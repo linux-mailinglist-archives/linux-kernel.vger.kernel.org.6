@@ -1,243 +1,221 @@
-Return-Path: <linux-kernel+bounces-551053-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-551054-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 86A4EA56785
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 13:10:06 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0111FA56789
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 13:11:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 72B063A7BE7
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 12:09:54 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 31D0D7A9CCC
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 12:10:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12EE4218AB2;
-	Fri,  7 Mar 2025 12:09:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4D92218ADF;
+	Fri,  7 Mar 2025 12:11:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="SHGmB75G";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="qgoGIvye"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="T2XH7+Le"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACAA71E1DE5;
-	Fri,  7 Mar 2025 12:09:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741349398; cv=none; b=oZrBQQXmkm9SjlWw64k0Gs7OKnbE/9OhquloQCFQuo3D4paJaydNqy/bmnYIphxY+DOnwFMe3trdnZ/Nj3i8lQcw81qWDDL/TiioH35cedYZk3pkXxOVguMGX7lLNpwTBVqmpIXkVIUDDhnTiwE1+/NqKVtHBiSs2bzoUtoG2Ck=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741349398; c=relaxed/simple;
-	bh=QGDqhnVTkMxUD/s/oQfklPC6spqn0PHAdbKwzCq7oQU=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=P39ny2VGR3astKgBA9+8aPNRRCz6SbKxlspheZYdXWkpLgoLrUeuzD9BYcFaDo+LoP5BDKA1k1AKt3Z4HoYD5mqv8LLzkwVB1oo2S5oLV9G2mxpMMQyXLGyVDrZpep3G3SRIajrYxmpY5uwgDlun7IZkM/DMzyWVqYHG6UB/H5k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=SHGmB75G; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=qgoGIvye; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Fri, 07 Mar 2025 12:09:48 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1741349392;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=UigKyD5FBJEO172t/PeVjmazgOFcEa1nbtu2g0lmZug=;
-	b=SHGmB75Gj7sRmq31H9EmNfMuA2LJiC/VgFl21502hQ3pNgtmPdgdjun9qvtsucGO6fRjIA
-	Z9Oa+uqkuyEL1DDivZrTcKbZ2rsMarsMrbQ2a5B+CVbsR5LH8WrQB5JmNGBFd04W3NN2DT
-	K1pw3Nrkz0fZirDZsg5ZQ4tpWcm9HVrP4FfbfTmJLroxRePWLuCEkufv+l1sQ88chpKlLn
-	COdpbjsAqgLJ5XZGIEZ9ypSinp+iLzzDZfXdMMJ6LgWXc7jkVbDc2MQRPfmw5fmSRMhuk3
-	XOT3nGVUwaB+0qUAtJBTYPPP+3wAVf9zmWWEQBXbyFnavjANHkAZTChLOLWZNw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1741349392;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=UigKyD5FBJEO172t/PeVjmazgOFcEa1nbtu2g0lmZug=;
-	b=qgoGIvyem2reeyyt+6bYhYvR7UPJYwSHU2g24LFnMGvuymA/phATJ8TXssMgOEsWQ7BrCi
-	e3e0R0GGb8xfZOAQ==
-From: "tip-bot2 for Maksim Davydov" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: locking/core] x86/split_lock: Fix the delayed detection logic
-Cc: Maksim Davydov <davydov-max@yandex-team.ru>,
- Ingo Molnar <mingo@kernel.org>, "Guilherme G. Piccoli" <gpiccoli@igalia.com>,
- Thomas Gleixner <tglx@linutronix.de>, Ravi Bangoria <ravi.bangoria@amd.com>,
- Tom Lendacky <thomas.lendacky@amd.com>, x86@kernel.org,
- linux-kernel@vger.kernel.org
-In-Reply-To: <20250115131704.132609-1-davydov-max@yandex-team.ru>
-References: <20250115131704.132609-1-davydov-max@yandex-team.ru>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D51F21767D;
+	Fri,  7 Mar 2025 12:11:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.11
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741349478; cv=fail; b=qX6u1kCg/z1W14veh6EI4CoujKFen2blSp3Hzl6Ou0LG5WIpUKd3IiYtfCZebq8V2kRlZOh+dWAD4ScjH6whI7Dj+FpVJoXyRcqn7vZZfrKmykNKI66JbIB5LGJU3fNO17AJaObP8NAMxeEjpEq/hYHms2G38fB4T6HbCrKC/o4=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741349478; c=relaxed/simple;
+	bh=rMmgzhegAq0gg/ML2c0n5IhLVaVzrE4XebCzt5gckd8=;
+	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=X2vX+7zcjLbIpkoOynMq0rCU5fR8WRXgJc7aBnqKwtIJW1PWbbZRRjcEqJESLr21LFNg70HIMMSVnvah9Kdqxx9PUMw3idWs5v3mZ+BFOzSsUcZ85gS1q6Y5JZFUWk3xHPiuPrGKe11vdzQwkxvmnv4QmKTGLdh88rLZ1opviu0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=T2XH7+Le; arc=fail smtp.client-ip=192.198.163.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1741349478; x=1772885478;
+  h=date:from:to:cc:subject:message-id:references:
+   in-reply-to:mime-version;
+  bh=rMmgzhegAq0gg/ML2c0n5IhLVaVzrE4XebCzt5gckd8=;
+  b=T2XH7+LekKUEDK/a28BAdSF/YDtvF9S4kazsI3YrIoM0ik3oXqU+ixhm
+   9XBtToHUgl7uYzMAwzbsfbiSL5Q2IXK4YvV+dQgPIqTDEa8y1ncOiGJYM
+   A8yj2WDHiCCGwdGRU3DYSVx2CR6RPTIlLjWcNhOoAJvSV2ghz2YCRnpb8
+   oBKFmo+ZxCOqcvQKoct1Gs0ueGvkR57XiYeOIs7NEw1b5cdXWWk02Qw2a
+   eFLmxcfFMYzy+9A6xFaq4RWLOERl9epMEzYl8GCDBz7pb6wgLRZIl73wG
+   a8ZxkmzeOPuxd0D8EtCBARmqqnW3XH4xZFA0Mw+eREh+INECve6zgPAGl
+   g==;
+X-CSE-ConnectionGUID: 1CZknhU8RYGhRkUxxcIuNg==
+X-CSE-MsgGUID: F009FyDaTSW45MVGfMfqAw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11365"; a="53036704"
+X-IronPort-AV: E=Sophos;i="6.14,229,1736841600"; 
+   d="scan'208";a="53036704"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Mar 2025 04:11:15 -0800
+X-CSE-ConnectionGUID: vpuhkLu+SYWPDPuoc0gAqA==
+X-CSE-MsgGUID: C8Zz6ZbYR+2Uy5Celo0uLg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,229,1736841600"; 
+   d="scan'208";a="142540548"
+Received: from orsmsx603.amr.corp.intel.com ([10.22.229.16])
+  by fmviesa002.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 07 Mar 2025 04:11:14 -0800
+Received: from ORSMSX901.amr.corp.intel.com (10.22.229.23) by
+ ORSMSX603.amr.corp.intel.com (10.22.229.16) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.44; Fri, 7 Mar 2025 04:11:13 -0800
+Received: from orsedg603.ED.cps.intel.com (10.7.248.4) by
+ ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.14 via Frontend Transport; Fri, 7 Mar 2025 04:11:13 -0800
+Received: from NAM10-BN7-obe.outbound.protection.outlook.com (104.47.70.47) by
+ edgegateway.intel.com (134.134.137.100) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.44; Fri, 7 Mar 2025 04:11:13 -0800
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=s12w0FJgbDBZDJtCykOcojET6iXAoerAck20L6hroQGPfyQLOC+CfwgTgMI7FuBOlB9ZNkZUGmKsSeiH8Pns3kLZvu6vKWG9jkl2fGcVtL0DTyPoBhQrOdnA+vxJaWThFvk7wG/YFGp8Q+TCpJXmPwFBVvNLnVM24Hv5WAQ1PMfKRe2P1bPT1vwMLPS1Gg/3e9LwjRR7ilPQnZphYe2BKM5dHIVxImd7NiOqfI4MtFX505mEO25bpHBT7eACAubKHcUq3+bryeT/7Rj+4p9708pw1dPjQ/aYjE3i7VsJv5iuCcx5RyZUVAnSsMsHlspflc3aLVhkpCTDtB6/Dctw7A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=1mggZABp1JgUicXztc9zb8YYWZ1M5nYMn67DABoOGY0=;
+ b=Fwx/OpeA9d81Bc6mDgWQAjmUr407vPjH+OAHztqwzGJ7zq0jYLFV+kqZ7IYeUCSN/hCehEV07omjTNVXRUU7vNvIoiiKlLp/T4sUgvz0AETQna/xqplIgeSg+uFCvXG4jhfZ5LKqkI9T0gFA2id3HNiMCVYnMa+hnBd6KGX34iadXp525eMZRNQcGA/Zn3QVerAErUN0cgAddlWdNZ+8W7RW21eG/Hd05pBRwXN148lCyzpIYqtg1+biIuq07hCUSRvj7u+hABCfEES7z1DZGLdZ35/XAVeIR+chDIX8ONhc1kFlihZcZQyhdq0B0LJ5jdAN7bvQ6wnTFZgSBYvRbQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from DM4PR11MB6117.namprd11.prod.outlook.com (2603:10b6:8:b3::19) by
+ CH0PR11MB8234.namprd11.prod.outlook.com (2603:10b6:610:190::19) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8511.19; Fri, 7 Mar
+ 2025 12:10:42 +0000
+Received: from DM4PR11MB6117.namprd11.prod.outlook.com
+ ([fe80::d19:56fe:5841:77ca]) by DM4PR11MB6117.namprd11.prod.outlook.com
+ ([fe80::d19:56fe:5841:77ca%3]) with mapi id 15.20.8511.017; Fri, 7 Mar 2025
+ 12:10:41 +0000
+Date: Fri, 7 Mar 2025 13:10:29 +0100
+From: Maciej Fijalkowski <maciej.fijalkowski@intel.com>
+To: Alexander Lobakin <aleksander.lobakin@intel.com>
+CC: <intel-wired-lan@lists.osuosl.org>, Michal Kubiak
+	<michal.kubiak@intel.com>, Tony Nguyen <anthony.l.nguyen@intel.com>, "Przemek
+ Kitszel" <przemyslaw.kitszel@intel.com>, Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, "Alexei
+ Starovoitov" <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>,
+	"Jesper Dangaard Brouer" <hawk@kernel.org>, John Fastabend
+	<john.fastabend@gmail.com>, Simon Horman <horms@kernel.org>,
+	<bpf@vger.kernel.org>, <netdev@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH net-next 10/16] idpf: add support for nointerrupt queues
+Message-ID: <Z8riNXXSw/ZBrD+B@boxer>
+References: <20250305162132.1106080-1-aleksander.lobakin@intel.com>
+ <20250305162132.1106080-11-aleksander.lobakin@intel.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20250305162132.1106080-11-aleksander.lobakin@intel.com>
+X-ClientProxiedBy: WA1P291CA0022.POLP291.PROD.OUTLOOK.COM
+ (2603:10a6:1d0:19::29) To DM4PR11MB6117.namprd11.prod.outlook.com
+ (2603:10b6:8:b3::19)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <174134938906.14745.11174609071483438403.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM4PR11MB6117:EE_|CH0PR11MB8234:EE_
+X-MS-Office365-Filtering-Correlation-Id: f053be17-f22a-4326-ad95-08dd5d7114b3
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014|7416014;
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?yE/38aJqNjEOHW+m2lRwLj+ZHwtTyXpEtlKpc6p9UJYwGAKN9+TM4t9rMV9C?=
+ =?us-ascii?Q?zLZ4ogwTvDy+mjTxiaNH8RBybTq9PJ0UhFv4eYtRCU66K88xdVi2PnlBhSco?=
+ =?us-ascii?Q?9WSuX8ZDLuJJ+G+BglP2mhs9+PYZm4TYyroGPyC+t1ed/OT2CAaN+WXWTyue?=
+ =?us-ascii?Q?PEJ7563Xxh8HRjEaYlODqjEvnX0FwsdllEhmrIjdMhT963pxxjuTMuDr9JfT?=
+ =?us-ascii?Q?ac0gwfbPbwYg+pdF6U/U9bS/YvZg4U8oV/V+v0ub7Mqrpn2Xcv1mHk46Pb5f?=
+ =?us-ascii?Q?ErudCVNsLqO34AWKaMww3mc3/ctSu3kwNnwQef5ZRMFvRSKQ/Jq4o21DdVlq?=
+ =?us-ascii?Q?0dKSNTDTTP+HchtmN/50MzwSNfb259/p9iG84CUUzoaEEQI0DUlvc7zigUtv?=
+ =?us-ascii?Q?qRiVbmz9vfQbLmPvhBMpgUn6LFTnhlZ/ex/ZDGqYmGRnDgYZcTEi1dfBg3pD?=
+ =?us-ascii?Q?XsvfM3iFUCmh6QjTNkeK8Moww13jRo4ptOcwAbxuGmwywPA3+RJsR4p0vPaf?=
+ =?us-ascii?Q?/lK86n+ojvDwTKpn7qagIuGyw1iYZccw6TcN5GA4d5wSBgY8X5/mGXbNgDGm?=
+ =?us-ascii?Q?5WvQ+Yd+8O2NmTGAkA8OIQgDM5tq40gtMkXnu4MdUpXR4sag7PDOxQYfCmjG?=
+ =?us-ascii?Q?PXvjxLHjxkncb//f1hVH8N1j7bpk9//4QF0/KqCSntq/aI4yAsKhdLzPJh4p?=
+ =?us-ascii?Q?HQnNaLzktedGeLMn9UZz30/ZmaRF5fgoiI/2mn9SpIoAPx6j6ShHDTv9eyy3?=
+ =?us-ascii?Q?z5IDWGn5eR40bjqZc9z1yB65szugSgmTV4uycQG/ZoTdFyj3VavxKBNubkb/?=
+ =?us-ascii?Q?38HMthQTNrq9Tv+xJ9LAFNUp9IwOcIYVbJNlghS2K4Z/Pcu6OypG3daZ9C+c?=
+ =?us-ascii?Q?1L2ouY3pZ0k6L740C2zmXWNSNYTiWYQ+upGHI9nVdciKqtkr2jvdSWJeG6Pu?=
+ =?us-ascii?Q?vTc7Blm0/DT3LI19YjBsJDB2sb72/ThjgN3LyLdJ2M0OtiuyUygdJ8Z14uHg?=
+ =?us-ascii?Q?BSPXnrVQT9N/6/S8rQ0vpwou0QiJ91YlzGRGIZYPbIei7RksF1Qx6UbpWBFV?=
+ =?us-ascii?Q?ZipCXgHhZAU9rjMHLxLQ07Qe8V4jrdMfTlSzVxebuwYRJqpUmcTxno45PHOF?=
+ =?us-ascii?Q?Yth+qv1NauaY2FhTcYNoNPbsaTPzUMgUMlPN8ZjkMmT4YbJiJfoB/cAGdJ+9?=
+ =?us-ascii?Q?v5SmytJvSXV24UJEeuWB8zkw1ew64zokqhnn83FgDoqzz6mcIASA5MKI2lg0?=
+ =?us-ascii?Q?AmG+Zj7huvwmSlwoIt6PyXnNUAn6OBY017WR9VdSZ3RamFZ1E1Aao45jYvOR?=
+ =?us-ascii?Q?ftE7lnDF0H6ynvPb7dQq93Ux58sq0ACzlm+PrUn+eeqQhYYNNV/SFQ6q7awH?=
+ =?us-ascii?Q?pJ5SRqZoZcqYFcBP+QjIhepJb+Zd?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR11MB6117.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7416014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?B4bhgstGbVFojj6uU5SrZV+VfMfFS9uIPTTCWWGm7ENvSSfbXl3kxaqzJPW6?=
+ =?us-ascii?Q?13ajUnjxmJjt22AJeFszgaUV2Zb7ZJaLYZGWkWH9VrnLZKVtI/EjwXW9k72D?=
+ =?us-ascii?Q?wXO4W+Qp/Ai9VolRqDTgWoPucneW1zPjcvyGkb56NycIikBeYV2nyU+zkcZA?=
+ =?us-ascii?Q?LjtMcNeNznaQSwbA6CvnTD4bo2dwdBHd4Yk7CSLAWknY3i7dqJqMvcW+0x8M?=
+ =?us-ascii?Q?SOw+4Axghj3dIgabrlo5hZm72HxkfhuSVHca8HO65SsMhEND15gGkAplGpww?=
+ =?us-ascii?Q?utr5tSKfbo9vTeKqmjSf6CWg0sZIrTqyFkN0MwwYBSEewwHaE3FDcLNaY17b?=
+ =?us-ascii?Q?+cuMHPWov8oDVBbMaeaSwqfuN7b5kJOZG3vUTgpsoeCmPCAO2G/h4hsbOQlt?=
+ =?us-ascii?Q?7EUJ2Nluqo+Wt39iIpkWxttDJ2aI7NR0+TxEvtRAhzLIUNHR2pt4rxtDcEZd?=
+ =?us-ascii?Q?ZypRYqyn7L11cDCRw5/yjXv4j1XINcwdFu91nXk4sCpHiVEl6q3vD9cCJ7nT?=
+ =?us-ascii?Q?HEQJwZpqIJZeztJ2+nMi+1K2QRaDzkXcCeVUTUDv5WfzWD0sBWxZV34xUt5a?=
+ =?us-ascii?Q?aBWqeOgI91hPEC2+Z4Hy6YXL+dNJ3pvxYBXIYvRc4pO9UBE0j9hBc2q9xlSY?=
+ =?us-ascii?Q?hOKSh6rQ4tUBW6xwWtY0rByuOfLAwygKH1Le2GjmCtxJEzeW9VqbX5Poiwie?=
+ =?us-ascii?Q?8zkKkyB5GX+dbjqbRyNvgn/bjLtRy3wT/mqgQoqv2OEKyrwiDaHsvQnGTqmj?=
+ =?us-ascii?Q?AtctOqgm6syDHtYcW5qDBkDhoz4iM5NYI74Hlx64CKS6hJ916T2m1TJDKeeJ?=
+ =?us-ascii?Q?/cYIxxgQPIU5IQKwUJwiFGe63avOK4Ph4262SNDhiwXJF1d/BSxc9ItdFK+8?=
+ =?us-ascii?Q?jda7u8U/z8s8NxZheI2v04COwd+vc3ChZ3kJWJgMcC1IQvy8i8wXzQrTiu4J?=
+ =?us-ascii?Q?sfkozXjx1vW49+SsT/rg+YJMX1JKBt+lLnCuk/39ZuDR41XYrZrfuRBm6lwA?=
+ =?us-ascii?Q?jszijkbk1uTkxbnwtYELb35U+hs9uv2vbgPrApT5+k08RjBGKsolYeFnZsML?=
+ =?us-ascii?Q?urZlNaY+Tzs2g4Q5+HENeMX/XeodEb3DL3a33CrGUWajsLlEdbdwqtbV1iJ5?=
+ =?us-ascii?Q?s6mpwlJ5UIHMWqGNu4LZP1YGR0B3rScHJ2RL6sXGBsH8zwsVvxktVxFpCpYp?=
+ =?us-ascii?Q?errk5CQxhBqVZYHOk5xlo7DjsIjozpoJmIyKv7KIWpGPvZ8DHkjNcQwPTQYQ?=
+ =?us-ascii?Q?M+VgyQc0Jfrt/IZNTvYemf4B1Xlgdz37Xy4AQKsPVbXTwwh+xGF6EXk/71Ln?=
+ =?us-ascii?Q?id2VfW/OWYcKVryhWRZqekZicOzIck2XpIrgCt86ZTHy7D5sjgwa+ORUt7o9?=
+ =?us-ascii?Q?s5nAkFMAVdH8+L94/ayLZ9qMlFKXIrvV0ktIzOmsUiiV+6jcAA/QetcyvbmD?=
+ =?us-ascii?Q?d8nPmTm5hrNki2PX27FVhh1J1Np1wUv0NIPWMOsS7K2pJMEEkac69dtVMoA5?=
+ =?us-ascii?Q?jtrh/NINDGJIo0XeYICcZ+yvRdFgD5Knjwd3/CXvjfPiROWC0j5HT8EWMdL7?=
+ =?us-ascii?Q?ndYKPR07sRP7inDuO6DizbDcHYSbNrF7qv2Y35bQaduuV6OarUm+KP65EV95?=
+ =?us-ascii?Q?Qw=3D=3D?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: f053be17-f22a-4326-ad95-08dd5d7114b3
+X-MS-Exchange-CrossTenant-AuthSource: DM4PR11MB6117.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Mar 2025 12:10:41.7702
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 6/TFoyZ+dlB+tjeb/NMnWCOInzwTePz0h+LFkmo1+eOeF1OyAPvbQN8GswJlZ1OM03pQpi9v/BMKoPm3RxYWkVCp0d7jWQtRlIJ2JDYx3Pg=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH0PR11MB8234
+X-OriginatorOrg: intel.com
 
-The following commit has been merged into the locking/core branch of tip:
+On Wed, Mar 05, 2025 at 05:21:26PM +0100, Alexander Lobakin wrote:
+> Currently, queues are associated 1:1 with interrupt vectors as it's
+> assumed queues are always interrupt-driven.
+> In order to use a queue without an interrupt, idpf still needs to have
+> a vector assigned to it to flush descriptors. This vector can be global
+> and only one for the whole vport to handle all its noirq queues.
+> Always request one excessive vector and configure it in non-interrupt
+> mode right away when creating vport, so that it can be used later by
+> queues when needed.
 
-Commit-ID:     c929d08df8bee855528b9d15b853c892c54e1eee
-Gitweb:        https://git.kernel.org/tip/c929d08df8bee855528b9d15b853c892c54e1eee
-Author:        Maksim Davydov <davydov-max@yandex-team.ru>
-AuthorDate:    Wed, 15 Jan 2025 16:17:04 +03:00
-Committer:     Ingo Molnar <mingo@kernel.org>
-CommitterDate: Fri, 07 Mar 2025 13:01:02 +01:00
+Description sort of miss the purpose of this commit, you don't ever
+mention that your design choice for XDP Tx queues is to have them
+irq-less.
 
-x86/split_lock: Fix the delayed detection logic
-
-If the warning mode with disabled mitigation mode is used, then on each
-CPU where the split lock occurred detection will be disabled in order to
-make progress and delayed work will be scheduled, which then will enable
-detection back.
-
-Now it turns out that all CPUs use one global delayed work structure.
-This leads to the fact that if a split lock occurs on several CPUs
-at the same time (within 2 jiffies), only one CPU will schedule delayed
-work, but the rest will not.
-
-The return value of schedule_delayed_work_on() would have shown this,
-but it is not checked in the code.
-
-A diagram that can help to understand the bug reproduction:
-
- - sld_update_msr() enables/disables SLD on both CPUs on the same core
-
- - schedule_delayed_work_on() internally checks WORK_STRUCT_PENDING_BIT.
-   If a work has the 'pending' status, then schedule_delayed_work_on()
-   will return an error code and, most importantly, the work will not
-   be placed in the workqueue.
-
-Let's say we have a multicore system on which split_lock_mitigate=0 and
-a multithreaded application is running that calls splitlock in multiple
-threads. Due to the fact that sld_update_msr() affects the entire core
-(both CPUs), we will consider 2 CPUs from different cores. Let the 2
-threads of this application schedule to CPU0 (core 0) and to CPU 2
-(core 1), then:
-
-|                                 ||                                   |
-|             CPU 0 (core 0)      ||          CPU 2 (core 1)           |
-|_________________________________||___________________________________|
-|                                 ||                                   |
-| 1) SPLIT LOCK occured           ||                                   |
-|                                 ||                                   |
-| 2) split_lock_warn()            ||                                   |
-|                                 ||                                   |
-| 3) sysctl_sld_mitigate == 0     ||                                   |
-|    (work = &sl_reenable)        ||                                   |
-|                                 ||                                   |
-| 4) schedule_delayed_work_on()   ||                                   |
-|    (reenable will be called     ||                                   |
-|     after 2 jiffies on CPU 0)   ||                                   |
-|                                 ||                                   |
-| 5) disable SLD for core 0       ||                                   |
-|                                 ||                                   |
-|    -------------------------    ||                                   |
-|                                 ||                                   |
-|                                 || 6) SPLIT LOCK occured             |
-|                                 ||                                   |
-|                                 || 7) split_lock_warn()              |
-|                                 ||                                   |
-|                                 || 8) sysctl_sld_mitigate == 0       |
-|                                 ||    (work = &sl_reenable,          |
-|                                 ||     the same address as in 3) )   |
-|                                 ||                                   |
-|            2 jiffies            || 9) schedule_delayed_work_on()     |
-|                                 ||    fials because the work is in   |
-|                                 ||    the pending state since 4).    |
-|                                 ||    The work wasn't placed to the  |
-|                                 ||    workqueue. reenable won't be   |
-|                                 ||    called on CPU 2                |
-|                                 ||                                   |
-|                                 || 10) disable SLD for core 0        |
-|                                 ||                                   |
-|                                 ||     From now on SLD will          |
-|                                 ||     never be reenabled on core 1  |
-|                                 ||                                   |
-|    -------------------------    ||                                   |
-|                                 ||                                   |
-|    11) enable SLD for core 0 by ||                                   |
-|        __split_lock_reenable    ||                                   |
-|                                 ||                                   |
-
-If the application threads can be scheduled to all processor cores,
-then over time there will be only one core left, on which SLD will be
-enabled and split lock will be able to be detected; and on all other
-cores SLD will be disabled all the time.
-
-Most likely, this bug has not been noticed for so long because
-sysctl_sld_mitigate default value is 1, and in this case a semaphore
-is used that does not allow 2 different cores to have SLD disabled at
-the same time, that is, strictly only one work is placed in the
-workqueue.
-
-In order to fix the warning mode with disabled mitigation mode,
-delayed work has to be per-CPU. Implement it.
-
-Fixes: 727209376f49 ("x86/split_lock: Add sysctl to control the misery mode")
-Signed-off-by: Maksim Davydov <davydov-max@yandex-team.ru>
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Tested-by: Guilherme G. Piccoli <gpiccoli@igalia.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Ravi Bangoria <ravi.bangoria@amd.com>
-Cc: Tom Lendacky <thomas.lendacky@amd.com>
-Link: https://lore.kernel.org/r/20250115131704.132609-1-davydov-max@yandex-team.ru
----
- arch/x86/kernel/cpu/bus_lock.c | 20 ++++++++++++++++----
- 1 file changed, 16 insertions(+), 4 deletions(-)
-
-diff --git a/arch/x86/kernel/cpu/bus_lock.c b/arch/x86/kernel/cpu/bus_lock.c
-index 6cba85c..97222ef 100644
---- a/arch/x86/kernel/cpu/bus_lock.c
-+++ b/arch/x86/kernel/cpu/bus_lock.c
-@@ -192,7 +192,13 @@ static void __split_lock_reenable(struct work_struct *work)
- {
- 	sld_update_msr(true);
- }
--static DECLARE_DELAYED_WORK(sl_reenable, __split_lock_reenable);
-+/*
-+ * In order for each CPU to schedule its delayed work independently of the
-+ * others, delayed work struct must be per-CPU. This is not required when
-+ * sysctl_sld_mitigate is enabled because of the semaphore that limits
-+ * the number of simultaneously scheduled delayed works to 1.
-+ */
-+static DEFINE_PER_CPU(struct delayed_work, sl_reenable);
- 
- /*
-  * If a CPU goes offline with pending delayed work to re-enable split lock
-@@ -213,7 +219,7 @@ static int splitlock_cpu_offline(unsigned int cpu)
- 
- static void split_lock_warn(unsigned long ip)
- {
--	struct delayed_work *work;
-+	struct delayed_work *work = NULL;
- 	int cpu;
- 
- 	if (!current->reported_split_lock)
-@@ -235,11 +241,17 @@ static void split_lock_warn(unsigned long ip)
- 		if (down_interruptible(&buslock_sem) == -EINTR)
- 			return;
- 		work = &sl_reenable_unlock;
--	} else {
--		work = &sl_reenable;
- 	}
- 
- 	cpu = get_cpu();
-+
-+	if (!work) {
-+		work = this_cpu_ptr(&sl_reenable);
-+		/* Deferred initialization of per-CPU struct */
-+		if (!work->work.func)
-+			INIT_DELAYED_WORK(work, __split_lock_reenable);
-+	}
-+
- 	schedule_delayed_work_on(cpu, work, 2);
- 
- 	/* Disable split lock detection on this CPU to make progress */
+> 
+> Co-developed-by: Michal Kubiak <michal.kubiak@intel.com>
+> Signed-off-by: Michal Kubiak <michal.kubiak@intel.com>
+> Signed-off-by: Alexander Lobakin <aleksander.lobakin@intel.com>
+> ---
+>  drivers/net/ethernet/intel/idpf/idpf.h        |  8 +++
+>  drivers/net/ethernet/intel/idpf/idpf_txrx.h   |  4 ++
+>  drivers/net/ethernet/intel/idpf/idpf_dev.c    | 11 +++-
+>  drivers/net/ethernet/intel/idpf/idpf_lib.c    |  2 +-
+>  drivers/net/ethernet/intel/idpf/idpf_txrx.c   |  8 +++
+>  drivers/net/ethernet/intel/idpf/idpf_vf_dev.c | 11 +++-
+>  .../net/ethernet/intel/idpf/idpf_virtchnl.c   | 53 +++++++++++++------
+>  7 files changed, 79 insertions(+), 18 deletions(-)
 
