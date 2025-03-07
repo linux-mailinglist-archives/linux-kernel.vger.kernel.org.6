@@ -1,139 +1,126 @@
-Return-Path: <linux-kernel+bounces-551270-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-551271-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A19B7A56A4F
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 15:25:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id C4E76A56A50
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 15:25:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3EDA9189B1CB
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 14:25:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 90C99189B52C
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 14:25:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 008D521B9F8;
-	Fri,  7 Mar 2025 14:25:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E13D21C17F;
+	Fri,  7 Mar 2025 14:25:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Cq1KdLD3"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=proton.me header.i=@proton.me header.b="j3t4W7sl"
+Received: from mail-10630.protonmail.ch (mail-10630.protonmail.ch [79.135.106.30])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B0E921ADD6;
-	Fri,  7 Mar 2025 14:25:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AF6B21ADD6
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Mar 2025 14:25:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.135.106.30
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741357526; cv=none; b=PYWw3kj1yVAvbmOq2C2TdrSqZ+CDNdZk3ZHTrhBuOZVqiSBN21hCvtSWcrRyNqW8jdfQlwHayn2KDB/hqdS3BWDeK5+7hNS13Qt2VHvJpE4aSGa03aTfjEaCBifgkkCfIaLKlX+z2GX3GzCEFCF2dNbmKjtnRMYRfkHbqnByt1Y=
+	t=1741357535; cv=none; b=O1qKZDJKQtl20xSz7n01bhKNKJlT/gWlBEy1fKHScuFU/RGXJb1SyPAbTWBGJl9gcvJ7RN4LSu/BCrxby4ibTNmvI5xeyF2TZ8R9M+7JxHIGT3Bgh2LJOIJ0VUkyWSizJnosrW08PSAmGbDsSNq/tUzJsEhRihBpxZnJykbU3mE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741357526; c=relaxed/simple;
-	bh=gA1kKgFhU+9VhS4X+o0hrNIOinwo4I1C9mOk0WY1OZ0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ERgn8edl+BEptU1QyA9S9cVw4fC7X58IIiO2zPDtzpjaosbjDZcAJd5cspAd5qu8PTAIb/QaShEoHPEnN0o2m07iyem9caWVC/d5R78E7Uq5+Gtq7bP27GRBIJpMKRX9hRiuo543VD/3PUd/zxXAM36OZnNK34m/qpTkOBmKyhI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Cq1KdLD3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C86ECC4CED1;
-	Fri,  7 Mar 2025 14:25:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741357525;
-	bh=gA1kKgFhU+9VhS4X+o0hrNIOinwo4I1C9mOk0WY1OZ0=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=Cq1KdLD3IlILAhs6gUffxuTAljMGMPKK7kp+P9R26SlTmARWPZqUNWSYvq7LCDVNm
-	 d2bc2aTd/wo2/IeztEKULOXqtjxrjsXSlE5nA5pv5RLWz70qrA5PzL+mKRLMC4v/L0
-	 I+KV4hBdLRlo+2RdVsbdSYDpZvyFiUoXB0FSF9kbIuC0T6aTk8dA7K2dtO+yaVIrfT
-	 WIexrCjNoCPpTpbOGnwmYNWG+ZtNrPTSvjdLmYe1WTy7LjZlVvqzfQjzXeaC6yxyqc
-	 D7L8yisBozIHFLSWlz10fNfebUFTE924cWAYfcdS5TuYyr1NBw/2ovkJHxxPeOghrj
-	 y8kneFTWaKZvw==
-Received: by mail-ot1-f43.google.com with SMTP id 46e09a7af769-72a1a9dd1b0so212465a34.1;
-        Fri, 07 Mar 2025 06:25:25 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCWxnNqXKGmL0PzMiNCjOlCrVNZxw6pL9ffNSegQ/Yy6xKG+G/5rC761vE1YfEP6BM0ZkQIjpxe0eQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxrgHTEJB7hiQKMykB6WYLsUA8yp9zxC88gRaAapynZ4angMgoa
-	tyVRJCkNbRgkIK3z/CuUio4+uOBdnTKwHVB7dx1W+nczFoyZiagJL2S5UUeNeSstKQqd0OOEiZ6
-	UktcXCJInPMGP+EaO1n/WIz4thZg=
-X-Google-Smtp-Source: AGHT+IHrn8BPA4VPZK4gNrpWmVAKymKPX0ujhAOibfwiVPmaJ1Y6zgW+h5z2SXATyxILf5DKeSM0iNbqDqK38DtGvig=
-X-Received: by 2002:a05:6830:410a:b0:727:3f3e:53ba with SMTP id
- 46e09a7af769-72a37c7be8emr1905104a34.26.1741357525140; Fri, 07 Mar 2025
- 06:25:25 -0800 (PST)
+	s=arc-20240116; t=1741357535; c=relaxed/simple;
+	bh=2Lz/YT0dAJcIe3LvHXqUJ+5fEKYlZ7dzJES1cIVQqzM=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=WFWiD0+MAjS6jarMUmLXI/X/mWqnx50yorQ3VyeXHbADfgRjXrO1CwP0PiNi5NtY3uKbZsP+v8UTofKy6UxQggpplMuBgroVrViAgIcmsjtED2W3PQprFl9gXnLH5ri21erqTT0yzLV8cYrQTaSFHcXpHB5xLCrv4mnHjbMkhN8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=j3t4W7sl; arc=none smtp.client-ip=79.135.106.30
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
+	s=37m4ecngtjhfpi7pjsnirjaagq.protonmail; t=1741357530; x=1741616730;
+	bh=XLr7YhQshyfQf6d3k7XvIYgwSMk4ZzLpOKlpv74Y9B0=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector:List-Unsubscribe:List-Unsubscribe-Post;
+	b=j3t4W7slXIuOZ1wLVjU9zNfUfTkF+4u3PHySvksAxaDa/lqy6ZSJVaewYv92MTyvg
+	 d6Nu4BgIjZdGU8mMTCz54h2UYNZbMWSPimiGWbXJ9NdXHbSphQlFhnKIxV9XCgxiIj
+	 TjacaSNcogRjQyUvR2upZTOzjpx9i1thAO9zioRIxGQevcoV1EegzYSWj92kS24FfV
+	 TR4I+ZvNCB+kjX/b+7oabJHoCfWMy7oZ7uCDfV0xwPUrtE/Vs1eumn77GXCPecW49F
+	 jnd5NA0rV6SwxEiPRf+ZTgFmSUn/ogsSRVE8M2RRXlTm9OGPA17Ijbj03XWXSSSxXh
+	 weNp0LJoOvnwQ==
+Date: Fri, 07 Mar 2025 14:25:24 +0000
+To: Andreas Hindborg <a.hindborg@kernel.org>
+From: Benno Lossin <benno.lossin@proton.me>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Anna-Maria Behnsen <anna-maria@linutronix.de>, Frederic Weisbecker <frederic@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Danilo Krummrich <dakr@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, Lyude Paul <lyude@redhat.com>, Guangbo Cui <2407018371@qq.com>, Dirk Behme <dirk.behme@gmail.com>, Daniel Almeida <daniel.almeida@collabora.com>, Tamir Duberstein <tamird@gmail.com>, Markus Elfring <Markus.Elfring@web.de>, rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v10 07/13] rust: hrtimer: implement `UnsafeHrTimerPointer` for `Pin<&T>`
+Message-ID: <D8A3PZPLKPA0.1CWNFJG4RSWKE@proton.me>
+In-Reply-To: <87ikok3or8.fsf@kernel.org>
+References: <20250307-hrtimer-v3-v6-12-rc2-v10-0-0cf7e9491da4@kernel.org> <20250307-hrtimer-v3-v6-12-rc2-v10-7-0cf7e9491da4@kernel.org> <6-QyjoxR_6TYuJVEXwdFAZrhFz52ZDU_4-r64epTLFpOAMc3jM_REWS-v_7TzdcgYmq1j74UmTnhYW5HdT98bQ==@protonmail.internalid> <D8A25UNDIJHK.216EX6YG4EJ6E@proton.me> <87msdx3qsg.fsf@kernel.org> <MAOSH8H2lF5xrSfp-bnsmnF6Cw0BeJaotLwkrEDKvOki2VxkUP4yazYV7vRrxa1DZhg2g_Enxlkb9lF_mC2TiQ==@protonmail.internalid> <D8A2ZPH3TSGK.IZ41SSRCL37@proton.me> <87ikok3or8.fsf@kernel.org>
+Feedback-ID: 71780778:user:proton
+X-Pm-Message-ID: 3ad981e282e5dd4f5618e482cb50cd67cfa9df8b
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250307132649.4056210-1-lukasz.luba@arm.com>
-In-Reply-To: <20250307132649.4056210-1-lukasz.luba@arm.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Fri, 7 Mar 2025 15:25:12 +0100
-X-Gmail-Original-Message-ID: <CAJZ5v0jH3Kp0KfX9Ef6OhrJ8-_i_RibvFqWPptHK4my-jvYHCA@mail.gmail.com>
-X-Gm-Features: AQ5f1Jpi8HX32u4DBeNVqAePMACF9J5teGO_ImDjJ6baaBQq8vZHcGVHNilrwIY
-Message-ID: <CAJZ5v0jH3Kp0KfX9Ef6OhrJ8-_i_RibvFqWPptHK4my-jvYHCA@mail.gmail.com>
-Subject: Re: [RESEND][PATCH] power: energy_model: Rework the depends on for CONFIG_ENERGY_MODEL
-To: Lukasz Luba <lukasz.luba@arm.com>
-Cc: linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, rafael@kernel.org, 
-	daniel.lezcano@linaro.org, rui.zhang@intel.com, 
-	srinivas.pandruvada@linux.intel.com, jeson.gao@unisoc.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Mar 7, 2025 at 2:27=E2=80=AFPM Lukasz Luba <lukasz.luba@arm.com> wr=
-ote:
+On Fri Mar 7, 2025 at 3:21 PM CET, Andreas Hindborg wrote:
+> "Benno Lossin" <benno.lossin@proton.me> writes:
 >
-> From: Jeson Gao <jeson.gao@unisoc.com>
+>> On Fri Mar 7, 2025 at 2:37 PM CET, Andreas Hindborg wrote:
+>>> "Benno Lossin" <benno.lossin@proton.me> writes:
+>>>> On Fri Mar 7, 2025 at 11:11 AM CET, Andreas Hindborg wrote:
+>>>>> +impl<'a, T> RawHrTimerCallback for Pin<&'a T>
+>>>>> +where
+>>>>> +    T: HasHrTimer<T>,
+>>>>> +    T: HrTimerCallback<Pointer<'a> =3D Self>,
+>>>>> +{
+>>>>> +    type CallbackTarget<'b> =3D Self;
+>>>>> +
+>>>>> +    unsafe extern "C" fn run(ptr: *mut bindings::hrtimer) -> binding=
+s::hrtimer_restart {
+>>>>> +        // `HrTimer` is `repr(C)`
+>>>>> +        let timer_ptr =3D ptr as *mut HrTimer<T>;
+>>>>> +
+>>>>> +        // SAFETY: By the safety requirement of this function, `time=
+r_ptr`
+>>>>> +        // points to a `HrTimer<T>` contained in an `T`.
+>>>>> +        let receiver_ptr =3D unsafe { T::timer_container_of(timer_pt=
+r) };
+>>>>> +
+>>>>> +        // SAFETY: By the safety requirement of this function, `time=
+r_ptr`
+>>>>> +        // points to a `HrTimer<T>` contained in an `T`.
+>>>>
+>>>> This justification seems wrong it talks about `HrTimer<T>`, but here w=
+e
+>>>> have a `*const T`... Also see [1] (I am mainly interested in your
+>>>> justification for the lifetime).
+>>>>
+>>>> [1]: https://doc.rust-lang.org/std/ptr/index.html#pointer-to-reference=
+-conversion
+>>>
+>>> How is this:
+>>>
+>>>         // SAFETY:
+>>>         //  - By the safety requirement of this function, `timer_ptr`
+>>>         //    points to a `HrTimer<T>` contained in an `T`.
+>>>         //  - The `PinHrTimerHandle` associated with this timer is guar=
+anteed to
+>>>         //    be alive until this method returns. As the handle borrows=
+ from
+>>>         //    `T`, `T` is also guaranteed to be alive for the duration =
+of this
+>>>         //    function.
+>>
+>> Sounds good, if you can also explain (probably somewhere else, as every
+>> `RawHrTimerCallback` implementer will rely on this) why the handle lives
+>> for the duration of the callback.
 >
-> Now not only CPUs can use energy efficiency models, but GPUs
-> can also use. On the other hand, even with only one CPU, we can also
-> use energy_model to align control in thermal.
-> So remove the dependence of SMP, and add the DEVFREQ.
->
-> Signed-off-by: Jeson Gao <jeson.gao@unisoc.com>
-> [Added missing SMP config option in DTPM_CPU dependency]
-> Signed-off-by: Lukasz Luba <lukasz.luba@arm.com>
-> ---
->
-> Hi Rafael,
->
-> This fixes the issue in the former patch with the DTMP_CPU
-> implicit build dependencies on SMP.
-> The original patch can be found here [1] (the one that you had to revert)=
-.
->
-> Regards,
-> Lukasz Luba
->
-> [1] https://lore.kernel.org/lkml/20241219091109.10050-1-xuewen.yan@unisoc=
-.com/
->
->
->  drivers/powercap/Kconfig | 2 +-
->  kernel/power/Kconfig     | 3 +--
->  2 files changed, 2 insertions(+), 3 deletions(-)
->
-> diff --git a/drivers/powercap/Kconfig b/drivers/powercap/Kconfig
-> index 69ef8d081c98b..03c4c796d9931 100644
-> --- a/drivers/powercap/Kconfig
-> +++ b/drivers/powercap/Kconfig
-> @@ -82,7 +82,7 @@ config DTPM
->
->  config DTPM_CPU
->         bool "Add CPU power capping based on the energy model"
-> -       depends on DTPM && ENERGY_MODEL
-> +       depends on DTPM && ENERGY_MODEL && SMP
->         help
->           This enables support for CPU power limitation based on
->           energy model.
-> diff --git a/kernel/power/Kconfig b/kernel/power/Kconfig
-> index ca947ed32e3dd..54a6236800194 100644
-> --- a/kernel/power/Kconfig
-> +++ b/kernel/power/Kconfig
-> @@ -380,8 +380,7 @@ config CPU_PM
->
->  config ENERGY_MODEL
->         bool "Energy Model for devices with DVFS (CPUs, GPUs, etc)"
-> -       depends on SMP
-> -       depends on CPU_FREQ
-> +       depends on CPU_FREQ || PM_DEVFREQ
->         help
->           Several subsystems (thermal and/or the task scheduler for examp=
-le)
->           can leverage information about the energy consumed by devices t=
-o
-> --
+> It is in the safety requirement for the `HrTimerHandle` trait already.
+> Should I reference it here?
 
-Applied as 6.15 material, thanks!
+Yes please!
+
+---
+Cheers,
+Benno
+
 
