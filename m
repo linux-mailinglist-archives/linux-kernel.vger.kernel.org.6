@@ -1,296 +1,123 @@
-Return-Path: <linux-kernel+bounces-551449-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-551450-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id F2B53A56C99
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 16:51:09 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 83852A56C9B
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 16:51:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2D80717835C
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 15:51:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 008D0189A738
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 15:51:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88D4D21D3F2;
-	Fri,  7 Mar 2025 15:50:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8433A21D3FC;
+	Fri,  7 Mar 2025 15:51:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Y9+35CJp"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NLLP7UOu"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECA1421D3D5
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Mar 2025 15:50:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF31C21A459;
+	Fri,  7 Mar 2025 15:51:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741362649; cv=none; b=aeGjkqdVesVkzpvAbV0yG1Gt0JfNK5gZrbRe8G909WBd83dt3uwPQQy8SS0IGjEEuO4FW55fnVdEwGimYWA5G+C+pCKNyw0Qku3Dpvco4M2vT54HIf2pRSoEG7ApIlKbqpxVYeOrKHk4pwengZjF6hYj30CqaRab+T+20I9g8x0=
+	t=1741362697; cv=none; b=YbKbtotRwYRKSXug+DpZ9iLVzEcv6kS3zUAp7kzLWwkx56DrOGkr2Lf+dNLbinKZejYXSoLZNvr6N0m4dol45K1wCtHXD9UotZBLtnLHtUeRwQiiOe0DhblFQQ+0sYnDOck2UrhR6c9TJhs/1GGqMxG0UbC+ZzPN2hdQzVIanOk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741362649; c=relaxed/simple;
-	bh=iXGYjBWdULJWCrP71xmD0+Dbl0c5VJX4/HXIc9O2icI=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:From:Subject:
-	 In-Reply-To:Content-Type; b=VapMR+lAy3vMa/ChvJhUTsPwvPiDxEUSkebVvOQtiBfxon2bNfkHkBblny3YiGpvJZv2PXphptWF39ZUr2QDh0hLdeMbhOomnPQqn9JFqnvFohF7jrNH7+Csybd+VW6pTyJL8vjsPGW1EqupFVrS9kK0qbRt3UfHMlXBh+VRfAQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Y9+35CJp; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1741362646;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=iYEpkA1N+H9dx8XJCjT8MQ/PI+vw7jshcFKkIi9I5lI=;
-	b=Y9+35CJpHdx74WfdVx/S5IOnrSpFE4wGwvBdlPYQV8Sc9LfSb0YB0dE6vf38EUI5X8mhqe
-	j36vWCs9hDioClQpAtHQGfGezER6puPkHzcT9XygRTtJoAOB9fRPPQzu3qrgZEkoV0fMx3
-	OPBUQca5+psZRoErFgoiwe2PeOXsCoM=
-Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com
- [209.85.222.199]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-654--EL9eUw7NXyoxVMyZ7f4Zg-1; Fri, 07 Mar 2025 10:50:45 -0500
-X-MC-Unique: -EL9eUw7NXyoxVMyZ7f4Zg-1
-X-Mimecast-MFC-AGG-ID: -EL9eUw7NXyoxVMyZ7f4Zg_1741362644
-Received: by mail-qk1-f199.google.com with SMTP id af79cd13be357-7c3b53373f7so520580885a.0
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Mar 2025 07:50:45 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741362644; x=1741967444;
-        h=content-transfer-encoding:in-reply-to:subject:from:references:cc:to
-         :content-language:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=iYEpkA1N+H9dx8XJCjT8MQ/PI+vw7jshcFKkIi9I5lI=;
-        b=S4TPMQuBPf50Islhzl2j8Q+DlO2+somHEKrqQTffkwp4p0yeN/2CLYoYHdiH6S4DSd
-         otNG5uxe6PukClnfCkhZ4vXSNNWvQvKeM22Q+ZZss3qh6UUS2S5YEH2vcZFyz7FLsGCY
-         /3z0sZSHKF1jWHKPdQgsR1YPy4dOLph6w9J4p5rNVgmyTQI35rv/DUScIUjAc3g6GzwE
-         FHr41HEzzdInPWtKPAHXpwPb3Xb67ecyb9musQjsYP1SqCw6tvd6lYJDbXgBXjD2YQ10
-         gMrKYJqXBb3YihyTstJ32OWOpsr2Sg9E0MLn9CVVoAc6RibtGPThoMl7RjfYVg0mHVJK
-         W+Mw==
-X-Forwarded-Encrypted: i=1; AJvYcCX+O1ev616YqzN0G9mb6YQZ7RKGuBcNJn52IIXZijvy8pdBYY8Zf1UgRUL5SK8ceSkQJh/xDUDLaRGtdYM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwhCNZyMbZ+1smKtGRIwXrbUpDcP2pPGnj9kDg370V7lrss5DM0
-	ebOEUAyrepC3MHR98Z6tRPbZRkcyuDWNahMRQ7U2l2XbWf2te4NjgATB6n99SBGGEKNaHX69nH6
-	PTHec525jgS4GfK4r40+GNA0AOxTD6FdL1MMpJuxQU2Ktm/99OVSoM9y6p/djug==
-X-Gm-Gg: ASbGncuF7MVleXqpOhw/Qt4peYf1bHyTnwJ52pbBhg0taeJPsjTsytybA+a3GiQT1C7
-	yqTeL+DpcSWtpwoh9YlIqhaduIh92QMHoFjGLH3+cnxRQfSVKewIUz9V/wEVpO4lF9MDwK+gS/b
-	mc8N+65oP2g46CKwPfF5fN7IFZgjYaRwwA1Th09C5S7EBnIwCtx2UUuC0ly5c5qCVtfTVq7+lW2
-	pgyOES/cJIE+Gd8NoJXL3rUuebcBh20yWB70toQUjSRL0naFWS7GAP9/WscokDJDGHEYmZvD1CE
-	CDvblgZE0YUzRTvxrT80YVqCDjM5DgPiiiO/VwLCSNqxHXO7LCL7O985TcbA59F6EJRKGoFxsg=
-	=
-X-Received: by 2002:a05:620a:8811:b0:7c5:3c0a:ab77 with SMTP id af79cd13be357-7c53c0aabe8mr40488685a.4.1741362644494;
-        Fri, 07 Mar 2025 07:50:44 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IHJbVW//Hd7MkBfbQxMBNrneqKSkHySglXtj4bk8ymVE1LQpMC61/SkaXOudIU+dGIzv8U3DA==
-X-Received: by 2002:a05:620a:8811:b0:7c5:3c0a:ab77 with SMTP id af79cd13be357-7c53c0aabe8mr40485785a.4.1741362644127;
-        Fri, 07 Mar 2025 07:50:44 -0800 (PST)
-Received: from [192.168.1.61] (pool-68-160-135-240.bstnma.fios.verizon.net. [68.160.135.240])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7c3e5339dfcsm258120485a.2.2025.03.07.07.50.43
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 07 Mar 2025 07:50:43 -0800 (PST)
-Message-ID: <566cfe7c-d5df-6407-6058-b78de5519e04@redhat.com>
-Date: Fri, 7 Mar 2025 10:50:42 -0500
+	s=arc-20240116; t=1741362697; c=relaxed/simple;
+	bh=6Z45Z8lISqmW5OTe484pnVNuND+c7SokmIMANOXLj6E=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=VGWgKJ1+C1Xpk8raxgx9LtB5WmQpKOpMyyGMZAD7JaEYNJLEEkMWJgB22hXFI7WJI8prvclIm4gn23F/tOwguyjJIohk6fFAZM+lgrs+hI/XnLkGg21vwfivsq418XAc/MEuiqHejAgWFcPjWMYjKMM+baBm2/aH4g5vUsU74TY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NLLP7UOu; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 957C3C4CED1;
+	Fri,  7 Mar 2025 15:51:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741362696;
+	bh=6Z45Z8lISqmW5OTe484pnVNuND+c7SokmIMANOXLj6E=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=NLLP7UOuEdRAQEZucHaeKjYn8tKVNsa3WpCRfYoNOpI+AdHB5TY/oN4RiiMsE9K1Q
+	 4X0ddZGdOhPuGUl/z4y/bViyo+asN0UcvZRy3T+BCZFD2tsKW4R7tL5QwCQ7SVOSXY
+	 G6LmzUiIVL/PRlxEXk2jb0Ra31SjjrBnPYbhoFrlxXngoXVb+BsXWdsVut8gzHHWB8
+	 OOZMF0yJT5dxlWcfKxJ0kg0pPJeM5RuNe03s9Qtyz0lSFjgr0dY6AvBEMCNVZrPsyv
+	 UEEfFxLMe8Wp3BRl6doXu4iUbnEEEItj3BAlscyDfn7dIfsBzbQR2qP+Ew5KISvxvd
+	 CgRSqi2a8x5cg==
+Message-ID: <c38729d5-dfe9-4a55-b2f9-06af4cfd6ce9@kernel.org>
+Date: Fri, 7 Mar 2025 16:51:30 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.15.1
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 4/4] arm64: dts: amd/seattle: Drop undocumented
+ "spi-controller" properties
+To: "Rob Herring (Arm)" <robh@kernel.org>, soc@kernel.org,
+ Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>,
+ Tom Lendacky <thomas.lendacky@amd.com>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Shyam Sundar S K <Shyam-sundar.S-k@amd.com>,
+ Richard Cochran <richardcochran@gmail.com>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250306-dt-amd-fixes-v1-0-011c423ba99a@kernel.org>
+ <20250306-dt-amd-fixes-v1-4-011c423ba99a@kernel.org>
+From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
-To: Petr Mladek <pmladek@suse.com>
-Cc: Nicolai Stange <nstange@suse.de>, live-patching@vger.kernel.org,
- linux-kernel@vger.kernel.org, Josh Poimboeuf <jpoimboe@kernel.org>,
- Miroslav Benes <mbenes@suse.cz>
-References: <20250115082431.5550-1-pmladek@suse.com>
- <20250115082431.5550-19-pmladek@suse.com>
- <c291e9ea-2e66-e9f5-216d-f27e01382bfe@redhat.com>
- <Z8rmCritDCtNmw64@pathway.suse.cz>
-From: Joe Lawrence <joe.lawrence@redhat.com>
-Subject: Re: [PATCH v1 18/19] Documentation/livepatch: Update documentation
- for state, callbacks, and shadow variables
-In-Reply-To: <Z8rmCritDCtNmw64@pathway.suse.cz>
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20250306-dt-amd-fixes-v1-4-011c423ba99a@kernel.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 3/7/25 07:26, Petr Mladek wrote:
-> On Thu 2025-03-06 17:54:41, Joe Lawrence wrote:
->>
->> With that in mind, a livepatch state could be thought of as an
->> indication of "a context needing special handling in a (versioned) way".
+On 07/03/2025 02:07, Rob Herring (Arm) wrote:
+> "spi-controller" is not a documented property nor used anywhere, so drop
+> it.
 > 
-> I am not sure about the word "context". But it might be because I am
-> not a native speaker.
-> 
-> In my view, a state represents a side effect, made by loading
-> the livepatch module (enabling livepatch), which would need a special
-> handling when the livepatch module gets disabled or replaced.
-> 
+> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
 
-Ok, yeah "side effect" works well here.
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-> There are currently two types of these side effects:
-> 
->   + Changes made by callbacks which have to get reverted when
->     the livepatch gets disabled.
-> 
->   + Shadow variables which have to be freed when the livepatch
->     gets disabled.
-> 
-
-Right, these are livepatch-native side effects as we're providing the
-API to introduce them.  Nothing would stop a livepatch author from using
-states to handle their own interesting side effects though.  (I'm trying
-to initially think of states in the abstract and then callbacks/shadow
-variables are just implementations that tie together in the livepatching
-core.)
-
-> The states API was added to handle compatibility between more
-> livepatches. I primary had the atomic replace mode in mind.
-> 
-> Changes made by callbacks, and shadow variables added, by
-> the current livepatch usually should get preserved during
-> the atomic replace.
-> 
->>  Livepatches claiming to deal with a particular state, needed to do so
->> with its latest or current versioning.
-> 
-> The original approach was affected by the behavior of per-object callbacks
-> during the atomic replace. Note that:
-> 
-> 	Only per-object callbacks from the _new_ livepatch were
-> 	called during the atomic replace.
-> 
-
-Ah right ...
-
-> As a result, previously, new livepatch, using the atomic replace, had to be
-> able to revert changes made by the older livepatches when it did
-> not want to keep them.
-> 
-> This shows nicely that the original semantic was broken! There was
-> no obvious way how to revert obsolete states using the atomic
-> replace.
-> 
-> The new livepatch needed to provide callbacks which were able to
-> revert the obsoleted state. A workaround was to define it as
-> the same state with a higher version. The same state and
-> higher version made the livepatch compatible. The higher
-> version signalized that it was a new variant (a revert) so that
-> newer livepatches did not do the revert again...
-> 
-> 
->> A livepatch without a particular
->> state was not bound to any restriction on that state, so nothing
->> prevented subsequent atomic replace patches from blowing away existing
->> states (those patches cleaned up their states on their disabling),
-> 
-> I am confused here. Is the talking about the original or new
-> semantic?
-> 
-
-... so nevermind about this.
-
-> In the original semantic, only callbacks from the new livepatch
-> were called during the atomic replace. Livepatches were
-> compatible only when the new livepatch supported all
-> existing states.
-> 
-> In the new semantic, the callbacks from the obsolete livepatch
-> are called for obsolete states. The new livepatch does not need
-> to know about the state. By other words, the replaced livepatch
-> can clean up its own mess.
-> 
-
-Yes, the new model means that the last livepatch providing the state
-also handles its cleanup on its way out. This is much more intuitive
-than the previous semantic (for which I missed the step above :)
-
->> subsequent non-atomic replace patches from adding to the collective
->> livepatch state.
-> 
-> Honestly, I do not think much about the non-atomic livepatches.
-> It would require input from people who use this approach.
-> It looks like a wild word to me ;-)
-> 
-> I allowed to use the same states for more non-atomic livepatches
-> because it might make sense to share shadow variables. Also more
-> livepatches might depend on the same change made by callbacks
-> and it need not matter which one is installed first.
-> 
-
-IMHO the non-atomic world only made sense with cumulative patches.  I
-see some folks reporting that separate operating groups are layering
-non-atomic patches across subsystems and my head spins.
-
-But we are going to need to consider the use cases (or perhaps prevent
-them) for the eventual documentation.
-
-> 
->> This patchset does away with .version and adds .block_disable.  This is
->> very different from versioning as prevents the associated state from
->> ever going away.  In an atomic-replace series of livepatches, this means
->> once a state is introduced, all following patches must contain that
->> state.  In non-atomic-replace series, there is no restriction on
->> subsequent patches, but the original patch introducing the state cannot
->> ever be disabled/unloaded.  (I'm not going to consider future hybrid
->> mixed atomic/not use cases as my brain is already full.)
-> 
-> Yes, this describes the old behavior very well. And the impossibility
-> to remove existing states using the atomic replace was one of the problems.
-> 
-> The API solves this elegantly because it calls callbacks from
-> the replaced livepatch for the obsolete states. The livepatch
-> needed to implement these callbacks anyway to support the disable
-> livepatch operation.
-> 
-> And there is still the option to do not implement the reverse
-> operation when it is not easy or safe. The author could set
-> the new .block_disable flag. It blocks disabling the state.
-> Which blocks disabling the livepatch or replacing it with
-> a livepatch which does not support, aka is not compatible with,
-> the state.
-> 
-> 
->> Finally, the patchset adds .is_shadow and .callbacks.  A short sequence
->> of livepatches may look like:
->>
->>   klp_patch A               |  klp_patch B
->>     .states[x]              |    .states[y]
->>       .id            = 42   |      .id            = 42
->>       .callbacks            |      .callbacks
->>       .block_disable        |      .block_disable
->>       .is_shadow            |      .is_shadow
->>
->> is there any harm or confusion if the two patches' state 42 contained
->> disparate .callbacks, .block_disable, or .is_shadow contents?
-> 
-> Yes, two incompatible states with the same .id would break things.
-> The callbacks won't be called and the old shadow variables
-> won't get freed during an atomic replace.
-> 
-> It is responsibility of the author of the livepatches to use
-> different .id for different states.
-> 
-> I am not sure if we could prevent mistakes. Hmm, we might add
-> a check that every .id is there only once in the patch.states[] array.
-> Also we could add a human readable .name of the state and ensure
-> that it is the same. Or something like this.
-> 
-
-Well, providing the same state twice in the same klp_patch seems highly
-likely a bug by livepatch author.  That's worth a WARN?
-
-I'm not sure what to think about the same state id provided by two
-klp_patches.  For a atomic-replace series of patches, if the state
-content is the same, it's effectively like handing off cleanup
-responsibility for that state to the incoming patch, right?  If the
-state content changes, that would mean that the incoming patch is
-redefining the state... which could be ok?
-
-> Yeah, as I said. The non-atomic-replace world is a kind of jungle.
-> It would require some real life users which might define some
-> sane rules.
-> 
-
-Yup.  I can kinda grok things with cumulative non-replace, but it gets a
-lot harder when considering other use cases cases.  I'll put non-replace
-aside for now and continue diving into the patchset.  Thanks for the
-explanations!
-
--- 
-Joe
+Best regards,
+Krzysztof
 
 
