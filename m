@@ -1,106 +1,96 @@
-Return-Path: <linux-kernel+bounces-551400-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-551360-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC88DA56BF6
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 16:26:16 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 749DEA56B7E
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 16:15:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 45C173A8860
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 15:26:04 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2C9587AA268
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 15:13:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04E7521CFE6;
-	Fri,  7 Mar 2025 15:26:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4FFF220682;
+	Fri,  7 Mar 2025 15:10:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=cslab.ece.ntua.gr header.i=@cslab.ece.ntua.gr header.b="T2zf5W+w"
-Received: from achilles.noc.ntua.gr (achilles.noc.ntua.gr [147.102.222.210])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6A8321CA0F;
-	Fri,  7 Mar 2025 15:26:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=147.102.222.210
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="KDrkAndT"
+Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69FE4220683
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Mar 2025 15:10:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741361168; cv=none; b=RAQBCVN1SVXMxXM7WxN7LVFbxIVcO/AwVW3fMKF8c5bkFU3hkMkta8zV+vCfe4SSYpcJQ7gIY9AJzvAKBnM5+FShvTx0vLU+0XIUVlrOplXx8TY45KI2/p2msm7OmQU3ykSSiNAjVYRRedjPrFb3M9I1js3YEq0oZqEa/+vULRs=
+	t=1741360215; cv=none; b=WCGOMibbWhqNdB+Ymd3bs++cp+wprddx4yPF14fMcEmhbSFLykpNkeWBPu4TVtDcQFt4LP3yNG6ZtRUT3gchmadr/o9p1f3UrzvYExrPsmnvpqGeY2+c+jqhJ7soInicdfIo9pLpGGLNV6BZ/njtie5mM/wvSGIPcMTb1MV1uas=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741361168; c=relaxed/simple;
-	bh=oVpPMTXsg3bi3hi70RsuLhS3qOSUxyPhr8tXaNh8K5g=;
-	h=MIME-Version:Content-Type:Date:From:To:Cc:Subject:In-Reply-To:
-	 References:Message-ID; b=OgBG80aTxMB8mzoJ59sejwnOYOPHhEaoTciLfWUFXHrb6P4zCXZFGANo1CsfldVXn62tyh9f6B0RFynEb4lgdsuezo5dV6lG8I71qUEZXN/+CuhZd1uHdB89U+3WbRnkGpp24ULnp+ylLMwnAHqbKjNnTyk/KyAECIL5MS2mVkQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cslab.ece.ntua.gr; spf=pass smtp.mailfrom=cslab.ece.ntua.gr; dkim=fail (1024-bit key) header.d=cslab.ece.ntua.gr header.i=@cslab.ece.ntua.gr header.b=T2zf5W+w reason="signature verification failed"; arc=none smtp.client-ip=147.102.222.210
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cslab.ece.ntua.gr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cslab.ece.ntua.gr
-Received: from webmail.mail.ntua.gr (webmail.mail.ntua.gr [147.102.222.247])
-	by achilles.noc.ntua.gr (8.15.2/8.15.2) with ESMTP id 527DBCEG025797;
-	Fri, 7 Mar 2025 15:11:13 +0200 (EET)
-	(envelope-from jimsiak@cslab.ece.ntua.gr)
-Received: from webmail.ntua.gr ([IPv6:2001:648:2000:de:0:0:0:247])
-	by webmail.mail.ntua.gr (8.15.2/8.15.2) with ESMTP id 527DB9nr096999;
-	Fri, 7 Mar 2025 15:11:10 +0200 (EET)
-	(envelope-from jimsiak@cslab.ece.ntua.gr)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=cslab.ece.ntua.gr;
-	s=ntuawebmail; t=1741353072;
-	bh=oVpPMTXsg3bi3hi70RsuLhS3qOSUxyPhr8tXaNh8K5g=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References;
-	b=T2zf5W+wLagiy8P5No0no31FHpQrRE+eN4n0FMpeIzccfnKBL8kHzWJ2S1fsSuBN2
-	 BCo/GrEVNabskXcfd8ERSuUqZS/N27ndecgWKkXsU/Bx7r+yYtbLRKoLwxiBKODdr3
-	 zc9xoEfP9x+yiASASJmwRRtde56CgkWeSGCd3EAc=
-X-Authentication-Warning: webmail.mail.ntua.gr: Host [IPv6:2001:648:2000:de:0:0:0:247] claimed to be webmail.ntua.gr
+	s=arc-20240116; t=1741360215; c=relaxed/simple;
+	bh=6BdE3BOmpc0hWHpiv/1U3xCx/f6RR9FEN5UM+tYYQew=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=OdjNvaGGrxNaQUntQtbEDnO29PB6TPoVeTee/eOkwTiPJ6tYgTn04ODB3PIOR3z8pESaTQlHhVv7GUG4o61qJTYtfh9+MW+jmo0DgQWgrmETnLepQILGSGqfTM6ucFvTPkj3ZMBNN7OJASk1VMuFNIBZAhP7s7WzNNsYO/8+UyM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=KDrkAndT; arc=none smtp.client-ip=178.60.130.6
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+	s=20170329; h=Cc:To:Content-Transfer-Encoding:Content-Type:MIME-Version:
+	Message-Id:Date:Subject:From:Sender:Reply-To:Content-ID:Content-Description:
+	Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
+	In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=BuJf+DWtLBBhZh38ItBtEvDGGJVgmVqlp/Eo3nFZtyM=; b=KDrkAndTkH7QTO69oufln1sMwf
+	nDDWW0PxU6tSdOjTNI5oj/WBO3TzCvdH9Ooy6PIfsyEhQbPLi8TA4E0EWFWx7C1dgUCfG48xewoBo
+	Dz0hRxL/00GvSZQldeRG2cm9H3HaSa1VIYBSRnQ7cb5XDE/Scmol6GHeFqAsariXTp3yfwpbFODpA
+	SgeywavZUGedinBPeHjqztGFNNFMuF/fVz7FI26+NlEjINJcWUAD89w5JItiEWL7BM6T0anx+qdoI
+	QUjhdXQSWROB7DwLNd5A5lCpy4aNqDMTeJNxhqJ4VVwEJAwNjpQ+KRmQcgsSUYyLM98CzdZc0v6L5
+	Lfnqq8ow==;
+Received: from 179-125-91-70-dinamico.pombonet.net.br ([179.125.91.70] helo=[192.168.67.187])
+	by fanzine2.igalia.com with esmtpsa 
+	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
+	id 1tqYrH-005OEr-VB; Fri, 07 Mar 2025 15:39:34 +0100
+From: Thadeu Lima de Souza Cascardo <cascardo@igalia.com>
+Subject: [PATCH v2 0/2] char: misc: improve test and dynamic allocation
+Date: Fri, 07 Mar 2025 11:39:26 -0300
+Message-Id: <20250307-misc-dynrange-v2-0-6fe19032ef76@igalia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8;
- format=flowed
-Content-Transfer-Encoding: 8bit
-Date: Fri, 07 Mar 2025 15:11:09 +0200
-From: jimsiak <jimsiak@cslab.ece.ntua.gr>
-To: Jinjiang Tu <tujinjiang@huawei.com>
-Cc: peterx@redhat.com, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, viro@zeniv.linux.org.uk,
-        linux-mm@kvack.org, wangkefeng.wang@huawei.com
-Subject: Re: Using userfaultfd with KVM's async page fault handling causes
- processes to hung waiting for mmap_lock to be released
-In-Reply-To: <46ac83f7-d3e0-b667-7352-d853938c9fc9@huawei.com>
-References: <79375b71-db2e-3e66-346b-254c90d915e2@cslab.ece.ntua.gr>
- <20250307072133.3522652-1-tujinjiang@huawei.com>
- <46ac83f7-d3e0-b667-7352-d853938c9fc9@huawei.com>
-Message-ID: <dee238e365f3727ab16d6685e186c53c@cslab.ece.ntua.gr>
-X-Sender: jimsiak@cslab.ece.ntua.gr
-User-Agent: Roundcube Webmail/1.3.10
-X-Greylist: Sender passed SPF test, not delayed by milter-greylist-4.6.2 (achilles.noc.ntua.gr [147.102.222.210]); Fri, 07 Mar 2025 15:11:13 +0200 (EET)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAB4Fy2cC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyjHQUlJIzE
+ vPSU3UzU4B8JSMDI1MDYwNz3dzM4mTdlMq8IrBkiqlJsqVRommqsaGlElBPQVFqWmYF2Lzo2Np
+ aAAp9OjRfAAAA
+X-Change-ID: 20250307-misc-dynrange-d54c92a5e319
+To: Arnd Bergmann <arnd@arndb.de>, 
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>, 
+ Dirk VanDerMerwe <dirk.vandermerwe@sophos.com>, 
+ Vimal Agrawal <vimal.agrawal@sophos.com>, linux-kernel@vger.kernel.org, 
+ Thadeu Lima de Souza Cascardo <cascardo@igalia.com>
+X-Mailer: b4 0.14.2
 
-Hi,
+This includes a change that prevents dynamic allocation from using a minor
+number that belongs to the historically static reserved range, which is
+still used by some drivers.
 
- From my side, I managed to avoid the freezing of processes with the 
-following change in function userfaultfd_release() in file 
-fs/userfaultfd.c 
-(https://elixir.bootlin.com/linux/v5.13/source/fs/userfaultfd.c#L842):
+It also improves the test, including a lot of corner cases, specially ones
+that would fail before past fixes.
 
-I moved the following command from line 851:
-WRITE_ONCE(ctx->released, true);
-(https://elixir.bootlin.com/linux/v5.13/source/fs/userfaultfd.c#L851)
+Signed-off-by: Thadeu Lima de Souza Cascardo <cascardo@igalia.com>
+---
+Thadeu Lima de Souza Cascardo (2):
+      char: misc: restrict the dynamic range to exclude reserved minors
+      char: misc: add test cases
 
-to line 905, that is exactly before the functions returns 0.
+ drivers/char/misc.c             |   9 +-
+ drivers/misc/misc_minor_kunit.c | 509 +++++++++++++++++++++++++++++++++++++++-
+ 2 files changed, 509 insertions(+), 9 deletions(-)
+---
+base-commit: 2397d61ee45cddb8f3bd3a3a9840ef0f0b5aa843
+change-id: 20250307-misc-dynrange-d54c92a5e319
 
-That simple workaround worked for my use case but I am far from sure 
-that is a correct/sufficient fix for the problem at hand.
+Best regards,
+-- 
+Thadeu Lima de Souza Cascardo <cascardo@igalia.com>
 
-Best Regards,
-Dimitris
-
-Στις 07/03/2025 10:07, Jinjiang Tu έγραψε:
-> cc Peter Xu
-> 
-> 在 2025/3/7 15:21, Jinjiang Tu 写道:
->> Hi,
->> 
->> I encountered the same issue too. In my scenario, GUP is called by 
->> mlockall()
->> syscall.
->> 
->> Is there a solution to fix it?
->> 
->> Thanks.
->> 
 
