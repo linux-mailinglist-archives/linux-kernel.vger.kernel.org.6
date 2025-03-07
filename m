@@ -1,108 +1,95 @@
-Return-Path: <linux-kernel+bounces-550763-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-550762-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 29785A563CC
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 10:30:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 53CD8A563C8
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 10:29:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 826303B0775
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 09:29:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DF1283AEBFB
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 09:29:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75BBE205AC3;
-	Fri,  7 Mar 2025 09:29:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E74C42063FD;
+	Fri,  7 Mar 2025 09:29:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="MfBYfJcD"
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b="cRHA9YOt"
+Received: from mail11.truemail.it (mail11.truemail.it [217.194.8.81])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34D27202C42;
-	Fri,  7 Mar 2025 09:29:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B05891A314C;
+	Fri,  7 Mar 2025 09:29:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.194.8.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741339779; cv=none; b=JLx/DFgIHg0zowm4OPf421TLYsKU107op30MjFKHqixTt8aAOYSC7z9VDrKgVtGQwXaXn1+MtQObb0UhI/mIjVET0DminxmOmXZ14BB4fDKgVuDQC/kM1fJiiAJRihQj/14h1UVGvxWri7R8OCrx+dlwEnrMczVFTkJ80w9+/Bo=
+	t=1741339765; cv=none; b=FyBL/R0XWVMrHNs/nIU68Pd80U2HMjHyRbfnx5ij0HZVRDF24mCpQmPwSJe22jGHe1DBHD7GtzDiDJkC9e+t8EsL+yevBdU8C2T5MTczEBURW0NwAouXyLsniWWnSWq7DNyouCBrjotZ+H9SklajXtJRwq/GflqczBn3+9fhCAQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741339779; c=relaxed/simple;
-	bh=G1lCccy/OszgdLNgqruHVs1sxATd6Zr72E+2mhbDyfQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=P4qkzqzKQ2EOdfkaHE97HgsTTs/GpbvCAW0Uj2akN7n7wVb2Vgwjak1LSrrcJ2pr8YQ3uFfp8FWKMutozo+mNdzq+fJLitb9FRNL5L2qNmnfeE89jdK5QVMt9nSmMkTQQv6fIWLGPuTvW1ABTJl/PERxyU9uSqdXcwjFgum0zF8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=MfBYfJcD; arc=none smtp.client-ip=185.11.138.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
-	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
-	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=D2F6Zdb1CkSBitSIoiyY8ywRdELphgvUiwPTl0y2m+g=; b=MfBYfJcDOUJ7bmp4dok8wEmuaJ
-	s+yyx3IlEJGd4KThHeWy3pAxTHVErNEA+3t9rrrGyHhIC1iQ+ZefIqjYk7FknH3oKX1GjF2gY3WLT
-	+lUHpZPwe7d2cLz5xeEN6MiYDqzmLU124SaDix8I1yDz9h/nJOWkU25hJB96NDIOe/KL7D9WeUZyy
-	pKWGJnS728oPVRpb60e1WJAaDeNsSG8y0bj9ocXbmZSCYH+bmYT9X9qsbYhB7GeJxVRUT8u1XNv1+
-	RFFGO32ilew0RNMPDCaMkVYG9KjTO/rZTL7gkmRUNjHbh66yygeEemgVc3gb0CuLZRwoc0wz+6PkS
-	NKUMyvLw==;
-Received: from i53875a38.versanet.de ([83.135.90.56] helo=diego.localnet)
-	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <heiko@sntech.de>)
-	id 1tqU0n-0002G6-II; Fri, 07 Mar 2025 10:28:57 +0100
-From: Heiko =?UTF-8?B?U3TDvGJuZXI=?= <heiko@sntech.de>
-To: Daniel Golle <daniel@makrotopia.org>,
- Aurelien Jarno <aurelien@aurel32.net>,
- Nicolas Frattaroli <nicolas.frattaroli@collabora.com>,
- Olivia Mackall <olivia@selenic.com>,
- Herbert Xu <herbert@gondor.apana.org.au>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
- linux-crypto@vger.kernel.org, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
- linux-kernel@vger.kernel.org,
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject:
- Re: [PATCH] dt-bindings: rng: rockchip,rk3588-rng.: Drop unnecessary status
- from example
-Date: Fri, 07 Mar 2025 10:28:55 +0100
-Message-ID: <5865714.DvuYhMxLoT@diego>
-In-Reply-To: <20250307081406.35242-1-krzysztof.kozlowski@linaro.org>
-References: <20250307081406.35242-1-krzysztof.kozlowski@linaro.org>
+	s=arc-20240116; t=1741339765; c=relaxed/simple;
+	bh=7Bfh7k5UFdmVJJ49J0KDeGRQEWeJgvMMCfSW/OTRfHM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LqjSNloDusTHNJ4J8OVMjpezSPuIihBm5ZHY320qMlwg0K2StBwoUPwDgTnDsK2mkT6YYw+NOSraeNt1ayfbNDzBGrIzzqKQKwNvJ+UdvPuOBHOoj5W+I3/o21C6k6ktSoJ5v0ZF8Ll3qTEqw5xIfGF/c53OcSd/u1ZRMmzYwyM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it; spf=pass smtp.mailfrom=dolcini.it; dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b=cRHA9YOt; arc=none smtp.client-ip=217.194.8.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dolcini.it
+Received: from gaggiata.pivistrello.it (93-49-2-63.ip317.fastwebnet.it [93.49.2.63])
+	by mail11.truemail.it (Postfix) with ESMTPA id 2FE081F93A;
+	Fri,  7 Mar 2025 10:29:19 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dolcini.it;
+	s=default; t=1741339759;
+	bh=GoOiJhY8rRPZ1FkH1+d35YRgNoOiXclww2mKrX+grYU=;
+	h=Received:From:To:Subject;
+	b=cRHA9YOtsK8T9ZERn8VJgDzgCNizecLxpfsGZl1vaxUvfO7AT7NN1vHTkDP+wY+4w
+	 FVTD4YnTsiVTrSH/wrFuwqWQnhphWwJBLmmcAFgQ1coazjDfMkO8QCdq1bk6fIvvTI
+	 YM+6eEaMBYHYfk/kjbuAJcTr4e6he2UnkG0DupH42rXHA2OuJYES3wBJlqoExQJ/sQ
+	 yA3IzvmWY/6yoMVq3lZQFmTVIhNd+NLJUlIjhtpefN0q5C6RolcwNT4AliaC6ywzRQ
+	 pt/URsyPkYcjAcRg6WlNrr4OIpGnzWakZvdPdbjPIroCXrCXfI15JF0KpPIw9h4lFs
+	 Lwcb/RUOywG7w==
+Received: by gaggiata.pivistrello.it (Postfix, from userid 1000)
+	id CF8567F934; Fri,  7 Mar 2025 10:29:18 +0100 (CET)
+Date: Fri, 7 Mar 2025 10:29:18 +0100
+From: Francesco Dolcini <francesco@dolcini.it>
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: Brian Norris <briannorris@chromium.org>,
+	Francesco Dolcini <francesco@dolcini.it>,
+	Kalle Valo <kvalo@kernel.org>, linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org, linux-wireless@vger.kernel.org
+Subject: Re: [PATCH] wifi: mwifiex: Constify struct mwifiex_if_ops
+Message-ID: <Z8q8bleeyyavuNeA@gaggiata.pivistrello.it>
+References: <03d524b72f20a0302e4de5e0ebdc20ab69469dec.1737308889.git.christophe.jaillet@wanadoo.fr>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <03d524b72f20a0302e4de5e0ebdc20ab69469dec.1737308889.git.christophe.jaillet@wanadoo.fr>
 
-Am Freitag, 7. M=C3=A4rz 2025, 09:14:06 MEZ schrieb Krzysztof Kozlowski:
-> Device nodes are enabled by default, so no need for 'status =3D "okay"' in
-> the DTS example.
->=20
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+On Sun, Jan 19, 2025 at 06:48:39PM +0100, Christophe JAILLET wrote:
+> 'struct mwifiex_if_ops' are not modified in these drivers.
+> 
+> Constifying these structures moves some data to a read-only section, so
+> increase overall security, especially when the structure holds some
+> function pointers.
+> 
+> On a x86_64, with allmodconfig, as an example:
+> Before:
+> ======
+>    text	   data	    bss	    dec	    hex	filename
+>   61439	   4367	     32	  65838	  1012e	drivers/net/wireless/marvell/mwifiex/pcie.o
+> 
+> After:
+> =====
+>    text	   data	    bss	    dec	    hex	filename
+>   61699	   4127	     32	  65858	  10142	drivers/net/wireless/marvell/mwifiex/pcie.o
+> 
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-Reviewed-by: Heiko Stuebner <heiko@sntech.de>
+Reviewed-by: Francesco Dolcini <francesco.dolcini@toradex.com>
 
-> ---
->  Documentation/devicetree/bindings/rng/rockchip,rk3588-rng.yaml | 1 -
->  1 file changed, 1 deletion(-)
->=20
-> diff --git a/Documentation/devicetree/bindings/rng/rockchip,rk3588-rng.ya=
-ml b/Documentation/devicetree/bindings/rng/rockchip,rk3588-rng.yaml
-> index 757967212f55..ca71b400bcae 100644
-> --- a/Documentation/devicetree/bindings/rng/rockchip,rk3588-rng.yaml
-> +++ b/Documentation/devicetree/bindings/rng/rockchip,rk3588-rng.yaml
-> @@ -53,7 +53,6 @@ examples:
->          interrupts =3D <GIC_SPI 400 IRQ_TYPE_LEVEL_HIGH 0>;
->          clocks =3D <&scmi_clk SCMI_HCLK_SECURE_NS>;
->          resets =3D <&scmi_reset SCMI_SRST_H_TRNG_NS>;
-> -        status =3D "okay";
->        };
->      };
-> =20
->=20
+> Compile tested-only.
+I did also a brief smoke test on 88W8997, and the driver just probe fines.
 
-
-
+Tested-by: Francesco Dolcini <francesco.dolcini@toradex.com> # Verdin iMX8MM - 88W8997
 
 
