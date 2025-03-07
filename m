@@ -1,323 +1,163 @@
-Return-Path: <linux-kernel+bounces-551021-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-551012-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C844AA56709
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 12:48:32 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 54892A566EC
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 12:40:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 13027177545
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 11:48:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9A0EC189668A
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 11:40:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFFD4218587;
-	Fri,  7 Mar 2025 11:48:22 +0000 (UTC)
-Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FBD521770B;
+	Fri,  7 Mar 2025 11:40:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="lKjjt++J"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 912704414;
-	Fri,  7 Mar 2025 11:48:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DC4E21767C;
+	Fri,  7 Mar 2025 11:39:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741348102; cv=none; b=RJSbjtTSRT+gqZeKEd4OLAR7t+WZ/obiaUXusd1KSrqjj+ykGDEEaU++lyAjd30z6t6wK7Xi10hAR27nRy0HF3p9a9zzSt3eVDZRwyf+ez/8rKuM/6dLWUClQIw/HGfl9SWrhACheCoh+zHe/CSm1Hux2Yr0fYyl9b+o2qCacRA=
+	t=1741347607; cv=none; b=Q2dtAJxy+kK6sjvjXBL4ALEN+BSJBx7IJnUjRUlMuwu8KqBAlxNT8vrKRMk/Y5wOPYOUtJisA5K6eLehYWIklvJ3st7Yf/WhurcEj/6fM7mG7jhODjh/XLqz4DBmLPpVa9ROz6O2d01DRTQHK51fT8yDKYV6UVouKi7VQxdca+w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741348102; c=relaxed/simple;
-	bh=Ff0mzo5M+35H11/L8H+BX55L2YdSHa0VItcDXO8ScFs=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=nJMvDVc2JMX2iz11InBeEWIuYJeVEcNwf9TyyNIYZjvB+7Gn5khNc6irll+JQAlsxN+jjcRYkjxIKVTfaIywr1G+4sP6KcXuhz8Iq28gQYhioEW+DMlzDcEyVQRew5bpNi28rXj9FaMxKeyYXcZxncm0/K1e+bKs456aImgosPI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.17])
-	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4Z8PZT0Tnjz1ltcX;
-	Fri,  7 Mar 2025 19:44:01 +0800 (CST)
-Received: from kwepemk100013.china.huawei.com (unknown [7.202.194.61])
-	by mail.maildlp.com (Postfix) with ESMTPS id 23B361A0188;
-	Fri,  7 Mar 2025 19:48:16 +0800 (CST)
-Received: from localhost.localdomain (10.90.30.45) by
- kwepemk100013.china.huawei.com (7.202.194.61) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Fri, 7 Mar 2025 19:48:15 +0800
-From: Jijie Shao <shaojijie@huawei.com>
-To: <mkubecek@suse.cz>
-CC: <shenjian15@huawei.com>, <wangpeiyang1@huawei.com>,
-	<liuyonglong@huawei.com>, <chenhao418@huawei.com>, <sudongming1@huawei.com>,
-	<xujunsheng@huawei.com>, <shiyongbang@huawei.com>, <libaihan@huawei.com>,
-	<netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<shaojijie@huawei.com>
-Subject: [PATCH ethtool] hibmcge: add support dump registers for hibmcge driver
-Date: Fri, 7 Mar 2025 19:39:32 +0800
-Message-ID: <20250307113932.821862-1-shaojijie@huawei.com>
-X-Mailer: git-send-email 2.30.0
+	s=arc-20240116; t=1741347607; c=relaxed/simple;
+	bh=RdXGeUksPX5nBK/Nql891UU9+VHLyZXp5Jp77NwC/lM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=IB9p3AhczKJJnUGQ2DGi7l1kQysRwZynawcDobuG6SSoiRwa6ZTIoa/j7Wiez4PX1RIjN9+CUBE9jB08EjniqW/YowWx91kcFqzkZqZXlzX0ERWagkMqLEO9xGt+kAW/Wq0a3XKTK3qw60N/mvlcGcfgDfsJkiRZ5TiHJPira+w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=lKjjt++J; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=qJd8io4yNDJMwXhLW9Dt8G+ZqODy5u6PCGa0y547CXU=; b=lKjjt++J+HBCgfVI9IYXcazi5Q
+	72CTIpHnw6xOivdf9EBin4omOJsOOKakaGp2XCz3wfinSdS7UNgYuW31GA9rk5cpvCNrqMmxikhnq
+	QT2g4ezgHGZZgNCHMTE+RIx+c9dQiqtQ1W9HiKyHoGKjuM4jFsS6zOwRTGiV6beHFyVT45uukbja/
+	rRAR5rJ2tmeqT+mz/r+LZPNTydv1KZwuz2FFnrKHDgcXmS6Uq5PIejr6RyvyKx8EiEsCBwq/lqoMG
+	3AI7by4DSf4Y0t65jFGhZ6pXkttWOOYJxsERUsvbt+vTrpRaC6fJRrdsWBR+H1fDSTlyBi2HaIghT
+	Sk5UKx/w==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1tqW3Y-0000000CMER-1YFt;
+	Fri, 07 Mar 2025 11:39:56 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id A392D30031C; Fri,  7 Mar 2025 12:39:55 +0100 (CET)
+Date: Fri, 7 Mar 2025 12:39:55 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: linux-kernel@vger.kernel.org
+Cc: linux-tip-commits@vger.kernel.org, Ryo Takakura <ryotkkr98@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>, x86@kernel.org
+Subject: Re: [tip: locking/core] lockdep: Fix wait context check on softirq
+ for PREEMPT_RT
+Message-ID: <20250307113955.GK16878@noisy.programming.kicks-ass.net>
+References: <20250118054900.18639-1-ryotkkr98@gmail.com>
+ <174102791921.14745.9525905092448169732.tip-bot2@tip-bot2>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
- kwepemk100013.china.huawei.com (7.202.194.61)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <174102791921.14745.9525905092448169732.tip-bot2@tip-bot2>
 
-Add support pretty printer for the registers of hibmcge driver.
+On Mon, Mar 03, 2025 at 06:51:59PM -0000, tip-bot2 for Ryo Takakura wrote:
+> The following commit has been merged into the locking/core branch of tip:
+> 
+> Commit-ID:     8a9d677a395703ef9075c91dd04066be8a553405
+> Gitweb:        https://git.kernel.org/tip/8a9d677a395703ef9075c91dd04066be8a553405
+> Author:        Ryo Takakura <ryotkkr98@gmail.com>
+> AuthorDate:    Sat, 18 Jan 2025 14:49:00 +09:00
+> Committer:     Boqun Feng <boqun.feng@gmail.com>
+> CommitterDate: Sun, 23 Feb 2025 18:24:46 -08:00
+> 
+> lockdep: Fix wait context check on softirq for PREEMPT_RT
+> 
+> Since commit 0c1d7a2c2d32 ("lockdep: Remove softirq accounting on
+> PREEMPT_RT."), the wait context test for mutex usage within
+> "in softirq context" fails as it references @softirq_context.
+> 
+> [    0.184549]   | wait context tests |
+> [    0.184549]   --------------------------------------------------------------------------
+> [    0.184549]                                  | rcu  | raw  | spin |mutex |
+> [    0.184549]   --------------------------------------------------------------------------
+> [    0.184550]                in hardirq context:  ok  |  ok  |  ok  |  ok  |
+> [    0.185083] in hardirq context (not threaded):  ok  |  ok  |  ok  |  ok  |
+> [    0.185606]                in softirq context:  ok  |  ok  |  ok  |FAILED|
+> 
+> As a fix, add lockdep map for BH disabled section. This fixes the
+> issue by letting us catch cases when local_bh_disable() gets called
+> with preemption disabled where local_lock doesn't get acquired.
+> In the case of "in softirq context" selftest, local_bh_disable() was
+> being called with preemption disable as it's early in the boot.
+> 
+> Signed-off-by: Ryo Takakura <ryotkkr98@gmail.com>
+> Signed-off-by: Boqun Feng <boqun.feng@gmail.com>
+> Link: https://lore.kernel.org/r/20250118054900.18639-1-ryotkkr98@gmail.com
 
-Sample output:
-$ ethtool -d enp132s0f2
-[SPEC]valid                   [0x0000]: 0x00000001
-[SPEC]event_req               [0x0004]: 0x00000000
-[SPEC]mac_id                  [0x0008]: 0x00000003
-[SPEC]phy_addr                [0x000c]: 0x00000003
-[SPEC]mac_addr_h              [0x0010]: 0x08080803
-[SPEC]mac_addr_l              [0x0014]: 0x00000808
-[SPEC]uc_max_num              [0x0018]: 0x00000004
-[SPEC]mdio_freq               [0x0024]: 0x00000000
-[SPEC]max_mtu                 [0x0028]: 0x00000fc2
-[SPEC]min_mtu                 [0x002c]: 0x00000100
-[SPEC]tx_fifo_num             [0x0030]: 0x00000040
-[SPEC]rx_fifo_num             [0x0034]: 0x0000007f
-[SPEC]vlan_layers             [0x0038]: 0x00000002
-[MDIO]command_reg             [0x0000]: 0x0000187f
-[MDIO]addr_reg                [0x0004]: 0x00000000
-[MDIO]wdata_reg               [0x0008]: 0x0000a000
-[MDIO]rdata_reg               [0x000c]: 0x00000000
-[MDIO]sta_reg                 [0x0010]: 0x00000000
-[GMAC]duplex_type             [0x0008]: 0x00000001
-[GMAC]fd_fc_type              [0x000c]: 0x00008808
-[GMAC]fc_tx_timer             [0x001c]: 0x000000ff
-[GMAC]fd_fc_addr_low          [0x0020]: 0x08080803
-[GMAC]fd_fc_addr_high         [0x0024]: 0x00000808
-[GMAC]max_frm_size            [0x003c]: 0x000005f6
-[GMAC]port_mode               [0x0040]: 0x00000008
-[GMAC]port_en                 [0x0044]: 0x00000006
-[GMAC]pause_en                [0x0048]: 0x00000003
-[GMAC]an_neg_state            [0x0058]: 0x00349800
-...
+This commit is causing:
 
-Signed-off-by: Jijie Shao <shaojijie@huawei.com>
----
- Makefile.am |   2 +-
- ethtool.c   |   1 +
- hibmcge.c   | 170 ++++++++++++++++++++++++++++++++++++++++++++++++++++
- internal.h  |   3 +
- 4 files changed, 175 insertions(+), 1 deletion(-)
- create mode 100644 hibmcge.c
+[    7.184373] NET: Registered PF_INET6 protocol family
+[    7.196129] =============================
+[    7.196129] [ BUG: Invalid wait context ]
+[    7.196129] 6.14.0-rc5-00547-g67de62470d82-dirty #629 Not tainted
+[    7.196129] -----------------------------
+[    7.196129] swapper/0/1 is trying to lock:
+[    7.196129] ffffffff83312108 (pcpu_alloc_mutex){+.+.}-{4:4}, at: pcpu_alloc_noprof+0x818/0xc20
+[    7.196129] other info that might help us debug this:
+[    7.196129] context-{5:5}
+[    7.238009] ata7.00: ATA-8: ST91000640NS, SN03, max UDMA/133
+[    7.196129] 3 locks held by swapper/0/1:
+[    7.196129]  #0: ffffffff834414d0 (pernet_ops_rwsem){+.+.}-{4:4}, at: register_netdevice_notifier+0x1a/0x120
+[    7.196129]  #1: ffffffff83442988 (rtnl_mutex){+.+.}-{4:4}, at: register_netdevice_notifier+0x1f/0x120
+[    7.196129]  #2: ffffffff8324c740 (local_bh){.+.+}-{1:3}, at: dev_mc_add+0x39/0xb0
+[    7.196129] stack backtrace:
+[    7.196129] CPU: 31 UID: 0 PID: 1 Comm: swapper/0 Not tainted 6.14.0-rc5-00547-g67de62470d82-dirty #629
+[    7.196129] Hardware name: Intel Corporation S2600GZ/S2600GZ, BIOS SE5C600.86B.02.02.0002.122320131210 12/23/2013
+[    7.196129] Call Trace:
+[    7.196129]  <TASK>
+[    7.196129]  dump_stack_lvl+0x57/0x80
+[    7.196129]  __lock_acquire+0xd72/0x17d0
+[    7.196129]  ? ret_from_fork_asm+0x1a/0x30
+[    7.196129]  lock_acquire+0xcd/0x2f0
+[    7.196129]  ? pcpu_alloc_noprof+0x818/0xc20
+[    7.196129]  __mutex_lock+0xa4/0x820
+[    7.196129]  ? pcpu_alloc_noprof+0x818/0xc20
+[    7.196129]  ? pcpu_alloc_noprof+0x818/0xc20
+[    7.196129]  ? lock_acquire+0xcd/0x2f0
+[    7.239989]  ? pcpu_alloc_noprof+0x818/0xc20
+[    7.239990]  pcpu_alloc_noprof+0x818/0xc20
+[    7.239993]  ? lockdep_hardirqs_on+0x74/0x110
+[    7.239996]  ? neigh_parms_alloc+0xed/0x160
+[    7.240001]  ? neigh_parms_alloc+0xed/0x160
+[    7.240005]  ipv6_add_dev+0x154/0x520
+[    7.240005]  addrconf_notify+0x2de/0x8b0
+[    7.240005]  ? register_netdevice_notifier+0x1f/0x120
+[    7.240005]  ? lock_acquire+0xdd/0x2f0
+[    7.240005]  call_netdevice_register_net_notifiers+0x5b/0x100
+[    7.240005]  register_netdevice_notifier+0x87/0x120
+[    7.240005]  addrconf_init+0xa5/0x150
+[    7.240005]  inet6_init+0x1f3/0x3b0
+[    7.240005]  ? __pfx_inet6_init+0x10/0x10
+[    7.240005]  do_one_initcall+0x53/0x2b0
+[    7.240005]  ? rcu_is_watching+0xd/0x40
+[    7.240005]  kernel_init_freeable+0x23f/0x280
+[    7.240005]  ? __pfx_kernel_init+0x10/0x10
+[    7.240005]  kernel_init+0x16/0x130
+[    7.240005]  ret_from_fork+0x2d/0x50
+[    7.240005]  ? __pfx_kernel_init+0x10/0x10
+[    7.240005]  ret_from_fork_asm+0x1a/0x30
+[    7.240005]  </TASK>
 
-diff --git a/Makefile.am b/Makefile.am
-index 862886b..3ecb327 100644
---- a/Makefile.am
-+++ b/Makefile.am
-@@ -23,7 +23,7 @@ ethtool_SOURCES += \
- 		  smsc911x.c at76c50x-usb.c sfc.c stmmac.c	\
- 		  sff-common.c sff-common.h sfpid.c sfpdiag.c	\
- 		  ixgbevf.c tse.c vmxnet3.c qsfp.c qsfp.h fjes.c lan78xx.c \
--		  igc.c cmis.c cmis.h bnxt.c cpsw.c lan743x.c hns3.c
-+		  igc.c cmis.c cmis.h bnxt.c cpsw.c lan743x.c hns3.c hibmcge.c
- endif
- 
- if ENABLE_BASH_COMPLETION
-diff --git a/ethtool.c b/ethtool.c
-index a1393bc..20f96f4 100644
---- a/ethtool.c
-+++ b/ethtool.c
-@@ -1206,6 +1206,7 @@ static const struct {
- 	{ "fsl_enetc", fsl_enetc_dump_regs },
- 	{ "fsl_enetc_vf", fsl_enetc_dump_regs },
- 	{ "hns3", hns3_dump_regs },
-+	{ "hibmcge", hibmcge_dump_regs },
- };
- #endif
- 
-diff --git a/hibmcge.c b/hibmcge.c
-new file mode 100644
-index 0000000..921efd2
---- /dev/null
-+++ b/hibmcge.c
-@@ -0,0 +1,170 @@
-+/* Copyright (c) 2025 Huawei Corporation */
-+#include <stdio.h>
-+#include <stdlib.h>
-+#include <errno.h>
-+#include "internal.h"
-+
-+#define HBG_REG_NAEM_MAX_LEN 24
-+
-+struct hbg_reg_info {
-+	u32 type;
-+	u32 offset;
-+	u32 val;
-+};
-+
-+struct hbg_offset_name_map {
-+	u32 offset;
-+	const char *name;
-+};
-+
-+enum hbg_reg_dump_type {
-+	HBG_DUMP_REG_TYPE_SPEC = 0,
-+	HBG_DUMP_REG_TYPE_MDIO,
-+	HBG_DUMP_REG_TYPE_GMAC,
-+	HBG_DUMP_REG_TYPE_PCU,
-+	HBG_DUMP_REG_TYPE_MAX,
-+};
-+
-+struct hbg_type_info {
-+	const char *type_name;
-+	const struct hbg_offset_name_map *reg_map;
-+	u32 reg_num;
-+};
-+
-+static const struct hbg_offset_name_map hbg_spec_maps[] = {
-+	{0x0000, "valid"},
-+	{0x0004, "event_req"},
-+	{0x0008, "mac_id"},
-+	{0x000c, "phy_addr"},
-+	{0x0010, "mac_addr_h"},
-+	{0x0014, "mac_addr_l"},
-+	{0x0018, "uc_max_num"},
-+	{0x0024, "mdio_freq"},
-+	{0x0028, "max_mtu"},
-+	{0x002c, "min_mtu"},
-+	{0x0030, "tx_fifo_num"},
-+	{0x0034, "rx_fifo_num"},
-+	{0x0038, "vlan_layers"},
-+};
-+
-+static const struct hbg_offset_name_map hbg_mdio_maps[] = {
-+	{0x0000, "command_reg"},
-+	{0x0004, "addr_reg"},
-+	{0x0008, "wdata_reg"},
-+	{0x000c, "rdata_reg"},
-+	{0x0010, "sta_reg"},
-+};
-+
-+static const struct hbg_offset_name_map hbg_gmac_maps[] = {
-+	{0x0008, "duplex_type"},
-+	{0x000c, "fd_fc_type"},
-+	{0x001c, "fc_tx_timer"},
-+	{0x0020, "fd_fc_addr_low"},
-+	{0x0024, "fd_fc_addr_high"},
-+	{0x003c, "max_frm_size"},
-+	{0x0040, "port_mode"},
-+	{0x0044, "port_en"},
-+	{0x0048, "pause_en"},
-+	{0x0058, "an_neg_state"},
-+	{0x0060, "transmit_ctrl"},
-+	{0x0064, "rec_filt_ctrl"},
-+	{0x01a8, "line_loop_back"},
-+	{0x01b0, "cf_crc_strip"},
-+	{0x01b4, "mode_change_en"},
-+	{0x01dc, "loop_reg"},
-+	{0x01e0, "recv_control"},
-+	{0x01e8, "vlan_code"},
-+	{0x0200, "station_addr_low_0"},
-+	{0x0204, "station_addr_high_0"},
-+	{0x0208, "station_addr_low_1"},
-+	{0x020c, "station_addr_high_1"},
-+	{0x0210, "station_addr_low_2"},
-+	{0x0214, "station_addr_high_2"},
-+	{0x0218, "station_addr_low_3"},
-+	{0x021c, "station_addr_high_3"},
-+	{0x0220, "station_addr_low_4"},
-+	{0x0224, "station_addr_high_4"},
-+	{0x0228, "station_addr_low_5"},
-+	{0x022c, "station_addr_high_5"},
-+};
-+
-+static const struct hbg_offset_name_map hbg_pcu_maps[] = {
-+	{0x0420, "cf_tx_fifo_thrsld"},
-+	{0x0424, "cf_rx_fifo_thrsld"},
-+	{0x0428, "cf_cfg_fifo_thrsld"},
-+	{0x042c, "cf_intrpt_msk"},
-+	{0x0434, "cf_intrpt_stat"},
-+	{0x0438, "cf_intrpt_clr"},
-+	{0x043c, "tx_bus_err_addr"},
-+	{0x0440, "rx_bus_err_addr"},
-+	{0x0444, "max_frame_len"},
-+	{0x0450, "debug_st_mch"},
-+	{0x0454, "fifo_curr_status"},
-+	{0x0458, "fifo_his_status"},
-+	{0x045c, "cf_cff_data_num"},
-+	{0x0470, "cf_tx_pause"},
-+	{0x04a0, "rx_cff_addr"},
-+	{0x04e4, "rx_buf_size"},
-+	{0x04e8, "bus_ctrl"},
-+	{0x04f0, "rx_ctrl"},
-+	{0x04f4, "rx_pkt_mode"},
-+	{0x05e4, "dbg_st0"},
-+	{0x05e8, "dbg_st1"},
-+	{0x05ec, "dbg_st2"},
-+	{0x0688, "bus_rst_en"},
-+	{0x0694, "cf_ind_txint_msk"},
-+	{0x0698, "cf_ind_txint_stat"},
-+	{0x069c, "cf_ind_txint_clr"},
-+	{0x06a0, "cf_ind_rxint_msk"},
-+	{0x06a4, "cf_ind_rxint_stat"},
-+	{0x06a8, "cf_ind_rxint_clr"},
-+};
-+
-+static const struct hbg_type_info hbg_type_infos[] = {
-+	[HBG_DUMP_REG_TYPE_SPEC] = {"SPEC", hbg_spec_maps, ARRAY_SIZE(hbg_spec_maps)},
-+	[HBG_DUMP_REG_TYPE_MDIO] = {"MDIO", hbg_mdio_maps, ARRAY_SIZE(hbg_mdio_maps)},
-+	[HBG_DUMP_REG_TYPE_GMAC] = {"GMAC", hbg_gmac_maps, ARRAY_SIZE(hbg_gmac_maps)},
-+	[HBG_DUMP_REG_TYPE_PCU] = {"PCU", hbg_pcu_maps, ARRAY_SIZE(hbg_pcu_maps)},
-+	[HBG_DUMP_REG_TYPE_MAX] = {"UNKNOWN", NULL, 0},
-+};
-+
-+static void dump_type_reg(const struct hbg_type_info *type_info,
-+			  const struct hbg_reg_info *reg_info)
-+{
-+	const char *reg_name = "UNKNOWN";
-+	u32 i = 0;
-+
-+	for (i = 0; i < type_info->reg_num; i++)
-+		if (type_info->reg_map[i].offset == reg_info->offset) {
-+			reg_name = type_info->reg_map[i].name;
-+			break;
-+		}
-+
-+	fprintf(stdout, "[%s]%-*s[0x%04x]: 0x%08x\n",
-+		type_info->type_name, HBG_REG_NAEM_MAX_LEN, reg_name,
-+		reg_info->offset, reg_info->val);
-+}
-+
-+int hibmcge_dump_regs(struct ethtool_drvinfo *info __maybe_unused,
-+		      struct ethtool_regs *regs)
-+{
-+	struct hbg_reg_info *reg_info;
-+	u32 offset = 0;
-+
-+	if (regs->len % sizeof(*reg_info) != 0)
-+		return -EINVAL;
-+
-+	while (offset < regs->len) {
-+		reg_info = (struct hbg_reg_info *)(regs->data + offset);
-+
-+		if (reg_info->type >= HBG_DUMP_REG_TYPE_MAX)
-+			dump_type_reg(&hbg_type_infos[HBG_DUMP_REG_TYPE_MAX],
-+				      reg_info);
-+		else
-+			dump_type_reg(&hbg_type_infos[reg_info->type], reg_info);
-+
-+		offset += sizeof(*reg_info);
-+	}
-+
-+	return 0;
-+}
-diff --git a/internal.h b/internal.h
-index f33539d..e3707d7 100644
---- a/internal.h
-+++ b/internal.h
-@@ -366,6 +366,9 @@ int vmxnet3_dump_regs(struct ethtool_drvinfo *info, struct ethtool_regs *regs);
- /* hns3 ethernet controller */
- int hns3_dump_regs(struct ethtool_drvinfo *info, struct ethtool_regs *regs);
- 
-+/* hibmcge ethernet controller */
-+int hibmcge_dump_regs(struct ethtool_drvinfo *info, struct ethtool_regs *regs);
-+
- /* Rx flow classification */
- int rxclass_parse_ruleopts(struct cmd_context *ctx,
- 			   struct ethtool_rx_flow_spec *fsp, __u32 *rss_context);
--- 
-2.33.0
+And some other weirdness for bpetkov:
 
+  https://lkml.kernel.org/r/20250306122413.GBZ8mT7Z61Tmgnh5Y9@fat_crate.local
+
+
+I suspect you missed a release somewhere.
 
