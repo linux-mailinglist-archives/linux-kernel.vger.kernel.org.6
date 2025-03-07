@@ -1,368 +1,221 @@
-Return-Path: <linux-kernel+bounces-550098-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-550104-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10338A55B57
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 01:01:42 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 97F98A55B66
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 01:04:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2FA007AA51E
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 00:00:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B636C1899D1B
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 00:04:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 016AE4C80;
-	Fri,  7 Mar 2025 00:01:32 +0000 (UTC)
-Received: from mail-il1-f206.google.com (mail-il1-f206.google.com [209.85.166.206])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13E127464;
+	Fri,  7 Mar 2025 00:04:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="NiB21l5k"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48E672CA6
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Mar 2025 00:01:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.206
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 739B63FE4
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Mar 2025 00:04:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741305691; cv=none; b=e+CJvw2OKNZFUh2jK+nc6CYoOekNkkfvkNysUz7eZYxYEurI93Sn5+wJknodieyPsWfEa4ickVjOJU8jxjetJJcemN5xh4+vsNU8ek/tOju0YGRlR5NENIT+xtXc42Hge4i/0r3oWvxDKkHKBe3TXXq06fy1K8ciT4enyr8KOVk=
+	t=1741305871; cv=none; b=mncbVNfDaI3fnA+t3vl0o8HvTgenBduBYc0Xk+BWSO8K1zOIYqsCgli9jXQ8Cm5CAv9uG0aCi3jYfCUWS3WxYvytGApzILgHlh0M2atXytNqRA/1B749OfKCamcJlgz0VKizn/46sTBbKn0IidqqRSJleudl7+N60oUQm9R4Lbc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741305691; c=relaxed/simple;
-	bh=cuP/vScxGtaMqppW/h6NaC/dlve9qOgtjc8hq4kp0AU=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=BrBZi9ywXCQ0HdnmDLDcaocvHlNXSCPua89Udnzpb8dbKLybMj1S8t7UoE8EKPG8ALhmWrJH/w9gKrDA+oNZe06Gn1MfKnZezWi5shGS/Mbx3k6wZpUcfEuB7TYo1JJNbToXxk1LHM0drptxHwysNtpJ73d96OkMIrFtp1l3Uic=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.206
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f206.google.com with SMTP id e9e14a558f8ab-3ce843b51c3so25606375ab.0
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Mar 2025 16:01:29 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741305688; x=1741910488;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ifMmxd60Hb7OPYrM+DTw5Np2I8L4Y/29uTi+Rh8hpQk=;
-        b=bKSgCp1eDpSJPincCsUdpQp43kvvHpNjPAOZorOaUmbe+wko0BRrIFcR1DCCOaU+sY
-         aHKdIL/QzxQJ+afwyT+5dhxhPB2JtR+ZsAkqqjGi2lLcrc+4u3XM7XuGqd8LHFEjqDCk
-         wQU+EA1u3qt+E5hS8qyjodo4jPMvHcUCa/6doCY+yRV5Fe5DA+YUWrLUgINqP/WnS5xc
-         6pBbCJZ9UCUER0Sl8GDG+kijRZbSrn7lupdB+nabM6cyR54noeeH/DnhZtjdOGkOeCVp
-         sQvnI0D/RBD5jOhnuXXmZ7lZGt8/a/x93OsIVah2uFJQwa6yDPZXRpFnZKjLu1vc1p+p
-         NdJw==
-X-Forwarded-Encrypted: i=1; AJvYcCVtLyhAfNxTSAvAnGiLfIXkqPo227bHg3O1C9bnHSTCRFykKJQG+yyTLkamWihBWoc0LSBPJr/r6KY709s=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzWR4J6Q1LFTh+ponq89sTzg8DBREKKvFm6NxKNLyOBI7i89NEk
-	uAvwcKHQPkDVfkbqGr68ciI6BovdED4Qj2JkbXvtYn+yHMTVn60QrkJ8PZQhClm9nABVIWAoFD5
-	bM58pLN6VdCKCcTtYEll4ZzuZqv3YfO9MzYiCn7QZqsleP6GmpHHkhgI=
-X-Google-Smtp-Source: AGHT+IHNHvKJbD0FFhT0nPb+EzQcFSiphBjI449xuRyJhOPgFV5mkctrULPQgeygR4oC9719dc3k7YVJ7JyTaaVXzH7AxPmc/f1c
+	s=arc-20240116; t=1741305871; c=relaxed/simple;
+	bh=L4j43FN8u0nH0qweYUWLARYbl/n9oWfCtUi1l78AP5M=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=b0pfPxkkDvqyMZ2iXm5vEUA85WDcZNTVtnFahnRuzfRjqaJvRyCOPLkzbH4pfD8oTimNeLB/FwkwFoAC6pCk021PRn5r8iVOCj98X51SzXRws91DOFmMIth3Sb6cqP5jHsgJAE74vTgm5IJMF0y1sYzGey53xIn2w5Ojt98zUYs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=NiB21l5k; arc=none smtp.client-ip=192.198.163.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1741305869; x=1772841869;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=L4j43FN8u0nH0qweYUWLARYbl/n9oWfCtUi1l78AP5M=;
+  b=NiB21l5kep8RmsLyXti960iHurb4Z5BkBt1D9MCf+1hI9LxV7B/TGEjq
+   +hz3IrjosgAdZS5UDsPnZYkgpxqAGBIpmc5htAS3fQgCDnnz9sX+uj2qI
+   dwVutnJBXqgcDVLhMQCOfNBmndNKMuXPkJCwP7QcWQcH9TRSHEjwMYACW
+   3DGqerZdaX1qu6bZipmJEsQj+Q4JVPNOnXEExtihH3DTSJ+po/HThOLdx
+   lFPXWHtP0Cc9YQupmvEvAKfcYPmNjJUSa36JD3iEJmasbhTwtLrYgYiwo
+   DZLzFsM75m4zQ408pM1folVCMiT9TKa8l5nHyPUn70pHKkFF1H0TguoQm
+   g==;
+X-CSE-ConnectionGUID: M21+PZGJR1mUcgzEQ0p1kA==
+X-CSE-MsgGUID: V0xNZ1eFQ8e+dSnPP74M3g==
+X-IronPort-AV: E=McAfee;i="6700,10204,11365"; a="42482769"
+X-IronPort-AV: E=Sophos;i="6.14,227,1736841600"; 
+   d="scan'208";a="42482769"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Mar 2025 16:04:29 -0800
+X-CSE-ConnectionGUID: wXBsjPsZTOq7da4k7vm1Sg==
+X-CSE-MsgGUID: +UBmSuvuQcuP9mJRMYcY3A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,227,1736841600"; 
+   d="scan'208";a="124099874"
+Received: from sohilmeh.sc.intel.com ([172.25.103.65])
+  by orviesa003.jf.intel.com with ESMTP; 06 Mar 2025 16:04:28 -0800
+From: Sohil Mehta <sohil.mehta@intel.com>
+To: x86@kernel.org,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	Ingo Molnar <mingo@redhat.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>,
+	"H . Peter Anvin" <hpa@zytor.com>,
+	Uros Bizjak <ubizjak@gmail.com>,
+	Sohil Mehta <sohil.mehta@intel.com>,
+	Sandipan Das <sandipan.das@amd.com>,
+	Sean Christopherson <seanjc@google.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Vegard Nossum <vegard.nossum@oracle.com>,
+	Tony Luck <tony.luck@intel.com>,
+	Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
+	Nikolay Borisov <nik.borisov@suse.com>,
+	Eric Biggers <ebiggers@google.com>,
+	Xin Li <xin3.li@intel.com>,
+	Alexander Shishkin <alexander.shishkin@intel.com>,
+	Kirill Shutemov <kirill.shutemov@linux.intel.com>,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v5] x86/cpufeature: Warn about unmet feature dependencies
+Date: Fri,  7 Mar 2025 00:02:04 +0000
+Message-ID: <20250307000204.3581369-1-sohil.mehta@intel.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a92:ca49:0:b0:3d2:b66b:94cd with SMTP id
- e9e14a558f8ab-3d441930332mr21411855ab.3.1741305688466; Thu, 06 Mar 2025
- 16:01:28 -0800 (PST)
-Date: Thu, 06 Mar 2025 16:01:28 -0800
-In-Reply-To: <6761bbbd.050a0220.29fcd0.0075.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67ca3758.050a0220.15b4b9.005c.GAE@google.com>
-Subject: Re: [syzbot] [bluetooth?] KASAN: slab-use-after-free Read in l2cap_connect_cfm
-From: syzbot <syzbot+e9abaabc441d3dd18735@syzkaller.appspotmail.com>
-To: johan.hedberg@gmail.com, linux-bluetooth@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, luiz.dentz@gmail.com, marcel@holtmann.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-syzbot has found a reproducer for the following issue on:
+Currently, the cpuid_deps[] table is only exercised when a particular
+feature gets explicitly disabled and clear_cpu_cap() is called. However,
+some of these listed dependencies might already be missing during boot.
 
-HEAD commit:    f66d6acccbc0 Merge tag 'x86_urgent_for_v6.12' of git://git..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=1666b2e8580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=ca2f08f822652bd0
-dashboard link: https://syzkaller.appspot.com/bug?extid=e9abaabc441d3dd18735
-compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+These types of errors shouldn't generally happen in production
+environments but they could sometimes sneak through, especially when VMs
+and Kconfigs are in the mix. Also, the kernel might introduce artificial
+dependencies between unrelated features such as making LAM depend on
+LASS.
 
-Unfortunately, I don't have any reproducer for this issue yet.
+Unexpected failures can occur when the kernel tries to use such a
+feature. Add a simple boot time scan of the cpuid_deps[] table to detect
+the missing dependencies. One option is to disable all of such features
+during boot but that may cause regressions in existing systems. For now,
+just warn about the missing dependencies to create awareness.
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/5b28ec7d6aaa/disk-f66d6acc.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/1999546fff71/vmlinux-f66d6acc.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/ef848d42ab19/bzImage-f66d6acc.xz
+As a trade-off between spamming the kernel log and keeping track of all
+the features that have been warned about, only warn about the first
+missing dependency. Any subsequent unmet dependency will only be logged
+after the first one has been resolved.
 
-Bisection is inconclusive: the issue happens on the oldest tested release.
+Features are typically represented through unsigned integers within the
+kernel though some of them have user friendly names if they are exposed
+via cpuinfo.  Show the friendlier name if available otherwise display
+the X86_FEATURE_* numerals to make it easier to identify the feature.
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=147adb78580000
-final oops:     https://syzkaller.appspot.com/x/report.txt?x=167adb78580000
-console output: https://syzkaller.appspot.com/x/log.txt?x=127adb78580000
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+e9abaabc441d3dd18735@syzkaller.appspotmail.com
-
-kobject: kobject_add_internal failed for hci5:201 with -EEXIST, don't try to register things with the same name in the same directory.
-Bluetooth: hci5: failed to register connection device
-==================================================================
-BUG: KASAN: slab-use-after-free in l2cap_conn_ready net/bluetooth/l2cap_core.c:1619 [inline]
-BUG: KASAN: slab-use-after-free in l2cap_connect_cfm+0xdbe/0xf80 net/bluetooth/l2cap_core.c:7278
-Read of size 8 at addr ffff8880780f0480 by task kworker/u9:3/5950
-
-CPU: 0 UID: 0 PID: 5950 Comm: kworker/u9:3 Not tainted 6.12.0-rc7-syzkaller-00216-gf66d6acccbc0 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/30/2024
-Workqueue: hci5 hci_rx_work
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:94 [inline]
- dump_stack_lvl+0x116/0x1f0 lib/dump_stack.c:120
- print_address_description mm/kasan/report.c:377 [inline]
- print_report+0xc3/0x620 mm/kasan/report.c:488
- kasan_report+0xd9/0x110 mm/kasan/report.c:601
- l2cap_conn_ready net/bluetooth/l2cap_core.c:1619 [inline]
- l2cap_connect_cfm+0xdbe/0xf80 net/bluetooth/l2cap_core.c:7278
- hci_connect_cfm include/net/bluetooth/hci_core.h:1960 [inline]
- le_conn_complete_evt+0x1665/0x1d80 net/bluetooth/hci_event.c:5758
- hci_le_conn_complete_evt+0x23c/0x370 net/bluetooth/hci_event.c:5784
- hci_le_meta_evt+0x2e5/0x5d0 net/bluetooth/hci_event.c:7132
- hci_event_func net/bluetooth/hci_event.c:7440 [inline]
- hci_event_packet+0x669/0x1180 net/bluetooth/hci_event.c:7495
- hci_rx_work+0x2c6/0x1610 net/bluetooth/hci_core.c:4029
- process_one_work+0x9c8/0x1ba0 kernel/workqueue.c:3229
- process_scheduled_works kernel/workqueue.c:3310 [inline]
- worker_thread+0x6c8/0xf00 kernel/workqueue.c:3391
- kthread+0x2c4/0x3a0 kernel/kthread.c:389
- ret_from_fork+0x48/0x80 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
- </TASK>
-
-Allocated by task 5950:
- kasan_save_stack+0x33/0x60 mm/kasan/common.c:47
- kasan_save_track+0x14/0x30 mm/kasan/common.c:68
- poison_kmalloc_redzone mm/kasan/common.c:377 [inline]
- __kasan_kmalloc+0xaa/0xb0 mm/kasan/common.c:394
- kmalloc_noprof include/linux/slab.h:878 [inline]
- kzalloc_noprof include/linux/slab.h:1014 [inline]
- l2cap_chan_create+0x44/0x920 net/bluetooth/l2cap_core.c:449
- l2cap_sock_alloc.constprop.0+0xf3/0x180 net/bluetooth/l2cap_sock.c:1886
- l2cap_sock_new_connection_cb+0x101/0x240 net/bluetooth/l2cap_sock.c:1468
- l2cap_connect_cfm+0x4cc/0xf80 net/bluetooth/l2cap_core.c:7261
- hci_connect_cfm include/net/bluetooth/hci_core.h:1960 [inline]
- le_conn_complete_evt+0x1665/0x1d80 net/bluetooth/hci_event.c:5758
- hci_le_conn_complete_evt+0x23c/0x370 net/bluetooth/hci_event.c:5784
- hci_le_meta_evt+0x2e5/0x5d0 net/bluetooth/hci_event.c:7132
- hci_event_func net/bluetooth/hci_event.c:7440 [inline]
- hci_event_packet+0x669/0x1180 net/bluetooth/hci_event.c:7495
- hci_rx_work+0x2c6/0x1610 net/bluetooth/hci_core.c:4029
- process_one_work+0x9c8/0x1ba0 kernel/workqueue.c:3229
- process_scheduled_works kernel/workqueue.c:3310 [inline]
- worker_thread+0x6c8/0xf00 kernel/workqueue.c:3391
- kthread+0x2c4/0x3a0 kernel/kthread.c:389
- ret_from_fork+0x48/0x80 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
-
-Freed by task 6070:
- kasan_save_stack+0x33/0x60 mm/kasan/common.c:47
- kasan_save_track+0x14/0x30 mm/kasan/common.c:68
- kasan_save_free_info+0x3b/0x60 mm/kasan/generic.c:579
- poison_slab_object mm/kasan/common.c:247 [inline]
- __kasan_slab_free+0x51/0x70 mm/kasan/common.c:264
- kasan_slab_free include/linux/kasan.h:230 [inline]
- slab_free_hook mm/slub.c:2342 [inline]
- slab_free mm/slub.c:4579 [inline]
- kfree+0x14f/0x4b0 mm/slub.c:4727
- l2cap_chan_destroy net/bluetooth/l2cap_core.c:495 [inline]
- kref_put include/linux/kref.h:65 [inline]
- l2cap_chan_put+0x216/0x2c0 net/bluetooth/l2cap_core.c:519
- l2cap_sock_cleanup_listen+0x4d/0x2a0 net/bluetooth/l2cap_sock.c:1451
- l2cap_sock_release+0x5c/0x210 net/bluetooth/l2cap_sock.c:1411
- __sock_release+0xb3/0x270 net/socket.c:658
- sock_close+0x1c/0x30 net/socket.c:1426
- __fput+0x3f9/0xb60 fs/file_table.c:431
- task_work_run+0x151/0x250 kernel/task_work.c:239
- resume_user_mode_work include/linux/resume_user_mode.h:50 [inline]
- exit_to_user_mode_loop kernel/entry/common.c:114 [inline]
- exit_to_user_mode_prepare include/linux/entry-common.h:328 [inline]
- __syscall_exit_to_user_mode_work kernel/entry/common.c:207 [inline]
- syscall_exit_to_user_mode+0x27b/0x2a0 kernel/entry/common.c:218
- do_syscall_64+0xda/0x250 arch/x86/entry/common.c:89
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-The buggy address belongs to the object at ffff8880780f0000
- which belongs to the cache kmalloc-2k of size 2048
-The buggy address is located 1152 bytes inside of
- freed 2048-byte region [ffff8880780f0000, ffff8880780f0800)
-
-The buggy address belongs to the physical page:
-page: refcount:1 mapcount:0 mapping:0000000000000000 index:0xffff8880780f6000 pfn:0x780f0
-head: order:3 mapcount:0 entire_mapcount:0 nr_pages_mapped:0 pincount:0
-flags: 0xfff00000000040(head|node=0|zone=1|lastcpupid=0x7ff)
-page_type: f5(slab)
-raw: 00fff00000000040 ffff88801b042000 ffffea0001292c00 0000000000000002
-raw: ffff8880780f6000 0000000080080003 00000001f5000000 0000000000000000
-head: 00fff00000000040 ffff88801b042000 ffffea0001292c00 0000000000000002
-head: ffff8880780f6000 0000000080080003 00000001f5000000 0000000000000000
-head: 00fff00000000003 ffffea0001e03c01 ffffffffffffffff 0000000000000000
-head: 0000000000000008 0000000000000000 00000000ffffffff 0000000000000000
-page dumped because: kasan: bad access detected
-page_owner tracks the page as allocated
-page last allocated via order 3, migratetype Unmovable, gfp_mask 0xd20c0(__GFP_IO|__GFP_FS|__GFP_NOWARN|__GFP_NORETRY|__GFP_COMP|__GFP_NOMEMALLOC), pid 2965, tgid 2965 (kworker/u8:7), ts 97728781507, free_ts 97577158223
- set_page_owner include/linux/page_owner.h:32 [inline]
- post_alloc_hook+0x2d1/0x350 mm/page_alloc.c:1556
- prep_new_page mm/page_alloc.c:1564 [inline]
- get_page_from_freelist+0xfce/0x2f80 mm/page_alloc.c:3474
- __alloc_pages_noprof+0x223/0x25a0 mm/page_alloc.c:4751
- alloc_pages_mpol_noprof+0x2c9/0x610 mm/mempolicy.c:2265
- alloc_slab_page mm/slub.c:2412 [inline]
- allocate_slab mm/slub.c:2578 [inline]
- new_slab+0x2c9/0x410 mm/slub.c:2631
- ___slab_alloc+0xdac/0x1880 mm/slub.c:3818
- __slab_alloc.constprop.0+0x56/0xb0 mm/slub.c:3908
- __slab_alloc_node mm/slub.c:3961 [inline]
- slab_alloc_node mm/slub.c:4122 [inline]
- __do_kmalloc_node mm/slub.c:4263 [inline]
- __kmalloc_node_track_caller_noprof+0x355/0x430 mm/slub.c:4283
- kmalloc_reserve+0xef/0x2c0 net/core/skbuff.c:609
- __alloc_skb+0x164/0x380 net/core/skbuff.c:678
- alloc_skb include/linux/skbuff.h:1322 [inline]
- nlmsg_new include/net/netlink.h:1015 [inline]
- rtmsg_ifinfo_build_skb+0x81/0x280 net/core/rtnetlink.c:4099
- unregister_netdevice_many_notify+0x983/0x1e50 net/core/dev.c:11411
- cleanup_net+0x58c/0xb40 net/core/net_namespace.c:621
- process_one_work+0x9c8/0x1ba0 kernel/workqueue.c:3229
- process_scheduled_works kernel/workqueue.c:3310 [inline]
- worker_thread+0x6c8/0xf00 kernel/workqueue.c:3391
- kthread+0x2c4/0x3a0 kernel/kthread.c:389
-page last free pid 2965 tgid 2965 stack trace:
- reset_page_owner include/linux/page_owner.h:25 [inline]
- free_pages_prepare mm/page_alloc.c:1127 [inline]
- free_unref_page+0x661/0x1080 mm/page_alloc.c:2657
- __folio_put+0x32a/0x450 mm/swap.c:112
- kvfree+0x47/0x50 mm/util.c:701
- unix_net_exit+0x61/0xb0 net/unix/af_unix.c:3708
- ops_exit_list+0xb3/0x180 net/core/net_namespace.c:173
- cleanup_net+0x5b7/0xb40 net/core/net_namespace.c:626
- process_one_work+0x9c8/0x1ba0 kernel/workqueue.c:3229
- process_scheduled_works kernel/workqueue.c:3310 [inline]
- worker_thread+0x6c8/0xf00 kernel/workqueue.c:3391
- kthread+0x2c4/0x3a0 kernel/kthread.c:389
- ret_from_fork+0x48/0x80 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
-
-Memory state around the buggy address:
- ffff8880780f0380: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
- ffff8880780f0400: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
->ffff8880780f0480: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-                   ^
- ffff8880780f0500: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
- ffff8880780f0580: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-==================================================================
-==================================================================
-BUG: KASAN: wild-memory-access in instrument_atomic_read include/linux/instrumented.h:68 [inline]
-BUG: KASAN: wild-memory-access in atomic_read include/linux/atomic/atomic-instrumented.h:32 [inline]
-BUG: KASAN: wild-memory-access in l2cap_chan_lock include/net/bluetooth/l2cap.h:827 [inline]
-BUG: KASAN: wild-memory-access in l2cap_conn_ready net/bluetooth/l2cap_core.c:1621 [inline]
-BUG: KASAN: wild-memory-access in l2cap_connect_cfm+0x7eb/0xf80 net/bluetooth/l2cap_core.c:7278
-Read of size 4 at addr deacfffffffffc8c by task kworker/u9:3/5950
-
-CPU: 0 UID: 0 PID: 5950 Comm: kworker/u9:3 Tainted: G    B              6.12.0-rc7-syzkaller-00216-gf66d6acccbc0 #0
-Tainted: [B]=BAD_PAGE
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/30/2024
-Workqueue: hci5 hci_rx_work
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:94 [inline]
- dump_stack_lvl+0x116/0x1f0 lib/dump_stack.c:120
- kasan_report+0xd9/0x110 mm/kasan/report.c:601
- check_region_inline mm/kasan/generic.c:183 [inline]
- kasan_check_range+0xef/0x1a0 mm/kasan/generic.c:189
- instrument_atomic_read include/linux/instrumented.h:68 [inline]
- atomic_read include/linux/atomic/atomic-instrumented.h:32 [inline]
- l2cap_chan_lock include/net/bluetooth/l2cap.h:827 [inline]
- l2cap_conn_ready net/bluetooth/l2cap_core.c:1621 [inline]
- l2cap_connect_cfm+0x7eb/0xf80 net/bluetooth/l2cap_core.c:7278
- hci_connect_cfm include/net/bluetooth/hci_core.h:1960 [inline]
- le_conn_complete_evt+0x1665/0x1d80 net/bluetooth/hci_event.c:5758
- hci_le_conn_complete_evt+0x23c/0x370 net/bluetooth/hci_event.c:5784
- hci_le_meta_evt+0x2e5/0x5d0 net/bluetooth/hci_event.c:7132
- hci_event_func net/bluetooth/hci_event.c:7440 [inline]
- hci_event_packet+0x669/0x1180 net/bluetooth/hci_event.c:7495
- hci_rx_work+0x2c6/0x1610 net/bluetooth/hci_core.c:4029
- process_one_work+0x9c8/0x1ba0 kernel/workqueue.c:3229
- process_scheduled_works kernel/workqueue.c:3310 [inline]
- worker_thread+0x6c8/0xf00 kernel/workqueue.c:3391
- kthread+0x2c4/0x3a0 kernel/kthread.c:389
- ret_from_fork+0x48/0x80 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
- </TASK>
-==================================================================
-Oops: general protection fault, probably for non-canonical address 0xfbd59bffffffff91: 0000 [#1] PREEMPT SMP KASAN NOPTI
-KASAN: maybe wild-memory-access in range [0xdeacfffffffffc88-0xdeacfffffffffc8f]
-CPU: 0 UID: 0 PID: 5950 Comm: kworker/u9:3 Tainted: G    B              6.12.0-rc7-syzkaller-00216-gf66d6acccbc0 #0
-Tainted: [B]=BAD_PAGE
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/30/2024
-Workqueue: hci5 hci_rx_work
-RIP: 0010:arch_atomic_read arch/x86/include/asm/atomic.h:23 [inline]
-RIP: 0010:raw_atomic_read include/linux/atomic/atomic-arch-fallback.h:457 [inline]
-RIP: 0010:atomic_read include/linux/atomic/atomic-instrumented.h:33 [inline]
-RIP: 0010:l2cap_chan_lock include/net/bluetooth/l2cap.h:827 [inline]
-RIP: 0010:l2cap_conn_ready net/bluetooth/l2cap_core.c:1621 [inline]
-RIP: 0010:l2cap_connect_cfm+0x7f2/0xf80 net/bluetooth/l2cap_core.c:7278
-Code: 80 fb ff ff 49 39 c5 0f 84 29 01 00 00 e8 26 a0 6e f7 49 8d 6f 0c be 04 00 00 00 48 89 ef e8 b5 80 cf f7 48 89 e8 48 c1 e8 03 <0f> b6 14 18 48 89 e8 83 e0 07 83 c0 03 38 d0 7c 08 84 d2 0f 85 c5
-RSP: 0018:ffffc90003e0f878 EFLAGS: 00010213
-RAX: 1bd59fffffffff91 RBX: dffffc0000000000 RCX: ffffffff814e821f
-RDX: ffff888030808000 RSI: ffffffff81ee2f8e RDI: 0000000000000007
-RBP: deacfffffffffc8c R08: 0000000000000007 R09: 0000000000000000
-R10: 0000000000000000 R11: 3d3d3d3d3d3d3d3d R12: ffff88804779003b
-R13: ffff88806c83d2c0 R14: 0000000000000080 R15: deacfffffffffc80
-FS:  0000000000000000(0000) GS:ffff8880b8600000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 000055558a5ef5c8 CR3: 000000007bf02000 CR4: 0000000000350ef0
-Call Trace:
- <TASK>
- hci_connect_cfm include/net/bluetooth/hci_core.h:1960 [inline]
- le_conn_complete_evt+0x1665/0x1d80 net/bluetooth/hci_event.c:5758
- hci_le_conn_complete_evt+0x23c/0x370 net/bluetooth/hci_event.c:5784
- hci_le_meta_evt+0x2e5/0x5d0 net/bluetooth/hci_event.c:7132
- hci_event_func net/bluetooth/hci_event.c:7440 [inline]
- hci_event_packet+0x669/0x1180 net/bluetooth/hci_event.c:7495
- hci_rx_work+0x2c6/0x1610 net/bluetooth/hci_core.c:4029
- process_one_work+0x9c8/0x1ba0 kernel/workqueue.c:3229
- process_scheduled_works kernel/workqueue.c:3310 [inline]
- worker_thread+0x6c8/0xf00 kernel/workqueue.c:3391
- kthread+0x2c4/0x3a0 kernel/kthread.c:389
- ret_from_fork+0x48/0x80 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
- </TASK>
-Modules linked in:
----[ end trace 0000000000000000 ]---
-RIP: 0010:arch_atomic_read arch/x86/include/asm/atomic.h:23 [inline]
-RIP: 0010:raw_atomic_read include/linux/atomic/atomic-arch-fallback.h:457 [inline]
-RIP: 0010:atomic_read include/linux/atomic/atomic-instrumented.h:33 [inline]
-RIP: 0010:l2cap_chan_lock include/net/bluetooth/l2cap.h:827 [inline]
-RIP: 0010:l2cap_conn_ready net/bluetooth/l2cap_core.c:1621 [inline]
-RIP: 0010:l2cap_connect_cfm+0x7f2/0xf80 net/bluetooth/l2cap_core.c:7278
-Code: 80 fb ff ff 49 39 c5 0f 84 29 01 00 00 e8 26 a0 6e f7 49 8d 6f 0c be 04 00 00 00 48 89 ef e8 b5 80 cf f7 48 89 e8 48 c1 e8 03 <0f> b6 14 18 48 89 e8 83 e0 07 83 c0 03 38 d0 7c 08 84 d2 0f 85 c5
-RSP: 0018:ffffc90003e0f878 EFLAGS: 00010213
-RAX: 1bd59fffffffff91 RBX: dffffc0000000000 RCX: ffffffff814e821f
-RDX: ffff888030808000 RSI: ffffffff81ee2f8e RDI: 0000000000000007
-RBP: deacfffffffffc8c R08: 0000000000000007 R09: 0000000000000000
-R10: 0000000000000000 R11: 3d3d3d3d3d3d3d3d R12: ffff88804779003b
-R13: ffff88806c83d2c0 R14: 0000000000000080 R15: deacfffffffffc80
-FS:  0000000000000000(0000) GS:ffff8880b8600000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 000055558a5ef5c8 CR3: 000000007bf02000 CR4: 0000000000350ef0
-----------------
-Code disassembly (best guess), 4 bytes skipped:
-   0:	49 39 c5             	cmp    %rax,%r13
-   3:	0f 84 29 01 00 00    	je     0x132
-   9:	e8 26 a0 6e f7       	call   0xf76ea034
-   e:	49 8d 6f 0c          	lea    0xc(%r15),%rbp
-  12:	be 04 00 00 00       	mov    $0x4,%esi
-  17:	48 89 ef             	mov    %rbp,%rdi
-  1a:	e8 b5 80 cf f7       	call   0xf7cf80d4
-  1f:	48 89 e8             	mov    %rbp,%rax
-  22:	48 c1 e8 03          	shr    $0x3,%rax
-* 26:	0f b6 14 18          	movzbl (%rax,%rbx,1),%edx <-- trapping instruction
-  2a:	48 89 e8             	mov    %rbp,%rax
-  2d:	83 e0 07             	and    $0x7,%eax
-  30:	83 c0 03             	add    $0x3,%eax
-  33:	38 d0                	cmp    %dl,%al
-  35:	7c 08                	jl     0x3f
-  37:	84 d2                	test   %dl,%dl
-  39:	0f                   	.byte 0xf
-  3a:	85 c5                	test   %eax,%ebp
-
-
+Suggested-by: Tony Luck <tony.luck@intel.com>
+Suggested-by: Ingo Molnar <mingo@redhat.com>
+Signed-off-by: Sohil Mehta <sohil.mehta@intel.com>
 ---
+v5: Don't disable features with unmet dependencies (Ingo)
+    Use pr_warn_once() for the warning (Ingo)
+
+v4: https://lore.kernel.org/lkml/20241210224037.3052555-1-sohil.mehta@intel.com/
+    Update the log level to pr_info() (Ingo)
+    Update the char buffer size to 16 (0day warning)
+    Dropped Dave's review tag since the code has changed a bit more
+    than usual.
+
+v3: Picked up the review tag.
+    Reworded the commit message.
+
+v2: Use cpu_has() instead of boot_cpu_has() (Sean)
+---
+ arch/x86/include/asm/cpufeature.h |  1 +
+ arch/x86/kernel/cpu/common.c      |  4 ++++
+ arch/x86/kernel/cpu/cpuid-deps.c  | 35 +++++++++++++++++++++++++++++++
+ 3 files changed, 40 insertions(+)
+
+diff --git a/arch/x86/include/asm/cpufeature.h b/arch/x86/include/asm/cpufeature.h
+index de1ad09fe8d7..1bb30e82ea77 100644
+--- a/arch/x86/include/asm/cpufeature.h
++++ b/arch/x86/include/asm/cpufeature.h
+@@ -149,6 +149,7 @@ extern const char * const x86_bug_flags[NBUGINTS*32];
+ 
+ extern void setup_clear_cpu_cap(unsigned int bit);
+ extern void clear_cpu_cap(struct cpuinfo_x86 *c, unsigned int bit);
++void scan_feature_dependencies(struct cpuinfo_x86 *c);
+ 
+ #define setup_force_cpu_cap(bit) do {			\
+ 							\
+diff --git a/arch/x86/kernel/cpu/common.c b/arch/x86/kernel/cpu/common.c
+index 7cce91b19fb2..52111d97c8ae 100644
+--- a/arch/x86/kernel/cpu/common.c
++++ b/arch/x86/kernel/cpu/common.c
+@@ -1610,6 +1610,7 @@ static void __init early_identify_cpu(struct cpuinfo_x86 *c)
+ 
+ 		c->cpu_index = 0;
+ 		filter_cpuid_features(c, false);
++		scan_feature_dependencies(c);
+ 
+ 		if (this_cpu->c_bsp_init)
+ 			this_cpu->c_bsp_init(c);
+@@ -1870,6 +1871,9 @@ static void identify_cpu(struct cpuinfo_x86 *c)
+ 	/* Filter out anything that depends on CPUID levels we don't have */
+ 	filter_cpuid_features(c, true);
+ 
++	/* Scan for unmet dependencies based on the CPUID dependency table */
++	scan_feature_dependencies(c);
++
+ 	/* If the model name is still unset, do table lookup. */
+ 	if (!c->x86_model_id[0]) {
+ 		const char *p;
+diff --git a/arch/x86/kernel/cpu/cpuid-deps.c b/arch/x86/kernel/cpu/cpuid-deps.c
+index df838e3bdbe0..1b02dbd43cf4 100644
+--- a/arch/x86/kernel/cpu/cpuid-deps.c
++++ b/arch/x86/kernel/cpu/cpuid-deps.c
+@@ -147,3 +147,38 @@ void setup_clear_cpu_cap(unsigned int feature)
+ {
+ 	do_clear_cpu_cap(NULL, feature);
+ }
++
++/*
++ * Return the feature "name" if available otherwise return
++ * the X86_FEATURE_* numerals to make it easier to identify
++ * the feature.
++ */
++static const char *x86_feature_name(unsigned int feature, char *buf)
++{
++	if (x86_cap_flags[feature])
++		return x86_cap_flags[feature];
++
++	snprintf(buf, 16, "%d*32+%2d", feature / 32, feature % 32);
++
++	return buf;
++}
++
++void scan_feature_dependencies(struct cpuinfo_x86 *c)
++{
++	char feature_buf[16], depends_buf[16];
++	const struct cpuid_dep *d;
++
++	for (d = cpuid_deps; d->feature; d++) {
++		if (cpu_has(c, d->feature) && !cpu_has(c, d->depends)) {
++			/*
++			 * Only warn about the first unmet dependency on the
++			 * first CPU where it is encountered to avoid spamming
++			 * the kernel log.
++			 */
++			pr_warn_once("CPU%d: feature:%s may not work properly without feature:%s\n",
++				     smp_processor_id(),
++				     x86_feature_name(d->feature, feature_buf),
++				     x86_feature_name(d->depends, depends_buf));
++		}
++	}
++}
+-- 
+2.43.0
+
 
