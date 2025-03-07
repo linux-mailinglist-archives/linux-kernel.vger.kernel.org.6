@@ -1,115 +1,93 @@
-Return-Path: <linux-kernel+bounces-550274-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-550275-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F5E9A55D6E
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 03:02:50 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D9CEA55D73
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 03:04:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9D3621895722
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 02:02:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4B4033AE173
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 02:04:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D95B8634E;
-	Fri,  7 Mar 2025 02:02:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F82D1624D0;
+	Fri,  7 Mar 2025 02:04:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="SsYgX2ik"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (1024-bit key) header.d=panix.com header.i=@panix.com header.b="Q0ZTWrag"
+Received: from mailbackend.panix.com (mailbackend.panix.com [166.84.1.89])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECA9417C79;
-	Fri,  7 Mar 2025 02:02:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDFDF17C79;
+	Fri,  7 Mar 2025 02:04:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.84.1.89
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741312963; cv=none; b=LDEzof3WOzv4hDc2l99Ijxv5i+c+b5dyBiY3kL/kB1APhXal2sm+TZtWA1WONp3ELbwgytEShHNOIse45KIU+WvM1ZMTOhFCAD1PQKVsYvcTqnMUetYfRGZBF4iMKLQcZY+Gu2dFSXF61d1FEOF18CPPMsnDI3cnSE+ArjwjUK8=
+	t=1741313067; cv=none; b=c7tYxYVedVjJCIGGTaM7m+553G2+8vLuPCmwaAnIwHjN4/98VmniIqmD0oGKiYMtR68rJMylujSrj8z8gw5ypdFBWnrhWjaVJ9EOzqzpY1bQT2Zsfl5erCegpjFjkQLgMbaRCwGT5hSQMBaA4jT3MmoisY7d3mbss+Jv3USfhwI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741312963; c=relaxed/simple;
-	bh=fyz54xRj2tz6kJ9UDGOylrMzh84ue78WSUOpab77uhw=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=RWiMX/pNsgu8/XYclBWLsM92161oIWDQzSWq7gd9HyBzdKDzSAMVYv/XsetKKDWmgbsxHqILS9PNl4m3gWmBaipDv1eswLS1C5f9EAKlh5GXJlUWsTLlIjkGAGUxsqsmufmv19DITwG9vvPdxzG0+DjFtt4IyfSKE7hWQPko51c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=SsYgX2ik; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1741312959;
-	bh=EPfmCoKBu8qK3BnMdHyazIBANjr2Pb9D9/rdSD+z39U=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=SsYgX2ikHhTmy8umVlSnSlFJ9Z61gaBEmD5Gk0NF7/zHx+/crkOtBvT/H6daTYR3s
-	 oariRrzRqEGVBQPxx9ChzUxfhIKVoSY+lNd17DtmbprEYCglRB5nMrqlnoaCN3Pm+j
-	 4ATfvYoOseYHED3Bg9mz9t3vFDoryr80ZPYn1O/U1F5iTshTkExLf4Is36V+6/sDGI
-	 SzA20jKW+uIDEVqcmpz5eyWwkxYcwOs5tIxMujPALYN+n105ghCK+NMTuEXR+E/9rX
-	 DNq6990TXN3F/0YLp1PQkrtUsoJ8HbxAmI6dB7yIo48yY/ZUMnTE0u4ictV6cPYvB8
-	 1XgcvxxE1n/0w==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4Z88gf6r33z4wy9;
-	Fri,  7 Mar 2025 13:02:38 +1100 (AEDT)
-Date: Fri, 7 Mar 2025 13:02:38 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Rob Clark <robdclark@gmail.com>, Sean Paul <seanpaul@chromium.org>
-Cc: Jessica Zhang <quic_jesszhan@quicinc.com>, Rob Clark
- <robdclark@chromium.org>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: Re: linux-next: build warning after merge of the drm-msm tree
-Message-ID: <20250307130238.6d04e6cb@canb.auug.org.au>
-In-Reply-To: <20250307123645.07564e19@canb.auug.org.au>
-References: <20250307123645.07564e19@canb.auug.org.au>
+	s=arc-20240116; t=1741313067; c=relaxed/simple;
+	bh=Zz1CxZkmtmg31tAg9LWsnMekLcNzLiU2onf7rKUwvjo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=vEQn66FahEYe7ZLTxdGMKtXJH+OqK916vcs7aOitJJIvlqMB511Kbl6/HKed3kDzU9eQnbkHzImSkKQXJEH/W1K3bPeU/gKYB17Yvn412OjDFpohJMe+Ctitla/6wUmGlaSipd8fcYbbkYNUS8m28fqy1WkBlasT9gC3XjqNFzk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=panix.com; spf=pass smtp.mailfrom=panix.com; dkim=pass (1024-bit key) header.d=panix.com header.i=@panix.com header.b=Q0ZTWrag; arc=none smtp.client-ip=166.84.1.89
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=panix.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=panix.com
+Received: from [192.168.126.189] (ip72-219-82-239.oc.oc.cox.net [72.219.82.239])
+	by mailbackend.panix.com (Postfix) with ESMTPSA id 4Z88jg0kRkz4dCC;
+	Thu,  6 Mar 2025 21:04:23 -0500 (EST)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=panix.com; s=panix;
+	t=1741313064; bh=Zz1CxZkmtmg31tAg9LWsnMekLcNzLiU2onf7rKUwvjo=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To;
+	b=Q0ZTWraggZoYusdIthxj4dwENxn4KSdq1+SPGfbeBbovgUlhmGSM1n92El+7bUDF8
+	 9G45QZDr1IgYtpaeKDABSRrnagNddmiV73Y7aUbJgzqXgyddoR5gnTXE1T80a8oKF+
+	 5iTEYCMTERUdV3R9ZYeKHNVZr0sMSPpGddfhYSo4=
+Message-ID: <4cbde456-9a2e-4404-abff-3f3c53ed9d15@panix.com>
+Date: Thu, 6 Mar 2025 18:04:21 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/mK1cTosHlnZ=mXhrNRKzvV6";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+User-Agent: Mozilla Thunderbird
+Subject: Re: diagnosing resume failures after disconnected USB4 drives (Was:
+ Re: PCI/ASPM: Fix L1SS saving (linus/master commit 7507eb3e7bfac))
+To: Lukas Wunner <lukas@wunner.de>,
+ Mika Westerberg <mika.westerberg@linux.intel.com>, Me <kenny@panix.com>
+Cc: Bjorn Helgaas <helgaas@kernel.org>, ilpo.jarvinen@linux.intel.com,
+ Bjorn Helgaas <bhelgaas@google.com>, Jian-Hong Pan <jhp@endlessos.org>,
+ linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Nikl??vs Ko??es??ikovs <pinkflames.linux@gmail.com>,
+ Andreas Noever <andreas.noever@gmail.com>,
+ Michael Jamet <michael.jamet@intel.com>,
+ Yehezkel Bernat <YehezkelShB@gmail.com>, linux-usb@vger.kernel.org
+References: <83d9302a-f743-43e4-9de2-2dd66d91ab5b@panix.com>
+ <20250213135911.GG3713119@black.fi.intel.com>
+ <a8d6ca75-8f50-4c46-8c67-fcf20d870dcc@panix.com>
+ <20250214162948.GJ3713119@black.fi.intel.com>
+ <661459dd-67d0-4e1c-bb28-9adf1417f660@panix.com>
+ <20250226084404.GM3713119@black.fi.intel.com> <Z77ak-4YsdAKXbHr@wunner.de>
+ <20250226091958.GN3713119@black.fi.intel.com> <Z8YKXC1IXYXctQrZ@wunner.de>
+ <20250304082314.GE3713119@black.fi.intel.com> <Z8nRI6xjGl3frMe5@wunner.de>
+Content-Language: en-US
+From: Kenneth Crudup <kenny@panix.com>
+In-Reply-To: <Z8nRI6xjGl3frMe5@wunner.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
---Sig_/mK1cTosHlnZ=mXhrNRKzvV6
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+On 3/6/25 08:45, Lukas Wunner wrote:
 
-On Fri, 7 Mar 2025 12:36:45 +1100 Stephen Rothwell <sfr@canb.auug.org.au> w=
-rote:
->
-> After merging the drm-msm tree, today's linux-next build (arm
-> multi_v7_defconfig) produced this warning:
->=20
-> drivers/gpu/drm/msm/disp/dpu1/dpu_hw_catalog.c:235:18: warning: 'wb2_form=
-ats_rgb' defined but not used [-Wunused-const-variable=3D]
->   235 | static const u32 wb2_formats_rgb[] =3D {
->       |                  ^~~~~~~~~~~~~~~
->=20
-> Introduced by commit
->=20
->   69d02730431e ("drm/msm/dpu: Support YUV formats on writeback for DPU 5.=
-x+")
+> Thanks for testing.  Would you mind giving the below a spin?
+> I've realized this can likely be solved in a much easier way:
 
-This became a build failure in the x86_64 allmodconfig build, so I have
-used the drm-msm tree from next-20250306 for today.
+OK, I've tried all the scenarios that had failures with your original 
+commit, and with your latest change I've not had any issues.
 
---=20
-Cheers,
-Stephen Rothwell
+ACK :)
 
---Sig_/mK1cTosHlnZ=mXhrNRKzvV6
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+-Kenny
 
------BEGIN PGP SIGNATURE-----
+-- 
+Kenneth R. Crudup / Sr. SW Engineer, Scott County Consulting, Orange 
+County CA
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmfKU74ACgkQAVBC80lX
-0GxxcwgAg2ZwkZK/QJU0T7xJ/9k95PElXBHwvf3Bfzf7pMr84/aaJSNv6UwHKisw
-OdpgqXyXUMIaOG6TKnG4F0qzj3mPvoXx3pbCmbmcK26MDFlZqaE8n6eHjZSMS/LL
-IpKbEFMe/Vw5a9lo7a4+L1tY9KQ0IG8MKIGHiYBOKRb3gjCYYxPa47ku63DbJ/9B
-cXXsHv/TbX/UBizFRLXXx50Nq55p5/mRuZV7r8iUA2RCwUA2kJ1L/IDi3vaUXrB0
-ZvWR8aN57AjhCDFGf1+dQptLihiSEx0sAY8kh/7ugQG4hk3NrVebXZZYPDrjplac
-uqaPqjxSSOh6ZpH+cwKJyCS5hwjOUg==
-=W5bx
------END PGP SIGNATURE-----
-
---Sig_/mK1cTosHlnZ=mXhrNRKzvV6--
 
