@@ -1,386 +1,160 @@
-Return-Path: <linux-kernel+bounces-551648-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-551650-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BFE03A56F23
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 18:36:19 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1B31DA56F27
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 18:36:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0B1411899911
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 17:36:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AC7BC1769FB
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 17:36:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D2592405EC;
-	Fri,  7 Mar 2025 17:36:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61F5724168D;
+	Fri,  7 Mar 2025 17:36:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="jPb4kpFX"
-Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="C2nI0Nx5"
+Received: from relay3-d.mail.gandi.net (relay3-d.mail.gandi.net [217.70.183.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D32A02940D
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Mar 2025 17:36:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B84D623F403;
+	Fri,  7 Mar 2025 17:36:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741368972; cv=none; b=M/gmnYV+8tFBhQ8ZWuS4aZylVO2nI11CGL4Tz1m3yTxy8bU4IslCCUWHMNDsngYt1KNo8dBOPodj1mtvWMvRV1AGh2gcArRgLrr9zJkoa93hTx8Y+adz1cy358EZ1kVOSqGLCNIZW88xAYKo19XUpNF6MRrv9GvecD3WcxmyVfw=
+	t=1741368980; cv=none; b=TaVnuPoucW2a/zhf39Pf30zD0X2VXykoA4OnCpqtYU24XVhhkhIiPiFQ0i8KpruiKPnXcFgGuxkT5WVjtSNFTy+6tbCX6JhvCL8YUKi6NuX4ObCqwavqfu1CMyBZitHR3TKynauRsIpY+Nad9aKiu2k+vqrZDId+wHo1jqU1aww=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741368972; c=relaxed/simple;
-	bh=Mj4I71vmGcViF0pS0YuRQq3nWpdZq7aHhc2Qk5J3d40=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=G6xJqdt8EdGT+BtfaIIDA5DBwLAJfp7CffbNoVoF4xqYwuUzHzkpCQvgZLjm64MyDJcNyR9IP66OXWC5IymbkY3Ulv2aGti5BsWq8qEoJUMumJALVcJCYRD7acYfzq0qJRekKfKlFU9jouhXl6+nPJwTHNbqTD4Fs9Oc0ffg/5Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=jPb4kpFX; arc=none smtp.client-ip=209.85.214.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-2240aad70f2so1215ad.0
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Mar 2025 09:36:10 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1741368970; x=1741973770; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=tMEdet0PWL/MVZ4rPjZVDjuPrMML8ZWDlWINUqqcvE4=;
-        b=jPb4kpFXrXlUWLRKlOkfWxaju+mvfQjk5sSe5tKDKoGTibFzQFyx6QQjViOIHkj6TY
-         BIOYyrGqPBSC7B+8KhDfUKBsf0arkbSjv1HOugR9k+6TzqK7CoBOezrLLePxzcLU+vMh
-         002Mbslgtb0vqpE+Z/Z8caw2mRv4GAWAKbGMPeCktrrYm0ELHD0OtKOkA9Nh0Up7OmT+
-         rUosblkWoz7eDay8zyY0I0eYEY840sZ3Puwg9JaS9XAos+D3bVnWyUpBjAmrKjE3jr3E
-         WNVcNV9pBMQMkxA7qFEZY2OVNhIl9o4BtkNU5+8vJDyMIB1TmbxVVY2i3pjyidEOp0p7
-         fxQQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741368970; x=1741973770;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=tMEdet0PWL/MVZ4rPjZVDjuPrMML8ZWDlWINUqqcvE4=;
-        b=QNm/bptFQeQXKy/sKPROiLNXbq8Cj8EwmMEhBTJ22bOZNaLQn21T/olCZ5cTHwzUM/
-         C+n3uSsCAXp8Qk5K7SH0c8HM0hvLb6YXDsljJyV8q0FueKczgXB/HjbZ65aBK8de8WtK
-         UjISmzJL9KAsVv3RKAHzsSO+jVgMkS8JTfdQsWMK/w8iY0Lh8rBzdaaKMh1aBSVLkCz4
-         GFXgV9IUlgnRkkkQfoGFhzibDx9Q6wroqKbfIa+x4VSp7weqcfK+c/FdIKv4XW52tYwK
-         kNJIfYQKSHyWEIIhezaPDxVGBDTYS09f+9BhHG57+UcgLhQv4nv0AwANsy5PQL9fl5Gd
-         nMiw==
-X-Forwarded-Encrypted: i=1; AJvYcCVnba4SnbwypYteerIqJetB3WVpI/G2unbGqeD/8J1Hj9X2xBufRcKA5nuld+HSGEXTbEbP7/0VJJyqbMM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxFMt6t5PWWv+aKvDzPYjQAVN6YGIeDJ8AgJF8E1GriW+DYam+D
-	vd8p4nY78oPNKxuwWRD/Olunt2PpSOjGL2lGA1VXhDnY5xeZqnKDz9iW63XwTHwPCSSwFElROme
-	Ked3JfyZZFem9Xj7LUwFX/txJMxqmRzMAcKGe
-X-Gm-Gg: ASbGnctuLKnQ/dOZlD1pA5DbH3Kn8MxpJDokFTTRv53yeP8WHOVhqEZuP1HlzNHY+wv
-	8TufRfuZsNdsd19SfolkwgR7seEX37TRy7ZBKW1VDxpbWIStvQv0LQkvK70MuI/k6FcPyXs/NMw
-	Ivn3Dv+nDcTu01fUOJnzzKgfrPqmI=
-X-Google-Smtp-Source: AGHT+IEq/ZSpGchbW6QkUEuvQtmGiuTU9hScEXfCaoH9cjYsbUB6FJ9XKRYhHxs9lBIsysXSUvWnKN7svpPRZY44sHk=
-X-Received: by 2002:a17:902:e5c1:b0:216:27f5:9dd7 with SMTP id
- d9443c01a7336-22434a42e02mr971865ad.11.1741368969927; Fri, 07 Mar 2025
- 09:36:09 -0800 (PST)
+	s=arc-20240116; t=1741368980; c=relaxed/simple;
+	bh=M5X7Sv+Rw5spgUv/ENrqLytpPLVwMEeHG2a7O//bROE=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=tsrskBp2B1i52v+OtX4Ql1ej4EcRXEFXTkNB7x9rTbySndKx0rvgMay12XP60WaQYNhOghEFeMju5BUeYnvYORFqRs+c3vIt6WNkkf5yjFn09SHPn1P8SdndenHs5evMZg69ndQIFJZ7V4VXZF+pQI9jdOE5gPSjKlQDP+CuMSM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=C2nI0Nx5; arc=none smtp.client-ip=217.70.183.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id B6A6A20479;
+	Fri,  7 Mar 2025 17:36:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1741368976;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=NSOuv+Cq2XOdE+gyQcZoQt6plaS3Tn4srk0koyuw3xY=;
+	b=C2nI0Nx5Z6Q8901KdfjeK9VWLkj478JDK5InVRnPWu5ZEfg4oG95OcdU7tgEv6EY4FXcRt
+	yuStCXhOxbTMKoxo8tnRmoAiIwoEwDfjSEg+koqkDExq1M4s4IOPjt1a5Fqqa+W+gYOZBX
+	LCBUSb902a4yxZyUPyFpsbdqPSfWTJvMjtQp9+DN5dTP05NduevSwB2ScChLGXc4vStiA3
+	oqQrFZOzouaniV+bNPwCvzzjEvzEJ0wtS19TOEStpbuMQcWfWstYcbVUpgtiNfMeH0j726
+	EqSaUK6MACFAayFFLAEurKmtiJAhPa2ErJ5fdt/4M/ZOANyJoD16kP5VJNyQ1Q==
+From: Maxime Chevallier <maxime.chevallier@bootlin.com>
+To: davem@davemloft.net,
+	Andrew Lunn <andrew@lunn.ch>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Eric Dumazet <edumazet@google.com>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Russell King <linux@armlinux.org.uk>,
+	Heiner Kallweit <hkallweit1@gmail.com>
+Cc: Maxime Chevallier <maxime.chevallier@bootlin.com>,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	thomas.petazzoni@bootlin.com,
+	linux-arm-kernel@lists.infradead.org,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Herve Codina <herve.codina@bootlin.com>,
+	Florian Fainelli <f.fainelli@gmail.com>,
+	Vladimir Oltean <vladimir.oltean@nxp.com>,
+	=?UTF-8?q?K=C3=B6ry=20Maincent?= <kory.maincent@bootlin.com>,
+	Oleksij Rempel <o.rempel@pengutronix.de>,
+	Simon Horman <horms@kernel.org>,
+	Romain Gantois <romain.gantois@bootlin.com>
+Subject: [PATCH net-next v5 01/13] net: ethtool: Export the link_mode_params definitions
+Date: Fri,  7 Mar 2025 18:35:58 +0100
+Message-ID: <20250307173611.129125-2-maxime.chevallier@bootlin.com>
+X-Mailer: git-send-email 2.48.1
+In-Reply-To: <20250307173611.129125-1-maxime.chevallier@bootlin.com>
+References: <20250307173611.129125-1-maxime.chevallier@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250304-james-perf-hybrid-list-v1-0-a363ffac283c@linaro.org>
- <20250304-james-perf-hybrid-list-v1-2-a363ffac283c@linaro.org>
- <CAP-5=fX+aSDLMDL3DMNCQ4tDuhaZPv-L6OgfOso3q5wf7anoGg@mail.gmail.com> <12da919e-5674-4b12-a51d-ed767cc0b1ac@linaro.org>
-In-Reply-To: <12da919e-5674-4b12-a51d-ed767cc0b1ac@linaro.org>
-From: Ian Rogers <irogers@google.com>
-Date: Fri, 7 Mar 2025 09:35:58 -0800
-X-Gm-Features: AQ5f1JpN3gZ_WNTTyzjs3l5NZ7XIwS4pn2agGlXg0KjzWSDb9xxl6tCUCJrs1U0
-Message-ID: <CAP-5=fWVw499hZ7WM7A+vUmxALX7M-kYXoEehQkv-fh6qHOoOg@mail.gmail.com>
-Subject: Re: [PATCH 2/3] perf list: Collapse similar events across PMUs
-To: James Clark <james.clark@linaro.org>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
-	Mark Rutland <mark.rutland@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Adrian Hunter <adrian.hunter@intel.com>, Robin Murphy <robin.murphy@arm.com>, 
-	Leo Yan <leo.yan@arm.com>, linux-perf-users@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdduudduvdekucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvfevufffkffojghfggfgsedtkeertdertddtnecuhfhrohhmpeforgigihhmvgcuvehhvghvrghllhhivghruceomhgrgihimhgvrdgthhgvvhgrlhhlihgvrhessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepveegtdffleffleevueellefgjeefvedvjefhheegfefgffdvfeetgeevudetffdtnecukfhppedvrgdtudemtggsudelmeekugegtgemlehftddtmegstgdvudemkeekleelmeehgedttgemvgehlegvnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepvdgrtddumegtsgduleemkegugegtmeelfhdttdemsggtvddumeekkeelleemheegtdgtmegvheelvgdphhgvlhhopehfvgguohhrrgdrhhhomhgvpdhmrghilhhfrhhomhepmhgrgihimhgvrdgthhgvvhgrlhhlihgvrhessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepvddtpdhrtghpthhtohepuggrvhgvmhesuggrvhgvmhhlohhfthdrnhgvthdprhgtphhtthhopegrnhgurhgvfieslhhunhhnrdgthhdprhgtphhtthhopehkuhgsrgeskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepvgguuhhmr
+ giivghtsehgohhoghhlvgdrtghomhdprhgtphhtthhopehprggsvghnihesrhgvughhrghtrdgtohhmpdhrtghpthhtoheplhhinhhugiesrghrmhhlihhnuhigrdhorhhgrdhukhdprhgtphhtthhopehhkhgrlhhlfigvihhtudesghhmrghilhdrtghomhdprhgtphhtthhopehmrgigihhmvgdrtghhvghvrghllhhivghrsegsohhothhlihhnrdgtohhm
+X-GND-Sasl: maxime.chevallier@bootlin.com
 
-On Fri, Mar 7, 2025 at 6:08=E2=80=AFAM James Clark <james.clark@linaro.org>=
- wrote:
->
->
->
-> On 05/03/2025 9:40 pm, Ian Rogers wrote:
-> > On Tue, Mar 4, 2025 at 5:50=E2=80=AFAM James Clark <james.clark@linaro.=
-org> wrote:
-> >>
-> >> Instead of showing multiple line items with the same event name and
-> >> description, show a single line and concatenate all PMUs that this
-> >> event can belong to.
-> >>
-> >> Don't do it for json output. Machine readable output doesn't need to b=
-e
-> >> minimized, and changing the "Unit" field to a list type would break
-> >> backwards compatibility.
-> >>
-> >> Before:
-> >>   $ perf list -v
-> >>   ...
-> >>   br_indirect_spec
-> >>         [Branch speculatively executed,indirect branch. Unit: armv8_co=
-rtex_a53]
-> >>   br_indirect_spec
-> >>         [Branch speculatively executed,indirect branch. Unit: armv8_co=
-rtex_a57]
-> >>
-> >> After:
-> >>
-> >>   $ perf list -v
-> >>   ...
-> >>   br_indirect_spec
-> >>         [Branch speculatively executed,indirect branch. Unit: armv8_co=
-rtex_a53,armv8_cortex_a57]
-> >>
-> >> Signed-off-by: James Clark <james.clark@linaro.org>
-> >> ---
-> >>   tools/perf/builtin-list.c      |  2 ++
-> >>   tools/perf/util/pmus.c         | 75 ++++++++++++++++++++++++++++++++=
-+++++-----
-> >>   tools/perf/util/print-events.h |  1 +
-> >>   3 files changed, 70 insertions(+), 8 deletions(-)
-> >>
-> >> diff --git a/tools/perf/builtin-list.c b/tools/perf/builtin-list.c
-> >> index fed482adb039..aacd7beae2a0 100644
-> >> --- a/tools/perf/builtin-list.c
-> >> +++ b/tools/perf/builtin-list.c
-> >> @@ -516,6 +516,7 @@ int cmd_list(int argc, const char **argv)
-> >>                  .print_event =3D default_print_event,
-> >>                  .print_metric =3D default_print_metric,
-> >>                  .skip_duplicate_pmus =3D default_skip_duplicate_pmus,
-> >> +               .collapse_events =3D true
-> >
-> > So collapse_events is put in the callbacks but isn't a callback. I
-> > think skipping duplicates and collapsing are the same thing, I'd
-> > prefer it if there weren't two terms for the same thing. If you prefer
-> > collapsing as a name then default_skip_duplicate_pmus can be
-> > default_collapse_pmus.
-> >
->
-> I can use the existing callback and rename it. That does have the effect
-> of disabling this behavior in verbose mode which may be useful or may be
-> unexpected to some people. But it seems pretty 50/50 so fewer callbacks
-> are probably better.
->
-> >>          };
-> >>          const char *cputype =3D NULL;
-> >>          const char *unit_name =3D NULL;
-> >> @@ -574,6 +575,7 @@ int cmd_list(int argc, const char **argv)
-> >>                          .print_event =3D json_print_event,
-> >>                          .print_metric =3D json_print_metric,
-> >>                          .skip_duplicate_pmus =3D json_skip_duplicate_=
-pmus,
-> >> +                       .collapse_events =3D false
-> >>                  };
-> >>                  ps =3D &json_ps;
-> >>          } else {
-> >> diff --git a/tools/perf/util/pmus.c b/tools/perf/util/pmus.c
-> >> index 4d60bac2d2b9..cb1b14ade25b 100644
-> >> --- a/tools/perf/util/pmus.c
-> >> +++ b/tools/perf/util/pmus.c
-> >> @@ -453,17 +453,50 @@ static int cmp_sevent(const void *a, const void =
-*b)
-> >>          /* Order by PMU name. */
-> >>          if (as->pmu =3D=3D bs->pmu)
-> >>                  return 0;
-> >> -       return strcmp(as->pmu_name ?: "", bs->pmu_name ?: "");
-> >> +       ret =3D strcmp(as->pmu_name ?: "", bs->pmu_name ?: "");
-> >> +       if (ret)
-> >> +               return ret;
-> >> +
-> >> +       /* Order by remaining displayed fields for purposes of dedupli=
-cation later */
-> >> +       ret =3D strcmp(as->scale_unit ?: "", bs->scale_unit ?: "");
-> >> +       if (ret)
-> >> +               return ret;
-> >> +       ret =3D !!as->deprecated - !!bs->deprecated;
-> >> +       if (ret)
-> >> +               return ret;
-> >> +       ret =3D strcmp(as->desc ?: "", bs->desc ?: "");
-> >> +       if (ret)
-> >> +               return ret;
-> >> +       return strcmp(as->long_desc ?: "", bs->long_desc ?: "");
-> >>   }
-> >>
-> >> -static bool pmu_alias_is_duplicate(struct sevent *a, struct sevent *b=
-)
-> >> +enum dup_type {
-> >> +       UNIQUE,
-> >> +       DUPLICATE,
-> >> +       SAME_TEXT
-> >> +};
-> >> +
-> >> +static enum dup_type pmu_alias_duplicate_type(struct sevent *a, struc=
-t sevent *b)
-> >>   {
-> >>          /* Different names -> never duplicates */
-> >>          if (strcmp(a->name ?: "//", b->name ?: "//"))
-> >> -               return false;
-> >> +               return UNIQUE;
-> >> +
-> >> +       /* Duplicate PMU name and event name -> hide completely */
-> >> +       if (strcmp(a->pmu_name, b->pmu_name) =3D=3D 0)
-> >> +               return DUPLICATE;
-> >> +
-> >> +       /* Any other different display text -> not duplicate */
-> >> +       if (strcmp(a->topic ?: "", b->topic ?: "") ||
-> >> +           strcmp(a->scale_unit ?: "", b->scale_unit ?: "") ||
-> >> +           a->deprecated !=3D b->deprecated ||
-> >> +           strcmp(a->desc ?: "", b->desc ?: "") ||
-> >> +           strcmp(a->long_desc ?: "", b->long_desc ?: "")) {
-> >> +               return UNIQUE;
-> >> +       }
-> >>
-> >> -       /* Don't remove duplicates for different PMUs */
-> >> -       return strcmp(a->pmu_name, b->pmu_name) =3D=3D 0;
-> >> +       /* Same display text but different PMU -> collapse */
-> >> +       return SAME_TEXT;
-> >>   }
-> >>
-> >>   struct events_callback_state {
-> >> @@ -501,6 +534,21 @@ static int perf_pmus__print_pmu_events__callback(=
-void *vstate,
-> >>          return 0;
-> >>   }
-> >>
-> >> +static void concat_pmu_names(char *pmu_names, size_t size, const char=
- *a, const char *b)
-> >> +{
-> >> +       size_t len =3D strlen(pmu_names);
-> >> +       size_t added;
-> >> +
-> >> +       if (len)
-> >> +               added =3D snprintf(pmu_names + len, size - len, ",%s",=
- b);
-> >> +       else
-> >> +               added =3D snprintf(pmu_names, size, "%s,%s", a, b);
-> >> +
-> >> +       /* Truncate with ... */
-> >> +       if (added > 0 && added + len >=3D size)
-> >> +               sprintf(pmu_names + size - 4, "...");
-> >> +}
-> >> +
-> >>   void perf_pmus__print_pmu_events(const struct print_callbacks *print=
-_cb, void *print_state)
-> >>   {
-> >>          struct perf_pmu *pmu;
-> >> @@ -510,6 +558,7 @@ void perf_pmus__print_pmu_events(const struct prin=
-t_callbacks *print_cb, void *p
-> >>          struct events_callback_state state;
-> >>          bool skip_duplicate_pmus =3D print_cb->skip_duplicate_pmus(pr=
-int_state);
-> >>          struct perf_pmu *(*scan_fn)(struct perf_pmu *);
-> >> +       char pmu_names[128] =3D {0};
-> >>
-> >>          if (skip_duplicate_pmus)
-> >>                  scan_fn =3D perf_pmus__scan_skip_duplicates;
-> >> @@ -539,12 +588,21 @@ void perf_pmus__print_pmu_events(const struct pr=
-int_callbacks *print_cb, void *p
-> >>          qsort(aliases, len, sizeof(struct sevent), cmp_sevent);
-> >>          for (int j =3D 0; j < len; j++) {
-> >>                  /* Skip duplicates */
-> >> -               if (j < len - 1 && pmu_alias_is_duplicate(&aliases[j],=
- &aliases[j + 1]))
-> >> -                       goto free;
-> >> +               if (j < len - 1) {
-> >> +                       enum dup_type dt =3D pmu_alias_duplicate_type(=
-&aliases[j], &aliases[j + 1]);
-> >> +
-> >> +                       if (dt =3D=3D DUPLICATE) {
-> >> +                               goto free;
-> >> +                       } else if (print_cb->collapse_events && dt =3D=
-=3D SAME_TEXT) {
-> >> +                               concat_pmu_names(pmu_names, sizeof(pmu=
-_names),
-> >> +                                                aliases[j].pmu_name, =
-aliases[j+1].pmu_name);
-> >> +                               goto free;
-> >> +                       }
-> >> +               }
-> >
-> > I think a label called 'free' is a little unfortunate given the
-> > function called free.
-> > When I did things with sevent I was bringing over previous `perf list`
-> > code mainly so that the perf list output before and after the changes
-> > was identical. I wonder if this logic would be better placed in the
-> > callback like default_print_event which already maintains state
-> > (last_topic) to optionally print different things. This may better
-> > encapsulate the behavior rather than the logic being in the PMU code.
-> >
->
-> Yeah I can have a look at putting it in one of the callbacks. But in the
-> end builtin-list.c is the only user of perf_pmus__print_pmu_events()
-> anyway so makes you wonder if the whole thing can be moved to
-> builtin-list and open coded without the callbackyness.
+link_mode_params contains a lookup table of all 802.3 link modes that
+are currently supported with structured data about each mode's speed,
+duplex, number of lanes and mediums.
 
-I wanted to hide some of the innards of pmus, so I think that's the
-reason it is as it is. The whole `sevent` was pre-existing and
-maintained so that the output was the same.
+As a preparation for a port representation, export that table for the
+rest of the net stack to use.
 
-> >>
-> >>                  print_cb->print_event(print_state,
-> >>                                  aliases[j].topic,
-> >> -                               aliases[j].pmu_name,
-> >> +                               pmu_names[0] ? pmu_names : aliases[j].=
-pmu_name,
-> >>                                  aliases[j].name,
-> >>                                  aliases[j].alias,
-> >>                                  aliases[j].scale_unit,
-> >> @@ -553,6 +611,7 @@ void perf_pmus__print_pmu_events(const struct prin=
-t_callbacks *print_cb, void *p
-> >>                                  aliases[j].desc,
-> >>                                  aliases[j].long_desc,
-> >>                                  aliases[j].encoding_desc);
-> >
-> > The encoding_desc will have a PMU with the suffix removed as per
-> > skipping duplicates:
-> > https://web.git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-nex=
-t.git/tree/tools/perf/util/pmu.c?h=3Dperf-tools-next#n1954
-> > So I think something like:
-> > ```
-> >    br_mis_pred_retired
-> >         [Instruction architecturally executed,mispredicted branch. Unit=
-:
-> >          armv9_cortex_a510,armv9_cortex_a710]
-> > ```
-> > Would have an encoding of `armv9_cortex_a510/.../` without the a710
-> > encoding being present. That said, I'm not sure anyone cares :-)
-> >
-> > Thanks,
-> > Ian
-> >
->
-> Ah, in that case I'll disable it for --detailed as well as --json. I
-> could compare encoding_desc in pmu_alias_duplicate_type() but they'll
-> always be different because of the PMU name, so there's no point. And
-> displaying multiple encoding_descs would be fiddly too.
+Signed-off-by: Maxime Chevallier <maxime.chevallier@bootlin.com>
+---
+ include/linux/ethtool.h | 8 ++++++++
+ net/ethtool/common.c    | 1 +
+ net/ethtool/common.h    | 7 -------
+ 3 files changed, 9 insertions(+), 7 deletions(-)
 
-So I'd like not to have the encoding_desc removed. It is useful for
-debugging.. I meant by people not caring that the format of that
-string is under specified, so the PMU name not being 100% accurate
-likely doesn't affect people.
+diff --git a/include/linux/ethtool.h b/include/linux/ethtool.h
+index 7f222dccc7d1..8210ece94fa6 100644
+--- a/include/linux/ethtool.h
++++ b/include/linux/ethtool.h
+@@ -210,6 +210,14 @@ static inline u8 *ethtool_rxfh_context_key(struct ethtool_rxfh_context *ctx)
+ 
+ void ethtool_rxfh_context_lost(struct net_device *dev, u32 context_id);
+ 
++struct link_mode_info {
++	int                             speed;
++	u8                              lanes;
++	u8                              duplex;
++};
++
++extern const struct link_mode_info link_mode_params[];
++
+ /* declare a link mode bitmap */
+ #define __ETHTOOL_DECLARE_LINK_MODE_MASK(name)		\
+ 	DECLARE_BITMAP(name, __ETHTOOL_LINK_MODE_MASK_NBITS)
+diff --git a/net/ethtool/common.c b/net/ethtool/common.c
+index ac8b6107863e..c9d6302e88c9 100644
+--- a/net/ethtool/common.c
++++ b/net/ethtool/common.c
+@@ -423,6 +423,7 @@ const struct link_mode_info link_mode_params[] = {
+ 	__DEFINE_LINK_MODE_PARAMS(800000, VR4, Full),
+ };
+ static_assert(ARRAY_SIZE(link_mode_params) == __ETHTOOL_LINK_MODE_MASK_NBITS);
++EXPORT_SYMBOL_GPL(link_mode_params);
+ 
+ const char netif_msg_class_names[][ETH_GSTRING_LEN] = {
+ 	[NETIF_MSG_DRV_BIT]		= "drv",
+diff --git a/net/ethtool/common.h b/net/ethtool/common.h
+index a1088c2441d0..b4683d286a5a 100644
+--- a/net/ethtool/common.h
++++ b/net/ethtool/common.h
+@@ -15,12 +15,6 @@
+ #define __SOF_TIMESTAMPING_CNT (const_ilog2(SOF_TIMESTAMPING_LAST) + 1)
+ #define __HWTSTAMP_FLAG_CNT (const_ilog2(HWTSTAMP_FLAG_LAST) + 1)
+ 
+-struct link_mode_info {
+-	int				speed;
+-	u8				lanes;
+-	u8				duplex;
+-};
+-
+ struct genl_info;
+ struct hwtstamp_provider_desc;
+ 
+@@ -33,7 +27,6 @@ tunable_strings[__ETHTOOL_TUNABLE_COUNT][ETH_GSTRING_LEN];
+ extern const char
+ phy_tunable_strings[__ETHTOOL_PHY_TUNABLE_COUNT][ETH_GSTRING_LEN];
+ extern const char link_mode_names[][ETH_GSTRING_LEN];
+-extern const struct link_mode_info link_mode_params[];
+ extern const char netif_msg_class_names[][ETH_GSTRING_LEN];
+ extern const char wol_mode_names[][ETH_GSTRING_LEN];
+ extern const char sof_timestamping_names[][ETH_GSTRING_LEN];
+-- 
+2.48.1
 
-Thanks,
-Ian
-
-
-> >> +               pmu_names[0] =3D '\0';
-> >>   free:
-> >>                  zfree(&aliases[j].name);
-> >>                  zfree(&aliases[j].alias);
-> >> diff --git a/tools/perf/util/print-events.h b/tools/perf/util/print-ev=
-ents.h
-> >> index 445efa1636c1..e91f9f830a2a 100644
-> >> --- a/tools/perf/util/print-events.h
-> >> +++ b/tools/perf/util/print-events.h
-> >> @@ -27,6 +27,7 @@ struct print_callbacks {
-> >>                          const char *threshold,
-> >>                          const char *unit);
-> >>          bool (*skip_duplicate_pmus)(void *print_state);
-> >> +       bool collapse_events;
-> >>   };
-> >>
-> >>   /** Print all events, the default when no options are specified. */
-> >>
-> >> --
-> >> 2.34.1
-> >>
->
 
