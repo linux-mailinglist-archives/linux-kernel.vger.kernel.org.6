@@ -1,120 +1,117 @@
-Return-Path: <linux-kernel+bounces-551904-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-551905-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7DC97A572C8
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 21:11:28 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D8645A572CC
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 21:11:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D955D3B7267
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 20:11:09 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0E58D7A5D1C
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 20:10:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBBA52561C6;
-	Fri,  7 Mar 2025 20:11:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C8CE2561C7;
+	Fri,  7 Mar 2025 20:11:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="XfOStQ/I"
-Received: from mail-qk1-f181.google.com (mail-qk1-f181.google.com [209.85.222.181])
+	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="CfSYRyIR"
+Received: from mail-yb1-f226.google.com (mail-yb1-f226.google.com [209.85.219.226])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91A101A5B8C
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Mar 2025 20:11:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BE902561BD
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Mar 2025 20:11:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.226
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741378273; cv=none; b=kd0u/8i9ryMeiTi31TQF6GQ2kzI4xnam8a7fyuxvL7hbJkbhRqtxBGN4wePrHx5bNL/hGM0J+j1YU2Rpq0Buu67fDzdSIfP1+BJumY7CiGL+9A4OzzzXG2qJnWcwJ/Jr1wHy2+Nh6IiBPldaw+9LZ/xEvEq+b7yNWlbunpRJK3s=
+	t=1741378283; cv=none; b=m9OLUNpg2C+ZVQILdLK/gKx5grV7IHQSeOcJeYStv+QejlFA8DvHYaFWgww5FBYsXXIS1k4Jl/pBady6XYl2kGwuAA7vyo6MkXOMT92zdTgLHjxePR01TNgkahkYdMXMQOnFak1CRdgeh7yDWObGqDl/R8pAznUQO56lJvgCf0w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741378273; c=relaxed/simple;
-	bh=8mMyk1ulJwVyqgnppDDhKpfmvXF0Bc4Fw/7P5XU97/g=;
-	h=Date:Message-ID:MIME-Version:Content-Type:From:To:Cc:Subject:
-	 References:In-Reply-To; b=l/XiAto7E2rWeOsn3Q+vkqMevKoCZfMYmfBtjSWkk1X7eZvSWCc/qvRE2V5ImqjKmhMZP41JKaTBnn2G81PJbMsdGzuySrOU2GMX/ZRJSczrbrB/Bbt9fT2oKSRWfui8KVw5jJbj1EX/GBqJiUej+d1H2kCOgb/hpiuF81USL3s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=XfOStQ/I; arc=none smtp.client-ip=209.85.222.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
-Received: by mail-qk1-f181.google.com with SMTP id af79cd13be357-7c3d1664ed5so277677485a.2
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Mar 2025 12:11:11 -0800 (PST)
+	s=arc-20240116; t=1741378283; c=relaxed/simple;
+	bh=XnokswpRVUawxvrh0+H2EO37FE3w3hGAjLgWW05bx5c=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=m9MmGjzJWeYgyg/Cpzjb5/qAWB0mHbz2A/R3xYF/KjvI13mOXGrTvCvlelZmggVXnUO6C+y3t31c9EJg+WtVxJUV+fL2k1g9ACGdjCJbApxpICaT4FxO+WS211nl2+rCAM7kQhLBNlWvKz+xdnjOvZnqIUJ0JDs2NEeQ9YsUsEU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=CfSYRyIR; arc=none smtp.client-ip=209.85.219.226
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=purestorage.com
+Received: by mail-yb1-f226.google.com with SMTP id 3f1490d57ef6-e5ad75ca787so1961167276.0
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Mar 2025 12:11:20 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1741378270; x=1741983070; darn=vger.kernel.org;
-        h=in-reply-to:references:subject:cc:to:from:content-transfer-encoding
-         :mime-version:message-id:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=q78/HiWHJU/pFecas/YddCOoXzeJ1vsGLqv0kt0f1Vs=;
-        b=XfOStQ/IQBgHLs0DBQ03faY5Egd1dJT4aEYJePKvgj06hiFa1vryZ6ve29oF8j/CDf
-         nM14NvzrqCMIqaAhwzxaBiCsL5fyEPTvEqIgQkI+p5XgmYwdI4nV8SlbIxoglidRmocl
-         B0Hna8vUCkbq4wwdXFsfHLh2mJ4Y4xS6M0/sg0UQF2O10ABCgsoQYQd6krfjdMqmsdVZ
-         U69WmHBFKWCNPKUe/vH+nZWJErleT4dsETqnW6NRJt/wvqRQWmBfYaYnNrmlvGtnuQkg
-         php3LMJsptmoR4meZ3G+MG4JWsHa+lS7+maJAJ7zvNubMT7QfOu8gG62V1EmVTq3Pl8R
-         QVGQ==
+        d=purestorage.com; s=google2022; t=1741378279; x=1741983079; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=XnokswpRVUawxvrh0+H2EO37FE3w3hGAjLgWW05bx5c=;
+        b=CfSYRyIRM0jvy6C5rlcEtYOXSsnlv7OSvkQwANLjzG2JXhoMm29V4p54eVVBQaje+J
+         fWjH37Oz3gCjbNIjGSRJDd58FFpgoTDu4qHV0L/RSIeIm5t50TJc7cj8na9T0Js1Wx/J
+         WtGmHs0cgm5U8BMk1qViLwLSPXK3GwdvDgVDX3krXqKGT6Y0eP+Er1BZoBVCG6zajfT0
+         IfFmQE8wEa5aBolFsh6lsZbzpq8YMdrRelsbbiCep5cpxj1AIOdCVkld3PupzTZ4EYnO
+         in26eGJxEloLkalZNdVzOEeZtjcFo4jpIQbpDpfO3IE1KSw0IGC/rym+0ZZLVNwj9SPP
+         /QPg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741378270; x=1741983070;
-        h=in-reply-to:references:subject:cc:to:from:content-transfer-encoding
-         :mime-version:message-id:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=q78/HiWHJU/pFecas/YddCOoXzeJ1vsGLqv0kt0f1Vs=;
-        b=i2/VqZOr98CQCdtdRih089YCUYtT1vSJgW1blPfhQbH00QYbjjZCPwHSysgMxcPWSZ
-         yLt7KrRfyQk5XHhuctZ736JRDk45qec58p4S1snMZYgZQNmSXEuFIp5u5yskHdaA4Spm
-         PjMtAbwXV4+kHaYMBoug9bfUTGmd9F8y+a6jgfhMQTJgTex/EurHI005ynNkYUexxM4G
-         jkHB72bMBrAlqt3pOJny0hfU6l5KfUrKIsQI82M5VM6q6A2H7vzlskyOhtPMnnmdVp56
-         eV27UrRByCJrifLLfutWhbS9KWKG64yYt+W+4uDmcoy9TNTZtEImhrCVVvmIY4ZfunNP
-         uKBQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUSxb3gh5GgcNb6pIwblb4O9IO03bY2yOWZ1I2DCagvnXwxLLXPQm0FOXQrgDFxZ/+WR6VdEqj2XL7/T2c=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwFLodqL36AozsSwtBaYxsA9a7Vff9Qq0hC+0sbb2j0dfS30RBo
-	cxLaMgRK1Pa9wUi4FsFZkJ8bbKMZCWU3e+G5yw0vrmjkKJfD1gkOtTynjtnr/w==
-X-Gm-Gg: ASbGncv2UpdO69HXPcDCI0zSkf6yk+V0M4oS0RUqUZKgkGhMtbaQmrnEdEtVe29NQrI
-	9atpKYEqOJE7zrHp5VY02VpSd83miiVagd/j+2Mc+8Nyy75lIPLhxC1UUYvZaufZM9ljHnpL42V
-	YIMEcgUNg8e0Js95/TTbA1B6bvv+BUgtJiBMo4CpXCn7phmdOXyU0L7CTd8U74mh7ZERyDE3re4
-	rMAZrd8vz6rBatPCGqaaU/TvekanDJYyO7uAD3XT0dLi62ahlBkoFtpi0BrpxwXT1h8tKOOkKdo
-	/BhBd/naEStBPtkcBI3dKhTp7nJSmfY9xEX9JFhxAQKZjwaTfPo/WrpVucRh0adCQK0F7odWb0i
-	eysHUBIWssUHmjg==
-X-Google-Smtp-Source: AGHT+IFigSgioC6qGGcWPMc1V2MMvwUklhtlL/Nr0hqqWle0uIyyD/88acNfu9IOe8cY2IJGlAOOrQ==
-X-Received: by 2002:a05:620a:1b84:b0:7c3:cd38:9be1 with SMTP id af79cd13be357-7c4e6193e60mr760431985a.48.1741378270458;
-        Fri, 07 Mar 2025 12:11:10 -0800 (PST)
-Received: from localhost (pool-71-126-255-178.bstnma.fios.verizon.net. [71.126.255.178])
-        by smtp.gmail.com with UTF8SMTPSA id af79cd13be357-7c3e5500015sm280557185a.85.2025.03.07.12.11.09
+        d=1e100.net; s=20230601; t=1741378279; x=1741983079;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=XnokswpRVUawxvrh0+H2EO37FE3w3hGAjLgWW05bx5c=;
+        b=VBEILlS/3Ti6G9GSiviUuOAfPuXo0ZgqzhQ40+c8Y9guWHAGXcQQlxWBpytv48NmRj
+         l1PgI0q7IDIIj7iu+5sU8bCUSlxlWhZhb3OaDH+Gp8AogxbzTtsgudeyPHEb9mbaTM0y
+         /H81DEDDGW4e+87aXpYJ9S+2Bmc2oZ4CG8xzuHtXY9tT1M9RYKLQyf7RF2dD8+3/PwpZ
+         50zVMsZdPuUMf3oMoguTWIGWgqejIekzO0Icx3KLN8n+kC0Ch19w/tWdf2+xv3VfEIXY
+         4/RqNWeoapgvD8gngZ/YskdlFB1szjvmcO+F2Yu08o/+iRtWdv0l6oBjK95SgKdJiId9
+         Qjxw==
+X-Forwarded-Encrypted: i=1; AJvYcCWna8W/yEw9PEFEbZwscndgC0VUOB7naUnj8EryBDUGIjhaIbr8z8BGcE0eSYtBU+cC/qUrHIhuiuQ4Xmg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxDUST2mNhiEklKMxFZI6xRDOKisXpQW86qr7RwEH3jYvAW7fI3
+	t4jh+hznxSPDLaJ97hDFrTQgNjA3WHWIyl25EyECiYG3E74iiw7pE3ib3pRjnufgZuKkWUOz2zT
+	kljJQr2zxspLEQIep6aYeqppag8Mb0r1F
+X-Gm-Gg: ASbGncvtXdz7QlzV38r0WIEBFLMI3DHLrObE6QWw5OfRH0Onpivjd/Mjdr5yCsnOsvY
+	jQdXvAuO7Nz+2/hr42xicfzfs0ktHSrkX7TGLjJ0qIu5Kwk5vZYwttGZ7w50vBNKqWKRzEk1Wsx
+	peF52tYJgD55FYijCeMReVnZ/1paVJfMf3gRE2Z99m1zXL6i+yOXKLj8+aojMJJvIC/G86Yfn6x
+	S9Yzr9f5gZ6msKwoOzwF2Uu8VvnEwaGpDtI3bk/Ra+2iyCQcaxP++UFUrHzCFAi3GJDLE5hk/WL
+	IiyH2UNugKxRJbWDusT5A7iukUYHSz3+6rqsLUCK2GUiUTpMLA==
+X-Google-Smtp-Source: AGHT+IFVIC1dPB2oQzuEy2i1L1p+CBm3CNBs2IFDf0LbWaFMmjn30sMZygpeRyebFOscyIQ6uTQhXSytdw3F
+X-Received: by 2002:a05:6902:18c5:b0:e63:3e25:d71a with SMTP id 3f1490d57ef6-e636f7e8b1cmr1236822276.15.1741378279189;
+        Fri, 07 Mar 2025 12:11:19 -0800 (PST)
+Received: from c7-smtp-2023.dev.purestorage.com ([208.88.159.129])
+        by smtp-relay.gmail.com with ESMTPS id 3f1490d57ef6-e636dfd2009sm42439276.12.2025.03.07.12.11.18
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 07 Mar 2025 12:11:10 -0800 (PST)
-Date: Fri, 07 Mar 2025 15:11:09 -0500
-Message-ID: <c53b73fccbc24586776e9240a14dc6b3@paul-moore.com>
+        Fri, 07 Mar 2025 12:11:19 -0800 (PST)
+X-Relaying-Domain: purestorage.com
+Received: from dev-ushankar.dev.purestorage.com (dev-ushankar.dev.purestorage.com [10.7.70.36])
+	by c7-smtp-2023.dev.purestorage.com (Postfix) with ESMTP id 4B339340245;
+	Fri,  7 Mar 2025 13:11:18 -0700 (MST)
+Received: by dev-ushankar.dev.purestorage.com (Postfix, from userid 1557716368)
+	id 3F0D3E56FE8; Fri,  7 Mar 2025 13:11:18 -0700 (MST)
+Date: Fri, 7 Mar 2025 13:11:18 -0700
+From: Uday Shankar <ushankar@purestorage.com>
+To: Simon Horman <horms@kernel.org>
+Cc: Breno Leitao <leitao@debian.org>, Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+	=?utf-8?B?UmFmYcWCIE1pxYJlY2tp?= <rafal@milecki.pl>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Johannes Berg <johannes@sipsolutions.net>,
+	Jonathan Corbet <corbet@lwn.net>, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-wireless@vger.kernel.org,
+	linux-doc@vger.kernel.org
+Subject: Re: [PATCH net-next v5 2/2] netconsole: allow selection of egress
+ interface via MAC address
+Message-ID: <Z8tS5t+warQdwFTs@dev-ushankar.dev.purestorage.com>
+References: <20250220-netconsole-v5-0-4aeafa71debf@purestorage.com>
+ <20250220-netconsole-v5-2-4aeafa71debf@purestorage.com>
+ <20250225144035.GY1615191@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 
-Content-Type: text/plain; charset=UTF-8 
-Content-Transfer-Encoding: 8bit 
-X-Mailer: pstg-pwork:20250307_1437/pstg-lib:20250307_1437/pstg-pwork:20250307_1437
-From: Paul Moore <paul@paul-moore.com>
-To: =?UTF-8?q?Christian=20G=C3=B6ttsche?= <cgoettsche@seltendoof.de>, selinux@vger.kernel.org
-Cc: =?UTF-8?q?Christian=20G=C3=B6ttsche?= <cgzones@googlemail.com>, Stephen Smalley <stephen.smalley.work@gmail.com>, Ondrej Mosnacek <omosnace@redhat.com>, =?UTF-8?q?Thi=C3=A9baud=20Weksteen?= <tweek@google.com>, =?UTF-8?q?Bram=20Bonn=C3=A9?= <brambonne@google.com>, Casey Schaufler <casey@schaufler-ca.com>, Canfeng Guo <guocanfeng@uniontech.com>, GUO Zihua <guozihua@huawei.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] selinux: support wildcard network interface names
-References: <20250302154100.104746-1-cgoettsche@seltendoof.de>
-In-Reply-To: <20250302154100.104746-1-cgoettsche@seltendoof.de>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250225144035.GY1615191@kernel.org>
 
-On Mar  2, 2025 =?UTF-8?q?Christian=20G=C3=B6ttsche?= <cgoettsche@seltendoof.de> wrote:
-> 
-> Add support for wildcard matching of network interface names.  This is
-> useful for auto-generated interfaces, for example podman creates network
-> interfaces for containers with the naming scheme podman0, podman1,
-> podman2, ...
-> 
-> To maintain backward compatibility guard this feature with a new policy
-> capability 'netif_wildcard'.
-> 
-> Netifcon definitions are compared against in the order given by the
-> policy, so userspace tools should sort them in a reasonable order.
-> 
-> Signed-off-by: Christian Göttsche <cgzones@googlemail.com>
-> ---
-> v2: add policy capability netif_wildcard
-> ---
->  security/selinux/include/policycap.h       |  1 +
->  security/selinux/include/policycap_names.h |  1 +
->  security/selinux/include/security.h        |  8 +++++++-
->  security/selinux/ss/services.c             | 16 +++++++++++++---
->  4 files changed, 22 insertions(+), 4 deletions(-)
+On Tue, Feb 25, 2025 at 02:40:35PM +0000, Simon Horman wrote:
+> Reviewed-by: Simon Horman <horms@kernel.org>
 
-Looks good, merged into selinux/dev, thanks!
+Hey, since this has gotten quiet for a while, just wanted to confirm
+that there's no action needed from my end? Is this in the queue for
+net-next?
 
---
-paul-moore.com
 
