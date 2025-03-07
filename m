@@ -1,136 +1,119 @@
-Return-Path: <linux-kernel+bounces-552141-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-552142-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6BE41A57623
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 00:34:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9E81CA57627
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 00:34:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BBF38188F4D7
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 23:34:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 166B2188FD0D
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 23:34:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B72721DC99A;
-	Fri,  7 Mar 2025 23:34:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70F1420E6F2;
+	Fri,  7 Mar 2025 23:34:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OmJRIvCO"
-Received: from mail-yb1-f175.google.com (mail-yb1-f175.google.com [209.85.219.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="f9TNv5eE"
+Received: from relay8-d.mail.gandi.net (relay8-d.mail.gandi.net [217.70.183.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0DC733DF
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Mar 2025 23:34:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1831F1925AC;
+	Fri,  7 Mar 2025 23:34:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741390466; cv=none; b=S7/+/jF+Q94a+YyFkzuPjAZ1/mSmsB/mr4AkOPKUNbOYv3IIzJpnQMIpJmmqCR2dvv/88okPhGbZD8uSzaNq77UmGJFAwL6o4w+n1ToEijltnS/ivvfhILgW9WKgnrG6VBcOf1T9i1GIuiFzSc1ETWv8YYDnV7r/SkpmZmF9OSc=
+	t=1741390481; cv=none; b=aEFq7G+uyO3q9ZAuWpkgDzNAF/AGvELiLo2IPG5CofTQhbVIrU0R1m6sLGcGQKOeYQUJksuNPhkuKvi/X1TJJdRDDPjDEAlS0Bxp9eWZOCqwxiC2U29O6DRJ0HD2nGrGABrYFOkVwtfpNFnhFP3t6gEE4JowuhpKrjMUBwqp7JI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741390466; c=relaxed/simple;
-	bh=khm0+qfbUHp7BUp6ZvQjgUSVNMxzi2iLOG32cMl9I+Q=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Dxw7Bl1lA5BjgS0A3Z/1NZcIPCXG5TspFnC+zo/+sf8B2rPmk6lKkGTtUpRmnPv3GtHuyKQm2R2KsFoVV3ExkMr1HiY7ceMGvFpd6oLGd9JnLyVXHD5yNaKR0aagx8XmDzvkqieEVV+BgZM/GUjjZQzR6nVjkVWI8MtC+3jq5CE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OmJRIvCO; arc=none smtp.client-ip=209.85.219.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f175.google.com with SMTP id 3f1490d57ef6-e5ad75ca787so2088401276.0
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Mar 2025 15:34:24 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741390463; x=1741995263; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ItUIUWSkaBDo4gvOHQAaaSasVOjEOP8U9MmMhIViMDk=;
-        b=OmJRIvCO4DFzcJsTfGSkCUTQ70Ww+GGQnJyh4LsIS8WMmnGf7K74CHTyooriX1lvRm
-         R6cqJxhDX/Rju3j+BzVWve0ykx0FOpX9sMYVj2NQte1fmYQVKBSlqj5eFwGpqlRwvtY6
-         9qY9la2zHJXsgjuUQxW9lMEVcFsBRvAcer0o18iI1IDd7WVEn6yL1kzcFRO4vsuJGZWr
-         YWww+MbZ0HgaOKNIRCHrAxKdtW2IxOsMiMFm/96dBWcJfYJPj7tNLpNPWQidm0ZdJZSE
-         mDAROlLPhyOioqleAE/dLejXO12yplywpR4X3D78TfPoaWWliw6EqQ2uFQSXalVw/Uxk
-         l/aA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741390463; x=1741995263;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ItUIUWSkaBDo4gvOHQAaaSasVOjEOP8U9MmMhIViMDk=;
-        b=izrYDe8x/J/9dFqoBl56xgW9wtOVceegPr/0C6FPnliaCPrp1LDjfDG13fZF69KC8u
-         eeQi5LYs+0RxGqw8aLZLwJS6Nt8SsIs/8IbQIHOMo41G2Mv/RDot45LDY9Fs7S5Xi9Ws
-         fTmOpD3c+Rb+92jimrJJPlw8+9mHH8+qM+3kkFsbXuiZ5+oW9rV0jErOPI//lGu06peA
-         V3mOMO1J0q+4XUZ4qlMKpnxowPqNX2AtuQUqv7mXpWorrXqqmHpKQRGZKFacF72nov6w
-         s25XF1MItxuwGcSwsRiylPxBFUMEzs9Gl5NTXizvZHwJ7ztI0fG8nOiTkjhC8lY8F7YN
-         TU1A==
-X-Forwarded-Encrypted: i=1; AJvYcCWqS6g6bL6qihgqb+K9r8LOtxLYk/gMLwLvjxylRWNmkZkcICm7ig6oRIADmArbzMTeQDzb+FuBd1BmFvc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzlnpCinceDp0tXd/7s0Ts1XuP4XHWhU7Zyp25WL8T9lYXZt8HS
-	Ojka1NWSeu6K10p61MnTbmdYvJzPrbGakcLmfkiFx9zY0w3BPdVq+uTaGA==
-X-Gm-Gg: ASbGnctLjPmJ/wvGToc9xfsJWKK0P/jnh1w4QWpUOvlW+9kef3nqn3/1hTf9+zG+H7f
-	gBiL5ZQYGNnbE0CR3BOT/YS8UInA6t3/FAWK87P7lEJj4JxZyBRhBna5ZyWdThXJYVMntbX9naC
-	OzUXZFMO5/8VfrurEDzwrpAcNU4fEWVfrywHPtir9dBSBSx+hDwF7Zd7Fbk/ReEmEuD+zAPhB9P
-	jdYfCnDDJ13fgIQCiIy6EbuKgyvzSh1EhkHDjtnXPV1WPLEMIagqVGbAte5wDWb2djTHLmGc/R4
-	JMZhsRRMnbZcUR4O3x7PnOpPR9Odgr4soAg=
-X-Google-Smtp-Source: AGHT+IGtiAG5HzVRcSvrO3fKhko8Jdkv2p32kH0pPlw0M3D/fuxVWpiVLIKS8UEHrS2CiYvlw8wsGg==
-X-Received: by 2002:a05:6902:238a:b0:e63:41cf:b600 with SMTP id 3f1490d57ef6-e636f818e5fmr2142208276.24.1741390463532;
-        Fri, 07 Mar 2025 15:34:23 -0800 (PST)
-Received: from localhost ([2a03:2880:25ff:6::])
-        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-e634b8e8ff1sm1049120276.40.2025.03.07.15.34.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 07 Mar 2025 15:34:23 -0800 (PST)
-From: Nhat Pham <nphamcs@gmail.com>
-To: akpm@linux-foundation.org
-Cc: hannes@cmpxchg.org,
-	yosryahmed@google.com,
-	yosry.ahmed@linux.dev,
-	chengming.zhou@linux.dev,
-	linux-mm@kvack.org,
-	kernel-team@meta.com,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] page_io: return proper error codes for swap_read_folio_zeromap() (fix)
-Date: Fri,  7 Mar 2025 15:34:22 -0800
-Message-ID: <20250307233422.658954-1-nphamcs@gmail.com>
-X-Mailer: git-send-email 2.43.5
-In-Reply-To: <20250306230015.1456794-1-nphamcs@gmail.com>
-References: <20250306230015.1456794-1-nphamcs@gmail.com>
+	s=arc-20240116; t=1741390481; c=relaxed/simple;
+	bh=kKh3XN4Srdg6CtNs5pzgXD8hxt/NvDuNA+VDK3Ebwe8=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=NsPGM8VzM5PzhcpM9O8R+OnY7HX6rxpgieBYmVzIYCtubuzRsYzSCA4dAks9PxtDPxZVKAMgZtKrLUNWsaJe2rh+zbPCnxpop/Bg8wMPSBLAfZLszjWX5zanKPE6hDCuF6a/oZvc94n/Up06+CQ1SdbZAFoDyJeBemuqmIdyIT8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=f9TNv5eE; arc=none smtp.client-ip=217.70.183.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 42F0F42FF4;
+	Fri,  7 Mar 2025 23:34:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1741390470;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ydp6do/YmlCcdU444Z/VCOeLnRiEL8f6oOoQBqEHKHw=;
+	b=f9TNv5eEBJQERSONNPIXE86lFBWD77yGJ0nfLkaPUyNuIH6zkHG/Xwkpa6VsAb4Q8S+WXq
+	9t8VWk5F3hSznCwvIsppnG35PdvPLucURj1+RITr+Bi55fj0IqNMTk/p67sOrbKOwOVPmk
+	yTdHYG7FXmt4EGD7CgJPRbD74ll4O8OLUieXDg9tvxCenxIIx1NYsT/O8l1qpNNNAD0viL
+	ke1iM91BoEq61FbAJYzrC4sa1gHMDh7Y8USPTJEDEqAE0umO6zs6MI4GJpw0C+VHcX+b3h
+	P51EWslCVh/NJMFZ6QDK9CvZS8jN1vdJFcsWHa6NdVw6LhaqiIUF5tjvHCVosg==
+Date: Sat, 8 Mar 2025 00:34:25 +0100
+From: Luca Ceresoli <luca.ceresoli@bootlin.com>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Daniel Lezcano
+ <daniel.lezcano@linaro.org>, Zhang Rui <rui.zhang@intel.com>, Lukasz Luba
+ <lukasz.luba@arm.com>, Florian Fainelli <florian.fainelli@broadcom.com>,
+ Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
+ Broadcom internal kernel review list
+ <bcm-kernel-feedback-list@broadcom.com>, Petr Mladek <pmladek@suse.com>,
+ Steven Rostedt <rostedt@goodmis.org>, Rasmus Villemoes
+ <linux@rasmusvillemoes.dk>, Sergey Senozhatsky <senozhatsky@chromium.org>,
+ Jonathan Corbet <corbet@lwn.net>, Andrew Morton
+ <akpm@linux-foundation.org>, Thomas Petazzoni
+ <thomas.petazzoni@bootlin.com>, Michael Turquette
+ <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Geert
+ Uytterhoeven <geert+renesas@glider.be>, Liu Ying <victor.liu@nxp.com>,
+ linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
+ linux-rpi-kernel@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org
+Subject: Re: [PATCH 2/2] vsprintf: remove redundant and unused %pCn format
+ specifier
+Message-ID: <20250308003425.7b89bfb6@booty>
+In-Reply-To: <Z8sqJhbqEBla_Ch7@smile.fi.intel.com>
+References: <20250307-vsprintf-pcn-v1-0-df0b2ccf610f@bootlin.com>
+	<20250307-vsprintf-pcn-v1-2-df0b2ccf610f@bootlin.com>
+	<Z8sqJhbqEBla_Ch7@smile.fi.intel.com>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdduudduleelucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpeffhffvvefukfgjfhhoofggtgfgsehtjeertdertddvnecuhfhrohhmpefnuhgtrgcuvegvrhgvshholhhiuceolhhutggrrdgtvghrvghsohhlihessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepgeelffefgfehhfdtvdefueefieevkefggfelkeeiudetkeektedvhedukefgvddvnecuffhomhgrihhnpegsohhothhlihhnrdgtohhmnecukfhppedvrgdtvdemieejtdemvddtvddtmegvrgdtudemrgegiedvmedusgguugemledutddumedvleegfhenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpedvrgdtvdemieejtdemvddtvddtmegvrgdtudemrgegiedvmedusgguugemledutddumedvleegfhdphhgvlhhopegsohhothihpdhmrghilhhfrhhomheplhhutggrrdgtvghrvghsohhlihessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepvdeipdhrtghpthhtoheprghnughrihihrdhshhgvvhgthhgvnhhkoheslhhinhhugidrihhnthgvlhdrtghomhdprhgtphhtthhopehrrghfrggvlheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepuggrnhhivghlrdhlv
+ giitggrnhhosehlihhnrghrohdrohhrghdprhgtphhtthhopehruhhirdiihhgrnhhgsehinhhtvghlrdgtohhmpdhrtghpthhtoheplhhukhgrshiirdhluhgsrgesrghrmhdrtghomhdprhgtphhtthhopehflhhorhhirghnrdhfrghinhgvlhhlihessghrohgruggtohhmrdgtohhmpdhrtghpthhtoheprhhjuhhisegsrhhorggutghomhdrtghomhdprhgtphhtthhopehssghrrghnuggvnhessghrohgruggtohhmrdgtohhm
+X-GND-Sasl: luca.ceresoli@bootlin.com
 
-Fix the comments for swap_read_folio_zeromap().
+Hello Andy,
 
-Suggested-by: Yosry Ahmed <yosry.ahmed@linux.dev>
-Signed-off-by: Nhat Pham <nphamcs@gmail.com>
----
- mm/page_io.c | 10 ++--------
- 1 file changed, 2 insertions(+), 8 deletions(-)
+On Fri, 7 Mar 2025 19:17:26 +0200
+Andy Shevchenko <andriy.shevchenko@linux.intel.com> wrote:
 
-diff --git a/mm/page_io.c b/mm/page_io.c
-index 48ed1e810392..30ec132c801b 100644
---- a/mm/page_io.c
-+++ b/mm/page_io.c
-@@ -521,9 +521,8 @@ static void sio_read_complete(struct kiocb *iocb, long ret)
-  *
-  *  -ENOENT: the folio is entirely not zeromapped. The folio remains locked.
-  *
-- *  -EINVAL: some of the subpages in the folio are zeromaped, but not all of
-- *  them. This is an error because we don't currently support a large folio
-- *  that is partially in the zeromap. The folio is unlocked, but NOT marked
-+ *  -EINVAL: The folio is partially in the zeromap, which is not
-+ *  currently supported. The folio is unlocked, but NOT marked
-  *  up-to-date, so that an IO error is emitted (e.g. do_swap_page() will
-  *  sigbus).
-  */
-@@ -533,11 +532,6 @@ static int swap_read_folio_zeromap(struct folio *folio)
- 	struct obj_cgroup *objcg;
- 	bool is_zeromap;
- 
--	/*
--	 * Swapping in a large folio that is partially in the zeromap is not
--	 * currently handled. Return -EINVAL without marking the folio uptodate so
--	 * that an IO error is emitted (e.g. do_swap_page() will sigbus).
--	 */
- 	if (WARN_ON_ONCE(swap_zeromap_batch(folio->swap, nr_pages,
- 			&is_zeromap) != nr_pages)) {
- 		folio_unlock(folio);
+> On Fri, Mar 07, 2025 at 12:19:08PM +0100, Luca Ceresoli wrote:
+> > %pC and %pCn print the same string, and commit 900cca294425 ("lib/vsprintf:
+> > add %pC{,n,r} format specifiers for clocks") introducing them does not
+> > clarify any intended difference. It can be assumed %pC is a default for
+> > %pCn as some other specifiers do, but not all are consistent with this
+> > policy. Moreover there is now no other suffix other than 'n', which makes a
+> > default not really useful.
+> > 
+> > All users in the kernel were using %pC except for one which has been
+> > converted. So now remove %pCn and all the unnecessary extra code and
+> > documentation.  
+> 
+> You seem forgot to update translation(s) of the documentation.
+
+I'm afraid I don't speak Chinese. :-)
+
+For this specific change I think I could come up with an approximation
+of it, but the both the docs and git log suggest this is not expected.
+
+Luca
+
 -- 
-2.43.5
-
+Luca Ceresoli, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
