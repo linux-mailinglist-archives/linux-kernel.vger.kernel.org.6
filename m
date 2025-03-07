@@ -1,113 +1,111 @@
-Return-Path: <linux-kernel+bounces-550411-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-550412-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C6D3A55F1E
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 05:04:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 74B44A55F36
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 05:09:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0BC6E1893EDC
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 04:04:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 368BC1894D6B
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 04:09:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 955D818E02A;
-	Fri,  7 Mar 2025 04:03:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C0D618FC65;
+	Fri,  7 Mar 2025 04:09:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="scdHHOoO"
-Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com [209.85.208.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="ZHAlsoVg"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A236157A48
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Mar 2025 04:03:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2385DF49;
+	Fri,  7 Mar 2025 04:09:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741320237; cv=none; b=LcP8Zq1Kh6k9CZR3uGDUWs4wwwzWsbuo+5WjSTFVLr54XtYzi6sNPSCV7paXj75RkEhK9hkFpBmmeSEzsi5VSAr5L6gnP82oIFDCBdagh3dUrThXxFUHGfLeOMZViUdvQMaT4KrWYY1zz372jK0jUpfaFApgvCPdohPBRUBbDJQ=
+	t=1741320561; cv=none; b=KCV6npI/rp1MTJiBz3ISv2relXyfc2VWv7Hd7R8CAA1W3pZW4yU0XJHCCtjsG7BQJq7cdh7Y2fm1qKO5er58OmKXRa5kV6Y+YIK1Lq1g6IypVgR5HiNagwmPs9K8WFAKjuY4PAopu0sffOQP6CmgLPN7JMfHZmcNY/VEFhOoK7o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741320237; c=relaxed/simple;
-	bh=IB0b27UAz8bwJMlHSb6ikfeP9mwsthfyQDSwmR3e5BI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Q0By+wQ3sVEDMiQ6GwpTlIorQsfPmPsROuyxuw/uc+1nr/vP2wgAe4fKRS0jw+pgcqQ9eQBpS5T/AttnqD/0a0Q/qTzt599LJ0TGAfw38nCaa9f6szd9ULhf5lkJcpxeuNY/jgE2LbTYydm+jSKHw1ioaJK7zsXXDdHZn5RyYrM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=scdHHOoO; arc=none smtp.client-ip=209.85.208.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-30beedb99c9so10612481fa.3
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Mar 2025 20:03:54 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1741320233; x=1741925033; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=q559lQVO0eqbcaMdE1cepZ7h+gw822oPb1VcWyT+D3k=;
-        b=scdHHOoOTnqIusmPxjXSEq/TEvuK2fKlP88lP9wMgyu3IhKLApALt+kfhgypJOub6f
-         VynUcRSwJ9UfXXXLWLTexIOOQkV7craFixtEskid2ZgibB6VlA+nRRrzsZCbbT8QVXn8
-         teUlEk5A4yKkIXMxkNO8vor3jeWhKQtf9qqVFO2e0pHziugWcMYIW0HZMy9tY6xSkXfN
-         7qJHkS2BK9fcBHHcQjJDN658KZOa6lEayXtLvQ+9DQjD/R9YDZuHYu1JphIdK0Kx8lR4
-         BWc1Tcy9ol/Mv5lA1HGrdpwNxtryJejwWfzvSlpxY+yFVoaja5jgl6+ZszJjRmp0Qi7u
-         sEoQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741320233; x=1741925033;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=q559lQVO0eqbcaMdE1cepZ7h+gw822oPb1VcWyT+D3k=;
-        b=W9ePxtNgPEQjNPElmACwadsK2Hie2ndavuQBAUbvNPmDE2XM6N82ngKG6703pG7FY0
-         5IO5So0GWf7LqO7qIsf58fEAGjazhECPawW9GJvYj36oltHWN6mOeUaUNTdCGymWMAkF
-         TmSI0xMwusH9OeRVkxKYPt5zsPH20zY1ikAEtQ5Ml9NgCeKOqiZeh1STVlcqjHadRD7a
-         yR2vfQNEWtUQ0wJtfU5Ni3HpmxbhY6C+mnJubWg4Js0+6RE5iYCAWc2IWyHW+6EEDGUy
-         5wN0q8D43m+2P6BktQZkgrG2KnUnHByk4bc+AOb2igJaTr/ZRLiJRx6Vz/mPR9UTTHvk
-         brWg==
-X-Forwarded-Encrypted: i=1; AJvYcCUI2asiZeVVPazXU/EYgIVjFxdMMX7fR1Vgkw0OxA6sguijGw4Pr6S0TVByp1m8fD+m11qpA0Czg3ij8Is=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzTTiIB52Ob/CiGKacSr6b36ot4eRWH+/5vXUf2uG5Ud5QlnNIm
-	I30aCuSKluwbkAC8L8UKRibXPlQd4HOa38fZ9eybvdgVUeFJhS3gvuWEKIH9FkU=
-X-Gm-Gg: ASbGncutCAcANvCaYPBXwu95fM4T3lb+yJ0ZOQjHlSyhjDz4lUbgnhqgwTH2AmDJRYI
-	GCqwXNQNQwMyJGtG7FLXhMTMPMzFflvsM3VwiLLbA8qRRqDT69rq7Se2XURyFmldzQvN66Qy+yF
-	ndUHBsSnBl+cdWfMQ0twYuFmUSMB/Go5PPvuNlFXym+9zMZyKDjGvmRSOR20zP3JlOi7j2RPo3Z
-	QweD1yo8mcXlYPPwV8VlB1Z0pah8C8TxZDhw5atpN5gKJn79o2t0HjZRZXR1qvQYyaqE4IKcC4Q
-	fCZTeNwPlSrQ8ViT10CzMQx3LXII05wLURFzItkdaRazwaZbOKcTU5KEDw+J/Gb8IfBAJxMGJdX
-	E6sPZWHBxhxvC2rNPhnMoYz7u
-X-Google-Smtp-Source: AGHT+IFkU/H2JgQ+KzgwwZXcDnVmGrvz6WNb4Dvni6Bmcn4jgovRKWXORNDJCk42rS/+awsQtmG+NA==
-X-Received: by 2002:a05:6512:3b14:b0:545:2c2c:5802 with SMTP id 2adb3069b0e04-54990ec1da0mr569205e87.48.1741320233311;
-        Thu, 06 Mar 2025 20:03:53 -0800 (PST)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5498ae461edsm362946e87.38.2025.03.06.20.03.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 06 Mar 2025 20:03:52 -0800 (PST)
-Date: Fri, 7 Mar 2025 06:03:49 +0200
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Jiapeng Chong <jiapeng.chong@linux.alibaba.com>
-Cc: robdclark@gmail.com, quic_abhinavk@quicinc.com, sean@poorly.run, 
-	marijn.suijten@somainline.org, airlied@gmail.com, simona@ffwll.ch, 
-	linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, 
-	linux-kernel@vger.kernel.org, Abaci Robot <abaci@linux.alibaba.com>
-Subject: Re: [PATCH -next] drm/msm/dpu: Remove duplicate dpu_hw_cwb.h header
-Message-ID: <gs6zemh276kxuphyedsv445ujroazok6jq66mdljkrkd2f5fzf@zjumlvcebaix>
-References: <20250307015030.86282-1-jiapeng.chong@linux.alibaba.com>
+	s=arc-20240116; t=1741320561; c=relaxed/simple;
+	bh=vYNXxjTEA5P8TI6zuQI7bgTFrFFYpBZ5P49z2LAHFLI=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=tGx6UbjmUnISJhGQJOu10dAPlZSGi2OxtFu0P4kLTxRmhLFxOj8G6FFWr3pEIYZ5b2JHiyXoQFpWfWFWy1+uxbAyEK3Cw4HwCtnRijwE4vMI7oRUYqOptJi+HzCe8lYLWaMyZlv6MmEf61inmF6CiRg070zm/1i5xm5AsIBEqAY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=ZHAlsoVg; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 526LFcm5019600;
+	Fri, 7 Mar 2025 04:09:15 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=3myaz05gJUsn4Trep8ooUM
+	0g2cG7uUv7yvGPvMB7amE=; b=ZHAlsoVggCn7tpJS85kKQm4U8GwJhD4V17zsK6
+	ArgUy/cKolbYv1DpgTKXpFCI/VJTW/X60VcjpcYnHsKz4lnTZ6BAKnWqv+qSFZR5
+	edngswx1nDHRxzURyBly5ZIUg0MGgw1Uu8C5QBl7eG4qb+62LQ4AEpMibN1dVteO
+	27AjCet4lqiPrFFRkcg3DxaahklTaPHiQ3RLUJ7tgIYrQzvYfBkgKwI9H40ZQ7pu
+	K/8xpPwSiapYCqk1hkEqb0nVmvT+OkxdGVM3pFDwyqbKslkAntVvpO1EC3csk3/c
+	9uK0K8A3+mNxDsZl4Gp01nR7+o6OG+QFhvDraLdlTJyJv3sQ==
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 457kfbgtrr-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 07 Mar 2025 04:09:15 +0000 (GMT)
+Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
+	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 52749E7l008764
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 7 Mar 2025 04:09:14 GMT
+Received: from Z2-SFF-G9-MQ.ap.qualcomm.com (10.80.80.8) by
+ nalasex01c.na.qualcomm.com (10.47.97.35) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Thu, 6 Mar 2025 20:09:12 -0800
+From: Miaoqing Pan <quic_miaoqing@quicinc.com>
+To: <quic_jjohnson@quicinc.com>
+CC: <ath11k@lists.infradead.org>, <linux-wireless@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        Miaoqing Pan <quic_miaoqing@quicinc.com>
+Subject: [PATCH ath-next 0/2] wifi: ath11k: fix HTC rx insufficient length
+Date: Fri, 7 Mar 2025 12:08:46 +0800
+Message-ID: <20250307040848.3822788-1-quic_miaoqing@quicinc.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250307015030.86282-1-jiapeng.chong@linux.alibaba.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01c.na.qualcomm.com (10.47.97.35)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: mVe9xauhExAEdFDTJ0TbcDPp49n6uBCj
+X-Authority-Analysis: v=2.4 cv=D/e9KuRj c=1 sm=1 tr=0 ts=67ca716b cx=c_pps a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17 a=GEpy-HfZoHoA:10 a=Vs1iUdzkB0EA:10 a=VwQbUJbxAAAA:8 a=G9Sqsl_jvRD_TnvheR8A:9
+X-Proofpoint-GUID: mVe9xauhExAEdFDTJ0TbcDPp49n6uBCj
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-07_01,2025-03-06_04,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ phishscore=0 lowpriorityscore=0 spamscore=0 mlxscore=0 clxscore=1011
+ malwarescore=0 impostorscore=0 suspectscore=0 adultscore=0 bulkscore=0
+ mlxlogscore=649 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2502100000
+ definitions=main-2503070025
 
-On Fri, Mar 07, 2025 at 09:50:30AM +0800, Jiapeng Chong wrote:
-> ./drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c: dpu_hw_cwb.h is included more than once.
-> 
-> Reported-by: Abaci Robot <abaci@linux.alibaba.com>
-> Closes: https://bugzilla.openanolis.cn/show_bug.cgi?id=19239
-> Signed-off-by: Jiapeng Chong <jiapeng.chong@linux.alibaba.com>
-> ---
->  drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c | 1 -
->  1 file changed, 1 deletion(-)
-> 
+This series of patches is to address the issue reported in
+https://bugzilla.kernel.org/show_bug.cgi?id=218623.
 
-Also
+ath11k_pci 0006:01:00.0: HTC Rx: insufficient length, got 1488, expected 1492
+ath11k_pci 0006:01:00.0: HTC Rx: insufficient length, got 1460, expected 1484
 
-Fixes: dd331404ac7c ("drm/msm/dpu: Configure CWB in writeback encoder")
+Miaoqing Pan (2):
+  wifi: ath11k: add function to get next srng desc
+  wifi: ath11k: fix HTC rx insufficient length
+
+ drivers/net/wireless/ath/ath11k/ce.c   | 32 ++++++++++++++++++++------
+ drivers/net/wireless/ath/ath11k/core.h |  1 +
+ drivers/net/wireless/ath/ath11k/hal.c  | 24 +++++++++++--------
+ drivers/net/wireless/ath/ath11k/hal.h  |  3 ++-
+ 4 files changed, 42 insertions(+), 18 deletions(-)
 
 
+base-commit: 3148fc3cf193dbbd2e14eee59468a510a38bf604
 -- 
-With best wishes
-Dmitry
+2.25.1
+
 
