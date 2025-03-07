@@ -1,101 +1,116 @@
-Return-Path: <linux-kernel+bounces-551420-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-551421-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B75DA56C39
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 16:35:25 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E7CAA56C3C
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 16:35:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A5B2E1612EB
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 15:35:24 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1C65B7A2442
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 15:34:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9231321D3F8;
-	Fri,  7 Mar 2025 15:35:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BD9D21D3CD;
+	Fri,  7 Mar 2025 15:35:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="bGc5tA3K"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YfsqKkHU"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECAF121CC7C;
-	Fri,  7 Mar 2025 15:35:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0001121D002;
+	Fri,  7 Mar 2025 15:35:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741361714; cv=none; b=OyVS8ud72WRQMG6nAAydHM6YbqW5dAm4d4sEFaUUQ/EvrO1ad4VlywzVo3ZBPFxN3pG23i7sSJ08vwZM+MRcA3rEgP6q/9LJaOG/j6uoJT+b+IAUtkolqmuZJNoC2n8D01UFwC1n526kb//ct6BTHjLGwNaOWhNb0qSYdgxJ78I=
+	t=1741361730; cv=none; b=DZXjjl9ZZmxSimEihUHEzjR4d2qszQiDLaNcXMyXRNUyq0/Zt/LhqoA5SI7kwIz4jhNuwCT7S6AunhFER+8p8kJ7/dm/XpBWCTq1VZvETjZBuF5BeJ/5DgjJSFPxN2UoObsRq7X3k1sDvrGwIQaFZzU0w9+OX94JyupMNe6QUcs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741361714; c=relaxed/simple;
-	bh=zpDzNzMQTz7b7/qntlneyT/nKeNHRUPJIdqF4FdT5GM=;
+	s=arc-20240116; t=1741361730; c=relaxed/simple;
+	bh=+NBaiXMA7TB4yM9FUBKC0Vpf3PO8/vw0zeJ97JH5BWk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JSOTn3S7iXmk8EV/K/TD7CnUUBgPhwlYbmFXH5y9rLKnBhnqtgAWEVaaQZ7CvyTpARsrOyr8FQpgpZVvYrATy5yUqdBIdNlR+0jMtdvFtzD9rk8KWixWhQPfK2qM4UHiyaeI2CUKMwFcvyw/S/YL+yjTEyEDHn77aNcCfP7ZluI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=bGc5tA3K; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=hCshOJoEiJOSmt4EMGwGg+lny2/v+WdYh03qhKxiJ/0=; b=bGc5tA3KbdA/PPZAg53oSE+w3r
-	ha2dbU/dEeNSx02jKLsnXuahA6Xmpp5kKEUdJstHEMUxoPAg01ChRd7BB0fRaiIJWltp1vAvIkfnF
-	N+oRxqvu5c385AwEXQK7JM55jykYsSFxGxlDlVa+SocAjjRojhOdkO7bGbEvVQ/wkJDM=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1tqZj1-003B1F-RW; Fri, 07 Mar 2025 16:34:59 +0100
-Date: Fri, 7 Mar 2025 16:34:59 +0100
-From: Andrew Lunn <andrew@lunn.ch>
-To: Dimitri Fedrau <dima.fedrau@gmail.com>
-Cc: dimitri.fedrau@liebherr.com, Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	 Content-Type:Content-Disposition:In-Reply-To; b=UlviDtqt3JA/vjaOY6xkDb5+8yWDG+5MTyKZ/m+meIV4r9MXQIYMNRnwTUQHuywt7S6ydEi92fOWVfaaj5CHKKZ5AlxGFA15K0pGGKyJFNQRgDFV5+ck3l1Lc44QIENHbsMe5HaaBiK6A+LjVN1yFSETB1iAp+UP+mDpNQXpyG4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YfsqKkHU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 11B39C4CED1;
+	Fri,  7 Mar 2025 15:35:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741361729;
+	bh=+NBaiXMA7TB4yM9FUBKC0Vpf3PO8/vw0zeJ97JH5BWk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=YfsqKkHUjw9IIklBMftnuGiGHxcFvD4TS/2lzMv1w+m/F+mfT2YacH0ItyIeOhy1j
+	 ttKrUIYShf6jDDT0/2Gn6TZAxKgDS3b8rDJM5HQJ5Qjdv1vpwAewV11QbmQNtQ3Ziq
+	 m/wvq5J+qcXpWKyQumRts24nj7rvj90H9be4HdZoP3GgXWOvvJKRW60zsUqG3vewk4
+	 rtfGxEFN++FcbXk3EU8Ib3Ks8nKFgncADKPYJUJYsZxa2Ky1+TLCtAeYzYPucfCWZo
+	 AFYS3+2qgLOk5tBqBEH5tzvVfNQyhGvb8+w9a815//7j8oXcOcmpWA+PDIkq42gPRQ
+	 NFY/riNN7NoJQ==
+Date: Fri, 7 Mar 2025 15:35:24 +0000
+From: Conor Dooley <conor@kernel.org>
+To: Chukun Pan <amadeus@jmu.edu.cn>
+Cc: Heiko Stuebner <heiko@sntech.de>, Rob Herring <robh@kernel.org>,
 	Conor Dooley <conor+dt@kernel.org>,
-	Florian Fainelli <f.fainelli@gmail.com>, netdev@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next 0/3] net: phy: dp83822: Add support for changing
- the MAC series termination
-Message-ID: <d57aff5b-7d1d-43bf-95a1-ee90689f5ac0@lunn.ch>
-References: <20250307-dp83822-mac-impedance-v1-0-bdd85a759b45@liebherr.com>
- <6aee57d3-8657-44d6-ac21-9f443ca0924e@lunn.ch>
- <20250307142252.GA2326148@legfed1>
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <ukleinek@kernel.org>,
+	Jonas Karlman <jonas@kwiboo.se>, Yao Zi <ziyao@disroot.org>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-pwm@vger.kernel.org
+Subject: Re: [PATCH 1/2] dt-bindings: pwm: rockchip: Add rockchip,rk3528-pwm
+Message-ID: <20250307-paddle-zoology-89858b29061d@spud>
+References: <20250307120004.959980-1-amadeus@jmu.edu.cn>
+ <20250307120004.959980-2-amadeus@jmu.edu.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="/Afd+EhsTE5IatMg"
+Content-Disposition: inline
+In-Reply-To: <20250307120004.959980-2-amadeus@jmu.edu.cn>
+
+
+--/Afd+EhsTE5IatMg
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250307142252.GA2326148@legfed1>
+Content-Transfer-Encoding: quoted-printable
 
-> Should I add the proper description in the bindings ? Description of the
-> properties are somehow short. However will expand the description.
+On Fri, Mar 07, 2025 at 08:00:03PM +0800, Chukun Pan wrote:
+> Document pwm compatible for rk3528 which is fallback compatible
+> of rk3328-pwm group.
+>=20
+> Signed-off-by: Chukun Pan <amadeus@jmu.edu.cn>
 
-Yes, please expand the description. For well known concepts, we can
-keep the binding description short. But i would not consider this a
-well known concept, so we need to spell out in detail what it is.
+Acked-by: Conor Dooley <conor.dooley@microchip.com>
 
-My knowledge of transmission lines and termination is not so good....
+> ---
+>  Documentation/devicetree/bindings/pwm/pwm-rockchip.yaml | 1 +
+>  1 file changed, 1 insertion(+)
+>=20
+> diff --git a/Documentation/devicetree/bindings/pwm/pwm-rockchip.yaml b/Do=
+cumentation/devicetree/bindings/pwm/pwm-rockchip.yaml
+> index e4e1976c542d..c8cdfb723336 100644
+> --- a/Documentation/devicetree/bindings/pwm/pwm-rockchip.yaml
+> +++ b/Documentation/devicetree/bindings/pwm/pwm-rockchip.yaml
+> @@ -30,6 +30,7 @@ properties:
+>            - enum:
+>                - rockchip,px30-pwm
+>                - rockchip,rk3308-pwm
+> +              - rockchip,rk3528-pwm
+>                - rockchip,rk3562-pwm
+>                - rockchip,rk3568-pwm
+>                - rockchip,rk3588-pwm
+> --=20
+> 2.25.1
+>=20
 
-So this configures the resistor on the PHY outputs. Do PHY inputs also
-need termination resistors? Could there be PHYs which also allow such
-resistors to be configured? Are there use cases where you need
-asymmetric termination resistors?
+--/Afd+EhsTE5IatMg
+Content-Type: application/pgp-signature; name="signature.asc"
 
-My questions are trying to lead to an answer to your question:
+-----BEGIN PGP SIGNATURE-----
 
-> Should I rename then "mac-series-termination-ohms" to
-> "output-mac-series-termination-ohms" or similar ?
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZ8sSPAAKCRB4tDGHoIJi
+0m/eAP9rX1JDmngdihmkL/YjmxTR+sVxZMPjO2SZ0tmi4POUjQEAq56oMRBUG7s1
+0HAle8NRwAy5t4/NvjvcQoi/XxOk7Ak=
+=gUgZ
+-----END PGP SIGNATURE-----
 
-We should think about this from the general case, not one specific
-PHY, and ideally from thinking about the physics of termination.
-
-https://electronics.stackexchange.com/questions/524620/impedance-termination-of-marvell-phy
-
-This seems to suggest RGMII only has termination resistors at the
-outputs. So "mac-series-termination-ohms" would be O.K.
-
-	Andrew
+--/Afd+EhsTE5IatMg--
 
