@@ -1,145 +1,145 @@
-Return-Path: <linux-kernel+bounces-550913-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-550914-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 59339A565AB
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 11:48:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 77767A565B6
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 11:51:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4CB6A3B1F9F
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 10:47:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 660E83B17FD
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 10:51:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 601E220B7EF;
-	Fri,  7 Mar 2025 10:47:54 +0000 (UTC)
-Received: from mail115-69.sinamail.sina.com.cn (mail115-69.sinamail.sina.com.cn [218.30.115.69])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B03E4207653;
+	Fri,  7 Mar 2025 10:51:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="YTlJeiCl"
+Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0589502BE
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Mar 2025 10:47:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=218.30.115.69
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29E6A502BE
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Mar 2025 10:51:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741344474; cv=none; b=HyZGtlRBkaTguMlL/01blxxUYnFnFHrz9Ot5auDXE0K68HwJs6Y8wP8SUCyswrZVzTmdAmR+Bx7CvlRPu/dju1PgBqRQZkrxq3CCzV39bpY4Ro4gST1hgDE7+ygtEVGiYMgRe3CvgQJZm7of21yp1YTviyVDWYZjDKdZhlrp3F8=
+	t=1741344681; cv=none; b=aSSXSjHpDPlpbuoVbwvFL03jihJsXHFvo9uWmZiw37aXBXlKEt4ovHNwviqL3zbZaD7h9nJK/PWFyvpZvh/yvnxENivzWvy0yJuoxbx1drQfxeb/6o4fqH6Zcf4lsh04/AkBtS50ISG8P7lc2mmh7t5BGHCbVb8QIfZazcvxjGA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741344474; c=relaxed/simple;
-	bh=66LIJRgvtmb82m4Prv1VGMy3lyra4Xy0ff/krbhsFuM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=aTePhwTlruAUX/RGjuGU+GbkHUCMCUMWTRcTJJNCdpL3qZ3IBErKJIN3scPf1ebcDv7CkGLhJ6l/uFRYl5VLQtBlbjIFB7wdQU+/7CSCXW1YxnHi5rSjg/1Gal9eH1BY9p/v1vUta8jYsR20z4KObmLJFjudZ20cj7Kt6Pg1WfU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; arc=none smtp.client-ip=218.30.115.69
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
-X-SMAIL-HELO: localhost.localdomain
-Received: from unknown (HELO localhost.localdomain)([113.88.50.28])
-	by sina.com (10.185.250.22) with ESMTP
-	id 67CACEA60000032F; Fri, 7 Mar 2025 18:47:05 +0800 (CST)
-X-Sender: hdanton@sina.com
-X-Auth-ID: hdanton@sina.com
-Authentication-Results: sina.com;
-	 spf=none smtp.mailfrom=hdanton@sina.com;
-	 dkim=none header.i=none;
-	 dmarc=none action=none header.from=hdanton@sina.com
-X-SMAIL-MID: 2029257602334
-X-SMAIL-UIID: 6D67943474CD4499AA6E9DE897B1B042-20250307-184705-1
-From: Hillf Danton <hdanton@sina.com>
-To: K Prateek Nayak <kprateek.nayak@amd.com>
-Cc: Hillf Danton <hdanton@sina.com>,
-	Oleg Nesterov <oleg@redhat.com>,
-	Mateusz Guzik <mjguzik@gmail.com>,
-	"Sapkal, Swapnil" <swapnil.sapkal@amd.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	linux-fsdevel@vger.kernel.org,
+	s=arc-20240116; t=1741344681; c=relaxed/simple;
+	bh=mbH+eKDo1AWLls7XpyfZrXtxyYxrVqcJyi31q2Rb2a8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bp88vXvl0LgGS0fWa0LgYZbeavxqYF5b3MBrsOOdnHyeFPYrKx9+vbmAYtT7gnWCVR8jdYHNvU0MpAvws3rzFIPFHUsJPBbohV9if/m5VQI4VPsEJ8f9UAN1U6CUm624R4OFEM/9rljLplUC8B9shsa+gvafC+OMIzrA8pl9p00=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=YTlJeiCl; arc=none smtp.client-ip=209.85.167.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-54957f0c657so1958175e87.0
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Mar 2025 02:51:18 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1741344677; x=1741949477; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=CoJab6aQwdUmHv51fjpmCPB+nAKlS0NjVx82EWhJoYs=;
+        b=YTlJeiClQPN380eqwEE78u97GEz5yfjXblxDbYntyNckLoREsj0QbuRx1FuXtokz6B
+         Y4xvPoa4PI6jwCgcb6XkBZh729HEWAg4NMbWvR2T3+KCJ5MfHHDrOKpWA0TcWT6eimYU
+         UxZctz/XHtkVmh993M6sW4z2EoSSOCax1gPYOonjzcfz8OJjw0XjrH/7PQZjmV2HPSAo
+         yEQcXetqTn3Hvr9pjsdhzPcku9/qNFjXFPIl/fPi1Q1VWQX6Cem8N9CWxZQa4gO6EdPv
+         hf7BbXp5qoCbC/C8XY3LzsB6qkg8CA6Tao5h9QqmAMV/n6auP1nWqoDeJT+OJlC3R2V0
+         oHKA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741344677; x=1741949477;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=CoJab6aQwdUmHv51fjpmCPB+nAKlS0NjVx82EWhJoYs=;
+        b=i/U3uKAnL+Xle3Kzoe4IZAgWWm7y+mHjzPN68TIsk51ZotsXDmU45lLoAQtwzhBsIu
+         VKPpZ1cDlhouGPYB7ebxgDu2Pt1XUFEG3s0uiEJvqZ64mBSNOe8E/csUMVE5YAelEKPW
+         LfcWtWYmZja2tlUEEXnJfEh5dKHkbRFoWXs4YDqnmqN8LqbhuWXsIGZEaQBr87FpNbWf
+         wRUb9tK0LaNbZpfmZsURzZyZIXoucS6iGLVzVsSyJhbVIk84w0eEQ/ErHw70qx6dnCcl
+         GiwriC+rzUavIOAKTwgIv0mnI42tFW+XfZIXkOuLXcuQa2fee9P+boPd3doOjxw4L0BC
+         e5Gw==
+X-Forwarded-Encrypted: i=1; AJvYcCWw66qCAdGxc1+sQWOKLmJkr44QOPc9HSv95EXrnU2lT/F2/nrWD1E/ZfMr+MQXgoMoLQ/7Om0y0AUoiC4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzLSIy0Kh9XPgWD+sUanIhyBA3nbsAmow0lKQSp8ESZvHgHgHik
+	xNWOtdOWKslDezccTBnbm/EvJCQjlHpr2iFXOJ/9jaDVp1gFOejliXLUER6b20Y=
+X-Gm-Gg: ASbGnctMmfa1/KJ09ZVZXq1oMwAAyH5lWNrbNBOu6YENCVArJ7v3h6DJHCmy30E54G9
+	XVIZLIirvAQnWov2H+p6gcZWSssESszi2cqd5JIyTeQQClL1rnfOTasTRVTbgLOSKmPH459Jc06
+	GQbvKu/dKEf78yKLebuUac3wkNviqCH7bO52u3BRzyzt2PMJWj3soeX3mlzOtu7zOyfy6E8zLO5
+	E8opPODh40s7z6euuziQSIHSQSi4z2sQjTMlMHw9+CZRAlnmAoOWnlJxXslgR8qDtr8W/p3UFU1
+	0Q0ZaVfY0OSPgKrcMjPf6+nJaekFLTiwjCJk2gWu4q4x1VIUFctRL3g0F9K7RHLwqzOzBBINYfe
+	BiyjiHffDxfOM1ZkQTYIpfR3i
+X-Google-Smtp-Source: AGHT+IGuTWabfmD5KlWD1Zo2jdScv5WVuOItfBGwPCTPIUUULkXh0GT+oBxIC6TBlHo9j2mbtrr9hA==
+X-Received: by 2002:a05:6512:114e:b0:545:5d:a5c7 with SMTP id 2adb3069b0e04-5499043ea30mr1171693e87.21.1741344677083;
+        Fri, 07 Mar 2025 02:51:17 -0800 (PST)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5498b0bd069sm450565e87.117.2025.03.07.02.51.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 07 Mar 2025 02:51:15 -0800 (PST)
+Date: Fri, 7 Mar 2025 12:51:13 +0200
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Yongbang Shi <shiyongbang@huawei.com>
+Cc: xinliang.liu@linaro.org, tiantao6@hisilicon.com, 
+	maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com, 
+	daniel@ffwll.ch, kong.kongxinwei@hisilicon.com, liangjian010@huawei.com, 
+	chenjianmin@huawei.com, lidongming5@huawei.com, libaihan@huawei.com, 
+	shenjian15@huawei.com, shaojijie@huawei.com, dri-devel@lists.freedesktop.org, 
 	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] pipe_read: don't wake up the writer if the pipe is still full
-Date: Fri,  7 Mar 2025 18:46:53 +0800
-Message-ID: <20250307104654.3100-1-hdanton@sina.com>
-In-Reply-To: <6ff2e489-7289-4840-868e-9401f26033c6@amd.com>
-References: <c63cc8e8-424f-43e2-834f-fc449b24787e@amd.com> <20250227211229.GD25639@redhat.com> <06ae9c0e-ba5c-4f25-a9b9-a34f3290f3fe@amd.com> <20250228143049.GA17761@redhat.com> <20250228163347.GB17761@redhat.com> <20250304050644.2983-1-hdanton@sina.com> <20250304102934.2999-1-hdanton@sina.com> <20250304233501.3019-1-hdanton@sina.com> <20250305045617.3038-1-hdanton@sina.com> <20250305224648.3058-1-hdanton@sina.com> <20250307060827.3083-1-hdanton@sina.com>
+Subject: Re: [PATCH v5 drm-dp 2/9] drm/hisilicon/hibmc: Add dp serdes cfg to
+ adjust serdes rate, voltage and pre-emphasis
+Message-ID: <of75z5hy3pc5wvbd2rzmvpo2wdmap3iraj2vofldg6qeglvl2t@ogiq5nfeh4qe>
+References: <20250307101640.4003229-1-shiyongbang@huawei.com>
+ <20250307101640.4003229-3-shiyongbang@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250307101640.4003229-3-shiyongbang@huawei.com>
 
-On Fri, 7 Mar 2025 11:54:56 +0530 K Prateek Nayak <kprateek.nayak@amd.com>
-On 3/7/2025 11:38 AM, Hillf Danton wrote:
->> On Thu, 6 Mar 2025 10:30:21 +0100 Oleg Nesterov <oleg@redhat.com>
->>> On 03/06, Hillf Danton wrote:
->>>> On Wed, 5 Mar 2025 12:44:34 +0100 Oleg Nesterov <oleg@redhat.com>
->>>>> On 03/05, Hillf Danton wrote:
->>>>>> See the loop in  ___wait_event(),
->>>>>>
->>>>>> 	for (;;) {
->>>>>> 		prepare_to_wait_event();
->>>>>>
->>>>>> 		// flip
->>>>>> 		if (condition)
->>>>>> 			break;
->>>>>>
->>>>>> 		schedule();
->>>>>> 	}
->>>>>>
->>>>>> After wakeup, waiter will sleep again if condition flips false on the waker
->>>>>> side before waiter checks condition, even if condition is atomic, no?
->>>>>
->>>>> Yes, but in this case pipe_full() == true is correct, this writer can
->>>>> safely sleep.
->>>>>
->>>> No, because no reader is woken up before sleep to make pipe not full.
->>>
->>> Why the reader should be woken before this writer sleeps? Why the reader
->>> should be woken at all in this case (when pipe is full again) ?
->>>
->> "to make pipe not full" failed to prevent you asking questions like this one.
->> 
->>> We certainly can't understand each other.
->>>
->>> Could your picture the exact scenario/sequence which can hang?
->>>
->> If you think the scenario in commit 3d252160b818 [1] is correct, check
->> the following one.
->> 
->> step-00
->> 	pipe->head = 36
->> 	pipe->tail = 36
->> 	after 3d252160b818
->> 
->> step-01
->> 	task-118762 writer
->> 	pipe->head++;
->> 	wakes up task-118740 and task-118768
->> 
->> step-02
->> 	task-118768 writer
->> 	makes pipe full;
->> 	sleeps without waking up any reader as
->> 	pipe was not empty after step-01
->> 
->> step-03
->> 	task-118766 new reader
->> 	makes pipe empty
->
->Reader seeing a pipe full should wake up a writer allowing 118768 to
->wakeup again and fill the pipe. Am I missing something?
->
-Good catch, but that wakeup was cut off [2,3]
+On Fri, Mar 07, 2025 at 06:16:33PM +0800, Yongbang Shi wrote:
+> From: Baihan Li <libaihan@huawei.com>
+> 
+> This dp controller need features of digital-to-analog conversion and
+> high-speed transmission in chip by its extern serdes controller. Our
+> serdes cfg is relatively simple, just need two register configurations.
+> Don't need too much functions, like: power on/off, initialize, and some
+> complex configurations, so I'm not going to use the phy framework.
+> This serdes is inited and configured in dp initialization, and also
+> integrating them into link training process.
+> 
+> For rate changing, we can change from 1.62-8.2Gpbs by cfg reg.
+> For voltage and pre-emphasis levels changing, we can cfg different
+> serdes ffe value.
+> 
+> Signed-off-by: Baihan Li <libaihan@huawei.com>
+> Signed-off-by: Yongbang Shi <shiyongbang@huawei.com>
+> ---
+> ChangeLog:
+> v3 -> v4:
+>   - fix the serdes cfg in hibmc_dp_serdes_set_tx_cfg(), suggested by Dmitry Baryshkov.
+>   - move the dp serdes registers to dp_reg.h, suggested by Dmitry Baryshkov.
+>   - 
+> v2 -> v3:
+>   - add commit log about dp serdes, suggested by Dmitry Baryshkov.
+>   - return value in hibmc_dp_serdes_init(), suggested by Dmitry Baryshkov.
+>   - add static const in the array of serdes_tx_cfg[], suggested by Dmitry Baryshkov.
+>   - change drm_warn to drm_dbg_dp, suggested by Dmitry Baryshkov.
+>   - add explanations about dp serdes macros, suggested by Dmitry Baryshkov.
+> v1 -> v2:
+>   - splittting the patch and add more detailed the changes in the commit message, suggested by Dmitry Baryshkov.
+>   - changing all names of dp phy to dp serdes.
+> ---
+>  drivers/gpu/drm/hisilicon/hibmc/Makefile      |  2 +-
+>  drivers/gpu/drm/hisilicon/hibmc/dp/dp_comm.h  |  4 ++
+>  drivers/gpu/drm/hisilicon/hibmc/dp/dp_hw.c    |  5 ++
+>  drivers/gpu/drm/hisilicon/hibmc/dp/dp_reg.h   | 23 ++++++
+>  .../gpu/drm/hisilicon/hibmc/dp/dp_serdes.c    | 71 +++++++++++++++++++
+>  5 files changed, 104 insertions(+), 1 deletion(-)
+>  create mode 100644 drivers/gpu/drm/hisilicon/hibmc/dp/dp_serdes.c
+> 
 
-[2] https://lore.kernel.org/lkml/20250304123457.GA25281@redhat.com/
-[3] https://lore.kernel.org/all/20250210114039.GA3588@redhat.com/
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 
->> 	sleeps
->> 
->> step-04
->> 	task-118740 reader
->> 	sleeps as pipe is empty
->> 
->> [ Tasks 118740 and 118768 can then indefinitely wait on each other. ]
->> 
->> 
->> [1] https://web.git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/fs/pipe.c?id=3d252160b818045f3a152b13756f6f37ca34639d
->
->-- 
->Thanks and Regards,
->Prateek
+-- 
+With best wishes
+Dmitry
 
