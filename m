@@ -1,130 +1,105 @@
-Return-Path: <linux-kernel+bounces-551248-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-551249-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 69720A56A0E
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 15:11:29 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EB3ECA56A13
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 15:13:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4D49416C550
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 14:11:28 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 018667A3519
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 14:12:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4996721ADD6;
-	Fri,  7 Mar 2025 14:11:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AC5121ADD6;
+	Fri,  7 Mar 2025 14:13:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="TeTjE5bo"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Q4pF+Hjt"
+Received: from mail-oo1-f41.google.com (mail-oo1-f41.google.com [209.85.161.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C378A13A86C;
-	Fri,  7 Mar 2025 14:11:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A01742185BC
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Mar 2025 14:12:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741356682; cv=none; b=kFbejARYrCLopiHte/9woUWmimBXcc7TOfw0tJIyVTdiHDN3MEBmIj8MPBMQfI7bvYY2P7rdce7z7JbolbX+36aCZXCnaZhrdoyShd+/who0VtGbRfN8/Ym8h9heUdfUXkYhuFfvKFKsDcypOxmVj4ZiPxMNmndAD0jJoyZsP9U=
+	t=1741356780; cv=none; b=fSkDQVoS5FnDkJQuj50uDf0m3o7/A4INq1vHqKiq5+ezZSMKyB/atfPe4VHHisLx5jdooiAAEk9YUkt8GbjHUns+iMVXaj5oRfqRcOvcjohgQJSw65hbPOT8JtsBUGi8S3hjgpnXjtS/Zxzok/S2B8/H2Okv9Ymb91ycPNocdn0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741356682; c=relaxed/simple;
-	bh=yTlXssuljQaYsdIFV4oTsy3eB8buOW1rjXsfqeZlkw0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kU2V7sRDUPZHKlnlxn9tYJ40pXzCTXiV0QQnc5rfE0U4A9R2+g7WqVmIjnrleBo1VeTDUSk0eZdlBOrBCX3JOA4NhhrkQaIsM1j6vZPEcbQ5izGk6LTr6DfTwWHYMTVS3N2mnDv2gbSJ0z/y4kPT6QYvTwWXW+/4W2btAMsZo+g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=TeTjE5bo; arc=none smtp.client-ip=192.198.163.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1741356680; x=1772892680;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=yTlXssuljQaYsdIFV4oTsy3eB8buOW1rjXsfqeZlkw0=;
-  b=TeTjE5bobTqhi1o38L3m6aev/8FDIwnY9YmrihH4FFx9T0yQbRvZ806z
-   WoAHYb4hYWnnY56TjE67p0YpBpdjUdq+LkmCt1brbB1atEWFV4Fo1hY2Y
-   5lm5m6lgI+zWeUjHANyyiO6ikSXepvbx/akTpu51tfw00s6Vk4akmuKCZ
-   Lf0kpjCH+OJ1TvtZbZLQWXFShu4WTR5CN2Lq5pRie9ZyZ1ry7vfnT2Vci
-   civ+SZRnNGYW63ZmTGWQRCqF5e53wNXaNwY8wHMr2Mmkd+JUjl6xqwkm2
-   iPeMoQXAv0uhdckH0KNNvWRwUhxZBA/rmeNCuxwx10qyHIUWt7qRAPjsy
-   w==;
-X-CSE-ConnectionGUID: h3zxnbYXRBaauVTaQo7vqA==
-X-CSE-MsgGUID: UHUo4F19Qoab6bdzIHvBhQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11365"; a="53041183"
-X-IronPort-AV: E=Sophos;i="6.14,229,1736841600"; 
-   d="scan'208";a="53041183"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Mar 2025 06:11:19 -0800
-X-CSE-ConnectionGUID: daiZfncWSVaaIoj4T6dC7w==
-X-CSE-MsgGUID: zKESH/YCSn+oDQSKUJSrkg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
-   d="scan'208";a="123521211"
-Received: from lkp-server02.sh.intel.com (HELO a4747d147074) ([10.239.97.151])
-  by fmviesa003.fm.intel.com with ESMTP; 07 Mar 2025 06:11:15 -0800
-Received: from kbuild by a4747d147074 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tqYPx-0000Yl-12;
-	Fri, 07 Mar 2025 14:11:13 +0000
-Date: Fri, 7 Mar 2025 22:10:47 +0800
-From: kernel test robot <lkp@intel.com>
-To: Alistair Francis <alistair@alistair23.me>, bhelgaas@google.com,
-	linux-pci@vger.kernel.org, Jonathan.Cameron@huawei.com,
-	lukas@wunner.de
-Cc: oe-kbuild-all@lists.linux.dev, alex.williamson@redhat.com,
-	christian.koenig@amd.com, kch@nvidia.com,
-	gregkh@linuxfoundation.org, logang@deltatee.com,
-	linux-kernel@vger.kernel.org, alistair23@gmail.com,
-	chaitanyak@nvidia.com, rdunlap@infradead.org,
-	Alistair Francis <alistair@alistair23.me>
-Subject: Re: [PATCH v17 3/4] PCI/DOE: Expose the DOE features via sysfs
-Message-ID: <202503072119.bmT7zRPN-lkp@intel.com>
-References: <20250306075211.1855177-3-alistair@alistair23.me>
+	s=arc-20240116; t=1741356780; c=relaxed/simple;
+	bh=60re8BiRqNaxfgjZjOXpMIdToHtt/3wVQ2TQ428IPn8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=rGf3f3hMJsH00U112k/2tiOTL0WquoQLrqT/WJg42PfiwSCjhLv/LD42MQns0CNSsgFhInAlMmw9IM08rY4paGl7VYxw6qvqQpD52GU4D2c6WYOS7erXSH3wB0nBSaISGC+sBVM37PFcFOVBKEYoudqiwqNI3PEwYX9fmtDopkc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Q4pF+Hjt; arc=none smtp.client-ip=209.85.161.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-oo1-f41.google.com with SMTP id 006d021491bc7-6004798156dso675523eaf.0
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Mar 2025 06:12:57 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1741356776; x=1741961576; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=60re8BiRqNaxfgjZjOXpMIdToHtt/3wVQ2TQ428IPn8=;
+        b=Q4pF+Hjt6fmAMzrfiFom+p2VaMdCzP+ZMQ24GRgOHZE7TRwB6OxbesBD2DKj6Cj3ci
+         ToBn98bzLWo9oJOg5t6L+s21a9rqnELOW+ljJD/OgZ6G2E+mTpKpRmmJ1s1SIICO8/K5
+         MhVbWtTyBYkIeV1W6XJOd/Akzir0XcVkF1FkCIgztuwGYVqjL6OC7bGcDrgI524WxZxj
+         Wz9GDm/ZS08h2yeRfCA+hXhcjgrAJXZT4noYghzV9FmRALNq+zCPdXbsGiINwVot3CSa
+         thmXXSC+k+H/qToUcqO6YHhWxjQ/8XVo0sMlktoSR2XkdV9U+Nhryhf+6gStokaQ93FL
+         3nJQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741356776; x=1741961576;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=60re8BiRqNaxfgjZjOXpMIdToHtt/3wVQ2TQ428IPn8=;
+        b=Wsal7O/fsZm4wnFXnxICxhVpG3Jgol2xyzhyIIkCHE4Gei3/nD89xZkkAuOTAizyLi
+         gD24buYuHh8+0gPdXcYHmYOZDiqHp4sfwFp2x6W+M7afr1x+tUOckgr2Hi5cWkW7Unhk
+         gBhY51fzEvzjEA5MG5e4tB7PfH+7GZ8h3TSv+oyOzbiWO5At6XWwsR/S5OORkmSBzV9m
+         VHGRArweGP/gLBJbsaNi0txXL+pO9F8xgCk/jt/KwxmnVQUkvFdvxhu6cDrBpQ84cLIC
+         gMy3eFJMIfsltxijvVq/jtqOt9gY4xiJRZL5kiFF5TEJ7KoGxCVI0QtGEV/eOfVyPFGp
+         YDCg==
+X-Forwarded-Encrypted: i=1; AJvYcCUDWR5vPG2qfBwLyM1am5UKg/lRxW3Q05yjpF6w1MSY5fN3EuBGGYwIXimaKC6AwxsBnD8V7b2oXRk0AIU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw2R0jS1IYJRNNaRIeOzQNM683gIIJPuNWIE3VVFJb1H7VdB0ZO
+	1YjqAtEyrNBh6zKNhOEa1ogltHerXrP89qhAmsGbR+ubMGsG21BlpE6h+1XCnXW7UAsBbipeDbY
+	TeO/A5iXK78lYP8Jxx4SV8c5blB3IUPbZ4eHldQ==
+X-Gm-Gg: ASbGncsqFTRaU+W5WpIR+WXhNoWHZj02ekKa7Depv5Fi9aImahkoXwaNNZSEfKTnYpE
+	AAov5FTjS4ejKEq4BeSMv0dfryDHv89ktqyq7jfXn2K0LbUr4g1OL+8h6C6SXrkDERoJA4LvlvO
+	F/e3TJmD+9//BoHsiRfIaaxk+Hyf0=
+X-Google-Smtp-Source: AGHT+IH9L2ObJ6dDXOCpIMSXNSBNafNehee0qnPWJxOsmaTrt6AVB5PDvXlGpGJ+NlBDx4GXdCpmmJeVhirk9krz6vY=
+X-Received: by 2002:a4a:ec4c:0:b0:5fe:9a72:3dea with SMTP id
+ 006d021491bc7-6004a767138mr1732794eaf.1.1741356776690; Fri, 07 Mar 2025
+ 06:12:56 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250306075211.1855177-3-alistair@alistair23.me>
+References: <20250305-clk-samsung-headers-cleanup-v2-0-ea1ae8e9e2bf@linaro.org>
+ <20250305-clk-samsung-headers-cleanup-v2-1-ea1ae8e9e2bf@linaro.org>
+In-Reply-To: <20250305-clk-samsung-headers-cleanup-v2-1-ea1ae8e9e2bf@linaro.org>
+From: Peter Griffin <peter.griffin@linaro.org>
+Date: Fri, 7 Mar 2025 14:12:44 +0000
+X-Gm-Features: AQ5f1JrAJDWL1aZmpxNwroG6aOpF70B9j3ySId9aUtSrljkJO2C5fdV0SfrMx24
+Message-ID: <CADrjBPqxTiy8D8PVpZBzYnes-hxqKX+gd6a4WgJeDE=x7YQKAA@mail.gmail.com>
+Subject: Re: [PATCH v2 1/2] clk: samsung: Add missing mod_devicetable.h header
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, 
+	Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Sam Protsenko <semen.protsenko@linaro.org>, =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, 
+	Tudor Ambarus <tudor.ambarus@linaro.org>, linux-samsung-soc@vger.kernel.org, 
+	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Alistair,
+On Wed, 5 Mar 2025 at 20:03, Krzysztof Kozlowski
+<krzysztof.kozlowski@linaro.org> wrote:
+>
+> Add an include for <mod_devicetable.h> in the drivers which use
+> of_device_id table to bring its declaration directly, not through some
+> other headers.
+>
+> Reviewed-by: Tudor Ambarus <tudor.ambarus@linaro.org>
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> ---
 
-kernel test robot noticed the following build warnings:
-
-[auto build test WARNING on pci/next]
-[also build test WARNING on pci/for-linus linus/master v6.14-rc5 next-20250307]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Alistair-Francis/PCI-DOE-Rename-Discovery-Response-Data-Object-Contents-to-type/20250306-155550
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/pci/pci.git next
-patch link:    https://lore.kernel.org/r/20250306075211.1855177-3-alistair%40alistair23.me
-patch subject: [PATCH v17 3/4] PCI/DOE: Expose the DOE features via sysfs
-config: microblaze-randconfig-r111-20250307 (https://download.01.org/0day-ci/archive/20250307/202503072119.bmT7zRPN-lkp@intel.com/config)
-compiler: microblaze-linux-gcc (GCC) 14.2.0
-reproduce: (https://download.01.org/0day-ci/archive/20250307/202503072119.bmT7zRPN-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202503072119.bmT7zRPN-lkp@intel.com/
-
-sparse warnings: (new ones prefixed by >>)
->> drivers/pci/doe.c:109:1: sparse: sparse: symbol 'dev_attr_doe_discovery' was not declared. Should it be static?
-
-vim +/dev_attr_doe_discovery +109 drivers/pci/doe.c
-
-   101	
-   102	#ifdef CONFIG_SYSFS
-   103	static ssize_t doe_discovery_show(struct device *dev,
-   104					  struct device_attribute *attr,
-   105					  char *buf)
-   106	{
-   107		return sysfs_emit(buf, "0001:00\n");
-   108	}
- > 109	DEVICE_ATTR_RO(doe_discovery);
-   110	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Reviewed-by: Peter Griffin <peter.griffin@linaro.org>
 
