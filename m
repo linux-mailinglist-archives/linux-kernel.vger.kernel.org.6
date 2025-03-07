@@ -1,77 +1,60 @@
-Return-Path: <linux-kernel+bounces-552142-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-552143-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E81CA57627
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 00:34:48 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 517D7A57629
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 00:35:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 166B2188FD0D
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 23:34:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BDF6B1893BD2
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 23:35:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70F1420E6F2;
-	Fri,  7 Mar 2025 23:34:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9F6520E6F2;
+	Fri,  7 Mar 2025 23:34:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="f9TNv5eE"
-Received: from relay8-d.mail.gandi.net (relay8-d.mail.gandi.net [217.70.183.201])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RHWoqqxH"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1831F1925AC;
-	Fri,  7 Mar 2025 23:34:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E3531DC99A;
+	Fri,  7 Mar 2025 23:34:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741390481; cv=none; b=aEFq7G+uyO3q9ZAuWpkgDzNAF/AGvELiLo2IPG5CofTQhbVIrU0R1m6sLGcGQKOeYQUJksuNPhkuKvi/X1TJJdRDDPjDEAlS0Bxp9eWZOCqwxiC2U29O6DRJ0HD2nGrGABrYFOkVwtfpNFnhFP3t6gEE4JowuhpKrjMUBwqp7JI=
+	t=1741390498; cv=none; b=bZL2xlzxFEoy5GA6a53ejgOIp5dZWmUsxCUHM87hfAJYUL0OS9iMxyTnnjrPEpO/BAv9ew/hGm/+WldCmISSgaRlH2TJ/Q1stDKkg7QxP7qaJho5nUBSqGW4n56sKyf3doyEa9Nd4ejm0zP9jyB/S78V2F6C4KTOd2d3tuhVW0g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741390481; c=relaxed/simple;
-	bh=kKh3XN4Srdg6CtNs5pzgXD8hxt/NvDuNA+VDK3Ebwe8=;
+	s=arc-20240116; t=1741390498; c=relaxed/simple;
+	bh=a1YQ9cOh75u3hhehPsn7rsUns7nbPJ2h8AZWjHl/VNc=;
 	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=NsPGM8VzM5PzhcpM9O8R+OnY7HX6rxpgieBYmVzIYCtubuzRsYzSCA4dAks9PxtDPxZVKAMgZtKrLUNWsaJe2rh+zbPCnxpop/Bg8wMPSBLAfZLszjWX5zanKPE6hDCuF6a/oZvc94n/Up06+CQ1SdbZAFoDyJeBemuqmIdyIT8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=f9TNv5eE; arc=none smtp.client-ip=217.70.183.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 42F0F42FF4;
-	Fri,  7 Mar 2025 23:34:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1741390470;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ydp6do/YmlCcdU444Z/VCOeLnRiEL8f6oOoQBqEHKHw=;
-	b=f9TNv5eEBJQERSONNPIXE86lFBWD77yGJ0nfLkaPUyNuIH6zkHG/Xwkpa6VsAb4Q8S+WXq
-	9t8VWk5F3hSznCwvIsppnG35PdvPLucURj1+RITr+Bi55fj0IqNMTk/p67sOrbKOwOVPmk
-	yTdHYG7FXmt4EGD7CgJPRbD74ll4O8OLUieXDg9tvxCenxIIx1NYsT/O8l1qpNNNAD0viL
-	ke1iM91BoEq61FbAJYzrC4sa1gHMDh7Y8USPTJEDEqAE0umO6zs6MI4GJpw0C+VHcX+b3h
-	P51EWslCVh/NJMFZ6QDK9CvZS8jN1vdJFcsWHa6NdVw6LhaqiIUF5tjvHCVosg==
-Date: Sat, 8 Mar 2025 00:34:25 +0100
-From: Luca Ceresoli <luca.ceresoli@bootlin.com>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Daniel Lezcano
- <daniel.lezcano@linaro.org>, Zhang Rui <rui.zhang@intel.com>, Lukasz Luba
- <lukasz.luba@arm.com>, Florian Fainelli <florian.fainelli@broadcom.com>,
- Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
- Broadcom internal kernel review list
- <bcm-kernel-feedback-list@broadcom.com>, Petr Mladek <pmladek@suse.com>,
- Steven Rostedt <rostedt@goodmis.org>, Rasmus Villemoes
- <linux@rasmusvillemoes.dk>, Sergey Senozhatsky <senozhatsky@chromium.org>,
- Jonathan Corbet <corbet@lwn.net>, Andrew Morton
- <akpm@linux-foundation.org>, Thomas Petazzoni
- <thomas.petazzoni@bootlin.com>, Michael Turquette
- <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Geert
- Uytterhoeven <geert+renesas@glider.be>, Liu Ying <victor.liu@nxp.com>,
- linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
- linux-rpi-kernel@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org
-Subject: Re: [PATCH 2/2] vsprintf: remove redundant and unused %pCn format
- specifier
-Message-ID: <20250308003425.7b89bfb6@booty>
-In-Reply-To: <Z8sqJhbqEBla_Ch7@smile.fi.intel.com>
-References: <20250307-vsprintf-pcn-v1-0-df0b2ccf610f@bootlin.com>
-	<20250307-vsprintf-pcn-v1-2-df0b2ccf610f@bootlin.com>
-	<Z8sqJhbqEBla_Ch7@smile.fi.intel.com>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	 MIME-Version:Content-Type; b=Z0oF/7j60IufMeEpm6PuESKlbilRc8r1V9uCMdASfh86Wd0MbFszJyeozP1dnSvXtkYvYAC6dn90Gn2nzITT7WocO+6raQQnMxVPSMMTiR7H8fJtihscC2v3d6cN+zSykbltbuB5sOqnF1tiXs9A2aBjJTdpzknnNixpvK6rRmQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RHWoqqxH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0C05BC4CED1;
+	Fri,  7 Mar 2025 23:34:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741390497;
+	bh=a1YQ9cOh75u3hhehPsn7rsUns7nbPJ2h8AZWjHl/VNc=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=RHWoqqxHsbCCQetrMiNj0qPKSyAtjw6psSQWIrwG0VG+SbUYjWyvV7N5zGpKmSa5q
+	 JwPtglQcUvOPojZhaz1AYm3rMnS+PNmqyqoZzHn9pUlOgvdp8y6h7IZ3IMR9oznrGh
+	 B1pLxIzzkJR//9liOZnzgzU7YUVnNf85q5IAPgV1eLIf+WjSC9Td+/Dnkrta1YPKSy
+	 bYkMxgj6MY3ZFAyFxJvlfdC3p45n7Xp1XHie1NISVjv5guTllQcrKi1b788DEWLonx
+	 DgIHy9AB+TS6RggrO66jY9GlLvsk3dMKqm3RLd0QMwuU9JFcxteS7t6L1CaOX0qofG
+	 Trr6Oix1Xq0GA==
+Date: Fri, 7 Mar 2025 15:34:56 -0800
+From: Jakub Kicinski <kuba@kernel.org>
+To: Stanislav Fomichev <sdf@fomichev.me>
+Cc: netdev@vger.kernel.org, davem@davemloft.net, edumazet@google.com,
+ pabeni@redhat.com, linux-kernel@vger.kernel.org, horms@kernel.org,
+ donald.hunter@gmail.com, michael.chan@broadcom.com,
+ pavan.chebbi@broadcom.com, andrew+netdev@lunn.ch, jdamato@fastly.com,
+ xuanzhuo@linux.alibaba.com, almasrymina@google.com, asml.silence@gmail.com,
+ dw@davidwei.uk
+Subject: Re: [PATCH net-next v1 3/4] net: add granular lock for the netdev
+ netlink socket
+Message-ID: <20250307153456.7c698a1a@kernel.org>
+In-Reply-To: <20250307155725.219009-4-sdf@fomichev.me>
+References: <20250307155725.219009-1-sdf@fomichev.me>
+	<20250307155725.219009-4-sdf@fomichev.me>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -80,40 +63,28 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdduudduleelucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpeffhffvvefukfgjfhhoofggtgfgsehtjeertdertddvnecuhfhrohhmpefnuhgtrgcuvegvrhgvshholhhiuceolhhutggrrdgtvghrvghsohhlihessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepgeelffefgfehhfdtvdefueefieevkefggfelkeeiudetkeektedvhedukefgvddvnecuffhomhgrihhnpegsohhothhlihhnrdgtohhmnecukfhppedvrgdtvdemieejtdemvddtvddtmegvrgdtudemrgegiedvmedusgguugemledutddumedvleegfhenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpedvrgdtvdemieejtdemvddtvddtmegvrgdtudemrgegiedvmedusgguugemledutddumedvleegfhdphhgvlhhopegsohhothihpdhmrghilhhfrhhomheplhhutggrrdgtvghrvghsohhlihessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepvdeipdhrtghpthhtoheprghnughrihihrdhshhgvvhgthhgvnhhkoheslhhinhhugidrihhnthgvlhdrtghomhdprhgtphhtthhopehrrghfrggvlheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepuggrnhhivghlrdhlv
- giitggrnhhosehlihhnrghrohdrohhrghdprhgtphhtthhopehruhhirdiihhgrnhhgsehinhhtvghlrdgtohhmpdhrtghpthhtoheplhhukhgrshiirdhluhgsrgesrghrmhdrtghomhdprhgtphhtthhopehflhhorhhirghnrdhfrghinhgvlhhlihessghrohgruggtohhmrdgtohhmpdhrtghpthhtoheprhhjuhhisegsrhhorggutghomhdrtghomhdprhgtphhtthhopehssghrrghnuggvnhessghrohgruggtohhmrdgtohhm
-X-GND-Sasl: luca.ceresoli@bootlin.com
 
-Hello Andy,
+On Fri,  7 Mar 2025 07:57:24 -0800 Stanislav Fomichev wrote:
+> diff --git a/net/core/netdev-genl.c b/net/core/netdev-genl.c
+> index a219be90c739..8acdeeae24e7 100644
+> --- a/net/core/netdev-genl.c
+> +++ b/net/core/netdev-genl.c
+> @@ -859,6 +859,7 @@ int netdev_nl_bind_rx_doit(struct sk_buff *skb, struct genl_info *info)
+>  		goto err_genlmsg_free;
+>  	}
+>  
+> +	mutex_lock(&priv->lock);
+>  	rtnl_lock();
+>  
+>  	netdev = __dev_get_by_index(genl_info_net(info), ifindex);
+> @@ -925,6 +926,7 @@ int netdev_nl_bind_rx_doit(struct sk_buff *skb, struct genl_info *info)
+>  	net_devmem_unbind_dmabuf(binding);
+>  err_unlock:
+>  	rtnl_unlock();
+> +	mutex_unlock(&priv->lock);
+>  err_genlmsg_free:
+>  	nlmsg_free(rsp);
+>  	return err;
 
-On Fri, 7 Mar 2025 19:17:26 +0200
-Andy Shevchenko <andriy.shevchenko@linux.intel.com> wrote:
-
-> On Fri, Mar 07, 2025 at 12:19:08PM +0100, Luca Ceresoli wrote:
-> > %pC and %pCn print the same string, and commit 900cca294425 ("lib/vsprintf:
-> > add %pC{,n,r} format specifiers for clocks") introducing them does not
-> > clarify any intended difference. It can be assumed %pC is a default for
-> > %pCn as some other specifiers do, but not all are consistent with this
-> > policy. Moreover there is now no other suffix other than 'n', which makes a
-> > default not really useful.
-> > 
-> > All users in the kernel were using %pC except for one which has been
-> > converted. So now remove %pCn and all the unnecessary extra code and
-> > documentation.  
-> 
-> You seem forgot to update translation(s) of the documentation.
-
-I'm afraid I don't speak Chinese. :-)
-
-For this specific change I think I could come up with an approximation
-of it, but the both the docs and git log suggest this is not expected.
-
-Luca
-
--- 
-Luca Ceresoli, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+I think you're missing an unlock before successful return here no?
 
