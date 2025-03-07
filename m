@@ -1,79 +1,85 @@
-Return-Path: <linux-kernel+bounces-550618-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-550619-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E83CA56211
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 08:54:17 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 41E36A56213
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 08:55:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 689867A62FD
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 07:53:15 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3A38B7AA432
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 07:54:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30FF81A9B2B;
-	Fri,  7 Mar 2025 07:54:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75C091A9B52;
+	Fri,  7 Mar 2025 07:55:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="G85GjxPh"
-Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="irS0WXDg"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFEA61632C8
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Mar 2025 07:54:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16D6D1A8F95
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Mar 2025 07:54:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741334046; cv=none; b=LQT6Q5A8DSJgNTe1a95Y8dTe+uki5U8WQ121IB2H9TtxOvZVP5a/AkHMS/dFAbHHFvk+9kKU1AAkjgHASCTjtrArMRoSOwEQTVbEWBmCsYoD6uWfEYm1yqmXeJ4oUab7QdqwAwU2y70m/u9WsnsmkfFAelYZegBx9hLn9EP5hW8=
+	t=1741334100; cv=none; b=bErUaUknrKoQqLe5UJzOCMLftxcw1jw3z87BVLm8QD3QHVpZIc7qiRkEiOFQa9e0FeTknJIzvalMGAxi2tnk8Ur7HhfRAiKbAt45+hNJY0z8xMAY3umEj4WDTEU5mPp2R2H7oPEpVvup5lYILmJdLBdNKSTfb6/3l/7OlUxkqpM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741334046; c=relaxed/simple;
-	bh=pR/IPm52Dmzz7euqedDIW/qKpLuxfuVEAfUk0HQW4Yc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=HNVtYAMqzx/EANTkXxC9OqXK9bFOUsmEOrkiac+Dpmm6ZYyTm5oOwqwmbs2QHeYM73I7CwDzXBA8plXbVrVysK1XUTOUTokd4zs/vThq77Cb+rErBLpXtQlNcXTa4+YkDTvpTvp+v1DRDluN3UaSOePWj5BALtM/fPRBMYgjzSg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=G85GjxPh; arc=none smtp.client-ip=209.85.221.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-390effd3e85so1401608f8f.0
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Mar 2025 23:54:04 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1741334043; x=1741938843; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=jivBZbbpeUpC37vr59Lus7C69ZvI+/qcef+nWtlt/Z8=;
-        b=G85GjxPh5tBYTBULDd+1PWFUqSKDOztUofZZ8JaXfCDtb2YYHOLX2UyhWmTV2aH8Ih
-         h808l+8d80Y/hsLWUDoVF2mEZk1GjgpeMTrDVSqtpDlz3woDrWVVGCzLaScaqxoiZkF2
-         COkxStDyBJ+X6/EArc+56pSyuP5jnu2JxFwiw6fcp4jFA+QoJ4hsM7++0sIm+eZnLInp
-         sJO7iDbYGbeghHBek/f3lSI73yabZD+G9UwRL1mjYRcHgw/jjUIXlVXbQP5FvU4S3qgj
-         OIWVIfBkasMmMDTCfImFWW3/PbHZ83tbPqU5dXnJKTitAel1DytQPf7NI61nQaoGVKP9
-         mcaQ==
+	s=arc-20240116; t=1741334100; c=relaxed/simple;
+	bh=Th5hIPziHcOiMnhSQ1ehwx4jc2j35d04Ew87lt0uSKc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=S1cqYUhFtkI2ERfAHjqbvxM5Cxwb3L1FbjIEIsv1exRbQca1RunevLdF4kaQGjioPgI28qVtGq0uy/peJLc4++d5TFEz0gUiIGb1kGJ1DW41T1CXZzNfUdp1l7M/T1Mz4L8W/cFdPMw5clnNXLcGNPbp9aQIRVuEKda4SKrAaEg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=irS0WXDg; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1741334097;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=/XjSBrzgKarSUxwTUTP4kt/kMcpFKwcJA5tHsYp7Puk=;
+	b=irS0WXDg/AGbatsAGuVNipYkhYfktaD/Dzzc7/wYnmPk59ylk6Ud6Hkq0FovfqApdWuWSt
+	YtdD7A5DfKVElpFRGkmzTJRJPG+kFmJy0vL0upjgoF7fQ8j6AZOKyNTkAkJjVv9qkdmTGx
+	lCrpL8NDXFwUTG0159ChDtqOCXRhCl0=
+Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
+ [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-561-1sxgOaHDN4GdQiL7JAJ1vQ-1; Fri, 07 Mar 2025 02:54:56 -0500
+X-MC-Unique: 1sxgOaHDN4GdQiL7JAJ1vQ-1
+X-Mimecast-MFC-AGG-ID: 1sxgOaHDN4GdQiL7JAJ1vQ_1741334095
+Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-438da39bb69so10866035e9.0
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Mar 2025 23:54:56 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741334043; x=1741938843;
+        d=1e100.net; s=20230601; t=1741334095; x=1741938895;
         h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :references:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=jivBZbbpeUpC37vr59Lus7C69ZvI+/qcef+nWtlt/Z8=;
-        b=tjoiACuWoMYyx+/e4JdvovBi/354uE5BJR2GYnodX4IE0tbOl7+itdugpDkoTZCVpI
-         v6Td4MS/vfwbRNJvgbn/OXTkwLk0hGJ0hPnyzaiEyKBWqY4rEebcdnk9qn9IzKdYAuim
-         0OaIdAYvj87cc1g8WNR3jDsq9NaKsSkHjOxLBD/1wSe/4jQAw8lKSdR3FxufGd1xiB3Y
-         2u9oISp/Pgghap/+4SEd8tXRcLYBGeOs8qc2cgQuUZVw9Akust8Gy2ZQ44aPkugcOP2d
-         nLFxrYU21gyhpMRJAPfxIkAVMySZ7zUvP5trqAOaEC2c9q/mK7JNQn5bmnMWiEXCXFzg
-         2+zQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVq2JryR7rhaAGFKwbGsq47FX6J2a8Lfy9hLncxCALv3JrnvmfSMj5dJo/v1uq3L82MLjODg+ihe2ghYjU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyoTW7bCMAhXobUvfebLYaDi2OtRq8QJ9p/6hCDmcZrsq5qZ8Ve
-	f4pIp3GuYEhVcbkL8xQ44L9CsjqqWACSo1pq4SipmaSdG7zyVl8UYrLXgDn/HK4=
-X-Gm-Gg: ASbGnctBdkujxnJR5Oxx5EbIpkUgGsT9QoWPaQN0qBAZ0qM3POvXt4pjylf2RO5gGcg
-	seyGpJmNuugcxhVqB/pCtTCgMdu5DA8dIU+tOd8bZliGimNKkXWjGrXEJ7D9z7xQaAVDCzU/oto
-	PH0t8dHPfuv69acEMsujhZKOucrhzUKaVroljf3qJPly0R6RM3Xc0x0s5olSznqy2U4bFhzzQBz
-	F/A78gFkTtYR+EjFG9LFTRNj/6SHeaZBFkuDRM02JbywQ1ENsShSzTyY29N8puGLjpdx5phLstK
-	Qpj561GGsXrfxLDRw2dkUfOnoqtXSSzN8jv2pqNGnygY1AE4hJEoVJ5jdIMYbO4d5VPiytL+yEy
-	C7ZMmMbW4
-X-Google-Smtp-Source: AGHT+IF84dx46mQjSLVGU2fwl0MIMB+9teoe3MWhOKYeBMQn9a4+JteyS3aCEq/ZWOCktwprXzRy4w==
-X-Received: by 2002:a05:6000:1884:b0:390:df83:1f5d with SMTP id ffacd0b85a97d-39132dbb4efmr1337542f8f.35.1741334043195;
-        Thu, 06 Mar 2025 23:54:03 -0800 (PST)
-Received: from [192.168.10.46] (146725694.box.freepro.com. [130.180.211.218])
-        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-3912bfdfddcsm4579617f8f.35.2025.03.06.23.54.02
+        bh=/XjSBrzgKarSUxwTUTP4kt/kMcpFKwcJA5tHsYp7Puk=;
+        b=ZDP0kWahqmJFySMjSl7eaDjzdEAHy+KLWrLICka2MsxlwCBD0uCix9t4FkShVJvKsE
+         Jy3h8x3YylW9Z3Bk/38UHkxPwL8rwXqiqrnUBv327m7Fq/MFYT2KiFCm2R0Vaixdb214
+         3UxMEVla1NR77NVtu4V4yjfL5QgHRiDxslSr2zsOZM3YCzONh0nDxjOf6oklpG6Ry0uc
+         N4zvjpqDpvsJDUST4StoJFKewENV17hw5hzR3ANmZYo/i0V8qubkV2V20adGR8SzJGXt
+         V0eD3T7NAPYjrZu3KfWb3cgSZ+NCrA9S2FEMRD8D++VRzejNV+zt3T19AA6AmrRe+ad2
+         U30A==
+X-Forwarded-Encrypted: i=1; AJvYcCWYFknlotDF0F6Q5xstfUgsUi41yi2fOy+cm6OLUuLLIlx9NZyZotDUQ7PF1bDTzlSQeUNOU9z6VIq6xN0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx/Vl3i+xWn9UYNW0YTjzj4K0QmmHmIsvxO0JkPJ1uzKZnwPxLu
+	SIpHwBkiL4TSvmN0Xvr9vLbPcGPqky1IKTsh7YKEts8/hdob1lZgJBltp9S5dFafQMe4OIV1wR9
+	uvJjQZ64ySW5nP7a04jH702B1ym3Kzxm4prOBVYqpghqf7n20sT0au58I6oI52A==
+X-Gm-Gg: ASbGnctdbRiva4Avi2+7XZNp+ZX+a9GLGFVQfNXl/YSkU/rKCoXkvgGTPlA4WYbWXd8
+	0bL6o4aiEdE4GBHudJBwWY/nVkfX/MPCUvTV1KgFQkC6ofDKJHqzeoPRjAz1Av7M8YkFWY2uS6+
+	lvFeMsS5fWVL2EzgtXMu80wIr3Tur+4OlT1a3/FQM4vYzyQ1VaKfIqGvJHHktR+SfWuHxst/aR0
+	0jVweylJ+8YsH8gH113tAXyI+fF2xHt8HjI0uOUuKEgHX/3fPxden2SXqQDxkUWnu6hfS5FL0AI
+	AdcGUIXe8jp7ki1AgrbIUrvyUzHtRNsrbc8hHkTY0cOxm420cp+LlTA=
+X-Received: by 2002:a05:600c:3553:b0:439:8bc3:a698 with SMTP id 5b1f17b1804b1-43c601cdc45mr16230375e9.6.1741334094993;
+        Thu, 06 Mar 2025 23:54:54 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IG5GpnS4MDn/K1MDh6DvplMjCwTGNqRWUJiQpcKLuEIKeIoa5hrBZx50YeG7edtD/K149h+Ww==
+X-Received: by 2002:a05:600c:3553:b0:439:8bc3:a698 with SMTP id 5b1f17b1804b1-43c601cdc45mr16230285e9.6.1741334094550;
+        Thu, 06 Mar 2025 23:54:54 -0800 (PST)
+Received: from ?IPV6:2a01:e0a:c:37e0:ced3:55bd:f454:e722? ([2a01:e0a:c:37e0:ced3:55bd:f454:e722])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43bd4352fa3sm72985885e9.30.2025.03.06.23.54.53
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 06 Mar 2025 23:54:02 -0800 (PST)
-Message-ID: <b651acf3-ae10-4f70-a879-3b5d6ff39b02@linaro.org>
-Date: Fri, 7 Mar 2025 08:54:01 +0100
+        Thu, 06 Mar 2025 23:54:54 -0800 (PST)
+Message-ID: <51c11147-4927-4ebc-9737-fd1eebe4e0bd@redhat.com>
+Date: Fri, 7 Mar 2025 08:54:52 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,39 +87,78 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3] clocksource: stm32-lptimer: use wakeup capable instead
- of init wakeup
-To: Fabrice Gasnier <fabrice.gasnier@foss.st.com>, tglx@linutronix.de
-Cc: stable@vger.kernel.org, alexandre.torgue@foss.st.com,
- olivier.moysan@foss.st.com, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org,
- linux-stm32@st-md-mailman.stormreply.com
-References: <20250306102501.2980153-1-fabrice.gasnier@foss.st.com>
-Content-Language: en-US
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
-In-Reply-To: <20250306102501.2980153-1-fabrice.gasnier@foss.st.com>
+Subject: Re: [PATCH drm-next 1/2] vmalloc: Add atomic_vmap
+To: Matthew Wilcox <willy@infradead.org>,
+ Ryosuke Yasuoka <ryasuoka@redhat.com>, maarten.lankhorst@linux.intel.com,
+ mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch,
+ kraxel@redhat.com, gurchetansingh@chromium.org, olvaffe@gmail.com,
+ akpm@linux-foundation.org, urezki@gmail.com, hch@infradead.org,
+ dmitry.osipenko@collabora.com, dri-devel@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org, virtualization@lists.linux.dev,
+ linux-mm@kvack.org
+References: <20250305152555.318159-1-ryasuoka@redhat.com>
+ <20250305152555.318159-2-ryasuoka@redhat.com>
+ <Z8kp9Z9VgTpQmV9d@casper.infradead.org>
+ <3bfd4238-6954-41a3-a5a3-8515a3ac9dce@redhat.com>
+ <Z8nEqDQhjU-Ly8Js@phenom.ffwll.local>
+Content-Language: en-US, fr
+From: Jocelyn Falempe <jfalempe@redhat.com>
+In-Reply-To: <Z8nEqDQhjU-Ly8Js@phenom.ffwll.local>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-On 06/03/2025 11:25, Fabrice Gasnier wrote:
-> From: Alexandre Torgue <alexandre.torgue@foss.st.com>
+On 06/03/2025 16:52, Simona Vetter wrote:
+> On Thu, Mar 06, 2025 at 02:24:51PM +0100, Jocelyn Falempe wrote:
+>> On 06/03/2025 05:52, Matthew Wilcox wrote:
+>>> On Thu, Mar 06, 2025 at 12:25:53AM +0900, Ryosuke Yasuoka wrote:
+>>>> Some drivers can use vmap in drm_panic, however, vmap is sleepable and
+>>>> takes locks. Since drm_panic will vmap in panic handler, atomic_vmap
+>>>> requests pages with GFP_ATOMIC and maps KVA without locks and sleep.
+>>>
+>>> In addition to the implicit GFP_KERNEL allocations Vlad mentioned, how
+>>> is this supposed to work?
+>>>
+>>>> +	vn = addr_to_node(va->va_start);
+>>>> +
+>>>> +	insert_vmap_area(va, &vn->busy.root, &vn->busy.head);
+>>>
+>>> If someone else is holding the vn->busy.lock because they're modifying the
+>>> busy tree, you'll corrupt the tree.  You can't just say "I can't take a
+>>> lock here, so I won't bother".  You need to figure out how to do something
+>>> safe without taking the lock.  For example, you could preallocate the
+>>> page tables and reserve a vmap area when the driver loads that would
+>>> then be usable for the panic situation.  I don't know that we have APIs
+>>> to let you do that today, but it's something that could be added.
+>>>
+>> Regarding the lock, it should be possible to use the trylock() variant, and
+>> fail if the lock is already taken. (In the panic handler, only 1 CPU remain
+>> active, so it's unlikely the lock would be released anyway).
+>>
+>> If we need to pre-allocate the page table and reserve the vmap area, maybe
+>> it would be easier to just always vmap() the primary framebuffer, so it can
+>> be used in the panic handler?
 > 
-> "wakeup-source" property describes a device which has wakeup capability
-> but should not force this device as a wakeup source.
+> Yeah I really don't like the idea of creating some really brittle one-off
+> core mm code just so we don't have to vmap a buffer unconditionally. I
+> think even better would be if drm_panic can cope with non-linear buffers,
+> it's entirely fine if the drawing function absolutely crawls and sets each
+> individual byte ...
+
+It already supports some non-linear buffer, like Nvidia block-linear:
+https://elixir.bootlin.com/linux/v6.13.5/source/drivers/gpu/drm/nouveau/dispnv50/wndw.c#L606
+
+And I've also sent some patches to support Intel's 4-tile and Y-tile format:
+https://patchwork.freedesktop.org/patch/637200/?series=141936&rev=5
+https://patchwork.freedesktop.org/patch/637202/?series=141936&rev=5
+
+Hopefully Color Compression can be disabled on intel's GPU, otherwise 
+that would be a bit harder to implement than tiling.
+
 > 
-> Fixes: 48b41c5e2de6 ("clocksource: Add Low Power STM32 timers driver")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Alexandre Torgue <alexandre.torgue@foss.st.com>
-> Signed-off-by: Fabrice Gasnier <fabrice.gasnier@foss.st.com>
-> ---
+> The only thing you're allowed to do in panic is try_lock on a raw spinlock
+> (plus some really scare lockless tricks), imposing that on core mm sounds
+> like a non-starter to me.
+> 
+> Cheers, Sima
 
-Applied, thanks
-
-
--- 
-<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
-
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
 
