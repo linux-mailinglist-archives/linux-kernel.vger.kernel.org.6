@@ -1,259 +1,330 @@
-Return-Path: <linux-kernel+bounces-551930-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-551931-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 57F20A5730D
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 21:46:17 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9BF88A5730E
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 21:46:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 83707173EB3
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 20:46:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E5AF3189604D
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 20:46:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 667DB257424;
-	Fri,  7 Mar 2025 20:46:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C390257AF3;
+	Fri,  7 Mar 2025 20:46:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nutanix.com header.i=@nutanix.com header.b="Nua/HzJg";
-	dkim=pass (2048-bit key) header.d=nutanix.com header.i=@nutanix.com header.b="QKzgnLM7"
-Received: from mx0b-002c1b01.pphosted.com (mx0b-002c1b01.pphosted.com [148.163.155.12])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="l9QwVTeG"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 773AC19DF53;
-	Fri,  7 Mar 2025 20:46:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=148.163.155.12
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741380369; cv=fail; b=UucKMurx1uQtbdgcMpiKfykPeni6mbADC8mj7ILC/MJbGKHVbA2moGHt5aN5JvAmMnSqhqGXbPc5rWi5hLeHX2wGhD0Xawt0xyRggkN5L8JfJHWRs8+XOaBggw74Qd3EfaRLgb0FjGrRB0g/Jc+jzgMJiUv9rWXmClNopzYuFgE=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741380369; c=relaxed/simple;
-	bh=NR02LZW35ZbIhN++Z1l8tmoxzqMRczhdpxfDC6T2lZw=;
-	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=GKHtgO5q3U3EjQlkZGhyLGpmLtdTriuboirfSC0G/wsLMb/5BMpaarL+TPtr2klsyy+EGHCVSG1gtpDsGaOa8CczMVL7F9d5CUtpzwwM+s9ngQv+a+wjjp+bmreq89Z3dQ7h9+6dDc+iyAMYmgPKRwHZ/P0yewXGkLgpyzOd2wY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nutanix.com; spf=pass smtp.mailfrom=nutanix.com; dkim=pass (2048-bit key) header.d=nutanix.com header.i=@nutanix.com header.b=Nua/HzJg; dkim=pass (2048-bit key) header.d=nutanix.com header.i=@nutanix.com header.b=QKzgnLM7; arc=fail smtp.client-ip=148.163.155.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nutanix.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nutanix.com
-Received: from pps.filterd (m0127843.ppops.net [127.0.0.1])
-	by mx0b-002c1b01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 527Feq1O005163;
-	Fri, 7 Mar 2025 12:43:09 -0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nutanix.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=proofpoint20171006; bh=HQrfGrNz3OaEz
-	KDROWMUTdQ2oApcwnOqPweFVeXkJzU=; b=Nua/HzJg1lpniP0IQt7KFaX2iiQxE
-	A2cKGWPeE5xGGlnocniHSwzGsc65Tvn+7igjuWPe77WSh7D3YZHg40iRD9D7Kq6c
-	lrlSUhgybfKopavRn7QDWcqNN5LsEr2Noe9UNAH94nIuRUD8dRi8YODTKZeQwbVZ
-	gA7TukS6SeUzpGnzeHbu7zxbaPGhCjFlxbUEp7RYfCcdSG3lX1h03VrvoZAaVycb
-	JFFCilX2yL+5aYrmIZLAqdYTwJPjacx3KQdfLQ2VrLLFWYm2BpgBxogdhewirvMH
-	MusuNyuSXpdedpMeKvn1YqElEm6JTG0D8Eilo8VMNRaGQY5jdQp1dyEig==
-Received: from bl0pr05cu006.outbound.protection.outlook.com (mail-BL0PR05CU006.outbound1701.protection.outlook.com [40.93.2.8])
-	by mx0b-002c1b01.pphosted.com (PPS) with ESMTPS id 456kny7qt9-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 07 Mar 2025 12:43:09 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=hCqp8sEICwzLOpuXAEZRD4egaYrNDvLcmxvLPLx8A6bho5N3d0ggHyH4kX7w2F05A9oH0ytbHCPtpXuFbe1iylihBWOR12qa3FL27h4RXQfMTI9db352fGz7cIStRxRs6ZBTkjfotyRXd2QfEU6w3jvmaeCBpQWAnQ8+LrXgZtVjyX4jpy3CSrfDoNSHgzJgcBzKpHtbPtaW5auk+VkQpgKl+KHKEAW8HKSpb4XBRWm5mJCULAaPti7j+RGv57/aTAvtKlCD7tx+owI1tJte9dHebkaGdvZvZ+RgGjZ8PMoK2Q5JRmpFQgrmBMwGvwyN8C02OZ0rniOAvLcoGWesBg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=HQrfGrNz3OaEzKDROWMUTdQ2oApcwnOqPweFVeXkJzU=;
- b=PdEENehWB5GXWxq6nIm287/tyh3IQV3gtISMq5mfwFWOYQoAiS7By8afufrrwTaIMhPXIm7BHmJ13G5HlyLG2k0C+TpqkfZ4qtb9cTmaFrwRHh9W7M1Nj+V6Znh0NKmLk7PQ2FbArX5X6nljlxqUQyfHex/6ViAHhTEH8ZwIQPay+mWM8ms00fNqafGr7t1orw0w4u1CMr4p1dd7WJF23x9KElZu8wbLG2dgWopRkrCLzBHc9Y7Z8zJXhf+ocSsLySeFZZg//vg8p4fi1mpOIrm/A85pyzTWNWO2BAMFvWcFyND/0h1j/3EYP9jv7gaok9Zjys1tWZCBQTrXSWG4yw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nutanix.com; dmarc=pass action=none header.from=nutanix.com;
- dkim=pass header.d=nutanix.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nutanix.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=HQrfGrNz3OaEzKDROWMUTdQ2oApcwnOqPweFVeXkJzU=;
- b=QKzgnLM7z8XoDXvSHfGlNLyRF7BbyEGURhJ0YTY5UyepDGRVRBRoI015M6Ui78YTuIXwFhHiXdCZKbbegAciULbO3vXERtG/gDGIsI9wrRtf9982JNudyn5ouMJFn517g2lLNpSo1qH/nrAm2VkD7kKGtyXiuC77z+qfJZ5IClE4698Sle4vE+tzKXtW2zK0BoIJMGHP+Y7+66gA52+hrXAmgvShIx93XC4PWvYg0MgbYOm5M28yiIgIyc9DZdqa+6HiP/3cciFTLdiDG8MqD/UrMS8Y6sr0ubzw5u6aiNqyDxJaVfe8c01IaxnAQCigqT+hp0XH8JnlslA/kyvR9g==
-Received: from SJ0PR02MB8861.namprd02.prod.outlook.com (2603:10b6:a03:3f4::5)
- by SA0PR02MB7403.namprd02.prod.outlook.com (2603:10b6:806:e2::23) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8466.28; Fri, 7 Mar
- 2025 20:43:07 +0000
-Received: from SJ0PR02MB8861.namprd02.prod.outlook.com
- ([fe80::a4b8:321f:2a92:bc42]) by SJ0PR02MB8861.namprd02.prod.outlook.com
- ([fe80::a4b8:321f:2a92:bc42%3]) with mapi id 15.20.8511.017; Fri, 7 Mar 2025
- 20:43:07 +0000
-From: Harshit Agarwal <harshit@nutanix.com>
-To: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>,
-        Mel Gorman <mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>,
-        linux-kernel@vger.kernel.org
-Cc: Harshit Agarwal <harshit@nutanix.com>, stable@vger.kernel.org
-Subject: [PATCH] sched/deadline: Fix race in push_dl_task
-Date: Fri,  7 Mar 2025 20:42:54 +0000
-Message-Id: <20250307204255.60640-1-harshit@nutanix.com>
-X-Mailer: git-send-email 2.22.3
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: PH7P220CA0148.NAMP220.PROD.OUTLOOK.COM
- (2603:10b6:510:327::16) To SJ0PR02MB8861.namprd02.prod.outlook.com
- (2603:10b6:a03:3f4::5)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42C97257AC7;
+	Fri,  7 Mar 2025 20:46:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741380374; cv=none; b=A7El/k/SzdRxNJu2HlDagrFHvDeS05PEl69w/1pcU+6o6mNA7LUE7Ujgqrm5Wm8t3Jq3UGfIyP3pRFQ18YM5Vc7x+alZCUqBKn9tNYsCqbPdo2IWuhcMRcLO2u1lasWZgLxV/jeVaJecAIQgOoc+4Hcn5AmpHUl/SKE1leOM+WM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741380374; c=relaxed/simple;
+	bh=vH3B2G8mPnZ0Vn4SWEkEXyHTOOqIOVypjdD5j3REujk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=EOqzRj8QKyJrtP/tgolFIPy+UiZaQtb4CTQIdrDUG4tzwKRmALxOHSzjiKqK5knfdJcf2tH7SHLLohnI0iC49MZKMj5JQ7guMi5jUByPBrh2PJw0B7A8CDRSM46qTbm7cjmsGXRoi6a51oWSL2qvwlJMgjIfcucNJaKpV/XBKYY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=l9QwVTeG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 32319C4CED1;
+	Fri,  7 Mar 2025 20:46:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741380373;
+	bh=vH3B2G8mPnZ0Vn4SWEkEXyHTOOqIOVypjdD5j3REujk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=l9QwVTeGRe3Oj/noO/+Ib7n4jNqYSm6CYOupKLeaUYM+rhL6CLTvkIHY4OLrXL61M
+	 MInriMDdggUshLsVP+C1qswvejcc34dmgLD7CGBRt8Keexv14XI4xE7W6UnoeevgAM
+	 0qUHlib3FPxhlrER4p7/UUd54AuvVgaPWeS+hN9csSXaYvV2Zvxc0AwK8HT+T8l9YB
+	 IsI0yQ6GSqD51GsYVh4qMovQClSY8N5xe7HMQMZj8cYezR0zM7UYyNAvcFKDNEW+U1
+	 DcBRlWamRS7LTIY9+JiPQWz9YcJxWmqKz1KEcuSbKWIOakQkV2236PO7TBtGzsklnK
+	 uEXKGMdRinpVw==
+Date: Fri, 7 Mar 2025 17:46:10 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Stephen Brennan <stephen.s.brennan@oracle.com>,
+	Namhyung Kim <namhyung@kernel.org>
+Cc: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
+	"Liang, Kan" <kan.liang@linux.intel.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Athira Rajeev <atrajeev@linux.vnet.ibm.com>,
+	Jiri Olsa <jolsa@kernel.org>, linux-kernel@vger.kernel.org,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	James Clark <james.clark@linaro.org>,
+	Chaitanya S Prakash <chaitanyas.prakash@arm.com>,
+	Ian Rogers <irogers@google.com>, linux-perf-users@vger.kernel.org,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Andi Kleen <ak@linux.intel.com>
+Subject: Re: [PATCH v2 0/3] Support .gnu_debugdata for symbols in perf
+Message-ID: <Z8tbEgh7rZscggv6@x1>
+References: <20250220185512.3357820-1-stephen.s.brennan@oracle.com>
+ <Z7-QZKNT4Cc8lspM@google.com>
+ <Z8tSyzcHF2V7Lofx@x1>
+ <Z8tUmcIH1qTF6YTn@x1>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ0PR02MB8861:EE_|SA0PR02MB7403:EE_
-X-MS-Office365-Filtering-Correlation-Id: 25ba3ffa-1204-473c-afe1-08dd5db8aa62
-x-proofpoint-crosstenant: true
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|7416014|1800799024|376014|52116014|366016|38350700014|921020;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?yZsA1YyvK14z2W4GJr4yNI9IxrNBBFsg3SFIOkB3c7FIVjUr8Juu34WNxJze?=
- =?us-ascii?Q?0VzqZdHvkfDXowTHJP2tqNMCi+SI0GJBbdXn19n5t1xbb8mPmkwKSektbSUn?=
- =?us-ascii?Q?M1UsMANNPB9fvV8QBQM4UzYuYVd2rwuOp0ZnQvQJY6uxb6DMUm9GWznAl4Zt?=
- =?us-ascii?Q?qKD0Yub4H8LvQzzoyDFBETor0NJf+VCN2+MpRw3CwIUkISY4Oapu4TcjtPbw?=
- =?us-ascii?Q?nM+chV3tdKQHo4UCzR75Lcij9vG39qwPUjxLm8m0adU0KRXY1OhJucBPE68K?=
- =?us-ascii?Q?OFMkiZnwUAuZ1IrIBE7R5u4j+2Zl/eWxBUqNG0t84PJt8FCOAIRrwAmWGD9Z?=
- =?us-ascii?Q?jjfOiQTr0gTORjhc2RNqM+HcOEhZy2gMjHPBrURZFfLlxouL0cV/8Zb56r+F?=
- =?us-ascii?Q?AdyrwHxOpDbzm5LRuwAHJe02RJm+J0EbAi4kufk3hZFX3XuEzLdCiIEYLlHg?=
- =?us-ascii?Q?FUQuE+/kmQ/6ESGrfpegFc2LT1M0It3krW5U/Sznj9dxvUspMYCffkYyfIJ7?=
- =?us-ascii?Q?xCuxj2LfVxgmZDNPitIxw2bucNZ8GaF8pLqzabMIpr+9qFg95L4MiDI5zwS9?=
- =?us-ascii?Q?mugEYFhaAM5MrISwrf012mWh0tVTpyE72xuuA7uWrm7P8HeMSLu19odAo4wO?=
- =?us-ascii?Q?83gesg+zZJ8jGmBV2cbqwgVxJ90nTQsYhTZgflARlMc5uPdAIeGOhDXOXDWi?=
- =?us-ascii?Q?HIgbJh811YtQO9vB4iweDULqlsGN3G0KplgG3rWzdikLmGlFx2jCE4RwQzby?=
- =?us-ascii?Q?WZNxyeuar3ZEIwcd5KlIsXDW2/C0ieSTXN+5eC7H3g9gtvieomfC8ra/RKcQ?=
- =?us-ascii?Q?jwdfIx7gOvYV6DA5OFrwGej34SCqgx3MvIPm2foLWAdd/EThFlMXKzZsSk8e?=
- =?us-ascii?Q?f7oJ1IHW25x42psu2E4ZBFG0v1XMHArfm1ILVlzR27vRZVajCVc/45W+8YI8?=
- =?us-ascii?Q?kGULNdEpty+zm1u0W+91V59WGQi7AptejEnfrS2R9MH3gtOxPCvzSLKSH6aZ?=
- =?us-ascii?Q?GVpGEl5PSWnw3lxEmHDAvUifEtjtTUgRNlaz5Hk5xLVnCw+bnZoImK6byFmR?=
- =?us-ascii?Q?+7Bbrjn5qTp2coVNIlJBUwePhGv0Dxp0YTtXVWkPe9gVALhvmvgt7yJPSzf7?=
- =?us-ascii?Q?OhnBd+cFxeuvu+5ReLnsvk/CYTnk9jeXpt/tERoWhCEf2t8OTDFPlJzkv5Im?=
- =?us-ascii?Q?sVHa/O5rx1T6OztkxSBz7dlRcWzMDRsmXCYJXRQHv8n701zqckoUvILPLU26?=
- =?us-ascii?Q?PSdZpSjcCANbq2rW3fOk8ws7AVhkmhoPZ56W9oTC+gVkFxWlmwwTTEQyinxI?=
- =?us-ascii?Q?jjhrSoxHmzayQViHVgI95ufKTT9VXe6HslIZLcB3TLdlH+0ugGDwbYqP2jmK?=
- =?us-ascii?Q?Fv8Q/wl6PNeQdedNpj+EzqCN/2Y4KG38pshezlG1fZybY3GveKPKfG1kPSnq?=
- =?us-ascii?Q?NfEh4d709XCC5EB3T09KS4T34QPsDGTP+OT1042gfiCDGkTnnT2Ktw=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ0PR02MB8861.namprd02.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(1800799024)(376014)(52116014)(366016)(38350700014)(921020);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?IjgraV1N4jBYWYFOHd7bGr26ktV42H+26ljQBsRUQx47CbvPKHB83lTjTaX4?=
- =?us-ascii?Q?ONannInozgwzC/sG2MW997wsPEhhbO1hpEJFW0jkBeUGB1ZL4Kkqt6xz29B3?=
- =?us-ascii?Q?TQe4xPMX5wF4wUQkZUTydOBu7JUuVW3jjcxN24gV1TYC/nBo4G4hXR7nEj5Q?=
- =?us-ascii?Q?pkeAEu9DcC8pvROXE1cZTGrSe+ylX3Gv9F8tpbRf0R6q/0LhI3We0jutg48k?=
- =?us-ascii?Q?fqHiW4yz+R5B94xpweHjeHfDxq9qvDeiAi/B9E1jMpUdPCgCDHCSVAgRrbuB?=
- =?us-ascii?Q?wKcRNhzIDS12B6AykmPAAjXgy6EHb0B1hBWuraogKUa7ob8Y/fOD536YJcGi?=
- =?us-ascii?Q?UXx0DjDnH6tNDpQqLthxIs4tMoO0xrpMXyb5iaVzMqTJmxGjPtY0nU/TpvHN?=
- =?us-ascii?Q?1ZTvLZPz279wnMUiengEEc4FGvX44PbwvLdZCkJTNQirSoGg+hatwNlTgPa7?=
- =?us-ascii?Q?siFKpU82rosLG5IwLEnp7AvyHWU4fkh9CFokKUU0SDfDb5pjrwXOOR8NzV7z?=
- =?us-ascii?Q?0zl9kMvki8eZqZX/cZrZSIrg+IH2/05cKOaC0USnwW7Ymfknvuh49XTm/W13?=
- =?us-ascii?Q?ekoTJ9zEt9z6DCHJth1SQTa7G3c5uanmi/jHeH9zo/vTnn8SaS9TkB7sdg9R?=
- =?us-ascii?Q?e6oAYFuEbyiGnDazJbWn8qkVBPzAF+ERwZtjBAifPZuR9pOqXhjo48ci6EKx?=
- =?us-ascii?Q?B4V/HVVybBBg+dWawZP1c7rKWmE+lEEthC5/GZsk6ooNctmLrhXKC13jeNzQ?=
- =?us-ascii?Q?bgM7m+dgjTVCDzvY6kSgj0wEJRczdf0wIi9Z9XGThwmdGQHQbQ6xtA7QuTOE?=
- =?us-ascii?Q?DIS6GN6Tga85RseIGGXNCFGRjQtt0w/iQ+cok6IJc0inDCwmWye5Q2BvRpH/?=
- =?us-ascii?Q?CPHzgeFcW4oxXLnTpsyxsl7mkyMYpusnV67vWIIXL8eDFTm5Yb4pNbhEe9BU?=
- =?us-ascii?Q?hIevi6wO4FFS0N0vxUUFfxUG9XhiR6lPWP9AjYJvxi7LWCjCyWz3qjHXQ+9b?=
- =?us-ascii?Q?rMEeSC1U/gUWv8oe9a3nnhCwYVsA0aXcZmYC2Er4iX4WetzV2pdlbd1RvsWb?=
- =?us-ascii?Q?dJIJh/CQ5iGZ+aIe0y9cRNpTqyfhPAAnBPJGdtgbNzXodhuBX2RwmPN9Aqdd?=
- =?us-ascii?Q?pjhZvCXJ8lyK8cb9xpjSEspjI6iL+idsWY8gTMe7wFUMj51C/nhU656A2P3m?=
- =?us-ascii?Q?vPnpUmcPwTCK80/zahmNGugiaBnc/9NhleTd/yKfwyTZkPn16vs/p1xzD3cf?=
- =?us-ascii?Q?HWkkYan7MEmOH26FvljrdhjUbYBjNu0oDmWig7I5aRRG+EjWNBHQZNdj8Ogf?=
- =?us-ascii?Q?LuRBqR/d1UFAQdbVa1LXzx65rexIx7OjIzDyItrWORJokILlPUYr5vP0W47V?=
- =?us-ascii?Q?O6tVtDmCpwpv83qQ/lLkcjOeQk/EQ0BWk0gurn+oksa2ktZKSBggech6Xdm/?=
- =?us-ascii?Q?zFDHsKpRkoiQifkIcdKZ167GK96yAi3CecbJhaNUJ8x5LRg3BaZ6WCWQs65P?=
- =?us-ascii?Q?nk39hIZU/MjrLTG1ut/zLjBESct839YoxLQKQFdZsb/dXGkZDhOnC4dofUJL?=
- =?us-ascii?Q?AqHS5y6GboSOT8r/5p3P+NrtYv7qHy3CTHbdXNC2t1+r96K+umiIvuqFRV8x?=
- =?us-ascii?Q?IQ=3D=3D?=
-X-OriginatorOrg: nutanix.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 25ba3ffa-1204-473c-afe1-08dd5db8aa62
-X-MS-Exchange-CrossTenant-AuthSource: SJ0PR02MB8861.namprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Mar 2025 20:43:07.2011
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: bb047546-786f-4de1-bd75-24e5b6f79043
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: X9EqPP6CETY4CTbW6ODUKcPL9eKIaZS6+Bxn42ghXjb9+sgoR8wxi0ZC/sf7GULsncXxlim40abz2kr9olU1jQlfZscDiue7PECqbm3nI4M=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA0PR02MB7403
-X-Proofpoint-GUID: q0OKclvs59Zi2IhOHrN4lC8fXgMJYIR7
-X-Authority-Analysis: v=2.4 cv=cNYaskeN c=1 sm=1 tr=0 ts=67cb5a5d cx=c_pps a=Kq952KYlFoMAqHE57MuLQQ==:117 a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19 a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19 a=xqWC_Br6kY4A:10 a=Vs1iUdzkB0EA:10
- a=0kUYKlekyDsA:10 a=VwQbUJbxAAAA:8 a=64Cc0HZtAAAA:8 a=7T9Mn912R_FWUNc41XoA:9 a=iFS0Xi_KNk6JYoBecTCZ:22
-X-Proofpoint-ORIG-GUID: q0OKclvs59Zi2IhOHrN4lC8fXgMJYIR7
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-07_07,2025-03-07_01,2024-11-22_01
-X-Proofpoint-Spam-Reason: safe
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <Z8tUmcIH1qTF6YTn@x1>
 
-This fix is the deadline version of the change made to the rt scheduler
-here:
-https://lore.kernel.org/lkml/20250225180553.167995-1-harshit@nutanix.com/
-Please go through the original change for more details on the issue.
+On Fri, Mar 07, 2025 at 05:18:36PM -0300, Arnaldo Carvalho de Melo wrote:
+> The NO_LZMA code in the perf build system should at this point either be
+> deleted, as elfutils is so critical for perf, or mean that outside of
+> elfutils, perf should make no use of lzma, which seems odd even with
+> some potentially marginal value.
+ 
+> So for testing this series I'll have to collect data before these
+> patches get applied, making sure we collect samples from symbols in
+> binaries with a MiniDebuginfo section, do a perf report, see them as
+> being not resolved after making sure we don't have its debuginfo files
+> installed and zapping whatever local debuginfo cache we have
+> (debuginfod, perfs, etc), apply the patches and then see if it gets more
+> symbols resolved by looking at the .gnu_debugdata section.
+> 
+> Ok, doing that now.
 
-In this fix we bail out or retry in the push_dl_task, if the task is no
-longer at the head of pushable tasks list because this list changed
-while trying to lock the runqueue of the other CPU.
+Works:
 
-Signed-off-by: Harshit Agarwal <harshit@nutanix.com>
-Cc: stable@vger.kernel.org
----
- kernel/sched/deadline.c | 25 +++++++++++++++++++++----
- 1 file changed, 21 insertions(+), 4 deletions(-)
+⬢ [acme@toolbox perf-tools-next]$ taskset -c 0 perf record -e cpu_core/cycles/P find . > /dev/null
+[ perf record: Woken up 1 times to write data ]
+[ perf record: Captured and wrote 0.011 MB perf.data (163 samples) ]
+⬢ [acme@toolbox perf-tools-next]$ perf report --stdio > before
+⬢ [acme@toolbox perf-tools-next]$ 
 
-diff --git a/kernel/sched/deadline.c b/kernel/sched/deadline.c
-index 38e4537790af..c5048969c640 100644
---- a/kernel/sched/deadline.c
-+++ b/kernel/sched/deadline.c
-@@ -2704,6 +2704,7 @@ static int push_dl_task(struct rq *rq)
- {
- 	struct task_struct *next_task;
- 	struct rq *later_rq;
-+	struct task_struct *task;
- 	int ret = 0;
- 
- 	next_task = pick_next_pushable_dl_task(rq);
-@@ -2734,15 +2735,30 @@ static int push_dl_task(struct rq *rq)
- 
- 	/* Will lock the rq it'll find */
- 	later_rq = find_lock_later_rq(next_task, rq);
--	if (!later_rq) {
--		struct task_struct *task;
-+	task = pick_next_pushable_dl_task(rq);
-+	if (later_rq && (!task || task != next_task)) {
-+		/*
-+		 * We must check all this again, since
-+		 * find_lock_later_rq releases rq->lock and it is
-+		 * then possible that next_task has migrated and
-+		 * is no longer at the head of the pushable list.
-+		 */
-+		double_unlock_balance(rq, later_rq);
-+		if (!task) {
-+			/* No more tasks */
-+			goto out;
-+		}
- 
-+		put_task_struct(next_task);
-+		next_task = task;
-+		goto retry;
-+	}
-+	if (!later_rq) {
- 		/*
- 		 * We must check all this again, since
- 		 * find_lock_later_rq releases rq->lock and it is
- 		 * then possible that next_task has migrated.
- 		 */
--		task = pick_next_pushable_dl_task(rq);
- 		if (task == next_task) {
- 			/*
- 			 * The task is still there. We don't try
-@@ -2751,9 +2767,10 @@ static int push_dl_task(struct rq *rq)
- 			goto out;
- 		}
- 
--		if (!task)
-+		if (!task) {
- 			/* No more tasks */
- 			goto out;
-+		}
- 
- 		put_task_struct(next_task);
- 		next_task = task;
--- 
-2.22.3
+Apply the patches and:
 
+⬢ [acme@toolbox perf-tools-next]$ perf report --stdio > after
+⬢ [acme@toolbox perf-tools-next]$ diff -u before after
+--- before	2025-03-07 17:33:15.113447391 -0300
++++ after	2025-03-07 17:33:39.291525994 -0300
+@@ -9,88 +9,56 @@
+ # Overhead  Command  Shared Object         Symbol                            
+ # ........  .......  ....................  ..................................
+ #
++     8.72%  find     find                  [.] consider_visiting
+      7.90%  find     libc.so.6             [.] __GI___readdir64
+      7.44%  find     libc.so.6             [.] _int_malloc
++     7.06%  find     find                  [.] find
++     6.20%  find     find                  [.] fts_build.constprop.0
+      6.18%  find     libc.so.6             [.] __memmove_avx_unaligned_erms
++     4.36%  find     find                  [.] pred_print
+      4.14%  find     libc.so.6             [.] __printf_buffer
+      3.65%  find     libc.so.6             [.] __strlen_avx2
+      3.35%  find     libc.so.6             [.] malloc
+-     2.65%  find     find                  [.] 0x000000000000b498
++     2.85%  find     find                  [.] fts_alloc
+      2.51%  find     libc.so.6             [.] __vfprintf_internal
+      2.45%  find     libc.so.6             [.] __fprintf_chk
+-     2.45%  find     find                  [.] 0x00000000000089e3
+      2.33%  find     libc.so.6             [.] __printf_buffer_write
+      2.13%  find     libc.so.6             [.] _int_free_merge_chunk
+      1.88%  find     libc.so.6             [.] __printf_buffer_flush_to_file
+-     1.87%  find     find                  [.] 0x000000000000bf8e
+      1.79%  find     libc.so.6             [.] _int_free
+      1.64%  find     libc.so.6             [.] msort_with_tmp.part.0
+      1.63%  find     find                  [.] free@plt
+-     1.34%  find     find                  [.] 0x000000000000c214
+-     1.30%  find     find                  [.] 0x000000000001ea34
+-     1.27%  find     find                  [.] 0x000000000001ea96
++     1.29%  find     find                  [.] fts_safe_changedir.lto_priv.0
+      1.26%  find     [unknown]             [k] 0xffffffffad4001c8
+      1.25%  find     libc.so.6             [.] __libc_fcntl64
+      1.23%  find     libc.so.6             [.] _int_free_create_chunk
+-     1.22%  find     find                  [.] 0x000000000000bfb9
+-     1.22%  find     find                  [.] 0x000000000000bbde
+-     1.22%  find     find                  [.] 0x000000000000b4a2
+-     1.20%  find     find                  [.] 0x0000000000006918
++     1.20%  find     find                  [.] pred_and
+      1.16%  find     libc.so.6             [.] __fcntl64_nocancel_adjusted
++     1.15%  find     find                  [.] AD_hash
+      1.12%  find     libc.so.6             [.] cfree@GLIBC_2.2.5
+      1.05%  find     libc.so.6             [.] __strchrnul_ifunc@plt
+      1.03%  find     libc.so.6             [.] __libc_openat64
+      1.01%  find     libc.so.6             [.] __strchrnul_avx2
+-     0.69%  find     find                  [.] 0x0000000000008a0e
+-     0.68%  find     find                  [.] 0x000000000000b553
+-     0.67%  find     find                  [.] 0x000000000001ea63
+-     0.67%  find     find                  [.] 0x0000000000006869
+-     0.65%  find     find                  [.] 0x0000000000019e82
+-     0.65%  find     find                  [.] 0x000000000000bbc5
+-     0.65%  find     find                  [.] 0x000000000001117e
+-     0.64%  find     find                  [.] 0x0000000000019fc6
+-     0.64%  find     find                  [.] 0x000000000001111c
+-     0.63%  find     find                  [.] 0x0000000000008a19
+-     0.63%  find     find                  [.] 0x0000000000018b3d
+-     0.63%  find     find                  [.] 0x000000000000b61e
++     0.97%  find     find                  [.] leave_dir.lto_priv.0
++     0.67%  find     find                  [.] apply_predicate
++     0.63%  find     find                  [.] cwd_advance_fd.lto_priv.0
+      0.63%  find     libc.so.6             [.] __GI___fstatat64
+-     0.63%  find     find                  [.] 0x000000000001f0de
+      0.63%  find     libc.so.6             [.] __fstat64
+-     0.63%  find     find                  [.] 0x000000000001edfb
+-     0.62%  find     find                  [.] 0x000000000001113f
+-     0.61%  find     find                  [.] 0x000000000000c223
+-     0.61%  find     find                  [.] 0x000000000000c06b
+-     0.61%  find     find                  [.] 0x000000000000fd90
+-     0.61%  find     find                  [.] 0x0000000000018d98
+-     0.60%  find     find                  [.] 0x0000000000017cfa
+-     0.60%  find     find                  [.] 0x000000000001e990
+-     0.60%  find     find                  [.] 0x000000000000b657
++     0.60%  find     find                  [.] rpl_fcntl
+      0.59%  find     find                  [.] malloc@plt
+-     0.59%  find     find                  [.] 0x000000000000c099
+-     0.59%  find     find                  [.] 0x00000000000089d9
+      0.58%  find     ld-linux-x86-64.so.2  [.] _dl_process_pt_gnu_property
+      0.57%  find     libc.so.6             [.] unlink_chunk.isra.0
+-     0.56%  find     find                  [.] 0x000000000001ea4e
+-     0.56%  find     find                  [.] 0x000000000000b64b
+      0.56%  find     libc.so.6             [.] malloc@plt
+-     0.54%  find     find                  [.] 0x00000000000110e6
+-     0.54%  find     find                  [.] 0x000000000001ead0
+-     0.54%  find     find                  [.] 0x000000000000fdc7
+-     0.53%  find     find                  [.] 0x000000000000fd8a
+-     0.52%  find     find                  [.] 0x0000000000011e07
+-     0.52%  find     find                  [.] 0x000000000000b6a8
+-     0.48%  find     find                  [.] 0x0000000000012463
++     0.54%  find     find                  [.] fts_compare_ino
++     0.52%  find     find                  [.] hash_find_entry
++     0.48%  find     find                  [.] fts_sort
+      0.47%  find     libc.so.6             [.] __printf_buffer_to_file_switch
+      0.42%  find     libc.so.6             [.] alloc_perturb
+-     0.42%  find     find                  [.] 0x000000000000bfc2
+-     0.41%  find     find                  [.] 0x0000000000011179
+-     0.40%  find     find                  [.] 0x000000000000c234
+-     0.36%  find     find                  [.] 0x0000000000018cc0
+      0.14%  find     ld-linux-x86-64.so.2  [.] _dl_sysdep_parse_arguments
+      0.01%  find     ld-linux-x86-64.so.2  [.] _dl_start
+      0.00%  find     ld-linux-x86-64.so.2  [.] _start
+ 
+ 
+ #
+-# (Tip: Create an archive with symtabs to analyse on other machine: perf archive)
++# (Tip: To see callchains in a more compact form: perf report -g folded)
+ #
+⬢ [acme@toolbox perf-tools-next]$
+
+⬢ [acme@toolbox perf-tools-next]$ find ~/.debug/ -name af3f04d1b31abc9e5ce8428110e424fd980a37
+⬢ [acme@toolbox perf-tools-next]$ find ~/.cache/ -name af3f04d1b31abc9e5ce8428110e424fd980a37
+⬢ [acme@toolbox perf-tools-next]$ 
+⬢ [acme@toolbox perf-tools-next]$ rpm -qf /bin/find
+findutils-4.9.0-9.fc40.x86_64
+⬢ [acme@toolbox perf-tools-next]$ rpm -q findutils-debuginfo
+package findutils-debuginfo is not installed
+⬢ [acme@toolbox perf-tools-next]$
+
+And /bin/find has only unresolved symbols in its symtabs:
+
+⬢ [acme@toolbox perf-tools-next]$ readelf -sW /bin/find | grep -w FUNC | wc -l
+145
+⬢ [acme@toolbox perf-tools-next]$ readelf -sW /bin/find | grep -w FUNC | grep -vw UND
+⬢ [acme@toolbox perf-tools-next]$
+
+⬢ [acme@toolbox perf-tools-next]$ readelf -SW /bin/find  | grep SYM
+  [ 7] .dynsym           DYNSYM          00000000000004a0 0004a0 000ed0 18   A  8   1  8
+  [ 9] .gnu.version      VERSYM          00000000000019a0 0019a0 00013c 02   A  7   0  2
+⬢ [acme@toolbox perf-tools-next]$
+
+And that matches eu-readelf output, almost the same (UND => UNDEF):
+
+⬢ [acme@toolbox perf-tools-next]$ eu-readelf -s /bin/find | grep -w FUNC | wc -l
+145
+⬢ [acme@toolbox perf-tools-next]$
+⬢ [acme@toolbox perf-tools-next]$ eu-readelf -s /bin/find | grep -w FUNC | grep -vw UNDEF
+⬢ [acme@toolbox perf-tools-next]$
+
+It has a way to use that section tho:
+
+⬢ [acme@toolbox perf-tools-next]$ man eu-readelf | grep -A2 -- --elf-section
+               [--elf-section [section] ]
+               [-w|
+                --debug-dump[=line,=decodedline,=info,=info+,=abbrev,=pubnames,=aranges,=macro,=frames,=str,=loc,=ranges,=gdb_index,=addr]]
+--
+       --elf-section [section]
+           Use the named SECTION (default .gnu_debugdata) as (compressed) ELF input data
+
+⬢ [acme@toolbox perf-tools-next]$
+
+⬢ [acme@toolbox perf-tools-next]$ eu-readelf --elf-section -s /bin/find | grep -w FUNC | grep -vw UNDEF | wc -l
+339
+⬢ [acme@toolbox perf-tools-next]$ eu-readelf --elf-section -s /bin/find | grep -w FUNC | grep -vw UNDEF | head
+    1: 00000000000056d0     35 FUNC    LOCAL  DEFAULT       17 entry_hashfunc
+    2: 0000000000005700     34 FUNC    LOCAL  DEFAULT       17 entry_comparator
+    3: 0000000000005920    121 FUNC    LOCAL  DEFAULT       17 subtree_has_side_effects
+    4: 00000000000059a0    992 FUNC    LOCAL  DEFAULT       17 worst_cost.part.0
+    5: 0000000000005d80    449 FUNC    LOCAL  DEFAULT       17 traverse_tree
+    6: 0000000000005f50     73 FUNC    LOCAL  DEFAULT       17 undangle_file_pointers
+    7: 0000000000005fa0     72 FUNC    LOCAL  DEFAULT       17 looks_like_expression
+    8: 0000000000006030    303 FUNC    LOCAL  DEFAULT       17 get_fts_info_name
+    9: 0000000000006190     35 FUNC    LOCAL  DEFAULT       17 inside_dir.part.0
+   10: 0000000000006330    451 FUNC    LOCAL  DEFAULT       17 pred_sanity_check
+⬢ [acme@toolbox perf-tools-next]$
+
+So there we can find the new entries, such as the top one in the example
+profile session above:
+
+⬢ [acme@toolbox perf-tools-next]$ eu-readelf --elf-section -s /bin/find | grep -w FUNC | grep -vw UNDEF | grep -w consider_visiting
+   48: 000000000000b460   2544 FUNC    LOCAL  DEFAULT       17 consider_visiting
+⬢ [acme@toolbox perf-tools-next]$
+
+And trat address matches the resolution perf did with your patches:
+
+⬢ [acme@toolbox perf-tools-next]$ perf report -v --stdio |& head
+build id event received for [vdso]: a2184b81fbbc08eff401d16259eca8ad5f9d8988 [20]
+build id event received for /usr/bin/find: 3faf3f04d1b31abc9e5ce8428110e424fd980a37 [20]
+build id event received for /usr/lib64/ld-linux-x86-64.so.2: 765f7ab0f3569ffe98de85864a0cedda9b686994 [20]
+build id event received for /usr/lib64/libc.so.6: c8c3fa52aaee3f5d73b6fd862e39e9d4c010b6ba [20]
+build id event received for [kernel.kallsyms]: c3fbb7df4dfb94762b1648bc65e4363e50f45585 [20]
+read_gnu_debugdata: using .gnu_debugdata of /usr/bin/find
+# To display the perf.data header info, please use --header/--header-only options.
+#
+#
+# Total Lost Samples: 0
+⬢ [acme@toolbox perf-tools-next]$ perf report -v --stdio |& head -20
+build id event received for [vdso]: a2184b81fbbc08eff401d16259eca8ad5f9d8988 [20]
+build id event received for /usr/bin/find: 3faf3f04d1b31abc9e5ce8428110e424fd980a37 [20]
+build id event received for /usr/lib64/ld-linux-x86-64.so.2: 765f7ab0f3569ffe98de85864a0cedda9b686994 [20]
+build id event received for /usr/lib64/libc.so.6: c8c3fa52aaee3f5d73b6fd862e39e9d4c010b6ba [20]
+build id event received for [kernel.kallsyms]: c3fbb7df4dfb94762b1648bc65e4363e50f45585 [20]
+read_gnu_debugdata: using .gnu_debugdata of /usr/bin/find
+# To display the perf.data header info, please use --header/--header-only options.
+#
+#
+# Total Lost Samples: 0
+#
+# Samples: 163  of event 'cpu_core/cycles/Pu'
+# Event count (approx.): 68126524
+#
+# Overhead  Command  Shared Object                    Symbol                                                 
+# ........  .......  ...............................  .......................................................
+#
+     8.72%  find     /usr/bin/find                    0xb498             
+     7.90%  find     /usr/lib64/libc.so.6             0xe51e0            B [.] __GI___readdir64
+     7.44%  find     /usr/lib64/libc.so.6             0xa77cd            B [.] _int_malloc
+⬢ [acme@toolbox perf-tools-next]$
+
+The only strange thing was not having it resolved in the -v case, which
+I think its because you added a new type of DSO but didn't update the
+code that does the 'perf report -v' verbose case?
+
+I ran out of time, have to go AFK now, can you please take a look,
+Stephen?
+
+DSO_BINARY_TYPE__GNU_DEBUGDATA should be handled at...
+
+int dso__read_binary_type_filename(const struct dso *dso,
+                                   enum dso_binary_type type,
+                                   char *root_dir, char *filename, size_t size)
+
+But you have it there, ok, I'll try to continue later.
+
+Other than that the patch looks great and makes use of this new mini
+symtab, excellent!
+
+- Arnaldo
 
