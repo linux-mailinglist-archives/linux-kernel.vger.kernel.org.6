@@ -1,138 +1,78 @@
-Return-Path: <linux-kernel+bounces-551155-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-551156-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48701A568C7
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 14:23:05 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 507F1A568C8
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 14:23:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 81DAE169D34
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 13:23:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 40A673AFEE6
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 13:23:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E17B21A425;
-	Fri,  7 Mar 2025 13:22:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE052219A93;
+	Fri,  7 Mar 2025 13:23:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="UH30BZtw"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=proton.me header.i=@proton.me header.b="OVtHNwYT"
+Received: from mail-40134.protonmail.ch (mail-40134.protonmail.ch [185.70.40.134])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88C0D39ACC;
-	Fri,  7 Mar 2025 13:22:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D0E339ACC;
+	Fri,  7 Mar 2025 13:23:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.40.134
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741353773; cv=none; b=sEtHYYwRR2g2g13XiNv9y6DKfn5U4ILSMscQD6hRTa07obzSUz+VnKh+l5g3/5l72fvNEX5cl2H70MoYBysix4BGq1jnzn8otkoJoeo6Fm93emdaMRLZe1yyLEvc8jxGVeKKI6FlRhFpsqgw1HR1mBHsvOqS/OGMCadpNZlqtLE=
+	t=1741353803; cv=none; b=XG/g7aMiJANcPBSSDcG9Y9YNGYH2FdTbBFOYJaZZcEIPXZJLVLNE4dBUUumM8Jl6BaqmEokp1eECYZoX2cJscRRmCZ8d+r+2/HRXtDLVuGTaCavScTw3l319i5RILfSWDHQfuoBwcLCiXIzx6Sp33PUGXJ718yyRiDrNSTE2oUU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741353773; c=relaxed/simple;
-	bh=nMdElkX27SYzjIYLE2Nq3THJhnIkeKxIRL8VmbGk6kM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=abWB9QQ9JjZbBWYLlQlNBXq7d1hQak6UZuYtZ1Wbaa+M/uNvPYx3V5PtXPJoiBRo8m+J6s1llQmzDRz55YLV3L2BOw4gv3kx3LDaoNr0pgBbev4OhAGF66mni8ACf5k1Cp4d4wqGyDkICY41UT15FOUBc0SRsNCqu5otwMYUPpw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=UH30BZtw; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1741353763;
-	bh=nMdElkX27SYzjIYLE2Nq3THJhnIkeKxIRL8VmbGk6kM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=UH30BZtwjumsTG+ymcK82JDw2TOztk6pPaFGRIpxdfLL1yrF5Rmrv9L+JIpB89d94
-	 ka7coYAc8FoQpIRTFFbPiKgBC//VrsODHU+kGTJxpx9+Ng0X/71/Ny2kMGDpjBVY+0
-	 ODUgWtfT8q1pjxowPX9FiTO3UPu+04ep7laZhiObugs3aPEkCrZr2FrZI6FDCHxv3g
-	 BXWuwjjbT9K0PdGHnHZh131bbuZcUHc1yWlKt0ZMbXggm/q6uOk8W3E54qS4BZJvd6
-	 mkdlKAI6qFkfL7sDjOm41FPFfpS7Qp7vgQzpDzA3oRd6sKGVbxDXyy2Ac0NupiiBG3
-	 9Q96c+BviI4RQ==
-Received: from notapiano (unknown [IPv6:2804:14c:1a9:53ee::1001])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: nfraprado)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id A168917E05C1;
-	Fri,  7 Mar 2025 14:22:38 +0100 (CET)
-Date: Fri, 7 Mar 2025 10:22:36 -0300
-From: =?utf-8?B?TsOtY29sYXMgRi4gUi4gQS4=?= Prado <nfraprado@collabora.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Sen Chu <sen.chu@mediatek.com>, Sean Wang <sean.wang@mediatek.com>,
-	Macpaul Lin <macpaul.lin@mediatek.com>, Lee Jones <lee@kernel.org>,
-	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>, kernel@collabora.com,
-	linux-sound@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org, linux-pm@vger.kernel.org
-Subject: Re: [PATCH v4 01/19] dt-bindings: mfd: mediatek: mt6397: Add accdet
- subnode
-Message-ID: <cb2820d8-84e8-49ca-b497-1ea815679a3d@notapiano>
-References: <20250305-mt6359-accdet-dts-v4-0-e5ffa5ee9991@collabora.com>
- <20250305-mt6359-accdet-dts-v4-1-e5ffa5ee9991@collabora.com>
- <20250306-certain-jasmine-mastiff-fd67ba@krzk-bin>
- <2fa6037d-b5e9-45b2-a5d5-dbc92fb3434b@notapiano>
- <0663e03e-e331-4a06-be95-ce8d9059ed6b@kernel.org>
+	s=arc-20240116; t=1741353803; c=relaxed/simple;
+	bh=4WxMkD6CWyChQWUEG9Os74cWrdBRR9i/mnauP29FhQA=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=vFMcIbufijHHrtnvVsqUvWCXbdWc1Q1GaSY3V2020O6kDusLDSGTsCrvRHLZSDCB/lzzgmOn2DH4He5AnRrOyfPICitA8QevysvznIeB6ZBOmGETyLD13Jq1KTDezS0puaJHR65ak70b/jzVp1SBfGVaTzCRC2xqCUfiKhEBxjM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=OVtHNwYT; arc=none smtp.client-ip=185.70.40.134
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
+	s=protonmail; t=1741353800; x=1741613000;
+	bh=4WxMkD6CWyChQWUEG9Os74cWrdBRR9i/mnauP29FhQA=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector:List-Unsubscribe:List-Unsubscribe-Post;
+	b=OVtHNwYTOnfPsM5SvBMF8K8nqWh2pTMDquHO8MEK+SNTE2q4odDI5WQ/Q6G7shTp1
+	 GZGJy4/xHWlZto/RLuWVxkRzQgMePqqwOy6sSgNmslLN24gIkkn/tb6eeTVgPt8hcX
+	 AaAMRVVqp/7nSpL+pv2g0RAE808bO3JyQvk8yX+/Oj7+/j9Sx8qDa6E+VsXq0nbRxQ
+	 kAs2JSAMCgkSmbmz7ll/LmcnzMtG1GjsTbc/x/nPPAl1L16YSzNSCLcfq52zwXubfl
+	 kCKHb8xiRJU6Jo0ljgsKhK+UI6O91fWgF1a8xE1d3HK7vK7bWi25xA6i7Hyz+B7z3+
+	 HOzxvD2TWce/w==
+Date: Fri, 07 Mar 2025 13:23:15 +0000
+To: Andreas Hindborg <a.hindborg@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, Anna-Maria Behnsen <anna-maria@linutronix.de>, Frederic Weisbecker <frederic@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Danilo Krummrich <dakr@kernel.org>
+From: Benno Lossin <benno.lossin@proton.me>
+Cc: Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, Lyude Paul <lyude@redhat.com>, Guangbo Cui <2407018371@qq.com>, Dirk Behme <dirk.behme@gmail.com>, Daniel Almeida <daniel.almeida@collabora.com>, Tamir Duberstein <tamird@gmail.com>, Markus Elfring <Markus.Elfring@web.de>, rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v10 12/13] rust: hrtimer: add clocksource selection through `ClockId`
+Message-ID: <D8A2EFIWWJI6.YSGD4KNNDYFX@proton.me>
+In-Reply-To: <20250307-hrtimer-v3-v6-12-rc2-v10-12-0cf7e9491da4@kernel.org>
+References: <20250307-hrtimer-v3-v6-12-rc2-v10-0-0cf7e9491da4@kernel.org> <20250307-hrtimer-v3-v6-12-rc2-v10-12-0cf7e9491da4@kernel.org>
+Feedback-ID: 71780778:user:proton
+X-Pm-Message-ID: 2b7d2f67b764e6bff4b81e640caa986fcc2b35ef
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <0663e03e-e331-4a06-be95-ce8d9059ed6b@kernel.org>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Mar 07, 2025 at 08:11:26AM +0100, Krzysztof Kozlowski wrote:
-> On 06/03/2025 13:19, Nícolas F. R. A. Prado wrote:
-> >>>    It is interfaced to host controller using SPI interface by a proprietary hardware
-> >>>    called PMIC wrapper or pwrap. MT6397/MT6323 PMIC is a child device of pwrap.
-> >>> @@ -224,6 +225,30 @@ properties:
-> >>>      description:
-> >>>        Pin controller
-> >>>  
-> >>> +  accdet:
-> >>> +    type: object
-> >>> +    additionalProperties: false
-> >>> +    description:
-> >>> +      The Accessory Detection module found on the PMIC allows detecting audio
-> >>> +      jack insertion and removal, as well as identifying the type of events
-> >>> +      connected to the jack.
-> >>> +
-> >>> +    properties:
-> >>> +      compatible:
-> >>> +        const: mediatek,mt6359-accdet
-> >>
-> >> You just removed the other file, no folding happened here. Drop the
-> >> accdet node and fold this into parent.
-> > 
-> > Sorry, I'm still not sure what you mean by folding here then. Right now the
-> > accdet is a subnode of the PMIC. If you want me to remove the accdet node, where
-> 
-> Yes
-> 
-> > would its compatible and property go?
-> 
-> compatible: nowhere, because it is close to redundancy.
-> 
-> property: to the parent pmic node.
-> 
->     pmic {
->         compatible = "mediatek,mt6359";
->         interrupt-controller;
->         #interrupt-cells = <2>;
-> 
->         mediatek,hp-eint-high;
->     };
+On Fri Mar 7, 2025 at 11:11 AM CET, Andreas Hindborg wrote:
+> Allow selecting a clock source for timers by passing a `ClockId`
+> variant to `HrTimer::new`.
+>
+> Acked-by: Frederic Weisbecker <frederic@kernel.org>
+> Reviewed-by: Lyude Paul <lyude@redhat.com>
+> Signed-off-by: Andreas Hindborg <a.hindborg@kernel.org>
 
-I'm not sure that's right. The ACCDET submodule does have some resources, IRQs,
-that it registers in its mfd cell, see patch 2 of this series [1]. It also has
-its own driver (sound/soc/codecs/mt6359-accdet.c) that probes based on this
-compatible and handles those interrupts. Why would it not get its own node like
-the other MFD cells?
+Reviewed-by: Benno Lossin <benno.lossin@proton.me>
 
-[1] https://lore.kernel.org/all/20250305-mt6359-accdet-dts-v4-2-e5ffa5ee9991@collabora.com
+---
+Cheers,
+Benno
 
-Thanks,
-Nícolas
 
