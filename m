@@ -1,242 +1,294 @@
-Return-Path: <linux-kernel+bounces-551121-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-551122-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE95AA5686F
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 14:05:25 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B9C46A56873
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 14:06:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1578C167ABD
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 13:05:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 01ACA1884F73
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 13:06:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2CEB219A72;
-	Fri,  7 Mar 2025 13:05:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DC91219A79;
+	Fri,  7 Mar 2025 13:06:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="hn3sqhdP";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="RLgu4gx9"
-Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="DEuYQ/jR"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D54E62940B;
-	Fri,  7 Mar 2025 13:05:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741352717; cv=fail; b=p7Geb+CFkJS3dYd59BOXoML9bG1vbi8vjzlj9TdT90jTuxwOMX+U2qGd81bnLltRDNkTksBc8gBMf0TAF1aBvx0ALseXX2h3d0fIMRka4MZQzpqwUXX3IRxiFNTBjMQjXQ0K+DLbsWHGR4pjiXPeBThHeRtJkTWqQvqbLI0EuRQ=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741352717; c=relaxed/simple;
-	bh=UpczWxtzVPwsRYLsd0Rbl4bzWLRy2rCylQSQGV0bZnY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=jn4kknH9WGGJuAjeDA+hXBB+lJfQSueZMwG7prI2whELFP15MJvQ5r8c5+qHE3Q7e6rXABthMkdaogBxg7lOLZutb+GzmkwhW+QILC2sC3ek52JmYEn/VPuC/2wErPCNwcWV3mpTCe9YGasj2F74iV0XeBK97Zx4Z+pm11q2ci8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=hn3sqhdP; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=RLgu4gx9; arc=fail smtp.client-ip=205.220.177.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246632.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5271u2NH031499;
-	Fri, 7 Mar 2025 13:05:07 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=corp-2023-11-20; bh=n0fwKgudzheSlnzVGC
-	u1yzcMSow1KyEzps6AIzbk/Z8=; b=hn3sqhdPrmidnvjW5tQKJvCen5saxQl+YI
-	sXLabLQBC/AqSO9a7/ccrxByAjruLiHlvOC9SwbzWR6Yci5YZwHuCckyOQaqkRME
-	HmbD8jgTFs2vUwcaty2gWj/yUNN8KGyWttGu2EnkWVLByzDeHl3rBN3HwGC81pj5
-	EMVOvaDcBc+tvYz4LHuNJusLIGSgE8xkrYA/aOVaAihR8/8jcUWYqsQvTG6H3Twi
-	yeeNzeHNRXGX+QklP5jVMH+lCGYjfqbKfz6wkAB6eXip6/abaK38twBHIfVjCu+W
-	Yeig3eVQg1N0/N2xiArUPNTcFv2CZvu0viUG/1jKr1uufmf1YOlQ==
-Received: from phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta02.appoci.oracle.com [147.154.114.232])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 453u86v3ca-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 07 Mar 2025 13:05:07 +0000 (GMT)
-Received: from pps.filterd (phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 527CO9bG015762;
-	Fri, 7 Mar 2025 13:05:06 GMT
-Received: from nam04-mw2-obe.outbound.protection.outlook.com (mail-mw2nam04lp2172.outbound.protection.outlook.com [104.47.73.172])
-	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 453rpek28w-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 07 Mar 2025 13:05:06 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=XECKonIU/8sSgOZ4gScPw6p2vvT+Iv+BK6dq0WPK+RkSPyiOFWnuhiG2BGhlOEuKue/mWhtXSQbhjgqeEJp6R+p4bDdyKjc7zYiyIaQg1RzhTBnwkWun1cJ+xnxSEpYl09SwpA3whGqzoL75qAOqDL44O1VNRdBtBRcByyndkoGd8u/9I285lsTia1Q/ndXH1MkhFEGyVZcAkOexU0EW+X/4riQ5SrblOMHvgQkR5P2XPDgedsAA4oILS2fnu6XtmLTfAK8lXF+JhTf1fmsflFdwa5p6+/BAF0E14vRIluze1yuNdjZHHJAA4sD8NrrgqXGxYrj8ZklkxwLsBnjYyA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=n0fwKgudzheSlnzVGCu1yzcMSow1KyEzps6AIzbk/Z8=;
- b=H6QkQz4HH+FIDaq6IJDXuYzIemTGihhI55PLryXcxZG+bK8kU7AzTn3L6pxcKZJ0ZnCmP0o6y29B9OowZPOn5nrO5LFdhQ/5UROB68+4eGdcJeE0bhBKTu/WXvDVRsv/cdyaobbCDF+htO1ZJf8VcrLdpsmQvE+zldfNIfj4gJWQ5K1ajc0sIrrGFwkyBp/6sWZfgGbM10Yq1jqpc1zsURJVWEr56wUFZGm0EX3RCRQUjsSnF86VztWbDp6rJ010QB+2rKUEUEPy2FnpiOO+BTx/dND1vqh9zqgXh7fn9vG0Zo9hv/UFnxF07vdVwqY9LCa0ztRwiid/TPId0XCRCg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=n0fwKgudzheSlnzVGCu1yzcMSow1KyEzps6AIzbk/Z8=;
- b=RLgu4gx9qZE5wdUpWg/v4oxobrgkGTY46RARmRRRPnXIonIztx1wgefHXg71Mmefaq26k1ixLuxUu95V80hBq4Y2OdyekgIbT6XJgiexNmAieNCpMSn+6DjUNYuZeu3itARFWIm8UqW44N+hLxbCV+X8zURyDzbSMED1DOXgn/g=
-Received: from MN2PR10MB4112.namprd10.prod.outlook.com (2603:10b6:208:11e::33)
- by SJ0PR10MB5565.namprd10.prod.outlook.com (2603:10b6:a03:3d2::19) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8511.17; Fri, 7 Mar
- 2025 13:05:03 +0000
-Received: from MN2PR10MB4112.namprd10.prod.outlook.com
- ([fe80::3256:3c8c:73a9:5b9c]) by MN2PR10MB4112.namprd10.prod.outlook.com
- ([fe80::3256:3c8c:73a9:5b9c%7]) with mapi id 15.20.8489.025; Fri, 7 Mar 2025
- 13:05:02 +0000
-Date: Fri, 7 Mar 2025 13:04:57 +0000
-From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-To: Ryan Roberts <ryan.roberts@arm.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH v1] mm/madvise: Always set ptes via arch helpers
-Message-ID: <dbdeb4d7-f7b9-4b10-ada3-c2d37e915f6d@lucifer.local>
-References: <20250307123307.262298-1-ryan.roberts@arm.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250307123307.262298-1-ryan.roberts@arm.com>
-X-ClientProxiedBy: LO2P265CA0405.GBRP265.PROD.OUTLOOK.COM
- (2603:10a6:600:f::33) To MN2PR10MB4112.namprd10.prod.outlook.com
- (2603:10b6:208:11e::33)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A09512940B;
+	Fri,  7 Mar 2025 13:06:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741352800; cv=none; b=HRbTjdiYEGe30i/iY6HJZESEv1bf0ki53np9ueE5hPuaYG2lJ31oN7Q2yFHF9zl+44cd+yV1P3Lsiy4ylA9bneAMjJHjKJ7DVOcw7UY1j+26dIYkvCWUvptKwx/UaDSGtN1CDguJNCz61Fun9w3etZFuVd18KMZREkHNZ1c5Skw=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741352800; c=relaxed/simple;
+	bh=pyHubA2Y8El2Dxo9cYYe+J579rPOig3OH2qxyp1/PRI=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=a4Zczyns2EXw2iLplFCwBv7dhfjoMKjbrByO2pIuYhFDEe/OIscTnU8lGfxcYRNSg2KXHYRxI6UkZLn3s2asFCqVSY0N2xVRrwsijV+O2xYvXnXwe+HdN6qJVy+ZhAyBH7k82JXqMCg5hH6i+BWKARMXrigBHi52ajkqkNUdDxU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=DEuYQ/jR; arc=none smtp.client-ip=198.175.65.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1741352799; x=1772888799;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=pyHubA2Y8El2Dxo9cYYe+J579rPOig3OH2qxyp1/PRI=;
+  b=DEuYQ/jRG9mtclPA0IATUGLr4pX+iKGnlrDBia9YCz+kmFbdMZxQnLGL
+   JhIUC5C3psJSoEAUGXTW6jO/Yp9k7bzY42ODPOyfdgEEQpQVR6y2/2sDH
+   VOGRxc9gf/EGIxJRAFXp4HTBfsaGAL5xLKrP6GNlDKIwZw7RUx8e8UXwe
+   2Y9PalP03VARs2KHsXKeHnDM3FcQ7FGS7JWl7bQ15GDfhyHJC5gtE2PbP
+   Bfj5HzDo9fHtS+84U9+HQv+COIFDrBa1wemucCCRx2/iaYZUpWxbpS/Ru
+   livylHbKn4RwjIJYSR1s9ldEkjQdDMRJ9fwmsWDi+SAL775dF6OUjha/R
+   w==;
+X-CSE-ConnectionGUID: beueioGtTge6zZmwJARSdA==
+X-CSE-MsgGUID: 5UBe7GtaTp2oWnq2EwZ+kw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11365"; a="42597806"
+X-IronPort-AV: E=Sophos;i="6.14,229,1736841600"; 
+   d="scan'208";a="42597806"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Mar 2025 05:06:38 -0800
+X-CSE-ConnectionGUID: Vcy1/GqCRXy6USNwKX5XPw==
+X-CSE-MsgGUID: 2vsEvP1QS+yo9LF9DAAYeg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
+   d="scan'208";a="150271266"
+Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.120])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Mar 2025 05:06:35 -0800
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Fri, 7 Mar 2025 15:06:31 +0200 (EET)
+To: Bjorn Helgaas <helgaas@kernel.org>
+cc: Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org, 
+    LKML <linux-kernel@vger.kernel.org>, 
+    Dan Williams <dan.j.williams@intel.com>
+Subject: Re: [RFC PATCH 1/1] PCI: Add Extended Tag + MRRS quirk for Xeon 6
+In-Reply-To: <20250304211428.GA258044@bhelgaas>
+Message-ID: <ef29ceb3-9aa6-f4ca-014e-3f005a9b4beb@linux.intel.com>
+References: <20250304211428.GA258044@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MN2PR10MB4112:EE_|SJ0PR10MB5565:EE_
-X-MS-Office365-Filtering-Correlation-Id: 44af6571-318f-492b-1a74-08dd5d78abe4
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?27xAqfx4WLtWTSuKqSdfuwIOzsNh9Q31fNFVqCwL15X2yxmvr+pGrAm43ESp?=
- =?us-ascii?Q?DdI40J/+OML+gX6yvXaH5YwWut8z8IhUPrFHWcgqdMRcgVf0eP7APeWpYTA7?=
- =?us-ascii?Q?pobTG2BDlATFwHcou3OVSKElRouvsgzYCGgIxrZoXHds2Moyf6YrHUVQ58VY?=
- =?us-ascii?Q?3mLAa+bfEi/ZgOfWoqcatlxaiBphDPqNJ1BQC4n+RPXI+36QZXJRMd9tvNm+?=
- =?us-ascii?Q?F19914TIJalH/TltvlehBYam5P0wpw2vctAiUuspCO1I1lNu2KlVpYtcvcE3?=
- =?us-ascii?Q?hREu9XzOOZrVucttAA+HZ4e81r/GQK/tWHfRU0sLWIkL1IJLfuMUg8ST/kJJ?=
- =?us-ascii?Q?uoQUDSZ/rlKOn7hxMV+KnTrtQ2L4AM3OWDJcer1EAnA0xc0FsszcWYMIC796?=
- =?us-ascii?Q?Mvxd1Dx8MvdVxVodvxsOH3eivbFngBSI6bORAGErw3mRb0jku1FbCD8ds2qH?=
- =?us-ascii?Q?1KKP+xSbS1+xWhKbnpWQ4mAQR409gwUpQJ6t6XRKStd+godVM2gbs2uTr1IN?=
- =?us-ascii?Q?yt+pzP08gMrFFX7DOC/X6ntMTEj46r5rlvSj0bwEVCOTa5k9DvaoWqqrf5Kb?=
- =?us-ascii?Q?3BuvuWlrfNyzrLhqIZX0Cmsk2YzXnjDjmv1DGDmsnp68134O6x07C5mMsY3y?=
- =?us-ascii?Q?laWQSwagcfXfMNyeCm9kZEUerumb6ZdgzkshS73Dv9Au7wV5sqzQSerPQmdV?=
- =?us-ascii?Q?ENKyQ1CEy3X3U+y+07qD2s/j8uO0pJR2onb38LIR1MGuNIk8aG5kHWP7V4Wv?=
- =?us-ascii?Q?l5Bb9qt9wWeI+WL8XAxOcx3loUrLWyEGomFaY3M/euK88Uc1LMhx4pTK7kJK?=
- =?us-ascii?Q?fTyXYHksyOa/335U4UMJcYR8Nulb0eDw0lvzBJbtSii0r8vwSNVU2ntvqFRe?=
- =?us-ascii?Q?rI65Kgr0YV+sH9CaO7Q6TZCYfUxyym13lmaJXc0T3ug8rtK9AecicMp4LlDn?=
- =?us-ascii?Q?d/C/UatRAKChBbIVDQBd7aKhjHVS+kEpSs8gBTA2ZrxHDDCHZ2ePR/xs4D53?=
- =?us-ascii?Q?X54rDOmD79daT3fMKNkS3x1T6aULfyxfQwy1/ze6+/VUaHfuGOIXBT1PMZKT?=
- =?us-ascii?Q?93EhUJ1UmPFl7LEIwwVAIKuEvQOKbHScEWwY4C4YbC8ArY5sZW4xLaCVYkMD?=
- =?us-ascii?Q?UKDfd0Y241t06hzBlRfVwBncPZKj1+3oAxWTzzpWWZtl1lyVHuaVu+IXFmyJ?=
- =?us-ascii?Q?LcA3LhFLYDcct3Qu78G5UVjmjastlKMZm0nYEUpl849On9GfeDLI4+93E5l5?=
- =?us-ascii?Q?tmarW0qMPu3SmyzopEREygietj3SYYG+9Gp85tOVnE28z0aoJ2kJYmpDO5A4?=
- =?us-ascii?Q?V3Quk45fD3VuomEK8S/xFfpZYDf0+Yljxd1xl8fGWiFzRYelpPmPbhA1yiIb?=
- =?us-ascii?Q?m8KpKSOxgRQ2eU8mQ5H4tixSeNpz?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN2PR10MB4112.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?l5uGcnOX6A26K93UHMq0Y4TqAQSBOcd6Dpwsk0nhVO+bkPm7L1r32X1QF+sG?=
- =?us-ascii?Q?HFekWKuXe0tcSDM3Gs346iq2vdInnFrVqQQn7gz6fv6ECeNmDJ1agzeY8oS6?=
- =?us-ascii?Q?AS2pD6eLICbR4rTuPQIdlnwGraAJCcOLVl4faPzhgzzq+mZNoAh3HUuFtSkv?=
- =?us-ascii?Q?BpVulVLfkB+D634Tf9bWKwyQXk41rUbKRCuqBGO1rsAcdEMA29Ky8VIbxF0N?=
- =?us-ascii?Q?VMWybCBSiKd7nH42InxdakKoHebHeCtFClCU5kw0TRMiR/il+N8RO5IEjA9A?=
- =?us-ascii?Q?vMZNFZM7U87fLpktjT/QkJs+YzvA1n234DQoX6M9fs1me0ArPU5nuGA86T2d?=
- =?us-ascii?Q?dnfCdj57ho/D7UJUCGiOkaD9V+Ody+c8YOnZayMdivH3+JHu/rjs+5kN2rAE?=
- =?us-ascii?Q?oL4Hq2EYGFbj/A01u+5TkMbnsp/9NwB24d8nTSTKpOdLRAOrEgEl9lZ2azp/?=
- =?us-ascii?Q?VKwU4U0+5a+VS4VwAN9FYKflgklhJSZZgbF98GH0RUVZYYHU06zH3FUWosBu?=
- =?us-ascii?Q?wEHb3C6SIoEaaqxN3Km7ZhaeJ0RoTdXaHFjooTQbYFnNArRsU1Z0K0cTWy7z?=
- =?us-ascii?Q?AjoJflqcmZWSjzbtDn1+NNet7daVuHsvgb+1Ab2gBKIcjFfxpRv+i8tnfR7I?=
- =?us-ascii?Q?ddlEmBZ/GVqXX1gmVhSyxQ51zkSH8xPcyfCE8cIzQ/7jRzLoiwigKiXQuXR+?=
- =?us-ascii?Q?aklpLGzQ4LwxBHhBPMFkP0ZcRoTmnwhW7gfR6z57KFvOHWdeozqUUBcsD+XG?=
- =?us-ascii?Q?MDX0CNXzPQ1/86UKknni9JAUR4PFTt2tOa4uF36pbWJkRuIpxtV/SGTh7Nwz?=
- =?us-ascii?Q?qx1rlb4fjRksl9s5QOum6VmGtbIamCpGkX3jklFtpyMgW/8g6H4Jz5/eh9eg?=
- =?us-ascii?Q?EmlNojAqWiL+9xC/P7v1ZRd/gqFT+Y+HY6O89nz1Q9knCg5GQAQI8CoAcJnm?=
- =?us-ascii?Q?0M3FWB5Izc4is/wVJZFsK3ONyZ2Q+eTUZktH+aQwhjwNJtbonJH7EhKnNDqs?=
- =?us-ascii?Q?FcgP1isOuBUjSWUsX0jFw77gROPsAocPF+Ct0VIy/FnVlvdrwD1B4aHrqZ5c?=
- =?us-ascii?Q?6ZDn0ILf7lpGQlcctdKfwdgcdr/FoLZ1ydOa7PebnmkqUNcsQWuDudp0NN3G?=
- =?us-ascii?Q?Mo5YzpzjWySTLdQjyKGcpYniNjCOrmJF4p6iMFeae5Q470ZOZIv1hmr8bPYF?=
- =?us-ascii?Q?pp1r3TJq2amJ2kg8Me7e+9Q/rXTOGnGWtI55pWI3RkG5RTdpGQD7aGBDttUC?=
- =?us-ascii?Q?8yiVdvn9oP5ABNJ9V1UF93OiVp7fYbbtPiy6ZxHcK9/2eDmAQQPWre8nrJEF?=
- =?us-ascii?Q?2wzEfEaeuKG5qW0sxamOh8EnlvuPrNkyqXLya5wbH5jZRhD3CHTp4lPve/3n?=
- =?us-ascii?Q?QQYUNJIgiZxZ9sA3jN7XcxXtCdMsxHTQKUS4fuEekwR27B9SsOlZxUPAd6aX?=
- =?us-ascii?Q?OzjdYZJVZWcTQ/QpiXZOXq0P6Jm0icE4y96MYqIk1B4YM9LnjiuR2XXhMIxJ?=
- =?us-ascii?Q?+blnJe0XpHpsIJlPFzjze5qrbye721RNomE2/Y34YvmPuVHJMaSgiYcmbMuj?=
- =?us-ascii?Q?b3h2bvo3/55pQt8n6dVNvjD19+aJ2WftrfJe1VEz71p7GHIkdbihKX5R9N0+?=
- =?us-ascii?Q?BQ=3D=3D?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	Yf/OYizKzo5VHw3xKA0Cn2ZRC/DZlUEAkSeT83hVVak9rRkZHvR5c76w4wOnpfrRLPoP0Oox0O3WM8l7BLQkZRUrd2oGpxF9bdsJJ4BttHE2yq/labhlLezDxWhmh8SlGAtnx54avNdDEUucmfR5L60o5u0dIb8lPp1C4oOGsgAzyx6buWKOkKFnoG0vQ4ArkJEiHYF6Ktt8YIBcbZJDIxtDoIw2eV/VGbyEO5kvgTTRhVSeiFx67gBHqd2uibaPyy8Kh21X0U9Av6uPSsoSXez0nOCK4wpqHUG2Znx4FUsYHUm/B/RsQIu5D/zSpwTbXK7SNAdNcxv9yZxlTVE+mKXGL0aFMQ2gY8KIWKynqlnQuGVwjcK4hOH3/H+bDF9EE/jzTcVb3bAmEeQpUDiZRgrA8AMBGJQWX5XXpduSrqLwXbL/iSCVrLj2EzKe0+Z4eiEEk6blPxZI+XljfSjWZg2+60VyOvByLcyEX/dBsVBPsqjsACnIUeM+8/NiTEhOPB5uRfslHxICv34zrXHV3KY185vXE/eyyQi4GJF7gtX9GcT62W+2q5SoAXPoKE/SbrrkwlQFTh3yUUZIazGoJufpm5fJQQd19RnLSnjcbk8=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 44af6571-318f-492b-1a74-08dd5d78abe4
-X-MS-Exchange-CrossTenant-AuthSource: MN2PR10MB4112.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Mar 2025 13:05:02.0164
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: OvfX3S7rHLyBLD2Dz2OrtHdoqgqzBeJLfEGLjwvs3W3pQNFBMD2uqB3G/2dP7OzGxqbDsrBBfob2cJe42HHYYQT2U6t650g0pxRnoWs6bgc=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR10MB5565
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-07_05,2025-03-06_04,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxscore=0 suspectscore=0 phishscore=0
- adultscore=0 mlxlogscore=845 malwarescore=0 spamscore=0 bulkscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2502100000
- definitions=main-2503070096
-X-Proofpoint-ORIG-GUID: qrX43TuLFdw7XJ7iyV14QnrArFU6CmJQ
-X-Proofpoint-GUID: qrX43TuLFdw7XJ7iyV14QnrArFU6CmJQ
+Content-Type: multipart/mixed; boundary="8323328-967870661-1741352791=:984"
 
-On Fri, Mar 07, 2025 at 12:33:06PM +0000, Ryan Roberts wrote:
-> Instead of writing a pte directly into the table, use the set_pte_at()
-> helper, which gives the arch visibility of the change.
->
-> In this instance we are guaranteed that the pte was originally none and
-> is being modified to a not-present pte, so there was unlikely to be a
-> bug in practice (at least not on arm64). But it's bad practice to write
-> the page table memory directly without arch involvement.
->
-> Cc: <stable@vger.kernel.org>
-> Fixes: 662df3e5c376 ("mm: madvise: implement lightweight guard page mechanism")
-> Signed-off-by: Ryan Roberts <ryan.roberts@arm.com>
-> ---
->  mm/madvise.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/mm/madvise.c b/mm/madvise.c
-> index 388dc289b5d1..6170f4acc14f 100644
-> --- a/mm/madvise.c
-> +++ b/mm/madvise.c
-> @@ -1101,7 +1101,7 @@ static int guard_install_set_pte(unsigned long addr, unsigned long next,
->  	unsigned long *nr_pages = (unsigned long *)walk->private;
->
->  	/* Simply install a PTE marker, this causes segfault on access. */
-> -	*ptep = make_pte_marker(PTE_MARKER_GUARD);
-> +	set_pte_at(walk->mm, addr, ptep, make_pte_marker(PTE_MARKER_GUARD));
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
-I agree with you, but I think perhaps the arg name here is misleading :) If
-you look at mm/pagewalk.c and specifically, in walk_pte_range_inner():
+--8323328-967870661-1741352791=:984
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 
-		if (ops->install_pte && pte_none(ptep_get(pte))) {
-			pte_t new_pte;
+On Tue, 4 Mar 2025, Bjorn Helgaas wrote:
 
-			err = ops->install_pte(addr, addr + PAGE_SIZE, &new_pte,
-					       walk);
-			if (err)
-				break;
+> On Tue, Mar 04, 2025 at 03:51:08PM +0200, Ilpo J=C3=A4rvinen wrote:
+> > Disallow Extended Tags and Max Read Request Size (MRRS) larger than
+> > 128B for devices under Xeon 6 Root Ports if the Root Port is bifurcated
+> > to x2. Also, 10-Bit Tag Requester should be disallowed for device
+> > underneath these Root Ports but there is currently no 10-Bit Tag
+> > support in the kernel.
+> >=20
+> > The normal path that writes MRRS is through
+> > pcie_bus_configure_settings() -> pcie_bus_configure_set() ->
+> > pcie_write_mrrs() and contains a few early returns that are based on
+> > the value of pcie_bus_config. Overriding such checks with the host
+> > bridge flag check on each level seems messy. Thus, simply ensure MRRS
+> > is always written in pci_configure_device() if a device requiring the
+> > quirk is detected.
+>=20
+> This is kind of weird.  It's apparently not an erratum in the sense
+> that something doesn't *work*, just something for "optimized PCIe
+> performance"?
+>=20
+> What are we supposed to do with this?  Add similar quirks for every
+> random PCI controller?  Scratching my head about what this means for
+> the future.
+>=20
+> What bad things happen if we *don't* do this?  Is this something we
+> could/should rely on BIOS to configure for us?
 
-			set_pte_at(walk->mm, addr, pte, new_pte);
+Even if BIOS configures this (I'm under impression they already do, I=20
+had problem in finding a configuration in our lab on which this patch
+had some effect). But my kernel was built with CONFIG_PCIE_BUS_DEFAULT, if=
+=20
+I set that to CONFIG_PCIE_BUS_PERFORMANCE, what BIOS did will be=20
+overwritten.
 
-			...
-		}
+One option would be to drop the changes to drivers/pci/probe.c which is=20
+there to force MRRS is always written (in this v1). That case should be=20
+coverable with BIOS configuration but changes into pcie_set_readrq() seems=
+=20
+necessary to prevent Linux overwriting the configuration made by the BIOS.=
+=20
+Unless there's going to some other mechanism to tell kernel it should keep=
+=20
+hands from from these values as suggested by Dan.
 
-So the ptep being assigned here is a stack value, new_pte, which we simply
-assign to, and _then_ the page walker code handles the set_pte_at() for us.
+--=20
+ i.
 
-So we are indeed doing the right thing here, just in a different place :P
-
->  	(*nr_pages)++;
->
->  	return 0;
-> --
-> 2.43.0
->
+> > Link: https://cdrdv2.intel.com/v1/dl/getContent/837176
+> > Signed-off-by: Ilpo J=C3=A4rvinen <ilpo.jarvinen@linux.intel.com>
+> > ---
+> >=20
+> > The normal path that writes MRRS is somewhat convoluted so I ensure MRR=
+S
+> > gets written in a more direct way, I'm not sure if that's the best
+> > approach. Thus sending this as RFC.
+> >=20
+> >  drivers/pci/pci.c    | 15 ++++++++-------
+> >  drivers/pci/probe.c  |  8 +++++++-
+> >  drivers/pci/quirks.c | 27 +++++++++++++++++++++++++++
+> >  include/linux/pci.h  |  1 +
+> >  4 files changed, 43 insertions(+), 8 deletions(-)
+> >=20
+> > diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
+> > index 869d204a70a3..81ddad81ccb8 100644
+> > --- a/drivers/pci/pci.c
+> > +++ b/drivers/pci/pci.c
+> > @@ -5913,7 +5913,7 @@ EXPORT_SYMBOL(pcie_get_readrq);
+> >  int pcie_set_readrq(struct pci_dev *dev, int rq)
+> >  {
+> >  =09u16 v;
+> > -=09int ret;
+> > +=09int ret, max_mrrs =3D 4096;
+> >  =09struct pci_host_bridge *bridge =3D pci_find_host_bridge(dev->bus);
+> > =20
+> >  =09if (rq < 128 || rq > 4096 || !is_power_of_2(rq))
+> > @@ -5933,13 +5933,14 @@ int pcie_set_readrq(struct pci_dev *dev, int rq=
+)
+> > =20
+> >  =09v =3D FIELD_PREP(PCI_EXP_DEVCTL_READRQ, ffs(rq) - 8);
+> > =20
+> > -=09if (bridge->no_inc_mrrs) {
+> > -=09=09int max_mrrs =3D pcie_get_readrq(dev);
+> > +=09if (bridge->no_inc_mrrs)
+> > +=09=09max_mrrs =3D pcie_get_readrq(dev);
+> > +=09if (bridge->only_128b_mrrs)
+> > +=09=09max_mrrs =3D 128;
+> > =20
+> > -=09=09if (rq > max_mrrs) {
+> > -=09=09=09pci_info(dev, "can't set Max_Read_Request_Size to %d; max is =
+%d\n", rq, max_mrrs);
+> > -=09=09=09return -EINVAL;
+> > -=09=09}
+> > +=09if (rq > max_mrrs) {
+> > +=09=09pci_info(dev, "can't set Max_Read_Request_Size to %d; max is %d\=
+n", rq, max_mrrs);
+> > +=09=09return -EINVAL;
+> >  =09}
+> > =20
+> >  =09ret =3D pcie_capability_clear_and_set_word(dev, PCI_EXP_DEVCTL,
+> > diff --git a/drivers/pci/probe.c b/drivers/pci/probe.c
+> > index b6536ed599c3..ceaa34b0525b 100644
+> > --- a/drivers/pci/probe.c
+> > +++ b/drivers/pci/probe.c
+> > @@ -2342,7 +2342,11 @@ static void pci_configure_serr(struct pci_dev *d=
+ev)
+> > =20
+> >  static void pci_configure_device(struct pci_dev *dev)
+> >  {
+> > +=09struct pci_host_bridge *host_bridge =3D pci_find_host_bridge(dev->b=
+us);
+> > +
+> >  =09pci_configure_mps(dev);
+> > +=09if (host_bridge && host_bridge->only_128b_mrrs)
+> > +=09=09pcie_set_readrq(dev, 128);
+> >  =09pci_configure_extended_tags(dev, NULL);
+> >  =09pci_configure_relaxed_ordering(dev);
+> >  =09pci_configure_ltr(dev);
+> > @@ -2851,13 +2855,15 @@ static void pcie_write_mps(struct pci_dev *dev,=
+ int mps)
+> > =20
+> >  static void pcie_write_mrrs(struct pci_dev *dev)
+> >  {
+> > +=09struct pci_host_bridge *host_bridge =3D pci_find_host_bridge(dev->b=
+us);
+> >  =09int rc, mrrs;
+> > =20
+> >  =09/*
+> >  =09 * In the "safe" case, do not configure the MRRS.  There appear to =
+be
+> >  =09 * issues with setting MRRS to 0 on a number of devices.
+> >  =09 */
+> > -=09if (pcie_bus_config !=3D PCIE_BUS_PERFORMANCE)
+> > +=09if (pcie_bus_config !=3D PCIE_BUS_PERFORMANCE &&
+> > +=09    (!host_bridge || !host_bridge->only_128b_mrrs))
+> >  =09=09return;
+> > =20
+> >  =09/*
+> > diff --git a/drivers/pci/quirks.c b/drivers/pci/quirks.c
+> > index b84ff7bade82..987cd94028e1 100644
+> > --- a/drivers/pci/quirks.c
+> > +++ b/drivers/pci/quirks.c
+> > @@ -5564,6 +5564,33 @@ DECLARE_PCI_FIXUP_EARLY(PCI_VENDOR_ID_SERVERWORK=
+S, 0x0144, quirk_no_ext_tags);
+> >  DECLARE_PCI_FIXUP_EARLY(PCI_VENDOR_ID_SERVERWORKS, 0x0420, quirk_no_ex=
+t_tags);
+> >  DECLARE_PCI_FIXUP_EARLY(PCI_VENDOR_ID_SERVERWORKS, 0x0422, quirk_no_ex=
+t_tags);
+> > =20
+> > +static void quirk_pcie2x_no_tags_no_mrrs(struct pci_dev *pdev)
+> > +{
+> > +=09struct pci_host_bridge *bridge =3D pci_find_host_bridge(pdev->bus);
+> > +=09u32 linkcap;
+> > +
+> > +=09if (!bridge)
+> > +=09=09return;
+> > +
+> > +=09pcie_capability_read_dword(pdev, PCI_EXP_LNKCAP, &linkcap);
+> > +=09if (FIELD_GET(PCI_EXP_LNKCAP_MLW, linkcap) !=3D 0x2)
+> > +=09=09return;
+> > +
+> > +=09bridge->no_ext_tags =3D 1;
+> > +=09bridge->only_128b_mrrs =3D 1;
+> > +=09pci_info(pdev, "Disabling Extended Tags and forcing MRRS to 128B (p=
+erformance reasons due to 2x PCIe link)\n");
+> > +}
+> > +
+> > +DECLARE_PCI_FIXUP_EARLY(PCI_VENDOR_ID_INTEL, 0x0db0, quirk_pcie2x_no_t=
+ags_no_mrrs);
+> > +DECLARE_PCI_FIXUP_EARLY(PCI_VENDOR_ID_INTEL, 0x0db1, quirk_pcie2x_no_t=
+ags_no_mrrs);
+> > +DECLARE_PCI_FIXUP_EARLY(PCI_VENDOR_ID_INTEL, 0x0db2, quirk_pcie2x_no_t=
+ags_no_mrrs);
+> > +DECLARE_PCI_FIXUP_EARLY(PCI_VENDOR_ID_INTEL, 0x0db3, quirk_pcie2x_no_t=
+ags_no_mrrs);
+> > +DECLARE_PCI_FIXUP_EARLY(PCI_VENDOR_ID_INTEL, 0x0db6, quirk_pcie2x_no_t=
+ags_no_mrrs);
+> > +DECLARE_PCI_FIXUP_EARLY(PCI_VENDOR_ID_INTEL, 0x0db7, quirk_pcie2x_no_t=
+ags_no_mrrs);
+> > +DECLARE_PCI_FIXUP_EARLY(PCI_VENDOR_ID_INTEL, 0x0db8, quirk_pcie2x_no_t=
+ags_no_mrrs);
+> > +DECLARE_PCI_FIXUP_EARLY(PCI_VENDOR_ID_INTEL, 0x0db9, quirk_pcie2x_no_t=
+ags_no_mrrs);
+> > +
+> > +
+> >  #ifdef CONFIG_PCI_ATS
+> >  static void quirk_no_ats(struct pci_dev *pdev)
+> >  {
+> > diff --git a/include/linux/pci.h b/include/linux/pci.h
+> > index 47b31ad724fa..def29c8c0f84 100644
+> > --- a/include/linux/pci.h
+> > +++ b/include/linux/pci.h
+> > @@ -601,6 +601,7 @@ struct pci_host_bridge {
+> >  =09unsigned int=09ignore_reset_delay:1;=09/* For entire hierarchy */
+> >  =09unsigned int=09no_ext_tags:1;=09=09/* No Extended Tags */
+> >  =09unsigned int=09no_inc_mrrs:1;=09=09/* No Increase MRRS */
+> > +=09unsigned int=09only_128b_mrrs:1;=09/* Only 128B MRRS */
+> >  =09unsigned int=09native_aer:1;=09=09/* OS may use PCIe AER */
+> >  =09unsigned int=09native_pcie_hotplug:1;=09/* OS may use PCIe hotplug =
+*/
+> >  =09unsigned int=09native_shpc_hotplug:1;=09/* OS may use SHPC hotplug =
+*/
+> >=20
+> > base-commit: 2014c95afecee3e76ca4a56956a936e23283f05b
+> > --=20
+> > 2.39.5
+> >=20
+>=20
+--8323328-967870661-1741352791=:984--
 
