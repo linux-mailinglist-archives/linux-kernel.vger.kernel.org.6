@@ -1,178 +1,158 @@
-Return-Path: <linux-kernel+bounces-551087-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-551088-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A299BA567FC
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 13:40:21 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2FEFFA56802
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 13:41:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8F9BF3B6016
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 12:40:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6694617781B
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 12:41:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AD89219316;
-	Fri,  7 Mar 2025 12:40:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AE75219309;
+	Fri,  7 Mar 2025 12:41:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="d0vT0Kq4"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="EhLbZYRN";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="NRP4bvSx"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67840215760;
-	Fri,  7 Mar 2025 12:40:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 671D72192F6;
+	Fri,  7 Mar 2025 12:41:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741351212; cv=none; b=NpeftZzGXrcoEMFCn6Lv7oEvmr2TmknEJh3jGua4RJSvWSaI3SZY2wgNldnSANt/9OnaB2uQxS2f/1o48moplTNqxaZQHf5SZ9JcqCFrKTXbbM+Jr3iZslkSiljmE3hfXhhnxl4f+2j7KeUAr7SNp5jsAORuckSVXxOeAVtcHu8=
+	t=1741351272; cv=none; b=PNEmwQIm4KlwSv+dys2OYQlHh4OAeNiqoDT6rzmEh0ClvMpugvtgDtWLdid1zcwja0gKoSO1zkXY6CGa+FTbn2S7dqEFKxb+3MaTB3KmvRriYzDbR4zlNhvJxSFovPJ24tk4vY6j5uklBg64KSNOVRxQ7d2brb6wzMWYtWM/Qj8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741351212; c=relaxed/simple;
-	bh=G5VBh8i8J2WvpCjkRkouehcpWaB8KXAb2HO6V8L2dDY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cGLlbVbd2T/7UZ8ZURPgp0inq+jW755HBQNI7+BSMdXLYo0EcjphAzZHNchyAjwDNJILTUpIt01vsE7ovQKmkv/eujL4tlNkeddVufeoRxRs7Y83nmRIPv1wQg0q7+gmsKzL+UDxkYGbpTAOmXzritngCbehh2UHPWT7WKWlGJ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=d0vT0Kq4; arc=none smtp.client-ip=192.198.163.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1741351211; x=1772887211;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=G5VBh8i8J2WvpCjkRkouehcpWaB8KXAb2HO6V8L2dDY=;
-  b=d0vT0Kq4/PHjkJQKJYhK85RzhPPG4mCUW3Uhw28hGWvw5Wshh+HFDj+O
-   dJRlqw3ajrsEd041yWZfex0kq6FrucD8B0OXWJTPaKFfDzYOoY+JTtVTy
-   8Lcc5wZ0x6LnRh1dtzf5o+X5ZF9LPbI0mUAqLy6iXVvMeAhbdOdO6E0Ni
-   t0qkqE28X4QOV1qeb/V/9URan9BNCZWH6+V7FJrqnf3TDiGF1UfZXcpMP
-   qNTaR9jTXzr9gRW9Z1AyCvLKRMmHMcPRPGBv0pWKK2qcHk35niWU6uSYO
-   cmdHj2Q+/z7J1voivHR09TdfirJ0rST0JyuIE8C5r/0r8f2irsWCvCIM4
-   w==;
-X-CSE-ConnectionGUID: BCLkPKWwS1+cI9JmwPlzsg==
-X-CSE-MsgGUID: /P4xNMxDRLqsEaoGX4CUGA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11365"; a="41651808"
-X-IronPort-AV: E=Sophos;i="6.14,229,1736841600"; 
-   d="scan'208";a="41651808"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Mar 2025 04:40:10 -0800
-X-CSE-ConnectionGUID: dVzl55soTd23ED5spwyZmw==
-X-CSE-MsgGUID: n27M5QajR4efWEVWBq7Miw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
-   d="scan'208";a="119235420"
-Received: from lkp-server02.sh.intel.com (HELO a4747d147074) ([10.239.97.151])
-  by orviesa010.jf.intel.com with ESMTP; 07 Mar 2025 04:40:06 -0800
-Received: from kbuild by a4747d147074 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tqWzj-0000Tr-2I;
-	Fri, 07 Mar 2025 12:40:03 +0000
-Date: Fri, 7 Mar 2025 20:39:32 +0800
-From: kernel test robot <lkp@intel.com>
-To: Jorge Marques <jorge.marques@analog.com>,
-	Jonathan Cameron <jic23@kernel.org>,
-	Lars-Peter Clausen <lars@metafoo.de>,
-	Michael Hennerich <Michael.Hennerich@analog.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Jonathan Corbet <corbet@lwn.net>,
-	David Lechner <dlechner@baylibre.com>
-Cc: oe-kbuild-all@lists.linux.dev, linux-iio@vger.kernel.org,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-doc@vger.kernel.org, Jorge Marques <jorge.marques@analog.com>
-Subject: Re: [PATCH 4/4] iio: adc: add support for ad4052
-Message-ID: <202503072008.ysqhEBaX-lkp@intel.com>
-References: <20250306-iio-driver-ad4052-v1-4-2badad30116c@analog.com>
+	s=arc-20240116; t=1741351272; c=relaxed/simple;
+	bh=RFnMpGCEq6KusUZOTkqeWE75JiqiNWQN8xEID0URfTk=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=KMuzMtb3I4aH0N3musOVd+vHrFY0JfBWPcdf9XPXrKxSFlC3c6vtKLrteuwdTNcUqMlV5hJdHykT2sAD6/Doy9HAdH/v1QKXVfOpCUCogMw6MTzlZIpYRIq1rx8COQfxQjS0rsjDbGtsxtHHzOSbgfDDueSqSbVJVTMfgUy+AFU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=EhLbZYRN; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=NRP4bvSx; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Fri, 07 Mar 2025 12:41:08 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1741351269;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=h7hW6K9PJ8lxkQjFDwtGIOrFreGrUa4zCoiv+rlaSd8=;
+	b=EhLbZYRNoA5BbficassE/mzKeBYeXZOVAx+wWg5T5GPUY/BVVbwgsea8umvLcODkeR8dX3
+	om/YDJ4ht57ykfmVDKtk3lQnVt0jFq0F9k3Syp3DU+enkP6ZjkgHtgGAOj2gmauH90YGVo
+	nc+fJtWEs26/VW2oeyicOTlxfQj6MB2VyrV5k/mFkmGDE9UhYmj2zE5ogHBd389MXQgdM7
+	2bc5uAD445xngOhSfVA3vHwIDssjBmF5okp8aTH+CGX1c5LKAMcVciB1nQ3UCtfkTv8sp/
+	M8jHaXCGpl9zC0dh0iCP+ndX6tfvB2T4qpB9D6XGmFEE426I7CLNk0AmZlNHLQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1741351269;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=h7hW6K9PJ8lxkQjFDwtGIOrFreGrUa4zCoiv+rlaSd8=;
+	b=NRP4bvSxu5XmY4ProwuwqSoE8WSEQHhrKS4fnT87YLfHoF3ASUvpgvJttqgwND65inJQqD
+	1M9yUn2ZGVkOWmDg==
+From: "tip-bot2 for Andrew Cooper" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject:
+ [tip: x86/urgent] x86/amd_nb: Use rdmsr_safe() in amd_get_mmconfig_range()
+Cc: Andrew Cooper <andrew.cooper3@citrix.com>, Ingo Molnar <mingo@kernel.org>,
+ x86@kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20250307002846.3026685-1-andrew.cooper3@citrix.com>
+References: <20250307002846.3026685-1-andrew.cooper3@citrix.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250306-iio-driver-ad4052-v1-4-2badad30116c@analog.com>
+Message-ID: <174135126828.14745.8496438046154822833.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 
-Hi Jorge,
+The following commit has been merged into the x86/urgent branch of tip:
 
-kernel test robot noticed the following build warnings:
+Commit-ID:     14cb5d83068ecf15d2da6f7d0e9ea9edbcbc0457
+Gitweb:        https://git.kernel.org/tip/14cb5d83068ecf15d2da6f7d0e9ea9edbcbc0457
+Author:        Andrew Cooper <andrew.cooper3@citrix.com>
+AuthorDate:    Fri, 07 Mar 2025 00:28:46 
+Committer:     Ingo Molnar <mingo@kernel.org>
+CommitterDate: Fri, 07 Mar 2025 13:28:31 +01:00
 
-[auto build test WARNING on aac287ec80d71a7ab7e44c936a434625417c3e30]
+x86/amd_nb: Use rdmsr_safe() in amd_get_mmconfig_range()
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Jorge-Marques/iio-code-mark-iio_dev-as-const-in-iio_buffer_enabled/20250306-220719
-base:   aac287ec80d71a7ab7e44c936a434625417c3e30
-patch link:    https://lore.kernel.org/r/20250306-iio-driver-ad4052-v1-4-2badad30116c%40analog.com
-patch subject: [PATCH 4/4] iio: adc: add support for ad4052
-config: powerpc-randconfig-r132-20250307 (https://download.01.org/0day-ci/archive/20250307/202503072008.ysqhEBaX-lkp@intel.com/config)
-compiler: powerpc-linux-gcc (GCC) 14.2.0
-reproduce: (https://download.01.org/0day-ci/archive/20250307/202503072008.ysqhEBaX-lkp@intel.com/reproduce)
+Xen doesn't offer MSR_FAM10H_MMIO_CONF_BASE to all guests.  This results
+in the following warning:
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202503072008.ysqhEBaX-lkp@intel.com/
+  unchecked MSR access error: RDMSR from 0xc0010058 at rIP: 0xffffffff8101d19f (xen_do_read_msr+0x7f/0xa0)
+  Call Trace:
+   xen_read_msr+0x1e/0x30
+   amd_get_mmconfig_range+0x2b/0x80
+   quirk_amd_mmconfig_area+0x28/0x100
+   pnp_fixup_device+0x39/0x50
+   __pnp_add_device+0xf/0x150
+   pnp_add_device+0x3d/0x100
+   pnpacpi_add_device_handler+0x1f9/0x280
+   acpi_ns_get_device_callback+0x104/0x1c0
+   acpi_ns_walk_namespace+0x1d0/0x260
+   acpi_get_devices+0x8a/0xb0
+   pnpacpi_init+0x50/0x80
+   do_one_initcall+0x46/0x2e0
+   kernel_init_freeable+0x1da/0x2f0
+   kernel_init+0x16/0x1b0
+   ret_from_fork+0x30/0x50
+   ret_from_fork_asm+0x1b/0x30
 
-sparse warnings: (new ones prefixed by >>)
->> drivers/iio/adc/ad4052.c:357:31: sparse: sparse: symbol 'ad4050_chip_info' was not declared. Should it be static?
->> drivers/iio/adc/ad4052.c:366:31: sparse: sparse: symbol 'ad4052_chip_info' was not declared. Should it be static?
->> drivers/iio/adc/ad4052.c:375:31: sparse: sparse: symbol 'ad4056_chip_info' was not declared. Should it be static?
->> drivers/iio/adc/ad4052.c:384:31: sparse: sparse: symbol 'ad4058_chip_info' was not declared. Should it be static?
->> drivers/iio/adc/ad4052.c:711:22: sparse: sparse: incorrect type in assignment (different base types) @@     expected int @@     got restricted __be16 [usertype] d16 @@
-   drivers/iio/adc/ad4052.c:711:22: sparse:     expected int
-   drivers/iio/adc/ad4052.c:711:22: sparse:     got restricted __be16 [usertype] d16
->> drivers/iio/adc/ad4052.c:715:22: sparse: sparse: incorrect type in assignment (different base types) @@     expected int @@     got restricted __be32 [usertype] d32 @@
-   drivers/iio/adc/ad4052.c:715:22: sparse:     expected int
-   drivers/iio/adc/ad4052.c:715:22: sparse:     got restricted __be32 [usertype] d32
-   drivers/iio/adc/ad4052.c:912:22: sparse: sparse: incorrect type in assignment (different base types) @@     expected int @@     got restricted __be32 [usertype] d32 @@
-   drivers/iio/adc/ad4052.c:912:22: sparse:     expected int
-   drivers/iio/adc/ad4052.c:912:22: sparse:     got restricted __be32 [usertype] d32
->> drivers/iio/adc/ad4052.c:958:33: sparse: sparse: bad assignment (>>=) to restricted __be16
-   drivers/iio/adc/ad4052.c:251:12: sparse: sparse: context imbalance in 'ad4052_iio_device_claim_direct' - different lock contexts for basic block
-   drivers/iio/adc/ad4052.c:277:9: sparse: sparse: context imbalance in 'ad4052_sample_rate_get' - unexpected unlock
-   drivers/iio/adc/ad4052.c:294:9: sparse: sparse: context imbalance in 'ad4052_sample_rate_set' - unexpected unlock
-   drivers/iio/adc/ad4052.c:780:34: sparse: sparse: context imbalance in 'ad4052_read_raw' - unexpected unlock
-   drivers/iio/adc/ad4052.c:805:34: sparse: sparse: context imbalance in 'ad4052_write_raw' - unexpected unlock
-   drivers/iio/adc/ad4052.c:820:9: sparse: sparse: context imbalance in 'ad4052_read_event_config' - unexpected unlock
-   drivers/iio/adc/ad4052.c:903:42: sparse: sparse: context imbalance in 'ad4052_read_event_value' - unexpected unlock
-   drivers/iio/adc/ad4052.c:971:34: sparse: sparse: context imbalance in 'ad4052_write_event_value' - unexpected unlock
-   drivers/iio/adc/ad4052.c:1055:34: sparse: sparse: context imbalance in 'ad4052_debugfs_reg_access' - unexpected unlock
+based on quirks for a "PNP0c01" device.  Treating MMCFG as disabled is the
+right course of action, so no change is needed there.
 
-vim +/ad4050_chip_info +357 drivers/iio/adc/ad4052.c
+This was most likely exposed by fixing the Xen MSR accessors to not be
+silently-safe.
 
-   356	
- > 357	const struct ad4052_chip_info ad4050_chip_info = {
-   358		.name = "ad4050",
-   359		.channels = { AD4052_CHAN(12, AD4052_2MSPS) },
-   360		.offload_channels = { AD4052_OFFLOAD_CHAN(12, AD4052_2MSPS) },
-   361		.prod_id = 0x70,
-   362		.max_avg = AD4050_MAX_AVG,
-   363		.grade = AD4052_2MSPS,
-   364	};
-   365	
- > 366	const struct ad4052_chip_info ad4052_chip_info = {
-   367		.name = "ad4052",
-   368		.channels = { AD4052_CHAN(16, AD4052_2MSPS) },
-   369		.offload_channels = { AD4052_OFFLOAD_CHAN(16, AD4052_2MSPS) },
-   370		.prod_id = 0x72,
-   371		.max_avg = AD4052_MAX_AVG,
-   372		.grade = AD4052_2MSPS,
-   373	};
-   374	
- > 375	const struct ad4052_chip_info ad4056_chip_info = {
-   376		.name = "ad4056",
-   377		.channels = { AD4052_CHAN(12, AD4052_500KSPS) },
-   378		.offload_channels = { AD4052_OFFLOAD_CHAN(12, AD4052_500KSPS) },
-   379		.prod_id = 0x70,
-   380		.max_avg = AD4050_MAX_AVG,
-   381		.grade = AD4052_500KSPS,
-   382	};
-   383	
- > 384	const struct ad4052_chip_info ad4058_chip_info = {
-   385		.name = "ad4058",
-   386		.channels = { AD4052_CHAN(16, AD4052_500KSPS) },
-   387		.offload_channels = { AD4052_OFFLOAD_CHAN(16, AD4052_500KSPS) },
-   388		.prod_id = 0x72,
-   389		.max_avg = AD4052_MAX_AVG,
-   390		.grade = AD4052_500KSPS,
-   391	};
-   392	
+Fixes: 3fac3734c43a ("xen/pv: support selecting safe/unsafe msr accesses")
+Signed-off-by: Andrew Cooper <andrew.cooper3@citrix.com>
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Link: https://lore.kernel.org/r/20250307002846.3026685-1-andrew.cooper3@citrix.com
+---
+ arch/x86/kernel/amd_nb.c |  9 +++------
+ 1 file changed, 3 insertions(+), 6 deletions(-)
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+diff --git a/arch/x86/kernel/amd_nb.c b/arch/x86/kernel/amd_nb.c
+index 11fac09..67e7737 100644
+--- a/arch/x86/kernel/amd_nb.c
++++ b/arch/x86/kernel/amd_nb.c
+@@ -143,7 +143,6 @@ bool __init early_is_amd_nb(u32 device)
+ 
+ struct resource *amd_get_mmconfig_range(struct resource *res)
+ {
+-	u32 address;
+ 	u64 base, msr;
+ 	unsigned int segn_busn_bits;
+ 
+@@ -151,13 +150,11 @@ struct resource *amd_get_mmconfig_range(struct resource *res)
+ 	    boot_cpu_data.x86_vendor != X86_VENDOR_HYGON)
+ 		return NULL;
+ 
+-	/* assume all cpus from fam10h have mmconfig */
+-	if (boot_cpu_data.x86 < 0x10)
++	/* Assume CPUs from Fam10h have mmconfig, although not all VMs do */
++	if (boot_cpu_data.x86 < 0x10 ||
++	    rdmsrl_safe(MSR_FAM10H_MMIO_CONF_BASE, &msr))
+ 		return NULL;
+ 
+-	address = MSR_FAM10H_MMIO_CONF_BASE;
+-	rdmsrl(address, msr);
+-
+ 	/* mmconfig is not enabled */
+ 	if (!(msr & FAM10H_MMIO_CONF_ENABLE))
+ 		return NULL;
 
