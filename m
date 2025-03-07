@@ -1,151 +1,107 @@
-Return-Path: <linux-kernel+bounces-551390-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-551391-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 43E64A56BD3
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 16:22:21 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 79914A56BDC
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 16:23:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1DD0D1898789
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 15:22:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B9D1C3AD386
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 15:22:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E7CD1714B4;
-	Fri,  7 Mar 2025 15:22:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0960D21CC45;
+	Fri,  7 Mar 2025 15:22:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZRs6WJ19"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="OGzfdexT"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE1FF21B90F;
-	Fri,  7 Mar 2025 15:22:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBF9021A92F
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Mar 2025 15:22:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741360928; cv=none; b=In2i5Q2P3KlYaWR4yfSrE0YEoQoO+5nhhROII5OexFPniiUGF0JKeeQxrYhrAChVUKp1gGe6Xm6/eDSLjSylMk1G+wS1NMDWJe3aDyo9t2S86GtRJxlJjEKKiIeJGk6Hgh9/I1/dleA1gvuI+BJ/mqrk9dyp3VpHupRaOXFkMXo=
+	t=1741360956; cv=none; b=amcaCOEGQMMLaxCC+NaZzSLZkfOBXIdeKtFoY0S2wYvZIEkrK4kJtNVAt7Cauuc1ywDRN5Wq9F9MQu1JwhLLc+Ous3u1zCYD4ZE4DlBfQ4yluc3Oj8DIhw7fakMZSHxbm7oV9lilwynV3s4Wr9vRKf6v13KXmXhas4eQ6mB4fw0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741360928; c=relaxed/simple;
-	bh=YA8C0J31UV/dkU0jT8//MR5vNBHEqT503gqEdmk09E8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=tV1w++LQocOhtrDI/oWQ4HRqKr0MSUvD2fUpzWbtIeX6gl6Jejbf3jqTl8MJjruRs3JDcid2PmekLBE6CZZ7gXX7/aYIP4LQXJV2bflRhBSRaoouDD0NNXOdAxuRxjFNOafwqxtOo5XbczlDsV5DsHnGlVxliLF6DRHvwkx0ZfI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZRs6WJ19; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4247FC4CED1;
-	Fri,  7 Mar 2025 15:22:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741360928;
-	bh=YA8C0J31UV/dkU0jT8//MR5vNBHEqT503gqEdmk09E8=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=ZRs6WJ19u0ePeh3vRZXfle8qIT3wgqDB51Rj6lq16ZcgPqKwIpbhk4CmXJE6d5MoF
-	 0oiSkVaYjfWUDpOccb1WEcZNJvahIMIcnJ+XBrSDUOofW9/UNcFPxLDuR2A6k9nUIp
-	 2/XcOe0GQ2U1LWIEx8OZvdzKkWkjqbD3AH88EUl8r1boC9deO1ZzTXAYqjtaBMEuUd
-	 EwDuBM6/0lTC+JE1YlPuwkzhOtW3gjFrfFssHfdZW1xVzU9PxiQFEIVzifqiFaijtZ
-	 A5HOsU+r/7U6oqVCBaDFxDPUwxMIOgEVHQL1ZBo43MRPt+7HYbDl9zAmwqqFgtGoP4
-	 D/WCtSChwMonA==
-Message-ID: <7b967651-1368-42f1-af23-adc3c94c88ca@kernel.org>
-Date: Fri, 7 Mar 2025 16:21:59 +0100
+	s=arc-20240116; t=1741360956; c=relaxed/simple;
+	bh=KSMC5QM8qz0gz5xHIBm/4GI/nE2ksGcyfus2VQkF2rQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=NXjJnt7ip7GyqMLQYig+2AGh9ewz/XPk0uzlC/MEQM0JYTL/M1bh0H44hpRCRb2VfVO1PY3nsVBYcJQ+dR6VKPH/c8pYEUK/LsQN9K/AR7VF21fNJdN452NOTCwyjVr1yiD1xJ+CAvr5EYudYKD7zxZX9FyK6dl37pwhs9SsofM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=OGzfdexT; arc=none smtp.client-ip=192.198.163.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1741360955; x=1772896955;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=KSMC5QM8qz0gz5xHIBm/4GI/nE2ksGcyfus2VQkF2rQ=;
+  b=OGzfdexTrQYAN/QqegxwO/uS80i62iEvzL/NCIhEw/8dXW9dNpbT4bl6
+   vSvYQqvCxYzz6sCqDGCkx/58BkDJ0nLQyt1PFxlgoQx9Z8lhMREibqhXi
+   b81DaZyLd0L8tKespJZ5bkvn5Yu+F2rpUaBpkK9C5Viwt6jv/3udFmF3U
+   UwoXqxDRj1mYAMFeRiVXl2rROPtdM0x3bIVKZVS0csAg6yJIZqMtctTvQ
+   2+MQnEKmFc1TxEk31iGIn7BVCim1M/KJ46HiCn8ytEHf0B4YSHQOnKUcT
+   6iR/yPXVAQPt5GHmE7sqoFTwNdGu74z7UodMOInBYKuovyN6v0qHSTh18
+   w==;
+X-CSE-ConnectionGUID: F2JHy5rYRvmBzjSNTJ3pjQ==
+X-CSE-MsgGUID: 7S0SIYHlQQ6a2nb9HUsJEQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11365"; a="42641179"
+X-IronPort-AV: E=Sophos;i="6.14,229,1736841600"; 
+   d="scan'208";a="42641179"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Mar 2025 07:22:34 -0800
+X-CSE-ConnectionGUID: jxflgZpCQxiEbKo8TpoN8Q==
+X-CSE-MsgGUID: kAgM1Y5cRAiYSvsxMVIJbg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,229,1736841600"; 
+   d="scan'208";a="120045919"
+Received: from lkp-server02.sh.intel.com (HELO a4747d147074) ([10.239.97.151])
+  by fmviesa009.fm.intel.com with ESMTP; 07 Mar 2025 07:22:32 -0800
+Received: from kbuild by a4747d147074 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tqZWw-0000du-2O;
+	Fri, 07 Mar 2025 15:22:30 +0000
+Date: Fri, 7 Mar 2025 23:22:20 +0800
+From: kernel test robot <lkp@intel.com>
+To: Rong Xu <xur@google.com>
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	Masahiro Yamada <masahiroy@kernel.org>,
+	Han Shen <shenhan@google.com>, Kees Cook <kees@kernel.org>
+Subject: main.c:(.text.unlikely+0x18): relocation truncated to fit:
+ R_ARC_S25W_PCREL against symbol `__st_r13_to_r15' defined in .text section
+ in ../lib/gcc/arc-elf/12.3.0/arc700/libgcc.a(_millicodethunk_st.o)
+Message-ID: <202503072317.Y9GcLy6u-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 02/14] ASoC: mediatek: common: modify mtk afe platform
- driver for mt8196
-To: "Darren.Ye" <darren.ye@mediatek.com>, Liam Girdwood
- <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Matthias Brugger
- <matthias.bgg@gmail.com>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
- Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: linux-sound@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-mediatek@lists.infradead.org, linux-gpio@vger.kernel.org
-References: <20250307124841.23777-1-darren.ye@mediatek.com>
- <20250307124841.23777-3-darren.ye@mediatek.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20250307124841.23777-3-darren.ye@mediatek.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On 07/03/2025 13:47, Darren.Ye wrote:
-> From: Darren Ye <darren.ye@mediatek.com>
-> 
-> Mofify the pcm pointer interface to support 64-bit address access.
-> 
-> Signed-off-by: Darren Ye <darren.ye@mediatek.com>
-> ---
->  .../mediatek/common/mtk-afe-platform-driver.c | 63 ++++++++++++++-----
->  .../mediatek/common/mtk-afe-platform-driver.h |  5 ++
->  2 files changed, 52 insertions(+), 16 deletions(-)
-> 
-> diff --git a/sound/soc/mediatek/common/mtk-afe-platform-driver.c b/sound/soc/mediatek/common/mtk-afe-platform-driver.c
-> index 6b6330583941..5d8f4421e665 100644
-> --- a/sound/soc/mediatek/common/mtk-afe-platform-driver.c
-> +++ b/sound/soc/mediatek/common/mtk-afe-platform-driver.c
-> @@ -77,6 +77,16 @@ int mtk_afe_add_sub_dai_control(struct snd_soc_component *component)
->  }
->  EXPORT_SYMBOL_GPL(mtk_afe_add_sub_dai_control);
->  
-> +int mtk_afe_pcm_open(struct snd_soc_component *component,
+Hi Rong,
 
-How adding this is related with 64-bit addresses? It's not even used here.
+FYI, the error/warning still remains.
 
-> +		     struct snd_pcm_substream *substream)
-> +{
-> +	/* set the wait_for_avail to 2 sec*/
-> +	substream->wait_time = msecs_to_jiffies(2 * 1000);
-> +
-> +	return 0;
-> +}
-> +EXPORT_SYMBOL_GPL(mtk_afe_pcm_open);
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+head:   00a7d39898c8010bfd5ff62af31ca5db34421b38
+commit: 0043ecea2399ffc8bfd99ed9dbbe766e7c79293c vmlinux.lds.h: Adjust symbol ordering in text output section
+date:   3 months ago
+config: arc-randconfig-r006-20230901 (https://download.01.org/0day-ci/archive/20250307/202503072317.Y9GcLy6u-lkp@intel.com/config)
+compiler: arc-elf-gcc (GCC) 12.3.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250307/202503072317.Y9GcLy6u-lkp@intel.com/reproduce)
 
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202503072317.Y9GcLy6u-lkp@intel.com/
 
-Best regards,
-Krzysztof
+All errors (new ones prefixed by >>):
+
+   init/main.o: in function `run_init_process':
+>> main.c:(.text.unlikely+0x18): relocation truncated to fit: R_ARC_S25W_PCREL against symbol `__st_r13_to_r15' defined in .text section in ../lib/gcc/arc-elf/12.3.0/arc700/libgcc.a(_millicodethunk_st.o)
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
