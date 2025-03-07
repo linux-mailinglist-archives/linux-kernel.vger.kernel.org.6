@@ -1,78 +1,123 @@
-Return-Path: <linux-kernel+bounces-552059-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-552060-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3CB37A574CE
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 23:16:13 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E7031A574D1
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 23:17:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 76E6617556D
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 22:16:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 17BDD7A4A62
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 22:16:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 880B91A0BC5;
-	Fri,  7 Mar 2025 22:16:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7604920C02A;
+	Fri,  7 Mar 2025 22:17:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jT71TCLQ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NZ3InEQ9"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6D961F94C
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Mar 2025 22:16:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1DA118BC36;
+	Fri,  7 Mar 2025 22:17:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741385768; cv=none; b=OYWhcbRcFsn5/R4fZv1baSvZ70gokXw5HsnFPbaRZ7g8uqaaUxrHHvDQvRaoEg04j8QlC8DTpH8lKkOkSEOBo2ryPjChrz0XbzuBJJmT4nTEq/6SOc5pmb90jhVkiCGoKSeBkbFwreI6hyEHF/CC+9xXkBHclAY2N/HUev0r8Ds=
+	t=1741385845; cv=none; b=OklIv9+U6lV+FMIa41ls8tj71WPsFc00rPmcyznB3ZHhnPgwrkMf2NelY4q5FOw4XWaOrxg77xkbji6YfzvJlpvhr9FFyK0ySK710Icgzx0HSl6BbQowHi+qRLydwdaARdOkXrO/IdbS+Y3yKgWXjI/clR0PagB2ZQ7ZOXyXAP8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741385768; c=relaxed/simple;
-	bh=tfjO0wLc/sY0wUsPLXOAszI/hnr/k/6TVIxNQkkddp4=;
+	s=arc-20240116; t=1741385845; c=relaxed/simple;
+	bh=xZncabeg2pY81ef2kTNH2Siipl1hUkdDVBAPW8PZo5E=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VukeMl6bgCN7SSysv8b9U1onoGBTqJgAlM5t8W5FSJn+dNGX14FH2tNjQk7WKkJ0ktDV149fPrUzvjjOZSPmPlipKF2Udtbf4DPrQ9yBXbgdP/vRj9rE3n8D5qp1tRhhHYhg/oquI/BsB7rAToDFbccZxLCFPWE7eWua8YzCLBs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jT71TCLQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 19F0AC4CED1;
-	Fri,  7 Mar 2025 22:16:06 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=HvRg0qJnp9tZCJVQtUP20aqzC7rb77a5kZjOKwoiWuwbBtCMMKfaayC5hcLrYKztPVEH+TyDlhhNdY925eycYxfKHaLMp8u7m49WxO6rfyD+e0jDuzLAkM7igFLXdqIUWN05adl4WISjoja80Ol/mx/lNyCdZUGTtudBT5WzlN8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NZ3InEQ9; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3189FC4CED1;
+	Fri,  7 Mar 2025 22:17:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741385767;
-	bh=tfjO0wLc/sY0wUsPLXOAszI/hnr/k/6TVIxNQkkddp4=;
+	s=k20201202; t=1741385845;
+	bh=xZncabeg2pY81ef2kTNH2Siipl1hUkdDVBAPW8PZo5E=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=jT71TCLQ/ofLsANiDQ7d/9BaltnW6/9ecifsnZxLsLB+CybQfdyL2Wr8VJ7kzuq8k
-	 9/DMf7rhDIe0iifdgBN7TU+L737oPhXItvSG+rl/VdUVho7jxS4kR8+1pRJyYa14XY
-	 zw47HM2nQ2qfLOYUnSiB2qERf6yx3C3mlNI1Z0DEY5DskGjKBGPba1d82/ks6LLjmz
-	 ijhDiTQv+WO1cGGwBEcbft55jo+EUKx2aet9DyJxqz/axuWWIPeTthxP4kyM9MfRkt
-	 SVF9RAROBxgRpS7tKuqvg1zsK+LWXruXSrdwGbgba9sm3VF46yTqpoUMGnMHy6qAcn
-	 G4DUIpYmVybNA==
-Date: Fri, 7 Mar 2025 23:16:04 +0100
-From: Frederic Weisbecker <frederic@kernel.org>
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: LKML <linux-kernel@vger.kernel.org>,
-	Anna-Maria Behnsen <anna-maria@linutronix.de>,
-	Benjamin Segall <bsegall@google.com>,
-	Eric Dumazet <edumazet@google.com>,
-	Andrey Vagin <avagin@openvz.org>,
-	Pavel Tikhomirov <ptikhomirov@virtuozzo.com>,
-	Peter Zijlstra <peterz@infradead.org>
-Subject: Re: [patch V2 07/17] posix-timers: Simplify lock/unlock_timer()
-Message-ID: <Z8twJAGEZs0kiYtz@pavilion.home>
-References: <20250302185753.311903554@linutronix.de>
- <20250302193627.354754536@linutronix.de>
+	b=NZ3InEQ9MIoNhoJhCb4AJTZ+z7X4MEVbVNiCUoS7xcLeJ5IJ7+SEtOTeUMF6MZHDw
+	 +gQSW/Sx7cW4cWBYODO/uOHhLUHIUgp9DIe70QiqHrsQLnu4HZSe2qREJci10yKcUb
+	 GwiFRr6Oqwqe0+KnZiHpwt6Xjp4M6hmjbJQAe1986PnJSRfM6oo1xQwKmSlbUDvetr
+	 2m7rTy2db50v8z7C1ASy817Fa+MzipcOj6+pMOoTehe5TfbFZqBKYDgeBaS1ahtCOt
+	 Mq+pf8knHmOzxbO2Qrs5hdRyAxRgQlH30TWVqrdShUZyQHg+n4o5Y0BYU0eLskfVgE
+	 dGYFrL+03rq+g==
+Date: Fri, 7 Mar 2025 12:17:23 -1000
+From: Tejun Heo <tj@kernel.org>
+To: Andrea Righi <arighi@nvidia.com>
+Cc: David Vernet <void@manifault.com>, Changwoo Min <changwoo@igalia.com>,
+	bpf@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 3/6] sched_ext: idle: Introduce the concept of allowed
+ CPUs
+Message-ID: <Z8twc3pc7I9SyIMC@slm.duckdns.org>
+References: <20250307200502.253867-1-arighi@nvidia.com>
+ <20250307200502.253867-4-arighi@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250302193627.354754536@linutronix.de>
+In-Reply-To: <20250307200502.253867-4-arighi@nvidia.com>
 
-Le Sun, Mar 02, 2025 at 08:36:54PM +0100, Thomas Gleixner a écrit :
-> Since the integration of sigqueue into the timer struct, lock_timer() is
-> only used in task context. So taking the lock with irqsave() is not longer
-> required.
-> 
-> Convert it to use spin_[un]lock_irq().
-> 
-> Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Hello,
 
-Reviewed-by: Frederic Weisbecker <frederic@kernel.org>
+On Fri, Mar 07, 2025 at 09:01:05PM +0100, Andrea Righi wrote:
+> Many scx schedulers define their own concept of scheduling domains to
+> represent topology characteristics, such as heterogeneous architectures
+
+I'm not sure "domain" is a good choice given that sched_domain is already an
+established construct in kernel and means something specific.
+
+> (e.g., big.LITTLE, P-cores/E-cores), or to categorize tasks based on
+> specific properties (e.g., setting the soft-affinity of certain tasks to
+> a subset of CPUs).
+> 
+> Currently, there is no mechanism to share these domains with the
+> built-in idle CPU selection policy. As a result, schedulers often
+> implement their own idle CPU selection policies, which are typically
+> similar to one another, leading to a lot of code duplication.
+> 
+> To address this, introduce the concept of allowed domain (represented as
+> a cpumask) that can be used by the BPF schedulers to apply the built-in
+> idle CPU selection policy to a subset of preferred CPUs.
+
+We don't need a new term here, do we? All that's being added is an extra
+mask when picking CPUs.
+
+> With this concept the idle CPU selection policy becomes the following:
+>  - always prioritize CPUs from fully idle SMT cores (if SMT is enabled),
+>  - select the same CPU if it's idle and in the allowed domain,
+>  - select an idle CPU within the same LLC domain, if the LLC domain is a
+>    subset of the allowed domain,
+
+Why not select from the intersection of the same LLC domain and the cpumask?
+
+>  - select an idle CPU within the same node, if the node domain is a
+>    subset of the allowed domain,
+
+Ditto.
+
+>  - select an idle CPU within the allowed domain.
+> 
+> If the allowed domain is empty or NULL, the behavior of the built-in
+> idle CPU selection policy remains unchanged.
+> 
+> This only introduces the core concept of allowed domain. This
+> functionality will be exposed through a dedicated kfunc in a separate
+> patch.
+...
+> -s32 scx_select_cpu_dfl(struct task_struct *p, s32 prev_cpu, u64 wake_flags, u64 flags)
+> +s32 scx_select_cpu_dfl(struct task_struct *p, const struct cpumask *cpus_allowed,
+> +		       s32 prev_cpu, u64 wake_flags, u64 flags)
+
+Maybe rearrange them (p, prev_cpu, wake_flags, and_cpumask, pick_idle_flags)
+so that the first three args align with select_task_rq() and we don't have
+three consecutive integer arguments? Two back-to-back flag args increase the
+chance of subtle bugs.
+
+Thanks.
+
+-- 
+tejun
 
