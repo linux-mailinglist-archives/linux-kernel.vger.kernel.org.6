@@ -1,300 +1,193 @@
-Return-Path: <linux-kernel+bounces-551189-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-551186-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3217AA56927
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 14:42:31 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E4A8A56920
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 14:41:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D791F3B0DBF
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 13:42:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ED35B3B22A3
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 13:41:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B53A21A436;
-	Fri,  7 Mar 2025 13:42:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8748421A43C;
+	Fri,  7 Mar 2025 13:41:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="O9P7q61A";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="X6oCDFcx"
-Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="G4ENfnLT"
+Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43D1E21A431
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Mar 2025 13:42:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741354939; cv=fail; b=DRfOkogYcaeDeGmOmCT4c9PzUxxMSGndl5a1a4x+XskR6aSYlZcSQLcAlq9XJyzuqsKKiqbgOUWPbuwULEKIDralosNun0zVQMN7MM0Jih7Q4C3icb1iuErHM74ldMdG6+4nUkrgEHUxHuLgyQ98HDjfHL8EE31EYrCGY4Uw4tM=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741354939; c=relaxed/simple;
-	bh=9qEQGl7HczY5AviwCSUng19G9XUUT6y3y30PhbmV7ow=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=tWaYSjb8hrNyNcuf0OhvHW4w79zKUbYuWjd2dfDK+JOySRfjtqoR4f8mFACiiITutZ74lWFj58CJfU+PVttbTBPyaaTJ0lkrvLMn896760m9yR8crgpiqh2J4Pks3rUK8IuEXG6qLhHctvd1spJY/ZbpJCACsX47rqFrHQP2nSE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=O9P7q61A; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=X6oCDFcx; arc=fail smtp.client-ip=205.220.177.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0333520.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5273FD75019526;
-	Fri, 7 Mar 2025 13:42:04 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=
-	corp-2023-11-20; bh=JL/scoWvniNv9yuKTWlW5UVO0WBH+gao29iUI/ur6Ec=; b=
-	O9P7q61AC/T00t2rD/rjKtwkxVuo3gstCu3zGFyAuZpSl4wgS7Qthoilcc0cjpkf
-	cFj/YBo6aTgmx2aOGMe7bz9Fyh3RshSgF2ZL77WuScnEKzyO9YJlRBelguyQCRb7
-	FFtwPlXsUG+RrVCafFJ18CDZTq8rvr0q8xdsPXC1sixQOZl66CWQHZivhUMU6M26
-	5to2gZQSI4shQWcFI+tjgTSdRMK25pSM175NoZEFcKBbFyv6MG2hM1cIgffRkdKq
-	qi+5M04+QAFRAcGxXU538iLDsiTNRqbpbJahnkgnYEHZnsmFx6NOtUxUs+KkgTJb
-	NxZ9DtmzqlXfUHLZifCARw==
-Received: from phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta02.appoci.oracle.com [147.154.114.232])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 4541r4c513-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 07 Mar 2025 13:42:04 +0000 (GMT)
-Received: from pps.filterd (phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 527D3YZq015772;
-	Fri, 7 Mar 2025 13:42:03 GMT
-Received: from nam12-dm6-obe.outbound.protection.outlook.com (mail-dm6nam12lp2168.outbound.protection.outlook.com [104.47.59.168])
-	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 453rpemc1q-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 07 Mar 2025 13:42:03 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=pNTMg4gpIuuFXBBOjapBvYodWJadw8UWCMWgvqs8f7PCGJUBxbBOEBkK7cqFwFMxLwCrfCXpBg2+wSXxCjTaBtpCDEh7A/OcSW+5QxcsePVutaYP7qqVQpJ+Wmr528Tm8lxCZW4TCpNNdCDfblEJzPAmJWuryDgt50jABdX58qzeQDS4o7l1TzNhCmAL0r6EU2kUykfuT9JIEzVdNxHhoMEqswkfNYkkV0rXA7hCjf+a3CW+DLBK3Ors1262icJxMlgdRWTGsexgfqb/4RpY9Eni6YtF62wJL6Wu+6QlYvHifQNN3YhbfKze3eQadciPjxafc87HM6tSwocgV4jVmQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=JL/scoWvniNv9yuKTWlW5UVO0WBH+gao29iUI/ur6Ec=;
- b=RzXIaRpC8so9QSzoCdDytCq62Jqkv+RQVaICLnPd8gu5JQuUjhiDGj51dfeSh5k42B0PnD2Qg5tp6Elh8qnj9vM6VLaOyxYV3HWxdp+JKon5axnecvcd6RovjVKG/AwgD/CEaUS8e0waS+KhlIMn4VxlZejSdRVOwy2/y7kW3asxLwOb3YsDEsUhiTZwrxOUeoKJ12ult9OY3M9CjdvBqLmxchUihD+hL6IeDHnhOX4gK07F1rA4s4/MlpTEWJAVL4xOI8dOO6JzRixqLr2a/MNhpK7kuPOvWIsBM/LveYb6SIEJBMFesVZXSLVyy8H5MdRumPzqUX8i1m2s1Y8VTg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F71DEBE;
+	Fri,  7 Mar 2025 13:41:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741354880; cv=none; b=hOZrC1UMAnJYkZRg0F4M5unmv5Bvx+ZCoXn/zBOUfP7dOKFx/koVkZDWxZEjvRJMBjjqSF0snbK8I6OhezX6n7oBA7OwJ8m+AACdrhctfdwcioiw5xm1yX46c7Kq6DcuviAVI/njxvyFJXr018Kdp7sauRZ94RT11JYClWp9Zdk=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741354880; c=relaxed/simple;
+	bh=N8sYo3uz0FrCRUbMqngY+YYmmopRY57XHjzEdmi1tY0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bXiuHSv0R4fe4kVTj+9d2u9pp0AW7UMcYKeHuIjOLcCdjsz6QGXWSSAI+eHdsQgxd9kZW7aFEGxEK/Du1jNdM0PaTXsWE8XFWFuqu8meptTYRV1fugyVMueZo34+V4gBm+MMtW7BaSlWRquCtgl2zAn+NGJ1g8S+FwRpiiCHYvc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=G4ENfnLT; arc=none smtp.client-ip=209.85.214.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-223a7065ff8so5895965ad.0;
+        Fri, 07 Mar 2025 05:41:18 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=JL/scoWvniNv9yuKTWlW5UVO0WBH+gao29iUI/ur6Ec=;
- b=X6oCDFcxUherVxhiMH03O2Lec8SHMMt2PxhVqiFS9CP19IPBGbzA449OMJa/tXIy+G1l6PLbkc6uu+bHopbb8UMSCoHGhN3YfQ7uyBw6bcRVIqugiQ4yJ3QC0NtQHEh6QK6ddXRI7BwrOl3+e1hMLofgVzrHZkD+Psy9lbM6UVY=
-Received: from MN2PR10MB4112.namprd10.prod.outlook.com (2603:10b6:208:11e::33)
- by SJ0PR10MB5582.namprd10.prod.outlook.com (2603:10b6:a03:3db::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8511.18; Fri, 7 Mar
- 2025 13:42:00 +0000
-Received: from MN2PR10MB4112.namprd10.prod.outlook.com
- ([fe80::3256:3c8c:73a9:5b9c]) by MN2PR10MB4112.namprd10.prod.outlook.com
- ([fe80::3256:3c8c:73a9:5b9c%7]) with mapi id 15.20.8489.025; Fri, 7 Mar 2025
- 13:42:00 +0000
-Date: Fri, 7 Mar 2025 13:41:57 +0000
-From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-To: Pedro Falcato <pedro.falcato@gmail.com>
-Cc: Yang Shi <yang@os.amperecomputing.com>, Liam.Howlett@oracle.com,
-        vbabka@suse.cz, jannh@google.com, oliver.sang@intel.com,
-        akpm@linux-foundation.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] mm: vma: skip anonymous vma when inserting vma to file
- rmap tree
-Message-ID: <fdd28cd2-d563-4bdc-8dab-033ed80ae287@lucifer.local>
-References: <20250306214948.2939043-1-yang@os.amperecomputing.com>
- <6f3cece7-4dc6-471c-978c-efcf4bbe64ce@lucifer.local>
- <CAKbZUD3Gk8Qb4zznpCszXHzfAO82=rkTOb0_z6yVU0CXWAMoSA@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAKbZUD3Gk8Qb4zznpCszXHzfAO82=rkTOb0_z6yVU0CXWAMoSA@mail.gmail.com>
-X-ClientProxiedBy: LO2P123CA0082.GBRP123.PROD.OUTLOOK.COM
- (2603:10a6:600:138::15) To MN2PR10MB4112.namprd10.prod.outlook.com
- (2603:10b6:208:11e::33)
+        d=gmail.com; s=20230601; t=1741354877; x=1741959677; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=h38aqFe9Ma4NHWsTUuQBby7UCorGRNLzawB5Rnpg1KI=;
+        b=G4ENfnLTH4tvY2co9QGuN7K2rR1L4r7dXc9OgAm2byrNAvYj84i1bc0xaytPVDWB6L
+         Xla8YFi3DA0q78MXfUEHh5v0W8W3zVxfct/HDLhX73kvGsAOcO4bGH7EG8Q1Os560a9i
+         DvMj63ZWGRRInA+pvSu8BZ8fohR/Q9OeS3R3a09DaMHvnPKRmgBJa1yrTToD0RqoHmYw
+         1bvMAxYKR8GuEZc2jvfbxOPCWvN/YUFNshDYJg1TGEJKNzhw83gOVZmCDVMzm0+IWaT6
+         yTDi6CE4cmLLvOtKCUpObm1bUgatcc7/OhVdM7hxATSh/QypcVhOk9q8ft7kAxDOD6Do
+         E75w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741354877; x=1741959677;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=h38aqFe9Ma4NHWsTUuQBby7UCorGRNLzawB5Rnpg1KI=;
+        b=pjm6FVI4bfZfRDypFDwvCYZXbuQJQ1+udhy3NUpdEr183Bzs0mv5bBmLfRmlAF+8sY
+         kD0fpwQTedhb8QfIo3CRm0gblj/zs33kAbPdG554uQ76m2lJPWGyILhfTX3ejZ9Ckyft
+         MgMvWDjPYzfn3xktFJkZJeXhGrSImjhbroaIPeZRzp3OMMII+1DJfNhpGY2W5C//HV1L
+         j2n7d98h4JYrlbZpHz5tdinJNFAUanc/i608q4uBBYNpH1HD7OJl74XyVdP3fCQirx6D
+         9gPG5CcxGgmr9MnhU7HBSe4IWSGp81VSfHWBd4LhHj0t7jv5NwtOWiRwVTG2lwLO0kLB
+         1z4g==
+X-Forwarded-Encrypted: i=1; AJvYcCUBf13ovEKM8w3S+1luF7l46fO94UHsbf9jvkpdj+bKUx8HlpUxBstrvsLSAl/GrkcfI9BB+01f0lHC9A==@vger.kernel.org, AJvYcCV4oeeNZkRCe5y1B0nwy72939j4O2P3PzaFASSQsfyzKumjcNUeYF8iU8D9mFkYsdq6lIDSPqGMGgxZJTrI@vger.kernel.org, AJvYcCXIDylVZ7RCyeXMZd7VTyDYW5/hluZTNH7quRJiIQPG8D4GcEA7qWbj0CrELYuz/FpWQFOqwH0BKEoD@vger.kernel.org
+X-Gm-Message-State: AOJu0YxN1pFk9l7iB64xm4Va5KBsyLQJed2WJpOJNf/9zc/LksE7RH2S
+	peDR9jcdlEfDzVUjmoFWI5XCo9dso6/CRusa3kK7A9MZXVan5b1K
+X-Gm-Gg: ASbGncsN9TBGAfLJSE0CiruZdZ4kM3qFFQbe2Ru/mAYkGICYPDtEsx8x4ZGyo5yE37y
+	fajVynOSdBnXjpIc0ulSwT6zTOixuoVVeu/+cd2AuHgPjFRcKU2Avp2CM8nBefTi0VbHqUpDYrc
+	+5tVgy9HYGoNIYwC2TrK8pn3M5SwErFj0SyKuJlFMJBogcnbp8OQr1zSfVcyLqSpuVq41awaEWi
+	cbK/WjzFNfsGNZV3IEe9g1v+l4W088herq3y84bLTQbMYeNHa9YOpXwFsUbP824bVYBCNhFhIFA
+	7Heok+yp4PzkNqE9YwjKpPOKfsTBGXRsX3IFEDzxELsuX/597skGcg==
+X-Google-Smtp-Source: AGHT+IFNfcJHZ+3VSfDlVytA+8MieA2fcDSQnh0iehKMSSKusFnNT8AR7I9mN5SQu5o+C1VqXZA3zA==
+X-Received: by 2002:a05:6a00:2d90:b0:736:48d1:57f7 with SMTP id d2e1a72fcca58-736aa9dc1d5mr5359686b3a.7.1741354877520;
+        Fri, 07 Mar 2025 05:41:17 -0800 (PST)
+Received: from localhost ([2804:30c:1f21:4300:1cf6:c485:6555:b1c5])
+        by smtp.gmail.com with UTF8SMTPSA id d2e1a72fcca58-73698206ba4sm3220610b3a.4.2025.03.07.05.41.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 07 Mar 2025 05:41:16 -0800 (PST)
+Date: Fri, 7 Mar 2025 10:42:09 -0300
+From: Marcelo Schmitt <marcelo.schmitt1@gmail.com>
+To: Jonathan Santos <Jonathan.Santos@analog.com>
+Cc: linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
+	Sergiu Cuciurean <sergiu.cuciurean@analog.com>, lars@metafoo.de,
+	Michael.Hennerich@analog.com, marcelo.schmitt@analog.com,
+	jic23@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, linus.walleij@linaro.org, brgl@bgdev.pl,
+	lgirdwood@gmail.com, broonie@kernel.org, dlechner@baylibre.com,
+	jonath4nns@gmail.com
+Subject: Re: [PATCH v4 09/17] iio: adc: ad7768-1: Add reset gpio
+Message-ID: <Z8r3sR740CpZfVFr@debian-BULLSEYE-live-builder-AMD64>
+References: <cover.1741268122.git.Jonathan.Santos@analog.com>
+ <305f0bb4a90aba547de6b46d4c9dcf04a2a4db72.1741268122.git.Jonathan.Santos@analog.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MN2PR10MB4112:EE_|SJ0PR10MB5582:EE_
-X-MS-Office365-Filtering-Correlation-Id: d75a1fa8-e36d-4590-08a3-08dd5d7dd630
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?MkxISmRNdzF3WmZBK212OW0zYnJCeEZES0d5TGgvWmlhcDR1WUxzU09LYWov?=
- =?utf-8?B?S1ZMaS9Bei9WTDA5WFhVa285STF2ZGg4VHNCZndEcVZXaG4zejJvdTcwcXBi?=
- =?utf-8?B?Sm1pbUZsUTFFcWZaK3JTcVljTUZybE56N3M1ZGFvZWVnWmJRZjFmRXl6Rjk2?=
- =?utf-8?B?QXBVWUczWWxLc3BjYVhhdDFjTjh5bWI0emxtL1h6UWlSRS9LZFp0N1o5UndR?=
- =?utf-8?B?RkJaSExwUnhNQytlMUtpcGhnb0s4aWljNXpidy9QWHNsNVVXZkNKWjFVdjhq?=
- =?utf-8?B?Y0w1RDlKaFdCYzBHRzdpVG5vSmpmaXZzYWkzaDhzTWpJNDVGeUJhTUlwUmN2?=
- =?utf-8?B?UjhqZVFTUDY5YzdJTDBHWmJ2czgvVWU3Z09UWWZPWE1kYWpkLzFmWVJjQ1hq?=
- =?utf-8?B?eE1lQW45eG9hNzZGdDRzMHRYMFVFSENYRDJrUXlNR2IyZkNIdEVOR0VuT1Nt?=
- =?utf-8?B?aXlZQTFUTzJJSDlQR29ycjJhUWVheWNzQ2dPcHB4bWVhRUxLZmN1c3pLekY5?=
- =?utf-8?B?d2NIcWQ3d2x6ZG9YdFc1K0tpdUN6UkZyUUF3R1B3c29US0lzeDBZeEFqU1oz?=
- =?utf-8?B?TTR1SGdZcXMzS2tLVU50V3Z5NSsrT0NUc29RUFh0QThxT1FyU01BclU1Rk1v?=
- =?utf-8?B?em4zdHIyaFEzNmNYdnFYSGVITWZ2ZW03QmRydVZEclhaK3RwWStTbFE2dVhl?=
- =?utf-8?B?b3hZY2xiK1J1ejlNakhOaXNQYk0vUTBYd1UwMW1GS0V4VC92RjhlaW5TMldu?=
- =?utf-8?B?a2lSRk5mRzBEVWEzWkc2UDdNYk1TM0Z4UENHVndmMUFkdjd2Q1dGY2ZmcGZL?=
- =?utf-8?B?SkZnVm5HUFp6bUtpQW4zdlBXcUJyL3Y4Y0tPRVdDVWFjNjdkOUdSck5MSmFl?=
- =?utf-8?B?ellqYjFUY2RFOGNSL1J1T3l0WHRGVmEvblFVazJwaldIWjhobU9sN3FVMFZX?=
- =?utf-8?B?ZTBHdXZCS00wYVBlbGlPYmFCQzhZeTAzUURvNUlTU3BuTWU3R3A2Zk93U1Vq?=
- =?utf-8?B?MzI5cjMxckdnZWtDdlJ1SGZJTTVxdm1IekMvdzFSNWhxQUJqVlVSbUwzZVZS?=
- =?utf-8?B?bmVKZ0xzUjZqQmxxUEhjR3lpK3hWMzErMytibmpIQWVhTENPQnBCcHZRakV0?=
- =?utf-8?B?bk5KaFZtN3BBRXJKcHFjbEY3bzBlRkZZVlpkcHpFdGJ6bFRJWUI0aEtJY1RZ?=
- =?utf-8?B?Q3hDNkc5L3R0SkV0N2dsMk92c2RDWUdZcWhSSXk3cjZaQ0Zld0hvOEpWdU5i?=
- =?utf-8?B?MlIzWHpac0ErbE9HWmVhVGZ5QmZwZE9LRmF5d3YzSGNVZFpkdTNjRHhHNU5J?=
- =?utf-8?B?UW80MExFRkR1RGJkYlc5QVp0R1kvdmdvUUhXZXUzUG1pdWk0VWYzMU1HVE9Z?=
- =?utf-8?B?RlMydk9oMVg1bjFmaGhYVjZvaFl2SlI2eGJ0bUV3ZWljekhDZCtGSGdpZlJl?=
- =?utf-8?B?YUdRZjRNRllNeGloMDQ3WVR0dmFOdlZzWGlCMFlsSUovR1prYkJScmh2YVFs?=
- =?utf-8?B?c3BJK3JPYjlJbzZrTXAvRjF2VUFuZ2ZZSTA2bzcwdEtEMXVtVFFDMjVvQ2F3?=
- =?utf-8?B?cDdIaUhVUXBRRVRFc2kyRGNvSDM2ckEzNUFHSjlLYzFnaktVaXFlT1o3TThD?=
- =?utf-8?B?U3VkUDZPR3lqc2RJVEZJSWhXZ3NvZXR3Q0Q4UVB5bUR4dWd5elh2dGJZaStU?=
- =?utf-8?B?VWY3TmFpL081K1RPSm5pMjJ6WFV3cFJUSlpRb0k1R0xZVWMwQkhnQWNNdHZ2?=
- =?utf-8?B?dHpQZ1lXU3lBYmhhVHFOcldlS1RlZVNEOWpiWHBpeXMya3lkVXgvRWMzTTdL?=
- =?utf-8?B?SVZGWGFCVEtFa0RyeWpHLzB5eFpmV05ZTGoyNnoyT0laNG9pa0hIaStkbWQ0?=
- =?utf-8?Q?IA0YmzadO3jCV?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN2PR10MB4112.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?Z2ZmS1V6NWthK3MycHYvdHVMTndvSkl6bEVHeWh1UmFpNWZwTjgwNFZ5RllI?=
- =?utf-8?B?enVONXRFY0swVm0zK2IzaUdCdlcxMXJuNm9GQVltUVN5WHo0eDNROGFwQUpW?=
- =?utf-8?B?RHd2VUFLNlpaZEtyQ1JVTTJLTm83azdxVUVTbEg2S0Z1eVVmM0pSMUppY0tC?=
- =?utf-8?B?Lzgwd0t0RkR1OEYyTG9oV1Npa2VUSlRrcmJ6cGRyY1BTeGhVaHRlbG91aFFh?=
- =?utf-8?B?c1hIMWZmYXVqM09FZ2RPNE5ORkxDV3VsRzBDbWpRS2s5SVkxRkMzakVyajJ6?=
- =?utf-8?B?WW1KSHZzSTM3RXNCNDU2dkRrVXk4Q0RFMjdpOGFLR2ZrNDlxZW5HcVhLaUVN?=
- =?utf-8?B?TGZYVmtoQ2dRTDE1N2M5cmxZRzFGWkxXdDA2WVV5WkZrRUxFV3dRMVBsZmMx?=
- =?utf-8?B?ZWZ6MUVPY2FXb2ZFWDkwVTBuTldBaXhwNGE3UlFhRjVyVTFFbG5pc1lJMTNQ?=
- =?utf-8?B?YUlmZGpveExCOFpmQVdMaFJxRGYxQkZtWlg4WHh5ZDcvMVNoc3RvcGMxZllv?=
- =?utf-8?B?NER5em1vVEtMQUJZWG9qaGtiM1hzd0l3dEFlRFc3em9iS0xvUFBxZUJXNDVB?=
- =?utf-8?B?U0lja3BXUFhyTDgzeVl0dVZydFBoaVZyMmhBM1B0WDJiOTZwenJsN3hZSmFq?=
- =?utf-8?B?TVhUMGdwNnJXRWVWMGo2L0Y1VlVKN2VBaEg4SG83aXJSNUNhNGRkSVUyaURH?=
- =?utf-8?B?YTQ0SGdIVklyTXd5VVhsczhoMEVjVmx3dVo1ZnhmZGkwcUY2WkdOeUJKa1dS?=
- =?utf-8?B?cHBCUzFEUlF4eG1kT3oycHlqOWY2OFpUUUR6YkF3R0I4Nk5LcEE1a3VsWXZJ?=
- =?utf-8?B?WXRxVnN6L3VhZStlVzNWYUlCN0pZWEt4bTA2d1JtYjRxRDV5bFFCdktZVVl4?=
- =?utf-8?B?K3B1YnViTUpGYU1xNjVHUndyOFJnSGdjajFRb2pPbEVNaTc1R2tyUWlmRW1X?=
- =?utf-8?B?NzkzMGpCY1p2UVdpZW41S3FNZW16NmExOU5TL1d0N2FHcWpqWDgrUnQzckRh?=
- =?utf-8?B?U3BGVXRBZFpZd3JGaDVPd3M5UFNIc01mV0R5Y2cyQmRzSElyS04zbWpRemlN?=
- =?utf-8?B?WDFIblRUbDFFcml2Q1JiTEd1YXZEUHRkVjBma2xTYkdFQi9aUkNqRUFiQkRF?=
- =?utf-8?B?eDVScTJnSjRoTDQwZVY0OEtoTkFCQ1pld0pQVVlwaG9QN3llMkc5dWNueGpV?=
- =?utf-8?B?WU95NkxjSUlsVGtWdG9YTC9jNmVKRzA2ditVRnkzYnJqZ3A2Y2tsV29LMkdR?=
- =?utf-8?B?MFc3Ui9Ga0g2TnpvclEybVZxcXRtNG1odVhrTFVlYk1RWnBxVk03aVgzTzdX?=
- =?utf-8?B?ZTl1ZVdSYkVVUEMyb2djOTlxSk5jZ251RzB0YlJWajZNRWRVK2libCtRZUo1?=
- =?utf-8?B?RU5HVnZJeWwyK21nQjJTRi9mbXBxZTVYRjQyMWVINFQyemJTYndqZ2ppeFpH?=
- =?utf-8?B?a3A2a2RQaHJLN20wa1J0cDE3ckIvMFNLSDk2ZURIM1NuZ2RzQm9VaHhha3JS?=
- =?utf-8?B?OHBNcktlOXlDMXlSRlRTWmRQNjFXVDFOUWJwSHI5bUErclo4NENCOFpnMzMy?=
- =?utf-8?B?MFdPRHJJeE4wLzJFNGxvTlZGUEI3UEEzS2lxaEFLRlUzQlRtblFzbmZRb0xJ?=
- =?utf-8?B?NUZPMVlqc3JRbXhiaS9WQjFTRTJ2UVI0dHBHcTJQV1l0RDNMZmZQVjFldHEr?=
- =?utf-8?B?ejgwQjE5WEV5U1h1Q3l6bERVSWZBcy85NUNNbkc0QUNTNnFPdDdra1dnVC90?=
- =?utf-8?B?Rkl4NVFpRFFXS3FQUkFRREhLcFhJbTVvY2l2Skhqckwvc0p5WGhFQ1F3VDRx?=
- =?utf-8?B?ZFNyajNMaDFUU2NWMVJ5WlFjVkprWEs2a0VWQkt0UlhCQThUS2xSelNDSCti?=
- =?utf-8?B?QUZaeTJOakNNL0dobGZUUDdhT2RwaWxILzJ6NDJTUWIxaHNDdHQ0aU9EQ1FY?=
- =?utf-8?B?Um1nVjR4c011NDBCc0JKdlVhd0VYRzJ4ZzNOWFVaeDYvK21ia1VMckdoR3ls?=
- =?utf-8?B?RUtySHRreEQ0eHRIMElaazZTdHFUallkeXZhT0dLRU9tdEFzdzBHNjJxeUFZ?=
- =?utf-8?B?dHFscVdNNEpya2lRLzVmeldsMlRqT3gzRXk0RVBCOCtoaktGdGhLR3B2bmFt?=
- =?utf-8?B?Qmd3WGhyUmhtNmVtc0FMeDZaQVdqWjljdEZpT1U0bDduODg0K0VxUGhpTERU?=
- =?utf-8?B?a3c9PQ==?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	+CGldlDVSScn1W2Plt1TsTq8H/faiv4xR9PWlxVGO49IWqE/jkl98xKrKM0JDg5GvmMFTdYh384Ud5oKFe2J51kPQF/whUwChdKGoKoBxkDoql1n3s59xPszxrU5w+uWYz1So3Xm1rh0eab278o2+0uIX6pjoQDmhvEd24ux/Rz/6cNLWxLRh1XVRRoTlKNH9ZFBRGEZR7iRkCYLhg3O+9HLqdhGIPWxD8jdtilcskxkKMFA4Vb00UR5AX/b/StgvwG7wI5p3QIKNIZfz5VrqrV0shdR/G3Y+Q6KQlo1MsMAcmBh0Vy2DoNaENI7vx+XHqHwUrHu3duHwltmKNZQR2SHUDvp83V8LvEdGlbLA0CZPlxGOe51szDPhY1jwhYhx76IVNY+0u5WwZEbDWJx+nSaIkujPje4ZWtYEX0OZ7nfLzPz16uwPIhTZgy/idOebuWGrvNyRfAY56+V8dddZAUPn70GC9zgPuiTh3NBokrUC2tErsdZ0bFWd1lMmzdb2c9jLW7ZIz8jGip/dz/nEWiNdunjNkCS6TMsMBXCjJD70Afdeu7pYDqAvIxC89atvavUrce/rrJ/S7F38hrt90ln9HxlalolRNbghdHQ8WA=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: d75a1fa8-e36d-4590-08a3-08dd5d7dd630
-X-MS-Exchange-CrossTenant-AuthSource: MN2PR10MB4112.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Mar 2025 13:42:00.3386
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: O9CgBvJN7OWSm+4Cn2ttQd2gCy0oiG1K46MIPZbnHqgtH0/+ORPpugU3rK1BmA0jxp3VzEJVMjTGdt9+X5mhY7W5BdxDQUleYLuzCYp9Jpo=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR10MB5582
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-07_05,2025-03-06_04,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxscore=0 suspectscore=0 phishscore=0
- adultscore=0 mlxlogscore=999 malwarescore=0 spamscore=0 bulkscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2502100000
- definitions=main-2503070100
-X-Proofpoint-ORIG-GUID: mmm6_OGyrpQogjW6jctP1Ga1v3TdPb6X
-X-Proofpoint-GUID: mmm6_OGyrpQogjW6jctP1Ga1v3TdPb6X
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <305f0bb4a90aba547de6b46d4c9dcf04a2a4db72.1741268122.git.Jonathan.Santos@analog.com>
 
-On Fri, Mar 07, 2025 at 01:35:00PM +0000, Pedro Falcato wrote:
-> On Fri, Mar 7, 2025 at 1:12 PM Lorenzo Stoakes
-> <lorenzo.stoakes@oracle.com> wrote:
-> >
-> > On Thu, Mar 06, 2025 at 01:49:48PM -0800, Yang Shi wrote:
-> > > LKP reported 800% performance improvement for small-allocs benchmark
-> > > from vm-scalability [1] with patch ("/dev/zero: make private mapping
-> > > full anonymous mapping") [2], but the patch was nack'ed since it changes
-> > > the output of smaps somewhat.
-> >
-> > Yeah sorry about that, but unfortunately something we really do have to
-> > think about (among other things, the VMA edge cases are always the source
-> > of weirdness...)
-> >
-> > >
-> > > The profiling shows one of the major sources of the performance
-> > > improvement is the less contention to i_mmap_rwsem.
-> >
-> > Great work tracking that down! Sorry I lost track of the other thread.
-> >
-> > >
-> > > The small-allocs benchmark creates a lot of 40K size memory maps by
-> > > mmap'ing private /dev/zero then triggers page fault on the mappings.
-> > > When creating private mapping for /dev/zero, the anonymous VMA is
-> > > created, but it has valid vm_file.  Kernel basically assumes anonymous
-> > > VMAs should have NULL vm_file, for example, mmap inserts VMA to the file
-> > > rmap tree if vm_file is not NULL.  So the private /dev/zero mapping
-> > > will be inserted to the file rmap tree, this resulted in the contention
-> > > to i_mmap_rwsem.  But it is actually anonymous VMA, so it is pointless
-> > > to insert it to file rmap tree.
-> >
-> > Ughhhh god haha.
-> >
-> > >
-> > > Skip anonymous VMA for this case.  Over 400% performance improvement was
-> > > reported [3].
-> >
-> > That's insane. Amazing work.
-> >
->
-> Ok, so the real question (to Yang) is: who are these /dev/zero users
-> that require an insane degree of scalability, and why didn't they
-> switch to regular MAP_ANONYMOUS? Are they in the room with us?
+On 03/06, Jonathan Santos wrote:
+> From: Sergiu Cuciurean <sergiu.cuciurean@analog.com>
+> 
+> Depending on the controller, the default state of a gpio can vary. This
+> change excludes the probability that the dafult state of the ADC reset
+> gpio will be HIGH if it will be passed as reference in the devicetree.
 
-This could be said about a lot of benchmarks.
+The description doesn't seem to match the changes nor the patch title. You are
+essentinally adding support for hardware reset. Change the commit description to
+reflect that.
 
->
-> > >
-> > > It is not on par with the 800% improvement from the original patch.  It is
-> > > because page fault handler needs to access some members of struct file
-> > > if vm_file is not NULL, for example, f_mode and f_mapping.  They are in
-> > > the same cacheline with file refcount.  When mmap'ing a file the file
-> > > refcount is inc'ed and dec'ed, this caused bad cache false sharing
-> > > problem.  The further debug showed checking whether the VMA is anonymous
-> > > or not can alleviate the problem.  But I'm not sure whether it is the
-> > > best way to handle it, maybe we should consider shuffle the layout of
-> > > struct file.
-> >
-> > Interesting, I guess you'll take a look at this also?
->
-> ... And this is probably a non-issue in 99% of !/dev/zero mmaps unless
-> it's something like libc.so.6 at an insane rate of execs/second.
+The default state of GPIOs would not impact device reset because (in theory)
+they weren't being connected to the reset pin prevously.
 
-But the cost of fixing this is...?
-
->
-> This seems like a patch in search of a problem and I really don't see
-> why we should wart up the mmap code otherwise. Not that I have a huge
-> problem with this patch, which is somewhat simple and obvious.
-> It'd be great if there was a real workload driving this rather than
-> useless synthetic benchmarks.
-
-Disagree with first part. Disallowing a known-broken situation for very low
-cost in the majority of cases, as well as documenting that such odd
-creatures exist is valuable.
-
-Improving benchmarks, however synthetic they may be, also valuable.
-
-But on the latter bit, yes it'd be nice if we could get information on
-real-life scenarios where this is an issue if you have it Yang.
-
->
-> --
-> Pedro
-
-The patch is fine as-is AFAIC, and I am very happy to reduce lock
-contention on heavily contested locks wherever I can, especially when the
-cost for doing so, in this case, is so low.
+> 
+> Reviewed-by: David Lechner <dlechner@baylibre.com>
+> Reviewed-by: Marcelo Schmitt <marcelo.schmitt@analog.com>
+> Signed-off-by: Sergiu Cuciurean <sergiu.cuciurean@analog.com>
+> Co-developed-by: Jonathan Santos <Jonathan.Santos@analog.com>
+> Signed-off-by: Jonathan Santos <Jonathan.Santos@analog.com>
+> ---
+> v4 Changes:
+> * None.
+> 
+> v3 Changes:
+> * fixed SoB order.
+> * increased delay after finishing the reset action to 200us, as the
+>   datasheet recommends.
+> 
+> v2 Changes:
+> * Replaced usleep_range() for fsleep() and gpiod_direction_output() for 
+>   gpiod_set_value_cansleep().
+> * Reset via SPI register is performed if the Reset GPIO is not defined. 
+> ---
+>  drivers/iio/adc/ad7768-1.c | 36 ++++++++++++++++++++++++------------
+>  1 file changed, 24 insertions(+), 12 deletions(-)
+> 
+> diff --git a/drivers/iio/adc/ad7768-1.c b/drivers/iio/adc/ad7768-1.c
+> index 04a26e5b7d5c..86f44d28c478 100644
+> --- a/drivers/iio/adc/ad7768-1.c
+> +++ b/drivers/iio/adc/ad7768-1.c
+> @@ -166,6 +166,7 @@ struct ad7768_state {
+>  	struct completion completion;
+>  	struct iio_trigger *trig;
+>  	struct gpio_desc *gpio_sync_in;
+> +	struct gpio_desc *gpio_reset;
+>  	const char *labels[ARRAY_SIZE(ad7768_channels)];
+>  	/*
+>  	 * DMA (thus cache coherency maintenance) may require the
+> @@ -487,19 +488,30 @@ static int ad7768_setup(struct ad7768_state *st)
+>  {
+>  	int ret;
+>  
+> -	/*
+> -	 * Two writes to the SPI_RESET[1:0] bits are required to initiate
+> -	 * a software reset. The bits must first be set to 11, and then
+> -	 * to 10. When the sequence is detected, the reset occurs.
+> -	 * See the datasheet, page 70.
+> -	 */
+> -	ret = regmap_write(st->regmap, AD7768_REG_SYNC_RESET, 0x3);
+> -	if (ret)
+> -		return ret;
+> +	st->gpio_reset = devm_gpiod_get_optional(&st->spi->dev, "reset",
+> +						 GPIOD_OUT_HIGH);
+> +	if (IS_ERR(st->gpio_reset))
+> +		return PTR_ERR(st->gpio_reset);
+>  
+> -	ret = regmap_write(st->regmap, AD7768_REG_SYNC_RESET, 0x2);
+> -	if (ret)
+> -		return ret;
+> +	if (st->gpio_reset) {
+> +		fsleep(10);
+> +		gpiod_set_value_cansleep(st->gpio_reset, 0);
+> +		fsleep(200);
+> +	} else {
+> +		/*
+> +		 * Two writes to the SPI_RESET[1:0] bits are required to initiate
+> +		 * a software reset. The bits must first be set to 11, and then
+> +		 * to 10. When the sequence is detected, the reset occurs.
+> +		 * See the datasheet, page 70.
+> +		 */
+> +		ret = regmap_write(st->regmap, AD7768_REG_SYNC_RESET, 0x3);
+> +		if (ret)
+> +			return ret;
+> +
+> +		ret = regmap_write(st->regmap, AD7768_REG_SYNC_RESET, 0x2);
+> +		if (ret)
+> +			return ret;
+> +	}
+>  
+>  	st->gpio_sync_in = devm_gpiod_get(&st->spi->dev, "adi,sync-in",
+>  					  GPIOD_OUT_LOW);
+> -- 
+> 2.34.1
+> 
 
