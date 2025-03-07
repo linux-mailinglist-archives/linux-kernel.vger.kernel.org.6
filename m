@@ -1,99 +1,173 @@
-Return-Path: <linux-kernel+bounces-551906-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-551909-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 897ECA572CF
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 21:12:07 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D28C7A572D6
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 21:13:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CC7133B91D8
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 20:11:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 444571895C2F
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 20:13:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7550C2561D4;
-	Fri,  7 Mar 2025 20:11:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70EAF256C66;
+	Fri,  7 Mar 2025 20:13:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JooKpY1U"
-Received: from mail-yw1-f173.google.com (mail-yw1-f173.google.com [209.85.128.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="h1E40Tt+"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 650BD2561DC;
-	Fri,  7 Mar 2025 20:11:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACAFD2561BC;
+	Fri,  7 Mar 2025 20:13:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741378301; cv=none; b=b5EYu2nyQFSZi4IyseedP398NJrhiW/pJqWW1tv54qduKO8HeYVikyIeVtl5hvahUTm/InY/Ay+xOicHojH/uiJwP7LVJNGNv9TGDt+/gW27cuz8SlU4y5XMgNGk+boJI/RxPue2s/I8coeSeNTIzTDulxKsIiM6J1S1VKF0+14=
+	t=1741378411; cv=none; b=LvcXfVC/Fvv9qH5V/SEZ1KEIEEG7x6Ha9jaDjuAkum99U02rmjaMnXb+avJ+Rhmd3cN7yOcS9emDBgJHeYvERV3ucWSo3/IrEIskQEXfhWLgvHIJCwCQa86q7BN2vzgsG1Gw3H6fhGZjL01FdtOJEQ8mSgQsl1cY9zZ6NJeAUkw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741378301; c=relaxed/simple;
-	bh=kvUDm8am0hSMA2w3XwH8qyN8rQp+p+otQyAY+cG40dU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=qXYeGZ74eSkWYpL+zCAbK8kA+MkMZ2N3D4cvz9TUdlMilU4sXKtFFB2hZueA6Ru2RGzPPWfSWkeMW3cWABLB3EMOxxZ5oSpiOEv9cU/fF8FG2ihTneqEyaDxh8B47LHc20aJeROByTNmupYM0PaL1R/lt8/dZpmjE5r2M6eEnpc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JooKpY1U; arc=none smtp.client-ip=209.85.128.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f173.google.com with SMTP id 00721157ae682-6fda22908d9so17202607b3.1;
-        Fri, 07 Mar 2025 12:11:40 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741378299; x=1741983099; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=Fl996EB/BPN5hEnQtgwscpPDmaZ06UU290EobaQCcK4=;
-        b=JooKpY1UikjsqgSwEq1z/8i8Fh2puW/gP27hM3xbCZ+FaTLDOsKPRMNzTInetOE/X9
-         al/xezAdNjsU5sM2VVCTDB+YeBTpmpHCDuMFtasZKV4qXDN1Io4pb5eOv+uSrtvv7uOq
-         OFgvCvr8HQrQAGr0kUU34V9RFtV3oMME7LnLr2w+UU0ZGynYkZQDXc1ldIiKwQfYC/BE
-         lfLqf8LmJ+kJwVgU8UfOjfXiyFjdyVbSeCVA5YDPq7d3yL3aTfBy6+Fz/2FdG8d/opGT
-         WfBVPevdrvxcc8WgGQ9OaUAjn6zR9vwe2egwWfIJ+dOyHpBt7EdjoDWQmukrnO7oiSqf
-         33Kg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741378299; x=1741983099;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Fl996EB/BPN5hEnQtgwscpPDmaZ06UU290EobaQCcK4=;
-        b=d/7G+YwiV0OLrqpWSVXZ6APHPfclMri8sut6ENSbuXPy9ckr8aI6+ZorijFautphup
-         dyzfwJpd54qryR0BvvRQLa80xsKjIiOqgpPkATiP8wW1ljXpJ88kGDGh/sQi3yVwnA7a
-         NcUE180gdg9TK3knGlsPoQndFMQUwPlcx7z6KGXf+JgyfwXpGgz6wFLdh9OuV2ZtkOsl
-         KGDgMsiezM2HXjLPPZDlffaQ1TMr516QWbBqTN9lNom2zN4NSxXKg/a6y3S5LgfbQg/v
-         PVB3XYl2EDF+k9GbQZN8c9b4qhpWyXczT+7Ak+ESoEr+Hlop7U7eFsa8CeI3uJNHANz6
-         LUCw==
-X-Forwarded-Encrypted: i=1; AJvYcCVLWI+31z/6k9d1fUuXAIU9mIDWzDlgdi73+TiCgObS/mIcNW9wIJdWuHDsWDGJhUfnnBFPFsvSHZWKqPOi3Ts=@vger.kernel.org, AJvYcCXmmCS0WWC4koWPhcPscPcKBrZUoGL4MS4dBCIek1Po3PbYkl8Dt6mFEf+DuYSYijjjsYW9mgZLZIWnGZiO@vger.kernel.org
-X-Gm-Message-State: AOJu0YxEOy5ELO6TRjqc36jXbfHLBOLNk5e8BvFwn6QfNzOtL0mLe+cC
-	eLgny9YATLR7a9FXcAbN/pINTrOU0ejNeJorZf18vIVDwC2ODN380N2W2FTYW7tu/TViJReOi+W
-	hWwrMF/M5FcT7Qt/a3ADW5jbZEwg=
-X-Gm-Gg: ASbGncvDa0Y9rtNU6KZbxbDqTQC4PsteWmOqdVyAIRlOu4br67DBSSesG8etokaRlL8
-	leF6rkQxqFt7M+LjHrEKmLam2Z2wT9Bj0ptGqFBhS0wW1rKnOYFFd7ccqt6M0pmM3qwy7g5qK1m
-	k45/HAa6jSHWkxcx0A9SzMXp+3LrY=
-X-Google-Smtp-Source: AGHT+IG4pG20Yrepe041wDSG8GJC3NZSymhx3boOCHZlIMGASclrEFPEzLQZrlRc2a50xWaYhD2crUw3xuwpdrKBiYM=
-X-Received: by 2002:a05:690c:67c7:b0:6f9:b12b:8943 with SMTP id
- 00721157ae682-6febf2f3a9bmr72669737b3.19.1741378299319; Fri, 07 Mar 2025
- 12:11:39 -0800 (PST)
+	s=arc-20240116; t=1741378411; c=relaxed/simple;
+	bh=jL7DgXRTAIxdsq7tMW4vNI8UHMSejygWFWiH2zOE9K0=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=g0zEQpbJeVHkR6sA9SeBIINHDaFbPNCKH2nD8/vgYC4IYjODyf4+tUIiNPUVmo3FYwPUwnyGBBbFCFk/aOArNhhhFdsuM3tNrz7K9972aotvifpiKEOS9jnNAITUMSKsrZ93pUrnRDKzXXwGfIRbKGoThy7Ha2Gyz5ip+8FR2X4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=h1E40Tt+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E55F1C4CED1;
+	Fri,  7 Mar 2025 20:13:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741378411;
+	bh=jL7DgXRTAIxdsq7tMW4vNI8UHMSejygWFWiH2zOE9K0=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=h1E40Tt+pIMu5++zslxPZ29o+au/acKWXLM/y6n4n1FueDX/ZfXd1eNDYC8uaISX8
+	 2UGh3YKC+GHPNLWLzOlGHzobyPUjxWe7JrNrYeQ+Ua4vYwbWh7nNZQPhFCky7jN96W
+	 p6emh55NBl6FxEW9sDrz9+EQOsI4+QBl/QElW+VrVmHSY/SYRlet0LuxSKwQ2MFDm9
+	 AJAwY3JDQboJN3n4BL4RBao0H4KUkQQTj7Mj3wW5PAneZAaWeC/M4P55dZMDpFLGJn
+	 12kVDYgolDaS/zdFzJ4NUH6oFHgO6Mph7NmqicvaAEClGsJKYdImlutVNsPJqxGImk
+	 9J8laLKf7HeVA==
+From: Andreas Hindborg <a.hindborg@kernel.org>
+To: "Abdiel Janulgue" <abdiel.janulgue@gmail.com>
+Cc: <rust-for-linux@vger.kernel.org>,  <daniel.almeida@collabora.com>,
+  <dakr@kernel.org>,  <robin.murphy@arm.com>,  <aliceryhl@google.com>,
+  "Miguel Ojeda" <ojeda@kernel.org>,  "Alex Gaynor"
+ <alex.gaynor@gmail.com>,  "Boqun Feng" <boqun.feng@gmail.com>,  "Gary Guo"
+ <gary@garyguo.net>,  =?utf-8?Q?Bj=C3=B6rn?= Roy Baron
+ <bjorn3_gh@protonmail.com>,  "Benno
+ Lossin" <benno.lossin@proton.me>,  "Trevor Gross" <tmgross@umich.edu>,
+  "Valentin Obst" <kernel@valentinobst.de>,
+  <linux-kernel@vger.kernel.org>,  "Christoph Hellwig" <hch@lst.de>,
+  "Marek Szyprowski" <m.szyprowski@samsung.com>,  <airlied@redhat.com>,
+  <iommu@lists.linux.dev>
+Subject: Re: [PATCH v13 4/7] rust: device: add dma addressing capabilities
+In-Reply-To: <20250307110821.1703422-5-abdiel.janulgue@gmail.com> (Abdiel
+	Janulgue's message of "Fri, 07 Mar 2025 13:06:21 +0200")
+References: <20250307110821.1703422-1-abdiel.janulgue@gmail.com>
+	<nxaaNW1XIbhf7dSf8aRLVF5Se-0maF6BhX8GaUXlsOL-QOste8OMQxtmhYe_BYI6FYFEMeHEzy1s4OEy7PdGKw==@protonmail.internalid>
+	<20250307110821.1703422-5-abdiel.janulgue@gmail.com>
+User-Agent: mu4e 1.12.7; emacs 29.4
+Date: Fri, 07 Mar 2025 21:12:38 +0100
+Message-ID: <877c5038i1.fsf@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <14a845e8-54d0-45f8-b8b9-927609d92ede@stanley.mountain>
-In-Reply-To: <14a845e8-54d0-45f8-b8b9-927609d92ede@stanley.mountain>
-From: Sasha Finkelstein <fnkl.kernel@gmail.com>
-Date: Fri, 7 Mar 2025 21:11:28 +0100
-X-Gm-Features: AQ5f1JpZohgGftYZeUPmd7mjaK_v2MjyriIGwTdsUOZcHqxqIzREXd76VJK0afk
-Message-ID: <CAMT+MTSHT92Q=Xm62zfDgTnR0MEw5gKEk1rmvmrQSbXgQbww_w@mail.gmail.com>
-Subject: Re: [PATCH next] drm: adp: Fix NULL vs IS_ERR() check in adp_plane_new()
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Janne Grunau <j@jannau.net>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Neal Gompa <neal@gompa.dev>, 
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, Alyssa Rosenzweig <alyssa@rosenzweig.io>, 
-	dri-devel@lists.freedesktop.org, asahi@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
 
-On Fri, 7 Mar 2025 at 10:31, Dan Carpenter <dan.carpenter@linaro.org> wrote:
->
-> The __drmm_universal_plane_alloc() function doesn't return NULL, it
-> returns error pointers.  Update the check to match.
->
-> Fixes: 332122eba628 ("drm: adp: Add Apple Display Pipe driver")
+"Abdiel Janulgue" <abdiel.janulgue@gmail.com> writes:
 
-Acked-by: Sasha Finkelstein <fnkl.kernel@gmail.com>
+> Add functions to set the DMA mask to inform the kernel about the
+> device's DMA addressing capabilities.
+>
+> Signed-off-by: Abdiel Janulgue <abdiel.janulgue@gmail.com>
+> ---
+>  rust/helpers/dma.c     |  8 ++++++++
+>  rust/helpers/helpers.c |  1 +
+>  rust/kernel/device.rs  | 29 +++++++++++++++++++++++++++++
+>  3 files changed, 38 insertions(+)
+>  create mode 100644 rust/helpers/dma.c
+>
+> diff --git a/rust/helpers/dma.c b/rust/helpers/dma.c
+> new file mode 100644
+> index 000000000000..8eb482386f93
+> --- /dev/null
+> +++ b/rust/helpers/dma.c
+> @@ -0,0 +1,8 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +
+> +#include <linux/dma-mapping.h>
+> +
+> +int rust_helper_dma_set_mask_and_coherent(struct device *dev, u64 mask)
+> +{
+> +	return dma_set_mask_and_coherent(dev, mask);
+> +}
+> diff --git a/rust/helpers/helpers.c b/rust/helpers/helpers.c
+> index 0640b7e115be..8f3808c8b7fe 100644
+> --- a/rust/helpers/helpers.c
+> +++ b/rust/helpers/helpers.c
+> @@ -13,6 +13,7 @@
+>  #include "build_bug.c"
+>  #include "cred.c"
+>  #include "device.c"
+> +#include "dma.c"
+>  #include "err.c"
+>  #include "fs.c"
+>  #include "io.c"
+> diff --git a/rust/kernel/device.rs b/rust/kernel/device.rs
+> index db2d9658ba47..f9d3d4f60ddb 100644
+> --- a/rust/kernel/device.rs
+> +++ b/rust/kernel/device.rs
+> @@ -6,10 +6,12 @@
+>
+>  use crate::{
+>      bindings,
+> +    error::Result,
+>      str::CStr,
+>      types::{ARef, Opaque},
+>  };
+>  use core::{fmt, ptr};
+> +use kernel::prelude::*;
+>
+>  #[cfg(CONFIG_PRINTK)]
+>  use crate::c_str;
+> @@ -187,6 +189,33 @@ pub fn property_present(&self, name: &CStr) -> bool {
+>          // SAFETY: By the invariant of `CStr`, `name` is null-terminated.
+>          unsafe { bindings::device_property_present(self.as_raw().cast_const(), name.as_char_ptr()) }
+>      }
+> +
+> +    /// Inform the kernel about the device's DMA addressing capabilities.
+> +    ///
+> +    /// Set both the DMA mask and the coherent DMA mask to the same thing.
+> +    /// Note that we don't check the return value from the C `dma_set_coherent_mask`
+> +    /// as the DMA API guarantees that the coherent DMA mask can be set to
+> +    /// the same or smaller than the streaming DMA mask.
+> +    pub fn dma_set_mask_and_coherent(&mut self, mask: u64) -> Result {
+> +        // SAFETY: device pointer is guaranteed as valid by invariant on `Device`.
+> +        let ret = unsafe { bindings::dma_set_mask_and_coherent(self.as_raw(), mask) };
+> +        if ret != 0 {
+> +            Err(Error::from_errno(ret))
+> +        } else {
+> +            Ok(())
+> +        }
+> +    }
+
+I think we can use `Error::from_errno` here (and below). As far as I can
+tell, these C functions return negative on error.
+
+> +
+> +    /// Same as [`dma_set_mask_and_coherent`], but set the mask only for streaming mappings.
+> +    pub fn dma_set_mask(&mut self, mask: u64) -> Result {
+> +        // SAFETY: device pointer is guaranteed as valid by invariant on `Device`.
+> +        let ret = unsafe { bindings::dma_set_mask(self.as_raw(), mask) };
+> +        if ret != 0 {
+> +            Err(Error::from_errno(ret))
+> +        } else {
+> +            Ok(())
+> +        }
+> +    }
+>  }
+>
+>  // SAFETY: Instances of `Device` are always reference-counted.
+
+
+Best regards,
+Andreas Hindborg
+
+
 
