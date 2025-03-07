@@ -1,37 +1,37 @@
-Return-Path: <linux-kernel+bounces-550195-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-550196-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 97B4FA55C70
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 01:59:54 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 19E49A55C78
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 02:00:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C7278176CD2
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 00:59:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D4570189602C
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 01:00:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E116197A7F;
-	Fri,  7 Mar 2025 00:57:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53BC915381A;
+	Fri,  7 Mar 2025 00:57:49 +0000 (UTC)
 Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 217EE1922FD;
-	Fri,  7 Mar 2025 00:57:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C12B4193425;
+	Fri,  7 Mar 2025 00:57:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741309068; cv=none; b=dcodNRJtZqlY0AqC796R/YfiDAQbn3ql8lnCEZ4o/r8rPpnodTxrDBf1GPlgUAr2r6HpPhDrfupJaoK+ivM5rjl6gHNr+PdCMcpJCZwrjTqLHbve9z1hpVUv5V11LUKCh9dqAILPqo4fR6Bvf3qhK75oQS6CKys6U6EUDAlji60=
+	t=1741309068; cv=none; b=Q4I4Ei5J9U+MbX0UqaHxTwwxc8YN9a2f/itzo5tMKrxl0qNzNOp4VqN85RmvmQjfKNuTOrdNTbHavwWT4aMzK+3M5G1DLC3Oo8k2O9VCw4qgah2Z7YLXuWXEKHikbQdKR8IyObNZ0UkfxHN4fPsh3wwRWEeclgkvbGG4l4khmTU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1741309068; c=relaxed/simple;
-	bh=fClDeJExpgWFSaGrs6x4HfazvvjKs0x2h4nxuwRmOGk=;
+	bh=PmhbBBrzH+WUvkvfGvB8SKrN/j40ZPRmaSdlWjoKyUk=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=YMc/947tXk1mGy+RPxwAzc1nvALdnFUAhY4x+vJc4dRvIrAf9wKRMd0C++5C4mkyjwZdP1AkVQdEVdGcttCwoyeOSengMaoHblw4rCHnPPTajOZ8n80QJoLaRZXFnWUeuEjhDIenhdG8qy9O0ChVjXmVHGwml27cUIgJHWzsLYU=
+	 MIME-Version; b=UYxIEa1AUbP6DmbkzzdBi8C9qL9RJNP7p/2wVsR2nYA2o43WlaP5UdArdoN7NxO5Rhw5TigKs5PZuUk7RABum0TYk82Rt9+8OaWj8X/LG45UI3K42U2phSA2ZBLELKK/Rd2eaExkadOGldc4CzvusiMAca92u8L7RL4oG2edhks=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id AE2991BC0;
-	Thu,  6 Mar 2025 16:57:57 -0800 (PST)
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 5A24F169E;
+	Thu,  6 Mar 2025 16:57:59 -0800 (PST)
 Received: from localhost.localdomain (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 7B9A03F5A1;
-	Thu,  6 Mar 2025 16:57:43 -0800 (PST)
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 2946E3F5A1;
+	Thu,  6 Mar 2025 16:57:45 -0800 (PST)
 From: Andre Przywara <andre.przywara@arm.com>
 To: Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
@@ -43,9 +43,9 @@ Cc: devicetree@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
 	linux-sunxi@lists.linux.dev,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v3 12/15] arm64: dts: allwinner: a523: add X96Q-Pro+ support
-Date: Fri,  7 Mar 2025 00:57:09 +0000
-Message-ID: <20250307005712.16828-13-andre.przywara@arm.com>
+Subject: [PATCH v3 13/15] arm64: dts: allwinner: a523: add Radxa A5E support
+Date: Fri,  7 Mar 2025 00:57:10 +0000
+Message-ID: <20250307005712.16828-14-andre.przywara@arm.com>
 X-Mailer: git-send-email 2.46.3
 In-Reply-To: <20250307005712.16828-1-andre.przywara@arm.com>
 References: <20250307005712.16828-1-andre.przywara@arm.com>
@@ -57,63 +57,58 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The X96QPro+ is a TV box using the Allwinner H728 SoC. That SoC seems to
-be a package variant of the A523 family, at least it uses the same SoC
-ID and is compatible as far as we can assess.
+The Radxa A5E is a development board using the Allwinner A527 SoC, which
+is using the same die as the A523 SoC, just exposing the pins of more
+peripherals (like HDMI or the 2nd MAC). The board features:
 
-It comes with the following specs:
-  - Allwinner H728 SoC: 8 Arm Cortex-A55 cores, Mali-G57 MC1 GPU
-  - 2 or 4GiB DDR3L DRAM
-  - 32, 64, or 128 GiB eMMC flash
+  - Allwinner A527/T527 SoC: 8 ARM Cortex-A55 cores, Mali-G57 MC1 GPU
+  - 1GiB/2GiB/4GiB LPDDR4 DRAM
   - AXP717 + AXP323 PMICs
-  - Gigabit Ethernet (using MAXIO PHY)
+  - Raspberry-Pi-2 compatible 40pin GPIO header
+  - 1 USB 2.0 type C port (OTG), also power supply
+  - 1 USB 3.0 type A host port (multiplexed with M.2 slot)
+  - 1 M.2 M-key 2230 slot, with 1 PCIe2.1 lane connected (multiplexed
+    with USB 3.0 port)
+  - MicroSD slot
+  - optional eMMC, 8, 16 or 32GB available
+  - optional on-board 16MiB bootable SPI NOR flash
+  - two 1Gbps Ethernet ports (via MAXIO MAE0621A PHYs)
+  - PoE header for optional supply circuit on one Ethernet port
+  - WiFi 802.11 a/b/g/n/ac/ax (LB-Link BL-M8800DS2 module using AIC8800)
   - HDMI port
-  - 2 * USB 2.0 ports
-  - 1 * USB 3.0 port
-  - microSD card slot
-  - TOSLINK digital audio output
-  - 3.5mm A/V port
-  - infrared sensor
-  - 7-segment display
-  - 5V barrel plug power supply
-  - power button
+  - camera and LCD connectors
+  - power supply via USB-C connector (but no PD) or GPIO header pins
 
-The PCB provides holes for soldering a UART header or cable, this is
-connected to the debug UART0. There is another set of UART pins
-available. The board also features a FEL button (accessible through the
-3.5mm socket) and a reset button (only accessible when case is open).
-
-This .dts just describes the basic peripherals as far as we support them
-at the moment. The PMIC rail assignments are reverse engineered as far
-as possible, by dumping them from a running Android system, and correlating
-them to other boards using the same SoC.
+This .dts describes the devices as far as we support them at the moment.
+The PMIC rails have been assigned as per the schematics.
 
 Signed-off-by: Andre Przywara <andre.przywara@arm.com>
 Acked-by: Jernej Skrabec <jernej.skrabec@gmail.com>
 ---
  arch/arm64/boot/dts/allwinner/Makefile        |   1 +
- .../dts/allwinner/sun55i-h728-x96qpro+.dts    | 287 ++++++++++++++++++
- 2 files changed, 288 insertions(+)
- create mode 100644 arch/arm64/boot/dts/allwinner/sun55i-h728-x96qpro+.dts
+ .../dts/allwinner/sun55i-a527-radxa-a5e.dts   | 299 ++++++++++++++++++
+ 2 files changed, 300 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/allwinner/sun55i-a527-radxa-a5e.dts
 
 diff --git a/arch/arm64/boot/dts/allwinner/Makefile b/arch/arm64/boot/dts/allwinner/Makefile
-index 0d678a7499e3c..983be49ea6ef8 100644
+index 983be49ea6ef8..9d5e14695af0b 100644
 --- a/arch/arm64/boot/dts/allwinner/Makefile
 +++ b/arch/arm64/boot/dts/allwinner/Makefile
-@@ -52,4 +52,5 @@ dtb-$(CONFIG_ARCH_SUNXI) += sun50i-h700-anbernic-rg35xx-2024.dtb
+@@ -52,5 +52,6 @@ dtb-$(CONFIG_ARCH_SUNXI) += sun50i-h700-anbernic-rg35xx-2024.dtb
  dtb-$(CONFIG_ARCH_SUNXI) += sun50i-h700-anbernic-rg35xx-h.dtb
  dtb-$(CONFIG_ARCH_SUNXI) += sun50i-h700-anbernic-rg35xx-plus.dtb
  dtb-$(CONFIG_ARCH_SUNXI) += sun50i-h700-anbernic-rg35xx-sp.dtb
-+dtb-$(CONFIG_ARCH_SUNXI) += sun55i-h728-x96qpro+.dtb
++dtb-$(CONFIG_ARCH_SUNXI) += sun55i-a527-radxa-a5e.dtb
+ dtb-$(CONFIG_ARCH_SUNXI) += sun55i-h728-x96qpro+.dtb
  dtb-$(CONFIG_ARCH_SUNXI) += sun55i-t527-avaota-a1.dtb
-diff --git a/arch/arm64/boot/dts/allwinner/sun55i-h728-x96qpro+.dts b/arch/arm64/boot/dts/allwinner/sun55i-h728-x96qpro+.dts
+diff --git a/arch/arm64/boot/dts/allwinner/sun55i-a527-radxa-a5e.dts b/arch/arm64/boot/dts/allwinner/sun55i-a527-radxa-a5e.dts
 new file mode 100644
-index 0000000000000..c0bce3f4fa925
+index 0000000000000..912e1bda974ce
 --- /dev/null
-+++ b/arch/arm64/boot/dts/allwinner/sun55i-h728-x96qpro+.dts
-@@ -0,0 +1,287 @@
++++ b/arch/arm64/boot/dts/allwinner/sun55i-a527-radxa-a5e.dts
+@@ -0,0 +1,299 @@
 +// SPDX-License-Identifier: (GPL-2.0-only OR MIT)
-+// Copyright (C) 2024 Arm Ltd.
++// Copyright (C) 2025 Arm Ltd.
 +
 +/dts-v1/;
 +
@@ -122,8 +117,8 @@ index 0000000000000..c0bce3f4fa925
 +#include <dt-bindings/gpio/gpio.h>
 +
 +/ {
-+	model = "X96Q Pro+";
-+	compatible = "amediatech,x96q-pro-plus", "allwinner,sun55i-h728";
++	model = "Radxa A5E";
++	compatible = "radxa,cubie-a5e", "allwinner,sun55i-a527";
 +
 +	aliases {
 +		serial0 = &uart0;
@@ -141,7 +136,7 @@ index 0000000000000..c0bce3f4fa925
 +	};
 +
 +	reg_vcc5v: vcc5v {
-+		/* board wide 5V supply from the barrel plug */
++		/* board wide 5V supply from the USB-C connector */
 +		compatible = "regulator-fixed";
 +		regulator-name = "vcc-5v";
 +		regulator-min-microvolt = <5000000>;
@@ -149,14 +144,14 @@ index 0000000000000..c0bce3f4fa925
 +		regulator-always-on;
 +	};
 +
-+	reg_vcc3v3: vcc3v3 {
-+		/* 3.3V dummy supply for the SD card */
++	reg_usb_vbus: vbus {
 +		compatible = "regulator-fixed";
-+		regulator-name = "vcc-3v3";
-+		regulator-min-microvolt = <3300000>;
-+		regulator-max-microvolt = <3300000>;
++		regulator-name = "usb-vbus";
++		regulator-min-microvolt = <5000000>;
++		regulator-max-microvolt = <5000000>;
 +		vin-supply = <&reg_vcc5v>;
-+		regulator-always-on;
++		gpio = <&r_pio 0 8 GPIO_ACTIVE_HIGH>;	/* PL8 */
++		enable-active-high;
 +	};
 +};
 +
@@ -169,21 +164,9 @@ index 0000000000000..c0bce3f4fa925
 +};
 +
 +&mmc0 {
-+	vmmc-supply = <&reg_vcc3v3>;
++	vmmc-supply = <&reg_cldo3>;
 +	cd-gpios = <&pio 5 6 (GPIO_ACTIVE_LOW | GPIO_PULL_DOWN)>; /* PF6 */
 +	bus-width = <4>;
-+	disable-wp;
-+	status = "okay";
-+};
-+
-+&mmc2 {
-+	vmmc-supply = <&reg_cldo3>;
-+	vqmmc-supply = <&reg_cldo1>;
-+	bus-width = <8>;
-+	non-removable;
-+	cap-mmc-hw-reset;
-+	mmc-ddr-1_8v;
-+	mmc-hs200-1_8v;
 +	status = "okay";
 +};
 +
@@ -198,14 +181,14 @@ index 0000000000000..c0bce3f4fa925
 +&pio {
 +	vcc-pb-supply = <&reg_cldo3>;	/* via VCC-IO */
 +	vcc-pc-supply = <&reg_cldo1>;
-+	vcc-pd-supply = <&reg_dcdc4>;
-+	vcc-pe-supply = <&reg_dcdc4>;
++	vcc-pd-supply = <&reg_cldo3>;
++	vcc-pe-supply = <&reg_aldo2>;
 +	vcc-pf-supply = <&reg_cldo3>;	/* actually switchable */
 +	vcc-pg-supply = <&reg_bldo1>;
 +	vcc-ph-supply = <&reg_cldo3>;	/* via VCC-IO */
-+	vcc-pi-supply = <&reg_dcdc4>;
-+	vcc-pj-supply = <&reg_dcdc4>;
-+	vcc-pk-supply = <&reg_bldo3>;
++	vcc-pi-supply = <&reg_cldo3>;
++	vcc-pj-supply = <&reg_cldo4>;
++	vcc-pk-supply = <&reg_cldo1>;
 +};
 +
 +&r_i2c0 {
@@ -228,7 +211,7 @@ index 0000000000000..c0bce3f4fa925
 +		cldoin-supply = <&reg_vcc5v>;
 +
 +		regulators {
-+			/* Supplies the "little" cluster (1.0(?) GHz cores) */
++			/* Supplies the "little" cluster (1.4 GHz cores) */
 +			reg_dcdc1: dcdc1 {
 +				regulator-always-on;
 +				regulator-min-microvolt = <900000>;
@@ -245,15 +228,9 @@ index 0000000000000..c0bce3f4fa925
 +
 +			reg_dcdc3: dcdc3 {
 +				regulator-always-on;
-+				regulator-min-microvolt = <1360000>;
-+				regulator-max-microvolt = <1360000>;
++				regulator-min-microvolt = <1100000>;
++				regulator-max-microvolt = <1100000>;
 +				regulator-name = "vdd-dram";
-+			};
-+
-+			reg_dcdc4: dcdc4 {
-+				regulator-min-microvolt = <1000000>;
-+				regulator-max-microvolt = <1000000>;
-+				regulator-name = "vdd-dcdc4";
 +			};
 +
 +			reg_aldo1: aldo1 {
@@ -261,14 +238,17 @@ index 0000000000000..c0bce3f4fa925
 +			};
 +
 +			reg_aldo2: aldo2 {
-+				/* not connected */
++				regulator-min-microvolt = <1800000>;
++				regulator-max-microvolt = <1800000>;
++				regulator-name = "vcc-pe";
 +			};
 +
 +			reg_aldo3: aldo3 {
++				/* supplies the I2C pins for this PMIC */
 +				regulator-always-on;
 +				regulator-min-microvolt = <3300000>;
 +				regulator-max-microvolt = <3300000>;
-+				regulator-name = "vcc-aldo3";
++				regulator-name = "vcc-pl-usb";
 +			};
 +
 +			reg_aldo4: aldo4 {
@@ -281,20 +261,20 @@ index 0000000000000..c0bce3f4fa925
 +			reg_bldo1: bldo1 {
 +				regulator-min-microvolt = <1800000>;
 +				regulator-max-microvolt = <1800000>;
-+				regulator-name = "vcc-pg-wifi-lvds";
++				regulator-name = "vcc-pg-iowifi";
 +			};
 +
 +			reg_bldo2: bldo2 {
 +				regulator-always-on;
 +				regulator-min-microvolt = <1800000>;
 +				regulator-max-microvolt = <1800000>;
-+				regulator-name = "vcc-dram-1v8";
++				regulator-name = "vcc-pm-lpddr4";
 +			};
 +
 +			reg_bldo3: bldo3 {
-+				regulator-min-microvolt = <2800000>;
-+				regulator-max-microvolt = <2800000>;
-+				regulator-name = "vcc-bldo3";
++				regulator-min-microvolt = <3300000>;
++				regulator-max-microvolt = <3300000>;
++				regulator-name = "vcc-mipi-cam";
 +			};
 +
 +			reg_bldo4: bldo4 {
@@ -302,25 +282,27 @@ index 0000000000000..c0bce3f4fa925
 +			};
 +
 +			reg_cldo1: cldo1 {
-+				regulator-always-on;
 +				regulator-min-microvolt = <1800000>;
 +				regulator-max-microvolt = <1800000>;
-+				regulator-name = "vcc-codec-sd";
++				regulator-name = "vcc-pc-and-their-dog";
 +			};
 +
 +			reg_cldo2: cldo2 {
++				/* not connected */
 +			};
 +
 +			reg_cldo3: cldo3 {
++				/* IO, USB-2, 3V3, card, NAND, sensor, PI */
++				regulator-always-on;
 +				regulator-min-microvolt = <3300000>;
 +				regulator-max-microvolt = <3300000>;
-+				regulator-name = "vcc-codec-eth-sd";
++				regulator-name = "vcc-io-mmc-spi-ana";
 +			};
 +
 +			reg_cldo4: cldo4 {
 +				regulator-min-microvolt = <3300000>;
 +				regulator-max-microvolt = <3300000>;
-+				regulator-name = "vcc-eth-phy";
++				regulator-name = "vcc-pj-phy";
 +			};
 +
 +			reg_cpusldo: cpusldo {
@@ -348,7 +330,9 @@ index 0000000000000..c0bce3f4fa925
 +
 +		regulators {
 +			aldo1 {
-+				/* not connected */
++				regulator-min-microvolt = <1800000>;
++				regulator-max-microvolt = <1800000>;
++				regulator-name = "vcc-mipi-dsi";
 +			};
 +
 +			dldo1 {
@@ -365,11 +349,12 @@ index 0000000000000..c0bce3f4fa925
 +
 +			/* DCDC2 is polyphased with DCDC1 */
 +
++			/* RISC-V management core supply */
 +			reg_dcdc3_323: dcdc3 {
 +				regulator-always-on;
-+				regulator-min-microvolt = <1050000>;
-+				regulator-max-microvolt = <1050000>;
-+				regulator-name = "vdd-dcdc3";
++				regulator-min-microvolt = <900000>;
++				regulator-max-microvolt = <900000>;
++				regulator-name = "vdd-dnr";
 +			};
 +		};
 +	};
@@ -391,12 +376,34 @@ index 0000000000000..c0bce3f4fa925
 +};
 +
 +&usb_otg {
-+	/* USB0 is a USB-A receptacle, always powered, so force host mode. */
-+	dr_mode = "host";
++	/*
++	 * The USB-C port is the primary power supply, so in this configuration
++	 * relies on the other end of the USB cable to supply the VBUS power.
++	 * So use this port in peripheral mode.
++	 * It is possible to supply the board with the 5V pins on the GPIO
++	 * header, and since the DCIN_5V line is hardwired to the USB-C VBUS
++	 * pins, the port turns into a host port, unconditionally supplying
++	 * power. The dr_mode property should be changed to "host" here, if
++	 * users choose this setup.
++	 */
++	dr_mode = "peripheral";
 +	status = "okay";
 +};
 +
++/*
++ * The schematic describes USB0_ID (PL10), measuring VBUS_5V, which looks to
++ * be always on. Also there is USB-VBUSDET (PL2), which is measuring the same
++ * VBUS_5V. There is also DCIN_DET, which measures DCIN_5V, so the power
++ * input rail.
++ * None of them seem to make any sense in relation to detecting USB devices
++ * or whether there is power provided via any USB pins: they would always
++ * report high, otherwise the system wouldn't be running.
++ * The AXP717C provides proper USB-C CC pin functionality, but the PMIC is
++ * not connected to those pins of the USB-C connector.
++ */
 +&usbphy {
++	usb0_vbus-supply = <&reg_vcc5v>;
++	usb1_vbus-supply = <&reg_usb_vbus>;
 +	status = "okay";
 +};
 -- 
