@@ -1,267 +1,180 @@
-Return-Path: <linux-kernel+bounces-551791-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-551792-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B4E3CA570FB
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 19:59:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 13ED0A57101
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 20:00:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9234F3B8F04
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 18:59:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ED9B93B1EF6
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 19:00:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 484EB2475DD;
-	Fri,  7 Mar 2025 18:59:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61F5924BBEF;
+	Fri,  7 Mar 2025 19:00:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lQo/UExz"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="c/7+0u34"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 893251C860C;
-	Fri,  7 Mar 2025 18:59:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09398217718
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Mar 2025 19:00:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741373966; cv=none; b=CB/51y4OdD8ABIKUJ9MwRajgWDVqOYvV1+HErQ90ZD96s6lVGIfJBoU3ZnmRLVM2FL7ATQwf2sO1GnDQgeIrk9cpH7sRumRmtl1V3UDeoYoFXCKn51+5u9h2Llo78Xb8xawT3A46jiUtO6UshXL8ajZlniSvA9YJCcgAl+j5NDY=
+	t=1741374017; cv=none; b=fWr8Uv7S+CoK+3I4gCvJhRn0l5D25kWrUyn+bCwdRznDTlXXepvboDNN7HPLh7fOhX2eGBiwzmziIi0BjZThG6aSl+Hbek2102+T6d/PIQIDAIC3Ce6p6nIX6lru+QAxxWoXj/00f5EWbWyEi5asGVKfW3vmDSFvxO9zniyNEnk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741373966; c=relaxed/simple;
-	bh=rSSfjfazwk6DZbU+QABgVOqbuGLDpvSFLTCTKi3Wg6c=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=M7aoFJ69kmBELQ5Lbugs5IldaV/8z9ivIdDxEoFolK+UugAw2pcL/mJFFZqM0ISkC7dp7pDY3nLY7bqmUVNQIftBEUxZXyVv6bEqt3iK2j71vUBguLW4YIHbT5ZOTXQyWamp13uJa5XKEtR0k+j1GabVQy8tHSh4E1vRxb77yn4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lQo/UExz; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F0724C4CEE2;
-	Fri,  7 Mar 2025 18:59:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741373966;
-	bh=rSSfjfazwk6DZbU+QABgVOqbuGLDpvSFLTCTKi3Wg6c=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=lQo/UExzDnzJzMnwvxWXUCS92Gu4qLRl3HiREjb1EorqG9/Lvi2YCOMxyFkzjsuVs
-	 kSJp+gtiedSX+XIf9Mp+5LU3ApZ+lTe0ENyZWQtfnqhR7jRGPTGdQB3riMVleretHl
-	 q0EnDCFDWV3dgNFHyU6AMCF+cFniBInHYVODkfPGp11BnUq8oYjxHAU4VYbJxpen/F
-	 H/lOP4rxncLA5Vm7pP9dObz8sTO8NzhqhQNJSrhi/vTVMAKBkZMcjusSSDEMW42bXD
-	 baittk8u3myqVN68psPxBxP64VkZTYBN0ZCiRypLOvURK6thQjTgP6H3tpDJ6Zzzi2
-	 tpxQiEmiNA0zA==
-Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-5497e7bf2e0so2360094e87.3;
-        Fri, 07 Mar 2025 10:59:25 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCWQkSyPiI2r6yGbgvO4RWI+N9U4skCn1YiqgUp01PlYJnGVjuVCL+y/2wiJ3M1HKXjVzFgLZGY+ryRm4VQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz06SDz6rAMPhVgGpqFXi6nDBVQUHyUM/zOqoTQGtT0E8MOQeIS
-	DOzDIyI0QmIZBvDqfzSEZekekkAVIzA6+v3vEQU3Gse+FBeAsZPsZkjQi2yyk1c4UDVkAUSLt7o
-	b5/gR3QZ/DXJbMUiqQm2iznpnI2E=
-X-Google-Smtp-Source: AGHT+IGK7OG7m9tA2pW3zCkgYI1uksbfHoxQ09rp9tXpQOcYT3rfnVS6ajNCu0QHF8fFwQQGfSqk6oo2V+eUoKAd82Q=
-X-Received: by 2002:a05:6512:2393:b0:546:27f0:21a7 with SMTP id
- 2adb3069b0e04-54990ec1fbdmr1825085e87.49.1741373964605; Fri, 07 Mar 2025
- 10:59:24 -0800 (PST)
+	s=arc-20240116; t=1741374017; c=relaxed/simple;
+	bh=gEdITdBQkxBcEo+xf0PTFVBaDxaG0wYNsG1JOV1teRc=;
+	h=From:Message-ID:Date:MIME-Version:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=Z5A+7V+EuLjIFP/oBczT0sqYGeaB+lEgFxw3jWfIGGAdQKn7H+vnBty1PR2lJecwDjgOO4B8l3UiOu6RZw0TUg/zZoWIwwmGItP54HKuF/AAhf4AdReED/oIfUKkvt0smCfdNtP0IyoXVFvRynLUsGgFf0ADk7qDlLnmO7u4N8k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=c/7+0u34; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1741374015;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=IGL2mElf4pWcuuOVu/32c+R0ECrqVcIsm2yeFgp2v0k=;
+	b=c/7+0u34WVIYHIR9e9BCCTkLIBbyV97scefF0pN8vEHrBBQkBlBfWqB/De/+0ErzC9UFGq
+	r0Kd/t3rU16JElMPXHGIy5uOK39yatiurBmcU6y5bSoD6x5TSOE36sPl2WYdFMkZE5Xz+3
+	mlova1UNlLPOAYIusNVIx0MCmT2V6Do=
+Received: from mail-qv1-f71.google.com (mail-qv1-f71.google.com
+ [209.85.219.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-146-MCY5nabQMBCuTZJSdITCnQ-1; Fri, 07 Mar 2025 14:00:13 -0500
+X-MC-Unique: MCY5nabQMBCuTZJSdITCnQ-1
+X-Mimecast-MFC-AGG-ID: MCY5nabQMBCuTZJSdITCnQ_1741374013
+Received: by mail-qv1-f71.google.com with SMTP id 6a1803df08f44-6e8ed78717eso36577906d6.2
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Mar 2025 11:00:13 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741374008; x=1741978808;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:subject:user-agent:mime-version:date:message-id:from
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=IGL2mElf4pWcuuOVu/32c+R0ECrqVcIsm2yeFgp2v0k=;
+        b=OfQMkrfa6q9cY2HJmVmxA4CZ+NcQKH9IRkmKEv/De1aIOmdI1FVLLMimcnhjQdBpzr
+         BINr6vytZQve2GL/HA2Sq4IYeYi7oEE5ErnNcUIzNapL4e3+XSCuBj7Tk6brd5NytEka
+         sORPHr+gQrYKQBPFqy+CrYC63FHDOZafyf4amQQgUmDTMZfRUQvJTxs4utLjMiEgSoBR
+         R8XXD4+tcH3pMGJWlpc5tl4ghc1+ZKbAxUmBdVa+FiYOe1d22ULmpwD7eLbbzqwt2yn9
+         PTy1TAmJ/eQCvzUHJp7rJFGf1/APCy8K+1RtkjyhcK2hGzDpoeMCMg5Ov3qTmIgohvxy
+         1L7w==
+X-Forwarded-Encrypted: i=1; AJvYcCXzl8baN7KDlMiIUGhQXuiv+HRGBpA8ippzLcrD96wEYfMPcJBrDFBw3iXdJKPrl0nlCeGx0uVHffQauWM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyIBAVa/JkeOj2K+gRSGIIIt7yXdrJvPaeES9CBtqVCLdJ+HeAJ
+	Cu0IT0BRS1prFyCqabanlDjZBlOUWh4UWLFCOpVieHwNqph8nEhX+UIBs4kZUBluwW9Vwo9gmBr
+	kE1ff8b/IxJLJfMCPEbW6THI4qZpgY8dF13spdqtZ3n4KfCU47O9m8YLmNIkwww==
+X-Gm-Gg: ASbGnctIlHit/+SQSTj0tRbs46Sw2aCkN56lC7QM6ki/6s/ZzIYWTCCJSiQM+MIHNzx
+	D7h+m4weC0NsXh5OKo+kZ8/zF4Zw5vKMiO1vzZp0m1jQ4Zj95e6vQV/H3eIvZhnB6VMfjqGgW60
+	IGNrpOekoKeVhZGg2Nx0f7jVzwoqEZemS0+FXDIb1oZbR5YeedMLtocAHUDwZKYXW4Zov1A+63L
+	SqvrEbECwbbZshD5iyRljBU4bE7/2q1d7LZy1vLgk5JxF+Lnx2rW5vQwPpE5sJmxHnGFekXJUgp
+	TMyfjHhEwpIY16QTkOqJIOkkHvhv/Vr/hKxKUzTiAt03GE8YpqUsNkJpqRk=
+X-Received: by 2002:ad4:5f85:0:b0:6e6:64a5:e18d with SMTP id 6a1803df08f44-6e9006060b9mr58690626d6.17.1741374008382;
+        Fri, 07 Mar 2025 11:00:08 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IF5N9D50+NdtUHWHhWFcEiZ7MMlPprhjKEs/UhN9BLkC+eLvO3qMbCq10Xpj6qdcevGBpMctg==
+X-Received: by 2002:ad4:5f85:0:b0:6e6:64a5:e18d with SMTP id 6a1803df08f44-6e9006060b9mr58690156d6.17.1741374008020;
+        Fri, 07 Mar 2025 11:00:08 -0800 (PST)
+Received: from ?IPV6:2601:188:c100:5710:627d:9ff:fe85:9ade? ([2601:188:c100:5710:627d:9ff:fe85:9ade])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6e8f715b798sm22445896d6.80.2025.03.07.11.00.06
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 07 Mar 2025 11:00:07 -0800 (PST)
+From: Waiman Long <llong@redhat.com>
+X-Google-Original-From: Waiman Long <longman@redhat.com>
+Message-ID: <93c3f9ac-0225-429a-807c-d11c649c819e@redhat.com>
+Date: Fri, 7 Mar 2025 14:00:05 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250224132132.1765115-6-ardb+git@google.com> <20250224132132.1765115-8-ardb+git@google.com>
-In-Reply-To: <20250224132132.1765115-8-ardb+git@google.com>
-From: Masahiro Yamada <masahiroy@kernel.org>
-Date: Sat, 8 Mar 2025 03:58:48 +0900
-X-Gmail-Original-Message-ID: <CAK7LNAT7YLZAeX+x+TMN30KwDfs4c5DM=mh7w_FWmv082xTztg@mail.gmail.com>
-X-Gm-Features: AQ5f1Jq793AMtaKIoEn_wYdUpnrgHA_qGfyXcw3vTYutmKLTPnDjXzBctmiW7sY
-Message-ID: <CAK7LNAT7YLZAeX+x+TMN30KwDfs4c5DM=mh7w_FWmv082xTztg@mail.gmail.com>
-Subject: Re: [RFC PATCH 2/4] Kbuild: Introduce Kconfig symbol for linking
- vmlinux with relocations
-To: Ard Biesheuvel <ardb+git@google.com>
-Cc: linux-kernel@vger.kernel.org, x86@kernel.org, linux-kbuild@vger.kernel.org, 
-	Ard Biesheuvel <ardb@kernel.org>, Ingo Molnar <mingo@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 0/8] Fix SCHED_DEADLINE bandwidth accounting during
+ suspend
+To: Juri Lelli <juri.lelli@redhat.com>, linux-kernel@vger.kernel.org,
+ cgroups@vger.kernel.org
+Cc: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
+ Vincent Guittot <vincent.guittot@linaro.org>,
+ Dietmar Eggemann <dietmar.eggemann@arm.com>,
+ Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>,
+ Mel Gorman <mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>,
+ Tejun Heo <tj@kernel.org>, Johannes Weiner <hannes@cmpxchg.org>,
+ =?UTF-8?Q?Michal_Koutn=C3=BD?= <mkoutny@suse.com>,
+ Qais Yousef <qyousef@layalina.io>,
+ Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+ Swapnil Sapkal <swapnil.sapkal@amd.com>,
+ Shrikanth Hegde <sshegde@linux.ibm.com>, Phil Auld <pauld@redhat.com>,
+ luca.abeni@santannapisa.it, tommaso.cucinotta@santannapisa.it,
+ Jon Hunter <jonathanh@nvidia.com>
+References: <20250306141016.268313-1-juri.lelli@redhat.com>
+Content-Language: en-US
+In-Reply-To: <20250306141016.268313-1-juri.lelli@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon, Feb 24, 2025 at 10:21=E2=80=AFPM Ard Biesheuvel <ardb+git@google.co=
-m> wrote:
+On 3/6/25 9:10 AM, Juri Lelli wrote:
+> Hello!
 >
-> From: Ard Biesheuvel <ardb@kernel.org>
+> Jon reported [1] a suspend regression on a Tegra board configured to
+> boot with isolcpus and bisected it to commit 53916d5fd3c0
+> ("sched/deadline: Check bandwidth overflow earlier for hotplug").
 >
-> Some architectures build vmlinux with static relocations preserved, but
-> strip them again from the final vmlinux image. Arch specific tools
-> consume these static relocations in order to construct relocation tables
-> for KASLR.
+> Root cause analysis pointed out that we are currently failing to
+> correctly clear and restore bandwidth accounting on root domains after
+> changes that initiate from partition_sched_domains(), as it is the case
+> for suspend operations on that board.
 >
-> The fact that vmlinux is created, consumed and subsequently updated goes
-> against the typical, declarative paradigm used by Make, which is based
-> on rules and dependencies. So as a first step towards cleaning this up,
-> introduce a Kconfig symbol to declare that the arch wants to consume the
-> static relocations emitted into vmlinux. This will be wired up further
-> in subsequent patches.
+> This is v2 [2] of the proposed approach to fix the issue. With respect
+> to v1, the following implements the approach by:
 >
-> Signed-off-by: Ard Biesheuvel <ardb@kernel.org>
+> - 01: filter out DEADLINE special tasks
+> - 02: preparatory wrappers to be able to grab sched_domains_mutex on
+>        UP (remove !SMP wrappers - Waiman)
+> - 03: generalize unique visiting of root domains so that we can
+>        re-use the mechanism elsewhere
+> - 04: the bulk of the approach, clean and rebuild after changes
+> - 05: clean up a now redundant call
+> - 06: remove partition_and_rebuild_sched_domains() (Waiman)
+> - 07: stop exposing partition_sched_domains_locked (Waiman)
+>
+> Please test and review. The set is also available at
+>
+> git@github.com:jlelli/linux.git upstream/deadline/domains-suspend
+>
+> Best,
+> Juri
+>
+> 1 - https://lore.kernel.org/lkml/ba51a43f-796d-4b79-808a-b8185905638a@nvidia.com/
+> 2 - v1 https://lore.kernel.org/lkml/20250304084045.62554-1-juri.lelli@redhat.com
+>
+> Juri Lelli (8):
+>    sched/deadline: Ignore special tasks when rebuilding domains
+>    sched/topology: Wrappers for sched_domains_mutex
+>    sched/deadline: Generalize unique visiting of root domains
+>    sched/deadline: Rebuild root domain accounting after every update
+>    sched/topology: Remove redundant dl_clear_root_domain call
+>    cgroup/cpuset: Remove partition_and_rebuild_sched_domains
+>    sched/topology: Stop exposing partition_sched_domains_locked
+>    include/{topology,cpuset}: Move dl_rebuild_rd_accounting to cpuset.h
+>
+>   include/linux/cpuset.h         |  5 +++++
+>   include/linux/sched.h          |  2 ++
+>   include/linux/sched/deadline.h |  7 +++++++
+>   include/linux/sched/topology.h | 10 ---------
+>   kernel/cgroup/cpuset.c         | 27 +++++++++----------------
+>   kernel/sched/core.c            |  4 ++--
+>   kernel/sched/deadline.c        | 37 ++++++++++++++++++++--------------
+>   kernel/sched/debug.c           |  8 ++++----
+>   kernel/sched/rt.c              |  2 ++
+>   kernel/sched/sched.h           |  2 +-
+>   kernel/sched/topology.c        | 32 +++++++++++++----------------
+>   11 files changed, 69 insertions(+), 67 deletions(-)
+>
+>
+> base-commit: 48a5eed9ad584315c30ed35204510536235ce402
 
-I have no objection to this patch.
+I have run my cpuset test and it completed successfully without any issue.
 
-The code diff seems a good clean-up.
+Tested-by: Waiman Long <longman@redhat.com>
 
-
-> ---
->  Makefile            | 4 ++++
->  arch/Kconfig        | 7 +++++++
->  arch/mips/Kconfig   | 1 +
->  arch/mips/Makefile  | 4 ----
->  arch/riscv/Kconfig  | 1 +
->  arch/riscv/Makefile | 2 +-
->  arch/s390/Kconfig   | 1 +
->  arch/s390/Makefile  | 2 +-
->  arch/x86/Kconfig    | 1 +
->  arch/x86/Makefile   | 6 ------
->  10 files changed, 17 insertions(+), 12 deletions(-)
->
-> diff --git a/Makefile b/Makefile
-> index 30dab4c8b012..a3302dce56de 100644
-> --- a/Makefile
-> +++ b/Makefile
-> @@ -1119,6 +1119,10 @@ ifdef CONFIG_LD_ORPHAN_WARN
->  LDFLAGS_vmlinux +=3D --orphan-handling=3D$(CONFIG_LD_ORPHAN_WARN_LEVEL)
->  endif
->
-> +ifneq ($(CONFIG_ARCH_VMLINUX_NEEDS_RELOCS),)
-> +LDFLAGS_vmlinux        +=3D --emit-relocs --discard-none
-> +endif
-> +
->  # Align the bit size of userspace programs with the kernel
->  KBUILD_USERCFLAGS  +=3D $(filter -m32 -m64 --target=3D%, $(KBUILD_CPPFLA=
-GS) $(KBUILD_CFLAGS))
->  KBUILD_USERLDFLAGS +=3D $(filter -m32 -m64 --target=3D%, $(KBUILD_CPPFLA=
-GS) $(KBUILD_CFLAGS))
-> diff --git a/arch/Kconfig b/arch/Kconfig
-> index b8a4ff365582..101a13fcde8e 100644
-> --- a/arch/Kconfig
-> +++ b/arch/Kconfig
-> @@ -1695,6 +1695,13 @@ config ARCH_HAS_KERNEL_FPU_SUPPORT
->           Architectures that select this option can run floating-point co=
-de in
->           the kernel, as described in Documentation/core-api/floating-poi=
-nt.rst.
->
-> +config ARCH_VMLINUX_NEEDS_RELOCS
-> +       bool
-> +       help
-> +         Whether the architecture needs vmlinux to be built with static
-> +         relocations preserved. This is used by some architectures to
-> +         construct bespoke relocation tables for KASLR.
-> +
->  source "kernel/gcov/Kconfig"
->
->  source "scripts/gcc-plugins/Kconfig"
-> diff --git a/arch/mips/Kconfig b/arch/mips/Kconfig
-> index 1924f2d83932..5aedbd7afadb 100644
-> --- a/arch/mips/Kconfig
-> +++ b/arch/mips/Kconfig
-> @@ -2617,6 +2617,7 @@ config RELOCATABLE
->                    CPU_MIPS32_R6 || CPU_MIPS64_R6 || \
->                    CPU_P5600 || CAVIUM_OCTEON_SOC || \
->                    CPU_LOONGSON64
-> +       select ARCH_VMLINUX_NEEDS_RELOCS
->         help
->           This builds a kernel image that retains relocation information
->           so it can be loaded someplace besides the default 1MB.
-> diff --git a/arch/mips/Makefile b/arch/mips/Makefile
-> index be8cb44a89fd..d9057e29bc62 100644
-> --- a/arch/mips/Makefile
-> +++ b/arch/mips/Makefile
-> @@ -100,10 +100,6 @@ LDFLAGS_vmlinux                    +=3D -G 0 -static=
- -n -nostdlib
->  KBUILD_AFLAGS_MODULE           +=3D -mlong-calls
->  KBUILD_CFLAGS_MODULE           +=3D -mlong-calls
->
-> -ifeq ($(CONFIG_RELOCATABLE),y)
-> -LDFLAGS_vmlinux                        +=3D --emit-relocs
-> -endif
-> -
->  cflags-y +=3D -ffreestanding
->
->  cflags-$(CONFIG_CPU_BIG_ENDIAN)                +=3D -EB
-> diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
-> index 7612c52e9b1e..6f5800114416 100644
-> --- a/arch/riscv/Kconfig
-> +++ b/arch/riscv/Kconfig
-> @@ -1077,6 +1077,7 @@ config RELOCATABLE
->         bool "Build a relocatable kernel"
->         depends on MMU && 64BIT && !XIP_KERNEL
->         select MODULE_SECTIONS if MODULES
-> +       select ARCH_VMLINUX_NEEDS_RELOCS
->         help
->            This builds a kernel as a Position Independent Executable (PIE=
-),
->            which retains all relocation metadata required to relocate the
-> diff --git a/arch/riscv/Makefile b/arch/riscv/Makefile
-> index 13fbc0f94238..6ef0d10e0c50 100644
-> --- a/arch/riscv/Makefile
-> +++ b/arch/riscv/Makefile
-> @@ -8,7 +8,7 @@
->
->  LDFLAGS_vmlinux :=3D -z norelro
->  ifeq ($(CONFIG_RELOCATABLE),y)
-> -       LDFLAGS_vmlinux +=3D -shared -Bsymbolic -z notext --emit-relocs
-> +       LDFLAGS_vmlinux +=3D -shared -Bsymbolic -z notext
->         KBUILD_CFLAGS +=3D -fPIE
->  endif
->  ifeq ($(CONFIG_DYNAMIC_FTRACE),y)
-> diff --git a/arch/s390/Kconfig b/arch/s390/Kconfig
-> index 9c9ec08d78c7..ea67b7317138 100644
-> --- a/arch/s390/Kconfig
-> +++ b/arch/s390/Kconfig
-> @@ -630,6 +630,7 @@ endchoice
->
->  config RELOCATABLE
->         def_bool y
-> +       select ARCH_VMLINUX_NEEDS_RELOCS
->         help
->           This builds a kernel image that retains relocation information
->           so it can be loaded at an arbitrary address.
-> diff --git a/arch/s390/Makefile b/arch/s390/Makefile
-> index 5fae311203c2..d5f4be440879 100644
-> --- a/arch/s390/Makefile
-> +++ b/arch/s390/Makefile
-> @@ -15,7 +15,7 @@ KBUILD_CFLAGS_MODULE +=3D -fPIC
->  KBUILD_AFLAGS  +=3D -m64
->  KBUILD_CFLAGS  +=3D -m64
->  KBUILD_CFLAGS  +=3D -fPIC
-> -LDFLAGS_vmlinux        :=3D -no-pie --emit-relocs --discard-none
-> +LDFLAGS_vmlinux        :=3D -no-pie
->  extra_tools    :=3D relocs
->  aflags_dwarf   :=3D -Wa,-gdwarf-2
->  KBUILD_AFLAGS_DECOMPRESSOR :=3D $(CLANG_FLAGS) -m64 -D__ASSEMBLY__
-> diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
-> index be2c311f5118..2005d80ff8d1 100644
-> --- a/arch/x86/Kconfig
-> +++ b/arch/x86/Kconfig
-> @@ -2199,6 +2199,7 @@ config RANDOMIZE_BASE
->  config X86_NEED_RELOCS
->         def_bool y
->         depends on RANDOMIZE_BASE || (X86_32 && RELOCATABLE)
-> +       select ARCH_VMLINUX_NEEDS_RELOCS
->
->  config PHYSICAL_ALIGN
->         hex "Alignment value to which kernel should be aligned"
-> diff --git a/arch/x86/Makefile b/arch/x86/Makefile
-> index 5b773b34768d..f65ed6dcd6fb 100644
-> --- a/arch/x86/Makefile
-> +++ b/arch/x86/Makefile
-> @@ -251,12 +251,6 @@ endif
->
->  KBUILD_LDFLAGS +=3D -m elf_$(UTS_MACHINE)
->
-> -ifdef CONFIG_X86_NEED_RELOCS
-> -LDFLAGS_vmlinux :=3D --emit-relocs --discard-none
-> -else
-> -LDFLAGS_vmlinux :=3D
-> -endif
-> -
->  #
->  # The 64-bit kernel must be aligned to 2MB.  Pass -z max-page-size=3D0x2=
-00000 to
->  # the linker to force 2MB page size regardless of the default page size =
-used
-> --
-> 2.48.1.601.g30ceb7b040-goog
->
->
-
-
---=20
-Best Regards
-Masahiro Yamada
 
