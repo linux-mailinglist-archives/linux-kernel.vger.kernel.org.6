@@ -1,78 +1,200 @@
-Return-Path: <linux-kernel+bounces-550091-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-550096-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 360B9A55B46
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 01:00:14 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 45C90A55B52
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 01:01:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4A98D7A3CD9
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 23:58:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 824E018996A6
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 00:01:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AE5F280A43;
-	Thu,  6 Mar 2025 23:58:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59D0A27E1B0;
+	Fri,  7 Mar 2025 00:00:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GLqE2exo"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UTVYQ3F9"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C9AD280A28;
-	Thu,  6 Mar 2025 23:58:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5961202C44;
+	Fri,  7 Mar 2025 00:00:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741305527; cv=none; b=qupNmLOfw0JGGC48BMgSowsqJ1nZzCFVODUJESyyiN/PkLg5OVaNm2Hil3XTDUgL2D1JARxwuj+NlBpbjW/DdBLxMJBuuJg9ICelBftOXVwHUEoQzHCgEkhax+mxcBnISLhPYDm/KMWp89MMZzQGFCui237hhIAf9ZjA3SaRUm0=
+	t=1741305624; cv=none; b=PLaqLq7eecBluNt+zR9xQMFbhQpucszrwQ5AIJJKGDTdbpoRhOU74jvi3ZE7OkdedSRWmyCT0aCy0q1IrddZmceGZi67nXI45fLDFNsgobjFeJyIcz/KYIkGZIlSMMGfpfE4JJRLPhbK1enxZOMcZeHPqP9iX2fU+DU8HXF5g44=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741305527; c=relaxed/simple;
-	bh=moVc7pOtCwnKINiMtA5zpBx/8SyTaAtBgLkPgetKskg=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=LXJ2W7lhhB4JAJNijfKo6TscXB9u7JquyGIOOZ8XJQZt743jtiuS2liHnWE8L7KldI8kPoL0nRAa/WUfOzH3jyC9rPN0eNXi8yNdXBu/5eWrVL1PYX/AA+Jv9wEFlsJy20qN/hqcH1+qso1ClIuIiE4xMFD+fQV74GFiHkuLBNU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GLqE2exo; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DDB5BC4CEE9;
-	Thu,  6 Mar 2025 23:58:46 +0000 (UTC)
+	s=arc-20240116; t=1741305624; c=relaxed/simple;
+	bh=iyIR7Lu7scO0az/72iAv4+pIQLty4sEWKIC8oyRDQYo=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Id+G5XVYZK/jarBpBH5mYZM8Bx+SK0wo287prNlFVbX7mRH5zCnPeSk1y27QY57g8d305r/GGAMaB1IQxGukGCtPTcnd2SSAZgywKriNu4vuRByD1H1VJBX7QC5Y1IL2Wqwss3Z3IwttO71ADLTz2q7Eoj5zSk8HWDZsunFxtPQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UTVYQ3F9; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1429AC4CEE8;
+	Fri,  7 Mar 2025 00:00:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741305526;
-	bh=moVc7pOtCwnKINiMtA5zpBx/8SyTaAtBgLkPgetKskg=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=GLqE2exowz+k/gMCk8N7WoEaAkfr0mATl3HdoyAVkkVMQ7Ro3ubl/0kuO1PN4Tsdb
-	 BmwESwMX+lWlRMuSXmIvX3CgOOD5H0452oGPuCsJaHJpnvlbQqK1vTZuHtCKVKBfsc
-	 YaB61OPN9wGinNjp/e9wClhfBC15Pxn5zXx0xfFOGw5ATyccrfqlOfTxmgMqP+tslO
-	 VoPjtod19TI2Z54Uh+a5QN4JlxeSB5J+XpjQv/Svb88qgAgRDtOUH7v0aCFPgrWINv
-	 8yXjmN3NxGBwnjxh7xdFzS9lExQHwyjUIzRErPBeURCCYLYen8lPbRthRQyH/EOikl
-	 2wknMpmBphZfw==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 70F7F380CFF6;
-	Thu,  6 Mar 2025 23:59:21 +0000 (UTC)
-Subject: Re: [GIT PULL] bcachefs fixes for 6.14-rc6
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <ww7iqi2mto3fvyhrgpyxcdzcndcr527evvzktb5xp56o32lwg4@zlvkrwuiki6i>
-References: <ww7iqi2mto3fvyhrgpyxcdzcndcr527evvzktb5xp56o32lwg4@zlvkrwuiki6i>
-X-PR-Tracked-List-Id: <linux-fsdevel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <ww7iqi2mto3fvyhrgpyxcdzcndcr527evvzktb5xp56o32lwg4@zlvkrwuiki6i>
-X-PR-Tracked-Remote: git://evilpiepirate.org/bcachefs.git tags/bcachefs-2025-03-06
-X-PR-Tracked-Commit-Id: 8ba73f53dc5b7545776e09e6982115dcbcbabec4
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 0f52fd4f67c67f7f2ea3063c627e466255f027fd
-Message-Id: <174130556008.1823246.13013665258720328821.pr-tracker-bot@kernel.org>
-Date: Thu, 06 Mar 2025 23:59:20 +0000
-To: Kent Overstreet <kent.overstreet@linux.dev>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+	s=k20201202; t=1741305624;
+	bh=iyIR7Lu7scO0az/72iAv4+pIQLty4sEWKIC8oyRDQYo=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=UTVYQ3F9vbaj3EcucvysnDwYLL21cUguDxM/YVi5slxSK1pdyHwFVINCY+3YHPblz
+	 4zijPdD93HN0PCux6PUpLs5tExx3Ak1J+7VFt7y6IW9KydEiguDCdXcRQNAs1rcHEG
+	 JX+XOq8Tve1UPIMo0YZluWzI4paM6CxZgfzbRZLwdBHu8HKp4Wesjcdg1MQw/KkIwn
+	 SnPdqz7g+k694FwOUj6ZcxIo35msgdH2dWfYkV0nZqiwMYFnUHreBZymqhRmHClbN8
+	 MDmC33ZwU/ier3Gvk3Sig/qMHEkq4iBAr4CUtx4lnbOhumHD0vMvCRGbpj0j5LcShG
+	 vZ8DeyP3JswSw==
+Received: from [165.225.242.197] (helo=wait-a-minute.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1tqL8X-00BE7m-EB;
+	Fri, 07 Mar 2025 00:00:22 +0000
+Date: Fri, 07 Mar 2025 00:00:15 +0000
+Message-ID: <87v7sl7lrk.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: 	Oliver Upton <oliver.upton@linux.dev>, Shameerali Kolothum Thodi <shameerali.kolothum.thodi@huawei.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>,
+	Christoffer Dall
+	<cdall@cs.columbia.edu>,
+	Linux Kernel Mailing List
+	<linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List
+	<linux-next@vger.kernel.org>
+Subject: Re: linux-next: build failure after merge of the kvm-arm tree
+In-Reply-To: <6027e05e03474a87826217ee56f12761@huawei.com>
+References: <20250306164614.4ccb2e9d@canb.auug.org.au>
+	<6027e05e03474a87826217ee56f12761@huawei.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
+ (x86_64-pc-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 165.225.242.197
+X-SA-Exim-Rcpt-To: oliver.upton@linux.dev, shameerali.kolothum.thodi@huawei.com, sfr@canb.auug.org.au, cdall@cs.columbia.edu, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-The pull request you sent on Thu, 6 Mar 2025 18:25:30 -0500:
+On Thu, 06 Mar 2025 09:56:32 +0000,
+Shameerali Kolothum Thodi <shameerali.kolothum.thodi@huawei.com> wrote:
+> 
+> 
+> 
+> > -----Original Message-----
+> > From: Stephen Rothwell <sfr@canb.auug.org.au>
+> > Sent: Thursday, March 6, 2025 5:46 AM
+> > To: Christoffer Dall <cdall@cs.columbia.edu>; Marc Zyngier
+> > <maz@kernel.org>
+> > Cc: Oliver Upton <oliver.upton@linux.dev>; Shameerali Kolothum Thodi
+> > <shameerali.kolothum.thodi@huawei.com>; Linux Kernel Mailing List
+> > <linux-kernel@vger.kernel.org>; Linux Next Mailing List <linux-
+> > next@vger.kernel.org>
+> > Subject: linux-next: build failure after merge of the kvm-arm tree
+> > 
+> > Hi all,
+> > 
+> > After merging the kvm-arm tree, today's linux-next build (arm
+> > multi_v7_defconfig) failed like this:
+> > 
+> > drivers/firmware/smccc/kvm_guest.c:58:14: warning: no previous prototype
+> > for 'kvm_arm_target_impl_cpu_init' [-Wmissing-prototypes]
+> >    58 | void  __init kvm_arm_target_impl_cpu_init(void)
+> >       |              ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> > drivers/firmware/smccc/kvm_guest.c: In function
+> > 'kvm_arm_target_impl_cpu_init':
+> > drivers/firmware/smccc/kvm_guest.c:89:39: error: invalid application of
+> > 'sizeof' to incomplete type 'struct target_impl_cpu'
+> >    89 |         target = memblock_alloc(sizeof(*target) * max_cpus,
+> > __alignof__(*target));
+> >       |                                       ^
+> > drivers/firmware/smccc/kvm_guest.c:89:62: error: invalid application of
+> > '__alignof__' to incomplete type 'struct target_impl_cpu'
+> >    89 |         target = memblock_alloc(sizeof(*target) * max_cpus,
+> > __alignof__(*target));
+> >       |                                                              ^~~~~~~~~~~
+> > drivers/firmware/smccc/kvm_guest.c:102:23: error: invalid use of undefined
+> > type 'struct target_impl_cpu'
+> >   102 |                 target[i].midr = res.a1;
+> >       |                       ^
+> > drivers/firmware/smccc/kvm_guest.c:102:26: error: invalid use of undefined
+> > type 'struct target_impl_cpu'
+> >   102 |                 target[i].midr = res.a1;
+> >       |                          ^
+> > drivers/firmware/smccc/kvm_guest.c:103:23: error: invalid use of undefined
+> > type 'struct target_impl_cpu'
+> >   103 |                 target[i].revidr = res.a2;
+> >       |                       ^
+> > drivers/firmware/smccc/kvm_guest.c:103:26: error: invalid use of undefined
+> > type 'struct target_impl_cpu'
+> >   103 |                 target[i].revidr = res.a2;
+> >       |                          ^
+> > drivers/firmware/smccc/kvm_guest.c:104:23: error: invalid use of undefined
+> > type 'struct target_impl_cpu'
+> >   104 |                 target[i].aidr = res.a3;
+> >       |                       ^
+> > drivers/firmware/smccc/kvm_guest.c:104:26: error: invalid use of undefined
+> > type 'struct target_impl_cpu'
+> >   104 |                 target[i].aidr = res.a3;
+> >       |                          ^
+> > drivers/firmware/smccc/kvm_guest.c:107:14: error: implicit declaration of
+> > function 'cpu_errata_set_target_impl' [-Wimplicit-function-declaration]
+> >   107 |         if (!cpu_errata_set_target_impl(max_cpus, target)) {
+> >       |              ^~~~~~~~~~~~~~~~~~~~~~~~~~
+> > drivers/firmware/smccc/kvm_guest.c:116:37: error: invalid application of
+> > 'sizeof' to incomplete type 'struct target_impl_cpu'
+> >   116 |         memblock_free(target, sizeof(*target) * max_cpus);
+> >       |                                     ^
+> > 
+> > Caused by commit
+> > 
+> >   86edf6bdcf05 ("smccc/kvm_guest: Enable errata based on implementation
+> > CPUs")
+> > 
+> > I have used the kvm-arm tree from next-20250305 for today.
+> 
+> Thanks for reporting this.
+> 
+> Hmm..kvm_guest.c gets build through HAVE_ARM_SMCCC_DISCOVERY 
+> which is selected by ARM_GIC_V3.
+> 
+> We could limit the kvm_arm_target_impl_cpu_init() to ARM64 to fix this
+> like below as these hypercall is only supported for KVM/ARM64.
+> 
+> Or is there a better way to handle this?
+> 
+> Thanks,
+> Shameer
+> 
+> ---8---
+> diff --git a/drivers/firmware/smccc/kvm_guest.c
+> b/drivers/firmware/smccc/kvm_guest.c
+> index 2f03b582c298..5767aed25cdc 100644
+> --- a/drivers/firmware/smccc/kvm_guest.c
+> +++ b/drivers/firmware/smccc/kvm_guest.c
+> @@ -55,6 +55,7 @@ bool kvm_arm_hyp_service_available(u32 func_id)
+>  }
+>  EXPORT_SYMBOL_GPL(kvm_arm_hyp_service_available);
+> 
+> +#ifdef CONFIG_ARM64
+>  void  __init kvm_arm_target_impl_cpu_init(void)
+>  {
+>         int i;
+> @@ -115,3 +116,4 @@ void  __init kvm_arm_target_impl_cpu_init(void)
+>  mem_free:
+>         memblock_free(target, sizeof(*target) * max_cpus);
+>  }
+> +#endif
 
-> git://evilpiepirate.org/bcachefs.git tags/bcachefs-2025-03-06
+Yeah, that's probably best for now.
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/0f52fd4f67c67f7f2ea3063c627e466255f027fd
+Oliver, do you mind stashing this on top so that -next can build
+again? We can revisit this and have a better solution down the line.
 
-Thank you!
+Thanks,
+
+	M.
 
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+Without deviation from the norm, progress is not possible.
 
