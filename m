@@ -1,253 +1,339 @@
-Return-Path: <linux-kernel+bounces-551505-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-551506-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EB103A56D57
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 17:16:44 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 227E2A56D5D
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 17:17:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D2B103A92F5
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 16:16:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 60F2A1894B95
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 16:17:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B462723A986;
-	Fri,  7 Mar 2025 16:16:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4119523956A;
+	Fri,  7 Mar 2025 16:17:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="5E5NQcJo"
-Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2086.outbound.protection.outlook.com [40.107.237.86])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Afdv8ICT"
+Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EA4A2376E0;
-	Fri,  7 Mar 2025 16:16:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.237.86
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741364178; cv=fail; b=iL1ke3u4LmDKZDelj/I+K6dp0JxORZknIvuKTUe8zkQlzQ8kv8EiFLicD6yeDhN182PtWdqHupRhlqFYqnCnaEZt1xm3WAU4ybeBgaNLYwMY3XIlmiRsd3gqxwktDi98q6Cj+dAYueeMbbK+kCgJK8okHc1GXkRJ253EzCrvDFM=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741364178; c=relaxed/simple;
-	bh=1zjE8cy60Cf0zdGqvH2lIJqfEcqwj+b/kU6/tFo0rXQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=rDPl9n1DNkOG6QR4iqPvx1/TA1zwH/bVH6qCGMKnkY0kLqjKUDVKqx1XU1YDnt4mTNMxrxzDZBVZ+CdG5tcIP41RamdBakH2paBhLVA9fxCDd0utJULArS2++dagKNAguHe8xSCPulKFXzYjRacGRdQT6bwAVO55BcFmNC2kA1Y=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=5E5NQcJo; arc=fail smtp.client-ip=40.107.237.86
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=xNwiHoL502xd7QwvG8J6uBv91ZmpeXv6c174ToPT0Uk5FYSThdc+YrKnO/e8kysOsJihBHHiUGZ1s80fFJWbZxUrQsGRPayg5h6beqf/FDqHXX/lvxeZKiYAMUK1ZG7BjkeCq30ZD+5dP2lFFeqxbJt+cfIC/eckPJ/E9I4+YXhQAypRqauNZQJvhniFyEP8CEAozfs4WSF6y6gMmX3b9Xnpy0c5wJemizE3R801NrzJ5+tpDOXkdAvmOCZVB7ijkAXSoQiwgFRRDJ1nVjtp3jcH4Pz1FN5IQ0mswmFnR7t09u7JLm0qvRp411AagfcdwpJh2V4dwMsC5c+xnejlRw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=tOQWH9bTw9Pg92y/4/EplfmCIrmkF2crpH070F/W95Y=;
- b=qOjKEWiqPy0+iJ68J8P3MNEocItHtzkwDV+vebptvfPOCM9yK28+CYHpb8r580GIUwU27fiYUIALFGfWMIJeWWS2ggXQJM3vdA5um38GDnQ7PJO3+34McnBEjeHtdow+WKEi7oYHNzbzucD8avOyH8KZqHJm0B0kIuiJtcNT7UpKsTZfouGi2bwhUdktzh3djm+KtHgGAHd1B+8E0r3Q1hZ+sZLp2I70cFXoNNVIuI+L00yeMHL4ckOAD+UkIAXNI2ttqIbyoqnxeFWTMqNaCU/RzF2vD6Nl2ku9ystS1aJruXEbyAzaW57VjqIf4/exR1hwLYlRfT/Cm4mo8wBSWw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=redhat.com smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=tOQWH9bTw9Pg92y/4/EplfmCIrmkF2crpH070F/W95Y=;
- b=5E5NQcJoGJrkAa9BRBukayA5LGYBiEdrQQ324zKW1tBFCXK99eETK+FkV6wGsfniVR1QYxOXx5fRm0VcyOEnf3NYLBm8r368mNd/xYFox2NuQzvaJ+w5CbPUQWsV1QBeEukLjcxF3LCac6zO/qlLDBzLy5IoxprWpPiRO5UP364=
-Received: from SN1PR12CA0051.namprd12.prod.outlook.com (2603:10b6:802:20::22)
- by SA3PR12MB8045.namprd12.prod.outlook.com (2603:10b6:806:31d::5) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8511.19; Fri, 7 Mar
- 2025 16:16:08 +0000
-Received: from SA2PEPF00003F62.namprd04.prod.outlook.com
- (2603:10b6:802:20:cafe::c1) by SN1PR12CA0051.outlook.office365.com
- (2603:10b6:802:20::22) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8511.18 via Frontend Transport; Fri,
- 7 Mar 2025 16:16:08 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- SA2PEPF00003F62.mail.protection.outlook.com (10.167.248.37) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.8511.15 via Frontend Transport; Fri, 7 Mar 2025 16:16:07 +0000
-Received: from [172.31.188.187] (10.180.168.240) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Fri, 7 Mar
- 2025 10:16:03 -0600
-Message-ID: <7cbc5845-e890-4bf5-9488-cd2496642f7e@amd.com>
-Date: Fri, 7 Mar 2025 21:46:01 +0530
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C68121770E;
+	Fri,  7 Mar 2025 16:17:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741364232; cv=none; b=lQdnYzGEMBw2TKGYzQWWGz6RO3uqSxBJTuSZwgr9ieFd/2lABAiQv4NUufZRA/QWr+mKkTPbDAaGDumi9m0L7SpQ4yaYpv5PX8nM3uXcyzMbsyWX+d30us+t8tnGY09GnSgQA68qjH+NEck10Uco0VT6CE3LUydH93TAfQWuWfQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741364232; c=relaxed/simple;
+	bh=hbnyvuWuqdGr5ygHxpvX7F24ksN3p0p3uUkgfdnkrjw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=kCABFpHQUchvhQG3QTSEKk9nVMRbA2P6XLFuE/34wYDuD5US3bnWgRsjbxsiT0hmB4cKDSUoIaX2txcyXxJiz4jUxWd2h7AJLNagWz+p8Gc2STMAzl6/AHnNhe8J98K9M2VjKqO5oSeew5wUToFi/cU4izUuuNPdynuAJllWvqo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Afdv8ICT; arc=none smtp.client-ip=209.85.208.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-30b83290b7bso23137441fa.1;
+        Fri, 07 Mar 2025 08:17:10 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741364228; x=1741969028; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=rZaNXG2sGxfm60Sk9mhhTQ9Kdjne1uye23ZjRrkOk2U=;
+        b=Afdv8ICThBfxA5dNaSMGZ4o6QmzBN/R8zV2qM6Wx0mxD6pdGFejGHGT9XmcTvR3woS
+         K3InsFCtVE5mu/TDAfg4mt0uoYCr8EGR3E2Mzm9XCpZLZp0VkZ+U40pSeS+oTyI03YGC
+         tKPO/LdPUnXdQUIDVPDdJMP5RmMyX0360+46T69EW+ra9ee0oJi5cHFoZ3D6Tx7royeM
+         EkxBQAaU6RazLGsnAv7mCn10+7bHezHy1R4AgfHvLavwXIzo2CZ6/0drks187IEt2A4i
+         /5QXXOirZIgJWZDPRcwDXEjR/KXhsKmiJHqB3ywnb8LGnboa3rWy33fFk/VOT5oAO4kp
+         3S3w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741364228; x=1741969028;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=rZaNXG2sGxfm60Sk9mhhTQ9Kdjne1uye23ZjRrkOk2U=;
+        b=oTUfwSoyqsDLDjWZxwW5FWulwvV4lToPw3o5+9LyKQ6i778Nk4JzjUo6rQAUnjmbA0
+         u9bJt+RHieQjQ4o7cnQQ4YYuq3idIpPE1q9g+nmvGC3eyVa8rxZAY8GwDtkFxTYYHaMP
+         P81rIGhj60wu3X8S3Ea6KWFV9ZwAGQ4Unv+VxN5NQt5wxclotXtvWwQXQvgR3KERdGl/
+         AZQIXdGtM5cCXTdX6UsgUw8Gfnqg/fxzw3vnvv/fkF3ifyk5juUFsH++TeSPFAjuBAVi
+         U2fVzhbufD0o5i0aUcxRERxwabMttC+gjLGmQVu/RYVDMfMnwcGFjPRiF4Bl+h64JRbX
+         lm4A==
+X-Forwarded-Encrypted: i=1; AJvYcCWnspIrX2N+k02JwAbT/COVckUnBDhGpEWjhXC+9yAi/k7JRHpuJAaF/t5VQgPuUhy3vVvbQZU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxDey6+rCnJn2/2dyUOgqJ89dlgPZBgvET0jx1fM04HkTqzH0rO
+	CMlde5y9QX+BJVfJbak6X6y1TsQAs5v9TMU1y1UVhUi4iTVcvFwt
+X-Gm-Gg: ASbGncujukxyux4z3z9AHGnuUVn4/n6VAKqHcGNkUbWtsTMmhSdLGcVyfj1zjb/XZzL
+	Wfs8PNthz//RsWU7CExIAfv7gVIUHBqxZpfU6Ccg7vr898hoAc60V/9shw55O/zSKLK6Yg6Kbjv
+	us0CjjHXO5yB8eIlGj95r9Wn1W/3ViitdYOZDPosw+VzQV5Z9KScxSqB99hwCGoVRet/pGk43vf
+	W/HLHgeZcg7ijKDRHc2JF5EZlU8IY4DF+KL6LUcWL/jstSSMbjUlEgkCKq9kAwHDf+gSnjs5F9B
+	ty4RAMvkZYj8Rz40JXZ8XOg1QRrHrv/pRthtunnaUsu44nIsbJ1P5laL9T7Qxf5VP4A=
+X-Google-Smtp-Source: AGHT+IFwfp8fYt6Uuq3OLG3jtqyMmF8MtcotuF9IhKrlg+E57qF+N58dl70gVb0peT2lek1GFPU8Nw==
+X-Received: by 2002:a2e:bc1d:0:b0:30b:fc3b:417f with SMTP id 38308e7fff4ca-30bfc3b439amr7149511fa.10.1741364228194;
+        Fri, 07 Mar 2025 08:17:08 -0800 (PST)
+Received: from FI-L-7486715.nmea.abb.com ([147.161.186.106])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-30be98d0b35sm5739831fa.16.2025.03.07.08.17.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 07 Mar 2025 08:17:07 -0800 (PST)
+From: Jaakko Karrenpalo <jkarrenpalo@gmail.com>
+To: "David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Simon Horman <horms@kernel.org>,
+	Lukasz Majewski <lukma@denx.de>,
+	MD Danish Anwar <danishanwar@ti.com>
+Cc: linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org,
+	Jaakko Karrenpalo <jaakko.karrenpalo@fi.abb.com>,
+	Jaakko Karrenpalo <jkarrenpalo@gmail.com>
+Subject: [PATCH net-next v5 1/2] net: hsr: Fix PRP duplicate detection
+Date: Fri,  7 Mar 2025 18:16:59 +0200
+Message-ID: <20250307161700.1045-1-jkarrenpalo@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/4] fs/pipe: Limit the slots in pipe_resize_ring()
-To: Oleg Nesterov <oleg@redhat.com>
-CC: Linus Torvalds <torvalds@linux-foundation.org>, Alexander Viro
-	<viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>,
-	<linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>, Jan Kara
-	<jack@suse.cz>, "Matthew Wilcox (Oracle)" <willy@infradead.org>, "Mateusz
- Guzik" <mjguzik@gmail.com>, Rasmus Villemoes <ravi@prevas.dk>, "Gautham R.
- Shenoy" <gautham.shenoy@amd.com>, <Neeraj.Upadhyay@amd.com>,
-	<Ananth.narayan@amd.com>, Swapnil Sapkal <swapnil.sapkal@amd.com>
-References: <20250307052919.34542-1-kprateek.nayak@amd.com>
- <20250307052919.34542-2-kprateek.nayak@amd.com>
- <20250307145125.GE5963@redhat.com>
-Content-Language: en-US
-From: K Prateek Nayak <kprateek.nayak@amd.com>
-In-Reply-To: <20250307145125.GE5963@redhat.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SATLEXMB04.amd.com (10.181.40.145) To SATLEXMB04.amd.com
- (10.181.40.145)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SA2PEPF00003F62:EE_|SA3PR12MB8045:EE_
-X-MS-Office365-Filtering-Correlation-Id: 38eb8e50-7f03-4f5b-c4dc-08dd5d935e52
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|7416014|376014|1800799024|36860700013|82310400026|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?Um5jT2xmNWUvU1NvMi9GS2g5Ri8xUFoyVVJNNHAwNzBsMDY5c0pjcVFxZWpP?=
- =?utf-8?B?WThOTVg2SThrMndBNFZXdzZjVVMwSjdOR3JvV2RiaTl6S0lvQWViZHpSWnhI?=
- =?utf-8?B?dEpHSmhzOWdDekhBYTV2Z1U5NkUrbWxZcWtUZzdBL0hyRU9Od1dCWFR3M2V2?=
- =?utf-8?B?UDlhTm16ZU5HbER2NTVKZEFtUkpZL2dLckNrT2RpQjRzZW9wQXllQW5nNFVD?=
- =?utf-8?B?WElETjRXVDVzaXk5VzBZSFNFNEtiZS9uU1FMUjg5TjVQQ1dzM3lZbVU5aGli?=
- =?utf-8?B?dlpOVm1rcFQ5ZjlON09vYW0wbUJ1RWJwdG5QazUyRmdnMHVVU0dJeXY5S3pR?=
- =?utf-8?B?bDlsSmYyS2tHS3ZWNlZJNk1PeVduOG0wa3htbTBUNFczUGFLNUgwRUhtaVZJ?=
- =?utf-8?B?UllleFR6WHViZWhycW1DTHEwS2NmNWVLYkdwN1Nobk1GZUpZUVhIdE5OcUtO?=
- =?utf-8?B?UE5ZTFdlM0dLV3c5b2pyQVdNWTBSZ0lYTFRYVUFaZFlPV1Q2Ni85Umdhek1V?=
- =?utf-8?B?eE9VL3lHWmpVUWY4UGFaTis0aVhGM1RDVmd2blhFVzJPSDhrNnBwcHVzcWNY?=
- =?utf-8?B?RVJUOUo3d0h2WmdmcXE5ZUUxb213eGhJamxMdzV5aDA2VDhkUDNibVNocS91?=
- =?utf-8?B?MEd6cDd0dWU0b2xmQjNWTmRTb2s0cE5lNnI5YXRtUjRzZWxlZUdBRXFDWmhJ?=
- =?utf-8?B?Zi9acXFOMVRyN1JEem9IUEFRVDVyK2kyS2o0TjRRbnRORU8zUnUwZ2xXYTgy?=
- =?utf-8?B?TFRiY0ZIY2tVRWwzdnBVR3hRZnRlNUZneGIxTlh6b1owcnJLcktlb3dWa25U?=
- =?utf-8?B?UEVOR1Z1NHVTeHNJcytldnhOU3ZHVXV4SWlxSWtYTWk1c3lJOENuZHJVQnM4?=
- =?utf-8?B?MGRmcTFaY0NldC8zbjRMcERHSVhka3ZZRDh6a1U1dTBpUWJSY3FhWWtOTWR4?=
- =?utf-8?B?bHE4dCsreXR0cG5WVkY0c3gxaDdCTitpK1RBNjNVVk4zcTdCRzlSbTZQdHdW?=
- =?utf-8?B?S3ZkMk50OUF4M3lWUEdLVXo3OFBPTC9mMGF0ZHdVeDVLbkZrMUdzTkZhNlNV?=
- =?utf-8?B?bks0UkJ4Z1UzblhtRmRVbjBzem8rSGxCTm9pZHJMdHhBMEdTTVBvM0lOQ2Er?=
- =?utf-8?B?b1M4Wk9qM3dHcFRiM3V2bWxSOXRVQVlOT1VUbHZsTzdkMlgvMDVEanNvcWUw?=
- =?utf-8?B?bkNkTGhoNWZTV3BiQ3ZrQTVNZThPdXJoalNVS2s5WXRkdjlYVXlYUGlpa0tC?=
- =?utf-8?B?bzNFdWZjUTY0MjRZNVZNVGNvTWJwWUFXem8wYWhLTnorYnVNRWRBeUt4bGVx?=
- =?utf-8?B?OTBnbExvaVpWbDBCOUxWYlpJcG5lMHNybjI5MWpGYXVEOC94UWdGRzVHZVRm?=
- =?utf-8?B?NXIyWE5neS9IWkFOSWE2T284a0lLc1ZWbTZwSjIxTTVKQ05IL2F0U3F2eERS?=
- =?utf-8?B?SXU2QWJTSGQrTzhsNFVNejlySzJRTDVqcStRdmhZN2svMnpHdFpCOGhrT1VY?=
- =?utf-8?B?ZjZtd09FcFA2cmV0SlZnNDduVVp4Vmd4Ni8zK3NIYXRPc2cvTEVWbHBiOVZr?=
- =?utf-8?B?RWxsWWFxOXNOL2ZCTHRWUGl5bW1SLzU3Ukw2dVJmeTZIbnZsRTJiaTNEVTNu?=
- =?utf-8?B?MHJ0eGVheUppTjR4S01HNHRjTWZYeENlTmcweExDOEtsNWlFb0wxOFB4NndS?=
- =?utf-8?B?bUJzY2hkNTdQME80cHhHYkF6bXh5eDhOTmM0SG03WUQ3VGp3L1ZlMFBValZI?=
- =?utf-8?B?MFFuSXNZYmZETC96YnhDTmhqOVlJS0svaDdLQmpsa0hXU2JQRlFSbk5sRHZT?=
- =?utf-8?B?WGJLY0kzYlJCaHl3SFF3MHNEa2hXWHpuY3huYnFSbVk3M1pqdmplMmhwRU5U?=
- =?utf-8?B?c2lnUjFEV0h0WWdnbm5jakE2ek8xZU8rT2RBZVp6eUdZZlF1UkQ0dXpJWUhR?=
- =?utf-8?B?UTZHNzY4M2VuUlRrNHFXVXpaaFZnbmlPdVNSbXM2WWdIWHlZSFJESG5pVUN5?=
- =?utf-8?Q?x5gAAGu08s96pW7H3VFRZrk0Ckmo3E=3D?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(7416014)(376014)(1800799024)(36860700013)(82310400026)(7053199007);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Mar 2025 16:16:07.9599
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 38eb8e50-7f03-4f5b-c4dc-08dd5d935e52
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	SA2PEPF00003F62.namprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA3PR12MB8045
+Content-Transfer-Encoding: 8bit
 
-Hello Oleg,
+Add PRP specific function for handling duplicate
+packets. This is needed because of potential
+L2 802.1p prioritization done by network switches.
 
-Thank you for the review.
+The L2 prioritization can re-order the PRP packets
+from a node causing the existing implementation to
+discard the frame(s) that have been received 'late'
+because the sequence number is before the previous
+received packet. This can happen if the node is
+sending multiple frames back-to-back with different
+priority.
 
-On 3/7/2025 8:21 PM, Oleg Nesterov wrote:
-> On 03/07, K Prateek Nayak wrote:
->>
->> --- a/fs/pipe.c
->> +++ b/fs/pipe.c
->> @@ -1271,6 +1271,10 @@ int pipe_resize_ring(struct pipe_inode_info *pipe, unsigned int nr_slots)
->>   	struct pipe_buffer *bufs;
->>   	unsigned int head, tail, mask, n;
->>
->> +	/* nr_slots larger than limits of pipe->{head,tail} */
->> +	if (unlikely(nr_slots > (pipe_index_t)-1u))
->> +		return -EINVAL;
-> 
-> The whole series look "obviously" good to me,
-> 
-> Reviewed-by: Oleg Nesterov <oleg@redhat.com>
-> 
-> -------------------------------------------------------------------------------
-> But damn ;) lets look at round_pipe_size(),
-> 
-> 	unsigned int round_pipe_size(unsigned int size)
-> 	{
-> 		if (size > (1U << 31))
-> 			return 0;
-> 
-> 		/* Minimum pipe size, as required by POSIX */
-> 		if (size < PAGE_SIZE)
-> 			return PAGE_SIZE;
-> 
-> 		return roundup_pow_of_two(size);
-> 	}
-> 
-> it is a bit silly to allow the maximum size == 1U << 31 in pipe_set_size()
-> or (more importantly) in /proc/sys/fs/pipe-max-size, and then nack nr_slots
-> in pipe_resize_ring().
-> 
-> So perhaps this check should go into round_pipe_size() ? Although I can't
-> suggest a simple/clear check without unnecesary restrictions for the case
-> when pipe_index_t is u16.
-> 
-> pipe_resize_ring() has another caller, watch_queue_set_size(), but it has
-> its own hard limits...
+Signed-off-by: Jaakko Karrenpalo <jkarrenpalo@gmail.com>
+Reviewed-by: Simon Horman <horms@kernel.org>
+---
+Changes in v3:
+- Fixed indentation
+- Renamed local variables
+Changes in v4:
+- Fix indentation issues missed in previous version
 
-"nr_notes" for watch queues cannot cross 512 so we should be covered there.
-As for round_pipe_size(), we can do:
+Thanks to Paolo and Simon for reviewing!
 
-diff --git a/fs/pipe.c b/fs/pipe.c
-index ce1af7592780..f82098aaa510 100644
---- a/fs/pipe.c
-+++ b/fs/pipe.c
-@@ -1253,6 +1253,8 @@ const struct file_operations pipefifo_fops = {
-   */
-  unsigned int round_pipe_size(unsigned int size)
-  {
-+	unsigned int max_slots;
+ net/hsr/hsr_device.c   |  2 +
+ net/hsr/hsr_forward.c  |  4 +-
+ net/hsr/hsr_framereg.c | 95 ++++++++++++++++++++++++++++++++++++++++--
+ net/hsr/hsr_framereg.h |  8 +++-
+ net/hsr/hsr_main.h     |  2 +
+ 5 files changed, 104 insertions(+), 7 deletions(-)
+
+diff --git a/net/hsr/hsr_device.c b/net/hsr/hsr_device.c
+index b6fb18469439..2c43776b7c4f 100644
+--- a/net/hsr/hsr_device.c
++++ b/net/hsr/hsr_device.c
+@@ -616,6 +616,7 @@ static struct hsr_proto_ops hsr_ops = {
+ 	.drop_frame = hsr_drop_frame,
+ 	.fill_frame_info = hsr_fill_frame_info,
+ 	.invalid_dan_ingress_frame = hsr_invalid_dan_ingress_frame,
++	.register_frame_out = hsr_register_frame_out,
+ };
+ 
+ static struct hsr_proto_ops prp_ops = {
+@@ -626,6 +627,7 @@ static struct hsr_proto_ops prp_ops = {
+ 	.fill_frame_info = prp_fill_frame_info,
+ 	.handle_san_frame = prp_handle_san_frame,
+ 	.update_san_info = prp_update_san_info,
++	.register_frame_out = prp_register_frame_out,
+ };
+ 
+ void hsr_dev_setup(struct net_device *dev)
+diff --git a/net/hsr/hsr_forward.c b/net/hsr/hsr_forward.c
+index a4bacf198555..c67c0d35921d 100644
+--- a/net/hsr/hsr_forward.c
++++ b/net/hsr/hsr_forward.c
+@@ -536,8 +536,8 @@ static void hsr_forward_do(struct hsr_frame_info *frame)
+ 		 * Also for SAN, this shouldn't be done.
+ 		 */
+ 		if (!frame->is_from_san &&
+-		    hsr_register_frame_out(port, frame->node_src,
+-					   frame->sequence_nr))
++		    hsr->proto_ops->register_frame_out &&
++		    hsr->proto_ops->register_frame_out(port, frame))
+ 			continue;
+ 
+ 		if (frame->is_supervision && port->type == HSR_PT_MASTER &&
+diff --git a/net/hsr/hsr_framereg.c b/net/hsr/hsr_framereg.c
+index 73bc6f659812..85991fab7db5 100644
+--- a/net/hsr/hsr_framereg.c
++++ b/net/hsr/hsr_framereg.c
+@@ -35,6 +35,7 @@ static bool seq_nr_after(u16 a, u16 b)
+ 
+ #define seq_nr_before(a, b)		seq_nr_after((b), (a))
+ #define seq_nr_before_or_eq(a, b)	(!seq_nr_after((a), (b)))
++#define PRP_DROP_WINDOW_LEN 32768
+ 
+ bool hsr_addr_is_redbox(struct hsr_priv *hsr, unsigned char *addr)
+ {
+@@ -176,8 +177,11 @@ static struct hsr_node *hsr_add_node(struct hsr_priv *hsr,
+ 		new_node->time_in[i] = now;
+ 		new_node->time_out[i] = now;
+ 	}
+-	for (i = 0; i < HSR_PT_PORTS; i++)
++	for (i = 0; i < HSR_PT_PORTS; i++) {
+ 		new_node->seq_out[i] = seq_out;
++		new_node->seq_expected[i] = seq_out + 1;
++		new_node->seq_start[i] = seq_out + 1;
++	}
+ 
+ 	if (san && hsr->proto_ops->handle_san_frame)
+ 		hsr->proto_ops->handle_san_frame(san, rx_port, new_node);
+@@ -482,9 +486,11 @@ void hsr_register_frame_in(struct hsr_node *node, struct hsr_port *port,
+  *	 0 otherwise, or
+  *	 negative error code on error
+  */
+-int hsr_register_frame_out(struct hsr_port *port, struct hsr_node *node,
+-			   u16 sequence_nr)
++int hsr_register_frame_out(struct hsr_port *port, struct hsr_frame_info *frame)
+ {
++	struct hsr_node *node = frame->node_src;
++	u16 sequence_nr = frame->sequence_nr;
 +
-  	if (size > (1U << 31))
-  		return 0;
-  
-@@ -1260,7 +1262,14 @@ unsigned int round_pipe_size(unsigned int size)
-  	if (size < PAGE_SIZE)
-  		return PAGE_SIZE;
-  
--	return roundup_pow_of_two(size);
-+	size = roundup_pow_of_two(size);
-+	max_slots = size >> PAGE_SHIFT;
+ 	spin_lock_bh(&node->seq_out_lock);
+ 	if (seq_nr_before_or_eq(sequence_nr, node->seq_out[port->type]) &&
+ 	    time_is_after_jiffies(node->time_out[port->type] +
+@@ -499,6 +505,89 @@ int hsr_register_frame_out(struct hsr_port *port, struct hsr_node *node,
+ 	return 0;
+ }
+ 
++/* Adaptation of the PRP duplicate discard algorithm described in wireshark
++ * wiki (https://wiki.wireshark.org/PRP)
++ *
++ * A drop window is maintained for both LANs with start sequence set to the
++ * first sequence accepted on the LAN that has not been seen on the other LAN,
++ * and expected sequence set to the latest received sequence number plus one.
++ *
++ * When a frame is received on either LAN it is compared against the received
++ * frames on the other LAN. If it is outside the drop window of the other LAN
++ * the frame is accepted and the drop window is updated.
++ * The drop window for the other LAN is reset.
++ *
++ * 'port' is the outgoing interface
++ * 'frame' is the frame to be sent
++ *
++ * Return:
++ *	 1 if frame can be shown to have been sent recently on this interface,
++ *	 0 otherwise
++ */
++int prp_register_frame_out(struct hsr_port *port, struct hsr_frame_info *frame)
++{
++	enum hsr_port_type other_port;
++	enum hsr_port_type rcv_port;
++	struct hsr_node *node;
++	u16 sequence_diff;
++	u16 sequence_exp;
++	u16 sequence_nr;
 +
-+	/* Max slots cannot be covered pipe->{head,tail} limits */
-+	if (max_slots > (pipe_index_t)-1U)
-+		return 0;
++	/* out-going frames are always in order
++	 * and can be checked the same way as for HSR
++	 */
++	if (frame->port_rcv->type == HSR_PT_MASTER)
++		return hsr_register_frame_out(port, frame);
 +
-+	return size;
-  }
-  
-  /*
---
-
-Since pipe_resize_ring() can be called without actually looking at
-"pipe_max_size" as is the case with watch queues, we can either keep the
-check in pipe_resize_ring() as well out of paranoia or get rid of it
-since the current users are within the bounds.
-
-Thoughts?
-
-> 
-> Oleg.
-> 
-
++	/* for PRP we should only forward frames from the slave ports
++	 * to the master port
++	 */
++	if (port->type != HSR_PT_MASTER)
++		return 1;
++
++	node = frame->node_src;
++	sequence_nr = frame->sequence_nr;
++	sequence_exp = sequence_nr + 1;
++	rcv_port = frame->port_rcv->type;
++	other_port = rcv_port == HSR_PT_SLAVE_A ? HSR_PT_SLAVE_B :
++				 HSR_PT_SLAVE_A;
++
++	spin_lock_bh(&node->seq_out_lock);
++	if (time_is_before_jiffies(node->time_out[port->type] +
++	    msecs_to_jiffies(HSR_ENTRY_FORGET_TIME)) ||
++	    (node->seq_start[rcv_port] == node->seq_expected[rcv_port] &&
++	     node->seq_start[other_port] == node->seq_expected[other_port])) {
++		/* the node hasn't been sending for a while
++		 * or both drop windows are empty, forward the frame
++		 */
++		node->seq_start[rcv_port] = sequence_nr;
++	} else if (seq_nr_before(sequence_nr, node->seq_expected[other_port]) &&
++		   seq_nr_before_or_eq(node->seq_start[other_port], sequence_nr)) {
++		/* drop the frame, update the drop window for the other port
++		 * and reset our drop window
++		 */
++		node->seq_start[other_port] = sequence_exp;
++		node->seq_expected[rcv_port] = sequence_exp;
++		node->seq_start[rcv_port] = node->seq_expected[rcv_port];
++		spin_unlock_bh(&node->seq_out_lock);
++		return 1;
++	}
++
++	/* update the drop window for the port where this frame was received
++	 * and clear the drop window for the other port
++	 */
++	node->seq_start[other_port] = node->seq_expected[other_port];
++	node->seq_expected[rcv_port] = sequence_exp;
++	sequence_diff = sequence_exp - node->seq_start[rcv_port];
++	if (sequence_diff > PRP_DROP_WINDOW_LEN)
++		node->seq_start[rcv_port] = sequence_exp - PRP_DROP_WINDOW_LEN;
++
++	node->time_out[port->type] = jiffies;
++	node->seq_out[port->type] = sequence_nr;
++	spin_unlock_bh(&node->seq_out_lock);
++	return 0;
++}
++
+ static struct hsr_port *get_late_port(struct hsr_priv *hsr,
+ 				      struct hsr_node *node)
+ {
+diff --git a/net/hsr/hsr_framereg.h b/net/hsr/hsr_framereg.h
+index 993fa950d814..b04948659d84 100644
+--- a/net/hsr/hsr_framereg.h
++++ b/net/hsr/hsr_framereg.h
+@@ -44,8 +44,7 @@ void hsr_addr_subst_dest(struct hsr_node *node_src, struct sk_buff *skb,
+ 
+ void hsr_register_frame_in(struct hsr_node *node, struct hsr_port *port,
+ 			   u16 sequence_nr);
+-int hsr_register_frame_out(struct hsr_port *port, struct hsr_node *node,
+-			   u16 sequence_nr);
++int hsr_register_frame_out(struct hsr_port *port, struct hsr_frame_info *frame);
+ 
+ void hsr_prune_nodes(struct timer_list *t);
+ void hsr_prune_proxy_nodes(struct timer_list *t);
+@@ -73,6 +72,8 @@ void prp_update_san_info(struct hsr_node *node, bool is_sup);
+ bool hsr_is_node_in_db(struct list_head *node_db,
+ 		       const unsigned char addr[ETH_ALEN]);
+ 
++int prp_register_frame_out(struct hsr_port *port, struct hsr_frame_info *frame);
++
+ struct hsr_node {
+ 	struct list_head	mac_list;
+ 	/* Protect R/W access to seq_out */
+@@ -89,6 +90,9 @@ struct hsr_node {
+ 	bool			san_b;
+ 	u16			seq_out[HSR_PT_PORTS];
+ 	bool			removed;
++	/* PRP specific duplicate handling */
++	u16			seq_expected[HSR_PT_PORTS];
++	u16			seq_start[HSR_PT_PORTS];
+ 	struct rcu_head		rcu_head;
+ };
+ 
+diff --git a/net/hsr/hsr_main.h b/net/hsr/hsr_main.h
+index 7561845b8bf6..1bc47b17a296 100644
+--- a/net/hsr/hsr_main.h
++++ b/net/hsr/hsr_main.h
+@@ -175,6 +175,8 @@ struct hsr_proto_ops {
+ 			       struct hsr_frame_info *frame);
+ 	bool (*invalid_dan_ingress_frame)(__be16 protocol);
+ 	void (*update_san_info)(struct hsr_node *node, bool is_sup);
++	int (*register_frame_out)(struct hsr_port *port,
++				  struct hsr_frame_info *frame);
+ };
+ 
+ struct hsr_self_node {
 -- 
-Thanks and Regards,
-Prateek
+2.43.0
 
 
