@@ -1,311 +1,117 @@
-Return-Path: <linux-kernel+bounces-550785-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-550787-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A934A56413
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 10:37:21 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6B104A56419
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 10:39:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 65E5E165287
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 09:37:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5F5DC3A7E9B
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 09:38:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A322C1F3FF8;
-	Fri,  7 Mar 2025 09:37:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC13E20AF67;
+	Fri,  7 Mar 2025 09:38:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="x0NrEan7"
-Received: from mout-p-201.mailbox.org (mout-p-201.mailbox.org [80.241.56.171])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="XjK9BYyj"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50CAF1A314C
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Mar 2025 09:37:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6770F1AA7BF;
+	Fri,  7 Mar 2025 09:38:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741340235; cv=none; b=HEcm5SuLXdJ4h5zkqZb4s31195uSj6xobT+uRLQdAM7UJQHe2j1py+MEtS5EJwhtgDED6E+VYvfV1vA5KMZkHe33HNRkOk5DGhivsm9wPltPLQ+9vkjch8pOcF38qnNvqZrMfV7oxWg/YRLVZZRYLlG6tbrvfGPRfPbXLuYndAI=
+	t=1741340339; cv=none; b=lZbvEaKOR6WnsoAKsztZj40fVXTlJOksFGkn/x1kneSfik4c2UA/3QXd+7BhlN+cpjFHaTAW6Pn3OOAr+OFNUjKqWj3+vQAClxMdd9PoDZ2ZVuxfDYCx7qTYfc0S8PWg065CNvxJKz5Z6vpdGsjT/zcEehtnWmWpHZcDLpZL1aA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741340235; c=relaxed/simple;
-	bh=4e38Rd/ZSEWO6ZryurE8yjC/HyR3BPHKL70uA7tlmDc=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=RQrmFD9bDZA6homfZvaWq22j0LBLj1PzYkSCrcUmSuEDiq0ytriow8CRqABs664zMKaQiNVzfllEiu5r9LoGM6aApADPtGzmD2rJYXgEowzyGJQXKvduf5fhnRMtGCISsc6dWr5gZf7gO870RARU2KL0O+1UEDfvvVBLSp0OdLc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=x0NrEan7; arc=none smtp.client-ip=80.241.56.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
-Received: from smtp2.mailbox.org (smtp2.mailbox.org [IPv6:2001:67c:2050:b231:465::2])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-201.mailbox.org (Postfix) with ESMTPS id 4Z8Lm43L0sz9smj;
-	Fri,  7 Mar 2025 10:37:08 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1741340228; h=from:from:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=4s2jfg7G6ikb3PdVKxX3h5jRV13JB4VUmGRVM+FOEpg=;
-	b=x0NrEan78fW52UTLMOY+qbiFq0Upqyes3WZUdoxvnBeu6+yVcG4NTN4tkDkatn+WRvBJls
-	OXzwPtN6uj25M1WQ/Dz9tCwuXIaQ/H7Xre9M31gYbo5giCpEyWmTHzxnDldGU9/Wln0VaV
-	p9jaeG3QOP8qpU4aQu+e9i1+uEa9MtzaIQvJDwswT0tm7o9KMx1XEShHelD7zIOGEsO7pv
-	V4/gzI+z8TOL+QRppqZJjNQHS+XWud8+4gNZNOkUgf42zFGfiJJZI62bGrKZamHEKZvuLI
-	Cp1oqjDGb4LoEpBaPNMc4bm7YmFZixyoBax/p5UGEjvZ0KL2hCVgKkBJeET8yw==
-Message-ID: <0ff8b5ddce856a7d9f5ffbabcb220e345b2dcfaa.camel@mailbox.org>
-Subject: Re: [PATCH v7 3/3] drm/sched: Update timedout_job()'s documentation
-From: Philipp Stanner <phasta@mailbox.org>
-Reply-To: phasta@kernel.org
-To: Matthew Brost <matthew.brost@intel.com>, Philipp Stanner
- <phasta@kernel.org>
-Cc: Danilo Krummrich <dakr@kernel.org>, Christian =?ISO-8859-1?Q?K=F6nig?=
- <ckoenig.leichtzumerken@gmail.com>, Maarten Lankhorst
- <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
- Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>, Sumit Semwal <sumit.semwal@linaro.org>,
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Date: Fri, 07 Mar 2025 10:37:04 +0100
-In-Reply-To: <Z8oMSWulN0mF43aB@lstrano-desk.jf.intel.com>
-References: <20250305130551.136682-2-phasta@kernel.org>
-	 <20250305130551.136682-5-phasta@kernel.org>
-	 <Z8oMSWulN0mF43aB@lstrano-desk.jf.intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+	s=arc-20240116; t=1741340339; c=relaxed/simple;
+	bh=rLs1wzqH52S/8SS8AdvefAUT8BlMKmSH93vnAmNwPS0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=a0kgLJdSbbAgu2/I3fn0mBrmVkJx320giIM3sfrXs67Nnel1abo4+u5qCLDHUHzrI06C1i0ht8yA+U5knEL8bQjkhCtuDyo+Wywg82nWlPPWg5WkLtvZIMAWu7pEXDJsfhuWzqe7/qMILceH9SBX8eASuB+6tSTXqqxQPaRIC4E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=XjK9BYyj; arc=none smtp.client-ip=198.175.65.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1741340337; x=1772876337;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=rLs1wzqH52S/8SS8AdvefAUT8BlMKmSH93vnAmNwPS0=;
+  b=XjK9BYyjLmjuPlQ/q/CiYeSt8/nNghiIlw1+NnAa7uS1YKIC6Dmar7Gy
+   VIYeymI8Jiw15mOAzUfbz9dTytVd9en/kv8xOyUh38rm/mQckyML7JDWU
+   52dWqsYkphq4LTGG9SWGFrfo/bDjJuFo/j+ymWHcV2RNXtKHBhDA0afgD
+   oiC+UVdj7QQ1Pm9D5s5sJZVwAUIZXD09Ev/c34rD5KRr9yIxNKljPSOwO
+   7xcX4lq5Jusl09FVP3+ZgUFf1MrxEgM4IhiMLtDSQtAW4t9J4u2e6j9sI
+   gC5an/bmNfxrRgppeD01p0AM6Ie5wI6pNnOFTIq5Zyfk6cZOTj/wp3eLp
+   g==;
+X-CSE-ConnectionGUID: cJYimkFdSXWvJ+LDJGLWig==
+X-CSE-MsgGUID: RSMkRsIZQ/6xlyGGq4W0qg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11365"; a="46161764"
+X-IronPort-AV: E=Sophos;i="6.14,228,1736841600"; 
+   d="scan'208";a="46161764"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Mar 2025 01:38:57 -0800
+X-CSE-ConnectionGUID: kGyra7qNQN2eoeVm9SqYaw==
+X-CSE-MsgGUID: xgQLYtAcTSmA84/tKBk4Iw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,228,1736841600"; 
+   d="scan'208";a="124371050"
+Received: from lkp-server02.sh.intel.com (HELO a4747d147074) ([10.239.97.151])
+  by fmviesa004.fm.intel.com with ESMTP; 07 Mar 2025 01:38:54 -0800
+Received: from kbuild by a4747d147074 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tqUAO-0000Eh-1j;
+	Fri, 07 Mar 2025 09:38:52 +0000
+Date: Fri, 7 Mar 2025 17:38:08 +0800
+From: kernel test robot <lkp@intel.com>
+To: Jiayi Li <lijiayi@kylinos.cn>, gregkh@linuxfoundation.org,
+	stern@rowland.harvard.edu, stefan.eichenberger@toradex.com,
+	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev, jiayi_dec@163.com,
+	Jiayi Li <lijiayi@kylinos.cn>
+Subject: Re: [PATCH v1] usb: core: Add boot delay for DH34 board in restore
+ mode
+Message-ID: <202503071748.Paav3L6j-lkp@intel.com>
+References: <20250306061749.1502029-1-lijiayi@kylinos.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MBO-RS-ID: 5f7705042c1a9815e16
-X-MBO-RS-META: f1mmh8cr96meugnykqhcrpdagy8bnktp
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250306061749.1502029-1-lijiayi@kylinos.cn>
 
-On Thu, 2025-03-06 at 12:57 -0800, Matthew Brost wrote:
-> On Wed, Mar 05, 2025 at 02:05:52PM +0100, Philipp Stanner wrote:
-> > drm_sched_backend_ops.timedout_job()'s documentation is outdated.
-> > It
-> > mentions the deprecated function drm_sched_resubmit_jobs().
-> > Furthermore,
-> > it does not point out the important distinction between hardware
-> > and
-> > firmware schedulers.
-> >=20
-> > Since firmware schedulers typically only use one entity per
-> > scheduler,
-> > timeout handling is significantly more simple because the entity
-> > the
-> > faulted job came from can just be killed without affecting innocent
-> > processes.
-> >=20
-> > Update the documentation with that distinction and other details.
-> >=20
-> > Reformat the docstring to work to a unified style with the other
-> > handles.
-> >=20
->=20
-> Looks really good, one suggestion.
+Hi Jiayi,
 
-Already merged. But I'm working already on the TODO and could address
-your feedback in that followup.
+kernel test robot noticed the following build errors:
 
-Of course, would also be great if you could provide a proposal in a
-patch? :)
+[auto build test ERROR on usb/usb-testing]
+[also build test ERROR on usb/usb-next usb/usb-linus linus/master v6.14-rc5 next-20250306]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
->=20
-> > Signed-off-by: Philipp Stanner <phasta@kernel.org>
-> > ---
-> > =C2=A0include/drm/gpu_scheduler.h | 78 ++++++++++++++++++++++----------=
--
-> > ----
-> > =C2=A01 file changed, 47 insertions(+), 31 deletions(-)
-> >=20
-> > diff --git a/include/drm/gpu_scheduler.h
-> > b/include/drm/gpu_scheduler.h
-> > index 6381baae8024..1a7e377d4cbb 100644
-> > --- a/include/drm/gpu_scheduler.h
-> > +++ b/include/drm/gpu_scheduler.h
-> > @@ -383,8 +383,15 @@ struct drm_sched_job {
-> > =C2=A0	struct xarray			dependencies;
-> > =C2=A0};
-> > =C2=A0
-> > +/**
-> > + * enum drm_gpu_sched_stat - the scheduler's status
-> > + *
-> > + * @DRM_GPU_SCHED_STAT_NONE: Reserved. Do not use.
-> > + * @DRM_GPU_SCHED_STAT_NOMINAL: Operation succeeded.
-> > + * @DRM_GPU_SCHED_STAT_ENODEV: Error: Device is not available
-> > anymore.
-> > + */
-> > =C2=A0enum drm_gpu_sched_stat {
-> > -	DRM_GPU_SCHED_STAT_NONE, /* Reserve 0 */
-> > +	DRM_GPU_SCHED_STAT_NONE,
-> > =C2=A0	DRM_GPU_SCHED_STAT_NOMINAL,
-> > =C2=A0	DRM_GPU_SCHED_STAT_ENODEV,
-> > =C2=A0};
-> > @@ -447,43 +454,52 @@ struct drm_sched_backend_ops {
-> > =C2=A0	 * @timedout_job: Called when a job has taken too long to
-> > execute,
-> > =C2=A0	 * to trigger GPU recovery.
-> > =C2=A0	 *
-> > -	 * This method is called in a workqueue context.
-> > +	 * @sched_job: The job that has timed out
-> > =C2=A0	 *
-> > -	 * Drivers typically issue a reset to recover from GPU
-> > hangs, and this
-> > -	 * procedure usually follows the following workflow:
-> > +	 * Drivers typically issue a reset to recover from GPU
-> > hangs.
-> > +	 * This procedure looks very different depending on
-> > whether a firmware
-> > +	 * or a hardware scheduler is being used.
-> > =C2=A0	 *
-> > -	 * 1. Stop the scheduler using drm_sched_stop(). This will
-> > park the
-> > -	 *=C2=A0=C2=A0=C2=A0 scheduler thread and cancel the timeout work,
-> > guaranteeing that
-> > -	 *=C2=A0=C2=A0=C2=A0 nothing is queued while we reset the hardware qu=
-eue
-> > -	 * 2. Try to gracefully stop non-faulty jobs (optional)
-> > -	 * 3. Issue a GPU reset (driver-specific)
-> > -	 * 4. Re-submit jobs using drm_sched_resubmit_jobs()
-> > -	 * 5. Restart the scheduler using drm_sched_start(). At
-> > that point, new
-> > -	 *=C2=A0=C2=A0=C2=A0 jobs can be queued, and the scheduler thread is
-> > unblocked
-> > +	 * For a FIRMWARE SCHEDULER, each ring has one scheduler,
-> > and each
-> > +	 * scheduler has one entity. Hence, the steps taken
-> > typically look as
-> > +	 * follows:
-> > +	 *
-> > +	 * 1. Stop the scheduler using drm_sched_stop(). This will
-> > pause the
-> > +	 *=C2=A0=C2=A0=C2=A0 scheduler workqueues and cancel the timeout work=
-,
-> > guaranteeing
-> > +	 *=C2=A0=C2=A0=C2=A0 that nothing is queued while the ring is being
-> > removed.
-> > +	 * 2. Remove the ring. The firmware will make sure that
-> > the
-> > +	 *=C2=A0=C2=A0=C2=A0 corresponding parts of the hardware are resetted=
-,
-> > and that other
-> > +	 *=C2=A0=C2=A0=C2=A0 rings are not impacted.
-> > +	 * 3. Kill the entity and the associated scheduler.
->=20
-> Xe doesn't do step 3.
->=20
-> It does:
-> - Ban entity / scheduler so futures submissions are a NOP. This would
-> be
-> =C2=A0 submissions with unmet dependencies. Submission at the IOCTL are
-> =C2=A0 disallowed=20
-> - Signal all job's fences on the pending list
-> - Restart scheduler so free_job() is naturally called
->=20
-> I'm unsure if this how other firmware schedulers do this, but it
-> seems
-> to work quite well in Xe.
+url:    https://github.com/intel-lab-lkp/linux/commits/Jiayi-Li/usb-core-Add-boot-delay-for-DH34-board-in-restore-mode/20250306-141857
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usb.git usb-testing
+patch link:    https://lore.kernel.org/r/20250306061749.1502029-1-lijiayi%40kylinos.cn
+patch subject: [PATCH v1] usb: core: Add boot delay for DH34 board in restore mode
+config: arm64-randconfig-002-20250307 (https://download.01.org/0day-ci/archive/20250307/202503071748.Paav3L6j-lkp@intel.com/config)
+compiler: clang version 15.0.7 (https://github.com/llvm/llvm-project 8dfdcc7b7bf66834a761bd8de445840ef68e4d1a)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250307/202503071748.Paav3L6j-lkp@intel.com/reproduce)
 
-Alright, so if I interpret this correctly you do that to avoid our
-infamous memory leaks. That makes sense.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202503071748.Paav3L6j-lkp@intel.com/
 
-The memory leaks are documented in drm_sched_fini()'s docu, but it
-could make sense to mention them here, too.
+All errors (new ones prefixed by >>, old ones prefixed by <<):
 
-=E2=80=A6 thinking about it, we probably actually have to rephrase this lin=
-e.
-Just tearing down entity & sched makes those leaks very likely. Argh.
+WARNING: modpost: missing MODULE_DESCRIPTION() in fs/exportfs/exportfs.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in lib/zlib_inflate/zlib_inflate.o
+>> ERROR: modpost: "saved_command_line" [drivers/usb/core/usbcore.ko] undefined!
 
-Nouveau, also a firmware scheduler, has effectively a copy of the
-pending_list and also ensures that all fences get signalled. Only once
-that copy of the pending list is empty it calls into drm_sched_fini().
-Take a look at nouveau_sched.c if you want, the code is quite
-straightforward.
-
-P.
-
->=20
-> Matt
->=20
-> > +	 *
-> > +	 *
-> > +	 * For a HARDWARE SCHEDULER, a scheduler instance
-> > schedules jobs from
-> > +	 * one or more entities to one ring. This implies that all
-> > entities
-> > +	 * associated with the affected scheduler cannot be torn
-> > down, because
-> > +	 * this would effectively also affect innocent userspace
-> > processes which
-> > +	 * did not submit faulty jobs (for example).
-> > +	 *
-> > +	 * Consequently, the procedure to recover with a hardware
-> > scheduler
-> > +	 * should look like this:
-> > +	 *
-> > +	 * 1. Stop all schedulers impacted by the reset using
-> > drm_sched_stop().
-> > +	 * 2. Kill the entity the faulty job stems from.
-> > +	 * 3. Issue a GPU reset on all faulty rings (driver-
-> > specific).
-> > +	 * 4. Re-submit jobs on all schedulers impacted by re-
-> > submitting them to
-> > +	 *=C2=A0=C2=A0=C2=A0 the entities which are still alive.
-> > +	 * 5. Restart all schedulers that were stopped in step #1
-> > using
-> > +	 *=C2=A0=C2=A0=C2=A0 drm_sched_start().
-> > =C2=A0	 *
-> > =C2=A0	 * Note that some GPUs have distinct hardware queues but
-> > need to reset
-> > =C2=A0	 * the GPU globally, which requires extra synchronization
-> > between the
-> > -	 * timeout handler of the different &drm_gpu_scheduler.
-> > One way to
-> > -	 * achieve this synchronization is to create an ordered
-> > workqueue
-> > -	 * (using alloc_ordered_workqueue()) at the driver level,
-> > and pass this
-> > -	 * queue to drm_sched_init(), to guarantee that timeout
-> > handlers are
-> > -	 * executed sequentially. The above workflow needs to be
-> > slightly
-> > -	 * adjusted in that case:
-> > +	 * timeout handlers of different schedulers. One way to
-> > achieve this
-> > +	 * synchronization is to create an ordered workqueue
-> > (using
-> > +	 * alloc_ordered_workqueue()) at the driver level, and
-> > pass this queue
-> > +	 * as drm_sched_init()'s @timeout_wq parameter. This will
-> > guarantee
-> > +	 * that timeout handlers are executed sequentially.
-> > =C2=A0	 *
-> > -	 * 1. Stop all schedulers impacted by the reset using
-> > drm_sched_stop()
-> > -	 * 2. Try to gracefully stop non-faulty jobs on all queues
-> > impacted by
-> > -	 *=C2=A0=C2=A0=C2=A0 the reset (optional)
-> > -	 * 3. Issue a GPU reset on all faulty queues (driver-
-> > specific)
-> > -	 * 4. Re-submit jobs on all schedulers impacted by the
-> > reset using
-> > -	 *=C2=A0=C2=A0=C2=A0 drm_sched_resubmit_jobs()
-> > -	 * 5. Restart all schedulers that were stopped in step #1
-> > using
-> > -	 *=C2=A0=C2=A0=C2=A0 drm_sched_start()
-> > +	 * Return: The scheduler's status, defined by &enum
-> > drm_gpu_sched_stat
-> > =C2=A0	 *
-> > -	 * Return DRM_GPU_SCHED_STAT_NOMINAL, when all is normal,
-> > -	 * and the underlying driver has started or completed
-> > recovery.
-> > -	 *
-> > -	 * Return DRM_GPU_SCHED_STAT_ENODEV, if the device is no
-> > longer
-> > -	 * available, i.e. has been unplugged.
-> > =C2=A0	 */
-> > =C2=A0	enum drm_gpu_sched_stat (*timedout_job)(struct
-> > drm_sched_job *sched_job);
-> > =C2=A0
-> > --=20
-> > 2.48.1
-> >=20
-
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
