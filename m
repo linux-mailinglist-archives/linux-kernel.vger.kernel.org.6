@@ -1,240 +1,253 @@
-Return-Path: <linux-kernel+bounces-551779-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-551782-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 43AC6A570BE
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 19:44:44 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AFFB4A570C5
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 19:48:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 599CF7A35F3
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 18:43:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EFE95189BD1E
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 18:48:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E4392417FB;
-	Fri,  7 Mar 2025 18:44:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2C9924394B;
+	Fri,  7 Mar 2025 18:48:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="SAooB1bN"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="XPkXkgBp"
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0DE82417C3;
-	Fri,  7 Mar 2025 18:44:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.17
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741373073; cv=fail; b=nrlPNLl/IIsMhvgS3BJsLRnzPJOSJkaeGOdv5kFnilwVrNmpLvHkok8CwDhRMnKg2c6lzvG/IFbVp0gs0eXMtYdIWQUKF2etouSf00qD0/CAYvkYcHE1m/e0pQ2WFRwxOd0kIBpZwfTanZceV7AhtMlMwtOAz4VruiG56+A7uF0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741373073; c=relaxed/simple;
-	bh=4+wqBPZPY+6UkzSTeyUztmgu4na3iurQhX6HXkWukBU=;
-	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=RyIyzISdvowiqRZjkIPxaO2CwlxjMmxFAE0pI2rRVAqvEBAXy5cRLjnCjbS7CFwzwlUPObdvUYKrIIBuHopZv6heFleu6FIp5PR+pvt9tBF5nz9aPI1IN0+gKVv0XtwkJov3p8RKuSuJ//NGR4G0XvMwvIB/A1yADkTp9m03G2k=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=SAooB1bN; arc=fail smtp.client-ip=192.198.163.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1741373072; x=1772909072;
-  h=message-id:date:subject:to:cc:references:from:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=4+wqBPZPY+6UkzSTeyUztmgu4na3iurQhX6HXkWukBU=;
-  b=SAooB1bNHZZdbqBy9tOReq1r1tqkvRz5uahH5SaKSR16BI1veTpWQ0DY
-   QYZYnDO+20Q3Mc94LBd9fMOKVzgzwkCiQAf3X7AqqSQTNDo8jb7t/IKhU
-   /N0eYF2mirZIkXdBnR4Ytib6cu5sKfVKrg3SaY2kpPaIQR2MhjS92nQOy
-   PmiyILXLnTJSyJLAPEZXzKBAaDizSBZcxNzVYqhztI1diWCokRAILaRpy
-   eoYc8soKdDSsGppQln7jtLouhRR6LmZ6a2RzML4XC26cssk5nM0+GOpnB
-   dJaxa1iKV6HqWadGrIN0URlkxp94baIrudY7p4sWsLRKEGa2uve/Dfgxa
-   w==;
-X-CSE-ConnectionGUID: ugJe+HT6TFqtr2RgUodNtw==
-X-CSE-MsgGUID: GiaxgXl4RK+B613k6Fa7AA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11365"; a="42312441"
-X-IronPort-AV: E=Sophos;i="6.14,229,1736841600"; 
-   d="scan'208";a="42312441"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Mar 2025 10:44:30 -0800
-X-CSE-ConnectionGUID: 6yMOeNZwQ0Wfo4bDAI5F0w==
-X-CSE-MsgGUID: BwckMkZHRMmgiVh93oOZ8Q==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,229,1736841600"; 
-   d="scan'208";a="119147557"
-Received: from orsmsx903.amr.corp.intel.com ([10.22.229.25])
-  by orviesa009.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Mar 2025 10:44:30 -0800
-Received: from ORSMSX901.amr.corp.intel.com (10.22.229.23) by
- ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.14; Fri, 7 Mar 2025 10:44:29 -0800
-Received: from orsedg603.ED.cps.intel.com (10.7.248.4) by
- ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.14 via Frontend Transport; Fri, 7 Mar 2025 10:44:29 -0800
-Received: from NAM02-DM3-obe.outbound.protection.outlook.com (104.47.56.40) by
- edgegateway.intel.com (134.134.137.100) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.44; Fri, 7 Mar 2025 10:44:28 -0800
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=qyLc/8g24mTrRP9RgepUwogJkFl4x8U4eXw4Kb5ESNHmcZ5pkH/13kbe332R4Wybq1NRVlYifEAy9+QZSQmJZt4WKvTFzcraCvVE7hmflzJ4E/dp4jTS+TOLVjGOG+O242+BICRWC2ins8EYXlAvlP3QHTtW/P9763dNtb6j9g4kTiLVkhwsa+DF9huZu6vbc5tholWCbeEP5yFkPgVIXcqFH4W/v9LODw1VsNsrmthiwfzGSbl3on7qRH8jzTT5MOKfZiGYj7pvAGLWDliWcBROL8fmqGdLLCc1XRFIZQjrfcsrmYF23WaXfoyJL3R7xKk9FzaXsaF5Rgi/01aVbQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=cmY9a7M+66B/D1RlbZfRLlhy/mEUe0NIqYkFFSkN5DQ=;
- b=DB4Ug1+GLSkST9Q8I9xGgYVkhX8CBQRAA4cDHL/x4bgodX7SqXKIZRZto0fsGOe9EaHryYMYh6mUOBzW2e7sQ7fVGVf/nEHoGDXYBdcssJSWSUd5hR3oGJdnYoKp8noqya0gksFxXMdIgexcKkmSq9G7zv+YCpmquuZQoJC2sh2OeRLi46PC0I9+DwHXVoSlPtEXzKinnVrsYSb5TCZzZFBbt1P8TRR5hZiHyXpqi/ChPge52DLzTPwoLX4kirq42oAGLDe/v0uIkFAQoO2f+PO+/dIcC1k/5s8QOBkGeGNfvXPOh4ThavnUKjjBYLVhF81alq9ubjcooqjVMYPm1g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from BYAPR11MB3605.namprd11.prod.outlook.com (2603:10b6:a03:f5::33)
- by BL1PR11MB5222.namprd11.prod.outlook.com (2603:10b6:208:313::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8511.22; Fri, 7 Mar
- 2025 18:44:26 +0000
-Received: from BYAPR11MB3605.namprd11.prod.outlook.com
- ([fe80::1c0:cc01:1bf0:fb89]) by BYAPR11MB3605.namprd11.prod.outlook.com
- ([fe80::1c0:cc01:1bf0:fb89%4]) with mapi id 15.20.8489.025; Fri, 7 Mar 2025
- 18:44:26 +0000
-Message-ID: <4030ee60-b607-4ddf-99d9-5348a741f7d5@intel.com>
-Date: Fri, 7 Mar 2025 20:44:17 +0200
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH V2 2/2] mmc: allow card to disable tuning
-To: Erick Shepherd <erick.shepherd@ni.com>
-CC: <andy-ld.lu@mediatek.com>, <avri.altman@wdc.com>,
-	<cw9316.lee@samsung.com>, <dsimic@manjaro.org>, <keita.aihara@sony.com>,
-	<linux-kernel@vger.kernel.org>, <linux-mmc@vger.kernel.org>,
-	<quic_jjohnson@quicinc.com>, <ricardo@marliere.net>,
-	<ulf.hansson@linaro.org>, <victor.shih@genesyslogic.com.tw>,
-	<wsa+renesas@sang-engineering.com>
-References: <9e34fea2-6bdd-4673-a75d-837d9b793c3d@intel.com>
- <20250307174545.1288682-1-erick.shepherd@ni.com>
-Content-Language: en-US
-From: Adrian Hunter <adrian.hunter@intel.com>
-Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
- Business Identity Code: 0357606 - 4, Domiciled in Helsinki
-In-Reply-To: <20250307174545.1288682-1-erick.shepherd@ni.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: MI0P293CA0011.ITAP293.PROD.OUTLOOK.COM
- (2603:10a6:290:44::11) To BYAPR11MB3605.namprd11.prod.outlook.com
- (2603:10b6:a03:f5::33)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C80715382E
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Mar 2025 18:48:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741373294; cv=none; b=HNsF93H+jE4/doQH89PpUOGa6BI5kdKEfiipAluU1KfgJecC9+QEcZ2MVM9Id1myDjWZUebKRomHMoDKJfef2bfGgqwplvmdLYCU27nzAA6mDJF0TTWpnn/z2wHTH2zNY29EcZFjf3Dr0WphCUBCmv1LURVfZrXNYp3VR6Kc+e0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741373294; c=relaxed/simple;
+	bh=GTfNNZvLCbOPBoM0Ai0WgtMz65rUH5c7i6UB1UGWT7s=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=qAZYmNeKBJV1lXoY2OHW2W+z7FUbBz6ybG+ax24AQnTIuHcx7fWZY93TjiishuI6VYyvMAD9fdfcQeYwRb4QRrU5AML/6r8JRlIRWP33J2a89gsWmAhqN76UhqmbG926k/irtMu4v3cVTgL+NKgZPqpIN0aTojJSuKANW58ng+s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=XPkXkgBp; arc=none smtp.client-ip=209.85.214.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-223a0da61easo12515ad.0
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Mar 2025 10:48:12 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1741373292; x=1741978092; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=hnnBLiHSipCquEBENm80tx5p5tMfaLtXbkHcXLPFAjU=;
+        b=XPkXkgBpG2Z/bl6TqPHaytNlT1VMOl4x5jpQBvxyz8CBz3WUEZb5/elJHjKYjRMQ87
+         sfnMLzQJwtcUqO2PhXCVQnp9d/Vrbj0mUhQyVMeW8MDqpnH9079IP7VMd4bpemw2iLsj
+         HRDZWHVIWtYKNHdjmpB/+3SbOsd4oqJ55XAmo7R/CLjxQ6n0JEUgxx0ry9OrqhImowzW
+         vZk25VWt3RJidaN5GopH6dya26Bw1jXvC/0WLywzHvQDbngBA8/pssjiHhJGoIt7s0z4
+         a7YeUyzEqW/KrQ+h4xX9a3if/gbxDsXyz7fjndyy9Q3w/g6RRe62ysebX2BGoBLg3SG8
+         lXrQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741373292; x=1741978092;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=hnnBLiHSipCquEBENm80tx5p5tMfaLtXbkHcXLPFAjU=;
+        b=wLY0zhNfEvT4YdviRaE8f4p7ha5YZOsBOd+HVY2INGaU07XUh6aitMiLI5UtMhcZwk
+         4natfGZwvibA+34aN15/1w72UleQnM9A9ml3BxvRo0vgFhNEQAPEmEv/JvceaNmN2ep0
+         jWNuWszdaOBLgKWq6CYYiOTbPOCXWFi+U+MCPIM8GZqpPqifV6Q63hzBTlrWMjN8HzsM
+         27XsnLwESEGwc6/cKsaOobXlHfhlY0HFcMC4gF8+ABxfuDRIdpPt56IoJ9Ebps4G1GEj
+         /Ch9Y6AAXoFDKYkck0Y6BYetSYJbCG+o2PhBD6r+1nDinOsquflumdtkxtbHqJHxs3PS
+         O1+A==
+X-Forwarded-Encrypted: i=1; AJvYcCXcTczr/pt8x6FLB5wM+Z84+uazFjcP27O80YGivP0zc2DJ9eSWEIVM5b1GCElBqwpP4MlkQT29JuEj2go=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxvJ/NKnDkgB9J7EL32kHpjoYdbPIuyTSwh5kElb+UZaoH+Bkmf
+	rXZZ0X2gAFqUlemESL5TtszSejPRvq1M6B8E85+lpWQzBllYsC1NuVz1uAwAseTwNSGRekrGNPs
+	bDAabiZlXYQ406+dSvbyXawmz9xYgc3BM8kma
+X-Gm-Gg: ASbGnctmL1SHzPR2AcheBDHBZXv3pny7AivC2nAjXuoykFooNXTMa+GiXWcfr2p1tp/
+	0fzvNYuQuX49CVPU7/eZxmT2N1Xmr3U+u9OI/A+q7Ohj9FlQEqvFpc8Mue2w2rnZ4P+umV3NmBH
+	QVvMS0fbZW/W6laOCZWI73nFL5mzI=
+X-Google-Smtp-Source: AGHT+IGdT5nE+QHbJpWHzcC0wNB5abK8RgakHQzBWpxs8Ndj2pR7WbNhCjKOLLaAbeK/qow+V4wBDpPUYk2l/+ePmXg=
+X-Received: by 2002:a17:902:ccc8:b0:215:42a3:e844 with SMTP id
+ d9443c01a7336-22434b5433emr1163905ad.17.1741373291454; Fri, 07 Mar 2025
+ 10:48:11 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BYAPR11MB3605:EE_|BL1PR11MB5222:EE_
-X-MS-Office365-Filtering-Correlation-Id: 0e0a8c6a-4a62-41d0-fd57-08dd5da8161a
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|376014|1800799024|366016;
-X-Microsoft-Antispam-Message-Info: =?utf-8?B?Yy9RYWc5N3QxMHFNZEhrQ1VvN3l3czBJbVFUVThHOFpjWGhLTCt2OTdubm1n?=
- =?utf-8?B?ZXVTUzJyRnp1RW1mY0JLVGw4OTNPWWNTMkM2LzFJQW1WZEMrZU4rbzFwSTE5?=
- =?utf-8?B?R3dnUG52K2FCSUxnQ0xUVHRFTlBLMy9LcWVwWHJBNEVaVzVaMDVhRTFnMDEy?=
- =?utf-8?B?YnFiSU1QTzk1Y2Y2ZXF4MlN4WTV2dzBmL29IeWVwYU0rMXNKUEFSOEttdVlo?=
- =?utf-8?B?cnpnUmpLK3pBME41MzVTU200dk42cEprcmpNR2VkUGF2UDhEN3U3QkVzd01L?=
- =?utf-8?B?YlBTclhZUTNrM1dxN3NVWTRrOUJoWkwrSUU2SUs1dExMVmF6dGkzd0o1Z0FS?=
- =?utf-8?B?bmV4SUV3RzZ4RERPaGlRcDJTN1U1UktYVzdqcHBjMFBGdVVjSTFncFVSdlBV?=
- =?utf-8?B?Q3dnSDlZZXVuR0ROUFUzTWNzTnU0WlNDQVVtR2JiZ0ZLak9NU2luTGpqU09I?=
- =?utf-8?B?TWpkM3FDOUtKVUlSK2F2ZDZJczVVYkFVVDhhc3ozY3hrQmlmY2FZQU9OL2U1?=
- =?utf-8?B?RTgvdEQ3VmJDT05KQmppSTVVV1hvOVc5SDUwSFJqTDJ4YnNpanNwU3AyWkJx?=
- =?utf-8?B?OExaa2lVRjFFWkNuRC9NdThBWUdRaU9UUWdPcURDRHpSZGVPNVNsb1RSd2c0?=
- =?utf-8?B?SVgvK0FPNlpJb2JWd1BHVDJQaVRsaFFkTUFtNGd6bk5nUHBPeWVER0N5STlz?=
- =?utf-8?B?NzBrREZzSXJZcmNkMGVVVjdkb2RhMUdqbGJxNkFXT3V1aldKQ2UwVkpUTHc3?=
- =?utf-8?B?ZFJpSjYyanBqUlZHOGJxT0ZSME44UWQ2ZEYrTko3ZnZpOGxXQkg4b0R3dFhC?=
- =?utf-8?B?WUtYYjltdDJjM2VQbEtWWTUwTVVHTUJCNmczd29meTRlM0Q0RjlzMDgrTVda?=
- =?utf-8?B?UkRUaHl3SHVFWGRLT3VLbGtxY2dDNThNZ2hsUGRyeEJjUzVxbVBWK2pUaHlh?=
- =?utf-8?B?a0tnUkJuNmRiMmREd3RPMTYyUnVQeWdsU0tVYnZCMWFNMWcwUUpaYkxsODdX?=
- =?utf-8?B?WHBGTmhTaXdGdUUwYnN4YXpLaGdYR2FPOExBK1FCL1dNS3hJMUU5NGZGTEhw?=
- =?utf-8?B?WU1EcnFsdE1VbFJLTjJhZDJGZnNwTHVacVVDQm13cGNYT0pOTTZnU3UxcXda?=
- =?utf-8?B?ZlFuT1FGVG90NEVzem5YZjJMMlFoMy9wT1krYTFYOEVKSU5MdGtWSkRqMGJE?=
- =?utf-8?B?am9BNk80RlMzZGRRL281aUg2MFJhd1BPREhvbFZ1dzVnRE1FSEdha3A4Z0ha?=
- =?utf-8?B?aWpTSlpUVmg2SFBoRExBMnkzUEk1eDhac001S1IxU2V4Ykc5OXNCT3pFclR6?=
- =?utf-8?B?bjhZTHFPNjExSWpRUmtMYWJlLzNZN0Q5MzA0c2lDREdaUkt6ZzZFVFFhWEpF?=
- =?utf-8?B?bkZkV01yRnFKTTd3MHpvaElGTE40RzRuRWxDckFZQzZSL1B6RVY0Mms3NTlJ?=
- =?utf-8?B?VDc4d1FPUC9ialg0T2M1dEs4UFRubXJ4OFNzQThldTFybVFBdlRKZjVHL2dt?=
- =?utf-8?B?MGd3R3MrWTNzQmlyWTBRVStQUThUcnhIbXEzdHUwcVNjbFJoS3ozUEg2TGFZ?=
- =?utf-8?B?d0RVNy8wZGlwNnJEZjFrSlArOS81bU5rMjRFTWZyYlRoVzMrNGNWeExxRTdC?=
- =?utf-8?B?aG9kdXdycnBpMjNHdEduTU9WQm02djlLV3NJUG5xd2RmSnJBMVEwMjl4Rno5?=
- =?utf-8?B?RUo2RmZkOHRobmNBQWkxMUJtMXhJTkdrd1grVDFERnlKL0ZPdUlzZkVJUlNC?=
- =?utf-8?B?WkxuRUJwTWdYYnFnSjc2czQvZTBVY3M5bERqMW9NZ2JnK1FBcmlGS0NkUVl4?=
- =?utf-8?Q?Y9zcGsyF69p48i6yJ1WnCu5Ha1px9sexXTHmw=3D?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BYAPR11MB3605.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?TjhNTHAyVWk5Y3dyOEVaN3dZcTZvSmFjUGRxRmlwRUVpWVpBZ3RqbVRycFVx?=
- =?utf-8?B?Nis4NFlodVErQWdmRmFOOXNHNkp0OGxYTCthZ3B2ZEhUUng2aHcvdUFMZXV5?=
- =?utf-8?B?TUNFemJKNElWczNBeGFMaTVqbmsvb0JkaWF1cWtjdEZmclpONFpsTmorTFEx?=
- =?utf-8?B?UW1xNG96aXNHbytxd2VmM1dVSFlFOEVJK1R1dGFoblMydkxOS1FFR3RRdnBE?=
- =?utf-8?B?UkFVWVJVME52TnVxWVpFNUl4WUNGTnBvOEtRUXU0MjUvb1Zxa084U0JZcmlQ?=
- =?utf-8?B?b0tjc2dFdFJiUGEvTkZ0N24xSURhWUZLM2JzalFRV1hBR3g5bFg0VjlWSW45?=
- =?utf-8?B?ZG84R2hEWmNieHIyVWJpR0xxaXl0dGlNV1FVbnBxQUYvV0FyN25tWDM5S2F6?=
- =?utf-8?B?RHVSdHVVeGtUT3o4Wi92SXgzT3FCNTMzWXFyN0xlOEg4Wmpzb3lkRlVLRDFt?=
- =?utf-8?B?TjR6VkJqVkkza0JrUTFUK1hDSXJvSGU5Q1JBczU4azNFOWNiM2szczJqN2ZY?=
- =?utf-8?B?THVKYTFtcm0wTFZtTDJPN0lSQ01kSm0vY0RycnA2MjhoMExRTXFXNWsrN09i?=
- =?utf-8?B?ZGtZZGx2VUV6YlZrN2lUblNzdHc1VlNseTliZFlsT1hNSDMyaW1TWktCUDBu?=
- =?utf-8?B?N3BWbllmWjZ5TW9RNGxNbG9KMkFqYUp3dnN2ZmlZUFRTSkliSkZoT05wTkdS?=
- =?utf-8?B?QStacFl6UDJBTU45djNEVkY1aWdVZEhadm1nMnEwRUVMTHFwL3ZETWNsUUpj?=
- =?utf-8?B?SnR0cmduQ2prbDQ5am9zQTFpT0tMR0paYTJMcGRsbDN1dDhCa29HQ0lTTUhE?=
- =?utf-8?B?c2d1QS9pOEY5UEs3WEdTQWFUc3hBOHVNZ25Gd082TEljNHpXa29uRUZhKzJG?=
- =?utf-8?B?elZKYTNkaGEzbG8rdEpETnR0a0dJSndlYXhHVS8yd3NYd29CZTlWVWV5VGhH?=
- =?utf-8?B?UjgwYXpPblk1Zlpka05EVE43SlF5RWNwUitYOXlaLzNnSlBZczRnSE9lM0ZE?=
- =?utf-8?B?bk9lZXVSMlRwek5nS2NKMnJaK1I2L2lVd2hkdld3SlU5UUVJanVtK1kxdFRJ?=
- =?utf-8?B?VDNlR3JpTDVYSWlBWDZzUDJHMmZYc01BTUEweXNCcWxWbGNVczhTY2NlZkU1?=
- =?utf-8?B?bjgxVklPbmxFWFVMQ25yUzRUVXdOa3Q3Sm1HNWJ4MWtKMWlIN2hWTkRMRlp5?=
- =?utf-8?B?Nitqa2Jad3lPMUZvMC9QMkhWUmthUG1tZDFUQVpFY1h5SmdPZnFnV2t2NnlL?=
- =?utf-8?B?ellKbnltR2d4Q1dUZmdMYXdwUEpkZDlpcTMyd3V0Ykp6OEtMUHVqSVdCZWJB?=
- =?utf-8?B?MVlQeGF4ZTViN3BpQzhRbUppMXcvYXdqNFduU1g0Lzdmb1ZxeG1DLzFMNG16?=
- =?utf-8?B?UGZRRkJVbTIrekZmOEYwZzdyUzY2Z0tLeXJTVktnbndNODY0NXZKa2p6Qmlp?=
- =?utf-8?B?MGovcFc2RXZQU3JBUXdNM3NKcE5pR05FeXFpT2lIWll1Z0hqYWI2VUMwOXMx?=
- =?utf-8?B?RWdOZTVKYUx4YVRmM3FQS2dVMW41eEhkN2kyL3NGTEFRc1F5TjVjY1M3eWJS?=
- =?utf-8?B?em14cVJYV205QWMrdE9UL0l1VHU2TkRWRWRqNytxaXhiNlZkWWJNVWxkTmR6?=
- =?utf-8?B?bW54cU50eERqdXU3ejlnWVc4RE0xVFNPOStqbnpOb3k3MUJja0tUODdobzlB?=
- =?utf-8?B?QzVRaVZhSlIvWGhYOVJpT2JjekVnMlR6KzBkZ0dQdSt5bGs1U2V1NGJqcG8x?=
- =?utf-8?B?MFc4VmprWlJiK2FvQ2U4SnJCQzdoL1U2VVdBQlBRdlZjb21BdVRPdlNGY2FI?=
- =?utf-8?B?MUVFZUFFWkgzSko2aHJWMFlaeERNNUtJNjZDVnRwZXR1MFJZVnk1bjUxdytw?=
- =?utf-8?B?aVoxN1o2NjFjZ2F2UXdDOEF3RmE1cnNqakJoa0MrVFptczk0cU54YTdaQVBI?=
- =?utf-8?B?dmV4aGw2RndNK1hRMldjTHVxSzU4Z29QYlloOXdlanVWTkUvcURHek9BWENG?=
- =?utf-8?B?R1Q2bGZ1dDR6b2ZaV0c3NnpKaVFFQVkyNGdEK3lUc1Era2NSaUMveWVIaSts?=
- =?utf-8?B?UDdPUVFtSHJBWHFOL1hDK1Q4MDZxb1NKUTBpd3liajdDNld3TlpaZVNsSlo5?=
- =?utf-8?B?WERXQ2lSOWJvTnZFTVJFYkFXNndnL0xaaWx1M0VkZ2hFYy9yancwZlRSaCtx?=
- =?utf-8?B?Y1E9PQ==?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0e0a8c6a-4a62-41d0-fd57-08dd5da8161a
-X-MS-Exchange-CrossTenant-AuthSource: BYAPR11MB3605.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Mar 2025 18:44:26.6378
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: uwFORYnWta1qmULjQUEGFyF3v9m6guCNL7r63G6LLS8Oy+TJX6Pwh+DVcRrwgpH8Tt+4CVJ2PhLTCkwR46AUnQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL1PR11MB5222
-X-OriginatorOrg: intel.com
+References: <Z7Z5kv75BMML2A1q@google.com> <CAP-5=fVbti6efu6uA9a5os6xhnTuJ0egyesZsy0dmkiScwYFqQ@mail.gmail.com>
+ <Z7yJ0Vpub6JeQyYo@x1> <80432f35-e865-4186-8b92-26b25279e150@linaro.org> <Z8sMcta0zTWeOso4@x1>
+In-Reply-To: <Z8sMcta0zTWeOso4@x1>
+From: Ian Rogers <irogers@google.com>
+Date: Fri, 7 Mar 2025 10:48:00 -0800
+X-Gm-Features: AQ5f1Jq6zGKtLrcNss-uzScSqLCab5P5rfBJprgge4TMGFWgurWy9LXP2biOgVw
+Message-ID: <CAP-5=fWytO4QkxQEu02RxTM51dtqtDXnT517tdiAe79LidT6Ww@mail.gmail.com>
+Subject: Re: [RFC] perf tools: About encodings of legacy event names
+To: Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc: James Clark <james.clark@linaro.org>, Namhyung Kim <namhyung@kernel.org>, 
+	linux-perf-users@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>, 
+	Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org, 
+	Mark Rutland <mark.rutland@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Adrian Hunter <adrian.hunter@intel.com>, Kan Liang <kan.liang@linux.intel.com>, 
+	Andi Kleen <ak@linux.intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 7/03/25 19:45, Erick Shepherd wrote:
->> Sorry for the slow reply.
-> 
->> I would expect if there was a general problem with DDR50 SD cards,
->> it would have come to light before now.
-> 
->> Does the card work with any other host controllers with linux?
-> 
->> If it is specific to a particular kind of card, a card quirk
->> could be added, say MMC_QUIRK_BROKEN_DDR50_TUNING
-> 
-> No worries. I have not tested this with other host controllers but
-> can try to get something set up. This issue has only appeared on
-> one particular SD card model for us so I would not be surprised if
-> the I/O errors we see on subsequent tune requests are specific to this
-> card. I can put together a solution using the card quirk you suggested
-> if you think that is the best way forward.
-> 
-> My fix is currently spread across two commits, one to return the error
-> code thrown by the tune request timing out, which prevents the card from
-> retuning, and this one that prevents the initial card tuning if it has
-> already failed. Should both parts be controlled by the new card quirk?
+On Fri, Mar 7, 2025 at 7:10=E2=80=AFAM Arnaldo Carvalho de Melo <acme@kerne=
+l.org> wrote:
+>
+> On Fri, Mar 07, 2025 at 02:17:22PM +0000, James Clark wrote:
+> > On 24/02/2025 3:01 pm, Arnaldo Carvalho de Melo wrote:
+> > > On Wed, Feb 19, 2025 at 10:37:33PM -0800, Ian Rogers wrote:
+> > > > I knew of this tech debt and separately RISC-V was also interested =
+to
+> > > > have sysfs/json be the priority so that the legacy to config encodi=
+ng
+> > > > could exist more in the perf tool than the PMU driver. I'm a SIG
+>
+> > > I saw them saying that supporting PERF_TYPE_HARDWARE counters was ok =
+as
+> > > they didn't want to break the perf tooling workflow, no?
+>
+> > Doesn't most of the discussion stem from this particular point? I also
+> > understood it that way, that risc-v folks agreed it was better to suppo=
+rt
+> > these to make all existing software work, not just Perf.
+>
+> That is my understanding, and I agree with them and with you.
 
-Does it tuning at all?  Maybe MMC_QUIRK_NO_UHS_DDR50_TUNING is a better
-name, then at the top of mmc_execute_tuning()
+This is describing what RISC-V have been forced into doing:
+1) to support non-perf tooling,
+2) because the perf is inconsistent in priority with legacy and
+sysfs/json events.
 
-	if ((card->quirks & MMC_QUIRK_NO_UHS_DDR50_TUNING) &&
-	    host->ios->timing == MMC_TIMING_UHS_DDR50)
-		return 0;
+Their preference has been to move these problems into the tool not the
+PMU driver. What you are saying here is to ignore their preference.
+I've already quoted them in this thread saying this, but this keeps
+being ignored. Here is my previous message:
+https://lore.kernel.org/lkml/CAP-5=3DfXSgpZaAgickZSWgjt-2iTWK7FFZc65_HG3Qhr=
+Tg1mtBw@mail.gmail.com/
 
+> > Maybe one issue was calling them 'legacy' events in the first place, an=
+d I'm
+> > not sure if there is complete consensus that these are legacy.
+>
+> I don't see them as "legacy".
+
+So let me say this is really distracting from the intent in the
+series. The series is:
+1) trying to clean up wild carding ambiguity - not making it dependent
+on the name of the event being parsed, the behavior of `cpu_cycles`
+matches that of `cpu-cycles`
+2) trying to make the legacy vs sysfs/json prioritization consistent -
+making it so that `cpu_core/instructions/` encoding matches
+`instructions` as we display both of these as cpu_core/instructions/
+and it is confusing to a user that different encodings were used. We
+also pattern match perf_event_attr config values in places like:
+https://web.git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.gi=
+t/tree/tools/perf/arch/x86/util/topdown.c?h=3Dperf-tools-next#n38
+so >1 config for the same event means such pattern matching needs to
+consider all cases.
+
+There is now a  "Make Legacy Events Great Again" (MLEGA) effort that
+is standing in the way of clean up work. As already stated but
+repeating, why is MLEGA a bad thing:
+1) legacy events lack descriptions and are open for interpretation.
+For example, do the events include counts for things done
+speculatively?
+2) it is unneeded. Vendors can choose to name events the same name in
+sysfs and json. ARM are achieving pretty much all of the same thing
+with architecture standard events but in their use they will have
+appropriate event descriptions for each model giving all the caveats
+for the event. When something is common we can encode it in the common
+json we don't need legacy events for this:
+https://web.git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.gi=
+t/tree/tools/perf/pmu-events/arch/common/common?h=3Dperf-tools-next
+3) LLC doesn't mean L2, it nearly always means L3, the event names
+have become obsolete and confusing. More MLEGA means more of this.
+4) PMUs have only ever supported a subset of the legacy events. We
+have to make use of legacy events in `perf stat` not fail when they
+are implicitly added as default events and via the -ddd options.
+5) multiple encodings/PMU types for the same thing complicates things
+like topdown event ordering, that is a kernel/PMU restriction, and
+metric event deduplication.
+6) legacy events are broken on ARM Apple-M and have been broken on Juno boa=
+rds.
+7) architectures trying to push complexity into user land (RISC-V) are
+being forced to push it into the kernel/driver.
+
+Is MLEGA relevant here? Well if you want legacy events to be >
+sysfs/json then yes. For wild carding I don't see why MLEGA cares. Do
+I want to push on MLEGA? No, and I think the reasons above are why it
+hasn't happened in over 10 years.
+
+> > Can't they continue be the short easy list of events likely to be commo=
+n across
+> > platforms?
+>
+> That is my understanding of the original intent, yes.
+>
+> A first approximation, those who want to dig deeper, well, learn more
+> about the architecture, learn about the extensive support for
+> vendor/JSON events, sysfs ones, how to properly configure them taking
+> advantage of the high level of flexibility both perf, the tool and perf
+> the kernel subsystem allows them to be used, in groups, leader sampling,
+> multiplexing or not, etc.
+>
+> But lots of developers seem to be OK with just the default events or
+> using those aliases for expected events across architectures, sometimes
+> specifying :ppp as a hint that if there are more precise events in this
+> architecture, please use them, for instance.
+
+When and where have I said that I don't want to support events like
+instructions and cycles? See above, consistent wild carding and the
+encoding priority are the only issues here.
+
+> > If there is an issue with some of them being wrong in some places
+> > we can move forward from that by making sure new platforms do it right,
+>
+> And adding special case for broken things when we know that some event
+> named "cycles" shouldn't be used for sampling, for instance.
+
+What is this? A new framework for special casing PMUs and events,
+where we're maintaining lists of broken PMUs and changing encodings?
+And tooling like event sorting, metrics, is all supposed to just work
+with this? Are we going to write json for this? Who is writing/testing
+it for Apple-M?
+
+Special cases should be the exception and not an expected norm.
+
+> > rather than changing the logic for everyone to fix that bug.
+>
+> Right. And again, if something doesn't work for a while in some
+> architecture, its just a matter of specifying the name of the event in
+> full form, with the PMU prefix, etc.
+
+So MLEGA would like sysfs/json when they are broken? This is just
+silly, if something is broken we should just not use it. Having 2 ways
+of stating something and expecting different behaviors from them is
+clearly brittle.
+
+> > For the argument that Google prefers to use the sysfs events because of
+> > these differences, I don't think there is anything preventing that kind=
+ of
+> > use today?
+>
+> Indeed.
+
+I explained that in the context of why legacy events are wrong. I've
+repeated it above. This is not addressing the issues of wild carding
+and the encoding priority.
+
+> > Or at least not for the main priority flip proposed, but maybe
+> > there are some smaller adjacent bugs that can be fixed up separately.
+>
+> Yes, and work in this area is greatly appreciated.
+
+I don't know what your proposals are and to my eyes none of them have
+ever existed, no one has created them in over 10 years.
+I am trying to fix wild carding and the encoding priority.
+Bike shedding on MLEGA, please can we move it to a separate email thread.
+
+Thanks,
+Ian
 
