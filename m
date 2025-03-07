@@ -1,111 +1,100 @@
-Return-Path: <linux-kernel+bounces-551826-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-551827-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C144CA57175
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 20:20:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 36A7EA57178
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 20:20:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 076CF1654D7
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 19:20:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 706AF160657
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 19:20:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 599952566EA;
-	Fri,  7 Mar 2025 19:18:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 186B5255E3D;
+	Fri,  7 Mar 2025 19:19:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="oIbAT696"
-Received: from mout.web.de (mout.web.de [212.227.15.14])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="Lz/gbSs8"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 103A6250BE9;
-	Fri,  7 Mar 2025 19:18:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 604A52517B4;
+	Fri,  7 Mar 2025 19:19:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741375108; cv=none; b=tU7aHxBt6BBWLj1DSRXv+qThFaBEH9YZfhCbuOYvgxDWZwmbjXe3CrJItcbqGbyROmaUDbZq79y0hmKzSoTpfAw1RpQlSwaVwJYxaf6xoIbbAWGktIJYOv3mVwOHSpfG+dA/g9C+YdngoKMF9gwUtjY6nPowHu/a5hSqhPNCf18=
+	t=1741375149; cv=none; b=R5q7jUy1dOnl8MGcqUnYYBND7cg33U+cuI4ID1MOORcEsWg7oOSB5UxwZOslFaDdlQLwGFvsK8GY/vqYHWVy3XVmHU9m2Ck01ZICDdPeipWDNedetTlPpfvyoDww2FAsuyZri6CAjEGHSv8w+JAisRGy+bIxBTvFMcW+P/5CrRs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741375108; c=relaxed/simple;
-	bh=XO6eoc2L9VIlXdKSv70QkK1kPfBWdjWFGNB+o6b0OCU=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=SMyIJGs2kSzU2fDvAQKwdpKB94FSERIx4IGMSBGZVkOmmtAhr+XTpSW1r/QqMx/p2e0/lyWsVsWHbM9snGURfjb6AcaluPNh/5C87G7zFFRB65Xf4JS6jE6w0A+/vxch+IsVbM0SbBXTuM/fMMVTllYkUcEz4LE9MyNtZGGmwAY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=oIbAT696; arc=none smtp.client-ip=212.227.15.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1741375095; x=1741979895; i=markus.elfring@web.de;
-	bh=XO6eoc2L9VIlXdKSv70QkK1kPfBWdjWFGNB+o6b0OCU=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=oIbAT696x7mY9H7ybTZVR5vKDZso+TD7pj2OFyEgNBB0n/yxydp3qmuIrvkMyKfV
-	 0i5FoQcnpiH1HY5xO4zIJiu8f1MM040f/wRxeTKHuyP+ur+lXRUJs//nFEM9j/xRJ
-	 cmaROWKkItt3aPZe4yrFA/zS25o8u0D2skWjnG11nZBm4lzY/RWvEnmzipXJdAbBu
-	 3NaPHdaUAn/kp2B7oPKFSpDhVc+kHvQFOFUifCW0A1RQm6PCkC6ix0EZxsOhap8yh
-	 084h3qM0QVA3qMCFkSpksfTLwmui3HOqSe+3BBTWL2a+KJZuvN4XYy788nN6zH4Nb
-	 QOswN2hKfj+5FBLIZA==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.29] ([94.31.70.70]) by smtp.web.de (mrweb005
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1M1rPI-1toRLz17GK-007Ua2; Fri, 07
- Mar 2025 20:18:15 +0100
-Message-ID: <85a61dad-46df-4920-bbff-7f500ef692da@web.de>
-Date: Fri, 7 Mar 2025 20:18:09 +0100
+	s=arc-20240116; t=1741375149; c=relaxed/simple;
+	bh=3o4gKXJDIHgmAvWpcDkkYgG9LXNWEgidJjvzU10kvm0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=eRI/xYuvAALGDYMq5uf2+YlfLd2eG039j8uxDjSyRKNIKkJWm1NCOG1+UYDGugavp/wtbDwu4IKl/PhILFXjA8fsfjqdlCgLCDMnQx6kVXmRo8FV6HXLzj0sqv5+n2YF7qcxV+BljClViabOEM0/3Fafm9YkwhrA03F8G4VZegg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=Lz/gbSs8; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 6B72E40E015D;
+	Fri,  7 Mar 2025 19:19:03 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id zvYFGKxcmHP9; Fri,  7 Mar 2025 19:18:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1741375139; bh=JNCKMRJVqSwAHC0eoKKiW3t/AjtW80g4cyMSaZyXr7I=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Lz/gbSs8i/be7YUZvbfZrizPx/0fB3D1JN1GguQu/qZ7PBchjwhJk2U+4gfZXWN0O
+	 3phFen6jb0118eiFdR4J5rKYbSshtIO5LwQ6Hr5gkrQpoy1/O5/iLFVkE4iMudyK3x
+	 deotLNimnpqCcoj24Qwxg+EkUTsmbrP+r5/aYYalLqK7fys1G4ifmE9A7Exq6XU8y0
+	 RspaCvlSTMIeBVQxs9FGIVm3bdgMp+c9zudViFHHOORqVkU/5d/nncpgDTYIHYIqJh
+	 bvsn5NFASR81fVQ7b7NHn/Q3IQEHUBAaZayfRuJO6YbSOEo+0tajNO2wqPDuKqY6mz
+	 JOWavsoDIU2IQ1SXIKJZRmw681t9h4/6dphx8YssCYUUFhhMQ/N//6uYNj+udQ8xb/
+	 gfTt9vxdZsfXJclVsX1z5ED+64MrogUFVobkIlZjmZqJdwD+lLd+Okycv0bIZRtorJ
+	 apjD/IeWSejDKHBxd+g6Smu42MAOWdD93stnkrQJAyNM8AgxCvS4HFByYMwVMaA8Xn
+	 D7Qvdwz/QyU3YvI87YO0OljR8RCAi2k4/NuEx3y/8PnDTZj4cCvIB9MO2kYIGJOI7k
+	 GVrg0PJ6Rc4ioJ7jAredqpHdre32KEWpPJgm63O58AxPXtSDeK4TVfXJe4vp+eBRsT
+	 6VVL1qdrxZ5uD+KN8dkMm6ow=
+Received: from zn.tnic (pd95303ce.dip0.t-ipconnect.de [217.83.3.206])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id D6C0B40E016E;
+	Fri,  7 Mar 2025 19:18:39 +0000 (UTC)
+Date: Fri, 7 Mar 2025 20:18:32 +0100
+From: Borislav Petkov <bp@alien8.de>
+To: Xin Li <xin@zytor.com>
+Cc: linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
+	tglx@linutronix.de, mingo@redhat.com, dave.hansen@linux.intel.com,
+	x86@kernel.org, hpa@zytor.com, will@kernel.org,
+	peterz@infradead.org, yury.norov@gmail.com,
+	akpm@linux-foundation.org, acme@kernel.org, namhyung@kernel.org,
+	brgerst@gmail.com, andrew.cooper3@citrix.com, nik.borisov@suse.com,
+	sraithal@amd.com, philip.li@intel.com
+Subject: Re: [PATCH v7 0/4] x86/cpufeatures: Automatically generate required
+ and disabled feature masks
+Message-ID: <20250307191832.GAZ8tGiKty2K-cl1LC@fat_crate.local>
+References: <20250305184725.3341760-1-xin@zytor.com>
+ <4b44eaec-2c45-4a68-80c5-6a8c0905b1ab@zytor.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Florent Revest <revest@chromium.org>, x86@kernel.org
-Cc: stable@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
- Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
- "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
- Thomas Gleixner <tglx@linutronix.de>
-References: <20250307131243.2703699-1-revest@chromium.org>
-Subject: Re: [PATCH] x86/microcode/AMD: Fix out-of-bounds on systems with
- CPU-less NUMA nodes
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20250307131243.2703699-1-revest@chromium.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:oTC+wNwkr78wPpL0D7N6au6+BRYDOflbySeDqknRF7PnWunPgw6
- n09CEbl+6yOcQZr6tYINMNK3H/klIzFRyF2ZEX4XzLPmU6o2PEBXXWG32D5Jh5gHq7yOVSN
- e0jaDtKna87wDe3oGfS6JN308rk+pIwDRVKkyLNo2CpDcLAfql1/HlkajPHfzWXDYWoQXOH
- lOaHR9jpdDaoF2+xT2GTQ==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:04z+TJWa0Xs=;eqmRtTFiaJAo1iFFN0yEKMKniBw
- +abQEHIRPmpTG0VyjgfsB5zGISY7droePnaOD2Atn4YU25M6fO268ZDeVfHkHkp7LuoBEpf1I
- qwIH/nqAbaL0Dm5jEVN0VoKB+NSE08e4Ak1mhC0sSe47pj+I1S9sN8msAOluy3h3EmPUw+WIL
- rw6GHNbj6wXqO/D6EHeP04GQWMHWl/q8YgiduNUewSiA6lK4fc7xWiNwg1qfNHPmmmCvqmahf
- IjBAp25KIury+s8a7zcyIB8GOcL99ujU63VBJN/WKB/2JvILqPsn8fvkY4INDQjwPKUbdEhi4
- AXzqa3HaUBBzU32D0qBRhzz+pspiQaY6fi94FEF728cDC3oTbQoH0PN/ZkgMW5pOJF5+Imdrt
- 6EcBHIXpTsQy+K4PLBdMrzqTiUmlFn4LOdvVs6VzkxWbMvwOV97IVzmcXGTYwDLMQixaMT0Su
- pIohAk4AW7hJMGE/kpckA66U+Em6iOA8Lo02zBfgI1mGN+sjSAOjNdAng8zk0wKEdr/TNh0wW
- +zGMLTQspIjFeRC8XHQ4zvfp2dPuhdrNLqcY/jokHr0Igu7ru7FIFv0goN80x7jCct2jsC1CK
- F3LVchusUbYyhEkKEQ97ZbS0AMDBY9gZWgvqel2Do82hp+6DjNw3dFWFMDpNaYWVF/w6lYBFB
- qoN9rfVFV+NY5dMR90KlV5YPF/9eiUMQiGE+qK/3jEHMWjlrUDuS2N4OXiYjGDJTZMh0Dd+x7
- zAUJcCxtaj/3Qe1XDHerRNx8enviQrBG4fHbNGwPyBqF3j29xmn4uD/nzju7bhUFjk3OclyTT
- 9Yd1QQIrRdR94YEMaDqYNcJ9oNav+AWs1Q8CKD/go5WedtpSe7jeaVsX2hs5ZN8gyVsVdHOHj
- 3uPaBTbZMfnAmmLGrWYmJPSv4bGkdZ+rqBrnsX9puTodn5GbFRqaSEAzTF+iRQfUAV6jgyvZB
- tBPJjnyTQxFCHN+XbkLekZpphuEyn34og/c4SgFEgk6bagZJT8ONYXR00OPuVqStlx5gitRWU
- RDK8s1PB4d3hJX5zkQQhhOVIpMxwdHidasTKQIXMNhOiDTjUijifp7rXbOE1Cf/fHxYDXCUnf
- X8SDepmnkYDMMyjqwP2psiBVrzE3WGk/vGsGJJkC8k1d16UOvjzAPsJM038dXx7/wHG8YAFcg
- B0M10UPNJ4GhkqFilqXVT/C2COsq0iK0Ez3mXXckD+m1H9/Yc1cIkCaUgFJnGc5fuSPPgaaCk
- lUFQhSODchxxBSh4yupSx59yIPtrF4B6UEd/I1mNWnsjz8rv4HaGGjcl3a641FaeuisjsM9lT
- d7M0LJf2ZIN9QYcvOFD8c09hoFg+TyJDV5UYW3FClqJEiC80F4kf1aNWkZp2H5fUFR9fXweDo
- R4aeh4WxaQudspPMH93BwgqeMBTd1ckKE5S7JL+4yP6f3FcU5/NdULLfpWfmpWRtfokFwgRCt
- 38JTDqoafKa6AQrYzFQRjWjOQZxQ=
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <4b44eaec-2c45-4a68-80c5-6a8c0905b1ab@zytor.com>
 
-=E2=80=A6
-> This patch checks that a NUMA node =E2=80=A6
+On Fri, Mar 07, 2025 at 10:28:56AM -0800, Xin Li wrote:
+> I guess I don't have to rebase on the latest tip/master and resend it?
 
-Please improve such a change description another bit.
+No, you don't need to do anything for now. The patch tetris pleasure is all
+mine. I'll ask you to test once stuff is ready.
 
-See also:
-https://web.git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tre=
-e/Documentation/process/submitting-patches.rst?h=3Dv6.14-rc5#n94
+Thx.
 
-Regards,
-Markus
+-- 
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
 
