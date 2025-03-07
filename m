@@ -1,136 +1,276 @@
-Return-Path: <linux-kernel+bounces-550126-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-550127-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA824A55B9B
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 01:15:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id E878EA55B9E
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 01:15:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0BAC97A45ED
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 00:14:21 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 30E047A41E2
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 00:14:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 719854C96;
-	Fri,  7 Mar 2025 00:13:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DD59DDAD;
+	Fri,  7 Mar 2025 00:13:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="o8Sa4cR7"
-Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bchumZve"
+Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F6F818CBFB
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Mar 2025 00:13:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 754E3256D
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Mar 2025 00:13:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741306384; cv=none; b=SQskRyRaNqEeiyk/jHTq+l63aPZ4m+taLH471ajJoQSZqLlLEOa8Y9TJv+/oRnJyFtbyEbJRO5KmruA6RwuoaZrssUQyO7mOH877Gv5ytsDXocNiLCad3AYlAu/+Loc96mspqIKIXUvFFbaECHaYjYF/YAQqeEK8PbVd5lUc810=
+	t=1741306404; cv=none; b=b4vL8h9Cl9/M0dfn96y5F3yRABe6JesCElkWVwQFFZH+PLaKKD//ArWHE9jmu3U/BKQOG4f964BYohM86M49erxfnMoQoHA58cFoY46CJ2pEW4opIsj5s261c16W9PgHm4p93C4lx5p8zI0Nx05NsJmQrZMxpVe+KC0BUs9kYNA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741306384; c=relaxed/simple;
-	bh=Tenu1ukjY6u+ZkLVEiCAKDnTnxufajsrpXcE5yWz9kA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qaCd2um2UAaOaWr5ukzHaXfA0IfXh4wHphzVxy3XUT9vPeUx012WhjKd/Febh3ieX4kqHnspQIR5C7MRpfNu34TwDnIcbpMTNDzchzWYWtX7wwD9vBxC0F9L1X4s1yxlugOaU9JiJvsD95gl7iXixAzJk4y9bkvAhRCpLmS/2gM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=o8Sa4cR7; arc=none smtp.client-ip=209.85.214.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-2240aad70f2so73835ad.0
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Mar 2025 16:13:03 -0800 (PST)
+	s=arc-20240116; t=1741306404; c=relaxed/simple;
+	bh=WUy3BnoFl87bFjAqIVAVQ7fVwAEL7qPTWFsOcRZs2CE=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=Z/JB1xNx+xd4C01UzMG+yvX/bFSwf4uWTSj2hQKyLj3LWfMBpu5emhUGEkUnyMqX8KTkRhS+LMABXQiVUNRs8nOZkGalXJCYqiq1jmQNA4BjQ36R4zR9Hfn6GWru2q4JLfBjrpF/uSbaZj0zVOo81P6QyDY1v5Q9jo90sjtdilo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bchumZve; arc=none smtp.client-ip=209.85.218.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-aaf0f1adef8so212504266b.3
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Mar 2025 16:13:22 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1741306382; x=1741911182; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=WNup9EWbC6i8Ta60udEbTUwEbnvvutxKgGcyMFVFThM=;
-        b=o8Sa4cR7kqg8BtBRZMbK/EwaVXRDb+4/AQgJsisqokyKRSdBoNzlRA14qjP7yUig+1
-         NdXnx2CQb9CrZFwQuup8cZrMO4BY2LLiE9rzB5Cz2KwIPPK0xquaBPXRUPIHUIuvy5em
-         Tk65EDJzOvJF0PtsaPx0LdECH1VJK8DwYyu5dm3Wl1b5hhI5yC8rm7atRtS8DGoOk3a9
-         3CaAhX74mMWgw59Pom8R5tyBGXy/qYgY40FNt1o2MvCwLZGh9BLZweHuZTfqevxHaAvI
-         gCdAC1smToYk3Jop/J5rYBlvZC6gu6cwm+rE1qhPTOq/sBzpNVQkqr7e4baEGq4XRoga
-         o2dw==
+        d=gmail.com; s=20230601; t=1741306401; x=1741911201; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=V+coMIrKPqiErWfQYpK9wmQFyJx26pAi45ANI3Pnrqs=;
+        b=bchumZvezx90PKclDV2ptNe0tJhynW9a3sgKenRSKV8cVcHJ9W8ZAhJJLLyzVigjbn
+         UOZF0uSiySkaysv/xPIAy1dHUfAlzbinan99A1pLNgGZqL1LPcBDCYEHT4vbQJtpTouC
+         Qbku8L/m1E+/BqJcQHdr7RPJHMsrrP7tDW+FIbZrlWn76+G6wE87NkU8RzYRli2QlGmk
+         OtrMYs2Ua0ACwR5KdGQTE2M+XZpzMxUeRcWnGWZyOasQtWFzxuqT3maLdekfIHWKDBog
+         b6AQfAww9EMoHx2Kt+vRk/R2DZYjIGMUDFLrCeMuRd4ezz26+jX8DRz7vJlgnhq7gPLB
+         7FvA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741306382; x=1741911182;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=WNup9EWbC6i8Ta60udEbTUwEbnvvutxKgGcyMFVFThM=;
-        b=jKhxup0go3sTSTCBH7K2JWRtWwAWYLqEuIugzVTBlBzHwe+yhh/ldc6xQXqPoLjrPx
-         fMRtDDRjijFsnv/LlwShEn+xd1tatHS3P6j/CKBVuhBywKe3Oh7m+fhi7cXHMS8NoP0T
-         jMdkoZrUXAwpC/b22PraUOUqTdJe0rTu1lVbTxMV+cc5FhaAHBkvNXE+FnvO0qcsRJ17
-         b5K5euyC8wTwLJG0p0BkD8DbKOjMI5DQJ/4BD21CdcRhLzsl9z9m1qxIpPr6iQNornHR
-         aoEnOIe7WcM8t+oM/yI1AKRs7OuvvdziCNDJcDeiMUqGkHYwfc1zeZPD7QwoUDz9XWzm
-         8Aow==
-X-Forwarded-Encrypted: i=1; AJvYcCV9oZw7amPoqsK+rBRSPkKw+byC0bju1YJtzeAJz7wj26Rz7kSTpd47XV28jS4vycUTpH+E0jlYjKXTLCg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxGuGeK1j8Yew8bcTQhidKw6dloc3/Fk6bAy37NT29s+uba7xGs
-	WZm5O0/ZpSjvHQkyJYgjgALAUHQZdRbbUbfa2hj2KSx5N9TBoE4+hqu8VeT9Lg==
-X-Gm-Gg: ASbGncta9SO8jI3UtZqVXB3VS4gt09vZK/tn0jIFOK04DM1l+4FE/jroxbLSLHCm62S
-	yc0GGEYn0COX8iG0IvQerAK8FiCJnH+Kx/OjCNgicpLXqOiy9Ug0D73v3x2KzuYVSSEwToBPXFr
-	SQjFI03k30toRueCK71C2EnuV1ZE4gP1wUu/5yjzHj61vI+OzV1SrlV8fYbmn0Zt9FMxX7HyCCy
-	oXAmgx6dEXQ0ZV+AT4XsC/wNJDM9t+qgHhoxSrfYM0eczMM9Kvz1l9gr1VHAn55oJ7KyMU6NXF/
-	Ck4XzN92jjjERTihiZTt+a2zCCC+gvaeY3ZA//e2awwTZYZbK2yKwvlXe0o8o+HIM4t60tAns9W
-	IXRqZGvTTtmQFGpc=
-X-Google-Smtp-Source: AGHT+IGndUGgbQJfPfDEt+Vg5y1zSKAlbfktDO3mZC256dapXXCz6DYdZT7vrdjQcup5ZikrLodZnw==
-X-Received: by 2002:a17:903:22c8:b0:215:65f3:27ef with SMTP id d9443c01a7336-2242971d35amr1149525ad.12.1741306382090;
-        Thu, 06 Mar 2025 16:13:02 -0800 (PST)
-Received: from google.com (227.180.227.35.bc.googleusercontent.com. [35.227.180.227])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2ff693f7cebsm1864500a91.45.2025.03.06.16.13.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 06 Mar 2025 16:13:01 -0800 (PST)
-Date: Fri, 7 Mar 2025 00:12:56 +0000
-From: Sami Tolvanen <samitolvanen@google.com>
-To: Christophe Leroy <christophe.leroy@csgroup.eu>
-Cc: Petr Pavlu <petr.pavlu@suse.com>, Luis Chamberlain <mcgrof@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Josh Poimboeuf <jpoimboe@kernel.org>,
-	Jason Baron <jbaron@akamai.com>,
-	Daniel Gomez <da.gomez@samsung.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Ard Biesheuvel <ardb@kernel.org>, linux-modules@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 3/3] module: Make .static_call_sites read-only after
- init
-Message-ID: <20250307001256.GA2276503@google.com>
-References: <20250306131430.7016-1-petr.pavlu@suse.com>
- <20250306131430.7016-4-petr.pavlu@suse.com>
- <481a3ef9-6d4e-4e29-9d50-a6338604c873@csgroup.eu>
+        d=1e100.net; s=20230601; t=1741306401; x=1741911201;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=V+coMIrKPqiErWfQYpK9wmQFyJx26pAi45ANI3Pnrqs=;
+        b=UBTzHWn26saDS53bjZDl71QwBSMEk1iiYAOalaISguToPXD9TKic+76fjY5yh/6pe8
+         KQB6fgGnzU1nCqzFzDa18kNpd05tJLRGGleguseo6Z61UsqXsL7uMEtB9BkBIxmBKtJY
+         5CtphiOe7C7fZ5nXWikYKOUVnW9kOhhGjWpfAqAxBOMzJO8vmCB8iFNMRR0/juucfKJ+
+         YhZn9JT8JDBry+G71idJ/JuNSgQZJBqKvil/HP1oe1FJh0HE6MzJz5BlWtjb/IPRxmCi
+         yPuR2luhM7j3rlRjB3rSLHG+YjQOc7anNZeV0g9DnOdEeZT60HuBgkfpcWjurc0At0L2
+         S4Sg==
+X-Forwarded-Encrypted: i=1; AJvYcCXsGxY92qnP4l1QLRAhR2b+V1Z1SDPbPO8sTS+kN6ycBIvca+z1tdKptRQokX/MZrpEEmiAF+OtdX3kiuI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwfX/mVcZfTVRaFat9tJwhBSLkJ0yCrBM0Xyis4jb6/zSnv5dgt
+	hVWFgkL9j5tZCsVE+StDLhjtYsmx2qq0fmaj7iH95PzhJXtrsJpQ7qaSMzC7M6/dmO26+VnLoys
+	ODAmxhcjQbU3+k8LEBYTYW2kDejIPG6Gp
+X-Gm-Gg: ASbGnct8Ae1o6aLoMKrPjAeUZVyrcKTflYp9CPtiuaF4Vetx4tuc3nv7UzZCiPaAI94
+	97G0Gzd28wlJ4hwjZRAjTshMBu+VDzmHZqPoK9FrOBoMbiYaWx8S3/bP6Tceo2+Jz3x/p9tckb/
+	QtsXMzFeZgLQ6JosOG8s1jOxN9
+X-Google-Smtp-Source: AGHT+IEs1H7D9wR1RtDGXDvz8FVlYfWVFiJqdKal9HypXfyO5HuEqNCbowowkuut9E3ZHZsn1JHucObPLqq+FkMKUiQ=
+X-Received: by 2002:a17:907:1c1f:b0:ac1:dc35:8337 with SMTP id
+ a640c23a62f3a-ac252fb9b12mr126049366b.38.1741306400461; Thu, 06 Mar 2025
+ 16:13:20 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <481a3ef9-6d4e-4e29-9d50-a6338604c873@csgroup.eu>
+From: Dave Airlie <airlied@gmail.com>
+Date: Fri, 7 Mar 2025 10:13:09 +1000
+X-Gm-Features: AQ5f1JoQcijU1PWlrdTrt7IvLjGGmpF6i0qrOAiYW8LmLQ3TMWUvadsseaEZHJ8
+Message-ID: <CAPM=9tzHwhm74Z=itrPBz=yz=0VZOrcbnKs6u5LLQuwJrng5zw@mail.gmail.com>
+Subject: [git pull] drm fixes for 6.14-rc6
+To: Linus Torvalds <torvalds@linux-foundation.org>, Sima Vetter <sima@ffwll.ch>
+Cc: dri-devel <dri-devel@lists.freedesktop.org>, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Mar 06, 2025 at 06:28:58PM +0100, Christophe Leroy wrote:
-> 
-> 
-> Le 06/03/2025 à 14:13, Petr Pavlu a écrit :
-> > Section .static_call_sites holds data structures that need to be sorted and
-> > processed only at module load time. This initial processing happens in
-> > static_call_add_module(), which is invoked as a callback to the
-> > MODULE_STATE_COMING notification from prepare_coming_module().
-> > 
-> > The section is never modified afterwards. Make it therefore read-only after
-> > module initialization to avoid any (non-)accidental modifications.
-> 
-> Maybe this suggestion is stupid, I didn't investigate the feasability but:
-> why don't we group everything that is ro_after_init in a single section just
-> like we do in vmlinux ? That would avoid having to add every new possible
-> section in the C code.
-> 
-> Like we have in asm-generic/vmlinux.lds.h:
-> 
-> #define RO_AFTER_INIT_DATA						\
-> 	. = ALIGN(8);							\
-> 	__start_ro_after_init = .;					\
-> 	*(.data..ro_after_init)						\
-> 	JUMP_TABLE_DATA							\
-> 	STATIC_CALL_DATA						\
-> 	__end_ro_after_init = .;
+Hey Linus,
 
-I like this idea. Grouping the sections in the module linker script
-feels cleaner than having an array of section names in the code. To be
-fair, I think this code predates v5.10, where scripts/module.lds.S was
-first added.
+Looks like the cyclone is taking its time getting here, so I can at
+least get the drm fixes tree out.
 
-Sami
+Fixes across the board, mostly xe and imagination with some amd and
+misc others. The xe fixes are mostly hmm related, though there are
+some others in there as well, nothing really stands out otherwise. The
+nouveau Kconfig to select FW_CACHE is in this, which we discussed a
+while back.
+
+drm-fixes-2025-03-07:
+drm fixes for 6.14-rc6
+
+nouveau:
+- rely on fw caching Kconfig fix
+
+imagination:
+- avoid deadlock on fence release
+- fix fence initialisation
+- fix timestamps firmware traces
+
+scheduler:
+- fix include guard
+
+bochs:
+- dpms fix
+
+i915:
+- bump max stream count to match pipes
+
+xe:
+- Remove double page flip on initial plane
+- Properly setup userptr pfn_flags_mask
+- Fix GT "for each engine" workarounds
+- Fix userptr races and missed validations
+- Userptr invalid page access fixes
+- Cleanup some style nits
+
+amdgpu:
+- Fix NULL check in DC code
+- SMU 14 fix
+
+amdkfd:
+- Fix NULL check in queue validation
+
+radeon:
+- RS400 HyperZ fix
+The following changes since commit 7eb172143d5508b4da468ed59ee857c6e5e01da6=
+:
+
+  Linux 6.14-rc5 (2025-03-02 11:48:20 -0800)
+
+are available in the Git repository at:
+
+  https://gitlab.freedesktop.org/drm/kernel.git tags/drm-fixes-2025-03-07
+
+for you to fetch changes up to c8bc66206a44f389649af374f5301b2c3a71fff4:
+
+  Merge tag 'amd-drm-fixes-6.14-2025-03-06' of
+https://gitlab.freedesktop.org/agd5f/linux into drm-fixes (2025-03-07
+09:54:43 +1000)
+
+----------------------------------------------------------------
+drm fixes for 6.14-rc6
+
+nouveau:
+- rely on fw caching Kconfig fix
+
+imagination:
+- avoid deadlock on fence release
+- fix fence initialisation
+- fix timestamps firmware traces
+
+scheduler:
+- fix include guard
+
+bochs:
+- dpms fix
+
+i915:
+- bump max stream count to match pipes
+
+xe:
+- Remove double page flip on initial plane
+- Properly setup userptr pfn_flags_mask
+- Fix GT "for each engine" workarounds
+- Fix userptr races and missed validations
+- Userptr invalid page access fixes
+- Cleanup some style nits
+
+amdgpu:
+- Fix NULL check in DC code
+- SMU 14 fix
+
+amdkfd:
+- Fix NULL check in queue validation
+
+radeon:
+- RS400 HyperZ fix
+
+----------------------------------------------------------------
+Alessio Belle (1):
+      drm/imagination: Fix timestamps in firmware traces
+
+Andrew Martin (1):
+      drm/amdkfd: Fix NULL Pointer Dereference in KFD queue
+
+Brendan King (3):
+      drm/imagination: avoid deadlock on fence release
+      drm/imagination: Hold drm_gem_gpuva lock for unmap
+      drm/imagination: only init job done fences once
+
+Dave Airlie (5):
+      drm/nouveau: select FW caching
+      Merge tag 'drm-misc-fixes-2025-03-06' of
+https://gitlab.freedesktop.org/drm/misc/kernel into drm-fixes
+      Merge tag 'drm-intel-fixes-2025-03-06' of
+https://gitlab.freedesktop.org/drm/i915/kernel into drm-fixes
+      Merge tag 'drm-xe-fixes-2025-03-06' of
+https://gitlab.freedesktop.org/drm/xe/kernel into drm-fixes
+      Merge tag 'amd-drm-fixes-6.14-2025-03-06' of
+https://gitlab.freedesktop.org/agd5f/linux into drm-fixes
+
+Jani Nikula (1):
+      drm/i915/mst: update max stream count to match number of pipes
+
+Kenneth Feng (1):
+      drm/amd/pm: always allow ih interrupt from fw
+
+Ma Ke (1):
+      drm/amd/display: Fix null check for pipe_ctx->plane_state in
+resource_build_scaling_params
+
+Maarten Lankhorst (1):
+      drm/xe: Remove double pageflip
+
+Matthew Auld (1):
+      drm/xe/userptr: properly setup pfn_flags_mask
+
+Matthew Brost (1):
+      drm/xe: Add staging tree for VM binds
+
+Philipp Stanner (1):
+      drm/sched: Fix preprocessor guard
+
+Richard Thier (1):
+      drm/radeon: Fix rs400_gpu_init for ATI mobility radeon Xpress 200M
+
+Takashi Iwai (1):
+      drm/bochs: Fix DPMS regression
+
+Thomas Hellstr=C3=B6m (6):
+      drm/xe/vm: Validate userptr during gpu vma prefetching
+      drm/xe/vm: Fix a misplaced #endif
+      drm/xe: Fix fault mode invalidation with unbind
+      drm/xe/hmm: Style- and include fixes
+      drm/xe/hmm: Don't dereference struct page pointers without notifier l=
+ock
+      drm/xe/userptr: Unmap userptrs in the mmu notifier
+
+Tvrtko Ursulin (1):
+      drm/xe: Fix GT "for each engine" workarounds
+
+ drivers/gpu/drm/amd/amdkfd/kfd_queue.c            |   4 +-
+ drivers/gpu/drm/amd/display/dc/core/dc_resource.c |   3 +-
+ drivers/gpu/drm/amd/pm/swsmu/smu14/smu_v14_0.c    |  12 +-
+ drivers/gpu/drm/i915/display/intel_dp_mst.c       |   3 +-
+ drivers/gpu/drm/imagination/pvr_fw_meta.c         |   6 +-
+ drivers/gpu/drm/imagination/pvr_fw_trace.c        |   4 +-
+ drivers/gpu/drm/imagination/pvr_queue.c           |  18 +-
+ drivers/gpu/drm/imagination/pvr_queue.h           |   4 +
+ drivers/gpu/drm/imagination/pvr_vm.c              | 134 ++++++++++++---
+ drivers/gpu/drm/imagination/pvr_vm.h              |   3 +
+ drivers/gpu/drm/nouveau/Kconfig                   |   1 +
+ drivers/gpu/drm/radeon/r300.c                     |   3 +-
+ drivers/gpu/drm/radeon/radeon_asic.h              |   1 +
+ drivers/gpu/drm/radeon/rs400.c                    |  18 +-
+ drivers/gpu/drm/scheduler/gpu_scheduler_trace.h   |   4 +-
+ drivers/gpu/drm/tiny/bochs.c                      |   5 +-
+ drivers/gpu/drm/xe/display/xe_plane_initial.c     |  10 --
+ drivers/gpu/drm/xe/xe_gt.c                        |   4 +-
+ drivers/gpu/drm/xe/xe_hmm.c                       | 194 ++++++++++++++++--=
+----
+ drivers/gpu/drm/xe/xe_hmm.h                       |   7 +
+ drivers/gpu/drm/xe/xe_pt.c                        |  96 +++++------
+ drivers/gpu/drm/xe/xe_pt_walk.c                   |   3 +-
+ drivers/gpu/drm/xe/xe_pt_walk.h                   |   4 +
+ drivers/gpu/drm/xe/xe_vm.c                        | 100 +++++++----
+ drivers/gpu/drm/xe/xe_vm.h                        |  10 +-
+ drivers/gpu/drm/xe/xe_vm_types.h                  |   8 +-
+ 26 files changed, 459 insertions(+), 200 deletions(-)
 
