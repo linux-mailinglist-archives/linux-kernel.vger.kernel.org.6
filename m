@@ -1,74 +1,87 @@
-Return-Path: <linux-kernel+bounces-551384-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-551383-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D5E93A56BC5
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 16:20:45 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 68437A56BC3
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 16:20:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C07913B5069
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 15:20:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C26811788AC
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 15:20:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 000B821D3E4;
-	Fri,  7 Mar 2025 15:19:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60ABE21D001;
+	Fri,  7 Mar 2025 15:19:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="GDOaH9v/"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="LfOIidRX"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBE1F21A92F
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Mar 2025 15:19:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16CD121C179
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Mar 2025 15:19:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741360783; cv=none; b=unJSnBcKopPX5WYXXLh/ReXltVZg7JAUiC6Gpsb0Shh2X5JCnnzzz3tx55dQiipjRHyx1xVKK8/j2g54k09XNVfG6Ip/1fmXCchIMtO+SmS8fR93p46CJcTg+I2FdO+IHtpCHQteIuPZEj7sw/2wZxDRL0xWXu7Q/ZHYJ5SX8B8=
+	t=1741360774; cv=none; b=WgLIhKMQS0y9yQHKaCfOxdzPq6hbhkgdhutdz8j5zrczkiFnb+BAbm/9a12D1mPO+ajnAof2a9KuRwjwUXmbIv79H4K+dUZ2cGSuXrJR6uuQVZkSmazxQFh4cn3mrJGUrQ/HacPNCMGvoi9rlqT3sUA5ioauspSCODS2NqPvhuw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741360783; c=relaxed/simple;
-	bh=4I6iSscz3B5uoux7s7C+/CPGopWi54IbOyIS2dFilxQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=hGPSLyEKsCQH1bXoGueQUw0R3Lrg86TsvzfEDwSKH0hIR/PLGiidiPTgDq00T6w9YJMncaRzNSPiggOgm56Vaq92h5TfHFiXJi8gn0dB5SmBIA5w8Iphj7Nmz2L9XAXBc+LCCzwluidhAet9/CfdlU6uiHPLd6Xqmwe3ezHHgAY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=GDOaH9v/; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 527Dq1bH018284;
-	Fri, 7 Mar 2025 15:19:18 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=ZyFn+r
-	1eFLX1116kt0khVRZJApepYRHlTPrywKyMS0g=; b=GDOaH9v/wTN+xgMoHyEwyT
-	uu4UmmCEo38Dxn1DemsYtqF3Pjnv5lTP07zQZl4SRWGLhRrsqHFnA6Qfp/GA6IVl
-	d4CmvFXthmN2/IhiwDD5/ZPgu8wlVnaJZTM3ZMTr4PHv/vBeYSAMYWY7CGGV/4P/
-	+f0q9U8qDjp5o9oZhQvh9p2MKjQqZNBEVipI73ZbeCeiNAMipllkLHglUOS0mhTg
-	GYaLNJLIL7PDYD11lVJwl2Ot5iYUwmO+V5VPh1CUbqcEpSS2wzaXFLSV3YKJKq0X
-	l6fkxqvLAoWlsPRYswVhwZwk5kzlKX5qp/LywkQ/xCEbMpfyfg2qJ1y2sR2czzng
-	==
-Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 457s6a366y-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 07 Mar 2025 15:19:17 +0000 (GMT)
-Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 527EcuAV025012;
-	Fri, 7 Mar 2025 15:19:16 GMT
-Received: from smtprelay05.wdc07v.mail.ibm.com ([172.16.1.72])
-	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 454f92f12u-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 07 Mar 2025 15:19:16 +0000
-Received: from smtpav06.dal12v.mail.ibm.com (smtpav06.dal12v.mail.ibm.com [10.241.53.105])
-	by smtprelay05.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 527FJF9R10617392
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 7 Mar 2025 15:19:16 GMT
-Received: from smtpav06.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id CE85858043;
-	Fri,  7 Mar 2025 15:19:15 +0000 (GMT)
-Received: from smtpav06.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id AD4F558055;
-	Fri,  7 Mar 2025 15:19:11 +0000 (GMT)
-Received: from [9.61.11.159] (unknown [9.61.11.159])
-	by smtpav06.dal12v.mail.ibm.com (Postfix) with ESMTP;
-	Fri,  7 Mar 2025 15:19:11 +0000 (GMT)
-Message-ID: <b2c9df64-0afc-46cd-9e8d-6a3f41a4f1c7@linux.ibm.com>
-Date: Fri, 7 Mar 2025 20:49:09 +0530
+	s=arc-20240116; t=1741360774; c=relaxed/simple;
+	bh=gYhaNaVy80cladvz8VcRr5nT9/6t+nPTFWqppoCVnOU=;
+	h=From:Message-ID:Date:MIME-Version:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=oPIdSKyEQ6H042gBxgLUCMKAlmSGOUCHVyZQ6gaGhi6hPqjfgAXDgLbjjOsGAAexmAmaZUdGajhH1VSJUhZjKQpE0xp8gCdQHg3j4wrO6uyqAUK24mPm7/TkdW3TvJCeGRwGUGw97XRSXdA2zouwREa/pZbHCe1MGN/NKSodG7g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=LfOIidRX; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1741360772;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=/voaY1C+JOHxKM+JbIxct2yY2wAsdgT0ed4f25T51P4=;
+	b=LfOIidRXqnb2POzHfRn9Pvvp8qD/7+qOO2SE7F/NUyUNtBHJ5m0Kt06UaroZP6ZJB+vvCX
+	jr3HYBgkB9Dnk/xWEdm0nIXwJ6haTchjD1obA0+5iLnSqVSFGmillb9dvqd8MPA03oCoVH
+	O45ZzU2RbYNLgXlW3E76RUB3GHfneyg=
+Received: from mail-qv1-f70.google.com (mail-qv1-f70.google.com
+ [209.85.219.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-311-2CpJviUaO9aAU-9rN_nbOg-1; Fri, 07 Mar 2025 10:19:31 -0500
+X-MC-Unique: 2CpJviUaO9aAU-9rN_nbOg-1
+X-Mimecast-MFC-AGG-ID: 2CpJviUaO9aAU-9rN_nbOg_1741360770
+Received: by mail-qv1-f70.google.com with SMTP id 6a1803df08f44-6e8f6443ed5so34504286d6.1
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Mar 2025 07:19:31 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741360770; x=1741965570;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:subject:user-agent:mime-version:date:message-id:from
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=/voaY1C+JOHxKM+JbIxct2yY2wAsdgT0ed4f25T51P4=;
+        b=xOcaqjwWFb8jw15svSWwHnhzCx858hSCyqT3GVUy/PaWwC/6bwwhoZ4c5TlS1mvYAn
+         gCMoMJ+9nzY4RdNM8Jl8Q/TNa6LvUrBZKRDQ6DytlB+AwoBoszYjn7TXx/FPEL/nzIzz
+         Wz/roVtM3rpfrv7w8MeLZPntUaS/WJt8ARs7VcTEyBarsEKOVFJeFNbgmNvRVrkrRHTh
+         DRl1ZXK6pjzMepD64GdhUhQ3RIuyqiERjvV3Y5Iahn5VL3AaSzGCpazJNkfVdFY+4Q3Q
+         B0mZ6oOYM+Kug1xqulcfqH/msaoskiM913jdWqf5Rjho9ONUnNmVXnsqtNchI2YhBOl0
+         y1tA==
+X-Forwarded-Encrypted: i=1; AJvYcCViXH+WEASiocVSUCQAvPJ8CEh6sf+KpeWz+HDsjhieiBzLitiLa656dVoI/cWpB9WaYiML20C6JSVHvWQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyMin6cdO58pyeoQJZsRGzxNwu0eLh6ugBEkgw1b1HRUc6lSgLX
+	oRY+bwD7QXEkd+SqLldGHuMf6VJBLgp8yG83FIVfxTN88lCX1MJza01KZicd8Km+z6hjHyM+1Bf
+	PV90R4q3wwSQRJavhEF4qg3NQZExytC8+Qw9sEmTI1kqBNUAtHJDdvuZ+15Nw8w==
+X-Gm-Gg: ASbGncsNH59ETp9fjdlh1Aa73+l9rsb/9YgPePjWrLs3JxGqn5jGL0yDjhOEbfukRAf
+	ZeX2UR+cIW75aCRMTVg79Guxe5Hisk2HGKXNqeHvywLSNwCUbAFrZhTc6MEb4RqzxZKjrITSM9A
+	t1ndx/S9aav4mxXb01kkHu//BRSFk+gtzhHrRaZJetmofoCQ6PYfMyfRR5XYNThEiaX8QNPi//z
+	ANbtsZvJ58Sqq/wL2srKY16I0BrfjqRvrj0zSUgHxXtCeAoV+4ooePh3zSJnfqCt2owyu7jk8O0
+	/8nXeAe2w3KBKCX5zAn1IQzst8tmttUopR9hy0G81QHyULs/oiSjv3K2ap8=
+X-Received: by 2002:ad4:5be2:0:b0:6e8:af23:b6f1 with SMTP id 6a1803df08f44-6e8ff738403mr48320796d6.10.1741360770545;
+        Fri, 07 Mar 2025 07:19:30 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IF7vgy3SRMmsojlqsMkxhqU/1Y5Pf8CiqlPcyisxnRS9jhc3xrWLOs4SjjO+5bclG8zm4TyGA==
+X-Received: by 2002:ad4:5be2:0:b0:6e8:af23:b6f1 with SMTP id 6a1803df08f44-6e8ff738403mr48320296d6.10.1741360770032;
+        Fri, 07 Mar 2025 07:19:30 -0800 (PST)
+Received: from ?IPV6:2601:188:c100:5710:627d:9ff:fe85:9ade? ([2601:188:c100:5710:627d:9ff:fe85:9ade])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6e8f715b6acsm20401296d6.74.2025.03.07.07.19.28
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 07 Mar 2025 07:19:29 -0800 (PST)
+From: Waiman Long <llong@redhat.com>
+X-Google-Original-From: Waiman Long <longman@redhat.com>
+Message-ID: <4c63551b-4272-45f3-bb6b-626dd7ba10f9@redhat.com>
+Date: Fri, 7 Mar 2025 10:19:28 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -76,74 +89,74 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] nvme: remove multipath module parameter
-To: Keith Busch <kbusch@kernel.org>, Christoph Hellwig <hch@lst.de>
-Cc: Hannes Reinecke <hare@suse.de>, Sagi Grimberg <sagi@grimberg.me>,
-        John Meneghini <jmeneghi@redhat.com>, bmarzins@redhat.com,
-        Bryan Gurney <bgurney@redhat.com>, linux-nvme@lists.infradead.org,
-        linux-kernel@vger.kernel.org, Marco Patalano <mpatalan@redhat.com>,
-        axboe@kernel.dk
-References: <91ae613a-7b56-4ca0-b91c-6bc1eee798b8@suse.de>
- <20250305141554.GA18065@lst.de> <Z8hrJ5JVqi7TgFCn@kbusch-mbp>
- <20250305235119.GB896@lst.de> <Z8jk-D3EjEdyBIU5@kbusch-mbp>
- <20250306000348.GA1233@lst.de> <1ffebf60-5672-4cd0-bb5a-934376c16694@suse.de>
- <20250306141837.GA21353@lst.de> <Z8m4vzE36UHWjwep@kbusch-mbp>
- <20250306151654.GA22810@lst.de> <Z8pB9jQALxMN6WaA@kbusch-mbp>
+Subject: Re: [PATCH v2 2/8] sched/topology: Wrappers for sched_domains_mutex
+To: Juri Lelli <juri.lelli@redhat.com>, linux-kernel@vger.kernel.org,
+ cgroups@vger.kernel.org
+Cc: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
+ Vincent Guittot <vincent.guittot@linaro.org>,
+ Dietmar Eggemann <dietmar.eggemann@arm.com>,
+ Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>,
+ Mel Gorman <mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>,
+ Tejun Heo <tj@kernel.org>, Johannes Weiner <hannes@cmpxchg.org>,
+ =?UTF-8?Q?Michal_Koutn=C3=BD?= <mkoutny@suse.com>,
+ Qais Yousef <qyousef@layalina.io>,
+ Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+ Swapnil Sapkal <swapnil.sapkal@amd.com>,
+ Shrikanth Hegde <sshegde@linux.ibm.com>, Phil Auld <pauld@redhat.com>,
+ luca.abeni@santannapisa.it, tommaso.cucinotta@santannapisa.it,
+ Jon Hunter <jonathanh@nvidia.com>
+References: <20250306141016.268313-1-juri.lelli@redhat.com>
+ <20250306141016.268313-3-juri.lelli@redhat.com>
+ <eafef3d6-c5ce-435e-850c-60f780500b2e@redhat.com>
 Content-Language: en-US
-From: Nilay Shroff <nilay@linux.ibm.com>
-In-Reply-To: <Z8pB9jQALxMN6WaA@kbusch-mbp>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: F8oRERkOXie4hKo3gKGqA87w2iHGMcmB
-X-Proofpoint-ORIG-GUID: F8oRERkOXie4hKo3gKGqA87w2iHGMcmB
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-07_06,2025-03-06_04,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 suspectscore=0
- mlxlogscore=871 adultscore=0 priorityscore=1501 phishscore=0 clxscore=1015
- malwarescore=0 impostorscore=0 bulkscore=0 spamscore=0 lowpriorityscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2502100000
- definitions=main-2503070111
+In-Reply-To: <eafef3d6-c5ce-435e-850c-60f780500b2e@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
 
-
-On 3/7/25 6:16 AM, Keith Busch wrote:
-> On Thu, Mar 06, 2025 at 04:16:54PM +0100, Christoph Hellwig wrote:
->> On Thu, Mar 06, 2025 at 08:01:19AM -0700, Keith Busch wrote:
+On 3/7/25 10:11 AM, Waiman Long wrote:
+> On 3/6/25 9:10 AM, Juri Lelli wrote:
+>> Create wrappers for sched_domains_mutex so that it can transparently be
+>> used on both CONFIG_SMP and !CONFIG_SMP, as some function will need to
+>> do.
 >>
->>> Or consider a true multiport PCIe where each port connects to a
->>> different host. Each host sees a single port so they're not using
->>> multipath capabilities, and the admin wants the MD behavior that removes
->>> a disk on hot plug. Or even if one host sees both paths of a multiport
->>> PCIe, they still might want that hot plug behavior. The module parameter
->>> makes that possible, so some equivalent should be available before
->>> removing it.
+>> Reported-by: Jon Hunter <jonathanh@nvidia.com>
+>> Fixes: 53916d5fd3c0 ("sched/deadline: Check bandwidth overflow 
+>> earlier for hotplug")
+>> Signed-off-by: Juri Lelli <juri.lelli@redhat.com>
+>> ---
+>> v1 -> v2: Remove wrappers for the !SMP case as all users are not defined
+>>            either in that case
+>> ---
+>>   include/linux/sched.h   |  2 ++
+>>   kernel/cgroup/cpuset.c  |  4 ++--
+>>   kernel/sched/core.c     |  4 ++--
+>>   kernel/sched/debug.c    |  8 ++++----
+>>   kernel/sched/topology.c | 12 ++++++++++--
+>>   5 files changed, 20 insertions(+), 10 deletions(-)
 >>
->> A module-wide parameter is absolutely the wrong way to configure it.
->> You'd ad best want it per-controller or even per-namespace.  One
->> tradeoff would be to disable the multipath code for private namespaces,
->> although that would cause problems when rescanning changes the flag.
-> 
-> It's not really about private vs. shared namespaces, though. There
-> really is no programatic way for the driver to know what behavior the
-> admin needs out of their system without user input. If you don't want a
-> module parameter, then the driver will just have to default to
-> something, then the user will have to do something to change it later.
-> Not very pleasant compared to a simple one time boot parameter.
-> 
-I think always creating multipath head node even for the disk which doesn't 
-have CMIC/NMIC capability should be useful. That way, we may then be able 
-to remove multipath module parameter? In fact, you already mentioned about
-it in one of your previous message. I see two approaches (one of them you 
-proposed and another one Christoph proposed: 
-https://lore.kernel.org/linux-nvme/Y+1aKcQgbskA2tra@kbusch-mbp.dhcp.thefacebook.com/). 
+>> diff --git a/include/linux/sched.h b/include/linux/sched.h
+>> index 9632e3318e0d..d5f8c161d852 100644
+>> --- a/include/linux/sched.h
+>> +++ b/include/linux/sched.h
+>> @@ -383,6 +383,8 @@ enum uclamp_id {
+>>   extern struct root_domain def_root_domain;
+>>   extern struct mutex sched_domains_mutex;
+>>   #endif
+>> +extern void sched_domains_mutex_lock(void);
+>> +extern void sched_domains_mutex_unlock(void);
+>
+> As discussed in the other thread, move the 
+> sched_domains_mutex_{lock/unlock}{} inside the "#if CONFIG_SMP" block 
+> and define the else part so that it can be used in code block that 
+> will also be compiled in the !CONFIG_SMP case.
+>
+> Other than that, the rest looks good to me.
 
-Maybe in first cut we should create multipath head disk node always for 
-single/multi ported NVMe disk. Later we may enhance it and allow pinning the 
-head node for hotplug events so that head node dev name remains consistent 
-across disk add/remove hotplug events.
+Actually, you can also remove sched_domains_mutex from the header and 
+make it static as it is no longer directly accessed.
 
-Thanks,
---Nilay
+Cheers,
+Longman
+
 
