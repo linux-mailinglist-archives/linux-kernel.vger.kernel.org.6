@@ -1,160 +1,140 @@
-Return-Path: <linux-kernel+bounces-551899-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-551903-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 85E21A572B9
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 21:09:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 75DFCA572C6
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 21:11:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 555B83B6FA9
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 20:09:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AE7FE3B8320
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 20:10:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5326E2566D1;
-	Fri,  7 Mar 2025 20:09:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB2CA2561BC;
+	Fri,  7 Mar 2025 20:10:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aJdBP/0E"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TJgd30qO"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A438F2405EC;
-	Fri,  7 Mar 2025 20:09:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C52821CC4A;
+	Fri,  7 Mar 2025 20:10:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741378141; cv=none; b=o86wvkZ66LXppNN1sDXJmchc6vvepIT1OgCNfouVaG01BCNMRofDGh6Was2TVWmvdOKUbAt0xMmrtXWha42GOKnecePzK9BC1KqIW/pXt3fbqQIqHFHvCwJJXjLCcc+PbnkKfszjnvgjPe9CP2d3Vi4cKdvPJ7zN+1cS3JmdmDg=
+	t=1741378255; cv=none; b=ilNtnEGgcFdTJWrmGmkFsIhed1fPCFzI7v4bvbTRe5TllWJyf8hWYSg6eLC6AviATpTUNWPUUieWCWXJmpDm3DETEsIC2oz1u4gGkWzs9+ea4F5k3TnUhv3ETgUT0tYKi0c4uVLmKEHf8CRP67vrVohCShDV9Y5gfacBuAVQb+Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741378141; c=relaxed/simple;
-	bh=M8b67bSpkXpNwrWbVgdymEb+uCIjAyGK7SXteTWS2zk=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=t/yaeRXFJQ3eNGHT7CLdQl+MVKHNeLk31Nu7ZvtT0QDgp/jatWLhN90e6/zar+oEh7r3dg+R7IjFyr60LUhwZYIHvEn792+1Rx6aJEEQ6PROSHfAYPhuKAN6i82Ylwx+3ukbwGjxGaxdmsZAN6v6X2XCL3GWxQsKeRnbOeJsnnY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aJdBP/0E; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 7F625C4CEEC;
-	Fri,  7 Mar 2025 20:09:01 +0000 (UTC)
+	s=arc-20240116; t=1741378255; c=relaxed/simple;
+	bh=3nSZ2JbAIlV45zJPDKD7cz1iFS7azKXpOcw/9B+Wc7Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QNoU+1BNp6ac3yraA9FZ0AmPMkkZuFdayqBy+Tnz6c45lMTo2YhWwglwvk5lkZ35qg5BqNJFJ9hvwzaQPsPWz8TqEQTMdlGzBdWxMBRFBgicYB6X2CdfSIUCUjILq6xu0LEDIhfL7gtTvRmVpHxrf5wLBAfK3rast6mj3+w62H4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TJgd30qO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4F93DC4CED1;
+	Fri,  7 Mar 2025 20:10:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741378141;
-	bh=M8b67bSpkXpNwrWbVgdymEb+uCIjAyGK7SXteTWS2zk=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=aJdBP/0EGFLE40JwXHiGleIF4BrjuBnxUJby1qfuVA5l+lIWMtlZQqtpMkD7JiflY
-	 K+9y2BlPHIit//+z5KpaiZfBkFcAjppdBhVgY/AezvTAwFaLKo7FPTZwk1gnMAgNYn
-	 7oEjE0dknGbJApQN5F23aGcZtpYt2FuxAqN4Sf71i03sL5buPd3I7oZSiB2OnnvxcW
-	 KxJRzvmSw6+ptxbTXLCDiqeGm0n4pQJ64MYbNAd8d1MzNbP5FIdoUlmh+9Wbf0B9k8
-	 WG+8ix/Oc8VmfoYjJQjuzTYjCj3Y3AtpXF90sT1CLuon2uuI/LQ7CjZ0/5cxfgLGZ1
-	 TWKI/u4nx2ydg==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 76FCFC28B23;
-	Fri,  7 Mar 2025 20:09:01 +0000 (UTC)
-From: Sasha Finkelstein via B4 Relay <devnull+fnkl.kernel.gmail.com@kernel.org>
-Date: Fri, 07 Mar 2025 21:09:01 +0100
-Subject: [PATCH v2 3/3] arm64: dts: apple: Add SPMI controller nodes
+	s=k20201202; t=1741378254;
+	bh=3nSZ2JbAIlV45zJPDKD7cz1iFS7azKXpOcw/9B+Wc7Y=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=TJgd30qOSyXEM7mIsT2K4/fd6oyvFM0crtMoGhc0OlKMUnx1gUXwqYxR/x1c0YrnQ
+	 kQ4AisB7J9AzfaG3wKdKZCJtwzHLA/DcRDnKw3Q82VD9hsbqygWosSlCyjz6GlGguP
+	 VMREfYj2uFOCdOgsaEcjNMS/+bvCP8WJQSBL/pI0/kh+mJmAFaTLwV8T8LeKJCeNZx
+	 4dIs8o2YaqLslu23yA1kCYSZKHv9EiKmRyD/6aOf1ZQlQKoIlgtmSJHMC2rTGzSoU7
+	 DAgQoWgjOdN2lCLv0XoSfkP75FtnMWyfUs2Q3qbEGDPaZuEFEQtOISGdHziTDKjyhI
+	 1ze7QJ7J5QvKA==
+Date: Fri, 7 Mar 2025 17:10:51 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Namhyung Kim <namhyung@kernel.org>
+Cc: Stephen Brennan <stephen.s.brennan@oracle.com>,
+	Ingo Molnar <mingo@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	"Liang, Kan" <kan.liang@linux.intel.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Athira Rajeev <atrajeev@linux.vnet.ibm.com>,
+	Jiri Olsa <jolsa@kernel.org>, linux-kernel@vger.kernel.org,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	James Clark <james.clark@linaro.org>,
+	Chaitanya S Prakash <chaitanyas.prakash@arm.com>,
+	Ian Rogers <irogers@google.com>, linux-perf-users@vger.kernel.org,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Andi Kleen <ak@linux.intel.com>
+Subject: Re: [PATCH v2 0/3] Support .gnu_debugdata for symbols in perf
+Message-ID: <Z8tSyzcHF2V7Lofx@x1>
+References: <20250220185512.3357820-1-stephen.s.brennan@oracle.com>
+ <Z7-QZKNT4Cc8lspM@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250307-spmi-v2-3-eccdb06afb99@gmail.com>
-References: <20250307-spmi-v2-0-eccdb06afb99@gmail.com>
-In-Reply-To: <20250307-spmi-v2-0-eccdb06afb99@gmail.com>
-To: Sven Peter <sven@svenpeter.dev>, Janne Grunau <j@jannau.net>, 
- Alyssa Rosenzweig <alyssa@rosenzweig.io>, Stephen Boyd <sboyd@kernel.org>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>
-Cc: asahi@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
- Sasha Finkelstein <fnkl.kernel@gmail.com>, 
- Nick Chan <towinchenmi@gmail.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1741378140; l=2656;
- i=fnkl.kernel@gmail.com; s=20241124; h=from:subject:message-id;
- bh=vAy3qAJvENlWfH+6RnDDlx2HQlH2MYFllFghIMOrbEU=;
- b=MClImYe6YJJM14dS7aEJlgncn9cez8m0s5vjVl604WH60T+4pOqVUAgjY5+lfzVcMvNK9C2Aw
- q5cItAiy1W2AJB7A6XeKCJRtrzrjD6SOIUqko8dXi/Z8Du9mlH82qiT
-X-Developer-Key: i=fnkl.kernel@gmail.com; a=ed25519;
- pk=aSkp1PdZ+eF4jpMO6oLvz/YfT5XkBUneWwyhQrOgmsU=
-X-Endpoint-Received: by B4 Relay for fnkl.kernel@gmail.com/20241124 with
- auth_id=283
-X-Original-From: Sasha Finkelstein <fnkl.kernel@gmail.com>
-Reply-To: fnkl.kernel@gmail.com
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <Z7-QZKNT4Cc8lspM@google.com>
 
-From: Sasha Finkelstein <fnkl.kernel@gmail.com>
+On Wed, Feb 26, 2025 at 02:06:28PM -0800, Namhyung Kim wrote:
+> On Thu, Feb 20, 2025 at 10:55:08AM -0800, Stephen Brennan wrote:
+> > Hello all,
+> > 
+> > This series adds the ability to read symbols from the ".gnu_debugdata" section,
+> > an LZMA-compressed embedded ELF file which is supposed to contain additional ELF
+> > symbols. This is something that Fedora implemented (as "MiniDebuginfo" [1]).
+> > There are more details in v1. I've tested it with binaries that have
+> > .gnu_debugdata, and I've also ensured that the build & runtime work when LZMA is
+> > disabled.
+> > 
+> > [1]: https://fedoraproject.org/wiki/Features/MiniDebugInfo
+> > 
+> > Changes since v1:
+> > * Reuses the existing LZMA decompression helpers, rather than implementing a
+> >   new LZMA decompression loop. This does involve creating a temporary file, but
+> >   I think that actually makes things cleaner, since now the symsrc has a file
+> >   descriptor to close, rather than adding a new pointer that needs freeing.
+> > * I did also remove the pr_debug() for the case where there is no
+> >   ".gnu_debugdata" section. That's not really an error worth logging, that's
+> >   just normal operation.
+> > * I added a pr_debug() for the case where we successfully load .gnu_debugdata
+> >   so that it's easier to determine whether it gets used in tests.
+> 
+> Thanks, it'd be nice if anyone with a Fedora box could test this.
 
-Add device tree entries for the SPMI controller
+I'm trying to go thru this, testing with/without LZMA so that we can
+show the difference in symbol resolution, etc, but I've now stumbled on
+something that predates this, namely trying to build with NO_LZMA=1
+isn't disabling it:
 
-Reviewed-by: Nick Chan <towinchenmi@gmail.com>
-Signed-off-by: Sasha Finkelstein <fnkl.kernel@gmail.com>
----
- arch/arm64/boot/dts/apple/t600x-die0.dtsi | 7 +++++++
- arch/arm64/boot/dts/apple/t8103.dtsi      | 8 ++++++++
- arch/arm64/boot/dts/apple/t8112.dtsi      | 7 +++++++
- 3 files changed, 22 insertions(+)
+⬢ [acme@toolbox perf-tools-next]$ rm -rf /tmp/build/$(basename $PWD)/ ; mkdir /tmp/build/$(basename $PWD)/ ; make NO_LZMA=1 O=/tmp/build/$(basename $PWD)/ -C tools/perf install-bin
+make: Entering directory '/home/acme/git/perf-tools-next/tools/perf'
+  BUILD:   Doing 'make -j28' parallel build
 
-diff --git a/arch/arm64/boot/dts/apple/t600x-die0.dtsi b/arch/arm64/boot/dts/apple/t600x-die0.dtsi
-index b1c875e692c8fb9c0af46a23568a7b0cd720141b..d544a35c8af414c583d38b040e1aa753902f1c93 100644
---- a/arch/arm64/boot/dts/apple/t600x-die0.dtsi
-+++ b/arch/arm64/boot/dts/apple/t600x-die0.dtsi
-@@ -53,6 +53,13 @@ wdt: watchdog@2922b0000 {
- 		interrupts = <AIC_IRQ 0 631 IRQ_TYPE_LEVEL_HIGH>;
- 	};
- 
-+	nub_spmi0: spmi@2920a1300 {
-+		compatible = "apple,t6000-spmi", "apple,spmi";
-+		reg = <0x2 0x920a1300 0x0 0x100>;
-+		#address-cells = <2>;
-+		#size-cells = <0>;
-+	};
-+
- 	sio_dart_0: iommu@39b004000 {
- 		compatible = "apple,t6000-dart";
- 		reg = <0x3 0x9b004000 0x0 0x4000>;
-diff --git a/arch/arm64/boot/dts/apple/t8103.dtsi b/arch/arm64/boot/dts/apple/t8103.dtsi
-index 9b0dad6b618444ac6b1c9735c50cccfc3965f947..0f03dc808cf7c6b7d71afc79dd29d368f957f979 100644
---- a/arch/arm64/boot/dts/apple/t8103.dtsi
-+++ b/arch/arm64/boot/dts/apple/t8103.dtsi
-@@ -11,6 +11,7 @@
- #include <dt-bindings/interrupt-controller/apple-aic.h>
- #include <dt-bindings/interrupt-controller/irq.h>
- #include <dt-bindings/pinctrl/apple.h>
-+#include <dt-bindings/spmi/spmi.h>
- 
- / {
- 	compatible = "apple,t8103", "apple,arm-platform";
-@@ -604,6 +605,13 @@ pcie_pins: pcie-pins {
- 			};
- 		};
- 
-+		nub_spmi: spmi@23d0d9300 {
-+			compatible = "apple,t8103-spmi", "apple,spmi";
-+			reg = <0x2 0x3d0d9300 0x0 0x100>;
-+			#address-cells = <2>;
-+			#size-cells = <0>;
-+		};
-+
- 		pinctrl_nub: pinctrl@23d1f0000 {
- 			compatible = "apple,t8103-pinctrl", "apple,pinctrl";
- 			reg = <0x2 0x3d1f0000 0x0 0x4000>;
-diff --git a/arch/arm64/boot/dts/apple/t8112.dtsi b/arch/arm64/boot/dts/apple/t8112.dtsi
-index 1666e6ab250bc0be9b8318e3c8fc903ccd3f3760..fecf70eba255c668757e2edfe25a4e9e7c0d0bad 100644
---- a/arch/arm64/boot/dts/apple/t8112.dtsi
-+++ b/arch/arm64/boot/dts/apple/t8112.dtsi
-@@ -641,6 +641,13 @@ pcie_pins: pcie-pins {
- 			};
- 		};
- 
-+		nub_spmi: spmi@23d714000 {
-+			compatible = "apple,t8112-spmi", "apple,spmi";
-+			reg = <0x2 0x3d714000 0x0 0x100>;
-+			#address-cells = <2>;
-+			#size-cells = <0>;
-+		};
-+
- 		pinctrl_nub: pinctrl@23d1f0000 {
- 			compatible = "apple,t8112-pinctrl", "apple,pinctrl";
- 			reg = <0x2 0x3d1f0000 0x0 0x4000>;
-
--- 
-2.48.1
+Auto-detecting system features:
+...                                   libdw: [ on  ]
+...                                   glibc: [ on  ]
+...                                  libbfd: [ on  ]
+...                          libbfd-buildid: [ on  ]
+...                                  libelf: [ on  ]
+...                                 libnuma: [ on  ]
+...                  numa_num_possible_cpus: [ on  ]
+...                                 libperl: [ on  ]
+...                               libpython: [ on  ]
+...                               libcrypto: [ on  ]
+...                               libunwind: [ on  ]
+...                             libcapstone: [ on  ]
+...                               llvm-perf: [ on  ]
+...                                    zlib: [ on  ]
+...                                    lzma: [ on  ]
+<SNIP>
 
 
+⬢ [acme@toolbox perf-tools-next]$ ldd ~/bin/perf | grep lzma
+	liblzma.so.5 => /lib64/liblzma.so.5 (0x00007f77ac879000)
+⬢ [acme@toolbox perf-tools-next]$
+
+my hunch is that some other feature needs lzma support and ignores the
+explicit NO_LZMA=1 on the make command line when it should really be
+disabling whatever features needs it, not overriding the cmd line
+request.
+
+I'm trying to investigate.
+
+- Arnaldo
 
