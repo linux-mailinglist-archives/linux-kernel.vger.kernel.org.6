@@ -1,160 +1,141 @@
-Return-Path: <linux-kernel+bounces-550783-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-550784-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id F0606A5640C
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 10:36:27 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 78952A56411
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 10:37:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C781817817A
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 09:35:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2E8623B21A2
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 09:35:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E0E220C476;
-	Fri,  7 Mar 2025 09:34:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9215B20E70A;
+	Fri,  7 Mar 2025 09:34:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="h9w52F4n"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="09Icbpot"
+Received: from mail-wm1-f74.google.com (mail-wm1-f74.google.com [209.85.128.74])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9292202F9A
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Mar 2025 09:34:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 358C220C479
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Mar 2025 09:34:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741340042; cv=none; b=MKcJ7owNz40uN6auq0D2KpO69FV3jV9JJzKI39NbT7xVUC0MCfAeTbB9thUBtPSnpmvGlg8fzXw1utDOPU9B+Ce5ippI4/T222c2TCDQSdDid15kTK8Y0TiifuPmwU7w0bRqLHHG8qXFUUCkznXp5SgcOPtvEhVc3ByZVJN+Fkg=
+	t=1741340060; cv=none; b=M8Tt7s83WegGT3Z6W9WE7gOX8275Zv74pUh0jp9EQbyqTl7+g5DBsd0LeLfylUMgF81JuNtjZZleWx/5Mb+9Uf2khdfd8WltMvLgSxpQqnWGWEpENBcCq5jI8nJOdtx4BAoTaYYSlMOr6PqSV6NQKYK0Iz3Ze1he5hOm5qrCKlY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741340042; c=relaxed/simple;
-	bh=Ypb9lH57vm+WjVbRerOzUIkxUzGc7i5IMTgs/vJz0zQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CaGhBcdCZqnjyeIz+binz7P1+O1sHiyfDUY+mplwAi6KySM2019lEC0X5wM3FltGResgUaz6uxgDSJzPJyoshW8fBTnMQukpc0vxyXKSQvW8/tcdcoq5XYYxPQXbPZfosQfUSCCito9ysA93j4QYljmDTzY+N7YbYMKKm62OEe0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=h9w52F4n; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1741340039;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=jVEOIfEn4WDZ5RzbzaumI6wBZHn7khG5qOmcjQFY/34=;
-	b=h9w52F4n/pCaAIW7xhI09jxg5sVIPyBOvnPvNuyGK1pw4+RuGLdDx0Qef9CNUVuwxGTub2
-	vkXYtZF7Mg809TP9zjbohaKVdYrdYITWWCwa7wSumutFiuwr1rDOvdYiptWaUfYsF0PApt
-	F/omwqllRhz+ZMl1MQeNv5Ryt24b2OA=
-Received: from mail-qv1-f72.google.com (mail-qv1-f72.google.com
- [209.85.219.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-404-Vy6fiRnkPK-rnji1tWsQeA-1; Fri, 07 Mar 2025 04:33:56 -0500
-X-MC-Unique: Vy6fiRnkPK-rnji1tWsQeA-1
-X-Mimecast-MFC-AGG-ID: Vy6fiRnkPK-rnji1tWsQeA_1741340036
-Received: by mail-qv1-f72.google.com with SMTP id 6a1803df08f44-6e8ff626b73so16675956d6.0
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Mar 2025 01:33:56 -0800 (PST)
+	s=arc-20240116; t=1741340060; c=relaxed/simple;
+	bh=G4ZdZ3jn8XixgDv3LYH+FbkhXka89hw0bw5VeQ0/00o=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=ISQWm3DE13FLfZihRO95D2KcCb8kkMTPIA081tz1T1nlGnMsaEEvoJ0a9kc6rokYoon1ayaW+OzGQi/8x5PY04skaVsBwPk6UTaM6Zm2C51i4ZcWjZrYRJn+eUgZHvbHNdP3VRUacb1Y+jZThfsPD+wiW85ZinchLipX/5JQO0I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=09Icbpot; arc=none smtp.client-ip=209.85.128.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
+Received: by mail-wm1-f74.google.com with SMTP id 5b1f17b1804b1-43bca561111so6898875e9.3
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Mar 2025 01:34:18 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1741340057; x=1741944857; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=R840fbpOCY97ygCHkbEX+Ner86gAnwGHvg1aopa7qhQ=;
+        b=09IcbpotA4T2sxZgOfjiIL6siNgiXYZ8TmTjdleZFOClycRpzcv9+vGTJXkIAe5d6t
+         eME7KZ/bVpoO3fERN9mH04mXVj1hDNDChLykDg2PXzNCWvXZbwLcrope9H1PSHEFaRek
+         rgPDL7dJ0FtgnBzZT5/fowxyh2b72N7AlytgRYCmjdyiiJ4kYoTkqR0fKc4k5upBAzWa
+         SBMGsyyybtM8vJ2Jrn1n3JZfLlofS1eV+1vIM8UlnkmZ+WpIebkOxOtCSi9jT3C5S9to
+         QBK/p//VNYjzzwlBudC3j/KsVcK+/Z+XTTLvRZlVauBNYMa5pihypAmNrov4o8NW8aen
+         ATeg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741340036; x=1741944836;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=jVEOIfEn4WDZ5RzbzaumI6wBZHn7khG5qOmcjQFY/34=;
-        b=N8CP9QsTCtJM75s4fXOblbnUS15t/OvvcJP70bn1wH0qGGVPmx1CS9/Z6U78S4tInf
-         9nonAPqcwZqSKVl0FYeVRx1ha8uLsen9QmWO8b4ytT3OiHFektLyXKYXRf5mNw4HNtbT
-         S/9x/9FJY1PIUIFozqyfRB5ivCAO1gYA8IVDDlm4zgPZ2oJJkEFqQoFS1DXwEJDqPX59
-         R+VyNrIVLjLDTH67YgWHv6te5wso/lCIgS3zy2Wt353Ru4xl6Wy6J2cpgL2V1EHQXcSV
-         VtI3qNbYHJssKlxrDnpyEye7eXM+88ykmzkzUi+OO/36gSChMHWuj2uAtbjjXuH8wTVF
-         cNcw==
-X-Forwarded-Encrypted: i=1; AJvYcCXfRtASMBDbA5ldtZXJpvLFpZ3IGEKr/4gmtw6ryCR0dR5AAkdQ6NFROpu08vPLKfMCI2dsDRTdb3IWFNY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzreTKtgMIxGE0vQ8Z6C2qjRn8vYoUJLnjCuK9qlqVHKtA8o0lg
-	sujGcFgqVI9hkaASqRyXEn2SAxPEEwAdaD/+kSgBOi3ZwQxAM++6Bn/9laeRDTn97QQijwLVFNu
-	YQ1o5dO3/3CjLHQZ/2EYpOBJKsrEN8vJqENojx4jn2zFTpWTaNU940pYCxGcdOQ==
-X-Gm-Gg: ASbGncvUnwJiieWFKMo/jjjvDxozBBNi2IjagGbKMAYevQ1gm/v+riIy2TiwuF3L32j
-	J3kQ0wUWm/kBD/NkCc0y+bO2ij4wB3Ct+IlXuyoXo3CC7o6+iV+uJvbG5IXcWi6XkxyhTulLBrG
-	iY/WizPkfiXC6Jmkpde8oNKCtigMUfNWloeoUzChAjowsoxp51ooHcnPjUbazd4P4q9rj1+moed
-	CY3he1tOOoXm6VR2Ic7UyDg8mNWG1G8xV2ZKNBV0/AnoAzHVBEIfyR3KMMmb4/CYLyCJSMPr/Wv
-	vrTrT1924XMdarKnvW1/Ok9uyB1CluZU3MO/lGs0X3W1pDCcBX2C3Ts3t6kTkVF7Vq8Z3azVHhY
-	iAkFl
-X-Received: by 2002:ad4:5d65:0:b0:6e8:89bd:2b50 with SMTP id 6a1803df08f44-6e900604760mr33987766d6.7.1741340035817;
-        Fri, 07 Mar 2025 01:33:55 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IHyw0MIlPz6JSxN4+Pj2WN6QeNWdmbKWHxOQqdc5jlEBKq4ZYwIpIMz5BhiL2wU0DVNM6In+g==
-X-Received: by 2002:ad4:5d65:0:b0:6e8:89bd:2b50 with SMTP id 6a1803df08f44-6e900604760mr33987556d6.7.1741340035522;
-        Fri, 07 Mar 2025 01:33:55 -0800 (PST)
-Received: from jlelli-thinkpadt14gen4.remote.csb (host-89-240-117-139.as13285.net. [89.240.117.139])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6e8f7090c4csm17736036d6.33.2025.03.07.01.33.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 07 Mar 2025 01:33:54 -0800 (PST)
-Date: Fri, 7 Mar 2025 09:33:49 +0000
-From: Juri Lelli <juri.lelli@redhat.com>
-To: Shrikanth Hegde <sshegde@linux.ibm.com>
-Cc: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-	Valentin Schneider <vschneid@redhat.com>,
-	Waiman Long <longman@redhat.com>, Tejun Heo <tj@kernel.org>,
-	Johannes Weiner <hannes@cmpxchg.org>,
-	Michal =?iso-8859-1?Q?Koutn=FD?= <mkoutny@suse.com>,
-	Qais Yousef <qyousef@layalina.io>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	Swapnil Sapkal <swapnil.sapkal@amd.com>, cgroups@vger.kernel.org,
-	Phil Auld <pauld@redhat.com>, luca.abeni@santannapisa.it,
-	linux-kernel@vger.kernel.org, tommaso.cucinotta@santannapisa.it,
-	Jon Hunter <jonathanh@nvidia.com>
-Subject: Re: [PATCH v2 4/8] sched/deadline: Rebuild root domain accounting
- after every update
-Message-ID: <Z8q9fY0DDzVsc4Yb@jlelli-thinkpadt14gen4.remote.csb>
-References: <20250306141016.268313-1-juri.lelli@redhat.com>
- <20250306141016.268313-5-juri.lelli@redhat.com>
- <2926c843-62e6-419b-a045-e49bdd0b0b97@linux.ibm.com>
+        d=1e100.net; s=20230601; t=1741340057; x=1741944857;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=R840fbpOCY97ygCHkbEX+Ner86gAnwGHvg1aopa7qhQ=;
+        b=JcoREEHOTLSis/q9iHBcSyDnn4YPstd6F/FISHdOS7RUlRZyYKV8bXJK3P8oz1PxTr
+         JFErh1VSaPRGasVTPifsAftvrZqcdeLeU9McEkHaA7c5rs/P0lATBS99nSsz+tOxx99J
+         Zk4qcUhuSP97EvrHyM+V6tBS4og6wZFvGGi4WrZV15GpLtflJrI8lpKo38GwsKTLFTfG
+         sM+CY8A4TivAZxBnDzhSe9Ocb21yCQwmfSq8LRoyyCIEtbbUq5J/eKpjVW4ND8gSVwG3
+         X+LCmYtY/at3I/PvN5ra5MslidlShSYDA0WRHAa1r2ogEWejRDnS7sZB87eMb/OWwcA1
+         Q8hQ==
+X-Gm-Message-State: AOJu0YyQsGd2WubfWNtra2/xsxfiMriSvOcd4CcOcVQLINRTbrLhBtVB
+	4rfrRJQRF0laWzUIDQ1vOfTV9CkCyc9Sc9mkeywKblXIB8RAy0Zgc+UY5bUMrO9yoUvxNVD6y/g
+	O48gkKlUeQ45vIg==
+X-Google-Smtp-Source: AGHT+IFY1Xk8hcEAqu7olINreEmrik4Yk5IQrPDjwNCaSq6h11n3n3dB0r47iG1PlbW7axsMkqZodWf0on/+u8o=
+X-Received: from wmbfl19.prod.google.com ([2002:a05:600c:b93:b0:43b:cfc3:aabb])
+ (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a05:600c:4f8b:b0:43b:d12a:40e1 with SMTP id 5b1f17b1804b1-43c5a611738mr17712685e9.18.1741340057664;
+ Fri, 07 Mar 2025 01:34:17 -0800 (PST)
+Date: Fri, 7 Mar 2025 09:34:15 +0000
+In-Reply-To: <20250306185447.2039336-1-cristian.marussi@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <2926c843-62e6-419b-a045-e49bdd0b0b97@linux.ibm.com>
+Mime-Version: 1.0
+References: <20250306185447.2039336-1-cristian.marussi@arm.com>
+Message-ID: <Z8q9l0vDTLpbo8UR@google.com>
+Subject: Re: [PATCH] firmware: arm_scmi: Balance device refcount when
+ destroying devices
+From: Alice Ryhl <aliceryhl@google.com>
+To: Cristian Marussi <cristian.marussi@arm.com>
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	arm-scmi@vger.kernel.org, Sudeep Holla <sudeep.holla@arm.com>, 
+	Catalin Marinas <catalin.marinas@arm.com>
+Content-Type: text/plain; charset="utf-8"
 
-On 07/03/25 12:03, Shrikanth Hegde wrote:
-> Hi Juri.
+On Thu, Mar 06, 2025 at 06:54:47PM +0000, Cristian Marussi wrote:
+> Using device_find_child() to lookup the proper SCMI device to destroy
+> causes an unbalance in device refcount, since device_find_child() calls an
+> implicit get_device(): this, in turns, inhibits the call of the provided
+> release methods upon devices destruction.
 > 
-> On 3/6/25 19:40, Juri Lelli wrote:
-> > Rebuilding of root domains accounting information (total_bw) is
-> > currently broken on some cases, e.g. suspend/resume on aarch64. Problem
-> > is that the way we keep track of domain changes and try to add bandwidth
-> > back is convoluted and fragile.
-> > 
-> > Fix it by simplify things by making sure bandwidth accounting is cleared
-> > and completely restored after root domains changes (after root domains
-> > are again stable).
-> > 
-> > Reported-by: Jon Hunter <jonathanh@nvidia.com>
-> > Fixes: 53916d5fd3c0 ("sched/deadline: Check bandwidth overflow earlier for hotplug")
-> > Signed-off-by: Juri Lelli <juri.lelli@redhat.com>
-> > ---
-> >   include/linux/sched/deadline.h |  4 ++++
-> >   include/linux/sched/topology.h |  2 ++
-> >   kernel/cgroup/cpuset.c         | 16 +++++++++-------
-> >   kernel/sched/deadline.c        | 16 ++++++++++------
-> >   kernel/sched/topology.c        |  1 +
-> >   5 files changed, 26 insertions(+), 13 deletions(-)
-> > 
-> > diff --git a/include/linux/sched/deadline.h b/include/linux/sched/deadline.h
-> > index 6ec578600b24..a780068aa1a5 100644
-> > --- a/include/linux/sched/deadline.h
-> > +++ b/include/linux/sched/deadline.h
-> > @@ -34,6 +34,10 @@ static inline bool dl_time_before(u64 a, u64 b)
-> >   struct root_domain;
-> >   extern void dl_add_task_root_domain(struct task_struct *p);
-> >   extern void dl_clear_root_domain(struct root_domain *rd);
-> > +extern void dl_clear_root_domain_cpu(int cpu);
-> > +
-> > +extern u64 dl_cookie;
-> > +extern bool dl_bw_visited(int cpu, u64 gen);
+> As a consequence, one of the structures that is not freed properly upon
+> destruction is the internal struct device_private dev->p populated by the
+> drivers subsystem core.
 > 
-> Is this needed? There is same declaration outside of CONFIG_SMP done in
-> patch 3/8.
+> KMemleak detects this situation since loading/unloding some SCMI driver
+> causes related devices to be created/destroyed without calling any
+> device_release method.
+> 
+> unreferenced object 0xffff00000f583800 (size 512):
+>   comm "insmod", pid 227, jiffies 4294912190
+>   hex dump (first 32 bytes):
+>     00 00 00 00 ad 4e ad de ff ff ff ff 00 00 00 00  .....N..........
+>     ff ff ff ff ff ff ff ff 60 36 1d 8a 00 80 ff ff  ........`6......
+>   backtrace (crc 114e2eed):
+>     kmemleak_alloc+0xbc/0xd8
+>     __kmalloc_cache_noprof+0x2dc/0x398
+>     device_add+0x954/0x12d0
+>     device_register+0x28/0x40
+>     __scmi_device_create.part.0+0x1bc/0x380
+>     scmi_device_create+0x2d0/0x390
+>     scmi_create_protocol_devices+0x74/0xf8
+>     scmi_device_request_notifier+0x1f8/0x2a8
+>     notifier_call_chain+0x110/0x3b0
+>     blocking_notifier_call_chain+0x70/0xb0
+>     scmi_driver_register+0x350/0x7f0
+>     0xffff80000a3b3038
+>     do_one_initcall+0x12c/0x730
+>     do_init_module+0x1dc/0x640
+>     load_module+0x4b20/0x5b70
+>     init_module_from_file+0xec/0x158
+> 
+> $ ./scripts/faddr2line ./vmlinux device_add+0x954/0x12d0
+> device_add+0x954/0x12d0:
+> kmalloc_noprof at include/linux/slab.h:901
+> (inlined by) kzalloc_noprof at include/linux/slab.h:1037
+> (inlined by) device_private_init at drivers/base/core.c:3510
+> (inlined by) device_add at drivers/base/core.c:3561
+> 
+> Balance device refcount by issuing a put_device() on devices found via
+> device_find_child().
+> 
+> Reported-by: Alice Ryhl <aliceryhl@google.com>
+> Closes: https://lore.kernel.org/linux-arm-kernel/Z8nK3uFkspy61yjP@arm.com/T/#mc1f73a0ea5e41014fa145147b7b839fc988ada8f
+> CC: Sudeep Holla <sudeep.holla@arm.com>
+> CC: Catalin Marinas <catalin.marinas@arm.com>
+> Fixes: d4f9dddd21f3 ("firmware: arm_scmi: Add dynamic scmi devices creation")
+> Signed-off-by: Cristian Marussi <cristian.marussi@arm.com>
 
-Nope. Good catch.
+I was not able to reproduce the memory leak after applying this patch.
 
-Thanks,
-Juri
-
+Tested-by: Alice Ryhl <aliceryhl@google.com>
 
