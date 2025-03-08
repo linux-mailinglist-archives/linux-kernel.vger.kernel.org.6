@@ -1,97 +1,97 @@
-Return-Path: <linux-kernel+bounces-552312-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-552313-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D9B4A5783B
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 05:07:15 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E047A5783D
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 05:10:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 938817A6FE4
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 04:06:13 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 386767A83C8
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 04:09:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D956815B102;
-	Sat,  8 Mar 2025 04:07:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89DE415E5B8;
+	Sat,  8 Mar 2025 04:10:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="R/rx4imJ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="I+0o7tKJ"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 420B02CAB;
-	Sat,  8 Mar 2025 04:07:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E34362CAB;
+	Sat,  8 Mar 2025 04:10:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741406826; cv=none; b=JW0mIm0Z1ftwPCMmc6Fk2ImQ3gENZO0rlg1DilmqBHC31C2oH6q0TRyVv/iW3AOvX3j6K/7qAtraPTz49IIbnAtlLmVKYQw6mkCxT59imtvdLERQQ49uHSnXuw49gkSlvcFYs9FodS7IIu1Q1eCJUxvmuGfM09bjxvkIgrx68Ak=
+	t=1741407003; cv=none; b=YIlz3qJScUjUxUJqLjElD/g5zDkHxWARVcJHfB0pg5Bt7IFEeqMYNTLj30ZnFgzPlTP3EOqfUMmuZtvZ45tom+W7TUFO3OjlAKABfxKRl3BS8iw+Ar1Cu+nMUBbcAqbjxx0t3GCjKNczkOrKtoKcc4TtlvSyM5TZYtsycg8S1D8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741406826; c=relaxed/simple;
-	bh=s41Kiihoo5v0OXthZUir9md3noNFobzwW/cnNSvrFAo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cGwEoytuagl8fCvbhJK3DFUL3iPiPjko7g1sqSDnsH5gJfuAJcDLBc6yAMMboktYqXJnPd6NfUQZSvc0+kc4Ghu4cTeZm9wt1fRysGiRvWkQheC5WkDpDFQvWPQptMHu/XhdRsG5jc92AlrEZGhnGzmpynGNZEeGQZji2rsFBQU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=R/rx4imJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 93A14C4CEE0;
-	Sat,  8 Mar 2025 04:07:05 +0000 (UTC)
+	s=arc-20240116; t=1741407003; c=relaxed/simple;
+	bh=fRP8SZLkJrLqavgzqVtzfiFeKnhkJ6/7/snyOvPYj5g=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=I1a77TM3FODHWPJUiQjTtwcwkYh10pwSAlye08dHRmcOmEvA4F2Fe5Zo7ikXK2wjbEEleThf8mJs5ZmbG9T7Hv6ji7VPxeVY3RnFR+72p5Kgs1nnYXwN5fD4m9ds8RBAfXDAGjDJI3asQSVf2J/bVwmEuCdyBx8aWbMyhEqShf4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=I+0o7tKJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 62DD7C4CEE0;
+	Sat,  8 Mar 2025 04:10:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741406825;
-	bh=s41Kiihoo5v0OXthZUir9md3noNFobzwW/cnNSvrFAo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=R/rx4imJ1i7ZDNHYHBA7H4lp7cojqNDgPdPaS3/7MnfFNfOeQYHcBYGV/HSyRxWjw
-	 ro+iHFi8ugniPknrC0uBQEZDnulTXvtX+ii9iun8nG8+Sy0MQin7yvaYPuN1myiZpz
-	 Y3nNe3NfYaZFmtk8evlnvGI3C+FmuT0Vs8+XDGeCODll4eZ6WMPIWdcgvcSfCfrbLz
-	 wTvnmPDFxc0DQO1o5Wrh/VS7EYyT8tmLAQs6k/e1tjXM6+1p/iHpEXV2hhzOMZlShI
-	 GYnZB5UMWjcyK19Rr+ypxthdY9rXRWwWac5+f71nwFRNXfRZRyZMW617G7SDGOPPG1
-	 FGcVlNkfb+gYA==
-Date: Fri, 7 Mar 2025 20:07:01 -0800
-From: Kees Cook <kees@kernel.org>
-To: Pedro Falcato <pedro.falcato@gmail.com>
-Cc: viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz,
-	ebiederm@xmission.com, sunliming@linux.dev,
-	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org, sunliming@kylinos.cn,
-	kernel test robot <lkp@intel.com>
-Subject: Re: [PATCH V2] fs: binfmt_elf_efpic: fix variable set but not used
- warning
-Message-ID: <202503072006.B920348F@keescook>
-References: <20250308022754.75013-1-sunliming@linux.dev>
- <174140535640.1476341.8645731807830133176.b4-ty@kernel.org>
- <CAKbZUD1ieaVVD9A9CG=5oCacud4JqnxzYgMv=fiQK=2zT_y10w@mail.gmail.com>
+	s=k20201202; t=1741407002;
+	bh=fRP8SZLkJrLqavgzqVtzfiFeKnhkJ6/7/snyOvPYj5g=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=I+0o7tKJxismgEEZ77JdvHUHtLxXFLWRbGCjYhdwE+rvme2UjMYJOQWNSGE3xmHFk
+	 6aGM7mae219HPWQ6rP9U2fjm7JDbE900BQirg7qOI4Lvni8HgMAMSV+C5s/9TVlhe6
+	 hqxmi94piZwOJiqYhOjq1OoScUGHxQTS4bUzyTPVLZruwbxCYyTVYwH/iWV3hllfcM
+	 YYUT6tlp+/aps/VM53C2epSygS6dg7fFniyZP6GTk8PGMqXYeezQwyM4IWlHtQ/UXB
+	 PatdyGWIHue46n0l9M5ylSIBlJO6itBYWD+FZ5JdYkIACYLW3/rqBSvwT6b9SBeaos
+	 PYuukHZT+YvjA==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 34129380CFFB;
+	Sat,  8 Mar 2025 04:10:37 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAKbZUD1ieaVVD9A9CG=5oCacud4JqnxzYgMv=fiQK=2zT_y10w@mail.gmail.com>
+Subject: Re: [PATCH net v2] netpoll: hold rcu read lock in __netpoll_send_skb()
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <174140703601.2576884.2534454406231476474.git-patchwork-notify@kernel.org>
+Date: Sat, 08 Mar 2025 04:10:36 +0000
+References: <20250306-netpoll_rcu_v2-v2-1-bc4f5c51742a@debian.org>
+In-Reply-To: <20250306-netpoll_rcu_v2-v2-1-bc4f5c51742a@debian.org>
+To: Breno Leitao <leitao@debian.org>
+Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+ pabeni@redhat.com, horms@kernel.org, amwang@redhat.com,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-team@meta.com
 
-On Sat, Mar 08, 2025 at 04:01:50AM +0000, Pedro Falcato wrote:
-> On Sat, Mar 8, 2025 at 3:45 AM Kees Cook <kees@kernel.org> wrote:
-> >
-> > On Sat, 08 Mar 2025 10:27:54 +0800, sunliming@linux.dev wrote:
-> > > Fix below kernel warning:
-> > > fs/binfmt_elf_fdpic.c:1024:52: warning: variable 'excess1' set but not
-> > > used [-Wunused-but-set-variable]
-> > >
-> > >
-> >
-> > Adjusted Subject for typos.
-> >
-> > Applied to for-next/execve, thanks!
-> >
-> > [1/1] binfmt_elf_fdpic: fix variable set but not used warning
-> >       https://git.kernel.org/kees/c/7845fe65b33d
-> >
-> 
-> FYI, there's a typo so this patch won't compile
-> 
-> >+ unsiged long excess1
-> >+ = PAGE_SIZE - ((maddr + phdr->p_filesz) & ~PAGE_MASK);
-> 
-> s/unsiged/unsigned/
+Hello:
 
-D'oh. Fixing in my tree..
+This patch was applied to netdev/net.git (main)
+by Jakub Kicinski <kuba@kernel.org>:
 
+On Thu, 06 Mar 2025 05:16:18 -0800 you wrote:
+> The function __netpoll_send_skb() is being invoked without holding the
+> RCU read lock. This oversight triggers a warning message when
+> CONFIG_PROVE_RCU_LIST is enabled:
+> 
+> 	net/core/netpoll.c:330 suspicious rcu_dereference_check() usage!
+> 
+> 	 netpoll_send_skb
+> 	 netpoll_send_udp
+> 	 write_ext_msg
+> 	 console_flush_all
+> 	 console_unlock
+> 	 vprintk_emit
+> 
+> [...]
+
+Here is the summary with links:
+  - [net,v2] netpoll: hold rcu read lock in __netpoll_send_skb()
+    https://git.kernel.org/netdev/net/c/505ead7ab77f
+
+You are awesome, thank you!
 -- 
-Kees Cook
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
+
 
