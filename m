@@ -1,177 +1,73 @@
-Return-Path: <linux-kernel+bounces-552497-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-552524-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42C51A57A7D
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 14:31:06 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 03E57A57AC1
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 14:49:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A10C41894673
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 13:31:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2F6AD167AD4
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 13:48:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E7D31C6FF1;
-	Sat,  8 Mar 2025 13:30:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HgrE1vSY"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8892A1B87CB;
+	Sat,  8 Mar 2025 13:48:49 +0000 (UTC)
+Received: from baidu.com (mx24.baidu.com [111.206.215.185])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F72D4C70;
-	Sat,  8 Mar 2025 13:30:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 438341B0F18
+	for <linux-kernel@vger.kernel.org>; Sat,  8 Mar 2025 13:48:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=111.206.215.185
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741440657; cv=none; b=RrzJ/hZ/hMYXFgV0HnceZIsSLiqIvg446zpOFsIjzAFPAKkOLAHWbkN8XP6pjxQ73v8JLXXgaOYj6pIixlnbGIUn9EOZmxV2ufj66kKtas01FNlNtp+5e5aMB3WiINh1L3C/oMmfkqxzpYPtffGCbXZRENufQQnFo49HGqwKQKg=
+	t=1741441729; cv=none; b=Nr0QBadnd3oeGo26co9usqhZPdPVQlEWgi09qZYJpQYxeeCSP0g+cefXl/ueLdJ7gPzcEMk/15haqIOGrTLOeR59+iRvCP9tBSGC+m/9v+jpi4TdMPLkcWRRpXkWSJyy8fso6iIR5CYyEK8BVPZuz65FCnm1RiRN2bkSl6/Y2Zo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741440657; c=relaxed/simple;
-	bh=l+KYoPy1W++DpoqS9X+vOEm/qsEB5yFrTh+h6WL1POU=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=dCx0js9m+trwQiyrCq0XX1SHXyBga6jUJt7xe+5yjsWT4RGsHD+VtBI2qu8q9fOYpV5UkAuXFASNSVSZsfB6z9kIVxi//D4hBlIuNU0Yq85dmaxHljK6rKxha+aPxJM2FGe/HfTch81muMjkBLFA2nNHJTjHRY6rvjHAPaVOsdc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HgrE1vSY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3AF3CC4CEE0;
-	Sat,  8 Mar 2025 13:30:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741440656;
-	bh=l+KYoPy1W++DpoqS9X+vOEm/qsEB5yFrTh+h6WL1POU=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=HgrE1vSYiLu5agPEnuAuy3fdEJVpcyN8Mjq9nuu1/vGuM5nd7kIb/Zfn2Z/EJfSZ7
-	 VxJ1eN/SMHA7qz18h9mpTHnl+x4d5QiUHaXpbSRQpwRmO2LhKEuah3vmbBgEps3Je9
-	 CiLAwA389qbcSz0f3QI3LgmBWlsa9Pda7y5xpjM/VoFwdrFBbS1J9/h8KYTWn7JE/6
-	 Wjr0kO2FpZfioOjRBGmNh6MtlYgmz1Bq7cUPGLk87V/q8yqWtyS6w2R6hfDdhOrfnM
-	 a+hqAHt0bSLfLuD4FNb4XlRoPbjpsmeyfQBjbRsRG85PiCoGY6FSY3weqbeZnHEbY1
-	 +b+fiBwnk4B2Q==
-Date: Sat, 8 Mar 2025 13:30:45 +0000
-From: Jonathan Cameron <jic23@kernel.org>
-To: Marcelo Schmitt <marcelo.schmitt1@gmail.com>
-Cc: Jonathan Santos <Jonathan.Santos@analog.com>, linux-iio@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-gpio@vger.kernel.org, Sergiu Cuciurean <sergiu.cuciurean@analog.com>,
- lars@metafoo.de, Michael.Hennerich@analog.com, marcelo.schmitt@analog.com,
- robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- linus.walleij@linaro.org, brgl@bgdev.pl, lgirdwood@gmail.com,
- broonie@kernel.org, dlechner@baylibre.com, jonath4nns@gmail.com
-Subject: Re: [PATCH v4 09/17] iio: adc: ad7768-1: Add reset gpio
-Message-ID: <20250308133045.2b3b2f49@jic23-huawei>
-In-Reply-To: <Z8r3sR740CpZfVFr@debian-BULLSEYE-live-builder-AMD64>
-References: <cover.1741268122.git.Jonathan.Santos@analog.com>
-	<305f0bb4a90aba547de6b46d4c9dcf04a2a4db72.1741268122.git.Jonathan.Santos@analog.com>
-	<Z8r3sR740CpZfVFr@debian-BULLSEYE-live-builder-AMD64>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.48; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1741441729; c=relaxed/simple;
+	bh=x8L8uli7Myj08OMRg4LrX6zscoXseo+X57M/4nZHWsg=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=haddfUn2bbKF8spbV5L2j1b7/Cqv3CI/zd1zN98Dyvd4aOVfzksj+hCrF1t6jnipYizlKP19i7mPEXprgNSTmgMRQ3e6Dut4IEjIsBD6xT7JgFv1ZKquJiGOKMfEq7aurn362hXh0g3E45/iqM1Si/cRTw2ZZ+d+0zkLuike2TM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=baidu.com; spf=pass smtp.mailfrom=baidu.com; arc=none smtp.client-ip=111.206.215.185
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=baidu.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baidu.com
+From: "Li,Rongqing" <lirongqing@baidu.com>
+To: Tejun Heo <tj@kernel.org>
+CC: "void@manifault.com" <void@manifault.com>, "arighi@nvidia.com"
+	<arighi@nvidia.com>, "changwoo@igalia.com" <changwoo@igalia.com>,
+	"mingo@redhat.com" <mingo@redhat.com>, "peterz@infradead.org"
+	<peterz@infradead.org>, "juri.lelli@redhat.com" <juri.lelli@redhat.com>,
+	"vincent.guittot@linaro.org" <vincent.guittot@linaro.org>,
+	"dietmar.eggemann@arm.com" <dietmar.eggemann@arm.com>, "rostedt@goodmis.org"
+	<rostedt@goodmis.org>, "bsegall@google.com" <bsegall@google.com>,
+	"mgorman@suse.de" <mgorman@suse.de>, "vschneid@redhat.com"
+	<vschneid@redhat.com>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>
+Subject: =?gb2312?B?tPC4tDogWz8/Pz9dIFJlOiBbUEFUQ0hdIHNjaGVkX2V4dDogU2ltcGxpZnkg?=
+ =?gb2312?Q?cpumask_computation_in_balance=5Fscx?=
+Thread-Topic: [????] Re: [PATCH] sched_ext: Simplify cpumask computation in
+ balance_scx
+Thread-Index: AQHbjyyKE7Ts+jm/YkeB7je4YAozwrNnTymAgAEZK1A=
+Date: Sat, 8 Mar 2025 13:32:07 +0000
+Message-ID: <7f05b88f883848a583e36afe97bb0c7c@baidu.com>
+References: <20250307064533.2663-1-lirongqing@baidu.com>
+ <Z8sXt5eRyga_ukql@slm.duckdns.org>
+In-Reply-To: <Z8sXt5eRyga_ukql@slm.duckdns.org>
+Accept-Language: zh-CN, en-US
+Content-Language: zh-CN
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+Content-Type: text/plain; charset="gb2312"
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+X-FEAS-Client-IP: 10.127.64.36
+X-FE-Last-Public-Client-IP: 100.100.100.38
+X-FE-Policy-ID: 52:10:53:SYSTEM
 
-On Fri, 7 Mar 2025 10:42:09 -0300
-Marcelo Schmitt <marcelo.schmitt1@gmail.com> wrote:
-
-> On 03/06, Jonathan Santos wrote:
-> > From: Sergiu Cuciurean <sergiu.cuciurean@analog.com>
-> > 
-> > Depending on the controller, the default state of a gpio can vary. This
-> > change excludes the probability that the dafult state of the ADC reset
-> > gpio will be HIGH if it will be passed as reference in the devicetree.  
-> 
-> The description doesn't seem to match the changes nor the patch title. You are
-> essentinally adding support for hardware reset. Change the commit description to
-> reflect that.
-> 
-> The default state of GPIOs would not impact device reset because (in theory)
-> they weren't being connected to the reset pin prevously.
-Also possible some other entity was doing appropriate reset (sometimes
-it's just how the system is wired - puts appropriate voltage to come out
-of reset after some other action - no kernel involvement).
-
-Agreed in general though that this is simpler described as just implementing
-hardware reset and not worry about those details.
-
-Jonathan
-
-> 
-> > 
-> > Reviewed-by: David Lechner <dlechner@baylibre.com>
-> > Reviewed-by: Marcelo Schmitt <marcelo.schmitt@analog.com>
-> > Signed-off-by: Sergiu Cuciurean <sergiu.cuciurean@analog.com>
-> > Co-developed-by: Jonathan Santos <Jonathan.Santos@analog.com>
-> > Signed-off-by: Jonathan Santos <Jonathan.Santos@analog.com>
-> > ---
-> > v4 Changes:
-> > * None.
-> > 
-> > v3 Changes:
-> > * fixed SoB order.
-> > * increased delay after finishing the reset action to 200us, as the
-> >   datasheet recommends.
-> > 
-> > v2 Changes:
-> > * Replaced usleep_range() for fsleep() and gpiod_direction_output() for 
-> >   gpiod_set_value_cansleep().
-> > * Reset via SPI register is performed if the Reset GPIO is not defined. 
-> > ---
-> >  drivers/iio/adc/ad7768-1.c | 36 ++++++++++++++++++++++++------------
-> >  1 file changed, 24 insertions(+), 12 deletions(-)
-> > 
-> > diff --git a/drivers/iio/adc/ad7768-1.c b/drivers/iio/adc/ad7768-1.c
-> > index 04a26e5b7d5c..86f44d28c478 100644
-> > --- a/drivers/iio/adc/ad7768-1.c
-> > +++ b/drivers/iio/adc/ad7768-1.c
-> > @@ -166,6 +166,7 @@ struct ad7768_state {
-> >  	struct completion completion;
-> >  	struct iio_trigger *trig;
-> >  	struct gpio_desc *gpio_sync_in;
-> > +	struct gpio_desc *gpio_reset;
-> >  	const char *labels[ARRAY_SIZE(ad7768_channels)];
-> >  	/*
-> >  	 * DMA (thus cache coherency maintenance) may require the
-> > @@ -487,19 +488,30 @@ static int ad7768_setup(struct ad7768_state *st)
-> >  {
-> >  	int ret;
-> >  
-> > -	/*
-> > -	 * Two writes to the SPI_RESET[1:0] bits are required to initiate
-> > -	 * a software reset. The bits must first be set to 11, and then
-> > -	 * to 10. When the sequence is detected, the reset occurs.
-> > -	 * See the datasheet, page 70.
-> > -	 */
-> > -	ret = regmap_write(st->regmap, AD7768_REG_SYNC_RESET, 0x3);
-> > -	if (ret)
-> > -		return ret;
-> > +	st->gpio_reset = devm_gpiod_get_optional(&st->spi->dev, "reset",
-> > +						 GPIOD_OUT_HIGH);
-> > +	if (IS_ERR(st->gpio_reset))
-> > +		return PTR_ERR(st->gpio_reset);
-> >  
-> > -	ret = regmap_write(st->regmap, AD7768_REG_SYNC_RESET, 0x2);
-> > -	if (ret)
-> > -		return ret;
-> > +	if (st->gpio_reset) {
-> > +		fsleep(10);
-> > +		gpiod_set_value_cansleep(st->gpio_reset, 0);
-> > +		fsleep(200);
-> > +	} else {
-> > +		/*
-> > +		 * Two writes to the SPI_RESET[1:0] bits are required to initiate
-> > +		 * a software reset. The bits must first be set to 11, and then
-> > +		 * to 10. When the sequence is detected, the reset occurs.
-> > +		 * See the datasheet, page 70.
-> > +		 */
-> > +		ret = regmap_write(st->regmap, AD7768_REG_SYNC_RESET, 0x3);
-> > +		if (ret)
-> > +			return ret;
-> > +
-> > +		ret = regmap_write(st->regmap, AD7768_REG_SYNC_RESET, 0x2);
-> > +		if (ret)
-> > +			return ret;
-> > +	}
-> >  
-> >  	st->gpio_sync_in = devm_gpiod_get(&st->spi->dev, "adi,sync-in",
-> >  					  GPIOD_OUT_LOW);
-> > -- 
-> > 2.34.1
-> >   
-
+PiBIb3cgaXMgY3B1bWFza19vZigpIGV4cGVuc2l2ZT8gSSBoYXZlIGEgaGFyZCB0aW1lIHNlZWlu
+ZyBob3cgdGhpcyB3b3VsZA0KPiBhY3R1YWxseSBpbXByb3ZlIGFueXRoaW5nLiBEbyB5b3UgaGF2
+ZSBhbnkgbWVhc3VyZW1lbnRzPw0KPiANCg0KZm9yX2VhY2hfY3B1X2FuZG5vdCtjcHVtYXNrX29m
+IGlzIG1vcmUgZmFzdGVyDQpzb3JyeSBmb3IgdGhpcyBub2lzZQ0KDQp0aGFua3MNCg==
 
