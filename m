@@ -1,314 +1,146 @@
-Return-Path: <linux-kernel+bounces-552749-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-552720-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA8BFA57D92
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 19:57:59 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C2498A57D50
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 19:44:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2A4B8188FB5D
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 18:58:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9998616E965
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 18:44:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE2681B3957;
-	Sat,  8 Mar 2025 18:57:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFDAF1EFF90;
+	Sat,  8 Mar 2025 18:42:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nUbQm7Ee"
-Received: from mail-pj1-f49.google.com (mail-pj1-f49.google.com [209.85.216.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="DhrstXCP"
+Received: from relay1-d.mail.gandi.net (relay1-d.mail.gandi.net [217.70.183.193])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 699DC8BFF;
-	Sat,  8 Mar 2025 18:57:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 915C11B041A;
+	Sat,  8 Mar 2025 18:42:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.193
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741460271; cv=none; b=HtD0vxyKbkNv2ed/mASzC7RH22EMjfqzsuo05RzI+7lnNuqSj2T70lVMzhMbTn1HszSXR9lsHKjmOtrIXtNsguvajJFP4FRQeMTI+6ikJNSViojXuSIqnkzW5XopdB4EnUbKQ6br9hQffcfjPfbLHIOo6s0yTFF9NkPSNFXMzzo=
+	t=1741459379; cv=none; b=lj48f51yE7S2OqL2XsqfPn8OBcw5L80gOzrJKsYFSOoekdGMkU6sr78znNjuvepGgTjL+q3kgB6Q7f1J+SUB3aISmw/s7oJ37Nfp8s36cKtagEWsH6rzDhuu+wofGlU8FP8FuwVDjEkF/5H9u8gXVzfz4KUv3cjsYfrmOVLjqNw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741460271; c=relaxed/simple;
-	bh=XmNTWLJqsIjerW9NiA+27YBuZq9mjNlrLg5Xxj8WVLQ=;
-	h=From:To:Cc:Subject:In-Reply-To:Date:Message-ID:References; b=lnbZWXdlot4tFSqNiMtc7GgzsGKXwscucQCaiiI3kXU3/HaW6H0VUgsArpKLKGnxfGmUSAIxsweovIr52g4MP4O3bYlJzboHk0n0qn8v+Q9jY4xNtXt/aZQROymtzrRT1xhDcaOvfwuGrdY2Y7WY0APSiqzEZhMCdnEza6XgylQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nUbQm7Ee; arc=none smtp.client-ip=209.85.216.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f49.google.com with SMTP id 98e67ed59e1d1-2ff694d2d4dso4181769a91.0;
-        Sat, 08 Mar 2025 10:57:49 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741460269; x=1742065069; darn=vger.kernel.org;
-        h=references:message-id:date:in-reply-to:subject:cc:to:from:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=5GgQebRpaI8tg+e2D2WplA5dGl2hw8xIsKdL5v3sIfw=;
-        b=nUbQm7EeziTh3rfHjsuHV1fhQXFVYESsDB4ARYfk6OjMTTF07gxs2WV/jWRLiutWXY
-         mk890adELhfjPDwBwJPBwETJHAyPbG8p/C3CC66v7ofrt729VBydxMn/r4zD7EHU4VnX
-         OTUfhkhJdDnPfqwd3tHOkCOXhVrncStGjkos+ap68Z0WBqNlDd8kB64gIOa7vRz4SPT0
-         AxnapHhSeqZefZZ9RLknCT8V9XSZD2P/CT0C6soV0w8E0VkqJdOkJZ1xFCLONUJya/Om
-         OpILABs5hBRsfOzfB/920BUBDcJ2Bmvb8s23lQ+p6eTMrArieZzHiVsTq/D1O4o0cr1x
-         GI2A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741460269; x=1742065069;
-        h=references:message-id:date:in-reply-to:subject:cc:to:from
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=5GgQebRpaI8tg+e2D2WplA5dGl2hw8xIsKdL5v3sIfw=;
-        b=btDCHWmqstgFg+vcnwTvnt7VSromuYPt21ULs2PM0V2UGpsAxdZ5yRYmFQSUDILyiY
-         lh6JSnufgJgrxEsiwYFDMMIJIFmGANlBAn4GJGsdKuyxlfZ+PXNmF+28NCIbiOFDNP2P
-         PMtdtxrMobVFMWwjC3Mg0+bWlYz4ZZf0tVY10kAD48zHLeWcirl4vTxubhz66oJEkesY
-         F99h0w4iU0POIINDgcGtCrfT1Q5Q5KUuXzZsyAwJoh8jA6d23JXZGNDjLsE+l/q8e/1J
-         ZMQZ+aqnGs8Nwux3B7OEsD0plhJn7sfSMlbhuxRukgXSrQve5VPZDgTUzYRdmZ0WVOBo
-         +2VA==
-X-Forwarded-Encrypted: i=1; AJvYcCXGQcuBmEzv8ogG+lexYRLTxwwbap7YIQZXScOwtgf1cthpaf0GgrpTaUO5Y3PvX/ClfMQYaCvHdPJgSWw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyivAydErXP65xsPX5jOOOa0R16BH1QRY6bktvRj+Co0sYwEV5G
-	nRedUQIMgHvT47oin8/Ac0T82YuBz+1ogBy4z5eF8jXwSrx4CBXU
-X-Gm-Gg: ASbGncvlNBOakqIWAkqMl8vqYyvJw3epC++muhk5z6IRwOnoBMi8MfS8lNL/76hA30x
-	Yc/A39T0rF9I8T/EuH7JRFaVCNDUgS2ljcchinRHcu6ZAmhRvEhvk1Uwfcrn5HD8O3RQbGCN7uJ
-	d7sMMpWeQtUjH3SeKLzIt4RNg68ifR8sBr1+6TUV1ueSIzEzwlQ4FDxLZjIqPecZXdeWKvHXY+n
-	I1q5EK7plyBc2e38hlFaBteFMfhLIySsrUgxcl9OzPzx8Js7s8o2M0KrdpZZkUbpviSX0FT2kYZ
-	WAnbgQIQFL7yFQJLvfkP1Nu0YD+K4VSwNZ4=
-X-Google-Smtp-Source: AGHT+IFQNfbGhuNdv9bcKfedwM9w7GN5xsLluOGAk7ccw7yHuc5arby2ETjSD+scF+gJMKUEEBMOoQ==
-X-Received: by 2002:a17:90b:3c0d:b0:2fa:228d:5b03 with SMTP id 98e67ed59e1d1-2ff7ce93e84mr11804304a91.19.1741460268510;
-        Sat, 08 Mar 2025 10:57:48 -0800 (PST)
-Received: from dw-tp ([171.76.82.7])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2ff4e7ffdd3sm6942707a91.39.2025.03.08.10.57.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 08 Mar 2025 10:57:47 -0800 (PST)
-From: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
-To: Ojaswin Mujoo <ojaswin@linux.ibm.com>
-Cc: linux-ext4@vger.kernel.org, Theodore Ts'o <tytso@mit.edu>, Jan Kara <jack@suse.cz>, Baokun Li <libaokun1@huawei.com>, linux-kernel@vger.kernel.org, Mahesh Kumar <maheshkumar657g@gmail.com>
-Subject: Re: [PATCH v2 2/3] ext4: avoid journaling sb update on error if journal is destroying
-In-Reply-To: <Z8xbLrdN3L1E50-G@li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com>
-Date: Sun, 09 Mar 2025 00:11:22 +0530
-Message-ID: <87cyergyb1.fsf@gmail.com>
-References: <cover.1741270780.git.ojaswin@linux.ibm.com> <1bf59095d87e5dfae8f019385ba3ce58973baaff.1741270780.git.ojaswin@linux.ibm.com> <87ldtfhmo7.fsf@gmail.com> <Z8xAmyICsNlln4Y3@li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com> <87ecz7hcw0.fsf@gmail.com> <Z8xbLrdN3L1E50-G@li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com>
+	s=arc-20240116; t=1741459379; c=relaxed/simple;
+	bh=bj3AkQyGvXTri8BE6H5tQYcO68Pw6ckMVTozMMTxzeU=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ER9+AOXs1hZnEJJdNru6H/tflC3casHZnDTKmRSpZbjN5JiMZtd9kt4NoUx8QJL875Mq11ZIg+mAQN4H4wBkaDwcWxy6YSz92dLqCM8yudt44fn6BmzHxPyO4+8f5Xgkb3cD/DY5NuC4fmpZTFq0XghgfTVXh59YLuET0pW8BN8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=DhrstXCP; arc=none smtp.client-ip=217.70.183.193
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 582E2442E0;
+	Sat,  8 Mar 2025 18:42:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1741459374;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=QVizt2ypnXhadSn6f+iBrMMSpu+9hfUNiwubAs2JXgk=;
+	b=DhrstXCPLPMkRn/DTi3/8xqShChF4pDqYIwL80fkmnrTih3SXKGwuFHHL3p2tGHq4kQ0C+
+	HvdB9kOtmgwWkkRHNV/bmJly8QzZOrvunhb9NYdeSU3wG7/EPDiHVx17dh/SCFstEvuS5S
+	ML7YKxCfhLQHs2iIcfNtgw5tVJfXqy0srUstji4m7T0R+50IPZn37wPyGF0QXsIt3aWhqv
+	aLeHOcOSqkiCDzFCJKRC26ipWHNwQhVLCMZuuzFCgOVBhKcJzLDxmvuNWSacOgk1YTazab
+	//y8Dd2vbRfyty/MhOZaut952vu/oPvvcxgWHHbQk1s1PxN7TH6ANpvXFL7NFg==
+Date: Sat, 8 Mar 2025 19:42:51 +0100
+From: Maxime Chevallier <maxime.chevallier@bootlin.com>
+To: davem@davemloft.net, Andrew Lunn <andrew@lunn.ch>, Jakub Kicinski
+ <kuba@kernel.org>, Eric Dumazet <edumazet@google.com>, Paolo Abeni
+ <pabeni@redhat.com>, Russell King <linux@armlinux.org.uk>, Heiner Kallweit
+ <hkallweit1@gmail.com>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ thomas.petazzoni@bootlin.com, Florian Fainelli <f.fainelli@gmail.com>,
+ =?UTF-8?B?S8O2cnk=?= Maincent <kory.maincent@bootlin.com>, Simon Horman
+ <horms@kernel.org>, Romain Gantois <romain.gantois@bootlin.com>, Antoine
+ Tenart <atenart@kernel.org>, Marek =?UTF-8?B?QmVow7pu?= <kabel@kernel.org>,
+ Sean Anderson <sean.anderson@linux.dev>, =?UTF-8?B?QmrDuHJu?= Mork
+ <bjorn@mork.no>
+Subject: Re: [PATCH net-next v2 1/2] net: phy: sfp: Add support for SMBus
+ module access
+Message-ID: <20250308194251.30622971@fedora.home>
+In-Reply-To: <20250225112043.419189-2-maxime.chevallier@bootlin.com>
+References: <20250225112043.419189-1-maxime.chevallier@bootlin.com>
+	<20250225112043.419189-2-maxime.chevallier@bootlin.com>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdduudegfedtucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpeffhffvvefukfgjfhhoofggtgfgsehtjeeftdertddvnecuhfhrohhmpeforgigihhmvgcuvehhvghvrghllhhivghruceomhgrgihimhgvrdgthhgvvhgrlhhlihgvrhessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepheetveefiedvkeejfeekkefffefgtdduteejheekgeeileehkefgfefgveevfffhnecukfhppedvrgdtudemtggsudelmeekugegtgemlehftddtmegstgdvudemkeekleelmeehgedttgemvgehlegvnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepvdgrtddumegtsgduleemkegugegtmeelfhdttdemsggtvddumeekkeelleemheegtdgtmegvheelvgdphhgvlhhopehfvgguohhrrgdrhhhomhgvpdhmrghilhhfrhhomhepmhgrgihimhgvrdgthhgvvhgrlhhlihgvrhessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepudekpdhrtghpthhtohepuggrvhgvmhesuggrvhgvmhhlohhfthdrnhgvthdprhgtphhtthhopegrnhgurhgvfieslhhunhhnrdgthhdprhgtphhtthhopehkuhgsrgeskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepvgguu
+ hhmrgiivghtsehgohhoghhlvgdrtghomhdprhgtphhtthhopehprggsvghnihesrhgvughhrghtrdgtohhmpdhrtghpthhtoheplhhinhhugiesrghrmhhlihhnuhigrdhorhhgrdhukhdprhgtphhtthhopehhkhgrlhhlfigvihhtudesghhmrghilhdrtghomhdprhgtphhtthhopehnvghtuggvvhesvhhgvghrrdhkvghrnhgvlhdrohhrgh
+X-GND-Sasl: maxime.chevallier@bootlin.com
 
-Ojaswin Mujoo <ojaswin@linux.ibm.com> writes:
+Hi,
 
-> On Sat, Mar 08, 2025 at 06:56:23PM +0530, Ritesh Harjani wrote:
->> Ojaswin Mujoo <ojaswin@linux.ibm.com> writes:
->> 
->> > On Sat, Mar 08, 2025 at 03:25:04PM +0530, Ritesh Harjani (IBM) wrote:
->> >> Ojaswin Mujoo <ojaswin@linux.ibm.com> writes:
->> >> 
->> >> > Presently we always BUG_ON if trying to start a transaction on a journal marked
->> >> > with JBD2_UNMOUNT, since this should never happen. However, while ltp running
->> >> > stress tests, it was observed that in case of some error handling paths, it is
->> >> > possible for update_super_work to start a transaction after the journal is
->> >> > destroyed eg:
->> >> >
->> >> > (umount)
->> >> > ext4_kill_sb
->> >> >   kill_block_super
->> >> >     generic_shutdown_super
->> >> >       sync_filesystem /* commits all txns */
->> >> >       evict_inodes
->> >> >         /* might start a new txn */
->> >> >       ext4_put_super
->> >> > 	flush_work(&sbi->s_sb_upd_work) /* flush the workqueue */
->> >> >         jbd2_journal_destroy
->> >> >           journal_kill_thread
->> >> >             journal->j_flags |= JBD2_UNMOUNT;
->> >> >           jbd2_journal_commit_transaction
->> >> >             jbd2_journal_get_descriptor_buffer
->> >> >               jbd2_journal_bmap
->> >> >                 ext4_journal_bmap
->> >> >                   ext4_map_blocks
->> >> >                     ...
->> >> >                     ext4_inode_error
->> >> >                       ext4_handle_error
->> >> >                         schedule_work(&sbi->s_sb_upd_work)
->> >> >
->> >> >                                                /* work queue kicks in */
->> >> >                                                update_super_work
->> >> >                                                  jbd2_journal_start
->> >> >                                                    start_this_handle
->> >> >                                                      BUG_ON(journal->j_flags &
->> >> >                                                             JBD2_UNMOUNT)
->> >> >
->> >> > Hence, introduce a new sbi flag s_journal_destroying to indicate journal is
->> >> > destroying only do a journaled (and deferred) update of sb if this flag is not
->> >> > set. Otherwise, just fallback to an un-journaled commit.
->> >> >
->> >> > We set sbi->s_journal_destroying = true only after all the FS updates are done
->> >> > during ext4_put_super() (except a running transaction that will get commited
->> >> > during jbd2_journal_destroy()). After this point, it is safe to commit the sb
->> >> > outside the journal as it won't race with a journaled update (refer
->> >> > 2d01ddc86606).
->> >> >
->> >> > Also, we don't need a similar check in ext4_grp_locked_error since it is only
->> >> > called from mballoc and AFAICT it would be always valid to schedule work here.
->> >> >
->> >> > Fixes: 2d01ddc86606 ("ext4: save error info to sb through journal if available")
->> >> > Reported-by: Mahesh Kumar <maheshkumar657g@gmail.com>
->> >> > Suggested-by: Jan Kara <jack@suse.cz>
->> >> > Signed-off-by: Ojaswin Mujoo <ojaswin@linux.ibm.com>
->> >> > ---
->> >> >  fs/ext4/ext4.h      | 2 ++
->> >> >  fs/ext4/ext4_jbd2.h | 8 ++++++++
->> >> >  fs/ext4/super.c     | 4 +++-
->> >> >  3 files changed, 13 insertions(+), 1 deletion(-)
->> >> >
->> >> > diff --git a/fs/ext4/ext4.h b/fs/ext4/ext4.h
->> >> > index 2b7d781bfcad..d48e93bd5690 100644
->> >> > --- a/fs/ext4/ext4.h
->> >> > +++ b/fs/ext4/ext4.h
->> >> > @@ -1728,6 +1728,8 @@ struct ext4_sb_info {
->> >> >  	 */
->> >> >  	struct work_struct s_sb_upd_work;
->> >> >  
->> >> > +	bool s_journal_destorying;
->> >> > +
->> >> >  	/* Atomic write unit values in bytes */
->> >> >  	unsigned int s_awu_min;
->> >> >  	unsigned int s_awu_max;
->> >> > diff --git a/fs/ext4/ext4_jbd2.h b/fs/ext4/ext4_jbd2.h
->> >> > index 9b3c9df02a39..6bd3ca84410d 100644
->> >> > --- a/fs/ext4/ext4_jbd2.h
->> >> > +++ b/fs/ext4/ext4_jbd2.h
->> >> > @@ -437,6 +437,14 @@ static inline int ext4_journal_destroy(struct ext4_sb_info *sbi, journal_t *jour
->> >> >  {
->> >> >  	int err = 0;
->> >> >  
->> >> > +	/*
->> >> > +	 * At this point all pending FS updates should be done except a possible
->> >> > +	 * running transaction (which will commit in jbd2_journal_destroy). It
->> >> > +	 * is now safe for any new errors to directly commit superblock rather
->> >> > +	 * than going via journal.
->> >> > +	 */
->> >> > +	sbi->s_journal_destorying = true;
->> >> 
->> >> This is not correct right. I think what we decided to set this flag
->> >> before we flush the workqueue. So that we don't schedule any new
->> >> work after this flag has been set. At least that is what I understood.
->> >> 
->> >> [1]: https://lore.kernel.org/all/87eczc6rlt.fsf@gmail.com/
->> >> 
->> >> -ritesh
->> >
->> > Hey Ritesh,
->> >
->> > Yes that is not correct, I missed that in my patch however we realised
->> > that adding it before flush_work() also has issues [1]. More
->> > specifically:
->> 
->> Ohk. right. 
->> 
->> >
->> >                      **kjournald2**
->> >                      jbd2_journal_commit_transaction()
->> >                      ...
->> >                      ext4_handle_error()
->> >                         /* s_journal_destorying is not set */
->> >                         if (journal && !s_journal_destorying)
->> 
->> Then maybe we should not schedule another work to update the superblock
->> via journalling, it the error itself occurred while were trying to
->> commit the journal txn? 
->> 
->> 
->> -ritesh
->
-> Hmm, ideally yes that should not happen, but how can we achieve that?
-> For example with the trace we saw:
->
->    **kjournald2**
->    jbd2_journal_commit_transaction()
->      jbd2_journal_get_descriptor_buffer
->        jbd2_journal_bmap
->          ext4_journal_bmap
->            ext4_map_blocks
->              ...
->              ext4_inode_error
->                ext4_handle_error
->                  schedule_work(&sbi->s_sb_upd_work)
->
-> How do we tell ext4_handle_error that it is in the context of a
-> committing txn.
+On Tue, 25 Feb 2025 12:20:39 +0100
+Maxime Chevallier <maxime.chevallier@bootlin.com> wrote:
 
-So even if we identify that the current
-jbd2_journal_commit_transaction() is coming from kjournald2(), that is
-sufficient right? Because the only other place where we call
-jbd2_journal_commit_transaction() is jbd2_journal_destroy() and that
-happens after we can set few things from ext4_put_super() and flush work
-is completed, correct? 
+> The SFP module's eeprom and internals are accessible through an i2c bus.
+> However, all the i2c transfers that are performed are SMBus-style
+> transfers for read and write operations.
+> 
+> It is possible that the SFP might be connected to an SMBus-only
+> controller, such as the one found in some PHY devices in the VSC85xx
+> family.
+> 
+> Introduce a set of sfp read/write ops that are going to be used if the
+> i2c bus is only capable of doing smbus byte accesses.
+> 
+> As Single-byte SMBus transaction go against SFF-8472 and breaks the
+> atomicity for diagnostics data access, hwmon is disabled in the case
+> of SMBus access.
+> 
+> Moreover, as this may cause other instabilities, print a warning at
+> probe time to indicate that the setup may be unreliable because of the
+> hardware design.
+> 
+> Tested-by: Sean Anderson <sean.anderson@linux.dev>
+> Signed-off-by: Maxime Chevallier <maxime.chevallier@bootlin.com>
+> ---
+> 
+> V2: - Added Sean's tested-by
+>     - Added a warning indicating that operations won't be reliable, from
+>       Russell and Andrew's reviews
+>     - Also added a flag saying we're under a single-byte-access bus, to
+>       both print the warning and disable hwmon.
+> 
+>  drivers/net/phy/sfp.c | 79 +++++++++++++++++++++++++++++++++++++++----
+>  1 file changed, 73 insertions(+), 6 deletions(-)
+> 
+> diff --git a/drivers/net/phy/sfp.c b/drivers/net/phy/sfp.c
+> index 9369f5297769..6e9d3d95eb95 100644
+> --- a/drivers/net/phy/sfp.c
+> +++ b/drivers/net/phy/sfp.c
+> @@ -282,6 +282,7 @@ struct sfp {
+>  	unsigned int rs_state_mask;
+>  
+>  	bool have_a2;
+> +	bool single_byte_access;
 
+Looking back at that code and our discussions, struct sfp already has an
+"i2c_block_size", that is set to 1 for modules with broken emulated
+eeprom, and there's already some logging and all the logic to disable
+hwmon in such case.
 
-> We can't pass down an argument all the way down 
-> cause that is not feasible. An sb level flag will also not work
-> I think. Any thoughts on this?
+So I think V3 will ditch that "single_byte_access" bool, and rather add
+a "i2c_max_block_size" member, set depending on the bus capabilities,
+that we'll use to clamp the i2c_block_size.
 
-I was thinking if we should have a per task flag? Something like
-PF_KJOURNALD?  (Similar to how we have PF_KSWAPD or PF_KCOMPACTD)? This
-can help us identify if we are a kjournald2() kthread.
+Of course the big warning to say that the design is inherently broken
+because we're on a bus that's limited will stay, but that should make
+our life easier for proper non-single-byte smbus support, and also
+keep the code flow cleaner.
 
-That will help prevent scheduling another work item to start a new
-transaction in case an error occurs while committing the currently
-running transaction. Correct?
+Let me know what you think,
 
-Now I don't know if we have any free bit available in current->flags. If
-not shall we use current->journal_info pointer to have 0th bit as a
-flag? Basically override current->journal_info to also store a flag.  We
-can create a wrapper to get the journal_info from current by masking
-this flag bit and use it to dereference journal_info.
-
-But before going down that road, it's better to know what others think?
-
--ritesh
-
-
->
-> regards,
-> ojaswin
->
->> 
->> 
->> >   ext4_put_super()
->> >     sbi->s_journal_destorying = true;
->> >     flush_work(&sbi->s_sb_upd_work)
->> >                                       schedule_work()
->> >     jbd2_journal_destroy()
->> >      journal->j_flags |= JBD2_UNMOUNT;
->> >
->> >                                         jbd2_journal_start()
->> >                                          start_this_handle()
->> >                                            BUG_ON(JBD2_UNMOUNT)
->> >
->> > So the right thing to do seems to be that we need to force a journal
->> > commit before the final flush as well. [1] Has more info on this and
->> > some followup discussion as well.
->> >
->> > [1] https://lore.kernel.org/all/cover.1741270780.git.ojaswin@linux.ibm.com/T/#mc8046d47b357665bdbd2878c91e51eb660f94b3e
->> >
->> > Regards,
->> > ojaswin
->> >> 
->> >> 
->> >> > +
->> >> >  	err = jbd2_journal_destroy(journal);
->> >> >  	sbi->s_journal = NULL;
->> >> >  
->> >> > diff --git a/fs/ext4/super.c b/fs/ext4/super.c
->> >> > index 8ad664d47806..31552cf0519a 100644
->> >> > --- a/fs/ext4/super.c
->> >> > +++ b/fs/ext4/super.c
->> >> > @@ -706,7 +706,7 @@ static void ext4_handle_error(struct super_block *sb, bool force_ro, int error,
->> >> >  		 * constraints, it may not be safe to do it right here so we
->> >> >  		 * defer superblock flushing to a workqueue.
->> >> >  		 */
->> >> > -		if (continue_fs && journal)
->> >> > +		if (continue_fs && journal && !EXT4_SB(sb)->s_journal_destorying)
->> >> >  			schedule_work(&EXT4_SB(sb)->s_sb_upd_work);
->> >> >  		else
->> >> >  			ext4_commit_super(sb);
->> >> > @@ -5311,6 +5311,8 @@ static int __ext4_fill_super(struct fs_context *fc, struct super_block *sb)
->> >> >  	spin_lock_init(&sbi->s_error_lock);
->> >> >  	INIT_WORK(&sbi->s_sb_upd_work, update_super_work);
->> >> >  
->> >> > +	sbi->s_journal_destorying = false;
->> >> > +
->> >> >  	err = ext4_group_desc_init(sb, es, logical_sb_block, &first_not_zeroed);
->> >> >  	if (err)
->> >> >  		goto failed_mount3;
->> >> > -- 
->> >> > 2.48.1
+Maxime
 
