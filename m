@@ -1,126 +1,109 @@
-Return-Path: <linux-kernel+bounces-552601-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-552618-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6281AA57BE7
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 17:24:34 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F33E4A57C11
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 17:47:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 51FA53AEA11
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 16:24:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3A31616DA3A
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 16:47:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 260061E521D;
-	Sat,  8 Mar 2025 16:24:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2085E1DE3BD;
+	Sat,  8 Mar 2025 16:47:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MLtFli/M"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="Xt+M408Y"
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7328181720;
-	Sat,  8 Mar 2025 16:24:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7339DDDC5;
+	Sat,  8 Mar 2025 16:47:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741451065; cv=none; b=GeeCU891/Dw1UTK8dyyhsxnaDVnlohFiUfLw3P/VZmIWp/SGLuO3XVpjxY0T3QDV+ig5tGq6Tg0N/Jp5lPWCS8IBrjw750RNY0NlpSPq9j+6GS83GkLpCHUhdNYM/tNtwFT9neLP7NBFx3k4vdfGVRIYRmMYaI9vHv9Zm+7k4yc=
+	t=1741452436; cv=none; b=MPCXB+DMKMEad8lkJPh7aOh+TrMFeYqO578rIf2iLpTbkhnRYCNRbnJ+uDvf/kFN8fA20PfY0kQUGuMNN28ptZwciiLIqJS4lM07P/cKdkHfDujzQE4lYNzXXJF4F3lzot6lc+8/y2S98shHC1fBPWl9lkGkGFSBPrab/ey9968=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741451065; c=relaxed/simple;
-	bh=mxjT0AhbJ+fH5D/EKExE2eW9/MHvtfzCY9Y8SWeY37U=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=J99dZzilowK0UnkNR2npmQ+2/+z/EyVmDrojG0gfZ/vK/aWLX2ctPWPlyzzc6C5Ul0dIZSeeO0EzA9LgU+TLRTGMJYJa9Q1io2PzsYyMBWn84RkY0ifDWe9m0dH7BJqsidnzNmTCTG+Kq2iAKznM5b8XOTpCBBk2Qqw+uOB/oQk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MLtFli/M; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EE880C4CEE0;
-	Sat,  8 Mar 2025 16:24:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741451064;
-	bh=mxjT0AhbJ+fH5D/EKExE2eW9/MHvtfzCY9Y8SWeY37U=;
-	h=From:Date:Subject:To:Cc:From;
-	b=MLtFli/MqO4Uv/vWJrQeJLZscaCJTFEAX5rQgbMV/KCi0OPTJwFFDxn108zqE0AUY
-	 4ZUgcP7FesRx6Ue7uOOdz4kdyTTUmtA4A948l9KVk9tLi7hVhKQzE5tE2jdBC2s1FY
-	 J01kx2JQ0NBb7QC9vGMVumOBCPshqKtYQMXQilbfH7g6ciLgaHrVwaaKThFBBJ0Oew
-	 7hUcCwiqNnsZCK/LS7KMhr8eyiiREePVqzayZTU0kPVAGVOnsrtckXK2e/cJfdWNW4
-	 /HjcnvNA8gHnY9x9aMea6CL8M569x+a0v9TrrnKl94utGlJEaIWr25mJTfc4gQ+wZ8
-	 LE1juUi+x7pWw==
-From: Konrad Dybcio <konradybcio@kernel.org>
-Date: Sat, 08 Mar 2025 17:24:15 +0100
-Subject: [PATCH v2] dt-bindings: usb: qcom,dwc3: Synchronize minItems for
- interrupts and -names
+	s=arc-20240116; t=1741452436; c=relaxed/simple;
+	bh=OD2hOtHQa0uwK+Cr0jnQY97FmNfZwoPMsZKx2Stcwn4=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=qpbR8g750fIQdxt2WwfBz6tYrcTjkM7izoW5FQww2LV1H5A61vgj04PHgyiPbCzb8vgQ4twUrZ8Txr8bqw10wfDf8/JjX5dOJxhg9YjmQQ2Sx0JQowx4iT4itYF/YkHOOwySdSRSGPC7ZyQOUs9HZqsFxG8w0T3BWHaww+LtzDY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=Xt+M408Y; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
+	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
+	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=OD2hOtHQa0uwK+Cr0jnQY97FmNfZwoPMsZKx2Stcwn4=; b=Xt+M408YamdyCB/pMOD0BkKihm
+	Hg6ZflaaQS2yqz405faQ82I6AxOV5ze5MwaXsxDiX7jKdOlcr18KDU9B5DRXEe4CHalzrA6aic/MM
+	ITyEbZ0xgApQGzSXFTa71eg+cMXC+e9NvmU84UNo8p24AytPE34azJbvb5lU3TqzADoEc+h+nIbAT
+	VTHUHySoUwGoyGdt5VQqBXcDVHq1KTZYnQx4OXtPUSrYIX9K1aYSr7O8ORPhsXPJMdipeOTo8byPj
+	0aFzVLwicZTfM69yy6XoIt4cW8DCrHzIRLL27pKTUkjOD4ZK9UPEbOnMW+GXEyLIa2la5dZUzh2VN
+	gdlbWLzA==;
+Received: from [194.95.143.137] (helo=phil.localnet)
+	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <heiko@sntech.de>)
+	id 1tqwz8-0003oR-SC; Sat, 08 Mar 2025 17:25:10 +0100
+From: Heiko Stuebner <heiko@sntech.de>
+To: Chukun Pan <amadeus@jmu.edu.cn>,
+ Uwe =?UTF-8?B?S2xlaW5lLUvDtm5pZw==?= <ukleinek@kernel.org>
+Cc: Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Jonas Karlman <jonas@kwiboo.se>,
+ Yao Zi <ziyao@disroot.org>, linux-arm-kernel@lists.infradead.org,
+ linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-pwm@vger.kernel.org
+Subject: Re: [PATCH 1/2] dt-bindings: pwm: rockchip: Add rockchip,rk3528-pwm
+Date: Sat, 08 Mar 2025 17:25:09 +0100
+Message-ID: <5942715.DvuYhMxLoT@phil>
+In-Reply-To: <pnlkcc2rl7fegltovgtvp4xdxhonw72rclvhn7qmvb7xyuullm@xf5x6lcigji3>
+References:
+ <20250307120004.959980-1-amadeus@jmu.edu.cn>
+ <20250307120004.959980-2-amadeus@jmu.edu.cn>
+ <pnlkcc2rl7fegltovgtvp4xdxhonw72rclvhn7qmvb7xyuullm@xf5x6lcigji3>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250308-topic-dt_bindings_fixes_usb-v2-1-3169a3394d5b@oss.qualcomm.com>
-X-B4-Tracking: v=1; b=H4sIAC5vzGcC/42NXQqDMBCEryL73EiS4k/71HsUEZNsdaEmNqvSI
- t69qSfoy8A3A99swBgJGa7ZBhFXYgo+gT5lYIfO9yjIJQYtdSHPshRzmMgKN7eGvCPfc/ugN3K
- 7sBFWSmfQVXVlL5AMU8RjTIJ7k3ggnkP8HGer+rX/eVcllECFZVcYh3WlboE5fy3d04ZxzFNAs
- +/7F+Ml9NnNAAAA
-X-Change-ID: 20250306-topic-dt_bindings_fixes_usb-c00dbed787c9
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Wesley Cheng <quic_wcheng@quicinc.com>, 
- Konrad Dybcio <konradybcio@kernel.org>, 
- Krishna Kurapati <quic_kriskura@quicinc.com>
-Cc: Marijn Suijten <marijn.suijten@somainline.org>, 
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
- linux-arm-msm@vger.kernel.org, linux-usb@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1741451060; l=1614;
- i=konrad.dybcio@oss.qualcomm.com; s=20230215; h=from:subject:message-id;
- bh=SIaQZaIKTd4vnJ9IAfLcrJh++UCApOBcXKazDbk+l/Y=;
- b=Amm4rC3YU4Z15RBVBr6EdjVNbFDukRdBlIfPI6IlqXe3lnfvIz1ugt1lS/EibcOQPYZW7+D/m
- QdDEMC4crwRCxk6QIpq0QTsAjnpNNYHkR/NL7+clIUOassRlqNIbZTr
-X-Developer-Key: i=konrad.dybcio@oss.qualcomm.com; a=ed25519;
- pk=iclgkYvtl2w05SSXO5EjjSYlhFKsJ+5OSZBjOkQuEms=
 
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Hi Uwe,
 
-It makes sense that ARRAY_SIZE(prop) should == ARRAY_SIZE(prop-names),
-so allow that to happen with interrupts.
+Am Freitag, 7. M=C3=A4rz 2025, 18:07:47 MEZ schrieb Uwe Kleine-K=C3=B6nig:
+> On Fri, Mar 07, 2025 at 08:00:03PM +0800, Chukun Pan wrote:
+> > Document pwm compatible for rk3528 which is fallback compatible
+> > of rk3328-pwm group.
+> >=20
+> > Signed-off-by: Chukun Pan <amadeus@jmu.edu.cn>
+>=20
+> to prevent binding warnings it's probably sensible to let both patches
+> go in via the same tree at the same time. Feel free to take the binding
+> patch via rockchip/arm-soc.
+>=20
+> Acked-by: Uwe Kleine-K=C3=B6nig <ukleinek@kernel.org>
 
-Fixes bogus warnings such as:
-usb@c2f8800: interrupt-names: ['pwr_event', 'qusb2_phy', 'hs_phy_irq'] is too short
+You already have the rk3562 binding in your for-next branch [0], which
+could create merge-conflicts later on.
 
-Fixes: 53c6d854be4e ("dt-bindings: usb: dwc3: Clean up hs_phy_irq in binding")
-Signed-off-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
----
-Changes in v2:
-- Use a better reference in the Fixes tag
-- Link to v1: https://lore.kernel.org/r/20250306-topic-dt_bindings_fixes_usb-v1-1-e1e6a5bde871@oss.qualcomm.com
----
- Documentation/devicetree/bindings/usb/qcom,dwc3.yaml | 2 ++
- 1 file changed, 2 insertions(+)
+This patch already contains it, so should fit neatly onto your branch.
 
-diff --git a/Documentation/devicetree/bindings/usb/qcom,dwc3.yaml b/Documentation/devicetree/bindings/usb/qcom,dwc3.yaml
-index a2b3cf625e5b3962f3acfe93de02f3cae2b6123d..64137c1619a635a5a4f96fc49bd75c5fb757febb 100644
---- a/Documentation/devicetree/bindings/usb/qcom,dwc3.yaml
-+++ b/Documentation/devicetree/bindings/usb/qcom,dwc3.yaml
-@@ -404,6 +404,7 @@ allOf:
-           minItems: 2
-           maxItems: 3
-         interrupt-names:
-+          minItems: 2
-           items:
-             - const: pwr_event
-             - const: qusb2_phy
-@@ -425,6 +426,7 @@ allOf:
-           minItems: 3
-           maxItems: 4
-         interrupt-names:
-+          minItems: 3
-           items:
-             - const: pwr_event
-             - const: qusb2_phy
+And binding warnings only come from linux-next, so won't trigger as the
+pwm will feed the binding there too :-)
 
----
-base-commit: 565351ae7e0cee80e9b5ed84452a5b13644ffc4d
-change-id: 20250306-topic-dt_bindings_fixes_usb-c00dbed787c9
+So I guess it might be better to take the binding through the pwm tree
+and me then picking up the dts patch.
 
-Best regards,
--- 
-Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+=46or the binding
+Reviewed-by: Heiko Stuebner <heiko@sntech.de>
+
+
+[0] https://web.git.kernel.org/pub/scm/linux/kernel/git/ukleinek/linux.git/=
+commit/?h=3Dpwm/for-next&id=3D058210e84b48dbb670a6bf72afaed6fbd8043a37
+
 
 
