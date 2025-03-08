@@ -1,436 +1,246 @@
-Return-Path: <linux-kernel+bounces-552276-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-552277-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 440AFA577D9
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 04:23:19 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D572A577DB
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 04:25:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9844E1899545
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 03:23:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AE9F718914ED
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 03:25:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F206714EC60;
-	Sat,  8 Mar 2025 03:23:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF54E1527B4;
+	Sat,  8 Mar 2025 03:24:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b="G3FIXI9/"
-Received: from mail-qk1-f174.google.com (mail-qk1-f174.google.com [209.85.222.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="bJ6xBg4r"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E866512CDA5
-	for <linux-kernel@vger.kernel.org>; Sat,  8 Mar 2025 03:23:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.174
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741404191; cv=none; b=b8K4OqUdS9QP0nvr9igzTqRe8KRh4TGx+EMFMnBbnnxIJFT2UCmSf+Kw7PqwQYMO+vMX62tO1s5tR+DgDF+F4NTStImU0uVALzat9HCg5GwhiAHY3FZSeBDSHp7bB+vk6vv7L2jyn5bICxRPFgpwMnOoSjc2XoFerfzQQybhKq4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741404191; c=relaxed/simple;
-	bh=MmzQsLxDKIXvY+Hbb0XgX5cimXDJJg45pGRDylUKdgE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=C8EiVFEI6mhC8OTUEzL72m5jgzH1Ci3NKpc5YWEitH23MmyYi/VXDSI+BQegPWYZ5LpycNVi095VaiMxK39dUA9YzMZKJo6c+TH8BcMBbOQ55Sw43HdygbfzBUuqtwR9nUSw4VOPT/QICDBZiSlo59fKTQ0Ymz/5RANNkZHqNTw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net; spf=pass smtp.mailfrom=gourry.net; dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b=G3FIXI9/; arc=none smtp.client-ip=209.85.222.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gourry.net
-Received: by mail-qk1-f174.google.com with SMTP id af79cd13be357-7c08b14baa9so237989085a.3
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Mar 2025 19:23:08 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gourry.net; s=google; t=1741404188; x=1742008988; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=9kkDaiYn8BNq9wXK9Bp+xqS98ju01c1lv7vbYke9egk=;
-        b=G3FIXI9/QgS6b7p9ZKeChZXfnJbfsBaKwiMp3MmplqM0SDwuySwiSvtHDPpvk10lnl
-         6ynhbpCsGWYhU8lLF8chc9f0yu4xylAyBYwok8uyb75bjsRGS5SX0Ev7QqqgwayENzZq
-         IDiyceOQHhpG/vGc80p+phcoqOt/CTAU/Qee3bwbKNt4CFxuVTUa1jqcz4VNvJFAINqy
-         eUzrnawfrKrohuqSEo17BDBsjkv4qKVsEGaDODprJ778umm5TV5MvVeMjLLWLraQGlnu
-         3Ct56NtALTcoGsBOIFigi4+ykG2xeZFOLZsT4GhHVDgVnIwlhm4IxY8X41eVIcAsi6Kk
-         hDRw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741404188; x=1742008988;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=9kkDaiYn8BNq9wXK9Bp+xqS98ju01c1lv7vbYke9egk=;
-        b=fvmBFKDzcnVKC4RFg/jWxfnm6QpgeHptSMpJP2RWlyZ5IXRf0+SW3It9gzRQPpWLid
-         wdHK34D+44cCgEfxKaxlXDlWiYPYJL5vV3Zux0RZTi6+75O81iGSxYsRyJ9qyA/15FVS
-         NbIVKwTmbtsUByOZ9/mJ1Nh4WmhA6IztC46fU/2qLFEi0UfgNiFggs82kI+fsEvpg8PT
-         A58qB40EPvVeDxapK7B4OF30A4vBeVBO326CXjn5i+oPdAzKfDuIx3D+/hD1wqJyh0m/
-         Xeefjzq89KJM0cI18if7U0ML6HZy/GNprgA+T5RDYVZD4YNcEHvRiT4gkbkHckfl3iaa
-         dwDw==
-X-Forwarded-Encrypted: i=1; AJvYcCX+LlmRk27Gt96ti8yhgUvHUqM2NhRTlyPtZDPsggUd2IpoFssPwdUKW8xzXk/9PW+bx+H5491TFOLueBs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyT3oGu8D10chXFxD2uNlH/Oz5xwryVuc1zXwEgt/wqtU1z5K/m
-	0JrHxt8r5AExapwk3l/zm5kqoNua+66pGpFhQ7qFujFQQYoFg+yQzk+ZqU9PRpusn6/Ul/UU8vL
-	L
-X-Gm-Gg: ASbGncsvk+j+Q8cSYO6X0hci6MJWkziTvfHzP1bbbpE28xqaSxzRxtzJABVb/sslWc8
-	VEP3ATpZwjMQuhGlJj47v0QTGAb6L9c2UttTJB51egE+swyPUNv9x7cJff8ZxHsx0HmnLd3eGrY
-	jj2bEeA87KFSb93qsb+0UpHCUmkAXgTi2fAQE1rgpdv6Y6gWEvJ7aaRinZ6lUlUuiypjhCfv5Ok
-	a1ZiKoNh+MaLVLOvh91A84OR7J1h3IFr6CCcbd7KhuN87sUXDr9yMcNtWNV1ua/RkIB9i+SaIdF
-	Tt3+dqVZZkM+u90XSh5XKn1K0r2kUeF1HuKQTKmUjuJIHg2dV1XaoAalu3RNO/GzluFIJ6ZHId2
-	CXA+AN1NYEIZkagNgzeBa/nQmggE=
-X-Google-Smtp-Source: AGHT+IEcBkI69lUrjBbxyKItEz6GSDDrzJ/inNMnbTU6xoigcZCvrVlOh6zAGVKFHLwBZbuUjdRTMg==
-X-Received: by 2002:a05:620a:86ce:b0:7c3:d316:1d8e with SMTP id af79cd13be357-7c4e6194783mr917562385a.53.1741404187604;
-        Fri, 07 Mar 2025 19:23:07 -0800 (PST)
-Received: from gourry-fedora-PF4VCD3F (pool-173-79-56-208.washdc.fios.verizon.net. [173.79.56.208])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7c3e534e924sm331448985a.39.2025.03.07.19.23.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 07 Mar 2025 19:23:07 -0800 (PST)
-Date: Fri, 7 Mar 2025 22:23:05 -0500
-From: Gregory Price <gourry@gourry.net>
-To: lsf-pc@lists.linux-foundation.org
-Cc: linux-mm@kvack.org, linux-cxl@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [LSF/MM] CXL Boot to Bash - Section 0a: CFMWS and NUMA Flexiblity
-Message-ID: <Z8u4GTrr-UytqXCB@gourry-fedora-PF4VCD3F>
-References: <Z226PG9t-Ih7fJDL@gourry-fedora-PF4VCD3F>
- <Z8jORKIWC3ZwtzI4@gourry-fedora-PF4VCD3F>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B3E4AD4B;
+	Sat,  8 Mar 2025 03:24:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.16
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741404298; cv=fail; b=Acv/PNvYrHbvJDfARescBA+qhdAPs0N2XK4HWnMxQ7yTa6DNplDUP6I9AoFdAQ9EjHf+7+j+DI+Pt48HBr+FrbVI4ED5bc0MhySPNXt3+IgZN5upEjX9nf5SlvaLDFj/bFwTawBk1kWtAOQ9Y3oZVT4BuoIte/Pecu943zPrqI4=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741404298; c=relaxed/simple;
+	bh=NuTX8xe/XjOMPc2egeBvI2GxIbYZ3X1k5oKjervXQ+o=;
+	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=I5wxX0TzpWZHharJdY687PUaBK4uuFfc76kdubxZGTADmlmtpGfHkRSm6OlKXFEtBJ5lz1nRT7B1RuLOQ58BZr7eFNFWaVX6PWuSD81xvjFONtXzWIPFJfTQE1h8B2HOX6gqiZaVnX3+DwT3dGF+f4K+ajDEAbkyzRZt2W176Bg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=bJ6xBg4r; arc=fail smtp.client-ip=192.198.163.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1741404297; x=1772940297;
+  h=date:from:to:cc:subject:message-id:references:
+   in-reply-to:mime-version;
+  bh=NuTX8xe/XjOMPc2egeBvI2GxIbYZ3X1k5oKjervXQ+o=;
+  b=bJ6xBg4rEu/69hkLIFkRFgri2JTy35lpidGuxo3fzla1AsgOmYFWxb4Q
+   p7o6zvn9014a0GDt8xqGsNedHAw6h/NyV2dMmCRU6VcZRyo5h2mHxkH4R
+   i0Q126N2QpQCPZyLbpAUjzjXCOfcu9VEh7GiAK32HU5Y6jLFZmZDQk3Gy
+   GYiPzgbObp91E98aFttkGiROSuzCnawQoYGmQZTaQR0mVG95tr0vSwhqW
+   qobE4u+guKQGWWsQ5Z4rmxEryIDE8dQ+8WOJjQJGTfe587f6CXjP+BDeq
+   XXab/kGKUIv+TSRvc5g0Bx2MhPv8PswDIKl9n1ifSyOEji60WV06cI3Pm
+   g==;
+X-CSE-ConnectionGUID: P6KoBHasTW+kz5UwVWjH4Q==
+X-CSE-MsgGUID: nT9TIv5nTpmZuZ14O6zIcw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11366"; a="30040886"
+X-IronPort-AV: E=Sophos;i="6.14,231,1736841600"; 
+   d="scan'208";a="30040886"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Mar 2025 19:24:56 -0800
+X-CSE-ConnectionGUID: 4CmHqahRRuaa2mB5Nb0iWg==
+X-CSE-MsgGUID: t9bcOdUMRrigVPfciVSIQQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
+   d="scan'208";a="120010744"
+Received: from orsmsx901.amr.corp.intel.com ([10.22.229.23])
+  by orviesa007.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Mar 2025 19:24:56 -0800
+Received: from ORSMSX901.amr.corp.intel.com (10.22.229.23) by
+ ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.14; Fri, 7 Mar 2025 19:24:55 -0800
+Received: from orsedg603.ED.cps.intel.com (10.7.248.4) by
+ ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.14 via Frontend Transport; Fri, 7 Mar 2025 19:24:55 -0800
+Received: from NAM12-BN8-obe.outbound.protection.outlook.com (104.47.55.176)
+ by edgegateway.intel.com (134.134.137.100) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.44; Fri, 7 Mar 2025 19:24:54 -0800
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=p4UkeJBQryhoaYUmdKJMbjsdiR1BLhFbxfIW8WiYWVFVk2m+oq5H9vTu/70ba62IBeq4WlY2bNDWfIHwgrn+rCzR3zpPYdNA8JJoQZ9bCyEscYDcCyJ4cvEwFEonlxMU5/gD23hOzLNWDQZ+VlbqyXCYQiRU+gBTdEuycsjIs0+HGPGWch4a7jp9t+rePc79yKw2lYU8exw6GJhLxGL3+Jxq3Jn80mFVRpOfEkFWNwQiIQ46+lpWeJRALd+wfrsV3fjdutfZKPJmiVAHf48g2ca8n+olU7n9CexSH87SL8BmcQVhHOIdLf3EUeIgTHRgYjeHzcHZ9u6VebZ57dZHjQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=r3TlAhPWViDG26L2BNMPI9qpy+554QFkyyt7wp7IapI=;
+ b=S7mu8P3vemOjfu4fKnWj6gtYOeywi+WnRH28+3EUdF1qdOVI6iE65YLepNcDA2ExXdzzi899IXgQYyOsAOEv8KK41+AYL1V76enDPlOrLpq38FwqGwnylSgkcBF9cMt0oH6X2D8pDroGSR7AWVFDZ8tBupCNg+GN0mN+IN16+1imhmFJhy2BxU3+WdwXnEHkVzF/gXm4zs5Xg65vyoc6dNYx9UAPMNZOpDHTU3Phx/Hs/OMlzFJf7bkmf1AeyaJo/y0EY01p2elF1YPrxWArS/hku/KojWHchQzo0F71yLukGuSXq8cs2imQaxd4vWOnO58CEzDAMcxu190tx6UUSQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from CH3PR11MB8660.namprd11.prod.outlook.com (2603:10b6:610:1ce::13)
+ by SA2PR11MB4906.namprd11.prod.outlook.com (2603:10b6:806:fa::7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8511.19; Sat, 8 Mar
+ 2025 03:24:25 +0000
+Received: from CH3PR11MB8660.namprd11.prod.outlook.com
+ ([fe80::cfad:add4:daad:fb9b]) by CH3PR11MB8660.namprd11.prod.outlook.com
+ ([fe80::cfad:add4:daad:fb9b%5]) with mapi id 15.20.8511.017; Sat, 8 Mar 2025
+ 03:24:25 +0000
+Date: Sat, 8 Mar 2025 11:24:15 +0800
+From: Chao Gao <chao.gao@intel.com>
+To: Dave Hansen <dave.hansen@intel.com>
+CC: <tglx@linutronix.de>, <x86@kernel.org>, <seanjc@google.com>,
+	<pbonzini@redhat.com>, <linux-kernel@vger.kernel.org>, <kvm@vger.kernel.org>,
+	<peterz@infradead.org>, <rick.p.edgecombe@intel.com>,
+	<weijiang.yang@intel.com>, <john.allen@amd.com>, <bp@alien8.de>, "Maxim
+ Levitsky" <mlevitsk@redhat.com>
+Subject: Re: [PATCH v3 08/10] x86/fpu/xstate: Add CET supervisor xfeature
+ support
+Message-ID: <Z8u4Xwwp1wO/HeM0@intel.com>
+References: <20250307164123.1613414-1-chao.gao@intel.com>
+ <20250307164123.1613414-9-chao.gao@intel.com>
+ <74e49413-dd1a-4577-818f-b5b21b2a2b7e@intel.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <74e49413-dd1a-4577-818f-b5b21b2a2b7e@intel.com>
+X-ClientProxiedBy: SG2P153CA0054.APCP153.PROD.OUTLOOK.COM (2603:1096:4:c6::23)
+ To CH3PR11MB8660.namprd11.prod.outlook.com (2603:10b6:610:1ce::13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z8jORKIWC3ZwtzI4@gourry-fedora-PF4VCD3F>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH3PR11MB8660:EE_|SA2PR11MB4906:EE_
+X-MS-Office365-Filtering-Correlation-Id: 8dcd8df8-0676-46ce-f0d7-08dd5df0b9f1
+X-LD-Processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|366016|1800799024;
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?6orYwOxzmqzG45L8OZNDyAaG6TWvObS0UbdjmUCdF7Eph885m5Q76qKTzver?=
+ =?us-ascii?Q?4gV5i+6H2Ipx7e4zjonDmD0Kswapy6VVmqdOHxXOMPB1yTKbL4qpip1jBFGX?=
+ =?us-ascii?Q?60ShD7yriOy/h1W7uFN8MvviPWsCDlpc18d5alU+moPSwm+8IJuGRVnBUPNZ?=
+ =?us-ascii?Q?PI8ycBrMI5gwKVNILMzxzieln32f3T7NPpMzpzXiuprEqC2u85XLiylwnPqD?=
+ =?us-ascii?Q?C9SeU+V3/ShB+Gcl+1kTwl/wrCP3p9MdvlNK8SUis3KksCxUonxqwkFRyhmy?=
+ =?us-ascii?Q?TT76fUeUWhkTIPFqFKpDEZWRUVqrTDS71XpFadpHrHiJXxJPdKkviaC5HBtF?=
+ =?us-ascii?Q?7EwXbxEHtWHMo7qL96eH1Uo3xl0f5MdsbPFLMzte5H3BTkmcTIJLtE+O3ZW2?=
+ =?us-ascii?Q?1ziiA6qfvxPy4cc66YF53qn6Br3YCylYcKW3CQAwRUHfZ/eBymMZ+TliHHoi?=
+ =?us-ascii?Q?mzuTxtHxYieF1j5zuVkhVpe+zwJJSCWljJ6v0Oqu25QjyE3Ws3orDhXUPl55?=
+ =?us-ascii?Q?3Q8zeAlSqOGSmGAnainc7DLWjoV+ca8dGzNkVvDm56G2HQ9SUQD/5BJ8kOvA?=
+ =?us-ascii?Q?DMdDW3H5XXPi9BT9NWjSpeKf4vzV6Nev2ZK/QIoQ0zCkJ9/z81sWmFu33qf4?=
+ =?us-ascii?Q?Of198Nnr50ay7iIe9R2cZ5FGCpDkeLfDZTSrb9sLZEtd3hyXuzfFlwqdFQLg?=
+ =?us-ascii?Q?NC1xqsi1sJwd9WtNtt5tkcxx3M2zFq8QjqrkGukzT+BgkPrH6uIP5E9YgBWY?=
+ =?us-ascii?Q?8Q94umw3vwH1jdTA/GXKRDJD+SilC6s+OK05v63GvUyJeVd7bsu2eN7begyj?=
+ =?us-ascii?Q?JDsRmsd79o/T5o+QwLOUxLLGNovSEkgraNrsblUCsyEU2JLkbZZZuzb/4bgj?=
+ =?us-ascii?Q?+4xeCqMsmBN8vQuKOsAedIH/eP1uc1zAvsC968EA6ZiME4ajxh5z5iivY5lg?=
+ =?us-ascii?Q?Xs9ErturnjQ3T493VJ44Qgj/KaVyfJ28Zs3PQ5Be1hSSqc+OHrjh2xaWbOK8?=
+ =?us-ascii?Q?mYICGdPBbVM4YJ9gXnivUYqNsSfmU3dSAC/faBXao+amzc07u5ufiIHE+lDy?=
+ =?us-ascii?Q?ifs/muMidlb3ISq49qaVBwo5xojEPoGD+lYwoge3Oe0PmZvS2IzYf+HIptHr?=
+ =?us-ascii?Q?voQos8ivfYI1ahVn+Fqee8us9CiauOHwYiTqP3LgfGhkCnwXn558mjaykQmZ?=
+ =?us-ascii?Q?O510QOMopQ9/eHUCYLysKE6tDaGsqABS24lHdQmC4Q4optix4pjAs/z9TpNS?=
+ =?us-ascii?Q?yQUqlF0tTTm4EB7wcPA+tx+YHNJgF23PjUq4x7wSwkbrqLN9FYhy7RzY7433?=
+ =?us-ascii?Q?tN63RMYa9CGH/oUjREWhMhxolM81xyHpsGK6B+GIvTFGdyk6NUVnWvny+qlG?=
+ =?us-ascii?Q?qXQHSxX6/9YbNuEGZoqdb3yuQrG/?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH3PR11MB8660.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(366016)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?1eMebXdqpclOpa3c50y4m9Q+RUJVPvEG20f3a99qVHv36EfgzlNlK/bi204Y?=
+ =?us-ascii?Q?MuxGDbWZm9qzn57Zfr+BlL8ZW57Kr+iaYMKqi64DK0bFJ7wwMmiCMeWKW//D?=
+ =?us-ascii?Q?1xm7Ef2RxZUmzr3hOhb5fs73AclWNGAfJ0JjLMXTPjbBKWilW78fa6QNTSh8?=
+ =?us-ascii?Q?8bQAr3vDJzUNmZSBgr8i0yd1nRqnuKs2pKlNgw9oHxxDdSCZlt/f9kmicYJY?=
+ =?us-ascii?Q?LwCEbIMrosdnGboQ0kqt5HLrWvaS5TJojC2e1Q8hT8t2JD3DxjI8Qgy1SEav?=
+ =?us-ascii?Q?NRnWH9ZvnyGHlU/ajgwCcDFyzHweBAOve4bpofrcicZaivSk39Q4NE0wFSNe?=
+ =?us-ascii?Q?Yo0ribbZROf/5Ezi9b9ODRQB8fG8CsZ9No/azwYzhosNGxUOUpMmQmzWZ/CG?=
+ =?us-ascii?Q?VonuYq+6jfD+dxwdb9hsJqDNFS3LEBdKzLznvE09ELVnnPyyy134JPrLPqlq?=
+ =?us-ascii?Q?Q2MPSwMorsEC556/aZnvIGxpsT+uoYm+lc1C+RmKYFK6xCRnGqV/6bFkmyhd?=
+ =?us-ascii?Q?n7VtuygjG81Md+2KfhZGMRUe67taTwbIm2IXQOwxXu6Tl/ffVkdNkkb4ygMn?=
+ =?us-ascii?Q?TT70DcGfdAyJIirMIDyyeVjwh4LyK2NDze7sj5YM+LwyPTvLQ+JPOsb4WqIo?=
+ =?us-ascii?Q?d5GgMk2lWObOquhwt504gw5VuUr8kmauLGox9zg6zo3NCDMGxoavmT571qdv?=
+ =?us-ascii?Q?4B/WFXSQXKnjgZDd5Y8PFCSOYFd29FFEpKa96blMw9497gTyr+/AOX43TVXP?=
+ =?us-ascii?Q?7C+qmGT+7HTxNxX6YAu3nPhpM4ViOg6zBSXRjZqP0PmbPjn5bm6prJja2H9w?=
+ =?us-ascii?Q?DG6CP9PQQ2k2b7D2i+HpRClv7FyY0/yqTciAttQYzFJ41X1x5iaO57xbGjTe?=
+ =?us-ascii?Q?VkKUC0Dkg988KHD8W5mlpl2brKDVwHV6cQPk0S6tThrRDKI9wT5cGS0DP6FV?=
+ =?us-ascii?Q?hIpNfjB51eALdfM/DSjnvEhdgsT4l80+87p/iWjMGavYoC8ND1DFqiR8UFnp?=
+ =?us-ascii?Q?GE27D5sfGOm9/fLgT9uaPD8SkDI0VC5LuotkKeT/FQ7pCIkSLx1IqWL+SIiC?=
+ =?us-ascii?Q?aRVrGMyqqT+Y9694vWznUZfjyCgKpCBKm1r733gt9jsxHAtoGU0vNLnBjiP1?=
+ =?us-ascii?Q?XUXNSamaUoyr8Xac2l+xqflVwcW+9SnPrX1GMP0z7qpm+1gb7AvyJbqEflKs?=
+ =?us-ascii?Q?PO8kDqwkD7/hR9/OBzbkTe3GkNJx0k9booGGYtgSwIvMmf0DeFHNN3JEFCEU?=
+ =?us-ascii?Q?XfgeeVJqYibkZOepaoikIwGG2qEmdVXk2lAUkEhuTnmUTbLQjV5wKO8E8TIz?=
+ =?us-ascii?Q?HnJMle2QJfqE7FGPyUdbZksyMxNQmU9xXtI3KnXpRmh6mCLfDPOQiZ91oBwZ?=
+ =?us-ascii?Q?WaPWnuIiA4aLk9t3acrnaWWNd+boskqVwtXCgjeZ5khN9Mr6asRc5b5Ca40B?=
+ =?us-ascii?Q?eGG1eptcgbVUjvQXjDOVI6/Y8e0wuYb8KHkp4eLU7LS+MW0S7GtAU6q7I/Us?=
+ =?us-ascii?Q?iB1S+uebUCCXc0/Kvs6LHogrE1cHjgpcH04wSTVZZOPQUKximkNqO/XfKe49?=
+ =?us-ascii?Q?rIkls+ztvaWnIRjnJDJih7cAAGcJTDkXBIvb+KKa?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8dcd8df8-0676-46ce-f0d7-08dd5df0b9f1
+X-MS-Exchange-CrossTenant-AuthSource: CH3PR11MB8660.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Mar 2025 03:24:25.0793
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: YtaTKTUER2hZ6JvtqFJG7XfR0p5MjZ/9pf5qYgI+oUdXuqoJDjeikMPDcuKBu08MoWlWZSJx8Kjk+m7p3G/NAw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA2PR11MB4906
+X-OriginatorOrg: intel.com
 
-In the last section we discussed how the CEDT CFMWS and SRAT Memory
-Affinity structures are used by linux to "create" NUMA nodes (or at
-least mark them as possible). However, the examples I used suggested
-that there was a 1-to-1 relationship between CFMWS and devices or
-host bridges.
+On Fri, Mar 07, 2025 at 10:39:47AM -0800, Dave Hansen wrote:
+>On 3/7/25 08:41, Chao Gao wrote:
+>> From: Yang Weijiang <weijiang.yang@intel.com>
+>> 
+>> To support CET virtualization, KVM needs the kernel to save/restore CET
+>> supervisor xstate in guest FPUs when switching between guest and host
+>> FPUs.
+>> 
+>> Add CET supervisor xstate (i.e., XFEATURE_CET_KERNEL) support. Both the
+>> guest FPU and the kernel FPU will allocate memory for the new xstate.
+>> For the guest FPU, the xstate remains unused until the upcoming CET
+>> virtualization is added to KVM. For the kernel FPU, the xstate is unused
+>> until CET_S is enabled within the kernel.
+>> 
+>> Note CET_S may or may not be enabled within the kernel, so always
+>> allocating memory for XFEATURE_CET_KERNEL could potentially waste some
+>> XSAVE buffer space. If necessary, this issue can be addressed by making
+>> XFEATURE_CET_KERNEL a guest-only feature.
+>
+>I feel like these changelogs are long but say very little.
+>
+>This patch *WASTES* resources. Granted, it's only for a single patch,
+>but it's totally not obvious.
+>
+>Could you work on tightening down the changelog, please?
 
-This is not true - in fact, CFMWS are a simply a carve out of System
-Physical Address space which may be used to map any number of endpoint
-devices behind the associated Host Bridge(s).
+ok. will update the changelog to:
 
-The limiting factor is what your platform vendor BIOS supports.
+To support CET virtualization, KVM needs the kernel to save and restore the CET
+supervisor xstate in guest FPUs when switching between guest and host FPUs.
 
-This section describes a handful of *possible* configurations, what NUMA
-structure they will create, and what flexibility this provides.
+Add CET supervisor xstate support in preparation for the upcoming CET
+virtualization in KVM.
 
-All of these CFMWS configurations are made up, and may or may not exist
-in real machines. They are a conceptual teching tool, not a roadmap.
+Currently, kernel FPUs will not utilize the CET supervisor xstate, resulting in
+some wasted XSAVE buffer space (24 Bytes) for all kernel FPUs.
 
-(When discussing interleave in this section, please note that I am
- intentionally omitting details about decoder programming, as this
- will be covered later.)
+>
+>> --- a/arch/x86/kernel/fpu/xstate.c
+>> +++ b/arch/x86/kernel/fpu/xstate.c
+>> @@ -55,7 +55,7 @@ static const char *xfeature_names[] =
+>>  	"Protection Keys User registers",
+>>  	"PASID state",
+>>  	"Control-flow User registers",
+>> -	"Control-flow Kernel registers (unused)",
+>> +	"Control-flow Kernel registers",
+>
+>This should probably be:
+>
+>> +	"Control-flow Kernel registers (KVM only)",
+>
+>or something similar for now. XFEATURE_CET_KERNEL is *VERY* different
+>from all of the other features and it's silly to pretend that it's the same.
 
-
--------------------------------
-One 2GB Device, Multiple CFMWS.
--------------------------------
-Lets imagine we have one 2GB device attached to a host bridge.
-
-In this example, the device hosts 2GB of persistent memory - but we
-might want the flexibility to map capacity as volatile or persistent.
-
-The platform vendor may decide that they want to reserve two entirely
-separate system physical address ranges to represent the capacity.
-
-```
-           Subtable Type : 01 [CXL Fixed Memory Window Structure]
-                Reserved : 00
-                  Length : 002C
-                Reserved : 00000000
-     Window base address : 0000000100000000   <- Memory Region
-             Window size : 0000000080000000   <- 2GB
-Interleave Members (2^n) : 00
-   Interleave Arithmetic : 00
-                Reserved : 0000
-             Granularity : 00000000
-            Restrictions : 0006               <- Bit(2) - Volatile
-                   QtgId : 0001
-            First Target : 00000007           <- Host Bridge _UID
-
-           Subtable Type : 01 [CXL Fixed Memory Window Structure]
-                Reserved : 00
-                  Length : 002C
-                Reserved : 00000000
-     Window base address : 0000000200000000   <- Memory Region
-             Window size : 0000000080000000   <- 2GB
-Interleave Members (2^n) : 00
-   Interleave Arithmetic : 00
-                Reserved : 0000
-             Granularity : 00000000
-            Restrictions : 000A               <- Bit(3) - Persistant
-                   QtgId : 0001
-            First Target : 00000007           <- Host Bridge _UID
-
-NUMA effect: 2 nodes marked POSSIBLE (1 for each CFMWS)
-```
-
-You might have a CEDT with two CFMWS as above, where the base addresses
-are `0x100000000` and `0x200000000` respectively, but whose window sizes
-cover the entire 2GB capacity of the device.  This affords the user 
-flexibility in where the memory is mapped depending on if it is mapped
-as volatile or persistent while keeping the two SPA ranges separate.
-
-This is allowed because the endpoint decoders commit device physical
-address space *in order*, meaning no two regions of device physical
-address space can be mapped to more than one system physical address.
-
-i.e.: DPA(0) can only map to SPA(0x200000000) xor SPA(0x100000000)
-
-(See Section 2a - decoder programming).
-
--------------------------------
-Two Devices On One Host Bridge.
--------------------------------
-Lets say we have two CXL 2GB devices behind a single host bridge, and we
-may or may not want to interleave some or all of those devices.
-
-There are (at least) 2 ways to provide this flexibility.
-
-First, we might simply have two CFMWS.
-```
-           Subtable Type : 01 [CXL Fixed Memory Window Structure]
-                Reserved : 00
-                  Length : 002C
-                Reserved : 00000000
-     Window base address : 0000000100000000   <- Memory Region
-             Window size : 0000000080000000   <- 2GB
-Interleave Members (2^n) : 00
-   Interleave Arithmetic : 00
-                Reserved : 0000
-             Granularity : 00000000
-            Restrictions : 0006               <- Bit(2) - Volatile
-                   QtgId : 0001
-            First Target : 00000007           <- Host Bridge _UID
-
-           Subtable Type : 01 [CXL Fixed Memory Window Structure]
-                Reserved : 00
-                  Length : 002C
-                Reserved : 00000000
-     Window base address : 0000000200000000   <- Memory Region
-             Window size : 0000000080000000
-Interleave Members (2^n) : 00
-   Interleave Arithmetic : 00
-                Reserved : 0000
-             Granularity : 00000000
-            Restrictions : 0006               <- Bit(2) - Volatile
-                   QtgId : 0001
-            First Target : 00000007           <- Host Bridge _UID
-
-NUMA effect: 2 nodes marked POSSIBLE (1 for each CFMWS)
-```
-
-These CFMWS target the same host bridge, but are NOT necessarily limited
-to mapping memory from any one device. We could program decoders in
-either of the following ways.
-
-Example: Host bridge and endpoints are programmed WITHOUT interleave.
-```
-Decoders
-                               CXL  Root
-                             /           \
-                    decoder0.0           decoder1.0
-    [0x100000000, 0x17FFFFFFF]           [0x200000000, 0x27FFFFFFF]
-                             \           /
-                              Host Bridge
-                             /           \
-                    decoder2.0           decoder2.1
-    [0x100000000, 0x17FFFFFFFF]           [0x200000000, 0x27FFFFFFF]
-                        |                    |
-                    Endpoint 0           Endpoint 1
-                        |                    |
-                    decoder4.0           decoder5.0
-    [0x100000000, 0x17FFFFFFF]           [0x200000000, 0x27FFFFFFF]
-
-NUMA effect:
-   All of Endpoint 0 memory is on NUMA node A
-   All of Endpoint 1 memory is on NUMA node B
-```
-
-Alternatively, these decoders could be programmed to interleave memory
-accesses across endpoints.  We'll cover this configuration in-depth
-later. For now, just know the above structure means that each endpoint
-has its own NUMA node - but this is not required.
-
-
--------------------------------------------------------------
-Two Devices On One Host Bridge - With and Without Interleave.
--------------------------------------------------------------
-What if we wanted some capacity on each endpoint hosted on its own NUMA
-node, and wanted to interleave a portion of each device capacity?
-
-We could produce the following CFMWS configuration.
-```
-           Subtable Type : 01 [CXL Fixed Memory Window Structure]
-                Reserved : 00
-                  Length : 002C
-                Reserved : 00000000
-     Window base address : 0000000100000000   <- Memory Region 1
-             Window size : 0000000080000000   <- 2GB
-Interleave Members (2^n) : 00
-   Interleave Arithmetic : 00
-                Reserved : 0000
-             Granularity : 00000000
-            Restrictions : 0006               <- Bit(2) - Volatile
-                   QtgId : 0001
-            First Target : 00000007           <- Host Bridge _UID
-
-           Subtable Type : 01 [CXL Fixed Memory Window Structure]
-                Reserved : 00
-                  Length : 002C
-                Reserved : 00000000
-     Window base address : 0000000200000000   <- Memory Region 2
-             Window size : 0000000080000000   <- 2GB
-Interleave Members (2^n) : 00
-   Interleave Arithmetic : 00
-                Reserved : 0000
-             Granularity : 00000000
-            Restrictions : 0006               <- Bit(2) - Volatile
-                   QtgId : 0001
-            First Target : 00000007           <- Host Bridge _UID
-
-           Subtable Type : 01 [CXL Fixed Memory Window Structure]
-                Reserved : 00
-                  Length : 002C
-                Reserved : 00000000
-     Window base address : 0000000300000000   <- Memory Region 3
-             Window size : 0000000100000000   <- 4GB
-Interleave Members (2^n) : 00
-   Interleave Arithmetic : 00
-                Reserved : 0000
-             Granularity : 00000000
-            Restrictions : 0006               <- Bit(2) - Volatile
-                   QtgId : 0001
-            First Target : 00000007           <- Host Bridge _UID
-
-NUMA effect: 3 nodes marked POSSIBLE (1 for each CFMWS)
-```
-
-In this configuration, we could still do what we did with the prior
-configuration (2 CFMWS), but we could also use the third root decoder
-to simplify decoder programming of interleave.
-
-Since the third region has sufficient capacity (4GB) to cover both
-devices (2GB/each), we can actually associate the entire capacity of
-both devices in that region.
-
-We'll discuss this decoder structure in-depth in Section 4.
-
-
--------------------------------------
-Two devices on separate host bridges.
--------------------------------------
-We may have placed the devices on separate host bridges.
-
-In this case we may naturally have one CFMWS per host bridge.
-
-```
-           Subtable Type : 01 [CXL Fixed Memory Window Structure]
-                Reserved : 00
-                  Length : 002C
-                Reserved : 00000000
-     Window base address : 0000000100000000   <- Memory Region 1
-             Window size : 0000000080000000   <- 2GB
-Interleave Members (2^n) : 00
-   Interleave Arithmetic : 00
-                Reserved : 0000
-             Granularity : 00000000
-            Restrictions : 0006               <- Bit(2) - Volatile
-                   QtgId : 0001
-            First Target : 00000007           <- Host Bridge _UID
-
-           Subtable Type : 01 [CXL Fixed Memory Window Structure]
-                Reserved : 00
-                  Length : 002C
-                Reserved : 00000000
-     Window base address : 0000000200000000   <- Memory Region 2
-             Window size : 0000000080000000   <- 2GB
-Interleave Members (2^n) : 00
-   Interleave Arithmetic : 00
-                Reserved : 0000
-             Granularity : 00000000
-            Restrictions : 0006               <- Bit(2) - Volatile
-                   QtgId : 0001
-            First Target : 00000006           <- Host Bridge _UID
-
-NUMA Effects: 2 NUMA nodes marked POSSIBLE
-```
-
-But we may also want to interleave *across* host bridges. To do this,
-the platform vendor may add the following CFMWS (either by itself if
-done statically, or in addition to the above two for flexibility).
-
-```
-           Subtable Type : 01 [CXL Fixed Memory Window Structure]
-                Reserved : 00
-                  Length : 002C
-                Reserved : 00000000
-     Window base address : 0000000300000000   <- Memory Region
-             Window size : 0000000100000000   <- 4GB
-Interleave Members (2^n) : 01                 <- 2-way interleave
-   Interleave Arithmetic : 00
-                Reserved : 0000
-             Granularity : 00000000
-            Restrictions : 0006               <- Bit(2) - Volatile
-                   QtgId : 0001
-            First Target : 00000007           <- Host Bridge 7
-             Next Target : 00000006           <- Host Bridge 6
-
-NUMA Effect: an additional NUMA node marked POSSIBLE
-```
-
-This greatly simplifies the decoder programming structure, and allows
-us to aggregate bandwidth across host bridges.  The decoder programming
-might look as follows in this setup.
-
-```
-Decoders:
-                             CXL  Root
-                                 |
-                             decoder0.0
-                    [0x300000000, 0x3FFFFFFFF]
-                             /         \
-                Host Bridge 7           Host Bridge 6
-                /                                    \
-           decoder1.0                             decoder2.0
-  [0x300000000, 0x3FFFFFFFFF]             [0x300000000, 0x3FFFFFFFF]
-               |                                      |
-           Endpoint 0                             Endpoint 1
-               |                                      |
-           decoder3.0                             decoder4.0
-  [0x300000000, 0x3FFFFFFFF]              [0x300000000, 0x3FFFFFFFF]
-```
-
-We'll discuss this more in-depth in section 4 - but you can see how
-straight-forward this is.  All the decoders are programmed the same.
-
-----------
-SRAT Note.
-----------
-If you remember from the first portion of Section 0, the SRAT may be
-used to statically assign memory regions to specific proximity domains.
-
-```
-        Subtable Type : 01 [Memory Affinity]
-               Length : 28
-     Proximity Domain : 00000001          <- NUMA Node 1
-            Reserved1 : 0000
-         Base Address : 000000C050000000  <- Physical Memory Region
-       Address Length : 0000003CA0000000
-```
-
-There is a careful dance between the CEDT and SRAT tables and how NUMA
-nodes are created.  If things don't look quite the way you expect - check
-the SRAT Memory Affinity entries and CEDT CFMWS to determine what your
-platform actually supports in terms of flexible topologies.
-
---------
-Summary.
---------
-In the first part of Section 0 we showed how CFMWS and SRAT affect how
-Linux creates NUMA nodes.  Here we demonstrated that CFMWS are not a
-1-to-1 relationship to either CXL devices or Host Bridges.
-
-Instead, CFMWS are simply a System Physical Address carve out which can
-be used in a number of ways to define your memory topology in software.
-
-This is a core piece of the "Software Defined Memory" puzzle.
-
-How your platform vendor decides to program the CEDT will dictate how
-flexibly you can manage CXL devices in software.
-
-
-~Gregory
+Agreed. Should "KVM only" tag be added in the next patch, where CET supervisor
+xstate becomes a guest-only feature?
 
