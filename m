@@ -1,101 +1,99 @@
-Return-Path: <linux-kernel+bounces-552561-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-552562-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D47A8A57B4B
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 15:56:07 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 80E4BA57B4E
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 15:58:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 637D9188FD9C
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 14:56:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 19B35166E6F
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 14:58:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0E421DE3AB;
-	Sat,  8 Mar 2025 14:56:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="e7KjkHbI"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E9C51DE3CB;
+	Sat,  8 Mar 2025 14:58:07 +0000 (UTC)
+Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BF3B17C77;
-	Sat,  8 Mar 2025 14:56:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F96D10F4;
+	Sat,  8 Mar 2025 14:58:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741445761; cv=none; b=Ze5La3RiTglns10dN9tAfkRqb5eKetohApxRpuszniCEX1iWTaDFwbqbtsggVIt8Ru6PpljyN/UW2iAq2WTwFal8t8kAENE+2YUMDnCIFV0FpjuSfK3MfIjIBwxZmO30eFVUf3faOWznKyIJorTprwiW7JLqd4ltdfUm4MIQCT8=
+	t=1741445887; cv=none; b=Kzqm6gY+TIZ8sJbRVf+udNkgVgPPMm1c8FR0ZgYE64kQKUYezJYbrOgjnnf4N0qBfTGVLHdDqOgcq3Lu9ANhXjgBBAaOwY1nDULHtyelipCQj8Oz0rtMxGIbOOJ2Z5iksZMFpsgwFzmpWRC1KtFbc7JUqTnn3ECl9rl+N09X7oI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741445761; c=relaxed/simple;
-	bh=mb0JUBDCgBoLXGBTbaQxhvTXIEjCUu60lxP8c8upW3Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=BY9Qi0ZWTKBPd0ThhO0GhZ9jSuAnwQHRA/vTucunuyxld/BDnnVQXpcUwwbtMG0U/ImhPn6HaNkz60iUOO+vYJdz7F1TMXIuLCMzQAP3hqBrJWOggY9AjmnGVixJRsn31qXNGykMRasojmxqDtf+KHzDYuCIFKDBiW3vpc9qXy4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=e7KjkHbI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 38A8CC4CEE0;
-	Sat,  8 Mar 2025 14:55:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741445760;
-	bh=mb0JUBDCgBoLXGBTbaQxhvTXIEjCUu60lxP8c8upW3Y=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=e7KjkHbIXAqiMlJ80yLx7yW/Zoo48r6u7aPRmp76q3d6MiEiSe1BOwjTvZjpOU5BE
-	 KiXtPq4HccKCxlpsYecb4/QYN4g1O+WJXs74xil3rFVe/7+l493WEDNI2dy3r4epes
-	 OZT3V3hW6YyFHmK/sEWVBpqfjue1T4o1/eqUHBBVb//RkWzV4FCgPAxfU+/YkKGhSj
-	 DzwYHjpUOBAY1HGrXWJZxvxg9PWCWBvAUTPolJj0S39pd0np7vkxahLtZ0b4On51ZX
-	 Z5885NJX+EU9w6qiKpXFSD04ZhkS6AjYNGNOBfAZyrNPeeel0wMVcMmw95F0+mv5nb
-	 5f5NolfD12e3Q==
-Date: Sat, 8 Mar 2025 14:55:51 +0000
-From: Jonathan Cameron <jic23@kernel.org>
-To: Gustavo Silva <gustavograzs@gmail.com>
-Cc: Alex Lanzano <lanzano.alex@gmail.com>, Lars-Peter Clausen
- <lars@metafoo.de>, linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] iio: imu: bmi270: fix initial sampling frequency
- configuration
-Message-ID: <20250308145551.06d9ca14@jic23-huawei>
-In-Reply-To: <5se4isw4f6xpbub62tna53ah2qjcf3mwks23ifc2yn4u462lpn@u53frmcgjth2>
-References: <20250304-bmi270-odr-fix-v1-1-384dbcd699fb@gmail.com>
-	<20250305144928.1b9b483a@jic23-huawei>
-	<5se4isw4f6xpbub62tna53ah2qjcf3mwks23ifc2yn4u462lpn@u53frmcgjth2>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.48; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1741445887; c=relaxed/simple;
+	bh=hMDlrsxv5N1HhsTBGniC6IAMAhMKkBOp/z2a3zXv6EM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KpHiQbmFwBUN6NoiBxuoy4qVdMEMiMB3W2Rb9ul7ZWFlB3MRny/nIWl3xIEhpxvdhVhXvIQL/VoybQrESkV/TOBvceACAwKi1ZRQC6Xls3jNbrehNrIQypzKK0zx0JcV5ZQikUH3XdhkFnK8qoumFqhi3nZAVzzcg/PtH8m7UEk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.214.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-223fb0f619dso56208545ad.1;
+        Sat, 08 Mar 2025 06:58:05 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741445885; x=1742050685;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=0KDrEoyP4jGfL5KBLDfRqPR/7suUQU11UZUvsVsBe/g=;
+        b=sm/TZDTnMa4qT12vB26GijVV4xCw3UYjEi/b+AktbgSqYGXhMJf0YhL59c6aAcGAna
+         6Yh3BqOGQsE1wHC0fAl6Y2/cecrl9lqaZzZonyolJlZkoA78UWlBQd0qlbhT2Ke+Wb8a
+         iM4VCLSqz9lN/hKIOaF2QEWGq0mkMcE+SKYarviXt55Ay8aWbAfArC6mcOTAHEjRRJmi
+         yHQtS45Nf5S/RupyTuGbu9Q+tdUyrc7aC2bCUrBNH5RC+YuzkBKH0JmwzChj3RkLsgWR
+         5iHag5fPBHGNYDeFiQXob976pFPk86oILgE/o4lDUz9Bud0IfPHgn0ZtFQArV+0gR7wu
+         QZpA==
+X-Forwarded-Encrypted: i=1; AJvYcCVoKyI+9O3JL7ccvMsbHMGChXWcgBTW118WYfPPfiz0bG+sPpHbfy0R5JhPOs4KwWKxqtXkpzGQD59H7wS9@vger.kernel.org, AJvYcCWnAEfxutFUmlbc2ZpyIEy+RAcHNwMnvLprQ6pHaQj7TNw1yesiRAV2N+ghu6j3qvZScN8QlpHLninZ@vger.kernel.org, AJvYcCXSwEAVOkZvDeQG6EtreupGDRbvaWI5kkPbQ/gJ3ykBTS/HPWrpW8QLRxWY2Rg/HIJpnV0DJsC+UPEc@vger.kernel.org
+X-Gm-Message-State: AOJu0YyjknVm8G6dzjUK3UO92vws76Ckvc8C9IkmpAmCDLw1z2YE7yBb
+	Br/jrqs4k5ngbtfa8JjII4j0IGFXsewk1HeGtH5o0JW58Pueh5Kl
+X-Gm-Gg: ASbGncv0nEtF7YJq5V6X4dD1XUizOaIPGpyJgPav7rw2dT8T81aGjBh0MEvBQEIWuEN
+	Gg3SnxnvsIxskeBxB9xhUUoB9SHmpbK+hdu+iKhzI+aIkcgwZ9JGZwrJEnbV5sol8rx89iPLWaR
+	tV+Wo8ip6mEXISd3OYWDMOXnkX1rgvwb5e1hs9VJoO1H/y3H8AWzAUczQCU9A637WmpZl0nM6Ey
+	UmtJmyM7efR+3qqPP7QSgjI58zInnb7aEyZ83bZflytFdqRTpq0bFFs1zzMp7dyMmKe7cC8Od1G
+	CKaj9Gdi4Bl5N0gHWzQcNuk68IzFRGpUMPj/b7ss/QjRTG9veALmQfNth7lkRAXh6bd4wsEegrD
+	YfQE=
+X-Google-Smtp-Source: AGHT+IFrki4JZBZlTOdD9wNIdmnZOMDK+QF1rINfsxHIZ8KiUTgx72Vi+I+qLYVyzk80DV0WCZDW6g==
+X-Received: by 2002:a05:6a21:6d96:b0:1ee:c7c8:ca4 with SMTP id adf61e73a8af0-1f544c92b65mr15412514637.36.1741445884819;
+        Sat, 08 Mar 2025 06:58:04 -0800 (PST)
+Received: from localhost (fpd11144dd.ap.nuro.jp. [209.17.68.221])
+        by smtp.gmail.com with UTF8SMTPSA id d2e1a72fcca58-73698514f58sm5236020b3a.133.2025.03.08.06.58.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 08 Mar 2025 06:58:04 -0800 (PST)
+Date: Sat, 8 Mar 2025 23:58:02 +0900
+From: Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: Bjorn Helgaas <bhelgaas@google.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Frank Li <Frank.Li@nxp.com>,
+	linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] dt-bindings: PCI: fsl,layerscape-pcie-ep: Drop
+ deprecated windows
+Message-ID: <20250308145802.GA482803@rocinante>
+References: <20250307081327.35153-1-krzysztof.kozlowski@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250307081327.35153-1-krzysztof.kozlowski@linaro.org>
 
-On Wed, 5 Mar 2025 21:11:54 -0300
-Gustavo Silva <gustavograzs@gmail.com> wrote:
+Hello,
 
-> On Wed, Mar 05, 2025 at 02:49:28PM +0000, Jonathan Cameron wrote:
-> > On Tue, 04 Mar 2025 15:01:02 -0300
-> > Gustavo Silva <gustavograzs@gmail.com> wrote:
-> >   
-> > > In the bmi270_configure_imu() function, the accelerometer and gyroscope
-> > > configuration registers are incorrectly written with the mask
-> > > BMI270_PWR_CONF_ADV_PWR_SAVE_MSK, which is unrelated to these registers.
-> > > 
-> > > As a result, the accelerometer's sampling frequency is set to 200 Hz
-> > > instead of the intended 100 Hz.
-> > > 
-> > > Remove the mask to ensure the correct bits are set in the configuration
-> > > registers.
-> > > 
-> > > Signed-off-by: Gustavo Silva <gustavograzs@gmail.com>  
-> > 
-> > Hi Gustavo,
-> > 
-> > Please reply to this thread with a suitable fixes tag.
-> > 
-> > Thanks,
-> > 
-> > Jonathan
-> >   
+> The example DTS uses 'num-ib-windows' and 'num-ob-windows' properties
+> but these are not defined in the binding.  Binding also does not
+> reference snps,dw-pcie-common.yaml, probably because it is quite
+> different even though the device is based on Synopsys controller.
 > 
-> Fixes: 3ea51548d6b2 ("iio: imu: Add i2c driver for bmi270 imu")
+> The properties are actually deprecated, so simply drop them from the
+> example.
 
-Thanks. Applied to the fixes-togreg branch of iio.git.
-Given where we are in the cycle I might just drag this into the pull
-request for the next merge window.
+Applied to dt-bindings, thank you!
 
-Jonathan
-
+	Krzysztof
 
