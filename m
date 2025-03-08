@@ -1,226 +1,167 @@
-Return-Path: <linux-kernel+bounces-552214-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-552215-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E8E79A57706
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 01:46:26 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 55B28A5770D
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 02:02:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9B5483A8D2D
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 00:46:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0E2261895AE6
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 01:02:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D2E214AA9;
-	Sat,  8 Mar 2025 00:46:18 +0000 (UTC)
-Received: from mail-wr1-f67.google.com (mail-wr1-f67.google.com [209.85.221.67])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E69CBDDCD;
+	Sat,  8 Mar 2025 01:02:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="nlBOUIiB"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3E96C2FA;
-	Sat,  8 Mar 2025 00:46:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.67
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 845873C38;
+	Sat,  8 Mar 2025 01:02:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741394778; cv=none; b=NJyDPgy8atTFeVKyPV5NTYbVPTLeiQ2UACqSR9aun33SVUDZG1u4R53kQGDiPkBEGmDfVUUJituAl5hCUnD0BfxOTc5sj79ObgqQ0fwNpAMwDmu/1IMHAk8TCZnq5DZa8QcyhyXT+lQrxUdV7W4zgIuTJpC3z1varD0T6Fo9cOI=
+	t=1741395748; cv=none; b=kAINEI0b1oQ1YWDtgiQX7X+qmU3Q8g5cB7sP3EjVtAL+d7vHSI6SlHB1ETMWJsYHu8w7Trfa2E82LiSYx2Abkq9Grk2oCc+Pj64x2h4NvNm/fnso2XHEyoQUW5wM8l4+ZyLtIszi3UFW2I270g2Aou21txgYOqf31J5tkdZLcUA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741394778; c=relaxed/simple;
-	bh=y1W4e1wYfpdVrT1KOl483GYtqc45OqLl/qLvkC8zYjU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=uI21qnVu9MfZ3Ewynpkab7HjKuymoosK5jMMx9kDwdEgIZLk0FqySz879Pr5U5mttQA4cqiYHUaMBR9zpLC88C4RN2XinB3IpIUT6YC5Vs1Zel1AcbrhjlupJlI4eYumSG6AKfIQ3nalEuNfHQtUPztw6VfubXcNAoxnUxOj6IM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ovn.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.67
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ovn.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f67.google.com with SMTP id ffacd0b85a97d-391342fc1f6so1292878f8f.1;
-        Fri, 07 Mar 2025 16:46:15 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741394774; x=1741999574;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=LpQ9W6r3A269sn54hKhYIafhwiAez/jqGdPqFLq8ztg=;
-        b=u4fG8MO2BpYwkd2nJynTLAd1Btax2Ob6jUzmAdUayREecFkng5Hjtc5A1HCDSAbsi5
-         piRl3zS6levRKCW5bY4Q3WY4pbLWpITfQHzGiVcbEv6QmMtMjJxWm4bo1u7XpNiZMPCT
-         tsLvDDUqJiF3r2RzfYrgX69N13TPYl/zlXCE08KQVzbYpEwVuC9iq+SZsE5P2PbsAkGT
-         5VrE1XVCIq2L/AVc2G3wtjwpIs4xa1aUqTXYKzMT0b/zdDo9eAWK2CsRt+j83j75S6h/
-         r37IFCCWMx0HieOoWoqB533E0231ovOHQd5yoe174sNX1gIZ7rqp/07VemCxM4jEOSeQ
-         kKrA==
-X-Forwarded-Encrypted: i=1; AJvYcCXkdCx7WWPl6jZ93vfydapOaU/7sZZORCsq5NE8sYfrlAr8U2cJB6b4lAwd0pb1d2DiBWrNdRdsocmNTUs=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz2GCRHpzSjOGUIOGsqTKiXk8wRqkd5wiamcyY76jrS2tXKRm/8
-	UxbIGQr/jXFDxbIfG6EgoYsQQgbDycRhlWrI8cS1KQ/587NIO63SdWRUWBrK
-X-Gm-Gg: ASbGncs9zJfZJxRGSBRxXv37Z+SFkKi1BW/dxGhGaVSWSStlmPxkM+bMt2D58Q0y/kA
-	vLJfNB4NO924awQWr3zxt0W6L69ych6QVsiDXxIUaKb2dTp3LYPBkKgaf8NFgFyGBjit7GqHWw/
-	6N33FLBQTZe1LSMzLCxPNvKu2cjLDyBs9jocM8RMkT1qyWK8M4TWgV480E+2B8MsneE4IcpwEWu
-	PFGCUF9D8ZZ/S5y2QlhEvtGbD3FGk5vp59DFU++tlrTUKC0uMuBvo5IeQXtLUQBk29j5roa2Og2
-	+6HDQOZEI3ljoe36KqdfpQy69j4/4QQ3PRL++aCdhKcPP9BpApR0lhnYCdkKuO4MBhAXOYDfquM
-	zhW5bshk=
-X-Google-Smtp-Source: AGHT+IGMBvkOP0HsDWpJIUBSXM0T0CXGMaX2xgRyqY9FTDhwupT7f8MHEcd9UI0KpFjphg80zBOA/g==
-X-Received: by 2002:a5d:5f89:0:b0:390:f552:d291 with SMTP id ffacd0b85a97d-39132d68331mr3762833f8f.22.1741394773696;
-        Fri, 07 Mar 2025 16:46:13 -0800 (PST)
-Received: from im-t490s.redhat.com (ip-86-49-44-151.bb.vodafone.cz. [86.49.44.151])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43bd426c01bsm98554725e9.2.2025.03.07.16.46.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 07 Mar 2025 16:46:13 -0800 (PST)
-From: Ilya Maximets <i.maximets@ovn.org>
-To: netdev@vger.kernel.org
-Cc: "David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Simon Horman <horms@kernel.org>,
-	dev@openvswitch.org,
-	linux-kernel@vger.kernel.org,
-	Pravin B Shelar <pshelar@ovn.org>,
-	Eelco Chaudron <echaudro@redhat.com>,
-	Aaron Conole <aconole@redhat.com>,
-	Ilya Maximets <i.maximets@ovn.org>
-Subject: [PATCH net] net: openvswitch: remove misbehaving actions length check
-Date: Sat,  8 Mar 2025 01:45:59 +0100
-Message-ID: <20250308004609.2881861-1-i.maximets@ovn.org>
-X-Mailer: git-send-email 2.47.0
+	s=arc-20240116; t=1741395748; c=relaxed/simple;
+	bh=1Z06EGd0YPfG9SHGEVxJJILprBZqLC9ZMU3X+BG2jvA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=npNkw9RrE01V0W7y2+N09K2PCIhZmNFgQug7gsuH7Hp18HGzlmLqobh6xgtTQ/o6gmWi083+vL9Ec5lCVEut2dtAdrqKsgXVUEi6Mbndhra4yifO6rXIYuDq2GGWMY7Wp5UEiHcuOiR1c2nbiTdwM855sa/Mmn0djWo1fyD4iDU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=nlBOUIiB; arc=none smtp.client-ip=192.198.163.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1741395746; x=1772931746;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=1Z06EGd0YPfG9SHGEVxJJILprBZqLC9ZMU3X+BG2jvA=;
+  b=nlBOUIiBSMf2LRF1jZTSJHlvQmSWSV/t2x5FjlcjbT6r/OdFuLscS3NM
+   tipejXFfezT6WJmXfkQ4LXi3UGr6wq8UZdpeVOaH9w9uMJbOjrRSxW4Tz
+   2vWRqG4lhiimgMRYNXqCMSPNiCyV9vWTVSBBScHo2CL35n2lb8UMjE2Qo
+   BFuT0dwGNCVJPFuueLJqmcxO6S50G7xhc8Pg5CAYTPFeLXMPkl7gNWrgS
+   MxtCx1JOsfrAZGodYm+51vByoXaf1QFJfNrP9lsEOba90emq3QFNBoN03
+   y/choAKwAwRDEeQZlecVIc7uj/i6wruG0DupEArAHzJWm5VZ25YZLbyDB
+   A==;
+X-CSE-ConnectionGUID: 0HiiVhETTbyk9wpD3F8ZGA==
+X-CSE-MsgGUID: mRBQncZ7T8m2aAiiim/t4w==
+X-IronPort-AV: E=McAfee;i="6700,10204,11366"; a="67825786"
+X-IronPort-AV: E=Sophos;i="6.14,230,1736841600"; 
+   d="scan'208";a="67825786"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Mar 2025 17:02:25 -0800
+X-CSE-ConnectionGUID: cbvbsfTyTha0ngMUDpRDAw==
+X-CSE-MsgGUID: JfpX22owRoqpsLOjbfxt5Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
+   d="scan'208";a="120378502"
+Received: from lucas-s2600cw.jf.intel.com ([10.165.21.196])
+  by orviesa008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Mar 2025 17:02:25 -0800
+From: Lucas De Marchi <lucas.demarchi@intel.com>
+To: "Rafael J. Wysocki" <rafael@kernel.org>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Zhang Rui <rui.zhang@intel.com>,
+	Lukasz Luba <lukasz.luba@arm.com>
+Cc: Lucas De Marchi <lucas.demarchi@intel.com>,
+	linux-pm@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] thermal: core: Delay exposing sysfs interface
+Date: Fri,  7 Mar 2025 17:02:01 -0800
+Message-ID: <20250307-thermal-sysfs-race-v1-1-8a3d4d4ac9c4@intel.com>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+X-Change-ID: 20250307-thermal-sysfs-race-808f6f8376f4
+X-Mailer: b4 0.15-dev-c25d1
 Content-Transfer-Encoding: 8bit
 
-The actions length check is unreliable and produces different results
-depending on the initial length of the provided netlink attribute and
-the composition of the actual actions inside of it.  For example, a
-user can add 4088 empty clone() actions without triggering -EMSGSIZE,
-on attempt to add 4089 such actions the operation will fail with the
--EMSGSIZE verdict.  However, if another 16 KB of other actions will
-be *appended* to the previous 4089 clone() actions, the check passes
-and the flow is successfully installed into the openvswitch datapath.
+There's a race between initializing the governor and userspace accessing
+the sysfs interface. From time to time the Intel graphics CI shows this
+signature:
 
-The reason for a such a weird behavior is the way memory is allocated.
-When ovs_flow_cmd_new() is invoked, it calls ovs_nla_copy_actions(),
-that in turn calls nla_alloc_flow_actions() with either the actual
-length of the user-provided actions or the MAX_ACTIONS_BUFSIZE.  The
-function adds the size of the sw_flow_actions structure and then the
-actually allocated memory is rounded up to the closest power of two.
+	<1>[] #PF: error_code(0x0000) - not-present page
+	<6>[] PGD 0 P4D 0
+	<4>[] Oops: Oops: 0000 [#1] PREEMPT SMP NOPTI
+	<4>[] CPU: 3 UID: 0 PID: 562 Comm: thermald Not tainted 6.14.0-rc4-CI_DRM_16208-g7e37396f86d8+ #1
+	<4>[] Hardware name: Intel Corporation Twin Lake Client Platform/AlderLake-N LP5 RVP, BIOS TWLNFWI1.R00.5222.A01.2405290634 05/29/2024
+	<4>[] RIP: 0010:policy_show+0x1a/0x40
 
-So, if the user-provided actions are larger than MAX_ACTIONS_BUFSIZE,
-then MAX_ACTIONS_BUFSIZE + sizeof(*sfa) rounded up is 32K + 24 -> 64K.
-Later, while copying individual actions, we look at ksize(), which is
-64K, so this way the MAX_ACTIONS_BUFSIZE check is not actually
-triggered and the user can easily allocate almost 64 KB of actions.
+thermald tries to read the policy file between the sysfs files being
+created and the governor set by thermal_set_governor(), which causes the
+NULL pointer dereference.
 
-However, when the initial size is less than MAX_ACTIONS_BUFSIZE, but
-the actions contain ones that require size increase while copying
-(such as clone() or sample()), then the limit check will be performed
-during the reserve_sfa_size() and the user will not be allowed to
-create actions that yield more than 32 KB internally.
+Similarly to the hwmon interface, delay exposing the sysfs files to when
+the governor is already set.
 
-This is one part of the problem.  The other part is that it's not
-actually possible for the userspace application to know beforehand
-if the particular set of actions will be rejected or not.
-
-Certain actions require more space in the internal representation,
-e.g. an empty clone() takes 4 bytes in the action list passed in by
-the user, but it takes 12 bytes in the internal representation due
-to an extra nested attribute, and some actions require less space in
-the internal representations, e.g. set(tunnel(..)) normally takes
-64+ bytes in the action list provided by the user, but only needs to
-store a single pointer in the internal implementation, since all the
-data is stored in the tunnel_info structure instead.
-
-And the action size limit is applied to the internal representation,
-not to the action list passed by the user.  So, it's not possible for
-the userpsace application to predict if the certain combination of
-actions will be rejected or not, because it is not possible for it to
-calculate how much space these actions will take in the internal
-representation without knowing kernel internals.
-
-All that is causing random failures in ovs-vswitchd in userspace and
-inability to handle certain traffic patterns as a result.  For example,
-it is reported that adding a bit more than a 1100 VMs in an OpenStack
-setup breaks the network due to OVS not being able to handle ARP
-traffic anymore in some cases (it tries to install a proper datapath
-flow, but the kernel rejects it with -EMSGSIZE, even though the action
-list isn't actually that large.)
-
-Kernel behavior must be consistent and predictable in order for the
-userspace application to use it in a reasonable way.  ovs-vswitchd has
-a mechanism to re-direct parts of the traffic and partially handle it
-in userspace if the required action list is oversized, but that doesn't
-work properly if we can't actually tell if the action list is oversized
-or not.
-
-Solution for this is to check the size of the user-provided actions
-instead of the internal representation.  This commit just removes the
-check from the internal part because there is already an implicit size
-check imposed by the netlink protocol.  The attribute can't be larger
-than 64 KB.  Realistically, we could reduce the limit to 32 KB, but
-we'll be risking to break some existing setups that rely on the fact
-that it's possible to create nearly 64 KB action lists today.
-
-Vast majority of flows in real setups are below 100-ish bytes.  So
-removal of the limit will not change real memory consumption on the
-system.  The absolutely worst case scenario is if someone adds a flow
-with 64 KB of empty clone() actions.  That will yield a 192 KB in the
-internal representation consuming 256 KB block of memory.  However,
-that list of actions is not meaningful and also a no-op.  Real world
-very large action lists (that can occur for a rare cases of BUM
-traffic handling) are unlikely to contain a large number of clones and
-will likely have a lot of tunnel attributes making the internal
-representation comparable in size to the original action list.
-So, it should be fine to just remove the limit.
-
-Commit in the 'Fixes' tag is the first one that introduced the
-difference between internal representation and the user-provided action
-lists, but there were many more afterwards that lead to the situation
-we have today.
-
-Fixes: 7d5437c709de ("openvswitch: Add tunneling interface.")
-Signed-off-by: Ilya Maximets <i.maximets@ovn.org>
+Closes: https://gitlab.freedesktop.org/drm/i915/kernel/-/issues/13655
+Signed-off-by: Lucas De Marchi <lucas.demarchi@intel.com>
 ---
- net/openvswitch/flow_netlink.c | 15 +--------------
- 1 file changed, 1 insertion(+), 14 deletions(-)
+The race window is not that big. I could reproduce it and confirm
+the fix by doing this:
 
-diff --git a/net/openvswitch/flow_netlink.c b/net/openvswitch/flow_netlink.c
-index 881ddd3696d5..95e0dd14dc1a 100644
---- a/net/openvswitch/flow_netlink.c
-+++ b/net/openvswitch/flow_netlink.c
-@@ -2317,14 +2317,10 @@ int ovs_nla_put_mask(const struct sw_flow *flow, struct sk_buff *skb)
- 				OVS_FLOW_ATTR_MASK, true, skb);
- }
+1) Add a udelay() in thermal_zone_device_register_with_trips
+2) A busy loop cat'ing the file
+
+	$ while [ 1 ]; do
+		cat /sys/devices/virtual/thermal/thermal_zone0/policy > /dev/null 2>&1
+	  done
+3) rebind processor_thermal_device_pci
+---
+ drivers/thermal/thermal_core.c | 20 ++++++++++----------
+ 1 file changed, 10 insertions(+), 10 deletions(-)
+
+diff --git a/drivers/thermal/thermal_core.c b/drivers/thermal/thermal_core.c
+index 2328ac0d8561b..f96ca27109288 100644
+--- a/drivers/thermal/thermal_core.c
++++ b/drivers/thermal/thermal_core.c
+@@ -1589,26 +1589,26 @@ thermal_zone_device_register_with_trips(const char *type,
  
--#define MAX_ACTIONS_BUFSIZE	(32 * 1024)
--
- static struct sw_flow_actions *nla_alloc_flow_actions(int size)
- {
- 	struct sw_flow_actions *sfa;
+ 	tz->state = TZ_STATE_FLAG_INIT;
  
--	WARN_ON_ONCE(size > MAX_ACTIONS_BUFSIZE);
--
- 	sfa = kmalloc(kmalloc_size_roundup(sizeof(*sfa) + size), GFP_KERNEL);
- 	if (!sfa)
- 		return ERR_PTR(-ENOMEM);
-@@ -2480,15 +2476,6 @@ static struct nlattr *reserve_sfa_size(struct sw_flow_actions **sfa,
++	result = dev_set_name(&tz->device, "thermal_zone%d", tz->id);
++	if (result)
++		goto remove_id;
++
++	thermal_zone_device_init(tz);
++
++	result = thermal_zone_init_governor(tz);
++	if (result)
++		goto remove_id;
++
+ 	/* sys I/F */
+ 	/* Add nodes that are always present via .groups */
+ 	result = thermal_zone_create_device_groups(tz);
+ 	if (result)
+ 		goto remove_id;
  
- 	new_acts_size = max(next_offset + req_size, ksize(*sfa) * 2);
- 
--	if (new_acts_size > MAX_ACTIONS_BUFSIZE) {
--		if ((next_offset + req_size) > MAX_ACTIONS_BUFSIZE) {
--			OVS_NLERR(log, "Flow action size exceeds max %u",
--				  MAX_ACTIONS_BUFSIZE);
--			return ERR_PTR(-EMSGSIZE);
--		}
--		new_acts_size = MAX_ACTIONS_BUFSIZE;
+-	result = dev_set_name(&tz->device, "thermal_zone%d", tz->id);
+-	if (result) {
+-		thermal_zone_destroy_device_groups(tz);
+-		goto remove_id;
 -	}
+-	thermal_zone_device_init(tz);
+ 	result = device_register(&tz->device);
+ 	if (result)
+ 		goto release_device;
+ 
+-	result = thermal_zone_init_governor(tz);
+-	if (result)
+-		goto unregister;
 -
- 	acts = nla_alloc_flow_actions(new_acts_size);
- 	if (IS_ERR(acts))
- 		return ERR_CAST(acts);
-@@ -3545,7 +3532,7 @@ int ovs_nla_copy_actions(struct net *net, const struct nlattr *attr,
- 	int err;
- 	u32 mpls_label_count = 0;
- 
--	*sfa = nla_alloc_flow_actions(min(nla_len(attr), MAX_ACTIONS_BUFSIZE));
-+	*sfa = nla_alloc_flow_actions(nla_len(attr));
- 	if (IS_ERR(*sfa))
- 		return PTR_ERR(*sfa);
- 
+ 	if (!tz->tzp || !tz->tzp->no_hwmon) {
+ 		result = thermal_add_hwmon_sysfs(tz);
+ 		if (result)
+
+---
+base-commit: 8aed61b8334e00f4fe5de9f2df1cd183dc328a9d
+change-id: 20250307-thermal-sysfs-race-808f6f8376f4
+
+Best regards,
 -- 
-2.47.0
+Lucas De Marchi <lucas.demarchi@intel.com>
 
 
