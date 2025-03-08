@@ -1,135 +1,134 @@
-Return-Path: <linux-kernel+bounces-552798-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-552799-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F16CEA57E4A
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 21:55:29 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9D216A57E4B
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 21:55:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E38B83ACEB8
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 20:55:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2873D188C929
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 20:55:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 358101EB5DE;
-	Sat,  8 Mar 2025 20:55:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9387E20E318;
+	Sat,  8 Mar 2025 20:55:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=permerror (0-bit key) header.d=sapience.com header.i=@sapience.com header.b="63VKNfmU";
-	dkim=pass (2048-bit key) header.d=sapience.com header.i=@sapience.com header.b="hTYUHsMO"
-Received: from s1.sapience.com (s1.sapience.com [72.84.236.66])
+	dkim=pass (2048-bit key) header.d=mt-integration.ru header.i=@mt-integration.ru header.b="ndXX6Rls"
+Received: from ksmg01.maxima.ru (ksmg01.maxima.ru [81.200.124.38])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41AA91ACED5;
-	Sat,  8 Mar 2025 20:55:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=72.84.236.66
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741467322; cv=fail; b=TGJ+lHlW3WOhX+zhnVpBnVRTc93mnXeBWbyqVwxwhWI3WRfz3dPj4pl4WaUTd0H3os/c43xltDb8C+n7qYA5Y7wOLhrGDJDIAQsXWzRSzRKbB7WFo2jPdiymXvmJ8ryiSgKvprt3DV7muth7Cbur9RiPPj5QAJK3k3FTSebrcmw=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741467322; c=relaxed/simple;
-	bh=HhuqrTQn+TtvoFQ3fsOiTP7sctsRq7AK07o0jVMaxYg=;
-	h=Message-ID:Subject:From:To:Date:Content-Type:MIME-Version; b=Jalf3q/Wz+nvjLvxz6HsL5N8HEqJjd3X6gz91uBcwbAN8xzmaSIs3KDWPCpK6udHN8G5EB544n+WCKonC+h6e41cZ7ZGiLjLsBb5/w1QJovxysdj/MHv3tr8xAjoHp44effnPZOi9tcCrpo6cC7WzMRsdTLfRiIbYTX9Xj53Fq0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sapience.com; spf=pass smtp.mailfrom=sapience.com; dkim=permerror (0-bit key) header.d=sapience.com header.i=@sapience.com header.b=63VKNfmU; dkim=pass (2048-bit key) header.d=sapience.com header.i=@sapience.com header.b=hTYUHsMO; arc=fail smtp.client-ip=72.84.236.66
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sapience.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sapience.com
-Authentication-Results: dkim-srvy7; dkim=pass (Good ed25519-sha256 
-   signature) header.d=sapience.com header.i=@sapience.com 
-   header.a=ed25519-sha256; dkim=pass (Good 2048 bit rsa-sha256 signature) 
-   header.d=sapience.com header.i=@sapience.com header.a=rsa-sha256
-Received: from srv8.sapience.com (srv8.sapience.com [x.x.x.x])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange x25519 server-signature ECDSA (secp384r1) server-digest SHA384)
-	(No client certificate requested)
-	by s1.sapience.com (Postfix) with ESMTPS id E340D480990;
-	Sat, 08 Mar 2025 15:45:17 -0500 (EST)
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=sapience.com;
- i=@sapience.com; q=dns/txt; s=dk-ed25519-220413; t=1741466717;
- h=message-id : subject : from : to : date : content-type :
- mime-version : from; bh=oFv/GNF8I/MbO4QIQpbVr7UCA+CqmFZweV/XknZ4CT0=;
- b=63VKNfmUr4fDbuQpglK3bLgUi7zK4dhHyk1E7mt/MYN5I8NBqFRWXJWQjQkPme7umbzGO
- zl4GRr6iL87FBNdBg==
-ARC-Seal: i=1; a=rsa-sha256; d=sapience.com; s=arc6-rsa-220412; t=1741466717;
-	cv=none; b=tVYq2lI208E0qtZls73Y/JLW9WyuuMQqh29tfs9M4zmgmxRAWUoKbwjZ+4k2xcBRC0a+I03/qCW1sR0yug/7EWUXTJVAKmU+TPm1NQfv/nRXIdZrUrR1QAcWSM/yMPhmXZi8mh4VP3ccSJkcxyHVQprh/jT6aWtUobjtP6Tx2NPhM/ARny7k42tvoOTTquUdB/+23QfFFRX9hFOfH1o9c7SiFJw6jyJ0SSsVIjIz1wvJMCqls7qrGMdyEtu94FciDFmwzl2wOcA7YFcW+ZlBmXTjunKs9MFpqVuHoWA+od/Cvw3GtKRZt7UsfoIso3JodjoORV+SIeCLxNmifrFXtQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; d=sapience.com; s=arc6-rsa-220412;
-	t=1741466717; c=relaxed/simple;
-	bh=HhuqrTQn+TtvoFQ3fsOiTP7sctsRq7AK07o0jVMaxYg=;
-	h=DKIM-Signature:DKIM-Signature:Message-ID:Subject:From:To:Date:
-	 Autocrypt:Content-Type:User-Agent:MIME-Version; b=sqokkkbljQUdk7tvHthVh2QxQ6YBPYys/bU/COHhS6+aKFQkNvDQa5tHqpOxcVwZyeAgSTQWP/FMW8zZq0tu01gQFbotn0KwbUzWauL/VmZHXnR7oCyOF87te18S1/1ldq5Xjh8CG9LR89EqZJSLlW3FFuD38L2b1nkNjjySjn1L2JsDFrBABU46GxEhVIX0YCHW2hGvijmhs+cwP/7fsYTPGIDRJru7XuKL0I++LZO4bZAT5NCs5iCANyE5tYjYYPDDESZ4nZzSmBEGfI1znueG2RzayzKBzb/wFmNxY6U2NtfrSXUvOhnDiD86I2tOqgaQ0YEh0NwYn3bqgBgozg==
-ARC-Authentication-Results: i=1; arc-srv8.sapience.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sapience.com;
- i=@sapience.com; q=dns/txt; s=dk-rsa-220413; t=1741466717;
- h=message-id : subject : from : to : date : content-type :
- mime-version : from; bh=oFv/GNF8I/MbO4QIQpbVr7UCA+CqmFZweV/XknZ4CT0=;
- b=hTYUHsMOpO/2Y26FJngeWAyoNtSlx04DFAj7anirmpDBtt6ZybbSTxzH43bi/G7G53LRg
- K22TYRMwqqKW7L+nZyKysnSa+XmF1dUimM5aaTCm7CYEjJHQrNjPknLvp9KSe2qSVilkkaK
- RyounZhU6UWR6rAyqPvlMUgrt0GzTBhr15UlkIUFyngtuKXSXPxIe0nxqiwE2v1QUUOahIP
- 0qKojX7BOpj2YzM9+L0Gn49ZBIV8jRiO6vKEvu/UC9JsHUG1BfYg5Egjjcwj8jjnH1CcJFx
- zih5tsUFuhxxJoMHUWLZZtIZKqRgaC+Q7eLrVQ5nLkHIFcscm6HyOF0M9+1w==
-Received: by srv8.prv.sapience.com (Postfix) id B0F50280015;
-	Sat, 08 Mar 2025 15:45:17 -0500 (EST)
-Message-ID: <579283e5c832d77aeed531e8680961c815557613.camel@sapience.com>
-Subject: rc4 and later  log message:  gpiochip_add_data_with_key:
- get_direction failed
-From: Genes Lists <lists@sapience.com>
-To: Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski
-	 <brgl@bgdev.pl>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
-Date: Sat, 08 Mar 2025 15:45:16 -0500
-Autocrypt: addr=lists@sapience.com; prefer-encrypt=mutual;
- keydata=mDMEXSY9GRYJKwYBBAHaRw8BAQdAwzFfmp+m0ldl2vgmbtPC/XN7/k5vscpADq3BmRy5R
- 7y0LU1haWwgTGlzdHMgKEwwIDIwMTkwNzEwKSA8bGlzdHNAc2FwaWVuY2UuY29tPoiWBBMWCAA+Ah
- sBBQsJCAcCBhUKCQgLAgQWAgMBAh4BAheAFiEE5YMoUxcbEgQOvOMKc+dlCv6PxQAFAmPJfooFCRl
- vRHEACgkQc+dlCv6PxQAc/wEA/Dbmg91DOGXll0OW1GKaZQGQDl7fHibMOKRGC6X/emoA+wQR5FIz
- BnV/PrXbao8LS/h0tSkeXgPsYxrzvfZInIAC
-Content-Type: multipart/signed; micalg="pgp-sha384";
-	protocol="application/pgp-signature"; boundary="=-vzrN2d26u93hK/5ZWTJL"
-User-Agent: Evolution 3.54.3 
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B60F01E51EF
+	for <linux-kernel@vger.kernel.org>; Sat,  8 Mar 2025 20:55:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=81.200.124.38
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741467326; cv=none; b=ticmGGqmTiXUkCqqscXp7T+KQFskEFLL3qB/x7x9XolQhtRg8IpchMvRWuPWFZVQsBe8W20CGm0ESPmX2+j1tdidB4et0MX68Q6EdugKvjj7Z0Qbd8fUcVt14jy1cFnrCIrU/+CjkdYBUSk0PgVQc1cQ9zngH+JVtLuAv1YVz7Y=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741467326; c=relaxed/simple;
+	bh=4LHLO8CUrvZiO6+yanutCTPlpX5jorIHdavJ5XK8qxA=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ueQRgy2zLYvxHy+NubqgjhhVdOkUvX3CBqDmSIwUSCXk47CkPB+1APvUjZKmtdhd1vfxttbz/FSxCR+OnqnX1AZG81++IsmnSzNzcUbCyIUrIIaRtLNZSNKD8pfThtQefFjIvU+1SoSRFwhlTQ+c7FTsMs62eVV+NPtElEX05QE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mt-integration.ru; spf=pass smtp.mailfrom=mt-integration.ru; dkim=pass (2048-bit key) header.d=mt-integration.ru header.i=@mt-integration.ru header.b=ndXX6Rls; arc=none smtp.client-ip=81.200.124.38
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mt-integration.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mt-integration.ru
+Received: from ksmg01.maxima.ru (localhost [127.0.0.1])
+	by ksmg01.maxima.ru (Postfix) with ESMTP id 058A0C0006;
+	Sat,  8 Mar 2025 23:55:20 +0300 (MSK)
+DKIM-Filter: OpenDKIM Filter v2.11.0 ksmg01.maxima.ru 058A0C0006
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mt-integration.ru;
+	s=sl; t=1741467320; bh=YlIgRdjZlQYdvbTIwLGaclFbEqVqJx3iD15N7MiEnE8=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type:From;
+	b=ndXX6RlsdNRJbC7jX0G8IAkUYfwr657L2o41HhDd4kpAc8J/n545o4tV2Sj3zeQEz
+	 41kq9a/t4UIxvzX8uplvvr0z/SBwHH0NHCjJM7HqANC485QLaQ3TaG3jeUKmXHOJYx
+	 D5Kg6deOGxn0JOT9oo08kKgIDs0RoXZB/7NeBGvPJghVuDLCrCNOJAIjDCHOjqywTk
+	 4oyR8h05R3foKiZmINDhjTzDKkvwTNSbsbkAx3bl3VkTfpuUGUGLV03c2ruhbW9Wky
+	 UlFv2OwnEYkVkfneDOk80lSn8Y10nT/1WTRzu6MpGcS5lkXf/jK5wJwwTtPQ49jry+
+	 J8WS+dEL/r6OQ==
+Received: from ksmg01.maxima.ru (mail.maxima.ru [81.200.124.61])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(Client CN "*.maxima.ru", Issuer "GlobalSign GCC R3 DV TLS CA 2020" (verified OK))
+	by ksmg01.maxima.ru (Postfix) with ESMTPS;
+	Sat,  8 Mar 2025 23:55:19 +0300 (MSK)
+Received: from localhost.maximatelecom.ru (5.1.51.128) by mmail-p-exch01.mt.ru
+ (81.200.124.61) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.2.1544.4; Sat, 8 Mar 2025
+ 23:55:19 +0300
+From: Vitaliy Shevtsov <v.shevtsov@mt-integration.ru>
+To: Dave Airlie <airlied@redhat.com>
+CC: Vitaliy Shevtsov <v.shevtsov@mt-integration.ru>, Thomas Zimmermann
+	<tzimmermann@suse.de>, Jocelyn Falempe <jfalempe@redhat.com>, Maarten
+ Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
+	<mripard@kernel.org>, David Airlie <airlied@gmail.com>, Simona Vetter
+	<simona@ffwll.ch>, Sam Ravnborg <sam@ravnborg.org>,
+	<dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
+	<lvc-project@linuxtesting.org>
+Subject: [PATCH v2] drm/mgag200: fix division by zero in mgag200_g200_pixpllc_atomic_check()
+Date: Sun, 9 Mar 2025 01:54:00 +0500
+Message-ID: <20250308205406.4162-1-v.shevtsov@mt-integration.ru>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: mt-exch-01.mt.ru (91.220.120.210) To mmail-p-exch01.mt.ru
+ (81.200.124.61)
+X-KSMG-AntiPhishing: NotDetected
+X-KSMG-AntiSpam-Auth: dmarc=none header.from=mt-integration.ru;spf=none smtp.mailfrom=mt-integration.ru;dkim=none
+X-KSMG-AntiSpam-Envelope-From: v.shevtsov@mt-integration.ru
+X-KSMG-AntiSpam-Info: LuaCore: 51 0.3.51 68896fb0083a027476849bf400a331a2d5d94398, {rep_avail}, {Tracking_from_domain_doesnt_match_to}, 81.200.124.61:7.1.2;ksmg01.maxima.ru:7.1.1;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;127.0.0.199:7.1.2;mt-integration.ru:7.1.1, FromAlignment: s, ApMailHostAddress: 81.200.124.61
+X-KSMG-AntiSpam-Interceptor-Info: scan successful
+X-KSMG-AntiSpam-Lua-Profiles: 191593 [Mar 08 2025]
+X-KSMG-AntiSpam-Method: none
+X-KSMG-AntiSpam-Rate: 0
+X-KSMG-AntiSpam-Status: not_detected
+X-KSMG-AntiSpam-Version: 6.1.1.11
+X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.1.1.8310, bases: 2025/03/08 18:36:00 #27678783
+X-KSMG-AntiVirus-Status: NotDetected, skipped
+X-KSMG-LinksScanning: NotDetected
+X-KSMG-Message-Action: skipped
+X-KSMG-Rule-ID: 7
 
+There is a small chance to perform a division by zero. According to the
+driver code, clock may have a value less than (p_clk_min >> 3). p_clk_min
+itself may have a value up to 2032000 in case of a BIOS PINS version 5.
 
---=-vzrN2d26u93hK/5ZWTJL
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+If this is the case, then f_vco gets the value greater than delta and the
+condition (tmp_delta < delta) is always false because the variable computed
+is always less than f_vco. This was tested with ref_clk = 27050 and 14318.
 
+As a result variable m remains zero and then is used as a divisor.
 
-mainline=C2=A0starting with rc4. Same with rc5 and commit
+Check if m is zero before performing a possibly unsafe division.
 
-  b7c90e3e717abff6fe06445b98be306b732bbd2b
+Found by Linux Verification Center (linuxtesting.org) with Svace.
 
-there are now 194 lines logged on boot with:
-   =20
- gpio gpiochip0: gpiochip_add_data_with_key: get_direction failed: -22
+Fixes: 877507bb954e ("drm/mgag200: Provide per-device callbacks for PIXPLLC")
+Signed-off-by: Vitaliy Shevtsov <v.shevtsov@mt-integration.ru>
+---
+v2: Change the commit description to mention both ref_clk values 27050 and
+    14318.
 
-Dont recall seeing these before.
+ drivers/gpu/drm/mgag200/mgag200_g200.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-# gpiodetect
-gpiochip0 [INTC1055:00] (360 lines)
-gpiochip1 [INTC100B:00] (64 lines)
+diff --git a/drivers/gpu/drm/mgag200/mgag200_g200.c b/drivers/gpu/drm/mgag200/mgag200_g200.c
+index f874e2949840..484b22930ce1 100644
+--- a/drivers/gpu/drm/mgag200/mgag200_g200.c
++++ b/drivers/gpu/drm/mgag200/mgag200_g200.c
+@@ -115,6 +115,10 @@ static int mgag200_g200_pixpllc_atomic_check(struct drm_crtc *crtc, struct drm_a
+ 			}
+ 		}
+ 	}
++
++	if (!m)
++		return -EINVAL;
++
+ 	f_vco = ref_clk * n / m;
+ 	if (f_vco < 100000)
+ 		s = 0;
+-- 
+2.48.1
 
-Machine (dell xps 13 plus laptop) seems to be working normally.
-
-Hoping someone will know how to quiet loggin down some without a bisect
-but if its really needed I can.
-
-thank you.
-
---=20
-Gene
-
-
---=-vzrN2d26u93hK/5ZWTJL
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYJAB0WIQRByXNdQO2KDRJ2iXo5BdB0L6Ze2wUCZ8ysXAAKCRA5BdB0L6Ze
-21jiAP4imfpiqmNU3gQrKzjnL+4ayPliTWOLgDLz8RugeTIwNwD/UabvNFk40GLb
-VkFhVFfjS/RctbDVkvAZQSYx9/+CigI=
-=bupz
------END PGP SIGNATURE-----
-
---=-vzrN2d26u93hK/5ZWTJL--
 
