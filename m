@@ -1,110 +1,201 @@
-Return-Path: <linux-kernel+bounces-552364-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-552367-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 553CAA5790F
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 08:57:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C8EEA5791B
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 09:06:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3337C3A2A53
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 07:57:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 68FCB3B135A
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 08:06:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 583EC19DF9A;
-	Sat,  8 Mar 2025 07:57:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 081CF1A264A;
+	Sat,  8 Mar 2025 08:06:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="FPXocMsQ"
-Received: from mout.web.de (mout.web.de [212.227.15.4])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CpFZJrxT"
+Received: from mail-pl1-f195.google.com (mail-pl1-f195.google.com [209.85.214.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10F2518DB2D;
-	Sat,  8 Mar 2025 07:57:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA3DB17583;
+	Sat,  8 Mar 2025 08:06:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741420634; cv=none; b=df03Fge7kP87VFyxe7eTq1asmmNr8I3ysQKsM0f9pfXFZjEWfARGGba1I5zh0Cwjwsi/9d4sBeHcEdd0zn2T/BxxuUoShQqBtIrEJw/0f9MaC4QRJrU7L4PW1fJWpj/TJ4Xkt++LfHtOy4VEpSD6Ox5kG5D1uBLvxbl8FJxOf20=
+	t=1741421167; cv=none; b=eC/nHdaYg2Vi1K45LqBWrFDeXom2fq21Yw68m/lmkYLIfOfGhkfYa88aYDjg4EZ6n3lcW2gU7kVHgjICy2sCm8LPwUwbG9p/JRctvbYs40Gdqq0mkkqnNHAplSixho1pzUqSLcwlquWBrcHOkPHja2VXYnJNtZfji5DtAPQT5IY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741420634; c=relaxed/simple;
-	bh=Zj3zJcA4uSUYzD3DvV0Arf1ZE/tEBc/rPcPhCxar2JE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=pu3aBLUUDuaAImjZ8ZY2b/pg9JesCVQsBW1Tq8gpern4+Q8Jm3yrb5eYpWN9PDz1HvxUW/AO/sGCQE9VTG5TfCBf+VF0AxDXogthlEh3tNtFI8kOrsXhS/lga5Q98jDeDyho0Cuu40zfbhLoPlYNpBI6x7zHggQ/DSwDwkhUmEE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=FPXocMsQ; arc=none smtp.client-ip=212.227.15.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1741420615; x=1742025415; i=markus.elfring@web.de;
-	bh=Zj3zJcA4uSUYzD3DvV0Arf1ZE/tEBc/rPcPhCxar2JE=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=FPXocMsQP7BEgGbkQdM9lpBa+Ev1vYv3y2FJ+fcfLNUQEkCiDYDhJwNDD32+rdL0
-	 tX0ch8kdv0P+uZ47cZAEFbqOKCNl5YEJzDjLwzq/UVpIw2mZ0pWhLIJZGICr98Bi3
-	 BT6CKAwzvbXNM1PCjJUoZFR64ltvbZ6p8LDzpJzaFtO5BbuCECKjmbKAmTmrmWXp8
-	 nOdEzWvWnY2D5srKa0Bmp/lrBBx+iDsxGmQvJsVsVfCXztZ41C8xesBjaatkexreF
-	 aYZlQkaYKiFk+YOwyU2rCfiIu5LMpDmdwQiVebwXnuVP5hGW5hXKjrCa2oi49hAnU
-	 rY0SuDm9z2A4ba6KMA==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.29] ([94.31.70.79]) by smtp.web.de (mrweb005
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1MDMv4-1u08zR374g-00EbhJ; Sat, 08
- Mar 2025 08:56:55 +0100
-Message-ID: <d2b2716d-b482-467e-9653-9219de40bae8@web.de>
-Date: Sat, 8 Mar 2025 08:56:37 +0100
+	s=arc-20240116; t=1741421167; c=relaxed/simple;
+	bh=XGRxZAYguXEWQD/gjMwK8T/ARx3CsugPw3sn2U4bboE=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=EuK0VFBx4H3OHs+B54mHhMLkk7+cD6rNcj2UduPjZxX0WjCOWvs2FixFXwa1a3xloDSV8vUOhbHYWgaLK8YOk7xBHQDy/IXIxojIYYW/JMrm+iI2s1IR6GtF3IBI1BrSNGqKJDBJp3+QNSCJpZrUpbG7Gdg6+bXODmqerZCwckY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CpFZJrxT; arc=none smtp.client-ip=209.85.214.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f195.google.com with SMTP id d9443c01a7336-22337bc9ac3so54314055ad.1;
+        Sat, 08 Mar 2025 00:06:05 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741421165; x=1742025965; darn=vger.kernel.org;
+        h=references:in-reply-to:message-id:date:subject:cc:to:from:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=ChhxADJR+xbJvkByK/dxsEr1PgDDMt78zzdKfiQchCo=;
+        b=CpFZJrxTWo8NSt1unJJNGf6kwCHf2blg6Z4PFACJlPyTiuEOu4YtRy+etWqjTzQIsI
+         TSzrZUfydc9dq0KRDufOe9jTxo+3jGiKHjOBNacxhw1A6lXHVbxL0jUdK/4nSC2pp0eB
+         50htEeqEVgWB896flEkZ8NXDaUoFI/KHZ3sTUdMiIdYfRSy1Y9XcH8NsEbavE1yF8mhe
+         rqwjsua82u8dZXa5ImCi9UkRvK7aTQDmby1/UX4XAsNTAKciQulwo/UGSF1eVp2HJ9Sp
+         1kPt41XHWyOiV7QbmZkRqi4OtHiWwUVEBKTl4D9mN9UKNfyi4xXhTZojAzK5Cp2j40Pl
+         eh0Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741421165; x=1742025965;
+        h=references:in-reply-to:message-id:date:subject:cc:to:from
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ChhxADJR+xbJvkByK/dxsEr1PgDDMt78zzdKfiQchCo=;
+        b=Oz48klfTUoUOKbtWfuN5Qb4KHsY4sksEyYo+BE9riXwdx9qjfYwTH8UiX+RYXU62Hp
+         EUB5fhIU7+4tXUL8cZrr+79flFU2uAw9DeiQ8bNSk2LtoyJziBMQ4PlnnVN0bl+78FZu
+         amFkG1bcHj7Vzm96bFn63ir47Sau5/S5JCkzpPjxlwDz36UWeIUnVGJpIlFnsSthxley
+         OFMwQet92NI/MyN7EDpZxm3tebNToMHb/OyLcHJRyzqaR6E2Z1tgOkkyjHPizHloopOi
+         uPHyUjKaaUGSSKH1xJdPLUDXWeeCjd2k0b+RSgq7Msh8c8YfGxYvXY0UrDqd+EpQRr7/
+         dGpA==
+X-Forwarded-Encrypted: i=1; AJvYcCUs6dl/Q/2EeH/2nf88L7H13SmzVPQ+Jej5+jLPg3vG8RK7Bj2AhGjO+GQW1bMyybTiPgTgJbg3aLcSY4SY@vger.kernel.org, AJvYcCWL/r808OVgUVfQjXao2NKnZXd6AQhjdqgxG8u8byU/Hcn+yExcqHXeT3cpPTO5I4y5lcuxCmNThWg=@vger.kernel.org, AJvYcCWy09PZy4wJ1sMRBtwvY5Ypa7qWzNkvaOHbaI2v5eIO4bmMn5aBQp/WTFIFtfm5s8maDv87mr6khSriQ6FiCw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxRjYYqRDVrjT7u13EQAuJ7Ayd6/D3hRoDSTiWQ5NO/cG+5E32q
+	QI2lDkNZa71aiKiPjmNp2/2AjG/AL914s+IcBZ1f0HHjT9kXaWZF
+X-Gm-Gg: ASbGncuNHbp6le175uSc4cSfRKMKTnDj3PIcC5x9RHiztgpZKKAuL8IVsKl4q8EiopH
+	B3ofkNZQBKMtmDPeS4j1+X1etI7FNcQVVa8nDWnogd4+/rEQRMCY7ZGRFXOv2jTVzSnOh4MjCFb
+	ZxC1ug6nZBTAsP7ERWSkLE0r7vrT5rlqSzdBnwc23Nx5QKbbhHyQKDF+JI88Z0wjXTdZPg4FHrM
+	NOIQcHpXuHEfrBZ0MKb05//0OX9BNCXQmzpCPemLk/JXbfAx0O0T2wQV8FzM6tC8eur8SAtQX8n
+	NHbPk3q3QL8pY5IB+HZ78yVKJg9texsM6+kKJfqL/CRR1SjzMbrBcVt7gugfCBE3qqNDaj1hVQh
+	6k/o=
+X-Google-Smtp-Source: AGHT+IHTlPN6GmKz0DlzaC9MC6JKE39U4JRzI9PelS42v8C7wtfhvijef631QQXLRW/IU34dwMPy/w==
+X-Received: by 2002:a17:902:ce0f:b0:223:3396:15e8 with SMTP id d9443c01a7336-22428899f38mr129999835ad.22.1741421165055;
+        Sat, 08 Mar 2025 00:06:05 -0800 (PST)
+Received: from localhost.localdomain ([103.49.135.232])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22410a92699sm41859775ad.204.2025.03.08.00.06.02
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sat, 08 Mar 2025 00:06:04 -0800 (PST)
+From: Ruiwu Chen <rwchen404@gmail.com>
+To: mcgrof@kernel.org
+Cc: corbet@lwn.net,
+	joel.granados@kernel.org,
+	keescook@chromium.org,
+	linux-doc@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	rwchen404@gmail.com,
+	viro@zeniv.linux.org.uk,
+	zachwade.k@gmail.com
+Subject: Re: [PATCH v2] drop_caches: re-enable message after disabling
+Date: Sat,  8 Mar 2025 16:05:49 +0800
+Message-Id: <20250308080549.14464-1-rwchen404@gmail.com>
+X-Mailer: git-send-email 2.18.0.windows.1
+In-Reply-To: <Z7tZTCsQop1Oxk_O@bombadil.infradead.org>
+References: <Z7tZTCsQop1Oxk_O@bombadil.infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [v2 1/2] perf report: Use map_symbol__copy() when copying call
- chains
-To: Namhyung Kim <namhyung@kernel.org>, linux-perf-users@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>,
- Adrian Hunter <adrian.hunter@intel.com>,
- Arnaldo Carvalho de Melo <acme@kernel.org>, Ian Rogers <irogers@google.com>,
- Ingo Molnar <mingo@kernel.org>, Jiri Olsa <jolsa@kernel.org>,
- Kan Liang <kan.liang@linux.intel.com>, Peter Zijlstra <peterz@infradead.org>
-References: <20250307061250.320849-1-namhyung@kernel.org>
- <2719d1d0-6e1c-48fd-b73e-42b78c51b201@web.de> <Z8tudline_-qNJog@google.com>
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <Z8tudline_-qNJog@google.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Provags-ID: V03:K1:mIU5Uztp5BCv3mSjwgOuclJYhvAlUx4lh0MYp2697qqnxf7D7uJ
- R4JfvKnmGbvH8/CEru2gJBHs5j8A1iJWH5ZRgBMGBaPNTh6fai7sOs8elpGze0nLmoz48+V
- Fu5ofOSgQ0KQQ7hERRAOj6fyaXGvckSOdxPjro3ZzlhKDLZNAdHOl/ZvM7w8yXY9rpaceRb
- gIoKGUoHOgvb4DY5DteTg==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:teHOiyEJCCw=;V63J687ciM74R8eO6PJS+pCFeUQ
- LdXczH34h0eUOo5/ReZjj4mYa0AXuGAktQKQ/hmAUICqAnAJ+iFH0upmbZjtLNK4rGc0BlBRX
- 950wyQDILpavC8LDLTc+XkLq9SEW/RpqhVQdXx3xeJ5KUQ+wDq/fWKJIKuudV2kv1GlWjRqQ4
- swPneHAbPHN3GZfWq5bLwUedqg8G5oioVrS/VgBJvLwpCSzEWxOLzWLQT5Z7T+fTeXQzGboc5
- Uh6MnhWeq+qIJ2DTjeJpnMdZTkrBeeU7qsGWwb2BBiUgH1LaWGwp/Ec3dK5ucxbzUA8HxDS4Y
- jBap9p+BniYD79F4PrkqtkxHOGWk4I0HV2BEEJ4DB1Q0rhFjHPzClUuamNZLp4ML0DModN1/J
- 0VKJHBRCMVztKt/24r/Rj/vrT/xyKgeveZTN2kPegFr+51lCT0KiZjL6awCWo0PdiFAd4d1n5
- V+dQ64wGGpc0RF2F1zlnKBiY31IggSzHn3M8pthjIbYLeR4oG/9QeIbd4mlgJZHzRRTCL/yoC
- piHdb/wBjxu6f9Y5QPpJH6y741LQHqu/cyNB02CbNXyxJKjULXt+BDKMGH07AEa4T9IWhh46k
- n9JHbvNrSWD+uvGnUbXM2YV1ThLKZ4IMZyZ7KLnFCnZ3XK7xzMSNoYZ1YzoSGXm18dLOrTbrh
- itELX20rcnzTXEf03jt15ig6S/NH+TGsN9mKyhSjlitoKkfg1uhq64wWqZXTX3puethKsd9DR
- hbO9SzJuVlLVWHOvK6mSw6IaSMsjdwU7IUxTk53VaJf5Fim8oSkmtGbAMZo5KLVrnvMiL8yy5
- akXf8S/eD3UjupFhXCcGZdgXxfYzSK3bWk9hofvm6Yx2tswmlpMV2W5JMny/5gHa2dolqpt9w
- wtOUyZxsv9GcDggsg8uuBx6dXmDbsWLkkK1ysqFXA/eQIlsN/TgzYNuG0BI0coYm7oPLLA7O0
- omrf/oJFf5fc/Tu28Pp/cZDy/QnH2KdjO1yuXV4f228jkVGYOAK5inMWvREIE/jlqy7ljIOyq
- m1DaEM/FNwMfHluAoYqoBKbKtElCSDb4yFNtaFFq7g2bHdBlWJZaGA8AIrCl+WwAezHnjOcuh
- WP8vsAXLjx4iE2Hj9Cqw1vSBrqIhZOUc0ufEJFMFJfBKTlT5g3yFoLtHK+rFrbMbHAk9N8h2e
- I+oWEnpZSeM3i8tk14G21/cLd5be5FMYuK8GCyEyeGeOk7/yIPzancrOQC60TP2oGHMG4zHEB
- ZL+zaGqWjv0wPr4jnmbdtnDGonxlNpjvqHIwtK+Ve4kkJMuyM6sf+ODI8tHwhkobdScp7WbG6
- bwq07ZQ1MoudwGbedtEkMPgFM7aD4ezo5fHk74jGRY1H4jqJUvjS1mZG1xyX3Ito+eKKerqHL
- JGGALJmkCc6mPjXLhVuLFslxuChAtA1l+bOE/zMeEK1AtNX5IiJxngCwLOQb6I+ezZOUP+clJ
- nYjABQg==
 
-> It's just two patches and they are independent.
+>> When 'echo 4 > /proc/sys/vm/drop_caches' the message is disabled,
+>> but there is no interface to enable the message, only by restarting
+>> the way, so add the 'echo 0 > /proc/sys/vm/drop_caches' way to
+>> enabled the message again.
+>> 
+>> Signed-off-by: Ruiwu Chen <rwchen404@gmail.com>
+>
+> You are overcomplicating things, if you just want to re-enable messages
+> you can just use:
+>
+> -		stfu |= sysctl_drop_caches & 4;
+> +		stfu = sysctl_drop_caches & 4;
+>
+> The bool is there as 4 is intended as a bit flag, you can can figure
+> out what values you want and just append 4 to it to get the expected
+> result.
+>
+>  Luis
 
-How do you think about to offer the desired changes as single items then
-(without the context of a patch series in this case)?
+Is that what you mean ?
 
-Regards,
-Markus
+-               stfu |= sysctl_drop_caches & 4;
++               stfu ^= sysctl_drop_caches & 4;
+
+'echo 4 > /sys/kernel/vm/drop_caches' can disable or open messages,
+This is what I originally thought, but there is uncertainty that when different operators execute the command,
+It is not possible to determine whether this time is enabled or turned on unless you operate it twice.
+
+Ruiwu
+
+>
+>> ---
+>> v2: - updated Documentation/ to note this new API.
+>>     - renamed the variable.
+>>     - rebase this on top of sysctl-next [1].
+>> [1] https://git.kernel.org/pub/scm/linux/kernel/git/sysctl/sysctl.git/log/?h=sysctl-next
+>> 
+>>  Documentation/admin-guide/sysctl/vm.rst | 11 ++++++++++-
+>>  fs/drop_caches.c                        | 11 +++++++----
+>>  2 files changed, 17 insertions(+), 5 deletions(-)
+>> 
+>> diff --git a/Documentation/admin-guide/sysctl/vm.rst b/Documentation/admin-guide/sysctl/vm.rst
+>> index f48eaa98d22d..ef73d36e8b84 100644
+>> --- a/Documentation/admin-guide/sysctl/vm.rst
+>> +++ b/Documentation/admin-guide/sysctl/vm.rst
+>> @@ -266,7 +266,16 @@ used::
+>>  	cat (1234): drop_caches: 3
+>>  
+>>  These are informational only.  They do not mean that anything is wrong
+>> -with your system.  To disable them, echo 4 (bit 2) into drop_caches.
+>> +with your system.
+>> +
+>> +To disable informational::
+>> +
+>> +	echo 4 > /proc/sys/vm/drop_caches
+>> +
+>> +To enable informational::
+>> +
+>> +	echo 0 > /proc/sys/vm/drop_caches
+>> +
+>>  
+>>  enable_soft_offline
+>>  ===================
+>> diff --git a/fs/drop_caches.c b/fs/drop_caches.c
+>> index 019a8b4eaaf9..a49af7023886 100644
+>> --- a/fs/drop_caches.c
+>> +++ b/fs/drop_caches.c
+>> @@ -57,7 +57,7 @@ static int drop_caches_sysctl_handler(const struct ctl_table *table, int write,
+>>  	if (ret)
+>>  		return ret;
+>>  	if (write) {
+>> -		static int stfu;
+>> +		static bool silent;
+>>  
+>>  		if (sysctl_drop_caches & 1) {
+>>  			lru_add_drain_all();
+>> @@ -68,12 +68,15 @@ static int drop_caches_sysctl_handler(const struct ctl_table *table, int write,
+>>  			drop_slab();
+>>  			count_vm_event(DROP_SLAB);
+>>  		}
+>> -		if (!stfu) {
+>> +		if (!silent) {
+>>  			pr_info("%s (%d): drop_caches: %d\n",
+>>  				current->comm, task_pid_nr(current),
+>>  				sysctl_drop_caches);
+>>  		}
+>> -		stfu |= sysctl_drop_caches & 4;
+>> +		if (sysctl_drop_caches == 0)
+>> +			silent = true;
+>> +		else if (sysctl_drop_caches == 4)
+>> +			silent = false;
+>>  	}
+>>  	return 0;
+>>  }
+>> @@ -85,7 +88,7 @@ static const struct ctl_table drop_caches_table[] = {
+>>  		.maxlen		= sizeof(int),
+>>  		.mode		= 0200,
+>>  		.proc_handler	= drop_caches_sysctl_handler,
+>> -		.extra1		= SYSCTL_ONE,
+>> +		.extra1		= SYSCTL_ZERO,
+>>  		.extra2		= SYSCTL_FOUR,
+>>  	},
+>>  };
+>> -- 
+>> 2.27.0
+>> 
 
