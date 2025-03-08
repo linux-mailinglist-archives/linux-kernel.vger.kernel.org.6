@@ -1,206 +1,140 @@
-Return-Path: <linux-kernel+bounces-552169-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-552168-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 96CF2A57674
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 01:02:05 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 51FFCA57673
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 01:01:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DDAD21899DC6
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 00:02:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 65EE917906D
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 00:01:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A71BEBE4F;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75FF714B086;
 	Sat,  8 Mar 2025 00:01:26 +0000 (UTC)
-Received: from mail-io1-f77.google.com (mail-io1-f77.google.com [209.85.166.77])
+Received: from mail-io1-f80.google.com (mail-io1-f80.google.com [209.85.166.80])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7AB13D6A
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF0F26FBF
 	for <linux-kernel@vger.kernel.org>; Sat,  8 Mar 2025 00:01:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.77
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.80
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741392085; cv=none; b=k2k4VEUKCYs+zs02oNeF9x/Ri+0khhr0RSqQaVoWhdDBZ6ZMVKjR4B0PXzdSVQBp4niUbApzrsuIZ5jmhf56TF/MLnLQu3FutfG9b1GdGIwGIJ5Caa1QIIMaXsIM8YNpfQGHdWoIJI366RzYgEBAU7jz21ChDqn8Q+1Nll9UvQk=
+	t=1741392085; cv=none; b=hBEX1e5OFnJEZil5KvEw06eBHDHX+V30bOra8X70FDdTi2H6yTGmI9apb/lVSIN87kfxcL29msRPFxfsu0v/Oyx+vwCy+9wyq7xaRl/AAwNXDeEfL9MLls4sgfuTJip5e6BWEiDt8FGby6lndBtYEz3ua+ZRp3/I6LxdEFdGXdM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1741392085; c=relaxed/simple;
-	bh=N0eKSeVL7+VRhfKRNDp0NxLIQwmlrCDDLmB0QxzSMug=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=ZUMcO9YZpMYXuZiI4HMUiUdDSRXID1p4skB78fwvGn/2VMFsZ9SzDu5SWs5rIfYT0QDQbOIclm+zK9pbGCsMH/s8HwN4TgRGFr8D5uMiEmHq6tpOS5sl/MYWRWuO7SSTaOTYB9RMn4Oto9eyWkRfCRly9D5zEB5zQBRCOTiAY1I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.77
+	bh=fz1nK46pFYnMhlF2+BNxIg87IvvPu6orE2AvipFlJiA=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=AnNWPsoqgr7x2HHB0SpQ5vl5eBPf2sxngucbn/n6aSLYx/9ebYeF3YJcziZPjEF+A+WvFcel3JB2Rq/4VUyJ29IgfSPqO5iKnC/jOHoDws5v9Cvz3ymemB9UmLB3/jQdeRBzdq6smF3pxw/yUBaHxjrbPU7lMVHQNlOXUKW1tgA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.80
 Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f77.google.com with SMTP id ca18e2360f4ac-85adee9bb56so212678839f.2
+Received: by mail-io1-f80.google.com with SMTP id ca18e2360f4ac-85aef819601so510413939f.3
         for <linux-kernel@vger.kernel.org>; Fri, 07 Mar 2025 16:01:22 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20230601; t=1741392082; x=1741996882;
         h=to:from:subject:message-id:date:mime-version:x-gm-message-state
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=zeqWouS+SSFmOzj0vligAq58jwoQW/v1su47nD9czv8=;
-        b=eoUjS1u2smInTxYozMUmupWurJc4KsHAuC+oekxsmZikr29h42vOvwVSduk+eONFjC
-         fpwWWe9IAyh/LRGPXKLZ9WCDf4pAYkijLr3MvvRHBOqa6kFsiCEfgoActbuP6RntRWI8
-         3kbZMcTICLzbZQWlq+DzwFEKn/sSw8YNQ2p07EdexlJ8QjG3KmQXDw/r2Ejo542olgTD
-         Hbuz6dk1x//xhiqXzW9eDzwOm73UZVoWWwL2yAlAw9FrMAuDnBz7X1VN0A+rMtaX4YRo
-         lF7odqX9y/EVfdtDEfw6c4eVpQPwBpNyrqv7xbXvUlE+Oo3BVZniqt+Kgos79XBRZ5HV
-         X44Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVaI2gPRQABdai6sYOcWzUFzklA7lrgsQHhEJc42X02PlsnEh0bjXB0OrC6Xh6rdmPvH9gjAYPzNl6xCxc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz6C05UVsIKbOwTb7/lR6AVKuEj88V0uVV/GKqwstoC+C1HXHkZ
-	OxyGu2OPkdZ6T/kYXObDnGlGkl/V+w6VJ2jFewDe4Bkv7ZxaE+pzcJayxvi7RU05WxMKOEnEsJp
-	X3xbCUFOQy3eNNilyexeIR9Loto9hW2t16cfdStZ3VBQzSQMBwOhk448=
-X-Google-Smtp-Source: AGHT+IE2RVxAN/LY5wy/Gi9Cg3zFZnJxLg+/g/jvJkGvV7nk6cVSFYhEwL0YOUHJDLjNEV8tUI9rU044HUQ7z4Y8tCdCJAizeq6H
+        bh=vkzX2jZY3i9fq06qmBpkNfr2Pob81IJ9KiDRVpOA3Dw=;
+        b=VUVs3uXqKXQyQe3nSZYbb8mDomiu/A7bulHyDiW/rXeGqkAkfjw25roEgmn55FZ0Lb
+         mj03tfWt9i6gtC7UnuTNTRaSatvxa7bBETLN7ZpzdKjPSsXiA2U6TMEqZzg3Mh3rz7l5
+         ShcKKJfU21GX9JQGeMbDgHXNfAVlGRazSMHO6zrE9kBoUE9O4ByJBS59q/052iy6J9pc
+         52PbagkDKHfsbo2oKYHHe3X82Q2xokUJqeVu3T3Ag4clGaaoLyCuFFLX2jJ7H62yf2Ct
+         C8Jur2ynzhKNr01VhR70DtAAySpFj6xgKphDzihZIhrE5fm7Pr3Fc3yefWI2cz/cmb8i
+         z9AQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUdv0Nca9oWddjK1nItOwU9sIw0fvDY2tjKBHz32P5AjYEkEK0MtGKYjZ3OLuYzCbN5PHSyCu23lFcDJp4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxY82r6spV2BKM3dbSY7Uxhogr3GkZK24BAVHdoK6G+SX0EUPva
+	y7uMENVxirBJ1th4mnVoB1IzS9hsf/I0c4366lXfrxh14+TXPsWnGQEt4jpBa0nX39wzf+TEPX7
+	B9JMaBLphckxjjRRFimtfWl17E6yOwC3f/KymjIOhzlS7tuwqLM7W35Y=
+X-Google-Smtp-Source: AGHT+IEWpPUhIjJy2F84jIIeuQMtopJdFGWux5rJRE6VGWshbOnX4Z3R4+9QeBVMTaaL0uhEDpBiIHDEAlyj/rzMLuydDRPCPlz4
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1a83:b0:3d3:f27a:9103 with SMTP id
- e9e14a558f8ab-3d44197137fmr69704715ab.1.1741392081681; Fri, 07 Mar 2025
+X-Received: by 2002:a05:6e02:11:b0:3d4:35d3:87d3 with SMTP id
+ e9e14a558f8ab-3d44187b8b4mr70256235ab.4.1741392081958; Fri, 07 Mar 2025
  16:01:21 -0800 (PST)
 Date: Fri, 07 Mar 2025 16:01:21 -0800
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67cb88d1.050a0220.d8275.022c.GAE@google.com>
-Subject: [syzbot] [net?] [bcachefs?] KASAN: slab-use-after-free Read in
- ip_skb_dst_mtu (2)
-From: syzbot <syzbot+98d6cedbab2dd7eaa17e@syzkaller.appspotmail.com>
-To: davem@davemloft.net, dsahern@kernel.org, edumazet@google.com, 
-	horms@kernel.org, kent.overstreet@linux.dev, kuba@kernel.org, 
-	linux-bcachefs@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	netdev@vger.kernel.org, pabeni@redhat.com, syzkaller-bugs@googlegroups.com
+Message-ID: <67cb88d1.050a0220.d8275.022d.GAE@google.com>
+Subject: [syzbot] [netfilter?] WARNING in dev_setup_tc
+From: syzbot <syzbot+0afb4bcf91e5a1afdcad@syzkaller.appspotmail.com>
+To: coreteam@netfilter.org, davem@davemloft.net, edumazet@google.com, 
+	horms@kernel.org, kadlec@netfilter.org, kuba@kernel.org, 
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
+	netfilter-devel@vger.kernel.org, pabeni@redhat.com, pablo@netfilter.org, 
+	syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
 
 Hello,
 
 syzbot found the following issue on:
 
-HEAD commit:    03d38806a902 Merge tag 'thermal-6.14-rc5' of git://git.ker..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=15952864580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=8de9cc84d5960254
-dashboard link: https://syzkaller.appspot.com/bug?extid=98d6cedbab2dd7eaa17e
+HEAD commit:    865eddcf0afb Merge branch 'mlx5-misc-enhancements-2025-03-..
+git tree:       net-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=12fcc878580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=fbc61e4c6e816b7b
+dashboard link: https://syzkaller.appspot.com/bug?extid=0afb4bcf91e5a1afdcad
 compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=17952864580000
+
+Unfortunately, I don't have any reproducer for this issue yet.
 
 Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/3a7779436438/disk-03d38806.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/d7e23add8bc8/vmlinux-03d38806.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/b718ff622c01/bzImage-03d38806.xz
-mounted in repro: https://storage.googleapis.com/syzbot-assets/5b20d0f140ec/mount_0.gz
-
-The issue was bisected to:
-
-commit 14152654805256d760315ec24e414363bfa19a06
-Author: Kent Overstreet <kent.overstreet@linux.dev>
-Date:   Mon Nov 25 05:21:27 2024 +0000
-
-    bcachefs: Bad btree roots are now autofix
-
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=13c464b7980000
-final oops:     https://syzkaller.appspot.com/x/report.txt?x=102464b7980000
-console output: https://syzkaller.appspot.com/x/log.txt?x=17c464b7980000
+disk image: https://storage.googleapis.com/syzbot-assets/15388530d696/disk-865eddcf.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/dfd22998e59b/vmlinux-865eddcf.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/ecc6b8f2a90d/bzImage-865eddcf.xz
 
 IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+98d6cedbab2dd7eaa17e@syzkaller.appspotmail.com
-Fixes: 141526548052 ("bcachefs: Bad btree roots are now autofix")
+Reported-by: syzbot+0afb4bcf91e5a1afdcad@syzkaller.appspotmail.com
 
-==================================================================
-BUG: KASAN: slab-use-after-free in sk_fullsock include/net/sock.h:2787 [inline]
-BUG: KASAN: slab-use-after-free in ip_skb_dst_mtu+0xa42/0xbc0 include/net/ip.h:515
-Read of size 1 at addr ffff88805fe4154a by task kworker/1:2/975
-
-CPU: 1 UID: 0 PID: 975 Comm: kworker/1:2 Not tainted 6.14.0-rc4-syzkaller-00248-g03d38806a902 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 02/12/2025
-Workqueue: mld mld_dad_work
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:94 [inline]
- dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
- print_address_description mm/kasan/report.c:408 [inline]
- print_report+0x16e/0x5b0 mm/kasan/report.c:521
- kasan_report+0x143/0x180 mm/kasan/report.c:634
- sk_fullsock include/net/sock.h:2787 [inline]
- ip_skb_dst_mtu+0xa42/0xbc0 include/net/ip.h:515
- __ip_finish_output+0x12b/0x400 net/ipv4/ip_output.c:307
- iptunnel_xmit+0x55d/0x9b0 net/ipv4/ip_tunnel_core.c:82
- udp_tunnel_xmit_skb+0x262/0x3b0 net/ipv4/udp_tunnel_core.c:173
- geneve_xmit_skb drivers/net/geneve.c:916 [inline]
- geneve_xmit+0x210e/0x2bf0 drivers/net/geneve.c:1039
- __netdev_start_xmit include/linux/netdevice.h:5151 [inline]
- netdev_start_xmit include/linux/netdevice.h:5160 [inline]
- xmit_one net/core/dev.c:3800 [inline]
- dev_hard_start_xmit+0x27a/0x7d0 net/core/dev.c:3816
- __dev_queue_xmit+0x1b73/0x3f50 net/core/dev.c:4649
- dev_queue_xmit include/linux/netdevice.h:3313 [inline]
- neigh_hh_output include/net/neighbour.h:523 [inline]
- neigh_output include/net/neighbour.h:537 [inline]
- ip6_finish_output2+0x127d/0x17c0 net/ipv6/ip6_output.c:141
- ip6_finish_output+0x41e/0x840 net/ipv6/ip6_output.c:226
- NF_HOOK+0x9e/0x430 include/linux/netfilter.h:314
- mld_sendpack+0x843/0xdb0 net/ipv6/mcast.c:1868
- mld_dad_work+0x44/0x500 net/ipv6/mcast.c:2308
- process_one_work kernel/workqueue.c:3238 [inline]
- process_scheduled_works+0xabe/0x18e0 kernel/workqueue.c:3319
- worker_thread+0x870/0xd30 kernel/workqueue.c:3400
- kthread+0x7a9/0x920 kernel/kthread.c:464
- ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:148
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
- </TASK>
-
-Last potentially related work creation:
 ------------[ cut here ]------------
-pool index 54431 out of bounds (772) for stack id 8c38d4a0
-WARNING: CPU: 1 PID: 975 at lib/stackdepot.c:452 depot_fetch_stack+0x86/0xc0 lib/stackdepot.c:451
+RTNL: assertion failed at net/core/dev.c (1769)
+WARNING: CPU: 1 PID: 10093 at net/core/dev.c:1769 dev_setup_tc+0x315/0x360 net/core/dev.c:1769
 Modules linked in:
-CPU: 1 UID: 0 PID: 975 Comm: kworker/1:2 Not tainted 6.14.0-rc4-syzkaller-00248-g03d38806a902 #0
+CPU: 1 UID: 0 PID: 10093 Comm: syz.2.1168 Not tainted 6.14.0-rc5-syzkaller-01096-g865eddcf0afb #0
 Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 02/12/2025
-Workqueue: mld mld_dad_work
-RIP: 0010:depot_fetch_stack+0x86/0xc0 lib/stackdepot.c:451
-Code: 83 7c 18 1c 00 74 38 48 01 d8 eb 24 90 0f 0b 90 44 39 f5 72 ca 90 48 c7 c7 6e af 39 8e 89 ee 44 89 f2 89 d9 e8 fb be 5b fc 90 <0f> 0b 90 90 31 c0 5b 41 5e 5d c3 cc cc cc cc 90 0f 0b 90 eb ef 90
-RSP: 0018:ffffc90003836d28 EFLAGS: 00010046
-RAX: eec25f5fb9356300 RBX: 000000008c38d4a0 RCX: ffff888026575a00
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
-RBP: 000000000000d49f R08: ffffffff81817d42 R09: 1ffff110170e519a
-R10: dffffc0000000000 R11: ffffed10170e519b R12: ffff88805fe4154a
-R13: ffffea00017f9000 R14: 0000000000000304 R15: ffffc90003836df8
-FS:  0000000000000000(0000) GS:ffff8880b8700000(0000) knlGS:0000000000000000
+RIP: 0010:dev_setup_tc+0x315/0x360 net/core/dev.c:1769
+Code: cc 49 89 ee e8 dc da f7 f7 c6 05 c0 39 5d 06 01 90 48 c7 c7 a0 5e 2e 8d 48 c7 c6 80 5e 2e 8d ba e9 06 00 00 e8 3c 97 b7 f7 90 <0f> 0b 90 90 e9 66 fd ff ff 89 d1 80 e1 07 38 c1 0f 8c aa fd ff ff
+RSP: 0018:ffffc90003b8eed0 EFLAGS: 00010246
+RAX: 587f1d6754f87800 RBX: 0000000000000000 RCX: 0000000000080000
+RDX: ffffc90010d68000 RSI: 00000000000049c3 RDI: 00000000000049c4
+RBP: ffff8880250f8008 R08: ffffffff81818e32 R09: fffffbfff1d3a67c
+R10: dffffc0000000000 R11: fffffbfff1d3a67c R12: ffffc90003b8f070
+R13: ffffffff8d4ab1c0 R14: ffff8880250f8008 R15: ffff8880250f8000
+FS:  00007f58e67f66c0(0000) GS:ffff8880b8700000(0000) knlGS:0000000000000000
 CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f086af09000 CR3: 00000000798e8000 CR4: 00000000003526f0
+CR2: 0000000000000000 CR3: 0000000030ed6000 CR4: 00000000003526f0
 DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
 DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
 Call Trace:
  <TASK>
- stack_depot_fetch lib/stackdepot.c:714 [inline]
- stack_depot_print+0x16/0x50 lib/stackdepot.c:752
- kasan_print_aux_stacks+0x38/0x70 mm/kasan/report_generic.c:199
- describe_object_stacks mm/kasan/report.c:347 [inline]
- describe_object mm/kasan/report.c:353 [inline]
- print_address_description mm/kasan/report.c:412 [inline]
- print_report+0x22b/0x5b0 mm/kasan/report.c:521
- kasan_report+0x143/0x180 mm/kasan/report.c:634
- sk_fullsock include/net/sock.h:2787 [inline]
- ip_skb_dst_mtu+0xa42/0xbc0 include/net/ip.h:515
- __ip_finish_output+0x12b/0x400 net/ipv4/ip_output.c:307
- iptunnel_xmit+0x55d/0x9b0 net/ipv4/ip_tunnel_core.c:82
- udp_tunnel_xmit_skb+0x262/0x3b0 net/ipv4/udp_tunnel_core.c:173
- geneve_xmit_skb drivers/net/geneve.c:916 [inline]
- geneve_xmit+0x210e/0x2bf0 drivers/net/geneve.c:1039
- __netdev_start_xmit include/linux/netdevice.h:5151 [inline]
- netdev_start_xmit include/linux/netdevice.h:5160 [inline]
- xmit_one net/core/dev.c:3800 [inline]
- dev_hard_start_xmit+0x27a/0x7d0 net/core/dev.c:3816
- __dev_queue_xmit+0x1b73/0x3f50 net/core/dev.c:4649
- dev_queue_xmit include/linux/netdevice.h:3313 [inline]
- neigh_hh_output include/net/neighbour.h:523 [inline]
- neigh_output include/net/neighbour.h:537 [inline]
- ip6_finish_output2+0x127d/0x17c0 net/ipv6/ip6_output.c:141
- ip6_finish_output+0x41e/0x840 net/ipv6/ip6_output.c:226
- NF_HOOK+0x9e/0x430 include/linux/netfilter.h:314
- mld_sendpack+0x843/0xdb0 net/ipv6/mcast.c:1868
- mld_dad_work+0x44/0x500 net/ipv6/mcast.c:2308
- process_one_work kernel/workqueue.c:3238 [inline]
- process_scheduled_works+0xabe/0x18e0 kernel/workqueue.c:3319
- worker_thread+0x870/0xd30 kernel/workqueue.c:3400
- kthread+0x7a9/0x920 kernel/kthread.c:464
- ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:148
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+ nf_flow_table_offload_cmd net/netfilter/nf_flow_table_offload.c:1178 [inline]
+ nf_flow_table_offload_setup+0x2ff/0x710 net/netfilter/nf_flow_table_offload.c:1198
+ nft_register_flowtable_net_hooks+0x24c/0x570 net/netfilter/nf_tables_api.c:8918
+ nf_tables_newflowtable+0x19f4/0x23d0 net/netfilter/nf_tables_api.c:9139
+ nfnetlink_rcv_batch net/netfilter/nfnetlink.c:524 [inline]
+ nfnetlink_rcv_skb_batch net/netfilter/nfnetlink.c:647 [inline]
+ nfnetlink_rcv+0x14e3/0x2ab0 net/netfilter/nfnetlink.c:665
+ netlink_unicast_kernel net/netlink/af_netlink.c:1313 [inline]
+ netlink_unicast+0x7f6/0x990 net/netlink/af_netlink.c:1339
+ netlink_sendmsg+0x8de/0xcb0 net/netlink/af_netlink.c:1883
+ sock_sendmsg_nosec net/socket.c:709 [inline]
+ __sock_sendmsg+0x221/0x270 net/socket.c:724
+ ____sys_sendmsg+0x53a/0x860 net/socket.c:2564
+ ___sys_sendmsg net/socket.c:2618 [inline]
+ __sys_sendmsg+0x269/0x350 net/socket.c:2650
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f58e898d169
+Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007f58e67f6038 EFLAGS: 00000246 ORIG_RAX: 000000000000002e
+RAX: ffffffffffffffda RBX: 00007f58e8ba6160 RCX: 00007f58e898d169
+RDX: 0000000000000000 RSI: 0000400000000300 RDI: 000000000000000c
+RBP: 00007f58e8a0e2a0 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 0000000000000000 R14: 00007f58e8ba6160 R15: 00007fff6c4048f8
  </TASK>
 
 
@@ -211,14 +145,9 @@ syzbot engineers can be reached at syzkaller@googlegroups.com.
 
 syzbot will keep track of this issue. See:
 https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
 If the report is already addressed, let syzbot know by replying with:
 #syz fix: exact-commit-title
-
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
 
 If you want to overwrite report's subsystems, reply with:
 #syz set subsystems: new-subsystem
