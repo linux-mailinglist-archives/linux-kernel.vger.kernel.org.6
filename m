@@ -1,127 +1,131 @@
-Return-Path: <linux-kernel+bounces-552850-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-552851-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5527EA57F68
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 23:48:44 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6548CA57F6E
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 23:59:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 99D641884982
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 22:48:50 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0146C7A6F02
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 22:58:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19D981E834F;
-	Sat,  8 Mar 2025 22:48:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06ADA20E31D;
+	Sat,  8 Mar 2025 22:59:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Xi1jmIE8"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KVjMi79e"
+Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B7161AA1C8
-	for <linux-kernel@vger.kernel.org>; Sat,  8 Mar 2025 22:48:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D5071917F1;
+	Sat,  8 Mar 2025 22:59:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741474117; cv=none; b=UrqjpyJNwQcjpUEBze9Sis+fbAblYnC+1j5lndS8dNoscHU9ZXeF1yDZG5UHti0kfhj+rNwVZXNf3+wmrWZTIi4FGbrLvW+06iZTBEuMMySt/PjWOHN5HOmPxY5fxzJM3OPVHVVkOXOxEMIINnv5lDIN7Tz0OnhdXCqwP69J/iQ=
+	t=1741474760; cv=none; b=Lh3R2HkPuTBQW5x4HVesJ2bK9YSldPoZah/lmL2whqr331sOUUWing9g1blAOvhsLTShEdDVK8gwA5JXNPpo70YMZoTCI2b0FaEXRfpiANBeItrD2Jx+qzVQssnUhK7Q98wIbNMaXpegTP5NfuPAAjVcB0dKAMktnBmTstTbt90=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741474117; c=relaxed/simple;
-	bh=HsTzUSlwUghBGudHn1GbbnYvhPej4GoUjLOnJW1/ZYg=;
+	s=arc-20240116; t=1741474760; c=relaxed/simple;
+	bh=sB92SeEGQyAF6SE8thv+CqiWBDawmX2AqAiWf8yf61s=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jvKrJiq5t7+3qqxOmI4uG//wdEut9RtTlCFlKO+Is5JeOkPXKGoD1VmnWUDsFc4PU6vmW4wb+gWiFufK221s3BT9tgMxSFLq8qGUXcW97WXqNzyPrh2KIGryRg0wgXoI6r+JpKlL6NsISTIrXMjBWSlswOn7rZW0W5oloCu1BlE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Xi1jmIE8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 95DFFC4CEE0;
-	Sat,  8 Mar 2025 22:48:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741474116;
-	bh=HsTzUSlwUghBGudHn1GbbnYvhPej4GoUjLOnJW1/ZYg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Xi1jmIE8a0pOzU+Z0hCpUnl7IQ5p/eL6kDZ7fGhlBJdxP9BJfB/kn5Tx1H07zqv9R
-	 52FTZbS/od8zfKgmEDE+fRd6c5GKjZerITmjR+VFFxCm5G3APwHQBNZSKCjP4Cv5CD
-	 Us66P45vEibXrXAXCy6LU3lDGqd6A+k/RZAjXrWrZ81gcMQj5scXFuZUbYN6/cYt0L
-	 qpCct0O0edwcoTImydWSL2TMrpScMRpHP314h2Zgrrl+qW0cJVtDYlnjN59QrLQEl4
-	 47CrgTlytOA14F3K7wVIi3k+H4oj2I7YR4JcTFnd+hrjISL9sfldICiOBQig2xKG7m
-	 xvYo/B6fBZyNw==
-Date: Sat, 8 Mar 2025 23:48:34 +0100
-From: Frederic Weisbecker <frederic@kernel.org>
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: LKML <linux-kernel@vger.kernel.org>,
-	Anna-Maria Behnsen <anna-maria@linutronix.de>,
-	Benjamin Segall <bsegall@google.com>,
-	Eric Dumazet <edumazet@google.com>,
-	Andrey Vagin <avagin@openvz.org>,
-	Pavel Tikhomirov <ptikhomirov@virtuozzo.com>,
-	Peter Zijlstra <peterz@infradead.org>
-Subject: Re: [patch V2 08/17] posix-timers: Rework timer removal
-Message-ID: <Z8zJQtzLIliTNe2e@pavilion.home>
-References: <20250302185753.311903554@linutronix.de>
- <20250302193627.416552300@linutronix.de>
- <Z8t7UJUd9SLT0Ytj@pavilion.home>
- <8734fn53b5.ffs@tglx>
+	 Content-Type:Content-Disposition:In-Reply-To; b=thSSiPe3EXRQa4Cqv71TvOxHyQOIaIxw4e+kdknZkmelY3SEG6Ba2iOKWWgynZaRsY0JDodGJd95aSuT7rO25tI/6k9TZfFTAZt8HehfvhzMBGxsljyUaa5K4rkn/FKGdboygXQlpfyE90XA8Kns4L/75PUeR6QeKqQa3A9vX/M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KVjMi79e; arc=none smtp.client-ip=209.85.214.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-223a7065ff8so36672085ad.0;
+        Sat, 08 Mar 2025 14:59:17 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741474757; x=1742079557; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=cxiW8EN6R1blDN9h6UwBVZwoRhC3HKbW+f3lztUaYME=;
+        b=KVjMi79eFVGqE2z+okvkGcF273EmGFEoo+DTx0LURvke3CN6BRMmcqWQCtZPzBduJK
+         HPUKTPBu9CAPVykZXH+P1Ef6ut2oJofSJg0CvLZ5KLlMeSwyaeODpei5b4gxDbGF3B42
+         yVkUIcov0G5u6cucBsfpPp4jQMV7NROAEUDpd/NE7HZf+aqfi9z3sPKzIHpBWdKtenEv
+         wV3EkonyJmY8rlnDoSsd0gXmYYCsAjani5AOFyVXHkK/brk+MocfeIqTYC3iSqNIM9C9
+         sOQ5aDuOfJlm0Q4suzZX0aGFh6P7gzubelXLeyCxdXrO2JRANfRy0+JnbPg8sjxvNvmS
+         hPfg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741474757; x=1742079557;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=cxiW8EN6R1blDN9h6UwBVZwoRhC3HKbW+f3lztUaYME=;
+        b=hDcIeRd6wYMVWz9IVF7iDSaoikaEGUW7spuHuPQwvkRhypKZl2JUHa/cQMlW54rgXT
+         l9STtdn1XzT/Bz4aaJoHrCFYXVHjNELJ5V4RMqiCMBdApbGXnXmWu4HDzKHJxo8Us2ps
+         zpynySTL+mRdeuM2IZirCM+cdM4DK/bThXwi5sJ533HG1WfFyJMJSgctBdYagN6YEUWb
+         1SrErjETq/teWeuGcDI0dtvkMKwg+7lYmUh/x5Pj1gaQERd1ZzNQOCnQRkViHInk+1Rx
+         YV9oS6lCrLHvtqCUpMG3JXL+op5ZwwQ+Wg+GNYxsNrnMgg7Jbk/OzTxxN1qfC7bwX54e
+         9Cxw==
+X-Forwarded-Encrypted: i=1; AJvYcCUXk26kJGd1ZAOgKMn//RJnuUjrVzaDHb1Re+xcd85dIJKto8ehgN96Wo79z5lIyORk1SA=@vger.kernel.org, AJvYcCUjRX++ljFZJbEt35z94U3x6fWHZdB4qCt9iJ4/IxbqVA1qMIoDy0VeTM/m/2Ukp5rOSC7iTe8p@vger.kernel.org, AJvYcCWh4BfoxAiw9rclvsBWeySJ5hrTt0t5Ymdi1QS9YJ2hSLX7fMp5n6IZR5QoKV7pNk06f1LOgwEOpXVVOsTj@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxx4aiQTTFMZy/8A3OlE3Vm7W62tbrl4113tpMoeJGPikm2c0YF
+	BkMwjk/5hkSUgsGxO1IxNJbWxNLvbdjeL92XFG7syQgP2tlFarA=
+X-Gm-Gg: ASbGnctKVqPUEkNaOy83EbqTly8AsqB5Ey7VKF8y+mjKNWAqbNPq1UOF9xoQKwZcSV1
+	Oxwr3tSfxmRXCrt83JPuE+qsKrOPLvCTCk0iNQAc2rnzlQ031CGBKxwVMl59xTrKnJgeuq1OBKK
+	ZHDfSw7hRalj1q85Brt6sCGbmvPJWEsiTOK166MwAK0ZRt0T5XmzMQT2n/hlQGytch6E79jAlp8
+	3Jt5In8CwzbW5UsSbZZnfgThEULMfPPTCHAanSZyTOIsy8NFjPuw3g2UDH3goqat6L/JrUuUWLV
+	0B45oChukv47pBbDMOMBXj3KPYtMbnTdxMw+ansBWTe/
+X-Google-Smtp-Source: AGHT+IFXzplSe4u+mbhEwrQ0KQ0Y1/Cj83mGXAf+vM2k299VHADZTlmvLLleGjG1OdzkIjpjb5uYiw==
+X-Received: by 2002:a17:902:ce0a:b0:220:c143:90a0 with SMTP id d9443c01a7336-2242889f501mr160867805ad.24.1741474757155;
+        Sat, 08 Mar 2025 14:59:17 -0800 (PST)
+Received: from localhost ([2601:646:9e00:f56e:2844:3d8f:bf3e:12cc])
+        by smtp.gmail.com with UTF8SMTPSA id d9443c01a7336-224109dd627sm51945745ad.50.2025.03.08.14.59.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 08 Mar 2025 14:59:16 -0800 (PST)
+Date: Sat, 8 Mar 2025 14:59:15 -0800
+From: Stanislav Fomichev <stfomichev@gmail.com>
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: Kohei Enju <enjuk@amazon.com>, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
+	"David S . Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
+	Simon Horman <horms@kernel.org>,
+	Kuniyuki Iwashima <kuniyu@amazon.com>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	Ahmed Zaki <ahmed.zaki@intel.com>,
+	Stanislav Fomichev <sdf@fomichev.me>,
+	Alexander Lobakin <aleksander.lobakin@intel.com>,
+	Kohei Enju <kohei.enju@gmail.com>
+Subject: Re: [PATCH net-next v1] dev: remove netdev_lock() and
+ netdev_lock_ops() in register_netdevice().
+Message-ID: <Z8zLwzMl1wU6va7d@mini-arch>
+References: <20250308203835.60633-2-enjuk@amazon.com>
+ <20250308131813.4f8c8f0d@kernel.org>
+ <20250308144142.4f68c0be@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <8734fn53b5.ffs@tglx>
+In-Reply-To: <20250308144142.4f68c0be@kernel.org>
 
-Le Sat, Mar 08, 2025 at 09:34:06AM +0100, Thomas Gleixner a écrit :
-> On Sat, Mar 08 2025 at 00:03, Frederic Weisbecker wrote:
-> > Le Sun, Mar 02, 2025 at 08:36:56PM +0100, Thomas Gleixner a écrit :
-> >> --- a/include/linux/posix-timers.h
-> >> +++ b/include/linux/posix-timers.h
-> >> @@ -240,6 +240,13 @@ static inline void posixtimer_sigqueue_p
-> >>  
-> >>  	posixtimer_putref(tmr);
-> >>  }
-> >> +
-> >> +static inline bool posixtimer_valid(const struct k_itimer *timer)
-> >> +{
-> >> +	unsigned long val = (unsigned long)timer->it_signal;
-> >> +
-> >> +	return !(val & 0x1UL);
-> >> +}
-> >>  #else  /* CONFIG_POSIX_TIMERS */
-> >>  static inline void posixtimer_sigqueue_getref(struct sigqueue *q) { }
-> >>  static inline void posixtimer_sigqueue_putref(struct sigqueue *q) { }
-> >> --- a/kernel/signal.c
-> >> +++ b/kernel/signal.c
-> >> @@ -2092,7 +2092,7 @@ static inline void posixtimer_sig_ignore
-> >>  	 * from a non-periodic timer, then just drop the reference
-> >>  	 * count. Otherwise queue it on the ignored list.
-> >>  	 */
-> >> -	if (tmr->it_signal && tmr->it_sig_periodic)
-> >> +	if (posixtimer_valid(tmr) && tmr->it_sig_periodic)
-> >>  		hlist_add_head(&tmr->ignored_list, &tsk->signal->ignored_posix_timers);
-> >>  	else
-> >>  		posixtimer_putref(tmr);
-> >> --- a/kernel/time/posix-timers.c
-> >> +++ b/kernel/time/posix-timers.c
-> >> @@ -279,7 +279,7 @@ static bool __posixtimer_deliver_signal(
-> >>  	 * since the signal was queued. In either case, don't rearm and
-> >>  	 * drop the signal.
-> >>  	 */
-> >> -	if (timr->it_signal_seq != timr->it_sigqueue_seq || WARN_ON_ONCE(!timr->it_signal))
-> >> +	if (timr->it_signal_seq != timr->it_sigqueue_seq || !posixtimer_valid(timr))
-> >
-> > Hmm, should it still warn here? ie: WARN_ON_ONCE(!posixtimer_valid(timr)) ?
+On 03/08, Jakub Kicinski wrote:
+> On Sat, 8 Mar 2025 13:18:13 -0800 Jakub Kicinski wrote:
+> > On Sun, 9 Mar 2025 05:37:18 +0900 Kohei Enju wrote:
+> > > Both netdev_lock() and netdev_lock_ops() are called before
+> > > list_netdevice() in register_netdevice().
+> > > No other context can access the struct net_device, so we don't need these
+> > > locks in this context.  
+> > 
+> > Doesn't sysfs get registered earlier?
+> > I'm afraid not being able to take the lock from the registration
+> > path ties our hands too much. Maybe we need to make a more serious
+> > attempt at letting the caller take the lock?
 > 
-> No, because the timer is invalidated early now.
-
-But the signal can only be queued before posix_timer_delete(). So
-if the bit 0 of it_signal has been reset, it_signal_seq must have been
-incremented along, right?
-
-And if so then timr->it_signal_seq == timr->it_sigqueue_seq must imply
-posixtimer_valid(). And if not we should warn. Or am I missing something?
-
-Thanks.
-
-
+> Looking closer at the report - we are violating the contract that only
+> drivers which opted in get their ops called under the instance lock.
+> iavf had a similar problem but it had to opt in. WiFi doesn't.
 > 
-> Thanks,
-> 
->         tglx
+> Maybe we can bring the address semaphore back?
+> We just need to take it before the ops lock in do_setlink.
+> A bit ugly but would work?
+
+I remember I was having another lockdep circular report with the addr
+sema, but maybe moving it before the ops lock fill fix it not sure.
+
+But coming back to "No other context can access the struct net_device,
+so we don't need these locks in this context.". What if we move
+netdev_set_addr_lockdep_class() call down a bit? Right before list_netdevice
+happens. Will it help with the lockdep?
 
