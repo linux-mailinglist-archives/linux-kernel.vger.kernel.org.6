@@ -1,173 +1,115 @@
-Return-Path: <linux-kernel+bounces-552407-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-552381-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 917F5A57997
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 10:47:23 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CD43EA57960
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 10:06:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CD209172A62
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 09:47:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C3B013B392D
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 09:06:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45D6519DF8B;
-	Sat,  8 Mar 2025 09:47:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE6E11AA7BA;
+	Sat,  8 Mar 2025 09:06:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cNiaNpnE"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="f2CebwcH"
+Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5B24BE4F
-	for <linux-kernel@vger.kernel.org>; Sat,  8 Mar 2025 09:47:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61327190470;
+	Sat,  8 Mar 2025 09:06:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741427237; cv=none; b=sChfU/uIp263GedZyIL/1FCJmR8uzkUom2i4pkWru1sL0p8oOh1nqcsATjEhljQT+Wr5zhMmInoFzu0Hs/bsBoyWysaOvdn0cqjaqAVs66jntmUB5bM2VdU2U6o+v7UYAlfxeY6GgyJ3cTYUCKouOUk+Qv4bd/uXO2I2F9/GohE=
+	t=1741424809; cv=none; b=TOozC6ajYa/jSI3en93ZQajCGEKeOLoteB1VtNdMWDic790vYehirfwbaiZIclDznoyCeebq97H/T6NHsOO1QRWlHzvQFriToIg7MRADD4yXezRgw0R1nkoeXK1jemHlPG1+UIIT3kzmFV4R5QlS1h1DuKi55vE+e/WkTI9V6xA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741427237; c=relaxed/simple;
-	bh=kBJ5fzJuS4XS6xPkBmPOVlmWnL2oKehn+/7J73khbt8=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=FnX5rnhPLuF/cmDcfByAcRrlakt9FgE27mya7XSYlDuJJhg+BVJ7fGd26nOcgdulYhfl4TDTPBSbCLubI/ZeD+T9oJjwYQKIZnqA2s2M+8Fye/lBMPw1mJAZPoW9NjdodgLKI0KpTca+6m7XUOvSMELafRcNDzUczHqK8tWogCs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cNiaNpnE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C4708C4CEE0;
-	Sat,  8 Mar 2025 09:47:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741427236;
-	bh=kBJ5fzJuS4XS6xPkBmPOVlmWnL2oKehn+/7J73khbt8=;
-	h=From:To:Cc:Subject:Date:From;
-	b=cNiaNpnEMytoWcZRiVn759snA9q4Vv811bus0J+0flM/TQzHm4yG9XN2YpJoDWs9i
-	 Mc5kdV+Lc8FAGCnkflRYTrQejjclh9FVHiEguI51FMGHEBCmQOa4XD/qeVgu6cA/Lw
-	 s/lGDBluIWE//2aJhP6jNE35ayiZfmYad8XZSI7vvoE968VSBbkGb8tVRiuuBxvaP9
-	 j2Q+pIlPQYzt3+qHbNKm6oF9GlHI/4sQVAjqzI9B0sfQBww3pRIiiLc7va5IuvvO/p
-	 EVwTWQHlRQd3LrA22x+1zZimB43kErVsO8K2lYdgWtVTaTqHgCV17cDKqLmMTQZ0Uq
-	 aaZQ44y6dWD5w==
-From: Chao Yu <chao@kernel.org>
-To: jaegeuk@kernel.org
-Cc: linux-f2fs-devel@lists.sourceforge.net,
-	linux-kernel@vger.kernel.org,
-	Chao Yu <chao@kernel.org>
-Subject: [PATCH] f2fs: control nat_bits feature via mount option
-Date: Sat,  8 Mar 2025 13:18:46 +0800
-Message-Id: <20250308051846.29079-1-chao@kernel.org>
-X-Mailer: git-send-email 2.40.1
+	s=arc-20240116; t=1741424809; c=relaxed/simple;
+	bh=nfhjE40xxkcPs3x/zKH+iuKpPgn5nQqIk3wcE5A/8bI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=lKeQXQTBabj/PvJc6zFN9GfBKMj0V7Xj75FZx2dkTueQB906KRupJq3vVjeNI7Ew9+aQz1CKQcfgRu0SuMumIicoDFjSkC38Are9Bn+N8S1GZUh27RlJNuWlgeT+xW59/PSTG5BQlfQoueOXpWxVqJGjnvHfNRpEhhQ3KqFiW5A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=f2CebwcH; arc=none smtp.client-ip=209.85.218.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-ac2400d1c01so447174866b.1;
+        Sat, 08 Mar 2025 01:06:47 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741424806; x=1742029606; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=nfhjE40xxkcPs3x/zKH+iuKpPgn5nQqIk3wcE5A/8bI=;
+        b=f2CebwcHOHAlkK6Y7H/C98MMH3U6h7nkFYVS7IeOi1j3quoHc/Ua3MxgHcVn8Dd8YY
+         R445xjW7PTfjHrGD2YgFEO7lJYuDmxbJw4rKaMABb43/ltdXxG5e7CcdqO1tNHRdrPhe
+         8FZLxiLg4zfSMMR+5dn0EOw1wmGiHozsL+pvK9v5JUcAA/VwTkGVaPDSv3ds1+22xPmP
+         e2sqerHtDm+sXJKhGPhWJbZye1XiVPw1e30bEUHMjtreg1XrwMscBwGTiRZN1FtxQfMI
+         6QKoZKVDI7l9R9DC5Y045VcHGtA9o6JaAQsu7sbspcruQZOjTgjwZvUhVWEH8zxmfsmW
+         EbEA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741424806; x=1742029606;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=nfhjE40xxkcPs3x/zKH+iuKpPgn5nQqIk3wcE5A/8bI=;
+        b=GNoBKywarKTvhTg2ilYd/j21DvUugwAyu1Psd6jOCYfHiEMO/dJnvJ3G1sMgJ21dhW
+         eCyYP5SZqR7u0zpchtQQcejFZRF1ZmsQ9MeU0YawodkH8Z3t5zkbi8vbPVfG1kK6+3Ue
+         2dZ4tEqvMLis7lC2gFzRCnsWhYO/LLWVJdhKZDOb2jZd7cWe6p7ebahsPk5quY3nSHk3
+         A8NjABVoN1RdlSHryX2Q39k/E+l2HG7EMJm/2xc4G/rEtt9O3To1qO9U8NJ0hRC1ShPW
+         Oz2lLXo9hFG88UKprtk3pIpN/sJKpyOxmn6IE8WUNTKPJUu0EdQjlvW2p6wiqSR48KVO
+         teyA==
+X-Forwarded-Encrypted: i=1; AJvYcCWbzIMxOl5PFWFoDcF9ITaxn+8RvgJxLBxYuQaZpuRp+c+855skei+HnP3SCIwj7HaDe76esC0/wzyEi9w=@vger.kernel.org, AJvYcCX+OXEipzcwpXipLabcnPEZagJa8XUkFAd23390XNMQA5fX6xSH2+m7o7RYHxanGbKd1tciwxVg@vger.kernel.org
+X-Gm-Message-State: AOJu0YwH2ctSJ6+ueWHnWW+Ke112QchhxwOWYT5d10VhvhtPqBKoYEIj
+	PlR/n/xjfUdQ3AbryMGIuyKeRW3zGB++KLw/WpblQDUY4UMMhMW3a56w2t02yMNzhiFGoS7z6wK
+	XLT4TVdVny9tA1JL4EGVXzQx8kkw=
+X-Gm-Gg: ASbGncviu5gLhc21uVd6LfgTHvg3uChWCYiqJ7RcUeDPXjnKhDDOtp2Owj3KKQPxZM1
+	MM+OV65QRoL+C9m4LsfLe9tJZ2AJKp+B+Ct5SyoCeOUORESH40E/b0XzR7nvoGYHg2rGWq77q1A
+	+fw97OjDGwiD7w7bedYO3RkOdD
+X-Google-Smtp-Source: AGHT+IHkeM05YvQ3aCsNf4yKtzCuNpIM0jL/QQ2Us5+xQQOxNr0NPQZlyzAQUOEgBpZrXn/lKU5lNudpr9HcScj5mIU=
+X-Received: by 2002:a17:907:9703:b0:ac0:4364:4083 with SMTP id
+ a640c23a62f3a-ac26c55ad33mr318540966b.0.1741424805405; Sat, 08 Mar 2025
+ 01:06:45 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <CAMpRfLORiuJOgUmpmjgCC1LZC1Kp0KFzPGXd9KQZELtr35P+eQ@mail.gmail.com>
+ <2025030559-radiated-reviver-eebb@gregkh> <CAMpRfLMQ=rWBpYCaco5X4Sh1ecHuiqa91TwsBo6m2MA_UMKM+g@mail.gmail.com>
+ <CAMpRfLMakzeazr91DBVyZQnin7y6L9RB+sPFb59U1QZvY3+KBQ@mail.gmail.com>
+ <2025030718-dwindle-degrading-94d3@gregkh> <CAMpRfLPLJA4TaJQCeYfn5XRFnVdqJ36yv-1LL7o=kjYOAj9u1Q@mail.gmail.com>
+In-Reply-To: <CAMpRfLPLJA4TaJQCeYfn5XRFnVdqJ36yv-1LL7o=kjYOAj9u1Q@mail.gmail.com>
+From: =?UTF-8?Q?Se=C3=AFfane_Idouchach?= <seifane53@gmail.com>
+Date: Sat, 8 Mar 2025 17:06:29 +0800
+X-Gm-Features: AQ5f1Jp1hvuPcDaUxTR56G33cLSG2ApeIhs0Aj6N0KUu2izrRwnaakZ21ArTRiA
+Message-ID: <CAMpRfLOmXBFatrp-tuYF=XeruyDLUE=Dk=yxx7N_nHP7NsQ5jA@mail.gmail.com>
+Subject: Re: [REGRESSION] Long boot times due to USB enumeration
+To: Greg KH <gregkh@linuxfoundation.org>
+Cc: dirk.behme@de.bosch.com, rafael@kernel.org, dakr@kernel.org, 
+	linux-kernel@vger.kernel.org, regressions@lists.linux.dev, 
+	stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Introduce a new mount option "nat_bits" to control nat_bits feature,
-by default nat_bits feature is disabled.
+Some development here,
 
-Signed-off-by: Chao Yu <chao@kernel.org>
----
- Documentation/filesystems/f2fs.rst |  2 ++
- fs/f2fs/f2fs.h                     |  1 +
- fs/f2fs/node.c                     |  3 +++
- fs/f2fs/super.c                    | 15 +++++++++++++++
- 4 files changed, 21 insertions(+)
+I noticed today that while applying Dan's patch and reverting the
+"bad" commit resolves the issue, it only does so on a reboot. The boot
+is still slow on a cold boot.
+As you said this might very well be a mix of different issues. It is
+my own fault for not reporting this regression earlier thinking it
+would be fixed.
 
-diff --git a/Documentation/filesystems/f2fs.rst b/Documentation/filesystems/f2fs.rst
-index 42f28dbf2410..e15c4275862a 100644
---- a/Documentation/filesystems/f2fs.rst
-+++ b/Documentation/filesystems/f2fs.rst
-@@ -366,6 +366,8 @@ errors=%s		 Specify f2fs behavior on critical errors. This supports modes:
- 			 pending node write	drop		keep		N/A
- 			 pending meta write	keep		keep		N/A
- 			 ====================== =============== =============== ========
-+nat_bits		 Enable nat_bits feature to enhance full/empty nat blocks access,
-+			 by default it's disabled.
- ======================== ============================================================
- 
- Debugfs Entries
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 8d8917b92b5d..99ded6512d8b 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -115,6 +115,7 @@ extern const char *f2fs_fault_name[FAULT_MAX];
- #define	F2FS_MOUNT_GC_MERGE		0x02000000
- #define F2FS_MOUNT_COMPRESS_CACHE	0x04000000
- #define F2FS_MOUNT_AGE_EXTENT_CACHE	0x08000000
-+#define F2FS_MOUNT_NAT_BITS		0x10000000
- 
- #define F2FS_OPTION(sbi)	((sbi)->mount_opt)
- #define clear_opt(sbi, option)	(F2FS_OPTION(sbi).opt &= ~F2FS_MOUNT_##option)
-diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
-index 24085fa8493b..579955c6e03c 100644
---- a/fs/f2fs/node.c
-+++ b/fs/f2fs/node.c
-@@ -3278,6 +3278,9 @@ static int init_node_manager(struct f2fs_sb_info *sbi)
- 	if (!nm_i->nat_bitmap)
- 		return -ENOMEM;
- 
-+	if (!test_opt(sbi, NAT_BITS))
-+		disable_nat_bits(sbi, true);
-+
- 	err = __get_nat_bitmaps(sbi);
- 	if (err)
- 		return err;
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index 079c5d4b60b6..1b8ca7d63afe 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -191,6 +191,7 @@ enum {
- 	Opt_memory_mode,
- 	Opt_age_extent_cache,
- 	Opt_errors,
-+	Opt_nat_bits,
- 	Opt_err,
- };
- 
-@@ -270,6 +271,7 @@ static match_table_t f2fs_tokens = {
- 	{Opt_memory_mode, "memory=%s"},
- 	{Opt_age_extent_cache, "age_extent_cache"},
- 	{Opt_errors, "errors=%s"},
-+	{Opt_nat_bits, "nat_bits"},
- 	{Opt_err, NULL},
- };
- 
-@@ -1323,6 +1325,9 @@ static int parse_options(struct super_block *sb, char *options, bool is_remount)
- 			}
- 			kfree(name);
- 			break;
-+		case Opt_nat_bits:
-+			set_opt(sbi, NAT_BITS);
-+			break;
- 		default:
- 			f2fs_err(sbi, "Unrecognized mount option \"%s\" or missing value",
- 				 p);
-@@ -2135,6 +2140,9 @@ static int f2fs_show_options(struct seq_file *seq, struct dentry *root)
- 	else if (F2FS_OPTION(sbi).errors == MOUNT_ERRORS_PANIC)
- 		seq_printf(seq, ",errors=%s", "panic");
- 
-+	if (test_opt(sbi, NAT_BITS))
-+		seq_puts(seq, ",nat_bits");
-+
- 	return 0;
- }
- 
-@@ -2325,6 +2333,7 @@ static int f2fs_remount(struct super_block *sb, int *flags, char *data)
- 	bool no_discard = !test_opt(sbi, DISCARD);
- 	bool no_compress_cache = !test_opt(sbi, COMPRESS_CACHE);
- 	bool block_unit_discard = f2fs_block_unit_discard(sbi);
-+	bool no_nat_bits = !test_opt(sbi, NAT_BITS);
- #ifdef CONFIG_QUOTA
- 	int i, j;
- #endif
-@@ -2453,6 +2462,12 @@ static int f2fs_remount(struct super_block *sb, int *flags, char *data)
- 		goto restore_opts;
- 	}
- 
-+	if (no_nat_bits == !!test_opt(sbi, NAT_BITS)) {
-+		err = -EINVAL;
-+		f2fs_warn(sbi, "switch nat_bits option is not allowed");
-+		goto restore_opts;
-+	}
-+
- 	if ((*flags & SB_RDONLY) && test_opt(sbi, DISABLE_CHECKPOINT)) {
- 		err = -EINVAL;
- 		f2fs_warn(sbi, "disabling checkpoint not compatible with read-only");
--- 
-2.40.1
+As a sanity check I retested old LTS releases. I find that v6.1 does
+not have the issue on cold boot while v6.6 does. The USB error
+messages are there regardless, they just don't impede on the boot
+process time.
+I am almost 90% positive that those error messages have always been
+present on this system, for what it's worth.
+I have gone through the troubleshooting step of unplugging all USB
+devices and headers and the errors are still present.
 
+If I find the time I might run another bisect between v6.1 and v6.6
+doing cold boots instead of reboots and report back. I am just afraid
+I will just get back to the initial commit reported since this is what
+I first did.
+
+Thank you.
 
