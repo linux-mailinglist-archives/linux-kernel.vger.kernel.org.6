@@ -1,194 +1,219 @@
-Return-Path: <linux-kernel+bounces-552395-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-552397-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id F08BEA57986
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 10:35:00 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A45BA57989
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 10:35:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E2C167A89EF
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 09:33:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3CAA63B42F6
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 09:35:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28AED1AF0B5;
-	Sat,  8 Mar 2025 09:34:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDE54187FEC;
+	Sat,  8 Mar 2025 09:35:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="eE84SUkc"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XjNw2D2V"
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D32C1AB6DE
-	for <linux-kernel@vger.kernel.org>; Sat,  8 Mar 2025 09:34:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 255201B0421
+	for <linux-kernel@vger.kernel.org>; Sat,  8 Mar 2025 09:35:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741426494; cv=none; b=V9zAmChBFrBU+WSXX5KBMH7p1G1LfPgHZ4ioFqZ1+7bjOO6jV1Oo4mWruDtOtrE2BaVFBzQ3V9gvLkxxfwf2Z2Dhmh21FzWpNUYjeQ2jVw01Xl4AHSggWnoau7RgrxvZh1mdKAQRLYGcp+e9p0aFp/7ChG+3CXbp6GN0ZpxTfKo=
+	t=1741426518; cv=none; b=Gmacbv/jpNQdkXvdDM4dBFO0kroIsy/jhIG+af+VaREvdMFFcsd7JnKhNY1KTNty3Pz8AWYYN6d6f01TDfsDKiWLtLS9jQliYHFwExYyyu3auEOW0D77lfL6PSZhcYYbcjw4IkaGmLNmD2LxM2c3t0WRp6cuDWTYgqUlLhypo1E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741426494; c=relaxed/simple;
-	bh=NHC7RP2GbKdwTiWHGO8lLwZWIfTS4uViaABUpCOl+2E=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=D7kawpTJ5MeuVnjaRaKwywgfzQqe4Awnjobreabwdcw85AS0CAYWjVKNEcf5Uzf+t6i+3Y2/ZW59Ih0ufTJOwGo0pAvB0rt1DGZz8b2gBjbGTOe26l8/+1JxawJ7FOvXvVG3cIiAOPah7nCtuG3DSWiGF2R9oUCZkPHwrTYsE+o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=eE84SUkc; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5286STDL029053
-	for <linux-kernel@vger.kernel.org>; Sat, 8 Mar 2025 09:34:52 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	2D2hEuOwQrEqYMvC2ATnO4j/VTIi52LI14hMdCpxT/w=; b=eE84SUkc6CSFHZFb
-	YlR/83jsDZ6y8lpInTcNDS9umqGI476vp4Bf0sfLmP+hsK3D4SD5zloIf2owaxC4
-	00z+cD0toWBiUEM5XTSive0iKfi2F5AIB0P+opuqoyGo7ye54QKmAWFnDWpqTDzk
-	m6bvl/AlIiLUU8rTjU95XjfuiDxPtR8GvRxIqKRePDlArPL3SisDtFaqGalz0S5L
-	BkTkrg+LEFE7TWMEvbhh0hNfvl2tHzPAgyC9l1gXce8JwlOb05z/j65fgJ1SlkIz
-	O6U6Km+E89+bh+EjZv++nexDO02y8X5FAZeeB5Qv0i9E+kVaq630kTDo4y5vgLit
-	8lGuMA==
-Received: from mail-qv1-f70.google.com (mail-qv1-f70.google.com [209.85.219.70])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 458f0w0b27-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Sat, 08 Mar 2025 09:34:51 +0000 (GMT)
-Received: by mail-qv1-f70.google.com with SMTP id 6a1803df08f44-6e8fd4ef023so5405296d6.2
-        for <linux-kernel@vger.kernel.org>; Sat, 08 Mar 2025 01:34:51 -0800 (PST)
+	s=arc-20240116; t=1741426518; c=relaxed/simple;
+	bh=gJT8KFm2BDhcFxPIXv4x/VUO8cwfBB/jJoOBt6gPwRs=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=kyuhKDg4XX5fOW4tf0xRXS6ZUvy4QbE0rKA0MMHUF6X8iIzXhCu1n/DndcM1AEiM4HUe8uyqSb30SDHyD6gjBI6odVL5scYAz4v5ak7VKbuxguy+LAUrXUkB2341FYwf3sQ+KBiBCGjaKQKkNdKjc8Ww7iSNNy4iGndp3LrS05M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XjNw2D2V; arc=none smtp.client-ip=209.85.128.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-43bc48ff815so15777435e9.0
+        for <linux-kernel@vger.kernel.org>; Sat, 08 Mar 2025 01:35:15 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741426514; x=1742031314; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=iS0WSD5gKp5cnAuszIjnCYCd0M0+1iOtyBELh+t/oUk=;
+        b=XjNw2D2V14XDu3HK3OJGDX7UFUzk/le/UmCRTcKUWHxkXup/OHWIgm2zfTDjZVTs4B
+         ASpn8KjcsxwSumlieg/SLzChlmCbgkkVQReH8Z9Hj1pU+zjmjtIF7wHnFGCVEepvR2fK
+         dcRu+Yv0m8S9sLx9dH9mzmw+PxJQQLYG57ayunqCFrz1dMNKflsarcsL1bbFu8HFR7zR
+         0qaqYv+6GgCy1RhEzJ8IUG/VJJQpsh40KJhrEoSfDDRPjEdQsXDJCOw/n1QAagDLbRoX
+         fUSlW7t5MsOMGUNlPGOZ3rPDeqbtB3R+uhs2gwlJtUPL2nrhta9klNv94eK70CyPwhn6
+         t6EA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741426490; x=1742031290;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=2D2hEuOwQrEqYMvC2ATnO4j/VTIi52LI14hMdCpxT/w=;
-        b=lOiMJDqaVYeMQjSMCdnZRssjsTB5tzpCjKbtyAHSxpnOXCrbpbD+4h48kHXnpngx0P
-         6hfggAPLts45Jv4SmzNiZNx9PFoAgAgvzZTSGM1/5yl9oNl6HVzBJLUysV6+nALlpRSR
-         REWA0J/xXwRKC9uWIsAHspy6/RVX9UGF9iNlu7h7K1EOi60V4Yabp1iOohWT32kVpiK9
-         9bgZqSEZiMWE2FGaIMXd1TdmoA+wJmtbDXk6JajV4oAitjRYQJJg1rx6g3Dt8xNCUbVA
-         hkgp9tXGd8dQSJAWstHiyXShYU5hUZsJmMWyFeV+k3bTjW5JGPx8nTZGnpBo2SChfzjg
-         gbEQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWSXlRjVnlsP43lAtCIBqgcbysYOR8kPxCRw3pfZquT4AtHk6zIihJEis+tYcPoLozs/YSmWyWOdpeyZ2o=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxPKMVyjIJlj08zrTz9ohnuCThh425cUfj7eXfeOxWBhkUqUrvr
-	FdUuLUNsoGARKKHGW/HFQGykqI06XfEQHjSkDU7jvCDu6K5xglsIvDQUmdnMidYbR5hL6TnCP6e
-	zWYWtAK5An72JibfZEKPRlEnRSqi1cF+dRD0nq0qMQ8P/94vxV4+M7t1FBwzFSJ0=
-X-Gm-Gg: ASbGncvpTkNVoZGC9YwrQn41iUfYSX00S0cj/5OKD6AhQQ3Aqr5y1Dia2ozVd5MFpLj
-	S5WwgPLRix7SuH29XaN5FtObTvwhMNi9qk9jsz9Dp18tZS7J9bTpiXoN4zGlGZoI8vX/Gx2P4yC
-	A98B4422yCoyGjX0fQhoIE5doSg3ysP2gy3fn161dDAIdTYhRTRHa7UhV24HFa25zp0aZjVnhJ0
-	ln3JGgPHD8czQjDTNzpMdonv3YbdzaJhR9/Vn7FJ0AF7QUx53EhrNimpbiTJDah6ikD7qmr04uR
-	KInBwgh0TT7PGeqRGAEIwxQPTdPRSlXmQIRtrBu0YghHEPPUr3Voumbv93cSRnewTTbX3w==
-X-Received: by 2002:a05:622a:11d0:b0:472:15be:54ad with SMTP id d75a77b69052e-47666fb5b2dmr10259011cf.14.1741426490146;
-        Sat, 08 Mar 2025 01:34:50 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IGSQHbt0IYdZtC+FufjOVfWZsEqsYNhC+Fq/qSDVU1/CY2UA/2XqPrSX1GmY+54b8CpLYzCbg==
-X-Received: by 2002:a05:622a:11d0:b0:472:15be:54ad with SMTP id d75a77b69052e-47666fb5b2dmr10258751cf.14.1741426489676;
-        Sat, 08 Mar 2025 01:34:49 -0800 (PST)
-Received: from [192.168.65.90] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac239485bf3sm413325166b.63.2025.03.08.01.34.46
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 08 Mar 2025 01:34:49 -0800 (PST)
-Message-ID: <0401fdf9-7665-40d6-9ec7-7222b2eda866@oss.qualcomm.com>
-Date: Sat, 8 Mar 2025 10:34:45 +0100
+        d=1e100.net; s=20230601; t=1741426514; x=1742031314;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=iS0WSD5gKp5cnAuszIjnCYCd0M0+1iOtyBELh+t/oUk=;
+        b=GD7uQU7TrA93u01f2tCpJGNNAN0zYlh3lEL3FSlsb6rDd9ZDOKLJiC8FovAK+4hi3e
+         abHVeCYfmsCl1cNiataZmIN2GaFW+ltL2VIb3h88ERMbcqKi20p6i6M60RNKDmgLRBmC
+         JL0A2IHLuTrGzuauITr/+K8SLyF7TYMaS9RqavUGPstP1z+E3so1+IlaAzObMpSvhN4q
+         iAoaU9Bj0u7gfqGss0udZvcAAvM8GNnjDDzEk1z45JzXM1Z9ACrXK8NFXFB5itDfwFwM
+         wBMZ1xnU4SaUNs9zUm9JEOgv9meCoexCFQEn1PUXhKKdBEI4kUBvN9SffkTq6Jzn1Y4r
+         TweA==
+X-Gm-Message-State: AOJu0YwDHyyBng9zsFujsk4jDJ5+gxywGD2fPLXbzqRvWdMKwXuS1h9I
+	8w7yY/wfk04sZj8i9OkpbvtOuS7Kb/dcRKimjpGxltfal8lgu8Rc/0KLrw==
+X-Gm-Gg: ASbGncuZ83wKY2P/EYfTDQYRaNQsjzbRnbosoId6Bf0OQpjo9mFh3owIemzrRGFthQl
+	UGRYckmP6h4XZGRaKUPA7mVMQLdTxCPy0G00nYKEPooKQ6CTYdctbcPrtO+qwWYbN8U+57QUd5L
+	xUsXyYjipXQu2NRNLtcK1ffnH31ELtd4Zzg6iSIZxy1wuWERcx5/hWjoYR9VgTaQG4lLey30ocY
+	iIXphshttehTe7Aonj7DP5AMt7pPJhb+e9AoNgS6LnMTmggOVY599lOZX0pLnUoah7oFik/2AaR
+	bmXSjmwfM+ynqZ6DQAI6Pm52doNtFeNfHmzlar3aPFTmF4lHFetYWC5p7hWblCo5KaM6eBP3pwg
+	GWOMZ0IK+DhOxAhFSXNQhohoMAA==
+X-Google-Smtp-Source: AGHT+IH4O6vzDrZ1HR1AZ4KCRONlOv/LizsBVk9kFV6Vz/TriUtHWtb84lTI8Cs29KXJfWVOcPFxwg==
+X-Received: by 2002:a05:600c:54f1:b0:43b:c638:3433 with SMTP id 5b1f17b1804b1-43ce4af10f3mr13048525e9.12.1741426514063;
+        Sat, 08 Mar 2025 01:35:14 -0800 (PST)
+Received: from snowdrop.snailnet.com (82-69-66-36.dsl.in-addr.zen.co.uk. [82.69.66.36])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43ce3f573f6sm15663895e9.0.2025.03.08.01.35.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 08 Mar 2025 01:35:13 -0800 (PST)
+From: David Laight <david.laight.linux@gmail.com>
+To: linux-kernel@vger.kernel.org,
+	Andrew Morton <akpm@linux-foundation.org>
+Cc: David Laight <david.laight.linux@gmail.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Christophe Leroy <christophe.leroy@c-s.fr>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+	nnac123@linux.ibm.com,
+	horms@kernel.org
+Subject: [PATCH next 1/8] test_hexdump: Change rowsize and groupsize to size_t
+Date: Sat,  8 Mar 2025 09:34:45 +0000
+Message-Id: <20250308093452.3742-2-david.laight.linux@gmail.com>
+X-Mailer: git-send-email 2.39.5
+In-Reply-To: <20250308093452.3742-1-david.laight.linux@gmail.com>
+References: <20250308093452.3742-1-david.laight.linux@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/7] usb: common: usb-conn-gpio: switch psy_cfg from
- of_node to fwnode
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Sebastian Reichel <sebastian.reichel@collabora.com>
-Cc: Mark Brown <broonie@kernel.org>, Linus Walleij
- <linus.walleij@linaro.org>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Liam Girdwood <lgirdwood@gmail.com>, Chen-Yu Tsai <wens@csie.org>,
-        Matti Vaittinen <mazziesaccount@gmail.com>,
-        =?UTF-8?Q?Pali_Roh=C3=A1r?=
- <pali@kernel.org>,
-        Paul Cercueil <paul@crapouillou.net>,
-        Samuel Holland <samuel@sholland.org>,
-        David Lechner <david@lechnology.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Sebastian Krzyszkowiak <sebastian.krzyszkowiak@puri.sm>,
-        Purism Kernel Team <kernel@puri.sm>,
-        Bartosz Golaszewski <brgl@bgdev.pl>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-        Orson Zhai <orsonzhai@gmail.com>,
-        Baolin Wang
- <baolin.wang@linux.alibaba.com>,
-        Chunyan Zhang <zhang.lyra@gmail.com>, linux-pm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org
-References: <20250225-psy-core-convert-to-fwnode-v1-0-d5e4369936bb@collabora.com>
- <20250225-psy-core-convert-to-fwnode-v1-3-d5e4369936bb@collabora.com>
- <2025022542-recital-ebony-d9b5@gregkh>
- <lhtljyn52wkhotaf2cn6fcj2vqx3dzipv2663kzwtw2tjjlxye@5l3xytkyvocy>
- <2025030845-pectin-facility-a474@gregkh>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <2025030845-pectin-facility-a474@gregkh>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-ORIG-GUID: iQmBq_-1Q8K8BkA5uoAdxzF4D1Cs99gx
-X-Proofpoint-GUID: iQmBq_-1Q8K8BkA5uoAdxzF4D1Cs99gx
-X-Authority-Analysis: v=2.4 cv=MICamNZl c=1 sm=1 tr=0 ts=67cc0f3b cx=c_pps a=oc9J++0uMp73DTRD5QyR2A==:117 a=FpWmc02/iXfjRdCD7H54yg==:17 a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=QX4gbG5DAAAA:8 a=ag1SF4gXAAAA:8 a=vjfVVXfxOX9NMr4QhcAA:9 a=QEXdDO2ut3YA:10
- a=iYH6xdkBrDN1Jqds4HTS:22 a=AbAUZ8qAyYyZVLSsDulk:22 a=Yupwre4RP9_Eg_Bd0iYG:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-08_03,2025-03-07_03,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
- mlxlogscore=999 lowpriorityscore=0 phishscore=0 spamscore=0 suspectscore=0
- priorityscore=1501 malwarescore=0 mlxscore=0 adultscore=0 bulkscore=0
- clxscore=1015 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2502100000
- definitions=main-2503080067
+Content-Transfer-Encoding: 8bit
 
-On 8.03.2025 6:57 AM, Greg Kroah-Hartman wrote:
-> On Sat, Mar 08, 2025 at 02:10:29AM +0100, Sebastian Reichel wrote:
->> Hello Greg,
->>
->> On Tue, Feb 25, 2025 at 04:32:50AM +0100, Greg Kroah-Hartman wrote:
->>> On Tue, Feb 25, 2025 at 12:21:36AM +0100, Sebastian Reichel wrote:
->>>> In order to remove .of_node from the power_supply_config struct,
->>>> use .fwnode instead.
->>>>
->>>> Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.com>
->>>> ---
->>>>  drivers/usb/common/usb-conn-gpio.c | 2 +-
->>>>  1 file changed, 1 insertion(+), 1 deletion(-)
->>>>
->>>> diff --git a/drivers/usb/common/usb-conn-gpio.c b/drivers/usb/common/usb-conn-gpio.c
->>>> index aa710b50791b0282be0a6a26cffdd981b794acaa..1e36be2a28fd5ca5e1495b7923e4d3e25d7cedef 100644
->>>> --- a/drivers/usb/common/usb-conn-gpio.c
->>>> +++ b/drivers/usb/common/usb-conn-gpio.c
->>>> @@ -158,7 +158,7 @@ static int usb_conn_psy_register(struct usb_conn_info *info)
->>>>  	struct device *dev = info->dev;
->>>>  	struct power_supply_desc *desc = &info->desc;
->>>>  	struct power_supply_config cfg = {
->>>> -		.of_node = dev->of_node,
->>>> +		.fwnode = dev_fwnode(dev),
->>>>  	};
->>>>  
->>>>  	desc->name = "usb-charger";
->>>>
->>>> -- 
->>>> 2.47.2
->>>
->>> Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
->>
->> Please just merge this patch through the USB tree.
->>
->> There are no dependencies and I will send a new version for the
->> later patches, but they won't make it to 6.15 as I want enough
->> time in linux-next for them. This patch is rather simple and
->> getting it merged now means we avoid immutable branches or
->> merging through the wrong tree in the 6.16 cycle.
-> 
-> Attempting to merge a single patch out of a series is hard with our
-> current tools, you know that.  Please resend just the single patch if
-> you want that applied.
+Both refer to positive values, size_t matches the other parameters.
 
-b4 shazam <msgid> -P 3
+Signed-off-by: David Laight <david.laight.linux@gmail.com>
+---
+ lib/test_hexdump.c | 32 ++++++++++++++++----------------
+ 1 file changed, 16 insertions(+), 16 deletions(-)
 
-to apply the third patch (such as this one) in a thread
+diff --git a/lib/test_hexdump.c b/lib/test_hexdump.c
+index 751645645988..502768e56e4e 100644
+--- a/lib/test_hexdump.c
++++ b/lib/test_hexdump.c
+@@ -64,14 +64,14 @@ static const char * const test_data_8_be[] __initconst = {
+ static unsigned total_tests __initdata;
+ static unsigned failed_tests __initdata;
+ 
+-static void __init test_hexdump_prepare_test(size_t len, int rowsize,
+-					     int groupsize, char *test,
++static void __init test_hexdump_prepare_test(size_t len, size_t rowsize,
++					     size_t groupsize, char *test,
+ 					     size_t testlen, bool ascii)
+ {
+ 	char *p;
+ 	const char * const *result;
+ 	size_t l = len;
+-	int gs = groupsize, rs = rowsize;
++	size_t gs = groupsize, rs = rowsize;
+ 	unsigned int i;
+ 	const bool is_be = IS_ENABLED(CONFIG_CPU_BIG_ENDIAN);
+ 
+@@ -122,7 +122,7 @@ static void __init test_hexdump_prepare_test(size_t len, int rowsize,
+ 
+ #define TEST_HEXDUMP_BUF_SIZE		(32 * 3 + 2 + 32 + 1)
+ 
+-static void __init test_hexdump(size_t len, int rowsize, int groupsize,
++static void __init test_hexdump(size_t len, size_t rowsize, size_t groupsize,
+ 				bool ascii)
+ {
+ 	char test[TEST_HEXDUMP_BUF_SIZE];
+@@ -139,16 +139,16 @@ static void __init test_hexdump(size_t len, int rowsize, int groupsize,
+ 				  ascii);
+ 
+ 	if (memcmp(test, real, TEST_HEXDUMP_BUF_SIZE)) {
+-		pr_err("Len: %zu row: %d group: %d\n", len, rowsize, groupsize);
++		pr_err("Len: %zu row: %zu group: %zu\n", len, rowsize, groupsize);
+ 		pr_err("Result: '%s'\n", real);
+ 		pr_err("Expect: '%s'\n", test);
+ 		failed_tests++;
+ 	}
+ }
+ 
+-static void __init test_hexdump_set(int rowsize, bool ascii)
++static void __init test_hexdump_set(size_t rowsize, bool ascii)
+ {
+-	size_t d = min_t(size_t, sizeof(data_b), rowsize);
++	size_t d = min(sizeof(data_b), rowsize);
+ 	size_t len = get_random_u32_inclusive(1, d);
+ 
+ 	test_hexdump(len, rowsize, 4, ascii);
+@@ -158,13 +158,13 @@ static void __init test_hexdump_set(int rowsize, bool ascii)
+ }
+ 
+ static void __init test_hexdump_overflow(size_t buflen, size_t len,
+-					 int rowsize, int groupsize,
++					 size_t rowsize, size_t groupsize,
+ 					 bool ascii)
+ {
+ 	char test[TEST_HEXDUMP_BUF_SIZE];
+ 	char buf[TEST_HEXDUMP_BUF_SIZE];
+-	int rs = rowsize, gs = groupsize;
+-	int ae, he, e, f, r;
++	size_t rs = rowsize, gs = groupsize;
++	size_t ae, he, e, f, r;
+ 	bool a;
+ 
+ 	total_tests++;
+@@ -185,7 +185,7 @@ static void __init test_hexdump_overflow(size_t buflen, size_t len,
+ 	else
+ 		e = he;
+ 
+-	f = min_t(int, e + 1, buflen);
++	f = min(e + 1, buflen);
+ 	if (buflen) {
+ 		test_hexdump_prepare_test(len, rs, gs, test, sizeof(test), ascii);
+ 		test[f - 1] = '\0';
+@@ -199,8 +199,8 @@ static void __init test_hexdump_overflow(size_t buflen, size_t len,
+ 	if (!a) {
+ 		pr_err("Len: %zu buflen: %zu strlen: %zu\n",
+ 			len, buflen, strnlen(buf, sizeof(buf)));
+-		pr_err("Result: %d '%s'\n", r, buf);
+-		pr_err("Expect: %d '%s'\n", e, test);
++		pr_err("Result: %zu '%s'\n", r, buf);
++		pr_err("Expect: %zu '%s'\n", e, test);
+ 		failed_tests++;
+ 	}
+ }
+@@ -208,10 +208,10 @@ static void __init test_hexdump_overflow(size_t buflen, size_t len,
+ static void __init test_hexdump_overflow_set(size_t buflen, bool ascii)
+ {
+ 	unsigned int i = 0;
+-	int rs = get_random_u32_inclusive(1, 2) * 16;
++	size_t rs = get_random_u32_inclusive(1, 2) * 16;
+ 
+ 	do {
+-		int gs = 1 << i;
++		size_t gs = 1 << i;
+ 		size_t len = get_random_u32_below(rs) + gs;
+ 
+ 		test_hexdump_overflow(buflen, rounddown(len, gs), rs, gs, ascii);
+@@ -221,7 +221,7 @@ static void __init test_hexdump_overflow_set(size_t buflen, bool ascii)
+ static int __init test_hexdump_init(void)
+ {
+ 	unsigned int i;
+-	int rowsize;
++	size_t rowsize;
+ 
+ 	rowsize = get_random_u32_inclusive(1, 2) * 16;
+ 	for (i = 0; i < 16; i++)
+-- 
+2.39.5
 
-unless you use some other set of tools..
-
-Konrad
 
