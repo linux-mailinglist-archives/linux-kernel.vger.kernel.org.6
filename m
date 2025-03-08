@@ -1,99 +1,163 @@
-Return-Path: <linux-kernel+bounces-552607-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-552608-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 504ECA57BF8
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 17:33:42 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5757DA57BFB
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 17:34:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 406883AFF8B
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 16:33:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DA8091890B94
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 16:34:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C43E1E51EF;
-	Sat,  8 Mar 2025 16:33:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D28001E5217;
+	Sat,  8 Mar 2025 16:34:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MIu04DLx"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b="rIPGoYzu"
+Received: from smtp.forwardemail.net (smtp.forwardemail.net [121.127.44.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F361C14A8B;
-	Sat,  8 Mar 2025 16:33:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4DFD14A8B
+	for <linux-kernel@vger.kernel.org>; Sat,  8 Mar 2025 16:34:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=121.127.44.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741451615; cv=none; b=XyCsFemgK8hOwQcfb8K3JWFe3ZQA2R9iRuQ7m1Vz8L+7BT8PG+3UoAqq+JojKnwvUchgQ/i7+JSzdvKqMbe25DIb9ot/z6diXzBL8g6kxaBns8oXzzSQBWGzyEppnnXh9OOQE7/f3xCIHHTUKgkBcsW2O9Fw0Fsi34SUGkJ/whw=
+	t=1741451681; cv=none; b=VbXBePdia1z3YVKiCQs81i7ZmG48VEXTuLW1A1CrMFz2TL0hAPom18ssW/x05Ha+P8zeigEJz9Zj1jasz1EzXEN4Pw3zTis3O5G4p6eDZyXJYjiW8cQaK1nhpwMk8rAke2kWON5a9LV0AG2vRKrvFsfqr1wB4rBhS04cTEZyPqs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741451615; c=relaxed/simple;
-	bh=tM7Z1MIuoa/H4YwFnFknjGiGKPNlBmSaJxIzbb0eGDk=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=IMRiVSE9afdyidq5wY9Axfy17Y+X0iXOtihOhpiAg1AEAgS83dtqG26sLEYALSO0XO+w/PAP1EJr7o8lQTLEX5o3J6OWBK05exkGnxq+32NWVoOFA+D3YOT5K4y0k2TeH+X86enFbcN7Y0SdmKVJQ6ZYC95ODR59HIIa07pOpgE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MIu04DLx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1470CC4CEE7;
-	Sat,  8 Mar 2025 16:33:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741451614;
-	bh=tM7Z1MIuoa/H4YwFnFknjGiGKPNlBmSaJxIzbb0eGDk=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=MIu04DLxZwEmwBIzWaHbgfhISn6yiqjivHJe03p3ZKnFn36PELOhRqaddAcbavYqc
-	 8M5Z1otxTkuT4q9P8zRv2VFQwnZ8QG8LBBV+QKzgriwyaXHEe6lJ0BfzOjG4fYckid
-	 Z8nhQgdPfL3bc3vHutkwuE0uOtojmi1mWMNlViuCmVDsP8+M5vjbfCHZ3AnIVeZi63
-	 22SPJbPNZWX81dhjMpifa5ryLTvFs6vz37u3DAKvgw96kl6GGCqYiHGW+6Sk2LLMF0
-	 1lJNgha7B6z6S55T5eqNfUPPmyzPojD5NeRnesvnI2Iamha3jFVmliqjFjYBnEdsA7
-	 pozWP3Mn3VT4w==
-Date: Sat, 8 Mar 2025 16:33:22 +0000
-From: Jonathan Cameron <jic23@kernel.org>
-To: Matti Vaittinen <mazziesaccount@gmail.com>
-Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>, Lars-Peter Clausen
- <lars@metafoo.de>, Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
- Chen-Yu Tsai <wens@csie.org>, David Lechner <dlechner@baylibre.com>, Javier
- Carrasco <javier.carrasco.cruz@gmail.com>, Guillaume Stols
- <gstols@baylibre.com>, Olivier Moysan <olivier.moysan@foss.st.com>, Dumitru
- Ceclan <mitrutzceclan@gmail.com>, Trevor Gamblin <tgamblin@baylibre.com>,
- Matteo Martelli <matteomartelli3@gmail.com>, Alisa-Dariana Roman
- <alisadariana@gmail.com>, Andy Shevchenko
- <andriy.shevchenko@linux.intel.com>, linux-iio@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH v5 04/10] iio: adc: rzg2l_adc: Use adc-helpers
-Message-ID: <20250308163322.63d6e053@jic23-huawei>
-In-Reply-To: <f8d2e21c7c4948453a42f1edcd3621d2c20871c5.1740993491.git.mazziesaccount@gmail.com>
-References: <cover.1740993491.git.mazziesaccount@gmail.com>
-	<f8d2e21c7c4948453a42f1edcd3621d2c20871c5.1740993491.git.mazziesaccount@gmail.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.48; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1741451681; c=relaxed/simple;
+	bh=QGLh/6JQgeudjVxuHIxfA33KxLX+oZAVVM/slJ0bCEU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=PWTsbCJ8ugEcMDoCasDKynJq619MWnH0YWT0Jzf5lpvuJYSNovPjURSu42c9J8qIw/vwD767yGNVLyv4OYjdVxVECmiP4Eiahg+EGPSOn/PqF33Pgq1zDqblHnZ/jGW+9e9NYGKoOtSv6e765gEPdN1kFQNV+BT7aKARuZozYWM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se; dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b=rIPGoYzu; arc=none smtp.client-ip=121.127.44.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kwiboo.se;
+ h=Content-Transfer-Encoding: Content-Type: In-Reply-To: From: References:
+ Cc: To: Subject: MIME-Version: Date: Message-ID; q=dns/txt;
+ s=fe-e1b5cab7be; t=1741451677;
+ bh=XfxZ2EUMtcYRuh5iiI7Ca6IZaZJZ9N99juCripq5x6I=;
+ b=rIPGoYzuIXmmVJU4IuQe2o6/daWE+eDF6a6nIfxnr0+hvJIz51MGuzUzRjsmUmuCVfoxOIJ48
+ jUSMaxgMjXKLunUXL4/3S7O9yTcfliUrKH/+/HjPbvvrPeJM3D1d6MYBM0z/e47anteV5+AXjZh
+ 9HSaRTh3JXyUYcU2iau9e9t3Vix0QsjnjX0DpYIeUOf9DP37+u1R2+2j0grjn5WNd//WdW52KgA
+ TZB7LRc6fHoGipR1BQq3CMp9+Bi4BqRpgw6WWgBZ+OIXgr9h9vomartD7h8WOsJvt1oHLsqILZJ
+ RAceyuHBrybYoNzyDX/gGPkQdCrFLIayEXp20/XkcIeg==
+X-Forward-Email-ID: 67cc719a91daabb65c1b40e8
+X-Forward-Email-Sender: rfc822; jonas@kwiboo.se, smtp.forwardemail.net,
+ 121.127.44.73
+X-Forward-Email-Version: 0.4.40
+X-Forward-Email-Website: https://forwardemail.net
+X-Complaints-To: abuse@forwardemail.net
+X-Report-Abuse: abuse@forwardemail.net
+X-Report-Abuse-To: abuse@forwardemail.net
+Message-ID: <29739e60-15f5-4361-a57a-2e6b93fba09c@kwiboo.se>
+Date: Sat, 8 Mar 2025 17:34:29 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/2] arm64: dts: rockchip: Add Xunlong Orange Pi 3B
+To: Arturas Moskvinas <arturas.moskvinas@gmail.com>
+Cc: Heiko Stuebner <heiko@sntech.de>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+References: <20240626230319.1425316-1-jonas@kwiboo.se>
+ <20240626230319.1425316-3-jonas@kwiboo.se>
+ <d1c600f1-a874-4bb8-8b9f-22a3414edfcc@gmail.com>
+Content-Language: en-US
+From: Jonas Karlman <jonas@kwiboo.se>
+In-Reply-To: <d1c600f1-a874-4bb8-8b9f-22a3414edfcc@gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On Mon, 3 Mar 2025 13:32:29 +0200
-Matti Vaittinen <mazziesaccount@gmail.com> wrote:
+Hi Arturas,
 
-> The new devm_iio_adc_device_alloc_chaninfo() -helper is intended to help
-> drivers avoid open-coding the for_each_node -loop for getting the
-> channel IDs. The helper provides standard way to detect the ADC channel
-> nodes (by the node name), and a standard way to convert the "reg"
-> -propereties to channel identification numbers, used in the struct
-spell check: properties
+On 2025-03-08 15:53, Arturas Moskvinas wrote:
+> On 6/27/24 2:03 AM, Jonas Karlman wrote:
+> 
+>> The Xunlong Orange Pi 3B is a single-board computer based on the
+>> Rockchip RK3566 SoC.
+> ...> +
+>> +&gmac1 {
+>> +	phy-handle = <&rgmii_phy1>;
+>> +	status = "okay";
+>> +};
+>> +
+>> +&mdio1 {
+>> +	rgmii_phy1: ethernet-phy@1 {
+>> +		compatible = "ethernet-phy-ieee802.3-c22";
+>> +		reg = <1>;
+> 
+> Jonas, were you able to test V1.1 board's Ethernet?
 
-> iio_chan_spec. Furthermore, the helper can optionally check the found
-> channel IDs are smaller than given maximum. This is useful for callers
-> which later use the IDs for example for indexing a channel data array.
-> 
-> The original driver treated all found child nodes as channel nodes. The
-> new helper requires channel nodes to be named channel[@N]. This should
-> help avoid problems with devices which may contain also other but ADC
-> child nodes. Quick grep from arch/* with the rzg2l_adc's compatible
-> string didn't reveal any in-tree .dts with channel nodes named
-> otherwise. Also, same grep shows all the .dts seem to have channel IDs
-> between 0..num of channels.
-> 
-> Use the new helper.
-> 
-> Signed-off-by: Matti Vaittinen <mazziesaccount@gmail.com>
-Code looks good to me.
+Yes, I have both a v1.1.1 and v2.1 hw revision of this board and
+Ethernet should be working on both hw revisions.
 
-J
+> 
+> Whenever I start the board - Ethernet initialization fails with:
+> ```
+> [   21.140055] rk_gmac-dwmac fe010000.ethernet eth0: __stmmac_open: 
+> Cannot attach to PHY (error: -19)
+> ```
+
+This is because of a reset issue with Ethernet PHYs in Linux, see [1].
+
+Two workarounds:
+1. Let boot firmware reset the PHY before Linux, i.e. use U-Boot
+   v2024.10 or newer.
+2. Use a ethernet-phy-id compatible with correct phy-id to force Linux
+   to attach the PHY.
+
+I suggest you try to wipe U-Boot from SPI flash on your board and update
+to use U-Boot v2025.01 and try again.
+
+> 
+> But if reset is performed inside gmac - initialization succeeds.
+
+Use of deprecated snps,reset- props is not a proper fix for this issue,
+instead Linux could use an improve Ethernet PHY initialization handling
+and ensuring the PHY is reset before it tries to read a phy-id from it.
+
+[1] https://lore.kernel.org/r/47d55aca-bee6-810f-379f-9431649fefa6@kwiboo.se/
+
+Regards,
+Jonas
+
+> 
+> Eg. patch:
+> ```
+> --- 
+> linux-6.12.17.orig/arch/arm64/boot/dts/rockchip/rk3566-orangepi-3b-v1.1.dts
+> +++ linux-6.12.17/arch/arm64/boot/dts/rockchip/rk3566-orangepi-3b-v1.1.dts
+> @@ -16,14 +16,14 @@
+>   &gmac1 {
+>   	phy-handle = <&rgmii_phy1>;
+>   	status = "okay";
+> +	snps,reset-gpio = <&gpio3 RK_PC2 GPIO_ACTIVE_LOW>;
+> +	snps,reset-active-low;
+> +	snps,reset-delays-us = <0 50000 200000>;
+>   };
+> 
+>   &mdio1 {
+>   	rgmii_phy1: ethernet-phy@1 {
+>   		compatible = "ethernet-phy-ieee802.3-c22";
+>   		reg = <1>;
+> -		reset-assert-us = <20000>;
+> -		reset-deassert-us = <50000>;
+> -		reset-gpios = <&gpio3 RK_PC2 GPIO_ACTIVE_LOW>;
+>   	};
+>   };
+> ```
+>> +		reset-assert-us = <20000>;
+>> +		reset-deassert-us = <50000>;
+>> +		reset-gpios = <&gpio3 RK_PC2 GPIO_ACTIVE_LOW>;
+>> +	};
+>> +};
+> 
+> 
+> Arturas Moskvinas
+
 
