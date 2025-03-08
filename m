@@ -1,129 +1,87 @@
-Return-Path: <linux-kernel+bounces-552641-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-552642-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D2EB5A57C2B
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 17:53:00 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 271A7A57C2C
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 17:53:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 15A6616E556
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 16:52:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 206D9167910
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 16:53:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACF721EB5C0;
-	Sat,  8 Mar 2025 16:50:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F0BF1EB5C7;
+	Sat,  8 Mar 2025 16:52:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iXg6Ifae"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="EZ1vdrVV"
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FDBE1E8359;
-	Sat,  8 Mar 2025 16:50:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F10807464
+	for <linux-kernel@vger.kernel.org>; Sat,  8 Mar 2025 16:51:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741452657; cv=none; b=lWBLIhJUcUgP1y3tNwnduEgZx66f/nc3SeC+T9TIra1OxR5CaH1YedVOvnY3J3bmf7SpOIa4rGG+Bl4421As0mObMlCBPZPsq6fN5505XvDdjdSrUmX8qC684PRkAKdIVlU5GJ065UPPtr4AZ9nRCok++fgRALO7lpBuIYLAdNw=
+	t=1741452721; cv=none; b=pJGUfwmi7lNqNw39Y+l4/liYRGga5T1jIQiex2UAAnOR1qvgbZNc8YgTUT+sm4d7Ajx2+hghGCRN3VlIVWX3wWfPSq+0v8uyFI4kCSc6yM2GbNoIghsbkNC9SYicLh8iTTpDwtImfpadoN3wUk3l+bjTsiTTHiMQV8v0+q+6zMY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741452657; c=relaxed/simple;
-	bh=zukLuVZquSpBt41C2EFKFn86YAE7G8TH2t/2Y3RItps=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=gEi7/JKS81jKsjhiQwtQfA3v6WqoGFBmcsq4aCZM22LExIknJFOC9w8FqyQqFUkY/XDbHsCtFj/RJ3oqn66TexmULmPRDsfCrO20Hb5g7tPv1Dw2bQxfCb1AqmtKW4F7L4B3Lz0RXulDYportFCCtSc4p3okf4pi6o5Ybtdt1W4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iXg6Ifae; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E33D9C4CEE0;
-	Sat,  8 Mar 2025 16:50:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741452656;
-	bh=zukLuVZquSpBt41C2EFKFn86YAE7G8TH2t/2Y3RItps=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=iXg6IfaewLz89ab7WY7g6PaicLru+znqMziV7Egb7krkpv0fJwEsgMvtExibQW7hN
-	 6huU3GeJUFEqflDdWStDU59BR9spfZR6fQauzepLYFC4mLenvsmdElLuueDiiPdQI0
-	 LmAEhiiKETjCRPs+mUUeo/lWJX6bzJI6SN9WgdgWdAs45IAhnHcixV5srxHdjTUGe0
-	 JPsfClvfokmR0fbE8oVdUSako6znToz/OZCtPYb5UWtS8neEogl9gK9tZ6NbgkIYnu
-	 BEzVdZSzR6D3Ud4++EkPFc3UUm+t5KW6CmlkAhxOYHO0LrSI1+BdEsKVHDTCvnawuJ
-	 NokxTMD1AiOyg==
-Date: Sat, 8 Mar 2025 16:50:48 +0000
-From: Jonathan Cameron <jic23@kernel.org>
-To: Karan Sanghavi <karansanghvi98@gmail.com>
-Cc: Javier Carrasco <javier.carrasco.cruz@gmail.com>, Lars-Peter Clausen
- <lars@metafoo.de>, linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
- Shuah Khan <skhan@linuxfoundation.org>
-Subject: Re: [PATCH v3] iio: light: Add check for array bounds in
- veml6075_read_int_time_ms
-Message-ID: <20250308165048.408d31ad@jic23-huawei>
-In-Reply-To: <20250222164519.45c48a52@jic23-huawei>
-References: <Z7dnrEpKQdRZ2qFU@Emma>
-	<20250222164337.0372fb58@jic23-huawei>
-	<20250222164519.45c48a52@jic23-huawei>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.48; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1741452721; c=relaxed/simple;
+	bh=H2BsNafZeYvp9wbkGN2qGL99O0ortwb9hsZ0gqUcIdA=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=K/yAONZ99W7TGsnNa1v/SkrhKHOSRHss9b/m/egpp0DmnIaqxGtQkHZFObSXNPemedjySZ/9m5A0yGJzQ4i1OawR0VoWPbtMYd0BWvyFYZ6HM2rUxu8MaLeUTJYXwXUs2WUMH92BB/Y58Kw+RxD/8DGteTOMOEvCzJkSgH2MAqg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=EZ1vdrVV; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
+	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
+	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=H2BsNafZeYvp9wbkGN2qGL99O0ortwb9hsZ0gqUcIdA=; b=EZ1vdrVVdILyYK9dTDvtM7OoD3
+	+qArpJvcSeElp9yPV81y5wQCiFYrtzFh4jIwIPPbd6kNm0oYAfywwQHxioFHDr4yRgXKaR5ALGwjX
+	dWHgcLVL3kaRYIDyjT+zmCjLyOsukR/DtVn2w+3Tti8XIb/qFTCG+LMSftEPjWJYXp9HhkEjt5pg0
+	qUFZEsG7r3zj3E6PLaJI9HmBpPVt32OM4Q0yw7keWSjLVCfudBHVtOmS+Mqv3N8asn/rA5B/exSz8
+	YARA9KImzZKKEtHtbCxfmSdeLgkPIC1dWkkTg+UNRzk6dG4iFZMBGCpgywcb0QvmYolvJnOFsTSlR
+	97cq09TQ==;
+Received: from [194.95.143.137] (helo=phil.localnet)
+	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <heiko@sntech.de>)
+	id 1tqxOw-000463-O9; Sat, 08 Mar 2025 17:51:50 +0100
+From: Heiko Stuebner <heiko@sntech.de>
+To: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>,
+ Andy Yan <andyshrk@163.com>, Vinod Koul <vkoul@kernel.org>,
+ Kishon Vijay Abraham I <kishon@kernel.org>,
+ Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
+Cc: Sebastian Reichel <sebastian.reichel@collabora.com>, kernel@collabora.com,
+ linux-phy@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
+ linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+ Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
+Subject: Re: [PATCH] phy: phy-rockchip-samsung-hdptx: Add support for RK3576
+Date: Sat, 08 Mar 2025 17:51:50 +0100
+Message-ID: <5069079.31r3eYUQgx@phil>
+In-Reply-To: <20250306-rk3576-hdptx-phy-v1-1-288cc4b0611a@collabora.com>
+References: <20250306-rk3576-hdptx-phy-v1-1-288cc4b0611a@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
 
-On Sat, 22 Feb 2025 16:45:19 +0000
-Jonathan Cameron <jic23@kernel.org> wrote:
+Am Donnerstag, 6. M=C3=A4rz 2025, 20:29:23 MEZ schrieb Nicolas Frattaroli:
+> Despite the compatible already being listed in the bindings, the PHY
+> driver never gained explicit support for it. This is especially a
+> problem because the explicitly listed PHY addresses need to be specified
+> for each SoC.
+>=20
+> To solve this, add the compatible, and a PHY config, with the address
+> gleaned from rk3576.dtsi.
+>=20
+> Signed-off-by: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
 
-> On Sat, 22 Feb 2025 16:43:37 +0000
-> Jonathan Cameron <jic23@kernel.org> wrote:
-> 
-> > On Thu, 20 Feb 2025 17:34:36 +0000
-> > Karan Sanghavi <karansanghvi98@gmail.com> wrote:
-> >   
-> > > The array contains only 5 elements, but the index calculated by
-> > > veml6075_read_int_time_index can range from 0 to 7,
-> > > which could lead to out-of-bounds access. The check prevents this issue.
-> > > 
-> > > Coverity Issue
-> > > CID 1574309: (#1 of 1): Out-of-bounds read (OVERRUN)
-> > > overrun-local: Overrunning array veml6075_it_ms of 5 4-byte
-> > > elements at element index 7 (byte offset 31) using
-> > > index int_index (which evaluates to 7)
-> > > 
-> > > Fixes: 3b82f43238ae ("iio: light: add VEML6075 UVA and UVB light sensor driver")
-> > > Signed-off-by: Karan Sanghavi <karansanghvi98@gmail.com>
-> > > ---    
-> > Superficially this looks hardening against malicious or broken hardware.
-> > That is fine to add, but not worth backporting or (in my opinion) adding a fixes
-> > tag.  
-> Ah I see Javier asked for the fixes tag.  Ok.  Maybe just add a note that
-> the hardware is not expected to return such an out of bounds value.
-> 
-> That will help me to remember we don't need to rush this one upstream!
-I guess you don't have time so I made the changes requested and applied.
-(mostly so I can stop tracking the status!)
+Reviewed-by: Heiko Stuebner <heiko@sntech.de>
 
-Jonathan
-
-> 
-> Jonathan
-> 
-> >   
-> > >  drivers/iio/light/veml6075.c | 7 ++++++-
-> > >  1 file changed, 6 insertions(+), 1 deletion(-)
-> > > 
-> > > diff --git a/drivers/iio/light/veml6075.c b/drivers/iio/light/veml6075.c
-> > > index 05d4c0e9015d..5dd951f6e989 100644
-> > > --- a/drivers/iio/light/veml6075.c
-> > > +++ b/drivers/iio/light/veml6075.c
-> > > @@ -201,7 +201,12 @@ static int veml6075_read_int_time_index(struct veml6075_data *data)
-> > >  	if (ret < 0)
-> > >  		return ret;
-> > >  
-> > > -	return FIELD_GET(VEML6075_CONF_IT, conf);
-> > > +	int int_index = FIELD_GET(VEML6075_CONF_IT, conf);
-> > > +
-> > > +	if (int_index >= ARRAY_SIZE(veml6075_it_ms))
-> > > +		return -EINVAL;
-> > > +
-> > > +	return int_index;
-> > >  }
-> > >  
-> > >  static int veml6075_read_int_time_ms(struct veml6075_data *data, int *val)    
-> >   
-> 
-> 
 
 
