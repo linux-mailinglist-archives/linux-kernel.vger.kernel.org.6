@@ -1,68 +1,63 @@
-Return-Path: <linux-kernel+bounces-552527-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-552528-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 78060A57AC8
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 14:54:34 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CC925A57ACE
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 14:56:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B36BA16BD8C
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 13:54:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2803B188DCED
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 13:56:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 375DA1C07E6;
-	Sat,  8 Mar 2025 13:54:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7F9C1C84CC;
+	Sat,  8 Mar 2025 13:56:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="N7qj1/Dr"
-Received: from relay1-d.mail.gandi.net (relay1-d.mail.gandi.net [217.70.183.193])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ADJleh1w"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33F7B17A2F5;
-	Sat,  8 Mar 2025 13:54:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.193
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02A4617C77;
+	Sat,  8 Mar 2025 13:56:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741442066; cv=none; b=KWX5lsKKEfkQT08IVoXq2puQ+PXX9zWaf0Ed1QvD42kq3tS3wd68YKN5Yh8Ie/bhudoF0AFP6NSqJGBdZBtl1j4jbZ1fT2bWmjUi7g/LdIjXCrIWI/6So+80e2kUL6A5PBxfScdpvfYQqqQpmaozz0WVlBs0qNyli4wzP+sAUoA=
+	t=1741442193; cv=none; b=FV3lhcdgmCqTUiaIaL0eDxGzWHx/XPK1+3ASKC3cQpDY4ry9sWmaTIt9hU1mYHrw+mSd8aVu36o3cwPLRTwpCECc+8oISnCjhJOAcjAnxST1ZkfoCdIEaeO3SHL7NtLs9Z/StpZ3mEPiHHc3JaWGU/iBdIECO8cyd05QsVApuk4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741442066; c=relaxed/simple;
-	bh=7Tw2HNt1HVYnuuPGHl3TsAng25V0j2+0BlRcBB9eRyg=;
+	s=arc-20240116; t=1741442193; c=relaxed/simple;
+	bh=MQAZkMy5mvZfTTMDKNvhCwU1i2VmIVTdeKRsTiagL14=;
 	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=DoxmS++kkcCkTZtTOPWWKQYnVPCopz6pOw3HmKsHUVuGgHoqduTdDeSF9yijneZLY2Vby9a7skRWMtu0lCve7KtfDO+NH2WPu6eYVgYySSjGaRDOhBtssj8IWC6GFpX4YHFZKwLFyWqh9SVuiojwMWvKdq/vhl5b8fM3lzHj/Js=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=N7qj1/Dr; arc=none smtp.client-ip=217.70.183.193
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 3D5C342E80;
-	Sat,  8 Mar 2025 13:54:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1741442055;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Mby0pUW4UzyD8b5PxL0LFse+sgWHkla2gTE4ym797V0=;
-	b=N7qj1/DrHrZYEYp8euvYLYqXa7PgQlXaDKSBg1HQxwPK/ERo4pgBFpJx181IwAmNAdD8mX
-	9mIZ1HUxE27Vf/kd9Jsh4Mw8vv7sQiSWPBB885YO0k1qf3ivSiNlwe9Jvq7Erluo9jTw4m
-	yJ8KN120Mz1d0yIVwcdyQAeDlGsClPuuvHJKsXvNoccwTACCy8XC4lVbfmMQNEIKxLSkSI
-	T9vZCnyLx7xPNfpXrblQFQpmTayKN6Xmb5iypXYECZyR8cdJpnrzpxeKRv02YON5AfQ1IE
-	FaUpnKUqRffabE6iaH8nrp7mn0z7aiFyCH/ufscm3c2Ue2BMeSqr2PH2jVhUZQ==
-Date: Sat, 8 Mar 2025 14:54:12 +0100
-From: Maxime Chevallier <maxime.chevallier@bootlin.com>
-To: Oleksij Rempel <o.rempel@pengutronix.de>
-Cc: "David S. Miller" <davem@davemloft.net>, Eric Dumazet
- <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
- <pabeni@redhat.com>, Woojung Huh <woojung.huh@microchip.com>, Andrew Lunn
- <andrew+netdev@lunn.ch>, Russell King <rmk+kernel@armlinux.org.uk>,
- Thangaraj Samynathan <Thangaraj.S@microchip.com>, Rengarajan Sundararajan
- <Rengarajan.S@microchip.com>, kernel@pengutronix.de,
- linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
- UNGLinuxDriver@microchip.com, Phil Elwell <phil@raspberrypi.org>
-Subject: Re: [PATCH net-next v2 2/7] net: usb: lan78xx: Move fixed PHY
- cleanup to lan78xx_unbind()
-Message-ID: <20250308145412.1f7944d4@fedora.home>
-In-Reply-To: <20250307182432.1976273-3-o.rempel@pengutronix.de>
-References: <20250307182432.1976273-1-o.rempel@pengutronix.de>
-	<20250307182432.1976273-3-o.rempel@pengutronix.de>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	 MIME-Version:Content-Type; b=GJleOWP9Lq/qWMOot4QOX5I2zFIowf3Zw2cYBLt5XhHP0573UMm9knObcWIVEnFNPNq0CQyVvhK+xWRfudzeDlGJUTlUTKn3TFJGehklt4tuC6jn2NqMjhJ78NANafbDDL5j/DRqGEJKR6rv7vthQRgohXQUxuewV9hZjauIozY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ADJleh1w; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 20721C4CEE0;
+	Sat,  8 Mar 2025 13:56:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741442191;
+	bh=MQAZkMy5mvZfTTMDKNvhCwU1i2VmIVTdeKRsTiagL14=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=ADJleh1w5MlFygbIVLOnRJi9Fa64kaoQUtOwPK3/mff7F8Fuo9yb/s0svvUxLoBjF
+	 0RnZ1mPqVoHZoLZ4C3T9sjoysA0IQ4cxeKuF7W6m5PoihvMjtfWwrkEhl+ZJuNNgRs
+	 SIgseJw9cm3kKh/tWSd/S5LYK9dU3UhruKR0rUfO4CtYren40VAcAAK1BiB2tSFtR4
+	 l+O1ZWtl/7vizZh6w9EwG6aWSM3bcbb+czy5YKFknRGj27obL5yDTxih0gkxT0yGnY
+	 NkKsnbC5A2f/8SBomeYd4iWZEazRkoZVCdg3YA6It5SNL2G0qQ7JIkqg+jXRGGf1S6
+	 6PSjtyU0xhEhA==
+Date: Sat, 8 Mar 2025 13:56:20 +0000
+From: Jonathan Cameron <jic23@kernel.org>
+To: Jonathan Santos <Jonathan.Santos@analog.com>
+Cc: <linux-iio@vger.kernel.org>, <devicetree@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>, <linux-gpio@vger.kernel.org>,
+ <lars@metafoo.de>, <Michael.Hennerich@analog.com>,
+ <marcelo.schmitt@analog.com>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+ <conor+dt@kernel.org>, <linus.walleij@linaro.org>, <brgl@bgdev.pl>,
+ <lgirdwood@gmail.com>, <broonie@kernel.org>, <dlechner@baylibre.com>,
+ <marcelo.schmitt1@gmail.com>, <jonath4nns@gmail.com>, Pop Paul
+ <paul.pop@analog.com>
+Subject: Re: [PATCH v4 16/17] iio: adc: ad7768-1: add filter type and
+ oversampling ratio attributes
+Message-ID: <20250308135620.3c95b951@jic23-huawei>
+In-Reply-To: <3586a75e3b7bf09c271a44390b2fed9f1ffc8565.1741268122.git.Jonathan.Santos@analog.com>
+References: <cover.1741268122.git.Jonathan.Santos@analog.com>
+	<3586a75e3b7bf09c271a44390b2fed9f1ffc8565.1741268122.git.Jonathan.Santos@analog.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.48; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -71,47 +66,154 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdduudefjedvucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpeffhffvvefukfgjfhhoofggtgfgsehtjeertdertddvnecuhfhrohhmpeforgigihhmvgcuvehhvghvrghllhhivghruceomhgrgihimhgvrdgthhgvvhgrlhhlihgvrhessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepgeevledtvdevueehhfevhfelhfekveeftdfgiedufeffieeltddtgfefuefhueeknecukfhppedvrgdtudemtggsudelmeekugegtgemlehftddtmegstgdvudemkeekleelmeehgedttgemvgehlegvnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepvdgrtddumegtsgduleemkegugegtmeelfhdttdemsggtvddumeekkeelleemheegtdgtmegvheelvgdphhgvlhhopehfvgguohhrrgdrhhhomhgvpdhmrghilhhfrhhomhepmhgrgihimhgvrdgthhgvvhgrlhhlihgvrhessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepudehpdhrtghpthhtohepohdrrhgvmhhpvghlsehpvghnghhuthhrohhnihigrdguvgdprhgtphhtthhopegurghvvghmsegurghvvghmlhhofhhtrdhnvghtpdhrtghpthhtohepvgguuhhmrgiivghtsehgohhoghhlvgdrt
- ghomhdprhgtphhtthhopehkuhgsrgeskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepphgrsggvnhhisehrvgguhhgrthdrtghomhdprhgtphhtthhopeifohhojhhunhhgrdhhuhhhsehmihgtrhhotghhihhprdgtohhmpdhrtghpthhtoheprghnughrvgifodhnvghtuggvvheslhhunhhnrdgthhdprhgtphhtthhopehrmhhkodhkvghrnhgvlhesrghrmhhlihhnuhigrdhorhhgrdhukh
-X-GND-Sasl: maxime.chevallier@bootlin.com
 
-Hi Oleksij,
+On Thu, 6 Mar 2025 18:04:24 -0300
+Jonathan Santos <Jonathan.Santos@analog.com> wrote:
 
-On Fri,  7 Mar 2025 19:24:27 +0100
-Oleksij Rempel <o.rempel@pengutronix.de> wrote:
-
-> Move the cleanup of the fixed PHY to the lan78xx_unbind() function,
-> which is invoked during both the probe and disconnect paths.  This
-> change eliminates duplicate cleanup code in the disconnect routine and
-> ensures that the fixed PHY is properly freed during other probe steps.
+> Separate filter type and decimation rate from the sampling frequency
+> attribute. The new filter type attribute enables sinc3, sinc3+rej60
+> and wideband filters, which were previously unavailable.
 > 
-> Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
+> Previously, combining decimation and MCLK divider in the sampling
+> frequency obscured performance trade-offs. Lower MCLK divider
+> settings increase power usage, while lower decimation rates reduce
+> precision by decreasing averaging. By creating an oversampling
+> attribute, which controls the decimation, users gain finer control
+> over performance.
+> 
+> The addition of those attributes allows a wider range of sampling
+> frequencies and more access to the device features. Sampling frequency
+> table is updated after every digital filter paramerter change.
+> 
+> Co-developed-by: Pop Paul <paul.pop@analog.com>
+> Signed-off-by: Pop Paul <paul.pop@analog.com>
+> Signed-off-by: Jonathan Santos <Jonathan.Santos@analog.com>
 > ---
+> v4 Changes:
+> * Sampling frequency table is dinamically updated after every
 
-The commit message looks totally unrelated to the content of the patch
-:(
+Good to spell check. Dynamically
 
-Maxime
+>   filter configuration.
 
->  drivers/net/usb/lan78xx.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/net/usb/lan78xx.c b/drivers/net/usb/lan78xx.c
-> index 01967138bc8c..4efe7a956667 100644
-> --- a/drivers/net/usb/lan78xx.c
-> +++ b/drivers/net/usb/lan78xx.c
-> @@ -2688,8 +2688,8 @@ static int lan78xx_phy_init(struct lan78xx_net *dev)
+Currently this runs into the potential race conditions we get with
+read_avail callbacks.  If we update the avail values in parallel
+with consumer code in a kernel driver reading them we can get tearing.
+So better if possible to do it all before those interfaces are exposed
+and just pick from a set of static arrays.
+
+> +static struct iio_chan_spec_ext_info ad7768_ext_info[] = {
+> +	IIO_ENUM("filter_type", IIO_SHARED_BY_ALL, &ad7768_flt_type_iio_enum),
+> +	IIO_ENUM_AVAILABLE("filter_type", IIO_SHARED_BY_ALL, &ad7768_flt_type_iio_enum),
+> +	{ },
+
+No trailing comma on a terminating entry as we don't want it to be easy
+to accidentally add stuff after this.
+
+> +};
+
+
+> +static int ad7768_configure_dig_fil(struct iio_dev *dev,
+> +				    enum ad7768_filter_type filter_type,
+> +				    unsigned int dec_rate)
+> +{
+> +	struct ad7768_state *st = iio_priv(dev);
+> +	unsigned int dec_rate_idx, dig_filter_regval;
+> +	int ret;
+> +
+> +	switch (filter_type) {
+> +	case AD7768_FILTER_SINC3:
+> +		dig_filter_regval = AD7768_DIG_FIL_FIL(AD7768_FILTER_REGVAL_SINC3);
+> +		break;
+> +	case AD7768_FILTER_SINC3_REJ60:
+> +		dig_filter_regval = AD7768_DIG_FIL_FIL(AD7768_FILTER_REGVAL_SINC3_REJ60);
+> +		break;
+> +	case AD7768_FILTER_WIDEBAND:
+> +		/* Skip decimations 8 and 16, not supported by the wideband filter */
+> +		dec_rate_idx = find_closest(dec_rate, &ad7768_dec_rate_values[2],
+> +					    ARRAY_SIZE(ad7768_dec_rate_values) - 2);
+> +		dig_filter_regval = AD7768_DIG_FIL_FIL(AD7768_FILTER_REGVAL_WIDEBAND) |
+> +				    AD7768_DIG_FIL_DEC_RATE(dec_rate_idx);
+> +		/* Correct the index offset */
+> +		dec_rate_idx += 2;
+> +		break;
+> +	case AD7768_FILTER_SINC5:
+> +		dec_rate_idx = find_closest(dec_rate, ad7768_dec_rate_values,
+> +					    ARRAY_SIZE(ad7768_dec_rate_values));
+> +
+> +		/*
+> +		 * Decimations 8 (idx 0) and 16 (idx 1) are set in the
+> +		 * FILTER[6:4] field. The other decimations are set in the
+> +		 * DEC_RATE[2:0] field, and the idx need to be offsetted by two.
+> +		 */
+> +		if (dec_rate_idx == 0)
+> +			dig_filter_regval = AD7768_DIG_FIL_FIL(AD7768_FILTER_REGVAL_SINC5_X8);
+> +		else if (dec_rate_idx == 1)
+> +			dig_filter_regval = AD7768_DIG_FIL_FIL(AD7768_FILTER_REGVAL_SINC5_X16);
+> +		else
+> +			dig_filter_regval = AD7768_DIG_FIL_FIL(AD7768_FILTER_REGVAL_SINC5) |
+> +					    AD7768_DIG_FIL_DEC_RATE(dec_rate_idx - 2);
+> +		break;
+> +	}
+> +
+> +	ret = regmap_write(st->regmap, AD7768_REG_DIGITAL_FILTER, dig_filter_regval);
+> +	if (ret)
+>  		return ret;
 >  
->  	ret = phylink_connect_phy(dev->phylink, phydev);
->  	if (ret) {
-> -		netdev_err(dev->net, "can't attach PHY to %s\n",
-> -			   dev->mdiobus->id);
-> +		netdev_err(dev->net, "can't attach PHY to %s, error %pe\n",
-> +			   dev->mdiobus->id, ERR_PTR(ret));
->  		return -EIO;
->  	}
+> -	/* A sync-in pulse is required every time the filter dec rate changes */
+> +	st->filter_type = filter_type;
+> +	/*
+> +	 * The decimation for SINC3 filters are configured in different
+> +	 * registers
+> +	 */
+> +	if (filter_type == AD7768_FILTER_SINC3 ||
+> +	    filter_type == AD7768_FILTER_SINC3_REJ60) {
+> +		ret = ad7768_set_sinc3_dec_rate(st, dec_rate);
+> +		if (ret)
+> +			return ret;
+> +	} else {
+> +		st->oversampling_ratio =  ad7768_dec_rate_values[dec_rate_idx];
+
+Looks like an extra space after =
+
+> +	}
+> +
+> +	ad7768_fill_samp_freq_tbl(st);
+
+This is opens a potentially complex race condition if we have the an
+in kernel consumer reading the data in this array as it is being updated
+(currently we can't stop that happening though solutions to that problem
+have been much discussed). 
+
+There aren't that many oversampling ratios so perhaps it is better
+to precalculate all the potential available values as an array indexed
+by oversampling ratio.  That way all the data is const, it's just possible
+to get stale pointer to the wrong entry which can always happen anyway
+if the read vs update happen in different entities.
+
+> +
+> +	/* A sync-in pulse is required after every configuration change */
+>  	return ad7768_send_sync_pulse(st);
+>  }
+
 >  
+> +static int ad7768_write_raw(struct iio_dev *indio_dev,
+> +			    struct iio_chan_spec const *chan,
+> +			    int val, int val2, long info)
+> +{
+> +	int ret;
+> +
+> +	ret = iio_device_claim_direct_mode(indio_dev);
+
+update to use if (!iio_device_claim_direct())
+
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret = __ad7768_write_raw(indio_dev, chan, val, val2, info);
+> +	iio_device_release_direct_mode(indio_dev);
+> +
+> +	return ret;
+> +}
 
 
