@@ -1,91 +1,97 @@
-Return-Path: <linux-kernel+bounces-552311-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-552312-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5FDEA57836
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 05:05:44 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D9B4A5783B
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 05:07:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0C84C172321
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 04:05:44 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 938817A6FE4
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 04:06:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 422F6158DAC;
-	Sat,  8 Mar 2025 04:05:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D956815B102;
+	Sat,  8 Mar 2025 04:07:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="evn/H3V5"
-Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="R/rx4imJ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DFCF74040;
-	Sat,  8 Mar 2025 04:05:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 420B02CAB;
+	Sat,  8 Mar 2025 04:07:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741406738; cv=none; b=EQdwjfO893bItgFXkxiKKJ7kHo5LgJCY5I/kIWjpi5xr4idBYIaj1esrev3MXy6vGobX/cy1njllkd4MM+l80vwMa0kayEsDnq2rlB85OCTepzyx9YtazUSv5kYuwvSM4JQCNWHGqyyyNzcXJf/Y1ItUb2epIfXz5t8pz65QXfQ=
+	t=1741406826; cv=none; b=JW0mIm0Z1ftwPCMmc6Fk2ImQ3gENZO0rlg1DilmqBHC31C2oH6q0TRyVv/iW3AOvX3j6K/7qAtraPTz49IIbnAtlLmVKYQw6mkCxT59imtvdLERQQ49uHSnXuw49gkSlvcFYs9FodS7IIu1Q1eCJUxvmuGfM09bjxvkIgrx68Ak=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741406738; c=relaxed/simple;
-	bh=K+99yL0sZ4CSDoJdmI5TDT8OXmbbc7Yvgi6uhVeYI6s=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=tRYbxuh0mSjPgY05KkSxlcmzFZUGPF1S9Dekw51/EGenAemjKH1kv7CSWlHVZ698xiAi4XqhACwuLv/jPfc6z7axbdyEUVptm1Ynjk22QP1YkUGKN87FhrL1LmxEhpPKNuw3f2gl2gMSS9Lj39hmB5mAMZ+lPvXnaKvCJOBt67c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=evn/H3V5; arc=none smtp.client-ip=198.137.202.136
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
-Received: from terminus.zytor.com (terminus.zytor.com [IPv6:2607:7c80:54:3:0:0:0:136])
-	(authenticated bits=0)
-	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 52844pmC585572
-	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
-	Fri, 7 Mar 2025 20:04:55 -0800
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 52844pmC585572
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-	s=2025021701; t=1741406696;
-	bh=A40h3med0vL+BEFOR0ZaeFpXzh3uArCOZeASQFAe+r4=;
-	h=From:To:Cc:Subject:Date:From;
-	b=evn/H3V57XPl2oAfuDcoCJSbnsOtz6jbUPOtdFDZUbgPKtSW90F5qbLxgem37SCk6
-	 DJWCa7oBNr/bN0Y1PkpchuoLHmzSw4gHuPPjG/thBBMOdOxhifE26f9oDygMgiUWp7
-	 MkmI49ziusT/YBLU0Y4zyaoRmQrW8WUW/UoD6W58i+oBNX2YORX7dswYN7+XZKita9
-	 REnbPvPgpFIqp3y+ZSTSWfu40obwXDNAOigdePfRc0+Wx3l5qGqN+p7/dPxAbPHMgI
-	 9CHEQE8jxkZQOb/2/cuMlyUueAiFb0bIYvLMfNN99GKBmxBPG23NuLSvy95n232qCo
-	 d74yrAd43hUYw==
-From: "Xin Li (Intel)" <xin@zytor.com>
-To: linux-kernel@vger.kernel.org, linux-kbuild@vger.kernel.org
-Cc: masahiroy@kernel.org, nathan@kernel.org, nicolas@fjasle.eu, bp@alien8.de,
-        hpa@zytor.com, sraithal@amd.com
-Subject: [PATCH v1 1/1] kbuild: Add "make headers" to "make help" output
-Date: Fri,  7 Mar 2025 20:04:51 -0800
-Message-ID: <20250308040451.585561-1-xin@zytor.com>
-X-Mailer: git-send-email 2.48.1
+	s=arc-20240116; t=1741406826; c=relaxed/simple;
+	bh=s41Kiihoo5v0OXthZUir9md3noNFobzwW/cnNSvrFAo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cGwEoytuagl8fCvbhJK3DFUL3iPiPjko7g1sqSDnsH5gJfuAJcDLBc6yAMMboktYqXJnPd6NfUQZSvc0+kc4Ghu4cTeZm9wt1fRysGiRvWkQheC5WkDpDFQvWPQptMHu/XhdRsG5jc92AlrEZGhnGzmpynGNZEeGQZji2rsFBQU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=R/rx4imJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 93A14C4CEE0;
+	Sat,  8 Mar 2025 04:07:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741406825;
+	bh=s41Kiihoo5v0OXthZUir9md3noNFobzwW/cnNSvrFAo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=R/rx4imJ1i7ZDNHYHBA7H4lp7cojqNDgPdPaS3/7MnfFNfOeQYHcBYGV/HSyRxWjw
+	 ro+iHFi8ugniPknrC0uBQEZDnulTXvtX+ii9iun8nG8+Sy0MQin7yvaYPuN1myiZpz
+	 Y3nNe3NfYaZFmtk8evlnvGI3C+FmuT0Vs8+XDGeCODll4eZ6WMPIWdcgvcSfCfrbLz
+	 wTvnmPDFxc0DQO1o5Wrh/VS7EYyT8tmLAQs6k/e1tjXM6+1p/iHpEXV2hhzOMZlShI
+	 GYnZB5UMWjcyK19Rr+ypxthdY9rXRWwWac5+f71nwFRNXfRZRyZMW617G7SDGOPPG1
+	 FGcVlNkfb+gYA==
+Date: Fri, 7 Mar 2025 20:07:01 -0800
+From: Kees Cook <kees@kernel.org>
+To: Pedro Falcato <pedro.falcato@gmail.com>
+Cc: viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz,
+	ebiederm@xmission.com, sunliming@linux.dev,
+	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org, sunliming@kylinos.cn,
+	kernel test robot <lkp@intel.com>
+Subject: Re: [PATCH V2] fs: binfmt_elf_efpic: fix variable set but not used
+ warning
+Message-ID: <202503072006.B920348F@keescook>
+References: <20250308022754.75013-1-sunliming@linux.dev>
+ <174140535640.1476341.8645731807830133176.b4-ty@kernel.org>
+ <CAKbZUD1ieaVVD9A9CG=5oCacud4JqnxzYgMv=fiQK=2zT_y10w@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAKbZUD1ieaVVD9A9CG=5oCacud4JqnxzYgMv=fiQK=2zT_y10w@mail.gmail.com>
 
-Meanwhile explicitly state that the headers are uapi headers.
+On Sat, Mar 08, 2025 at 04:01:50AM +0000, Pedro Falcato wrote:
+> On Sat, Mar 8, 2025 at 3:45 AM Kees Cook <kees@kernel.org> wrote:
+> >
+> > On Sat, 08 Mar 2025 10:27:54 +0800, sunliming@linux.dev wrote:
+> > > Fix below kernel warning:
+> > > fs/binfmt_elf_fdpic.c:1024:52: warning: variable 'excess1' set but not
+> > > used [-Wunused-but-set-variable]
+> > >
+> > >
+> >
+> > Adjusted Subject for typos.
+> >
+> > Applied to for-next/execve, thanks!
+> >
+> > [1/1] binfmt_elf_fdpic: fix variable set but not used warning
+> >       https://git.kernel.org/kees/c/7845fe65b33d
+> >
+> 
+> FYI, there's a typo so this patch won't compile
+> 
+> >+ unsiged long excess1
+> >+ = PAGE_SIZE - ((maddr + phdr->p_filesz) & ~PAGE_MASK);
+> 
+> s/unsiged/unsigned/
 
-Suggested-by: Borislav Petkov <bp@alien8.de>
-Signed-off-by: Xin Li (Intel) <xin@zytor.com>
----
- Makefile | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+D'oh. Fixing in my tree..
 
-diff --git a/Makefile b/Makefile
-index 70bdbf2218fc..8f5aa710105e 100644
---- a/Makefile
-+++ b/Makefile
-@@ -1659,7 +1659,8 @@ help:
- 	@echo  '  kernelrelease	  - Output the release version string (use with make -s)'
- 	@echo  '  kernelversion	  - Output the version stored in Makefile (use with make -s)'
- 	@echo  '  image_name	  - Output the image name (use with make -s)'
--	@echo  '  headers_install - Install sanitised kernel headers to INSTALL_HDR_PATH'; \
-+	@echo  '  headers	  - Install sanitised kernel uapi headers to usr/include'
-+	@echo  '  headers_install - Install sanitised kernel uapi headers to INSTALL_HDR_PATH'; \
- 	 echo  '                    (default: $(INSTALL_HDR_PATH))'; \
- 	 echo  ''
- 	@echo  'Static analysers:'
-
-base-commit: 7eb172143d5508b4da468ed59ee857c6e5e01da6
 -- 
-2.48.1
-
+Kees Cook
 
