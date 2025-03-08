@@ -1,116 +1,105 @@
-Return-Path: <linux-kernel+bounces-552712-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-552713-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 41027A57D45
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 19:42:40 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A6BE6A57D43
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 19:42:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 98A073B29A3
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 18:42:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DFD1D16E86E
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 18:42:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBCD3212B0D;
-	Sat,  8 Mar 2025 18:37:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23A98208973;
+	Sat,  8 Mar 2025 18:38:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="gRodNPR4"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="hTuPFvxP"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EA25214A82
-	for <linux-kernel@vger.kernel.org>; Sat,  8 Mar 2025 18:37:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECB94202C44;
+	Sat,  8 Mar 2025 18:38:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741459024; cv=none; b=jart9von6iTF7cLQFaBBFd9cWVCCLxbFdNMHhcg+o++cqr9gwyXCUn7ANGifZm7MxpDCPDLl4WtP13H1OTWYElsNPedAos+0NovsCtC5PEApT3hlKkQz6sP0Pt99gbcD5O8aHhVc1pzsCuVw+mFfmnKqV8FcRE86jOW1a5F08H0=
+	t=1741459115; cv=none; b=sZIiMakl3X0caB8/tTQ8T/x5VAektbcNYcqjBbBIETUvLVpd8SPGARq3XJV2nDo8MO8v5VgWv9StL3SUkhFmDGTKoOvmK6b+xWR7opraCCkKX8kRBXDNYE+bp0dfpvC3qMaZhltbXu4axbP4Mhv609su+2+6TElj4ZfZOnPT/f0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741459024; c=relaxed/simple;
-	bh=de80fhR1oga+j2cwNsqZ/kApwvosfVY97WNh0bbPtBs=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=WuwED/xXX3H9DQJcJpb4XMPivUHLyAuhhqkCDVS1W/Gloliu/rKzYHmj4EEYxnURWGls/z8awcUnTXpc5N5x4NV5GeZBW+mbTIlwW5kRKlF1rQwASLHdSIBSf0P9zR+aqQecPKExHo0ScV6FD6uD8bwZpnYMte+/EOyC+auOnpQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=gRodNPR4; arc=none smtp.client-ip=198.175.65.17
+	s=arc-20240116; t=1741459115; c=relaxed/simple;
+	bh=ICxQvEvaELWXWRTD7ERZkdpAUoDpnDms71ShTxZILq0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=dexZw5PYUxvpF6GFKfbmR5wHPysngiGnsCc5Lxov6UV0jgmAeuhsNG6uGKyfsMsGwnqEAtpGV1s45ShGlxyyIZklUkTSanuhzbkU3F5l/LYU1zzs0mdP7APBqhYULVDHqvkm8aAaBM5jiPtbbXAI8CNhTJ9GXw7QwvhW8G0vC3g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=hTuPFvxP; arc=none smtp.client-ip=198.175.65.15
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1741459023; x=1772995023;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=de80fhR1oga+j2cwNsqZ/kApwvosfVY97WNh0bbPtBs=;
-  b=gRodNPR4sMsxZ+URoPmcg7ZOJ335XvDj399Db2HHYa4Vb8KWQnQ8uM07
-   9mrLUQwTSiCUX1bB5jNybwJOioI5MxDGmFAKVlZuX/4MYh2Ezk4pLeo2e
-   b/awJsCYpiYi9Xslq8djFn/lsBhBlzlP0wL+JIe42UQkKZZnmaVB4gKMb
-   6D+6t0TESjV20UhGD2u/ovvtYrOXMt5ubClmDGuhAQ1MUncYtXLFH/4t0
-   npCpiZvETtHiSBUh0CEU07zqlG5hXibU34s5rSBUmIueLmjx0EUAVliIR
-   v42WfkEWg1IIPmTR3y+qCNvozEjuN8B228gI+mbU5no2GGCHB1DM4+fsr
-   w==;
-X-CSE-ConnectionGUID: V2s9Vc6GRReyIdPOZ9UBTA==
-X-CSE-MsgGUID: lT+E+BIzR8SWmG9uha9/fA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11367"; a="42532476"
+  t=1741459114; x=1772995114;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=ICxQvEvaELWXWRTD7ERZkdpAUoDpnDms71ShTxZILq0=;
+  b=hTuPFvxP195bbJtFUQSoViwP6IZiLuL/kFzxeNHozojK0YK7pdIbUv4H
+   Zwk6z6OyH4rL1ePopBAn2MBAKklEs/WDfLtwXl2MKkforHVk7IQWAgzEN
+   zpRTh42Sa34+PdZLMsK+GOrOb73jT2g9FRuA0sV4Re2wzcYI2gVJF6+aV
+   6/NEwzRy+MQbiyVvXxEDrEx7tjUjX8tQpCQkFZzV6uT5282+wfMSjsRvn
+   eHmQ9MeH2FNebdsggL0d5G+laJgi/0flwEcKfqnntFGMcZpXloYlUNNrS
+   /cqS0v2FnHfRpLtvXE14GTHipYMt2DE28YjC0qMxoKabZG3DOraqWDmfB
+   A==;
+X-CSE-ConnectionGUID: B4XpsmnyR6mYYGE2esW5oQ==
+X-CSE-MsgGUID: 6D3hwoi7TH+LEvp+1LfMkg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11367"; a="46148327"
 X-IronPort-AV: E=Sophos;i="6.14,232,1736841600"; 
-   d="scan'208";a="42532476"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Mar 2025 10:36:59 -0800
-X-CSE-ConnectionGUID: G5E0+or9QruePWY+lmNb1g==
-X-CSE-MsgGUID: 71fqDc/bQBqdPuUluaYXpg==
+   d="scan'208";a="46148327"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Mar 2025 10:38:33 -0800
+X-CSE-ConnectionGUID: 93+1aL03Tc65t2WKh4ha8Q==
+X-CSE-MsgGUID: bQmRIgPcSO+ZMlrZjoGcUA==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
-   d="scan'208";a="150548552"
+X-IronPort-AV: E=Sophos;i="6.14,232,1736841600"; 
+   d="scan'208";a="119584462"
 Received: from spandruv-desk.jf.intel.com ([10.54.75.16])
-  by fmviesa001.fm.intel.com with ESMTP; 08 Mar 2025 10:36:58 -0800
+  by orviesa006.jf.intel.com with ESMTP; 08 Mar 2025 10:38:33 -0800
 From: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
 To: rui.zhang@intel.com,
 	daniel.lezcano@linaro.org,
 	rafael@kernel.org,
 	lukasz.luba@arm.com
 Cc: linux-kernel@vger.kernel.org,
+	linux-pm@vger.kernel.org,
 	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-Subject: [PATCH 3/3] thermal: int340x: processor_thermal: Platform temperature control documentation
-Date: Sat,  8 Mar 2025 10:36:55 -0800
-Message-ID: <20250308183655.118285-4-srinivas.pandruvada@linux.intel.com>
+Subject: [PATCH 0/3] Platform Temperature Control interface
+Date: Sat,  8 Mar 2025 10:38:09 -0800
+Message-ID: <20250308183812.118311-1-srinivas.pandruvada@linux.intel.com>
 X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20250308183655.118285-1-srinivas.pandruvada@linux.intel.com>
-References: <20250308183655.118285-1-srinivas.pandruvada@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-Update documentation of attributes for platform temperature control.
+Platform Temperature Control is a dynamic control loop implemented in
+hardware to manage the skin or any board temperature of a device. The
+reported skin or board temperature is controlled by comparing to a
+configured target temperature and adjusting the SoC (System on Chip)
+performance accordingly.
 
-Signed-off-by: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
----
- Documentation/driver-api/thermal/intel_dptf.rst | 15 +++++++++++++++
- 1 file changed, 15 insertions(+)
+This series supports optional controls from the user space.
 
-diff --git a/Documentation/driver-api/thermal/intel_dptf.rst b/Documentation/driver-api/thermal/intel_dptf.rst
-index 8fb8c5b2d685..e7e387d60b7e 100644
---- a/Documentation/driver-api/thermal/intel_dptf.rst
-+++ b/Documentation/driver-api/thermal/intel_dptf.rst
-@@ -191,6 +191,21 @@ ABI.
- 	User space can specify any one of the available workload type using
- 	this interface.
- 
-+:file:`/sys/bus/pci/devices/0000\:00\:04.0/platform_temperature_0_control`
-+:file:`/sys/bus/pci/devices/0000\:00\:04.0/platform_temperature_1_control`
-+:file:`/sys/bus/pci/devices/0000\:00\:04.0/platform_temperature_2_control`
-+
-+All these controls needs admin privilege to update.
-+
-+``enable`` (RW)
-+	1 for enable, 0 for disable. Shows the current enable status of
-+	platform temperature control feature. User space can enable/disable
-+	hardware controls.
-+
-+``temperature_target`` (RW)
-+	Update a new temperature target in milli degree celsius for hardware to
-+	use for the temperature control.
-+
- DPTF Processor thermal RFIM interface
- --------------------------------------------
- 
+Srinivas Pandruvada (3):
+  thermal: intel: int340x: Add platform temperature control interface
+  thermal: intel: int340x: Enable platform temperature control
+  thermal: int340x: processor_thermal: Platform temperature control
+    documentation
+
+ .../driver-api/thermal/intel_dptf.rst         |  15 ++
+ .../thermal/intel/int340x_thermal/Makefile    |   1 +
+ .../platform_temperature_control.c            | 181 ++++++++++++++++++
+ .../processor_thermal_device.c                |  15 +-
+ .../processor_thermal_device.h                |   3 +
+ .../processor_thermal_device_pci.c            |   6 +-
+ 6 files changed, 218 insertions(+), 3 deletions(-)
+ create mode 100644 drivers/thermal/intel/int340x_thermal/platform_temperature_control.c
+
 -- 
 2.48.1
 
