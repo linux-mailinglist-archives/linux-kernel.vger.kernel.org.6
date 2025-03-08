@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-552812-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-552811-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 25625A57EA1
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 22:38:17 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 62BAFA57EA0
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 22:38:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 800323AC3C8
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 21:37:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6743516E286
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 21:38:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55FEF21323B;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 023D3212B3C;
 	Sat,  8 Mar 2025 21:37:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b="ISGMtoKr"
-Received: from smtp.forwardemail.net (smtp.forwardemail.net [149.28.215.223])
+	dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b="yTYUSQYu"
+Received: from smtp.forwardemail.net (smtp.forwardemail.net [121.127.44.73])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C8ED207A10
-	for <linux-kernel@vger.kernel.org>; Sat,  8 Mar 2025 21:37:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=149.28.215.223
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D7E21DB951
+	for <linux-kernel@vger.kernel.org>; Sat,  8 Mar 2025 21:37:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=121.127.44.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741469863; cv=none; b=nqcP9bvVIOWW3Q/gj7KAB6nqjnOVbXbWxY3CKVEe8UP3f5SgXYYh9M+2CqoUV7HtmYMztm5+LKtNAvPUcKIrHiOvR9IuwH4oUklA4UnNBKKVdbrP91EQ0x6Kv1+F5yZxP8cwnJd+oaoEft8DCcMQQH8qvbtIOqtrvqnKAHY49Os=
+	t=1741469863; cv=none; b=Bhm9F7x2qV98Da4+yyTaBimO6Eds4tjRI094Nyuq8BZACHtxN/JjYZOd7O8aqDqsy4X7pIuwM6hRv5a+3dw60VsKODVkLSfk0lfF5Lv+CWY8t+MkCukUvWa/K9JM0tOQOfMuxruYW6xKTZlJu1Nc5cfe3x4JRILrKHFoZs2m9qU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1741469863; c=relaxed/simple;
-	bh=IPDNMr7X/K6yxoN9T0fftTf2PAkwAWDcRKsEdq7qczY=;
+	bh=ZNcLqMM/SppNIWCsDUuU2QqjwnokOxUw+1emVVIkXaU=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ckPC3b2sLwdo8Wn+d7HWLZRc4lqpYqoLiC/E9wsJTx7KruoXq2xsloxcGUSbOapcXhR5dCvchPeNL1tROdwGK0/SiU8t+HNLTHa5OkwbYi0rm/48ysK4B6YqTLxSSV+BJN9qF64ukhZgoIIE4S2MjW0DNyb6c0lYCLcvOCbdr0I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se; dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b=ISGMtoKr; arc=none smtp.client-ip=149.28.215.223
+	 MIME-Version; b=Db1h5TFsO4wy+4Yrir+fbhxG5NhYwxu/pvOWMsX8NZJ7sBx9KWoCE2/93OP+/ck4vxXeCmJSEseMvV4pkjfnmWolIblCVXlNm003JcmND+zkU4fb6J0a7fFfU2+dkloP7yh0ZEyyGLzXgd1N5nYValYuVKvN1ySSLSKI1qZ5h6s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se; dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b=yTYUSQYu; arc=none smtp.client-ip=121.127.44.73
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kwiboo.se;
  h=Content-Transfer-Encoding: MIME-Version: References: In-Reply-To:
  Message-ID: Date: Subject: Cc: To: From; q=dns/txt; s=fe-e1b5cab7be;
- t=1741469861; bh=I/ujcC5nq+Y57EaiIBIvtCu4qYPsR76utxdU3XJmP/Y=;
- b=ISGMtoKrcwxwTBpiyLgkxscTmJ2pNDq31IhZD3YzYid6UOCovtW5J7tmk2/ERYuqg/cqRPiRI
- rsNsdQXdlEdih+v8NbauzBQSY0AKv/j63KCqDDRcqa7UnE53NdEpldOjqbfCrevIUjDVlpIZD3D
- VMqVmtOYkeSH1Rm5jKp4sf7u7T1vWZpJsXZK33x7rwfGdW2BH2Y0XSXD3nmzZVBteD6ojS6jdeS
- kEzm+aKkGChzVThf/4zhq8dMxOI7zUHizAmr6EtAsmU34/Q+EBeHgtoT2tSc7N5MwanZ2GqNcZP
- Mr5jS3ME6cGAFcNw+rrwZyFaF6MM/24B3mQUfhilgqWA==
-X-Forward-Email-ID: 67ccb89cbfe70eb1bfc13b09
+ t=1741469859; bh=MKVPFM3sM6NsoiVf8w+etPqEHxvCwW6Ue1sPujMeiBA=;
+ b=yTYUSQYuNkZ6oKXFtTuo0AJ6Lp90tzAXjCHQfClqWN2sP1zkitFUvtzvXkXUKWubtoavZb7Pd
+ vLbsi2EbvNt6Jm3Mb/sNm7hW8QdiMeFUSlgXXAcNMUhMp3F4MVe+L+PtVItiGC7suQF62VcKEK+
+ HM7mDRpIQJI+aEWHKRct1+mkoxaLqNEDtZBFS+6tKsLHXLYGQL5ZHHX9MhTuhQxWofj0eZOK96Z
+ m1WwWVOTKquz9eDB395QpFxb5f1+K6denQ/Y92xImvsd+XKwfNKtYRYd6zxrHKX4+M8Hj4NErdV
+ nAcKDXrsX3ehjTnV7CRrQP+dZz9GhibTBdJzQHcAaAkg==
+X-Forward-Email-ID: 67ccb8a0bfe70eb1bfc13b1e
 X-Forward-Email-Sender: rfc822; jonas@kwiboo.se, smtp.forwardemail.net,
- 149.28.215.223
+ 121.127.44.73
 X-Forward-Email-Version: 0.4.40
 X-Forward-Email-Website: https://forwardemail.net
 X-Complaints-To: abuse@forwardemail.net
@@ -54,19 +54,21 @@ To: Heiko Stuebner <heiko@sntech.de>,
 	Eric Dumazet <edumazet@google.com>,
 	Jakub Kicinski <kuba@kernel.org>,
 	Paolo Abeni <pabeni@redhat.com>,
-	Rob Herring <robh@kernel.org>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>
+Cc: Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
 	Conor Dooley <conor+dt@kernel.org>,
-	David Wu <david.wu@rock-chips.com>
-Cc: netdev@vger.kernel.org,
+	netdev@vger.kernel.org,
 	linux-rockchip@lists.infradead.org,
 	devicetree@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
-	Jonas Karlman <jonas@kwiboo.se>
-Subject: [PATCH v2 1/3] dt-bindings: net: rockchip-dwmac: Require rockchip,grf and rockchip,php-grf
-Date: Sat,  8 Mar 2025 21:37:13 +0000
-Message-ID: <20250308213720.2517944-2-jonas@kwiboo.se>
+	Jonas Karlman <jonas@kwiboo.se>,
+	linux-stm32@st-md-mailman.stormreply.com
+Subject: [PATCH v2 2/3] net: stmmac: dwmac-rk: Validate GRF and peripheral GRF during probe
+Date: Sat,  8 Mar 2025 21:37:14 +0000
+Message-ID: <20250308213720.2517944-3-jonas@kwiboo.se>
 X-Mailer: git-send-email 2.48.1
 In-Reply-To: <20250308213720.2517944-1-jonas@kwiboo.se>
 References: <20250308213720.2517944-1-jonas@kwiboo.se>
@@ -79,82 +81,92 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
 All Rockchip GMAC variants typically write to GRF regs to control e.g.
-interface mode, speed and MAC rx/tx delay. Newer SoCs such as RK3562,
-RK3576 and RK3588 use a mix of GRF and peripheral GRF regs.
+interface mode, speed and MAC rx/tx delay. Newer SoCs such as RK3576 and
+RK3588 use a mix of GRF and peripheral GRF regs. These syscon regmaps is
+located with help of a rockchip,grf and rockchip,php-grf phandle.
 
-Prior to the commit b331b8ef86f0 ("dt-bindings: net: convert
-rockchip-dwmac to json-schema") the property rockchip,grf was listed
-under "Required properties". During the conversion this was lost and
-rockchip,grf has since then incorrectly been treated as optional and
-not as required.
+However, validating the rockchip,grf and rockchip,php-grf syscon regmap
+is deferred until e.g. interface mode or speed is configured, inside the
+individual SoC specific operations.
 
-Similarly, when rockchip,php-grf was added to the schema in the
-commit a2b77831427c ("dt-bindings: net: rockchip-dwmac: add rk3588 gmac
-compatible") it also incorrectly has been treated as optional for all
-GMAC variants, when it should have been required for RK3588, and later
-also for RK3576.
+Change to validate the rockchip,grf and rockchip,php-grf syscon regmap
+at probe time to simplify all SoC specific operations.
 
-Update this binding to require rockchip,grf and rockchip,php-grf to
-properly reflect that GRF (and peripheral GRF for RK3576/RK3588) is
-required to control part of GMAC.
-
-This should not introduce any breakage as all Rockchip GMAC nodes have
-been added together with a rockchip,grf phandle (and rockchip,php-grf
-where required) in their initial commit.
+This should not introduce any backward compatibility issues as all
+GMAC nodes have been added together with a rockchip,grf phandle (and
+rockchip,php-grf where required) in their initial commit.
 
 Signed-off-by: Jonas Karlman <jonas@kwiboo.se>
 ---
 Changes in v2:
-- Reword the commit message
-- Disable rockchip,php-grf for other GMACs than RK3576 and RK3588
+- Split removal of the IS_ERR() check in each SoC specific operation to
+  a separate patch
+- Add a php_grf_required flag to indicate when peripheral GRF is
+  required
+- Only lookup rockchip,php-grf phandle when php_grf_required is true
+- Use ERR_CAST() instead of ERR_PTR()
 
-The pending rockchip,rk3562-gmac compatible [1] must also be added to
-the list of compatible that require rockchip,php-grf.
+The pending addition of RK3562 support [1] must be adjusted to set
+.php_grf_required = true, or this will break RK3562 support.
 
-[1] https://lore.kernel.org/r/20250227110652.2342729-1-kever.yang@rock-chips.com/
+[1] https://lore.kernel.org/r/20250227110652.2342729-2-kever.yang@rock-chips.com/
 ---
- .../bindings/net/rockchip-dwmac.yaml          | 21 ++++++++++++++++---
- 1 file changed, 18 insertions(+), 3 deletions(-)
+ .../net/ethernet/stmicro/stmmac/dwmac-rk.c    | 21 +++++++++++++++++--
+ 1 file changed, 19 insertions(+), 2 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/net/rockchip-dwmac.yaml b/Documentation/devicetree/bindings/net/rockchip-dwmac.yaml
-index f8a576611d6c..8dd870f0214d 100644
---- a/Documentation/devicetree/bindings/net/rockchip-dwmac.yaml
-+++ b/Documentation/devicetree/bindings/net/rockchip-dwmac.yaml
-@@ -32,9 +32,6 @@ select:
-   required:
-     - compatible
+diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-rk.c b/drivers/net/ethernet/stmicro/stmmac/dwmac-rk.c
+index 003fa5cf42c3..5615f015c5fe 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/dwmac-rk.c
++++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-rk.c
+@@ -33,6 +33,7 @@ struct rk_gmac_ops {
+ 	void (*set_clock_selection)(struct rk_priv_data *bsp_priv, bool input,
+ 				    bool enable);
+ 	void (*integrated_phy_powerup)(struct rk_priv_data *bsp_priv);
++	bool php_grf_required;
+ 	bool regs_valid;
+ 	u32 regs[];
+ };
+@@ -1254,6 +1255,7 @@ static const struct rk_gmac_ops rk3576_ops = {
+ 	.set_rgmii_speed = rk3576_set_gmac_speed,
+ 	.set_rmii_speed = rk3576_set_gmac_speed,
+ 	.set_clock_selection = rk3576_set_clock_selection,
++	.php_grf_required = true,
+ 	.regs_valid = true,
+ 	.regs = {
+ 		0x2a220000, /* gmac0 */
+@@ -1401,6 +1403,7 @@ static const struct rk_gmac_ops rk3588_ops = {
+ 	.set_rgmii_speed = rk3588_set_gmac_speed,
+ 	.set_rmii_speed = rk3588_set_gmac_speed,
+ 	.set_clock_selection = rk3588_set_clock_selection,
++	.php_grf_required = true,
+ 	.regs_valid = true,
+ 	.regs = {
+ 		0xfe1b0000, /* gmac0 */
+@@ -1812,8 +1815,22 @@ static struct rk_priv_data *rk_gmac_setup(struct platform_device *pdev,
  
--allOf:
--  - $ref: snps,dwmac.yaml#
--
- properties:
-   compatible:
-     oneOf:
-@@ -114,6 +111,24 @@ required:
-   - compatible
-   - clocks
-   - clock-names
-+  - rockchip,grf
+ 	bsp_priv->grf = syscon_regmap_lookup_by_phandle(dev->of_node,
+ 							"rockchip,grf");
+-	bsp_priv->php_grf = syscon_regmap_lookup_by_phandle(dev->of_node,
+-							    "rockchip,php-grf");
++	if (IS_ERR(bsp_priv->grf)) {
++		dev_err_probe(dev, PTR_ERR(bsp_priv->grf),
++			      "failed to lookup rockchip,grf\n");
++		return ERR_CAST(bsp_priv->grf);
++	}
 +
-+allOf:
-+  - $ref: snps,dwmac.yaml#
-+
-+  - if:
-+      properties:
-+        compatible:
-+          contains:
-+            enum:
-+              - rockchip,rk3576-gmac
-+              - rockchip,rk3588-gmac
-+    then:
-+      required:
-+        - rockchip,php-grf
-+    else:
-+      properties:
-+        rockchip,php-grf: false
++	if (ops->php_grf_required) {
++		bsp_priv->php_grf =
++			syscon_regmap_lookup_by_phandle(dev->of_node,
++							"rockchip,php-grf");
++		if (IS_ERR(bsp_priv->php_grf)) {
++			dev_err_probe(dev, PTR_ERR(bsp_priv->php_grf),
++				      "failed to lookup rockchip,php-grf\n");
++			return ERR_CAST(bsp_priv->php_grf);
++		}
++	}
  
- unevaluatedProperties: false
- 
+ 	if (plat->phy_node) {
+ 		bsp_priv->integrated_phy = of_property_read_bool(plat->phy_node,
 -- 
 2.48.1
 
