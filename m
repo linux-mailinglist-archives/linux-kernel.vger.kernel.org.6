@@ -1,224 +1,182 @@
-Return-Path: <linux-kernel+bounces-552780-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-552781-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3B95FA57E08
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 21:18:35 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D9396A57E0B
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 21:23:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 22A3C3B2FD6
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 20:18:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0ED1A188BA85
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 20:24:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0766F1A3178;
-	Sat,  8 Mar 2025 20:18:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2578202C44;
+	Sat,  8 Mar 2025 20:23:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="Yjgkm1Xe"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SKzelMbM"
+Received: from mail-ua1-f47.google.com (mail-ua1-f47.google.com [209.85.222.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DD0218E1F;
-	Sat,  8 Mar 2025 20:18:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E8A91F94A;
+	Sat,  8 Mar 2025 20:23:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741465107; cv=none; b=hh8gdn5thUiLPXu3Ujo2AB1D4TiTSfux1kSV9sEouqx/ftHXd8GFT01PWCQOZkeIXw6teh343pcbPTWJJNWyfmCaEIycNZfPKzHATD28ovDtw9JrOFU35mUQd46N1jwJUDHDFwD5Dq1iAZhGqutdF/3QVFq61K+w97JvySX68gQ=
+	t=1741465428; cv=none; b=BbSqyaT+3Pt9tHBm/dsogmIAccwmRBROU9huA0phcSvwhUqaHaRM+Y7GpdzFN9VzoXnggMwXq2t7j5P08G+bC76caYEXUb1ekcxPnhN8cJuAZktpnbUva/FQXc1vFfcxVDng6f2nu2vUfDzGZZyogN6/M+Vx2REG/Xyw5YdOxtc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741465107; c=relaxed/simple;
-	bh=w+Ho0kdh+ZHla2AXe0wjcnltJycmfuibgP/P3gY/KKQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gvr4Uhfyz2vIVbGBvfdFQtT+h1kGihVmMATQyc8Ny84311sJV3v4Xn9LvsEyBcM9Yd8rwRDgyONsN8QDZuvElcQcPA52wkHeYd9tJhCbxaYPknxdluft1V6rMgCLFvtOHQv13iw6PXjqUO0vI3j7V1tER5dMYmz1sTCrk6xHAv0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=Yjgkm1Xe; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id AAC4740E0202;
-	Sat,  8 Mar 2025 20:18:22 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id MWd90MCkUWH6; Sat,  8 Mar 2025 20:18:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1741465098; bh=N+2HARJAq2hBsbEGiY6TGYAcPQtu9AmH1QNG+W8vS2Q=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Yjgkm1XeZYJIm5cYbD11x1cKYnG6M+KjsrT/MkA0waHYBrWaBznyS+rKbCENta5Qz
-	 9VdSk02kRIC88+bqDB8z4sJgJDX3UkcBRo7GBXxDIEfAb0cso4QLCWFyzMuflRQjy1
-	 o5uMcT2G+Dcd5G3cvvfyT8WWjPybrpP83RzTgx82YQ7M5MDWVfJmlq7ugd2Ft2eQH3
-	 JDFXJ4wRwQY6t/BQbMqHEnNBAZw7p4XqutCYwDkZ0lt6km3IKsgR6Vl7m5MqUntQQj
-	 NeLddCRgaiYsXLES2kn03SycAs7oKS70BB38qZHR85JDACg/Go4wxHQ7byybL/Ek2+
-	 atcZKW/ksHmPBzIloh7eWNDEL7wjDV3HYO5rqYB7JRWIHKQOQ0eNYgP1Ba8wuV/ncb
-	 RxOriCuRl2XV+JPqAH3FaUBOc032axdNmnI/CdFMKT0mEIUxp1b0zDMGXNsjDdLwt+
-	 z4a7XqP3p62Ck0hBKUCA62pgJCB7u+748rnE95b80zqLCxHnnGRggINJ92uzyRBOCk
-	 wFLRefgeThnVCxlleYe8u1hEOU2zS5htOUHyJbWrK00boOp86opv+TGufWINcFahC1
-	 0OMjctBYWFVU6XaCcntS7t4FECFyUwexnRtLpUP4mwWlToFtmAQFo2aHDD8yq2g94+
-	 50fX2/jzev4WklXk1GI6+Lkk=
-Received: from zn.tnic (pd95303ce.dip0.t-ipconnect.de [217.83.3.206])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id E2F9340E015D;
-	Sat,  8 Mar 2025 20:17:52 +0000 (UTC)
-Date: Sat, 8 Mar 2025 21:17:46 +0100
-From: Borislav Petkov <bp@alien8.de>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Naresh Kamboju <naresh.kamboju@linaro.org>, stable@vger.kernel.org,
-	patches@lists.linux.dev, linux-kernel@vger.kernel.org,
-	torvalds@linux-foundation.org, akpm@linux-foundation.org,
-	linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
-	lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
-	f.fainelli@gmail.com, sudipm.mukherjee@gmail.com,
-	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org,
-	hargar@microsoft.com, broonie@kernel.org,
-	Thomas Gleixner <tglx@linutronix.de>, nik.borisov@suse.com,
-	Arnd Bergmann <arnd@arndb.de>,
-	Dan Carpenter <dan.carpenter@linaro.org>,
-	Anders Roxell <anders.roxell@linaro.org>
-Subject: Re: [PATCH 6.6 000/147] 6.6.81-rc2 review
-Message-ID: <20250308201746.GKZ8yl6tHf4aNOEFgp@fat_crate.local>
-References: <20250306151412.957725234@linuxfoundation.org>
- <CA+G9fYtfmMThUC+erk6jVk8BN0jWJCw=FnKh68ypwhgv65OZ+w@mail.gmail.com>
- <20250306174442.GHZ8nfCiXOJj_fnQa7@fat_crate.local>
- <2025030633-deserve-postcard-9ed7@gregkh>
+	s=arc-20240116; t=1741465428; c=relaxed/simple;
+	bh=Q6nV3nKrSCi9BXAz+2u8J5JAul6UeQw2Mc95FgxICWs=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=iQ0G5o2EiZ1X1KB7c75CsIYAp3Z3ATt2I41e8IVjYmkwBKvfqHFW/XOhGpkpn+OvjeZHoIh/flg/+u1JsZyN8Nj0caim7dlAv6S9QV25f00cWVUSI0aHzqT9hLt2n8sxLVcskM8Dlk/q5h61luBPQZ4k6HhAe6Nd061fEy1s9XM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SKzelMbM; arc=none smtp.client-ip=209.85.222.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ua1-f47.google.com with SMTP id a1e0cc1a2514c-86714f41f5bso1244919241.3;
+        Sat, 08 Mar 2025 12:23:46 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741465425; x=1742070225; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=lDQFGNKi7NrYGCpzczTIm99TkghXnnRgAC/HEvbOf98=;
+        b=SKzelMbM3OriaDSf0opl+ZCPHMN5q8Wn5Xe9re8N5IQ9L8eMq/gzSqFawzc3XtnfM7
+         3TOF+G1ywvo4sU1hI9Jy4YPUfGXYBKPRBJCNYxxP7q8l0iYjWc3kwzucHCLP3J0ZErLs
+         j+2WjNdczUIDl4zQtZoyLzmGNe7qQGbYvX+KNVzQgBAsir4s9YORIknCUagxFOogat2q
+         YQClkudDgUVofpiEGwzS+c8+H9R5QflftWJ69kHxIviLiFB2ghvRcCnlHzWERPTHJ52u
+         xX9LYfZcRNdLcRFzVKjff2zYGBQU5fk/8TycqlRZrOP5T1KRLoBi9dOKTcnuYqVspSGE
+         HMmg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741465425; x=1742070225;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=lDQFGNKi7NrYGCpzczTIm99TkghXnnRgAC/HEvbOf98=;
+        b=Xtx7sN2zDS6xjguOGjT+kyDjRGo5GiaAIiDkfOsI2TIk7ngItCMpnNVlhXP7+Pt/4i
+         6Jo60vI6qbu85FvCU/MhLyh++dcJ0Vlx2daT4hsk+jrm1a2mpY9xEg0YdcBy/rmGOoDz
+         SqZq1qiYH4hQ45+geXpshWpuBa1jZ43HKqybK4NDibRugUonYO8WjSLZthwHtU8hpIUq
+         DDJlrftt/UN3LMrrEFYMSMNSHIirf9+UamVD+QOrkbqI69/iCSZsINwp+sQnNGe2UDZJ
+         z6OquuNFWyL67i+o/g/bY10nDOcVygw3pJDSrAnOLmF/dmTBJCT4gRUllJI41xDW5qbV
+         wvBA==
+X-Forwarded-Encrypted: i=1; AJvYcCVbRbM24OT7H7kNcVcrV8vd8GPuCAxDZvjYcdirJ5oaaOxp2LM84uiACHXkIDNSdNDXO/2x0KSKSGwzHQ==@vger.kernel.org, AJvYcCWFeImLUZW+ZoXgtfnfJ5jza5AaoiD1oTBXm9MeVJ5GCZ1pGTxKB7QC4E7NS3NQSKNTJ4ekUffqi+qj/6igF3sL05pz6A==@vger.kernel.org, AJvYcCWssRIiKvx2OxPWJ1ZTU+ynix/zh7T93lE5qPDKe94MMSU/6itu7mbVX2a+zorM/Plbp8VGPY2Bv8qTWOZB@vger.kernel.org
+X-Gm-Message-State: AOJu0YyiojbKOW8D9sWmJZiksD9v8/xC/soPbo6/6SWqZvu+u7+FAk2I
+	OTjv5E7BVWMFPwRwm0RBQFSXt/eibbfXl3cdCT8+jPuKaVUAxcBq
+X-Gm-Gg: ASbGnctsDVSeP/hTgsWusmAS7LmGxvfjVAE5J4LJWA9IvF6ICkEhAVNHbyLqS6OIl3P
+	nfbhqPmv9pzMQTtvPs/3n5tv3DWySTMSK4pUixSXTViF3nTGHmQfwYvitCuNodx9jaaOmRAN6mY
+	oLfuwL3lCNqTlqESwfpGDvyTxnRcmJqsJJiSp58RoKpH3erJPn9PtTJVxaEWRGtxulxCisiSFys
+	C1W7J0hh8MiaNO1aTktbFhddxSQUIZ1KtY9WiDvivnd0MnzC6rAGx2t7jbAsi6KHOVajDLFq0v1
+	7lGBpvgFbF7jBGdh40Q0/vUVc6u93vMV+LXJhv/zal1raQ==
+X-Google-Smtp-Source: AGHT+IHSOMQVHgz4mDmX4zUz+H9UhEPWeA+l17Ai1uROYsCtqmkvHcpK0j2VgmZc5nkc4j/CIC47xw==
+X-Received: by 2002:a05:6102:15a0:b0:4af:fca2:1b7 with SMTP id ada2fe7eead31-4c30a6038camr5354717137.14.1741465425039;
+        Sat, 08 Mar 2025 12:23:45 -0800 (PST)
+Received: from [192.168.100.70] ([2800:bf0:82:3d2:9e61:1a62:1a8c:3e62])
+        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-4c2fb452a47sm1281061137.8.2025.03.08.12.23.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 08 Mar 2025 12:23:44 -0800 (PST)
+From: Kurt Borja <kuurtb@gmail.com>
+Subject: [PATCH v4 00/12] platform/x86: alienware-wmi-wmax: HWMON support +
+ DebugFS + Improvements
+Date: Sat, 08 Mar 2025 15:23:12 -0500
+Message-Id: <20250308-hwm-v4-0-afa1342828f5@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="0Km15duY5v01DIOH"
-Content-Disposition: inline
-In-Reply-To: <2025030633-deserve-postcard-9ed7@gregkh>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIADCnzGcC/1WOQQ6CMBBFr0K6dkiZ0jS48h6GRYGBNlpqWkAN4
+ e4WNupiFi/5//1ZWaRgKbJztrJAi43WjwnKU8Zao8eBwHaJGXKUXHAJ5umgV01XFRXHRiqWko9
+ AvX0dlmuduA/ewWQC6W8XUWI6znMUUkgo4DbPYWoug9P2nrfe7SZj4+TD+3hnEbvvf3kRwEFUk
+ pQuSq4If+r1tm0fMofM09AAAAA=
+X-Change-ID: 20250305-hwm-f7bd91902b57
+To: =?utf-8?q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>, 
+ Armin Wolf <W_Armin@gmx.de>
+Cc: Kurt Borja <kuurtb@gmail.com>, Hans de Goede <hdegoede@redhat.com>, 
+ platform-driver-x86@vger.kernel.org, Dell.Client.Kernel@dell.com, 
+ linux-kernel@vger.kernel.org, Guenter Roeck <linux@roeck-us.net>, 
+ Jean Delvare <jdelvare@suse.com>, linux-hwmon@vger.kernel.org, 
+ Bagas Sanjaya <bagasdotme@gmail.com>
+X-Mailer: b4 0.14.2
 
+Hi all,
 
---0Km15duY5v01DIOH
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+This set mainly adds hwmon and manual fan control support (patches 7-8)
+to the alienware-wmi driver, after some improvements.
 
-On Thu, Mar 06, 2025 at 07:01:31PM +0100, Greg Kroah-Hartman wrote:
-> A backported version would be great. If you want to just send me a
-> single patch, or a whole new bundle, anything will work, whatever is
-> easier for you.
+I have a question for anyone that may know how to solve it. In version 2
+of these series the kernel test robot found a build error
 
-Thanks, here's a tarball attached.
+	https://lore.kernel.org/platform-driver-x86/202503051819.bQ9P70Og-lkp@intel.com/
 
-Now build- and boot-tested on my last 32-bit laptop.
+I think this happened because
 
-Thx.
+	CONFIG_ALIENWARE_WMI=y
 
+while
+
+	CONFIG_ACPI_PLATFORM_PROFILE=m
+	CONFIG_HWMON=m
+
+How should I Kconfig to avoid this?
+
+Thank you for your feedback :)
+
+---
+Changes in v4:
+
+[03/12]
+  - Dropped awcc_profile_id_to_pprof because it's no longer used for
+    pwm*_enable attributes
+
+[07/12]
+  - Dropped pwm*_enable visibility
+  - Dropped fan_data->related_temps
+  - Allocate fan_data->auto_channels_temp statically
+  - Allocate priv->temp_sensors statically
+  - Determine and allocate fan label while probing
+
+[08/12]
+  - Dropped pwm*_enable attributes because it's incompatible with
+    current ABI
+  - Renamed pwm*_boost attributes to fan*_boost
+  - Added dev_err logs to awcc_hwmon_suspend/resume
+
+[11/12]
+  - Introduced laptop documentation
+
+[12/12]
+  - Introduced ABI documentation
+
+Link to v3: https://lore.kernel.org/r/20250305-hwm-v3-0-395e7a1407e2@gmail.com
+
+---
+Kurt Borja (12):
+      platform/x86: alienware-wmi-wmax: Rename thermal related symbols
+      platform/x86: alienware-wmi-wmax: Refactor is_awcc_thermal_mode()
+      platform/x86: alienware-wmi-wmax: Improve internal AWCC API
+      platform/x86: alienware-wmi-wmax: Modify supported_thermal_profiles[]
+      platform/x86: alienware-wmi-wmax: Improve platform profile probe
+      platform/x86: alienware-wmi-wmax: Add support for the "custom" thermal profile
+      platform/x86: alienware-wmi-wmax: Add HWMON support
+      platform/x86: alienware-wmi-wmax: Add support for manual fan control
+      platform/x86: alienware-wmi-wmax: Add a DebugFS interface
+      Documentation: wmi: Improve and update alienware-wmi documentation
+      Documentation: admin-guide: laptops: Add documentation for alienware-wmi
+      Documentation: ABI: Add sysfs platform and debugfs ABI documentation for alienware-wmi
+
+ Documentation/ABI/testing/debugfs-alienware-wmi    |   44 +
+ .../ABI/testing/sysfs-platform-alienware-wmi       |   14 +
+ .../admin-guide/laptops/alienware-wmi.rst          |  128 +++
+ Documentation/admin-guide/laptops/index.rst        |    1 +
+ Documentation/wmi/devices/alienware-wmi.rst        |  383 +++-----
+ MAINTAINERS                                        |    3 +
+ drivers/platform/x86/dell/Kconfig                  |    1 +
+ drivers/platform/x86/dell/alienware-wmi-wmax.c     | 1023 +++++++++++++++++---
+ 8 files changed, 1187 insertions(+), 410 deletions(-)
+---
+base-commit: e57eabe2fb044950e6ffdfe01803895043dec0b7
+change-id: 20250305-hwm-f7bd91902b57
+
+Best regards,
 -- 
-Regards/Gruss,
-    Boris.
+ ~ Kurt
 
-https://people.kernel.org/tglx/notes-about-netiquette
-
---0Km15duY5v01DIOH
-Content-Type: application/octet-stream
-Content-Disposition: attachment; filename="microcode-i386-6.6.tar.bz2"
-Content-Transfer-Encoding: base64
-
-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
-vuA=
-
---0Km15duY5v01DIOH--
 
