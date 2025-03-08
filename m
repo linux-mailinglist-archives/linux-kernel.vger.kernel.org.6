@@ -1,57 +1,57 @@
-Return-Path: <linux-kernel+bounces-552432-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-552433-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 40A61A579DA
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 12:04:29 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 69D75A579DB
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 12:04:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6EF153B404F
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 11:04:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B46F77A7B75
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 11:03:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 184BE1B4257;
-	Sat,  8 Mar 2025 11:04:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AD291B85E4;
+	Sat,  8 Mar 2025 11:04:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=proton.me header.i=@proton.me header.b="ldOnfA2Q"
-Received: from mail-40131.protonmail.ch (mail-40131.protonmail.ch [185.70.40.131])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=proton.me header.i=@proton.me header.b="KWk/b8Es"
+Received: from mail-10631.protonmail.ch (mail-10631.protonmail.ch [79.135.106.31])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A82C1B21B8;
-	Sat,  8 Mar 2025 11:04:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.40.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C6471B3957;
+	Sat,  8 Mar 2025 11:04:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.135.106.31
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741431853; cv=none; b=bqalr1CUt2k7xjWYW+KF1cqEf7A2MrDYI3KbhOIkl9CcP0e9ARBqxn8X7Ppw1DaYwztZiwbtYzILgIGTHlMmd0Oo8cqNOsE5/mORg7Sa/NYfumGzgWESjpDGW13LEJIvBBNQ5DA5gmK1isCUP1c3ovkzsWMpcpOyxO7bDK0hNkA=
+	t=1741431855; cv=none; b=JNDsX6+0uh5YDdr/oAc+37EObIENTcwb/U3m+FRGg+XZY9xD2XK7Gzsf7C69X/X6wt6BHWU0plrPtXYaqcex7pt2TkxGDFB/gpOknmp1K640nPZqf7KtbvpzYpTkvoNpDXc/Q0/FIpRZNs/5FvBVUxiHcca+M4jjgRIzbUQuRtw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741431853; c=relaxed/simple;
-	bh=p8PhLZ+7mERZU+6NlqRNMcHPwKXHBR+0h5C+DqSjmYw=;
+	s=arc-20240116; t=1741431855; c=relaxed/simple;
+	bh=5BZko5JUORaab5UbXEdENJ4M03Tm3RagAj3w5hXz/Ek=;
 	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=gEgaSmlnSehk3vYR5qvdnCA9ec30T9Jgj2PtxGYEo+CuwvSkL97+jDflPL2uano3HGVxcuFLkwtHyIAZPGxt02EuxJpQ0B5jeQlwllI7y2CmJ8oQ+28Iv9om7m6TJL9hWDZlnzfUS8bta6iThci6LV+jCHsHQUVVAonWbmo+09s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=ldOnfA2Q; arc=none smtp.client-ip=185.70.40.131
+	 MIME-Version:Content-Type; b=OA9rcrW6/aybw5/5Pew07JrZuceG2mnrvToWNEb+MnnsqT5+O1F5ubCl9ZHqF34NGuMv8LVmu75fqG8ikApjqx31V2CtTFw39CcQ+yTqC7+9B1dsoXJl6k0ZGGBWad+g31RpoZapuZqTaHGoyLkVyS4lSGzUz5SbbjGojxdOVK0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=KWk/b8Es; arc=none smtp.client-ip=79.135.106.31
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
-	s=protonmail; t=1741431849; x=1741691049;
-	bh=wrc7dAMq4/lYVNenkoKdjjCIkKvIznXuj/iO5UKDIr4=;
+	s=protonmail; t=1741431844; x=1741691044;
+	bh=wcqVwX8hUetdj+PMF8SdJJPFLlDHKqaITBUxAO9j3yk=;
 	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
 	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
 	 Message-ID:BIMI-Selector:List-Unsubscribe:List-Unsubscribe-Post;
-	b=ldOnfA2QK22kNSlrCDlxlaqQYvpx4uq1mQNJvjnQ2yw+XgtsQT8x9DgyjtmTyw7Ct
-	 ohbGQdlM6pFQhEU9MQKwhOFvTQ0OUd5T0bOvL0ItR8uH+qS6lHgNqQ9hEGwrnSYZlr
-	 dzXbjdvrf5DQqgy+7gFQpjleL057fET2JTUpFyGgFzrykMw9wqBl1DZbnUls2lAF/s
-	 3GVRCJ3hsFFbyLrxwBZBbjZP9iF2rKfWzqFyLBNF471si/ccZSd8WzGxspjJnpJeZs
-	 ViPTvq9qbTKqgTB4N39b2iFnXwjI7hxNVGJHPCltn5Woky8LSCk54mX0dOii21WbOx
-	 9ywnJvdD4rZ4Q==
-Date: Sat, 08 Mar 2025 11:04:07 +0000
+	b=KWk/b8Es9fthS2emqeSIez6eAP+d1FPceDA0EPyi7vBdx1cGvYu6OigzyiLjx4JSX
+	 xJhFxbFUoH2xpQuTzMnV3ob7jsPWbglK6g79/rkd+IRDHPlP+Ytn7UuyXROZwn+JSJ
+	 D7PtpQtE1sGxZCUmnk9ojtmbnTQEYrzysmxL8Tz5kiAynVQUOnqbgVaNsJmYDtNBxW
+	 QIwDmQEM+ay4wHcEWt+3F9AyI5OwpS7EtCSMAZ4FOKuVWIP+Tf37AwsbP6FJtAxrG8
+	 GBSlfHDVIU4jRl0iAG3d92BVbfSzaTL/P5MfaD8GNsvP5LAWGR9kRW2XMTfMkQDtk1
+	 bRIs0Dx3UDYRw==
+Date: Sat, 08 Mar 2025 11:04:00 +0000
 To: Benno Lossin <benno.lossin@proton.me>, Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>
 From: Benno Lossin <benno.lossin@proton.me>
 Cc: Fiona Behrens <me@kloenk.dev>, linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org
-Subject: [PATCH v2 03/22] rust: add extensions to the pin-init crate and move relevant documentation there
-Message-ID: <20250308110339.2997091-4-benno.lossin@proton.me>
+Subject: [PATCH v2 02/22] rust: move pin-init API into its own directory
+Message-ID: <20250308110339.2997091-3-benno.lossin@proton.me>
 In-Reply-To: <20250308110339.2997091-1-benno.lossin@proton.me>
 References: <20250308110339.2997091-1-benno.lossin@proton.me>
 Feedback-ID: 71780778:user:proton
-X-Pm-Message-ID: 63fbfc773db8d6a8b7f0d450616ff290069b4d19
+X-Pm-Message-ID: 4949be7146a55d9b4830610cc2387e0c7f108db8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -62,246 +62,740 @@ Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
 
 In preparation of splitting off the pin-init crate from the kernel
-crate, move all kernel-specific documentation from pin-init back into
-the kernel crate.
+crate, move all pin-init API code (including proc-macros) into
+`rust/pin-init`.
 
-Also include an example from the user-space version [1] adapted to the
-kernel.
+Moved modules have their import path adjusted via the `#[path =3D "..."]`
+attribute. This allows the files to still be imported in the kernel
+crate even though the files are in different directories.
 
-The new `init.rs` file will also be populated by kernel-specific
-extensions to the pin-init crate by the next commits.
+Code that is moved out of files (but the file itself stays where it is)
+is imported via the `include!` macro. This also allows the code to be
+moved while still being part of the kernel crate.
 
-Link: https://github.com/Rust-for-Linux/pin-init/blob/c1417c64c71229f0fd444=
-d75e88f33e3c547c829/src/lib.rs#L161 [1]
+Note that this commit moves the generics parsing code out of the GPL-2.0
+file `rust/macros/helpers.rs` into the Apache-2.0 OR MIT file
+`rust/pin_init/internal/src/helpers.rs`. I am the sole author of that
+code and it already is available with that license at [1].
+The same is true for the entry-points of the proc-macros `pin_data`,
+`pinned_drop` and `derive_zeroable` in `rust/macros/lib.rs` that are
+moved to `rust/pin_data/internal/src/lib.rs`. Although there are some
+smaller patches that fix the doctests.
+
+Link: https://github.com/Rust-for-Linux/pinned-init [1]
 Signed-off-by: Benno Lossin <benno.lossin@proton.me>
+Reviewed-by: Andreas Hindborg <a.hindborg@kernel.org>
 Reviewed-by: Fiona Behrens <me@kloenk.dev>
 Tested-by: Andreas Hindborg <a.hindborg@kernel.org>
 ---
- rust/kernel/init.rs      | 135 +++++++++++++++++++++++++++++++++++++++
- rust/kernel/lib.rs       |   3 +
- rust/pin-init/src/lib.rs |  14 ----
- 3 files changed, 138 insertions(+), 14 deletions(-)
- create mode 100644 rust/kernel/init.rs
+ rust/kernel/lib.rs                            |   1 +
+ rust/macros/helpers.rs                        | 146 +----------------
+ rust/macros/lib.rs                            | 124 +--------------
+ rust/pin-init/internal/src/helpers.rs         | 147 ++++++++++++++++++
+ rust/pin-init/internal/src/lib.rs             | 122 +++++++++++++++
+ .../internal/src}/pin_data.rs                 |   0
+ .../internal/src}/pinned_drop.rs              |   0
+ .../internal/src}/zeroable.rs                 |   0
+ .../init =3D> pin-init/src}/__internal.rs       |   0
+ rust/{kernel/init.rs =3D> pin-init/src/lib.rs}  |   0
+ rust/{kernel/init =3D> pin-init/src}/macros.rs  |   0
+ 11 files changed, 275 insertions(+), 265 deletions(-)
+ create mode 100644 rust/pin-init/internal/src/helpers.rs
+ create mode 100644 rust/pin-init/internal/src/lib.rs
+ rename rust/{macros =3D> pin-init/internal/src}/pin_data.rs (100%)
+ rename rust/{macros =3D> pin-init/internal/src}/pinned_drop.rs (100%)
+ rename rust/{macros =3D> pin-init/internal/src}/zeroable.rs (100%)
+ rename rust/{kernel/init =3D> pin-init/src}/__internal.rs (100%)
+ rename rust/{kernel/init.rs =3D> pin-init/src/lib.rs} (100%)
+ rename rust/{kernel/init =3D> pin-init/src}/macros.rs (100%)
 
-diff --git a/rust/kernel/init.rs b/rust/kernel/init.rs
-new file mode 100644
-index 000000000000..322dfd9ec347
---- /dev/null
-+++ b/rust/kernel/init.rs
-@@ -0,0 +1,135 @@
-+// SPDX-License-Identifier: GPL-2.0
-+
-+//! Extensions to the [`pin-init`] crate.
-+//!
-+//! Most `struct`s from the [`sync`] module need to be pinned, because the=
-y contain self-referential
-+//! `struct`s from C. [Pinning][pinning] is Rust's way of ensuring data do=
-es not move.
-+//!
-+//! The [`pin-init`] crate is the way such structs are initialized on the =
-Rust side. Please refer
-+//! to its documentation to better understand how to use it. Additionally,=
- there are many examples
-+//! throughout the kernel, such as the types from the [`sync`] module. And=
- the ones presented
-+//! below.
-+//!
-+//! [`sync`]: crate::sync
-+//! [pinning]: https://doc.rust-lang.org/std/pin/index.html
-+//! [`pin-init`]: https://rust.docs.kernel.org/pin_init/
-+//!
-+//! # [`Opaque<T>`]
-+//!
-+//! For the special case where initializing a field is a single FFI-functi=
-on call that cannot fail,
-+//! there exist the helper function [`Opaque::ffi_init`]. This function in=
-itialize a single
-+//! [`Opaque<T>`] field by just delegating to the supplied closure. You ca=
-n use these in
-+//! combination with [`pin_init!`].
-+//!
-+//! [`Opaque<T>`]: crate::types::Opaque
-+//! [`Opaque::ffi_init`]: crate::types::Opaque::ffi_init
-+//! [`pin_init!`]: crate::pin_init
-+//!
-+//! # Examples
-+//!
-+//! ## General Examples
-+//!
-+//! ```rust,ignore
-+//! # #![allow(clippy::disallowed_names)]
-+//! use kernel::types::Opaque;
-+//! use pin_init::pin_init_from_closure;
-+//!
-+//! // assume we have some `raw_foo` type in C:
-+//! #[repr(C)]
-+//! struct RawFoo([u8; 16]);
-+//! extern {
-+//!     fn init_foo(_: *mut RawFoo);
-+//! }
-+//!
-+//! #[pin_data]
-+//! struct Foo {
-+//!     #[pin]
-+//!     raw: Opaque<RawFoo>,
-+//! }
-+//!
-+//! impl Foo {
-+//!     fn setup(self: Pin<&mut Self>) {
-+//!         pr_info!("Setting up foo");
-+//!     }
-+//! }
-+//!
-+//! let foo =3D pin_init!(Foo {
-+//!     raw <- unsafe {
-+//!         Opaque::ffi_init(|s| {
-+//!             // note that this cannot fail.
-+//!             init_foo(s);
-+//!         })
-+//!     },
-+//! }).pin_chain(|foo| {
-+//!     foo.setup();
-+//!     Ok(())
-+//! });
-+//! ```
-+//!
-+//! ```rust,ignore
-+//! # #![allow(unreachable_pub, clippy::disallowed_names)]
-+//! use kernel::{prelude::*, types::Opaque};
-+//! use core::{ptr::addr_of_mut, marker::PhantomPinned, pin::Pin};
-+//! # mod bindings {
-+//! #     #![allow(non_camel_case_types)]
-+//! #     pub struct foo;
-+//! #     pub unsafe fn init_foo(_ptr: *mut foo) {}
-+//! #     pub unsafe fn destroy_foo(_ptr: *mut foo) {}
-+//! #     pub unsafe fn enable_foo(_ptr: *mut foo, _flags: u32) -> i32 { 0=
- }
-+//! # }
-+//! # // `Error::from_errno` is `pub(crate)` in the `kernel` crate, thus p=
-rovide a workaround.
-+//! # trait FromErrno {
-+//! #     fn from_errno(errno: core::ffi::c_int) -> Error {
-+//! #         // Dummy error that can be constructed outside the `kernel` =
-crate.
-+//! #         Error::from(core::fmt::Error)
-+//! #     }
-+//! # }
-+//! # impl FromErrno for Error {}
-+//! /// # Invariants
-+//! ///
-+//! /// `foo` is always initialized
-+//! #[pin_data(PinnedDrop)]
-+//! pub struct RawFoo {
-+//!     #[pin]
-+//!     foo: Opaque<bindings::foo>,
-+//!     #[pin]
-+//!     _p: PhantomPinned,
-+//! }
-+//!
-+//! impl RawFoo {
-+//!     pub fn new(flags: u32) -> impl PinInit<Self, Error> {
-+//!         // SAFETY:
-+//!         // - when the closure returns `Ok(())`, then it has successful=
-ly initialized and
-+//!         //   enabled `foo`,
-+//!         // - when it returns `Err(e)`, then it has cleaned up before
-+//!         unsafe {
-+//!             pin_init::pin_init_from_closure(move |slot: *mut Self| {
-+//!                 // `slot` contains uninit memory, avoid creating a ref=
-erence.
-+//!                 let foo =3D addr_of_mut!((*slot).foo);
-+//!
-+//!                 // Initialize the `foo`
-+//!                 bindings::init_foo(Opaque::raw_get(foo));
-+//!
-+//!                 // Try to enable it.
-+//!                 let err =3D bindings::enable_foo(Opaque::raw_get(foo),=
- flags);
-+//!                 if err !=3D 0 {
-+//!                     // Enabling has failed, first clean up the foo and=
- then return the error.
-+//!                     bindings::destroy_foo(Opaque::raw_get(foo));
-+//!                     return Err(Error::from_errno(err));
-+//!                 }
-+//!
-+//!                 // All fields of `RawFoo` have been initialized, since=
- `_p` is a ZST.
-+//!                 Ok(())
-+//!             })
-+//!         }
-+//!     }
-+//! }
-+//!
-+//! #[pinned_drop]
-+//! impl PinnedDrop for RawFoo {
-+//!     fn drop(self: Pin<&mut Self>) {
-+//!         // SAFETY: Since `foo` is initialized, destroying is safe.
-+//!         unsafe { bindings::destroy_foo(self.foo.get()) };
-+//!     }
-+//! }
-+//! ```
 diff --git a/rust/kernel/lib.rs b/rust/kernel/lib.rs
-index c1b781371ba3..e3933f3dfc0b 100644
+index 398242f92a96..c1b781371ba3 100644
 --- a/rust/kernel/lib.rs
 +++ b/rust/kernel/lib.rs
-@@ -52,6 +52,9 @@
+@@ -50,6 +50,7 @@
+ #[cfg(CONFIG_RUST_FW_LOADER_ABSTRACTIONS)]
+ pub mod firmware;
  pub mod fs;
- #[path =3D "../pin-init/src/lib.rs"]
++#[path =3D "../pin-init/src/lib.rs"]
  pub mod init;
-+// momentarily use the name `init_ext` and set the path manually
-+#[path =3D "init.rs"]
-+pub mod init_ext;
  pub mod io;
  pub mod ioctl;
- pub mod jump_label;
-diff --git a/rust/pin-init/src/lib.rs b/rust/pin-init/src/lib.rs
-index aa8df0595585..0307a08ccee9 100644
---- a/rust/pin-init/src/lib.rs
-+++ b/rust/pin-init/src/lib.rs
-@@ -5,9 +5,6 @@
- //! It also allows in-place initialization of big `struct`s that would oth=
-erwise produce a stack
- //! overflow.
- //!
--//! Most `struct`s from the [`sync`] module need to be pinned, because the=
-y contain self-referential
--//! `struct`s from C. [Pinning][pinning] is Rust's way of ensuring data do=
-es not move.
--//!
- //! # Overview
- //!
- //! To initialize a `struct` with an in-place constructor you will need tw=
-o things:
-@@ -188,15 +185,6 @@
- //! }
- //! ```
- //!
--//! For the special case where initializing a field is a single FFI-functi=
-on call that cannot fail,
--//! there exist the helper function [`Opaque::ffi_init`]. This function in=
-itialize a single
--//! [`Opaque`] field by just delegating to the supplied closure. You can u=
-se these in combination
--//! with [`pin_init!`].
--//!
--//! For more information on how to use [`pin_init_from_closure()`], take a=
- look at the uses inside
--//! the `kernel` crate. The [`sync`] module is a good starting point.
--//!
--//! [`sync`]: kernel::sync
- //! [pinning]: https://doc.rust-lang.org/std/pin/index.html
- //! [structurally pinned fields]:
- //!     https://doc.rust-lang.org/std/pin/index.html#pinning-is-structural=
--for-field
-@@ -205,8 +193,6 @@
- //! [`impl PinInit<Foo>`]: PinInit
- //! [`impl PinInit<T, E>`]: PinInit
- //! [`impl Init<T, E>`]: Init
--//! [`Opaque`]: kernel::types::Opaque
--//! [`Opaque::ffi_init`]: kernel::types::Opaque::ffi_init
- //! [`pin_data`]: ::macros::pin_data
- //! [`pin_init!`]: crate::pin_init!
+diff --git a/rust/macros/helpers.rs b/rust/macros/helpers.rs
+index 563dcd2b7ace..8e07703fcc16 100644
+--- a/rust/macros/helpers.rs
++++ b/rust/macros/helpers.rs
+@@ -70,148 +70,4 @@ pub(crate) fn expect_end(it: &mut token_stream::IntoIte=
+r) {
+     }
+ }
 =20
+-/// Parsed generics.
+-///
+-/// See the field documentation for an explanation what each of the fields=
+ represents.
+-///
+-/// # Examples
+-///
+-/// ```rust,ignore
+-/// # let input =3D todo!();
+-/// let (Generics { decl_generics, impl_generics, ty_generics }, rest) =3D=
+ parse_generics(input);
+-/// quote! {
+-///     struct Foo<$($decl_generics)*> {
+-///         // ...
+-///     }
+-///
+-///     impl<$impl_generics> Foo<$ty_generics> {
+-///         fn foo() {
+-///             // ...
+-///         }
+-///     }
+-/// }
+-/// ```
+-pub(crate) struct Generics {
+-    /// The generics with bounds and default values (e.g. `T: Clone, const=
+ N: usize =3D 0`).
+-    ///
+-    /// Use this on type definitions e.g. `struct Foo<$decl_generics> ...`=
+ (or `union`/`enum`).
+-    pub(crate) decl_generics: Vec<TokenTree>,
+-    /// The generics with bounds (e.g. `T: Clone, const N: usize`).
+-    ///
+-    /// Use this on `impl` blocks e.g. `impl<$impl_generics> Trait for ...=
+`.
+-    pub(crate) impl_generics: Vec<TokenTree>,
+-    /// The generics without bounds and without default values (e.g. `T, N=
+`).
+-    ///
+-    /// Use this when you use the type that is declared with these generic=
+s e.g.
+-    /// `Foo<$ty_generics>`.
+-    pub(crate) ty_generics: Vec<TokenTree>,
+-}
+-
+-/// Parses the given `TokenStream` into `Generics` and the rest.
+-///
+-/// The generics are not present in the rest, but a where clause might rem=
+ain.
+-pub(crate) fn parse_generics(input: TokenStream) -> (Generics, Vec<TokenTr=
+ee>) {
+-    // The generics with bounds and default values.
+-    let mut decl_generics =3D vec![];
+-    // `impl_generics`, the declared generics with their bounds.
+-    let mut impl_generics =3D vec![];
+-    // Only the names of the generics, without any bounds.
+-    let mut ty_generics =3D vec![];
+-    // Tokens not related to the generics e.g. the `where` token and defin=
+ition.
+-    let mut rest =3D vec![];
+-    // The current level of `<`.
+-    let mut nesting =3D 0;
+-    let mut toks =3D input.into_iter();
+-    // If we are at the beginning of a generic parameter.
+-    let mut at_start =3D true;
+-    let mut skip_until_comma =3D false;
+-    while let Some(tt) =3D toks.next() {
+-        if nesting =3D=3D 1 && matches!(&tt, TokenTree::Punct(p) if p.as_c=
+har() =3D=3D '>') {
+-            // Found the end of the generics.
+-            break;
+-        } else if nesting >=3D 1 {
+-            decl_generics.push(tt.clone());
+-        }
+-        match tt.clone() {
+-            TokenTree::Punct(p) if p.as_char() =3D=3D '<' =3D> {
+-                if nesting >=3D 1 && !skip_until_comma {
+-                    // This is inside of the generics and part of some bou=
+nd.
+-                    impl_generics.push(tt);
+-                }
+-                nesting +=3D 1;
+-            }
+-            TokenTree::Punct(p) if p.as_char() =3D=3D '>' =3D> {
+-                // This is a parsing error, so we just end it here.
+-                if nesting =3D=3D 0 {
+-                    break;
+-                } else {
+-                    nesting -=3D 1;
+-                    if nesting >=3D 1 && !skip_until_comma {
+-                        // We are still inside of the generics and part of=
+ some bound.
+-                        impl_generics.push(tt);
+-                    }
+-                }
+-            }
+-            TokenTree::Punct(p) if skip_until_comma && p.as_char() =3D=3D =
+',' =3D> {
+-                if nesting =3D=3D 1 {
+-                    impl_generics.push(tt.clone());
+-                    impl_generics.push(tt);
+-                    skip_until_comma =3D false;
+-                }
+-            }
+-            _ if !skip_until_comma =3D> {
+-                match nesting {
+-                    // If we haven't entered the generics yet, we still wa=
+nt to keep these tokens.
+-                    0 =3D> rest.push(tt),
+-                    1 =3D> {
+-                        // Here depending on the token, it might be a gene=
+ric variable name.
+-                        match tt.clone() {
+-                            TokenTree::Ident(i) if at_start && i.to_string=
+() =3D=3D "const" =3D> {
+-                                let Some(name) =3D toks.next() else {
+-                                    // Parsing error.
+-                                    break;
+-                                };
+-                                impl_generics.push(tt);
+-                                impl_generics.push(name.clone());
+-                                ty_generics.push(name.clone());
+-                                decl_generics.push(name);
+-                                at_start =3D false;
+-                            }
+-                            TokenTree::Ident(_) if at_start =3D> {
+-                                impl_generics.push(tt.clone());
+-                                ty_generics.push(tt);
+-                                at_start =3D false;
+-                            }
+-                            TokenTree::Punct(p) if p.as_char() =3D=3D ',' =
+=3D> {
+-                                impl_generics.push(tt.clone());
+-                                ty_generics.push(tt);
+-                                at_start =3D true;
+-                            }
+-                            // Lifetimes begin with `'`.
+-                            TokenTree::Punct(p) if p.as_char() =3D=3D '\''=
+ && at_start =3D> {
+-                                impl_generics.push(tt.clone());
+-                                ty_generics.push(tt);
+-                            }
+-                            // Generics can have default values, we skip t=
+hese.
+-                            TokenTree::Punct(p) if p.as_char() =3D=3D '=3D=
+' =3D> {
+-                                skip_until_comma =3D true;
+-                            }
+-                            _ =3D> impl_generics.push(tt),
+-                        }
+-                    }
+-                    _ =3D> impl_generics.push(tt),
+-                }
+-            }
+-            _ =3D> {}
+-        }
+-    }
+-    rest.extend(toks);
+-    (
+-        Generics {
+-            impl_generics,
+-            decl_generics,
+-            ty_generics,
+-        },
+-        rest,
+-    )
+-}
++include!("../pin-init/internal/src/helpers.rs");
+diff --git a/rust/macros/lib.rs b/rust/macros/lib.rs
+index 60a0226bad42..7ff82c82ce0c 100644
+--- a/rust/macros/lib.rs
++++ b/rust/macros/lib.rs
+@@ -12,9 +12,12 @@
+ mod helpers;
+ mod module;
+ mod paste;
++#[path =3D "../pin-init/internal/src/pin_data.rs"]
+ mod pin_data;
++#[path =3D "../pin-init/internal/src/pinned_drop.rs"]
+ mod pinned_drop;
+ mod vtable;
++#[path =3D "../pin-init/internal/src/zeroable.rs"]
+ mod zeroable;
+=20
+ use proc_macro::TokenStream;
+@@ -232,106 +235,6 @@ pub fn concat_idents(ts: TokenStream) -> TokenStream =
+{
+     concat_idents::concat_idents(ts)
+ }
+=20
+-/// Used to specify the pinning information of the fields of a struct.
+-///
+-/// This is somewhat similar in purpose as
+-/// [pin-project-lite](https://crates.io/crates/pin-project-lite).
+-/// Place this macro on a struct definition and then `#[pin]` in front of =
+the attributes of each
+-/// field you want to structurally pin.
+-///
+-/// This macro enables the use of the [`pin_init!`] macro. When pin-initia=
+lizing a `struct`,
+-/// then `#[pin]` directs the type of initializer that is required.
+-///
+-/// If your `struct` implements `Drop`, then you need to add `PinnedDrop` =
+as arguments to this
+-/// macro, and change your `Drop` implementation to `PinnedDrop` annotated=
+ with
+-/// `#[`[`macro@pinned_drop`]`]`, since dropping pinned values requires ex=
+tra care.
+-///
+-/// # Examples
+-///
+-/// ```ignore
+-/// # #![feature(lint_reasons)]
+-/// # use kernel::prelude::*;
+-/// # use std::{sync::Mutex, process::Command};
+-/// # use kernel::macros::pin_data;
+-/// #[pin_data]
+-/// struct DriverData {
+-///     #[pin]
+-///     queue: Mutex<KVec<Command>>,
+-///     buf: KBox<[u8; 1024 * 1024]>,
+-/// }
+-/// ```
+-///
+-/// ```ignore
+-/// # #![feature(lint_reasons)]
+-/// # use kernel::prelude::*;
+-/// # use std::{sync::Mutex, process::Command};
+-/// # use core::pin::Pin;
+-/// # pub struct Info;
+-/// # mod bindings {
+-/// #     pub unsafe fn destroy_info(_ptr: *mut super::Info) {}
+-/// # }
+-/// use kernel::macros::{pin_data, pinned_drop};
+-///
+-/// #[pin_data(PinnedDrop)]
+-/// struct DriverData {
+-///     #[pin]
+-///     queue: Mutex<KVec<Command>>,
+-///     buf: KBox<[u8; 1024 * 1024]>,
+-///     raw_info: *mut Info,
+-/// }
+-///
+-/// #[pinned_drop]
+-/// impl PinnedDrop for DriverData {
+-///     fn drop(self: Pin<&mut Self>) {
+-///         unsafe { bindings::destroy_info(self.raw_info) };
+-///     }
+-/// }
+-/// # fn main() {}
+-/// ```
+-///
+-/// [`pin_init!`]: ../kernel/macro.pin_init.html
+-//  ^ cannot use direct link, since `kernel` is not a dependency of `macro=
+s`.
+-#[proc_macro_attribute]
+-pub fn pin_data(inner: TokenStream, item: TokenStream) -> TokenStream {
+-    pin_data::pin_data(inner, item)
+-}
+-
+-/// Used to implement `PinnedDrop` safely.
+-///
+-/// Only works on structs that are annotated via `#[`[`macro@pin_data`]`]`=
+.
+-///
+-/// # Examples
+-///
+-/// ```ignore
+-/// # #![feature(lint_reasons)]
+-/// # use kernel::prelude::*;
+-/// # use macros::{pin_data, pinned_drop};
+-/// # use std::{sync::Mutex, process::Command};
+-/// # use core::pin::Pin;
+-/// # mod bindings {
+-/// #     pub struct Info;
+-/// #     pub unsafe fn destroy_info(_ptr: *mut Info) {}
+-/// # }
+-/// #[pin_data(PinnedDrop)]
+-/// struct DriverData {
+-///     #[pin]
+-///     queue: Mutex<KVec<Command>>,
+-///     buf: KBox<[u8; 1024 * 1024]>,
+-///     raw_info: *mut bindings::Info,
+-/// }
+-///
+-/// #[pinned_drop]
+-/// impl PinnedDrop for DriverData {
+-///     fn drop(self: Pin<&mut Self>) {
+-///         unsafe { bindings::destroy_info(self.raw_info) };
+-///     }
+-/// }
+-/// ```
+-#[proc_macro_attribute]
+-pub fn pinned_drop(args: TokenStream, input: TokenStream) -> TokenStream {
+-    pinned_drop::pinned_drop(args, input)
+-}
+-
+ /// Paste identifiers together.
+ ///
+ /// Within the `paste!` macro, identifiers inside `[<` and `>]` are concat=
+enated together to form a
+@@ -472,23 +375,4 @@ pub fn paste(input: TokenStream) -> TokenStream {
+     tokens.into_iter().collect()
+ }
+=20
+-/// Derives the [`Zeroable`] trait for the given struct.
+-///
+-/// This can only be used for structs where every field implements the [`Z=
+eroable`] trait.
+-///
+-/// # Examples
+-///
+-/// ```ignore
+-/// use kernel::macros::Zeroable;
+-///
+-/// #[derive(Zeroable)]
+-/// pub struct DriverData {
+-///     id: i64,
+-///     buf_ptr: *mut u8,
+-///     len: usize,
+-/// }
+-/// ```
+-#[proc_macro_derive(Zeroable)]
+-pub fn derive_zeroable(input: TokenStream) -> TokenStream {
+-    zeroable::derive(input)
+-}
++include!("../pin-init/internal/src/lib.rs");
+diff --git a/rust/pin-init/internal/src/helpers.rs b/rust/pin-init/internal=
+/src/helpers.rs
+new file mode 100644
+index 000000000000..2f4fc75c014e
+--- /dev/null
++++ b/rust/pin-init/internal/src/helpers.rs
+@@ -0,0 +1,147 @@
++// SPDX-License-Identifier: Apache-2.0 OR MIT
++
++/// Parsed generics.
++///
++/// See the field documentation for an explanation what each of the fields=
+ represents.
++///
++/// # Examples
++///
++/// ```rust,ignore
++/// # let input =3D todo!();
++/// let (Generics { decl_generics, impl_generics, ty_generics }, rest) =3D=
+ parse_generics(input);
++/// quote! {
++///     struct Foo<$($decl_generics)*> {
++///         // ...
++///     }
++///
++///     impl<$impl_generics> Foo<$ty_generics> {
++///         fn foo() {
++///             // ...
++///         }
++///     }
++/// }
++/// ```
++pub(crate) struct Generics {
++    /// The generics with bounds and default values (e.g. `T: Clone, const=
+ N: usize =3D 0`).
++    ///
++    /// Use this on type definitions e.g. `struct Foo<$decl_generics> ...`=
+ (or `union`/`enum`).
++    pub(crate) decl_generics: Vec<TokenTree>,
++    /// The generics with bounds (e.g. `T: Clone, const N: usize`).
++    ///
++    /// Use this on `impl` blocks e.g. `impl<$impl_generics> Trait for ...=
+`.
++    pub(crate) impl_generics: Vec<TokenTree>,
++    /// The generics without bounds and without default values (e.g. `T, N=
+`).
++    ///
++    /// Use this when you use the type that is declared with these generic=
+s e.g.
++    /// `Foo<$ty_generics>`.
++    pub(crate) ty_generics: Vec<TokenTree>,
++}
++
++/// Parses the given `TokenStream` into `Generics` and the rest.
++///
++/// The generics are not present in the rest, but a where clause might rem=
+ain.
++pub(crate) fn parse_generics(input: TokenStream) -> (Generics, Vec<TokenTr=
+ee>) {
++    // The generics with bounds and default values.
++    let mut decl_generics =3D vec![];
++    // `impl_generics`, the declared generics with their bounds.
++    let mut impl_generics =3D vec![];
++    // Only the names of the generics, without any bounds.
++    let mut ty_generics =3D vec![];
++    // Tokens not related to the generics e.g. the `where` token and defin=
+ition.
++    let mut rest =3D vec![];
++    // The current level of `<`.
++    let mut nesting =3D 0;
++    let mut toks =3D input.into_iter();
++    // If we are at the beginning of a generic parameter.
++    let mut at_start =3D true;
++    let mut skip_until_comma =3D false;
++    while let Some(tt) =3D toks.next() {
++        if nesting =3D=3D 1 && matches!(&tt, TokenTree::Punct(p) if p.as_c=
+har() =3D=3D '>') {
++            // Found the end of the generics.
++            break;
++        } else if nesting >=3D 1 {
++            decl_generics.push(tt.clone());
++        }
++        match tt.clone() {
++            TokenTree::Punct(p) if p.as_char() =3D=3D '<' =3D> {
++                if nesting >=3D 1 && !skip_until_comma {
++                    // This is inside of the generics and part of some bou=
+nd.
++                    impl_generics.push(tt);
++                }
++                nesting +=3D 1;
++            }
++            TokenTree::Punct(p) if p.as_char() =3D=3D '>' =3D> {
++                // This is a parsing error, so we just end it here.
++                if nesting =3D=3D 0 {
++                    break;
++                } else {
++                    nesting -=3D 1;
++                    if nesting >=3D 1 && !skip_until_comma {
++                        // We are still inside of the generics and part of=
+ some bound.
++                        impl_generics.push(tt);
++                    }
++                }
++            }
++            TokenTree::Punct(p) if skip_until_comma && p.as_char() =3D=3D =
+',' =3D> {
++                if nesting =3D=3D 1 {
++                    impl_generics.push(tt.clone());
++                    impl_generics.push(tt);
++                    skip_until_comma =3D false;
++                }
++            }
++            _ if !skip_until_comma =3D> {
++                match nesting {
++                    // If we haven't entered the generics yet, we still wa=
+nt to keep these tokens.
++                    0 =3D> rest.push(tt),
++                    1 =3D> {
++                        // Here depending on the token, it might be a gene=
+ric variable name.
++                        match tt.clone() {
++                            TokenTree::Ident(i) if at_start && i.to_string=
+() =3D=3D "const" =3D> {
++                                let Some(name) =3D toks.next() else {
++                                    // Parsing error.
++                                    break;
++                                };
++                                impl_generics.push(tt);
++                                impl_generics.push(name.clone());
++                                ty_generics.push(name.clone());
++                                decl_generics.push(name);
++                                at_start =3D false;
++                            }
++                            TokenTree::Ident(_) if at_start =3D> {
++                                impl_generics.push(tt.clone());
++                                ty_generics.push(tt);
++                                at_start =3D false;
++                            }
++                            TokenTree::Punct(p) if p.as_char() =3D=3D ',' =
+=3D> {
++                                impl_generics.push(tt.clone());
++                                ty_generics.push(tt);
++                                at_start =3D true;
++                            }
++                            // Lifetimes begin with `'`.
++                            TokenTree::Punct(p) if p.as_char() =3D=3D '\''=
+ && at_start =3D> {
++                                impl_generics.push(tt.clone());
++                                ty_generics.push(tt);
++                            }
++                            // Generics can have default values, we skip t=
+hese.
++                            TokenTree::Punct(p) if p.as_char() =3D=3D '=3D=
+' =3D> {
++                                skip_until_comma =3D true;
++                            }
++                            _ =3D> impl_generics.push(tt),
++                        }
++                    }
++                    _ =3D> impl_generics.push(tt),
++                }
++            }
++            _ =3D> {}
++        }
++    }
++    rest.extend(toks);
++    (
++        Generics {
++            impl_generics,
++            decl_generics,
++            ty_generics,
++        },
++        rest,
++    )
++}
+diff --git a/rust/pin-init/internal/src/lib.rs b/rust/pin-init/internal/src=
+/lib.rs
+new file mode 100644
+index 000000000000..0a2761cc793c
+--- /dev/null
++++ b/rust/pin-init/internal/src/lib.rs
+@@ -0,0 +1,122 @@
++// SPDX-License-Identifier: Apache-2.0 OR MIT
++
++/// Used to specify the pinning information of the fields of a struct.
++///
++/// This is somewhat similar in purpose as
++/// [pin-project-lite](https://crates.io/crates/pin-project-lite).
++/// Place this macro on a struct definition and then `#[pin]` in front of =
+the attributes of each
++/// field you want to structurally pin.
++///
++/// This macro enables the use of the [`pin_init!`] macro. When pin-initia=
+lizing a `struct`,
++/// then `#[pin]` directs the type of initializer that is required.
++///
++/// If your `struct` implements `Drop`, then you need to add `PinnedDrop` =
+as arguments to this
++/// macro, and change your `Drop` implementation to `PinnedDrop` annotated=
+ with
++/// `#[`[`macro@pinned_drop`]`]`, since dropping pinned values requires ex=
+tra care.
++///
++/// # Examples
++///
++/// ```ignore
++/// # #![feature(lint_reasons)]
++/// # use kernel::prelude::*;
++/// # use std::{sync::Mutex, process::Command};
++/// # use kernel::macros::pin_data;
++/// #[pin_data]
++/// struct DriverData {
++///     #[pin]
++///     queue: Mutex<KVec<Command>>,
++///     buf: KBox<[u8; 1024 * 1024]>,
++/// }
++/// ```
++///
++/// ```ignore
++/// # #![feature(lint_reasons)]
++/// # use kernel::prelude::*;
++/// # use std::{sync::Mutex, process::Command};
++/// # use core::pin::Pin;
++/// # pub struct Info;
++/// # mod bindings {
++/// #     pub unsafe fn destroy_info(_ptr: *mut super::Info) {}
++/// # }
++/// use kernel::macros::{pin_data, pinned_drop};
++///
++/// #[pin_data(PinnedDrop)]
++/// struct DriverData {
++///     #[pin]
++///     queue: Mutex<KVec<Command>>,
++///     buf: KBox<[u8; 1024 * 1024]>,
++///     raw_info: *mut Info,
++/// }
++///
++/// #[pinned_drop]
++/// impl PinnedDrop for DriverData {
++///     fn drop(self: Pin<&mut Self>) {
++///         unsafe { bindings::destroy_info(self.raw_info) };
++///     }
++/// }
++/// # fn main() {}
++/// ```
++///
++/// [`pin_init!`]: ../kernel/macro.pin_init.html
++//  ^ cannot use direct link, since `kernel` is not a dependency of `macro=
+s`.
++#[proc_macro_attribute]
++pub fn pin_data(inner: TokenStream, item: TokenStream) -> TokenStream {
++    pin_data::pin_data(inner, item)
++}
++
++/// Used to implement `PinnedDrop` safely.
++///
++/// Only works on structs that are annotated via `#[`[`macro@pin_data`]`]`=
+.
++///
++/// # Examples
++///
++/// ```ignore
++/// # #![feature(lint_reasons)]
++/// # use kernel::prelude::*;
++/// # use macros::{pin_data, pinned_drop};
++/// # use std::{sync::Mutex, process::Command};
++/// # use core::pin::Pin;
++/// # mod bindings {
++/// #     pub struct Info;
++/// #     pub unsafe fn destroy_info(_ptr: *mut Info) {}
++/// # }
++/// #[pin_data(PinnedDrop)]
++/// struct DriverData {
++///     #[pin]
++///     queue: Mutex<KVec<Command>>,
++///     buf: KBox<[u8; 1024 * 1024]>,
++///     raw_info: *mut bindings::Info,
++/// }
++///
++/// #[pinned_drop]
++/// impl PinnedDrop for DriverData {
++///     fn drop(self: Pin<&mut Self>) {
++///         unsafe { bindings::destroy_info(self.raw_info) };
++///     }
++/// }
++/// ```
++#[proc_macro_attribute]
++pub fn pinned_drop(args: TokenStream, input: TokenStream) -> TokenStream {
++    pinned_drop::pinned_drop(args, input)
++}
++
++/// Derives the [`Zeroable`] trait for the given struct.
++///
++/// This can only be used for structs where every field implements the [`Z=
+eroable`] trait.
++///
++/// # Examples
++///
++/// ```ignore
++/// use kernel::macros::Zeroable;
++///
++/// #[derive(Zeroable)]
++/// pub struct DriverData {
++///     id: i64,
++///     buf_ptr: *mut u8,
++///     len: usize,
++/// }
++/// ```
++#[proc_macro_derive(Zeroable)]
++pub fn derive_zeroable(input: TokenStream) -> TokenStream {
++    zeroable::derive(input)
++}
+diff --git a/rust/macros/pin_data.rs b/rust/pin-init/internal/src/pin_data.=
+rs
+similarity index 100%
+rename from rust/macros/pin_data.rs
+rename to rust/pin-init/internal/src/pin_data.rs
+diff --git a/rust/macros/pinned_drop.rs b/rust/pin-init/internal/src/pinned=
+_drop.rs
+similarity index 100%
+rename from rust/macros/pinned_drop.rs
+rename to rust/pin-init/internal/src/pinned_drop.rs
+diff --git a/rust/macros/zeroable.rs b/rust/pin-init/internal/src/zeroable.=
+rs
+similarity index 100%
+rename from rust/macros/zeroable.rs
+rename to rust/pin-init/internal/src/zeroable.rs
+diff --git a/rust/kernel/init/__internal.rs b/rust/pin-init/src/__internal.=
+rs
+similarity index 100%
+rename from rust/kernel/init/__internal.rs
+rename to rust/pin-init/src/__internal.rs
+diff --git a/rust/kernel/init.rs b/rust/pin-init/src/lib.rs
+similarity index 100%
+rename from rust/kernel/init.rs
+rename to rust/pin-init/src/lib.rs
+diff --git a/rust/kernel/init/macros.rs b/rust/pin-init/src/macros.rs
+similarity index 100%
+rename from rust/kernel/init/macros.rs
+rename to rust/pin-init/src/macros.rs
 --=20
 2.47.2
 
