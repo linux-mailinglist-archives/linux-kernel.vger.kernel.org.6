@@ -1,122 +1,164 @@
-Return-Path: <linux-kernel+bounces-552282-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-552283-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 12938A577E1
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 04:33:17 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 42A18A577E4
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 04:36:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8E6FA3B6414
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 03:33:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8338A174C8F
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 03:36:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 826A8155A4D;
-	Sat,  8 Mar 2025 03:33:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D62D7158553;
+	Sat,  8 Mar 2025 03:36:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="inyxdyag"
-Received: from mail-pj1-f48.google.com (mail-pj1-f48.google.com [209.85.216.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="H2gEW4Qe"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9ECB38F66;
-	Sat,  8 Mar 2025 03:33:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CE23839F4;
+	Sat,  8 Mar 2025 03:36:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741404789; cv=none; b=MGWoxmlMT8rPbNd+izUB66QJ3AWQJhdYn/uuJxezv6l6RIU0e3DuND1p775HG3x+cfXXbsGgEe3bhoChfSSvTzsHn/rVMBm16xX5c0328FrxEI1XAwRhomcdUsOg8e0+YuF+8CRxZUBvnfGeg2hq4LVqN+wvPUPgWEjyU7cZDLk=
+	t=1741404995; cv=none; b=eMx5GlZ0xkC1qYGFN74SG+iPQe9KPHkUjJfz2reIzgqpRYpr6LyoHHM0Jhkw1qDmiCmEHKNs9XmfiKyUTANRpA5QjNhdPnSn+KCKyz4R7OFAkV0GSllISuYvipQFw2rlxQ/SNF2IUwPeLIikKNxUuaTYZ5QnR+fyDDBecD0HnGA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741404789; c=relaxed/simple;
-	bh=J3GOrkHlYe1f1Ad/hqfBmcN6lLCGyERRLaUQ6yh6PBU=;
+	s=arc-20240116; t=1741404995; c=relaxed/simple;
+	bh=wLEqT0IC9gJ1SaLEGeSi2Lgq48p3Sz8pFixWAnU6Gj4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RkkVuSokSjyyoJcuq4uVu7HzIgtjU/K1KZmfiqAuigiUoZNUp2tEDICGi1abFFphaxmVttIDnmQFOGTw6SKobJzpRzWxO+EFQhAJZNUgDbJ5rxf5CdHx3yh+/atNvR7p0NTFwBpaWfH431i4NAwOSzepa0wqPIE9kHOoidT6s94=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=inyxdyag; arc=none smtp.client-ip=209.85.216.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f48.google.com with SMTP id 98e67ed59e1d1-2ff6a98c638so4877270a91.0;
-        Fri, 07 Mar 2025 19:33:07 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741404787; x=1742009587; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=UvgrHzEVnpT8/G3HmHL6s2DUgeJhb4IX0T9xLTixKK0=;
-        b=inyxdyaglmnaUGTgkJPVxFICV3m+PZ5TUcKLW+so57VklDWFcAGHURt/yd99lMlolr
-         QHcLwDhrW1WFGrfr2XLKkdMmuoUNxagZE7RRSuDB8HxHl8cyRfnuj16DHsZvPv4I14NE
-         gkINESDz9Nw7620Za6BJHQju8a9iphambpXA/DujONrEcr+ApeJCVsfMXFt38Pgg1FCW
-         9KR90kdYTjpxWG+FthSohTt1aAS49thzXBBBklM+YH7yGyscEKc1yqJAciRVJH+xV/1j
-         B81I/sI6GoTX4ddHZnKxiCjHLCEXWQ7ifIuVzzMlyNY4zO6IksSuXXj6KtyrqBJp6sZN
-         M3Ww==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741404787; x=1742009587;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=UvgrHzEVnpT8/G3HmHL6s2DUgeJhb4IX0T9xLTixKK0=;
-        b=L3BnQhzhqKtkwtV0CKfycymbj6GwtO8vzMSFyEtdTeVbbIz5ktiuKvfO28/H/RC0AR
-         4RnxKJaJ4/dfO74p8SlVNgaNdfJZQTkzlSxeT5Cyqw9pgTWVNQ//vRg2y4nMHQCOOwWx
-         3qlUgoKxAz1VK4duIrzEqyk/1gUe0kr0VFmFTdLb86C6aJhCzYnIhvTER3d8nJcHCbWZ
-         5cXeLvQb/1yc5KjDuZQ5r2Z3nkgSxcXZm//z6lmbeSrroGHTZaX195fkZ74UNLqyqKUD
-         nWviSFC7Xpy6Q9WwH7wrnu1r9uphzQr31a+RuFkdn5NYg0487bSsQ+Cdrx32zqRrlMsu
-         B8ng==
-X-Forwarded-Encrypted: i=1; AJvYcCWloRRLDVUp8oMS7e23iU4qxKKbj2H21WZU97zRylf3pEKqByrUFdVsRmLk8ePYIGh54EvQfLq8@vger.kernel.org, AJvYcCWvYIeO3eV6nSJHDqL87d8vKoVZ7aicLiitbNOBydaKdxScTZUGfS6GjvE9PK6rAgEPbnlozUyC2voneOg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxeSExuceZYmh4jy37ul+tT0F1ahy40gwYHbT/dO5Xhj3zRgF4c
-	DTPyN5yNtUEJJG6j8u22qAcyyO6PoNv577ugdJCHhGCnnNnhHLk=
-X-Gm-Gg: ASbGnct70mqTDqIuyzFRw4CyHdbj5H/mqDxSO29T5V4G0I6xM4sl+Tzv0/+nkyOL5Nv
-	yU1jZiZvpMRpRX1M+/Bs/iPOvDCRmf9BoFIz3vVhoXowjCc/Pz8xCP4qAo2GBrvMoZqpA8Dg28f
-	GqLLc/FdSRf2w5jyOxGhOAjj1qIR0Sx1MM/6w/O1D/Xa+1EHgwH5vNR5ikE+EN5+vlryWGyLjFS
-	yVy4xRryUgdgIDytDA2GE5eFjw9x9rAvHYemsEXjyBTQ0lE3cfcq8X+KqP6A423qEE0xfRQd1vH
-	etu3hLC8Q479MS0JGWCP5Mx0Q4DTmB2f28Gc5ooBQtov
-X-Google-Smtp-Source: AGHT+IHPRXLJpetfEwSMQ7twdjphQ1M6P53SRY3QIktwMixPny5Lf92aBO0J+9e1YgZJgGzLPwmEoA==
-X-Received: by 2002:a17:90b:390c:b0:2f9:cf97:56a6 with SMTP id 98e67ed59e1d1-2ff7ce63ffbmr10417495a91.14.1741404786689;
-        Fri, 07 Mar 2025 19:33:06 -0800 (PST)
-Received: from localhost ([2601:646:9e00:f56e:2844:3d8f:bf3e:12cc])
-        by smtp.gmail.com with UTF8SMTPSA id d9443c01a7336-224109e97d0sm38247115ad.79.2025.03.07.19.33.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 07 Mar 2025 19:33:06 -0800 (PST)
-Date: Fri, 7 Mar 2025 19:33:05 -0800
-From: Stanislav Fomichev <stfomichev@gmail.com>
-To: Jakub Kicinski <kuba@kernel.org>
-Cc: Stanislav Fomichev <sdf@fomichev.me>, netdev@vger.kernel.org,
-	davem@davemloft.net, edumazet@google.com, pabeni@redhat.com,
-	linux-kernel@vger.kernel.org, horms@kernel.org,
-	donald.hunter@gmail.com, michael.chan@broadcom.com,
-	pavan.chebbi@broadcom.com, andrew+netdev@lunn.ch,
-	jdamato@fastly.com, xuanzhuo@linux.alibaba.com,
-	almasrymina@google.com, asml.silence@gmail.com, dw@davidwei.uk
-Subject: Re: [PATCH net-next v1 0/4] net: remove rtnl_lock from the callers
- of queue APIs
-Message-ID: <Z8u6cSJGzUGRFjkX@mini-arch>
-References: <20250307155725.219009-1-sdf@fomichev.me>
- <20250307192234.2f8be6b9@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=DsfwfunSxMxvV3cgkTeX0HCMXhA5IRDhBbRWNGd8XrmN1bJNWLX+ok4TSDF8lfbcqOCwfDKHpaFAfgF44whSCuNOtApVriU6DIJzA+v7UtFOFogiFOHt5IdbuAvQ/YM9k/o1pqLuCEuESxiXFS/dI4Z7ATwYwLs2Rq76GqV0WaE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=H2gEW4Qe; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 824E2C4CED1;
+	Sat,  8 Mar 2025 03:36:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741404994;
+	bh=wLEqT0IC9gJ1SaLEGeSi2Lgq48p3Sz8pFixWAnU6Gj4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=H2gEW4QeX38oiBqCP1qkGaua8cdgDgvAnVgZrCCL8gdBNvYqvK+u0Ru4MnaP0B3nU
+	 nG4UJK+irKKH3fr8JqFNeIfavwXOXHEez7xR8gfQ2EywxIyKmiGDI9p69+auzLW308
+	 94lClOOtc+06LFdXpuCtGEGl86LiIxTYNAXZ721T8t71QSU29lB1h/AS0TizRnpXdr
+	 PvWAU4zREeLaQjzNf9VI2Ovfghe70nqWP570vRzDTHGwJhHJEJpJUsy5zOPmKB0e5i
+	 zaTefESg7PDwrAk2G3CMdKBDPFAM6BP6njtX4mI9st8gARwjmqHIPxuxxNiT1m5KOt
+	 hhKJZymnSu8LA==
+Date: Fri, 7 Mar 2025 19:36:31 -0800
+From: Kees Cook <kees@kernel.org>
+To: Peter Collingbourne <pcc@google.com>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Andy Shevchenko <andy@kernel.org>,
+	Andrey Konovalov <andreyknvl@gmail.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-hardening@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, stable@vger.kernel.org
+Subject: Re: [PATCH] string: Disable read_word_at_a_time() optimizations if
+ kernel MTE is enabled
+Message-ID: <202503071927.1A795821A@keescook>
+References: <20250308023314.3981455-1-pcc@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250307192234.2f8be6b9@kernel.org>
+In-Reply-To: <20250308023314.3981455-1-pcc@google.com>
 
-On 03/07, Jakub Kicinski wrote:
-> On Fri,  7 Mar 2025 07:57:21 -0800 Stanislav Fomichev wrote:
-> > All drivers that use queue management APIs already depend on the netdev
-> > lock. Ultimately, we want to have most of the paths that work with
-> > specific netdev to be rtnl_lock-free (ethtool mostly in particular).
-> > Queue API currently has a much smaller API surface, so start with
-> > rtnl_lock from it:
-> > 
-> > - add mutex to each dmabuf binding (to replace rtnl_lock)
-> > - protect global net_devmem_dmabuf_bindings with a new (global) lock
-> > - move netdev lock management to the callers of netdev_rx_queue_restart
-> >   and drop rtnl_lock
-> 
-> One more note, looks like this silently conflicts with my:
-> https://lore.kernel.org/all/20250307183006.2312761-1-kuba@kernel.org/
-> 
-> You need to add:
-> 
-> #include <net/netdev_lock.h>
-> 
-> to net/core/netdev_rx_queue.c, otherwise the series together break 
-> the build.
+On Fri, Mar 07, 2025 at 06:33:13PM -0800, Peter Collingbourne wrote:
+> The optimized strscpy() and dentry_string_cmp() routines will read 8
+> unaligned bytes at a time via the function read_word_at_a_time(), but
+> this is incompatible with MTE which will fault on a partially invalid
+> read. The attributes on read_word_at_a_time() that disable KASAN are
+> invisible to the CPU so they have no effect on MTE. Let's fix the
+> bug for now by disabling the optimizations if the kernel is built
+> with HW tag-based KASAN and consider improvements for followup changes.
 
-Noted, thanks!
+Why is faulting on a partially invalid read a problem? It's still
+invalid, so ... it should fault, yes? What am I missing?
+
+> 
+> Signed-off-by: Peter Collingbourne <pcc@google.com>
+> Link: https://linux-review.googlesource.com/id/If4b22e43b5a4ca49726b4bf98ada827fdf755548
+> Fixes: 94ab5b61ee16 ("kasan, arm64: enable CONFIG_KASAN_HW_TAGS")
+> Cc: stable@vger.kernel.org
+> ---
+>  fs/dcache.c  | 2 +-
+>  lib/string.c | 3 ++-
+>  2 files changed, 3 insertions(+), 2 deletions(-)
+
+Why are DCACHE_WORD_ACCESS and HAVE_EFFICIENT_UNALIGNED_ACCESS separate
+things? I can see at least one place where it's directly tied:
+
+arch/arm/Kconfig:58:    select DCACHE_WORD_ACCESS if HAVE_EFFICIENT_UNALIGNED_ACCESS
+
+Would it make sense to sort this out so that KASAN_HW_TAGS can be taken
+into account at the Kconfig level instead?
+
+> diff --git a/fs/dcache.c b/fs/dcache.c
+> index e3634916ffb93..71f0830ac5e69 100644
+> --- a/fs/dcache.c
+> +++ b/fs/dcache.c
+> @@ -223,7 +223,7 @@ fs_initcall(init_fs_dcache_sysctls);
+>   * Compare 2 name strings, return 0 if they match, otherwise non-zero.
+>   * The strings are both count bytes long, and count is non-zero.
+>   */
+> -#ifdef CONFIG_DCACHE_WORD_ACCESS
+> +#if defined(CONFIG_DCACHE_WORD_ACCESS) && !defined(CONFIG_KASAN_HW_TAGS)
+
+Why not also the word_at_a_time use in fs/namei.c and lib/siphash.c?
+
+For reference, here are the DCACHE_WORD_ACCESS places:
+
+arch/arm/Kconfig:58:    select DCACHE_WORD_ACCESS if HAVE_EFFICIENT_UNALIGNED_ACCESS
+arch/arm64/Kconfig:137: select DCACHE_WORD_ACCESS
+arch/powerpc/Kconfig:192:       select DCACHE_WORD_ACCESS if PPC64 && CPU_LITTLE_ENDIAN
+arch/riscv/Kconfig:934: select DCACHE_WORD_ACCESS if MMU
+arch/s390/Kconfig:154:  select DCACHE_WORD_ACCESS if !KMSAN
+arch/x86/Kconfig:160:   select DCACHE_WORD_ACCESS if !KMSAN
+arch/x86/um/Kconfig:12: select DCACHE_WORD_ACCESS
+
+>  
+>  #include <asm/word-at-a-time.h>
+>  /*
+> diff --git a/lib/string.c b/lib/string.c
+> index eb4486ed40d25..9a43a3824d0d7 100644
+> --- a/lib/string.c
+> +++ b/lib/string.c
+> @@ -119,7 +119,8 @@ ssize_t sized_strscpy(char *dest, const char *src, size_t count)
+>  	if (count == 0 || WARN_ON_ONCE(count > INT_MAX))
+>  		return -E2BIG;
+>  
+> -#ifdef CONFIG_HAVE_EFFICIENT_UNALIGNED_ACCESS
+> +#if defined(CONFIG_HAVE_EFFICIENT_UNALIGNED_ACCESS) && \
+> +	!defined(CONFIG_KASAN_HW_TAGS)
+
+There are lots more places checking CONFIG_HAVE_EFFICIENT_UNALIGNED_ACCESS...
+Why only here?
+
+And the Kconfigs since I was comparing these against DCACHE_WORD_ACCESS
+
+arch/arc/Kconfig:352:   select HAVE_EFFICIENT_UNALIGNED_ACCESS
+arch/arm/Kconfig:107:   select HAVE_EFFICIENT_UNALIGNED_ACCESS if (CPU_V6 || CPU_V6K || CPU_V7) && MMU
+arch/arm64/Kconfig:222: select HAVE_EFFICIENT_UNALIGNED_ACCESS
+arch/loongarch/Kconfig:140:     select HAVE_EFFICIENT_UNALIGNED_ACCESS if !ARCH_STRICT_ALIGN
+arch/m68k/Kconfig:33:   select HAVE_EFFICIENT_UNALIGNED_ACCESS if !CPU_HAS_NO_UNALIGNED
+arch/powerpc/Kconfig:246:       select HAVE_EFFICIENT_UNALIGNED_ACCESS
+arch/riscv/Kconfig:935: select HAVE_EFFICIENT_UNALIGNED_ACCESS
+arch/s390/Kconfig:197:  select HAVE_EFFICIENT_UNALIGNED_ACCESS
+arch/x86/Kconfig:238:   select HAVE_EFFICIENT_UNALIGNED_ACCESS
+arch/x86/um/Kconfig:13: select HAVE_EFFICIENT_UNALIGNED_ACCESS
+
+>  	/*
+>  	 * If src is unaligned, don't cross a page boundary,
+>  	 * since we don't know if the next page is mapped.
+> -- 
+> 2.49.0.rc0.332.g42c0ae87b1-goog
+> 
+
+-Kees
+
+-- 
+Kees Cook
 
