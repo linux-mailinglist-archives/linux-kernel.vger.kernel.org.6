@@ -1,64 +1,81 @@
-Return-Path: <linux-kernel+bounces-552379-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-552380-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 55F66A5795B
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 09:55:05 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 152D4A5795D
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 09:56:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E7CD71703DC
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 08:55:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 67A631895709
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 08:56:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 502241AB50D;
-	Sat,  8 Mar 2025 08:54:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30A8F1AB52F;
+	Sat,  8 Mar 2025 08:56:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="E5oOiuDn"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="SXR/I6AU"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AC66322B;
-	Sat,  8 Mar 2025 08:54:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 989F51A2632;
+	Sat,  8 Mar 2025 08:56:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741424097; cv=none; b=aJ1n7KJ2buXeDD1NqIpQKL5+BSa1lKzqba9DXY0y8fCmxc6CsIkaUBikSAY84VsVB4W4+mj5AUsIXbKgxmpOq8Mwh5iq1mYOeHGm4ZQoNex7lRN4GrRtXu5JmWCtloE6g3yv5WqobONptx9XGoOHF6lscZoeq51y1hw9Il6cBwQ=
+	t=1741424171; cv=none; b=vAfCXhce5LeXuzlC7dDJ/OGVvOAOBrznfxPCTP43r86kmlYmz831xnc5cISiraP9R6PpGVKoMkhs1k4fkistE1x62ZgEE/wns2IT2VmLIWj96rPiNxz5BoXIgx444dGl5zMQUrphEfmhgF3r2TemU1bpZ2R+E1pRbwa9qm+9KoY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741424097; c=relaxed/simple;
-	bh=9hUfcwgc9NMp39VZsIy/9tZ/bsjGfe3p3+gbAqS06HM=;
+	s=arc-20240116; t=1741424171; c=relaxed/simple;
+	bh=4VgkYCgoYtsqJcDFHrQ8pnLz9wmKnHdijePp6ttEMMg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TehFpcsdvjgeNQFSQCQvqlEx4esJGF9PWhgdl1ct4+wmWiYagB3Uvi8mliVKAcryzK4Ln+5MhpYqUZV9mxHAxzmJYcZ8hB+GgdNowhiab2uSd6jpQm84wc0jcKpI/QprKQ8Vf1iZImwk1IHfWYXlzte6oMjR/7vjsvyYhIjMsNU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=E5oOiuDn; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9E40AC4CEE0;
-	Sat,  8 Mar 2025 08:54:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741424096;
-	bh=9hUfcwgc9NMp39VZsIy/9tZ/bsjGfe3p3+gbAqS06HM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=E5oOiuDnV7YwOgHL38/5uSUO/+Sg3d22jGakLTxTXe724I4ACInErw/3tBSjLn8mm
-	 t+xSeuOcPeV/PG1sLLls2OvfDNlUFdNlp7pI8ZYnw4wiBOtrPJqfG7Ex24ueSnpIzH
-	 b+CHHofzLdwI0cYRKmjo+wSWAJMWiGhNZ3AxzK8Qo/y4E9EdvTg5hrl5ve2c5lnD3t
-	 NMZ8d9xMWlViaqUKLUTFvCV+g6+X9iYu3NHcA7vw/cJ91UiGvNTPk9GoI3UtrWFbmY
-	 GPJBHLDH5uiJ/AdDLtLMHxgof6AMO6Ae2QazaDB5BLS14UgX3wBx3OT1AxrvlKECVR
-	 Vf8OK1rrDGPDw==
-Date: Sat, 8 Mar 2025 08:54:51 +0000
-From: Simon Horman <horms@kernel.org>
-To: Hangbin Liu <liuhangbin@gmail.com>
-Cc: netdev@vger.kernel.org, Jay Vosburgh <jv@jvosburgh.net>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Nikolay Aleksandrov <razor@blackwall.org>,
-	Shuah Khan <shuah@kernel.org>, Tariq Toukan <tariqt@nvidia.com>,
-	Jianbo Liu <jianbol@nvidia.com>, Jarod Wilson <jarod@redhat.com>,
-	Steffen Klassert <steffen.klassert@secunet.com>,
-	Cosmin Ratiu <cratiu@nvidia.com>, Petr Machata <petrm@nvidia.com>,
-	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCHv5 net 1/3] bonding: fix calling sleeping function in spin
- lock and some race conditions
-Message-ID: <20250308085451.GL3666230@kernel.org>
-References: <20250307031903.223973-1-liuhangbin@gmail.com>
- <20250307031903.223973-2-liuhangbin@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=kiywBP3HZEsAp1w5z4qaDImAz0ezRNUg06KG8rS1KDbgf/b8Pv9pl6kaJhRV7VLHuyTvrQeJDtdAInW/nO3D4QwzQx2D3RLSqAt1JJU4u5Sn8PUmlNn35zoQ+EELkjWAGoCTlKYruQzTXMXV/crbks4m9wLXEjLYXe0UJ20n4iM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=SXR/I6AU; arc=none smtp.client-ip=192.198.163.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1741424170; x=1772960170;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=4VgkYCgoYtsqJcDFHrQ8pnLz9wmKnHdijePp6ttEMMg=;
+  b=SXR/I6AUsknINmcsyqQqUrYfU+GvZDDACFmYYt5Bm+RIPMg2EaEOCJIu
+   I/j4+7iB6rVYDRYbJSJeeF2FS2jInuh9OR9mIwtAWILKBn5jvJmmzc902
+   16whSqTnZJHs3QMBAUxIbmENw+d1Is2Rbt7fs94EzvqmKh2hKWGewD4TA
+   nkfz8N8f+ue4osqHB+Loflpri7+eFu7P4aPVewyDtBNGgdjkXic7TiEul
+   GQWDNWMtt6o4H7C0xXS+sKE9i0+88wR9Ow1/x6MJrZYmy5VeYqcq2hvT1
+   5qRp/hs04Q7B9CytGjC7mKtdqs2p15tGMgjs7rRBw8WRHpaKyzgLWwqOx
+   g==;
+X-CSE-ConnectionGUID: dSK93mgKTMK+y1/sXuItKQ==
+X-CSE-MsgGUID: C59SCixJSOi55E6YgCfdIA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11366"; a="46395427"
+X-IronPort-AV: E=Sophos;i="6.14,231,1736841600"; 
+   d="scan'208";a="46395427"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Mar 2025 00:56:09 -0800
+X-CSE-ConnectionGUID: prOlML3uTkWwaENRbOkvzQ==
+X-CSE-MsgGUID: 4N6N18olTjev+4xijpH3ag==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
+   d="scan'208";a="120434605"
+Received: from lkp-server02.sh.intel.com (HELO a4747d147074) ([10.239.97.151])
+  by orviesa008.jf.intel.com with ESMTP; 08 Mar 2025 00:56:04 -0800
+Received: from kbuild by a4747d147074 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tqpyU-0001jE-0K;
+	Sat, 08 Mar 2025 08:56:02 +0000
+Date: Sat, 8 Mar 2025 16:55:04 +0800
+From: kernel test robot <lkp@intel.com>
+To: Zaid Alali <zaidal@os.amperecomputing.com>, rafael@kernel.org,
+	lenb@kernel.org, james.morse@arm.com, tony.luck@intel.com,
+	bp@alien8.de, robert.moore@intel.com, dan.j.williams@intel.com,
+	Jonathan.Cameron@huawei.com, Benjamin.Cheatham@amd.com,
+	Avadhut.Naik@amd.com, viro@zeniv.linux.org.uk, arnd@arndb.de,
+	ira.weiny@intel.com, dave.jiang@intel.com,
+	sthanneeru.opensrc@micron.com, linux-acpi@vger.kernel.org,
+	linux-kernel@vger.kernel.org, acpica-devel@lists.linux.dev
+Cc: oe-kbuild-all@lists.linux.dev
+Subject: Re: [PATCH v4 3/9] ACPI: APEI: EINJ: Fix kernel test robot sparse
+ warning
+Message-ID: <202503081600.JxR875hh-lkp@intel.com>
+References: <20250306234810.75511-4-zaidal@os.amperecomputing.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -67,73 +84,97 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250307031903.223973-2-liuhangbin@gmail.com>
+In-Reply-To: <20250306234810.75511-4-zaidal@os.amperecomputing.com>
 
-On Fri, Mar 07, 2025 at 03:19:01AM +0000, Hangbin Liu wrote:
+Hi Zaid,
 
-...
+kernel test robot noticed the following build warnings:
 
-> @@ -616,9 +615,22 @@ static void bond_ipsec_del_sa_all(struct bonding *bond)
->  		return;
->  
->  	mutex_lock(&bond->ipsec_lock);
-> -	list_for_each_entry(ipsec, &bond->ipsec_list, list) {
-> -		if (!ipsec->xs->xso.real_dev)
-> +	list_for_each_entry_safe(ipsec, tmp_ipsec, &bond->ipsec_list, list) {
-> +		spin_lock_bh(&ipsec->xs->lock);
-> +		if (!ipsec->xs->xso.real_dev) {
-> +			spin_unlock_bh(&ipsec->xs->lock);
->  			continue;
-> +		}
-> +
-> +		if (ipsec->xs->km.state == XFRM_STATE_DEAD) {
-> +			list_del(&ipsec->list);
-> +			kfree(ipsec);
+[auto build test WARNING on rafael-pm/linux-next]
+[also build test WARNING on rafael-pm/bleeding-edge linus/master v6.14-rc5 next-20250307]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-Hi Hangbin,
+url:    https://github.com/intel-lab-lkp/linux/commits/Zaid-Alali/ACPICA-Update-values-to-hex-to-follow-ACPI-specs/20250307-075155
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git linux-next
+patch link:    https://lore.kernel.org/r/20250306234810.75511-4-zaidal%40os.amperecomputing.com
+patch subject: [PATCH v4 3/9] ACPI: APEI: EINJ: Fix kernel test robot sparse warning
+config: i386-randconfig-063-20250308 (https://download.01.org/0day-ci/archive/20250308/202503081600.JxR875hh-lkp@intel.com/config)
+compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250308/202503081600.JxR875hh-lkp@intel.com/reproduce)
 
-Apologies if this was covered elsewhere, but ipsec is kfree'd here...
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202503081600.JxR875hh-lkp@intel.com/
 
+sparse warnings: (new ones prefixed by >>)
+>> drivers/acpi/apei/einj-core.c:265:32: sparse: sparse: incorrect type in return expression (different address spaces) @@     expected void * @@     got void [noderef] __iomem *[assigned] p @@
+   drivers/acpi/apei/einj-core.c:265:32: sparse:     expected void *
+   drivers/acpi/apei/einj-core.c:265:32: sparse:     got void [noderef] __iomem *[assigned] p
+   drivers/acpi/apei/einj-core.c:280:24: sparse: sparse: incorrect type in return expression (different address spaces) @@     expected void * @@     got void [noderef] __iomem *[assigned] p @@
+   drivers/acpi/apei/einj-core.c:280:24: sparse:     expected void *
+   drivers/acpi/apei/einj-core.c:280:24: sparse:     got void [noderef] __iomem *[assigned] p
+>> drivers/acpi/apei/einj-core.c:824:20: sparse: sparse: incorrect type in assignment (different address spaces) @@     expected void [noderef] __iomem *static [toplevel] einj_param @@     got void * @@
+   drivers/acpi/apei/einj-core.c:824:20: sparse:     expected void [noderef] __iomem *static [toplevel] einj_param
+   drivers/acpi/apei/einj-core.c:824:20: sparse:     got void *
 
-> +			/* Need to free device here, or the xs->xso.real_dev
-> +			 * may changed in bond_ipsec_add_sa_all and free
-> +			 * on old device will never be called.
-> +			 */
-> +			goto next;
-> +		}
->  
->  		if (!real_dev->xfrmdev_ops ||
->  		    !real_dev->xfrmdev_ops->xdo_dev_state_delete ||
-> @@ -626,11 +638,20 @@ static void bond_ipsec_del_sa_all(struct bonding *bond)
->  			slave_warn(bond_dev, real_dev,
->  				   "%s: no slave xdo_dev_state_delete\n",
->  				   __func__);
-> -		} else {
-> -			real_dev->xfrmdev_ops->xdo_dev_state_delete(ipsec->xs);
-> -			if (real_dev->xfrmdev_ops->xdo_dev_state_free)
-> -				real_dev->xfrmdev_ops->xdo_dev_state_free(ipsec->xs);
-> +			spin_unlock_bh(&ipsec->xs->lock);
-> +			continue;
->  		}
-> +
-> +		real_dev->xfrmdev_ops->xdo_dev_state_delete(ipsec->xs);
-> +
-> +next:
-> +		/* set real_dev to NULL in case __xfrm_state_delete() is called in parallel */
-> +		ipsec->xs->xso.real_dev = NULL;
+vim +265 drivers/acpi/apei/einj-core.c
 
-... and the dereferenced here.
+   235	
+   236	static void *einj_get_parameter_address(void)
+   237	{
+   238		int i;
+   239		u64 pa_v4 = 0, pa_v5 = 0;
+   240		struct acpi_whea_header *entry;
+   241	
+   242		entry = EINJ_TAB_ENTRY(einj_tab);
+   243		for (i = 0; i < einj_tab->entries; i++) {
+   244			if (entry->action == ACPI_EINJ_SET_ERROR_TYPE &&
+   245			    entry->instruction == ACPI_EINJ_WRITE_REGISTER &&
+   246			    entry->register_region.space_id ==
+   247			    ACPI_ADR_SPACE_SYSTEM_MEMORY)
+   248				pa_v4 = get_unaligned(&entry->register_region.address);
+   249			if (entry->action == ACPI_EINJ_SET_ERROR_TYPE_WITH_ADDRESS &&
+   250			    entry->instruction == ACPI_EINJ_WRITE_REGISTER &&
+   251			    entry->register_region.space_id ==
+   252			    ACPI_ADR_SPACE_SYSTEM_MEMORY)
+   253				pa_v5 = get_unaligned(&entry->register_region.address);
+   254			entry++;
+   255		}
+   256		if (pa_v5) {
+   257			struct set_error_type_with_address v5param;
+   258			void __iomem *p;
+   259	
+   260			p = acpi_os_map_iomem(pa_v5, sizeof(v5param));
+   261			if (p) {
+   262				memcpy_fromio(&v5param, p, sizeof(v5param));
+   263				acpi5 = 1;
+   264				check_vendor_extension(pa_v5, &v5param);
+ > 265				return p;
+   266			}
+   267		}
+   268		if (param_extension && pa_v4) {
+   269			struct einj_parameter v4param;
+   270			void __iomem *p;
+   271	
+   272			p = acpi_os_map_iomem(pa_v4, sizeof(v4param));
+   273			if (!p)
+   274				return NULL;
+   275			memcpy_fromio(&v4param, p, sizeof(v4param));
+   276			if (v4param.reserved1 || v4param.reserved2) {
+   277				acpi_os_unmap_iomem(p, sizeof(v4param));
+   278				return NULL;
+   279			}
+   280			return p;
+   281		}
+   282	
+   283		return NULL;
+   284	}
+   285	
 
-Flagged by Smatch.
-
-> +
-> +		/* Unlock before freeing device state, it could sleep. */
-> +		spin_unlock_bh(&ipsec->xs->lock);
-> +		if (real_dev->xfrmdev_ops->xdo_dev_state_free)
-> +			real_dev->xfrmdev_ops->xdo_dev_state_free(ipsec->xs);
->  	}
->  	mutex_unlock(&bond->ipsec_lock);
->  }
-
-...
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
