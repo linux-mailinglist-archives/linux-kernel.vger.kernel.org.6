@@ -1,89 +1,100 @@
-Return-Path: <linux-kernel+bounces-552292-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-552293-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B3314A57803
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 04:43:32 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7FFFDA57806
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 04:45:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EB4F716C339
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 03:43:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7E6463B6458
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 03:44:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 290DF1598F4;
-	Sat,  8 Mar 2025 03:43:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85786158553;
+	Sat,  8 Mar 2025 03:44:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dusQBWYn"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SDYEpfkv"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 870AC3A1DB;
-	Sat,  8 Mar 2025 03:43:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E35951758B;
+	Sat,  8 Mar 2025 03:44:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741405405; cv=none; b=WJWOYld6l7J8GE9omM3xCwjH511MNtzVCmy3WyAvNRvP7lC0KpKE256CtODSrUvQ0D1w8+Ixpjl6WCsxgUobOYo0TFeZyVStpvCnt3IqSoUT9N7lZtKHlNCSVDVOAQo5Dnxn3o6nqL8a4W3P26zlnndQuD7a9jYFz6d0nB/GITo=
+	t=1741405495; cv=none; b=qODQxJzeK21bIr8t90piOHgKA2x8lA4SZ65bnoHf+MdO1DPCbc/AnW85VqN+7IRggAEod5G+6dXNQ7W/mYZJ54AsD7TzOC1WyygZwTEGyDvU7BNPq+wrmrz9AQyskzy38Ffkqy4UeU6t38trZLAE5MXasj0YvYV1aaOPh0sThy0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741405405; c=relaxed/simple;
-	bh=ica+9mODfxewARoWmuQgFubvre1BHwD4871DgNF8e28=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=OUk2odIMh7/iI+Vky/Q2MNjUgkzld0C4vhSIx4Ir4Ra6n5IuRXv9xJOfHIXhDj/2vV+hQrpsf/RKzBADdxegU3VmODUXjhQ14BsGcWJd76HPSzyrwyvH3oqepW6NdmoT/d/G0Jiou5a1J9KdL8B9qDEPflmqOa6YsaRrVoim5Os=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dusQBWYn; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D4E58C4CED1;
-	Sat,  8 Mar 2025 03:43:24 +0000 (UTC)
+	s=arc-20240116; t=1741405495; c=relaxed/simple;
+	bh=9FXqXEgPrSCUdss8mDXDjVLyF7i2swbdCmkkvaXmW1A=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KXobNatvN35Z9m8IuNQpusnTsnn1lPuj8p+cOWeD5IxOIWmA3x6ZjTlWmSButziuKPVs9tTvtNyvtPBY3tqRx7jfx0eZxBU+JGjRoYrMIrumx/A1lemUWOv9K2q0OCDi2UtiICdRWrwNgYxG8P4kUvoQvsQkjtbIHGil7XoqHs8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SDYEpfkv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 340BFC4CED1;
+	Sat,  8 Mar 2025 03:44:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741405404;
-	bh=ica+9mODfxewARoWmuQgFubvre1BHwD4871DgNF8e28=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=dusQBWYnXmnySfLKKmC0Fzu8k+eOHF24AhihdhjF2FaTE168Fi+QGww55E4RBVdN4
-	 O5OVWFPoqzwOuae/UBtUDyXrIIa7ws3kYl8jz75fBqYZazww+8diRcmuxPj5Zvfc/k
-	 bZ9awcQhuUUBuqhdWZEQE+aLaZ+LFrVqCpZOinlidnUZtq1f8SJlcNIURm32tyNni8
-	 dWgqT6XdzAYUQ5ZeA+2LaDhNXCTEDk2jYEKh1H+oW/MiBP5U22MA6cvVq7pU/74hI5
-	 3eixJL4qOMrQS8pl08URDU2nkNSnW86oDyniZCvpJfH2w0hbnZb5rR71RrjHfmZFMj
-	 LKR/58hS+7Wyg==
-From: Kees Cook <kees@kernel.org>
-To: viro@zeniv.linux.org.uk,
-	brauner@kernel.org,
-	jack@suse.cz,
-	ebiederm@xmission.com,
-	sunliming@linux.dev
-Cc: Kees Cook <kees@kernel.org>,
-	linux-fsdevel@vger.kernel.org,
-	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org,
-	sunliming@kylinos.cn,
-	kernel test robot <lkp@intel.com>
-Subject: Re: [PATCH V2] fs: binfmt_elf_efpic: fix variable set but not used warning
-Date: Fri,  7 Mar 2025 19:42:38 -0800
-Message-Id: <174140535640.1476341.8645731807830133176.b4-ty@kernel.org>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250308022754.75013-1-sunliming@linux.dev>
-References: <20250308022754.75013-1-sunliming@linux.dev>
+	s=k20201202; t=1741405494;
+	bh=9FXqXEgPrSCUdss8mDXDjVLyF7i2swbdCmkkvaXmW1A=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=SDYEpfkv1LnTuakx0Jefgl82P7kqsmINLdpgFAwvNUt9dtEMj84obMfxepV0tK/as
+	 DwiGHIzea7o56O4Ug8PfBYvqIFl+QCZjrHS4lvD8udn+Y39NzYbCRfzHatK7XLp8mb
+	 NYLGzTFxwfnVqM0mffjsBxprAJRINN5nWyEUSSiZ1NMsZzV5FJbp00BEEjW9q0AUW0
+	 dJ+t97GkpnIZaKlKKMHQkC8v8Hsi0ksOUk3o5LKd14rOL32x7k6BmP4X+CW4WkLVf4
+	 5HCVM7RxlvSy5J693GMJzF6rT4Tlb37gI4rYKgrlitggQjkXprzB3tPWtm1JFMecSM
+	 jOEBCndUXpf6g==
+Date: Sat, 8 Mar 2025 03:44:50 +0000
+From: sergeh@kernel.org
+To: Paul Moore <paul@paul-moore.com>
+Cc: linux@treblig.org, serge@hallyn.com,
+	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] capability: Remove unused has_capability
+Message-ID: <Z8u9MhM450tD3lYe@lei>
+References: <20241219172859.188117-1-linux@treblig.org>
+ <CAHC9VhQ73qdL2Qf-jOMMVSf=+h-H8K+mz165XZztb5X6XjH11w@mail.gmail.com>
+ <CAHC9VhTuvNuNfeLrR+5b+LOB_kC8a_67EvLPnOJO4vcvkcuMYQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAHC9VhTuvNuNfeLrR+5b+LOB_kC8a_67EvLPnOJO4vcvkcuMYQ@mail.gmail.com>
 
-On Sat, 08 Mar 2025 10:27:54 +0800, sunliming@linux.dev wrote:
-> Fix below kernel warning:
-> fs/binfmt_elf_fdpic.c:1024:52: warning: variable 'excess1' set but not
-> used [-Wunused-but-set-variable]
+On Wed, Feb 26, 2025 at 07:08:52PM -0500, Paul Moore wrote:
+> On Thu, Dec 19, 2024 at 1:28 PM Paul Moore <paul@paul-moore.com> wrote:
+> >
+> > On Thu, Dec 19, 2024 at 12:29 PM <linux@treblig.org> wrote:
+> > >
+> > > From: "Dr. David Alan Gilbert" <linux@treblig.org>
+> > >
+> > > The vanilla has_capability() function has been unused since 2018's
+> > > commit dcb569cf6ac9 ("Smack: ptrace capability use fixes")
+> > >
+> > > Remove it.
+> > >
+> > > Fixup a comment in security/commoncap.c that referenced it.
+> > >
+> > > Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
+> > > ---
+> > >  include/linux/capability.h |  5 -----
+> > >  kernel/capability.c        | 16 ----------------
+> > >  security/commoncap.c       |  9 +++++----
+> > >  3 files changed, 5 insertions(+), 25 deletions(-)
+> >
+> > Now that Serge has the capabilities tree back up and running I'm
+> > assuming he will grab this patch, if not just let me know Serge and I
+> > can take it.
+> >
+> > Reviewed-by: Paul Moore <paul@paul-moore.com>
 > 
-> 
+> Bump this thread to make sure Serge sees it ...
 
-Adjusted Subject for typos.
+d'oh, sorry, yes
 
-Applied to for-next/execve, thanks!
+Acked-by: Serge Hallyn <serge@hallyn.com>
 
-[1/1] binfmt_elf_fdpic: fix variable set but not used warning
-      https://git.kernel.org/kees/c/7845fe65b33d
+I will apply this now.
 
-Take care,
-
--- 
-Kees Cook
-
+-serge
 
