@@ -1,48 +1,48 @@
-Return-Path: <linux-kernel+bounces-552287-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-552288-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C46FCA577F2
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 04:40:28 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id F00DBA577F6
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 04:40:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BA6E57A90C1
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 03:39:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DF7E01897C7E
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 03:41:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04C77170A0B;
-	Sat,  8 Mar 2025 03:40:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E88A183CCA;
+	Sat,  8 Mar 2025 03:40:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mV7oTwwp"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ujVdmuvv"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 575A71624DC;
-	Sat,  8 Mar 2025 03:40:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07E3515B54A;
+	Sat,  8 Mar 2025 03:40:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741405209; cv=none; b=dkJaymFC3mMbz6x1lJkSGdtUm0piD26qcR+ZXsoSZphkCJQLICHnmfgJx6CpTaJ/OBvMH3E+KgvzkPJvyCyqXVQ1OGk647pnnq2+8hSzAV4wwbXVR3g01fau9YBwTBlitS3MRp+RZo7eK/wSX6HIPXY6pBVPQ9DIjGzuzx8aiN8=
+	t=1741405216; cv=none; b=eYyc+VS3tsyXvKStEpujS28QF0b4bJ0b1YDsWq1nrw3pxDzorkLiBJERKLOUFmyRRaPJSHAOjpqaRu/Xk4NRaywqiRDro1T7Av4DOlYHJy6MEa49TIRuTqW1w4lEaBwL3lXWJ5xUIARBvefhhqf0X2XYnyYzT8PiS912AKcqcgU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741405209; c=relaxed/simple;
-	bh=VbfFId+c8hU5TKBC8vVV3K3Ub0jULqeS8673sNKaj7g=;
+	s=arc-20240116; t=1741405216; c=relaxed/simple;
+	bh=tNdZnQN3DKj2QztuZLJeIBNKvSQQ+s87os7ruXPbIFw=;
 	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=sXuYwuXPkdQh8Od3VyT6K5xvcm3G4NyzxHDXa9aNLjOFJyebEwCqBPnLnazLCOGr3tAbmIKYhV6Yq4tUJJw+dg5lrCwZL6svmjg8Jfc6rmvmr7M05NlgLFmEaOlVb8C3pJOhJku4ryRvoS/AeuqXC+/Y75myZ92v0cqDAbLutGw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mV7oTwwp; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AB0C3C4CEE8;
-	Sat,  8 Mar 2025 03:40:08 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=RAOJ+v0gj3igKuYbSKc857ejLq7juLxT7uqxIf7PQx2GEx7BauyjVsw+7pUfEfm5mz6KsFja+qNIkvJpSjLO1IxpivfMNMu3KMAjFMQUlEDjBJ2L9cdWx2TD5kqXme7rK2FuEQa/7Upj5TP6VhuDVtsBiXkqEJmtsxAcfgWkvnM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ujVdmuvv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DC412C4CEE2;
+	Sat,  8 Mar 2025 03:40:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741405208;
-	bh=VbfFId+c8hU5TKBC8vVV3K3Ub0jULqeS8673sNKaj7g=;
+	s=k20201202; t=1741405215;
+	bh=tNdZnQN3DKj2QztuZLJeIBNKvSQQ+s87os7ruXPbIFw=;
 	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=mV7oTwwpvL0aeS+JSNZl3l8a9/aRCG7F9Js6RToq04XDgUGqYoGAPcje1iM9jtDNn
-	 8KdCPVCgeiA9aadZfulZYr4hUzqfWPIyhUY0uZZqpO8yYKKqFDsIlNX3iQ1qBSIi9b
-	 VLVPJMaSHVflnFMNfUrjcW+MmlWE0a+zhK/SfdfyreuWSia4jVQ+wyJBEXBtnk8MJX
-	 RGCNk0ygocpcj0TgkwAu6AegZtA67CQDjTw0H2rO+59j0Vm7XTv//hUK+oVAG3B1+V
-	 rc9BVSkzgtfG+38Ici/qeBxoWWQ7CwfbubBDbn6H1hqsKQ0P4FRe3OgtGN8lsPsrgd
-	 CgtPosWoTw7Qw==
+	b=ujVdmuvvoVc9JoJHZLwFVGRCELe7bUb8p25LmtWsz0vnchWXKCQihaljlHvWdQfwi
+	 eYNKew93Q0DCbTlZchYNFnNLU6KMNh4kXUQF4E+MzIwyA7AMcRSreylNeSoH0D3qkP
+	 p5IL28hXZlYtIWvyWK667nRsrhvMnbLOB6Rmf+KKjoEz6VwGB/yxHMnL/6lHtOocM7
+	 QYu7KOINyfk8S78yl+RskjTBVFxnib23nqYUm6ZUcSOlElcJZ8fgqhwxGPUuqoW9k2
+	 1/ph1+rnnM8rF/rxhWVe1fdICIDFe9zlpFBB7TdDhIpc5+qLAGq38dXmZoFu0MezF+
+	 j90F9qpjUhmrw==
 Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 71901380CFFB;
-	Sat,  8 Mar 2025 03:40:43 +0000 (UTC)
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id ADDB7380CFFB;
+	Sat,  8 Mar 2025 03:40:50 +0000 (UTC)
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -51,56 +51,37 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net-next v7 0/4] riscv: sophgo: Add ethernet support for
- SG2044
+Subject: Re: [PATCH net-next] net: phylink: Remove unused phylink_init_eee
 From: patchwork-bot+netdevbpf@kernel.org
 Message-Id: 
- <174140524199.2565853.4357984309163755989.git-patchwork-notify@kernel.org>
-Date: Sat, 08 Mar 2025 03:40:41 +0000
-References: <20250307011623.440792-1-inochiama@gmail.com>
-In-Reply-To: <20250307011623.440792-1-inochiama@gmail.com>
-To: Inochi Amaoto <inochiama@gmail.com>
-Cc: andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
- kuba@kernel.org, pabeni@redhat.com, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, unicorn_wang@outlook.com, inochiama@outlook.com,
- mcoquelin.stm32@gmail.com, alexandre.torgue@foss.st.com,
- richardcochran@gmail.com, paul.walmsley@sifive.com, palmer@dabbelt.com,
- aou@eecs.berkeley.edu, alex@ghiti.fr, clement.leger@bootlin.com,
- emil.renner.berthing@canonical.com, jan.petrous@oss.nxp.com,
- yong.liang.choong@linux.intel.com, jszhang@kernel.org,
- rmk+kernel@armlinux.org.uk, olteanv@gmail.com, 0x1207@gmail.com,
- romain.gantois@bootlin.com, fancer.lancer@gmail.com,
- joe@pf.is.s.u-tokyo.ac.jp, l.rubusch@gmail.com,
- bartosz.golaszewski@linaro.org, peppe.cavallaro@st.com, joabreu@synopsys.com,
- netdev@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
- linux-arm-kernel@lists.infradead.org, linux-riscv@lists.infradead.org,
- dlan@gentoo.org, looong.bin@gmail.com
+ <174140524924.2565853.9888349135574832319.git-patchwork-notify@kernel.org>
+Date: Sat, 08 Mar 2025 03:40:49 +0000
+References: <20250306184534.246152-1-linux@treblig.org>
+In-Reply-To: <20250306184534.246152-1-linux@treblig.org>
+To: Dr. David Alan Gilbert <linux@treblig.org>
+Cc: linux@armlinux.org.uk, andrew@lunn.ch, hkallweit1@gmail.com,
+ davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
 Hello:
 
-This series was applied to netdev/net-next.git (main)
+This patch was applied to netdev/net-next.git (main)
 by Jakub Kicinski <kuba@kernel.org>:
 
-On Fri,  7 Mar 2025 09:16:13 +0800 you wrote:
-> The ethernet controller of SG2044 is Synopsys DesignWare IP with
-> custom clock. Add glue layer for it.
+On Thu,  6 Mar 2025 18:45:34 +0000 you wrote:
+> From: "Dr. David Alan Gilbert" <linux@treblig.org>
 > 
-> Changed from v6:
-> - https://lore.kernel.org/netdev/20250305063920.803601-1-inochiama@gmail.com/
-> 1. rebase against latest net-next/main
+> phylink_init_eee() is currently unused.
+> 
+> It was last added in 2019 by
+> commit 86e58135bc4a ("net: phylink: add phylink_init_eee() helper")
+> but it didn't actually wire a use up.
 > 
 > [...]
 
 Here is the summary with links:
-  - [net-next,v7,1/4] dt-bindings: net: Add support for Sophgo SG2044 dwmac
-    https://git.kernel.org/netdev/net-next/c/114508a89ddc
-  - [net-next,v7,2/4] net: stmmac: platform: Group GMAC4 compatible check
-    https://git.kernel.org/netdev/net-next/c/f8add6654d3c
-  - [net-next,v7,3/4] net: stmmac: platform: Add snps,dwmac-5.30a IP compatible string
-    https://git.kernel.org/netdev/net-next/c/9ef17cafc36b
-  - [net-next,v7,4/4] net: stmmac: Add glue layer for Sophgo SG2044 SoC
-    https://git.kernel.org/netdev/net-next/c/a22221ef5dee
+  - [net-next] net: phylink: Remove unused phylink_init_eee
+    https://git.kernel.org/netdev/net-next/c/c8be7018d47c
 
 You are awesome, thank you!
 -- 
