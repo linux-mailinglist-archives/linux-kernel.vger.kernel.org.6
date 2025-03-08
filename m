@@ -1,191 +1,200 @@
-Return-Path: <linux-kernel+bounces-552387-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-552388-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE918A57973
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 10:22:42 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 963F7A57975
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 10:23:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9E99A3B1820
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 09:22:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C2FF317267B
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 09:23:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7436D1AAA10;
-	Sat,  8 Mar 2025 09:22:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D564B1AAA10;
+	Sat,  8 Mar 2025 09:23:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bPPUhYy5"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="CtVqVOFN"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8E68C2FA
-	for <linux-kernel@vger.kernel.org>; Sat,  8 Mar 2025 09:22:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F663C2FA
+	for <linux-kernel@vger.kernel.org>; Sat,  8 Mar 2025 09:23:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741425755; cv=none; b=sF+vCJ4WZMPwULXVFf4H95krkB0o6ga+BvbuZXf2hzDGG5Xy+RposUyDTWhYaPpF3ONlp5KR1Id/ZrmvlGe0B+BaXYrl1WYAGWZsX07IBkGWiNoNJNA6DXzLXvgYvbtY5QU3xP+8AvzQDqA3Ebb36/iAlLwkwCaBueIM+7jStfg=
+	t=1741425790; cv=none; b=fjXVYhdF9OfHZN1i1bKyTfarb7pyrBkHXlky5sz1lUjlCZKOBph78iIsedRiemhuhYRWu9G/e8vRayHhJfJGJSqgh/105SmX+ZmxrJ9gkTtERUA4hhc9EJPbGk04cBmVati/74UJ6hZ93wKwqkZlNf6zHEFnFHb/ItYgCzs72x0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741425755; c=relaxed/simple;
-	bh=Ej/ETKPHxuo5RpVLYbH3+Q1984+YqMNYqlfecOZ2L4o=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=RUTLg/43p28cku+LkrXxDB1YeelePOpVw7U52euJ4dedDXt3kb5uwdsyiFACe6vo3g5IvIpaqCzG66gYNi9xuJ3/0G74jt0SAd9ct7evGryqHMBfIvj2gbaS7tQNDhGxlese4H/O4i6Kx3CPqVPKeyXciQ8/ao2h9JHWklJ6pto=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bPPUhYy5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D3B19C4CEE0;
-	Sat,  8 Mar 2025 09:22:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741425755;
-	bh=Ej/ETKPHxuo5RpVLYbH3+Q1984+YqMNYqlfecOZ2L4o=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=bPPUhYy5j6jK6SFJqmyMvIRJtaqO/osXy8OXOp1+wXzZII9OxerW5YSq818FvzJ0Q
-	 h4QeQJe2tKC980sZdWpyY0x4jAsuNK6b7G+QJgOKK/Pqa0yOKEsvCImOEFK5PQWCHS
-	 XAOPI/zH5AKzhPc17IeKEFULEGCMOBAlDcMadrI00SjTTLeKeteTm82selNVu5/Wxi
-	 bN3KGBs3eBwc6BCIf37MoqBya9DXu97P2RpUeXz1+y0YrezgyTjvvpBl918u663NJW
-	 WF7rUbjNlFyeRjp2Jki4VNtdmNFDVyEWsqnunPPWVp1UMKpzcQJHHL1QMITViFWytB
-	 4GNoJWnJMmPJA==
-Date: Sat, 8 Mar 2025 10:22:28 +0100
-From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-To: Philippe =?UTF-8?B?TWF0aGlldS1EYXVkw6k=?= <philmd@linaro.org>
-Cc: Igor Mammedov <imammedo@redhat.com>, "Michael S . Tsirkin"
- <mst@redhat.com>, Jonathan Cameron <Jonathan.Cameron@huawei.com>, Shiju
- Jose <shiju.jose@huawei.com>, qemu-arm@nongnu.org, qemu-devel@nongnu.org,
- Gavin Shan <gshan@redhat.com>, Cleber Rosa <crosa@redhat.com>, John Snow
- <jsnow@redhat.com>, linux-kernel@vger.kernel.org, Thomas Huth
- <thuth@redhat.com>
-Subject: Re: [PATCH v8 20/20] scripts/ghes_inject: add a script to generate
- GHES error inject
-Message-ID: <20250308102228.389e2537@foz.lan>
-In-Reply-To: <3f777e6a-01bc-44eb-8eac-7ff685a3fbee@linaro.org>
-References: <cover.1741374594.git.mchehab+huawei@kernel.org>
-	<3045b51edaf2d07eb0c513249fd1c621562ee3d9.1741374594.git.mchehab+huawei@kernel.org>
-	<3f777e6a-01bc-44eb-8eac-7ff685a3fbee@linaro.org>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1741425790; c=relaxed/simple;
+	bh=Yk76eefBXVMpO3k2mRf5bsnE1mB1KHc0S5O8QMRylYI=;
+	h=Date:From:To:Cc:Subject:Message-ID; b=MQPZXeMby6Rjk/tYncfOid+a3tp7T5MdUKyvzEPpTBAppDXZg717O8IEUz/mP7pN30OzbIcBj2obHE9hV/1MIQbPjbOlh1N2RhRaWikkUQCRnin+ZsxyKgEtIB6rVbLywL5cwWpNLN3kLYTZWP+LM2JvDgE4MlYwrwcP8MYz09o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=CtVqVOFN; arc=none smtp.client-ip=198.175.65.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1741425789; x=1772961789;
+  h=date:from:to:cc:subject:message-id;
+  bh=Yk76eefBXVMpO3k2mRf5bsnE1mB1KHc0S5O8QMRylYI=;
+  b=CtVqVOFNcFN4E/P/W0WRBBCzLKmt6F3E5TRwB+PjS0nFXnTzwU6oNbCD
+   yNG5M9nTxQ9Sgw7gnnteSbDRrH92VCS4Xigcat3SoReFKOVG3Hso0417J
+   NqbaNcrPspCET9857LiYprqPd5v8NVLPpBK6m2Gym/3f4VyVfThX4+z6C
+   Rz0E8kaKNaH2UtqU+nWtXToVk+OLjb5qMtWB2uMHtJvPyzOzUPLV0PAdG
+   kwHSSk7MUY/vSiiN6PrG+4plwYSZtYri1QSXmU8Vg6GLNy+c+T58i4eeY
+   PpM3YKGbCI4YCvtcl53x76r8Jxwy1z2JSzJlI7zEdd/QpUfNit6TsuhX7
+   A==;
+X-CSE-ConnectionGUID: yHXLP/nETEmX5OYQnUt4Gw==
+X-CSE-MsgGUID: 6HjYzjcVTpu83jQTAWCzvg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11366"; a="59882360"
+X-IronPort-AV: E=Sophos;i="6.14,231,1736841600"; 
+   d="scan'208";a="59882360"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Mar 2025 01:23:08 -0800
+X-CSE-ConnectionGUID: tCwN7tVhSFWervls6j98SA==
+X-CSE-MsgGUID: sILtT/u1QQ2anv1rtssOgA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,231,1736841600"; 
+   d="scan'208";a="119528672"
+Received: from lkp-server02.sh.intel.com (HELO a4747d147074) ([10.239.97.151])
+  by fmviesa007.fm.intel.com with ESMTP; 08 Mar 2025 01:23:07 -0800
+Received: from kbuild by a4747d147074 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tqqOe-0001kY-2b;
+	Sat, 08 Mar 2025 09:23:04 +0000
+Date: Sat, 08 Mar 2025 17:22:34 +0800
+From: kernel test robot <lkp@intel.com>
+To: "x86-ml" <x86@kernel.org>
+Cc: linux-kernel@vger.kernel.org
+Subject: [tip:irq/drivers] BUILD SUCCESS
+ 7db5fd6b751fbcaca253efc4de68f4346299948f
+Message-ID: <202503081728.EZIJBxN4-lkp@intel.com>
+User-Agent: s-nail v14.9.24
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
 
-Hi Phillipe,
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git irq/drivers
+branch HEAD: 7db5fd6b751fbcaca253efc4de68f4346299948f  irqchip/imx-irqsteer: Support up to 960 input interrupts
 
-Em Fri, 7 Mar 2025 22:05:27 +0100
-Philippe Mathieu-Daud=C3=A9 <philmd@linaro.org> escreveu:
+elapsed time: 1444m
 
-> Hi Mauro,
->=20
-> On 7/3/25 20:14, Mauro Carvalho Chehab wrote:
-> > Using the QMP GHESv2 API requires preparing a raw data array
-> > containing a CPER record.
-> >=20
-> > Add a helper script with subcommands to prepare such data.
-> >=20
-> > Currently, only ARM Processor error CPER record is supported, by
-> > using:
-> > 	$ ghes_inject.py arm
-> >=20
-> > which produces those warnings on Linux:
-> >=20
-> > [  705.032426] [Firmware Warn]: GHES: Unhandled processor error type 0x=
-02: cache error
-> > [  774.866308] {4}[Hardware Error]: Hardware error from APEI Generic Ha=
-rdware Error Source: 1
-> > [  774.866583] {4}[Hardware Error]: event severity: recoverable
-> > [  774.866738] {4}[Hardware Error]:  Error 0, type: recoverable
-> > [  774.866889] {4}[Hardware Error]:   section_type: ARM processor error
-> > [  774.867048] {4}[Hardware Error]:   MIDR: 0x00000000000f0510
-> > [  774.867189] {4}[Hardware Error]:   running state: 0x0
-> > [  774.867321] {4}[Hardware Error]:   Power State Coordination Interfac=
-e state: 0
-> > [  774.867511] {4}[Hardware Error]:   Error info structure 0:
-> > [  774.867679] {4}[Hardware Error]:   num errors: 2
-> > [  774.867801] {4}[Hardware Error]:    error_type: 0x02: cache error
-> > [  774.867962] {4}[Hardware Error]:    error_info: 0x000000000091000f
-> > [  774.868124] {4}[Hardware Error]:     transaction type: Data Access
-> > [  774.868280] {4}[Hardware Error]:     cache error, operation type: Da=
-ta write
-> > [  774.868465] {4}[Hardware Error]:     cache level: 2
-> > [  774.868592] {4}[Hardware Error]:     processor context not corrupted
-> > [  774.868774] [Firmware Warn]: GHES: Unhandled processor error type 0x=
-02: cache error
+configs tested: 108
+configs skipped: 1
 
-Thanks for your review!
+The following configs have been built successfully.
+More configs may be tested in the coming days.
 
-> > Such script allows customizing the error data, allowing to change
-> > all fields at the record. Please use:
-> >=20
-> > 	$ ghes_inject.py arm -h =20
->=20
-> It should be easy enough to add a functional test covering this,
-> do you mind having a look?
+tested configs:
+alpha                             allnoconfig    gcc-14.2.0
+alpha                            allyesconfig    gcc-14.2.0
+arc                              allmodconfig    gcc-13.2.0
+arc                               allnoconfig    gcc-13.2.0
+arc                              allyesconfig    gcc-13.2.0
+arc                      axs103_smp_defconfig    gcc-13.2.0
+arc                        nsim_700_defconfig    gcc-13.2.0
+arc                   randconfig-001-20250307    gcc-13.2.0
+arc                   randconfig-002-20250307    gcc-13.2.0
+arm                              allmodconfig    gcc-14.2.0
+arm                               allnoconfig    clang-17
+arm                              allyesconfig    gcc-14.2.0
+arm                          collie_defconfig    gcc-14.2.0
+arm                            dove_defconfig    gcc-14.2.0
+arm                      integrator_defconfig    clang-15
+arm                   randconfig-001-20250307    clang-21
+arm                   randconfig-002-20250307    gcc-14.2.0
+arm                   randconfig-003-20250307    clang-19
+arm                   randconfig-004-20250307    clang-21
+arm64                            allmodconfig    clang-18
+arm64                             allnoconfig    gcc-14.2.0
+arm64                 randconfig-001-20250307    gcc-14.2.0
+arm64                 randconfig-002-20250307    clang-15
+arm64                 randconfig-003-20250307    gcc-14.2.0
+arm64                 randconfig-004-20250307    clang-15
+csky                              allnoconfig    gcc-14.2.0
+csky                  randconfig-001-20250307    gcc-14.2.0
+csky                  randconfig-002-20250307    gcc-14.2.0
+hexagon                          allmodconfig    clang-21
+hexagon                           allnoconfig    clang-21
+hexagon                          allyesconfig    clang-18
+hexagon               randconfig-001-20250307    clang-21
+hexagon               randconfig-002-20250307    clang-21
+i386                             allmodconfig    gcc-12
+i386                              allnoconfig    gcc-12
+i386                             allyesconfig    gcc-12
+i386        buildonly-randconfig-001-20250307    clang-19
+i386        buildonly-randconfig-002-20250307    clang-19
+i386        buildonly-randconfig-003-20250307    gcc-11
+i386        buildonly-randconfig-004-20250307    clang-19
+i386        buildonly-randconfig-005-20250307    gcc-12
+i386        buildonly-randconfig-006-20250307    clang-19
+i386                                defconfig    clang-19
+loongarch                        allmodconfig    gcc-14.2.0
+loongarch                         allnoconfig    gcc-14.2.0
+loongarch             randconfig-001-20250307    gcc-14.2.0
+loongarch             randconfig-002-20250307    gcc-14.2.0
+m68k                             allmodconfig    gcc-14.2.0
+m68k                              allnoconfig    gcc-14.2.0
+m68k                             allyesconfig    gcc-14.2.0
+microblaze                        allnoconfig    gcc-14.2.0
+mips                              allnoconfig    gcc-14.2.0
+mips                          ath79_defconfig    gcc-14.2.0
+mips                           xway_defconfig    clang-21
+nios2                             allnoconfig    gcc-14.2.0
+nios2                 randconfig-001-20250307    gcc-14.2.0
+nios2                 randconfig-002-20250307    gcc-14.2.0
+openrisc                         alldefconfig    gcc-14.2.0
+openrisc                          allnoconfig    gcc-14.2.0
+parisc                            allnoconfig    gcc-14.2.0
+parisc                randconfig-001-20250307    gcc-14.2.0
+parisc                randconfig-002-20250307    gcc-14.2.0
+powerpc                           allnoconfig    gcc-14.2.0
+powerpc                     ksi8560_defconfig    gcc-14.2.0
+powerpc                  mpc866_ads_defconfig    clang-21
+powerpc               randconfig-001-20250307    gcc-14.2.0
+powerpc               randconfig-002-20250307    clang-21
+powerpc               randconfig-003-20250307    clang-19
+powerpc                     redwood_defconfig    clang-21
+powerpc64             randconfig-001-20250307    clang-21
+powerpc64             randconfig-002-20250307    gcc-14.2.0
+powerpc64             randconfig-003-20250307    gcc-14.2.0
+riscv                             allnoconfig    gcc-14.2.0
+riscv                 randconfig-001-20250307    gcc-14.2.0
+riscv                 randconfig-002-20250307    clang-19
+s390                             allmodconfig    clang-19
+s390                              allnoconfig    clang-15
+s390                             allyesconfig    gcc-14.2.0
+s390                  randconfig-001-20250307    gcc-14.2.0
+s390                  randconfig-002-20250307    gcc-14.2.0
+sh                               allmodconfig    gcc-14.2.0
+sh                                allnoconfig    gcc-14.2.0
+sh                               allyesconfig    gcc-14.2.0
+sh                    randconfig-001-20250307    gcc-14.2.0
+sh                    randconfig-002-20250307    gcc-14.2.0
+sparc                            allmodconfig    gcc-14.2.0
+sparc                             allnoconfig    gcc-14.2.0
+sparc                 randconfig-001-20250307    gcc-14.2.0
+sparc                 randconfig-002-20250307    gcc-14.2.0
+sparc64               randconfig-001-20250307    gcc-14.2.0
+sparc64               randconfig-002-20250307    gcc-14.2.0
+um                               allmodconfig    clang-21
+um                                allnoconfig    clang-18
+um                               allyesconfig    gcc-12
+um                    randconfig-001-20250307    clang-17
+um                    randconfig-002-20250307    clang-21
+x86_64                            allnoconfig    clang-19
+x86_64                           allyesconfig    clang-19
+x86_64      buildonly-randconfig-001-20250307    clang-19
+x86_64      buildonly-randconfig-002-20250307    gcc-12
+x86_64      buildonly-randconfig-003-20250307    clang-19
+x86_64      buildonly-randconfig-004-20250307    clang-19
+x86_64      buildonly-randconfig-005-20250307    clang-19
+x86_64      buildonly-randconfig-006-20250307    gcc-12
+x86_64                              defconfig    gcc-11
+xtensa                            allnoconfig    gcc-14.2.0
+xtensa                randconfig-001-20250307    gcc-14.2.0
+xtensa                randconfig-002-20250307    gcc-14.2.0
 
-It is on my TODO plan to add some tests to check it, but instead of
-a functional test, I'm aiming to test the full stack.
-
-See, I'm one of the reviewers of the RAS subsystem at the Linux Kernel,=20
-and the author/maintainer of the userspace tool used to report and take
-actions in case of troubles [1]. So, I'm targeting a solution that
-will have rasdaemon installed on a Linux VM, testing all three
-components altogether.
-
-This will require to implement something at rasdaemon that will have
-an interface at the rasdaemon to report errors to the host OS. It
-currently have ABRT support, but it will likely need something
-different to output error report in a way that the same error will
-report the same over newer versions of the components inside the
-stack.
-
-For such purpose, I'm planning to implement a new feature on rasdaemon=20
-to allow reading the errors eithe via a TCP/IP socket with some
-simple text output interface, or maybe add a SQL interface[3].
-
-[1] https://github.com/mchehab/rasdaemon
-[2] https://docs.kernel.org/dev-tools/ktap.html
-[3] internally, rasdaemon has already a SQL interface, used with
-    SQLite. It shouldn't be hard to add PostgreSQL and/or
-    mariaDB/Mysql support on it.
-
-Before implementing it, we need to have this series merged.
-
-So, in summary, my plan to add tests for firmware-first error
-report is:
-
-1. Have this patch series merged;
-2. Add a new report mechanism on rasdaemon to report errors via
-   a TCP/IP socket;
-3. Setup a runner that would periodically test the full stack and
-   report regressions. Such runner would need to fetch from 3 different
-   sources (QEMU, Kernel, rasdaemon), so it would likely be triggered
-   by some scheduler.
-
-Btw, for the first version of the script, only ARM Processor Error is
-there, but my long term plan is to be able to test other type of
-GHESv2 errors, like this one [4]:
-
-	https://gitlab.com/mchehab_kernel/qemu/-/commit/8a774121750def2723ea59ce23=
-43a774a3f01ca6
-
-[3] I implemented PCIe bus error without checking first if the Kernel
-    supported it (when I tested, it didn't). I opted to add this one
-    to ensure that adding new subcommands to the ghes_inject.py script
-    would be trivial. It helped me to organize the code in a way that a
-    new error injection code means just a two lines change at the main
-    script. In this specific case, it is:
-
-	+ from pcie_bus_error import PcieBusError
-	...
-	+    PcieBusError(subparsers)
-
-    With the actual implementation handled on a separate .py module.
-
-    This way, we can add multiple handlers there, each one with its
-    own separate Python file.
-
-    After having this series merged, my TODO plan for GHES type support is
-    to add error injection code for the errors that are already implemented
-    inside the Kernel and rasdaemon, after checking that the support for
-    they are OK. Then, add support for it at the runner that will be
-    checking for potential regressions at the full stack.
-
-Regards,
-Mauro
+--
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
