@@ -1,131 +1,140 @@
-Return-Path: <linux-kernel+bounces-552454-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-552456-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 68967A579F6
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 12:19:27 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1283EA579FC
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 12:31:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D9C4F3AFB42
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 11:19:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4590116FA58
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 11:31:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F1D61B0F26;
-	Sat,  8 Mar 2025 11:19:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15D011B3725;
+	Sat,  8 Mar 2025 11:31:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="baDJzKrv";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="S+SHjGHR"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="TF5L0mrB"
+Received: from out30-112.freemail.mail.aliyun.com (out30-112.freemail.mail.aliyun.com [115.124.30.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1258374F1
-	for <linux-kernel@vger.kernel.org>; Sat,  8 Mar 2025 11:19:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB05F1917FB;
+	Sat,  8 Mar 2025 11:31:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.112
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741432761; cv=none; b=fZaVEt9kcNWIjsMZm5FjvkRivi2ugC9GMXLaDzoLG5nO65pPVDiuomslI5YZvBJSHF/f4GmNWttT1OS+Sbvm/7X6TtuQRwH150D+uSz+dw/LqIWx/T2Bl/5OhsAZFJT+3FZOeoVNFB9ogrvVbunoA2aR2YIiq4mvWyG+RPFDwIc=
+	t=1741433491; cv=none; b=R9jVpgABCX7269Qb+0kPtiH/3nCriE7GWcVm+RngOCwDm+9UbVcpPWwanfT5IAV6oMe6e+3BrzJGydzPux44QeINOheucucU87IKwn+fDyFfB5mCKiaEMF/TdPSbPRwMFIpuqJOZr9RHbwLCBRMjY14RyRjgHXfFxVa8m6hKvqs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741432761; c=relaxed/simple;
-	bh=gU+UcvRVPrP3417Wwe96TRvmgJhmzMPHUdRgX3HUaho=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=lQwxZpgFJJp0j/2XtNa8I7J+dGiAWgbbxg6KfL8jLXiQsydLNuIghswZRbtrxandJEdKMWwEDTJ6qa21PVtlHOepZgRztrP9Ed3SVL7/52OiBANmugzFyLNXQ9eQi+s7smzZgZr6ZU95a2/7FgusQYpSi7gIdOtv0hB5HBYlp5M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=baDJzKrv; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=S+SHjGHR; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1741432757;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=6Wwe+Yut1DnOhJnZ/JWqRRJe9rO44j2r7LQI6F1jeF8=;
-	b=baDJzKrvbi8MZyhdOsdplpGcFCulGwNDidt2zWWvMHhroOJXhhMOI7sbcbkLqoVF7PIspt
-	ohk+mGYjhQ+PCu05XQ1tpHd3QSr3U8sv56zy7xPNAc8nYIb7FEKD6569JsQCclFRzdxmXW
-	/lxoNhAtgaMkpvyXrF7xU4PH2B5oZMSntM8Ywb4y8M2CrmeVeJkb3rbonu8UirgJWqstwf
-	TUyBJBLp17pXTBqQ54lyeNYVzSl4NLWFL9PtqPE0c20aW0Zay/kZ1KJFkfohH0D3xR5sqf
-	3IGO0zNVjivWlv6Zd4gXMlUK65TSuwdb6+RL/LSagym0e0raOVqn0BY/wDkTEA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1741432757;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=6Wwe+Yut1DnOhJnZ/JWqRRJe9rO44j2r7LQI6F1jeF8=;
-	b=S+SHjGHRVNAbrSn4vlAlcCUalTnsMY8HyobMiWlhT2I5n5TemkVs4VbcDHnRsN9JCiiNGh
-	0F/hL3yx6XjdTzAg==
-To: Dmitry Vyukov <dvyukov@google.com>, krisman@collabora.com,
- luto@kernel.org, peterz@infradead.org, keescook@chromium.org,
- gregory.price@memverge.com
-Cc: Dmitry Vyukov <dvyukov@google.com>, Marco Elver <elver@google.com>,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/3] syscall_user_dispatch: Allow allowed range
- wrap-around
-In-Reply-To: <de940218d0a59fd930ec244d87f2375b16a7815a.1740386567.git.dvyukov@google.com>
-References: <cover.1740386567.git.dvyukov@google.com>
- <de940218d0a59fd930ec244d87f2375b16a7815a.1740386567.git.dvyukov@google.com>
-Date: Sat, 08 Mar 2025 12:19:17 +0100
-Message-ID: <87y0xf3h3e.ffs@tglx>
+	s=arc-20240116; t=1741433491; c=relaxed/simple;
+	bh=JFfAR3S+qYJY2WY6M/D87teeIRVXSJ/RDDc4sMzf00U=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=SmyZlWpNqE9zZLZOsueVqHwTNRHxfmZtS7x6Nax1tKEkHN0SAYqNoq8g8aANwSWqlZgJPGRKsGPdkP2I+Btt5DM8iRZJoYhqbakap0kdh8wIasXang6bC51fjztPWrsqLgGyLxc7RsmUyfNO6b+nR7baVfGT9amPAxmZHrAMz0I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=TF5L0mrB; arc=none smtp.client-ip=115.124.30.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1741433479; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=GM5S3cFClXldgr+roHNekbKFyWqgvgh/iNs0mzaLJow=;
+	b=TF5L0mrBQhON+aD3fFDH5RKVFItUGwLKpeoNyoR/4szt8scaLp8HFKWkNuoveojxj4eSMQ80hYlAfthoDiASNMu4Nu1wnPZAMtBrymjHn0NTsU1xkPwne13SSw9l0++dOqi5qPLRjmFhE5uovsDWkD74rePfiSRtljtQc27rC5s=
+Received: from 30.246.161.128(mailfrom:xueshuai@linux.alibaba.com fp:SMTPD_---0WQukq4m_1741433156 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Sat, 08 Mar 2025 19:25:57 +0800
+Message-ID: <5966a572-f69b-404d-b632-9b29f52656b0@linux.alibaba.com>
+Date: Sat, 8 Mar 2025 19:25:55 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 1/3] x86/mce: Use is_copy_from_user() to determine
+ copy-from-user context
+To: Borislav Petkov <bp@alien8.de>
+Cc: tony.luck@intel.com, peterz@infradead.org, catalin.marinas@arm.com,
+ yazen.ghannam@amd.com, akpm@linux-foundation.org, linmiaohe@huawei.com,
+ nao.horiguchi@gmail.com, tglx@linutronix.de, mingo@redhat.com,
+ dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
+ jpoimboe@kernel.org, linux-edac@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+ baolin.wang@linux.alibaba.com, tianruidong@linux.alibaba.com
+References: <20250307054404.73877-1-xueshuai@linux.alibaba.com>
+ <20250307054404.73877-2-xueshuai@linux.alibaba.com>
+ <20250307204018.GAZ8tZstt11Y4KFprC@fat_crate.local>
+From: Shuai Xue <xueshuai@linux.alibaba.com>
+In-Reply-To: <20250307204018.GAZ8tZstt11Y4KFprC@fat_crate.local>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Mon, Feb 24 2025 at 09:45, Dmitry Vyukov wrote:
-> There are two possible scenarios for syscall filtering:
->  - having a trusted/allowed range of PCs, and intercepting everything else
->  - or the opposite: a single untrusted/intercepted range and allowing
->    everything else
-> The current implementation only allows the former use case due to
-> allowed range wrap-around check. Allow the latter use case as well
-> by removing the wrap-around check.
-> The latter use case is relevant for any kind of sandboxing scenario,
-> or monitoring behavior of a single library. If a program wants to
-> intercept syscalls for PC range [START, END) then it needs to call:
-> prctl(..., END, -(END-START), ...);
-> which sets a wrap-around range that excludes everything
-> besides [START, END).
 
-That's not really intuitive and the implementation changes the prctl()
-behaviour in a non backwards compatible way.
 
-Can we please keep the current behaviour and have a new mode. Something
-like:
+在 2025/3/8 04:40, Borislav Petkov 写道:
+> On Fri, Mar 07, 2025 at 01:44:02PM +0800, Shuai Xue wrote:
+>> Commit 4c132d1d844a ("x86/futex: Remove .fixup usage") introduced a new
+>> extable fixup type, EX_TYPE_EFAULT_REG, and commit 4c132d1d844a
+>> ("x86/futex: Remove .fixup usage") updated the extable fixup type for
+>> copy-from-user operations, changing it from EX_TYPE_UACCESS to
+>> EX_TYPE_EFAULT_REG. The error context for copy-from-user operations no
+>> longer functions as an in-kernel recovery context. Consequently, the error
+>> context for copy-from-user operations no longer functions as an in-kernel
+>> recovery context, resulting in kernel panics with the message: "Machine
+>> check: Data load in unrecoverable area of kernel."
+>>
+>> The critical aspect is identifying whether the error context involves a
+>> read from user memory. We do not care about the ex-type if we know its a
+> 
+> Please use passive voice in your commit message: no "we" or "I", etc,
+> and describe your changes in imperative mood.
+> 
+> Also, pls read section "2) Describe your changes" in
+> Documentation/process/submitting-patches.rst for more details.
+> 
+> Also, see section "Changelog" in
+> Documentation/process/maintainer-tip.rst
+> 
+> Bottom line is: personal pronouns are ambiguous in text, especially with
+> so many parties/companies/etc developing the kernel so let's avoid them
+> please.
+> 
+> "ex-type"?
+> 
+> Please write in plain English - not in a programming language.
+> 
+>> MOV reading from userspace. is_copy_from_user() return true when both of
+>> the following conditions are met:
+>>
+>>      - the current instruction is copy
+> 
+> There is no "copy instruction". You mean the "current operation".
+> 
+>>      - source address is user memory
+> 
+> So you can simply say "when reading user memory". Simple.
+>>
+>> So, use is_copy_from_user() to determin if a context is copy user directly.
+> 
+> Unknown word [determin] in commit message.
+> Suggestions: ['determine',
+> 
+> Please introduce a spellchecker into your patch creation workflow.
+> 
+> Also, run your commit messages through AI to correct the grammar and
+> formulations in them.
 
- # define PR_SYS_DISPATCH_OFF            0
- # define PR_SYS_DISPATCH_ON             1
- # define PR_SYS_DISPATCH_EXCLUSIVE_ON   PR_SYS_DISPATCH_ON
- # define PR_SYS_DISPATCH_INCLUSIVE_ON   2
+Certainly, thank you for bringing that to my attention.
+I will refine the commit log accordingly.
 
-That keeps the current mode backwards compatible and avoids the oddity of
+> 
+> The more important part which I asked for already is, is is_copy_from_user()
+> exhaustive in determining the that the operation really is a copy from user?
+> 
+> The EX_TYPE_UACCESS things *explicitly* marked such places in the code. Does
+> is_copy_from_user() guarantee the same, without false positives?
+> 
 
-     prctl(..., END, -(END-START), ...);
+Following your discussion with Tony, it seems that we have reached a conclusion.
 
-i.e. this is clearly and obvious distinguishable for user space:
+Thanks.
+Best Regards,
+Shuai
 
-     prctl(..., PR_SYS_DISPATCH_EXCLUSIVE_ON, END, END - START, ...);
-     prctl(..., PR_SYS_DISPATCH_INCLUSIVE_ON, END, END - START, ...);
-
-Which makes a lot of sense because these two modes are distinctly
-different, no?
-
-PR_SYS_DISPATCH_INCLUSIVE_ON will fail on older kernels and both modes
-have a sanity check. PR_SYS_DISPATCH_INCLUSIVE_ON should at least check
-for a zero length dispatcher region.
-
-Aside of the better user interface this avoids the in_compat_syscall()
-hack. Because then set_syscall_user_dispatch() does the range inversion
-and that works completely independent of compat.
-
-> kernel/entry/syscall_user_dispatch.c | 9 +++------
-> kernel/sys.c                         | 6 ++++++
-> 2 files changed, 9 insertions(+), 6 deletions(-)
-
-This clearly lacks an update of
-
-     Documentation/admin-guide/syscall-user-dispatch.rst
-
-Thanks,
-
-        tglx
 
