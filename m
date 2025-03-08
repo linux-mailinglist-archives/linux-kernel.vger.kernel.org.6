@@ -1,208 +1,804 @@
-Return-Path: <linux-kernel+bounces-552760-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-552761-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9329A57DCC
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 20:35:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2BC8CA57DD2
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 20:39:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2055A16D78C
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 19:35:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5A1E916BE28
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 19:39:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37D1E1B424E;
-	Sat,  8 Mar 2025 19:34:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 184DF205E15;
+	Sat,  8 Mar 2025 19:39:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nMOQ2siz"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gGdYTkBS"
+Received: from mail-qk1-f180.google.com (mail-qk1-f180.google.com [209.85.222.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 912A22A8C1
-	for <linux-kernel@vger.kernel.org>; Sat,  8 Mar 2025 19:34:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB439155316;
+	Sat,  8 Mar 2025 19:39:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741462494; cv=none; b=pQzTfmVnhXw9k8QTueSk+rSv6bJ4JfasbclQfRUiD37JYeUkUxzsUj9xFpVhOVl7g5r1DPVwP+hjPQLUKMvSRairzKjtC7liXhECA6m9FIOyrQomIb5g10b+j0ZVcfnM8giU0Dc3UO029Tua79+QyJuEmqSdSHnZ4GYRx/n58UE=
+	t=1741462748; cv=none; b=iiYVEWTv9uC4ssel32qCd7GOjci4jTnFVTsgozeOz/T/EXjXVxN1677FbEHNpwB6t9+fPHauKiztF3Nh2nq6gY4NBEnaociFJImXPG8APr0+/juOxLyTX0nIX6WS7PDXD0VQ0TP2xM0rlq/LTa/hM8oCRjQL2wD61eZhYxnTHkI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741462494; c=relaxed/simple;
-	bh=XNbvfbl9PP9G8yGmtpy35qtIz7wmhgMPojP/eFF63yA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OScS7+gEww9f2RI+WPZu0cOqbptmW0rTaK7Up3/5R7Zd1D1899WSRwu/738oEKmCPL22qQytj5+CdZMeVzcsBd1KxNtnYg8NdnZBC4A8/vqOQHr0OkqVj1XF7DcmQDZEqMmxXgMXWBDh/LN5sHpz8soVKfZRjwtawAaC6lVPNjs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nMOQ2siz; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 36AB1C4CEE0;
-	Sat,  8 Mar 2025 19:34:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741462494;
-	bh=XNbvfbl9PP9G8yGmtpy35qtIz7wmhgMPojP/eFF63yA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=nMOQ2sizIB2deF+OKEMldRWVQSjPOpFR6hdO69rNpUD8l3bA99jg+QLlIOsNQDPQA
-	 RO1DALt0WGDCTmYLlYr6j8kaBhxIFTt/De3fO20Y5wD1ae5GFxb61SOHtrPRMleXfR
-	 e3/JFYZFwFmwInASfetXZh1NCi/p6yU2srloG16+MeOiGJubVfStxijRle5oVGZ0A/
-	 kcA/J4uYB8ghk3LCVhy8cMQIo5jCFiKxYHBJKOg8f3545Qo9M9FDNSBL77iVA2Iql9
-	 75hy2qak03EPRXvG8Jo/T0jtt5u0b/ZXZfR5+QKDemFnL5fUiHj+VUUmLU7UM6918c
-	 n5h5EWXLbnPnA==
-Date: Sat, 8 Mar 2025 20:34:49 +0100
-From: Ingo Molnar <mingo@kernel.org>
-To: "H. Peter Anvin" <hpa@zytor.com>
-Cc: Uros Bizjak <ubizjak@gmail.com>, x86@kernel.org,
-	linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>
-Subject: Re: [PATCH] x86/boot: Do not test if AC and ID eflags are changeable
- on x86_64
-Message-ID: <Z8yb2f8nqvN_K-PA@gmail.com>
-References: <20250307091022.181136-1-ubizjak@gmail.com>
- <DC668A65-3173-4A0C-BF78-1CECF60D300B@zytor.com>
- <CAFULd4aMkxYp6L=grE7TrvvfdX7gTGOTAJgojJ=mjHfDLJ=kVQ@mail.gmail.com>
- <E3E112F8-CC41-4933-9FEC-B53D6A0AFA7A@zytor.com>
+	s=arc-20240116; t=1741462748; c=relaxed/simple;
+	bh=jINclNBT2Wr7tmSpVcDI+rn5eFJlZXxiOwHSOhpGYJs=;
+	h=Date:From:To:Message-ID:In-Reply-To:References:Subject:
+	 Mime-Version:Content-Type; b=O/pEQRz04LkyYkVpK3q5wIOCsunjLDtk4YjdXjwxVOZzWrQgvIOKaHjfUDLU2mpWlDm2FvLzflOcD63sq5LmykNt522VgNkMsz/CAcGTz49U3hchAHdcItRjuHunDmq5VrOEwRBR7tiKAQcZTCmxJPP0he5bsCtIBymk8yZoHe0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gGdYTkBS; arc=none smtp.client-ip=209.85.222.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f180.google.com with SMTP id af79cd13be357-7c2303a56d6so340064385a.3;
+        Sat, 08 Mar 2025 11:39:06 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741462745; x=1742067545; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:subject:references
+         :in-reply-to:message-id:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=2IWQwhkPuIBucQja63csZ9zvEwpAy8WdkO38UEbtuBY=;
+        b=gGdYTkBST6lxe2qU7mpsr8X2aPCK7n6woZ0X0W7s6zH9E7wdEq2QvBlVo809veYkmN
+         kIfVObdQABTANV00TMNNd4kbHWWtH5+bWavEJWbJYDWoaKLMeWE0tGo5tp10Um8YHrNM
+         gewh9p4fZUntdecacJugkFezwXTnyfEwPgXZ1oqS3Z7ieApKADo1vMXETAuFIFiLIOMC
+         Wt7ZiQoeEF9iTSRgXl2RUbd7sIIBirlvgQoBdf1lb40ZF4d2sReU7lmbVGVko9bljinb
+         qAKRWbkrRqg9XylBDwlQ/mvk9zqvLC7bIBxYVkrMsgdWfau6lSCRB9f6UhJa3KgUxrhT
+         Gbxg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741462745; x=1742067545;
+        h=content-transfer-encoding:mime-version:subject:references
+         :in-reply-to:message-id:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=2IWQwhkPuIBucQja63csZ9zvEwpAy8WdkO38UEbtuBY=;
+        b=qaYMkXXZ7XN2G4C9q/omoHPQEAbxPaklKH9zfA5bU68w4A0r14G6JOG3gcur/apl85
+         R+JotatjwRdzXVVu32h0pqvI8lCq2ZnCnYGni6yCMzSYbpeY5zcUH6FUrjpWh70S57c7
+         uPr50R8emPqnC+BKbmo7kuQsaQUMFvi2RjwojwYDFIRDdRCzHkZmyP0ZTOopuv9PlIDt
+         bdsXVb2ZWa59tH68XUAwvmJZ2s2qTLOzXx5rOnUcZ/SEPPWlpWI3X7AvSHu5f2yRtuap
+         iEWKUP7IHj9zFLJf1McVgA9MnyTEj6ET7/yew/M9TbOz8nWyvdzCbzokQfj2rzah5HHr
+         nLvA==
+X-Forwarded-Encrypted: i=1; AJvYcCU6PRGeuX+G/OSjQxSgCKmCfD7FmstR7Y621TVJ2TLTi3DdfsHbB8xOnEVVzaTFRVF2QgiTAWJxt+nxK0ik@vger.kernel.org, AJvYcCUIykGgE0OncfGDeEXVmiMiCIx4xlpyJtJU1TI6I3H6Hx/0+SnDbkHXHsH+1Ta6DCuBe975JA6n@vger.kernel.org, AJvYcCVQ8yNmhpJzPxav1LKQbGR1JHSIlTR/2xI8r79HQzEop2Efb0VurR7nb3eiMY+L1mGu9GU=@vger.kernel.org, AJvYcCVrPZYDr/Am1mzcds5tLbDrIJ1qPSWePLmrhxvmQ1zhiv6OaqYrIxB9rMrE0MRb19PMK0yF2+wBDCwb@vger.kernel.org, AJvYcCW4VPN1T0+sp81mHnAxbfLyVOWj/dAgsjXLpzeRYPz8fc5W1B6PBPFyU5Y2P6jex+X06h5dumgl9C1N+36jMb6y@vger.kernel.org
+X-Gm-Message-State: AOJu0YzmFpYLLJH4oEcAEdrR3Umvjr7edX1ReTuVO805QyJiRiSYJYXO
+	VJxMLhGvDZdUV1n7SChVgp5XSvLcxInrGE+q7ZPb7HzzAJh9W8T/
+X-Gm-Gg: ASbGncvDR281chxjCksXS+5iVPg1ojLj4dj4Ugrq/JIpnlE3bocOYQ7VKHXXyeQJkwR
+	D2y+ilnXTB+Mucuxi9MV7clJHtGYhaCzaCoGuoKraIZRHTknqcs3lo0pPU4zg0Rha3MpgpMeKPD
+	WNztv4ws6oJQpWMNJE68HvCg0ffV1ty93ZRx/AIIMI50p+xGGswu9uRyZD/epK6aMDiQDwn1/ZX
+	H2on2idCFwywmkNJwLwQWZzgwjpIHEf+2sWvON60ZSZHUZ5ndZQSysJ/QySuQ89wYu8GKwriFp2
+	KNr0GeoF7q5fFAMzf4PQncmVQv/AicCHy/u+l/4AO0QdbS6b7VO9PVWfNO9LcLKgdUsj+oYMl+T
+	KBUoBGN6bnc1g69zUyNa7sQ==
+X-Google-Smtp-Source: AGHT+IEbAiNkRe5mCRPA6jGEsnKtVdOnwc/WLU1rix96DD9BsiiWGTqjlAollOT6vN0M2UQuU/aCDw==
+X-Received: by 2002:a05:6214:411b:b0:6e6:61f1:458a with SMTP id 6a1803df08f44-6e9005e8f70mr91739796d6.14.1741462745254;
+        Sat, 08 Mar 2025 11:39:05 -0800 (PST)
+Received: from localhost (234.207.85.34.bc.googleusercontent.com. [34.85.207.234])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6e8f70909c9sm34277706d6.26.2025.03.08.11.39.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 08 Mar 2025 11:39:04 -0800 (PST)
+Date: Sat, 08 Mar 2025 14:39:04 -0500
+From: Willem de Bruijn <willemdebruijn.kernel@gmail.com>
+To: Akihiko Odaki <akihiko.odaki@daynix.com>, 
+ Jonathan Corbet <corbet@lwn.net>, 
+ Willem de Bruijn <willemdebruijn.kernel@gmail.com>, 
+ Jason Wang <jasowang@redhat.com>, 
+ "David S. Miller" <davem@davemloft.net>, 
+ Eric Dumazet <edumazet@google.com>, 
+ Jakub Kicinski <kuba@kernel.org>, 
+ Paolo Abeni <pabeni@redhat.com>, 
+ "Michael S. Tsirkin" <mst@redhat.com>, 
+ Xuan Zhuo <xuanzhuo@linux.alibaba.com>, 
+ Shuah Khan <shuah@kernel.org>, 
+ linux-doc@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, 
+ netdev@vger.kernel.org, 
+ kvm@vger.kernel.org, 
+ virtualization@lists.linux-foundation.org, 
+ linux-kselftest@vger.kernel.org, 
+ Yuri Benditovich <yuri.benditovich@daynix.com>, 
+ Andrew Melnychenko <andrew@daynix.com>, 
+ Stephen Hemminger <stephen@networkplumber.org>, 
+ gur.stavi@huawei.com, 
+ Lei Yang <leiyang@redhat.com>, 
+ Simon Horman <horms@kernel.org>, 
+ Akihiko Odaki <akihiko.odaki@daynix.com>
+Message-ID: <67cc9cd8218f1_14b9f9294c4@willemb.c.googlers.com.notmuch>
+In-Reply-To: <20250307-rss-v9-5-df76624025eb@daynix.com>
+References: <20250307-rss-v9-0-df76624025eb@daynix.com>
+ <20250307-rss-v9-5-df76624025eb@daynix.com>
+Subject: Re: [PATCH net-next v9 5/6] selftest: tun: Add tests for virtio-net
+ hashing
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <E3E112F8-CC41-4933-9FEC-B53D6A0AFA7A@zytor.com>
+Mime-Version: 1.0
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: 7bit
 
-
-* H. Peter Anvin <hpa@zytor.com> wrote:
-
-> On March 7, 2025 4:15:42 AM PST, Uros Bizjak <ubizjak@gmail.com> wrote:
-> >On Fri, Mar 7, 2025 at 12:58 PM H. Peter Anvin <hpa@zytor.com> wrote:
-> >>
-> >> On March 7, 2025 1:10:03 AM PST, Uros Bizjak <ubizjak@gmail.com> wrote:
-> >> >The test for the changeabitily of AC and ID eflags is used to
-> >> >distinguish between i386 and i486 processors (AC) and to test
-> >> >for cpuid instruction support (ID).
-> >> >
-> >> >Skip these tests on x86_64 processors as they always supports cpuid.
-> >> >
-> >> >Also change the return type of has_eflag() to bool.
-> >> >
-> >> >Signed-off-by: Uros Bizjak <ubizjak@gmail.com>
-> >> >Cc: Thomas Gleixner <tglx@linutronix.de>
-> >> >Cc: Ingo Molnar <mingo@kernel.org>
-> >> >Cc: Borislav Petkov <bp@alien8.de>
-> >> >Cc: Dave Hansen <dave.hansen@linux.intel.com>
-> >> >Cc: "H. Peter Anvin" <hpa@zytor.com>
-> >> >---
-> >> > arch/x86/boot/cpuflags.c | 26 +++++++++-----------------
-> >> > arch/x86/boot/cpuflags.h |  6 +++++-
-> >> > 2 files changed, 14 insertions(+), 18 deletions(-)
-> >> >
-> >> >diff --git a/arch/x86/boot/cpuflags.c b/arch/x86/boot/cpuflags.c
-> >> >index d75237ba7ce9..2150a016176f 100644
-> >> >--- a/arch/x86/boot/cpuflags.c
-> >> >+++ b/arch/x86/boot/cpuflags.c
-> >> >@@ -29,40 +29,32 @@ static int has_fpu(void)
-> >> >       return fsw == 0 && (fcw & 0x103f) == 0x003f;
-> >> > }
-> >> >
-> >> >+#ifdef CONFIG_X86_32
-> >> > /*
-> >> >  * For building the 16-bit code we want to explicitly specify 32-bit
-> >> >  * push/pop operations, rather than just saying 'pushf' or 'popf' and
-> >> >- * letting the compiler choose. But this is also included from the
-> >> >- * compressed/ directory where it may be 64-bit code, and thus needs
-> >> >- * to be 'pushfq' or 'popfq' in that case.
-> >> >+ * letting the compiler choose.
-> >> >  */
-> >> >-#ifdef __x86_64__
-> >> >-#define PUSHF "pushfq"
-> >> >-#define POPF "popfq"
-> >> >-#else
-> >> >-#define PUSHF "pushfl"
-> >> >-#define POPF "popfl"
-> >> >-#endif
-> >> >-
-> >> >-int has_eflag(unsigned long mask)
-> >> >+bool has_eflag(unsigned long mask)
-> >> > {
-> >> >       unsigned long f0, f1;
-> >> >
-> >> >-      asm volatile(PUSHF "    \n\t"
-> >> >-                   PUSHF "    \n\t"
-> >> >+      asm volatile("pushfl    \n\t"
-> >> >+                   "pushfl    \n\t"
-> >> >                    "pop %0    \n\t"
-> >> >                    "mov %0,%1 \n\t"
-> >> >                    "xor %2,%1 \n\t"
-> >> >                    "push %1   \n\t"
-> >> >-                   POPF "     \n\t"
-> >> >-                   PUSHF "    \n\t"
-> >> >+                   "popfl     \n\t"
-> >> >+                   "pushfl    \n\t"
-> >> >                    "pop %1    \n\t"
-> >> >-                   POPF
-> >> >+                   "popfl"
-> >> >                    : "=&r" (f0), "=&r" (f1)
-> >> >                    : "ri" (mask));
-> >> >
-> >> >       return !!((f0^f1) & mask);
-> >> > }
-> >> >+#endif
-> >> >
-> >> > void cpuid_count(u32 id, u32 count, u32 *a, u32 *b, u32 *c, u32 *d)
-> >> > {
-> >> >diff --git a/arch/x86/boot/cpuflags.h b/arch/x86/boot/cpuflags.h
-> >> >index fdcc2aa4c3c4..a398d9204ad0 100644
-> >> >--- a/arch/x86/boot/cpuflags.h
-> >> >+++ b/arch/x86/boot/cpuflags.h
-> >> >@@ -15,7 +15,11 @@ struct cpu_features {
-> >> > extern struct cpu_features cpu;
-> >> > extern u32 cpu_vendor[3];
-> >> >
-> >> >-int has_eflag(unsigned long mask);
-> >> >+#ifdef CONFIG_X86_32
-> >> >+bool has_eflag(unsigned long mask);
-> >> >+#else
-> >> >+static inline bool has_eflag(unsigned long mask) { return true; }
-> >> >+#endif
-> >> > void get_cpuflags(void);
-> >> > void cpuid_count(u32 id, u32 count, u32 *a, u32 *b, u32 *c, u32 *d);
-> >> > bool has_cpuflag(int flag);
-> >>
-> >> PUSF et al → pushf
-> >>
-> >> The -l and -q suffixes have been optional for a long time.
-> >
-> >No, not in this case. Please see the comment:
-> >
-> >/*
-> >* For building the 16-bit code we want to explicitly specify 32-bit
-> >* push/pop operations, rather than just saying 'pushf' or 'popf' and
-> >* letting the compiler choose.
-> >*/
-> >
-> >We are building 16-bit code here, and we want PUSHFL, the one with
-> >operand size prefix 0x66.
-> >
-> >Please consider the following code:
-> >
-> >    .code16
-> >    pushf
-> >    pushfl
-> >
-> >as -o push.o push.s
-> >
-> >objdump -dr -Mdata16 push.o
-> >
-> >0000000000000000 <.text>:
-> >  0:   9c                      pushf
-> >  1:   66 9c                   pushfl
-> >
-> >Uros.
-> >
+Akihiko Odaki wrote:
+> The added tests confirm tun can perform RSS and hash reporting, and
+> reject invalid configurations for them.
 > 
-> *plonk* I should have remembered (.code16gcc is different then 
-> .code16 though.) I wrote the damned things after all...
+> Signed-off-by: Akihiko Odaki <akihiko.odaki@daynix.com>
+> Tested-by: Lei Yang <leiyang@redhat.com>
+> ---
+>  tools/testing/selftests/net/Makefile |   2 +-
+>  tools/testing/selftests/net/tun.c    | 584 ++++++++++++++++++++++++++++++++++-
+>  2 files changed, 576 insertions(+), 10 deletions(-)
+> 
+> diff --git a/tools/testing/selftests/net/Makefile b/tools/testing/selftests/net/Makefile
+> index 73ee88d6b043004be23b444de667a1d99a6045de..9772f691a9a011d99212df32463cdb930cf0a1a0 100644
+> --- a/tools/testing/selftests/net/Makefile
+> +++ b/tools/testing/selftests/net/Makefile
+> @@ -123,6 +123,6 @@ $(OUTPUT)/reuseport_bpf_numa: LDLIBS += -lnuma
+>  $(OUTPUT)/tcp_mmap: LDLIBS += -lpthread -lcrypto
+>  $(OUTPUT)/tcp_inq: LDLIBS += -lpthread
+>  $(OUTPUT)/bind_bhash: LDLIBS += -lpthread
+> -$(OUTPUT)/io_uring_zerocopy_tx: CFLAGS += -I../../../include/
+> +$(OUTPUT)/io_uring_zerocopy_tx $(OUTPUT)/tun: CFLAGS += -I../../../include/
+>  
+>  include bpf.mk
+> diff --git a/tools/testing/selftests/net/tun.c b/tools/testing/selftests/net/tun.c
+> index 463dd98f2b80b1bdcb398cee43c834e7dc5cf784..acadeea7194eaea9416a605b47f99f7a5f1f80cd 100644
+> --- a/tools/testing/selftests/net/tun.c
+> +++ b/tools/testing/selftests/net/tun.c
+> @@ -2,21 +2,38 @@
+>  
+>  #define _GNU_SOURCE
+>  
+> +#include <endian.h>
+>  #include <errno.h>
+>  #include <fcntl.h>
+> +#include <sched.h>
+> +#include <stddef.h>
+>  #include <stdio.h>
+>  #include <stdlib.h>
+>  #include <string.h>
+>  #include <unistd.h>
+> -#include <linux/if.h>
+> +#include <net/if.h>
+> +#include <netinet/ip.h>
+> +#include <sys/ioctl.h>
+> +#include <sys/socket.h>
+> +#include <linux/compiler.h>
+> +#include <linux/icmp.h>
+> +#include <linux/if_arp.h>
+>  #include <linux/if_tun.h>
+> +#include <linux/ipv6.h>
+>  #include <linux/netlink.h>
+>  #include <linux/rtnetlink.h>
+> -#include <sys/ioctl.h>
+> -#include <sys/socket.h>
+> +#include <linux/sockios.h>
+> +#include <linux/tcp.h>
+> +#include <linux/udp.h>
+> +#include <linux/virtio_net.h>
+>  
+>  #include "../kselftest_harness.h"
+>  
+> +#define TUN_HWADDR_SOURCE { 0x02, 0x00, 0x00, 0x00, 0x00, 0x00 }
+> +#define TUN_HWADDR_DEST { 0x02, 0x00, 0x00, 0x00, 0x00, 0x01 }
+> +#define TUN_IPADDR_SOURCE htonl((172 << 24) | (17 << 16) | 0)
+> +#define TUN_IPADDR_DEST htonl((172 << 24) | (17 << 16) | 1)
+> +
+>  static int tun_attach(int fd, char *dev)
+>  {
+>  	struct ifreq ifr;
+> @@ -39,7 +56,7 @@ static int tun_detach(int fd, char *dev)
+>  	return ioctl(fd, TUNSETQUEUE, (void *) &ifr);
+>  }
+>  
+> -static int tun_alloc(char *dev)
+> +static int tun_alloc(char *dev, short flags)
+>  {
+>  	struct ifreq ifr;
+>  	int fd, err;
+> @@ -52,7 +69,8 @@ static int tun_alloc(char *dev)
+>  
+>  	memset(&ifr, 0, sizeof(ifr));
+>  	strcpy(ifr.ifr_name, dev);
+> -	ifr.ifr_flags = IFF_TAP | IFF_NAPI | IFF_MULTI_QUEUE;
+> +	ifr.ifr_flags = flags | IFF_TAP | IFF_NAPI | IFF_NO_PI |
+> +			IFF_MULTI_QUEUE;
+>  
+>  	err = ioctl(fd, TUNSETIFF, (void *) &ifr);
+>  	if (err < 0) {
+> @@ -64,6 +82,40 @@ static int tun_alloc(char *dev)
+>  	return fd;
+>  }
+>  
+> +static bool tun_add_to_bridge(int local_fd, const char *name)
+> +{
+> +	struct ifreq ifreq = {
+> +		.ifr_name = "xbridge",
+> +		.ifr_ifindex = if_nametoindex(name)
+> +	};
+> +
+> +	if (!ifreq.ifr_ifindex) {
+> +		perror("if_nametoindex");
+> +		return false;
+> +	}
+> +
+> +	if (ioctl(local_fd, SIOCBRADDIF, &ifreq)) {
+> +		perror("SIOCBRADDIF");
+> +		return false;
+> +	}
+> +
+> +	return true;
+> +}
+> +
+> +static bool tun_set_flags(int local_fd, const char *name, short flags)
+> +{
+> +	struct ifreq ifreq = { .ifr_flags = flags };
+> +
+> +	strcpy(ifreq.ifr_name, name);
+> +
+> +	if (ioctl(local_fd, SIOCSIFFLAGS, &ifreq)) {
+> +		perror("SIOCSIFFLAGS");
+> +		return false;
+> +	}
+> +
+> +	return true;
+> +}
+> +
+>  static int tun_delete(char *dev)
+>  {
+>  	struct {
+> @@ -102,6 +154,156 @@ static int tun_delete(char *dev)
+>  	return ret;
+>  }
+>  
+> +static uint32_t tun_sum(const void *buf, size_t len)
+> +{
+> +	const uint16_t *sbuf = buf;
+> +	uint32_t sum = 0;
+> +
+> +	while (len > 1) {
+> +		sum += *sbuf++;
+> +		len -= 2;
+> +	}
+> +
+> +	if (len)
+> +		sum += *(uint8_t *)sbuf;
+> +
+> +	return sum;
+> +}
+> +
+> +static uint16_t tun_build_ip_check(uint32_t sum)
+> +{
+> +	return ~((sum & 0xffff) + (sum >> 16));
+> +}
+> +
+> +static uint32_t tun_build_ip_pseudo_sum(const void *iphdr)
+> +{
+> +	uint16_t tot_len = ntohs(((struct iphdr *)iphdr)->tot_len);
+> +
+> +	return tun_sum((char *)iphdr + offsetof(struct iphdr, saddr), 8) +
+> +	       htons(((struct iphdr *)iphdr)->protocol) +
+> +	       htons(tot_len - sizeof(struct iphdr));
+> +}
+> +
+> +static uint32_t tun_build_ipv6_pseudo_sum(const void *ipv6hdr)
+> +{
+> +	return tun_sum((char *)ipv6hdr + offsetof(struct ipv6hdr, saddr), 32) +
+> +	       ((struct ipv6hdr *)ipv6hdr)->payload_len +
+> +	       htons(((struct ipv6hdr *)ipv6hdr)->nexthdr);
+> +}
+> +
+> +static void tun_build_ethhdr(struct ethhdr *ethhdr, uint16_t proto)
+> +{
+> +	*ethhdr = (struct ethhdr) {
+> +		.h_dest = TUN_HWADDR_DEST,
+> +		.h_source = TUN_HWADDR_SOURCE,
+> +		.h_proto = htons(proto)
+> +	};
+> +}
+> +
+> +static void tun_build_iphdr(void *dest, uint16_t len, uint8_t protocol)
+> +{
+> +	struct iphdr iphdr = {
+> +		.ihl = sizeof(iphdr) / 4,
+> +		.version = 4,
+> +		.tot_len = htons(sizeof(iphdr) + len),
+> +		.ttl = 255,
+> +		.protocol = protocol,
+> +		.saddr = TUN_IPADDR_SOURCE,
+> +		.daddr = TUN_IPADDR_DEST
+> +	};
+> +
+> +	iphdr.check = tun_build_ip_check(tun_sum(&iphdr, sizeof(iphdr)));
+> +	memcpy(dest, &iphdr, sizeof(iphdr));
+> +}
+> +
+> +static void tun_build_ipv6hdr(void *dest, uint16_t len, uint8_t protocol)
+> +{
+> +	struct ipv6hdr ipv6hdr = {
+> +		.version = 6,
+> +		.payload_len = htons(len),
+> +		.nexthdr = protocol,
+> +		.saddr = {
+> +			.s6_addr32 = {
+> +				htonl(0xffff0000), 0, 0, TUN_IPADDR_SOURCE
+> +			}
+> +		},
+> +		.daddr = {
+> +			.s6_addr32 = {
+> +				htonl(0xffff0000), 0, 0, TUN_IPADDR_DEST
+> +			}
+> +		},
+> +	};
+> +
+> +	memcpy(dest, &ipv6hdr, sizeof(ipv6hdr));
+> +}
+> +
+> +static void tun_build_tcphdr(void *dest, uint32_t sum)
+> +{
+> +	struct tcphdr tcphdr = {
+> +		.source = htons(9),
+> +		.dest = htons(9),
+> +		.fin = 1,
+> +		.doff = sizeof(tcphdr) / 4,
+> +	};
+> +	uint32_t tcp_sum = tun_sum(&tcphdr, sizeof(tcphdr));
+> +
+> +	tcphdr.check = tun_build_ip_check(sum + tcp_sum);
+> +	memcpy(dest, &tcphdr, sizeof(tcphdr));
+> +}
+> +
+> +static void tun_build_udphdr(void *dest, uint32_t sum)
+> +{
+> +	struct udphdr udphdr = {
+> +		.source = htons(9),
+> +		.dest = htons(9),
+> +		.len = htons(sizeof(udphdr)),
+> +	};
+> +	uint32_t udp_sum = tun_sum(&udphdr, sizeof(udphdr));
+> +
+> +	udphdr.check = tun_build_ip_check(sum + udp_sum);
+> +	memcpy(dest, &udphdr, sizeof(udphdr));
+> +}
+> +
+> +static bool tun_vnet_hash_check(int source_fd, const int *dest_fds,
+> +				const void *buffer, size_t len,
+> +				uint8_t flags,
+> +				uint16_t hash_report, uint32_t hash_value)
+> +{
+> +	size_t read_len = sizeof(struct virtio_net_hdr_v1_hash) + len;
+> +	struct virtio_net_hdr_v1_hash *read_buffer;
+> +	struct virtio_net_hdr_v1_hash hdr = {
+> +		.hdr = { .flags = flags },
+> +		.hash_value = htole32(hash_value),
+> +		.hash_report = htole16(hash_report)
+> +	};
+> +	int ret;
+> +	int txq = hash_report ? hash_value & 1 : 2;
+> +
+> +	if (write(source_fd, buffer, len) != len) {
+> +		perror("write");
+> +		return false;
+> +	}
+> +
+> +	read_buffer = malloc(read_len);
+> +	if (!read_buffer) {
+> +		perror("malloc");
+> +		return false;
+> +	}
+> +
+> +	ret = read(dest_fds[txq], read_buffer, read_len);
+> +	if (ret != read_len) {
+> +		perror("read");
+> +		free(read_buffer);
+> +		return false;
+> +	}
+> +
+> +	ret = !memcmp(read_buffer, &hdr, sizeof(*read_buffer)) &&
+> +	      !memcmp(read_buffer + 1, buffer, len);
+> +
+> +	free(read_buffer);
+> +	return ret;
+> +}
+> +
+>  FIXTURE(tun)
+>  {
+>  	char ifname[IFNAMSIZ];
+> @@ -112,10 +314,10 @@ FIXTURE_SETUP(tun)
+>  {
+>  	memset(self->ifname, 0, sizeof(self->ifname));
+>  
+> -	self->fd = tun_alloc(self->ifname);
+> +	self->fd = tun_alloc(self->ifname, 0);
+>  	ASSERT_GE(self->fd, 0);
+>  
+> -	self->fd2 = tun_alloc(self->ifname);
+> +	self->fd2 = tun_alloc(self->ifname, 0);
+>  	ASSERT_GE(self->fd2, 0);
+>  }
+>  
+> @@ -168,7 +370,7 @@ FIXTURE(tun_deleted)
+>  FIXTURE_SETUP(tun_deleted)
+>  {
+>  	self->ifname[0] = 0;
+> -	self->fd = tun_alloc(self->ifname);
+> +	self->fd = tun_alloc(self->ifname, 0);
+>  	ASSERT_LE(0, self->fd);
+>  
+>  	ASSERT_EQ(0, tun_delete(self->ifname))
+> @@ -233,4 +435,368 @@ TEST_F(tun_deleted, setvnethash)
+>  	EXPECT_EQ(EBADFD, errno);
+>  }
+>  
+> -TEST_HARNESS_MAIN
+> +FIXTURE(tun_vnet_hash)
+> +{
+> +	int local_fd;
+> +	int source_fd;
+> +	int dest_fds[3];
+> +};
+> +
+> +FIXTURE_SETUP(tun_vnet_hash)
+> +{
+> +	static const struct {
+> +		struct tun_vnet_hash hdr;
+> +		struct tun_vnet_hash_rss rss;
+> +		uint16_t rss_indirection_table[2];
+> +		uint8_t rss_key[40];
+> +	} vnet_hash = {
+> +		.hdr = {
+> +			.flags = TUN_VNET_HASH_REPORT | TUN_VNET_HASH_RSS,
+> +			.types = VIRTIO_NET_RSS_HASH_TYPE_IPv4 |
+> +				VIRTIO_NET_RSS_HASH_TYPE_TCPv4 |
+> +				VIRTIO_NET_RSS_HASH_TYPE_UDPv4 |
+> +				VIRTIO_NET_RSS_HASH_TYPE_IPv6 |
+> +				VIRTIO_NET_RSS_HASH_TYPE_TCPv6 |
+> +				VIRTIO_NET_RSS_HASH_TYPE_UDPv6
+> +		},
+> +		.rss = { .indirection_table_mask = 1, .unclassified_queue = 5 },
+> +		.rss_indirection_table = { 3, 4 },
+> +		.rss_key = {
+> +			0x6d, 0x5a, 0x56, 0xda, 0x25, 0x5b, 0x0e, 0xc2,
+> +			0x41, 0x67, 0x25, 0x3d, 0x43, 0xa3, 0x8f, 0xb0,
+> +			0xd0, 0xca, 0x2b, 0xcb, 0xae, 0x7b, 0x30, 0xb4,
+> +			0x77, 0xcb, 0x2d, 0xa3, 0x80, 0x30, 0xf2, 0x0c,
+> +			0x6a, 0x42, 0xb7, 0x3b, 0xbe, 0xac, 0x01, 0xfa
+> +		}
+> +	};
+> +
+> +	struct {
+> +		struct virtio_net_hdr_v1_hash vnet_hdr;
+> +		struct ethhdr ethhdr;
+> +		struct arphdr arphdr;
+> +		unsigned char sender_hwaddr[6];
+> +		uint32_t sender_ipaddr;
+> +		unsigned char target_hwaddr[6];
+> +		uint32_t target_ipaddr;
+> +	} __packed packet = {
+> +		.ethhdr = {
+> +			.h_source = TUN_HWADDR_SOURCE,
+> +			.h_dest = { 0xff, 0xff, 0xff, 0xff, 0xff, 0xff },
+> +			.h_proto = htons(ETH_P_ARP)
+> +		},
+> +		.arphdr = {
+> +			.ar_hrd = htons(ARPHRD_ETHER),
+> +			.ar_pro = htons(ETH_P_IP),
+> +			.ar_hln = ETH_ALEN,
+> +			.ar_pln = 4,
+> +			.ar_op = htons(ARPOP_REQUEST)
+> +		},
+> +		.sender_hwaddr = TUN_HWADDR_DEST,
+> +		.sender_ipaddr = TUN_IPADDR_DEST,
+> +		.target_ipaddr = TUN_IPADDR_DEST
+> +	};
+> +
+> +	struct tun_vnet_hash cap;
+> +	char source_ifname[IFNAMSIZ] = "";
+> +	char dest_ifname[IFNAMSIZ] = "";
+> +	int i;
+> +
+> +	self->local_fd = socket(AF_LOCAL, SOCK_STREAM, 0);
+> +	ASSERT_LE(0, self->local_fd);
+> +
+> +	self->source_fd = tun_alloc(source_ifname, 0);
+> +	ASSERT_LE(0, self->source_fd) {
+> +		EXPECT_EQ(0, close(self->local_fd));
+> +	}
+> +
+> +	i = ioctl(self->source_fd, TUNGETVNETHASHCAP, &cap);
+> +	if (i == -1 && errno == EINVAL) {
+> +		EXPECT_EQ(0, close(self->local_fd));
+> +		SKIP(return, "TUNGETVNETHASHCAP not supported");
+> +	}
+> +
+> +	ASSERT_EQ(0, i)
+> +		EXPECT_EQ(0, close(self->local_fd));
+> +
+> +	if ((cap.flags & vnet_hash.hdr.flags) != vnet_hash.hdr.flags) {
+> +		EXPECT_EQ(0, close(self->local_fd));
+> +		SKIP(return, "Lacks some hash flag support");
+> +	}
+> +
+> +	if ((cap.types & vnet_hash.hdr.types) != vnet_hash.hdr.types) {
+> +		EXPECT_EQ(0, close(self->local_fd));
+> +		SKIP(return, "Lacks some hash type support");
+> +	}
+> +
+> +	ASSERT_TRUE(tun_set_flags(self->local_fd, source_ifname, IFF_UP))
+> +		EXPECT_EQ(0, close(self->local_fd));
+> +
+> +	self->dest_fds[0] = tun_alloc(dest_ifname, IFF_VNET_HDR);
+> +	ASSERT_LE(0, self->dest_fds[0]) {
+> +		EXPECT_EQ(0, close(self->source_fd));
+> +		EXPECT_EQ(0, close(self->local_fd));
+> +	}
+> +
+> +	i = sizeof(struct virtio_net_hdr_v1_hash);
+> +	ASSERT_EQ(0, ioctl(self->dest_fds[0], TUNSETVNETHDRSZ, &i)) {
+> +		EXPECT_EQ(0, close(self->dest_fds[0]));
+> +		EXPECT_EQ(0, close(self->source_fd));
+> +		EXPECT_EQ(0, close(self->local_fd));
+> +	}
+> +
+> +	i = 1;
+> +	ASSERT_EQ(0, ioctl(self->dest_fds[0], TUNSETVNETLE, &i)) {
+> +		EXPECT_EQ(0, close(self->dest_fds[0]));
+> +		EXPECT_EQ(0, close(self->source_fd));
+> +		EXPECT_EQ(0, close(self->local_fd));
+> +	}
+> +
+> +	ASSERT_TRUE(tun_set_flags(self->local_fd, dest_ifname, IFF_UP)) {
+> +		EXPECT_EQ(0, close(self->dest_fds[0]));
+> +		EXPECT_EQ(0, close(self->source_fd));
+> +		EXPECT_EQ(0, close(self->local_fd));
+> +	}
+> +
+> +	ASSERT_EQ(sizeof(packet),
+> +		  write(self->dest_fds[0], &packet, sizeof(packet))) {
+> +		EXPECT_EQ(0, close(self->dest_fds[0]));
+> +		EXPECT_EQ(0, close(self->source_fd));
+> +		EXPECT_EQ(0, close(self->local_fd));
+> +	}
+> +
+> +	ASSERT_EQ(0, ioctl(self->dest_fds[0], TUNSETVNETHASH, &vnet_hash)) {
+> +		EXPECT_EQ(0, close(self->dest_fds[0]));
+> +		EXPECT_EQ(0, close(self->source_fd));
+> +		EXPECT_EQ(0, close(self->local_fd));
+> +	}
+> +
+> +	for (i = 1; i < ARRAY_SIZE(self->dest_fds); i++) {
+> +		self->dest_fds[i] = tun_alloc(dest_ifname, IFF_VNET_HDR);
+> +		ASSERT_LE(0, self->dest_fds[i]) {
+> +			while (i) {
+> +				i--;
+> +				EXPECT_EQ(0, close(self->local_fd));
+> +			}
+> +
+> +			EXPECT_EQ(0, close(self->source_fd));
+> +			EXPECT_EQ(0, close(self->local_fd));
+> +		}
+> +	}
+> +
+> +	ASSERT_EQ(0, ioctl(self->local_fd, SIOCBRADDBR, "xbridge")) {
+> +		EXPECT_EQ(0, ioctl(self->local_fd, SIOCBRDELBR, "xbridge"));
+> +
+> +		for (i = 0; i < ARRAY_SIZE(self->dest_fds); i++)
+> +			EXPECT_EQ(0, close(self->dest_fds[i]));
+> +
+> +		EXPECT_EQ(0, close(self->source_fd));
+> +		EXPECT_EQ(0, close(self->local_fd));
+> +	}
+> +
+> +	ASSERT_TRUE(tun_add_to_bridge(self->local_fd, source_ifname)) {
+> +		EXPECT_EQ(0, ioctl(self->local_fd, SIOCBRDELBR, "xbridge"));
+> +
+> +		for (i = 0; i < ARRAY_SIZE(self->dest_fds); i++)
+> +			EXPECT_EQ(0, close(self->dest_fds[i]));
+> +
+> +		EXPECT_EQ(0, close(self->source_fd));
+> +		EXPECT_EQ(0, close(self->local_fd));
+> +	}
+> +
+> +	ASSERT_TRUE(tun_add_to_bridge(self->local_fd, dest_ifname)) {
+> +		EXPECT_EQ(0, ioctl(self->local_fd, SIOCBRDELBR, "xbridge"));
+> +
+> +		for (i = 0; i < ARRAY_SIZE(self->dest_fds); i++)
+> +			EXPECT_EQ(0, close(self->dest_fds[i]));
+> +
+> +		EXPECT_EQ(0, close(self->source_fd));
+> +		EXPECT_EQ(0, close(self->local_fd));
+> +	}
+> +
+> +	ASSERT_TRUE(tun_set_flags(self->local_fd, "xbridge", IFF_UP)) {
+> +		EXPECT_EQ(0, ioctl(self->local_fd, SIOCBRDELBR, "xbridge"));
+> +
+> +		for (i = 0; i < ARRAY_SIZE(self->dest_fds); i++)
+> +			EXPECT_EQ(0, close(self->dest_fds[i]));
+> +
+> +		EXPECT_EQ(0, close(self->source_fd));
+> +		EXPECT_EQ(0, close(self->local_fd));
+> +	}
+> +}
+> +
+> +FIXTURE_TEARDOWN(tun_vnet_hash)
+> +{
+> +	ASSERT_TRUE(tun_set_flags(self->local_fd, "xbridge", 0)) {
+> +		for (size_t i = 0; i < ARRAY_SIZE(self->dest_fds); i++)
+> +			EXPECT_EQ(0, close(self->dest_fds[i]));
+> +
+> +		EXPECT_EQ(0, close(self->source_fd));
+> +		EXPECT_EQ(0, close(self->local_fd));
+> +	}
+> +
+> +	EXPECT_EQ(0, ioctl(self->local_fd, SIOCBRDELBR, "xbridge"));
+> +
+> +	for (size_t i = 0; i < ARRAY_SIZE(self->dest_fds); i++)
+> +		EXPECT_EQ(0, close(self->dest_fds[i]));
+> +
+> +	EXPECT_EQ(0, close(self->source_fd));
+> +	EXPECT_EQ(0, close(self->local_fd));
+> +}
+> +
+> +TEST_F(tun_vnet_hash, unclassified)
+> +{
+> +	struct {
+> +		struct ethhdr ethhdr;
+> +		struct iphdr iphdr;
+> +	} __packed packet;
+> +
+> +	tun_build_ethhdr(&packet.ethhdr, ETH_P_LOOPBACK);
+> +
+> +	EXPECT_TRUE(tun_vnet_hash_check(self->source_fd, self->dest_fds,
+> +					&packet, sizeof(packet), 0,
+> +					VIRTIO_NET_HASH_REPORT_NONE, 0));
+> +}
+> +
+> +TEST_F(tun_vnet_hash, ipv4)
+> +{
+> +	struct {
+> +		struct ethhdr ethhdr;
+> +		struct iphdr iphdr;
+> +	} __packed packet;
+> +
+> +	tun_build_ethhdr(&packet.ethhdr, ETH_P_IP);
+> +	tun_build_iphdr(&packet.iphdr, 0, 253);
+> +
+> +	EXPECT_TRUE(tun_vnet_hash_check(self->source_fd, self->dest_fds,
+> +					&packet, sizeof(packet), 0,
+> +					VIRTIO_NET_HASH_REPORT_IPv4,
+> +					0x6e45d952));
+> +}
+> +
+> +TEST_F(tun_vnet_hash, tcpv4)
+> +{
+> +	struct {
+> +		struct ethhdr ethhdr;
+> +		struct iphdr iphdr;
+> +		struct tcphdr tcphdr;
+> +	} __packed packet;
+> +
+> +	tun_build_ethhdr(&packet.ethhdr, ETH_P_IP);
+> +	tun_build_iphdr(&packet.iphdr, sizeof(struct tcphdr), IPPROTO_TCP);
+> +
+> +	tun_build_tcphdr(&packet.tcphdr,
+> +			 tun_build_ip_pseudo_sum(&packet.iphdr));
+> +
+> +	EXPECT_TRUE(tun_vnet_hash_check(self->source_fd, self->dest_fds,
+> +					&packet, sizeof(packet),
+> +					VIRTIO_NET_HDR_F_DATA_VALID,
+> +					VIRTIO_NET_HASH_REPORT_TCPv4,
+> +					0xfb63539a));
+> +}
+> +
+> +TEST_F(tun_vnet_hash, udpv4)
+> +{
+> +	struct {
+> +		struct ethhdr ethhdr;
+> +		struct iphdr iphdr;
+> +		struct udphdr udphdr;
+> +	} __packed packet;
+> +
+> +	tun_build_ethhdr(&packet.ethhdr, ETH_P_IP);
+> +	tun_build_iphdr(&packet.iphdr, sizeof(struct udphdr), IPPROTO_UDP);
+> +
+> +	tun_build_udphdr(&packet.udphdr,
+> +			 tun_build_ip_pseudo_sum(&packet.iphdr));
+> +
+> +	EXPECT_TRUE(tun_vnet_hash_check(self->source_fd, self->dest_fds,
+> +					&packet, sizeof(packet),
+> +					VIRTIO_NET_HDR_F_DATA_VALID,
+> +					VIRTIO_NET_HASH_REPORT_UDPv4,
+> +					0xfb63539a));
+> +}
+> +
+> +TEST_F(tun_vnet_hash, ipv6)
+> +{
+> +	struct {
+> +		struct ethhdr ethhdr;
+> +		struct ipv6hdr ipv6hdr;
+> +	} __packed packet;
+> +
+> +	tun_build_ethhdr(&packet.ethhdr, ETH_P_IPV6);
+> +	tun_build_ipv6hdr(&packet.ipv6hdr, 0, 253);
+> +
+> +	EXPECT_TRUE(tun_vnet_hash_check(self->source_fd, self->dest_fds,
+> +					&packet, sizeof(packet), 0,
+> +					VIRTIO_NET_HASH_REPORT_IPv6,
+> +					0xd6eb560f));
+> +}
+> +
+> +TEST_F(tun_vnet_hash, tcpv6)
+> +{
+> +	struct {
+> +		struct ethhdr ethhdr;
+> +		struct ipv6hdr ipv6hdr;
+> +		struct tcphdr tcphdr;
+> +	} __packed packet;
+> +
+> +	tun_build_ethhdr(&packet.ethhdr, ETH_P_IPV6);
+> +	tun_build_ipv6hdr(&packet.ipv6hdr, sizeof(struct tcphdr), IPPROTO_TCP);
+> +
+> +	tun_build_tcphdr(&packet.tcphdr,
+> +			 tun_build_ipv6_pseudo_sum(&packet.ipv6hdr));
+> +
+> +	EXPECT_TRUE(tun_vnet_hash_check(self->source_fd, self->dest_fds,
+> +					&packet, sizeof(packet),
+> +					VIRTIO_NET_HDR_F_DATA_VALID,
+> +					VIRTIO_NET_HASH_REPORT_TCPv6,
+> +					0xc2b9f251));
+> +}
+> +
+> +TEST_F(tun_vnet_hash, udpv6)
+> +{
+> +	struct {
+> +		struct ethhdr ethhdr;
+> +		struct ipv6hdr ipv6hdr;
+> +		struct udphdr udphdr;
+> +	} __packed packet;
+> +
+> +	tun_build_ethhdr(&packet.ethhdr, ETH_P_IPV6);
+> +	tun_build_ipv6hdr(&packet.ipv6hdr, sizeof(struct udphdr), IPPROTO_UDP);
+> +
+> +	tun_build_udphdr(&packet.udphdr,
+> +			 tun_build_ipv6_pseudo_sum(&packet.ipv6hdr));
+> +
+> +	EXPECT_TRUE(tun_vnet_hash_check(self->source_fd, self->dest_fds,
+> +					&packet, sizeof(packet),
+> +					VIRTIO_NET_HDR_F_DATA_VALID,
+> +					VIRTIO_NET_HASH_REPORT_UDPv6,
+> +					0xc2b9f251));
+> +}
+> +
+> +int main(int argc, char **argv)
+> +{
+> +	FILE *file;
+> +
+> +	if (unshare(CLONE_NEWNET)) {
+> +		perror("unshare");
+> +		return KSFT_FAIL;
+> +	}
+> +
+> +	file = fopen("/proc/sys/net/ipv6/conf/default/disable_ipv6", "w");
+> +	if (file) {
+> +		if (fputc('1', file) != '1') {
+> +			perror("fputc");
+> +			return KSFT_FAIL;
+> +		}
+> +
+> +		if (fclose(file)) {
+> +			perror("fclose");
+> +			return KSFT_FAIL;
+> +		}
+> +	} else if (errno != ENOENT) {
+> +		perror("fopen");
+> +		return KSFT_FAIL;
+> +	}
 
-So I'll read this as a tentative:
+What is the purpose of this disable_ipv6?
 
-  Acked-by: H. Peter Anvin <hpa@zytor.com>
+> +
+> +	return test_harness_run(argc, argv);
+> +}
+> 
+> -- 
+> 2.48.1
+> 
 
-Let me know if I'm not reading the room right. :-)
 
-	Ingo
 
