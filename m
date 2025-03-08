@@ -1,90 +1,150 @@
-Return-Path: <linux-kernel+bounces-552764-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-552765-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A2859A57DDA
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 20:47:18 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1DF78A57DDD
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 20:48:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1BBA9188D00A
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 19:47:26 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CB90C7A67CA
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 19:47:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91BF917A5BD;
-	Sat,  8 Mar 2025 19:47:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="xMDx7hLj"
-Received: from out-187.mta1.migadu.com (out-187.mta1.migadu.com [95.215.58.187])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A2961F7904;
+	Sat,  8 Mar 2025 19:48:32 +0000 (UTC)
+Received: from mail-il1-f207.google.com (mail-il1-f207.google.com [209.85.166.207])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAF231392
-	for <linux-kernel@vger.kernel.org>; Sat,  8 Mar 2025 19:47:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52BBD7482
+	for <linux-kernel@vger.kernel.org>; Sat,  8 Mar 2025 19:48:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.207
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741463232; cv=none; b=GsehM/5R0cM0duQ4ghx3ofplWAN//pdR/7rbsN31fCFp1a0cBQ39SP3VOAVsr/Nh/IPzWjSTfJBkkXRWBywmLr1fqWQIa8VcIR65k6LWOyQNggmwz188XXsReNapg6Em9ntNYYfbJIRjHeAmFozQUv+7k6oA1wCxfmATzFArFfY=
+	t=1741463311; cv=none; b=GrqWRxjIuwAgFW/B9zYz7J4XOjUHN9wjEzBzXLn9s5G1fJ/E+ubiGFTuko4ABGLjs6u07OC8ElUeBEHSPznXI+SLM5kmBLB3L/nGOcI9uZdy+nRRBzLMdxaQ5bosxFKrRaVcXCjjN1496jok9/0e8xe5o+X5rjJD4JMlk18bKvw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741463232; c=relaxed/simple;
-	bh=NXcByO8e5AUKQNfZRgHIJRWjXfcWfMjuacKTD2xvuVo=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=M5KvqgnjBlpTaxnpHPM3h3Q/YQ3S47pK5lGSHd8Ushny/e7v2gvdxmWb07reCielkpJScBTsO68Yb6S4fusPywc7MRZj8zcZFfVUUc9f5YXt13gYIpOFTCVv69gN19GUOxydYW/eEGaKqqf8/YCFHyxxV7jnkV9wuJpyp0WIOpk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=xMDx7hLj; arc=none smtp.client-ip=95.215.58.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1741463226;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=3QbJam/t2edM6YxRdQTQO8Mkh9a0H/CFHQLFiR8pKDg=;
-	b=xMDx7hLjzCW62XQPNCxwQmRgdreKDf4XgBrfjNR71s7jS7VZHylHXIgOsGDisW8fe64yZV
-	Lr/gygVpGQk5Rz3gTrrmwWFi+WRoTAZhlKpY4+tRrQ/9LShfZ1dFwXVUMpU8rOBeTNOecq
-	RTZy6qid4AlonTPqkTwDUKPtNYdsxzQ=
-From: Thorsten Blum <thorsten.blum@linux.dev>
-To: Luis Chamberlain <mcgrof@kernel.org>,
-	Petr Pavlu <petr.pavlu@suse.com>,
-	Sami Tolvanen <samitolvanen@google.com>,
-	Daniel Gomez <da.gomez@samsung.com>
-Cc: Thorsten Blum <thorsten.blum@linux.dev>,
-	linux-modules@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] module: Remove unnecessary size argument when calling strscpy()
-Date: Sat,  8 Mar 2025 20:46:32 +0100
-Message-ID: <20250308194631.191670-2-thorsten.blum@linux.dev>
+	s=arc-20240116; t=1741463311; c=relaxed/simple;
+	bh=/5WWxSf8LBpQx8K8lp+pJVwAGjgJTD/bO+VcFtfoito=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=DMcUi4bAl3HhVhDBNkAHtisDxI1m14ZEuL/GiK01exV7Hi4BooC8d/Ane5m+wm/2IkjSIGUSDvHC8uD9vhJKN81iC9d/JcAZeafr3u6eTt9aJIq0M1w5J0lnsvD2GWoWbzB4+XXJjC7Vc3C2Z/I8zoqUVIX1ZXxTp3KU1xo7s4c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.207
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f207.google.com with SMTP id e9e14a558f8ab-3d44b221f0dso22436955ab.1
+        for <linux-kernel@vger.kernel.org>; Sat, 08 Mar 2025 11:48:30 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741463309; x=1742068109;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=E0kUnKJ/Hbb5rDIh+tNr9gyaBINNXokpFjGp9x/PF8M=;
+        b=WTIdEJItb11lT3jqGAXKjlLoXeQ9lbWL5Vh2jL6+YQ63+x82QbYZLMsdnFp/AKCBTj
+         UUEkr04xqqLQEhmI+X7WfNwwmiicBP+z0Rq46wX2heu+xI+QWjFFoKzPkCNbaZbiDWQy
+         KM/LC91vQcjCKLMZlN6SY7c875XLmyhjIsKq1Cz+8i6AibfkZzQS6guDyCi9u8U4ibqN
+         1uSL9Nx/V+lPX8dIFs27sfKB7xqHaNWxc8NbVQUmsSqTbmB01V1/aoMtYB9ABwmqWUm9
+         thVzsVp/IIo+6t1/2SRx2Ft4avwTiYtIaGAqV8W5eaxJKAqmUssIX3XSpc4FchgKFRKl
+         SLkg==
+X-Forwarded-Encrypted: i=1; AJvYcCUzVyXP1RvAYZz/2G3yBArn4B1d6AJ2fFejeZYSZjR2Mg0VfmlhVNrd1iCyEPWy8W6RLDbNmO7ZfZZCLno=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz4smI7n015/Sqi+Sf3km2Tr6qbyUaUm1/FRhu2pY3PTh/GqJwk
+	sA8F4br9keHIk6/uS3xCl9+Ko/7ddrQTl61pVOaoeXw5qXgni3VsvJnfIG0x9pe17QSIUgcIPej
+	mHsn/3NXTkWIlkrqbK/lBz5BHDTYUVW9wNnsdz7zL3xcufnJzrijk7X0=
+X-Google-Smtp-Source: AGHT+IEqcZbX5J85DTBCue0PG8qnSzRG01E+SQFqUCUZBh1LtXPyygujlM2Y6neUvt2/k9DuW8z1Nk7meMsRREAOhWorl9BY6WwZ
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+X-Received: by 2002:a05:6e02:1c0e:b0:3d1:a75e:65f6 with SMTP id
+ e9e14a558f8ab-3d44195797bmr95723035ab.18.1741463309517; Sat, 08 Mar 2025
+ 11:48:29 -0800 (PST)
+Date: Sat, 08 Mar 2025 11:48:29 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <67cc9f0d.050a0220.14db68.0046.GAE@google.com>
+Subject: [syzbot] [btrfs?] WARNING in btrfs_create_new_inode (2)
+From: syzbot <syzbot+35244a1be5611b840ab2@syzkaller.appspotmail.com>
+To: clm@fb.com, dsterba@suse.com, josef@toxicpanda.com, 
+	linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-The size parameter is optional and strscpy() automatically determines
-the length of the destination buffer using sizeof() if the argument is
-omitted. This makes the explicit sizeof() unnecessary. Remove it to
-shorten and simplify the code.
+Hello,
 
-Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
+syzbot found the following issue on:
+
+HEAD commit:    99fa936e8e4f Merge tag 'affs-6.14-rc5-tag' of git://git.ke..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=1079b5a8580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=523d3ff8e053340a
+dashboard link: https://syzkaller.appspot.com/bug?extid=35244a1be5611b840ab2
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+
+Unfortunately, I don't have any reproducer for this issue yet.
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/b40ecb8ed597/disk-99fa936e.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/16348198506c/vmlinux-99fa936e.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/65fc34c1d4d6/bzImage-99fa936e.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+35244a1be5611b840ab2@syzkaller.appspotmail.com
+
+------------[ cut here ]------------
+BTRFS: Transaction aborted (error -28)
+WARNING: CPU: 1 PID: 7341 at fs/btrfs/inode.c:6384 btrfs_create_new_inode+0x1c10/0x1fa0 fs/btrfs/inode.c:6384
+Modules linked in:
+CPU: 1 UID: 0 PID: 7341 Comm: syz.4.132 Not tainted 6.14.0-rc5-syzkaller-00013-g99fa936e8e4f #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 02/12/2025
+RIP: 0010:btrfs_create_new_inode+0x1c10/0x1fa0 fs/btrfs/inode.c:6384
+Code: 49 8b 3e 48 c7 c6 a0 8c 6c 8c 44 89 e2 e8 78 ea 3e fd eb 1a e8 91 f3 d8 fd 90 48 c7 c7 40 8c 6c 8c 44 89 e6 e8 71 af 98 fd 90 <0f> 0b 90 90 4c 8b 7c 24 38 e9 43 f8 ff ff e8 6d f3 d8 fd eb 05 e8
+RSP: 0000:ffffc90005447a20 EFLAGS: 00010246
+RAX: b537982dfbea0300 RBX: 0000000000000000 RCX: ffff88807c24da00
+RDX: 0000000000000000 RSI: 0000000000000001 RDI: 0000000000000000
+RBP: ffffc90005447c50 R08: ffffffff81817d42 R09: 1ffff92000a88ee0
+R10: dffffc0000000000 R11: fffff52000a88ee1 R12: 00000000ffffffe4
+R13: 1ffff1100b55d70f R14: ffff88805aaeb878 R15: ffff888028651f20
+FS:  00007f7bffc1a6c0(0000) GS:ffff8880b8700000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f664e111000 CR3: 0000000076f6e000 CR4: 00000000003526f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ btrfs_create_common+0x1d4/0x2e0 fs/btrfs/inode.c:6615
+ vfs_mkdir+0x2f9/0x4f0 fs/namei.c:4313
+ do_mkdirat+0x264/0x3a0 fs/namei.c:4336
+ __do_sys_mkdirat fs/namei.c:4351 [inline]
+ __se_sys_mkdirat fs/namei.c:4349 [inline]
+ __x64_sys_mkdirat+0x87/0xa0 fs/namei.c:4349
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f7bfed8d169
+Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007f7bffc1a038 EFLAGS: 00000246 ORIG_RAX: 0000000000000102
+RAX: ffffffffffffffda RBX: 00007f7bfefa6080 RCX: 00007f7bfed8d169
+RDX: 0000000000000008 RSI: 0000400000000100 RDI: 0000000000000003
+RBP: 00007f7bfee0e2a0 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 0000000000000001 R14: 00007f7bfefa6080 R15: 00007ffe1988f628
+ </TASK>
+
+
 ---
- kernel/module/main.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-diff --git a/kernel/module/main.c b/kernel/module/main.c
-index 1fb9ad289a6f..e690f46a7ea7 100644
---- a/kernel/module/main.c
-+++ b/kernel/module/main.c
-@@ -795,8 +795,8 @@ SYSCALL_DEFINE2(delete_module, const char __user *, name_user,
- 	async_synchronize_full();
- 
- 	/* Store the name and taints of the last unloaded module for diagnostic purposes */
--	strscpy(last_unloaded_module.name, mod->name, sizeof(last_unloaded_module.name));
--	strscpy(last_unloaded_module.taints, module_flags(mod, buf, false), sizeof(last_unloaded_module.taints));
-+	strscpy(last_unloaded_module.name, mod->name);
-+	strscpy(last_unloaded_module.taints, module_flags(mod, buf, false));
- 
- 	free_module(mod);
- 	/* someone could wait for the module in add_unformed_module() */
--- 
-2.48.1
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
