@@ -1,190 +1,248 @@
-Return-Path: <linux-kernel+bounces-552350-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-552351-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C3518A578D7
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 07:58:45 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 36935A578E2
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 08:22:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EECEE173DC3
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 06:58:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 076213B2457
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 07:22:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 586A81990C7;
-	Sat,  8 Mar 2025 06:58:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85069183CCA;
+	Sat,  8 Mar 2025 07:22:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="TyjKv87C"
-Received: from EUR05-DB8-obe.outbound.protection.outlook.com (mail-db8eur05on2057.outbound.protection.outlook.com [40.107.20.57])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VGjsx5x+"
+Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85B5B137E;
-	Sat,  8 Mar 2025 06:58:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.20.57
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741417116; cv=fail; b=XS1pKG16SoqhTtGDRdWvoPOM5PNxaZ/Vrm53EchaBY+AAHhMwFDfNyrertb7Wb3LValgBzWJnJf0KLunX4PQoJO0hXHRGAwQCE9r7CWQkfmCSCcUTwNv2ojwL99RwlQ+B1A8Njoc8Sc0gjy4BeZ9t59ogn6cJ16RmEHomn2fegI=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741417116; c=relaxed/simple;
-	bh=eU27EIXvyw/n04EcsY4NoM+U6kiUIem64UgRBvitWRY=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=PYV4U9cDzvM5RT1m9x5pC8rFLCiFCK9XVt7IL3kGhMXaPuYYiGkHwPQ5MgnftNKDyq/QKKeh4SdcnbAiVuDbRsUmx0VAlM9L/28W93fnE2qUGN4Tgej6XhSvSKKcf/cIjDH1+rGy6TdA/lTejrBCzJMmGfM8Ikc4ivDTcKcW5n8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=TyjKv87C; arc=fail smtp.client-ip=40.107.20.57
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Pz20XAbJdgb2L61WKsfRwz0vWnqzq8hM9I2LdDE0E8wew1KWckfefQj0rjLPgj7DuPVydEtVt8jd4e6zJStahiISiAFm7uIMCzZ/6M+QUfWWmpnl+2yHL3AQqNgZw1PcEcjlL61yxeCChqrTYaVuYRgRJYdpmlkgd/V9u0S+Dy7jJBj1eh3i8XWkt8o7/ZM0Z/8fAX/0cxGPybK7bNfVzEfY5KIvvy2VeqnGn5G2KaBsqC5xP3k6Vq+4UQsJTt80UVGSi3pgMOwfIvWCVbnajK4dwhEzywIJ/RP3t3rhbbDpDaf2MjRxdjuK7fSNdtAeKO01VUB99MhGeCVKTF6XeQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=q6pZ8rkdSaVuEJ8JCUWFQBGtDJeMckIEv/9XXffG91Y=;
- b=fBaaLHV0TEB77cxcOgmgfXu6PWOD5/Flrlkp3sbBd7TLmzSUvKd9w6LVrCsyeiu8L8qv8RUGhaFYKK677gfa85vlS2NbZ105WDDjsbyaJtErHewbf23lfEb4auuifgfzYMjcmdsPnnULvtfBv1z5UiX6muD+fHWQ5fe2aPs8CTGImoCFwv9npXyKuB16BBpVdzTXh+IXHrkoUIyoCFtHoYf3kZaOW+YYKIRPQ8taNMIjh0iISA22nG7peDgZBimr+8p9po4GF0KCoO4xsSoW/vh5BoR67d2asTKgwbm25OXSRltYaafYxDKazao6WL6PUuK6iQRNgKFOIUcThYrq3w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=q6pZ8rkdSaVuEJ8JCUWFQBGtDJeMckIEv/9XXffG91Y=;
- b=TyjKv87CxLi7NxqgSOUekzBzSunDW8gNbpzHPDNJgAsmUeVEfDhjj3gnTm+/1wbrEdxJOjGn0mNRWA7Z+HtNKxvsTUltP3ofASdsn75WN/aZDWyF1PDZ6pnIPkTgUD1FshV7XJZZ8+a1D/HwUGHH1D2bFGDkxecRVrk+TsogN9PzO9HRVqksILzstsDwWtcHaUbERgWJ5mHsculF2KIf0S4V4E0d+FZyZc89DFf5PlLKb22Gm3EzDX7xirhWe8fHqwfBOuFXY61Zz1UGGcqIdRi9Sx4TFZM6YSwRSckvHh6tuW8a9l1xckiKnBFQbdnTGmURMpXkONP1TuIUEFkNdQ==
-Received: from PAXPR04MB8510.eurprd04.prod.outlook.com (2603:10a6:102:211::7)
- by GVXPR04MB9904.eurprd04.prod.outlook.com (2603:10a6:150:119::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8511.22; Sat, 8 Mar
- 2025 06:58:29 +0000
-Received: from PAXPR04MB8510.eurprd04.prod.outlook.com
- ([fe80::a7c2:e2fa:8e04:40db]) by PAXPR04MB8510.eurprd04.prod.outlook.com
- ([fe80::a7c2:e2fa:8e04:40db%5]) with mapi id 15.20.8511.017; Sat, 8 Mar 2025
- 06:58:29 +0000
-From: Wei Fang <wei.fang@nxp.com>
-To: Jakub Kicinski <kuba@kernel.org>
-CC: Claudiu Manoil <claudiu.manoil@nxp.com>, Vladimir Oltean
-	<vladimir.oltean@nxp.com>, Clark Wang <xiaoning.wang@nxp.com>,
-	"andrew+netdev@lunn.ch" <andrew+netdev@lunn.ch>, "davem@davemloft.net"
-	<davem@davemloft.net>, "edumazet@google.com" <edumazet@google.com>,
-	"pabeni@redhat.com" <pabeni@redhat.com>, "christophe.leroy@csgroup.eu"
-	<christophe.leroy@csgroup.eu>, "netdev@vger.kernel.org"
-	<netdev@vger.kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "imx@lists.linux.dev" <imx@lists.linux.dev>,
-	"linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
-Subject: RE: [PATCH v3 net-next 01/13] net: enetc: add initial netc-lib driver
- to support NTMP
-Thread-Topic: [PATCH v3 net-next 01/13] net: enetc: add initial netc-lib
- driver to support NTMP
-Thread-Index: AQHbjNiMrmwkTzPG206zUiHxDe17mbNmtIkAgAAxcACAAZzhYIAAD4wAgABB49A=
-Date: Sat, 8 Mar 2025 06:58:29 +0000
-Message-ID:
- <PAXPR04MB851024A8448430F298831ADD88D42@PAXPR04MB8510.eurprd04.prod.outlook.com>
-References: <20250304072201.1332603-1-wei.fang@nxp.com>
-	<20250304072201.1332603-2-wei.fang@nxp.com>
-	<20250306142842.476db52c@kernel.org>
-	<PAXPR04MB85107A1E5990FBB63F12C3B888D52@PAXPR04MB8510.eurprd04.prod.outlook.com>
-	<PAXPR04MB8510771650890E8B7395B2DA88D42@PAXPR04MB8510.eurprd04.prod.outlook.com>
- <20250307185902.384554a5@kernel.org>
-In-Reply-To: <20250307185902.384554a5@kernel.org>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: PAXPR04MB8510:EE_|GVXPR04MB9904:EE_
-x-ms-office365-filtering-correlation-id: 6e963b29-9bc1-415b-9123-08dd5e0ea1e6
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|376014|7416014|366016|1800799024|38070700018;
-x-microsoft-antispam-message-info:
- =?us-ascii?Q?EUM8864rqNGFFZoCMcw3B5xIlTnvvuxiAP6KoozgO6m6hIvrTtufwVptMnxF?=
- =?us-ascii?Q?BybD3pcDz1DDaswgVNd2oVVyjpP9mM8Jq+ivS00oAtYmv3SZkZ5OqmER4+0U?=
- =?us-ascii?Q?YTXqX6wnJ7j6gXeWCceSAnNpF108ZlgRyMFXHkdyD4gZqo3Y4+P1S67c+Twy?=
- =?us-ascii?Q?ukHi8VK80po+6Drs+B3TYno+otSqJpD4dluOJTE/DuxTt/enS17BD/IP2uiS?=
- =?us-ascii?Q?I0TetdFRYme+c/+7TBZHpJOnaVPXkYGJ2WktjDtBtIX4Taqg8/PLvQqaAgqF?=
- =?us-ascii?Q?QQlyABOcN7/QqQA4PlniQI7VLEd4XGY7rRWEbcsD/UMfHQ6Yo694tsik4nzT?=
- =?us-ascii?Q?D5Njy0ALA2C61xZP5qlIK5U4uoLRTdwUB1gvfp4NdJDlfp1P1DaLjDWO1puU?=
- =?us-ascii?Q?uH4+IwPDbmNx91BL19t3tgfgkkUOvIE80GzTNmIGmrX6TtA9sI0m5OWYh96A?=
- =?us-ascii?Q?n4AwIPvSARGAGp/itfg5G7Jmor31Xch0Tkp210exoffBJ+xXzGP9zXVq9wJv?=
- =?us-ascii?Q?8cBxwpHlf1zitouORDDWQAagFKmNcIoWG651/E3S9+7S8UNEEYC2juvjt+yB?=
- =?us-ascii?Q?fTIrADIxUShDCgF4MJtu3/ieO3uz0iQMQTnFm3fQEggCyhesXQfE9HJf/YJA?=
- =?us-ascii?Q?eYCKjGv/7DKltTH8AcHKJOMnBIneVmi8ds4VL9ef99mwgGA5/4VCqhJN+VwD?=
- =?us-ascii?Q?qbfcFGO4AyAigly2aYtml/c7I5SbxerkDWYb9cFzk2t3ui40AuQDtgwhe+FN?=
- =?us-ascii?Q?Kyc3ITdK4xbSy5UJjB0DNSMcqh5sZu9SA8gUuCYiF5B4Rx49ihyIUaboRKt4?=
- =?us-ascii?Q?MPJ9NDCMX0c3cZIyX1M5Vt1Ek4CAzc59qk/IAttvZlAGZ4z/8Ve5qbv8RtVf?=
- =?us-ascii?Q?ACr0pdqDBHIUzOUiGN9DiRWY5IgYECfRPZ/C9cfWTsVHWN0Bc9gHpXzuWFeV?=
- =?us-ascii?Q?8oN7+eZo855jJLs93brm//1pmelgiPBXMSGD+hKmfK11mD9EnB92E2arJamr?=
- =?us-ascii?Q?hftO4lz6ICyinD6LtOvIT6ibOCtiLojLsNTSrHNbaJGZi7rlSygOT8Bosuzu?=
- =?us-ascii?Q?ActvfmyLFyl3Gs8VV9fQ98X6DEyipyl3RVcLc0cMBOM88FaC2EK2eNtLfSqC?=
- =?us-ascii?Q?2Vr3bV1sq3LaDmQ+LlFZq2Yd77vSBG/LSfd7S5W5iQmhHWvh6xx1nj2DffD3?=
- =?us-ascii?Q?GHSOnDsVYl1We/EXBPVABDKBwpFM9/QgBKi8d4Q/m0fovuedMT3ei4MbhXNo?=
- =?us-ascii?Q?1sErGEDa9ZAjQGnvNbQhZuD3hLR3wB0tL/sDL7Ga4MrS4dQKJNgog9ZLdCNF?=
- =?us-ascii?Q?gWvigjyXpHbeCP/CGVCmf18G/4SjK5ON3C33jeirreN7OXfIOlDkNGugQ+tz?=
- =?us-ascii?Q?X3Wr8XrblTMD0EEnZ+GLyrAdoHVNUD6FFZ3fRiDyxoVGly0LA+12ATAbFF6P?=
- =?us-ascii?Q?YdpQ4qgD5mg2TQycirFz25QbJD5ZqMwR?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB8510.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(366016)(1800799024)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?ky/jifM7S8igPF8HgGqCwTHDdbuZrUcf4pzdbyUGlFi5Wynjz6SxVSB6Ok+N?=
- =?us-ascii?Q?I5EKi5wtU24XMD8shpEI9aOY20AbS08z9kGCnilGtXA0MjtuU9O8Jt6eQ0K/?=
- =?us-ascii?Q?95Ezf4Qm1O1DIeU0yI974sJCT1esBC2/Us3fcq12uH3B4FHPTaIR+EnsIZ8d?=
- =?us-ascii?Q?SvmEAAam/h2bCISNdANv4JmeB8XtYRjGNhtCVfjwziPcmQMFAjsoAqr3n0b1?=
- =?us-ascii?Q?Z6uw7/3Oupkfi2E9g16CoavgZU+AxNVFxY/yFNXpAEz3ZiA8ZxQMBSg1Ztz7?=
- =?us-ascii?Q?Hh3le6jF4WaQFiDB2TfBOM+Kj49f1+CvzwvF9OIfl5iP9GfW+L6fQyrShZCX?=
- =?us-ascii?Q?MzYb/22vJr2lR49OPqayLB/uaKf+jTld5o8jwRyVkUvWJ+MNR0k/oXsrt/UT?=
- =?us-ascii?Q?AQSJWBl7BM4wHhE8PBIwS4mE9yiKKhmHchbnoy06mUWZAVKSYf4v5K0hjM0b?=
- =?us-ascii?Q?PaLqSEKwsGNH8F+yXcMo0gBRPya50EDL8uMVrLmkNFyEvfSYEkN5wtbNDZ7b?=
- =?us-ascii?Q?gZTNzM7ypuxu5QBToBqWU2olXXKxN/ijEXVeXDB6hmSBUTl8Ny5oifXyQgfg?=
- =?us-ascii?Q?bY93TB0DKwWone5ukO5OdW5iYj99AEiWEs8CL44ExgR4Kf1cHWDeVX3h8hHt?=
- =?us-ascii?Q?/WoHqZOID34k+So43pWDBGWBFyd/6IKbl57yzgUTY6T3xvlUt9a0UjfbN32D?=
- =?us-ascii?Q?deNuk9Ud4FAg6r2KPql7oYLHsBxYdfjm19Vetxsp7FJnkAldOv25uS9qYypt?=
- =?us-ascii?Q?wG5KzkWSWoicgnixwa4vldHB13ytq2LQmxMJY3+zNxn0wcqp/5PL5pcV4uj9?=
- =?us-ascii?Q?IrdG5c1o/5bc8UOz65wfHpNvVFj8ZKguj581eeO+CLRR+hxuetfteiRaQLcS?=
- =?us-ascii?Q?zvQ3/E+ccNuiSR0KkpNAf4RPev0xi84/CNJWBRI1cPobovHa4lAgDejpcZjP?=
- =?us-ascii?Q?BuE3g4Kvcnr7SyZkVehsqQvyRKLBeTI/30l6p7vr9owrJEaBs8R3H4i0ULpf?=
- =?us-ascii?Q?S2GzSt4nsC5/mSmwGQrlXmAGtUw+ajcZDZ6VRptCusfxZUA55abGfHpWcfkn?=
- =?us-ascii?Q?7GA8yUfA9jsIGvssXu8sMGS1Gfg2V/+Uw1SmPuS9YxPZumGIYYtdA5V4EjxD?=
- =?us-ascii?Q?of+tOQThJFhRLmwQzceQn/NV9HX6xztYku2yfb4KmVbDZCkVW1oOCKJqGC52?=
- =?us-ascii?Q?XOxtd/hVHPpi0nyDkv8qiIF3/A9aOdisVyfdUyrf5gCVQ/455hpT5G7gxAHM?=
- =?us-ascii?Q?8GFpjTdUrwRer4uoiawOWI8Qu0Hl6iw755y8cpWgMcIlbk0P4d/PWXfGyCyo?=
- =?us-ascii?Q?TdnP+TjG9kSljRPHbNbAIcddDoXvt6F7h5LJV01aA8UrzElWhF/YX0MPocuw?=
- =?us-ascii?Q?70HkzVZqKFa6Hjle0AkT0o0YrDqGbiXb82I26HI9DRSlGc9/l3iwPXK5wqMF?=
- =?us-ascii?Q?kkhdQqD+I7OgCbaDG9cGFGkm/lG0DIBYvldWg7PwimpoULXG1xZW8F8/SCu1?=
- =?us-ascii?Q?uTKfVzaRD636AII8WcIPadbwbJxZP2CIkbAwz1OE7hzFz2LAIn0a1Cl/lfZ6?=
- =?us-ascii?Q?HRClsj3FG//5YefJjf4=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0C5B15382E
+	for <linux-kernel@vger.kernel.org>; Sat,  8 Mar 2025 07:22:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741418566; cv=none; b=qGNAn4JAeTrXeVJqPoENc9ZCghx3jbuT9pfZJW+x0NoZbudgZ0wGzUPmSMuPf8rTdNq3eNNJYLtfqo4penn34kTkP3Q316Yo9UJZqnpKW3G/iwqnUw1yefRT92U9dlT2tvYqLLTCZUir6c4xV4IYT7sl8Y0KoYxmmnE3Ni7I8fU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741418566; c=relaxed/simple;
+	bh=Al6AWqwfdo7eRqqCvn1VeWB1PJzel0+sICEjd32iZjo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=SzEIr1k6ePCE77bk6eD+4/1lxeJWOvxU06Hs6PIte1eG/aOFkpbs+oHVhDzgujVXpGTg30ULvIki6ugi10ferfMkMgmzvJnw4suMuk+hPMiTKI/m08GtdKreLRW1JlvNJNvZyu2au93lE9lCFRkIqJoDvUzI5Z8AL0pGDqKgXrI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VGjsx5x+; arc=none smtp.client-ip=209.85.208.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-3061513d353so29064061fa.2
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Mar 2025 23:22:43 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741418562; x=1742023362; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=5Prhk3Z2Ao6RE1RwSeTidg3bPn/ii2KnJBCu54q4WXE=;
+        b=VGjsx5x+TFa7IOgUfp6jXrWn0BJLD+Xyf7LLfeiGorMmQskkCitRbPo64yrMPG1o+S
+         S6PLLhZfandsOgcGjvVmy74uF8+cwVSrOz7VaAwl3rbWJQ+u/MsMdqul6RqcF1tbTaYw
+         9q8HIo48XEEzUgQ0Z3MXdgrBPNaIuZpSvegji+6fk7Ia+pMISQR83twZpqXmOPxqOdqe
+         7exMiHcmaTaa6vBWco8x8+BJPIcFbNeoknuyK+JPU5HVa+bMqOC+lGSK3ZJLmILaXo4v
+         DNmfV+tTsObJ8N9BAxSZTNMbSKrv7OicKxg1+oIuU8w7jlIBhNCTqcA7lMzTh+d/bjBJ
+         QYbQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741418562; x=1742023362;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=5Prhk3Z2Ao6RE1RwSeTidg3bPn/ii2KnJBCu54q4WXE=;
+        b=FdslbcQaVTvYyZAf/6JKM0XcwXfvA7JeSsvgLxcS5b+uMSaH6OXjACJ+7A0BUy3Kno
+         7E2bXFTJ0Rxqb9DRxSEQHyCq8rBbd6K730gcArvYCtz6JuWHZkOwn2QICz4bcAg+MV0s
+         B3IcTmzDwOFpX6WFpsBhOM3qrZmkOmVbv3jPoeTEH4/c0sFrltVmluEuXnw4HKcK0u8R
+         mUxkU8DGb8h1MRWyZSqPk2KbG8xLPomFTaURNSRDw+dIPv+XFnqlwMgFaAlAGZsXAd96
+         BaGV/oJfp63zg7C8fwWwL6BOE2waITX7YdEcgzJZhjqc5i9oyR0XZAyFFtACR24cbgJR
+         Dldw==
+X-Forwarded-Encrypted: i=1; AJvYcCUcKrXAhHuV4XEmhWERduuerr21yeWCspkQVA+BPrUncC5dmobRNevEnq+OYizIQAEmKe3hy6VJeAX2y/Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwEIGvY8ArG8cc+BVADYM/NUMjZouLp11lSBD4fL+Ff18v0ymRP
+	zBvafrpMEmO7rlcLZkgsnIPvBOBPLXL51EaKbNjSTVObbJFPyzlN0/ujPdu55XyqMZIQ7CsNXBZ
+	WqklLkdzV5g01NUAd/vA9ETFk87k=
+X-Gm-Gg: ASbGncvUabmobMJ8KvFOUYBQYW7Ei3Bw4Ho4SCXUOuD7hjmqjP0SweFFzmbv2RH8cJt
+	XBIutpWrx1vCK/SrjH9+pJR2suJqiadI3Y29WD3u+CEuXEvl89ZPpZKS083wwsAR5mlHSpr5MXI
+	o4uMJDZuFyZEtXJebRuKk6kiHDZUKZbwY8hSX0
+X-Google-Smtp-Source: AGHT+IExJQI9E7A/e/ZpHPeVhyWvLaEYWpDGKCL0AUBkn47frgmmwvm55ai73pYbGbuOX32lXAju7FuqmQWiClPMjzs=
+X-Received: by 2002:a2e:be84:0:b0:30b:fd7a:22e9 with SMTP id
+ 38308e7fff4ca-30bfd7a2457mr9179411fa.13.1741418561537; Fri, 07 Mar 2025
+ 23:22:41 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB8510.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 6e963b29-9bc1-415b-9123-08dd5e0ea1e6
-X-MS-Exchange-CrossTenant-originalarrivaltime: 08 Mar 2025 06:58:29.4954
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: jNxz+MimmLvb8wMI2n6OySl6AKALg9sBIheosoMoW0v5Q6fmOf4+kNMA/J47oFIM/v5FS1mA9tO1MDgEUMrH6Q==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: GVXPR04MB9904
+References: <20f1af22-71dc-4d62-9615-03030012222e@intel.com>
+ <CAFULd4bpHGE83qc37sbh=rpGj+SFqQrsNDLzL_-NQpo6pQH3jw@mail.gmail.com>
+ <c4aca08a-95c1-48ee-b4da-55a69b74101c@intel.com> <CAFULd4YVOEtT+bsp9H7ijaoJn2e2108tWhiFarRv=QxoUMZaiw@mail.gmail.com>
+ <20250301123802.GCZ8L_qsv7-WwUwqt5@fat_crate.local> <CAFULd4b=4rHcVAVSg_3yMb8=3ReiSriw_rM4vJL9_HvheXE92w@mail.gmail.com>
+ <CAHk-=wgBMG7CcwvW15ULJOsVEq5QRSj+ccgaUJU+XGxJKeXEVw@mail.gmail.com>
+ <20250305201429.3026ba9f@pumpkin> <CAFULd4ZzdPcnQAELpukF4vzUnQufteNqV4BzZr3BxuzRG+XK+A@mail.gmail.com>
+ <CAFULd4Yuhb-BbV9LAJ+edMRGEi2kTYfcq70=TTMaSXP3oxwfQQ@mail.gmail.com> <Z8ofYTR9nou2650h@gmail.com>
+In-Reply-To: <Z8ofYTR9nou2650h@gmail.com>
+From: Uros Bizjak <ubizjak@gmail.com>
+Date: Sat, 8 Mar 2025 08:22:31 +0100
+X-Gm-Features: AQ5f1JqMtqeoywImI7JHCuvtAc2W9q0iGnzovT-MVZdUCDm1xGbyGhtCaHgHDvM
+Message-ID: <CAFULd4YubNt7vUV2T3McHJb-L4X-Vh=e3QbM7W2i71uRg=J_8Q@mail.gmail.com>
+Subject: Re: [PATCH -tip] x86/locking/atomic: Use asm_inline for atomic
+ locking insns
+To: Ingo Molnar <mingo@kernel.org>
+Cc: David Laight <david.laight.linux@gmail.com>, 
+	Linus Torvalds <torvalds@linuxfoundation.org>, Borislav Petkov <bp@alien8.de>, 
+	Dave Hansen <dave.hansen@intel.com>, x86@kernel.org, linux-kernel@vger.kernel.org, 
+	Peter Zijlstra <peterz@infradead.org>, Thomas Gleixner <tglx@linutronix.de>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, "H. Peter Anvin" <hpa@zytor.com>, 
+	Linus Torvalds <torvalds@linux-foundation.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-> On Sat, 8 Mar 2025 02:05:35 +0000 Wei Fang wrote:
-> > > > On Tue,  4 Mar 2025 15:21:49 +0800 Wei Fang wrote:
-> > > hm..., there are some interfaces of netc-lib are used in common .c
-> > > files in downstream, so I used "ifdef" in downstream. Now for the
-> > > upstream, I'm going to separate them from the common .c files. So
-> > > yes, we can remove it now.
+On Thu, Mar 6, 2025 at 11:19=E2=80=AFPM Ingo Molnar <mingo@kernel.org> wrot=
+e:
+>
+>
+> * Uros Bizjak <ubizjak@gmail.com> wrote:
+>
+> > On Thu, Mar 6, 2025 at 11:45=E2=80=AFAM Uros Bizjak <ubizjak@gmail.com>=
+ wrote:
+> > >
+> > > On Wed, Mar 5, 2025 at 9:14=E2=80=AFPM David Laight
+> > > <david.laight.linux@gmail.com> wrote:
+> > > >
+> > > > On Wed, 5 Mar 2025 07:04:08 -1000
+> > > > Linus Torvalds <torvalds@linuxfoundation.org> wrote:
+> > > >
+> > > > > On Tue, 4 Mar 2025 at 22:54, Uros Bizjak <ubizjak@gmail.com> wrot=
+e:
+> > > > > >
+> > > > > > Even to my surprise, the patch has some noticeable effects on t=
+he
+> > > > > > performance, please see the attachment in [1] for LMBench data =
+or [2]
+> > > > > > for some excerpts from the data. So, I think the patch has pote=
+ntial
+> > > > > > to improve the performance.
+> > > > >
+> > > > > I suspect some of the performance difference - which looks
+> > > > > unexpectedly large - is due to having run them on a CPU with the
+> > > > > horrendous indirect return costs, and then inlining can make a hu=
+ge
+> > > > > difference.
+> > > > ...
+> > > >
+> > > > Another possibility is that the processes are getting bounced aroun=
+d
+> > > > cpu in a slightly different way.
+> > > > An idle cpu might be running at 800MHz, run something that spins on=
+ it
+> > > > and the clock speed will soon jump to 4GHz.
+> > > > But if your 'spinning' process is migrated to a different cpu it st=
+arts
+> > > > again at 800MHz.
+> > > >
+> > > > (I had something where a fpga compile when from 12 mins to over 20 =
+because
+> > > > the kernel RSB stuffing caused the scheduler to behave differently =
+even
+> > > > though nothing was doing a lot of system calls.)
+> > > >
+> > > > All sorts of things can affect that - possibly even making some cod=
+e faster!
+> > > >
+> > > > The (IIRC) 30k increase in code size will be a few functions being =
+inlined.
+> > > > The bloat-o-meter might show which, and forcing a few inlines the s=
+ame way
+> > > > should reduce that difference.
+> > >
+> > > bloat-o-meter is an excellent idea, I'll analyse binaries some more
+> > > and report my findings.
 > >
-> > Sorry, I misread the header file. The ifdef in ntmp.h is needed
-> > because the interfaces in this header file will be used by the
-> > enetc-core and enetc-vf drivers. For the ENETC v1 (LS1028A platform),
-> > it will not select NXP_NETC_LIB.
->=20
-> Meaning FSL_ENETC ? And the calls are in FSL_ENETC_CORE ?
+> > Please find attached bloat.txt where:
+> >
+> > a) some functions now include once-called functions. These are:
+> >
+> > copy_process                                6465   10191   +3726
+> > balance_dirty_pages_ratelimited_flags        237    2949   +2712
+> > icl_plane_update_noarm                      5800    7969   +2169
+> > samsung_input_mapping                       3375    5170   +1795
+> > ext4_do_update_inode.isra                      -    1526   +1526
+> >
+> > that now include:
+> >
+> > ext4_mark_iloc_dirty                        1735     106   -1629
+> > samsung_gamepad_input_mapping.isra          2046       -   -2046
+> > icl_program_input_csc                       2203       -   -2203
+> > copy_mm                                     2242       -   -2242
+> > balance_dirty_pages                         2657       -   -2657
+> >
+> > b) ISRA [interprocedural scalar replacement of aggregates,
+> > interprocedural pass that removes unused function return values
+> > (turning functions returning a value which is never used into void
+> > functions) and removes unused function parameters.  It can also
+> > replace an aggregate parameter by a set of other parameters
+> > representing part of the original, turning those passed by reference
+> > into new ones which pass the value directly.]
+> >
+> > ext4_do_update_inode.isra                      -    1526   +1526
+> > nfs4_begin_drain_session.isra                  -     249    +249
+> > nfs4_end_drain_session.isra                    -     168    +168
+> > __guc_action_register_multi_lrc_v70.isra     335     500    +165
+> > __i915_gem_free_objects.isra                   -     144    +144
+> > ...
+> > membarrier_register_private_expedited.isra     108       -    -108
+> > syncobj_eventfd_entry_func.isra              445     314    -131
+> > __ext4_sb_bread_gfp.isra                     140       -    -140
+> > class_preempt_notrace_destructor.isra        145       -    -145
+> > p9_fid_put.isra                              151       -    -151
+> > __mm_cid_try_get.isra                        238       -    -238
+> > membarrier_global_expedited.isra             294       -    -294
+> > mm_cid_get.isra                              295       -    -295
+> > samsung_gamepad_input_mapping.isra.cold      604       -    -604
+> > samsung_gamepad_input_mapping.isra          2046       -   -2046
+> >
+> > c) different split points of hot/cold split that just move code around:
+> >
+> > samsung_input_mapping.cold                   900    1500    +600
+> > __i915_request_reset.cold                    311     389     +78
+> > nfs_update_inode.cold                         77     153     +76
+> > __do_sys_swapon.cold                         404     455     +51
+> > copy_process.cold                              -      45     +45
+> > tg3_get_invariants.cold                       73     115     +42
+> > ...
+> > hibernate.cold                               671     643     -28
+> > copy_mm.cold                                  31       -     -31
+> > software_resume.cold                         249     207     -42
+> > io_poll_wake.cold                            106      54     -52
+> > samsung_gamepad_input_mapping.isra.cold      604       -    -604
+> >
+> > c) full inline of small functions with locking insn (~150 cases).
+> > These bring in most of the performance increase because there is no
+> > call setup. E.g.:
+> >
+> > 0000000000a50e10 <release_devnum>:
+> >   a50e10:    48 63 07                 movslq (%rdi),%rax
+> >   a50e13:    85 c0                    test   %eax,%eax
+> >   a50e15:    7e 10                    jle    a50e27 <release_devnum+0x1=
+7>
+> >   a50e17:    48 8b 4f 50              mov    0x50(%rdi),%rcx
+> >   a50e1b:    f0 48 0f b3 41 50        lock btr %rax,0x50(%rcx)
+> >   a50e21:    c7 07 ff ff ff ff        movl   $0xffffffff,(%rdi)
+> >   a50e27:    e9 00 00 00 00           jmp    a50e2c <release_devnum+0x1=
+c>
+> >             a50e28: R_X86_64_PLT32    __x86_return_thunk-0x4
+> >   a50e2c:    0f 1f 40 00              nopl   0x0(%rax)
+> >
+> > IMO, for 0.14% code increase, these changes are desirable.
+>
+> I concur, and it's extra desirable IMHO due to the per function
+> overhead of CPU bug mitigations like retpolines.
 
-Yes, ENETC v1 uses FSL_ENETC, and some of the functions in ntmp.h
-are called in FSL_ENETC_CORE, enetc-core is common driver which
-provides interfaces to ENETC (v1 and v4) PF and VF drivers.
+Thanks!
+
+I will submit a v2 patch next week that will summarize all the
+measurements in its commit message.
+
+BR,
+Uros.
 
