@@ -1,95 +1,127 @@
-Return-Path: <linux-kernel+bounces-552849-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-552850-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A065A57F66
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 23:42:58 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5527EA57F68
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 23:48:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 661C316DAB4
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 22:42:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 99D641884982
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 22:48:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B564B20B803;
-	Sat,  8 Mar 2025 22:42:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19D981E834F;
+	Sat,  8 Mar 2025 22:48:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YcpoglwU"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Xi1jmIE8"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B9181DE3AB;
-	Sat,  8 Mar 2025 22:42:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B7161AA1C8
+	for <linux-kernel@vger.kernel.org>; Sat,  8 Mar 2025 22:48:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741473772; cv=none; b=mdENVI8h7XOUE8ppdsPl8popmweDqJYF2V6lZwwk4FxKDxWwiYCJ4eSVislWTtzQlgcJvW7J+WUE9YRRajgv9rFOQA+wOrm9G15J/lNC0sohebYenw715vLFYiEeK1r24iFtbvGkTknhq8Akn6mrN8yZqbPm3dMOmB79uPzjtvU=
+	t=1741474117; cv=none; b=UrqjpyJNwQcjpUEBze9Sis+fbAblYnC+1j5lndS8dNoscHU9ZXeF1yDZG5UHti0kfhj+rNwVZXNf3+wmrWZTIi4FGbrLvW+06iZTBEuMMySt/PjWOHN5HOmPxY5fxzJM3OPVHVVkOXOxEMIINnv5lDIN7Tz0OnhdXCqwP69J/iQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741473772; c=relaxed/simple;
-	bh=K1kOokh8SNPeyFgCYbH+M2YEKW5UEDX4zuEHKMpNMRQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=QS9nFnMgcohU9UmTJGp8RGKBx1yfbKco2QtOVmXGJboBkb97yfbvjN1YZ1EI9LkjZ58dk5AfcQiIuNhcOzudjIraQhdZ3ymik+vifLc9soEBahJNgFEAyCrH23+H68YrG8tiqQQ+15nCJP3MJxlXzzPHdnEx7p6MygTb22on8VM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YcpoglwU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 95526C4CEE0;
-	Sat,  8 Mar 2025 22:42:51 +0000 (UTC)
+	s=arc-20240116; t=1741474117; c=relaxed/simple;
+	bh=HsTzUSlwUghBGudHn1GbbnYvhPej4GoUjLOnJW1/ZYg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jvKrJiq5t7+3qqxOmI4uG//wdEut9RtTlCFlKO+Is5JeOkPXKGoD1VmnWUDsFc4PU6vmW4wb+gWiFufK221s3BT9tgMxSFLq8qGUXcW97WXqNzyPrh2KIGryRg0wgXoI6r+JpKlL6NsISTIrXMjBWSlswOn7rZW0W5oloCu1BlE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Xi1jmIE8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 95DFFC4CEE0;
+	Sat,  8 Mar 2025 22:48:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741473771;
-	bh=K1kOokh8SNPeyFgCYbH+M2YEKW5UEDX4zuEHKMpNMRQ=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=YcpoglwU5hoQiKYn58NQTyZ6mWeH1jUlwS3gJLkru7mka6JLQklQnUMlIzeXvQAGe
-	 Ed5PU4hxZqmgmtFZHObQgd5H99QK3KuCsGaX7f0Av/h40z2K5CCi1Wx6WDKqnhTrZO
-	 ml7CJynQsDcV05iOMrAtGS8R4cfmuoDLbDRTmQoCYP24QiuOsYyWwxc9yWIZmw+HGY
-	 +I+DOZJrotql0TrRxmuvY6JszSirzqIIO5iyalQCTuJKA8pK0ohlHrxEwYqz3Hh1nJ
-	 6yidGAxlgjNE4T76EZew1AlfpHXKswsEG0OOu38U/sEgeNBWWxqKgDiy2ki18P4aaZ
-	 nV/mWLNgz9YGA==
-Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-548409cd2a8so2988173e87.3;
-        Sat, 08 Mar 2025 14:42:51 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCUzajl+aCMpJq76OEYzGXxJly5DI3/rl87STbkBDMd2Q2OohokcOZj0oYBJIOygz3AHakh2MuJ1eLQtuxI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwX2c27V0ZBqFMECBKnWZZCToPqfWPucphV8mGShNFC+d0mDbhJ
-	C1PaN3asQWsaVYUWZ/RLJX6s76kbST1pemyS9Mukt1h3IjEkn8ppSRTIkl9XAz3fol/Vjz545xU
-	4HM7nwncFZXNrFD8M+Sczby5pnGk=
-X-Google-Smtp-Source: AGHT+IFTSndMozBb53xjzolq0wPJB84p+WHBr3kJnsQef2jLyDINFNKx891d0kc0upGsNQ5dhrocpMeX2pkwQRUgVWs=
-X-Received: by 2002:a05:6512:12c3:b0:549:4df0:76 with SMTP id
- 2adb3069b0e04-54990e2bfa4mr2708024e87.4.1741473769934; Sat, 08 Mar 2025
- 14:42:49 -0800 (PST)
+	s=k20201202; t=1741474116;
+	bh=HsTzUSlwUghBGudHn1GbbnYvhPej4GoUjLOnJW1/ZYg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Xi1jmIE8a0pOzU+Z0hCpUnl7IQ5p/eL6kDZ7fGhlBJdxP9BJfB/kn5Tx1H07zqv9R
+	 52FTZbS/od8zfKgmEDE+fRd6c5GKjZerITmjR+VFFxCm5G3APwHQBNZSKCjP4Cv5CD
+	 Us66P45vEibXrXAXCy6LU3lDGqd6A+k/RZAjXrWrZ81gcMQj5scXFuZUbYN6/cYt0L
+	 qpCct0O0edwcoTImydWSL2TMrpScMRpHP314h2Zgrrl+qW0cJVtDYlnjN59QrLQEl4
+	 47CrgTlytOA14F3K7wVIi3k+H4oj2I7YR4JcTFnd+hrjISL9sfldICiOBQig2xKG7m
+	 xvYo/B6fBZyNw==
+Date: Sat, 8 Mar 2025 23:48:34 +0100
+From: Frederic Weisbecker <frederic@kernel.org>
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+	Anna-Maria Behnsen <anna-maria@linutronix.de>,
+	Benjamin Segall <bsegall@google.com>,
+	Eric Dumazet <edumazet@google.com>,
+	Andrey Vagin <avagin@openvz.org>,
+	Pavel Tikhomirov <ptikhomirov@virtuozzo.com>,
+	Peter Zijlstra <peterz@infradead.org>
+Subject: Re: [patch V2 08/17] posix-timers: Rework timer removal
+Message-ID: <Z8zJQtzLIliTNe2e@pavilion.home>
+References: <20250302185753.311903554@linutronix.de>
+ <20250302193627.416552300@linutronix.de>
+ <Z8t7UJUd9SLT0Ytj@pavilion.home>
+ <8734fn53b5.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250224132132.1765115-6-ardb+git@google.com> <CAMj1kXHamiZ8u4YO9FnrWhpcotUkAusDF_db_5H2qaVD85qmVA@mail.gmail.com>
- <CAK7LNATLf2iXNGi-UKRg=+PRRqgmxry5QQnQ4GUNsuVmDBAnmw@mail.gmail.com>
- <CAMj1kXGVe-R7VF1nHmRx+UB4FuhSjiwMU=n_uWCLC99rTTa5ZQ@mail.gmail.com> <CAK7LNATkaTvAwPmNM3kSOCkCptW-bo9Ko6asWyFVcGYgu5rHtw@mail.gmail.com>
-In-Reply-To: <CAK7LNATkaTvAwPmNM3kSOCkCptW-bo9Ko6asWyFVcGYgu5rHtw@mail.gmail.com>
-From: Ard Biesheuvel <ardb@kernel.org>
-Date: Sat, 8 Mar 2025 23:42:38 +0100
-X-Gmail-Original-Message-ID: <CAMj1kXHCia-gQy7fkVC5SgMyFqz6rRgpVbz6_W7e9jk7ENaQxA@mail.gmail.com>
-X-Gm-Features: AQ5f1JoGMoOCrYC2A_aKY5GIOyqLMRk-0npKPlhUEmMgbJg10Ael5xd7u_fZOpM
-Message-ID: <CAMj1kXHCia-gQy7fkVC5SgMyFqz6rRgpVbz6_W7e9jk7ENaQxA@mail.gmail.com>
-Subject: Re: [RFC PATCH 0/4] x86/build: Get rid of vmlinux postlink step
-To: Masahiro Yamada <masahiroy@kernel.org>
-Cc: linux-kernel@vger.kernel.org, x86@kernel.org, linux-kbuild@vger.kernel.org, 
-	Ingo Molnar <mingo@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <8734fn53b5.ffs@tglx>
 
-On Sat, 8 Mar 2025 at 17:17, Masahiro Yamada <masahiroy@kernel.org> wrote:
->
-...
-> I do not think it is broken.
-> As I mentioned above, I regard vmlinux.relocs as a byproduct
-> of the atomic build rule of vmlinux. This works.
->
+Le Sat, Mar 08, 2025 at 09:34:06AM +0100, Thomas Gleixner a écrit :
+> On Sat, Mar 08 2025 at 00:03, Frederic Weisbecker wrote:
+> > Le Sun, Mar 02, 2025 at 08:36:56PM +0100, Thomas Gleixner a écrit :
+> >> --- a/include/linux/posix-timers.h
+> >> +++ b/include/linux/posix-timers.h
+> >> @@ -240,6 +240,13 @@ static inline void posixtimer_sigqueue_p
+> >>  
+> >>  	posixtimer_putref(tmr);
+> >>  }
+> >> +
+> >> +static inline bool posixtimer_valid(const struct k_itimer *timer)
+> >> +{
+> >> +	unsigned long val = (unsigned long)timer->it_signal;
+> >> +
+> >> +	return !(val & 0x1UL);
+> >> +}
+> >>  #else  /* CONFIG_POSIX_TIMERS */
+> >>  static inline void posixtimer_sigqueue_getref(struct sigqueue *q) { }
+> >>  static inline void posixtimer_sigqueue_putref(struct sigqueue *q) { }
+> >> --- a/kernel/signal.c
+> >> +++ b/kernel/signal.c
+> >> @@ -2092,7 +2092,7 @@ static inline void posixtimer_sig_ignore
+> >>  	 * from a non-periodic timer, then just drop the reference
+> >>  	 * count. Otherwise queue it on the ignored list.
+> >>  	 */
+> >> -	if (tmr->it_signal && tmr->it_sig_periodic)
+> >> +	if (posixtimer_valid(tmr) && tmr->it_sig_periodic)
+> >>  		hlist_add_head(&tmr->ignored_list, &tsk->signal->ignored_posix_timers);
+> >>  	else
+> >>  		posixtimer_putref(tmr);
+> >> --- a/kernel/time/posix-timers.c
+> >> +++ b/kernel/time/posix-timers.c
+> >> @@ -279,7 +279,7 @@ static bool __posixtimer_deliver_signal(
+> >>  	 * since the signal was queued. In either case, don't rearm and
+> >>  	 * drop the signal.
+> >>  	 */
+> >> -	if (timr->it_signal_seq != timr->it_sigqueue_seq || WARN_ON_ONCE(!timr->it_signal))
+> >> +	if (timr->it_signal_seq != timr->it_sigqueue_seq || !posixtimer_valid(timr))
+> >
+> > Hmm, should it still warn here? ie: WARN_ON_ONCE(!posixtimer_valid(timr)) ?
+> 
+> No, because the timer is invalidated early now.
 
-There is no make rule for vmlinux.relocs, and so
+But the signal can only be queued before posix_timer_delete(). So
+if the bit 0 of it_signal has been reset, it_signal_seq must have been
+incremented along, right?
 
-- if it gets deleted, it cannot be rebuilt and even though the build
-does not break, the relocation data is missing from the compressed
-image, and this could potentially break the kaslr startup code,
-- it vmlinux.relocs is older than vmlinux for some reason, make will
-not notice and silently reuse the outdated version,
-- when creating vmlinux.relocs from vmlinux and an error occurs,
-vmlinux is deleted, making it difficult to diagnose the problem.
+And if so then timr->it_signal_seq == timr->it_sigqueue_seq must imply
+posixtimer_valid(). And if not we should warn. Or am I missing something?
 
-I think this is badly broken, but if you think this is all working as
-it should, I am not going to debate this further, and you can consider
-the patch series withdrawn.
+Thanks.
+
+
+> 
+> Thanks,
+> 
+>         tglx
 
