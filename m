@@ -1,78 +1,53 @@
-Return-Path: <linux-kernel+bounces-552751-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-552752-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 51064A57D9F
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 20:04:30 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 29703A57DAD
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 20:09:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3613C7A311E
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 19:03:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6349F16B7BC
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 19:09:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60628205E15;
-	Sat,  8 Mar 2025 19:04:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 481461EFF9C;
+	Sat,  8 Mar 2025 19:09:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gs0Pprfw"
-Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com [209.85.208.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="heUJRSTQ"
+Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2698F1DB122;
-	Sat,  8 Mar 2025 19:04:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E345A1A8403
+	for <linux-kernel@vger.kernel.org>; Sat,  8 Mar 2025 19:08:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741460647; cv=none; b=qNMDG8bR4YUul+Pbc+cwNnC/AtZv4s7cyJfZp0XtztbatRgokaSsisImoeXCOqe+CMZlXfMCbJH3YpgREvGE5gxsqBcwVYEeE8Xybo6BrfSNd0XB3JVFYFxfaUSxpuzBzcUFxk8hjAh/ogHio3RxNz66DS50JneiReqX9QH0qlw=
+	t=1741460939; cv=none; b=nc39al9gLzRKSPV7B/mDlmtLKIBpu16EzYdJn4jaBjras2Vxp/cvJysoYUpoG6Uou5x64KtZDGikEnCDIq+qKGVUUolT6zPKud8KU2roYw4tpC9pGMQLjNEhYZ/NfHSbCMCSHZBQyaNoP+FMRMjl7u6PH7/pth6DSUIvi/GRUM0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741460647; c=relaxed/simple;
-	bh=hLQRFBlo3PiBpW/PV5t75PCUgkfxdVXkjt3uDuaXM2k=;
+	s=arc-20240116; t=1741460939; c=relaxed/simple;
+	bh=HN6sybrOqzy3o4ZNRPHcGmJpL/umIrCvKbvnrjaDzfU=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Zv7sBcLHTf4pkoI3V7XfsVhyVopHq6esdvIfBzD0fxqv2tRQsCDDyKW9PMNrms/EqujwhEQ5cf3aYUd9i2jrLmWwhrzw1wuSzeJ5DSmIOp0XSOb+NZk9s/8LMsp0wkgkOqiSOlyiZfK+YpVuCUKiK+INFXCLJl/VJ+YtFhUYVXs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gs0Pprfw; arc=none smtp.client-ip=209.85.208.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-30bfb6ab47cso14698331fa.3;
-        Sat, 08 Mar 2025 11:04:05 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741460644; x=1742065444; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=eTVbXxjWlsf93+TNBRlPrQnC9sQtCvCemMI+xBM+RLA=;
-        b=gs0PprfwHwLOYeBY5LdOMnj0FBBxwVKznWpgHfqpcKqy/woloSSMnvpHGxjSYNtNEx
-         XOSev05zu71UJTM88m8YzEywjtx+e+ilKVQ3OmzXR5Vr9EIWF2T9pnkRvk8c5H5+OOM5
-         mawJIJS1pFGenRzs5PnLGtPf2M2fnurEdZm7DYXmz7VFRDzZEghyDk3hEUTT6jw9ho8+
-         zv/WM07ZYCVJLWzEz8v5Ecbsvy70IOPAXyTnCEdvjkB2xrC5BluR4Av+6heYkDvc08FU
-         Rj/ZAnQTH5X+527+GvuaOGdX3baOESjfEPAvl876NnEWiwNT05AASV/bjBs0Hzv2FMEo
-         UqzA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741460644; x=1742065444;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=eTVbXxjWlsf93+TNBRlPrQnC9sQtCvCemMI+xBM+RLA=;
-        b=p7jSso7baoAcujIoPrrcWCiDaIl0FIw/HGWhWwmKCkZ8wIzHGEXFc9enuB1qH4LvH2
-         7l4wuyB0M0Y2kuM12KVlV+VjZXUEEF30TTCDnuH+TiMCz9sF00jNlRkZUdDad8fWMw6Q
-         TtbDaJQ4WH/aAQlNsOjWeUW1cUJ3HWYRdjPhjOwnErItYcUqbl+PgwZ2nZ+FmHNf6VaR
-         IKhrXiWfiiY+XjuJA2vvUg/QI6vYL88dPGjKXfokgbUa70ail55LxHI5Hli6NR4XtwkY
-         2fAJcSzr9wh5ITSysD9W3HjDvHraTkx0OC0Fg2gyg9XtUjsfCtKawONbbvI8GH8791dM
-         MA1A==
-X-Forwarded-Encrypted: i=1; AJvYcCVvYzOPQaCifv9DrBGP+kdFnY32vCoEwWZzwYOCnnJrW8F9q6bMpp1R7eVxfLdLBS7MVaV/mK9RFAI2Y3qs@vger.kernel.org, AJvYcCXJ4Ej7GSg53hh7ggFbVTONtvI5NJcBwTMAgGLY9Ki7I6StPosiVdv9UKafRlLDiOvKYQ07B/khkPfM@vger.kernel.org
-X-Gm-Message-State: AOJu0YxJl8kuARMxxtdQnyt/ktLGBLmN1KjVUTpNypK62dFBBhFEWP7R
-	PQzfrzPchte9qHXZSuVqXa7Pmyn8NZD0SDsP1m2w7y9V2/062r03
-X-Gm-Gg: ASbGncuhEJptwob/qBfsNGd9OmkGhxaWmfPzIzrIwhG3bbVGIfhJHDsU9/AER4gmY9C
-	MMCYM3s5gj5pDi+cX8lQ+5NQhhpyOZ37VHf3PAXla6IDo/1BUzKZDerEohY14flc5JDOyGjSDkS
-	ASdfZPqKHUEWms9Ik9glt+7Gf4dVE1C7rIV9Od93N11QKGiMdo6OTVpBRyoata6/15XSk7l+VKG
-	mIck4Lk9IPA8FM1fsWMm9duZyLxuZhgB22VWJ7p7i9GcDHvzFF3qDT+kjTvS8mnULwueimp/mWx
-	TnkBpKGCyj/swLIu8dY9p9ta/icJv4i8zHJIEHYMXmlR1Zj/nC9anz6w1lw=
-X-Google-Smtp-Source: AGHT+IHONdtOGFlS7xPC7CsMoQUtrhTnztXQBlowSZtaB1Dgbc0GCjes4fUV0lQgJ2cvnPRqYxqQbg==
-X-Received: by 2002:a05:6512:a93:b0:545:2fa9:8cf5 with SMTP id 2adb3069b0e04-549910b7c6fmr3484311e87.49.1741460643774;
-        Sat, 08 Mar 2025 11:04:03 -0800 (PST)
-Received: from [192.168.3.116] ([78.56.129.233])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5498b1c3adcsm883370e87.249.2025.03.08.11.04.00
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 08 Mar 2025 11:04:02 -0800 (PST)
-Message-ID: <5bb045fe-89c3-46dd-bd9a-dee8800a6d58@gmail.com>
-Date: Sat, 8 Mar 2025 21:03:59 +0200
+	 In-Reply-To:Content-Type; b=udUNPA8DUAjwTGoKD2lBxAL2MQNG7c8XlWLSkt1tqYXvNhoTnEsp+Sxr1Rzp7qzvkzHa6Zg48wIC+cY6pSqsLP5gB9ClPXj6cgH0vSM6cmdDygVXMwjB2IEjUj9eneIcl45j74dcrAakj3TiFBZg4Hxi13nlR6JcuJnUULzeFaY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=heUJRSTQ; arc=none smtp.client-ip=198.137.202.136
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
+Received: from [IPV6:2601:646:8003:ca73:434c:8ca7:921e:6209] ([IPv6:2601:646:8003:ca73:434c:8ca7:921e:6209])
+	(authenticated bits=0)
+	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 528J8DAG909937
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
+	Sat, 8 Mar 2025 11:08:14 -0800
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 528J8DAG909937
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+	s=2025021701; t=1741460895;
+	bh=ASEmqZoEsQ9vQDaSfYF27u21eOMajeVX46NKvJosq3o=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=heUJRSTQet1YpRfXmujiS+InLKJiAT0BvjwD0Xp1CWqUK9BjR9Fii19Slrsyfr+TM
+	 xQiEGQjqjgT65fElUL9MHqbIhh1rXRThLp3KQAWRzCf3T9tmwdIiKUqGO4QCJjtH4Z
+	 QN8ZA0dhl8RdZ1OZNYyrFFGvdZ78M7LeIcmTdk/E6EPmXopSCctxfjd/PeJug2+bff
+	 4V6LpoVjtuXLivXdGPSqQ9BZOK3pwMKQF+qS4yDM/YzcfpimY73C5SxoZgBsgoBRPr
+	 ffVW3L1cEYCsneYg5UMn9GmDOLHTb1LhtNDbIKKIEKgB7UFVn0pMWWpB35r+5QQNBr
+	 Z7Ya+v0BNkzYw==
+Message-ID: <954c7084-3d6f-47b8-b6cc-08a912eda74c@zytor.com>
+Date: Sat, 8 Mar 2025 11:08:08 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -80,40 +55,57 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/2] arm64: dts: rockchip: Add Xunlong Orange Pi 3B
-To: Jonas Karlman <jonas@kwiboo.se>
-Cc: Heiko Stuebner <heiko@sntech.de>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
- linux-kernel@vger.kernel.org
-References: <20240626230319.1425316-1-jonas@kwiboo.se>
- <20240626230319.1425316-3-jonas@kwiboo.se>
- <d1c600f1-a874-4bb8-8b9f-22a3414edfcc@gmail.com>
- <29739e60-15f5-4361-a57a-2e6b93fba09c@kwiboo.se>
+Subject: Re: [PATCH -tip] x86/locking/atomic: Use asm_inline for atomic
+ locking insns
+To: Dave Hansen <dave.hansen@intel.com>, Uros Bizjak <ubizjak@gmail.com>,
+        x86@kernel.org, linux-kernel@vger.kernel.org
+Cc: Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@kernel.org>,
+        Borislav Petkov <bp@alien8.de>,
+        Dave Hansen <dave.hansen@linux.intel.com>
+References: <20250228123825.2729925-1-ubizjak@gmail.com>
+ <20f1af22-71dc-4d62-9615-03030012222e@intel.com>
 Content-Language: en-US
-From: Arturas Moskvinas <arturas.moskvinas@gmail.com>
-In-Reply-To: <29739e60-15f5-4361-a57a-2e6b93fba09c@kwiboo.se>
+From: "H. Peter Anvin" <hpa@zytor.com>
+In-Reply-To: <20f1af22-71dc-4d62-9615-03030012222e@intel.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
+On 2/28/25 08:48, Dave Hansen wrote:
+> On 2/28/25 04:35, Uros Bizjak wrote:
+>> The code size of the resulting x86_64 defconfig object file increases
+>> for 33.264 kbytes, representing 1.2% code size increase:
+>>
+>>     text    data     bss     dec     hex filename
+>> 27450107        4633332  814148 32897587        1f5fa33 vmlinux-old.o
+>> 27483371        4633784  814148 32931303        1f67de7 vmlinux-new.o
+> 
+> So, first of all, thank you for including some objective measurement of
+> the impact if your patches. It's much appreciated.
+> 
+> But I think the patches need to come with a solid theory of why they're
+> good. The minimum bar for that, I think, is *some* kind of actual
+> real-world performance test. I'm not picky. Just *something* that spends
+> a lot of time in the kernel and ideally where a profile points at some
+> of the code you're poking here.
+> 
+> I'm seriously not picky: will-it-scale, lmbench, dbench, kernel
+> compiles. *ANYTHING*. *ANY* hardware. Run it on your laptop.
+> 
+> But performance patches need to come with performance *numbers*.
 
-On 3/8/25 6:34 PM, Jonas Karlman wrote:
-> This is because of a reset issue with Ethernet PHYs in Linux, see [1].
->
-> Two workarounds:
-> 1. Let boot firmware reset the PHY before Linux, i.e. use U-Boot
->     v2024.10 or newer.
-> 2. Use a ethernet-phy-id compatible with correct phy-id to force Linux
->     to attach the PHY.
->
-> I suggest you try to wipe U-Boot from SPI flash on your board and update
-> to use U-Boot v2025.01 and try again.
-Wiping board SPI flash which contained old U-boot and using 2025.01 from 
-SD card fixed issue hence DTS is OK.
-Though I do not remember that I ever wrote anything into SPI flash in 
-first place (I touched board almost year ago so potentially forgot about 
-it) maybe it was shipped like that with the board...
+Incidentally, this is exactly the reason why gcc added "asm inline" *at 
+our request*. We just haven't caught up with it everywhere yet.
 
-Arturas Moskvinas
+In fact, I would wonder if we shouldn't simply do:
+
+#define asm __asm__ __inline__
+#define asm_noinline __asm__
+
+... in other words, to make asm inline an opt-out instead of an opt-in.
+It is comparatively unusual that we do complex things in inline assembly 
+that we would want gcc to treat as something that should be avoided.
+
+	-hpa
+
 
