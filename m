@@ -1,137 +1,136 @@
-Return-Path: <linux-kernel+bounces-552170-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-552171-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3ADDCA57678
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 01:02:40 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C16CA5767B
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 01:03:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7EEB2189BB8F
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 00:02:47 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 639387A8E8D
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 00:01:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C46BB101FF;
-	Sat,  8 Mar 2025 00:01:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD80C2556E;
+	Sat,  8 Mar 2025 00:01:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tKXLMBNB"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BHxX1YN6"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F871137E;
-	Sat,  8 Mar 2025 00:01:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0984DAD4B;
+	Sat,  8 Mar 2025 00:01:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741392096; cv=none; b=FNFKxx0S7HA7HmIGOafTEkmJd5aagRzGyzSNVblI0I22JgdjbTG9JrQC8oVhCti1X855A7BWwQERh1dAXDoHUYaLqNiEB5siEN6sA1WvVeWrJRcQeBYtl/0Xm4hoSs1EEANvrIQA2/1EKJomP2hm5iZBr9eAOt1nGJapT5E6Tyc=
+	t=1741392112; cv=none; b=aES1pYA+rfT0uENzi4o4KNoAwfGgmtYDWHDNBW7IsxWJGK0LWft9ZcGFuw4gSKv8sf5+4azGrhASuu5Sor93oWQvluuPphpc4xACcotlBaCouRnpe2uUIc/pVP41Lwp8j56H8NLw9EUoVjd4LkN8NbAtSk2wgPk3N0+bSEk/ZbE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741392096; c=relaxed/simple;
-	bh=RxrYJHQ56oEI9BGDiBCfydVzW7XVfkyco8V5ApsDlQY=;
+	s=arc-20240116; t=1741392112; c=relaxed/simple;
+	bh=CvcOzcHYZdNnB3mh1G+GBqKxyf26qLvuGTb6WCYhDKU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IdnUiBv0DY5XOYgyvqL0q8PkSiPpJr0tfnYZPe2Z6dM/qM1VnQmdm2vhB69hYt+8uqcbgg9AjXNPzoKnm6Cjus2tWXPtcQycIofLlZN4KnHzxCCPAkUhFt0oRVEC7huJOKmso4q7T2zvf4OzkBgIGpBfDbQCqqlniMG6vDn0xiU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tKXLMBNB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 46537C4CED1;
-	Sat,  8 Mar 2025 00:01:34 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=QJa89MuZd/3ATwDeUPy5TMm1Sbyzmo2LfT92cNB7PL7dyIOFmngoa9F4KBqbf8dSuBwwoccIG69f+5mEjAZiHqzv7wJ6dztlkvivqWUqMQ+UjhSojwTSAVtqL6cw8oFe/5gTIUCDBHW8CMvB8JXdgBYbyNnLJIODycMfu+fqsdc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BHxX1YN6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3197FC4CED1;
+	Sat,  8 Mar 2025 00:01:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741392094;
-	bh=RxrYJHQ56oEI9BGDiBCfydVzW7XVfkyco8V5ApsDlQY=;
+	s=k20201202; t=1741392111;
+	bh=CvcOzcHYZdNnB3mh1G+GBqKxyf26qLvuGTb6WCYhDKU=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=tKXLMBNBEG4l/WGTfeUKVbn4j3rdE8gJ6Ilcva4PJSJcslzXv6M6WfGCNgacYUXkn
-	 US65jmiBuIuulxzETgm01TOt7owT/UpNqIBEt5hGmKSmSfEqIe3oTs1ZPs+n0cEt/X
-	 +Iu1yfibj7iPQmzG69qyA845987YQTBDw9GtIJ88kmaZW02/57lSJVWzcBoR2r7nAe
-	 eeP3mRg8Ig5AajMqymimA2WHZycUViBklTfnUGeSXA3DXfbmilQX049h6Vr6eq5dGk
-	 n94JiTWskjViv4kLtGofrhuYO8HJOoRlaeByRmvFEc5si0HWdN2//l9MRk6uKl5+JV
-	 KZ401FLEJF/UA==
-Received: by venus (Postfix, from userid 1000)
-	id 3564A180B97; Sat, 08 Mar 2025 01:01:32 +0100 (CET)
-Date: Sat, 8 Mar 2025 01:01:31 +0100
-From: Sebastian Reichel <sre@kernel.org>
-To: Abel Vesa <abel.vesa@linaro.org>
-Cc: Bjorn Andersson <andersson@kernel.org>, 
-	Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Johan Hovold <johan@kernel.org>, Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
-	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [RFC 1/2] arm64: dts: qcom: x1e78100-t14s: Add LCD variant with
- backlight support
-Message-ID: <lolqokpczxdscvgj6xdfyxblmle3csgzje3fgo4itzspgmeriy@7zzx7hg2zfks>
-References: <20250306090503.724390-1-abel.vesa@linaro.org>
- <20250306090503.724390-2-abel.vesa@linaro.org>
+	b=BHxX1YN6/iaOtx4wMoR/Hj4eGamzCNyeUK257LVH979ty6/vVRN8Rols++9lXxwsy
+	 +6NMqt4Q5xaxjd15KWYviRvzJbwSZO2Hxg3YxYb1pC+z537tHO1prwqoKqaxLTIa2W
+	 y7v/dePLxRx/P3KttKFBlA6LPF/J6w9JOL6uAA84yRXLoQRXlDB/zLTzZZDtozQ4/C
+	 2jDzpBlxb6//t8/kdhIP1C91HtYT9iToauB7cKS6KQ1dDH2olZzpQ7IpjS7BlIgUlp
+	 wgv1Uji+aeyEtNjFj3xvI2uE2/OhGpugb6p83Bh1JOa45780jrIGtW5LG980r1TCCZ
+	 V5qKmm07w5w0w==
+Date: Sat, 8 Mar 2025 01:01:45 +0100
+From: Ingo Molnar <mingo@kernel.org>
+To: Boqun Feng <boqun.feng@gmail.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Will Deacon <will@kernel.org>,
+	Waiman Long <longman@redhat.com>, linux-kernel@vger.kernel.org,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
+	"open list:RUST:Keyword:b(?i:rust)b" <rust-for-linux@vger.kernel.org>
+Subject: Re: [PATCH locking 00/11] LOCKDEP and Rust locking changes for v6.15
+Message-ID: <Z8uI6aOd79xe32CS@gmail.com>
+References: <Z76Uk1d4SHPwVD6n@Mac.home>
+ <20250307232717.1759087-1-boqun.feng@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="y6zodhuo7ebbvgn4"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250306090503.724390-2-abel.vesa@linaro.org>
+In-Reply-To: <20250307232717.1759087-1-boqun.feng@gmail.com>
 
 
---y6zodhuo7ebbvgn4
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [RFC 1/2] arm64: dts: qcom: x1e78100-t14s: Add LCD variant with
- backlight support
-MIME-Version: 1.0
+* Boqun Feng <boqun.feng@gmail.com> wrote:
 
-Hi,
+> Hi Ingo & Peter,
+> 
+> As discussed, I'm resending the pull request for lockdep and Rust
+> locking for v6.15 in the format of email patches. I dropped one patch
+> and will postpone it for v6.16 because of a bug [1], and I think the fix
+> [2] needs more reviews.
+> 
+> [1]: https://lore.kernel.org/lkml/20250306122413.GBZ8mT7Z61Tmgnh5Y9@fat_crate.local/
+> [2]: https://lore.kernel.org/lkml/Z8t8imzJVhWyDvhC@boqun-archlinux/
+> 
+> Regards,
+> Boqun
+> 
+> Alice Ryhl (2):
+>   rust: sync: Add accessor for the lock behind a given guard
+>   rust: sync: condvar: Add wait_interruptible_freezable()
+> 
+> Boqun Feng (1):
+>   rust: sync: lock: Add an example for Guard::lock_ref()
+> 
+> Mitchell Levy (2):
+>   rust: lockdep: Remove support for dynamically allocated LockClassKeys
+>   rust: lockdep: Use Pin for all LockClassKey usages
+> 
+> Randy Dunlap (1):
+>   locking/rtmutex: Use struct keyword in kernel-doc comment
+> 
+> Waiman Long (5):
+>   locking/semaphore: Use wake_q to wake up processes outside lock
+>     critical section
+>   locking/lock_events: Add locking events for rtmutex slow paths
+>   locking/lock_events: Add locking events for lockdep
+>   locking/lockdep: Disable KASAN instrumentation of lockdep.c
+>   locking/lockdep: Add kasan_check_byte() check in lock_acquire()
 
-On Thu, Mar 06, 2025 at 11:05:02AM +0200, Abel Vesa wrote:
-> Due to the fact that Lenovo Thinkpad T14s Gen6 is available with both
-> OLED and LCD, the backlight control differs HW-wise. For the LCD variant,
-> the panel's backlight is controlled via one of the PWMs provided by the
-> PMK8550 PMIC. For the OLED variant, the backlight is internal to the
-> panel and therefore it is not described in devicetree.
->=20
-> For this reason, create a generic dtsi for the T14s by renaming the
-> existing dts. While at it, add a node name to panel and drop the enable
-> gpio and pinctrl properties from the panel node. Then add the LCD variant
-> dts file with the old name and describe all backlight related nodes.
->=20
-> So the existing dts will now be used for LCD variant while for OLED new
-> dts will be added.
->=20
-> Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
-> ---
-> [...]
-> +	backlight: backlight {
-> +		compatible =3D "pwm-backlight";
-> +		pwms =3D <&pmk8550_pwm 0 5000000>;
+Thanks Boqun!
 
-I've tried this patch series together with the fix series [0], but
-without the duty cycle calculation change [1]. Instead I changed the
-period from 5000000 to 4266667. With that everything works as
-expected for me.
+I've applied these 3 patches to the tip:locking/urgent tree:
 
-[0] https://lore.kernel.org/all/20250305-leds-qcom-lpg-fix-max-pwm-on-hi-re=
-s-v4-0-bfe124a53a9f@linaro.org/
-[1] https://lore.kernel.org/all/20250303-leds-qcom-lpg-compute-pwm-value-us=
-ing-period-v1-1-833e729e3da2@linaro.org/
+  locking/semaphore: Use wake_q to wake up processes outside lock critical section
+  locking/rtmutex: Use the 'struct' keyword in kernel-doc comment
+  rust: lockdep: Remove support for dynamically allocated LockClassKeys
 
-Greetings,
+As a general rule, if a patch is marked Cc: stable, it must also be 
+applied to current upstream.
 
--- Sebastian
+I have applied the others to tip:locking/core:
 
---y6zodhuo7ebbvgn4
-Content-Type: application/pgp-signature; name="signature.asc"
+  locking/lock_events: Add locking events for rtmutex slow pathsa94d32446ab5 locking/lock_events: Add locking events for lockdep
+  locking/lockdep: Disable KASAN instrumentation of lockdep.c
+  locking/lockdep: Add kasan_check_byte() check in lock_acquire()
+  rust: sync: Add accessor for the lock behind a given guard
+  rust: sync: lock: Add an example for Guard:: Lock_ref()
+  rust: sync: condvar: Add wait_interruptible_freezable()
+  rust: lockdep: Use Pin for all LockClassKey usages
 
------BEGIN PGP SIGNATURE-----
+I cleaned up changelogs where necessary - for example we generally 
+don't include printk timestamps in changelogs, unless it's relevant, 
+plus there were a number of typos and grammar mistakes left in some of 
+the changelogs.
 
-iQIzBAABCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAmfLiNAACgkQ2O7X88g7
-+ppf3xAAlXHluicXnkOYso5FoMHezzKxZjWtgPdfvJrO1u9ofgYj2f/Ge6kgRMWP
-1bp5iE3MgKeVdlyx20FZ4fCi+ETG379ozRXgUQULpe3QdW23k/tCzPTZvB0zWnl3
-thkrUn6vJOFUEOIJR7d7J104eT04kvDXAUV+ift/Rvx46p2YrEwT57yktbylYpkt
-2LyX4RM+aHCc7Dux3Am9FZcmRciHUnWsxFt9ZGIzLOU6PiYeo1OIK2j07vvWxNYP
-ReRVZP3dy+HkXIp76BKpvf85Qp827KitUKrHLMTtq5vb/qpyDn00F9WuKgFpm8aw
-qseJhwgyDnSFKri6ZXkJzeIDJbzB/bYlqkJSFNr/n1j6NJuqVWhm+5bMcn0yeGTI
-sNFYKCeER0BrQeiOWXl8wSDR7CFE8WqYibiSkZ9Fuf1UVYF83+gHry9p7amX2u9o
-ArhpXakQtpQCFZqWsWqHyz3KtZdt2EaEVK2qpWCfV7aqmmERHDSYyMqMIDxz/kXR
-0QqJwLOniL/bxCwUjRyXMrQ0AZeDuAT208s7TCcLL1KWdir10MChg6jeRZ/qQ6zS
-Cr8fsFZKzOUwEC8mH6xvZDyJc6rUrn0kSNA9JnsaRleidenAg4r5eVWe05kPRdo3
-QyJuA9h2TPDK05AVHdq1qeA+4tf2BVy7CvAGoZVgIPZAdARbnHQ=
-=tLqZ
------END PGP SIGNATURE-----
+Thanks,
 
---y6zodhuo7ebbvgn4--
+	Ingo
 
