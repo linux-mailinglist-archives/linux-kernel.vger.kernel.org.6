@@ -1,118 +1,119 @@
-Return-Path: <linux-kernel+bounces-552424-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-552425-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 38434A579BE
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 11:24:58 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 677D4A579C2
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 11:28:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 352293B080F
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 10:24:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A266F171366
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 10:28:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D0B91B043E;
-	Sat,  8 Mar 2025 10:24:53 +0000 (UTC)
-Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FB751953A1
-	for <linux-kernel@vger.kernel.org>; Sat,  8 Mar 2025 10:24:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8717E1B3725;
+	Sat,  8 Mar 2025 10:27:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SlU0SfWP"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D425AC133;
+	Sat,  8 Mar 2025 10:27:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741429493; cv=none; b=bszmU1xPog5UcZMvijnJI2eSfpcbJOLekHA4vY8s3yYAqZdG5TskJB+9h21o0bbYfzE19L/w1rRhQK+N6kwLbSf62ATmXuUhn/GCTss3k9p3ZPKTvMG+J3O+f525VSp/+2Lkpoq4eI6zyeyaWFFWyLwT6Z4jsBv9w254GcYbY5U=
+	t=1741429676; cv=none; b=QN99m35liEbV3fm/roSiAosQlwBWLJysSZbA1ekVXJUn0rg51l0x8R1GydQHN4+RGdEodO6XH+UeKNlSjVCh+xHswVqhWpmYCRmhp37rrD4gbN9X/bHDVkE4LPpTAdSWcIs8La+3Ys47JmX956RXHfgd5OAOkMS2/7agOpPSIoM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741429493; c=relaxed/simple;
-	bh=yuHqUZKAMZAMTIbjaRmiWha9srQx/kUYPRC2ncRQ/TI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=LaNZMxOAQjQGibRXdA+FGh+ilbOpMHRDaXZXfNExbV07a8N0nfJKefqXOBamVQMDSSO2huAsWvTIrohRnFF5mz4f/+Kb2ePbG5RTBgGevWMwWP0A7t4NJ4y3qTqCTqvMNAjWW2mwbm98X261KuG6DFLsEMUxJvzRKEm0bM8Cpro=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
-Received: from loongson.cn (unknown [223.64.68.156])
-	by gateway (Coremail) with SMTP id _____8CxvnLvGsxn7e6OAA--.47660S3;
-	Sat, 08 Mar 2025 18:24:47 +0800 (CST)
-Received: from localhost.localdomain (unknown [223.64.68.156])
-	by front1 (Coremail) with SMTP id qMiowMCxasTmGsxnMyE+AA--.15162S2;
-	Sat, 08 Mar 2025 18:24:46 +0800 (CST)
-From: Huacai Chen <chenhuacai@loongson.cn>
-To: Linus Torvalds <torvalds@linux-foundation.org>,
-	Huacai Chen <chenhuacai@kernel.org>
-Cc: loongarch@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	Guo Ren <guoren@kernel.org>,
-	Xuerui Wang <kernel@xen0n.name>,
-	Jiaxun Yang <jiaxun.yang@flygoat.com>,
-	Huacai Chen <chenhuacai@loongson.cn>
-Subject: [GIT PULL] LoongArch fixes for v6.14-rc6
-Date: Sat,  8 Mar 2025 18:24:16 +0800
-Message-ID: <20250308102416.3722203-1-chenhuacai@loongson.cn>
-X-Mailer: git-send-email 2.47.1
+	s=arc-20240116; t=1741429676; c=relaxed/simple;
+	bh=PITZtdJg2uIAhqm1Sgq0C/a7piJ6sd/4BSSAg4EQ/HQ=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=oLVqkNQ5MX4Gxl3XkPKXO/fU4UyDO4s/U/04j2exNKXX2mHlTiLVEQDNrDcYL9DNR39SXrDMRFa9yU5+bpvPmfk9QMKIsS4BUGBkSrju5heMtIUNkoaIrvvgsHfuTYN0zB46BpPxS0stp3H0HJ+Ik06GcHzUI+S79ieaHX3kwcI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SlU0SfWP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 37B44C4CEE0;
+	Sat,  8 Mar 2025 10:27:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741429675;
+	bh=PITZtdJg2uIAhqm1Sgq0C/a7piJ6sd/4BSSAg4EQ/HQ=;
+	h=From:Date:Subject:To:Cc:Reply-To:From;
+	b=SlU0SfWPjSx1xK/lUhKeYXlODnhynQsbLzzBZ7W+7g9W6VsQ9ccdLMwgro86p8sil
+	 4bpsdQ0KpeZg0TvxjDDXEzj/JTgL/0tStGgTyrBmo+M6qmwSy7BYlZNYSicQEikMzg
+	 Mp/P7lN6HqrFyEYh71q/GCkctLoy+MBkk+ujHysXoyqC6cZFNd+OCIXZnUvk0rn0Xg
+	 57mOsw2SxW4IaCxAbTVzz7nOhfdk8Hvuh6i3OjlQkrFOnYk5osijwb1mjjFS6EbGm+
+	 LWKmq+KBlukTt7lZabJqeDihNJXZRGXxYP0k5H2gd9gGE0JtmQG7Ut4zI5CmJe/Whe
+	 J0kFkU4ecULVA==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1973EC282EC;
+	Sat,  8 Mar 2025 10:27:55 +0000 (UTC)
+From: Xilin Wu via B4 Relay <devnull+wuxilin123.gmail.com@kernel.org>
+Date: Sat, 08 Mar 2025 18:27:51 +0800
+Subject: [PATCH] arm64: dts: qcom: sm8250: Fix CPU7 opp table
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:qMiowMCxasTmGsxnMyE+AA--.15162S2
-X-CM-SenderInfo: hfkh0x5xdftxo6or00hjvr0hdfq/
-X-Coremail-Antispam: 1Uk129KBj93XoW7Zr4kZFWxGF4xur4rZr4rtFc_yoW8Ww1fpr
-	yakFsxJr45JrnxJwnxt34Uurn8XryxG347XF4akry8Cr4UAr1UJry8WrWkXFyUt34rJr10
-	qr1rJw4jgF1UJagCm3ZEXasCq-sJn29KB7ZKAUJUUUUr529EdanIXcx71UUUUU7KY7ZEXa
-	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
-	0xBIdaVrnRJUUUvEb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
-	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
-	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_JFI_Gr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
-	0_Jr0_Gr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_
-	GcCE3s1ln4kS14v26r1Y6r17M2AIxVAIcxkEcVAq07x20xvEncxIr21l57IF6xkI12xvs2
-	x26I8E6xACxx1l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r1Y6r17
-	McIj6I8E87Iv67AKxVW8JVWxJwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr4
-	1l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1l4IxYO2xFxVAFwI0_Jrv_
-	JF1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17
-	CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0
-	I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I
-	8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73
-	UjIFyTuYvjxU4s2-UUUUU
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250308-fix-sm8250-cpufreq-v1-1-8a0226721399@gmail.com>
+X-B4-Tracking: v=1; b=H4sIAKYbzGcC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDI1MDYwML3bTMCt3iXAsgTze5oDStKLVQN8XS1NLEJMksxTDRWAmosaAoFag
+ KbGh0bG0tAADDTpNkAAAA
+X-Change-ID: 20250308-fix-sm8250-cpufreq-d95944b6d1a3
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
+ Thara Gopinath <thara.gopinath@linaro.org>
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Xilin Wu <wuxilin123@gmail.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1741429673; l=1086;
+ i=wuxilin123@gmail.com; s=20240424; h=from:subject:message-id;
+ bh=D9z9X3e5J8ftwp1wdYD55jK/Ci2H15jjh248DelqCdQ=;
+ b=n/PHBwcxilz316ny13BQE1y4sYxBxB+E1XcDU8ZpXttkORZqR1x5/1iFqaQrQGz9NKE1uu/6t
+ JxzlZ3NhRU/CLeR1T8p+Sb2zWFU4raSRtCwL0CSPOmL+K9DksCzJMA/
+X-Developer-Key: i=wuxilin123@gmail.com; a=ed25519;
+ pk=vPnxeJnlD/PfEbyQPZzaay5ezxI/lMrke7qXy31lSM8=
+X-Endpoint-Received: by B4 Relay for wuxilin123@gmail.com/20240424 with
+ auth_id=157
+X-Original-From: Xilin Wu <wuxilin123@gmail.com>
+Reply-To: wuxilin123@gmail.com
 
-The following changes since commit 7eb172143d5508b4da468ed59ee857c6e5e01da6:
+From: Xilin Wu <wuxilin123@gmail.com>
 
-  Linux 6.14-rc5 (2025-03-02 11:48:20 -0800)
+There is a typo in cpu7_opp9. Fix it to get rid of the following
+errors.
 
-are available in the Git repository at:
+[    0.198043] cpu cpu7: Voltage update failed freq=1747200
+[    0.198052] cpu cpu7: failed to update OPP for freq=1747200
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/chenhuacai/linux-loongson.git loongarch-fixes-6.14-2
+Fixes: 8e0e8016cb79 ("arm64: dts: qcom: sm8250: Add CPU opp tables")
+Signed-off-by: Xilin Wu <wuxilin123@gmail.com>
+---
+ arch/arm64/boot/dts/qcom/sm8250.dtsi | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-for you to fetch changes up to 6bdbb73dc8d99fbb77f5db79dbb6f108708090b4:
+diff --git a/arch/arm64/boot/dts/qcom/sm8250.dtsi b/arch/arm64/boot/dts/qcom/sm8250.dtsi
+index c2937b4d9f180296733b6d7a7a16a088f1f96b76..68613ea7146c8882150f1b81dbc0f3384d3380ba 100644
+--- a/arch/arm64/boot/dts/qcom/sm8250.dtsi
++++ b/arch/arm64/boot/dts/qcom/sm8250.dtsi
+@@ -606,7 +606,7 @@ cpu7_opp8: opp-1632000000 {
+ 		};
+ 
+ 		cpu7_opp9: opp-1747200000 {
+-			opp-hz = /bits/ 64 <1708800000>;
++			opp-hz = /bits/ 64 <1747200000>;
+ 			opp-peak-kBps = <5412000 42393600>;
+ 		};
+ 
 
-  LoongArch: KVM: Fix GPA size issue about VM (2025-03-08 13:52:04 +0800)
+---
+base-commit: 0a2f889128969dab41861b6e40111aa03dc57014
+change-id: 20250308-fix-sm8250-cpufreq-d95944b6d1a3
 
-----------------------------------------------------------------
-LoongArch fixes for v6.14-rc6
+Best regards,
+-- 
+Xilin Wu <wuxilin123@gmail.com>
 
-Fix bugs about kernel build, hibernation, memory management and KVM.
-----------------------------------------------------------------
-Bibo Mao (5):
-      LoongArch: Set max_pfn with the PFN of the last page
-      LoongArch: Set hugetlb mmap base address aligned with pmd size
-      LoongArch: KVM: Add interrupt checking for AVEC
-      LoongArch: KVM: Reload guest CSR registers after sleep
-      LoongArch: KVM: Fix GPA size issue about VM
-
-Huacai Chen (1):
-      LoongArch: Use polling play_dead() when resuming from hibernation
-
-Tiezhu Yang (1):
-      LoongArch: Convert unreachable() to BUG()
-
-Yuli Wang (1):
-      LoongArch: Eliminate superfluous get_numa_distances_cnt()
-
- arch/loongarch/kernel/acpi.c          | 12 ---------
- arch/loongarch/kernel/machine_kexec.c |  4 +--
- arch/loongarch/kernel/setup.c         |  3 +++
- arch/loongarch/kernel/smp.c           | 47 ++++++++++++++++++++++++++++++++++-
- arch/loongarch/kvm/exit.c             |  6 +++++
- arch/loongarch/kvm/main.c             |  7 ++++++
- arch/loongarch/kvm/vcpu.c             |  2 +-
- arch/loongarch/kvm/vm.c               |  6 ++++-
- arch/loongarch/mm/mmap.c              |  6 ++++-
- 9 files changed, 75 insertions(+), 18 deletions(-)
 
 
