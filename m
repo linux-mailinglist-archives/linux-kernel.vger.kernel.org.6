@@ -1,86 +1,78 @@
-Return-Path: <linux-kernel+bounces-552678-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-552679-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E359A57CC8
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 19:27:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0EFFAA57CC9
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 19:31:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8223D16C060
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 18:27:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3436216C446
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 18:31:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05E4B1EB5EA;
-	Sat,  8 Mar 2025 18:27:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A99F1DB122;
+	Sat,  8 Mar 2025 18:30:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="JNtpSbwW"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=sedlak-dev.20230601.gappssmtp.com header.i=@sedlak-dev.20230601.gappssmtp.com header.b="GWLeJhO1"
+Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C28E04B5AE
-	for <linux-kernel@vger.kernel.org>; Sat,  8 Mar 2025 18:27:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3121C2744E
+	for <linux-kernel@vger.kernel.org>; Sat,  8 Mar 2025 18:30:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741458456; cv=none; b=BFEd8aQptpJLXZH+RdYnPN0VriQPEKxsx3xj3yeeNO23zxYt5SWgsAbTezjJAUov5wReIVX9hbENszsvcgVA2LRMGEsK3Vbx8MDZhkMx3SVLijSsZG3Qfzy6hlYHerb4OUhdxGIc3axbGLpbEkOlFEJD5KIOzypTFM+OpJXvGTY=
+	t=1741458655; cv=none; b=CNdd6SpfBbFoOTAkmUUi9SVTIJVC+pnrNbTizW1hLytL0PKcBF5DgWhDK3mzEz8AvB/COMYpDTQHVkBqYB9HlKbse6+I9A1s5GA0vLq3R1YtIxHLku5swL21ke6HPtzT4wd7xokPPxyPiuu6o+/TuTea3Gnli7NqYE4kmYTL+os=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741458456; c=relaxed/simple;
-	bh=mZGJjE9J6nPENdw3R6qHpn+oUR2EHsw7Roao2Jmba9Y=;
+	s=arc-20240116; t=1741458655; c=relaxed/simple;
+	bh=uegV6SzNrvzv8Lu72cW1Lqhek1OERJI0RNLRHc22BCI=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qS6wxASJlj8yiqQpxwk7iMKThZA0/EIFj5/+A9otcVm/WbpCAV2c4Zy/dg1/yye9ReVIhDXuN4P3w1tGm6GIHEj0MrCdrzTEGwKDeLtQRgMD994qjbrmrChycM3F3qB4XT4AZDGW48iWCs9Z8ztYiQ45ajThvNA/u2lDFkQWUBs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=JNtpSbwW; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 528HdPhq032514
-	for <linux-kernel@vger.kernel.org>; Sat, 8 Mar 2025 18:27:33 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	Zm0fIbKt1P+B2YQrFVSHiI90y5gg5UDdQQYWtWf2GJI=; b=JNtpSbwW8dsjbr/H
-	f19TfEd8t7QRUnEu/7BCBDxqsGHsTXBGIppFMznXS9cZpRGjP2mc340LJ474hRIH
-	SjQjqsqaIeJsoevM98BL5jGVZD3sW+9/b84ut5aj2yG0J2s4f9bjiOx0nJLj4U2T
-	46mHiWjxi3zIDr7qOMksuw47IRiRvMmnoTPHL/T9I4/zUsfMuEmmap8Qu25j4SNJ
-	pPAybhpmhvANMhGvRMm8dOqQKVkPYiPUCjV3G8UYp4/5yv7/6CgZO+Dn7eBtfdhn
-	hwF7DERyStMp0C5M92xkDvlxazcADd3hDVyhDHXJdXwv5PJv30V8mRYZFZWn8b6z
-	KrcIig==
-Received: from mail-qv1-f70.google.com (mail-qv1-f70.google.com [209.85.219.70])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 458f0pry6b-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Sat, 08 Mar 2025 18:27:33 +0000 (GMT)
-Received: by mail-qv1-f70.google.com with SMTP id 6a1803df08f44-6e8fb83e15fso7827966d6.0
-        for <linux-kernel@vger.kernel.org>; Sat, 08 Mar 2025 10:27:33 -0800 (PST)
+	 In-Reply-To:Content-Type; b=frPJJVuM7oXuVHYJifNifI67u8EZKm5ZXiaEtv13wIO5y/2Y0t2KedZ1wtuapyePIL5Anzm3Q7kBfrXuDLjERl+f3x1Xe84iPVsEIhPkKrztHOu9gq0Qdw/ZDePtU6mfip3hfEfma/Shpbqnhmdg3jiGlxGdWSJQEVnmWnCWu5o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sedlak.dev; spf=none smtp.mailfrom=sedlak.dev; dkim=pass (2048-bit key) header.d=sedlak-dev.20230601.gappssmtp.com header.i=@sedlak-dev.20230601.gappssmtp.com header.b=GWLeJhO1; arc=none smtp.client-ip=209.85.218.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sedlak.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=sedlak.dev
+Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-aaf900cc7fbso595071366b.3
+        for <linux-kernel@vger.kernel.org>; Sat, 08 Mar 2025 10:30:52 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=sedlak-dev.20230601.gappssmtp.com; s=20230601; t=1741458651; x=1742063451; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=OYzCwEg8iZQ/2MVSbV7YyAM5WpMPKmd4xSEbITKoHKU=;
+        b=GWLeJhO1NO+d8aE7JzLMHeqWtMyO/0BdjVaUwc6IwLxWSwGO+3tz1fvIEGaiRDu/LE
+         hE/0066M0Viz1V0CErutPwK03NyPWo/Shh1uw3P1maHystIHRz0FtvUpOuO9hZCIycu+
+         ZmdXiaixtf0FKPV9FhpHUvqlkIHpw7bUO9mfKexvUSqXWEt6JqYDmrtKyolVvlB8BMa7
+         2pH4Bm3PQ6nqTHsZ2ifNG3G6VbMXudjqpwHVc47dY+m8Mm2PPDtGqmuycsdEfRH3ESUD
+         B1p0bNBNb+Rzm3ETbFKfA6nq73y/nxqyIKKJq5+NT3VEe7FS3f/AdMmE1hRcj5uxuxlf
+         Z40Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741458452; x=1742063252;
+        d=1e100.net; s=20230601; t=1741458651; x=1742063451;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Zm0fIbKt1P+B2YQrFVSHiI90y5gg5UDdQQYWtWf2GJI=;
-        b=Ezsv6hCm9h6vvlertCIkcWNUwnPntkDfmMfnLKBBC1DJWhQLbifbTeqR5e40db7BQ3
-         2ZSpXcBuEBRISTF/kyzgfcljAyReUUir/hJxZyywJ3AX/f+vsvSKf8x6JwzByXfI+HeX
-         9jY7vfB49OvR0z3KspFPXM9c/LzWzuZwCRbqxg4id+hhNPJctxgVYA2LWmrkr7fbYqkI
-         GnOMKBd2FkcCGUSOS26vdr7RSjrZqfzAaoW1S9Nq4kNzv7FbEqwxWwNIGNTLqfOND/gR
-         tCq9EmoJaB2+oCz0oxUYANFosLpAfaLt9VxrBltojHcerU691MAk+Ul4Kw8GIT2ho3YI
-         4EqQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVvb6ra+tbh+YcDAXRnfr5uxPbKbpqrCxTq+OxNeEQF16PNbInP04ANMeVW27m6+lUglnGwiu71nX4OPok=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx2b4TRlQMFBX8HbDPGlhF2WXWP+Ip8W8JEFtFAsoNFpkgQHK0s
-	6aVE5ij/qVcGAXj7V8qBJ6+893f0ydTpB6G4s4wvkIkfevI8KM/GG3OsU9XH0J2ghyMWaLMqExQ
-	lxApKOjpXivftOeAAnlJXoL0nVWzRQp/i6dlZ+ZN07vvgcen78v9vYEWLrCeFc3A=
-X-Gm-Gg: ASbGncvid74qqHuzLs3Bgm6O6zV3jm4z16WsoBVYmvmfTjUHpZmbVpIrsAGSYJGrPHl
-	9rnh1uGe0cLk+V40rlGVmEksF8zatvpYV7lhC/MApfbtgOsL+mGk6szIUC9anyUUZwbrE34dmSY
-	Ki9HF6pQIsBY90zJLFrqMG/9lSBxwqRmU4+70Mx+BEVsqn09ndbk397pfUXXKS9EnvLCX3ESN0E
-	gQkYBIp92QiEZ2fIDIQxt/zUdCr5AAQLpSsGJe8fa4o5+EcyvuSOFIZN7O7wLoAU6NVQMdVSYh4
-	iVAxwucTExDbIIOw1V/GfgyLFBiZcL8reBe3pMzSCiwfBVXQxqm3g4kE0u9cchS2G6zQoA==
-X-Received: by 2002:a05:6214:501c:b0:6e6:60f6:56dd with SMTP id 6a1803df08f44-6e908daad6amr19154996d6.7.1741458452570;
-        Sat, 08 Mar 2025 10:27:32 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IGuhNwOobWK10InZ0rt9nJA/hwpNz+zn+BWgUcVkO6LwDiLCRj4SL3cJNEIriGAfDjmRZv6Xg==
-X-Received: by 2002:a05:6214:501c:b0:6e6:60f6:56dd with SMTP id 6a1803df08f44-6e908daad6amr19154896d6.7.1741458451981;
-        Sat, 08 Mar 2025 10:27:31 -0800 (PST)
-Received: from [192.168.65.90] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac239482f9asm479537266b.51.2025.03.08.10.27.28
+        bh=OYzCwEg8iZQ/2MVSbV7YyAM5WpMPKmd4xSEbITKoHKU=;
+        b=tFpqm2D8SAxp9EAV5GyLKYJ18HE4DAnmqG804Rd8UR3z72C1ffX1odBtd3rxqK+xvT
+         fdbVDTX+9ov4KF20w8s7d765fGJPcXaqTOxwbTefnTBhZXGZn5Rs6g4vLbLzFiFxF2Oy
+         9kNX9zKr5MiPuOcDTz6Oq2a027+yeB8NfFqG7D+Jf7iy3y2zQh03q0gy4V6gQDtzqx3j
+         qk3M8bgNDBmIDQE6W+OvQ9ntQMTkIhdI+2V4howHmOMuMkY9/4OLK3bJxnxMN64EvnwR
+         wZMrUqG44vlxXz9sfJLhF5Fd644l8ZjRwsAIpX6m5/65KqX6fMhQy42kJ2y9cemCp9fO
+         xMRA==
+X-Forwarded-Encrypted: i=1; AJvYcCVU+pdf1AL/EGboxJS6qZbagMklFZHe44B1vpPZkLnE7vaCgzTYxj26d+cIb5Z497nwVnZCOSVCPZ3C0Zc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwuvrWY9fWKzwYT02tyt1HwvEvAkD5NcyrOEBkBXxdfkWqiviVV
+	ZBghRlxoZ/lpAKK5eF9aPkanuy3pDuV/IVSlTrMFANzunspFmbQ6XB0iAFO8F5w=
+X-Gm-Gg: ASbGncsVsJSUKtlUcI1DZ5tsGszE2l3dkfBwibQKm5AYui6+Te4DHJzViqdYgx4P5/0
+	K++MFE4RCJ0YQ494jrJp7t/fSVSq7jEfJ203bQjMWWPA98RMhee9silqFjycHusSw1Bjz89hDzY
+	HIHKLnLrrlfwZZz7sZLuAUp1vweS4y0ARiMaQLIDqww/U9M6zv/ghITSqv43SnAGeCnOf0oQOAt
+	dLT480kWnNixeloKC2p1u0bHDn9TerMwmF6G55/k1ZyB/Ue8kJ7M1awYdLTJFHnpzGKrhbvApc4
+	v7FRzvUx69lgu9AXQhSEBn7TxtpcI3r8jYLpMFG/iA/zyllwL7Dq0av7Y+0KVWe8ivJ9HEvK
+X-Google-Smtp-Source: AGHT+IFpvqrtMcNxEKdZ9ZCMtzR7eszu134IcdgZnLa27XaORcUskX6N4V3lxdQs799jBVuIH8FSzQ==
+X-Received: by 2002:a17:906:68cc:b0:ac2:66ff:878 with SMTP id a640c23a62f3a-ac266ff0c24mr562524366b.50.1741458649864;
+        Sat, 08 Mar 2025 10:30:49 -0800 (PST)
+Received: from [192.168.1.15] (89-24-188-1.customers.tmcz.cz. [89.24.188.1])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac27bd0ea5asm104546766b.4.2025.03.08.10.30.48
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 08 Mar 2025 10:27:31 -0800 (PST)
-Message-ID: <5ef97125-2b27-4961-8755-09fcea062f78@oss.qualcomm.com>
-Date: Sat, 8 Mar 2025 19:27:28 +0100
+        Sat, 08 Mar 2025 10:30:49 -0800 (PST)
+Message-ID: <d2fe8cfc-df97-4947-bcbc-7d43b5c24ecc@sedlak.dev>
+Date: Sat, 8 Mar 2025 19:30:47 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -88,136 +80,131 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/7] usb: common: usb-conn-gpio: switch psy_cfg from
- of_node to fwnode
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Sebastian Reichel <sebastian.reichel@collabora.com>,
-        Konstantin Ryabitsev <konstantin@linuxfoundation.org>
-Cc: Mark Brown <broonie@kernel.org>, Linus Walleij
- <linus.walleij@linaro.org>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Liam Girdwood <lgirdwood@gmail.com>, Chen-Yu Tsai <wens@csie.org>,
-        Matti Vaittinen <mazziesaccount@gmail.com>,
-        =?UTF-8?Q?Pali_Roh=C3=A1r?=
- <pali@kernel.org>,
-        Paul Cercueil <paul@crapouillou.net>,
-        Samuel Holland <samuel@sholland.org>,
-        David Lechner <david@lechnology.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Sebastian Krzyszkowiak <sebastian.krzyszkowiak@puri.sm>,
-        Purism Kernel Team <kernel@puri.sm>,
-        Bartosz Golaszewski <brgl@bgdev.pl>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-        Orson Zhai <orsonzhai@gmail.com>,
-        Baolin Wang
- <baolin.wang@linux.alibaba.com>,
-        Chunyan Zhang <zhang.lyra@gmail.com>, linux-pm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org
-References: <20250225-psy-core-convert-to-fwnode-v1-0-d5e4369936bb@collabora.com>
- <20250225-psy-core-convert-to-fwnode-v1-3-d5e4369936bb@collabora.com>
- <2025022542-recital-ebony-d9b5@gregkh>
- <lhtljyn52wkhotaf2cn6fcj2vqx3dzipv2663kzwtw2tjjlxye@5l3xytkyvocy>
- <2025030845-pectin-facility-a474@gregkh>
- <0401fdf9-7665-40d6-9ec7-7222b2eda866@oss.qualcomm.com>
- <eqfqv2tkfretqzvt74o5dvj5yixkfc3h3my4bhskvhtsrbmtwp@poryvs4oipnp>
- <2025030831-various-monthly-4ae0@gregkh>
+Subject: Re: [PATCH V7 2/2] checkpatch: check format of Vec<String> in modules
+To: Guilherme Giacomo Simoes <trintaeoitogc@gmail.com>,
+ a.hindborg@kernel.org, alex.gaynor@gmail.com, aliceryhl@google.com,
+ apw@canonical.com, arnd@arndb.de, aswinunni01@gmail.com, axboe@kernel.dk,
+ benno.lossin@proton.me, bhelgaas@google.com, bjorn3_gh@protonmail.com,
+ boqun.feng@gmail.com, dakr@kernel.org, dwaipayanray1@gmail.com,
+ ethan.twardy@gmail.com, fujita.tomonori@gmail.com, gary@garyguo.net,
+ gregkh@linuxfoundation.org, joe@perches.com, lukas.bulwahn@gmail.com,
+ ojeda@kernel.org, pbonzini@redhat.com, tmgross@umich.edu,
+ walmeida@microsoft.com, charmitro@posteo.net
+Cc: rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250307131401.638820-1-trintaeoitogc@gmail.com>
+ <20250307131401.638820-3-trintaeoitogc@gmail.com>
 Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <2025030831-various-monthly-4ae0@gregkh>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-GUID: xt-it-6Qbp7igmFmc-2uS4mML2TQZhsc
-X-Authority-Analysis: v=2.4 cv=KK2gDEFo c=1 sm=1 tr=0 ts=67cc8c15 cx=c_pps a=oc9J++0uMp73DTRD5QyR2A==:117 a=FpWmc02/iXfjRdCD7H54yg==:17 a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=QX4gbG5DAAAA:8 a=ag1SF4gXAAAA:8 a=A6-iuEzwBZR8Vts4HQEA:9 a=QEXdDO2ut3YA:10
- a=iYH6xdkBrDN1Jqds4HTS:22 a=AbAUZ8qAyYyZVLSsDulk:22 a=Yupwre4RP9_Eg_Bd0iYG:22
-X-Proofpoint-ORIG-GUID: xt-it-6Qbp7igmFmc-2uS4mML2TQZhsc
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-08_07,2025-03-07_03,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 mlxlogscore=999
- clxscore=1015 malwarescore=0 adultscore=0 impostorscore=0 mlxscore=0
- lowpriorityscore=0 priorityscore=1501 bulkscore=0 spamscore=0
- suspectscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2502100000
- definitions=main-2503080142
+From: Daniel Sedlak <daniel@sedlak.dev>
+In-Reply-To: <20250307131401.638820-3-trintaeoitogc@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On 8.03.2025 6:27 PM, Greg Kroah-Hartman wrote:
-> On Sat, Mar 08, 2025 at 05:33:05PM +0100, Sebastian Reichel wrote:
->> Hi,
->>
->> On Sat, Mar 08, 2025 at 10:34:45AM +0100, Konrad Dybcio wrote:
->>> On 8.03.2025 6:57 AM, Greg Kroah-Hartman wrote:
->>>> On Sat, Mar 08, 2025 at 02:10:29AM +0100, Sebastian Reichel wrote:
->>>>> On Tue, Feb 25, 2025 at 04:32:50AM +0100, Greg Kroah-Hartman wrote:
->>>>>> On Tue, Feb 25, 2025 at 12:21:36AM +0100, Sebastian Reichel wrote:
->>>>>>> In order to remove .of_node from the power_supply_config struct,
->>>>>>> use .fwnode instead.
->>>>>>>
->>>>>>> Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.com>
->>>>>>> ---
->>>>>>>  drivers/usb/common/usb-conn-gpio.c | 2 +-
->>>>>>>  1 file changed, 1 insertion(+), 1 deletion(-)
->>>>>>>
->>>>>>> diff --git a/drivers/usb/common/usb-conn-gpio.c b/drivers/usb/common/usb-conn-gpio.c
->>>>>>> index aa710b50791b0282be0a6a26cffdd981b794acaa..1e36be2a28fd5ca5e1495b7923e4d3e25d7cedef 100644
->>>>>>> --- a/drivers/usb/common/usb-conn-gpio.c
->>>>>>> +++ b/drivers/usb/common/usb-conn-gpio.c
->>>>>>> @@ -158,7 +158,7 @@ static int usb_conn_psy_register(struct usb_conn_info *info)
->>>>>>>  	struct device *dev = info->dev;
->>>>>>>  	struct power_supply_desc *desc = &info->desc;
->>>>>>>  	struct power_supply_config cfg = {
->>>>>>> -		.of_node = dev->of_node,
->>>>>>> +		.fwnode = dev_fwnode(dev),
->>>>>>>  	};
->>>>>>>  
->>>>>>>  	desc->name = "usb-charger";
->>>>>>>
->>>>>>> -- 
->>>>>>> 2.47.2
->>>>>>
->>>>>> Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
->>>>>
->>>>> Please just merge this patch through the USB tree.
->>>>>
->>>>> There are no dependencies and I will send a new version for the
->>>>> later patches, but they won't make it to 6.15 as I want enough
->>>>> time in linux-next for them. This patch is rather simple and
->>>>> getting it merged now means we avoid immutable branches or
->>>>> merging through the wrong tree in the 6.16 cycle.
->>>>
->>>> Attempting to merge a single patch out of a series is hard with our
->>>> current tools, you know that.
->>
->> Sorry, I did not know your tooling has issues with that. AFAIK most
->> maintainers are using b4 nowadays, which makes it really easy. Might
->> be I am biased because I mostly work on ARM stuff where series often
->> have patches for the driver and the device tree and thus merging
->> partial patch series is basically the norm.
+
+
+On 3/7/25 2:14 PM, Guilherme Giacomo Simoes wrote:
+> Implement a check to ensure that the author, firmware, and alias fields
+> of the module! macro are properly formatted.
 > 
-> I do use b4, but it wants to suck the whole series down.  If I want to
-> pick an individual one out, I have to manually cut the message-id out
-> of the email and type out the command and pick the individual commit
-> out (or use the -P 3 as was said).
+> * If the array contains more than one value, enforce vertical
+>    formatting.
+> * If the array contains only one value, it may be formatted on a single
+>    line
 > 
-> But that's a world away from me just hitting a single key in my email
-> client to suck down the whole thread and apply it to my tree.
+> Signed-off-by: Guilherme Giacomo Simoes <trintaeoitogc@gmail.com>
+> ---
+>   scripts/checkpatch.pl | 67 +++++++++++++++++++++++++++++++++++++++++++
+>   1 file changed, 67 insertions(+)
 > 
-> For those of us who have to apply a lot of patches, automation is key.
-> When sending a patch series that wants to be split across multiple
-> trees, that makes it harder for everyone.
-> 
-> Anyway, I can take this as is, I've spent more time typing this than it
-> would have taken me to dig out just the single email.  Give me a few
-> days to catch up with it...
+> diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
+> index 7b28ad331742..7c42c1a0ea6b 100755
+> --- a/scripts/checkpatch.pl
+> +++ b/scripts/checkpatch.pl
+> @@ -2775,6 +2775,12 @@ sub process {
+>   	$realcnt = 0;
+>   	$linenr = 0;
+>   	$fixlinenr = -1;
+> +
+> +	my %array_parse_module;
+> +	my $expected_spaces;
+> +	my $spaces;
+> +	my $herevet_space_add;
+> +
+>   	foreach my $line (@lines) {
+>   		$linenr++;
+>   		$fixlinenr++;
+> @@ -3567,6 +3573,67 @@ sub process {
+>   # ignore non-hunk lines and lines being removed
+>   		next if (!$hunk_line || $line =~ /^-/);
+>   
+> +# check if the field is about author, firmware or alias from module! macro and find malformed arrays
+> +		my $inline = 0;
+> +		my $key = "";
+> +		my $add_line = $line =~ /^\+/;
+> +
+> +		if ($line =~ /\b(authors|alias|firmware)\s*:\s*\[/) {
+> +			$inline = 1;
+> +			$array_parse_module{$1} = 1;
+> +		}
+> +
+> +		my @keys = keys %array_parse_module;
+> +		if (@keys) {
+> +			$key = $keys[0];
+> +		}
+> +
+> +		if (!$expected_spaces && (!$add_line && $key && !$inline)) {
+> +			if ($line =~ /^([\t ]+)(\s)/) {
+> +				$expected_spaces = $1;
+> +			}
+> +		}
+> +
+> +		if ($add_line && $key) {
+> +			my $herevet = "$here\n" . cat_vet($rawline) . "\n";
+> +
+> +			my $counter = () = $line =~ /"/g;
+> +			my $more_than_one = $counter > 2;
+> +			if ($more_than_one) {
+> +				WARN("ARRAY_MODULE_MACRO",
+> +				     "Prefer each array element on a separate line\n". $herevet);
+> +			} elsif ($inline && $line !~ /\]/ && $line !~ /,/ && $line =~ /"/) {
+> +				WARN("ARRAY_MODULE_MACRO",
+> +				     "Prefer declare ] on the same line\n" . $herevet);
 
-Maybe +Konstantin has a better idea, but
+Small grammar nit. "Prefer to declare…"
 
-b4 shazam <msgid> --single-message
+> +			} elsif (!$inline && $line =~ /\]/ && $line =~ /\"/) {
+> +				WARN("ARRAY_MODULE_MACRO",
+> +				     "Prefer a new line after the last value and before ]\n" . $herevet);
+> +			} elsif ($inline && $line =~ /,/ && $line !~ /\]/) {
+> +				WARN("ARRAY_MODULE_MACRO",
+> +				     "Prefer a new line after [\n" . $herevet);
+> +			}
+> +
+> +			if ($line =~ /^\+\s*([\t ]+)(\S)/) {
+> +				$spaces = $1;
+> +				$herevet_space_add = $herevet;
+> +			}
+> +		}
+> +
+> +		if ($expected_spaces && $spaces) {
+> +			if (length($spaces) != length($expected_spaces)) {
+> +				WARN("ARRAY_MODULE_MACRO",
+> +					 "Prefer a align parameters\n" . $herevet_space_add);
 
-works too, provided you use the very msgid of the patch (i.e. not a reply
-to it or so) and should be easy to add a keybind for
+Small grammar nit. Shouldn't this be rather: "Prefer to align 
+parameters" or "Prefer aligned parameters"?
 
-Konrad
+> +			}
+> +
+> +			$spaces = undef;
+> +		}
+> +
+> +		#END OF ANALYZE FIELD
+> +		if ($line =~ /\]/) {
+> +			delete $array_parse_module{$key};
+> +			$expected_spaces = undef;
+> +		}
+> +
+>   #trailing whitespace
+>   		if ($line =~ /^\+.*\015/) {
+>   			my $herevet = "$here\n" . cat_vet($rawline) . "\n";
 
