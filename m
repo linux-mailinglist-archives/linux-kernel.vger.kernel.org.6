@@ -1,131 +1,78 @@
-Return-Path: <linux-kernel+bounces-552270-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-552271-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9CE88A577CC
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 04:04:17 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8DBE2A577CF
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 04:06:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8ED7E7A8363
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 03:03:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8D84C3B4B4C
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 03:06:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2BE61494CF;
-	Sat,  8 Mar 2025 03:04:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2162914B086;
+	Sat,  8 Mar 2025 03:06:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="dqMSs7qi"
-Received: from out30-100.freemail.mail.aliyun.com (out30-100.freemail.mail.aliyun.com [115.124.30.100])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="V/IbsMoR"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 876E8182CD;
-	Sat,  8 Mar 2025 03:04:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.100
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C3E9182CD;
+	Sat,  8 Mar 2025 03:06:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741403048; cv=none; b=lE1+E1Rp4BhAUvytRXG9TUU1LuGhRTIS7HDdiwwO4Ur56c4O2L5FnWdsmFC/maS6TtH8YMej6eZjOMbZ+4BvrTxKUwDQGNowhbQUgrpZfNDqntyvaoj8vaobmZyfhfGKENAZpcn8lrXBPcmXx0owlPwQ+oI81/dXA2gZBAleAi0=
+	t=1741403195; cv=none; b=KYUTOQm3rzxGn2JGdoKVgVzMUtDHzZ+NMbqQ4NEKkl7y4/5zfFQDwwxiXHzYEUYF57lzABfVnluO41tWIoI2UvWPYyF2vg4rs1ovuVsQD0pJxSaYNPdDva/HvQ7CToNC1q78fKCXReopdfv8D5fYH+HLGH8MJSwjW27/lAcPj2A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741403048; c=relaxed/simple;
-	bh=ueLBGNQ3QKmyrdZPjUrFVyltMuc0Q0BmNicBG5Ct8VY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dkmHJvrQCDTB0kfMZoCKs83e4+mEJXTOW/Ufwk4JI9oy2Ih2ES7uFKjSKeRsBv0E9+c8W2fQn2K09PfLqPlt9nPwqkqVjJVKM4R/m06GB0XHsXKLh0yMUw6yDnpntZCxG/iJNOh6u2rhaEuwetui4nlB3UehRi5POYQR4bHF/3Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=dqMSs7qi; arc=none smtp.client-ip=115.124.30.100
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1741403041; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=F93G/xQwuaQ+L3SjO6Q3R0jadY1LvGXIeiTnrx0dWo0=;
-	b=dqMSs7qi4lCOSXYaDd6/0h+SshGGGOsbMxamAQ6/5hXHHVC++xlhzCUcDdtCVotxMpwxNCXgKvI1Yy7dYmnAlyBCJJCpGJmVyGcNYQswZXOtdQRQjn29JWRtz0Jx3m0KUW24qPTFM1C687DzBR8YwYCBLS3IEZxt9zKJt16BC84=
-Received: from 30.221.80.100(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0WQtkU0i_1741403039 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Sat, 08 Mar 2025 11:03:59 +0800
-Message-ID: <b59be306-e891-4957-b50c-103d941d0b7e@linux.alibaba.com>
-Date: Sat, 8 Mar 2025 11:03:59 +0800
+	s=arc-20240116; t=1741403195; c=relaxed/simple;
+	bh=/X58aJlajNubapj8G4hkuZOrsx6c2STFNdFZx+8DB8U=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=SfuMK6Tz2GepH6C6DNW4TnLPUWcqxYzvaLibuyAInY8tOqHXM9D/ScKVr2lpLlP4nX+Q6OZIQnu7F8OqFVnrE2rAtAJXMghCa7Iq+KhQ1/c37rhcHYeYLfNxE8Jv8LIyb/wJTED6X1nqdc9sz460l3llapbXU2X3bjJtNQJXSEc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=V/IbsMoR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5D884C4CED1;
+	Sat,  8 Mar 2025 03:06:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741403194;
+	bh=/X58aJlajNubapj8G4hkuZOrsx6c2STFNdFZx+8DB8U=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+	b=V/IbsMoRF7VSqINDcNFizB81kjTgKdAk5pBCW0koxFxyzzp8w3sE+MSFbgFoEcMO+
+	 n6E1EQZ48IBAoHJR4MfpRGw4+lyPSmfiv52DkSBkXcFgY/NQVuyEMeoF8OiFPVRaNR
+	 e1cBzZXUPtJCv0xH3QrFDtmsucKKX7L+4shQfHrNscnW/Tz11C52e6us5iJmcB4XVq
+	 zaU7Qi68klWYJ0N52xeNpLwE1LNWqvAjcLJu/+6CkxwQa24NYxvrZdZQvmtmiehSRK
+	 pLZs40uaDO7HJDes/E5w+61SQcx8R5u/G50OyRAqYKQz6abmVOdYqSdDQwOaLK5lBe
+	 uaTAIA2nuDmNg==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 33DB5380CFFB;
+	Sat,  8 Mar 2025 03:07:09 +0000 (UTC)
+Subject: Re: [GIT PULL] s390 updates for 6.14-rc6
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <your-ad-here.call-01741389235-ext-8883@work.hours>
+References: <your-ad-here.call-01741389235-ext-8883@work.hours>
+X-PR-Tracked-List-Id: <linux-s390.vger.kernel.org>
+X-PR-Tracked-Message-Id: <your-ad-here.call-01741389235-ext-8883@work.hours>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/s390/linux.git tags/s390-6.14-6
+X-PR-Tracked-Commit-Id: b4a1dec11793936ffe1a9fb811724532ff3b1174
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 2a520073e74fbb956b5564818fc5529dcc7e9f0e
+Message-Id: <174140322787.2560613.15705664915690538882.pr-tracker-bot@kernel.org>
+Date: Sat, 08 Mar 2025 03:07:07 +0000
+To: Vasily Gorbik <gor@linux.ibm.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, Heiko Carstens <hca@linux.ibm.com>, Alexander Gordeev <agordeev@linux.ibm.com>, Shuah Khan <skhan@linuxfoundation.org>, linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3] mm/migrate: fix shmem xarray update during migration
-To: Zi Yan <ziy@nvidia.com>, Liu Shixin <liushixin2@huawei.com>,
- linux-mm@kvack.org
-Cc: Andrew Morton <akpm@linux-foundation.org>, Barry Song
- <baohua@kernel.org>, David Hildenbrand <david@redhat.com>,
- Kefeng Wang <wangkefeng.wang@huawei.com>, Lance Yang <ioworker0@gmail.com>,
- Ryan Roberts <ryan.roberts@arm.com>, Matthew Wilcox <willy@infradead.org>,
- Hugh Dickins <hughd@google.com>,
- Charan Teja Kalla <quic_charante@quicinc.com>, linux-kernel@vger.kernel.org,
- stable@vger.kernel.org
-References: <20250305200403.2822855-1-ziy@nvidia.com>
-From: Baolin Wang <baolin.wang@linux.alibaba.com>
-In-Reply-To: <20250305200403.2822855-1-ziy@nvidia.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
 
+The pull request you sent on Sat, 8 Mar 2025 00:13:55 +0100:
 
+> git://git.kernel.org/pub/scm/linux/kernel/git/s390/linux.git tags/s390-6.14-6
 
-On 2025/3/6 04:04, Zi Yan wrote:
-> A shmem folio can be either in page cache or in swap cache, but not at the
-> same time. Namely, once it is in swap cache, folio->mapping should be NULL,
-> and the folio is no longer in a shmem mapping.
-> 
-> In __folio_migrate_mapping(), to determine the number of xarray entries
-> to update, folio_test_swapbacked() is used, but that conflates shmem in
-> page cache case and shmem in swap cache case. It leads to xarray
-> multi-index entry corruption, since it turns a sibling entry to a
-> normal entry during xas_store() (see [1] for a userspace reproduction).
-> Fix it by only using folio_test_swapcache() to determine whether xarray
-> is storing swap cache entries or not to choose the right number of xarray
-> entries to update.
-> 
-> [1] https://lore.kernel.org/linux-mm/Z8idPCkaJW1IChjT@casper.infradead.org/
-> 
-> Note:
-> In __split_huge_page(), folio_test_anon() && folio_test_swapcache() is used
-> to get swap_cache address space, but that ignores the shmem folio in swap
-> cache case. It could lead to NULL pointer dereferencing when a
-> in-swap-cache shmem folio is split at __xa_store(), since
-> !folio_test_anon() is true and folio->mapping is NULL. But fortunately,
-> its caller split_huge_page_to_list_to_order() bails out early with EBUSY
-> when folio->mapping is NULL. So no need to take care of it here.
-> 
-> Fixes: fc346d0a70a1 ("mm: migrate high-order folios in swap cache correctly")
-> Reported-by: Liu Shixin <liushixin2@huawei.com>
-> Closes: https://lore.kernel.org/all/28546fb4-5210-bf75-16d6-43e1f8646080@huawei.com/
-> Suggested-by: Hugh Dickins <hughd@google.com>
-> Signed-off-by: Zi Yan <ziy@nvidia.com>
-> Cc: stable@vger.kernel.org
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/2a520073e74fbb956b5564818fc5529dcc7e9f0e
 
-Thanks for fixing the issue.
-Reviewed-by: Baolin Wang <baolin.wang@linux.alibaba.com>
+Thank you!
 
-> ---
->   mm/migrate.c | 10 ++++------
->   1 file changed, 4 insertions(+), 6 deletions(-)
-> 
-> diff --git a/mm/migrate.c b/mm/migrate.c
-> index fb4afd31baf0..c0adea67cd62 100644
-> --- a/mm/migrate.c
-> +++ b/mm/migrate.c
-> @@ -518,15 +518,13 @@ static int __folio_migrate_mapping(struct address_space *mapping,
->   	if (folio_test_anon(folio) && folio_test_large(folio))
->   		mod_mthp_stat(folio_order(folio), MTHP_STAT_NR_ANON, 1);
->   	folio_ref_add(newfolio, nr); /* add cache reference */
-> -	if (folio_test_swapbacked(folio)) {
-> +	if (folio_test_swapbacked(folio))
->   		__folio_set_swapbacked(newfolio);
-> -		if (folio_test_swapcache(folio)) {
-> -			folio_set_swapcache(newfolio);
-> -			newfolio->private = folio_get_private(folio);
-> -		}
-> +	if (folio_test_swapcache(folio)) {
-> +		folio_set_swapcache(newfolio);
-> +		newfolio->private = folio_get_private(folio);
->   		entries = nr;
->   	} else {
-> -		VM_BUG_ON_FOLIO(folio_test_swapcache(folio), folio);
->   		entries = 1;
->   	}
->   
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
 
