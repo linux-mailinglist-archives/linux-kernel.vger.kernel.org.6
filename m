@@ -1,92 +1,171 @@
-Return-Path: <linux-kernel+bounces-552800-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-552801-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D7BEDA57E4E
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 22:01:21 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D395EA57E54
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 22:06:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B7D7B3AF318
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 21:01:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5479F3B0204
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 21:05:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 063631A4F2F;
-	Sat,  8 Mar 2025 21:01:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 874741FF7CC;
+	Sat,  8 Mar 2025 21:05:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="D26bn7Wy"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="PbjaYFSX";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="2k09chLW"
+Received: from flow-a6-smtp.messagingengine.com (flow-a6-smtp.messagingengine.com [103.168.172.141])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 989B738F91;
-	Sat,  8 Mar 2025 21:01:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C23919597F;
+	Sat,  8 Mar 2025 21:05:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.141
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741467675; cv=none; b=uFERoTaD+PW7svyrJo/t/NYO8g0LvkK0GJWkfDyvIrKHT4jkQorn2Wg4h8ZkZK5XvhcDarZ+qo+yPbKkArK7iNG3OVNlguDtse2G2cA/a9xQsJWc0hkd2u/nehuFSmsZ3OE+jjlgIUkz+OrGfbhUbFqVOCXoP9CYC0lobA8mjbk=
+	t=1741467951; cv=none; b=YZAPlbS9Bcpo6hzh+BlGJsUwoWw3VsXbfyPu32YvVI13tnRmWPEVLmtTGU9JJW4WMUc88MYVZDZJzb+L9pNdhzuyO/ag524pKMb91GdBeynegkyecJllRVeIz0lQORbion+/Sh/rDvJ9N+Bb4pi3SnckW+FVU29Ez3QnHVFHg48=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741467675; c=relaxed/simple;
-	bh=Llm0VCPcIbPZNGLaBuiTx5atCb6gaqgG3GYtd5TmHMw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EDg9hDS9cn5BKOf4DuFh9xqhtM0GzBhx/5SnJOBwdHaPz2httq3Zlz3sSLoL93uU4WSjOgNgC5wh1yFqGB7X1e2qgtcoqbpKOKz285AZDUjFcyP94ona9LT2k/7YxPD2UfQVYNZjgzYItVg0wR5c4IYWela67YJ2ShkKD0IRwhs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=D26bn7Wy; arc=none smtp.client-ip=192.198.163.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1741467674; x=1773003674;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=Llm0VCPcIbPZNGLaBuiTx5atCb6gaqgG3GYtd5TmHMw=;
-  b=D26bn7Wy73LtrwSUzU3YQQQYXEJjvyk4br7KksAW373PEZ516Vof/TwZ
-   PK3rbLdIaMs3XYCNTGtWaI8SB2r2cOvbyMs9XCBYF8DB3i3CW0hKT9V/G
-   1yEsz9H7MQYxyik5uBCunl3K2KStSakOUZhJmJ+WY8naaMRNlWjOGXdx3
-   jhJ+TjjFfxJuf74bg/bvELwzTVS/JLTt1O2q8xBsuYn60j3A81at1lvzw
-   pLcr7Qp1sj8caVyRHc5mk1novr8EvKm+4VVMpguqjNPYSMSWJ5VrgPtpN
-   saFEY3iB4wPhg1ooXpf7g6BQgEM57nVYa7buniNjIiP0bdzmGgG+H2rbx
-   g==;
-X-CSE-ConnectionGUID: G1n6M3WBR/COgKsI0Y1xyg==
-X-CSE-MsgGUID: HWpNl6gTTlC+J7E1q4cY2w==
-X-IronPort-AV: E=McAfee;i="6700,10204,11367"; a="60051970"
-X-IronPort-AV: E=Sophos;i="6.14,233,1736841600"; 
-   d="scan'208";a="60051970"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Mar 2025 13:01:13 -0800
-X-CSE-ConnectionGUID: 5eRYaizUQ/O1oISBG1P12g==
-X-CSE-MsgGUID: pkpBJONxSqemJs0xVtyonQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
-   d="scan'208";a="120540422"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by orviesa008.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Mar 2025 13:01:11 -0800
-Date: Sat, 8 Mar 2025 23:01:07 +0200
-From: Raag Jadav <raag.jadav@intel.com>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: deller@gmx.de, tzimmermann@suse.de, linux-fbdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] fbdev: pxafb: use devm_kmemdup*()
-Message-ID: <Z8ywEzFvWxb59LqK@black.fi.intel.com>
-References: <20250228071009.150971-1-raag.jadav@intel.com>
- <Z8Gt8fg07Y-bFPGT@smile.fi.intel.com>
+	s=arc-20240116; t=1741467951; c=relaxed/simple;
+	bh=soAQYnXR+lBcoAqzICQ9dhN2P4GRiTJuBPmQemVV+zk=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=LYMtKMWOdR2DJEMF4H5CDhTz3uF3ltjYPyoik5SD664abP3b2cxuB0V4qLCc99By6EzN+EuPU2+SXDXBd5SqlEynHrBRO9sEJ4mPSq6qz7QhZdobXV5FNu7P++Hn62NheYsBlk0C7k7zwPsOnu8SxAzxdbteftpFUbwcnpDOmok=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=PbjaYFSX; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=2k09chLW; arc=none smtp.client-ip=103.168.172.141
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from phl-compute-07.internal (phl-compute-07.phl.internal [10.202.2.47])
+	by mailflow.phl.internal (Postfix) with ESMTP id DE8FE2017E6;
+	Sat,  8 Mar 2025 16:05:46 -0500 (EST)
+Received: from phl-imap-11 ([10.202.2.101])
+  by phl-compute-07.internal (MEProxy); Sat, 08 Mar 2025 16:05:46 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm3; t=1741467946;
+	 x=1741475146; bh=W4poDmOA64pY4uvHZcOCt8hPoavx9e3hXSZvtxdXHKk=; b=
+	PbjaYFSX9IBx2Zrs40HbC9+xW+mfnGRXkjrLnF/lmBTxXHH5vogiHSSOspqIeun1
+	NHfBh6H00r3dQfPeg/5Np/6Z9XnSuH0FKD+DR2HubpiuMGQ/cIlXZj4R8B8ROhDL
+	goKIgFL/GsoFSOene+PO+8yhXJyNpaw+RIaTc2mAtJJGV6CjknGC9TlrbTxPTF9X
+	pWcsaTZU3KhhEbiIyNbOPqhcecuUGjnfGnDJ2dWkoU+YL+V5DIIga1Rn2j0Bl5qL
+	u59YI9TE/OHE24iRU+89XEMwS2VxZLS7RtbtY5u5kVRUVTePTpxwefPCm6nJdU9/
+	et5ORwsXOuqEk213wxjyfw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1741467946; x=
+	1741475146; bh=W4poDmOA64pY4uvHZcOCt8hPoavx9e3hXSZvtxdXHKk=; b=2
+	k09chLWM/lSt9ok/EPaPM1tR7eBje/kIsmlJQe/3mXR56QFqC9W69F7BHwDF0fGM
+	kODKlY76T3e9H8oa0C+vm3AnKrYBg4EHOFO+NeDTv9i2LVhrbDe+4On1enx+SXkf
+	jCuY+jGWCb7dq6bVKRic6ilsWWRffPxqNl3G4H3ZyFTFR5vG3CC93kYg0GtIJREx
+	i7ppS1ZpZObOXtg1acJC8U8r4gnYj7l+dkuLnVJPKp/LgM21hZnVKFd/s3wHJv+C
+	oYUKaTLoubtPOBBZsxqlbvftF3FJJh5RQfjk0WIAx3lkCwrtVye9WojKDgsaWm8w
+	eqXtQNTKoXuDuJ4eq/jTA==
+X-ME-Sender: <xms:KrHMZwqQWf1vmDRRZmKYix9_AvEX71hk9A5-PUg-mMHoqyGuX43GTw>
+    <xme:KrHMZ2psuRMKaam0ybx-JZLEC1a7vUGqphSu1hLVSUR3YOE3xwz-daI2PPjxwEq4X
+    bngyXPelqUm1rvI9Vg>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdduudegheekucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
+    pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
+    gvnhhtshculddquddttddmnecujfgurhepofggfffhvfevkfgjfhfutgfgsehtjeertder
+    tddtnecuhfhrohhmpedftehrnhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnug
+    gsrdguvgeqnecuggftrfgrthhtvghrnhephfdthfdvtdefhedukeetgefggffhjeeggeet
+    fefggfevudegudevledvkefhvdeinecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrg
+    hmpehmrghilhhfrhhomheprghrnhgusegrrhhnuggsrdguvgdpnhgspghrtghpthhtohep
+    gedvpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopegsphesrghlihgvnhekrdguvg
+    dprhgtphhtthhopegtrghtrghlihhnrdhmrghrihhnrghssegrrhhmrdgtohhmpdhrtghp
+    thhtohepjhhovgihrdhgohhulhihsegrrhhmrdgtohhmpdhrtghpthhtohepmhgrrhhkrd
+    hruhhtlhgrnhgusegrrhhmrdgtohhmpdhrtghpthhtohepshhuuggvvghprdhhohhllhgr
+    segrrhhmrdgtohhmpdhrtghpthhtohepshhuiihukhhirdhpohhulhhoshgvsegrrhhmrd
+    gtohhmpdhrtghpthhtohepsghhvghlghgrrghssehgohhoghhlvgdrtghomhdprhgtphht
+    thhopeihuhiivghnghhhuhhisehhuhgrfigvihdrtghomhdprhgtphhtthhopegtohhnoh
+    hrodgutheskhgvrhhnvghlrdhorhhg
+X-ME-Proxy: <xmx:KrHMZ1O9ctL676w5AHUIxE0SC1uXzVCBMq5d4oaLxLgUSw773mfxVg>
+    <xmx:KrHMZ36aWng3VojtFfg9JWrEIO2NAAnLf-1dP-OHoquiOYe6lO0u_Q>
+    <xmx:KrHMZ_6_zJEf_V0pq87wzL4JG8U2CRExCG9veX074cbH5tYyr-yvvg>
+    <xmx:KrHMZ3iPusvaeexA7SSSlwDrRNP8bOUuPa3aybP_Ilx1k2AiNrnRHA>
+    <xmx:KrHMZxAOYkkYPw5ZnbYA_W8w8hNAHsxDFHKJb1ECP7qxkoZka0El8mlf>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id E676A2220072; Sat,  8 Mar 2025 16:05:45 -0500 (EST)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z8Gt8fg07Y-bFPGT@smile.fi.intel.com>
+Date: Sat, 08 Mar 2025 22:05:24 +0100
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Roman Kisel" <romank@linux.microsoft.com>, bhelgaas@google.com,
+ "Borislav Petkov" <bp@alien8.de>,
+ "Catalin Marinas" <catalin.marinas@arm.com>,
+ "Conor Dooley" <conor+dt@kernel.org>,
+ "Dave Hansen" <dave.hansen@linux.intel.com>,
+ "Dexuan Cui" <decui@microsoft.com>,
+ "Haiyang Zhang" <haiyangz@microsoft.com>,
+ "H. Peter Anvin" <hpa@zytor.com>, "Joey Gouly" <joey.gouly@arm.com>,
+ krzk+dt@kernel.org, =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>,
+ "K. Y. Srinivasan" <kys@microsoft.com>, "Len Brown" <lenb@kernel.org>,
+ "Lorenzo Pieralisi" <lpieralisi@kernel.org>,
+ "Manivannan Sadhasivam" <manivannan.sadhasivam@linaro.org>,
+ "Mark Rutland" <mark.rutland@arm.com>, "Marc Zyngier" <maz@kernel.org>,
+ "Ingo Molnar" <mingo@redhat.com>,
+ "Oliver Upton" <oliver.upton@linux.dev>,
+ "Rafael J . Wysocki" <rafael@kernel.org>,
+ "Rob Herring" <robh@kernel.org>, ssengar@linux.microsoft.com,
+ "Sudeep Holla" <sudeep.holla@arm.com>,
+ "Suzuki K Poulose" <suzuki.poulose@arm.com>,
+ "Thomas Gleixner" <tglx@linutronix.de>, "Wei Liu" <wei.liu@kernel.org>,
+ "Will Deacon" <will@kernel.org>, "Zenghui Yu" <yuzenghui@huawei.com>,
+ devicetree@vger.kernel.org, kvmarm@lists.linux.dev,
+ linux-acpi@vger.kernel.org, Linux-Arch <linux-arch@vger.kernel.org>,
+ linux-arm-kernel@lists.infradead.org, linux-hyperv@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, x86@kernel.org
+Cc: apais@microsoft.com, benhill@microsoft.com, bperkins@microsoft.com,
+ sunilmut@microsoft.com
+Message-Id: <e0f81049-688e-4f53-a002-5d246281bf8d@app.fastmail.com>
+In-Reply-To: <20250307220304.247725-4-romank@linux.microsoft.com>
+References: <20250307220304.247725-1-romank@linux.microsoft.com>
+ <20250307220304.247725-4-romank@linux.microsoft.com>
+Subject: Re: [PATCH hyperv-next v5 03/11] Drivers: hv: Enable VTL mode for arm64
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-On Fri, Feb 28, 2025 at 02:37:05PM +0200, Andy Shevchenko wrote:
-> On Fri, Feb 28, 2025 at 12:40:09PM +0530, Raag Jadav wrote:
-> > Convert to use devm_kmemdup() and devm_kmemdup_array() which are
-> > more robust.
+On Fri, Mar 7, 2025, at 23:02, Roman Kisel wrote:
+> @@ -5,18 +5,20 @@ menu "Microsoft Hyper-V guest support"
+>  config HYPERV
+>  	tristate "Microsoft Hyper-V client drivers"
+>  	depends on (X86 && X86_LOCAL_APIC && HYPERVISOR_GUEST) \
+> -		|| (ACPI && ARM64 && !CPU_BIG_ENDIAN)
+> +		|| (ARM64 && !CPU_BIG_ENDIAN)
+> +	depends on (ACPI || HYPERV_VTL_MODE)
+>  	select PARAVIRT
+>  	select X86_HV_CALLBACK_VECTOR if X86
+> -	select OF_EARLY_FLATTREE if OF
+>  	help
+>  	  Select this option to run Linux as a Hyper-V client operating
+>  	  system.
 > 
-> FWIW,
-> Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+>  config HYPERV_VTL_MODE
+>  	bool "Enable Linux to boot in VTL context"
+> -	depends on X86_64 && HYPERV
+> +	depends on (X86_64 || ARM64)
+>  	depends on SMP
+> +	select OF_EARLY_FLATTREE
+> +	select OF
+>  	default n
+>  	help
 
-Thank you.
+Having the dependency below the top-level Kconfig entry feels a little
+counterintuitive. You could flip that back as it was before by doing
 
-Anything I can do to move this forward?
+      select HYPERV_VTL_MODE if !ACPI
+      depends on ACPI || SMP
 
-Raag
+in the HYPERV option, leaving the dependency on HYPERV in
+HYPERV_VTL_MODE.
+
+Is OF_EARLY_FLATTREE actually needed on x86?
+
+      Arnd
 
