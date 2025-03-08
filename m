@@ -1,118 +1,128 @@
-Return-Path: <linux-kernel+bounces-552342-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-552343-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F194A578B3
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 06:47:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B490A578B6
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 06:57:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4EE7E7A3E8C
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 05:46:36 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 36A337A43A1
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 05:56:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47CF017B50A;
-	Sat,  8 Mar 2025 05:47:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2748D18D63A;
+	Sat,  8 Mar 2025 05:57:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jZREOVjl"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="yZXZnV9A"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA08684A2B
-	for <linux-kernel@vger.kernel.org>; Sat,  8 Mar 2025 05:47:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59D3415E5B8;
+	Sat,  8 Mar 2025 05:57:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741412849; cv=none; b=ExXlcAetRCSLKkkogKzLIYr0C+SbDSYG+eIiePrz5j1klV50/IbYBJWbKLmWMG1xDEZwGO4FdlIcjCPVLht9Xsj6PnYnxJjKJl2xa/qkPV50XlQ3vx9+/r/RhZfi5V5knkviIq9JKrT3C2WyeYfuCXiYw1yBNaNoxgfgtQ+5hc0=
+	t=1741413442; cv=none; b=Xym0oEg5ZAF4IKfFqSl/15rIH0+ME6lRavCgPt7UhkSuA35aSGUKoEuZi9qpEp7uw1D/RILMV5Yi8Wctuv0eJhO59KO6V80FrPMmUSQpFW8t0jd3EQgqAaRDGhVNu/bL5+PYj64FfnVgz0War9CkL15HG6/jDtlt+jpvv1u6iFw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741412849; c=relaxed/simple;
-	bh=7bt+6j5Q+vjies/LWa4TaAAJ1EJn6bHAw/B2dvHYS8g=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=fnqmpZIaqilB7fB3ZQUA7VSgqHFAF2ZBN0klKnwHvr4vWvpHH59TMvIwtBY/EgxauFCLViacd0cmxKB+9/YaTA/xc+8/foVpsh+fAP3uG1QgwTm6QSuleIR3w5zYOqL/HX11IoD/nTsJ+Yu/wgG0xd8ZMGZu5kNFi6SRK2+9oGw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jZREOVjl; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 294ECC4CEE0
-	for <linux-kernel@vger.kernel.org>; Sat,  8 Mar 2025 05:47:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741412849;
-	bh=7bt+6j5Q+vjies/LWa4TaAAJ1EJn6bHAw/B2dvHYS8g=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=jZREOVjl0XpIQxoeGnj8aK2M7gw15HChHQTjyILdAJDimp8a6B5KSYyU8rrUDsQQk
-	 6ZiKzETdsKgI99bl8tbYWYxZ+P+9MBEGzYbV7LiCwHU3AgZnnuVVokfrGRTiS6S4mE
-	 VvjQ9nSt/Py9274OigAVA0nrf8C+B/0UEnFx4mkycMIHKDJza2OTD4oyxNq/82sPC8
-	 k7OO3v3F9KL+iZrJmsx8HYPOlCE9C+83tQDuXJ1VKtJmbVxhizEou/ZIf9xNB9iZuV
-	 FodmjVp3E9s37ZAWH84ngEwUbosWimevs2QgrYW3qgmAA0kIsVxyWwWtRqvrbdKzzp
-	 K/8YwXK+wAPrw==
-Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-abec8b750ebso427226666b.0
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Mar 2025 21:47:29 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCVeHzRIWBREEfXjkfmRsyJQa77sjCPVdXiEyU5xWF8j/KvT1Txz+GflmjrxZc2VkTUw1JL8FP/X/qJUb0I=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwRGmEcaOi17Rjaq+cOp0RpTUD1w4DOg6X1uPa8YejnxVmZTH0g
-	6HYUdNeByptQkZ/mtgdrfk7/JPkRchHyIU8wjKhmWdutgkt6APaknBMrKjYEcDIP/jJkrygWXvn
-	Ds2MvSWFk56nxxdb7teovq5sYLS4=
-X-Google-Smtp-Source: AGHT+IHfblzcb3JDX2PJNJ+7gmb47AWa1o8o5uirTRFLLPDt6z2ebmfOscXdfMDQloM2YP7OD4ENLnlrPcBa1SoEuic=
-X-Received: by 2002:a17:907:720d:b0:ac1:db49:99b7 with SMTP id
- a640c23a62f3a-ac252ff84c2mr692799566b.51.1741412847785; Fri, 07 Mar 2025
- 21:47:27 -0800 (PST)
+	s=arc-20240116; t=1741413442; c=relaxed/simple;
+	bh=JzmsDg9DtrYfYPjoGVH8JHEuPvWz63npzYi59wS/Dbo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VPv98TnPkVAorrlZITNLDIHrPJJPWDp5yB14BL71+jC1pZ5t5sztdqRzVmP0QeUUdSTadSK46QTaExlkGd2I45bz04aACWCDCMX2gVPhZf4uTAjauvG/G4eE7SwKHWbOc6kMvVj9DpA8296xvcqy0LzAKfVeyjgLwUc8asXWCuU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=yZXZnV9A; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 44473C4CEE0;
+	Sat,  8 Mar 2025 05:57:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1741413441;
+	bh=JzmsDg9DtrYfYPjoGVH8JHEuPvWz63npzYi59wS/Dbo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=yZXZnV9AmVNu6/JIAb7/rajXcgFg/OOZi5E/jFwrcbUN3gk6TfQ5whJXfXQDSEmF0
+	 6sLCxGLENX/sRKHsXBt1IHqRqQEezypOjXL7g1V/m8qbcwbz7Bv7G34cpBOLglpaCj
+	 b8n7VDOqPs/KqxnDYAz+lripf6iaSPcuLFU8lvEc=
+Date: Sat, 8 Mar 2025 06:57:18 +0100
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Sebastian Reichel <sebastian.reichel@collabora.com>
+Cc: Mark Brown <broonie@kernel.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Hans de Goede <hdegoede@redhat.com>,
+	Liam Girdwood <lgirdwood@gmail.com>, Chen-Yu Tsai <wens@csie.org>,
+	Matti Vaittinen <mazziesaccount@gmail.com>,
+	Pali =?iso-8859-1?Q?Roh=E1r?= <pali@kernel.org>,
+	Paul Cercueil <paul@crapouillou.net>,
+	Samuel Holland <samuel@sholland.org>,
+	David Lechner <david@lechnology.com>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Marek Szyprowski <m.szyprowski@samsung.com>,
+	Sebastian Krzyszkowiak <sebastian.krzyszkowiak@puri.sm>,
+	Purism Kernel Team <kernel@puri.sm>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Orson Zhai <orsonzhai@gmail.com>,
+	Baolin Wang <baolin.wang@linux.alibaba.com>,
+	Chunyan Zhang <zhang.lyra@gmail.com>, linux-pm@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org
+Subject: Re: [PATCH 3/7] usb: common: usb-conn-gpio: switch psy_cfg from
+ of_node to fwnode
+Message-ID: <2025030845-pectin-facility-a474@gregkh>
+References: <20250225-psy-core-convert-to-fwnode-v1-0-d5e4369936bb@collabora.com>
+ <20250225-psy-core-convert-to-fwnode-v1-3-d5e4369936bb@collabora.com>
+ <2025022542-recital-ebony-d9b5@gregkh>
+ <lhtljyn52wkhotaf2cn6fcj2vqx3dzipv2663kzwtw2tjjlxye@5l3xytkyvocy>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250211115016.26913-1-yangtiezhu@loongson.cn>
-In-Reply-To: <20250211115016.26913-1-yangtiezhu@loongson.cn>
-From: Huacai Chen <chenhuacai@kernel.org>
-Date: Sat, 8 Mar 2025 13:47:18 +0800
-X-Gmail-Original-Message-ID: <CAAhV-H4UJe0_VexB894PrRz8wKT9V_i=-_ODQEHCOBv7ngs1xQ@mail.gmail.com>
-X-Gm-Features: AQ5f1JqP_SHk7GiHED2C-cFwFZJOJgfBB6TzFTVNf3xTrlGwoYbSTo94OX0rjOc
-Message-ID: <CAAhV-H4UJe0_VexB894PrRz8wKT9V_i=-_ODQEHCOBv7ngs1xQ@mail.gmail.com>
-Subject: Re: [PATCH v7 0/7] Add jump table support for objtool on LoongArch
-To: Tiezhu Yang <yangtiezhu@loongson.cn>
-Cc: Josh Poimboeuf <jpoimboe@kernel.org>, Peter Zijlstra <peterz@infradead.org>, loongarch@lists.linux.dev, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <lhtljyn52wkhotaf2cn6fcj2vqx3dzipv2663kzwtw2tjjlxye@5l3xytkyvocy>
 
-Hi, Josh and Peter,
+On Sat, Mar 08, 2025 at 02:10:29AM +0100, Sebastian Reichel wrote:
+> Hello Greg,
+> 
+> On Tue, Feb 25, 2025 at 04:32:50AM +0100, Greg Kroah-Hartman wrote:
+> > On Tue, Feb 25, 2025 at 12:21:36AM +0100, Sebastian Reichel wrote:
+> > > In order to remove .of_node from the power_supply_config struct,
+> > > use .fwnode instead.
+> > > 
+> > > Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.com>
+> > > ---
+> > >  drivers/usb/common/usb-conn-gpio.c | 2 +-
+> > >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > > 
+> > > diff --git a/drivers/usb/common/usb-conn-gpio.c b/drivers/usb/common/usb-conn-gpio.c
+> > > index aa710b50791b0282be0a6a26cffdd981b794acaa..1e36be2a28fd5ca5e1495b7923e4d3e25d7cedef 100644
+> > > --- a/drivers/usb/common/usb-conn-gpio.c
+> > > +++ b/drivers/usb/common/usb-conn-gpio.c
+> > > @@ -158,7 +158,7 @@ static int usb_conn_psy_register(struct usb_conn_info *info)
+> > >  	struct device *dev = info->dev;
+> > >  	struct power_supply_desc *desc = &info->desc;
+> > >  	struct power_supply_config cfg = {
+> > > -		.of_node = dev->of_node,
+> > > +		.fwnode = dev_fwnode(dev),
+> > >  	};
+> > >  
+> > >  	desc->name = "usb-charger";
+> > > 
+> > > -- 
+> > > 2.47.2
+> > 
+> > Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> 
+> Please just merge this patch through the USB tree.
+> 
+> There are no dependencies and I will send a new version for the
+> later patches, but they won't make it to 6.15 as I want enough
+> time in linux-next for them. This patch is rather simple and
+> getting it merged now means we avoid immutable branches or
+> merging through the wrong tree in the 6.16 cycle.
 
-Since "unreachable: Unify", "x86: Convert unreachable() to BUG()" and
-other relevant patches have been backported to 6.12/6.13, I think the
-7th of this series should also be backported to avoid build warnings.
+Attempting to merge a single patch out of a series is hard with our
+current tools, you know that.  Please resend just the single patch if
+you want that applied.
 
-Since tip.git hasn't applied this series, I will apply the 7th patch
-as part of loongarch-fixes now.
+thanks,
 
-Huacai
-
-On Tue, Feb 11, 2025 at 7:50=E2=80=AFPM Tiezhu Yang <yangtiezhu@loongson.cn=
-> wrote:
->
-> This version is based on tip/tip.git master branch [1], the patch
-> "objtool: Handle unreachable entry of rodata" is dropped, tested
-> with the latest mainline Binutils, GCC and Clang (2025-02-11).
->
-> [1] https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git/log/?h=3D=
-master
->
-> Tiezhu Yang (7):
->   objtool: Handle various symbol types of rodata
->   objtool: Handle different entry size of rodata
->   objtool: Handle PC relative relocation type
->   objtool/LoongArch: Add support for switch table
->   objtool/LoongArch: Add support for goto table
->   LoongArch: Enable jump table for objtool
->   LoongArch: Convert unreachable() to BUG()
->
->  arch/loongarch/Kconfig                        |   3 +
->  arch/loongarch/Makefile                       |   6 +-
->  arch/loongarch/kernel/machine_kexec.c         |   4 +-
->  tools/objtool/arch/loongarch/decode.c         |  28 ++-
->  .../objtool/arch/loongarch/include/arch/elf.h |   7 +
->  tools/objtool/arch/loongarch/special.c        | 159 +++++++++++++++++-
->  tools/objtool/arch/powerpc/decode.c           |  15 ++
->  tools/objtool/arch/x86/decode.c               |  13 ++
->  tools/objtool/check.c                         |  23 ++-
->  tools/objtool/include/objtool/arch.h          |   3 +
->  10 files changed, 247 insertions(+), 14 deletions(-)
->
-> --
-> 2.42.0
->
+greg k-h
 
