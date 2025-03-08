@@ -1,318 +1,190 @@
-Return-Path: <linux-kernel+bounces-552774-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-552775-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10961A57DF0
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 21:02:55 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C8CDA57DF2
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 21:04:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B7A823B2997
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 20:02:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D5D481662E1
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 20:04:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B030D211719;
-	Sat,  8 Mar 2025 20:02:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39E0D202C4C;
+	Sat,  8 Mar 2025 20:04:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dq2prbBS"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="XSJ26o94"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B82BD2080FD;
-	Sat,  8 Mar 2025 20:02:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D76A32A8C1
+	for <linux-kernel@vger.kernel.org>; Sat,  8 Mar 2025 20:04:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741464150; cv=none; b=su5To1QS5/gwJ2KaHQZebhL7hBK3iy9bKUqN37q5qNFAdF8v/pDrf0309jT3HBFc/HZmpaVbs4eOb6K3fV0J4Js+VBnEkjSdD8HbaZkOYga48bnMogeePipW0jQ/D29sMNSc7xFiV1mqCrMQ/uiYO8EfW8BIJhl33nPsYn2rs/A=
+	t=1741464253; cv=none; b=cV3oE9AXlFv+4hZQOmC0K/OF0Nicn16F21vucK0k1e2TiRDdMUu8c5vnFXKLisMNbl5tDteG9TKuFoXwInWAeRRyDBLpigOz+igDdbix3S9hR9rBIud6zHFfhLSaJp5wKV+qefv1voeUG2VNz0x7tFvQij42pSaSv+8IIpTsz0A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741464150; c=relaxed/simple;
-	bh=FbwfoFA9TUfwf9Q1WJyzp7VxofeoHXHrNGqGmADWW5g=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=fnEsmW1E2ZDisU1ankORNTK9G/Zu2CYmQ8W/W6A78tmDYBTU4TpqvJUe5ahiiBiGL/2hLQyFTa1d3JurUuGNeuBKOczys1DGfiJALVeDhunDDciPtMt7YLdbOJLc1+5OmRLwHGCbwKU1+DUNwHgqTm/OJC3A6u6HcMd7ATRWBOM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dq2prbBS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 480DEC4CEED;
-	Sat,  8 Mar 2025 20:02:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741464150;
-	bh=FbwfoFA9TUfwf9Q1WJyzp7VxofeoHXHrNGqGmADWW5g=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=dq2prbBSx6MnMHCQZdrPD3ML6cGNQbalkeDqncDsB23q3/YMhjeP4qK/FP4WRlV2R
-	 ELB4QZXMYBhKvO8NN47A+9/T2eDKwhD0y5XoVoPRcuGwlzY0WSW9C0VikU/egE3riY
-	 PzEa3yuEQOYXUsFSPaBLa0SZEQcaDRyVYBhSJfH6UVglm5IKNSKUDN3TsJNLX3y4pm
-	 mvfQNxAmTVYNwajd6Q4Gs6ABC1bkz9kxVv+Q51jHVHAzuCO2H/+oEHK9kFuIiAJNF6
-	 cdB4iEe/Ok8o35n1Sxt1J0QqkvPlM7zOciRJkoyqh72UX1X5fRKPMw1IVlrT1W3WF/
-	 3X0XaNwD4uFCQ==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A832C28B31;
-	Sat,  8 Mar 2025 20:02:30 +0000 (UTC)
-From: David Heidelberg via B4 Relay <devnull+david.ixit.cz@kernel.org>
-Date: Sat, 08 Mar 2025 21:01:01 +0100
-Subject: [PATCH 4/4] iio: light: al3320a: Implement regmap support
+	s=arc-20240116; t=1741464253; c=relaxed/simple;
+	bh=ryLPmpCSdVMe0M26o/lxW0KDr0KYblyjS78RXZj7cjY=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=jSdoiQ+LqJnU2gl3DOHqPMdcL+UIiMj1F6DdjZ+fg6cQgux7DRtvzbyxYXeBcGZPxCpyoJz4D9J3uEU+R5kujHhkAO08OspolOfwLAXtRo/soag1riumoG1Aur6SAY+cAk8TEhKwu+aGa1gcW5ogbhoBpBHIxLDu/YQeL8RYDz4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=XSJ26o94; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1741464250;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=YJ1ng78giZpgZ1pkR/H9sfY5f+t35cP7au54QDB9oqk=;
+	b=XSJ26o94XFNKVwJBX8p1X7e52pfOw7uuUmielenIjkUGbVZdCoaK5PzBcqPDzm6MsmgcaS
+	D8YPqp8tJOOW6wfRLcZ0UjQ2UZN1+06ubVM0yHqtLlQFcImFMQLBPFsDwen2wIb/GMJ5/F
+	3P0BHV9wuZJVCLT+OscRWv2VnyVTY50=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-461-MbNUwnKLPu2TqG3zxzVckQ-1; Sat,
+ 08 Mar 2025 15:04:05 -0500
+X-MC-Unique: MbNUwnKLPu2TqG3zxzVckQ-1
+X-Mimecast-MFC-AGG-ID: MbNUwnKLPu2TqG3zxzVckQ_1741464243
+Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 6D2CA195608A;
+	Sat,  8 Mar 2025 20:04:03 +0000 (UTC)
+Received: from RHTRH0061144 (unknown [10.22.81.152])
+	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 7507E19560AD;
+	Sat,  8 Mar 2025 20:04:00 +0000 (UTC)
+From: Aaron Conole <aconole@redhat.com>
+To: Ilya Maximets <i.maximets@ovn.org>
+Cc: netdev@vger.kernel.org,  "David S. Miller" <davem@davemloft.net>,  Eric
+ Dumazet <edumazet@google.com>,  Jakub Kicinski <kuba@kernel.org>,  Paolo
+ Abeni <pabeni@redhat.com>,  Simon Horman <horms@kernel.org>,
+  dev@openvswitch.org,  linux-kernel@vger.kernel.org,  Pravin B Shelar
+ <pshelar@ovn.org>,  Eelco Chaudron <echaudro@redhat.com>
+Subject: Re: [PATCH net] net: openvswitch: remove misbehaving actions length
+ check
+In-Reply-To: <20250308004609.2881861-1-i.maximets@ovn.org> (Ilya Maximets's
+	message of "Sat, 8 Mar 2025 01:45:59 +0100")
+References: <20250308004609.2881861-1-i.maximets@ovn.org>
+Date: Sat, 08 Mar 2025 15:03:58 -0500
+Message-ID: <f7tmsdv2ssx.fsf@redhat.com>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250308-al3010-iio-regmap-v1-4-b672535e8213@ixit.cz>
-References: <20250308-al3010-iio-regmap-v1-0-b672535e8213@ixit.cz>
-In-Reply-To: <20250308-al3010-iio-regmap-v1-0-b672535e8213@ixit.cz>
-To: Jonathan Cameron <jic23@kernel.org>, 
- Lars-Peter Clausen <lars@metafoo.de>
-Cc: Svyatoslav Ryhel <clamor95@gmail.com>, 
- Robert Eckelmann <longnoserob@gmail.com>, linux-iio@vger.kernel.org, 
- linux-kernel@vger.kernel.org, David Heidelberg <david@ixit.cz>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=6797; i=david@ixit.cz;
- h=from:subject:message-id;
- bh=5I6aLiVBvHlW9GqP9cewvJ+GzQ5KKG9d4c1w8WEv3k4=;
- b=owEBbQKS/ZANAwAIAWACP8TTSSByAcsmYgBnzKJUKSj+aSO7mnAWNa2/OCRt+uzxahs6/j9FY
- vOe9ckR53mJAjMEAAEIAB0WIQTXegnP7twrvVOnBHRgAj/E00kgcgUCZ8yiVAAKCRBgAj/E00kg
- cu6ZEACNLmmqM1HzvFOBITah4KysNN7aImTh9WaoMLNrxeIbt/FD8lUmWA1dhB1qJC+rFCMojmB
- J/yJ+EbFtG6WrbkvAmWqheN5Yfyx16gbp4y1g7poVc46Gnimdnh/6pya8SolmXJM6csw3ZaxqAg
- 6VaICjlDub6b/O7qXxy5qLrEDfYmaBdj2oD2AGAwYBUNm4H31cOEAAZ0J7LmKLvY5d42rmOZf5y
- S4mKqT809e92ZzadxfpuSut6u7ubsylvuq/d5tYv75gu/B76eW6xCCvGLWN77lbryRO9ZJMJAPu
- t2enaOq7fgAZ0WjE/inMxVoIxBFLisk4alEBFGV80kyRZzX4IkNfdJuF+7bX2oNYUg2llw5L8NA
- ehuPu7SeO2u51WnbBf1WeQlVg3ckEjaSJT87DJ6zuvjw9l1AUKaaqzufrT5wtN5xe113mDGHA9J
- ZVkfB2oC75mGLtM/PtoboetdWrme7n8u/Ibg1hQ7Tc4g0BrcjZOcXsvKgrpVxWAeuPlbB+hcFVW
- zDn4drWY7enPaYxuhLp+SuJQPEOW6fsPwng+tM11GW/9keO5qudO8J8W/fMu0Y0GS5xzQHO3qDt
- y9UCwbhf6MRw/aWgAofh+UkIZxzhCCn1yLY28/9WyIj6ph+CuMAea0J/wF6kmMPK/FR+QMlzTfL
- 7bEj9bGkM24oeuA==
-X-Developer-Key: i=david@ixit.cz; a=openpgp;
- fpr=D77A09CFEEDC2BBD53A7047460023FC4D3492072
-X-Endpoint-Received: by B4 Relay for david@ixit.cz/default with auth_id=355
-X-Original-From: David Heidelberg <david@ixit.cz>
-Reply-To: david@ixit.cz
+Content-Type: text/plain
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
 
-From: David Heidelberg <david@ixit.cz>
+Ilya Maximets <i.maximets@ovn.org> writes:
 
-Modernize and make driver a bit cleaner.
+> The actions length check is unreliable and produces different results
+> depending on the initial length of the provided netlink attribute and
+> the composition of the actual actions inside of it.  For example, a
+> user can add 4088 empty clone() actions without triggering -EMSGSIZE,
+> on attempt to add 4089 such actions the operation will fail with the
+> -EMSGSIZE verdict.  However, if another 16 KB of other actions will
+> be *appended* to the previous 4089 clone() actions, the check passes
+> and the flow is successfully installed into the openvswitch datapath.
+>
+> The reason for a such a weird behavior is the way memory is allocated.
+> When ovs_flow_cmd_new() is invoked, it calls ovs_nla_copy_actions(),
+> that in turn calls nla_alloc_flow_actions() with either the actual
+> length of the user-provided actions or the MAX_ACTIONS_BUFSIZE.  The
+> function adds the size of the sw_flow_actions structure and then the
+> actually allocated memory is rounded up to the closest power of two.
+>
+> So, if the user-provided actions are larger than MAX_ACTIONS_BUFSIZE,
+> then MAX_ACTIONS_BUFSIZE + sizeof(*sfa) rounded up is 32K + 24 -> 64K.
+> Later, while copying individual actions, we look at ksize(), which is
+> 64K, so this way the MAX_ACTIONS_BUFSIZE check is not actually
+> triggered and the user can easily allocate almost 64 KB of actions.
+>
+> However, when the initial size is less than MAX_ACTIONS_BUFSIZE, but
+> the actions contain ones that require size increase while copying
+> (such as clone() or sample()), then the limit check will be performed
+> during the reserve_sfa_size() and the user will not be allowed to
+> create actions that yield more than 32 KB internally.
+>
+> This is one part of the problem.  The other part is that it's not
+> actually possible for the userspace application to know beforehand
+> if the particular set of actions will be rejected or not.
+>
+> Certain actions require more space in the internal representation,
+> e.g. an empty clone() takes 4 bytes in the action list passed in by
+> the user, but it takes 12 bytes in the internal representation due
+> to an extra nested attribute, and some actions require less space in
+> the internal representations, e.g. set(tunnel(..)) normally takes
+> 64+ bytes in the action list provided by the user, but only needs to
+> store a single pointer in the internal implementation, since all the
+> data is stored in the tunnel_info structure instead.
+>
+> And the action size limit is applied to the internal representation,
+> not to the action list passed by the user.  So, it's not possible for
+> the userpsace application to predict if the certain combination of
+> actions will be rejected or not, because it is not possible for it to
+> calculate how much space these actions will take in the internal
+> representation without knowing kernel internals.
+>
+> All that is causing random failures in ovs-vswitchd in userspace and
+> inability to handle certain traffic patterns as a result.  For example,
+> it is reported that adding a bit more than a 1100 VMs in an OpenStack
+> setup breaks the network due to OVS not being able to handle ARP
+> traffic anymore in some cases (it tries to install a proper datapath
+> flow, but the kernel rejects it with -EMSGSIZE, even though the action
+> list isn't actually that large.)
+>
+> Kernel behavior must be consistent and predictable in order for the
+> userspace application to use it in a reasonable way.  ovs-vswitchd has
+> a mechanism to re-direct parts of the traffic and partially handle it
+> in userspace if the required action list is oversized, but that doesn't
+> work properly if we can't actually tell if the action list is oversized
+> or not.
+>
+> Solution for this is to check the size of the user-provided actions
+> instead of the internal representation.  This commit just removes the
+> check from the internal part because there is already an implicit size
+> check imposed by the netlink protocol.  The attribute can't be larger
+> than 64 KB.  Realistically, we could reduce the limit to 32 KB, but
+> we'll be risking to break some existing setups that rely on the fact
+> that it's possible to create nearly 64 KB action lists today.
+>
+> Vast majority of flows in real setups are below 100-ish bytes.  So
+> removal of the limit will not change real memory consumption on the
+> system.  The absolutely worst case scenario is if someone adds a flow
+> with 64 KB of empty clone() actions.  That will yield a 192 KB in the
+> internal representation consuming 256 KB block of memory.  However,
+> that list of actions is not meaningful and also a no-op.  Real world
+> very large action lists (that can occur for a rare cases of BUM
+> traffic handling) are unlikely to contain a large number of clones and
+> will likely have a lot of tunnel attributes making the internal
+> representation comparable in size to the original action list.
+> So, it should be fine to just remove the limit.
+>
+> Commit in the 'Fixes' tag is the first one that introduced the
+> difference between internal representation and the user-provided action
+> lists, but there were many more afterwards that lead to the situation
+> we have today.
+>
+> Fixes: 7d5437c709de ("openvswitch: Add tunneling interface.")
+> Signed-off-by: Ilya Maximets <i.maximets@ovn.org>
+> ---
 
-Incorporate most of the feedback given on new AL3000A.
+Thanks for the detailed explanation.  Do you think it's useful to
+check with selftest:
 
-Signed-off-by: David Heidelberg <david@ixit.cz>
----
- drivers/iio/light/al3320a.c | 101 ++++++++++++++++++++++++--------------------
- 1 file changed, 56 insertions(+), 45 deletions(-)
+   # python3 ./ovs-dpctl.py add-dp flbr
+   # python3 ./ovs-dpctl.py add-flow flbr \
+     "in_port(0),eth(),eth_type(0x806),arp()" \
+     $(echo 'print("clone(),"*4089)' | python3)
 
-diff --git a/drivers/iio/light/al3320a.c b/drivers/iio/light/al3320a.c
-index d34a91fdafa0affad4665d995e1f66d2aaa0373b..208b4f212f3543557e99342630c92f5e6bdaf05d 100644
---- a/drivers/iio/light/al3320a.c
-+++ b/drivers/iio/light/al3320a.c
-@@ -15,6 +15,7 @@
- #include <linux/bitfield.h>
- #include <linux/i2c.h>
- #include <linux/module.h>
-+#include <linux/regmap.h>
- #include <linux/mod_devicetable.h>
- 
- #include <linux/iio/iio.h>
-@@ -59,8 +60,14 @@ static const int al3320a_scales[][2] = {
- 	{0, 512000}, {0, 128000}, {0, 32000}, {0, 10000}
- };
- 
-+static const struct regmap_config al3320a_regmap_config = {
-+	.reg_bits = 8,
-+	.val_bits = 8,
-+	.max_register = AL3320A_REG_HIGH_THRESH_HIGH,
-+};
-+
- struct al3320a_data {
--	struct i2c_client *client;
-+	struct regmap *regmap;
- };
- 
- static const struct iio_chan_spec al3320a_channels[] = {
-@@ -82,45 +89,42 @@ static const struct attribute_group al3320a_attribute_group = {
- 	.attrs = al3320a_attributes,
- };
- 
--static int al3320a_set_pwr(struct i2c_client *client, bool pwr)
-+static int al3320a_set_pwr_on(struct al3320a_data *data)
- {
--	u8 val = pwr ? AL3320A_CONFIG_ENABLE : AL3320A_CONFIG_DISABLE;
--	return i2c_smbus_write_byte_data(client, AL3320A_REG_CONFIG, val);
-+	return regmap_write(data->regmap, AL3320A_REG_CONFIG, AL3320A_CONFIG_ENABLE);
- }
- 
- static void al3320a_set_pwr_off(void *_data)
- {
- 	struct al3320a_data *data = _data;
-+	struct device *dev = regmap_get_device(data->regmap);
-+	int ret;
- 
--	al3320a_set_pwr(data->client, false);
-+	ret = regmap_write(data->regmap, AL3320A_REG_CONFIG, AL3320A_CONFIG_DISABLE);
-+	if (ret)
-+		dev_err(dev, "failed to write system register\n");
- }
- 
- static int al3320a_init(struct al3320a_data *data)
- {
- 	int ret;
- 
--	ret = al3320a_set_pwr(data->client, true);
--
--	if (ret < 0)
-+	ret = al3320a_set_pwr_on(data);
-+	if (ret)
- 		return ret;
- 
--	ret = i2c_smbus_write_byte_data(data->client, AL3320A_REG_CONFIG_RANGE,
--					FIELD_PREP(AL3320A_GAIN_MASK,
--						   AL3320A_RANGE_3));
--	if (ret < 0)
--		return ret;
--
--	ret = i2c_smbus_write_byte_data(data->client, AL3320A_REG_MEAN_TIME,
--					AL3320A_DEFAULT_MEAN_TIME);
--	if (ret < 0)
-+	ret = regmap_write(data->regmap, AL3320A_REG_CONFIG_RANGE,
-+			   FIELD_PREP(AL3320A_GAIN_MASK, AL3320A_RANGE_3));
-+	if (ret)
- 		return ret;
- 
--	ret = i2c_smbus_write_byte_data(data->client, AL3320A_REG_WAIT,
--					AL3320A_DEFAULT_WAIT_TIME);
--	if (ret < 0)
-+	ret = regmap_write(data->regmap, AL3320A_REG_MEAN_TIME,
-+			   AL3320A_DEFAULT_MEAN_TIME);
-+	if (ret)
- 		return ret;
- 
--	return 0;
-+	return regmap_write(data->regmap, AL3320A_REG_WAIT,
-+			    AL3320A_DEFAULT_WAIT_TIME);
- }
- 
- static int al3320a_read_raw(struct iio_dev *indio_dev,
-@@ -128,7 +132,7 @@ static int al3320a_read_raw(struct iio_dev *indio_dev,
- 			    int *val2, long mask)
- {
- 	struct al3320a_data *data = iio_priv(indio_dev);
--	int ret;
-+	int ret, value;
- 
- 	switch (mask) {
- 	case IIO_CHAN_INFO_RAW:
-@@ -137,21 +141,21 @@ static int al3320a_read_raw(struct iio_dev *indio_dev,
- 		 * - low byte of output is stored at AL3320A_REG_DATA_LOW
- 		 * - high byte of output is stored at AL3320A_REG_DATA_LOW + 1
- 		 */
--		ret = i2c_smbus_read_word_data(data->client,
--					       AL3320A_REG_DATA_LOW);
--		if (ret < 0)
-+		ret = regmap_read(data->regmap, AL3320A_REG_DATA_LOW, &value);
-+		if (ret)
- 			return ret;
--		*val = ret;
-+
-+		*val = value;
-+
- 		return IIO_VAL_INT;
- 	case IIO_CHAN_INFO_SCALE:
--		ret = i2c_smbus_read_byte_data(data->client,
--					       AL3320A_REG_CONFIG_RANGE);
--		if (ret < 0)
-+		ret = regmap_read(data->regmap, AL3320A_REG_CONFIG_RANGE, &value);
-+		if (ret)
- 			return ret;
- 
--		ret = FIELD_GET(AL3320A_GAIN_MASK, ret);
--		*val = al3320a_scales[ret][0];
--		*val2 = al3320a_scales[ret][1];
-+		value = FIELD_GET(AL3320A_GAIN_MASK, value);
-+		*val = al3320a_scales[value][0];
-+		*val2 = al3320a_scales[value][1];
- 
- 		return IIO_VAL_INT_PLUS_MICRO;
- 	}
-@@ -163,7 +167,7 @@ static int al3320a_write_raw(struct iio_dev *indio_dev,
- 			     int val2, long mask)
- {
- 	struct al3320a_data *data = iio_priv(indio_dev);
--	int i;
-+	unsigned int i;
- 
- 	switch (mask) {
- 	case IIO_CHAN_INFO_SCALE:
-@@ -172,9 +176,8 @@ static int al3320a_write_raw(struct iio_dev *indio_dev,
- 			    val2 != al3320a_scales[i][1])
- 				continue;
- 
--			return i2c_smbus_write_byte_data(data->client,
--					AL3320A_REG_CONFIG_RANGE,
--					FIELD_PREP(AL3320A_GAIN_MASK, i));
-+			return regmap_write(data->regmap, AL3320A_REG_CONFIG_RANGE,
-+					    FIELD_PREP(AL3320A_GAIN_MASK, i));
- 		}
- 		break;
- 	}
-@@ -190,16 +193,21 @@ static const struct iio_info al3320a_info = {
- static int al3320a_probe(struct i2c_client *client)
- {
- 	struct al3320a_data *data;
-+	struct device *dev = &client->dev;
- 	struct iio_dev *indio_dev;
- 	int ret;
- 
--	indio_dev = devm_iio_device_alloc(&client->dev, sizeof(*data));
-+	indio_dev = devm_iio_device_alloc(dev, sizeof(*data));
- 	if (!indio_dev)
- 		return -ENOMEM;
- 
- 	data = iio_priv(indio_dev);
- 	i2c_set_clientdata(client, indio_dev);
--	data->client = client;
-+
-+	data->regmap = devm_regmap_init_i2c(client, &al3320a_regmap_config);
-+	if (IS_ERR(data->regmap))
-+		return dev_err_probe(dev, PTR_ERR(data->regmap),
-+				     "cannot allocate regmap\n");
- 
- 	indio_dev->info = &al3320a_info;
- 	indio_dev->name = AL3320A_DRV_NAME;
-@@ -209,27 +217,30 @@ static int al3320a_probe(struct i2c_client *client)
- 
- 	ret = al3320a_init(data);
- 	if (ret < 0) {
--		dev_err(&client->dev, "al3320a chip init failed\n");
-+		dev_err(dev, "failed to init ALS\n");
- 		return ret;
- 	}
- 
--	ret = devm_add_action_or_reset(&client->dev,
--					al3320a_set_pwr_off,
--					data);
-+	ret = devm_add_action_or_reset(dev, al3320a_set_pwr_off, data);
- 	if (ret < 0)
- 		return ret;
- 
--	return devm_iio_device_register(&client->dev, indio_dev);
-+	return devm_iio_device_register(dev, indio_dev);
- }
- 
- static int al3320a_suspend(struct device *dev)
- {
--	return al3320a_set_pwr(to_i2c_client(dev), false);
-+	struct al3320a_data *data = iio_priv(dev_get_drvdata(dev));
-+
-+	al3320a_set_pwr_off(data);
-+	return 0;
- }
- 
- static int al3320a_resume(struct device *dev)
- {
--	return al3320a_set_pwr(to_i2c_client(dev), true);
-+	struct al3320a_data *data = iio_priv(dev_get_drvdata(dev));
-+
-+	return al3320a_set_pwr_on(data);
- }
- 
- static DEFINE_SIMPLE_DEV_PM_OPS(al3320a_pm_ops, al3320a_suspend,
+I think a limit test is probably a good thing to have anyway (although
+after this commit we will rely on netlink limits).
 
--- 
-2.47.2
 
+Reviewed-by: Aaron Conole <aconole@redhat.com>
 
 
