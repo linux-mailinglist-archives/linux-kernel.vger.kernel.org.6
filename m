@@ -1,228 +1,96 @@
-Return-Path: <linux-kernel+bounces-552648-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-552649-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 77143A57C49
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 18:19:55 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 05D89A57C4E
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 18:23:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B9BF7188BB3E
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 17:20:02 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 040A87A3F51
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 17:22:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37B161C6FF1;
-	Sat,  8 Mar 2025 17:19:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0679B1E832B;
+	Sat,  8 Mar 2025 17:23:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MrnmAze8"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aiJIW/mJ"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 662591537A7;
-	Sat,  8 Mar 2025 17:19:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C1E21537A7;
+	Sat,  8 Mar 2025 17:23:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741454385; cv=none; b=RUsbfMO0jUNIjyo3GibA1gAZE/XtshG4KsUT2g+8O5B8ehDo8cQDijbsDtXW+psJlUIzWcqxoempw/LcActR85Erc6hX20ZGhDsALQLLMQtjjaJZmLpcHs14YShwPirbKVklnRuZzEMA7hPbMXEOnsNTLFYH8NFKvH/ZZCYIbaM=
+	t=1741454604; cv=none; b=ebhzhtWITTziDGbG/D1fWKqwHlpqq6Et8U6v4vvZ3TMgbwS/XcClRXzzjfoZGO7Ejia5qAmANfcfd3k6FMa0AgJl7kri/5x8JPz20S3yNHzTTdPXGISvT0j9zDuz1Jyvt00MO0LjCF84N5WLpftl0jT7Hm/TIaxL5tLEN45Hdeo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741454385; c=relaxed/simple;
-	bh=WIXPEAfYW6XziCXxNrSUx8MTO0qn8BfggsX4aIVdclE=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=SLMK4igxRIUTpG3f23+eLJHL0K6KEuyGDMIOV7z8v87i6Tgvj+uJDHvdSVa+tehq9kRZm+pL3gqEIC3rfeol8TcZ3f7cHPckzT1Ajg3Cfrx4NElO3Zx4Sye4h95hJEkafvv8qbyUcoP+hX7G2chs2jcwLiUQ4EHqLwF3Y53OSQA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MrnmAze8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 392D4C4CEE0;
-	Sat,  8 Mar 2025 17:19:37 +0000 (UTC)
+	s=arc-20240116; t=1741454604; c=relaxed/simple;
+	bh=DlQgq+nTfYXehSgy8StfVyl+ry6xsjxTIGAX43yqTC4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OHIBkEwdzWEar77gr2A0X2Rku3oAfrUePYJQmAYWrXsubhpIpWESdQP0VBwoW2/yFQ6oN/ZVhWTAg+pYhly2SdHHpOrRnKpS+aawMicnGpqKr2WdTAix3M9q4U5pLmM9dXVXM294AolmPfTeR51JA0vkrRHUKD8s8d0OBBtuOq0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aiJIW/mJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 88377C4CEE0;
+	Sat,  8 Mar 2025 17:23:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741454384;
-	bh=WIXPEAfYW6XziCXxNrSUx8MTO0qn8BfggsX4aIVdclE=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=MrnmAze88WmBN/BzwaskCEYUl/E7BBXL4zio3IYdhby50e3KiZaPauGIURpacE/Dw
-	 UBb+o9RKvUtD8FZcx+9DBz69KbwMmZvn2ADR3VrAbBy/2I1GDssGYJO/4K4wzG8GHO
-	 ZNbnsL1ebkV6GXU+0h1iUkYgnp4fYYw0r6cpHTSamn2fJL7YrK3H+DbBSVhBrHd79z
-	 4+8kH/U1hj2tQWYIYiWfT6rJ+xAVemaQUqHdmxSzu99yAMjBKruAuTJ6pwXAwXukK4
-	 3H6s/bCklWlVZPO+/buxuUFR+Kh2tQE6JcuTP6m2tyv9PI3eg6FIP25uHYQWvuJQmp
-	 EmH1Nmlv0ciDg==
-Date: Sat, 8 Mar 2025 17:19:32 +0000
-From: Jonathan Cameron <jic23@kernel.org>
-To: Svyatoslav Ryhel <clamor95@gmail.com>
-Cc: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof
- Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
- Lars-Peter Clausen <lars@metafoo.de>, Pavel Machek <pavel@ucw.cz>, Daniel
- Thompson <danielt@kernel.org>, Jingoo Han <jingoohan1@gmail.com>, Helge
- Deller <deller@gmx.de>, Andy Shevchenko
- <andriy.shevchenko@linux.intel.com>, Uwe =?UTF-8?B?S2xlaW5lLUvDtm5pZw==?=
- <u.kleine-koenig@baylibre.com>, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org,
- linux-leds@vger.kernel.org, dri-devel@lists.freedesktop.org,
- linux-fbdev@vger.kernel.org
-Subject: Re: [PATCH v3 2/2] mfd: lm3533: convert to use OF
-Message-ID: <20250308171932.2a5f0a9b@jic23-huawei>
-In-Reply-To: <CAPVz0n3Qt00my1ejoyEgxTRi-mQszHybwhPq70eO=94oxMfECQ@mail.gmail.com>
-References: <20250224114815.146053-1-clamor95@gmail.com>
-	<20250224114815.146053-3-clamor95@gmail.com>
-	<20250228085927.GM824852@google.com>
-	<CAPVz0n0jaR=UM7WbBs3zM-cZzuaPVWBjf4Q7i82hvxtXg2oCzQ@mail.gmail.com>
-	<20250305134455.2843f603@jic23-huawei>
-	<CAPVz0n3Qt00my1ejoyEgxTRi-mQszHybwhPq70eO=94oxMfECQ@mail.gmail.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.48; x86_64-pc-linux-gnu)
+	s=k20201202; t=1741454603;
+	bh=DlQgq+nTfYXehSgy8StfVyl+ry6xsjxTIGAX43yqTC4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=aiJIW/mJwLF5MpzsSmVgsP0Wj3Q7Qiika82FBziDrgURGrJDS8+yCf87I/dLVmFU2
+	 IkR8MpN3500LXKWSbtLPb62jPGkPnsf+9wHGyXtLpzv6e9lYuetUDISBxBsPkvHnKW
+	 4TFPQgSrld+8Gr8Rkva6Mwa6PfyVhsMNtevm0c+cRta0X40tuFBn7UdgHZJ8mEAced
+	 j8MtkwNiYKlHDwGpKeUPLlUa6Qa6n3myI5eUalzF82s33LKzowhfMRIokG05qMKaxJ
+	 ud9PxlVLZXGYtMJLiwsLlqk4jT6DqGmS9y+Wzz7eWoXC8RpT0DRNJsjN9i86jOmgp/
+	 dZo+gmdi7SncA==
+Date: Sat, 8 Mar 2025 09:23:20 -0800
+From: Kees Cook <kees@kernel.org>
+To: Nathan Chancellor <nathan@kernel.org>
+Cc: Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
+	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>,
+	Nick Desaulniers <ndesaulniers@google.com>,
+	Bill Wendling <morbo@google.com>,
+	Justin Stitt <justinstitt@google.com>, linux-kernel@vger.kernel.org,
+	linux-hardening@vger.kernel.org,
+	linux-security-module@vger.kernel.org, llvm@lists.linux.dev
+Subject: Re: [PATCH v2 1/2] x86/build: Remove -ffreestanding on i386 with GCC
+Message-ID: <202503080922.AB2CF7C9@keescook>
+References: <20250308041950.it.402-kees@kernel.org>
+ <20250308042929.1753543-1-kees@kernel.org>
+ <20250308091746.GA707537@ax162>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250308091746.GA707537@ax162>
 
-On Wed, 5 Mar 2025 16:18:38 +0200
-Svyatoslav Ryhel <clamor95@gmail.com> wrote:
+On Sat, Mar 08, 2025 at 10:17:46AM +0100, Nathan Chancellor wrote:
+> On Fri, Mar 07, 2025 at 08:29:25PM -0800, Kees Cook wrote:
+> > The use of -ffreestanding is a leftover that is only needed for certain
+> > versions of Clang. Adjust this to be Clang-only. A later patch will make
+> > this a versioned check.
+> > 
+> > Signed-off-by: Kees Cook <kees@kernel.org>
+> 
+> This could also adjust the comment but it is probably not that big of a
+> deal since the "temporary" is already pretty stale.
 
-> =D1=81=D1=80, 5 =D0=B1=D0=B5=D1=80. 2025=E2=80=AF=D1=80. =D0=BE 15:45 Jon=
-athan Cameron <jic23@kernel.org> =D0=BF=D0=B8=D1=88=D0=B5:
-> >
-> > On Fri, 28 Feb 2025 11:30:51 +0200
-> > Svyatoslav Ryhel <clamor95@gmail.com> wrote:
-> > =20
-> > > =D0=BF=D1=82, 28 =D0=BB=D1=8E=D1=82. 2025=E2=80=AF=D1=80. =D0=BE 10:5=
-9 Lee Jones <lee@kernel.org> =D0=BF=D0=B8=D1=88=D0=B5: =20
-> > > >
-> > > > On Mon, 24 Feb 2025, Svyatoslav Ryhel wrote:
-> > > > =20
-> > > > > Remove platform data and fully relay on OF and device tree
-> > > > > parsing and binding devices.
-> > > > >
-> > > > > Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
-> > > > > ---
-> > > > >  drivers/iio/light/lm3533-als.c      |  40 ++++---
-> > > > >  drivers/leds/leds-lm3533.c          |  46 +++++---
-> > > > >  drivers/mfd/lm3533-core.c           | 159 ++++++++--------------=
-------
-> > > > >  drivers/video/backlight/lm3533_bl.c |  71 ++++++++++---
-> > > > >  include/linux/mfd/lm3533.h          |  35 +-----
-> > > > >  5 files changed, 164 insertions(+), 187 deletions(-)
-> > > > > =20
-> ...
-> > > > >       /* ALS input is always high impedance in PWM-mode. */
-> > > > > -     if (!pdata->pwm_mode) {
-> > > > > -             ret =3D lm3533_als_set_resistor(als, pdata->r_selec=
-t);
-> > > > > +     if (!als->pwm_mode) {
-> > > > > +             ret =3D lm3533_als_set_resistor(als, als->r_select)=
-; =20
-> > > >
-> > > > You're already passing 'als'.
-> > > >
-> > > > Just teach lm3533_als_set_resistor that 'r_select' is now contained.
-> > > > =20
-> > >
-> > > This is not scope of this patchset. I was already accused in too much
-> > > changes which make it unreadable. This patchset is dedicated to
-> > > swapping platform data to use of the device tree. NOT improving
-> > > functions, NOT rewriting arbitrary mechanics. If you feed a need for
-> > > this change, then propose a followup. I need from this driver only one
-> > > thing, that it could work with device tree. But it seems that it is
-> > > better that it just rots in the garbage bin until removed cause no one
-> > > cared. =20
-> >
-> > This is not an unreasonable request as you added r_select to als.
-> > Perhaps it belongs in a separate follow up patch. =20
->=20
-> I have just moved values used in pdata to private structs of each
-> driver. Without changing names or purpose.
->=20
-> > However
-> > it is worth remembering the motivation here is that you want get
-> > this code upstream, the maintainers don't have that motivation. =20
->=20
-> This driver is already upstream and it is useless and incompatible
-> with majority of supported devices. Maintainers should encourage those
-> who try to help and instead we have what? A total discouragement. Well
-> defined path into nowhere.
+Ah yeah, good call. I'll fix that up locally.
 
-That is not how I read the situation. A simple request was made to
-result in more maintainable code as a direct result of that
-improvement being enabled by code changes you were making.
-I'm sorry to hear that discouraged you.
+> 
+> Reviewed-by: Nathan Chancellor <nathan@kernel.org>
 
->=20
-> >
-> > Greg KH has given various talks on the different motivations in the
-> > past. It maybe worth a watch.
-> >
-> > =20
-> > > =20
-> > > > >               if (ret)
-> > > > >                       return ret;
-> > > > >       }
-> > > > > @@ -828,22 +833,16 @@ static const struct iio_info lm3533_als_inf=
-o =3D {
-> > > > >
-> > > > >  static int lm3533_als_probe(struct platform_device *pdev)
-> > > > >  {
-> > > > > -     const struct lm3533_als_platform_data *pdata;
-> > > > >       struct lm3533 *lm3533;
-> > > > >       struct lm3533_als *als;
-> > > > >       struct iio_dev *indio_dev;
-> > > > > +     u32 val; =20
-> > > >
-> > > > Value of what, potatoes?
-> > > > =20
-> > >
-> > > Oranges. =20
-> >
-> > A well named variable would avoid need for any discussion of
-> > what it is the value of.
-> > =20
->=20
-> This is temporary placeholder used to get values from the tree and
-> then pass it driver struct.
+Thanks!
 
-Better if it is a temporary placeholder with a meaningful name.
+-Kees
 
->=20
-> > > =20
-> > > > >       int ret;
-> > > > >
-> > > > >       lm3533 =3D dev_get_drvdata(pdev->dev.parent);
-> > > > >       if (!lm3533)
-> > > > >               return -EINVAL;
-> > > > >
-> > > > > -     pdata =3D dev_get_platdata(&pdev->dev);
-> > > > > -     if (!pdata) {
-> > > > > -             dev_err(&pdev->dev, "no platform data\n");
-> > > > > -             return -EINVAL;
-> > > > > -     }
-> > > > > -
-> > > > >       indio_dev =3D devm_iio_device_alloc(&pdev->dev, sizeof(*als=
-));
-> > > > >       if (!indio_dev)
-> > > > >               return -ENOMEM;
-> > > > > @@ -864,13 +863,21 @@ static int lm3533_als_probe(struct platform=
-_device *pdev)
-> > > > >
-> > > > >       platform_set_drvdata(pdev, indio_dev);
-> > > > >
-> > > > > +     val =3D 200 * KILO; /* 200kOhm */ =20
-> > > >
-> > > > Better to #define magic numbers; DEFAULT_{DESCRIPTION}_OHMS
-> > > > =20
-> > >
-> > > Why? that is not needed. =20
-> > If this variable had a more useful name there would be no need for
-> > the comment either.
-> >
-> >         val_resitor_ohms =3D 200 * KILLO;
-> >
-> > or similar.
-> > =20
->=20
-> So I have to add a "reasonably" named variable for each property I
-> want to get from device tree? Why? It seems to be a bit of overkill,
-> no? Maybe I am not aware, have variables stopped being reusable?
-
-Lets go with yes if you want a definitive answer. In reality it's
-a question of how many are needed.  If 10-100s sure reuse is fine,
-if just a few sensible naming can remove the need for comments
-and improve readability.
-
-Jonathan
-
+-- 
+Kees Cook
 
