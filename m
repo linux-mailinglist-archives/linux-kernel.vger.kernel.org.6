@@ -1,113 +1,97 @@
-Return-Path: <linux-kernel+bounces-552639-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-552640-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C795A57C27
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 17:52:32 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F8CBA57C29
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 17:52:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A74A51892B5A
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 16:52:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8D10E7A3BF9
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 16:51:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D16271E832B;
-	Sat,  8 Mar 2025 16:49:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED6481E8340;
+	Sat,  8 Mar 2025 16:50:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=posteo.net header.i=@posteo.net header.b="DamSJZ8a"
-Received: from mout01.posteo.de (mout01.posteo.de [185.67.36.65])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="fSueElyy"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 347181E5721
-	for <linux-kernel@vger.kernel.org>; Sat,  8 Mar 2025 16:49:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.67.36.65
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B493D1E8344;
+	Sat,  8 Mar 2025 16:50:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741452572; cv=none; b=kNN+sJ/h8UR6jDAV823hHd70lIW3jg43EtVgCZsX8X5go1N3tMEVzp1ffl3FZK6v9WXvrE6MbUttDDaQU3VHtUG/QYsr/3We81rxBY9C3bPM4fLqmA7H+7rkIYWXLV712U5sPfOPYJ5n1IXoxcclGUZWi6W6NIw/j/wc2wu1ow4=
+	t=1741452607; cv=none; b=DJmLLL6E8GipaDojlBSD2Cbb7Abj+ylwCUxzfORj1hZi2YzgCnTq0JtrLdAUGm9gxcrf3fFIgVvRQ9BniqMAwb4MYIxu2PTdJwabh8EukcUO7fbyvxj0hQIy+Job65Zk0co+P0JDtMnyq2tBxgTd+a09mOA8+WAt+z6llPqMZi0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741452572; c=relaxed/simple;
-	bh=NMBRHjyiUf4fqRzIW1+eJkuyhDfwTkf1Nmf3eaTS+us=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=J2QGQ02O44TwchZGS4ALRC1NlWhyv0yxbi1CAvlL+1gZbuL4A4otCWpFi3HNLsPI00DelxVJcrOrZOjEVD0Uwpj0NVXtG8UTW3z9BPKsYoUmj4uheJzzpHdL1jULCdeUGWUDGEGdNkYtRwwT/dnhotlsBR3/Wq0YUBgK1kiBXVo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=posteo.net; spf=pass smtp.mailfrom=posteo.net; dkim=pass (2048-bit key) header.d=posteo.net header.i=@posteo.net header.b=DamSJZ8a; arc=none smtp.client-ip=185.67.36.65
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=posteo.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=posteo.net
-Received: from submission (posteo.de [185.67.36.169]) 
-	by mout01.posteo.de (Postfix) with ESMTPS id 3330E240027
-	for <linux-kernel@vger.kernel.org>; Sat,  8 Mar 2025 17:49:28 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=posteo.net; s=2017;
-	t=1741452568; bh=NMBRHjyiUf4fqRzIW1+eJkuyhDfwTkf1Nmf3eaTS+us=;
-	h=From:Date:Subject:MIME-Version:Content-Type:
-	 Content-Transfer-Encoding:Message-Id:To:Cc:From;
-	b=DamSJZ8ahaaBF8tvy/5dEWM6mGA3QgyRPRMdeOiA7aqkA6ZJH38zj9L0zNsIq8G8q
-	 Ood1pT80gs6ofSnbZxgTWyDFl/kK8+vVCTq9v1XKu/Gga9aj/vDX6JWHDHkF77M8X3
-	 90nQ8PH0cGKN+TdcC8ILZ4cN79nOP0SfDTySit5J4YV8R1BppfJoTC22FDbWUfkCl5
-	 p+3voL1JNl1AgOrx4MMnPBZ0XnjmQuwNYGkISfux2GpmTNQAu6ivQBaxdsbbw1mj/h
-	 F7tqx4/o5JacWqREONeUjxqSds/c1kTUtPB8lXkK0i+L0A7yspVhKp8OwCDtr7RV+F
-	 qWwicU3iNysZg==
-Received: from customer (localhost [127.0.0.1])
-	by submission (posteo.de) with ESMTPSA id 4Z98JQ3Hy1z9rxF;
-	Sat,  8 Mar 2025 17:49:26 +0100 (CET)
-From: Panagiotis Foliadis <pfoliadis@posteo.net>
-Date: Sat, 08 Mar 2025 16:49:05 +0000
-Subject: [PATCH] rust: task: fix `SAFETY` comment for Task::wake_up
+	s=arc-20240116; t=1741452607; c=relaxed/simple;
+	bh=q5ToWsqwfUJVfGtsOnAxosRif4Zfret3ISIx6DxbI9c=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QyuYGsbwae8TSdpN8u5LUx6k0tyh1LTDevmwuMkOvaOb5uK+x7GKPnaDvDHuSlqV8o2ZkENdHZfv669j2jDYGMifvfK7rkr6+nLaIeL/ITFmLCKUNfxHxT/x7UQsI8j14oIMnf3scvN9zpZTjqQop1MO0dNnAvl2hy/SuiKJfjM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=fSueElyy; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id DF33F40E0202;
+	Sat,  8 Mar 2025 16:49:57 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id S-T5ad5jWdO2; Sat,  8 Mar 2025 16:49:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1741452593; bh=arEv/Pd18rGteBgIYsKtY/Bv9Ca+WV87XA2nz4xo1rQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=fSueElyy9h5oZMBGqN2Lxiizg7wnOEEyoy+4HJlPDL2FGLcyUqnB5gB1xbrsPUwNY
+	 yIG9SWGJ/bqSdPBoa0RC9lKTpMAuGOh9ZSuFxSSX+dyADDtD01WNyKJ64x3eoJiTCd
+	 XzsjkKe+k4Lx2TKSWIhQkdjoA0qXwSUDWqSjUPAqS+UL83dO6Kh7/M05RtK1yLAaMp
+	 Pmch6pUwDtaAKC+vNqqry1THS6agl8vVva6cuGj3mCotK0G/cbBvCQvCRS2Sl8sV4I
+	 TfiAC63FHKodF1uBqb9noIb19nqFgMySGn+j+KTeSUaDWBKYqMQXnIgw+IR0+dFkXu
+	 fyu9IVKDWsQCTE4DT2FDIQxuH3XrjqWqA5dzhEH445lXeod6vCs1rjX/jmIBq7zMZ6
+	 T9hc7HEnTWKA6V2bENsS67VXhdKF0SNUmUMcCcASb/Mu43xp66OY0EnNcxWCWODOGR
+	 wV1dDk7nWE5qnt624uh3PQt0VxodBqPV7dyWstiFmjeY/WD3I7tah7k20VjzxLLL6s
+	 B4v1zFZbs+dWMapQL3LV9uOcG8Y9LWRsUAmrpx7DQEEIxXIYtyPKTLNq7RhpIfPd0V
+	 BJ3XZ3FLqNaOD8jsMhRgucMicT9UNYuJbCsQZIGQ5TbKd7P0BxJYMSCvuKXm+weJIc
+	 mIxQA72ziacCt+0Kx5iG5PVk=
+Received: from zn.tnic (pd95303ce.dip0.t-ipconnect.de [217.83.3.206])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id B7CF440E016E;
+	Sat,  8 Mar 2025 16:49:45 +0000 (UTC)
+Date: Sat, 8 Mar 2025 17:49:44 +0100
+From: Borislav Petkov <bp@alien8.de>
+To: "H. Peter Anvin" <hpa@zytor.com>
+Cc: Masahiro Yamada <masahiroy@kernel.org>,
+	"Xin Li (Intel)" <xin@zytor.com>, linux-kernel@vger.kernel.org,
+	linux-kbuild@vger.kernel.org, nathan@kernel.org, nicolas@fjasle.eu,
+	sraithal@amd.com
+Subject: Re: [PATCH v1 1/1] kbuild: Add "make headers" to "make help" output
+Message-ID: <20250308164944.GGZ8x1KPX1-NfFaF5B@fat_crate.local>
+References: <20250308040451.585561-1-xin@zytor.com>
+ <CAK7LNARHvn4Sy-e4hMmjGt0C7TFaWrGJrLq3YvN0BjehZ8QwSg@mail.gmail.com>
+ <FAE530F5-B657-4C72-8D69-7ABA2D3209A9@zytor.com>
+ <20250308164151.GFZ8xzTwiNd1JVcMHT@fat_crate.local>
+ <DC1CB322-2527-4F6A-8EC4-A76DD35CB564@zytor.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250308-comment-fix-v1-1-4bba709fd36d@posteo.net>
-X-B4-Tracking: v=1; b=H4sIAAB1zGcC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
- vPSU3UzU4B8JSMDI1MDYwML3eT83NzUvBLdtMwKXSPTFAPLtDTD5OQkUyWgjoKiVKAw2LTo2Np
- aAPQ0Tl1dAAAA
-X-Change-ID: 20250308-comment-fix-25d09ff1ccb5
-To: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
- Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
- =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
- Benno Lossin <benno.lossin@proton.me>, 
- Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, 
- Trevor Gross <tmgross@umich.edu>, Christian Brauner <brauner@kernel.org>
-Cc: rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Panagiotis Foliadis <pfoliadis@posteo.net>
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1741452566; l=1255;
- i=pfoliadis@posteo.net; s=20250308; h=from:subject:message-id;
- bh=NMBRHjyiUf4fqRzIW1+eJkuyhDfwTkf1Nmf3eaTS+us=;
- b=8fZQbC42Yqv8+b3HLQN4MZtx/9vCG23pX4ZSUxtpYvpEeGzS1VKZGJU3oKflpnqBElgyKyhvu
- P9mAMgkQzfOD75kqSls1A5wWWtPalhR904r51rADEEdL87PrBb9TBHi
-X-Developer-Key: i=pfoliadis@posteo.net; a=ed25519;
- pk=/8ch2dv3mwtZ5ygYwiG7ldc/132K6XmLkAZDmIe0aQw=
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <DC1CB322-2527-4F6A-8EC4-A76DD35CB564@zytor.com>
 
-The `SAFETY` comment inside the `wake_up` function references
-erroneously the `signal_pending` function instead of the
-`wake_up_process` which is actually called. Fix the comment
-to reference the correct function.
+On Sat, Mar 08, 2025 at 08:47:44AM -0800, H. Peter Anvin wrote:
+> That's not the only one. Point being that users have been using it so it is
+> better to make it official than breaking it.
 
-Fixes: fe95f58320e6 ("rust: task: adjust safety comments in Task methods")
-Signed-off-by: Panagiotis Foliadis <pfoliadis@posteo.net>
----
- rust/kernel/task.rs | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Yap, it ain't internal anymore - that's for sure.
 
-diff --git a/rust/kernel/task.rs b/rust/kernel/task.rs
-index 07bc22a7645c0c7d792a0a163dd55b8ff0fe5f92..38da555a2bdbb71d698c671ad1a7a337e50c6600 100644
---- a/rust/kernel/task.rs
-+++ b/rust/kernel/task.rs
-@@ -320,7 +320,7 @@ pub fn tgid_nr_ns(&self, pidns: Option<&PidNamespace>) -> Pid {
- 
-     /// Wakes up the task.
-     pub fn wake_up(&self) {
--        // SAFETY: It's always safe to call `signal_pending` on a valid task, even if the task
-+        // SAFETY: It's always safe to call `wake_up_process` on a valid task, even if the task
-         // running.
-         unsafe { bindings::wake_up_process(self.as_ptr()) };
-     }
-
----
-base-commit: 2a520073e74fbb956b5564818fc5529dcc7e9f0e
-change-id: 20250308-comment-fix-25d09ff1ccb5
-
-Best regards,
 -- 
-Panagiotis Foliadis <pfoliadis@posteo.net>
+Regards/Gruss,
+    Boris.
 
+https://people.kernel.org/tglx/notes-about-netiquette
 
