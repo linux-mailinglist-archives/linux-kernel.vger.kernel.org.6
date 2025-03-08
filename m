@@ -1,97 +1,129 @@
-Return-Path: <linux-kernel+bounces-552640-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-552641-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F8CBA57C29
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 17:52:54 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D2EB5A57C2B
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 17:53:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8D10E7A3BF9
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 16:51:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 15A6616E556
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 16:52:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED6481E8340;
-	Sat,  8 Mar 2025 16:50:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACF721EB5C0;
+	Sat,  8 Mar 2025 16:50:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="fSueElyy"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iXg6Ifae"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B493D1E8344;
-	Sat,  8 Mar 2025 16:50:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FDBE1E8359;
+	Sat,  8 Mar 2025 16:50:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741452607; cv=none; b=DJmLLL6E8GipaDojlBSD2Cbb7Abj+ylwCUxzfORj1hZi2YzgCnTq0JtrLdAUGm9gxcrf3fFIgVvRQ9BniqMAwb4MYIxu2PTdJwabh8EukcUO7fbyvxj0hQIy+Job65Zk0co+P0JDtMnyq2tBxgTd+a09mOA8+WAt+z6llPqMZi0=
+	t=1741452657; cv=none; b=lWBLIhJUcUgP1y3tNwnduEgZx66f/nc3SeC+T9TIra1OxR5CaH1YedVOvnY3J3bmf7SpOIa4rGG+Bl4421As0mObMlCBPZPsq6fN5505XvDdjdSrUmX8qC684PRkAKdIVlU5GJ065UPPtr4AZ9nRCok++fgRALO7lpBuIYLAdNw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741452607; c=relaxed/simple;
-	bh=q5ToWsqwfUJVfGtsOnAxosRif4Zfret3ISIx6DxbI9c=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QyuYGsbwae8TSdpN8u5LUx6k0tyh1LTDevmwuMkOvaOb5uK+x7GKPnaDvDHuSlqV8o2ZkENdHZfv669j2jDYGMifvfK7rkr6+nLaIeL/ITFmLCKUNfxHxT/x7UQsI8j14oIMnf3scvN9zpZTjqQop1MO0dNnAvl2hy/SuiKJfjM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=fSueElyy; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id DF33F40E0202;
-	Sat,  8 Mar 2025 16:49:57 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id S-T5ad5jWdO2; Sat,  8 Mar 2025 16:49:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1741452593; bh=arEv/Pd18rGteBgIYsKtY/Bv9Ca+WV87XA2nz4xo1rQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=fSueElyy9h5oZMBGqN2Lxiizg7wnOEEyoy+4HJlPDL2FGLcyUqnB5gB1xbrsPUwNY
-	 yIG9SWGJ/bqSdPBoa0RC9lKTpMAuGOh9ZSuFxSSX+dyADDtD01WNyKJ64x3eoJiTCd
-	 XzsjkKe+k4Lx2TKSWIhQkdjoA0qXwSUDWqSjUPAqS+UL83dO6Kh7/M05RtK1yLAaMp
-	 Pmch6pUwDtaAKC+vNqqry1THS6agl8vVva6cuGj3mCotK0G/cbBvCQvCRS2Sl8sV4I
-	 TfiAC63FHKodF1uBqb9noIb19nqFgMySGn+j+KTeSUaDWBKYqMQXnIgw+IR0+dFkXu
-	 fyu9IVKDWsQCTE4DT2FDIQxuH3XrjqWqA5dzhEH445lXeod6vCs1rjX/jmIBq7zMZ6
-	 T9hc7HEnTWKA6V2bENsS67VXhdKF0SNUmUMcCcASb/Mu43xp66OY0EnNcxWCWODOGR
-	 wV1dDk7nWE5qnt624uh3PQt0VxodBqPV7dyWstiFmjeY/WD3I7tah7k20VjzxLLL6s
-	 B4v1zFZbs+dWMapQL3LV9uOcG8Y9LWRsUAmrpx7DQEEIxXIYtyPKTLNq7RhpIfPd0V
-	 BJ3XZ3FLqNaOD8jsMhRgucMicT9UNYuJbCsQZIGQ5TbKd7P0BxJYMSCvuKXm+weJIc
-	 mIxQA72ziacCt+0Kx5iG5PVk=
-Received: from zn.tnic (pd95303ce.dip0.t-ipconnect.de [217.83.3.206])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id B7CF440E016E;
-	Sat,  8 Mar 2025 16:49:45 +0000 (UTC)
-Date: Sat, 8 Mar 2025 17:49:44 +0100
-From: Borislav Petkov <bp@alien8.de>
-To: "H. Peter Anvin" <hpa@zytor.com>
-Cc: Masahiro Yamada <masahiroy@kernel.org>,
-	"Xin Li (Intel)" <xin@zytor.com>, linux-kernel@vger.kernel.org,
-	linux-kbuild@vger.kernel.org, nathan@kernel.org, nicolas@fjasle.eu,
-	sraithal@amd.com
-Subject: Re: [PATCH v1 1/1] kbuild: Add "make headers" to "make help" output
-Message-ID: <20250308164944.GGZ8x1KPX1-NfFaF5B@fat_crate.local>
-References: <20250308040451.585561-1-xin@zytor.com>
- <CAK7LNARHvn4Sy-e4hMmjGt0C7TFaWrGJrLq3YvN0BjehZ8QwSg@mail.gmail.com>
- <FAE530F5-B657-4C72-8D69-7ABA2D3209A9@zytor.com>
- <20250308164151.GFZ8xzTwiNd1JVcMHT@fat_crate.local>
- <DC1CB322-2527-4F6A-8EC4-A76DD35CB564@zytor.com>
+	s=arc-20240116; t=1741452657; c=relaxed/simple;
+	bh=zukLuVZquSpBt41C2EFKFn86YAE7G8TH2t/2Y3RItps=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=gEi7/JKS81jKsjhiQwtQfA3v6WqoGFBmcsq4aCZM22LExIknJFOC9w8FqyQqFUkY/XDbHsCtFj/RJ3oqn66TexmULmPRDsfCrO20Hb5g7tPv1Dw2bQxfCb1AqmtKW4F7L4B3Lz0RXulDYportFCCtSc4p3okf4pi6o5Ybtdt1W4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iXg6Ifae; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E33D9C4CEE0;
+	Sat,  8 Mar 2025 16:50:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741452656;
+	bh=zukLuVZquSpBt41C2EFKFn86YAE7G8TH2t/2Y3RItps=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=iXg6IfaewLz89ab7WY7g6PaicLru+znqMziV7Egb7krkpv0fJwEsgMvtExibQW7hN
+	 6huU3GeJUFEqflDdWStDU59BR9spfZR6fQauzepLYFC4mLenvsmdElLuueDiiPdQI0
+	 LmAEhiiKETjCRPs+mUUeo/lWJX6bzJI6SN9WgdgWdAs45IAhnHcixV5srxHdjTUGe0
+	 JPsfClvfokmR0fbE8oVdUSako6znToz/OZCtPYb5UWtS8neEogl9gK9tZ6NbgkIYnu
+	 BEzVdZSzR6D3Ud4++EkPFc3UUm+t5KW6CmlkAhxOYHO0LrSI1+BdEsKVHDTCvnawuJ
+	 NokxTMD1AiOyg==
+Date: Sat, 8 Mar 2025 16:50:48 +0000
+From: Jonathan Cameron <jic23@kernel.org>
+To: Karan Sanghavi <karansanghvi98@gmail.com>
+Cc: Javier Carrasco <javier.carrasco.cruz@gmail.com>, Lars-Peter Clausen
+ <lars@metafoo.de>, linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Shuah Khan <skhan@linuxfoundation.org>
+Subject: Re: [PATCH v3] iio: light: Add check for array bounds in
+ veml6075_read_int_time_ms
+Message-ID: <20250308165048.408d31ad@jic23-huawei>
+In-Reply-To: <20250222164519.45c48a52@jic23-huawei>
+References: <Z7dnrEpKQdRZ2qFU@Emma>
+	<20250222164337.0372fb58@jic23-huawei>
+	<20250222164519.45c48a52@jic23-huawei>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.48; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <DC1CB322-2527-4F6A-8EC4-A76DD35CB564@zytor.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Sat, Mar 08, 2025 at 08:47:44AM -0800, H. Peter Anvin wrote:
-> That's not the only one. Point being that users have been using it so it is
-> better to make it official than breaking it.
+On Sat, 22 Feb 2025 16:45:19 +0000
+Jonathan Cameron <jic23@kernel.org> wrote:
 
-Yap, it ain't internal anymore - that's for sure.
+> On Sat, 22 Feb 2025 16:43:37 +0000
+> Jonathan Cameron <jic23@kernel.org> wrote:
+> 
+> > On Thu, 20 Feb 2025 17:34:36 +0000
+> > Karan Sanghavi <karansanghvi98@gmail.com> wrote:
+> >   
+> > > The array contains only 5 elements, but the index calculated by
+> > > veml6075_read_int_time_index can range from 0 to 7,
+> > > which could lead to out-of-bounds access. The check prevents this issue.
+> > > 
+> > > Coverity Issue
+> > > CID 1574309: (#1 of 1): Out-of-bounds read (OVERRUN)
+> > > overrun-local: Overrunning array veml6075_it_ms of 5 4-byte
+> > > elements at element index 7 (byte offset 31) using
+> > > index int_index (which evaluates to 7)
+> > > 
+> > > Fixes: 3b82f43238ae ("iio: light: add VEML6075 UVA and UVB light sensor driver")
+> > > Signed-off-by: Karan Sanghavi <karansanghvi98@gmail.com>
+> > > ---    
+> > Superficially this looks hardening against malicious or broken hardware.
+> > That is fine to add, but not worth backporting or (in my opinion) adding a fixes
+> > tag.  
+> Ah I see Javier asked for the fixes tag.  Ok.  Maybe just add a note that
+> the hardware is not expected to return such an out of bounds value.
+> 
+> That will help me to remember we don't need to rush this one upstream!
+I guess you don't have time so I made the changes requested and applied.
+(mostly so I can stop tracking the status!)
 
--- 
-Regards/Gruss,
-    Boris.
+Jonathan
 
-https://people.kernel.org/tglx/notes-about-netiquette
+> 
+> Jonathan
+> 
+> >   
+> > >  drivers/iio/light/veml6075.c | 7 ++++++-
+> > >  1 file changed, 6 insertions(+), 1 deletion(-)
+> > > 
+> > > diff --git a/drivers/iio/light/veml6075.c b/drivers/iio/light/veml6075.c
+> > > index 05d4c0e9015d..5dd951f6e989 100644
+> > > --- a/drivers/iio/light/veml6075.c
+> > > +++ b/drivers/iio/light/veml6075.c
+> > > @@ -201,7 +201,12 @@ static int veml6075_read_int_time_index(struct veml6075_data *data)
+> > >  	if (ret < 0)
+> > >  		return ret;
+> > >  
+> > > -	return FIELD_GET(VEML6075_CONF_IT, conf);
+> > > +	int int_index = FIELD_GET(VEML6075_CONF_IT, conf);
+> > > +
+> > > +	if (int_index >= ARRAY_SIZE(veml6075_it_ms))
+> > > +		return -EINVAL;
+> > > +
+> > > +	return int_index;
+> > >  }
+> > >  
+> > >  static int veml6075_read_int_time_ms(struct veml6075_data *data, int *val)    
+> >   
+> 
+> 
+
 
