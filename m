@@ -1,136 +1,141 @@
-Return-Path: <linux-kernel+bounces-552717-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-552718-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 74603A57D4F
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 19:44:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 61D88A57D51
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 19:44:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 309953B4514
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 18:43:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0ADDA3B4CC6
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 18:43:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C7DC2066F9;
-	Sat,  8 Mar 2025 18:40:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E753D20D50D;
+	Sat,  8 Mar 2025 18:40:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="FRYzsWPb"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="hENOQpfP"
+Received: from smtp-bc0e.mail.infomaniak.ch (smtp-bc0e.mail.infomaniak.ch [45.157.188.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 884EE1EB5C5;
-	Sat,  8 Mar 2025 18:40:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D0381C5F0A
+	for <linux-kernel@vger.kernel.org>; Sat,  8 Mar 2025 18:40:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.157.188.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741459207; cv=none; b=XqrSFBsVqvQ9zaK09kK3J03BDZU54nl5sC+8yAZquH2TpQOchsXbo0PjoAivLbg/E8+TbYmv9OM8AAndSz1C9FBZ/gOZx5+x5YBJvgUxJ5jo+yqbOuXq49sOQdUy/ba20p0yOjxRxiklzTcYYh+vQoO9sbx6EPSOcfakUhmf7Uc=
+	t=1741459234; cv=none; b=k3rOlAltYXxi8Zg8+L2MeGFK0nex4zTr3DVEu28NPjbrrTk9kd2MeXLnAuinHv9NFMHMVjaXX/whOm5W3g6wlKoFMRNNJBiuj83dWahGwxj0fUnYqJtXw/Pd2B0hidwjxcnaE+E5u1N3UXIgmXW20Bt/xldWFJfF6b3JgdSbURU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741459207; c=relaxed/simple;
-	bh=AeP9zcQrnv3yrFX198BR3DSSfFDFET1rz7YI3ou3jRs=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=kUiDae0dhHH+YDLD4pMYaTxH5ydwCK5NUEChrZdtkrBqVQEUgkWSfcD8JHEoHoXk6C6MEKP9qp00nH7g92lAVmqsc39OPAgzb7M4J+ZJohdDGHVfmlv6tdHB1IfVIACnEcTZdQ9anBrT6gRRnibtf2d0P9VPng8S2KKeD9rU30c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=FRYzsWPb; arc=none smtp.client-ip=198.175.65.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1741459207; x=1772995207;
-  h=message-id:subject:from:to:cc:date:in-reply-to:
-   references:content-transfer-encoding:mime-version;
-  bh=AeP9zcQrnv3yrFX198BR3DSSfFDFET1rz7YI3ou3jRs=;
-  b=FRYzsWPbvSbDOK5AGESOWzqOAy8VaCuVRUnORylH9sJ220ZNjuObcmPW
-   lMk8Dx5Mqku4SsVDwG87uYrsje32iDz/q+nST3yVBO1NfRspmQUmCARIY
-   AnCzjpkHVYg9X0weY4k+PUt7yrVVI+FOeRBIvFle7Xwmt0gh/O4MN7zUe
-   TyxELkEvNtXnIRrvtxjk5bJ+0prCdkuKcRpJhLjZ53Y4oqisPBe5/3YTB
-   BAfZpygxXyKt9s02cVJM7xkNz5WfDvsF1FhVdH+MQF4hjinh41oAkW43d
-   jQeyOtxdc8ehP0pQ3bqMx/G64wcwbXCvOUNu+e9M6KsLeEdWsa03fN3qc
-   w==;
-X-CSE-ConnectionGUID: wbV3GtXTTUuf4wk1GuAGPg==
-X-CSE-MsgGUID: ssEN4dyaS8mrV97RT8sllg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11367"; a="53475696"
-X-IronPort-AV: E=Sophos;i="6.14,232,1736841600"; 
-   d="scan'208";a="53475696"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Mar 2025 10:40:06 -0800
-X-CSE-ConnectionGUID: 1o+6TBW4RY29u5yBIjXZUQ==
-X-CSE-MsgGUID: vVdWuiO5SNCVRnutjOfuYw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,232,1736841600"; 
-   d="scan'208";a="119343147"
-Received: from spandruv-desk1.amr.corp.intel.com ([10.125.110.230])
-  by orviesa009-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Mar 2025 10:40:06 -0800
-Message-ID: <5f70e7004b4e00d689703eb73175460b1dab9614.camel@linux.intel.com>
-Subject: Re: [PATCH 0/3] Platform Temperature Control interface
-From: srinivas pandruvada <srinivas.pandruvada@linux.intel.com>
-To: rui.zhang@intel.com, daniel.lezcano@linaro.org, rafael@kernel.org, 
-	lukasz.luba@arm.com
-Cc: linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
-Date: Sat, 08 Mar 2025 10:40:05 -0800
-In-Reply-To: <20250308183812.118311-1-srinivas.pandruvada@linux.intel.com>
-References: <20250308183812.118311-1-srinivas.pandruvada@linux.intel.com>
-Autocrypt: addr=srinivas.pandruvada@linux.intel.com; prefer-encrypt=mutual;
- keydata=mQGNBGYHNAsBDAC7tv5u9cIsSDvdgBBEDG0/a/nTaC1GXOx5MFNEDL0LWia2p8Asl7igx
- YrB68fyfPNLSIgtCmps0EbRUkPtoN5/HTbAEZeJUTL8Xdoe6sTywf8/6/DMheEUzprE4Qyjt0HheW
- y1JGvdOA0f1lkxCnPXeiiDY4FUqQHr3U6X4FPqfrfGlrMmGvntpKzOTutlQl8eSAprtgZ+zm0Jiwq
- NSiSBOt2SlbkGu9bBYx7mTsrGv+x7x4Ca6/BO9o5dIvwJOcfK/cXC/yxEkr1ajbIUYZFEzQyZQXrT
- GUGn8j3/cXQgVvMYxrh3pGCq9Q0Q6PAwQYhm97ipXa86GcTpP5B2ip9xclPtDW99sihiL8euTWRfS
- TUsEI+1YzCyz5DU32w3WiXr3ITicaMV090tMg9phIZsjfFbnR8hY03n0kRNWWFXi/ch2MsZCCqXIB
- oY/SruNH9Y6mnFKW8HSH762C7On8GXBYJzH6giLGeSsbvis2ZmV/r+LmswwZ6ACcOKLlvvIukAEQE
- AAbQ5U3Jpbml2YXMgUGFuZHJ1dmFkYSA8c3Jpbml2YXMucGFuZHJ1dmFkYUBsaW51eC5pbnRlbC5j
- b20+iQHRBBMBCAA7FiEEdki2SeUi0wlk2xcjOqtdDMJyisMFAmYHNAsCGwMFCwkIBwICIgIGFQoJC
- AsCBBYCAwECHgcCF4AACgkQOqtdDMJyisMobAv+LLYUSKNuWhRN3wS7WocRPCi3tWeBml+qivCwyv
- oZbmE2LcxYFnkcj6YNoS4N1CHJCr7vwefWTzoKTTDYqz3Ma0D0SbR1p/dH0nDgN34y41HpIHf0tx0
- UxGMgOWJAInq3A7/mNkoLQQ3D5siG39X3bh9Ecg0LhMpYwP/AYsd8X1ypCWgo8SE0J/6XX/HXop2a
- ivimve15VklMhyuu2dNWDIyF2cWz6urHV4jmxT/wUGBdq5j87vrJhLXeosueRjGJb8/xzl34iYv08
- wOB0fP+Ox5m0t9N5yZCbcaQug3hSlgp9hittYRgIK4GwZtNO11bOzeCEMk+xFYUoa5V8JWK9/vxrx
- NZEn58vMJ/nxoJzkb++iV7KBtsqErbs5iDwFln/TRJAQDYrtHJKLLFB9BGUDuaBOmFummR70Rbo55
- J9fvUHc2O70qteKOt5A0zv7G8uUdIaaUHrT+VOS7o+MrbPQcSk+bl81L2R7TfWViCmKQ60sD3M90Y
- oOfCQxricddC
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.4 (3.52.4-2.fc40) 
+	s=arc-20240116; t=1741459234; c=relaxed/simple;
+	bh=KccRmKopDzpzcsIQqux0kM71Ko6yFWLOgpDHgLG/Ooc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=eQZAR7pLBJskSmWCFkEmUu7YO++7Okc+KVXI5wiFIdEE84Pubd06fZ6gRQ35Yiz2TzILAxaCxsO/qhBRqF+m3IWTDzu4a0UxwGKsBJXfEkPT46RhycYlC/K1WRJ9KnWXsledX3R/MfUbMzP9XUT0iNU1EQvhaqZxa+ZxQw3FfOY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=hENOQpfP; arc=none smtp.client-ip=45.157.188.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+Received: from smtp-3-0000.mail.infomaniak.ch (unknown [IPv6:2001:1600:4:17::246b])
+	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4Z9BmN3pTzzNwS;
+	Sat,  8 Mar 2025 19:40:20 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1741459220;
+	bh=lTMXco+S8phMp0wJ7FpXrE4IyYLwzV5fOK4aa3aX+EI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=hENOQpfPaSBEj9lAejXUEN7GW2PBud7EHSSxox4uG20za2u4qWalaIc78GX6u/gJ9
+	 DV2NPrHaxT4nuWrURnyQ40GcNlOXxplhssLw+EKdMyUK7efmSSbjHM1cRUCFAzc0xh
+	 HTfA3Uxw35FSF0bKp02QmaxIBZ4KuWIXv1tZudRM=
+Received: from unknown by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4Z9BmM0bNZzq4n;
+	Sat,  8 Mar 2025 19:40:19 +0100 (CET)
+Date: Sat, 8 Mar 2025 19:40:18 +0100
+From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack3000@gmail.com>
+Cc: Eric Paris <eparis@redhat.com>, Paul Moore <paul@paul-moore.com>, 
+	=?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>, "Serge E . Hallyn" <serge@hallyn.com>, 
+	Ben Scarlato <akhna@google.com>, Casey Schaufler <casey@schaufler-ca.com>, 
+	Charles Zaffery <czaffery@roblox.com>, Daniel Burgener <dburgener@linux.microsoft.com>, 
+	Francis Laniel <flaniel@linux.microsoft.com>, James Morris <jmorris@namei.org>, Jann Horn <jannh@google.com>, 
+	Jeff Xu <jeffxu@google.com>, Jorge Lucangeli Obes <jorgelo@google.com>, 
+	Kees Cook <kees@kernel.org>, Konstantin Meskhidze <konstantin.meskhidze@huawei.com>, 
+	Matt Bobrowski <mattbobrowski@google.com>, Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>, 
+	Phil Sutter <phil@nwl.cc>, Praveen K Paladugu <prapal@linux.microsoft.com>, 
+	Robert Salvet <robert.salvet@roblox.com>, Shervin Oloumi <enlightened@google.com>, 
+	Song Liu <song@kernel.org>, Tahera Fahimi <fahimitahera@gmail.com>, 
+	Tyler Hicks <code@tyhicks.com>, audit@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org
+Subject: Re: [PATCH v5 02/24] landlock: Add unique ID generator
+Message-ID: <20250308.moo2siethohX@digikod.net>
+References: <20250131163059.1139617-1-mic@digikod.net>
+ <20250131163059.1139617-3-mic@digikod.net>
+ <20250307.db38587e80e7@gnoack.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250307.db38587e80e7@gnoack.org>
+X-Infomaniak-Routing: alpha
 
-On Sat, 2025-03-08 at 10:38 -0800, Srinivas Pandruvada wrote:
-> Platform Temperature Control is a dynamic control loop implemented in
-> hardware to manage the skin or any board temperature of a device. The
-> reported skin or board temperature is controlled by comparing to a
-> configured target temperature and adjusting the SoC (System on Chip)
-> performance accordingly.
->=20
-> This series supports optional controls from the user space.
->=20
-Missed cc to linux-pm@vger.kernel.org to resent again.
+On Fri, Mar 07, 2025 at 03:15:44PM +0100, Günther Noack wrote:
+> On Fri, Jan 31, 2025 at 05:30:37PM +0100, Mickaël Salaün wrote:
+> > --- /dev/null
+> > +++ b/security/landlock/id.c
+> > +static atomic64_t next_id = ATOMIC64_INIT(COUNTER_PRE_INIT);
+> > +
+> > +static void __init init_id(atomic64_t *const counter, const u32 random_32bits)
+> > +{
+> > +	u64 init;
+> > +
+> > +	/*
+> > +	 * Ensures sure 64-bit values are always used by user space (or may
+> > +	 * fail with -EOVERFLOW), and makes this testable.
+> > +	 */
+> > +	init = 1ULL << 32;
+> > +
+> > +	/*
+> > +	 * Makes a large (2^32) boot-time value to limit ID collision in logs
+> > +	 * from different boots, and to limit info leak about the number of
+> > +	 * initially (relative to the reader) created elements (e.g. domains).
+> > +	 */
+> > +	init += random_32bits;
+> > +
+> > +	/* Sets first or ignores.  This will be the first ID. */
+> > +	atomic64_cmpxchg(counter, COUNTER_PRE_INIT, init);
+> 
+> It feels like this should always need to succeed.  Or to say it the
+> other way around: If this cmpxchg were to fail, the guarantees from
+> your commit message would be broken.  Maybe it would be worth handling
+> that error case in a more direct way?
 
-Thanks,
-Srinivas
+This should always succeed and with the current code it always succeed
+because there is only one call to this function.  This
+atomic64_cmpxchg() is a safeguard to be sure that, even if there are
+several calls to this function, the counter will only be initialized
+once (i.e. cmpxchg only sets the counter if its value was 0)
 
-> Srinivas Pandruvada (3):
-> =C2=A0 thermal: intel: int340x: Add platform temperature control interfac=
-e
-> =C2=A0 thermal: intel: int340x: Enable platform temperature control
-> =C2=A0 thermal: int340x: processor_thermal: Platform temperature control
-> =C2=A0=C2=A0=C2=A0 documentation
->=20
-> =C2=A0.../driver-api/thermal/intel_dptf.rst=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0 |=C2=A0 15 ++
-> =C2=A0.../thermal/intel/int340x_thermal/Makefile=C2=A0=C2=A0=C2=A0 |=C2=
-=A0=C2=A0 1 +
-> =C2=A0.../platform_temperature_control.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 181
-> ++++++++++++++++++
-> =C2=A0.../processor_thermal_device.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0 15 +-
-> =C2=A0.../processor_thermal_device.h=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=A0 3 +
-> =C2=A0.../processor_thermal_device_pci.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=A0 6 +-
-> =C2=A06 files changed, 218 insertions(+), 3 deletions(-)
-> =C2=A0create mode 100644
-> drivers/thermal/intel/int340x_thermal/platform_temperature_control.c
->=20
+We could add a WARN_ON(atomic64_cmpxchg()) but I don't see the point.
 
+> 
+> 
+> > +static void __init test_init_once(struct kunit *const test)
+> > +{
+> > +	const u64 first_init = 1ULL + U32_MAX;
+> > +	atomic64_t counter = ATOMIC64_INIT(COUNTER_PRE_INIT);
+> > +
+> > +	init_id(&counter, 0);
+> > +	KUNIT_EXPECT_EQ(test, atomic64_read(&counter), first_init);
+> > +
+> > +	init_id(&counter, ~0);
+> > +	KUNIT_EXPECT_EQ(test, atomic64_read(&counter), first_init);
+> 
+> Maybe we can annotate this with an explanatory message,
+> to make it slightly clearer that this is the point of the test:
+> 
+> KUNIT_EXPECT_EQ_MSG(test, atomic64_read(&counter), first_init,
+>     "should still have the same value after the subsequent init_id()");
+
+Yep, good idea.
+
+> 
+> –Günther
+> 
 
