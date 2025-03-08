@@ -1,179 +1,90 @@
-Return-Path: <linux-kernel+bounces-552763-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-552764-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 12F3AA57DD9
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 20:44:49 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A2859A57DDA
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 20:47:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CE03A7A64F3
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 19:43:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1BBA9188D00A
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 19:47:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C48C20458B;
-	Sat,  8 Mar 2025 19:44:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91BF917A5BD;
+	Sat,  8 Mar 2025 19:47:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="riP0Iyqt"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="xMDx7hLj"
+Received: from out-187.mta1.migadu.com (out-187.mta1.migadu.com [95.215.58.187])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52B622A8C1;
-	Sat,  8 Mar 2025 19:44:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAF231392
+	for <linux-kernel@vger.kernel.org>; Sat,  8 Mar 2025 19:47:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741463073; cv=none; b=pQBwncH867VQpfYIxv8505oaRgAhyqutAmiZADWfkNHxQfmJXRLddrHsBdcbl7omgpg5+D3DpLS/GiwbtCJDBBPE33T6EvkmQcxxJ5v2Mr557myPvtvAcvUgiEv+/1Mrl15vXrvjmV8SqBA3sJOfKeUL5c7FOrtVUjAFN7eyfFk=
+	t=1741463232; cv=none; b=GsehM/5R0cM0duQ4ghx3ofplWAN//pdR/7rbsN31fCFp1a0cBQ39SP3VOAVsr/Nh/IPzWjSTfJBkkXRWBywmLr1fqWQIa8VcIR65k6LWOyQNggmwz188XXsReNapg6Em9ntNYYfbJIRjHeAmFozQUv+7k6oA1wCxfmATzFArFfY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741463073; c=relaxed/simple;
-	bh=WH7ragwrHlwuij9dMvPOSWuZiuTHQ1s+svKzfPzvvuA=;
-	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=rtjewLaTvRPkZ4j1v5el11shm14qeyP41VtdUyth/iDCCwktnsTUkz9/85lxXy+uF27sDY/erdu8s+x/4sBXQHZTa+gp6aJ+a0HFfYikHsDHO8iQd11mQAQJeJoJ2sqZr29/ryuLTcrb1f/kkh2b9/oDBkrFj1WqSK+vu18JC+4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=riP0Iyqt; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7F9C0C4CEE0;
-	Sat,  8 Mar 2025 19:44:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741463071;
-	bh=WH7ragwrHlwuij9dMvPOSWuZiuTHQ1s+svKzfPzvvuA=;
-	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
-	b=riP0IyqtTT36pME2aDILYcOKdGQiC1l+NduMZWCe/7KZ6Ce4hvZVAlipLR+lqrImc
-	 aE2oulRYfxV9lcv8FbAIRsJjYjwdnwzimm+AwAqMITy3lfQnyB2KwQwi9XGsYV+SFc
-	 hKmB/q/QiKkncAhQQnZYUwxsR5/tpSfFfLHxMjU+E+/TKPVTubTDfGwDkKk0PVt6tD
-	 JhrnL6/gKO6MTku6s0IAOfR5rVR3UlqMzQ9iHf3xSzo/xPfXQTpZgxL9+zCCpdWFWK
-	 DU40utvTxgaxb0a9z3hCso1gJZQN2gMa8gFvJiT4KZWo3GIyZaqfjguvh9die/sM+f
-	 0Mr9uJFA1W4gw==
-Date: Sat, 08 Mar 2025 13:44:30 -0600
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	s=arc-20240116; t=1741463232; c=relaxed/simple;
+	bh=NXcByO8e5AUKQNfZRgHIJRWjXfcWfMjuacKTD2xvuVo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=M5KvqgnjBlpTaxnpHPM3h3Q/YQ3S47pK5lGSHd8Ushny/e7v2gvdxmWb07reCielkpJScBTsO68Yb6S4fusPywc7MRZj8zcZFfVUUc9f5YXt13gYIpOFTCVv69gN19GUOxydYW/eEGaKqqf8/YCFHyxxV7jnkV9wuJpyp0WIOpk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=xMDx7hLj; arc=none smtp.client-ip=95.215.58.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1741463226;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=3QbJam/t2edM6YxRdQTQO8Mkh9a0H/CFHQLFiR8pKDg=;
+	b=xMDx7hLjzCW62XQPNCxwQmRgdreKDf4XgBrfjNR71s7jS7VZHylHXIgOsGDisW8fe64yZV
+	Lr/gygVpGQk5Rz3gTrrmwWFi+WRoTAZhlKpY4+tRrQ/9LShfZ1dFwXVUMpU8rOBeTNOecq
+	RTZy6qid4AlonTPqkTwDUKPtNYdsxzQ=
+From: Thorsten Blum <thorsten.blum@linux.dev>
+To: Luis Chamberlain <mcgrof@kernel.org>,
+	Petr Pavlu <petr.pavlu@suse.com>,
+	Sami Tolvanen <samitolvanen@google.com>,
+	Daniel Gomez <da.gomez@samsung.com>
+Cc: Thorsten Blum <thorsten.blum@linux.dev>,
+	linux-modules@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] module: Remove unnecessary size argument when calling strscpy()
+Date: Sat,  8 Mar 2025 20:46:32 +0100
+Message-ID: <20250308194631.191670-2-thorsten.blum@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, 
- =?utf-8?q?Niklas_S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>, 
- linux-staging@lists.linux.dev, Mark Brown <broonie@kernel.org>, 
- Bjorn Andersson <quic_bjorande@quicinc.com>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Benjamin Mugnier <benjamin.mugnier@foss.st.com>, 
- Kieran Bingham <kieran.bingham@ideasonboard.com>, 
- Taniya Das <quic_tdas@quicinc.com>, Zhi Mao <zhi.mao@mediatek.com>, 
- Umang Jain <umang.jain@ideasonboard.com>, 
- =?utf-8?q?N=C3=ADcolas_F_=2E_R_=2E_A_=2E_Prado?= <nfraprado@collabora.com>, 
- Heiko Stuebner <heiko@sntech.de>, linux-media@vger.kernel.org, 
- Catalin Marinas <catalin.marinas@arm.com>, 
- Liam Girdwood <lgirdwood@gmail.com>, 
- Geert Uytterhoeven <geert+renesas@glider.be>, 
- Dan Carpenter <dan.carpenter@linaro.org>, 
- Biju Das <biju.das.jz@bp.renesas.com>, 
- Laurentiu Palcu <laurentiu.palcu@oss.nxp.com>, 
- Cosmin Tanislav <cosmin.tanislav@analog.com>, 
- Bartosz Golaszewski <brgl@bgdev.pl>, Ross Burton <ross.burton@arm.com>, 
- Julien Massot <julien.massot@collabora.com>, 
- Sakari Ailus <sakari.ailus@linux.intel.com>, 
- Ricardo Ribalda <ribalda@chromium.org>, Conor Dooley <conor+dt@kernel.org>, 
- Ihor Matushchak <ihor.matushchak@foobox.net>, 
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
- Eric Biggers <ebiggers@google.com>, linux-arm-kernel@lists.infradead.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Tommaso Merciai <tomm.merciai@gmail.com>, Hans Verkuil <hverkuil@xs4all.nl>, 
- Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
- Will Deacon <will@kernel.org>, Mauro Carvalho Chehab <mchehab@kernel.org>, 
- Dongcheng Yan <dongcheng.yan@intel.com>, 
- Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>, 
- Javier Carrasco <javier.carrasco@wolfvision.net>
-To: Cosmin Tanislav <demonsingur@gmail.com>
-In-Reply-To: <20250308183410.3013996-19-demonsingur@gmail.com>
-References: <20250308183410.3013996-1-demonsingur@gmail.com>
- <20250308183410.3013996-19-demonsingur@gmail.com>
-Message-Id: <174146307027.3480579.7919845264276459579.robh@kernel.org>
-Subject: Re: [RFC PATCH 18/24] dt-bindings: media: i2c: max96712: add
- support for I2C MUX
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
+The size parameter is optional and strscpy() automatically determines
+the length of the destination buffer using sizeof() if the argument is
+omitted. This makes the explicit sizeof() unnecessary. Remove it to
+shorten and simplify the code.
 
-On Sat, 08 Mar 2025 20:33:47 +0200, Cosmin Tanislav wrote:
-> MAX96712 and MAX96724 have more than one GMSL2 link, and each link is
-> capable of connecting to a separate serializer. If these serializers
-> have the same CFG pins configuration, they will also have the same I2C
-> address, causing conflicts unless the deserializer muxes the I2C
-> channels. Moreover, the serializers can have the same hardware attached
-> to their respective I2C bus.
-> 
-> The MAX96712 and MAX96724 suppot I2C channel muxing via the GMSL2 link
-> to facilitate communication to each of the connected serializers.
-> 
-> Document this capability.
-> 
-> Signed-off-by: Cosmin Tanislav <demonsingur@gmail.com>
-> ---
->  .../devicetree/bindings/media/i2c/maxim,max96712.yaml | 11 +++++++++++
->  1 file changed, 11 insertions(+)
-> 
+Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
+---
+ kernel/module/main.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-My bot found errors running 'make dt_binding_check' on your patch:
-
-yamllint warnings/errors:
-
-dtschema/dtc warnings/errors:
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/media/i2c/maxim,max96712.yaml: properties:i2c-mux:patternProperties:^i2c@[0-3]$:properties:reg:items: 'oneOf' conditional failed, one must be fixed:
-	/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/media/i2c/maxim,max96712.yaml: properties:i2c-mux:patternProperties:^i2c@[0-3]$:properties:reg:items: 'anyOf' conditional failed, one must be fixed:
-		'min' is not one of ['$ref', 'additionalItems', 'additionalProperties', 'allOf', 'anyOf', 'const', 'contains', 'default', 'dependencies', 'dependentRequired', 'dependentSchemas', 'deprecated', 'description', 'else', 'enum', 'exclusiveMaximum', 'exclusiveMinimum', 'items', 'if', 'minItems', 'minimum', 'maxItems', 'maximum', 'multipleOf', 'not', 'oneOf', 'pattern', 'patternProperties', 'properties', 'required', 'then', 'typeSize', 'unevaluatedProperties', 'uniqueItems']
-		'type' was expected
-		from schema $id: http://devicetree.org/meta-schemas/keywords.yaml#
-	/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/media/i2c/maxim,max96712.yaml: properties:i2c-mux:patternProperties:^i2c@[0-3]$:properties:reg:items: 'anyOf' conditional failed, one must be fixed:
-		'max' is not one of ['$ref', 'additionalItems', 'additionalProperties', 'allOf', 'anyOf', 'const', 'contains', 'default', 'dependencies', 'dependentRequired', 'dependentSchemas', 'deprecated', 'description', 'else', 'enum', 'exclusiveMaximum', 'exclusiveMinimum', 'items', 'if', 'minItems', 'minimum', 'maxItems', 'maximum', 'multipleOf', 'not', 'oneOf', 'pattern', 'patternProperties', 'properties', 'required', 'then', 'typeSize', 'unevaluatedProperties', 'uniqueItems']
-		'type' was expected
-		from schema $id: http://devicetree.org/meta-schemas/keywords.yaml#
-	{'min': 0, 'max': 3} is not of type 'array'
-	from schema $id: http://devicetree.org/meta-schemas/keywords.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/media/i2c/maxim,max96712.yaml: properties:i2c-mux:patternProperties:^i2c@[0-3]$:properties:reg: 'anyOf' conditional failed, one must be fixed:
-	'maxItems' is a required property
-		hint: Only "maxItems" is required for a single entry if there are no constraints defined for the values.
-	'items' is not one of ['maxItems', 'description', 'deprecated']
-		hint: Only "maxItems" is required for a single entry if there are no constraints defined for the values.
-	'items' is not one of ['description', 'deprecated', 'const', 'enum', 'minimum', 'maximum', 'multipleOf', 'default', '$ref', 'oneOf']
-	/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/media/i2c/maxim,max96712.yaml: properties:i2c-mux:patternProperties:^i2c@[0-3]$:properties:reg:items: 'oneOf' conditional failed, one must be fixed:
-		/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/media/i2c/maxim,max96712.yaml: properties:i2c-mux:patternProperties:^i2c@[0-3]$:properties:reg:items: 'anyOf' conditional failed, one must be fixed:
-			'maxItems' is a required property
-				hint: Only "maxItems" is required for a single entry if there are no constraints defined for the values.
-			'min' is not one of ['maxItems', 'description', 'deprecated']
-				hint: Only "maxItems" is required for a single entry if there are no constraints defined for the values.
-			'max' is not one of ['maxItems', 'description', 'deprecated']
-				hint: Only "maxItems" is required for a single entry if there are no constraints defined for the values.
-			Additional properties are not allowed ('max', 'min' were unexpected)
-				hint: Arrays must be described with a combination of minItems/maxItems/items
-			'min' is not one of ['description', 'deprecated', 'const', 'enum', 'minimum', 'maximum', 'multipleOf', 'default', '$ref', 'oneOf']
-				hint: "items" can be a list defining each entry or a schema applying to all items. A list has an implicit size. A schema requires minItems/maxItems to define the size.
-			'max' is not one of ['description', 'deprecated', 'const', 'enum', 'minimum', 'maximum', 'multipleOf', 'default', '$ref', 'oneOf']
-				hint: "items" can be a list defining each entry or a schema applying to all items. A list has an implicit size. A schema requires minItems/maxItems to define the size.
-			hint: cell array properties must define how many entries and what the entries are when there is more than one entry.
-			from schema $id: http://devicetree.org/meta-schemas/core.yaml#
-		{'min': 0, 'max': 3} is not of type 'array'
-		hint: "items" can be a list defining each entry or a schema applying to all items. A list has an implicit size. A schema requires minItems/maxItems to define the size.
-		from schema $id: http://devicetree.org/meta-schemas/core.yaml#
-	hint: cell array properties must define how many entries and what the entries are when there is more than one entry.
-	from schema $id: http://devicetree.org/meta-schemas/core.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/media/i2c/maxim,max96712.yaml: i2c-mux: Missing additionalProperties/unevaluatedProperties constraint
-
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/media/i2c/maxim,max96712.yaml: ^i2c@[0-3]$: Missing additionalProperties/unevaluatedProperties constraint
-
-doc reference errors (make refcheckdocs):
-
-See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20250308183410.3013996-19-demonsingur@gmail.com
-
-The base for the series is generally the latest rc1. A different dependency
-should be noted in *this* patch.
-
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit after running the above command yourself. Note
-that DT_SCHEMA_FILES can be set to your schema file to speed up checking
-your schema. However, it must be unset to test all examples with your schema.
+diff --git a/kernel/module/main.c b/kernel/module/main.c
+index 1fb9ad289a6f..e690f46a7ea7 100644
+--- a/kernel/module/main.c
++++ b/kernel/module/main.c
+@@ -795,8 +795,8 @@ SYSCALL_DEFINE2(delete_module, const char __user *, name_user,
+ 	async_synchronize_full();
+ 
+ 	/* Store the name and taints of the last unloaded module for diagnostic purposes */
+-	strscpy(last_unloaded_module.name, mod->name, sizeof(last_unloaded_module.name));
+-	strscpy(last_unloaded_module.taints, module_flags(mod, buf, false), sizeof(last_unloaded_module.taints));
++	strscpy(last_unloaded_module.name, mod->name);
++	strscpy(last_unloaded_module.taints, module_flags(mod, buf, false));
+ 
+ 	free_module(mod);
+ 	/* someone could wait for the module in add_unformed_module() */
+-- 
+2.48.1
 
 
