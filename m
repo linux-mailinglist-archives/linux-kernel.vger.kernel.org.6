@@ -1,87 +1,95 @@
-Return-Path: <linux-kernel+bounces-552848-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-552849-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 57CDEA57F64
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 23:42:11 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A065A57F66
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 23:42:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B74ED3B0B47
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 22:41:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 661C316DAB4
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 22:42:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC72A213250;
-	Sat,  8 Mar 2025 22:41:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B564B20B803;
+	Sat,  8 Mar 2025 22:42:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ajlgNmDj"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YcpoglwU"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E5A3212B37;
-	Sat,  8 Mar 2025 22:41:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B9181DE3AB;
+	Sat,  8 Mar 2025 22:42:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741473706; cv=none; b=hVwMt67PmwBGGNPMC7ovHwYTmc8AIuZ+m25CRQyCkEKcJ4FZzniuWNLFVFQmkl5jnW4xf/eEw6hBSc3wT6rYVAguROZtm8hjvnXUvy/bM6hd5OsgRSBm80TmxpuaKyIYRa2U/w240Rb/6aikhmJAaMIRj8WHTkLbmKZheMGxAQM=
+	t=1741473772; cv=none; b=mdENVI8h7XOUE8ppdsPl8popmweDqJYF2V6lZwwk4FxKDxWwiYCJ4eSVislWTtzQlgcJvW7J+WUE9YRRajgv9rFOQA+wOrm9G15J/lNC0sohebYenw715vLFYiEeK1r24iFtbvGkTknhq8Akn6mrN8yZqbPm3dMOmB79uPzjtvU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741473706; c=relaxed/simple;
-	bh=GlFnB3LmY4qSlV2qqA+wWWfR6yvVmGRtqr6ttgjWXCM=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=W4ZhZOEi8ewxU7y7Ikckqfvyy9OX7vblUWGGMb4ZkMz39jYmL/rM3onYVHUUT14RbuMrdTH2Jo+vRJjmE+05mqqrHZcIL5y9M4KU2YDTnd09kGPjX32SGaeLUyQ7N7L/srPRdCR+ucJgenduCcnzFSRLNc3ZgQmblliEEryW7Nc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ajlgNmDj; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 09A0EC4CEE0;
-	Sat,  8 Mar 2025 22:41:43 +0000 (UTC)
+	s=arc-20240116; t=1741473772; c=relaxed/simple;
+	bh=K1kOokh8SNPeyFgCYbH+M2YEKW5UEDX4zuEHKMpNMRQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=QS9nFnMgcohU9UmTJGp8RGKBx1yfbKco2QtOVmXGJboBkb97yfbvjN1YZ1EI9LkjZ58dk5AfcQiIuNhcOzudjIraQhdZ3ymik+vifLc9soEBahJNgFEAyCrH23+H68YrG8tiqQQ+15nCJP3MJxlXzzPHdnEx7p6MygTb22on8VM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YcpoglwU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 95526C4CEE0;
+	Sat,  8 Mar 2025 22:42:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741473705;
-	bh=GlFnB3LmY4qSlV2qqA+wWWfR6yvVmGRtqr6ttgjWXCM=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=ajlgNmDjlcv6pwqOkP2ggq3If+GfP6ZdeFdir/KMjee4Up8FQ7IW46cSoXN+/ZpIW
-	 TFDbLAB/uETzYbnlB6OiCWTycYLhFt3n0O3vlzSx9KhJBirixYtfdUe1hwfoUJdZZN
-	 RBpUspuUcXobz/6BSrHn3qo1tu4KfQ+iowrpRpiiX7dQ1iWUZfYppDlHceDaTayYK2
-	 o4D5HkumK3AW+erjkvYwGUyDhdf4aTzaONe1HD6B98XmJcYjtd0CRdgKTgVvSaXVwx
-	 mXJKUPTBQvb0xXL4uPqp0E15WFeZvCOmIAyo66xjLxWO7tFl7UnPsBPTj5MDQj9xto
-	 d237g5t4FHDjg==
-Date: Sat, 8 Mar 2025 14:41:42 -0800
-From: Jakub Kicinski <kuba@kernel.org>
-To: Kohei Enju <enjuk@amazon.com>
-Cc: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
- <bpf@vger.kernel.org>, "David S . Miller" <davem@davemloft.net>, Eric
- Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Simon
- Horman <horms@kernel.org>, Kuniyuki Iwashima <kuniyu@amazon.com>, Sebastian
- Andrzej Siewior <bigeasy@linutronix.de>, "Ahmed Zaki"
- <ahmed.zaki@intel.com>, Stanislav Fomichev <sdf@fomichev.me>, "Alexander
- Lobakin" <aleksander.lobakin@intel.com>, Kohei Enju <kohei.enju@gmail.com>
-Subject: Re: [PATCH net-next v1] dev: remove netdev_lock() and
- netdev_lock_ops() in register_netdevice().
-Message-ID: <20250308144142.4f68c0be@kernel.org>
-In-Reply-To: <20250308131813.4f8c8f0d@kernel.org>
-References: <20250308203835.60633-2-enjuk@amazon.com>
-	<20250308131813.4f8c8f0d@kernel.org>
+	s=k20201202; t=1741473771;
+	bh=K1kOokh8SNPeyFgCYbH+M2YEKW5UEDX4zuEHKMpNMRQ=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=YcpoglwU5hoQiKYn58NQTyZ6mWeH1jUlwS3gJLkru7mka6JLQklQnUMlIzeXvQAGe
+	 Ed5PU4hxZqmgmtFZHObQgd5H99QK3KuCsGaX7f0Av/h40z2K5CCi1Wx6WDKqnhTrZO
+	 ml7CJynQsDcV05iOMrAtGS8R4cfmuoDLbDRTmQoCYP24QiuOsYyWwxc9yWIZmw+HGY
+	 +I+DOZJrotql0TrRxmuvY6JszSirzqIIO5iyalQCTuJKA8pK0ohlHrxEwYqz3Hh1nJ
+	 6yidGAxlgjNE4T76EZew1AlfpHXKswsEG0OOu38U/sEgeNBWWxqKgDiy2ki18P4aaZ
+	 nV/mWLNgz9YGA==
+Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-548409cd2a8so2988173e87.3;
+        Sat, 08 Mar 2025 14:42:51 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCUzajl+aCMpJq76OEYzGXxJly5DI3/rl87STbkBDMd2Q2OohokcOZj0oYBJIOygz3AHakh2MuJ1eLQtuxI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwX2c27V0ZBqFMECBKnWZZCToPqfWPucphV8mGShNFC+d0mDbhJ
+	C1PaN3asQWsaVYUWZ/RLJX6s76kbST1pemyS9Mukt1h3IjEkn8ppSRTIkl9XAz3fol/Vjz545xU
+	4HM7nwncFZXNrFD8M+Sczby5pnGk=
+X-Google-Smtp-Source: AGHT+IFTSndMozBb53xjzolq0wPJB84p+WHBr3kJnsQef2jLyDINFNKx891d0kc0upGsNQ5dhrocpMeX2pkwQRUgVWs=
+X-Received: by 2002:a05:6512:12c3:b0:549:4df0:76 with SMTP id
+ 2adb3069b0e04-54990e2bfa4mr2708024e87.4.1741473769934; Sat, 08 Mar 2025
+ 14:42:49 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <20250224132132.1765115-6-ardb+git@google.com> <CAMj1kXHamiZ8u4YO9FnrWhpcotUkAusDF_db_5H2qaVD85qmVA@mail.gmail.com>
+ <CAK7LNATLf2iXNGi-UKRg=+PRRqgmxry5QQnQ4GUNsuVmDBAnmw@mail.gmail.com>
+ <CAMj1kXGVe-R7VF1nHmRx+UB4FuhSjiwMU=n_uWCLC99rTTa5ZQ@mail.gmail.com> <CAK7LNATkaTvAwPmNM3kSOCkCptW-bo9Ko6asWyFVcGYgu5rHtw@mail.gmail.com>
+In-Reply-To: <CAK7LNATkaTvAwPmNM3kSOCkCptW-bo9Ko6asWyFVcGYgu5rHtw@mail.gmail.com>
+From: Ard Biesheuvel <ardb@kernel.org>
+Date: Sat, 8 Mar 2025 23:42:38 +0100
+X-Gmail-Original-Message-ID: <CAMj1kXHCia-gQy7fkVC5SgMyFqz6rRgpVbz6_W7e9jk7ENaQxA@mail.gmail.com>
+X-Gm-Features: AQ5f1JoGMoOCrYC2A_aKY5GIOyqLMRk-0npKPlhUEmMgbJg10Ael5xd7u_fZOpM
+Message-ID: <CAMj1kXHCia-gQy7fkVC5SgMyFqz6rRgpVbz6_W7e9jk7ENaQxA@mail.gmail.com>
+Subject: Re: [RFC PATCH 0/4] x86/build: Get rid of vmlinux postlink step
+To: Masahiro Yamada <masahiroy@kernel.org>
+Cc: linux-kernel@vger.kernel.org, x86@kernel.org, linux-kbuild@vger.kernel.org, 
+	Ingo Molnar <mingo@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
-On Sat, 8 Mar 2025 13:18:13 -0800 Jakub Kicinski wrote:
-> On Sun, 9 Mar 2025 05:37:18 +0900 Kohei Enju wrote:
-> > Both netdev_lock() and netdev_lock_ops() are called before
-> > list_netdevice() in register_netdevice().
-> > No other context can access the struct net_device, so we don't need these
-> > locks in this context.  
-> 
-> Doesn't sysfs get registered earlier?
-> I'm afraid not being able to take the lock from the registration
-> path ties our hands too much. Maybe we need to make a more serious
-> attempt at letting the caller take the lock?
+On Sat, 8 Mar 2025 at 17:17, Masahiro Yamada <masahiroy@kernel.org> wrote:
+>
+...
+> I do not think it is broken.
+> As I mentioned above, I regard vmlinux.relocs as a byproduct
+> of the atomic build rule of vmlinux. This works.
+>
 
-Looking closer at the report - we are violating the contract that only
-drivers which opted in get their ops called under the instance lock.
-iavf had a similar problem but it had to opt in. WiFi doesn't.
+There is no make rule for vmlinux.relocs, and so
 
-Maybe we can bring the address semaphore back?
-We just need to take it before the ops lock in do_setlink.
-A bit ugly but would work?
+- if it gets deleted, it cannot be rebuilt and even though the build
+does not break, the relocation data is missing from the compressed
+image, and this could potentially break the kaslr startup code,
+- it vmlinux.relocs is older than vmlinux for some reason, make will
+not notice and silently reuse the outdated version,
+- when creating vmlinux.relocs from vmlinux and an error occurs,
+vmlinux is deleted, making it difficult to diagnose the problem.
+
+I think this is badly broken, but if you think this is all working as
+it should, I am not going to debate this further, and you can consider
+the patch series withdrawn.
 
