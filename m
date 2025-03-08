@@ -1,122 +1,196 @@
-Return-Path: <linux-kernel+bounces-552324-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-552325-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D5C78A57862
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 05:55:00 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C366A57864
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 05:55:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D2E783B5C0D
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 04:54:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C8AC916D334
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 04:55:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99365187332;
-	Sat,  8 Mar 2025 04:54:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7E0E18787A;
+	Sat,  8 Mar 2025 04:55:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OofxIiQh"
-Received: from mail-pj1-f50.google.com (mail-pj1-f50.google.com [209.85.216.50])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZUMDQ70U"
+Received: from mail-yw1-f173.google.com (mail-yw1-f173.google.com [209.85.128.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFA67182CD;
-	Sat,  8 Mar 2025 04:54:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 891D117A313;
+	Sat,  8 Mar 2025 04:55:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741409693; cv=none; b=JmEs035CmaTItSJ6axrmZTeZhzUsyoqgZpJgUGUK0pA1nOLcqpeSl++pG7lcdddfFHuUwGX0bCnxl3BKxARgLYYQeLkvbcw3f7+8uqtFFKk5w0dI2ErWjNMH1Q7Bi1670guynaHmpxUs3pgy0wmAH7T7m7JstMqmG1o5a2wLgkU=
+	t=1741409702; cv=none; b=Sp5MebhPGTURGRf/r/QB9zNgRiCpKy/IEddZRrTyvsfJ3uWIIayhDlfASt9pxoN1yuvh12ATDAg6R+KwrmVafOzc14rsTK0KedY+au635ozOdEvWnzvnKgXK+Hpb5tBtkasbApU0Ac5ODE27fQV1UGUXQzPQ9nEc0cPsRxzt25I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741409693; c=relaxed/simple;
-	bh=m7E7hfGjzYxVKvu1XX3hJSXaUHoz6cQWsutZRTb5GBc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HnxPckYfCX9hfpj0nXWxh4fgwmrRPq8hAAoyDOMIOdXIDi4TZRY1RADMDBxteO1m0Rwxb/Qbtpj+5suzrXn1QBp3ZkGP2MC/2C0h7wSN2DDBWTa1T9QO9uh/76USNO2wHW6oklHi/vys/vyTjp3tq0lwoy1kYsX4pfnmu6ltY3Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OofxIiQh; arc=none smtp.client-ip=209.85.216.50
+	s=arc-20240116; t=1741409702; c=relaxed/simple;
+	bh=79eWymJ/dJNrOsnciOWzUUy1t7U9wwQ0z8U24msUpgo=;
+	h=Mime-Version:Content-Type:Date:Message-Id:From:To:Cc:Subject:
+	 References:In-Reply-To; b=G4WWiFdaxuDKemG7f4Mg0lglbgBw0P65iVe+LNBZB8X3usnSxmZs1aUJS1H2ttEfNfFzqdJCEmwT1dP1swB48CusQClbZUu6BRG9Xr36akJLFp/I/fzxfu31S1yrplCfjSD5M/yh0R2EXaiEvT7w5RmTB/MJYQJjxMVQhKt6uXM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZUMDQ70U; arc=none smtp.client-ip=209.85.128.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f50.google.com with SMTP id 98e67ed59e1d1-2ff087762bbso3883877a91.3;
-        Fri, 07 Mar 2025 20:54:51 -0800 (PST)
+Received: by mail-yw1-f173.google.com with SMTP id 00721157ae682-6fb2a0e4125so17990857b3.1;
+        Fri, 07 Mar 2025 20:55:00 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741409691; x=1742014491; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=6rVGE9wl0Ua0Qt/DrkYxodd4KQ8at+5opd4O2vE36Bw=;
-        b=OofxIiQhTpBka83Fr9V7Cbyx9rsnwfWp6nink4LA+pEOd2dKS/e4IxGBXMX/U7f0EO
-         k12CtlVDrFCdT810lUJ/VkjNBw8qnnCVAklFLW8sCLlo4s56BH8qfTpWUHvnFHR1gdWD
-         NnRqkILX5c14PDiapyb7LXCsR60xT/0BeQyWSbBxNVSMMWofUJOvSI33BOM5mMfg8p/o
-         RcG6lgVcK+Tq2AQFRtLvfGYX0C5+vqF9fUM8eIFLgfkJh0gm+VHNslngq124K2SqtilU
-         I9uu8Rpmb8Q2iXRbxh9PcbTHko1GY2sYFJ74sbZahizuHKRXvhbW2Ltfwi7xqAnYa1lj
-         /vKA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741409691; x=1742014491;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1741409699; x=1742014499; darn=vger.kernel.org;
+        h=in-reply-to:references:subject:cc:to:from:message-id:date
+         :content-transfer-encoding:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=6rVGE9wl0Ua0Qt/DrkYxodd4KQ8at+5opd4O2vE36Bw=;
-        b=n3VhKvLZLj2luKkuK0VTzEdBt/oRoBJE5RNDW3v5TSDaCOYbVwRanthuaNhFk1yeDh
-         Bvx9U/V+P7TkdQVbHMRcy7tcWu/7OSrPmnGoOjR9n91foqB02i9DueEWjR9NihiK5hOO
-         2kUUOMILs1n6ZIZT1eVlT07uCMjQ+7qRDsXEmsO1p+9d0t3L9ANaYYUI56xRTyV+scEh
-         IkS9svvMIIiNuINh1MtdNQM53TVhXJ5sbwfBC02FTDMXi0v6TsfnMSPjU/DeBUuiw0AV
-         lJVBbGRNGuOoeoVwUJCWi7eweSrvC/c6R7K9VW2RwHW60MUtTmOJdd53gR4HLyMeZNcF
-         RI9Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUhPFFJDB9UH02LNCgJ5G4bhdu9J9V1Wfkcyyp9t5OGL81gbc5rWjeOAayyI+URVQFUjfA=@vger.kernel.org, AJvYcCVxhSk2iXIMA0jINSLIIwswSOcYsglGRt+EF008bJlAunrGJ0LUnoJDUz6526qmptS932j6ZEqj8pEWNCmS@vger.kernel.org, AJvYcCX56xYOvZ/NSq/JusQHM4zhHUeflrmUafobEw+3cY4a2PcrT8bXBqJ24FfUID+8+BPULkqDHlx+/31z5JDYuT7M@vger.kernel.org
-X-Gm-Message-State: AOJu0YwHagayvwqkvikkXcNp6kiNOYlZIEdMrDYvVunbmdiZqjXvRmQA
-	SQPSlOo+wnNRZNuENP7nEhazf/mC4sRNsq1Mm+24meHyuzQnDdU=
-X-Gm-Gg: ASbGncv+KeN8n2mIJ+UAd1QoWb6PLIMKBvQC67vKjYtsF8ED+KRtbMz1oKneCHXjNt5
-	fKg4WUMJte6nbNyo7EOoGK5Y/bNBTUWjktzDyxGYb7AyF7V7rUT6DOhfkFQOWUP0OhO3DUA+P+0
-	Wc9HTJCIaEIO+sLP18skysR5YcSsWOJPS40bcKfzJx32UpJBsVxNsKwZcgic6ouYTh3aBGn74MH
-	jlUPMLkzQ2wao60NqMgkQ8+PcAlThfsnCDc4y7ce/tVEqICQ9dleFcBaDAf68K9vTTi9NqTr9s5
-	TtMlq2CUUALkNRrP3qI43zuvX+1Q4a3M7qo/redctKYs
-X-Google-Smtp-Source: AGHT+IFsqTQ1XZGfImIAAQO0Pt3PNoxiUFFfaNcH3bx/gViFixwh+wID75CRGSs7UX0UdPOap4IljA==
-X-Received: by 2002:a17:90a:ec87:b0:2f5:88bb:118 with SMTP id 98e67ed59e1d1-2ff7cef6771mr8111291a91.22.1741409691036;
-        Fri, 07 Mar 2025 20:54:51 -0800 (PST)
-Received: from localhost ([2601:646:9e00:f56e:2844:3d8f:bf3e:12cc])
-        by smtp.gmail.com with UTF8SMTPSA id 98e67ed59e1d1-2ff4e789387sm5844066a91.25.2025.03.07.20.54.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 07 Mar 2025 20:54:50 -0800 (PST)
-Date: Fri, 7 Mar 2025 20:54:49 -0800
-From: Stanislav Fomichev <stfomichev@gmail.com>
-To: "Bastien Curutchet (eBPF Foundation)" <bastien.curutchet@bootlin.com>
-Cc: Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	Martin KaFai Lau <martin.lau@linux.dev>,
-	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
-	Yonghong Song <yonghong.song@linux.dev>,
-	John Fastabend <john.fastabend@gmail.com>,
-	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>,
-	Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,
-	Mykola Lysenko <mykolal@fb.com>, Shuah Khan <shuah@kernel.org>,
-	Alexis Lothore <alexis.lothore@bootlin.com>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
-	linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH bpf-next 0/2] selftests/bpf: Move test_lwt_seg6local to
- test_progs
-Message-ID: <Z8vNmRN8JPFZZOlU@mini-arch>
-References: <20250307-seg6local-v1-0-990fff8f180d@bootlin.com>
+        bh=79eWymJ/dJNrOsnciOWzUUy1t7U9wwQ0z8U24msUpgo=;
+        b=ZUMDQ70UQ61UP+l+YbWPJF8g2FWWkDZL9f7dY/s+tc7QrP/iKZ5ivn/SqFhn2yVkhJ
+         kI9qkyk9MuQOguZyg8CPYHOXoQ5uOJYJZnao7hQIPukxKr/xT/Ftf9GDYZnb2jNmZZ9O
+         Xrd/6yuT3l4yUTHmb0ltO/qQL/k0VpWjuJxhOl24h7minjFjW9C6btI39oThR0D7pNMZ
+         obK3IhveR+TO/JS/Lup67c0jzy9S3OrKa2wjdmiKmDQfBYV96cBsCpGvw+s9XyLpxBUq
+         LqwFUr4Nq+Qd49t9pxwurZHwytFf9zTLJ/VpkBUd21aRf2bmLb67TRRzSwJHfrcuXJ3f
+         Hnww==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741409699; x=1742014499;
+        h=in-reply-to:references:subject:cc:to:from:message-id:date
+         :content-transfer-encoding:mime-version:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=79eWymJ/dJNrOsnciOWzUUy1t7U9wwQ0z8U24msUpgo=;
+        b=B++YN7hPKGZA1ZLNrr/H+A6gPkbplqne4J/L+kbMHrZ2bMFvKnc9W9sQ6twuoPI5DW
+         3NiF+M6BLQQJ9WcZl8W1xCpbYWwX8qFT350Q4ba9Fm/6GpeCniJNk7ibf7LOStIrQULU
+         LGaHnLI8nbp2pJVrZPgQGBxxalncxehPsIzu5plIwg+cbzcrp1toueCGDJhnjGSnn6vs
+         J/F003a7Z8TvoiJ3w07VMQgiKb3uzdQKKqNvRIqS/XT5uIztzqGYRca0oOYabJRAsFwH
+         tmfoT68D5XHMVf0IiZk4jTSwnQcLwJUWCsxD1kHEImCHkfLWA5zWWxQGUP2SQnaq4jPU
+         9RLQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVen+/D2oi5mWReCrveve7HL4eSuC9MU3eA8v/qI4r2AwUenrSr7JRKxy8Wtplungdz3Ios3T0N9K28N9T2@vger.kernel.org, AJvYcCVfG3U8waBp8dPaRxyX1kYEEB83JzNBX9yQ7uS2f5HQ3pxbrNvSfHb+g/ioxsTaXGZuSdnDoRsZWrmGcw==@vger.kernel.org, AJvYcCXhls7iChZ0Zz6Njki0/nGclyiJplLAjFzqbJ6qTWV9yIkEwVBYy8nVJThCSFokkrhjvd5E9C1XZb2uQTPLQK594a6dHw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzsyU82ckOSBRh9XrFXeVMCKxfE6dPjdVoW3W9baU+lAOIdpCFd
+	Y0PgSBcPHelcD+fvFX+SByoh2LW0YuLcSosa9CyiVzLnd4ILV1Tr
+X-Gm-Gg: ASbGncsD4hy95G7YYVsOqbz74PQW3uFYsxLHg4zLgitdt+O9VwD7ymkwhCLXJtYO8Ho
+	i0OgvxOQnU9RjW0ZLi2VcRjCiVOUx/YD/I09T2powOhyernV1Bbkx5CRMx8+dleJMAqmiEk4OId
+	D0ep/Xre1OtAxmR3jSThILjzWPRiHiOq8DZjT12Vh3qRfWKKb1ZoSQJbRKniTNyxDf4ClND7uSO
+	rPqqeD1Y+4eNP3JksRipjm1eYryOMeAARoDjex8e6LTUbSywfW8JU2nFOfGqJN2gONEKKE4npWG
+	AvwB+EO9SjxMv35d7a2GXaCnbw5349GlScDwp3KCrXtcPOc=
+X-Google-Smtp-Source: AGHT+IHqmQr8ufHJU7mJvjQTEpig38FM22E1OhqXdH/0lA7fBKukKwvf6tzl3LD1WvgacVEosW13lg==
+X-Received: by 2002:a05:690c:300f:b0:6fe:bf9d:f6de with SMTP id 00721157ae682-6febf9e0392mr59139037b3.0.1741409699282;
+        Fri, 07 Mar 2025 20:54:59 -0800 (PST)
+Received: from localhost ([2800:bf0:82:3d2:9e61:1a62:1a8c:3e62])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-6fed2a528f2sm1553507b3.62.2025.03.07.20.54.56
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 07 Mar 2025 20:54:58 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250307-seg6local-v1-0-990fff8f180d@bootlin.com>
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Fri, 07 Mar 2025 23:54:55 -0500
+Message-Id: <D8AM7U5UNBX5.XYJUL18HC2M5@gmail.com>
+From: "Kurt Borja" <kuurtb@gmail.com>
+To: "Guenter Roeck" <linux@roeck-us.net>, "Armin Wolf" <W_Armin@gmx.de>,
+ =?utf-8?q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Cc: "Hans de Goede" <hdegoede@redhat.com>,
+ <platform-driver-x86@vger.kernel.org>, <Dell.Client.Kernel@dell.com>,
+ <linux-kernel@vger.kernel.org>, "Jean Delvare" <jdelvare@suse.com>,
+ <linux-hwmon@vger.kernel.org>
+Subject: Re: [PATCH v3 07/10] platform/x86: alienware-wmi-wmax: Add HWMON
+ support
+X-Mailer: aerc 0.20.1-0-g2ecb8770224a
+References: <20250305-hwm-v3-0-395e7a1407e2@gmail.com>
+ <20250305-hwm-v3-7-395e7a1407e2@gmail.com>
+ <a375d474-5349-4662-8ce8-4f8f55349901@gmx.de>
+ <D89M2ZQJEH45.1HKFFX5ESXRSJ@gmail.com>
+ <7fbf0553-e6b3-4964-9210-8cd720ae9c9e@gmx.de>
+ <7c850374-8caa-430d-b114-1aaa944bbc89@roeck-us.net>
+In-Reply-To: <7c850374-8caa-430d-b114-1aaa944bbc89@roeck-us.net>
 
-On 03/07, Bastien Curutchet (eBPF Foundation) wrote:
-> Hi all,
-> 
-> This patch series continues the work to migrate the script tests into
-> prog_tests.
-> 
-> test_lwt_seg6local.sh tests some bpf_lwt_* helpers. It contains only one
-> test that uses a network topology quite different than the ones that
-> can be found in others prog_tests/lwt_*.c files so I add a new
-> prog_tests/lwt_seg6local.c file.
-> 
-> While working on the migration I noticed that some routes present in the
-> script weren't needed so PATCH 1 deletes them and then PATCH 2 migrates
-> the test into the test_progs framework.
-> 
-> Signed-off-by: Bastien Curutchet (eBPF Foundation) <bastien.curutchet@bootlin.com>
+On Fri Mar 7, 2025 at 6:59 PM -05, Guenter Roeck wrote:
+> On 3/7/25 13:09, Armin Wolf wrote:
+>> Am 07.03.25 um 01:35 schrieb Kurt Borja:
+> ...
+>>>>> +static const struct hwmon_ops awcc_hwmon_ops =3D {
+>>>>> +=C2=A0=C2=A0=C2=A0 .is_visible =3D awcc_hwmon_is_visible,
+>>>>> +=C2=A0=C2=A0=C2=A0 .read =3D awcc_hwmon_read,
+>>>>> +=C2=A0=C2=A0=C2=A0 .read_string =3D awcc_hwmon_read_string,
+>>>>> +};
+>>>>> +
+>>>>> +static const struct hwmon_channel_info * const awcc_hwmon_info[] =3D=
+ {
+>>>>> +=C2=A0=C2=A0=C2=A0 HWMON_CHANNEL_INFO(temp,
+>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0 HWMON_T_LABEL | HWMON_T_INPUT,
+>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0 HWMON_T_LABEL | HWMON_T_INPUT,
+>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0 HWMON_T_LABEL | HWMON_T_INPUT,
+>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0 HWMON_T_LABEL | HWMON_T_INPUT,
+>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0 HWMON_T_LABEL | HWMON_T_INPUT,
+>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0 HWMON_T_LABEL | HWMON_T_INPUT
+>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0 ),
+>>>>> +=C2=A0=C2=A0=C2=A0 HWMON_CHANNEL_INFO(fan,
+>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0 HWMON_F_LABEL | HWMON_F_INPUT | HWMON_F_MIN | HWMON_F_MA=
+X,
+>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0 HWMON_F_LABEL | HWMON_F_INPUT | HWMON_F_MIN | HWMON_F_MA=
+X,
+>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0 HWMON_F_LABEL | HWMON_F_INPUT | HWMON_F_MIN | HWMON_F_MA=
+X,
+>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0 HWMON_F_LABEL | HWMON_F_INPUT | HWMON_F_MIN | HWMON_F_MA=
+X,
+>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0 HWMON_F_LABEL | HWMON_F_INPUT | HWMON_F_MIN | HWMON_F_MA=
+X,
+>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0 HWMON_F_LABEL | HWMON_F_INPUT | HWMON_F_MIN | HWMON_F_MA=
+X
+>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0 ),
+>>>>> +=C2=A0=C2=A0=C2=A0 HWMON_CHANNEL_INFO(pwm,
+>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0 HWMON_PWM_AUTO_CHANNELS_TEMP,
+>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0 HWMON_PWM_AUTO_CHANNELS_TEMP,
+>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0 HWMON_PWM_AUTO_CHANNELS_TEMP,
+>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0 HWMON_PWM_AUTO_CHANNELS_TEMP,
+>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0 HWMON_PWM_AUTO_CHANNELS_TEMP,
+>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0 HWMON_PWM_AUTO_CHANNELS_TEMP
+>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0 ),
+>>>> Since the number of fans and temperature sensors is only known at runt=
+ime creating awcc_hwmon_info
+>>>> would make sense.
+>>> IIRC Guenter asked another dev to add more CHANNEL_INFO entries instead
+>>> of doing that? I might be wrong tho.
+>>>
+>>> I'm fine either way.
+>>>
+>> If Guenter is fine with your current approach then you can keep it.
+>>=20
+>
+> In drivers/hwmon, I prefer static descriptions such as the above and usin=
+g
+> the is_visible() function to determine if sensor attributes should actual=
+ly
+> be created. However, as I have mentioned several times, I do not comment =
+on style
+> questions like this (or, for that matter, non-standard sysfs attributes) =
+outside
+> drivers/hwmon, so you can do or request whatever you like.
+>
+> Guenter
 
-Acked-by: Stanislav Fomichev <sdf@fomichev.me>
+Thank you for clarifying!
+
+If there are no objections, then I prefer to keep it this way. With the
+few extra HWMON_CHANNEL_INFO entries.
+
+--=20
+ ~ Kurt
+
 
