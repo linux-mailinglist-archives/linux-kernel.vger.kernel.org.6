@@ -1,149 +1,115 @@
-Return-Path: <linux-kernel+bounces-552344-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-552345-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 91DFBA578B9
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 06:59:51 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 41EE2A578C0
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 07:20:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 89BE13AAE83
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 05:59:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7394716F02D
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 06:20:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D053A18CC10;
-	Sat,  8 Mar 2025 05:59:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBB6B19047C;
+	Sat,  8 Mar 2025 06:20:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kroah.com header.i=@kroah.com header.b="pjkA/3w7";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="R+avuYy6"
-Received: from fhigh-a4-smtp.messagingengine.com (fhigh-a4-smtp.messagingengine.com [103.168.172.155])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="UngE8yea"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7FCB15E5B8;
-	Sat,  8 Mar 2025 05:59:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.155
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21CAF17A318;
+	Sat,  8 Mar 2025 06:20:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741413584; cv=none; b=bcRS6koykewojQjpH53XRT1cjfSlWOuCstP73ufv+mbLUB3I1tE5Lsu+9Ihh3jV/AMgXfYsSxscJV22EnbHBTUuNbGxm8rSOXO2lX0uqUB3/CGYZQd6hg/A10MqX8Az/1zppftKhBhRbcUXAuDfLwT63BRq/poXTA21X/EsWCHM=
+	t=1741414838; cv=none; b=mQ2ORyrgab1d5lqzvaV9LWo5zV4GSl782imxOSamSVZgGmsd5Wa8b0uWAn7culYeiaB5hvRKxjT55F9uR13+e+EyLVMJrgbRxEpUWlMHriC19KWWdncX/oumBd7TSF58sw/TvFEqqL9/4HEgIEwizieow+YzHQWfr7piNmI6JRw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741413584; c=relaxed/simple;
-	bh=5x6isPeriY4tooFN+kVCEAJ/nWOS7VHr5tjxCsHdOI8=;
+	s=arc-20240116; t=1741414838; c=relaxed/simple;
+	bh=5YfqZTbEGIseGzwqMQm6Q/pxFyZ7sTTqrLNxwSsyqPc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JUkx+C9I4gZ/AkIkcJwi37EW3xM8fo3AfFR+DGub13MPYngkNYy0/bhlZlynhDhy1rkzY7WvoVDfQIb/8wl+BQycN8bjqPbCuarD/eFvCD3xUyMCuNsesqPNBzPArXJYVNidoQb6IdkSh2lLh4eD03u1G47DwgQSR29afKuAAU8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kroah.com; spf=pass smtp.mailfrom=kroah.com; dkim=pass (2048-bit key) header.d=kroah.com header.i=@kroah.com header.b=pjkA/3w7; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=R+avuYy6; arc=none smtp.client-ip=103.168.172.155
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kroah.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kroah.com
-Received: from phl-compute-06.internal (phl-compute-06.phl.internal [10.202.2.46])
-	by mailfhigh.phl.internal (Postfix) with ESMTP id 88EC41140106;
-	Sat,  8 Mar 2025 00:59:40 -0500 (EST)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-06.internal (MEProxy); Sat, 08 Mar 2025 00:59:40 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kroah.com; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1741413580;
-	 x=1741499980; bh=FmgsMxhCqmgmceLCdDPE0XEb1ubyzeREmvx0bfeNqd0=; b=
-	pjkA/3w7n9QqKt641i22MY3WjAAYLDE4yTPWlxzyMzWD8VPfKvMDvkrkush8rcfC
-	aJ+8/sAktxDSoFRi4lW+y5cqOTgpQnyEqNutxrIDKUoDOiiJ6tyxmWXWFrMOFQjE
-	ZBJaosjzylamllOtZGV1tYfSpIcONo/L9rs5VHmpACEL0skmtcME6rvnV8iiuX3a
-	dwUISFtj6P0lvloHP/IS5blNN3YJDx4tAWLgKBXFsxNkGv3ZGEi5FaAF9lWL7k8N
-	Fy3DbI6KFl2fOXtuTiE1vg07mEHOkRNbfEfM/V104xQUt/UQESkrZZ0s5It7wdCN
-	orvWHULf+3OOFMP2MByxiw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1741413580; x=
-	1741499980; bh=FmgsMxhCqmgmceLCdDPE0XEb1ubyzeREmvx0bfeNqd0=; b=R
-	+avuYy6YfkL/clvWr4snjBiF0NKBKgAv7dyDI9ZxLAuFqIwOz5h7hhwTxd1g6Npc
-	c+lc/FtT5vgccVCMXSSqhQjEl3Q0m2mOCercIKfTXqLapyC0Yrcd9NtV80D1RFC4
-	CXOxdAmP8wQ7N9ZSTmG86HTBZmfTd3r/J3jVsg6PC+taTlwJGueWLKtMtSXbu7Kp
-	u+9NgeODf60JiiGs0slc0UXqUxrVaVR40hlwfOF8IaNuH5GkL/V8L4GdHuv8QgI0
-	C6yobKMGWrdGkfcrlhpbo+D4cjoVFQxJUwg9WpnhK3m1mSEb8jqW/3DQMRzQxzhR
-	TiAefQBziJlrd8e1zwpHA==
-X-ME-Sender: <xms:y9zLZ2RqOu8_V2zEorkwg2tPQ4yh3_glNc6WzWPrHaG4Zr0qQeZqSA>
-    <xme:y9zLZ7xAm2sC3DF0OoJbG3g9fwGdOvfc6SFRvrPA75IQyvjvtX_tQkdPfruZ_GPdb
-    6rC_118x-rQNw>
-X-ME-Received: <xmr:y9zLZz3Q8_n7KHEHbjA8LUOm5-rRxi6BNkPCLzJD-r_fNL4zfHN-66_szidMSiax2I6Q1rwc-_8Spn14n-XFeFg63cWCdkaH1smejg>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdduuddvjeekucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
-    pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
-    gvnhhtshculddquddttddmnecujfgurhepfffhvfevuffkfhggtggugfgjsehtkeertddt
-    tdejnecuhfhrohhmpefirhgvghcumffjuceoghhrvghgsehkrhhorghhrdgtohhmqeenuc
-    ggtffrrghtthgvrhhnpeelkeehjeejieehjedvteehjeevkedugeeuiefgfedufefgfffh
-    feetueeikedufeenucffohhmrghinhepkhgvrhhnvghlrdhorhhgnecuvehluhhsthgvrh
-    fuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepghhrvghgsehkrhhorghhrdgt
-    ohhmpdhnsggprhgtphhtthhopedvtddpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtoh
-    epmhgrrhhkuhhsrdgvlhhfrhhinhhgseifvggsrdguvgdprhgtphhtthhopehrvghvvghs
-    thestghhrhhomhhiuhhmrdhorhhgpdhrtghpthhtohepgiekieeskhgvrhhnvghlrdhorh
-    hgpdhrtghpthhtohepshhtrggslhgvsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghp
-    thhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtg
-    hpthhtohepsghpsegrlhhivghnkedruggvpdhrtghpthhtohepuggrvhgvrdhhrghnshgv
-    nheslhhinhhugidrihhnthgvlhdrtghomhdprhgtphhtthhopehhphgrseiihihtohhrrd
-    gtohhmpdhrtghpthhtohepmhhinhhgohesrhgvughhrghtrdgtohhm
-X-ME-Proxy: <xmx:y9zLZyDkBZ0bWFAk15lirtWkDwf_Q3mUrnAo4yffekc9dsxqwmWCkw>
-    <xmx:y9zLZ_ilOnALCQw5ZGZe2oXXP1icp7fcZjyQBtoPRnC3_-hEz-0mlw>
-    <xmx:y9zLZ-oWnAt3_oetwgVGRZ53ZGfxH1T5mdzTrsSXCAHb9UjMXpw3Jg>
-    <xmx:y9zLZyiPYaxTmGfL8iSL-izxN9u6MMR9lE7FNB_UgZRYLabsDju1rg>
-    <xmx:zNzLZyinhU9Q2eFDu0hpxq-ZGB6DaA4y4WrF3jGfaZtofO4R8CpP3d6Y>
-Feedback-ID: i787e41f1:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sat,
- 8 Mar 2025 00:59:39 -0500 (EST)
-Date: Sat, 8 Mar 2025 06:59:37 +0100
-From: Greg KH <greg@kroah.com>
-To: Markus Elfring <Markus.Elfring@web.de>
-Cc: Florent Revest <revest@chromium.org>, x86@kernel.org,
-	stable@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	"H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
-	Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: [PATCH] x86/microcode/AMD: Fix out-of-bounds on systems with
- CPU-less NUMA nodes
-Message-ID: <2025030832-germproof-batting-6124@gregkh>
-References: <20250307131243.2703699-1-revest@chromium.org>
- <85a61dad-46df-4920-bbff-7f500ef692da@web.de>
+	 Content-Type:Content-Disposition:In-Reply-To; b=aTXrOjrlije/A6tj59sV17nlTntn9PS1Y/H6fa2NMcj7eD4Fcn35RTf9u+Nhk7Aksg02M7y9DCS4u/66krmrITfoS5SZzwDHV9+HYAelioC54KszmHxZ1GZtRl/ijGJVnYNChZlz7ybYQZK/LViOrAO4TaCQYIm8qzDLZXgHrIs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=UngE8yea; arc=none smtp.client-ip=192.198.163.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1741414835; x=1772950835;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=5YfqZTbEGIseGzwqMQm6Q/pxFyZ7sTTqrLNxwSsyqPc=;
+  b=UngE8yeayas6Tx3Bdc3bNuuFhwChrat7UM3tPDbFIy3W1pzvgwqZBgW/
+   YIEYRvrU5M76euPiL2UVHCxpvmxssHnSB+Rm/PqoHFmIN5efT+YO2Q9eA
+   2gPj7rByDaiGhpKoCBYmybdptDWwjHENldV3OFpUmKLXQkORb+EWXLQlu
+   lIF+CevsX4lNQTbZu3qqqlCMIX4JZsQWjHYRdt7XwQUwmKhCP6HzMiryl
+   /GhHZAnDJd2xUrUGGL2ZBpXhIcKKLEC83VtfeXo19tNUFw+HyFHCytebV
+   xslg9JDdkoDM/3C5AsW1hmtX18ceFebUXfkM+hP3IrLkQVa7p93TuVbrT
+   w==;
+X-CSE-ConnectionGUID: M7TwBbLMQpmLFNSDsqDZAQ==
+X-CSE-MsgGUID: mkNXwAsoRVS1yNhAZ2txIg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11366"; a="42611147"
+X-IronPort-AV: E=Sophos;i="6.14,231,1736841600"; 
+   d="scan'208";a="42611147"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Mar 2025 22:20:34 -0800
+X-CSE-ConnectionGUID: TBMUlj87R0qD7RzuhIEVTg==
+X-CSE-MsgGUID: aA64BUCcSjudK9qzQo3J1Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
+   d="scan'208";a="123689338"
+Received: from lkp-server02.sh.intel.com (HELO a4747d147074) ([10.239.97.151])
+  by fmviesa003.fm.intel.com with ESMTP; 07 Mar 2025 22:20:30 -0800
+Received: from kbuild by a4747d147074 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tqnXv-0001Zs-2J;
+	Sat, 08 Mar 2025 06:20:27 +0000
+Date: Sat, 8 Mar 2025 14:20:22 +0800
+From: kernel test robot <lkp@intel.com>
+To: wangweidong.a@awinic.com, lgirdwood@gmail.com, broonie@kernel.org,
+	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+	perex@perex.cz, tiwai@suse.com, ivprusov@salutedevices.com,
+	jack.yu@realtek.com, zhoubinbin@loongson.cn,
+	luca.ceresoli@bootlin.com, quic_pkumpatl@quicinc.com,
+	paulha@opensource.cirrus.com, rf@opensource.cirrus.com,
+	nuno.sa@analog.com, linux-sound@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	yijiangtao@awinic.com
+Subject: Re: [PATCH V2 2/2] ASoC: codecs: Add aw88166 amplifier driver
+Message-ID: <202503081433.xufVVq8t-lkp@intel.com>
+References: <20250228034958.181934-3-wangweidong.a@awinic.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <85a61dad-46df-4920-bbff-7f500ef692da@web.de>
-
-On Fri, Mar 07, 2025 at 08:18:09PM +0100, Markus Elfring wrote:
-> …
-> > This patch checks that a NUMA node …
-> 
-> Please improve such a change description another bit.
-> 
-> See also:
-> https://web.git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/submitting-patches.rst?h=v6.14-rc5#n94
-> 
-> Regards,
-> Markus
-> 
+In-Reply-To: <20250228034958.181934-3-wangweidong.a@awinic.com>
 
 Hi,
 
-This is the semi-friendly patch-bot of Greg Kroah-Hartman.
+kernel test robot noticed the following build warnings:
 
-Markus, you seem to have sent a nonsensical or otherwise pointless
-review comment to a patch submission on a Linux kernel developer mailing
-list.  I strongly suggest that you not do this anymore.  Please do not
-bother developers who are actively working to produce patches and
-features with comments that, in the end, are a waste of time.
+[auto build test WARNING on 1e15510b71c99c6e49134d756df91069f7d18141]
 
-Patch submitter, please ignore Markus's suggestion; you do not need to
-follow it at all.  The person/bot/AI that sent it is being ignored by
-almost all Linux kernel maintainers for having a persistent pattern of
-behavior of producing distracting and pointless commentary, and
-inability to adapt to feedback.  Please feel free to also ignore emails
-from them.
+url:    https://github.com/intel-lab-lkp/linux/commits/wangweidong-a-awinic-com/ASoC-dt-bindings-Add-schema-for-awinic-aw88166/20250228-115709
+base:   1e15510b71c99c6e49134d756df91069f7d18141
+patch link:    https://lore.kernel.org/r/20250228034958.181934-3-wangweidong.a%40awinic.com
+patch subject: [PATCH V2 2/2] ASoC: codecs: Add aw88166 amplifier driver
+config: x86_64-buildonly-randconfig-004-20250308 (https://download.01.org/0day-ci/archive/20250308/202503081433.xufVVq8t-lkp@intel.com/config)
+compiler: clang version 19.1.7 (https://github.com/llvm/llvm-project cd708029e0b2869e80abe31ddb175f7c35361f90)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250308/202503081433.xufVVq8t-lkp@intel.com/reproduce)
 
-thanks,
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202503081433.xufVVq8t-lkp@intel.com/
 
-greg k-h's patch email bot
+All warnings (new ones prefixed by >>):
+
+>> sound/soc/codecs/snd-soc-aw88166.o: warning: objtool: .text.aw_dev_dsp_update_cfg: unexpected end of section
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
