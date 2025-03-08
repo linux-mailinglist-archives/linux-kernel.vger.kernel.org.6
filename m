@@ -1,141 +1,173 @@
-Return-Path: <linux-kernel+bounces-552666-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-552667-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 25FBBA57C91
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 18:58:26 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 93F5FA57C93
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 19:04:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0E5993B0AE0
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 17:58:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EE6C918915ED
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 18:04:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60E5D1EB5C6;
-	Sat,  8 Mar 2025 17:58:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB1C4187332;
+	Sat,  8 Mar 2025 18:04:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="TKkITgoZ"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="bALZpQ3l"
+Received: from out-171.mta1.migadu.com (out-171.mta1.migadu.com [95.215.58.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BE3F1E521E
-	for <linux-kernel@vger.kernel.org>; Sat,  8 Mar 2025 17:58:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B36D137E
+	for <linux-kernel@vger.kernel.org>; Sat,  8 Mar 2025 18:03:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741456695; cv=none; b=Xcr26f0/1xv3fug/LccW4K3QEKvqj+kGxv011oasD9ALa4bvYJv2uTz0uZmcrwdKp2iRP4mXpPiHCrt36BvfLv9uAdGYyhvq2AllvcDZCWXxylvHjWDM1aRaMAXqsztBjqFttDz6DYdU8+msCGTYNyGH56RfoMgEeg7J3fG2nWs=
+	t=1741457043; cv=none; b=iwaGy+WK8Lwa8OSlBl75NYpq12MbwO8IgN3qKr20ne8zMxxn6Tqjbc3NcFJNjmp2wTS8+y0OJse6YQgSSGQuHCJkAU71MRA9v+08z50aZaNn41JqlwUVPdlq0xnVIDDJDVQNoZklgwNr5eR/07+V4KJrVuhZaCt/HejI0B1bc2k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741456695; c=relaxed/simple;
-	bh=DTwxP2GW5T7DulwloGAKdjS+EfeDO0vUSjlUc8CnGJo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=UCkpHU0U8ANmPhwdXLvyFKT4ICtznxaarTtaDqp+gCHI+ljelhzQHwvSm9+Coa+DwdH04MT4dQ770lDKKVKUfCGBs9F2wdW8YMWrYFwvvGlu39Zq/G8Ea2fEmluGLKvniCdQ7jShIxEiu2ujfRfmHEyZfn73O9pIMO24gKGEqJ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=TKkITgoZ; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5287Uo4c003480
-	for <linux-kernel@vger.kernel.org>; Sat, 8 Mar 2025 17:58:12 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	ndoPm+wLhTR15mIqP6fWmUhkHpLNXcNulvnJ9Nq1v/g=; b=TKkITgoZ5L62rZPh
-	bz6Cplt1ieq0AROpN2hdXQWHeTuRwTYQKxfMH+TnThQGPfL1NujmXxtuk+TFoxdH
-	2jxpLTU1DvbfM0cuyAWVIw47k7oJxps4RUtk95J+ISoc2ppJx19X3cfTe+6pFel8
-	InG4pzAd9SlsNPdHlcJDDOWIl8qG7OK8ZW3eJhSHdtGNDcM0DCiOdsLzjz/uTb3L
-	OQ+0GlUvvFM47IjN7ABMpOd9cIX3RQhUsORuSnXq9kwRQLgPZt+Unmn9s+7xjzsl
-	6ajTKzg8oWBrx7xzQQ9XWhleQPTG21AxYojaLlLBgRao688FBt51UiRXZhuG92nJ
-	AxS63A==
-Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com [209.85.160.200])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 458f6a8wwf-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Sat, 08 Mar 2025 17:58:12 +0000 (GMT)
-Received: by mail-qt1-f200.google.com with SMTP id d75a77b69052e-46e78a271d3so5180191cf.3
-        for <linux-kernel@vger.kernel.org>; Sat, 08 Mar 2025 09:58:12 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741456691; x=1742061491;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ndoPm+wLhTR15mIqP6fWmUhkHpLNXcNulvnJ9Nq1v/g=;
-        b=OkXjrUSt8LpvgIKBB0Xjp7RunCQOZ/CBBZ+mhnRTS5hE60Rdv8KC2WQElZnmZV8aKO
-         sRByDVgbJ1u3I6tLNYH8wDoy0MXsyllvsD/UhEru9WJtOz/CFuulaCJ6ios4Y1K1abKg
-         b1HNiMzv++OnuT/YqUwbgEVKAPmkAtB3LtulIxVsWLkyA1ympP2xNO3b2qS3p5o98lnj
-         iuYYjAGciZfx1Nx3tpxImyfqYvMS2fyM6mX3n5gIWaBhLG2zJJ14Fh2XbK+OinUebxTH
-         2I+VbddyHBOPoAjWMKpO/I1WK4ELW6FGy/8H1hE4y689TVnRx70U8VAn4/MxrHmg4u0t
-         jdAA==
-X-Forwarded-Encrypted: i=1; AJvYcCUntv5BSun7bH09NrP+GUUuW3UzEUwL/3H2a75HuVLfN1GM9rN1sx53s/t+7qGmRUt/yFcle+SvSLEsqak=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywt8Nvi5AosJjUsUjJl/dUNc9NJ5WtelRNjL1Hiqg7W680YMyDO
-	FDCfEyvm6sTXy+REcuRl+bE3NsOnJGc450jIAOqdj3bpLK0sljK4VLKsW8m8VAnwJ6VS/P4HSh7
-	wlW3Bg5WR2VhZw8nyjaozjMDwuyEsHI9o56aYhqqNoVgY/LlYSV1OKOjPyn0fJT4=
-X-Gm-Gg: ASbGnctFYXs5AJGj/plKdUw1ufZK8xFEEKThIkhexXywtjy93+hDhEwWIhSUGx/+D05
-	U/3fK/LK8AWjqhkMkxsr6O6KfHrU8hobQEzH1oaW+ot9b9pdssFO57jDGVWTlVVzjaD3RPaRTbw
-	BeM2f5ySspOaK166fGUERH8pqpVUyo9+5fbl9MxhKTcVq/cgrxIPERR0Diuzs0oYbe/uNwOG10p
-	orK7vY/fxongFK80ttJjdLW+se0HxFuRRlM9rYGJXO8bTFaQQku0P7A7Af0ttW/8yWlnXZcIpX5
-	yxoyb2fVe8Z7nKst/Lk8hPvQM23/xYq6CppJO5dzn0r+0kNlweJzQhNvNkblu0QbDQyOjw==
-X-Received: by 2002:ad4:5de6:0:b0:6e8:d9b5:4131 with SMTP id 6a1803df08f44-6e908ca81cemr18109306d6.4.1741456691239;
-        Sat, 08 Mar 2025 09:58:11 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IHwWnxVYC3JH5zrCZZSA7cwgUX9Nj/k5VDUse5wQOlChTKjJAlW3O9RMHr7yqSsRMJeeDCyQw==
-X-Received: by 2002:ad4:5de6:0:b0:6e8:d9b5:4131 with SMTP id 6a1803df08f44-6e908ca81cemr18109196d6.4.1741456690860;
-        Sat, 08 Mar 2025 09:58:10 -0800 (PST)
-Received: from [192.168.65.90] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac239438117sm459641466b.26.2025.03.08.09.58.08
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 08 Mar 2025 09:58:10 -0800 (PST)
-Message-ID: <27c48f41-dfc3-4fb0-84f2-c9123d2fef56@oss.qualcomm.com>
-Date: Sat, 8 Mar 2025 18:58:07 +0100
+	s=arc-20240116; t=1741457043; c=relaxed/simple;
+	bh=nTe/1FKrZ61wPMXwoiIXUSHwUYTDM2kvMZA2ZukMWhY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=EjKfpGI9FKBBXMIpu4RSC2sBvAwj2UGul1iIhoZZfpSFNL3hs45fDJuCppAJ6GIkftVMpdQuc1zx93MSndmDbxr29gW/QH5P/am2LnBDq70fGDTAU6COujBV3fAAJ7aOyCT3zFvkeRINF0rIRG/9v2/Dl4QjU77Qq44IfqA6L4A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=bALZpQ3l; arc=none smtp.client-ip=95.215.58.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <662c734d-6b5a-4435-8eb4-4d912ba37cf6@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1741457037;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=NmpQgy86E1gD6AfEtQJs4ondCL2qcMbQBKlrVz00Ka0=;
+	b=bALZpQ3lifquJythjAjppqtV99PwvNHvVJKB+Wv80juisPtGtPzG1oQ8YLY9UfldNm2fPO
+	UrmC+N3GAUn0mOfPl8Jv+5uYlI9/b8RQM07tBoHeRGbXvkC50H5iu57nHKbcH30TLk5Eaz
+	KVNeUYMbm0zZPK3dZcjP54OdOBGMNUE=
+Date: Sat, 8 Mar 2025 19:03:52 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 7/7] arm64: dts: qcom: sc8280x: Flatten the USB nodes
-To: Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>, Felipe Balbi <balbi@kernel.org>,
-        Wesley Cheng <quic_wcheng@quicinc.com>,
-        Saravana Kannan <saravanak@google.com>,
-        Thinh Nguyen <Thinh.Nguyen@synopsys.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, Frank Li <Frank.li@nxp.com>
-Cc: linux-arm-msm@vger.kernel.org, linux-usb@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250226-dwc3-refactor-v4-0-4415e7111e49@oss.qualcomm.com>
- <20250226-dwc3-refactor-v4-7-4415e7111e49@oss.qualcomm.com>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <20250226-dwc3-refactor-v4-7-4415e7111e49@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Authority-Analysis: v=2.4 cv=WsDRMcfv c=1 sm=1 tr=0 ts=67cc8534 cx=c_pps a=JbAStetqSzwMeJznSMzCyw==:117 a=FpWmc02/iXfjRdCD7H54yg==:17 a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=EUspDBNiAAAA:8 a=08ITDv3IiRPUJx8zK7wA:9 a=QEXdDO2ut3YA:10
- a=uxP6HrT_eTzRwkO_Te1X:22
-X-Proofpoint-GUID: ZzDIUrHzX5Y3PPXTbV5srUrVQRUkpA-m
-X-Proofpoint-ORIG-GUID: ZzDIUrHzX5Y3PPXTbV5srUrVQRUkpA-m
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-08_07,2025-03-07_03,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 suspectscore=0
- lowpriorityscore=0 priorityscore=1501 bulkscore=0 adultscore=0
- impostorscore=0 phishscore=0 mlxscore=0 mlxlogscore=723 clxscore=1015
- spamscore=0 classifier=spam authscore=0 authtc=n/a authcc= route=outbound
- adjust=0 reason=mlx scancount=1 engine=8.19.0-2502100000
- definitions=main-2503080137
+Subject: Re: [syzbot] [rdma?] WARNING in rxe_pool_cleanup
+To: syzbot <syzbot+221e213bf17f17e0d6cd@syzkaller.appspotmail.com>,
+ jgg@ziepe.ca, leon@kernel.org, linux-kernel@vger.kernel.org,
+ linux-rdma@vger.kernel.org, netdev@vger.kernel.org,
+ syzkaller-bugs@googlegroups.com, zyjzyj2000@gmail.com
+References: <67a59df3.050a0220.2b1e6.0011.GAE@google.com>
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Zhu Yanjun <yanjun.zhu@linux.dev>
+In-Reply-To: <67a59df3.050a0220.2b1e6.0011.GAE@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-On 27.02.2025 1:17 AM, Bjorn Andersson wrote:
-> Transition the three USB controllers found in sc8280xp to the newly
-> introduced, flattened representation of the Qualcomm USB block, i.e.
-> qcom,snps-dwc3, to show the end result.
+在 2025/2/7 6:45, syzbot 写道:
+> syzbot has found a reproducer for the following issue on:
 > 
-> The reg and interrupts properties from the usb child node are merged
-> with their counterpart in the outer node, remaining properties and child
-> nodes are simply moved.
+> HEAD commit:    bb066fe812d6 Merge tag 'pci-v6.14-fixes-2' of git://git.ke..
+> git tree:       upstream
+> console output: https://syzkaller.appspot.com/x/log.txt?x=16a973df980000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=1909f2f0d8e641ce
+> dashboard link: https://syzkaller.appspot.com/bug?extid=221e213bf17f17e0d6cd
+> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=11a01df8580000
 > 
-> Signed-off-by: Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>
+> Downloadable assets:
+> disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7feb34a89c2a/non_bootable_disk-bb066fe8.raw.xz
+> vmlinux: https://storage.googleapis.com/syzbot-assets/ac7155966351/vmlinux-bb066fe8.xz
+> kernel image: https://storage.googleapis.com/syzbot-assets/92d6cbf35949/bzImage-bb066fe8.xz
+> 
+> IMPORTANT: if you fix the issue, please add the following tag to the commit:
+> Reported-by: syzbot+221e213bf17f17e0d6cd@syzkaller.appspotmail.com
+> 
+> smc: removing ib device syz0
+> ------------[ cut here ]------------
+> WARNING: CPU: 0 PID: 5645 at drivers/infiniband/sw/rxe/rxe_pool.c:116 rxe_pool_cleanup+0x47/0x50 drivers/infiniband/sw/rxe/rxe_pool.c:116
+
+Hi, all
+
+I delved into this problem. I found the following in the link 
+https://syzkaller.appspot.com/x/log.txt?x=16a973df980000
+
+"
+[   73.687051][ T5401] infiniband syz0: set active
+[   73.688993][ T5401] infiniband syz0: added bond0
+[   73.724619][ T5401] RDS/IB: syz0: added 
+   < --- It seems that RDS also used this rxe device in this test.
+[   73.726492][ T5401] smc: adding ib device syz0 with port count 1
+[   73.729145][ T5401] smc:    ib device syz0 port 1 has pnetid
+"
+
+But when smc releases rxe device, RDS does not release rxe device.
+
+The logs are as below
+"
+[   76.652232][ T5401] smc: removing ib device syz0
+[   76.952936][ T5401] ------------[ cut here ]------------
+[   76.955199][ T5401] WARNING: CPU: 0 PID: 5401 at 
+drivers/infiniband/sw/rxe/rxe_pool.c:116 rxe_pool_cleanup+0x47/0x50
+"
+I have no idea about the whole test script. So I just suggest whether 
+this test script remove this RDS initialization because RDS does not do 
+any work in this script.
+
+Or before smc removes ib device syz0, let RDS also release rxe device.
+
+Then let us know whether this problem still occur or not.
+
+Thanks a lot.
+Zhu Yanjun
+
+> Modules linked in:
+> CPU: 0 UID: 0 PID: 5645 Comm: syz.0.16 Not tainted 6.14.0-rc1-syzkaller-00081-gbb066fe812d6 #0
+> Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+> RIP: 0010:rxe_pool_cleanup+0x47/0x50 drivers/infiniband/sw/rxe/rxe_pool.c:116
+> Code: 00 00 fc ff df 80 3c 08 00 74 08 48 89 df e8 10 aa 1a f9 48 83 3b 00 75 0b e8 95 11 b4 f8 5b c3 cc cc cc cc e8 8a 11 b4 f8 90 <0f> 0b 90 5b c3 cc cc cc cc 90 90 90 90 90 90 90 90 90 90 90 90 90
+> RSP: 0018:ffffc9000ce370e8 EFLAGS: 00010293
+> RAX: ffffffff890b4c96 RBX: ffff888052855380 RCX: ffff88801f3e8000
+> RDX: 0000000000000000 RSI: 0000000000000002 RDI: ffff888052855300
+> RBP: 0000000000000002 R08: ffffffff88e3bcc3 R09: 1ffff1100a50a8ee
+> R10: dffffc0000000000 R11: ffffffff89096000 R12: dffffc0000000000
+> R13: dffffc0000000000 R14: ffff888052854658 R15: dffffc0000000000
+> FS:  00007fc32943e6c0(0000) GS:ffff88801fc00000(0000) knlGS:0000000000000000
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: 00007fc32943dfe0 CR3: 00000000405a6000 CR4: 0000000000352ef0
+> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+> Call Trace:
+>   <TASK>
+>   rxe_dealloc+0x33/0x100 drivers/infiniband/sw/rxe/rxe.c:24
+>   ib_dealloc_device+0x50/0x200 drivers/infiniband/core/device.c:647
+>   __ib_unregister_device+0x366/0x3d0 drivers/infiniband/core/device.c:1520
+>   ib_unregister_device_and_put+0xb9/0xf0 drivers/infiniband/core/device.c:1567
+>   nldev_dellink+0x2c6/0x310 drivers/infiniband/core/nldev.c:1825
+>   rdma_nl_rcv_skb drivers/infiniband/core/netlink.c:239 [inline]
+>   rdma_nl_rcv+0x6dd/0x9e0 drivers/infiniband/core/netlink.c:259
+>   netlink_unicast_kernel net/netlink/af_netlink.c:1322 [inline]
+>   netlink_unicast+0x7f6/0x990 net/netlink/af_netlink.c:1348
+>   netlink_sendmsg+0x8e4/0xcb0 net/netlink/af_netlink.c:1892
+>   sock_sendmsg_nosec net/socket.c:713 [inline]
+>   __sock_sendmsg+0x221/0x270 net/socket.c:728
+>   ____sys_sendmsg+0x52a/0x7e0 net/socket.c:2568
+>   ___sys_sendmsg net/socket.c:2622 [inline]
+>   __sys_sendmsg+0x269/0x350 net/socket.c:2654
+>   do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+>   do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+>   entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> RIP: 0033:0x7fc32858cde9
+> Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+> RSP: 002b:00007fc32943e038 EFLAGS: 00000246 ORIG_RAX: 000000000000002e
+> RAX: ffffffffffffffda RBX: 00007fc3287a6160 RCX: 00007fc32858cde9
+> RDX: 0000000020000000 RSI: 0000200000000000 RDI: 0000000000000004
+> RBP: 00007fc32860e2a0 R08: 0000000000000000 R09: 0000000000000000
+> R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+> R13: 0000000000000000 R14: 00007fc3287a6160 R15: 00007ffc02559df8
+>   </TASK>
+> 
+> 
 > ---
+> If you want syzbot to run the reproducer, reply with:
+> #syz test: git://repo/address.git branch-or-commit-hash
+> If you attach or paste a git patch, syzbot will apply it before testing.
 
-Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-
-Konrad
 
