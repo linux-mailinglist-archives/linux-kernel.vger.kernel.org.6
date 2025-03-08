@@ -1,148 +1,222 @@
-Return-Path: <linux-kernel+bounces-552831-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-552832-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AFC3FA57EFB
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 22:48:36 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9DE3BA57F03
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 22:49:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CC5941892CC0
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 21:48:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CC099169FB9
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 21:49:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E0AF212FB5;
-	Sat,  8 Mar 2025 21:48:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97A3520E020;
+	Sat,  8 Mar 2025 21:49:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IlH/w/dW"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Gw+iAH3r"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D288187FEC;
-	Sat,  8 Mar 2025 21:48:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0394549620;
+	Sat,  8 Mar 2025 21:49:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741470491; cv=none; b=W2nE8LyRgy7j6DXiv+WHXiiDYKqipuQR4P2EAfA5V8sXL9fEYy1r5go0xBozMSQrM9UyAcm2PNwYxbUHQ/eDdcZho8mw5Pk2CLzrOtbUBccUOWsq9EnjqqnCgDSY/XxMzRarJEAhvYF1RhoktQQiY8RfXxVJIuzpH1cnhch+8es=
+	t=1741470556; cv=none; b=dYonMs77+J72zow/jqWrMojVQ8ZJyuWKc/AACkeVnc3zBO/uouOlwjusQsbOUDoVG13a2Lrn6N3Po97u1EfcDQiWi4kLYbHICEzYaz2afT5NrMRfU/LwlUTCp4s6sB6j2D9cIbxNAkRu0KEoYZCbUbdFwXBjAgiuBfNS2HU9Ito=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741470491; c=relaxed/simple;
-	bh=NBkyLSUP9n9Ax4+7aC60v72hjL1RvF641HX71E/k+i8=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=GaO4Q1m0nCl3tI6Cd7qmFzZGsjT8F/qd4hUu0bwRiABnCNajlQK32Qa4jXFZDBOGN6lOj0NKKiJ7xXJgQOGJ8J+jxkN+Zjp9c5JteYGKdf7Eyga9O+vBBXZOibink3oYFF7f88PWLbwNSQIVxdQZqU+YY950xdiVvSGlio1xYDg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IlH/w/dW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id E7F4DC4CEED;
-	Sat,  8 Mar 2025 21:48:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741470491;
-	bh=NBkyLSUP9n9Ax4+7aC60v72hjL1RvF641HX71E/k+i8=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=IlH/w/dW52z87757vTdf4M7w9gn7K6w+DE1iPANxiGTm7AidiByDUeN45c5keAROM
-	 3AaBW152441T2oqK0nERdZLc7rxY/4ugVU4MB7uJBYqtJ0qb8oF7f/9ucQjLSVURlw
-	 284o0HlUqfEiL7A20n0CFtYdgWa4mgHAih1HdOfzfKHbAo9d24r9olu2ATIE7xI1X3
-	 nzSeb+WfKpkCriACuXRELkR14clF9WeAoF0h6QESrl9vXZ76v/dv9CGwBOTkxHal66
-	 yBG0gM0QFujIW2Phjp71GY3+ztqbqhGnv7F0F4/KGazC0EfO8S4J6zVwJ6/17b63I+
-	 eHCL58Vnl5eJQ==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D87C0C282EC;
-	Sat,  8 Mar 2025 21:48:10 +0000 (UTC)
-From: =?utf-8?q?Andr=C3=A9_Apitzsch_via_B4_Relay?= <devnull+git.apitzsch.eu@kernel.org>
-Date: Sat, 08 Mar 2025 22:47:58 +0100
-Subject: [PATCH RESEND 4/4] media: i2c: imx214: Add support for 23.88MHz
- clock
+	s=arc-20240116; t=1741470556; c=relaxed/simple;
+	bh=ogZX1Fgf0emz5/XgrE7Jdv5XjH7+aPutVc/+AUG8ok4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DZck+DK0UCssg75aP1GpIZbM3f/ugABpwKEO+UnuPqm1HDMJZRF9kNMuU3jzvtha02z8V+J6NlZBXsTWYKMT6yYngehsHoWEVxfQQEdvLGi7pT241ApP1Sr8F+w7uiuSUDkd4GpGq0csz9w/g6GkT2OLFXTgDq2xLfpS6bphB8s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Gw+iAH3r; arc=none smtp.client-ip=192.198.163.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1741470555; x=1773006555;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=ogZX1Fgf0emz5/XgrE7Jdv5XjH7+aPutVc/+AUG8ok4=;
+  b=Gw+iAH3raUMyQy7OAKWtJ8Ka9tZ/Z2KkBf68tcX94RIePeGdUN9njJc3
+   exc02j2jvEPbJ3rozwJiWOlispnIIIxKpKVhAx0uU1qFvPprvCjlx+j4k
+   +NWNkQ7/FZG9GF9tGBUQwUO5btdx4lEeSijg/2LFOVg6DBNs02UMXf4aP
+   JvSeW+yMK0KSYzrdwKnLMG40c2YdQuKJkLPSgdEVShTyEmeBqRtQ2acGp
+   kOK2aiWLfa5XNEXE4idV8/wlrLkBc04Km0JnNwG7DFokfmkxuFDjWEmZ4
+   E23BvIgl3KcPfNrSXHBVgXKSp2aUhoNqUVYVoOn9kL7NEeZkW5SC1IaEU
+   g==;
+X-CSE-ConnectionGUID: sCJ57nLET3+3LYKzuTSg7w==
+X-CSE-MsgGUID: OIvyMOrPTSqmfgSpaCFlrQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11367"; a="42638753"
+X-IronPort-AV: E=Sophos;i="6.14,233,1736841600"; 
+   d="scan'208";a="42638753"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Mar 2025 13:49:14 -0800
+X-CSE-ConnectionGUID: TZmFUD+/TReB/RTeelOYBQ==
+X-CSE-MsgGUID: L14Hls9FQ+yTxKkK2KpU5Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,233,1736841600"; 
+   d="scan'208";a="142863193"
+Received: from lkp-server02.sh.intel.com (HELO a4747d147074) ([10.239.97.151])
+  by fmviesa002.fm.intel.com with ESMTP; 08 Mar 2025 13:49:11 -0800
+Received: from kbuild by a4747d147074 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tr22e-0002Mw-0F;
+	Sat, 08 Mar 2025 21:49:08 +0000
+Date: Sun, 9 Mar 2025 05:49:02 +0800
+From: kernel test robot <lkp@intel.com>
+To: Terry Junge <linuxhid@cosmicgizmosystems.com>,
+	Jiri Kosina <jikos@kernel.org>,
+	Benjamin Tissoires <bentiss@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: oe-kbuild-all@lists.linux.dev,
+	Terry Junge <linuxhid@cosmicgizmosystems.com>,
+	Nikita Zhandarovich <n.zhandarovich@fintech.ru>,
+	Alan Stern <stern@rowland.harvard.edu>, Kees Cook <kees@kernel.org>,
+	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
+	linux-input@vger.kernel.org, linux-usb@vger.kernel.org,
+	linux-hyperv@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-hardening@vger.kernel.org, syzkaller-bugs@googlegroups.com,
+	lvc-project@linuxtesting.org,
+	syzbot+c52569baf0c843f35495@syzkaller.appspotmail.com,
+	stable@vger.kernel.org
+Subject: Re: [PATCH v1] HID: usbhid: Eliminate recurrent out-of-bounds bug in
+ usbhid_parse()
+Message-ID: <202503090701.715nV1DW-lkp@intel.com>
+References: <20250307045449.745634-1-linuxhid@cosmicgizmosystems.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20250308-imx214_clk_freq-v1-4-467a4c083c35@apitzsch.eu>
-References: <20250308-imx214_clk_freq-v1-0-467a4c083c35@apitzsch.eu>
-In-Reply-To: <20250308-imx214_clk_freq-v1-0-467a4c083c35@apitzsch.eu>
-To: Ricardo Ribalda <ribalda@kernel.org>, 
- Sakari Ailus <sakari.ailus@linux.intel.com>, 
- Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org, 
- linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
- =?utf-8?q?Andr=C3=A9_Apitzsch?= <git@apitzsch.eu>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1741470489; l=2166;
- i=git@apitzsch.eu; s=20240325; h=from:subject:message-id;
- bh=WazSPfo9iHxmaDrm3SErM4Vh2VDI2d/EHPhwKDpeOK0=;
- b=9FuClyeXyAMC4vqo/KrMlBMy2FxYhXKiRyuEQ6X/GiABtnb+qz4HmAW41Ze4+ALTYE+RYFYIb
- 0X6ehEiIaHLA+5xaZx9Q4/kdKFKhktKqdBC4tX/ATg7SW6jee3qkgXG
-X-Developer-Key: i=git@apitzsch.eu; a=ed25519;
- pk=wxovcZRfvNYBMcTw4QFFtNEP4qv39gnBfnfyImXZxiU=
-X-Endpoint-Received: by B4 Relay for git@apitzsch.eu/20240325 with
- auth_id=142
-X-Original-From: =?utf-8?q?Andr=C3=A9_Apitzsch?= <git@apitzsch.eu>
-Reply-To: git@apitzsch.eu
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250307045449.745634-1-linuxhid@cosmicgizmosystems.com>
 
-From: André Apitzsch <git@apitzsch.eu>
+Hi Terry,
 
-Qualcomm MSM8916 devices only provide an external clock of 23.88MHz.
-Make the sensor usable by those devices by adding support for this
-frequency.
+kernel test robot noticed the following build warnings:
 
-Signed-off-by: André Apitzsch <git@apitzsch.eu>
----
- drivers/media/i2c/imx214.c | 12 ++++++++++--
- 1 file changed, 10 insertions(+), 2 deletions(-)
+[auto build test WARNING on 58c9bf3363e596d744f56616d407278ef5f97f5a]
 
-diff --git a/drivers/media/i2c/imx214.c b/drivers/media/i2c/imx214.c
-index c3d55259d6fd1c4ca96f52833864bdfe6bedf13a..e24c76e01ab5070c073d082b1a2969cff3e17f9f 100644
---- a/drivers/media/i2c/imx214.c
-+++ b/drivers/media/i2c/imx214.c
-@@ -30,7 +30,10 @@
- 
- #define IMX214_REG_FAST_STANDBY_CTRL	CCI_REG8(0x0106)
- 
-+#define IMX214_CLK_FREQ_23880KHZ	23880000
- #define IMX214_CLK_FREQ_24000KHZ	24000000
-+
-+#define IMX214_LINK_FREQ_597MHZ		597000000
- #define IMX214_LINK_FREQ_600MHZ		600000000
- /* Keep wrong link frequency for backward compatibility */
- #define IMX214_DEFAULT_LINK_FREQ_LEGACY	480000000
-@@ -233,6 +236,7 @@ static const char * const imx214_supply_name[] = {
- #define IMX214_NUM_SUPPLIES ARRAY_SIZE(imx214_supply_name)
- 
- static const s64 link_freq[] = {
-+	IMX214_LINK_FREQ_597MHZ,
- 	IMX214_LINK_FREQ_600MHZ,
- };
- 
-@@ -242,6 +246,10 @@ struct imx214_clk_params {
- };
- 
- static const struct imx214_clk_params imx214_clk_params[] = {
-+	{
-+		.clk_freq = IMX214_CLK_FREQ_23880KHZ,
-+		.link_freq = IMX214_LINK_FREQ_597MHZ,
-+	},
- 	{
- 		.clk_freq = IMX214_CLK_FREQ_24000KHZ,
- 		.link_freq = IMX214_LINK_FREQ_600MHZ,
-@@ -1320,8 +1328,7 @@ static int imx214_parse_fwnode(struct device *dev, struct imx214 *imx214)
- 
- 	if (i == bus_cfg.nr_of_link_frequencies)
- 		ret = dev_err_probe(dev, -EINVAL,
--				    "link-frequencies %d not supported, please review your DT\n",
--				    IMX214_LINK_FREQ_600MHZ);
-+				    "provided link-frequencies not supported, please review your DT\n");
- 
- done:
- 	v4l2_fwnode_endpoint_free(&bus_cfg);
-@@ -1359,6 +1366,7 @@ static int imx214_probe(struct i2c_client *client)
- 	}
- 
- 	switch (xclk_freq) {
-+	case IMX214_CLK_FREQ_23880KHZ:
- 	case IMX214_CLK_FREQ_24000KHZ:
- 		if (imx214->clk_params->clk_freq != xclk_freq)
- 			return dev_err_probe(imx214->dev, -EINVAL,
+url:    https://github.com/intel-lab-lkp/linux/commits/Terry-Junge/HID-usbhid-Eliminate-recurrent-out-of-bounds-bug-in-usbhid_parse/20250307-130514
+base:   58c9bf3363e596d744f56616d407278ef5f97f5a
+patch link:    https://lore.kernel.org/r/20250307045449.745634-1-linuxhid%40cosmicgizmosystems.com
+patch subject: [PATCH v1] HID: usbhid: Eliminate recurrent out-of-bounds bug in usbhid_parse()
+config: s390-randconfig-r133-20250308 (https://download.01.org/0day-ci/archive/20250309/202503090701.715nV1DW-lkp@intel.com/config)
+compiler: clang version 15.0.7 (https://github.com/llvm/llvm-project 8dfdcc7b7bf66834a761bd8de445840ef68e4d1a)
+reproduce: (https://download.01.org/0day-ci/archive/20250309/202503090701.715nV1DW-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202503090701.715nV1DW-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+>> drivers/hid/usbhid/hid-core.c:1055:4: warning: format specifies type 'unsigned char' but the argument has type 'int' [-Wformat]
+                           hdesc->bNumDescriptors - 1);
+                           ^~~~~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/hid.h:1239:31: note: expanded from macro 'hid_warn'
+           dev_warn(&(hid)->dev, fmt, ##__VA_ARGS__)
+                                 ~~~    ^~~~~~~~~~~
+   include/linux/dev_printk.h:156:70: note: expanded from macro 'dev_warn'
+           dev_printk_index_wrap(_dev_warn, KERN_WARNING, dev, dev_fmt(fmt), ##__VA_ARGS__)
+                                                                       ~~~     ^~~~~~~~~~~
+   include/linux/dev_printk.h:110:23: note: expanded from macro 'dev_printk_index_wrap'
+                   _p_func(dev, fmt, ##__VA_ARGS__);                       \
+                                ~~~    ^~~~~~~~~~~
+   1 warning generated.
+
+
+vim +1055 drivers/hid/usbhid/hid-core.c
+
+   979	
+   980	static int usbhid_parse(struct hid_device *hid)
+   981	{
+   982		struct usb_interface *intf = to_usb_interface(hid->dev.parent);
+   983		struct usb_host_interface *interface = intf->cur_altsetting;
+   984		struct usb_device *dev = interface_to_usbdev (intf);
+   985		struct hid_descriptor *hdesc;
+   986		struct hid_class_descriptor *hcdesc;
+   987		u32 quirks = 0;
+   988		unsigned int rsize = 0;
+   989		char *rdesc;
+   990		int ret;
+   991	
+   992		quirks = hid_lookup_quirk(hid);
+   993	
+   994		if (quirks & HID_QUIRK_IGNORE)
+   995			return -ENODEV;
+   996	
+   997		/* Many keyboards and mice don't like to be polled for reports,
+   998		 * so we will always set the HID_QUIRK_NOGET flag for them. */
+   999		if (interface->desc.bInterfaceSubClass == USB_INTERFACE_SUBCLASS_BOOT) {
+  1000			if (interface->desc.bInterfaceProtocol == USB_INTERFACE_PROTOCOL_KEYBOARD ||
+  1001				interface->desc.bInterfaceProtocol == USB_INTERFACE_PROTOCOL_MOUSE)
+  1002					quirks |= HID_QUIRK_NOGET;
+  1003		}
+  1004	
+  1005		if (usb_get_extra_descriptor(interface, HID_DT_HID, &hdesc) &&
+  1006		    (!interface->desc.bNumEndpoints ||
+  1007		     usb_get_extra_descriptor(&interface->endpoint[0], HID_DT_HID, &hdesc))) {
+  1008			dbg_hid("class descriptor not present\n");
+  1009			return -ENODEV;
+  1010		}
+  1011	
+  1012		if (!hdesc->bNumDescriptors ||
+  1013		    hdesc->bLength != sizeof(*hdesc) +
+  1014				      (hdesc->bNumDescriptors - 1) * sizeof(*hcdesc)) {
+  1015			dbg_hid("hid descriptor invalid, bLen=%hhu bNum=%hhu\n",
+  1016				hdesc->bLength, hdesc->bNumDescriptors);
+  1017			return -EINVAL;
+  1018		}
+  1019	
+  1020		hid->version = le16_to_cpu(hdesc->bcdHID);
+  1021		hid->country = hdesc->bCountryCode;
+  1022	
+  1023		if (hdesc->rpt_desc.bDescriptorType == HID_DT_REPORT)
+  1024			rsize = le16_to_cpu(hdesc->rpt_desc.wDescriptorLength);
+  1025	
+  1026		if (!rsize || rsize > HID_MAX_DESCRIPTOR_SIZE) {
+  1027			dbg_hid("weird size of report descriptor (%u)\n", rsize);
+  1028			return -EINVAL;
+  1029		}
+  1030	
+  1031		rdesc = kmalloc(rsize, GFP_KERNEL);
+  1032		if (!rdesc)
+  1033			return -ENOMEM;
+  1034	
+  1035		hid_set_idle(dev, interface->desc.bInterfaceNumber, 0, 0);
+  1036	
+  1037		ret = hid_get_class_descriptor(dev, interface->desc.bInterfaceNumber,
+  1038				HID_DT_REPORT, rdesc, rsize);
+  1039		if (ret < 0) {
+  1040			dbg_hid("reading report descriptor failed\n");
+  1041			kfree(rdesc);
+  1042			goto err;
+  1043		}
+  1044	
+  1045		ret = hid_parse_report(hid, rdesc, rsize);
+  1046		kfree(rdesc);
+  1047		if (ret) {
+  1048			dbg_hid("parsing report descriptor failed\n");
+  1049			goto err;
+  1050		}
+  1051	
+  1052		if (hdesc->bNumDescriptors > 1)
+  1053			hid_warn(intf,
+  1054				"%hhu unsupported optional hid class descriptors\n",
+> 1055				hdesc->bNumDescriptors - 1);
+  1056	
+  1057		hid->quirks |= quirks;
+  1058	
+  1059		return 0;
+  1060	err:
+  1061		return ret;
+  1062	}
+  1063	
 
 -- 
-2.48.1
-
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
