@@ -1,185 +1,112 @@
-Return-Path: <linux-kernel+bounces-552236-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-552237-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F1448A57749
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 02:34:22 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 83D68A57750
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 02:38:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 377591726FD
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 01:34:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BDFA917354E
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 01:38:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98CE61494D9;
-	Sat,  8 Mar 2025 01:33:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0AAA84D34;
+	Sat,  8 Mar 2025 01:38:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="XVX/p+uQ"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C90A33987;
-	Sat,  8 Mar 2025 01:33:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QCbZjXjv"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28CDB60DCF;
+	Sat,  8 Mar 2025 01:38:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741397637; cv=none; b=EKX2pZ1nbulawp1WEC2TLCVsrjdy+i71l0OCAqk936Tyt1B488yf+X2h14/xN+tvJGlGQDhHoQMcfsT19Oqv0daAlmhUwlhbtWpLUkDgee83wZQl5SvhF/0T/p6ZHCJgCBb9Ymk55ZeU6C2T1lyR1HlKG0ErgOpncncPMhE2/jk=
+	t=1741397897; cv=none; b=by2Ez6yb/z3yZBVR7FxJ8y8ADBMMyg3pAqKV492SUYqoDMUHTUHaSABgpIe7BDYSzWC2M63veWEo+BLNUPtU1UMtm+VQTIECmkbz9mJKJKCGRfokPrtiiB9F/qTvNckfKu0YeejX9D0KzcpCCDJHl6CbV1De/hpX5ADFLZacDE0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741397637; c=relaxed/simple;
-	bh=JjUKUFdE7JsuOeOMyd9/iTw1+idX++Iy87pV8kzk2Ko=;
-	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=aCcFKKgDMegBjeMnsl0uH7bpsYQ3QXOUmT2nODIgiaxRMksmGiTYWc4xqA3ZDqMb2021cdIUTzDIJHf7gIynw2qLZyJShngn3xQZE0pYaVxsQn00tRfzEIi7bZvqMaRimu9ZVwUXA9gBxeWuTNrlqHzfknPycMQla80bpCriUaY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=XVX/p+uQ; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: from narnia.corp.microsoft.com (unknown [167.220.2.28])
-	by linux.microsoft.com (Postfix) with ESMTPSA id 07F5D2038F43;
-	Fri,  7 Mar 2025 17:33:47 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 07F5D2038F43
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1741397635;
-	bh=KgNysdb+YD7YcMoVAkbZNtHFWh6xJ6N4PzgqutHta8k=;
-	h=From:To:Subject:Date:In-Reply-To:References:From;
-	b=XVX/p+uQZfM3CGvdbJGB2+k0r74nNHh5fHiJtOLlXZxvP4Wwi7OlDGKriiN7zVioA
-	 kmGGh0q1WSnwWnhqvl4sei3ir+xmNbhk9Cak26B2Cwi03WlLiv6/Gl7nkItxiiv9Ch
-	 JO/Au7of7MUtmR2yhTr7MOn424Jb2XCnG0DeACqs=
-From: Blaise Boscaccy <bboscaccy@linux.microsoft.com>
-To: Paul Moore <paul@paul-moore.com>,
-	James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	John Fastabend <john.fastabend@gmail.com>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	Martin KaFai Lau <martin.lau@linux.dev>,
-	Eduard Zingerman <eddyz87@gmail.com>,
-	Song Liu <song@kernel.org>,
-	Yonghong Song <yonghong.song@linux.dev>,
-	KP Singh <kpsingh@kernel.org>,
-	Stanislav Fomichev <sdf@fomichev.me>,
-	Hao Luo <haoluo@google.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Stephen Smalley <stephen.smalley.work@gmail.com>,
-	Ondrej Mosnacek <omosnace@redhat.com>,
-	Mykola Lysenko <mykolal@fb.com>,
-	Shuah Khan <shuah@kernel.org>,
-	Blaise Boscaccy <bboscaccy@linux.microsoft.com>,
-	Kumar Kartikeya Dwivedi <memxor@gmail.com>,
-	Matt Bobrowski <mattbobrowski@google.com>,
-	Xu Kuohai <xukuohai@huawei.com>,
-	linux-kernel@vger.kernel.org,
-	linux-security-module@vger.kernel.org,
-	bpf@vger.kernel.org,
-	selinux@vger.kernel.org,
-	linux-kselftest@vger.kernel.org
-Subject: [PATCH v6 bpf-next 2/2] selftests/bpf: Add a kernel flag test for LSM bpf hook
-Date: Fri,  7 Mar 2025 17:32:35 -0800
-Message-ID: <20250308013314.719150-3-bboscaccy@linux.microsoft.com>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20250308013314.719150-1-bboscaccy@linux.microsoft.com>
-References: <20250308013314.719150-1-bboscaccy@linux.microsoft.com>
+	s=arc-20240116; t=1741397897; c=relaxed/simple;
+	bh=O0pfHBH6G6rQLqBAYK579O3diR42DxdkQNQ218db5KA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ewrEzjICOkuHd8OX4QkdxDTXJAcxFrO9iuf0ibxP2/kP6LAv1YMLdtFWH1rJLOgBsmUFXWoO7eX+51ngnCWEaMnrUBKmZnYdH0RfgE1krCWdbMZ+CXNocFsS3Zi0HetsJqf88JmVBQfchiBzxG7Of+zMo90ROIDnh+9jQw9rljM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QCbZjXjv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0F5E9C4CED1;
+	Sat,  8 Mar 2025 01:38:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741397896;
+	bh=O0pfHBH6G6rQLqBAYK579O3diR42DxdkQNQ218db5KA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=QCbZjXjvqzDIZg4nJx1cbFRvyRuP2/4rId5gTE1S5VCl4/xrAkqhbCWZIlPPKGUHi
+	 qRXO/SBPkKk17OY41FZaDuhiEvgdHTHjfX9KZ0qPJfvhHX5I17lC6hIpWgZablY3n3
+	 gpdJqT6kTVHjViKKcHN1Lwjf0EPkzEZPI/Q86iTedtnEaoVWmEzBVVnT6TRJGghlAK
+	 wOM7CF0KoSlSnDHxdBt0q3OSB2tPCvfOKLvmRfO6+7accrkzoKKuyyWQNlUrGXXlXx
+	 P//2TGOET/JQhxqvQ7GkW8o3I+ZeE2/IeZukZTyfcsuv1Bkw9YIjUlfydwRFMhKd8n
+	 D8rtInttJSuEg==
+Date: Fri, 7 Mar 2025 17:38:14 -0800
+From: Josh Poimboeuf <jpoimboe@kernel.org>
+To: "H. Peter Anvin" <hpa@zytor.com>
+Cc: Ingo Molnar <mingo@kernel.org>, linux-kernel@vger.kernel.org,
+	tip-bot2 for Josh Poimboeuf <tip-bot2@linutronix.de>,
+	linux-tip-commits@vger.kernel.org,
+	"Peter Zijlstra (Intel)" <peterz@infradead.org>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Brian Gerst <brgerst@gmail.com>, x86@kernel.org
+Subject: Re: [tip: x86/asm] x86/asm: Make ASM_CALL_CONSTRAINT conditional on
+ frame pointers
+Message-ID: <20250308013814.sa745d25m3ddlu2b@jpoimboe>
+References: <174108458405.14745.4864877018394987266.tip-bot2@tip-bot2>
+ <90B1074B-E7D4-4CE0-8A82-ADEB7BAED7AD@zytor.com>
+ <Z8t7ubUE5P7woAr5@gmail.com>
+ <20250307232157.comm4lycebr7zmre@jpoimboe>
+ <A669251B-7414-4EE7-B0AD-735E845C0B5B@zytor.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <A669251B-7414-4EE7-B0AD-735E845C0B5B@zytor.com>
 
-This test exercises the kernel flag added to security_bpf by
-effectively blocking light-skeletons from loading while allowing
-normal skeletons to function as-is. Since this should work with any
-arbitrary BPF program, an existing program from LSKELS_EXTRA was
-used as a test payload.
+On Fri, Mar 07, 2025 at 03:29:00PM -0800, H. Peter Anvin wrote:
+> On March 7, 2025 3:21:57 PM PST, Josh Poimboeuf <jpoimboe@kernel.org> wrote:
+> >On Sat, Mar 08, 2025 at 12:05:29AM +0100, Ingo Molnar wrote:
+> >> 
+> >> * H. Peter Anvin <hpa@zytor.com> wrote:
+> >> 
+> >> > > #endif /* __ASSEMBLY__ */
+> >> > 
+> >> > So we are going to be using this version despite the gcc maintainers 
+> >> > telling us it is not supported?
+> >> 
+> >> No, neither patches are in the x86 tree at the moment.
+> >
+> >FWIW, the existing ASM_CALL_CONSTRAINT is also not supported, so this
+> >patch wouldn't have changed anything in that respect.
+> >
+> >Regardless I plan to post a new patch set soon with a bunch of cleanups.
+> >
+> >It will keep the existing ASM_CALL_CONSTRAINT in place for GCC, and will
+> >use the new __builtin_frame_address(0) input constraint for Clang only.
+> >
+> >There will be a new asm_call() interface to hide the mess.
+> >
+> 
+> Alternatively, you can co-opt the gcc BR I already filed on this and
+> argue there that there are new reasons to support the alternate
+> construct.
 
-Signed-off-by: Blaise Boscaccy <bboscaccy@linux.microsoft.com>
----
- .../selftests/bpf/prog_tests/kernel_flag.c    | 43 +++++++++++++++++++
- .../selftests/bpf/progs/test_kernel_flag.c    | 28 ++++++++++++
- 2 files changed, 71 insertions(+)
- create mode 100644 tools/testing/selftests/bpf/prog_tests/kernel_flag.c
- create mode 100644 tools/testing/selftests/bpf/progs/test_kernel_flag.c
+We hopefully won't need those hacks much longer anyway, as I'll have
+another series to propose removing frame pointers for x86-64.
 
-diff --git a/tools/testing/selftests/bpf/prog_tests/kernel_flag.c b/tools/testing/selftests/bpf/prog_tests/kernel_flag.c
-new file mode 100644
-index 0000000000000..479ad5de3737e
---- /dev/null
-+++ b/tools/testing/selftests/bpf/prog_tests/kernel_flag.c
-@@ -0,0 +1,43 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/* Copyright (c) 2025 Microsoft */
-+#include <test_progs.h>
-+#include "kfunc_call_test.skel.h"
-+#include "kfunc_call_test.lskel.h"
-+#include "test_kernel_flag.skel.h"
-+
-+void test_kernel_flag(void)
-+{
-+	struct test_kernel_flag *lsm_skel;
-+	struct kfunc_call_test *skel = NULL;
-+	struct kfunc_call_test_lskel *lskel = NULL;
-+	int ret;
-+
-+	lsm_skel = test_kernel_flag__open_and_load();
-+	if (!ASSERT_OK_PTR(lsm_skel, "lsm_skel"))
-+		return;
-+
-+	ret = test_kernel_flag__attach(lsm_skel);
-+	if (!ASSERT_OK(ret, "test_kernel_flag__attach"))
-+		goto close_prog;
-+
-+	lsm_skel->bss->monitored_pid = getpid();
-+
-+	/* Test with skel. This should pass the gatekeeper */
-+	skel = kfunc_call_test__open_and_load();
-+	if (!ASSERT_OK_PTR(skel, "skel"))
-+		goto close_prog;
-+
-+	/* Test with lskel. This should fail due to blocking kernel-based bpf() invocations */
-+	lskel = kfunc_call_test_lskel__open_and_load();
-+	if (!ASSERT_ERR_PTR(lskel, "lskel"))
-+		goto close_prog;
-+
-+close_prog:
-+	if (skel)
-+		kfunc_call_test__destroy(skel);
-+	if (lskel)
-+		kfunc_call_test_lskel__destroy(lskel);
-+
-+	lsm_skel->bss->monitored_pid = 0;
-+	test_kernel_flag__destroy(lsm_skel);
-+}
-diff --git a/tools/testing/selftests/bpf/progs/test_kernel_flag.c b/tools/testing/selftests/bpf/progs/test_kernel_flag.c
-new file mode 100644
-index 0000000000000..9ca01aadb6656
---- /dev/null
-+++ b/tools/testing/selftests/bpf/progs/test_kernel_flag.c
-@@ -0,0 +1,28 @@
-+// SPDX-License-Identifier: GPL-2.0
-+
-+/*
-+ * Copyright (C) 2025 Microsoft Corporation
-+ *
-+ * Author: Blaise Boscaccy <bboscaccy@linux.microsoft.com>
-+ */
-+
-+#include "vmlinux.h"
-+#include <errno.h>
-+#include <bpf/bpf_helpers.h>
-+#include <bpf/bpf_tracing.h>
-+
-+char _license[] SEC("license") = "GPL";
-+
-+__u32 monitored_pid;
-+
-+SEC("lsm.s/bpf")
-+int BPF_PROG(bpf, int cmd, union bpf_attr *attr, unsigned int size, bool kernel)
-+{
-+	__u32 pid;
-+
-+	pid = bpf_get_current_pid_tgid() >> 32;
-+	if (!kernel || pid != monitored_pid)
-+		return 0;
-+	else
-+		return -EINVAL;
-+}
+x86-32 can keep frame pointers, but doesn't need the constraints.  It's
+not supported for livepatch so it doesn't need to be 100% reliable.
+Worst case, an unwind skips a frame, but the call address still shows up
+on stack trace dumps prepended with '?'.
+
+I plan to do the asm_call() series before the FP removal series because
+it's presumably less disruptive, and it has a bunch more orthogonal
+cleanups.
+
 -- 
-2.48.1
-
+Josh
 
