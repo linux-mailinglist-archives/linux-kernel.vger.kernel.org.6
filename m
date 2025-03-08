@@ -1,48 +1,48 @@
-Return-Path: <linux-kernel+bounces-552303-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-552304-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6CC35A5781F
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 04:51:21 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EA819A57825
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 04:52:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 73AEB1895BCE
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 03:51:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8F3603B6E91
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 03:51:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B4941A238B;
-	Sat,  8 Mar 2025 03:50:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCDFB17A2E3;
+	Sat,  8 Mar 2025 03:50:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pSU5paSE"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Msrd4WTy"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A460219C57C;
-	Sat,  8 Mar 2025 03:50:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BF8917A2E5;
+	Sat,  8 Mar 2025 03:50:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741405813; cv=none; b=HwKb+IaLdyRgsmTAUdh4zi4W1YjKXCS77H7aIZmgXQQbXm/YopHSgHfDbBXCEkyzZbH1rJAqqoDExJipG7lesBFSeW71qtvp5eH68jl9b/T/ULIiBioDw8T55r2TzQ1f06ROrcqCBRMK++mSUHVYrXETJ4Dec+5ncUkmSDJizhQ=
+	t=1741405819; cv=none; b=AW+i4vxZP/XuCd4b69Xz9JMQU9NSeBF3iXNujXj+uk+SmjOb0u3OKV9JPOnYUcc9MyJqlUEwv2zSEwgmKuaZqTyPp7exkEw/v2jwyXWHG/7MR8Y02FxwtnmfGKwcKa/6ZmJOoI0mh7BdYoZ+rjhD9TP7DImpfIn8pvwP2BrGbBw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741405813; c=relaxed/simple;
-	bh=LTLedz0rUoQkGzGjg3GVcO+gfls7McrashGAtoxZecA=;
+	s=arc-20240116; t=1741405819; c=relaxed/simple;
+	bh=90XLQP1hM4lN1DT85WNI8TXL1Gf8VrJWS4VLcv9kReM=;
 	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=QTBCXYTH6v/PpCi1ch37Itpk8i2ZLQ9aqVRYNXIwiVosTr7GLpGuj6OVnycrAcxs+tEOACfnB1tGoaKrEKvOK4RUi+wrNk0dOiult9St+Te10O1UkRORqZoRSquaPAFdECg/JzqXQBDahqqniGVOlP8LAh9cCH3FxoQH9ze9jEU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pSU5paSE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2CBF5C4CEE0;
-	Sat,  8 Mar 2025 03:50:13 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=ltVoyvc8I5Hv1RLGmghvJlv2kQSb2Z4+gYQsIaA1hEUvB3eEe7mRD2H9/GDzdjzkqHKmuUpqatXt51Ofber8mb+1J7jEQdhKbhOJA8jvPodTNucCvSUOYr9isXms9FiBSKRedMH9FNdIu9cJP1ab7rv4vuqfDaFqJCoS/ENXl0U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Msrd4WTy; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9981EC4CEE0;
+	Sat,  8 Mar 2025 03:50:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741405813;
-	bh=LTLedz0rUoQkGzGjg3GVcO+gfls7McrashGAtoxZecA=;
+	s=k20201202; t=1741405817;
+	bh=90XLQP1hM4lN1DT85WNI8TXL1Gf8VrJWS4VLcv9kReM=;
 	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=pSU5paSE92B3jTwOz/fXrX07Nf3QSv5YM/FsXMAIT36kM4heja6H/JCyJVtAGn5PA
-	 XPEpnb3jy0w1KVFx5veJUa5Bp2CrC0SwNQzmsBHFPASsnjzE5L0AmIlwWKa638pHeY
-	 sxPJWlbRK3010aPzpWA7i/g6s2ZVcW1/4BEtJweUY4YI16TsMtpVLh7sMNDJumx8ws
-	 aPO1wmoYUSypBhaGS1gz4LY8Dr/W4iFaOZsgkYJpRf+wRfYzordXoo6oHGCBOU2Wse
-	 NhF6sxWvUTNB6RylxHUBfuS7lTjWDW4qjcPJuoiPNUx0WBdI9905ieeOxXuNbQqSQx
-	 wwMyZ5FG8Y0gw==
+	b=Msrd4WTyjJYCVAm2trYa7zpd8T+d32HzKL9SB+a0MbE9kHIJ+hfG3Mv6OsoCbrC7r
+	 vNyXksBxsxKNujo+vjsLr4gdm1kc+OF568RDSl3xl6zr6tGJEPH0IohvkQl8snFZ7D
+	 zVafk/hWzpNBE01dyV6+hQ+adTYmoKKnNUvCkwwpI5exfZXxqDdKcQp4uYsDnN+knM
+	 2qwV2BTiyp8tjDQAvoXZgqz77afEOIUt6KLrd+tDCxa30l1OsCWc49ewcy4cZ7jUg7
+	 MTQnrYqlQlwOT9x225uYQrtKz4RI/LQgoodIQFRxEJpzqa6ce4BtnEFY+2ep1Oa785
+	 gt16IGzGF/Smw==
 Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EAD96380CFFB;
-	Sat,  8 Mar 2025 03:50:47 +0000 (UTC)
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 70AD8380CFFB;
+	Sat,  8 Mar 2025 03:50:52 +0000 (UTC)
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -51,42 +51,37 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net-next 0/2] tcp: ulp: diag: expose more to non net admin
- users
+Subject: Re: [PATCH] net: ethernet: Remove accidental duplication in Kconfig file
 From: patchwork-bot+netdevbpf@kernel.org
 Message-Id: 
- <174140584648.2568613.10671440631322496348.git-patchwork-notify@kernel.org>
-Date: Sat, 08 Mar 2025 03:50:46 +0000
-References: <20250306-net-next-tcp-ulp-diag-net-admin-v1-0-06afdd860fc9@kernel.org>
-In-Reply-To: <20250306-net-next-tcp-ulp-diag-net-admin-v1-0-06afdd860fc9@kernel.org>
-To: Matthieu Baerts (NGI0) <matttbe@kernel.org>
-Cc: mptcp@lists.linux.dev, edumazet@google.com, ncardwell@google.com,
- kuniyu@amazon.com, davem@davemloft.net, dsahern@kernel.org, kuba@kernel.org,
- pabeni@redhat.com, horms@kernel.org, martineau@kernel.org,
- geliang@kernel.org, borisp@nvidia.com, john.fastabend@gmail.com,
- dcaratti@redhat.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+ <174140585098.2568613.2283385624839221581.git-patchwork-notify@kernel.org>
+Date: Sat, 08 Mar 2025 03:50:50 +0000
+References: <20250306094753.63806-1-lukas.bulwahn@redhat.com>
+In-Reply-To: <20250306094753.63806-1-lukas.bulwahn@redhat.com>
+To: Lukas Bulwahn <lbulwahn@redhat.com>
+Cc: lorenzo@kernel.org, andrew+netdev@lunn.ch, davem@davemloft.net,
+ edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+ netdev@vger.kernel.org, kernel-janitors@vger.kernel.org,
+ linux-kernel@vger.kernel.org, lukas.bulwahn@redhat.com
 
 Hello:
 
-This series was applied to netdev/net-next.git (main)
+This patch was applied to netdev/net-next.git (main)
 by Jakub Kicinski <kuba@kernel.org>:
 
-On Thu, 06 Mar 2025 12:29:26 +0100 you wrote:
-> Since its introduction in commit 61723b393292 ("tcp: ulp: add functions
-> to dump ulp-specific information"), the ULP diag info have been exported
-> only to users with CAP_NET_ADMIN capability.
+On Thu,  6 Mar 2025 10:47:53 +0100 you wrote:
+> From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
 > 
-> Not everything is sensitive, and some info can be exported to all users
-> in order to ease the debugging from the userspace side without requiring
-> additional capabilities.
+> Commit fb3dda82fd38 ("net: airoha: Move airoha_eth driver in a dedicated
+> folder") accidentally added the line:
+> 
+>   source "drivers/net/ethernet/mellanox/Kconfig"
 > 
 > [...]
 
 Here is the summary with links:
-  - [net-next,1/2] tcp: ulp: diag: always print the name if any
-    https://git.kernel.org/netdev/net-next/c/f5afcb9fbb39
-  - [net-next,2/2] tcp: ulp: diag: more info without CAP_NET_ADMIN
-    https://git.kernel.org/netdev/net-next/c/0d7336f8f06d
+  - net: ethernet: Remove accidental duplication in Kconfig file
+    https://git.kernel.org/netdev/net-next/c/e2537326e3b6
 
 You are awesome, thank you!
 -- 
