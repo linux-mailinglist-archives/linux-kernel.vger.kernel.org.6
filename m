@@ -1,136 +1,177 @@
-Return-Path: <linux-kernel+bounces-552352-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-552354-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B9CA2A578EB
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 08:48:25 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B478A578F3
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 08:50:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7AE313B38F1
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 07:48:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B13FB18973A7
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 07:51:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE1DE19CC05;
-	Sat,  8 Mar 2025 07:48:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A4C419CC0A;
+	Sat,  8 Mar 2025 07:50:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="j6WQKwLK"
-Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NtCDDGYu"
+Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 085AD12E7E;
-	Sat,  8 Mar 2025 07:48:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.61.82.184
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C86FD8462;
+	Sat,  8 Mar 2025 07:50:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741420096; cv=none; b=Zg0+GCRnUWY3VCBoPX5rnVu16PfP29kLTLq3Zl4QtIDMwvOPzSTJut2xG0+hpVuIiyKk+JZXtqMt44/AMQDK4TpPAOMbRX/NyduHZbVcw2ihcfFmvr7O3pSZqwYhgkWAymoHZNPJPnq3p+BmXbq4P0qeIDRuMfPCVz+HP/cZb9s=
+	t=1741420247; cv=none; b=kON34yULHp/aUhej2D8MRivwGhV48+j6cawrEix8Ln6/SM+ZXuq5yhUKEKy0OGntSPC+AFWXpdfOize8QiWa5QNd+d6CwYkNdkANdLWx3QeNyg6N8ZBxNOu/U9QdZpHK1X3RT2PDEOa1T4JGNZwqRhul2/wX6ZDz3qo8WxRT2pY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741420096; c=relaxed/simple;
-	bh=BbFnqrQot3eI1tdCsSFJP42/nStify28jurl6ieonD0=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=LPm6d0O4ufiBdUF4rmhiKGA+9D651p+yVoIadmYll+k/ftI27sPKTJ9QY7idhgzV2C8Zah6N+e746mv9NhPLuVC2d9J+VmUiJWMW8R8wLOms5rcaAXjOFdAtRH6SkHq74JbErfhkmE8y2uy+4NVylb7L+mtr3aCPEjv0qNRx3Ek=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=j6WQKwLK; arc=none smtp.client-ip=210.61.82.184
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
-X-UUID: ad0a36c4fbf111ef8eb9c36241bbb6fb-20250308
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-	h=Content-Type:Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:CC:To:From; bh=wh8DeNqOcIX6+nJAx3o2buQIVBjHMurmDl2AULBTpp0=;
-	b=j6WQKwLKPLb/l7js8ArGWbUTBeyOWshKagMNnjy1r6Y2RWFkKPXoMWTR21g/KzjwKLmrrmUu/CplIQnC2QSToOS9E8fUZlsd3UmXHRwi2UKJ8+q310UWCsw13paxSl3u2JdRktMcfkqRehCf7gz+NxtyRgTC4PsTMBvHeB9q9K4=;
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.2.1,REQID:acc10574-43e3-4cc7-8dcc-313d3d2c2c71,IP:0,UR
-	L:0,TC:0,Content:-25,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION
-	:release,TS:-25
-X-CID-META: VersionHash:0ef645f,CLOUDID:71301c8c-f5b8-47d5-8cf3-b68fe7530c9a,B
-	ulkID:nil,BulkQuantity:0,Recheck:0,SF:81|82|102,TC:nil,Content:0|50,EDM:-3
-	,IP:nil,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV
-	:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 0
-X-CID-BAS: 0,_,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR
-X-UUID: ad0a36c4fbf111ef8eb9c36241bbb6fb-20250308
-Received: from mtkmbs09n2.mediatek.inc [(172.21.101.94)] by mailgw02.mediatek.com
-	(envelope-from <yunfei.dong@mediatek.com>)
-	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
-	with ESMTP id 1386299348; Sat, 08 Mar 2025 15:48:08 +0800
-Received: from mtkmbs11n2.mediatek.inc (172.21.101.187) by
- mtkmbs10n1.mediatek.inc (172.21.101.34) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1258.28; Sat, 8 Mar 2025 15:48:06 +0800
-Received: from mhfsdcap04.gcn.mediatek.inc (10.17.3.154) by
- mtkmbs11n2.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
- 15.2.1258.28 via Frontend Transport; Sat, 8 Mar 2025 15:48:05 +0800
-From: Yunfei Dong <yunfei.dong@mediatek.com>
-To: =?UTF-8?q?N=C3=ADcolas=20F=20=2E=20R=20=2E=20A=20=2E=20Prado?=
-	<nfraprado@collabora.com>, Sebastian Fricke <sebastian.fricke@collabora.com>,
-	Nicolas Dufresne <nicolas.dufresne@collabora.com>, Hans Verkuil
-	<hverkuil-cisco@xs4all.nl>, AngeloGioacchino Del Regno
-	<angelogioacchino.delregno@collabora.com>, Benjamin Gaignard
-	<benjamin.gaignard@collabora.com>, Nathan Hebert <nhebert@chromium.org>,
-	Daniel Almeida <daniel.almeida@collabora.com>
-CC: Hsin-Yi Wang <hsinyi@chromium.org>, Fritz Koenig <frkoenig@chromium.org>,
-	Daniel Vetter <daniel@ffwll.ch>, Steve Cho <stevecho@chromium.org>, "Yunfei
- Dong" <yunfei.dong@mediatek.com>, <linux-media@vger.kernel.org>,
-	<devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-mediatek@lists.infradead.org>,
-	<Project_Global_Chrome_Upstream_Group@mediatek.com>
-Subject: [PATCH v8 3/3] media: mediatek: vcodec: add description for vsi struct
-Date: Sat, 8 Mar 2025 15:47:57 +0800
-Message-ID: <20250308074802.18929-4-yunfei.dong@mediatek.com>
-X-Mailer: git-send-email 2.46.0
-In-Reply-To: <20250308074802.18929-1-yunfei.dong@mediatek.com>
-References: <20250308074802.18929-1-yunfei.dong@mediatek.com>
+	s=arc-20240116; t=1741420247; c=relaxed/simple;
+	bh=1zP1a5dMyb4DAaMCOQd4d2onxFIE66DEJCP0uRZ4hy8=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=VCkdJw7ahF5ZciDvY+aAdgYg1mjINeLTq/bqf6JpYosOrytKVjYIOK6hidj6Dv6yEQOWMbdfttSEUmOiu2zrpOrufTPwx7QmSrzLujSDNKpB05hwEPYB2AuIaKwE821TuX9lQ5KrbKnQah4fdYtTwFDAwkMSmy3wI6OluKVQ3CI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NtCDDGYu; arc=none smtp.client-ip=209.85.218.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-ac0b6e8d96cso365042466b.0;
+        Fri, 07 Mar 2025 23:50:45 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741420244; x=1742025044; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=+Gm63QmkgaeWQbiVP834QkzwimUfZ5vt/9bD8i+JVic=;
+        b=NtCDDGYuMlwRX8OrkV/mL+TNmciTAjcx1oRaKJd1C4UnUkvBLbTO8NTuxH10Nf+VMu
+         0WrWv2G+o7tfhsIvvbnBXIhvkve6iM0ABX8Gmidq8U/bIh7sSa2HuFAqQvKy8aFulOe5
+         aNvv+IHM+4EwnNX+WsEydmSQziOe/NhxhxtOzBpSOeGe9hT6dV9SlQ1/J3oH+EcWO19E
+         7oWF60iMRoF1vj7dLthk5ITsNxo5+/l18KYtoXvZJ8x5JB+NqSaS2OQbq1aSEYA468+K
+         c9ElFi3zrJmVD/Bc6lPDP9oZcFZN25PV+54EJ0dCB5HPoORYbfvotUTSTkTu4LPVrzN5
+         UWtg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741420244; x=1742025044;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=+Gm63QmkgaeWQbiVP834QkzwimUfZ5vt/9bD8i+JVic=;
+        b=plz6PS+RKqoXcJ4jLDu9BJNmrJXiX3J2S+eEDfFG/EqI8aS/50ednya7Ho5VSMCuNJ
+         sXCiFFQsb7Jd/LozsVagGFuBM697HEgyJ4BE7oCnTIzGK/Q7RUHnFIm1CDDL7bqvJM9t
+         0sKi3x9ltBY9Q7OjKp0OdYuwE1ieVeGPIHZtFYpFFR9NbCIQSxHiQQl4f2gkWMgyJNEv
+         guQWmwRAh250JbE8+rT2k1Qs8NgGMHjDkjqKGtkfD1zCVzwJONxM9H6RNNuMwATdz48v
+         HTtbQDCii1EowFr8X+xOtxZtzi/FNbCHgao2y2iMvgwbpZ0glIJ/rzTQhbbCEEDNrdgD
+         o9wA==
+X-Forwarded-Encrypted: i=1; AJvYcCU0ULEFH+JbYG3fthBchqPm0OVhrJgrRkHTpfBdVQK2iIR02B35skLmD2JbvFuSZftNf1+KNeHp6bT/MvpJ@vger.kernel.org, AJvYcCUU58194N3OyHy6GcDV+Sti9KowfM7ubqiWREyItR82HA0vhNvD+CduIEV0OWG9hLaXkrhAUFrPeXBi@vger.kernel.org, AJvYcCWntTjNqmTg2yrTik1nvUw04H1QnWgOEO6WVlFLD++jYpAN9Qu2AHp9xqHCQocxyhKwuSGmQbRKBKS1@vger.kernel.org
+X-Gm-Message-State: AOJu0YzLpSCXoHAK/QiAlrlA2uSvFSfXZMbJB47tvLVIBFAQvWXBMKwF
+	ps9xs5LBiQHZJaTZQs56lYmxOvh91vUlCFqjvLTWYaxPaFkCZu3e
+X-Gm-Gg: ASbGncsjG315Kp0yiXF7eQILulYJlSe4QXjNqYQrxycCwb3WXG9Ejm2N05b++esxuEc
+	Vn64Dvsa9BTovpFO78I6MuszHtnYqlE4/2iaTXnB9OwD4OVoCddO80t/Tw1l5utc4hMU845PalG
+	FWLd5WPuAgURMto1o0BZcIRJAoW3+RtfC0wyB/8Yi96tmYoZ6MzPWQqFL0SoE+n21cIuZhhUMeo
+	YWQI25FEEBUkEPRz/8H0WTyDwXaACSrCQCZ2L3ZASc7wFbX7jPP9OOSqXfzqUEFrQ7eeWVpLQEp
+	A8/ymMCuIyiUJIoDSTMteTTKpxXZYMienwgvor1t83vlkX3IjdDsT2s/7d8L37DFMyZTPpxWQYx
+	egTkF1crP+ajDrdx80Q==
+X-Google-Smtp-Source: AGHT+IFwuEnguVcsU4XeJmM0ayQyaOroGWPWft/RM6QnhSkJYKlbzfHJDVDEv/kkNTyLVPE1H5JmRw==
+X-Received: by 2002:a17:906:c516:b0:ac2:806e:bb5b with SMTP id a640c23a62f3a-ac2806ebd72mr5592066b.21.1741420243698;
+        Fri, 07 Mar 2025 23:50:43 -0800 (PST)
+Received: from hex.my.domain (83.11.221.132.ipv4.supernova.orange.pl. [83.11.221.132])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac25d376342sm213104766b.106.2025.03.07.23.50.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 07 Mar 2025 23:50:42 -0800 (PST)
+From: Artur Weber <aweber.kernel@gmail.com>
+Subject: [PATCH v3 0/9] clk: bcm: kona: Add bus clock support, bus clocks
+ for BCM21664/BCM281xx
+Date: Sat, 08 Mar 2025 08:50:38 +0100
+Message-Id: <20250308-kona-bus-clock-v3-0-d6fb5bfc3b67@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-MTK: N
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAM72y2cC/2XMSw7CIBSF4a00jMXQS4XiyH0YB5TetqQPDCjRN
+ N27tInR6PCc5P9mEtBbDOSYzcRjtMG6KQ2+y4jp9NQitXXaBBgcGORAezdpWt0DNYMzPS1AScR
+ GoyoYSdHVY2MfG3i+pN3ZcHP+ufkxX983JX6pmFNGsZRS1VJq0cCpHbUd9saNZKUifHLO+F8OK
+ ddccCO0qKQqv/NlWV6COFB/6wAAAA==
+X-Change-ID: 20250212-kona-bus-clock-4297eefae940
+To: Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, 
+ Florian Fainelli <florian.fainelli@broadcom.com>, 
+ Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>, 
+ Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: Alex Elder <elder@kernel.org>, 
+ Stanislav Jakubek <stano.jakubek@gmail.com>, linux-clk@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
+ ~postmarketos/upstreaming@lists.sr.ht, 
+ Artur Weber <aweber.kernel@gmail.com>, Alex Elder <elder@riscstar.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1741420241; l=3052;
+ i=aweber.kernel@gmail.com; s=20231030; h=from:subject:message-id;
+ bh=1zP1a5dMyb4DAaMCOQd4d2onxFIE66DEJCP0uRZ4hy8=;
+ b=MMr5YVGCded9/KOyn3VFmrWwZFK9ceIaAv68U0OQxxeSWhaE3wqIQdZKwX4cMWYjsikK1sXol
+ zbEh9T5xExvA9ISLwQM3PJPnxd4f4xxd51K/DCJSV1MGRhMqE4sDN4F
+X-Developer-Key: i=aweber.kernel@gmail.com; a=ed25519;
+ pk=RhDBfWbJEHqDibXbhNEBAnc9FMkyznGxX/hwfhL8bv8=
 
-The vsi (video shared information) struct needs to be synchronized
-between firmware and host, as a change that is only done in the host
-version of the struct but isn't synchronized to the firmware can lead
-to decoding issues with H264 bitstreams. Highlight this requirement
-within the struct descriptions.
+This patchset does the following:
 
-Signed-off-by: Yunfei Dong <yunfei.dong@mediatek.com>
-Reviewed-by: Chen-Yu Tsai <wenst@chromium.org>
-Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+- Introduce support for bus clocks. These are fairly similar to
+  peripheral clocks, but only implement policy, gate and hyst.
+
+- Add matching bus clocks for BCM21664 and BCM281xx peripheral clocks
+  and update device tree bindings to match.
+
+The previous (RFC) version of this patchset also introduced a
+prerequisite clock mechanism to enable bus clocks before their
+corresponding peripheral clocks. It seems that this is unnecessary - 
+the way these clocks are initialized leaves them enabled by default.
+Thus, the prerequisite mechanism has been dropped from this version.
+
+This is fine for now, and more accurate to hardware (bus clocks are
+a prerequisite for the bus, not the peripheral clock). I had an idea
+to connect bus clocks to buses using "simple-pm-bus" in DT, but
+this is a task for another patchset.
+
+Signed-off-by: Artur Weber <aweber.kernel@gmail.com>
 ---
- .../mediatek/vcodec/decoder/vdec/vdec_h264_req_multi_if.c    | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+Changes in v3:
+- Fix DT schema example in BCM281xx bus clock bindings
+- Move CLOCK_COUNT defines from dt-bindings header to the driver
+- Fix BCM21664 UARTBx_APB IDs being out of order compared to clock
+  driver
+- Link to v2: https://lore.kernel.org/r/20250303-kona-bus-clock-v2-0-a363c6a6b798@gmail.com
 
-diff --git a/drivers/media/platform/mediatek/vcodec/decoder/vdec/vdec_h264_req_multi_if.c b/drivers/media/platform/mediatek/vcodec/decoder/vdec/vdec_h264_req_multi_if.c
-index 13d14187e4f5..5b25e1679b51 100644
---- a/drivers/media/platform/mediatek/vcodec/decoder/vdec/vdec_h264_req_multi_if.c
-+++ b/drivers/media/platform/mediatek/vcodec/decoder/vdec/vdec_h264_req_multi_if.c
-@@ -30,6 +30,7 @@ enum vdec_h264_core_dec_err_type {
- 
- /**
-  * struct vdec_h264_slice_lat_dec_param  - parameters for decode current frame
-+ *	(shared data between host and firmware)
-  *
-  * @sps:		h264 sps syntax parameters
-  * @pps:		h264 pps syntax parameters
-@@ -48,7 +49,7 @@ struct vdec_h264_slice_lat_dec_param {
- };
- 
- /**
-- * struct vdec_h264_slice_info - decode information
-+ * struct vdec_h264_slice_info - decode information (shared data between host and firmware)
-  *
-  * @nal_info:		nal info of current picture
-  * @timeout:		Decode timeout: 1 timeout, 0 no timeout
-@@ -72,7 +73,7 @@ struct vdec_h264_slice_info {
- 
- /**
-  * struct vdec_h264_slice_vsi - shared memory for decode information exchange
-- *        between SCP and Host.
-+ *        between SCP and Host (shared data between host and firmware).
-  *
-  * @wdma_err_addr:        wdma error dma address
-  * @wdma_start_addr:      wdma start dma address
+Changes in v2:
+- Drop prerequisite clock patch
+- Move clock/bcm21664.h dt-bindings header change to dt-bindings patch
+- Add BCM281xx bus clocks
+- Link to v1: https://lore.kernel.org/r/20250216-kona-bus-clock-v1-0-e8779d77a6f2@gmail.com
+
+---
+Artur Weber (9):
+      clk: bcm: kona: Move CLOCK_COUNT defines into the driver
+      dt-bindings: clock: brcm,kona-ccu: Drop CLOCK_COUNT defines from DT headers
+      dt-bindings: clock: brcm,kona-ccu: Add BCM21664 bus clocks
+      dt-bindings: clock: brcm,kona-ccu: Add BCM281xx bus clocks
+      clk: bcm: kona: Add support for bus clocks
+      clk: bcm21664: Add matching bus clocks for peripheral clocks
+      clk: bcm281xx: Add corresponding bus clocks for peripheral clocks
+      ARM: dts: bcm2166x-common: Add matching bus clocks for peripheral clocks
+      ARM: dts: bcm11351: Add corresponding bus clocks for peripheral clocks
+
+ .../devicetree/bindings/clock/brcm,kona-ccu.yaml   |  49 +++++++-
+ arch/arm/boot/dts/broadcom/bcm11351.dtsi           |  33 ++++--
+ arch/arm/boot/dts/broadcom/bcm2166x-common.dtsi    |  28 +++--
+ drivers/clk/bcm/clk-bcm21664.c                     |  91 ++++++++++++++
+ drivers/clk/bcm/clk-bcm281xx.c                     | 131 +++++++++++++++++++++
+ drivers/clk/bcm/clk-kona-setup.c                   | 116 ++++++++++++++++++
+ drivers/clk/bcm/clk-kona.c                         |  62 +++++++++-
+ drivers/clk/bcm/clk-kona.h                         |  10 ++
+ include/dt-bindings/clock/bcm21664.h               |  17 ++-
+ include/dt-bindings/clock/bcm281xx.h               |  24 +++-
+ 10 files changed, 528 insertions(+), 33 deletions(-)
+---
+base-commit: ffd294d346d185b70e28b1a28abe367bbfe53c04
+change-id: 20250212-kona-bus-clock-4297eefae940
+
+Best regards,
 -- 
-2.46.0
+Artur Weber <aweber.kernel@gmail.com>
 
 
