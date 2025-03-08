@@ -1,86 +1,86 @@
-Return-Path: <linux-kernel+bounces-552567-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-552568-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 31700A57B70
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 16:07:48 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B5EAA57B73
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 16:09:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9286B3AC11B
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 15:07:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A7D1E16BE01
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 15:09:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B348E1DE884;
-	Sat,  8 Mar 2025 15:07:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CACD1DE3DC;
+	Sat,  8 Mar 2025 15:08:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="QhGn7ZsS"
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="pm3Q5tMk"
 Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 953DA13DBA0
-	for <linux-kernel@vger.kernel.org>; Sat,  8 Mar 2025 15:07:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9671E1A3144
+	for <linux-kernel@vger.kernel.org>; Sat,  8 Mar 2025 15:08:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741446454; cv=none; b=TGPhOIgQLCzv1eyvosswYGZbhlr2T1fqB1VqUonDkCPgf8AeYEYoG7GditDe8wISzAk93FlnCxS+mWUulmjIB3CWW3gDz2YtQxGnkFIk11d9G/g/y+TmXv53vlJ+lgS/5YI81ejyVzHApMxxIJ92d4PEA+PV4NqGX1HaVkI+4m4=
+	t=1741446537; cv=none; b=mgnngxDeYIfdfL6/Cr3IxuDjjYbMbXA8Thu2rV00M05IbSHDcJdhJH0c4nrxbrod1qo9AMkhTUEKnBwD4EeTR/gDxzT193C6D3bLR/sAjwcxMipp5lg9FnzwZrX5mLW2wGkxkVgdQRR66eOUKMdSmX0BHpPABRau9f3gx7PXuF4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741446454; c=relaxed/simple;
-	bh=ClXkDW+t+1FLdQ5NSOYSoeq05rtHJHwc7FDPRS/JpoA=;
+	s=arc-20240116; t=1741446537; c=relaxed/simple;
+	bh=3GFm4luup+pqEjZgGHZ7drgx+phEmjUyO+rtAkf0gdY=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=gdKqV/bVs9whZl0ASotoC8a+GCG4IKpLlZhEplYD2WkAGUWqT3zJ3Gux1TBmc++ZmIaNSgoH60pBTpolf/HcdNw+Azjx2lFMIcP4YV7h8y1GrwpcfS7QV3WRS4cjcbGLUP4wrUcD8JneZk9EGn8TvIC64f+pW5BiE+XKUb2IdXw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=QhGn7ZsS; arc=none smtp.client-ip=205.220.180.131
+	 In-Reply-To:Content-Type; b=JrBcztlDB7i4BIX6lw+zEusWtzScFpWFg+wk1NeBQ5qUnJg4VW1ouO8Cs9BYWuKnLpNUua911UztY7Xt7s3T+5ZnvmoK2FE4t9je51QcOgfw9jSL2UbYCMlERnuTnTiRRBGn8/pxCD7YULkbiIbLDVxAK49oJbiwnAivIrLFeek=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=pm3Q5tMk; arc=none smtp.client-ip=205.220.180.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52892ikF006354
-	for <linux-kernel@vger.kernel.org>; Sat, 8 Mar 2025 15:07:31 GMT
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 528Co26o019596
+	for <linux-kernel@vger.kernel.org>; Sat, 8 Mar 2025 15:08:54 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
 	cc:content-transfer-encoding:content-type:date:from:in-reply-to
 	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	7gGa4aZilPyCyYaUtOkyKJLgEGpI8bxypefG7qwCZ+M=; b=QhGn7ZsS3LO0WODO
-	oRf1M2GnRuCy1OnVi7pwmk5bkxm07W4HD+Hdgrqc6udDywKidh2GQcWbCDW1em8q
-	KGdezKiyvA4+2a2xwei7sOFksWugzh3vkEA47uU46TYm4tXFP8zVbdt7vCMsDlp/
-	e8QgekpnPgAOdkoF/p3WwNy3mLR3scauqyF9b8hInq5Nhcaohu60r+aveFptooVr
-	kpR4VYZ1Rduvl+8sCu/1rPvUU/a2TKqOs7hOviU4WMhis/I5rQuzGeQtaOkqPEBR
-	AV6vPlPprXi0O8iwn/3pqEzTptF2TaUK7jYFpCg73sAovsWAjJl4trmAaQNuJVdX
-	DJTlJw==
-Received: from mail-qt1-f199.google.com (mail-qt1-f199.google.com [209.85.160.199])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 458f1jrqty-1
+	9WvEgSQ6fjLHoWS3Q+wrjvW0AGfYG3GKpopCgkxp6Ro=; b=pm3Q5tMk7TXVfjAr
+	voItw4cmezcg4cFw7t8NmsUkDERgQUACEOGihn7lbmphMlWl8PPxm/jQPN/kzsxg
+	pv2X4eHso0gs6UXwfFIJI2V+L+hpvTSzOMh5tD9PH1Kr7s8JJd3+vbEelu658R/9
+	fENn5xZd63C8/+3exPGG2M04E0i2mJJJAdI0BqLAFLaq2ICqCryftaJmioOePiNg
+	dDsmDVoeO/M3hjjvFDz7K8MGAkTFlNWei7No7oHiYGse7an6rhiJBM8QKDJ0OUsI
+	BmJV4l9rtJJPLtzeUkBw3qRcZDivDihFbLTRXMlQSiecK+WhGQzAsvLR3Zj8R1Sk
+	URtFKw==
+Received: from mail-qv1-f70.google.com (mail-qv1-f70.google.com [209.85.219.70])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 458ewk0qrt-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Sat, 08 Mar 2025 15:07:31 +0000 (GMT)
-Received: by mail-qt1-f199.google.com with SMTP id d75a77b69052e-476786e50d9so118071cf.1
-        for <linux-kernel@vger.kernel.org>; Sat, 08 Mar 2025 07:07:31 -0800 (PST)
+	for <linux-kernel@vger.kernel.org>; Sat, 08 Mar 2025 15:08:54 +0000 (GMT)
+Received: by mail-qv1-f70.google.com with SMTP id 6a1803df08f44-6e8ff8c9dcfso6398126d6.3
+        for <linux-kernel@vger.kernel.org>; Sat, 08 Mar 2025 07:08:54 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741446451; x=1742051251;
+        d=1e100.net; s=20230601; t=1741446533; x=1742051333;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=7gGa4aZilPyCyYaUtOkyKJLgEGpI8bxypefG7qwCZ+M=;
-        b=b1anORRwNDCAvxHYCX2/erGj133lMYo/fHnGHSU6OcTI8DW8JnhAwJtAhVDU8kBUZ2
-         2gvurft4T6x8NfnEOveTdNbTBHnATKtdjIIov91TT7j4yFjsGYGAq0Kaf78g07BF/Z6Y
-         7NaxebRCsseCVNDNQi/JUyv1ImlwIfdia/5WqkyXH2oJ7emw0bgV14kGVFcDZx6Bt3nb
-         9BfkGsEOFRccBtzSTXQxKlOfU4N+lya+wfy/naI6u2P1FllQv76bJIQGCT21nR/Vz4u7
-         FVBSHp6PwpJ+dcgOkdlxCfvP3UUwtaeJOmmey1obz59IZdp9J6zPvEChU9Qipd0zs++/
-         LNjQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWRhqRIBjlhS0J7Yww1EsYofIQB/qlDztRKGr63AwSWR6GkscvTfyr4e+QqfdNQW4ld84fRkn3NMwrNLb8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxgMLfDVeAwI9sEvLiL5n3/2ZRAOIhTweiNk/iiNcFSM1WlmpiL
-	KwyAzAWUeG2A0wjyMHkNJfgwTedDYbjLi2ebRovnMvrQ5qnZ2CVGucnBaupolLMgJBhSZcwAAIE
-	mi7/Mn55mOY747SdEUb1QIc0+Q8W4scq5j8IyEJIj0+VdFz0ZGONX++J85CBqyFA=
-X-Gm-Gg: ASbGncvdUp21YGY8udQ6VOEuUqTdrrTpv8LfyTXKlpeDXcFXBWJD02/C8nmcNO1hP2U
-	vgbpLANU0Fxo4pAHBX+S7ROIEgoUYARDI8z0rFlKYvfGB4JRcUzKNVlAEpPip5ZE0eYiStjcU/f
-	D4uYwfYA6zGVVYCHXK9bQLZwKgO3IPLptJFYn7wN1ypG4CDu6G4OCXTwciReImXD0w3PSM2eulI
-	coWR4ZuOyYxZ7mVb89ozuln2lDEwUCjamiihtTSlNuTKHBlunn+WlFWQGnUxPLoC96/bpc1Jd22
-	xpdyeNf9q5d0eVW3XjGWYil59wJpe+EKFciLds9dgU+1xffW5Af07K73DSwR5cA7vNlOSA==
-X-Received: by 2002:a05:622a:1342:b0:471:ea1a:d9e with SMTP id d75a77b69052e-47666c9c2efmr15222091cf.12.1741446450572;
-        Sat, 08 Mar 2025 07:07:30 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IG16fJ1s25av/19NCMWWvw3UdbNssC4iChQRcYwnRiDIAmzLAMyr8NziGv9MuhUVNksyID2cQ==
-X-Received: by 2002:a05:622a:1342:b0:471:ea1a:d9e with SMTP id d75a77b69052e-47666c9c2efmr15221891cf.12.1741446450220;
-        Sat, 08 Mar 2025 07:07:30 -0800 (PST)
+        bh=9WvEgSQ6fjLHoWS3Q+wrjvW0AGfYG3GKpopCgkxp6Ro=;
+        b=K0qJbIaEIgQt5+J6s6q0amgrE/UjLkgHfuI9Jt18CgtNKnsrPry2OXHSWHimnw1U4e
+         Q2p3ITea8zGSRrJgHxwNMJpBzdXgCUrkTbTZL0ZG2EFXLcueIL5/qNCkpHnUtGFA8qru
+         3f9qJHOEVjDqdNnrjMc9twJjZtAIFckC6DdiUZh0VAHzjue+ItcJ4IUtniN4qA3dOFY+
+         lCDnSGzSIG4zQgXroBDG8cg34kw0L9/QT6LpECP64+pE0gjNlJR+WattbCZlcieCCthV
+         xDDngpT5lLmYzqT57ZMAqlNjZ6+N2cWBwwImzvcAbCNbrfKYRkUOfpOoW4IVIZEmg7HL
+         S2KQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU34y+5L6gSqW5Voi4xNEVhnUO3/6zL7EN3A36MNcbhvIlms9JodcoBE6qz9NM0rRDJuxKRlpdjrmPo/DE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwSH3fMS0Zjl0Ef1TEbyKzjOYvNgLD7jMpprNIVeMfsgNDVvogG
+	SqXY4ts9xoKHBVT3Xbpu8I/pPaEIsMnK0N71Wg+TRClVQOcdCcZAuD+MmuIce8YxlsiZ0d7JT17
+	yLSBT0tHkQPtvykGgIUb57vH1ACfhh57VB0ROOrdiQ0niDeJLhdWJD/3z6ofrPeI=
+X-Gm-Gg: ASbGncs4CGoHoUe1tFb6MaFY6xaYsW6QFAaV16H0gibVWvSeSdHGAxMXNOMpWtjUJpc
+	7LymTdpyKlg6XlbmPALR9A8Od5PiJ/Um5Q0UY6z7XPaRcvm3exKBPiQG1lCvOaUGKnGpAQM5We6
+	4e1Alzg3BSETFdKVbCZQAstPZ+vLoS9IPR3G0bKuhzZwRafcomcSvtCuADF3ZKuHq8hOukxu1iz
+	jKQCrPxLjuL7po+Ha7CqGGyDDBVsQ5ZnoCg2yhKYAamgjASDrtJoFnW/v2Sh+UR/CcgZKeauBED
+	lCMSNMrCkNoVU65oidcjUhhQmvZSQSb3D/d8HAXpn++OlK7cro73EHLmj7+9ie0wcASyJw==
+X-Received: by 2002:a05:6214:5289:b0:6e4:2975:ce54 with SMTP id 6a1803df08f44-6e908cb5248mr17585446d6.3.1741446533308;
+        Sat, 08 Mar 2025 07:08:53 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IG7VzZfMJABr9wvGjQaN3mynWkb62I3My6wlogqF3sUcltn/eOJ0ALm9h7T2SCMQYhNBFiMvw==
+X-Received: by 2002:a05:6214:5289:b0:6e4:2975:ce54 with SMTP id 6a1803df08f44-6e908cb5248mr17585166d6.3.1741446532965;
+        Sat, 08 Mar 2025 07:08:52 -0800 (PST)
 Received: from [192.168.65.90] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac284f76a22sm24449066b.149.2025.03.08.07.07.27
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac23943878csm443575066b.23.2025.03.08.07.08.50
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 08 Mar 2025 07:07:29 -0800 (PST)
-Message-ID: <aca09e7c-53e2-45a3-8281-7df9951549eb@oss.qualcomm.com>
-Date: Sat, 8 Mar 2025 16:07:26 +0100
+        Sat, 08 Mar 2025 07:08:52 -0800 (PST)
+Message-ID: <aff4fd18-59a2-4378-bfd2-840bcd1a2392@oss.qualcomm.com>
+Date: Sat, 8 Mar 2025 16:08:49 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -88,113 +88,62 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 7/9] arm64: dts: qcom: sm8750: Add USB support to
- SM8750 SoCs
-To: Melody Olvera <quic_molvera@quicinc.com>, Vinod Koul <vkoul@kernel.org>,
-        Kishon Vijay Abraham I <kishon@kernel.org>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
- <conor+dt@kernel.org>,
-        Wesley Cheng <quic_wcheng@quicinc.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-usb@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-References: <20250304-sm8750_usb_master-v2-0-a698a2e68e06@quicinc.com>
- <20250304-sm8750_usb_master-v2-7-a698a2e68e06@quicinc.com>
+Subject: Re: [PATCH v3 5/6] arm64: dts: qcom: ipq5018: Add PCIe related nodes
+To: George Moussalem <george.moussalem@outlook.com>,
+        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-pci@vger.kernel.org, linux-phy@lists.infradead.org,
+        andersson@kernel.org, bhelgaas@google.com, conor+dt@kernel.org,
+        devicetree@vger.kernel.org, dmitry.baryshkov@linaro.org,
+        kishon@kernel.org, konradybcio@kernel.org, krzk+dt@kernel.org,
+        kw@linux.com, lpieralisi@kernel.org, manivannan.sadhasivam@linaro.org,
+        p.zabel@pengutronix.de, quic_nsekar@quicinc.com, robh@kernel.org,
+        robimarko@gmail.com, vkoul@kernel.org
+Cc: quic_srichara@quicinc.com
+References: <20250305134239.2236590-1-george.moussalem@outlook.com>
+ <DS7PR19MB8883E4A90C8AFF66BCAE14F49DCB2@DS7PR19MB8883.namprd19.prod.outlook.com>
 Content-Language: en-US
 From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <20250304-sm8750_usb_master-v2-7-a698a2e68e06@quicinc.com>
+In-Reply-To: <DS7PR19MB8883E4A90C8AFF66BCAE14F49DCB2@DS7PR19MB8883.namprd19.prod.outlook.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-Authority-Analysis: v=2.4 cv=ctthk04i c=1 sm=1 tr=0 ts=67cc5d33 cx=c_pps a=WeENfcodrlLV9YRTxbY/uA==:117 a=FpWmc02/iXfjRdCD7H54yg==:17 a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=COk6AnOGAAAA:8 a=wuHw7GjLwNk9Z1BGEEEA:9 a=QEXdDO2ut3YA:10
- a=kacYvNCVWA4VmyqE58fU:22 a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-ORIG-GUID: KxtUYK1k5zDTDyI_T9IpyVfZBfphqs93
-X-Proofpoint-GUID: KxtUYK1k5zDTDyI_T9IpyVfZBfphqs93
+X-Authority-Analysis: v=2.4 cv=Tr8chCXh c=1 sm=1 tr=0 ts=67cc5d86 cx=c_pps a=oc9J++0uMp73DTRD5QyR2A==:117 a=FpWmc02/iXfjRdCD7H54yg==:17 a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=COk6AnOGAAAA:8 a=UqCG9HQmAAAA:8 a=eQ806-ShdUuXvpoWo40A:9 a=QEXdDO2ut3YA:10
+ a=iYH6xdkBrDN1Jqds4HTS:22 a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-GUID: i0W5obC8q1yk7I4AimpY1Zn27JXzXphk
+X-Proofpoint-ORIG-GUID: i0W5obC8q1yk7I4AimpY1Zn27JXzXphk
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-08_05,2025-03-07_03,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 bulkscore=0
- clxscore=1015 priorityscore=1501 malwarescore=0 lowpriorityscore=0
- phishscore=0 adultscore=0 mlxscore=0 impostorscore=0 mlxlogscore=975
- spamscore=0 classifier=spam authscore=0 authtc=n/a authcc= route=outbound
- adjust=0 reason=mlx scancount=1 engine=8.19.0-2502100000
- definitions=main-2503080113
+ definitions=2025-03-08_06,2025-03-07_03,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0
+ priorityscore=1501 mlxlogscore=542 spamscore=0 lowpriorityscore=0
+ mlxscore=0 clxscore=1015 phishscore=0 malwarescore=0 impostorscore=0
+ bulkscore=0 adultscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2502100000
+ definitions=main-2503080114
 
-On 4.03.2025 10:56 PM, Melody Olvera wrote:
-> From: Wesley Cheng <quic_wcheng@quicinc.com>
+On 5.03.2025 2:41 PM, George Moussalem wrote:
+> From: Sricharan Ramabadhran <quic_srichara@quicinc.com>
 > 
-> Add the base USB devicetree definitions for SM8750 platforms.  The overall
-> chipset contains a single DWC3 USB3 controller (rev. 200a), SS QMP PHY
-> (rev. v8) and M31 eUSB2 PHY.  The major difference for SM8750 is the
-> transition to using the M31 eUSB2 PHY compared to previous SoCs.
+> From: Nitheesh Sekar <quic_nsekar@quicinc.com>
 > 
-> Enable USB support on SM8750 MTP and QRD variants. SM8750 has a QMP combo
-> PHY for the SSUSB path, and a M31 eUSB2 PHY for the HSUSB path.
+> Add phy and controller nodes for a 2-lane Gen2 and
+> a 1-lane Gen2 PCIe bus. IPQ5018 has 8 MSI SPI interrupts and
+> one global interrupt.
 > 
-> Signed-off-by: Wesley Cheng <quic_wcheng@quicinc.com>
-> Signed-off-by: Melody Olvera <quic_molvera@quicinc.com>
+> Signed-off-by: Nitheesh Sekar <quic_nsekar@quicinc.com>
+> Signed-off-by: Sricharan R <quic_srichara@quicinc.com>
+> Signed-off-by: George Moussalem <george.moussalem@outlook.com>
 > ---
 
 [...]
 
-> +		usb_1: usb@a6f8800 {
-> +			compatible = "qcom,sm8750-dwc3", "qcom,dwc3";
-> +			reg = <0x0 0x0a6f8800 0x0 0x400>;
-> +			status = "disabled";
-> +			#address-cells = <2>;
-> +			#size-cells = <2>;
-> +			ranges;
+> +			#interrupt-cells = <1>;
+> +			interrupt-map-mask = <0 0 0 0x7>;
+> +			interrupt-map = <0 0 0 1 &intc 0 142 IRQ_TYPE_LEVEL_HIGH>, /* int_a */
+> +					<0 0 0 2 &intc 0 143 IRQ_TYPE_LEVEL_HIGH>, /* int_b */
+> +					<0 0 0 3 &intc 0 144 IRQ_TYPE_LEVEL_HIGH>, /* int_c */
+> +					<0 0 0 4 &intc 0 145 IRQ_TYPE_LEVEL_HIGH>; /* int_d */
 
-Please follow property order / general style found in x1e80100.dtsi
-
-> +
-> +			clocks = <&gcc GCC_CFG_NOC_USB3_PRIM_AXI_CLK>,
-> +				 <&gcc GCC_USB30_PRIM_MASTER_CLK>,
-> +				 <&gcc GCC_AGGRE_USB3_PRIM_AXI_CLK>,
-> +				 <&gcc GCC_USB30_PRIM_SLEEP_CLK>,
-> +				 <&gcc GCC_USB30_PRIM_MOCK_UTMI_CLK>,
-> +				 <&tcsrcc TCSR_USB3_CLKREF_EN>;
-> +			clock-names = "cfg_noc",
-> +				      "core",
-> +				      "iface",
-> +				      "sleep",
-> +				      "mock_utmi",
-> +				      "xo";
-> +
-> +			assigned-clocks = <&gcc GCC_USB30_PRIM_MOCK_UTMI_CLK>,
-> +					  <&gcc GCC_USB30_PRIM_MASTER_CLK>;
-> +			assigned-clock-rates = <19200000>, <200000000>;
-> +
-> +			interrupts-extended = <&intc GIC_SPI 130 IRQ_TYPE_LEVEL_HIGH>,
-> +						  <&intc GIC_SPI 131 IRQ_TYPE_LEVEL_HIGH>,
-> +					      <&pdc 14 IRQ_TYPE_EDGE_BOTH>,
-> +					      <&pdc 15 IRQ_TYPE_EDGE_BOTH>,
-> +					      <&pdc 17 IRQ_TYPE_LEVEL_HIGH>;
-> +			interrupt-names = "pwr_event",
-> +					  "hs_phy_irq",
-> +					  "dp_hs_phy_irq",
-> +					  "dm_hs_phy_irq",
-> +					  "ss_phy_irq";
-> +
-> +			power-domains = <&gcc GCC_USB30_PRIM_GDSC>;
-> +			required-opps = <&rpmhpd_opp_nom>;
-> +
-> +			resets = <&gcc GCC_USB30_PRIM_BCR>;
-> +
-> +			interconnects = <&aggre1_noc MASTER_USB3_0 0 &mc_virt SLAVE_EBI1 0>,
-
-QCOM_ICC_TAG_ALWAYS
-
-> +					<&gem_noc MASTER_APPSS_PROC 0 &config_noc SLAVE_USB3_0 0>;
-
-QCOM_ICC_TAG_ACTIVE_ONLY
+Please all the comments in this patch, they're not very useful
 
 Konrad
 
