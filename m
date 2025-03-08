@@ -1,196 +1,167 @@
-Return-Path: <linux-kernel+bounces-552325-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-552326-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C366A57864
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 05:55:11 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8AA72A5786C
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 06:09:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C8AC916D334
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 04:55:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5CC1B3B6138
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 05:09:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7E0E18787A;
-	Sat,  8 Mar 2025 04:55:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DFC4187FE4;
+	Sat,  8 Mar 2025 05:09:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZUMDQ70U"
-Received: from mail-yw1-f173.google.com (mail-yw1-f173.google.com [209.85.128.173])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="m0gXOMsR"
+Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com [209.85.208.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 891D117A313;
-	Sat,  8 Mar 2025 04:55:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 467FC17A313
+	for <linux-kernel@vger.kernel.org>; Sat,  8 Mar 2025 05:09:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741409702; cv=none; b=Sp5MebhPGTURGRf/r/QB9zNgRiCpKy/IEddZRrTyvsfJ3uWIIayhDlfASt9pxoN1yuvh12ATDAg6R+KwrmVafOzc14rsTK0KedY+au635ozOdEvWnzvnKgXK+Hpb5tBtkasbApU0Ac5ODE27fQV1UGUXQzPQ9nEc0cPsRxzt25I=
+	t=1741410559; cv=none; b=XDPr18t3rW3VwfU4eRUSRXiQyCtnhelZzcuT/jGuHm8urdUBmEa9lLPSGctxlDCMIUnhRs1Fd8bHKRgKUE7dmM5fsriLxORxJaSvakkjVmvXaPXYFxyAr31pVj1ySj0PiIhBIsgqFlgcX1S2uPKvcuGzzQPyAnj2nHCHw9pqcXE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741409702; c=relaxed/simple;
-	bh=79eWymJ/dJNrOsnciOWzUUy1t7U9wwQ0z8U24msUpgo=;
-	h=Mime-Version:Content-Type:Date:Message-Id:From:To:Cc:Subject:
-	 References:In-Reply-To; b=G4WWiFdaxuDKemG7f4Mg0lglbgBw0P65iVe+LNBZB8X3usnSxmZs1aUJS1H2ttEfNfFzqdJCEmwT1dP1swB48CusQClbZUu6BRG9Xr36akJLFp/I/fzxfu31S1yrplCfjSD5M/yh0R2EXaiEvT7w5RmTB/MJYQJjxMVQhKt6uXM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZUMDQ70U; arc=none smtp.client-ip=209.85.128.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f173.google.com with SMTP id 00721157ae682-6fb2a0e4125so17990857b3.1;
-        Fri, 07 Mar 2025 20:55:00 -0800 (PST)
+	s=arc-20240116; t=1741410559; c=relaxed/simple;
+	bh=ptCcDRtuDzbTjjE4m2PHHQvXnqToeWz1+GhetT24juk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rPknMX1s/w0edSvlo8qAm+Zt9yyFejPWV8wi0BSSu6WxS4DKHRni03+/Fdy2uh6DgL4VPXc0ucyVGHm+Ds+y7QstCCifm0hj9zzMA3dRuEG9jOWRhU6+gVyfMQy6lTQ7SeFZlpTfYVLlzjkSx89jY0uofEJlrXoKO4ckbNrN3vs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=m0gXOMsR; arc=none smtp.client-ip=209.85.208.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-307c13298eeso30219711fa.0
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Mar 2025 21:09:16 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741409699; x=1742014499; darn=vger.kernel.org;
-        h=in-reply-to:references:subject:cc:to:from:message-id:date
-         :content-transfer-encoding:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=79eWymJ/dJNrOsnciOWzUUy1t7U9wwQ0z8U24msUpgo=;
-        b=ZUMDQ70UQ61UP+l+YbWPJF8g2FWWkDZL9f7dY/s+tc7QrP/iKZ5ivn/SqFhn2yVkhJ
-         kI9qkyk9MuQOguZyg8CPYHOXoQ5uOJYJZnao7hQIPukxKr/xT/Ftf9GDYZnb2jNmZZ9O
-         Xrd/6yuT3l4yUTHmb0ltO/qQL/k0VpWjuJxhOl24h7minjFjW9C6btI39oThR0D7pNMZ
-         obK3IhveR+TO/JS/Lup67c0jzy9S3OrKa2wjdmiKmDQfBYV96cBsCpGvw+s9XyLpxBUq
-         LqwFUr4Nq+Qd49t9pxwurZHwytFf9zTLJ/VpkBUd21aRf2bmLb67TRRzSwJHfrcuXJ3f
-         Hnww==
+        d=linaro.org; s=google; t=1741410555; x=1742015355; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=ulAMfJbRFBT/fSAG0Qg9z+1DBNf6VyZHT1tEXJwkloQ=;
+        b=m0gXOMsRmOE6nqheCVUiEbBGxsp0INCWwAHDxfsg83DlwZwv31TjLObGWlHKixuwV8
+         i+GCYhDWKShRenWQnT1rW87zezRFlgNDDpdTWYVBwb0sWj11gzr/p07UGHthsWw6CjCv
+         fgG9b6KYhWh0WWcc/UnhKnebDJNmjN60671FKjPojGpgepYQ3ckJlG5F6jGFFhkXXS8p
+         VOZiV2hUNtLXFT0m8foKbKQX9cFjSF3xVPsIMBHk69edvBG9q0TqaGxyoOvS7z/74T3L
+         ztQ2+oJPF/8WE+xcKCY1kQA9/lCuYNyAFXwHzId8dkTbHxd9GKzfmIJcQhRdW3XOZGgO
+         iFnA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741409699; x=1742014499;
-        h=in-reply-to:references:subject:cc:to:from:message-id:date
-         :content-transfer-encoding:mime-version:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=79eWymJ/dJNrOsnciOWzUUy1t7U9wwQ0z8U24msUpgo=;
-        b=B++YN7hPKGZA1ZLNrr/H+A6gPkbplqne4J/L+kbMHrZ2bMFvKnc9W9sQ6twuoPI5DW
-         3NiF+M6BLQQJ9WcZl8W1xCpbYWwX8qFT350Q4ba9Fm/6GpeCniJNk7ibf7LOStIrQULU
-         LGaHnLI8nbp2pJVrZPgQGBxxalncxehPsIzu5plIwg+cbzcrp1toueCGDJhnjGSnn6vs
-         J/F003a7Z8TvoiJ3w07VMQgiKb3uzdQKKqNvRIqS/XT5uIztzqGYRca0oOYabJRAsFwH
-         tmfoT68D5XHMVf0IiZk4jTSwnQcLwJUWCsxD1kHEImCHkfLWA5zWWxQGUP2SQnaq4jPU
-         9RLQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVen+/D2oi5mWReCrveve7HL4eSuC9MU3eA8v/qI4r2AwUenrSr7JRKxy8Wtplungdz3Ios3T0N9K28N9T2@vger.kernel.org, AJvYcCVfG3U8waBp8dPaRxyX1kYEEB83JzNBX9yQ7uS2f5HQ3pxbrNvSfHb+g/ioxsTaXGZuSdnDoRsZWrmGcw==@vger.kernel.org, AJvYcCXhls7iChZ0Zz6Njki0/nGclyiJplLAjFzqbJ6qTWV9yIkEwVBYy8nVJThCSFokkrhjvd5E9C1XZb2uQTPLQK594a6dHw==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzsyU82ckOSBRh9XrFXeVMCKxfE6dPjdVoW3W9baU+lAOIdpCFd
-	Y0PgSBcPHelcD+fvFX+SByoh2LW0YuLcSosa9CyiVzLnd4ILV1Tr
-X-Gm-Gg: ASbGncsD4hy95G7YYVsOqbz74PQW3uFYsxLHg4zLgitdt+O9VwD7ymkwhCLXJtYO8Ho
-	i0OgvxOQnU9RjW0ZLi2VcRjCiVOUx/YD/I09T2powOhyernV1Bbkx5CRMx8+dleJMAqmiEk4OId
-	D0ep/Xre1OtAxmR3jSThILjzWPRiHiOq8DZjT12Vh3qRfWKKb1ZoSQJbRKniTNyxDf4ClND7uSO
-	rPqqeD1Y+4eNP3JksRipjm1eYryOMeAARoDjex8e6LTUbSywfW8JU2nFOfGqJN2gONEKKE4npWG
-	AvwB+EO9SjxMv35d7a2GXaCnbw5349GlScDwp3KCrXtcPOc=
-X-Google-Smtp-Source: AGHT+IHqmQr8ufHJU7mJvjQTEpig38FM22E1OhqXdH/0lA7fBKukKwvf6tzl3LD1WvgacVEosW13lg==
-X-Received: by 2002:a05:690c:300f:b0:6fe:bf9d:f6de with SMTP id 00721157ae682-6febf9e0392mr59139037b3.0.1741409699282;
-        Fri, 07 Mar 2025 20:54:59 -0800 (PST)
-Received: from localhost ([2800:bf0:82:3d2:9e61:1a62:1a8c:3e62])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-6fed2a528f2sm1553507b3.62.2025.03.07.20.54.56
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 07 Mar 2025 20:54:58 -0800 (PST)
+        d=1e100.net; s=20230601; t=1741410555; x=1742015355;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ulAMfJbRFBT/fSAG0Qg9z+1DBNf6VyZHT1tEXJwkloQ=;
+        b=wcu5z/Iw+nIzIGclbXCFkfNbFFMZvLjR+YVBV9ThFyuzQCfMIM7h4CbnzYj4prg2/z
+         3cN8saNetbnT26u5WHR57XlR9Ye/IkxezHEYE2AWhjCeF6Qbw1c+6IPE76SZkd3vDij9
+         MIudLJdn46MJhxsxSvv0csu2Ba2x4+PAU/jGFv6rylfV9j1bPkg4OEUGgIxk7fPSCXzg
+         ilx6jyLWhxdxpjeTtco1toWLNXMITEVbA5mA40gneMjzv+yxhYO/68fQsDhw6LKwrAED
+         oLN1RRL+yTHGAiNLfrdGxMFdjkjdmrJhYUM2sM4iOwwT28VxoWyMQTFag9Bs4xjvITai
+         q5Kw==
+X-Forwarded-Encrypted: i=1; AJvYcCWYr6zIpiqh8Ky/+ANNJnZTVVKhjJO+50iKw0dNMg20AnGSQQyesWpT8Ty4D8UlcvUKVVBo0pzion7ZAQ8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzEwa3m9qCUaUVnYuKVSmqQjCOdB1mpqhB9kpJnEwNts/dF3vso
+	tBgQz1iPh8+SCuDFcGKbRI+WHcqk/Ha1y3XsMgKfzdCJExj4lh4/ocCEXArHLAc=
+X-Gm-Gg: ASbGncvvFM2KROjh3Us+u03BvVxuv7L1gKupfE9BFJ+p3NqNQpxwG2RArT/6Gw6cFiZ
+	DT1ZJix+1BNl9MiBByBngfXvF/tKyAhMUPCVVNEhjvZzmgyHDkHEqJOra+wztlaQUGuQLAqEXLQ
+	3l5jHp1GlAJhQbtZRWGBF0ulwqPidAuC3q3E/sugsXrZo7ZalZCP0mkYDqnk6LOwHlhuGr1RvEF
+	WdVva4Ie8oHeQdu9xJlf2s9DzECfm/reLSe89t3Ce6eV72BuinSnvs1A/Wz0ULCPWv2bKBNZ+7Y
+	RzjMp0A45XqZhCGgq3Ju0d/8E2MIVhGAwGqot51MqepqmNLbwtsXOUwRBh18zFjhJ5JoEaGtcTs
+	uffohs64ZUaa2QXFPXXDKsNzR
+X-Google-Smtp-Source: AGHT+IF7bjBB5aMjSIOWPIZXx3se8ZXwg6KEPXnQgNtkefZ48n8buFCzC0ExNuYMF9We4+jwIP9GuA==
+X-Received: by 2002:a2e:be91:0:b0:30b:c608:22bf with SMTP id 38308e7fff4ca-30bfe429ce8mr7170571fa.9.1741410555213;
+        Fri, 07 Mar 2025 21:09:15 -0800 (PST)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-30be98d0bf3sm7872791fa.8.2025.03.07.21.09.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 07 Mar 2025 21:09:13 -0800 (PST)
+Date: Sat, 8 Mar 2025 07:09:11 +0200
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: Dmitry Baryshkov <lumag@kernel.org>, linux-kernel@vger.kernel.org, 
+	linux-arm-msm@vger.kernel.org, Sean Paul <sean@poorly.run>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Conor Dooley <conor+dt@kernel.org>, 
+	Marijn Suijten <marijn.suijten@somainline.org>, dri-devel@lists.freedesktop.org, 
+	David Airlie <airlied@gmail.com>, Thomas Zimmermann <tzimmermann@suse.de>, 
+	Abhinav Kumar <quic_abhinavk@quicinc.com>, devicetree@vger.kernel.org, 
+	Neil Armstrong <neil.armstrong@linaro.org>, Rob Clark <robdclark@gmail.com>, 
+	Kuogee Hsieh <quic_khsieh@quicinc.com>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Simona Vetter <simona@ffwll.ch>, freedreno@lists.freedesktop.org, 
+	Bjorn Andersson <andersson@kernel.org>, Robin Murphy <robin.murphy@arm.com>, 
+	Joerg Roedel <joro@8bytes.org>, Jonathan Marek <jonathan@marek.ca>, 
+	Maxime Ripard <mripard@kernel.org>, iommu@lists.linux.dev, 
+	Krishna Manikandan <quic_mkrishn@quicinc.com>, linux-arm-kernel@lists.infradead.org, 
+	Will Deacon <will@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>
+Subject: Re: [PATCH 05/10] dt-bindings: display/msm: Add Qualcomm SAR2130P
+Message-ID: <nddxntwmiyurqew75gc6yoj2dcinhjqu36cdujhruqyrz62ry5@4e2y76ghmo4h>
+References: <20250308-sar2130p-display-v1-0-1d4c30f43822@linaro.org>
+ <20250308-sar2130p-display-v1-5-1d4c30f43822@linaro.org>
+ <174140525677.1770282.3232695979994091275.robh@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Fri, 07 Mar 2025 23:54:55 -0500
-Message-Id: <D8AM7U5UNBX5.XYJUL18HC2M5@gmail.com>
-From: "Kurt Borja" <kuurtb@gmail.com>
-To: "Guenter Roeck" <linux@roeck-us.net>, "Armin Wolf" <W_Armin@gmx.de>,
- =?utf-8?q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Cc: "Hans de Goede" <hdegoede@redhat.com>,
- <platform-driver-x86@vger.kernel.org>, <Dell.Client.Kernel@dell.com>,
- <linux-kernel@vger.kernel.org>, "Jean Delvare" <jdelvare@suse.com>,
- <linux-hwmon@vger.kernel.org>
-Subject: Re: [PATCH v3 07/10] platform/x86: alienware-wmi-wmax: Add HWMON
- support
-X-Mailer: aerc 0.20.1-0-g2ecb8770224a
-References: <20250305-hwm-v3-0-395e7a1407e2@gmail.com>
- <20250305-hwm-v3-7-395e7a1407e2@gmail.com>
- <a375d474-5349-4662-8ce8-4f8f55349901@gmx.de>
- <D89M2ZQJEH45.1HKFFX5ESXRSJ@gmail.com>
- <7fbf0553-e6b3-4964-9210-8cd720ae9c9e@gmx.de>
- <7c850374-8caa-430d-b114-1aaa944bbc89@roeck-us.net>
-In-Reply-To: <7c850374-8caa-430d-b114-1aaa944bbc89@roeck-us.net>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <174140525677.1770282.3232695979994091275.robh@kernel.org>
 
-On Fri Mar 7, 2025 at 6:59 PM -05, Guenter Roeck wrote:
-> On 3/7/25 13:09, Armin Wolf wrote:
->> Am 07.03.25 um 01:35 schrieb Kurt Borja:
-> ...
->>>>> +static const struct hwmon_ops awcc_hwmon_ops =3D {
->>>>> +=C2=A0=C2=A0=C2=A0 .is_visible =3D awcc_hwmon_is_visible,
->>>>> +=C2=A0=C2=A0=C2=A0 .read =3D awcc_hwmon_read,
->>>>> +=C2=A0=C2=A0=C2=A0 .read_string =3D awcc_hwmon_read_string,
->>>>> +};
->>>>> +
->>>>> +static const struct hwmon_channel_info * const awcc_hwmon_info[] =3D=
- {
->>>>> +=C2=A0=C2=A0=C2=A0 HWMON_CHANNEL_INFO(temp,
->>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0 HWMON_T_LABEL | HWMON_T_INPUT,
->>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0 HWMON_T_LABEL | HWMON_T_INPUT,
->>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0 HWMON_T_LABEL | HWMON_T_INPUT,
->>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0 HWMON_T_LABEL | HWMON_T_INPUT,
->>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0 HWMON_T_LABEL | HWMON_T_INPUT,
->>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0 HWMON_T_LABEL | HWMON_T_INPUT
->>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0 ),
->>>>> +=C2=A0=C2=A0=C2=A0 HWMON_CHANNEL_INFO(fan,
->>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0 HWMON_F_LABEL | HWMON_F_INPUT | HWMON_F_MIN | HWMON_F_MA=
-X,
->>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0 HWMON_F_LABEL | HWMON_F_INPUT | HWMON_F_MIN | HWMON_F_MA=
-X,
->>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0 HWMON_F_LABEL | HWMON_F_INPUT | HWMON_F_MIN | HWMON_F_MA=
-X,
->>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0 HWMON_F_LABEL | HWMON_F_INPUT | HWMON_F_MIN | HWMON_F_MA=
-X,
->>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0 HWMON_F_LABEL | HWMON_F_INPUT | HWMON_F_MIN | HWMON_F_MA=
-X,
->>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0 HWMON_F_LABEL | HWMON_F_INPUT | HWMON_F_MIN | HWMON_F_MA=
-X
->>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0 ),
->>>>> +=C2=A0=C2=A0=C2=A0 HWMON_CHANNEL_INFO(pwm,
->>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0 HWMON_PWM_AUTO_CHANNELS_TEMP,
->>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0 HWMON_PWM_AUTO_CHANNELS_TEMP,
->>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0 HWMON_PWM_AUTO_CHANNELS_TEMP,
->>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0 HWMON_PWM_AUTO_CHANNELS_TEMP,
->>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0 HWMON_PWM_AUTO_CHANNELS_TEMP,
->>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0 HWMON_PWM_AUTO_CHANNELS_TEMP
->>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0 ),
->>>> Since the number of fans and temperature sensors is only known at runt=
-ime creating awcc_hwmon_info
->>>> would make sense.
->>> IIRC Guenter asked another dev to add more CHANNEL_INFO entries instead
->>> of doing that? I might be wrong tho.
->>>
->>> I'm fine either way.
->>>
->> If Guenter is fine with your current approach then you can keep it.
->>=20
->
-> In drivers/hwmon, I prefer static descriptions such as the above and usin=
-g
-> the is_visible() function to determine if sensor attributes should actual=
-ly
-> be created. However, as I have mentioned several times, I do not comment =
-on style
-> questions like this (or, for that matter, non-standard sysfs attributes) =
-outside
-> drivers/hwmon, so you can do or request whatever you like.
->
-> Guenter
+On Fri, Mar 07, 2025 at 09:40:56PM -0600, Rob Herring (Arm) wrote:
+> 
+> On Sat, 08 Mar 2025 03:42:23 +0200, Dmitry Baryshkov wrote:
+> > From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> > 
+> > Describe the Mobile Display SubSystem (MDSS) device present on the
+> > Qualcomm SAR2130P platform. It looks pretty close to SM8550 on the
+> > system level. SAR2130P features two DSI hosts and single DisplayPort
+> > controller.
+> > 
+> > Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> > ---
+> >  .../bindings/display/msm/qcom,sar2130p-mdss.yaml   | 445 +++++++++++++++++++++
+> >  1 file changed, 445 insertions(+)
+> > 
+> 
+> My bot found errors running 'make dt_binding_check' on your patch:
+> 
+> yamllint warnings/errors:
+> 
+> dtschema/dtc warnings/errors:
+> /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/display/msm/qcom,sar2130p-mdss.example.dtb: dsi@ae94000: compatible: 'oneOf' conditional failed, one must be fixed:
+> 	['qcom,sar2130p-dsi-ctrl', 'qcom,mdss-dsi-ctrl'] is too long
+> 	'qcom,sar2130p-dsi-ctrl' is not one of ['qcom,apq8064-dsi-ctrl', 'qcom,msm8226-dsi-ctrl', 'qcom,msm8916-dsi-ctrl', 'qcom,msm8953-dsi-ctrl', 'qcom,msm8974-dsi-ctrl', 'qcom,msm8976-dsi-ctrl', 'qcom,msm8996-dsi-ctrl', 'qcom,msm8998-dsi-ctrl', 'qcom,qcm2290-dsi-ctrl', 'qcom,sc7180-dsi-ctrl', 'qcom,sc7280-dsi-ctrl', 'qcom,sdm660-dsi-ctrl', 'qcom,sdm670-dsi-ctrl', 'qcom,sdm845-dsi-ctrl', 'qcom,sm6115-dsi-ctrl', 'qcom,sm6125-dsi-ctrl', 'qcom,sm6150-dsi-ctrl', 'qcom,sm6350-dsi-ctrl', 'qcom,sm6375-dsi-ctrl', 'qcom,sm7150-dsi-ctrl', 'qcom,sm8150-dsi-ctrl', 'qcom,sm8250-dsi-ctrl', 'qcom,sm8350-dsi-ctrl', 'qcom,sm8450-dsi-ctrl', 'qcom,sm8550-dsi-ctrl', 'qcom,sm8650-dsi-ctrl']
+> 	'qcom,sar2130p-dsi-ctrl' is not one of ['qcom,dsi-ctrl-6g-qcm2290', 'qcom,mdss-dsi-ctrl']
+> 	from schema $id: http://devicetree.org/schemas/display/msm/dsi-controller-main.yaml#
 
-Thank you for clarifying!
+It looks like the patch 2 could not be applied and was skipped. Is the
+bot parsing the dependencies from the cover letter?
 
-If there are no objections, then I prefer to keep it this way. With the
-few extra HWMON_CHANNEL_INFO entries.
+> /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/display/msm/qcom,sar2130p-mdss.example.dtb: dsi@ae94000: Unevaluated properties are not allowed ('compatible' was unexpected)
+> 	from schema $id: http://devicetree.org/schemas/display/msm/dsi-controller-main.yaml#
+> /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/display/msm/qcom,sar2130p-mdss.example.dtb: dsi@ae96000: compatible: 'oneOf' conditional failed, one must be fixed:
+> 	['qcom,sar2130p-dsi-ctrl', 'qcom,mdss-dsi-ctrl'] is too long
+> 	'qcom,sar2130p-dsi-ctrl' is not one of ['qcom,apq8064-dsi-ctrl', 'qcom,msm8226-dsi-ctrl', 'qcom,msm8916-dsi-ctrl', 'qcom,msm8953-dsi-ctrl', 'qcom,msm8974-dsi-ctrl', 'qcom,msm8976-dsi-ctrl', 'qcom,msm8996-dsi-ctrl', 'qcom,msm8998-dsi-ctrl', 'qcom,qcm2290-dsi-ctrl', 'qcom,sc7180-dsi-ctrl', 'qcom,sc7280-dsi-ctrl', 'qcom,sdm660-dsi-ctrl', 'qcom,sdm670-dsi-ctrl', 'qcom,sdm845-dsi-ctrl', 'qcom,sm6115-dsi-ctrl', 'qcom,sm6125-dsi-ctrl', 'qcom,sm6150-dsi-ctrl', 'qcom,sm6350-dsi-ctrl', 'qcom,sm6375-dsi-ctrl', 'qcom,sm7150-dsi-ctrl', 'qcom,sm8150-dsi-ctrl', 'qcom,sm8250-dsi-ctrl', 'qcom,sm8350-dsi-ctrl', 'qcom,sm8450-dsi-ctrl', 'qcom,sm8550-dsi-ctrl', 'qcom,sm8650-dsi-ctrl']
+> 	'qcom,sar2130p-dsi-ctrl' is not one of ['qcom,dsi-ctrl-6g-qcm2290', 'qcom,mdss-dsi-ctrl']
+> 	from schema $id: http://devicetree.org/schemas/display/msm/dsi-controller-main.yaml#
+> /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/display/msm/qcom,sar2130p-mdss.example.dtb: dsi@ae96000: Unevaluated properties are not allowed ('compatible' was unexpected)
+> 	from schema $id: http://devicetree.org/schemas/display/msm/dsi-controller-main.yaml#
+> 
+> doc reference errors (make refcheckdocs):
+> 
+> See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20250308-sar2130p-display-v1-5-1d4c30f43822@linaro.org
+> 
+> The base for the series is generally the latest rc1. A different dependency
+> should be noted in *this* patch.
+> 
+> If you already ran 'make dt_binding_check' and didn't see the above
+> error(s), then make sure 'yamllint' is installed and dt-schema is up to
+> date:
+> 
+> pip3 install dtschema --upgrade
+> 
+> Please check and re-submit after running the above command yourself. Note
+> that DT_SCHEMA_FILES can be set to your schema file to speed up checking
+> your schema. However, it must be unset to test all examples with your schema.
+> 
 
---=20
- ~ Kurt
-
+-- 
+With best wishes
+Dmitry
 
