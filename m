@@ -1,146 +1,122 @@
-Return-Path: <linux-kernel+bounces-552281-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-552282-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE793A577DE
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 04:26:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 12938A577E1
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 04:33:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DDA3F3B5194
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 03:26:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8E6FA3B6414
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 03:33:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26A9415667D;
-	Sat,  8 Mar 2025 03:26:12 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 826A8155A4D;
+	Sat,  8 Mar 2025 03:33:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="inyxdyag"
+Received: from mail-pj1-f48.google.com (mail-pj1-f48.google.com [209.85.216.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8DB214B96E
-	for <linux-kernel@vger.kernel.org>; Sat,  8 Mar 2025 03:26:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9ECB38F66;
+	Sat,  8 Mar 2025 03:33:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741404371; cv=none; b=UP2QM57FyKCxqOc/fcPjzjW8dOgoBak4LWs1mX3AbApb12xQzi8KykO9Lq3EaNVQfhwuia2xdK/fauvVpj0MM1hT0Ad0ne+EPois1nlKRu9oEXA3++nq+MWAtIYbUq2VgdN6A3oR7IO/t4xvtInCYgD8ucJHe39cwHZ0PVd/6VY=
+	t=1741404789; cv=none; b=MGWoxmlMT8rPbNd+izUB66QJ3AWQJhdYn/uuJxezv6l6RIU0e3DuND1p775HG3x+cfXXbsGgEe3bhoChfSSvTzsHn/rVMBm16xX5c0328FrxEI1XAwRhomcdUsOg8e0+YuF+8CRxZUBvnfGeg2hq4LVqN+wvPUPgWEjyU7cZDLk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741404371; c=relaxed/simple;
-	bh=3la3ZTuD0xpvId0lrDivu5IdGwMRstaRwemIk2AxhaA=;
-	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type; b=p5OJdy1q0c3NrB9mBEV7dCMLlrYEifK6N5gfzeHuzxF50Zdmisdr/wnCtueJTaRHrMBPOd5toaI+RRd9NafBBooBk8NIgQsIGXxZd0qjcC4a9WQfx/Do1R3RiOsLnoaZnAtMobA+0BibhuSBetsYrh4oD6qm1lXhlKn3MygslXI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 55757C4CEEC;
-	Sat,  8 Mar 2025 03:26:11 +0000 (UTC)
-Received: from rostedt by gandalf with local (Exim 4.98)
-	(envelope-from <rostedt@goodmis.org>)
-	id 1tqkpJ-00000000Ulp-25Ii;
-	Fri, 07 Mar 2025 22:26:13 -0500
-Message-ID: <20250308032613.347917964@goodmis.org>
-User-Agent: quilt/0.68
-Date: Fri, 07 Mar 2025 22:24:35 -0500
-From: Steven Rostedt <rostedt@goodmis.org>
-To: linux-kernel@vger.kernel.org
-Cc: Masami Hiramatsu <mhiramat@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>,
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- Andrew Morton <akpm@linux-foundation.org>,
- Ingo Molnar <mingo@redhat.com>,
- Peter Zijlstra <peterz@infradead.org>,
- Juri Lelli <juri.lelli@redhat.com>,
- Gabriele Monaco <gmonaco@redhat.com>
-Subject: [for-next][PATCH 3/3] rv: Add license identifiers to monitor files
-References: <20250308032432.109115966@goodmis.org>
+	s=arc-20240116; t=1741404789; c=relaxed/simple;
+	bh=J3GOrkHlYe1f1Ad/hqfBmcN6lLCGyERRLaUQ6yh6PBU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RkkVuSokSjyyoJcuq4uVu7HzIgtjU/K1KZmfiqAuigiUoZNUp2tEDICGi1abFFphaxmVttIDnmQFOGTw6SKobJzpRzWxO+EFQhAJZNUgDbJ5rxf5CdHx3yh+/atNvR7p0NTFwBpaWfH431i4NAwOSzepa0wqPIE9kHOoidT6s94=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=inyxdyag; arc=none smtp.client-ip=209.85.216.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f48.google.com with SMTP id 98e67ed59e1d1-2ff6a98c638so4877270a91.0;
+        Fri, 07 Mar 2025 19:33:07 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741404787; x=1742009587; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=UvgrHzEVnpT8/G3HmHL6s2DUgeJhb4IX0T9xLTixKK0=;
+        b=inyxdyaglmnaUGTgkJPVxFICV3m+PZ5TUcKLW+so57VklDWFcAGHURt/yd99lMlolr
+         QHcLwDhrW1WFGrfr2XLKkdMmuoUNxagZE7RRSuDB8HxHl8cyRfnuj16DHsZvPv4I14NE
+         gkINESDz9Nw7620Za6BJHQju8a9iphambpXA/DujONrEcr+ApeJCVsfMXFt38Pgg1FCW
+         9KR90kdYTjpxWG+FthSohTt1aAS49thzXBBBklM+YH7yGyscEKc1yqJAciRVJH+xV/1j
+         B81I/sI6GoTX4ddHZnKxiCjHLCEXWQ7ifIuVzzMlyNY4zO6IksSuXXj6KtyrqBJp6sZN
+         M3Ww==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741404787; x=1742009587;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=UvgrHzEVnpT8/G3HmHL6s2DUgeJhb4IX0T9xLTixKK0=;
+        b=L3BnQhzhqKtkwtV0CKfycymbj6GwtO8vzMSFyEtdTeVbbIz5ktiuKvfO28/H/RC0AR
+         4RnxKJaJ4/dfO74p8SlVNgaNdfJZQTkzlSxeT5Cyqw9pgTWVNQ//vRg2y4nMHQCOOwWx
+         3qlUgoKxAz1VK4duIrzEqyk/1gUe0kr0VFmFTdLb86C6aJhCzYnIhvTER3d8nJcHCbWZ
+         5cXeLvQb/1yc5KjDuZQ5r2Z3nkgSxcXZm//z6lmbeSrroGHTZaX195fkZ74UNLqyqKUD
+         nWviSFC7Xpy6Q9WwH7wrnu1r9uphzQr31a+RuFkdn5NYg0487bSsQ+Cdrx32zqRrlMsu
+         B8ng==
+X-Forwarded-Encrypted: i=1; AJvYcCWloRRLDVUp8oMS7e23iU4qxKKbj2H21WZU97zRylf3pEKqByrUFdVsRmLk8ePYIGh54EvQfLq8@vger.kernel.org, AJvYcCWvYIeO3eV6nSJHDqL87d8vKoVZ7aicLiitbNOBydaKdxScTZUGfS6GjvE9PK6rAgEPbnlozUyC2voneOg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxeSExuceZYmh4jy37ul+tT0F1ahy40gwYHbT/dO5Xhj3zRgF4c
+	DTPyN5yNtUEJJG6j8u22qAcyyO6PoNv577ugdJCHhGCnnNnhHLk=
+X-Gm-Gg: ASbGnct70mqTDqIuyzFRw4CyHdbj5H/mqDxSO29T5V4G0I6xM4sl+Tzv0/+nkyOL5Nv
+	yU1jZiZvpMRpRX1M+/Bs/iPOvDCRmf9BoFIz3vVhoXowjCc/Pz8xCP4qAo2GBrvMoZqpA8Dg28f
+	GqLLc/FdSRf2w5jyOxGhOAjj1qIR0Sx1MM/6w/O1D/Xa+1EHgwH5vNR5ikE+EN5+vlryWGyLjFS
+	yVy4xRryUgdgIDytDA2GE5eFjw9x9rAvHYemsEXjyBTQ0lE3cfcq8X+KqP6A423qEE0xfRQd1vH
+	etu3hLC8Q479MS0JGWCP5Mx0Q4DTmB2f28Gc5ooBQtov
+X-Google-Smtp-Source: AGHT+IHPRXLJpetfEwSMQ7twdjphQ1M6P53SRY3QIktwMixPny5Lf92aBO0J+9e1YgZJgGzLPwmEoA==
+X-Received: by 2002:a17:90b:390c:b0:2f9:cf97:56a6 with SMTP id 98e67ed59e1d1-2ff7ce63ffbmr10417495a91.14.1741404786689;
+        Fri, 07 Mar 2025 19:33:06 -0800 (PST)
+Received: from localhost ([2601:646:9e00:f56e:2844:3d8f:bf3e:12cc])
+        by smtp.gmail.com with UTF8SMTPSA id d9443c01a7336-224109e97d0sm38247115ad.79.2025.03.07.19.33.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 07 Mar 2025 19:33:06 -0800 (PST)
+Date: Fri, 7 Mar 2025 19:33:05 -0800
+From: Stanislav Fomichev <stfomichev@gmail.com>
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: Stanislav Fomichev <sdf@fomichev.me>, netdev@vger.kernel.org,
+	davem@davemloft.net, edumazet@google.com, pabeni@redhat.com,
+	linux-kernel@vger.kernel.org, horms@kernel.org,
+	donald.hunter@gmail.com, michael.chan@broadcom.com,
+	pavan.chebbi@broadcom.com, andrew+netdev@lunn.ch,
+	jdamato@fastly.com, xuanzhuo@linux.alibaba.com,
+	almasrymina@google.com, asml.silence@gmail.com, dw@davidwei.uk
+Subject: Re: [PATCH net-next v1 0/4] net: remove rtnl_lock from the callers
+ of queue APIs
+Message-ID: <Z8u6cSJGzUGRFjkX@mini-arch>
+References: <20250307155725.219009-1-sdf@fomichev.me>
+ <20250307192234.2f8be6b9@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250307192234.2f8be6b9@kernel.org>
 
-From: Gabriele Monaco <gmonaco@redhat.com>
+On 03/07, Jakub Kicinski wrote:
+> On Fri,  7 Mar 2025 07:57:21 -0800 Stanislav Fomichev wrote:
+> > All drivers that use queue management APIs already depend on the netdev
+> > lock. Ultimately, we want to have most of the paths that work with
+> > specific netdev to be rtnl_lock-free (ethtool mostly in particular).
+> > Queue API currently has a much smaller API surface, so start with
+> > rtnl_lock from it:
+> > 
+> > - add mutex to each dmabuf binding (to replace rtnl_lock)
+> > - protect global net_devmem_dmabuf_bindings with a new (global) lock
+> > - move netdev lock management to the callers of netdev_rx_queue_restart
+> >   and drop rtnl_lock
+> 
+> One more note, looks like this silently conflicts with my:
+> https://lore.kernel.org/all/20250307183006.2312761-1-kuba@kernel.org/
+> 
+> You need to add:
+> 
+> #include <net/netdev_lock.h>
+> 
+> to net/core/netdev_rx_queue.c, otherwise the series together break 
+> the build.
 
-Some monitor files like the main header and the Kconfig are missing the
-license identifier.
-
-Add it to those and make sure the automatic generation script includes
-the line in newly created monitors.
-
-Cc: Masami Hiramatsu <mhiramat@kernel.org>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Juri Lelli <juri.lelli@redhat.com>
-Link: https://lore.kernel.org/20250218123121.253551-3-gmonaco@redhat.com
-Signed-off-by: Gabriele Monaco <gmonaco@redhat.com>
-Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
----
- kernel/trace/rv/monitors/wip/Kconfig            | 2 ++
- kernel/trace/rv/monitors/wip/wip.h              | 1 +
- kernel/trace/rv/monitors/wwnr/Kconfig           | 2 ++
- kernel/trace/rv/monitors/wwnr/wwnr.h            | 1 +
- tools/verification/dot2/dot2k.py                | 1 +
- tools/verification/dot2/dot2k_templates/Kconfig | 2 ++
- 6 files changed, 9 insertions(+)
-
-diff --git a/kernel/trace/rv/monitors/wip/Kconfig b/kernel/trace/rv/monitors/wip/Kconfig
-index 3ef664b5cd90..e464b9294865 100644
---- a/kernel/trace/rv/monitors/wip/Kconfig
-+++ b/kernel/trace/rv/monitors/wip/Kconfig
-@@ -1,3 +1,5 @@
-+# SPDX-License-Identifier: GPL-2.0-only
-+#
- config RV_MON_WIP
- 	depends on RV
- 	depends on PREEMPT_TRACER
-diff --git a/kernel/trace/rv/monitors/wip/wip.h b/kernel/trace/rv/monitors/wip/wip.h
-index 2e373f2c65ed..c7193748bf36 100644
---- a/kernel/trace/rv/monitors/wip/wip.h
-+++ b/kernel/trace/rv/monitors/wip/wip.h
-@@ -1,3 +1,4 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
- /*
-  * Automatically generated C representation of wip automaton
-  * For further information about this format, see kernel documentation:
-diff --git a/kernel/trace/rv/monitors/wwnr/Kconfig b/kernel/trace/rv/monitors/wwnr/Kconfig
-index ee741aa6d6b8..d3bfc20037db 100644
---- a/kernel/trace/rv/monitors/wwnr/Kconfig
-+++ b/kernel/trace/rv/monitors/wwnr/Kconfig
-@@ -1,3 +1,5 @@
-+# SPDX-License-Identifier: GPL-2.0-only
-+#
- config RV_MON_WWNR
- 	depends on RV
- 	select DA_MON_EVENTS_ID
-diff --git a/kernel/trace/rv/monitors/wwnr/wwnr.h b/kernel/trace/rv/monitors/wwnr/wwnr.h
-index d0d9c4b8121b..0a59d23edf61 100644
---- a/kernel/trace/rv/monitors/wwnr/wwnr.h
-+++ b/kernel/trace/rv/monitors/wwnr/wwnr.h
-@@ -1,3 +1,4 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
- /*
-  * Automatically generated C representation of wwnr automaton
-  * For further information about this format, see kernel documentation:
-diff --git a/tools/verification/dot2/dot2k.py b/tools/verification/dot2/dot2k.py
-index 7547eb290b7d..153cc14bcca4 100644
---- a/tools/verification/dot2/dot2k.py
-+++ b/tools/verification/dot2/dot2k.py
-@@ -160,6 +160,7 @@ class dot2k(Dot2c):
- 
-     def fill_model_h_header(self):
-         buff = []
-+        buff.append("/* SPDX-License-Identifier: GPL-2.0 */")
-         buff.append("/*")
-         buff.append(" * Automatically generated C representation of %s automaton" % (self.name))
-         buff.append(" * For further information about this format, see kernel documentation:")
-diff --git a/tools/verification/dot2/dot2k_templates/Kconfig b/tools/verification/dot2/dot2k_templates/Kconfig
-index 90cdc1e9379e..03100eda1707 100644
---- a/tools/verification/dot2/dot2k_templates/Kconfig
-+++ b/tools/verification/dot2/dot2k_templates/Kconfig
-@@ -1,3 +1,5 @@
-+# SPDX-License-Identifier: GPL-2.0-only
-+#
- config RV_MON_%%MODEL_NAME_UP%%
- 	depends on RV
- 	select %%MONITOR_CLASS_TYPE%%
--- 
-2.47.2
-
-
+Noted, thanks!
 
