@@ -1,150 +1,189 @@
-Return-Path: <linux-kernel+bounces-552765-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-552766-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1DF78A57DDD
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 20:48:43 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 695CAA57DDF
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 20:51:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CB90C7A67CA
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 19:47:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A306E16D7AF
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 19:51:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A2961F7904;
-	Sat,  8 Mar 2025 19:48:32 +0000 (UTC)
-Received: from mail-il1-f207.google.com (mail-il1-f207.google.com [209.85.166.207])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C92251EFF90;
+	Sat,  8 Mar 2025 19:51:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="FuaDFJ3B";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="L5amJJz8"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52BBD7482
-	for <linux-kernel@vger.kernel.org>; Sat,  8 Mar 2025 19:48:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.207
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC2641392;
+	Sat,  8 Mar 2025 19:51:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741463311; cv=none; b=GrqWRxjIuwAgFW/B9zYz7J4XOjUHN9wjEzBzXLn9s5G1fJ/E+ubiGFTuko4ABGLjs6u07OC8ElUeBEHSPznXI+SLM5kmBLB3L/nGOcI9uZdy+nRRBzLMdxaQ5bosxFKrRaVcXCjjN1496jok9/0e8xe5o+X5rjJD4JMlk18bKvw=
+	t=1741463475; cv=none; b=f1D5p8AksdK930ifUItDXrgze9T3ap4Spbb6Ke2ZkNwNgcn/+mwfxIkcub/Cu7UgvATJo6AImc9Y9pQQ6N5KiTk6vFtVURAbBoyDrRi3d0TqRdP1rX9JTQ0fyRVcvvXrrtkqruDOoyE/GRP2lMH/45aCoYN33CYBDnRjAQRoLLI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741463311; c=relaxed/simple;
-	bh=/5WWxSf8LBpQx8K8lp+pJVwAGjgJTD/bO+VcFtfoito=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=DMcUi4bAl3HhVhDBNkAHtisDxI1m14ZEuL/GiK01exV7Hi4BooC8d/Ane5m+wm/2IkjSIGUSDvHC8uD9vhJKN81iC9d/JcAZeafr3u6eTt9aJIq0M1w5J0lnsvD2GWoWbzB4+XXJjC7Vc3C2Z/I8zoqUVIX1ZXxTp3KU1xo7s4c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.207
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f207.google.com with SMTP id e9e14a558f8ab-3d44b221f0dso22436955ab.1
-        for <linux-kernel@vger.kernel.org>; Sat, 08 Mar 2025 11:48:30 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741463309; x=1742068109;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=E0kUnKJ/Hbb5rDIh+tNr9gyaBINNXokpFjGp9x/PF8M=;
-        b=WTIdEJItb11lT3jqGAXKjlLoXeQ9lbWL5Vh2jL6+YQ63+x82QbYZLMsdnFp/AKCBTj
-         UUEkr04xqqLQEhmI+X7WfNwwmiicBP+z0Rq46wX2heu+xI+QWjFFoKzPkCNbaZbiDWQy
-         KM/LC91vQcjCKLMZlN6SY7c875XLmyhjIsKq1Cz+8i6AibfkZzQS6guDyCi9u8U4ibqN
-         1uSL9Nx/V+lPX8dIFs27sfKB7xqHaNWxc8NbVQUmsSqTbmB01V1/aoMtYB9ABwmqWUm9
-         thVzsVp/IIo+6t1/2SRx2Ft4avwTiYtIaGAqV8W5eaxJKAqmUssIX3XSpc4FchgKFRKl
-         SLkg==
-X-Forwarded-Encrypted: i=1; AJvYcCUzVyXP1RvAYZz/2G3yBArn4B1d6AJ2fFejeZYSZjR2Mg0VfmlhVNrd1iCyEPWy8W6RLDbNmO7ZfZZCLno=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz4smI7n015/Sqi+Sf3km2Tr6qbyUaUm1/FRhu2pY3PTh/GqJwk
-	sA8F4br9keHIk6/uS3xCl9+Ko/7ddrQTl61pVOaoeXw5qXgni3VsvJnfIG0x9pe17QSIUgcIPej
-	mHsn/3NXTkWIlkrqbK/lBz5BHDTYUVW9wNnsdz7zL3xcufnJzrijk7X0=
-X-Google-Smtp-Source: AGHT+IEqcZbX5J85DTBCue0PG8qnSzRG01E+SQFqUCUZBh1LtXPyygujlM2Y6neUvt2/k9DuW8z1Nk7meMsRREAOhWorl9BY6WwZ
+	s=arc-20240116; t=1741463475; c=relaxed/simple;
+	bh=Cv9w6j1wkUGMGsL8WPaA8N2nNTPKr3doitguBpOz9L4=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=Z2yMlNEv77AeA1qCOHHCwtK5PQi0i8VN3oHcDXXjz3sR4WolhPuP0QPdFQFSInFrGxGF3DyS+nXkD637FtmBTynuqJ+latrvueAGdEONS7rJSEIwtfSEG+EmS2u5I789KP6a4uxE1VNnVKdsXdBr7SXbtpgc5n5/6ESh0V91PJQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=FuaDFJ3B; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=L5amJJz8; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Sat, 08 Mar 2025 19:51:09 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1741463471;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=l6KyjsVOfXSso1sQaltrCCGA6dJuEPH4J7hFkk+58wU=;
+	b=FuaDFJ3B8ZrX5QRKDiqwMnQkhE09ufiv9pD3JIhCwQHlvacQlwq5/DpiQwR5FQbqJn7psz
+	WRcrDDKttfJ9IS6MChPL/4inIDEQiUJ8oYksxpJb5Vp4Q2+VfLsYu2vHO6sOzV33SUEY1/
+	ip5nkpabzx28uD+eyM/pPaQAJuZ3ru2aXB003Z6MlKcMiq1yljG6BSMmL5rjrGv/siwFpv
+	fpwyoQE2yyC1Zj9MZ8R9V6FSwgdD+lJWYVOPTKJU17R/lkcuiHUAgt+YBwLOPJLEmao15L
+	417iib7eIOFwM9PffNUfxd/QB5hv10BKHRSj4sX+ZLlAhMtlQ7d4WqOrod2TlQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1741463471;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=l6KyjsVOfXSso1sQaltrCCGA6dJuEPH4J7hFkk+58wU=;
+	b=L5amJJz8MhWmL1VFRR+A6nid6SlJogfpCPJM79wEAXDyxeQmRG1m1MXMCVWVwpT4O/uywT
+	KYXwJ2y01jsJ0MAg==
+From: "tip-bot2 for Uros Bizjak" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: x86/boot] x86/boot: Do not test if AC and ID eflags are
+ changeable on x86_64
+Cc: Uros Bizjak <ubizjak@gmail.com>, Ingo Molnar <mingo@kernel.org>,
+ "H. Peter Anvin" <hpa@zytor.com>,
+ Linus Torvalds <torvalds@linux-foundation.org>,
+ Brian Gerst <brgerst@gmail.com>, Nathan Chancellor <nathan@kernel.org>,
+ Nick Desaulniers <ndesaulniers@google.com>, x86@kernel.org,
+ linux-kernel@vger.kernel.org
+In-Reply-To: <20250307091022.181136-1-ubizjak@gmail.com>
+References: <20250307091022.181136-1-ubizjak@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1c0e:b0:3d1:a75e:65f6 with SMTP id
- e9e14a558f8ab-3d44195797bmr95723035ab.18.1741463309517; Sat, 08 Mar 2025
- 11:48:29 -0800 (PST)
-Date: Sat, 08 Mar 2025 11:48:29 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67cc9f0d.050a0220.14db68.0046.GAE@google.com>
-Subject: [syzbot] [btrfs?] WARNING in btrfs_create_new_inode (2)
-From: syzbot <syzbot+35244a1be5611b840ab2@syzkaller.appspotmail.com>
-To: clm@fb.com, dsterba@suse.com, josef@toxicpanda.com, 
-	linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Message-ID: <174146346999.14745.5356641328543778517.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 
-Hello,
+The following commit has been merged into the x86/boot branch of tip:
 
-syzbot found the following issue on:
+Commit-ID:     558fc8e1869ca6e1eb99a1e2b52f6c35424d4adf
+Gitweb:        https://git.kernel.org/tip/558fc8e1869ca6e1eb99a1e2b52f6c35424d4adf
+Author:        Uros Bizjak <ubizjak@gmail.com>
+AuthorDate:    Fri, 07 Mar 2025 10:10:03 +01:00
+Committer:     Ingo Molnar <mingo@kernel.org>
+CommitterDate: Sat, 08 Mar 2025 20:36:26 +01:00
 
-HEAD commit:    99fa936e8e4f Merge tag 'affs-6.14-rc5-tag' of git://git.ke..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=1079b5a8580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=523d3ff8e053340a
-dashboard link: https://syzkaller.appspot.com/bug?extid=35244a1be5611b840ab2
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+x86/boot: Do not test if AC and ID eflags are changeable on x86_64
 
-Unfortunately, I don't have any reproducer for this issue yet.
+The test for the changeabitily of AC and ID EFLAGS is used to
+distinguish between i386 and i486 processors (AC) and to test
+for CPUID instruction support (ID).
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/b40ecb8ed597/disk-99fa936e.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/16348198506c/vmlinux-99fa936e.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/65fc34c1d4d6/bzImage-99fa936e.xz
+Skip these tests on x86_64 processors as they always supports CPUID.
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+35244a1be5611b840ab2@syzkaller.appspotmail.com
+Also change the return type of has_eflag() to bool.
 
-------------[ cut here ]------------
-BTRFS: Transaction aborted (error -28)
-WARNING: CPU: 1 PID: 7341 at fs/btrfs/inode.c:6384 btrfs_create_new_inode+0x1c10/0x1fa0 fs/btrfs/inode.c:6384
-Modules linked in:
-CPU: 1 UID: 0 PID: 7341 Comm: syz.4.132 Not tainted 6.14.0-rc5-syzkaller-00013-g99fa936e8e4f #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 02/12/2025
-RIP: 0010:btrfs_create_new_inode+0x1c10/0x1fa0 fs/btrfs/inode.c:6384
-Code: 49 8b 3e 48 c7 c6 a0 8c 6c 8c 44 89 e2 e8 78 ea 3e fd eb 1a e8 91 f3 d8 fd 90 48 c7 c7 40 8c 6c 8c 44 89 e6 e8 71 af 98 fd 90 <0f> 0b 90 90 4c 8b 7c 24 38 e9 43 f8 ff ff e8 6d f3 d8 fd eb 05 e8
-RSP: 0000:ffffc90005447a20 EFLAGS: 00010246
-RAX: b537982dfbea0300 RBX: 0000000000000000 RCX: ffff88807c24da00
-RDX: 0000000000000000 RSI: 0000000000000001 RDI: 0000000000000000
-RBP: ffffc90005447c50 R08: ffffffff81817d42 R09: 1ffff92000a88ee0
-R10: dffffc0000000000 R11: fffff52000a88ee1 R12: 00000000ffffffe4
-R13: 1ffff1100b55d70f R14: ffff88805aaeb878 R15: ffff888028651f20
-FS:  00007f7bffc1a6c0(0000) GS:ffff8880b8700000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f664e111000 CR3: 0000000076f6e000 CR4: 00000000003526f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- btrfs_create_common+0x1d4/0x2e0 fs/btrfs/inode.c:6615
- vfs_mkdir+0x2f9/0x4f0 fs/namei.c:4313
- do_mkdirat+0x264/0x3a0 fs/namei.c:4336
- __do_sys_mkdirat fs/namei.c:4351 [inline]
- __se_sys_mkdirat fs/namei.c:4349 [inline]
- __x64_sys_mkdirat+0x87/0xa0 fs/namei.c:4349
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f7bfed8d169
-Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007f7bffc1a038 EFLAGS: 00000246 ORIG_RAX: 0000000000000102
-RAX: ffffffffffffffda RBX: 00007f7bfefa6080 RCX: 00007f7bfed8d169
-RDX: 0000000000000008 RSI: 0000400000000100 RDI: 0000000000000003
-RBP: 00007f7bfee0e2a0 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 0000000000000001 R14: 00007f7bfefa6080 R15: 00007ffe1988f628
- </TASK>
-
-
+Signed-off-by: Uros Bizjak <ubizjak@gmail.com>
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Acked-by: H. Peter Anvin <hpa@zytor.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Brian Gerst <brgerst@gmail.com>
+Cc: Nathan Chancellor <nathan@kernel.org>
+Cc: Nick Desaulniers <ndesaulniers@google.com>
+Link: https://lore.kernel.org/r/20250307091022.181136-1-ubizjak@gmail.com
 ---
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+ arch/x86/boot/cpuflags.c | 26 +++++++++-----------------
+ arch/x86/boot/cpuflags.h |  6 +++++-
+ 2 files changed, 14 insertions(+), 18 deletions(-)
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+diff --git a/arch/x86/boot/cpuflags.c b/arch/x86/boot/cpuflags.c
+index d75237b..2150a01 100644
+--- a/arch/x86/boot/cpuflags.c
++++ b/arch/x86/boot/cpuflags.c
+@@ -29,40 +29,32 @@ static int has_fpu(void)
+ 	return fsw == 0 && (fcw & 0x103f) == 0x003f;
+ }
+ 
++#ifdef CONFIG_X86_32
+ /*
+  * For building the 16-bit code we want to explicitly specify 32-bit
+  * push/pop operations, rather than just saying 'pushf' or 'popf' and
+- * letting the compiler choose. But this is also included from the
+- * compressed/ directory where it may be 64-bit code, and thus needs
+- * to be 'pushfq' or 'popfq' in that case.
++ * letting the compiler choose.
+  */
+-#ifdef __x86_64__
+-#define PUSHF "pushfq"
+-#define POPF "popfq"
+-#else
+-#define PUSHF "pushfl"
+-#define POPF "popfl"
+-#endif
+-
+-int has_eflag(unsigned long mask)
++bool has_eflag(unsigned long mask)
+ {
+ 	unsigned long f0, f1;
+ 
+-	asm volatile(PUSHF "	\n\t"
+-		     PUSHF "	\n\t"
++	asm volatile("pushfl	\n\t"
++		     "pushfl	\n\t"
+ 		     "pop %0	\n\t"
+ 		     "mov %0,%1	\n\t"
+ 		     "xor %2,%1	\n\t"
+ 		     "push %1	\n\t"
+-		     POPF "	\n\t"
+-		     PUSHF "	\n\t"
++		     "popfl	\n\t"
++		     "pushfl	\n\t"
+ 		     "pop %1	\n\t"
+-		     POPF
++		     "popfl"
+ 		     : "=&r" (f0), "=&r" (f1)
+ 		     : "ri" (mask));
+ 
+ 	return !!((f0^f1) & mask);
+ }
++#endif
+ 
+ void cpuid_count(u32 id, u32 count, u32 *a, u32 *b, u32 *c, u32 *d)
+ {
+diff --git a/arch/x86/boot/cpuflags.h b/arch/x86/boot/cpuflags.h
+index fdcc2aa..a398d92 100644
+--- a/arch/x86/boot/cpuflags.h
++++ b/arch/x86/boot/cpuflags.h
+@@ -15,7 +15,11 @@ struct cpu_features {
+ extern struct cpu_features cpu;
+ extern u32 cpu_vendor[3];
+ 
+-int has_eflag(unsigned long mask);
++#ifdef CONFIG_X86_32
++bool has_eflag(unsigned long mask);
++#else
++static inline bool has_eflag(unsigned long mask) { return true; }
++#endif
+ void get_cpuflags(void);
+ void cpuid_count(u32 id, u32 count, u32 *a, u32 *b, u32 *c, u32 *d);
+ bool has_cpuflag(int flag);
 
