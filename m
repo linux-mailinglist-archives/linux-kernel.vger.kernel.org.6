@@ -1,48 +1,48 @@
-Return-Path: <linux-kernel+bounces-552300-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-552301-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 14F03A57816
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 04:50:32 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8A343A57819
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 04:50:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6248D18956E9
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 03:50:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0BEDB16F085
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 03:50:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE40117A314;
-	Sat,  8 Mar 2025 03:50:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9408A1581E5;
+	Sat,  8 Mar 2025 03:50:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WfL4VVEE"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eqW+DPdf"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15BEE182CD;
-	Sat,  8 Mar 2025 03:50:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC19315687D;
+	Sat,  8 Mar 2025 03:50:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741405804; cv=none; b=WTGR8Rj7qxA9SESV2EfXReAdaKQlQjuZTl2loFi3Oj/PcAJVLXWq2N6mzSbPWK1IkG7QKbPvhnI1MwlQ+1gF1055Nudh3JZf/jhs5g9L95EULRfpo4mwK9N42UUMgvp2ib5WziF/8uye6KFsKz51DCwp01n9Sa4+qW0oz39BoSI=
+	t=1741405807; cv=none; b=EiddleOQyV0XifAFN7FGwjfpGRmxIi85ZwqJz3Fqw6x+uQXdzPShiVFDxzpRz81mY3hhzpK1guC3v0t7JY/4k8JEgzZmuUfGLsuD9GWmOBIRGVf13/iebv6gi361nrJuiMGz9F3iohpe/2XeYZiu63+d4QUqIyzn6I454rCFpOM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741405804; c=relaxed/simple;
-	bh=EpIWs+rSWHdG6XRUVJzl1QYMYMZZDU3itzGxtLtT0n4=;
+	s=arc-20240116; t=1741405807; c=relaxed/simple;
+	bh=gMTHFRUzvjZvMCwhd15l/Ro9Q3gwPrcUmEHbWd5fiEM=;
 	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=ufgxc66tXoI19MiEPQJUVE5jA5JJ1I5pJhI95hT7TtE5ZOAy/T4HjlOESlGweLLow8gYHoopiGsjEQgTPy9ayGEU8HNTZf4Pir5PqM851AlmZDHuha9mxB0dWUFB9Q5gtnwoAwFIr+BlV3X8y2xsaKccUrXEFoea7tdU2wa8FQ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WfL4VVEE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 66CE8C4CEE0;
-	Sat,  8 Mar 2025 03:50:03 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=E4FpbXsUxgxbjg6byTIb4I/hxGKc8jwbkzwJ1BIjRFracNPoBYOgU3h8xsSvW9DpTW5n9BTpJqsLcpjLbJe5TVef99u7O5yMvB40JOU4rFKuL5or7CCIlEgB8zdBX6Q/zOqRzQN7Jo25HPZd9VeTxdh//KIPOGcuELaLRl+cosk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eqW+DPdf; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 67822C4CEE8;
+	Sat,  8 Mar 2025 03:50:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741405803;
-	bh=EpIWs+rSWHdG6XRUVJzl1QYMYMZZDU3itzGxtLtT0n4=;
+	s=k20201202; t=1741405806;
+	bh=gMTHFRUzvjZvMCwhd15l/Ro9Q3gwPrcUmEHbWd5fiEM=;
 	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=WfL4VVEE+e4UzPcTle8X4v3rC9c4LZayg8BdFP9RzRz9uryPYWq2/w8YKJLYUbAIF
-	 aXnJILkVgMVhlk1QW2UtbCtqaOW7H/7JtKN5kwS5QxmSky0s3Vrddn1K1zo1U1I6UR
-	 ZDM3UTfibmAT/qOo1LO2YdD2y170BiGgZ2VxtMZeV+kbhfKcfr5e1odRImF6ECCSJp
-	 EhmkNN1PtH+Z93my8WNrlARvN+0pkFtWAUl16aRf5JfNNgzMJjEUKa0YYVlaEGJE+3
-	 QCRAuWciCW6CNl2/4XeKJXpYU7f1wInvkINh03loMfbG4WZ2nCSlNunzMZF2f1R0Zq
-	 ORUDW78WLGlYg==
+	b=eqW+DPdfvcU9nRph9O/Z+RsYfUjuIo6T5atEdAj5SCLJZ88pY7KDPTUa5vlUio6+F
+	 1IeAhGF9Ryr0he8i62+xMPVn3P5w6079p5r38b4JSgyFD0hhd5zhOlF42WnVZ4YCwt
+	 4+MoFXDEsNAeH+QtbhBIeNDN9tZjS4f3dn6CDh2e+W3OThA0qo210dOuNTaCJyM4yv
+	 sC5aEDqYJIcs1pN3nJCX8VefDLVj3Tc7ePDNVzxDZNqfIAU/tpLPBk8bJ+QCOLGnmq
+	 F9Jt6nVj6RMK15lDg6Tnmx4HE7dYjRK/OMbqq1yVSGLD2+Y3lM77+ainwN7veI3DXb
+	 FvMqm4Caq+HEg==
 Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 33F84380CFFB;
-	Sat,  8 Mar 2025 03:50:38 +0000 (UTC)
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 341FA380CFFB;
+	Sat,  8 Mar 2025 03:50:41 +0000 (UTC)
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -51,37 +51,36 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH v3 net 1/1] net: dsa: mv88e6xxx: Verify after ATU Load ops
+Subject: Re: [PATCH net v2] netmem: prevent TX of unreadable skbs
 From: patchwork-bot+netdevbpf@kernel.org
 Message-Id: 
- <174140583674.2568613.16273319782055135359.git-patchwork-notify@kernel.org>
-Date: Sat, 08 Mar 2025 03:50:36 +0000
-References: <20250306172306.3859214-1-Joseph.Huang@garmin.com>
-In-Reply-To: <20250306172306.3859214-1-Joseph.Huang@garmin.com>
-To: Joseph Huang <Joseph.Huang@garmin.com>
-Cc: netdev@vger.kernel.org, joseph.huang.2024@gmail.com, andrew@lunn.ch,
- olteanv@gmail.com, davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
- pabeni@redhat.com, linux@roeck-us.net, linux-kernel@vger.kernel.org
+ <174140583973.2568613.2231565890209246697.git-patchwork-notify@kernel.org>
+Date: Sat, 08 Mar 2025 03:50:39 +0000
+References: <20250306215520.1415465-1-almasrymina@google.com>
+In-Reply-To: <20250306215520.1415465-1-almasrymina@google.com>
+To: Mina Almasry <almasrymina@google.com>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, davem@davemloft.net,
+ edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, horms@kernel.org,
+ stable@vger.kernel.org
 
 Hello:
 
 This patch was applied to netdev/net.git (main)
 by Jakub Kicinski <kuba@kernel.org>:
 
-On Thu, 6 Mar 2025 12:23:05 -0500 you wrote:
-> ATU Load operations could fail silently if there's not enough space
-> on the device to hold the new entry. When this happens, the symptom
-> depends on the unknown flood settings. If unknown multicast flood is
-> disabled, the multicast packets are dropped when the ATU table is
-> full. If unknown multicast flood is enabled, the multicast packets
-> will be flooded to all ports. Either way, IGMP snooping is broken
-> when the ATU Load operation fails silently.
+On Thu,  6 Mar 2025 21:55:20 +0000 you wrote:
+> Currently on stable trees we have support for netmem/devmem RX but not
+> TX. It is not safe to forward/redirect an RX unreadable netmem packet
+> into the device's TX path, as the device may call dma-mapping APIs on
+> dma addrs that should not be passed to it.
+> 
+> Fix this by preventing the xmit of unreadable skbs.
 > 
 > [...]
 
 Here is the summary with links:
-  - [v3,net,1/1] net: dsa: mv88e6xxx: Verify after ATU Load ops
-    https://git.kernel.org/netdev/net/c/dc5340c3133a
+  - [net,v2] netmem: prevent TX of unreadable skbs
+    https://git.kernel.org/netdev/net/c/f3600c867c99
 
 You are awesome, thank you!
 -- 
