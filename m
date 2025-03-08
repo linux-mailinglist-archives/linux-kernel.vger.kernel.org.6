@@ -1,48 +1,48 @@
-Return-Path: <linux-kernel+bounces-552306-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-552307-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 871DDA5782C
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 05:00:17 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D6CBEA5782E
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 05:00:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D56A01899BC1
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 04:00:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 61BCC3B6854
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 04:00:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E14E1714C0;
-	Sat,  8 Mar 2025 04:00:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C951317A2EA;
+	Sat,  8 Mar 2025 04:00:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Z/GztMjN"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TH6APekX"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 849BC148857;
-	Sat,  8 Mar 2025 04:00:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 306CB1779B8;
+	Sat,  8 Mar 2025 04:00:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741406408; cv=none; b=u+u1XUJponCCXDW7EQncmTPy/CTU2MHVf9GxodMkaisstXYD2+yOWKy4vfKK8WUBeBd2aDSr4zJh4UnL0UnFFInjtr2rvF7583t5EavxjlcOd+mpMENXHGNDpteFBUbQwKKo7U7wu0JZ9Ubev5FIuEEXUSDjSzkC0T7cr3AfRdo=
+	t=1741406412; cv=none; b=LK7yQK2ObP3s99diygsXxuE3OOZN+ZPV3V+GdrHcLBdfXPfzvYHVAz1fzosXtR9o3/gZYe2byxd+6GcjBtydDAz4ituS1rF41gOqP4OP+XtJIgFYkvcc8ASAip+08b8S3/s/n/ERiWr90P3iVqg3gteIMU5UtargA/3uzY4fE/I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741406408; c=relaxed/simple;
-	bh=l90PT/23TcBuQ8NyWBxWVeCbtj0856DbC1B/xjemcEA=;
+	s=arc-20240116; t=1741406412; c=relaxed/simple;
+	bh=ViqGyPEeJggtd3m/P4z9rbC73RF+/FE79lcIusBiVL4=;
 	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=JULHZmydPFDvZqnrvkoMPRWSn9WFYigvPmpRgzk4/IQTgsbqnaa3+QIZptED3KTnIu9O1cKkdCKqtOuesbNKS4hGNpZ+4amSn0jL7soCKZFUMlnCcm2Pb4XEkuhYgh/H7i14EN9dqvoZ81bTFRGz8uL9NKb1QToVeyb7h11m7Ew=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Z/GztMjN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E3053C4CEE0;
-	Sat,  8 Mar 2025 04:00:07 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=kjaiiAyMuSGqoiBmORuoivK1jQKKANuQJnzHEFfH1fQGk9p4B34Rpfv5pdGV7bfPXnBBX+qI3fGLeTeltRzssLbvApyeYPx7CF1ub7fcC+3z0biEu0FCkQsmieE9j1TX8e+1u/wGjvqQJhREoR+pztISOToUO9uhXUYDMl4sqrk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TH6APekX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A35C0C4CEE0;
+	Sat,  8 Mar 2025 04:00:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741406408;
-	bh=l90PT/23TcBuQ8NyWBxWVeCbtj0856DbC1B/xjemcEA=;
+	s=k20201202; t=1741406411;
+	bh=ViqGyPEeJggtd3m/P4z9rbC73RF+/FE79lcIusBiVL4=;
 	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=Z/GztMjNsEM+nilrL+yRWfRJWXWyAMp9JgfduH5cVj10Memcj5S+dt/s1cJuFAsjr
-	 38otziIWorCx/pWXbtqIgJKSeK79Hi/rfUvg2BWYnn5arkEnsErElIVrocF5+fAG9w
-	 8zcZuRLkbFDUHwgG7pXwhq+MKL61h6LEzRziwDyZhVoNwMcTj4rFjkGIGdMDGvwwSS
-	 Wd9wMa0vCxOFOkkngQSwlEpLNMIQAMNpD9rAIVq2gpb9hyYqhjHW0/wz75OxuY8M1j
-	 DpqMbc6pAK/L5tXCyxQBJssxxR31IcBxU/0Km7lS10+8dh83zkvq49TytljpeMMWCx
-	 OlFXUiEYd5W8A==
+	b=TH6APekXKuw/VG3TzEaSv/RP5CcXVByMNkmR4M5vOsRuaQ9VUZHV7yw8OpTg2GeMZ
+	 /+A+Lwr9Lhf1C4g5lLk+mpwc1GoPFY1re/pU2XDfgvA0HoINviD2F1HWnlVhR+P2zm
+	 0xVcs1oCJFy9Gdw4bgL+/loTNSTiSEg1n4c8O3Yt7OjS5YnJ4EMluU4Q8Et4H8eQ5W
+	 BjQOCPUavZ1uMI7F+f4JgG7sHxY0LCi+RX72Na5cH39COSDUtbcRpWwRgGe4enWET4
+	 +QDfyAYowrLI/ujym3Lqyu7kFd21iaZ/cCYsggsgMJZPmLEchCAUZupTARRaWJ4cNI
+	 jSFAXqZy+b6hQ==
 Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id AE2F2380CFFB;
-	Sat,  8 Mar 2025 04:00:42 +0000 (UTC)
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 70DC6380CFFB;
+	Sat,  8 Mar 2025 04:00:46 +0000 (UTC)
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -51,40 +51,44 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net v2 0/2] net: phy: nxp-c45-tja11xx: add errata for
- TJA112XA/B
+Subject: Re: [PATCH net-next v2 0/2] net: phy: tja11xx: add support for
+ TJA1102S
 From: patchwork-bot+netdevbpf@kernel.org
 Message-Id: 
- <174140644151.2570715.57630167993884355.git-patchwork-notify@kernel.org>
-Date: Sat, 08 Mar 2025 04:00:41 +0000
-References: <20250304160619.181046-1-andrei.botila@oss.nxp.com>
-In-Reply-To: <20250304160619.181046-1-andrei.botila@oss.nxp.com>
-To: Andrei Botila <andrei.botila@oss.nxp.com>
+ <174140644498.2570715.14636868576802803016.git-patchwork-notify@kernel.org>
+Date: Sat, 08 Mar 2025 04:00:44 +0000
+References: <20250304-tja1102s-support-v2-0-cd3e61ab920f@liebherr.com>
+In-Reply-To: <20250304-tja1102s-support-v2-0-cd3e61ab920f@liebherr.com>
+To: Dimitri Fedrau via B4 Relay <devnull+dimitri.fedrau.liebherr.com@kernel.org>
 Cc: andrew@lunn.ch, hkallweit1@gmail.com, linux@armlinux.org.uk,
  davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org, s32@nxp.com,
- clizzi@redhat.com, aruizrui@redhat.com, eballetb@redhat.com
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ dimitri.fedrau@liebherr.com, dima.fedrau@gmail.com, marex@denx.de,
+ o.rempel@pengutronix.de
 
 Hello:
 
-This series was applied to netdev/net.git (main)
+This series was applied to netdev/net-next.git (main)
 by Jakub Kicinski <kuba@kernel.org>:
 
-On Tue,  4 Mar 2025 18:06:12 +0200 you wrote:
-> This patch series implements two errata for TJA1120 and TJA1121.
+On Tue, 04 Mar 2025 19:37:25 +0100 you wrote:
+> - add support for TJA1102S
+> - enable PHY in sleep mode for TJA1102S
 > 
-> The first errata applicable to both RGMII and SGMII version
-> of TJA1120 and TJA1121 deals with achieving full silicon performance.
-> The workaround in this case is putting the PHY in managed mode and
-> applying a series of PHY writes before the link gest established.
+> Signed-off-by: Dimitri Fedrau <dimitri.fedrau@liebherr.com>
+> ---
+> Changes in v2:
+> - Drop fallthrough tja11xx_config_init
+> - Address net-next
+> - Link to v1: https://lore.kernel.org/r/20250303-tja1102s-support-v1-0-180e945396e0@liebherr.com
 > 
 > [...]
 
 Here is the summary with links:
-  - [net,v2,1/2] net: phy: nxp-c45-tja11xx: add TJA112X PHY configuration errata
-    https://git.kernel.org/netdev/net/c/a07364b39469
-  - [net,v2,2/2] net: phy: nxp-c45-tja11xx: add TJA112XB SGMII PCS restart errata
-    https://git.kernel.org/netdev/net/c/48939523843e
+  - [net-next,v2,1/2] net: phy: tja11xx: add support for TJA1102S
+    https://git.kernel.org/netdev/net-next/c/5d7610577fd9
+  - [net-next,v2,2/2] net: phy: tja11xx: enable PHY in sleep mode for TJA1102S
+    https://git.kernel.org/netdev/net-next/c/5b3178c452c3
 
 You are awesome, thank you!
 -- 
