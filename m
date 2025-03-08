@@ -1,130 +1,179 @@
-Return-Path: <linux-kernel+bounces-552846-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-552847-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 58045A57F5C
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 23:39:10 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 85977A57F61
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 23:41:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 93D6316DA51
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 22:39:09 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AD5ED7A6A4C
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 22:40:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6DD11EB5DF;
-	Sat,  8 Mar 2025 22:39:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CC2A20E6F2;
+	Sat,  8 Mar 2025 22:41:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HVXR4FB1"
-Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bhdLuWXB"
+Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FAA519006F
-	for <linux-kernel@vger.kernel.org>; Sat,  8 Mar 2025 22:39:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5166619006F;
+	Sat,  8 Mar 2025 22:41:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741473545; cv=none; b=r530EB4apD/WpyqKTYNwP2mH9V66XAaBVcXEskBQYi8iZTO34sv59ZPYPJZm4wr330R29zLyoPwv1LjxZv+PdVJDJt//A56G+n9FiAmZhG/b2e6y6EOzQWGsSglxSo6a8TKyokXik0w/yt7kLWYXNP6LbS3AhasT2N+P5mMDlT8=
+	t=1741473704; cv=none; b=Wn0or8Bs9KPmt3jRAnd+eqx1q4YW7riKCXRrN+DNFTWzDSX5Vxq1orS1uHLKkWiikvXHlTKambi+FAx9g7mlT3bCuhC/dpXKyn1cMzIz/PCdniMAC+Kez7dkjS7r0tVypNW5kVz/H3HLug5rLIyogc55R+iyERdpJ5Mz2Egcyi8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741473545; c=relaxed/simple;
-	bh=qQ2gt7duVoxoCXPiSaRWKdMzeq+6kQJO83giNgRY8RY=;
+	s=arc-20240116; t=1741473704; c=relaxed/simple;
+	bh=C4zE+73EWQ8ZVsBGoZlf+StXl3O+tyzUriwyrFbOKa4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=trbPsYNnkwk3rXtEobHyqbjuAg+ebshUc/6B/F7/V6svQnCuZRXjpVkC280vwqTT5SNqk9isEahI8RbV44dEsaqGVTvJ45p5+k0F642YwNCU7OTRWcct3B1tn+kXSNCHy8UZ9cpD/C8QYyYSBqE5WHvfcLmug214UWblLwoNP6g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HVXR4FB1; arc=none smtp.client-ip=209.85.167.51
+	 Content-Type:Content-Disposition:In-Reply-To; b=Nas7kcW/cqRy+r2rczJygsK2qYWWsy5auHTEVNUAqEXbflCkya/uPhAodWFp7OciTBboJvblKEPVHsnSaFe6t0vMILM94n/sn8kwFB6yTXEiEAiGVzHPQnjGA67f6O+U1TKcWUjXz/ERDN6tMkcbLHRjhfj3VKHBoLX+cCaO7Es=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bhdLuWXB; arc=none smtp.client-ip=209.85.214.177
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-5499c8fa0f3so553072e87.2
-        for <linux-kernel@vger.kernel.org>; Sat, 08 Mar 2025 14:39:03 -0800 (PST)
+Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-224341bbc1dso25425505ad.3;
+        Sat, 08 Mar 2025 14:41:43 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741473541; x=1742078341; darn=vger.kernel.org;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=G06SGv4GweN16TZkskRsMVNAONyGavm2HmhknCI/78M=;
-        b=HVXR4FB1hWLu0W3T3K/o3WknPOEiC7CEqxiByiQ5K4Z7UhYQLV3a+ekx6nyyZguQ+V
-         ObIfZLoC76gRpu7VqM+SZgUGae2CqQuN/PARssfUSoaazS4RM3xs3uit/RXpZJyuspmq
-         w0qSsern5NTONu3QoK+PlW1iMhUY5jumLgY5SaSsgspjA1LzkCdFpudJpDyDbHtPdkeR
-         roim/t1kRz2ZneHNew10vtGFoGUm68BEZtrseKTMz6kAjeP8Onep6GEl6/Mrx8EqRTBz
-         LkhJ9Quv/+bglU5j+W+cSn5aaUCxaon2ZKKPBj3hmM3NdheJq7PR2jLC+UTTPIGAdta8
-         3+qg==
+        d=gmail.com; s=20230601; t=1741473702; x=1742078502; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=8fPMyxNmgolKEIW1uMpQno8oVVMoFLSw0UC+1Zt/nxE=;
+        b=bhdLuWXBBNWqzmdRbkNTA7gWGxNq5zx6XJoDPeqqHYPKW/+y8PGEwS3/AXP8ZTHi80
+         rgMZiM0GGPZpN72hnXRAPVEuQYLhPJo30oqd132b5z5z9lfw+8fSNYyOazOYWKXdprS/
+         +mO3priv26S1uAbZebMUJkLPKAjKiFSg0+Lr4sVaPpnlir3KNXa0kNAZnclF/GdOFPeH
+         QLG+fznwxv9XQCEf8bc+o6N3Pn+STsF85wAFsqzAelAeOT+BELMtlzV3GcjEXCCOfBTT
+         ojSIwf8ercOwj1uZYsTZhjg+EdYH9AO4dRayr5rpfFdoz2DQBWQKiZgh5KsnUbNWHdEd
+         wMPA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741473541; x=1742078341;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=G06SGv4GweN16TZkskRsMVNAONyGavm2HmhknCI/78M=;
-        b=d4vi/4AIAXtPOqy4YCKGZXPSIacrJgA9TJdgcgvRe4DxqzF9W/v79Tm6QVdR1XHrOj
-         neT5TyhGbDrnf1xudWT8sf1FCvCSdKu5EOpfAgZTftSRVgPExZDE++yNl/mqqjLGL4+o
-         HrBwZHdRCc8LhcszIUptMOaiV/Hw3s+2xC0PySoLVxqEBppubMbnObd8il4Q+VaFEyCO
-         3308+3p9J5KPVR5MuwcJbu17C1MhGTb9r9UF4LxNotWIIj0D+tZbH1P/Mv1pFKr03hKN
-         5YcoVWUsgdmhV7Uwo1rrl2RkVVyWYYMZiF9HmibFD7o5NXGbUNwXyEH/JE1KHfY1LxDU
-         iy6A==
-X-Gm-Message-State: AOJu0Yz+7b/dmusS/MiIlQd0CkCtRugvAer4udwFbnbndJtciL3vyqiR
-	F/vR2MAwbVP9exlQlNd27ZAGXmsARhlRSLPy7lWLqYJBOeCTt//p
-X-Gm-Gg: ASbGncsrTENN/V/B/ZKe8VxLUXjpF3S20zthJU81v1CLusTvhQlnvp3TLUczHyol1Dy
-	UlNUbI3Csg1XpN8uVKTBoGf5Fdd9Vxq9I8nWlcj0IMDa6ohYzf8U8j4FvKO32yYTxy0RH23fEoj
-	RPfbYWXi67dBELsVSLZRMKD+Chf26abbdP8zBXFzoeQ0jjJeqC6/s5XxYKn7zB6O/HYi2aisbh7
-	ckzVR2bcfDgZXD7B2r6MfduSLpyuohvndaptEOAC3gl5NCayMrVi1zKg7bdi374HyleYGc+iGd3
-	TAbO8R8eAD4wi+fmEaD7LzfQIJywvmKl/8VdqkW5j94L8Q==
-X-Google-Smtp-Source: AGHT+IFK+ZTQdP+mU7Hx7M+t/fhphhUi+ODz78UMU6WJXFTf/aTYncv4uaZUYHC4v7kXLjJOYJD8RQ==
-X-Received: by 2002:a05:6512:3dab:b0:549:5b54:2c66 with SMTP id 2adb3069b0e04-54990e66e8cmr2935247e87.23.1741473540007;
-        Sat, 08 Mar 2025 14:39:00 -0800 (PST)
-Received: from grain.localdomain ([5.18.255.97])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5498b1bc369sm930079e87.177.2025.03.08.14.38.59
+        d=1e100.net; s=20230601; t=1741473702; x=1742078502;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=8fPMyxNmgolKEIW1uMpQno8oVVMoFLSw0UC+1Zt/nxE=;
+        b=okQo2v9HHf/k2GpcSgw6tLoB3MdGtPtQ+5PsxK9ngdAKuxKdv8NX9BvaZ+VTT/WPk2
+         wUmCGRT7IAMVIUUMkbJwljV/EYTM5EBtDIf3ks22nWcK8g0dpP6CorP7PLGuXzsyMvx5
+         /t34pAAZ/q2QcvbwLSer4u3jRaRRL968zV2WsWTZBjNnz14vzEHLYOa911YF9BS7wEtJ
+         gAzt+9f3iFkbUTSZWJ3kB943GN/LGxinQyuSzeDXqW4MO5o2udg/++wTl+M0eFEffWcZ
+         JM3jIQtrxLeTWESJXd3WlxzjrWT33zkf1bx7o7sEj3ghYgkNjOUC+z3ronEEUKhgNQUZ
+         +IWw==
+X-Forwarded-Encrypted: i=1; AJvYcCUM+9EYCSmKNpFXsygf7a0aXvhKvV53FSVuLGNVWo6sre1qKv0wa/WAkgpVvb0vLrpQcnU=@vger.kernel.org, AJvYcCWyv2mfSIpxyWLlcVfcLTrIMBRNcDAExjnRz9nD8jb9oanS2IdatLHOQbo18cz6hd+crchAYqe2slmPKT1V@vger.kernel.org, AJvYcCXpKltbP84J0IYvBIrP31ytOT23ymHOt3GnxMEpshzCK0cn14wqM2NKTGDOeWAgYYq3YLE75tQ0@vger.kernel.org
+X-Gm-Message-State: AOJu0YyPIRtB/EyA0dA0aF+z5Wa4NEvtSQ8jRdcFfQwDqaSoAXlz+Qc7
+	/ivmmNmPLtkEqhlpUgsta1J3TEh8oioOGtCv3qk8oiaSTr5rN+E=
+X-Gm-Gg: ASbGncv0+VeatS2H4/KswHe3lIgc9GfEiMei4K49gmENrp3iRAiYc+sZA9XtCrJOU84
+	55bkcVEMuetZCKAJTA2CqUjEKSi4fj8ezBkUb6oHlBgNAxop9qchwCVGvs9HfkZVCqggulM+39F
+	DxSfzas12FrSv326yaNroDP4XwaOOXpdoJL1dZKt8lf5KKXoeeM/1FZ05pabHGjgyQHUfcwTRu1
+	WfClnUtLb0YC+/DLwhuW/Q0z/EKQuAMCAF8hmALwYJgfzUzPBGzsDBa1xmofSpuZYEToT+4w4jS
+	27fyQf+3TITwSwFde2yWCEegtwd5MHIZcR0Uwq7cyPE+
+X-Google-Smtp-Source: AGHT+IGF5zrLsdlkXnrbncS3XKunf2BikQsRsdSN1uU1BRL2NuN4OnXNdf4rFzbUe95e+zSgIBIzAw==
+X-Received: by 2002:a17:902:da81:b0:224:c46:d167 with SMTP id d9443c01a7336-22428887604mr110358155ad.16.1741473702411;
+        Sat, 08 Mar 2025 14:41:42 -0800 (PST)
+Received: from localhost ([2601:646:9e00:f56e:2844:3d8f:bf3e:12cc])
+        by smtp.gmail.com with UTF8SMTPSA id d9443c01a7336-224109de155sm51695545ad.27.2025.03.08.14.41.41
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 08 Mar 2025 14:38:59 -0800 (PST)
-Received: by grain.localdomain (Postfix, from userid 1000)
-	id 3FFF55A00A4; Sun, 09 Mar 2025 01:38:59 +0300 (MSK)
-Date: Sun, 9 Mar 2025 01:38:59 +0300
-From: Cyrill Gorcunov <gorcunov@gmail.com>
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: LKML <linux-kernel@vger.kernel.org>,
-	Anna-Maria Behnsen <anna-maria@linutronix.de>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	Benjamin Segall <bsegall@google.com>,
-	Eric Dumazet <edumazet@google.com>,
-	Andrey Vagin <avagin@openvz.org>,
-	Pavel Tikhomirov <ptikhomirov@virtuozzo.com>,
-	Peter Zijlstra <peterz@infradead.org>
-Subject: Re: [patch V3 16/18] posix-timers: Dont iterate /proc/$PID/timers
- with sighand:: Siglock held
-Message-ID: <Z8zHAwpFDECRYVC6@grain>
-References: <20250308155501.391430556@linutronix.de>
- <20250308155624.465175807@linutronix.de>
+        Sat, 08 Mar 2025 14:41:41 -0800 (PST)
+Date: Sat, 8 Mar 2025 14:41:41 -0800
+From: Stanislav Fomichev <stfomichev@gmail.com>
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: Kohei Enju <enjuk@amazon.com>, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
+	"David S . Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
+	Simon Horman <horms@kernel.org>,
+	Kuniyuki Iwashima <kuniyu@amazon.com>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	Ahmed Zaki <ahmed.zaki@intel.com>,
+	Stanislav Fomichev <sdf@fomichev.me>,
+	Alexander Lobakin <aleksander.lobakin@intel.com>,
+	Kohei Enju <kohei.enju@gmail.com>
+Subject: Re: [PATCH net-next v1] dev: remove netdev_lock() and
+ netdev_lock_ops() in register_netdevice().
+Message-ID: <Z8zHpf6JPfjkC_Sv@mini-arch>
+References: <20250308203835.60633-2-enjuk@amazon.com>
+ <20250308131813.4f8c8f0d@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250308155624.465175807@linutronix.de>
-User-Agent: Mutt/2.2.13 (2024-03-09)
+In-Reply-To: <20250308131813.4f8c8f0d@kernel.org>
 
-On Sat, Mar 08, 2025 at 05:48:45PM +0100, Thomas Gleixner wrote:
-...
->  
->  static int show_timer(struct seq_file *m, void *v)
->  {
-> -	struct k_itimer *timer;
-> -	struct timers_private *tp = m->private;
-> -	int notify;
->  	static const char * const nstr[] = {
-> +		[SIGEV_SIGNAL]	= "signal",
-> +		[SIGEV_NONE]	= "none",
-> +		[SIGEV_THREAD]	= "thread",
->  	};
->  
-...
-> -	seq_printf(m, "notify: %s/%s.%d\n",
-> -		   nstr[notify & ~SIGEV_THREAD_ID],
-> +	seq_printf(m, "notify: %s/%s.%d\n", nstr[notify & ~SIGEV_THREAD_ID],
->  		   (notify & SIGEV_THREAD_ID) ? "tid" : "pid",
->  		   pid_nr_ns(timer->it_pid, tp->ns));
-...
+On 03/08, Jakub Kicinski wrote:
+> On Sun, 9 Mar 2025 05:37:18 +0900 Kohei Enju wrote:
+> > Both netdev_lock() and netdev_lock_ops() are called before
+> > list_netdevice() in register_netdevice().
+> > No other context can access the struct net_device, so we don't need these
+> > locks in this context.
 
-Btw this nstr[notify & ~SIGEV_THREAD_ID] has been always fishy since ~SIGEV_THREAD_ID
-doesn't give a proper mask over nstr size :-) It just happen to work but if for some
-reason ::it_sigev_notify get screwed we will get a surprise. I think later (not in this
-series) we better provide an explicit bitwise mask here.
+That's technically true, but it will set off a bunch of lockdep
+warnings :-(
 
-	Cyrill
+> Doesn't sysfs get registered earlier?
+> I'm afraid not being able to take the lock from the registration
+> path ties our hands too much. Maybe we need to make a more serious
+> attempt at letting the caller take the lock?
+
+This looks like another case of upper/lower :-( So maybe we need to solve
+it for real? With an extra upper_lock pointer in the netdev?
+Untested patch to convey the general idea:
+
+diff --git a/include/linux/netdevice.h b/include/linux/netdevice.h
+index d3c549f73909..9c85179431e6 100644
+--- a/include/linux/netdevice.h
++++ b/include/linux/netdevice.h
+@@ -2520,6 +2520,7 @@ struct net_device {
+ 	 * Ordering: take after rtnl_lock.
+ 	 */
+ 	struct mutex		lock;
++	struct mutex		*upper_lock;
+ 
+ #if IS_ENABLED(CONFIG_NET_SHAPER)
+ 	/**
+diff --git a/net/core/rtnetlink.c b/net/core/rtnetlink.c
+index 90597bf84e3d..3d0fda6e9bca 100644
+--- a/net/core/rtnetlink.c
++++ b/net/core/rtnetlink.c
+@@ -3022,6 +3022,9 @@ static int do_setlink(const struct sk_buff *skb, struct net_device *dev,
+ 	char ifname[IFNAMSIZ];
+ 	int err;
+ 
++	/* TODO: add another wrapper for this */
++	if (dev->upper_lock)
++		mutex_lock(dev->upper_lock);
+ 	netdev_lock_ops(dev);
+ 
+ 	err = validate_linkmsg(dev, tb, extack);
+@@ -3394,6 +3397,8 @@ static int do_setlink(const struct sk_buff *skb, struct net_device *dev,
+ 	}
+ 
+ 	netdev_unlock_ops(dev);
++	if (dev->upper_lock)
++		mutex_unlock(dev->upper_lock);
+ 
+ 	return err;
+ }
+diff --git a/net/mac80211/iface.c b/net/mac80211/iface.c
+index b0423046028c..818ff487b363 100644
+--- a/net/mac80211/iface.c
++++ b/net/mac80211/iface.c
+@@ -304,7 +304,7 @@ static int ieee80211_change_mac(struct net_device *dev, void *addr)
+ 	if (!dev->ieee80211_ptr->registered)
+ 		return 0;
+ 
+-	guard(wiphy)(local->hw.wiphy);
++	/* TODO: remove guard from other places */
+ 
+ 	return _ieee80211_change_mac(sdata, addr);
+ }
+@@ -2227,6 +2227,8 @@ int ieee80211_if_add(struct ieee80211_local *local, const char *name,
+ 			free_netdev(ndev);
+ 			return ret;
+ 		}
++
++		ndev->upper_lock = &local->hw.wiphy.mtx;
+ 	}
+ 
+ 	mutex_lock(&local->iflist_mtx);
+
 
