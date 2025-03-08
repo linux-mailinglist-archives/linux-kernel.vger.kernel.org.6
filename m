@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-552738-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-552743-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1BC3CA57D73
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 19:48:08 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 03870A57D7B
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 19:48:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 972A91893D5B
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 18:48:15 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B910E7A80A1
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 18:47:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 927CE217655;
-	Sat,  8 Mar 2025 18:45:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECB2F21A434;
+	Sat,  8 Mar 2025 18:45:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="FKW0l1ej"
-Received: from smtp-42ab.mail.infomaniak.ch (smtp-42ab.mail.infomaniak.ch [84.16.66.171])
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="Faw3SRV2"
+Received: from smtp-8fad.mail.infomaniak.ch (smtp-8fad.mail.infomaniak.ch [83.166.143.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B6652163AF;
-	Sat,  8 Mar 2025 18:45:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=84.16.66.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 886462192F7
+	for <linux-kernel@vger.kernel.org>; Sat,  8 Mar 2025 18:45:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.166.143.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741459505; cv=none; b=D7Fk1A/Yx1ioZ+8anX8RR7+jYSQ7ymBEDHpASBgAeIUe2kZjnZRZ7xF1PrUBpEC2jnOe09RNmjuM2sa24dME0FFD1+zg37eYq3ZnJz0+bZBL55ZxbycGccn6LhGmi4PmlLj642T/bHu8HHBP6suBcoQRT0rEBUqsGSZDpV7TKVQ=
+	t=1741459513; cv=none; b=VjBNeLVYYCermUv9L7y/VXuJIkb/zp6IuGV3fzdeXmp62lApmFqZQ7KJoOzjXjm56jmF2E2Py4Wy8ZnKTg+TNNk/YywXHFGAzC0ngkzePCGJEQ+YAuH2/s3LgAueM0zoCbw8/cuT3Cz9v2eQGaypC998Ivqyu/0ta20mTRKWSS8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741459505; c=relaxed/simple;
-	bh=+mEtiRH9mg2PBl1dWGMUlkUQPx/inb4Y4ygUZfCMhnM=;
+	s=arc-20240116; t=1741459513; c=relaxed/simple;
+	bh=d1ahUO9jDK5pg7d/9PAjmipszcgEPlus3+ZqkBxJNkc=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=i97jE84Y6BUC1XVY2CoDzD9vLazUw/2c+nnbrv4jFK9jzdS9qT/+1jzPLj9aKD29YzI8RAe0nmEAF5qG9o62Q1hK9PdW/vaqG3owheAfsKpnX/h0Mke8odCYDWXDwW8rJyzwHnKd3PXyPQ5lYfzM8NZRUarfy0HJAW0SBSTwqWc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=FKW0l1ej; arc=none smtp.client-ip=84.16.66.171
+	 MIME-Version:Content-Type; b=T2tE3K4xQyLNrSkyM0/IwYaF+SgCqIi6KwbRyCjYP4zEydRVOcpClF7oKQLqeKOxKe6k8dny98LZruhN5CYrJTYK438ozcxk78jCvAVmTFHkJ7weAgZ2b6Ww3qqDT6UfcPx2RCIq8ol2IkGefK6pM9o2wJ0Jn2uouAX7PCbLSGo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=Faw3SRV2; arc=none smtp.client-ip=83.166.143.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
-Received: from smtp-4-0000.mail.infomaniak.ch (unknown [IPv6:2001:1600:7:10:40ca:feff:fe05:0])
-	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4Z9Bsn6jSbzRWl;
-	Sat,  8 Mar 2025 19:45:01 +0100 (CET)
+Received: from smtp-4-0000.mail.infomaniak.ch (smtp-4-0000.mail.infomaniak.ch [10.7.10.107])
+	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4Z9Bsq2VkczLMc;
+	Sat,  8 Mar 2025 19:45:03 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1741459501;
-	bh=eX6a/Otpuw4To8WlM9lxQqOqmo1WzQUlapzGb7manJs=;
+	s=20191114; t=1741459503;
+	bh=9AetjI08iDywqjQ4EG14lhpkZUde1COiJ/To5plRgo0=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=FKW0l1ejWpVNelD5NPCKfyjChf9JgbkWqsOr/Yb4Lbl77RO5xN4UUJzsBgSa9hTCT
-	 q63HDz8llx0MgIZLsTkylPO0yjymGEP0DdStov+Q1Eabwmw6Lff5FjFN6bSwwyd2jG
-	 p9XtrjTr7OxR54dXwxH8T2aRSMxGViNsCok7g2gU=
-Received: from unknown by smtp-4-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4Z9Bsn0lNwzHQJ;
-	Sat,  8 Mar 2025 19:45:01 +0100 (CET)
+	b=Faw3SRV2wWKnSnl+Mhykh6nMk946Tk+q9WV+WHXmYxHyCJ0wmPzlIuQsDm+PJct0P
+	 W5li2iobh8e7l8VAQx+lG56/JS5e32K6RiIUzcdv5TGg9If4TlFT3QBo5XVp9u5qVI
+	 SNg79LDFyybYDIpL1BBH7D+2TFU7vQnNv2OEutEg=
+Received: from unknown by smtp-4-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4Z9Bsp3rTqzJyQ;
+	Sat,  8 Mar 2025 19:45:02 +0100 (CET)
 From: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
 To: Eric Paris <eparis@redhat.com>,
 	Paul Moore <paul@paul-moore.com>,
@@ -72,9 +72,9 @@ Cc: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
 	audit@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	linux-security-module@vger.kernel.org
-Subject: [PATCH v6 19/26] selftests/landlock: Add test for invalid ruleset file descriptor
-Date: Sat,  8 Mar 2025 19:44:15 +0100
-Message-ID: <20250308184422.2159360-20-mic@digikod.net>
+Subject: [PATCH v6 20/26] selftests/landlock: Extend tests for landlock_restrict_self(2)'s flags
+Date: Sat,  8 Mar 2025 19:44:16 +0100
+Message-ID: <20250308184422.2159360-21-mic@digikod.net>
 In-Reply-To: <20250308184422.2159360-1-mic@digikod.net>
 References: <20250308184422.2159360-1-mic@digikod.net>
 Precedence: bulk
@@ -87,39 +87,118 @@ Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 X-Infomaniak-Routing: alpha
 
-To align with fs_test's layout1.inval and layout0.proc_nsfs which test
-EBADFD for landlock_add_rule(2), create a new base_test's
-restrict_self_fd which test EBADFD for landlock_restrict_self(2).
+Add the base_test's restrict_self_fd_flags tests to align with previous
+restrict_self_fd tests but with the new
+LANDLOCK_RESTRICT_SELF_LOG_SUBDOMAINS_OFF flag.
+
+Add the restrict_self_flags tests to check that
+LANDLOCK_RESTRICT_SELF_LOG_SAME_EXEC_OFF,
+LANDLOCK_RESTRICT_SELF_LOG_NEW_EXEC_ON, and
+LANDLOCK_RESTRICT_SELF_LOG_SUBDOMAINS_OFF are valid but not the next
+bit.  Some checks are similar to restrict_self_checks_ordering's ones.
 
 Cc: Günther Noack <gnoack@google.com>
 Cc: Paul Moore <paul@paul-moore.com>
 Signed-off-by: Mickaël Salaün <mic@digikod.net>
-Link: https://lore.kernel.org/r/20250308184422.2159360-20-mic@digikod.net
+Link: https://lore.kernel.org/r/20250308184422.2159360-21-mic@digikod.net
 ---
 
 Changes since v5:
-- New standalone patch (that can be backported).
+- Rename restrict flags.
+- Update LANDLOCK_RESTRICT_SELF_LOG_SUBDOMAINS_OFF test to pass with -1
+  as ruleset FD, and flag ordering.
+- Add restrict_self_fd_flags tests.
+
+Changes since v4:
+- Update with LANDLOCK_RESTRICT_SELF_QUIET_SUBDOMAINS, and
+  LANDLOCK_RESTRICT_SELF_LOG_CROSS_EXEC.
+
+Changes since v3:
+- Use a last_flag variable.
+
+Changes since v2:
+- New patch.
 ---
- tools/testing/selftests/landlock/base_test.c | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+ tools/testing/selftests/landlock/base_test.c | 71 ++++++++++++++++++++
+ 1 file changed, 71 insertions(+)
 
 diff --git a/tools/testing/selftests/landlock/base_test.c b/tools/testing/selftests/landlock/base_test.c
-index fbd687691b3c..9059045ae8b6 100644
+index 9059045ae8b6..ab00afe1fc25 100644
 --- a/tools/testing/selftests/landlock/base_test.c
 +++ b/tools/testing/selftests/landlock/base_test.c
-@@ -233,6 +233,17 @@ TEST(restrict_self_checks_ordering)
- 	ASSERT_EQ(0, close(ruleset_fd));
+@@ -244,6 +244,77 @@ TEST(restrict_self_fd)
+ 	EXPECT_EQ(EBADFD, errno);
  }
  
-+TEST(restrict_self_fd)
++TEST(restrict_self_fd_flags)
 +{
 +	int fd;
 +
 +	fd = open("/dev/null", O_RDONLY | O_CLOEXEC);
 +	ASSERT_LE(0, fd);
 +
-+	EXPECT_EQ(-1, landlock_restrict_self(fd, 0));
++	/*
++	 * LANDLOCK_RESTRICT_SELF_LOG_SUBDOMAINS_OFF accepts -1 but not any file
++	 * descriptor.
++	 */
++	EXPECT_EQ(-1, landlock_restrict_self(
++			      fd, LANDLOCK_RESTRICT_SELF_LOG_SUBDOMAINS_OFF));
 +	EXPECT_EQ(EBADFD, errno);
++}
++
++TEST(restrict_self_flags)
++{
++	const __u32 last_flag = LANDLOCK_RESTRICT_SELF_LOG_SUBDOMAINS_OFF;
++
++	/* Tests invalid flag combinations. */
++
++	EXPECT_EQ(-1, landlock_restrict_self(-1, last_flag << 1));
++	EXPECT_EQ(EINVAL, errno);
++
++	EXPECT_EQ(-1, landlock_restrict_self(-1, -1));
++	EXPECT_EQ(EINVAL, errno);
++
++	/* Tests valid flag combinations. */
++
++	EXPECT_EQ(-1, landlock_restrict_self(-1, 0));
++	EXPECT_EQ(EBADF, errno);
++
++	EXPECT_EQ(-1, landlock_restrict_self(
++			      -1, LANDLOCK_RESTRICT_SELF_LOG_SAME_EXEC_OFF));
++	EXPECT_EQ(EBADF, errno);
++
++	EXPECT_EQ(-1,
++		  landlock_restrict_self(
++			  -1,
++			  LANDLOCK_RESTRICT_SELF_LOG_SAME_EXEC_OFF |
++				  LANDLOCK_RESTRICT_SELF_LOG_SUBDOMAINS_OFF));
++	EXPECT_EQ(EBADF, errno);
++
++	EXPECT_EQ(-1,
++		  landlock_restrict_self(
++			  -1,
++			  LANDLOCK_RESTRICT_SELF_LOG_NEW_EXEC_ON |
++				  LANDLOCK_RESTRICT_SELF_LOG_SUBDOMAINS_OFF));
++	EXPECT_EQ(EBADF, errno);
++
++	EXPECT_EQ(-1, landlock_restrict_self(
++			      -1, LANDLOCK_RESTRICT_SELF_LOG_NEW_EXEC_ON));
++	EXPECT_EQ(EBADF, errno);
++
++	EXPECT_EQ(-1,
++		  landlock_restrict_self(
++			  -1, LANDLOCK_RESTRICT_SELF_LOG_SAME_EXEC_OFF |
++				      LANDLOCK_RESTRICT_SELF_LOG_NEW_EXEC_ON));
++	EXPECT_EQ(EBADF, errno);
++
++	/* Tests with an invalid ruleset_fd. */
++
++	EXPECT_EQ(-1, landlock_restrict_self(
++			      -2, LANDLOCK_RESTRICT_SELF_LOG_SUBDOMAINS_OFF));
++	EXPECT_EQ(EBADF, errno);
++
++	EXPECT_EQ(0, landlock_restrict_self(
++			     -1, LANDLOCK_RESTRICT_SELF_LOG_SUBDOMAINS_OFF));
 +}
 +
  TEST(ruleset_fd_io)
