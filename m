@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-552734-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-552736-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C28EA57D6A
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 19:47:16 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C5E4A57D6B
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 19:47:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 22AB27A7226
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 18:46:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9A2EA16E49D
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 18:47:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 781131FE45D;
-	Sat,  8 Mar 2025 18:45:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14D3121639D;
+	Sat,  8 Mar 2025 18:45:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="Ts51/geC"
-Received: from smtp-8fab.mail.infomaniak.ch (smtp-8fab.mail.infomaniak.ch [83.166.143.171])
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="wT/LqKPN"
+Received: from smtp-bc08.mail.infomaniak.ch (smtp-bc08.mail.infomaniak.ch [45.157.188.8])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A87C5215181
-	for <linux-kernel@vger.kernel.org>; Sat,  8 Mar 2025 18:44:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.166.143.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E83522153D9
+	for <linux-kernel@vger.kernel.org>; Sat,  8 Mar 2025 18:44:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.157.188.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741459500; cv=none; b=cnl64uQMaJ9/WwA1JAJLMgEXi2nkuy5tLPj0MQGglWLPlbwmKPTCVIsPqPpgMrzlnENsnSvZixGDhoyE6wojAXcFD07ulQ/8V27h2Ufj8b9thb3zXkvjy571d2ZO9tZP6rEJ37/FuQm/xnK8Hq/5ObVFTMkMydJ3Ra9TR4ZjNDk=
+	t=1741459501; cv=none; b=sZOYkNt/UwxaC6MA5jOwp7SndkYpET4OUH6LPpvMA5RK3efty7HE6S80QRHzqQzW79tdWqJrhD6wEuAoRqWZtTYU6eNAU1z4fypKAiJAEf71jlLt3h9ABtx5/M3XQpNo9A2lPu877PWUdvsSjP/DSyQAh1mtIG7HuMs4XNZjWGc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741459500; c=relaxed/simple;
-	bh=cpV6J7vFv8QlFZY9S6XFDG63kp4XExRkTYYnDCOW2Zg=;
+	s=arc-20240116; t=1741459501; c=relaxed/simple;
+	bh=k1m9iFSywrtIwR6hiRVlkDVU5un0WI0sVvyht2eqlcc=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=PTrpOdMy7aQCR5Th5xGEdB0kvxd/WS22eAF4mfbFBIuCpg0ADFPEb89qIa/QpMPM9/XLcXC/Reg7nB9XMorDJ43Ter4B2PotdA4Ev1s3xpiRN3vAnjkWM+KnJD9hpEfVT3C3+GoD4Boy3iQnJpJjl7EKT7p4ckhI3QfuZiGpQTE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=Ts51/geC; arc=none smtp.client-ip=83.166.143.171
+	 MIME-Version:Content-Type; b=PgyaySWXy7WEYiFeb59hvyPfF3girbwwv64RzztwP15pLAqyJwm9Aiz8xNZ5nPVJmhrTUEu+ROLWacqFRETCTFEzQl20G8xm7fu7e47/oq1zRO927WIp5YDA3SmybXwcLMDfQahB+Ew1kcOjTw4csxWZWtfAo6SVoIZnWsJk3D0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=wT/LqKPN; arc=none smtp.client-ip=45.157.188.8
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
-Received: from smtp-4-0000.mail.infomaniak.ch (smtp-4-0000.mail.infomaniak.ch [10.7.10.107])
-	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4Z9Bsg6DYgzS6w;
-	Sat,  8 Mar 2025 19:44:55 +0100 (CET)
+Received: from smtp-3-0000.mail.infomaniak.ch (smtp-3-0000.mail.infomaniak.ch [10.4.36.107])
+	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4Z9Bsj2hZrzQBn;
+	Sat,  8 Mar 2025 19:44:57 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1741459495;
-	bh=v7zxGlR9p2Vk6aOhQ+9hHdnseZZyVA7sQx36u2Dx7Fs=;
+	s=20191114; t=1741459497;
+	bh=/wKf0zE+F9KVAAzytvTvsyiRmpBYc4ELYRrZOq7vhPQ=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=Ts51/geCAI90y4KlErY52fZVtW5rS8byJpifQ7ixm9wf9grvtX2gUw3HcgdeM4EsU
-	 UVXTvKtmLIecvxi2aJIec4JfZU9UfwtFy2xSz2YbKqKb9cFcaASrpCmgYOXF1yD1hP
-	 E7XTo20BVmZYCMDAVgIv2JwuEBWWsRc/OCfSAP7E=
-Received: from unknown by smtp-4-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4Z9Bsf6tT7zGbL;
-	Sat,  8 Mar 2025 19:44:54 +0100 (CET)
+	b=wT/LqKPNwF4iJTaHMAbHK06j/fUpmi5d3cqXcn0rHKGRbBd0xtW+VV6BEyHa/hzGz
+	 EWJ7Ny9X7YMTyY8HyKUrGr+LcIoMGzEC31aM6NQ4ZXQ0+GZXfCmDPXV7Jvgozz4NiK
+	 JmWFNLVEEYiAET7FApmwT9OZP6i+Lp+dSRDYvAc8=
+Received: from unknown by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4Z9Bsh3bCDzqYW;
+	Sat,  8 Mar 2025 19:44:56 +0100 (CET)
 From: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
 To: Eric Paris <eparis@redhat.com>,
 	Paul Moore <paul@paul-moore.com>,
@@ -72,9 +72,9 @@ Cc: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
 	audit@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	linux-security-module@vger.kernel.org
-Subject: [PATCH v6 15/26] landlock: Log scoped denials
-Date: Sat,  8 Mar 2025 19:44:11 +0100
-Message-ID: <20250308184422.2159360-16-mic@digikod.net>
+Subject: [PATCH v6 16/26] landlock: Add LANDLOCK_RESTRICT_SELF_LOG_*_EXEC_* flags
+Date: Sat,  8 Mar 2025 19:44:12 +0100
+Message-ID: <20250308184422.2159360-17-mic@digikod.net>
 In-Reply-To: <20250308184422.2159360-1-mic@digikod.net>
 References: <20250308184422.2159360-1-mic@digikod.net>
 Precedence: bulk
@@ -87,301 +87,308 @@ Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 X-Infomaniak-Routing: alpha
 
-Add audit support for unix_stream_connect, unix_may_send, task_kill, and
-file_send_sigiotask hooks.
+TODO: Add header copyrights
 
-The related blockers are:
-- scope.abstract_unix_socket
-- scope.signal
+Most of the time we want to log denied access because they should not
+happen and such information helps diagnose issues.  However, when
+sandboxing processes that we know will try to access denied resources
+(e.g. unknown, bogus, or malicious binary), we might want to not log
+related access requests that might fill up logs.
 
-Audit event sample for abstract unix socket:
+By default, denied requests are logged until the task call execve(2).
 
-  type=LANDLOCK_DENY msg=audit(1729738800.268:30): domain=195ba459b blockers=scope.abstract_unix_socket path=00666F6F
+If the LANDLOCK_RESTRICT_SELF_LOG_SAME_EXEC_OFF flag is set, denied
+requests will not be logged for the same executed file.
 
-Audit event sample for signal:
+If the LANDLOCK_RESTRICT_SELF_LOG_NEW_EXEC_ON flag is set, denied
+requests from after an execve(2) call will be logged.
 
-  type=LANDLOCK_DENY msg=audit(1729738800.291:31): domain=195ba459b blockers=scope.signal opid=1 ocomm="systemd"
+The rationale is that a program should know its own behavior, but not
+necessarily the behavior of other programs.
 
-Refactor and simplify error handling in LSM hooks.
+Because LANDLOCK_RESTRICT_SELF_LOG_SAME_EXEC_OFF is set for a specific
+Landlock domain, it makes it possible to selectively mask some access
+requests that would be logged by a parent domain, which might be handy
+for unprivileged processes to limit logs.  However, system
+administrators should still use the audit filtering mechanism.  There is
+intentionally no audit nor sysctl configuration to re-enable these logs.
+This is delegated to the user space program.
 
-Extend struct landlock_file_security with fown_layer and use it to log
-the blocking domain.  The struct aligned size is still 16 bytes.
+Increment the Landlock ABI version to reflect this interface change.
 
 Cc: Günther Noack <gnoack@google.com>
-Cc: Tahera Fahimi <fahimitahera@gmail.com>
+Cc: Paul Moore <paul@paul-moore.com>
 Signed-off-by: Mickaël Salaün <mic@digikod.net>
-Link: https://lore.kernel.org/r/20250308184422.2159360-16-mic@digikod.net
+Link: https://lore.kernel.org/r/20250308184422.2159360-17-mic@digikod.net
 ---
 
 Changes since v5:
-- Move request declarations in the landlock_log_denial() calls to
-  not impact allowed requests with audit, and return as soon as
-  possible when access is allowed.
-- Store a fown_layer per file and use it to log the blocking domain.
-- Refactor and simplify error handling in LSM hooks.
+- Rename LANDLOCK_RESTRICT_SELF_QUIET to
+  LANDLOCK_RESTRICT_SELF_LOG_SAME_EXEC_OFF, and adjust
+  landlock_log_denial() accordingly.  This better reflects what is the
+  impact of this flag, especially wrt the following
+  LANDLOCK_RESTRICT_SELF_LOG_NEW_EXEC_ON, and makes both flags
+  compatible and complementary.
+- Rename LANDLOCK_RESTRICT_SELF_LOG_CROSS_EXEC to
+  LANDLOCK_RESTRICT_SELF_LOG_NEW_EXEC_ON to be more consistent with
+  other flags.
+- Change flag values.
+- Squash the LOG_SAME_EXEC_OFF and the LOG_NEW_EXEC_ON patches to get
+  a more consistent patch.
 
 Changes since v4:
-- Rebase on top of the landlock_log_denial() and subject type changes.
+- Rebase on top of the scoped guard patches.
 
 Changes since v3:
-- Cosmetic change to the "scope.*" blocker names.
-- Extend commit message.
+- Rename LANDLOCK_RESTRICT_SELF_LOGLESS to LANDLOCK_RESTRICT_SELF_QUIET.
+  "quiet" is already used by kernel's cmdline to disable most log
+  messages, so this name makes sense for Landlock.
+- Improve the LANDLOCK_ABI_VERSION comment.
 
-Changes since v1:
-- New patch.
+Changes since v2:
+- Update ABI version test.
 ---
- security/landlock/audit.c |  8 ++++
- security/landlock/audit.h |  2 +
- security/landlock/fs.c    |  7 +++-
- security/landlock/fs.h    | 14 +++++++
- security/landlock/task.c  | 79 +++++++++++++++++++++++++++++++--------
- 5 files changed, 92 insertions(+), 18 deletions(-)
+ include/uapi/linux/landlock.h                | 21 ++++++++++++
+ security/landlock/audit.c                    | 16 +++++++--
+ security/landlock/domain.c                   |  2 ++
+ security/landlock/domain.h                   | 11 +++++++
+ security/landlock/limits.h                   |  4 +++
+ security/landlock/syscalls.c                 | 34 +++++++++++++++++---
+ tools/testing/selftests/landlock/base_test.c |  2 +-
+ 7 files changed, 81 insertions(+), 9 deletions(-)
 
-diff --git a/security/landlock/audit.c b/security/landlock/audit.c
-index 6c34758b9ff2..d0eafb946f31 100644
---- a/security/landlock/audit.c
-+++ b/security/landlock/audit.c
-@@ -71,6 +71,14 @@ get_blocker(const enum landlock_request_type type,
- 		if (WARN_ON_ONCE(access_bit >= ARRAY_SIZE(net_access_strings)))
- 			return "unknown";
- 		return net_access_strings[access_bit];
-+
-+	case LANDLOCK_REQUEST_SCOPE_ABSTRACT_UNIX_SOCKET:
-+		WARN_ON_ONCE(access_bit != -1);
-+		return "scope.abstract_unix_socket";
-+
-+	case LANDLOCK_REQUEST_SCOPE_SIGNAL:
-+		WARN_ON_ONCE(access_bit != -1);
-+		return "scope.signal";
- 	}
+diff --git a/include/uapi/linux/landlock.h b/include/uapi/linux/landlock.h
+index e1d2c27533b4..daa1bc4123c3 100644
+--- a/include/uapi/linux/landlock.h
++++ b/include/uapi/linux/landlock.h
+@@ -4,6 +4,7 @@
+  *
+  * Copyright © 2017-2020 Mickaël Salaün <mic@digikod.net>
+  * Copyright © 2018-2020 ANSSI
++ * Copyright © 2021-2025 Microsoft Corporation
+  */
  
- 	WARN_ON_ONCE(1);
-diff --git a/security/landlock/audit.h b/security/landlock/audit.h
-index eeff2c5bfa4f..aaf21b31baa8 100644
---- a/security/landlock/audit.h
-+++ b/security/landlock/audit.h
-@@ -20,6 +20,8 @@ enum landlock_request_type {
- 	LANDLOCK_REQUEST_FS_CHANGE_LAYOUT,
- 	LANDLOCK_REQUEST_FS_ACCESS,
- 	LANDLOCK_REQUEST_NET_ACCESS,
-+	LANDLOCK_REQUEST_SCOPE_ABSTRACT_UNIX_SOCKET,
-+	LANDLOCK_REQUEST_SCOPE_SIGNAL,
- };
+ #ifndef _UAPI_LINUX_LANDLOCK_H
+@@ -62,6 +63,26 @@ struct landlock_ruleset_attr {
+ #define LANDLOCK_CREATE_RULESET_VERSION			(1U << 0)
+ /* clang-format on */
  
- /*
-diff --git a/security/landlock/fs.c b/security/landlock/fs.c
-index 14f9c6d9903f..34f316031ecf 100644
---- a/security/landlock/fs.c
-+++ b/security/landlock/fs.c
-@@ -1798,6 +1798,7 @@ static void hook_file_set_fowner(struct file *file)
- 	const struct landlock_cred_security *new_subject;
- 	struct landlock_cred_security *fown_subject;
- 	struct landlock_ruleset *prev_dom;
-+	size_t handle_layer;
- 
- 	/*
- 	 * Lock already held by __f_setown(), see commit 26f204380a3c ("fs: Fix
-@@ -1807,15 +1808,17 @@ static void hook_file_set_fowner(struct file *file)
- 
- 	fown_subject = &landlock_file(file)->fown_subject;
- 	prev_dom = fown_subject->domain;
--	new_subject = landlock_get_applicable_subject(current_cred(),
--						      signal_scope, NULL);
-+	new_subject = landlock_get_applicable_subject(
-+		current_cred(), signal_scope, &handle_layer);
- 	if (new_subject) {
- 		landlock_get_ruleset(new_subject->domain);
- 		*fown_subject = *new_subject;
-+		landlock_file(file)->fown_layer = handle_layer;
- 	} else {
- 		static const struct landlock_cred_security empty = {};
- 
- 		*fown_subject = empty;
-+		landlock_file(file)->fown_layer = 0;
- 	}
- 
- 	/* Called in an RCU read-side critical section. */
-diff --git a/security/landlock/fs.h b/security/landlock/fs.h
-index 3a09ba985b74..a2a2014d68ae 100644
---- a/security/landlock/fs.h
-+++ b/security/landlock/fs.h
-@@ -9,6 +9,7 @@
- #ifndef _SECURITY_LANDLOCK_FS_H
- #define _SECURITY_LANDLOCK_FS_H
- 
-+#include <linux/build_bug.h>
- #include <linux/fs.h>
- #include <linux/init.h>
- #include <linux/rcupdate.h>
-@@ -61,6 +62,11 @@ struct landlock_file_security {
- 	 * _LANDLOCK_ACCESS_FS_OPTIONAL).
- 	 */
- 	deny_masks_t deny_masks;
-+	/**
-+	 * @fown_layer: Layer level of @fown_subject->domain with
-+	 * LANDLOCK_SCOPE_SIGNAL.
-+	 */
-+	u8 fown_layer;
- #endif /* CONFIG_AUDIT */
- 
- 	/**
-@@ -73,6 +79,14 @@ struct landlock_file_security {
- 	struct landlock_cred_security fown_subject;
- };
- 
-+#ifdef CONFIG_AUDIT
-+
-+/* Makes sure all layers can be identified. */
-+static_assert((typeof_member(struct landlock_file_security, fown_layer))~0 >=
-+	      LANDLOCK_MAX_NUM_LAYERS);
-+
-+#endif /* CONFIG_AUDIT */
++/*
++ * sys_landlock_restrict_self() flags:
++ *
++ * - %LANDLOCK_RESTRICT_SELF_LOG_SAME_EXEC_OFF: Do not create any log related to the
++ *   enforced restrictions.  This should only be set by tools launching unknown
++ *   or untrusted programs (e.g. a sandbox tool, container runtime, system
++ *   service manager).  Because programs sandboxing themselves should fix any
++ *   denied access, they should not set this flag to be aware of potential
++ *   issues reported by system's logs (i.e. audit).
++ * - %LANDLOCK_RESTRICT_SELF_LOG_NEW_EXEC_ON: Explicitly ask to continue
++ *   logging denied access requests even after an :manpage:`execve(2)` call.
++ *   This flag should only be set if all the programs than can legitimately be
++ *   executed will not try to request a denied access (which could spam audit
++ *   logs).
++ */
++/* clang-format off */
++#define LANDLOCK_RESTRICT_SELF_LOG_SAME_EXEC_OFF		(1U << 0)
++#define LANDLOCK_RESTRICT_SELF_LOG_NEW_EXEC_ON			(1U << 1)
++/* clang-format on */
 +
  /**
-  * struct landlock_superblock_security - Superblock security blob
+  * enum landlock_rule_type - Landlock rule type
   *
-diff --git a/security/landlock/task.c b/security/landlock/task.c
-index e8a0b4ead381..f6359cf4c11b 100644
---- a/security/landlock/task.c
-+++ b/security/landlock/task.c
-@@ -264,26 +264,41 @@ static int hook_unix_stream_connect(struct sock *const sock,
- 				    struct sock *const other,
- 				    struct sock *const newsk)
- {
-+	size_t handle_layer;
- 	const struct landlock_cred_security *const subject =
- 		landlock_get_applicable_subject(current_cred(), unix_scope,
--						NULL);
-+						&handle_layer);
- 
- 	/* Quick return for non-landlocked tasks. */
- 	if (!subject)
- 		return 0;
- 
--	if (is_abstract_socket(other) && sock_is_scoped(other, subject->domain))
--		return -EPERM;
-+	if (!is_abstract_socket(other))
-+		return 0;
-+
-+	if (!sock_is_scoped(other, subject->domain))
-+		return 0;
- 
--	return 0;
-+	landlock_log_denial(subject, &(struct landlock_request) {
-+		.type = LANDLOCK_REQUEST_SCOPE_ABSTRACT_UNIX_SOCKET,
-+		.audit = {
-+			.type = LSM_AUDIT_DATA_NET,
-+			.u.net = &(struct lsm_network_audit) {
-+				.sk = other,
-+			},
-+		},
-+		.layer_plus_one = handle_layer + 1,
-+	});
-+	return -EPERM;
- }
- 
- static int hook_unix_may_send(struct socket *const sock,
- 			      struct socket *const other)
- {
-+	size_t handle_layer;
- 	const struct landlock_cred_security *const subject =
- 		landlock_get_applicable_subject(current_cred(), unix_scope,
--						NULL);
-+						&handle_layer);
- 
- 	if (!subject)
- 		return 0;
-@@ -295,11 +310,23 @@ static int hook_unix_may_send(struct socket *const sock,
- 	if (unix_peer(sock->sk) == other->sk)
- 		return 0;
- 
--	if (is_abstract_socket(other->sk) &&
--	    sock_is_scoped(other->sk, subject->domain))
--		return -EPERM;
-+	if (!is_abstract_socket(other->sk))
-+		return 0;
-+
-+	if (!sock_is_scoped(other->sk, subject->domain))
-+		return 0;
- 
--	return 0;
-+	landlock_log_denial(subject, &(struct landlock_request) {
-+		.type = LANDLOCK_REQUEST_SCOPE_ABSTRACT_UNIX_SOCKET,
-+		.audit = {
-+			.type = LSM_AUDIT_DATA_NET,
-+			.u.net = &(struct lsm_network_audit) {
-+				.sk = other->sk,
-+			},
-+		},
-+		.layer_plus_one = handle_layer + 1,
-+	});
-+	return -EPERM;
- }
- 
- static const struct access_masks signal_scope = {
-@@ -311,13 +338,15 @@ static int hook_task_kill(struct task_struct *const p,
- 			  const struct cred *cred)
- {
- 	bool is_scoped;
-+	size_t handle_layer;
- 	const struct landlock_cred_security *subject;
- 
- 	if (!cred)
- 		/* Not dealing with USB IO. */
- 		cred = current_cred();
- 
--	subject = landlock_get_applicable_subject(cred, signal_scope, NULL);
-+	subject = landlock_get_applicable_subject(cred, signal_scope,
-+						  &handle_layer);
- 
- 	/* Quick return for non-landlocked tasks. */
- 	if (!subject)
-@@ -329,10 +358,19 @@ static int hook_task_kill(struct task_struct *const p,
- 					     landlock_get_task_domain(p),
- 					     signal_scope.scope);
+diff --git a/security/landlock/audit.c b/security/landlock/audit.c
+index d0eafb946f31..01dc62ba7999 100644
+--- a/security/landlock/audit.c
++++ b/security/landlock/audit.c
+@@ -422,6 +422,9 @@ void landlock_log_denial(const struct landlock_cred_security *const subject,
+ 			get_hierarchy(subject->domain, youngest_layer);
  	}
--	if (is_scoped)
--		return -EPERM;
  
--	return 0;
-+	if (!is_scoped)
-+		return 0;
++	if (READ_ONCE(youngest_denied->log_status) == LANDLOCK_LOG_DISABLED)
++		return;
 +
-+	landlock_log_denial(subject, &(struct landlock_request) {
-+		.type = LANDLOCK_REQUEST_SCOPE_SIGNAL,
-+		.audit = {
-+			.type = LSM_AUDIT_DATA_TASK,
-+			.u.tsk = p,
-+		},
-+		.layer_plus_one = handle_layer + 1,
-+	});
-+	return -EPERM;
- }
+ 	/*
+ 	 * Consistently keeps track of the number of denied access requests
+ 	 * even if audit is currently disabled, or if audit rules currently
+@@ -433,9 +436,16 @@ void landlock_log_denial(const struct landlock_cred_security *const subject,
+ 	if (!audit_enabled)
+ 		return;
  
- static int hook_file_send_sigiotask(struct task_struct *tsk,
-@@ -361,10 +399,19 @@ static int hook_file_send_sigiotask(struct task_struct *tsk,
- 					     landlock_get_task_domain(tsk),
- 					     signal_scope.scope);
+-	/* Ignores denials after an execution. */
+-	if (!(subject->domain_exec & (1 << youngest_layer)))
+-		return;
++	/* Checks if the current exec was restricting itself. */
++	if (subject->domain_exec & (1 << youngest_layer)) {
++		/* Ignores denials for the same execution. */
++		if (!youngest_denied->log_same_exec)
++			return;
++	} else {
++		/* Ignores denials after a new execution. */
++		if (!youngest_denied->log_cross_exec)
++			return;
++	}
+ 
+ 	ab = audit_log_start(audit_context(), GFP_ATOMIC | __GFP_NOWARN,
+ 			     AUDIT_LANDLOCK_ACCESS);
+diff --git a/security/landlock/domain.c b/security/landlock/domain.c
+index 6704e9283206..925b3c2f8d23 100644
+--- a/security/landlock/domain.c
++++ b/security/landlock/domain.c
+@@ -127,6 +127,8 @@ int landlock_init_hierarchy_log(struct landlock_hierarchy *const hierarchy)
+ 	hierarchy->details = details;
+ 	hierarchy->id = landlock_get_id_range(1);
+ 	hierarchy->log_status = LANDLOCK_LOG_PENDING;
++	hierarchy->log_same_exec = true;
++	hierarchy->log_cross_exec = false;
+ 	atomic64_set(&hierarchy->num_denials, 0);
+ 	return 0;
+ }
+diff --git a/security/landlock/domain.h b/security/landlock/domain.h
+index c1ab2fe1d441..567b86d48849 100644
+--- a/security/landlock/domain.h
++++ b/security/landlock/domain.h
+@@ -24,6 +24,7 @@
+ enum landlock_log_status {
+ 	LANDLOCK_LOG_PENDING = 0,
+ 	LANDLOCK_LOG_RECORDED,
++	LANDLOCK_LOG_DISABLED,
+ };
+ 
+ /**
+@@ -103,6 +104,16 @@ struct landlock_hierarchy {
+ 	 * @details: Information about the related domain.
+ 	 */
+ 	const struct landlock_details *details;
++	/**
++	 * @log_same_exec: Set if the domain is *not* configured with
++	 * %LANDLOCK_RESTRICT_SELF_LOG_SAME_EXEC_OFF.  Set to true by default.
++	 */
++	u32 log_same_exec : 1,
++		/**
++		 * @log_cross_exec: Set if the domain is configured with
++		 * %LANDLOCK_RESTRICT_SELF_LOG_NEW_EXEC_ON.  Set to false by default.
++		 */
++		log_cross_exec : 1;
+ #endif /* CONFIG_AUDIT */
+ };
+ 
+diff --git a/security/landlock/limits.h b/security/landlock/limits.h
+index 15f7606066c8..a45cd58898d0 100644
+--- a/security/landlock/limits.h
++++ b/security/landlock/limits.h
+@@ -29,6 +29,10 @@
+ #define LANDLOCK_LAST_SCOPE		LANDLOCK_SCOPE_SIGNAL
+ #define LANDLOCK_MASK_SCOPE		((LANDLOCK_LAST_SCOPE << 1) - 1)
+ #define LANDLOCK_NUM_SCOPE		__const_hweight64(LANDLOCK_MASK_SCOPE)
++
++#define LANDLOCK_LAST_RESTRICT_SELF	LANDLOCK_RESTRICT_SELF_LOG_NEW_EXEC_ON
++#define LANDLOCK_MASK_RESTRICT_SELF	((LANDLOCK_LAST_RESTRICT_SELF << 1) - 1)
++
+ /* clang-format on */
+ 
+ #endif /* _SECURITY_LANDLOCK_LIMITS_H */
+diff --git a/security/landlock/syscalls.c b/security/landlock/syscalls.c
+index 5129981fec8b..c9f4e213a6f4 100644
+--- a/security/landlock/syscalls.c
++++ b/security/landlock/syscalls.c
+@@ -28,6 +28,7 @@
+ #include <uapi/linux/landlock.h>
+ 
+ #include "cred.h"
++#include "domain.h"
+ #include "fs.h"
+ #include "limits.h"
+ #include "net.h"
+@@ -151,7 +152,14 @@ static const struct file_operations ruleset_fops = {
+ 	.write = fop_dummy_write,
+ };
+ 
+-#define LANDLOCK_ABI_VERSION 6
++/*
++ * The Landlock ABI version should be incremented for each new Landlock-related
++ * user space visible change (e.g. Landlock syscalls).  This version should
++ * only be incremented once per Linux release, and the date in
++ * Documentation/userspace-api/landlock.rst should be updated to reflect the
++ * UAPI change.
++ */
++#define LANDLOCK_ABI_VERSION 7
+ 
+ /**
+  * sys_landlock_create_ruleset - Create a new ruleset
+@@ -429,7 +437,10 @@ SYSCALL_DEFINE4(landlock_add_rule, const int, ruleset_fd,
+  * sys_landlock_restrict_self - Enforce a ruleset on the calling thread
+  *
+  * @ruleset_fd: File descriptor tied to the ruleset to merge with the target.
+- * @flags: Must be 0.
++ * @flags: Supported values:
++ *
++ * - %LANDLOCK_RESTRICT_SELF_LOG_SAME_EXEC_OFF
++ * - %LANDLOCK_RESTRICT_SELF_LOG_NEW_EXEC_ON
+  *
+  * This system call enables to enforce a Landlock ruleset on the current
+  * thread.  Enforcing a ruleset requires that the task has %CAP_SYS_ADMIN in its
+@@ -439,7 +450,7 @@ SYSCALL_DEFINE4(landlock_add_rule, const int, ruleset_fd,
+  * Possible returned errors are:
+  *
+  * - %EOPNOTSUPP: Landlock is supported by the kernel but disabled at boot time;
+- * - %EINVAL: @flags is not 0.
++ * - %EINVAL: @flags contains an unknown bit.
+  * - %EBADF: @ruleset_fd is not a file descriptor for the current thread;
+  * - %EBADFD: @ruleset_fd is not a ruleset file descriptor;
+  * - %EPERM: @ruleset_fd has no read access to the underlying ruleset, or the
+@@ -455,6 +466,7 @@ SYSCALL_DEFINE2(landlock_restrict_self, const int, ruleset_fd, const __u32,
+ 		*ruleset __free(landlock_put_ruleset) = NULL;
+ 	struct cred *new_cred;
+ 	struct landlock_cred_security *new_llcred;
++	bool log_same_exec, log_cross_exec;
+ 
+ 	if (!is_initialized())
+ 		return -EOPNOTSUPP;
+@@ -467,10 +479,15 @@ SYSCALL_DEFINE2(landlock_restrict_self, const int, ruleset_fd, const __u32,
+ 	    !ns_capable_noaudit(current_user_ns(), CAP_SYS_ADMIN))
+ 		return -EPERM;
+ 
+-	/* No flag for now. */
+-	if (flags)
++	if ((flags | LANDLOCK_MASK_RESTRICT_SELF) !=
++	    LANDLOCK_MASK_RESTRICT_SELF)
+ 		return -EINVAL;
+ 
++	/* Translates "off" flag to boolean. */
++	log_same_exec = !(flags & LANDLOCK_RESTRICT_SELF_LOG_SAME_EXEC_OFF);
++	/* Translates "on" flag to boolean. */
++	log_cross_exec = !!(flags & LANDLOCK_RESTRICT_SELF_LOG_NEW_EXEC_ON);
++
+ 	/* Gets and checks the ruleset. */
+ 	ruleset = get_ruleset_from_fd(ruleset_fd, FMODE_CAN_READ);
+ 	if (IS_ERR(ruleset))
+@@ -493,6 +510,13 @@ SYSCALL_DEFINE2(landlock_restrict_self, const int, ruleset_fd, const __u32,
+ 		return PTR_ERR(new_dom);
  	}
--	if (is_scoped)
--		return -EPERM;
  
--	return 0;
-+	if (!is_scoped)
-+		return 0;
++#ifdef CONFIG_AUDIT
++	new_dom->hierarchy->log_same_exec = log_same_exec;
++	new_dom->hierarchy->log_cross_exec = log_cross_exec;
++	if (!log_same_exec && !log_cross_exec)
++		new_dom->hierarchy->log_status = LANDLOCK_LOG_DISABLED;
++#endif /* CONFIG_AUDIT */
 +
-+	landlock_log_denial(subject, &(struct landlock_request) {
-+		.type = LANDLOCK_REQUEST_SCOPE_SIGNAL,
-+		.audit = {
-+			.type = LSM_AUDIT_DATA_TASK,
-+			.u.tsk = tsk,
-+		},
-+		.layer_plus_one = landlock_file(fown->file)->fown_layer + 1,
-+	});
-+	return -EPERM;
- }
+ 	/* Replaces the old (prepared) domain. */
+ 	landlock_put_ruleset(new_llcred->domain);
+ 	new_llcred->domain = new_dom;
+diff --git a/tools/testing/selftests/landlock/base_test.c b/tools/testing/selftests/landlock/base_test.c
+index 1bc16fde2e8a..fbd687691b3c 100644
+--- a/tools/testing/selftests/landlock/base_test.c
++++ b/tools/testing/selftests/landlock/base_test.c
+@@ -76,7 +76,7 @@ TEST(abi_version)
+ 	const struct landlock_ruleset_attr ruleset_attr = {
+ 		.handled_access_fs = LANDLOCK_ACCESS_FS_READ_FILE,
+ 	};
+-	ASSERT_EQ(6, landlock_create_ruleset(NULL, 0,
++	ASSERT_EQ(7, landlock_create_ruleset(NULL, 0,
+ 					     LANDLOCK_CREATE_RULESET_VERSION));
  
- static struct security_hook_list landlock_hooks[] __ro_after_init = {
+ 	ASSERT_EQ(-1, landlock_create_ruleset(&ruleset_attr, 0,
 -- 
 2.48.1
 
