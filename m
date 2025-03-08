@@ -1,220 +1,369 @@
-Return-Path: <linux-kernel+bounces-552501-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-552502-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5CDDAA57A8B
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 14:39:01 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0FC0AA57A94
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 14:40:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E92933B33A6
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 13:38:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F14A33B2A5C
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 13:40:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 921D91CAA6A;
-	Sat,  8 Mar 2025 13:38:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 648251CAA94;
+	Sat,  8 Mar 2025 13:40:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HxRncr6X"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D77B72CAB;
-	Sat,  8 Mar 2025 13:38:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="SWMdjGcD"
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.4])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C202C158A13;
+	Sat,  8 Mar 2025 13:40:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741441133; cv=none; b=Xq2yYwKG1rIFT9lMyD9G45+Y6FwqucY/15FTgUB6smTWgO7UPX41ggDrY7RXshMAtUAw8exR6XZdeS0szyW+mUMPhrUc1MZcCzVaJ06WknH5pyFCttKtv7rZQwXpntlmOGAEOHzI7R09SpNIHwcMClag9xtJHRM9NIqKo2Zq0as=
+	t=1741441210; cv=none; b=phdTH/F8vUfzakLD83NwAbmCPyCpoziuI0o/wdKYMtf6AwIs5VTInOAJnNI9ufPPfQ6hkVwIgj/zWVyYnmlTqanwXn3WapIJWk0gLQ7Td7RIlgAN9T69RohWnRd5wnnrwXkIcjPKSOOPlwC/t/8kNV0KDtpu8cnE1VvQUTaUOMc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741441133; c=relaxed/simple;
-	bh=YNI+llb9gBYtQbN0ihkpgMdd3AVM7l9QkkiYTUqCjwo=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=BAo2LUISv/uRxig7DnI/BevL/KbZP3/pi01GuwmrFIkRrM9xbx4If2qbTz6wZvL/5c9r7oPzNFYNw+Wq0TuNkCSdJhNn/2LOv7awemwoc6hf/pd+XdFuP/iczSgbD85Qo5j6KaUC+Eq1OiZRGseYjo2ggfFJn+a/xsL6Odc88i8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HxRncr6X; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C5452C4CEE0;
-	Sat,  8 Mar 2025 13:38:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741441132;
-	bh=YNI+llb9gBYtQbN0ihkpgMdd3AVM7l9QkkiYTUqCjwo=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=HxRncr6XgG3KMwhLMzjEK+zdHN7s6yCUybxb1Mh+MardBLMxDyZLslouuAo9kTszx
-	 TehxjYbaO2QY619ldtzVjOtjIviNO2JUzv0iPiPKM+TilyAyd28lQaE0uT9fKbioP5
-	 /zYpZ0wtitHZgI+QgRANuZP2rj0cso6BDBHN3hhme40eM9qsdVA6O9h9bDO1lcOcvh
-	 Z6d1NVBhDNn1eT/PtDCy3UwwPgjkFyU6yjP28lkG5ZWuGxgciedzs3tUkeFLP1o/RX
-	 YKPBBnhP1r0/v3/CnlfS87arK9PqgJS0bPn2Ujzq7PnU7W1lNOF/zCHvKxUMaW4BfO
-	 Dp8hcXN0iKLGA==
-Date: Sat, 8 Mar 2025 13:38:40 +0000
-From: Jonathan Cameron <jic23@kernel.org>
-To: Jonathan Santos <Jonathan.Santos@analog.com>
-Cc: <linux-iio@vger.kernel.org>, <devicetree@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>, <linux-gpio@vger.kernel.org>,
- <lars@metafoo.de>, <Michael.Hennerich@analog.com>,
- <marcelo.schmitt@analog.com>, <robh@kernel.org>, <krzk+dt@kernel.org>,
- <conor+dt@kernel.org>, <linus.walleij@linaro.org>, <brgl@bgdev.pl>,
- <lgirdwood@gmail.com>, <broonie@kernel.org>, <dlechner@baylibre.com>,
- <marcelo.schmitt1@gmail.com>, <jonath4nns@gmail.com>
-Subject: Re: [PATCH v4 11/17] iio: adc: ad7768-1: add regulator to control
- VCM output
-Message-ID: <20250308133840.30112a8b@jic23-huawei>
-In-Reply-To: <40c586006b5cee0570ae577db2b58e6e7e36a6e6.1741268122.git.Jonathan.Santos@analog.com>
-References: <cover.1741268122.git.Jonathan.Santos@analog.com>
-	<40c586006b5cee0570ae577db2b58e6e7e36a6e6.1741268122.git.Jonathan.Santos@analog.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.48; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1741441210; c=relaxed/simple;
+	bh=KhPyyOsn+64Bseb6RvG/v7MtCzJlYoOiTfKhFiIuIXg=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=fMqsU/K5Wtfd4HdCNoT2vzDZwzEG0QeOTQ0BcY7RIH1zPabbCay+/Nct8v/ZXbhT/IQnuKnLTHVEyJIRAJSoI2X6OZ341cuGULb96UU6q2EdmG3PmKj3gJcnLywOogWua5ODRP+escu2cHfupyU2p9a6wSTVthD+yNT3r2DImXE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=SWMdjGcD; arc=none smtp.client-ip=220.197.31.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=5KRlU
+	gwe2YWlT6t90IRfiqUigCaSKPTwu5I4iKOrX2A=; b=SWMdjGcDcKQ+EaT3+Nxqz
+	GJtmVAGg6yg04siQoRFvS/DQUklMoTVf0NBTUQyWAI9rIj1oGHl7QxlolweaeUSs
+	tY2gxLT8aiv6ZhphvSgwkwZsm+IYa9ihxeC7aU3W/JPQi33CwddqXZgECciT4Awp
+	pJkUWl7e18aMELcaBNYDd4=
+Received: from localhost.localdomain (unknown [])
+	by gzga-smtp-mtada-g1-2 (Coremail) with SMTP id _____wCHvVCCSMxnYMm_RA--.18932S2;
+	Sat, 08 Mar 2025 21:39:15 +0800 (CST)
+From: Hans Zhang <18255117159@163.com>
+To: lpieralisi@kernel.org
+Cc: kw@linux.com,
+	manivannan.sadhasivam@linaro.org,
+	robh@kernel.org,
+	bhelgaas@google.com,
+	bwawrzyn@cisco.com,
+	s-vadapalli@ti.com,
+	thomas.richard@bootlin.com,
+	wojciech.jasko-EXT@continental-corporation.com,
+	linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Hans Zhang <18255117159@163.com>
+Subject: [v2] PCI: cadence: Add configuration space capability search API
+Date: Sat,  8 Mar 2025 21:39:03 +0800
+Message-Id: <20250308133903.322216-1-18255117159@163.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_____wCHvVCCSMxnYMm_RA--.18932S2
+X-Coremail-Antispam: 1Uf129KBjvJXoW3AryUXFWUtw17JFWkZF13urg_yoWfKr4UpF
+	Z8ua4SkF40qrW7uFsrAa15Zr13tFnIva47Aa92kw15uF12kryUGFyIya43KF1akrs7WF17
+	XrWDtrsY93ZxtrUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0zi22NJUUUUU=
+X-CM-SenderInfo: rpryjkyvrrlimvzbiqqrwthudrp/1tbiWwwKo2fMRRlWXgAAsB
 
-On Thu, 6 Mar 2025 18:02:59 -0300
-Jonathan Santos <Jonathan.Santos@analog.com> wrote:
+Add configuration space capability search API using struct cdns_pcie*
+pointer.
 
-> The VCM output voltage can be used as a common-mode voltage within the
-> amplifier preconditioning circuits external to the AD7768-1.
-> 
-> This change allows the user to configure VCM output using the regulator
-> framework.
-> 
-> Signed-off-by: Jonathan Santos <Jonathan.Santos@analog.com>
-Looks fine but as likely you will be doing a v5, please switch
-to the new iio_device_claim/release_direct() functions.
-If I had applied up to here I'd probably just have tweaked this whilst
-applying but given a few other tweaks needed, please do this one
-as well for v5.
+The offset address of capability or extended capability designed by
+different SOC design companies may not be the same. Therefore, a flexible
+public API is required to find the offset address of a capability or
+extended capability in the configuration space.
 
-Thanks,
+Signed-off-by: Hans Zhang <18255117159@163.com>
+---
+Changes since v1:
+https://lore.kernel.org/linux-pci/20250123070935.1810110-1-18255117159@163.com
 
-Jonathan
+- Added calling the new API in PCI-Cadence ep.c.
+- Add a commit message reason for adding the API.
+---
+ .../pci/controller/cadence/pcie-cadence-ep.c  | 40 ++++++----
+ drivers/pci/controller/cadence/pcie-cadence.c | 80 +++++++++++++++++++
+ drivers/pci/controller/cadence/pcie-cadence.h |  8 +-
+ 3 files changed, 106 insertions(+), 22 deletions(-)
 
-> @@ -644,6 +654,172 @@ static int ad7768_triggered_buffer_alloc(struct iio_dev *indio_dev)
->  					       &ad7768_buffer_ops);
->  }
->  
-> +static int ad7768_vcm_enable(struct regulator_dev *rdev)
-> +{
-> +	struct iio_dev *indio_dev = rdev_get_drvdata(rdev);
-> +	struct ad7768_state *st = iio_priv(indio_dev);
-> +	int ret, regval;
-> +
-> +	if (!indio_dev)
-> +		return -EINVAL;
-> +
-> +	ret = iio_device_claim_direct_mode(indio_dev);
-As below.
+diff --git a/drivers/pci/controller/cadence/pcie-cadence-ep.c b/drivers/pci/controller/cadence/pcie-cadence-ep.c
+index e0cc4560dfde..aea53ddcaf9b 100644
+--- a/drivers/pci/controller/cadence/pcie-cadence-ep.c
++++ b/drivers/pci/controller/cadence/pcie-cadence-ep.c
+@@ -19,12 +19,13 @@
+ 
+ static u8 cdns_pcie_get_fn_from_vfn(struct cdns_pcie *pcie, u8 fn, u8 vfn)
+ {
+-	u32 cap = CDNS_PCIE_EP_FUNC_SRIOV_CAP_OFFSET;
+ 	u32 first_vf_offset, stride;
++	u16 cap;
+ 
+ 	if (vfn == 0)
+ 		return fn;
+ 
++	cap = cdns_pcie_find_ext_capability(pcie, PCI_EXT_CAP_ID_SRIOV);
+ 	first_vf_offset = cdns_pcie_ep_fn_readw(pcie, fn, cap + PCI_SRIOV_VF_OFFSET);
+ 	stride = cdns_pcie_ep_fn_readw(pcie, fn, cap +  PCI_SRIOV_VF_STRIDE);
+ 	fn = fn + first_vf_offset + ((vfn - 1) * stride);
+@@ -36,10 +37,11 @@ static int cdns_pcie_ep_write_header(struct pci_epc *epc, u8 fn, u8 vfn,
+ 				     struct pci_epf_header *hdr)
+ {
+ 	struct cdns_pcie_ep *ep = epc_get_drvdata(epc);
+-	u32 cap = CDNS_PCIE_EP_FUNC_SRIOV_CAP_OFFSET;
+ 	struct cdns_pcie *pcie = &ep->pcie;
+ 	u32 reg;
++	u16 cap;
+ 
++	cap = cdns_pcie_find_ext_capability(pcie, PCI_EXT_CAP_ID_SRIOV);
+ 	if (vfn > 1) {
+ 		dev_err(&epc->dev, "Only Virtual Function #1 has deviceID\n");
+ 		return -EINVAL;
+@@ -224,9 +226,10 @@ static int cdns_pcie_ep_set_msi(struct pci_epc *epc, u8 fn, u8 vfn, u8 mmc)
+ {
+ 	struct cdns_pcie_ep *ep = epc_get_drvdata(epc);
+ 	struct cdns_pcie *pcie = &ep->pcie;
+-	u32 cap = CDNS_PCIE_EP_FUNC_MSI_CAP_OFFSET;
+ 	u16 flags;
++	u8 cap;
+ 
++	cap = cdns_pcie_find_capability(pcie, PCI_CAP_ID_MSI);
+ 	fn = cdns_pcie_get_fn_from_vfn(pcie, fn, vfn);
+ 
+ 	/*
+@@ -246,9 +249,10 @@ static int cdns_pcie_ep_get_msi(struct pci_epc *epc, u8 fn, u8 vfn)
+ {
+ 	struct cdns_pcie_ep *ep = epc_get_drvdata(epc);
+ 	struct cdns_pcie *pcie = &ep->pcie;
+-	u32 cap = CDNS_PCIE_EP_FUNC_MSI_CAP_OFFSET;
+ 	u16 flags, mme;
++	u8 cap;
+ 
++	cap = cdns_pcie_find_capability(pcie, PCI_CAP_ID_MSI);
+ 	fn = cdns_pcie_get_fn_from_vfn(pcie, fn, vfn);
+ 
+ 	/* Validate that the MSI feature is actually enabled. */
+@@ -269,9 +273,10 @@ static int cdns_pcie_ep_get_msix(struct pci_epc *epc, u8 func_no, u8 vfunc_no)
+ {
+ 	struct cdns_pcie_ep *ep = epc_get_drvdata(epc);
+ 	struct cdns_pcie *pcie = &ep->pcie;
+-	u32 cap = CDNS_PCIE_EP_FUNC_MSIX_CAP_OFFSET;
+ 	u32 val, reg;
++	u8 cap;
+ 
++	cap = cdns_pcie_find_capability(pcie, PCI_CAP_ID_MSIX);
+ 	func_no = cdns_pcie_get_fn_from_vfn(pcie, func_no, vfunc_no);
+ 
+ 	reg = cap + PCI_MSIX_FLAGS;
+@@ -290,9 +295,10 @@ static int cdns_pcie_ep_set_msix(struct pci_epc *epc, u8 fn, u8 vfn,
+ {
+ 	struct cdns_pcie_ep *ep = epc_get_drvdata(epc);
+ 	struct cdns_pcie *pcie = &ep->pcie;
+-	u32 cap = CDNS_PCIE_EP_FUNC_MSIX_CAP_OFFSET;
+ 	u32 val, reg;
++	u8 cap;
+ 
++	cap = cdns_pcie_find_capability(pcie, PCI_CAP_ID_MSIX);
+ 	fn = cdns_pcie_get_fn_from_vfn(pcie, fn, vfn);
+ 
+ 	reg = cap + PCI_MSIX_FLAGS;
+@@ -379,11 +385,11 @@ static int cdns_pcie_ep_send_msi_irq(struct cdns_pcie_ep *ep, u8 fn, u8 vfn,
+ 				     u8 interrupt_num)
+ {
+ 	struct cdns_pcie *pcie = &ep->pcie;
+-	u32 cap = CDNS_PCIE_EP_FUNC_MSI_CAP_OFFSET;
+ 	u16 flags, mme, data, data_mask;
+-	u8 msi_count;
+ 	u64 pci_addr, pci_addr_mask = 0xff;
++	u8 msi_count, cap;
+ 
++	cap = cdns_pcie_find_capability(pcie, PCI_CAP_ID_MSI);
+ 	fn = cdns_pcie_get_fn_from_vfn(pcie, fn, vfn);
+ 
+ 	/* Check whether the MSI feature has been enabled by the PCI host. */
+@@ -431,14 +437,14 @@ static int cdns_pcie_ep_map_msi_irq(struct pci_epc *epc, u8 fn, u8 vfn,
+ 				    u32 *msi_addr_offset)
+ {
+ 	struct cdns_pcie_ep *ep = epc_get_drvdata(epc);
+-	u32 cap = CDNS_PCIE_EP_FUNC_MSI_CAP_OFFSET;
+ 	struct cdns_pcie *pcie = &ep->pcie;
+ 	u64 pci_addr, pci_addr_mask = 0xff;
+ 	u16 flags, mme, data, data_mask;
+-	u8 msi_count;
++	u8 msi_count, cap;
+ 	int ret;
+ 	int i;
+ 
++	cap = cdns_pcie_find_capability(pcie, PCI_CAP_ID_MSI);
+ 	fn = cdns_pcie_get_fn_from_vfn(pcie, fn, vfn);
+ 
+ 	/* Check whether the MSI feature has been enabled by the PCI host. */
+@@ -481,16 +487,16 @@ static int cdns_pcie_ep_map_msi_irq(struct pci_epc *epc, u8 fn, u8 vfn,
+ static int cdns_pcie_ep_send_msix_irq(struct cdns_pcie_ep *ep, u8 fn, u8 vfn,
+ 				      u16 interrupt_num)
+ {
+-	u32 cap = CDNS_PCIE_EP_FUNC_MSIX_CAP_OFFSET;
+ 	u32 tbl_offset, msg_data, reg;
+ 	struct cdns_pcie *pcie = &ep->pcie;
+ 	struct pci_epf_msix_tbl *msix_tbl;
+ 	struct cdns_pcie_epf *epf;
+ 	u64 pci_addr_mask = 0xff;
+ 	u64 msg_addr;
++	u8 bir, cap;
+ 	u16 flags;
+-	u8 bir;
+ 
++	cap = cdns_pcie_find_capability(pcie, PCI_CAP_ID_MSIX);
+ 	epf = &ep->epf[fn];
+ 	if (vfn > 0)
+ 		epf = &epf->epf[vfn - 1];
+@@ -564,7 +570,9 @@ static int cdns_pcie_ep_start(struct pci_epc *epc)
+ 	int max_epfs = sizeof(epc->function_num_map) * 8;
+ 	int ret, epf, last_fn;
+ 	u32 reg, value;
++	u8 cap;
+ 
++	cap = cdns_pcie_find_capability(pcie, PCI_CAP_ID_EXP);
+ 	/*
+ 	 * BIT(0) is hardwired to 1, hence function 0 is always enabled
+ 	 * and can't be disabled anyway.
+@@ -588,12 +596,10 @@ static int cdns_pcie_ep_start(struct pci_epc *epc)
+ 				continue;
+ 
+ 			value = cdns_pcie_ep_fn_readl(pcie, epf,
+-					CDNS_PCIE_EP_FUNC_DEV_CAP_OFFSET +
+-					PCI_EXP_DEVCAP);
++						      cap + PCI_EXP_DEVCAP);
+ 			value &= ~PCI_EXP_DEVCAP_FLR;
+-			cdns_pcie_ep_fn_writel(pcie, epf,
+-					CDNS_PCIE_EP_FUNC_DEV_CAP_OFFSET +
+-					PCI_EXP_DEVCAP, value);
++			cdns_pcie_ep_fn_writel(pcie, epf, cap + PCI_EXP_DEVCAP,
++					       value);
+ 		}
+ 	}
+ 
+diff --git a/drivers/pci/controller/cadence/pcie-cadence.c b/drivers/pci/controller/cadence/pcie-cadence.c
+index 204e045aed8c..ebb4a0130145 100644
+--- a/drivers/pci/controller/cadence/pcie-cadence.c
++++ b/drivers/pci/controller/cadence/pcie-cadence.c
+@@ -8,6 +8,86 @@
+ 
+ #include "pcie-cadence.h"
+ 
++/*
++ * These interfaces resemble the pci_find_*capability() interfaces, but these
++ * are for configuring host controllers, which are bridges *to* PCI devices but
++ * are not PCI devices themselves.
++ */
++static u8 __cdns_pcie_find_next_cap(struct cdns_pcie *pcie, u8 cap_ptr,
++				    u8 cap)
++{
++	u8 cap_id, next_cap_ptr;
++	u16 reg;
++
++	if (!cap_ptr)
++		return 0;
++
++	reg = cdns_pcie_readl(pcie, cap_ptr);
++	cap_id = (reg & 0x00ff);
++
++	if (cap_id > PCI_CAP_ID_MAX)
++		return 0;
++
++	if (cap_id == cap)
++		return cap_ptr;
++
++	next_cap_ptr = (reg & 0xff00) >> 8;
++	return __cdns_pcie_find_next_cap(pcie, next_cap_ptr, cap);
++}
++
++u8 cdns_pcie_find_capability(struct cdns_pcie *pcie, u8 cap)
++{
++	u8 next_cap_ptr;
++	u16 reg;
++
++	reg = cdns_pcie_readl(pcie, PCI_CAPABILITY_LIST);
++	next_cap_ptr = (reg & 0x00ff);
++
++	return __cdns_pcie_find_next_cap(pcie, next_cap_ptr, cap);
++}
++EXPORT_SYMBOL_GPL(cdns_pcie_find_capability);
++
++static u16 cdns_pcie_find_next_ext_capability(struct cdns_pcie *pcie,
++					      u16 start, u8 cap)
++{
++	u32 header;
++	int ttl;
++	int pos = PCI_CFG_SPACE_SIZE;
++
++	/* minimum 8 bytes per capability */
++	ttl = (PCI_CFG_SPACE_EXP_SIZE - PCI_CFG_SPACE_SIZE) / 8;
++
++	if (start)
++		pos = start;
++
++	header = cdns_pcie_readl(pcie, pos);
++	/*
++	 * If we have no capabilities, this is indicated by cap ID,
++	 * cap version and next pointer all being 0.
++	 */
++	if (header == 0)
++		return 0;
++
++	while (ttl-- > 0) {
++		if (PCI_EXT_CAP_ID(header) == cap && pos != start)
++			return pos;
++
++		pos = PCI_EXT_CAP_NEXT(header);
++		if (pos < PCI_CFG_SPACE_SIZE)
++			break;
++
++		header = cdns_pcie_readl(pcie, pos);
++	}
++
++	return 0;
++}
++
++u16 cdns_pcie_find_ext_capability(struct cdns_pcie *pcie, u8 cap)
++{
++	return cdns_pcie_find_next_ext_capability(pcie, 0, cap);
++}
++EXPORT_SYMBOL_GPL(cdns_pcie_find_ext_capability);
++
+ void cdns_pcie_detect_quiet_min_delay_set(struct cdns_pcie *pcie)
+ {
+ 	u32 delay = 0x3;
+diff --git a/drivers/pci/controller/cadence/pcie-cadence.h b/drivers/pci/controller/cadence/pcie-cadence.h
+index f5eeff834ec1..d0fcf1b3549c 100644
+--- a/drivers/pci/controller/cadence/pcie-cadence.h
++++ b/drivers/pci/controller/cadence/pcie-cadence.h
+@@ -125,11 +125,6 @@
+  */
+ #define CDNS_PCIE_EP_FUNC_BASE(fn)	(((fn) << 12) & GENMASK(19, 12))
+ 
+-#define CDNS_PCIE_EP_FUNC_MSI_CAP_OFFSET	0x90
+-#define CDNS_PCIE_EP_FUNC_MSIX_CAP_OFFSET	0xb0
+-#define CDNS_PCIE_EP_FUNC_DEV_CAP_OFFSET	0xc0
+-#define CDNS_PCIE_EP_FUNC_SRIOV_CAP_OFFSET	0x200
+-
+ /*
+  * Endpoint PF Registers
+  */
+@@ -557,6 +552,9 @@ static inline int cdns_pcie_ep_setup(struct cdns_pcie_ep *ep)
+ }
+ #endif
+ 
++u8 cdns_pcie_find_capability(struct cdns_pcie *pcie, u8 cap);
++u16 cdns_pcie_find_ext_capability(struct cdns_pcie *pcie, u8 cap);
++
+ void cdns_pcie_detect_quiet_min_delay_set(struct cdns_pcie *pcie);
+ 
+ void cdns_pcie_set_outbound_region(struct cdns_pcie *pcie, u8 busnr, u8 fn,
 
-> +	if (ret)
-> +		return ret;
-> +
-> +	/* To enable, set the last selected output */
-> +	regval = AD7768_REG_ANALOG2_VCM(st->vcm_output_sel + 1);
-> +	ret = regmap_update_bits(st->regmap, AD7768_REG_ANALOG2,
-> +				 AD7768_REG_ANALOG2_VCM_MSK, regval);
-> +	iio_device_release_direct_mode(indio_dev);
-> +
-> +	return ret;
-> +}
-> +
-> +static int ad7768_vcm_disable(struct regulator_dev *rdev)
-> +{
-> +	struct iio_dev *indio_dev = rdev_get_drvdata(rdev);
-> +	struct ad7768_state *st = iio_priv(indio_dev);
-> +	int ret;
-> +
-> +	if (!indio_dev)
-> +		return -EINVAL;
-> +
-> +	ret = iio_device_claim_direct_mode(indio_dev);
-As looks likely you'll be doing a v5 for other minor stuff please
-rebase on the testing branch of iio.git (as I've picked up some of this
-series) or togreg once that is pushed out and use
-	if (!iio_device_claim_direct(indio_dev))
-		return -EBUSY;
-+ iio_device_release_direct()
-to get the variants adjusted to play better with sparse.
-
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret = regmap_update_bits(st->regmap, AD7768_REG_ANALOG2,
-> +				 AD7768_REG_ANALOG2_VCM_MSK, AD7768_VCM_OFF);
-> +	iio_device_release_direct_mode(indio_dev);
-> +
-> +	return ret;
-> +}
-> +
-> +static int ad7768_vcm_is_enabled(struct regulator_dev *rdev)
-> +{
-> +	struct iio_dev *indio_dev = rdev_get_drvdata(rdev);
-> +	struct ad7768_state *st = iio_priv(indio_dev);
-> +	int ret, val;
-> +
-> +	if (!indio_dev)
-> +		return -EINVAL;
-> +
-> +	ret = iio_device_claim_direct_mode(indio_dev);
-As above.
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret = regmap_read(st->regmap, AD7768_REG_ANALOG2, &val);
-> +	if (ret)
-> +		goto err_release;
-> +
-> +	ret = FIELD_GET(AD7768_REG_ANALOG2_VCM_MSK, val) != AD7768_VCM_OFF;
-> +err_release:
-> +	iio_device_release_direct_mode(indio_dev);
-> +
-> +	return ret;
-> +}
-> +
-> +static int ad7768_set_voltage_sel(struct regulator_dev *rdev,
-> +				  unsigned int selector)
-> +{
-> +	unsigned int regval = AD7768_REG_ANALOG2_VCM(selector + 1);
-> +	struct iio_dev *indio_dev = rdev_get_drvdata(rdev);
-> +	struct ad7768_state *st = iio_priv(indio_dev);
-> +	int ret;
-> +
-> +	if (!indio_dev)
-> +		return -EINVAL;
-> +
-> +	ret = iio_device_claim_direct_mode(indio_dev);
-As above.
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret = regmap_update_bits(st->regmap, AD7768_REG_ANALOG2,
-> +				 AD7768_REG_ANALOG2_VCM_MSK, regval);
-> +	iio_device_release_direct_mode(indio_dev);
-> +	st->vcm_output_sel = selector;
-> +
-> +	return ret;
-> +}
-> +
-> +static int ad7768_get_voltage_sel(struct regulator_dev *rdev)
-> +{
-> +	struct iio_dev *indio_dev = rdev_get_drvdata(rdev);
-> +	struct ad7768_state *st = iio_priv(indio_dev);
-> +	int ret, val;
-> +
-> +	if (!indio_dev)
-> +		return -EINVAL;
-> +
-> +	ret = iio_device_claim_direct_mode(indio_dev);
-As above.
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret = regmap_read(st->regmap, AD7768_REG_ANALOG2, &val);
-> +	if (ret)
-> +		goto err_release;
-> +
-> +	val = FIELD_GET(AD7768_REG_ANALOG2_VCM_MSK, val);
-> +	ret = clamp(val, 1, (int)rdev->desc->n_voltages) - 1;
-> +err_release:
-> +	iio_device_release_direct_mode(indio_dev);
-> +
-> +	return ret;
-> +}
+base-commit: 76544811c850a1f4c055aa182b513b7a843868ea
+-- 
+2.25.1
 
 
