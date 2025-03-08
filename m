@@ -1,207 +1,94 @@
-Return-Path: <linux-kernel+bounces-552617-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-552622-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A142AA57C0D
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 17:44:59 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B999EA57C16
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 17:48:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9E71A7A6B2C
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 16:43:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A94603AA955
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 16:48:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9054C1E832D;
-	Sat,  8 Mar 2025 16:44:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A51091EB5D6;
+	Sat,  8 Mar 2025 16:48:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rjQoM39p"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="tS1cZDZB"
+Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA6897E0E4;
-	Sat,  8 Mar 2025 16:44:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 133821DDA2F;
+	Sat,  8 Mar 2025 16:48:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741452290; cv=none; b=mdT3H/qsKUbMf/tWsdWYC6hWjFQNfxVCd+PtyFR4t4gFcsCd6TzyqtLfLNt1WfPQHgUb3Ymhs9U8A4l/dgiYxwNjfR7vlwy0sGUSKeorFjWsz8B6eI4wzuPxnN9DeizQ9psNxuvwBuel5sMaj3GFN0INPHw3zcpxIvP/ghwKj8A=
+	t=1741452500; cv=none; b=LA5b0imN6DSHt/sy+IsEVNQOZVahoSQNU3WR6baAsRcA9MZpRzUm88wBrSk4lB3T8rm+ktJzpLh7UTdtV215WNMQoVkZ5LfUFKW4ANzdqOyUWHkmv4C95WASxAGarmjOKuU5MGQBgO3kAFW54X7A99EXzIyIaFPbYV11kdAdLZ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741452290; c=relaxed/simple;
-	bh=XmWFGdTfcaGqbXLexjd2nltEBEsDhy2zNQyas9t/IKk=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=EN4gKdecI+EUyLUlthwtGUImaFCqofyVr9KKXnO9spX6gvbgWo09ACtQsiJ1s6zVn69U+inhkhgXU4Sl/1qidK0SgqKMUllW3XGx6qN2jppqeDl4wKU9rEGwtfsY1KdZgzxV20K/Yz7xwBYhv4e3UZgtlzoznE8fJ/rGmAe8XXM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rjQoM39p; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 896D7C4CEE0;
-	Sat,  8 Mar 2025 16:44:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741452289;
-	bh=XmWFGdTfcaGqbXLexjd2nltEBEsDhy2zNQyas9t/IKk=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=rjQoM39p9uMhfrRfuWgDOe+rZcJNLSthydIs4ouKCgIJibZySOLYXBx1cKTrwMQzr
-	 mf9yL/uMLnP9HhKeYL/PK8VtWAMO4Qx6wyDDpKR/X88PH382z2J1JI/iPc1FNgdmL7
-	 4x9H5zvLiE37rbVRpSyEEevHZmNuQjeRMPeoeETVZzLUSuHF4rIigr0FvgPDap+YIt
-	 dQ7xkBuWNs80AK0IaVYvfG2X0dZK7vYD9Wu1+X96Hy8xXwXRyCkZKkuHYEitSCmoYO
-	 1HpGFoHTS2VAATgiyy99creWdnThyWYSFs88VFWwTajHD270zMxMKB8GWY3dW/Gfdj
-	 S/r2b/okpmcCQ==
-Date: Sat, 8 Mar 2025 16:44:41 +0000
-From: Jonathan Cameron <jic23@kernel.org>
-To: Matti Vaittinen <mazziesaccount@gmail.com>
-Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>, Lars-Peter Clausen
- <lars@metafoo.de>, Nuno Sa <nuno.sa@analog.com>, David Lechner
- <dlechner@baylibre.com>, Javier Carrasco <javier.carrasco.cruz@gmail.com>,
- Olivier Moysan <olivier.moysan@foss.st.com>, Guillaume Stols
- <gstols@baylibre.com>, Dumitru Ceclan <mitrutzceclan@gmail.com>, Trevor
- Gamblin <tgamblin@baylibre.com>, Matteo Martelli
- <matteomartelli3@gmail.com>, Alisa-Dariana Roman <alisadariana@gmail.com>,
- Andy Shevchenko <andriy.shevchenko@linux.intel.com>, =?UTF-8?B?Sm/Do28=?=
- Paulo =?UTF-8?B?R29uw6dhbHZlcw==?= <joao.goncalves@toradex.com>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org
-Subject: Re: [PATCH v5 07/10] iio: adc: Support ROHM BD79124 ADC
-Message-ID: <20250308164441.00f64ab2@jic23-huawei>
-In-Reply-To: <60a55e4027cf9335b37d4affc11d805a1504cab7.1740993491.git.mazziesaccount@gmail.com>
-References: <cover.1740993491.git.mazziesaccount@gmail.com>
-	<60a55e4027cf9335b37d4affc11d805a1504cab7.1740993491.git.mazziesaccount@gmail.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.48; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1741452500; c=relaxed/simple;
+	bh=Mzmh5uAz152L3wEs5lzf3u7CR7G/1Lm/gkTq9VRgpO0=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
+	 MIME-Version:Content-Type; b=i4pWP+xVa9F/1a4kc694vcD8zvafikRvVlmHkJMvDbEnzXYiHrP1Pvm1S8qhjRWpdTnW2mSMeIhvcydai0LhSKU/HjbqzH3LETn6gHQPdhIIzrXAeg/L3jp1E4CVU3m9NWtVFoqOdXeQxoZWEHXKCuXQ4z0mi1almRT/RUfT1XQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=tS1cZDZB; arc=none smtp.client-ip=198.137.202.136
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
+Received: from [127.0.0.1] ([76.133.66.138])
+	(authenticated bits=0)
+	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 528GljFO860265
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
+	Sat, 8 Mar 2025 08:47:46 -0800
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 528GljFO860265
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+	s=2025021701; t=1741452467;
+	bh=cfYhmh7hfT5eY8aPopfdC0CAHsTKij6RMoNpyAJXLyw=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
+	b=tS1cZDZBo0yCSEy2CS5qx0cx2UoMq/+C8W+deWU0PPVgknO4WH+5PzdM3yPSrqPka
+	 a7xpbb98dIC7Iwt8vLwbkNGozQlIh/EQ5NqnA/vJl9hQAqqlxu2ij6g0LW5Ti7FlfR
+	 NDE2JOaqlzbsPrj9TuZXrrSdRSrcdhSHY38C/8eVXK7CUK/ld9yDwRNy5K3CNx/OiL
+	 QlAp+FmCpon2Z8PMwz3bm0UxZpMUGNa9t0aAmim+KC4hC8zXcIejmLRQYcLnV58Tsm
+	 uc0wxuwWEkBGTltvny/tXX7jqGHROsqdocpHEnMDk6jbjrM8rOkf+35jy22YwmOYiK
+	 PscFjRrnMkIkg==
+Date: Sat, 08 Mar 2025 08:47:44 -0800
+From: "H. Peter Anvin" <hpa@zytor.com>
+To: Borislav Petkov <bp@alien8.de>
+CC: Masahiro Yamada <masahiroy@kernel.org>, "Xin Li (Intel)" <xin@zytor.com>,
+        linux-kernel@vger.kernel.org, linux-kbuild@vger.kernel.org,
+        nathan@kernel.org, nicolas@fjasle.eu, sraithal@amd.com
+Subject: Re: [PATCH v1 1/1] kbuild: Add "make headers" to "make help" output
+User-Agent: K-9 Mail for Android
+In-Reply-To: <20250308164151.GFZ8xzTwiNd1JVcMHT@fat_crate.local>
+References: <20250308040451.585561-1-xin@zytor.com> <CAK7LNARHvn4Sy-e4hMmjGt0C7TFaWrGJrLq3YvN0BjehZ8QwSg@mail.gmail.com> <FAE530F5-B657-4C72-8D69-7ABA2D3209A9@zytor.com> <20250308164151.GFZ8xzTwiNd1JVcMHT@fat_crate.local>
+Message-ID: <DC1CB322-2527-4F6A-8EC4-A76DD35CB564@zytor.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, 3 Mar 2025 13:33:39 +0200
-Matti Vaittinen <mazziesaccount@gmail.com> wrote:
-
-> The ROHM BD79124 is a 12-bit, 8-channel, SAR ADC. The ADC supports
-> an automatic measurement mode, with an alarm interrupt for out-of-window
-> measurements. The window is configurable for each channel.
-> 
-> The I2C protocol for manual start of the measurement and data reading is
-> somewhat peculiar. It requires the master to do clock stretching after
-> sending the I2C slave-address until the slave has captured the data.
-> Needless to say this is not well suopported by the I2C controllers.
-> 
-> Thus the driver does not support the BD79124's manual measurement mode
-> but implements the measurements using automatic measurement mode relying
-> on the BD79124's ability of storing latest measurements into register.
-> 
-> The driver does also support configuring the threshold events for
-> detecting the out-of-window events.
-> 
-> The BD79124 keeps asserting IRQ for as long as the measured voltage is
-> out of the configured window. Thus the driver masks the received event
-> for a fixed duration (1 second) when an event is handled. This prevents
-> the user-space from choking on the events
-> 
-> The ADC input pins can be also configured as general purpose outputs.
-> Those pins which don't have corresponding ADC channel node in the
-> device-tree will be controllable as GPO.
-> 
-> Signed-off-by: Matti Vaittinen <mazziesaccount@gmail.com>
-Hi Matti
-
-Just a few really trivial comments.  If all else in the
-set was resolved I'd probably have applied with a tweak or two
-
-Thanks,
-
-Jonathan
-
->  obj-$(CONFIG_SC27XX_ADC) += sc27xx_adc.o
-> diff --git a/drivers/iio/adc/rohm-bd79124.c b/drivers/iio/adc/rohm-bd79124.c
-> new file mode 100644
-> index 000000000000..466c7decf8fc
-> --- /dev/null
-> +++ b/drivers/iio/adc/rohm-bd79124.c
-> @@ -0,0 +1,1108 @@
-...
-
-> +
-> +/* Read-only regs */
-
-Given naming this is pretty obvious. I would drop the comment
-and any others that don't add much meaning.
-
-> +static const struct regmap_range bd79124_ro_ranges[] = {
-
-
-
-> +static int bd79124_read_event_value(struct iio_dev *iio_dev,
-> +				    const struct iio_chan_spec *chan,
-> +				    enum iio_event_type type,
-> +				    enum iio_event_direction dir,
-> +				    enum iio_event_info info, int *val,
-> +				    int *val2)
-> +{
-> +	struct bd79124_data *data = iio_priv(iio_dev);
-> +	int ret, reg;
-> +
-> +	if (chan->channel >= BD79124_MAX_NUM_CHANNELS)
-> +		return -EINVAL;
-> +
-> +	switch (info) {
-> +	case IIO_EV_INFO_VALUE:
-> +		if (dir == IIO_EV_DIR_RISING)
-> +			*val = data->alarm_r_limit[chan->channel];
-> +		else if (dir == IIO_EV_DIR_FALLING)
-> +			*val = data->alarm_f_limit[chan->channel];
-> +		else
-> +			return -EINVAL;
-> +
-> +		return IIO_VAL_INT;
-> +
-> +	case IIO_EV_INFO_HYSTERESIS:
-> +		reg = BD79124_GET_HYSTERESIS_REG(chan->channel);
-> +		ret = regmap_read(data->map, reg, val);
-> +		if (ret)
-> +			return ret;
-> +		/* Mask the non hysteresis bits */
-> +		*val &= BD79124_MASK_HYSTERESIS;
-> +		/*
-> +		 * The data-sheet says the hysteresis register value needs to be
-> +		 * sifted left by 3 (or multiplied by 8, depending on the
-> +		 * page :] )
-
-We don't really need this comment on the oddity of the way the datasheet
-describes things in the final driver as effect is same in either case.
-It did make me smile though ;)
-
-
-> +		 */
-> +		*val <<= 3;
-> +
-> +		return IIO_VAL_INT;
-> +	default:
-> +		return -EINVAL;
-> +	}
-> +}
-
-> +
-> +static int bd79124_disable_event(struct bd79124_data *data,
-> +			enum iio_event_direction dir, int channel)
-> +{
-> +	int dir_bit = BIT(dir), reg;
-
-I'd rather this one was split as I find it hard to read lines that
-mix setting of some variables and not others.
-
-> +	unsigned int limit;
-> +
+On March 8, 2025 8:41:51 AM PST, Borislav Petkov <bp@alien8=2Ede> wrote:
+>On Sat, Mar 08, 2025 at 08:01:56AM -0800, H=2E Peter Anvin wrote:
+>> Unfortunately it seems users haven't been following that :(
 >
-> +static int bd79124_enable_event(struct bd79124_data *data,
-> +		enum iio_event_direction dir, unsigned int channel)
-> +{
-> +	int dir_bit = BIT(dir);
-> +	int reg;
-> +	u16 *limit;
-> +	int ret;
-
-Trivial but might as well but ret and reg on same line.
-
-
-> +
-> +}
-
-
+>If by "users haven't been following that" you mean they've been doing
 >
+>make kselftest
+>
+>in order to run selftests and *that* thing builds headers, then yes, you'=
+re
+>right=2E
+>
+>Oh look:
+>
+>PHONY +=3D kselftest
+>kselftest: headers
+>	   ^^^^^^^^
+>        $(Q)$(MAKE) -C $(srctree)/tools/testing/selftests run_tests
+>
+>:-P
+>
+
+That's not the only one=2E Point being that users have been using it so it=
+ is better to make it official than breaking it=2E
 
