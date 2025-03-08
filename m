@@ -1,166 +1,175 @@
-Return-Path: <linux-kernel+bounces-552808-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-552809-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 24064A57E90
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 22:27:23 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 344C6A57E93
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 22:34:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DAC4C3A66C4
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 21:27:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 162DC3AB9E4
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 21:33:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75F921F584B;
-	Sat,  8 Mar 2025 21:27:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63E7C1EEA30;
+	Sat,  8 Mar 2025 21:34:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ODACHIm8"
-Received: from mail-yb1-f171.google.com (mail-yb1-f171.google.com [209.85.219.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lQp7L3ln"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E1E41E25F7;
-	Sat,  8 Mar 2025 21:27:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBD4F15749F;
+	Sat,  8 Mar 2025 21:34:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741469234; cv=none; b=HLVHwhZ4ktI8XA9VgQ6h1MZ6891y7qNyxO3Un8gfpL9OZEBFoqgXn8L1zXjQcp+gnPRZhjC3POXnYvMNtp4AD0BEwVFYMuAWkPxln3o1pEpF+B3cu6X0oL1qyOmJ1SYzBiCslfwZwueUDw8WOmdrVrJq+bZyH7tyRDis4/clwcc=
+	t=1741469643; cv=none; b=IdSMeWJHVoZQ/lx53ww67sgSxQj/B6hop9QKC34Y8CPx7icN6vM5adqJMwasMwSh0jqPJ3kY/+rqMlVc9hLVzenQPisuCn59oKvwD8i8vnmJPOFjQ98QuTgiuExCjDLhwYjpohnOf9MYyIb5q0kyviHv1EOcAMKK+3ThpVkBfxM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741469234; c=relaxed/simple;
-	bh=EaY/agzfScHykGn8A/LRbd6yTlZC2sbtxmAuEdpm9zw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=qRsL1CBepiFP24Qw/49UfwCMEVsYRL1AedSA/F8FHeAuhPxHWTKuo5Fc1NisgpF/06bP/7MXPAh5tQjKRlX58c4Tclr/OLaEwax2UQVw9XAYQ2DaspVZqif6yH3YH4BA/rmw2H/UWOiJiIabhn5FOEW3yzMYb8KXQKWsY0UWnDQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ODACHIm8; arc=none smtp.client-ip=209.85.219.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f171.google.com with SMTP id 3f1490d57ef6-e634d27661eso299275276.1;
-        Sat, 08 Mar 2025 13:27:13 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741469232; x=1742074032; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=v8NqAd3c5NFekNt4az1U3G2oz33PLqlAz5uAxFgA+Mo=;
-        b=ODACHIm82PysltuJ0vF8jZ1IwkwJ6YEE2yyFx7AF93a3iLxrIqpGeSzXqu6m09C6Zm
-         NAxoYDj9gdctU4hoHdun6GDIhGlK4Tp40t8F0LCfbl9TfG8qggp2ENoyQcyHVqRwK5wa
-         jKyUGFeN5SCzA3CKKjDeGZIaXjnZUpaIpg8IP4p8QqfvvavmHkzEH3oeDVgG/NQxCpzD
-         FwnCFIf8WkWT7LdonXaydMW+U4ZkDqUHs55SEOdGPW0GOIxKUfMa974eB5qZanveoM4U
-         jCktDEP3zXX2lg4KuQPFBkGFZ6wyEi1R+LXb0LHjoSiPo4qoboMUGDDiQWJ/IgMyrYcs
-         jr2Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741469232; x=1742074032;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=v8NqAd3c5NFekNt4az1U3G2oz33PLqlAz5uAxFgA+Mo=;
-        b=NiwV7tRsBnxa5yn9sNc21AXIfsEQCJwVIBDvk8ndTTQNxRTGgjrEEy1thqjLzB/kM8
-         Jtqnb7gpN5rsmzJAPWWpOU1e146h9E1drWQ6QoyXOlKBLKN3zQoK6FU/W2IZNRPGk/ee
-         ZAciPAITT6t47bUiHu7ivY/JZ+C9zCuJ7fX8dHKuuR4ipby7L6vGA3ePJI/V69mRUHCd
-         0TaVZC7PLmvSlwG/fXg18P8CAwufS6I919Q8dIYWzSoCdeeuMhhwY9In3Uty8CjAPhiI
-         I2EPXBckLO7qU2558GPRqKNcdYkPs3WpEfp1x2EDHARr12kDwjZUIoHGWs/5BP66eTqS
-         rR8Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUIoJM2HCP4EhC0x3C2jomQqQOzdsnJlI8GGRFcjfvnpwiyX+YJetetnTas5KkSJq54mw41v4naKNghBkqi@vger.kernel.org, AJvYcCVecBHcGDFg6nXbJTWLulDOgUkgD9VR3Rcej9BM2PvoajnvEBIx/14cq2R2PRVH5RqPUhHiwkWdOTM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyicdMO+KUpgpfEiAAL9A6EQGA5Mr0/sORf7BU7fAq3xVsJT9QZ
-	dxFYld5N6WfwPCt+Tb125YHIp6Gryod0QwSlu01hQoqB91w2wpevCIMMsQiZ9iNY0f0azsO/kSf
-	IIdVsxxPsoWDHpuDTmFFh2sCA9lg=
-X-Gm-Gg: ASbGnctyWcmrzHhQAxiWRDAIBjAr23Ofs+EXZJhwbOelZXgzMb1O47dIrFdUHDHDJ/A
-	VKoZ8mLHPCz7X+iQ1I+GXYs8q8uE7UlH3YJL0/Yk/fe6tMHctCQPCXeOJzacWN88kxgBz9WPfRA
-	TncN+xJbO6IYkE6LIeY5d9sITUvkQ5rOUHX8V8
-X-Google-Smtp-Source: AGHT+IEU7iSsrDZqz1jnr1oTG5DJpDgNKpGuux0vLfcvBUYiknBaHEySZeEWRd7zNsslEEHvjaciWWfkYtSNz/U0M3s=
-X-Received: by 2002:a05:6902:161e:b0:e5b:4283:6f7 with SMTP id
- 3f1490d57ef6-e63720d5d47mr2335791276.10.1741469232255; Sat, 08 Mar 2025
- 13:27:12 -0800 (PST)
+	s=arc-20240116; t=1741469643; c=relaxed/simple;
+	bh=D3enNDD6IJ9h5WbzvlwGVYrpzdUfItJAPQgFApHCcXE=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=eSs7NeznBROvLVYH8UOGXkvpPX30HlodoK+yItvI6Lr3tH4bcPlo02JWyX7ci5vouWwuXB+swFV7lUKjc6/DxXGD1RobkWdlNQ7CVKS+YKoWTYh7YXCGocUwVjqyaEGOepTmTXbqpUigJPDy3zWGuYLtiwaWgAsTlyk20mC31cU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lQp7L3ln; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 07C26C4CEE0;
+	Sat,  8 Mar 2025 21:34:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741469643;
+	bh=D3enNDD6IJ9h5WbzvlwGVYrpzdUfItJAPQgFApHCcXE=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=lQp7L3lnRvKN3sS1evrXBI53w7bgUXY37xeFolN7N5OzCNV93cQeh+HkdKAllfc5P
+	 rUDnCBqOwpjubbd5si4dsVh7eG+r/JO+A85CdDpdl4f58vKwATa+NzfpjEbpGO+B4B
+	 Z5G5v6Aq/yRIqsYQ7eep/I2dosIaI+2JsGH/6F2hPZfp/Zmp2S1PCRc5P9kaN0PPe2
+	 M5CRw/z0XQ7rrZvlV2w/jsZHxZhRq3MEXhnkKhovQhP9zwdvbAL4e+D2bY3fKQLWKj
+	 Ek54OrDIoljN4906DppDy5Mesd+S2F2MHyg56+ywGVI69oZMnohV/WfmQIOesZ2dCr
+	 bqKWybEGFsCfA==
+From: SeongJae Park <sj@kernel.org>
+To: Zi Yan <ziy@nvidia.com>
+Cc: SeongJae Park <sj@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Baolin Wang <baolin.wang@linux.alibaba.com>,
+	Matthew Wilcox <willy@infradead.org>,
+	linux-mm@kvack.org,
+	linux-fsdevel@vger.kernel.org,
+	Hugh Dickins <hughd@google.com>,
+	Kairui Song <kasong@tencent.com>,
+	Miaohe Lin <linmiaohe@huawei.com>,
+	linux-kernel@vger.kernel.org,
+	David Hildenbrand <david@redhat.com>,
+	John Hubbard <jhubbard@nvidia.com>,
+	Kefeng Wang <wangkefeng.wang@huawei.com>,
+	"Kirill A. Shuemov" <kirill.shutemov@linux.intel.com>,
+	Ryan Roberts <ryan.roberts@arm.com>,
+	Yang Shi <yang@os.amperecomputing.com>,
+	Yu Zhao <yuzhao@google.com>
+Subject: Re: [PATCH v3 1/2] mm/filemap: use xas_try_split() in __filemap_add_folio()
+Date: Sat,  8 Mar 2025 13:34:00 -0800
+Message-Id: <20250308213400.10220-1-sj@kernel.org>
+X-Mailer: git-send-email 2.39.5
+In-Reply-To: <20A1553F-C30A-4D93-8A43-011163A22C60@nvidia.com>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250221203352.41941-1-l.rubusch@gmail.com> <20250222150329.66d6e79b@jic23-huawei>
-In-Reply-To: <20250222150329.66d6e79b@jic23-huawei>
-From: Lothar Rubusch <l.rubusch@gmail.com>
-Date: Sat, 8 Mar 2025 22:26:36 +0100
-X-Gm-Features: AQ5f1Jo-8x7IoNhmucJGmGQpusKyAJBCvtPJiid_1YXDE_p4k9GZC3B6A2wljiI
-Message-ID: <CAFXKEHZEkNXAPVxZA5raPsA8cNt3A+tbd83kNzJc3wY5OjAsdw@mail.gmail.com>
-Subject: Re: [PATCH v1 1/1] iio: accel: adxl367: fix setting odr for activity
- time update
-To: Jonathan Cameron <jic23@kernel.org>
-Cc: lars@metafoo.de, Michael.Hennerich@analog.com, cosmin.tanislav@analog.com, 
-	linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Sat, Feb 22, 2025 at 4:03=E2=80=AFPM Jonathan Cameron <jic23@kernel.org>=
- wrote:
->
-> On Fri, 21 Feb 2025 20:33:52 +0000
-> Lothar Rubusch <l.rubusch@gmail.com> wrote:
->
-> > Fix setting the odr value to update activity time based on frequency
-> > derrived by recent odr, and not by obsolete odr value.
-> >
-> > The [small] bug: When _adxl367_set_odr() is called with a new odr value=
-,
-> > it first writes the new odr value to the hardware register
-> > ADXL367_REG_FILTER_CTL.
-> > Second, it calls _adxl367_set_act_time_ms(), which calls
-> > adxl367_time_ms_to_samples(). Here st->odr still holds the old odr valu=
-e.
-> > This st->odr member is used to derrive a frequency value, which is
-> > applied to update ADXL367_REG_TIME_ACT. Hence, the idea is to update
-> > activity time, based on possibilities and power consumption by the
-> > current ODR rate.
-> > Finally, when the function calls return, again in _adxl367_set_odr() th=
-e
-> > new ODR is assigned to st->odr.
-> >
-> > The fix: When setting a new ODR value is set to ADXL367_REG_FILTER_CTL,
-> > also ADXL367_REG_TIME_ACT should probably be updated with a frequency
-> > based on the recent ODR value and not the old one. Changing the locatio=
-n
-> > of the assignment to st->odr fixes this.
-> >
-> > Signed-off-by: Lothar Rubusch <l.rubusch@gmail.com>
-> Fixes tag?
->
+On Sat, 08 Mar 2025 13:32:02 -0500 Zi Yan <ziy@nvidia.com> wrote:
 
-Hi IIO ML readers - Hi Jonathan,
-AFAIK there is no tracked bug which I could refer to. Alternatively, I
-could refer to
-the commit hash of the original commit which introduced the code this
-patch is supposed
-to fix. Is this ok? Could you please help me here with the process?
+> On 8 Mar 2025, at 13:14, SeongJae Park wrote:
+> 
+> > Hello,
+> >
+> > On Wed, 26 Feb 2025 16:08:53 -0500 Zi Yan <ziy@nvidia.com> wrote:
+[...]
+> >> diff --git a/include/linux/xarray.h b/include/linux/xarray.h
+> >> index 4010195201c9..78eede109b1a 100644
+> >> --- a/include/linux/xarray.h
+> >> +++ b/include/linux/xarray.h
+> >> @@ -1556,6 +1556,7 @@ int xas_get_order(struct xa_state *xas);
+> >>  void xas_split(struct xa_state *, void *entry, unsigned int order);
+> >>  void xas_split_alloc(struct xa_state *, void *entry, unsigned int order, gfp_t);
+> >>  void xas_try_split(struct xa_state *xas, void *entry, unsigned int order);
+> >> +unsigned int xas_try_split_min_order(unsigned int order);
+> >>  #else
+> >>  static inline int xa_get_order(struct xarray *xa, unsigned long index)
+> >>  {
+> >> @@ -1582,6 +1583,12 @@ static inline void xas_try_split(struct xa_state *xas, void *entry,
+> >>  		unsigned int order)
+> >>  {
+> >>  }
+> >> +
+> >> +static inline unsigned int xas_try_split_min_order(unsigned int order)
+> >> +{
+> >> +	return 0;
+> >> +}
+> >> +
+> >>  #endif
+> >>
+> >>  /**
+> >> diff --git a/lib/xarray.c b/lib/xarray.c
+> >> index bc197c96d171..8067182d3e43 100644
+> >> --- a/lib/xarray.c
+> >> +++ b/lib/xarray.c
+> >> @@ -1133,6 +1133,28 @@ void xas_split(struct xa_state *xas, void *entry, unsigned int order)
+> >>  }
+> >>  EXPORT_SYMBOL_GPL(xas_split);
+> >>
+> >> +/**
+> >> + * xas_try_split_min_order() - Minimal split order xas_try_split() can accept
+> >> + * @order: Current entry order.
+> >> + *
+> >> + * xas_try_split() can split a multi-index entry to smaller than @order - 1 if
+> >> + * no new xa_node is needed. This function provides the minimal order
+> >> + * xas_try_split() supports.
+> >> + *
+> >> + * Return: the minimal order xas_try_split() supports
+> >> + *
+> >> + * Context: Any context.
+> >> + *
+> >> + */
+> >> +unsigned int xas_try_split_min_order(unsigned int order)
+> >> +{
+> >> +	if (order % XA_CHUNK_SHIFT = 0)
+> >> +		return order = 0 ? 0 : order - 1;
+> >> +
+> >> +	return order - (order % XA_CHUNK_SHIFT);
+> >> +}
+> >> +EXPORT_SYMBOL_GPL(xas_try_split_min_order);
+> >> +
+> >
+> > I found this makes build fails when CONFIG_XARRAY_MULTI is unset, like below.
+> >
+> >     /linux/lib/xarray.c:1251:14: error: redefinition of ‘xas_try_split_min_order’
+> >      1251 | unsigned int xas_try_split_min_order(unsigned int order)
+> >           |              ^~~~~~~~~~~~~~~~~~~~~~~
+> >     In file included from /linux/lib/xarray.c:13:
+> >     /linux/include/linux/xarray.h:1587:28: note: previous definition of ‘xas_try_split_min_order’ with type ‘unsigned int(unsigned int)’
+> >      1587 | static inline unsigned int xas_try_split_min_order(unsigned int order)
+> >           |                            ^~~~~~~~~~~~~~~~~~~~~~~
+> >
+> > I think we should have the definition only when CONFIG_XARRAY_MULTI?
+> 
+> I think it might be a merge issue, since my original patch[1] places
+> xas_try_split_min_order() above xas_try_split(), both of which are
+> in #ifdef CONFIG_XARRAY_MULTI #endif. But mm-everything-2025-03-08-00-43
+> seems to move xas_try_split_min_order() below xas_try_split() and
+> out of CONFIG_XARRAY_MULTI guard.
 
-> Otherwise looks good to me.
->
-> > ---
-> >  drivers/iio/accel/adxl367.c | 10 +++-------
-> >  1 file changed, 3 insertions(+), 7 deletions(-)
-> >
-> > diff --git a/drivers/iio/accel/adxl367.c b/drivers/iio/accel/adxl367.c
-> > index add4053e7a02..0c04b2bb7efb 100644
-> > --- a/drivers/iio/accel/adxl367.c
-> > +++ b/drivers/iio/accel/adxl367.c
-> > @@ -601,18 +601,14 @@ static int _adxl367_set_odr(struct adxl367_state =
-*st, enum adxl367_odr odr)
-> >       if (ret)
-> >               return ret;
-> >
-> > +     st->odr =3D odr;
-> > +
-> >       /* Activity timers depend on ODR */
-> >       ret =3D _adxl367_set_act_time_ms(st, st->act_time_ms);
-> >       if (ret)
-> >               return ret;
-> >
-> > -     ret =3D _adxl367_set_inact_time_ms(st, st->inact_time_ms);
-> > -     if (ret)
-> > -             return ret;
-> > -
-> > -     st->odr =3D odr;
-> > -
-> > -     return 0;
-> > +     return _adxl367_set_inact_time_ms(st, st->inact_time_ms);
-> >  }
-> >
-> >  static int adxl367_set_odr(struct iio_dev *indio_dev, enum adxl367_odr=
- odr)
->
+You're right.  I was testing this on the mm-unstable tree, more specifically,
+commit 2f0c87542d97.
+
+I confirmed the build failure goes away after moving the definition to the
+original place.
+
+> 
+> [1] https://lore.kernel.org/linux-mm/20250226210854.2045816-2-ziy@nvidia.com/
+> 
+> --
+> Best Regards,
+> Yan, Zi
+
+
+Thanks,
+SJ
 
