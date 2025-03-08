@@ -1,108 +1,96 @@
-Return-Path: <linux-kernel+bounces-552615-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-552616-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E03BA57C09
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 17:42:14 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9CB86A57C0A
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 17:43:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E1B1716D75E
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 16:42:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0368D3B13F9
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 16:43:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52AA21E5217;
-	Sat,  8 Mar 2025 16:42:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01FDF1E832D;
+	Sat,  8 Mar 2025 16:43:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="IOfFjElN"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="duKuCkEc"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C96B31E00A0;
-	Sat,  8 Mar 2025 16:42:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C2217E0E4;
+	Sat,  8 Mar 2025 16:43:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741452128; cv=none; b=RAggZXxjR71S6lrXAvL1oA7sf8rXYJKM+jC9T5WWE/Z28g/uEJg7JF7hiDm6v30DPu/rChArYLDENLry/MiJOx7b8H7iD8NFn9BUeBB0I6pgjJ/x5MCLVCmzWkQhwKo8lWs30GSCwB8Ghkm2gcYbHA7eiKZ/A5yPCANMyv0tnX8=
+	t=1741452207; cv=none; b=hWJl1tdRLVddpd44hiDcggkMv0tx5XQ3A/XLaK1rwwqkXWUqPosXXqquOI3xn2nbYL2Xr/sUycQ8Pw8IsdzL1D8ltdIkuotVh0wNasHWSIRdxOHYnxOddILv6hgM/DUjPyiS8kCRVz1G4ZCfpgSfcgVCd9+h4JiGksHFmK2aYoA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741452128; c=relaxed/simple;
-	bh=5YQi/yppGT60Qz5ERFnjZXkM8JJB66wQMozBsyrzPnU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=f609XuNFicbpd3/Lj75LFplfUt98Swgd/2u2rUDy1iQIHVxkB8tSAARhccAG8twqdOZ9NzXvfF2u9ZZROcYYxJbxpOPxvZyafsusnUzqFe84ytPYfUWqtZk8VldCcfO9eCHhLPoyyEWqVfTKQTx6mQbpfGz3JTW2Kd2zw0uhS8M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=IOfFjElN; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id B11CA40E01D1;
-	Sat,  8 Mar 2025 16:42:04 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id cWGCF3pVqs9c; Sat,  8 Mar 2025 16:42:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1741452120; bh=o575BGKSgdAGPxICB7ydHGX62H0Z4HV7YhrHC7x8t2I=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=IOfFjElNS5hEZyQFQ53RZfjNC/MClho1UrzY971aAUYE3RqV2frIZttdyzWtMtVTi
-	 Ptmss/GLFwyJ8HIc57fgH9ZvgJVyuhcp3KBFG48xwbAHA/bADupuU0kwgVZLLqTC++
-	 fhAAzT8iNdkzWbQlHlh+f2FR6sV7vPU5qu2su+yeKMtgi/U5s95o39yaWaR8IE8Xse
-	 oFES3vbHiqL8Rnx9zzz04lj/Hva8absMthaLsG3C86VJ7qz1J/1ONcplB55r6mARf1
-	 wOMG6uC7xTsGQdF9OaghUbrWuOdJov4aO6wPaVU706WZFd7e7hSw6dY5riRMd4bEoy
-	 UQqf+aBt139qdbDXXKRhi6gyyCcGl6ptmt5T0agBruHhcEQd5NVgEJtbnM6mV92i8B
-	 lSyY46bt/4A/hhnobSVqvch0ATXyYxZtteLvFBrxeCtxfNU1+j6mWWGwbZudeR3WHX
-	 ppnGIBBReJwf+8usiCof7LKMbdb54p/wyj5iBgWEHY9u6aD2vbPaUVhWiduAV0vEMl
-	 KUilmEBg87vop1WhHEcS0pSWcZumaJcr7jTVrFyiymNMGKEB2pCq5z/DVX3L/Lf3UO
-	 yRMwX5s1LRRnOlxHeA4/XA/49Rf4Qo/nb6c5xj8GNAetpGyx406NpS+Ql3P5pmX/25
-	 hkA45755cidg0h3XsrEYHHx8=
-Received: from zn.tnic (pd95303ce.dip0.t-ipconnect.de [217.83.3.206])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 8020A40E01A0;
-	Sat,  8 Mar 2025 16:41:52 +0000 (UTC)
-Date: Sat, 8 Mar 2025 17:41:51 +0100
-From: Borislav Petkov <bp@alien8.de>
-To: "H. Peter Anvin" <hpa@zytor.com>
-Cc: Masahiro Yamada <masahiroy@kernel.org>,
-	"Xin Li (Intel)" <xin@zytor.com>, linux-kernel@vger.kernel.org,
-	linux-kbuild@vger.kernel.org, nathan@kernel.org, nicolas@fjasle.eu,
-	sraithal@amd.com
-Subject: Re: [PATCH v1 1/1] kbuild: Add "make headers" to "make help" output
-Message-ID: <20250308164151.GFZ8xzTwiNd1JVcMHT@fat_crate.local>
-References: <20250308040451.585561-1-xin@zytor.com>
- <CAK7LNARHvn4Sy-e4hMmjGt0C7TFaWrGJrLq3YvN0BjehZ8QwSg@mail.gmail.com>
- <FAE530F5-B657-4C72-8D69-7ABA2D3209A9@zytor.com>
+	s=arc-20240116; t=1741452207; c=relaxed/simple;
+	bh=giXjfla1IUB80vCiBZBA4tDUia2ogWeR+zO5AzfF78s=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=AkkvRcVt5ZhcR+jmunvzeSV8fCLU59rbOkxJOJ8u6erS1XYUBjCV9hCcg0BsXkbc5X/HtGWXHoCoo/4xxcF1CLGbeLP0f/Dxb2srDa4PBo3hnBN5thnUI8K8z7imxJBEFAzpuayU9exbs0fJOam2ggytIaSxB63EjwJejxuabMs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=duKuCkEc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C53D2C4CEE0;
+	Sat,  8 Mar 2025 16:43:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741452206;
+	bh=giXjfla1IUB80vCiBZBA4tDUia2ogWeR+zO5AzfF78s=;
+	h=From:To:Cc:Subject:Date:From;
+	b=duKuCkEcowvy002FIXu9V+JBtDM12ZOgGND6SkEpSWuRsJTQliU5pDts3zMH9UGb0
+	 MSiiV1EsH/CGSESA2AaXMKl2TVDwWmDSj9iQXGiN6yn0b7eOxBeCqfDMTXBDFxBX8F
+	 Mhw35q92osqMnsUTb25oteaVApbhbAfP3qerWAERoBmXX7nVog3RwzTRxmLyzeCyug
+	 /tNwNCStm8/qOlsA3FCvoYHzE/VyoVZf99dPsY0o4IkYEffFgQtWbYEsqMqyowHuYc
+	 oNq3BlBYUj8+EiDlQWtw+F0lGsFuyY8z6hYRI3fIBwhnjv5jxqlWIpXU1yvKm7d0pv
+	 1irCwFFw0rekQ==
+From: Miguel Ojeda <ojeda@kernel.org>
+To: Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Danilo Krummrich <dakr@kernel.org>
+Cc: Boqun Feng <boqun.feng@gmail.com>,
+	Gary Guo <gary@garyguo.net>,
+	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>,
+	Trevor Gross <tmgross@umich.edu>,
+	rust-for-linux@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	patches@lists.linux.dev
+Subject: [PATCH] MAINTAINERS: rust: add tree field for RUST [ALLOC]
+Date: Sat,  8 Mar 2025 17:42:58 +0100
+Message-ID: <20250308164258.811040-1-ojeda@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <FAE530F5-B657-4C72-8D69-7ABA2D3209A9@zytor.com>
+Content-Transfer-Encoding: 8bit
 
-On Sat, Mar 08, 2025 at 08:01:56AM -0800, H. Peter Anvin wrote:
-> Unfortunately it seems users haven't been following that :(
+In the Rust subsystem we are starting to add new subentries which will
+have their own trees. Those trees will be part of linux-next and will
+be sent as PRs to be merged into rust-next.
 
-If by "users haven't been following that" you mean they've been doing
+Thus do the same for the existing subentry we already have: RUST [ALLOC].
 
-make kselftest
+Cc: Danilo Krummrich <dakr@kernel.org>
+Signed-off-by: Miguel Ojeda <ojeda@kernel.org>
+---
+ MAINTAINERS | 1 +
+ 1 file changed, 1 insertion(+)
 
-in order to run selftests and *that* thing builds headers, then yes, you're
-right.
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 8e0736dc2ee0..1ddc313abbdd 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -20732,6 +20732,7 @@ RUST [ALLOC]
+ M:	Danilo Krummrich <dakr@kernel.org>
+ L:	rust-for-linux@vger.kernel.org
+ S:	Maintained
++T:	git https://github.com/Rust-for-Linux/linux.git alloc-next
+ F:	rust/kernel/alloc.rs
+ F:	rust/kernel/alloc/
+ 
 
-Oh look:
-
-PHONY += kselftest
-kselftest: headers
-	   ^^^^^^^^
-        $(Q)$(MAKE) -C $(srctree)/tools/testing/selftests run_tests
-
-:-P
-
+base-commit: 7eb172143d5508b4da468ed59ee857c6e5e01da6
 -- 
-Regards/Gruss,
-    Boris.
+2.48.1
 
-https://people.kernel.org/tglx/notes-about-netiquette
 
