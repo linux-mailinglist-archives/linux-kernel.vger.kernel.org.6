@@ -1,140 +1,183 @@
-Return-Path: <linux-kernel+bounces-552428-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-552429-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA211A579CA
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 11:40:29 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id F13EEA579CE
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 11:49:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C0B983B3CBD
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 10:40:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DF4583B3CF9
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 10:49:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C0531B043E;
-	Sat,  8 Mar 2025 10:40:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AF8F1B0434;
+	Sat,  8 Mar 2025 10:49:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="H6SJPHuD"
-Received: from out.smtpout.orange.fr (out-14.smtpout.orange.fr [193.252.22.14])
-	(using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RiCi92Oc"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DD12DDC5
-	for <linux-kernel@vger.kernel.org>; Sat,  8 Mar 2025 10:40:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.252.22.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEC981624F7;
+	Sat,  8 Mar 2025 10:49:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741430422; cv=none; b=m8/5O/vsfkXR0wpk1DiLPeRNpcr0+IrY1CoSyLU4NNyujQZrQdoTvcOEYTuVTHgzTgKU2Xg3tO4ikn6pvOqzmX1EIPFgkEqTlV8auiBgLqKqsUB9tyt780zNeHEt1NvMtHok/kuPHpdrtYOApgq4eFV9Tlde8p/EsJXxq9DNf8Q=
+	t=1741430962; cv=none; b=NJxLT1BJCIwYa2YJBYVfSrYl6tmZeR9afBCblMxlq4apNF4wyaqH2ly09PuYX+XAg393eosA2bL6Pahf2DYKRLJXGSC6n59p4MLT8eufjtIfPAwE2WKY2I2FU/n97ygtt1cc3qDLTM9pDxCURDJSpNQM0ZNBSGNnEeLAFDBrVFk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741430422; c=relaxed/simple;
-	bh=IksHSKTCTNLKygyUnDdNxGyDtq0DVMU3N+aq5BMFEFw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=KmsGJzXoE/4KzKnnw9rSycZsWL9sVUXzqQl6C+TJENEzB0wqE4po4FPSTYkEjDspFsVwy3LqB9/nknzTK6JgxKA+8zYzZbLS1t3hB/R8oKozO4XWPzE9pHgFwXD1T03dDHw4JWgZopEogXCUbJsiqAYfxHOu1QkAj0CxSHUPg7U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=H6SJPHuD; arc=none smtp.client-ip=193.252.22.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Received: from [172.16.82.72] ([124.33.176.97])
-	by smtp.orange.fr with ESMTPA
-	id qrb7twWi1ALzcqrbBtNgXo; Sat, 08 Mar 2025 11:40:12 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1741430412;
-	bh=/j8zMOSOfHLTeXM/zRrMNeAIVt8zB+gxs/PMQCLhw4k=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From;
-	b=H6SJPHuDoGPq2dPUXUS3W2Dq6vuvk2E8b4mngN2NeTNXKy7+gf0Hv/hgjW+mFrTcb
-	 j3oea+6qJ3z2ra22KrIwsubNdo2RsuHjk1SoU/cOc31v7ku+pp72WJLv/4w5bCpHou
-	 AnW+xmu1b7IPvDR+U7uR4/hcoD7r6kg0o/v3diXq7yh9U8QEPOUyuL9Swx1ZZXw41d
-	 Y2zwIWX5skkrGProIw+pNrURBRXjX1DnjqMgppca6Y/W4RwRuDhW5lczwNJpdmEcb3
-	 65yNdu2l4OQ8V0DwRTUtl6qtuEW/tpAsE+L/BmS9Gl+KVQYf9KcWu6Sr2rQ7RAIxC9
-	 w7DE2e1/z/9xA==
-X-ME-Helo: [172.16.82.72]
-X-ME-Auth: bWFpbGhvbC52aW5jZW50QHdhbmFkb28uZnI=
-X-ME-Date: Sat, 08 Mar 2025 11:40:12 +0100
-X-ME-IP: 124.33.176.97
-Message-ID: <1258559e-e23d-42db-910c-f5d84dda8218@wanadoo.fr>
-Date: Sat, 8 Mar 2025 19:40:00 +0900
+	s=arc-20240116; t=1741430962; c=relaxed/simple;
+	bh=VtyxIhn1MqFuj4Ez+8kB3Bet4PSr1CCgIGFP5TsZw10=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=lca1cJJF0llnJYVvtEozmLkFpfVxk7pFQT+3mptGyvqvJE5XXzQWG2GWORGXbXVkA1fITJn2bYJf/SD5skgiWW/uboMq+9WaBdO0rtxoxqso8RBJcgSaI/Gd50CTUEhqces/QJn9GBCLYe2OblJJ0DoZ4p7yTcQsYB9RNo/8GZQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RiCi92Oc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9899FC4CEE0;
+	Sat,  8 Mar 2025 10:49:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741430962;
+	bh=VtyxIhn1MqFuj4Ez+8kB3Bet4PSr1CCgIGFP5TsZw10=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=RiCi92OcmsI8Gxvhb4Fzt/INHK1kbh8/N/DGVGhR3VNWxHxfO50N7H+GegB/Fr86H
+	 5+OHRaxqDkVp3ImCBKYzz0pJwZKCEoyXsKiJNYC5+AUW9TdjFm2VGaZqiMxZdtFAnB
+	 gsGkC+IhqNB9KjLGz602fyC/IbI9xtE2LNmrJZAjsQSX/FeVit4omISh9nofClIfeP
+	 3cKSGPuhkowjk1I6ISIVIuNU0vvAdZI/CBzT2CQCqEc4w8wEfMgns9MaW9kksZYZUk
+	 rXFzTcKNyHkoGLcNkvtI1syFWbJUAnz2YyrR1TghTQX4uyD4tcjADbXgEZSedG8jah
+	 TOKZHCyNxwoZA==
+Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-54991d85f99so1694125e87.1;
+        Sat, 08 Mar 2025 02:49:22 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCWrz2ZiAvHADW5BQFGfNhd+CKqjRQvlAUb+aYB4q1CtHptzNvEHgVL9gLtN0d+yR2GGXhnQ1UMIhNyOnXQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzokImS0q7EQQR2HDBVi4pbtrDaLRggoLf3nd69PPdEAGySK/6m
+	HgnfoIrX83FhsAYlYdmqgqz5hDkBRC/WeOHt2YKvN2LwQQc+iOgXWpLzw9voXi+yARE165ZDASr
+	ibvkKK/qacfGRO2xCikf0pxN0Afw=
+X-Google-Smtp-Source: AGHT+IG2An5WF2QlGh2eCzveAL3dfszVI0/qGJMycmfCIf8KiNvGAp92NpHru1Tjs9I5dlF/DDesMTs1/F4epdiaeTU=
+X-Received: by 2002:a05:6512:1252:b0:549:8dd6:fb41 with SMTP id
+ 2adb3069b0e04-54997ef677emr1099186e87.24.1741430961001; Sat, 08 Mar 2025
+ 02:49:21 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 0/7] bits: Fixed-type GENMASK_U*() and BIT_U*()
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
- Yury Norov <yury.norov@gmail.com>
-Cc: Lucas De Marchi <lucas.demarchi@intel.com>,
- Rasmus Villemoes <linux@rasmusvillemoes.dk>,
- Jani Nikula <jani.nikula@linux.intel.com>,
- Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
- Rodrigo Vivi <rodrigo.vivi@intel.com>, Tvrtko Ursulin
- <tursulin@ursulin.net>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>, Andrew Morton <akpm@linux-foundation.org>,
- linux-kernel@vger.kernel.org, intel-gfx@lists.freedesktop.org,
- dri-devel@lists.freedesktop.org, Andi Shyti <andi.shyti@linux.intel.com>,
- David Laight <David.Laight@aculab.com>,
- Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
- Jani Nikula <jani.nikula@intel.com>
-References: <20250308-fixed-type-genmasks-v6-0-f59315e73c29@wanadoo.fr>
- <Z8sqSpKZzfolKm8Q@thinkpad> <Z8swXUGf9rtTHw1o@smile.fi.intel.com>
- <Z8sxdOjk3LksG9ky@thinkpad> <Z8sx__SHALZI1NCx@smile.fi.intel.com>
-Content-Language: en-US
-From: Vincent Mailhol <mailhol.vincent@wanadoo.fr>
-Autocrypt: addr=mailhol.vincent@wanadoo.fr; keydata=
- xjMEZluomRYJKwYBBAHaRw8BAQdAf+/PnQvy9LCWNSJLbhc+AOUsR2cNVonvxhDk/KcW7FvN
- LFZpbmNlbnQgTWFpbGhvbCA8bWFpbGhvbC52aW5jZW50QHdhbmFkb28uZnI+wrIEExYKAFoC
- GwMFCQp/CJcFCwkIBwICIgIGFQoJCAsCBBYCAwECHgcCF4AWIQTtj3AFdOZ/IOV06OKrX+uI
- bbuZwgUCZx41XhgYaGtwczovL2tleXMub3BlbnBncC5vcmcACgkQq1/riG27mcIYiwEAkgKK
- BJ+ANKwhTAAvL1XeApQ+2NNNEwFWzipVAGvTRigA+wUeyB3UQwZrwb7jsQuBXxhk3lL45HF5
- 8+y4bQCUCqYGzjgEZx4y8xIKKwYBBAGXVQEFAQEHQJrbYZzu0JG5w8gxE6EtQe6LmxKMqP6E
- yR33sA+BR9pLAwEIB8J+BBgWCgAmFiEE7Y9wBXTmfyDldOjiq1/riG27mcIFAmceMvMCGwwF
- CQPCZwAACgkQq1/riG27mcJU7QEA+LmpFhfQ1aij/L8VzsZwr/S44HCzcz5+jkxnVVQ5LZ4B
- ANOCpYEY+CYrld5XZvM8h2EntNnzxHHuhjfDOQ3MAkEK
-In-Reply-To: <Z8sx__SHALZI1NCx@smile.fi.intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20250224132132.1765115-6-ardb+git@google.com> <CAMj1kXHamiZ8u4YO9FnrWhpcotUkAusDF_db_5H2qaVD85qmVA@mail.gmail.com>
+ <CAK7LNATLf2iXNGi-UKRg=+PRRqgmxry5QQnQ4GUNsuVmDBAnmw@mail.gmail.com>
+In-Reply-To: <CAK7LNATLf2iXNGi-UKRg=+PRRqgmxry5QQnQ4GUNsuVmDBAnmw@mail.gmail.com>
+From: Ard Biesheuvel <ardb@kernel.org>
+Date: Sat, 8 Mar 2025 11:49:09 +0100
+X-Gmail-Original-Message-ID: <CAMj1kXGVe-R7VF1nHmRx+UB4FuhSjiwMU=n_uWCLC99rTTa5ZQ@mail.gmail.com>
+X-Gm-Features: AQ5f1JqD9j-0PZ6Su8a_JuvMkpVsCaunLd1ZKbi_6BD3YAku5dpbUrIEghClm2w
+Message-ID: <CAMj1kXGVe-R7VF1nHmRx+UB4FuhSjiwMU=n_uWCLC99rTTa5ZQ@mail.gmail.com>
+Subject: Re: [RFC PATCH 0/4] x86/build: Get rid of vmlinux postlink step
+To: Masahiro Yamada <masahiroy@kernel.org>
+Cc: linux-kernel@vger.kernel.org, x86@kernel.org, linux-kbuild@vger.kernel.org, 
+	Ingo Molnar <mingo@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 08/03/2025 at 02:50, Andy Shevchenko wrote:
-> On Fri, Mar 07, 2025 at 12:48:36PM -0500, Yury Norov wrote:
->> On Fri, Mar 07, 2025 at 07:43:57PM +0200, Andy Shevchenko wrote:
->>> On Fri, Mar 07, 2025 at 12:18:02PM -0500, Yury Norov wrote:
->>>> No rush, please allow your reviewers a week or two before submitting
->>>> a new iteration unless you want to disregard the previous version for
->>>> some reason, of course. This will not get into the upcoming merge
->>>> window, anyways.
+On Fri, 7 Mar 2025 at 19:54, Masahiro Yamada <masahiroy@kernel.org> wrote:
+>
+> On Fri, Mar 7, 2025 at 1:47=E2=80=AFAM Ard Biesheuvel <ardb@kernel.org> w=
+rote:
+> >
+> > On Mon, 24 Feb 2025 at 14:21, Ard Biesheuvel <ardb+git@google.com> wrot=
+e:
+> > >
+> > > From: Ard Biesheuvel <ardb@kernel.org>
+> > >
+> > > Kbuild supports an architecture specific Makefile.postlink file that =
+is
+> > > invoked for the vmlinux target after it has been built. This Makefile
+> > > takes 'vmlinux' (which has just been built) as the target, and mangle=
+s
+> > > the file and/or constructs other intermediate artifacts from it.
+> > >
+> > > This violates the general philosophy of Make, which is based on rules
+> > > and dependencies, and artifacts that are rebuilt only when any of the=
+ir
+> > > dependencies have been updated.
+> > >
+> > > Instead, the different incarnations of vmlinux that are consumed by
+> > > different stages of the build should be emitted as distinct files, wh=
+ere
+> > > rules and dependencies are used to define one in terms of the other.
+>
+>
+> In my understanding, the build rule of vmlinux is atomic
+> because vmlinux embeds a timestamp and a build version.
+>
+> Now, you are splitting it into two stages.
+>
+> vmlinux.unstripped (this includes timestamp and the build version)
+>   --(cmd_strip_relocs)-->  vmlinux
+>
+>
+> When cmd_strip_relocs is changed, only vmlinux is updated.
+> This changes the content of vmlinux, but its timestamp and build version
+> remain the same.
+>
+> So, I am not sure if this is the right direction.
+>
 
-Ack. I was not expecting this to go into the next merge windows either.
+You are saying that, when we change the contents of the
+cmd_strip_relocs build rule and rebuild without cleaning, vmlinux will
+have an older timestamp? I think there are many more cases where the
+version is not updated, so I don't see this as a problem at all.
 
-Most of the feedback was not on the actual code but just on the naming,
-the code comments or the patch descriptions. I normally wait longer on
-the first version of a series but I tend to do kick re-spin when
-addressing the nitpicks.
+>
+> You can see more steps for updating vmlinux.
+> Do you believe the build rule should be further split into
+> more fine-grained stages?
+>
 
-But message taken! I will wait a couple of weeks before the next iteration.
+No.
 
->>>> So, what should I do? Go through the v5 and all discussions in there,
->>>> or just jump on this?
+The problem is that vmlinux.relocs (in arch/x86/boot/compressed)
+depends on vmlinux, but not the version of vmlinux that is ultimately
+produced.
 
-The code is the same between v5 and v6.
+It should depend on an artifact that is always suitable to generate
+the relocation table, not only during the short time between the
+initial creation of vmlinux and the point during the execution of
+Makefile.postlink where the relocations that are needed to generate
+vmlinux.relocs are stripped from vmlinux.
 
-There is this message from David in which he suggested to make some
-changes to the uapi __GENMASK() and __GENMASK_ULL() and to which I
-commented that I was not confident doing such changes:
+> For example,
+>
+> vmlinux.pre-sort  (this includes timestamp and the build version)
+>    --(scripts/sortable)-->
 
-  https://lore.kernel.org/all/20250306192331.2701a029@pumpkin/t/#u
+Why? Which other artifact depends on the unsorted tables, and can no
+longer be generated correctly after the tables have been sorted?
 
-Aside from the above, you wouldn't miss much by directly jumping on this v6.
+> vmlinux.unstripped
+>    --(cmd_strip_relocs)-->
+> vmlinux
+>
+> But, again, even when sorttable is changed,
+> the timestamp and the build version remain the same.
+>
 
->>> There is also question to you. Are we going to leave with U128 variants or is
->>> it subject to remove? If the latter, can you issue a formal patch?
->>
->> I asked Anshuman about it as he's the only person interested in it. Will wait
->> for a _usual_ few weeks for reply before making any conclusions. If you know
->> anyone relevant in ARM or everywhere else, feel free to loop them.
-> 
-> I see, yep, we still have time for that, let's wait a bit.
+Again, there are many other ways in which the final vmlinux can be
+newer than the internal version fields suggest. I really don't think
+this is an issue.
 
-Ack. Andy, I already addressed your last comments in my local tree. I
-will now wait for others' feedback.
+>
+> Yeah, arch/*/Makefile.postlink is a crap
+> where arch maintainers build a fence
+> and start whatever they want to do.
+>
+> If they completely disappear, I would love it.
+>
 
+Good.
 
-Yours sincerely,
-Vincent Mailhol
+> However, this seems a partial clean-up
+> within the scope you are interested in.
+> (more specifically your motivation is because Linus pointed out
+> a failure in arch/x86/Makefile.postlink deleted vmlinux)
+>
 
+Yes. Makefile.postlink failures propagate back to the build rule that
+generates vmlinux, and so the file is deleted again.
+
+For sanity checks performed on vmlinux, this is fine. But for
+generating another file that takes vmlinux as its input, this is
+completely broken.
 
