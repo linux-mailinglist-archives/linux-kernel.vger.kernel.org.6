@@ -1,101 +1,129 @@
-Return-Path: <linux-kernel+bounces-552611-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-552612-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6E37FA57C02
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 17:35:29 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E007A57C04
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 17:35:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 17A773B04B6
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 16:35:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ADBD43B02F6
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 16:35:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B73F1E8358;
-	Sat,  8 Mar 2025 16:35:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6689B1E832F;
+	Sat,  8 Mar 2025 16:35:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="X/aNA7Z3"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="F70o9oYp"
+Received: from mail-pj1-f44.google.com (mail-pj1-f44.google.com [209.85.216.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0D981E8341;
-	Sat,  8 Mar 2025 16:35:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62D6D1DF97C;
+	Sat,  8 Mar 2025 16:35:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741451717; cv=none; b=Ay1wc4HfCgkk/JgKkS2LMd64xIq5EHR7JUUOyromFzaOQ4M6cGbcXpIvHyu22C8Tn2YZHpvnN8zFSuttX1DtPwEg16cCkVaYg1Zq2J7p6u/sltN7SCFhMQb+DGb+nuSH68vYX8EjzPiUf7DtK85nRhnAjZXhTsw/xaMtFmU/YZc=
+	t=1741451736; cv=none; b=qx6oZ29ykkmQ9xHokmb4HLzDebXrpgvvAXHuISJ0E/poVmyrOsawaGVPiYuUPU0U8E+wHu7qffkqgDBedm2YzE7OzkGju5G1ulPZK8KBWg2tX6yO5gqGQ0qFRKAdI7roVod7eQUZNgW4DQOLqM9Ke3cxRDL2IX76NI0jIAvO7Cw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741451717; c=relaxed/simple;
-	bh=hHfV8kx8wrHR7+8E6WI3ssEv6MnebcU05CUBb1yiFgs=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=aircnjygWBzNhnjR3ywvdpYMSjQPRfeKKIAWzcGNbAtQN0LHpygXt/myZzyIPLsmSnS+mHnPeFEygbKlw0S+R1Qbq5jWXW1QEK+C2BCFX6/oQotZwFgLbTeR09YBvSBDC9d+9bYciqUhoOh6ZFVhymQDg+JtLnXNhU2LEfZSDag=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=X/aNA7Z3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B9B44C4CEE0;
-	Sat,  8 Mar 2025 16:35:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741451717;
-	bh=hHfV8kx8wrHR7+8E6WI3ssEv6MnebcU05CUBb1yiFgs=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=X/aNA7Z3E5cln+jCB0zSs1H9LkqPep9eoxzzWKcZIU+8eV5SJC7Niy4qJcuheOy7M
-	 9jXNklRhgO0354yo/C0Y7a9lNVMmswFZstnIFJkTrL4Q5IsPNPf7lX2oHj1TIk1U+7
-	 Zn9MUQGVFMy4M9oEc8qByBN/K1guazaezxjZ73xjTCxKLUEDWOcydNFoRPX+WtRPjb
-	 FMRb2z0PoepLTIe3zlLIcWgjAVQLXvmF1dLr8Gd2x9jcyfsZO3qx9SRix/detu8+k4
-	 x0fa1g2TCb2uW0OhpL58j6TrY/YF4JNNEywgQLK5/8XFYN5XqNbBpzphLfSouQURjD
-	 ymqt8ajSytsyQ==
-Date: Sat, 8 Mar 2025 16:35:05 +0000
-From: Jonathan Cameron <jic23@kernel.org>
-To: Matti Vaittinen <mazziesaccount@gmail.com>
-Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>, Lars-Peter Clausen
- <lars@metafoo.de>, Chen-Yu Tsai <wens@csie.org>, Jernej Skrabec
- <jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>, Nuno Sa
- <nuno.sa@analog.com>, David Lechner <dlechner@baylibre.com>, Javier
- Carrasco <javier.carrasco.cruz@gmail.com>, Olivier Moysan
- <olivier.moysan@foss.st.com>, Guillaume Stols <gstols@baylibre.com>,
- Dumitru Ceclan <mitrutzceclan@gmail.com>, Trevor Gamblin
- <tgamblin@baylibre.com>, Matteo Martelli <matteomartelli3@gmail.com>,
- Alisa-Dariana Roman <alisadariana@gmail.com>, Andy Shevchenko
- <andriy.shevchenko@linux.intel.com>, linux-iio@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-sunxi@lists.linux.dev
-Subject: Re: [PATCH v5 05/10] iio: adc: sun20i-gpadc: Use adc-helpers
-Message-ID: <20250308163505.200135cc@jic23-huawei>
-In-Reply-To: <aabd8836dbe54ef54730d1cd112edb52a57cd353.1740993491.git.mazziesaccount@gmail.com>
-References: <cover.1740993491.git.mazziesaccount@gmail.com>
-	<aabd8836dbe54ef54730d1cd112edb52a57cd353.1740993491.git.mazziesaccount@gmail.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.48; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1741451736; c=relaxed/simple;
+	bh=RIwW7eO1EJwvrd3VVoMhJVapyB6IvOmF9aB7VdpAhZA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PZqEazYaaiZe0k2QtyGl/Sr4J2Izi0l3yg2MSs+HL2MXNPPqmQm8V8pkWDG5db2iZ6Hvh2/U48O0TPqWtcwN853pUOpy8UeWj+GZowPf1bCu7iHWmTqI3GfjZ0jcE6JbcmQmVJ/4Am0Mk5TaSV9E+4ZweSod17XEge6iRrstPKA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=F70o9oYp; arc=none smtp.client-ip=209.85.216.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f44.google.com with SMTP id 98e67ed59e1d1-2ff80290e44so3469094a91.0;
+        Sat, 08 Mar 2025 08:35:35 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741451734; x=1742056534; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=E2ixVN08UWIJynEo5bLIccBxGvDmgvF24wCvxvnHlHU=;
+        b=F70o9oYpSWJ5QmWtw+8J2aOuRdrD5j1yLqxVS/BuKz16ZHgh6lN2Clwp94oNI+KsCJ
+         WtdvPDieucUk+jOdir4fI+R9wenkEDMAREfZn2JU+Qn16nPd7IQZAZaWqog0uZWdICeA
+         klzlVQjzKHZXsnHI3I3ex5emY05ZJcqz63RFoeadfjMuDJmPdIP5o/SKsFfFWFpMux8A
+         FeB0HjBKbaAyAOWfI1yOYws0aKCo8M8xxtDyvQOOYOXLreaDaaK6eSazY4sG4gpedlja
+         KvEYAYm15tYzlr1eB0xOTpSGSEqCB9iA/q7v37+TPJaQnnpuXf8oxz7GWzmjyhdiOUj+
+         IGIQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741451734; x=1742056534;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=E2ixVN08UWIJynEo5bLIccBxGvDmgvF24wCvxvnHlHU=;
+        b=XimYeHZSgF0DciO+3Pi9oWDNMphdgYMQ3e8vrjXjSco7bMm7ibWYDIyBCaJYMyKnLL
+         CeJTI72OQRbGQ9xxOYIDc8JAq9dtsyvcPiiYJvvAIxO20D8U+R96w9122gJ+bk1knQNh
+         BPu131iaRT1iWcTCRGGLHYEl9VHqWBLQcL7oDtoOtDQ57vuPjJ32+vTaRSyIEpfZCkcS
+         2lS4/wCmXTvZ+OJk4IBhbAkj88E7MlpZ2tI5hANR2dyFQvBdWKTxV5JW+mC7NFbaRnRO
+         r1UnqJxYzUOfy+rGqCJmPbayxY3ozV5NOXX7xOXSh7L1tTbsZHEeIxPF8aSGng1fM5ha
+         msZw==
+X-Forwarded-Encrypted: i=1; AJvYcCVwhRno8YNxNXsvqSjGhTDtM9qrX5Xk4K2AuY3wuhGxnkgR1dxzB/luxWRh9zsSFhkDTQj3dCVW37DfXuQ=@vger.kernel.org, AJvYcCWVrRgeUk2p9ecGXY+hLwjWRsQSZVfzsMHo/Pl/4nTKV5CxMvicvbpKhQ6ewsgAWzbOxyrlq45d@vger.kernel.org
+X-Gm-Message-State: AOJu0YzSrIwb/3snvoV8t1bwp1WspfkzZIozG3qpHt1Af8lxZqZzmeUn
+	9NYHuV3d5FyMfwK2lgxgQFYNKYu8L0MyaICiKtCj1Gr7CHLwbIy6
+X-Gm-Gg: ASbGncuIhfTskX0BuX2YYTgQBXduBCWX/ux43R+Pw+mkDwlcbSguxScUUsz5ImzexVu
+	yQkpAbjVYSo47KLGePXzhBM8naQ1sHKROfpkDf9PXljvoGiSmpwG6/AgJZUzsrICK6Osemx04MA
+	YEebcINxgTN32ej61hm5jNcGxp7q3GLHHSprYjRmMUaryYFyNwPLlxPKfetExNCFCYM1gWvyLFw
+	lu/5i4Xek0/2pYUKR6seWZXmNMwmcuXH+2qY9v1190+5uBX7d/yepdTgC/viTKnRTScnX2n1+l7
+	rFhJpcpn21yXKYIOkVk78aB/6S7Owq4avJOiXBI3/Z4EBxs=
+X-Google-Smtp-Source: AGHT+IEllU0GwXPBCLuRcx/4+jszmSTr/axljfzv0oTkjgVskpmReKjT67EUiTsOqkWQmkdwuEEi0w==
+X-Received: by 2002:a17:90b:1f88:b0:2fe:b174:31fe with SMTP id 98e67ed59e1d1-2ff7ce7b3c1mr12704804a91.2.1741451734474;
+        Sat, 08 Mar 2025 08:35:34 -0800 (PST)
+Received: from eleanor-wkdl ([140.116.96.203])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-224109ddbdcsm48671545ad.51.2025.03.08.08.35.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 08 Mar 2025 08:35:33 -0800 (PST)
+Date: Sun, 9 Mar 2025 00:35:29 +0800
+From: Yu-Chun Lin <eleanor15x@gmail.com>
+To: Simon Horman <horms@kernel.org>
+Cc: shshaikh@marvell.com, manishc@marvell.com, GR-Linux-NIC-Dev@marvell.com,
+	andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
+	kuba@kernel.org, pabeni@redhat.com, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, jserv@ccns.ncku.edu.tw,
+	visitorckw@gmail.com
+Subject: Re: [PATCH net-next] qlcnic: Optimize performance by replacing
+ rw_lock with spinlock
+Message-ID: <Z8xx0aN4vA7d-73i@eleanor-wkdl>
+References: <20250306163124.127473-1-eleanor15x@gmail.com>
+ <20250307132929.GI3666230@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250307132929.GI3666230@kernel.org>
 
-On Mon, 3 Mar 2025 13:33:02 +0200
-Matti Vaittinen <mazziesaccount@gmail.com> wrote:
+On Fri, Mar 07, 2025 at 01:29:29PM +0000, Simon Horman wrote:
+> On Fri, Mar 07, 2025 at 12:31:24AM +0800, Yu-Chun Lin wrote:
+> > The 'crb_lock', an rwlock, is only used by writers, making it functionally
+> > equivalent to a spinlock.
+> > 
+> > According to Documentation/locking/spinlocks.rst:
+> > 
+> > "Reader-writer locks require more atomic memory operations than simple
+> > spinlocks. Unless the reader critical section is long, you are better
+> > off just using spinlocks."
+> > 
+> > Since read_lock() is never called, switching to a spinlock reduces
+> > overhead and improves efficiency.
+> > 
+> > Signed-off-by: Yu-Chun Lin <eleanor15x@gmail.com>
+> 
+> Hi Yu-Chun Lin,
+> 
+> Thanks for your patch.
+> 
+> My main question is if you have hardware to test this?
+> And if so, was a benefit observed?
+> 
+> If not, my feeling is that although your change looks
+> correct, we'd be better off taking the lower risk option
+> of leaving things be.
 
-> The new devm_iio_adc_device_alloc_chaninfo() -helper is intended to help
-> drivers avoid open-coding the for_each_node -loop for getting the
-> channel IDs. The helper provides standard way to detect the ADC channel
-> nodes (by the node name), and a standard way to convert the "reg"
-> -propereties to channel identification numbers, used in the struct
+Hi Simon
 
-same typo.
+I perform a compile test to ensure correctness. But I don't have the
+hardware to run a full test.
 
-> iio_chan_spec. Furthermore, the helper can optionally check the found
-> channel IDs are smaller than given maximum. This is useful for callers
-> which later use the IDs for example for indexing a channel data array.
-> 
-> The original driver treated all found child nodes as channel nodes. The
-> new helper requires channel nodes to be named channel[@N]. This should
-> help avoid problems with devices which may contain also other but ADC
-> child nodes. Quick grep from arch/* with the sun20i-gpadc's compatible
-> string didn't reveal any in-tree .dts with channel nodes named
-> otherwise. Also, same grep shows all the in-tree .dts seem to have
-> channel IDs between 0..num of channels.
-> 
-> Use the new helper.
-> 
-> Signed-off-by: Matti Vaittinen <mazziesaccount@gmail.com>
-> 
-Otherwise LGTM
+Yu-Chun Lin
 
