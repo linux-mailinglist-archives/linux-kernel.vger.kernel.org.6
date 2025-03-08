@@ -1,113 +1,118 @@
-Return-Path: <linux-kernel+bounces-552426-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-552427-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3BBF5A579C5
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 11:35:09 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 93030A579C7
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 11:36:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 747DE171825
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 10:35:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1E74D1891CF4
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 10:36:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57DC21B0416;
-	Sat,  8 Mar 2025 10:35:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0790A1B0412;
+	Sat,  8 Mar 2025 10:36:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="IVl/SXmq"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="cAUOkt0X"
+Received: from out.smtpout.orange.fr (out-18.smtpout.orange.fr [193.252.22.18])
+	(using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C105194A6C;
-	Sat,  8 Mar 2025 10:34:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0D1A194A6C
+	for <linux-kernel@vger.kernel.org>; Sat,  8 Mar 2025 10:36:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.252.22.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741430103; cv=none; b=III5jrTxt9NU6NAFyHlua27/QGf6O/ClDcn0O3pJLO44cxumcr8UEwti2pduJfoRqvatKtjDih8j6lrRvtiueysBx4fQJI4CrIiA+6u+Or3xYUz/dwv/ekuE4IOEg5fBmY/NnhQHQtN5kSHFCMKUR7JE1CIklbrilV8pgZL5a9s=
+	t=1741430189; cv=none; b=CMvzoVr/lFudmmiTyM4+g8eKPbbHcUwckJyAfBEiJ9BDkRyT/RBhCWMLU/jda6oj2RgyijuTeghVe66/k07gKxud5d99KaVi5jDg6mUiPSpAbqyO1S/jdrUn1VtIImx3r8gNK56z40Sxp+3k89IiWh/pRIrfEsWE1sbtlVXXcEk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741430103; c=relaxed/simple;
-	bh=vMML90PmPz4f5iAqQP3twGkVRdax3owqnUyoLOTy6XU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jNlmd3lUB2WjBeUFfjbQZ1RC0GrrXNt5DIL3XYJYUclEvJ7woi47Ns4aggT5Z6+2rbWEm+FhMs70V5PfXqtdWXY/MRz80XwazuNkMyP+ppbb1If1KqhDZgBvwDzCOL4+/4qX5AIzbnlvx1DX01LRUBVfUb/Hxb816BVrv9RMxjU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=IVl/SXmq; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 4549140E01A0;
-	Sat,  8 Mar 2025 10:34:56 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id Dx9MuYHWPlqr; Sat,  8 Mar 2025 10:34:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1741430091; bh=MeXXMrhJlDtSepFHfsLRrAktBWHVEJK6DeWmWg1ARF0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=IVl/SXmq/rp7/wuTuL3JeG1NhCkCjhndn80n3QHMOsg3kRhCK6KSFFXupFy9l/o2X
-	 onLBWr6480uwDj6EigIybWN8lGEZLTUTmIDncjaEWtQSlbLThoWuiDT2VKuvVAG8oL
-	 k9xnD1qKRO6Soad9zafHKjLIDwIc7TNiUjqLxyO69M5umcFk8tkje0pHxxuEiRoIlb
-	 bcyH5jrpa0lqCpYiNs7/fOWGCh6bQNwS1c0QtfpYkvicsWgc5RqULwaGKA7X+0UWR0
-	 uk1HqMlGrImJh3y+w6LDkD0E9iBe6wbkFn+WaGUF25LcARVQsPb+UDhvTNsaodOClM
-	 2iqZD/zz9RStGvlQcWuvEiyP49nwG5qkmKS/LqESHRlenfxrjQQX2UQgrgUkgbdR29
-	 HQwyhPGyNrR0zdudeYgaaEISdMsSkQ/SoWnvx7Um0GRguoLKs0l8vOu5S5xwVFTV1a
-	 zYN6BUiIoxRBVDmawk9RQ8C6eH95+2eNY1l4ugHa8HKVzSV4lmG+41OHV7c+8isg/e
-	 +WmrCZLTyb1YOUebbwqdLq675QzOOST/OuKtoToqpb2/jOL1gx/mONiEVOAy14Dig1
-	 WVMUX7CANI1GigYwBY2kdL+CmGn8Bs/Kw0cq5MAz1AJR3k9KR4sr50ye39/YVksMAA
-	 vZ2ecJo9efEZFCmTXLYVoWwQ=
-Received: from zn.tnic (pd95303ce.dip0.t-ipconnect.de [217.83.3.206])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 0834440E016E;
-	Sat,  8 Mar 2025 10:34:43 +0000 (UTC)
-Date: Sat, 8 Mar 2025 11:34:37 +0100
-From: Borislav Petkov <bp@alien8.de>
-To: "Xin Li (Intel)" <xin@zytor.com>
-Cc: linux-kernel@vger.kernel.org, linux-kbuild@vger.kernel.org,
-	masahiroy@kernel.org, nathan@kernel.org, nicolas@fjasle.eu,
-	hpa@zytor.com, sraithal@amd.com
-Subject: Re: [PATCH v1 1/1] kbuild: Add "make headers" to "make help" output
-Message-ID: <20250308103437.GAZ8wdPbFGfhzAi1WU@fat_crate.local>
-References: <20250308040451.585561-1-xin@zytor.com>
+	s=arc-20240116; t=1741430189; c=relaxed/simple;
+	bh=T3hEc+vebrKNFXfRZHg52cFOW8PoOAYo7LOHjFa2Zz4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Iv/kHT0iEuEOJk7LZuZcbneJg8bWS6KIB3bPjC9hInPsg8FU56n3q0+miepN6YzwDPq3McCDj9UOEbvGsZDTzjXk8LE1rlkbLdmn2uW/R91Eb3yFHyOQaYNLxF8WRPR/5hJzFqV2iXkGwgNr2JqQhNGeO9fxE8+Vj/0NXNcTDj4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=cAUOkt0X; arc=none smtp.client-ip=193.252.22.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+Received: from [172.16.82.72] ([124.33.176.97])
+	by smtp.orange.fr with ESMTPA
+	id qrXKto1FVACDNqrXPtbz9o; Sat, 08 Mar 2025 11:36:18 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1741430178;
+	bh=3r6CNq7c1UF1VpR9t/DNQ2vWkrvLhXco71nuRKB37ek=;
+	h=Message-ID:Date:MIME-Version:Subject:To:From;
+	b=cAUOkt0XhKkPVCP7sPPdl6eDa5wXICtIPMZMYju5W72dV5z2SOjwLCcfuPLWAHk9n
+	 2gTYHZXd0R4sI8KMvK3SXBwfJCDIS1b1K6HKf8bMbeNqk9FmIL5tMnOi1VgF9PRT3Y
+	 nCpkIQgcXFRAYCNVi89hpt91TV94UknqNVbC2yysaRIeyZYrBIwrFnoCKROpKJ1+Ux
+	 A4s6V8kF4TjX7zNe/m+EmBbeqY6E1yA7+p9nFMbg5UbUznxwaH978S2CA0bk2LuW3z
+	 SW1iyANPCxfEo3SlDMTXHUprAnZ7bBGfVnUTD7p1WZniJ4R7/r1qpZ9IzolDgenoHP
+	 8p0zl3mLtMCvQ==
+X-ME-Helo: [172.16.82.72]
+X-ME-Auth: bWFpbGhvbC52aW5jZW50QHdhbmFkb28uZnI=
+X-ME-Date: Sat, 08 Mar 2025 11:36:18 +0100
+X-ME-IP: 124.33.176.97
+Message-ID: <b34f0fbe-43e2-41c0-b47d-4c026432272b@wanadoo.fr>
+Date: Sat, 8 Mar 2025 19:36:05 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250308040451.585561-1-xin@zytor.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 4/7] drm/i915: Convert REG_GENMASK*() to fixed-width
+ GENMASK_U*()
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Yury Norov <yury.norov@gmail.com>,
+ Lucas De Marchi <lucas.demarchi@intel.com>,
+ Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+ Jani Nikula <jani.nikula@linux.intel.com>,
+ Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+ Rodrigo Vivi <rodrigo.vivi@intel.com>, Tvrtko Ursulin
+ <tursulin@ursulin.net>, David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>, Andrew Morton <akpm@linux-foundation.org>,
+ linux-kernel@vger.kernel.org, intel-gfx@lists.freedesktop.org,
+ dri-devel@lists.freedesktop.org, Andi Shyti <andi.shyti@linux.intel.com>,
+ David Laight <David.Laight@aculab.com>,
+ Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+ Jani Nikula <jani.nikula@intel.com>
+References: <20250308-fixed-type-genmasks-v6-0-f59315e73c29@wanadoo.fr>
+ <20250308-fixed-type-genmasks-v6-4-f59315e73c29@wanadoo.fr>
+ <Z8syw47cN0eEW7lO@smile.fi.intel.com>
+Content-Language: en-US
+From: Vincent Mailhol <mailhol.vincent@wanadoo.fr>
+Autocrypt: addr=mailhol.vincent@wanadoo.fr; keydata=
+ xjMEZluomRYJKwYBBAHaRw8BAQdAf+/PnQvy9LCWNSJLbhc+AOUsR2cNVonvxhDk/KcW7FvN
+ LFZpbmNlbnQgTWFpbGhvbCA8bWFpbGhvbC52aW5jZW50QHdhbmFkb28uZnI+wrIEExYKAFoC
+ GwMFCQp/CJcFCwkIBwICIgIGFQoJCAsCBBYCAwECHgcCF4AWIQTtj3AFdOZ/IOV06OKrX+uI
+ bbuZwgUCZx41XhgYaGtwczovL2tleXMub3BlbnBncC5vcmcACgkQq1/riG27mcIYiwEAkgKK
+ BJ+ANKwhTAAvL1XeApQ+2NNNEwFWzipVAGvTRigA+wUeyB3UQwZrwb7jsQuBXxhk3lL45HF5
+ 8+y4bQCUCqYGzjgEZx4y8xIKKwYBBAGXVQEFAQEHQJrbYZzu0JG5w8gxE6EtQe6LmxKMqP6E
+ yR33sA+BR9pLAwEIB8J+BBgWCgAmFiEE7Y9wBXTmfyDldOjiq1/riG27mcIFAmceMvMCGwwF
+ CQPCZwAACgkQq1/riG27mcJU7QEA+LmpFhfQ1aij/L8VzsZwr/S44HCzcz5+jkxnVVQ5LZ4B
+ ANOCpYEY+CYrld5XZvM8h2EntNnzxHHuhjfDOQ3MAkEK
+In-Reply-To: <Z8syw47cN0eEW7lO@smile.fi.intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Fri, Mar 07, 2025 at 08:04:51PM -0800, Xin Li (Intel) wrote:
-> Meanwhile explicitly state that the headers are uapi headers.
+On 08/03/2025 at 02:54, Andy Shevchenko wrote:
+> On Sat, Mar 08, 2025 at 01:48:51AM +0900, Vincent Mailhol via B4 Relay wrote:
+>> From: Lucas De Marchi <lucas.demarchi@intel.com>
+>>
+>> Now that include/linux/bits.h implements fixed-width GENMASK_U*(), use
+>> them to implement the i915/xe specific macros. Converting each driver
+>> to use the generic macros are left for later, when/if other
+>> driver-specific macros are also generalized.
 > 
-> Suggested-by: Borislav Petkov <bp@alien8.de>
-> Signed-off-by: Xin Li (Intel) <xin@zytor.com>
-> ---
->  Makefile | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
+> ...
 > 
-> diff --git a/Makefile b/Makefile
-> index 70bdbf2218fc..8f5aa710105e 100644
-> --- a/Makefile
-> +++ b/Makefile
-> @@ -1659,7 +1659,8 @@ help:
->  	@echo  '  kernelrelease	  - Output the release version string (use with make -s)'
->  	@echo  '  kernelversion	  - Output the version stored in Makefile (use with make -s)'
->  	@echo  '  image_name	  - Output the image name (use with make -s)'
-> -	@echo  '  headers_install - Install sanitised kernel headers to INSTALL_HDR_PATH'; \
-> +	@echo  '  headers	  - Install sanitised kernel uapi headers to usr/include'
-									     ^^^^^^^^^^^
+>> +/*
+>> + * Wrappers over the generic BIT_* and GENMASK_* implementations,
+> 
+> BIT_U*(), GENMASK_U*() as far as I can see.
+> 
+> Also "...generic fixed-width...".
 
-It is INSTALL_HDR_PATH too, try:
+Ack. I will address both in next version.
 
-make O=/tmp/b/ headers
 
-for example.
+Yours sincerely,
+Vincent Mailhol
 
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
 
