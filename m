@@ -1,126 +1,509 @@
-Return-Path: <linux-kernel+bounces-552580-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-552581-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 60829A57B97
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 16:29:20 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0BD51A57B9A
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 16:32:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8CC1016D7FE
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 15:29:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 29E6B16D863
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 15:32:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47ED81E1E18;
-	Sat,  8 Mar 2025 15:29:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1C7C13CA9C;
+	Sat,  8 Mar 2025 15:32:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="BWUplUDZ"
-Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="S8+zZa2B"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 035E31C84C1
-	for <linux-kernel@vger.kernel.org>; Sat,  8 Mar 2025 15:29:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1826A1C07E6
+	for <linux-kernel@vger.kernel.org>; Sat,  8 Mar 2025 15:32:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741447752; cv=none; b=m1QzW9uknydbodZwMnpnHEZL33h8Ri5FdGGRJLif9SpZgWDPB31dANzUd74SscABseMrwxQPlEtIGj1dJKcJO3vPMoR6sBdhfIqh5mrX3GyJfzZus3Zr9UeuBq+IU8Cckj4njCqGMK415+77+mt+9+txcFLKemdO5DDbUcRW0ww=
+	t=1741447941; cv=none; b=lAyiKmebJ74TshaMjONBqvg2ekklAUd/fHkoMw3ToWQds2HDHeCvE21H7r50nDWHz2DU0ldsroKRuPMh9elhvPqZXjoTm1V3SWrE80qzsIvVURYV9vFXrB4Bx/gZNFW0RWmx+BWOeMnEVAja0q+r1Sg4EpFzZ7dt/7gQ7xKwH78=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741447752; c=relaxed/simple;
-	bh=DngW6UKwtoP4vTNhZNLO04627yOjUXfCZEoZdkARLkI=;
+	s=arc-20240116; t=1741447941; c=relaxed/simple;
+	bh=aCOCEpaVH+30HX17q9jqaxGS78kFjRKje/JxKl7RuUM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Bl1yFLvaNfXkeARO1H0FmidvpJ/RUBk7nlE9CGCcP2Pz+yi+UsEoetRDI4hitETv+24QnGYgIVjJ3MBrjDXXJ9bXuPF3B/dSFZ54gKud76k4AQVVIoRTrUYfKisJeyA63uiz/lhrn8kdp7r0kl2iEbmYeEtMNE6dlaUv1j5ogpc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=BWUplUDZ; arc=none smtp.client-ip=209.85.208.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-30bf8632052so15352031fa.0
-        for <linux-kernel@vger.kernel.org>; Sat, 08 Mar 2025 07:29:10 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1741447749; x=1742052549; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=j1erwRbEpf42IpSPu2HfeF24p9T9l4keifT6FQUxIMM=;
-        b=BWUplUDZeU96vc/TLQ7w/otbqzRgDvT04TbNFonvcJaruyHrXUlYrduHQmt78qat6q
-         GmonXuEAXKDRBa90glxwaCN77+Wde2D5FsSFPkXNcQ2vy2MVdRbAu/YuPHQcD3M6EsSR
-         dlCD9uJGmSBQYvIpmokxA1U+N/WFnKyJJGNiHwgOTlQGijR17Dz1nBGt/teRWg85WzgL
-         MdtsLpgZ7rLGnZzIlDxhE9zg4ijroIIpoCzw/+dfvkBmCa4/V2BOa7Mjm/JL1V+T715o
-         oKXC1OtQIA47M2C5tQmXRuaRhiTz5K3fYWqSaWM76Ss3/vq6KjMxEwb+6RarroS5CjCZ
-         fW5A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741447749; x=1742052549;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=j1erwRbEpf42IpSPu2HfeF24p9T9l4keifT6FQUxIMM=;
-        b=XivHXrB268uzKlt+97oG/r7Tgpt4pLHtnDmzStcwHzXU2YxJJi/Ap8q6VdpQOSeAaj
-         qno2EdKUZ25vuenmSYUVFLPQIa8D6WyGVnQLqzWRDYEYiOMw82O+ifu/+zhnOYlLlE7P
-         7gS7nraO5iQv4t1E5RFhoNfMQmIh73HTTklBXIhKf6fSJfUOgx+Hh8rJ58x9IsfwNQcw
-         Q3GDgpiHBZG/1FdRAEuUYXfXBU5W2VM/eY7U0f8zmFERj+bmjkfSL0Y6BiIGsVaq5Qhq
-         G1V4XsXcN3cehJIbm9ybYCl8oGta0j3nc5KEk1HPOjNDA5Nt69oxXv/YVn79JXf4B1uQ
-         tpVw==
-X-Forwarded-Encrypted: i=1; AJvYcCXdk+kwy41ktfhcMlY8yMmCF2/otGAJWTwCwBR4TNvqimb16vhMJ1GkMC9tTXFOFecMwibeZ2q5LpuZX9M=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzEisSsc7qY8p3U4X2eWSBSF2H0TMD4zaKb8QWNBBKulx0bR4in
-	sorM4k7NwmaAJY1Hk4t2BSNsGf8rt/msCnvs8L8rTmulhGjDDJuPWJ6Alt5UV44=
-X-Gm-Gg: ASbGncs5GxYfoMFVXjPLVlCUM7CSTsIUO3FeWfwrrhhGbKz/G8Jkpz5nSEtBSYPa/KH
-	Hxi+OKTCRRe8g+tRgCiIJNuk95oSboFQ8MSu2zJGW3YWXBZCQGTRIathm6myoJT15DicYkFw5pN
-	N8CuijezRG487l16StjXIllgmBF0mryhtcTYGumNB5VlsnFEb7GS/7Wpz96AWsxy5pVwYghN9Qh
-	TrIlZ4g8qBCowd+ASIupVgsjM2XHM9+TBQG03iXV36kBWU2cn8Y4FFAGJ/CTWPB+ZXFlY8wALjH
-	brawRjm7SzqAr/0zwLavSrjh9cJTuiMexxMZmD/vTMBMwlFXI5AVKyaL5PvCfzJu2Bx5o71nHUB
-	m/uVJl0qLQkScCtvATaNxAZxg
-X-Google-Smtp-Source: AGHT+IHWJzyRENoKYCsCD6ryWleW1FfCxkcxA9oKFolKIPqPM2Gc1cW/mG3/aDezKXNBCG2jOe6Msg==
-X-Received: by 2002:a05:651c:2106:b0:30b:b204:6b80 with SMTP id 38308e7fff4ca-30bf44eda0cmr24484481fa.8.1741447749006;
-        Sat, 08 Mar 2025 07:29:09 -0800 (PST)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-30bfcc80809sm3965871fa.86.2025.03.08.07.29.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 08 Mar 2025 07:29:07 -0800 (PST)
-Date: Sat, 8 Mar 2025 17:29:05 +0200
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Cc: George Moussalem <george.moussalem@outlook.com>, 
-	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, 
-	linux-phy@lists.infradead.org, andersson@kernel.org, bhelgaas@google.com, conor+dt@kernel.org, 
-	devicetree@vger.kernel.org, kishon@kernel.org, konradybcio@kernel.org, krzk+dt@kernel.org, 
-	kw@linux.com, lpieralisi@kernel.org, manivannan.sadhasivam@linaro.org, 
-	p.zabel@pengutronix.de, quic_nsekar@quicinc.com, robh@kernel.org, robimarko@gmail.com, 
-	vkoul@kernel.org, quic_srichara@quicinc.com
-Subject: Re: [PATCH v3 2/6] phy: qualcomm: qcom-uniphy-pcie 28LP add support
- for IPQ5018
-Message-ID: <fwpdzm4gdulyhfnmcvoqsbnu3fwbqyc6gne3ayz7sr6eu2yyqy@hhii6x4pk7a7>
-References: <20250305134239.2236590-1-george.moussalem@outlook.com>
- <DS7PR19MB8883A6C7E8FA6810089453149DCB2@DS7PR19MB8883.namprd19.prod.outlook.com>
- <oeu6wkfhx2masvendoweoufzit6dcwwer5bakzvg75dz3uc4bj@bwuj4slnb24e>
- <e2d84147-c061-4f12-a44b-f60919625f77@oss.qualcomm.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=C/8XLHuUVpew93KtIqoH56BxpJ4GbeM0uYjypeljTrVgqj5LcUjBg7XAQbk9sRzdidXG5HWAuE+S46d6Hd5SNxukTm6IbxYTvau0CfZdgoukWXne8g5N0zT1ZzvvOyCriNrS/3EfBY3maxWP533xopP52dMcvaMQ1xRvWj2wEjI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=S8+zZa2B; arc=none smtp.client-ip=198.175.65.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1741447938; x=1772983938;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=aCOCEpaVH+30HX17q9jqaxGS78kFjRKje/JxKl7RuUM=;
+  b=S8+zZa2BYMkS+E3QWcaEYzdY0dlVvpqO5xIWxF9V/uJUiedd/3rllIqk
+   IpUtvt/ictAWOwutG9eRs9Hhd3T7yLhRjftnXAB9uCH1+0F3XQ676tq4q
+   HwXzUcSmvOuhoio6RJHlRqMKUYkSD6+Il0ufKSSwdqceqqK5L4NNToHAo
+   sZPsebTRoQvy984kxa+5j2LrIzYchM8FkQhn3zl+rVUpeIPIbgw8OrhvP
+   S6nagY0WEGz8bNWWmhA+wxAuDzztCCFDwR1SY0i6XdkkHqPtpvDzsMPBI
+   EsldRwcyx4Pkt5yAsJK3a5DlBNaYwDHT8WVgg5WQpS0rwyX59WLa6r1Nx
+   w==;
+X-CSE-ConnectionGUID: JMJTIhl9RMq2ygLxdnFfMw==
+X-CSE-MsgGUID: GJnH3JoGQYGD0su6Aedtlw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11367"; a="46267541"
+X-IronPort-AV: E=Sophos;i="6.14,232,1736841600"; 
+   d="scan'208";a="46267541"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Mar 2025 07:32:18 -0800
+X-CSE-ConnectionGUID: uRZAX0p3TsWFdU5HyAQX1Q==
+X-CSE-MsgGUID: RME2FdVjTquzI4fs7BboIA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
+   d="scan'208";a="150526792"
+Received: from lkp-server02.sh.intel.com (HELO a4747d147074) ([10.239.97.151])
+  by fmviesa001.fm.intel.com with ESMTP; 08 Mar 2025 07:32:14 -0800
+Received: from kbuild by a4747d147074 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tqw9r-0001zz-2x;
+	Sat, 08 Mar 2025 15:32:11 +0000
+Date: Sat, 8 Mar 2025 23:31:42 +0800
+From: kernel test robot <lkp@intel.com>
+To: Ashley Smith <ashley.smith@collabora.com>,
+	Boris Brezillon <bbrezillon@kernel.org>,
+	Steven Price <steven.price@arm.com>,
+	Liviu Dudau <liviu.dudau@arm.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Heiko Stuebner <heiko@sntech.de>
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	kernel@collabora.com, Ashley Smith <ashley.smith@collabora.com>,
+	Daniel Stone <daniels@collabora.com>,
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] drm/panthor: Make the timeout per-queue instead of
+ per-job
+Message-ID: <202503082339.3TzIrrex-lkp@intel.com>
+References: <20250307155556.173494-1-ashley.smith@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <e2d84147-c061-4f12-a44b-f60919625f77@oss.qualcomm.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250307155556.173494-1-ashley.smith@collabora.com>
 
-On Sat, Mar 08, 2025 at 03:25:05PM +0100, Konrad Dybcio wrote:
-> On 5.03.2025 9:39 PM, Dmitry Baryshkov wrote:
-> > On Wed, Mar 05, 2025 at 05:41:27PM +0400, George Moussalem wrote:
-> >> From: Sricharan Ramabadhran <quic_srichara@quicinc.com>
-> >>
-> >> From: Nitheesh Sekar <quic_nsekar@quicinc.com>
-> > 
-> > Something is wrong here. There can't be two authors for the patch.
-> 
-> It may be that Nitheesh was the original author, whose patch was then
-> picked up by Sricharan for sending (no additional notices of
-> co-development), but George later did the same, forgetting to remove
-> Sricharan from the chain.
+Hi Ashley,
 
-That would go to the SoB trailers. The issue is slightly different. I
-can't even come up with a normal way to end up with the patch having
-two From: headers:
+kernel test robot noticed the following build warnings:
 
-The only way how one can get the From: header is by doing git
-format-patch. But then git am would get rid of it by filling the commit
-metadata.
+[auto build test WARNING on b72f66f22c0e39ae6684c43fead774c13db24e73]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Ashley-Smith/drm-panthor-Make-the-timeout-per-queue-instead-of-per-job/20250307-235830
+base:   b72f66f22c0e39ae6684c43fead774c13db24e73
+patch link:    https://lore.kernel.org/r/20250307155556.173494-1-ashley.smith%40collabora.com
+patch subject: [PATCH] drm/panthor: Make the timeout per-queue instead of per-job
+config: i386-buildonly-randconfig-004-20250308 (https://download.01.org/0day-ci/archive/20250308/202503082339.3TzIrrex-lkp@intel.com/config)
+compiler: clang version 19.1.7 (https://github.com/llvm/llvm-project cd708029e0b2869e80abe31ddb175f7c35361f90)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250308/202503082339.3TzIrrex-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202503082339.3TzIrrex-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+   drivers/gpu/drm/panthor/panthor_sched.c:318: warning: Excess struct member 'runnable' description in 'panthor_scheduler'
+   drivers/gpu/drm/panthor/panthor_sched.c:318: warning: Excess struct member 'idle' description in 'panthor_scheduler'
+   drivers/gpu/drm/panthor/panthor_sched.c:318: warning: Excess struct member 'waiting' description in 'panthor_scheduler'
+   drivers/gpu/drm/panthor/panthor_sched.c:318: warning: Excess struct member 'has_ref' description in 'panthor_scheduler'
+   drivers/gpu/drm/panthor/panthor_sched.c:318: warning: Excess struct member 'in_progress' description in 'panthor_scheduler'
+   drivers/gpu/drm/panthor/panthor_sched.c:318: warning: Excess struct member 'stopped_groups' description in 'panthor_scheduler'
+>> drivers/gpu/drm/panthor/panthor_sched.c:493: warning: Excess struct member 'remaining' description in 'panthor_queue'
+   drivers/gpu/drm/panthor/panthor_sched.c:493: warning: Excess struct member 'mem' description in 'panthor_queue'
+   drivers/gpu/drm/panthor/panthor_sched.c:493: warning: Excess struct member 'input' description in 'panthor_queue'
+   drivers/gpu/drm/panthor/panthor_sched.c:493: warning: Excess struct member 'output' description in 'panthor_queue'
+   drivers/gpu/drm/panthor/panthor_sched.c:493: warning: Excess struct member 'input_fw_va' description in 'panthor_queue'
+   drivers/gpu/drm/panthor/panthor_sched.c:493: warning: Excess struct member 'output_fw_va' description in 'panthor_queue'
+   drivers/gpu/drm/panthor/panthor_sched.c:493: warning: Excess struct member 'gpu_va' description in 'panthor_queue'
+   drivers/gpu/drm/panthor/panthor_sched.c:493: warning: Excess struct member 'ref' description in 'panthor_queue'
+   drivers/gpu/drm/panthor/panthor_sched.c:493: warning: Excess struct member 'gt' description in 'panthor_queue'
+   drivers/gpu/drm/panthor/panthor_sched.c:493: warning: Excess struct member 'sync64' description in 'panthor_queue'
+   drivers/gpu/drm/panthor/panthor_sched.c:493: warning: Excess struct member 'bo' description in 'panthor_queue'
+   drivers/gpu/drm/panthor/panthor_sched.c:493: warning: Excess struct member 'offset' description in 'panthor_queue'
+   drivers/gpu/drm/panthor/panthor_sched.c:493: warning: Excess struct member 'kmap' description in 'panthor_queue'
+   drivers/gpu/drm/panthor/panthor_sched.c:493: warning: Excess struct member 'lock' description in 'panthor_queue'
+   drivers/gpu/drm/panthor/panthor_sched.c:493: warning: Excess struct member 'id' description in 'panthor_queue'
+   drivers/gpu/drm/panthor/panthor_sched.c:493: warning: Excess struct member 'seqno' description in 'panthor_queue'
+   drivers/gpu/drm/panthor/panthor_sched.c:493: warning: Excess struct member 'last_fence' description in 'panthor_queue'
+   drivers/gpu/drm/panthor/panthor_sched.c:493: warning: Excess struct member 'in_flight_jobs' description in 'panthor_queue'
+   drivers/gpu/drm/panthor/panthor_sched.c:493: warning: Excess struct member 'slots' description in 'panthor_queue'
+   drivers/gpu/drm/panthor/panthor_sched.c:493: warning: Excess struct member 'slot_count' description in 'panthor_queue'
+   drivers/gpu/drm/panthor/panthor_sched.c:493: warning: Excess struct member 'seqno' description in 'panthor_queue'
+   drivers/gpu/drm/panthor/panthor_sched.c:702: warning: Excess struct member 'data' description in 'panthor_group'
+   drivers/gpu/drm/panthor/panthor_sched.c:838: warning: Excess struct member 'start' description in 'panthor_job'
+   drivers/gpu/drm/panthor/panthor_sched.c:838: warning: Excess struct member 'size' description in 'panthor_job'
+   drivers/gpu/drm/panthor/panthor_sched.c:838: warning: Excess struct member 'latest_flush' description in 'panthor_job'
+   drivers/gpu/drm/panthor/panthor_sched.c:838: warning: Excess struct member 'start' description in 'panthor_job'
+   drivers/gpu/drm/panthor/panthor_sched.c:838: warning: Excess struct member 'end' description in 'panthor_job'
+   drivers/gpu/drm/panthor/panthor_sched.c:838: warning: Excess struct member 'mask' description in 'panthor_job'
+   drivers/gpu/drm/panthor/panthor_sched.c:838: warning: Excess struct member 'slot' description in 'panthor_job'
+   drivers/gpu/drm/panthor/panthor_sched.c:1832: warning: Function parameter or struct member 'ptdev' not described in 'panthor_sched_report_fw_events'
+   drivers/gpu/drm/panthor/panthor_sched.c:1832: warning: Function parameter or struct member 'events' not described in 'panthor_sched_report_fw_events'
+   drivers/gpu/drm/panthor/panthor_sched.c:2712: warning: Function parameter or struct member 'ptdev' not described in 'panthor_sched_report_mmu_fault'
+
+
+vim +493 drivers/gpu/drm/panthor/panthor_sched.c
+
+de85488138247d0 Boris Brezillon 2024-02-29  147  
+de85488138247d0 Boris Brezillon 2024-02-29  148  /**
+de85488138247d0 Boris Brezillon 2024-02-29  149   * struct panthor_scheduler - Object used to manage the scheduler
+de85488138247d0 Boris Brezillon 2024-02-29  150   */
+de85488138247d0 Boris Brezillon 2024-02-29  151  struct panthor_scheduler {
+de85488138247d0 Boris Brezillon 2024-02-29  152  	/** @ptdev: Device. */
+de85488138247d0 Boris Brezillon 2024-02-29  153  	struct panthor_device *ptdev;
+de85488138247d0 Boris Brezillon 2024-02-29  154  
+de85488138247d0 Boris Brezillon 2024-02-29  155  	/**
+de85488138247d0 Boris Brezillon 2024-02-29  156  	 * @wq: Workqueue used by our internal scheduler logic and
+de85488138247d0 Boris Brezillon 2024-02-29  157  	 * drm_gpu_scheduler.
+de85488138247d0 Boris Brezillon 2024-02-29  158  	 *
+de85488138247d0 Boris Brezillon 2024-02-29  159  	 * Used for the scheduler tick, group update or other kind of FW
+de85488138247d0 Boris Brezillon 2024-02-29  160  	 * event processing that can't be handled in the threaded interrupt
+de85488138247d0 Boris Brezillon 2024-02-29  161  	 * path. Also passed to the drm_gpu_scheduler instances embedded
+de85488138247d0 Boris Brezillon 2024-02-29  162  	 * in panthor_queue.
+de85488138247d0 Boris Brezillon 2024-02-29  163  	 */
+de85488138247d0 Boris Brezillon 2024-02-29  164  	struct workqueue_struct *wq;
+de85488138247d0 Boris Brezillon 2024-02-29  165  
+de85488138247d0 Boris Brezillon 2024-02-29  166  	/**
+de85488138247d0 Boris Brezillon 2024-02-29  167  	 * @heap_alloc_wq: Workqueue used to schedule tiler_oom works.
+de85488138247d0 Boris Brezillon 2024-02-29  168  	 *
+de85488138247d0 Boris Brezillon 2024-02-29  169  	 * We have a queue dedicated to heap chunk allocation works to avoid
+de85488138247d0 Boris Brezillon 2024-02-29  170  	 * blocking the rest of the scheduler if the allocation tries to
+de85488138247d0 Boris Brezillon 2024-02-29  171  	 * reclaim memory.
+de85488138247d0 Boris Brezillon 2024-02-29  172  	 */
+de85488138247d0 Boris Brezillon 2024-02-29  173  	struct workqueue_struct *heap_alloc_wq;
+de85488138247d0 Boris Brezillon 2024-02-29  174  
+de85488138247d0 Boris Brezillon 2024-02-29  175  	/** @tick_work: Work executed on a scheduling tick. */
+de85488138247d0 Boris Brezillon 2024-02-29  176  	struct delayed_work tick_work;
+de85488138247d0 Boris Brezillon 2024-02-29  177  
+de85488138247d0 Boris Brezillon 2024-02-29  178  	/**
+de85488138247d0 Boris Brezillon 2024-02-29  179  	 * @sync_upd_work: Work used to process synchronization object updates.
+de85488138247d0 Boris Brezillon 2024-02-29  180  	 *
+de85488138247d0 Boris Brezillon 2024-02-29  181  	 * We use this work to unblock queues/groups that were waiting on a
+de85488138247d0 Boris Brezillon 2024-02-29  182  	 * synchronization object.
+de85488138247d0 Boris Brezillon 2024-02-29  183  	 */
+de85488138247d0 Boris Brezillon 2024-02-29  184  	struct work_struct sync_upd_work;
+de85488138247d0 Boris Brezillon 2024-02-29  185  
+de85488138247d0 Boris Brezillon 2024-02-29  186  	/**
+de85488138247d0 Boris Brezillon 2024-02-29  187  	 * @fw_events_work: Work used to process FW events outside the interrupt path.
+de85488138247d0 Boris Brezillon 2024-02-29  188  	 *
+de85488138247d0 Boris Brezillon 2024-02-29  189  	 * Even if the interrupt is threaded, we need any event processing
+de85488138247d0 Boris Brezillon 2024-02-29  190  	 * that require taking the panthor_scheduler::lock to be processed
+de85488138247d0 Boris Brezillon 2024-02-29  191  	 * outside the interrupt path so we don't block the tick logic when
+de85488138247d0 Boris Brezillon 2024-02-29  192  	 * it calls panthor_fw_{csg,wait}_wait_acks(). Since most of the
+de85488138247d0 Boris Brezillon 2024-02-29  193  	 * event processing requires taking this lock, we just delegate all
+de85488138247d0 Boris Brezillon 2024-02-29  194  	 * FW event processing to the scheduler workqueue.
+de85488138247d0 Boris Brezillon 2024-02-29  195  	 */
+de85488138247d0 Boris Brezillon 2024-02-29  196  	struct work_struct fw_events_work;
+de85488138247d0 Boris Brezillon 2024-02-29  197  
+de85488138247d0 Boris Brezillon 2024-02-29  198  	/**
+de85488138247d0 Boris Brezillon 2024-02-29  199  	 * @fw_events: Bitmask encoding pending FW events.
+de85488138247d0 Boris Brezillon 2024-02-29  200  	 */
+de85488138247d0 Boris Brezillon 2024-02-29  201  	atomic_t fw_events;
+de85488138247d0 Boris Brezillon 2024-02-29  202  
+de85488138247d0 Boris Brezillon 2024-02-29  203  	/**
+de85488138247d0 Boris Brezillon 2024-02-29  204  	 * @resched_target: When the next tick should occur.
+de85488138247d0 Boris Brezillon 2024-02-29  205  	 *
+de85488138247d0 Boris Brezillon 2024-02-29  206  	 * Expressed in jiffies.
+de85488138247d0 Boris Brezillon 2024-02-29  207  	 */
+de85488138247d0 Boris Brezillon 2024-02-29  208  	u64 resched_target;
+de85488138247d0 Boris Brezillon 2024-02-29  209  
+de85488138247d0 Boris Brezillon 2024-02-29  210  	/**
+de85488138247d0 Boris Brezillon 2024-02-29  211  	 * @last_tick: When the last tick occurred.
+de85488138247d0 Boris Brezillon 2024-02-29  212  	 *
+de85488138247d0 Boris Brezillon 2024-02-29  213  	 * Expressed in jiffies.
+de85488138247d0 Boris Brezillon 2024-02-29  214  	 */
+de85488138247d0 Boris Brezillon 2024-02-29  215  	u64 last_tick;
+de85488138247d0 Boris Brezillon 2024-02-29  216  
+de85488138247d0 Boris Brezillon 2024-02-29  217  	/** @tick_period: Tick period in jiffies. */
+de85488138247d0 Boris Brezillon 2024-02-29  218  	u64 tick_period;
+de85488138247d0 Boris Brezillon 2024-02-29  219  
+de85488138247d0 Boris Brezillon 2024-02-29  220  	/**
+de85488138247d0 Boris Brezillon 2024-02-29  221  	 * @lock: Lock protecting access to all the scheduler fields.
+de85488138247d0 Boris Brezillon 2024-02-29  222  	 *
+de85488138247d0 Boris Brezillon 2024-02-29  223  	 * Should be taken in the tick work, the irq handler, and anywhere the @groups
+de85488138247d0 Boris Brezillon 2024-02-29  224  	 * fields are touched.
+de85488138247d0 Boris Brezillon 2024-02-29  225  	 */
+de85488138247d0 Boris Brezillon 2024-02-29  226  	struct mutex lock;
+de85488138247d0 Boris Brezillon 2024-02-29  227  
+de85488138247d0 Boris Brezillon 2024-02-29  228  	/** @groups: Various lists used to classify groups. */
+de85488138247d0 Boris Brezillon 2024-02-29  229  	struct {
+de85488138247d0 Boris Brezillon 2024-02-29  230  		/**
+de85488138247d0 Boris Brezillon 2024-02-29  231  		 * @runnable: Runnable group lists.
+de85488138247d0 Boris Brezillon 2024-02-29  232  		 *
+de85488138247d0 Boris Brezillon 2024-02-29  233  		 * When a group has queues that want to execute something,
+de85488138247d0 Boris Brezillon 2024-02-29  234  		 * its panthor_group::run_node should be inserted here.
+de85488138247d0 Boris Brezillon 2024-02-29  235  		 *
+de85488138247d0 Boris Brezillon 2024-02-29  236  		 * One list per-priority.
+de85488138247d0 Boris Brezillon 2024-02-29  237  		 */
+de85488138247d0 Boris Brezillon 2024-02-29  238  		struct list_head runnable[PANTHOR_CSG_PRIORITY_COUNT];
+de85488138247d0 Boris Brezillon 2024-02-29  239  
+de85488138247d0 Boris Brezillon 2024-02-29  240  		/**
+de85488138247d0 Boris Brezillon 2024-02-29  241  		 * @idle: Idle group lists.
+de85488138247d0 Boris Brezillon 2024-02-29  242  		 *
+de85488138247d0 Boris Brezillon 2024-02-29  243  		 * When all queues of a group are idle (either because they
+de85488138247d0 Boris Brezillon 2024-02-29  244  		 * have nothing to execute, or because they are blocked), the
+de85488138247d0 Boris Brezillon 2024-02-29  245  		 * panthor_group::run_node field should be inserted here.
+de85488138247d0 Boris Brezillon 2024-02-29  246  		 *
+de85488138247d0 Boris Brezillon 2024-02-29  247  		 * One list per-priority.
+de85488138247d0 Boris Brezillon 2024-02-29  248  		 */
+de85488138247d0 Boris Brezillon 2024-02-29  249  		struct list_head idle[PANTHOR_CSG_PRIORITY_COUNT];
+de85488138247d0 Boris Brezillon 2024-02-29  250  
+de85488138247d0 Boris Brezillon 2024-02-29  251  		/**
+de85488138247d0 Boris Brezillon 2024-02-29  252  		 * @waiting: List of groups whose queues are blocked on a
+de85488138247d0 Boris Brezillon 2024-02-29  253  		 * synchronization object.
+de85488138247d0 Boris Brezillon 2024-02-29  254  		 *
+de85488138247d0 Boris Brezillon 2024-02-29  255  		 * Insert panthor_group::wait_node here when a group is waiting
+de85488138247d0 Boris Brezillon 2024-02-29  256  		 * for synchronization objects to be signaled.
+de85488138247d0 Boris Brezillon 2024-02-29  257  		 *
+de85488138247d0 Boris Brezillon 2024-02-29  258  		 * This list is evaluated in the @sync_upd_work work.
+de85488138247d0 Boris Brezillon 2024-02-29  259  		 */
+de85488138247d0 Boris Brezillon 2024-02-29  260  		struct list_head waiting;
+de85488138247d0 Boris Brezillon 2024-02-29  261  	} groups;
+de85488138247d0 Boris Brezillon 2024-02-29  262  
+de85488138247d0 Boris Brezillon 2024-02-29  263  	/**
+de85488138247d0 Boris Brezillon 2024-02-29  264  	 * @csg_slots: FW command stream group slots.
+de85488138247d0 Boris Brezillon 2024-02-29  265  	 */
+de85488138247d0 Boris Brezillon 2024-02-29  266  	struct panthor_csg_slot csg_slots[MAX_CSGS];
+de85488138247d0 Boris Brezillon 2024-02-29  267  
+de85488138247d0 Boris Brezillon 2024-02-29  268  	/** @csg_slot_count: Number of command stream group slots exposed by the FW. */
+de85488138247d0 Boris Brezillon 2024-02-29  269  	u32 csg_slot_count;
+de85488138247d0 Boris Brezillon 2024-02-29  270  
+de85488138247d0 Boris Brezillon 2024-02-29  271  	/** @cs_slot_count: Number of command stream slot per group slot exposed by the FW. */
+de85488138247d0 Boris Brezillon 2024-02-29  272  	u32 cs_slot_count;
+de85488138247d0 Boris Brezillon 2024-02-29  273  
+de85488138247d0 Boris Brezillon 2024-02-29  274  	/** @as_slot_count: Number of address space slots supported by the MMU. */
+de85488138247d0 Boris Brezillon 2024-02-29  275  	u32 as_slot_count;
+de85488138247d0 Boris Brezillon 2024-02-29  276  
+de85488138247d0 Boris Brezillon 2024-02-29  277  	/** @used_csg_slot_count: Number of command stream group slot currently used. */
+de85488138247d0 Boris Brezillon 2024-02-29  278  	u32 used_csg_slot_count;
+de85488138247d0 Boris Brezillon 2024-02-29  279  
+de85488138247d0 Boris Brezillon 2024-02-29  280  	/** @sb_slot_count: Number of scoreboard slots. */
+de85488138247d0 Boris Brezillon 2024-02-29  281  	u32 sb_slot_count;
+de85488138247d0 Boris Brezillon 2024-02-29  282  
+de85488138247d0 Boris Brezillon 2024-02-29  283  	/**
+de85488138247d0 Boris Brezillon 2024-02-29  284  	 * @might_have_idle_groups: True if an active group might have become idle.
+de85488138247d0 Boris Brezillon 2024-02-29  285  	 *
+de85488138247d0 Boris Brezillon 2024-02-29  286  	 * This will force a tick, so other runnable groups can be scheduled if one
+de85488138247d0 Boris Brezillon 2024-02-29  287  	 * or more active groups became idle.
+de85488138247d0 Boris Brezillon 2024-02-29  288  	 */
+de85488138247d0 Boris Brezillon 2024-02-29  289  	bool might_have_idle_groups;
+de85488138247d0 Boris Brezillon 2024-02-29  290  
+de85488138247d0 Boris Brezillon 2024-02-29  291  	/** @pm: Power management related fields. */
+de85488138247d0 Boris Brezillon 2024-02-29  292  	struct {
+de85488138247d0 Boris Brezillon 2024-02-29  293  		/** @has_ref: True if the scheduler owns a runtime PM reference. */
+de85488138247d0 Boris Brezillon 2024-02-29  294  		bool has_ref;
+de85488138247d0 Boris Brezillon 2024-02-29  295  	} pm;
+de85488138247d0 Boris Brezillon 2024-02-29  296  
+de85488138247d0 Boris Brezillon 2024-02-29  297  	/** @reset: Reset related fields. */
+de85488138247d0 Boris Brezillon 2024-02-29  298  	struct {
+de85488138247d0 Boris Brezillon 2024-02-29  299  		/** @lock: Lock protecting the other reset fields. */
+de85488138247d0 Boris Brezillon 2024-02-29  300  		struct mutex lock;
+de85488138247d0 Boris Brezillon 2024-02-29  301  
+de85488138247d0 Boris Brezillon 2024-02-29  302  		/**
+de85488138247d0 Boris Brezillon 2024-02-29  303  		 * @in_progress: True if a reset is in progress.
+de85488138247d0 Boris Brezillon 2024-02-29  304  		 *
+de85488138247d0 Boris Brezillon 2024-02-29  305  		 * Set to true in panthor_sched_pre_reset() and back to false in
+de85488138247d0 Boris Brezillon 2024-02-29  306  		 * panthor_sched_post_reset().
+de85488138247d0 Boris Brezillon 2024-02-29  307  		 */
+de85488138247d0 Boris Brezillon 2024-02-29  308  		atomic_t in_progress;
+de85488138247d0 Boris Brezillon 2024-02-29  309  
+de85488138247d0 Boris Brezillon 2024-02-29  310  		/**
+de85488138247d0 Boris Brezillon 2024-02-29  311  		 * @stopped_groups: List containing all groups that were stopped
+de85488138247d0 Boris Brezillon 2024-02-29  312  		 * before a reset.
+de85488138247d0 Boris Brezillon 2024-02-29  313  		 *
+de85488138247d0 Boris Brezillon 2024-02-29  314  		 * Insert panthor_group::run_node in the pre_reset path.
+de85488138247d0 Boris Brezillon 2024-02-29  315  		 */
+de85488138247d0 Boris Brezillon 2024-02-29  316  		struct list_head stopped_groups;
+de85488138247d0 Boris Brezillon 2024-02-29  317  	} reset;
+de85488138247d0 Boris Brezillon 2024-02-29 @318  };
+de85488138247d0 Boris Brezillon 2024-02-29  319  
+de85488138247d0 Boris Brezillon 2024-02-29  320  /**
+de85488138247d0 Boris Brezillon 2024-02-29  321   * struct panthor_syncobj_32b - 32-bit FW synchronization object
+de85488138247d0 Boris Brezillon 2024-02-29  322   */
+de85488138247d0 Boris Brezillon 2024-02-29  323  struct panthor_syncobj_32b {
+de85488138247d0 Boris Brezillon 2024-02-29  324  	/** @seqno: Sequence number. */
+de85488138247d0 Boris Brezillon 2024-02-29  325  	u32 seqno;
+de85488138247d0 Boris Brezillon 2024-02-29  326  
+de85488138247d0 Boris Brezillon 2024-02-29  327  	/**
+de85488138247d0 Boris Brezillon 2024-02-29  328  	 * @status: Status.
+de85488138247d0 Boris Brezillon 2024-02-29  329  	 *
+de85488138247d0 Boris Brezillon 2024-02-29  330  	 * Not zero on failure.
+de85488138247d0 Boris Brezillon 2024-02-29  331  	 */
+de85488138247d0 Boris Brezillon 2024-02-29  332  	u32 status;
+de85488138247d0 Boris Brezillon 2024-02-29  333  };
+de85488138247d0 Boris Brezillon 2024-02-29  334  
+de85488138247d0 Boris Brezillon 2024-02-29  335  /**
+de85488138247d0 Boris Brezillon 2024-02-29  336   * struct panthor_syncobj_64b - 64-bit FW synchronization object
+de85488138247d0 Boris Brezillon 2024-02-29  337   */
+de85488138247d0 Boris Brezillon 2024-02-29  338  struct panthor_syncobj_64b {
+de85488138247d0 Boris Brezillon 2024-02-29  339  	/** @seqno: Sequence number. */
+de85488138247d0 Boris Brezillon 2024-02-29  340  	u64 seqno;
+de85488138247d0 Boris Brezillon 2024-02-29  341  
+de85488138247d0 Boris Brezillon 2024-02-29  342  	/**
+de85488138247d0 Boris Brezillon 2024-02-29  343  	 * @status: Status.
+de85488138247d0 Boris Brezillon 2024-02-29  344  	 *
+de85488138247d0 Boris Brezillon 2024-02-29  345  	 * Not zero on failure.
+de85488138247d0 Boris Brezillon 2024-02-29  346  	 */
+de85488138247d0 Boris Brezillon 2024-02-29  347  	u32 status;
+de85488138247d0 Boris Brezillon 2024-02-29  348  
+de85488138247d0 Boris Brezillon 2024-02-29  349  	/** @pad: MBZ. */
+de85488138247d0 Boris Brezillon 2024-02-29  350  	u32 pad;
+de85488138247d0 Boris Brezillon 2024-02-29  351  };
+de85488138247d0 Boris Brezillon 2024-02-29  352  
+de85488138247d0 Boris Brezillon 2024-02-29  353  /**
+de85488138247d0 Boris Brezillon 2024-02-29  354   * struct panthor_queue - Execution queue
+de85488138247d0 Boris Brezillon 2024-02-29  355   */
+de85488138247d0 Boris Brezillon 2024-02-29  356  struct panthor_queue {
+de85488138247d0 Boris Brezillon 2024-02-29  357  	/** @scheduler: DRM scheduler used for this queue. */
+de85488138247d0 Boris Brezillon 2024-02-29  358  	struct drm_gpu_scheduler scheduler;
+de85488138247d0 Boris Brezillon 2024-02-29  359  
+de85488138247d0 Boris Brezillon 2024-02-29  360  	/** @entity: DRM scheduling entity used for this queue. */
+de85488138247d0 Boris Brezillon 2024-02-29  361  	struct drm_sched_entity entity;
+de85488138247d0 Boris Brezillon 2024-02-29  362  
+b571025809e4350 Ashley Smith    2025-03-07  363  	/** @timeout: Queue timeout related fields. */
+b571025809e4350 Ashley Smith    2025-03-07  364  	struct {
+b571025809e4350 Ashley Smith    2025-03-07  365  		/** @timeout.work: Work executed when a queue timeout occurs. */
+b571025809e4350 Ashley Smith    2025-03-07  366  		struct delayed_work work;
+b571025809e4350 Ashley Smith    2025-03-07  367  
+de85488138247d0 Boris Brezillon 2024-02-29  368  		/**
+b571025809e4350 Ashley Smith    2025-03-07  369  		 * @remaining: Time remaining before a queue timeout.
+de85488138247d0 Boris Brezillon 2024-02-29  370  		 *
+b571025809e4350 Ashley Smith    2025-03-07  371  		 * When the timer is running, this value is set to MAX_SCHEDULE_TIMEOUT.
+b571025809e4350 Ashley Smith    2025-03-07  372  		 * When the timer is suspended, it's set to the time remaining when the
+b571025809e4350 Ashley Smith    2025-03-07  373  		 * timer was suspended.
+de85488138247d0 Boris Brezillon 2024-02-29  374  		 */
+b571025809e4350 Ashley Smith    2025-03-07  375  		unsigned long remaining;
+b571025809e4350 Ashley Smith    2025-03-07  376  	} timeout;
+de85488138247d0 Boris Brezillon 2024-02-29  377  
+de85488138247d0 Boris Brezillon 2024-02-29  378  	/**
+de85488138247d0 Boris Brezillon 2024-02-29  379  	 * @doorbell_id: Doorbell assigned to this queue.
+de85488138247d0 Boris Brezillon 2024-02-29  380  	 *
+de85488138247d0 Boris Brezillon 2024-02-29  381  	 * Right now, all groups share the same doorbell, and the doorbell ID
+de85488138247d0 Boris Brezillon 2024-02-29  382  	 * is assigned to group_slot + 1 when the group is assigned a slot. But
+de85488138247d0 Boris Brezillon 2024-02-29  383  	 * we might decide to provide fine grained doorbell assignment at some
+de85488138247d0 Boris Brezillon 2024-02-29  384  	 * point, so don't have to wake up all queues in a group every time one
+de85488138247d0 Boris Brezillon 2024-02-29  385  	 * of them is updated.
+de85488138247d0 Boris Brezillon 2024-02-29  386  	 */
+de85488138247d0 Boris Brezillon 2024-02-29  387  	u8 doorbell_id;
+de85488138247d0 Boris Brezillon 2024-02-29  388  
+de85488138247d0 Boris Brezillon 2024-02-29  389  	/**
+de85488138247d0 Boris Brezillon 2024-02-29  390  	 * @priority: Priority of the queue inside the group.
+de85488138247d0 Boris Brezillon 2024-02-29  391  	 *
+de85488138247d0 Boris Brezillon 2024-02-29  392  	 * Must be less than 16 (Only 4 bits available).
+de85488138247d0 Boris Brezillon 2024-02-29  393  	 */
+de85488138247d0 Boris Brezillon 2024-02-29  394  	u8 priority;
+de85488138247d0 Boris Brezillon 2024-02-29  395  #define CSF_MAX_QUEUE_PRIO	GENMASK(3, 0)
+de85488138247d0 Boris Brezillon 2024-02-29  396  
+de85488138247d0 Boris Brezillon 2024-02-29  397  	/** @ringbuf: Command stream ring-buffer. */
+de85488138247d0 Boris Brezillon 2024-02-29  398  	struct panthor_kernel_bo *ringbuf;
+de85488138247d0 Boris Brezillon 2024-02-29  399  
+de85488138247d0 Boris Brezillon 2024-02-29  400  	/** @iface: Firmware interface. */
+de85488138247d0 Boris Brezillon 2024-02-29  401  	struct {
+de85488138247d0 Boris Brezillon 2024-02-29  402  		/** @mem: FW memory allocated for this interface. */
+de85488138247d0 Boris Brezillon 2024-02-29  403  		struct panthor_kernel_bo *mem;
+de85488138247d0 Boris Brezillon 2024-02-29  404  
+de85488138247d0 Boris Brezillon 2024-02-29  405  		/** @input: Input interface. */
+de85488138247d0 Boris Brezillon 2024-02-29  406  		struct panthor_fw_ringbuf_input_iface *input;
+de85488138247d0 Boris Brezillon 2024-02-29  407  
+de85488138247d0 Boris Brezillon 2024-02-29  408  		/** @output: Output interface. */
+de85488138247d0 Boris Brezillon 2024-02-29  409  		const struct panthor_fw_ringbuf_output_iface *output;
+de85488138247d0 Boris Brezillon 2024-02-29  410  
+de85488138247d0 Boris Brezillon 2024-02-29  411  		/** @input_fw_va: FW virtual address of the input interface buffer. */
+de85488138247d0 Boris Brezillon 2024-02-29  412  		u32 input_fw_va;
+de85488138247d0 Boris Brezillon 2024-02-29  413  
+de85488138247d0 Boris Brezillon 2024-02-29  414  		/** @output_fw_va: FW virtual address of the output interface buffer. */
+de85488138247d0 Boris Brezillon 2024-02-29  415  		u32 output_fw_va;
+de85488138247d0 Boris Brezillon 2024-02-29  416  	} iface;
+de85488138247d0 Boris Brezillon 2024-02-29  417  
+de85488138247d0 Boris Brezillon 2024-02-29  418  	/**
+de85488138247d0 Boris Brezillon 2024-02-29  419  	 * @syncwait: Stores information about the synchronization object this
+de85488138247d0 Boris Brezillon 2024-02-29  420  	 * queue is waiting on.
+de85488138247d0 Boris Brezillon 2024-02-29  421  	 */
+de85488138247d0 Boris Brezillon 2024-02-29  422  	struct {
+de85488138247d0 Boris Brezillon 2024-02-29  423  		/** @gpu_va: GPU address of the synchronization object. */
+de85488138247d0 Boris Brezillon 2024-02-29  424  		u64 gpu_va;
+de85488138247d0 Boris Brezillon 2024-02-29  425  
+de85488138247d0 Boris Brezillon 2024-02-29  426  		/** @ref: Reference value to compare against. */
+de85488138247d0 Boris Brezillon 2024-02-29  427  		u64 ref;
+de85488138247d0 Boris Brezillon 2024-02-29  428  
+de85488138247d0 Boris Brezillon 2024-02-29  429  		/** @gt: True if this is a greater-than test. */
+de85488138247d0 Boris Brezillon 2024-02-29  430  		bool gt;
+de85488138247d0 Boris Brezillon 2024-02-29  431  
+de85488138247d0 Boris Brezillon 2024-02-29  432  		/** @sync64: True if this is a 64-bit sync object. */
+de85488138247d0 Boris Brezillon 2024-02-29  433  		bool sync64;
+de85488138247d0 Boris Brezillon 2024-02-29  434  
+de85488138247d0 Boris Brezillon 2024-02-29  435  		/** @bo: Buffer object holding the synchronization object. */
+de85488138247d0 Boris Brezillon 2024-02-29  436  		struct drm_gem_object *obj;
+de85488138247d0 Boris Brezillon 2024-02-29  437  
+de85488138247d0 Boris Brezillon 2024-02-29  438  		/** @offset: Offset of the synchronization object inside @bo. */
+de85488138247d0 Boris Brezillon 2024-02-29  439  		u64 offset;
+de85488138247d0 Boris Brezillon 2024-02-29  440  
+de85488138247d0 Boris Brezillon 2024-02-29  441  		/**
+de85488138247d0 Boris Brezillon 2024-02-29  442  		 * @kmap: Kernel mapping of the buffer object holding the
+de85488138247d0 Boris Brezillon 2024-02-29  443  		 * synchronization object.
+de85488138247d0 Boris Brezillon 2024-02-29  444  		 */
+de85488138247d0 Boris Brezillon 2024-02-29  445  		void *kmap;
+de85488138247d0 Boris Brezillon 2024-02-29  446  	} syncwait;
+de85488138247d0 Boris Brezillon 2024-02-29  447  
+de85488138247d0 Boris Brezillon 2024-02-29  448  	/** @fence_ctx: Fence context fields. */
+de85488138247d0 Boris Brezillon 2024-02-29  449  	struct {
+de85488138247d0 Boris Brezillon 2024-02-29  450  		/** @lock: Used to protect access to all fences allocated by this context. */
+de85488138247d0 Boris Brezillon 2024-02-29  451  		spinlock_t lock;
+de85488138247d0 Boris Brezillon 2024-02-29  452  
+de85488138247d0 Boris Brezillon 2024-02-29  453  		/**
+de85488138247d0 Boris Brezillon 2024-02-29  454  		 * @id: Fence context ID.
+de85488138247d0 Boris Brezillon 2024-02-29  455  		 *
+de85488138247d0 Boris Brezillon 2024-02-29  456  		 * Allocated with dma_fence_context_alloc().
+de85488138247d0 Boris Brezillon 2024-02-29  457  		 */
+de85488138247d0 Boris Brezillon 2024-02-29  458  		u64 id;
+de85488138247d0 Boris Brezillon 2024-02-29  459  
+de85488138247d0 Boris Brezillon 2024-02-29  460  		/** @seqno: Sequence number of the last initialized fence. */
+de85488138247d0 Boris Brezillon 2024-02-29  461  		atomic64_t seqno;
+de85488138247d0 Boris Brezillon 2024-02-29  462  
+7b6f9ec6ad51125 Boris Brezillon 2024-07-03  463  		/**
+7b6f9ec6ad51125 Boris Brezillon 2024-07-03  464  		 * @last_fence: Fence of the last submitted job.
+7b6f9ec6ad51125 Boris Brezillon 2024-07-03  465  		 *
+7b6f9ec6ad51125 Boris Brezillon 2024-07-03  466  		 * We return this fence when we get an empty command stream.
+7b6f9ec6ad51125 Boris Brezillon 2024-07-03  467  		 * This way, we are guaranteed that all earlier jobs have completed
+7b6f9ec6ad51125 Boris Brezillon 2024-07-03  468  		 * when drm_sched_job::s_fence::finished without having to feed
+7b6f9ec6ad51125 Boris Brezillon 2024-07-03  469  		 * the CS ring buffer with a dummy job that only signals the fence.
+7b6f9ec6ad51125 Boris Brezillon 2024-07-03  470  		 */
+7b6f9ec6ad51125 Boris Brezillon 2024-07-03  471  		struct dma_fence *last_fence;
+7b6f9ec6ad51125 Boris Brezillon 2024-07-03  472  
+de85488138247d0 Boris Brezillon 2024-02-29  473  		/**
+de85488138247d0 Boris Brezillon 2024-02-29  474  		 * @in_flight_jobs: List containing all in-flight jobs.
+de85488138247d0 Boris Brezillon 2024-02-29  475  		 *
+de85488138247d0 Boris Brezillon 2024-02-29  476  		 * Used to keep track and signal panthor_job::done_fence when the
+de85488138247d0 Boris Brezillon 2024-02-29  477  		 * synchronization object attached to the queue is signaled.
+de85488138247d0 Boris Brezillon 2024-02-29  478  		 */
+de85488138247d0 Boris Brezillon 2024-02-29  479  		struct list_head in_flight_jobs;
+de85488138247d0 Boris Brezillon 2024-02-29  480  	} fence_ctx;
+f8ff51a47084517 Adrián Larumbe  2024-09-24  481  
+f8ff51a47084517 Adrián Larumbe  2024-09-24  482  	/** @profiling: Job profiling data slots and access information. */
+f8ff51a47084517 Adrián Larumbe  2024-09-24  483  	struct {
+f8ff51a47084517 Adrián Larumbe  2024-09-24  484  		/** @slots: Kernel BO holding the slots. */
+f8ff51a47084517 Adrián Larumbe  2024-09-24  485  		struct panthor_kernel_bo *slots;
+f8ff51a47084517 Adrián Larumbe  2024-09-24  486  
+f8ff51a47084517 Adrián Larumbe  2024-09-24  487  		/** @slot_count: Number of jobs ringbuffer can hold at once. */
+f8ff51a47084517 Adrián Larumbe  2024-09-24  488  		u32 slot_count;
+f8ff51a47084517 Adrián Larumbe  2024-09-24  489  
+f8ff51a47084517 Adrián Larumbe  2024-09-24  490  		/** @seqno: Index of the next available profiling information slot. */
+f8ff51a47084517 Adrián Larumbe  2024-09-24  491  		u32 seqno;
+f8ff51a47084517 Adrián Larumbe  2024-09-24  492  	} profiling;
+de85488138247d0 Boris Brezillon 2024-02-29 @493  };
+de85488138247d0 Boris Brezillon 2024-02-29  494  
 
 -- 
-With best wishes
-Dmitry
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
