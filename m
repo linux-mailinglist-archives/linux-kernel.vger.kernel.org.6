@@ -1,128 +1,228 @@
-Return-Path: <linux-kernel+bounces-552647-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-552648-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C36DA57C3D
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 18:09:07 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 77143A57C49
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 18:19:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CFFF53A9CEB
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 17:08:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B9BF7188BB3E
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 17:20:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C4D51E3DD7;
-	Sat,  8 Mar 2025 17:08:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37B161C6FF1;
+	Sat,  8 Mar 2025 17:19:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ENzzTTAw"
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MrnmAze8"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0410D383A2;
-	Sat,  8 Mar 2025 17:08:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 662591537A7;
+	Sat,  8 Mar 2025 17:19:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741453736; cv=none; b=XYj+BRwgcKP8Sv8H4jILYuxqmHT0G6go8MFenpIO3Z074mkRTBkuTGir2T5jULIHOprElQSpzrjbHC3l6wJxTe5zyJT/pe0W18iirgp43UlMGizbkZ1mX5GMzM5YQnIcY31utNWj7LDTB93ds5BU0ZjfqwF6Ik83H2xgFcxcofo=
+	t=1741454385; cv=none; b=RUsbfMO0jUNIjyo3GibA1gAZE/XtshG4KsUT2g+8O5B8ehDo8cQDijbsDtXW+psJlUIzWcqxoempw/LcActR85Erc6hX20ZGhDsALQLLMQtjjaJZmLpcHs14YShwPirbKVklnRuZzEMA7hPbMXEOnsNTLFYH8NFKvH/ZZCYIbaM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741453736; c=relaxed/simple;
-	bh=YrA7wd8n7NLqEVAxegd9y+Av4QEBqHIaZpXSN7Muc+w=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DEF6dcvRyq34MaveM30oR+xHvIJEwr3jLDaN4bylEjNn+xQPXl6yfXFu7AL+uRgoN1mV3xI+NtZxOaDUK7Jcb39Q26yw/ifyj+1A7oTXi26NWqvm/GTLhM+GT3kcVjEoWrmNB6H5T3BMQofSW6QjvkjoEgUyagI3H/6FKe1J9Dg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ENzzTTAw; arc=none smtp.client-ip=209.85.214.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-224341bbc1dso23699175ad.3;
-        Sat, 08 Mar 2025 09:08:54 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741453734; x=1742058534; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=4IcMf84uhZ1TJoFOuLgOfVe7+B4onn10+WD0mzIT9m4=;
-        b=ENzzTTAwRBwxma4dIAk3Xuti416AORrZnEtmJD7N8fsRX+HVZV882Kw774b8UP+8iV
-         u6qhD69DmObqgC/mLyV9ZefdrWeeCGY1WaKzsMDHFe0s8mPOIdFt1tVFjbVpyvT4EuCE
-         r9R3q4YblY8lmmyEA0BQKZYntBVlpL0XkRy+C/gky4q1F9ujIYFf72UzMB8x6c51haRT
-         JmsocNEQ6jvgmke5ZmapC5OxnDYXS6p2ZfFy4kUV3QJyabJeQvo5PMi9nNrTJUN0MKWe
-         0CSKtXEqGl6GRbaEwS4akZX+IPZssoyS8hnDRnKK+zkoubqRHCWdWvyb16s+77oKDJyB
-         FtTw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741453734; x=1742058534;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=4IcMf84uhZ1TJoFOuLgOfVe7+B4onn10+WD0mzIT9m4=;
-        b=RzZf1RVpK3IUGpntmJL7I5NY/ov/3K+QjVe/GYWvkGAopE7+IPN4nodNP5xRo6/JNt
-         CGwvZ8mnJGV/0ANrSi78tnUqq3rBknHzzILXzKZUqv2MLkLjfrMZC7CeoG+AO0zJejdz
-         2XDqJYTfvytXhuXOznaMJR6XLOEY3hnUC5lpvF0WvJsUORDFvWz4KgfYisQ6h3RGcAP4
-         jboFNn3LUrnuQAFXPaNs6Z2Yd+KQP70IgKwB7qfUss7kw0ZfNY/Dr/U3i6oMgU+Enod/
-         ShTRkHjuwe5P9VscF+KCa8nrk2Oe7sYKWbQ1C4wBRZUPytaeVcBE+R8uZPZMqqj6KcxK
-         OC6w==
-X-Forwarded-Encrypted: i=1; AJvYcCUuQUWpx3GTfVp1YTaYgqX6XGwgQfarN4YVMA3azqLSBno/LZzFdB4WFrieItq9bIDP4Q32UzpDUbQ=@vger.kernel.org, AJvYcCVI5bp5UB+CivUqCYaKKvIEjVdUDfcdJzYwnc9uaNdmOLcp09rcP1h29md4ciCJ4hySycZa1SzfDGaxzWPcTZQI@vger.kernel.org, AJvYcCX9IXE+h+rT0ueZ1ghXNGRzwN5fWZSQBjyRVpTaayuKbkg2al0Kgk4mg+DRvEjx4ijhKqJOeKlI@vger.kernel.org, AJvYcCXjBMdWkxBMR/Hd8JCdwQaxvdSjitqH23OD0KbM0Zt6iFTXHD7khCWhHBQ3YC9o4fMwk9j8GlPY3fRIfj9Q@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy6mIWEKy7BuQBd1rpViUwkjm32qBvfeCEoRtPO8q8vqF5VzmKq
-	7yuXlnNcZz7x3t3sDRqZNq3pboJktkO9fs+Klm+nKw1+LmtF63w=
-X-Gm-Gg: ASbGncvaxlvOBZtA4Sno2DFHt7rsBiGXpd4/6/GTuSlOA3Es6uMNIBsQa73NgUexMRe
-	QUIihyfUrpp/Lwul/agvTeGZdrsngGkEuvUd3fTWFLXDEZDDBOfP3nlqQban9xmplB3LNAsSlrY
-	6QaJ7h4shDMiX4EkFMj9FXif0Qx6HYZcIYe5dbYpQDPuoEsDMEqVTcutfcPDrJ2T1ZFnWjNsgHl
-	bJemhruvf4SYrpGi7jP7lk6LbpxNB8puYdLkI9betjDKPlTJXyHn7Z3NZ17lVrk3ITbGvHs2lIh
-	m+sq9wRmkgps8ufJ7X/7AR8Z4uObhp9v9Gp0h7yxYaDY
-X-Google-Smtp-Source: AGHT+IFRZHlbgFDOueySaqdPee3EawbUTko5dKs36Wbsu+tzE6PWqif1pLkL8NZFxLhvNX2+zZW8Vw==
-X-Received: by 2002:a17:902:f78d:b0:223:5ada:88ff with SMTP id d9443c01a7336-2242889d1c3mr140941825ad.24.1741453734162;
-        Sat, 08 Mar 2025 09:08:54 -0800 (PST)
-Received: from localhost ([2601:646:9e00:f56e:2844:3d8f:bf3e:12cc])
-        by smtp.gmail.com with UTF8SMTPSA id d9443c01a7336-22410a7fa3csm48879285ad.110.2025.03.08.09.08.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 08 Mar 2025 09:08:53 -0800 (PST)
-Date: Sat, 8 Mar 2025 09:08:52 -0800
-From: Stanislav Fomichev <stfomichev@gmail.com>
-To: Eric Dumazet <edumazet@google.com>
-Cc: Stanislav Fomichev <sdf@fomichev.me>, netdev@vger.kernel.org,
-	davem@davemloft.net, kuba@kernel.org, pabeni@redhat.com,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
-	horms@kernel.org, corbet@lwn.net, andrew+netdev@lunn.ch,
-	pablo@netfilter.org, kadlec@netfilter.org
-Subject: Re: [PATCH net-next] net: revert to lockless TC_SETUP_BLOCK and
- TC_SETUP_FT
-Message-ID: <Z8x5pI0suqOiZPId@mini-arch>
-References: <20250308044726.1193222-1-sdf@fomichev.me>
- <CANn89iLV6mLh8mWhYket7gBWTX+3TcCrJDA4EU5YU4ebV2nPYw@mail.gmail.com>
+	s=arc-20240116; t=1741454385; c=relaxed/simple;
+	bh=WIXPEAfYW6XziCXxNrSUx8MTO0qn8BfggsX4aIVdclE=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=SLMK4igxRIUTpG3f23+eLJHL0K6KEuyGDMIOV7z8v87i6Tgvj+uJDHvdSVa+tehq9kRZm+pL3gqEIC3rfeol8TcZ3f7cHPckzT1Ajg3Cfrx4NElO3Zx4Sye4h95hJEkafvv8qbyUcoP+hX7G2chs2jcwLiUQ4EHqLwF3Y53OSQA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MrnmAze8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 392D4C4CEE0;
+	Sat,  8 Mar 2025 17:19:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741454384;
+	bh=WIXPEAfYW6XziCXxNrSUx8MTO0qn8BfggsX4aIVdclE=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=MrnmAze88WmBN/BzwaskCEYUl/E7BBXL4zio3IYdhby50e3KiZaPauGIURpacE/Dw
+	 UBb+o9RKvUtD8FZcx+9DBz69KbwMmZvn2ADR3VrAbBy/2I1GDssGYJO/4K4wzG8GHO
+	 ZNbnsL1ebkV6GXU+0h1iUkYgnp4fYYw0r6cpHTSamn2fJL7YrK3H+DbBSVhBrHd79z
+	 4+8kH/U1hj2tQWYIYiWfT6rJ+xAVemaQUqHdmxSzu99yAMjBKruAuTJ6pwXAwXukK4
+	 3H6s/bCklWlVZPO+/buxuUFR+Kh2tQE6JcuTP6m2tyv9PI3eg6FIP25uHYQWvuJQmp
+	 EmH1Nmlv0ciDg==
+Date: Sat, 8 Mar 2025 17:19:32 +0000
+From: Jonathan Cameron <jic23@kernel.org>
+To: Svyatoslav Ryhel <clamor95@gmail.com>
+Cc: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof
+ Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+ Lars-Peter Clausen <lars@metafoo.de>, Pavel Machek <pavel@ucw.cz>, Daniel
+ Thompson <danielt@kernel.org>, Jingoo Han <jingoohan1@gmail.com>, Helge
+ Deller <deller@gmx.de>, Andy Shevchenko
+ <andriy.shevchenko@linux.intel.com>, Uwe =?UTF-8?B?S2xlaW5lLUvDtm5pZw==?=
+ <u.kleine-koenig@baylibre.com>, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org,
+ linux-leds@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ linux-fbdev@vger.kernel.org
+Subject: Re: [PATCH v3 2/2] mfd: lm3533: convert to use OF
+Message-ID: <20250308171932.2a5f0a9b@jic23-huawei>
+In-Reply-To: <CAPVz0n3Qt00my1ejoyEgxTRi-mQszHybwhPq70eO=94oxMfECQ@mail.gmail.com>
+References: <20250224114815.146053-1-clamor95@gmail.com>
+	<20250224114815.146053-3-clamor95@gmail.com>
+	<20250228085927.GM824852@google.com>
+	<CAPVz0n0jaR=UM7WbBs3zM-cZzuaPVWBjf4Q7i82hvxtXg2oCzQ@mail.gmail.com>
+	<20250305134455.2843f603@jic23-huawei>
+	<CAPVz0n3Qt00my1ejoyEgxTRi-mQszHybwhPq70eO=94oxMfECQ@mail.gmail.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.48; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CANn89iLV6mLh8mWhYket7gBWTX+3TcCrJDA4EU5YU4ebV2nPYw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-On 03/08, Eric Dumazet wrote:
-> On Sat, Mar 8, 2025 at 5:47 AM Stanislav Fomichev <sdf@fomichev.me> wrote:
-> >
-> > There is a couple of places from which we can arrive to ndo_setup_tc
-> > with TC_SETUP_BLOCK/TC_SETUP_FT:
-> > - netlink
-> > - netlink notifier
-> > - netdev notifier
-> >
-> > Locking netdev too deep in this call chain seems to be problematic
-> > (especially assuming some/all of the call_netdevice_notifiers
-> > NETDEV_UNREGISTER) might soon be running with the instance lock).
-> > Revert to lockless ndo_setup_tc for TC_SETUP_BLOCK/TC_SETUP_FT. NFT
-> > framework already takes care of most of the locking. Document
-> > the assumptions.
-> >
-> 
-> 
-> >
-> > Fixes: c4f0f30b424e ("net: hold netdev instance lock during nft ndo_setup_tc")
-> > Signed-off-by: Stanislav Fomichev <sdf@fomichev.me>
-> 
-> I think you forgot to mention syzbot.
-> 
-> Reported-by: syzbot+0afb4bcf91e5a1afdcad@syzkaller.appspotmail.com
-> Closes: https://lore.kernel.org/netdev/67cb88d1.050a0220.d8275.022d.GAE@google.com/T/#u
+On Wed, 5 Mar 2025 16:18:38 +0200
+Svyatoslav Ryhel <clamor95@gmail.com> wrote:
 
-Ah, yes, I was waiting for a repro, but should have attached the proper
-tags, thanks!
+> =D1=81=D1=80, 5 =D0=B1=D0=B5=D1=80. 2025=E2=80=AF=D1=80. =D0=BE 15:45 Jon=
+athan Cameron <jic23@kernel.org> =D0=BF=D0=B8=D1=88=D0=B5:
+> >
+> > On Fri, 28 Feb 2025 11:30:51 +0200
+> > Svyatoslav Ryhel <clamor95@gmail.com> wrote:
+> > =20
+> > > =D0=BF=D1=82, 28 =D0=BB=D1=8E=D1=82. 2025=E2=80=AF=D1=80. =D0=BE 10:5=
+9 Lee Jones <lee@kernel.org> =D0=BF=D0=B8=D1=88=D0=B5: =20
+> > > >
+> > > > On Mon, 24 Feb 2025, Svyatoslav Ryhel wrote:
+> > > > =20
+> > > > > Remove platform data and fully relay on OF and device tree
+> > > > > parsing and binding devices.
+> > > > >
+> > > > > Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
+> > > > > ---
+> > > > >  drivers/iio/light/lm3533-als.c      |  40 ++++---
+> > > > >  drivers/leds/leds-lm3533.c          |  46 +++++---
+> > > > >  drivers/mfd/lm3533-core.c           | 159 ++++++++--------------=
+------
+> > > > >  drivers/video/backlight/lm3533_bl.c |  71 ++++++++++---
+> > > > >  include/linux/mfd/lm3533.h          |  35 +-----
+> > > > >  5 files changed, 164 insertions(+), 187 deletions(-)
+> > > > > =20
+> ...
+> > > > >       /* ALS input is always high impedance in PWM-mode. */
+> > > > > -     if (!pdata->pwm_mode) {
+> > > > > -             ret =3D lm3533_als_set_resistor(als, pdata->r_selec=
+t);
+> > > > > +     if (!als->pwm_mode) {
+> > > > > +             ret =3D lm3533_als_set_resistor(als, als->r_select)=
+; =20
+> > > >
+> > > > You're already passing 'als'.
+> > > >
+> > > > Just teach lm3533_als_set_resistor that 'r_select' is now contained.
+> > > > =20
+> > >
+> > > This is not scope of this patchset. I was already accused in too much
+> > > changes which make it unreadable. This patchset is dedicated to
+> > > swapping platform data to use of the device tree. NOT improving
+> > > functions, NOT rewriting arbitrary mechanics. If you feed a need for
+> > > this change, then propose a followup. I need from this driver only one
+> > > thing, that it could work with device tree. But it seems that it is
+> > > better that it just rots in the garbage bin until removed cause no one
+> > > cared. =20
+> >
+> > This is not an unreasonable request as you added r_select to als.
+> > Perhaps it belongs in a separate follow up patch. =20
+>=20
+> I have just moved values used in pdata to private structs of each
+> driver. Without changing names or purpose.
+>=20
+> > However
+> > it is worth remembering the motivation here is that you want get
+> > this code upstream, the maintainers don't have that motivation. =20
+>=20
+> This driver is already upstream and it is useless and incompatible
+> with majority of supported devices. Maintainers should encourage those
+> who try to help and instead we have what? A total discouragement. Well
+> defined path into nowhere.
+
+That is not how I read the situation. A simple request was made to
+result in more maintainable code as a direct result of that
+improvement being enabled by code changes you were making.
+I'm sorry to hear that discouraged you.
+
+>=20
+> >
+> > Greg KH has given various talks on the different motivations in the
+> > past. It maybe worth a watch.
+> >
+> > =20
+> > > =20
+> > > > >               if (ret)
+> > > > >                       return ret;
+> > > > >       }
+> > > > > @@ -828,22 +833,16 @@ static const struct iio_info lm3533_als_inf=
+o =3D {
+> > > > >
+> > > > >  static int lm3533_als_probe(struct platform_device *pdev)
+> > > > >  {
+> > > > > -     const struct lm3533_als_platform_data *pdata;
+> > > > >       struct lm3533 *lm3533;
+> > > > >       struct lm3533_als *als;
+> > > > >       struct iio_dev *indio_dev;
+> > > > > +     u32 val; =20
+> > > >
+> > > > Value of what, potatoes?
+> > > > =20
+> > >
+> > > Oranges. =20
+> >
+> > A well named variable would avoid need for any discussion of
+> > what it is the value of.
+> > =20
+>=20
+> This is temporary placeholder used to get values from the tree and
+> then pass it driver struct.
+
+Better if it is a temporary placeholder with a meaningful name.
+
+>=20
+> > > =20
+> > > > >       int ret;
+> > > > >
+> > > > >       lm3533 =3D dev_get_drvdata(pdev->dev.parent);
+> > > > >       if (!lm3533)
+> > > > >               return -EINVAL;
+> > > > >
+> > > > > -     pdata =3D dev_get_platdata(&pdev->dev);
+> > > > > -     if (!pdata) {
+> > > > > -             dev_err(&pdev->dev, "no platform data\n");
+> > > > > -             return -EINVAL;
+> > > > > -     }
+> > > > > -
+> > > > >       indio_dev =3D devm_iio_device_alloc(&pdev->dev, sizeof(*als=
+));
+> > > > >       if (!indio_dev)
+> > > > >               return -ENOMEM;
+> > > > > @@ -864,13 +863,21 @@ static int lm3533_als_probe(struct platform=
+_device *pdev)
+> > > > >
+> > > > >       platform_set_drvdata(pdev, indio_dev);
+> > > > >
+> > > > > +     val =3D 200 * KILO; /* 200kOhm */ =20
+> > > >
+> > > > Better to #define magic numbers; DEFAULT_{DESCRIPTION}_OHMS
+> > > > =20
+> > >
+> > > Why? that is not needed. =20
+> > If this variable had a more useful name there would be no need for
+> > the comment either.
+> >
+> >         val_resitor_ohms =3D 200 * KILLO;
+> >
+> > or similar.
+> > =20
+>=20
+> So I have to add a "reasonably" named variable for each property I
+> want to get from device tree? Why? It seems to be a bit of overkill,
+> no? Maybe I am not aware, have variables stopped being reusable?
+
+Lets go with yes if you want a definitive answer. In reality it's
+a question of how many are needed.  If 10-100s sure reuse is fine,
+if just a few sensible naming can remove the need for comments
+and improve readability.
+
+Jonathan
+
 
