@@ -1,131 +1,167 @@
-Return-Path: <linux-kernel+bounces-552521-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-552523-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E78ACA57ABB
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 14:47:46 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 562A4A57ABF
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 14:49:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2F3EB16D628
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 13:47:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C432D16D786
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 13:48:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D7191D5AC3;
-	Sat,  8 Mar 2025 13:45:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99B231C8622;
+	Sat,  8 Mar 2025 13:47:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="rj6MsDal";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="wmA2Xj8H"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="a7z7Q+y7"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B47E41E832D;
-	Sat,  8 Mar 2025 13:45:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 494F1185B67;
+	Sat,  8 Mar 2025 13:47:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741441509; cv=none; b=PqJ1sy3Sins+CK3vqAn3R2XKLkAxq2BT2XBbOi0C8WP1lTyqf30NyLD7r3uq+IP1yGLWClxR7ED2pG6a9wwSkUpwXGFptv/8+FUohHFVa+2fwMdEaIA2zVRghd866DwtZPyKPYHiLJLG950qWDXdUHPqukdmERQo47/F1vgVSDs=
+	t=1741441656; cv=none; b=Zj/d18SqJfj+yJW+Gpx2HNLBqoR1NYCfPSsEaPg0Q7RJOTV67BUmEeKXiiLPweYdrvYjmch8ISpqsCOyFZEKDHlT8znpibVRepZAZPX73LEdHCobUZ0IXi8IHRy6qfZ9R7gqHQKWxKH8JDBiJLp/TVIChnFk1XjjZOXIq8yXzOc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741441509; c=relaxed/simple;
-	bh=syeurhr32aruv2Jl52eslCKwe0pgyczLqP8fT8mV0po=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=elZwTrrPUJ91SBE5butRYQl9t91V3odkcAcF3nZhOUXcZvBPvMLlfFfM89+q5YbCKfKGAT8kt/16mV2pbsZyoWPeNEn+b8JI1J3VpLLs05jbCfHBflbpPXlYbLuuSuELMSOXQGX7pu6YqD/4OdRtdOPG1f58GFHTCXGA0+Cfc6g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=rj6MsDal; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=wmA2Xj8H; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Sat, 08 Mar 2025 13:45:05 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1741441505;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=bxO25XUCGnE8DKA/8sSgYHJ4Q2AjITR5L/EkP2HhzRM=;
-	b=rj6MsDalPSXGROiBiT8IUAbOKXKSr1f0hHdrVWqGFU/NzYeGpGjAD2YM9SZ/KvEfiK105i
-	E+wxz1vTHh61OFrCxZEHnnyZKpb9A8sTYCgAuS16M633DSNAVpb4Bz1Q+9BzyofexWCwy1
-	Uk+KZk85xbAYg/wLWMm8BiaATp4cY6YTUdaRzmNxyS7/qWfaijMJ+vxuHHqiOptSH2RmcE
-	k3PezxV4N2ZqFs7bAauY3gjezFe1/ZlXSKNdIPubsdmwIjnJIjOLfYQl7jurnVYvY5kSlj
-	lelYwJL4afdHJCW2dFy2XdltTC8YZViG5yHCtaVqFw+p1qTEQpaik/HILYjjIw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1741441505;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=bxO25XUCGnE8DKA/8sSgYHJ4Q2AjITR5L/EkP2HhzRM=;
-	b=wmA2Xj8Hbx4cUM/z2g/Xh+lT2+JqlW9yyH1US5BaIpK6PicRyx9zvpjzFyyXV0oU2gbZ5l
-	I/XUO4g4A8KWPFAg==
-From:
- tip-bot2 for Thomas =?utf-8?q?Wei=C3=9Fschuh?= <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: timers/vdso] arm64: Make asm/cache.h compatible with vDSO
-Cc: thomas.weissschuh@linutronix.de, Thomas Gleixner <tglx@linutronix.de>,
- x86@kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20250303-vdso-clock-v1-2-c1b5c69a166f@linutronix.de>
-References: <20250303-vdso-clock-v1-2-c1b5c69a166f@linutronix.de>
+	s=arc-20240116; t=1741441656; c=relaxed/simple;
+	bh=VhVMNtKTGuXymtyKJMeoT8KYnmWFDSOmhBUY5ZZr65M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MTS4VWVKAlQAYdIA6oK2W+EmRNGSgIXYLXTVth7dpme0zO5xROaIXVGQPVBBRLJjn84nFIhQnLzo9kGCHhySRQhNQyvpqSlJu4KlSf5wkXHTqlvtIK45PeDp32jVPm2IJ3RTS8LoKM3z+UztYsLtMf751G3NepiWBBrTkZPsDUw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=a7z7Q+y7; arc=none smtp.client-ip=198.175.65.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1741441655; x=1772977655;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=VhVMNtKTGuXymtyKJMeoT8KYnmWFDSOmhBUY5ZZr65M=;
+  b=a7z7Q+y7ogyCz0nxUsIl25k6nl4z1BtjsbcU4g+3WUFwvMERri5yP4Lu
+   Fl2dUpksUwwz7WvDZlzLMuLMts7tEImZeMAX7b9AmIe4FbtBgSksHOvWK
+   W4DU72IbMiMyJdm3Uurl0QA/Pmr66z+vADkIqMDtbFN5omQ/g+V4UeC39
+   cllk8+sc7p8iC8ltzE/ft5B3C8Dy/yYMEoGnukabgc/ugmpAu2IpuiBh2
+   P/nPY3uF8JYuGQcaYph1vaul7fR0lq1k8qzx3ZGpdYD5J8+QisuWeQEy2
+   UPz0PncVsrZ0vjoUNdH143E+LC8vplA9lW/Sd5p2WTyDBEAWmD0LwBw3q
+   g==;
+X-CSE-ConnectionGUID: OTpjXPSRTnG5GTNi348AwQ==
+X-CSE-MsgGUID: rz7AhZFCT7KSI5mMBh1GWw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11367"; a="46263793"
+X-IronPort-AV: E=Sophos;i="6.14,232,1736841600"; 
+   d="scan'208";a="46263793"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Mar 2025 05:47:34 -0800
+X-CSE-ConnectionGUID: qBrvRkGqQQG0U0lDswIdLw==
+X-CSE-MsgGUID: 8Tm5jwVmQoKT7WroWG650A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
+   d="scan'208";a="119501133"
+Received: from lkp-server02.sh.intel.com (HELO a4747d147074) ([10.239.97.151])
+  by orviesa010.jf.intel.com with ESMTP; 08 Mar 2025 05:47:31 -0800
+Received: from kbuild by a4747d147074 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tquWR-0001wW-23;
+	Sat, 08 Mar 2025 13:47:25 +0000
+Date: Sat, 8 Mar 2025 21:46:59 +0800
+From: kernel test robot <lkp@intel.com>
+To: Mateusz Guzik <mjguzik@gmail.com>, brauner@kernel.org
+Cc: oe-kbuild-all@lists.linux.dev, viro@zeniv.linux.org.uk, jack@suse.cz,
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	io-uring@vger.kernel.org, audit@vger.kernel.org, axboe@kernel.dk,
+	Mateusz Guzik <mjguzik@gmail.com>
+Subject: Re: [PATCH] fs: support filename refcount without atomics
+Message-ID: <202503082155.OjmOoifN-lkp@intel.com>
+References: <20250307161155.760949-1-mjguzik@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <174144150526.14745.1686118958467952818.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250307161155.760949-1-mjguzik@gmail.com>
 
-The following commit has been merged into the timers/vdso branch of tip:
+Hi Mateusz,
 
-Commit-ID:     b69b47a6b5f67ac1074e0a6baac7f07bdc3dceed
-Gitweb:        https://git.kernel.org/tip/b69b47a6b5f67ac1074e0a6baac7f07bdc3=
-dceed
-Author:        Thomas Wei=C3=9Fschuh <thomas.weissschuh@linutronix.de>
-AuthorDate:    Mon, 03 Mar 2025 12:11:04 +01:00
-Committer:     Thomas Gleixner <tglx@linutronix.de>
-CommitterDate: Sat, 08 Mar 2025 14:37:39 +01:00
+kernel test robot noticed the following build errors:
 
-arm64: Make asm/cache.h compatible with vDSO
+[auto build test ERROR on brauner-vfs/vfs.all]
+[also build test ERROR on linus/master v6.14-rc5 next-20250307]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-asm/cache.h can be used during the vDSO build through vdso/cache.h.
-Not all definitions in it are compatible with the vDSO, especially the
-compat vDSO.
+url:    https://github.com/intel-lab-lkp/linux/commits/Mateusz-Guzik/fs-support-filename-refcount-without-atomics/20250308-002442
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git vfs.all
+patch link:    https://lore.kernel.org/r/20250307161155.760949-1-mjguzik%40gmail.com
+patch subject: [PATCH] fs: support filename refcount without atomics
+config: i386-buildonly-randconfig-001-20250308 (https://download.01.org/0day-ci/archive/20250308/202503082155.OjmOoifN-lkp@intel.com/config)
+compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250308/202503082155.OjmOoifN-lkp@intel.com/reproduce)
 
-Hide the more complex definitions from the vDSO build.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202503082155.OjmOoifN-lkp@intel.com/
 
-Signed-off-by: Thomas Wei=C3=9Fschuh <thomas.weissschuh@linutronix.de>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Link: https://lore.kernel.org/all/20250303-vdso-clock-v1-2-c1b5c69a166f@linut=
-ronix.de
+All errors (new ones prefixed by >>):
 
----
- arch/arm64/include/asm/cache.h | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+   In file included from include/linux/container_of.h:5,
+                    from include/linux/list.h:5,
+                    from include/linux/swait.h:5,
+                    from include/linux/completion.h:12,
+                    from include/linux/crypto.h:15,
+                    from arch/x86/kernel/asm-offsets.c:9:
+   include/linux/fs.h: In function 'makeatomicname':
+>> include/linux/fs.h:2875:24: error: 'struct filename' has no member named 'owner'
+    2875 |         VFS_BUG_ON(name->owner != current && !name->is_atomic);
+         |                        ^~
+   include/linux/build_bug.h:30:63: note: in definition of macro 'BUILD_BUG_ON_INVALID'
+      30 | #define BUILD_BUG_ON_INVALID(e) ((void)(sizeof((__force long)(e))))
+         |                                                               ^
+   include/linux/fs.h:2875:9: note: in expansion of macro 'VFS_BUG_ON'
+    2875 |         VFS_BUG_ON(name->owner != current && !name->is_atomic);
+         |         ^~~~~~~~~~
+   include/linux/fs.h: In function 'refname':
+   include/linux/fs.h:2884:24: error: 'struct filename' has no member named 'owner'
+    2884 |         VFS_BUG_ON(name->owner != current && !name->is_atomic);
+         |                        ^~
+   include/linux/build_bug.h:30:63: note: in definition of macro 'BUILD_BUG_ON_INVALID'
+      30 | #define BUILD_BUG_ON_INVALID(e) ((void)(sizeof((__force long)(e))))
+         |                                                               ^
+   include/linux/fs.h:2884:9: note: in expansion of macro 'VFS_BUG_ON'
+    2884 |         VFS_BUG_ON(name->owner != current && !name->is_atomic);
+         |         ^~~~~~~~~~
+   make[3]: *** [scripts/Makefile.build:102: arch/x86/kernel/asm-offsets.s] Error 1 shuffle=2878351160
+   make[3]: Target 'prepare' not remade because of errors.
+   make[2]: *** [Makefile:1264: prepare0] Error 2 shuffle=2878351160
+   make[2]: Target 'prepare' not remade because of errors.
+   make[1]: *** [Makefile:251: __sub-make] Error 2 shuffle=2878351160
+   make[1]: Target 'prepare' not remade because of errors.
+   make: *** [Makefile:251: __sub-make] Error 2 shuffle=2878351160
+   make: Target 'prepare' not remade because of errors.
 
-diff --git a/arch/arm64/include/asm/cache.h b/arch/arm64/include/asm/cache.h
-index 06a4670..99cd654 100644
---- a/arch/arm64/include/asm/cache.h
-+++ b/arch/arm64/include/asm/cache.h
-@@ -35,7 +35,7 @@
- #define ARCH_DMA_MINALIGN	(128)
- #define ARCH_KMALLOC_MINALIGN	(8)
-=20
--#ifndef __ASSEMBLY__
-+#if !defined(__ASSEMBLY__) && !defined(BUILD_VDSO)
-=20
- #include <linux/bitops.h>
- #include <linux/kasan-enabled.h>
-@@ -118,6 +118,6 @@ static inline u32 __attribute_const__ read_cpuid_effectiv=
-e_cachetype(void)
- 	return ctr;
- }
-=20
--#endif	/* __ASSEMBLY__ */
-+#endif /* !defined(__ASSEMBLY__) && !defined(BUILD_VDSO) */
-=20
- #endif
+
+vim +2875 include/linux/fs.h
+
+  2866	
+  2867	static inline void makeatomicname(struct filename *name)
+  2868	{
+  2869		VFS_BUG_ON(IS_ERR_OR_NULL(name));
+  2870		/*
+  2871		 * The name can legitimately already be atomic if it was cached by audit.
+  2872		 * If switching the refcount to atomic, we need not to know we are the
+  2873		 * only non-atomic user.
+  2874		 */
+> 2875		VFS_BUG_ON(name->owner != current && !name->is_atomic);
+  2876		/*
+  2877		 * Don't bother branching, this is a store to an already dirtied cacheline.
+  2878		 */
+  2879		name->is_atomic = true;
+  2880	}
+  2881	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
