@@ -1,132 +1,117 @@
-Return-Path: <linux-kernel+bounces-552259-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-552260-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7722A577AA
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 03:33:30 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CCB8FA577AD
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 03:36:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D04A23B6679
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 02:33:18 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EF6BF7A5412
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 02:35:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 279AB374FF;
-	Sat,  8 Mar 2025 02:33:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9ADA614885D;
+	Sat,  8 Mar 2025 02:35:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="k0PFhym6"
-Received: from mail-oo1-f74.google.com (mail-oo1-f74.google.com [209.85.161.74])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="bsjybrFN"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FB6B20DF4
-	for <linux-kernel@vger.kernel.org>; Sat,  8 Mar 2025 02:33:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0133DAD4B;
+	Sat,  8 Mar 2025 02:35:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741401200; cv=none; b=SLLIFfrcT9/pM65GPcS321YVjkAl1tGUkL8yykaECSbY/KIMuqJTh4pIwpcbxVqzmP6Am65LRQF2+0tPI8tM7c4Y4i/BvTTCnwmOykK1u77JKnL6mQR5W4mT0ajO7eM+UKyi6XEbcVxOJzzNlfQC1rwmZt+F/OShXZf2hpJ5lcQ=
+	t=1741401351; cv=none; b=OHr77vsFbxXLfuwUOUMCfVMCocTR6/rhXtSQwTi/vY2ZOWpSxy5RKgzM2emHWajvDthIyOQElKsjwdbeJoLT9ktGfvambWw2ePlA4/7PFpRpDDZ1rlLBeVbmUNBpc3Xi4iW8le/D30u13bkbP8OUYNrNDDydmracqFCf03S7niY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741401200; c=relaxed/simple;
-	bh=8y7jXNcb6ARWEXok82aZRH5T5isSwP8i7PMYGI1wjuI=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=KWGeH88gLi5w3W5NBi0KIww21iOJsIy9tHIBtwjNJBAOCuWf289ia6NEiq8GIR0hbNPDTsAXKMnq65oZnz5L1o01vY5vCo9NulEYDOmjC1/n/bk3esB0nqtm7bIuasKqc85rGPdKpPgCNDpp2Ergzrk7JpNlJ5eRSkW/D3XmlUc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--pcc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=k0PFhym6; arc=none smtp.client-ip=209.85.161.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--pcc.bounces.google.com
-Received: by mail-oo1-f74.google.com with SMTP id 006d021491bc7-60011267804so870568eaf.0
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Mar 2025 18:33:17 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1741401197; x=1742005997; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=jKzjjHkyghJxAnuAXwC3PWRJfez3LkNv1m9ZaRZ16eg=;
-        b=k0PFhym6QKycn58ms3PcuKzU7mFgWoQakPp97JPvFg7L27Cc71YeteHgTaTZZaMlnJ
-         ogd3lgesN/Dr84dReNV7LCtztys27zpM1ZEg7Hm7KRMF3OZfZrj4vt/mt/uv8cOK+W/1
-         sUH6gukIFwTe9ddB0ik2DoaH0VftCFTA4RbJSMqK/D9ROb0EJ1v/c1cC66LdIYpeX/I6
-         UDm6hcQPo18bW9XLQVGIrBWhVmSLkhbUw1IXoHVyWUYlR0+aHMCsJNx6TWQ+oU92JJrG
-         A1evKqbcjClZZ541zWLBbHkTtuzdlcC1g+XH+LQbrbgNh36Lit7QcEJKKuv4hF1b4KpG
-         Yv8A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741401197; x=1742005997;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=jKzjjHkyghJxAnuAXwC3PWRJfez3LkNv1m9ZaRZ16eg=;
-        b=UoAfVBPkWuRb6+iIp7RuFYwkNpXckAaBfatIpOzYJW5RA6twcUsauJNgeeEZwRZ4dt
-         2++p1zHgzltZD6UgFH6hN8Eoj5oKpHjrLLt8uIysHwVjGa2EynCgLcbnzvz8jTOpR9fc
-         ZVbF7nipNlGP/15Yw73w/I5Ag1kQAkbO8atdJZIG596ljB+U4iVehfemuYkm5Jr3xWPq
-         VdW/VawokyQR45Phsb1H+ZJzLH1XrWn7LJjYUtcXotTC81/Nygr2EIW/sNxhVRnIWp11
-         +emDXSlV4iiGsNIybvj9aXGgq7AhQSZ5E//fcL3HpRvTIISLoo3wooMkj748wor/Ypc/
-         nomA==
-X-Forwarded-Encrypted: i=1; AJvYcCWcN0mrLQfsKqoH0cwbVkeMgBcz7JBLa7pPdmXSE6NzBsxKGvqqUucjINgN8WOZ+RUab8I+wPztNYz+dPU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwTk4VWETULoyBk6IgHoOtfYkpnFQBSNOnVH379+VZQQqE8fuRl
-	pw/VL2IwhmAjquQa/pXE/FLNSP53euzwGlD7g5f9YQNDNz0v0JSWHlqA9kLuKQg0lA==
-X-Google-Smtp-Source: AGHT+IFFZMokntAqkxOEmyT2cvJ9U4fSWph4TCXA8wvZ1kT5cN4sra8A6sENMM+l+kubdYKyBOP+ETg=
-X-Received: from oabnw7.prod.google.com ([2002:a05:6870:bb07:b0:2c1:c983:48c1])
- (user=pcc job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6830:264e:b0:727:345d:3b7b
- with SMTP id 46e09a7af769-72a37b41aafmr3231129a34.5.1741401197125; Fri, 07
- Mar 2025 18:33:17 -0800 (PST)
-Date: Fri,  7 Mar 2025 18:33:13 -0800
+	s=arc-20240116; t=1741401351; c=relaxed/simple;
+	bh=MhauIabnB7If6c1T4+kj4R3KybC9TZDd7Mdqu6pz4jE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WzF8gpB4zlwZwBUlBVEtLoVD6CGjj1B5h/cO/Ll4cIyQoxYJs9gjiB6iktFDtqD+whpTsoiqv2Z7YDjWn/6RkLeXBW9iL5bomd/tIC6DZDAGnvY15LYf2J4q2bF7lR1ALEtfhoQJR0eK3ssDR/oGKsTUE4+Au3r8r039TlrMyCU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=bsjybrFN; arc=none smtp.client-ip=198.175.65.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1741401348; x=1772937348;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=MhauIabnB7If6c1T4+kj4R3KybC9TZDd7Mdqu6pz4jE=;
+  b=bsjybrFNvyTvF+iNphYa0pzO/0t73hT6iL1spZRX9lQHub8vQm0J6Ter
+   Zdd4qXz6s5eeo3GGbFIZFQAJvDt608GnpQx7delAg/VAame9MYQ0iFDC0
+   IHLICdjWyeZIlFN7k3Nv8SkPfSgxqQMYGFQlxZcLsWTKKBOz90+NZjm3Z
+   N6RzFMdbfawloV9Je3nOcCCyzKwXVI3rpe98//Ugb/an+cfmv3nNzQDpW
+   fG9CQIEx/3opue6/s+lx3Sc2RvrVYfH19Dxh4v6nI79easbnuqAXpsgO4
+   5Swi/762SGCJNg3iCTP+dxS/Aazl6obd2fwcI421Dwux3TPzgpC2lN8ca
+   w==;
+X-CSE-ConnectionGUID: iGo4hDNEQtSBjkzgdSGyeg==
+X-CSE-MsgGUID: fMtDLd69RM+HL9vXSTcHcg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11366"; a="42377810"
+X-IronPort-AV: E=Sophos;i="6.14,231,1736841600"; 
+   d="scan'208";a="42377810"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Mar 2025 18:35:47 -0800
+X-CSE-ConnectionGUID: mUfabHK+Ti+imaNYgWhdlA==
+X-CSE-MsgGUID: W3A3JNBlRQOWWIHN5QUNzg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,231,1736841600"; 
+   d="scan'208";a="119475451"
+Received: from aschofie-mobl2.amr.corp.intel.com (HELO aschofie-mobl2.lan) ([10.125.110.159])
+  by fmviesa007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Mar 2025 18:35:45 -0800
+Date: Fri, 7 Mar 2025 18:35:43 -0800
+From: Alison Schofield <alison.schofield@intel.com>
+To: shiju.jose@huawei.com
+Cc: linux-cxl@vger.kernel.org, dan.j.williams@intel.com, dave@stgolabs.net,
+	jonathan.cameron@huawei.com, dave.jiang@intel.com,
+	vishal.l.verma@intel.com, ira.weiny@intel.com, david@redhat.com,
+	Vilas.Sridharan@amd.com, linux-edac@vger.kernel.org,
+	linux-acpi@vger.kernel.org, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org, bp@alien8.de, tony.luck@intel.com,
+	rafael@kernel.org, lenb@kernel.org, mchehab@kernel.org,
+	leo.duran@amd.com, Yazen.Ghannam@amd.com, rientjes@google.com,
+	jiaqiyan@google.com, Jon.Grimm@amd.com, dave.hansen@linux.intel.com,
+	naoya.horiguchi@nec.com, james.morse@arm.com, jthoughton@google.com,
+	somasundaram.a@hpe.com, erdemaktas@google.com, pgonda@google.com,
+	duenwen@google.com, gthelen@google.com,
+	wschwartz@amperecomputing.com, dferguson@amperecomputing.com,
+	wbs@os.amperecomputing.com, nifan.cxl@gmail.com,
+	tanxiaofei@huawei.com, prime.zeng@hisilicon.com,
+	roberto.sassu@huawei.com, kangkang.shen@futurewei.com,
+	wanghuiqiang@huawei.com, linuxarm@huawei.com
+Subject: Re: [PATCH 8/8] cxl/memfeature: Add CXL memory device memory sparing
+ control feature
+Message-ID: <Z8us_6E2bnDie0pk@aschofie-mobl2.lan>
+References: <20250227223816.2036-1-shiju.jose@huawei.com>
+ <20250227223816.2036-9-shiju.jose@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.49.0.rc0.332.g42c0ae87b1-goog
-Message-ID: <20250308023314.3981455-1-pcc@google.com>
-Subject: [PATCH] string: Disable read_word_at_a_time() optimizations if kernel
- MTE is enabled
-From: Peter Collingbourne <pcc@google.com>
-To: Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
-	Andrew Morton <akpm@linux-foundation.org>, Kees Cook <kees@kernel.org>, 
-	Andy Shevchenko <andy@kernel.org>, Andrey Konovalov <andreyknvl@gmail.com>, 
-	Catalin Marinas <catalin.marinas@arm.com>
-Cc: Peter Collingbourne <pcc@google.com>, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250227223816.2036-9-shiju.jose@huawei.com>
 
-The optimized strscpy() and dentry_string_cmp() routines will read 8
-unaligned bytes at a time via the function read_word_at_a_time(), but
-this is incompatible with MTE which will fault on a partially invalid
-read. The attributes on read_word_at_a_time() that disable KASAN are
-invisible to the CPU so they have no effect on MTE. Let's fix the
-bug for now by disabling the optimizations if the kernel is built
-with HW tag-based KASAN and consider improvements for followup changes.
+On Thu, Feb 27, 2025 at 10:38:15PM +0000, shiju.jose@huawei.com wrote:
+> From: Shiju Jose <shiju.jose@huawei.com>
 
-Signed-off-by: Peter Collingbourne <pcc@google.com>
-Link: https://linux-review.googlesource.com/id/If4b22e43b5a4ca49726b4bf98ada827fdf755548
-Fixes: 94ab5b61ee16 ("kasan, arm64: enable CONFIG_KASAN_HW_TAGS")
-Cc: stable@vger.kernel.org
----
- fs/dcache.c  | 2 +-
- lib/string.c | 3 ++-
- 2 files changed, 3 insertions(+), 2 deletions(-)
+snip
+> 
+> diff --git a/drivers/cxl/core/memfeatures.c b/drivers/cxl/core/memfeatures.c
+> index 8d5a57a0c154..14d3960504a2 100644
+> --- a/drivers/cxl/core/memfeatures.c
+> +++ b/drivers/cxl/core/memfeatures.c
 
-diff --git a/fs/dcache.c b/fs/dcache.c
-index e3634916ffb93..71f0830ac5e69 100644
---- a/fs/dcache.c
-+++ b/fs/dcache.c
-@@ -223,7 +223,7 @@ fs_initcall(init_fs_dcache_sysctls);
-  * Compare 2 name strings, return 0 if they match, otherwise non-zero.
-  * The strings are both count bytes long, and count is non-zero.
-  */
--#ifdef CONFIG_DCACHE_WORD_ACCESS
-+#if defined(CONFIG_DCACHE_WORD_ACCESS) && !defined(CONFIG_KASAN_HW_TAGS)
- 
- #include <asm/word-at-a-time.h>
- /*
-diff --git a/lib/string.c b/lib/string.c
-index eb4486ed40d25..9a43a3824d0d7 100644
---- a/lib/string.c
-+++ b/lib/string.c
-@@ -119,7 +119,8 @@ ssize_t sized_strscpy(char *dest, const char *src, size_t count)
- 	if (count == 0 || WARN_ON_ONCE(count > INT_MAX))
- 		return -E2BIG;
- 
--#ifdef CONFIG_HAVE_EFFICIENT_UNALIGNED_ACCESS
-+#if defined(CONFIG_HAVE_EFFICIENT_UNALIGNED_ACCESS) && \
-+	!defined(CONFIG_KASAN_HW_TAGS)
- 	/*
- 	 * If src is unaligned, don't cross a page boundary,
- 	 * since we don't know if the next page is mapped.
--- 
-2.49.0.rc0.332.g42c0ae87b1-goog
+Hi Shiju,
 
+This new file memfeatures.c would benefit from clang-format-ing,
+starting in the earlier patch that introduced it, and repeating
+through this last patch. (I got a lot of diffs when I ran
+clang-format.)
+
+-- Alison
+
+snip
+
+> 
 
