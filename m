@@ -1,171 +1,220 @@
-Return-Path: <linux-kernel+bounces-552500-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-552501-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BECBBA57A87
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 14:36:33 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5CDDAA57A8B
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 14:39:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EA14916FE87
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 13:36:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E92933B33A6
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 13:38:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2564F1CAA6A;
-	Sat,  8 Mar 2025 13:36:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 921D91CAA6A;
+	Sat,  8 Mar 2025 13:38:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Q2EkWaQS"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HxRncr6X"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92C721BC41;
-	Sat,  8 Mar 2025 13:36:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D77B72CAB;
+	Sat,  8 Mar 2025 13:38:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741440983; cv=none; b=n113Bu5rRaZET5WwhDXR8ADRe2S1Xexu2RDxKNcjCm7ftcSTH8hPm68/zR/JmTruExcAThcov2RZ/9ax5CeRAIXy2DxClYsUW41B+etgVWLwCTPNqdoaFfY4379Ux8qkiBsU/i7lWB+sXIvMuhTG629EsNncqjBIIL9xW82xB5U=
+	t=1741441133; cv=none; b=Xq2yYwKG1rIFT9lMyD9G45+Y6FwqucY/15FTgUB6smTWgO7UPX41ggDrY7RXshMAtUAw8exR6XZdeS0szyW+mUMPhrUc1MZcCzVaJ06WknH5pyFCttKtv7rZQwXpntlmOGAEOHzI7R09SpNIHwcMClag9xtJHRM9NIqKo2Zq0as=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741440983; c=relaxed/simple;
-	bh=WM7b4EhgJ9Elb2J//99kUcCyNjVVSd3WMLVSJauZ8qU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ULtZ9xENQxrtPySjD3VVXFhJjdQPjtqIleX5AyRycOp20yptg7aLFV6oRWBQSMEeJUYojmx8JxuNF9WzTUG3YZ0EQgabM1VuXVs2XGQEp8SrtB719BBHEzV5bjgsRmTpIwR+6qfxGUpf5b0gPrWldOZRmTlpOa8TP+Iw9I2DZ7I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Q2EkWaQS; arc=none smtp.client-ip=198.175.65.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1741440982; x=1772976982;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=WM7b4EhgJ9Elb2J//99kUcCyNjVVSd3WMLVSJauZ8qU=;
-  b=Q2EkWaQSXARj9jWOOPqBRCIKy1DI17fjF0OfbMZ5Kqvu686Knjeayw9y
-   nNyWWJnt36aGFCQuAkuWgCSLDH5+N+igWmW7VI3mq/EaRV3s6WRGwkxiT
-   YY83eYc8/HAcQH4yIlAqU62XkLpIJUoh/4/wyD4mMv4BfaqUswioeTBtH
-   wO7/bB4bvFfSxvmvYz46p7h7UYso9jrnJ5J8CDP6fQbaVX6XKj9QXaUrx
-   0l/0/OIApIUXwXr/eDpamOGW7ogtpO4JqdHZvGBgYheZBUQcO09ajpOG4
-   BYg6F2p7Bf4llzd+u/8XYLvjEttM6oq1Bwe1k+NKjSX/A3VrMQU/e6A0a
-   A==;
-X-CSE-ConnectionGUID: AdeM49ZkQAa//gDyMBBM3A==
-X-CSE-MsgGUID: 6aGyUOVgSkOfxL0u7gPeqA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11367"; a="64921391"
-X-IronPort-AV: E=Sophos;i="6.14,232,1736841600"; 
-   d="scan'208";a="64921391"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Mar 2025 05:36:21 -0800
-X-CSE-ConnectionGUID: 306oRoH8RmmrYWtwACr4Dw==
-X-CSE-MsgGUID: syZEQ7H3R2Gs+oRwBssLrA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
-   d="scan'208";a="156778569"
-Received: from lkp-server02.sh.intel.com (HELO a4747d147074) ([10.239.97.151])
-  by orviesa001.jf.intel.com with ESMTP; 08 Mar 2025 05:36:18 -0800
-Received: from kbuild by a4747d147074 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tquLf-0001vk-2f;
-	Sat, 08 Mar 2025 13:36:15 +0000
-Date: Sat, 8 Mar 2025 21:35:54 +0800
-From: kernel test robot <lkp@intel.com>
-To: Mateusz Guzik <mjguzik@gmail.com>, brauner@kernel.org
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	viro@zeniv.linux.org.uk, jack@suse.cz, linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, io-uring@vger.kernel.org,
-	audit@vger.kernel.org, axboe@kernel.dk,
-	Mateusz Guzik <mjguzik@gmail.com>
-Subject: Re: [PATCH] fs: support filename refcount without atomics
-Message-ID: <202503082153.UnKZ6sGP-lkp@intel.com>
-References: <20250307161155.760949-1-mjguzik@gmail.com>
+	s=arc-20240116; t=1741441133; c=relaxed/simple;
+	bh=YNI+llb9gBYtQbN0ihkpgMdd3AVM7l9QkkiYTUqCjwo=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=BAo2LUISv/uRxig7DnI/BevL/KbZP3/pi01GuwmrFIkRrM9xbx4If2qbTz6wZvL/5c9r7oPzNFYNw+Wq0TuNkCSdJhNn/2LOv7awemwoc6hf/pd+XdFuP/iczSgbD85Qo5j6KaUC+Eq1OiZRGseYjo2ggfFJn+a/xsL6Odc88i8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HxRncr6X; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C5452C4CEE0;
+	Sat,  8 Mar 2025 13:38:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741441132;
+	bh=YNI+llb9gBYtQbN0ihkpgMdd3AVM7l9QkkiYTUqCjwo=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=HxRncr6XgG3KMwhLMzjEK+zdHN7s6yCUybxb1Mh+MardBLMxDyZLslouuAo9kTszx
+	 TehxjYbaO2QY619ldtzVjOtjIviNO2JUzv0iPiPKM+TilyAyd28lQaE0uT9fKbioP5
+	 /zYpZ0wtitHZgI+QgRANuZP2rj0cso6BDBHN3hhme40eM9qsdVA6O9h9bDO1lcOcvh
+	 Z6d1NVBhDNn1eT/PtDCy3UwwPgjkFyU6yjP28lkG5ZWuGxgciedzs3tUkeFLP1o/RX
+	 YKPBBnhP1r0/v3/CnlfS87arK9PqgJS0bPn2Ujzq7PnU7W1lNOF/zCHvKxUMaW4BfO
+	 Dp8hcXN0iKLGA==
+Date: Sat, 8 Mar 2025 13:38:40 +0000
+From: Jonathan Cameron <jic23@kernel.org>
+To: Jonathan Santos <Jonathan.Santos@analog.com>
+Cc: <linux-iio@vger.kernel.org>, <devicetree@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>, <linux-gpio@vger.kernel.org>,
+ <lars@metafoo.de>, <Michael.Hennerich@analog.com>,
+ <marcelo.schmitt@analog.com>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+ <conor+dt@kernel.org>, <linus.walleij@linaro.org>, <brgl@bgdev.pl>,
+ <lgirdwood@gmail.com>, <broonie@kernel.org>, <dlechner@baylibre.com>,
+ <marcelo.schmitt1@gmail.com>, <jonath4nns@gmail.com>
+Subject: Re: [PATCH v4 11/17] iio: adc: ad7768-1: add regulator to control
+ VCM output
+Message-ID: <20250308133840.30112a8b@jic23-huawei>
+In-Reply-To: <40c586006b5cee0570ae577db2b58e6e7e36a6e6.1741268122.git.Jonathan.Santos@analog.com>
+References: <cover.1741268122.git.Jonathan.Santos@analog.com>
+	<40c586006b5cee0570ae577db2b58e6e7e36a6e6.1741268122.git.Jonathan.Santos@analog.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.48; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250307161155.760949-1-mjguzik@gmail.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Hi Mateusz,
+On Thu, 6 Mar 2025 18:02:59 -0300
+Jonathan Santos <Jonathan.Santos@analog.com> wrote:
 
-kernel test robot noticed the following build errors:
+> The VCM output voltage can be used as a common-mode voltage within the
+> amplifier preconditioning circuits external to the AD7768-1.
+> 
+> This change allows the user to configure VCM output using the regulator
+> framework.
+> 
+> Signed-off-by: Jonathan Santos <Jonathan.Santos@analog.com>
+Looks fine but as likely you will be doing a v5, please switch
+to the new iio_device_claim/release_direct() functions.
+If I had applied up to here I'd probably just have tweaked this whilst
+applying but given a few other tweaks needed, please do this one
+as well for v5.
 
-[auto build test ERROR on brauner-vfs/vfs.all]
-[also build test ERROR on linus/master v6.14-rc5 next-20250307]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+Thanks,
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Mateusz-Guzik/fs-support-filename-refcount-without-atomics/20250308-002442
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git vfs.all
-patch link:    https://lore.kernel.org/r/20250307161155.760949-1-mjguzik%40gmail.com
-patch subject: [PATCH] fs: support filename refcount without atomics
-config: i386-buildonly-randconfig-003-20250308 (https://download.01.org/0day-ci/archive/20250308/202503082153.UnKZ6sGP-lkp@intel.com/config)
-compiler: clang version 19.1.7 (https://github.com/llvm/llvm-project cd708029e0b2869e80abe31ddb175f7c35361f90)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250308/202503082153.UnKZ6sGP-lkp@intel.com/reproduce)
+Jonathan
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202503082153.UnKZ6sGP-lkp@intel.com/
+> @@ -644,6 +654,172 @@ static int ad7768_triggered_buffer_alloc(struct iio_dev *indio_dev)
+>  					       &ad7768_buffer_ops);
+>  }
+>  
+> +static int ad7768_vcm_enable(struct regulator_dev *rdev)
+> +{
+> +	struct iio_dev *indio_dev = rdev_get_drvdata(rdev);
+> +	struct ad7768_state *st = iio_priv(indio_dev);
+> +	int ret, regval;
+> +
+> +	if (!indio_dev)
+> +		return -EINVAL;
+> +
+> +	ret = iio_device_claim_direct_mode(indio_dev);
+As below.
 
-All errors (new ones prefixed by >>):
+> +	if (ret)
+> +		return ret;
+> +
+> +	/* To enable, set the last selected output */
+> +	regval = AD7768_REG_ANALOG2_VCM(st->vcm_output_sel + 1);
+> +	ret = regmap_update_bits(st->regmap, AD7768_REG_ANALOG2,
+> +				 AD7768_REG_ANALOG2_VCM_MSK, regval);
+> +	iio_device_release_direct_mode(indio_dev);
+> +
+> +	return ret;
+> +}
+> +
+> +static int ad7768_vcm_disable(struct regulator_dev *rdev)
+> +{
+> +	struct iio_dev *indio_dev = rdev_get_drvdata(rdev);
+> +	struct ad7768_state *st = iio_priv(indio_dev);
+> +	int ret;
+> +
+> +	if (!indio_dev)
+> +		return -EINVAL;
+> +
+> +	ret = iio_device_claim_direct_mode(indio_dev);
+As looks likely you'll be doing a v5 for other minor stuff please
+rebase on the testing branch of iio.git (as I've picked up some of this
+series) or togreg once that is pushed out and use
+	if (!iio_device_claim_direct(indio_dev))
+		return -EBUSY;
++ iio_device_release_direct()
+to get the variants adjusted to play better with sparse.
 
-   In file included from arch/x86/kernel/asm-offsets.c:14:
-   In file included from include/linux/suspend.h:5:
-   In file included from include/linux/swap.h:9:
-   In file included from include/linux/memcontrol.h:13:
-   In file included from include/linux/cgroup.h:17:
->> include/linux/fs.h:2875:19: error: no member named 'owner' in 'struct filename'
-    2875 |         VFS_BUG_ON(name->owner != current && !name->is_atomic);
-         |                    ~~~~  ^
-   include/linux/vfsdebug.h:35:47: note: expanded from macro 'VFS_BUG_ON'
-      35 | #define VFS_BUG_ON(cond) BUILD_BUG_ON_INVALID(cond)
-         |                                               ^~~~
-   include/linux/build_bug.h:30:63: note: expanded from macro 'BUILD_BUG_ON_INVALID'
-      30 | #define BUILD_BUG_ON_INVALID(e) ((void)(sizeof((__force long)(e))))
-         |                                                               ^
-   In file included from arch/x86/kernel/asm-offsets.c:14:
-   In file included from include/linux/suspend.h:5:
-   In file included from include/linux/swap.h:9:
-   In file included from include/linux/memcontrol.h:13:
-   In file included from include/linux/cgroup.h:17:
-   include/linux/fs.h:2884:19: error: no member named 'owner' in 'struct filename'
-    2884 |         VFS_BUG_ON(name->owner != current && !name->is_atomic);
-         |                    ~~~~  ^
-   include/linux/vfsdebug.h:35:47: note: expanded from macro 'VFS_BUG_ON'
-      35 | #define VFS_BUG_ON(cond) BUILD_BUG_ON_INVALID(cond)
-         |                                               ^~~~
-   include/linux/build_bug.h:30:63: note: expanded from macro 'BUILD_BUG_ON_INVALID'
-      30 | #define BUILD_BUG_ON_INVALID(e) ((void)(sizeof((__force long)(e))))
-         |                                                               ^
-   2 errors generated.
-   make[3]: *** [scripts/Makefile.build:102: arch/x86/kernel/asm-offsets.s] Error 1 shuffle=2759713076
-   make[3]: Target 'prepare' not remade because of errors.
-   make[2]: *** [Makefile:1264: prepare0] Error 2 shuffle=2759713076
-   make[2]: Target 'prepare' not remade because of errors.
-   make[1]: *** [Makefile:251: __sub-make] Error 2 shuffle=2759713076
-   make[1]: Target 'prepare' not remade because of errors.
-   make: *** [Makefile:251: __sub-make] Error 2 shuffle=2759713076
-   make: Target 'prepare' not remade because of errors.
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret = regmap_update_bits(st->regmap, AD7768_REG_ANALOG2,
+> +				 AD7768_REG_ANALOG2_VCM_MSK, AD7768_VCM_OFF);
+> +	iio_device_release_direct_mode(indio_dev);
+> +
+> +	return ret;
+> +}
+> +
+> +static int ad7768_vcm_is_enabled(struct regulator_dev *rdev)
+> +{
+> +	struct iio_dev *indio_dev = rdev_get_drvdata(rdev);
+> +	struct ad7768_state *st = iio_priv(indio_dev);
+> +	int ret, val;
+> +
+> +	if (!indio_dev)
+> +		return -EINVAL;
+> +
+> +	ret = iio_device_claim_direct_mode(indio_dev);
+As above.
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret = regmap_read(st->regmap, AD7768_REG_ANALOG2, &val);
+> +	if (ret)
+> +		goto err_release;
+> +
+> +	ret = FIELD_GET(AD7768_REG_ANALOG2_VCM_MSK, val) != AD7768_VCM_OFF;
+> +err_release:
+> +	iio_device_release_direct_mode(indio_dev);
+> +
+> +	return ret;
+> +}
+> +
+> +static int ad7768_set_voltage_sel(struct regulator_dev *rdev,
+> +				  unsigned int selector)
+> +{
+> +	unsigned int regval = AD7768_REG_ANALOG2_VCM(selector + 1);
+> +	struct iio_dev *indio_dev = rdev_get_drvdata(rdev);
+> +	struct ad7768_state *st = iio_priv(indio_dev);
+> +	int ret;
+> +
+> +	if (!indio_dev)
+> +		return -EINVAL;
+> +
+> +	ret = iio_device_claim_direct_mode(indio_dev);
+As above.
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret = regmap_update_bits(st->regmap, AD7768_REG_ANALOG2,
+> +				 AD7768_REG_ANALOG2_VCM_MSK, regval);
+> +	iio_device_release_direct_mode(indio_dev);
+> +	st->vcm_output_sel = selector;
+> +
+> +	return ret;
+> +}
+> +
+> +static int ad7768_get_voltage_sel(struct regulator_dev *rdev)
+> +{
+> +	struct iio_dev *indio_dev = rdev_get_drvdata(rdev);
+> +	struct ad7768_state *st = iio_priv(indio_dev);
+> +	int ret, val;
+> +
+> +	if (!indio_dev)
+> +		return -EINVAL;
+> +
+> +	ret = iio_device_claim_direct_mode(indio_dev);
+As above.
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret = regmap_read(st->regmap, AD7768_REG_ANALOG2, &val);
+> +	if (ret)
+> +		goto err_release;
+> +
+> +	val = FIELD_GET(AD7768_REG_ANALOG2_VCM_MSK, val);
+> +	ret = clamp(val, 1, (int)rdev->desc->n_voltages) - 1;
+> +err_release:
+> +	iio_device_release_direct_mode(indio_dev);
+> +
+> +	return ret;
+> +}
 
-
-vim +2875 include/linux/fs.h
-
-  2866	
-  2867	static inline void makeatomicname(struct filename *name)
-  2868	{
-  2869		VFS_BUG_ON(IS_ERR_OR_NULL(name));
-  2870		/*
-  2871		 * The name can legitimately already be atomic if it was cached by audit.
-  2872		 * If switching the refcount to atomic, we need not to know we are the
-  2873		 * only non-atomic user.
-  2874		 */
-> 2875		VFS_BUG_ON(name->owner != current && !name->is_atomic);
-  2876		/*
-  2877		 * Don't bother branching, this is a store to an already dirtied cacheline.
-  2878		 */
-  2879		name->is_atomic = true;
-  2880	}
-  2881	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
 
