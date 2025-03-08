@@ -1,266 +1,126 @@
-Return-Path: <linux-kernel+bounces-552598-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-552601-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DAA03A57BD5
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 17:17:37 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6281AA57BE7
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 17:24:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D0AC07A368C
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 16:16:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 51FA53AEA11
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 16:24:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53BB31E1E14;
-	Sat,  8 Mar 2025 16:17:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 260061E521D;
+	Sat,  8 Mar 2025 16:24:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EnX+fPQn"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MLtFli/M"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 900BA383A2;
-	Sat,  8 Mar 2025 16:17:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7328181720;
+	Sat,  8 Mar 2025 16:24:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741450645; cv=none; b=Xwm5lmRPo3mjQ0UOtRxZ5pVdz3AZErOFNsEBexlC6rtQxrVUOH9Z6XyNAthxcigxoIExVzIqd9cfEFLE2qOZams8O2pRtO29uIK3+xQVg1KPG+R2pn/l356E84mlcII5K14Wz5bo/rvq2veZAVvYH0+gJxN4hN/qoULTPJeyOiw=
+	t=1741451065; cv=none; b=GeeCU891/Dw1UTK8dyyhsxnaDVnlohFiUfLw3P/VZmIWp/SGLuO3XVpjxY0T3QDV+ig5tGq6Tg0N/Jp5lPWCS8IBrjw750RNY0NlpSPq9j+6GS83GkLpCHUhdNYM/tNtwFT9neLP7NBFx3k4vdfGVRIYRmMYaI9vHv9Zm+7k4yc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741450645; c=relaxed/simple;
-	bh=xC1dhXRJhNJXV88A2GMTUC68oKasP1pQrkTR0oGtHRM=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=G6fUJgU6mgQkuD/vS7enA7OuBuxHcVmgAMZjAZiotu6LPrtpDTun7Y9IzMSgJ0Kf6/2lt+ZZc2dp158vktRVx6+pFXDGKJiA7KGO/zee5I6EYiXDMeny/NVNqfkJDQa/RwyXpN+7CBP+upSWW7qIFG8kwuNAtoYgWfB1KDqo+sk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EnX+fPQn; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6A921C4CEE0;
-	Sat,  8 Mar 2025 16:17:21 +0000 (UTC)
+	s=arc-20240116; t=1741451065; c=relaxed/simple;
+	bh=mxjT0AhbJ+fH5D/EKExE2eW9/MHvtfzCY9Y8SWeY37U=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=J99dZzilowK0UnkNR2npmQ+2/+z/EyVmDrojG0gfZ/vK/aWLX2ctPWPlyzzc6C5Ul0dIZSeeO0EzA9LgU+TLRTGMJYJa9Q1io2PzsYyMBWn84RkY0ifDWe9m0dH7BJqsidnzNmTCTG+Kq2iAKznM5b8XOTpCBBk2Qqw+uOB/oQk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MLtFli/M; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EE880C4CEE0;
+	Sat,  8 Mar 2025 16:24:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741450644;
-	bh=xC1dhXRJhNJXV88A2GMTUC68oKasP1pQrkTR0oGtHRM=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=EnX+fPQnSRCyreIT/+/blhaBEZEIbjj2Nqdp5unhGL2Edt9jDPyTRmWUDrU7fUjnw
-	 B5gBHkvsQGWZKFg7j5738FYpcuQTp3q+/fXxOGV5PmhFuF/AQObW5YVKAdxGzKeR78
-	 Kb8CFWkPODcVfnLUpZpjYpdmNqcw1j2pgemSrKY94fYRrgzvfQK3ObI5Xbykh2xMAk
-	 s+wlBG3fUzfwDgx4X9DS+83Pm+EELcHb/WXOYAEYsCFkwnLldIiJ9ui8j6MVnBkWsG
-	 eVXOHpbHWkKZRPlpHFXWZZLTHpjpPsWa36EacnSPGSaM+t5wcUqA5Qi2wzWjupXFGx
-	 be1ludsQWP1rQ==
-Date: Sat, 8 Mar 2025 16:17:17 +0000
-From: Jonathan Cameron <jic23@kernel.org>
-To: Angelo Dureghello <adureghello@baylibre.com>
-Cc: Lars-Peter Clausen <lars@metafoo.de>, Michael Hennerich
- <Michael.Hennerich@analog.com>, Nuno =?UTF-8?B?U8Oh?= <nuno.sa@analog.com>,
- David Lechner <dlechner@baylibre.com>, Jonathan Corbet <corbet@lwn.net>,
- linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-doc@vger.kernel.org, Julien Stephan <jstephan@baylibre.com>
-Subject: Re: [PATCH v3 1/2] iio: ad7380: add support for SPI offload
-Message-ID: <20250308161717.3842cbdf@jic23-huawei>
-In-Reply-To: <20250304-wip-bl-spi-offload-ad7380-v3-1-2d830f863bd1@baylibre.com>
-References: <20250304-wip-bl-spi-offload-ad7380-v3-0-2d830f863bd1@baylibre.com>
-	<20250304-wip-bl-spi-offload-ad7380-v3-1-2d830f863bd1@baylibre.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.48; x86_64-pc-linux-gnu)
+	s=k20201202; t=1741451064;
+	bh=mxjT0AhbJ+fH5D/EKExE2eW9/MHvtfzCY9Y8SWeY37U=;
+	h=From:Date:Subject:To:Cc:From;
+	b=MLtFli/MqO4Uv/vWJrQeJLZscaCJTFEAX5rQgbMV/KCi0OPTJwFFDxn108zqE0AUY
+	 4ZUgcP7FesRx6Ue7uOOdz4kdyTTUmtA4A948l9KVk9tLi7hVhKQzE5tE2jdBC2s1FY
+	 J01kx2JQ0NBb7QC9vGMVumOBCPshqKtYQMXQilbfH7g6ciLgaHrVwaaKThFBBJ0Oew
+	 7hUcCwiqNnsZCK/LS7KMhr8eyiiREePVqzayZTU0kPVAGVOnsrtckXK2e/cJfdWNW4
+	 /HjcnvNA8gHnY9x9aMea6CL8M569x+a0v9TrrnKl94utGlJEaIWr25mJTfc4gQ+wZ8
+	 LE1juUi+x7pWw==
+From: Konrad Dybcio <konradybcio@kernel.org>
+Date: Sat, 08 Mar 2025 17:24:15 +0100
+Subject: [PATCH v2] dt-bindings: usb: qcom,dwc3: Synchronize minItems for
+ interrupts and -names
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+Message-Id: <20250308-topic-dt_bindings_fixes_usb-v2-1-3169a3394d5b@oss.qualcomm.com>
+X-B4-Tracking: v=1; b=H4sIAC5vzGcC/42NXQqDMBCEryL73EiS4k/71HsUEZNsdaEmNqvSI
+ t69qSfoy8A3A99swBgJGa7ZBhFXYgo+gT5lYIfO9yjIJQYtdSHPshRzmMgKN7eGvCPfc/ugN3K
+ 7sBFWSmfQVXVlL5AMU8RjTIJ7k3ggnkP8HGer+rX/eVcllECFZVcYh3WlboE5fy3d04ZxzFNAs
+ +/7F+Ml9NnNAAAA
+X-Change-ID: 20250306-topic-dt_bindings_fixes_usb-c00dbed787c9
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Wesley Cheng <quic_wcheng@quicinc.com>, 
+ Konrad Dybcio <konradybcio@kernel.org>, 
+ Krishna Kurapati <quic_kriskura@quicinc.com>
+Cc: Marijn Suijten <marijn.suijten@somainline.org>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
+ linux-arm-msm@vger.kernel.org, linux-usb@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1741451060; l=1614;
+ i=konrad.dybcio@oss.qualcomm.com; s=20230215; h=from:subject:message-id;
+ bh=SIaQZaIKTd4vnJ9IAfLcrJh++UCApOBcXKazDbk+l/Y=;
+ b=Amm4rC3YU4Z15RBVBr6EdjVNbFDukRdBlIfPI6IlqXe3lnfvIz1ugt1lS/EibcOQPYZW7+D/m
+ QdDEMC4crwRCxk6QIpq0QTsAjnpNNYHkR/NL7+clIUOassRlqNIbZTr
+X-Developer-Key: i=konrad.dybcio@oss.qualcomm.com; a=ed25519;
+ pk=iclgkYvtl2w05SSXO5EjjSYlhFKsJ+5OSZBjOkQuEms=
 
-On Tue, 04 Mar 2025 16:25:44 +0100
-Angelo Dureghello <adureghello@baylibre.com> wrote:
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
 
-> Add support for SPI offload to the ad7380 driver. SPI offload allows
-> sampling data at the max sample rate (2MSPS with one SDO line).
-> 
-> This is developed and tested against the ADI example FPGA design for
-> this family of ADCs [1].
-> 
-> [1]: http://analogdevicesinc.github.io/hdl/projects/ad738x_fmc/index.html
-> 
-> Signed-off-by: Angelo Dureghello <adureghello@baylibre.com>
-Hi Angelo
+It makes sense that ARRAY_SIZE(prop) should == ARRAY_SIZE(prop-names),
+so allow that to happen with interrupts.
 
-A couple of trivial comments inline.
+Fixes bogus warnings such as:
+usb@c2f8800: interrupt-names: ['pwr_event', 'qusb2_phy', 'hs_phy_irq'] is too short
 
-This has crossed with Julien adding an extra device to the supported
-set. I could have guessed what the necessary changes were but probably
-better for you to do it and check for any problems.
+Fixes: 53c6d854be4e ("dt-bindings: usb: dwc3: Clean up hs_phy_irq in binding")
+Signed-off-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+---
+Changes in v2:
+- Use a better reference in the Fixes tag
+- Link to v1: https://lore.kernel.org/r/20250306-topic-dt_bindings_fixes_usb-v1-1-e1e6a5bde871@oss.qualcomm.com
+---
+ Documentation/devicetree/bindings/usb/qcom,dwc3.yaml | 2 ++
+ 1 file changed, 2 insertions(+)
 
-https://lore.kernel.org/all/20250226-ad7380-add-adaq4381-4-support-v1-1-f350ab872d37@baylibre.com/
+diff --git a/Documentation/devicetree/bindings/usb/qcom,dwc3.yaml b/Documentation/devicetree/bindings/usb/qcom,dwc3.yaml
+index a2b3cf625e5b3962f3acfe93de02f3cae2b6123d..64137c1619a635a5a4f96fc49bd75c5fb757febb 100644
+--- a/Documentation/devicetree/bindings/usb/qcom,dwc3.yaml
++++ b/Documentation/devicetree/bindings/usb/qcom,dwc3.yaml
+@@ -404,6 +404,7 @@ allOf:
+           minItems: 2
+           maxItems: 3
+         interrupt-names:
++          minItems: 2
+           items:
+             - const: pwr_event
+             - const: qusb2_phy
+@@ -425,6 +426,7 @@ allOf:
+           minItems: 3
+           maxItems: 4
+         interrupt-names:
++          minItems: 3
+           items:
+             - const: pwr_event
+             - const: qusb2_phy
 
-Jonathan
+---
+base-commit: 565351ae7e0cee80e9b5ed84452a5b13644ffc4d
+change-id: 20250306-topic-dt_bindings_fixes_usb-c00dbed787c9
 
-> ---
->  drivers/iio/adc/Kconfig  |   2 +
->  drivers/iio/adc/ad7380.c | 509 +++++++++++++++++++++++++++++++++++++++++++----
->  2 files changed, 475 insertions(+), 36 deletions(-)
-> 
-> diff --git a/drivers/iio/adc/Kconfig b/drivers/iio/adc/Kconfig
-> index 27413516216cb3f83cf1d995b9ffc22bf01776a4..c528f4632c0ef6782269d8afa89c17d2046d28a3 100644
-> --- a/drivers/iio/adc/Kconfig
-> +++ b/drivers/iio/adc/Kconfig
-> @@ -218,7 +218,9 @@ config AD7298
->  config AD7380
->  	tristate "Analog Devices AD7380 ADC driver"
->  	depends on SPI_MASTER
-> +	select SPI_OFFLOAD
->  	select IIO_BUFFER
-> +	select IIO_BUFFER_DMAENGINE
->  	select IIO_TRIGGER
->  	select IIO_TRIGGERED_BUFFER
->  	help
-> diff --git a/drivers/iio/adc/ad7380.c b/drivers/iio/adc/ad7380.c
-> index f232ad1a49634baeedc655916bc7a967604a1206..39a5e55fa7e8a6706e15750d07fa4b0fda7175eb 100644
-> --- a/drivers/iio/adc/ad7380.c
-> +++ b/drivers/iio/adc/ad7380.c
-> @@ -15,6 +15,9 @@
->   * ad7386/7/8-4 : https://www.analog.com/media/en/technical-documentation/data-sheets/ad7386-4-7387-4-7388-4.pdf
->   * adaq4370-4 : https://www.analog.com/media/en/technical-documentation/data-sheets/adaq4370-4.pdf
->   * adaq4380-4 : https://www.analog.com/media/en/technical-documentation/data-sheets/adaq4380-4.pdf
-> + *
-> + * HDL ad738x_fmc: https://analogdevicesinc.github.io/hdl/projects/ad738x_fmc/index.html
-> + *
-
-Pet dislike of mine.  No lines at ends of comment blocks with nothing on them.  The */ provides
-any necessary space.
-
->   */
->  
->  #include <linux/align.h>
-> @@ -29,11 +32,13 @@
->  #include <linux/regmap.h>
->  #include <linux/regulator/consumer.h>
->  #include <linux/slab.h>
-> +#include <linux/spi/offload/consumer.h>
->  #include <linux/spi/spi.h>
->  #include <linux/units.h>
->  #include <linux/util_macros.h>
->  
->  #include <linux/iio/buffer.h>
-> +#include <linux/iio/buffer-dmaengine.h>
->  #include <linux/iio/events.h>
->  #include <linux/iio/iio.h>
->  #include <linux/iio/trigger_consumer.h>
-> @@ -92,6 +97,12 @@
->  #define AD7380_NUM_SDO_LINES		1
->  #define AD7380_DEFAULT_GAIN_MILLI	1000
->  
-> +/*
-> + * Using SPI offload, storagebits is always 32, so can't be used to compute struct
-> + * spi_transfer.len. Using realbits instead.
-> + */
-> +#define AD7380_SPI_BYTES(scan_type)	((scan_type)->realbits > 16 ? 4 : 2)
-> +
->  struct ad7380_timing_specs {
->  	const unsigned int t_csh_ns;	/* CS minimum high time */
->  };
-> @@ -99,6 +110,7 @@ struct ad7380_timing_specs {
->  struct ad7380_chip_info {
->  	const char *name;
->  	const struct iio_chan_spec *channels;
-> +	const struct iio_chan_spec *offload_channels;
->  	unsigned int num_channels;
->  	unsigned int num_simult_channels;
->  	bool has_hardware_gain;
-> @@ -111,6 +123,7 @@ struct ad7380_chip_info {
->  	unsigned int num_vcm_supplies;
->  	const unsigned long *available_scan_masks;
->  	const struct ad7380_timing_specs *timing_specs;
-> +	u32 max_conversion_rate_hz;
->  };
->  
->  static const struct iio_event_spec ad7380_events[] = {
-> @@ -216,6 +229,91 @@ static const struct iio_scan_type ad7380_scan_type_16_u[] = {
->  	},
->  };
->  
-> +/*
-> + * Defining here scan types for offload mode, since with current available HDL
-> + * only a value of 32 for storagebits is supported.
-> + */
-> +
-> +/* Extended scan types for 12-bit unsigned chips, offload support. */
-> +static const struct iio_scan_type ad7380_scan_type_12_u_offload[] = {
-> +	[AD7380_SCAN_TYPE_NORMAL] = {
-> +		.sign = 'u',
-> +		.realbits = 12,
-> +		.storagebits = 32,
-> +		.endianness = IIO_CPU,
-> +	},
-> +	[AD7380_SCAN_TYPE_RESOLUTION_BOOST] = {
-> +		.sign = 'u',
-> +		.realbits = 14,
-> +		.storagebits = 32,
-> +		.endianness = IIO_CPU,
-> +	},
-> +};
-> +
-> +/* Extended scan types for 14-bit signed chips, offload support. */
-> +static const struct iio_scan_type ad7380_scan_type_14_s_offload[] = {
-> +	[AD7380_SCAN_TYPE_NORMAL] = {
-> +		.sign = 's',
-> +		.realbits = 14,
-> +		.storagebits = 32,
-> +		.endianness = IIO_CPU,
-> +	},
-> +	[AD7380_SCAN_TYPE_RESOLUTION_BOOST] = {
-> +		.sign = 's',
-> +		.realbits = 16,
-> +		.storagebits = 32,
-> +		.endianness = IIO_CPU,
-> +	},
-> +};
-> +
-> +/* Extended scan types for 14-bit unsigned chips, offload support. */
-> +static const struct iio_scan_type ad7380_scan_type_14_u_offload[] = {
-> +	[AD7380_SCAN_TYPE_NORMAL] = {
-> +		.sign = 'u',
-> +		.realbits = 14,
-> +		.storagebits = 32,
-> +		.endianness = IIO_CPU,
-> +	},
-> +	[AD7380_SCAN_TYPE_RESOLUTION_BOOST] = {
-> +		.sign = 'u',
-> +		.realbits = 16,
-> +		.storagebits = 32,
-> +		.endianness = IIO_CPU,
-> +	},
-> +};
-> +
-> +/* Extended scan types for 16-bit signed_chips, offload support. */
-> +static const struct iio_scan_type ad7380_scan_type_16_s_offload[] = {
-> +	[AD7380_SCAN_TYPE_NORMAL] = {
-> +		.sign = 's',
-> +		.realbits = 16,
-> +		.storagebits = 32,
-> +		.endianness = IIO_CPU,
-> +	},
-> +	[AD7380_SCAN_TYPE_RESOLUTION_BOOST] = {
-> +		.sign = 's',
-> +		.realbits = 18,
-> +		.storagebits = 32,
-> +		.endianness = IIO_CPU,
-> +	},
-> +};
-> +
-> +/* Extended scan types for 16-bit unsigned chips, offload support. */
-> +static const struct iio_scan_type ad7380_scan_type_16_u_offload[] = {
-> +	[AD7380_SCAN_TYPE_NORMAL] = {
-> +		.sign = 'u',
-> +		.realbits = 16,
-> +		.storagebits = 32,
-> +		.endianness = IIO_CPU,
-> +	},
-> +	[AD7380_SCAN_TYPE_RESOLUTION_BOOST] = {
-> +		.sign = 'u',
-> +		.realbits = 18,
-> +		.storagebits = 32,
-> +		.endianness = IIO_CPU,
-> +	},
-> +};
-
-You could have perhaps used a macro for these to reduce repetition but it
-is perhaps slightly more readable without doing that.
-
-Jonathan
-
-
+Best regards,
+-- 
+Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
 
 
