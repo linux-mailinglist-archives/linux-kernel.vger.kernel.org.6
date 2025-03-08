@@ -1,199 +1,110 @@
-Return-Path: <linux-kernel+bounces-552363-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-552364-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3E5C8A5790E
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 08:52:57 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 553CAA5790F
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 08:57:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6BCEA171894
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 07:52:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3337C3A2A53
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 07:57:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2DC51A2399;
-	Sat,  8 Mar 2025 07:51:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 583EC19DF9A;
+	Sat,  8 Mar 2025 07:57:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TuB2/1+U"
-Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="FPXocMsQ"
+Received: from mout.web.de (mout.web.de [212.227.15.4])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 633C01B425C;
-	Sat,  8 Mar 2025 07:51:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10F2518DB2D;
+	Sat,  8 Mar 2025 07:57:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741420263; cv=none; b=AeTRsoX11YOIZP2os9n100cOEXtb7ATTh8BIradDrbEioBKYK86xNOwVCWwCmVvUhTLj+F8mhD1h3B2x2EHY/NAJGS0WjmxnJdqdRtF6sNSbhyvGRJ5lY7zU2yiIbwo9KlUXeATam2x6oXw4b2P1QGoTaok8OY4/naws9o8z0Lg=
+	t=1741420634; cv=none; b=df03Fge7kP87VFyxe7eTq1asmmNr8I3ysQKsM0f9pfXFZjEWfARGGba1I5zh0Cwjwsi/9d4sBeHcEdd0zn2T/BxxuUoShQqBtIrEJw/0f9MaC4QRJrU7L4PW1fJWpj/TJ4Xkt++LfHtOy4VEpSD6Ox5kG5D1uBLvxbl8FJxOf20=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741420263; c=relaxed/simple;
-	bh=6WL3+gww7pwy7HeSxhHT435XK+Ky7XngeaLYGMY0ueU=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=RFC9muVIb2NcnF6ph2KF7HlHk7wZewxSB0mI5ReUffpZRWDLntQmZWlcha7DT5r7LtoReHyWzmw5jRBXyoqoTRHpwUTScX/L48CMBHFOzPxhIrH1+gmaSNXoZ/VOQ5vqhEbyn3oKvf64NvJfsya7FRGwZ/IsqGlKEcod6VXjdB0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TuB2/1+U; arc=none smtp.client-ip=209.85.218.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-aaedd529ba1so311473266b.1;
-        Fri, 07 Mar 2025 23:51:01 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741420260; x=1742025060; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=5mUS3JAucq16wAF6W5pFtM5mAxXgdUK4IDJ6WzSb7Xo=;
-        b=TuB2/1+UTXUTnTepWshJ19WMZozFhuvXSwzEmzvkpo7E+aymgraz4ZfhiOoN5vgC7m
-         gtidjo3mBx0aIR3KmYa/Mo35BUhFFLAKq7yqPfhRkq3tlRz1DlZylXFjaVxdFHQWCg6z
-         TAIKkgr6EbdezYwXMzQ7t2eCuY1Zw/tM3A9cbTVETirpV9pqANclqF0IWRjLuy1DHvTq
-         xAf3l6W8ft8F/HJqxS3IvItCjgnezlczztXQGF1U6wVZ1RdbyBcxAV9DhEebzooMx0nN
-         +lmTRl4C321s+3Uo4UmEoOlu+dxh4Ges8fcKY//EnJSedVyZwF1APtbfS3Iz+EFik+Gp
-         KPVQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741420260; x=1742025060;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=5mUS3JAucq16wAF6W5pFtM5mAxXgdUK4IDJ6WzSb7Xo=;
-        b=luvoo2vnv8QZzSlGdNo0a3yE3+ue8EEx0Gqt9N2z4UTJGLN/LSZTB7VkJezU6Cri+k
-         UPNltwMwLzbJ42cPamzVZ/tMAJ/9lBNYydNV7MOHyfFmf0zswrlGeJqa07CiwZj+Zehi
-         g1QLv1GIIEQHmrjjpvl4Dms5M7DavfKxv5kmUGUcA/MWiLIKUb5nfXTsT33ov1lXl/Rz
-         MCk5WNIpGYshEyPhQIPbaa2CRlDtbD+WxF1G9MOV4Q8T3Q0lF2VGYP/Wfvv1w5b9o3FD
-         i0t+4ScnRyW8qsOXQnuPpgiko2UjklTV5e++kmtbjnfmPl0TcddEvymbEkptGyTD81Ku
-         LmoA==
-X-Forwarded-Encrypted: i=1; AJvYcCVlTv7x64dX3s/SLuYA+/QuV0GvLLLGsdGJZPB4efoksg7DvgLXD4b/YqaZbprO7A3TmEhSKFTRwEcc@vger.kernel.org, AJvYcCXK2DwBFEdCiOF7UOnwUakE9PMFKlXVwz5m7MzuPcVUGchW0NXJUl+v0UfykvYscEnYCQ+U6EejrMtbgD8j@vger.kernel.org, AJvYcCXKxknLDRWT43GKQ8hFG6KaH4jZ8nq5wgYOY8/xL2GiJRnKYJg2I6zkbC5rhykka6BdEekNks1ZOTF5@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw0iQrKXu9eO27f0rqLG2XRISZA7VMzJiyznqznHO3sVkuRGcMV
-	VIOoEeZ3E5xV7TKotL+lxo79/E8+THirGMmbnwZiAJ6B90oRgHLI
-X-Gm-Gg: ASbGncuOAkeRHQrwSL6GOEEnaJpJGmHYfTl88cKexBa6mEz5/j4XHKUVnSxDMLkhr87
-	sqOfAbYjlhJlwUbCchBbLpoug3WaVo6ujlWdTKEZN3Y5rzD4VCmzM4NcHmOpx0ZC8HOwOJx4wt1
-	bKite8IAc7KvgtJz1irfMtfrLLZvIec/88T+xq8kMWVwYnt72Wu4NHrZGj2VPPcxGI0NBssvpkU
-	qij1ZK3RgejCNsQva08/ZxzoTZrECaabexj2RC0KmmSTML9HwLOrbZtU7X2slD6e7Ngjv5ym0oL
-	f8aPjVwRYh6JZJ8R0nj07jdcHDJiHu2w6Wy/xaTgV1EdJW0HWWps0ugWBplffA2sA8oQlDQb09p
-	29YXrS53lQiUkxymZJw==
-X-Google-Smtp-Source: AGHT+IGpzlej2+Z3SXODAEzFJm8VdCZDsdM7lfDewREwNsE0MaBEO6TMznf73Bfd6qCYOF6NnQCOog==
-X-Received: by 2002:a05:6402:34c7:b0:5e5:ba77:6f24 with SMTP id 4fb4d7f45d1cf-5e5e22d4c66mr15989484a12.16.1741420259465;
-        Fri, 07 Mar 2025 23:50:59 -0800 (PST)
-Received: from hex.my.domain (83.11.221.132.ipv4.supernova.orange.pl. [83.11.221.132])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac25d376342sm213104766b.106.2025.03.07.23.50.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 07 Mar 2025 23:50:59 -0800 (PST)
-From: Artur Weber <aweber.kernel@gmail.com>
-Date: Sat, 08 Mar 2025 08:50:47 +0100
-Subject: [PATCH v3 9/9] ARM: dts: bcm11351: Add corresponding bus clocks
- for peripheral clocks
+	s=arc-20240116; t=1741420634; c=relaxed/simple;
+	bh=Zj3zJcA4uSUYzD3DvV0Arf1ZE/tEBc/rPcPhCxar2JE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=pu3aBLUUDuaAImjZ8ZY2b/pg9JesCVQsBW1Tq8gpern4+Q8Jm3yrb5eYpWN9PDz1HvxUW/AO/sGCQE9VTG5TfCBf+VF0AxDXogthlEh3tNtFI8kOrsXhS/lga5Q98jDeDyho0Cuu40zfbhLoPlYNpBI6x7zHggQ/DSwDwkhUmEE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=FPXocMsQ; arc=none smtp.client-ip=212.227.15.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1741420615; x=1742025415; i=markus.elfring@web.de;
+	bh=Zj3zJcA4uSUYzD3DvV0Arf1ZE/tEBc/rPcPhCxar2JE=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=FPXocMsQP7BEgGbkQdM9lpBa+Ev1vYv3y2FJ+fcfLNUQEkCiDYDhJwNDD32+rdL0
+	 tX0ch8kdv0P+uZ47cZAEFbqOKCNl5YEJzDjLwzq/UVpIw2mZ0pWhLIJZGICr98Bi3
+	 BT6CKAwzvbXNM1PCjJUoZFR64ltvbZ6p8LDzpJzaFtO5BbuCECKjmbKAmTmrmWXp8
+	 nOdEzWvWnY2D5srKa0Bmp/lrBBx+iDsxGmQvJsVsVfCXztZ41C8xesBjaatkexreF
+	 aYZlQkaYKiFk+YOwyU2rCfiIu5LMpDmdwQiVebwXnuVP5hGW5hXKjrCa2oi49hAnU
+	 rY0SuDm9z2A4ba6KMA==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.29] ([94.31.70.79]) by smtp.web.de (mrweb005
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1MDMv4-1u08zR374g-00EbhJ; Sat, 08
+ Mar 2025 08:56:55 +0100
+Message-ID: <d2b2716d-b482-467e-9653-9219de40bae8@web.de>
+Date: Sat, 8 Mar 2025 08:56:37 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [v2 1/2] perf report: Use map_symbol__copy() when copying call
+ chains
+To: Namhyung Kim <namhyung@kernel.org>, linux-perf-users@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>,
+ Adrian Hunter <adrian.hunter@intel.com>,
+ Arnaldo Carvalho de Melo <acme@kernel.org>, Ian Rogers <irogers@google.com>,
+ Ingo Molnar <mingo@kernel.org>, Jiri Olsa <jolsa@kernel.org>,
+ Kan Liang <kan.liang@linux.intel.com>, Peter Zijlstra <peterz@infradead.org>
+References: <20250307061250.320849-1-namhyung@kernel.org>
+ <2719d1d0-6e1c-48fd-b73e-42b78c51b201@web.de> <Z8tudline_-qNJog@google.com>
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <Z8tudline_-qNJog@google.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250308-kona-bus-clock-v3-9-d6fb5bfc3b67@gmail.com>
-References: <20250308-kona-bus-clock-v3-0-d6fb5bfc3b67@gmail.com>
-In-Reply-To: <20250308-kona-bus-clock-v3-0-d6fb5bfc3b67@gmail.com>
-To: Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, 
- Florian Fainelli <florian.fainelli@broadcom.com>, 
- Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>, 
- Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>
-Cc: Alex Elder <elder@kernel.org>, 
- Stanislav Jakubek <stano.jakubek@gmail.com>, linux-clk@vger.kernel.org, 
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
- ~postmarketos/upstreaming@lists.sr.ht, 
- Artur Weber <aweber.kernel@gmail.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1741420241; l=2485;
- i=aweber.kernel@gmail.com; s=20231030; h=from:subject:message-id;
- bh=6WL3+gww7pwy7HeSxhHT435XK+Ky7XngeaLYGMY0ueU=;
- b=S+ne26yjaEAziJt6Hen4F5vs7TSLH7eYElTQDr9fk1DZftrPd+kqW3L5pMCzrsr7+4mX6a+sn
- 7X4Fa9Wk3wgAlInT+5Ko+cdi5XYnJ27HGfnFrlL3Q8a41p3JG+Xn7BS
-X-Developer-Key: i=aweber.kernel@gmail.com; a=ed25519;
- pk=RhDBfWbJEHqDibXbhNEBAnc9FMkyznGxX/hwfhL8bv8=
+X-Provags-ID: V03:K1:mIU5Uztp5BCv3mSjwgOuclJYhvAlUx4lh0MYp2697qqnxf7D7uJ
+ R4JfvKnmGbvH8/CEru2gJBHs5j8A1iJWH5ZRgBMGBaPNTh6fai7sOs8elpGze0nLmoz48+V
+ Fu5ofOSgQ0KQQ7hERRAOj6fyaXGvckSOdxPjro3ZzlhKDLZNAdHOl/ZvM7w8yXY9rpaceRb
+ gIoKGUoHOgvb4DY5DteTg==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:teHOiyEJCCw=;V63J687ciM74R8eO6PJS+pCFeUQ
+ LdXczH34h0eUOo5/ReZjj4mYa0AXuGAktQKQ/hmAUICqAnAJ+iFH0upmbZjtLNK4rGc0BlBRX
+ 950wyQDILpavC8LDLTc+XkLq9SEW/RpqhVQdXx3xeJ5KUQ+wDq/fWKJIKuudV2kv1GlWjRqQ4
+ swPneHAbPHN3GZfWq5bLwUedqg8G5oioVrS/VgBJvLwpCSzEWxOLzWLQT5Z7T+fTeXQzGboc5
+ Uh6MnhWeq+qIJ2DTjeJpnMdZTkrBeeU7qsGWwb2BBiUgH1LaWGwp/Ec3dK5ucxbzUA8HxDS4Y
+ jBap9p+BniYD79F4PrkqtkxHOGWk4I0HV2BEEJ4DB1Q0rhFjHPzClUuamNZLp4ML0DModN1/J
+ 0VKJHBRCMVztKt/24r/Rj/vrT/xyKgeveZTN2kPegFr+51lCT0KiZjL6awCWo0PdiFAd4d1n5
+ V+dQ64wGGpc0RF2F1zlnKBiY31IggSzHn3M8pthjIbYLeR4oG/9QeIbd4mlgJZHzRRTCL/yoC
+ piHdb/wBjxu6f9Y5QPpJH6y741LQHqu/cyNB02CbNXyxJKjULXt+BDKMGH07AEa4T9IWhh46k
+ n9JHbvNrSWD+uvGnUbXM2YV1ThLKZ4IMZyZ7KLnFCnZ3XK7xzMSNoYZ1YzoSGXm18dLOrTbrh
+ itELX20rcnzTXEf03jt15ig6S/NH+TGsN9mKyhSjlitoKkfg1uhq64wWqZXTX3puethKsd9DR
+ hbO9SzJuVlLVWHOvK6mSw6IaSMsjdwU7IUxTk53VaJf5Fim8oSkmtGbAMZo5KLVrnvMiL8yy5
+ akXf8S/eD3UjupFhXCcGZdgXxfYzSK3bWk9hofvm6Yx2tswmlpMV2W5JMny/5gHa2dolqpt9w
+ wtOUyZxsv9GcDggsg8uuBx6dXmDbsWLkkK1ysqFXA/eQIlsN/TgzYNuG0BI0coYm7oPLLA7O0
+ omrf/oJFf5fc/Tu28Pp/cZDy/QnH2KdjO1yuXV4f228jkVGYOAK5inMWvREIE/jlqy7ljIOyq
+ m1DaEM/FNwMfHluAoYqoBKbKtElCSDb4yFNtaFFq7g2bHdBlWJZaGA8AIrCl+WwAezHnjOcuh
+ WP8vsAXLjx4iE2Hj9Cqw1vSBrqIhZOUc0ufEJFMFJfBKTlT5g3yFoLtHK+rFrbMbHAk9N8h2e
+ I+oWEnpZSeM3i8tk14G21/cLd5be5FMYuK8GCyEyeGeOk7/yIPzancrOQC60TP2oGHMG4zHEB
+ ZL+zaGqWjv0wPr4jnmbdtnDGonxlNpjvqHIwtK+Ve4kkJMuyM6sf+ODI8tHwhkobdScp7WbG6
+ bwq07ZQ1MoudwGbedtEkMPgFM7aD4ezo5fHk74jGRY1H4jqJUvjS1mZG1xyX3Ito+eKKerqHL
+ JGGALJmkCc6mPjXLhVuLFslxuChAtA1l+bOE/zMeEK1AtNX5IiJxngCwLOQb6I+ezZOUP+clJ
+ nYjABQg==
 
-Following changes in the clock driver, add matching bus clocks for
-existing peripheral clocks. Replace the usb_otg_ahb fixed clock with
-the real bus clock.
+> It's just two patches and they are independent.
 
-Signed-off-by: Artur Weber <aweber.kernel@gmail.com>
----
-Changes in v2:
-- Add this patch (BCM281xx bus clocks)
----
- arch/arm/boot/dts/broadcom/bcm11351.dtsi | 33 ++++++++++++++++++++++----------
- 1 file changed, 23 insertions(+), 10 deletions(-)
+How do you think about to offer the desired changes as single items then
+(without the context of a patch series in this case)?
 
-diff --git a/arch/arm/boot/dts/broadcom/bcm11351.dtsi b/arch/arm/boot/dts/broadcom/bcm11351.dtsi
-index 53857e572080d752732c512ed27f942756d59c46..fac5cf5a46bd9a4b7e09a2e65c3e807d1b4ef960 100644
---- a/arch/arm/boot/dts/broadcom/bcm11351.dtsi
-+++ b/arch/arm/boot/dts/broadcom/bcm11351.dtsi
-@@ -233,7 +233,9 @@ aon_ccu: aon_ccu@35002000 {
- 			#clock-cells = <1>;
- 			clock-output-names = "hub_timer",
- 					     "pmu_bsc",
--					     "pmu_bsc_var";
-+					     "pmu_bsc_var",
-+					     "hub_timer_apb",
-+					     "pmu_bsc_apb";
- 		};
- 
- 		master_ccu: master_ccu@3f001000 {
-@@ -246,7 +248,14 @@ master_ccu: master_ccu@3f001000 {
- 					     "sdio4",
- 					     "usb_ic",
- 					     "hsic2_48m",
--					     "hsic2_12m";
-+					     "hsic2_12m",
-+					     "sdio1_ahb",
-+					     "sdio2_ahb",
-+					     "sdio3_ahb",
-+					     "sdio4_ahb",
-+					     "usb_ic_ahb",
-+					     "hsic2_ahb",
-+					     "usb_otg_ahb";
- 		};
- 
- 		slave_ccu: slave_ccu@3e011000 {
-@@ -262,7 +271,17 @@ slave_ccu: slave_ccu@3e011000 {
- 					     "bsc1",
- 					     "bsc2",
- 					     "bsc3",
--					     "pwm";
-+					     "pwm",
-+					     "uartb_apb",
-+					     "uartb2_apb",
-+					     "uartb3_apb",
-+					     "uartb4_apb",
-+					     "ssp0_apb",
-+					     "ssp2_apb",
-+					     "bsc1_apb",
-+					     "bsc2_apb",
-+					     "bsc3_apb",
-+					     "pwm_apb";
- 		};
- 
- 		ref_1m_clk: ref_1m {
-@@ -325,12 +344,6 @@ var_52m_clk: var_52m {
- 			clock-frequency = <52000000>;
- 		};
- 
--		usb_otg_ahb_clk: usb_otg_ahb {
--			compatible = "fixed-clock";
--			clock-frequency = <52000000>;
--			#clock-cells = <0>;
--		};
--
- 		ref_96m_clk: ref_96m {
- 			#clock-cells = <0>;
- 			compatible = "fixed-clock";
-@@ -396,7 +409,7 @@ usbotg: usb@3f120000 {
- 		compatible = "snps,dwc2";
- 		reg = <0x3f120000 0x10000>;
- 		interrupts = <GIC_SPI 47 IRQ_TYPE_LEVEL_HIGH>;
--		clocks = <&usb_otg_ahb_clk>;
-+		clocks = <&master_ccu BCM281XX_MASTER_CCU_USB_OTG_AHB>;
- 		clock-names = "otg";
- 		phys = <&usbphy>;
- 		phy-names = "usb2-phy";
-
--- 
-2.48.1
-
+Regards,
+Markus
 
