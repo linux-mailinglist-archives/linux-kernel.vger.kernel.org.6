@@ -1,117 +1,126 @@
-Return-Path: <linux-kernel+bounces-552592-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-552597-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B99ECA57BBA
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 16:56:32 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 04BD1A57BC6
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 17:04:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7FA657A783D
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 15:55:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E98BE3B2526
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 16:04:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42679207A10;
-	Sat,  8 Mar 2025 15:55:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7C091DC19F;
+	Sat,  8 Mar 2025 16:04:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="aq2NocH9"
-Received: from relay3-d.mail.gandi.net (relay3-d.mail.gandi.net [217.70.183.195])
+	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="L3oeCnln"
+Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D104E1E51FD;
-	Sat,  8 Mar 2025 15:54:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 155F017C77;
+	Sat,  8 Mar 2025 16:04:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741449298; cv=none; b=MtYHEo7oe0vc8F2G97NTxEvXoGcrGP2Bn77qDsz+XdJIESYCnlgh7P2WzSZyIsi81VFKXk4sB8TwAGJHFezfuDLDCvvGeGIDrnKguPujXrRUlu1Y8BA6kvMsIMbDqQrLe52IoZwEBvi3hecO8xhZukOucjxGr3hulY9+ebDtbso=
+	t=1741449860; cv=none; b=iEjgwlC+/6rvt7C7TXtDKSds8zckYAIb04IZzmi5sXbQOI6wk70Uq1gDBAnm8brH6JXI8HQGxAyRpfqSdDSmC3jYVqNWLAggOoAe6kHYEQDPMlwZBmuvmtX5VZ1tMwYdZna1DhcLONrHFKLWzr/ygVljj6qtv4HW5c83GyXixLk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741449298; c=relaxed/simple;
-	bh=0mfjyXKIgmzvaAX9DA1hxS8ulnzghvGnKD6Ne4Ff0/U=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=jGZgp5727eZt4Gc/PMp4fo6kBRvsDvRBuNe1oOA2MwcjQ2ehfFdb8uYUhyQslB+AOalVPTljmTLIVY9Gk+GI6xIkPwr09vYYcU+jsmfIGuD0s996QeeIicIhOvxpsv4UE6JBRjrgjb0809TzjT9r4nhVxLG2bQFW1MThZ1LXCtY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=aq2NocH9; arc=none smtp.client-ip=217.70.183.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id D4ADB2057E;
-	Sat,  8 Mar 2025 15:54:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1741449294;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ILe6nI6Ki42KcccEbLeCevH0sAe1JndgxjyaSZB5rZs=;
-	b=aq2NocH9h4KO6RCWTD52ysb3UUY2rngTh3huiE4ND/emR2/PwABy1MuqxzlmAip9zYh/W4
-	Zsx9fYHsmJ3Qi+n8kIDp0z0bTCqfU9+EJAHOjobYGkgw9ubSnPwQahh9BzU/fMCvI9jelf
-	FuEMWNITeyVkgcpnkO8Fb0iKqNixvJCUhocZNJ4hsasQZg7FufYYlFyzflsbD4PIHFw4Vw
-	U+1e3/hMRw8lDZATB8pbRCslz0nIGoEWiMoE5NHIDHOicCq3xpXcYyG0hBaS730cuuVBDI
-	naBi3rON3vRnk1/LuJaoKzTg/12N0eMiLyqlVsMgEy3M7YYKNsKWZjgpz11YqA==
-From: Maxime Chevallier <maxime.chevallier@bootlin.com>
-To: davem@davemloft.net,
-	Andrew Lunn <andrew@lunn.ch>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Eric Dumazet <edumazet@google.com>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Heiner Kallweit <hkallweit1@gmail.com>
-Cc: Maxime Chevallier <maxime.chevallier@bootlin.com>,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	thomas.petazzoni@bootlin.com,
-	linux-arm-kernel@lists.infradead.org,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Herve Codina <herve.codina@bootlin.com>,
-	Florian Fainelli <f.fainelli@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	Vladimir Oltean <vladimir.oltean@nxp.com>,
-	=?UTF-8?q?K=C3=B6ry=20Maincent?= <kory.maincent@bootlin.com>,
-	Oleksij Rempel <o.rempel@pengutronix.de>,
-	Simon Horman <horms@kernel.org>,
-	Romain Gantois <romain.gantois@bootlin.com>,
-	Piergiorgio Beruto <piergiorgio.beruto@gmail.com>,
-	Stanislav Fomichev <sdf@fomichev.me>
-Subject: [PATCH net-next v2 7/7] net: ethtool: pse-pd: Use per-PHY DUMP operations
-Date: Sat,  8 Mar 2025 16:54:39 +0100
-Message-ID: <20250308155440.267782-8-maxime.chevallier@bootlin.com>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20250308155440.267782-1-maxime.chevallier@bootlin.com>
-References: <20250308155440.267782-1-maxime.chevallier@bootlin.com>
+	s=arc-20240116; t=1741449860; c=relaxed/simple;
+	bh=+zBPeyLIwQ3GQrILfK5tDhMKAHbfYI7Q2/ocf4qtmAo=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
+	 MIME-Version:Content-Type; b=WbdPhfJJ/RpYr8/Xk9vxL5fNz1EZc63wwE4iNnU0VWn1etYcByXAp03raK8EVPdE5zZrn4hGfWffY4/cLKsRhIgIc6sIdigsV1XlS+6V+Fk0xENXKdIMrQh9jl1zp9gSvigo8+y8AeGDM+a5tMahA1xgm206zYKhASrut4ruQQ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=L3oeCnln; arc=none smtp.client-ip=198.137.202.136
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
+Received: from [127.0.0.1] ([76.133.66.138])
+	(authenticated bits=0)
+	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 528G1vx3843220
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
+	Sat, 8 Mar 2025 08:01:57 -0800
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 528G1vx3843220
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+	s=2025021701; t=1741449719;
+	bh=XZ6zT2NcuplMVReO3d9Pob3Dzop+8WCFvEBTROi2/bE=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
+	b=L3oeCnlnKypB2FJSTW6d8Fse4ayJOhIcoiox2lF3RifwcuqlEGm+ubDkWHEwk2FYx
+	 kwvy50gJENeAh86tlWae6AecaDrvWvhEsTMyQGp80HZjgRbBBHZQfzoKwr8XtNy9cQ
+	 4nI1dJgzqtITC7q3sHt95OP+S242xPurAS1CUG/j2AaeIMZifumZ49JClp+FdvSBIJ
+	 QyvBr+le59w3c+z16ArMaqrwlosQzgopw6IR+ZVyUZ6iW/KfUemXsUsGdq4A+AtWn2
+	 1t0zeHUvzqfCCuHMkaO9WxgP+4AQ1jCAyF9WqQyqlx0mVGtJoyyd9iKhtg9WZ1sRX2
+	 8eK1IKPlrqjSg==
+Date: Sat, 08 Mar 2025 08:01:56 -0800
+From: "H. Peter Anvin" <hpa@zytor.com>
+To: Masahiro Yamada <masahiroy@kernel.org>, "Xin Li (Intel)" <xin@zytor.com>
+CC: linux-kernel@vger.kernel.org, linux-kbuild@vger.kernel.org,
+        nathan@kernel.org, nicolas@fjasle.eu, bp@alien8.de, sraithal@amd.com
+Subject: Re: [PATCH v1 1/1] kbuild: Add "make headers" to "make help" output
+User-Agent: K-9 Mail for Android
+In-Reply-To: <CAK7LNARHvn4Sy-e4hMmjGt0C7TFaWrGJrLq3YvN0BjehZ8QwSg@mail.gmail.com>
+References: <20250308040451.585561-1-xin@zytor.com> <CAK7LNARHvn4Sy-e4hMmjGt0C7TFaWrGJrLq3YvN0BjehZ8QwSg@mail.gmail.com>
+Message-ID: <FAE530F5-B657-4C72-8D69-7ABA2D3209A9@zytor.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdduudefleeiucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvfevufffkffojghfggfgsedtkeertdertddtnecuhfhrohhmpeforgigihhmvgcuvehhvghvrghllhhivghruceomhgrgihimhgvrdgthhgvvhgrlhhlihgvrhessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepveegtdffleffleevueellefgjeefvedvjefhheegfefgffdvfeetgeevudetffdtnecukfhppedvrgdtudemtggsudelmeekugegtgemlehftddtmegstgdvudemkeekleelmeehgedttgemvgehlegvnecuvehluhhsthgvrhfuihiivgepgeenucfrrghrrghmpehinhgvthepvdgrtddumegtsgduleemkegugegtmeelfhdttdemsggtvddumeekkeelleemheegtdgtmegvheelvgdphhgvlhhopehfvgguohhrrgdrhhhomhgvpdhmrghilhhfrhhomhepmhgrgihimhgvrdgthhgvvhgrlhhlihgvrhessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepvddvpdhrtghpthhtohepuggrvhgvmhesuggrvhgvmhhlohhfthdrnhgvthdprhgtphhtthhopegrnhgurhgvfieslhhunhhnrdgthhdprhgtphhtthhopehkuhgsrgeskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepvgguuhhmr
- giivghtsehgohhoghhlvgdrtghomhdprhgtphhtthhopehprggsvghnihesrhgvughhrghtrdgtohhmpdhrtghpthhtohephhhkrghllhifvghithdusehgmhgrihhlrdgtohhmpdhrtghpthhtohepmhgrgihimhgvrdgthhgvvhgrlhhlihgvrhessghoohhtlhhinhdrtghomhdprhgtphhtthhopehnvghtuggvvhesvhhgvghrrdhkvghrnhgvlhdrohhrgh
-X-GND-Sasl: maxime.chevallier@bootlin.com
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-Leverage the per-phy ethnl DUMP helpers in case we have more that one
-PSE PHY on the link.
+On March 8, 2025 7:12:59 AM PST, Masahiro Yamada <masahiroy@kernel=2Eorg> w=
+rote:
+>On Sat, Mar 8, 2025 at 1:05=E2=80=AFPM Xin Li (Intel) <xin@zytor=2Ecom> w=
+rote:
+>>
+>> Meanwhile explicitly state that the headers are uapi headers=2E
+>
+>There are many internal-use targets, which are not documented in the
+>help message=2E
+>I assume this one is the case=2E
+>
+>If users want to install UAPI headers, 'headers_install' is
+>the user-visible interface and it is already documented=2E
+>
+>
+>
+>
+>
+>> Suggested-by: Borislav Petkov <bp@alien8=2Ede>
+>> Signed-off-by: Xin Li (Intel) <xin@zytor=2Ecom>
+>> ---
+>>  Makefile | 3 ++-
+>>  1 file changed, 2 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/Makefile b/Makefile
+>> index 70bdbf2218fc=2E=2E8f5aa710105e 100644
+>> --- a/Makefile
+>> +++ b/Makefile
+>> @@ -1659,7 +1659,8 @@ help:
+>>         @echo  '  kernelrelease   - Output the release version string (=
+use with make -s)'
+>>         @echo  '  kernelversion   - Output the version stored in Makefi=
+le (use with make -s)'
+>>         @echo  '  image_name      - Output the image name (use with mak=
+e -s)'
+>> -       @echo  '  headers_install - Install sanitised kernel headers to=
+ INSTALL_HDR_PATH'; \
+>> +       @echo  '  headers         - Install sanitised kernel uapi heade=
+rs to usr/include'
+>> +       @echo  '  headers_install - Install sanitised kernel uapi heade=
+rs to INSTALL_HDR_PATH'; \
+>>          echo  '                    (default: $(INSTALL_HDR_PATH))'; \
+>>          echo  ''
+>>         @echo  'Static analysers:'
+>>
+>> base-commit: 7eb172143d5508b4da468ed59ee857c6e5e01da6
+>> --
+>> 2=2E48=2E1
+>>
+>
+>
+>--
+>Best Regards
+>Masahiro Yamada
+>
 
-Signed-off-by: Maxime Chevallier <maxime.chevallier@bootlin.com>
----
-V2: No changes
-
- net/ethtool/pse-pd.c | 6 ++++++
- 1 file changed, 6 insertions(+)
-
-diff --git a/net/ethtool/pse-pd.c b/net/ethtool/pse-pd.c
-index 4f6b99eab2a6..f3d14be8bdd9 100644
---- a/net/ethtool/pse-pd.c
-+++ b/net/ethtool/pse-pd.c
-@@ -314,4 +314,10 @@ const struct ethnl_request_ops ethnl_pse_request_ops = {
- 
- 	.set			= ethnl_set_pse,
- 	/* PSE has no notification */
-+
-+	.dump_start		= ethnl_dump_start_perphy,
-+	.dump_one_dev		= ethnl_dump_one_dev_perphy,
-+	.dump_done		= ethnl_dump_done_perphy,
-+
-+	.allow_pernetdev_dump	= true,
- };
--- 
-2.48.1
-
+Unfortunately it seems users haven't been following that :(
 
