@@ -1,167 +1,149 @@
-Return-Path: <linux-kernel+bounces-552523-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-552526-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 562A4A57ABF
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 14:49:08 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9AB09A57AC6
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 14:52:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C432D16D786
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 13:48:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 81E6D188DCEC
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 13:52:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99B231C8622;
-	Sat,  8 Mar 2025 13:47:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 992BE1C6FF1;
+	Sat,  8 Mar 2025 13:52:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="a7z7Q+y7"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="NRjZGi8m"
+Received: from relay4-d.mail.gandi.net (relay4-d.mail.gandi.net [217.70.183.196])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 494F1185B67;
-	Sat,  8 Mar 2025 13:47:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B66A1527B1;
+	Sat,  8 Mar 2025 13:52:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.196
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741441656; cv=none; b=Zj/d18SqJfj+yJW+Gpx2HNLBqoR1NYCfPSsEaPg0Q7RJOTV67BUmEeKXiiLPweYdrvYjmch8ISpqsCOyFZEKDHlT8znpibVRepZAZPX73LEdHCobUZ0IXi8IHRy6qfZ9R7gqHQKWxKH8JDBiJLp/TVIChnFk1XjjZOXIq8yXzOc=
+	t=1741441928; cv=none; b=m7ljE/FIu1cZzsfZIX7e4ZfqBhcIdqxz47oooVPBr7eCdVn3dGJO1pWRCx/yy0f+NGi5OZhMUU9YQuD2q5d8pG0mrHq95OAksQMhckit7jXR7MqJe9lvHvRTx3yKOQmrzpMJwZX+bVN+BvlaSXbxVs0JXChTp4QVOJRDfrr1/8Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741441656; c=relaxed/simple;
-	bh=VhVMNtKTGuXymtyKJMeoT8KYnmWFDSOmhBUY5ZZr65M=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MTS4VWVKAlQAYdIA6oK2W+EmRNGSgIXYLXTVth7dpme0zO5xROaIXVGQPVBBRLJjn84nFIhQnLzo9kGCHhySRQhNQyvpqSlJu4KlSf5wkXHTqlvtIK45PeDp32jVPm2IJ3RTS8LoKM3z+UztYsLtMf751G3NepiWBBrTkZPsDUw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=a7z7Q+y7; arc=none smtp.client-ip=198.175.65.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1741441655; x=1772977655;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=VhVMNtKTGuXymtyKJMeoT8KYnmWFDSOmhBUY5ZZr65M=;
-  b=a7z7Q+y7ogyCz0nxUsIl25k6nl4z1BtjsbcU4g+3WUFwvMERri5yP4Lu
-   Fl2dUpksUwwz7WvDZlzLMuLMts7tEImZeMAX7b9AmIe4FbtBgSksHOvWK
-   W4DU72IbMiMyJdm3Uurl0QA/Pmr66z+vADkIqMDtbFN5omQ/g+V4UeC39
-   cllk8+sc7p8iC8ltzE/ft5B3C8Dy/yYMEoGnukabgc/ugmpAu2IpuiBh2
-   P/nPY3uF8JYuGQcaYph1vaul7fR0lq1k8qzx3ZGpdYD5J8+QisuWeQEy2
-   UPz0PncVsrZ0vjoUNdH143E+LC8vplA9lW/Sd5p2WTyDBEAWmD0LwBw3q
-   g==;
-X-CSE-ConnectionGUID: OTpjXPSRTnG5GTNi348AwQ==
-X-CSE-MsgGUID: rz7AhZFCT7KSI5mMBh1GWw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11367"; a="46263793"
-X-IronPort-AV: E=Sophos;i="6.14,232,1736841600"; 
-   d="scan'208";a="46263793"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Mar 2025 05:47:34 -0800
-X-CSE-ConnectionGUID: qBrvRkGqQQG0U0lDswIdLw==
-X-CSE-MsgGUID: 8Tm5jwVmQoKT7WroWG650A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
-   d="scan'208";a="119501133"
-Received: from lkp-server02.sh.intel.com (HELO a4747d147074) ([10.239.97.151])
-  by orviesa010.jf.intel.com with ESMTP; 08 Mar 2025 05:47:31 -0800
-Received: from kbuild by a4747d147074 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tquWR-0001wW-23;
-	Sat, 08 Mar 2025 13:47:25 +0000
-Date: Sat, 8 Mar 2025 21:46:59 +0800
-From: kernel test robot <lkp@intel.com>
-To: Mateusz Guzik <mjguzik@gmail.com>, brauner@kernel.org
-Cc: oe-kbuild-all@lists.linux.dev, viro@zeniv.linux.org.uk, jack@suse.cz,
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	io-uring@vger.kernel.org, audit@vger.kernel.org, axboe@kernel.dk,
-	Mateusz Guzik <mjguzik@gmail.com>
-Subject: Re: [PATCH] fs: support filename refcount without atomics
-Message-ID: <202503082155.OjmOoifN-lkp@intel.com>
-References: <20250307161155.760949-1-mjguzik@gmail.com>
+	s=arc-20240116; t=1741441928; c=relaxed/simple;
+	bh=WKVokk4EZBnnTxzZA3HR4l0jDWxT54H1Fc7mvdjy3cE=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=piPmcwGOEXNWu7b7soLxzGAb70RIxMHZpF1QXcidw7qx09+ZlQEy2+T2anM6ok7BFF6WUCmGKNIyEoLNr07/QtWPfV0VmHduFLygPUY0YpT1gSZXrMzaFj9dKo4v57b1lWqQMioh4nppkaQXN0ZBfB42L+asuJ8WehuUgO6lQKk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=NRjZGi8m; arc=none smtp.client-ip=217.70.183.196
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 53FE5443D5;
+	Sat,  8 Mar 2025 13:51:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1741441917;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=U/wbGZUe+OxH97D/WyxmtJYVI7v+UGzPeNHB5oGEb8s=;
+	b=NRjZGi8m/PVXSRTiJGtCN3cMbxxfTw1LfZcEiaEqZOKyHYfLWptawgzkwNzwjxauyAohnm
+	GK/N/BiIyAs4FWTgHzo1mBJbzPiFNQiKyffksl807Gs6vurDGFVeVdVRHnLp80e2DKiMmd
+	b2wAy6VeKCzhtN0kaH/Vsv0Q58iM9x5Hnr6xfVGw9IQJ6/KTk7jJq2gtqNQ41FYcnnYyS6
+	gFnFZVxBCxkll6mQbkC5F42tFK7evv3A2bhB1NptMLve6OLtZ877tKTx9BaLAewXOu22Bv
+	gO1OO2PQtAHYc+b/6vYO09wUrcUxadltRSfjH2Rabqk4TK9PgW93sCTMOLcY8g==
+Date: Sat, 8 Mar 2025 14:51:55 +0100
+From: Maxime Chevallier <maxime.chevallier@bootlin.com>
+To: Oleksij Rempel <o.rempel@pengutronix.de>
+Cc: "David S. Miller" <davem@davemloft.net>, Eric Dumazet
+ <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
+ <pabeni@redhat.com>, Woojung Huh <woojung.huh@microchip.com>, Andrew Lunn
+ <andrew+netdev@lunn.ch>, Russell King <rmk+kernel@armlinux.org.uk>,
+ Thangaraj Samynathan <Thangaraj.S@microchip.com>, Rengarajan Sundararajan
+ <Rengarajan.S@microchip.com>, kernel@pengutronix.de,
+ linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+ UNGLinuxDriver@microchip.com, Phil Elwell <phil@raspberrypi.org>
+Subject: Re: [PATCH net-next v2 1/7] net: usb: lan78xx: Convert to PHYlink
+ for improved PHY and MAC management
+Message-ID: <20250308145155.12c437c5@fedora.home>
+In-Reply-To: <20250307182432.1976273-2-o.rempel@pengutronix.de>
+References: <20250307182432.1976273-1-o.rempel@pengutronix.de>
+	<20250307182432.1976273-2-o.rempel@pengutronix.de>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250307161155.760949-1-mjguzik@gmail.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdduudefjedvucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpeffhffvvefukfgjfhhoofggtgfgsehtjeertdertddvnecuhfhrohhmpeforgigihhmvgcuvehhvghvrghllhhivghruceomhgrgihimhgvrdgthhgvvhgrlhhlihgvrhessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepgeevledtvdevueehhfevhfelhfekveeftdfgiedufeffieeltddtgfefuefhueeknecukfhppedvrgdtudemtggsudelmeekugegtgemlehftddtmegstgdvudemkeekleelmeehgedttgemvgehlegvnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepvdgrtddumegtsgduleemkegugegtmeelfhdttdemsggtvddumeekkeelleemheegtdgtmegvheelvgdphhgvlhhopehfvgguohhrrgdrhhhomhgvpdhmrghilhhfrhhomhepmhgrgihimhgvrdgthhgvvhgrlhhlihgvrhessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepudehpdhrtghpthhtohepohdrrhgvmhhpvghlsehpvghnghhuthhrohhnihigrdguvgdprhgtphhtthhopegurghvvghmsegurghvvghmlhhofhhtrdhnvghtpdhrtghpthhtohepvgguuhhmrgiivghtsehgohhoghhlvgdrt
+ ghomhdprhgtphhtthhopehkuhgsrgeskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepphgrsggvnhhisehrvgguhhgrthdrtghomhdprhgtphhtthhopeifohhojhhunhhgrdhhuhhhsehmihgtrhhotghhihhprdgtohhmpdhrtghpthhtoheprghnughrvgifodhnvghtuggvvheslhhunhhnrdgthhdprhgtphhtthhopehrmhhkodhkvghrnhgvlhesrghrmhhlihhnuhigrdhorhhgrdhukh
+X-GND-Sasl: maxime.chevallier@bootlin.com
 
-Hi Mateusz,
+Hi Oleksij,
 
-kernel test robot noticed the following build errors:
+On Fri,  7 Mar 2025 19:24:26 +0100
+Oleksij Rempel <o.rempel@pengutronix.de> wrote:
 
-[auto build test ERROR on brauner-vfs/vfs.all]
-[also build test ERROR on linus/master v6.14-rc5 next-20250307]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+> Convert the LAN78xx driver to use the PHYlink framework for managing
+> PHY and MAC interactions.
+> 
+> Key changes include:
+> - Replace direct PHY operations with phylink equivalents (e.g.,
+>   phylink_start, phylink_stop).
+> - Introduce lan78xx_phylink_setup for phylink initialization and
+>   configuration.
+> - Add phylink MAC operations (lan78xx_mac_config,
+>   lan78xx_mac_link_down, lan78xx_mac_link_up) for managing link
+>   settings and flow control.
+> - Remove redundant and now phylink-managed functions like
+>   `lan78xx_link_status_change`.
+> 
+> Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Mateusz-Guzik/fs-support-filename-refcount-without-atomics/20250308-002442
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git vfs.all
-patch link:    https://lore.kernel.org/r/20250307161155.760949-1-mjguzik%40gmail.com
-patch subject: [PATCH] fs: support filename refcount without atomics
-config: i386-buildonly-randconfig-001-20250308 (https://download.01.org/0day-ci/archive/20250308/202503082155.OjmOoifN-lkp@intel.com/config)
-compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250308/202503082155.OjmOoifN-lkp@intel.com/reproduce)
+I only have a small comment, the rest looks OK (at least to me) :
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202503082155.OjmOoifN-lkp@intel.com/
+> +static int lan78xx_phylink_setup(struct lan78xx_net *dev)
+> +{
+> +	phy_interface_t link_interface;
+> +	struct phylink *phylink;
+> +
+> +	dev->phylink_config.dev = &dev->net->dev;
+> +	dev->phylink_config.type = PHYLINK_NETDEV;
+> +	dev->phylink_config.mac_capabilities = MAC_SYM_PAUSE | MAC_ASYM_PAUSE |
+> +		MAC_10 | MAC_100 | MAC_1000FD;
+> +	dev->phylink_config.mac_managed_pm = true;
+> +
+> +	if (dev->chipid == ID_REV_CHIP_ID_7801_) {
+> +		__set_bit(PHY_INTERFACE_MODE_RGMII,
+> +			  dev->phylink_config.supported_interfaces);
+> +		__set_bit(PHY_INTERFACE_MODE_RGMII_ID,
+> +			  dev->phylink_config.supported_interfaces);
+> +		__set_bit(PHY_INTERFACE_MODE_RGMII_RXID,
+> +			  dev->phylink_config.supported_interfaces);
+> +		__set_bit(PHY_INTERFACE_MODE_RGMII_TXID,
+> +			  dev->phylink_config.supported_interfaces);
 
-All errors (new ones prefixed by >>):
+You can use :
 
-   In file included from include/linux/container_of.h:5,
-                    from include/linux/list.h:5,
-                    from include/linux/swait.h:5,
-                    from include/linux/completion.h:12,
-                    from include/linux/crypto.h:15,
-                    from arch/x86/kernel/asm-offsets.c:9:
-   include/linux/fs.h: In function 'makeatomicname':
->> include/linux/fs.h:2875:24: error: 'struct filename' has no member named 'owner'
-    2875 |         VFS_BUG_ON(name->owner != current && !name->is_atomic);
-         |                        ^~
-   include/linux/build_bug.h:30:63: note: in definition of macro 'BUILD_BUG_ON_INVALID'
-      30 | #define BUILD_BUG_ON_INVALID(e) ((void)(sizeof((__force long)(e))))
-         |                                                               ^
-   include/linux/fs.h:2875:9: note: in expansion of macro 'VFS_BUG_ON'
-    2875 |         VFS_BUG_ON(name->owner != current && !name->is_atomic);
-         |         ^~~~~~~~~~
-   include/linux/fs.h: In function 'refname':
-   include/linux/fs.h:2884:24: error: 'struct filename' has no member named 'owner'
-    2884 |         VFS_BUG_ON(name->owner != current && !name->is_atomic);
-         |                        ^~
-   include/linux/build_bug.h:30:63: note: in definition of macro 'BUILD_BUG_ON_INVALID'
-      30 | #define BUILD_BUG_ON_INVALID(e) ((void)(sizeof((__force long)(e))))
-         |                                                               ^
-   include/linux/fs.h:2884:9: note: in expansion of macro 'VFS_BUG_ON'
-    2884 |         VFS_BUG_ON(name->owner != current && !name->is_atomic);
-         |         ^~~~~~~~~~
-   make[3]: *** [scripts/Makefile.build:102: arch/x86/kernel/asm-offsets.s] Error 1 shuffle=2878351160
-   make[3]: Target 'prepare' not remade because of errors.
-   make[2]: *** [Makefile:1264: prepare0] Error 2 shuffle=2878351160
-   make[2]: Target 'prepare' not remade because of errors.
-   make[1]: *** [Makefile:251: __sub-make] Error 2 shuffle=2878351160
-   make[1]: Target 'prepare' not remade because of errors.
-   make: *** [Makefile:251: __sub-make] Error 2 shuffle=2878351160
-   make: Target 'prepare' not remade because of errors.
+	phy_interface_set_rgmii(dev->phylink_config.supported_interfaces);
 
+instead of setting all indivdual RGMII modes :)
 
-vim +2875 include/linux/fs.h
+> +		link_interface = PHY_INTERFACE_MODE_RGMII_ID;
+> +	} else {
+> +		__set_bit(PHY_INTERFACE_MODE_INTERNAL,
+> +			  dev->phylink_config.supported_interfaces);
+> +		link_interface = PHY_INTERFACE_MODE_INTERNAL;
+> +	}
+> +
+> +	phylink = phylink_create(&dev->phylink_config, dev->net->dev.fwnode,
+> +				 link_interface, &lan78xx_phylink_mac_ops);
+> +	if (IS_ERR(phylink))
+> +		return PTR_ERR(phylink);
+> +
+> +	dev->phylink = phylink;
+> +
+> +	return 0;
+> +}
+> +
 
-  2866	
-  2867	static inline void makeatomicname(struct filename *name)
-  2868	{
-  2869		VFS_BUG_ON(IS_ERR_OR_NULL(name));
-  2870		/*
-  2871		 * The name can legitimately already be atomic if it was cached by audit.
-  2872		 * If switching the refcount to atomic, we need not to know we are the
-  2873		 * only non-atomic user.
-  2874		 */
-> 2875		VFS_BUG_ON(name->owner != current && !name->is_atomic);
-  2876		/*
-  2877		 * Don't bother branching, this is a store to an already dirtied cacheline.
-  2878		 */
-  2879		name->is_atomic = true;
-  2880	}
-  2881	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Maxime
 
