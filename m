@@ -1,156 +1,136 @@
-Return-Path: <linux-kernel+bounces-552663-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-552664-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 73287A57C80
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 18:48:03 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A37CCA57C84
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 18:49:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5BEDC3B031C
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 17:47:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DA48916B2B9
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 17:49:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5505E1DE4E7;
-	Sat,  8 Mar 2025 17:47:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 706E2D528;
+	Sat,  8 Mar 2025 17:48:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=iencinas.com header.i=@iencinas.com header.b="O9hBrwsU"
-Received: from out-173.mta0.migadu.com (out-173.mta0.migadu.com [91.218.175.173])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="W5W+1Vqx"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E56A7D528
-	for <linux-kernel@vger.kernel.org>; Sat,  8 Mar 2025 17:47:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 881C71A5BAB
+	for <linux-kernel@vger.kernel.org>; Sat,  8 Mar 2025 17:48:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741456077; cv=none; b=HJyEYNBwL/W+/9jtHhYWm/zLr2obX8ySJ66WSzPoH4gdtTt/eoNzP9JEQKJfMEYLjkJOWaN295RGaIZ0qDJW3pjmNeLPHWq8wpCVMEzbqUJnKMYnRzmsiZ40qz4Tj6Pjk4MZ3sbNPJZDBqvqyNYaDW1cY0yuxX5vy4INFzjVVjM=
+	t=1741456135; cv=none; b=AWc4YYQg1tRGu/eL7mMowaZgLkJK3dV/eXgP7Esy0qf/0HnF/7P/XByXOAGGhtMnoR4iXORJTmXjZRBxjdSCbQLvr5LuYmr1EcXdSAfQseRqfj1OFb9w+ywvxti1omare/LfS2g4rNUx3EseD/JtMxs8l/5N/PqoxWdMxXumCOY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741456077; c=relaxed/simple;
-	bh=p6InFRndnQU8EQckgN3pPyd05sWUsTAd05gohqs9UvY=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=jX5OmMlWPVtDUCId4Bxdcw5wRWqC6FZ/N0W4jKJM01faZCsO95qOiQpP2hjUHBL8GSWR4WMaJekRcn2qZ5iLMjAE4LmxQg0oSmw+1xAJTI5gw1IrKCXuARtAh2vQU2DVdA/qmwdQL6ESYO+5CNDARfJEEbJsmnPGmo4KLuC1Ytw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=iencinas.com; spf=pass smtp.mailfrom=iencinas.com; dkim=pass (2048-bit key) header.d=iencinas.com header.i=@iencinas.com header.b=O9hBrwsU; arc=none smtp.client-ip=91.218.175.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=iencinas.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iencinas.com
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=iencinas.com;
-	s=key1; t=1741456072;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=iH+nG+xkzMrLIyIs8nUbB7bGFwyHx+ZLku2SBIZQKbo=;
-	b=O9hBrwsUnzHE6nP8M7rR4LwDxH1racbMlTbDUxI6kt28RSBISHSGjPuqHN37y1AL9R5XmB
-	KOkUSNNUTpalDqEGN3U7KJmovY0GMKzAJjOfnV4Whz/s+gAfEtlgykMaJCMyFw5k1VBPyh
-	z6Ip+bhfw1m3qzFP7qw50PQrsCmyQ+5u4R80qdViQNzdfrLFE5vW/OEquCyzBb62MPNveJ
-	FqHqNBIBwdZVBfEVuXMDr3oUKg9KCbggJ+rKvxsh1aA543ai7EY4R3hgKnqvKjAJT45/8l
-	f7+rPrObKiw+ri8IP8BWRSu56arZgDZ8D9Xrwuf4uGM63B0dQKAr3rHPhn08Kg==
-From: Ignacio Encinas <ignacio@iencinas.com>
-Date: Sat, 08 Mar 2025 18:47:38 +0100
-Subject: [PATCH] 9p/trans_fd: mark concurrent read and writes to
- p9_conn->err
+	s=arc-20240116; t=1741456135; c=relaxed/simple;
+	bh=ONK1kMMZ2tlq7ImNd6unr943MlZoZ4E9hWT3KTW2Fj4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=UFwm71jGmNNrk/P3/tFGok0AcLSfDsDE36eUgmtfGEfX40EsMo33fCZBjmEl9pctcb69SOM4durvoDX4MHsULrdNIExisydz8WN1/B9ROgLeMs5EFsBSRvPQkaRjPB26dSus700htW+N05XUwtPoF8J21ED1sPO87pJP697WEU0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=W5W+1Vqx; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5284m9b1026221
+	for <linux-kernel@vger.kernel.org>; Sat, 8 Mar 2025 17:48:54 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	9zgESm2DJBeKwNRa2kpBfLUx05b1iadnUUGYGKJsXFI=; b=W5W+1VqxoIboIAao
+	o7OHvznBlV72U24+pAB4JcWtW0piW2pworPz3K7fFgr9bC95WRRx541EaagvEUfF
+	YRXCLxHBcFTlDcjZZnQKIOCzXCJiFzjVbD2K/WB5wF2x6TrpezQ/L8G3lvpnt9SC
+	2+nseKwfoB6Imo67972mEObK7Z8UjXKwtzK9ryxvQK76q8OBtBqMEgef3MSOjhTD
+	hjd7rm23WufRhZ3KtSQ/LGf1ey16XdxxMzrDyuCD1jCNkNmXMk+OhkaBE+yZN8kI
+	61jYb7fC3fqnxs8LTP0BrnKl/r9WPOQbE7x99u4h9Q0K0Pw+0+1/14Rh0pL+uFLX
+	9Uzmzg==
+Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com [209.85.160.198])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 458f6a8wmb-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Sat, 08 Mar 2025 17:48:53 +0000 (GMT)
+Received: by mail-qt1-f198.google.com with SMTP id d75a77b69052e-476786e50d9so522481cf.1
+        for <linux-kernel@vger.kernel.org>; Sat, 08 Mar 2025 09:48:53 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741456132; x=1742060932;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=9zgESm2DJBeKwNRa2kpBfLUx05b1iadnUUGYGKJsXFI=;
+        b=N0BQRZiDj3Ezc2nrdt2dLGWEXuEfBxeFRfvsduCteRHQ0P7PfRFjPCXr+5lytFZeqK
+         nWbZh7gNneUBWxHqfAcGad5wyeZA/8fdA7IQYtYRDl+yDAAdQXo1e0I9J1kqReEbhVRP
+         0Floai/5d2hhxvW/+uuEIaQOUDA6yG6y/pNKv0J5Dr/a2iKRHAgWtEfiFrYBqOx0A93Z
+         oE7kZ/nEoaUYE9Hmsdsq5R9jRieVpg4YeBSfziw0UYUIlfxVKMV8QAc7lVflA2mcoe+J
+         09PEja3RN3NguesCSgw4k5nFR0CiLQOwuWPreUzWiYjD2GuKXznZ8v3NPFvmCAiTiTLz
+         bm5Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUK0FOgMh1flliJ7oed8hucAidHmCvXAOW6sMfalUK5eGK+6Vy9tcpZFfGklZ1rdbHwbT9AD8568HVOEkY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz0ne3JXjY83cwWhas78JyYg86l4ujVYVoput7V/BcPDdvezO/C
+	WDZfpkDHxqaFGrf81dEclq1jBScLAztkkUMZkgZKUaE0hvNFjyUszO87fcTUGD3Yrkk5f7AXQGf
+	bHGSF7f5kD2xIdvDseIArANDXR24mfyrE/3W7H7yZfIVxTCxA7XFn+EBNMtTgx7w=
+X-Gm-Gg: ASbGnct9zhEGs6H0TaG8I7+KH4WiX16J6CToVERqrD5tfN9fZx8qg2rNwhCbBBdHc4F
+	YJhMqXWqhCcCCKeHRHbjhXoY8rPJFpxakRACqp9bvOp7CxiaVRRnV17t/uXvgtc+YvoQh5ASAr9
+	70IWoWOb2MBDdJSk/qZEQxHg1HZWjiLjj9+/M5u+6Fv6rv+4FmKJkSaz2QqJdmNV0Zw786Yj/fq
+	S9pVufZ/va9k68Qtj976HngkpCs9zC0Cyg+wua1st/4HsCkXCVWg17s3p/gsfF+lCMp5cIhFP/b
+	8K0qBrv9tBzB5FlZ8MdLvgYMCBXoRykPAqc+2hNDYKRMyaIK+INHDaRqdi8ucES+CY3QPQ==
+X-Received: by 2002:a05:620a:1a8a:b0:7c0:a1ca:93b8 with SMTP id af79cd13be357-7c53e03dbffmr174468085a.2.1741456132470;
+        Sat, 08 Mar 2025 09:48:52 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IFjAXC2YaGFJRA94KJeJmLjjJ5NKBnfQcZY0wcOSqqMLcDRcER+6YBErzya43C+IrezGavqtQ==
+X-Received: by 2002:a05:620a:1a8a:b0:7c0:a1ca:93b8 with SMTP id af79cd13be357-7c53e03dbffmr174466685a.2.1741456132091;
+        Sat, 08 Mar 2025 09:48:52 -0800 (PST)
+Received: from [192.168.65.90] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac23988c542sm466544866b.134.2025.03.08.09.48.50
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 08 Mar 2025 09:48:51 -0800 (PST)
+Message-ID: <3795a811-e202-4f7d-94f6-7afdb5046e84@oss.qualcomm.com>
+Date: Sat, 8 Mar 2025 18:48:49 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 2/2] ARM: dts: qcom: msm8960: Add thermal sensor
+ (tsens)
+To: Rudraksha Gupta <guptarud@gmail.com>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+ <conor+dt@kernel.org>,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, wctrl@proton.me,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+References: <20250227-expressatt-tsens-v4-0-d70afa5a1fd0@gmail.com>
+ <20250227-expressatt-tsens-v4-2-d70afa5a1fd0@gmail.com>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <20250227-expressatt-tsens-v4-2-d70afa5a1fd0@gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250308-p9_conn_err_benign_data_race-v1-1-729e57d5832b@iencinas.com>
-X-B4-Tracking: v=1; b=H4sIALmCzGcC/x3MTQrCMBAG0KuUWRuIkWLqVUSG/HxtZzMtExGh9
- O4Gl2/zDmowQaPHcJDhI0027bheBipr0gVOajcFH0Z/89HtE5dNlWHGGSqLck3vxJYKXLiPcUb
- MGdVTL3bDLN9//3yd5w/NHJ9gbgAAAA==
-X-Change-ID: 20250308-p9_conn_err_benign_data_race-2758fe8bbed0
-To: linux-kernel-mentees@lists.linux.dev, skhan@linuxfoundation.org, 
- Eric Van Hensbergen <ericvh@kernel.org>, 
- Latchesar Ionkov <lucho@ionkov.net>, 
- Dominique Martinet <asmadeus@codewreck.org>, 
- Christian Schoenebeck <linux_oss@crudebyte.com>
-Cc: Sishuai Gong <sishuai.system@gmail.com>, Marco Elver <elver@google.com>, 
- v9fs@lists.linux.dev, linux-kernel@vger.kernel.org, 
- syzbot+d69a7cc8c683c2cb7506@syzkaller.appspotmail.com, 
- syzbot+483d6c9b9231ea7e1851@syzkaller.appspotmail.com, 
- Ignacio Encinas <ignacio@iencinas.com>
-X-Migadu-Flow: FLOW_OUT
+X-Authority-Analysis: v=2.4 cv=WsDRMcfv c=1 sm=1 tr=0 ts=67cc8305 cx=c_pps a=mPf7EqFMSY9/WdsSgAYMbA==:117 a=FpWmc02/iXfjRdCD7H54yg==:17 a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=KKAkSRfTAAAA:8 a=pGLkceISAAAA:8 a=EUspDBNiAAAA:8 a=Idcbk8-iRzM_5biadzEA:9
+ a=QEXdDO2ut3YA:10 a=dawVfQjAaf238kedN5IG:22 a=cvBusfyB2V15izCimMoJ:22
+X-Proofpoint-GUID: OZ5yJD8_lZ1Gy8mbmu1TySzS5LsY0hBW
+X-Proofpoint-ORIG-GUID: OZ5yJD8_lZ1Gy8mbmu1TySzS5LsY0hBW
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-08_07,2025-03-07_03,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 suspectscore=0
+ lowpriorityscore=0 priorityscore=1501 bulkscore=0 adultscore=0
+ impostorscore=0 phishscore=0 mlxscore=0 mlxlogscore=960 clxscore=1015
+ spamscore=0 classifier=spam authscore=0 authtc=n/a authcc= route=outbound
+ adjust=0 reason=mlx scancount=1 engine=8.19.0-2502100000
+ definitions=main-2503080137
 
-Writes for the error value of a connection are spinlock-protected inside
-p9_conn_cancel, but lockless reads are present elsewhere to avoid
-performing unnecessary work after an error has been met.
+On 28.02.2025 2:16 AM, Rudraksha Gupta wrote:
+> Add support for the thermal sensor (tsens) on the MSM8960 by copying and
+> modifying the relevant nodes from the APQ8064 dtsi. These changes enable
+> thermal management.
+> 
+> Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> Signed-off-by: Rudraksha Gupta <guptarud@gmail.com>
+> ---
 
-Mark the write and lockless reads to make KCSAN happy. Mark the write as
-exclusive following the recommendation in "Lock-Protected Writes with
-Lockless Reads" in tools/memory-model/Documentation/access-marking.txt
-while we are at it.
+Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
 
-Reported-by: syzbot+d69a7cc8c683c2cb7506@syzkaller.appspotmail.com
-Reported-by: syzbot+483d6c9b9231ea7e1851@syzkaller.appspotmail.com
-Signed-off-by: Ignacio Encinas <ignacio@iencinas.com>
----
-Hello! I noticed these syzbot reports that seem to repeat periodically
-and figured I should send a patch. 
-
-The read-paths look very similar to the one changed here [1]. Perhaps it
-would make sense to make them the same?
-
-[1] https://lore.kernel.org/all/ZTZtHdqifXlWG8nN@codewreck.org/
----
- net/9p/trans_fd.c | 11 ++++++-----
- 1 file changed, 6 insertions(+), 5 deletions(-)
-
-diff --git a/net/9p/trans_fd.c b/net/9p/trans_fd.c
-index 196060dc6138af10e99ad04a76ee36a11f770c65..5458e6530084cabeb01d13e9b9a4b1b8f338e494 100644
---- a/net/9p/trans_fd.c
-+++ b/net/9p/trans_fd.c
-@@ -196,7 +196,8 @@ static void p9_conn_cancel(struct p9_conn *m, int err)
- 		return;
- 	}
- 
--	m->err = err;
-+	WRITE_ONCE(m->err, err);
-+	ASSERT_EXCLUSIVE_WRITER(m->err);
- 
- 	list_for_each_entry_safe(req, rtmp, &m->req_list, req_list) {
- 		list_move(&req->req_list, &cancel_list);
-@@ -283,7 +284,7 @@ static void p9_read_work(struct work_struct *work)
- 
- 	m = container_of(work, struct p9_conn, rq);
- 
--	if (m->err < 0)
-+	if (READ_ONCE(m->err) < 0)
- 		return;
- 
- 	p9_debug(P9_DEBUG_TRANS, "start mux %p pos %zd\n", m, m->rc.offset);
-@@ -450,7 +451,7 @@ static void p9_write_work(struct work_struct *work)
- 
- 	m = container_of(work, struct p9_conn, wq);
- 
--	if (m->err < 0) {
-+	if (READ_ONCE(m->err) < 0) {
- 		clear_bit(Wworksched, &m->wsched);
- 		return;
- 	}
-@@ -622,7 +623,7 @@ static void p9_poll_mux(struct p9_conn *m)
- 	__poll_t n;
- 	int err = -ECONNRESET;
- 
--	if (m->err < 0)
-+	if (READ_ONCE(m->err) < 0)
- 		return;
- 
- 	n = p9_fd_poll(m->client, NULL, &err);
-@@ -673,7 +674,7 @@ static int p9_fd_request(struct p9_client *client, struct p9_req_t *req)
- 
- 	spin_lock(&m->req_lock);
- 
--	if (m->err < 0) {
-+	if (READ_ONCE(m->err) < 0) {
- 		spin_unlock(&m->req_lock);
- 		return m->err;
- 	}
-
----
-base-commit: 2a520073e74fbb956b5564818fc5529dcc7e9f0e
-change-id: 20250308-p9_conn_err_benign_data_race-2758fe8bbed0
-
-Best regards,
--- 
-Ignacio Encinas <ignacio@iencinas.com>
-
+Konrad
 
