@@ -1,54 +1,53 @@
-Return-Path: <linux-kernel+bounces-552753-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-552755-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08A32A57DAE
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 20:10:41 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id F1C22A57DB7
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 20:15:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 838351891583
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 19:10:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E05EA3AC089
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 19:15:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8E211F5827;
-	Sat,  8 Mar 2025 19:10:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C70441E5210;
+	Sat,  8 Mar 2025 19:15:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="GZ9fVXSh"
-Received: from mout.web.de (mout.web.de [212.227.17.12])
+	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="qYwuVrGd"
+Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA1F1182BD;
-	Sat,  8 Mar 2025 19:10:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6C68148857
+	for <linux-kernel@vger.kernel.org>; Sat,  8 Mar 2025 19:15:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741461034; cv=none; b=YoESdMcLPY5CIYSsQBpegAk+c5Y/TBr6kvG0Qowh1p7V1LaPfFYTycIXQAzQKUuhAWUBtOWgtIA0v8j14f053t7JcanxbG00vh/xxDwaC6zwZxNJbvENOBMzDnzBhCmNisLbptS5FmyYotO45lYyXIijyv9cbXhhjkyQ5tya1Jc=
+	t=1741461333; cv=none; b=KE5qrz1B110hfkhZWMusn7fuAzoOu8IEBm8UsXzuUgN5oyTvGuT9yur5GtONRkJhQNZiJtLCykm1i61AuKN9eYDNqStopvSEFGxeDcCcorzSpq1xzyWI6thQR2YlRz1eNE3eDmdt1sE1Q6dDaoaZ9SFSgN/pzDXwA00Y03buCDo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741461034; c=relaxed/simple;
-	bh=MFhWjnwCq9VAZ1ofWC8aiiD17UJ5XlmzNLHT6UJtbaI=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=r2qp60O4yhkbLRU4jjEkSEhtNcsyHkqBs5Vf23YmKZfWRXU42M/jdvWr93wcmh7V73fkOrW5CeniTQnHosq7/UhSY1LF6V7DRw73HCIEuGpLthpZ167clevfsLfYBFNoORGqukpzFUj6HOCkY2/DCKwO3fzfIhkkd0Gz1/75Na8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=GZ9fVXSh; arc=none smtp.client-ip=212.227.17.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1741461011; x=1742065811; i=markus.elfring@web.de;
-	bh=MFhWjnwCq9VAZ1ofWC8aiiD17UJ5XlmzNLHT6UJtbaI=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=GZ9fVXShcYPk36YjF/USdyCj+HqQr4HPRMvWhpgh9xylo123bKqShlbxZXrNT7Km
-	 1DK8uLkhHaVu5q/forUQc57zNUgVMunq1uluXKpG9kJZ7LT9ef+qtXBsyDqNM9DFF
-	 OGlbI8FzNprEn5/6AlIfAfcdqKzL0/DPxobF7vNEgQ2DicjK4tcEbO+l5uCLxYx6i
-	 CJuvhNR9cMVc1uqXVfEA+nUlLyQ7GUwlt1ea944vMvCajLra8mC91p1IgmcORpeE5
-	 OwKH8mmzEpzeE7LOpx/9yy/4zqT0uNvptaUMVx5hq4oDBMzRYd0x/ODCBnf2VCYFv
-	 GdDN4boGXacaYkTyNg==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.29] ([94.31.70.79]) by smtp.web.de (mrweb105
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1MWzCt-1tklNy1ezR-00YcVT; Sat, 08
- Mar 2025 20:10:11 +0100
-Message-ID: <61137c75-1b24-4425-bed8-518e1bfb0e0d@web.de>
-Date: Sat, 8 Mar 2025 20:10:10 +0100
+	s=arc-20240116; t=1741461333; c=relaxed/simple;
+	bh=ThRfEjaMXH8Uw3+BNDOdBtD7reexvKpMiCAheJxQxXI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=fkjz3oH2F47gxk7joYSjy7hQXcnpMdCGv84k6Dyz0CbVZYs5hi3NI/6spbYw3UH7I341c7Q+Lrd7SNM4LguT0DsmiblQcJqzOS8v3txU9UcGFPNR4LBh6N66AAQCmEddxrVmkizdl1RT0rpjDE1PNqq9N/gdXURjoAUU0WJAUuU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=qYwuVrGd; arc=none smtp.client-ip=198.137.202.136
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
+Received: from [IPV6:2601:646:8003:ca73:434c:8ca7:921e:6209] ([IPv6:2601:646:8003:ca73:434c:8ca7:921e:6209])
+	(authenticated bits=0)
+	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 528JF5ex911877
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
+	Sat, 8 Mar 2025 11:15:05 -0800
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 528JF5ex911877
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+	s=2025021701; t=1741461306;
+	bh=CjZwy+PBWyWlbkhdLvXgvgMevu9DTUlZfmF6j4/oq4M=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=qYwuVrGdsIT+fM9eQFNF19EdJ5e9bExWTJpSQtrkv9XvnbkyKofIyM6aiBISNyicI
+	 VkUfAqa+nGv27lcNBt5eR/JDk3xudgMYVpGnUqeQ+n/feXOEL5BgaCWogGS/B2t+ps
+	 5Czj2U3dQxSKjdEYYEY+5vsXokOUmajkhpY+Tkb0j2Y1ESOiXIPuePRP2zjHE+NZ3u
+	 TDDbDrgm6On8suaap7OMo4CmRsl1SSjLYB8/ziP/yUKbndNGMa8h0YUQfKZKoPtCFP
+	 W+5Hr8P2a01wKfeHINavIBbpeFPiaTcSk89TGlIlDcfc/ouiEauoJRU881jaGfMDfP
+	 ieQ/lz6H9KOPA==
+Message-ID: <22d90b7f-fdc9-40e3-8afb-c7bf313f60c2@zytor.com>
+Date: Sat, 8 Mar 2025 11:15:00 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,55 +55,54 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-To: Ethan Carter Edwards <ethan@ethancedwards.com>,
- linux-sound@vger.kernel.org, linux-hardening@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>, Jaroslav Kysela <perex@perex.cz>,
- Takashi Iwai <tiwai@suse.com>
-References: <20250308-ctdaio-kzalloc-v1-1-804a09875b0e@ethancedwards.com>
-Subject: Re: [PATCH] ALSA: ctxfi: change dao_set_input functions from kzalloc
- to kcalloc
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20250308-ctdaio-kzalloc-v1-1-804a09875b0e@ethancedwards.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:Dsp8DBc0wP5H3VzZJi1LMWqnO101NZOaF6ZxuUTZpY1kn7sddfe
- hTtY6fvvqnf2WwfRyZpwRVjvrFHCKH7TuI7tzxciBQhYp71Iz88Md+WNor/O0OCRnICmap2
- d+RKhjHEs45pOtRmgBBjmv2rpgLaL9WGYHIG8lM1MFa0YDdzaIpsXcmcVdVRMLYnYQN71S7
- 1ooSS6xxo5Co0w7uJNf9w==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:F0IpBO66jtY=;+ffitv7G7GsrvY+Ptl1hdlzG4VM
- tNJOcLiEGykBDZSP7RmjKyrWZoHMGGRRvsZJik/k09qX8nRAeVBCEXrEQT2/KvJOm9sjiRVDn
- JtG09aAYby24JyywHzDCJnWGu3YD286W4FCK9wofsyEALq44GHAs3FC+9VL4nEQNDB51JTbIZ
- G1AHikl7WuDHiZfU8uV1JlJc0qE0JDRq1ogH1yIbC1tzNyVyjObuAIVSTL/ljDzYVs6Qz0bNd
- rv6tmV+GHuyRYS0DEI5Vk7yfLFOzIDqVEX+Ol1VbRGx1owWTywJVbkLwPMH20ODkkiBrHsJW4
- b3eq0bnYPw7u5Td/IHYa9qZHYc0svZVffba1PK2KyCxA2xjaLhfiQq//p72faVHemASG+srxb
- cAi28hYlAGIWu/y9U3AOgiDTbLruPjmkL24SUcL/kKxdrcESLt+Wasi+aTnKlePkcO6qtx4dw
- ZZp7I82lNAsmAO7vkjmGqoCbHvxcpwLJ25Wz36oYr0OQlXeSIZ3yNO8i5Mq0qGNOKIG1SFpXe
- ExBNJuDaU8SNc1Fafj2FDLQH6SY8NpLuQF3GUZO1srIwgFzEcalqKNdzY+1cm0jDYFnGKVvC9
- 7BpFCqib4vriRzieqOuctKBtkLSvGHsfjymD5gHELoW1VsRN65mEA8gO3m8Cg7cpalGEHP7hh
- Ij/mBn+sjis0HVfnuZYC41QZCkSgQSg4DdX7mcBdtdQU8254Rhrkyqqxs6R9jHQx8RLiqujMb
- ktv2FLcSNR0Nc/Wjp3IcGn4cuMV6acIJ6kZXcZFIllLpm/AfDUCABf4mTUIrBV3Wplmzvmi4l
- 4geD5D2w9Oskm8KrGpr2fQyHxyl1Q5EOXbaw+lu7M4tOecxrx/vhfIKIpB6+EsIx7bTyX/4uR
- aHbumsiIPp33d9LfDdpm5kbtJcN45exv94FB+eI1XJHwh0w8j1+nR8KbkexwqIQ4YigsTa2kU
- z16ycaguEnKTbVn09nqAFZyRU3Y53vagfHnVXW41G9dsqQ4oYDlvQfsIGXYX661oe2um/e7hm
- 1TfQLnx2EiV71VB/hbtJ0xFwcqX68W2ptVLUq+JVXeGGw9cGXuX3hAzG+1qW3YwmlRHBLWT/c
- bgRR6+CYwDraEvQC6rqghmfAKQLB/dcmHFQz7ybpQVBqH6GlbYeoowXDf6xNMRFcNU7rOpt5R
- 8uR8IuIsTfWJGbV8jYd3tRdPj1QROVufupukT+WkSSXWB5dWpkfJbaT71T6AfH5L1prk3opYk
- wtRy9E9k800PjVvG/qx0To99y+81tETFTBF09i8X4HpGiZQY5dVCx7cOZS4R6KPSKP3TzPEQN
- CZMFeuqoqwuLkNzj2QozwsmjbiSeaIYPQGfhpjVMV1QdJ/l3ldu03D5LTYqJtrWvqZd2bbB9i
- YQKyIVpN/vv5hOonbBEik0mumeHSnPXaqdJ7REW8iJ+xaFKthg3X1dyeGNKDCJyhcNPHjX61F
- JAML5Z78WVw3tQVSHe9yY69Jb334=
+Subject: Re: [PATCH -tip] x86/locking/atomic: Use asm_inline for atomic
+ locking insns
+To: Linus Torvalds <torvalds@linuxfoundation.org>,
+        Uros Bizjak <ubizjak@gmail.com>
+Cc: Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@intel.com>,
+        x86@kernel.org, linux-kernel@vger.kernel.org,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@kernel.org>,
+        Dave Hansen <dave.hansen@linux.intel.com>
+References: <20250228123825.2729925-1-ubizjak@gmail.com>
+ <20f1af22-71dc-4d62-9615-03030012222e@intel.com>
+ <CAFULd4bpHGE83qc37sbh=rpGj+SFqQrsNDLzL_-NQpo6pQH3jw@mail.gmail.com>
+ <c4aca08a-95c1-48ee-b4da-55a69b74101c@intel.com>
+ <CAFULd4YVOEtT+bsp9H7ijaoJn2e2108tWhiFarRv=QxoUMZaiw@mail.gmail.com>
+ <20250301123802.GCZ8L_qsv7-WwUwqt5@fat_crate.local>
+ <CAFULd4b=4rHcVAVSg_3yMb8=3ReiSriw_rM4vJL9_HvheXE92w@mail.gmail.com>
+ <CAHk-=wgBMG7CcwvW15ULJOsVEq5QRSj+ccgaUJU+XGxJKeXEVw@mail.gmail.com>
+Content-Language: en-US
+From: "H. Peter Anvin" <hpa@zytor.com>
+In-Reply-To: <CAHk-=wgBMG7CcwvW15ULJOsVEq5QRSj+ccgaUJU+XGxJKeXEVw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-> We are trying to get rid of all multiplications from allocation
-=E2=80=A6
+On 3/5/25 09:04, Linus Torvalds wrote:
+> 
+> That said, I do want to bring up another issue: maybe it's time to
+> just retire the LOCK_PREFIX thing entirely?
+> 
+> It harkens back to Ye Olde Days when UP was the norm, and we didn't
+> want to pay the cost of lock prefixes when the kernel was built for
+> SMP but was run on an UP machine.
+> 
+> And honestly, none of that makes sense any more. You can't buy a UP
+> machine any more, and the only UP case would be some silly minimal
+> virtual environment, and if people really care about that minimal
+> case, they should just compile the kernel without SMP support.
+> Becxause UP has gone from being the default to being irrelevant. At
+> least for x86-64.
+> 
 
-Please improve such a change description another bit.
+I think the key there is that "they should just compile the kernel 
+without SMP support" (which may very well make sense for some oddball 
+embedded uses) *does* still mean that remaining cases of locks 
+can/should be elided so demacroizing it is still not an option.
 
-See also:
-https://web.git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tre=
-e/Documentation/process/submitting-patches.rst?h=3Dv6.14-rc5#n94
+But yes... would get rid of a lot of crap machinery which is basically 
+dead code, and that would be a Very Good Thing[TM].
 
-Regards,
-Markus
+	-hpa
+
 
