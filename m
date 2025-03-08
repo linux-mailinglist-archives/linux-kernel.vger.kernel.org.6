@@ -1,144 +1,198 @@
-Return-Path: <linux-kernel+bounces-552221-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-552222-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10D46A57719
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 02:09:51 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5AD2DA5771C
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 02:11:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 06AB53B67C0
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 01:09:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 87564178A10
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 01:11:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BE1029CE8;
-	Sat,  8 Mar 2025 01:09:43 +0000 (UTC)
-Received: from szxga06-in.huawei.com (szxga06-in.huawei.com [45.249.212.32])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9F2D2A1D8;
+	Sat,  8 Mar 2025 01:10:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="2Se0bQ0K"
+Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2045.outbound.protection.outlook.com [40.107.94.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB37D2F30;
-	Sat,  8 Mar 2025 01:09:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.32
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741396183; cv=none; b=VP7lFLX+47vYv2s4sSpIGyTtcFh4Klt70Y6N5jnAaqdOVI1H2GDYPzdiYRP8Vi63XT0nWy6Ep8pS6OaUWKZP8VxjD9wLW1DS1Wo2+HwIqVWEs2QzV+9HQw/FlNDWA9SBIsgRgNxZFwb7NOuyjfKaNXaWwt8IIc5Cre1B5yYdYc8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741396183; c=relaxed/simple;
-	bh=XoL3MCMqaSyBFiZUsFNBsRSZqQJXhK/OZFNeft7zbI0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=bSrJhwi5Va9ALj3aOh8f4XlFCBc+qRtyzrDM6mR1JZfb46nNFDy/pbcyj++VlSIGwhloeHEqEr8BrdI41PEcckyCjLXrICVYpqJIYs+xLWL1lyzlf4TW8cNMSLFnJSsHMaAstoe0Zc/su9rmccq1aqNGpmh/ONl37iTUEWVZqtI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.162.112])
-	by szxga06-in.huawei.com (SkyGuard) with ESMTP id 4Z8lSW4jQcz17NTH;
-	Sat,  8 Mar 2025 09:10:03 +0800 (CST)
-Received: from kwepemg500008.china.huawei.com (unknown [7.202.181.45])
-	by mail.maildlp.com (Postfix) with ESMTPS id 86E241402CC;
-	Sat,  8 Mar 2025 09:09:29 +0800 (CST)
-Received: from [127.0.0.1] (10.174.177.71) by kwepemg500008.china.huawei.com
- (7.202.181.45) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Sat, 8 Mar
- 2025 09:09:28 +0800
-Message-ID: <692ab4aa-ff90-4b6f-980d-bfd6c1ca7619@huawei.com>
-Date: Sat, 8 Mar 2025 09:09:28 +0800
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B8C52F30;
+	Sat,  8 Mar 2025 01:10:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.45
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741396254; cv=fail; b=UwY4wiSYFDOfX1mCT6G2KK5wsiRGhbhBFQiIe5Re34na+/7SsV6j5MXaslrL13uuPDkxPXHZH4Le7wTNeSYZ9pY25c3WSLI3NHqjheeXA3yV/rQFw4ua7UOE+yMdxHH6ttarysVLJ03bds7v5Ae/YSfIvH68bhbPSU7nI+4M0cw=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741396254; c=relaxed/simple;
+	bh=qS7YDL3tvnPSF9quhO7lGWBcOCQo3azKLq/+w9IZU7Y=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=clbYyinrjhMpyWaCwuhbc/MsG3iEgQieIYr149FS/LnnBepSMeS4TyBjVvJqdruIV3JwdkhO2y/e5yOqW76wZpTfByqRYQjCV7Tqllcj4Z4qGQGDdAUfm06JyEI8GE3d76PlpE+hD/KKbtl0VvBwfMlJrzLjBTHvTJnng8rf+V4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=2Se0bQ0K; arc=fail smtp.client-ip=40.107.94.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=twKR+jg6jSQmdDbl2wxTDTDOJMOn1WwmYwCCpOcqsAlojljueFxA6nAQYK0KDSQgb0J49tdk7Ow76WPVrXDr8duTUzTvzNOd+bSD4Qn1CoFmT7/2nfA7q8M+rLUBnZOJr1EGZisj2l8G88VirDDE9i6rZdz4zV2VMIg0kyk2xo6Y+VwV1Nc5knFfP388dlB/if/DvI+ueM6l00X7nfnKtynsRZl8L29EErJ6VsinyQCEnpag/3A7uvuGCf/+0WOkFx/t6DiOy93Lyn50OcrYrnIG2eYRq3yrzOEoTskLTkJUshSxwIdoBME4QHOC+MV9wArSRN/ObGluA3QXE5OGsg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=mjPRQrn39bxjzHouzN3oumF7N0sICFxKxkU+bq6+8eE=;
+ b=ER7XbMY0X7ovSau57vi8Gwa1IUI4ROiOCPE4sAS5qQTwXRRAKtorcwznHfiCptgHpCoU7c/BUiAmsp+vs9STtMZSwJs4D96yPzxY+zSBkQLTp4B/BCMxq2Dh9TOMi+5XxfNhHt3vxZWA+Eca2GEddQL7QQFDxP/2bOdfQYuRjeP19HQpGA15QfrF8LoPVfaIWECv5I2CwaIckZiRuZnR6oxW8Plr3esVPyJmOHob19mbS/I4thQHCDwHuUQkmVhjXAqscLm+4QpkM/mV6kvgslpm0wBXKwCJgrk1A3rXM6glm8eQCHl1ENqdyqJDodfj/wlL/zYYuJrAgQBiYZrhRg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=amd.com;
+ dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
+ header.from=amd.com; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=mjPRQrn39bxjzHouzN3oumF7N0sICFxKxkU+bq6+8eE=;
+ b=2Se0bQ0KCLVHOdbBqMUty0NnTxVqQHG/D1qxmU6Clb2w72iRagUXNIJEwYI4h6Lv1JwPjezw+38b69D9xPG7Yct7zeuBbUcY1nAKb3r6/5lHLTzQ2u1/Ci/ZWJ/YKzWAJPRqsTqA+np5JRMAy09JTBzG7F2GDCD7ARExvrv7jak=
+Received: from MN2PR22CA0009.namprd22.prod.outlook.com (2603:10b6:208:238::14)
+ by SN7PR12MB7177.namprd12.prod.outlook.com (2603:10b6:806:2a5::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8511.17; Sat, 8 Mar
+ 2025 01:10:49 +0000
+Received: from BL02EPF0001A0FB.namprd03.prod.outlook.com
+ (2603:10b6:208:238:cafe::6) by MN2PR22CA0009.outlook.office365.com
+ (2603:10b6:208:238::14) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8511.19 via Frontend Transport; Sat,
+ 8 Mar 2025 01:10:48 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ BL02EPF0001A0FB.mail.protection.outlook.com (10.167.242.102) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.8511.15 via Frontend Transport; Sat, 8 Mar 2025 01:10:48 +0000
+Received: from aiemdee.l.aik.id.au (10.180.168.240) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Fri, 7 Mar
+ 2025 19:10:45 -0600
+From: Alexey Kardashevskiy <aik@amd.com>
+To: <linux-crypto@vger.kernel.org>
+CC: <linux-coco@lists.linux.dev>, <linux-kernel@vger.kernel.org>, Ashish Kalra
+	<ashish.kalra@amd.com>, Tom Lendacky <thomas.lendacky@amd.com>, "Borislav
+ Petkov (AMD)" <bp@alien8.de>, Herbert Xu <herbert@gondor.apana.org.au>,
+	Alexey Kardashevskiy <aik@amd.com>, <stable@vger.kernel.org>, Dionna Glaze
+	<dionnaglaze@google.com>
+Subject: [PATCH] crypto: ccp: Fix uAPI definitions of PSP errors
+Date: Sat, 8 Mar 2025 12:10:28 +1100
+Message-ID: <20250308011028.719002-1-aik@amd.com>
+X-Mailer: git-send-email 2.47.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 0/3] Fix a BUG_ON crashing the kernel in
- start_this_handle
-To: Ojaswin Mujoo <ojaswin@linux.ibm.com>
-CC: <linux-ext4@vger.kernel.org>, Theodore Ts'o <tytso@mit.edu>, Jan Kara
-	<jack@suse.cz>, <linux-kernel@vger.kernel.org>, Yang Erkun
-	<yangerkun@huawei.com>
-References: <cover.1741270780.git.ojaswin@linux.ibm.com>
-Content-Language: en-US
-From: Baokun Li <libaokun1@huawei.com>
-In-Reply-To: <cover.1741270780.git.ojaswin@linux.ibm.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
- kwepemg500008.china.huawei.com (7.202.181.45)
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To SATLEXMB04.amd.com
+ (10.181.40.145)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BL02EPF0001A0FB:EE_|SN7PR12MB7177:EE_
+X-MS-Office365-Filtering-Correlation-Id: 41973dd7-f524-429a-b3f7-08dd5dde0fe6
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|82310400026|1800799024|36860700013|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?J5NEvAoV9OHOads4jYYpm7Ei5AbuHTbhfRhwtiKUokx0YMvzF988dAk9/gK7?=
+ =?us-ascii?Q?4bwhmZU4Rtm6dGZOp2Qi80+XVqm0oD7xKrCFz4DrFN3/ieP4+1DNk1iYjVrI?=
+ =?us-ascii?Q?fj2qZwUCzhWaqKNU9hdIUlmuqnhhh+tYUCgE31+iBXU5A27XQ0N6MC7QwKaH?=
+ =?us-ascii?Q?+RuwgeP1XuCl97yn5yg3N/Glm1NSwy4Czq6eQKe0uqd8HCaqc0gBjmuQBEIq?=
+ =?us-ascii?Q?ZTBv51G3d2aKCN8hk/Wsf4HVvRiLTignQdjPb3M8ckU8vUjARk6Nopi+ddG0?=
+ =?us-ascii?Q?q0tPA2y0j9W5Fj7cPNyrj9YJdR581JRf5jTVCLFoMrQMwAR02evBpRwBv6e/?=
+ =?us-ascii?Q?ScV86DgOfhPRtDMUaDgch7hNA3MW7MFxsVjaBo1gANMsq58txqBbeRonBOaM?=
+ =?us-ascii?Q?Nz8FiIx6CuMUQPwEGbjW7cCFqKpnsLwSQKK+EpFCjXX59SzjEJAeEUx2K5p4?=
+ =?us-ascii?Q?URUhoM9Woz/MtIjog05Ki61CuFoXBJXt4+PfDSE4DblIz23kzdMYOaEjBsMy?=
+ =?us-ascii?Q?y3T5DrncK+v4uUapSaDzRDJx23irADLlQRkRbxPf1HVGXD2gi2DjG2RbGROI?=
+ =?us-ascii?Q?zSCgQCRAl7zHOaIecQwuLb1Hdm20AjhYlQdSLoKMeVlI8qdzYksHWf1FcL0r?=
+ =?us-ascii?Q?AV5EGc/3vGBPcm+oo7wSh4qDnLRn7jrXgt+b3GAg6RPLCBbB3Qk+i2KLoRED?=
+ =?us-ascii?Q?LS4pJHytli5r4c325Rm9xaSJXDZfBVlmpzIP+D0e862VILBXagXowdY3TVkR?=
+ =?us-ascii?Q?InMweMUHz+0aY9qPfaoh0Fh634XAVTokpMM7WknHgabJs1Y/PgeGhhHTk7GK?=
+ =?us-ascii?Q?9mh/AE4swzpBU9CanxHTUzcKfVwS0eHbJW7tVH5VcsbFteHcwn9jS9ha276n?=
+ =?us-ascii?Q?PIR2OUAFpLgFT822vLY287lfU0uifauSnMUQqwqwfbpV2Xb5nJCpo5TuYWPF?=
+ =?us-ascii?Q?I0b9fFYIXnyxX3REaHqc0kbatVlkwBwFyRUQNU6lJ5EXa5dcqKgY8aiZbOZ9?=
+ =?us-ascii?Q?+ghLYOjPiDj/ANJuUOiNQV5ZsXOffStXz5HipfazROVUUAIIfJdgB3efg1V1?=
+ =?us-ascii?Q?2DGu8leZPgJsJssOhSYi4T//JGbYrB6wyW7xWtc/d7jTkjqTsafwHhDaFCdN?=
+ =?us-ascii?Q?awI1BvGRL3ph2C4wtito7Ljvq3kWfeYar0TnWlTemCWSz0EocPTjGpb5Eyl5?=
+ =?us-ascii?Q?i+xkpFZRIzrzxiC18QAgr7biXdwmQPUTJXFy5tqb9ZfnbJmA8htSh4Bevm07?=
+ =?us-ascii?Q?rRmi0J7DGZnKJWSFVrofw8imXHvAROR3QSQF64I7VuhiPZUvvKI+khbsHqjX?=
+ =?us-ascii?Q?iDDUNfm3f5juCjBHm8zA9Uu5qjfibLvNcuhGGN8B2rS3ltg4XNwRksUB9a/7?=
+ =?us-ascii?Q?GhHNYXk6ujqutu5i1PxlhIYJGzsZSM+cf/iRYUX+Kcg0U39Z+OKMgJqOCVQ2?=
+ =?us-ascii?Q?JtW0a3FmXw32qGImyH78VzXQxJOipRjbHAo6XL0hiqHWv3gSyruTW0vt3o4+?=
+ =?us-ascii?Q?sygzamPSngzB2ww=3D?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(1800799024)(36860700013)(376014);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Mar 2025 01:10:48.6910
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 41973dd7-f524-429a-b3f7-08dd5dde0fe6
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	BL02EPF0001A0FB.namprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR12MB7177
 
-On 2025/3/6 22:28, Ojaswin Mujoo wrote:
-> ** Changes since v1 [1] **
->
->   * Picked up RVBs from Jan and Ritesh
->   * In patch 2/3, we now use a flag in sbi instead of SB_ACITVE
->     to determine when to journal sb vs when to commit directly.
->   * Added a prep patch 1/3
->
-> [1] https://lore.kernel.org/linux-ext4/cover.1740212945.git.ojaswin@linux.ibm.com/T/#m5e659425b8c8fe2ac01e7242b77fed315ff89db4
->
-> @Baokun, I didn't get a chance to look into the journal_inode
-> modifications we were discussing in [2]. I'll try to spend some time and
-> send that as a separate patch. Hope that's okay
->
-> [2] https://lore.kernel.org/linux-ext4/cover.1740212945.git.ojaswin@linux.ibm.com/T/#mad8feb44d9b6ddadf87830b92caa7b78d902dc05
->   
-That's fine, it's not a priority. And if this patch set makes sure we
-don't crash when things go wrong, I'm okay with leaving it as is.
+Additions to the error enum after explicit 0x27 setting for
+SEV_RET_INVALID_KEY leads to incorrect value assignments.
 
-It's possible that jbd2_journal_commit_transaction() could call
-ext4_handle_error() in other places as the code evolves. Fixing known
-problems and protecting against potential ones is always a good thing.
+Use explicit values to match the manufacturer specifications more
+clearly.
 
+Fixes: 3a45dc2b419e ("crypto: ccp: Define the SEV-SNP commands")
+CC: stable@vger.kernel.org
+Signed-off-by: Dionna Glaze <dionnaglaze@google.com>
+Reviewed-by: Tom Lendacky <thomas.lendacky@amd.com>
+Signed-off-by: Alexey Kardashevskiy <aik@amd.com>
+---
 
-Cheers,
-Baokun
-> ** Original Cover **
->
-> When running LTP stress tests on ext4, after a multiday run we seemed to
-> have hit the following BUG_ON:
->
->   [NIP  : start_this_handle+268]
->   #3 [c000001067c27a40] start_this_handle at c008000004d40f74 [jbd2]  (unreliable)
->   #4 [c000001067c27b60] jbd2__journal_start at c008000004d415cc [jbd2]
->   #5 [c000001067c27be0] update_super_work at c0080000053f9758 [ext4]
->   #6 [c000001067c27c70] process_one_work at c000000000188790
->   #7 [c000001067c27d20] worker_thread at c00000000018973c
->   #8 [c000001067c27dc0] kthread at c000000000196c84
->   #9 [c000001067c27e10] ret_from_kernel_thread at c00000000000cd64
->
-> Which comes out to
->
->    382   repeat:
->    383           read_lock(&journal->j_state_lock);
-> * 384           BUG_ON(journal->j_flags & JBD2_UNMOUNT);
->    385           if (is_journal_aborted(journal) ||
->    386               (journal->j_errno != 0 && !(journal->j_flags & JBD2_ACK_ERR))) {
->    387                   read_unlock(&journal->j_state_lock);
->
->
-> Initially this seemed like it should never happen but upon crash
-> analysis it seems like it could indeed be hit as described in patch 1/2.
->
-> I would like to add that through the logs we only knew that:
->
-> - ext4_journal_bmap -> ext4_map_blocks is failing with EFSCORRUPTED.
-> - update_super_work had hit the BUG_ON
->
-> I was not able to hit this bug again (without modifying the kernel to
-> inject errors) but the above backtrace seems to be one possible paths
-> where this BUG_ON can be hit. Rest of the analysis and fix is in patch
-> 2/3. Patch 3 is just a small tweak that i found helpful while debugging.
->
-> That being said, journalling is something I'm not very familiar with and
-> there might be gaps in my understanding so thoughts and suggestions are
-> welcome.
->
-> Ojaswin Mujoo (3):
->    ext4: define ext4_journal_destroy wrapper
->    ext4: avoid journaling sb update on error if journal is destroying
->    ext4: Make sb update interval tunable
->
->   fs/ext4/ext4.h      | 11 +++++++++++
->   fs/ext4/ext4_jbd2.h | 22 ++++++++++++++++++++++
->   fs/ext4/super.c     | 35 +++++++++++++++++------------------
->   fs/ext4/sysfs.c     |  4 ++++
->   4 files changed, 54 insertions(+), 18 deletions(-)
->
+Reposting as requested in
+https://lore.kernel.org/r/Z7f2S3MigLEY80P2@gondor.apana.org.au
+
+I wrote it in the first place but since then it travelled a lot,
+feel free to correct the chain of SOBs and RB :)
+---
+ include/uapi/linux/psp-sev.h | 21 +++++++++++++-------
+ 1 file changed, 14 insertions(+), 7 deletions(-)
+
+diff --git a/include/uapi/linux/psp-sev.h b/include/uapi/linux/psp-sev.h
+index 832c15d9155b..eeb20dfb1fda 100644
+--- a/include/uapi/linux/psp-sev.h
++++ b/include/uapi/linux/psp-sev.h
+@@ -73,13 +73,20 @@ typedef enum {
+ 	SEV_RET_INVALID_PARAM,
+ 	SEV_RET_RESOURCE_LIMIT,
+ 	SEV_RET_SECURE_DATA_INVALID,
+-	SEV_RET_INVALID_KEY = 0x27,
+-	SEV_RET_INVALID_PAGE_SIZE,
+-	SEV_RET_INVALID_PAGE_STATE,
+-	SEV_RET_INVALID_MDATA_ENTRY,
+-	SEV_RET_INVALID_PAGE_OWNER,
+-	SEV_RET_INVALID_PAGE_AEAD_OFLOW,
+-	SEV_RET_RMP_INIT_REQUIRED,
++	SEV_RET_INVALID_PAGE_SIZE          = 0x0019,
++	SEV_RET_INVALID_PAGE_STATE         = 0x001A,
++	SEV_RET_INVALID_MDATA_ENTRY        = 0x001B,
++	SEV_RET_INVALID_PAGE_OWNER         = 0x001C,
++	SEV_RET_AEAD_OFLOW                 = 0x001D,
++	SEV_RET_EXIT_RING_BUFFER           = 0x001F,
++	SEV_RET_RMP_INIT_REQUIRED          = 0x0020,
++	SEV_RET_BAD_SVN                    = 0x0021,
++	SEV_RET_BAD_VERSION                = 0x0022,
++	SEV_RET_SHUTDOWN_REQUIRED          = 0x0023,
++	SEV_RET_UPDATE_FAILED              = 0x0024,
++	SEV_RET_RESTORE_REQUIRED           = 0x0025,
++	SEV_RET_RMP_INITIALIZATION_FAILED  = 0x0026,
++	SEV_RET_INVALID_KEY                = 0x0027,
+ 	SEV_RET_MAX,
+ } sev_ret_code;
+ 
+-- 
+2.47.1
 
 
