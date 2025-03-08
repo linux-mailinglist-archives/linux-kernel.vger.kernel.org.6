@@ -1,117 +1,131 @@
-Return-Path: <linux-kernel+bounces-552833-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-552834-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8CD71A57F09
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 22:54:03 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 22DC7A57F1B
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 22:56:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6EF3C3AB86C
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 21:53:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4667316BB09
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 21:56:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72495202C44;
-	Sat,  8 Mar 2025 21:53:57 +0000 (UTC)
-Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 179241FC7D9;
+	Sat,  8 Mar 2025 21:56:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ERV3JkaF"
+Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F4091E8337
-	for <linux-kernel@vger.kernel.org>; Sat,  8 Mar 2025 21:53:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.9.28.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D74BB839F4;
+	Sat,  8 Mar 2025 21:56:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741470837; cv=none; b=LNUdytSNG0MG6pJF3DD5yJ8PU+FwShXrZ7VjPiuOLFUsS8N59MMFMKNm9msGOG3XxDoDWiYV4PKRxJ9HBFj3cw84iA1B709lxgDg0LCEXCbb4LFRsWTMwb0jT1+H4XhctO1H3iPfwfCMTIbeMfqZwm/QBcyghc/bttbE0RKR9DY=
+	t=1741471006; cv=none; b=ItRhkCm6TaB22nbkSsz/jCpLEc1dYQ5a8/A04GqFjGrh88i8qFQ3msCuvKLZYCc0cjaT4puY0xllk6amXXeTR3qIk4NIlwgZ3Cjifi4W8cye0h7eRhFlNsBcg9kyaIB1Qsf2IjHW5DpuwhBO+GPe19SXh6lFbmodUmCEtjoqPSU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741470837; c=relaxed/simple;
-	bh=CYnmF9Do29+aMPutGws7tNyvaQUYvmcRni7TXMbB5dI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=X/Ry43OlzMUjAqUbfSic2ZCVgaTWznm3nshnJLRwFg7qYCVNltJhltqwZHu1P+3WYjmIXiotE/lU0/UEYPQdR680LgMFxaWntLUy+iCMNK3hChe973RNHIgIR3Hs6r6qb47DNQpuh29i0Z54foKxWorjazU486KE01sUaL5F1m0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu; spf=pass smtp.mailfrom=mit.edu; arc=none smtp.client-ip=18.9.28.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mit.edu
-Received: from trampoline.thunk.org (pool-173-48-112-49.bstnma.fios.verizon.net [173.48.112.49])
-	(authenticated bits=0)
-        (User authenticated as tytso@ATHENA.MIT.EDU)
-	by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 528Lr6iT010003
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sat, 8 Mar 2025 16:53:06 -0500
-Received: by trampoline.thunk.org (Postfix, from userid 15806)
-	id EE5512E010B; Sat, 08 Mar 2025 16:53:05 -0500 (EST)
-Date: Sat, 8 Mar 2025 16:53:05 -0500
-From: "Theodore Ts'o" <tytso@mit.edu>
-To: Kent Overstreet <kent.overstreet@linux.dev>
-Cc: Hector Martin <marcan@marcan.st>,
-        syzbot <syzbot+4364ec1693041cad20de@syzkaller.appspotmail.com>,
-        broonie@kernel.org, joel.granados@kernel.org, kees@kernel.org,
-        linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [bcachefs?] general protection fault in proc_sys_compare
-Message-ID: <20250308215305.GB69932@mit.edu>
-References: <67ca5dd0.050a0220.15b4b9.0076.GAE@google.com>
- <239cbc8a-9886-4ebc-865c-762bb807276c@marcan.st>
- <ph6whomevsnlsndjuewjxaxi6ngezbnlmv2hmutlygrdu37k3w@k57yfx76ptih>
- <20250307133126.GA8837@mit.edu>
- <a5avbx7c6pilz4bnp3iv7ivuxtth7udo6ypepemhumsxvuawrw@qa7kec5sxyhp>
+	s=arc-20240116; t=1741471006; c=relaxed/simple;
+	bh=8JVyvALdGhp+06JWv71Z3QRMqqCrXf5H4cRpW0QVk3s=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=mUjloK6TosiYICU9nko/w2UHcJPGakLq9Nq5lKmudiOkIn5Q1t2YKzM64xIqLTZbpbecJmna3CoXyruWjrJtWJnj+GOr6P2lxj0CETEueJDmoWHL04v7j0G4OG3sorw7QvYJnOIa2q6VGCCYhrSnTtrE1J6aQa6AjQJDnLZ9ZTg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ERV3JkaF; arc=none smtp.client-ip=209.85.218.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-abbd96bef64so486412166b.3;
+        Sat, 08 Mar 2025 13:56:44 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741471003; x=1742075803; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Hy7bNbBQ5RijVVXZl92uPHvdE/fDQFAApRi8LCxQwm8=;
+        b=ERV3JkaFTwyWnMFv5bkfPal3H4NEmqEFp0R+plcmv+gpoWIh4CYEUSLCH4F+GJgLr9
+         tqXCJfqey9AzVCzvepFG90/oaSyuRmuCW857v+UqBYqf0zf4LH6BFyznHheQ3qM18qdi
+         kVhLY4I83cil31kyuwpjQNvta3PcEIITTkm9YpmXi9IeCginSf3HiHrdCuqn+cn9rMk+
+         I9Ti73kTnlYCtJBNi9aZAo2fr7vXXCLiHGwBAvFztFqdrTvpH5REovIrxWmenKTPrrgw
+         WqdfST0xTQgznwDnws41bsJPZUd03D/6kDFqNahCE97Cogo2jkkxGxVPotQ9A0vqLq1Q
+         BQnQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741471003; x=1742075803;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Hy7bNbBQ5RijVVXZl92uPHvdE/fDQFAApRi8LCxQwm8=;
+        b=AeRzS0RM54drxW8vyMVUd0d1SoZFf8zMdWKIRaoYvtVHnZ8PkwisSxYcR6vqZL5vZ5
+         rJQOzXpiy/DmFSosoalZezo6u9G5h2Nnj8psbduCmY1iCkHYGQWErDwhx0nPau2pcWB2
+         uXVnjec4m04KlhRGBJZExuXL+9xIdlLnggn1ECntyQCDo8ygMX8n0L/tn6bYqVYIXNMb
+         oQOykzqSHU01sHFi0+NUQXaKtiCzimwsiTRR66wCqCpha4PuCqRgnNCggwCIcQW4c0n+
+         v5q6F96lNPkhcqoGDvkiwTwuMqfe1HTpSaYoWqt4VtYNlPr9IBIFsW5JhVxfKyE27uve
+         n7Ww==
+X-Forwarded-Encrypted: i=1; AJvYcCUB4OdpZ5tggmmZuN9w18RnksK6/o2yX66Su7HmyvQsDbgqp94y4EPiX5+XzFild/2VtXInXMs7rsLRMB9q@vger.kernel.org, AJvYcCVwMvsrvqCOp7ie70LTUMABovwvNjKRszEqjHin8YoqVJQYc9HQz+U5OzCjCkG4QWyKROA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx/elL+ou0Fx8TG6GYwUI5oreH3rUheEH0zisGv/dUI76MXUM1b
+	z9Ru5r3POwWFAEgOXly2e3u0kQY91XJin2ARCCKid62oQ8vXpVl8
+X-Gm-Gg: ASbGnctMDmAEL+bUu2xvO0mAi3BDR/USaY9XkyCBYvg4CmUJHNViT0L/vId3L7LQe5F
+	9Z5OfdpiM5DTneRFy2KfY5+KRzseclWEJHME5IaylDxO5jPSf1aZFzsCKCXTR62UEDPRdVzm3O8
+	qE3jb1YO8LMopTKCSTH0dg2egz1GoG8hAguKXKANt7+fDMJ2nMC3tO05Cg6lSuUR7nHj2uZsWxN
+	2PmEDnvcxFzLEM7sTFT0mytSYJPKsD/Je+xZqECAItQusojI7jbR7bQlE8zz0Eu4zYWsMCXgkIL
+	i/gTEZSVsBzCXaMv4/XpFNHGUzV6YFL12OYgQTkOX6SVapWnY39QxQwT
+X-Google-Smtp-Source: AGHT+IHz4AuV2xnclSuleQgLco/at7uKIRgawb6iDA02l7khfRFvidmMxiaFO61FIlusyfpnPjEyQg==
+X-Received: by 2002:a17:906:c505:b0:abf:19ac:771 with SMTP id a640c23a62f3a-ac2525ba73fmr762356466b.2.1741471002839;
+        Sat, 08 Mar 2025 13:56:42 -0800 (PST)
+Received: from qasdev.Home ([2a02:c7c:6696:8300:441e:3a26:bb73:78a4])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac239737fc8sm499298366b.91.2025.03.08.13.56.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 08 Mar 2025 13:56:41 -0800 (PST)
+From: Qasim Ijaz <qasdev00@gmail.com>
+To: ast@kernel.org,
+	daniel@iogearbox.net,
+	andrii@kernel.org
+Cc: martin.lau@linux.dev,
+	eddyz87@gmail.com,
+	song@kernel.org,
+	yonghong.song@linux.dev,
+	john.fastabend@gmail.com,
+	kpsingh@kernel.org,
+	sdf@fomichev.me,
+	haoluo@google.com,
+	jolsa@kernel.org,
+	bpf@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] bpf: add missing NULL check for __dev_get_by_index
+Date: Sat,  8 Mar 2025 21:56:05 +0000
+Message-Id: <20250308215605.4774-1-qasdev00@gmail.com>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <a5avbx7c6pilz4bnp3iv7ivuxtth7udo6ypepemhumsxvuawrw@qa7kec5sxyhp>
+Content-Transfer-Encoding: 8bit
 
-On Fri, Mar 07, 2025 at 09:33:11AM -0500, Kent Overstreet wrote:
->
-> > Maybe this is something Syzbot could implement?
-> 
-> Wouldn't it be better to have it in 'git bisect'?
+The __dev_get_by_index function can return NULL if it fails to 
+find a device with the provided ifindex.
 
-"Git bisect" is the wrong layer of abstraction.  It doesn't know
-anything about (a) how build the software package (which might not be
-the kernel, remember), nor how to run a test, nor how to tell whether
-a test run was successful or a failure.
+We should handle this case by adding a NULL check
+and cleaning up if it does happened.
 
-It's expected that those tools need to be built on top of "git
-bisect."  For example Steve Rostedt has contributed ktest.pl, which is
-in the kernel sources in tools/teseting/ktest/.  This assumes that the
-system under test is a bare metal machine where is accessible via
-ssh/scp, and that builds are done on the local machine where ktest.pl
-is run.
+Signed-off-by: Qasim Ijaz <qasdev00@gmail.com>
+Fixes: a38845729ea3 ("bpf: offload: add map offload infrastructure")
+---
+ kernel/bpf/offload.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-ktest.pl is not something I've used myself, since I do pretty much all
-of my testing using VM's, and in the case of gce-xfstests, we spin up
-a fast compile VM which does the kernel compilation and uploads the
-freshly compiled kernel to Google Cloud Storage (GCS), and then kicks
-off one or more test VM's which fetches the kernel from GCS, with the
-command of which tests to run encoded in the test VM metadata.  I also
-have a monitoring VM that detects if a test VM hangs, so it can
-automatically restart the test VM.  All of this is logic which is't
-supported by ktest.pl, and obviously *far* beyond the scope of "git
-bisect".
+diff --git a/kernel/bpf/offload.c b/kernel/bpf/offload.c
+index a10153c3be2d..28a30fa4457a 100644
+--- a/kernel/bpf/offload.c
++++ b/kernel/bpf/offload.c
+@@ -530,6 +530,12 @@ struct bpf_map *bpf_map_offload_map_alloc(union bpf_attr *attr)
+ 	bpf_map_init_from_attr(&offmap->map, attr);
+ 	rtnl_lock();
+ 	offmap->netdev = __dev_get_by_index(net, attr->map_ifindex);
++	if (!offmap->netdev) {
++		rtnl_unlock();
++		bpf_map_area_free(offmap);
++		return ERR_PTR(-ENODEV);
++	}	
++
+ 	netdev_lock_ops(offmap->netdev);
+ 	down_write(&bpf_devs_lock);
+ 	err = bpf_dev_offload_check(offmap->netdev);
+-- 
+2.39.5
 
-And while Syzbot can use Google Cloud in addition to qemu, its
-infrastruture for how it compiles kernels and runs its test VM's is
-sufficiently different that it's not clear that software written for
-one infrastructure would be easily applicable to another.
-
-> If only we had interns and grad students for this sort of thing :)
-
-The lightweight test manager (ltm) for gce-xfstests was implemented by
-an intern.  And the kernel compilation service (kcs), git branch
-watcher, and git bisection engine for gce-xfstests was done by a group
-of undergraduates at a unversity in Boston as part of a software
-engineering class project.
-
-Mentoring interns and undergraduates was incredibly fulfilling, and I
-very much enjoyed the experience.  I'd like to think I helped them to
-become better software engineers.  However, mentoring students takes a
-significant amount of time, and on net, it's not clear it was a win
-from a personal time ROI perspective.
-
-We did manage to recruit the intern to become a SWE at Google after he
-graduated, so that was definitely considered a win from my company's
-perspective.  :-)
-
-						- Ted
 
