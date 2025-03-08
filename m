@@ -1,142 +1,144 @@
-Return-Path: <linux-kernel+bounces-552220-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-552221-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B99E1A57717
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 02:09:23 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 10D46A57719
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 02:09:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6DAC23B6780
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 01:09:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 06AB53B67C0
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 01:09:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C218513777E;
-	Sat,  8 Mar 2025 01:08:46 +0000 (UTC)
-Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BE1029CE8;
+	Sat,  8 Mar 2025 01:09:43 +0000 (UTC)
+Received: from szxga06-in.huawei.com (szxga06-in.huawei.com [45.249.212.32])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 031CABE4F;
-	Sat,  8 Mar 2025 01:08:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB37D2F30;
+	Sat,  8 Mar 2025 01:09:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.32
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741396126; cv=none; b=LGEHisd+sI3IrHJNMERKNCjxnxCd/aL+LXidt0OnTNELZhPEscFM0sru8EjjCg+leSHvSmAUSDDVcBt6Tsf8D7mK6NxtgSJDGxHsvuXF2+cF6fB7BtUH305AbOhPn7c5ffAhuuNM+gz1rccNjevHkZRTH+4XsNlYO69XEBUlWu4=
+	t=1741396183; cv=none; b=VP7lFLX+47vYv2s4sSpIGyTtcFh4Klt70Y6N5jnAaqdOVI1H2GDYPzdiYRP8Vi63XT0nWy6Ep8pS6OaUWKZP8VxjD9wLW1DS1Wo2+HwIqVWEs2QzV+9HQw/FlNDWA9SBIsgRgNxZFwb7NOuyjfKaNXaWwt8IIc5Cre1B5yYdYc8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741396126; c=relaxed/simple;
-	bh=wwil/2v41H0XAHT4WhGN3oUbvCK5TX1lOhPw1rpP4vU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=KM+pzzL1eJDHxDcUiPnLZVdZ5I5C/nvk9uaNZlRnlBXBT1g7CQMOteNXAFkxagoFKwCYszpIf8XJQfsjDxM5zXRbo++7h9SpJd8/fVMsp1kUSnokyWsWbt5kJ7x4xbOxKl5F6VKvH84APGUN1fBaX8SVmC9kiCIitAE1QT1tt18=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fomichev.me; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.214.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fomichev.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-2239f8646f6so47136245ad.2;
-        Fri, 07 Mar 2025 17:08:44 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741396124; x=1742000924;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=yZzG6RJCUE4w9vBi92LziU0iLdE8HumGGZ3TnO1HuEk=;
-        b=aaVC623Ez4+gTatItGjvSZyumQFNEdo5ZhpNwhf2TmMWR6darINkVPQCoqNJMbwvU5
-         DUSMENzSFPk7BZmDTM+mV+S5JKSIx9NfgbfOQkaZoXezdt1j4XouA4wI+vajp/XwGV9m
-         h6sxR1bybuHIJlK7uFvLWo6JyIxOTOoIOPoEksMpDP7DbFWstXUKyfEKyR5sECDuUUTK
-         Ah2AQPsAxvfdPlejiDbuqIfc1x2dDxNRDCjHz1PWIU6yD4ZNYzoZNX/sVTUcwLe5FYT7
-         OQnE3jSVh+6m2RfQkZ8wosb5Uq8sUrjo/joqMGRIA6gTzCQYgvWysg1eSNFM5dmfCPax
-         iW5w==
-X-Forwarded-Encrypted: i=1; AJvYcCV5wJuWH9kGcjT+OyyiQFIbL5Rndqw42RWyZgO0E5b3ycOaUx8xBAW2dSJE7z5zL5Rt1rk7ZG1RJ7Pj++o=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwYeDYNtzKqS8wma7FQEsbcbZy+I82ZcvETpIUetlTMl/ZIbfha
-	2Qgv5KX6tL3LLOIHeas4SdPzN+M7Xay4DE5Go1+gXS6+k75fbRXf3Ie6
-X-Gm-Gg: ASbGncvV4E7Wiw9yyE5OMdzKC0M2ZqCKbonho8gVOVn3TehqqLp3DuCrbbFpK3lo5BW
-	TGdgWPr44dMGU/eXFANNdN8mtyaa3UEhhcQwiPDPFxX3O2/lCXAr11kE8991X5fe8/+OAdyiV6x
-	9hoTpVO75Ivf8CCoaq1ciFDkBWF/LdKOUr7M/S1rMpcgJaDQqC7AKY/IIZlGcY5fnE5ea+k1F88
-	mlR1ERLP+bGla/YmPldFTZzJo/SA8Ee8cmDu+YzK9BWse5czIPk09SkG7D9Y963DjFMAcqx4Y5U
-	KDj/U552ZsGzHZ7cFemXCff3YZrJW43qvIxPEDpNi110
-X-Google-Smtp-Source: AGHT+IFLicPF9DYHopLUsyxSlIIaJHPsUCyq/CCGJkidujAVcbCjmBBrELmykKF33i3geS5NWWBBWw==
-X-Received: by 2002:a17:903:1a05:b0:224:1294:1d26 with SMTP id d9443c01a7336-2242888bf0fmr79353515ad.13.1741396123952;
-        Fri, 07 Mar 2025 17:08:43 -0800 (PST)
-Received: from localhost ([2601:646:9e00:f56e:2844:3d8f:bf3e:12cc])
-        by smtp.gmail.com with UTF8SMTPSA id d9443c01a7336-22410a91993sm36754865ad.175.2025.03.07.17.08.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 07 Mar 2025 17:08:43 -0800 (PST)
-From: Stanislav Fomichev <sdf@fomichev.me>
-To: netdev@vger.kernel.org
-Cc: davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	linux-kernel@vger.kernel.org,
-	michael.chan@broadcom.com,
-	pavan.chebbi@broadcom.com,
-	andrew+netdev@lunn.ch,
-	sdf@fomichev.me
-Subject: [PATCH net-next 3/3] eth: bnxt: add missing netdev lock management to bnxt_dl_reload_up
-Date: Fri,  7 Mar 2025 17:08:40 -0800
-Message-ID: <20250308010840.910382-3-sdf@fomichev.me>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20250308010840.910382-1-sdf@fomichev.me>
-References: <20250308010840.910382-1-sdf@fomichev.me>
+	s=arc-20240116; t=1741396183; c=relaxed/simple;
+	bh=XoL3MCMqaSyBFiZUsFNBsRSZqQJXhK/OZFNeft7zbI0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=bSrJhwi5Va9ALj3aOh8f4XlFCBc+qRtyzrDM6mR1JZfb46nNFDy/pbcyj++VlSIGwhloeHEqEr8BrdI41PEcckyCjLXrICVYpqJIYs+xLWL1lyzlf4TW8cNMSLFnJSsHMaAstoe0Zc/su9rmccq1aqNGpmh/ONl37iTUEWVZqtI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.162.112])
+	by szxga06-in.huawei.com (SkyGuard) with ESMTP id 4Z8lSW4jQcz17NTH;
+	Sat,  8 Mar 2025 09:10:03 +0800 (CST)
+Received: from kwepemg500008.china.huawei.com (unknown [7.202.181.45])
+	by mail.maildlp.com (Postfix) with ESMTPS id 86E241402CC;
+	Sat,  8 Mar 2025 09:09:29 +0800 (CST)
+Received: from [127.0.0.1] (10.174.177.71) by kwepemg500008.china.huawei.com
+ (7.202.181.45) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Sat, 8 Mar
+ 2025 09:09:28 +0800
+Message-ID: <692ab4aa-ff90-4b6f-980d-bfd6c1ca7619@huawei.com>
+Date: Sat, 8 Mar 2025 09:09:28 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 0/3] Fix a BUG_ON crashing the kernel in
+ start_this_handle
+To: Ojaswin Mujoo <ojaswin@linux.ibm.com>
+CC: <linux-ext4@vger.kernel.org>, Theodore Ts'o <tytso@mit.edu>, Jan Kara
+	<jack@suse.cz>, <linux-kernel@vger.kernel.org>, Yang Erkun
+	<yangerkun@huawei.com>
+References: <cover.1741270780.git.ojaswin@linux.ibm.com>
+Content-Language: en-US
+From: Baokun Li <libaokun1@huawei.com>
+In-Reply-To: <cover.1741270780.git.ojaswin@linux.ibm.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
+ kwepemg500008.china.huawei.com (7.202.181.45)
 
-bnxt_dl_reload_up is completely missing instance lock management
-which can result in `devlink dev reload` leaving with instance
-lock held. Add the missing calls.
+On 2025/3/6 22:28, Ojaswin Mujoo wrote:
+> ** Changes since v1 [1] **
+>
+>   * Picked up RVBs from Jan and Ritesh
+>   * In patch 2/3, we now use a flag in sbi instead of SB_ACITVE
+>     to determine when to journal sb vs when to commit directly.
+>   * Added a prep patch 1/3
+>
+> [1] https://lore.kernel.org/linux-ext4/cover.1740212945.git.ojaswin@linux.ibm.com/T/#m5e659425b8c8fe2ac01e7242b77fed315ff89db4
+>
+> @Baokun, I didn't get a chance to look into the journal_inode
+> modifications we were discussing in [2]. I'll try to spend some time and
+> send that as a separate patch. Hope that's okay
+>
+> [2] https://lore.kernel.org/linux-ext4/cover.1740212945.git.ojaswin@linux.ibm.com/T/#mad8feb44d9b6ddadf87830b92caa7b78d902dc05
+>   
+That's fine, it's not a priority. And if this patch set makes sure we
+don't crash when things go wrong, I'm okay with leaving it as is.
 
-Also add netdev_assert_locked to make it clear that the up() method
-is running with the instance lock grabbed.
+It's possible that jbd2_journal_commit_transaction() could call
+ext4_handle_error() in other places as the code evolves. Fixing known
+problems and protecting against potential ones is always a good thing.
 
-Fixes: 004b5008016a ("eth: bnxt: remove most dependencies on RTNL")
-Signed-off-by: Stanislav Fomichev <sdf@fomichev.me>
----
- drivers/net/ethernet/broadcom/bnxt/bnxt_devlink.c | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/net/ethernet/broadcom/bnxt/bnxt_devlink.c b/drivers/net/ethernet/broadcom/bnxt/bnxt_devlink.c
-index b6d6fcd105d7..ea7f789be760 100644
---- a/drivers/net/ethernet/broadcom/bnxt/bnxt_devlink.c
-+++ b/drivers/net/ethernet/broadcom/bnxt/bnxt_devlink.c
-@@ -518,6 +518,8 @@ static int bnxt_dl_reload_up(struct devlink *dl, enum devlink_reload_action acti
- 	struct bnxt *bp = bnxt_get_bp_from_dl(dl);
- 	int rc = 0;
- 
-+	netdev_assert_locked(bp->dev);
-+
- 	*actions_performed = 0;
- 	switch (action) {
- 	case DEVLINK_RELOAD_ACTION_DRIVER_REINIT: {
-@@ -542,6 +544,7 @@ static int bnxt_dl_reload_up(struct devlink *dl, enum devlink_reload_action acti
- 		if (!netif_running(bp->dev))
- 			NL_SET_ERR_MSG_MOD(extack,
- 					   "Device is closed, not waiting for reset notice that will never come");
-+		netdev_unlock(bp->dev);
- 		rtnl_unlock();
- 		while (test_bit(BNXT_STATE_FW_ACTIVATE, &bp->state)) {
- 			if (time_after(jiffies, timeout)) {
-@@ -557,6 +560,7 @@ static int bnxt_dl_reload_up(struct devlink *dl, enum devlink_reload_action acti
- 			msleep(50);
- 		}
- 		rtnl_lock();
-+		netdev_lock(bp->dev);
- 		if (!rc)
- 			*actions_performed |= BIT(DEVLINK_RELOAD_ACTION_DRIVER_REINIT);
- 		clear_bit(BNXT_STATE_FW_ACTIVATE, &bp->state);
-@@ -575,10 +579,9 @@ static int bnxt_dl_reload_up(struct devlink *dl, enum devlink_reload_action acti
- 		}
- 		*actions_performed |= BIT(action);
- 	} else if (netif_running(bp->dev)) {
--		netdev_lock(bp->dev);
- 		netif_close(bp->dev);
--		netdev_unlock(bp->dev);
- 	}
-+	netdev_unlock(bp->dev);
- 	rtnl_unlock();
- 	if (action == DEVLINK_RELOAD_ACTION_DRIVER_REINIT)
- 		bnxt_ulp_start(bp, rc);
--- 
-2.48.1
+Cheers,
+Baokun
+> ** Original Cover **
+>
+> When running LTP stress tests on ext4, after a multiday run we seemed to
+> have hit the following BUG_ON:
+>
+>   [NIP  : start_this_handle+268]
+>   #3 [c000001067c27a40] start_this_handle at c008000004d40f74 [jbd2]  (unreliable)
+>   #4 [c000001067c27b60] jbd2__journal_start at c008000004d415cc [jbd2]
+>   #5 [c000001067c27be0] update_super_work at c0080000053f9758 [ext4]
+>   #6 [c000001067c27c70] process_one_work at c000000000188790
+>   #7 [c000001067c27d20] worker_thread at c00000000018973c
+>   #8 [c000001067c27dc0] kthread at c000000000196c84
+>   #9 [c000001067c27e10] ret_from_kernel_thread at c00000000000cd64
+>
+> Which comes out to
+>
+>    382   repeat:
+>    383           read_lock(&journal->j_state_lock);
+> * 384           BUG_ON(journal->j_flags & JBD2_UNMOUNT);
+>    385           if (is_journal_aborted(journal) ||
+>    386               (journal->j_errno != 0 && !(journal->j_flags & JBD2_ACK_ERR))) {
+>    387                   read_unlock(&journal->j_state_lock);
+>
+>
+> Initially this seemed like it should never happen but upon crash
+> analysis it seems like it could indeed be hit as described in patch 1/2.
+>
+> I would like to add that through the logs we only knew that:
+>
+> - ext4_journal_bmap -> ext4_map_blocks is failing with EFSCORRUPTED.
+> - update_super_work had hit the BUG_ON
+>
+> I was not able to hit this bug again (without modifying the kernel to
+> inject errors) but the above backtrace seems to be one possible paths
+> where this BUG_ON can be hit. Rest of the analysis and fix is in patch
+> 2/3. Patch 3 is just a small tweak that i found helpful while debugging.
+>
+> That being said, journalling is something I'm not very familiar with and
+> there might be gaps in my understanding so thoughts and suggestions are
+> welcome.
+>
+> Ojaswin Mujoo (3):
+>    ext4: define ext4_journal_destroy wrapper
+>    ext4: avoid journaling sb update on error if journal is destroying
+>    ext4: Make sb update interval tunable
+>
+>   fs/ext4/ext4.h      | 11 +++++++++++
+>   fs/ext4/ext4_jbd2.h | 22 ++++++++++++++++++++++
+>   fs/ext4/super.c     | 35 +++++++++++++++++------------------
+>   fs/ext4/sysfs.c     |  4 ++++
+>   4 files changed, 54 insertions(+), 18 deletions(-)
+>
 
 
