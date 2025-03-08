@@ -1,119 +1,113 @@
-Return-Path: <linux-kernel+bounces-552425-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-552426-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 677D4A579C2
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 11:28:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3BBF5A579C5
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 11:35:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A266F171366
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 10:28:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 747DE171825
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 10:35:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8717E1B3725;
-	Sat,  8 Mar 2025 10:27:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57DC21B0416;
+	Sat,  8 Mar 2025 10:35:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SlU0SfWP"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="IVl/SXmq"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D425AC133;
-	Sat,  8 Mar 2025 10:27:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C105194A6C;
+	Sat,  8 Mar 2025 10:34:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741429676; cv=none; b=QN99m35liEbV3fm/roSiAosQlwBWLJysSZbA1ekVXJUn0rg51l0x8R1GydQHN4+RGdEodO6XH+UeKNlSjVCh+xHswVqhWpmYCRmhp37rrD4gbN9X/bHDVkE4LPpTAdSWcIs8La+3Ys47JmX956RXHfgd5OAOkMS2/7agOpPSIoM=
+	t=1741430103; cv=none; b=III5jrTxt9NU6NAFyHlua27/QGf6O/ClDcn0O3pJLO44cxumcr8UEwti2pduJfoRqvatKtjDih8j6lrRvtiueysBx4fQJI4CrIiA+6u+Or3xYUz/dwv/ekuE4IOEg5fBmY/NnhQHQtN5kSHFCMKUR7JE1CIklbrilV8pgZL5a9s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741429676; c=relaxed/simple;
-	bh=PITZtdJg2uIAhqm1Sgq0C/a7piJ6sd/4BSSAg4EQ/HQ=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=oLVqkNQ5MX4Gxl3XkPKXO/fU4UyDO4s/U/04j2exNKXX2mHlTiLVEQDNrDcYL9DNR39SXrDMRFa9yU5+bpvPmfk9QMKIsS4BUGBkSrju5heMtIUNkoaIrvvgsHfuTYN0zB46BpPxS0stp3H0HJ+Ik06GcHzUI+S79ieaHX3kwcI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SlU0SfWP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 37B44C4CEE0;
-	Sat,  8 Mar 2025 10:27:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741429675;
-	bh=PITZtdJg2uIAhqm1Sgq0C/a7piJ6sd/4BSSAg4EQ/HQ=;
-	h=From:Date:Subject:To:Cc:Reply-To:From;
-	b=SlU0SfWPjSx1xK/lUhKeYXlODnhynQsbLzzBZ7W+7g9W6VsQ9ccdLMwgro86p8sil
-	 4bpsdQ0KpeZg0TvxjDDXEzj/JTgL/0tStGgTyrBmo+M6qmwSy7BYlZNYSicQEikMzg
-	 Mp/P7lN6HqrFyEYh71q/GCkctLoy+MBkk+ujHysXoyqC6cZFNd+OCIXZnUvk0rn0Xg
-	 57mOsw2SxW4IaCxAbTVzz7nOhfdk8Hvuh6i3OjlQkrFOnYk5osijwb1mjjFS6EbGm+
-	 LWKmq+KBlukTt7lZabJqeDihNJXZRGXxYP0k5H2gd9gGE0JtmQG7Ut4zI5CmJe/Whe
-	 J0kFkU4ecULVA==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1973EC282EC;
-	Sat,  8 Mar 2025 10:27:55 +0000 (UTC)
-From: Xilin Wu via B4 Relay <devnull+wuxilin123.gmail.com@kernel.org>
-Date: Sat, 08 Mar 2025 18:27:51 +0800
-Subject: [PATCH] arm64: dts: qcom: sm8250: Fix CPU7 opp table
+	s=arc-20240116; t=1741430103; c=relaxed/simple;
+	bh=vMML90PmPz4f5iAqQP3twGkVRdax3owqnUyoLOTy6XU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jNlmd3lUB2WjBeUFfjbQZ1RC0GrrXNt5DIL3XYJYUclEvJ7woi47Ns4aggT5Z6+2rbWEm+FhMs70V5PfXqtdWXY/MRz80XwazuNkMyP+ppbb1If1KqhDZgBvwDzCOL4+/4qX5AIzbnlvx1DX01LRUBVfUb/Hxb816BVrv9RMxjU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=IVl/SXmq; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 4549140E01A0;
+	Sat,  8 Mar 2025 10:34:56 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id Dx9MuYHWPlqr; Sat,  8 Mar 2025 10:34:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1741430091; bh=MeXXMrhJlDtSepFHfsLRrAktBWHVEJK6DeWmWg1ARF0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=IVl/SXmq/rp7/wuTuL3JeG1NhCkCjhndn80n3QHMOsg3kRhCK6KSFFXupFy9l/o2X
+	 onLBWr6480uwDj6EigIybWN8lGEZLTUTmIDncjaEWtQSlbLThoWuiDT2VKuvVAG8oL
+	 k9xnD1qKRO6Soad9zafHKjLIDwIc7TNiUjqLxyO69M5umcFk8tkje0pHxxuEiRoIlb
+	 bcyH5jrpa0lqCpYiNs7/fOWGCh6bQNwS1c0QtfpYkvicsWgc5RqULwaGKA7X+0UWR0
+	 uk1HqMlGrImJh3y+w6LDkD0E9iBe6wbkFn+WaGUF25LcARVQsPb+UDhvTNsaodOClM
+	 2iqZD/zz9RStGvlQcWuvEiyP49nwG5qkmKS/LqESHRlenfxrjQQX2UQgrgUkgbdR29
+	 HQwyhPGyNrR0zdudeYgaaEISdMsSkQ/SoWnvx7Um0GRguoLKs0l8vOu5S5xwVFTV1a
+	 zYN6BUiIoxRBVDmawk9RQ8C6eH95+2eNY1l4ugHa8HKVzSV4lmG+41OHV7c+8isg/e
+	 +WmrCZLTyb1YOUebbwqdLq675QzOOST/OuKtoToqpb2/jOL1gx/mONiEVOAy14Dig1
+	 WVMUX7CANI1GigYwBY2kdL+CmGn8Bs/Kw0cq5MAz1AJR3k9KR4sr50ye39/YVksMAA
+	 vZ2ecJo9efEZFCmTXLYVoWwQ=
+Received: from zn.tnic (pd95303ce.dip0.t-ipconnect.de [217.83.3.206])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 0834440E016E;
+	Sat,  8 Mar 2025 10:34:43 +0000 (UTC)
+Date: Sat, 8 Mar 2025 11:34:37 +0100
+From: Borislav Petkov <bp@alien8.de>
+To: "Xin Li (Intel)" <xin@zytor.com>
+Cc: linux-kernel@vger.kernel.org, linux-kbuild@vger.kernel.org,
+	masahiroy@kernel.org, nathan@kernel.org, nicolas@fjasle.eu,
+	hpa@zytor.com, sraithal@amd.com
+Subject: Re: [PATCH v1 1/1] kbuild: Add "make headers" to "make help" output
+Message-ID: <20250308103437.GAZ8wdPbFGfhzAi1WU@fat_crate.local>
+References: <20250308040451.585561-1-xin@zytor.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250308-fix-sm8250-cpufreq-v1-1-8a0226721399@gmail.com>
-X-B4-Tracking: v=1; b=H4sIAKYbzGcC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
- vPSU3UzU4B8JSMDI1MDYwML3bTMCt3iXAsgTze5oDStKLVQN8XS1NLEJMksxTDRWAmosaAoFag
- KbGh0bG0tAADDTpNkAAAA
-X-Change-ID: 20250308-fix-sm8250-cpufreq-d95944b6d1a3
-To: Bjorn Andersson <andersson@kernel.org>, 
- Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
- Thara Gopinath <thara.gopinath@linaro.org>
-Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Xilin Wu <wuxilin123@gmail.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1741429673; l=1086;
- i=wuxilin123@gmail.com; s=20240424; h=from:subject:message-id;
- bh=D9z9X3e5J8ftwp1wdYD55jK/Ci2H15jjh248DelqCdQ=;
- b=n/PHBwcxilz316ny13BQE1y4sYxBxB+E1XcDU8ZpXttkORZqR1x5/1iFqaQrQGz9NKE1uu/6t
- JxzlZ3NhRU/CLeR1T8p+Sb2zWFU4raSRtCwL0CSPOmL+K9DksCzJMA/
-X-Developer-Key: i=wuxilin123@gmail.com; a=ed25519;
- pk=vPnxeJnlD/PfEbyQPZzaay5ezxI/lMrke7qXy31lSM8=
-X-Endpoint-Received: by B4 Relay for wuxilin123@gmail.com/20240424 with
- auth_id=157
-X-Original-From: Xilin Wu <wuxilin123@gmail.com>
-Reply-To: wuxilin123@gmail.com
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250308040451.585561-1-xin@zytor.com>
 
-From: Xilin Wu <wuxilin123@gmail.com>
+On Fri, Mar 07, 2025 at 08:04:51PM -0800, Xin Li (Intel) wrote:
+> Meanwhile explicitly state that the headers are uapi headers.
+> 
+> Suggested-by: Borislav Petkov <bp@alien8.de>
+> Signed-off-by: Xin Li (Intel) <xin@zytor.com>
+> ---
+>  Makefile | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/Makefile b/Makefile
+> index 70bdbf2218fc..8f5aa710105e 100644
+> --- a/Makefile
+> +++ b/Makefile
+> @@ -1659,7 +1659,8 @@ help:
+>  	@echo  '  kernelrelease	  - Output the release version string (use with make -s)'
+>  	@echo  '  kernelversion	  - Output the version stored in Makefile (use with make -s)'
+>  	@echo  '  image_name	  - Output the image name (use with make -s)'
+> -	@echo  '  headers_install - Install sanitised kernel headers to INSTALL_HDR_PATH'; \
+> +	@echo  '  headers	  - Install sanitised kernel uapi headers to usr/include'
+									     ^^^^^^^^^^^
 
-There is a typo in cpu7_opp9. Fix it to get rid of the following
-errors.
+It is INSTALL_HDR_PATH too, try:
 
-[    0.198043] cpu cpu7: Voltage update failed freq=1747200
-[    0.198052] cpu cpu7: failed to update OPP for freq=1747200
+make O=/tmp/b/ headers
 
-Fixes: 8e0e8016cb79 ("arm64: dts: qcom: sm8250: Add CPU opp tables")
-Signed-off-by: Xilin Wu <wuxilin123@gmail.com>
----
- arch/arm64/boot/dts/qcom/sm8250.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+for example.
 
-diff --git a/arch/arm64/boot/dts/qcom/sm8250.dtsi b/arch/arm64/boot/dts/qcom/sm8250.dtsi
-index c2937b4d9f180296733b6d7a7a16a088f1f96b76..68613ea7146c8882150f1b81dbc0f3384d3380ba 100644
---- a/arch/arm64/boot/dts/qcom/sm8250.dtsi
-+++ b/arch/arm64/boot/dts/qcom/sm8250.dtsi
-@@ -606,7 +606,7 @@ cpu7_opp8: opp-1632000000 {
- 		};
- 
- 		cpu7_opp9: opp-1747200000 {
--			opp-hz = /bits/ 64 <1708800000>;
-+			opp-hz = /bits/ 64 <1747200000>;
- 			opp-peak-kBps = <5412000 42393600>;
- 		};
- 
-
----
-base-commit: 0a2f889128969dab41861b6e40111aa03dc57014
-change-id: 20250308-fix-sm8250-cpufreq-d95944b6d1a3
-
-Best regards,
 -- 
-Xilin Wu <wuxilin123@gmail.com>
+Regards/Gruss,
+    Boris.
 
-
+https://people.kernel.org/tglx/notes-about-netiquette
 
