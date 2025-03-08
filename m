@@ -1,98 +1,107 @@
-Return-Path: <linux-kernel+bounces-552411-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-552412-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB06FA5799E
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 10:56:27 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B899A579A0
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 10:57:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E9FDE16DA00
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 09:56:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7ED6A3AE7B8
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 09:57:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 357B51A9B4D;
-	Sat,  8 Mar 2025 09:56:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 275451A9B4D;
+	Sat,  8 Mar 2025 09:57:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AK//zFk7"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="b1uxVrhe"
+Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com [209.85.208.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96FC9BE4F
-	for <linux-kernel@vger.kernel.org>; Sat,  8 Mar 2025 09:56:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0B8714A0B7
+	for <linux-kernel@vger.kernel.org>; Sat,  8 Mar 2025 09:57:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741427781; cv=none; b=mh8Z+fKQEHvxaK5WSGBdXlyW54/eTPXkbzqHB0Wmb2k8ioZEIi10od6izvEqcGjVM4dFEVAiUaQANeXGp3Pwta8cpf+wf9+ejzPHNSa9E7uwPRuT4jpS8z+Wke6MTagKaVIal7YVOQNapqV+YpoX/KLuqQ4CdFIoAWLaaOahbpI=
+	t=1741427871; cv=none; b=IocY6L8zh7DC8fHKmE7KtlmHzOjNRLgdGuq2x7I9beElGzy9ugZBisGgQJayPacW5p7xkmSqt5h2Y/u/fSqj67U42QGPdaXq/kfKImSNHu44H2Nt1cqL90to/qNP9pyzBWOsjhORcwC/JLP7Nhg8LXtIhU6/mJEU9hcMbIGSGbU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741427781; c=relaxed/simple;
-	bh=60XBRM5aenNPXo3XHWO87rpYBuXDMcswRuEPm9TqGE4=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=Poky2CVvYvUOp0t4hi+tfHfVtWTSKEX3y8r5/500yjzWn2AwkM6vl+B4p0WkZKDKzkqYABIH3vwgMEMI4GXz1oeOOJeoAsIS7203hFJ5QpJPy3tPjMdQmHRm6xvS3EL36VFxl/9udHJoI3XNaYEpCiJgP1exTFJXtz3TWWYqPCo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AK//zFk7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 22788C4CEE0;
-	Sat,  8 Mar 2025 09:56:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741427781;
-	bh=60XBRM5aenNPXo3XHWO87rpYBuXDMcswRuEPm9TqGE4=;
-	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
-	b=AK//zFk7TzNhTPApiVSBFzhf1Xu4kSHH8GNMi1tuLKDYnRagedy3SfCl/n4vp9/aA
-	 LYPGdytkFoAwQYYg+JYY+0wzCG+RnnQ8NgoBgNikVzetRIl7n/NtEttTI+u9iC7MJ0
-	 0+h1AISHybOULmTG5BdUja8H8YiX57FXHGMw7Rv9teB2G9UlH37JR5El9dxZivny76
-	 0ajJKCiGBdnugbbGOPneOwGjG6hD8i4+z8LtDKpTgcOguvn68fBYD/3ya1jJo5Q68T
-	 X9vDKr0hbcOpvKTAB0/H8nN9XZOEa2UyRvffz4uC4yYNzoHDWC1mcmwVoPuK7MhM/E
-	 l2JgGX85UA5cQ==
-Message-ID: <adbc8517-95c5-41cd-b654-79f1ad7ab58c@kernel.org>
-Date: Sat, 8 Mar 2025 17:56:18 +0800
+	s=arc-20240116; t=1741427871; c=relaxed/simple;
+	bh=Mxr2e4ZA36jMwAelu1FBD4WhMb9dC7e5AqJ+9luHgW0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=X0bdW0MBAEruexuY1FXtUcu5ibFEyG7kN1jgcYmiWaDlxpeXDiLYL1b7DHcMahIRhVM8q5XZtZ31KoQDxDo3xJFsOgFz/NUbz8huEXH47DgW5MvrepGYDeC2Qe04DGHBtKj+R/++H5RwafDDuLDR3so8F3/1cQ2MOjKDo8vkOf8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=b1uxVrhe; arc=none smtp.client-ip=209.85.208.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-lj1-f176.google.com with SMTP id 38308e7fff4ca-30bfe0d2b6dso7817371fa.3
+        for <linux-kernel@vger.kernel.org>; Sat, 08 Mar 2025 01:57:49 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1741427868; x=1742032668; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=/s83pCYTtFE8Z1A6ie6nfuX1L77r034f5y4goULBDTI=;
+        b=b1uxVrheQPmfQ0sbaP2ddB9S9/Rx97OL8pn4RdLD0/v8sEWeLqnAvywTtAk2au8Eu0
+         Surd5J7Pi9A+FKxvzyOREFif0xqiQsekwrJu4fajMff3tjRm5jUxL4+CJM4ql7LLf/7z
+         oHcztbsSGdc1tDlZawyR3IHoGdI6o0WLFUHvtek7y+cwQDLiq+S/DbhiEmE86KxfyuqX
+         A4RfqEqyFcpyNSzvo5CkNkAjHAnxaZjNgDxlsOCwr8akE6i7Elvapgag3cUWI1wzci5i
+         FI0WdR1QyfvU4NCRYcwKJQnjgqCAlSnByerPHDMSNaYayqTpbHMZh4mmBK1iNEPP2tVo
+         cw+A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741427868; x=1742032668;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=/s83pCYTtFE8Z1A6ie6nfuX1L77r034f5y4goULBDTI=;
+        b=AOqdcQ2EJF5R+vDEcS25iEaDGYhLL00ziMQFM37iz1YamMwcg+7Wb38S/hU/kyLjG3
+         n9I53gTTmarpybx2Sdvbc/hMboPzoRyvlooy75a9ic/Pq1LcYJVcr/p+PVKW6ZZe+W5X
+         R4UUUbB1D8BzPvTFL/WxyDUFZ8wwZxtDIuCHcSCrkMqMWvaBq8GAjoCZOnF5KwziTz2I
+         mcfnct+H/HOZyvErj2hbK0EeFHvbXfT9ilKVVnxs/EmG3uCSxRLmQL0MqiTnv4evokPE
+         FxsswehxE8hzSrW3ZED8lmh2b/akCelSq1FxWKt189xrcQ33o+RJQD7ot/tJY/CkyoTR
+         A8nw==
+X-Forwarded-Encrypted: i=1; AJvYcCVGy7YhNCc4I2kxXrH7M7GLZvnhkk4NZLgQNTmSVT94SUkOW6+ur6WrLyqhVuiBB3dqhKiLw9DEMKDIgQE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwVTsgBSzJXKHfvDi9Muxx3tIWV3okZdyZH4qC50owo8Y9RR8Xn
+	oSlPl1bXCcD2FEivmeLla+/5tQwmtudWNJ4htsX+eywzBziH/ia/kI/RZTDswqWYgx9dJuMB+19
+	nTe7s5kmH1nuz9OXoxYkX1USIBhI1DURsl072
+X-Gm-Gg: ASbGncv76WK15b5Md5Xu0kB8z/mr0fFfpxk86a3PbHOb+YQvOocw2luBTTHkbmUWW/l
+	8d5yTTOmDgvUKkiUH41YwsrvqSm5+U+DRyKJqA0z1IvBygExNhUPnOcIkb/TC+qE54ow+vWO6J+
+	erAnB7dj6s35fzaoAHLO6jGXucIGQtoSJl1Vqg2OlbVvRY5T0mtu8xIuwaHYw=
+X-Google-Smtp-Source: AGHT+IHR0EUK9ZtMt9FxyXgc0C72OSMMag1jHgF57q5U3/mz0I7z1/yui1BhF1sLPrsNF1n0thBDgR2HaFUtEwXz8zs=
+X-Received: by 2002:a05:651c:30c:b0:308:f0c9:c4cf with SMTP id
+ 38308e7fff4ca-30bf4615a5fmr18314711fa.33.1741427867518; Sat, 08 Mar 2025
+ 01:57:47 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Cc: chao@kernel.org, linux-f2fs-devel@lists.sourceforge.net,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] f2fs: disalbe nat_bits by default
-To: Jaegeuk Kim <jaegeuk@kernel.org>
-References: <20250307031838.19164-1-chao@kernel.org>
- <Z8s2rmqauwCGJb9v@google.com>
-Content-Language: en-US
-From: Chao Yu <chao@kernel.org>
-In-Reply-To: <Z8s2rmqauwCGJb9v@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <cover.1740386567.git.dvyukov@google.com> <d11d91e0c27ef78affcef06e00d1cf4cd8747fcc.1740386567.git.dvyukov@google.com>
+ <Z8XTmnRo5opCojnH@gourry-fedora-PF4VCD3F>
+In-Reply-To: <Z8XTmnRo5opCojnH@gourry-fedora-PF4VCD3F>
+From: Dmitry Vyukov <dvyukov@google.com>
+Date: Sat, 8 Mar 2025 10:57:36 +0100
+X-Gm-Features: AQ5f1Jr7BaXYd8XIJA3qiVBZ34K8ji0ntCxfm6LP4HxXs3q8hX6wVdmM9EHhJ1M
+Message-ID: <CACT4Y+aoHwF8JtsdGXjozmUXgUX=_+HqML97KqF6-fDFiD57tA@mail.gmail.com>
+Subject: Re: [PATCH v2 2/3] selftests: Fix errno checking in
+ syscall_user_dispatch test
+To: Gregory Price <gourry@gourry.net>
+Cc: krisman@collabora.com, tglx@linutronix.de, luto@kernel.org, 
+	peterz@infradead.org, keescook@chromium.org, gregory.price@memverge.com, 
+	Marco Elver <elver@google.com>, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On 2025/3/8 2:10, Jaegeuk Kim wrote:
-> I meant let's support it conservatively if someone needs to enable
-> in other platform.
+On Mon, 3 Mar 2025 at 17:06, Gregory Price <gourry@gourry.net> wrote:
+>
+> On Mon, Feb 24, 2025 at 09:45:26AM +0100, Dmitry Vyukov wrote:
+> >       /* len != 0 */
+> > -     prctl(PR_SET_SYSCALL_USER_DISPATCH, op, 0x0, 0xff, 0);
+> > +     EXPECT_EQ(-1, prctl(PR_SET_SYSCALL_USER_DISPATCH, op, 0x0, 0xff, 0));
+> >       EXPECT_EQ(EINVAL, errno);
+>
+> This patch should probably just be pulled ahead of everything else,
+> since you change the behavior of the syscall, and now you're updating
+> the test - but it will fail (since this no longer produces EINVAL).
+>
+> This patch should probably just be entirely separate, maybe even in
+> stable?
 
-Oh, I've updated it, we can control it via mount option now.
-
-Thanks,
-
-> 
-> On 03/07, Chao Yu wrote:
->> Let's disable nat_bits by default.
->>
->> Signed-off-by: Chao Yu <chao@kernel.org>
->> ---
->>   fs/f2fs/node.c | 3 +++
->>   1 file changed, 3 insertions(+)
->>
->> diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
->> index 56873c41436e..3148d9e44e7f 100644
->> --- a/fs/f2fs/node.c
->> +++ b/fs/f2fs/node.c
->> @@ -3286,6 +3286,9 @@ static int init_node_manager(struct f2fs_sb_info *sbi)
->>   	if (!nm_i->nat_bitmap)
->>   		return -ENOMEM;
->>   
->> +	/* disable nat_bits feature by default */
->> +	disable_nat_bits(sbi, true);
->> +
->>   	err = __get_nat_bitmaps(sbi);
->>   	if (err)
->>   		return err;
->> -- 
->> 2.40.1
-
+Should I do something for this (what)? Or maintainers can pull it?
+What tree should pull it?
 
