@@ -1,891 +1,233 @@
-Return-Path: <linux-kernel+bounces-552595-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-552596-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1EBACA57BC2
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 17:03:17 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B2F3A57BC3
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 17:03:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 79A471893C5F
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 16:03:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C5EFA3B2494
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 16:03:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 775431E51FB;
-	Sat,  8 Mar 2025 16:03:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A80E1DEFFD;
+	Sat,  8 Mar 2025 16:03:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pVnsmIeE"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=web.de header.i=jvpeetz@web.de header.b="tuxZ78A8"
+Received: from mout.web.de (mout.web.de [212.227.15.3])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A79B14A8B;
-	Sat,  8 Mar 2025 16:03:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4381F1B21B4;
+	Sat,  8 Mar 2025 16:03:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741449788; cv=none; b=chRPPgkMVMYLldHrLhoE4IlxgMSfK7XtMvdTPIHJLun74RjFrapCgf/NxgBOWxQkiymuK2uVd7X3AlyjOQNt3uFNJu6tJb+qpvTeYaERR7q3kSDUyP9Y7i5I4gAe6dUmKUse2KJ1/uyTQV0YxZouiRsHYYzjjegSjAxU1mFxNCI=
+	t=1741449805; cv=none; b=VrOUWIA7IEWTd1zgB6eIka0bqiTrqwrPyNdBzVtxoGDzeaIx0Vo8lozZDeITOD65Dmg+SDXXrZYqL9bcyDdMJKHLEqgn6ePhbUGcB2kC5uPofgozOUEpd7VfM0/11mbynlRyiTKiWRAfTZooZZ7Z6gAEwZD3FHt5PDTRvMUNhJ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741449788; c=relaxed/simple;
-	bh=yNpXGRdIbNprpAo0UvjJaSSc/x6ILCPYEZiyzp8Uzcw=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Wx/rY8bxX5ARtLAeKx3h9MVS7Ir8KtLpO++SYjRHKbtJFf0uDg3EDRp2c0ETOEsC9UbSAtMaFsY38fQF4N9mEpM3mpLaQ0BQRloGG7w8cJAg2DvS9NZ16O0lJCFNVmU/9bTm6x9RYYhMgkOBQ3kAq7EK2kGE7u9TFk9pHT5aeds=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pVnsmIeE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 35235C4CEE0;
-	Sat,  8 Mar 2025 16:03:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741449787;
-	bh=yNpXGRdIbNprpAo0UvjJaSSc/x6ILCPYEZiyzp8Uzcw=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=pVnsmIeEV3wZ9deYFezvHoHfv0oAs/mI7rbPUuCipX+v0JNZ2+atNnfDeRP+aJnJC
-	 Nm/9OSxsv0qwt+kj+XjPM0HeTHcfspboXy2rRnxHFnlxYAkF6WL5e35vTErFllr8cc
-	 /1ZRef7cCmvufVQFzS0g6L7lyafrekT8z9uRrH/UADjQ/mdKLuC0AcePkU+suUQOUC
-	 vXKK1uygg7EmzgA5nfdu7iAidsrEbfMbXZn1gNwVol8OfZh//VGZdhcM2uqFKV7UMo
-	 diGIwAj+L3TntiRpIHOmgKUInlc6xG5531FHsO/WXfE4qtuDwX7JmTq/BLEdRhnqwt
-	 zV1EC8g/3XFsA==
-Date: Sat, 8 Mar 2025 16:02:57 +0000
-From: Jonathan Cameron <jic23@kernel.org>
-To: Jorge Marques <jorge.marques@analog.com>
-Cc: Lars-Peter Clausen <lars@metafoo.de>, Michael Hennerich
- <Michael.Hennerich@analog.com>, Rob Herring <robh@kernel.org>, Krzysztof
- Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
- Jonathan Corbet <corbet@lwn.net>, David Lechner <dlechner@baylibre.com>,
- <linux-iio@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
- <devicetree@vger.kernel.org>, <linux-doc@vger.kernel.org>
-Subject: Re: [PATCH 4/4] iio: adc: add support for ad4052
-Message-ID: <20250308160257.051395fa@jic23-huawei>
-In-Reply-To: <20250306-iio-driver-ad4052-v1-4-2badad30116c@analog.com>
-References: <20250306-iio-driver-ad4052-v1-0-2badad30116c@analog.com>
-	<20250306-iio-driver-ad4052-v1-4-2badad30116c@analog.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.48; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1741449805; c=relaxed/simple;
+	bh=CcyPJSdT7v0lx+RJUF5l6lpRgEgDQSWMYvtp9S4Soes=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=NfmZp3HtZ1OnrEc/f7p3xyWqDHoa1u7dzlU4YD6TmFk/EV7b2JipmxiYaDee2fbJeXZHV/peJSMyzJ4ZdUz0MxNPj0VdbE+v73/a4KmrgifAFOPozdviNiK2QxFFL/44BIwyQ+BGO1CAehI5iUVHzHAiNb5Zwz+nqsYqQdh6Yj8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=jvpeetz@web.de header.b=tuxZ78A8; arc=none smtp.client-ip=212.227.15.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1741449792; x=1742054592; i=jvpeetz@web.de;
+	bh=471NOtV+uqpxsfeJ9KelICVljMieSLQf54akSdE5xsM=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=tuxZ78A8TwZ+FnT75M92y6bJrrh/HpgY83813ows7db2lKq9D8ijpVqJ04EqZz9G
+	 VYy1evBpFLEuBox+LYk4w+DT0A9mSG7zoHzB20EmiJgjU4WKCj+0a3U5sw0OleVAF
+	 /bL6kOq5TtQOl6zWuSCvTNGNo1J5k1Dor1QSQzK1/VaY0PTF1rkQj5H88K6Fg89tC
+	 3SykMl9xelgaRCwUrB8ADRyQ9ABTdrBJyFs+QNfszPyjiDsyxdr1bbH26O4kqMNjM
+	 5HfgGvJO7JT/EvLYbgvrz8wcFUSTeYDDBmKY1SEDgQm5suipXRByx5yIQJ19bBxC/
+	 o+bDj3Cu0E6brgW2ag==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from uruz.dynato.kyma ([91.5.111.65]) by smtp.web.de (mrweb006
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1Md6tr-1tIi1E3ToB-00lP3p; Sat, 08
+ Mar 2025 17:03:11 +0100
+Received: from [127.0.0.1]
+	by uruz.dynato.kyma with esmtp (Exim 4.98)
+	(envelope-from <jvpeetz@web.de>)
+	id 1tqwdo-0000000010L-3mcL;
+	Sat, 08 Mar 2025 17:03:08 +0100
+Message-ID: <1b3ea3ce-7754-494c-a87b-0b70b2d25f99@web.de>
+Date: Sat, 8 Mar 2025 17:03:08 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: Linux 6.13.6
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ linux-kernel@vger.kernel.org, akpm@linux-foundation.org,
+ torvalds@linux-foundation.org, stable@vger.kernel.org, x86@kernel.org
+Cc: lwn@lwn.net, jslaby@suse.cz
+Newsgroups: gmane.linux.kernel.stable,gmane.linux.kernel
+References: <2025030751-mongrel-unplug-83d8@gregkh>
+Content-Language: en-US
+From: =?UTF-8?Q?J=C3=B6rg-Volker_Peetz?= <jvpeetz@web.de>
+In-Reply-To: <2025030751-mongrel-unplug-83d8@gregkh>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:bCBURvFjf40I0ai4sPiOv+aJfwFYTxZzQFFNzvOe9O9oZlOp8CK
+ zzKF8rYNyAhb+K5sNDZg3dkeX1VHRK6X1nMaYUywaJqe40ffHLMkQC3fCGgdR7Zc2uhhJXi
+ ZjbbHxsOXs1THeWvcD+hTL7mph97H5QYJf1agDvzLFj7T42VVyxF+uOX7+GoV9dYaics4Wt
+ TXd/9wnSJ4X6dugHbu4Mg==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:64MDx3yeKHk=;otVhtLdeEfGO5qcslIfYq3rd0LN
+ R2fki4qPKSpCb/w9f9wnIGOHjiVuGq3KbAFPIwYqqtg6bwvQsPOIQhnMTrGWQSHQ009Psk4q9
+ bfCo2zvySYTrKSrM9bGs6q+2Gfv2GdmJWcN0IxId1pqEhqoEgpWTcM3C+80gu2iw62u3ZSGsq
+ k7H1jOev0EreUjM2wtUodaaRYw6ZEmpAk805/JVHQGyK3R/whcifm/CvIb4KciN6Ys9YDNov3
+ EMRP8FJzvueCOXnVC2JaQFNwV3MKvxHLW6jyXCagfbzVsUF8ESulAzKiHMY5Ft84uo2e6Bz1z
+ cocjWsp6+N+99ssArGBv+yW+qFb1iO/7ti8YaNy4A6TA3Gn6dkhVOO8qOjy2P5fG0+8EAlV/S
+ +yf22cmNtvKxzveoy9ccAO/XFRwnmkg31Co5SjtoG6vyy9FL2yVFhfQDi0+MYrV7svzkX1o7B
+ EfRYxKaGg4565On1okOwDETHG/xYOKkI8ggSGGBNLQonQWHW4EXXHkh/HL+UMsAwMninpREcs
+ ZNEp7xo+Og2zkjYyjH/G7TB3iQS7ecjbMr1MPsaFM+1WxMOPVrGofIht5r6qljh0WBpI0HElz
+ rclpXWL4zBlZ/2G/0xvLYxJ3jCsWk8p6/EHBcYv0JbwHDa4G4qlfihnoVa+rh4gda8ZfQedMa
+ 3c426DgSkwmBK1RqGeAKcG2LeLjlE6folaR7Kylicpo4gleEF7eIOdVdtQLhd0FYx1Ba2blfz
+ B7vLQloHXNHGfDjDWewhGayC5Ox+x+v5zSOBLsVji0FDxlhlOdgmviEV3wCbdL7Xh0TWZnYAe
+ oUjDcuC1c0tUXS8J7XxKn/KxEd/zyRr1sGPwHBVRY12003YTiHAZ4qLV8TvIHL7be3v26UmMU
+ G4rEcP04fRI+thZ2Y5dctasmXOMOJ/AXR3MLH0SKFdBy+gDKvKLmx77JWjpVsXEIQ0l3Cnm6Y
+ Fiu+HesRfMZ75571sCcZyMO+eSGsRs9Z9XOFMYgyZglwILmYp/ZoDRDigF/z+qT2u8AZ3xgtN
+ LNlSL8pCDv7e4V9/E3+6noJkQYh2u4ZLSt5f+mVbii+p5xarbwj6eTAeiWSYiTM6/xu1kgdN1
+ 4s7AWPdnzeZmRlnzmp82iE1p7AFGmr1IwA8qdT0QjQdL4VR2hjHY650XxZ6GiQxt+wpDRXGHj
+ uRlrwBmv+eJuxPy+iSBzZ/TEPwSwHLB4T0qubRhtgn0/w9nti6lmfn65wRKQ4O9PwGJSG/FDe
+ pEBqiUlBo0qxmK1e7DDA1gfjs0IMpUjHweWGdIT9Mxm/bbNG9t9MsOiRrFVGrZYFHOchD3q2V
+ ERgOcvIz+8V31d5VNH8qN/2GNl0NoDlL12F98G3RVk68MLQYA/OQY667yXY+RMnZsJPsRowvJ
+ 4dXBJkSDQSIqXYrh03zA7dgV8ZmEn5zhx9sV2Dq3GzzbkagoOr/8VYqCj/
 
-On Thu, 6 Mar 2025 15:03:17 +0100
-Jorge Marques <jorge.marques@analog.com> wrote:
+Greg Kroah-Hartman wrote on 07/03/2025 18:52:
+> I'm announcing the release of the 6.13.6 kernel.
+>
+> All users of the 6.13 kernel series must upgrade.
+>
 
-> The AD4052/AD4058/AD4050/AD4056 are versatile, 16-bit/12-bit,
-> successive approximation register (SAR) analog-to-digital converter (ADC)
-> that enables low-power, high-density data acquisition solutions without
-> sacrificing precision.
-> This ADC offers a unique balance of performance and power efficiency,
-> plus innovative features for seamlessly switching between high-resolution
-> and low-power modes tailored to the immediate needs of the system.
-> The AD4052/AD4058/AD4050/AD4056 are ideal for battery-powered,
-> compact data acquisition and edge sensing applications.
-> 
-> Signed-off-by: Jorge Marques <jorge.marques@analog.com>
-Hi Jorge
+Thank you all for the new stable kernel. Unfortunately, the following mess=
+ages
+appear in dmesg on my system:
 
-Various fairly minor comments inline.
-
-Jonathan
-
-> diff --git a/drivers/iio/adc/Kconfig b/drivers/iio/adc/Kconfig
-> index 27413516216cb3f83cf1d995b9ffc22bf01776a4..f518dadbdd3a6b0543d0b78206fcbc203898454c 100644
-> --- a/drivers/iio/adc/Kconfig
-> +++ b/drivers/iio/adc/Kconfig
-> @@ -62,6 +62,20 @@ config AD4130
->  	  To compile this driver as a module, choose M here: the module will be
->  	  called ad4130.
->  
-> +config AD4052
-Aim for alphanumeric order so this should at least be before AD4130
-
-> +	tristate "Analog Devices AD4052 Driver"
-> +	depends on SPI
-> +	select SPI_OFFLOAD
-> +	select IIO_BUFFER
-> +	select IIO_BUFFER_DMAENGINE
-> +	select REGMAP_SPI
-> +	help
-> +	  Say yes here to build support for Analog Devices AD4052 SPI analog
-> +	  to digital converters (ADC).
-> +
-> +	  To compile this driver as a module, choose M here: the module will be
-> +	  called ad4052.
-> +
-
-> diff --git a/drivers/iio/adc/ad4052.c b/drivers/iio/adc/ad4052.c
-> new file mode 100644
-> index 0000000000000000000000000000000000000000..29452963fb15ab1b11e3a2fc59c34a2579f25910
-> --- /dev/null
-> +++ b/drivers/iio/adc/ad4052.c
-> @@ -0,0 +1,1289 @@
-
-...
-
-> +#define AD4052_REG_FUSE_CRC		0x40
-> +#define AD4052_REG_DEVICE_STATUS	0x41
-> +#define AD4052_REG_MIN_SAMPLE		0x45
-> +#define AD4052_MAX_REG			0x45
-> +/* GP_CONFIG */
-Where possible it makes for easier to follow code if the field defines
-include what register they are in rather than relying on comments. 
-e.g.
-#define AD4052_GP_CONFIG_MODE_MASK(x) etc
-
-> +#define AD4052_GP_MODE_MSK(x)		(GENMASK(2, 0) << (x) * 4)
-Macro is a bit too 'clever'.  I think it would easier to just have
-AD4052_GP_CONFIG_GP0_MODE_MSK	GENMMSK(2, 0)
-AD4052_GP_CONFIG_GP1_MODE_MSK	GENMASK(6, 4)
-
-> +/* INTR_CONFIG */
-> +#define AD4052_INTR_EN_MSK(x)		(GENMASK(1, 0) << (x) * 4)
-Similar for this one.
-> +/* ADC_MODES */
-> +#define AD4052_DATA_FORMAT		BIT(7)
-> +/* DEVICE_CONFIG */
-> +#define AD4052_POWER_MODE_MSK		GENMASK(1, 0)
-> +#define AD4052_LOW_POWER_MODE		3
-> +/* DEVICE_STATUS */
-> +#define AD4052_DEVICE_RESET		BIT(6)
-> +#define AD4052_THRESH_OVERRUN		BIT(4)
-> +#define AD4052_MAX_FLAG			BIT(3)
-> +#define AD4052_MIN_FLAG			BIT(2)
-> +#define AD4052_EVENT_CLEAR		(AD4052_THRESH_OVERRUN | AD4052_MAX_FLAG | AD4052_MIN_FLAG)
-Wrap the define with \ to break the line.
-
-> +/* TIMER_CONFIG */
-> +#define AD4052_FS_MASK			GENMASK(7, 4)
-> +#define AD4052_300KSPS			0x2
-> +
-> +#define AD4052_SPI_VENDOR		0x0456
-> +
-> +#define AD4050_MAX_AVG			0x7
-> +#define AD4052_MAX_AVG			0xB
-> +#define AD4052_CHECK_OVERSAMPLING(x, y)	({typeof(y) y_ = (y); \
-> +					  ((y_) < 0 || (y_) > BIT((x) + 1)); })
-
-Don't have single use macros like these.  Better to have the code inline
-where we can see what it is doing.
-
-> +#define AD4052_MAX_RATE(x)		((x) == AD4052_500KSPS ? 500000 : 2000000)
-> +#define AD4052_CHECK_RATE(x, y)		({typeof(y) y_ = (y);				\
-> +					  ((y_) > AD4052_MAX_RATE(x) || (y_) <= 0); })
-> +#define AD4052_FS_OFFSET(g)		((g) == AD4052_500KSPS ? 2 : 0)
-> +#define AD4052_FS(g)			(&ad4052_sample_rates[AD4052_FS_OFFSET(g)])
-> +#define AD4052_FS_LEN(g)		(ARRAY_SIZE(ad4052_sample_rates) - (AD4052_FS_OFFSET(g)))
+[    0.000000] microcode: You should not be seeing this. Please send the
+following couple of lines to x86-<at>-kernel.org
+[    0.000000] microcode: CPUID(1).EAX: 0xa50f00, current revision: 0xa500=
+011
+[    0.000000] Linux version 6.13.6 (root@uruz) (gcc (Debian 14.2.0-17) 14=
+.2.0,
+GNU ld (GNU Binutils for Debian) 2.44) #1 SMP Fri Mar  7 19:40:58 CET 2025
+[    0.000000] Command line: BOOT_IMAGE=3D/boot/vmlinuz root=3DPARTUUID=3D=
+cb5df131-01
+random.trust_cpu=3Don amd_pstate=3Dactive spec_rstack_overflow=3Doff
 
 ...
 
-> +static const int ad4052_sample_rate_avail[] = {
-> +	2000000, 1000000, 300000, 100000, 33300,
-> +	10000, 3000, 500, 333, 250, 200,
-> +	166, 140, 125, 111
+[    0.295153] smpboot: CPU0: AMD Ryzen 7 5700G with Radeon Graphics (fami=
+ly:
+0x19, model: 0x50, stepping: 0x0)
+[    0.295308] Performance Events: Fam17h+ core perfctr, AMD PMU driver.
+[    0.295386] ... version:                0
+[    0.295442] ... bit width:              48
+[    0.295499] ... generic registers:      6
+[    0.295555] ... value mask:             0000ffffffffffff
+[    0.295617] ... max period:             00007fffffffffff
+[    0.295678] ... fixed-purpose events:   0
+[    0.295735] ... event mask:             000000000000003f
+[    0.295838] signal: max sigframe size: 2976
+[    0.295921] rcu: Hierarchical SRCU implementation.
+[    0.295981] rcu: 	Max phase no-delay instances is 1000.
+[    0.296062] Timer migration: 2 hierarchy levels; 8 children per group; =
+2
+crossnode level
+[    0.296192] smp: Bringing up secondary CPUs ...
+[    0.296286] smpboot: x86: Booting SMP configuration:
+[    0.296346] .... node  #0, CPUs:        #1  #2  #3  #4
+[    0.015631] microcode: You should not be seeing this. Please send the
+following couple of lines to x86-<at>-kernel.org
+[    0.015631] microcode: CPUID(1).EAX: 0xa50f00, current revision: 0xa500=
+011
+[    0.015631] microcode: You should not be seeing this. Please send the
+following couple of lines to x86-<at>-kernel.org
+[    0.015631] microcode: CPUID(1).EAX: 0xa50f00, current revision: 0xa500=
+011
+[    0.015631] microcode: You should not be seeing this. Please send the
+following couple of lines to x86-<at>-kernel.org
+[    0.015631] microcode: CPUID(1).EAX: 0xa50f00, current revision: 0xa500=
+011
+[    0.015631] microcode: You should not be seeing this. Please send the
+following couple of lines to x86-<at>-kernel.org
+[    0.015631] microcode: CPUID(1).EAX: 0xa50f00, current revision: 0xa500=
+011
+[    0.296783]   #5
+[    0.015631] microcode: You should not be seeing this. Please send the
+following couple of lines to x86-<at>-kernel.org
+[    0.015631] microcode: CPUID(1).EAX: 0xa50f00, current revision: 0xa500=
+011
+[    0.296817]   #6
+[    0.015631] microcode: You should not be seeing this. Please send the
+following couple of lines to x86-<at>-kernel.org
+[    0.015631] microcode: CPUID(1).EAX: 0xa50f00, current revision: 0xa500=
+011
+[    0.296817]   #7
+[    0.015631] microcode: You should not be seeing this. Please send the
+following couple of lines to x86-<at>-kernel.org
+[    0.015631] microcode: CPUID(1).EAX: 0xa50f00, current revision: 0xa500=
+011
+[    0.310182]   #8
+[    0.015631] microcode: You should not be seeing this. Please send the
+following couple of lines to x86-<at>-kernel.org
+[    0.015631] microcode: CPUID(1).EAX: 0xa50f00, current revision: 0xa500=
+011
+[    0.310682]   #9
+[    0.015631] microcode: You should not be seeing this. Please send the
+following couple of lines to x86-<at>-kernel.org
+[    0.015631] microcode: CPUID(1).EAX: 0xa50f00, current revision: 0xa500=
+011
+[    0.310978]  #10
+[    0.015631] microcode: You should not be seeing this. Please send the
+following couple of lines to x86-<at>-kernel.org
+[    0.015631] microcode: CPUID(1).EAX: 0xa50f00, current revision: 0xa500=
+011
+[    0.311265]  #11
+[    0.015631] microcode: You should not be seeing this. Please send the
+following couple of lines to x86-<at>-kernel.org
+[    0.015631] microcode: CPUID(1).EAX: 0xa50f00, current revision: 0xa500=
+011
+[    0.311553]  #12
+[    0.015631] microcode: You should not be seeing this. Please send the
+following couple of lines to x86-<at>-kernel.org
+[    0.015631] microcode: CPUID(1).EAX: 0xa50f00, current revision: 0xa500=
+011
+[    0.311842]  #13
+[    0.015631] microcode: You should not be seeing this. Please send the
+following couple of lines to x86-<at>-kernel.org
+[    0.015631] microcode: CPUID(1).EAX: 0xa50f00, current revision: 0xa500=
+011
+[    0.312134]  #14
+[    0.015631] microcode: You should not be seeing this. Please send the
+following couple of lines to x86-<at>-kernel.org
+[    0.015631] microcode: CPUID(1).EAX: 0xa50f00, current revision: 0xa500=
+011
+[    0.312424]  #15
+[    0.015631] microcode: You should not be seeing this. Please send the
+following couple of lines to x86-<at>-kernel.org
+[    0.015631] microcode: CPUID(1).EAX: 0xa50f00, current revision: 0xa500=
+011
+[    0.313521] Spectre V2 : Update user space SMT mitigation: STIBP always=
+-on
+[    0.328817] smp: Brought up 1 node, 16 CPUs
+[    0.330152] smpboot: Total of 16 processors activated (121422.53 BogoMI=
+PS)
+[    0.331117] Memory: 61612104K/62798720K available (10240K kernel code, =
+922K
+rwdata, 2264K rodata, 1248K init, 1564K bss, 1173300K reserved, 0K cma-res=
+erved)
+
+Before this, I used stable kernel 6.13.4 which didn't show these lines.
 
-trailing comma missing
+Regards,
+J=C3=B6rg.
 
-> +};
-> +
-> +static const char *const ad4052_sample_rates[] = {
-> +	"2000000", "1000000", "300000", "100000", "33300",
-> +	"10000", "3000", "500", "333", "250", "200",
-> +	"166", "140", "124", "111",
-Not sure why this can't be done with read_avail and the values above.
-> +};
-> +
-> +static int ad4052_iio_device_claim_direct(struct iio_dev *indio_dev,
-> +					  struct ad4052_state *st)
-> +{
-> +	if (!iio_device_claim_direct(indio_dev))
-> +		return false;
-
-This might stretch sparses ability to keep track or __acquire / __release.
-Make sure to check that with a C=1 build. If the cond_acquires
-stuff is merged into sparse, this may need a revisit for markings.
-
-> +
-> +	/**
-
-Not kernel-doc, so /*
-
-> +	 * If the device is in monitor mode, no register access is allowed,
-> +	 * since it would put the device back in configuration mode.
-> +	 */
-> +	if (st->wait_event) {
-> +		iio_device_release_direct(indio_dev);
-> +		return false;
-> +	}
-> +	return true;
-> +}
-> +
-> +static int ad4052_sample_rate_get(struct iio_dev *indio_dev,
-> +				  const struct iio_chan_spec *chan)
-> +{
-> +	struct ad4052_state *st = iio_priv(indio_dev);
-> +	int ret, val;
-> +
-> +	if (!ad4052_iio_device_claim_direct(indio_dev, st))
-> +		return -EBUSY;
-> +
-> +	ret = regmap_read(st->regmap, AD4052_REG_TIMER_CONFIG, &val);
-> +	val = FIELD_GET(AD4052_FS_MASK, val);
-
-I don't really like the double use of the val variable as it loses
-meaning we could otherwise provide in the variable naming.
-
-> +
-> +	iio_device_release_direct(indio_dev);
-> +	return ret ? ret : val - AD4052_FS_OFFSET(st->chip->grade);
-> +}
-> +
-> +static int ad4052_sample_rate_set(struct iio_dev *indio_dev,
-> +				  const struct iio_chan_spec *chan,
-> +				  unsigned int val)
-> +{
-> +	struct ad4052_state *st = iio_priv(indio_dev);
-> +	int ret;
-> +
-> +	if (!ad4052_iio_device_claim_direct(indio_dev, st))
-> +		return -EBUSY;
-> +
-> +	val += AD4052_FS_OFFSET(st->chip->grade);
-> +	val = FIELD_PREP(AD4052_FS_MASK, val);
-
-Using val for two different things here. I'd avoid that
-by just having this last line merged with the next one.
-
-> +	ret = regmap_write(st->regmap, AD4052_REG_TIMER_CONFIG, val);
-> +
-> +	iio_device_release_direct(indio_dev);
-> +	return ret;
-> +}
-
-> +
-> +#define AD4052_EXT_INFO(grade)								\
-> +static struct iio_chan_spec_ext_info grade##_ext_info[] = {				\
-> +	IIO_ENUM("sample_rate", IIO_SHARED_BY_ALL, &grade##_sample_rate_enum),		\
-> +	IIO_ENUM_AVAILABLE("sample_rate", IIO_SHARED_BY_ALL, &grade##_sample_rate_enum),\
-> +	{}										\
-{ }
-preferred slightly.
-
-> +}
-
-
-> +static int ad4052_get_oversampling_ratio(struct ad4052_state *st,
-> +					 unsigned int *val)
-> +{
-> +	int ret;
-> +
-> +	if (st->mode == AD4052_SAMPLE_MODE) {
-> +		*val = 0;
-
-Probably = 1 to reflect no oversampling.
-IIRC the attribute allows either but to me at least a default of 1
-is more logical.
-
-> +		return 0;
-> +	}
-> +
-> +	ret = regmap_read(st->regmap, AD4052_REG_AVG_CONFIG, val);
-> +	if (ret)
-> +		return ret;
-> +
-> +	*val = BIT(*val + 1);
-> +
-> +	return 0;
-> +}
-> +
-> +static int ad4052_assert(struct ad4052_state *st)
-Slighly odd name.  check_ids or something like that.
-
-> +{
-> +	int ret;
-> +	u16 val;
-> +
-> +	ret = regmap_bulk_read(st->regmap, AD4052_REG_PROD_ID_1, &st->d16, 2);
-
-sizeof(st->d16) here and in similar places.
-
-> +	if (ret)
-> +		return ret;
-> +
-> +	val = be16_to_cpu(st->d16);
-> +	if (val != st->chip->prod_id)
-> +		return -ENODEV;
-
-Should not be treated as a failure as that breaks the future use of
-fallback compatible values in DT (support new hardware on old kernel)
-Instead just print a message saying it didn't match and carry on as if it did.
-
-> +
-> +	ret = regmap_bulk_read(st->regmap, AD4052_REG_VENDOR_H, &st->d16, 2);
-> +	if (ret)
-> +		return ret;
-> +
-> +	val = be16_to_cpu(st->d16);
-> +	if (val != AD4052_SPI_VENDOR)
-> +		return -ENODEV;
-> +
-> +	return 0;
-> +}
-
-> +
-> +static int ad4052_set_operation_mode(struct ad4052_state *st, enum ad4052_operation_mode mode)
-> +{
-> +	u8 val = st->data_format | mode;
-
-Maybe regmap_update_bits so we don't have to store st->data_format if
-that bit has already been written.
-
-> +	int ret;
-> +
-> +	ret = regmap_write(st->regmap, AD4052_REG_ADC_MODES, val);
-> +	if (ret)
-> +		return ret;
-> +
-> +	val = BIT(0);
-
-This should have some sort of define and then use that inline
-in the regmap_write() call.
-
-
-> +	return regmap_write(st->regmap, AD4052_REG_MODE_SET, val);
-> +}
-
-> +
-> +static int ad4052_set_non_defaults(struct iio_dev *indio_dev,
-i kind of get where you are coming from with the 'non defaults'
-but we are setting software driven defaults here.
-
-Maybe just rename as ad4052_setup() or something similarly vague.
-
-> +				   struct iio_chan_spec const *chan)
-> +{
-> +	struct ad4052_state *st = iio_priv(indio_dev);
-> +	const struct iio_scan_type *scan_type;
-> +
-> +	scan_type = iio_get_current_scan_type(indio_dev, chan);
-> +
-> +	u8 val = FIELD_PREP(AD4052_GP_MODE_MSK(0), AD4052_GP_INTR) |
-> +		 FIELD_PREP(AD4052_GP_MODE_MSK(1), AD4052_GP_DRDY);
-> +	int ret;
-> +
-> +	ret = regmap_update_bits(st->regmap, AD4052_REG_GP_CONFIG,
-> +				 AD4052_GP_MODE_MSK(1) | AD4052_GP_MODE_MSK(0),
-> +				 val);
-> +	if (ret)
-> +		return ret;
-> +
-> +	val = FIELD_PREP(AD4052_INTR_EN_MSK(0), (AD4052_INTR_EN_EITHER)) |
-> +	      FIELD_PREP(AD4052_INTR_EN_MSK(1), (AD4052_INTR_EN_NEITHER));
-> +
-> +	ret = regmap_update_bits(st->regmap, AD4052_REG_INTR_CONFIG,
-> +				 AD4052_INTR_EN_MSK(0) | AD4052_INTR_EN_MSK(1),
-> +				 val);
-> +	if (ret)
-> +		return ret;
-> +
-> +	val = 0;
-> +	if (scan_type->sign == 's')
-> +		val |= AD4052_DATA_FORMAT;
-> +
-> +	st->data_format = val;
-> +
-> +	if (st->chip->grade == AD4052_500KSPS) {
-> +		ret = regmap_write(st->regmap, AD4052_REG_TIMER_CONFIG,
-> +				   FIELD_PREP(AD4052_FS_MASK, AD4052_300KSPS));
-> +		if (ret)
-> +			return ret;
-> +	}
-> +
-> +	return regmap_write(st->regmap, AD4052_REG_ADC_MODES, val);
-> +}
-
-> +
-> +static int ad4052_request_irq(struct iio_dev *indio_dev)
-> +{
-> +	struct ad4052_state *st = iio_priv(indio_dev);
-> +	struct device *dev = &st->spi->dev;
-> +	int ret = 0;
-> +
-> +	ret = fwnode_irq_get(dev_fwnode(&st->spi->dev), 0);
-
-As per the binding review, use named variant as we should
-not be controlling the order, but rather specifying which
-is which in the dt-binding.
-
-> +	if (ret <= 0)
-> +		return ret ? ret : -EINVAL;
-> +
-> +	ret = devm_request_threaded_irq(dev,
-> +					ret, NULL, ad4052_irq_handler_thresh,
-
-odd wrap.  Take each line up to 80 chars before wrapping to next one.
-
-> +					IRQF_TRIGGER_RISING | IRQF_ONESHOT,
-
-Direction should come from firmware, not be specified here.
-There might be an inverter in the path.  That used to be a common cheap
-way of doing level conversion for interrupt lines and it is handled by
-flipping the sense of the interrupt in the dts.
-
-> +					indio_dev->name, indio_dev);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret = fwnode_irq_get(dev_fwnode(&st->spi->dev), 1);
-> +	if (ret <= 0)
-> +		return ret ? ret : -EINVAL;
-> +
-> +	st->gp1_irq = ret;
-> +	ret = devm_request_threaded_irq(dev,
-> +					ret, NULL, ad4052_irq_handler_drdy,
-> +					IRQF_TRIGGER_FALLING | IRQF_ONESHOT,
-> +					indio_dev->name, st);
-return devm_request_thread_irq.
-
-> +	return ret;
-> +}
-> +
-> +static const int ad4052_oversampling_avail[] = {
-> +	0, 2, 4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048, 4096
-
-Always a trailing comma unless it is some form of terminator.
-
-Oversampling ratio of 0 is a bit strange. That should probably be 1
-to reflect 1 sample per reading output (or no oversampling).
-
-> +};
-
-> +
-> +static ssize_t ad4052_set_sampling_freq(struct ad4052_state *st, unsigned int val)
-> +{
-> +	int ret;
-> +
-> +	if (AD4052_CHECK_RATE(st->chip->grade, val))
-> +		return -EINVAL;
-> +
-> +	ret = __ad4052_set_sampling_freq(st, val);
-> +
-> +	return ret;
-	return __ad4052_set_sampling_freq(st, val);
-
-> +}
-
-
-
-> +static int ad4052_write_event_config(struct iio_dev *indio_dev,
-> +				     const struct iio_chan_spec *chan,
-> +				     enum iio_event_type type,
-> +				     enum iio_event_direction dir,
-> +				     bool state)
-> +{
-> +	struct ad4052_state *st = iio_priv(indio_dev);
-> +	int ret = -EBUSY;
-> +
-> +	if (!iio_device_claim_direct(indio_dev))
-> +		return -EBUSY;
-> +
-> +	if (st->wait_event == state)
-> +		goto out_release;
-> +
-> +	if (state) {
-> +		ret = pm_runtime_resume_and_get(&st->spi->dev);
-> +		if (ret)
-> +			goto out_release;
-> +
-> +		ret = ad4052_set_operation_mode(st, AD4052_MONITOR_MODE);
-> +		if (ret)
-> +			goto out_err_suspend;
-Given the error handling is different in the two paths, I'd
-split this into two helpers - one each for enable and disable.
-Probably take the direct claim around where they are called.
-
-> +	} else {
-> +		pm_runtime_mark_last_busy(&st->spi->dev);
-> +		pm_runtime_put_autosuspend(&st->spi->dev);
-> +
-> +		ret = ad4052_exit_command(st);
-> +	}
-> +	st->wait_event = state;
-> +	iio_device_release_direct(indio_dev);
-> +	return ret;
-> +
-> +out_err_suspend:
-> +	pm_runtime_mark_last_busy(&st->spi->dev);
-> +	pm_runtime_put_autosuspend(&st->spi->dev);
-> +
-> +out_release:
-> +	iio_device_release_direct(indio_dev);
-> +	return ret;
-> +}
-> +
-> +static int ad4052_read_event_value(struct iio_dev *indio_dev,
-> +				   const struct iio_chan_spec *chan,
-> +				   enum iio_event_type type,
-> +				   enum iio_event_direction dir,
-> +				   enum iio_event_info info, int *val,
-> +				   int *val2)
-> +{
-> +	struct ad4052_state *st = iio_priv(indio_dev);
-> +	u8 reg, size = 1;
-> +	int ret;
-> +
-> +	if (!ad4052_iio_device_claim_direct(indio_dev, st))
-> +		return -EBUSY;
-> +
-> +	switch (info) {
-> +	case IIO_EV_INFO_VALUE:
-> +		if (dir == IIO_EV_DIR_RISING)
-> +			reg = AD4052_REG_MAX_LIMIT;
-> +		else
-> +			reg = AD4052_REG_MIN_LIMIT;
-> +		size++;
-
-As below.  Seems to me better to just set size to 2 here.
-
-> +		break;
-> +	case IIO_EV_INFO_HYSTERESIS:
-> +		if (dir == IIO_EV_DIR_RISING)
-> +			reg = AD4052_REG_MAX_HYST;
-> +		else
-> +			reg = AD4052_REG_MIN_HYST;
-> +		break;
-> +	default:
-> +		iio_device_release_direct(indio_dev);
-> +		return -EINVAL;
-Maybe use an error block and goto.  You could factor
-out the stuff under the direct claim as an alternative
-path to simpler code.
-
-> +	}
-> +
-> +	ret = regmap_bulk_read(st->regmap, reg, &st->d32, size);
-> +	if (ret) {
-> +		iio_device_release_direct(indio_dev);
-> +		return ret;
-> +	}
-> +
-> +	if (reg == AD4052_REG_MAX_LIMIT || reg == AD4052_REG_MIN_LIMIT) {
-> +		*val = be16_to_cpu(st->d16);
-> +		if (st->data_format & AD4052_DATA_FORMAT)
-> +			*val = sign_extend32(*val, 11);
-> +	} else {
-> +		*val = st->d32;
-> +	}
-> +
-> +	iio_device_release_direct(indio_dev);
-> +	return IIO_VAL_INT;
-> +}
-> +
-> +static int ad4052_write_event_value(struct iio_dev *indio_dev,
-> +				    const struct iio_chan_spec *chan,
-> +				    enum iio_event_type type,
-> +				    enum iio_event_direction dir,
-> +				    enum iio_event_info info, int val,
-> +				    int val2)
-> +{
-> +	struct ad4052_state *st = iio_priv(indio_dev);
-> +	int ret = -EINVAL;
-> +	u8 reg, size = 1;
-> +
-> +	if (!ad4052_iio_device_claim_direct(indio_dev, st))
-> +		return -EBUSY;
-> +
-> +	st->d16 = cpu_to_be16(val);
-> +
-> +	switch (type) {
-> +	case IIO_EV_TYPE_THRESH:
-> +		switch (info) {
-> +		case IIO_EV_INFO_VALUE:
-> +			if (st->data_format & AD4052_DATA_FORMAT) {
-> +				if (val > 2047 || val < -2048)
-> +					goto out_release;
-> +			} else if (val > 4095 || val < 0) {
-> +				goto out_release;
-> +			}
-> +			if (dir == IIO_EV_DIR_RISING)
-> +				reg = AD4052_REG_MAX_LIMIT;
-> +			else
-> +				reg = AD4052_REG_MIN_LIMIT;
-> +			size++;
-Set size directly to 2 perhaps. I'm not really understanding why
-the increment scheme makes more sense.
-
-> +			break;
-> +		case IIO_EV_INFO_HYSTERESIS:
-> +			if (val & BIT(7))
-> +				goto out_release;
-> +			if (dir == IIO_EV_DIR_RISING)
-> +				reg = AD4052_REG_MAX_HYST;
-> +			else
-> +				reg = AD4052_REG_MIN_HYST;
-> +			st->d16 >>= 8;
-> +			break;
-> +		default:
-> +			goto out_release;
-> +		}
-> +		break;
-> +	default:
-> +		goto out_release;
-> +	}
-> +
-> +	ret = regmap_bulk_write(st->regmap, reg, &st->d16, size);
-> +
-> +out_release:
-> +	iio_device_release_direct(indio_dev);
-> +	return ret;
-> +}
-> +
-> +static int ad4052_buffer_preenable(struct iio_dev *indio_dev)
-> +{
-> +	struct ad4052_state *st = iio_priv(indio_dev);
-> +	struct spi_offload_trigger_config config = {
-> +		.type = SPI_OFFLOAD_TRIGGER_PERIODIC,
-> +		.periodic = {
-> +			.frequency_hz = st->offload_trigger_hz,
-> +		},
-> +	};
-> +	int ret;
-> +
-> +	if (st->wait_event)
-> +		return -EBUSY;
-> +
-> +	ret = pm_runtime_resume_and_get(&st->spi->dev);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret = ad4052_set_operation_mode(st, st->mode);
-> +	if (ret)
-> +		goto out_error;
-> +
-> +	ret = ad4052_update_xfer_offload(indio_dev, indio_dev->channels);
-> +	if (ret)
-> +		goto out_error;
-> +
-> +	disable_irq(st->gp1_irq);
-
-Add a comment on why.
-
-> +
-> +	ret = spi_offload_trigger_enable(st->offload, st->offload_trigger,
-> +					 &config);
-> +	if (ret)
-> +		goto out_offload_error;
-> +
-> +	return 0;
-> +
-> +out_offload_error:
-> +	enable_irq(st->gp1_irq);
-> +out_error:
-> +	pm_runtime_mark_last_busy(&st->spi->dev);
-> +	pm_runtime_put_autosuspend(&st->spi->dev);
-> +
-> +	return ret;
-> +}
-
-
-> +static int ad4052_get_current_scan_type(const struct iio_dev *indio_dev,
-> +					const struct iio_chan_spec *chan)
-> +{
-> +	struct ad4052_state *st = iio_priv(indio_dev);
-> +
-> +	/*
-> +	 * REVISIT: the supported offload has a fixed length of 32-bits
-> +	 * to fit the 24-bits oversampled case, requiring the additional
-> +	 * offload scan types.
-> +	 */
-
-That's an additional feature I think. We don't need to have a comment
-about things we haven't done in the driver.
-
-> +	if (iio_buffer_enabled(indio_dev))
-> +		return st->mode == AD4052_BURST_AVERAGING_MODE ?
-> +				   AD4052_SCAN_TYPE_OFFLOAD_BURST_AVG :
-> +				   AD4052_SCAN_TYPE_OFFLOAD_SAMPLE;
-> +
-> +	return st->mode == AD4052_BURST_AVERAGING_MODE ?
-> +			   AD4052_SCAN_TYPE_BURST_AVG :
-> +			   AD4052_SCAN_TYPE_SAMPLE;
-> +}
-
-> +static int ad4052_probe(struct spi_device *spi)
-> +{
-> +	const struct ad4052_chip_info *chip;
-> +	struct device *dev = &spi->dev;
-> +	struct iio_dev *indio_dev;
-> +	struct ad4052_state *st;
-> +	int ret;
-> +	u8 buf;
-> +
-> +	chip = spi_get_device_match_data(spi);
-> +	if (!chip)
-> +		return dev_err_probe(dev, -ENODEV,
-> +				     "Could not find chip info data\n");
-> +
-> +	indio_dev = devm_iio_device_alloc(dev, sizeof(*st));
-> +	if (!indio_dev)
-> +		return -ENOMEM;
-> +
-> +	st = iio_priv(indio_dev);
-> +	st->spi = spi;
-> +	spi_set_drvdata(spi, st);
-> +	init_completion(&st->completion);
-> +
-> +	st->regmap = devm_regmap_init_spi(spi, &ad4052_regmap_config);
-> +	if (IS_ERR(st->regmap))
-> +		return dev_err_probe(&spi->dev,  PTR_ERR(st->regmap),
-
-Use dev instead of spi->dev
-
-> +				     "Failed to initialize regmap\n");
-> +
-> +	st->mode = AD4052_SAMPLE_MODE;
-> +	st->wait_event = false;
-> +	st->chip = chip;
-> +
-> +	st->cnv_gp = devm_gpiod_get_optional(dev, "cnv",
-> +					     GPIOD_OUT_LOW);
-
-wrap to 80 chars - so don't wrap the above.
-
-> +	if (IS_ERR(st->cnv_gp))
-> +		return dev_err_probe(dev, PTR_ERR(st->cnv_gp),
-> +				    "Failed to get cnv gpio\n");
-> +
-> +	indio_dev->modes = INDIO_BUFFER_HARDWARE | INDIO_DIRECT_MODE;
-> +	indio_dev->num_channels = 1;
-> +	indio_dev->info = &ad4052_info;
-> +	indio_dev->name = chip->name;
-> +
-> +	st->offload = devm_spi_offload_get(dev, spi, &ad4052_offload_config);
-> +	ret = PTR_ERR_OR_ZERO(st->offload);
-
-Use IS_ERR() to detect error and PTR_ERR() to get it if needed (will
-end up calling PTR_ERR() twice but similar anyway.
-
-> +	if (ret && ret != -ENODEV)
-> +		return dev_err_probe(dev, ret, "Failed to get offload\n");
-> +
-> +	if (ret == -ENODEV) {
-> +		st->offload_trigger = NULL;
-> +		indio_dev->channels = chip->channels;
-> +	} else {
-> +		indio_dev->channels = chip->offload_channels;
-> +		ret = ad4052_request_offload(indio_dev);
-> +		if (ret)
-> +			return dev_err_probe(dev, ret, "Failed to configure offload\n");
-> +	}
-> +
-> +	st->xfer.rx_buf = &st->d32;
-> +
-> +	ret = ad4052_soft_reset(st);
-> +	if (ret)
-> +		return dev_err_probe(dev, ret,
-> +				     "AD4052 failed to soft reset\n");
-
-No need to wrap as fairly sure that's under 80 chars anyway.
-
-> +
-> +	ret = ad4052_assert(st);
-> +	if (ret)
-> +		return dev_err_probe(dev, ret,
-> +				     "AD4052 fields assertions failed\n");
-> +
-> +	ret = ad4052_set_non_defaults(indio_dev, indio_dev->channels);
-> +	if (ret)
-> +		return ret;
-> +
-> +	buf = AD4052_DEVICE_RESET;
-
-Pass directly into regmap_write()
-
-> +	ret = regmap_write(st->regmap, AD4052_REG_DEVICE_STATUS, buf);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret = ad4052_request_irq(indio_dev);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ad4052_update_xfer_raw(indio_dev, indio_dev->channels);
-> +
-> +	pm_runtime_set_autosuspend_delay(dev, 1000);
-> +	pm_runtime_use_autosuspend(dev);
-
-These autosuspend things are normally done after enabling runtime pm.
-If nothing else that keeps the devm cleanup as being in opposite
-order of what is set up here.  
-https://elixir.bootlin.com/linux/v6.13.5/source/drivers/base/power/runtime.c#L1548
-
-> +	pm_runtime_set_active(dev);
-> +	ret = devm_pm_runtime_enable(dev);
-> +	if (ret)
-> +		return dev_err_probe(dev, ret,
-> +				     "Failed to enable pm_runtime\n");
-> +
-> +	return devm_iio_device_register(dev, indio_dev);
-> +}
-> +
-> +static int ad4052_runtime_suspend(struct device *dev)
-> +{
-> +	u8 val = FIELD_PREP(AD4052_POWER_MODE_MSK, AD4052_LOW_POWER_MODE);
-
-Put that inline and no need for local variable val.
-
-> +	struct ad4052_state *st = dev_get_drvdata(dev);
-> +
-> +	return regmap_write(st->regmap, AD4052_REG_DEVICE_CONFIG, val);
-> +}
-> +
-> +static int ad4052_runtime_resume(struct device *dev)
-> +{
-> +	struct ad4052_state *st = dev_get_drvdata(dev);
-> +	u8 val = FIELD_PREP(AD4052_POWER_MODE_MSK, 0);
-Put that inline - no real point in the local variable.
-> +	int ret;
-> +
-> +	ret = regmap_write(st->regmap, AD4052_REG_DEVICE_CONFIG, val);
-	ret = regmap_write(st->regmap, AD4052_REG_DEVICE_CONFIG,
-			   FIELD_PREP(AD4052_POWER_MODE_MSK, 0));
-
-> +	if (ret)
-> +		return ret;
-> +
-> +	fsleep(2000);
-
-Sleeps like this should ideally have a spec reference as a comment to
-justify why that value is chosen.
-
-> +	return 0;
-> +}
-> +
-> +static const struct dev_pm_ops ad4052_pm_ops = {
-> +	RUNTIME_PM_OPS(ad4052_runtime_suspend, ad4052_runtime_resume, NULL)
-Can you allow this to be used for suspend and resume as well?  e.g.
-DEFINE_RUNTIME_DEV_PM_OPS()
-
-It is a rare case where that isn't safe to do even if there might be
-deeper sleep states available that would be even better.
-
-> +};
-> +
-> +static const struct spi_device_id ad4052_id_table[] = {
-> +	{"ad4050", (kernel_ulong_t)&ad4050_chip_info },
-> +	{"ad4052", (kernel_ulong_t)&ad4052_chip_info },
-> +	{"ad4056", (kernel_ulong_t)&ad4056_chip_info },
-> +	{"ad4058", (kernel_ulong_t)&ad4058_chip_info },
-> +	{}
-> +};
-> +MODULE_DEVICE_TABLE(spi, ad4052_id_table);
-> +
-> +static const struct of_device_id ad4052_of_match[] = {
-> +	{ .compatible = "adi,ad4050", .data = &ad4050_chip_info },
-> +	{ .compatible = "adi,ad4052", .data = &ad4052_chip_info },
-> +	{ .compatible = "adi,ad4056", .data = &ad4056_chip_info },
-> +	{ .compatible = "adi,ad4058", .data = &ad4058_chip_info },
-> +	{}
-Trivial but I'm slowly trying to standardize formatting of these tables
-in IIO and I randomly decided to go with 
-	{ }
-Please use that for terminating entries in this new driver.
-
-> +};
-> +MODULE_DEVICE_TABLE(of, ad4052_of_match);
 
