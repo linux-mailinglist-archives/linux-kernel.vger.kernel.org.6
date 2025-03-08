@@ -1,53 +1,49 @@
-Return-Path: <linux-kernel+bounces-552392-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-552389-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C7C2A57981
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 10:30:44 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id DAB67A5797C
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 10:30:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0745D18939E4
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 09:30:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2173B1722EB
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 09:30:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FE461AF0C9;
-	Sat,  8 Mar 2025 09:30:25 +0000 (UTC)
-Received: from mail-m155101.qiye.163.com (mail-m155101.qiye.163.com [101.71.155.101])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0AC91AF0C7;
+	Sat,  8 Mar 2025 09:30:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OybY/GP4"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D7341B0F0B;
-	Sat,  8 Mar 2025 09:30:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=101.71.155.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31DFF18DB2F;
+	Sat,  8 Mar 2025 09:30:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741426225; cv=none; b=bJOtN9WFru2WBkXCp3s1+Zbgg3dV+pZEnFQ0pH7jbToRCkhCnhKio35MbxxdcoAqKuikFZW1mZP/q8W+kL/V7M9sX95oL+JUAPq5ETtgGvLT8L91h2b/JeBMgMFYyPOaey0EuwnVU7X4DujUq/ooY4We/5Ey9hzvXNw/wSus3x4=
+	t=1741426201; cv=none; b=cup74glJ6Pj5lCAB96w3DmVk8ztHpRZW7RLVmjTypFOKkvfm0stBQqA8hn9Ux7SoTWmrK0zKotlSuW+BkiCfOJpNzcnHp/8sLJM9PPQkII6Vo96WVjawOJLAWB5jpazgstA4Ua3yJcfYK4+kdAOOmP/8ZcVbFUV0+Bfx/RBuZOQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741426225; c=relaxed/simple;
-	bh=qjtEVgKg7aSCTEEErT7DmK5qkUcB+t4P66ofDG9ntqY=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=dPGN1jwtc+4U2EySA3KEBtL30J1g8KnJBJnom1SZlNta1gRwgxQsuYmmALAVA3CKmQUePjWpnocNz/mQsZpPMQ149imOyy+6U7UFPAm+hRYjlRBJl++oZ2iJyAgYZFLl3mcaaIk5ovUlArkT3pix7XsHFQCCWihNKZ+R4q3XRTI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=jmu.edu.cn; spf=pass smtp.mailfrom=jmu.edu.cn; arc=none smtp.client-ip=101.71.155.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=jmu.edu.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jmu.edu.cn
-Received: from amadeus-Vostro-3710.lan (unknown [IPV6:240e:3b3:2c00:3300:217:f42e:f419:35e])
-	by smtp.qiye.163.com (Hmail) with ESMTP id d88bc5ea;
-	Sat, 8 Mar 2025 17:30:13 +0800 (GMT+08:00)
-From: Chukun Pan <amadeus@jmu.edu.cn>
-To: Heiko Stuebner <heiko@sntech.de>
-Cc: Conor Dooley <conor+dt@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Dragan Simic <dsimic@manjaro.org>,
-	Rob Herring <robh@kernel.org>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	Chukun Pan <amadeus@jmu.edu.cn>
-Subject: [PATCH 1/1] arm64: dts: rockchip: rk3568: Move PCIe3 MSI to use GIC ITS
-Date: Sat,  8 Mar 2025 17:30:08 +0800
-Message-Id: <20250308093008.568437-2-amadeus@jmu.edu.cn>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20250308093008.568437-1-amadeus@jmu.edu.cn>
-References: <20250308093008.568437-1-amadeus@jmu.edu.cn>
+	s=arc-20240116; t=1741426201; c=relaxed/simple;
+	bh=aSArHCwE1EiQPS+wEqfrybjts6oYNwDBrpiT+kUqSEk=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=OVqNq+hP4bZukvxiRv/0XE/tcGhbs67UFxrr9Z7YQFmKz7obCT7Mpe5JcNqjxbavCWN3ojBHLXNsTX7b6z2ArjMvDiOd8tfRmTkF8eO+4S2iDhY0cmkUh45+haqJ8WOHi0XO02wIhNKDVB8QHA7OpXYv63+AOKKNkPXW+dPJE5A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OybY/GP4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A1CADC4CEE0;
+	Sat,  8 Mar 2025 09:30:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741426200;
+	bh=aSArHCwE1EiQPS+wEqfrybjts6oYNwDBrpiT+kUqSEk=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=OybY/GP49DZg/eJb4KiRWgDaRBhCk+5fNgWRJ/ZQnPxkX9Guw5qrRrrkSiOGHNs0/
+	 nlhr2fheL4azt9JA/MAPxkgsqSmlHBllo4Rfs2qrPDz+t0AMq223+GpMNopL1Efzbi
+	 6kjlAm+sqwkeuC7ltZn5Y69WTXHybfs0qIWAReRP5l1aq3TTUfcgjtKlX9bl+sN6AM
+	 8YIbfm81jsRkaLPL0rHXoROgxrY8h0rvIPVezLcZzwhrIKYIDIw54Ul8MjOw6UVmX4
+	 Njqer/rDshar968VJc4Sq0Tu0lShkVrq47243cEWhy7+SmEKti9Qhxwe4cgFAopF3b
+	 0xXZ0LFjqflew==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 71448380CFFB;
+	Sat,  8 Mar 2025 09:30:35 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -55,66 +51,51 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFITzdXWS1ZQUlXWQ8JGhUIEh9ZQVkZTB5JVkIeGUIYGEhCGUlKQlYeHw5VEwETFhoSFy
-	QUDg9ZV1kYEgtZQVlJT0seQUgZSEFJGEtLQUhIS0tBSUpMQR1PSR5BHU9KQkFITh5ZV1kWGg8SFR
-	0UWUFZT0tIVUpLSU9PT0tVSktLVUtZBg++
-X-HM-Tid: 0a95751741d903a2kunmd88bc5ea
-X-HM-MType: 10
-X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6NTY6Gjo5DzJJFCksLyE5MT8f
-	LUwaCgpVSlVKTE9KT0lNSUpIQk5IVTMWGhIXVRoWGh8eDgg7ERYOVR4fDlUYFUVZV1kSC1lBWUlP
-	Sx5BSBlIQUkYS0tBSEhLS0FJSkxBHU9JHkEdT0pCQUhOHllXWQgBWUFKQ0xPNwY+
+Subject: Re: [PATCH bpf-next 0/2] selftests/bpf: Move test_lwt_seg6local to
+ test_progs
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <174142623426.2626975.17450118701682399019.git-patchwork-notify@kernel.org>
+Date: Sat, 08 Mar 2025 09:30:34 +0000
+References: <20250307-seg6local-v1-0-990fff8f180d@bootlin.com>
+In-Reply-To: <20250307-seg6local-v1-0-990fff8f180d@bootlin.com>
+To: Bastien Curutchet (eBPF Foundation) <bastien.curutchet@bootlin.com>
+Cc: ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org,
+ martin.lau@linux.dev, eddyz87@gmail.com, song@kernel.org,
+ yonghong.song@linux.dev, john.fastabend@gmail.com, kpsingh@kernel.org,
+ sdf@fomichev.me, haoluo@google.com, jolsa@kernel.org, mykolal@fb.com,
+ shuah@kernel.org, alexis.lothore@bootlin.com, thomas.petazzoni@bootlin.com,
+ linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
+ linux-kselftest@vger.kernel.org
 
-Following commit b956c9de9175 ("arm64: dts: rockchip: rk356x: Move
-PCIe MSI to use GIC ITS instead of MBI"), change the PCIe3 controller's
-MSI on rk3568 to use ITS, so that all MSI-X can work properly.
+Hello:
 
-Signed-off-by: Chukun Pan <amadeus@jmu.edu.cn>
----
- arch/arm64/boot/dts/rockchip/rk3568.dtsi | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+This series was applied to bpf/bpf-next.git (master)
+by Alexei Starovoitov <ast@kernel.org>:
 
-diff --git a/arch/arm64/boot/dts/rockchip/rk3568.dtsi b/arch/arm64/boot/dts/rockchip/rk3568.dtsi
-index 695cccbdab0f..e719a3df126c 100644
---- a/arch/arm64/boot/dts/rockchip/rk3568.dtsi
-+++ b/arch/arm64/boot/dts/rockchip/rk3568.dtsi
-@@ -152,7 +152,7 @@ pcie3x1: pcie@fe270000 {
- 		compatible = "rockchip,rk3568-pcie";
- 		#address-cells = <3>;
- 		#size-cells = <2>;
--		bus-range = <0x0 0xf>;
-+		bus-range = <0x10 0x1f>;
- 		clocks = <&cru ACLK_PCIE30X1_MST>, <&cru ACLK_PCIE30X1_SLV>,
- 			 <&cru ACLK_PCIE30X1_DBI>, <&cru PCLK_PCIE30X1>,
- 			 <&cru CLK_PCIE30X1_AUX_NDFT>;
-@@ -175,7 +175,7 @@ pcie3x1: pcie@fe270000 {
- 		num-ib-windows = <6>;
- 		num-ob-windows = <2>;
- 		max-link-speed = <3>;
--		msi-map = <0x0 &gic 0x1000 0x1000>;
-+		msi-map = <0x1000 &its 0x1000 0x1000>;
- 		num-lanes = <1>;
- 		phys = <&pcie30phy>;
- 		phy-names = "pcie-phy";
-@@ -205,7 +205,7 @@ pcie3x2: pcie@fe280000 {
- 		compatible = "rockchip,rk3568-pcie";
- 		#address-cells = <3>;
- 		#size-cells = <2>;
--		bus-range = <0x0 0xf>;
-+		bus-range = <0x20 0x2f>;
- 		clocks = <&cru ACLK_PCIE30X2_MST>, <&cru ACLK_PCIE30X2_SLV>,
- 			 <&cru ACLK_PCIE30X2_DBI>, <&cru PCLK_PCIE30X2>,
- 			 <&cru CLK_PCIE30X2_AUX_NDFT>;
-@@ -228,7 +228,7 @@ pcie3x2: pcie@fe280000 {
- 		num-ib-windows = <6>;
- 		num-ob-windows = <2>;
- 		max-link-speed = <3>;
--		msi-map = <0x0 &gic 0x2000 0x1000>;
-+		msi-map = <0x2000 &its 0x2000 0x1000>;
- 		num-lanes = <2>;
- 		phys = <&pcie30phy>;
- 		phy-names = "pcie-phy";
+On Fri, 07 Mar 2025 10:18:22 +0100 you wrote:
+> Hi all,
+> 
+> This patch series continues the work to migrate the script tests into
+> prog_tests.
+> 
+> test_lwt_seg6local.sh tests some bpf_lwt_* helpers. It contains only one
+> test that uses a network topology quite different than the ones that
+> can be found in others prog_tests/lwt_*.c files so I add a new
+> prog_tests/lwt_seg6local.c file.
+> 
+> [...]
+
+Here is the summary with links:
+  - [bpf-next,1/2] selftests/bpf: lwt_seg6local: Remove unused routes
+    https://git.kernel.org/bpf/bpf-next/c/359d07044dd5
+  - [bpf-next,2/2] selftests/bpf: lwt_seg6local: Move test to test_progs
+    https://git.kernel.org/bpf/bpf-next/c/3fb97a2b2f2d
+
+You are awesome, thank you!
 -- 
-2.25.1
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
 
 
