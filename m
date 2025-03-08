@@ -1,79 +1,79 @@
-Return-Path: <linux-kernel+bounces-552509-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-552514-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B7B18A57AA5
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 14:45:54 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 557A4A57AAF
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 14:46:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A6A163B3468
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 13:45:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A36841890438
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 13:46:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FBE91DED42;
-	Sat,  8 Mar 2025 13:45:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DF201E5209;
+	Sat,  8 Mar 2025 13:45:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="IhlKT0r2";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="X8rk2M0C"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="YrKX/W93";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="0ImiiuBe"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9236C1D61A1;
-	Sat,  8 Mar 2025 13:45:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C76F1DD539;
+	Sat,  8 Mar 2025 13:45:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741441504; cv=none; b=HHnLcEP1uV59MkT2/FiGRCPWhhPjrScHKsclJ2FsNk1QXG7s+M9bQs0tWKrwpr5H+F0gchF24GcenINXzaiTXS2FO+xMfkZoCT9a+Fmv3Irr+FxSu1zI8YcI7Y+BSJ0daebxnWZ6W3WHpQHOV+SXlaSnq4uOD8Sg01dq+2c/EKc=
+	t=1741441506; cv=none; b=KSi3BwnqGoDTsqZHHcs280Nu+iGb7QAkmsEZ1E7tlLKeqWkpJJ0or0JkkN+h0sW8wA+6dithV4OxwYVaGBDkEEfRaEadZmqkn2WPVg0R57K9rG3079xGUxKsB3Tk2umchXBsEGIzcPl6m/99IkJZIyq2ZfCXQzP/4TcGQbciut4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741441504; c=relaxed/simple;
-	bh=vM7L5fwy4Mtko5ihHZTwCZyhC1gzbooEM/bCUDwqKkk=;
+	s=arc-20240116; t=1741441506; c=relaxed/simple;
+	bh=aZirEZ6KOxkVHU3cXmlWK43NtpTgOvg7k/xbHVT1amw=;
 	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=k+LSReOBlOLoHMjXdPrKUR5dfk2e33pI6n8EkGJQf+oLKf8dDN76nKYoXmoNertvqGqUxhJHY5LZCFFieF85YtMNKX4PhmSSha9ToBEE9dbOSgRGpkT78+8VvGA6U5EelGTGNgMJnO/kRAVbdj038WvrfTY5XEmOJ7nSKXjNuCA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=IhlKT0r2; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=X8rk2M0C; arc=none smtp.client-ip=193.142.43.55
+	 Message-ID:Content-Type; b=aaK/oexygCEzEFdj2YxQswjATmhFhC67tvqTYV4XumJfmb4fQF+Wek0ZxCGa95D20iv1mk+JzPX3HTHxxbSCmq8hax/qrIg0JD97A7h31fakVhKBgGpVD1vJYkDAfRvlss8KXWMHTiza6S7YHlit1M5U/8oDyL7etVISGQXawQ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=YrKX/W93; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=0ImiiuBe; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Sat, 08 Mar 2025 13:45:00 -0000
+Date: Sat, 08 Mar 2025 13:45:01 -0000
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1741441500;
+	s=2020; t=1741441501;
 	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
 	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
 	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=e5bf9z0RgbqXonFyUsArwRAoJWwD80YgHESx9kNyK7A=;
-	b=IhlKT0r2OOG1y2WSYmj+uY2HK6quMwm0lcqaeToN1EL5Z8Twlj8KFyU5SZ2nDqMfkgLBeS
-	+6mKKVtPfMLqdTiHswPm9mJC9pkD0sYi3xIyw8qsVyv9U+5CE0CYBayZR0e6LnCZ1vpifh
-	/SN8VWiMykQuxmkApq2BTVoBgACmbKO4sPqPFC+If9EEgQjHazYh8EafBmFaLfr15Ukx17
-	4VDtPaQV9ckCa6KdEaFiWbOf+k7oQKe+WLONhtzwyBCEJOyCRK5ZXmaDw6KH0PHaPclUxi
-	+Iz+jcM3mJhlYOvEh+XtzPltu7TmqTI7x+Ut4lwsVMGQBJ22GYqgZYKHOtFyOA==
+	bh=+QLnflmcGLgtGNebt9hWg7+14+BcOCeLHKZ1myDEkpU=;
+	b=YrKX/W93XUs849T0kfDeoMY6ljXaxE4Vcmp8B7BIcchRPpxAlEh/E7c+fZyPECHNnCztM1
+	pfsAxrIgejcDaadMK8Wc91Et8K2gUaZvb1xyNKd9hBRWwBDfDW4YM4FnApjVbbf0rxdECT
+	he+GUN5bEQ9wAW/uadTQ3Xu/OkNbV3EuVYK4NMrltUIMN4YAxAIOhkJbV31XV44sVcLVx4
+	oDHgM+wevniskKGkc1P0f2TB3xnvpFnrwP1Ts5uzJq4jJHcDLQ4tZljdp78vvuo9if4yA0
+	skex0KIhkjeASLd30IBx3Ptw6Mi+uA3oXmCKpYsbqaiphTCG+LnheG5Wjd/o+A==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1741441500;
+	s=2020e; t=1741441501;
 	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
 	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
 	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=e5bf9z0RgbqXonFyUsArwRAoJWwD80YgHESx9kNyK7A=;
-	b=X8rk2M0CQShZjpow/4GUdhrtaoZx2po7Kio1ilJ1QCMr7SDCatGFGPlWNo+2iOJm+uLEEA
-	cvWuGb8vTqlioyDQ==
+	bh=+QLnflmcGLgtGNebt9hWg7+14+BcOCeLHKZ1myDEkpU=;
+	b=0ImiiuBe/TBY1QRQpwUQd9qgvQJVIqwhi9hPF1C91asFqzi7XnPBP73SaaYSSE7JfXp4jW
+	hcmI50M/ATuUNiBQ==
 From: "tip-bot2 for Anna-Maria Behnsen" <tip-bot2@linutronix.de>
 Sender: tip-bot2@linutronix.de
 Reply-to: linux-kernel@vger.kernel.org
 To: linux-tip-commits@vger.kernel.org
-Subject:
- [tip: timers/vdso] vdso/vsyscall: Prepare introduction of struct vdso_clock
+Subject: [tip: timers/vdso] vdso/gettimeofday: Prepare do_coarse_timens() for
+ introduction of struct vdso_clock
 Cc: "Anna-Maria Behnsen" <anna-maria@linutronix.de>,
  Nam Cao <namcao@linutronix.de>, thomas.weissschuh@linutronix.de,
  Thomas Gleixner <tglx@linutronix.de>, x86@kernel.org,
  linux-kernel@vger.kernel.org
-In-Reply-To: <20250303-vdso-clock-v1-12-c1b5c69a166f@linutronix.de>
-References: <20250303-vdso-clock-v1-12-c1b5c69a166f@linutronix.de>
+In-Reply-To: <20250303-vdso-clock-v1-10-c1b5c69a166f@linutronix.de>
+References: <20250303-vdso-clock-v1-10-c1b5c69a166f@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <174144150019.14745.15771824597626057566.tip-bot2@tip-bot2>
+Message-ID: <174144150114.14745.3933094187213972716.tip-bot2@tip-bot2>
 Robot-ID: <tip-bot2@linutronix.de>
 Robot-Unsubscribe:
  Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -83,23 +83,25 @@ Content-Transfer-Encoding: quoted-printable
 
 The following commit has been merged into the timers/vdso branch of tip:
 
-Commit-ID:     b5afbc106d7cbfa1ffbe7c8da2693e5effbba95e
-Gitweb:        https://git.kernel.org/tip/b5afbc106d7cbfa1ffbe7c8da2693e5effb=
-ba95e
+Commit-ID:     8c3f5cb3d33bee748b0408418d0d2a627586a2b5
+Gitweb:        https://git.kernel.org/tip/8c3f5cb3d33bee748b0408418d0d2a62758=
+6a2b5
 Author:        Anna-Maria Behnsen <anna-maria@linutronix.de>
-AuthorDate:    Mon, 03 Mar 2025 12:11:14 +01:00
+AuthorDate:    Mon, 03 Mar 2025 12:11:12 +01:00
 Committer:     Thomas Gleixner <tglx@linutronix.de>
-CommitterDate: Sat, 08 Mar 2025 14:37:41 +01:00
+CommitterDate: Sat, 08 Mar 2025 14:37:40 +01:00
 
-vdso/vsyscall: Prepare introduction of struct vdso_clock
+vdso/gettimeofday: Prepare do_coarse_timens() for introduction of struct vdso=
+_clock
 
 To support multiple PTP clocks, the VDSO data structure needs to be
 reworked. All clock specific data will end up in struct vdso_clock and in
 struct vdso_time_data there will be array of VDSO clocks. At the moment,
 vdso_clock is simply a define which maps vdso_clock to vdso_time_data.
 
-To prepare for the rework of the data structures, replace the struct
-vdso_time_data pointer with a struct vdso_clock pointer where applicable.
+Prepare for the rework of these structures by adding a struct vdso_clock
+pointer argument to do_coarse_time_ns(), and replace the struct
+vdso_time_data pointer with the new pointer argument where applicable.
 
 No functional change.
 
@@ -107,115 +109,75 @@ Signed-off-by: Anna-Maria Behnsen <anna-maria@linutronix.de>
 Signed-off-by: Nam Cao <namcao@linutronix.de>
 Signed-off-by: Thomas Wei=C3=9Fschuh <thomas.weissschuh@linutronix.de>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Link: https://lore.kernel.org/all/20250303-vdso-clock-v1-12-c1b5c69a166f@linu=
+Link: https://lore.kernel.org/all/20250303-vdso-clock-v1-10-c1b5c69a166f@linu=
 tronix.de
 
 ---
- kernel/time/vsyscall.c | 40 +++++++++++++++++++++-------------------
- 1 file changed, 21 insertions(+), 19 deletions(-)
+ lib/vdso/gettimeofday.c | 23 ++++++++++++++---------
+ 1 file changed, 14 insertions(+), 9 deletions(-)
 
-diff --git a/kernel/time/vsyscall.c b/kernel/time/vsyscall.c
-index 4181922..dd85b41 100644
---- a/kernel/time/vsyscall.c
-+++ b/kernel/time/vsyscall.c
-@@ -18,25 +18,26 @@
- static inline void update_vdso_time_data(struct vdso_time_data *vdata, struc=
-t timekeeper *tk)
- {
- 	struct vdso_timestamp *vdso_ts;
-+	struct vdso_clock *vc =3D vdata;
- 	u64 nsec, sec;
-=20
--	vdata[CS_HRES_COARSE].cycle_last	=3D tk->tkr_mono.cycle_last;
-+	vc[CS_HRES_COARSE].cycle_last	=3D tk->tkr_mono.cycle_last;
- #ifdef CONFIG_GENERIC_VDSO_OVERFLOW_PROTECT
--	vdata[CS_HRES_COARSE].max_cycles	=3D tk->tkr_mono.clock->max_cycles;
-+	vc[CS_HRES_COARSE].max_cycles	=3D tk->tkr_mono.clock->max_cycles;
- #endif
--	vdata[CS_HRES_COARSE].mask		=3D tk->tkr_mono.mask;
--	vdata[CS_HRES_COARSE].mult		=3D tk->tkr_mono.mult;
--	vdata[CS_HRES_COARSE].shift		=3D tk->tkr_mono.shift;
--	vdata[CS_RAW].cycle_last		=3D tk->tkr_raw.cycle_last;
-+	vc[CS_HRES_COARSE].mask		=3D tk->tkr_mono.mask;
-+	vc[CS_HRES_COARSE].mult		=3D tk->tkr_mono.mult;
-+	vc[CS_HRES_COARSE].shift	=3D tk->tkr_mono.shift;
-+	vc[CS_RAW].cycle_last		=3D tk->tkr_raw.cycle_last;
- #ifdef CONFIG_GENERIC_VDSO_OVERFLOW_PROTECT
--	vdata[CS_RAW].max_cycles		=3D tk->tkr_raw.clock->max_cycles;
-+	vc[CS_RAW].max_cycles		=3D tk->tkr_raw.clock->max_cycles;
- #endif
--	vdata[CS_RAW].mask			=3D tk->tkr_raw.mask;
--	vdata[CS_RAW].mult			=3D tk->tkr_raw.mult;
--	vdata[CS_RAW].shift			=3D tk->tkr_raw.shift;
-+	vc[CS_RAW].mask			=3D tk->tkr_raw.mask;
-+	vc[CS_RAW].mult			=3D tk->tkr_raw.mult;
-+	vc[CS_RAW].shift		=3D tk->tkr_raw.shift;
-=20
- 	/* CLOCK_MONOTONIC */
--	vdso_ts		=3D &vdata[CS_HRES_COARSE].basetime[CLOCK_MONOTONIC];
-+	vdso_ts		=3D &vc[CS_HRES_COARSE].basetime[CLOCK_MONOTONIC];
- 	vdso_ts->sec	=3D tk->xtime_sec + tk->wall_to_monotonic.tv_sec;
-=20
- 	nsec =3D tk->tkr_mono.xtime_nsec;
-@@ -54,7 +55,7 @@ static inline void update_vdso_time_data(struct vdso_time_d=
-ata *vdata, struct ti
- 	nsec	+=3D (u64)tk->monotonic_to_boot.tv_nsec << tk->tkr_mono.shift;
-=20
- 	/* CLOCK_BOOTTIME */
--	vdso_ts		=3D &vdata[CS_HRES_COARSE].basetime[CLOCK_BOOTTIME];
-+	vdso_ts		=3D &vc[CS_HRES_COARSE].basetime[CLOCK_BOOTTIME];
- 	vdso_ts->sec	=3D sec;
-=20
- 	while (nsec >=3D (((u64)NSEC_PER_SEC) << tk->tkr_mono.shift)) {
-@@ -64,12 +65,12 @@ static inline void update_vdso_time_data(struct vdso_time=
-_data *vdata, struct ti
- 	vdso_ts->nsec	=3D nsec;
-=20
- 	/* CLOCK_MONOTONIC_RAW */
--	vdso_ts		=3D &vdata[CS_RAW].basetime[CLOCK_MONOTONIC_RAW];
-+	vdso_ts		=3D &vc[CS_RAW].basetime[CLOCK_MONOTONIC_RAW];
- 	vdso_ts->sec	=3D tk->raw_sec;
- 	vdso_ts->nsec	=3D tk->tkr_raw.xtime_nsec;
-=20
- 	/* CLOCK_TAI */
--	vdso_ts		=3D &vdata[CS_HRES_COARSE].basetime[CLOCK_TAI];
-+	vdso_ts		=3D &vc[CS_HRES_COARSE].basetime[CLOCK_TAI];
- 	vdso_ts->sec	=3D tk->xtime_sec + (s64)tk->tai_offset;
- 	vdso_ts->nsec	=3D tk->tkr_mono.xtime_nsec;
+diff --git a/lib/vdso/gettimeofday.c b/lib/vdso/gettimeofday.c
+index 36ef7de..03fa039 100644
+--- a/lib/vdso/gettimeofday.c
++++ b/lib/vdso/gettimeofday.c
+@@ -193,21 +193,25 @@ int do_hres(const struct vdso_time_data *vd, const stru=
+ct vdso_clock *vc,
  }
-@@ -78,6 +79,7 @@ void update_vsyscall(struct timekeeper *tk)
+=20
+ #ifdef CONFIG_TIME_NS
+-static __always_inline int do_coarse_timens(const struct vdso_time_data *vdn=
+s, clockid_t clk,
+-					    struct __kernel_timespec *ts)
++static __always_inline
++int do_coarse_timens(const struct vdso_time_data *vdns, const struct vdso_cl=
+ock *vcns,
++		     clockid_t clk, struct __kernel_timespec *ts)
  {
- 	struct vdso_time_data *vdata =3D vdso_k_time_data;
- 	struct vdso_timestamp *vdso_ts;
-+	struct vdso_clock *vc =3D vdata;
- 	s32 clock_mode;
+ 	const struct vdso_time_data *vd =3D __arch_get_vdso_u_timens_data(vdns);
+-	const struct vdso_timestamp *vdso_ts =3D &vd->basetime[clk];
+-	const struct timens_offset *offs =3D &vdns->offset[clk];
++	const struct timens_offset *offs =3D &vcns->offset[clk];
++	const struct vdso_timestamp *vdso_ts;
++	const struct vdso_clock *vc =3D vd;
  	u64 nsec;
+ 	s64 sec;
+ 	s32 seq;
 =20
-@@ -85,21 +87,21 @@ void update_vsyscall(struct timekeeper *tk)
- 	vdso_write_begin(vdata);
++	vdso_ts =3D &vc->basetime[clk];
++
+ 	do {
+-		seq =3D vdso_read_begin(vd);
++		seq =3D vdso_read_begin(vc);
+ 		sec =3D vdso_ts->sec;
+ 		nsec =3D vdso_ts->nsec;
+-	} while (unlikely(vdso_read_retry(vd, seq)));
++	} while (unlikely(vdso_read_retry(vc, seq)));
 =20
- 	clock_mode =3D tk->tkr_mono.clock->vdso_clock_mode;
--	vdata[CS_HRES_COARSE].clock_mode	=3D clock_mode;
--	vdata[CS_RAW].clock_mode		=3D clock_mode;
-+	vc[CS_HRES_COARSE].clock_mode	=3D clock_mode;
-+	vc[CS_RAW].clock_mode		=3D clock_mode;
-=20
- 	/* CLOCK_REALTIME also required for time() */
--	vdso_ts		=3D &vdata[CS_HRES_COARSE].basetime[CLOCK_REALTIME];
-+	vdso_ts		=3D &vc[CS_HRES_COARSE].basetime[CLOCK_REALTIME];
- 	vdso_ts->sec	=3D tk->xtime_sec;
- 	vdso_ts->nsec	=3D tk->tkr_mono.xtime_nsec;
-=20
- 	/* CLOCK_REALTIME_COARSE */
--	vdso_ts		=3D &vdata[CS_HRES_COARSE].basetime[CLOCK_REALTIME_COARSE];
-+	vdso_ts		=3D &vc[CS_HRES_COARSE].basetime[CLOCK_REALTIME_COARSE];
- 	vdso_ts->sec	=3D tk->xtime_sec;
- 	vdso_ts->nsec	=3D tk->tkr_mono.xtime_nsec >> tk->tkr_mono.shift;
-=20
- 	/* CLOCK_MONOTONIC_COARSE */
--	vdso_ts		=3D &vdata[CS_HRES_COARSE].basetime[CLOCK_MONOTONIC_COARSE];
-+	vdso_ts		=3D &vc[CS_HRES_COARSE].basetime[CLOCK_MONOTONIC_COARSE];
- 	vdso_ts->sec	=3D tk->xtime_sec + tk->wall_to_monotonic.tv_sec;
- 	nsec		=3D tk->tkr_mono.xtime_nsec >> tk->tkr_mono.shift;
- 	nsec		=3D nsec + tk->wall_to_monotonic.tv_nsec;
+ 	/* Add the namespace offset */
+ 	sec +=3D offs->sec;
+@@ -222,8 +226,9 @@ static __always_inline int do_coarse_timens(const struct =
+vdso_time_data *vdns, c
+ 	return 0;
+ }
+ #else
+-static __always_inline int do_coarse_timens(const struct vdso_time_data *vdn=
+s, clockid_t clk,
+-					    struct __kernel_timespec *ts)
++static __always_inline
++int do_coarse_timens(const struct vdso_time_data *vdns, const struct vdso_cl=
+ock *vcns,
++		     clockid_t clk, struct __kernel_timespec *ts)
+ {
+ 	return -1;
+ }
+@@ -244,7 +249,7 @@ int do_coarse(const struct vdso_time_data *vd, const stru=
+ct vdso_clock *vc,
+ 		while ((seq =3D READ_ONCE(vc->seq)) & 1) {
+ 			if (IS_ENABLED(CONFIG_TIME_NS) &&
+ 			    vc->clock_mode =3D=3D VDSO_CLOCKMODE_TIMENS)
+-				return do_coarse_timens(vc, clk, ts);
++				return do_coarse_timens(vd, vc, clk, ts);
+ 			cpu_relax();
+ 		}
+ 		smp_rmb();
 
