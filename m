@@ -1,79 +1,78 @@
-Return-Path: <linux-kernel+bounces-552505-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-552507-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1877FA57A9E
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 14:45:14 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E74BA57A9F
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 14:45:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1572A7A7E98
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 13:44:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 791FC16D1C0
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 13:45:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C66AF1D5ADA;
-	Sat,  8 Mar 2025 13:45:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D0821D9329;
+	Sat,  8 Mar 2025 13:45:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="h+P6rHXM";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="IkmraJwz"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="wLEJjgm/";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="saUkpGNr"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AC4B17A2EF;
-	Sat,  8 Mar 2025 13:44:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 805BF1C3C14;
+	Sat,  8 Mar 2025 13:45:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741441501; cv=none; b=Th293BpEBxj7QAOQksASaz4s4edJth61EguOSzNnv0YsfTOmCetoGDRvYKBSx5807u9ELb30+0/YP0qtpXjSQr+3yZGQwVYvSLGUXYdRBhE2aeEi1t44mZCo9KXzq5MIojOMivrnSElyToFryM3zemFtrKNxTWJiIOIA9aauMi8=
+	t=1741441502; cv=none; b=FNNouOQAHnO60BGStJI1qgYEZKvAPgS6L72M0/U8Xk2xEA22SieTpkhGZJueif0InsggcvaCktXxZ4X4Bae81YLtvfmAoaeF5xLc20VYu+vOtTEUr5GFacfRo90aJV7ZyYI4RdX2AzjRJaJsW3fdxGMnEgD63ozp9bmf2uBCZMc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741441501; c=relaxed/simple;
-	bh=dnYxV+VG4f/AIIYc6bYQ2CMCBhnirgeGxPOu5sWUUbQ=;
+	s=arc-20240116; t=1741441502; c=relaxed/simple;
+	bh=093qitaZscckIDSpCCIN0aJ7R+GxB6gbAnZkILj2PMw=;
 	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=nBJVHMP3EEM/D45tOQz+/5oSSkGfTN9YJ8vT1UuNbuip3nWx+mv/7jDWyjWVGjCSdM58rFfswhQdnIWQNyfJTUYESqDXqHH+urbMR+u8fKhcivH8ctcVZUCjQY/q7nuXlZo8V2cieli8PqVseiDWclc4nnhCJShyz10ZrCEGWK0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=h+P6rHXM; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=IkmraJwz; arc=none smtp.client-ip=193.142.43.55
+	 Message-ID:Content-Type; b=gqhfDLORfeMUBr79gvA6tMSq2Mswe/qDIOzP/g0pt5s6QVebXtmQxlAIB/+eLkT9NzgcZDzekZJ62saExhLftpkFmPJ2j2DTrtxE9Izc/YlAcdFPWnJCOgGS7btIH2e5lr3gtJJAA+Y05/IDTrMsDt9C/Moa2OMv3h972zjYG7Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=wLEJjgm/; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=saUkpGNr; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Sat, 08 Mar 2025 13:44:56 -0000
+Date: Sat, 08 Mar 2025 13:44:57 -0000
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1741441497;
+	s=2020; t=1741441498;
 	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
 	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
 	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=MguDmraJV0zNSKmQB9z5Rg04WrOcvjCgEQjC19X1m6k=;
-	b=h+P6rHXMrJSzHPi788n9A6S6np1eLIOQ1mADzKSuzbpxW/AP7+KDpYmS1tZqKm1vyLJe/3
-	i9le4wDvooXpk73rmojOLme4/rFNsfQGq68BoQ1DzQP8T/LRr6Ymfvcy7cg24L0DwdTo+b
-	XfwGe2vLiDq847/cFAAP8pybL02SmZwmGS64XHytj6kJrQR5ccFtOUBwx2JreHEmy/hIf0
-	rd8r7yT4yeaP8djKKkvG9jJ3XCY0h2CQqzzSiJRrW9RhRa3SU2Y0Z3kZaZ4dyt9qOCEM8v
-	BXjMunc9jh3Z0Bou8t1cIv0lsJzFgLUHFTDg60sSelnCdmfzaM2yJzNAz95XeQ==
+	bh=20NYpG4Rg5JVfYvxZFTBBZmrA5bgRXFxuLHzpL91U70=;
+	b=wLEJjgm/uX9l22eP3/q/DJuOGeY7Ft6NsYThAfx0iwya4L9xUG5tlbxvbbmtJ5WHPvccwX
+	i9wWfDM150pRSmGP6lCls0/VlujjZL0zoims2IXWCQFbqQDW3lYcKe0ZKUTXLze0spuAad
+	2LEPKP3VtaioQapKVe/PSZ6Ez+GfnlGZ17o0ZEibDqFMI4s0MPertJojroyxPtpjOfdQB8
+	2Q6x7LIQIRPS1YpUGAIb7MEFiga++05IkdEYr+go5wvhX5gqYAcFLveGIga4k4P9lk79zk
+	6SA6rbtMFSDiKRB/JUig8FfL2/5D2xYxJO1fPJxmumr5niHh818IoTXJbfU3jQ==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1741441497;
+	s=2020e; t=1741441498;
 	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
 	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
 	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=MguDmraJV0zNSKmQB9z5Rg04WrOcvjCgEQjC19X1m6k=;
-	b=IkmraJwzuekB/K92/XH7eUmhCOxoS+TBhsr60YvtAtIUaqmmk6y5CjtnVpd+emwEwMsy1a
-	vD3BzA/0Z5FNy+Aw==
-From: "tip-bot2 for Anna-Maria Behnsen" <tip-bot2@linutronix.de>
+	bh=20NYpG4Rg5JVfYvxZFTBBZmrA5bgRXFxuLHzpL91U70=;
+	b=saUkpGNrMVAYvICQHszZUaHDTlRJqHFAvSPKYSZUo8x2COvsJ21Z4kRgtLY7HJQh5LXOTW
+	7yNanF1cwLeb7+DQ==
+From: "tip-bot2 for Nam Cao" <tip-bot2@linutronix.de>
 Sender: tip-bot2@linutronix.de
 Reply-to: linux-kernel@vger.kernel.org
 To: linux-tip-commits@vger.kernel.org
 Subject:
- [tip: timers/vdso] vdso: Move architecture related data before basetime data
-Cc: "Anna-Maria Behnsen" <anna-maria@linutronix.de>,
- Nam Cao <namcao@linutronix.de>, thomas.weissschuh@linutronix.de,
+ [tip: timers/vdso] arm64/vdso: Prepare introduction of struct vdso_clock
+Cc: Nam Cao <namcao@linutronix.de>, thomas.weissschuh@linutronix.de,
  Thomas Gleixner <tglx@linutronix.de>, x86@kernel.org,
  linux-kernel@vger.kernel.org
-In-Reply-To: <20250303-vdso-clock-v1-18-c1b5c69a166f@linutronix.de>
-References: <20250303-vdso-clock-v1-18-c1b5c69a166f@linutronix.de>
+In-Reply-To: <20250303-vdso-clock-v1-16-c1b5c69a166f@linutronix.de>
+References: <20250303-vdso-clock-v1-16-c1b5c69a166f@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <174144149685.14745.11465984232089173625.tip-bot2@tip-bot2>
+Message-ID: <174144149790.14745.14337622437039708314.tip-bot2@tip-bot2>
 Robot-ID: <tip-bot2@linutronix.de>
 Robot-Unsubscribe:
  Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -83,75 +82,52 @@ Content-Transfer-Encoding: quoted-printable
 
 The following commit has been merged into the timers/vdso branch of tip:
 
-Commit-ID:     97a5a90ca234eaa3de8a6aa44d43de2827393019
-Gitweb:        https://git.kernel.org/tip/97a5a90ca234eaa3de8a6aa44d43de28273=
-93019
-Author:        Anna-Maria Behnsen <anna-maria@linutronix.de>
-AuthorDate:    Mon, 03 Mar 2025 12:11:20 +01:00
+Commit-ID:     5340f3cb20989ec9562f7fcd65005e25b2365e6a
+Gitweb:        https://git.kernel.org/tip/5340f3cb20989ec9562f7fcd65005e25b23=
+65e6a
+Author:        Nam Cao <namcao@linutronix.de>
+AuthorDate:    Mon, 03 Mar 2025 12:11:18 +01:00
 Committer:     Thomas Gleixner <tglx@linutronix.de>
 CommitterDate: Sat, 08 Mar 2025 14:37:41 +01:00
 
-vdso: Move architecture related data before basetime data
+arm64/vdso: Prepare introduction of struct vdso_clock
 
-Architecture related vdso data is required in the fast path when reading
-CLOCK_MONOTONIC or CLOCK_REALTIME. At the moment, this information is
-located at the end of the vdso_time_data structure, which is a suboptimal
-cache layout.
+To support multiple PTP clocks, the VDSO data structure needs to be
+reworked. All clock specific data will end up in struct vdso_clock and in
+struct vdso_time_data there will be array of VDSO clocks. At the moment,
+vdso_clock is simply a define which maps vdso_clock to vdso_time_data.
 
-Move the architecture specific VDSO data right before the basetime
-information, which is always required. This change does not have an impact
-on architectures with CONFIG_ARCH_HAS_VDSO_DATA=3Dn. Architectures, which
-have it enabled, gain a better cache layout.
+To prepare for the rework of the data structures, replace the struct
+vdso_time_data pointer with a struct vdso_clock pointer where applicable.
 
-Signed-off-by: Anna-Maria Behnsen <anna-maria@linutronix.de>
+No functional change.
+
 Signed-off-by: Nam Cao <namcao@linutronix.de>
 Signed-off-by: Thomas Wei=C3=9Fschuh <thomas.weissschuh@linutronix.de>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Link: https://lore.kernel.org/all/20250303-vdso-clock-v1-18-c1b5c69a166f@linu=
+Link: https://lore.kernel.org/all/20250303-vdso-clock-v1-16-c1b5c69a166f@linu=
 tronix.de
 
 ---
- include/vdso/datapage.h | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ arch/arm64/include/asm/vdso/compat_gettimeofday.h | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/include/vdso/datapage.h b/include/vdso/datapage.h
-index 1df22e8..bcd19c2 100644
---- a/include/vdso/datapage.h
-+++ b/include/vdso/datapage.h
-@@ -70,6 +70,8 @@ struct vdso_timestamp {
+diff --git a/arch/arm64/include/asm/vdso/compat_gettimeofday.h b/arch/arm64/i=
+nclude/asm/vdso/compat_gettimeofday.h
+index 957ee12..2c6b90d 100644
+--- a/arch/arm64/include/asm/vdso/compat_gettimeofday.h
++++ b/arch/arm64/include/asm/vdso/compat_gettimeofday.h
+@@ -155,9 +155,9 @@ static __always_inline const struct vdso_time_data *__arc=
+h_get_vdso_u_time_data(
+ }
+ #define __arch_get_vdso_u_time_data __arch_get_vdso_u_time_data
 =20
- /**
-  * struct vdso_time_data - vdso datapage representation
-+ * @arch_data:		architecture specific data (optional, defaults
-+ *			to an empty struct)
-  * @seq:		timebase sequence counter
-  * @clock_mode:		clock mode
-  * @cycle_last:		timebase at clocksource init
-@@ -83,8 +85,6 @@ struct vdso_timestamp {
-  * @tz_dsttime:		type of DST correction
-  * @hrtimer_res:	hrtimer resolution
-  * @__unused:		unused
-- * @arch_data:		architecture specific data (optional, defaults
-- *			to an empty struct)
-  *
-  * vdso_time_data will be accessed by 64 bit and compat code at the same time
-  * so we should be careful before modifying this structure.
-@@ -105,6 +105,8 @@ struct vdso_timestamp {
-  * offset must be zero.
-  */
- struct vdso_time_data {
-+	struct arch_vdso_time_data arch_data;
-+
- 	u32			seq;
+-static inline bool vdso_clocksource_ok(const struct vdso_time_data *vd)
++static inline bool vdso_clocksource_ok(const struct vdso_clock *vc)
+ {
+-	return vd->clock_mode =3D=3D VDSO_CLOCKMODE_ARCHTIMER;
++	return vc->clock_mode =3D=3D VDSO_CLOCKMODE_ARCHTIMER;
+ }
+ #define vdso_clocksource_ok	vdso_clocksource_ok
 =20
- 	s32			clock_mode;
-@@ -125,8 +127,6 @@ struct vdso_time_data {
- 	s32			tz_dsttime;
- 	u32			hrtimer_res;
- 	u32			__unused;
--
--	struct arch_vdso_time_data arch_data;
- } ____cacheline_aligned;
-=20
- #define vdso_clock vdso_time_data
 
