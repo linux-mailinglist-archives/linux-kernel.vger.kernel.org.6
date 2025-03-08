@@ -1,146 +1,280 @@
-Return-Path: <linux-kernel+bounces-552720-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-552723-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2498A57D50
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 19:44:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 26F5AA57D57
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 19:45:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9998616E965
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 18:44:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 541C3167CB0
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 18:45:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFDAF1EFF90;
-	Sat,  8 Mar 2025 18:42:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F17F0202F9A;
+	Sat,  8 Mar 2025 18:44:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="DhrstXCP"
-Received: from relay1-d.mail.gandi.net (relay1-d.mail.gandi.net [217.70.183.193])
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="BsUvalJf"
+Received: from smtp-42ac.mail.infomaniak.ch (smtp-42ac.mail.infomaniak.ch [84.16.66.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 915C11B041A;
-	Sat,  8 Mar 2025 18:42:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.193
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D45F31E51EC
+	for <linux-kernel@vger.kernel.org>; Sat,  8 Mar 2025 18:44:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=84.16.66.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741459379; cv=none; b=lj48f51yE7S2OqL2XsqfPn8OBcw5L80gOzrJKsYFSOoekdGMkU6sr78znNjuvepGgTjL+q3kgB6Q7f1J+SUB3aISmw/s7oJ37Nfp8s36cKtagEWsH6rzDhuu+wofGlU8FP8FuwVDjEkF/5H9u8gXVzfz4KUv3cjsYfrmOVLjqNw=
+	t=1741459484; cv=none; b=aDa85B6ppVEKkxDykkZW2J5IAhw2MlKnaLyi0NTHI99ba66j8cSVAoJEVHkhXUuA4cXVaaIm4cd/EQxotbMpEhFv4UBK8qSPq8UFNwuMhkf0AoH9/cEWuHSpyOyqrzfntmoGStxyL2lMwlW4qvmABZjKrps+hqR65vd5sLDIQ0c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741459379; c=relaxed/simple;
-	bh=bj3AkQyGvXTri8BE6H5tQYcO68Pw6ckMVTozMMTxzeU=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ER9+AOXs1hZnEJJdNru6H/tflC3casHZnDTKmRSpZbjN5JiMZtd9kt4NoUx8QJL875Mq11ZIg+mAQN4H4wBkaDwcWxy6YSz92dLqCM8yudt44fn6BmzHxPyO4+8f5Xgkb3cD/DY5NuC4fmpZTFq0XghgfTVXh59YLuET0pW8BN8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=DhrstXCP; arc=none smtp.client-ip=217.70.183.193
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 582E2442E0;
-	Sat,  8 Mar 2025 18:42:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1741459374;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=QVizt2ypnXhadSn6f+iBrMMSpu+9hfUNiwubAs2JXgk=;
-	b=DhrstXCPLPMkRn/DTi3/8xqShChF4pDqYIwL80fkmnrTih3SXKGwuFHHL3p2tGHq4kQ0C+
-	HvdB9kOtmgwWkkRHNV/bmJly8QzZOrvunhb9NYdeSU3wG7/EPDiHVx17dh/SCFstEvuS5S
-	ML7YKxCfhLQHs2iIcfNtgw5tVJfXqy0srUstji4m7T0R+50IPZn37wPyGF0QXsIt3aWhqv
-	aLeHOcOSqkiCDzFCJKRC26ipWHNwQhVLCMZuuzFCgOVBhKcJzLDxmvuNWSacOgk1YTazab
-	//y8Dd2vbRfyty/MhOZaut952vu/oPvvcxgWHHbQk1s1PxN7TH6ANpvXFL7NFg==
-Date: Sat, 8 Mar 2025 19:42:51 +0100
-From: Maxime Chevallier <maxime.chevallier@bootlin.com>
-To: davem@davemloft.net, Andrew Lunn <andrew@lunn.ch>, Jakub Kicinski
- <kuba@kernel.org>, Eric Dumazet <edumazet@google.com>, Paolo Abeni
- <pabeni@redhat.com>, Russell King <linux@armlinux.org.uk>, Heiner Kallweit
- <hkallweit1@gmail.com>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- thomas.petazzoni@bootlin.com, Florian Fainelli <f.fainelli@gmail.com>,
- =?UTF-8?B?S8O2cnk=?= Maincent <kory.maincent@bootlin.com>, Simon Horman
- <horms@kernel.org>, Romain Gantois <romain.gantois@bootlin.com>, Antoine
- Tenart <atenart@kernel.org>, Marek =?UTF-8?B?QmVow7pu?= <kabel@kernel.org>,
- Sean Anderson <sean.anderson@linux.dev>, =?UTF-8?B?QmrDuHJu?= Mork
- <bjorn@mork.no>
-Subject: Re: [PATCH net-next v2 1/2] net: phy: sfp: Add support for SMBus
- module access
-Message-ID: <20250308194251.30622971@fedora.home>
-In-Reply-To: <20250225112043.419189-2-maxime.chevallier@bootlin.com>
-References: <20250225112043.419189-1-maxime.chevallier@bootlin.com>
-	<20250225112043.419189-2-maxime.chevallier@bootlin.com>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1741459484; c=relaxed/simple;
+	bh=XQRFwxmgfRwMhCfd4XHml0+Vhv2G7q0dSz5XCxpAZrM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=IpJ6ptBlL+cr4QZRgK0NF85VOgRJtYr1dLzLKg8gdmIXSKuAhHTT9EJCP14kW5T4VFiGzMlannNjUfcRcpSI9/4J9+uhNsB/eAkmThaACCrkoOikltMm7Bb9Eub8n75yNS5Yh3XzX+bk4/7LAsJKuh0PEd8OuRq1dwhqmcKSrEw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=BsUvalJf; arc=none smtp.client-ip=84.16.66.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+Received: from smtp-3-0000.mail.infomaniak.ch (smtp-3-0000.mail.infomaniak.ch [10.4.36.107])
+	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4Z9BsF4mqvzPl1;
+	Sat,  8 Mar 2025 19:44:33 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1741459473;
+	bh=w4fcp7RxZrlDVZrfYcTugj+wIPVn1nBTu6gy1bbd7hY=;
+	h=From:To:Cc:Subject:Date:From;
+	b=BsUvalJfR+M0AdGEnj4WCa3ivKCKap1oe1ho9fxsYOBYRBv5HZCSs5Eon/FDvQOw+
+	 HytHooTA/N/qyalWj5B4DlC5O3IQQGawbd62ZQFUi+rCwIEFjY5widRaZg7Vz3zZIs
+	 LEUHxquAixU22TXxVh+qyCbaf/is1nOJzGIP0ORI=
+Received: from unknown by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4Z9BsD5Nqgzpkl;
+	Sat,  8 Mar 2025 19:44:32 +0100 (CET)
+From: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
+To: Eric Paris <eparis@redhat.com>,
+	Paul Moore <paul@paul-moore.com>,
+	=?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack@google.com>,
+	"Serge E . Hallyn" <serge@hallyn.com>
+Cc: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
+	Ben Scarlato <akhna@google.com>,
+	Casey Schaufler <casey@schaufler-ca.com>,
+	Charles Zaffery <czaffery@roblox.com>,
+	Daniel Burgener <dburgener@linux.microsoft.com>,
+	Francis Laniel <flaniel@linux.microsoft.com>,
+	James Morris <jmorris@namei.org>,
+	Jann Horn <jannh@google.com>,
+	Jeff Xu <jeffxu@google.com>,
+	Jorge Lucangeli Obes <jorgelo@google.com>,
+	Kees Cook <kees@kernel.org>,
+	Konstantin Meskhidze <konstantin.meskhidze@huawei.com>,
+	Matt Bobrowski <mattbobrowski@google.com>,
+	Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>,
+	Phil Sutter <phil@nwl.cc>,
+	Praveen K Paladugu <prapal@linux.microsoft.com>,
+	Robert Salvet <robert.salvet@roblox.com>,
+	Shervin Oloumi <enlightened@google.com>,
+	Song Liu <song@kernel.org>,
+	Tahera Fahimi <fahimitahera@gmail.com>,
+	Tingmao Wang <m@maowtm.org>,
+	Tyler Hicks <code@tyhicks.com>,
+	audit@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-security-module@vger.kernel.org
+Subject: [PATCH v6 00/26] Landlock audit support
+Date: Sat,  8 Mar 2025 19:43:56 +0100
+Message-ID: <20250308184422.2159360-1-mic@digikod.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdduudegfedtucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpeffhffvvefukfgjfhhoofggtgfgsehtjeeftdertddvnecuhfhrohhmpeforgigihhmvgcuvehhvghvrghllhhivghruceomhgrgihimhgvrdgthhgvvhgrlhhlihgvrhessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepheetveefiedvkeejfeekkefffefgtdduteejheekgeeileehkefgfefgveevfffhnecukfhppedvrgdtudemtggsudelmeekugegtgemlehftddtmegstgdvudemkeekleelmeehgedttgemvgehlegvnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepvdgrtddumegtsgduleemkegugegtmeelfhdttdemsggtvddumeekkeelleemheegtdgtmegvheelvgdphhgvlhhopehfvgguohhrrgdrhhhomhgvpdhmrghilhhfrhhomhepmhgrgihimhgvrdgthhgvvhgrlhhlihgvrhessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepudekpdhrtghpthhtohepuggrvhgvmhesuggrvhgvmhhlohhfthdrnhgvthdprhgtphhtthhopegrnhgurhgvfieslhhunhhnrdgthhdprhgtphhtthhopehkuhgsrgeskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepvgguu
- hhmrgiivghtsehgohhoghhlvgdrtghomhdprhgtphhtthhopehprggsvghnihesrhgvughhrghtrdgtohhmpdhrtghpthhtoheplhhinhhugiesrghrmhhlihhnuhigrdhorhhgrdhukhdprhgtphhtthhopehhkhgrlhhlfigvihhtudesghhmrghilhdrtghomhdprhgtphhtthhopehnvghtuggvvhesvhhgvghrrdhkvghrnhgvlhdrohhrgh
-X-GND-Sasl: maxime.chevallier@bootlin.com
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Infomaniak-Routing: alpha
 
 Hi,
 
-On Tue, 25 Feb 2025 12:20:39 +0100
-Maxime Chevallier <maxime.chevallier@bootlin.com> wrote:
+This patch series adds audit support to Landlock.
 
-> The SFP module's eeprom and internals are accessible through an i2c bus.
-> However, all the i2c transfers that are performed are SMBus-style
-> transfers for read and write operations.
-> 
-> It is possible that the SFP might be connected to an SMBus-only
-> controller, such as the one found in some PHY devices in the VSC85xx
-> family.
-> 
-> Introduce a set of sfp read/write ops that are going to be used if the
-> i2c bus is only capable of doing smbus byte accesses.
-> 
-> As Single-byte SMBus transaction go against SFF-8472 and breaks the
-> atomicity for diagnostics data access, hwmon is disabled in the case
-> of SMBus access.
-> 
-> Moreover, as this may cause other instabilities, print a warning at
-> probe time to indicate that the setup may be unreliable because of the
-> hardware design.
-> 
-> Tested-by: Sean Anderson <sean.anderson@linux.dev>
-> Signed-off-by: Maxime Chevallier <maxime.chevallier@bootlin.com>
-> ---
-> 
-> V2: - Added Sean's tested-by
->     - Added a warning indicating that operations won't be reliable, from
->       Russell and Andrew's reviews
->     - Also added a flag saying we're under a single-byte-access bus, to
->       both print the warning and disable hwmon.
-> 
->  drivers/net/phy/sfp.c | 79 +++++++++++++++++++++++++++++++++++++++----
->  1 file changed, 73 insertions(+), 6 deletions(-)
-> 
-> diff --git a/drivers/net/phy/sfp.c b/drivers/net/phy/sfp.c
-> index 9369f5297769..6e9d3d95eb95 100644
-> --- a/drivers/net/phy/sfp.c
-> +++ b/drivers/net/phy/sfp.c
-> @@ -282,6 +282,7 @@ struct sfp {
->  	unsigned int rs_state_mask;
->  
->  	bool have_a2;
-> +	bool single_byte_access;
+Logging denied requests is useful for different use cases:
+- sysadmins: to look for users' issues,
+- security experts: to detect attack attempts,
+- power users: to understand denials,
+- developers: to ease sandboxing support and get feedback from users.
 
-Looking back at that code and our discussions, struct sfp already has an
-"i2c_block_size", that is set to 1 for modules with broken emulated
-eeprom, and there's already some logging and all the logic to disable
-hwmon in such case.
+Because of its unprivileged nature, Landlock can compose standalone
+security policies (i.e. domains).  To make logs useful, they need to
+contain the most relevant Landlock domain that denied an action, and the
+reason of such denial.  This translates to the latest nested domain and
+the related blockers: missing access rights or other kind of
+restrictions.
 
-So I think V3 will ditch that "single_byte_access" bool, and rather add
-a "i2c_max_block_size" member, set depending on the bus capabilities,
-that we'll use to clamp the i2c_block_size.
+# Main changes from previous version
 
-Of course the big warning to say that the design is inherently broken
-because we're on a bus that's limited will stay, but that should make
-our life easier for proper non-single-byte smbus support, and also
-keep the code flow cleaner.
+Renamed the landlock_restrict_self(2) flags to improve clarity and
+consistency, and slightly change the semantic of the first one:
+- LANDLOCK_RESTRICT_SELF_LOG_SAME_EXEC_OFF: do not log denied access
+  caused by a task with the same executable (i.e. before any new
+  execve(2));
+- LANDLOCK_RESTRICT_SELF_LOG_CROSS_EXEC_ON: log denied access for
+  processes resulting from an execve(2), which is not the case by
+  default.
+- LANDLOCK_RESTRICT_SELF_LOG_SUBDOMAINS_OFF: do not log denied access
+  from future nested domains.
 
-Let me know what you think,
+These new LANDLOCK_RESTRICT_SELF_LOG_SAME_EXEC_OFF and
+LANDLOCK_RESTRICT_SELF_LOG_CROSS_EXEC_ON are not incompatible anymore.
 
-Maxime
+Make it possible to set LANDLOCK_RESTRICT_SELF_LOG_SUBDOMAINS_OFF
+without ruleset/domain.  This bit is now stored directly in the Landlock
+credentials, not a potential related domain.
+
+Moved audit data declarations to not impact allowed requests.
+
+Added new tests and improved previous ones.  I'm still working on new
+tests but the kernel code should not change much with the next versions.
+I'd still like to align as much as possible with other LSM logs
+regarding the logged objects: e.g. in a link action, should we log the
+dir's path or the file's dentry?
+
+# Design
+
+Log records are created for any denied actions caused by a Landlock
+policy, which means that a well-sandboxed applications should not log
+anything except for unattended access requests that might be the result
+of attacks or bugs.
+
+However, sandbox tools creating restricted environments could lead to
+abundant log entries because the sandboxed processes may not be aware of
+the related restrictions.  To avoid log spam, the
+landlock_restrict_self(2) syscall gets new flags to not log denials
+related to this specific domain.  Except for well-understood exceptions,
+these flags should not be set.  Indeed, applications sandboxing
+themselves should only try to bypass their own sandbox if they are
+compromised, which should ring a bell thanks to log events.
+
+When an action is denied, the related Landlock domain ID is specified.
+If this domain was not previously described in a log record, one is
+created.  This record contains the domain ID, its creation time, and
+informations about the process that enforced the restriction (at the
+time of the call to landlock_restrict_self): PID, UID, executable path,
+and name (comm).
+
+This new approach also brings building blocks for an upcoming
+unprivileged introspection interface.  The unique Landlock IDs will be
+useful to tie audit log entries to running processes, and to get
+properties of the related Landlock domains.  This will replace the
+previously logged ruleset properties.
+
+# Samples
+
+Here are two examples of log events (see serial numbers):
+
+$ LL_FS_RO=/ LL_FS_RW=/ LL_SCOPED=s LL_FORCE_LOG=1 ./sandboxer kill 1
+
+  type=LANDLOCK_ACCESS msg=audit(1729738800.268:30): domain=1a6fdc66f blockers=scope.signal opid=1 ocomm="systemd"
+  type=LANDLOCK_DOMAIN msg=audit(1729738800.268:30): domain=1a6fdc66f status=allocated mode=enforcing pid=286 uid=0 exe="/root/sandboxer" comm="sandboxer"
+  type=SYSCALL msg=audit(1729738800.268:30): arch=c000003e syscall=62 success=no exit=-1 [..] ppid=272 pid=286 auid=0 uid=0 gid=0 [...] comm="kill" [...]
+  type=PROCTITLE msg=audit(1729738800.268:30): proctitle=6B696C6C0031
+  type=LANDLOCK_DOMAIN msg=audit(1729738800.324:31): domain=1a6fdc66f status=deallocated denials=1
+
+$ LL_FS_RO=/ LL_FS_RW=/tmp LL_FORCE_LOG=1 ./sandboxer sh -c "echo > /etc/passwd"
+
+  type=LANDLOCK_ACCESS msg=audit(1729738800.221:33): domain=1a6fdc679 blockers=fs.write_file path="/dev/tty" dev="devtmpfs" ino=9
+  type=LANDLOCK_DOMAIN msg=audit(1729738800.221:33): domain=1a6fdc679 status=allocated mode=enforcing pid=289 uid=0 exe="/root/sandboxer" comm="sandboxer"
+  type=SYSCALL msg=audit(1729738800.221:33): arch=c000003e syscall=257 success=no exit=-13 [...] ppid=272 pid=289 auid=0 uid=0 gid=0 [...] comm="sh" [...]
+  type=PROCTITLE msg=audit(1729738800.221:33): proctitle=7368002D63006563686F203E202F6574632F706173737764
+  type=LANDLOCK_ACCESS msg=audit(1729738800.221:34): domain=1a6fdc679 blockers=fs.write_file path="/etc/passwd" dev="vda2" ino=143821
+  type=SYSCALL msg=audit(1729738800.221:34): arch=c000003e syscall=257 success=no exit=-13 [...] ppid=272 pid=289 auid=0 uid=0 gid=0 [...] comm="sh" [...]
+  type=PROCTITLE msg=audit(1729738800.221:34): proctitle=7368002D63006563686F203E202F6574632F706173737764
+  type=LANDLOCK_DOMAIN msg=audit(1729738800.261:35): domain=1a6fdc679 status=deallocated denials=2
+
+# Previous versions
+
+v5: https://lore.kernel.org/r/20250131163059.1139617-1-mic@digikod.net
+v4: https://lore.kernel.org/r/20250108154338.1129069-1-mic@digikod.net
+v3: https://lore.kernel.org/r/20241122143353.59367-1-mic@digikod.net
+v2: https://lore.kernel.org/r/20241022161009.982584-1-mic@digikod.net
+v1: https://lore.kernel.org/r/20230921061641.273654-1-mic@digikod.net
+
+Regards,
+
+Mickaël Salaün (26):
+  lsm: Add audit_log_lsm_data() helper
+  landlock: Add unique ID generator
+  landlock: Move domain hierarchy management
+  landlock: Prepare to use credential instead of domain for filesystem
+  landlock: Prepare to use credential instead of domain for network
+  landlock: Prepare to use credential instead of domain for scope
+  landlock: Prepare to use credential instead of domain for fowner
+  landlock: Identify domain execution crossing
+  landlock: Add AUDIT_LANDLOCK_ACCESS and log ptrace denials
+  landlock: Add AUDIT_LANDLOCK_DOMAIN and log domain status
+  landlock: Log mount-related denials
+  landlock: Log file-related denials
+  landlock: Log truncate and IOCTL denials
+  landlock: Log TCP bind and connect denials
+  landlock: Log scoped denials
+  landlock: Add LANDLOCK_RESTRICT_SELF_LOG_*_EXEC_* flags
+  landlock: Add LANDLOCK_RESTRICT_SELF_LOG_SUBDOMAINS_OFF
+  samples/landlock: Enable users to log sandbox denials
+  selftests/landlock: Add test for invalid ruleset file descriptor
+  selftests/landlock: Extend tests for landlock_restrict_self(2)'s flags
+  selftests/landlock: Add tests for audit flags and domain IDs
+  selftests/landlock: Test audit with restrict flags
+  selftests/landlock: Add audit tests for ptrace
+  selftests/landlock: Add audit tests for abstract unix socket scoping
+  selftests/landlock: Add audit tests for filesystem
+  landlock: Add audit documentation
+
+ Documentation/admin-guide/LSM/index.rst       |   1 +
+ Documentation/admin-guide/LSM/landlock.rst    | 158 ++++++
+ Documentation/security/landlock.rst           |  13 +-
+ Documentation/userspace-api/landlock.rst      |   9 +-
+ MAINTAINERS                                   |   1 +
+ include/linux/lsm_audit.h                     |   8 +
+ include/uapi/linux/audit.h                    |   4 +-
+ include/uapi/linux/landlock.h                 |  33 ++
+ samples/landlock/sandboxer.c                  |  37 +-
+ security/landlock/.kunitconfig                |   2 +
+ security/landlock/Makefile                    |   5 +
+ security/landlock/access.h                    |  23 +
+ security/landlock/audit.c                     | 519 ++++++++++++++++++
+ security/landlock/audit.h                     |  77 +++
+ security/landlock/cred.c                      |  26 +-
+ security/landlock/cred.h                      |  89 ++-
+ security/landlock/domain.c                    | 264 +++++++++
+ security/landlock/domain.h                    | 157 ++++++
+ security/landlock/fs.c                        | 275 ++++++++--
+ security/landlock/fs.h                        |  35 +-
+ security/landlock/id.c                        | 251 +++++++++
+ security/landlock/id.h                        |  25 +
+ security/landlock/limits.h                    |   4 +
+ security/landlock/net.c                       |  74 ++-
+ security/landlock/ruleset.c                   |  33 +-
+ security/landlock/ruleset.h                   |  47 +-
+ security/landlock/setup.c                     |   2 +
+ security/landlock/syscalls.c                  |  72 ++-
+ security/landlock/task.c                      | 239 +++++---
+ security/lsm_audit.c                          |  27 +-
+ tools/testing/kunit/configs/all_tests.config  |   2 +
+ tools/testing/selftests/landlock/Makefile     |   6 +-
+ tools/testing/selftests/landlock/audit.h      | 425 ++++++++++++++
+ tools/testing/selftests/landlock/audit_test.c | 460 ++++++++++++++++
+ tools/testing/selftests/landlock/base_test.c  |  84 ++-
+ tools/testing/selftests/landlock/common.h     |  19 +
+ tools/testing/selftests/landlock/config       |   1 +
+ tools/testing/selftests/landlock/fs_test.c    | 455 +++++++++++++++
+ .../testing/selftests/landlock/ptrace_test.c  | 140 +++++
+ .../landlock/scoped_abstract_unix_test.c      | 121 ++++
+ .../selftests/landlock/wait-pipe-sandbox.c    | 131 +++++
+ 41 files changed, 4123 insertions(+), 231 deletions(-)
+ create mode 100644 Documentation/admin-guide/LSM/landlock.rst
+ create mode 100644 security/landlock/audit.c
+ create mode 100644 security/landlock/audit.h
+ create mode 100644 security/landlock/domain.c
+ create mode 100644 security/landlock/domain.h
+ create mode 100644 security/landlock/id.c
+ create mode 100644 security/landlock/id.h
+ create mode 100644 tools/testing/selftests/landlock/audit.h
+ create mode 100644 tools/testing/selftests/landlock/audit_test.c
+ create mode 100644 tools/testing/selftests/landlock/wait-pipe-sandbox.c
+
+
+base-commit: 7eb172143d5508b4da468ed59ee857c6e5e01da6
+-- 
+2.48.1
+
 
