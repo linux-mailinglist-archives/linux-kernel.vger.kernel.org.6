@@ -1,134 +1,92 @@
-Return-Path: <linux-kernel+bounces-552799-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-552800-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D216A57E4B
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 21:55:41 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D7BEDA57E4E
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 22:01:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2873D188C929
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 20:55:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B7D7B3AF318
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 21:01:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9387E20E318;
-	Sat,  8 Mar 2025 20:55:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 063631A4F2F;
+	Sat,  8 Mar 2025 21:01:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mt-integration.ru header.i=@mt-integration.ru header.b="ndXX6Rls"
-Received: from ksmg01.maxima.ru (ksmg01.maxima.ru [81.200.124.38])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="D26bn7Wy"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B60F01E51EF
-	for <linux-kernel@vger.kernel.org>; Sat,  8 Mar 2025 20:55:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=81.200.124.38
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 989B738F91;
+	Sat,  8 Mar 2025 21:01:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741467326; cv=none; b=ticmGGqmTiXUkCqqscXp7T+KQFskEFLL3qB/x7x9XolQhtRg8IpchMvRWuPWFZVQsBe8W20CGm0ESPmX2+j1tdidB4et0MX68Q6EdugKvjj7Z0Qbd8fUcVt14jy1cFnrCIrU/+CjkdYBUSk0PgVQc1cQ9zngH+JVtLuAv1YVz7Y=
+	t=1741467675; cv=none; b=uFERoTaD+PW7svyrJo/t/NYO8g0LvkK0GJWkfDyvIrKHT4jkQorn2Wg4h8ZkZK5XvhcDarZ+qo+yPbKkArK7iNG3OVNlguDtse2G2cA/a9xQsJWc0hkd2u/nehuFSmsZ3OE+jjlgIUkz+OrGfbhUbFqVOCXoP9CYC0lobA8mjbk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741467326; c=relaxed/simple;
-	bh=4LHLO8CUrvZiO6+yanutCTPlpX5jorIHdavJ5XK8qxA=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ueQRgy2zLYvxHy+NubqgjhhVdOkUvX3CBqDmSIwUSCXk47CkPB+1APvUjZKmtdhd1vfxttbz/FSxCR+OnqnX1AZG81++IsmnSzNzcUbCyIUrIIaRtLNZSNKD8pfThtQefFjIvU+1SoSRFwhlTQ+c7FTsMs62eVV+NPtElEX05QE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mt-integration.ru; spf=pass smtp.mailfrom=mt-integration.ru; dkim=pass (2048-bit key) header.d=mt-integration.ru header.i=@mt-integration.ru header.b=ndXX6Rls; arc=none smtp.client-ip=81.200.124.38
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mt-integration.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mt-integration.ru
-Received: from ksmg01.maxima.ru (localhost [127.0.0.1])
-	by ksmg01.maxima.ru (Postfix) with ESMTP id 058A0C0006;
-	Sat,  8 Mar 2025 23:55:20 +0300 (MSK)
-DKIM-Filter: OpenDKIM Filter v2.11.0 ksmg01.maxima.ru 058A0C0006
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mt-integration.ru;
-	s=sl; t=1741467320; bh=YlIgRdjZlQYdvbTIwLGaclFbEqVqJx3iD15N7MiEnE8=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type:From;
-	b=ndXX6RlsdNRJbC7jX0G8IAkUYfwr657L2o41HhDd4kpAc8J/n545o4tV2Sj3zeQEz
-	 41kq9a/t4UIxvzX8uplvvr0z/SBwHH0NHCjJM7HqANC485QLaQ3TaG3jeUKmXHOJYx
-	 D5Kg6deOGxn0JOT9oo08kKgIDs0RoXZB/7NeBGvPJghVuDLCrCNOJAIjDCHOjqywTk
-	 4oyR8h05R3foKiZmINDhjTzDKkvwTNSbsbkAx3bl3VkTfpuUGUGLV03c2ruhbW9Wky
-	 UlFv2OwnEYkVkfneDOk80lSn8Y10nT/1WTRzu6MpGcS5lkXf/jK5wJwwTtPQ49jry+
-	 J8WS+dEL/r6OQ==
-Received: from ksmg01.maxima.ru (mail.maxima.ru [81.200.124.61])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(Client CN "*.maxima.ru", Issuer "GlobalSign GCC R3 DV TLS CA 2020" (verified OK))
-	by ksmg01.maxima.ru (Postfix) with ESMTPS;
-	Sat,  8 Mar 2025 23:55:19 +0300 (MSK)
-Received: from localhost.maximatelecom.ru (5.1.51.128) by mmail-p-exch01.mt.ru
- (81.200.124.61) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.2.1544.4; Sat, 8 Mar 2025
- 23:55:19 +0300
-From: Vitaliy Shevtsov <v.shevtsov@mt-integration.ru>
-To: Dave Airlie <airlied@redhat.com>
-CC: Vitaliy Shevtsov <v.shevtsov@mt-integration.ru>, Thomas Zimmermann
-	<tzimmermann@suse.de>, Jocelyn Falempe <jfalempe@redhat.com>, Maarten
- Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
-	<mripard@kernel.org>, David Airlie <airlied@gmail.com>, Simona Vetter
-	<simona@ffwll.ch>, Sam Ravnborg <sam@ravnborg.org>,
-	<dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
-	<lvc-project@linuxtesting.org>
-Subject: [PATCH v2] drm/mgag200: fix division by zero in mgag200_g200_pixpllc_atomic_check()
-Date: Sun, 9 Mar 2025 01:54:00 +0500
-Message-ID: <20250308205406.4162-1-v.shevtsov@mt-integration.ru>
-X-Mailer: git-send-email 2.48.1
+	s=arc-20240116; t=1741467675; c=relaxed/simple;
+	bh=Llm0VCPcIbPZNGLaBuiTx5atCb6gaqgG3GYtd5TmHMw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=EDg9hDS9cn5BKOf4DuFh9xqhtM0GzBhx/5SnJOBwdHaPz2httq3Zlz3sSLoL93uU4WSjOgNgC5wh1yFqGB7X1e2qgtcoqbpKOKz285AZDUjFcyP94ona9LT2k/7YxPD2UfQVYNZjgzYItVg0wR5c4IYWela67YJ2ShkKD0IRwhs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=D26bn7Wy; arc=none smtp.client-ip=192.198.163.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1741467674; x=1773003674;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=Llm0VCPcIbPZNGLaBuiTx5atCb6gaqgG3GYtd5TmHMw=;
+  b=D26bn7Wy73LtrwSUzU3YQQQYXEJjvyk4br7KksAW373PEZ516Vof/TwZ
+   PK3rbLdIaMs3XYCNTGtWaI8SB2r2cOvbyMs9XCBYF8DB3i3CW0hKT9V/G
+   1yEsz9H7MQYxyik5uBCunl3K2KStSakOUZhJmJ+WY8naaMRNlWjOGXdx3
+   jhJ+TjjFfxJuf74bg/bvELwzTVS/JLTt1O2q8xBsuYn60j3A81at1lvzw
+   pLcr7Qp1sj8caVyRHc5mk1novr8EvKm+4VVMpguqjNPYSMSWJ5VrgPtpN
+   saFEY3iB4wPhg1ooXpf7g6BQgEM57nVYa7buniNjIiP0bdzmGgG+H2rbx
+   g==;
+X-CSE-ConnectionGUID: G1n6M3WBR/COgKsI0Y1xyg==
+X-CSE-MsgGUID: HWpNl6gTTlC+J7E1q4cY2w==
+X-IronPort-AV: E=McAfee;i="6700,10204,11367"; a="60051970"
+X-IronPort-AV: E=Sophos;i="6.14,233,1736841600"; 
+   d="scan'208";a="60051970"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Mar 2025 13:01:13 -0800
+X-CSE-ConnectionGUID: 5eRYaizUQ/O1oISBG1P12g==
+X-CSE-MsgGUID: pkpBJONxSqemJs0xVtyonQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
+   d="scan'208";a="120540422"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by orviesa008.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Mar 2025 13:01:11 -0800
+Date: Sat, 8 Mar 2025 23:01:07 +0200
+From: Raag Jadav <raag.jadav@intel.com>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: deller@gmx.de, tzimmermann@suse.de, linux-fbdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] fbdev: pxafb: use devm_kmemdup*()
+Message-ID: <Z8ywEzFvWxb59LqK@black.fi.intel.com>
+References: <20250228071009.150971-1-raag.jadav@intel.com>
+ <Z8Gt8fg07Y-bFPGT@smile.fi.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: mt-exch-01.mt.ru (91.220.120.210) To mmail-p-exch01.mt.ru
- (81.200.124.61)
-X-KSMG-AntiPhishing: NotDetected
-X-KSMG-AntiSpam-Auth: dmarc=none header.from=mt-integration.ru;spf=none smtp.mailfrom=mt-integration.ru;dkim=none
-X-KSMG-AntiSpam-Envelope-From: v.shevtsov@mt-integration.ru
-X-KSMG-AntiSpam-Info: LuaCore: 51 0.3.51 68896fb0083a027476849bf400a331a2d5d94398, {rep_avail}, {Tracking_from_domain_doesnt_match_to}, 81.200.124.61:7.1.2;ksmg01.maxima.ru:7.1.1;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;127.0.0.199:7.1.2;mt-integration.ru:7.1.1, FromAlignment: s, ApMailHostAddress: 81.200.124.61
-X-KSMG-AntiSpam-Interceptor-Info: scan successful
-X-KSMG-AntiSpam-Lua-Profiles: 191593 [Mar 08 2025]
-X-KSMG-AntiSpam-Method: none
-X-KSMG-AntiSpam-Rate: 0
-X-KSMG-AntiSpam-Status: not_detected
-X-KSMG-AntiSpam-Version: 6.1.1.11
-X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.1.1.8310, bases: 2025/03/08 18:36:00 #27678783
-X-KSMG-AntiVirus-Status: NotDetected, skipped
-X-KSMG-LinksScanning: NotDetected
-X-KSMG-Message-Action: skipped
-X-KSMG-Rule-ID: 7
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z8Gt8fg07Y-bFPGT@smile.fi.intel.com>
 
-There is a small chance to perform a division by zero. According to the
-driver code, clock may have a value less than (p_clk_min >> 3). p_clk_min
-itself may have a value up to 2032000 in case of a BIOS PINS version 5.
+On Fri, Feb 28, 2025 at 02:37:05PM +0200, Andy Shevchenko wrote:
+> On Fri, Feb 28, 2025 at 12:40:09PM +0530, Raag Jadav wrote:
+> > Convert to use devm_kmemdup() and devm_kmemdup_array() which are
+> > more robust.
+> 
+> FWIW,
+> Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-If this is the case, then f_vco gets the value greater than delta and the
-condition (tmp_delta < delta) is always false because the variable computed
-is always less than f_vco. This was tested with ref_clk = 27050 and 14318.
+Thank you.
 
-As a result variable m remains zero and then is used as a divisor.
+Anything I can do to move this forward?
 
-Check if m is zero before performing a possibly unsafe division.
-
-Found by Linux Verification Center (linuxtesting.org) with Svace.
-
-Fixes: 877507bb954e ("drm/mgag200: Provide per-device callbacks for PIXPLLC")
-Signed-off-by: Vitaliy Shevtsov <v.shevtsov@mt-integration.ru>
----
-v2: Change the commit description to mention both ref_clk values 27050 and
-    14318.
-
- drivers/gpu/drm/mgag200/mgag200_g200.c | 4 ++++
- 1 file changed, 4 insertions(+)
-
-diff --git a/drivers/gpu/drm/mgag200/mgag200_g200.c b/drivers/gpu/drm/mgag200/mgag200_g200.c
-index f874e2949840..484b22930ce1 100644
---- a/drivers/gpu/drm/mgag200/mgag200_g200.c
-+++ b/drivers/gpu/drm/mgag200/mgag200_g200.c
-@@ -115,6 +115,10 @@ static int mgag200_g200_pixpllc_atomic_check(struct drm_crtc *crtc, struct drm_a
- 			}
- 		}
- 	}
-+
-+	if (!m)
-+		return -EINVAL;
-+
- 	f_vco = ref_clk * n / m;
- 	if (f_vco < 100000)
- 		s = 0;
--- 
-2.48.1
-
+Raag
 
