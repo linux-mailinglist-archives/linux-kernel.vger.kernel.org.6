@@ -1,373 +1,128 @@
-Return-Path: <linux-kernel+bounces-552745-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-552748-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A4941A57D80
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 19:49:44 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id F31E5A57D8C
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 19:53:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0239F18962C2
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 18:49:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B654A16BD1B
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 18:53:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E90821D009;
-	Sat,  8 Mar 2025 18:45:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D5571A7AF7;
+	Sat,  8 Mar 2025 18:53:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="dNbCiEVA"
-Received: from smtp-8fad.mail.infomaniak.ch (smtp-8fad.mail.infomaniak.ch [83.166.143.173])
+	dkim=pass (2048-bit key) header.d=ethancedwards.com header.i=@ethancedwards.com header.b="jEO+Wnq4"
+Received: from mout-p-101.mailbox.org (mout-p-101.mailbox.org [80.241.56.151])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65F9821ABBF
-	for <linux-kernel@vger.kernel.org>; Sat,  8 Mar 2025 18:45:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.166.143.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4E6A8BFF;
+	Sat,  8 Mar 2025 18:53:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741459517; cv=none; b=UZo0/BDenAbvbVvsesAFWk1wdHcfFyA3Srcw+N1v6H+0m1T4/VMGFd24xUGej5NoeyBxssXyBsJ23LoenfN6EhU6hwwH1/rJ//36jZxKgFckdaR8bWXmdQC1CU8CyBnHshQQMKoRGf0a82dclLYsZqukuX5efl0jfAZibbs1bYU=
+	t=1741459995; cv=none; b=gE2lnMXLabEfGTHYw9v7my0k3vP/R6xDdvMVaBPKQar0j7yL2jjoM28iTVbOLA7rNibESv+By5gUeQct2f9UaEb452XWgWm8zHY/9iv+vXTnWaYDve5RY2CYZTtmi3c24amIJTlDUv9SMMSelup7QX1VRUJwIsrXoqNWkgOsPS4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741459517; c=relaxed/simple;
-	bh=065DKDG4l8GjBe6nTlgibA+hgQmFugtxUREoPraYyEQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=n0ADuAx2ikJYPdVHuM4oTHwwDER4TBsMqo8yPhLeRtp/mvIL9r1Mvh9szt/7irgrI06SjZQVC4IfF0uYH6qTAMaNKW4jeR0lpK5GgJFgMapY3oPkuDPaJqPv4/arRx3O/qPo1d832Epq386/jstIUu7zwUBe+coQ16fBA16BcTA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=dNbCiEVA; arc=none smtp.client-ip=83.166.143.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
-Received: from smtp-4-0000.mail.infomaniak.ch (unknown [IPv6:2001:1600:7:10:40ca:feff:fe05:0])
-	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4Z9Bt067zlzQ9D;
-	Sat,  8 Mar 2025 19:45:12 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1741459512;
-	bh=rbxAVM0frrhyQfoNxBqPXz6ATnPq5nEhIbUQovrqcuo=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=dNbCiEVANvyiw/MbQa7PWF8ylPOv8niePSHUQKhR7vhSidXWcHXvrZoUPPe6aFl/A
-	 lZOimP9LOe7B6UEKhJRX6SV09AYk2s+KuH/CUHvA7ADhz1w3l/+pGanXUvhxCnWMuE
-	 vugBlE56oY+7fI0GKRb3iKhIVspqxf++CELlzjlI=
-Received: from unknown by smtp-4-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4Z9Bsz6K8SzHMx;
-	Sat,  8 Mar 2025 19:45:11 +0100 (CET)
-From: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
-To: Eric Paris <eparis@redhat.com>,
-	Paul Moore <paul@paul-moore.com>,
-	=?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack@google.com>,
-	"Serge E . Hallyn" <serge@hallyn.com>
-Cc: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
-	Ben Scarlato <akhna@google.com>,
-	Casey Schaufler <casey@schaufler-ca.com>,
-	Charles Zaffery <czaffery@roblox.com>,
-	Daniel Burgener <dburgener@linux.microsoft.com>,
-	Francis Laniel <flaniel@linux.microsoft.com>,
-	James Morris <jmorris@namei.org>,
-	Jann Horn <jannh@google.com>,
-	Jeff Xu <jeffxu@google.com>,
-	Jorge Lucangeli Obes <jorgelo@google.com>,
-	Kees Cook <kees@kernel.org>,
-	Konstantin Meskhidze <konstantin.meskhidze@huawei.com>,
-	Matt Bobrowski <mattbobrowski@google.com>,
-	Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>,
-	Phil Sutter <phil@nwl.cc>,
-	Praveen K Paladugu <prapal@linux.microsoft.com>,
-	Robert Salvet <robert.salvet@roblox.com>,
-	Shervin Oloumi <enlightened@google.com>,
-	Song Liu <song@kernel.org>,
-	Tahera Fahimi <fahimitahera@gmail.com>,
-	Tingmao Wang <m@maowtm.org>,
-	Tyler Hicks <code@tyhicks.com>,
-	audit@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-security-module@vger.kernel.org
-Subject: [PATCH v6 26/26] landlock: Add audit documentation
-Date: Sat,  8 Mar 2025 19:44:22 +0100
-Message-ID: <20250308184422.2159360-27-mic@digikod.net>
-In-Reply-To: <20250308184422.2159360-1-mic@digikod.net>
-References: <20250308184422.2159360-1-mic@digikod.net>
+	s=arc-20240116; t=1741459995; c=relaxed/simple;
+	bh=6ywE/KCsG0OSGAcCoBVFTnvWrFMrpzEIEtPG/KeiqYw=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=bfAMUW60Ap7q7l7HQG6e1pRdI9Xp5yIVBWfKaviuOdL+yn+pMyczxL1prVwx258RsK3A1wbgZ9ft4t4MYMrDBJH0l5MBLEuge37d49qfS1SATMT1L1/sQXpz1eHkTr6N6EH/ZUeFP7mDKTVWouHbiazXfbbgx69kbhTMN8pLAio=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ethancedwards.com; spf=pass smtp.mailfrom=ethancedwards.com; dkim=pass (2048-bit key) header.d=ethancedwards.com header.i=@ethancedwards.com header.b=jEO+Wnq4; arc=none smtp.client-ip=80.241.56.151
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ethancedwards.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ethancedwards.com
+Received: from smtp102.mailbox.org (smtp102.mailbox.org [IPv6:2001:67c:2050:b231:465::102])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-101.mailbox.org (Postfix) with ESMTPS id 4Z9C326Z90z9sp5;
+	Sat,  8 Mar 2025 19:53:02 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ethancedwards.com;
+	s=MBO0001; t=1741459983;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=VTH4EiXKCLPkA8f3JyVPpOxN9JqCF6IoIwgh5tn62r8=;
+	b=jEO+Wnq4qhmkOYi6bWahHtVIyqAj/MLjKZBGDYHxNuy77zZXyDOV2btqyiN0xayGKKPZ3y
+	XA1tl5ydjzksnAJT/ntl8t/Evbt/JvEKvwYMNX8tnvl0iWPiirtJiDEtwn0eaUxX6X4K33
+	dQGGxYev1HDjH5yaa6Gw7mONaQjLXYAhdw7SdLrrJxReT1DTmh6DLPy8IC5qb81EdQNiGl
+	QiALYUTLShDqRcHSyiPRmknPrKkQA+V/iutnFrHSzQ8/ZEqekY0aaw3PucFXTlpdbI0hYV
+	Q3MzRnbjEjY19IYPrNY9xWSyTcU65NO1iJfWMBgYd9Yj+FrOJ3XU29vdbjXZzQ==
+From: Ethan Carter Edwards <ethan@ethancedwards.com>
+Date: Sat, 08 Mar 2025 13:52:59 -0500
+Subject: [PATCH] ALSA: ctxfi: change dao_set_input functions from kzalloc
+ to kcalloc
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Infomaniak-Routing: alpha
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250308-ctdaio-kzalloc-v1-1-804a09875b0e@ethancedwards.com>
+X-B4-Tracking: v=1; b=H4sIAAqSzGcC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDI1MDYwML3eSSlMTMfN3sqsScnPxk3bTkNBPzJItkkzRzEyWgpoKi1LTMCrC
+ B0bG1tQBmipiKYAAAAA==
+X-Change-ID: 20250308-ctdaio-kzalloc-fcf47b8c4f74
+To: Takashi Iwai <tiwai@suse.com>
+Cc: Jaroslav Kysela <perex@perex.cz>, linux-sound@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org, 
+ Ethan Carter Edwards <ethan@ethancedwards.com>
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1615;
+ i=ethan@ethancedwards.com; h=from:subject:message-id;
+ bh=6ywE/KCsG0OSGAcCoBVFTnvWrFMrpzEIEtPG/KeiqYw=;
+ b=LS0tLS1CRUdJTiBQR1AgTUVTU0FHRS0tLS0tCgpvd0o0bkp2QXk4ekFKWGJEOXFoNThlVGp6e
+ GhQcXlVeHBKK1p4RDFGZXVkR3U0cy85bHhuV2VIL2RlY0x0WTl6CnkzKzdGOHpZK09DQjZIR1RW
+ WXpHSGFVc0RHSmNETEppaWl6L2M1VFRIbXJPVU5qNTE2VUpaZzRyRThnUUJpNU8KQVpqSXB1V01
+ EQXM2VEdKSzA4VytMNUIvL0ozdm1QbG5sMWVieXI4c3ordFNsLzNrYVpHMGc0dmhENC93dDBNMQ
+ pyVFlYZkdZd3R3bXFmVnNjZC9STjFLdFdvM2Rkdno4Y1VaODdod01BdFJaUSt3PT0KPU5YVWkKL
+ S0tLS1FTkQgUEdQIE1FU1NBR0UtLS0tLQo=
+X-Developer-Key: i=ethan@ethancedwards.com; a=openpgp;
+ fpr=2E51F61839D1FA947A7300C234C04305D581DBFE
+X-Rspamd-Queue-Id: 4Z9C326Z90z9sp5
 
-Because audit is dedicated to the system administrator, create a new
-entry in Documentation/admin-guide/LSM .
+We are trying to get rid of all multiplications from allocation
+functions to prevent potential integer overflows. Here the
+multiplication is probably safe, but using kcalloc() is more
+appropriate and improves readability. This patch has no effect
+on runtime behavior.
 
-Extend other Landlock documentation's pages with this new one.
+Link: https://github.com/KSPP/linux/issues/162 [1]
+Link: https://www.kernel.org/doc/html/next/process/deprecated.html#open-coded-arithmetic-in-allocator-arguments
 
-Extend the guiding principles with logs.
-
-Cc: Günther Noack <gnoack@google.com>
-Cc: Paul Moore <paul@paul-moore.com>
-Signed-off-by: Mickaël Salaün <mic@digikod.net>
-Link: https://lore.kernel.org/r/20250308184422.2159360-27-mic@digikod.net
+Signed-off-by: Ethan Carter Edwards <ethan@ethancedwards.com>
 ---
+ sound/pci/ctxfi/ctdaio.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Changes since v5:
-- Extend the guiding principles with logs.
+diff --git a/sound/pci/ctxfi/ctdaio.c b/sound/pci/ctxfi/ctdaio.c
+index 9993b02d2968c6c6858475f7ab98d4e90e7ffe2a..806c4d7543877ed74f8ec2dd894cf6b76af6f314 100644
+--- a/sound/pci/ctxfi/ctdaio.c
++++ b/sound/pci/ctxfi/ctdaio.c
+@@ -159,7 +159,7 @@ static int dao_set_left_input(struct dao *dao, struct rsc *input)
+ 	struct daio *daio = &dao->daio;
+ 	int i;
+ 
+-	entry = kzalloc((sizeof(*entry) * daio->rscl.msr), GFP_KERNEL);
++	entry = kcalloc(daio->rscl.msr, sizeof(*entry), GFP_KERNEL);
+ 	if (!entry)
+ 		return -ENOMEM;
+ 
+@@ -188,7 +188,7 @@ static int dao_set_right_input(struct dao *dao, struct rsc *input)
+ 	struct daio *daio = &dao->daio;
+ 	int i;
+ 
+-	entry = kzalloc((sizeof(*entry) * daio->rscr.msr), GFP_KERNEL);
++	entry = kcalloc(daio->rscr.msr, sizeof(*entry), GFP_KERNEL);
+ 	if (!entry)
+ 		return -ENOMEM;
+ 
 
-Changes since v4:
-- New patch.
 ---
- Documentation/admin-guide/LSM/index.rst    |   1 +
- Documentation/admin-guide/LSM/landlock.rst | 158 +++++++++++++++++++++
- Documentation/security/landlock.rst        |  13 +-
- Documentation/userspace-api/landlock.rst   |   9 +-
- MAINTAINERS                                |   1 +
- 5 files changed, 180 insertions(+), 2 deletions(-)
- create mode 100644 Documentation/admin-guide/LSM/landlock.rst
+base-commit: 0a2f889128969dab41861b6e40111aa03dc57014
+change-id: 20250308-ctdaio-kzalloc-fcf47b8c4f74
 
-diff --git a/Documentation/admin-guide/LSM/index.rst b/Documentation/admin-guide/LSM/index.rst
-index ce63be6d64ad..b44ef68f6e4d 100644
---- a/Documentation/admin-guide/LSM/index.rst
-+++ b/Documentation/admin-guide/LSM/index.rst
-@@ -48,3 +48,4 @@ subdirectories.
-    Yama
-    SafeSetID
-    ipe
-+   landlock
-diff --git a/Documentation/admin-guide/LSM/landlock.rst b/Documentation/admin-guide/LSM/landlock.rst
-new file mode 100644
-index 000000000000..9e61607def08
---- /dev/null
-+++ b/Documentation/admin-guide/LSM/landlock.rst
-@@ -0,0 +1,158 @@
-+.. SPDX-License-Identifier: GPL-2.0
-+.. Copyright © 2025 Microsoft Corporation
-+
-+================================
-+Landlock: system-wide management
-+================================
-+
-+:Author: Mickaël Salaün
-+:Date: March 2025
-+
-+Landlock can leverage the audit framework to log events.
-+
-+User space documentation can be found here:
-+Documentation/userspace-api/landlock.rst.
-+
-+Audit
-+=====
-+
-+Denied access requests are logged by default for a sandboxed program if `audit`
-+is enabled.  This default behavior can be changed with the
-+sys_landlock_restrict_self() flags (cf.
-+Documentation/userspace-api/landlock.rst).  Landlock logs can also be masked
-+thanks to audit rules.  Landlock can generate 2 audit record types.
-+
-+Record types
-+------------
-+
-+AUDIT_LANDLOCK_ACCESS
-+    This record type identifies a denied access request to a kernel resource.
-+    The ``domain`` field indicates the ID of the domain that blocked the
-+    request.  The ``blockers`` field indicates the cause(s) of this denial
-+    (separated by a comma), and the following fields identify the kernel object
-+    (similar to SELinux).  There may be more than one of this record type per
-+    audit event.
-+
-+    Example with a file link request generating two records in the same event::
-+
-+        domain=195ba459b blockers=fs.refer path="/usr/bin" dev="vda2" ino=351
-+        domain=195ba459b blockers=fs.make_reg,fs.refer path="/usr/local" dev="vda2" ino=365
-+
-+AUDIT_LANDLOCK_DOMAIN
-+    This record type describes the status of a Landlock domain.  The ``status``
-+    field can be either ``allocated`` or ``deallocated``.
-+
-+    The ``allocated`` status is part of the same audit event and follows
-+    the first logged ``AUDIT_LANDLOCK_ACCESS`` record of a domain.  It identifies
-+    Landlock domain information at the time of the sys_landlock_restrict_self()
-+    call with the following fields:
-+
-+    - the ``domain`` ID
-+    - the enforcement ``mode``
-+    - the domain creator's ``pid``
-+    - the domain creator's ``uid``
-+    - the domain creator's executable path (``exe``)
-+    - the domain creator's command line (``comm``)
-+
-+    Example::
-+
-+        domain=195ba459b status=allocated mode=enforcing pid=300 uid=0 exe="/root/sandboxer" comm="sandboxer"
-+
-+    The ``deallocated`` status is an event on its own and it identifies a
-+    Landlock domain release.  After such event, it is guarantee that the
-+    related domain ID will never be reused during the lifetime of the system.
-+    The ``domain`` field indicates the ID of the domain which is released, and
-+    the ``denials`` field indicates the total number of denied access request,
-+    which might not have been logged according to the audit rules and
-+    sys_landlock_restrict_self()'s flags.
-+
-+    Example::
-+
-+        domain=195ba459b status=deallocated denials=3
-+
-+
-+Event samples
-+--------------
-+
-+Here are two examples of log events (see serial numbers).
-+
-+In this example a sandboxed program (``kill``) tries to send a signal to the
-+init process, which is denied because of the signal scoping restriction
-+(``LL_SCOPED=s``)::
-+
-+  $ LL_FS_RO=/ LL_FS_RW=/ LL_SCOPED=s LL_FORCE_LOG=1 ./sandboxer kill 1
-+
-+This command generates two events, each identified with a unique serial
-+number following a timestamp (``msg=audit(1729738800.268:30)``).  The first
-+event (serial ``30``) contains 4 records.  The first record
-+(``type=LANDLOCK_ACCESS``) shows an access denied by the domain `1a6fdc66f`.
-+The cause of this denial is signal scopping restriction
-+(``blockers=scope.signal``).  The process that would have receive this signal
-+is the init process (``opid=1 ocomm="systemd"``).
-+
-+The second record (``type=LANDLOCK_DOMAIN``) describes (``status=allocated``)
-+domain `1a6fdc66f`.  This domain was created by process ``286`` executing the
-+``/root/sandboxer`` program launched by the root user.
-+
-+The third record (``type=SYSCALL``) describes the syscall, its provided
-+arguments, its result (``success=no exit=-1``), and the process that called it.
-+
-+The fourth record (``type=PROCTITLE``) shows the command's name as an
-+hexadecimal value.  This can be translated with ``python -c
-+'print(bytes.fromhex("6B696C6C0031"))'``.
-+
-+Finally, the last record (``type=LANDLOCK_DOMAIN``) is also the only one from
-+the second event (serial ``31``).  It is not tied to a direct user space action
-+but an asynchronous one to free resources tied to a Landlock domain
-+(``status=deallocated``).  This can be useful to know that the following logs
-+will not concern the domain ``1a6fdc66f`` anymore.  This record also summarize
-+the number of requests this domain denied (``denials=1``), whether they were
-+logged or not.
-+
-+.. code-block::
-+
-+  type=LANDLOCK_ACCESS msg=audit(1729738800.268:30): domain=1a6fdc66f blockers=scope.signal opid=1 ocomm="systemd"
-+  type=LANDLOCK_DOMAIN msg=audit(1729738800.268:30): domain=1a6fdc66f status=allocated mode=enforcing pid=286 uid=0 exe="/root/sandboxer" comm="sandboxer"
-+  type=SYSCALL msg=audit(1729738800.268:30): arch=c000003e syscall=62 success=no exit=-1 [..] ppid=272 pid=286 auid=0 uid=0 gid=0 [...] comm="kill" [...]
-+  type=PROCTITLE msg=audit(1729738800.268:30): proctitle=6B696C6C0031
-+  type=LANDLOCK_DOMAIN msg=audit(1729738800.324:31): domain=1a6fdc66f status=deallocated denials=1
-+
-+Here is another example showcasing filesystem access control::
-+
-+  $ LL_FS_RO=/ LL_FS_RW=/tmp LL_FORCE_LOG=1 ./sandboxer sh -c "echo > /etc/passwd"
-+
-+The related audit logs contains 8 records from 3 different events (serials 33,
-+34 and 35) created by the same domain `1a6fdc679`::
-+
-+  type=LANDLOCK_ACCESS msg=audit(1729738800.221:33): domain=1a6fdc679 blockers=fs.write_file path="/dev/tty" dev="devtmpfs" ino=9
-+  type=LANDLOCK_DOMAIN msg=audit(1729738800.221:33): domain=1a6fdc679 status=allocated mode=enforcing pid=289 uid=0 exe="/root/sandboxer" comm="sandboxer"
-+  type=SYSCALL msg=audit(1729738800.221:33): arch=c000003e syscall=257 success=no exit=-13 [...] ppid=272 pid=289 auid=0 uid=0 gid=0 [...] comm="sh" [...]
-+  type=PROCTITLE msg=audit(1729738800.221:33): proctitle=7368002D63006563686F203E202F6574632F706173737764
-+  type=LANDLOCK_ACCESS msg=audit(1729738800.221:34): domain=1a6fdc679 blockers=fs.write_file path="/etc/passwd" dev="vda2" ino=143821
-+  type=SYSCALL msg=audit(1729738800.221:34): arch=c000003e syscall=257 success=no exit=-13 [...] ppid=272 pid=289 auid=0 uid=0 gid=0 [...] comm="sh" [...]
-+  type=PROCTITLE msg=audit(1729738800.221:34): proctitle=7368002D63006563686F203E202F6574632F706173737764
-+  type=LANDLOCK_DOMAIN msg=audit(1729738800.261:35): domain=1a6fdc679 status=deallocated denials=2
-+
-+
-+Event filtering
-+---------------
-+
-+If you get spammed with audit logs related to Landlock, this is either an
-+attack attempt or a bug in the security policy.  We can put in place some
-+filters to limit noise with two complementary ways:
-+
-+- with sys_landlock_restrict_self()'s flags if we can fix the sandboxed
-+  programs,
-+- or with audit rules (see :manpage:`auditctl(8)`).
-+
-+Additional documentation
-+========================
-+
-+* `Linux Audit Documentation`_
-+* Documentation/userspace-api/landlock.rst
-+* Documentation/security/landlock.rst
-+* https://landlock.io
-+
-+.. Links
-+.. _Linux Audit Documentation:
-+   https://github.com/linux-audit/audit-documentation/wiki
-diff --git a/Documentation/security/landlock.rst b/Documentation/security/landlock.rst
-index 59ecdb1c0d4d..e0fc54aff09e 100644
---- a/Documentation/security/landlock.rst
-+++ b/Documentation/security/landlock.rst
-@@ -7,7 +7,7 @@ Landlock LSM: kernel documentation
- ==================================
- 
- :Author: Mickaël Salaün
--:Date: December 2022
-+:Date: March 2025
- 
- Landlock's goal is to create scoped access-control (i.e. sandboxing).  To
- harden a whole system, this feature should be available to any process,
-@@ -45,6 +45,10 @@ Guiding principles for safe access controls
-   sandboxed process shall retain their scoped accesses (at the time of resource
-   acquisition) whatever process uses them.
-   Cf. `File descriptor access rights`_.
-+* Access denials shall be logged according to system and Landlock domain
-+  configurations.  Log entries must contain information about the cause of the
-+  denial and the owner of the related security policy.  Such log generation
-+  should have a negligible performance and memory impact on allowed requests.
- 
- Design choices
- ==============
-@@ -124,6 +128,13 @@ makes the reasoning much easier and helps avoid pitfalls.
- .. kernel-doc:: security/landlock/ruleset.h
-     :identifiers:
- 
-+Additional documentation
-+========================
-+
-+* Documentation/userspace-api/landlock.rst
-+* Documentation/admin-guide/LSM/landlock.rst
-+* https://landlock.io
-+
- .. Links
- .. _tools/testing/selftests/landlock/:
-    https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/tree/tools/testing/selftests/landlock/
-diff --git a/Documentation/userspace-api/landlock.rst b/Documentation/userspace-api/landlock.rst
-index ad587f53fe41..2a9843116202 100644
---- a/Documentation/userspace-api/landlock.rst
-+++ b/Documentation/userspace-api/landlock.rst
-@@ -8,7 +8,7 @@ Landlock: unprivileged access control
- =====================================
- 
- :Author: Mickaël Salaün
--:Date: January 2025
-+:Date: March 2025
- 
- The goal of Landlock is to enable restriction of ambient rights (e.g. global
- filesystem or network access) for a set of processes.  Because Landlock
-@@ -683,9 +683,16 @@ fine-grained restrictions).  Moreover, their complexity can lead to security
- issues, especially when untrusted processes can manipulate them (cf.
- `Controlling access to user namespaces <https://lwn.net/Articles/673597/>`_).
- 
-+How to disable Landlock audit records?
-+--------------------------------------
-+
-+You might want to put in place filters as explained here:
-+Documentation/admin-guide/LSM/landlock.rst
-+
- Additional documentation
- ========================
- 
-+* Documentation/admin-guide/LSM/landlock.rst
- * Documentation/security/landlock.rst
- * https://landlock.io
- 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 8e0736dc2ee0..a3aa52e47401 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -13075,6 +13075,7 @@ L:	linux-security-module@vger.kernel.org
- S:	Supported
- W:	https://landlock.io
- T:	git https://git.kernel.org/pub/scm/linux/kernel/git/mic/linux.git
-+F:	Documentation/admin-guide/LSM/landlock.rst
- F:	Documentation/security/landlock.rst
- F:	Documentation/userspace-api/landlock.rst
- F:	fs/ioctl.c
+Best regards,
 -- 
-2.48.1
+Ethan Carter Edwards <ethan@ethancedwards.com>
 
 
