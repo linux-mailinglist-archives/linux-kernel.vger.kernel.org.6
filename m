@@ -1,154 +1,193 @@
-Return-Path: <linux-kernel+bounces-552255-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-552256-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE4CDA5779F
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 03:22:46 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 78301A577A2
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 03:26:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0A0DA175B43
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 02:22:46 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7F5107A916F
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 02:25:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 136C21465AE;
-	Sat,  8 Mar 2025 02:22:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="WyslvGXS"
-Received: from out-185.mta1.migadu.com (out-185.mta1.migadu.com [95.215.58.185])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 408031487FE;
+	Sat,  8 Mar 2025 02:26:02 +0000 (UTC)
+Received: from szxga03-in.huawei.com (szxga03-in.huawei.com [45.249.212.189])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC88845BE3
-	for <linux-kernel@vger.kernel.org>; Sat,  8 Mar 2025 02:22:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.185
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43D0B14AA9;
+	Sat,  8 Mar 2025 02:25:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.189
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741400560; cv=none; b=lY7fxWsy7k7BObxxv4OlK3L4MLT2ODevUuZWd3STaxJjnWCHmzfRvrUQQJlbi+IcERD855ufg8ldlk6kPzxxVNft7EkIAOCCYwJ5oRUP0W2+OU+Sbm4LL94fKF9x7/+txRoWd7NN7ZhWMOq73DNwMM2zzwir9x6VT6ex/Cg4tJ0=
+	t=1741400761; cv=none; b=Sl5FvC2Ynt3JFNDBgyfQFH95jyg6z9du8qPecjxOtlt1F+0Ntl6FflLJL5aG3vKt+71M9IKho3FoaTPUPlE3nJ+mJEVnIGKfYfmh9w+Euh49ZRLjyXiLhTp0bziknqp3PjcCZ3XgJ2+TZEVuIzWFy9GcCK4Lbrxt394QUYrL37A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741400560; c=relaxed/simple;
-	bh=L/7jaKoLREh8m9RJKqR0YdJUC506zG80lLbEZM3Eaw0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qHy6+fvUXDzY7uUrfe91Gs9k3XIWvTyop08hMosuHeHk6e3KyuVuk1+8CHAhlN4wlNlwQ1aJweQZUbGbrCE0vNXUGOrmSgrixy42uS8xQJtLTKMJjo/M4tcjeN8adzU+mCArlnF+1iiFjfB8Uaj1Xy0+Pa2aKDi92MhTf55A1wA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=WyslvGXS; arc=none smtp.client-ip=95.215.58.185
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <fe4802f2-f81b-6e33-6ee1-af2f3771f8fc@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1741400555;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=jjhDoAzUW/5FGOnDp5v3OzlWQhpu3YvcufnBv3JkkCM=;
-	b=WyslvGXSkVSfE45H250Oc8xhGdfep6CJ03v8xSTm1NlBuuoYFOJekXiQapFNHzVBr0sFgf
-	aPVdC/D1z9yTXMwG76VmJNwp7EOEunCUVEeachPWaLqL6QiP4oU1vXiRusZzj9OS5F2cdi
-	rBVZHezXAvweCUq6RmimulD3iMtv+Gw=
-Date: Sat, 8 Mar 2025 10:21:37 +0800
+	s=arc-20240116; t=1741400761; c=relaxed/simple;
+	bh=BbyM1FMugdVrT11eiLsPsPBr3Y8rT+rtxvAokEU7dNU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=GWv25dyjYtYQM6XbP0MZysyxNXr+YIgvtgdDS2ym2sSm928RDLGg3g6EqlY/y+la9yj/+J8TFH0Rz8GMKxGhpk3JL84bLJc3WIA6piVtTc30ycY4r4EWJCYEwGMpX+YPyhZevgJgBRE7s7jh6PBI8Bqfy7ZFp6+SSltOHgCVZ2I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.189
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.194])
+	by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4Z8n4Q1LsWz9wP9;
+	Sat,  8 Mar 2025 10:22:46 +0800 (CST)
+Received: from kwepemg500008.china.huawei.com (unknown [7.202.181.45])
+	by mail.maildlp.com (Postfix) with ESMTPS id 50E00140380;
+	Sat,  8 Mar 2025 10:25:55 +0800 (CST)
+Received: from [127.0.0.1] (10.174.177.71) by kwepemg500008.china.huawei.com
+ (7.202.181.45) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Sat, 8 Mar
+ 2025 10:25:54 +0800
+Message-ID: <6ab6dba8-c15e-49e8-966f-63a6e2df0590@huawei.com>
+Date: Sat, 8 Mar 2025 10:25:53 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH] fs: binfmt_elf_efpic: fix variable set but not used
- warning
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 3/3] ext4: Make sb update interval tunable
+To: Ojaswin Mujoo <ojaswin@linux.ibm.com>
+CC: <linux-ext4@vger.kernel.org>, Theodore Ts'o <tytso@mit.edu>, Jan Kara
+	<jack@suse.cz>, <linux-kernel@vger.kernel.org>, "Ritesh Harjani (IBM)"
+	<ritesh.list@gmail.com>, Yang Erkun <yangerkun@huawei.com>
+References: <cover.1741270780.git.ojaswin@linux.ibm.com>
+ <4c89be10ad8c8937048148bce1fc9ca882d060c6.1741270780.git.ojaswin@linux.ibm.com>
 Content-Language: en-US
-To: Kees Cook <kees@kernel.org>, Jan Kara <jack@suse.cz>
-Cc: viro@zeniv.linux.org.uk, brauner@kernel.org, ebiederm@xmission.com,
- linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org, sunliming@kylinos.cn,
- kernel test robot <lkp@intel.com>
-References: <20250307061128.2999222-1-sunliming@linux.dev>
- <a555rynwidxdyj7s3oswpmcnkqu57jv3wsk5qwfg5zz6m55na3@n53ssiekfch4>
- <202503071227.578545FF9@keescook>
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Sunliming <sunliming@linux.dev>
-In-Reply-To: <202503071227.578545FF9@keescook>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+From: Baokun Li <libaokun1@huawei.com>
+In-Reply-To: <4c89be10ad8c8937048148bce1fc9ca882d060c6.1741270780.git.ojaswin@linux.ibm.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
+ kwepemg500008.china.huawei.com (7.202.181.45)
+
+On 2025/3/6 22:28, Ojaswin Mujoo wrote:
+> Currently, outside error paths, we auto commit the super block after 1
+> hour has passed and 16MB worth of updates have been written since last
+> commit. This is a policy decision so make this tunable while keeping the
+> defaults same. This is useful if user wants to tweak the superblock
+> behavior or for debugging the codepath by allowing to trigger it more
+> frequently.
+>
+> We can now tweak the super block update using sb_update_sec and
+> sb_update_kb files in /sys/fs/ext4/<dev>/
+>
+> Reviewed-by: Jan Kara <jack@suse.cz>
+> Reviewed-by: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
+> Signed-off-by: Ojaswin Mujoo <ojaswin@linux.ibm.com>
+Looks good.
+
+Reviewed-by: Baokun Li <libaokun1@huawei.com>
+> ---
+>   fs/ext4/ext4.h  |  9 +++++++++
+>   fs/ext4/super.c | 15 ++++++++-------
+>   fs/ext4/sysfs.c |  4 ++++
+>   3 files changed, 21 insertions(+), 7 deletions(-)
+>
+> diff --git a/fs/ext4/ext4.h b/fs/ext4/ext4.h
+> index d48e93bd5690..82c902ed86f3 100644
+> --- a/fs/ext4/ext4.h
+> +++ b/fs/ext4/ext4.h
+> @@ -1608,6 +1608,8 @@ struct ext4_sb_info {
+>   	unsigned int s_mb_prefetch;
+>   	unsigned int s_mb_prefetch_limit;
+>   	unsigned int s_mb_best_avail_max_trim_order;
+> +	unsigned int s_sb_update_sec;
+> +	unsigned int s_sb_update_kb;
+>   
+>   	/* stats for buddy allocator */
+>   	atomic_t s_bal_reqs;	/* number of reqs with len > 1 */
+> @@ -2281,6 +2283,13 @@ static inline int ext4_forced_shutdown(struct super_block *sb)
+>   #define EXT4_DEF_MIN_BATCH_TIME	0
+>   #define EXT4_DEF_MAX_BATCH_TIME	15000 /* 15ms */
+>   
+> +/*
+> + * Default values for superblock update
+> + */
+> +#define EXT4_DEF_SB_UPDATE_INTERVAL_SEC (3600) /* seconds (1 hour) */
+> +#define EXT4_DEF_SB_UPDATE_INTERVAL_KB (16384) /* kilobytes (16MB) */
+> +
+> +
+>   /*
+>    * Minimum number of groups in a flexgroup before we separate out
+>    * directories into the first block group of a flexgroup
+> diff --git a/fs/ext4/super.c b/fs/ext4/super.c
+> index 31552cf0519a..1b47b111c583 100644
+> --- a/fs/ext4/super.c
+> +++ b/fs/ext4/super.c
+> @@ -447,9 +447,6 @@ static time64_t __ext4_get_tstamp(__le32 *lo, __u8 *hi)
+>   #define ext4_get_tstamp(es, tstamp) \
+>   	__ext4_get_tstamp(&(es)->tstamp, &(es)->tstamp ## _hi)
+>   
+> -#define EXT4_SB_REFRESH_INTERVAL_SEC (3600) /* seconds (1 hour) */
+> -#define EXT4_SB_REFRESH_INTERVAL_KB (16384) /* kilobytes (16MB) */
+> -
+>   /*
+>    * The ext4_maybe_update_superblock() function checks and updates the
+>    * superblock if needed.
+> @@ -457,8 +454,10 @@ static time64_t __ext4_get_tstamp(__le32 *lo, __u8 *hi)
+>    * This function is designed to update the on-disk superblock only under
+>    * certain conditions to prevent excessive disk writes and unnecessary
+>    * waking of the disk from sleep. The superblock will be updated if:
+> - * 1. More than an hour has passed since the last superblock update, and
+> - * 2. More than 16MB have been written since the last superblock update.
+> + * 1. More than sbi->s_sb_update_sec (def: 1 hour) has passed since the last
+> + *    superblock update
+> + * 2. More than sbi->s_sb_update_kb (def: 16MB) kbs have been written since the
+> + *    last superblock update.
+>    *
+>    * @sb: The superblock
+>    */
+> @@ -479,7 +478,7 @@ static void ext4_maybe_update_superblock(struct super_block *sb)
+>   	now = ktime_get_real_seconds();
+>   	last_update = ext4_get_tstamp(es, s_wtime);
+>   
+> -	if (likely(now - last_update < EXT4_SB_REFRESH_INTERVAL_SEC))
+> +	if (likely(now - last_update < sbi->s_sb_update_sec))
+>   		return;
+>   
+>   	lifetime_write_kbytes = sbi->s_kbytes_written +
+> @@ -494,7 +493,7 @@ static void ext4_maybe_update_superblock(struct super_block *sb)
+>   	 */
+>   	diff_size = lifetime_write_kbytes - le64_to_cpu(es->s_kbytes_written);
+>   
+> -	if (diff_size > EXT4_SB_REFRESH_INTERVAL_KB)
+> +	if (diff_size > sbi->s_sb_update_kb)
+>   		schedule_work(&EXT4_SB(sb)->s_sb_upd_work);
+>   }
+>   
+> @@ -5246,6 +5245,8 @@ static int __ext4_fill_super(struct fs_context *fc, struct super_block *sb)
+>   	sbi->s_commit_interval = JBD2_DEFAULT_MAX_COMMIT_AGE * HZ;
+>   	sbi->s_min_batch_time = EXT4_DEF_MIN_BATCH_TIME;
+>   	sbi->s_max_batch_time = EXT4_DEF_MAX_BATCH_TIME;
+> +	sbi->s_sb_update_kb = EXT4_DEF_SB_UPDATE_INTERVAL_KB;
+> +	sbi->s_sb_update_sec = EXT4_DEF_SB_UPDATE_INTERVAL_SEC;
+>   
+>   	/*
+>   	 * set default s_li_wait_mult for lazyinit, for the case there is
+> diff --git a/fs/ext4/sysfs.c b/fs/ext4/sysfs.c
+> index ddb54608ca2e..987bd00f916a 100644
+> --- a/fs/ext4/sysfs.c
+> +++ b/fs/ext4/sysfs.c
+> @@ -254,6 +254,8 @@ EXT4_ATTR(journal_task, 0444, journal_task);
+>   EXT4_RW_ATTR_SBI_UI(mb_prefetch, s_mb_prefetch);
+>   EXT4_RW_ATTR_SBI_UI(mb_prefetch_limit, s_mb_prefetch_limit);
+>   EXT4_RW_ATTR_SBI_UL(last_trim_minblks, s_last_trim_minblks);
+> +EXT4_RW_ATTR_SBI_UI(sb_update_sec, s_sb_update_sec);
+> +EXT4_RW_ATTR_SBI_UI(sb_update_kb, s_sb_update_kb);
+>   
+>   static unsigned int old_bump_val = 128;
+>   EXT4_ATTR_PTR(max_writeback_mb_bump, 0444, pointer_ui, &old_bump_val);
+> @@ -305,6 +307,8 @@ static struct attribute *ext4_attrs[] = {
+>   	ATTR_LIST(mb_prefetch),
+>   	ATTR_LIST(mb_prefetch_limit),
+>   	ATTR_LIST(last_trim_minblks),
+> +	ATTR_LIST(sb_update_sec),
+> +	ATTR_LIST(sb_update_kb),
+>   	NULL,
+>   };
+>   ATTRIBUTE_GROUPS(ext4);
 
 
-On 2025/3/8 04:30, Kees Cook wrote:
-> On Fri, Mar 07, 2025 at 03:47:28PM +0100, Jan Kara wrote:
->> On Fri 07-03-25 14:11:28, sunliming@linux.dev wrote:
->>> From: sunliming <sunliming@kylinos.cn>
->>>
->>> Fix below kernel warning:
->>> fs/binfmt_elf_fdpic.c:1024:52: warning: variable 'excess1' set but not
->>> used [-Wunused-but-set-variable]
->>>
->>> Reported-by: kernel test robot <lkp@intel.com>
->>> Signed-off-by: sunliming <sunliming@kylinos.cn>
->> The extra ifdef is not pretty but I guess it's better. Feel free to add:
->>
->> Reviewed-by: Jan Kara <jack@suse.cz>
-> Since we allow loop-scope variable definitions now, perhaps this is a
-> case for defining the variable later within the #ifdef, like this?
->
->
-> diff --git a/fs/binfmt_elf_fdpic.c b/fs/binfmt_elf_fdpic.c
-> index e3cf2801cd64..b0ef71238328 100644
-> --- a/fs/binfmt_elf_fdpic.c
-> +++ b/fs/binfmt_elf_fdpic.c
-> @@ -1024,7 +1024,7 @@ static int elf_fdpic_map_file_by_direct_mmap(struct elf_fdpic_params *params,
->   	/* deal with each load segment separately */
->   	phdr = params->phdrs;
->   	for (loop = 0; loop < params->hdr.e_phnum; loop++, phdr++) {
-> -		unsigned long maddr, disp, excess, excess1;
-> +		unsigned long maddr, disp, excess;
->   		int prot = 0, flags;
->   
->   		if (phdr->p_type != PT_LOAD)
-> @@ -1120,9 +1120,10 @@ static int elf_fdpic_map_file_by_direct_mmap(struct elf_fdpic_params *params,
->   		 *   extant in the file
->   		 */
->   		excess = phdr->p_memsz - phdr->p_filesz;
-> -		excess1 = PAGE_SIZE - ((maddr + phdr->p_filesz) & ~PAGE_MASK);
->   
->   #ifdef CONFIG_MMU
-> +		const unsigned long excess1 =
-> +			PAGE_SIZE - ((maddr + phdr->p_filesz) & ~PAGE_MASK);
->   		if (excess > excess1) {
->   			unsigned long xaddr = maddr + phdr->p_filesz + excess1;
->   			unsigned long xmaddr;
-I think this is a good idea. I will resend this patch in this way，thanks.
->> 								Honza
->>
->>> ---
->>>   fs/binfmt_elf_fdpic.c | 7 +++++--
->>>   1 file changed, 5 insertions(+), 2 deletions(-)
->>>
->>> diff --git a/fs/binfmt_elf_fdpic.c b/fs/binfmt_elf_fdpic.c
->>> index e3cf2801cd64..bed13ee8bfec 100644
->>> --- a/fs/binfmt_elf_fdpic.c
->>> +++ b/fs/binfmt_elf_fdpic.c
->>> @@ -1024,8 +1024,11 @@ static int elf_fdpic_map_file_by_direct_mmap(struct elf_fdpic_params *params,
->>>   	/* deal with each load segment separately */
->>>   	phdr = params->phdrs;
->>>   	for (loop = 0; loop < params->hdr.e_phnum; loop++, phdr++) {
->>> -		unsigned long maddr, disp, excess, excess1;
->>> +		unsigned long maddr, disp, excess;
->>>   		int prot = 0, flags;
->>> +#ifdef CONFIG_MMU
->>> +		unsigned long excess1;
->>> +#endif
->>>   
->>>   		if (phdr->p_type != PT_LOAD)
->>>   			continue;
->>> @@ -1120,9 +1123,9 @@ static int elf_fdpic_map_file_by_direct_mmap(struct elf_fdpic_params *params,
->>>   		 *   extant in the file
->>>   		 */
->>>   		excess = phdr->p_memsz - phdr->p_filesz;
->>> -		excess1 = PAGE_SIZE - ((maddr + phdr->p_filesz) & ~PAGE_MASK);
->>>   
->>>   #ifdef CONFIG_MMU
->>> +		excess1 = PAGE_SIZE - ((maddr + phdr->p_filesz) & ~PAGE_MASK);
->>>   		if (excess > excess1) {
->>>   			unsigned long xaddr = maddr + phdr->p_filesz + excess1;
->>>   			unsigned long xmaddr;
->>> -- 
->>> 2.25.1
->>>
->> -- 
->> Jan Kara <jack@suse.com>
->> SUSE Labs, CR
 
