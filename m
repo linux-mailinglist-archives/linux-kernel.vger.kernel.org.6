@@ -1,158 +1,180 @@
-Return-Path: <linux-kernel+bounces-552251-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-552252-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 118D3A57792
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 03:00:31 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 98829A57795
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 03:04:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 031B33B3FD7
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 02:00:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 34B281897D6F
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 02:04:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D95F7101FF;
-	Sat,  8 Mar 2025 02:00:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C25D14831E;
+	Sat,  8 Mar 2025 02:04:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="h6VzCJCm"
-Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="bbOw0k9R"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61B4617BA6
-	for <linux-kernel@vger.kernel.org>; Sat,  8 Mar 2025 02:00:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741399223; cv=none; b=Qazmj0PUUNm3OlBxPZ2oe02Ece4NY+vh1V4P+qHXVtzCkfTCimOVwl/UTzj7pOH5O/4wasX1xhyneDjNyDDBLJvT6jPEOq8APaXPbptf5+YPjnx9gQ6YoBNwfR6lrV6l/BWeeLZPO1C+WjkWiaYFeGO3jyhOebODmvvPuTTYdhU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741399223; c=relaxed/simple;
-	bh=S8N+QxxiOhUsGd3S0a1x+yo4CeNlEdKYrscPJ0aeCTE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=L9XZDXpdAtUI6X/FwcFOH0bqQYcsUMzKwNtO8k8hZkwOmekfd001Qx6o3tbKYIoC+VNaqieLN8MqnsfA74K46ADMuFuUWkiWM/1+S6JPswbjVCcRi5C6FpITyhcdAv81a1RLUwQgABwADwtESewtn0ISkv8kR8ZmfJONBTbFwU8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=h6VzCJCm; arc=none smtp.client-ip=209.85.167.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-5493b5bc6e8so2574371e87.2
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Mar 2025 18:00:21 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1741399219; x=1742004019; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=NjVkCifx/RSQQ8Da117ebd6rVOl6XM9uzHnpVWsZ5zs=;
-        b=h6VzCJCmdxyZxXwCyL0qCG5jl6lsPzVqvjjUESWqf8k9TpVGTdbT0KtGgdlk9tcn1K
-         dIpEryQUif8dUjd0ZyNt+aCa9Bq0BzJTbUa+JO8Rk5hQwVXk+0xxyTj5eVZ87Gx06CEZ
-         Wa4pJRXNNbnUEsrGg7/WBFpIIvDCCtjNvyDZmDSKmoklxiXddNbX7sbQTbK6Ars57HtC
-         ZlUFvf3wO3qeVak7gCJqtNEq1mMzr+TUcHU79IvxxPrCbLjg4pF4IzgqTQu1ryXzx4aV
-         guF2lb9G+4oeiX5c6yKdXwgYLq78CSmUzgpQVZoDZKGMcmyvQTIlbjIpTF8g+B42QRF+
-         HUFQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741399219; x=1742004019;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=NjVkCifx/RSQQ8Da117ebd6rVOl6XM9uzHnpVWsZ5zs=;
-        b=jON+nypoEmv/PEOSmc68oz3Ws9ugpAG/M+QHOKHPOFZH6Xk3dwNKnj29geGoFid0ZS
-         S1ndKD9Loor4d/qz1nzepokFrVh74Vbsf7JseJtOiLZxgasoZbIjJgZB8XTm45o17lro
-         yGDEw2Y2CP7xphkH5ICheXcjTQKPSu50UzpJlmVP4qO0MtSchEWm+/n7zNcQgLstuVp5
-         TiKuQad5WlMGykMiMlX+ci/ef8qhi9rJXFndLNmqCqXuC/Hs5k6Blf+3WAVCEIcEDIU5
-         6X4yNefy2UEKyJAFRAPsf0iPdY8+V6bjJA34MReavKi93YAZqUdn19+Qosr1KZQyVuOv
-         OtBw==
-X-Forwarded-Encrypted: i=1; AJvYcCW3NvWmPxt8ZnW+/xdJ7n3kS1awb9tx3Ox3QcG9K4koCPg1bhIzMWCCD3x9oDMjVfV5LzjhaF1g38VWmQE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyIHbMZ5AG6uDKApUBQ7qUGkO39h9yemnwhIh5aK/YIVcU3vxIC
-	v9RH6Dlb87T6s6+E5B/pOWM45VUl8ShMcFC17A1xmATKGnPfkMavwcXMo+pMV3s=
-X-Gm-Gg: ASbGnctVI8cn2fSXi17YHUT6v0ehL8NXUa/UP4HuDlT+R25ybowF0zClR8ijFOLQB2z
-	z7zxkT4RKRgR6xzEG6aIT7i7SCrYcx85HViI6NzOC/ekHYar2uAf3/b/Y7IhZifGZRPrDvwQ2Mc
-	a08EaUPCrh9mnxIqMbTPlOXaGxARTzQsRNtlzjK3BndNeRCraLqPzbfhrbwqIaD7fs3M4PZYfQx
-	jx2un4PdD+xgaLubVd8VKhIaAADJoByPYYLzErIKHKCKYtCCUQFI+tq/W4Iag3h0rwySGqeab7y
-	+WaBGbxlz1v3aJpxlbcOrpNLdiru5X0LKYnuG/LYOo3MmymPf/NC8i1yO5jvl6GM0amY2x0lB+x
-	T4gHope5o3kQFRvJW3DEOCra2
-X-Google-Smtp-Source: AGHT+IHD+uwBqwVOK6PF+JlAvIXYtVL34Ab2L2yfhLPX2xkxj8BVZbxw9BTY9Ei5g5385gK2RsIBIw==
-X-Received: by 2002:a05:6512:3dab:b0:549:8ed4:fb46 with SMTP id 2adb3069b0e04-54990e676f0mr1813977e87.26.1741399219383;
-        Fri, 07 Mar 2025 18:00:19 -0800 (PST)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5498b1c33bfsm680563e87.236.2025.03.07.18.00.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 07 Mar 2025 18:00:18 -0800 (PST)
-Date: Sat, 8 Mar 2025 04:00:15 +0200
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Dmitry Baryshkov <lumag@kernel.org>
-Cc: Rob Clark <robdclark@gmail.com>, 
-	Abhinav Kumar <quic_abhinavk@quicinc.com>, Sean Paul <sean@poorly.run>, 
-	Marijn Suijten <marijn.suijten@somainline.org>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Kuogee Hsieh <quic_khsieh@quicinc.com>, 
-	Krishna Manikandan <quic_mkrishn@quicinc.com>, Jonathan Marek <jonathan@marek.ca>, 
-	Bjorn Andersson <andersson@kernel.org>, Neil Armstrong <neil.armstrong@linaro.org>, 
-	Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>, 
-	Joerg Roedel <joro@8bytes.org>, Konrad Dybcio <konradybcio@kernel.org>, 
-	linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, iommu@lists.linux.dev, 
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 06/10] drm/msm/mdss: add SAR2130P device configuration
-Message-ID: <kifzy754m7zygspknsk4a4aeuqxkt4bkyp5jbu6ul43gon7je3@yleqikfmh4lp>
-References: <20250308-sar2130p-display-v1-0-1d4c30f43822@linaro.org>
- <20250308-sar2130p-display-v1-6-1d4c30f43822@linaro.org>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D24531EEE6;
+	Sat,  8 Mar 2025 02:04:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741399443; cv=pass; b=u7emeP+OgUT7J+qKf6ApVGeKKCQX52IyMY/Q3vNPSZzTtaseEqzRe3ojlXOvl7yKZGgV9gpGwvBR9JZgAr7FXtM6Rwi3n4f1prBpHUV/rqYWQ1HJwUnWY609qJYTYRsg4EL+mCZbQoLOKD32pZr4O1M2u6zOKQYRMz/t0/YeKOA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741399443; c=relaxed/simple;
+	bh=fzqf8d40kMRV0B/31d4SpvqNTOm3LnawNTjCZEW2sLU=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=W0JfCCdz/INlDW6nDDPCFPHXGdwgt0XJKa/KNqzO26OBhyY5MW/Isc5Qtn+3Xj2o6HQRsigxLjyrFOVd+8mNPjxZpkm6zu7RK4UILwY6mmNiq/H8jhYtvWR2B00j+sAI2MbbX36oRbq1Y1sgseKZcT6EerSP+6WwaIVtcFDA+44=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=bbOw0k9R; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1741399413; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=giiBA+A+LzQ4rixA9S/EDVikE44XlsdZtBZETAkxthSRSaqTa8veggBhjaEumNaNhqVSumFIYu9krh9v0yelcOLDliFXWanjOUpsLkj02ppCrQQLN7qGB1X9DsBPEGdQRhdOGMbZaAPFpOKneCz6yfiLCpN2eU9PXjVe41TW2Bo=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1741399413; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=U5tvOevFekjKfogKK5n5IOeLUWZYMhAuBRM0LtrpGac=; 
+	b=ikDTmD2jYCohWzz7++a81be47ZYr0U+3Z/QlfWIw56F7/7JjVIy3p2SJDRGai+S/oVNrVgXrlSX9GCY/PeI400AdWjLSm6VCVgXVsLOUf3ZaIL56+d2U1CBIyTjIdSORcioYhAlJ+8phPXFM/ssaBWGsetXQYVK6hz1gCdW2TkU=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
+	dmarc=pass header.from=<daniel.almeida@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1741399413;
+	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
+	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
+	bh=U5tvOevFekjKfogKK5n5IOeLUWZYMhAuBRM0LtrpGac=;
+	b=bbOw0k9RLgAZYFzlJYOqf0M3lDnvpHCUPNYKYs2kXme6TAPJ1lrWz+XH4/4iIqgv
+	O1IrlLlOH23rKttiTj9fLlgLMs9PsOiXAZ9UFnaJ0YJbAAvYvUWalfZzsM0i2mOC0RI
+	h99D8cxjkT7lcverGcVT0SMhojJakI0V20f+LEDY=
+Received: by mx.zohomail.com with SMTPS id 1741399412188433.2847528501791;
+	Fri, 7 Mar 2025 18:03:32 -0800 (PST)
+Content-Type: text/plain;
+	charset=utf-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250308-sar2130p-display-v1-6-1d4c30f43822@linaro.org>
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.400.131.1.6\))
+Subject: Re: [PATCH V3 2/2] rust: Add initial clk abstractions
+From: Daniel Almeida <daniel.almeida@collabora.com>
+In-Reply-To: <20250304085351.inrvjgixvxla4yn3@vireshk-i7>
+Date: Fri, 7 Mar 2025 23:03:15 -0300
+Cc: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@kernel.org>,
+ Miguel Ojeda <ojeda@kernel.org>,
+ Alex Gaynor <alex.gaynor@gmail.com>,
+ Boqun Feng <boqun.feng@gmail.com>,
+ Gary Guo <gary@garyguo.net>,
+ =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
+ Benno Lossin <benno.lossin@proton.me>,
+ Andreas Hindborg <a.hindborg@kernel.org>,
+ Alice Ryhl <aliceryhl@google.com>,
+ Trevor Gross <tmgross@umich.edu>,
+ Russell King <linux@armlinux.org.uk>,
+ linux-clk@vger.kernel.org,
+ linux-kernel@vger.kernel.org,
+ rust-for-linux@vger.kernel.org,
+ Vincent Guittot <vincent.guittot@linaro.org>
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <DC3B4FA6-5938-49CE-A75C-D354562593B3@collabora.com>
+References: <cover.1740995194.git.viresh.kumar@linaro.org>
+ <023e3061cc164087b9079a9f6cb7e9fbf286794e.1740995194.git.viresh.kumar@linaro.org>
+ <CANiq72kdWzFOZ39EoFNxEAbk4KYgzLi1OAEc1zn8BM07VpXy3g@mail.gmail.com>
+ <20250304085351.inrvjgixvxla4yn3@vireshk-i7>
+To: Viresh Kumar <viresh.kumar@linaro.org>
+X-Mailer: Apple Mail (2.3826.400.131.1.6)
+X-ZohoMailClient: External
 
-On Sat, Mar 08, 2025 at 03:42:24AM +0200, Dmitry Baryshkov wrote:
-> From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> 
-> Add compatible and device configuration for the Qualcomm SAR2130P
-> platform.
-> 
-> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> ---
->  drivers/gpu/drm/msm/msm_mdss.c | 11 +++++++++++
->  1 file changed, 11 insertions(+)
-> 
-> diff --git a/drivers/gpu/drm/msm/msm_mdss.c b/drivers/gpu/drm/msm/msm_mdss.c
-> index dcb49fd30402b80edd2cb5971f95a78eaad6081f..3e82ba0885d03107d54eab9569bb4c5395454c7a 100644
-> --- a/drivers/gpu/drm/msm/msm_mdss.c
-> +++ b/drivers/gpu/drm/msm/msm_mdss.c
-> @@ -592,6 +592,16 @@ static const struct msm_mdss_data sa8775p_data = {
->  	.reg_bus_bw = 74000,
->  };
->  
-> +static const struct msm_mdss_data sar2130p_data = {
-> +	.ubwc_enc_version = UBWC_3_0, /* 4.0.2 in hw */
-> +	.ubwc_dec_version = UBWC_4_3,
-> +	.ubwc_swizzle = 6,
-> +	.ubwc_static = 1,
+Hi Viresh,
 
-This should have been .ubwc_bank_spread = true.
-I have been rebasing the series from the earlier kernel and I'm not sure
-why this didn't show up during the build phase.
-
-> +	.highest_bank_bit = 0,
-> +	.macrotile_mode = 1,
-> +	.reg_bus_bw = 74000,
+> On 4 Mar 2025, at 05:53, Viresh Kumar <viresh.kumar@linaro.org> wrote:
+>=20
+> On 03-03-25, 11:16, Miguel Ojeda wrote:
+>> On Mon, Mar 3, 2025 at 11:00=E2=80=AFAM Viresh Kumar =
+<viresh.kumar@linaro.org> wrote:
+>>>=20
+>>> +/// Frequency unit.
+>>> +pub type Hertz =3D crate::ffi::c_ulong;
+>>=20
+>> Do we want this to be an alias or would it make sense to take the
+>> chance to make this a newtype?
+>=20
+> I have tried some improvements based on your (and Alice's comments), =
+please see
+> if it looks any better now.
+>=20
+> --=20
+> viresh
+>=20
+> -------------------------8<-------------------------
+>=20
+> diff --git a/rust/kernel/clk.rs b/rust/kernel/clk.rs
+> new file mode 100644
+> index 000000000000..fc3cb0f5f332
+> --- /dev/null
+> +++ b/rust/kernel/clk.rs
+> @@ -0,0 +1,232 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +
+> +//! Clock abstractions.
+> +//!
+> +//! C header: [`include/linux/clk.h`](srctree/include/linux/clk.h)
+> +//!
+> +//! Reference: <https://docs.kernel.org/driver-api/clk.html>
+> +
+> +use crate::{
+> +    bindings,
+> +    device::Device,
+> +    error::{from_err_ptr, to_result, Result},
+> +    ffi::c_ulong,
+> +    prelude::*,
 > +};
 > +
->  static const struct msm_mdss_data sc7180_data = {
->  	.ubwc_enc_version = UBWC_2_0,
->  	.ubwc_dec_version = UBWC_2_0,
-> @@ -738,6 +748,7 @@ static const struct of_device_id mdss_dt_match[] = {
->  	{ .compatible = "qcom,msm8998-mdss", .data = &msm8998_data },
->  	{ .compatible = "qcom,qcm2290-mdss", .data = &qcm2290_data },
->  	{ .compatible = "qcom,sa8775p-mdss", .data = &sa8775p_data },
-> +	{ .compatible = "qcom,sar2130p-mdss", .data = &sar2130p_data },
->  	{ .compatible = "qcom,sdm670-mdss", .data = &sdm670_data },
->  	{ .compatible = "qcom,sdm845-mdss", .data = &sdm845_data },
->  	{ .compatible = "qcom,sc7180-mdss", .data = &sc7180_data },
-> 
-> -- 
-> 2.39.5
-> 
+> +use core::{ops::Deref, ptr};
+> +
+> +/// Frequency unit.
+> +#[derive(Copy, Clone, PartialEq, Eq, Debug)]
+> +pub struct Hertz(c_ulong);
 
--- 
-With best wishes
-Dmitry
+Maybe make self.0 pub too?
+
+> +
+> +impl Hertz {
+> +    /// Creates a new `Hertz` value.
+> +    pub fn new(freq: c_ulong) -> Self {
+> +        Hertz(freq)
+
+I don=E2=80=99t think we need a `new` function.  IMHO, the only thing =
+that matters is
+that the name Hertz shows up in the calling code, i.e.:
+
+```
+fn foo() {
+    let clk =3D =E2=80=A6;
+    let some_val =3D =E2=80=A6;
+    clk.set_rate(Hertz(some_val)); // Ok: crystal clear this is Hertz
+}
+```
+
+A  impl From<Hertz> for c_ulong would also be helpful, so that we =
+don=E2=80=99t have to
+manually define all the arithmetic operations on this.
+
+```
+fn foo() {
+    let clk =3D =E2=80=A6;
+    let double =3D u32::from(clk.rate()) * 2;
+    clk.set_rate(Hertz(double)); // Ok: crystal clear this is Hertz
+}
+```
+
+I need more time to look at the rest of the patch, so feel free to carry =
+on with the
+feedback from others. Sorry for the delay!
+
+=E2=80=94 Daniel=
 
