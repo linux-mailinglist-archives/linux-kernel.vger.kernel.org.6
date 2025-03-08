@@ -1,186 +1,131 @@
-Return-Path: <linux-kernel+bounces-552164-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-552166-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 12101A5766A
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 01:00:45 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 14BA0A5766C
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 01:01:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 58BA71897CA5
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 00:00:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 80B8B1898C21
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 00:01:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CF97282E1;
-	Sat,  8 Mar 2025 00:00:27 +0000 (UTC)
-Received: from mail-il1-f207.google.com (mail-il1-f207.google.com [209.85.166.207])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F88928F3;
+	Sat,  8 Mar 2025 00:00:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="NkmBY1yi"
+Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A840A59
-	for <linux-kernel@vger.kernel.org>; Sat,  8 Mar 2025 00:00:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.207
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02E59190470
+	for <linux-kernel@vger.kernel.org>; Sat,  8 Mar 2025 00:00:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741392026; cv=none; b=ewOl9TctOMpgwxN38Ft8KPp/pJGT0XeUpDyMMq7vw6TjUnhdx3j8PLOpPUXJAslg4bgCLZdhQqWmwlPVzrR5OaJG4U5je4wym8Mkz+CpAgG7f0wEvsdahBZPeQf9cAYzYPIB9FZsgJzKdSMaLoUIgG1gc7E1zF7q8kNDWODun84=
+	t=1741392032; cv=none; b=gxViN/yiavD4ryr4QOWbkYch6k1U+Wrgh3IJbIcXJ9KDc6g+IPQGO4hT/gKZkeiX7X11Z4E31Hcpk6xslLa4VndsS1RsNO8HcgyZymcQYWTub1w0/EVXYN4DBxCRJ7M9SqdMGifZE/m2UYIKAceK0c0peiYgWc19vDRyokX1vfE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741392026; c=relaxed/simple;
-	bh=PqeRCfCOt3IqwQkNHrSSUNElfR90VfB1ojffiwTjlZQ=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=DOZUBWHxOi5EaxhDOtzn46tQaHITF3sISaSI+QAYijerAzscRmnexh9GSl30pmnJuHZsNdqV+7rnUMN3MVutmwhAJEfml5A4ckl2NS84mqKgJGwNAg3XEy5RkRLZ6j+nYRehNhm4Gbfd/QbSbQQKk8evpiQTZMGACy6to2L44Uo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.207
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f207.google.com with SMTP id e9e14a558f8ab-3d3dee8d31aso18783925ab.2
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Mar 2025 16:00:24 -0800 (PST)
+	s=arc-20240116; t=1741392032; c=relaxed/simple;
+	bh=G24jByTcLB3gZ7lneK9yPWDVXemn8A7VmPesVcSmOBw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RPkKVegeS6opT89oQieeC9pAIHNds0dWG3838WxbQyAClmQFO7B9Dzd2HizVZIehpPRqEK0RTLyH1PrA4rKd4lxmVzD3vtdewXV27InIMdhfI8NIwkDIKQ36oORvK/Drr3OYsHhODCyBF0g00ZIdamOLF43TbZNekOQE8ywaOVg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=NkmBY1yi; arc=none smtp.client-ip=209.85.208.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-30bf7d0c15eso11508041fa.0
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Mar 2025 16:00:30 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1741392029; x=1741996829; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=AEwMiLzCyICEunJ5u9SkRaghHLUa2TZbSRFS1CMQbNs=;
+        b=NkmBY1yiPzJxrCbEyvTRt6E0VuRa19ATlJfgiNbWVhmE9Jo3UIr/KtQClPwI5vO4rG
+         YPfZqsUq8kUPWqpBOzzIArxV9BToZ7nAvmvHu1im5SHmh9nWBIGDXQcslyjg6kI0MCDi
+         yLvSYMrDwht2DfoxRsjGGDemYP6bn+zbG/L7gaI4fsaNKC/b0yQX4t55IKzaPUcLikJN
+         BYZajfnba527eF/twvxEzD01z2oKFa5fpUtttxnBwnqtxAtgdpMRhLdFx4jfFwgVcAER
+         31BD2AXqr5AGjnTorSBL0/NYo0M3P4qWtoHLSgjc6nSxQvvYiC3uQUYC9MTleU9ZxfhR
+         YD9A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741392024; x=1741996824;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=/EmyCjvl4yLKn40ekfPHqv7O9qpyCsq4OqgixO6uvnA=;
-        b=l18bYfdo7VGk1LgsyCF0oNSIIBfMcvQwsAXRfC6+b6Sh+YVcCICB444y7IZoMkJl1b
-         L6eU759yX8EUSm3eMFROxMXnPMGwDNERKmoCCsIS8HhZjZ4tTl0DrG+RrE0ClOUgojnr
-         d/CgVnQtQ/y5IcT/RItyH7Zbmeyec1ttvRPszyekc3YoPW9BzzkUXg/rSh9/Xg4GNSqs
-         FclOKoUYceKMjxq9v3wGBcoP5gtREKkKm3eIoA/qBZ+7BmdKaIQ5Tao9cZNFFilEOoOZ
-         kS9I+3+noPq2lZ/AGLi4St4tTfndoBbbGz+K3ZjYFat9gjN4MQwdKD5hx6GQwchZV/N5
-         4Riw==
-X-Forwarded-Encrypted: i=1; AJvYcCWiTDNjwVG10+LEMS9K7qF1ukisfRoAmZx1Yz0E3SHEdm9/+VJ/ZmNwasnsyXg0Jf53EvdIyocxBBJDbA8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzlltD3VpQX5JKk8G8g7RJ7iSsEj8UYB5pm6vYcgAyQU1zX1j/E
-	+e/6a06RwyXJNI+n3vgpCCW+mjbqdUziLHDv6k5/7XSzAg77JSLpuFsl7a1fNA1ZcgnpsNiUwF/
-	PbWy3rcIVlzcixIA+t2zqeKpX95VfOf8BwxG7/teVqzDCVgH65amsvWM=
-X-Google-Smtp-Source: AGHT+IEQzEb9Gl2x2dSjFHuit5MUQIoDN9+CNQbCbMkZqz6ntuZPDFR8N0OBNVtbTnTUkw3ZmU0ddHdsJBSRZukoinANO9bIrd95
+        d=1e100.net; s=20230601; t=1741392029; x=1741996829;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=AEwMiLzCyICEunJ5u9SkRaghHLUa2TZbSRFS1CMQbNs=;
+        b=Gf8vTkkXrGhStmO99o4XgWTLQLFAk6fyHSnkz2YCJyzAUwHhO7Ha2vrEmrgnnKJFqX
+         FwtJKwY+9IPvVstKuI+6ARatz2tUppmekCFC7YbIjwLn9UIX3ZP5gY2aiKgOTcSU/yka
+         KxGNGbJApZ3EKo9qxUYvOMeZdF8pJeEuVrPHm5s25T2yLKVGSriNlQhuIfTHbdq5sNzW
+         8hROmKzQd6/fAGIxRfZzzZKqcP2XO7zugZI8uC+67DPvIpTet0naepbprtiTFc0mi15G
+         fDyTZ2q9M878xD4KMR0nACn0KBGjqiFIPC16UQkM1tJOOJLzanIZKY2o/1ku+U8mugM0
+         ONiA==
+X-Forwarded-Encrypted: i=1; AJvYcCVrUbdUTRJ/Ett1aW8Rotg7K7TW/klzxm6UCKdyflqcbK06eiqJiaH/qjFJda24FSs/whaOColVskB3MHw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxxqnNS3qg7ZIgEoUuTg4cWQqLUMKKudfxIevkIq3sfDB7lqcYr
+	OheOmxHcVQ8PCIdrLFJyS5N3U1lv/tRvqFvk/hjkqYT5JEGUkbewtcMmYBpcJwc=
+X-Gm-Gg: ASbGncubukRPPEQVFPAEirqYG8Gph/49b4CVmxrnjvUYBc46sU9HEzcEbuDUcN2O1ya
+	EoWAd87oQ8OTa5XMLbjPYEI6bA0Pr4QlTKDtoNimqL3lcMvpyemc9yRpAW1Y3Qw4wNrHpqzpUjy
+	HK38Y2sH6UyjwpYjhDDKY5vpGltGxGyxfo0Rib48jhhBdvr3m+sjV+HsJEcouIKMHv+AN/gznb7
+	WG34piupyf6nPl3gE2gDe8vAxPMJjyiL98cC+FWDeWMEtuqjvNrrZY45cLQxlHYsSPaLrNj5muI
+	UiAAhIBbdeUh9DlYe4yJPVDW00sKL59SnX/+dcY0T3yhH06ZhqQHIvgwenBgZ/TsdCbF/PXbLN2
+	FzRz8DtRUYtPzVL9tJ5Rr39MG
+X-Google-Smtp-Source: AGHT+IHp+tbCuGTMiQOtkAJeNqJU+GLHRyHQrcNbiQ0L6CepcDGTgtUgqeherQpSU3yjAqkm/DxJgw==
+X-Received: by 2002:a2e:a78a:0:b0:30b:c3ce:ea38 with SMTP id 38308e7fff4ca-30bf43b45bcmr21229201fa.0.1741392028923;
+        Fri, 07 Mar 2025 16:00:28 -0800 (PST)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-30be99c815fsm7131741fa.69.2025.03.07.16.00.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 07 Mar 2025 16:00:27 -0800 (PST)
+Date: Sat, 8 Mar 2025 02:00:25 +0200
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Lyude Paul <lyude@redhat.com>
+Cc: Dmitry Baryshkov <lumag@kernel.org>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>, Rob Clark <robdclark@gmail.com>, 
+	Abhinav Kumar <quic_abhinavk@quicinc.com>, Sean Paul <sean@poorly.run>, 
+	Marijn Suijten <marijn.suijten@somainline.org>, Jani Nikula <jani.nikula@linux.intel.com>, 
+	Alex Deucher <alexander.deucher@amd.com>, Christian =?utf-8?B?S8O2bmln?= <christian.koenig@amd.com>, 
+	Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
+	Robert Foss <rfoss@kernel.org>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
+	Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
+	Xinliang Liu <xinliang.liu@linaro.org>, Tian Tao <tiantao6@hisilicon.com>, 
+	Xinwei Kong <kong.kongxinwei@hisilicon.com>, Sumit Semwal <sumit.semwal@linaro.org>, 
+	Yongqin Liu <yongqin.liu@linaro.org>, John Stultz <jstultz@google.com>, 
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
+	freedreno@lists.freedesktop.org, intel-gfx@lists.freedesktop.org, intel-xe@lists.freedesktop.org, 
+	amd-gfx@lists.freedesktop.org, Jani Nikula <jani.nikula@intel.com>
+Subject: Re: [PATCH RFC v3 4/7] drm/display: dp-aux-dev: use new DCPD access
+ helpers
+Message-ID: <ytsczbxfokt4yz26w5zl2rxtuagrirdpi6uyxnt4itcllrowuk@wqqcgkr7b52k>
+References: <20250307-drm-rework-dpcd-access-v3-0-9044a3a868ee@linaro.org>
+ <20250307-drm-rework-dpcd-access-v3-4-9044a3a868ee@linaro.org>
+ <3284acdfa43fa62e7230355b4ed2e09ab75f326a.camel@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:b26:b0:3d4:3a45:d889 with SMTP id
- e9e14a558f8ab-3d441a06f59mr51284945ab.14.1741392024217; Fri, 07 Mar 2025
- 16:00:24 -0800 (PST)
-Date: Fri, 07 Mar 2025 16:00:24 -0800
-In-Reply-To: <675e8eec.050a0220.37aaf.00f4.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67cb8898.050a0220.d8275.0229.GAE@google.com>
-Subject: Re: [syzbot] [bcachefs?] KMSAN: uninit-value in bch2_checksum_update (2)
-From: syzbot <syzbot+60ea31958b52b09e04af@syzkaller.appspotmail.com>
-To: kent.overstreet@linux.dev, linux-bcachefs@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <3284acdfa43fa62e7230355b4ed2e09ab75f326a.camel@redhat.com>
 
-syzbot has found a reproducer for the following issue on:
+On Fri, Mar 07, 2025 at 05:53:38PM -0500, Lyude Paul wrote:
+> I thought we had agreed that drm_dp_aux_dev.c was one of the few places where
+> we wanted to keep using the old functions here?
 
-HEAD commit:    00a7d39898c8 fs/pipe: add simpler helpers for common cases
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=1334c878580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=523d3ff8e053340a
-dashboard link: https://syzkaller.appspot.com/bug?extid=60ea31958b52b09e04af
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=13c56a54580000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1158e4b7980000
+Hmm, I thought I dropped it.
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/e8b5895e19ac/disk-00a7d398.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/4ba923545cbc/vmlinux-00a7d398.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/820c28b7d351/bzImage-00a7d398.xz
-mounted in repro: https://storage.googleapis.com/syzbot-assets/f69b61b5c375/mount_0.gz
+> 
+> On Fri, 2025-03-07 at 06:34 +0200, Dmitry Baryshkov wrote:
+> > From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> > 
+> > Switch drm_dp_aux_dev.c to use new set of DPCD read / write helpers.
+> > 
+> > Acked-by: Jani Nikula <jani.nikula@intel.com>
+> > Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> > ---
+> >  drivers/gpu/drm/display/drm_dp_aux_dev.c | 12 +++++-------
+> >  1 file changed, 5 insertions(+), 7 deletions(-)
+> > 
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+60ea31958b52b09e04af@syzkaller.appspotmail.com
-
-bcachefs (loop0): dropping and reconstructing all alloc info
-==================================================================
-BUG: KASAN: use-after-free in crc64_be+0x131/0x1f0 lib/crc64.c:58
-Read of size 1 at addr ffff888072e00000 by task syz-executor238/5820
-
-CPU: 1 UID: 0 PID: 5820 Comm: syz-executor238 Not tainted 6.14.0-rc5-syzkaller-00137-g00a7d39898c8 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 02/12/2025
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:94 [inline]
- dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
- print_address_description mm/kasan/report.c:408 [inline]
- print_report+0x16e/0x5b0 mm/kasan/report.c:521
- kasan_report+0x143/0x180 mm/kasan/report.c:634
- crc64_be+0x131/0x1f0 lib/crc64.c:58
- bch2_checksum_update+0x10f/0x160 fs/bcachefs/checksum.c:89
- bch2_checksum+0x37e/0x780 fs/bcachefs/checksum.c:226
- bch2_btree_node_read_done+0x155c/0x6180 fs/bcachefs/btree_io.c:1100
- btree_node_read_work+0x6dc/0x1380 fs/bcachefs/btree_io.c:1358
- bch2_btree_node_read+0x2433/0x29f0
- __bch2_btree_root_read fs/bcachefs/btree_io.c:1789 [inline]
- bch2_btree_root_read+0x626/0x7b0 fs/bcachefs/btree_io.c:1811
- read_btree_roots+0x3d3/0xa70 fs/bcachefs/recovery.c:581
- bch2_fs_recovery+0x260f/0x3de0 fs/bcachefs/recovery.c:928
- bch2_fs_start+0x37c/0x610 fs/bcachefs/super.c:1041
- bch2_fs_get_tree+0xdb7/0x17a0 fs/bcachefs/fs.c:2203
- vfs_get_tree+0x90/0x2b0 fs/super.c:1814
- do_new_mount+0x2be/0xb40 fs/namespace.c:3560
- do_mount fs/namespace.c:3900 [inline]
- __do_sys_mount fs/namespace.c:4111 [inline]
- __se_sys_mount+0x2d6/0x3c0 fs/namespace.c:4088
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f8317bc351a
-Code: d8 64 89 02 48 c7 c0 ff ff ff ff eb a6 e8 5e 04 00 00 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 49 89 ca b8 a5 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007ffec09d9368 EFLAGS: 00000282 ORIG_RAX: 00000000000000a5
-RAX: ffffffffffffffda RBX: 00007ffec09d9380 RCX: 00007f8317bc351a
-RDX: 00004000000000c0 RSI: 0000400000000000 RDI: 00007ffec09d9380
-RBP: 0000400000000000 R08: 00007ffec09d93c0 R09: 0000000000005950
-R10: 000000000100000a R11: 0000000000000282 R12: 00004000000000c0
-R13: 00007ffec09d93c0 R14: 0000000000000003 R15: 000000000100000a
- </TASK>
-
-The buggy address belongs to the physical page:
-page: refcount:0 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x72e00
-flags: 0xfff00000000000(node=0|zone=1|lastcpupid=0x7ff)
-raw: 00fff00000000000 ffffea0001cb8108 ffffea0001dfa708 0000000000000000
-raw: 0000000000000000 0000000000000000 00000000ffffffff 0000000000000000
-page dumped because: kasan: bad access detected
-page_owner tracks the page as freed
-page last allocated via order 0, migratetype Unmovable, gfp_mask 0xcc0(GFP_KERNEL), pid 1, tgid 1 (swapper/0), ts 15177598220, free_ts 16347346247
- set_page_owner include/linux/page_owner.h:32 [inline]
- post_alloc_hook+0x1f4/0x240 mm/page_alloc.c:1551
- split_free_pages+0xe1/0x2d0 mm/page_alloc.c:6355
- alloc_contig_range_noprof+0x10eb/0x1770 mm/page_alloc.c:6532
- __alloc_contig_pages mm/page_alloc.c:6562 [inline]
- alloc_contig_pages_noprof+0x4b3/0x5c0 mm/page_alloc.c:6644
- debug_vm_pgtable_alloc_huge_page+0xaf/0x100 mm/debug_vm_pgtable.c:1084
- init_args+0x83b/0xb20 mm/debug_vm_pgtable.c:1266
- debug_vm_pgtable+0xe4/0x590 mm/debug_vm_pgtable.c:1304
- do_one_initcall+0x248/0x930 init/main.c:1257
- do_initcall_level+0x157/0x210 init/main.c:1319
- do_initcalls+0x71/0xd0 init/main.c:1335
- kernel_init_freeable+0x435/0x5d0 init/main.c:1568
- kernel_init+0x1d/0x2b0 init/main.c:1457
- ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:148
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
-page last free pid 1 tgid 1 stack trace:
- reset_page_owner include/linux/page_owner.h:25 [inline]
- free_pages_prepare mm/page_alloc.c:1127 [inline]
- free_frozen_pages+0xe04/0x10e0 mm/page_alloc.c:2660
- free_contig_range+0x14c/0x430 mm/page_alloc.c:6678
- destroy_args+0x94/0x4b0 mm/debug_vm_pgtable.c:1017
- debug_vm_pgtable+0x551/0x590 mm/debug_vm_pgtable.c:1397
- do_one_initcall+0x248/0x930 init/main.c:1257
- do_initcall_level+0x157/0x210 init/main.c:1319
- do_initcalls+0x71/0xd0 init/main.c:1335
- kernel_init_freeable+0x435/0x5d0 init/main.c:1568
- kernel_init+0x1d/0x2b0 init/main.c:1457
- ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:148
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
-
-Memory state around the buggy address:
- ffff888072dfff00: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
- ffff888072dfff80: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
->ffff888072e00000: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
-                   ^
- ffff888072e00080: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
- ffff888072e00100: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
-==================================================================
-
-
----
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
+-- 
+With best wishes
+Dmitry
 
