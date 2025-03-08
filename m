@@ -1,180 +1,231 @@
-Return-Path: <linux-kernel+bounces-552252-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-552253-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 98829A57795
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 03:04:14 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CFAF3A57797
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 03:05:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 34B281897D6F
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 02:04:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9A1AD18998DC
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 02:05:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C25D14831E;
-	Sat,  8 Mar 2025 02:04:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F0061487F6;
+	Sat,  8 Mar 2025 02:05:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="bbOw0k9R"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="FVrXrqgu"
+Received: from AS8PR04CU009.outbound.protection.outlook.com (mail-westeuropeazon11011011.outbound.protection.outlook.com [52.101.70.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D24531EEE6;
-	Sat,  8 Mar 2025 02:04:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7640514A8B;
+	Sat,  8 Mar 2025 02:05:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.70.11
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741399443; cv=pass; b=u7emeP+OgUT7J+qKf6ApVGeKKCQX52IyMY/Q3vNPSZzTtaseEqzRe3ojlXOvl7yKZGgV9gpGwvBR9JZgAr7FXtM6Rwi3n4f1prBpHUV/rqYWQ1HJwUnWY609qJYTYRsg4EL+mCZbQoLOKD32pZr4O1M2u6zOKQYRMz/t0/YeKOA=
+	t=1741399541; cv=fail; b=Geo9NY2psp+J6Z57MUVlxHLVMMH+Mk7c5rkVQJIUkGvac3pWbgY3Z92b5P/FKUrXPlb/obKtxuSxS7Md8OC4x9Jbl3+RSKAxuZIOgumRCfmaJpD+0zuKqG2hSWZAA3hfqS5/zr5+Lc0etod7Ur2F8/gWm+qqj9G8h4eEOU05qxM=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741399443; c=relaxed/simple;
-	bh=fzqf8d40kMRV0B/31d4SpvqNTOm3LnawNTjCZEW2sLU=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=W0JfCCdz/INlDW6nDDPCFPHXGdwgt0XJKa/KNqzO26OBhyY5MW/Isc5Qtn+3Xj2o6HQRsigxLjyrFOVd+8mNPjxZpkm6zu7RK4UILwY6mmNiq/H8jhYtvWR2B00j+sAI2MbbX36oRbq1Y1sgseKZcT6EerSP+6WwaIVtcFDA+44=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=bbOw0k9R; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1741399413; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=giiBA+A+LzQ4rixA9S/EDVikE44XlsdZtBZETAkxthSRSaqTa8veggBhjaEumNaNhqVSumFIYu9krh9v0yelcOLDliFXWanjOUpsLkj02ppCrQQLN7qGB1X9DsBPEGdQRhdOGMbZaAPFpOKneCz6yfiLCpN2eU9PXjVe41TW2Bo=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1741399413; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=U5tvOevFekjKfogKK5n5IOeLUWZYMhAuBRM0LtrpGac=; 
-	b=ikDTmD2jYCohWzz7++a81be47ZYr0U+3Z/QlfWIw56F7/7JjVIy3p2SJDRGai+S/oVNrVgXrlSX9GCY/PeI400AdWjLSm6VCVgXVsLOUf3ZaIL56+d2U1CBIyTjIdSORcioYhAlJ+8phPXFM/ssaBWGsetXQYVK6hz1gCdW2TkU=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
-	dmarc=pass header.from=<daniel.almeida@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1741399413;
-	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
-	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
-	bh=U5tvOevFekjKfogKK5n5IOeLUWZYMhAuBRM0LtrpGac=;
-	b=bbOw0k9RLgAZYFzlJYOqf0M3lDnvpHCUPNYKYs2kXme6TAPJ1lrWz+XH4/4iIqgv
-	O1IrlLlOH23rKttiTj9fLlgLMs9PsOiXAZ9UFnaJ0YJbAAvYvUWalfZzsM0i2mOC0RI
-	h99D8cxjkT7lcverGcVT0SMhojJakI0V20f+LEDY=
-Received: by mx.zohomail.com with SMTPS id 1741399412188433.2847528501791;
-	Fri, 7 Mar 2025 18:03:32 -0800 (PST)
-Content-Type: text/plain;
-	charset=utf-8
+	s=arc-20240116; t=1741399541; c=relaxed/simple;
+	bh=ffoPEraNyHghScq0TwmnUBOnvCYjeSwjaUA5TT+GxN0=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=g/cXL6j/0kyNmeir2KhBlcFY5gyYU62VC/5IYAbPNivQZV3ySYZnibUd0gb//g6pLSJK8WldXMwymdXfGCw06utFtxjA/KSWM2tZAL1hBvyusW88LtwEWIVjsL9w+5a47X3Mikc2kmyW1kBXRQF+Oz3JGG+Sy3rpOcRwdMuBkOQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=FVrXrqgu; arc=fail smtp.client-ip=52.101.70.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=VodN8Y76iZyL8wzqlYvXBLHDiV9SKplWRvaO+ds6cOz1ZmctDZvSH5LAgM+EoLcUiTN9qwdGd7QHyWm7Tf+lr2BhNr+8gVcFqr632UcoNg09A+mqaM0XxpgAY36P+dAm1/vJ944qEUqcGRabq7nTBo/xPanvkS26nMfR+2/0V3WZBIxef1mbXrUNq6lNCCxqzYq1Fr5zHyrbhr09EtSgZlCnb3L3UNRdvYFURMCL29Cktk4EuFSeGhCjtjjSWXuPuyLhhaDushjA8nk3+Txtrow+xeQi+iW8c+FbhFcHV5BpOidpSEW8Mf1UvGw2PXzdBu0jcsU8tJ8t5eNpByC/TA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=e2PtgFb6B6Nsje0z6HDmc1vvWNo0dV1VutTqdYOm1NE=;
+ b=BU2IiRdfzMmyfSN6+aLw7Xv+6Qd1adJwMy8XkodN3CbdjHZzfTbWPeD7yXKADrh9a2uh5fWhd3iBClZT7sx82FXBdDtr32vnD29TQp3fGyg8QjPDuysGZsN5YeNhnIjI/W9Lycq4WXHsIv5pMRk1wCkdmE7h6Xzm/qNrVO2KYX/7YeEBE2kjxfgI4pphdfDa8zVPUhUWue/hgpSU8fqKgDtqwvLdgX8cR3hR3llhsHsFk6Clfm/NyImktf18DOuqOxmALklyVu0gv1dHYtQLLmaWQCQvQF1Q3kwH0KQTbW/k924RTjoYJeOP6r16JomxPcnltvyprWhp4BcUIIJkXA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=e2PtgFb6B6Nsje0z6HDmc1vvWNo0dV1VutTqdYOm1NE=;
+ b=FVrXrqgu64l0DByk0AVVLgmPJWFD/azs6SNJWOZad8pu+l9guOXhE6tqGdLAoaZFgQL63zM0l5dyJNVIObYws6PblBG/HViPOt3CIEXfs1Iicot6ZPlge7zb3Rh2QM4aTKkrQTJe5RZkWkvXumi0MHotAJnSzOJcpL5Etf4r2vnQA67qRDEYiVIPtQ5v4RcHeMEjaEnamV7xYKQ2LQCdTzsJTZVEfD+YdtKS0qhad8Vwtj9DGSrUYS08oN/TrWrpKH9rqGsB6M0gA/J+z0fRFmHLbL3Se48PQtCC7rdNuEMvg4ffhazSNosGZCTnBTJnp5gtDcwUqjbqchRnci/mKA==
+Received: from PAXPR04MB8510.eurprd04.prod.outlook.com (2603:10a6:102:211::7)
+ by AM9PR04MB7668.eurprd04.prod.outlook.com (2603:10a6:20b:2dd::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8511.20; Sat, 8 Mar
+ 2025 02:05:36 +0000
+Received: from PAXPR04MB8510.eurprd04.prod.outlook.com
+ ([fe80::a7c2:e2fa:8e04:40db]) by PAXPR04MB8510.eurprd04.prod.outlook.com
+ ([fe80::a7c2:e2fa:8e04:40db%5]) with mapi id 15.20.8511.017; Sat, 8 Mar 2025
+ 02:05:36 +0000
+From: Wei Fang <wei.fang@nxp.com>
+To: Jakub Kicinski <kuba@kernel.org>
+CC: Claudiu Manoil <claudiu.manoil@nxp.com>, Vladimir Oltean
+	<vladimir.oltean@nxp.com>, Clark Wang <xiaoning.wang@nxp.com>,
+	"andrew+netdev@lunn.ch" <andrew+netdev@lunn.ch>, "davem@davemloft.net"
+	<davem@davemloft.net>, "edumazet@google.com" <edumazet@google.com>,
+	"pabeni@redhat.com" <pabeni@redhat.com>, "christophe.leroy@csgroup.eu"
+	<christophe.leroy@csgroup.eu>, "netdev@vger.kernel.org"
+	<netdev@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "imx@lists.linux.dev" <imx@lists.linux.dev>,
+	"linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Subject: RE: [PATCH v3 net-next 01/13] net: enetc: add initial netc-lib driver
+ to support NTMP
+Thread-Topic: [PATCH v3 net-next 01/13] net: enetc: add initial netc-lib
+ driver to support NTMP
+Thread-Index: AQHbjNiMrmwkTzPG206zUiHxDe17mbNmtIkAgAAxcACAAZzhYA==
+Date: Sat, 8 Mar 2025 02:05:35 +0000
+Message-ID:
+ <PAXPR04MB8510771650890E8B7395B2DA88D42@PAXPR04MB8510.eurprd04.prod.outlook.com>
+References: <20250304072201.1332603-1-wei.fang@nxp.com>
+	<20250304072201.1332603-2-wei.fang@nxp.com>
+ <20250306142842.476db52c@kernel.org>
+ <PAXPR04MB85107A1E5990FBB63F12C3B888D52@PAXPR04MB8510.eurprd04.prod.outlook.com>
+In-Reply-To:
+ <PAXPR04MB85107A1E5990FBB63F12C3B888D52@PAXPR04MB8510.eurprd04.prod.outlook.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: PAXPR04MB8510:EE_|AM9PR04MB7668:EE_
+x-ms-office365-filtering-correlation-id: 4b63c16b-4bf4-4eb6-e821-08dd5de5b744
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|1800799024|366016|376014|7416014|38070700018;
+x-microsoft-antispam-message-info:
+ =?us-ascii?Q?rvb23W07Mos5lUeDZstJUfiTns7O5ZqVmq+HwOcztePtunzfoXOKxV0oTe9h?=
+ =?us-ascii?Q?Hanrh4TRAbkM5+uqgQI35+8ai4CQ892EyFfQCYiaeIy6CkLsl4p8F07kiXok?=
+ =?us-ascii?Q?1ojT93fwU2uRX457EmpE14jd5xalCG64LIdkQKkwP6Jn209Ahb2rm8947wSN?=
+ =?us-ascii?Q?QUxqnrYk3OYhNSFkehIYukOCmtzUd5rBIIxUMX65YdZzY2ijtDbtdlmHrSmu?=
+ =?us-ascii?Q?9HwDMD4P/50HzY77RCMnQQBTyqovQwakuoOrvntg67XfekM1XVWuFmNQkXF/?=
+ =?us-ascii?Q?+WIO0Q2eqcXwsRnN4u2uhb0lrLjcmgpJs4uXEbuQIZWYlqKdjDaFt/C/BFoL?=
+ =?us-ascii?Q?XVW5ARvgepSxvfygJ2HGI0z6lDI1QBgFOeiffXbjutHL7PMZHVRuPjSojy8h?=
+ =?us-ascii?Q?om4RpmA7GbowHWEbhSiWFKj5fJRdZ02G/34aaAHIKiw0qG+LDyhVgLdx0vRJ?=
+ =?us-ascii?Q?wd9DkLFjHl2Z6RMVT6DwgQ+1Ua9k9Pe10VOgihiyvsBt9Fh1pyf8AoS/cEII?=
+ =?us-ascii?Q?uAlo2qaS/fm6kuTvV6l43rEIB5yqFhPsqkC2RFhYGz1q8L1w1tVM6ensvMhr?=
+ =?us-ascii?Q?4IxMQMZpgUmg6W7yycv8LgF4aGtJ25BowmdZc103lMfNUkeYTIxLmkuNF3R/?=
+ =?us-ascii?Q?fRxaE+XEx0ZEAayCREAnXLs5uyBgnL5xFkOu9OPVt4EGaWSQKdaR3Xb7uhzy?=
+ =?us-ascii?Q?IY5xz0g1HOyuWAF18bCeikf8MgAML4LTuKZA3vtYYDTIqgl+WhAMJGzCOQVX?=
+ =?us-ascii?Q?WUf6ziShDDmS0BKI35jg3cJXh38DtdJ2ov2T96lyKrqg2Xkoq2YA5YfAcE6C?=
+ =?us-ascii?Q?CLAvz4sNsVgXgVYnOOwVkh4AtW2VhHtxjJzAS/4iB23KLlRL8Hf5LxeHMt2B?=
+ =?us-ascii?Q?zwOxIiHvNlEbTFwV2aWuapU9fh1aU87MYwym8960BuDuVdu6eL9zcq1KkRob?=
+ =?us-ascii?Q?cZeMB7amFTEjfGGRzbYsh+bJGuO5gEzAXLmBU1x98+lOB0HgUYd9ROUOQ4cn?=
+ =?us-ascii?Q?Ip3jXj6Qoy9Kr2gz3JUtzA1bBPPn5CbYcz6XMyxf7LJgn/ZUrbKduKxajBt2?=
+ =?us-ascii?Q?U5DvL+SguzbZ6uq1EzzOyZtDf8w2DC8oqOQPBXSvSMp8yOWI24unUK6Yz2Gw?=
+ =?us-ascii?Q?q89Tzc45qlHPwu7hhgpl+YFzNHXNSgmTnHtDcTGfqw83VTrbSjisIc0F+Tf3?=
+ =?us-ascii?Q?paxYq50R5PKMD6+U48xleb6cS0eNTZw7UCDXha5sPmFcetCLsjRt+FAsaTJf?=
+ =?us-ascii?Q?79lq6/5xBXbIMFHn/QZd/GWFsmxSl1MNbJtmZi5lQVlp01BEQiEoEFWQEbcx?=
+ =?us-ascii?Q?7wY2mfL4Bhc9Hsesdb/vfeOXgF8D4A1y+6XkJ76xmRsS3ya7gmXw1syc1fPG?=
+ =?us-ascii?Q?37yO2gjsW7DhEf1VP4irIHqfKxMTpXIGxz6OnPaO6hna1OWHX92o9SUCf+YW?=
+ =?us-ascii?Q?mxOOHEd77ZlPa9MQoTgpHJBzjCzj952o?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB8510.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7416014)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?uLJ596OwPwJQJADAct7Q+a5yd4gpilvyj0RjzEW5d6xI3MZ1aLgrLAnYLFY+?=
+ =?us-ascii?Q?/sX7cvRFBZUbPYQ2OeI29BQv7CB4j+SBpegOHwKaeAoafLeIJAOBkfrTVu1T?=
+ =?us-ascii?Q?wYLojGcjfun/cuxrUrET2GdaJAKMBS9Iqbg3QZUJzn7cS6Ymr/PQjJpqk5Us?=
+ =?us-ascii?Q?J0MRXwPZLOrJV3i/BZ0ZJNxj/6ANdhEpAIYRaf6nyL4EMzFO+2MWGAyVrCQi?=
+ =?us-ascii?Q?eZCQSIP0r02BbI29QUrY0g8A4IF3fCfcj+c4Sy4RYmTEw0Jl6LWrcuob7xmh?=
+ =?us-ascii?Q?Qb/x3X1v/N97YG9RzV8YlcRSP9bLG+wxyMovimDZGKkis6LxQ0ZLJVJRGzSN?=
+ =?us-ascii?Q?PqXL7vO9XA9UYhaPHRNoKJ+c03Fatt30oWxMcy+CMHdFfIRnQ9Y4iSlNXWlj?=
+ =?us-ascii?Q?CZLRnOAmyhzr3qI3+8qGIcTDmowLedH5yNy54+DxsP0Z5F5EjdLRGriV3esY?=
+ =?us-ascii?Q?ZyT5eXtLLbunNm396WymX3NaMzkP0bLG3lIg9tkl9U4yu0Y/5v2vWnSn6GWr?=
+ =?us-ascii?Q?AGHyBqH65DIpaJu9RgkicgEXfBzxjnbZewCuNJvcGjoIbSXPVjpJVD0XkzTx?=
+ =?us-ascii?Q?/CHPfnhXyp7iYYzrRynE8YrJy9TX3YNjjdTAw9M+ncvi4bQKxF3mmaX/avXz?=
+ =?us-ascii?Q?6gxSbNCS6odnkYDtkHx++ZUc0OUSgpXn6QJCN6hIa1gwZeowpJYoSEwgg6NJ?=
+ =?us-ascii?Q?toV00TZ3VUT1b0Bw+xTf4wWHnZczmZBUYrHrafQUDtQV+XX8DYoSeYDb/C9E?=
+ =?us-ascii?Q?p2kHbEZmhFNRZ4pxMpbou8V6D9oErubEWBLnSs6AxQdbcyExxTy/5rVKrE0B?=
+ =?us-ascii?Q?Cl6IRmuhZGWD2kvhS6llvASvXGEvDgg7bsdRDEAPos2rmRzkp7CtdxAZMK6f?=
+ =?us-ascii?Q?dVmQ9UwxO5Fjtgflx6Pq9cml74xRHpfAgBRxJ1/vXv/gRcOq3lmW8XOV03lG?=
+ =?us-ascii?Q?oAofRot7HzYtowHVK7+WpIbsBNHp034siNqpxw4ALaRbGeMVjzZoSjMNQn/H?=
+ =?us-ascii?Q?cDkxA5OACXUAatOra4HG9yyi7gtvJEV435BM9z/TEGiHUuhbQaDy6wvvEKMy?=
+ =?us-ascii?Q?V8C7JbcRCMo0zCP/wN5cbNiC+/jB7fJmWNbP6/9KUY7FA3mliAKiwOrHL6Ng?=
+ =?us-ascii?Q?WNegSNthSlwlch2//wDgB8noLgQMskicZMX93/urqGNKqEcyJQmaFwtEK1+9?=
+ =?us-ascii?Q?cqs7+PnJ1sPa+l6ElN6NeDDf9vWaJgnB9qsIs6G6bwM8vBkOJnOazGlFfqFF?=
+ =?us-ascii?Q?D14qR461N8YBwtDS9WMjTpzSLfbS1UcWQ6BavceZrrS6Cj4F3EbhYcZBe9ml?=
+ =?us-ascii?Q?vVreVZAYi/hyAwWeLGi0K8XDNMnkoBdbF2oe/IiK72J6wVuIOZycu19b6I3f?=
+ =?us-ascii?Q?17bXgorLMVMh6OthIf65AD8G//6Bh6aR8Mpi+GiBnPSo8BE1vp6ZrtCgFtsA?=
+ =?us-ascii?Q?IJ5/DgztE0dcWceAVCLq2PjIT7/syeOp9hLpyviL6zz9qz/2ff870LL4W5EC?=
+ =?us-ascii?Q?/TfFu57rApDZSeU90+VoOjSMqJd2i0LOrGoxAuvB+xikTZX2wYdoEIV9eg4m?=
+ =?us-ascii?Q?j+lbAa8CeL4WVNTsiUY=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.400.131.1.6\))
-Subject: Re: [PATCH V3 2/2] rust: Add initial clk abstractions
-From: Daniel Almeida <daniel.almeida@collabora.com>
-In-Reply-To: <20250304085351.inrvjgixvxla4yn3@vireshk-i7>
-Date: Fri, 7 Mar 2025 23:03:15 -0300
-Cc: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@kernel.org>,
- Miguel Ojeda <ojeda@kernel.org>,
- Alex Gaynor <alex.gaynor@gmail.com>,
- Boqun Feng <boqun.feng@gmail.com>,
- Gary Guo <gary@garyguo.net>,
- =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
- Benno Lossin <benno.lossin@proton.me>,
- Andreas Hindborg <a.hindborg@kernel.org>,
- Alice Ryhl <aliceryhl@google.com>,
- Trevor Gross <tmgross@umich.edu>,
- Russell King <linux@armlinux.org.uk>,
- linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org,
- rust-for-linux@vger.kernel.org,
- Vincent Guittot <vincent.guittot@linaro.org>
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <DC3B4FA6-5938-49CE-A75C-D354562593B3@collabora.com>
-References: <cover.1740995194.git.viresh.kumar@linaro.org>
- <023e3061cc164087b9079a9f6cb7e9fbf286794e.1740995194.git.viresh.kumar@linaro.org>
- <CANiq72kdWzFOZ39EoFNxEAbk4KYgzLi1OAEc1zn8BM07VpXy3g@mail.gmail.com>
- <20250304085351.inrvjgixvxla4yn3@vireshk-i7>
-To: Viresh Kumar <viresh.kumar@linaro.org>
-X-Mailer: Apple Mail (2.3826.400.131.1.6)
-X-ZohoMailClient: External
+MIME-Version: 1.0
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB8510.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4b63c16b-4bf4-4eb6-e821-08dd5de5b744
+X-MS-Exchange-CrossTenant-originalarrivaltime: 08 Mar 2025 02:05:35.9994
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: TFems3hoJLgJ3d0gZJxEgaHsiPVl3NcXLJqLyjU3HncN9QGnuv2YU5pr5t77EmKUp++F+aRkc7DYAcPGUUz16A==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM9PR04MB7668
 
-Hi Viresh,
-
-> On 4 Mar 2025, at 05:53, Viresh Kumar <viresh.kumar@linaro.org> wrote:
+> > On Tue,  4 Mar 2025 15:21:49 +0800 Wei Fang wrote:
+> > > +config NXP_NETC_LIB
+> > > +	tristate "NETC Library"
+> >
+> > Remove the string after "tristate", the user should not be prompted
+> > to make a choice for this, since the consumers "select" this config
+> > directly.
+> >
 >=20
-> On 03-03-25, 11:16, Miguel Ojeda wrote:
->> On Mon, Mar 3, 2025 at 11:00=E2=80=AFAM Viresh Kumar =
-<viresh.kumar@linaro.org> wrote:
->>>=20
->>> +/// Frequency unit.
->>> +pub type Hertz =3D crate::ffi::c_ulong;
->>=20
->> Do we want this to be an alias or would it make sense to take the
->> chance to make this a newtype?
+> Okay, I will remove it.
 >=20
-> I have tried some improvements based on your (and Alice's comments), =
-please see
-> if it looks any better now.
+> > > +	help
+> > > +	  This module provides common functionalities for both ENETC and NE=
+TC
+> > > +	  Switch, such as NETC Table Management Protocol (NTMP) 2.0,
+> common
+> > tc
+> > > +	  flower and debugfs interfaces and so on.
+> > > +
+> > > +	  If compiled as module (M), the module name is nxp-netc-lib.
+> >
+> > Not sure if the help makes sense for an invisible symbol either.
 >=20
-> --=20
-> viresh
+> Yes, I think it can also be removed. Thanks.
+> >
+> > >  config FSL_ENETC
+> > >  	tristate "ENETC PF driver"
+> > >  	depends on PCI_MSI
+> > > @@ -40,6 +50,7 @@ config NXP_ENETC4
+> > >  	select FSL_ENETC_CORE
+> > >  	select FSL_ENETC_MDIO
+> > >  	select NXP_ENETC_PF_COMMON
+> > > +	select NXP_NETC_LIB
+> > >  	select PHYLINK
+> > >  	select DIMLIB
+> > >  	help
+> >
+> > > +#pragma pack(1)
+> >
+> > please don't blindly pack all structs, only if they are misaligned
+> > or will otherwise have holes.
 >=20
-> -------------------------8<-------------------------
+> Because these structures are in hardware buffer format and need
+> to be aligned, so for convenience, I simply used pack(1). You are right,
+> I should use pack() for structures with holes. Thanks.
+> >
+> > > +#if IS_ENABLED(CONFIG_NXP_NETC_LIB)
+> >
+> > why the ifdef, all callers select the config option
 >=20
-> diff --git a/rust/kernel/clk.rs b/rust/kernel/clk.rs
-> new file mode 100644
-> index 000000000000..fc3cb0f5f332
-> --- /dev/null
-> +++ b/rust/kernel/clk.rs
-> @@ -0,0 +1,232 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +
-> +//! Clock abstractions.
-> +//!
-> +//! C header: [`include/linux/clk.h`](srctree/include/linux/clk.h)
-> +//!
-> +//! Reference: <https://docs.kernel.org/driver-api/clk.html>
-> +
-> +use crate::{
-> +    bindings,
-> +    device::Device,
-> +    error::{from_err_ptr, to_result, Result},
-> +    ffi::c_ulong,
-> +    prelude::*,
-> +};
-> +
-> +use core::{ops::Deref, ptr};
-> +
-> +/// Frequency unit.
-> +#[derive(Copy, Clone, PartialEq, Eq, Debug)]
-> +pub struct Hertz(c_ulong);
+> hm..., there are some interfaces of netc-lib are used in common .c files
+> in downstream, so I used "ifdef" in downstream. Now for the upstream,
+> I'm going to separate them from the common .c files. So yes, we can
+> remove it now.
 
-Maybe make self.0 pub too?
-
-> +
-> +impl Hertz {
-> +    /// Creates a new `Hertz` value.
-> +    pub fn new(freq: c_ulong) -> Self {
-> +        Hertz(freq)
-
-I don=E2=80=99t think we need a `new` function.  IMHO, the only thing =
-that matters is
-that the name Hertz shows up in the calling code, i.e.:
-
-```
-fn foo() {
-    let clk =3D =E2=80=A6;
-    let some_val =3D =E2=80=A6;
-    clk.set_rate(Hertz(some_val)); // Ok: crystal clear this is Hertz
-}
-```
-
-A  impl From<Hertz> for c_ulong would also be helpful, so that we =
-don=E2=80=99t have to
-manually define all the arithmetic operations on this.
-
-```
-fn foo() {
-    let clk =3D =E2=80=A6;
-    let double =3D u32::from(clk.rate()) * 2;
-    clk.set_rate(Hertz(double)); // Ok: crystal clear this is Hertz
-}
-```
-
-I need more time to look at the rest of the patch, so feel free to carry =
-on with the
-feedback from others. Sorry for the delay!
-
-=E2=80=94 Daniel=
+Sorry, I misread the header file. The ifdef in ntmp.h is needed because
+the interfaces in this header file will be used by the enetc-core and
+enetc-vf drivers. For the ENETC v1 (LS1028A platform), it will not select
+NXP_NETC_LIB.
 
