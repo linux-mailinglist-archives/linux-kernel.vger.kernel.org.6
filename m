@@ -1,78 +1,78 @@
-Return-Path: <linux-kernel+bounces-552180-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-552182-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D263CA5768C
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 01:08:18 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 16E28A57690
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 01:08:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 49719189C5D0
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 00:08:26 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4ABFC7A8EB0
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 00:07:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B31B74A1A;
-	Sat,  8 Mar 2025 00:08:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C08111CA0;
+	Sat,  8 Mar 2025 00:08:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ZuBPgL8H";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="mRE8Gq+1"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="fmCSIsY7";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="1Pg+zjtM"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90545D528;
-	Sat,  8 Mar 2025 00:08:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C9833C1F;
+	Sat,  8 Mar 2025 00:08:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741392487; cv=none; b=ovOgC/c/roXuLRjmq2mgOTYTyBxOaVwQVTV9VYi5gQugN870PfoQzRDQkH/6uli1Cqwc3/sxqF4mpbQmnS81pCtoOeZfTLBVg21S/5jU4d7xSQW13dqWzB3TymYHFhFCWaLoJOoYqXs94Mq14RzbtelDgmpTfTkJqdVyg/QjEW0=
+	t=1741392489; cv=none; b=aKPgPfz3V6opL2AlkA+Lxow1hUGLY5emgJHa2Y9sGN+xsabVHDkTv331kU3s+67hBhxDK5rIl7sv3ZOfsBwuUFqZ/g0rST1/ulmPTN/IAtt8IhTqc8WA5dzCKIp9WBR0SAfUSQ7E3xTo70XRhHMEeK0j2lmlABWvtPqyBhv8C44=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741392487; c=relaxed/simple;
-	bh=x2KUhE9WHpwYmqvScVCasbSRnXY1p1+c0F56uhayVEI=;
+	s=arc-20240116; t=1741392489; c=relaxed/simple;
+	bh=jOGjfftvjeBuDw9ZvbacrdqXQVYHDsf7ZGAP0BXNMQw=;
 	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=JRNg3lg21sUjBQkbq6szVPib9iPh/VxQSGM5DpTtDBJLRyKdNtH1gWPkh9oIE6zf6A9WpCbXhIGCZzTO46Omp/sZjT/+k5HvkwODISYc+28Xr9R3zAz4QDYUP1+ZT+WAeZVpcSwWFOxPbFSoTRlIDMpOv1e268m1VG83YPOhctQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ZuBPgL8H; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=mRE8Gq+1; arc=none smtp.client-ip=193.142.43.55
+	 Message-ID:Content-Type; b=bH7aX2elfsD/Hr1ftAjnqNHTZwoHjWp5RGUZiqQZ1eGTi9kGAabdZbOG2NN2RPDsUow5tuFPJP+zqljNCxDgelIsjkNx9drUODtZpXhPllb+L/XyZmfRYa3VW4LwRn2p/qIOjk3H67r2/dbhPSZDoMsEPudvY9Em7jI3X0jae9s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=fmCSIsY7; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=1Pg+zjtM; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Sat, 08 Mar 2025 00:08:02 -0000
+Date: Sat, 08 Mar 2025 00:08:03 -0000
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1741392483;
+	s=2020; t=1741392484;
 	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
 	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
 	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=4Jn0Y6xbm7c5laJPlXLSAvYo8DUSjHy2XzOv7VCduQo=;
-	b=ZuBPgL8H3pBLtkuxW3hLkoiE05lib34ErPxKv3+vCIlfu3mC1gAyDi+2PPiOB85cY1zD1S
-	FoMvJuVQ3bFbPbEfQx1jQBLeKLxZjsgcx1pB4bL5Vmq9U3HagPpd5PQiNFhhs9DwxFJpZ3
-	uABciN0eGSHWqedwOsGR0GbNtnWLNEwZN16IyfKIMlICn9188JoIM+Toz45OU/rRm5vlKp
-	qU6E+v1aWVVG4nGICUqywAdxeQ20dtCP35CZ/vuEeudVzUVUmgH9HYhR56uHK8G1X4X6vW
-	juHDzCITku4QQeaNtxKpoEyhLuSUvh0OtmMonkk+uKFYuqJRzehPv0ucdnsrnQ==
+	bh=tRP4kIiNc9biGBqpqxZ+pZ3/SjPPrTzesDvbfuzuq14=;
+	b=fmCSIsY7+65ykb942jEl3mwHC1SSGWypl2pCgKbtaG584QZK+/hqrSiSg9gMKrOU36fWb4
+	I5p7usP2OgNd1ABhFf7AOxcZ7y5/AtWlVo3tw6uFcXBttQVxNtVF10MSYq1PFEsU6MFkOV
+	hQmQL7nWqobB+KjL5mX1/kJYyybHzmQOjlgUqR+sw14HG1kqPi5WvsanbO7MhOOxDyYsyH
+	7TWvZw2Gcn38SfeUoaQDNHpYicp/wheeT+W7C4ylTU1f9g7yTQ8X4CeqDiDgiBKEjwhWXc
+	MAYjAB8HMLyUyaJ33KN3UnptLHjOMeYYxOCEIzo61HqoZ2tTWFMPEuwm4D8lIQ==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1741392483;
+	s=2020e; t=1741392484;
 	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
 	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
 	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=4Jn0Y6xbm7c5laJPlXLSAvYo8DUSjHy2XzOv7VCduQo=;
-	b=mRE8Gq+1ctOdpI727b6Lo1AN4ViB5kYpdjWmQs2BPGHcktgzWptva+bOimKE5VCsqOZ6Yh
-	l86t/U10dMF+PmDQ==
-From: "tip-bot2 for Boqun Feng" <tip-bot2@linutronix.de>
+	bh=tRP4kIiNc9biGBqpqxZ+pZ3/SjPPrTzesDvbfuzuq14=;
+	b=1Pg+zjtMfw5IfrlLziiSxtIyRNFr1dcfNdB+G0G1dv6m5AZfkn0AeeiCfJudAHGyrPGrOa
+	0BmmddFqk/1yBdBQ==
+From: "tip-bot2 for Alice Ryhl" <tip-bot2@linutronix.de>
 Sender: tip-bot2@linutronix.de
 Reply-to: linux-kernel@vger.kernel.org
 To: linux-tip-commits@vger.kernel.org
-Subject:
- [tip: locking/core] rust: sync: lock: Add an example for Guard:: Lock_ref()
-Cc: Boqun Feng <boqun.feng@gmail.com>, Ingo Molnar <mingo@kernel.org>,
- Benno Lossin <benno.lossin@proton.me>, Alice Ryhl <aliceryhl@google.com>,
- x86@kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20250307232717.1759087-9-boqun.feng@gmail.com>
-References: <20250307232717.1759087-9-boqun.feng@gmail.com>
+Subject: [tip: locking/core] rust: sync: Add accessor for the lock behind a
+ given guard
+Cc: Alice Ryhl <aliceryhl@google.com>, Boqun Feng <boqun.feng@gmail.com>,
+ Ingo Molnar <mingo@kernel.org>, Fiona Behrens <me@kloenk.dev>, x86@kernel.org,
+ linux-kernel@vger.kernel.org
+In-Reply-To: <20250307232717.1759087-8-boqun.feng@gmail.com>
+References: <20250307232717.1759087-8-boqun.feng@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <174139248296.14745.13317521669976622612.tip-bot2@tip-bot2>
+Message-ID: <174139248373.14745.16712674726296603783.tip-bot2@tip-bot2>
 Robot-ID: <tip-bot2@linutronix.de>
 Robot-Unsubscribe:
  Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -82,63 +82,50 @@ Content-Transfer-Encoding: 7bit
 
 The following commit has been merged into the locking/core branch of tip:
 
-Commit-ID:     c2849afafd08a1c3ad881129de48ebe1642f7675
-Gitweb:        https://git.kernel.org/tip/c2849afafd08a1c3ad881129de48ebe1642f7675
-Author:        Boqun Feng <boqun.feng@gmail.com>
-AuthorDate:    Fri, 07 Mar 2025 15:26:58 -08:00
+Commit-ID:     8f65291dae0e75941cf76e427088e5612c4d692e
+Gitweb:        https://git.kernel.org/tip/8f65291dae0e75941cf76e427088e5612c4d692e
+Author:        Alice Ryhl <aliceryhl@google.com>
+AuthorDate:    Fri, 07 Mar 2025 15:26:57 -08:00
 Committer:     Ingo Molnar <mingo@kernel.org>
 CommitterDate: Sat, 08 Mar 2025 00:55:04 +01:00
 
-rust: sync: lock: Add an example for Guard:: Lock_ref()
+rust: sync: Add accessor for the lock behind a given guard
 
-To provide examples on usage of `Guard::lock_ref()` along with the unit
-test, an "assert a lock is held by a guard" example is added.
+In order to assert a particular `Guard` is associated with a particular
+`Lock`, add an accessor to obtain a reference to the underlying `Lock`
+of a `Guard`.
 
-(Also apply feedback from Benno.)
+Binder needs this assertion to ensure unsafe list operations are done
+with the correct lock held.
 
+[Boqun: Capitalize the title and reword the commit log]
+
+Signed-off-by: Alice Ryhl <aliceryhl@google.com>
 Signed-off-by: Boqun Feng <boqun.feng@gmail.com>
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Reviewed-by: Benno Lossin <benno.lossin@proton.me>
-Reviewed-by: Alice Ryhl <aliceryhl@google.com>
-Link: https://lore.kernel.org/r/20250223072114.3715-1-boqun.feng@gmail.com
-Link: https://lore.kernel.org/r/20250307232717.1759087-9-boqun.feng@gmail.com
+Reviewed-by: Fiona Behrens <me@kloenk.dev>
+Link: https://lore.kernel.org/r/20250205-guard-get-lock-v2-1-ba32a8c1d5b7@google.com
+Link: https://lore.kernel.org/r/20250307232717.1759087-8-boqun.feng@gmail.com
 ---
- rust/kernel/sync/lock.rs | 24 ++++++++++++++++++++++++
- 1 file changed, 24 insertions(+)
+ rust/kernel/sync/lock.rs | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
 diff --git a/rust/kernel/sync/lock.rs b/rust/kernel/sync/lock.rs
-index 8e7e6d5..f53e87d 100644
+index eb80048..8e7e6d5 100644
 --- a/rust/kernel/sync/lock.rs
 +++ b/rust/kernel/sync/lock.rs
-@@ -201,6 +201,30 @@ unsafe impl<T: Sync + ?Sized, B: Backend> Sync for Guard<'_, T, B> {}
+@@ -199,7 +199,12 @@ pub struct Guard<'a, T: ?Sized, B: Backend> {
+ // SAFETY: `Guard` is sync when the data protected by the lock is also sync.
+ unsafe impl<T: Sync + ?Sized, B: Backend> Sync for Guard<'_, T, B> {}
  
- impl<'a, T: ?Sized, B: Backend> Guard<'a, T, B> {
-     /// Returns the lock that this guard originates from.
-+    ///
-+    /// # Examples
-+    ///
-+    /// The following example shows how to use [`Guard::lock_ref()`] to assert the corresponding
-+    /// lock is held.
-+    ///
-+    /// ```
-+    /// # use kernel::{new_spinlock, stack_pin_init, sync::lock::{Backend, Guard, Lock}};
-+    ///
-+    /// fn assert_held<T, B: Backend>(guard: &Guard<'_, T, B>, lock: &Lock<T, B>) {
-+    ///     // Address-equal means the same lock.
-+    ///     assert!(core::ptr::eq(guard.lock_ref(), lock));
-+    /// }
-+    ///
-+    /// // Creates a new lock on the stack.
-+    /// stack_pin_init!{
-+    ///     let l = new_spinlock!(42)
-+    /// }
-+    ///
-+    /// let g = l.lock();
-+    ///
-+    /// // `g` originates from `l`.
-+    /// assert_held(&g, &l);
-+    /// ```
-     pub fn lock_ref(&self) -> &'a Lock<T, B> {
-         self.lock
-     }
+-impl<T: ?Sized, B: Backend> Guard<'_, T, B> {
++impl<'a, T: ?Sized, B: Backend> Guard<'a, T, B> {
++    /// Returns the lock that this guard originates from.
++    pub fn lock_ref(&self) -> &'a Lock<T, B> {
++        self.lock
++    }
++
+     pub(crate) fn do_unlocked<U>(&mut self, cb: impl FnOnce() -> U) -> U {
+         // SAFETY: The caller owns the lock, so it is safe to unlock it.
+         unsafe { B::unlock(self.lock.state.get(), &self.state) };
 
