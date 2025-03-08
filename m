@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-552733-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-552734-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A2063A57D69
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 19:47:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C28EA57D6A
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 19:47:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4962F7A3F22
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 18:46:02 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 22AB27A7226
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 18:46:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F420821576F;
-	Sat,  8 Mar 2025 18:44:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 781131FE45D;
+	Sat,  8 Mar 2025 18:45:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="x207Suc9"
-Received: from smtp-8fa9.mail.infomaniak.ch (smtp-8fa9.mail.infomaniak.ch [83.166.143.169])
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="Ts51/geC"
+Received: from smtp-8fab.mail.infomaniak.ch (smtp-8fab.mail.infomaniak.ch [83.166.143.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E53EA214218
-	for <linux-kernel@vger.kernel.org>; Sat,  8 Mar 2025 18:44:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.166.143.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A87C5215181
+	for <linux-kernel@vger.kernel.org>; Sat,  8 Mar 2025 18:44:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.166.143.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741459499; cv=none; b=RwNBHmYhT7J9F49DwAkg13sjFztaJQLeN6SdM2q8vjcRwsFCiZCLFFK08oE4tXTOhtPF1FpvBILIlRmYqIFaLNinuLVXXZUsasxpf26LbYsuGeBAz3hrmIVJLeSQiDlz9zo/z7/6hya8pEOvQMkJH3JizBtG4NGwQeB3G/2EIok=
+	t=1741459500; cv=none; b=cnl64uQMaJ9/WwA1JAJLMgEXi2nkuy5tLPj0MQGglWLPlbwmKPTCVIsPqPpgMrzlnENsnSvZixGDhoyE6wojAXcFD07ulQ/8V27h2Ufj8b9thb3zXkvjy571d2ZO9tZP6rEJ37/FuQm/xnK8Hq/5ObVFTMkMydJ3Ra9TR4ZjNDk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741459499; c=relaxed/simple;
-	bh=Wx/6Hx+WDmJ7YB3tMN0nMjUM1VSJv9z1mb1C6KdOc2Q=;
+	s=arc-20240116; t=1741459500; c=relaxed/simple;
+	bh=cpV6J7vFv8QlFZY9S6XFDG63kp4XExRkTYYnDCOW2Zg=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Pa3At+3o3Ejj9peL9875QExtuGJDFflnMKcZsOqBomVYoICtP/owHswhNPOF/GyBpY4PD8AIbpJOyT0mmAA5GJAxJJX9eBoSx29y6Ds0XVKy/bkDKKWUuEMKoaFKGujIvH3mwFkMV3Ixg7bBHDWm63qSNdtxLJOBUuavCWRsdr0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=x207Suc9; arc=none smtp.client-ip=83.166.143.169
+	 MIME-Version:Content-Type; b=PTrpOdMy7aQCR5Th5xGEdB0kvxd/WS22eAF4mfbFBIuCpg0ADFPEb89qIa/QpMPM9/XLcXC/Reg7nB9XMorDJ43Ter4B2PotdA4Ev1s3xpiRN3vAnjkWM+KnJD9hpEfVT3C3+GoD4Boy3iQnJpJjl7EKT7p4ckhI3QfuZiGpQTE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=Ts51/geC; arc=none smtp.client-ip=83.166.143.171
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
-Received: from smtp-4-0000.mail.infomaniak.ch (unknown [IPv6:2001:1600:7:10:40ca:feff:fe05:0])
-	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4Z9Bsf1Nw3zS6s;
-	Sat,  8 Mar 2025 19:44:54 +0100 (CET)
+Received: from smtp-4-0000.mail.infomaniak.ch (smtp-4-0000.mail.infomaniak.ch [10.7.10.107])
+	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4Z9Bsg6DYgzS6w;
+	Sat,  8 Mar 2025 19:44:55 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1741459494;
-	bh=IYGEJlWXKfihUib9yAQfNAkO9iNl2ovlfA2BSTm6VT8=;
+	s=20191114; t=1741459495;
+	bh=v7zxGlR9p2Vk6aOhQ+9hHdnseZZyVA7sQx36u2Dx7Fs=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=x207Suc9QJufPETUpNZ1Bec+NEpYpsrzJFqecAycdkCakiDOX2dsQLZ+TNKOnk5fE
-	 iHAhjsNvL0G7VcjpDU6vKiFIBWqeImFfYkystPRHHh8Pkjz8nsCnu0waz7RPLOrM3E
-	 1IdFp2YFkD3G9zWXwhvXco7evM57rGr/aPp76e00=
-Received: from unknown by smtp-4-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4Z9Bsd2H7hzHcY;
-	Sat,  8 Mar 2025 19:44:53 +0100 (CET)
+	b=Ts51/geCAI90y4KlErY52fZVtW5rS8byJpifQ7ixm9wf9grvtX2gUw3HcgdeM4EsU
+	 UVXTvKtmLIecvxi2aJIec4JfZU9UfwtFy2xSz2YbKqKb9cFcaASrpCmgYOXF1yD1hP
+	 E7XTo20BVmZYCMDAVgIv2JwuEBWWsRc/OCfSAP7E=
+Received: from unknown by smtp-4-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4Z9Bsf6tT7zGbL;
+	Sat,  8 Mar 2025 19:44:54 +0100 (CET)
 From: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
 To: Eric Paris <eparis@redhat.com>,
 	Paul Moore <paul@paul-moore.com>,
@@ -72,9 +72,9 @@ Cc: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
 	audit@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	linux-security-module@vger.kernel.org
-Subject: [PATCH v6 14/26] landlock: Log TCP bind and connect denials
-Date: Sat,  8 Mar 2025 19:44:10 +0100
-Message-ID: <20250308184422.2159360-15-mic@digikod.net>
+Subject: [PATCH v6 15/26] landlock: Log scoped denials
+Date: Sat,  8 Mar 2025 19:44:11 +0100
+Message-ID: <20250308184422.2159360-16-mic@digikod.net>
 In-Reply-To: <20250308184422.2159360-1-mic@digikod.net>
 References: <20250308184422.2159360-1-mic@digikod.net>
 Precedence: bulk
@@ -87,180 +87,301 @@ Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 X-Infomaniak-Routing: alpha
 
-Add audit support to socket_bind and socket_connect hooks.
+Add audit support for unix_stream_connect, unix_may_send, task_kill, and
+file_send_sigiotask hooks.
 
 The related blockers are:
-- net.bind_tcp
-- net.connect_tcp
+- scope.abstract_unix_socket
+- scope.signal
 
-Audit event sample:
+Audit event sample for abstract unix socket:
 
-  type=LANDLOCK_DENY msg=audit(1729738800.349:44): domain=195ba459b blockers=net.connect_tcp daddr=127.0.0.1 dest=80
+  type=LANDLOCK_DENY msg=audit(1729738800.268:30): domain=195ba459b blockers=scope.abstract_unix_socket path=00666F6F
+
+Audit event sample for signal:
+
+  type=LANDLOCK_DENY msg=audit(1729738800.291:31): domain=195ba459b blockers=scope.signal opid=1 ocomm="systemd"
+
+Refactor and simplify error handling in LSM hooks.
+
+Extend struct landlock_file_security with fown_layer and use it to log
+the blocking domain.  The struct aligned size is still 16 bytes.
 
 Cc: Günther Noack <gnoack@google.com>
-Cc: Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
-Cc: Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>
+Cc: Tahera Fahimi <fahimitahera@gmail.com>
 Signed-off-by: Mickaël Salaün <mic@digikod.net>
-Link: https://lore.kernel.org/r/20250308184422.2159360-15-mic@digikod.net
+Link: https://lore.kernel.org/r/20250308184422.2159360-16-mic@digikod.net
 ---
 
 Changes since v5:
-- Move request declaration in the landlock_log_denial() call to
-  not impact allowed requests with audit.
+- Move request declarations in the landlock_log_denial() calls to
+  not impact allowed requests with audit, and return as soon as
+  possible when access is allowed.
+- Store a fown_layer per file and use it to log the blocking domain.
+- Refactor and simplify error handling in LSM hooks.
 
 Changes since v4:
 - Rebase on top of the landlock_log_denial() and subject type changes.
 
 Changes since v3:
-- Rename blockers from net_* to net.*
+- Cosmetic change to the "scope.*" blocker names.
+- Extend commit message.
 
-Changes since v2:
-- Remove potentially superfluous IPv6 saddr log, spotted by Francis
-  Laniel.
-- Cosmetic improvements.
+Changes since v1:
+- New patch.
 ---
- security/landlock/audit.c | 12 +++++++++
- security/landlock/audit.h |  1 +
- security/landlock/net.c   | 51 ++++++++++++++++++++++++++++++++++++---
- 3 files changed, 60 insertions(+), 4 deletions(-)
+ security/landlock/audit.c |  8 ++++
+ security/landlock/audit.h |  2 +
+ security/landlock/fs.c    |  7 +++-
+ security/landlock/fs.h    | 14 +++++++
+ security/landlock/task.c  | 79 +++++++++++++++++++++++++++++++--------
+ 5 files changed, 92 insertions(+), 18 deletions(-)
 
 diff --git a/security/landlock/audit.c b/security/landlock/audit.c
-index edb9fbafbcad..6c34758b9ff2 100644
+index 6c34758b9ff2..d0eafb946f31 100644
 --- a/security/landlock/audit.c
 +++ b/security/landlock/audit.c
-@@ -42,6 +42,13 @@ static const char *const fs_access_strings[] = {
- 
- static_assert(ARRAY_SIZE(fs_access_strings) == LANDLOCK_NUM_ACCESS_FS);
- 
-+static const char *const net_access_strings[] = {
-+	[BIT_INDEX(LANDLOCK_ACCESS_NET_BIND_TCP)] = "net.bind_tcp",
-+	[BIT_INDEX(LANDLOCK_ACCESS_NET_CONNECT_TCP)] = "net.connect_tcp",
-+};
-+
-+static_assert(ARRAY_SIZE(net_access_strings) == LANDLOCK_NUM_ACCESS_NET);
-+
- static __attribute_const__ const char *
- get_blocker(const enum landlock_request_type type,
- 	    const unsigned long access_bit)
-@@ -59,6 +66,11 @@ get_blocker(const enum landlock_request_type type,
- 		if (WARN_ON_ONCE(access_bit >= ARRAY_SIZE(fs_access_strings)))
+@@ -71,6 +71,14 @@ get_blocker(const enum landlock_request_type type,
+ 		if (WARN_ON_ONCE(access_bit >= ARRAY_SIZE(net_access_strings)))
  			return "unknown";
- 		return fs_access_strings[access_bit];
+ 		return net_access_strings[access_bit];
 +
-+	case LANDLOCK_REQUEST_NET_ACCESS:
-+		if (WARN_ON_ONCE(access_bit >= ARRAY_SIZE(net_access_strings)))
-+			return "unknown";
-+		return net_access_strings[access_bit];
++	case LANDLOCK_REQUEST_SCOPE_ABSTRACT_UNIX_SOCKET:
++		WARN_ON_ONCE(access_bit != -1);
++		return "scope.abstract_unix_socket";
++
++	case LANDLOCK_REQUEST_SCOPE_SIGNAL:
++		WARN_ON_ONCE(access_bit != -1);
++		return "scope.signal";
  	}
  
  	WARN_ON_ONCE(1);
 diff --git a/security/landlock/audit.h b/security/landlock/audit.h
-index 6765a419001d..eeff2c5bfa4f 100644
+index eeff2c5bfa4f..aaf21b31baa8 100644
 --- a/security/landlock/audit.h
 +++ b/security/landlock/audit.h
-@@ -19,6 +19,7 @@ enum landlock_request_type {
- 	LANDLOCK_REQUEST_PTRACE = 1,
+@@ -20,6 +20,8 @@ enum landlock_request_type {
  	LANDLOCK_REQUEST_FS_CHANGE_LAYOUT,
  	LANDLOCK_REQUEST_FS_ACCESS,
-+	LANDLOCK_REQUEST_NET_ACCESS,
+ 	LANDLOCK_REQUEST_NET_ACCESS,
++	LANDLOCK_REQUEST_SCOPE_ABSTRACT_UNIX_SOCKET,
++	LANDLOCK_REQUEST_SCOPE_SIGNAL,
  };
  
  /*
-diff --git a/security/landlock/net.c b/security/landlock/net.c
-index 6fb3e60bc5ff..f4478e6a2c0b 100644
---- a/security/landlock/net.c
-+++ b/security/landlock/net.c
-@@ -7,10 +7,12 @@
-  */
+diff --git a/security/landlock/fs.c b/security/landlock/fs.c
+index 14f9c6d9903f..34f316031ecf 100644
+--- a/security/landlock/fs.c
++++ b/security/landlock/fs.c
+@@ -1798,6 +1798,7 @@ static void hook_file_set_fowner(struct file *file)
+ 	const struct landlock_cred_security *new_subject;
+ 	struct landlock_cred_security *fown_subject;
+ 	struct landlock_ruleset *prev_dom;
++	size_t handle_layer;
  
- #include <linux/in.h>
-+#include <linux/lsm_audit.h>
- #include <linux/net.h>
- #include <linux/socket.h>
- #include <net/ipv6.h>
+ 	/*
+ 	 * Lock already held by __f_setown(), see commit 26f204380a3c ("fs: Fix
+@@ -1807,15 +1808,17 @@ static void hook_file_set_fowner(struct file *file)
  
-+#include "audit.h"
- #include "common.h"
- #include "cred.h"
- #include "limits.h"
-@@ -55,6 +57,7 @@ static int current_check_access_socket(struct socket *const sock,
- 	};
+ 	fown_subject = &landlock_file(file)->fown_subject;
+ 	prev_dom = fown_subject->domain;
+-	new_subject = landlock_get_applicable_subject(current_cred(),
+-						      signal_scope, NULL);
++	new_subject = landlock_get_applicable_subject(
++		current_cred(), signal_scope, &handle_layer);
+ 	if (new_subject) {
+ 		landlock_get_ruleset(new_subject->domain);
+ 		*fown_subject = *new_subject;
++		landlock_file(file)->fown_layer = handle_layer;
+ 	} else {
+ 		static const struct landlock_cred_security empty = {};
+ 
+ 		*fown_subject = empty;
++		landlock_file(file)->fown_layer = 0;
+ 	}
+ 
+ 	/* Called in an RCU read-side critical section. */
+diff --git a/security/landlock/fs.h b/security/landlock/fs.h
+index 3a09ba985b74..a2a2014d68ae 100644
+--- a/security/landlock/fs.h
++++ b/security/landlock/fs.h
+@@ -9,6 +9,7 @@
+ #ifndef _SECURITY_LANDLOCK_FS_H
+ #define _SECURITY_LANDLOCK_FS_H
+ 
++#include <linux/build_bug.h>
+ #include <linux/fs.h>
+ #include <linux/init.h>
+ #include <linux/rcupdate.h>
+@@ -61,6 +62,11 @@ struct landlock_file_security {
+ 	 * _LANDLOCK_ACCESS_FS_OPTIONAL).
+ 	 */
+ 	deny_masks_t deny_masks;
++	/**
++	 * @fown_layer: Layer level of @fown_subject->domain with
++	 * LANDLOCK_SCOPE_SIGNAL.
++	 */
++	u8 fown_layer;
+ #endif /* CONFIG_AUDIT */
+ 
+ 	/**
+@@ -73,6 +79,14 @@ struct landlock_file_security {
+ 	struct landlock_cred_security fown_subject;
+ };
+ 
++#ifdef CONFIG_AUDIT
++
++/* Makes sure all layers can be identified. */
++static_assert((typeof_member(struct landlock_file_security, fown_layer))~0 >=
++	      LANDLOCK_MAX_NUM_LAYERS);
++
++#endif /* CONFIG_AUDIT */
++
+ /**
+  * struct landlock_superblock_security - Superblock security blob
+  *
+diff --git a/security/landlock/task.c b/security/landlock/task.c
+index e8a0b4ead381..f6359cf4c11b 100644
+--- a/security/landlock/task.c
++++ b/security/landlock/task.c
+@@ -264,26 +264,41 @@ static int hook_unix_stream_connect(struct sock *const sock,
+ 				    struct sock *const other,
+ 				    struct sock *const newsk)
+ {
++	size_t handle_layer;
  	const struct landlock_cred_security *const subject =
- 		landlock_get_applicable_subject(current_cred(), masks, NULL);
-+	struct lsm_network_audit audit_net = {};
+ 		landlock_get_applicable_subject(current_cred(), unix_scope,
+-						NULL);
++						&handle_layer);
+ 
+ 	/* Quick return for non-landlocked tasks. */
+ 	if (!subject)
+ 		return 0;
+ 
+-	if (is_abstract_socket(other) && sock_is_scoped(other, subject->domain))
+-		return -EPERM;
++	if (!is_abstract_socket(other))
++		return 0;
++
++	if (!sock_is_scoped(other, subject->domain))
++		return 0;
+ 
+-	return 0;
++	landlock_log_denial(subject, &(struct landlock_request) {
++		.type = LANDLOCK_REQUEST_SCOPE_ABSTRACT_UNIX_SOCKET,
++		.audit = {
++			.type = LSM_AUDIT_DATA_NET,
++			.u.net = &(struct lsm_network_audit) {
++				.sk = other,
++			},
++		},
++		.layer_plus_one = handle_layer + 1,
++	});
++	return -EPERM;
+ }
+ 
+ static int hook_unix_may_send(struct socket *const sock,
+ 			      struct socket *const other)
+ {
++	size_t handle_layer;
+ 	const struct landlock_cred_security *const subject =
+ 		landlock_get_applicable_subject(current_cred(), unix_scope,
+-						NULL);
++						&handle_layer);
  
  	if (!subject)
  		return 0;
-@@ -68,18 +71,48 @@ static int current_check_access_socket(struct socket *const sock,
- 
- 	switch (address->sa_family) {
- 	case AF_UNSPEC:
--	case AF_INET:
-+	case AF_INET: {
-+		const struct sockaddr_in *addr4;
-+
- 		if (addrlen < sizeof(struct sockaddr_in))
- 			return -EINVAL;
--		port = ((struct sockaddr_in *)address)->sin_port;
-+
-+		addr4 = (struct sockaddr_in *)address;
-+		port = addr4->sin_port;
-+
-+		if (access_request == LANDLOCK_ACCESS_NET_CONNECT_TCP) {
-+			audit_net.dport = port;
-+			audit_net.v4info.daddr = addr4->sin_addr.s_addr;
-+		} else if (access_request == LANDLOCK_ACCESS_NET_BIND_TCP) {
-+			audit_net.sport = port;
-+			audit_net.v4info.saddr = addr4->sin_addr.s_addr;
-+		} else {
-+			WARN_ON_ONCE(1);
-+		}
- 		break;
-+	}
- 
- #if IS_ENABLED(CONFIG_IPV6)
--	case AF_INET6:
-+	case AF_INET6: {
-+		const struct sockaddr_in6 *addr6;
-+
- 		if (addrlen < SIN6_LEN_RFC2133)
- 			return -EINVAL;
--		port = ((struct sockaddr_in6 *)address)->sin6_port;
-+
-+		addr6 = (struct sockaddr_in6 *)address;
-+		port = addr6->sin6_port;
-+
-+		if (access_request == LANDLOCK_ACCESS_NET_CONNECT_TCP) {
-+			audit_net.dport = port;
-+			audit_net.v6info.daddr = addr6->sin6_addr;
-+		} else if (access_request == LANDLOCK_ACCESS_NET_BIND_TCP) {
-+			audit_net.sport = port;
-+			audit_net.v6info.saddr = addr6->sin6_addr;
-+		} else {
-+			WARN_ON_ONCE(1);
-+		}
- 		break;
-+	}
- #endif /* IS_ENABLED(CONFIG_IPV6) */
- 
- 	default:
-@@ -149,6 +182,16 @@ static int current_check_access_socket(struct socket *const sock,
- 				   ARRAY_SIZE(layer_masks)))
+@@ -295,11 +310,23 @@ static int hook_unix_may_send(struct socket *const sock,
+ 	if (unix_peer(sock->sk) == other->sk)
  		return 0;
  
-+	audit_net.family = address->sa_family;
-+	landlock_log_denial(subject,
-+			    &(struct landlock_request){
-+				    .type = LANDLOCK_REQUEST_NET_ACCESS,
-+				    .audit.type = LSM_AUDIT_DATA_NET,
-+				    .audit.u.net = &audit_net,
-+				    .access = access_request,
-+				    .layer_masks = &layer_masks,
-+				    .layer_masks_size = ARRAY_SIZE(layer_masks),
-+			    });
- 	return -EACCES;
+-	if (is_abstract_socket(other->sk) &&
+-	    sock_is_scoped(other->sk, subject->domain))
+-		return -EPERM;
++	if (!is_abstract_socket(other->sk))
++		return 0;
++
++	if (!sock_is_scoped(other->sk, subject->domain))
++		return 0;
+ 
+-	return 0;
++	landlock_log_denial(subject, &(struct landlock_request) {
++		.type = LANDLOCK_REQUEST_SCOPE_ABSTRACT_UNIX_SOCKET,
++		.audit = {
++			.type = LSM_AUDIT_DATA_NET,
++			.u.net = &(struct lsm_network_audit) {
++				.sk = other->sk,
++			},
++		},
++		.layer_plus_one = handle_layer + 1,
++	});
++	return -EPERM;
  }
  
+ static const struct access_masks signal_scope = {
+@@ -311,13 +338,15 @@ static int hook_task_kill(struct task_struct *const p,
+ 			  const struct cred *cred)
+ {
+ 	bool is_scoped;
++	size_t handle_layer;
+ 	const struct landlock_cred_security *subject;
+ 
+ 	if (!cred)
+ 		/* Not dealing with USB IO. */
+ 		cred = current_cred();
+ 
+-	subject = landlock_get_applicable_subject(cred, signal_scope, NULL);
++	subject = landlock_get_applicable_subject(cred, signal_scope,
++						  &handle_layer);
+ 
+ 	/* Quick return for non-landlocked tasks. */
+ 	if (!subject)
+@@ -329,10 +358,19 @@ static int hook_task_kill(struct task_struct *const p,
+ 					     landlock_get_task_domain(p),
+ 					     signal_scope.scope);
+ 	}
+-	if (is_scoped)
+-		return -EPERM;
+ 
+-	return 0;
++	if (!is_scoped)
++		return 0;
++
++	landlock_log_denial(subject, &(struct landlock_request) {
++		.type = LANDLOCK_REQUEST_SCOPE_SIGNAL,
++		.audit = {
++			.type = LSM_AUDIT_DATA_TASK,
++			.u.tsk = p,
++		},
++		.layer_plus_one = handle_layer + 1,
++	});
++	return -EPERM;
+ }
+ 
+ static int hook_file_send_sigiotask(struct task_struct *tsk,
+@@ -361,10 +399,19 @@ static int hook_file_send_sigiotask(struct task_struct *tsk,
+ 					     landlock_get_task_domain(tsk),
+ 					     signal_scope.scope);
+ 	}
+-	if (is_scoped)
+-		return -EPERM;
+ 
+-	return 0;
++	if (!is_scoped)
++		return 0;
++
++	landlock_log_denial(subject, &(struct landlock_request) {
++		.type = LANDLOCK_REQUEST_SCOPE_SIGNAL,
++		.audit = {
++			.type = LSM_AUDIT_DATA_TASK,
++			.u.tsk = tsk,
++		},
++		.layer_plus_one = landlock_file(fown->file)->fown_layer + 1,
++	});
++	return -EPERM;
+ }
+ 
+ static struct security_hook_list landlock_hooks[] __ro_after_init = {
 -- 
 2.48.1
 
