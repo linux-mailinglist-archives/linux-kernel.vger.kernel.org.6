@@ -1,49 +1,103 @@
-Return-Path: <linux-kernel+bounces-553255-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-553256-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 21841A58666
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 18:43:40 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D3E25A5866A
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 18:46:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4F11B160C59
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 17:43:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A7B473A9DAC
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 17:45:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 895681EDA2F;
-	Sun,  9 Mar 2025 17:43:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 490CF1EF36D;
+	Sun,  9 Mar 2025 17:45:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="eoM2n4m7"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HB9QplTG"
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF7161E32D4;
-	Sun,  9 Mar 2025 17:43:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23123F4F1;
+	Sun,  9 Mar 2025 17:45:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741542213; cv=none; b=Yi+t6pW8qPLEEraLAKExa7u+oKQRRNTQH3mVIk0MnsiJJd9IBss84IpPrOxOakq9DIebVU9Q3uzzmvUkCMkc2MlyN5zZAftp0+TW5L04H5243uHRRO/Z+lMjPopSWqGavoOKOiJ+yp6J510Se57YwUS+IKkv+dwz8UG/4BE6YLA=
+	t=1741542351; cv=none; b=PhyHle9YucD2x8BdM0DIVbE/e/YjKakL+QAnwlHPKNIIZ98O7jgkC2HF3FjnWHdpEELG83mjrnSO8EBQi9bc1e4f0XiFB60yd5oZV7gnClWmjOK70okTR7nH2VP05c3T8/CmdJo4IuMgDQDqOCHiRBEU13O+f1jfkJmSblBSjHo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741542213; c=relaxed/simple;
-	bh=kooIwOa6gEwB7oowS6HnKkkk+bXe9+cqX/oG5DutbCI=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=p82HAW9CLUDiL3fbnIM/5FOzxaJTyIhdSWsv2OKZPWbrJT0aM+25OJu0QPx+bDYlu52amcJSE0ftLX4pBL4pXbtu/Z5OFGqputpBRdFCfr+01s9xSaL8MhIP9SFdDq/KuFjEg5x7EONFL8+u2xyxIi3qzOU41F7Gs07cZ4aeq8g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=eoM2n4m7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 57DA3C4CEE3;
-	Sun,  9 Mar 2025 17:43:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1741542212;
-	bh=kooIwOa6gEwB7oowS6HnKkkk+bXe9+cqX/oG5DutbCI=;
-	h=Date:From:To:Cc:Subject:From;
-	b=eoM2n4m7hMlsupBdio1sV6TdFuFaJb59mZseqCvOGjPfAQmlAvSk06Xg2GMtLXzd6
-	 Py6HhqhNqDk8AwcDXOmuoNFMwKgVtnFZuEHNoG5RMsYKpugscXTR2hvpeS9li0Kv5e
-	 TlJKUpUwFezap/iS5kmQ8/FrlkOQEiBs6pKuXROU=
-Date: Sun, 9 Mar 2025 18:43:29 +0100
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>, linux-kernel@vger.kernel.org,
-	linux-usb@vger.kernel.org
-Subject: [GIT PULL] USB driver fixes for 6.14-rc6
-Message-ID: <Z83TQTyh4u64yFKF@kroah.com>
+	s=arc-20240116; t=1741542351; c=relaxed/simple;
+	bh=Ts4nRRhjYyME+pC7r6xMDOAjdA6nK3OzbkGfMevUYTw=;
+	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZVZO8P1b1yU5/Yf3n7zMAgRmi5i/fO02xD39GmGiLJWNZlkJU++lkvibWfJaG3JkxB6TyOlOPw8Z0gbQ2dcw9y/vV5YWCSRLFftSLpvvHZO43IO00ZyG33SDwr7bnEjGnwVCcxypd1EgxRyG2Gbf0itrpJTBM991md+jx3KD9D0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HB9QplTG; arc=none smtp.client-ip=209.85.128.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-438a39e659cso19444745e9.2;
+        Sun, 09 Mar 2025 10:45:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741542348; x=1742147148; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:subject:cc
+         :to:from:date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=mYVeDPxjhFeZxy0KwWJDY/eKgxnMZAxnPE/IYVsYVHI=;
+        b=HB9QplTGsXH27nqPQ8Y5IY1YVylqDo24WCnOWLL6CF61OwAge7VCx5eHJa9o2R0XNf
+         K2D0ip4rlJCyOok39f+De/KlTNpBQ2c1MMOEuQpQRulxIGMzjkTEmRfHP1ups+lqA3xN
+         p+hJi3yOgRPPYIRziU7D08N7+IFRcmjqMGnnPPLSskQnZed9KfIwmmpAC1ZfBXrkJzHt
+         i7GoeV9uPq5aSYckQgCMcw0kTbS7vptCRjHhrz04SP0Olb638PmZKa7twPMZoXOnFRX2
+         kylaFSWfFh9rSi2g4/nZiXvzoe+SNwFEI2OK0qmEIFhx8S7P4L/jhgi72HnGf22dsNjZ
+         Oa6A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741542348; x=1742147148;
+        h=in-reply-to:content-disposition:mime-version:references:subject:cc
+         :to:from:date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=mYVeDPxjhFeZxy0KwWJDY/eKgxnMZAxnPE/IYVsYVHI=;
+        b=jW42SiZvW0InLg0oklmsmotbFyWe60Qu2ThZVso1w/OvqfrnldLyVeC6M55W5Y29R5
+         /YCFXIvRHXjX6pe03eLOaokz72Xpa2sn4YogvhiJjV0OHCpvI8EWAau6gL1gdrzhXsZ8
+         mgtL7+nO1Q8VThnE2L/vGaXsscpObUmgCZ8wzQuXfcmlT7xzLy8isJI9PXYOgnbEWX41
+         nDskVf5YhnCwV2h10m4EO74kTsFh/H5INucRG36viUJA5cPIuW5DQ+MbA3CL+oc3jLjl
+         4FYnhxHDfhcAnwTSZRhqmFTpfkAhRfAxhWMs1BE4van6fbgcZwa10zb8P4zcSmPwKefH
+         SKmQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU58qDcWrPK2+uieHm3XlEtvTOEbhkgoPM9du7sZ5Yc36bRU1J6Pg/kZXtNc2sKRL6LcRDkTifuvOLs@vger.kernel.org, AJvYcCVxcUaLujUf8qStb84mXBM9Y1DMZu6ATWR1Krz5DHLq5qJ3C6qqgoJ8SHDng8m2weEfcItjcC/D@vger.kernel.org, AJvYcCWGQIkfeo4UCJ4puEGb5j5fIwdJx1kMKUZbaFvR0IyheH+3/G7roWfsQ9aaLLUE+gMnEbxKYHFowk9ap5fz@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy6xlS0h70L9kL1edJajXjSr/t870M+wFttlU11aw1bHboZlOzf
+	WgPsgMcxstZOtUsaWHTK8KLOlq2K5wXlRlpqTd2y9UFe7DKt5ik9
+X-Gm-Gg: ASbGncsjP/cPyvD1V9svx0gRQZ5hZ2EFHj6igfNWV1ee3GILxX4i+Nz9kKNnCbw2i7A
+	JhmQ61LKOVQ7Unci0jIXo3peMiB2KxieZPVM0oBMez6LclR/5KC/8LlZa5swknktHE2bCi4zlpG
+	pipynWD2R6EmWAx2PayXtRlfU0WBG+dGwEZKlucYWfWdNaMFlpzy1aSg3YVoD4J+IFeIf4PY39K
+	UIUydt5xk48xLiARsBfemdqjgcsi6SJukulDF4CiWiMTfz6lB5mXFVcDVvUpmHOufuGFncw0P9f
+	eLkiDmEBQ8i5JSIyU0k0VY8jxKt2QF+onAdwG0UkUe6zdwtEGyUOxzMd3C3OvfYExJObZ0181xt
+	Z
+X-Google-Smtp-Source: AGHT+IGp7jEKMgtsCA2TGbrvYbtqFa4WUNvO5evZDxVuTRVZ2MCZ3kALyJRYRl99L7jGJPY9VOa7nA==
+X-Received: by 2002:a5d:64ce:0:b0:391:3bba:7f18 with SMTP id ffacd0b85a97d-3913bba8128mr2360645f8f.12.1741542346719;
+        Sun, 09 Mar 2025 10:45:46 -0700 (PDT)
+Received: from Ansuel-XPS. (93-34-90-129.ip49.fastwebnet.it. [93.34.90.129])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3912c102e01sm12708957f8f.93.2025.03.09.10.45.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 09 Mar 2025 10:45:45 -0700 (PDT)
+Message-ID: <67cdd3c9.df0a0220.1c827e.b244@mx.google.com>
+X-Google-Original-Message-ID: <Z83TxxTXxVGMYZzu@Ansuel-XPS.>
+Date: Sun, 9 Mar 2025 18:45:43 +0100
+From: Christian Marangi <ansuelsmth@gmail.com>
+To: "Russell King (Oracle)" <linux@armlinux.org.uk>
+Cc: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Vladimir Oltean <olteanv@gmail.com>,
+	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Maxime Chevallier <maxime.chevallier@bootlin.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org, netdev@vger.kernel.org,
+	upstream@airoha.com
+Subject: Re: [net-next PATCH v12 07/13] net: mdio: regmap: add support for
+ multiple valid addr
+References: <20250309172717.9067-1-ansuelsmth@gmail.com>
+ <20250309172717.9067-8-ansuelsmth@gmail.com>
+ <Z83RsW1_bzoEWheo@shell.armlinux.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -52,106 +106,35 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <Z83RsW1_bzoEWheo@shell.armlinux.org.uk>
 
-The following changes since commit 0ad2507d5d93f39619fc42372c347d6006b64319:
+On Sun, Mar 09, 2025 at 05:36:49PM +0000, Russell King (Oracle) wrote:
+> On Sun, Mar 09, 2025 at 06:26:52PM +0100, Christian Marangi wrote:
+> > +/* If a non empty valid_addr_mask is passed, PHY address and
+> > + * read/write register are encoded in the regmap register
+> > + * by placing the register in the first 16 bits and the PHY address
+> > + * right after.
+> > + */
+> > +#define MDIO_REGMAP_PHY_ADDR		GENMASK(20, 16)
+> > +#define MDIO_REGMAP_PHY_REG		GENMASK(15, 0)
+> 
+> Clause 45 PHYs have 5 bits of PHY address, then 5 bits of mmd address,
+> and then 16 bits of register address - significant in that order. Can
+> we adjust the mask for the PHY address later to add the MMD between
+> the PHY address and register number?
+>
 
-  Linux 6.14-rc3 (2025-02-16 14:02:44 -0800)
+Honestly to future proof this, I think a good idea might be to add
+helper to encode these info and use Clause 45 format even for C22.
+Maybe we can use an extra bit to signal if the format is C22 or C45.
 
-are available in the Git repository at:
+BIT(26) 0: C22 1:C45
+GENMASK(25, 21) PHY ADDR
+GENMASK(20, 16) MMD ADDR
+GENMASK(15, 0) REG
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usb.git tags/usb-6.14-rc6
+What do you think?
 
-for you to fetch changes up to b13abcb7ddd8d38de769486db5bd917537b32ab1:
-
-  usb: typec: ucsi: Fix NULL pointer access (2025-03-06 16:55:46 +0100)
-
-----------------------------------------------------------------
-USB fixes for 6.14-rc6
-
-Here are some small USB driver fixes for some reported issues for
-6.14-rc6.  These contain:
-  - typec driver fixes
-  - dwc3 driver fixes
-  - xhci driver fixes
-  - renesas controller fixes
-  - gadget driver fixes
-  - a new USB quirk added
-
-All of these have been in linux-next with no reported issues.
-
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
-----------------------------------------------------------------
-Andrei Kuchynski (1):
-      usb: typec: ucsi: Fix NULL pointer access
-
-AngeloGioacchino Del Regno (1):
-      usb: typec: tcpci_rt1711h: Unmask alert interrupts to fix functionality
-
-Badhri Jagan Sridharan (1):
-      usb: dwc3: gadget: Prevent irq storm when TH re-executes
-
-Christian A. Ehrhardt (1):
-      acpi: typec: ucsi: Introduce a ->poll_cci method
-
-Claudiu Beznea (3):
-      usb: renesas_usbhs: Call clk_put()
-      usb: renesas_usbhs: Use devm_usb_get_phy()
-      usb: renesas_usbhs: Flush the notify_hotplug_work
-
-Fedor Pchelkin (1):
-      usb: typec: ucsi: increase timeout for PPM reset operations
-
-Marc Zyngier (1):
-      xhci: Restrict USB4 tunnel detection for USB3 devices to Intel hosts
-
-Marek Szyprowski (1):
-      usb: gadget: Fix setting self-powered state on suspend
-
-Miao Li (1):
-      usb: quirks: Add DELAY_INIT and NO_LPM for Prolific Mass Storage Card Reader
-
-Michal Pecio (2):
-      usb: xhci: Enable the TRB overfetch quirk on VIA VL805
-      usb: xhci: Fix host controllers "dying" after suspend and resume
-
-Nikita Zhandarovich (1):
-      usb: atm: cxacru: fix a flaw in existing endpoint checks
-
-Pawel Laszczak (1):
-      usb: hub: lack of clearing xHC resources
-
-Prashanth K (3):
-      usb: gadget: u_ether: Set is_suspend flag if remote wakeup fails
-      usb: gadget: Set self-powered based on MaxPower and bmAttributes
-      usb: gadget: Check bmAttributes only if configuration is valid
-
-Thinh Nguyen (1):
-      usb: dwc3: Set SUSPENDENABLE soon after phy init
-
- drivers/usb/atm/cxacru.c                | 13 ++---
- drivers/usb/core/hub.c                  | 33 +++++++++++++
- drivers/usb/core/quirks.c               |  4 ++
- drivers/usb/dwc3/core.c                 | 85 +++++++++++++++++++--------------
- drivers/usb/dwc3/core.h                 |  2 +-
- drivers/usb/dwc3/drd.c                  |  4 +-
- drivers/usb/dwc3/gadget.c               | 10 ++--
- drivers/usb/gadget/composite.c          | 17 +++++--
- drivers/usb/gadget/function/u_ether.c   |  4 +-
- drivers/usb/host/xhci-hub.c             |  8 ++++
- drivers/usb/host/xhci-mem.c             |  3 +-
- drivers/usb/host/xhci-pci.c             | 10 ++--
- drivers/usb/host/xhci.c                 |  6 ++-
- drivers/usb/host/xhci.h                 |  2 +-
- drivers/usb/renesas_usbhs/common.c      |  6 ++-
- drivers/usb/renesas_usbhs/mod_gadget.c  |  2 +-
- drivers/usb/typec/tcpm/tcpci_rt1711h.c  | 11 +++++
- drivers/usb/typec/ucsi/ucsi.c           | 25 +++++-----
- drivers/usb/typec/ucsi/ucsi.h           |  2 +
- drivers/usb/typec/ucsi/ucsi_acpi.c      | 21 +++++---
- drivers/usb/typec/ucsi/ucsi_ccg.c       |  1 +
- drivers/usb/typec/ucsi/ucsi_glink.c     |  1 +
- drivers/usb/typec/ucsi/ucsi_stm32g0.c   |  1 +
- drivers/usb/typec/ucsi/ucsi_yoga_c630.c |  1 +
- 24 files changed, 189 insertions(+), 83 deletions(-)
+-- 
+	Ansuel
 
