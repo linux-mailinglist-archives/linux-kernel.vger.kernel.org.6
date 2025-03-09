@@ -1,131 +1,123 @@
-Return-Path: <linux-kernel+bounces-553195-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-553197-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB9E3A5855E
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 16:24:48 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D0500A58569
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 16:28:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 281771887583
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 15:24:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6949F188418F
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 15:28:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42CBB1E51FD;
-	Sun,  9 Mar 2025 15:23:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PZrixR+O"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1E4F1DE4D7;
+	Sun,  9 Mar 2025 15:28:35 +0000 (UTC)
+Received: from mail.hallyn.com (mail.hallyn.com [178.63.66.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FB551DED5D;
-	Sun,  9 Mar 2025 15:23:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A9C81FB3;
+	Sun,  9 Mar 2025 15:28:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.63.66.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741533818; cv=none; b=aaytlHqLRGLMKZ2B/uLbtn9CUjhiqFG6wXtBg/YVc1xoxsJiL9rLPLNrf1Z0dPjV/+AYNIOgaajL8vxvDpUmJXMQ0SnrDIY28P6t1Wl9lYO5Klug4hdvputF+3AGtlbeu0NcWqYE+ztp9NJgNEsh3W2Upw2c3J2fY/ZtpzTKSKI=
+	t=1741534115; cv=none; b=WZFNVvwpArGoqYVfy74REy2ZYUjWwZv+hCLZEcwr1ez0PqSi1lCzPSb21x4W0vonplXmmwtwdTR8Uik6+JP2N/6Tqifj9e8iejQcFv+UOA/qBcCqSPOZaXyOVUmRyKmv+ZFnmFCuglaxzgIPiM8XH6Iot01FqRPJeAXIo6Jf7O4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741533818; c=relaxed/simple;
-	bh=dIjGlvzNhHkBxSc0U14VbDDTWmgvVt6lr6a6kbU7+mg=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=V8+qAK8TdI3lujQeCaycWt/xdUaiEiAo4oRw+lfm2QTzD34IYvwlSDqUKBAegd98zvlMSnYgiEYP/rmwHkTtVjFncJf/hUHmKjV5G5YGl7ASkVdDnS5AXeC2AB6+k/9VCPZ88jiIOn+A4vkyqdWIjrrLx6dvbpwCHpw+Oc2wLTQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PZrixR+O; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E632BC4CEF0;
-	Sun,  9 Mar 2025 15:23:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741533818;
-	bh=dIjGlvzNhHkBxSc0U14VbDDTWmgvVt6lr6a6kbU7+mg=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=PZrixR+Oy4TaJHR9aupSCHmGGRCwwODcDO9I8m96Z2rr8WBa1jdwljgBapARWfyrl
-	 1e/5SNj/jSo31PQwuxy95uphLGk3zobn1V+iInX9ParvfIkURjbhM+AXNVQlBDJ8b/
-	 m4Cz0Rx7BpRIMKt+HAWuRCBUgodD8urxrZSgSUP/iqVOK3AaNaTMNOFkHuQkAUG6pt
-	 XiMuWY+GbI7iurYj9qU1BA589ZTAYd6tx2w4DoOWTbpwjqa3q1EbAoXpV2x/aYMWWM
-	 gTPIS/xF1P9boIU372dm6BE4byAH9k5/egrXkZZW2YcZGcn1ZI8fdoBDlJL4HyEmK/
-	 Iv4M/cvtcBp5A==
-From: Andreas Hindborg <a.hindborg@kernel.org>
-Date: Sun, 09 Mar 2025 16:19:04 +0100
-Subject: [PATCH v12 13/13] rust: hrtimer: add maintainer entry
+	s=arc-20240116; t=1741534115; c=relaxed/simple;
+	bh=GLqJn90NpOB3NVZWTuF9R7824jnA7oFHGKAlTXcxvW0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LYdmfakJz1dc0MILW38Iy34ey1GzqrasC5I57rIXrLr4VxZHm2znoQj702ZeS690loIDWXtZpbHS0j1i0FhENZ4jXCzWHoGlLSv7sAlWvMm5t/BpHgriEME3dwiHoqKtnR11+tVxGWnbQatIo0COkOMrJsjgt35i5dhrFBmaGuI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hallyn.com; spf=pass smtp.mailfrom=mail.hallyn.com; arc=none smtp.client-ip=178.63.66.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hallyn.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mail.hallyn.com
+Received: by mail.hallyn.com (Postfix, from userid 1001)
+	id 5F8B33F3; Sun,  9 Mar 2025 10:19:07 -0500 (CDT)
+Date: Sun, 9 Mar 2025 10:19:07 -0500
+From: "Serge E. Hallyn" <serge@hallyn.com>
+To: Max Kellermann <max.kellermann@ionos.com>,
+	Andy Lutomirski <luto@kernel.org>
+Cc: serge@hallyn.com, paul@paul-moore.com, jmorris@namei.org,
+	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] security/commoncap: don't assume "setid" if all ids are
+ identical
+Message-ID: <20250309151907.GA178120@mail.hallyn.com>
+References: <20250306082615.174777-1-max.kellermann@ionos.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250309-hrtimer-v3-v6-12-rc2-v12-13-73586e2bd5f1@kernel.org>
-References: <20250309-hrtimer-v3-v6-12-rc2-v12-0-73586e2bd5f1@kernel.org>
-In-Reply-To: <20250309-hrtimer-v3-v6-12-rc2-v12-0-73586e2bd5f1@kernel.org>
-To: Miguel Ojeda <ojeda@kernel.org>, 
- Anna-Maria Behnsen <anna-maria@linutronix.de>, 
- Frederic Weisbecker <frederic@kernel.org>, 
- Thomas Gleixner <tglx@linutronix.de>, Danilo Krummrich <dakr@kernel.org>
-Cc: Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
- Gary Guo <gary@garyguo.net>, 
- =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
- Benno Lossin <benno.lossin@proton.me>, Alice Ryhl <aliceryhl@google.com>, 
- Trevor Gross <tmgross@umich.edu>, Lyude Paul <lyude@redhat.com>, 
- Guangbo Cui <2407018371@qq.com>, Dirk Behme <dirk.behme@gmail.com>, 
- Daniel Almeida <daniel.almeida@collabora.com>, 
- Tamir Duberstein <tamird@gmail.com>, Markus Elfring <Markus.Elfring@web.de>, 
- rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Andreas Hindborg <a.hindborg@kernel.org>
-X-Mailer: b4 0.15-dev
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1282; i=a.hindborg@kernel.org;
- h=from:subject:message-id; bh=dIjGlvzNhHkBxSc0U14VbDDTWmgvVt6lr6a6kbU7+mg=;
- b=owEBbQKS/ZANAwAIAeG4Gj55KGN3AcsmYgBnzbFzTyoN2/cdZriiqf8WvA1cLfj4GB+lRsVWn
- qyt9owqkQyJAjMEAAEIAB0WIQQSwflHVr98KhXWwBLhuBo+eShjdwUCZ82xcwAKCRDhuBo+eShj
- d10fD/sENM1jxlfijjWmHsafxDcO7fBUgTHMkBhxLKXvDEmkl41NFRL7NpfP2ZtudbzoqrS++iG
- QI5XIpQfIeADVRmGiddTT2STzU/vhjzm2xuAR3OdDznvHxJN1a/cp6rsxRi+KUXBxqoLK0N9DG1
- URdkzflZWz/zGSskHr0//FtDb4b7M4iu4SxTBWDvNOEgPFwKZ9ao0XdCH3XllKbcgaAFi453vTS
- ZwtzJIIsD6D79zO5/S+ySORv6wSLojbf8PqvXQFUZ7YLfZmAlXeM/ZnkBlHE9PjILb4X46KQ8GD
- 5/WslqzVlQW0jqrlfe6+M5kQIPCHurgXUmX5ifJxzwhnOUg7lckFaxeZTEYBqXMi3GOTsC1/nyb
- xJsWzOXo/ovxXvkMt8sm5ENvF5+5A7iq8zojidrjt0rOp7ienFr9rvzrQgVFM8r20Kz5MbvyQR+
- ETZwB5zNUBScW9BYV59v8HUyNMQkNzotvOEl6MgupXSWPmhHK6mGmNRnb/oe4kcOf6YPJvsLUJR
- jTM1fjw1aO78y+ZYJIlMqSUqQed96JuPxqGc694eBDLpQPXlYapmxvJkxXqX/YqoBgZg/aUX/MG
- FBkykHsq5BW0rlcXSWYOg871aP/nQCTopBqJQs12fB+mf7c7eo7QT6EcPLml0K4e0HCMBgLdUch
- 4Fhwc4AXNb0SrRw==
-X-Developer-Key: i=a.hindborg@kernel.org; a=openpgp;
- fpr=3108C10F46872E248D1FB221376EB100563EF7A7
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250306082615.174777-1-max.kellermann@ionos.com>
 
-Add Andreas Hindborg as maintainer for Rust `hrtimer` abstractions. Also
-add Boqun Feng as reviewer.
+On Thu, Mar 06, 2025 at 09:26:15AM +0100, Max Kellermann wrote:
+> If a program enables `NO_NEW_PRIVS` and sets up
+> differing real/effective/saved/fs ids, the effective ids are
+> downgraded during exec because the kernel believes it should "get no
+> more than they had, and maybe less".
+> 
+> I believe it is safe to keep differing ids even if `NO_NEW_PRIVS` is
+> set.  The newly executed program doesn't get any more, but there's no
+> reason to give it less.
+> 
+> This is different from "set[ug]id/setpcap" execution where privileges
+> may be raised; here, the assumption that it's "set[ug]id" if
+> effective!=real is too broad.
+> 
+> If we verify that all user/group ids remain as they were, we can
+> safely allow the new program to keep them.
 
-Acked-by: Boqun Feng <boqun.feng@gmail.com>
-Acked-by: Frederic Weisbecker <frederic@kernel.org>
-Reviewed-by: Lyude Paul <lyude@redhat.com>
-Signed-off-by: Andreas Hindborg <a.hindborg@kernel.org>
----
- MAINTAINERS | 15 +++++++++++++++
- 1 file changed, 15 insertions(+)
+Thanks, it's an interesting point.  Seems to mainly depend on what users
+of the feature have come to expect.
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 896a307fa065..ba8e802faabf 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -10355,6 +10355,21 @@ F:	kernel/time/timer_list.c
- F:	kernel/time/timer_migration.*
- F:	tools/testing/selftests/timers/
- 
-+HIGH-RESOLUTION TIMERS [RUST]
-+M:	Andreas Hindborg <a.hindborg@kernel.org>
-+R:	Boqun Feng <boqun.feng@gmail.com>
-+R:	Frederic Weisbecker <frederic@kernel.org>
-+R:	Lyude Paul <lyude@redhat.com>
-+R:	Thomas Gleixner <tglx@linutronix.de>
-+R:	Anna-Maria Behnsen <anna-maria@linutronix.de>
-+L:	rust-for-linux@vger.kernel.org
-+S:	Supported
-+W:	https://rust-for-linux.com
-+B:	https://github.com/Rust-for-Linux/linux/issues
-+T:	git https://github.com/Rust-for-Linux/linux.git hrtimer-next
-+F:	rust/kernel/time/hrtimer.rs
-+F:	rust/kernel/time/hrtimer/
-+
- HIGH-SPEED SCC DRIVER FOR AX.25
- L:	linux-hams@vger.kernel.org
- S:	Orphan
+Andy, what do you think?
 
--- 
-2.47.0
-
-
+> Signed-off-by: Max Kellermann <max.kellermann@ionos.com>
+> ---
+>  security/commoncap.c | 23 ++++++++++++++++++++++-
+>  1 file changed, 22 insertions(+), 1 deletion(-)
+> 
+> diff --git a/security/commoncap.c b/security/commoncap.c
+> index 58a0c1c3e409..057a7400ef7d 100644
+> --- a/security/commoncap.c
+> +++ b/security/commoncap.c
+> @@ -861,6 +861,26 @@ static inline bool __is_setuid(struct cred *new, const struct cred *old)
+>  static inline bool __is_setgid(struct cred *new, const struct cred *old)
+>  { return !gid_eq(new->egid, old->gid); }
+>  
+> +/**
+> + * Are all user/group ids in both cred instances identical?
+> + *
+> + * It can be used after __is_setuid() / __is_setgid() to check whether
+> + * this is really a set*id operation or whether both processes just
+> + * have differing real/effective ids.  It is safe to keep differing
+> + * real/effective ids in "unsafe" program execution.
+> + */
+> +static bool has_identical_uids_gids(const struct cred *a, const struct cred *b)
+> +{
+> +	return uid_eq(a->uid, b->uid) &&
+> +		gid_eq(a->gid, b->gid) &&
+> +		uid_eq(a->suid, b->suid) &&
+> +		gid_eq(a->sgid, b->sgid) &&
+> +		uid_eq(a->euid, b->euid) &&
+> +		gid_eq(a->egid, b->egid) &&
+> +		uid_eq(a->fsuid, b->fsuid) &&
+> +		gid_eq(a->fsgid, b->fsgid);
+> +}
+> +
+>  /*
+>   * 1) Audit candidate if current->cap_effective is set
+>   *
+> @@ -940,7 +960,8 @@ int cap_bprm_creds_from_file(struct linux_binprm *bprm, const struct file *file)
+>  	 *
+>  	 * In addition, if NO_NEW_PRIVS, then ensure we get no new privs.
+>  	 */
+> -	is_setid = __is_setuid(new, old) || __is_setgid(new, old);
+> +	is_setid = (__is_setuid(new, old) || __is_setgid(new, old)) &&
+> +		!has_identical_uids_gids(new, old);
+>  
+>  	if ((is_setid || __cap_gained(permitted, new, old)) &&
+>  	    ((bprm->unsafe & ~LSM_UNSAFE_PTRACE) ||
+> -- 
+> 2.47.2
 
