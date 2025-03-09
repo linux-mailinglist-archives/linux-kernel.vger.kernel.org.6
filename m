@@ -1,282 +1,131 @@
-Return-Path: <linux-kernel+bounces-553267-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-553268-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EE635A5869D
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 18:58:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 65365A586A1
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 18:58:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3C0753A956B
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 17:58:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1E12C3A8D92
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 17:58:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC1F11F4C94;
-	Sun,  9 Mar 2025 17:57:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43BF51F4C87;
+	Sun,  9 Mar 2025 17:57:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="dc5fL2Pa"
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MyHKyj43"
+Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B7AB1F099B;
-	Sun,  9 Mar 2025 17:57:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5910D1EF37C;
+	Sun,  9 Mar 2025 17:57:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741543066; cv=none; b=FP5TSV231hxC73Jz0nPa7AcJgtuRrqqOlVt4gbtJnBEBq1vL35aVPIK+1nDHzgf+zQQwAz5CgHdy4M19Wt6vOSkptdT4VsRCYc8Vn3a0LwdKxR7s0HnFMgoilubajt25GQDemznsIAVZnhBoKEspbTEkziwKQwVG/jWZ3eeAbeY=
+	t=1741543076; cv=none; b=IwZ/s/myk48EoFEznbvLoZPzYS8sZlyHCt2YK+eUD4clF2IGMv9IDstC8mVe7R+F+yUVjNlePCyh1m7or5YryE+s5Ew8pNxl25LVouat6Jal9cMpYfXdk9sYJgeigVj8YFqNnycA0viKZfkTxHAqcfTF13GLkybezbcDlSVZYpM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741543066; c=relaxed/simple;
-	bh=xsz6OPx6Z9uDP3D+uEqnroPiSIU8yECBlbfjyMtzjAM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PDzCM98lFSKJ7KGydMrnY3pXMjpuZoA5y+DTB1QWbVdybG07AzIvt78pQ6n3SWGeLEaVWDnaT7Vt9n0jg57O00j/csPXuSQlrrC8QdnnxM3+fvXURIlWPvAUuwb91pcTLMN1tSx9T/io+YkEHHZc1nXOHI+lsn6+UUHqGpaR2do=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=dc5fL2Pa; arc=none smtp.client-ip=78.32.30.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=dIhdSeA+sKY04sYaP/yGGu7Uf1h3HX4WesIt7XvRbuE=; b=dc5fL2Pap+D9k82kWKY/cDDfZu
-	iYILHTxmGsAQsiVsrzo8CHuB98dMQ38Jm1ctAkrGymRJnBUth5n79xKv46sDqw8cbEjiLTwXHchW2
-	8+MNISEP1foTylRjLfCrDZeiIjG/ZIPzFJkD/wxtw3V/Lr+oeVeS5XBmIVe2fNMiL4cS4fS1SeDKq
-	d9llRg6SOXq/m0zRSmU0RcSsWHI9Z6K2rlHPWnkyTpQjU6xEtLqzxdKk0SEjeyvZnw+u5B/uOiBSR
-	z6QBRB1XDGGTKcMAac9HTmIGLH9JXDB/eNfVW6dn+K4+cR+NmyAd2UeWAvrs9mS79HZaYGj7Vjl2K
-	rnIil4Ug==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:42970)
-	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <linux@armlinux.org.uk>)
-	id 1trKtw-0001ar-2h;
-	Sun, 09 Mar 2025 17:57:24 +0000
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
-	(envelope-from <linux@shell.armlinux.org.uk>)
-	id 1trKts-0001dj-36;
-	Sun, 09 Mar 2025 17:57:21 +0000
-Date: Sun, 9 Mar 2025 17:57:20 +0000
-From: "Russell King (Oracle)" <linux@armlinux.org.uk>
-To: Christian Marangi <ansuelsmth@gmail.com>
-Cc: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Vladimir Oltean <olteanv@gmail.com>,
-	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Maxime Chevallier <maxime.chevallier@bootlin.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org, netdev@vger.kernel.org,
-	upstream@airoha.com
-Subject: Re: [net-next PATCH v12 12/13] net: dsa: Add Airoha AN8855 5-Port
- Gigabit DSA Switch driver
-Message-ID: <Z83WgMeg_IxgbxhO@shell.armlinux.org.uk>
-References: <20250309172717.9067-1-ansuelsmth@gmail.com>
- <20250309172717.9067-13-ansuelsmth@gmail.com>
+	s=arc-20240116; t=1741543076; c=relaxed/simple;
+	bh=IcDiQbjK7QkOUtwcahlljvJSSFMJ7nHeE1X6Y+ZDf/w=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=c3WD/hcyYpv3TN+IG5esSLhZI7/gyDXQpxCR1P39Z6fce8BNsCpdNs9c36YT/JERNmiB59pxAEGSYZe85qyT51wR2g/WmSM1oYX0gMqNpg6T1xDZ3CP0QbIAq83uFsD3bNTlvaAyr+e/3fZPoOmWRhnsRGr8Rze7OOKrpMfnsOk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MyHKyj43; arc=none smtp.client-ip=209.85.214.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-22438c356c8so29971475ad.1;
+        Sun, 09 Mar 2025 10:57:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741543074; x=1742147874; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=+ShW+R2fg4UIDkgDliCZ19ugTtc1H63Gcayp71fy27U=;
+        b=MyHKyj43uXGVB4Bi+RGt1D4cJ7ASY95xRWcAbziYKFf3084EQcwulfu1EVlws3k55z
+         0urCLACm4g2aSkVlQYYGFVrYa0KoknyHkvlc/JAlkgFDgNj9wJn0TJ8N8+CvL6GI4M1F
+         Ucyjmj7m0UI+1G3wv3PTnI5ZN1yuSz70scjk53IwKGCI3lLd2GhnAKGOVF/j1ahIBapm
+         o9ieSd92fYTevp4ZNxJbMju6L0NLcGUke8LfrLCFaAt9VQ5hN7dfPSIKQq/2exeADXsO
+         ljflwljHpmaMNjctrkGUeEeg9K9gfH3E4SHwpKqr8x7kx5ttUelF0FJAnKMlaUeyHiio
+         MvmQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741543074; x=1742147874;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=+ShW+R2fg4UIDkgDliCZ19ugTtc1H63Gcayp71fy27U=;
+        b=o0lFBw45OXZZ/L3Kuc1xSP/Oy4BeT1EV/Y+HxWPReC4XOr2/UPjboXQuSnUKSFnmNb
+         YiS9PkEJVJfkkhZGHaM3vQLib3J8CXYuXo0MXYOYIXQsOzjiOrmU4x7ObU7RAHIKX7nq
+         /hEmUpb9Rp7eqn79ASmhFINk6vST7Dml2uSqNGatviooJfpnsESI3JRijQbEmM4hY5JT
+         VU/7Hul4HYHdEZuxR6o4eUufRqE5YtpYWfNbT5zDnFoX+lwAPWbHVII6v5ekyiJyW9Yc
+         1jmuvXc0RV4RcUmsz7mRPWx+Iv/eFlXMJbuVX9pMKLst7MhFv9LfC/eseA714yATzjWf
+         dPYQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUlSjLlnymAfUm0TNQ5u4XECCoXHMlRoLj93PIe11irnOXMocdkE4kyVHKDpjYLz+/74xX1X6woquFR5+E=@vger.kernel.org
+X-Gm-Message-State: AOJu0YymOxdyB+zCrWUDDB6TS/YQnSC3sUpHfa/33JwMWJkwbm4dR6b+
+	phRiHhFy6yVqlrUgCf2BkUnk8puAIG3RKGfvvHKi3GmB7q5msmDdRGgAqRBRAsM=
+X-Gm-Gg: ASbGncsW3sH+x6LtRliQYKLfk940BBgAbzZ37aNOHj9A6f17Zb/LkM+sR8qrh60H6Ls
+	G22rqR55XWwd46/6zE5XuoMfOexNxxgQ7vTFx8AAu8LTDzog2lro6z61cEKZ9r06XbW01VJvv+q
+	3Vu6WjBcOkQf3bWVysNaru5jTuOTLtf33/WnhnajDwgB8/cOOk6y9Q64VK0WtkY1OGqP3lNEc5U
+	cobDtmvcePdtGXRLPB/PwMZna7XYOXsAbSt62OFJ2jdxJy5vUcfdPo4avsaDDtg5LXoMhVF4AEr
+	rfmARE3fS1MEZiZpWf+xRWbg77GZiqiKSE0MkDu2FAMjsPFiGg+0NFM=
+X-Google-Smtp-Source: AGHT+IGBozFibCaSqkZ66LWvTrvLy45EL4JsTX508qnHiaChaQeNrguJ7G1t9sZHiCE9u0fIYS2xqg==
+X-Received: by 2002:a05:6a00:4b4a:b0:736:339b:8296 with SMTP id d2e1a72fcca58-736aaabaedcmr18333823b3a.18.1741543074450;
+        Sun, 09 Mar 2025 10:57:54 -0700 (PDT)
+Received: from dev0.. ([49.43.168.202])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-73698206989sm6713019b3a.21.2025.03.09.10.57.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 09 Mar 2025 10:57:53 -0700 (PDT)
+From: Abhinav Jain <jain.abhinav177@gmail.com>
+To: jgg@ziepe.ca,
+	leon@kernel.org
+Cc: linux-rdma@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Abhinav Jain <jain.abhinav177@gmail.com>
+Subject: [PATCH] RDMA/core: Publish node GUID with the uevent for ib_device
+Date: Sun,  9 Mar 2025 17:57:31 +0000
+Message-Id: <20250309175731.7185-1-jain.abhinav177@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250309172717.9067-13-ansuelsmth@gmail.com>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
+Content-Transfer-Encoding: 8bit
 
-On Sun, Mar 09, 2025 at 06:26:57PM +0100, Christian Marangi wrote:
-> +static int an8855_port_enable(struct dsa_switch *ds, int port,
-> +			      struct phy_device *phy)
-> +{
-> +	struct an8855_priv *priv = ds->priv;
-> +
-> +	return regmap_set_bits(priv->regmap, AN8855_PMCR_P(port),
-> +			       AN8855_PMCR_TX_EN | AN8855_PMCR_RX_EN);
+As per the comment, modify ib_device_uevent to publish the node
+GUID alongside device name, upon device state change.
 
-Shouldn't you wait for phylink to call your mac_link_up() method?
+Have compiled the file manually to ensure that it builds. Do not have
+a readily available IB hardware to test. Confirmed with checkpatch
+that the patch has no errors/warnings.
 
-> +}
-> +
-> +static void an8855_port_disable(struct dsa_switch *ds, int port)
-> +{
-> +	struct an8855_priv *priv = ds->priv;
-> +	int ret;
-> +
-> +	ret = regmap_clear_bits(priv->regmap, AN8855_PMCR_P(port),
-> +				AN8855_PMCR_TX_EN | AN8855_PMCR_RX_EN);
-> +	if (ret)
-> +		dev_err(priv->ds->dev, "failed to disable port: %d\n", ret);
+Signed-off-by: Abhinav Jain <jain.abhinav177@gmail.com>
+---
+ drivers/infiniband/core/device.c | 13 +++++++++----
+ 1 file changed, 9 insertions(+), 4 deletions(-)
 
-Doesn't the link get set down before this is called? IOW, doesn't
-phylink call your mac_link_down() method first?
-
-...
-
-> +static void an8855_phylink_mac_link_up(struct phylink_config *config,
-> +				       struct phy_device *phydev, unsigned int mode,
-> +				       phy_interface_t interface, int speed,
-> +				       int duplex, bool tx_pause, bool rx_pause)
-> +{
-> +	struct dsa_port *dp = dsa_phylink_to_port(config);
-> +	struct an8855_priv *priv = dp->ds->priv;
-> +	int port = dp->index;
-> +	u32 reg;
-> +
-> +	reg = regmap_read(priv->regmap, AN8855_PMCR_P(port), &reg);
-> +	if (phylink_autoneg_inband(mode)) {
-> +		reg &= ~AN8855_PMCR_FORCE_MODE;
-> +	} else {
-> +		reg |= AN8855_PMCR_FORCE_MODE | AN8855_PMCR_FORCE_LNK;
-> +
-> +		reg &= ~AN8855_PMCR_FORCE_SPEED;
-> +		switch (speed) {
-> +		case SPEED_10:
-> +			reg |= AN8855_PMCR_FORCE_SPEED_10;
-> +			break;
-> +		case SPEED_100:
-> +			reg |= AN8855_PMCR_FORCE_SPEED_100;
-> +			break;
-> +		case SPEED_1000:
-> +			reg |= AN8855_PMCR_FORCE_SPEED_1000;
-> +			break;
-> +		case SPEED_2500:
-> +			reg |= AN8855_PMCR_FORCE_SPEED_2500;
-> +			break;
-> +		case SPEED_5000:
-> +			dev_err(priv->ds->dev, "Missing support for 5G speed. Aborting...\n");
-> +			return;
-> +		}
-> +
-> +		reg &= ~AN8855_PMCR_FORCE_FDX;
-> +		if (duplex == DUPLEX_FULL)
-> +			reg |= AN8855_PMCR_FORCE_FDX;
-> +
-> +		reg &= ~AN8855_PMCR_RX_FC_EN;
-> +		if (rx_pause || dsa_port_is_cpu(dp))
-> +			reg |= AN8855_PMCR_RX_FC_EN;
-> +
-> +		reg &= ~AN8855_PMCR_TX_FC_EN;
-> +		if (rx_pause || dsa_port_is_cpu(dp))
-> +			reg |= AN8855_PMCR_TX_FC_EN;
-> +
-> +		/* Disable any EEE options */
-> +		reg &= ~(AN8855_PMCR_FORCE_EEE5G | AN8855_PMCR_FORCE_EEE2P5G |
-> +			 AN8855_PMCR_FORCE_EEE1G | AN8855_PMCR_FORCE_EEE100);
-
-Why? Maybe consider implementing the phylink tx_lpi functions for EEE
-support.
-
-> +	}
-> +
-> +	reg |= AN8855_PMCR_TX_EN | AN8855_PMCR_RX_EN;
-> +
-> +	regmap_write(priv->regmap, AN8855_PMCR_P(port), reg);
-> +}
-> +
-> +static unsigned int an8855_pcs_inband_caps(struct phylink_pcs *pcs,
-> +					   phy_interface_t interface)
-> +{
-> +	/* SGMII can be configured to use inband with AN result */
-> +	if (interface == PHY_INTERFACE_MODE_SGMII)
-> +		return LINK_INBAND_DISABLE | LINK_INBAND_ENABLE;
-> +
-> +	/* inband is not supported in 2500-baseX and must be disabled */
-> +	return  LINK_INBAND_DISABLE;
-
-Spurious double space.
-
-> +}
-> +
-> +static void an8855_pcs_get_state(struct phylink_pcs *pcs, unsigned int neg_mode,
-> +				 struct phylink_link_state *state)
-> +{
-> +	struct an8855_priv *priv = container_of(pcs, struct an8855_priv, pcs);
-> +	u32 val;
-> +	int ret;
-> +
-> +	ret = regmap_read(priv->regmap, AN8855_PMSR_P(AN8855_CPU_PORT), &val);
-> +	if (ret < 0) {
-> +		state->link = false;
-> +		return;
-> +	}
-> +
-> +	state->link = !!(val & AN8855_PMSR_LNK);
-> +	state->an_complete = state->link;
-> +	state->duplex = (val & AN8855_PMSR_DPX) ? DUPLEX_FULL :
-> +						  DUPLEX_HALF;
-> +
-> +	switch (val & AN8855_PMSR_SPEED) {
-> +	case AN8855_PMSR_SPEED_10:
-> +		state->speed = SPEED_10;
-> +		break;
-> +	case AN8855_PMSR_SPEED_100:
-> +		state->speed = SPEED_100;
-> +		break;
-> +	case AN8855_PMSR_SPEED_1000:
-> +		state->speed = SPEED_1000;
-> +		break;
-> +	case AN8855_PMSR_SPEED_2500:
-> +		state->speed = SPEED_2500;
-> +		break;
-> +	case AN8855_PMSR_SPEED_5000:
-> +		dev_err(priv->ds->dev, "Missing support for 5G speed. Setting Unknown.\n");
-> +		fallthrough;
-
-Which is wrong now, we have SPEED_5000.
-
-> +	default:
-> +		state->speed = SPEED_UNKNOWN;
-> +		break;
-> +	}
-> +
-> +	if (val & AN8855_PMSR_RX_FC)
-> +		state->pause |= MLO_PAUSE_RX;
-> +	if (val & AN8855_PMSR_TX_FC)
-> +		state->pause |= MLO_PAUSE_TX;
-> +}
-> +
-> +static int an8855_pcs_config(struct phylink_pcs *pcs, unsigned int neg_mode,
-> +			     phy_interface_t interface,
-> +			     const unsigned long *advertising,
-> +			     bool permit_pause_to_mac)
-> +{
-> +	struct an8855_priv *priv = container_of(pcs, struct an8855_priv, pcs);
-> +	u32 val;
-> +	int ret;
-> +
-> +	/*                   !!! WELCOME TO HELL !!!                   */
-> +
-[... hell ...]
-> +	ret = regmap_write(priv->regmap, AN8855_MSG_RX_LIK_STS_2,
-> +			   AN8855_RG_RXFC_AN_BYPASS_P3 |
-> +			   AN8855_RG_RXFC_AN_BYPASS_P2 |
-> +			   AN8855_RG_RXFC_AN_BYPASS_P1 |
-> +			   AN8855_RG_TXFC_AN_BYPASS_P3 |
-> +			   AN8855_RG_TXFC_AN_BYPASS_P2 |
-> +			   AN8855_RG_TXFC_AN_BYPASS_P1 |
-> +			   AN8855_RG_DPX_AN_BYPASS_P3 |
-> +			   AN8855_RG_DPX_AN_BYPASS_P2 |
-> +			   AN8855_RG_DPX_AN_BYPASS_P1 |
-> +			   AN8855_RG_DPX_AN_BYPASS_P0);
-> +	if (ret)
-> +		return ret;
-> +
-> +	return 0;
-
-Is this disruptive to the link if the link is up, and this is called
-(e.g. to change the advertisement rather than switch interface mode).
-If so, please do something about that - e.g. only doing the bulk of
-the configuration if the interface mode has changed.
-
-I guess, however, that as you're only using SGMII with in-band, it
-probably doesn't make much difference, but having similar behaviour
-in the various drivers helps with ongoing maintenance.
-
+diff --git a/drivers/infiniband/core/device.c b/drivers/infiniband/core/device.c
+index 0ded91f056f3..1812038f1a91 100644
+--- a/drivers/infiniband/core/device.c
++++ b/drivers/infiniband/core/device.c
+@@ -499,12 +499,17 @@ static void ib_device_release(struct device *device)
+ static int ib_device_uevent(const struct device *device,
+ 			    struct kobj_uevent_env *env)
+ {
+-	if (add_uevent_var(env, "NAME=%s", dev_name(device)))
++	const struct ib_device *dev =
++		container_of(device, struct ib_device, dev);
++
++	if (add_uevent_var(env, "NAME=%s", dev_name(&dev->dev)))
+ 		return -ENOMEM;
+ 
+-	/*
+-	 * It would be nice to pass the node GUID with the event...
+-	 */
++	__be64 node_guid_be = dev->node_guid;
++	u64 node_guid = be64_to_cpu(node_guid_be);
++
++	if (add_uevent_var(env, "NODE_GUID=0x%llx", node_guid))
++		return -ENOMEM;
+ 
+ 	return 0;
+ }
 -- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
+2.34.1
+
 
