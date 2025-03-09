@@ -1,140 +1,171 @@
-Return-Path: <linux-kernel+bounces-553393-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-553394-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 479E1A588A1
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 22:51:25 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A1578A588A4
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 22:52:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A75D1188DA14
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 21:51:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 79E463AC31E
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 21:52:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CBCC21D5BD;
-	Sun,  9 Mar 2025 21:51:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C6D821D5BD;
+	Sun,  9 Mar 2025 21:52:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="mZJxB7us"
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="xdM81uMJ"
+Received: from mail-yw1-f174.google.com (mail-yw1-f174.google.com [209.85.128.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 518221F5827
-	for <linux-kernel@vger.kernel.org>; Sun,  9 Mar 2025 21:51:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D77216B3B7
+	for <linux-kernel@vger.kernel.org>; Sun,  9 Mar 2025 21:52:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741557074; cv=none; b=Kl+mRnX7VVGqd3kZO7OO/0O7PM76fVy4vys9R+83Xr+bSG+/B5v6I0GpMqH21wL/nZSFtLKhii1c3kCcc8boG2nI29xLu16KrAOhoAwRSGt7mEZ3Kg/w4AO0whTgkMhuxsbhDeJIph7I1Rm356yOroPV05rCFIbHOg9McDZU8Hw=
+	t=1741557159; cv=none; b=S358T0kzen+tBkyctJITVTexpArLoMCqiLoS0rIiSo57nD4reu4PFC8ffq5a0rSSnnBM49WYjmipeLgBOy+mWd5tOJqQcfYVxxYRb981QIUGuWWLM6I5MvenbhUTvrcI/G/9tCVbaIRwprojjjA548I6HLzCIXQFDzVIsxqKREQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741557074; c=relaxed/simple;
-	bh=F1FrAhqe1gDWi8xlo4HpXF2wBOUM+KcW2zALRt2drk8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Pok1pSDMGougSVJUVM2RLLDlP0zBHjpOEo5h6mfXytTB5OlcMaSUGj90LlJ6Ce8bfhxN/nQY65tqQ1XaDr+V4MZrna78D5yiWDgsdMxt2XOGFimHwfrzWegrDAwEJSG9utqnxP7m0lNbvX6XXnb8oG60e8ThpdTakGvVEm1QVzc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=mZJxB7us; arc=none smtp.client-ip=209.85.214.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-224171d6826so45863145ad.3
-        for <linux-kernel@vger.kernel.org>; Sun, 09 Mar 2025 14:51:12 -0700 (PDT)
+	s=arc-20240116; t=1741557159; c=relaxed/simple;
+	bh=znDduV8o5do63kBgnI87Al2XfPX6k0jTsz0vM1YT25o=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=JDfNSOh7quLxgNuoNBXC7Pp5GBAsTrbAYB6rmHAXjeSw0rY2n38IOgooynArfQzfcu4WUoAkkzkpvYZZ4VDycoqsl2owfl3d4o5pAML5ifgi6Xelez4t9X1fywskun89nfWrlhyRQGEDwntEFLx40lWdkJUqx4pxyA2YGFcbSeg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=xdM81uMJ; arc=none smtp.client-ip=209.85.128.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yw1-f174.google.com with SMTP id 00721157ae682-6fead317874so30534607b3.0
+        for <linux-kernel@vger.kernel.org>; Sun, 09 Mar 2025 14:52:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1741557072; x=1742161872; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=wtQlZm6zttB+fiTHsUvomrcaKMWy8CxBSny2Xz7D1/k=;
-        b=mZJxB7usCFOpdhMxPogYwsPajD+HSuIwxBZZ264YG/qFwEE4TDPUEDhCO0A6O8g6uC
-         b8Nv/cmIOLpi5rs6ASLdBg/ZxEkcNZ75+NwIB5cltgpCgtco1X7VJR2u0rfSi8G48Baj
-         S/SYev6baCCr2KQz9WsNsa9U5I61qijAKqyMXLfbYm+FW8PEBPlj8gzgj1WbF/cI0S3E
-         Kk88vPHJUehFKpNANCYW2Xznb8IB3eBAT4S62UYoTSCETVAqYQYWFR2vPpLDpdFkd8Mw
-         obz/4PxFBRptgHlVgngNgyt9VntWKnsq8iD12ixEyvlGUyuaWzV5vcwr7ABhhiJPyNC5
-         xVkw==
+        d=linaro.org; s=google; t=1741557157; x=1742161957; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=x2cXZ1H4OWYbGTrPh8vFke/8+4UNPAMB80eBPTb7iwg=;
+        b=xdM81uMJ8UUubdaE9BAReuxEUkQmJPSYLKm1g+r53p7I+R1wGOKzP8pwiSnVFV4q05
+         +9zMEcx1oKBxl07pIERLrYr5r+UYTW7K7SjYueE3iyOfbGPQop3wi7nulqmYyq0TozS1
+         m8bmhaWaHyfzkBlp4FhHfwpagWv7kFpQ4p3PpKnSCPwKIABQqXNfvZ0dvQ6G2oC3Fd2k
+         2+7gWwXMsSLo7U3xfCcek8hSsdaxGhZ1bvf9CiXC48hwd2TFU7RlunPgDP6I+6D9wQod
+         uSIG57P5J68a+AiS9GpXZkArPaqy/hXHZEB+4bNov+oj7o8UwMxtKYZbZguSWdDaBFpO
+         ziXA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741557072; x=1742161872;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=wtQlZm6zttB+fiTHsUvomrcaKMWy8CxBSny2Xz7D1/k=;
-        b=bSKFRiJtZDpmis5KEsiDZsSG5TqWzflaCBUII/1522jd3j+iIUw6bBAU1gIDeCfjiU
-         /9/DGr6qjDax16peT7OEQM9l1lu23GapHP4gVpRhXrBn+Cuh2hxmNwORp9nyhaJZNWha
-         /8vrhWWawM7T1U1WrREZCJo4cqzbG+vMESyjAvsbfvQvfL8Nx/SGJJVwD+pKAV86XyhA
-         9YGiOKrJk8bv4R3FoD5EYOFnQdGiV9D8L7MloPZnEHe5uSBUl8xxbyOHfyjvhWDnDV8b
-         Ua5KBgCY6qplnVttfiqRoA6UhMQh4yU0WIh888SnObJ2Ul3/SAj2dnSWuKO1Ha0AocbP
-         6l/w==
-X-Forwarded-Encrypted: i=1; AJvYcCUnbutJ4kOg5dUmvF68nKgZkBR5zdKjzk/wl6Dh5tFKKJUhdGVWleK7rSFD9KZb7oWBrYwdewG26JOjUrg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwEcOv2Hy5VdPAPGGbLoTKJqccOAsT2OV8iw5LW9gzIkddtUwzG
-	G2e/MBsneb5b0YoaYkdUFH6FZV9nsR/n9pvO5Hz0afXg3qFNyIe/vJfzhj8G16flMZoGWj6glh2
-	K
-X-Gm-Gg: ASbGncuaVssg5XhmKWGGfzCi6jyPAS3o1mD1UJP+q99HwZ7jkTFjOL9IptnRUKOAXGs
-	bWn5VeAjI/SdQgQBVWpMYIUy1en/tW7ZrktQkvAdPmL6m0CfbQqS+spCeprf6wmRg3F1ON8AFfw
-	MyyTpCOu08mXHExIB66XpdZPrJtPDOqmSWmFwhfr/xvFw1NrsMoqG+KsM68/Oe66p74gYGK6DgS
-	o28lFGj4lBHjH870UJ1sdrbmRDgh0B0E/Ysnc6hBVn/GDiqTgFuFTmiF1UibY9hNCU9EnKEDx3Y
-	jcI+a3Dhq54RtuiOcnKR/ldIEqc7Kr2nQ+lhhypapQh6r2Hd11tpp/rM7sid3gpaaanHyLR/BNp
-	NC9OtqV+GuX1OJLko5KOT
-X-Google-Smtp-Source: AGHT+IFmE/y2ukJ1h6orczK3sejJrk1ZhdcmorRtk38tGOzGDUfVjo6i5W3u8DPicjhnFh7GQsAsuA==
-X-Received: by 2002:a05:6a20:4393:b0:1f5:7873:304b with SMTP id adf61e73a8af0-1f57873325amr2358526637.26.1741557072470;
-        Sun, 09 Mar 2025 14:51:12 -0700 (PDT)
-Received: from dread.disaster.area (pa49-186-89-135.pa.vic.optusnet.com.au. [49.186.89.135])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-af50b2d4c9fsm4345121a12.76.2025.03.09.14.51.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 09 Mar 2025 14:51:11 -0700 (PDT)
-Received: from dave by dread.disaster.area with local (Exim 4.98)
-	(envelope-from <david@fromorbit.com>)
-	id 1trOY8-0000000B2Ns-3N8c;
-	Mon, 10 Mar 2025 08:51:08 +1100
-Date: Mon, 10 Mar 2025 08:51:08 +1100
-From: Dave Chinner <david@fromorbit.com>
-To: John Garry <john.g.garry@oracle.com>
-Cc: brauner@kernel.org, djwong@kernel.org, cem@kernel.org,
-	linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, ojaswin@linux.ibm.com,
-	ritesh.list@gmail.com, martin.petersen@oracle.com, tytso@mit.edu,
-	linux-ext4@vger.kernel.org
-Subject: Re: [PATCH v4 05/12] iomap: Support SW-based atomic writes
-Message-ID: <Z84NTP5tyHEVLNbA@dread.disaster.area>
-References: <20250303171120.2837067-1-john.g.garry@oracle.com>
- <20250303171120.2837067-6-john.g.garry@oracle.com>
+        d=1e100.net; s=20230601; t=1741557157; x=1742161957;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=x2cXZ1H4OWYbGTrPh8vFke/8+4UNPAMB80eBPTb7iwg=;
+        b=jJKrDUjbmStVmDSCiYNPao1pPit0HuoYBMh2rC5mHrJw0sdktcnlX8/PdLxJrKdNnY
+         HM+jEQ7j0bbpvAgzz64quO714sWS8pPm3NKZ+LBt8UMggM3wraX/+7q397t/j24ijFwW
+         eaE1X8/86ez9FFSr1Qs/y3lQxtojOU8SHy5Vktm4wuBbAb//KJ6ZkKsWSqtoD4xVfkaG
+         vefjx3ovGjapfZ5A0/2ZlyLBiebpjrrqFQRwJGPw3sGLd+wEWaYtKin0GlaNsIX6tuAo
+         V0iwf4FUadieCiyxbo/52sWEhoVbWVpWXi/9813bYt5Dsl/XKRkwquSFjqGXY4ed3mfp
+         xOHA==
+X-Forwarded-Encrypted: i=1; AJvYcCUMzBrlmxI43nnaRb5MD4ErWPa1b8MN/KAdbCng0P+rTw9aN4v4SRops7KrvDmCbmdacHPgmxf36SK3zPE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx4sjJAQqxoooU0LXUPnz8uWoY/OvZWAr18OzPfy8CgbQ4YOjDk
+	TjnJYz+6KIQ9Y4AQhr9d1dgWxLyiebK/DFeLPhDdph3OTmA3eEKrWT+GL7D12RAeONptt3nbqQY
+	foGtHgNxdi9CFUE2xsV+eXKei7YdUaVjBhaqhLg==
+X-Gm-Gg: ASbGncvTfousWJU/xj2QFY24fM+ek1Ecu9RYzm9Io0irHMbgC6MeU3EEOF+UzzrEh08
+	JYPzq82fE4XQclKclh9csHpMEmBAFmQLyRaP/sY+vZgXaDJw9Ygn4v4EzSCe2By3AKmnzbyQsrK
+	fGobsgT/nADVVk1zQ6+A94uhRCHolBZzCrWuVTeepmc3St6eUNhARMY50=
+X-Google-Smtp-Source: AGHT+IEwTe7+gG6re5FQDG7RY1yURSNJRkSyIZAU9lwF7FoyT/rEI0T3LIFPG8BM7OfSqpJwMlkh2/UTicN36O2msKk=
+X-Received: by 2002:a05:690c:6f12:b0:6fd:9f44:f3ab with SMTP id
+ 00721157ae682-6febf2f2438mr162990607b3.13.1741557157024; Sun, 09 Mar 2025
+ 14:52:37 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250303171120.2837067-6-john.g.garry@oracle.com>
+References: <20250309-lg-nexus4-mako-v3-1-1dc2807df296@ixit.cz>
+ <l4lv22oi2ktubf7aveqxqtwb7zz7cfrzdayuxxgwdj46ygubfs@qpl6ut37taoe>
+ <88da307c-0403-405d-8356-c8baeb18eaba@ixit.cz> <qu5w56bp5yurdgbhjpeiabn5pvpoov7xfyta5j7djnnrveak42@povbs5bddtsz>
+ <c67defb5-f677-45e0-9316-cf0a60238393@ixit.cz>
+In-Reply-To: <c67defb5-f677-45e0-9316-cf0a60238393@ixit.cz>
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Date: Sun, 9 Mar 2025 23:52:27 +0200
+X-Gm-Features: AQ5f1Jo8FnoegJUkwQU389SNer04ipCTPWac6KL_0tUVVQOS-Rp5nkRzvpEdsJ0
+Message-ID: <CAA8EJprdmS1dFem_7vud=QgZ2G27crYF2X3G4=QRS76c8EJvCA@mail.gmail.com>
+Subject: Re: [PATCH v3] ARM: dts: nexus4: Initial dts
+To: David Heidelberg <david@ixit.cz>
+Cc: Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Kees Cook <kees@kernel.org>, Tony Luck <tony.luck@intel.com>, 
+	"Guilherme G. Piccoli" <gpiccoli@igalia.com>, linux-arm-msm@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-hardening@vger.kernel.org, Ivan Belokobylskiy <belokobylskij@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon, Mar 03, 2025 at 05:11:13PM +0000, John Garry wrote:
-> Currently atomic write support requires dedicated HW support. This imposes
-> a restriction on the filesystem that disk blocks need to be aligned and
-> contiguously mapped to FS blocks to issue atomic writes.
-> 
-> XFS has no method to guarantee FS block alignment for regular,
-> non-RT files. As such, atomic writes are currently limited to 1x FS block
-> there.
-> 
-> To deal with the scenario that we are issuing an atomic write over
-> misaligned or discontiguous data blocks - and raise the atomic write size
-> limit - support a SW-based software emulated atomic write mode. For XFS,
-> this SW-based atomic writes would use CoW support to issue emulated untorn
-> writes.
-> 
-> It is the responsibility of the FS to detect discontiguous atomic writes
-> and switch to IOMAP_DIO_ATOMIC_SW mode and retry the write. Indeed,
-> SW-based atomic writes could be used always when the mounted bdev does
-> not support HW offload, but this strategy is not initially expected to be
-> used.
+On Sun, 9 Mar 2025 at 23:39, David Heidelberg <david@ixit.cz> wrote:
+>
+>
+>
+> On 09/03/2025 10:36, Dmitry Baryshkov wrote:
+> > On Sun, Mar 09, 2025 at 10:17:29AM +0100, David Heidelberg wrote:
+> >> Hello Dmitry!
+> >>
+> >> Thank you for looking into it. See replies.
+> >>
+> >> On 09/03/2025 09:33, Dmitry Baryshkov wrote:
+> >>> On Sun, Mar 09, 2025 at 01:45:51AM +0100, David Heidelberg via B4 Relay wrote:
+> >>>> +
+> >>>> +&riva {
+> >>>> +  status = "okay";
+> >>>> +  pinctrl-names = "default";
+> >>>> +  pinctrl-0 = <&riva_wlan_pin_a>;
+> >>>
+> >>> Where is it defined? Also pinctrl-names should come after pinctrl-N.
+> >>
+> >> definition is kinda aside in qcom-apq8064-pins.dtsi .
+> >
+> > Ack, missed it.
+> >
+> >>
+> >> All other suggestions incorporated, if it's OK otherwise, let me send v2
+> >
+> > I think this also needs several supplies in the riva device itself and
+> > in the iris subdevice. See qcom-apq8064-sony-xperia-lagan-yuga.dts.
+> >
+>
+> I don't have the device in my hands, so if I figure out the regulators,
+> I'll not be able to test new WiFi setup. I would drop the WiFi node for
+> now, so at least the base regulators and eMMC gets and possible someone
+> with devices in his hand can push more functionality forward, if you
+> don't object.
+>
+> There is slowly forming some APQ8064/MSM8960 community, so I think there
+> will be updates, now I would just settle with minimum, so our downstream
+> changes will contain only small chunks to get upstreamed.
+>
+> Would you be ok with this approach?
 
-So now seeing how these are are to be used, these aren't "hardware"
-and "software" atomic IOs. They are block layer vs filesystem atomic
-IOs.
+Yes, that sounds perfectly fine.
 
-We can do atomic IOs in software in the block layer drivers (think
-loop or dm-thinp) rather than off-loading to storage hardware.
+>
+> >>
+> >> Thank you
+> >> David
+> >>
+> >>>
+> >>>> +};
+> >>>>
+> >>>> ---
+> >>>> base-commit: 0a2f889128969dab41861b6e40111aa03dc57014
+> >>>> change-id: 20250309-lg-nexus4-mako-da0833885b26
+> >>>>
+> >>>> Best regards,
+> >>>> --
+> >>>> David Heidelberg <david@ixit.cz>
+> >>>>
+> >>>>
+> >>>
+> >>
+> >> --
+> >> David Heidelberg
+> >>
+> >
+>
+> --
+> David Heidelberg
+>
 
-Hence I think these really need to be named after the layer that
-will provide the atomic IO guarantees, because "hw" and "sw" as they
-are currently used are not correct. e.g something like
-IOMAP_FS_ATOMIC and IOMAP_BDEV_ATOMIC which indicates which layer
-should be providing the atomic IO constraints and guarantees.
-
--Dave.
 
 -- 
-Dave Chinner
-david@fromorbit.com
+With best wishes
+Dmitry
 
