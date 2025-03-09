@@ -1,110 +1,144 @@
-Return-Path: <linux-kernel+bounces-552963-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-552964-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D3C8FA58192
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 09:16:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 85B2AA58194
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 09:16:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8F3953AD939
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 08:16:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 221AF3AD6FE
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 08:16:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42B7717B50F;
-	Sun,  9 Mar 2025 08:16:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE9C818FDD2;
+	Sun,  9 Mar 2025 08:16:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="lCl0Jg9h"
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.5])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B27071392;
-	Sun,  9 Mar 2025 08:16:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.5
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Vhd5b55N"
+Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BFA018E361
+	for <linux-kernel@vger.kernel.org>; Sun,  9 Mar 2025 08:16:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741508194; cv=none; b=Vp3hhTeOC1P7gx/kuUDO/30/TsRMQ9fppnChA5hViRJCcp1i5zdmb+OCFhq4+N7y31NhlAx30PCkS1fl6+zvyLgoiKoCzhrYX5uS7wkeEnxd7mxBSWGaX7UJPacw859LMqK9wFpeLY14ofLG6I6yXMMXuUp2WW0e0/1jprT7M0c=
+	t=1741508199; cv=none; b=GeZx7NAs/LMwKrinKOvUUe1R5bBOYpeqR7Vx4L6Wl5tmifsxrfn4YbWlGz2K0YVgWaO6iaVJfVatXwGDGCgBWADPOzgoroAbjal13l62nGEfM98kFjkCvLF6q+gn7b0XsKtJY8xcb7IvQfAj52b5QPDSsxNjzexEU14SwGIavnc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741508194; c=relaxed/simple;
-	bh=8RrAX5zsyl2v8FK4aVmcG4yXL+EivR7DK0ueJdHYnHk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=NwZBzip6s1uTtluZ28Pew1cJEae7xd6yF799Rq6uxhENh5TmhGmA/0mWxE2ygt3mP62NJm0rxoH3caz1oGQ8bRNNOWlviEIeNjZi6kn9XJZIvYs+Wb3uvh9U5sfoV8owqXlLt/BhrF4pJ9khdg/F+S/8KmX3tU4lVLufZ+8G+7I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=lCl0Jg9h; arc=none smtp.client-ip=220.197.31.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:Subject:Date:Message-ID:MIME-Version; bh=FeXfy
-	9DrSiD94bOaNEUCI5BYPJ0acvCrnQJISy1Gcq4=; b=lCl0Jg9hrmXh76RBaqg4D
-	UKHfyG+h5HgcVkZIesTPeGzzQxzTfhAxVQ8UhzjkgRYWJr6ZnKQPfMMQl1KzuzYg
-	XxfUXEtWNiuNRnvpGtTRMu1vieckxIxSdGOyqIX1MNApxObRoYHygGkGRTAp8Ja7
-	GGdj1hIbpUNF2YJltREvKU=
-Received: from DESKTOP-DMSSUQ5.localdomain (unknown [])
-	by gzga-smtp-mtada-g0-2 (Coremail) with SMTP id _____wBXBydJTs1n+NhnRQ--.8762S2;
-	Sun, 09 Mar 2025 16:16:09 +0800 (CST)
-From: Shixiong Ou <oushixiong1025@163.com>
-To: Timur Tabi <timur@kernel.org>
-Cc: Helge Deller <deller@gmx.de>,
-	linux-fbdev@vger.kernel.org,
-	dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	Shixiong Ou <oushixiong@kylinos.cn>
-Subject: [PATCH v2] fbdev: fsl-diu-fb: add missing device_remove_file()
-Date: Sun,  9 Mar 2025 16:16:07 +0800
-Message-ID: <20250309081607.27784-1-oushixiong1025@163.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1741508199; c=relaxed/simple;
+	bh=lWZOKRJ5HqRDVKNcGDOhOGnuQdNGoBUNycSoUvRSUlo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WoR09oTvefxAsQsyYwsTo5LSxDt0y1rB+PbgVwDp44EAswz60k8cbe92pjjvoRkft3MJbOxNrB2gxptCCtMXDKUV0fABzo8R8GZIUtrgq5T9/pXB1n39/eKRNCotas8urpNcWnkDPGxtlmc7IF/CNt4wjEsPlaksVvUmvvOgMgY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Vhd5b55N; arc=none smtp.client-ip=209.85.167.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-54963160818so3796329e87.2
+        for <linux-kernel@vger.kernel.org>; Sun, 09 Mar 2025 00:16:36 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1741508195; x=1742112995; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=89SfYDl9Q5QnukNfbtuYibaaCHpU8JBYjMuTQ2U+dPA=;
+        b=Vhd5b55NIZ044+9p6uUaM+/d3EOHEcXvHMWjDd0upR/uG6JVwfLeX3HrjGZY8ylmo0
+         4ZtpCKij8URix8lBy+kPA7VtvVT1v9LD/UgtTjySX8ahDH6n1cTIhZD1g4Voppzt6Ys7
+         ZcKdCLEig5ATglkztFJEq5qIOhnE0lMtUmBFgS4t+c/gFv1w9iovEyIjvazi7EiOy+dt
+         sRz2lhGDDF5JeVk5ykeEpi1lj+1IldlmUAU7BOTNFZHo1aOkzhPFyXfURB6SmaskfAe5
+         Zj0PeclEmHe6Q4q0wCfXO1zd1jFJOct8bzOp+weIzPi+9M1qqkqFpU819uRMU2a8ETMh
+         CwOQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741508195; x=1742112995;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=89SfYDl9Q5QnukNfbtuYibaaCHpU8JBYjMuTQ2U+dPA=;
+        b=g6SU1wQbqJ9fcclorkDBWfvekL/sD2XAQ5VaP+QEol3cq7R6lgpL/d3YZGe2fqm1Ge
+         KgVT56Kfo/ThpVbC1AkqMpp3FTgaL0wZqhCdAxmrtBzBYRdBogbrQt8pR0k3lyrRxV5Z
+         uJ0XhVOjWY1IcqUdTF4Ci5uL5OvCaThJuazuuisC+nQCaWj/ARlBQWoCGRZjk5hxVsyu
+         ZoasKSyNcsQJwAtNOzekOXE5QcSopdOBo4I0WEmmOcHb0EXxJ7XdYMNmiqqGx1C+HLOk
+         d2Hvvd3wkJJs7KdMS6iZjvjWJ1q/fxMbeXdfLemvBkIx40/71oYk/lgDZK9UF1LqFlYe
+         RXHA==
+X-Forwarded-Encrypted: i=1; AJvYcCV+rZMM5AWXYsgvRcMENdKIA3+NsOX/pCFQ6haUEg1rUQGj4ihL2ePLZ3npqCg5qgdzwaB9egMH4D1dRKY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzXxR2HxJlkLMlgqTUOUEhfLrGhWTHjtGa8OIrz2H0MUpNkScUS
+	fxR+DYzHurssXU9F1RSQi4yQ868/PLxPJ2DftU0mXhC64ycAeUTiLfMjD6VuC0o=
+X-Gm-Gg: ASbGncsHYDw+SR3R391aWeOp20l6J3o+QlQFn/MCzCXRdR11f8Ntas4kdheCWbwBgse
+	/kJBZ+m4bjJThJii5YJRo7GD8xIBjKQqPXZm6JwBw0YycY8bx2ldFUyCAEtD2lU6+VXXYp31XBA
+	UaeJ17Ts9q2S6I8e5cC6htHtCG1YUkucMKuO2VSf1urbUfJCGZ1s4fKXj3XZcOKJFyfCnRhVts1
+	565f5wgIapTX0wydNgygIMYT8qGnVZtPU5GI9ORdPvZnFojq06jwSEbDp5FifmwEVnsBNwJLnIZ
+	kMiEQIUkcUe4FAmL1zjXaZVO0jfACHHqHDiR0RALDxHS5lnvH865il/tyVpMvmF5KnwOfW8MWOC
+	YksElFWgFlvxXuqPk48uX3PX+
+X-Google-Smtp-Source: AGHT+IHonFYRVCOD3hc2ZLZ2k0nh0AnV9X63OZNmrpqQRQXGzg2TI3GANig2LQlLgV4Hue3Yp7RGkw==
+X-Received: by 2002:a05:6512:1112:b0:548:9786:c18a with SMTP id 2adb3069b0e04-54990e5da6emr3725516e87.19.1741508195235;
+        Sun, 09 Mar 2025 00:16:35 -0800 (PST)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5498ae46199sm1054491e87.39.2025.03.09.00.16.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 09 Mar 2025 00:16:33 -0800 (PST)
+Date: Sun, 9 Mar 2025 10:16:31 +0200
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Qasim Ijaz <qasdev00@gmail.com>
+Cc: robdclark@gmail.com, quic_abhinavk@quicinc.com, sean@poorly.run, 
+	marijn.suijten@somainline.org, airlied@gmail.com, simona@ffwll.ch, quic_jesszhan@quicinc.com, 
+	linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] drm/msm/dpu: reorder pointer operations after sanity
+ checks to avoid NULL deref
+Message-ID: <5x4bmy52gxc6y3m6qswqxoxvjsk52zz7lvjpudqgr4d2hwaz4b@bdf2dzgji7gf>
+References: <20250308144839.33849-1-qasdev00@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wBXBydJTs1n+NhnRQ--.8762S2
-X-Coremail-Antispam: 1Uf129KBjvJXoW7WFy8Gr1rCr4Dtw4fKryxGrg_yoW8JF4DpF
-	W7XFZ5KrZ8Jw1UKw1DGrWxu3WrXw4xA3s3ArW2k34a9wn09Fy8Xa4kJFy8AayFyrWkC3Wa
-	qwnrtrWFvF9rWF7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07UMUDAUUUUU=
-X-CM-SenderInfo: xrxvxxx0lr0wirqskqqrwthudrp/1tbiXRELD2fM8CDgGwABsJ
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250308144839.33849-1-qasdev00@gmail.com>
 
-From: Shixiong Ou <oushixiong@kylinos.cn>
+On Sat, Mar 08, 2025 at 02:48:39PM +0000, Qasim Ijaz wrote:
+> _dpu_encoder_trigger_start dereferences "struct dpu_encoder_phys *phys" 
+> before the sanity checks which can lead to a NULL pointer dereference if 
+> phys is NULL. 
+> 
+> Fix this by reordering the dereference after the sanity checks.
+> 
+> Signed-off-by: Qasim Ijaz <qasdev00@gmail.com>
+> Fixes: 8144d17a81d9 ("drm/msm/dpu: Skip trigger flush and start for CWB")
 
-Call device_remove_file() when driver remove.
+Your SoB should be the last tag. Fixes comes before it.
 
-Signed-off-by: Shixiong Ou <oushixiong@kylinos.cn>
----
-v1->v2:
-	add has_sysfs_attrs flag.
+> ---
+>  drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c
+> index 0eed93a4d056..ba8b2a163232 100644
+> --- a/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c
+> +++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c
+> @@ -1667,8 +1667,6 @@ static void _dpu_encoder_trigger_flush(struct drm_encoder *drm_enc,
+>   */
+>  static void _dpu_encoder_trigger_start(struct dpu_encoder_phys *phys)
+>  {
+> -	struct dpu_encoder_virt *dpu_enc = to_dpu_encoder_virt(phys->parent);
+> -
+>  	if (!phys) {
+>  		DPU_ERROR("invalid argument(s)\n");
+>  		return;
+> @@ -1679,6 +1677,8 @@ static void _dpu_encoder_trigger_start(struct dpu_encoder_phys *phys)
+>  		return;
+>  	}
+>  
+> +	struct dpu_encoder_virt *dpu_enc = to_dpu_encoder_virt(phys->parent);
+> +
 
- drivers/video/fbdev/fsl-diu-fb.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+I'm not a fan of having variable defs in the middle of the code. Please
+keep the def at the top and assign it here.
 
-diff --git a/drivers/video/fbdev/fsl-diu-fb.c b/drivers/video/fbdev/fsl-diu-fb.c
-index 5ac8201c3533..57f7fe6a4c76 100644
---- a/drivers/video/fbdev/fsl-diu-fb.c
-+++ b/drivers/video/fbdev/fsl-diu-fb.c
-@@ -384,6 +384,7 @@ struct fsl_diu_data {
- 	__le16 next_cursor[MAX_CURS * MAX_CURS] __aligned(32);
- 	uint8_t edid_data[EDID_LENGTH];
- 	bool has_edid;
-+	bool has_dev_attr;
- } __aligned(32);
- 
- /* Determine the DMA address of a member of the fsl_diu_data structure */
-@@ -1809,6 +1810,7 @@ static int fsl_diu_probe(struct platform_device *pdev)
- 			data->dev_attr.attr.name);
- 	}
- 
-+	data->has_dev_attr = true;
- 	dev_set_drvdata(&pdev->dev, data);
- 	return 0;
- 
-@@ -1827,6 +1829,10 @@ static void fsl_diu_remove(struct platform_device *pdev)
- 	int i;
- 
- 	data = dev_get_drvdata(&pdev->dev);
-+
-+	if (data->has_dev_attr)
-+		device_remove_file(&pdev->dev, &data->dev_attr);
-+
- 	disable_lcdc(&data->fsl_diu_info[0]);
- 
- 	free_irq(data->irq, data->diu_reg);
+>  	if (phys->parent->encoder_type == DRM_MODE_ENCODER_VIRTUAL &&
+>  	    dpu_enc->cwb_mask) {
+>  		DPU_DEBUG("encoder %d CWB enabled, skipping\n", DRMID(phys->parent));
+> -- 
+> 2.39.5
+> 
+
 -- 
-2.43.0
-
+With best wishes
+Dmitry
 
