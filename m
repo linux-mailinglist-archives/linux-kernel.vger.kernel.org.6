@@ -1,148 +1,190 @@
-Return-Path: <linux-kernel+bounces-553033-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-553034-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8AD0EA582B5
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 10:36:27 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 85CFCA582B8
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 10:36:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C7198168052
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 09:36:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 309213ACDBE
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 09:36:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 377401A9B2A;
-	Sun,  9 Mar 2025 09:36:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="RMagQJTR"
-Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com [209.85.208.173])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63B6B1AA1C8;
+	Sun,  9 Mar 2025 09:36:32 +0000 (UTC)
+Received: from mail-io1-f77.google.com (mail-io1-f77.google.com [209.85.166.77])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E62941A840D
-	for <linux-kernel@vger.kernel.org>; Sun,  9 Mar 2025 09:36:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C433C1A8409
+	for <linux-kernel@vger.kernel.org>; Sun,  9 Mar 2025 09:36:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.77
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741512979; cv=none; b=uWZu2nfgxjtm6VlA9ff2LV0do7n3K87sIT1WKOyBSQnnJ+UyqtwgIsrdbl8Quz7TfNKprx3iyfdL4YllX9sq13dBllbnTQ0Ct4CYUGGxEVl1Beu2JltjxuCIKNuX4fh4MqMF1ok8uA5lbGKHz/z5gcON228quSsUkW9f8FKyarY=
+	t=1741512991; cv=none; b=clfZ4s6P6Gr7lEP1/WSGp93qQC/1Frk88ZEHW33it8qU34eh2stXnIosDW2fRWQxjM+OGxyq2tD8n1YXa/xO+DjsmhOditUKW5/+fWPJSILy0MxRtserPoBRG12Kmpia2D1ARmlIOciaH46MHiGwGIajNRasjbzG0R+kGtYwzDk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741512979; c=relaxed/simple;
-	bh=RVfu8DAMzXPHxXwHgpPDG4/bBTmqwuwrt/l5NUmzylc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KyTnafTIJdpXCP9HigoPusrlqYe+7g2e9izftt5k9TBZ1vijIs6dbUMIPx+NgFfydd2rzxDs3SjEuiGcUHr65NcGsb4CNwfCLI4bQ07aBcJ+zaHb4ZU2/6ZKOitRMgbKJqL4X8BIrrz+ie+lD0reZ2Nwmnrxm5JacaNrCyC2qWU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=RMagQJTR; arc=none smtp.client-ip=209.85.208.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-30bfb6ab47cso18641231fa.3
-        for <linux-kernel@vger.kernel.org>; Sun, 09 Mar 2025 01:36:16 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1741512975; x=1742117775; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=qv7t9LAWFlrZnh/h1qzmcLb/WgGltOmnbPS1Sywm160=;
-        b=RMagQJTRI0VuKI6kR+3xBVVqMfQWa9rJjUQfZlWWZMTzEm0N8Y/wGNpGD+I1aeQNFZ
-         o04lA0H4vIX0OHiXZ3IC8vzEcgQli+gWNEsqJd/yII7xDni0BFpXCr7HpnWHhgD2YfcV
-         xOiNS2T+GrAD7u78FgXkb5Hb1j69CKz3FSk0APN5lhEQrPhKLFs+Vu9Eivq5D2JxompA
-         YFTTsAV9lcKjU1cvsE46Wsy2ZbXm4oy/sJVX8ylg0E70iyGQGL3njhw1SVlkvoecm4Yd
-         SFgmjYwI/ggtlpxYLeHTqeg535+3ewLV9KJJrKTTyBV/Z1ORCE8g80cm8K08S+0PHC/S
-         L7OQ==
+	s=arc-20240116; t=1741512991; c=relaxed/simple;
+	bh=Us8rGbmPFV8r9kILQZkJiRMErAO862YWq8zDsrOKbkI=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=qqWuMHDGXd99S6rGHF1gMD6CwlJb1455Ky9ntgcsTOxgcUmR47pJiP4KWmKiiklq5wvFasKCM/QT8F0U/YdHR252esm1tbHqYq49typj6GS86C3KBAdjOR1q4f66sS9Cj+7Sz2WJxOtdoGwj7HfI8ZF6g66K3dy7qGwe/cMS5/U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.77
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f77.google.com with SMTP id ca18e2360f4ac-85b072e48ddso710876239f.1
+        for <linux-kernel@vger.kernel.org>; Sun, 09 Mar 2025 01:36:29 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741512975; x=1742117775;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=qv7t9LAWFlrZnh/h1qzmcLb/WgGltOmnbPS1Sywm160=;
-        b=Av5AE8BcOsMhppGK+8DvwSHrdgLoLi7DKRAPfekH+jEB30qTuEWIBOnWfWemSn6WEV
-         KpiSdGHgCu2m6MUbFIx2J3bb11HuF4FswbDYwBHhK12SGhF4WWF7pZc/Klsfc258z2Cu
-         xdQc4xhy32RcDkkBVBbVBXpkZd9GI6x/xssCFuwLJ4IxYJw4KozMATv32Bs9/QhMmArX
-         9GfyQt1wT3KbP+Z1xjN9IsnWM+F+XQECDbKfuN1JuqPq2a3+YMkMlQkNLk5YAX/bo5QR
-         HkkSK1XR8maq0jJMsnKHJkSXIMMiXqJHV4m9MFdH91mrAUdEHO01t6oizrq56AD6Jdq+
-         RsCQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXLdp2qFxUYu4JildWQcIBQQVhA5mN/A5JPwlsBCb52mL/NL3QH3kwbYZBlvjaKaVuRlegBMlci+hURPoM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz8jygB07Veh5UbB2dkdgcu8HK5bViBvuwAFiq/RVwI2XwXUsXu
-	oVtx/RrDT8uBpokKgXeGdCb6v/kOpJ89irVnX9IUQg+ZYMQ1qVNm6AVCgIDdE7c=
-X-Gm-Gg: ASbGncui+uSQsPgzcWDejM1VNwcirXJwTIxRpkT5cWJXz62+F7Uq3+opk6j2NhndYJL
-	b1DQQvDzUhYAtWZpw3p+LTVQMExrScEQYgJhJpW9a80Tu7qB7sLd7dzg4UxCBGNquOFTWY+LTgw
-	wISfh+koc5amQjjOeIZjMj1YCsaYVtxgDuLDVCiW09ggBzhpnHybpi7K1cvS+1CIkdOCmWlNbtX
-	+nwFa7bdIfb45iHRFJhlv4WDKZE2HJfxBLf0KXv3cC1inxdmA8XA0tiJlZ8MMhoFPz3pwBVAr9W
-	yIuc8Uq98KF0uAFUVQybnYBSqpHa14VQs5OnLZteDI40vDK76aSRoP3aaI/gAZlUPygijMq877C
-	CCriiEPJqZ61it71mRlHWwlrT
-X-Google-Smtp-Source: AGHT+IFQyC6l+Pw1P/BVH/g0erUa7GdcnXNOr76Jgy50Rjd/lC1C4UYs/hv4IKjbXl6NI52mEWrsnw==
-X-Received: by 2002:a05:651c:1541:b0:30b:d63c:ad20 with SMTP id 38308e7fff4ca-30bf45e28fbmr31911591fa.24.1741512974977;
-        Sun, 09 Mar 2025 01:36:14 -0800 (PST)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-30c00e42dbfsm5573811fa.89.2025.03.09.01.36.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 09 Mar 2025 01:36:13 -0800 (PST)
-Date: Sun, 9 Mar 2025 11:36:11 +0200
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: David Heidelberg <david@ixit.cz>
-Cc: Bjorn Andersson <andersson@kernel.org>, 
-	Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Kees Cook <kees@kernel.org>, 
-	Tony Luck <tony.luck@intel.com>, "Guilherme G. Piccoli" <gpiccoli@igalia.com>, 
-	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-hardening@vger.kernel.org, Ivan Belokobylskiy <belokobylskij@gmail.com>
-Subject: Re: [PATCH v3] ARM: dts: nexus4: Initial dts
-Message-ID: <qu5w56bp5yurdgbhjpeiabn5pvpoov7xfyta5j7djnnrveak42@povbs5bddtsz>
-References: <20250309-lg-nexus4-mako-v3-1-1dc2807df296@ixit.cz>
- <l4lv22oi2ktubf7aveqxqtwb7zz7cfrzdayuxxgwdj46ygubfs@qpl6ut37taoe>
- <88da307c-0403-405d-8356-c8baeb18eaba@ixit.cz>
+        d=1e100.net; s=20230601; t=1741512989; x=1742117789;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=VXiY6N7OSU76pQp1Pi3Phz+uoYFFIUVn9s/PtSgWyek=;
+        b=PfpbHlDyCuPFzkBySRx28tJSdbIX+tcU+Rylxl8YtSNl5N6/x3GUzxexZ/LOmA3WCj
+         kPWXirQRSSyJ3mDR+5Le9uj88xBW5R7YWzkyRtjYy1hYpW62npbUxhUh/EFoDLuS5vDK
+         +8PTyHWqgoWqi9C+YOocS/OF5dY8LGVYX/UUSOqFDj0H5SfMwravsY0K66BhfCxKrpXp
+         yDXcyDYf0sLt/3Jy4k/jNu9GHx8anoIQnulD7C2dzvjGGt6vHNUt3ZTvCqj5IOX5aErU
+         uDJVoA0z5a5/BmZclrafXIMkfB/bKZC4g/xSlXYch+eRxdcQxjgt3aK7fTvbKVr8AjvL
+         LkGQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUoVKvwwEbjsBwRbUrhfwJwYNYgbgJ2gwb2APyNuS6lbpqrKxrQLbzhyFHYVXr8tLbg1OikxhWCuDCp+tM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwGZ9ttl1zu1YGVpQZZzH6MOf70wlvrSKiJiN2RlUWXnS33X3q6
+	qQEVwV9bFIutyAEDeVW/GoDZedrG1l22ewkps6qK29zju3PwFUXCldwFHczL5Gq32QYa2b9gsiY
+	ZDJb9uS32vKyTwl+Tup6giYnqf6MlAV2feXrt23/nU31tcb/zCh5CU4M=
+X-Google-Smtp-Source: AGHT+IFV+ki/og+ynEYa3x+hrLV2cKzsvxHzX28vc/Gong4u9ZA9/KBYgHozqiuX5HtOfa7I7NHKPQUrWMhUoBdhCEKPTcWehmtm
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <88da307c-0403-405d-8356-c8baeb18eaba@ixit.cz>
+X-Received: by 2002:a05:6e02:1c0b:b0:3d3:d4f0:271d with SMTP id
+ e9e14a558f8ab-3d44196ff85mr126243005ab.12.1741512988912; Sun, 09 Mar 2025
+ 01:36:28 -0800 (PST)
+Date: Sun, 09 Mar 2025 01:36:28 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <67cd611c.050a0220.14db68.0073.GAE@google.com>
+Subject: [syzbot] [x25?] possible deadlock in lapbeth_device_event
+From: syzbot <syzbot+377b71db585c9c705f8e@syzkaller.appspotmail.com>
+To: andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com, 
+	kuba@kernel.org, linux-kernel@vger.kernel.org, linux-x25@vger.kernel.org, 
+	ms@dev.tdt.de, netdev@vger.kernel.org, pabeni@redhat.com, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Sun, Mar 09, 2025 at 10:17:29AM +0100, David Heidelberg wrote:
-> Hello Dmitry!
-> 
-> Thank you for looking into it. See replies.
-> 
-> On 09/03/2025 09:33, Dmitry Baryshkov wrote:
-> > On Sun, Mar 09, 2025 at 01:45:51AM +0100, David Heidelberg via B4 Relay wrote:
-> > > +
-> > > +&riva {
-> > > +	status = "okay";
-> > > +	pinctrl-names = "default";
-> > > +	pinctrl-0 = <&riva_wlan_pin_a>;
-> > 
-> > Where is it defined? Also pinctrl-names should come after pinctrl-N.
-> 
-> definition is kinda aside in qcom-apq8064-pins.dtsi .
+Hello,
 
-Ack, missed it.
+syzbot found the following issue on:
 
-> 
-> All other suggestions incorporated, if it's OK otherwise, let me send v2
+HEAD commit:    8ef890df4031 net: move misc netdev_lock flavors to a separ..
+git tree:       net-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=149cd878580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=ca99d9d1f4a8ecfa
+dashboard link: https://syzkaller.appspot.com/bug?extid=377b71db585c9c705f8e
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1054d4b7980000
 
-I think this also needs several supplies in the riva device itself and
-in the iris subdevice. See qcom-apq8064-sony-xperia-lagan-yuga.dts.
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/ed25b0258c8e/disk-8ef890df.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/2989aa28823e/vmlinux-8ef890df.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/0e040be79a3d/bzImage-8ef890df.xz
 
-> 
-> Thank you
-> David
-> 
-> > 
-> > > +};
-> > > 
-> > > ---
-> > > base-commit: 0a2f889128969dab41861b6e40111aa03dc57014
-> > > change-id: 20250309-lg-nexus4-mako-da0833885b26
-> > > 
-> > > Best regards,
-> > > -- 
-> > > David Heidelberg <david@ixit.cz>
-> > > 
-> > > 
-> > 
-> 
-> -- 
-> David Heidelberg
-> 
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+377b71db585c9c705f8e@syzkaller.appspotmail.com
 
--- 
-With best wishes
-Dmitry
+============================================
+WARNING: possible recursive locking detected
+6.14.0-rc5-syzkaller-01147-g8ef890df4031 #0 Not tainted
+--------------------------------------------
+dhcpcd/5500 is trying to acquire lock:
+ffff888031330d28 (&dev->lock){+.+.}-{4:4}, at: netdev_lock include/linux/netdevice.h:2731 [inline]
+ffff888031330d28 (&dev->lock){+.+.}-{4:4}, at: netif_napi_add_weight include/linux/netdevice.h:2763 [inline]
+ffff888031330d28 (&dev->lock){+.+.}-{4:4}, at: lapbeth_new_device drivers/net/wan/lapbether.c:415 [inline]
+ffff888031330d28 (&dev->lock){+.+.}-{4:4}, at: lapbeth_device_event+0x766/0xa20 drivers/net/wan/lapbether.c:460
+
+but task is already holding lock:
+ffff88806408cd28 (&dev->lock){+.+.}-{4:4}, at: netdev_lock include/linux/netdevice.h:2731 [inline]
+ffff88806408cd28 (&dev->lock){+.+.}-{4:4}, at: netdev_lock_ops include/net/netdev_lock.h:40 [inline]
+ffff88806408cd28 (&dev->lock){+.+.}-{4:4}, at: dev_change_flags+0x120/0x270 net/core/dev_api.c:67
+
+other info that might help us debug this:
+ Possible unsafe locking scenario:
+
+       CPU0
+       ----
+  lock(&dev->lock);
+  lock(&dev->lock);
+
+ *** DEADLOCK ***
+
+ May be due to missing lock nesting notation
+
+2 locks held by dhcpcd/5500:
+ #0: ffffffff8fed6908 (rtnl_mutex){+.+.}-{4:4}, at: rtnl_net_lock include/linux/rtnetlink.h:130 [inline]
+ #0: ffffffff8fed6908 (rtnl_mutex){+.+.}-{4:4}, at: devinet_ioctl+0x34c/0x1d80 net/ipv4/devinet.c:1121
+ #1: ffff88806408cd28 (&dev->lock){+.+.}-{4:4}, at: netdev_lock include/linux/netdevice.h:2731 [inline]
+ #1: ffff88806408cd28 (&dev->lock){+.+.}-{4:4}, at: netdev_lock_ops include/net/netdev_lock.h:40 [inline]
+ #1: ffff88806408cd28 (&dev->lock){+.+.}-{4:4}, at: dev_change_flags+0x120/0x270 net/core/dev_api.c:67
+
+stack backtrace:
+CPU: 0 UID: 0 PID: 5500 Comm: dhcpcd Not tainted 6.14.0-rc5-syzkaller-01147-g8ef890df4031 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 02/12/2025
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:94 [inline]
+ dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
+ print_deadlock_bug+0x483/0x620 kernel/locking/lockdep.c:3039
+ check_deadlock kernel/locking/lockdep.c:3091 [inline]
+ validate_chain+0x15e2/0x5920 kernel/locking/lockdep.c:3893
+ __lock_acquire+0x1397/0x2100 kernel/locking/lockdep.c:5228
+ lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5851
+ __mutex_lock_common kernel/locking/mutex.c:585 [inline]
+ __mutex_lock+0x19c/0x1010 kernel/locking/mutex.c:730
+ netdev_lock include/linux/netdevice.h:2731 [inline]
+ netif_napi_add_weight include/linux/netdevice.h:2763 [inline]
+ lapbeth_new_device drivers/net/wan/lapbether.c:415 [inline]
+ lapbeth_device_event+0x766/0xa20 drivers/net/wan/lapbether.c:460
+ notifier_call_chain+0x1a5/0x3f0 kernel/notifier.c:85
+ __dev_notify_flags+0x207/0x400
+ netif_change_flags+0xf0/0x1a0 net/core/dev.c:9443
+ dev_change_flags+0x146/0x270 net/core/dev_api.c:68
+ devinet_ioctl+0xea2/0x1d80 net/ipv4/devinet.c:1200
+ inet_ioctl+0x3d7/0x4f0 net/ipv4/af_inet.c:1001
+ sock_do_ioctl+0x158/0x460 net/socket.c:1190
+ sock_ioctl+0x626/0x8e0 net/socket.c:1309
+ vfs_ioctl fs/ioctl.c:51 [inline]
+ __do_sys_ioctl fs/ioctl.c:906 [inline]
+ __se_sys_ioctl+0xf5/0x170 fs/ioctl.c:892
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7fcdbbcb2d49
+Code: 5c c3 48 8d 44 24 08 48 89 54 24 e0 48 89 44 24 c0 48 8d 44 24 d0 48 89 44 24 c8 b8 10 00 00 00 c7 44 24 b8 10 00 00 00 0f 05 <41> 89 c0 3d 00 f0 ff ff 76 10 48 8b 15 ae 60 0d 00 f7 d8 41 83 c8
+RSP: 002b:00007ffecf47b768 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
+RAX: ffffffffffffffda RBX: 00007fcdbbbe46c0 RCX: 00007fcdbbcb2d49
+RDX: 00007ffecf48b958 RSI: 0000000000008914 RDI: 000000000000000c
+RBP: 00007ffecf49bb18 R08: 00007ffecf48b918 R09: 00007ffecf48b8c8
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 00007ffecf48b958 R14: 0000000000000028 R15: 0000000000008914
+ </TASK>
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
