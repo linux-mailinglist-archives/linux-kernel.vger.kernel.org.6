@@ -1,77 +1,77 @@
-Return-Path: <linux-kernel+bounces-553139-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-553140-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B1622A58469
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 14:32:53 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D89FA5846E
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 14:33:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1EDB41890497
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 13:33:01 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AFE307A1D63
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 13:32:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A426E1DE8B8;
-	Sun,  9 Mar 2025 13:30:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 389A11F099C;
+	Sun,  9 Mar 2025 13:30:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SYG1g61R"
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="P8qvqG8K"
+Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CF301E521A;
-	Sun,  9 Mar 2025 13:30:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D11CC1EFF9C;
+	Sun,  9 Mar 2025 13:30:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741527051; cv=none; b=X2svrtxle75JiNkJsFRU6X84vEGaO1x1bbbzWJIve8SV+t8CS+C5BAuk53yKipCYrS49V/rx23ZY32oV9d44JlVEXqCIh8RE0BHhCR+vCHFaWD2puF6NYQBBp0bm2U+lEB0hjtA7lmqK31P17Y+taKReUyKIgeNPxoKwW73AuNU=
+	t=1741527054; cv=none; b=DAm8LWf9hVI9187wB0/JmFskA33QCprj4KcAL3K6/b6Z9fPYF4deH7z43r8xCk+0mO+jTG3axI+x8faq8PfPvxg1FERIGvsNZo5fhKtcA4YS6D/4HW/9UI4kAWk0RtCCzw3WUPo71NEw4B+w+Scto7KIgR28BpuNVCzVUpenq1A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741527051; c=relaxed/simple;
-	bh=+PJI4+Kyd347ETzgLInQ5mg+S7qWNmwJbj/lCsAkVdI=;
+	s=arc-20240116; t=1741527054; c=relaxed/simple;
+	bh=NQneIDZjAQWiKY/f0HKL8DvxADMUc2KxOnHKOd9T4ZM=;
 	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=h5fZHFM20UcvLHxZtQqjIEb6KhRVoP061kt4ki9L87bqWnzm5qaUNKLKLKw8cmvaU9mBBl8KjI67ieJYnYPDABR1iMp7UlyELjKWdvPBE2M3fnxRiZNS4IA8qhqCdFRmKR+RguL9SoYXZn9Av14DqaEyIo8ScXuvtjAsGIx/XtY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SYG1g61R; arc=none smtp.client-ip=209.85.128.53
+	 MIME-Version; b=tsPNfnlXUXuTRQJorC4JlDq3f4+6CWUtidDphK25IZVhA0pBYIPKFn6K4D88ApyWXEI/AXWZ9NFAzdvGrvOSlPlzB8CE1+uInOBBNRRgHEW9ebmiwR28y7QPfglLN0QupgFpfDidCgRps8NvIExJxxCiQ5NZYjxs6q5oM2HK2S8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=P8qvqG8K; arc=none smtp.client-ip=209.85.221.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-43948021a45so28847015e9.1;
-        Sun, 09 Mar 2025 06:30:49 -0700 (PDT)
+Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-3913d129c1aso598413f8f.0;
+        Sun, 09 Mar 2025 06:30:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741527048; x=1742131848; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1741527051; x=1742131851; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=ZbSAM91ADrJHfalqGDD88Hb16SIvmOajhEqLWyeYm6g=;
-        b=SYG1g61R4abYHpixSRBGGSGzPTGInAkBAksF+bhuhNAtvKXwKMhE8oMyGGqFLHNRfr
-         xdT5Pwbkz6SnfPNoxPokPBZOnnCS2fE9Dp1HiPDAiXCF16GD5RVrsazVro26cU4K3T5H
-         BtaUKx35GuU2Cl5r/AnPXJ4A0dq3MWECvYm8dDbmaJjyk5AW4F8Wgav0IAYwc686y5iA
-         s8vCIKQNF6Au4tihHoTLD+VXX/ooohRqeF8KWJ7igdUuDojATJU40V4nDoCvWbpmzcuf
-         lsSgoW8+cjOa8n8ejKn95tGiePcE3UFR2K2SHH7AChsyIebgm6B9SYsTXSAjgP1Fpiiz
-         tCkw==
+        bh=vMiZGcno+hW9tt+O9F3Zmv9JkNkMks439bcycH2JGwI=;
+        b=P8qvqG8KJW3rjnft9VBHj1uARl0gEzhkCgCnwZlTuLGIQFdqVT4zNmndN/WvRdwhts
+         GSc4+JZUGtKAaERXJOORTgbk0revnTPtTJAqQhDc/CZMvWiO6K1tJcgc0FWcCzQQmaQ5
+         88BqE5vFb7bmFkO5UcmANJKUcoWvpkNmw1pJ972N/ODj/KLaeUBDyOreL3qs+u9Ex5px
+         1wVaR4dQKz5DsqtaVjJF1FRQsXCst5vYmMTOYzTtxxkMU/ZzB6gbyx3o3e8FSKQ4/508
+         rWVwIRIdv9QNx+gX/U80ZJNGN8zGZZmyUH8RPYWlmTGEU65BLChQ19127Nm5UYthODrP
+         mB9w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741527048; x=1742131848;
+        d=1e100.net; s=20230601; t=1741527051; x=1742131851;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=ZbSAM91ADrJHfalqGDD88Hb16SIvmOajhEqLWyeYm6g=;
-        b=TFKmEdod9d/IfhtogRcZ1Bc7AFtpRjN6nBGRxBTQZqcOXJZugZDOLcvZzsZS5iCSV3
-         830c9LTmbfhk7jhUv05rBsqrmrcdHKTV2Je7V8URMMLENByTLIjrITb1MHWhe2KjiR+O
-         AJNefOcw3KiyRBgEDseOzWgbrx52NsjX+5hBmv4I1pmfZ5M8ZzsFE76qJPaOLcpZ8kFl
-         NfR6pZAzI/4J0Vhj2sNNqMpXOPme519W5/oDKi+15X5G5Ex83mybJykOlj1pjZBa42RC
-         LoK/j8w8+CmFDZHwQ5a4usGekNLa5Dt6OnZkrIWHrGE592+DJAML9GEEmQyoLqD1EfB2
-         BkgQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU7WStxknV1pfhuM4RV5a+ag+clP/blz1O5pRnwekbgAwndknOWKMVb2TeYlvTfIRq2CsLw6A+En5GJ@vger.kernel.org, AJvYcCX7P8ncUb116oiCsQP6Fr3LERnZMRR813s4fcQwLw96tTd7H9f5dHEX9KMKaaFqPBujIhQd6WigKNXb@vger.kernel.org, AJvYcCXGBtun5Ti+/AYw3pqyXFglZ+jeOnkGk+L6NdOpG4seeiqsTimqXtsE0hzG86AFUS5TgfqMGJfqjij/@vger.kernel.org, AJvYcCXPctNkSYfFMNvXPcFR8k4pogQSGoa8rVDvcio1HE7AXskfolXmtCXwVWz+mDiQVq4DhT5UUvoRCuhqVvnz@vger.kernel.org
-X-Gm-Message-State: AOJu0YzypA9gXTpFY9lSFl2VkPhznmO/G8AgIYhI3QDo9N4XfMmYlsX6
-	xD6SmKbIoWReZ99tDWt682UotWsqTx8+mGCVTj3uvzkQXKDOvMQ9T+nJ4Q==
-X-Gm-Gg: ASbGncukgK4GWSS/9HN1y/kgCDKm+RbfgP2xPeEdjAQlNJzN6ziWU0D0iljLR5YBuSB
-	W1AghdrmROhOUBdM44vVSFBMTQTFlv4CrVlw3qInTB28iurHyXd9kZ4oh6r2hS/4sOlvGkOwn3P
-	OjF/rtXQCeDNnRiKkGiFiCpnEVLIM7fGcdl2Udilrc9J4kQZtReIFvH7bSdpJHQyVRGFrCR6182
-	r1UTuKqRgQxO0v3KZJAc9pk36cAizFnGh+t6oige/zw76FypiLyZzvCgS5kowbuodVvl/tveCYn
-	5mBSd1UalIiUXmcW3utyLLa5UiRoBEAJlFlQsuS+RmNY/+eUtddRm0DYL5wmsR8bJ0xC/FPfQkr
-	6uygJ9t8RHYhplg==
-X-Google-Smtp-Source: AGHT+IFjxljLxw+g6msj/2zStIgexQhH3tclnIAh4+AmOpan6twS1irZOwFGMlz3N6mJw4r5TT41Og==
-X-Received: by 2002:a5d:59af:0:b0:390:f745:bbfb with SMTP id ffacd0b85a97d-39132d7d4e1mr6797683f8f.26.1741527047554;
-        Sun, 09 Mar 2025 06:30:47 -0700 (PDT)
+        bh=vMiZGcno+hW9tt+O9F3Zmv9JkNkMks439bcycH2JGwI=;
+        b=ORmwjj7sdzwyCeQ/sTqX1zHZU+RO8uySQM+atGwgjN+K8f6C7xwOVHqEBXaPq4UjyV
+         y57grTbA7woiIDbFMqPiVNk0cpQ4UGMQFUJ7b+KH3NBSCY83XsazU60qfXQYud7vOKUe
+         m+VNXePLUcVzI8iJ3Otn3S+FOquHObNHr1hSQfyDD4Gxc19KgKt3E9Yn/JzymtUPhX8L
+         gWanPE6zH+TbP2WCiFeASWAtIShKV2YCgUrwrAFLwvw7y6L2S2evQ56Uoqijj5YHZha+
+         zTvxBXqTlCxh4SaYZXM2/kbsjDbt8dR4lx6UMZiE1f4oM1pJaEFoXT6Sm5XMlkWcnc4F
+         yD/A==
+X-Forwarded-Encrypted: i=1; AJvYcCW0xKfbeZebScNqYBVRPrMFpuGcBI+6DupiybCrow19t7A8Wp0hXSOZfHBbx40K0cf7Hvtf3W18PwmG@vger.kernel.org, AJvYcCWMx2FQyC1p+OSNUhZ2lxXMqcKD2oW0mRI9GRnFhEIf/9uI50cmsL4sGw7fn1DSSGH45WACPXpC7d5wmRka@vger.kernel.org, AJvYcCXNvdoscu0kTnLbrxTEljgTHIgK/9YHd4MqIi8LOxKYyHxWrELgJ+FkvjqBtq9o8etItY+WDUGY1w2E@vger.kernel.org, AJvYcCXnMvf6ve7Dn7XHGSCiToeeM7qovaGsVUV+XuIjqZvH4b0U/hlLL766hrop/jA6Wk38fogSgC99FFO0@vger.kernel.org
+X-Gm-Message-State: AOJu0YwKO9+1MMaNKi/I9Wi/8N2qar3wcgS3aD1RZnM95XW4s0MqF1Ms
+	rmzUsOfmnI4u0Q8nyUuzboMLWM/QS2LdD1htXzFGU4vgfcpwiZjT
+X-Gm-Gg: ASbGncs9+tGpkjzJTyZTLRNkwai8H96trLODFisYRnBSGvRbK3pc4eENXK20rScFI6l
+	GL7gj/CcHDKQvA6bfLbBi6EIySjLzMfaG4pwWKfy9+lCMAvnJZ2gFbMbg5LLXAGE4N4XQ2ex4B0
+	8dj0CHlcS6cwZhvNUurymoN/cE3iOk2gYsrDO3tLI72D2X4WzCwWAPdeT+PtaqasEHN3dCi8D8q
+	IJww8rheRxW0vc/63z6uATJuVwxIiOgXxwaW+8GECzH4DqatZTr5EeYxea/ZiCB/MHW84zBxuLg
+	Xb9543OJpY2cNeLQH8367Oe8bmETUl4iJEbcYwhQc7ZT3Wh7PrathfWlTU1wSrahaGPuCwhXCkw
+	QtHzcuW5MAsHBcg==
+X-Google-Smtp-Source: AGHT+IEKDnwZY7XkrfL/HLuqPzV7EZSUKsEKRaNGjzZ6iQ8qzVfwZIlEdBBipFRunBqGuf6Da3ld5w==
+X-Received: by 2002:a05:6000:184b:b0:391:865:5a93 with SMTP id ffacd0b85a97d-3913af328d5mr4021842f8f.22.1741527049718;
+        Sun, 09 Mar 2025 06:30:49 -0700 (PDT)
 Received: from localhost.localdomain (93-34-90-129.ip49.fastwebnet.it. [93.34.90.129])
-        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-3912bee262esm11867536f8f.0.2025.03.09.06.30.46
+        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-3912bee262esm11867536f8f.0.2025.03.09.06.30.47
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 09 Mar 2025 06:30:47 -0700 (PDT)
+        Sun, 09 Mar 2025 06:30:49 -0700 (PDT)
 From: Christian Marangi <ansuelsmth@gmail.com>
 To: Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@kernel.org>,
@@ -102,9 +102,9 @@ To: Michael Turquette <mturquette@baylibre.com>,
 	linux-mediatek@lists.infradead.org,
 	linux-usb@vger.kernel.org,
 	upstream@airoha.com
-Subject: [PATCH 06/13] dt-bindings: clock: airoha: make reg optional for Airoha EN7581
-Date: Sun,  9 Mar 2025 14:29:37 +0100
-Message-ID: <20250309132959.19045-7-ansuelsmth@gmail.com>
+Subject: [PATCH 07/13] clk: en7523: support getting regmap from parent node for EN7581
+Date: Sun,  9 Mar 2025 14:29:38 +0100
+Message-ID: <20250309132959.19045-8-ansuelsmth@gmail.com>
 X-Mailer: git-send-email 2.48.1
 In-Reply-To: <20250309132959.19045-1-ansuelsmth@gmail.com>
 References: <20250309132959.19045-1-ansuelsmth@gmail.com>
@@ -116,58 +116,69 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The Airoha EN7581 clock-controller registers are placed in the SCU
-(System Controller Unit). Now that additional pheriperals are supported
-for the SCU, a dedicated SCU node is created and the clock-controller is
-moved as a child of such node hence the register property is taken from
+Add support for getting clock regmap from parent node for Airoha EN7581.
+
+This is needed to support new implementation with SCU (System Controller
+Unit) as an MFD and clock-controller node as a child node of it.
+
+In such implementation the register regmap is provided as a syscon from
 the parent node.
-
-To support this, make the reg property optional and provide an
-additional example for this case.
-
-Driver supports both old and new implementation by checking the presence
-of the reg property and parsing the register accordingly.
 
 Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
 ---
- .../bindings/clock/airoha,en7523-scu.yaml           | 13 ++++++++++++-
- 1 file changed, 12 insertions(+), 1 deletion(-)
+ drivers/clk/clk-en7523.c | 25 ++++++++++++++++---------
+ 1 file changed, 16 insertions(+), 9 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/clock/airoha,en7523-scu.yaml b/Documentation/devicetree/bindings/clock/airoha,en7523-scu.yaml
-index fe2c5c1baf43..84e6c3d43868 100644
---- a/Documentation/devicetree/bindings/clock/airoha,en7523-scu.yaml
-+++ b/Documentation/devicetree/bindings/clock/airoha,en7523-scu.yaml
-@@ -51,7 +51,6 @@ properties:
+diff --git a/drivers/clk/clk-en7523.c b/drivers/clk/clk-en7523.c
+index 2a74bc8fed24..29cb7ccea29a 100644
+--- a/drivers/clk/clk-en7523.c
++++ b/drivers/clk/clk-en7523.c
+@@ -665,6 +665,7 @@ static int en7581_clk_hw_init(struct platform_device *pdev,
+ 			      const struct en_clk_soc_data *soc_data,
+ 			      struct clk_hw_onecell_data *clk_data)
+ {
++	struct device *dev = &pdev->dev;
+ 	struct regmap *map, *clk_map;
+ 	void __iomem *base;
  
- required:
-   - compatible
--  - reg
-   - '#clock-cells'
+@@ -672,22 +673,28 @@ static int en7581_clk_hw_init(struct platform_device *pdev,
+ 	if (IS_ERR(map))
+ 		return PTR_ERR(map);
  
- allOf:
-@@ -66,6 +65,9 @@ allOf:
- 
-         '#reset-cells': false
- 
-+      required:
-+        - reg
+-	base = devm_platform_ioremap_resource(pdev, 0);
+-	if (IS_ERR(base))
+-		return PTR_ERR(base);
+-
+-	clk_map = devm_regmap_init_mmio(&pdev->dev, base, &en7523_clk_regmap_config);
+-	if (IS_ERR(clk_map))
+-		return PTR_ERR(clk_map);
++	if (of_property_present(dev->of_node, "reg")) {
++		base = devm_platform_ioremap_resource(pdev, 0);
++		if (IS_ERR(base))
++			return PTR_ERR(base);
 +
-   - if:
-       properties:
-         compatible:
-@@ -99,3 +101,12 @@ examples:
-               #reset-cells = <1>;
-       };
-     };
-+
-+  # Example with clock-controller in SCU MFD
-+  - |
-+    clock-controller {
-+      compatible = "airoha,en7581-scu";
-+
-+      #clock-cells = <1>;
-+      #reset-cells = <1>;
-+    };
++		clk_map = devm_regmap_init_mmio(dev, base, &en7523_clk_regmap_config);
++		if (IS_ERR(clk_map))
++			return PTR_ERR(clk_map);
++	} else {
++		clk_map = device_node_to_regmap(dev->parent->of_node);
++		if (IS_ERR(clk_map))
++			return PTR_ERR(clk_map);
++	}
+ 
+-	en75xx_register_clocks(&pdev->dev, soc_data, clk_data, map, clk_map);
++	en75xx_register_clocks(dev, soc_data, clk_data, map, clk_map);
+ 
+ 	regmap_clear_bits(clk_map, REG_NP_SCU_SSTR,
+ 			  REG_PCIE_XSI0_SEL_MASK | REG_PCIE_XSI1_SEL_MASK);
+ 	regmap_update_bits(clk_map, REG_NP_SCU_PCIC, REG_PCIE_CTRL,
+ 			   FIELD_PREP(REG_PCIE_CTRL, 3));
+ 
+-	return en7581_reset_register(&pdev->dev, clk_map);
++	return en7581_reset_register(dev, clk_map);
+ }
+ 
+ static int en7523_clk_probe(struct platform_device *pdev)
 -- 
 2.48.1
 
