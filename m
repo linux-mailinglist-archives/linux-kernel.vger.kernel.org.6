@@ -1,282 +1,560 @@
-Return-Path: <linux-kernel+bounces-553019-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-553016-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3F61EA5829C
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 10:18:28 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9116CA58297
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 10:17:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6EEC116BAF5
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 09:18:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 08CB7188DBFD
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 09:17:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16DE81A08B1;
-	Sun,  9 Mar 2025 09:18:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7F8D1A08DB;
+	Sun,  9 Mar 2025 09:17:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="Bk4NutRA"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=ixit.cz header.i=@ixit.cz header.b="2uIc5rHn"
+Received: from ixit.cz (ip-89-177-23-149.bb.vodafone.cz [89.177.23.149])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F5B4192B71;
-	Sun,  9 Mar 2025 09:18:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1D2DC2FD;
+	Sun,  9 Mar 2025 09:17:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.177.23.149
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741511899; cv=none; b=cBjO/sBybwzWyhD4mqnUlb8SycjQymyI8M6qrrxGnx2CPzzBcjScAcws16tF8RM8Op77vnY21TZLUCNFNFthcG7hl7SOw4hYIrmb2G8PMnhvM3+Fae5v2hJytujzVIxyBpz+TvC4OW84A4nS3C8ppUTRlpn29/pOj1WVU8Bsh2I=
+	t=1741511856; cv=none; b=WrUqFBjzl9RJtxxYXP9F5umgOihoZUZlwAPnZDFZD2L6FbqSerdoPIN8R2T0Sfq1xpwQND3CI8vaNv8f1lZBUM4Zn7cUK+tA8esVs724xNtmmvM3eUatQ1uTDCXwCU6+LGGDQoO1TWdYTqXSA8me2+r2Sx9tJ1y5tq1QtR0cEIw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741511899; c=relaxed/simple;
-	bh=vp3FpESTtGAik8FkBDMyuh4YsIV4BO1Z4c3juQS1F+0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=e6GEiPTYFY4F2Xa7OCn6vEAculdnqPBXiua6UA0WDXJw/OkXQWhe7McVLcAPZ9PKWdKV9Ras6cG7VO7+lCWSb119G39mwuoziH29VfkX8woM4s42XKwvqGomdFif8cRs6SEl7n0H4cr7JGT/F9BaoMvltzp7u7JAhSjnPFed30A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=Bk4NutRA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 69154C4CEE5;
-	Sun,  9 Mar 2025 09:18:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1741511898;
-	bh=vp3FpESTtGAik8FkBDMyuh4YsIV4BO1Z4c3juQS1F+0=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=Bk4NutRAIxlclWfceac4FiILX+tzCyaMGXjWJAjqqzVYVOJ35F5XoOweA+LX3isZz
-	 nyltB/uX1z8GE67xsCUhtaOQElX+b01j7YSkDjBmRDAXs7quzMAx+60Xa4k7ppug10
-	 BrzWc48U5+n4pEqoNNgHqRhf6I4KSUR91+B+stFg=
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: linux-kernel@vger.kernel.org,
-	akpm@linux-foundation.org,
-	torvalds@linux-foundation.org,
-	stable@vger.kernel.org
-Cc: lwn@lwn.net,
-	jslaby@suse.cz,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: Re: Linux 6.6.82
-Date: Sun,  9 Mar 2025 10:16:53 +0100
-Message-ID: <2025030919-laziness-pucker-b338@gregkh>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <2025030919-hurdle-tapestry-5b79@gregkh>
-References: <2025030919-hurdle-tapestry-5b79@gregkh>
+	s=arc-20240116; t=1741511856; c=relaxed/simple;
+	bh=JDQ3H9F/p5iNmdnwEyMhD1EBVlM5FKft5xwk3qf7y9A=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=WfiHAB7c4pCFTmYzcEkFErZvTms9MwlA7RD9tooWLnwKf0+ga3mCbJL3oPDZGXpVhMglOkogG4+/VTGH+uSCZFpFXFtSlTYj+WBtThjj99nNTCQJtDJg53plLr1ylrH5wHu/wDq6KknJ8YUrQCqPqOH7BmkpQMsHj8OqrI0EdzU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ixit.cz; spf=pass smtp.mailfrom=ixit.cz; dkim=pass (1024-bit key) header.d=ixit.cz header.i=@ixit.cz header.b=2uIc5rHn; arc=none smtp.client-ip=89.177.23.149
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ixit.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ixit.cz
+Received: from [10.0.0.200] (unknown [10.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by ixit.cz (Postfix) with ESMTPSA id 9E51A1669F4;
+	Sun,  9 Mar 2025 10:17:29 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ixit.cz; s=dkim;
+	t=1741511849;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=69Fuo4py2NXnhITT1eKwEmPko6LKD9oV+W4Tc0mnlQA=;
+	b=2uIc5rHnxIe9u2gqjIG52kXvqBzwUPGZdq8vAhN9wYn3YRYnQQoACdWEtU714QeMCCaNPO
+	gcQfwYkLGpkAO3NJHNRWFyCtcmaoKucubmsKqEwXvNsNgbc445+2Mi52KHdfa5lldMxn/f
+	8+kai+saixmumzd/AtNjPGbbgL1GYzc=
+Message-ID: <88da307c-0403-405d-8356-c8baeb18eaba@ixit.cz>
+Date: Sun, 9 Mar 2025 10:17:29 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird Beta
+Subject: Re: [PATCH v3] ARM: dts: nexus4: Initial dts
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Kees Cook <kees@kernel.org>,
+ Tony Luck <tony.luck@intel.com>, "Guilherme G. Piccoli"
+ <gpiccoli@igalia.com>, linux-arm-msm@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-hardening@vger.kernel.org, Ivan Belokobylskiy <belokobylskij@gmail.com>
+References: <20250309-lg-nexus4-mako-v3-1-1dc2807df296@ixit.cz>
+ <l4lv22oi2ktubf7aveqxqtwb7zz7cfrzdayuxxgwdj46ygubfs@qpl6ut37taoe>
+Content-Language: en-US
+From: David Heidelberg <david@ixit.cz>
+Autocrypt: addr=david@ixit.cz; keydata=
+ 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
+In-Reply-To: <l4lv22oi2ktubf7aveqxqtwb7zz7cfrzdayuxxgwdj46ygubfs@qpl6ut37taoe>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-diff --git a/Makefile b/Makefile
-index 892ed237b1e1..bca0f2e14c5c 100644
---- a/Makefile
-+++ b/Makefile
-@@ -1,7 +1,7 @@
- # SPDX-License-Identifier: GPL-2.0
- VERSION = 6
- PATCHLEVEL = 6
--SUBLEVEL = 81
-+SUBLEVEL = 82
- EXTRAVERSION =
- NAME = Pinguïn Aangedreven
- 
-diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
-index 1e666454ebdc..a06fab5016fd 100644
---- a/arch/x86/Kconfig
-+++ b/arch/x86/Kconfig
-@@ -1315,6 +1315,10 @@ config MICROCODE
- 	depends on CPU_SUP_AMD || CPU_SUP_INTEL
- 	select CRYPTO_LIB_SHA256 if CPU_SUP_AMD
- 
-+config MICROCODE_INITRD32
-+	def_bool y
-+	depends on MICROCODE && X86_32 && BLK_DEV_INITRD
-+
- config MICROCODE_LATE_LOADING
- 	bool "Late microcode loading (DANGEROUS)"
- 	default n
-diff --git a/arch/x86/include/asm/microcode.h b/arch/x86/include/asm/microcode.h
-index 1ab475a518e9..0ee6ed0ff2bf 100644
---- a/arch/x86/include/asm/microcode.h
-+++ b/arch/x86/include/asm/microcode.h
-@@ -23,6 +23,8 @@ static inline void load_ucode_ap(void) { }
- static inline void microcode_bsp_resume(void) { }
- #endif
- 
-+extern unsigned long initrd_start_early;
-+
- #ifdef CONFIG_CPU_SUP_INTEL
- /* Intel specific microcode defines. Public for IFS */
- struct microcode_header_intel {
-diff --git a/arch/x86/include/asm/setup.h b/arch/x86/include/asm/setup.h
-index f3495623ac99..bf483fcb4e57 100644
---- a/arch/x86/include/asm/setup.h
-+++ b/arch/x86/include/asm/setup.h
-@@ -126,6 +126,7 @@ void clear_bss(void);
- #ifdef __i386__
- 
- asmlinkage void __init __noreturn i386_start_kernel(void);
-+void __init mk_early_pgtbl_32(void);
- 
- #else
- asmlinkage void __init __noreturn x86_64_start_kernel(char *real_mode);
-diff --git a/arch/x86/kernel/Makefile b/arch/x86/kernel/Makefile
-index 3269a0e23d3a..0000325ab98f 100644
---- a/arch/x86/kernel/Makefile
-+++ b/arch/x86/kernel/Makefile
-@@ -16,6 +16,7 @@ CFLAGS_REMOVE_kvmclock.o = -pg
- CFLAGS_REMOVE_ftrace.o = -pg
- CFLAGS_REMOVE_early_printk.o = -pg
- CFLAGS_REMOVE_head64.o = -pg
-+CFLAGS_REMOVE_head32.o = -pg
- CFLAGS_REMOVE_sev.o = -pg
- CFLAGS_REMOVE_rethook.o = -pg
- endif
-diff --git a/arch/x86/kernel/head32.c b/arch/x86/kernel/head32.c
-index bde27a35bf2e..de001b2146ab 100644
---- a/arch/x86/kernel/head32.c
-+++ b/arch/x86/kernel/head32.c
-@@ -30,12 +30,32 @@ static void __init i386_default_early_setup(void)
- 	x86_init.mpparse.setup_ioapic_ids = setup_ioapic_ids_from_mpc;
- }
- 
-+#ifdef CONFIG_MICROCODE_INITRD32
-+unsigned long __initdata initrd_start_early;
-+static pte_t __initdata *initrd_pl2p_start, *initrd_pl2p_end;
-+
-+static void zap_early_initrd_mapping(void)
-+{
-+	pte_t *pl2p = initrd_pl2p_start;
-+
-+	for (; pl2p < initrd_pl2p_end; pl2p++) {
-+		*pl2p = (pte_t){ .pte = 0 };
-+
-+		if (!IS_ENABLED(CONFIG_X86_PAE))
-+			*(pl2p + ((PAGE_OFFSET >> PGDIR_SHIFT))) = (pte_t) {.pte = 0};
-+	}
-+}
-+#else
-+static inline void zap_early_initrd_mapping(void) { }
-+#endif
-+
- asmlinkage __visible void __init __noreturn i386_start_kernel(void)
- {
- 	/* Make sure IDT is set up before any exception happens */
- 	idt_setup_early_handler();
- 
- 	load_ucode_bsp();
-+	zap_early_initrd_mapping();
- 
- 	cr4_init_shadow();
- 
-@@ -72,52 +92,83 @@ asmlinkage __visible void __init __noreturn i386_start_kernel(void)
-  * to the first kernel PMD. Note the upper half of each PMD or PTE are
-  * always zero at this stage.
-  */
--void __init mk_early_pgtbl_32(void);
--void __init mk_early_pgtbl_32(void)
--{
--#ifdef __pa
--#undef __pa
--#endif
--#define __pa(x)  ((unsigned long)(x) - PAGE_OFFSET)
--	pte_t pte, *ptep;
--	int i;
--	unsigned long *ptr;
--	/* Enough space to fit pagetables for the low memory linear map */
--	const unsigned long limit = __pa(_end) +
--		(PAGE_TABLE_SIZE(LOWMEM_PAGES) << PAGE_SHIFT);
- #ifdef CONFIG_X86_PAE
--	pmd_t pl2, *pl2p = (pmd_t *)__pa(initial_pg_pmd);
--#define SET_PL2(pl2, val)    { (pl2).pmd = (val); }
-+typedef pmd_t			pl2_t;
-+#define pl2_base		initial_pg_pmd
-+#define SET_PL2(val)		{ .pmd = (val), }
- #else
--	pgd_t pl2, *pl2p = (pgd_t *)__pa(initial_page_table);
--#define SET_PL2(pl2, val)   { (pl2).pgd = (val); }
-+typedef pgd_t			pl2_t;
-+#define pl2_base		initial_page_table
-+#define SET_PL2(val)		{ .pgd = (val), }
- #endif
- 
--	ptep = (pte_t *)__pa(__brk_base);
--	pte.pte = PTE_IDENT_ATTR;
--
-+static __init __no_stack_protector pte_t init_map(pte_t pte, pte_t **ptep, pl2_t **pl2p,
-+						  const unsigned long limit)
-+{
- 	while ((pte.pte & PTE_PFN_MASK) < limit) {
-+		pl2_t pl2 = SET_PL2((unsigned long)*ptep | PDE_IDENT_ATTR);
-+		int i;
-+
-+		**pl2p = pl2;
-+		if (!IS_ENABLED(CONFIG_X86_PAE)) {
-+			/* Kernel PDE entry */
-+			*(*pl2p + ((PAGE_OFFSET >> PGDIR_SHIFT))) = pl2;
-+		}
- 
--		SET_PL2(pl2, (unsigned long)ptep | PDE_IDENT_ATTR);
--		*pl2p = pl2;
--#ifndef CONFIG_X86_PAE
--		/* Kernel PDE entry */
--		*(pl2p +  ((PAGE_OFFSET >> PGDIR_SHIFT))) = pl2;
--#endif
- 		for (i = 0; i < PTRS_PER_PTE; i++) {
--			*ptep = pte;
-+			**ptep = pte;
- 			pte.pte += PAGE_SIZE;
--			ptep++;
-+			(*ptep)++;
- 		}
--
--		pl2p++;
-+		(*pl2p)++;
- 	}
-+	return pte;
-+}
-+
-+void __init __no_stack_protector mk_early_pgtbl_32(void)
-+{
-+	/* Enough space to fit pagetables for the low memory linear map */
-+	unsigned long limit = __pa_nodebug(_end) + (PAGE_TABLE_SIZE(LOWMEM_PAGES) << PAGE_SHIFT);
-+	pte_t pte, *ptep = (pte_t *)__pa_nodebug(__brk_base);
-+	struct boot_params __maybe_unused *params;
-+	pl2_t *pl2p = (pl2_t *)__pa_nodebug(pl2_base);
-+	unsigned long *ptr;
-+
-+	pte.pte = PTE_IDENT_ATTR;
-+	pte = init_map(pte, &ptep, &pl2p, limit);
- 
--	ptr = (unsigned long *)__pa(&max_pfn_mapped);
-+	ptr = (unsigned long *)__pa_nodebug(&max_pfn_mapped);
- 	/* Can't use pte_pfn() since it's a call with CONFIG_PARAVIRT */
- 	*ptr = (pte.pte & PTE_PFN_MASK) >> PAGE_SHIFT;
- 
--	ptr = (unsigned long *)__pa(&_brk_end);
-+	ptr = (unsigned long *)__pa_nodebug(&_brk_end);
- 	*ptr = (unsigned long)ptep + PAGE_OFFSET;
--}
- 
-+#ifdef CONFIG_MICROCODE_INITRD32
-+	/* Running on a hypervisor? */
-+	if (native_cpuid_ecx(1) & BIT(31))
-+		return;
-+
-+	params = (struct boot_params *)__pa_nodebug(&boot_params);
-+	if (!params->hdr.ramdisk_size || !params->hdr.ramdisk_image)
-+		return;
-+
-+	/* Save the virtual start address */
-+	ptr = (unsigned long *)__pa_nodebug(&initrd_start_early);
-+	*ptr = (pte.pte & PTE_PFN_MASK) + PAGE_OFFSET;
-+	*ptr += ((unsigned long)params->hdr.ramdisk_image) & ~PAGE_MASK;
-+
-+	/* Save PLP2 for cleanup */
-+	ptr = (unsigned long *)__pa_nodebug(&initrd_pl2p_start);
-+	*ptr = (unsigned long)pl2p + PAGE_OFFSET;
-+
-+	limit = (unsigned long)params->hdr.ramdisk_image;
-+	pte.pte = PTE_IDENT_ATTR | PFN_ALIGN(limit);
-+	limit = (unsigned long)params->hdr.ramdisk_image + params->hdr.ramdisk_size;
-+
-+	init_map(pte, &ptep, &pl2p, limit);
-+
-+	ptr = (unsigned long *)__pa_nodebug(&initrd_pl2p_end);
-+	*ptr = (unsigned long)pl2p + PAGE_OFFSET;
-+#endif
-+}
+Hello Dmitry!
+
+Thank you for looking into it. See replies.
+
+On 09/03/2025 09:33, Dmitry Baryshkov wrote:
+> On Sun, Mar 09, 2025 at 01:45:51AM +0100, David Heidelberg via B4 Relay wrote:
+>> From: Ivan Belokobylskiy <belokobylskij@gmail.com>
+>>
+>> Add initial support for LG Nexus 4 (mako).
+>>
+>> Features currently working: regulators, eMMC, WiFi, and volume keys.
+>>
+>> Signed-off-by: Ivan Belokobylskiy <belokobylskij@gmail.com>
+>> Signed-off-by: David Heidelberg <david@ixit.cz>
+>> ---
+>> Changes in v3:
+>> - rebased against next-20250307
+>> - dropped backlight until driver gets converted to DT
+>>
+>> Changes in v2:
+>> - lge vendor doesn't exist anymore, rename to lg
+>> - sdcc@ to mmc@ to comply with dt-schema
+>> ---
+>>   arch/arm/boot/dts/qcom/Makefile                    |   1 +
+>>   .../boot/dts/qcom/qcom-apq8064-lg-nexus4-mako.dts  | 342 +++++++++++++++++++++
+>>   2 files changed, 343 insertions(+)
+>>
+>> diff --git a/arch/arm/boot/dts/qcom/Makefile b/arch/arm/boot/dts/qcom/Makefile
+>> index f06c6d425e91dd73c2b453d15543d95bd32383b9..0c1d116f6e84f76994aa8c8286350bdcd1657a42 100644
+>> --- a/arch/arm/boot/dts/qcom/Makefile
+>> +++ b/arch/arm/boot/dts/qcom/Makefile
+>> @@ -12,6 +12,7 @@ dtb-$(CONFIG_ARCH_QCOM) += \
+>>   	qcom-apq8064-ifc6410.dtb \
+>>   	qcom-apq8064-sony-xperia-lagan-yuga.dtb \
+>>   	qcom-apq8064-asus-nexus7-flo.dtb \
+>> +	qcom-apq8064-lg-nexus4-mako.dtb \
+>>   	qcom-apq8074-dragonboard.dtb \
+>>   	qcom-apq8084-ifc6540.dtb \
+>>   	qcom-apq8084-mtp.dtb \
+>> diff --git a/arch/arm/boot/dts/qcom/qcom-apq8064-lg-nexus4-mako.dts b/arch/arm/boot/dts/qcom/qcom-apq8064-lg-nexus4-mako.dts
+>> new file mode 100644
+>> index 0000000000000000000000000000000000000000..bcb57675aa24892b290d543601f7a6b36b6a65f6
+>> --- /dev/null
+>> +++ b/arch/arm/boot/dts/qcom/qcom-apq8064-lg-nexus4-mako.dts
+>> @@ -0,0 +1,342 @@
+>> +// SPDX-License-Identifier: GPL-2.0-only
+>> +#include "qcom-apq8064-v2.0.dtsi"
+>> +#include <dt-bindings/gpio/gpio.h>
+>> +#include <dt-bindings/input/input.h>
+>> +#include <dt-bindings/mfd/qcom-rpm.h>
+>> +#include <dt-bindings/pinctrl/qcom,pmic-gpio.h>
+>> +/ {
+>> +	model = "LG Nexus 4 (mako)";
+>> +	compatible = "lg,nexus4-mako", "qcom,apq8064";
+>> +
+>> +	aliases {
+>> +		serial0 = &gsbi7_serial;
+>> +		serial1 = &gsbi6_serial;
+>> +		serial2 = &gsbi4_serial;
+>> +	};
+>> +
+>> +	chosen {
+>> +		stdout-path = "serial2:115200n8";
+>> +	};
+>> +
+>> +	reserved-memory {
+>> +		#address-cells = <1>;
+>> +		#size-cells = <1>;
+>> +		ranges;
+>> +
+>> +		ramoops@88d00000{
+>> +			compatible = "ramoops";
+>> +			reg = <0x88d00000 0x100000>;
+>> +			record-size = <0x00020000>;
+>> +			console-size = <0x00020000>;
+>> +			ftrace-size = <0x00020000>;
+>> +		};
+>> +	};
+>> +
+>> +	battery_cell: battery-cell {
+>> +		compatible = "simple-battery";
+>> +		constant-charge-current-max-microamp = <900000>;
+>> +		operating-range-celsius = <0 45>;
+>> +	};
+>> +
+>> +	soc {
+>> +		rpm@108000 {
+> 
+> Please use &rpm { ... }; instead.
+> 
+>> +			regulators {
+>> +				vdd_l1_l2_l12_l18-supply = <&pm8921_s4>;
+>> +				vin_lvs1_3_6-supply = <&pm8921_s4>;
+> 
+> Please move vin_lvs2-supply here.
+> 
+>> +				vin_lvs4_5_7-supply = <&pm8921_s4>;
+>> +
+> 
+> Please move vdd_l1_l2_l12_l18 here.
+> 
+>> +				vdd_l24-supply = <&pm8921_s1>;
+>> +				vdd_l25-supply = <&pm8921_s1>;
+>> +				vin_lvs2-supply = <&pm8921_s1>;
+>> +
+>> +				vdd_l26-supply = <&pm8921_s7>;
+>> +				vdd_l27-supply = <&pm8921_s7>;
+>> +				vdd_l28-supply = <&pm8921_s7>;
+>> +
+>> +				/* Buck SMPS */
+>> +				s1 {
+>> +					regulator-always-on;
+>> +					regulator-min-microvolt = <1225000>;
+>> +					regulator-max-microvolt = <1225000>;
+>> +					qcom,switch-mode-frequency = <3200000>;
+>> +					bias-pull-down;
+>> +				};
+> 
+> empty line
+> 
+>> +				s2 {
+>> +					regulator-min-microvolt = <1300000>;
+>> +					regulator-max-microvolt = <1300000>;
+>> +					qcom,switch-mode-frequency = <1600000>;
+>> +					bias-pull-down;
+>> +				};
+>> +
+>> +				/* msm otg HSUSB_VDDCX */
+>> +				s3 {
+>> +					regulator-min-microvolt = <500000>;
+>> +					regulator-max-microvolt = <1150000>;
+>> +					qcom,switch-mode-frequency = <4800000>;
+>> +					bias-pull-down;
+>> +				};
+>> +
+>> +				/*
+>> +				 * msm_sdcc.1-sdc-vdd_io
+>> +				 * tabla2x-slim-CDC_VDDA_RX
+>> +				 * tabla2x-slim-CDC_VDDA_TX
+>> +				 * tabla2x-slim-CDC_VDD_CP
+>> +				 * tabla2x-slim-VDDIO_CDC
+>> +				 */
+>> +				s4 {
+>> +					regulator-always-on;
+>> +					regulator-min-microvolt	= <1800000>;
+>> +					regulator-max-microvolt	= <1800000>;
+>> +					qcom,switch-mode-frequency = <1600000>;
+>> +					bias-pull-down;
+>> +					qcom,force-mode = <QCOM_RPM_FORCE_MODE_AUTO>;
+>> +				};
+>> +
+>> +				/*
+>> +				 * supply vdd_l26, vdd_l27, vdd_l28
+>> +				 */
+>> +				s7 {
+>> +					regulator-min-microvolt = <1300000>;
+>> +					regulator-max-microvolt = <1300000>;
+>> +					qcom,switch-mode-frequency = <3200000>;
+>> +				};
+>> +
+>> +				s8 {
+>> +					regulator-min-microvolt = <2200000>;
+>> +					regulator-max-microvolt = <2200000>;
+>> +					qcom,switch-mode-frequency = <1600000>;
+>> +				};
+>> +
+>> +				l1 {
+>> +					regulator-min-microvolt = <1100000>;
+>> +					regulator-max-microvolt = <1100000>;
+>> +					regulator-always-on;
+>> +					bias-pull-down;
+>> +				};
+>> +
+>> +				/* mipi_dsi.1-dsi1_pll_vdda */
+>> +				l2 {
+>> +					regulator-min-microvolt = <1200000>;
+>> +					regulator-max-microvolt = <1200000>;
+>> +					bias-pull-down;
+>> +				};
+>> +
+>> +				/* msm_otg-HSUSB_3p3 */
+>> +				l3 {
+>> +					regulator-min-microvolt = <3075000>;
+>> +					regulator-max-microvolt = <3500000>;
+>> +					bias-pull-down;
+>> +				};
+>> +
+>> +				/* msm_otg-HSUSB_1p8 */
+>> +				l4 {
+>> +					regulator-always-on;
+>> +					regulator-min-microvolt = <1800000>;
+>> +					regulator-max-microvolt = <1800000>;
+>> +				};
+>> +
+>> +				/* msm_sdcc.1-sdc_vdd */
+>> +				l5 {
+>> +					regulator-min-microvolt = <2950000>;
+>> +					regulator-max-microvolt = <2950000>;
+>> +					bias-pull-down;
+>> +				};
+>> +
+>> +				/* earjack_debug */
+>> +				l6 {
+>> +					regulator-min-microvolt = <3000000>;
+>> +					regulator-max-microvolt = <3000000>;
+>> +					bias-pull-down;
+>> +				};
+>> +
+>> +				/* mipi_dsi.1-dsi_vci */
+>> +				l8 {
+>> +					regulator-min-microvolt = <2800000>;
+>> +					regulator-max-microvolt = <3000000>;
+>> +					bias-pull-down;
+>> +				};
+>> +
+>> +				/* wcnss_wlan.0-iris_vddpa */
+>> +				l10 {
+>> +					regulator-min-microvolt = <2900000>;
+>> +					regulator-max-microvolt = <2900000>;
+>> +					bias-pull-down;
+>> +				};
+>> +
+>> +				/* mipi_dsi.1-dsi1_avdd */
+>> +				l11 {
+>> +					regulator-min-microvolt = <2850000>;
+>> +					regulator-max-microvolt = <2850000>;
+>> +					bias-pull-down;
+>> +				};
+>> +
+>> +				/* touch_vdd */
+>> +				l15 {
+>> +					regulator-min-microvolt = <1800000>;
+>> +					regulator-max-microvolt = <2950000>;
+>> +					bias-pull-down;
+>> +				};
+>> +
+>> +				/* slimport_dvdd */
+>> +				l18 {
+>> +					regulator-min-microvolt = <1100000>;
+>> +					regulator-max-microvolt = <1100000>;
+>> +					bias-pull-down;
+>> +				};
+>> +
+>> +				/* touch_io */
+>> +				l22 {
+>> +					regulator-min-microvolt = <1800000>;
+>> +					regulator-max-microvolt = <1800000>;
+>> +					bias-pull-down;
+>> +				};
+>> +
+>> +				/*
+>> +				 * mipi_dsi.1-dsi_vddio
+>> +				 * pil_qdsp6v4.1-pll_vdd
+>> +				 * pil_qdsp6v4.2-pll_vdd
+>> +				 * msm_ehci_host.0-HSUSB_1p8
+>> +				 * msm_ehci_host.1-HSUSB_1p8
+>> +				 */
+>> +				l23 {
+>> +					regulator-min-microvolt = <1800000>;
+>> +					regulator-max-microvolt = <1800000>;
+>> +					bias-pull-down;
+>> +				};
+>> +
+>> +				/*
+>> +				 * tabla2x-slim-CDC_VDDA_A_1P2V
+>> +				 * tabla2x-slim-VDDD_CDC_D
+>> +				 */
+>> +				l24 {
+>> +					regulator-min-microvolt = <750000>;
+>> +					regulator-max-microvolt = <1150000>;
+>> +					bias-pull-down;
+>> +				};
+>> +
+>> +				l25 {
+>> +					regulator-min-microvolt = <1250000>;
+>> +					regulator-max-microvolt = <1250000>;
+>> +					regulator-always-on;
+>> +					bias-pull-down;
+>> +				};
+>> +
+>> +				l26 {
+>> +					regulator-min-microvolt = <375000>;
+>> +					regulator-max-microvolt = <1050000>;
+>> +					regulator-always-on;
+>> +					bias-pull-down;
+>> +				};
+>> +
+>> +				l27 {
+>> +					regulator-min-microvolt = <1100000>;
+>> +					regulator-max-microvolt = <1100000>;
+>> +				};
+>> +
+>> +				l28 {
+>> +					regulator-min-microvolt = <1050000>;
+>> +					regulator-max-microvolt = <1050000>;
+>> +					bias-pull-down;
+>> +				};
+>> +
+>> +				/* wcnss_wlan.0-iris_vddio */
+>> +				lvs1 {
+>> +					bias-pull-down;
+>> +				};
+>> +
+>> +				/* wcnss_wlan.0-iris_vdddig */
+>> +				lvs2 {
+>> +					bias-pull-down;
+>> +				};
+>> +
+>> +				lvs3 {
+>> +					bias-pull-down;
+>> +				};
+>> +
+>> +				lvs4 {
+>> +					bias-pull-down;
+>> +				};
+>> +
+>> +				lvs5 {
+>> +					bias-pull-down;
+>> +				};
+>> +
+>> +				/* mipi_dsi.1-dsi_iovcc */
+>> +				lvs6 {
+>> +					bias-pull-down;
+>> +				};
+>> +
+>> +				/*
+>> +				 * pil_riva-pll_vdd
+>> +				 * lvds.0-lvds_vdda
+>> +				 * mipi_dsi.1-dsi1_vddio
+>> +				 * hdmi_msm.0-hdmi_vdda
+>> +				 */
+>> +				lvs7 {
+>> +					bias-pull-down;
+>> +				};
+>> +
+>> +				ncp {
+>> +					regulator-min-microvolt = <1800000>;
+>> +					regulator-max-microvolt = <1800000>;
+>> +					qcom,switch-mode-frequency = <1600000>;
+>> +				};
+>> +			};
+>> +		};
+>> +	};
+>> +};
+>> +
+>> +&pmicintc {
+>> +	keypad@148 {
+>> +		compatible = "qcom,pm8921-keypad";
+>> +		reg = <0x148>;
+>> +		interrupt-parent = <&pmicintc>;
+>> +		interrupts = <74 1>, <75 1>;
+> 
+> IRQ_TYPE_EDGE_RISING
+> 
+> 
+>> +		linux,keymap = <
+>> +			MATRIX_KEY(0, 0, KEY_VOLUMEDOWN)
+>> +			MATRIX_KEY(0, 1, KEY_VOLUMEUP)
+>> +		>;
+>> +
+>> +		keypad,num-rows = <1>;
+>> +		keypad,num-columns = <5>;
+>> +		debounce = <15>;
+>> +		scan-delay = <32>;
+>> +		row-hold = <91500>;
+>> +	};
+>> +};
+>> +
+>> +&gsbi1 {
+>> +	status = "okay";
+> 
+> Status should be the last property. Add empty line before it (here and
+> further)
+> 
+>> +	qcom,mode = <GSBI_PROT_I2C>;
+>> +};
+>> +
+>> +&gsbi1_i2c {
+>> +	status = "okay";
+>> +	clock-frequency = <200000>;
+>> +	pinctrl-0 = <&i2c1_pins>;
+>> +	pinctrl-names = "default";
+> 
+> I don't see i2c1_pins being defined. Did it pass the build?
+> Also there is already a pinctrl for this device. Why do you need to
+> overwrite it?
+> 
+>> +};
+>> +
+>> +&gsbi4 {
+>> +	status = "okay";
+>> +	qcom,mode = <GSBI_PROT_I2C_UART>;
+>> +};
+>> +
+>> +&gsbi4_serial {
+>> +	status = "okay";
+>> +	pinctrl-names = "default";
+>> +	pinctrl-0 = <&gsbi4_uart_pin_a>;
+> 
+> Unnecessary, can be dropped. It's set in qcom-apq8064.dtsi.
+> 
+>> +};
+>> +
+>> +/* eMMC */
+>> +&sdcc1 {
+>> +	status = "okay";
+>> +	vmmc-supply = <&pm8921_l5>;
+>> +	vqmmc-supply = <&pm8921_s4>;
+>> +};
+>> +
+>> +&riva {
+>> +	status = "okay";
+>> +	pinctrl-names = "default";
+>> +	pinctrl-0 = <&riva_wlan_pin_a>;
+> 
+> Where is it defined? Also pinctrl-names should come after pinctrl-N.
+
+definition is kinda aside in qcom-apq8064-pins.dtsi .
+
+All other suggestions incorporated, if it's OK otherwise, let me send v2
+
+Thank you
+David
+
+> 
+>> +};
+>>
+>> ---
+>> base-commit: 0a2f889128969dab41861b6e40111aa03dc57014
+>> change-id: 20250309-lg-nexus4-mako-da0833885b26
+>>
+>> Best regards,
+>> -- 
+>> David Heidelberg <david@ixit.cz>
+>>
+>>
+> 
+
+-- 
+David Heidelberg
+
 
