@@ -1,136 +1,162 @@
-Return-Path: <linux-kernel+bounces-553321-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-553323-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id ABB8EA5876E
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 19:56:46 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5BEFFA58772
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 20:01:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E89B116A81D
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 18:56:45 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1FB417A40E2
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 19:00:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE5EF212FA9;
-	Sun,  9 Mar 2025 18:56:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 969D81F0981;
+	Sun,  9 Mar 2025 19:01:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="DBaHtTha"
-Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nUDSBA8Q"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BA18202C4C
-	for <linux-kernel@vger.kernel.org>; Sun,  9 Mar 2025 18:56:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0B50D528;
+	Sun,  9 Mar 2025 19:01:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741546575; cv=none; b=g3lIfmuaY/YNH4oAqin1q1MGlxofS9QHkT6irkFRADkO0JujCTRO5GaJbjMUe9+VuSxEdCcq9inbpPvw/3m2F906b30adwCEd2cCw8l6w/lAGntxqeqmCnZ1hDHDKyAueBe3n79GNPkIRYFhQoGBjU7nCHok2cG9M8h3JJfK9Fc=
+	t=1741546869; cv=none; b=ms5+LNc4wBinkfr7b8c2A3cP9eixu3hJcCJvG/+t/6AQZcJM0iGZ8Wg1OBIGreaAKV17BgmMiu471UIqpa2dp7eFUFkUV36zdButPVVkaXjBrdopVS+v614aixjBVeUkA0l5aDgMwVRYjWsMjvbzBkVul1ezObLc+t/xM5pzFJk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741546575; c=relaxed/simple;
-	bh=uvZ2+a6S6JpYckvLd3vN4y/XaCLyyGT9gNpQQ8dNmeI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=YLURa2LWOzpPy4DXqeESJRTVZ/VmItu6fohFihEcAMbUmFRi3Xw3Dsod/8ttorBgFdGHBd7wxXps3uqbhk9lKNfxGBf3WSg3+rYWop7K9Rg/R48Rnxf5AaPEdY5VdnfU3qui5klJfnGWf9/Id0kxgQhVvhrPlAjh2KfOevEFjiw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=DBaHtTha; arc=none smtp.client-ip=209.85.221.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-3912622c9c0so179735f8f.3
-        for <linux-kernel@vger.kernel.org>; Sun, 09 Mar 2025 11:56:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1741546572; x=1742151372; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=MrmBWLsc0A2hxy4AAIuONWnJt2T5epZ91diVlTxUCPM=;
-        b=DBaHtTha2b/oWM/5kev9UR3vSTFF7JN5KsUd+aOeu5Kh6l8CFDshFMMB/uVBYqcG/e
-         EL8maSl4wz4adQgxLK0/n1X4EBpUSfyIRRiJHHGH3hY5al7zIkqrgFihNlpZoTwNxkLG
-         +7gGfGHMzqq3L0E8Hw/TKr3bZuMPvuKax9qoOI6cvVcfaAFtWlqJ01CfYNOPrXaSEFWI
-         rnr98X2PznkqveXqJELLbG3s28TcZVvOEcSjiBdEd2CnZGyQDvIGmtXXAwC/YHPGJbLM
-         /0hOTnpSsuwcfh/1zTT4yUELdJnJBTmk/EmoKg+v3APt4xQ77awktHN0szbx6iT2btSt
-         BxRQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741546572; x=1742151372;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=MrmBWLsc0A2hxy4AAIuONWnJt2T5epZ91diVlTxUCPM=;
-        b=NIvDoTC7dXwLX0PGHzBOYbYSwqjjUScc67HuFDPmfv/dVpnIYOJP4AZ74kaUqKdgAS
-         CQWWR6pBWE8DB34Os1x98Jh1WiRBOH/w2pDhdUADRh0+I05S/oj9Jz/clH145eYfWLik
-         I+AW+WENv4c/kn0odLK1qXcn26gs7PimaGsAJJuhxJ171wRxdLv8iD7po7TfiBnRY1z4
-         hRdTqjLdDRj56jkB3hqYp5Z8GRl7LVO+oFIKcwBiFy3Ozkxjg7UbuLiAhxf5DxNiZ9GZ
-         YMoPdgG7MIVggCDgrccz4KwsvnIvI+KJ80oetdgoGtkjLxRXUPLlhTyzCM7o6szjb9Fg
-         fhWw==
-X-Forwarded-Encrypted: i=1; AJvYcCXJn8RIkA+JG6lpNVDKCgJU6+mEvA+Iv+9Z7UevMT6JE2Jypy9bXUac+9WguY7f58awNw9b1rs6+0pRoJc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy4CH3DjdOCcU5go/MEkQJLuWvWUEsy0znQ/yEnxEuGGOf4sJws
-	i2A/okdB2B59Pv1AFPcfSJIAWdR2C34+GGzdjnYiszyNJ7OCU/zt5ZvxcBTnteo=
-X-Gm-Gg: ASbGncsbtKlVjpAUBPY5EgXyEDIFToaZBECOdRd5WsOVPsZt/qeiu+SquKYmKIvEYEb
-	r5rOJ42I3FW9NA+MORx/X1xHNUzpBhGL7+DK2tBCF8YX9Gowb5amPGcnvXE+uEctWIPGuT3yf+m
-	YatV573AiaTw7DoPmz9dcXJ28r9cvgMlqrPquyBw2ZaW9ZC08xm7NlDm3SPrACDQ4IKwdNoQHyK
-	5LiHvkz12i3mGUumMQPkAvp8e3GAxZnTdpQkzl+jAisYeIesgqhuD6t+Noyd/Xl0mznT+soN/ZW
-	7zmHpKrgiMRlwLqLUs9G2dqgfYpcoOqxWIwJauT8HFVQLGvm+g9gSQ3ZIqg=
-X-Google-Smtp-Source: AGHT+IEKpRHbbGfEM98G+jT1dTf4FeQB+l3gBVL1qFl0csub7dukLp0ucTCxODN6l+bL/aW/iBduNQ==
-X-Received: by 2002:a05:600c:5122:b0:43b:c0fa:f9e5 with SMTP id 5b1f17b1804b1-43ce6eb5ab2mr15192015e9.4.1741546571601;
-        Sun, 09 Mar 2025 11:56:11 -0700 (PDT)
-Received: from krzk-bin.. ([178.197.206.225])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43cee22c13fsm44263945e9.40.2025.03.09.11.56.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 09 Mar 2025 11:56:11 -0700 (PDT)
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To: Arnd Bergmann <arnd@arndb.de>,
-	soc@lists.linux.dev
-Cc: Tudor Ambarus <tudor.ambarus@linaro.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Peter Griffin <peter.griffin@linaro.org>,
+	s=arc-20240116; t=1741546869; c=relaxed/simple;
+	bh=kH5JdLfYUUDkMU6DKgUeLSwXtGrR71Mgz2D16I88pkU=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=MwtKXdaYc8p7m8qlcgh/Gr/RNHJhcmAooc4YLvRAXhugBwNesSg/ebbjm3sj5Zl6rCl5mYWI2ncB0fCxowGGeW2H6/jPYVRcV/BBEKYLWJOkhb70rAba5YU9h8YeMKTc7vVhbNu+v/4UhAm+RRNMzacYon1hibrlvoCNyj722r0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nUDSBA8Q; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 661E5C4CEE3;
+	Sun,  9 Mar 2025 19:01:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741546868;
+	bh=kH5JdLfYUUDkMU6DKgUeLSwXtGrR71Mgz2D16I88pkU=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=nUDSBA8QYKj4ib20a3S0gzNzWPwUXQt5HPtjgFPa9psXoTr6RhK9erJQDi8sH2xAQ
+	 CJ8Nq6I6tPx27GzYGUBlIIUISD8I0Q2ORxaoLJNzGHrqZz/92qzYOyDsSlFW0MCwlX
+	 tlw0L69rvsptL+078lnlCHn725mVxmdOW1wfi/phzTe7UVzAwtDRoD+qL5wmun1rUJ
+	 GT5Bf8mH/JduCeYEkUVsuVqTQWjwa4+YRVINd7rvlfdcbtW4aTjF7r+AY5Dbgk86jO
+	 wZ8Sif6RHVVQevmi0EAleR9w8jAtgB/h/aju8GsdTfNCIpeLPcE4BENTdB9oJa27Mz
+	 fyH3qk+/qY1dQ==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1trLta-00ByG4-3R;
+	Sun, 09 Mar 2025 19:01:06 +0000
+Date: Sun, 09 Mar 2025 19:01:05 +0000
+Message-ID: <864j02owpa.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Akihiko Odaki <akihiko.odaki@daynix.com>
+Cc: Oliver Upton <oliver.upton@linux.dev>,
+	Joey Gouly <joey.gouly@arm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Zenghui Yu <yuzenghui@huawei.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
 	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org,
+	Andrew Jones <andrew.jones@linux.dev>,
+	kvmarm@lists.linux.dev,
 	linux-kernel@vger.kernel.org,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [GIT PULL 4/4 PATCH] arm64: defconfig: enable ACPM protocol and Exynos mailbox
-Date: Sun,  9 Mar 2025 19:55:58 +0100
-Message-ID: <20250309185601.10616-4-krzysztof.kozlowski@linaro.org>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250309185601.10616-1-krzysztof.kozlowski@linaro.org>
-References: <20250309185601.10616-1-krzysztof.kozlowski@linaro.org>
+	devel@daynix.com
+Subject: Re: [PATCH v2 3/3] KVM: arm64: PMU: Set raw values from user to PM{C,I}NTEN{SET,CLR}, PMOVS{SET,CLR}
+In-Reply-To: <20250307-pmc-v2-3-6c3375a5f1e4@daynix.com>
+References: <20250307-pmc-v2-0-6c3375a5f1e4@daynix.com>
+	<20250307-pmc-v2-3-6c3375a5f1e4@daynix.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: akihiko.odaki@daynix.com, oliver.upton@linux.dev, joey.gouly@arm.com, suzuki.poulose@arm.com, yuzenghui@huawei.com, catalin.marinas@arm.com, will@kernel.org, linux-arm-kernel@lists.infradead.org, andrew.jones@linux.dev, kvmarm@lists.linux.dev, linux-kernel@vger.kernel.org, devel@daynix.com
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-From: Tudor Ambarus <tudor.ambarus@linaro.org>
+On Fri, 07 Mar 2025 10:55:30 +0000,
+Akihiko Odaki <akihiko.odaki@daynix.com> wrote:
+> 
+> Commit a45f41d754e0 ("KVM: arm64: Add {get,set}_user for
+> PM{C,I}NTEN{SET,CLR}, PMOVS{SET,CLR}") changed KVM_SET_ONE_REG to update
+> the mentioned registers in a way matching with the behavior of guest
+> register writes. This is a breaking change of a UAPI though the new
+> semantics looks cleaner and VMMs are not prepared for this.
+> 
+> Firecracker, QEMU, and crosvm perform migration by listing registers
+> with KVM_GET_REG_LIST, getting their values with KVM_GET_ONE_REG and
+> setting them with KVM_SET_ONE_REG. This algorithm assumes
+> KVM_SET_ONE_REG restores the values retrieved with KVM_GET_ONE_REG
+> without any alteration. However, bit operations added by the earlier
+> commit do not preserve the values retried with KVM_GET_ONE_REG and
+> potentially break migration.
+> 
+> Remove the bit operations that alter the values retrieved with
+> KVM_GET_ONE_REG.
+> 
+> Fixes: a45f41d754e0 ("KVM: arm64: Add {get,set}_user for PM{C,I}NTEN{SET,CLR}, PMOVS{SET,CLR}")
+> Signed-off-by: Akihiko Odaki <akihiko.odaki@daynix.com>
+> ---
+>  arch/arm64/kvm/sys_regs.c | 21 +--------------------
+>  1 file changed, 1 insertion(+), 20 deletions(-)
+> 
+> diff --git a/arch/arm64/kvm/sys_regs.c b/arch/arm64/kvm/sys_regs.c
+> index 51054b7befc0b4bd822cecf717ee4a4740c4a685..2f44d4d4f54112787683dd75ea93fd60e92dd31f 100644
+> --- a/arch/arm64/kvm/sys_regs.c
+> +++ b/arch/arm64/kvm/sys_regs.c
+> @@ -1142,26 +1142,7 @@ static bool access_pmu_evtyper(struct kvm_vcpu *vcpu, struct sys_reg_params *p,
+>  
+>  static int set_pmreg(struct kvm_vcpu *vcpu, const struct sys_reg_desc *r, u64 val)
+>  {
+> -	bool set;
+> -
+> -	val &= kvm_pmu_valid_counter_mask(vcpu);
+> -
+> -	switch (r->reg) {
+> -	case PMOVSSET_EL0:
+> -		/* CRm[1] being set indicates a SET register, and CLR otherwise */
+> -		set = r->CRm & 2;
+> -		break;
+> -	default:
+> -		/* Op2[0] being set indicates a SET register, and CLR otherwise */
+> -		set = r->Op2 & 1;
+> -		break;
+> -	}
+> -
+> -	if (set)
+> -		__vcpu_sys_reg(vcpu, r->reg) |= val;
+> -	else
+> -		__vcpu_sys_reg(vcpu, r->reg) &= ~val;
+> -
+> +	__vcpu_sys_reg(vcpu, r->reg) = val & kvm_pmu_valid_counter_mask(vcpu);
+>  	kvm_make_request(KVM_REQ_RELOAD_PMU, vcpu);
+>  
+>  	return 0;
+> 
 
-Enable the Samsung Exynos ACPM protocol and its transport layer, the
-Exynos mailbox driver. Samsung Exynos platforms implement ACPM to
-provide support for PMIC, clock frequency scaling, clock configuration
-and temperature sensors.
+Yup, this code was definitely a brain fart. Thanks for spotting it.
+One of the big mistake was to expose both CLR and SET registers to
+userspace (one of the two should have been hidden).
 
-Signed-off-by: Tudor Ambarus <tudor.ambarus@linaro.org>
-Link: https://lore.kernel.org/r/20250207-gs101-acpm-dt-v4-4-230ba8663a2d@linaro.org
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
----
- arch/arm64/configs/defconfig | 2 ++
- 1 file changed, 2 insertions(+)
+This requires a Cc to stable@vger.kernel.org so that this can be
+backported to anything from 6.12. It would also help if you put this
+patch at the head of the series, before adding the PMU request (it is
+then likely to be very easy to backport).
 
-diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-index cb7da4415599..18f96796298c 100644
---- a/arch/arm64/configs/defconfig
-+++ b/arch/arm64/configs/defconfig
-@@ -264,6 +264,7 @@ CONFIG_IMX_SCU=y
- CONFIG_QCOM_TZMEM_MODE_SHMBRIDGE=y
- CONFIG_QCOM_QSEECOM=y
- CONFIG_QCOM_QSEECOM_UEFISECAPP=y
-+CONFIG_EXYNOS_ACPM_PROTOCOL=m
- CONFIG_GNSS=m
- CONFIG_GNSS_MTK_SERIAL=m
- CONFIG_MTD=y
-@@ -1403,6 +1404,7 @@ CONFIG_HWSPINLOCK_QCOM=y
- CONFIG_TEGRA186_TIMER=y
- CONFIG_RENESAS_OSTM=y
- CONFIG_ARM_MHU=y
-+CONFIG_EXYNOS_MBOX=m
- CONFIG_IMX_MBOX=y
- CONFIG_OMAP2PLUS_MBOX=m
- CONFIG_PLATFORM_MHU=y
+With that,
+
+Acked-by: Marc Zyngier <maz@kernel.org>
+
+Thanks,
+
+	M.
+
 -- 
-2.43.0
-
+Without deviation from the norm, progress is not possible.
 
