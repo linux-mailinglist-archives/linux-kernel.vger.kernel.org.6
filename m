@@ -1,154 +1,124 @@
-Return-Path: <linux-kernel+bounces-553314-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-553315-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC55DA58754
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 19:50:12 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A0995A58757
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 19:50:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F217C1696D5
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 18:50:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6D55716A885
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 18:50:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2272C1EF386;
-	Sun,  9 Mar 2025 18:50:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43BF0206F15;
+	Sun,  9 Mar 2025 18:50:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eKp+SrHP"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mPxiRP5w"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FC402556E;
-	Sun,  9 Mar 2025 18:50:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9840A2556E;
+	Sun,  9 Mar 2025 18:50:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741546205; cv=none; b=Ac3FQrEWfNiyCUj5LUS6kSdGl4Bd8eTXy2njyLg6AVTK6/KYgdLalLyOAWs275Ypm6V2Bpd3VurDPl/gXTx7JoLHeF6tYmyDrX3aXPzEw17uQ12GxYehV1Sosp4tNTmJxaAIQd8jW0dtBFUQskuxi+wLeHGQ2PEyvxh53LfEv1I=
+	t=1741546209; cv=none; b=TTjpEVjwfpqVE2aOrdujyf3kTnLLk3X7p1M82BYPYLGDdTV3kUIl5ttlyyFBXdhZqakMoXT6E7k6muhh4JzNBOd9dRbpnZq97dvnkaWyyvUAaYkT+80Z8KFHbwDe0GtZ4DRV8CDfGsKxjnTFRvBm/Vj+yWdKJ2pf+5/sHPPqsdg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741546205; c=relaxed/simple;
-	bh=m0QHM1obKJOTDhSTGRvOLOHGJZreyLnqsXZwaNVPN5Y=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=spsHfnc7Qci4APWJUW1GrKYGcmC4Xc0HS4kgTd+r7aoOPkDTnefDweCmYcs9E07UKoQL80ixmVFNSle7vSEoTvIVCBhysZq5v69hhZANAsnpIRa2YqAffh7JH9KWKWBWM91h3vv4E+BkFf1MmsM2usB34riN2MoKfthJQQ6YRlE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eKp+SrHP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 57896C4CEE3;
-	Sun,  9 Mar 2025 18:50:05 +0000 (UTC)
+	s=arc-20240116; t=1741546209; c=relaxed/simple;
+	bh=DE7rxV5hRZWbRfzVNpNP3kMmumFkL5JphKjCeeXHOkA=;
+	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
+	 Message-Id:Subject; b=tavH+c4KW8fEFvdtCnUGVo43GnwjNaGTEUuzkrdebOYEWyb7JckNHBz5sTOwiNMaHdy/PxpR6e/3xRJ/kVLVT6jRx8SJxDEhpz3HSC6QOqkRf2cvb4roEw5uHBTlhQnCfLt+n+OeRiEEP/ADfnfmmdSoSuSlV1QTJeDnugjlg8g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mPxiRP5w; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 43868C4CEE3;
+	Sun,  9 Mar 2025 18:50:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741546205;
-	bh=m0QHM1obKJOTDhSTGRvOLOHGJZreyLnqsXZwaNVPN5Y=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=eKp+SrHPEUa5HlrtyrVt8ASL9i+Tk6zdasrtWolJAoHe/W9dXTsv900KnUtC+B0zy
-	 ISgoRoNcmINzYSePTr6NzzI+eJp+/2VPXmbkmmdckc9T6tX36GceqPXe1iQhsDvUB8
-	 yk7La1zLw6rEEiik2GykOMmgFvMJaXuZ+gMPEY3FeJLGm1oBNgixGoHNQa+J8LT1gc
-	 2xcDvknQ5pbqKaA0XJInllYTayuTC71e6gGH3ZaNYjUryyGW+nvHcreEPHsJU1tNSC
-	 vjm/kYk+bpreQkc6gx/1jJ8tfEXjfDyoP9jAz53XNFDwkQa+l2L6nsP2UGMqujHuD/
-	 o73avuLoeFKUA==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1trLit-00By7j-5w;
-	Sun, 09 Mar 2025 18:50:03 +0000
-Date: Sun, 09 Mar 2025 18:50:02 +0000
-Message-ID: <865xkiox7p.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Akihiko Odaki <akihiko.odaki@daynix.com>
-Cc: Oliver Upton <oliver.upton@linux.dev>,
-	Joey Gouly <joey.gouly@arm.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Zenghui Yu <yuzenghui@huawei.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Andrew Jones <andrew.jones@linux.dev>,
-	linux-arm-kernel@lists.infradead.org,
-	kvmarm@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	devel@daynix.com
-Subject: Re: [PATCH v2 2/3] KVM: arm64: PMU: Reload when user modifies registers
-In-Reply-To: <20250307-pmc-v2-2-6c3375a5f1e4@daynix.com>
-References: <20250307-pmc-v2-0-6c3375a5f1e4@daynix.com>
-	<20250307-pmc-v2-2-6c3375a5f1e4@daynix.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	s=k20201202; t=1741546209;
+	bh=DE7rxV5hRZWbRfzVNpNP3kMmumFkL5JphKjCeeXHOkA=;
+	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
+	b=mPxiRP5wubFDs2aPs2uofBXSSevfhY1+Vm9j0ECn/EBxpR8GmpdAAS9JN9/M9jiCn
+	 bXAdVXOtQA7TDMrMVZrWkoiOrH8W4VFYUB5+QgedAAAEu0FvBYYh/T/LvJk0Id6dOm
+	 n1TOCKn3vIf+kEI+1+BzugoexCdqS1V8KvM4A8mBrtL6pv+lWRtxIN3LyG4Qik1/F7
+	 T4NqvW5+siU69hRS6SDVjhKPWBjNWPe/EYL5WXGQ6YJAy52g11rbIVCP1cuDSlkk4r
+	 ejdb/+osl4SG2D9m1hJQ6enPOVKfMLZzxGXfkuJjy8uMOPQ7MR/w0bevrgtyLQ1Y+j
+	 bd+1kSKK2B3iw==
+Date: Sun, 09 Mar 2025 13:50:07 -0500
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: akihiko.odaki@daynix.com, oliver.upton@linux.dev, joey.gouly@arm.com, suzuki.poulose@arm.com, yuzenghui@huawei.com, catalin.marinas@arm.com, will@kernel.org, andrew.jones@linux.dev, linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, linux-kernel@vger.kernel.org, devel@daynix.com
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+From: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: Matthias Brugger <matthias.bgg@gmail.com>, 
+ linux-mediatek@lists.infradead.org, 
+ Maxime Chevallier <maxime.chevallier@bootlin.com>, 
+ Andrew Lunn <andrew+netdev@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>, 
+ upstream@airoha.com, linux-arm-kernel@lists.infradead.org, 
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+ Conor Dooley <conor+dt@kernel.org>, linux-kernel@vger.kernel.org, 
+ Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, 
+ Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, 
+ Russell King <linux@armlinux.org.uk>, devicetree@vger.kernel.org, 
+ netdev@vger.kernel.org, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Vladimir Oltean <olteanv@gmail.com>, 
+ "David S. Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, 
+ Lee Jones <lee@kernel.org>
+To: Christian Marangi <ansuelsmth@gmail.com>
+In-Reply-To: <20250309172717.9067-6-ansuelsmth@gmail.com>
+References: <20250309172717.9067-1-ansuelsmth@gmail.com>
+ <20250309172717.9067-6-ansuelsmth@gmail.com>
+Message-Id: <174154620758.1888708.16493498235993467665.robh@kernel.org>
+Subject: Re: [net-next PATCH v12 05/13] dt-bindings: mfd: Document support
+ for Airoha AN8855 Switch SoC
 
-[dropping Shannon  from the list, as his Linaro email has been
-bouncing for about 10 years, and updating Andrew's email]
 
-On Fri, 07 Mar 2025 10:55:29 +0000,
-Akihiko Odaki <akihiko.odaki@daynix.com> wrote:
+On Sun, 09 Mar 2025 18:26:50 +0100, Christian Marangi wrote:
+> Document support for Airoha AN8855 Switch SoC. This SoC expose various
+> peripherals like an Ethernet Switch, a NVMEM provider and Ethernet PHYs.
 > 
-> Commit d0c94c49792c ("KVM: arm64: Restore PMU configuration on first
-> run") added the code to reload the PMU configuration on first run.
-> Trigger the code when a user modifies a PMU register instead so that
-> PMU configuration changes made by users will be applied also after the
-> first run.
+> It does also support i2c and timers but those are not currently
+> supported/used.
 > 
-> Signed-off-by: Akihiko Odaki <akihiko.odaki@daynix.com>
+> Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
 > ---
->  arch/arm64/kvm/pmu-emul.c | 3 ---
->  arch/arm64/kvm/sys_regs.c | 5 +++++
->  2 files changed, 5 insertions(+), 3 deletions(-)
+>  .../bindings/mfd/airoha,an8855.yaml           | 186 ++++++++++++++++++
+>  MAINTAINERS                                   |   1 +
+>  2 files changed, 187 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/mfd/airoha,an8855.yaml
 > 
-> diff --git a/arch/arm64/kvm/pmu-emul.c b/arch/arm64/kvm/pmu-emul.c
-> index 1402cce5625bffa706aabe5e6121d1f3817a0aaf..04eb3856b96576fad5afc8927c8916ff9738f9d7 100644
-> --- a/arch/arm64/kvm/pmu-emul.c
-> +++ b/arch/arm64/kvm/pmu-emul.c
-> @@ -888,9 +888,6 @@ int kvm_arm_pmu_v3_enable(struct kvm_vcpu *vcpu)
->  		   return -EINVAL;
->  	}
->  
-> -	/* One-off reload of the PMU on first run */
-> -	kvm_make_request(KVM_REQ_RELOAD_PMU, vcpu);
-> -
->  	return 0;
->  }
->  
-> diff --git a/arch/arm64/kvm/sys_regs.c b/arch/arm64/kvm/sys_regs.c
-> index 27418dac791df9a89124f867879e899db175e506..51054b7befc0b4bd822cecf717ee4a4740c4a685 100644
-> --- a/arch/arm64/kvm/sys_regs.c
-> +++ b/arch/arm64/kvm/sys_regs.c
-> @@ -1162,6 +1162,8 @@ static int set_pmreg(struct kvm_vcpu *vcpu, const struct sys_reg_desc *r, u64 va
->  	else
->  		__vcpu_sys_reg(vcpu, r->reg) &= ~val;
->  
-> +	kvm_make_request(KVM_REQ_RELOAD_PMU, vcpu);
-> +
->  	return 0;
->  }
->  
-> @@ -1322,6 +1324,8 @@ static int set_pmcr(struct kvm_vcpu *vcpu, const struct sys_reg_desc *r,
->  		val |= ARMV8_PMU_PMCR_LC;
->  
->  	__vcpu_sys_reg(vcpu, r->reg) = val;
-> +	kvm_make_request(KVM_REQ_RELOAD_PMU, vcpu);
-> +
->  	return 0;
->  }
->  
-> @@ -4276,6 +4280,7 @@ void kvm_reset_sys_regs(struct kvm_vcpu *vcpu)
->  	}
->  
->  	set_bit(KVM_ARCH_FLAG_ID_REGS_INITIALIZED, &kvm->arch.flags);
-> +	kvm_make_request(KVM_REQ_RELOAD_PMU, vcpu);
 
-This should be restricted to cases where a PMU is actually available.
+My bot found errors running 'make dt_binding_check' on your patch:
 
-But I also wonder what the motivation is to move this from first run
-to reset? Nothing explains it in the commit message.
+yamllint warnings/errors:
 
-Thanks,
+dtschema/dtc warnings/errors:
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/mfd/airoha,an8855.example.dtb: phy@1: $nodename:0: 'phy@1' does not match '^ethernet-phy(@[a-f0-9]+)?$'
+	from schema $id: http://devicetree.org/schemas/net/airoha,an8855-phy.yaml#
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/mfd/airoha,an8855.example.dtb: phy@1: Unevaluated properties are not allowed ('compatible' was unexpected)
+	from schema $id: http://devicetree.org/schemas/net/airoha,an8855-phy.yaml#
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/mfd/airoha,an8855.example.dtb: phy@2: $nodename:0: 'phy@2' does not match '^ethernet-phy(@[a-f0-9]+)?$'
+	from schema $id: http://devicetree.org/schemas/net/airoha,an8855-phy.yaml#
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/mfd/airoha,an8855.example.dtb: phy@2: Unevaluated properties are not allowed ('compatible' was unexpected)
+	from schema $id: http://devicetree.org/schemas/net/airoha,an8855-phy.yaml#
 
-	M.
+doc reference errors (make refcheckdocs):
+Warning: MAINTAINERS references a file that doesn't exist: Documentation/devicetree/bindings/mfd/airoha,an8855-mfd.yaml
+MAINTAINERS: Documentation/devicetree/bindings/mfd/airoha,an8855-mfd.yaml
 
--- 
-Without deviation from the norm, progress is not possible.
+See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20250309172717.9067-6-ansuelsmth@gmail.com
+
+The base for the series is generally the latest rc1. A different dependency
+should be noted in *this* patch.
+
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
+
+pip3 install dtschema --upgrade
+
+Please check and re-submit after running the above command yourself. Note
+that DT_SCHEMA_FILES can be set to your schema file to speed up checking
+your schema. However, it must be unset to test all examples with your schema.
+
 
