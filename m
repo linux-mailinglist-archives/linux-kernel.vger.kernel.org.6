@@ -1,118 +1,197 @@
-Return-Path: <linux-kernel+bounces-553248-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-553247-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 041CDA5864F
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 18:33:45 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B826A5864C
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 18:33:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 42DB63ADAC8
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 17:33:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8562D188C0B7
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 17:33:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D76F1EA7EE;
-	Sun,  9 Mar 2025 17:33:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE9051E98F8;
+	Sun,  9 Mar 2025 17:33:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="QvmkxY6h"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Y8l0st9r"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A2B81C5D78;
-	Sun,  9 Mar 2025 17:33:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2315813B2A4;
+	Sun,  9 Mar 2025 17:33:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741541589; cv=none; b=ERhTnpd/oK2hKrGDCuIUA3waSNlCgEsYe1fQ1AjcBEs4vzRWkTVXtU+mSQbPsJewGvalyhVnyMjPBk23qdDgzS1GS9l/Jthlwyhm1lLemJHuNOjfjYxooiE3paB7SwPxJEGt9rGeQ2ElZn86Qk3b39YbuzhS1YiF1YLtCJd00Ks=
+	t=1741541581; cv=none; b=QI7y+Z6g/Zaw+6ly0TefQ8T0BJqJ80XjJoQ7FHYiwiJTY9qonHdIR6jTv3NILjI34JPtSzm0/Rrwa7IOsvLfkCqvyu3oaknGfh01dmEJcHqO+WYbjti/gg9h9QZbwLrvjk9u5qBoI/OXAxNK//N+Srsxf7qJiCHyh01pxN1HM2U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741541589; c=relaxed/simple;
-	bh=DBdtiV38JvrK5apez6Z4gd9rOPGIqtIoKuhPJl81drU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TmqjQ1BYxUEGsTOklJIhyBK7X9iPDt1ZEZrHbcwf3AG3MnM+eEMRoGIvFfWCMijaXdHFjcTlueO3PGm9LYpfKXBzfYrbAa49R2DaKa2/K9dX9wTWk7ZHgV0/8f6BGsyzIa3C40Iq1JvbM215cqeil/1aK15GQ8lhTYbtOXNUflA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=QvmkxY6h; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 4EC1A40E015D;
-	Sun,  9 Mar 2025 17:33:04 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id WO0JmeVPD-1N; Sun,  9 Mar 2025 17:33:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1741541580; bh=JE9z+8KfG9ic8fY+M0OmWcViQrJ70UNbKwvs4lEwbEc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=QvmkxY6hDXFKYcuxskX/12KIrWNIR+YqqxWLI577Z55egcc1KJ+cGlQcMcHIWYApU
-	 xhdAHZr1W18gwvjQlQpFSIhIftw/0/ZX4Uhfx0ySPR3J4vnzNCI0Iwbw1c/ByTeItT
-	 tIJsc6VSEhk4V+AE5lfDM2IWVd0dRXowF2z+lYpHyTCp7JKVs4LpzEUyZq47BxXGzY
-	 yjSB2VoHp1ObZZLL+Q3IWGuqNd/z1K6LfVXVlGCFmikcL6C2mwHyfpOByOl7H/Skc+
-	 GI761HxrbR04DgX9XNGOkgoPwbvL0aCFZrK/veUrDlTgv8G/REWZdXt74RS6IcKGgs
-	 84Zqn6WoTc2tClCZr88MLHV1xHASSVb+lLuWltPKO3iIex7fATNww+I8kPx3NTkKTM
-	 k4z29ewk8snCyFeVr6j5sJdJAcVnllr2c4zOU1PwEIHcdJA/qai6OOeyA5qwdJB6ib
-	 6PcxfDNx64FtOzjub4nAIKMdhxLthJXSJrkXsnQLTeZAk3Dam/71haGiDVNfD+1Apv
-	 pS5AwANTz5yMrcYh6tc8bO8tZ1jJKI7yXWZalkrmg+J8ImIMAZOMDmFcRFjQtKyrkW
-	 C8Uhc3EGQ/NGaoP8iQHPehIr27evpjeG3QDLHyrMwleZCLz2tWG68DFroCgTSKaOKA
-	 yNvBU/vFybgYyWjNDVUzdx9c=
-Received: from zn.tnic (pd95303ce.dip0.t-ipconnect.de [217.83.3.206])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 89D1240E0214;
-	Sun,  9 Mar 2025 17:32:40 +0000 (UTC)
-Date: Sun, 9 Mar 2025 18:32:39 +0100
-From: Borislav Petkov <bp@alien8.de>
-To: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	daniel.sneddon@linux.intel.com, tony.luck@intel.com,
-	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-	linux-perf-users@vger.kernel.org,
-	Josh Poimboeuf <jpoimboe@kernel.org>,
-	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Ricardo Neri <ricardo.neri-calderon@linux.intel.com>,
-	"Liang, Kan" <kan.liang@linux.intel.com>,
-	Andrew Cooper <andrew.cooper3@citrix.com>,
-	Brice Goglin <brice.goglin@gmail.com>,
-	Mario Limonciello <mario.limonciello@amd.com>,
-	Perry Yuan <Perry.Yuan@amd.com>,
-	Dapeng Mi <dapeng1.mi@linux.intel.com>
-Subject: Re: [PATCH v7 2/4] x86/cpu: Add cpu_type to struct x86_cpu_id
-Message-ID: <20250309173239.GCZ83Qt2uxtPvMNxVL@fat_crate.local>
-References: <20250306-add-cpu-type-v7-0-f903fb022fd4@linux.intel.com>
- <20250306-add-cpu-type-v7-2-f903fb022fd4@linux.intel.com>
+	s=arc-20240116; t=1741541581; c=relaxed/simple;
+	bh=1UgctfymUV83xC3ix68vRlr3FAGTggR5aGYQLCNzbDI=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=c2EuKmcvUL+YqL4g4yCcnM6Tt4TS3hYai4EaX/GDMl5vDghuScTfDhweG9W2KbHxX4YX2AuGdYgDXwGv0o39TphKNWX6CzqYEx5mXTXXfwP2OerM8kBCehjTne60hv4egfrvJ5HPbOHU7W3DyK0UfbXXiL8SmgTrdNONpWptoC4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Y8l0st9r; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 73D34C4CEE5;
+	Sun,  9 Mar 2025 17:32:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741541580;
+	bh=1UgctfymUV83xC3ix68vRlr3FAGTggR5aGYQLCNzbDI=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=Y8l0st9r5NUNHRLdUc6QAuvfdp7z/SGXIVYgdibKL3oMiKK/TWKbgUu7of3jDgSJT
+	 xa1+UvktOZf0ZyjgzcCB1VpcCY/RKn8nBSglNhwCA4obeuG7RDSB3iWMVUsU7W2DAr
+	 ubx4ZOMoG4vanFDBA+k9aONrtifQ7qKeL9dyoh/2DOjpUR7Wk6u21gPeGBKYjyoX/X
+	 46lReRVXDgt4bRDZ2s5wJ2Yh0XD/nkaAxQxZwLUrTEGDFolP7YD56S7J2kLZKHnK4h
+	 29GCa+GzIk5hMQASMu/mSknKEcaB58Abch9CZMJDhQcOFqqxdb71s6ENh/rUiR6rIX
+	 NxD45unJiPLzQ==
+Date: Sun, 9 Mar 2025 17:32:50 +0000
+From: Jonathan Cameron <jic23@kernel.org>
+To: David Jander <david@protonic.nl>
+Cc: Uwe =?UTF-8?B?S2xlaW5lLUvDtm5pZw==?= <u.kleine-koenig@baylibre.com>,
+ linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org, Jonathan Corbet
+ <corbet@lwn.net>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
+ <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+ devicetree@vger.kernel.org, linux-doc@vger.kernel.org, Nuno Sa
+ <nuno.sa@analog.com>, Oleksij Rempel <o.rempel@pengutronix.de>, Greg
+ Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: Re: [RFC PATCH 1/7] drivers: Add motion control subsystem
+Message-ID: <20250309173250.68956c88@jic23-huawei>
+In-Reply-To: <20250306102540.7f0f6146@erd003.prtnl>
+References: <20250227162823.3585810-1-david@protonic.nl>
+	<20250227162823.3585810-2-david@protonic.nl>
+	<6c6cqaxmsy7miesel4ghdeiea6nrpe4gti4xf5enfyg4uqro5u@vpmtd2t7gydi>
+	<20250305164046.4de5b6ef@erd003.prtnl>
+	<mzxammninwmak5ti4c6is4pbdx3xzzziiwbxiwrldjyxgae4ok@ocec24vu4txa>
+	<20250306102540.7f0f6146@erd003.prtnl>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.48; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250306-add-cpu-type-v7-2-f903fb022fd4@linux.intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Mar 06, 2025 at 06:18:20PM -0800, Pawan Gupta wrote:
-> diff --git a/include/linux/mod_devicetable.h b/include/linux/mod_devicetable.h
-> index d67614f7b7f1..18e996acb49a 100644
-> --- a/include/linux/mod_devicetable.h
-> +++ b/include/linux/mod_devicetable.h
-> @@ -692,6 +692,7 @@ struct x86_cpu_id {
->  	__u16 feature;	/* bit index */
->  	/* Solely for kernel-internal use: DO NOT EXPORT to userspace! */
->  	__u16 flags;
-> +	__u8  cpu_type;
+On Thu, 6 Mar 2025 10:25:40 +0100
+David Jander <david@protonic.nl> wrote:
 
-The struct is called "x86_cpu_id" and all its members describe a CPU. There's
-no need to have more "cpu_" redundancy in the member names - just call that
-"type".  It is clear that it is about a CPU's type.
+> On Thu, 6 Mar 2025 00:21:22 +0100
+> Uwe Kleine-K=C3=B6nig <u.kleine-koenig@baylibre.com> wrote:
+>=20
+> > Hello David,
+> >=20
+> > On Wed, Mar 05, 2025 at 04:40:45PM +0100, David Jander wrote: =20
+> > > On Fri, 28 Feb 2025 17:44:27 +0100
+> > > Uwe Kleine-K=C3=B6nig <u.kleine-koenig@baylibre.com> wrote:   =20
+> > > > On Thu, Feb 27, 2025 at 05:28:17PM +0100, David Jander wrote:
+> > > > [...]   =20
+> > > > > +static int motion_open(struct inode *inode, struct file *file)
+> > > > > +{
+> > > > > +	int minor =3D iminor(inode);
+> > > > > +	struct motion_device *mdev =3D NULL, *iter;
+> > > > > +	int err;
+> > > > > +
+> > > > > +	mutex_lock(&motion_mtx);     =20
+> > > >=20
+> > > > If you use guard(), error handling gets a bit easier.   =20
+> > >=20
+> > > This looks interesting. I didn't know about guard(). Thanks. I see the
+> > > benefits, but in some cases it also makes the locked region less clea=
+rly
+> > > visible. While I agree that guard() in this particular place is nice,
+> > > I'm hesitant to try and replace all mutex_lock()/_unlock() calls with=
+ guard().
+> > > Let me know if my assessment of the intended use of guard() is incorr=
+ect.   =20
+> >=20
+> > I agree that guard() makes it harder for non-trivial functions to spot
+> > the critical section. In my eyes this is outweight by not having to
+> > unlock in all exit paths, but that might be subjective. Annother
+> > downside of guard is that sparse doesn't understand it and reports
+> > unbalanced locking. =20
+>=20
+> What I was referring to, and what I want to know is, is it okay to mix gu=
+ard()
+> with lock/unlock? I.e. Use guard() when there are multiple exit paths inv=
+olved
+> and revert back to simple lock/unlock if it is just to encase a handful of
+> non-exiting operations?
 
-The macro names having "CPU" - X86_CPU_TYPE_ANY - are fine I guess.
+Mixing is fine.  In some cases scoped_guard() can also make things
+clearer though at the cost of increased indent.
 
-Thx.
+> >=20
+> > Sad, so a userspace process still has to know some internal things about
+> > the motor it drives. :-\ =20
+>=20
+> Unfortunately that is almost impossible to avoid entirely.
+> You can replace one stepper motor driver with another that might have
+> different micro-stepping subdivision, by looking at struct
+> mot_capabilities.subdiv, but a simple brushed DC motor just isn't able to
+> replace a stepper motor in all but the most trivial applications. I also =
+think
+> that burdening the kernel with all sorts of complicated math to model the
+> mechanical conversion factors involved in anything that's connected to the
+> motor drive shaft is overkill. As well as trying to emulate all missing
+> capabilities from a motion device that is lacking that functionality nati=
+vely.
+>=20
+> So just like in IIO you cannot just replace one ADC with any other, in LM=
+C you
+> also cannot replace any device with any other.
+>=20
+> That's why there is struct mot_capabilities and MOT_IOCTL_GET_CAPA. It en=
+ables
+> user-space to optionally support different devices more easily. It is pro=
+bably
+> best used in conjunction with a LMC user-space library, although I don't =
+want
+> to rely on such a library for being able to use LMC. There is some middle
+> ground here I guess... just like in IIO.
+>=20
+> One thing I could try to improve though, is to include some additional
+> information in struct mot_capabilities that tells something more about the
+> nature of the used units, just like the speed_conv and accel_conv constan=
+ts do
+> for time conversion. Something that can be placed in the device tree (pos=
+sibly
+> in a motor child-node connected to the motor-controller) that contains so=
+me
+> conversion constant for distance. That way, if one were to (for example)
+> replace a stepper motor with a BLDC motor + encoder in a new hardware
+> revision, this constant could be used to make the units backwards compati=
+ble.
+>=20
+> As background information: A stepper motor controller counts distance in =
+steps
+> and/or micro-steps. There are mot_capabilities.subdiv micro-steps in each
+> step. The amount of angle the actual motor shaft advances with each whole=
+ step
+> depends on the motor construction and is often 200 steps per revolution (=
+1.8
+> degrees), but can vary from 4 to 400 steps per revolution depending on the
+> motor. So it is not only the controller that matters but also the type of
+> motor. This suggests the need of motor sub-nodes in the device-tree if one
+> wanted to extend the hardware knowledge further down from the motor drive=
+r.
+> But then there are gear boxes, pulleys, etc... it's basically conversion
+> factors all the way down. How many of them is sensible to bother the kern=
+el
+> with?
 
--- 
-Regards/Gruss,
-    Boris.
+I'd have a motor description that is sufficient to be able to swap steppers
+between hardware versions and present sufficient info to userspace to allow
+a library to hide those differences. That description might well be of
+an aggregate device consisting of motor and whatever mechanics to get you
+to the point you care about (actuator motion).  Hardest bit will be documen=
+ting
+'where' in the system the DT is describing.
 
-https://people.kernel.org/tglx/notes-about-netiquette
+It's not that heavily used but we do have analog front ends in IIO that
+provide a not dissimilar thing to the various potential mechanisms here.
+
+Jonathan
+
+
+>=20
+> Best regards,
+>=20
+
 
