@@ -1,125 +1,148 @@
-Return-Path: <linux-kernel+bounces-553032-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-553033-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C6A4BA582B2
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 10:35:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8AD0EA582B5
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 10:36:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 97134167F90
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 09:35:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C7198168052
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 09:36:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 155E91A4F0A;
-	Sun,  9 Mar 2025 09:35:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 377401A9B2A;
+	Sun,  9 Mar 2025 09:36:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=proton.me header.i=@proton.me header.b="cfUae+lF"
-Received: from mail-4322.protonmail.ch (mail-4322.protonmail.ch [185.70.43.22])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="RMagQJTR"
+Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com [209.85.208.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 425A935964;
-	Sun,  9 Mar 2025 09:35:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.22
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E62941A840D
+	for <linux-kernel@vger.kernel.org>; Sun,  9 Mar 2025 09:36:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741512914; cv=none; b=N/cTxHzaR4bBAj1YiP2YCx0ca+WJOEOs0kfs+ozzdSCykX9JFfLNX1zT6RBqOm9El24aRAftdcZsS7u613V6E13Ms/n8TZiwECEVHlHWOhZdPMDeFPEaCN/UIbK97F5RwEPtWZUyuGKi+W4mPraouOYYcRXXWZ2iw/J45PHkyrs=
+	t=1741512979; cv=none; b=uWZu2nfgxjtm6VlA9ff2LV0do7n3K87sIT1WKOyBSQnnJ+UyqtwgIsrdbl8Quz7TfNKprx3iyfdL4YllX9sq13dBllbnTQ0Ct4CYUGGxEVl1Beu2JltjxuCIKNuX4fh4MqMF1ok8uA5lbGKHz/z5gcON228quSsUkW9f8FKyarY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741512914; c=relaxed/simple;
-	bh=ef16vmQWr+hP9iDJ6GacPsHsiC+JXl5aqp2HwS/jCUM=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=byrwdHaPi1y2xzwglGvzS7d9+eA0ZfeoFjZtaabFmxyvS86Rqx9aczpelSLeGHWk33axrMbR7HwBxklRcE5wsnq66qELE95cYTse0XyZUVpddFCCMyAN5SDjcTnvgf7V57c1RAH/P6mDH/2TRqIsouUGYneHeLFE1WqfqvndJmA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=cfUae+lF; arc=none smtp.client-ip=185.70.43.22
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
-	s=protonmail; t=1741512903; x=1741772103;
-	bh=dmx/HBIdJFnExZ5Y+rLaBEWlh0Y9tq2BATLKSZ3zfa0=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector:List-Unsubscribe:List-Unsubscribe-Post;
-	b=cfUae+lFMLFSXAQPvvd+amFZLD/WZI31ipXgA61fjfm17vP7wXk/Uq2QnYzYcfReN
-	 +5USo7oOeH5tidIRaexfp5rzlFNtCRBeMnTNVe3u4o5826ztmESQ8wIeR2mdjsRH7t
-	 izwvuNgC6FKaOHpamdYNza+Fni9ZkAbcNfsy3Wk8HQJobMQKE4gqsiaL7+IquJKam4
-	 DvHnTJf63gmcj+QhOvbMeTeLLjc0+jYykhJo5divV4N5XBhVDGdtXx1bRbg4/sA9r/
-	 ziq7MZvcEYUs0A40mExl55jI76YhBx9cdMKXaIAKnjRpOPEg80Gl8tcAycFYovwKwy
-	 +YQrqGr/xI4yw==
-Date: Sun, 09 Mar 2025 09:35:00 +0000
-To: Andreas Hindborg <a.hindborg@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, Anna-Maria Behnsen <anna-maria@linutronix.de>, Frederic Weisbecker <frederic@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Danilo Krummrich <dakr@kernel.org>
-From: Benno Lossin <benno.lossin@proton.me>
-Cc: Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, Lyude Paul <lyude@redhat.com>, Guangbo Cui <2407018371@qq.com>, Dirk Behme <dirk.behme@gmail.com>, Daniel Almeida <daniel.almeida@collabora.com>, Tamir Duberstein <tamird@gmail.com>, Markus Elfring <Markus.Elfring@web.de>, rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v11 08/13] rust: hrtimer: implement `UnsafeHrTimerPointer` for `Pin<&mut T>`
-Message-ID: <D8BMSSM6IGCD.2TWTNMT3D8OT9@proton.me>
-In-Reply-To: <20250307-hrtimer-v3-v6-12-rc2-v11-8-7934aefd6993@kernel.org>
-References: <20250307-hrtimer-v3-v6-12-rc2-v11-0-7934aefd6993@kernel.org> <20250307-hrtimer-v3-v6-12-rc2-v11-8-7934aefd6993@kernel.org>
-Feedback-ID: 71780778:user:proton
-X-Pm-Message-ID: 967dc3798f38ca4a76c81d8e534b54d871371658
+	s=arc-20240116; t=1741512979; c=relaxed/simple;
+	bh=RVfu8DAMzXPHxXwHgpPDG4/bBTmqwuwrt/l5NUmzylc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KyTnafTIJdpXCP9HigoPusrlqYe+7g2e9izftt5k9TBZ1vijIs6dbUMIPx+NgFfydd2rzxDs3SjEuiGcUHr65NcGsb4CNwfCLI4bQ07aBcJ+zaHb4ZU2/6ZKOitRMgbKJqL4X8BIrrz+ie+lD0reZ2Nwmnrxm5JacaNrCyC2qWU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=RMagQJTR; arc=none smtp.client-ip=209.85.208.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-30bfb6ab47cso18641231fa.3
+        for <linux-kernel@vger.kernel.org>; Sun, 09 Mar 2025 01:36:16 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1741512975; x=1742117775; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=qv7t9LAWFlrZnh/h1qzmcLb/WgGltOmnbPS1Sywm160=;
+        b=RMagQJTRI0VuKI6kR+3xBVVqMfQWa9rJjUQfZlWWZMTzEm0N8Y/wGNpGD+I1aeQNFZ
+         o04lA0H4vIX0OHiXZ3IC8vzEcgQli+gWNEsqJd/yII7xDni0BFpXCr7HpnWHhgD2YfcV
+         xOiNS2T+GrAD7u78FgXkb5Hb1j69CKz3FSk0APN5lhEQrPhKLFs+Vu9Eivq5D2JxompA
+         YFTTsAV9lcKjU1cvsE46Wsy2ZbXm4oy/sJVX8ylg0E70iyGQGL3njhw1SVlkvoecm4Yd
+         SFgmjYwI/ggtlpxYLeHTqeg535+3ewLV9KJJrKTTyBV/Z1ORCE8g80cm8K08S+0PHC/S
+         L7OQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741512975; x=1742117775;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=qv7t9LAWFlrZnh/h1qzmcLb/WgGltOmnbPS1Sywm160=;
+        b=Av5AE8BcOsMhppGK+8DvwSHrdgLoLi7DKRAPfekH+jEB30qTuEWIBOnWfWemSn6WEV
+         KpiSdGHgCu2m6MUbFIx2J3bb11HuF4FswbDYwBHhK12SGhF4WWF7pZc/Klsfc258z2Cu
+         xdQc4xhy32RcDkkBVBbVBXpkZd9GI6x/xssCFuwLJ4IxYJw4KozMATv32Bs9/QhMmArX
+         9GfyQt1wT3KbP+Z1xjN9IsnWM+F+XQECDbKfuN1JuqPq2a3+YMkMlQkNLk5YAX/bo5QR
+         HkkSK1XR8maq0jJMsnKHJkSXIMMiXqJHV4m9MFdH91mrAUdEHO01t6oizrq56AD6Jdq+
+         RsCQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXLdp2qFxUYu4JildWQcIBQQVhA5mN/A5JPwlsBCb52mL/NL3QH3kwbYZBlvjaKaVuRlegBMlci+hURPoM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz8jygB07Veh5UbB2dkdgcu8HK5bViBvuwAFiq/RVwI2XwXUsXu
+	oVtx/RrDT8uBpokKgXeGdCb6v/kOpJ89irVnX9IUQg+ZYMQ1qVNm6AVCgIDdE7c=
+X-Gm-Gg: ASbGncui+uSQsPgzcWDejM1VNwcirXJwTIxRpkT5cWJXz62+F7Uq3+opk6j2NhndYJL
+	b1DQQvDzUhYAtWZpw3p+LTVQMExrScEQYgJhJpW9a80Tu7qB7sLd7dzg4UxCBGNquOFTWY+LTgw
+	wISfh+koc5amQjjOeIZjMj1YCsaYVtxgDuLDVCiW09ggBzhpnHybpi7K1cvS+1CIkdOCmWlNbtX
+	+nwFa7bdIfb45iHRFJhlv4WDKZE2HJfxBLf0KXv3cC1inxdmA8XA0tiJlZ8MMhoFPz3pwBVAr9W
+	yIuc8Uq98KF0uAFUVQybnYBSqpHa14VQs5OnLZteDI40vDK76aSRoP3aaI/gAZlUPygijMq877C
+	CCriiEPJqZ61it71mRlHWwlrT
+X-Google-Smtp-Source: AGHT+IFQyC6l+Pw1P/BVH/g0erUa7GdcnXNOr76Jgy50Rjd/lC1C4UYs/hv4IKjbXl6NI52mEWrsnw==
+X-Received: by 2002:a05:651c:1541:b0:30b:d63c:ad20 with SMTP id 38308e7fff4ca-30bf45e28fbmr31911591fa.24.1741512974977;
+        Sun, 09 Mar 2025 01:36:14 -0800 (PST)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-30c00e42dbfsm5573811fa.89.2025.03.09.01.36.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 09 Mar 2025 01:36:13 -0800 (PST)
+Date: Sun, 9 Mar 2025 11:36:11 +0200
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: David Heidelberg <david@ixit.cz>
+Cc: Bjorn Andersson <andersson@kernel.org>, 
+	Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Kees Cook <kees@kernel.org>, 
+	Tony Luck <tony.luck@intel.com>, "Guilherme G. Piccoli" <gpiccoli@igalia.com>, 
+	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-hardening@vger.kernel.org, Ivan Belokobylskiy <belokobylskij@gmail.com>
+Subject: Re: [PATCH v3] ARM: dts: nexus4: Initial dts
+Message-ID: <qu5w56bp5yurdgbhjpeiabn5pvpoov7xfyta5j7djnnrveak42@povbs5bddtsz>
+References: <20250309-lg-nexus4-mako-v3-1-1dc2807df296@ixit.cz>
+ <l4lv22oi2ktubf7aveqxqtwb7zz7cfrzdayuxxgwdj46ygubfs@qpl6ut37taoe>
+ <88da307c-0403-405d-8356-c8baeb18eaba@ixit.cz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <88da307c-0403-405d-8356-c8baeb18eaba@ixit.cz>
 
-On Fri Mar 7, 2025 at 10:38 PM CET, Andreas Hindborg wrote:
-> Allow pinned mutable references to structs that contain a `HrTimer` node =
-to
-> be scheduled with the `hrtimer` subsystem.
->
-> Acked-by: Frederic Weisbecker <frederic@kernel.org>
-> Reviewed-by: Lyude Paul <lyude@redhat.com>
-> Signed-off-by: Andreas Hindborg <a.hindborg@kernel.org>
+On Sun, Mar 09, 2025 at 10:17:29AM +0100, David Heidelberg wrote:
+> Hello Dmitry!
+> 
+> Thank you for looking into it. See replies.
+> 
+> On 09/03/2025 09:33, Dmitry Baryshkov wrote:
+> > On Sun, Mar 09, 2025 at 01:45:51AM +0100, David Heidelberg via B4 Relay wrote:
+> > > +
+> > > +&riva {
+> > > +	status = "okay";
+> > > +	pinctrl-names = "default";
+> > > +	pinctrl-0 = <&riva_wlan_pin_a>;
+> > 
+> > Where is it defined? Also pinctrl-names should come after pinctrl-N.
+> 
+> definition is kinda aside in qcom-apq8064-pins.dtsi .
 
-One problem below, with that fixed:
+Ack, missed it.
 
-Reviewed-by: Benno Lossin <benno.lossin@proton.me>
+> 
+> All other suggestions incorporated, if it's OK otherwise, let me send v2
 
-> ---
->  rust/kernel/time/hrtimer.rs         |   2 +
->  rust/kernel/time/hrtimer/pin_mut.rs | 110 ++++++++++++++++++++++++++++++=
-++++++
->  2 files changed, 112 insertions(+)
->
-> diff --git a/rust/kernel/time/hrtimer.rs b/rust/kernel/time/hrtimer.rs
-> index fee8e44447ee..ab0950a964e8 100644
-> --- a/rust/kernel/time/hrtimer.rs
-> +++ b/rust/kernel/time/hrtimer.rs
-> @@ -433,3 +433,5 @@ unsafe fn timer_container_of(
->  pub use arc::ArcHrTimerHandle;
->  mod pin;
->  pub use pin::PinHrTimerHandle;
-> +mod pin_mut;
-> +pub use pin_mut::PinMutHrTimerHandle;
-> diff --git a/rust/kernel/time/hrtimer/pin_mut.rs b/rust/kernel/time/hrtim=
-er/pin_mut.rs
-> new file mode 100644
-> index 000000000000..007f47d26df6
-> --- /dev/null
-> +++ b/rust/kernel/time/hrtimer/pin_mut.rs
-> @@ -0,0 +1,110 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +
-> +use super::{
-> +    HasHrTimer, HrTimer, HrTimerCallback, HrTimerHandle, RawHrTimerCallb=
-ack, UnsafeHrTimerPointer,
-> +};
-> +use crate::time::Ktime;
-> +use core::{marker::PhantomData, pin::Pin, ptr::NonNull};
-> +
-> +/// A handle for a `Pin<&mut HasHrTimer>`. When the handle exists, the t=
-imer might
-> +/// be running.
-> +pub struct PinMutHrTimerHandle<'a, T>
-> +where
-> +    T: HasHrTimer<T>,
-> +{
-> +    pub(crate) inner: NonNull<T>,
-> +    _p: PhantomData<&'a T>,
+I think this also needs several supplies in the riva device itself and
+in the iris subdevice. See qcom-apq8064-sony-xperia-lagan-yuga.dts.
 
-This should be `PhantomData<&'a mut T>`.
+> 
+> Thank you
+> David
+> 
+> > 
+> > > +};
+> > > 
+> > > ---
+> > > base-commit: 0a2f889128969dab41861b6e40111aa03dc57014
+> > > change-id: 20250309-lg-nexus4-mako-da0833885b26
+> > > 
+> > > Best regards,
+> > > -- 
+> > > David Heidelberg <david@ixit.cz>
+> > > 
+> > > 
+> > 
+> 
+> -- 
+> David Heidelberg
+> 
 
----
-Cheers,
-Benno
-
+-- 
+With best wishes
+Dmitry
 
