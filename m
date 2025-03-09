@@ -1,110 +1,125 @@
-Return-Path: <linux-kernel+bounces-553041-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-553045-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42C30A582CC
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 10:48:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D16CA582D4
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 10:51:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 53007188272A
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 09:48:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E25BE188AEBC
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 09:51:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 099231ADC72;
-	Sun,  9 Mar 2025 09:48:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0A4E1B4140;
+	Sun,  9 Mar 2025 09:51:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JoG/eB3/"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="KIT183px"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61D371FB3;
-	Sun,  9 Mar 2025 09:48:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18B621B2EF2;
+	Sun,  9 Mar 2025 09:51:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741513717; cv=none; b=s/ZVjr0Sp+92XVPkXBWEXMxMPHCyLl18Yp3HP2egHW9Rup2QX8oxuFJis2R5ye+hmcvArB0ULKqU3XeWnQhBwQ9f5qnOE7DRW2yzFBGi5pqs7+hzsCd+WHzPXrzKOFkcho2Off10GKuRb1PUwSzpDHM+G2YMte5D1nq8rWtxWsY=
+	t=1741513872; cv=none; b=JRj+dUdj13UTFGE78IHzOyZIQ29IvIGG94Y/Nd7+2qt6FDN3au/lMzhZzhf+z4qwnexCppR0fwr+bntnq2v4PGgf9r0CM3LEoWqkzpu/D38TKzXtLQZCZ5Qjtx4J+9rw/hklkj3hppzaMFGA8hfD4gsQT6HhqFydD+5qbh+5SYg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741513717; c=relaxed/simple;
-	bh=IlTX9kCJPuxZe+JTOdP3GseAAtQzgwIcutpUztNU7t4=;
+	s=arc-20240116; t=1741513872; c=relaxed/simple;
+	bh=1vB49cU3kZerNUwaC5QDfCUyaApa850mndtG/+7A74o=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PsS5BPQHWvVXYpPyTgjHb8J387JVlSnHmEfZiM9OwuZBNs0MX7cPPG8SxXsTJZ/IxfGgo3x/knSZiHf88LYkg69pjxVcKxVvXn0L8GI4TNvzXVVGV2FAsbstemV5zKgk+7TLZv7II2SxyulFarNuH9Di7MxkUfk+/9PbR/x1Zd0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JoG/eB3/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0E763C4CEEC;
-	Sun,  9 Mar 2025 09:48:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741513717;
-	bh=IlTX9kCJPuxZe+JTOdP3GseAAtQzgwIcutpUztNU7t4=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=ceavnX79VYD3J95rRPJTVBFXTBo5+kzsuLpCRL8/DY94J7B4TxKFPEz1XQFXCQmGW83gsA1cn1tb7qJnRJbO/Q8z15r5MeYyFyTiUGMYC16j0inmZK68g59Kp3Pw7Q1prIbDHvkKRKbODKHLs7lhObZJHh5BaTjap47a78Ltw84=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=KIT183px; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 64E23C4CEE5;
+	Sun,  9 Mar 2025 09:51:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1741513872;
+	bh=1vB49cU3kZerNUwaC5QDfCUyaApa850mndtG/+7A74o=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=JoG/eB3/+ltN6Rd4CQnb1NxClMyElmVR3OgWN5mMJlIbX1Fa4lc5Fhvob1QtpQvp8
-	 izxu4GwHBMxiIsHJrMIqw+9Wzk+wN0zxMdeUyWeNNhPzjjtfd0cCpe4yt+0TJ6o3zT
-	 qkDia0My6WeCdThw47EZ5m7Pbh2/8wV7U6zb9KrqipIcmYklIPMWtefD/Up8N1jkOW
-	 M1AZzV+tBAwSkqvhhD7D1rcBGU2yYlxEv0j/GzbEh2SDPryERU/sfNFJwkQK6lss3C
-	 rZNzqX/lCEvMe8FeLg73CXMRQRFdPjqq/wzcAmoN+7zHxyPu1gXZ+dGyDEsSY18ENR
-	 ZzAZJ3OZP7rHQ==
-Date: Sun, 9 Mar 2025 10:48:32 +0100
-From: Ingo Molnar <mingo@kernel.org>
-To: Ard Biesheuvel <ardb@kernel.org>
-Cc: Masahiro Yamada <masahiroy@kernel.org>, linux-kernel@vger.kernel.org,
-	x86@kernel.org, linux-kbuild@vger.kernel.org,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: [RFC PATCH 0/4] x86/build: Get rid of vmlinux postlink step
-Message-ID: <Z81j8EguDyz_uesu@gmail.com>
-References: <20250224132132.1765115-6-ardb+git@google.com>
- <CAMj1kXHamiZ8u4YO9FnrWhpcotUkAusDF_db_5H2qaVD85qmVA@mail.gmail.com>
- <CAK7LNATLf2iXNGi-UKRg=+PRRqgmxry5QQnQ4GUNsuVmDBAnmw@mail.gmail.com>
- <CAMj1kXGVe-R7VF1nHmRx+UB4FuhSjiwMU=n_uWCLC99rTTa5ZQ@mail.gmail.com>
- <CAK7LNATkaTvAwPmNM3kSOCkCptW-bo9Ko6asWyFVcGYgu5rHtw@mail.gmail.com>
- <CAMj1kXHCia-gQy7fkVC5SgMyFqz6rRgpVbz6_W7e9jk7ENaQxA@mail.gmail.com>
+	b=KIT183pxx0ewDo4rUkJFNJRkpdLMP9esEfaPUlrGMDWjtVE9KU90V2fyeScvTuBj2
+	 ouD99Eca3/0BOGblGogHzLJleWGmXTVQLgVaLNK18igHrFXMVjThTu5aHjEilebKmT
+	 s5zc2dTWQS/8apj6gj3AkBtahuMz+V4UghPKlNSA=
+Date: Sun, 9 Mar 2025 10:48:52 +0100
+From: "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>
+To: Aditya Garg <gargaditya08@live.com>
+Cc: "bhelgaas@google.com" <bhelgaas@google.com>,
+	"joro@8bytes.org" <joro@8bytes.org>,
+	"will@kernel.org" <will@kernel.org>,
+	"robin.murphy@arm.com" <robin.murphy@arm.com>,
+	"andriy.shevchenko@linux.intel.com" <andriy.shevchenko@linux.intel.com>,
+	"linux-staging@lists.linux.dev" <linux-staging@lists.linux.dev>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	"linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+	"iommu@lists.linux.dev" <iommu@lists.linux.dev>,
+	Aun-Ali Zaidi <admin@kodeit.net>, "paul@mrarm.io" <paul@mrarm.io>,
+	Orlando Chamberlain <orlandoch.dev@gmail.com>
+Subject: Re: [PATCH RFC] staging: Add driver to communicate with the T2
+ Security Chip
+Message-ID: <2025030909-recoup-unafraid-1df0@gregkh>
+References: <1A12CB39-B4FD-4859-9CD7-115314D97C75@live.com>
+ <2025030931-tattoo-patriarch-006d@gregkh>
+ <PN3PR01MB9597793C256B5A16048ADBFDB8D72@PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM>
+ <2025030937-antihero-sandblast-7c87@gregkh>
+ <PN3PR01MB9597F037471B133B54BA25BCB8D72@PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM>
+ <2025030935-contently-handbrake-9239@gregkh>
+ <PN3PR01MB9597F040DD8F5A9B1A65B397B8D72@PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <CAMj1kXHCia-gQy7fkVC5SgMyFqz6rRgpVbz6_W7e9jk7ENaQxA@mail.gmail.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <PN3PR01MB9597F040DD8F5A9B1A65B397B8D72@PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM>
 
-
-* Ard Biesheuvel <ardb@kernel.org> wrote:
-
-> On Sat, 8 Mar 2025 at 17:17, Masahiro Yamada <masahiroy@kernel.org> wrote:
-> >
-> ...
-> > I do not think it is broken.
-> > As I mentioned above, I regard vmlinux.relocs as a byproduct
-> > of the atomic build rule of vmlinux. This works.
-
-Except when it doesn't work, such as when an intermediate linking step 
-fails, and intermediate build products are lost and cannot be recreated 
-easily (or at all without modifying the source)?
-
-And the thing is, there should be no such thing as an 'atomic build 
-rule of vmlinux' if it means lost information when the build is broken 
-at an intermediate step. What purpose does it have?
-
-> There is no make rule for vmlinux.relocs, and so
+On Sun, Mar 09, 2025 at 09:41:29AM +0000, Aditya Garg wrote:
 > 
-> - if it gets deleted, it cannot be rebuilt and even though the build
-> does not break, the relocation data is missing from the compressed
-> image, and this could potentially break the kaslr startup code,
-> - it vmlinux.relocs is older than vmlinux for some reason, make will
-> not notice and silently reuse the outdated version,
-> - when creating vmlinux.relocs from vmlinux and an error occurs,
-> vmlinux is deleted, making it difficult to diagnose the problem.
 > 
-> I think this is badly broken, but if you think this is all working as
-> it should, I am not going to debate this further, and you can consider
-> the patch series withdrawn.
+> > On 9 Mar 2025, at 3:09 PM, gregkh@linuxfoundation.org wrote:
+> > 
+> > ﻿On Sun, Mar 09, 2025 at 09:28:01AM +0000, Aditya Garg wrote:
+> >> 
+> >> 
+> >>>> On 9 Mar 2025, at 2:46 PM, gregkh@linuxfoundation.org wrote:
+> >>> 
+> >>> ﻿On Sun, Mar 09, 2025 at 09:03:29AM +0000, Aditya Garg wrote:
+> >>>> 
+> >>>> 
+> >>>>>> On 9 Mar 2025, at 2:24 PM, gregkh@linuxfoundation.org wrote:
+> >>>>> 
+> >>>>> ﻿On Sun, Mar 09, 2025 at 08:40:31AM +0000, Aditya Garg wrote:
+> >>>>>> From: Paul Pawlowski <paul@mrarm.io>
+> >>>>>> 
+> >>>>>> This patch adds a driver named apple-bce, to add support for the T2
+> >>>>>> Security Chip found on certain Macs.
+> >>>>>> 
+> >>>>>> The driver has 3 main components:
+> >>>>>> 
+> >>>>>> BCE (Buffer Copy Engine) - this is what the files in the root directory
+> >>>>>> are for. This estabilishes a basic communication channel with the T2.
+> >>>>>> VHCI and Audio both require this component.
+> >>>>> 
+> >>>>> So this is a new "bus" type?  Or a platform resource?  Or something
+> >>>>> else?
+> >>>> 
+> >>>> It's a PCI device
+> >>> 
+> >>> Great, but then is the resources split up into smaller drivers that then
+> >>> bind to it?  How does the other devices talk to this?
+> >> 
+> >> We technically can split up these 3 into separate drivers and put then into their own trees.
+> > 
+> > That's fine, but you say that the bce code is used by the other drivers,
+> > right?  So there is some sort of "tie" between these, and that needs to
+> > be properly conveyed in the device tree in sysfs as that will be
+> > required for proper resource management.
+> 
+> Yes there needs to be a tie, basically first establish a communication with the t2 using bce and then the other 2 come into the picture. I did get a basic idea from what the maintainers want, and this will be some work to do. Thanks for your inputs!
 
-That's very sad, as both the simplification is substantial:
+If there is "communication" then that's a bus in the driver model
+scheme, so just use that, right?
 
-  19 files changed, 52 insertions(+), 87 deletions(-)
+thanks,
 
-and the increase in debuggability is substantial as well.
-
-Thanks,
-
-	Ingo
+greg k-h
 
