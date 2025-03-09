@@ -1,103 +1,161 @@
-Return-Path: <linux-kernel+bounces-552908-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-552909-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9282CA580DE
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 06:49:03 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EF731A580E0
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 06:49:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 739933A8200
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 05:48:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 33D5516BC97
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 05:49:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35747C133;
-	Sun,  9 Mar 2025 05:48:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B812183CC7;
+	Sun,  9 Mar 2025 05:49:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Gr6eMVcB"
-Received: from mail-yb1-f182.google.com (mail-yb1-f182.google.com [209.85.219.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="SuT3BGxR"
+Received: from lelvem-ot01.ext.ti.com (lelvem-ot01.ext.ti.com [198.47.23.234])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B949433AC;
-	Sun,  9 Mar 2025 05:48:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC953C133;
+	Sun,  9 Mar 2025 05:49:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.234
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741499336; cv=none; b=Yy+zWmXZQZLDFOh0ZqRmCdyfurVxD2gCVFwH1bXDH/PAVBS6m/5//dEa/3WgWXv/RdYDAcrpJIQ220+suXsOnDAr+0VXuGjREjDr5LO9svrZcnq+XUQiPfnEzqjmEKR/ypitYTxHtxXhoaaSRwFIUmpWN9ZNaOhZTUQgMMGtZhU=
+	t=1741499354; cv=none; b=C2XhzPC/8nR98QSPNrJmIdwLsxvu53JTUGP3Avsh0qMNaxA4gIgnlkoDOi03KlAz/oB+L4fCccc72o/WFviOBcsnkFq9OPZuk5seg3I75OkYQwneDYsi1dB3h2WRL5dAfIrxiw7Vbn1wDyAebEUTLlFtm4d7Xfmb7IwAw8hMF7A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741499336; c=relaxed/simple;
-	bh=0+vUFsq883gp4a88Om3aIZZNxVbvT/09ZAgkqJiFKhE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=K/xmCKwpY/6JS50UKv7IBZnv+qIwdS54rb6geUnUgGitVd4JA8uoDGCg5MQrzPG8z3+77xB4oA82RmgLmw8Mp31kuKvAslE0SvevxAZQ0aGdlMlWM4QafGrJ943F+fFrKdY4ot4WCaMS7NiW+DAr93yOPC3Zbx7h6hlBxlPw0Xg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Gr6eMVcB; arc=none smtp.client-ip=209.85.219.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f182.google.com with SMTP id 3f1490d57ef6-e6343c68b8fso2330832276.2;
-        Sat, 08 Mar 2025 21:48:55 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741499334; x=1742104134; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=0+vUFsq883gp4a88Om3aIZZNxVbvT/09ZAgkqJiFKhE=;
-        b=Gr6eMVcB+Y2Vy9y0zuoL2aI64RrY8EDw7VOqoNjJmslhcV4q84NnNa8MoU4IvXOJyS
-         gNibIYYKzmjKck5Ly7x4q3W2TStNY4mWJ4IcdDjHLviO6usSNMdMLMTyAEMhYME7Abdw
-         CDZLJqwEFG6tAekSadTNy27/UAOWXsCN16zVk5SZEUaddiXj6Ld2lnsKW/zYlpi/hZ0j
-         icd8Q+7YhllmnPbRz6N4jD/L+L2cepswHPVUseDOEF3As2JtbTOIyiPIg52TJqRx36UD
-         dTLvieuWGl6NglUfCCgRtz1N4H8VwuBscpLMQgJJqdHbzrxWcq14Rzs1Nl/ljsx8TD3Z
-         5FNQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741499334; x=1742104134;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=0+vUFsq883gp4a88Om3aIZZNxVbvT/09ZAgkqJiFKhE=;
-        b=pXR5B2d5kEkUXFEA//PCK+z6qk2X9uM5lG0sUWFmKq+uXg8Pfk51GckgRIPbq0pkhv
-         ZT+4pCcb22RhAZxpWPghs9kRyl/L3cYAMMwpAKAhFrJ77mREs0FfgWuUOrPOfryDzlXP
-         EQJmoFxjZMXERqEdBuObHX3mpaLVe9P1zd+/E+JyCRGWLdiMcbDDjsDMtiDh9N0ckev+
-         9KSE5gOQg0xw4WaDPvFuLVz3fG6iT5uIXx5cwhzL8WvwrGU9wweGMae3Nl+0kP/zXqws
-         yh+rh0ra2vsXeoC8D+k8tB4qyYZWfXGcryfHVu2Hzn3O8LqRoZHtfgAtdK5yDvYcDnJ3
-         2l4A==
-X-Forwarded-Encrypted: i=1; AJvYcCVgLce0Nt/ZzaFOJUoYVxMHbl2uQhu0RgMqJcL+XqmjU/jUbZECwh5Fb6hHg8IbeN/th33fDijJlY+qPeA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxfU3O10Mw/tFE37ER/jS7S/PQokK4sK8RvGjBMeAE9JFMVjP2a
-	NNaEhij3rzOeapK1a0Vk6KmIfFXl7rcaEcq6WrXzzIFf5ceFGkRvUaNAlCeNjGbIMDx54eM6Yz6
-	qTvywpldzEjjcx2K+iFBlqAZGYnA=
-X-Gm-Gg: ASbGncvlLWAfpVCQOR5d/FyquMrLv9P0POuSPgzNulVGaZIq5kwVguDzqjPalx9oNOk
-	IQO3abUjeN3QI8Cc9hZf5a0ELV/4uz4nnPWlbKImEPFtoM8k0AnQJJsH3hVkhc+tvf7N+lFtyMr
-	CPiAJLb1KpPWk3c4bDM3zSRQ==
-X-Google-Smtp-Source: AGHT+IGkM54VeRWhECXsPDF52IJ3lObNKFVMQZNCzIi+4MVCGhChHnkm7xcYx4R3VwX820vnJT8hwqDQG3epj7DrCI4=
-X-Received: by 2002:a05:6902:1201:b0:e57:87b3:d2e0 with SMTP id
- 3f1490d57ef6-e635c10191cmr13060935276.3.1741499334070; Sat, 08 Mar 2025
- 21:48:54 -0800 (PST)
+	s=arc-20240116; t=1741499354; c=relaxed/simple;
+	bh=bZPxp5jV+AkHzYA9fBKSNqPc/s0C8RUHq888V7WhoKs=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YrogzbInOTKwd4c3ggLnXhIdprounyfTMSaEOED3RrmjYk93jEd5vxg1zoNuwfKZncJQtz6gIDg0p7mwv28N0wXg+C0kncPENmD1onGA2UljA26TwWlGM/Xw8WnKyoZG57hnQhPqobO8oiKy/SM/IPDDeSwkHEqsfMJZ12FEbV4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=SuT3BGxR; arc=none smtp.client-ip=198.47.23.234
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+	by lelvem-ot01.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 5295mbLP215684
+	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Sat, 8 Mar 2025 23:48:37 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1741499317;
+	bh=ea59vFEkWPlyDnUdJd9y2Dei3RIVNR+SOpDzlFnCTgw=;
+	h=Date:From:To:CC:Subject:References:In-Reply-To;
+	b=SuT3BGxRgQ8WpSibgdCw9v+eOJnZBRF48pwoG/yOKZtqXRpKHbFuwTEsROm9GTjnc
+	 qagtwOlP3r0sle3aw1iGODRhFI0q1w5W/lSonDGbj8rP5Eswu9pecuZJWj0cVKMea2
+	 E3oc1Orf9yCVAgVI44M24V69MKVEBg2hvBPcJ/eM=
+Received: from DFLE100.ent.ti.com (dfle100.ent.ti.com [10.64.6.21])
+	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 5295mbuN022019
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Sat, 8 Mar 2025 23:48:37 -0600
+Received: from DFLE105.ent.ti.com (10.64.6.26) by DFLE100.ent.ti.com
+ (10.64.6.21) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Sat, 8
+ Mar 2025 23:48:36 -0600
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE105.ent.ti.com
+ (10.64.6.26) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Sat, 8 Mar 2025 23:48:36 -0600
+Received: from localhost (uda0492258.dhcp.ti.com [10.24.72.113])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 5295mZEC019524;
+	Sat, 8 Mar 2025 23:48:36 -0600
+Date: Sun, 9 Mar 2025 11:18:35 +0530
+From: Siddharth Vadapalli <s-vadapalli@ti.com>
+To: Hans Zhang <18255117159@163.com>
+CC: Siddharth Vadapalli <s-vadapalli@ti.com>, <lpieralisi@kernel.org>,
+        <kw@linux.com>, <manivannan.sadhasivam@linaro.org>, <robh@kernel.org>,
+        <bhelgaas@google.com>, <bwawrzyn@cisco.com>,
+        <thomas.richard@bootlin.com>,
+        <wojciech.jasko-EXT@continental-corporation.com>,
+        <linux-pci@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [v2] PCI: cadence: Add configuration space capability search API
+Message-ID: <20250309054835.4ydiq4xpguxtbvkf@uda0492258>
+References: <20250308133903.322216-1-18255117159@163.com>
+ <20250309023839.2cakdpmsbzn6pm7g@uda0492258>
+ <3e6645a8-6de9-4125-8444-fa1a4f526881@163.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250305155712.49833-2-simeddon@gmail.com> <20250308144357.20f24fa6@jic23-huawei>
- <20250308144944.668d79b5@jic23-huawei>
-In-Reply-To: <20250308144944.668d79b5@jic23-huawei>
-From: Siddharth Menon <simeddon@gmail.com>
-Date: Sun, 9 Mar 2025 11:18:18 +0530
-X-Gm-Features: AQ5f1Jr8iMs5wRpKB_SDTiXKTS02-KTePjS_i1SGrxVLXCES9nMY-YEBd4G5tA0
-Message-ID: <CAGd6pzO492FA4bijFgkGvusrbqo2mkT=kpkY150Xg-nMfHrpZw@mail.gmail.com>
-Subject: Re: [PATCH 0/2] iio: accel: adis16203: cleanup and standardization
-To: Jonathan Cameron <jic23@kernel.org>
-Cc: linux-iio@vger.kernel.org, marcelo.schmitt1@gmail.com, 
-	gregkh@linuxfoundation.org, lars@metafoo.de, Michael.Hennerich@analog.com, 
-	linux-kernel@vger.kernel.org, linux-staging@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <3e6645a8-6de9-4125-8444-fa1a4f526881@163.com>
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-On Sat, 8 Mar 2025 at 20:19, Jonathan Cameron <jic23@kernel.org> wrote:
->
-> > I'm not going to apply these because I think you correct
-> > identified that the device support should just be added
-> > to the adis16201 driver and this one dropped.
-> > Good thing you were more awake on this than me ;)
-> >
-> Sorry - wrong person.
+On Sun, Mar 09, 2025 at 11:18:21AM +0800, Hans Zhang wrote:
+> 
+> 
+> On 2025/3/9 10:38, Siddharth Vadapalli wrote:
+> > On Sat, Mar 08, 2025 at 09:39:03PM +0800, Hans Zhang wrote:
+> > > Add configuration space capability search API using struct cdns_pcie*
+> > > pointer.
+> > > 
+> > > The offset address of capability or extended capability designed by
+> > > different SOC design companies may not be the same. Therefore, a flexible
+> > > public API is required to find the offset address of a capability or
+> > > extended capability in the configuration space.
+> > > 
+> > > Signed-off-by: Hans Zhang <18255117159@163.com>
+> > > ---
+> > > Changes since v1:
+> > > https://lore.kernel.org/linux-pci/20250123070935.1810110-1-18255117159@163.com
+> > > 
+> > > - Added calling the new API in PCI-Cadence ep.c.
+> > > - Add a commit message reason for adding the API.
+> > 
+> > In reply to your v1 patch, you have mentioned the following:
+> > "Our controller driver currently has no plans for upstream and needs to
+> > wait for notification from the boss."
+> > at:
+> > https://lore.kernel.org/linux-pci/fcfd4827-4d9e-4bcd-b1d0-8f9e349a6be7@163.com/
+> > 
+> > Since you have posted this patch, does it mean that you will be
+> > upstreaming your driver as well? If not, we still end up in the same
+> > situation as earlier where the Upstream Linux has APIs to support a
+> > Downstream driver.
+> > 
+> > Bjorn indicated the above already at:
+> > https://lore.kernel.org/linux-pci/20250123170831.GA1226684@bhelgaas/
+> > and you did agree to do so. But this patch has no reference to the
+> > upstream driver series which shall be making use of the APIs in this
+> > patch.
+> 
+> Hi Siddharth,
+> 
+> 
+> Bjorn:
+>   If/when you upstream code that needs this interface, include this
+>   patch as part of the series.  As Siddharth pointed out, we avoid
+>   merging code that has no upstream users.
+> 
+> 
+> Hans: This user is: pcie-cadence-ep.c. I think this is an optimization of
+> Cadence common code. I think this is an optimization of Cadence common code.
+> Siddharth, what do you think?
 
-Well, I=E2=80=99ll assume these won't be getting applied.
+This seems to be an extension of the driver rather than an optimization.
+At first glance, though it seems like this patch is enabling code-reuse,
+it is actually attempting to walk through the config space registers to
+identify a capability. Prior to this patch, those offsets were hard-coded,
+saving the trouble of having to walk through the capability pointers to
+arrive at the capability.
 
-Siddharth Menon
+This patch will affect the following functions:
+01. cdns_pcie_get_fn_from_vfn()
+02. cdns_pcie_ep_write_header()
+03. cdns_pcie_ep_set_msi()
+04. cdns_pcie_ep_get_msi()
+05. cdns_pcie_ep_get_msix()
+06. cdns_pcie_ep_set_msix()
+07. cdns_pcie_ep_send_msi_irq()
+08. cdns_pcie_ep_map_msi_irq()
+09. cdns_pcie_ep_send_msix_irq()
+10. cdns_pcie_ep_start()
+which will now take longer to get to the capability whose offset was
+known. I understand that you wish to extend these functions to support
+your SoC where the offsets don't match the hard-coded ones.
+
+I will let Bjorn and others share their views on this patch.
+
+Regards,
+Siddharth.
 
