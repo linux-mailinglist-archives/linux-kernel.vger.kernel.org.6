@@ -1,123 +1,138 @@
-Return-Path: <linux-kernel+bounces-553162-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-553163-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED569A5850C
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 15:49:21 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A27ECA58518
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 15:50:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 364A81671B1
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 14:49:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 11F22188E65B
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 14:51:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CB651DE4D7;
-	Sun,  9 Mar 2025 14:49:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A9D51D79BE;
+	Sun,  9 Mar 2025 14:50:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SmyRjiHp"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="WhQf9h8h"
+Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBCCD1C5D51;
-	Sun,  9 Mar 2025 14:49:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B554019E999;
+	Sun,  9 Mar 2025 14:50:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741531750; cv=none; b=c9S8R+l1SpbxGNq+w1qT1ObDb5ZmhPSfPzhZOb+GKtd4KT6yLrv3nTCnGKQaLO0OXAK9dy9uNivXag6fzJlrL1BfriJ6D6ZjvC2aapjYP/kh/IVY/W10G2pRbCO3Fh5cC83/9S/7S6Basqf4kJwRf+zHWtu0CWJfHoWsMm/51/Q=
+	t=1741531851; cv=none; b=Ll1w+0SBxW2iNEdMcbToTGH6CN+qhU0QsfTOawY8JHw718ng4+wCD2b/JlNiGPPRpagffH7gIYohhIInpV58ycsmmNrnsZsnyKtm5SRjaPsAOAW2fuIRdOcqYBA0Pal75Msj1CQMR2Cq8Ngg0eaACbxmsQFCreZESKl8nhCm+BY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741531750; c=relaxed/simple;
-	bh=IGpFddVBBxQL0jWLZ1CuQkeHAw1KzCzTqLo0KMHbMBA=;
-	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=bT75Sd9KSjNtBMWnQTjnS31U2DpmNo2c+sgNYnHhRQL1oct1wnJNR6Dpfd375dAil7AKriHAK6rIl3c08ekmE3iagusyxXa0aizzde5xRCG91AUOY8Usbwpo0uPvx2QvuiiUHT3+GXBFk+GPamuDdxOyTXi1ISWVQZ/5SNszrbs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SmyRjiHp; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 369BBC4CEE3;
-	Sun,  9 Mar 2025 14:49:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741531749;
-	bh=IGpFddVBBxQL0jWLZ1CuQkeHAw1KzCzTqLo0KMHbMBA=;
-	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
-	b=SmyRjiHp3xzZSlxPwbe8MW5i8XRpkGUyAEQE5dDhP2Bk7q8NR5AElXnuPDcu/rEn0
-	 EMW4cxlpj+/lzUAI82rLo6FhliQ/ZXwg2eUl7g5cfZqXzzsR0c6/YCiEeJrUkdqwbk
-	 O7xJQGIfgwhMP12Q9RRPRKCK1heZ7EAcA7sOyR5N/uUgLumKkVKbyqnE71rNQaavhE
-	 Pp0KYybOnTiAMX1ullZT4Wp8DGpGxjVwQvqbwFHN2L3uX1MQhrA4bSNReVxYAkXd6K
-	 ks730h5004TAWkhCeoW1/IL2llxfUVkgs9ircKvqvjZUvJBLdHaCr+I2NppBnB11mR
-	 uY0jx6wBL/hMA==
-Date: Sun, 09 Mar 2025 09:49:08 -0500
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	s=arc-20240116; t=1741531851; c=relaxed/simple;
+	bh=PHkWvIpbR70ggHECt3ri06vC6jmvSrjkfvWoW7QrqQQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=bodHAxN5y5Xtg71+xQLKYpvol+C4Nfb+ydsMtZ8XXniqai6VgG29NWXPYU6sX0pdUgl5OQtqOmKr3gKfPPVgy2NQlYo0DfVZpwN5Hx9/aMFyH3182Mm0GxAwhb6Ds5xRblzHRpX2qU8phiVyRnbuWXj0tLKjF0X0HbkhVx5xtnI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=WhQf9h8h; arc=none smtp.client-ip=46.235.229.95
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
+	; s=bytemarkmx; h=MIME-Version:Message-ID:Date:Subject:From:Content-Type:From
+	:Subject; bh=wgaqx3L4bEmUAqdYIOiSTVQ/pNV4iVErt3TrM4quJB8=; b=WhQf9h8hRjftQbMi
+	op/1uazhXArZKwIIL6FGEGhwNK/R5Na0VFCSfuSBtySW2DRQ3MzTiXZiT0NLf+icmZbmz2B7xSoOU
+	jaqlVBZ64nG/RwsKLZKUqDOjtDmzH7zLreaKVoCFidocXZU4t7hP7uxFADNAb5NNLM1lz+LcTB5DL
+	qlJ6YHrZmCXcafXHuUJTZpGY7CqW/NJBZs7FHVpvcSO3VAlDpIhVbZDc1+872UMYnctgCtf//h7E2
+	MkLJGlWztdLJn/YEM9xXavVaXTzT8FIvUtoZIvsDdIJRINCxPgEikX2C+z7raHXFm4Joq4TmNao37
+	PpA0kPV9ceNByGWkdw==;
+Received: from localhost ([127.0.0.1] helo=dalek.home.treblig.org)
+	by mx.treblig.org with esmtp (Exim 4.96)
+	(envelope-from <linux@treblig.org>)
+	id 1trHzI-003iVd-2H;
+	Sun, 09 Mar 2025 14:50:44 +0000
+From: linux@treblig.org
+To: James.Bottomley@HansenPartnership.com,
+	martin.petersen@oracle.com
+Cc: linux-scsi@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	"Dr. David Alan Gilbert" <linux@treblig.org>
+Subject: [PATCH] scsi: isci: static most module parameters
+Date: Sun,  9 Mar 2025 14:50:44 +0000
+Message-ID: <20250309145044.38586-1-linux@treblig.org>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: Ben Hutchings <ben@decadent.org.uk>, Arnd Bergmann <arnd@arndb.de>, 
- Stephen Boyd <sboyd@kernel.org>, Lee Jones <lee@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Daniel Danzberger <dd@embedd.com>, 
- linux-arm-kernel@lists.infradead.org, 
- Nikita Shubin <nikita.shubin@maquefel.me>, 
- Lorenzo Bianconi <lorenzo@kernel.org>, devicetree@vger.kernel.org, 
- linux-usb@vger.kernel.org, linux-clk@vger.kernel.org, 
- Guo Ren <guoren@kernel.org>, linux-mediatek@lists.infradead.org, 
- Felix Fietkau <nbd@nbd.name>, Vinod Koul <vkoul@kernel.org>, 
- Matthias Brugger <matthias.bgg@gmail.com>, linux-phy@lists.infradead.org, 
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
- upstream@airoha.com, Michael Turquette <mturquette@baylibre.com>, 
- linux-kernel@vger.kernel.org, Yangyu Chen <cyy@cyyself.name>, 
- Kishon Vijay Abraham I <kishon@kernel.org>, 
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- Linus Walleij <linus.walleij@linaro.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>
-To: Christian Marangi <ansuelsmth@gmail.com>
-In-Reply-To: <20250309132959.19045-6-ansuelsmth@gmail.com>
-References: <20250309132959.19045-1-ansuelsmth@gmail.com>
- <20250309132959.19045-6-ansuelsmth@gmail.com>
-Message-Id: <174153174798.1107714.11562627501354617614.robh@kernel.org>
-Subject: Re: [PATCH 05/13] dt-bindings: mfd: add Documentation for Airoha
- EN7581 SCU
+Content-Transfer-Encoding: 8bit
 
+From: "Dr. David Alan Gilbert" <linux@treblig.org>
 
-On Sun, 09 Mar 2025 14:29:36 +0100, Christian Marangi wrote:
-> Add Documentation for Airoha EN7581 SCU.
-> 
-> Airoha EN7581 SoC expose registers to control miscellaneous pheriperals
-> via the SCU (System Controller Unit).
-> 
-> Example of these pheriperals are reset-controller, clock-controller,
-> PCIe line speed controller and bits to configure different Serdes ports
-> for USB or Ethernet usage.
-> 
-> Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
-> ---
->  .../mfd/airoha,en7581-scu-sysctl.yaml         | 68 +++++++++++++++++++
->  1 file changed, 68 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/mfd/airoha,en7581-scu-sysctl.yaml
-> 
+Most of the module parameters are only used locally in the same
+C file; so static them.
 
-My bot found errors running 'make dt_binding_check' on your patch:
+Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
+---
+ drivers/scsi/isci/init.c | 14 +++++++-------
+ drivers/scsi/isci/isci.h |  7 -------
+ 2 files changed, 7 insertions(+), 14 deletions(-)
 
-yamllint warnings/errors:
-
-dtschema/dtc warnings/errors:
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/mfd/airoha,en7581-scu-sysctl.example.dtb: system-controller@1fb00000: clock-controller: 'reg' is a required property
-	from schema $id: http://devicetree.org/schemas/mfd/airoha,en7581-scu-sysctl.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/mfd/airoha,en7581-scu-sysctl.example.dtb: clock-controller: 'reg' is a required property
-	from schema $id: http://devicetree.org/schemas/clock/airoha,en7523-scu.yaml#
-
-doc reference errors (make refcheckdocs):
-
-See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20250309132959.19045-6-ansuelsmth@gmail.com
-
-The base for the series is generally the latest rc1. A different dependency
-should be noted in *this* patch.
-
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit after running the above command yourself. Note
-that DT_SCHEMA_FILES can be set to your schema file to speed up checking
-your schema. However, it must be unset to test all examples with your schema.
+diff --git a/drivers/scsi/isci/init.c b/drivers/scsi/isci/init.c
+index 73085d2f5c43..acf0c2038d20 100644
+--- a/drivers/scsi/isci/init.c
++++ b/drivers/scsi/isci/init.c
+@@ -91,31 +91,31 @@ MODULE_DEVICE_TABLE(pci, isci_id_table);
+ 
+ /* linux isci specific settings */
+ 
+-unsigned char no_outbound_task_to = 2;
++static unsigned char no_outbound_task_to = 2;
+ module_param(no_outbound_task_to, byte, 0);
+ MODULE_PARM_DESC(no_outbound_task_to, "No Outbound Task Timeout (1us incr)");
+ 
+-u16 ssp_max_occ_to = 20;
++static u16 ssp_max_occ_to = 20;
+ module_param(ssp_max_occ_to, ushort, 0);
+ MODULE_PARM_DESC(ssp_max_occ_to, "SSP Max occupancy timeout (100us incr)");
+ 
+-u16 stp_max_occ_to = 5;
++static u16 stp_max_occ_to = 5;
+ module_param(stp_max_occ_to, ushort, 0);
+ MODULE_PARM_DESC(stp_max_occ_to, "STP Max occupancy timeout (100us incr)");
+ 
+-u16 ssp_inactive_to = 5;
++static u16 ssp_inactive_to = 5;
+ module_param(ssp_inactive_to, ushort, 0);
+ MODULE_PARM_DESC(ssp_inactive_to, "SSP inactivity timeout (100us incr)");
+ 
+-u16 stp_inactive_to = 5;
++static u16 stp_inactive_to = 5;
+ module_param(stp_inactive_to, ushort, 0);
+ MODULE_PARM_DESC(stp_inactive_to, "STP inactivity timeout (100us incr)");
+ 
+-unsigned char phy_gen = SCIC_SDS_PARM_GEN2_SPEED;
++static unsigned char phy_gen = SCIC_SDS_PARM_GEN2_SPEED;
+ module_param(phy_gen, byte, 0);
+ MODULE_PARM_DESC(phy_gen, "PHY generation (1: 1.5Gbps 2: 3.0Gbps 3: 6.0Gbps)");
+ 
+-unsigned char max_concurr_spinup;
++static unsigned char max_concurr_spinup;
+ module_param(max_concurr_spinup, byte, 0);
+ MODULE_PARM_DESC(max_concurr_spinup, "Max concurrent device spinup");
+ 
+diff --git a/drivers/scsi/isci/isci.h b/drivers/scsi/isci/isci.h
+index 4e6b1decbca7..f6a8fe206415 100644
+--- a/drivers/scsi/isci/isci.h
++++ b/drivers/scsi/isci/isci.h
+@@ -473,13 +473,6 @@ static inline void sci_swab32_cpy(void *_dest, void *_src, ssize_t word_cnt)
+ 		dest[word_cnt] = swab32(src[word_cnt]);
+ }
+ 
+-extern unsigned char no_outbound_task_to;
+-extern u16 ssp_max_occ_to;
+-extern u16 stp_max_occ_to;
+-extern u16 ssp_inactive_to;
+-extern u16 stp_inactive_to;
+-extern unsigned char phy_gen;
+-extern unsigned char max_concurr_spinup;
+ extern uint cable_selection_override;
+ 
+ irqreturn_t isci_msix_isr(int vec, void *data);
+-- 
+2.48.1
 
 
