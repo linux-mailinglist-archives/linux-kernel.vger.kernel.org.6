@@ -1,229 +1,521 @@
-Return-Path: <linux-kernel+bounces-553403-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-553404-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 07170A588BD
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 23:01:54 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E15C6A588C0
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 23:03:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BC4343A7EAF
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 22:01:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A7DCF3AB508
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 22:03:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9312E1ADC7F;
-	Sun,  9 Mar 2025 22:01:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92C8119B5B8;
+	Sun,  9 Mar 2025 22:03:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="O5uw8rl5"
-Received: from SA9PR02CU001.outbound.protection.outlook.com (mail-southcentralusazon11021080.outbound.protection.outlook.com [40.93.194.80])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="bed7+sQ/"
+Received: from mail-wr1-f73.google.com (mail-wr1-f73.google.com [209.85.221.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DE90C2FA;
-	Sun,  9 Mar 2025 22:01:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.194.80
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741557697; cv=fail; b=Unea210CMSXfFV8T4zk2rMmsI1shxRzboV1bjmWysjWQaBiTAEdZjc/LoPm2UKrfIjj7Mkjz4xcSPa+tDe9b/uxE/mOnQrqb08ZC61bDPZk8j+hqt3FgLIAF5yugll60bDyII6NsHa9o3bFr/XOZ65h0cC+eQgbgIt89+2oXkRM=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741557697; c=relaxed/simple;
-	bh=6/NfFkPxTKRVMMt0ks2iN5kesscuS4V0WU18MX5eHC0=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=Asd81c1L5RCVf54IpjZYWEmQMncXrBvESq0T4qoUspxA7qve4WREpZ+5DTSlMRmDXOi70GitK4zoyPltt/f7CJI8PtNRzUcMHVxPQtGeoSI5YbmHTuTrJup0xuZC5DHWFIQdF1QCbn3qWij+mw3bNtY63qZQVGtsrcflPuIz5J0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microsoft.com; spf=pass smtp.mailfrom=microsoft.com; dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b=O5uw8rl5; arc=fail smtp.client-ip=40.93.194.80
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microsoft.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Nzee8Cw9AUnhEUeEtqA4IiCuUoqiYrvpX/mQwuGBczCapa4d4SmJHuq4WqHfDAAixi3bqLmKFMZqsKpfxK1HWtjMO+svWO4OVIn17hCHPeWqwv2D9C6Kb8CspKQrhHDrCz7+1+2kHurrBh1pySaQSHAtC7Lrs0jkys/IjT8mMceKpSrnw4bdYfdi4qMABDYQXjU1eUGRHpWDUFFmFQ0yxtW3+shmsgRAkay3v1bOulPYdj0ZIZGwuwX+BS3w+BugrtFjNbcOwyq6XYUjmbQ5DiGDrrn0m5i83oV/5zQEDzM4r7JeMyGvszEBh7aoKscIVlkO0oRZWRCN6AjMnp0TUw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=sWofr6bSiZlhzkcCyjDFYvf3cFtVdPTSm7VoLZIdS84=;
- b=leUr1mmhV/RWutbuXDa6BgLMLizXEJua74xKbEuIllwcjP4FVoDsBGvJdnQiR3uaGhw4cSibHBlRXc+d00QXbf94mBjm62w5pD8tppbEMOUMymhiHvBcy5SyJ/6TahntgzMpYQfYFR75dGSRFEPbtmzu0SwgUgod04YQ8IGV+wQXwdqjUzUQWKz5Fk2VqLksj7YI4Vbf9C6KKhkeXTOQBO9Mw14+ObLA9o8iTKzgmxIGSXD1ma+XIGmLv9onKiP65LG7H3nWcynqe9sIr/np82yibRTYSw3wCtp91K5va898plIMJTNd9cdsZQm5ChxJ8P7AlQWOsD2+nYibfu20wA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=microsoft.com; dmarc=pass action=none
- header.from=microsoft.com; dkim=pass header.d=microsoft.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=sWofr6bSiZlhzkcCyjDFYvf3cFtVdPTSm7VoLZIdS84=;
- b=O5uw8rl5CLBnzDEu2xrhvO751fNH/NCmKVyX+ArVtVnUwXkfIGFaGZeGFKgDZHnUSIxl6+vTh3mqvy1DM+f8lshhoCY09piBEXsNp5+GjDDo8dRExYadPdNX3q0+VrAHqpYwoXBb4ldOlyglJGZurDMkuQ9DeT7fH44iNrb1o+M=
-Received: from MN0PR21MB3437.namprd21.prod.outlook.com (2603:10b6:208:3d2::17)
- by BL4PR21MB4556.namprd21.prod.outlook.com (2603:10b6:208:586::19) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8534.20; Sun, 9 Mar
- 2025 22:01:33 +0000
-Received: from MN0PR21MB3437.namprd21.prod.outlook.com
- ([fe80::19f:96c4:be9a:c684]) by MN0PR21MB3437.namprd21.prod.outlook.com
- ([fe80::19f:96c4:be9a:c684%5]) with mapi id 15.20.8511.012; Sun, 9 Mar 2025
- 22:01:33 +0000
-From: Haiyang Zhang <haiyangz@microsoft.com>
-To: Jakub Kicinski <kuba@kernel.org>
-CC: "linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
-	"netdev@vger.kernel.org" <netdev@vger.kernel.org>, Dexuan Cui
-	<decui@microsoft.com>, "stephen@networkplumber.org"
-	<stephen@networkplumber.org>, KY Srinivasan <kys@microsoft.com>, Paul
- Rosswurm <paulros@microsoft.com>, "olaf@aepfle.de" <olaf@aepfle.de>,
-	"vkuznets@redhat.com" <vkuznets@redhat.com>, "davem@davemloft.net"
-	<davem@davemloft.net>, "wei.liu@kernel.org" <wei.liu@kernel.org>,
-	"edumazet@google.com" <edumazet@google.com>, "pabeni@redhat.com"
-	<pabeni@redhat.com>, "leon@kernel.org" <leon@kernel.org>, Long Li
-	<longli@microsoft.com>, "ssengar@linux.microsoft.com"
-	<ssengar@linux.microsoft.com>, "linux-rdma@vger.kernel.org"
-	<linux-rdma@vger.kernel.org>, "daniel@iogearbox.net" <daniel@iogearbox.net>,
-	"john.fastabend@gmail.com" <john.fastabend@gmail.com>, "bpf@vger.kernel.org"
-	<bpf@vger.kernel.org>, "ast@kernel.org" <ast@kernel.org>, "hawk@kernel.org"
-	<hawk@kernel.org>, "tglx@linutronix.de" <tglx@linutronix.de>,
-	"shradhagupta@linux.microsoft.com" <shradhagupta@linux.microsoft.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"stable@vger.kernel.org" <stable@vger.kernel.org>
-Subject: RE: [EXTERNAL] Re: [PATCH net] net: mana: Support holes in device
- list reply msg
-Thread-Topic: [EXTERNAL] Re: [PATCH net] net: mana: Support holes in device
- list reply msg
-Thread-Index: AQHbjhgyS8cLhRPnh0m8BhGByKtsWbNonkeAgALCjVA=
-Date: Sun, 9 Mar 2025 22:01:33 +0000
-Message-ID:
- <MN0PR21MB3437F80F3AD98C82870A9173CAD72@MN0PR21MB3437.namprd21.prod.outlook.com>
-References: <1741211181-6990-1-git-send-email-haiyangz@microsoft.com>
- <20250307195029.1dc74f8e@kernel.org>
-In-Reply-To: <20250307195029.1dc74f8e@kernel.org>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-msip_labels:
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_ActionId=59979798-71db-4022-bf10-2e14231d7f06;MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_ContentBits=0;MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Enabled=true;MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Method=Standard;MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Name=Internal;MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SetDate=2025-03-09T21:59:20Z;MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SiteId=72f988bf-86f1-41af-91ab-2d7cd011db47;MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Tag=10,
- 3, 0, 1;
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=microsoft.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: MN0PR21MB3437:EE_|BL4PR21MB4556:EE_
-x-ms-office365-filtering-correlation-id: c4d3b294-fcc3-4870-6cd3-08dd5f55f466
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|376014|7416014|1800799024|366016|38070700018;
-x-microsoft-antispam-message-info:
- =?us-ascii?Q?WlNg9SIW6iFXpeLgLOultMaq2W7qa/bObmVooRm0yO0ShdSdPIPud6BXIk6h?=
- =?us-ascii?Q?O7U5rjVvdmt0EltYm/xmdU6YP9qXLThZFT9J0Rp7I0/zlEWBfHpN5qwntR79?=
- =?us-ascii?Q?xoIZB2cIZlZ6Sg2hXlxf2Cq0SQ5d/WWAVIANLaTNW1ZfJmSh7mWYqUVC85bp?=
- =?us-ascii?Q?On9QajLcGneMKJ5StpZV056heakQWEnVhwhqze4v9WcYM9QCI9OzODeKIZ9K?=
- =?us-ascii?Q?lOf/c4NlLbmhhynUOiDvXIRthXd7/K5bXZvtBv+fBaacdSWYvczNeBCz/97q?=
- =?us-ascii?Q?iTZI0MDSLtDhPToHtPoWe6h+Mnd2l1p7gl2o4kitEQfEDO4FPBU3/o1Rcwu6?=
- =?us-ascii?Q?JP5GVBiKmaG0SXZ4yPItcLuoWKHQ4RJjLEnFIsCdx72FSvYhEaLKqQFyYoDk?=
- =?us-ascii?Q?t9HcB1QA+FDIO3GQz7yBnPdhCZB1dxnYeL3JK1lYBc26+X1FeoY//4TzZXD/?=
- =?us-ascii?Q?7ZS+19Gna0BzQbKH1mSfrc9LP2/e3XhHfV0o769wHyKWKWsfW11Ht0NlPR2R?=
- =?us-ascii?Q?RQPWg2+Ew1LUDXnWA0sQjASCgAxTZLnhKokT5O0CRKeJY5PtrjnEAdbxFxY5?=
- =?us-ascii?Q?TBZq+WrdVAINLwtqrhIW9K1KZv4IIFK45vFlpgNoaXoJOzlWN4oqDUxtkXhE?=
- =?us-ascii?Q?2HehOOx9sYuS049zHUBKizxv4BrabTDJn9jTBrRXArVqx9gA6+OdbM/O0XSR?=
- =?us-ascii?Q?Eb2QqcCiKTERuPwsSvMy4FSiFyO6vYfjople0vNgBciOCwaK77a7AkZCsDve?=
- =?us-ascii?Q?raam1JZ5Hjds0nZh6IB1rGQTnEDl7QMkNpOoZ8sxFHsjKUQ8+kqTRVww3nvZ?=
- =?us-ascii?Q?w7sKKmyafgyR7s2m/gElV+2lILJag1MUAH0cdmyBNSxWW2iNvQWzNBtyA/Li?=
- =?us-ascii?Q?byrnLrf1l7ZqbMTNvyh0kdvn/HzfeHQdQ8kpjBc2jq5HxCOwzijuwlFDS9sD?=
- =?us-ascii?Q?zmZJ1IY0xy6zYEBt2YyrQCxRxLMfy0iLs50mucOCVFc3dH7jZS85DiQigw5D?=
- =?us-ascii?Q?88buABFYeITaBs5zCjKeBsWNUD8pQ6Ocl3VFvlF1M81YLI44EEVMu/+h2o1+?=
- =?us-ascii?Q?2Qovsr4xCq4SgxS4psIqUAwAGcwPMCZKkfDFZj90JAy1y/fReeh6TJuTqIZt?=
- =?us-ascii?Q?3o+XJ4sSGfAs8ljKsNnHGqhAnYbBfiC5grddU6IIvzqVVpQerLTSSLdsJVYA?=
- =?us-ascii?Q?wijsa08p2QR8l8OjoyRRmI6Zs20ZT0nAsPebwtU5zrijBAXJUOVr2tvIbyFI?=
- =?us-ascii?Q?w8RFcTg3c4ohdR6ciX3yaQjYyB5PATvMywmGUVQM7HI/+SDAEP1ys6+sNl7T?=
- =?us-ascii?Q?17jGH4zZ5axerIEZGZ2/H+CDMfYlPovv+QkK1HbGXzuHwfNAcWwV/X8h8l75?=
- =?us-ascii?Q?zCG9XzDqIuKX+DDkFYU+imPqb6kJwYyV2QS6Lzga7xRAZgBVv8AvNLGEQHgy?=
- =?us-ascii?Q?hkOrEsOMhfO+ntBRoEbzNaz9mUadtUhu?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN0PR21MB3437.namprd21.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(366016)(38070700018);DIR:OUT;SFP:1102;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?wqy3Z7dKA/2YFQYom5hejk8NEdbUUWEEU1wcvSDWDbTx/gIaqW8q6nOdd05f?=
- =?us-ascii?Q?k0tDvxgPur1qdu5qlZBdCH2Xw8fB6HWq2bjCPpjNGrvINyw1Ia+dpu9a8QuD?=
- =?us-ascii?Q?lsXNHaUasTfv6B3Xluj2wsG6f13uXkr3a29ow3cWn+u3gGQtk5A0OMGnT2Sa?=
- =?us-ascii?Q?V5GkbySJ6xFggeWqnuCyXJT9toipr+B9xXtT/1A6JiRuIMltvGGx90tB4j/o?=
- =?us-ascii?Q?Pl1kv3sdVzWjYb3QVOs1TOCbMIBzITh01+yi8WloeqrztQ6e/GPZvvuX3bxm?=
- =?us-ascii?Q?isZVasrxJAxHCHEgaSCQAoODOVmwfkfwEZ+Bpzf2Ldm4sA3ktIwx4a5rLcxQ?=
- =?us-ascii?Q?M//T9QXUU3NzvZe4hgzYArFdLoCwj5nZN4mrYLk6R6GdJ2Toa/rrunTiIHI2?=
- =?us-ascii?Q?AO/T78sZePPKlOzRgdyg+Busk6oXnLzA0VsoLLgMHVBDSb84jowYA1gUfJjn?=
- =?us-ascii?Q?PL8B3QP1kIeoTb2aajqRod6K7YB4o4EjxK4n/Ccum+//aQgmnN7mNjLzTwH3?=
- =?us-ascii?Q?Cb+yNHDfGOqICtMMuoAsSGlb2j+5iT3jYhMNJoCHJzyp/GGafQ3P00G8VnJN?=
- =?us-ascii?Q?ykSjpCy0bKlDm3ilUcm8x1Of3lGd/2BBWiX6hLOQzU3Fr4t95nJeO1BX1uf9?=
- =?us-ascii?Q?qhS0pn7PeTrDS4p3iZMXwmiUnuQwHvwQBLPGio82e3wyyfM7oF/wGRN8xDIq?=
- =?us-ascii?Q?iqZSgdDx96gWi+LzcBie/KlynXE3JPx/b/kEAL1jbwvYmP2jMukEbvpeUWeb?=
- =?us-ascii?Q?fXEYHzji5v3ZLlO8NbIKf4f0PZTy/7slLeBdJEYUWvdOveIqnzDrU+88rU5c?=
- =?us-ascii?Q?z3+9E8oJ+8ttdk49of8X2N0NyQV+vfmQHjx1DDlCX88CR04sOlaYkdbstA3u?=
- =?us-ascii?Q?dpg9t941NLoXGAlOh9Vvd62M78W8TGVHccH5MVLBimtG3Wf4NQJG5AXRz74M?=
- =?us-ascii?Q?TQNQbwMJfnurUhUbzSFp6rliSfoyFLR2YqhkobxmftxVg9MLTTD1yVAwqX5V?=
- =?us-ascii?Q?GAOdElACkcMyW6OShQYrunnRjwX0mtCphwU8EX52cH5W7Lj+3iX0LdB6wczT?=
- =?us-ascii?Q?EpWIICLq1Z/j//QtdwQ1w7jCjIYQyx86/rVKuJvYwf5fK/KJHo9fu7/UaGUF?=
- =?us-ascii?Q?8fKbOqJqMrvg3HoU0jKGyVM8fZuQXw4kCP1OLXPpZWsTeMh+2QCTrorUeCOC?=
- =?us-ascii?Q?EXXffoi8+ad9Q7masMVstmTB+8dpTJNndYFrlfazs5PCTLR6GFH5AB5T+QZA?=
- =?us-ascii?Q?J0A375eAhnQyR4HIMpQgT/31wb7SnbTJJPZ8jp2TTOaFxfQ8xQ+nZ8ylmKh2?=
- =?us-ascii?Q?jgzEi4C3ysQpeg76moc8EZi71/cnJ3z4rChIGl1jPxi0tCsB3f/rAsWFCTz3?=
- =?us-ascii?Q?KmYOMWrIUiIizd1s35PixLYPdoW1puxOKMQApBmqoUt4/3ddQ7fjJSKarJdE?=
- =?us-ascii?Q?NVxScM2VHQTiUjlHW0jznXqGYZDE+3GBw5WoVMMnvPGIaT0YLU7uoqI/KGSc?=
- =?us-ascii?Q?+p/Pe93q7A4AZ9whe5upTBY/qNAXn4LoTZqwTItChR2VXeMM175yIyeBqerX?=
- =?us-ascii?Q?K9n6Kmb9XWNn+FdQ0pZ+ivdcw6zX2onbEmSqYNbF?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 501B719DF8B
+	for <linux-kernel@vger.kernel.org>; Sun,  9 Mar 2025 22:03:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.73
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741557833; cv=none; b=TZ4LFd+QFqatuD0OxbfLC3plOE/S60/Dy8JHgaBGdRLgwWxR/MMuo1jwUDZWfKr4ThjPMbYfyl0Qy+9r+RJJWva0UhJaWi6ztmQQcjzD+P7ye4ByAct3KJ5sbyMLojPRCpPE/ggDj6wXkbG67IhngVekw0g9uUipxOfnaPZvqkw=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741557833; c=relaxed/simple;
+	bh=Q2J+vPBn041RytoPwRn5YnHWs4svGmhBIoBE3fpG8+w=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=TEQznu+d2A4TGQPiI9h72QYhb516pmr2jI+HlWtp8jcZ6m+8B+6beKOICiQnqbqYYAUE3Wn0i2kgp8tXy+QQsFk6xXxbJj1LEP+e4/PkfLT6KE000yAw0v8V+/D1yms+KSkDq2/EZCFXKid7p8Y3WRYD2iquVh0EJEIQessCUy4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ardb.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=bed7+sQ/; arc=none smtp.client-ip=209.85.221.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--ardb.bounces.google.com
+Received: by mail-wr1-f73.google.com with SMTP id ffacd0b85a97d-39149cbc77dso130395f8f.3
+        for <linux-kernel@vger.kernel.org>; Sun, 09 Mar 2025 15:03:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1741557829; x=1742162629; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=92yWzmGaxBvvO9z6MfRRfuk2DdoO0npYcRF/HiGU4g4=;
+        b=bed7+sQ/wV0NQxxw7xukB4unPho3YqPCLYTzYZVy+ybj6fk3V2HWJmkRnCR8kwrdEp
+         ht6IXUDI2WaT4Xsqp4+yD4bE5NHFgD1A1MZpZ5H80eb4GEnA47LfSBzz14ZTsdCOeufx
+         BLnnhFi83+S3msysShApv+TCqrGVsFDvqg+KHm4VREZgotpcl3a7cKO1hjLcmr49b0Sr
+         s5xraZNhr1OsgPHn1SJYm1VVnzUPQ/Mf99j19OwgS6ANFD5Gi73eGeEz9htiUrKvGciK
+         tgeWGJa9agAyTH4gWXkMCqbPC9UijjHXRJCNbdPnOueA2qZeybyUIwLty6S00E17Bawe
+         VpEA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741557829; x=1742162629;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=92yWzmGaxBvvO9z6MfRRfuk2DdoO0npYcRF/HiGU4g4=;
+        b=XIwFeIFAKjM9rpQQlHnB9UM+5fkQj7LCijAY87YwvEw8eMRPmAL1prQhdK6XiicsNp
+         uusim5SIkVG9RmDgyaeE1CIQTiX6RQIHs8sUIzTP/ILQLuYRFuNg3AoYVztEXxdEgUbh
+         YNnggSHg7RVPvuPlwPoFLwRy21vsl3+MWZ+8OWnq1HB9jEkv8L6SX3hSE08nx6AthHP1
+         PFzuqRRddssjIdmD2lXSPjI/I7unje3bjONw3y09qBp7iFRnkVxrl+FHwkI3/L7Q1HXa
+         zS7OWoWtT5rEjhI2E3CXXEuC1BV4v/H39Tmga8+P1XBmBqzv2v1SRDZZvtmXP55mWmMY
+         tJZw==
+X-Forwarded-Encrypted: i=1; AJvYcCXHl8Fy+DiRzflxzTuStM5dYjIYDXH8FqYb8Y0H/I90HhHJV7YtCzLLZIBUnGlHHJITYZRT74Ok+YWnlSY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyfXhLan8NQ0FTLI/dj/+3x/3A9dQOXul4BZFlJ2UktonvY8S/C
+	AmvRQdyEA+xORHEMNE5rjQxyjXWnz/P9AB5Kgq+1VJJjX945xQ/xPSr1IgVZjM5U/gP2Tw==
+X-Google-Smtp-Source: AGHT+IEY06PBuXF2WzYNvecHbrFfFhTF4ib55O8Oao59kMNjfX5sn+Sn04VTUFPPi2HQ7K613lvzK2qV
+X-Received: from wmbhc25.prod.google.com ([2002:a05:600c:8719:b0:43b:d212:f974])
+ (user=ardb job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6000:2cb:b0:391:306f:57de
+ with SMTP id ffacd0b85a97d-39132db1ac3mr9751061f8f.45.1741557829724; Sun, 09
+ Mar 2025 15:03:49 -0700 (PDT)
+Date: Sun,  9 Mar 2025 23:03:19 +0100
+In-Reply-To: <20250309220320.1876084-1-ardb+git@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: MN0PR21MB3437.namprd21.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: c4d3b294-fcc3-4870-6cd3-08dd5f55f466
-X-MS-Exchange-CrossTenant-originalarrivaltime: 09 Mar 2025 22:01:33.3054
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: v4bFZSXHQF403ZHcSqJxDxabvWA9sD8gs022FhM3VPHbfQZ6vk/BB2oHTWZPzGYyBEA4UJgiIE/3q6/OzFsSmQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL4PR21MB4556
+Mime-Version: 1.0
+References: <20250309220320.1876084-1-ardb+git@google.com>
+X-Mailer: git-send-email 2.49.0.rc0.332.g42c0ae87b1-goog
+Message-ID: <20250309220320.1876084-2-ardb+git@google.com>
+Subject: [PATCH for-stable-6.x 1/2] x86/boot: Rename conflicting 'boot_params'
+ pointer to 'boot_params_ptr'
+From: Ard Biesheuvel <ardb+git@google.com>
+To: stable@vger.kernel.org
+Cc: Ard Biesheuvel <ardb@kernel.org>, Ingo Molnar <mingo@kernel.org>, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
+From: Ard Biesheuvel <ardb@kernel.org>
 
+commit d55d5bc5d937743aa8ebb7ca3af25111053b5d8c upstream.
 
-> -----Original Message-----
-> From: Jakub Kicinski <kuba@kernel.org>
-> Sent: Friday, March 7, 2025 10:50 PM
-> To: Haiyang Zhang <haiyangz@microsoft.com>
-> Cc: linux-hyperv@vger.kernel.org; netdev@vger.kernel.org; Dexuan Cui
-> <decui@microsoft.com>; stephen@networkplumber.org; KY Srinivasan
-> <kys@microsoft.com>; Paul Rosswurm <paulros@microsoft.com>;
-> olaf@aepfle.de; vkuznets@redhat.com; davem@davemloft.net;
-> wei.liu@kernel.org; edumazet@google.com; pabeni@redhat.com;
-> leon@kernel.org; Long Li <longli@microsoft.com>;
-> ssengar@linux.microsoft.com; linux-rdma@vger.kernel.org;
-> daniel@iogearbox.net; john.fastabend@gmail.com; bpf@vger.kernel.org;
-> ast@kernel.org; hawk@kernel.org; tglx@linutronix.de;
-> shradhagupta@linux.microsoft.com; linux-kernel@vger.kernel.org;
-> stable@vger.kernel.org
-> Subject: [EXTERNAL] Re: [PATCH net] net: mana: Support holes in device
-> list reply msg
->=20
-> On Wed,  5 Mar 2025 13:46:21 -0800 Haiyang Zhang wrote:
-> > -	for (i =3D 0; i < max_num_devs; i++) {
-> > +	for (i =3D 0; i < GDMA_DEV_LIST_SIZE &&
-> > +		found_dev < resp.num_of_devs; i++) {
->=20
-> unfortunate mis-indent here, it blend with the code.
-> checkpatch is right that it should be aligned with opening bracket
-Will fix it.
+The x86 decompressor is built and linked as a separate executable, but
+it shares components with the kernel proper, which are either #include'd
+as C files, or linked into the decompresor as a static library (e.g, the
+EFI stub)
 
->=20
-> >  		dev =3D resp.devs[i];
-> >  		dev_type =3D dev.type;
-> >
-> > +		/* Skip empty devices */
-> > +		if (dev.as_uint32 =3D=3D 0)
-> > +			continue;
-> > +
-> > +		found_dev++;
-> > +		dev_info(gc->dev, "Got devidx:%u, type:%u, instance:%u\n", i,
-> > +			 dev.type, dev.instance);
->=20
-> Are you sure you want to print this info message for each device,
-> each time it's probed? Seems pretty noisy. We generally recommend
-> printing about _unusual_ things.
-Ok. I can remove it.
+Both the kernel itself and the decompressor define a global symbol
+'boot_params' to refer to the boot_params struct, but in the former
+case, it refers to the struct directly, whereas in the decompressor, it
+refers to a global pointer variable referring to the struct boot_params
+passed by the bootloader or constructed from scratch.
 
-Thanks,
-- Haiyang
+This ambiguity is unfortunate, and makes it impossible to assign this
+decompressor variable from the x86 EFI stub, given that declaring it as
+extern results in a clash. So rename the decompressor version (whose
+scope is limited) to boot_params_ptr.
+
+[ mingo: Renamed 'boot_params_p' to 'boot_params_ptr' for clarity ]
+
+Signed-off-by: Ard Biesheuvel <ardb@kernel.org>
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Cc: linux-kernel@vger.kernel.org
+[ardb: include references to boot_params in x86-stub.[ch]]
+Signed-off-by: Ard Biesheuvel <ardb@kernel.org>
+---
+ arch/x86/boot/compressed/acpi.c         | 14 +++++------
+ arch/x86/boot/compressed/cmdline.c      |  4 +--
+ arch/x86/boot/compressed/ident_map_64.c |  7 +++---
+ arch/x86/boot/compressed/kaslr.c        | 26 ++++++++++----------
+ arch/x86/boot/compressed/mem.c          |  6 ++---
+ arch/x86/boot/compressed/misc.c         | 26 ++++++++++----------
+ arch/x86/boot/compressed/misc.h         |  1 -
+ arch/x86/boot/compressed/pgtable_64.c   |  9 +++----
+ arch/x86/boot/compressed/sev.c          |  2 +-
+ arch/x86/include/asm/boot.h             |  2 ++
+ drivers/firmware/efi/libstub/x86-stub.c |  2 +-
+ drivers/firmware/efi/libstub/x86-stub.h |  2 --
+ 12 files changed, 50 insertions(+), 51 deletions(-)
+
+diff --git a/arch/x86/boot/compressed/acpi.c b/arch/x86/boot/compressed/acpi.c
+index 9caf89063e77..55c98fdd67d2 100644
+--- a/arch/x86/boot/compressed/acpi.c
++++ b/arch/x86/boot/compressed/acpi.c
+@@ -30,13 +30,13 @@ __efi_get_rsdp_addr(unsigned long cfg_tbl_pa, unsigned int cfg_tbl_len)
+ 	 * Search EFI system tables for RSDP. Preferred is ACPI_20_TABLE_GUID to
+ 	 * ACPI_TABLE_GUID because it has more features.
+ 	 */
+-	rsdp_addr = efi_find_vendor_table(boot_params, cfg_tbl_pa, cfg_tbl_len,
++	rsdp_addr = efi_find_vendor_table(boot_params_ptr, cfg_tbl_pa, cfg_tbl_len,
+ 					  ACPI_20_TABLE_GUID);
+ 	if (rsdp_addr)
+ 		return (acpi_physical_address)rsdp_addr;
+ 
+ 	/* No ACPI_20_TABLE_GUID found, fallback to ACPI_TABLE_GUID. */
+-	rsdp_addr = efi_find_vendor_table(boot_params, cfg_tbl_pa, cfg_tbl_len,
++	rsdp_addr = efi_find_vendor_table(boot_params_ptr, cfg_tbl_pa, cfg_tbl_len,
+ 					  ACPI_TABLE_GUID);
+ 	if (rsdp_addr)
+ 		return (acpi_physical_address)rsdp_addr;
+@@ -56,15 +56,15 @@ static acpi_physical_address efi_get_rsdp_addr(void)
+ 	enum efi_type et;
+ 	int ret;
+ 
+-	et = efi_get_type(boot_params);
++	et = efi_get_type(boot_params_ptr);
+ 	if (et == EFI_TYPE_NONE)
+ 		return 0;
+ 
+-	systab_pa = efi_get_system_table(boot_params);
++	systab_pa = efi_get_system_table(boot_params_ptr);
+ 	if (!systab_pa)
+ 		error("EFI support advertised, but unable to locate system table.");
+ 
+-	ret = efi_get_conf_table(boot_params, &cfg_tbl_pa, &cfg_tbl_len);
++	ret = efi_get_conf_table(boot_params_ptr, &cfg_tbl_pa, &cfg_tbl_len);
+ 	if (ret || !cfg_tbl_pa)
+ 		error("EFI config table not found.");
+ 
+@@ -156,7 +156,7 @@ acpi_physical_address get_rsdp_addr(void)
+ {
+ 	acpi_physical_address pa;
+ 
+-	pa = boot_params->acpi_rsdp_addr;
++	pa = boot_params_ptr->acpi_rsdp_addr;
+ 
+ 	if (!pa)
+ 		pa = efi_get_rsdp_addr();
+@@ -210,7 +210,7 @@ static unsigned long get_acpi_srat_table(void)
+ 	rsdp = (struct acpi_table_rsdp *)get_cmdline_acpi_rsdp();
+ 	if (!rsdp)
+ 		rsdp = (struct acpi_table_rsdp *)(long)
+-			boot_params->acpi_rsdp_addr;
++			boot_params_ptr->acpi_rsdp_addr;
+ 
+ 	if (!rsdp)
+ 		return 0;
+diff --git a/arch/x86/boot/compressed/cmdline.c b/arch/x86/boot/compressed/cmdline.c
+index f1add5d85da9..c1bb180973ea 100644
+--- a/arch/x86/boot/compressed/cmdline.c
++++ b/arch/x86/boot/compressed/cmdline.c
+@@ -14,9 +14,9 @@ static inline char rdfs8(addr_t addr)
+ #include "../cmdline.c"
+ unsigned long get_cmd_line_ptr(void)
+ {
+-	unsigned long cmd_line_ptr = boot_params->hdr.cmd_line_ptr;
++	unsigned long cmd_line_ptr = boot_params_ptr->hdr.cmd_line_ptr;
+ 
+-	cmd_line_ptr |= (u64)boot_params->ext_cmd_line_ptr << 32;
++	cmd_line_ptr |= (u64)boot_params_ptr->ext_cmd_line_ptr << 32;
+ 
+ 	return cmd_line_ptr;
+ }
+diff --git a/arch/x86/boot/compressed/ident_map_64.c b/arch/x86/boot/compressed/ident_map_64.c
+index aead80ec70a0..d040080d7edb 100644
+--- a/arch/x86/boot/compressed/ident_map_64.c
++++ b/arch/x86/boot/compressed/ident_map_64.c
+@@ -159,8 +159,9 @@ void initialize_identity_maps(void *rmode)
+ 	 * or does not touch all the pages covering them.
+ 	 */
+ 	kernel_add_identity_map((unsigned long)_head, (unsigned long)_end);
+-	boot_params = rmode;
+-	kernel_add_identity_map((unsigned long)boot_params, (unsigned long)(boot_params + 1));
++	boot_params_ptr = rmode;
++	kernel_add_identity_map((unsigned long)boot_params_ptr,
++				(unsigned long)(boot_params_ptr + 1));
+ 	cmdline = get_cmd_line_ptr();
+ 	kernel_add_identity_map(cmdline, cmdline + COMMAND_LINE_SIZE);
+ 
+@@ -168,7 +169,7 @@ void initialize_identity_maps(void *rmode)
+ 	 * Also map the setup_data entries passed via boot_params in case they
+ 	 * need to be accessed by uncompressed kernel via the identity mapping.
+ 	 */
+-	sd = (struct setup_data *)boot_params->hdr.setup_data;
++	sd = (struct setup_data *)boot_params_ptr->hdr.setup_data;
+ 	while (sd) {
+ 		unsigned long sd_addr = (unsigned long)sd;
+ 
+diff --git a/arch/x86/boot/compressed/kaslr.c b/arch/x86/boot/compressed/kaslr.c
+index 9193acf0e9cd..dec961c6d16a 100644
+--- a/arch/x86/boot/compressed/kaslr.c
++++ b/arch/x86/boot/compressed/kaslr.c
+@@ -63,7 +63,7 @@ static unsigned long get_boot_seed(void)
+ 	unsigned long hash = 0;
+ 
+ 	hash = rotate_xor(hash, build_str, sizeof(build_str));
+-	hash = rotate_xor(hash, boot_params, sizeof(*boot_params));
++	hash = rotate_xor(hash, boot_params_ptr, sizeof(*boot_params_ptr));
+ 
+ 	return hash;
+ }
+@@ -383,7 +383,7 @@ static void handle_mem_options(void)
+ static void mem_avoid_init(unsigned long input, unsigned long input_size,
+ 			   unsigned long output)
+ {
+-	unsigned long init_size = boot_params->hdr.init_size;
++	unsigned long init_size = boot_params_ptr->hdr.init_size;
+ 	u64 initrd_start, initrd_size;
+ 	unsigned long cmd_line, cmd_line_size;
+ 
+@@ -395,10 +395,10 @@ static void mem_avoid_init(unsigned long input, unsigned long input_size,
+ 	mem_avoid[MEM_AVOID_ZO_RANGE].size = (output + init_size) - input;
+ 
+ 	/* Avoid initrd. */
+-	initrd_start  = (u64)boot_params->ext_ramdisk_image << 32;
+-	initrd_start |= boot_params->hdr.ramdisk_image;
+-	initrd_size  = (u64)boot_params->ext_ramdisk_size << 32;
+-	initrd_size |= boot_params->hdr.ramdisk_size;
++	initrd_start  = (u64)boot_params_ptr->ext_ramdisk_image << 32;
++	initrd_start |= boot_params_ptr->hdr.ramdisk_image;
++	initrd_size  = (u64)boot_params_ptr->ext_ramdisk_size << 32;
++	initrd_size |= boot_params_ptr->hdr.ramdisk_size;
+ 	mem_avoid[MEM_AVOID_INITRD].start = initrd_start;
+ 	mem_avoid[MEM_AVOID_INITRD].size = initrd_size;
+ 	/* No need to set mapping for initrd, it will be handled in VO. */
+@@ -413,8 +413,8 @@ static void mem_avoid_init(unsigned long input, unsigned long input_size,
+ 	}
+ 
+ 	/* Avoid boot parameters. */
+-	mem_avoid[MEM_AVOID_BOOTPARAMS].start = (unsigned long)boot_params;
+-	mem_avoid[MEM_AVOID_BOOTPARAMS].size = sizeof(*boot_params);
++	mem_avoid[MEM_AVOID_BOOTPARAMS].start = (unsigned long)boot_params_ptr;
++	mem_avoid[MEM_AVOID_BOOTPARAMS].size = sizeof(*boot_params_ptr);
+ 
+ 	/* We don't need to set a mapping for setup_data. */
+ 
+@@ -447,7 +447,7 @@ static bool mem_avoid_overlap(struct mem_vector *img,
+ 	}
+ 
+ 	/* Avoid all entries in the setup_data linked list. */
+-	ptr = (struct setup_data *)(unsigned long)boot_params->hdr.setup_data;
++	ptr = (struct setup_data *)(unsigned long)boot_params_ptr->hdr.setup_data;
+ 	while (ptr) {
+ 		struct mem_vector avoid;
+ 
+@@ -706,7 +706,7 @@ static inline bool memory_type_is_free(efi_memory_desc_t *md)
+ static bool
+ process_efi_entries(unsigned long minimum, unsigned long image_size)
+ {
+-	struct efi_info *e = &boot_params->efi_info;
++	struct efi_info *e = &boot_params_ptr->efi_info;
+ 	bool efi_mirror_found = false;
+ 	struct mem_vector region;
+ 	efi_memory_desc_t *md;
+@@ -777,8 +777,8 @@ static void process_e820_entries(unsigned long minimum,
+ 	struct boot_e820_entry *entry;
+ 
+ 	/* Verify potential e820 positions, appending to slots list. */
+-	for (i = 0; i < boot_params->e820_entries; i++) {
+-		entry = &boot_params->e820_table[i];
++	for (i = 0; i < boot_params_ptr->e820_entries; i++) {
++		entry = &boot_params_ptr->e820_table[i];
+ 		/* Skip non-RAM entries. */
+ 		if (entry->type != E820_TYPE_RAM)
+ 			continue;
+@@ -852,7 +852,7 @@ void choose_random_location(unsigned long input,
+ 		return;
+ 	}
+ 
+-	boot_params->hdr.loadflags |= KASLR_FLAG;
++	boot_params_ptr->hdr.loadflags |= KASLR_FLAG;
+ 
+ 	if (IS_ENABLED(CONFIG_X86_32))
+ 		mem_limit = KERNEL_IMAGE_SIZE;
+diff --git a/arch/x86/boot/compressed/mem.c b/arch/x86/boot/compressed/mem.c
+index 3c1609245f2a..b3c3a4be7471 100644
+--- a/arch/x86/boot/compressed/mem.c
++++ b/arch/x86/boot/compressed/mem.c
+@@ -54,17 +54,17 @@ bool init_unaccepted_memory(void)
+ 	enum efi_type et;
+ 	int ret;
+ 
+-	et = efi_get_type(boot_params);
++	et = efi_get_type(boot_params_ptr);
+ 	if (et == EFI_TYPE_NONE)
+ 		return false;
+ 
+-	ret = efi_get_conf_table(boot_params, &cfg_table_pa, &cfg_table_len);
++	ret = efi_get_conf_table(boot_params_ptr, &cfg_table_pa, &cfg_table_len);
+ 	if (ret) {
+ 		warn("EFI config table not found.");
+ 		return false;
+ 	}
+ 
+-	table = (void *)efi_find_vendor_table(boot_params, cfg_table_pa,
++	table = (void *)efi_find_vendor_table(boot_params_ptr, cfg_table_pa,
+ 					      cfg_table_len, guid);
+ 	if (!table)
+ 		return false;
+diff --git a/arch/x86/boot/compressed/misc.c b/arch/x86/boot/compressed/misc.c
+index b5ecbd32a46f..ee0fac468e7f 100644
+--- a/arch/x86/boot/compressed/misc.c
++++ b/arch/x86/boot/compressed/misc.c
+@@ -46,7 +46,7 @@ void *memmove(void *dest, const void *src, size_t n);
+ /*
+  * This is set up by the setup-routine at boot-time
+  */
+-struct boot_params *boot_params;
++struct boot_params *boot_params_ptr;
+ 
+ struct port_io_ops pio_ops;
+ 
+@@ -132,8 +132,8 @@ void __putstr(const char *s)
+ 	if (lines == 0 || cols == 0)
+ 		return;
+ 
+-	x = boot_params->screen_info.orig_x;
+-	y = boot_params->screen_info.orig_y;
++	x = boot_params_ptr->screen_info.orig_x;
++	y = boot_params_ptr->screen_info.orig_y;
+ 
+ 	while ((c = *s++) != '\0') {
+ 		if (c == '\n') {
+@@ -154,8 +154,8 @@ void __putstr(const char *s)
+ 		}
+ 	}
+ 
+-	boot_params->screen_info.orig_x = x;
+-	boot_params->screen_info.orig_y = y;
++	boot_params_ptr->screen_info.orig_x = x;
++	boot_params_ptr->screen_info.orig_y = y;
+ 
+ 	pos = (x + cols * y) * 2;	/* Update cursor position */
+ 	outb(14, vidport);
+@@ -396,16 +396,16 @@ asmlinkage __visible void *extract_kernel(void *rmode, unsigned char *output)
+ 	size_t entry_offset;
+ 
+ 	/* Retain x86 boot parameters pointer passed from startup_32/64. */
+-	boot_params = rmode;
++	boot_params_ptr = rmode;
+ 
+ 	/* Clear flags intended for solely in-kernel use. */
+-	boot_params->hdr.loadflags &= ~KASLR_FLAG;
++	boot_params_ptr->hdr.loadflags &= ~KASLR_FLAG;
+ 
+-	parse_mem_encrypt(&boot_params->hdr);
++	parse_mem_encrypt(&boot_params_ptr->hdr);
+ 
+-	sanitize_boot_params(boot_params);
++	sanitize_boot_params(boot_params_ptr);
+ 
+-	if (boot_params->screen_info.orig_video_mode == 7) {
++	if (boot_params_ptr->screen_info.orig_video_mode == 7) {
+ 		vidmem = (char *) 0xb0000;
+ 		vidport = 0x3b4;
+ 	} else {
+@@ -413,8 +413,8 @@ asmlinkage __visible void *extract_kernel(void *rmode, unsigned char *output)
+ 		vidport = 0x3d4;
+ 	}
+ 
+-	lines = boot_params->screen_info.orig_video_lines;
+-	cols = boot_params->screen_info.orig_video_cols;
++	lines = boot_params_ptr->screen_info.orig_video_lines;
++	cols = boot_params_ptr->screen_info.orig_video_cols;
+ 
+ 	init_default_io_ops();
+ 
+@@ -433,7 +433,7 @@ asmlinkage __visible void *extract_kernel(void *rmode, unsigned char *output)
+ 	 * so that early debugging output from the RSDP parsing code can be
+ 	 * collected.
+ 	 */
+-	boot_params->acpi_rsdp_addr = get_rsdp_addr();
++	boot_params_ptr->acpi_rsdp_addr = get_rsdp_addr();
+ 
+ 	debug_putstr("early console in extract_kernel\n");
+ 
+diff --git a/arch/x86/boot/compressed/misc.h b/arch/x86/boot/compressed/misc.h
+index aae1a2db4251..bc2f0f17fb90 100644
+--- a/arch/x86/boot/compressed/misc.h
++++ b/arch/x86/boot/compressed/misc.h
+@@ -61,7 +61,6 @@ extern memptr free_mem_ptr;
+ extern memptr free_mem_end_ptr;
+ void *malloc(int size);
+ void free(void *where);
+-extern struct boot_params *boot_params;
+ void __putstr(const char *s);
+ void __puthex(unsigned long value);
+ #define error_putstr(__x)  __putstr(__x)
+diff --git a/arch/x86/boot/compressed/pgtable_64.c b/arch/x86/boot/compressed/pgtable_64.c
+index 7939eb6e6ce9..51f957b24ba7 100644
+--- a/arch/x86/boot/compressed/pgtable_64.c
++++ b/arch/x86/boot/compressed/pgtable_64.c
+@@ -28,7 +28,6 @@ static char trampoline_save[TRAMPOLINE_32BIT_SIZE];
+  */
+ unsigned long *trampoline_32bit __section(".data");
+ 
+-extern struct boot_params *boot_params;
+ int cmdline_find_option_bool(const char *option);
+ 
+ static unsigned long find_trampoline_placement(void)
+@@ -49,7 +48,7 @@ static unsigned long find_trampoline_placement(void)
+ 	 *
+ 	 * Only look for values in the legacy ROM for non-EFI system.
+ 	 */
+-	signature = (char *)&boot_params->efi_info.efi_loader_signature;
++	signature = (char *)&boot_params_ptr->efi_info.efi_loader_signature;
+ 	if (strncmp(signature, EFI32_LOADER_SIGNATURE, 4) &&
+ 	    strncmp(signature, EFI64_LOADER_SIGNATURE, 4)) {
+ 		ebda_start = *(unsigned short *)0x40e << 4;
+@@ -65,10 +64,10 @@ static unsigned long find_trampoline_placement(void)
+ 	bios_start = round_down(bios_start, PAGE_SIZE);
+ 
+ 	/* Find the first usable memory region under bios_start. */
+-	for (i = boot_params->e820_entries - 1; i >= 0; i--) {
++	for (i = boot_params_ptr->e820_entries - 1; i >= 0; i--) {
+ 		unsigned long new = bios_start;
+ 
+-		entry = &boot_params->e820_table[i];
++		entry = &boot_params_ptr->e820_table[i];
+ 
+ 		/* Skip all entries above bios_start. */
+ 		if (bios_start <= entry->addr)
+@@ -107,7 +106,7 @@ asmlinkage void configure_5level_paging(struct boot_params *bp, void *pgtable)
+ 	bool l5_required = false;
+ 
+ 	/* Initialize boot_params. Required for cmdline_find_option_bool(). */
+-	boot_params = bp;
++	boot_params_ptr = bp;
+ 
+ 	/*
+ 	 * Check if LA57 is desired and supported.
+diff --git a/arch/x86/boot/compressed/sev.c b/arch/x86/boot/compressed/sev.c
+index 0a49218a516a..01d61f0609ab 100644
+--- a/arch/x86/boot/compressed/sev.c
++++ b/arch/x86/boot/compressed/sev.c
+@@ -618,7 +618,7 @@ void sev_prep_identity_maps(unsigned long top_level_pgt)
+ 	 * accessed after switchover.
+ 	 */
+ 	if (sev_snp_enabled()) {
+-		unsigned long cc_info_pa = boot_params->cc_blob_address;
++		unsigned long cc_info_pa = boot_params_ptr->cc_blob_address;
+ 		struct cc_blob_sev_info *cc_info;
+ 
+ 		kernel_add_identity_map(cc_info_pa, cc_info_pa + sizeof(*cc_info));
+diff --git a/arch/x86/include/asm/boot.h b/arch/x86/include/asm/boot.h
+index c945c893c52e..a3e0be0470a4 100644
+--- a/arch/x86/include/asm/boot.h
++++ b/arch/x86/include/asm/boot.h
+@@ -86,6 +86,8 @@ extern const unsigned long kernel_total_size;
+ 
+ unsigned long decompress_kernel(unsigned char *outbuf, unsigned long virt_addr,
+ 				void (*error)(char *x));
++
++extern struct boot_params *boot_params_ptr;
+ #endif
+ 
+ #endif /* _ASM_X86_BOOT_H */
+diff --git a/drivers/firmware/efi/libstub/x86-stub.c b/drivers/firmware/efi/libstub/x86-stub.c
+index b2b06d18b7b4..7bea03963b28 100644
+--- a/drivers/firmware/efi/libstub/x86-stub.c
++++ b/drivers/firmware/efi/libstub/x86-stub.c
+@@ -883,7 +883,7 @@ void __noreturn efi_stub_entry(efi_handle_t handle,
+ 	unsigned long kernel_entry;
+ 	efi_status_t status;
+ 
+-	boot_params_pointer = boot_params;
++	boot_params_ptr = boot_params;
+ 
+ 	efi_system_table = sys_table_arg;
+ 	/* Check if we were booted by the EFI firmware */
+diff --git a/drivers/firmware/efi/libstub/x86-stub.h b/drivers/firmware/efi/libstub/x86-stub.h
+index 4433d0f97441..1c20e99a6494 100644
+--- a/drivers/firmware/efi/libstub/x86-stub.h
++++ b/drivers/firmware/efi/libstub/x86-stub.h
+@@ -2,8 +2,6 @@
+ 
+ #include <linux/efi.h>
+ 
+-extern struct boot_params *boot_params_pointer asm("boot_params");
+-
+ extern void trampoline_32bit_src(void *, bool);
+ extern const u16 trampoline_ljmp_imm_offset;
+ 
+-- 
+2.49.0.rc0.332.g42c0ae87b1-goog
+
 
