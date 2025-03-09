@@ -1,96 +1,701 @@
-Return-Path: <linux-kernel+bounces-553415-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-553416-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6898CA58927
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 00:18:08 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A2882A58932
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 00:26:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 914A2169E05
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 23:18:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 52DC9188D738
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 23:26:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD0E21B87D7;
-	Sun,  9 Mar 2025 23:18:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C5541B395F;
+	Sun,  9 Mar 2025 23:26:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bLfifXPF"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b="eQNEBGZ2"
+Received: from gate2.alliedtelesis.co.nz (gate2.alliedtelesis.co.nz [202.36.163.20])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AA4919CC33
-	for <linux-kernel@vger.kernel.org>; Sun,  9 Mar 2025 23:18:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E58917A312
+	for <linux-kernel@vger.kernel.org>; Sun,  9 Mar 2025 23:26:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.36.163.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741562282; cv=none; b=OTkA+x5qXkedf9HRnJiSMvYr+MJP2gudYlwRbmgi++kUVyXVz365FHy57/B48z3SUWafiJ4fXg+RVNjbRNxEgPyXwUYHh+2AdyXMO1xGxIxOCB7YyxEsG+63N+8kQShTYdwt0PZJteTHCQbXewd+6Nps1AfkRoNGMAWJyzX+gSs=
+	t=1741562769; cv=none; b=S7WCMkbABVyyyLl447rco0FOyrfc1Lhl7cAzbAe2Bx2LxgefjDO4UjuPIGumxLGcQFKuj/tT9vaJs9HNaTk6oXjEHFr5xmffToIkEmo1cfTtelbgX+B11oLV/Rx0As6bdogOBIkal9k1eixNapQWU/WsqehPJKkiErkg4VH03VQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741562282; c=relaxed/simple;
-	bh=soNJeVMQhsiNYQOx6tSlRwotz/IUlzEQcyYV0CzqnC4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JQkO1DFzY8zrzrtMJHBpCdTPBX92BkRAdZHkn0WBszO4gyvdN/Da9wJPUiYSauezU8l1Y58YzourlprCMNGaY4OglZHJwJaZ+326ohNtw/G0Yok4n28ybiRo/5nEdpAfJBJDyZqjNb58k2py6ixV6fqkKrUGoL69xHg1elU5YpM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bLfifXPF; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 62BECC4CEE3;
-	Sun,  9 Mar 2025 23:18:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741562281;
-	bh=soNJeVMQhsiNYQOx6tSlRwotz/IUlzEQcyYV0CzqnC4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=bLfifXPF4ctKF/iohMGNNhYwJbI+IvPP03glhfeSXLYB9klFpDtc9VJmR2+8Y5gUj
-	 uAsbOwPC6gxWlHjmBAr4Hcd5KtVxtncrtxyjYOfEVVpgZ+HWSc4KOhVSWr5HtuyTWV
-	 JkrUD16SuDcZsYlt9KJnbobro1MM6kRhNpGFmmnPm84s3TXv1/Xl51yZp6MMvWxUOs
-	 qiMO/fG2LbzoM1GyHXaLb7WOfJn3/QQ75Frpgs4blTaEGj2lYQ8UJiGU2AsSZFCDWU
-	 55HMz+2lSoSuni0LQ9OYzeaRwrNRrj7AHRaT+woyPmYdk5yJrIjUrjbkfcfbAPXRI3
-	 83EZuRMguFOdQ==
-Date: Mon, 10 Mar 2025 00:17:58 +0100
-From: Frederic Weisbecker <frederic@kernel.org>
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: LKML <linux-kernel@vger.kernel.org>,
-	Anna-Maria Behnsen <anna-maria@linutronix.de>,
-	Benjamin Segall <bsegall@google.com>,
-	Eric Dumazet <edumazet@google.com>,
-	Andrey Vagin <avagin@openvz.org>,
-	Pavel Tikhomirov <ptikhomirov@virtuozzo.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Cyrill Gorcunov <gorcunov@gmail.com>
-Subject: Re: [patch V3 09/18] posix-timers: Rework timer removal
-Message-ID: <Z84hpurQ6Co2jqV1@pavilion.home>
-References: <20250308155501.391430556@linutronix.de>
- <20250308155624.024143438@linutronix.de>
+	s=arc-20240116; t=1741562769; c=relaxed/simple;
+	bh=SQha+Qa+CYeyAmPU4GZx0CLRY5ctjpleVA5eQXW481I=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=kDmais7+bQuJVZlgNqeWcTc9K3YqlHzEB7g8NHrKl5BiiEOIsQee9/Ko/KTyxGE8g3klOXLaoeOIDR6HkLZdjebFkjOckinRWaTcIPn36a6kQ6KEL0NS//lX3XMfLzHGiFPCKl7DPtBKp4+H/K0UoiMdmXW37f20KHd4Qk/kqmw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz; spf=pass smtp.mailfrom=alliedtelesis.co.nz; dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b=eQNEBGZ2; arc=none smtp.client-ip=202.36.163.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alliedtelesis.co.nz
+Received: from svr-chch-seg1.atlnz.lc (mmarshal3.atlnz.lc [10.32.18.43])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by gate2.alliedtelesis.co.nz (Postfix) with ESMTPS id A10B72C0375;
+	Mon, 10 Mar 2025 12:25:54 +1300 (NZDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alliedtelesis.co.nz;
+	s=mail181024; t=1741562754;
+	bh=DWmRT/rbl8qBT8vu+Ztn4Z0ssMaxDizqDQa1mUA+AhI=;
+	h=From:To:Cc:Subject:Date:From;
+	b=eQNEBGZ2MTCswAt3qCVQI73wxpJQnqU85tDugZXgFtazBDZC2DpOy0/iTqgJEsiBj
+	 3ZIWW8IqVqhFjJh1lkiq6SUo8u3mff0KC8ZCIj9ELqZD1UukeihYOZotCZe3LIdosq
+	 Cc2fKLpqRMfZFnRJjE645NFT/2W/+8isFnwHdUrnkmSQTBO/2DZTNjaQvZnMsLg4sK
+	 n+EzCkcwB8Bb9d6rxgV2fIW0zl2LQJfjWpgj4AXyrOFPlU5N8fZFFr2r83+BiD54F/
+	 erK8xOlXPvu7EzuF7HSzc1HbTKPwjsfg5DwapGCaDCzpWsa5dwbyvp6kISJEBkvdBW
+	 ljtNF5UZlfIdA==
+Received: from pat.atlnz.lc (Not Verified[10.32.16.33]) by svr-chch-seg1.atlnz.lc with Trustwave SEG (v8,2,6,11305)
+	id <B67ce23820000>; Mon, 10 Mar 2025 12:25:54 +1300
+Received: from chrisp-dl.ws.atlnz.lc (chrisp-dl.ws.atlnz.lc [10.33.22.30])
+	by pat.atlnz.lc (Postfix) with ESMTP id 5BBB113ED4A;
+	Mon, 10 Mar 2025 12:25:54 +1300 (NZDT)
+Received: by chrisp-dl.ws.atlnz.lc (Postfix, from userid 1030)
+	id 560C5280C0B; Mon, 10 Mar 2025 12:25:54 +1300 (NZDT)
+From: Chris Packham <chris.packham@alliedtelesis.co.nz>
+To: andrew@lunn.ch,
+	hkallweit1@gmail.com,
+	linux@armlinux.org.uk,
+	davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	sander@svanheule.net,
+	markus.stockhausen@gmx.de
+Cc: linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org,
+	Chris Packham <chris.packham@alliedtelesis.co.nz>
+Subject: [PATCH net-next v9] net: mdio: Add RTL9300 MDIO driver
+Date: Mon, 10 Mar 2025 12:25:36 +1300
+Message-ID: <20250309232536.19141-1-chris.packham@alliedtelesis.co.nz>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250308155624.024143438@linutronix.de>
+Content-Transfer-Encoding: quoted-printable
+X-SEG-SpamProfiler-Analysis: v=2.4 cv=ccpxrWDM c=1 sm=1 tr=0 ts=67ce2382 a=KLBiSEs5mFS1a/PbTCJxuA==:117 a=Vs1iUdzkB0EA:10 a=iECymlslGK0iNHOZQ8AA:9 a=3ZKOabzyN94A:10
+X-SEG-SpamProfiler-Score: 0
+x-atlnz-ls: pat
 
-Le Sat, Mar 08, 2025 at 05:48:32PM +0100, Thomas Gleixner a écrit :
-> @@ -988,90 +988,56 @@ static inline void posix_timer_cleanup_i
->  	}
->  }
->  
-> -/* Delete a POSIX.1b interval timer. */
-> -SYSCALL_DEFINE1(timer_delete, timer_t, timer_id)
-> +static void posix_timer_delete(struct k_itimer *timer)
->  {
-> -	struct k_itimer *timer = lock_timer(timer_id);
-> -
-> -retry_delete:
-> -	if (!timer)
-> -		return -EINVAL;
-> -
-> -	/* Prevent signal delivery and rearming. */
-> +	/*
-> +	 * Invalidate the timer, remove it from the linked list and remove
-> +	 * it from the ignored list if pending.
-> +	 *
-> +	 * The invalidation must be written with siglock held so that the
-> +	 * signal code observes timer->it_valid == false in do_sigaction(),
+Add a driver for the MDIO controller on the RTL9300 family of Ethernet
+switches with integrated SoC. There are 4 physical SMI interfaces on the
+RTL9300 however access is done using the switch ports. The driver takes
+the MDIO bus hierarchy from the DTS and uses this to configure the
+switch ports so they are associated with the correct PHY. This mapping
+is also used when dealing with software requests from phylib.
 
-I guess it_valid is a leftover from previous attempts?
-Aside that and the lost WARN_ON in signal delivery:
+Signed-off-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
+---
 
-Reviewed-by: Frederic Weisbecker <frederic@kernel.org>
+Notes:
+    As requested I've split this out to a single patch for net-next.
+   =20
+    Changes in v9:
+    - More reverse Christmas tree
+    - Use manual mutex_lock/unlock instead of guard
+    Changes in v8:
+    - Fix typo in user visible string
+    Changes in v7:
+    - Update out of date comment
+    - Use for_each_set_bit() instead of open-coded iteration
+    - Use FIELD_PREP() in a few more places
+    - Add #defines for register field masks
+    Changes in v6:
+    - Parse port->phy mapping from devicetree removing the need for the
+      realtek,port property
+    - Remove erroneous code dealing with SMI_POLL_CTRL. When actually
+      implemented this stops the LED unit from updating correctly.
+    Changes in v5:
+    - Reword out of date comment
+    - Use GENMASK/FIELD_PREP where appropriate
+    - Introduce port validity bitmap.
+    - Use more obvious names for PHY_CTRL_READ/WRITE and
+      PHY_CTRL_TYPE_C45/C22
+    Changes in v4:
+    - rename to realtek-rtl9300
+    - s/realtek_/rtl9300_/
+    - add locking to support concurrent access
+    - The dtbinding now represents the MDIO bus hierarchy so we consume t=
+his
+      information and use it to configure the switch port to MDIO bus+add=
+r.
+    Changes in v3:
+    - Fix (another) off-by-one error
+    Changes in v2:
+    - Add clause 22 support
+    - Remove commented out code
+    - Formatting cleanup
+    - Set MAX_PORTS correctly for MDIO interface
+    - Fix off-by-one error in pn check
+
+ drivers/net/mdio/Kconfig                |   7 +
+ drivers/net/mdio/Makefile               |   1 +
+ drivers/net/mdio/mdio-realtek-rtl9300.c | 508 ++++++++++++++++++++++++
+ 3 files changed, 516 insertions(+)
+ create mode 100644 drivers/net/mdio/mdio-realtek-rtl9300.c
+
+diff --git a/drivers/net/mdio/Kconfig b/drivers/net/mdio/Kconfig
+index 4a7a303be2f7..058fcdaf6c18 100644
+--- a/drivers/net/mdio/Kconfig
++++ b/drivers/net/mdio/Kconfig
+@@ -185,6 +185,13 @@ config MDIO_IPQ8064
+ 	  This driver supports the MDIO interface found in the network
+ 	  interface units of the IPQ8064 SoC
+=20
++config MDIO_REALTEK_RTL9300
++	tristate "Realtek RTL9300 MDIO interface support"
++	depends on MACH_REALTEK_RTL || COMPILE_TEST
++	help
++	  This driver supports the MDIO interface found in the Realtek
++	  RTL9300 family of Ethernet switches with integrated SoC.
++
+ config MDIO_REGMAP
+ 	tristate
+ 	help
+diff --git a/drivers/net/mdio/Makefile b/drivers/net/mdio/Makefile
+index 1015f0db4531..c23778e73890 100644
+--- a/drivers/net/mdio/Makefile
++++ b/drivers/net/mdio/Makefile
+@@ -19,6 +19,7 @@ obj-$(CONFIG_MDIO_MOXART)		+=3D mdio-moxart.o
+ obj-$(CONFIG_MDIO_MSCC_MIIM)		+=3D mdio-mscc-miim.o
+ obj-$(CONFIG_MDIO_MVUSB)		+=3D mdio-mvusb.o
+ obj-$(CONFIG_MDIO_OCTEON)		+=3D mdio-octeon.o
++obj-$(CONFIG_MDIO_REALTEK_RTL9300)	+=3D mdio-realtek-rtl9300.o
+ obj-$(CONFIG_MDIO_REGMAP)		+=3D mdio-regmap.o
+ obj-$(CONFIG_MDIO_SUN4I)		+=3D mdio-sun4i.o
+ obj-$(CONFIG_MDIO_THUNDER)		+=3D mdio-thunder.o
+diff --git a/drivers/net/mdio/mdio-realtek-rtl9300.c b/drivers/net/mdio/m=
+dio-realtek-rtl9300.c
+new file mode 100644
+index 000000000000..cae53ad6701b
+--- /dev/null
++++ b/drivers/net/mdio/mdio-realtek-rtl9300.c
+@@ -0,0 +1,508 @@
++// SPDX-License-Identifier: GPL-2.0-only
++/*
++ * MDIO controller for RTL9300 switches with integrated SoC.
++ *
++ * The MDIO communication is abstracted by the switch. At the software l=
+evel
++ * communication uses the switch port to address the PHY. We work out th=
+e
++ * mapping based on the MDIO bus described in device tree and phandles o=
+n the
++ * ethernet-ports property.
++ */
++
++#include <linux/bitfield.h>
++#include <linux/bitmap.h>
++#include <linux/bits.h>
++#include <linux/find.h>
++#include <linux/mdio.h>
++#include <linux/mfd/syscon.h>
++#include <linux/mod_devicetable.h>
++#include <linux/mutex.h>
++#include <linux/of_mdio.h>
++#include <linux/phy.h>
++#include <linux/platform_device.h>
++#include <linux/property.h>
++#include <linux/regmap.h>
++
++#define SMI_GLB_CTRL			0xca00
++#define   GLB_CTRL_INTF_SEL(intf)	BIT(16 + (intf))
++#define SMI_PORT0_15_POLLING_SEL	0xca08
++#define SMI_ACCESS_PHY_CTRL_0		0xcb70
++#define SMI_ACCESS_PHY_CTRL_1		0xcb74
++#define   PHY_CTRL_REG_ADDR		GENMASK(24, 20)
++#define   PHY_CTRL_PARK_PAGE		GENMASK(19, 15)
++#define   PHY_CTRL_MAIN_PAGE		GENMASK(14, 3)
++#define   PHY_CTRL_WRITE		BIT(2)
++#define   PHY_CTRL_READ			0
++#define   PHY_CTRL_TYPE_C45		BIT(1)
++#define   PHY_CTRL_TYPE_C22		0
++#define   PHY_CTRL_CMD			BIT(0)
++#define   PHY_CTRL_FAIL			BIT(25)
++#define SMI_ACCESS_PHY_CTRL_2		0xcb78
++#define   PHY_CTRL_INDATA		GENMASK(31, 16)
++#define   PHY_CTRL_DATA			GENMASK(15, 0)
++#define SMI_ACCESS_PHY_CTRL_3		0xcb7c
++#define   PHY_CTRL_MMD_DEVAD		GENMASK(20, 16)
++#define   PHY_CTRL_MMD_REG		GENMASK(15, 0)
++#define SMI_PORT0_5_ADDR_CTRL		0xcb80
++
++#define MAX_PORTS       28
++#define MAX_SMI_BUSSES  4
++#define MAX_SMI_ADDR	0x1f
++
++struct rtl9300_mdio_priv {
++	struct regmap *regmap;
++	struct mutex lock; /* protect HW access */
++	DECLARE_BITMAP(valid_ports, MAX_PORTS);
++	u8 smi_bus[MAX_PORTS];
++	u8 smi_addr[MAX_PORTS];
++	bool smi_bus_is_c45[MAX_SMI_BUSSES];
++	struct mii_bus *bus[MAX_SMI_BUSSES];
++};
++
++struct rtl9300_mdio_chan {
++	struct rtl9300_mdio_priv *priv;
++	u8 mdio_bus;
++};
++
++static int rtl9300_mdio_phy_to_port(struct mii_bus *bus, int phy_id)
++{
++	struct rtl9300_mdio_chan *chan =3D bus->priv;
++	struct rtl9300_mdio_priv *priv;
++	int i;
++
++	priv =3D chan->priv;
++
++	for_each_set_bit(i, priv->valid_ports, MAX_PORTS)
++		if (priv->smi_bus[i] =3D=3D chan->mdio_bus &&
++		    priv->smi_addr[i] =3D=3D phy_id)
++			return i;
++
++	return -ENOENT;
++}
++
++static int rtl9300_mdio_wait_ready(struct rtl9300_mdio_priv *priv)
++{
++	struct regmap *regmap =3D priv->regmap;
++	u32 val;
++
++	lockdep_assert_held(&priv->lock);
++
++	return regmap_read_poll_timeout(regmap, SMI_ACCESS_PHY_CTRL_1,
++					val, !(val & PHY_CTRL_CMD), 10, 1000);
++}
++
++static int rtl9300_mdio_read_c22(struct mii_bus *bus, int phy_id, int re=
+gnum)
++{
++	struct rtl9300_mdio_chan *chan =3D bus->priv;
++	struct rtl9300_mdio_priv *priv;
++	struct regmap *regmap;
++	int port;
++	u32 val;
++	int err;
++
++	priv =3D chan->priv;
++	regmap =3D priv->regmap;
++
++	port =3D rtl9300_mdio_phy_to_port(bus, phy_id);
++	if (port < 0)
++		return port;
++
++	mutex_lock(&priv->lock);
++	err =3D rtl9300_mdio_wait_ready(priv);
++	if (err)
++		goto out_err;
++
++	err =3D regmap_write(regmap, SMI_ACCESS_PHY_CTRL_2, FIELD_PREP(PHY_CTRL=
+_INDATA, port));
++	if (err)
++		goto out_err;
++
++	val =3D FIELD_PREP(PHY_CTRL_REG_ADDR, regnum) |
++	      FIELD_PREP(PHY_CTRL_PARK_PAGE, 0x1f) |
++	      FIELD_PREP(PHY_CTRL_MAIN_PAGE, 0xfff) |
++	      PHY_CTRL_READ | PHY_CTRL_TYPE_C22 | PHY_CTRL_CMD;
++	err =3D regmap_write(regmap, SMI_ACCESS_PHY_CTRL_1, val);
++	if (err)
++		goto out_err;
++
++	err =3D rtl9300_mdio_wait_ready(priv);
++	if (err)
++		goto out_err;
++
++	err =3D regmap_read(regmap, SMI_ACCESS_PHY_CTRL_2, &val);
++	if (err)
++		goto out_err;
++
++	mutex_unlock(&priv->lock);
++	return FIELD_GET(PHY_CTRL_DATA, val);
++
++out_err:
++	mutex_unlock(&priv->lock);
++	return err;
++}
++
++static int rtl9300_mdio_write_c22(struct mii_bus *bus, int phy_id, int r=
+egnum, u16 value)
++{
++	struct rtl9300_mdio_chan *chan =3D bus->priv;
++	struct rtl9300_mdio_priv *priv;
++	struct regmap *regmap;
++	int port;
++	u32 val;
++	int err;
++
++	priv =3D chan->priv;
++	regmap =3D priv->regmap;
++
++	port =3D rtl9300_mdio_phy_to_port(bus, phy_id);
++	if (port < 0)
++		return port;
++
++	mutex_lock(&priv->lock);
++	err =3D rtl9300_mdio_wait_ready(priv);
++	if (err)
++		goto out_err;
++
++	err =3D regmap_write(regmap, SMI_ACCESS_PHY_CTRL_0, BIT(port));
++	if (err)
++		goto out_err;
++
++	err =3D regmap_write(regmap, SMI_ACCESS_PHY_CTRL_2, FIELD_PREP(PHY_CTRL=
+_INDATA, value));
++	if (err)
++		goto out_err;
++
++	val =3D FIELD_PREP(PHY_CTRL_REG_ADDR, regnum) |
++	      FIELD_PREP(PHY_CTRL_PARK_PAGE, 0x1f) |
++	      FIELD_PREP(PHY_CTRL_MAIN_PAGE, 0xfff) |
++	      PHY_CTRL_WRITE | PHY_CTRL_TYPE_C22 | PHY_CTRL_CMD;
++	err =3D regmap_write(regmap, SMI_ACCESS_PHY_CTRL_1, val);
++	if (err)
++		goto out_err;
++
++	err =3D regmap_read_poll_timeout(regmap, SMI_ACCESS_PHY_CTRL_1,
++				       val, !(val & PHY_CTRL_CMD), 10, 100);
++	if (err)
++		goto out_err;
++
++	if (val & PHY_CTRL_FAIL) {
++		err =3D -ENXIO;
++		goto out_err;
++	}
++
++	mutex_unlock(&priv->lock);
++	return 0;
++
++out_err:
++	mutex_unlock(&priv->lock);
++	return err;
++}
++
++static int rtl9300_mdio_read_c45(struct mii_bus *bus, int phy_id, int de=
+v_addr, int regnum)
++{
++	struct rtl9300_mdio_chan *chan =3D bus->priv;
++	struct rtl9300_mdio_priv *priv;
++	struct regmap *regmap;
++	int port;
++	u32 val;
++	int err;
++
++	priv =3D chan->priv;
++	regmap =3D priv->regmap;
++
++	port =3D rtl9300_mdio_phy_to_port(bus, phy_id);
++	if (port < 0)
++		return port;
++
++	mutex_lock(&priv->lock);
++	err =3D rtl9300_mdio_wait_ready(priv);
++	if (err)
++		goto out_err;
++
++	val =3D FIELD_PREP(PHY_CTRL_INDATA, port);
++	err =3D regmap_write(regmap, SMI_ACCESS_PHY_CTRL_2, val);
++	if (err)
++		goto out_err;
++
++	val =3D FIELD_PREP(PHY_CTRL_MMD_DEVAD, dev_addr) |
++	      FIELD_PREP(PHY_CTRL_MMD_REG, regnum);
++	err =3D regmap_write(regmap, SMI_ACCESS_PHY_CTRL_3, val);
++	if (err)
++		goto out_err;
++
++	err =3D regmap_write(regmap, SMI_ACCESS_PHY_CTRL_1,
++			   PHY_CTRL_READ | PHY_CTRL_TYPE_C45 | PHY_CTRL_CMD);
++	if (err)
++		goto out_err;
++
++	err =3D rtl9300_mdio_wait_ready(priv);
++	if (err)
++		goto out_err;
++
++	err =3D regmap_read(regmap, SMI_ACCESS_PHY_CTRL_2, &val);
++	if (err)
++		goto out_err;
++
++	mutex_unlock(&priv->lock);
++	return FIELD_GET(PHY_CTRL_DATA, val);
++
++out_err:
++	mutex_unlock(&priv->lock);
++	return err;
++}
++
++static int rtl9300_mdio_write_c45(struct mii_bus *bus, int phy_id, int d=
+ev_addr,
++				  int regnum, u16 value)
++{
++	struct rtl9300_mdio_chan *chan =3D bus->priv;
++	struct rtl9300_mdio_priv *priv;
++	struct regmap *regmap;
++	int port;
++	u32 val;
++	int err;
++
++	priv =3D chan->priv;
++	regmap =3D priv->regmap;
++
++	port =3D rtl9300_mdio_phy_to_port(bus, phy_id);
++	if (port < 0)
++		return port;
++
++	mutex_lock(&priv->lock);
++	err =3D rtl9300_mdio_wait_ready(priv);
++	if (err)
++		goto out_err;
++
++	err =3D regmap_write(regmap, SMI_ACCESS_PHY_CTRL_0, BIT(port));
++	if (err)
++		goto out_err;
++
++	val =3D FIELD_PREP(PHY_CTRL_INDATA, value);
++	err =3D regmap_write(regmap, SMI_ACCESS_PHY_CTRL_2, val);
++	if (err)
++		goto out_err;
++
++	val =3D FIELD_PREP(PHY_CTRL_MMD_DEVAD, dev_addr) |
++	      FIELD_PREP(PHY_CTRL_MMD_REG, regnum);
++	err =3D regmap_write(regmap, SMI_ACCESS_PHY_CTRL_3, val);
++	if (err)
++		goto out_err;
++
++	err =3D regmap_write(regmap, SMI_ACCESS_PHY_CTRL_1,
++			   PHY_CTRL_TYPE_C45 | PHY_CTRL_WRITE | PHY_CTRL_CMD);
++	if (err)
++		goto out_err;
++
++	err =3D regmap_read_poll_timeout(regmap, SMI_ACCESS_PHY_CTRL_1,
++				       val, !(val & PHY_CTRL_CMD), 10, 100);
++	if (err)
++		goto out_err;
++
++	if (val & PHY_CTRL_FAIL) {
++		err =3D -ENXIO;
++		goto out_err;
++	}
++
++	mutex_unlock(&priv->lock);
++	return 0;
++
++out_err:
++	mutex_unlock(&priv->lock);
++	return err;
++}
++
++static int rtl9300_mdiobus_init(struct rtl9300_mdio_priv *priv)
++{
++	u32 glb_ctrl_mask =3D 0, glb_ctrl_val =3D 0;
++	struct regmap *regmap =3D priv->regmap;
++	u32 port_addr[5] =3D { 0 };
++	u32 poll_sel[2] =3D { 0 };
++	int i, err;
++
++	/* Associate the port with the SMI interface and PHY */
++	for_each_set_bit(i, priv->valid_ports, MAX_PORTS) {
++		int pos;
++
++		pos =3D (i % 6) * 5;
++		port_addr[i / 6] |=3D (priv->smi_addr[i] & 0x1f) << pos;
++
++		pos =3D (i % 16) * 2;
++		poll_sel[i / 16] |=3D (priv->smi_bus[i] & 0x3) << pos;
++	}
++
++	/* Put the interfaces into C45 mode if required */
++	glb_ctrl_mask =3D GENMASK(19, 16);
++	for (i =3D 0; i < MAX_SMI_BUSSES; i++)
++		if (priv->smi_bus_is_c45[i])
++			glb_ctrl_val |=3D GLB_CTRL_INTF_SEL(i);
++
++	err =3D regmap_bulk_write(regmap, SMI_PORT0_5_ADDR_CTRL,
++				port_addr, 5);
++	if (err)
++		return err;
++
++	err =3D regmap_bulk_write(regmap, SMI_PORT0_15_POLLING_SEL,
++				poll_sel, 2);
++	if (err)
++		return err;
++
++	err =3D regmap_update_bits(regmap, SMI_GLB_CTRL,
++				 glb_ctrl_mask, glb_ctrl_val);
++	if (err)
++		return err;
++
++	return 0;
++}
++
++static int rtl9300_mdiobus_probe_one(struct device *dev, struct rtl9300_=
+mdio_priv *priv,
++				     struct fwnode_handle *node)
++{
++	struct rtl9300_mdio_chan *chan;
++	struct fwnode_handle *child;
++	struct mii_bus *bus;
++	u32 mdio_bus;
++	int err;
++
++	err =3D fwnode_property_read_u32(node, "reg", &mdio_bus);
++	if (err)
++		return err;
++
++	fwnode_for_each_child_node(node, child)
++		if (fwnode_device_is_compatible(child, "ethernet-phy-ieee802.3-c45"))
++			priv->smi_bus_is_c45[mdio_bus] =3D true;
++
++	bus =3D devm_mdiobus_alloc_size(dev, sizeof(*chan));
++	if (!bus)
++		return -ENOMEM;
++
++	bus->name =3D "Realtek Switch MDIO Bus";
++	bus->read =3D rtl9300_mdio_read_c22;
++	bus->write =3D rtl9300_mdio_write_c22;
++	bus->read_c45 =3D rtl9300_mdio_read_c45;
++	bus->write_c45 =3D  rtl9300_mdio_write_c45;
++	bus->parent =3D dev;
++	chan =3D bus->priv;
++	chan->mdio_bus =3D mdio_bus;
++	chan->priv =3D priv;
++
++	snprintf(bus->id, MII_BUS_ID_SIZE, "%s-%d", dev_name(dev), mdio_bus);
++
++	err =3D devm_of_mdiobus_register(dev, bus, to_of_node(node));
++	if (err)
++		return dev_err_probe(dev, err, "cannot register MDIO bus\n");
++
++	return 0;
++}
++
++/* The mdio-controller is part of a switch block so we parse the sibling
++ * ethernet-ports node and build a mapping of the switch port to MDIO bu=
+s/addr
++ * based on the phy-handle.
++ */
++static int rtl9300_mdiobus_map_ports(struct device *dev)
++{
++	struct rtl9300_mdio_priv *priv =3D dev_get_drvdata(dev);
++	struct device *parent =3D dev->parent;
++	struct fwnode_handle *port;
++	int err;
++
++	struct fwnode_handle *ports __free(fwnode_handle) =3D
++		device_get_named_child_node(parent, "ethernet-ports");
++	if (!ports)
++		return dev_err_probe(dev, -EINVAL, "%pfwP missing ethernet-ports\n",
++				     dev_fwnode(parent));
++
++	fwnode_for_each_child_node(ports, port) {
++		struct device_node *mdio_dn;
++		u32 addr;
++		u32 bus;
++		u32 pn;
++
++		struct device_node *phy_dn __free(device_node) =3D
++			of_parse_phandle(to_of_node(port), "phy-handle", 0);
++		/* skip ports without phys */
++		if (!phy_dn)
++			continue;
++
++		mdio_dn =3D phy_dn->parent;
++		/* only map ports that are connected to this mdio-controller */
++		if (mdio_dn->parent !=3D dev->of_node)
++			continue;
++
++		err =3D fwnode_property_read_u32(port, "reg", &pn);
++		if (err)
++			return err;
++
++		if (pn >=3D MAX_PORTS)
++			return dev_err_probe(dev, -EINVAL, "illegal port number %d\n", pn);
++
++		err =3D of_property_read_u32(mdio_dn, "reg", &bus);
++		if (err)
++			return err;
++
++		if (bus >=3D MAX_SMI_BUSSES)
++			return dev_err_probe(dev, -EINVAL, "illegal smi bus number %d\n", bus=
+);
++
++		err =3D of_property_read_u32(phy_dn, "reg", &addr);
++		if (err)
++			return err;
++
++		bitmap_set(priv->valid_ports, pn, 1);
++		priv->smi_bus[pn] =3D bus;
++		priv->smi_addr[pn] =3D addr;
++	}
++
++	return 0;
++}
++
++static int rtl9300_mdiobus_probe(struct platform_device *pdev)
++{
++	struct device *dev =3D &pdev->dev;
++	struct rtl9300_mdio_priv *priv;
++	struct fwnode_handle *child;
++	int err;
++
++	priv =3D devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
++	if (!priv)
++		return -ENOMEM;
++
++	err =3D devm_mutex_init(dev, &priv->lock);
++	if (err)
++		return err;
++
++	priv->regmap =3D syscon_node_to_regmap(dev->parent->of_node);
++	if (IS_ERR(priv->regmap))
++		return PTR_ERR(priv->regmap);
++
++	platform_set_drvdata(pdev, priv);
++
++	err =3D rtl9300_mdiobus_map_ports(dev);
++	if (err)
++		return err;
++
++	device_for_each_child_node(dev, child) {
++		err =3D rtl9300_mdiobus_probe_one(dev, priv, child);
++		if (err)
++			return err;
++	}
++
++	err =3D rtl9300_mdiobus_init(priv);
++	if (err)
++		return dev_err_probe(dev, err, "failed to initialise MDIO bus controll=
+er\n");
++
++	return 0;
++}
++
++static const struct of_device_id rtl9300_mdio_ids[] =3D {
++	{ .compatible =3D "realtek,rtl9301-mdio" },
++	{}
++};
++MODULE_DEVICE_TABLE(of, rtl9300_mdio_ids);
++
++static struct platform_driver rtl9300_mdio_driver =3D {
++	.probe =3D rtl9300_mdiobus_probe,
++	.driver =3D {
++		.name =3D "mdio-rtl9300",
++		.of_match_table =3D rtl9300_mdio_ids,
++	},
++};
++
++module_platform_driver(rtl9300_mdio_driver);
++
++MODULE_DESCRIPTION("RTL9300 MDIO driver");
++MODULE_LICENSE("GPL");
+--=20
+2.48.1
+
 
