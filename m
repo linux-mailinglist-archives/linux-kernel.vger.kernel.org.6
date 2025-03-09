@@ -1,105 +1,153 @@
-Return-Path: <linux-kernel+bounces-553165-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-553167-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C8ABFA5851D
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 15:56:42 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 176D5A5851F
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 15:57:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4468C188E58B
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 14:56:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 542C416B2F8
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 14:57:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE5E01DE3D8;
-	Sun,  9 Mar 2025 14:56:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46CA51DDC07;
+	Sun,  9 Mar 2025 14:57:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nwjATJRZ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="onsszDeH"
+Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15AA414A09E;
-	Sun,  9 Mar 2025 14:56:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C66AD1E885
+	for <linux-kernel@vger.kernel.org>; Sun,  9 Mar 2025 14:57:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741532196; cv=none; b=ozxpADv/e7AU4w6LrLeoDzDUz2j3lO0lT1W7BGPGH6nWl7IlSJLv3g3yNyxwS12pm0utW14R1Iezuku+sq7FTFzV50MTnonU2cjsW6iugEUFfPgWIufQzeE9EWSsY8SIhUNpkHWxb6A4rQVLYjvYQkfK1FWro22YUWtBvFvLL3k=
+	t=1741532252; cv=none; b=nHML0U5MlSsnDobpsAjPBYABAaqKOCxrRadnJ65hkROy76BrTAXhpvN+RQJPfOG55spoVM+qQy7U05LCAEZMu2ILjQXmTjN0JBuVixhsEymzwqeUY+0xTdS37dPFnIqTev3WeqtETA6pLbD2Ry3Ph535ZByKiUIGtG27e/9lm/4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741532196; c=relaxed/simple;
-	bh=Jhs0qRQUbAip+cpmFk01G57teBJ/kMUn81WHCTFJn3U=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=c6C8eVCyWE6SmSU+rLppbM0FIzxtW+XYYhNpD/zTvh/iOYNakM7QudvFZgJLWcLofXHBxgGfSlDP5BAW+ig256Bfc/NqZpgFGRT2DO0juQJ72/JDBSoATBcLN+3kZmJUCLGM1e/BYeXF/HzJW/pKM8y1qCfqUokYiuorbSaxgg8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nwjATJRZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 66F2AC4CEE5;
-	Sun,  9 Mar 2025 14:56:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741532195;
-	bh=Jhs0qRQUbAip+cpmFk01G57teBJ/kMUn81WHCTFJn3U=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=nwjATJRZ1Oe8oZrmfOdhFyCWHQdckrDOiCEoSX5dS57fUHUlYBtpGPbxVRFQXiCdn
-	 HBEo1eSyIy+P0ffLpLFg0EaOF+yT+bGwaeCtRfKjhs/7gMNdP2j9ekpwSv6VFZyCyt
-	 Q/DO5gc1sCiF/O50ICRH8Ykc6ZbcNaoKloxrd87bRhJ8RBt0Io3vE1MZraf7zgYKST
-	 syljBiC+D9Gp9Ec+ZBF1qHWuaSo/Ud14HQt3cuzZIg2Lo/1eAh0pXDN3NaPQisYJId
-	 Fyh+ra/akjAF+X10v3OcoLCCan2tuWGJMuvS0lQrJzlQDp5xrii5fOlvK4xkPLfeZc
-	 xXasN9/J9ltYg==
-Date: Sun, 9 Mar 2025 04:56:34 -1000
-From: Tejun Heo <tj@kernel.org>
-To: Andrea Righi <arighi@nvidia.com>
-Cc: David Vernet <void@manifault.com>, Changwoo Min <changwoo@igalia.com>,
-	bpf@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/6] sched_ext: idle: Introduce the concept of allowed
- CPUs
-Message-ID: <Z82sImYF7jOgPGbL@slm.duckdns.org>
-References: <20250307200502.253867-1-arighi@nvidia.com>
- <20250307200502.253867-4-arighi@nvidia.com>
- <Z8twc3pc7I9SyIMC@slm.duckdns.org>
- <Z8voSv70QuxuZa5Z@gpd3>
+	s=arc-20240116; t=1741532252; c=relaxed/simple;
+	bh=KC0l/ss0JwxRpgxTEM9LJu30+8jgTxoakl7UAcCPbu4=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=tCdw2S84WFpmw+fJpvtJ/kj3SmQsY30ySaKkG3EVjnQ4/OYIXHsCsJxePifISQD+Hi30sK9K5c/hmizLU+1HhlvOY2//ufQwdwxcNf70cq1IFESZN6lR698p3FPFw8mvB54g/QdEph7kM/wjcsqyud1kIZab8ploH5M9wa8Dujw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=onsszDeH; arc=none smtp.client-ip=209.85.221.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-391211ea598so1954103f8f.1
+        for <linux-kernel@vger.kernel.org>; Sun, 09 Mar 2025 07:57:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1741532249; x=1742137049; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=w+JSJkMrwvFhUQPc5VJwS29z+GuXIGVUSIm/mnNCd6k=;
+        b=onsszDeH8defE5NpFBW23uSEPOOJ/X8sMxB0E4fUs8ugTxxfdeN3U3FEYrvU4yXKyB
+         vxSGdl96zmfsp6Z0+3alqVSRwKofANc3BHSY/Ahb5PxXMGyvtyK+AW/sEK5YggXoc0aQ
+         AadhPp/XZWlNnW3XpxieZ1Q9TMwyeq6/6VMzAu6yssDGru1LY/E9rOCoEKCfveygPLR8
+         dPivqc/Tpv+UnC0Lx9pTWzK0NZBtXmX5d583yhAvWrdSjv/1GC74relXgYU0ZTfqwFEt
+         nJemrUlPAqTtRpqsD4/PLkD4uWm/4ujDHfuqVVj4JFQydKtjBFktdqB0ndi7RN3CYv2O
+         ZHtA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741532249; x=1742137049;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=w+JSJkMrwvFhUQPc5VJwS29z+GuXIGVUSIm/mnNCd6k=;
+        b=rfjtYOHYvKVB3EcpP3MfQkJ+4THaRi5WRzsKk1ztQnOPhmW9fWhalzDH9iYvaRb/EM
+         2zcfM/aS+aWSKY+2hTZuGMEmpPgcGyFAbPU6RPAoCdTILlpOwCF8I8z4ujgwmyoihpSQ
+         P83jNdkxCRRvIBFtZyhUOt7q822Xb4uBhOOWN8voNzRUIpHgYtM5CGVK9W9byDifl0iI
+         KRZrnGrOpbphOcqB/yvtfkRdoXmdsWYRyd1opwUV3BDbLD0V5Wlh7E2cjYjrz459YXw/
+         CP6ozDqHTUU/ipqtvWzmtHiQqLgKfZNyZ6/IqZLrOlat0KY7PJMrWtOHEV4EosTQttbd
+         Luww==
+X-Gm-Message-State: AOJu0Yyg84URWugyyJKDMm64vUW/8FuEbWcfdKQVcz/sFK+GQAxouYRw
+	vRGtbLmNEzbGLpU4WI/O9UBV9DMqnuctvMC+vMQWz91QxRDsPSwePwELoXnLbNs=
+X-Gm-Gg: ASbGncuqifpwNV6sufmEPbg1E5oE8PtvuhB8U3pRsjB76n55vgfrMXwCtGSsH25Vz8L
+	jK9ZsCtZwLL77I74uChwv7NAtBnRyDiGNpuBWLuSK5hCUa+9Z8eZ8I8w0Sn3t1QNTziLuY3hYIj
+	6U/KhbwFjMGHFFuc6gNgxKXnwaCVIuzulUmzE9iMhp7v9mFyxrqqTLqpvn3gTSAXvrsKpr5KNb/
+	5C8ccUq9fFDhzngL31wQQqBIqZbkh24VO7Naljm5KIjJDgN/EP1Lq57Mskx0ELfu0s1PbfK05tM
+	q/BPyoecrskyTLB6WNyz4Xyz/N0i51lJVkbrhQDFV2LNi2KjVIY4ECz+4dU5ZPzqSFhq2A==
+X-Google-Smtp-Source: AGHT+IG+ir9Dkx2EVlMlkkSQjsEFFZMtFEqIgysFkQQs9w2zDwp4p/S2ELkX6gpV8RtpriR+ygkUQw==
+X-Received: by 2002:a5d:64e9:0:b0:391:4873:7943 with SMTP id ffacd0b85a97d-39148737af1mr738709f8f.32.1741532248846;
+        Sun, 09 Mar 2025 07:57:28 -0700 (PDT)
+Received: from localhost.localdomain ([5.133.47.210])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3912c1031fdsm11744899f8f.89.2025.03.09.07.57.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 09 Mar 2025 07:57:28 -0700 (PDT)
+From: srinivas.kandagatla@linaro.org
+To: gregkh@linuxfoundation.org
+Cc: linux-kernel@vger.kernel.org,
+	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Subject: [PATCH v2 00/13] nvmem: patches (set 1) for 6.15
+Date: Sun,  9 Mar 2025 14:56:50 +0000
+Message-Id: <20250309145703.12974-1-srinivas.kandagatla@linaro.org>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z8voSv70QuxuZa5Z@gpd3>
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1907; i=srinivas.kandagatla@linaro.org; h=from:subject; bh=j0jrUOf2O04vwZDzLO9nPSEgckJ7DwqAHTZ0StJbRU8=; b=owEBbQGS/pANAwAKAXqh/VnHNFU3AcsmYgBnzaw1NyqmwIjrvq/+/3AgySzaRV00wEWttmAZj v8AcoWrooOJATMEAAEKAB0WIQQi509axvzi9vce3Y16of1ZxzRVNwUCZ82sNQAKCRB6of1ZxzRV N6pnB/4gwrW7Uvj4n/6LaoCIe9Y7/pYFLQ9bDcLGpA4HptuqL47FwL7Wwq/fZAw4mDtBHVvbinC sRw24tnu89foHejP+sSKOit2qssV0vIG1nqZOGicekFU6MFu8R1OZDCj+yELYXdVd9Cn4ywGDCg YXVHknHIxeQ2lAFNj7DoS3l6y/LfewLYFWyTrazLizWFY8cfyf45WLEEh48mzodpH/+5ltZVgbF 2crSY20sSzFPKpVSIY29w01tQfbnTveDwv0nIt7ekit7cRLsWSJ4inGqRuqExITpWXVSve41IJx D6UFvLyTfnmY/r5xFSNqDhtjWL36aAGG96kQihnyG0WsqJMW
+X-Developer-Key: i=srinivas.kandagatla@linaro.org; a=openpgp; fpr=ED6472765AB36EC43B3EF97AD77E3FC0562560D6
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Hello,
+From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 
-On Sat, Mar 08, 2025 at 07:48:42AM +0100, Andrea Righi wrote:
-> > > With this concept the idle CPU selection policy becomes the following:
-> > >  - always prioritize CPUs from fully idle SMT cores (if SMT is enabled),
-> > >  - select the same CPU if it's idle and in the allowed domain,
-> > >  - select an idle CPU within the same LLC domain, if the LLC domain is a
-> > >    subset of the allowed domain,
-> > 
-> > Why not select from the intersection of the same LLC domain and the cpumask?
-> 
-> We could do that, but to guarantee the intersection we need to introduce
-> other temporary cpumasks (one for the LLC intersection and another for the
-> NUMA), which is not a big problem, but it can introduce overhead. And most
-> of the time the LLC group is either a subset of the allowed CPUs or
-> vice-versa, so in this case the current logic already works.
-> 
-> The extra cpumask work is needed only when the allowed cpumask spans
-> multiple partial LLCs, which should be rare. So maybe in such cases, we
-> could tolerate the additional overhead of updating an additional temporary
-> cpumask to ensure proper hierarchical semantics (maintaining consistency
-> with the topology hierarchy). WDYT?
+Hi Greg,
 
-Would just using a pre-allocated cpumask to do pre-and on @cpus_allowed
-work? This won't only be used for topology support (e.g. soft partitioning
-in scx_layered and scx_mitosis may want to use multi-topology-unit spanning
-subsets) and I'm not sure assuming and optimizing for that is a good idea
-for generic API.
+Here are few nvmem patches for 6.15, Could you queue
+these for 6.15.
 
-We can do something simple now. Note that if we want to optimize it, we can
-introduce cpumask_any_and_and_distribute(). There already is
-cpumask_first_and_and(), so the pattern isn't new and the only extra bitops
-we need to add is find_next_and_and_bit_wrap(). There's already
-find_first_and_and_bit(), so I don't think it will be all that difficult to
-add.
+patche include
+	- updates to bindings to include MSM8960, X1E80100, MS8937,
+	  IPQ5018
+	- add support to bit offsets for register strides exceeding
+	  single byte
+	- add rockchip-otp variants.
+	- Few enhancements in qfprom and rochchip nvmem providers.
 
-Thanks.
+Thanks,
+Srini
+
+Changes since v1:
+ - Merged fixup "nvmem: make the misaligned raw_len non-fatal" into
+  "nvmem: core: verify cell's raw_len"
+
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+
+Akhil P Oommen (1):
+  dt-bindings: nvmem: qfprom: Add X1E80100 compatible
+
+Barnabás Czémán (1):
+  dt-bindings: nvmem: Add compatible for MS8937
+
+Dmitry Baryshkov (5):
+  dt-bindings: nvmem: fixed-cell: increase bits start value to 31
+  nvmem: core: fix bit offsets of more than one byte
+  nvmem: core: verify cell's raw_len
+  nvmem: core: update raw_len if the bit reading is required
+  nvmem: qfprom: switch to 4-byte aligned reads
+
+Heiko Stuebner (4):
+  nvmem: rockchip-otp: Move read-offset into variant-data
+  dt-bindings: nvmem: rockchip,otp: add missing limits for clock-names
+  dt-bindings: nvmem: rockchip,otp: Add compatible for RK3576
+  nvmem: rockchip-otp: add rk3576 variant data
+
+Rudraksha Gupta (1):
+  dt-bindings: nvmem: Add compatible for MSM8960
+
+Sricharan Ramabadhran (1):
+  dt-bindings: nvmem: Add compatible for IPQ5018
+
+ .../bindings/nvmem/layouts/fixed-cell.yaml    |  2 +-
+ .../bindings/nvmem/qcom,qfprom.yaml           |  4 ++
+ .../bindings/nvmem/rockchip,otp.yaml          | 25 ++++++++++++
+ drivers/nvmem/core.c                          | 40 +++++++++++++++----
+ drivers/nvmem/qfprom.c                        | 26 +++++++++---
+ drivers/nvmem/rockchip-otp.c                  | 17 +++++++-
+ 6 files changed, 97 insertions(+), 17 deletions(-)
 
 -- 
-tejun
+2.25.1
+
 
