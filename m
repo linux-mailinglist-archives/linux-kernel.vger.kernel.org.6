@@ -1,127 +1,101 @@
-Return-Path: <linux-kernel+bounces-553395-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-553396-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 58D12A588A6
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 22:55:44 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 294FFA588AA
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 22:55:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 19473188D93A
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 21:55:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4E1F3169DC8
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 21:55:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A98A21D5B6;
-	Sun,  9 Mar 2025 21:55:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DDB221D5B2;
+	Sun,  9 Mar 2025 21:55:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="C4SZu6jd"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="N8sSJttE"
+Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com [209.85.216.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 250551A3035;
-	Sun,  9 Mar 2025 21:55:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78C8A1EF368;
+	Sun,  9 Mar 2025 21:55:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741557331; cv=none; b=jFuCfMSkfWyu9yaxzNWwFdmIuBvyJFc4A0eNy6nH/xI7T7GkiRjRLLjYlZUUhK+xnt+WgAN1oDJrsyyHnM5UlqwfTea89+inYHYu3yYfo8H2W3FPFRiQv/l8fG9KZb1RxJN14dPRd9iqyH8wK11/2zq/B3qpwdixoZBOCPHKbsg=
+	t=1741557349; cv=none; b=p7enB36y9GCdqjpmS0laPx2Y3mu/5GdHPhnBtESzUG2bNuz2JX8MKfBbMa8x0V0nYCiSrOhjG8w5Be3pbDW8AUxTls5eZLi5lpF+92rb1mVCUE1LnTZpSAEYx19/b+t++EmQfNKeGhxp9WVJd67ZAP/cmhIctvcDwVCtpsr0ynI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741557331; c=relaxed/simple;
-	bh=XV4TFGJPOwdEuo+Uu6vVn9rLCbiRTLhhS72SB0Cnyxo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TNe0N3hALWQzCAHOA+F5pHizUDBb3VbyGLFFx1FRBY3168CyNL+axk/Ird45GxMLNlaXSZv1cBWr5mMpFwPp0ezpFi6UZrCeDXc0ihhaKcaqtqwms6CJH8ynDsNi9j0cm8O1aIAO8kGGhA7+fUNn6fkguN3HbaIY8nZDAPa7la0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=C4SZu6jd; arc=none smtp.client-ip=198.175.65.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1741557330; x=1773093330;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=XV4TFGJPOwdEuo+Uu6vVn9rLCbiRTLhhS72SB0Cnyxo=;
-  b=C4SZu6jdPS5NRnpt8LsE7pK1Dy6x83hSAfD6WBfw2OpYIa7PHjw9l+e9
-   Zn6cUFMONT0bsZcj7QDfXDiyelK8Z2V00R3JlQgJps4CWJOaEtaY+gE13
-   Kr+5oOpKneSnbpS5EtCzWKcW9wIqS4IRhPf/UAXd8KTt/Xn0+a1rJRK9e
-   9F56+eg4510yRViHkxkTT89t5SRSpkGxgq0setekkYkk+xKV6mlBGtJGP
-   TRhg2neBDGJseJc/UmNKjVVGHVMWJjmvhDwdJQQrDR8aeJSE6gdLDWewA
-   KaJHyT/heXdr3j2GL/50w4bYNLC/OcPHAtAbBFZgMC0T96MpgZcp4dfbS
-   w==;
-X-CSE-ConnectionGUID: bSCjOhIvQ9ms8ovky+q4Vg==
-X-CSE-MsgGUID: N5MWhspTRrK6q9xh2kLz5A==
-X-IronPort-AV: E=McAfee;i="6700,10204,11368"; a="42657013"
-X-IronPort-AV: E=Sophos;i="6.14,235,1736841600"; 
-   d="scan'208";a="42657013"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Mar 2025 14:55:30 -0700
-X-CSE-ConnectionGUID: KmuazXWsTQuQ/12EcYE7Ug==
-X-CSE-MsgGUID: dX7NmjAVR0eX9IkEFZMktA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,235,1736841600"; 
-   d="scan'208";a="119668697"
-Received: from lkp-server02.sh.intel.com (HELO a4747d147074) ([10.239.97.151])
-  by fmviesa006.fm.intel.com with ESMTP; 09 Mar 2025 14:55:24 -0700
-Received: from kbuild by a4747d147074 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1trOcD-0003VI-2o;
-	Sun, 09 Mar 2025 21:55:21 +0000
-Date: Mon, 10 Mar 2025 05:55:02 +0800
-From: kernel test robot <lkp@intel.com>
-To: Dmitry Baryshkov <lumag@kernel.org>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Rob Clark <robdclark@gmail.com>,
-	Abhinav Kumar <quic_abhinavk@quicinc.com>,
-	Sean Paul <sean@poorly.run>,
-	Marijn Suijten <marijn.suijten@somainline.org>,
-	Dave Stevenson <dave.stevenson@raspberrypi.com>,
-	=?iso-8859-1?Q?Ma=EDra?= Canal <mcanal@igalia.com>,
-	Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>,
-	Andrzej Hajda <andrzej.hajda@intel.com>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Robert Foss <rfoss@kernel.org>,
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-	Jonas Karlman <jonas@kwiboo.se>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org, freedreno@lists.freedesktop.org
-Subject: Re: [PATCH 4/4] drm: bridge: dw-hdmi: use new helper to get ACR
- values
-Message-ID: <202503100501.SlwYOb9U-lkp@intel.com>
-References: <20250309-drm-hdmi-acr-v1-4-bb9c242f4d4b@linaro.org>
+	s=arc-20240116; t=1741557349; c=relaxed/simple;
+	bh=GTq6UEu3Li4X7ErToPMFMwx2eg5l8CAxQ+gMdiZqzhs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=FLAdfkGdwnSEnEuvKZQnzK0nlUF3ToEsoTSuhWjQvZMODimoO+rp+d5FtjfKrPqwTERszA1l7nsm4MBNiAB+x4EN3kk69PaCGtQQuh5JuU6kwCoFqHpoyAVf7qvM8kg0HTL/RZ+DtmljyRxNpbhxriyzWgdDMrEph7quq4ktW54=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=N8sSJttE; arc=none smtp.client-ip=209.85.216.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-2ff7255b8c6so909853a91.0;
+        Sun, 09 Mar 2025 14:55:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741557346; x=1742162146; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=GTq6UEu3Li4X7ErToPMFMwx2eg5l8CAxQ+gMdiZqzhs=;
+        b=N8sSJttEWmVStN+dnBiVjmQC5kOJ7zL+TGxUNJdgcqVxv6QBlyfwpsGjyT0re2h29q
+         I/22JkMxd7U9dX9tLAdyBORWXx9ZsMHdvJDYZkKZMu9Rity88lbBQK3uxLOuNup15bvW
+         dhA8FLJky7IRQ5s25nTShKn3GYcYVKjAWNSauk7M21XKmE9Nla5jD0YSDzSzcf4QNzaN
+         2URnXvNHIcfhlCesVFFVSp/JCflcUgwi50AJDHBcdw3PC+zRAdFvZQ6tMw9QyievtVTe
+         yijoami0/LqoVivcTQl2AAqoTIFVCWow7FHWtQsxpEYfZ/bSJy/jOrN8WyNHXAY8C8p7
+         XU8g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741557346; x=1742162146;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=GTq6UEu3Li4X7ErToPMFMwx2eg5l8CAxQ+gMdiZqzhs=;
+        b=OBKdy8zXOdHXM21Tqw37lHt+mkUu8Q6ikl5cesZJyvXUV8nqcPWLUbNhjfsfo7EWpE
+         5riAI+EM2thW4Qlr0ti+NPllYd94lLLk5eTrC7lWNkweQ+IYVbtji/X3MjmqZs3oavOl
+         C6qMtIGWPngmDDn7H6uJvrpgpSr1tKHeiFoJMO7M8OPd+KOTdKHLBk8NxFVtMSvM/tfx
+         0rHUXRc2QtRyULu2lnUdRom92UPnPnNM1i++BMXxGaWluKKlHUcpK48fopcWV11a1paf
+         qiEHwrr9RDqKvrlfPjStbxiz3J5TnJYvMoHYK4HWkoasmnzPkGOIRe9pg1uO+3TLACnP
+         muqA==
+X-Forwarded-Encrypted: i=1; AJvYcCU20kp6m+v0s2nlfaGJOlZtGb9TNDs0yoxAACiwKb3s+xqJYjdSmSV+Rkb+t7M3aCjzH1hzw38y1Gcsu2E=@vger.kernel.org, AJvYcCUn+sMgSKgPfekQgoQG0lgPKw8pS/7Ajws/EafWraG30nOyKE44bpELapkugfcmsoCOo7mBzL8VjgI5xxXJsHE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy5b/vMxCBgGy3RIz+VB+ngJFYeKwsQUda036fYHivvHDMeUS3V
+	/crtdVYK56tEeJPzFuqE0Ep2YzWTwSuPc4RuwQQ9NZWs8MhiLRs0qxbs4dQHt/nE6MEUjjgMz6u
+	CiHp737+FjtL6aNtveK1tuzGJevc=
+X-Gm-Gg: ASbGnctyDV4bIg1li/G7TuMwOehh6fziJTNZwHGDNZkvq9JA29dNdw4VMz/P8YSjPUg
+	zKLcOsZXoEDRCZCI7KXBNbIZGHsRe3OeuFMgNuB4dsNKcERGHEE1ZPa182uc/cEUoa9nYq8pkqQ
+	tIRPtNZGRh1VS00W+taqNgBCTs3w==
+X-Google-Smtp-Source: AGHT+IHXlAJPVtOg05iMzwq+BMigf1lmxizD3DaJUYSB9U80GIORpHkKG2bK6XK7N00HhDagNjnQiESufq7xg5WfLB4=
+X-Received: by 2002:a17:90b:38c1:b0:2ff:6ac2:c5ae with SMTP id
+ 98e67ed59e1d1-300a2b6b6f4mr4206702a91.1.1741557345730; Sun, 09 Mar 2025
+ 14:55:45 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250309-drm-hdmi-acr-v1-4-bb9c242f4d4b@linaro.org>
+References: <Z8sXqXgfhHbNpG6B@google.com> <20250309214857.1559606-1-ojeda@kernel.org>
+In-Reply-To: <20250309214857.1559606-1-ojeda@kernel.org>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Sun, 9 Mar 2025 22:55:33 +0100
+X-Gm-Features: AQ5f1JplJ2sdLw88CGdK_039ODMPr-eVmC66w8cRjSL3sCK1VExgIqPYi5hdaQg
+Message-ID: <CANiq72nfdTDdk2TFJXMtdM5fpRQPkn38FEqQkNH1+xB45L99QA@mail.gmail.com>
+Subject: Re: [PATCH] rust: kbuild: provide `RUSTC_HAS_DO_NOT_RECOMMEND` symbol
+To: Miguel Ojeda <ojeda@kernel.org>
+Cc: aliceryhl@google.com, a.hindborg@kernel.org, alex.gaynor@gmail.com, 
+	benno.lossin@proton.me, bjorn3_gh@protonmail.com, boqun.feng@gmail.com, 
+	gary@garyguo.net, lina@asahilina.net, linux-kernel@vger.kernel.org, 
+	oliver.mangold@pm.me, rust-for-linux@vger.kernel.org, tmgross@umich.edu, 
+	patches@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Dmitry,
+On Sun, Mar 9, 2025 at 10:49=E2=80=AFPM Miguel Ojeda <ojeda@kernel.org> wro=
+te:
+>
+> Signed-off-by: Miguel Ojeda <ojeda@kernel.org>
 
-kernel test robot noticed the following build errors:
+s/kbuild: // in the title, sorry.
 
-[auto build test ERROR on 0a2f889128969dab41861b6e40111aa03dc57014]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Dmitry-Baryshkov/drm-display-hdmi-provide-central-data-authority-for-ACR-params/20250309-161610
-base:   0a2f889128969dab41861b6e40111aa03dc57014
-patch link:    https://lore.kernel.org/r/20250309-drm-hdmi-acr-v1-4-bb9c242f4d4b%40linaro.org
-patch subject: [PATCH 4/4] drm: bridge: dw-hdmi: use new helper to get ACR values
-config: arm64-randconfig-002-20250310 (https://download.01.org/0day-ci/archive/20250310/202503100501.SlwYOb9U-lkp@intel.com/config)
-compiler: clang version 17.0.6 (https://github.com/llvm/llvm-project 6009708b4367171ccdbf4b5905cb6a803753fe18)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250310/202503100501.SlwYOb9U-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202503100501.SlwYOb9U-lkp@intel.com/
-
-All errors (new ones prefixed by >>, old ones prefixed by <<):
-
->> ERROR: modpost: "drm_hdmi_acr_get_n_cts" [drivers/gpu/drm/bridge/synopsys/dw-hdmi.ko] undefined!
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Cheers,
+Miguel
 
