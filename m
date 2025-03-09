@@ -1,242 +1,210 @@
-Return-Path: <linux-kernel+bounces-553125-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-553127-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 617B1A5842E
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 14:16:39 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 65CF0A58436
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 14:24:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2F33F3AC734
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 13:16:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D880A169B70
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 13:24:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BAD121DC04A;
-	Sun,  9 Mar 2025 13:16:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C8841DC9AB;
+	Sun,  9 Mar 2025 13:23:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SvCqKlbf"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dVz46CN7"
+Received: from mail-pl1-f195.google.com (mail-pl1-f195.google.com [209.85.214.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 104C2188915;
-	Sun,  9 Mar 2025 13:16:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07722136349;
+	Sun,  9 Mar 2025 13:23:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741526186; cv=none; b=GUVxebaxImAaCWgjCF1lHCUmKBOMuHoSRUUx43kSdqXMaUAo8/dXpx4WT707VDaLyxLo+U9MVL/twRZVuDBcqVUNyAjKbwiuUDUFfmnmK2xLL1+khHpB0MeOhHyWL3g4xRSTG8mhxiw8nK00YaJ1Zx/EKR6nQi4OXaZk6CUYyBs=
+	t=1741526634; cv=none; b=iLadkb/cLZECY93/3+UenK2YmLHxOuUJ/BnLF2fm7gUlGU5J9/neotwoOVv5UcYlH+6LGqbERyC0+/4NR67EerEpRE55/A4gB+F/qWE5jSLo0/aTSBc+KtX8Aky+IKV+X6wdQXf8CIFhGJQJ5MCG0RDBZJMubLGO9IV+DDSfdeo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741526186; c=relaxed/simple;
-	bh=SHZtBJAG+o4RRVLthnCajXIZ2+BgK5nZRZEOGGpVBTg=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=XZ0BxpjeuU5pqOCNF76sQfD9oHU5clo9dTDCRNgeaNcYG7n0YvkaHtOgxyhlknbSAIm8lG6o3/Ot3IJUtzkBCkLDM/UKkeoqPILgAcwDyCRE/9fBTzqryrE6u8+pmj4Hj5BTJlguA2mC7vKnrRxw5jhppMG6eU1+mELXusnaTjo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SvCqKlbf; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 7B359C4CEEE;
-	Sun,  9 Mar 2025 13:16:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741526185;
-	bh=SHZtBJAG+o4RRVLthnCajXIZ2+BgK5nZRZEOGGpVBTg=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=SvCqKlbfwXeyDko/+0Omsj8qcKAQkuW6rNS3mPgph6cbliD8/8NMhmYpelLlWtuCt
-	 aTA9g8ENErDnNm7Ox5uM9roljunATr3VCeWbysQEHsFmcECBjG/Nk3YLIz2sX33tji
-	 o6dY7XVcmc9zs+A2Xml8tsG+skgyJD58te3KK0ZxRv6G4xYiVckTlJ5Yrobaxe3G61
-	 2N+r0evPNfjs+IOElIoxgSd06o3y6sxnR1b0pTtcPdPN3wSVqaSS0gN1tocm7QNmk6
-	 9yrWGSyDry1G3EHzWBwl8TLHtVsl+CVxY9jnNj1qSl83vtXjpMZ2WgCdod/HSLH6oM
-	 qwU67IxL7886w==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B0F8C35FF1;
-	Sun,  9 Mar 2025 13:16:25 +0000 (UTC)
-From: =?utf-8?q?J=2E_Neusch=C3=A4fer_via_B4_Relay?= <devnull+j.ne.posteo.net@kernel.org>
-Date: Sun, 09 Mar 2025 14:16:21 +0100
-Subject: [PATCH 2/2] arm64: dts: amlogic: Add Ogoos AM3
+	s=arc-20240116; t=1741526634; c=relaxed/simple;
+	bh=amviRZAng65qhSPsIn/ez8PlX5/EY5IcXVvOyQBoCh4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=rZNGvFCWFmn8to73uMN3GfOjykI1pgpoWD0gAsAaqyv/MgeSi4QgEcTuUKpAkkijCaXTEppVADyJGL8MOIjazSryjWGTiGcWW9ptIaMat+vVneLFz3barGNIWcCItoRDQD0W6+HJwBhL76Br1DCzq61GaOtkYKWAxheslRee0uI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dVz46CN7; arc=none smtp.client-ip=209.85.214.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f195.google.com with SMTP id d9443c01a7336-2241053582dso43908715ad.1;
+        Sun, 09 Mar 2025 06:23:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741526632; x=1742131432; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=78f5GfsZLdHs7HcZYqhufn9bqBeaLB9GfsmUNDdGsAU=;
+        b=dVz46CN7GFk2MohHsYZ1XpOKSfkjB8WZZklFuVu4dwGXHnMq+/+DPo0NDU9RYZ1nmO
+         StWMyWieLWr2EFekLtMfS7OY07T37Wf4p7Yr/k0gtVA8sbmhApmoKVHWdCk05IBBCkO9
+         GXgiiPhpbxyuJuhUXrasukPdW+3Y8tNLNp3da5OPzFGDoJ43XvgzFubu6JKCDTDLvRPV
+         QT10UjAgCd7URCYnsbTb3I35yAVBvjKQqkwzXkVhhiIIcstF/ga2Hgi3NaHEvnut06iQ
+         Zmg7nhaVsPi9r+VH8VlYVXe0xD+YBI/VS3RAkEhQzVLOiKvD8FqlqILpKbYoTiF0Bdli
+         Yo/Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741526632; x=1742131432;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=78f5GfsZLdHs7HcZYqhufn9bqBeaLB9GfsmUNDdGsAU=;
+        b=SLujwD/K5KKk51kaKy78olPD9T8e6LllR8SVwYHfc7zfkoqqwLY0MMPft+4ML8hoNn
+         N1BixI+htVtWc5MqbHGlU5FpozmEh+ep2lK0Wx9D6bkvqF0PIVr5EcRl3YflN6HGYtsh
+         1K3Qz+VSxGwKAS345FSVx/+oz+S46K79gpZY6pmBmhwa/G88fp+02i3OqjKHDn3IVTF2
+         cqSr/iOL0ftXc2Aljn0PinAZWucYSdE4pqKWyZ3TnIrMYvTUW1lcqAvoa+34XGAfrtM5
+         VnZdpnwWlXYDrCANhRYPqQRP1uBUsmxFqCL04ZoxFKTWNamOahfCsajhJmMUHVYUns5g
+         CqjQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUw8D/2Etaz6O2DIR3WsW5NuKisN1gOcibV2ejKQmVlbM9lWIbO/yNJ9cQMg/MhGtSRD5j8tywT5UpuZFBA@vger.kernel.org, AJvYcCVBZqjFSShKlA9/tRVoCr1HUIT494t2yd5+6g+7ijnbS/3+plWEZDTrlyA6+l0dhOkkpWCkkKy9@vger.kernel.org, AJvYcCVhEoJRBBhprANid+iS7cJntWMmp+eoEX/oA6homJnG8Ej991mKOVS3SEpVJIeP+0S2pdwDcVLHaWNw@vger.kernel.org, AJvYcCWMRG5l8xdXa7bI53NfScdvdVpFHIjFpGST8U/+U9EGJkW1Cz2KP818KoGYmYS9GQhLgY5LdrJWPVeD7i0=@vger.kernel.org, AJvYcCWl8RCmwfTr+gTFwKNxebdtWgGSII1tCp7IXOFdvBZbRGuw5O0x8PWcklhsr0G9xlD6XP7e0A4auu8Z@vger.kernel.org, AJvYcCXwYhBLoHtWchUPd4dhM4v9zMhoDiPgsloe19pqimPMmFntvkcxWUy5xNxsDq0lEQvKKWU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxpO6iAPX6wtQylr6LWtgptxI6xDaAfiQvZU2fpt5oXXNu7DfaI
+	0DSCcb79f0tkyUT1+pA+vZW6QcTUz6j9v41mb3DsdzlrqPmU9Rsv
+X-Gm-Gg: ASbGncvS7V1lS8M83grceIJfnJtzNab7Sk1jqr0fL4Tkm3UKu3qtpkL5gIqaq7FlRaH
+	qbsDgKCnE5lwgPbpfRmFJOsqkgFyXfEB8+ts5+mfvaEkQgYEoA/FaTsTR4Hl6a6jf0LRl/YbfH4
+	h2c2Bc+xtCfeUZJKDENxDq+AiweaYUhs8rXSvF8NyJDQ+2d4p2/VzRZ7ymgFUJaw9b389nQhjar
+	4SWQUgcurn14SMuBYFfzuXBF5REMVu3u7pYbQx4DKSYZ478pCHThsl890USCFLlxZztBdSfC/Xx
+	hrlU76nK2xkRgcXg5mOL36k9pYkpgXs1XknhNE3FTU4UubSg+p/Mlyj77rTAKYRrfBObJvvZMcp
+	1AW38DvjAEA+5gbsEvUrBOwO+SCG8tg7DuctILaZZ
+X-Google-Smtp-Source: AGHT+IFtC936bSg/3HregqNsD+RiIvE+I7Cf0Sja++qaGUNlZeLkZuXJlqOzuqqV2Wpl3dx1MeKXQQ==
+X-Received: by 2002:a17:902:eb81:b0:220:c86d:d7eb with SMTP id d9443c01a7336-22428ab863cmr167985465ad.36.1741526632153;
+        Sun, 09 Mar 2025 06:23:52 -0700 (PDT)
+Received: from ?IPV6:2409:8a55:301b:e120:c508:514a:4065:877? ([2409:8a55:301b:e120:c508:514a:4065:877])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-736d4f20913sm597161b3a.13.2025.03.09.06.23.43
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 09 Mar 2025 06:23:51 -0700 (PDT)
+Message-ID: <7abb0e8c-f565-48f0-a393-8dabbabc3fe2@gmail.com>
+Date: Sun, 9 Mar 2025 21:23:35 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20250309-ugoos-am3-v1-2-38cab5a4725b@posteo.net>
-References: <20250309-ugoos-am3-v1-0-38cab5a4725b@posteo.net>
-In-Reply-To: <20250309-ugoos-am3-v1-0-38cab5a4725b@posteo.net>
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Neil Armstrong <neil.armstrong@linaro.org>, 
- Martin Blumenstingl <martin.blumenstingl@googlemail.com>, 
- Jerome Brunet <jbrunet@baylibre.com>, Kevin Hilman <khilman@baylibre.com>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, linux-amlogic@lists.infradead.org, 
- =?utf-8?q?J=2E_Neusch=C3=A4fer?= <j.ne@posteo.net>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1741526184; l=4569;
- i=j.ne@posteo.net; s=20240329; h=from:subject:message-id;
- bh=r2xd+Ae/jy3p72pJ06WqDTpZeVRV52iMgB3vroAEsT0=;
- b=HT0H/WdaPMebTfWtVNUzbITgKdjZOBqvnQAfEt/VLbNCnctGgaFBwEt6w1YtFQVcwUvL0AMce
- JFmBOWaKuP6BjVG2dzUrKBhmNKXu3cq7x1RqdhhvLMVbjcE9hofvn8J
-X-Developer-Key: i=j.ne@posteo.net; a=ed25519;
- pk=NIe0bK42wNaX/C4bi6ezm7NJK0IQE+8MKBm7igFMIS4=
-X-Endpoint-Received: by B4 Relay for j.ne@posteo.net/20240329 with
- auth_id=156
-X-Original-From: =?utf-8?q?J=2E_Neusch=C3=A4fer?= <j.ne@posteo.net>
-Reply-To: j.ne@posteo.net
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] mm: alloc_pages_bulk: remove assumption of populating
+ only NULL elements
+To: NeilBrown <neilb@suse.de>, Yunsheng Lin <linyunsheng@huawei.com>
+Cc: Qu Wenruo <wqu@suse.com>, Yishai Hadas <yishaih@nvidia.com>,
+ Jason Gunthorpe <jgg@ziepe.ca>,
+ Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>,
+ Kevin Tian <kevin.tian@intel.com>,
+ Alex Williamson <alex.williamson@redhat.com>, Chris Mason <clm@fb.com>,
+ Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>,
+ Gao Xiang <xiang@kernel.org>, Chao Yu <chao@kernel.org>,
+ Yue Hu <zbestahu@gmail.com>, Jeffle Xu <jefflexu@linux.alibaba.com>,
+ Sandeep Dhavale <dhavale@google.com>, Carlos Maiolino <cem@kernel.org>,
+ "Darrick J. Wong" <djwong@kernel.org>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Jesper Dangaard Brouer <hawk@kernel.org>,
+ Ilias Apalodimas <ilias.apalodimas@linaro.org>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Simon Horman <horms@kernel.org>, Trond Myklebust <trondmy@kernel.org>,
+ Anna Schumaker <anna@kernel.org>, Chuck Lever <chuck.lever@oracle.com>,
+ Jeff Layton <jlayton@kernel.org>, Olga Kornievskaia <okorniev@redhat.com>,
+ Dai Ngo <Dai.Ngo@oracle.com>, Tom Talpey <tom@talpey.com>,
+ Luiz Capitulino <luizcap@redhat.com>,
+ Mel Gorman <mgorman@techsingularity.net>, Dave Chinner
+ <david@fromorbit.com>, kvm@vger.kernel.org, virtualization@lists.linux.dev,
+ linux-kernel@vger.kernel.org, linux-btrfs@vger.kernel.org,
+ linux-erofs@lists.ozlabs.org, linux-xfs@vger.kernel.org, linux-mm@kvack.org,
+ netdev@vger.kernel.org, linux-nfs@vger.kernel.org
+References: <> <180818a1-b906-4a0b-89d3-34cb71cc26c9@huawei.com>
+ <174138137096.33508.11446632870562394754@noble.neil.brown.name>
+Content-Language: en-US
+From: Yunsheng Lin <yunshenglin0825@gmail.com>
+In-Reply-To: <174138137096.33508.11446632870562394754@noble.neil.brown.name>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-From: "J. Neuschäfer" <j.ne@posteo.net>
+On 3/8/2025 5:02 AM, NeilBrown wrote:
 
-The Ugoos AM3 is a small set-top box based on the Amlogic S912 SoC,
-with a board design that is very close to the Q20x development boards.
-The MMC max-frequency properties are copied from the downstream device
-tree.
+...
 
-  https://ugoos.com/ugoos-am3-16g
+>>
+>>>    allocated pages in the array - just like the current
+>>>    alloc_pages_bulk().
+>>
+>> I guess 'the total number of allocated pages in the array ' include
+>> the pages which are already in the array before calling the above
+>> API?
+> 
+> Yes - just what the current function does.
+> Though I don't know that we really need that detail.
+> I think there are three interesting return values:
+> 
+> - hard failure - don't bother trying again soon:   maybe -ENOMEM
+> - success - all pages are allocated:  maybe 0 (or 1?)
+> - partial success - at least one page allocated, ok to try again
+>    immediately - maybe -EAGAIN (or 0).
 
-The following functionality has been tested and is known to work:
- - debug serial port
- - "update" button inside the case
- - USB host mode, on all three ports
- - HDMI video/audio output
- - eMMC, MicroSD, and SDIO WLAN
- - S/PDIF audio output
- - Ethernet
- - Infrared remote control input
+Yes, the above makes sense. And I guess returning '-ENOMEM' & '0' &
+'-EAGAIN' seems like a more explicit value.
 
-The following functionality doesn't seem to work:
- - USB role switching and device mode on the "OTG" port
- - case LED
+> 
+>>
 
-Signed-off-by: J. Neuschäfer <j.ne@posteo.net>
----
- arch/arm64/boot/dts/amlogic/Makefile               |  1 +
- .../arm64/boot/dts/amlogic/meson-gx-p23x-q20x.dtsi |  2 +-
- .../arm64/boot/dts/amlogic/meson-gxm-ugoos-am3.dts | 95 ++++++++++++++++++++++
- 3 files changed, 97 insertions(+), 1 deletion(-)
+...
 
-diff --git a/arch/arm64/boot/dts/amlogic/Makefile b/arch/arm64/boot/dts/amlogic/Makefile
-index 2fbda8419c65a3056410ac45ca3ddaceb69ea4f5..bf2bc14528bfa27e8d6ae2730085fc356d6c6dd8 100644
---- a/arch/arm64/boot/dts/amlogic/Makefile
-+++ b/arch/arm64/boot/dts/amlogic/Makefile
-@@ -76,6 +76,7 @@ dtb-$(CONFIG_ARCH_MESON) += meson-gxm-q200.dtb
- dtb-$(CONFIG_ARCH_MESON) += meson-gxm-q201.dtb
- dtb-$(CONFIG_ARCH_MESON) += meson-gxm-rbox-pro.dtb
- dtb-$(CONFIG_ARCH_MESON) += meson-gxm-s912-libretech-pc.dtb
-+dtb-$(CONFIG_ARCH_MESON) += meson-gxm-ugoos-am3.dtb
- dtb-$(CONFIG_ARCH_MESON) += meson-gxm-vega-s96.dtb
- dtb-$(CONFIG_ARCH_MESON) += meson-gxm-wetek-core2.dtb
- dtb-$(CONFIG_ARCH_MESON) += meson-s4-s805x2-aq222.dtb
-diff --git a/arch/arm64/boot/dts/amlogic/meson-gx-p23x-q20x.dtsi b/arch/arm64/boot/dts/amlogic/meson-gx-p23x-q20x.dtsi
-index 45ccddd1aaf0546632c81a52c8917a923beae883..4223b26f7d0f3aa47e42e9434d24f73b20441981 100644
---- a/arch/arm64/boot/dts/amlogic/meson-gx-p23x-q20x.dtsi
-+++ b/arch/arm64/boot/dts/amlogic/meson-gx-p23x-q20x.dtsi
-@@ -97,7 +97,7 @@ sdio_pwrseq: sdio-pwrseq {
- 		clock-names = "ext_clock";
- 	};
- 
--	cvbs-connector {
-+	cvbs_connector: cvbs-connector {
- 		compatible = "composite-video-connector";
- 
- 		port {
-diff --git a/arch/arm64/boot/dts/amlogic/meson-gxm-ugoos-am3.dts b/arch/arm64/boot/dts/amlogic/meson-gxm-ugoos-am3.dts
-new file mode 100644
-index 0000000000000000000000000000000000000000..c413736f4096df8727311844de352debd89cdfb9
---- /dev/null
-+++ b/arch/arm64/boot/dts/amlogic/meson-gxm-ugoos-am3.dts
-@@ -0,0 +1,95 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (C) 2025 J. Neuschäfer <j.ne@posteo.net>
-+ *
-+ * Debug UART (3.3V, 115200 baud) at the corner of the board:
-+ *   (4) (3) (2) [1]
-+ *   Vcc RXD TXD GND
-+ */
-+
-+/dts-v1/;
-+
-+#include <dt-bindings/input/input.h>
-+#include <dt-bindings/interrupt-controller/amlogic,meson-g12a-gpio-intc.h>
-+
-+#include "meson-gxm.dtsi"
-+#include "meson-gx-p23x-q20x.dtsi"
-+
-+/ {
-+	compatible = "ugoos,am3", "amlogic,s912", "amlogic,meson-gxm";
-+	model = "Ugoos AM3";
-+
-+	adc-keys {
-+		compatible = "adc-keys";
-+		io-channels = <&saradc 0>;
-+		io-channel-names = "buttons";
-+		keyup-threshold-microvolt = <1710000>;
-+
-+		button-function {
-+			label = "Update";
-+			linux,code = <KEY_VENDOR>;
-+			press-threshold-microvolt = <10000>;
-+		};
-+	};
-+};
-+
-+&cvbs_connector {
-+	/* Not used on this board */
-+	status = "disabled";
-+};
-+
-+&ethmac {
-+	pinctrl-0 = <&eth_pins>;
-+	pinctrl-names = "default";
-+
-+	/* Select external PHY by default */
-+	phy-handle = <&external_phy>;
-+
-+	amlogic,tx-delay-ns = <2>;
-+
-+	/* External PHY is in RGMII */
-+	phy-mode = "rgmii";
-+
-+	status = "okay";
-+};
-+
-+&external_mdio {
-+	external_phy: ethernet-phy@0 {
-+		/* Realtek RTL8211F (0x001cc916) */
-+		reg = <0>;
-+
-+		reset-assert-us = <10000>;
-+		reset-deassert-us = <80000>;
-+		reset-gpios = <&gpio GPIOZ_14 GPIO_ACTIVE_LOW>;
-+
-+		interrupt-parent = <&gpio_intc>;
-+		/* MAC_INTR on GPIOZ_15 */
-+		interrupts = <25 IRQ_TYPE_LEVEL_LOW>;
-+	};
-+};
-+
-+&i2c_B {
-+	status = "okay";
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&i2c_b_pins>;
-+
-+	rtc: rtc@51 {
-+		compatible = "haoyu,hym8563";
-+		reg = <0x51>;
-+		#clock-cells = <0>;
-+	};
-+};
-+
-+/* WLAN: Atheros 10k (QCA9377) */
-+&sd_emmc_a {
-+	max-frequency = <200000000>;
-+};
-+
-+&sdio_pwrseq {
-+	reset-gpios = <&gpio GPIOX_6 GPIO_ACTIVE_HIGH>;
-+};
-+
-+/* eMMC */
-+&sd_emmc_c {
-+	max-frequency = <100000000>;
-+};
+>>
+> 
+> If I were do work on this (and I'm not, so you don't have to follow my
+> ideas) I would separate the bulk_alloc into several inline functions and
+> combine them into the different interfaces that you want.  This will
+> result in duplicated object code without duplicated source code.  The
+> object code should be optimal.
 
--- 
-2.48.0.rc1.219.gb6b6757d772
+Thanks for the detailed suggestion, it seems feasible.
+If the 'add to a linked list' dispose was not removed in the [1],
+I guess it is worth trying.
+But I am not sure if it is still worth it at the cost of the above
+mentioned 'duplicated object code' considering the array defragmenting
+seem to be able to unify the dispose of 'add to end of array' and
+'add to next hole in array'.
 
+I guess I can try with the easier one using array defragmenting first,
+and try below if there is more complicated use case.
+
+1. 
+https://lore.kernel.org/all/f1c75db91d08cafd211eca6a3b199b629d4ffe16.1734991165.git.luizcap@redhat.com/
+
+> 
+> The parts of the function are:
+>   - validity checks - fallback to single page allocation
+>   - select zone - fallback to single page allocation
+>   - allocate multiple pages in the zone and dispose of them
+>   - allocate a single page
+> 
+> The "dispose of them" is one of
+>    - add to a linked list
+>    - add to end of array
+>    - add to next hole in array
+> 
+> These three could be inline functions that the "allocate multiple pages"
+> and "allocate single page" functions call.  We can pass these as
+> function arguments and the compile will inline them.
+> I imagine these little function would take one page and return
+> a bool indicating if any more are wanted.
+> 
+> The three functions: alloc_bulk_array alloc_bulk_list
+> alloc_bulk_refill_array would each look like:
+> 
+>    validity checks: do we need to allocate anything?
+> 
+>    if want more than one page &&
+>       am allowed to do mulipage (e.g. not __GFP_ACCOUNT) &&
+>       zone = choose_zone() {
+>          alloc_multi_from_zone(zone, dispose_function)
+>    }
+>    if nothing allocated
+>       alloc_single_page(dispose_function)
+> 
+> Each would have a different dispose_function and the initial checks
+> would be quite different, as would the return value.
+> 
+> Thanks for working on this.
+> 
+> NeilBrown
+> 
 
 
