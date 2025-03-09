@@ -1,113 +1,179 @@
-Return-Path: <linux-kernel+bounces-552879-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-552880-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 80212A5805D
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 03:51:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 47749A58060
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 03:52:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 23214188C1BD
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 02:51:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BED10188C0E7
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 02:52:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2B3835972;
-	Sun,  9 Mar 2025 02:51:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Nignk+6X"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30C703F9D5;
+	Sun,  9 Mar 2025 02:52:41 +0000 (UTC)
+Received: from mail-il1-f207.google.com (mail-il1-f207.google.com [209.85.166.207])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B82A514A85;
-	Sun,  9 Mar 2025 02:51:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 396392557A
+	for <linux-kernel@vger.kernel.org>; Sun,  9 Mar 2025 02:52:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.207
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741488691; cv=none; b=dbMfTPvf8/r+6zJve6ujcRqlitmiW85TpPe2qUZUQgvTDhxbAY+Nc9TnUUCIMiKP0KhL+gyb5Wgub7G5o6sKKieeCP86Cm3D0gzIcP69ztP3R+1qgbyM5qnfrXYkgXZKTA1DP7ISA72Sus4U3K8mtX1nGgbquGDfcTk3IvuMj+c=
+	t=1741488760; cv=none; b=JmYgjASWcDip/gz/riW+6tNcXyFXJ64/4oKROHxXnYUeA2wtcHn7QCD/5kPZguQbRI4T7lagVcyZsuI0fHzpKnvnUu8DW4gxijkh+Sl3bJQBO9JKGTPZxPkIXJ5ShqKg4k2OiM8fTzEFliseU4OAeCKYS4geLZulqAf7UvcAhdg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741488691; c=relaxed/simple;
-	bh=+AxKQzQOhFvyAjlz5Ur/xA8zBv34fgRsUJBCR73dObM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uOuagLYWuhf/khAdmwXgRHF5w3W6ND0WL+69prAKh97Twbf2J+27fQilaNs7wmYZc0wLIO6xkyQ4fX/aZhItmWZ+4EILg7CosKSoXJ/UF644H1OvlfvqY7pE0+jTpsTup6EoJ4nSv61WH922DaJ8skj9Gl1QeMZYpe1v4CpRjkI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Nignk+6X; arc=none smtp.client-ip=192.198.163.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1741488690; x=1773024690;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=+AxKQzQOhFvyAjlz5Ur/xA8zBv34fgRsUJBCR73dObM=;
-  b=Nignk+6X5m/DDD0/excdVZGpeQaQCZfAVdLlljII+ypjmL25SyV08sVX
-   2Fiqz5fHPTgqq4VtIajNbKlHUQzyI/ncDozDLm9xMeCmfM6UJsDXk7xzE
-   2dE6HDte/5dNGFLuKd6Torls2LxTUCjmGbqS7EgIvUhu53bQafDeaKqDy
-   l5wGVU9B7ZfXB3g+aRSsgEoJkDTSW3ZKFvOhmqZyCGMG9VhZzLqmyi8Nk
-   G0YH0wKToQ641ExRmFrhv1xsCs0JM9dlnTewEB1ODArlfFJTqgq+iFKOG
-   jI+o8HCyb36upvW6plqZqWR71/PRKG9pyVXcHQ9fECWeRW0oiTG6msT8I
-   A==;
-X-CSE-ConnectionGUID: 0SYZgyh+QmC9wMqMn5LRbA==
-X-CSE-MsgGUID: k4cFiNEfTTCxZDKJBv/D9Q==
-X-IronPort-AV: E=McAfee;i="6700,10204,11367"; a="41666197"
-X-IronPort-AV: E=Sophos;i="6.14,233,1736841600"; 
-   d="scan'208";a="41666197"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Mar 2025 18:51:29 -0800
-X-CSE-ConnectionGUID: HiQhBS2oTKiKQ/8IseH6xA==
-X-CSE-MsgGUID: E3Auo7O4QWawkzLNtPKfXQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,233,1736841600"; 
-   d="scan'208";a="119670936"
-Received: from lkp-server02.sh.intel.com (HELO a4747d147074) ([10.239.97.151])
-  by fmviesa007.fm.intel.com with ESMTP; 08 Mar 2025 18:51:26 -0800
-Received: from kbuild by a4747d147074 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tr6lA-0002aG-0r;
-	Sun, 09 Mar 2025 02:51:24 +0000
-Date: Sun, 9 Mar 2025 10:50:43 +0800
-From: kernel test robot <lkp@intel.com>
-To: Stanislav Fomichev <sdf@fomichev.me>, netdev@vger.kernel.org
-Cc: oe-kbuild-all@lists.linux.dev, davem@davemloft.net, edumazet@google.com,
-	kuba@kernel.org, pabeni@redhat.com, linux-kernel@vger.kernel.org,
-	michael.chan@broadcom.com, pavan.chebbi@broadcom.com,
-	andrew+netdev@lunn.ch, sdf@fomichev.me
-Subject: Re: [PATCH net-next 1/3] eth: bnxt: switch to netif_close
-Message-ID: <202503091014.T0oUWfdo-lkp@intel.com>
-References: <20250308010840.910382-1-sdf@fomichev.me>
+	s=arc-20240116; t=1741488760; c=relaxed/simple;
+	bh=IAF6tIlCZ771DQ7D/fW4IofhwRm1wGqrFwMlnS/Mw5w=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=dDIf8X31IxW3xnS6o5nWMEUB6vBBESCoqOYwBCIMpEX/2tQ0kseG1GN/toagvbabb2jHE6RNiiCjqvjSUvsFkmSOGWp0YLjGPhWSiq16IR4nPudSVg+6TB6TOZOMjI8QEU5NfsVODOpeKNmDQwBTyzbJ1ArHLh98fbIGj4aDarc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.207
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f207.google.com with SMTP id e9e14a558f8ab-3d05b1ae6e3so28672235ab.0
+        for <linux-kernel@vger.kernel.org>; Sat, 08 Mar 2025 18:52:38 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741488758; x=1742093558;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=LoNwlPHGgWrJYVppCXZabpLb34WQ3gVLmP7cpmCDknI=;
+        b=ma+TGPGMwEDJEoV6Qofy2zmzZ2YHv1PYn/zWWGalqnlQyoS7yXvFcxDMVhNvWKXADI
+         a47VPpGDrGTyhrheFMlPXlHh0dpOaFICQN2HYIyJzm+wudbM1RzYKLwqaXV1FpXzkmdH
+         2QLC2WRf9jto1fGDiFCLtgpyh2P887PsoAbkb0eQ9aW/ZT2+I40TVAcXb40U2NicgswK
+         k9bCdWKxZoYDz7lA80JArFYWePkgBOzk2VxUJOfdOVxRGZdoCeRy7d1SJfuGjChkcO2G
+         Pw2oT/KB5eqiLVRmIqUSZMH3bHjATpHoj6wObOeBcRDdITjf6uFt/p341C7KX7A8+kmr
+         /C8A==
+X-Forwarded-Encrypted: i=1; AJvYcCVo1vbPwHYD0nIaPcVTLJVUR+FR7KWGDVzto/C5GSR1varLNSU9Sja+LAxYLIh49dlUrVlPiLL3+Dbd5Jg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyn6BaCO8l9ZDpZV7CB1kpbIKItoE3MD7x7Mx+er7Bi5ARpcp4b
+	bleerYA9JBPgqyPG3T1gdNgUAaq13br+EK84OmBwUMjveBwE1edVvdvUJP6SAAt8oYJvrktERCX
+	O2aXpy2rijen88r5jfTzwLBHtkaEQn51KJwnF8tQ7EPay22OseYfqb3U=
+X-Google-Smtp-Source: AGHT+IFr9O8/YhatesoKbYIzMB5FoK9myw8WHXXuTPRkLDN4JKxY6KI/JsGeB9U353W2PzTRCca6QV81t/45BQoYLxUpP90o/vRD
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250308010840.910382-1-sdf@fomichev.me>
+X-Received: by 2002:a05:6e02:174b:b0:3d4:4134:521a with SMTP id
+ e9e14a558f8ab-3d441990392mr118888325ab.12.1741488758297; Sat, 08 Mar 2025
+ 18:52:38 -0800 (PST)
+Date: Sat, 08 Mar 2025 18:52:38 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <67cd0276.050a0220.14db68.006c.GAE@google.com>
+Subject: [syzbot] [efi?] [fs?] possible deadlock in efivarfs_actor
+From: syzbot <syzbot+019072ad24ab1d948228@syzkaller.appspotmail.com>
+To: ardb@kernel.org, jk@ozlabs.org, linux-efi@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Stanislav,
+Hello,
 
-kernel test robot noticed the following build errors:
+syzbot found the following issue on:
 
-[auto build test ERROR on net-next/main]
+HEAD commit:    e056da87c780 Merge remote-tracking branch 'will/for-next/p..
+git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-kernelci
+console output: https://syzkaller.appspot.com/x/log.txt?x=14ce9c64580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=d6b7e15dc5b5e776
+dashboard link: https://syzkaller.appspot.com/bug?extid=019072ad24ab1d948228
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+userspace arch: arm64
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=111ed7a0580000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=13b97c64580000
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Stanislav-Fomichev/eth-bnxt-request-unconditional-ops-lock/20250308-091318
-base:   net-next/main
-patch link:    https://lore.kernel.org/r/20250308010840.910382-1-sdf%40fomichev.me
-patch subject: [PATCH net-next 1/3] eth: bnxt: switch to netif_close
-config: arm-randconfig-004-20250309 (https://download.01.org/0day-ci/archive/20250309/202503091014.T0oUWfdo-lkp@intel.com/config)
-compiler: arm-linux-gnueabi-gcc (GCC) 14.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250309/202503091014.T0oUWfdo-lkp@intel.com/reproduce)
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/3d8b1b7cc4c0/disk-e056da87.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/b84c04cff235/vmlinux-e056da87.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/2ae4d0525881/Image-e056da87.gz.xz
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202503091014.T0oUWfdo-lkp@intel.com/
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+019072ad24ab1d948228@syzkaller.appspotmail.com
 
-All errors (new ones prefixed by >>, old ones prefixed by <<):
+efivarfs: resyncing variable state
+============================================
+WARNING: possible recursive locking detected
+6.14.0-rc4-syzkaller-ge056da87c780 #0 Not tainted
+--------------------------------------------
+syz-executor772/6443 is trying to acquire lock:
+ffff0000c6826558 (&sb->s_type->i_mutex_key#16){++++}-{4:4}, at: inode_lock include/linux/fs.h:877 [inline]
+ffff0000c6826558 (&sb->s_type->i_mutex_key#16){++++}-{4:4}, at: efivarfs_actor+0x1b8/0x2b8 fs/efivarfs/super.c:422
 
-WARNING: modpost: missing MODULE_DESCRIPTION() in arch/arm/probes/kprobes/test-kprobes.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in mm/kasan/kasan_test.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in lib/slub_kunit.o
->> ERROR: modpost: "netif_close" [drivers/net/ethernet/broadcom/bnxt/bnxt_en.ko] undefined!
+but task is already holding lock:
+ffff0000c6c7a558 (&sb->s_type->i_mutex_key#16){++++}-{4:4}, at: iterate_dir+0x3b4/0x5f4 fs/readdir.c:101
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+other info that might help us debug this:
+ Possible unsafe locking scenario:
+
+       CPU0
+       ----
+  lock(&sb->s_type->i_mutex_key#16);
+  lock(&sb->s_type->i_mutex_key#16);
+
+ *** DEADLOCK ***
+
+ May be due to missing lock nesting notation
+
+3 locks held by syz-executor772/6443:
+ #0: ffff80008fc57208 (system_transition_mutex){+.+.}-{4:4}, at: lock_system_sleep+0x68/0xc0 kernel/power/main.c:56
+ #1: ffff80008fc75d70 ((pm_chain_head).rwsem){++++}-{4:4}, at: blocking_notifier_call_chain+0x58/0xa0 kernel/notifier.c:379
+ #2: ffff0000c6c7a558 (&sb->s_type->i_mutex_key#16){++++}-{4:4}, at: iterate_dir+0x3b4/0x5f4 fs/readdir.c:101
+
+stack backtrace:
+CPU: 0 UID: 0 PID: 6443 Comm: syz-executor772 Not tainted 6.14.0-rc4-syzkaller-ge056da87c780 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 12/27/2024
+Call trace:
+ show_stack+0x2c/0x3c arch/arm64/kernel/stacktrace.c:466 (C)
+ __dump_stack lib/dump_stack.c:94 [inline]
+ dump_stack_lvl+0xe4/0x150 lib/dump_stack.c:120
+ dump_stack+0x1c/0x28 lib/dump_stack.c:129
+ print_deadlock_bug+0x4e8/0x668 kernel/locking/lockdep.c:3039
+ check_deadlock kernel/locking/lockdep.c:3091 [inline]
+ validate_chain kernel/locking/lockdep.c:3893 [inline]
+ __lock_acquire+0x6240/0x7904 kernel/locking/lockdep.c:5228
+ lock_acquire+0x23c/0x724 kernel/locking/lockdep.c:5851
+ down_write+0x50/0xc0 kernel/locking/rwsem.c:1577
+ inode_lock include/linux/fs.h:877 [inline]
+ efivarfs_actor+0x1b8/0x2b8 fs/efivarfs/super.c:422
+ dir_emit include/linux/fs.h:3849 [inline]
+ dcache_readdir+0x2dc/0x4e8 fs/libfs.c:209
+ iterate_dir+0x46c/0x5f4 fs/readdir.c:108
+ efivarfs_pm_notify+0x2f4/0x350 fs/efivarfs/super.c:517
+ notifier_call_chain+0x1c4/0x550 kernel/notifier.c:85
+ blocking_notifier_call_chain+0x70/0xa0 kernel/notifier.c:380
+ pm_notifier_call_chain+0x2c/0x3c kernel/power/main.c:109
+ snapshot_release+0x128/0x1b8 kernel/power/user.c:125
+ __fput+0x340/0x760 fs/file_table.c:464
+ ____fput+0x20/0x30 fs/file_table.c:492
+ task_work_run+0x230/0x2e0 kernel/task_work.c:227
+ resume_user_mode_work include/linux/resume_user_mode.h:50 [inline]
+ do_notify_resume+0x178/0x1f4 arch/arm64/kernel/entry-common.c:151
+ exit_to_user_mode_prepare arch/arm64/kernel/entry-common.c:169 [inline]
+ exit_to_user_mode arch/arm64/kernel/entry-common.c:178 [inline]
+ el0_svc+0xac/0x168 arch/arm64/kernel/entry-common.c:745
+ el0t_64_sync_handler+0x84/0x108 arch/arm64/kernel/entry-common.c:762
+ el0t_64_sync+0x198/0x19c arch/arm64/kernel/entry.S:600
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
