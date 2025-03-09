@@ -1,115 +1,159 @@
-Return-Path: <linux-kernel+bounces-552872-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-552873-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48B2FA5803C
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 02:28:04 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 111CEA58041
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 02:46:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 75EE216A928
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 01:28:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6A8D3188CDAA
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 01:46:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1021917BA5;
-	Sun,  9 Mar 2025 01:27:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 071ED17BA3;
+	Sun,  9 Mar 2025 01:46:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ethancedwards.com header.i=@ethancedwards.com header.b="yPNZGgS2"
-Received: from mout-p-103.mailbox.org (mout-p-103.mailbox.org [80.241.56.161])
+	dkim=pass (2048-bit key) header.d=gmx.de header.i=deller@gmx.de header.b="dRhEpMvz"
+Received: from mout.gmx.net (mout.gmx.net [212.227.17.22])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A9789460;
-	Sun,  9 Mar 2025 01:27:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.161
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C61B12576;
+	Sun,  9 Mar 2025 01:46:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.22
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741483678; cv=none; b=kAOK8rktVTeHVyQc03kdn8RbN8qE/O4FF8Zi49kUowcPDnbk0AwHDd4QLq+sZmtVFay7M+huMyaep8Qzi6aELF/lL7tvdm1m/F8MawRBjJkjfdbPwEslvK+3j6qWch0S+4NNJxDyHHY/tsNRpmR30sudJLCVvI3vhjuXsKSejRE=
+	t=1741484789; cv=none; b=F46JKZ2V2sKVvG+Hu7or+SBagN2uJPTjMussyawqNmoY0ETOm7hxxYmV0/xdOCJiC1ZVetrLded/R8VIfur72JFqf2U3xR/jpPb4yFAdUYaBdKeS82hGuNMGSAJMOB0RkXquuMb5rFOSj/MScBYUXp5ZfFiGyJgDyFZfh4SOKg4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741483678; c=relaxed/simple;
-	bh=xJPFbbCqg6D1eGooecE45eWO6eo2FRhq7cqhpX/lTuc=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=owcoF3zNbbulzWIK3JbH6Qj9/4aRCMU3A/BMz4/p8p6aWRU9XsRPP+4czWNzpu9DmiQ89VvG8JB/5W9SiX5+mA6O1i4V+3fqKjOU6WpUusgi4t8DsICdi9xkPlUZAO52Rkr6zZjzVjq6jQxNftoVEexueBRvffhMJnh7JIxXjy8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ethancedwards.com; spf=pass smtp.mailfrom=ethancedwards.com; dkim=pass (2048-bit key) header.d=ethancedwards.com header.i=@ethancedwards.com header.b=yPNZGgS2; arc=none smtp.client-ip=80.241.56.161
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ethancedwards.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ethancedwards.com
-Received: from smtp2.mailbox.org (smtp2.mailbox.org [IPv6:2001:67c:2050:b231:465::2])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-103.mailbox.org (Postfix) with ESMTPS id 4Z9MpT5LQ6z9sTd;
-	Sun,  9 Mar 2025 02:27:45 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ethancedwards.com;
-	s=MBO0001; t=1741483666;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=tuC52dWg8Ua+xArW/iLzWfqJB+lNGdXuO8bhICk80qY=;
-	b=yPNZGgS2P5Xhj0FZuR4IlwaaqI0vgSIw1KOnJx9YPo2OpM0jtus0XMuoK5e+vFbkeqYCNy
-	HXWfI0cqPhV1rEfb8zhCEyye2+df8V8c4DF24QGgufrGl1jxnyl9zOdO5rBrfWl1DWCRyM
-	oo6+aef6h8pB9kCkc5viO/c1C2fsTPtSJqE4//im+/evGsgRNMFWiBbtshD5cUfM/A9Vrs
-	eWRIAGSxt00ML7+27GPZnHDSQXZCDmq5orb57AtNUC6MRlohBf/bPdW4HE7vdaBSrVVCVk
-	J5Fz9+3yU3Ok5DxcCZ8/VkpbhpnjnOdairkKMzbE8Pr/HMa8Gf+nYfIM4dXVbQ==
-From: Ethan Carter Edwards <ethan@ethancedwards.com>
-Date: Sat, 08 Mar 2025 20:27:41 -0500
-Subject: [PATCH] efi: efibc: change kmalloc(size * count, ...) to
- kmalloc_array()
+	s=arc-20240116; t=1741484789; c=relaxed/simple;
+	bh=aouRbGl0zSLELc20htXPyiyjCbX/yEA98X/jslNS13E=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Uoec08SZYe0bIDilXSl33yIE+C99oIeBHPd1lfVa6x1JP11L8QZ+RsEQViip1sZppwmY9jlltSuyg3EwZ8lyP04pW3z70D+a78UCAOYoJFsFDCID6gAuHcf9d1PoShA74GBPLfn7tNsodCMiKorBzttbflYkm897mY23MnEP3Zc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=deller@gmx.de header.b=dRhEpMvz; arc=none smtp.client-ip=212.227.17.22
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
+	s=s31663417; t=1741484773; x=1742089573; i=deller@gmx.de;
+	bh=BI+qFGKtyIKj2XHGpJ0zmu5JOmyf8lpR4zpYb1MG7yg=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=dRhEpMvzlsvN8EUdWNfoQ8UEpjcOZnJvJHNHTL+6nmH5Ihly02u5rC9A+3Y1JoVU
+	 ko5vSQGkS8lUIld84nj2iG9Mo0wkTMGfRIJ9793c3KPYDzB/IKnUi5D1M/HAolFUJ
+	 B/ipQAA6Ev83f2LHAiD+p+6xN/FO1CRmj2L5FwEfv/FTget9PdGWy7GGqkIqZRy45
+	 mHZuCoj2NgvEinERKiOK39fjr4+jgnMOkHdiswLhix8ddI9IM+6bBTEwwZtSNfgyv
+	 AMyTt8CG2dEWjDoyaDzhLMAVWqOlRxXEMerS0LvjYaUqeDLEPmN97xGB0vAw4n8ua
+	 mX19BOk+rUuwIU3v4Q==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from [192.168.20.173] ([109.250.63.121]) by mail.gmx.net (mrgmx104
+ [212.227.17.168]) with ESMTPSA (Nemesis) id 1Mt79F-1syAm40Tkn-00rplv; Sun, 09
+ Mar 2025 02:46:13 +0100
+Message-ID: <9fb4e2f9-fa28-4dc2-b4db-6f7594ddc5ae@gmx.de>
+Date: Sun, 9 Mar 2025 02:46:11 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250308-efibc-kmalloc_array-v1-1-7bfc4013986f@ethancedwards.com>
-X-B4-Tracking: v=1; b=H4sIAIzuzGcC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
- vPSU3UzU4B8JSMDI1MDYwML3dS0zKRk3ezcxJyc/OT4xKKixErdpERzCwNL80QDcwMLJaDOgiK
- gqgqwqdGxtbUAQ0c37GUAAAA=
-X-Change-ID: 20250308-efibc-kmalloc_array-ba78097a0708
-To: Ard Biesheuvel <ardb@kernel.org>
-Cc: linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-hardening@vger.kernel.org, 
- Ethan Carter Edwards <ethan@ethancedwards.com>
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1167;
- i=ethan@ethancedwards.com; h=from:subject:message-id;
- bh=xJPFbbCqg6D1eGooecE45eWO6eo2FRhq7cqhpX/lTuc=;
- b=LS0tLS1CRUdJTiBQR1AgTUVTU0FHRS0tLS0tCgpvd0o0bkp2QXk4ekFKWGJEOXFoNThlVGp6e
- GhQcXlVeHBKOTUxeXRlOWlmMVhiWFdsWTJicHo5ZVppYnFLS0oyCitBcWpqK0R0dE96Y3p5dldu
- WFB2S0dWaEVPTmlrQlZUWlBtZm81ejJVSE9Hd3M2L0xrMHdjMWlaUUlZd2NIRUsKd0VUVUZ6RXl
- yUGgvdzVOTDVMM3IyZnZobjdmRTdBOHB1YnJzNWk3UlY4OGkwM2RMbXljZWZzZndUMjBuMDZ4Zg
- oxcVlpOWJuM3ZxeWNWZUpmZTBrbWk2dE83cnJkeGNONzFxeXo1d0FBcE9wUkhBPT0KPXlLWGMKL
- S0tLS1FTkQgUEdQIE1FU1NBR0UtLS0tLQo=
-X-Developer-Key: i=ethan@ethancedwards.com; a=openpgp;
- fpr=2E51F61839D1FA947A7300C234C04305D581DBFE
-X-Rspamd-Queue-Id: 4Z9MpT5LQ6z9sTd
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/3] dummycon: only build module if there are users
+To: Arnd Bergmann <arnd@kernel.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Arnd Bergmann <arnd@arndb.de>, linux-fbdev@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+References: <20250225164436.56654-1-arnd@kernel.org>
+Content-Language: en-US
+From: Helge Deller <deller@gmx.de>
+Autocrypt: addr=deller@gmx.de; keydata=
+ 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
+In-Reply-To: <20250225164436.56654-1-arnd@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:9dglOuAzJm0drNeh5CbFS+IxFTXpgGKs+ST9+pGvu4P8N5rSbIK
+ ShIYORdShc1eOUg0QXHYFbvKLdcjfuwCP08TkHNSAK03dobC5314tPzVfk5zvaJaEO6G16P
+ yIgqGDwy9M+6A/On2rsMayV5Vl4oMr4CRUjE3Z2qWkJ6NOJWAfkz/blCjDuP3xJKddI7Lnk
+ vzLrN/ofLVXyjVQErO6cQ==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:Ez3AJunTXxk=;dELhG1u3d+RMqaGdFvO2I+oDRI0
+ vM9s3SEzGwd7rTgH5EWZaWWoHZpJiv0HbbKbtKj4DoYHm1kX4atZZizFT26+0YFHfJLLVt8pN
+ HIiTdu7LGQ0vrsmO0TITl7ZUUWsnpbSPPYUMqSNTr2AEgspO1fiQVRUxJqGziOqsHGS4EZB5j
+ kB0h/CsSOo8nWs2KgX0fUkA8Aj4r/UhPZPth4F2sgqR8cxFO6PqGH1bddcMxWWjFFSxsfzSWt
+ /cGqMHEkhGWOeKhexbBqsNZTTWJXLDnzgixci7SIU2rjHbWaeVjtMyBcma7wEbZeh7gX8yFzf
+ Dzm+6XJjHmrzUcOwoREkXIFJ0GThIAJJ9wsmC9FrGjyouc8TuKYPy9MmEDLB8njuAZLnYkx49
+ WkoaMyjincR6N2CwNcMhWxlvZM/HY/JiCskJm03onmDSXfMEIeStJcptDcP8hmUmqiRET4jhK
+ QrVwWBSioEUQp/4mR6UQozcVDG6b9zgaPOcIa2Ag9t0RKgGcfAlYHXKLj5ngSwOrGCHU54ARq
+ 6b8L4eriFWJibpMVWq8VcR6i+7S2BlNycScKng6A8mDZiZNxRrEutq+Ikt3/bR84AVLwR8vTi
+ e/e/ktWXgc253JaH1NkLbYWRELBp2lRFNHM7i+wHEWRntu2jemq/mZdF9DUEwSXgsrEQ+Rrjf
+ E5EG+nYME06vj8Hv/I6BTIWy4eb54qk++vVLXYyMatZq/Sau9icr6Eu6E0MFXUkvu3KsKCh18
+ 5dtuXIaG1RI1C+6v8SpTaoM+BQ0OCAPviDfmlx/YNhlvhRjQVLT40093b0AOwmnUbHiH/pmm7
+ IRYWCWlOjNVipxsQ+EYmSMFAojJePNIfDkyW9JFnAT4devi0+gf2YJ8JQ3slbn2DmobokWQ4H
+ 7QNIObPuRrF4E75mMIcVCTwfWTSRXmLA6K7imtFSq4ZN4AOtOmGW875/KKviBSg4fhBjCHDnt
+ Xt9CeYaepO4wugTbI2U5CM+yYhU3Os6Qzndtj7svpeVLwIWAWDgdMcj/QUXRkXOBgbZ5mq1nE
+ PX6J+8YYhSspEC2Xz3BKy3IPDE2zAZjSgvml4pAvGFqu+ypzjxB5hW8sm4OEriTk/1bag5+KY
+ x4yFfcbBKClgqxOrMVWBrEAopDPalt3hdT5risVv4RGpC4QGuEHbcE2Fs/q7S28CX1a5k0OkN
+ 2l/3Mp4ZAW054HQpAoI4AE4bp09aH+yTmsC1rHRHDnQgF0gRfj+6KOtkYGo6TC+qhyTPvaAX/
+ VfNpvIOJSddjPWjwVFgXgvNhammGMkw1HXq4VYY3aRKXoOZh/TFMiL2nO9wR/VTNCWix/GAGU
+ 15VR7biuSohCLvaPkhSg8hqGQ6kKp9s7OGvnkZJ/DGQHUQC+pt6GNA2sP0w7kWtIP8x2KBgNK
+ CV2PIjNxXphDq+X4RvtUwUfD+sfLD88hfIS2tiXcbH8N9nesqzw8IhRZdD
 
-Open coded arithmetic in allocator arguments is discouraged. Helper
-functions like kcalloc or, in this case, kmalloc_array are preferred.
+On 2/25/25 17:44, Arnd Bergmann wrote:
+> From: Arnd Bergmann <arnd@arndb.de>
+>
+> Dummycon is used as a fallback conswitchp for vgacon and fbcon
+> in the VT code, and there are no references to it if all three
+> are disabled, so just leave it out of the kernel image for
+> configurations without those.
+>
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> ---
+>   drivers/video/console/Kconfig | 3 +--
+>   1 file changed, 1 insertion(+), 2 deletions(-)
 
-Link: https://www.kernel.org/doc/html/latest/process/deprecated.html#open-coded-arithmetic-in-allocator-arguments
 
-Signed-off-by: Ethan Carter Edwards <ethan@ethancedwards.com>
----
- drivers/firmware/efi/efibc.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+whole series applied to fbdev git tree.
 
-diff --git a/drivers/firmware/efi/efibc.c b/drivers/firmware/efi/efibc.c
-index 4f9fb086eab7b0e22252d22e59e5aae55865322d..0a7c764dcc614fbba3cbcd94183dc07939837a03 100644
---- a/drivers/firmware/efi/efibc.c
-+++ b/drivers/firmware/efi/efibc.c
-@@ -47,7 +47,7 @@ static int efibc_reboot_notifier_call(struct notifier_block *notifier,
- 	if (ret || !data)
- 		return NOTIFY_DONE;
- 
--	wdata = kmalloc(MAX_DATA_LEN * sizeof(efi_char16_t), GFP_KERNEL);
-+	wdata = kmalloc_array(MAX_DATA_LEN, sizeof(efi_char16_t), GFP_KERNEL);
- 	if (!wdata)
- 		return NOTIFY_DONE;
- 
-
----
-base-commit: 0a2f889128969dab41861b6e40111aa03dc57014
-change-id: 20250308-efibc-kmalloc_array-ba78097a0708
-
-Best regards,
--- 
-Ethan Carter Edwards <ethan@ethancedwards.com>
-
+Thanks!
+Helge
 
