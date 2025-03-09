@@ -1,184 +1,134 @@
-Return-Path: <linux-kernel+bounces-553102-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-553103-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id F3913A583D4
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 12:40:34 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 86D39A583DA
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 12:46:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 68594189443F
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 11:40:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B5DD916B877
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 11:46:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FD061B415F;
-	Sun,  9 Mar 2025 11:40:29 +0000 (UTC)
-Received: from mail-il1-f207.google.com (mail-il1-f207.google.com [209.85.166.207])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D13021C82F4;
+	Sun,  9 Mar 2025 11:46:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kukRWH4K"
+Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F17B15A864
-	for <linux-kernel@vger.kernel.org>; Sun,  9 Mar 2025 11:40:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.207
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 468FD137E;
+	Sun,  9 Mar 2025 11:46:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741520428; cv=none; b=EUXJY2VEUo+ZNz/aDn7DkVFL8EOkZfMyFv8bBubWGzKRq5husMfpT1WfDZp8f8y9pm1g1287/VesXHqQDV2cO9eR+d24C+QMSVEajmryZdVP2S1VlBEq3z2TgOzM6cgSV6+8p7marOxqcZyL6r5U8pASbPmn7SQrCZO3NDxbSi8=
+	t=1741520786; cv=none; b=h6DpZSVWsrcYhm+qR1Kgwi4LjR7PRCD3dX9j9V8KzBwUWEdWmaQBLhqu6xBb+y6BT9kQn/LfHFQ/19ir50p7rutgtcTJMJfOsDnqJT5VHYvH1hcfC7Zz8lCwW3TWkCAZK+jekUoM8trbQZFFlMmYMnHIJqGz9NXnM1GjckLZ2jo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741520428; c=relaxed/simple;
-	bh=A7jmwshfHMtHvmApSaG25IVfOUzBcuAuyZmSDluHo48=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=guUIx8D5DTkBT2bLtNSvvN+TuZKJZFod5ddm310O4cXVMYDp2YtoOfifMmEbMi1WsJurSpYVewM9BLeMpoHNmNH5+NXDaH0fsPvZcezw42ddUEBN2yMTv7E8qZpa87r95JP/u/8g2vuDtsqg4fyuwFfa25Z97bQMRgwfMYJoTrk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.207
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f207.google.com with SMTP id e9e14a558f8ab-3d44b221f0dso31651755ab.1
-        for <linux-kernel@vger.kernel.org>; Sun, 09 Mar 2025 04:40:26 -0700 (PDT)
+	s=arc-20240116; t=1741520786; c=relaxed/simple;
+	bh=bSXg2zabw7qKisgsVgjD6bCGbNw/2WZDn8ufJFEDH14=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ijaO1+FKlFHvXHcuIoWGwaSUjejSOapWQDGzVL5RtfSGx0KQwkNDSmxAMh6aoAAPSMFA3tuBzD+jnEb4zLmKiaUDufA6LWg7fIGs9y93P5jwNu1ErCBFF07lVmJHvI+rTQJpmQYwO0m4QFrk2+IO2fsWqPkufcdn692JG31hIWg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kukRWH4K; arc=none smtp.client-ip=209.85.218.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-aaf900cc7fbso678014766b.3;
+        Sun, 09 Mar 2025 04:46:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741520782; x=1742125582; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=OCu0vN4H8XwwS+13HQgSYHgbkhWHfbQF4cgbHHPiSUw=;
+        b=kukRWH4KyzJD+fXLrWzXaXd2VSXRq9GVPDAtL9DxEbdqN10bMsDYhj0ufcNnDyjbmm
+         UiaMjC6t8OEEdB/j6wcVydjBk5QFARfsWBb3Ugpap3P/IG79galfFSanHa7jin1X9hQV
+         tGH5nJltMJkgcNGNZ6zM6C2Hlj0JoWJyj7W1h4cgr5XxnFGY89j2jW1iLFbmtAAXQCGx
+         cV8bDCdoJH7n2w57WGRBzvMVCovPk/cg/OBJlrtHIeI0hlNnpycmVvqJAxF9Z+st15GU
+         DbbvpT+0lOJQ5ziQTqwPdp5k8tgReP7blmhv0IECVEHNkQN5RTclLWspQHcr6m/QYhGH
+         DVqw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741520426; x=1742125226;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
+        d=1e100.net; s=20230601; t=1741520782; x=1742125582;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=p9PJXD/jSiwFyiuecIvnhM1qNW/tF7+/fyvR00xRfU0=;
-        b=I7N5chac2e3DZFFxxAA7YefDU/UrOsZIScMj6Q2rwj6yUuJW804kRJHqL3tyCzr5Ps
-         PgTlO+syZEybY2gB9GE3bxGx6waPpCKcTevYedNQQziK+JgtffdfTzA9phFrjZiY35MF
-         pxCqFqqOsBiWciMrXCLGPkkIREvkegh8o0TM/b5SZd79nX2O8GBVBheecSb1vxxhsqnO
-         OXBJbwN4BUbXzh9/Nberdp5r9S1qGX1QG89cdiB8aYQ6hx2qwVaDKrehOM3oacYX2aG8
-         x1Ev7dvYdc9H8nS7vNOXLvvKR7oxahrx2UGUwHbB1dMZQkgoRjlbmFy9M4rLGMAr+6hq
-         rS/A==
-X-Forwarded-Encrypted: i=1; AJvYcCV7jeDaWbM7stntaFROImF71a+d3ydruba+wOuSMdp0SJcFcv3wi8FvA3eCNviMFTihGrCcvANIXxDEIxE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx9yPqedW4NMT/XfC4HKkTmvzlIjX6sh5Pof0cHYOZa7ASN8yNU
-	S6WoWai1BIsdGFVyt5/087mgjYYvzL1oWCf0SVRQTCjRmWoMsvAddeu741UExtXzRywqc/UMiE6
-	nN9ej1E1cKjKSiwlEGLXIFBKjFBqsT3njeZL5T41Xp+u7pH2UJvzBo2g=
-X-Google-Smtp-Source: AGHT+IErptT0tInK262zP60/UqsMh6kXrpP3aaCRPMgoIPi1iPw09F23416AriWDQdT2Iz6XIGCs2mgG3fb80/3Zuwfh7m6Xy5CY
+        bh=OCu0vN4H8XwwS+13HQgSYHgbkhWHfbQF4cgbHHPiSUw=;
+        b=GOU6t1+Dc13+y5ydrY1hKqiW5WDN7PWaWbS8Mnc5aDQ9v8n1PhleaJIcIw7VGiQ/ho
+         UVEYPy0Ulj627EDd4e6SuHJNGDlZlTE5JxKaoz4YVJutUgdZXt50dU+MugaRgbloPrkv
+         xRc6OVckUdduitQWtRMeK7lh7ys5JQUUMPcwWt8mSqxtjRJy1t7oqucQO8ZwW2mHS8rK
+         Ftm4QvhZUK7oymWyGPToAL+BeW9M6IcOkj70dMCG9ICAM923HD3sr8rGgThVxM4lJ122
+         MPsfBDQ5VXVjhqtPQ/ZsV44kC8WDCATbmxOxzYV5Wsv/rp0womQ6cEn9bZTS8/V1On10
+         nZJw==
+X-Forwarded-Encrypted: i=1; AJvYcCWS8xO9aVQ95zP3afwOZ7kDQlZ5d+plCd5Rf/VFbfl03FVL+Qc8O77sJiZRl4H1yYusgO4+/ltmxC2Ezw==@vger.kernel.org, AJvYcCXMWzDxj2CNZG+nraP4yezf7QtSlvOC8XdHg1We0nntR6nY8A4cQi+09jqHTOAzk1OAeqJ71yuuxBnUIyg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxSohCrImdlDPLRdhR7TbtnHrLMOp7/vpMJHM6uw/bgjhslJLcN
+	xsMdbeygDiRyKn65wP8WiWnFWKUsdcEKgYlg6bZr66OWyrub+mAb
+X-Gm-Gg: ASbGnctKOgE8gP5xalYcuBGK0uot119Y44rB5GF/Pi89E9c9TN8RyfFZUAAkG1ZCMML
+	QVsmcNrBrrEbfICr2aTzkyT9P87CylQ8Aw9ifG0xreLEFyPvBoJO9/ok2wKTNo32ee9KJERraTH
+	n4rufX8jrYoBtXKSc8cAvuHlHC9PM/cdrBL6trX9+pau+/aHeGMrPLYQv2P9HbAoOKl24ddL61+
+	ZuJ5j16Fe/0hEAMcKaHz4HSqI84L/XdlXjY2SZEngS5Im5F2p8mjEt/Bn0mAOeiKF1nQHZQRQ2g
+	fwnd2PET7awYGJERN0OoVGgyevqJNR+0ylC4Xw8U2g7GgEqoLRn4yQDNKPav3Z5gvg==
+X-Google-Smtp-Source: AGHT+IFbrSPJmJebinSVh5WJ3B/eEqdgNq4/X/xaPiP+Hd/vZ5pL3AqNBcKkELkot7YrNNw06xoQaA==
+X-Received: by 2002:a17:907:3f2a:b0:abf:7a26:c47e with SMTP id a640c23a62f3a-ac252e9e7cfmr1088030666b.43.1741520782067;
+        Sun, 09 Mar 2025 04:46:22 -0700 (PDT)
+Received: from [172.27.60.223] ([193.47.165.251])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac2811e5b32sm187067666b.159.2025.03.09.04.46.20
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 09 Mar 2025 04:46:21 -0700 (PDT)
+Message-ID: <d415dada-f1cb-486d-b018-171777bfaab6@gmail.com>
+Date: Sun, 9 Mar 2025 13:46:19 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:3008:b0:3d3:d07d:20a3 with SMTP id
- e9e14a558f8ab-3d4418cf719mr115685665ab.10.1741520425780; Sun, 09 Mar 2025
- 04:40:25 -0700 (PDT)
-Date: Sun, 09 Mar 2025 04:40:25 -0700
-In-Reply-To: <67483b75.050a0220.253251.007c.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67cd7e29.050a0220.e1a89.0007.GAE@google.com>
-Subject: Re: [syzbot] [ocfs2?] KASAN: slab-out-of-bounds Read in ocfs2_dx_dir_lookup_rec
-From: syzbot <syzbot+20282c1b2184a857ac4c@syzkaller.appspotmail.com>
-To: jlbec@evilplan.org, joseph.qi@linux.alibaba.com, 
-	linux-kernel@vger.kernel.org, mark@fasheh.com, ocfs2-devel@lists.linux.dev, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-
-syzbot has found a reproducer for the following issue on:
-
-HEAD commit:    b7c90e3e717a Merge tag 'x86-urgent-2025-03-08' of git://gi..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=14f8fa54580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=2040405600e83619
-dashboard link: https://syzkaller.appspot.com/bug?extid=20282c1b2184a857ac4c
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=17c58664580000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=17b1d878580000
-
-Downloadable assets:
-disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7feb34a89c2a/non_bootable_disk-b7c90e3e.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/b1f83f46f4b5/vmlinux-b7c90e3e.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/7d502ab93205/bzImage-b7c90e3e.xz
-mounted in repro: https://storage.googleapis.com/syzbot-assets/e57bf738b48c/mount_7.gz
-  fsck result: OK (log: https://syzkaller.appspot.com/x/fsck.log?x=171a1fa0580000)
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+20282c1b2184a857ac4c@syzkaller.appspotmail.com
-
-On-disk corruption discovered. Please run fsck.ocfs2 once the filesystem is unmounted.
-OCFS2: File system is now read-only.
-(syz-executor398,5304,0):ocfs2_find_entry_dx:1029 ERROR: status = -30
-Oops: general protection fault, probably for non-canonical address 0xdffffc0000000000: 0000 [#1] PREEMPT SMP KASAN NOPTI
-KASAN: null-ptr-deref in range [0x0000000000000000-0x0000000000000007]
-CPU: 0 UID: 0 PID: 5304 Comm: syz-executor398 Not tainted 6.14.0-rc5-syzkaller-00234-gb7c90e3e717a #0
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-RIP: 0010:ocfs2_dx_dir_lookup_rec+0x325/0x810 fs/ocfs2/dir.c:812
-Code: 20 48 83 c3 40 48 89 d8 48 c1 e8 03 42 80 3c 28 00 74 08 48 89 df e8 4a 4b 6f fe 48 8b 03 48 89 44 24 30 4c 89 e0 48 c1 e8 03 <42> 0f b6 04 28 84 c0 0f 85 c0 03 00 00 45 8b 3c 24 4c 89 f0 48 c1
-RSP: 0018:ffffc9000d14eb40 EFLAGS: 00010246
-RAX: 0000000000000000 RBX: ffff8880447788b8 RCX: ffff8880006f2440
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: ffff8880447788a0
-RBP: ffffc9000d14ec50 R08: ffffffff83b9ce2e R09: ffffc9000d14ece0
-R10: 23ec6d672c196c9a R11: 608b7c562adf3b03 R12: 0000000000000000
-R13: dffffc0000000000 R14: ffff8880491092c0 R15: ffff8880491092c0
-FS:  000055556a600380(0000) GS:ffff88801fc00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 000055721be84000 CR3: 000000003ef6e000 CR4: 0000000000352ef0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- ocfs2_dx_dir_lookup+0x163/0x930 fs/ocfs2/dir.c:860
- ocfs2_dx_dir_search fs/ocfs2/dir.c:920 [inline]
- ocfs2_find_entry_dx fs/ocfs2/dir.c:1034 [inline]
- ocfs2_find_entry+0x1309/0x2570 fs/ocfs2/dir.c:1071
- ocfs2_check_dir_for_entry+0x17b/0x4a0 fs/ocfs2/dir.c:2040
- ocfs2_mknod+0x83c/0x2b30 fs/ocfs2/namei.c:288
- ocfs2_create+0x1ab/0x470 fs/ocfs2/namei.c:673
- lookup_open fs/namei.c:3651 [inline]
- open_last_lookups fs/namei.c:3750 [inline]
- path_openat+0x193c/0x3590 fs/namei.c:3986
- do_filp_open+0x27f/0x4e0 fs/namei.c:4016
- do_sys_openat2+0x13e/0x1d0 fs/open.c:1428
- do_sys_open fs/open.c:1443 [inline]
- __do_sys_openat fs/open.c:1459 [inline]
- __se_sys_openat fs/open.c:1454 [inline]
- __x64_sys_openat+0x247/0x2a0 fs/open.c:1454
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f4c42698bf9
-Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 61 17 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007ffef4145088 EFLAGS: 00000246 ORIG_RAX: 0000000000000101
-RAX: ffffffffffffffda RBX: 00007f4c426649e3 RCX: 00007f4c42698bf9
-RDX: 0000000000105042 RSI: 0000400000000080 RDI: 00000000ffffff9c
-RBP: 0000400000000040 R08: 00000000000b45f8 R09: 00000000000b45f8
-R10: 00000000000001ff R11: 0000000000000246 R12: 0000000000000001
-R13: 00007ffef4145258 R14: 0000000000000001 R15: 0000000000000001
- </TASK>
-Modules linked in:
----[ end trace 0000000000000000 ]---
-RIP: 0010:ocfs2_dx_dir_lookup_rec+0x325/0x810 fs/ocfs2/dir.c:812
-Code: 20 48 83 c3 40 48 89 d8 48 c1 e8 03 42 80 3c 28 00 74 08 48 89 df e8 4a 4b 6f fe 48 8b 03 48 89 44 24 30 4c 89 e0 48 c1 e8 03 <42> 0f b6 04 28 84 c0 0f 85 c0 03 00 00 45 8b 3c 24 4c 89 f0 48 c1
-RSP: 0018:ffffc9000d14eb40 EFLAGS: 00010246
-RAX: 0000000000000000 RBX: ffff8880447788b8 RCX: ffff8880006f2440
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: ffff8880447788a0
-RBP: ffffc9000d14ec50 R08: ffffffff83b9ce2e R09: ffffc9000d14ece0
-R10: 23ec6d672c196c9a R11: 608b7c562adf3b03 R12: 0000000000000000
-R13: dffffc0000000000 R14: ffff8880491092c0 R15: ffff8880491092c0
-FS:  000055556a600380(0000) GS:ffff88801fc00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 000055721bea2000 CR3: 000000003ef6e000 CR4: 0000000000352ef0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-----------------
-Code disassembly (best guess):
-   0:	20 48 83             	and    %cl,-0x7d(%rax)
-   3:	c3                   	ret
-   4:	40                   	rex
-   5:	48 89 d8             	mov    %rbx,%rax
-   8:	48 c1 e8 03          	shr    $0x3,%rax
-   c:	42 80 3c 28 00       	cmpb   $0x0,(%rax,%r13,1)
-  11:	74 08                	je     0x1b
-  13:	48 89 df             	mov    %rbx,%rdi
-  16:	e8 4a 4b 6f fe       	call   0xfe6f4b65
-  1b:	48 8b 03             	mov    (%rbx),%rax
-  1e:	48 89 44 24 30       	mov    %rax,0x30(%rsp)
-  23:	4c 89 e0             	mov    %r12,%rax
-  26:	48 c1 e8 03          	shr    $0x3,%rax
-* 2a:	42 0f b6 04 28       	movzbl (%rax,%r13,1),%eax <-- trapping instruction
-  2f:	84 c0                	test   %al,%al
-  31:	0f 85 c0 03 00 00    	jne    0x3f7
-  37:	45 8b 3c 24          	mov    (%r12),%r15d
-  3b:	4c 89 f0             	mov    %r14,%rax
-  3e:	48                   	rex.W
-  3f:	c1                   	.byte 0xc1
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net v3] net/mlx5: handle errors in
+ mlx5_chains_create_table()
+To: Wentao Liang <vulab@iscas.ac.cn>, saeedm@nvidia.com, leon@kernel.org,
+ andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
+ kuba@kernel.org, pabeni@redhat.com
+Cc: netdev@vger.kernel.org, linux-rdma@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Tariq Toukan <tariqt@nvidia.com>
+References: <20250307021820.2646-1-vulab@iscas.ac.cn>
+Content-Language: en-US
+From: Tariq Toukan <ttoukan.linux@gmail.com>
+In-Reply-To: <20250307021820.2646-1-vulab@iscas.ac.cn>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
 
----
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
+
+On 07/03/2025 4:18, Wentao Liang wrote:
+> In mlx5_chains_create_table(), the return value of mlx5_get_fdb_sub_ns()
+> and mlx5_get_flow_namespace() must be checked to prevent NULL pointer
+> dereferences. If either function fails, the function should log error
+> message with mlx5_core_warn() and return error pointer.
+> 
+> Fixes: 39ac237ce009 ("net/mlx5: E-Switch, Refactor chains and priorities")
+> Signed-off-by: Wentao Liang <vulab@iscas.ac.cn>
+> ---
+> [v1]->[v2]: Add Fixes tag and branch target. Change return value.
+> [v2]->[v3]: Change Fixes tag. Move change history.
+> ---
+>   drivers/net/ethernet/mellanox/mlx5/core/lib/fs_chains.c | 5 +++++
+>   1 file changed, 5 insertions(+)
+> 
+> diff --git a/drivers/net/ethernet/mellanox/mlx5/core/lib/fs_chains.c b/drivers/net/ethernet/mellanox/mlx5/core/lib/fs_chains.c
+> index a80ecb672f33..711d14dea248 100644
+> --- a/drivers/net/ethernet/mellanox/mlx5/core/lib/fs_chains.c
+> +++ b/drivers/net/ethernet/mellanox/mlx5/core/lib/fs_chains.c
+> @@ -196,6 +196,11 @@ mlx5_chains_create_table(struct mlx5_fs_chains *chains,
+>   		ns = mlx5_get_flow_namespace(chains->dev, chains->ns);
+>   	}
+>   
+> +	if (!ns) {
+> +		mlx5_core_warn(chains->dev, "Failed to get flow namespace\n");
+> +		return ERR_PTR(-EOPNOTSUPP);
+> +	}
+> +
+>   	ft_attr.autogroup.num_reserved_entries = 2;
+>   	ft_attr.autogroup.max_num_groups = chains->group_num;
+>   	ft = mlx5_create_auto_grouped_flow_table(ns, &ft_attr);
+
+Reviewed-by: Tariq Toukan <tariqt@nvidia.com>
+
+Thanks.
 
