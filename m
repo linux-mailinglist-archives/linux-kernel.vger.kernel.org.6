@@ -1,113 +1,96 @@
-Return-Path: <linux-kernel+bounces-553306-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-553307-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4DAE8A58737
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 19:23:53 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E015EA58738
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 19:24:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DC2A6188C9A4
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 18:24:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8741E188C967
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 18:24:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 158FE1EF398;
-	Sun,  9 Mar 2025 18:23:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 284C61F4CB4;
+	Sun,  9 Mar 2025 18:24:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b="GcNwFK5o"
-Received: from smtp.forwardemail.net (smtp.forwardemail.net [149.28.215.223])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TuxO7sln"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE8C11F4CBF
-	for <linux-kernel@vger.kernel.org>; Sun,  9 Mar 2025 18:23:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=149.28.215.223
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82C50211C;
+	Sun,  9 Mar 2025 18:24:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741544629; cv=none; b=NpvwmaPGwFqbTbZ2Q59Fwk+L3ceref6q5Ra1HVpW1Wb78RFnwTja8liCoLpuPhELcPyc0Yh0s3XlQdHZ2bm2AY6+H62FTT1pFQ/iQsG+9O3QHM2Qde5RYaXyR9GGKlCfgvhHBOONi+/350UPtVGnPkRK+W//fcFnUENxkLCcsYA=
+	t=1741544685; cv=none; b=kBMDAfbq8W/8yWTMFAN7R8m7fKyLNl+8RMfa4RRtFB6SWBotLkonKdPdXjkQ9fwVWISWD5hjva/n7O43w0QNu5xDorXWOANDvfjbk+yztf3JSLKGRjReAQTs5AG5SrGo04UrnaBEsP+sPT9Zk+eOEA5f069orXBCJgsFHG1iKRw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741544629; c=relaxed/simple;
-	bh=8Q7sl7SWDPeMdadS7RKEQ5Zh375kbNERL8UHvLuI61o=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=NSOWhc31rgEI5zMOH/1VPr/lC+LAYAWNH+PCOw5mPv/vrCgHL1j6e3b4FPteAasWVsoBiYzXI56DuzKRhie0V0h8d2KeQl1TZE2BF0RebwUxMuvNodgtiO5fivPs+5tX090stvC0iRNu7TbUsVXvmmKjLXa6WF2inTmPyn1kojo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se; dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b=GcNwFK5o; arc=none smtp.client-ip=149.28.215.223
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kwiboo.se;
- h=Content-Transfer-Encoding: Content-Type: In-Reply-To: From: References:
- Cc: To: Subject: MIME-Version: Date: Message-ID; q=dns/txt;
- s=fe-e1b5cab7be; t=1741544621;
- bh=QvnfGlC40UQmnKcl5OF0pRINHPgf7NC49WGBsWl3pAM=;
- b=GcNwFK5oDUTLQbqhDrBhp/jcrTvPnBR4Yk33fBepAsFAyid+Fiqk3dGstQoCHfP/OKUoLtIxP
- QZroDQLPMywbiLwLQFiE+d8W1rY2IEYnkprSf7bpnwIGYrp0P4hvfUEGHep/plXa3quZ2X1WMMp
- RNcm1f+DBOkzvpo7Vx/jjJLGF1Lqs3uzHJNQcS7wduHOmnnVaSx1iEbJHKZ7XLgvQMeWgY1XTo7
- JLt+omXpyBjmi4gqrcPkNRYoeK98wqU8CG26SzmfUqpC2BMWNlpCYRMsyk0Uy9h2gSZrI0EhRTP
- FJNYICbwg7e3qjm+p0yheJHIgf1B0S3wthUQVJNjgMVA==
-X-Forward-Email-ID: 67cddc968d04fc44bbac47b6
-X-Forward-Email-Sender: rfc822; jonas@kwiboo.se, smtp.forwardemail.net,
- 149.28.215.223
-X-Forward-Email-Version: 0.4.40
-X-Forward-Email-Website: https://forwardemail.net
-X-Complaints-To: abuse@forwardemail.net
-X-Report-Abuse: abuse@forwardemail.net
-X-Report-Abuse-To: abuse@forwardemail.net
-Message-ID: <0b679284-d427-4229-b008-e3e466f66a0f@kwiboo.se>
-Date: Sun, 9 Mar 2025 19:23:12 +0100
+	s=arc-20240116; t=1741544685; c=relaxed/simple;
+	bh=xqmbU01GvdRaqLnnBBBn3XWRf5tpVBKdGgOv8hcAq4I=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=himhBry343npvibQEsEb88tzzHVqzIXWxcemMgyugNajqu2oeUIb6X1okIlqrLQL+lZ+CDAg9Nbq31oQn8mQyVRBLLUjI0I4cPFv244cGsG0uHDYcanIIriVmebFQZn/AY7uZTJg4F8TdhPJbKRi91pZWy/5RSbTcI+83u5I6A4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TuxO7sln; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EC2FCC4CEE3;
+	Sun,  9 Mar 2025 18:24:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741544685;
+	bh=xqmbU01GvdRaqLnnBBBn3XWRf5tpVBKdGgOv8hcAq4I=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=TuxO7slnvPm42OZE3We1kr9s6YsqJXcntDBJM4sjjHr1gJZU6KOwvqWRKv5mrj1Da
+	 191Zb644if4IMPc5rLlMjMd2+ykoEiY2ok19kR26i4AuWOmnDnDs3n7AnEn8C/N8oH
+	 F0TeLtOqy5mZ8NdP61zJAIie/uGQ+0pjgbeec7yzrTYcH/4LBk7xtPtTa8dOtHqoCG
+	 DGVBl/1g7P2HCe90jeRPsYZfnBaItg+j5GuQwIeViKkQnwcs4zIo2TbAtWDuvZYuv6
+	 eFGt0y+qLjKb2zs+RcY4ovh++NeyMy6aOl04C1WiDbgZ97FUsNX+1RFUOLp6VUv4rC
+	 ALlRemASiI7pg==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1trLKM-00Bxrp-9T;
+	Sun, 09 Mar 2025 18:24:42 +0000
+Date: Sun, 09 Mar 2025 18:24:40 +0000
+Message-ID: <868qpeoydz.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Sebastian Ott <sebott@redhat.com>
+Cc: Oliver Upton <oliver.upton@linux.dev>,
+	Joey Gouly <joey.gouly@arm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Zenghui Yu <yuzenghui@huawei.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	linux-arm-kernel@lists.infradead.org,
+	kvmarm@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] KVM: arm64: Writable TGRAN*_2
+In-Reply-To: <20250306184013.30008-1-sebott@redhat.com>
+References: <20250306184013.30008-1-sebott@redhat.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/3] arm64: dts: rockchip: Add I2C controllers for RK3528
-To: Yao Zi <ziyao@disroot.org>
-Cc: Heiko Stuebner <heiko@sntech.de>, Andi Shyti <andi.shyti@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Chukun Pan <amadeus@jmu.edu.cn>,
- linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
- linux-i2c@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250309070603.35254-1-ziyao@disroot.org>
- <20250309070603.35254-3-ziyao@disroot.org>
-Content-Language: en-US
-From: Jonas Karlman <jonas@kwiboo.se>
-In-Reply-To: <20250309070603.35254-3-ziyao@disroot.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: sebott@redhat.com, oliver.upton@linux.dev, joey.gouly@arm.com, suzuki.poulose@arm.com, yuzenghui@huawei.com, catalin.marinas@arm.com, will@kernel.org, linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, linux-kernel@vger.kernel.org
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-Hi Yao Zi,
-
-On 2025-03-09 08:06, Yao Zi wrote:
-> Describe I2C controllers shipped by RK3528 in devicetree.
+On Thu, 06 Mar 2025 18:40:13 +0000,
+Sebastian Ott <sebott@redhat.com> wrote:
 > 
-> Signed-off-by: Yao Zi <ziyao@disroot.org>
-> ---
->  arch/arm64/boot/dts/rockchip/rk3528.dtsi | 104 +++++++++++++++++++++++
->  1 file changed, 104 insertions(+)
+> Allow userspace to write the safe (NI) value for ID_AA64MMFR0_EL1.TGRAN*_2.
+> Disallow to change these fields for NV since kvm provides a sanitized view
+> for them based on the PAGE_SIZE.
+> Also add these bits to the set_id_regs selftest.
 > 
-> diff --git a/arch/arm64/boot/dts/rockchip/rk3528.dtsi b/arch/arm64/boot/dts/rockchip/rk3528.dtsi
-> index 04ca2e2b3e9b..860b6057e5c2 100644
-> --- a/arch/arm64/boot/dts/rockchip/rk3528.dtsi
-> +++ b/arch/arm64/boot/dts/rockchip/rk3528.dtsi
-> @@ -19,6 +19,14 @@ / {
->  	#size-cells = <2>;
->  
->  	aliases {
-> +		i2c0 = &i2c0;
-> +		i2c1 = &i2c1;
-> +		i2c2 = &i2c2;
-> +		i2c3 = &i2c3;
-> +		i2c4 = &i2c4;
-> +		i2c5 = &i2c5;
-> +		i2c6 = &i2c6;
-> +		i2c7 = &i2c7;
+> Signed-off-by: Sebastian Ott <sebott@redhat.com>
 
-nitpick: These should be ordered after the gpioX aliases.
+Acked-by: Marc Zyngier <maz@kernel.org>
 
-Regards,
-Jonas
+	M.
 
->  		gpio0 = &gpio0;
->  		gpio1 = &gpio1;
->  		gpio2 = &gpio2;
-
-[snip]
+-- 
+Without deviation from the norm, progress is not possible.
 
