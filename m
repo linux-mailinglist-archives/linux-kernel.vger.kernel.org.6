@@ -1,179 +1,186 @@
-Return-Path: <linux-kernel+bounces-553317-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-553318-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 005B0A58764
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 19:55:08 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E882A58767
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 19:56:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BF3773A7124
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 18:54:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6B9EB16A44E
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 18:56:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCE5C1F584B;
-	Sun,  9 Mar 2025 18:55:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 021911F874A;
+	Sun,  9 Mar 2025 18:56:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OZnpkWK6"
-Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ztMzmngd"
+Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65D4510E5;
-	Sun,  9 Mar 2025 18:54:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E625F1DF279
+	for <linux-kernel@vger.kernel.org>; Sun,  9 Mar 2025 18:56:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741546501; cv=none; b=Kdgpj6v2CmlzihWeI9ueKE6oOkSN+eOiLff0k6+dE02X4rNMrlJ6RSw1hvrShW3WY/plBs1ccwHnG4ZHgG4uEn3TCYKYHUxCIfqH9ybbAnU6m1MIP1Ky9fCRqD3Qzqxl/KmX8oIHJfkWxEN1d1ESqBvsDJfYOhOcAzhX/pltJVY=
+	t=1741546571; cv=none; b=ujrUJt3oAvtDpCDJiaCIn95+HieZCNvG5UKEX0/K1aoAalqTV+vlhIJsomRiXBNK7ftsinNYy/njj5L1+2Z7iZLeK54rSP/2gh9fzhW1SvB1lzghD5XgkciyhM08KF6WClKY+twsK6LqkwuRLj45+v31UZ7g+jP+fFG7dAhK4No=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741546501; c=relaxed/simple;
-	bh=VCI3PzOr8BVH3pnvOIpSd3z0MJw4AXBD0DZdGDMM+iA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=LmFRXy92ptyWzsZpcghGo055U2K8yqU7b9fchPh9HugjLnA4Ztj7TGnV1pZ/HjcK4Pw4o+WF424F8odcSGpl+KsUCR390V6Ps1E01VjZDOafLzLD0o9ogz3hO57A3uBwzk2J9XhlIMw84ZKJ/sjZV1pd2nSTBQ/H248vZPpX2FU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OZnpkWK6; arc=none smtp.client-ip=209.85.208.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-5e535e6739bso5481803a12.1;
-        Sun, 09 Mar 2025 11:54:59 -0700 (PDT)
+	s=arc-20240116; t=1741546571; c=relaxed/simple;
+	bh=Wa7r3qkuu7xnz/VOd3o4Ss+BQayKG/5FMUt/lzJsU2A=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=gblqqmhyuzNY43BGb0M6J4iN5FrQ//bN/u67B2vOTcw7OMn0mESEjFiEhKePk0xZizZsFhmwLRUJJB+uNUjA+IwTyp8bBh3qyYg0/+d5muq+m5pNJ64Vg9FItlSyWNYE7dG1sJ3rlafU0fRsCe1DRGsv5u1b7c9C9OgbwyJUi/U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ztMzmngd; arc=none smtp.client-ip=209.85.221.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-3912ebb8e88so239505f8f.0
+        for <linux-kernel@vger.kernel.org>; Sun, 09 Mar 2025 11:56:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741546498; x=1742151298; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=TvU0e2WHHQJk+uGY/Xu8xmGCC+8Y86v0MSPjlOl9HVs=;
-        b=OZnpkWK6WajeOMtqS3kRDRo947ahzLFg4gYInB/jJavlENE5olDtdpGnmpnI6isHEa
-         tT0uzNQ58DDGJDxpN+Y7uBPaT6YlDq5hkhvuX+YOwtiYXu8aDkoDuMh4gTF7DYnwb7wy
-         L483NtNGOdxLV5jRbJFj9QENLYWIs1aze5OUb/Fey/asft9fWMrNAC4Se5dAvXUanQN0
-         kL43SxyqLuhtoSFMpQPVgUjdhIdVbYIApCTV4LMokx3B7P6vYHraTpYJa1A6qu8stexo
-         O+n5ymcY/wdFJtfEBO9WPpEE/Khhd5dQ+XG3/+J/+kc/pBwsD+02Ly8zVPvqKTQ2nctZ
-         KPiQ==
+        d=linaro.org; s=google; t=1741546567; x=1742151367; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=ZYpRuX79H42AyJwMpeb72MjPa6wN8mVoMbygXkMxqYc=;
+        b=ztMzmngdVYMXFcJ9jUivm1CFFbjV4EG7hgbQ8r5OHrVu7S9ApBbUZ/V5uULjgZ+bWj
+         NFiM625rgRt806580PuydULfC56oFnUo89uJ7De3VNdvwOVf5AOJHI90sK5vF6+ymkHW
+         jEGBIezsTWjnOFKNTwKDuBHegCRpRJwqAdRoW2gVsVGYoCFXyjxfHG7dn9LVOL/uUA7G
+         yLkaBrqUhgG5BwS++FkYM7b6PIDd8sUqSSOu0qLyDr3kvM9Vd25OSouQI7SIS/inTu3N
+         1Mla66AJdSxDdeN3xhlnzI9uNTVPafNxSxdffhjP7akDB8fU44acxMDMT8mqjH8peB0Z
+         YQLg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741546498; x=1742151298;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=TvU0e2WHHQJk+uGY/Xu8xmGCC+8Y86v0MSPjlOl9HVs=;
-        b=KhtvrB9xruPzx+1jzwnL4P3DoGe5YJbWmnoNWeESUqjE38fQn38ws1Q+NYjkqOzApE
-         rC8lohap/nkH6ZmxPteC6s4inqchqmZPa951Vc6TyIaFzyWftxaXEOIf8yjWb09BCVeU
-         my/+E88NHR4dGPZheSsMm0iS6L6w/GgZIBLlWayQtErQETz5GQ0fp3SWxn3j5swR8P6p
-         q5BNQYNcQ8VpZUjJ9tNOTOEdw7+Q3kptmxSBTTQfD6eXCEeuiM5uNsqmetS11tCjIjKB
-         EX2B5tvLBWzZmuPWk/gi2qfGi6mJ7ps4GeyiHte4xgvkglWWatVTjTg6SdvscFa/hsnD
-         4EHg==
-X-Forwarded-Encrypted: i=1; AJvYcCV+0R2CbPRbAbVUk/nDNtLDMmvGoLk6cjweDaxny8E2+6J79EP+rzmahT8N1e6BL0WbJAo7sZwKbKj/CZc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzbAl3XCMGxoYq6BcS1RHDyRQLMpijRsbb89qlFBL/6/CEuOfmP
-	Pji/gzp98Rr8wFfZnofe66u1mfQLtHtuTs9+F899x6M8R6WDKYKR
-X-Gm-Gg: ASbGncubAv2VVdGaOoNjngt3dLI4qdp+Z7ijE13M9uyfXr9NpCzI1S6tLr38JoY3YOB
-	7IyDdCcckK6zHY0fWWM9kesfRXpYHDqwN/Lp2Fq3bTn/leF26p2pU98NShUK0Lb+WgI0FS2ySMX
-	CXJKSdqPW2D7iuJ1G845LQ7opc3BbQCODS8YqWstWpGzPx9FrBzO+5AVe4njdQmz7cdVTXRYOjd
-	3DSG53LsA115sypRebm5eowUdziN7wjf69FncHEhvHTrUbZcD/kXgQKuk5/aJ/UzRjiNOg06M9w
-	xxIyd7vISl1+URtJHNt21MunjLgN8H6bP0FtQ41myBCrVcJoYsT07yM5
-X-Google-Smtp-Source: AGHT+IF0Jox5sVpuCM0n5VW+dQfQ/Z14cDj+251hfTW9aIvIHfTAR1nkTjDO24Av1SG7JQD7YBrLZw==
-X-Received: by 2002:a17:906:cecb:b0:ac2:8118:27e7 with SMTP id a640c23a62f3a-ac2811831a3mr594179066b.50.1741546497372;
-        Sun, 09 Mar 2025 11:54:57 -0700 (PDT)
-Received: from [192.168.1.121] ([176.206.121.35])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac285211a00sm209386066b.36.2025.03.09.11.54.56
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 09 Mar 2025 11:54:56 -0700 (PDT)
-Message-ID: <acae4205-a7e0-4935-9a39-bbec3bc0c9c4@gmail.com>
-Date: Sun, 9 Mar 2025 19:54:41 +0100
+        d=1e100.net; s=20230601; t=1741546567; x=1742151367;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ZYpRuX79H42AyJwMpeb72MjPa6wN8mVoMbygXkMxqYc=;
+        b=u3mxHyy5/BptfvhHleSc/rDgxxAZ1jK+s8rvLD04UJ4NXYFbdMPIfQxw4uxuNhbz/E
+         TA6RKh98WzvV/+ozYPDTiq75dnq2tZWQYN+1PA9Qs3+1WhK/dtivPQ0l2cF4hh2Wg/Dg
+         D4nsOnG4G6bUTdkRGbJcLIv1G6HZXsUeKe7QCBARj9ou5m33VoD0fFBiD7W35Zjnj5bS
+         8t73RuTyXW/9UlBks8ShIhyhwmcHg2KafcEmGgadpRdnwhwgFEnn/BENoNpRLeUQzIpH
+         1y5uVMdZn+214gJtJoDzWUsx5KEo6nzDTJ+cHWvpA35lsfFA9CC1eXc4r2O/ulZpmThM
+         LQWA==
+X-Forwarded-Encrypted: i=1; AJvYcCXQR8oIU0OpscIAu1qm3quCmEI/lJ7W7HnABJF6H5A0BohgyT9BtXzUHcK3Qcq54VrFYqYZH9y9avAblck=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx6xl+44Qu1z0/pcMVqYCc6mDJSyJdR7B9x1EdR4ppnbNz83Z45
+	2+ssfFVp2VtvOSzHvNM0KMQhdDGo8yrlJT5QRaq4SFa5TGTUp2MxWfNh2L5tQ08=
+X-Gm-Gg: ASbGncvjIhGo3V8mZAlmPqxZKkGjcdHDUDUwgTVRlszasCITOlxmb4Q//7nNJwY6nr4
+	BTzkWVLbAN456Y8q3yK5hhI4JP9CGYqh57FA3UqeWk2kGNFt/WrK4Zxn7A3R+3Uax+BCO9k+9+I
+	FZfuVUpDx/D+Dq4wec63ZQaMeOMNLHkvfnZk0v4683hoXJj7CJg9Exfwo9ePGau1Xb+Sb6zuGd2
+	D7PEwfeWchEOl4tiO4bbRNYPIOJo3LhKADZb7jw9wTxzVfyJvfFrUs9737Ymwdxt6rzoQUXW4AM
+	wIPo9aYsFRMN+ligdAt+SfmJ85SD/J3W2FaMV2SYfZx4jQnyQyutifURW5Q=
+X-Google-Smtp-Source: AGHT+IGtaEQwIFc/6TYT3DLRhe8XehJ9zBv7aECl0lbGZTSP5NvnoXEhZ0PSYiVFLI7kcHS+u3EmMQ==
+X-Received: by 2002:a5d:6d8e:0:b0:38c:5d0b:71ca with SMTP id ffacd0b85a97d-3913ba438famr1345644f8f.0.1741546567145;
+        Sun, 09 Mar 2025 11:56:07 -0700 (PDT)
+Received: from krzk-bin.. ([178.197.206.225])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43cee22c13fsm44263945e9.40.2025.03.09.11.56.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 09 Mar 2025 11:56:06 -0700 (PDT)
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To: Arnd Bergmann <arnd@arndb.de>,
+	soc@lists.linux.dev
+Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Peter Griffin <peter.griffin@linaro.org>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Krzysztof Kozlowski <krzk@kernel.org>
+Subject: [GIT PULL 1/4] samsung: drivers for v6.15
+Date: Sun,  9 Mar 2025 19:55:55 +0100
+Message-ID: <20250309185601.10616-1-krzysztof.kozlowski@linaro.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] PCI/PM: Put devices to low power state on shutdown
-To: Mark Pearson <mpearson-lenovo@squebb.ca>,
- Kai-Heng Feng <kaihengf@nvidia.com>, bhelgaas@google.com,
- mika.westerberg@linux.intel.com
-Cc: linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
- AceLan Kao <acelan.kao@canonical.com>,
- "Limonciello, Mario" <mario.limonciello@amd.com>,
- =?UTF-8?Q?Merthan_Karaka=C5=9F?= <m3rthn.k@gmail.com>
-References: <20241208074147.22945-1-kaihengf@nvidia.com>
- <69ddda46-62cc-445f-a1ef-f4651ec0b138@app.fastmail.com>
-Content-Language: en-US, it-IT, en-US-large
-From: Denis Benato <benato.denis96@gmail.com>
-In-Reply-To: <69ddda46-62cc-445f-a1ef-f4651ec0b138@app.fastmail.com>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-On 17/01/25 21:31, Mark Pearson wrote:
-> Hi,
-> 
-> On Sun, Dec 8, 2024, at 2:41 AM, Kai-Heng Feng wrote:
->> Some laptops wake up after poweroff when HP Thunderbolt Dock G4 is
->> connected.
->>
->> The following error message can be found during shutdown:
->> pcieport 0000:00:1d.0: AER: Correctable error message received from 
->> 0000:09:04.0
->> pcieport 0000:09:04.0: PCIe Bus Error: severity=Correctable, type=Data 
->> Link Layer, (Receiver ID)
->> pcieport 0000:09:04.0:   device [8086:0b26] error 
->> status/mask=00000080/00002000
->> pcieport 0000:09:04.0:    [ 7] BadDLLP
->>
->> Calling aer_remove() during shutdown can quiesce the error message,
->> however the spurious wakeup still happens.
->>
->> The issue won't happen if the device is in D3 before system shutdown, so
->> putting device to low power state before shutdown to solve the issue.
->>
->> ACPI Spec 6.5, "7.4.2.5 System \_S4 State" says "Devices states are
->> compatible with the current Power Resource states. In other words, all
->> devices are in the D3 state when the system state is S4."
->>
->> The following "7.4.2.6 System \_S5 State (Soft Off)" states "The S5
->> state is similar to the S4 state except that OSPM does not save any
->> context." so it's safe to assume devices should be at D3 for S5.
->>
->> Link: https://bugzilla.kernel.org/show_bug.cgi?id=219036
->> Cc: AceLan Kao <acelan.kao@canonical.com>
->> Reviewed-by: Mario Limonciello <mario.limonciello@amd.com>
->> Tested-by: Mario Limonciello <mario.limonciello@amd.com>
->> Signed-off-by: Kai-Heng Feng <kaihengf@nvidia.com>
->> ---
->>  drivers/pci/pci-driver.c | 8 ++++++++
->>  1 file changed, 8 insertions(+)
->>
->> diff --git a/drivers/pci/pci-driver.c b/drivers/pci/pci-driver.c
->> index 35270172c833..248e0c9fd161 100644
->> --- a/drivers/pci/pci-driver.c
->> +++ b/drivers/pci/pci-driver.c
->> @@ -510,6 +510,14 @@ static void pci_device_shutdown(struct device *dev)
->>  	if (drv && drv->shutdown)
->>  		drv->shutdown(pci_dev);
->>
->> +	/*
->> +	 * If driver already changed device's power state, it can mean the
->> +	 * wakeup setting is in place, or a workaround is used. Hence keep it
->> +	 * as is.
->> +	 */
->> +	if (!kexec_in_progress && pci_dev->current_state == PCI_D0)
->> +		pci_prepare_to_sleep(pci_dev);
->> +
->>  	/*
->>  	 * If this is a kexec reboot, turn off Bus Master bit on the
->>  	 * device to tell it to not continue to do DMA. Don't touch
->> -- 
->> 2.47.0
-> 
-> Just a note that we've tested this in the Lenovo Linux team and confirmed that it reduces the power draw on a powered off Z16 G2 by 0.6W.
-> This is enough to bring Linux inline with Windows, and more importantly allow the platform to pass e-star energy certification (which it otherwise fails). We suspect other platforms will show similar benefits.
-> 
-> Let me know if there's anything we can do to help get this patch moving along - I think it's important.
-> 
-> Tested-by: Mark Pearson <mpearson-lenovo@squebb.ca>
-> 
-> Mark
+The following changes since commit 2014c95afecee3e76ca4a56956a936e23283f05b:
 
-Hello,
+  Linux 6.14-rc1 (2025-02-02 15:39:26 -0800)
 
-I have helped an user affected by the issue this patch solves (FA507NV).
+are available in the Git repository at:
 
-The issue has been solved by this patch.
+  https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-drivers-6.15
 
-I also tested this patch with two unaffected laptops: my own (G634JZ) and my brother's (FX507ZE): neither showed sign of any regressions.
+for you to fetch changes up to 8f299df1b75ad0939f1340182c265de019eab438:
 
-Tested-by: Merthan Karakaş <m3rthn.k@gmail.com>
-Tested-by: Denis Benato <benato.denis96@gmail.com>
+  dt-bindings: soc: samsung: exynos-usi: Drop unnecessary status from example (2025-03-09 18:53:34 +0100)
+
+----------------------------------------------------------------
+Samsung SoC drivers for v6.15
+
+1. Add support for Exynos USI v1 serial engines.  Drivers already
+   supported newer IP blocks - USI v2 - present in Exynos850 and newer.
+   A bit older ARM64 designs, like Exynos8895 use older USI v1 block.
+
+2. Add Exynos ACPM (Alive Clock and Power Manager) protocol driver
+   for Google GS101 SoC.  ACPM protocol allows communication between the
+   power management firmware and other embedded processors.
+
+3. Exynos2200: Add PMU, ChipID and SYSREG Devicetree bindings.
+
+4. Exynos7870: Add PMU and ChipID Devicetree bindings.
+
+5. Various cleanups.
+
+----------------------------------------------------------------
+Arnd Bergmann (1):
+      soc: samsung: include linux/array_size.h where needed
+
+Colin Ian King (1):
+      firmware: Exynos ACPM: Fix spelling mistake "Faile" -> "Failed"
+
+Ivaylo Ivanov (7):
+      dt-bindings: soc: samsung: usi: add USIv1 and samsung,exynos8895-usi
+      soc: samsung: usi: add a routine for unconfiguring the ip
+      soc: samsung: usi: implement support for USIv1 and exynos8895
+      dt-bindings: soc: samsung: exynos-sysreg: add sysreg compatibles for exynos2200
+      dt-bindings: soc: samsung: exynos-pmu: add exynos2200 compatible
+      dt-bindings: hwinfo: samsung,exynos-chipid: add exynos2200 compatible
+      soc: samsung: exynos-chipid: add exynos2200 SoC support
+
+Kaustabh Chakraborty (3):
+      dt-bindings: hwinfo: samsung,exynos-chipid: add exynos7870-chipid compatible
+      dt-bindings: soc: samsung: exynos-pmu: add exynos7870-pmu compatible
+      soc: samsung: exynos-chipid: add support for exynos7870
+
+Krzysztof Kozlowski (3):
+      soc: samsung: Use syscon_regmap_lookup_by_phandle_args
+      Merge branch 'for-v6.15/samsung-soc-dt-bindings' into next/drivers
+      dt-bindings: soc: samsung: exynos-usi: Drop unnecessary status from example
+
+Tudor Ambarus (3):
+      dt-bindings: firmware: add google,gs101-acpm-ipc
+      firmware: add Exynos ACPM protocol driver
+      MAINTAINERS: add entry for the Samsung Exynos ACPM mailbox protocol
+
+ .../bindings/firmware/google,gs101-acpm-ipc.yaml   |  50 ++
+ .../bindings/hwinfo/samsung,exynos-chipid.yaml     |   2 +
+ .../bindings/soc/samsung/exynos-pmu.yaml           |   2 +
+ .../bindings/soc/samsung/exynos-usi.yaml           | 100 ++-
+ .../soc/samsung/samsung,exynos-sysreg.yaml         |   5 +
+ MAINTAINERS                                        |  10 +
+ drivers/firmware/Kconfig                           |   1 +
+ drivers/firmware/Makefile                          |   1 +
+ drivers/firmware/samsung/Kconfig                   |  14 +
+ drivers/firmware/samsung/Makefile                  |   4 +
+ drivers/firmware/samsung/exynos-acpm-pmic.c        | 224 ++++++
+ drivers/firmware/samsung/exynos-acpm-pmic.h        |  29 +
+ drivers/firmware/samsung/exynos-acpm.c             | 769 +++++++++++++++++++++
+ drivers/firmware/samsung/exynos-acpm.h             |  23 +
+ drivers/soc/samsung/exynos-asv.c                   |   1 +
+ drivers/soc/samsung/exynos-chipid.c                |   3 +
+ drivers/soc/samsung/exynos-pmu.c                   |   1 +
+ drivers/soc/samsung/exynos-usi.c                   | 108 ++-
+ drivers/soc/samsung/exynos3250-pmu.c               |   1 +
+ drivers/soc/samsung/exynos5250-pmu.c               |   1 +
+ drivers/soc/samsung/exynos5420-pmu.c               |   1 +
+ include/dt-bindings/soc/samsung,exynos-usi.h       |  17 +-
+ .../linux/firmware/samsung/exynos-acpm-protocol.h  |  49 ++
+ 23 files changed, 1359 insertions(+), 57 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/firmware/google,gs101-acpm-ipc.yaml
+ create mode 100644 drivers/firmware/samsung/Kconfig
+ create mode 100644 drivers/firmware/samsung/Makefile
+ create mode 100644 drivers/firmware/samsung/exynos-acpm-pmic.c
+ create mode 100644 drivers/firmware/samsung/exynos-acpm-pmic.h
+ create mode 100644 drivers/firmware/samsung/exynos-acpm.c
+ create mode 100644 drivers/firmware/samsung/exynos-acpm.h
+ create mode 100644 include/linux/firmware/samsung/exynos-acpm-protocol.h
 
