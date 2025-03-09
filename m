@@ -1,121 +1,145 @@
-Return-Path: <linux-kernel+bounces-553004-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-553003-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4DFA5A58276
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 09:53:54 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id B85C1A58278
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 09:54:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E12B33ADA55
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 08:53:40 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 803347A6AAE
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 08:52:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 927231ADC99;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 447D31ADC7B;
 	Sun,  9 Mar 2025 08:51:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="yPLAzDRL"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="hPsLJARs"
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D807819DF99;
-	Sun,  9 Mar 2025 08:51:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B4A11917ED;
+	Sun,  9 Mar 2025 08:51:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741510266; cv=none; b=eTghE37/rw6wUE/Jzu7NpsUdFbxADfY3ifP2wpNu3GtYpNCmUO9R6pJxfMNcaJUjSZk+mHkYyNP4fdDwYVrhSRfGYUVOge6qbwfXfihcNhVZSblkxP7rZVnRR9IB8vB/N9yHRYuQguqnMhHN8ZbI168A0IWSWoH1D2tiWaKhpxg=
+	t=1741510265; cv=none; b=oYDRd29gM4eGbApqo7KSmVwl6z2voDIjVEIx7PZGUIw/J5QMrVkTOQFctMU5ib80RG5cagqXlgZy0itwO9DM13zliMwrzFCd+b0G4KpwHfiJQu+n2an3mzi704CGzjVBJNi+Or11lx4cTYe4yHwtTbq9L2T/7cVyTfiTPbcVJos=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741510266; c=relaxed/simple;
-	bh=fD/D7P///1cK9p2sXSmjxr9lxXGEV29mR0h4xFfx8GU=;
+	s=arc-20240116; t=1741510265; c=relaxed/simple;
+	bh=5jECTUiw9haCgXbEVQtiLiq0L4+XTURHsaG7ZIr/8KY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=g8/C7M6BUV8+RpxKJ21kDBlT7+0KAiTaBtCc4nTPbKzTvuWocdpucyO40xXcE0beB6VykrAJfoskWIJ873RSOncumN08Ji56t4rzLTiGYtQCgBw25Jk2+k/aumQpeKXr0DCYwOCncGf22vjUmIxhi1ejAJBHyZsP/p2snRPtJew=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=yPLAzDRL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AAA90C4CEE5;
-	Sun,  9 Mar 2025 08:51:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1741510265;
-	bh=fD/D7P///1cK9p2sXSmjxr9lxXGEV29mR0h4xFfx8GU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=yPLAzDRLbDuXQoh3rsbotetRZciGmONETc2l1cMwwL9ZP0s/xQqNWH2giBamr1BLB
-	 xa65R4v2jFrPebVpGSis/KeAYsVW9mCbSi7GcPX1w/bmjocgS8u/muVUpKO0NVVxET
-	 9Jb1PkWDm3Q5cVQVvUR+jDcde4w+8JqCBc/11an8=
-Date: Sun, 9 Mar 2025 09:49:49 +0100
-From: "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>
-To: Aditya Garg <gargaditya08@live.com>
-Cc: "bhelgaas@google.com" <bhelgaas@google.com>,
-	"joro@8bytes.org" <joro@8bytes.org>,
-	"will@kernel.org" <will@kernel.org>,
-	"robin.murphy@arm.com" <robin.murphy@arm.com>,
-	"andriy.shevchenko@linux.intel.com" <andriy.shevchenko@linux.intel.com>,
-	"linux-staging@lists.linux.dev" <linux-staging@lists.linux.dev>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	"linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-	"iommu@lists.linux.dev" <iommu@lists.linux.dev>,
-	Aun-Ali Zaidi <admin@kodeit.net>, "paul@mrarm.io" <paul@mrarm.io>,
-	Orlando Chamberlain <orlandoch.dev@gmail.com>
-Subject: Re: [PATCH RFC] staging: Add driver to communicate with the T2
- Security Chip
-Message-ID: <2025030939-moonrise-zipfile-97cf@gregkh>
-References: <1A12CB39-B4FD-4859-9CD7-115314D97C75@live.com>
- <2B62772A-4292-4673-8F86-9D27D7AB4EE6@live.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=YMTEvARjpIOx5E599WZbfYxGf5ZcqvJ/xQ8/nZdEFsGAhSXcmeE9ukAuWdW67ti4xH2I9DUWDVOTsursqHu9zWuwu+EvK6ig+9pCiQHO3uaPwK69GmvJEc9JQGFSx9O4InRJ0yODaAmxEBxdHG6WEdaeTwBFKzIMC/iJjHG9Iy4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=hPsLJARs; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=aqRgtvOvtDN3KSFPVIG9hG6fYTTX8Eg1w+wLpj29zgk=; b=hPsLJARs3EKAyDhDslxETQiu0l
+	XSEmcc26ugqnFvHWolkj8IdE3cvotzUBziKngYWlhLEpfYPj9TM/1owsi20dgqGxqMbDg6gbGauQW
+	EIMyhhWyjaIcdm+g//NiJE5prMoOHlvtZ6k0c5vjZgV+s+OykMzWRNbI8Q5vGIBxpfuYDVS4/xSWq
+	a0kvrYdbZ12gu6/4MSshaR1uL+dYrxrfFcIr4+Teek+JKu/IU76EAxX4d/wkTEq4XziRb3Ba0ynOm
+	mX0BfmYa1qGAcgo32hKTZ0KOdt4WUzP2qcAaHxX0zENcLpCa9AcKngUCwsq90B4kw9nLoF0pdSFhS
+	uQ29ZYzA==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:51030)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <linux@armlinux.org.uk>)
+	id 1trCMm-00014z-17;
+	Sun, 09 Mar 2025 08:50:36 +0000
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
+	(envelope-from <linux@shell.armlinux.org.uk>)
+	id 1trCMe-0001KD-1v;
+	Sun, 09 Mar 2025 08:50:28 +0000
+Date: Sun, 9 Mar 2025 08:50:28 +0000
+From: "Russell King (Oracle)" <linux@armlinux.org.uk>
+To: Prabhakar <prabhakar.csengg@gmail.com>
+Cc: Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Giuseppe Cavallaro <peppe.cavallaro@st.com>,
+	Jose Abreu <joabreu@synopsys.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	netdev@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+	Biju Das <biju.das.jz@bp.renesas.com>,
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: Re: [PATCH net-next v2 3/3] net: stmmac: Add DWMAC glue layer for
+ Renesas GBETH
+Message-ID: <Z81WVNGlvRNW5JFk@shell.armlinux.org.uk>
+References: <20250308200921.1089980-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20250308200921.1089980-4-prabhakar.mahadev-lad.rj@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <2B62772A-4292-4673-8F86-9D27D7AB4EE6@live.com>
+In-Reply-To: <20250308200921.1089980-4-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
-On Sun, Mar 09, 2025 at 08:44:16AM +0000, Aditya Garg wrote:
+On Sat, Mar 08, 2025 at 08:09:21PM +0000, Prabhakar wrote:
+> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 > 
+> Add the DWMAC glue layer for the GBETH IP found in the Renesas RZ/V2H(P)
+> SoC.
 > 
-> > On 9 Mar 2025, at 2:10 PM, Aditya Garg <gargaditya08@live.com> wrote:
-> > 
-> > From: Paul Pawlowski <paul@mrarm.io>
-> > 
-> > This patch adds a driver named apple-bce, to add support for the T2
-> > Security Chip found on certain Macs.
-> > 
-> > The driver has 3 main components:
-> > 
-> > BCE (Buffer Copy Engine) - this is what the files in the root directory
-> > are for. This estabilishes a basic communication channel with the T2.
-> > VHCI and Audio both require this component.
-> > 
-> > VHCI - this is a virtual USB host controller; keyboard, mouse and
-> > other system components are provided by this component (other
-> > drivers use this host controller to provide more functionality).
-> > 
-> > Audio - a driver for the T2 audio interface, currently only audio
-> > output is supported.
-> > 
-> > Currently, suspend and resume for VHCI is broken after a firmware
-> > update in iBridge since macOS Sonoma.
-> > 
-> > Signed-off-by: Paul Pawlowski <paul@mrarm.io>
-> > Signed-off-by: Aditya Garg <gargaditya08@live.com>
-> > 
-> 
-> FWIW, I am aware of the missing maintainers file and still not removed Linux version checks in the driver.
-> 
-> My main purpose of sending this was to know the views of the maintainers about the code quality, and whether this qualifies for staging or not.
+> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> ---
+> v1->v2
+> - Dropped __initconst for renesas_gbeth_clks array
+> - Added clks_config callback
+> - Dropped STMMAC_FLAG_RX_CLK_RUNS_IN_LPI flag as this needs
+>   investigation.
 
-I have to ask why do you want this in drivers/staging/ at all?  Why not
-take the day or so to clean up the code to be the proper style and
-handle the needed issues and then submit it to the normal part of the
-kernel?
+I thought you had got to the bottom of this, and it was a bug in your
+clock driver?
 
-Putting code in staging actually takes more work to clean it up and get
-it out of there than just doing it all at once out-of-tree.  So we need
-a good reason why it is in here, as well as what the plan is to get it
-out of staging entirely.  So a TODO file in the directory for the driver
-is required here.
+> + * The Rx and Tx clocks are supplied as follows for the GBETH IP.
+> + *
+> + *                         Rx / Tx
+> + *   -------+------------- on / off -------
+> + *          |
+> + *          |            Rx-180 / Tx-180
+> + *          +---- not ---- on / off -------
 
-Also, as this is at least 3 different drivers, this should be a patch
-series and not all in one if at all possible.
+Thanks for the diagram.
 
-thanks,
+> +struct renesas_gbeth {
+> +	struct device *dev;
+> +	void __iomem *regs;
+> +	unsigned int num_clks;
+> +	struct clk *clk_tx_i;
+> +	struct clk_bulk_data *clks;
+> +	struct reset_control *rstc;
+> +};
 
-greg k-h
+If you stored a pointer to struct plat_stmmacenet_data, then you
+wouldn't need num_clks, clk_tx_i or clks. If you look at
+dwmac-dwc-qos-eth.c, I recently added a helper (dwc_eth_find_clk())
+which could be made generic.
+
+You can then include the clk_tx_i clock in the bulk clock, and
+use the helper to set plat_dat->clk_tx_i.
+
+> +	plat_dat->flags |= STMMAC_FLAG_HWTSTAMP_CORRECT_LATENCY |
+> +			   STMMAC_FLAG_EN_TX_LPI_CLOCKGATING |
+
+Didn't I send you a patch that provides
+STMMAC_FLAG_EN_TX_LPI_CLK_PHY_CAP so we can move towards the PHY
+saying whether it permits the TX clock to be disabled?
+
+-- 
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
