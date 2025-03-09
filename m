@@ -1,126 +1,191 @@
-Return-Path: <linux-kernel+bounces-552953-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-552954-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EE368A5816D
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 09:05:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 437A1A5816E
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 09:07:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C97D53AE99D
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 08:04:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 16E6D3AD0CC
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 08:07:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A38C183CCA;
-	Sun,  9 Mar 2025 08:05:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D8DA183CCA;
+	Sun,  9 Mar 2025 08:07:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="b3RCb9ZJ";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="rCyICrMO"
-Received: from fhigh-b4-smtp.messagingengine.com (fhigh-b4-smtp.messagingengine.com [202.12.124.155])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="D2QOP4hJ"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88BDCC2FD
-	for <linux-kernel@vger.kernel.org>; Sun,  9 Mar 2025 08:04:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.155
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A423B10E5
+	for <linux-kernel@vger.kernel.org>; Sun,  9 Mar 2025 08:07:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741507500; cv=none; b=MNACD0hh+057Rqth8+bskvXfJHC9m4s62/fualkC2vPXy/EO1sfjNdvJGWPhTSpEPFdPbbvB2cO3yGHxboGfXlA0JHr2k8ylfK5pWEah87BaVSAhFcTrjCm2JAlxWCCk0VzshW48hRFO40J7gSg5LOEGsF8lbXAn5u+5CWWJ7kU=
+	t=1741507651; cv=none; b=P8kO+PioZ9thqRKKEzCah9PvkmAaliFTw1nAjVmreoqmqixY/G07qDlwlK69PK+g9r+DlYKwY8AbOVRrtTMNaKyK3BIL0gH5Y2ig9DnB9tBGdxpJSeQ6kiX6L88xEjQBhos2HjuC4sCP0rAB5KLNMx19FXhtdqj/BNUCFW/MvTk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741507500; c=relaxed/simple;
-	bh=BpiG0WDe1Lcls4MUZWZafgma3RijC7WNleRW4wBVUQg=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=avzMlpSLEa78bNN7vV2jXQI7rdQfc1BVT0U8wTagwj6QcKBn2K74l79XwDLmbtYMMP8tIeFQnmySHbaY34BfYUoi693ePj0FMbMRussNu77xzXlw8ibExw8nHsUlRQEIcc/l+EdbgkKU/swjkZM22P8St5Q6K829/VURirFVO1s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=b3RCb9ZJ; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=rCyICrMO; arc=none smtp.client-ip=202.12.124.155
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from phl-compute-07.internal (phl-compute-07.phl.internal [10.202.2.47])
-	by mailfhigh.stl.internal (Postfix) with ESMTP id 652942540160;
-	Sun,  9 Mar 2025 04:04:56 -0400 (EDT)
-Received: from phl-imap-11 ([10.202.2.101])
-  by phl-compute-07.internal (MEProxy); Sun, 09 Mar 2025 04:04:56 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm3; t=1741507496;
-	 x=1741593896; bh=V/+c+PfSv9Xbnb72b+7nPtdlmShsnuUQf+Gys1FKZRs=; b=
-	b3RCb9ZJed0cffiq+kpxIx2fEdfHKb/AnMmYUuJWzgkbngdGD69WP5tyoHVhl74K
-	3BOm5CVkDIf/BYwdphC5IHkxyqK2LhpORJFJpn5bT9j4SU6lqEbp+2QlbzF7ne2X
-	BlkidegF831ciauOTqEENa1JYdbUlNcanLIVtzLotTbr8cAFVSsSmeGuV9e+oRVD
-	cG3AjkfX3zB+xZAkbIhs1GTwRTrelQZLFGEh+dRbGaayNrORqwvGGGahSmx1sS+U
-	mtB3Q6kG0Hb5F4R/SNGTzlnN+SyfJgTcGz/aqEvy6p2+sI71wpMAibLp/+YV2yfg
-	4j828AbpP9oOfhzNHCBW0w==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1741507496; x=
-	1741593896; bh=V/+c+PfSv9Xbnb72b+7nPtdlmShsnuUQf+Gys1FKZRs=; b=r
-	CyICrMO5jdMpzat+Er7wqT4fWws5kqjyCnCFFvpZMgP5Dhnspkxi7SM+82hpR5i5
-	sUY+1ReYiMwBH9NcM1zemOMEqMK+I7xflpvoQkBsnAh9ioI/3Dy16LUCsJPPFTfe
-	2Xvg3EjqlSjD1i+ttRdKpno3vZzlTEIiqWdnE0sgmbZAWMPCHnoSp3Yjf03pxS34
-	oIwhW5/3X+eyLQCRKrRpkvFPndy+HqVFIRJnovhOV8MbrMKM87UM2qGaSjMwM5bz
-	DboLlNWG0VGnIqfzMeTKvEKpf3xSYnoMk22pC9izfbwef3pufY1KzNGNWiWmtibw
-	llBorT7Ot/EPHjg+9W4uA==
-X-ME-Sender: <xms:p0vNZ03CgzlL47ZftuMBw1gbYKPIurw6i3ELOTh0ymRWgciJqc5eBg>
-    <xme:p0vNZ_EEnQrJw9d6M1OqKE9sU5vuzXnXPnQhWKgKfIPWVYeTDyzHr25jknAZZ7CBp
-    1BT5UEUbom1CQqYBh0>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdduudehleduucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
-    pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucenucfjughrpefogg
-    ffhffvvefkjghfufgtgfesthejredtredttdenucfhrhhomhepfdetrhhnugcuuegvrhhg
-    mhgrnhhnfdcuoegrrhhnugesrghrnhgusgdruggvqeenucggtffrrghtthgvrhhnpeefhf
-    ehteffuddvgfeigefhjeetvdekteekjeefkeekleffjeetvedvgefhhfeihfenucffohhm
-    rghinhepkhgvrhhnvghlrdhorhhgnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrg
-    hmpehmrghilhhfrhhomheprghrnhgusegrrhhnuggsrdguvgdpnhgspghrtghpthhtohep
-    fedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtoheplhgvvgeskhgvrhhnvghlrdhorh
-    hgpdhrtghpthhtoheplhhinhhugiesthhrvggslhhighdrohhrghdprhgtphhtthhopehl
-    ihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrgh
-X-ME-Proxy: <xmx:p0vNZ8741xqegNpqM-EmEPkpNt0NtptqW9r6gfW8eDPmjwP4Cs0XFw>
-    <xmx:p0vNZ91vSb4zvhgZguRs9y9KR750MzN3ZCcrtiueQSyBeytBk9z03Q>
-    <xmx:p0vNZ3HzxAHp9SOXYsoU0XKfJHGrh_C5aUArKs5IJiHZ0_QqFngTIQ>
-    <xmx:p0vNZ2_JpZ4AGgisH4FZR4EEbFo3gjPAfGm_u2r7E4W1fbNje49J2Q>
-    <xmx:qEvNZ8SdtqjN8Wv1F10GcHQ125szM8HdLedRSwme9bt8sxeo9pf0GVC0>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id 8E6A92220072; Sun,  9 Mar 2025 04:04:55 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1741507651; c=relaxed/simple;
+	bh=99NEVqvBP5TRbaKk01Oc0W/ttk9cc30UFtifsXasBuM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=XC/DXJbRD7gWlVQDTPJio8M4V1atZcIKQ3rxQHJaQHOjKy8RYXx9ymuWt5Foso5OdCsNBixSsgFQ8Czu4Swypewo/6mt+B5YjeBUOakBkP2k2m9SuaxoSaItHWcMOJffNQAFtHqhfuAbctCDkpE1hZxqy6ed6B+YhlrxZNMIhzs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=D2QOP4hJ; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1741507648;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=bMxc923CRiMks37b+Jjb8HyITgLj/wOpsi581iiQzTY=;
+	b=D2QOP4hJGDSz5OG25vbvgjp/IX9k8W5RWmjqjOFh8HDXbWwMYry7860zOqYIJ4TIuTWaOX
+	qAiIC/z3eUskaMj7QE46YSrtHwi3W6OWlZJ5D07oSuZ/jzHHpWtoTGf2r/moNxxwwDwaZW
+	G4vwTTjJ2+UaeQidSiji/jwT5E1yz6E=
+Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
+ [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-527-ezbuFoReP3mZ2qPn0Xmh2g-1; Sun, 09 Mar 2025 04:07:26 -0400
+X-MC-Unique: ezbuFoReP3mZ2qPn0Xmh2g-1
+X-Mimecast-MFC-AGG-ID: ezbuFoReP3mZ2qPn0Xmh2g_1741507645
+Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-391425471ddso241667f8f.0
+        for <linux-kernel@vger.kernel.org>; Sun, 09 Mar 2025 00:07:26 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741507645; x=1742112445;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=bMxc923CRiMks37b+Jjb8HyITgLj/wOpsi581iiQzTY=;
+        b=H57L00odNynpxzTm4lrECgtVgxI7OsC1VH6+n7Y/zTP9YR7fOZhDMlrbea4cVP1YOp
+         +XwKNefd2yP6lbHpAR0art6rBO51YRdXZl+wpsUEVLBPuTftAYhnCs3mIJivPUqBNJQe
+         ksWA3rGek+1aSGqoQX4j7ph8gv0fwpLg77qLd5uc246oqZ0BiUgQST7141D+mEjzeztd
+         DLlAY+S4WzzrWx5ieL7w811VmGKiV6k0Q8Nll6ulURJmv2l20JbFmq0w7SNd4n3sM0/b
+         aw8Dc0isMQnkc+1bfcTFYq5gqsyZabsx1EnkHWaPEFs10bLlfsQB8i8xw/9hC2uQOk8g
+         HvIg==
+X-Forwarded-Encrypted: i=1; AJvYcCVDcn0iOAZqSH3z1ATVz6a3zGn+KfpiFk+Yi6KwEifhzYTrh4Eh68OmZfUQfcDQ4dQRgK6U3Tr76GwO1hA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzxLMVGUjCb8oJpiZchD+ggYZHLPrTIjssmUEc/rHxdEOQcG+mD
+	/biWY5Qgjgdi8JurwMAggOywPo7WekgWaGp9HThjOQyLIQAWQHrDKVackszitAbb1Oau4HRySww
+	UK/5EswrA1BYMtrQDI68lSTZ9ltQprFgX54HYbCCVuyHEGsdCsOQaqWFGjNAexC1ASvScbPa3sm
+	uzKweRTor8GNyyzp/UDlOO3s6jlld09dyy82Pj
+X-Gm-Gg: ASbGncuGR4XuVcIxQP+teMvUgIUZqHAeqEQ03D8V4QhuOxrrpQXnsP/v/Y0jzurpRSh
+	5jKmplVyh1l9qdNDLqS9DMLT7/LQw2uWfKCNQ8oyduqW66SEX9FvqrvqjVchHaKmrxTajgcY4CQ
+	==
+X-Received: by 2002:a05:6000:4102:b0:391:487f:27e7 with SMTP id ffacd0b85a97d-391487f2b5amr87716f8f.55.1741507645473;
+        Sun, 09 Mar 2025 00:07:25 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IGhD/61rkcaEIdwMrtxevM0JBg/y05qGnnJvvH/bQYC44QrzoG0yv2gURYtI+KKv8IIxwg7AZ5hOgrh770quwo=
+X-Received: by 2002:a05:6000:4102:b0:391:487f:27e7 with SMTP id
+ ffacd0b85a97d-391487f2b5amr87696f8f.55.1741507645022; Sun, 09 Mar 2025
+ 00:07:25 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Sun, 09 Mar 2025 09:04:34 +0100
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: linux <linux@treblig.org>, "Lee Jones" <lee@kernel.org>
-Cc: linux-kernel@vger.kernel.org
-Message-Id: <d68fbcda-d77c-4426-b579-57010de82c7b@app.fastmail.com>
-In-Reply-To: <Z8z236h4B5A6Ki3D@gallifrey>
-References: <Z8z236h4B5A6Ki3D@gallifrey>
-Subject: Re: the pcf50633 - dead?
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+References: <20250308010347.1014779-1-seanjc@google.com>
+In-Reply-To: <20250308010347.1014779-1-seanjc@google.com>
+From: Paolo Bonzini <pbonzini@redhat.com>
+Date: Sun, 9 Mar 2025 09:06:54 +0100
+X-Gm-Features: AQ5f1JoolazH4jL0h1xGLNNnbKtztmE1g0HsqhOFa3fHrQo1Y-uGVjTz1XGfUfY
+Message-ID: <CABgObfYO8tEYYTDfmf+F-GA3aOCrRn6_Os6uhry9EJ4F3QHkUw@mail.gmail.com>
+Subject: Re: [GIT PULL] KVM: x86: Fixes for 6.14-rcN
+To: Sean Christopherson <seanjc@google.com>
+Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Sun, Mar 9, 2025, at 04:03, Dr. David Alan Gilbert wrote:
-> Hi Arnd,
->   My scripts noticed pcf50633_adc_sync_read and a load of other
-> pcf50633 symbols weren't called; and hmm I'm pretty sure most of it's
-> dead.
->   Your:
->  61b7f8920b176e3cb86c3b5e7c866261720a7917 
->   ARM: s3c: remove all s3c24xx support
-> removed the last/only includes of any of the pcf50633 headers,
-> I think it was part of openmoko.
-> The only place I see it enabled (=m) in a config is
-> arch/mips/configs/ip27_defconfig  which is the ancient SGI Onyx
-> which predates the pcf50633 by a good few years (and is definitely
-> not portable and battery powered!)
+On Sat, Mar 8, 2025 at 2:03=E2=80=AFAM Sean Christopherson <seanjc@google.c=
+om> wrote:
+>
+> Please pull a handful of fixes for 6.14.  The DEBUGCTL changes are the mo=
+st
+> urgent, as they fix a bug that was introduced in 6.13 that results in Ste=
+am
+> (and other applications) getting killed due to unexpected #DBs.
+>
+> The following changes since commit c2fee09fc167c74a64adb08656cb993ea47519=
+7e:
+>
+>   KVM: x86: Load DR6 with guest value only before entering .vcpu_run() lo=
+op (2025-02-12 08:59:38 -0800)
+>
+> are available in the Git repository at:
+>
+>   https://github.com/kvm-x86/linux.git tags/kvm-x86-fixes-6.14-rcN.2
+>
+> for you to fetch changes up to f9dc8fb3afc968042bdaf4b6e445a9272071c9f3:
+>
+>   KVM: x86: Explicitly zero EAX and EBX when PERFMON_V2 isn't supported b=
+y KVM (2025-03-04 09:19:18 -0800)
 
-Yes, I have that one on my list of drivers that are unused upstream
-and should be cleaned up.
+Pulled, thanks.
 
-See also my reply at [1], feel free to send patches for any of those.
+Paolo
 
-      Arnd
+> ----------------------------------------------------------------
+> KVM x86 fixes for 6.14-rcN #2
+>
+>  - Set RFLAGS.IF in C code on SVM to get VMRUN out of the STI shadow.
+>
+>  - Ensure DEBUGCTL is context switched on AMD to avoid running the guest =
+with
+>    the host's value, which can lead to unexpected bus lock #DBs.
+>
+>  - Suppress DEBUGCTL.BTF on AMD (to match Intel), as KVM doesn't properly
+>    emulate BTF.  KVM's lack of context switching has meant BTF has always=
+ been
+>    broken to some extent.
+>
+>  - Always save DR masks for SNP vCPUs if DebugSwap is *supported*, as the=
+ guest
+>    can enable DebugSwap without KVM's knowledge.
+>
+>  - Fix a bug in mmu_stress_tests where a vCPU could finish the "writes to=
+ RO
+>    memory" phase without actually generating a write-protection fault.
+>
+>  - Fix a printf() goof in the SEV smoke test that causes build failures w=
+ith
+>    -Werror.
+>
+>  - Explicitly zero EAX and EBX in CPUID.0x8000_0022 output when PERFMON_V=
+2
+>    isn't supported by KVM.
+>
+> ----------------------------------------------------------------
+> Sean Christopherson (11):
+>       KVM: SVM: Set RFLAGS.IF=3D1 in C code, to get VMRUN out of the STI =
+shadow
+>       KVM: selftests: Assert that STI blocking isn't set after event inje=
+ction
+>       KVM: SVM: Drop DEBUGCTL[5:2] from guest's effective value
+>       KVM: SVM: Suppress DEBUGCTL.BTF on AMD
+>       KVM: x86: Snapshot the host's DEBUGCTL in common x86
+>       KVM: SVM: Manually context switch DEBUGCTL if LBR virtualization is=
+ disabled
+>       KVM: x86: Snapshot the host's DEBUGCTL after disabling IRQs
+>       KVM: SVM: Save host DR masks on CPUs with DebugSwap
+>       KVM: SVM: Don't rely on DebugSwap to restore host DR0..DR3
+>       KVM: selftests: Ensure all vCPUs hit -EFAULT during initial RO stag=
+e
+>       KVM: selftests: Fix printf() format goof in SEV smoke test
+>
+> Xiaoyao Li (1):
+>       KVM: x86: Explicitly zero EAX and EBX when PERFMON_V2 isn't support=
+ed by KVM
+>
+>  arch/x86/include/asm/kvm_host.h                    |  1 +
+>  arch/x86/kvm/cpuid.c                               |  2 +-
+>  arch/x86/kvm/svm/sev.c                             | 24 +++++++----
+>  arch/x86/kvm/svm/svm.c                             | 49 ++++++++++++++++=
+++++++
+>  arch/x86/kvm/svm/svm.h                             |  2 +-
+>  arch/x86/kvm/svm/vmenter.S                         | 10 +----
+>  arch/x86/kvm/vmx/vmx.c                             |  8 +---
+>  arch/x86/kvm/vmx/vmx.h                             |  2 -
+>  arch/x86/kvm/x86.c                                 |  2 +
+>  tools/testing/selftests/kvm/mmu_stress_test.c      | 21 ++++++----
+>  .../selftests/kvm/x86/nested_exceptions_test.c     |  2 +
+>  tools/testing/selftests/kvm/x86/sev_smoke_test.c   |  3 +-
+>  12 files changed, 91 insertions(+), 35 deletions(-)
+>
 
-[1] https://lore.kernel.org/lkml/a15bb180-401d-49ad-a212-0c81d613fbc8@app.fastmail.com/
 
