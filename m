@@ -1,103 +1,93 @@
-Return-Path: <linux-kernel+bounces-553369-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-553370-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 604FAA58830
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 21:30:10 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E4E29A58833
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 21:36:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1C6C37A1AEB
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 20:29:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 66D71188DDBB
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 20:36:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2202A1DED67;
-	Sun,  9 Mar 2025 20:30:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="neZOkEP2"
-Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B1B021D3E5;
+	Sun,  9 Mar 2025 20:36:29 +0000 (UTC)
+Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8539D1C700F
-	for <linux-kernel@vger.kernel.org>; Sun,  9 Mar 2025 20:29:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8161621D01B;
+	Sun,  9 Mar 2025 20:36:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741552203; cv=none; b=uwfLhGDqED9EwvvZ2DVAbmZzWjcwG7ZLwe3B+Zcy20Mee7ORbghGte7rHrPhezgFyOzsztIInWU/8DRw/tk+XzMEXgNeftH5MzwO2Jgd5cKPhPk1MPWu7qBlSkD7BhE0TGvAhVcTkBeEqh3XRJ/5XZFxQu5lqSSSEH3VsaJTxKo=
+	t=1741552588; cv=none; b=jztF54n1KHzCxtvWh039MjWgZVZwcTGMoSRdve15quroYi4r4uKeGyohhcEnyDocxsDj+2cmxuo1lbctt8YDyfco1/znk+CY6cbaFXPyOMLQDqbaEX1MZXaud5z8xWpVGtFH3AXVdiSOhZdTGYArkrkOVSqFbjKY8J86rWMOgp0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741552203; c=relaxed/simple;
-	bh=ThF7kvzYa/E8fSC9vAFOMgeWn7KWFG0cDjaRmzAahuA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=LcEwvTl/oH2/8SKp/LvwloWs7LJ1AERGNaQoKOC9q24F8LCXWJmAza2DA8fgKyz64hlo/dVlPkKWHYCNv4mWg3Gli5QTr+1Pluuw4m+6IhOQSY66MMH6Powmz5moLYxVJ36VBTN4LRYMwWFvRBzDzs0VfAR0N0hpxYw7fPWSffw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=neZOkEP2; arc=none smtp.client-ip=178.60.130.6
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
-	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=CiEwnW3BQBlaW9eYp7f+XfrbZdqWq7TjAzBqepm4H+A=; b=neZOkEP20YdgIPBes3WtdpM6vu
-	tpDWoqgoT6fU7i8ycIAGeS/tR1LU7KOQ2jLfn8rCrIgAN4916ger6SDuxb6ZsV4CjXXg4BIOStqPj
-	xzKj7o0wjjBLc9K0NaM3tqnkj/7z4okausFcDGw2VVoG23o6n4YyOgw3yGYfWsYKfRLKEn/3DPxCe
-	G9Zgb3KIvtGxtQ7PBG2w2U8WUdM+gtWjjI2R/5VieBy1wcyfhx9BR3UmASl0TkDVtISSYk+zD+0z1
-	r7h6r6C10kuCjpxpRHzyjnXk6LxJwDc1UU1AcxT2EhAErInOBD5Lj+Q9FpsROF5m5QEm3MhjmK2PT
-	39YGNSuA==;
-Received: from [189.7.87.170] (helo=[192.168.0.224])
-	by fanzine2.igalia.com with esmtpsa 
-	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
-	id 1trNGx-006EjL-2m; Sun, 09 Mar 2025 21:29:25 +0100
-Message-ID: <f5f920ec-be44-48d3-ae4d-bd385c3a4a5b@igalia.com>
-Date: Sun, 9 Mar 2025 17:29:16 -0300
+	s=arc-20240116; t=1741552588; c=relaxed/simple;
+	bh=vBSbV1b6P8CXHisFotONcoU0zzd7se5BPST4f4Y9UVU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Hzl4flAquPP/AupFzOM28vPrAVvUn7PZJ37xm+71L6CuwmjI+DMzTn+M0rCaFVG2dqCVcmpQZUxPyavG0fEjzgFls8YErlXdFELmITLyOw07xGJYfyhEl0P40ydjioo3gdAowoN/pG8Ym+sTd+5AODwGHKAqLwxQ4EPwNC3izTY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.214.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-223fd89d036so67535655ad.1;
+        Sun, 09 Mar 2025 13:36:27 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741552587; x=1742157387;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=5W1PPB8C5k9Rxvd4JqWh8H/eOLc6K5SLc+31IQB3dkE=;
+        b=sPrBLR4O9TKWQfy3BvJ1qP2ETut1333DjwPxnTFFMJJ4CUka+n1cm92MJ5Y79YrGPC
+         SyZak8XdZ6R0wrpt4zGlCRrwVXTGRy2+Jlt96358femRO7TjAhl/ZHbOkDg8B276jY3w
+         oSs80o7w0hMxWiU+1a300LBqpwRJMv3Ze8bK0H9pz0TP3gQ+1XvHJSMD32Hx2TEiI3YB
+         YuQp7QxgYwt+g+j92h0yy2ma0yIeYaE2FxEyhO+w2OeUx4jcGAwoTEba67LcEXMmfWiw
+         zeMzTxNonyIEzuLRrqSDQaPoy8udDxbeikHv8EKbao5X7xibtdwMA7PDfFo/daUK8M7J
+         KuHg==
+X-Forwarded-Encrypted: i=1; AJvYcCVKjruGyRwmBNSusnUdwnUPLqYfKIYeTLLfP2b/uRRZdjDoZS3YrOz8fD/tXgQ4pXV97A+1hHLDHhI1@vger.kernel.org, AJvYcCWY3pbz/Ofvaby9B5yTEsB3d2ViqNfZhMlbEXj8EYo3gmP/1LUhItyQDicL7hUgebV7C+BlCRCXfESa@vger.kernel.org, AJvYcCXcEMc8N3FbzO+jtdaFtUmg6JTfVXumWLFvJa3xgEFkxMbCV/h31TAw0F9LOgvz5eS7sxHwvi5M+8oEwEtF@vger.kernel.org
+X-Gm-Message-State: AOJu0YwhSJ40P5MqsInvigh9CbKVlNOaB/1iPvpKuZRi9lEhPoFBURW+
+	dVyHlF6cr5cVRJyhqldzH4jzqlmXWDdhChIhx2Fhos+QD3Q3cmU1
+X-Gm-Gg: ASbGnct79E3uvBlt3Q1roEDcmoWU9PP8We/8SEBTCr0LaUZSgytH9qAx20pqct/6Qa/
+	BTLpO1vF0KChUoprghTOFHIZqGqToWriCPtXzSJIUcBx0aCcTqwPHBSpTFW1Av8DmVg0lG2rEkA
+	SPoq0+MnyT7NOGtc2WelC45vVbME/V+0KYKF1gsC0nJnMFAm2eIB71PZMLsnNspcQSegNlrH0U+
+	bvCGpZCPzpPC0UqsuMx9rMXTBIBp28b2xedgmUg8hXkJuX4NW9WQCJ6bprd5xtIvifRElPvx1pC
+	swjIvNTjs3mfdLuRwUHOyhG+flkk2QwwD0uugerI115R2j3B2Yxe0u74kWRy1YYVDhq5gYLSh1D
+	qYp3nDJr9+0HhJg==
+X-Google-Smtp-Source: AGHT+IHj2p8QQGuPQO35NOVEoLjztQAIUj/vuHS+l9hV6ZdhMc7VKvfvvYb1Hm2TLPNP1gLnAWZ+5g==
+X-Received: by 2002:a05:6a00:4b4a:b0:736:54c9:df2c with SMTP id d2e1a72fcca58-736aaab75e8mr14689147b3a.15.1741552586706;
+        Sun, 09 Mar 2025 13:36:26 -0700 (PDT)
+Received: from localhost (fpd11144dd.ap.nuro.jp. [209.17.68.221])
+        by smtp.gmail.com with UTF8SMTPSA id d2e1a72fcca58-736c30b3a0csm2793283b3a.88.2025.03.09.13.36.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 09 Mar 2025 13:36:26 -0700 (PDT)
+Date: Mon, 10 Mar 2025 05:36:24 +0900
+From: Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>
+To: Richard Zhu <hongxing.zhu@nxp.com>
+Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+	shawnguo@kernel.org, l.stach@pengutronix.de, lpieralisi@kernel.org,
+	manivannan.sadhasivam@linaro.org, bhelgaas@google.com,
+	s.hauer@pengutronix.de, festevam@gmail.com,
+	devicetree@vger.kernel.org, linux-pci@vger.kernel.org,
+	imx@lists.linux.dev, kernel@pengutronix.de,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 2/2] PCI: imx6: Use domain number replace the hardcodes
+Message-ID: <20250309203624.GB3679091@rocinante>
+References: <20250226024256.1678103-1-hongxing.zhu@nxp.com>
+ <20250226024256.1678103-3-hongxing.zhu@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] drm/vc4: plane: fix inconsistent indenting warning
-To: Charles Han <hanchunchao@inspur.com>, mripard@kernel.org,
- dave.stevenson@raspberrypi.com, kernel-list@raspberrypi.com,
- maarten.lankhorst@linux.intel.com, tzimmermann@suse.de, airlied@gmail.com,
- simona@ffwll.ch
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-References: <20250305102107.2595-1-hanchunchao@inspur.com>
-Content-Language: en-US
-From: =?UTF-8?Q?Ma=C3=ADra_Canal?= <mcanal@igalia.com>
-In-Reply-To: <20250305102107.2595-1-hanchunchao@inspur.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250226024256.1678103-3-hongxing.zhu@nxp.com>
 
-Hi Charles,
+Hello,
 
-On 05/03/25 07:21, Charles Han wrote:
-> Fix below inconsistent indenting smatch warning.
-> smatch warnings:
-> drivers/gpu/drm/vc4/vc4_plane.c:2083 vc6_plane_mode_set() warn: inconsistent indenting
-> 
-> Signed-off-by: Charles Han <hanchunchao@inspur.com>
+> Use the domain number replace the hardcodes to uniquely identify
+> different controller on i.MX8MQ platforms. No function changes.
 
-Applied to misc/kernel.git (drm-misc-next).
+Applied to controller/imx6, thank you!
 
-Best Regards,
-- Maíra
-
-> ---
->   drivers/gpu/drm/vc4/vc4_plane.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/gpu/drm/vc4/vc4_plane.c b/drivers/gpu/drm/vc4/vc4_plane.c
-> index c5e84d3494d2..056d344c5411 100644
-> --- a/drivers/gpu/drm/vc4/vc4_plane.c
-> +++ b/drivers/gpu/drm/vc4/vc4_plane.c
-> @@ -2080,7 +2080,7 @@ static int vc6_plane_mode_set(struct drm_plane *plane,
->   			/* HPPF plane 1 */
->   			vc4_dlist_write(vc4_state, kernel);
->   			/* VPPF plane 1 */
-> -				vc4_dlist_write(vc4_state, kernel);
-> +			vc4_dlist_write(vc4_state, kernel);
->   		}
->   	}
->   
-
+	Krzysztof
 
