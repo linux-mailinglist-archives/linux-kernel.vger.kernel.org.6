@@ -1,77 +1,77 @@
-Return-Path: <linux-kernel+bounces-553136-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-553137-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1CA2EA5845D
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 14:32:05 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 41C32A58461
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 14:32:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7F8B1188C1F8
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 13:32:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A4DD2188C14D
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 13:32:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9C331DF248;
-	Sun,  9 Mar 2025 13:30:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0934C1E5205;
+	Sun,  9 Mar 2025 13:30:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="N4s4s4k/"
-Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mqGOZNFC"
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD9391DDA0E;
-	Sun,  9 Mar 2025 13:30:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 491E51DE3A9;
+	Sun,  9 Mar 2025 13:30:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741527047; cv=none; b=JdeT6Nc21dgLYqFVF3T7mU/ARYbNGtze9MFspMTgJFmoKD/vJzGjyw94Fzt5H1+j9K1QO9Wq807Z7xXmKVIvrRiDv6jhtg7rKvh5UxX5cBk8f08VZ+M5A222cCrp4e7aVApZv11mNB7VcLdnfQD8g7o1x8Fimkcv6joqtf9oSEM=
+	t=1741527048; cv=none; b=f8tn7qdjIGZlO1j9ofMbbJ+9cabpywmR33Qrq9q4VAOl8v0cTyI7UIXB9CK6AxvKUYoYKQmvIhSQ+gq8u1/m94xzCBpO8ObHTzHHOnQDIL7V9t3tPwN6Cxpk+x+AIUy6+5fWA2a7aUfLsjCA/rhKIl1BhXiVmc2GppSQ4n6DzlQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741527047; c=relaxed/simple;
-	bh=gZ/TFJVo109Yat5rmhoB8A3/+/GmwoPyvtGc6nbAgUo=;
+	s=arc-20240116; t=1741527048; c=relaxed/simple;
+	bh=N6fTVaKuSmGlZLYP76QgkEgoA1lQ16P73v1QI/K94NE=;
 	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=WHUDp+Umm8c1F95dRepETazpsORe80Hv2nrNd0ihJfZm6W9zg0/KlRJgEFHow9lzsPOKfHMK4FOK00KKgpSB3LhEMhf3uct+YoiUUVzLqcOVYoevpBOVUmHVDt92OfUtRYR2I4JDZgg22tDKHZ+uUkCR7T8B6WbYDA4ofHsZ4OU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=N4s4s4k/; arc=none smtp.client-ip=209.85.221.47
+	 MIME-Version; b=ZoQYg8itH57OUfB7HSWG2CB0aji3Cl9HOuoeIvmkEVxe71DWQE2pinhvxua0Lq61lntbFxdWUfjIL7EmupYoxGEUSnk+/t0cprGESfe5yECw12csPp4al4zRAvIqI18p0/p/27Ev0rgY2DS3Gk+Z7uukA/31NGxseLenGeUl7qc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mqGOZNFC; arc=none smtp.client-ip=209.85.128.42
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-3911748893aso2090275f8f.3;
-        Sun, 09 Mar 2025 06:30:44 -0700 (PDT)
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-43cf680d351so952285e9.0;
+        Sun, 09 Mar 2025 06:30:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741527043; x=1742131843; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1741527044; x=1742131844; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=LmZAJnwVdeb36PC0uWDUFCDQtkHDVfLiHfmoIbAgzmQ=;
-        b=N4s4s4k/E6x78ZgQ1vgOBr2fCdK0sRVAl4h6EJHPgCg3a/Sb8RildoHk8/nSiwlrxm
-         qzv6TcYgWhcPPe53XrSmx9AArHDJhzWPPc6kZGi97SuzLps00+bhhnLiWEd+4ulDFOvA
-         BkN4/f9TogARwlyDP8N2elK/iqE8+j6KQ3pCqsJr2pj8mFbfG5wjg6wgMtXtDDbJ74zO
-         tOiGOhcrVxTXr0dGeAph6gQvdVJNx1sCvZFypA5TIwU8EcevS62xwWGsi1BIl31yZTWv
-         wSQNHjmGj7AskC5PRj5cDvgKwI6WG9XabfwrQOy6wNjo86xeQd2sGoeDpUk7ouCzp2Pr
-         bSJg==
+        bh=K7rAztQuL1fqEwNhgIxMbKU2YwJ5HINRdQASSAMKL28=;
+        b=mqGOZNFC/Xzui3OP15AnSb5QLZZE1xYm0qiSEcQDimgbz+89Pxa1YEv8odbSAyXret
+         NW76TIgduiuoHfmlEvnKmIcxtab+IKgdGiBaqdIu5PkWGVqRDkEZCQpGKaUFX2BnXqBl
+         qrs29u7gLYYS7H78Kk+7aXtYYOvyNzPQz/ZY3zkrKlkXTwFCHZNhn/PbY6fZ+P3Ks2jF
+         0cZWqJm6rlmC/Jt20G2ovUGtXup+THiu8f/DToHDUgphvLHSKSxv7cLiZanWawEbUtrA
+         +tgMHT2NlPqZ710VSBSd1xWvjTO+uNr2stuJtSqxu+tlN8YZ3A+vhSgvNL0VtP6b3vf6
+         9HAw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741527043; x=1742131843;
+        d=1e100.net; s=20230601; t=1741527044; x=1742131844;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=LmZAJnwVdeb36PC0uWDUFCDQtkHDVfLiHfmoIbAgzmQ=;
-        b=nqADztqyebuCpE+7wOuAYKj18wwOI+OvgSJ1rN81zgtQM6ulJN8f7Td0NIg88avcAG
-         U+kH1CmRvqYqxveCwA1YFOYXXClHxWLm8RdQzDqP5qMfiez8bUPhcct2goq8gOWjLu/7
-         N/xOJ73ILIPpkfYZEJ75CMa8026vqTwL/DRyhvhwTAdUTK57OZBO7cRb/l1SE2ufRP7Q
-         SnETUDoGxwi1aSyd8VIVAq8S4PLaPIyKAMUoHNqSP3Ju5qPiRmIXcqPugFvVceuRixoW
-         qsvshhnMFx9eoc009+W2YwXdS9yXXqLLxF2d6Uh63S9GXjjFlPhpCAmcxNkz3nOPEDFR
-         zx0g==
-X-Forwarded-Encrypted: i=1; AJvYcCU4I42WqB06xkqorhjR+JreOEid4NlGr264fbkHG6Rnoy68gNOFMI3k3lPOk/LGnsT3rJltqoH3XZO1FnbU@vger.kernel.org, AJvYcCV7UxWtImgNqJS3PJldGPU1Tk6Hl3gyCruA7B2TNQhgXIu2q09GXcvJ2qbr6cWdB0VxzU/Z4EU78smj@vger.kernel.org, AJvYcCVC0OIAiXUm0THy5JCXs82A7EPwV2EGBZuYAZRB9BYjNzeZWhbpvxMdehZEeoy1q/FueB66H3AbGwZb@vger.kernel.org, AJvYcCWWATcSZ2FZ3s4mwTAP4G69ab3sXah4oUXwSYmT7HmZ4+CM7QjhLhbwl3CJc0aSFVEZqiO7SEQPHVXy@vger.kernel.org
-X-Gm-Message-State: AOJu0YxoMIae3tEf17dwSYbYVtU4Q5BrRLZ5YqsNiO4s1n5/fGifx6pe
-	EMSTn/yegEilLR4S3+6Wn4kYnQfPP0lIQt1yahW96u849qWsl8Vr
-X-Gm-Gg: ASbGncudkidwJlUzn2LoxaeNQUh7iBg+C2DRxGlP64HgKUTdUBiwxwRhBfuzQA8kLUU
-	0vlcb+GusCH4kV9eAtvFVwxcOep3OiAY3blU1aN/dyRanZxODOcTZPBQkVx/TDyRgAbo1BEexqb
-	KUeoDid2X2miu08yuYpnEmOkTtlPI3jwAP+p+X3YqbIh3JmlH5/+rKWooi7xKnKOTK0qD37nfQu
-	HgqIXla+afm/wMThLGsSI6/I2/0t2/ypWd67d+Nl4q8cTRXYFdm5ty/9Kmf+DjG+14lF+Mnnwi3
-	xofSoAah6msFz+sSYtIe9fKecyOpZh5abJDb+WKcOzlWDb0AqjxrWHcbroeytDQW7PmhFrGTAs+
-	QGxRQZa+Km9GxhA==
-X-Google-Smtp-Source: AGHT+IHYvjueTBKth2+iZLDZ1shgffPIvVWESl7zWZ3vriip/pFaWdphySinGg260hn/heKTJUJu2A==
-X-Received: by 2002:a5d:64ce:0:b0:391:3bba:7f18 with SMTP id ffacd0b85a97d-3913bba8128mr2142759f8f.12.1741527042854;
-        Sun, 09 Mar 2025 06:30:42 -0700 (PDT)
+        bh=K7rAztQuL1fqEwNhgIxMbKU2YwJ5HINRdQASSAMKL28=;
+        b=cv381egsN9XoAVVy91aNOXdSGjger+YFH1EXBVjD0k7ucpFfQq78cJuHw4gwZGAcW3
+         RVyzMrZwuYVQhZAB6noAvGHjDiI4mXa57UxhtKF2BzhW7TuwMe1w3Yi3sHfvvZbZk5n/
+         Ejr1pQ5bb5ftF67RorD8xTyLhhCFoRKZkMBxbTWWtzc5LKFOdCKnsB2dPxMBmxOcNCNI
+         9fJ0kCdi4/nZHF/+9pnnYU93h5lePEM1Zt9/UzBDmd1mqI9Dgx63dc101+YGSQkFlLii
+         283jvR0CsVuJa1X6oHFXfo658eZuP0GQpLGdFhCSolYX3lbseJcRSBZZ3k5ap2jqUX2t
+         NJqw==
+X-Forwarded-Encrypted: i=1; AJvYcCV3/w8LaZU2B8drJz++CmgBm/05nEa083NxaxBBfnwJx8We9lxSFDqJoRALHM/ZwdA3gAGWNnkV3wUP@vger.kernel.org, AJvYcCVJZk6mT//7aXzLG9HuGWAaspaNi9V7O5LXHDPMXB0vqS0xGSqRigvgGXfT2CixJcAxtS1eYYhj9Frv@vger.kernel.org, AJvYcCVfVzCMQH3GFYaobyp9e53S9Jf+nzpCCM0L1z1/jPyC9ADpEb1y+9HHOMCgInGMsB2AhBI4hv8N0MMO@vger.kernel.org, AJvYcCVqade5nxDmOD1fx0v1to87vRk5QX9Va5H6M5gQRDAjWIknxW4vK3R+gMvxNXPz+DVw9mBzLmnOG9wkMewg@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy/BLWioMEgP0glU3rp2pwpWNr20G0H6X6/vLiEYjEF8aNa90eE
+	xZXJGLpGTDtcLRRsNqz0oHiXiGnsUVStH2er0gdKw6th4RRkLbHI
+X-Gm-Gg: ASbGncssgz5GEAw96UxSH+nmR/wQeGP3A7vZePXB/1FHc+xt51TP0NZkgCTCH3LSsJu
+	iaf4CSyYHrGTqpQl3hhaF4TxxJYKSY1O8lE0wpuXoASnwayK6zJs2tBo8B/CF0on+PE8Zsypljf
+	84AeMc+e1/z9Ir40HisnADS06Ldhcew7Opb9OcEQ8AjvW6lTwG1zYRLJvxBz3Ghxrc/o0Vf+PSO
+	8/qvz9659b6Aseonsov5YeYczSkSNHKpenQDw0G3uIv6X2CFCDk0QYERK0OH+zR0J6QEwFcZqKK
+	9PGuijdkNPWB69Jzn/RQP2stlJIG+4q3MPSgr30Qj703pfaSx3TIuHDmZ618djYn5EUx6x5TKkF
+	t75NOH6qEqyFi8g==
+X-Google-Smtp-Source: AGHT+IEuhfvObU9vao062mg4FvmF1NzkPbIvIIx2h56yBlcCJSeWP0LGYj1OCWvIasRINrETP+XnDA==
+X-Received: by 2002:a05:6000:1842:b0:390:f116:d220 with SMTP id ffacd0b85a97d-3913af09864mr3103348f8f.17.1741527044465;
+        Sun, 09 Mar 2025 06:30:44 -0700 (PDT)
 Received: from localhost.localdomain (93-34-90-129.ip49.fastwebnet.it. [93.34.90.129])
-        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-3912bee262esm11867536f8f.0.2025.03.09.06.30.41
+        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-3912bee262esm11867536f8f.0.2025.03.09.06.30.43
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 09 Mar 2025 06:30:42 -0700 (PDT)
+        Sun, 09 Mar 2025 06:30:44 -0700 (PDT)
 From: Christian Marangi <ansuelsmth@gmail.com>
 To: Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@kernel.org>,
@@ -102,9 +102,9 @@ To: Michael Turquette <mturquette@baylibre.com>,
 	linux-mediatek@lists.infradead.org,
 	linux-usb@vger.kernel.org,
 	upstream@airoha.com
-Subject: [PATCH 03/13] dt-bindings: soc: airoha: add SCU SSR Serdes port binding
-Date: Sun,  9 Mar 2025 14:29:34 +0100
-Message-ID: <20250309132959.19045-4-ansuelsmth@gmail.com>
+Subject: [PATCH 04/13] dt-bindings: soc: airoha: add Documentation for Airoha AN7581 SCU SSR
+Date: Sun,  9 Mar 2025 14:29:35 +0100
+Message-ID: <20250309132959.19045-5-ansuelsmth@gmail.com>
 X-Mailer: git-send-email 2.48.1
 In-Reply-To: <20250309132959.19045-1-ansuelsmth@gmail.com>
 References: <20250309132959.19045-1-ansuelsmth@gmail.com>
@@ -116,67 +116,154 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Add Airoha AN7581 SCU SSR Serdes port binding to define what mode is
-supported by each Serdes port. These special binding are needed to
-identify and provide the port mode from any user driver.
+The Airoha AN7581 SoC have in the SCU register space particular
+address that control how some peripheral are configured.
 
-These modes are mutually exclusive and driver needs to correctly
-validate the current mode for the Serdes port in use.
+These are toggeled in the System Status Register and are used to
+toggle Serdes port for USB 3.0 mode or HSGMII, USB 3.0 mode or PCIe2
+or setup port for PCIe mode or Ethrnet mode (HSGMII/USXGMII).
+
+Modes are mutually exclusive and selecting one mode cause the
+other feature to not work (example a mode in USB 3.0 cause PCIe
+port 2 to not work) This depends also on what is physically
+connected to the Hardware and needs to correctly reflect the
+System Status Register bits.
+
+Special care is needed for PCIe port 0 in 2 line mode that
+requires both WiFi1 and WiFi2 Serdes port set to PCIe0 2 Line
+mode.
 
 Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
 ---
- MAINTAINERS                              |  6 ++++++
- include/dt-bindings/soc/airoha,scu-ssr.h | 24 ++++++++++++++++++++++++
- 2 files changed, 30 insertions(+)
- create mode 100644 include/dt-bindings/soc/airoha,scu-ssr.h
+ .../soc/airoha/airoha,an7581-scu-ssr.yaml     | 106 ++++++++++++++++++
+ MAINTAINERS                                   |   1 +
+ 2 files changed, 107 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/soc/airoha/airoha,an7581-scu-ssr.yaml
 
+diff --git a/Documentation/devicetree/bindings/soc/airoha/airoha,an7581-scu-ssr.yaml b/Documentation/devicetree/bindings/soc/airoha/airoha,an7581-scu-ssr.yaml
+new file mode 100644
+index 000000000000..4bbf6e3b79a4
+--- /dev/null
++++ b/Documentation/devicetree/bindings/soc/airoha/airoha,an7581-scu-ssr.yaml
+@@ -0,0 +1,106 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/soc/airoha/airoha,an7581-scu-ssr.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Airoha AN7581 SCU System Status Register
++
++maintainers:
++  - Christian Marangi <ansuelsmth@gmail.com>
++
++description: >
++  The Airoha AN7581 SoC have in the SCU register space particular
++  address that control how some peripheral are configured.
++
++  These are toggeled in the System Status Register and are used to
++  toggle Serdes port for USB 3.0 mode or HSGMII, USB 3.0 mode or PCIe2
++  or setup port for PCIe mode or Ethrnet mode (HSGMII/USXGMII).
++
++  Modes are mutually exclusive and selecting one mode cause the
++  other feature to not work (example a mode in USB 3.0 cause PCIe
++  port 2 to not work) This depends also on what is physically
++  connected to the Hardware and needs to correctly reflect the
++  System Status Register bits.
++
++  Special care is needed for PCIe port 0 in 2 line mode that
++  requires both WiFi1 and WiFi2 Serdes port set to PCIe0 2 Line
++  mode.
++
++properties:
++  compatible:
++    const: airoha,an7581-scu-ssr
++
++  airoha,serdes-wifi1:
++    description: |
++      Configure the Wifi1 Serdes port for:
++      - 0: PCIe0 2 Line
++      - 1: PCIe0 1 Line
++      - 2: Ethernet modes (HSGMII/USXGMII)
++    $ref: /schemas/types.yaml#/definitions/uint32
++    enum: [0, 1, 2]
++    default: 1
++
++  airoha,serdes-wifi2:
++    description: |
++      Configure the Wifi2 Serdes port for:
++      - 0: PCIe0 2 Line
++      - 1: PCIe1 1 Line
++      - 2: Ethernet modes (HSGMII/USXGMII)
++    $ref: /schemas/types.yaml#/definitions/uint32
++    enum: [0, 1, 2]
++    default: 1
++
++  airoha,serdes-usb1:
++    description: |
++      Configure the USB1 Serdes port for:
++      - 0: USB 3.0
++      - 1: Ethernet modes (HSGMII)
++    $ref: /schemas/types.yaml#/definitions/uint32
++    enum: [0, 1]
++    default: 0
++
++  airoha,serdes-usb2:
++    description: |
++      Configure the USB2 Serdes port for:
++      - 0: USB 3.0
++      - 1: PCIe2 1 Line
++    $ref: /schemas/types.yaml#/definitions/uint32
++    enum: [0, 1]
++    default: 0
++
++required:
++  - compatible
++
++allOf:
++  - if:
++      properties:
++        airoha,serdes-wifi1:
++          const: 0
++    then:
++      properties:
++        airoha,serdes-wifi2:
++          const: 0
++
++  - if:
++      properties:
++        airoha,serdes-wifi2:
++          const: 0
++    then:
++      properties:
++        airoha,serdes-wifi1:
++          const: 0
++
++additionalProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/soc/airoha,scu-ssr.h>
++
++    system-controller {
++      compatible = "airoha,an7581-scu-ssr";
++
++      airoha,serdes-wifi1 = <AIROHA_SCU_SSR_WIFI1_PCIE0_2LINE>;
++      airoha,serdes-wifi2 = <AIROHA_SCU_SSR_WIFI2_PCIE0_2LINE>;
++      airoha,serdes-usb2 = <AIROHA_SCU_SSR_USB2_PCIE2>;
++    };
 diff --git a/MAINTAINERS b/MAINTAINERS
-index 3eee238c2ea2..d3125268d63f 100644
+index d3125268d63f..9944845ae9f5 100644
 --- a/MAINTAINERS
 +++ b/MAINTAINERS
-@@ -736,6 +736,12 @@ F:	Documentation/devicetree/bindings/phy/airoha,en7581-pcie-phy.yaml
- F:	drivers/phy/phy-airoha-pcie-regs.h
- F:	drivers/phy/phy-airoha-pcie.c
+@@ -740,6 +740,7 @@ AIROHA SCU SSR DRIVER
+ M:	Christian Marangi <ansuelsmth@gmail.com>
+ L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
+ S:	Maintained
++F:	Documentation/devicetree/bindings/soc/airoha/airoha,an7581-scu-ssr.yaml
+ F:	include/dt-bindings/soc/airoha,scu-ssr.h
  
-+AIROHA SCU SSR DRIVER
-+M:	Christian Marangi <ansuelsmth@gmail.com>
-+L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
-+S:	Maintained
-+F:	include/dt-bindings/soc/airoha,scu-ssr.h
-+
  AIROHA SPI SNFI DRIVER
- M:	Lorenzo Bianconi <lorenzo@kernel.org>
- M:	Ray Liu <ray.liu@airoha.com>
-diff --git a/include/dt-bindings/soc/airoha,scu-ssr.h b/include/dt-bindings/soc/airoha,scu-ssr.h
-new file mode 100644
-index 000000000000..b14457c10d77
---- /dev/null
-+++ b/include/dt-bindings/soc/airoha,scu-ssr.h
-@@ -0,0 +1,24 @@
-+/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
-+
-+#ifndef __DT_BINDINGS_AIROHA_SCU_SSR_H
-+#define __DT_BINDINGS_AIROHA_SCU_SSR_H
-+
-+/* WiFi1 port can be PCIe0 2 line, PCIe0 1 line or Ethernet (USXGMII/HSGMII) */
-+#define AIROHA_SCU_SSR_WIFI1_PCIE0_2LINE	0
-+#define AIROHA_SCU_SSR_WIFI1_PCIE0		1
-+#define AIROHA_SCU_SSR_WIFI1_ETHERNET		2
-+
-+/* WiFi2 port can be PCIe0 2 line, PCIe1 1 line or Ethernet (USXGMII/HSGMII) */
-+#define AIROHA_SCU_SSR_WIFI2_PCIE0_2LINE	0
-+#define AIROHA_SCU_SSR_WIFI2_PCIE1		1
-+#define AIROHA_SCU_SSR_WIFI2_ETHERNET		2
-+
-+/* USB1 port can be USB 3.0 port or Ethernet (HSGMII) */
-+#define AIROHA_SCU_SSR_USB1_USB			0
-+#define AIROHA_SCU_SSR_USB1_ETHERNET		1
-+
-+/* USB2 port can be USB 3.0 port or PCIe2 1 line */
-+#define AIROHA_SCU_SSR_USB2_USB			0
-+#define AIROHA_SCU_SSR_USB2_PCIE2		1
-+
-+#endif /* __DT_BINDINGS_AIROHA_SCU_SSR_H */
 -- 
 2.48.1
 
