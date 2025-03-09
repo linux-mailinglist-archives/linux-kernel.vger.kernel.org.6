@@ -1,165 +1,156 @@
-Return-Path: <linux-kernel+bounces-553098-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-553099-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4FCDBA583CC
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 12:32:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 77546A583CF
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 12:33:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 183FE3A8EE4
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 11:32:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4CBBD3AA1A5
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 11:33:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FA651624F7;
-	Sun,  9 Mar 2025 11:32:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58EC11B4156;
+	Sun,  9 Mar 2025 11:33:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=svenpeter.dev header.i=@svenpeter.dev header.b="PQU72ehj";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="u9EwQZBU"
-Received: from fout-a3-smtp.messagingengine.com (fout-a3-smtp.messagingengine.com [103.168.172.146])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VM4MSwqd"
+Received: from mail-yb1-f169.google.com (mail-yb1-f169.google.com [209.85.219.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B0DB2CCC0
-	for <linux-kernel@vger.kernel.org>; Sun,  9 Mar 2025 11:32:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.146
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35A8A2F28;
+	Sun,  9 Mar 2025 11:33:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741519950; cv=none; b=bQQ/hssfYfK+sJiWFTaW+UdpRB14FidJ/8hYsoEUpyPl9NH42C62bmRaRaNWeFtd9lG0l2s/aVh2bkpVJZE9sGcSSVuqGRUTaNPI5QR04NAWZWMJfPh7RiCe3n0wWJniyq7vTlZWyTzPTmz6YdQMWlD5Cu3E7orhGN0Mf8alPq0=
+	t=1741520019; cv=none; b=ZsRfew83/dE+hVC2dPDUyedW/n9GFs8Zpm+Z/4++vZ9CSrmMwvv294b9BzxgqPeboBPm9JBxlpivJ7FzB2E1Teo6Z1obarzxRSJj26+YJc/w0gIgd2aEdG6xyTCYwdjLKpLVBKa7scEXD5GeHzW7NcVdP+t7d+3c3rN0gqGBhnQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741519950; c=relaxed/simple;
-	bh=KRY3h/y6Mm8gGXlg5rX8HYhOitbw1P/955MyYYkxzMo=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=MAVQStXGjbhY4FEfIoLI1zYLmfHyfmRIelyjNtbtKWLbIaUObKFC2xmb228DURQzmXRGU1SILxUJNxvXjSYAdJqAPSqlDKWMpIuaKLVAIdYbL/Kbu8mZGn93FgSewaY2IJj3hgu27VLLuySvH56KZ0sA5ZaS5IpsMk9Jj4usm3A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=svenpeter.dev; spf=pass smtp.mailfrom=svenpeter.dev; dkim=pass (2048-bit key) header.d=svenpeter.dev header.i=@svenpeter.dev header.b=PQU72ehj; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=u9EwQZBU; arc=none smtp.client-ip=103.168.172.146
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=svenpeter.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=svenpeter.dev
-Received: from phl-compute-13.internal (phl-compute-13.phl.internal [10.202.2.53])
-	by mailfout.phl.internal (Postfix) with ESMTP id 6E2A9138277C;
-	Sun,  9 Mar 2025 07:32:26 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-13.internal (MEProxy); Sun, 09 Mar 2025 07:32:26 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=svenpeter.dev;
-	 h=cc:cc:content-transfer-encoding:content-type:date:date:from
-	:from:in-reply-to:message-id:mime-version:reply-to:subject
-	:subject:to:to; s=fm2; t=1741519946; x=1741606346; bh=Cp91pbB5DN
-	2RZua8Qzi2EZ3MeEoU2r2L7P3lFPNnfBY=; b=PQU72ehjmMOLtRay+y0HSuFSMg
-	CJsQjmj6Xxn6dAsD2MFECU4nHG3PRAqH33ktLvgp+dmlQ/GP0K/4jDbL6Z4Lk4y9
-	ZWSD0oWQPitmZjueSe4B6BcuN7qHQwNfqLUxwrcUKv3NGqEtg50EIj2l3hxb+9Qn
-	gDd+3UEyeq2hFr/J2GhWBjwuxpvAF+7KAlKKTBwiPfA8XHy5xxsQ8zOTWPVmAmhv
-	b8qpo4UiCGJGkCs7a6cZ2pgogE7myPTBIa+06uwRqQTO1NknO4DqVK83pUK60nPN
-	a3jIobf1fNhkLjfSSQ0gSMWdXt11eRpEGn9cCtuXzsK94FXzhUk6zba7ti5A==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:date:date:feedback-id:feedback-id:from:from
-	:in-reply-to:message-id:mime-version:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=
-	1741519946; x=1741606346; bh=Cp91pbB5DN2RZua8Qzi2EZ3MeEoU2r2L7P3
-	lFPNnfBY=; b=u9EwQZBU2ecARqRlwjNuXFotaZQIfFKVF7Eve4ypZ9BjdIUJaqA
-	a90V7dnjKUAStnU3atPwt1EvftBMCJqYpHufat0JVN/bZZ0ZwgKCL2MYq+Z+FSXf
-	cfa8bIgtc6KooCCoW30Rt8BrPmuAiN5vM/Lmk//qW7cEjcCKqb+4cqR67EDbn6s8
-	v8dug2SMkcimAmg7Fl9qVkNtBQbjZnl3zgFmNWyyzrB2cWKxcBlOx9FrV8jI/kvh
-	caxMTxA3Xf4XG6tRXJRVVr1nPorjW1DNedzyp88+ySdqtCd+IoXydxG1t+4/A9qT
-	yDh7KpPCxy8XZJi92JWXHFwFgonMHcffoAA==
-X-ME-Sender: <xms:SXzNZ25iLS_exPE_cN1I1JaG2f1JDlX9osjrHo3wonjzmRjksf32kQ>
-    <xme:SXzNZ_7YH0baFb4_jYaWuseCv0oQ1vvaTcnZ7kVRxKpTmQJSsWpIcTJ6579IXp27T
-    FGxL6yyXwOrVDNkZWg>
-X-ME-Received: <xmr:SXzNZ1fwC76ILiwN1yjLQJDR50RsJ-GhwvrWZZPfVK1wq_lMa_T2iYpJ47cFPJvPHK7hAoSV8UHIfYWXlm_md4frNjs28M7RplHrxpQDozOE7BiQNwmKAEWguVJMscw>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdduudeifeegucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
-    pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucenucfjughrpefhvf
-    evufffkffoggfgsedtkeertdertddtnecuhfhrohhmpefuvhgvnhcurfgvthgvrhcuoehs
-    vhgvnhesshhvvghnphgvthgvrhdruggvvheqnecuggftrfgrthhtvghrnhepjeelveffvd
-    efgeeuteefueetgeeghfelveevheeugefftdelleeuudefvefhieelnecuffhomhgrihhn
-    pehkvghrnhgvlhdrohhrghdpghhithhhuhgsrdgtohhmnecuvehluhhsthgvrhfuihiivg
-    eptdenucfrrghrrghmpehmrghilhhfrhhomhepshhvvghnsehsvhgvnhhpvghtvghrrdgu
-    vghvpdhnsggprhgtphhtthhopeegpdhmohguvgepshhmthhpohhuthdprhgtphhtthhope
-    hsohgtsehlihhsthhsrdhlihhnuhigrdguvghvpdhrtghpthhtoheprghsrghhiheslhhi
-    shhtshdrlhhinhhugidruggvvhdprhgtphhtthhopehlihhnuhigqdgrrhhmqdhkvghrnh
-    gvlheslhhishhtshdrihhnfhhrrgguvggrugdrohhrghdprhgtphhtthhopehlihhnuhig
-    qdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrgh
-X-ME-Proxy: <xmx:SnzNZzLrGuwSnzZhhua0RIYir2QSycKhL4Nr0VfLVJi0kRiRSciAmQ>
-    <xmx:SnzNZ6LUICEe7rI2mDX8zXiVGzm3kOFOU2awiOoGMZQgYT7OZvScHA>
-    <xmx:SnzNZ0yxQpzmG6s-jypPAZftYb7FnRZjZRVgwKMfQCQV705_fjcRmg>
-    <xmx:SnzNZ-JWXUCxzguKEGVoLSGTM7WlBUrGX1zMSR2-SAWCV5b6VnwCqQ>
-    <xmx:SnzNZ_EfmoYfk3PkPkvj65VP3uGWSz83iIRnyv4w5J502ZWNWMMF9BG4>
-Feedback-ID: i51094778:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sun,
- 9 Mar 2025 07:32:24 -0400 (EDT)
-From: Sven Peter <sven@svenpeter.dev>
-To: soc@lists.linux.dev
-Cc: asahi@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [GIT PULL] Third and final batch of Apple SoC DT updates for v6.15
-Date: Sun,  9 Mar 2025 12:32:12 +0100
-Message-Id: <20250309113212.48137-1-sven@svenpeter.dev>
-X-Mailer: git-send-email 2.39.3 (Apple Git-146)
+	s=arc-20240116; t=1741520019; c=relaxed/simple;
+	bh=RHthkc2j69XzfYIrr4SUtCie38YjQQMGl8Wq9/DxPGk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=kegWTL7WioK+pcAG/cIB21Lzk2gS/JrtVEc7NwVMqW0kVTWcBeYacusOiyJBJDjuCTIcmbczbWANq1UXAUTDnycFItXG6jnEeSfAnXq/zVpEnJKeFc0ooVbYvwxG8IuZMLMO1FboDwXvrlQkqCvkq0rm+j+t+ZIVkLGBjO6fz1c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VM4MSwqd; arc=none smtp.client-ip=209.85.219.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yb1-f169.google.com with SMTP id 3f1490d57ef6-e6372042cc2so87544276.0;
+        Sun, 09 Mar 2025 04:33:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741520017; x=1742124817; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=hD6dSJWXPovNvfl2xfXR/ZabcRpLCeSb5xx2IJUN7R0=;
+        b=VM4MSwqd2j9ADMyiwMFE6VpqMZGhZpzNvk1XkdIqOEXGc95OHpQ80Muz5oHp6hg1s3
+         FMxoKdbCjG9g2Xx6Ra3vozOfOxBjerjZNu3CJ2YvCLstuMdXtQlwpo555x0qfdTgzT8t
+         EGA8pQKtJrJjgVjzSTtOYuX9fcJEFPm1mttXIouODqRWJDEnFmhgwPT54PJxVL9V/LWU
+         VFZl5yGKwo/thVhjVmzEvKFkCn9MRlZ2oomBx06GXsDFjrihRob5UcZvgmzrKG9VhtQ2
+         QyisV6luakllH+yxWqkjQRyHGswWGURsPVZ+ie+wehTudE+Q7LSD4iUMIzOPreOQJHpP
+         p8xg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741520017; x=1742124817;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=hD6dSJWXPovNvfl2xfXR/ZabcRpLCeSb5xx2IJUN7R0=;
+        b=It34Dx17AnEfZY2+n5POgdaxCFhJ3oLPztqz69K9U/tv+wW8MQRgNdhBuTVUlgRJ9c
+         IKnNcSMnGueqWaPm3qbWHLlIscU5otTYFFNyBcCzDYOm9ObbbcCdTt+daLcK1moZ5Xtc
+         12tZIdy2sdV6snhNyMMTW1ZvAJKsNCRZAsBVmF3dY/r16BJRggAXQkV2Ve4p+VP+SEoj
+         qUhWV1UiD31252X3WPk3oF257kLR581o105VoVSlfZlTu/Ap3TBG8/7MW9hmLCtVrVAX
+         06R1KeSz5+bnpVtKSmxiILCjH1amnjNXrSkv4+Uv5tOuuqxwFXSx5lc3p9XYFBKKaF1w
+         IUFw==
+X-Forwarded-Encrypted: i=1; AJvYcCV2D85G7aLYi9okK6h9IvBFkqMRX1V7whCyvEYT/PpBua5g57PGPfrh10X0vbVHN/EU+BJQkKfbaHI=@vger.kernel.org, AJvYcCWEEIAoP2SqfzmGBXLqzdfQJjnwM973VUsh/QOkibrXq0K9N/sqCknofyUJXg/PZhXVTfBMBXlPQKOEZWI8@vger.kernel.org
+X-Gm-Message-State: AOJu0YysxZylniG8vXYHMlxAWre7B/LAV1Ho3pkOXlsvr8cKlRo6ZCBW
+	pgFCxYWu9jEYMck8iyeXGNQ+6M3EFXYpqOztx2gX2nvzNHwkhXfhp8wU0kv9FpptZ3iH0uSaI9K
+	++dVTrF7n23KVSeCGlukkWVU9uWE=
+X-Gm-Gg: ASbGncskSUw8cfMmwS24CZ8KoJ6JiD9MaMGxbLEHHnh03iyZsBm82JiXIcqeA6MSbDh
+	mFbUzQq5mOtnyx2XeKOEMo7BRJY68mrWvKk6qJpPrejMtByunp+LtPy+8bx7V9bDWYB6QgUnYLt
+	fNv4UbMSM/RklVtuPv/nT1ICI57g==
+X-Google-Smtp-Source: AGHT+IGA1Wy//fz7eW7eT/q2jrcjQp0V/XcQS+bPrc/ZNvHnuX6UFWu5yhDiUjJO9e+hykwD1m7ybkneoLXj62lZDVI=
+X-Received: by 2002:a05:6902:330f:b0:e58:1112:c3d3 with SMTP id
+ 3f1490d57ef6-e6371da30c7mr2270597276.4.1741520016979; Sun, 09 Mar 2025
+ 04:33:36 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250220104234.40958-1-l.rubusch@gmail.com> <20250220104234.40958-5-l.rubusch@gmail.com>
+ <20250302114503.26cbcd97@jic23-huawei>
+In-Reply-To: <20250302114503.26cbcd97@jic23-huawei>
+From: Lothar Rubusch <l.rubusch@gmail.com>
+Date: Sun, 9 Mar 2025 12:33:01 +0100
+X-Gm-Features: AQ5f1Jp2-UOSg1n58egPOilYte5A-AmTplg8XtN0ymbsi9QW0UjWKlhoAlITO7A
+Message-ID: <CAFXKEHYmWk9tMa5VT_9WKT-j_XvWetjTRu4Lknyv2c3u+UcHNA@mail.gmail.com>
+Subject: Re: [PATCH v3 04/15] iio: accel: adxl345: use regmap cache for INT mapping
+To: Jonathan Cameron <jic23@kernel.org>
+Cc: lars@metafoo.de, Michael.Hennerich@analog.com, linux-iio@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, eraretuya@gmail.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi,
+On Sun, Mar 2, 2025 at 12:45=E2=80=AFPM Jonathan Cameron <jic23@kernel.org>=
+ wrote:
+>
+> On Thu, 20 Feb 2025 10:42:23 +0000
+> Lothar Rubusch <l.rubusch@gmail.com> wrote:
+>
+> > Use regmap cache to replace maintaining the member variable intio
+> > for the interrupt mapping state. The interrupt mapping is initialized
+> > when the driver is probed, and it is perfectly cacheable.
+> >
+> > The patch will still leave the function set_interrupts(). A follow up
+> > patch takes care of it, when cleaning up the INT enable register
+> > variable.
+> >
+> > Signed-off-by: Lothar Rubusch <l.rubusch@gmail.com>
+> > ---
+> >  drivers/iio/accel/adxl345.h      |  4 ++
+> >  drivers/iio/accel/adxl345_core.c | 63 ++++++++++++++++++++------------
+> >  drivers/iio/accel/adxl345_i2c.c  |  2 +
+> >  drivers/iio/accel/adxl345_spi.c  |  2 +
+> >  4 files changed, 48 insertions(+), 23 deletions(-)
+> >
+> > diff --git a/drivers/iio/accel/adxl345.h b/drivers/iio/accel/adxl345.h
+> > index bc6d634bd85c..a2a81caa292a 100644
+> > --- a/drivers/iio/accel/adxl345.h
+> > +++ b/drivers/iio/accel/adxl345.h
+> > @@ -8,6 +8,8 @@
+> >  #ifndef _ADXL345_H_
+> >  #define _ADXL345_H_
+> >
+> > +#include <linux/regmap.h>
+>
+> Why add this include?
+>
+> The file should have a forwards def of
+> struct regmap;
 
-This is our final pull request for Apple SoC device tree updates for v6.15
-based on the previous one [1].
-Drivers for the M1/M2 touchbar screen and pre-M1 (iPhone, etc.) backlight
-have been merged since then and this batch includes the required device tree
-nodes. Both drivers and these commits have been part of -next for at least a
-few days. The corresponding drivers are scheduled to be included in the 6.15
-merge window as well.
+Sure.
 
+> which is currently missing.  If you clean that up in this patch that
+> is fine (mention it in the patch description though as it isn't
+> directly related) but I don't see a reason to include regmap.h here.
+>
+> Given rest if fine I'll tweak this whilst applying. Applied to the
+> togreg branch of iio.git, pushed out for now as testing for 0-day
+> to poke at it.
+>
+> Also move to a newer kernel tree. The changes in export symbol
+> should be causing you build errors for this path. I'll fix that up.
+> Quotes now needed around IIO_ADXL345 in the EXPORT_SYMBOL_NS_GPL()
+> calls. I fixed that up.
 
+Yes, this gives/gave errors. I'm sorry, I left this in the patch.
 
-Best,
+FYI, I'm always patching against recent kernel source of your
+"testing" branch of the linux iio repo. Anyway, I'm testing/verifying
+on a semi-automized setup here, involving the particular sensor
+hardware connected to an RPI. Although the self-compiled pi-kernel is
++/- recent, it usually needs additional tweaks. My pi-kernel still
+uses unquoted symbols here, which I already cover by an auxiliary
+patch (not supposed to go upstream). I missed to update this patch
+here for the added function. Thank you for the hint. Anyway probably a
+good idea to update and rebuild my setup pi-kernel. TY
 
-Sven
-
-
-[1] https://lore.kernel.org/soc/20250302115808.59172-1-sven@svenpeter.dev/
-
-The following changes since commit 44db68dee1f77260d7037319e911e9883a6ffe0e:
-
-  arm64: dts: apple: Add touchbar digitizer nodes (2025-02-26 15:33:46 +0000)
-
-are available in the Git repository at:
-
-  https://github.com/AsahiLinux/linux.git tags/asahi-soc-dt-6.15-v3
-
-for you to fetch changes up to e1bc21d8f8fde47173073a2d6233f5faa4864cfc:
-
-  arm64: dts: apple: t8015: Add backlight nodes (2025-03-06 20:54:28 +0100)
-
-----------------------------------------------------------------
-Apple SoC DT updates for 6.15, final batch:
-
-- Added touchbar screen nodes for M1/M2 platforms
-- Added backlight nodes for iPhone, iPad and iPod touch
-
-----------------------------------------------------------------
-Nick Chan (5):
-      arm64: dts: apple: s5l8960x: Add backlight nodes
-      arm64: dts: apple: t7000: Add backlight nodes
-      arm64: dts: apple: s800-0-3: Add backlight nodes
-      arm64: dts: apple: t8010: Add backlight nodes
-      arm64: dts: apple: t8015: Add backlight nodes
-
-Sasha Finkelstein (1):
-      arm64: dts: apple: Add touchbar screen nodes
-
- arch/arm64/boot/dts/apple/s5l8960x-5s.dtsi     |  4 ++
- arch/arm64/boot/dts/apple/s5l8960x.dtsi        |  7 +++
- arch/arm64/boot/dts/apple/s800-0-3-common.dtsi |  4 ++
- arch/arm64/boot/dts/apple/s800-0-3.dtsi        |  7 +++
- arch/arm64/boot/dts/apple/t7000-handheld.dtsi  |  4 ++
- arch/arm64/boot/dts/apple/t7000.dtsi           |  7 +++
- arch/arm64/boot/dts/apple/t8010-common.dtsi    |  4 ++
- arch/arm64/boot/dts/apple/t8010.dtsi           |  7 +++
- arch/arm64/boot/dts/apple/t8015-8.dtsi         |  4 ++
- arch/arm64/boot/dts/apple/t8015.dtsi           |  7 +++
- arch/arm64/boot/dts/apple/t8103-j293.dts       | 31 +++++++++++++
- arch/arm64/boot/dts/apple/t8103.dtsi           | 61 ++++++++++++++++++++++++++
- arch/arm64/boot/dts/apple/t8112-j493.dts       | 31 +++++++++++++
- arch/arm64/boot/dts/apple/t8112.dtsi           | 61 ++++++++++++++++++++++++++
- 14 files changed, 239 insertions(+)
+>
+> Jonathan
 
