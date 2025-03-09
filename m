@@ -1,190 +1,319 @@
-Return-Path: <linux-kernel+bounces-552984-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-552985-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BDFB1A5821C
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 09:44:49 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 799D3A58229
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 09:48:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9201B188BF6B
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 08:44:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 39E5D7A52A8
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 08:47:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C549F192D83;
-	Sun,  9 Mar 2025 08:44:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43FE019259F;
+	Sun,  9 Mar 2025 08:48:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=live.com header.i=@live.com header.b="gXCaivRY"
-Received: from PNYPR01CU001.outbound.protection.outlook.com (mail-centralindiaazolkn19010008.outbound.protection.outlook.com [52.103.68.8])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mHVmUGis"
+Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CDB018FC74;
-	Sun,  9 Mar 2025 08:44:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.103.68.8
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741509864; cv=fail; b=kZGdYU/HmgzMxKPn/U29/RmjvnIFp+jMgoxr5NENGQ0bKOpN4YwiVtuDBySC/pU6BV8yAvC/ysH8OsdeSTtOW8WBKDhyNFa3jUL2Q/HMogzSiYd6wiF33A0A1CoPfEStm3N+ODVrlCwoneCbAisP+FMSMsKjnB76f8ludYmUEyw=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741509864; c=relaxed/simple;
-	bh=DfGUfQp+ZwTifrERsJD5VUtDXlg1AXHskukMQWMJCVg=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=nAhbDVRxC+RlRC4Ok2xuvQfnAKzPdxjsFrtetJU7YXXGZsxKaVhZtLfxseW2LYh2eFoZ/YHg3Zw80vI57yyILF/fXxtsjHKS+79zJYZ+fTlenpOS6bXAWsxzdMxf69ZYMeKYijgFNfiaNYNCNMS03cKQmFCbb2lehfAgkgmOcek=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=live.com; spf=pass smtp.mailfrom=live.com; dkim=pass (2048-bit key) header.d=live.com header.i=@live.com header.b=gXCaivRY; arc=fail smtp.client-ip=52.103.68.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=live.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=live.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=OCFrYMR3c31kpx6eCogxDY+vN1huUY84oqq9VqG7dtvDB9YF0S+onspbTZHF2diqYF30yz482LxrGyPiGqk6k0ISEoYeWgtaFEDX3zoKvjj0rgEgSdkc+jg0mOdcewVIiwLYupMU12SHHogZGGF9A+GiZbvxAJ7lSu5Srse14jJ4FyoITUmImyYSRdvh2jGe9PWbr6fzzoBlZlCQhW/xwhawshI+UeKNU7dHexjiBbmyYZQnrdyaZ7nDu6Ug93P29ko30p0SQlmwaT5hSn5c0TQL7srfMaM49JyRg+/MVH3xLkJEMvprliRtzulHXlKwOyLjFt7RET0lgTlkDtRr6Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=DfGUfQp+ZwTifrERsJD5VUtDXlg1AXHskukMQWMJCVg=;
- b=yIM40UdHuwBnlDEua/Jyd1fz4yvgg1O/OU3Rqz2owiWySKZ8Gj//itmmRhTEZE2wWkeqPCIzFkyenGfh9+AfMN6O7EFSOQTKkm391sUTMhRUVrnyO8sM8exPkTI/At0/GE+aRLcpNsskei/cscTOJCkCfu/ovjx+RBA0D9e7MbwTpS/0BCKEeOTG0BQofKAGn+czICLovyFo76GJzCwENHGvijhtXf/nPmO+TyZ4ZfwYYxO8ZqNzxWLiBA25MCzQR1DkAgBfeVQW9n87+4tK7HR+9+/cSr/n8Xj7KfNiAc9naK6EcTQ3UdjYA652dXkWW1ynrcetc928tC0Mk9EVFA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=live.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=DfGUfQp+ZwTifrERsJD5VUtDXlg1AXHskukMQWMJCVg=;
- b=gXCaivRY7RI/kBCDM8DRw2fYxFmHJMb+7Yqf0A3SsIlYY0LOeccMH2JY1l94Nx5TR332j7rxRSIV3V+nshH0XTyYq4oP4NuwrdGvn3ErqECEkIWNAbMKWq/NrVNJgv6CZrpMvOl40EaGZWe0ZMOxqeJR/TDfx0dvJnBtkVseqnPNv5Rk3e0Xv802PYDZVFclAjrvlIPpRW3C/wFKNEzc88uQEy/fksLNatB7qlm7DKsja6HHXMV9OQ3syp70M+Q4W30GT2NIZVXukq6gHVNnfmwTFuE25t3wkFkPtia2Z5Qy6fving3a/DaEe/Lu6aCyLf1cG7yyTzkML6puuRVhKA==
-Received: from PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM (2603:1096:c01:f7::14)
- by MA0PR01MB8698.INDPRD01.PROD.OUTLOOK.COM (2603:1096:a01:b6::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8511.26; Sun, 9 Mar
- 2025 08:44:16 +0000
-Received: from PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM
- ([fe80::324:c085:10c8:4e77]) by PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM
- ([fe80::324:c085:10c8:4e77%7]) with mapi id 15.20.8511.025; Sun, 9 Mar 2025
- 08:44:16 +0000
-From: Aditya Garg <gargaditya08@live.com>
-To: "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-	"bhelgaas@google.com" <bhelgaas@google.com>, "joro@8bytes.org"
-	<joro@8bytes.org>, "will@kernel.org" <will@kernel.org>,
-	"robin.murphy@arm.com" <robin.murphy@arm.com>,
-	"andriy.shevchenko@linux.intel.com" <andriy.shevchenko@linux.intel.com>
-CC: "linux-staging@lists.linux.dev" <linux-staging@lists.linux.dev>, Linux
- Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	"linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-	"iommu@lists.linux.dev" <iommu@lists.linux.dev>, Aun-Ali Zaidi
-	<admin@kodeit.net>, "paul@mrarm.io" <paul@mrarm.io>, Orlando Chamberlain
-	<orlandoch.dev@gmail.com>
-Subject: Re: [PATCH RFC] staging: Add driver to communicate with the T2
- Security Chip
-Thread-Topic: [PATCH RFC] staging: Add driver to communicate with the T2
- Security Chip
-Thread-Index: AQHbkM7rYdRJRFFoLkaQD5PHjXHnmrNqfTUA
-Date: Sun, 9 Mar 2025 08:44:16 +0000
-Message-ID: <2B62772A-4292-4673-8F86-9D27D7AB4EE6@live.com>
-References: <1A12CB39-B4FD-4859-9CD7-115314D97C75@live.com>
-In-Reply-To: <1A12CB39-B4FD-4859-9CD7-115314D97C75@live.com>
-Accept-Language: en-IN, en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-x-ms-exchange-messagesentrepresentingtype: 1
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: PN3PR01MB9597:EE_|MA0PR01MB8698:EE_
-x-ms-office365-filtering-correlation-id: ba7e3b2b-c11c-44b0-8810-08dd5ee6936a
-x-microsoft-antispam:
- BCL:0;ARA:14566002|8060799006|19110799003|8062599003|461199028|7092599003|15080799006|102099032|3412199025|440099028|21061999003|12071999003;
-x-microsoft-antispam-message-info:
- =?utf-8?B?elJTU21OUk9IaS9BV2NGVHBTSWs1TFJXeVZGVzUzcGpNQW05NjZHRGlZNTBa?=
- =?utf-8?B?SXlkWEVWS3pFQ2NuZnUyL0pXcEp5cmw4RzQ1TWNtQ3NNcTV2VkhmWEx4bFBK?=
- =?utf-8?B?QmJsRUc2cXg5WE5TQ0NoaFRvQVZ4NGxjMDVGSkhJdW1qT1VEQ0ZZdmU3L1NC?=
- =?utf-8?B?U2t1VXFmZS9FTUhWOXo2Rmg5V2xjMU5HZW53Q3dYYzZWa3Q2NDhaUVBZdVl3?=
- =?utf-8?B?bWNvSDRJMThaWXF5dE9qS2MwTDNpOUladUVWamJWb1FQSjhSSGNZUVk4V3NC?=
- =?utf-8?B?SGE2R05HTDhOR2NwYkdrdnJoTytQRmFFU0l1UytFZnl1bDNTSFpjaTdPVXVG?=
- =?utf-8?B?VmVNYzJaN1prRHlORk9vdGdUMldxbU40eStXcWg2clZXRWg1V3RraEhWTGZ5?=
- =?utf-8?B?NW9neVJ0Wll1SXVPbHlBWDVXejd3THZsYWtUS2pGTmpJY1RKdUF4Ni90c05T?=
- =?utf-8?B?TndGQ0JwWXRKTll3VnZCUGYvQURoOTQ4QVRLdTZxRXAzMmNwZWlpUHZJdGZm?=
- =?utf-8?B?ZEwzdUFiV0RiSExzM20rQ0NjOVVGU0NmTmErU09pQ2RWMnkzamxBaStRakhy?=
- =?utf-8?B?Ym5Ldi9kakpiak96ZlB3aHZ2eUxRT0pjdlhaczNMb0xWcXorQ2dJdDdqQnBS?=
- =?utf-8?B?QzM0OUc5Nm9Va1RTdHQvaGYycHY3YytWWGY1Qjl5dS81VXFRbkRvdHpjb0tL?=
- =?utf-8?B?V3BLN1c3UGtRVGZpN04yRFFwY1pqUjBHTWplSGFqMk81ckMyLzE1dHRiVGRs?=
- =?utf-8?B?VGVuM0lFN2pqSmVjQnVTTEJPZzVhdW1MN3J1cGdpV3JNSDVMQWdOdkpsQnZl?=
- =?utf-8?B?WExqY1VKOFhCQncrOGdWVE9rUHZtNFZlZUt5Y0t5NzErUHpDRDEwOVAwQm5x?=
- =?utf-8?B?aTkrMGV2dTBtc08ydjAzZTgvSGFRV3VFR3FtVERneWhNaG1BRVZvbXdab29W?=
- =?utf-8?B?M296emNaZUVoQkN5aStFNmw3R1dNYmgyWkwzcDFwbFJ3Y0ZuVmpOaVdhbnNl?=
- =?utf-8?B?R1JNejdZQW96N2U0N1JBZ2owbVB6eEVOeFNieE92Z0t0bkpZYUkxV05GYkJw?=
- =?utf-8?B?cU1uL1pLQ3gxUitKZUFqMGhoLytKRnJWMXNrYTAraERGNlhqczBUZ2szNWtY?=
- =?utf-8?B?S2pRbytESUtWSm1GRUNXTGpRNStSUGxQVmlXOHpWUGZmK0ZhMG9GcWRlQ2d6?=
- =?utf-8?B?QU50V00ySDJNTVRBWTROMVhuNmxxYmRheGpQcm5PRzJXc2pCMVhZcU1BQktw?=
- =?utf-8?B?UGZRNGhsZW9tTFNsNytlUnJPbzVyZGJXRkZhMjQ4aVFGQlN5UnEvcnY4VkV5?=
- =?utf-8?B?d216eVFsMlVEcmk4Wi9scjBUM2RJUEQvWUNXb21UUzBuN1BLcHlXcHRRVUdT?=
- =?utf-8?B?SFllSzdRRGQxcndXS0RzaENqbGtrTEE5YkREM2R1aHpqaWJ1VjNHaitYeFd2?=
- =?utf-8?B?dlFudlptVGxPWTVsbllXd1RFOCt1UVV6Y1JicEhWcnBoeXJmVElzZ3Z5d3k0?=
- =?utf-8?B?T2d4NWlKQXZxb3ZyKytaT3AyTVR5L2NRK2RwSmdQbjB3MnRsV2hxdXZnajZW?=
- =?utf-8?B?YVd1QT09?=
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?utf-8?B?VFdjaVN6SnNxWWQyS2JtZUw4Yk1OZVBkMEpFOUwzV3M2TXNNOEgweHNKT2ZP?=
- =?utf-8?B?bjNiN2Y3ZlpvdFRWbW5NMVdxczRYeWFwb2RDV0FQb2tsb0RvWHlST1FuQVJk?=
- =?utf-8?B?NG5HRzVhM2VMQldYTC9melJnQit4UGl6K1RMQ2p3d1F1N21MbWN4T1FTc1Rn?=
- =?utf-8?B?SjVmOGE2d2I4aEdncnpzWVhHeW1SVnoyOGtNcWJrYWxwclY5eTBsbGt2U3B0?=
- =?utf-8?B?eDFwR0xRMGJIL0tDQXhwNlQ0VmpLYit0azJVajVjUk9OTzRXbkhyRGllK2Yr?=
- =?utf-8?B?Z1JuRjlLS0hMQSthYyswWU9zSEVxKzFTelptNTRzUHFHZlpJY0pmM3JCZlB3?=
- =?utf-8?B?bUJjQlVua1R1b0pmYVpScWhGaE03YWVuWk9JcWgwczlBYXowRzFnbnFsOWNW?=
- =?utf-8?B?REdxa3h6RnJmN0tRVEE2OG1iTWJnZjBwZXBVaTE5U0tmTUNTSEZTbzREcE9j?=
- =?utf-8?B?Qk1Mb1U0SkF3bXFTbW9qaGxzaENxNlJ6aytGTER2NkJZSDB0dmhsTWNzSlJD?=
- =?utf-8?B?djhjZUQ4dVRWQ2dBZUhaOUdZZ3FxeHBvdERRZFB0SGx2bHlheG9TZXNqQVlQ?=
- =?utf-8?B?bHc4VEFaZzRwL3lZNEUrWjRlLzdOcVFvbzQyRmtncTJwNHNxTHhkK0RuOFoy?=
- =?utf-8?B?dFBTMVhnWUphVk9ZYXYreEt4a21lZytHUjdUUDF5VGMxMjRudk9Jd3FzZ01J?=
- =?utf-8?B?MUdSbmJ4MlhXeHYwbTc3cUhTMk52YXFNTkl2Nkt2NXNnVXNKNTJJZGlRQkxZ?=
- =?utf-8?B?NEtka2xtaU1TWEVYZDhZSTdmcUxRaERna1d1bEExQ012OGVIa0tVanVoUlVZ?=
- =?utf-8?B?VUpPZ0piQXdzbXdsMnBvcTF6MndhU2VBQnppdkhFK1IvYXVqNkpSV2lnejlr?=
- =?utf-8?B?ckdkVEF1dXRiZ0tFN0x4a205L3lLcGMyMUFTaEhOK0QwblIyRmRNTEw3dGMy?=
- =?utf-8?B?Qy9oWUhzOVFBRUMzU3h5SGJJdGFzMStRYmJNeXQ4VW1ZMi9IRld5T1RZb3Ir?=
- =?utf-8?B?SFZDMUd0aGh0VXI3YmtNWFJRNXpUa2ExYm9xZERKeEtBV2hBMDgxeGJPZEdZ?=
- =?utf-8?B?emJuT2o2bWJHWlJ5TXBaNTZVcU1tWWlKQWxFOEcvcU9PenNGMU1LMk9iTEZR?=
- =?utf-8?B?cFp5Q0p4dnRTYkxyQk0zeHVFdjJUMmdtb2VFeHI5VlNHVU1CS0xCeStrMVda?=
- =?utf-8?B?ZjF3eWdxZW9KbnUwWlhjOWgzYXBlTm84ZFcwekltN0kxSmlYUUdVWGFTQjUv?=
- =?utf-8?B?S1hKZkVyNmNnS2QzOW9BS0tWVUsvWU0yOVhGZ0lXdGlTR1liWGt0VG4vN3hN?=
- =?utf-8?B?dldKYyt4TE92SGtNS1pLdjNSaEdvMTRDZ255VE45WFhHUUF3bzkwMjhpTTMy?=
- =?utf-8?B?OU42L0tlNmNJWDFkN3Nhajc3QVE2UUtVRVhmWWVBNXVjMGNEWTl5R0RPWjFL?=
- =?utf-8?B?RGp0ZDZhVVNQMElUZlVrbE9VUG0wa3FpM1JrMkloM3NaR0E0dTg0Tld1UmlF?=
- =?utf-8?B?czAzS2tBQkM5bm8xaHJCSlVqMmhmQVp6VjlpZVRtajNVYlhQY0tzZTBBdG1I?=
- =?utf-8?B?THR1dEkxdGU0SFdJNlo1TGU3NWxhMm5xSVBTOHVDWHkrenBNdzVtSU5HcGc4?=
- =?utf-8?B?UUk4eTh6dVdaRDRmQURibFdWTG5tTWVRdktNdzE5Q0w3WWpzZmF0SXNuZUFH?=
- =?utf-8?B?UEY0VVVLcEEwL3Z5anlvUzRsc2Nmalh6S1d2dXBFbkJYc2U3WVZTY0JtS3Z3?=
- =?utf-8?Q?2eXCBe6ykavSDEF7Mmb1jHJK98ko8/6kzMrYbxp?=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <F71DF898396F554CA004849A66E27517@INDPRD01.PROD.OUTLOOK.COM>
-Content-Transfer-Encoding: base64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67AC018E1F;
+	Sun,  9 Mar 2025 08:48:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741510108; cv=none; b=pllSvSV3MMlCYw6Hl/x0+tdHnwDTNbqDotPcde67QXlxrHJuEetjhOLYBA1cVFqKq50cCX+lWKfFw9ZBYohAOeAENMHCraaBAeaoR08GbLT3XyXbGb7sAdjilLOl/orY8EeEYLc2Z3CBIMcHJ80K5w6j5tEdyqbACdDZPBjS6ME=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741510108; c=relaxed/simple;
+	bh=uPre4oTLY075H7ytM2SiW9AMN/odpcJY90t1k53KMzc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=IOtojpOTrzBj0ZfU9KZXcmkBUaL2KF6u/hokPAWfSgDywhf+RfFqSXyczpJbglT0dIx998Ih79tzjxE814hbCiXMQY+uwDLeSbwKoTffSCJXOi9fjrTUOMaadAov0iQjSH/cR1LksfXooMcJipdIYYKtLfaH3aZNrSDdxWETpgg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mHVmUGis; arc=none smtp.client-ip=209.85.218.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-aaec111762bso615017966b.2;
+        Sun, 09 Mar 2025 00:48:26 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741510105; x=1742114905; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=ZVGcsUdrY4Ojxb0Wjt3O7HW8bB7/V56V860JdJdtjqA=;
+        b=mHVmUGisfzahqUhYLkwUpBK8oqvbXfkleT3W1uvBZndBn76ID63DZQA9c9Y1+BuXII
+         C0Hc7WTSvsR+SRxqQ8OLyvQG7giL1hBuTrojmGtuEHUV+8sij58t+RWKyFqrHUFjrNQ4
+         L+HNYIhaRy+tf0ts8VX8Z2RGBv3ZGFrW9b+TE6ah0zyBiPqLh9OOMX4T6JOWYksp2TO3
+         xu0EP95fuseMbnJ4wC0U6WwHLYRarZ27ghYnY1bID1RkhD21ibGOViYWhoU7DImcYLTD
+         sMTeztNvsgr4AHNYBeHSvk1c9YpU4LdyNhdjgCoKtQav2vAIlsYqE6dXjNUhaa1FK9Cs
+         nRQA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741510105; x=1742114905;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ZVGcsUdrY4Ojxb0Wjt3O7HW8bB7/V56V860JdJdtjqA=;
+        b=uHBbuWxMA7TDAfE63sHEjltQYJPdXHESPmjL7QIQXXmKUTK+h009dQzKqJ7wmCXfEm
+         XVAMM+/m/Gv0o8Lu4tXRcb0pnI7VMQu3jSAkbv+YOFjYr/0MWU04pWVFlu3IzV9x039l
+         O1kDddhElRIpfdiGvzcvcg25/1hxV8UYsikQ9XGO+kyGmi788k/yLkNhDC/9JESeaDeC
+         eC41WS+egSYDc2NXl7//stmWasakXPIC0z0KJTDr6MdKQnw4IdMIrGoWU1SmiuXZZfFT
+         EaNvJT+2sG4r3d/rquDSTtgQ7dR8VFSp9RbjLF9D+6M9T/M5bGBFl9iGO8E7Zo+AIqG6
+         YmVQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV3rzI5fowxzS556dKxS2FGn3gUWTb8KD05fAAe2/qIrG/u5e+m8B4t6QohKT4F9jFaJv3UTvrp5CXd3CI=@vger.kernel.org, AJvYcCWM0LSXLjquPstI8y88of0Rtv2xsbvEZhyvj3jkT6AFciZ4mEJQCEPjOtCtt+4Yb88p3jZwb1z+0WY6TItG@vger.kernel.org, AJvYcCX5hGuHpGGQ1r6iePH1f42UvCLnCpzsevpAhfQL8gLoyjziedu9PsZPggIUoiJ02hLHNj03rZ9WwQlB@vger.kernel.org, AJvYcCXz7jPxg/aiwmWltB3Y9ONwjc3FW8EJQqOdUoFlbMgEl+aEtxSDHRAe880sZExNQM/kS0M2A1Dq2U169A==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzR+mkwqybxWQsMvNOStxeH1RVl/KTjpWyKadlXyxk9L0vWAUBq
+	OKaTOji2DiZfUITgbGCh/P2McdaNbsKl9yv2u+u8pOiq9R3JNXMaWL/p7g==
+X-Gm-Gg: ASbGncvp8Gz1qEtqWR8zlicu48DZaVky0z53BfGf/lbN+gaKbZO3fERZ005EpdOPCA/
+	oPJB8rmIrLcYePwXO2WQRMRpfbgZMf75A11jPstimIUH4+palcqijegCMLvO5iaRjvajKgVh9rE
+	494oGVDwhOPUIfxPkejVSrGn99kfkEWu8IVg+/YrTAyIH81umpOiN40Kl/0iuJwURf4k2rvy4xm
+	wpvaoRdc4ZMGyG6QxrbGDNOGtK5HJLMq+b3D+3DHdQld9+DETy6r02+ZL1hSsUbCH7PEWWaKzOw
+	2e7dWvfRAtG3yJsqm3+OBy40CT6ub8Auyk+5XRdL6xEQYf2vOfI8iFO1sQ==
+X-Google-Smtp-Source: AGHT+IHI4Zyfvvqb7frkRpwXvq+ngfIqgiZRQjrvqboXWAs52psPPFqtYXNUWfj7KjP1zDv7XZFEpw==
+X-Received: by 2002:a17:906:f590:b0:ab8:c215:fd27 with SMTP id a640c23a62f3a-ac252a9e65bmr864919566b.14.1741510104309;
+        Sun, 09 Mar 2025 00:48:24 -0800 (PST)
+Received: from demon-pc.localdomain ([188.27.130.21])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac239736153sm566347466b.108.2025.03.09.00.48.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 09 Mar 2025 00:48:23 -0800 (PST)
+From: Cosmin Tanislav <demonsingur@gmail.com>
+To: 
+Cc: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
+	Cosmin Tanislav <cosmin.tanislav@analog.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	=?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
+	Julien Massot <julien.massot@collabora.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Bjorn Andersson <quic_bjorande@quicinc.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Taniya Das <quic_tdas@quicinc.com>,
+	Biju Das <biju.das.jz@bp.renesas.com>,
+	=?UTF-8?q?N=C3=ADcolas=20F=20=2E=20R=20=2E=20A=20=2E=20Prado?= <nfraprado@collabora.com>,
+	Eric Biggers <ebiggers@google.com>,
+	Javier Carrasco <javier.carrasco@wolfvision.net>,
+	Ross Burton <ross.burton@arm.com>,
+	Hans Verkuil <hverkuil@xs4all.nl>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Zhi Mao <zhi.mao@mediatek.com>,
+	Kieran Bingham <kieran.bingham@ideasonboard.com>,
+	Dongcheng Yan <dongcheng.yan@intel.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Benjamin Mugnier <benjamin.mugnier@foss.st.com>,
+	Tommaso Merciai <tomm.merciai@gmail.com>,
+	Dan Carpenter <dan.carpenter@linaro.org>,
+	Ihor Matushchak <ihor.matushchak@foobox.net>,
+	Laurentiu Palcu <laurentiu.palcu@oss.nxp.com>,
+	linux-media@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-staging@lists.linux.dev,
+	linux-gpio@vger.kernel.org,
+	Cosmin Tanislav <demonsingur@gmail.com>
+Subject: [RFC PATCH v2 00/16]  media: i2c: add Maxim GMSL2/3 serializer and deserializer drivers
+Date: Sun,  9 Mar 2025 10:47:52 +0200
+Message-ID: <20250309084814.3114794-1-demonsingur@gmail.com>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: sct-15-20-7719-20-msonline-outlook-ae5c4.templateTenant
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
-X-MS-Exchange-CrossTenant-Network-Message-Id: ba7e3b2b-c11c-44b0-8810-08dd5ee6936a
-X-MS-Exchange-CrossTenant-originalarrivaltime: 09 Mar 2025 08:44:16.4737
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: 00000000-0000-0000-0000-000000000000
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MA0PR01MB8698
+Content-Transfer-Encoding: 8bit
 
-DQoNCj4gT24gOSBNYXIgMjAyNSwgYXQgMjoxMOKAr1BNLCBBZGl0eWEgR2FyZyA8Z2FyZ2FkaXR5
-YTA4QGxpdmUuY29tPiB3cm90ZToNCj4gDQo+IEZyb206IFBhdWwgUGF3bG93c2tpIDxwYXVsQG1y
-YXJtLmlvPg0KPiANCj4gVGhpcyBwYXRjaCBhZGRzIGEgZHJpdmVyIG5hbWVkIGFwcGxlLWJjZSwg
-dG8gYWRkIHN1cHBvcnQgZm9yIHRoZSBUMg0KPiBTZWN1cml0eSBDaGlwIGZvdW5kIG9uIGNlcnRh
-aW4gTWFjcy4NCj4gDQo+IFRoZSBkcml2ZXIgaGFzIDMgbWFpbiBjb21wb25lbnRzOg0KPiANCj4g
-QkNFIChCdWZmZXIgQ29weSBFbmdpbmUpIC0gdGhpcyBpcyB3aGF0IHRoZSBmaWxlcyBpbiB0aGUg
-cm9vdCBkaXJlY3RvcnkNCj4gYXJlIGZvci4gVGhpcyBlc3RhYmlsaXNoZXMgYSBiYXNpYyBjb21t
-dW5pY2F0aW9uIGNoYW5uZWwgd2l0aCB0aGUgVDIuDQo+IFZIQ0kgYW5kIEF1ZGlvIGJvdGggcmVx
-dWlyZSB0aGlzIGNvbXBvbmVudC4NCj4gDQo+IFZIQ0kgLSB0aGlzIGlzIGEgdmlydHVhbCBVU0Ig
-aG9zdCBjb250cm9sbGVyOyBrZXlib2FyZCwgbW91c2UgYW5kDQo+IG90aGVyIHN5c3RlbSBjb21w
-b25lbnRzIGFyZSBwcm92aWRlZCBieSB0aGlzIGNvbXBvbmVudCAob3RoZXINCj4gZHJpdmVycyB1
-c2UgdGhpcyBob3N0IGNvbnRyb2xsZXIgdG8gcHJvdmlkZSBtb3JlIGZ1bmN0aW9uYWxpdHkpLg0K
-PiANCj4gQXVkaW8gLSBhIGRyaXZlciBmb3IgdGhlIFQyIGF1ZGlvIGludGVyZmFjZSwgY3VycmVu
-dGx5IG9ubHkgYXVkaW8NCj4gb3V0cHV0IGlzIHN1cHBvcnRlZC4NCj4gDQo+IEN1cnJlbnRseSwg
-c3VzcGVuZCBhbmQgcmVzdW1lIGZvciBWSENJIGlzIGJyb2tlbiBhZnRlciBhIGZpcm13YXJlDQo+
-IHVwZGF0ZSBpbiBpQnJpZGdlIHNpbmNlIG1hY09TIFNvbm9tYS4NCj4gDQo+IFNpZ25lZC1vZmYt
-Ynk6IFBhdWwgUGF3bG93c2tpIDxwYXVsQG1yYXJtLmlvPg0KPiBTaWduZWQtb2ZmLWJ5OiBBZGl0
-eWEgR2FyZyA8Z2FyZ2FkaXR5YTA4QGxpdmUuY29tPg0KPiANCg0KRldJVywgSSBhbSBhd2FyZSBv
-ZiB0aGUgbWlzc2luZyBtYWludGFpbmVycyBmaWxlIGFuZCBzdGlsbCBub3QgcmVtb3ZlZCBMaW51
-eCB2ZXJzaW9uIGNoZWNrcyBpbiB0aGUgZHJpdmVyLg0KDQpNeSBtYWluIHB1cnBvc2Ugb2Ygc2Vu
-ZGluZyB0aGlzIHdhcyB0byBrbm93IHRoZSB2aWV3cyBvZiB0aGUgbWFpbnRhaW5lcnMgYWJvdXQg
-dGhlIGNvZGUgcXVhbGl0eSwgYW5kIHdoZXRoZXIgdGhpcyBxdWFsaWZpZXMgZm9yIHN0YWdpbmcg
-b3Igbm90Lg==
+This series adds new drivers for multiple Maxim GMSL2 and GMSL3 devices,
+replacing the few GMSL2 drivers already in upstream, and introducing a
+common framework that can be used to implement such GMSL chips, which
+avoids code duplication while also adding support for previously
+unsupported features.
+
+While the normally acceptable and polite way would be to extend the
+current mainline drivers, the choice was made here to add a totally new
+set of drivers. The current drivers support only a small subset of the
+possible features, and only a few devices, so the end result after
+extending them would in any case be essentially fully rewritten, new
+drivers.
+
+This series depends on these two series:
+ * https://lore.kernel.org/lkml/20250306-fpc202-v9-0-2779af6780f6@bootlin.com
+ * https://lore.kernel.org/lkml/20250228151730.1874916-1-demonsingur@gmail.com
+
+The following deserializers are supported:
+ * MAX96712 (already exists in staging)
+ * MAX96714 (already exists)
+ * MAX96716 (GMSL2)
+ * MAX96724 (part of existing MAX96712 driver)
+ * MAX9296A (GMSL2)
+ * MAX96792A (GMSL3)
+
+The following serializers are supported:
+ * MAX96717 (already exists)
+ * MAX9295A (GMSL2)
+ * MAX96793 (GMSL3)
+
+Missing features:
+ * The current TPG implementation makes use of the V4L2_CID_TEST_PATTERN
+   V4L2 control. With V4L2 streams support added, we would like to hook
+   up TPG using the internal pad feature which has not been accepted
+   upstream yet. We decided to leave TPG out for the moment and add it
+   back after internal pads have been accepted.
+
+Known backward compatibility breakages:
+ * No default routing. Default routing has been intentionally ommitted
+   as the devices support quite complex routing and it would be
+   unfeasible to provide sane defaults for multi-link deserialziers.
+   It is expected that userspace programs would set appropritate
+   routing. 
+
+The following list enumerates new features that are supported by the
+common framework and their respective chip-specific drivers:
+ * Full Streams API support. Most deserializers have support for more
+   than one link, and more than one PHY. Streams support allows
+   configuration of routing between these links and PHYs.
+
+ * .get_frame_desc() support. Both the serializers and deserializers
+   implement this to query and provide frame descriptor data. This is
+   used in features explained in-depth below.
+
+ * .get_mbus_config() support. The deserializers implement this to allow
+   upstream devices to query the link frequency of its pads.
+
+ * Address translation with I2C ATR for the serializers.
+
+ * I2C MUX where supported by the hardware for deserializers, otherwise
+   I2C ATR translation - some deserializers cannot do muxing since I2C
+   communication channel masking is not available per-link, and the only
+   other way to select links is to turn them off, causing link resets.
+   For such cases, I2C ATR is used to change the address of
+   the serializers at probe time.
+
+ * Automatic VC remapping on the deserializers. VCs are picked so that
+   if they were unique on the sink pad, they will end up as unique on
+   the source pad they are routed to too, prioritizing using the same
+   VC ID as the sink pad, to facilitate the possibility of using tunnel
+   mode.
+
+ * Automatic pixel mode / tunnel mode selection. Tunnel mode is used
+   when VC IDs do not need to be changed and all hardware supports
+   tunnel mode, otherwise, pixel mode is used. The serializers are
+   automatically switched between the two by using a private API.
+
+ * Automatic double mode selection. In pixel mode, double mode can be
+   used to pack two pixels into a single data unit, optimizing bandwidth
+   usage. The serializers are automatically set up to support the double
+   modes determined by the deserializers using a private API.
+
+ * Automatic data padding. In pixel mode, if the data being transferred
+   uses two different BPPs, data needs to be padded. The serializers
+   automatically set this up depending on the configured double mode
+   settings and incoming data types.
+
+ * Logging. Both the deserializers and serializers implement the V4L2
+   .log_status() ops to allow debugging of the internal state and
+   important chip status registers.
+
+ * PHY modes. Deserializer chips commonly have more than a single PHY.
+   The firmware ports are parsed to determine the modes in which to
+   configure the PHYs (2x4, 4x2, 1x4+2x2, 2x2+1x4, and variations using
+   fewer lanes).
+
+ * Serializer pinctrl. Serializers implement pinctrl to allow setting
+   configs which would otherwise be inaccessible through GPIO: TX/RX via
+   GMSL link, pull-up & pull-down (with strength), open-drain &
+   push-pull, slew rate, RCLK pin selection.
+
+The drivers have been tested on the following hardware combinations, but
+further testing is welcome to ensure no / minimal breakage:
+ * Raspberry Pi 5 + MAX96724 + 4xMAX96717 + 4xIMX219
+ * Raspberry Pi 5 + MAX96792A + 1xMAX96793 + 1xMAX96717 + 2xIMX219
+ * Raspberry Pi 5 + MAX96792A + 2xMAX96717 + 2xIMX219
+ * Renesas V4H + MAX96712 + 2xMAX96717 + 2xIMX219 
+
+Analog Devices is taking responsibility for the maintenance of these
+drivers and common framework, and plans to add support for new
+broad-market chips on top of them.
+
+Special thanks go to Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
+for testing the drivers, helping debug and coming up with ideas /
+implementations for various features.
+
+V2:
+ * add missing compatible for MAX96717F
+ * fix embarrassing dt-bindings mistakes
+ * move MAX9296A/MAX96716/MAX96792A to a separate file as they have two
+   links / PHYs, and adding those conditionally seems impossible
+
+Cosmin Tanislav (16):
+  dt-bindings: media: i2c: max96717: add myself as maintainer
+  dt-bindings: media: i2c: max96717: reflow text
+  dt-bindings: media: i2c: max96717: add support for I2C ATR
+  dt-bindings: media: i2c: max96717: add support for pinctrl/pinconf
+  dt-bindings: media: i2c: max96717: add support for MAX9295A
+  dt-bindings: media: i2c: max96717: add support for MAX96793
+  dt-bindings: media: i2c: max96712: add myself as maintainer
+  dt-bindings: media: i2c: max96712: use pattern properties for ports
+  dt-bindings: media: i2c: max96712: add support for I2C MUX
+  dt-bindings: media: i2c: max96712: add support for POC supplies
+  dt-bindings: media: i2c: add MAX9296A, MAX96716A, MAX96792A
+  media: i2c: add Maxim GMSL2/3 serializer and deserializer drivers
+  arm64: defconfig: disable deprecated MAX96712 driver
+  staging: media: remove MAX96712 driver
+  media: i2c: remove MAX96717 driver
+  media: i2c: remove MAX96714 driver
+
+ .../bindings/media/i2c/maxim,max9296a.yaml    |  281 ++
+ .../bindings/media/i2c/maxim,max96712.yaml    |   47 +-
+ .../media/i2c/maxim,max96717-pinctrl.yaml     |   71 +
+ .../bindings/media/i2c/maxim,max96717.yaml    |   80 +-
+ MAINTAINERS                                   |   13 +-
+ arch/arm64/configs/defconfig                  |    1 -
+ drivers/media/i2c/Kconfig                     |   34 +-
+ drivers/media/i2c/Makefile                    |    3 +-
+ drivers/media/i2c/max96714.c                  | 1024 --------
+ drivers/media/i2c/max96717.c                  | 1103 --------
+ drivers/media/i2c/maxim-serdes/Kconfig        |   53 +
+ drivers/media/i2c/maxim-serdes/Makefile       |    6 +
+ drivers/media/i2c/maxim-serdes/max9296a.c     | 1146 ++++++++
+ drivers/media/i2c/maxim-serdes/max96717.c     | 1501 +++++++++++
+ drivers/media/i2c/maxim-serdes/max96724.c     |  905 +++++++
+ drivers/media/i2c/maxim-serdes/max_des.c      | 2321 +++++++++++++++++
+ drivers/media/i2c/maxim-serdes/max_des.h      |  135 +
+ drivers/media/i2c/maxim-serdes/max_ser.c      | 1584 +++++++++++
+ drivers/media/i2c/maxim-serdes/max_ser.h      |  132 +
+ drivers/media/i2c/maxim-serdes/max_serdes.c   |  302 +++
+ drivers/media/i2c/maxim-serdes/max_serdes.h   |   88 +
+ drivers/staging/media/Kconfig                 |    2 -
+ drivers/staging/media/Makefile                |    1 -
+ drivers/staging/media/max96712/Kconfig        |   14 -
+ drivers/staging/media/max96712/Makefile       |    2 -
+ drivers/staging/media/max96712/max96712.c     |  487 ----
+ 26 files changed, 8634 insertions(+), 2702 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/media/i2c/maxim,max9296a.yaml
+ create mode 100644 Documentation/devicetree/bindings/media/i2c/maxim,max96717-pinctrl.yaml
+ delete mode 100644 drivers/media/i2c/max96714.c
+ delete mode 100644 drivers/media/i2c/max96717.c
+ create mode 100644 drivers/media/i2c/maxim-serdes/Kconfig
+ create mode 100644 drivers/media/i2c/maxim-serdes/Makefile
+ create mode 100644 drivers/media/i2c/maxim-serdes/max9296a.c
+ create mode 100644 drivers/media/i2c/maxim-serdes/max96717.c
+ create mode 100644 drivers/media/i2c/maxim-serdes/max96724.c
+ create mode 100644 drivers/media/i2c/maxim-serdes/max_des.c
+ create mode 100644 drivers/media/i2c/maxim-serdes/max_des.h
+ create mode 100644 drivers/media/i2c/maxim-serdes/max_ser.c
+ create mode 100644 drivers/media/i2c/maxim-serdes/max_ser.h
+ create mode 100644 drivers/media/i2c/maxim-serdes/max_serdes.c
+ create mode 100644 drivers/media/i2c/maxim-serdes/max_serdes.h
+ delete mode 100644 drivers/staging/media/max96712/Kconfig
+ delete mode 100644 drivers/staging/media/max96712/Makefile
+ delete mode 100644 drivers/staging/media/max96712/max96712.c
+
+-- 
+2.48.1
+
 
