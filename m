@@ -1,124 +1,102 @@
-Return-Path: <linux-kernel+bounces-553055-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-553056-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id F372EA582E7
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 11:09:23 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B942A582E8
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 11:10:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3B45D164AE0
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 10:09:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0FE9E188E30C
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 10:10:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F79F1B3957;
-	Sun,  9 Mar 2025 10:09:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 821CF1A00F8;
+	Sun,  9 Mar 2025 10:10:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AQRt95xC"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="d3oSvCHS"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9B0917A319;
-	Sun,  9 Mar 2025 10:09:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE7AD17A319
+	for <linux-kernel@vger.kernel.org>; Sun,  9 Mar 2025 10:10:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741514955; cv=none; b=BZmzy1hEFvqDCGwivI9X3goYlUrZweEJPdmpre12HKG0HPiQhe62mDhnaT9+WMejVZFMifm7LzM+3OJQk/jEykROH/4v7fNMrB6F9C+IMEW6pFsOFt/YzosF+VHe4J3lfBq0QLUmCXlgRgJPH6Z//5/TXPuL/4n3oClL4yhPHA0=
+	t=1741515017; cv=none; b=ucAHT+KZNDLywbCD4WYuDmlythGTUmx3XG3ONBuDukF/clSRlu5ID3pUwUoOSlqBZaac9JvSV/SNPqL4n6s0pXCYZvuzFS1c/YlaVH7DlMSWa3tpeVr7gKwh+mEzVit6kARCnfGR8deZqCYD0HAkF20uL+112iHArEL/GOq5xSE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741514955; c=relaxed/simple;
-	bh=C+xJjy9a26xtFek9Ow+eRfDFQ+TSQpx/FEE82qaeMGc=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=UmiFx16t2N6nL2FSWzD3XprjQLgTXlu1DnfJ7aN0TVpKLz9XfAvZKiuB1TKSMpZ2CFQGhAhm5jMUKWdQwnqdbMz0rshNwz5LB6weHoa6BLVM1nBTIdjaZJGkt9RXJUu31TJ1vYbVmvuQe6DocVLJ8GnVOH6OGOSUJKSS7iXTD/U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AQRt95xC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D7925C4CEE5;
-	Sun,  9 Mar 2025 10:09:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741514955;
-	bh=C+xJjy9a26xtFek9Ow+eRfDFQ+TSQpx/FEE82qaeMGc=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=AQRt95xC+vKHVwna4eEQQbF3pqShSVfVlquCNh3I0Bg1FWTznowlP15s9nRDBD9Ct
-	 rdCvuJUL84sqpIx3zNq2umd9Np3ZA7GAxqF0+yPsiUr0QL1s6RS67+V4SHwCYced1G
-	 j2LHc4TEWH8kTdgE062oWVwDRduOZ4MBeAnGSDuSrqlBPQT3Uh/AL1fjFE8NIAbgkH
-	 i7TjWbE4uiNNQqdFGc9dqTbSzzwTEhuYHX6C/vu7ORxyDvgjMFfvVLuFYQJQwIjj5S
-	 JsTYkk3OzPtK08iBQaEfMkxIo26uSbkmGhrRrgKMxs2oLsEsB4VAsk3wkJW5541DOh
-	 zI5JDH2NYyqsw==
-From: Andreas Hindborg <a.hindborg@kernel.org>
-To: "Benno Lossin" <benno.lossin@proton.me>
-Cc: "Miguel Ojeda" <ojeda@kernel.org>,  "Anna-Maria Behnsen"
- <anna-maria@linutronix.de>,  "Frederic Weisbecker" <frederic@kernel.org>,
-  "Thomas Gleixner" <tglx@linutronix.de>,  "Danilo Krummrich"
- <dakr@kernel.org>,  "Alex Gaynor" <alex.gaynor@gmail.com>,  "Boqun Feng"
- <boqun.feng@gmail.com>,  "Gary Guo" <gary@garyguo.net>,  =?utf-8?Q?Bj?=
- =?utf-8?Q?=C3=B6rn?= Roy Baron
- <bjorn3_gh@protonmail.com>,  "Alice Ryhl" <aliceryhl@google.com>,  "Trevor
- Gross" <tmgross@umich.edu>,  "Lyude Paul" <lyude@redhat.com>,  "Guangbo
- Cui" <2407018371@qq.com>,  "Dirk Behme" <dirk.behme@gmail.com>,  "Daniel
- Almeida" <daniel.almeida@collabora.com>,  "Tamir Duberstein"
- <tamird@gmail.com>,  "Markus Elfring" <Markus.Elfring@web.de>,
-  <rust-for-linux@vger.kernel.org>,  <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v11 08/13] rust: hrtimer: implement
- `UnsafeHrTimerPointer` for `Pin<&mut T>`
-In-Reply-To: <D8BNFIK9U108.273II0I7NZUG1@proton.me> (Benno Lossin's message of
-	"Sun, 09 Mar 2025 10:04:42 +0000")
-References: <20250307-hrtimer-v3-v6-12-rc2-v11-0-7934aefd6993@kernel.org>
-	<20250307-hrtimer-v3-v6-12-rc2-v11-8-7934aefd6993@kernel.org>
-	<bDmFMydggU4eq3yBLbESIOZQnfZkIfJiEPrrTwTTONi5iaT-ssC4Q0TQ1Wljr2k6PfTCfh2TYMEmj5KGN4FxGA==@protonmail.internalid>
-	<D8BNFIK9U108.273II0I7NZUG1@proton.me>
-User-Agent: mu4e 1.12.7; emacs 29.4
-Date: Sun, 09 Mar 2025 11:08:59 +0100
-Message-ID: <87frjmldms.fsf@kernel.org>
+	s=arc-20240116; t=1741515017; c=relaxed/simple;
+	bh=d/sNiwmDwosR14KhyiJOFG26A3mxq5tUt5OjZfyGCYw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Oz8WlvYHQ6Jmew6ON/UbYdlI1pfk8QX20l4p/Ykoxz+RCIQTiflMh3a6XzTxWOUap4mkiEe6UVAobTZed30rR7FojTxqWMOrU5WV9UkMnXEp/SFRzpoIEE6tctQfm9HQCRV6d690D3NZ2uikdSO/Jms4Pu3FyTvGqd4Q9fYiii0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=d3oSvCHS; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1741515007;
+	bh=d/sNiwmDwosR14KhyiJOFG26A3mxq5tUt5OjZfyGCYw=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=d3oSvCHS5cB/kc+sh08WU4QYk686sVu5viglEkz1Dpz4jFk4pz2M6yCdDFoVrUGMp
+	 mzkmd2BY7dwnh5wYCfZs1XwPdJPgWNylmHPMRYAXEQ77KPrp75GOXknvQvr9yZm4JW
+	 kQcsyFX2VwJ+jrThmHCUUugIWVdagFfNHGaGmHVwWx5bG6PZLAVBqISEcaf6f2D/dk
+	 V0z2ACr4SIBdKsV4zJGe8twzBVmFtSdKOZ2S87Gl8Dm28LE4e2bGyZKwLEaiKCpaZt
+	 dHK4JwKf1UFN6dRfNcZBEwnp3M5cq77OTG9s6YIK02fkv5IrB5gWd9uzu0LI02y+1T
+	 /+k0mG/Ze2oKw==
+Received: from [192.168.1.90] (unknown [84.232.140.93])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: cristicc)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 58DC617E0B25;
+	Sun,  9 Mar 2025 11:10:07 +0100 (CET)
+Message-ID: <22142c86-c8b5-4427-9764-a7daa4a005b1@collabora.com>
+Date: Sun, 9 Mar 2025 12:10:06 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 02/12] phy: hdmi: Add color depth configuration
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I
+ <kishon@kernel.org>, Heiko Stuebner <heiko@sntech.de>,
+ Algea Cao <algea.cao@rock-chips.com>, Sandor Yu <Sandor.yu@nxp.com>,
+ Maxime Ripard <mripard@kernel.org>, kernel@collabora.com,
+ linux-kernel@vger.kernel.org, linux-phy@lists.infradead.org,
+ linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org
+References: <20250308-phy-sam-hdptx-bpc-v5-0-35087287f9d1@collabora.com>
+ <20250308-phy-sam-hdptx-bpc-v5-2-35087287f9d1@collabora.com>
+ <CAA8EJpqYE1drM6=C0AwPZ-e5RkWqjMTpWQiwhA64qby1mmVL1Q@mail.gmail.com>
+Content-Language: en-US
+From: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+In-Reply-To: <CAA8EJpqYE1drM6=C0AwPZ-e5RkWqjMTpWQiwhA64qby1mmVL1Q@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-"Benno Lossin" <benno.lossin@proton.me> writes:
+Hi Dmitry,
 
-> On Fri Mar 7, 2025 at 10:38 PM CET, Andreas Hindborg wrote:
->> +impl<'a, T> RawHrTimerCallback for Pin<&'a mut T>
->> +where
->> +    T: HasHrTimer<T>,
->> +    T: HrTimerCallback<Pointer<'a> = Self>,
->> +{
->> +    type CallbackTarget<'b> = Self;
->> +
->> +    unsafe extern "C" fn run(ptr: *mut bindings::hrtimer) -> bindings::hrtimer_restart {
->> +        // `HrTimer` is `repr(C)`
->> +        let timer_ptr = ptr as *mut HrTimer<T>;
->> +
->> +        // SAFETY: By the safety requirement of this function, `timer_ptr`
->> +        // points to a `HrTimer<T>` contained in an `T`.
->> +        let receiver_ptr = unsafe { T::timer_container_of(timer_ptr) };
->> +
->> +        // SAFETY:
->> +        //  - By the safety requirement of this function, `timer_ptr`
->> +        //    points to a `HrTimer<T>` contained in an `T`.
->> +        //  - As per he safety requirements of the trait `HrTimerHandle`, the
->> +        //    `PinMutHrTimerHandle` associated with this timer is guaranteed to
->> +        //    be alive until this method returns. As the handle borrows from
->> +        //    `T`, `T` is also guaranteed to be alive for the duration of this
->> +        //    function.
->
-> Ah one more thing, I don't think that the second part is needed (i.e.
-> that `T` is alive). How about:
->
->         //  - As per the safety requirements of the trait `HrTimerHandle`, the `PinMutHrTimerHandle`
->         //  associated with this timer is guaranteed to be alive until this method returns. That
->         //  handle borrows the `T` behind `receiver_ptr` mutably thus guaranteeing the validity of
->         //  the reference created below.
+On 3/9/25 11:16 AM, Dmitry Baryshkov wrote:
+> On Sat, 8 Mar 2025 at 14:21, Cristian Ciocaltea
+> <cristian.ciocaltea@collabora.com> wrote:
+>>
+>> Extend the HDMI configuration options to allow managing bits per color
+>> channel.  This is required by some PHY drivers such as
+>> rockchip-samsung-hdptx.
+>>
+>> Signed-off-by: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+>> ---
+>>  include/linux/phy/phy-hdmi.h | 2 ++
+>>  1 file changed, 2 insertions(+)
+>>
+> 
+> Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> 
+> Just to confirm, are you passing TMDS char rate or pixel clock for
+> DeepColor (bpc > 8) modes?
 
-OK.
+It's the TMDS char rate, but we still need the bpc info to program
+CMN_REG(0086) in PATCH 12.
 
->
-> Can you also adjust the other instances of this in the other patches?
-> Thanks!
-
-Yes!
-
-
-Best regards,
-Andreas Hindborg
-
-
+Thanks for reviewing,
+Cristian
 
