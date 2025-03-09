@@ -1,119 +1,176 @@
-Return-Path: <linux-kernel+bounces-552868-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-552869-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BCF55A58035
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 02:06:47 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E9E5DA58037
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 02:10:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0C0D41891C39
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 01:06:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 15C2616D7B5
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 01:10:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA928C2EF;
-	Sun,  9 Mar 2025 01:06:41 +0000 (UTC)
-Received: from smtp134-31.sina.com.cn (smtp134-31.sina.com.cn [180.149.134.31])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 930EB19BBC;
+	Sun,  9 Mar 2025 01:10:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ZkeaAeZP"
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 629404C91
-	for <linux-kernel@vger.kernel.org>; Sun,  9 Mar 2025 01:06:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=180.149.134.31
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77F5CC2EF
+	for <linux-kernel@vger.kernel.org>; Sun,  9 Mar 2025 01:10:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741482401; cv=none; b=j3VKSimbAPjFKt8DxxABO7/TP2uYtoBgkOG8xJBM5A4YY4T44I/SmHYnpEYR7Dad1y9wPfpQ4iaOc1qJOqhvf46PJh7hgSlrhsQ+dVShJ83jpwRktdjllZoE09RDrmJcYx31behjW9BpXo7JpdbUReuJqOn++nASBO5+f3RLQQA=
+	t=1741482604; cv=none; b=clU8ou0AIqU4yHygtWfIMxbglvJCiVM7y16qaO2NijVCYBqYnkLr2leVi314I6or260OpWLtpiS/VLk/Eo6dvw/v6EQP7l6HY4pF1HUyHgi3uV+mdNgiYO32+j2zAhvpz/CdLJP5spkRtofKrhgVKTQnFEGch2EuWAlGf6v/7a8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741482401; c=relaxed/simple;
-	bh=S+Nv7k3/mmFrzGHckeo8cjudm8lR4wwrLCYBcP/dAL0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=u/EmdZHgRnqtGmjC14t9OEiu3IrEluq/1ds2/D4Sx/eeJxAGfjAgsLxGrtl1PLkNIq0LLm9qL2TdYMY/zwIj/4VYbd5AnNQbAPNTqhqdOX3AHKaFvS/Si+sTaiyYm1oPmkT2x7JY2rwDC4F/dlyO01+XS77e8pXkNd84HJJEmHk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; arc=none smtp.client-ip=180.149.134.31
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
-X-SMAIL-HELO: localhost.localdomain
-Received: from unknown (HELO localhost.localdomain)([113.118.65.203])
-	by sina.com (10.185.250.21) with ESMTP
-	id 67CCE96D00004BB8; Sun, 9 Mar 2025 09:05:52 +0800 (CST)
-X-Sender: hdanton@sina.com
-X-Auth-ID: hdanton@sina.com
-Authentication-Results: sina.com;
-	 spf=none smtp.mailfrom=hdanton@sina.com;
-	 dkim=none header.i=none;
-	 dmarc=none action=none header.from=hdanton@sina.com
-X-SMAIL-MID: 9464423408360
-X-SMAIL-UIID: C1B2F9E6C3134DE499268E94EB7A02E5-20250309-090552-1
-From: Hillf Danton <hdanton@sina.com>
-To: Nhat Pham <nphamcs@gmail.com>,
-	Barry Song <21cnbao@gmail.com>
-Cc: Qun-Wei Lin <qun-wei.lin@mediatek.com>,
-	Sergey Senozhatsky <senozhatsky@chromium.org>,
-	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org
-Subject: Re: [PATCH 2/2] kcompressd: Add Kcompressd for accelerated zram compression
-Date: Sun,  9 Mar 2025 09:05:22 +0800
-Message-ID: <20250309010541.3152-1-hdanton@sina.com>
-In-Reply-To: <CAKEwX=OP9PJ9YeUvy3ZMQPByH7ELHLDfeLuuYKvPy3aCQCAJwQ@mail.gmail.com>
-References: <20250307120141.1566673-1-qun-wei.lin@mediatek.com> <20250307120141.1566673-3-qun-wei.lin@mediatek.com> <CAGsJ_4xtp9iGPQinu5DOi3R2B47X9o=wS94GdhdY-0JUATf5hw@mail.gmail.com>
+	s=arc-20240116; t=1741482604; c=relaxed/simple;
+	bh=EMETro1CBymXxo+PkEzv8CVP78iq4oJXIfSe7eI5Prs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=CYhYdsFOT/TBcXUVocSH0DyNdWI99Hj6WKkNIf1bhb0IErY1zciy4atnEKgWz8XG6XKCnK+pUzC8pArTdXAQh72PEZkw40NiqnHcLoAF7JJSRY7+OXIt0w2YL+8ytvlD/DiGK4hGrzYNzgjhj3vERHqtKFd/PaClLdSBkjvWIhQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ZkeaAeZP; arc=none smtp.client-ip=209.85.214.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-2242aca53efso104325ad.1
+        for <linux-kernel@vger.kernel.org>; Sat, 08 Mar 2025 17:10:03 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1741482603; x=1742087403; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=r4FPh8cAnZtQW5ZPsNxGskEY/OiXTs4MuYAjZb1WM+U=;
+        b=ZkeaAeZPQ7WHdS2CK/13f0SEVvcCYLu7iFqUHpgPI9PUXmfMGxlkjOcbxwXzH2lFCR
+         ovavEJ2ReX0jD9uYyfg/h38rnF0bL7psOnlHjBaK+Ifvws3KFBbq1MBhToPtu0xMtCOj
+         CrWFlxncNE9PduzEtAg/Po7be/sguR0izvT5IlYtKBRA33AjsH2KBMWs19HaUKqf885Y
+         WYSV5a6/ixvWL06uvYbyJprsommeTLNrtIxe5j5H/NLQqGVG7r0U9Ldu1IbIzBT4LqRe
+         mRuyhdW4m180pcxrMO5wyUY+KA7rnffBmCaYBRx2/gWu2yhiXK5lfipt9RJT1k8t2OLv
+         DW4Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741482603; x=1742087403;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=r4FPh8cAnZtQW5ZPsNxGskEY/OiXTs4MuYAjZb1WM+U=;
+        b=PAiHB8YTTg8A7HyJuJnKysx1W2oIa+u0cHTqFCRS1Ly0D/dgjgriGuGz0feUob6FR7
+         UjqqYxgyVN21v+1cUOCcvJddeJtrIyC3pGDVbN/jJVMMSzhZOsOTBJSgBkrwGZTwHGST
+         5UKKmjGrGDJJ6ubI7tK9VO1yDuH2Q7HbCN6KzmiODDTLXIFk92PFCPfJT/nJsQTvFCq0
+         +NjKFqJYAV1xIVrdJWh4DRJR1odC9VP/lrmg5c4VxysqfYCVqsmyxe5DlOfgr2+hXv2U
+         caylBjKIYpzKGPxFJcG6+0je6ExzlOs04R+r5YTL64vLKwN9nrBh6852EEm2hOThaLXr
+         dUtQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW+FSTYrg37U12N0xZCsSxYhY01ddlkLXpwdjqg9SmIJ3Q42phXACdhXLUC1cQzDS118Xmm5dYm4llUMYI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwNCPg0p8wj5bv88KxXz9bPlvqvUIwc0BGDYhoeYh9RfRrvQpHf
+	Hqs0f0e7zg+zE34baXpfWj4f0FrR+93XbHIGw7NFhk86G+tHFAJtNi0DYON9HpiUKi7O1MZh1p9
+	Csw8Nk2OWLu3fSEKG4Lq8xP+0SoHNCjRrvD+F
+X-Gm-Gg: ASbGncvrKoPgm6YbLgSIb+Z+0BpwEv6kaKVY/feCNBRbbbz36ZBVUNrlDLzqyDeNOyg
+	Vh4wGeFAm9EnhkF0Pz4UNl0cAHMrrom2a6BwRp7itxTcD/HdHcank7TGtnE8UsE820z+caKVNHI
+	kar0ojVnV1KfhLgjW4G9Cm8dXuLtVW4+RRGeKghdLCFxMjnu5nKTeqjJnWAA==
+X-Google-Smtp-Source: AGHT+IFSArhJYsv3zVVqv8OWZu8TOBKIMea4fF5APrE5l+oYIst19Piwk29+HWLQWw6zl3b0tZUthbrcWcdq34ooI38=
+X-Received: by 2002:a17:903:32c7:b0:21f:56e5:daee with SMTP id
+ d9443c01a7336-22540e5a9aemr1979785ad.6.1741482602144; Sat, 08 Mar 2025
+ 17:10:02 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20250226082549.6034-1-shivankg@amd.com>
+In-Reply-To: <20250226082549.6034-1-shivankg@amd.com>
+From: Vishal Annapurve <vannapurve@google.com>
+Date: Sat, 8 Mar 2025 17:09:46 -0800
+X-Gm-Features: AQ5f1JpKR8YeZcYjkYLi6Yj3T7-X4RTGFozEjKkiiy8Q2qes9s3EoImSl39wsJs
+Message-ID: <CAGtprH8akKUF=8+RkX_QMjp35C0bU1zxGi4v1Zm5AWCw=8V8AQ@mail.gmail.com>
+Subject: Re: [PATCH v6 0/5] Add NUMA mempolicy support for KVM guest-memfd
+To: Shivank Garg <shivankg@amd.com>
+Cc: akpm@linux-foundation.org, willy@infradead.org, pbonzini@redhat.com, 
+	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org, kvm@vger.kernel.org, linux-coco@lists.linux.dev, 
+	chao.gao@intel.com, seanjc@google.com, ackerleytng@google.com, 
+	david@redhat.com, vbabka@suse.cz, bharata@amd.com, nikunj@amd.com, 
+	michael.day@amd.com, Neeraj.Upadhyay@amd.com, thomas.lendacky@amd.com, 
+	michael.roth@amd.com, tabba@google.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, 7 Mar 2025 15:13:12 -0800 Nhat Pham <nphamcs@gmail.com>
-> On Fri, Mar 7, 2025 at 11:41 AM Barry Song <21cnbao@gmail.com> wrote:
-> > On Sat, Mar 8, 2025 at 1:02 AM Qun-Wei Lin <qun-wei.lin@mediatek.com> wrote:
-> > >
-> > > Introduced Kcompressd to offload zram page compression, improving
-> > > system efficiency by handling compression separately from memory
-> > > reclaiming. Added necessary configurations and dependencies.
-> > >
-> > > Signed-off-by: Qun-Wei Lin <qun-wei.lin@mediatek.com>
-> > > ---
-> > >  drivers/block/zram/Kconfig      |  11 ++
-> > >  drivers/block/zram/Makefile     |   3 +-
-> > >  drivers/block/zram/kcompressd.c | 340 ++++++++++++++++++++++++++++++++
-> > >  drivers/block/zram/kcompressd.h |  25 +++
-> > >  drivers/block/zram/zram_drv.c   |  22 ++-
-> > >  5 files changed, 397 insertions(+), 4 deletions(-)
-> > >  create mode 100644 drivers/block/zram/kcompressd.c
-> > >  create mode 100644 drivers/block/zram/kcompressd.h
-> > >
-> > > diff --git a/drivers/block/zram/Kconfig b/drivers/block/zram/Kconfig
-> > > index 402b7b175863..f0a1b574f770 100644
-> > > --- a/drivers/block/zram/Kconfig
-> > > +++ b/drivers/block/zram/Kconfig
-> > > @@ -145,3 +145,14 @@ config ZRAM_MULTI_COMP
-> > >           re-compress pages using a potentially slower but more effective
-> > >           compression algorithm. Note, that IDLE page recompression
-> > >           requires ZRAM_TRACK_ENTRY_ACTIME.
-> > > +
-> > > +config KCOMPRESSD
-> > > +       tristate "Kcompressd: Accelerated zram compression"
-> > > +       depends on ZRAM
-> > > +       help
-> > > +         Kcompressd creates multiple daemons to accelerate the compression of pages
-> > > +         in zram, offloading this time-consuming task from the zram driver.
-> > > +
-> > > +         This approach improves system efficiency by handling page compression separately,
-> > > +         which was originally done by kswapd or direct reclaim.
-> >
-> > For direct reclaim, we were previously able to compress using multiple CPUs
-> > with multi-threading.
-> > After your patch, it seems that only a single thread/CPU is used for compression
-> > so it won't necessarily improve direct reclaim performance?
-> >
-> > Even for kswapd, we used to have multiple threads like [kswapd0], [kswapd1],
-> > and [kswapd2] for different nodes. Now, are we also limited to just one thread?
-> > I also wonder if this could be handled at the vmscan level instead of the zram
-> > level. then it might potentially help other sync devices or even zswap later.
-> 
-> Agree. A shared solution would be much appreciated. We can keep the
-> kcompressd idea, but have it accept IO work from multiple sources
-> (zram, zswap, whatever) through a shared API.
-> 
-> Otherwise we would need to reinvent the wheel multiple times :)
+On Wed, Feb 26, 2025 at 12:28=E2=80=AFAM Shivank Garg <shivankg@amd.com> wr=
+ote:
 >
-Could you explain what nr_kcompressd means, Qun-Wei, to quiesce barking lads?
+> In this patch-series:
+> Based on the discussion in the bi-weekly guest_memfd upstream call on
+> 2025-02-20[4], I have dropped the RFC tag, documented the memory allocati=
+on
+> behavior after policy changes and added selftests.
+>
+>
+> KVM's guest-memfd memory backend currently lacks support for NUMA policy
+> enforcement, causing guest memory allocations to be distributed arbitrari=
+ly
+> across host NUMA nodes regardless of the policy specified by the VMM. Thi=
+s
+> occurs because conventional userspace NUMA control mechanisms like mbind(=
+)
+> are ineffective with guest-memfd, as the memory isn't directly mapped to
+> userspace when allocations occur.
+>
+> This patch-series adds NUMA binding capabilities to guest_memfd backend
+> KVM guests. It has evolved through several approaches based on community
+> feedback:
+>
+> - v1,v2: Extended the KVM_CREATE_GUEST_MEMFD IOCTL to pass mempolicy.
+> - v3: Introduced fbind() syscall for VMM memory-placement configuration.
+> - v4-v6: Current approach using shared_policy support and vm_ops (based o=
+n
+>       suggestions from David[1] and guest_memfd biweekly upstream call[2]=
+).
+>
+> For SEV-SNP guests, which use the guest-memfd memory backend, NUMA-aware
+> memory placement is essential for optimal performance, particularly for
+> memory-intensive workloads.
+>
+> This series implements proper NUMA policy support for guest-memfd by:
+>
+> 1. Adding mempolicy-aware allocation APIs to the filemap layer.
+
+I have been thinking more about this after the last guest_memfd
+upstream call on March 6th.
+
+To allow 1G page support with guest_memfd [1] without encountering
+significant memory overheads, its important to support in-place memory
+conversion with private hugepages getting split/merged upon
+conversion. Private pages can be seamlessly split/merged only if the
+refcounts of complete subpages are frozen, most effective way to
+achieve and enforce this is to just not have struct pages for private
+memory. All the guest_memfd private range users (including IOMMU [2]
+in future) can request pfns for offsets and get notified about
+invalidation when pfns go away.
+
+Not having struct pages for private memory also provide additional benefits=
+:
+* Significantly lesser memory overhead for handling splitting/merge operati=
+ons
+    - With struct pages around, every split of 1G page needs struct
+page allocation for 512 * 512 4K pages in worst case.
+* Enable roadmap for PFN range allocators in the backend and usecases
+like KHO [3] that target use of memory without struct page.
+
+IIRC, filemap was initially used as a matter of convenience for
+initial guest memfd implementation.
+
+As pointed by David in the call, to get rid of struct page for private
+memory ranges, filemap/pagecache needs to be replaced by a lightweight
+mechanism that tracks offsets -> pfns mapping for private memory
+ranges while still keeping filemap/pagecache for shared memory ranges
+(it's still needed to allow GUP usecases). I am starting to think that
+the filemap replacement for private memory ranges should be done
+sooner rather than later, otherwise it will become more and more
+difficult with features landing in guest_memfd relying on presence of
+filemap.
+
+This discussion matters more for hugepages and PFN range allocations.
+I would like to ensure that we have consensus on this direction.
+
+[1] https://lpc.events/event/18/contributions/1764/
+[2] https://lore.kernel.org/kvm/CAGtprH8C4MQwVTFPBMbFWyW4BrK8-mDqjJn-UUFbFh=
+w4w23f3A@mail.gmail.com/
+[3] https://lore.kernel.org/linux-mm/20240805093245.889357-1-jgowans@amazon=
+.com/
 
