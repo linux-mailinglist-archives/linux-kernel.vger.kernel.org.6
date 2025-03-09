@@ -1,143 +1,181 @@
-Return-Path: <linux-kernel+bounces-552894-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-552895-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B9969A5808C
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 05:50:27 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 16FD0A58099
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 06:06:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DB7CC189117B
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 04:50:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 969163ABACA
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 05:06:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 242D5137C35;
-	Sun,  9 Mar 2025 04:50:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F73A136351;
+	Sun,  9 Mar 2025 05:06:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="r5jIQCM+"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15FBA1D554;
-	Sun,  9 Mar 2025 04:50:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="ZqyLlcpG"
+Received: from out203-205-221-173.mail.qq.com (out203-205-221-173.mail.qq.com [203.205.221.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75C7535280;
+	Sun,  9 Mar 2025 05:06:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741495820; cv=none; b=iUGdr5goWmqxPShNbWPlyDXOaX0E3qY7AiPN8GqOHP4zKBxoMPEPi5SD3ulh/b5/CYWcMQEJypDgf3SY6SQm+3y2c5RIxT9/6WY9UpKqqWqR9I0iugoY94aqkUN9ujcl03fpPv6pofeibLcobXGb+IkIYgbMDZA/pcR58o+LBtg=
+	t=1741496783; cv=none; b=FcfCCZli/pmhny7L8cueU6MC2VXTdXD3boYdsOrHw89nGf3w4wizJ+lOQ16UezZQpkrN3pZisLQ7DpqElElIFlfYTrmc1SFu20W56r5M2CcYdYULUeH2rNisjpp6vPVH9dqK1G48YSs7m4eCmmPqDHB5msKIHkQdVLg03zsPCDU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741495820; c=relaxed/simple;
-	bh=zddh1ZrzZxyTo254SntkmgsZ3r6yT41PDbl8AJjBho0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HIMu1UW0p52dO9uz10L33F0kua3VcWJkrpcZWsvP3MRoRh3AZkpXnyK5zox2n7uAk7hy9dyMoxxmHftYUGMOEid05Ugvbu3y4ZIn02HgY95SV5MuGIW6uQt9XVXwalf+bXv0NwjZQsY1mI5Bb30kkEZ12MXUDmIouc9S+Y5RlEM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=r5jIQCM+; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: by linux.microsoft.com (Postfix, from userid 1127)
-	id A1A272111406; Sat,  8 Mar 2025 20:50:12 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com A1A272111406
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1741495812;
-	bh=uDnlYrlw8dqgGid0QmMSbdigA/GmLu/A3cU6Y8+tvOM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=r5jIQCM+EJ/pOORo/ZqO1FE3+1OMTGp+BqfqkY/Sww1cZFYo4ptHFuPgGL0d7p03q
-	 4Vwh3KCz264vVSMYIG1VZ5qtoSjmT3s2R8h4xrI8ry60rQYuL6xxYhRH7d89heIw5z
-	 wywlSKeGAZsVp0tFQ4FZDA6cHNzjx+yU8G6WBnjU=
-Date: Sat, 8 Mar 2025 20:50:12 -0800
-From: Saurabh Singh Sengar <ssengar@linux.microsoft.com>
-To: mhklinux@outlook.com
-Cc: haiyangz@microsoft.com, wei.liu@kernel.org, decui@microsoft.com,
-	kys@microsoft.com, jakeo@microsoft.com,
-	linux-kernel@vger.kernel.org, linux-hyperv@vger.kernel.org
-Subject: Re: [PATCH 1/1] Drivers: hv: vmbus: Don't release fb_mmio resource
- in vmbus_free_mmio()
-Message-ID: <20250309045012.GA14928@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
-References: <20250211050114.1716-1-mhklinux@outlook.com>
+	s=arc-20240116; t=1741496783; c=relaxed/simple;
+	bh=ap14RnM0FXHiW/c1s1yggxVd0fRMyWGdyxBDMRKs5g4=;
+	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
+	 MIME-Version; b=Wm3WhazhUVNNFSrVxZsJ1jGCQysRIVfuTimkwsYO353wFPzOmSWh5ttI0JvcUY2BoRv26Fv6Inj2fp963zTMvDmdDoTYCIeK4Dj+PBEjrOps5luJgX560KQVES///AGWgoyqRaifdPTzS34nGxdzP2Jb7D2hE+vSoUWSIrL53+w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=ZqyLlcpG; arc=none smtp.client-ip=203.205.221.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1741496468; bh=zsWjWchoYt4RUeJrfVrKynL/2TGiCO85mo2XGyQv9tY=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=ZqyLlcpG0KDJDenOjbu5amYOIR7g56xBxidFf2mpEeFJuTVjFNTvfTI81KH18j9kt
+	 EvmUPR7GbE2p9ve2UzWwxf8ph0F5V1hY2PQZToAGn3GA6LcwS2eET41Qv8xARUETfW
+	 Z5zh/+oFk3MFoNm02fYWvt4zs8NnWX85XSNX8A/k=
+Received: from pek-lxu-l1.wrs.com ([114.244.57.157])
+	by newxmesmtplogicsvrszc13-0.qq.com (NewEsmtp) with SMTP
+	id DC1984B7; Sun, 09 Mar 2025 12:55:01 +0800
+X-QQ-mid: xmsmtpt1741496101ta2qaz7oj
+Message-ID: <tencent_0BEE86CD3878D26D402DDD6F949484E96E0A@qq.com>
+X-QQ-XMAILINFO: N7MBeL6vDXVdHGCMEieOPTrj7H4vCU2dXZZuxupGB4Mm831JCzHmWX2hs9ROHF
+	 XCXxAwrJqidJgFeUQ9s4snV/CMkKNNy7isxOPeikc9plSlyKbmqzNioxN2LXQgDklcoCG7uMvOOH
+	 OI9iakV2BDj+w3UuJ4Qw9wnaiQ2XrGGbR/j4R2iu2Eq5YRsCMDKJMuSnbCrOlIPNYpnMGAKzjFDt
+	 szyCm1cU3QmGStBA2UVTTOd1r4N0kJqj24qY2iPPoTj0R6Rp1CTCBhwwoxMXG9lBZjNpcD33I9ru
+	 ipN9J7kvDw9VSAGg8YNC2g/Qovi2SM6kByyyCjiDtCjjHGtGTE1XIjqwCD/6WZTwC2aKAykUNhFZ
+	 oXM3aJSBbwQMWXuznZdMS8ZD7KzkIlp25kehKqXlrEKDWQzCEY3dHRTjfdEaPO/vpENyqmSRSq4q
+	 IQIiLRIzzduDwMkIxlWEh2dwp5NESs/uv89P2yrQMtiMebMs4+mbgmh+mVApHPUO13sZxuRlKbVG
+	 KJalETTyVXDqm9BhOcffuDUzWugmcccBOu46wt3HKFgKJdIABurBu1w5un4vR6s3Rk99L4tt34eQ
+	 roJkvCapEuXeHdOTef9Z908FrVxH1h/3P5eWJqzld2KPjVaXow/wc6m/PtmNGdJxIyex700DLPg+
+	 rEa67EujRYm6Z1gn99+fFJKCd9BVg9amiuhU/+VivFhhwGZDMAlgv36CgGrEO/DfLGQG9Im+cEG9
+	 dOHhL0NZCnLTWNY6vh6N2+j/6GOBXxVWNdD32NO2EGC7ej2HQZ8+JN13pyHxMwbGJt/oANsgu49j
+	 JSXCWAiegYaxsvR7wJ6VZibzL+OSOe+q6TMj5XJVXLSNB4TdaQ5Zo42pA15BO2R/ahZNGNvLFYh5
+	 6f8/dDZMpVWYvTncJTu06MEuJ4cWyGdj2SwFiMlZ/3
+X-QQ-XMRINFO: OD9hHCdaPRBwq3WW+NvGbIU=
+From: Edward Adam Davis <eadavis@qq.com>
+To: syzbot+00c633585760c05507c3@syzkaller.appspotmail.com
+Cc: linux-kernel@vger.kernel.org,
+	omosnace@redhat.com,
+	paul@paul-moore.com,
+	selinux@vger.kernel.org,
+	stephen.smalley.work@gmail.com,
+	syzkaller-bugs@googlegroups.com
+Subject: [PATCH] selinux: read and write sid under lock
+Date: Sun,  9 Mar 2025 12:55:02 +0800
+X-OQ-MSGID: <20250309045501.2651020-2-eadavis@qq.com>
+X-Mailer: git-send-email 2.48.1
+In-Reply-To: <67cb894d.050a0220.d8275.0232.GAE@google.com>
+References: <67cb894d.050a0220.d8275.0232.GAE@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250211050114.1716-1-mhklinux@outlook.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+Content-Transfer-Encoding: 8bit
 
-On Mon, Feb 10, 2025 at 09:01:14PM -0800, mhkelley58@gmail.com wrote:
-> From: Michael Kelley <mhklinux@outlook.com>
-> 
-> The VMBus driver manages the MMIO space it owns via the hyperv_mmio
-> resource tree. Because the synthetic video framebuffer portion of the
-> MMIO space is initially setup by the Hyper-V host for each guest, the
-> VMBus driver does an early reserve of that portion of MMIO space in the
-> hyperv_mmio resource tree. It saves a pointer to that resource in
-> fb_mmio. When a VMBus driver requests MMIO space and passes "true"
-> for the "fb_overlap_ok" argument, the reserved framebuffer space is
-> used if possible. In that case it's not necessary to do another request
-> against the "shadow" hyperv_mmio resource tree because that resource
-> was already requested in the early reserve steps.
-> 
-> However, the vmbus_free_mmio() function currently does no special
-> handling for the fb_mmio resource. When a framebuffer device is
-> removed, or the driver is unbound, the current code for
-> vmbus_free_mmio() releases the reserved resource, leaving fb_mmio
-> pointing to memory that has been freed. If the same or another
-> driver is subsequently bound to the device, vmbus_allocate_mmio()
-> checks against fb_mmio, and potentially gets garbage. Furthermore
-> a second unbind operation produces this "nonexistent resource" error
-> because of the unbalanced behavior between vmbus_allocate_mmio() and
-> vmbus_free_mmio():
-> 
-> [   55.499643] resource: Trying to free nonexistent
-> 			resource <0x00000000f0000000-0x00000000f07fffff>
-> 
-> Fix this by adding logic to vmbus_free_mmio() to recognize when
-> MMIO space in the fb_mmio reserved area would be released, and don't
-> release it. This filtering ensures the fb_mmio resource always exists,
-> and makes vmbus_free_mmio() more parallel with vmbus_allocate_mmio().
-> 
-> Fixes: be000f93e5d7 ("drivers:hv: Track allocations of children of hv_vmbus in private resource tree")
-> Signed-off-by: Michael Kelley <mhklinux@outlook.com>
-> ---
->  drivers/hv/vmbus_drv.c | 13 +++++++++++++
->  1 file changed, 13 insertions(+)
-> 
-> diff --git a/drivers/hv/vmbus_drv.c b/drivers/hv/vmbus_drv.c
-> index 2892b8da20a5..7507b3641ebd 100644
-> --- a/drivers/hv/vmbus_drv.c
-> +++ b/drivers/hv/vmbus_drv.c
-> @@ -2262,12 +2262,25 @@ void vmbus_free_mmio(resource_size_t start, resource_size_t size)
->  	struct resource *iter;
->  
->  	mutex_lock(&hyperv_mmio_lock);
-> +
-> +	/*
-> +	 * If all bytes of the MMIO range to be released are within the
-> +	 * special case fb_mmio shadow region, skip releasing the shadow
-> +	 * region since no corresponding __request_region() was done
-> +	 * in vmbus_allocate_mmio().
-> +	 */
-> +	if (fb_mmio && (start >= fb_mmio->start) &&
-> +				(start + size - 1 <= fb_mmio->end))
-> +		goto skip_shadow_release;
-> +
->  	for (iter = hyperv_mmio; iter; iter = iter->sibling) {
->  		if ((iter->start >= start + size) || (iter->end <= start))
->  			continue;
->  
->  		__release_region(iter, start, size);
->  	}
-> +
-> +skip_shadow_release:
->  	release_mem_region(start, size);
->  	mutex_unlock(&hyperv_mmio_lock);
->  
-> -- 
-> 2.25.1
-> 
+syzbot reported a data-race in selinux_socket_post_create /
+selinux_socket_sock_rcv_skb. [1]
 
-Thanks for the fix.
-There are couple of checkpatch.pl --strict CHECK, post fixing that:
+When creating the socket path and receiving the network data packet path,
+effective data access protection is not performed when reading and writing
+the sid, resulting in a race condition.
 
-Tested-by: Saurabh Sengar <ssengar@linux.microsoft.com>
-Reviewed-by: Saurabh Sengar <ssengar@linux.microsoft.com>
+Add a lock to synchronize the two.
 
-Regards,
-Saurabh
+[1]
+BUG: KCSAN: data-race in selinux_socket_post_create / selinux_socket_sock_rcv_skb
+
+write to 0xffff88811b989e30 of 4 bytes by task 3803 on cpu 0:
+ selinux_socket_post_create+0x1b5/0x2a0 security/selinux/hooks.c:4681
+ security_socket_post_create+0x5b/0xa0 security/security.c:4577
+ __sock_create+0x35b/0x5a0 net/socket.c:1571
+ sock_create net/socket.c:1606 [inline]
+ __sys_socket_create net/socket.c:1643 [inline]
+ __sys_socket+0xae/0x240 net/socket.c:1690
+ __do_sys_socket net/socket.c:1704 [inline]
+ __se_sys_socket net/socket.c:1702 [inline]
+ __x64_sys_socket+0x3f/0x50 net/socket.c:1702
+ x64_sys_call+0x2cf2/0x2dc0 arch/x86/include/generated/asm/syscalls_64.h:42
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xc9/0x1c0 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+read to 0xffff88811b989e30 of 4 bytes by task 3805 on cpu 1:
+ selinux_socket_sock_rcv_skb+0x72/0x6a0 security/selinux/hooks.c:5129
+ security_sock_rcv_skb+0x3d/0x80 security/security.c:4781
+ sk_filter_trim_cap+0xca/0x3c0 net/core/filter.c:151
+ sk_filter include/linux/filter.h:1062 [inline]
+ sock_queue_rcv_skb_reason+0x28/0xc0 net/core/sock.c:527
+ sock_queue_rcv_skb include/net/sock.h:2403 [inline]
+ packet_rcv_spkt+0x2f7/0x3b0 net/packet/af_packet.c:1967
+ deliver_skb net/core/dev.c:2449 [inline]
+ __netif_receive_skb_core+0x48f/0x2350 net/core/dev.c:5737
+ __netif_receive_skb_list_core+0x115/0x520 net/core/dev.c:5968
+ __netif_receive_skb_list net/core/dev.c:6035 [inline]
+ netif_receive_skb_list_internal+0x4e4/0x660 net/core/dev.c:6126
+ netif_receive_skb_list+0x31/0x230 net/core/dev.c:6178
+ xdp_recv_frames net/bpf/test_run.c:280 [inline]
+ xdp_test_run_batch net/bpf/test_run.c:361 [inline]
+ bpf_test_run_xdp_live+0xe10/0x1040 net/bpf/test_run.c:390
+ bpf_prog_test_run_xdp+0x51d/0x8b0 net/bpf/test_run.c:1316
+ bpf_prog_test_run+0x20f/0x3a0 kernel/bpf/syscall.c:4407
+ __sys_bpf+0x400/0x7a0 kernel/bpf/syscall.c:5813
+ __do_sys_bpf kernel/bpf/syscall.c:5902 [inline]
+ __se_sys_bpf kernel/bpf/syscall.c:5900 [inline]
+ __x64_sys_bpf+0x43/0x50 kernel/bpf/syscall.c:5900
+ x64_sys_call+0x2914/0x2dc0 arch/x86/include/generated/asm/syscalls_64.h:322
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xc9/0x1c0 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+value changed: 0x00000003 -> 0x00000087
+
+Reported-by: syzbot+00c633585760c05507c3@syzkaller.appspotmail.com
+Closes: https://syzkaller.appspot.com/bug?extid=00c633585760c05507c3
+Signed-off-by: Edward Adam Davis <eadavis@qq.com>
+---
+ security/selinux/hooks.c | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
+
+diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
+index 7b867dfec88b..ea5d0273f9d5 100644
+--- a/security/selinux/hooks.c
++++ b/security/selinux/hooks.c
+@@ -4677,8 +4677,10 @@ static int selinux_socket_post_create(struct socket *sock, int family,
+ 
+ 	if (sock->sk) {
+ 		sksec = selinux_sock(sock->sk);
++		spin_lock(&sksec->lock);
+ 		sksec->sclass = sclass;
+ 		sksec->sid = sid;
++		spin_unlock(&sksec->lock);
+ 		/* Allows detection of the first association on this socket */
+ 		if (sksec->sclass == SECCLASS_SCTP_SOCKET)
+ 			sksec->sctp_assoc_state = SCTP_ASSOC_UNSET;
+@@ -5126,7 +5128,7 @@ static int selinux_socket_sock_rcv_skb(struct sock *sk, struct sk_buff *skb)
+ 	int err, peerlbl_active, secmark_active;
+ 	struct sk_security_struct *sksec = selinux_sock(sk);
+ 	u16 family = sk->sk_family;
+-	u32 sk_sid = sksec->sid;
++	u32 sk_sid;
+ 	struct common_audit_data ad;
+ 	struct lsm_network_audit net;
+ 	char *addrp;
+@@ -5155,6 +5157,9 @@ static int selinux_socket_sock_rcv_skb(struct sock *sk, struct sk_buff *skb)
+ 	if (err)
+ 		return err;
+ 
++	spin_lock(&sksec->lock);
++	sk_sid = sksec->sid;
++	spin_unlock(&sksec->lock);
+ 	if (peerlbl_active) {
+ 		u32 peer_sid;
+ 
+-- 
+2.43.0
+
 
