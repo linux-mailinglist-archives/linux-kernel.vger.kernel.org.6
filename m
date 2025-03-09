@@ -1,151 +1,200 @@
-Return-Path: <linux-kernel+bounces-553610-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-553772-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C08C8A58C68
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 08:02:12 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D9EDBA58E98
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 09:52:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5FAF1188CB11
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 07:02:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 971833AE1D7
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 08:52:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C95B81D47A6;
-	Mon, 10 Mar 2025 07:02:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F656224247;
+	Mon, 10 Mar 2025 08:52:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EXywG4TB"
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FMI5kabp"
+Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D56D13208;
-	Mon, 10 Mar 2025 07:02:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C06435965;
+	Mon, 10 Mar 2025 08:52:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741590124; cv=none; b=nVFSQissU7iRIBtS6nTWRCF8bv0g9YpLG1oNXKcbYb4SSBVI84FvTHsLT3XEJCF4/DGF4dhCpLwFzMEFilMwCss3o57+/Z9KBnVRsUJV4TfTeKcvV5oFegYDIHbIzLdon8dkORZOgnzoufFE7zzDSrPGc+veRddtC8/yHrbqJFM=
+	t=1741596724; cv=none; b=Bsmx8ZwXwQHaeCP9Ljt8DUsQOPCuUibyQBpR1GfzoLe5R8IbsPSHDgNZvWfU3Y4mnon7olgZPhVj5QtPBzUG5a/RjLgkVTa6pBZpeEFLHUXJcWKUu28pitNWt2YyWfQuIDx4OHa++C3IzbIXKXaGBObAPXBoICuVLSD0Mk2/740=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741590124; c=relaxed/simple;
-	bh=7ucsPrVIHaYhcCD0/wI12KA0NKzasjhda2jaVqHkqd0=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=lsNPLVvmloto5nWskjN7a07YFtFx+ywVDDPNrRG7gFZ4PAtgEoLHoC6TRnT/RTkuRvsGakFs1s23fMLPZELTK0VuICrIQGHCll46JU+N+B7o3/hMA4rl+PSlicEkdsurHjHA+HlFQMi/0x7IC1EjrcP4KfCJwUCTp/dw0sbV0xU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EXywG4TB; arc=none smtp.client-ip=209.85.214.182
+	s=arc-20240116; t=1741596724; c=relaxed/simple;
+	bh=ibPQgH8XfDu2zGZLCYjmbuevwZN82F3K0cabKb7zgls=;
+	h=References:From:To:Cc:Subject:Date:In-reply-to:Message-ID:
+	 MIME-Version:Content-Type; b=NwUEu2URcp5K4KEFqazueGzaDZwGboybBnSjutgHrcNMq6Ew5QBbFxxmuVzN+/qeiz3/LTubcCUODZLQcVggSFNAvr9Cdl9zh10dyI9fYJBkPRcortVCpCXGOs5Lug7Z0wLQTXQ1TDGnmxEd/+qq8F1bMvankHvHb2Hb6JWNNSc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FMI5kabp; arc=none smtp.client-ip=209.85.167.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-22438c356c8so36312115ad.1;
-        Mon, 10 Mar 2025 00:02:02 -0700 (PDT)
+Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-547bcef2f96so4124372e87.1;
+        Mon, 10 Mar 2025 01:52:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741590122; x=1742194922; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1741596721; x=1742201521; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:in-reply-to:date
+         :subject:cc:to:from:user-agent:references:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=7ftUF1HT5WFbBrDyGxswMLPBXuZHgKRdwf2S8NVL46M=;
-        b=EXywG4TBIcZ3tmFnubtYqYKb1YZAoOv9jdPmOz8Nq5dvU5O9D+tOMr5gxjkDAWdCGB
-         5rf5cB40uN43rjnp1c72lqaSR93ot+066kCjMCos/Sz1TynCrEKOkV9NfNVf+K+/3aob
-         zCSNVTFAIuGkr5NRsJXLNPevKBVYU4kJ2bu5o/iavpVAKKbtODq9jHE04Bu/XhjhDvLb
-         SoHMUstMtfJMYCt/PpDeaRTCwfqvtFI4k7PIu1hV/jcurFunmMpDO2fY1BjU6AUUu4nd
-         u/igcn6/9O9Ee2mAIg6bukKX4pz7QTZit17dWtXkWmeXtEQX6EWcFrmHtA2u0vuBUgSt
-         4EqA==
+        bh=KsfdUyH3zrjTycztjPtzayYh5FQ+lsz4U78oE1AJhhQ=;
+        b=FMI5kabp4Hu8ovyfXw8URmsBBESI9PoHBA60b4eRhpc8cPGAHsNok2BSHqlH++JFTx
+         nLQqNLmLl1VFq99Rz0rcdD6rs9R76jK8fiyG9sU6AMDnWtBouhCEjF9T/mb7XccWcylP
+         EcgfhLb/VsA9Wn5sejOgjf4UswB0+tuWQtV1dNB/nLJ927eCkh+phiuRsFMw+fb5DNjP
+         Wyt5AsyXcEzFMp/DMGbT/h/RlZoxtFDrykdUsZqtQrwA0gYVpP7I/Oh4FkzuGYQ2jXPu
+         4/CSmIzi6NjeiSVVyxQapmMWef/2WXnSLhBX6XQEuQm9Cd5DpfEd5Y2wuBXsbitBSycu
+         u96A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741590122; x=1742194922;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=7ftUF1HT5WFbBrDyGxswMLPBXuZHgKRdwf2S8NVL46M=;
-        b=SpelVvx62+60n4zgB65BlezrAnuyaoNT6OlNc95Z7XcSCD3LihZK3QSkCBMHh2FvNW
-         l9iOFKnv62LZvexx0sr3XZISxjo1HR0k0TBALYwk8lhjGH9JiVvNo/hEYAGxLXPrFL40
-         ve3U+cia2mK892cat9bc2IDZP6angkaAU82ZrJi7mYDh2Cmi4tcB42zKhRZMVllSO0DS
-         XXGKlnimPpwJk0m/AWZj9lJb1WXCuKdGCzIMrZKwcC9obrw2yLzskj3yeg2YhbsHXdGO
-         HKUE9ETp9N2aRT39+cVlnIud8LN0jSeWWAiLuyaeqDjGMHPr5WU+DKLEJ8f5YpnG71BB
-         pTnQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUruSOfW3BpeJJFRyD3dSoGO41B27FWbRH9Xp859QqdqXEu1jcCsoZGLz8F1xfn2/r3+31HhdZZkhlwwA==@vger.kernel.org, AJvYcCVZC6Y19i+6m4Pt7xB4JRJ/9+5yjTSfsRAzVvtYY98J0fKvNLVlU7GHBJhcmAe/tp+vNrvTLKuZ44DF7h0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw98I8hvoAv1Pac/18gCgbPdLZpaHJfX9dWCL4cu6lGqBm763Og
-	8WAw+tsR0DaLqark0fb/X8klc7UKJ6itlvlcCBOfAAKv6Xd2q83BLsfu/Jk6DwA=
-X-Gm-Gg: ASbGncv30+spmwNREc3IOOrkO4gA2TEzhCfV5uqry3R3GU4EJ0UqSM7jy4/FW179Mmb
-	HPIv68KsYqKxtUlszLBwvaBzjWWjO0IAm2TTSP5yUbuHZHA9vVQWk6kcuy5X1RvtgIqbSjrFEH/
-	V/dfcW2rZN2SYcwkeu7+/1IT3ywTrAvA48nAAKX/prKAmXWJfl7Um0+Sja2Z1FRj/6ztlIsbmR8
-	pii6vz9C8ovxv1VhkUqEFHYQBcn5QCDGKovLUZcU8x4gMbh9hyngSNz+qjuNW+puqGvZogyjyQY
-	iGDyadSEBQWtQBHmiBz9pJZSj/wKXsAb/r9Ts2cxAeiv
-X-Google-Smtp-Source: AGHT+IGINiIRnipScagDgoAw078UJsTXfi7udyqPOfceY//1UyRlBtfDJPRKd5DHngNJ9vLU7KtDbA==
-X-Received: by 2002:a17:902:f786:b0:224:c47:b6c3 with SMTP id d9443c01a7336-2242887ecefmr181042285ad.6.1741590121929;
-        Mon, 10 Mar 2025 00:02:01 -0700 (PDT)
-Received: from dev0.. ([49.43.168.202])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22410a91c8fsm70080295ad.191.2025.03.10.00.01.59
+        d=1e100.net; s=20230601; t=1741596721; x=1742201521;
+        h=content-transfer-encoding:mime-version:message-id:in-reply-to:date
+         :subject:cc:to:from:user-agent:references:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=KsfdUyH3zrjTycztjPtzayYh5FQ+lsz4U78oE1AJhhQ=;
+        b=nXeVM6MYJsRX8HU1UKOLeGdKwbWbfkqeP54rQU9L7S3VmQ32ubFno0PIB9nYZvg6bh
+         a0Rx7SzxnKBxjvoUEaz84XhqsJmi87jfxHmdeRwN+HZFGrqrSRDeSUG1LCemSwxGVNFE
+         7YZyulYSk7ZvNwrJ/gKE7Knmqm9ysh62EhhbWTkalQz39EEQWvWBYswXlUTDcuy0fjE4
+         IijWmyU2gbVRY+Awc/VTh0ZaTiHfpkcIk5hj0M+1W85QWGvKJdISlaREFLOrMHQKgu/8
+         70qTeDOaZTl1ksnhtCHYb/kB9WENmFw94yKkVb+Z+7fe6EYr/8vxSi7HGGz643jgE19e
+         hyGw==
+X-Forwarded-Encrypted: i=1; AJvYcCUpLKtr1mqI40smYW1cNVjO1nh3kXcAPwImVkUD+fiVs0zZIZO4jhI5pcaZGP4ebKisfZTnqchKcNOr09A=@vger.kernel.org, AJvYcCVNYYqu2o5+s0FxT6E4llsbXIXOIdcws0EpKOy9m8odltn/VqzBpLqiyaUqqTk9PHB8FCALa24aLCopl50=@vger.kernel.org, AJvYcCWi9dvugAxhp4YUuat9x/dFUpxBmhT5TXoEMtx/rLXW8ibokglEg/6m3roynBQ+UqH+gr1ZtaTq@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywyat1+gHLYfUWixAZubd9pe89PYvBr35A+M5Mqwh8A+4YepZH9
+	QUwkiHy5+BXWF89VK/AVFm0ViniAca/RU2aULtutZKIZyPiqIsw/4Z9UlVeB
+X-Gm-Gg: ASbGncsWAO/ArqXM4nHzirmap+YevaVX/JnWgeyF9XFA2r1zzRRzTE+TxKlSw2cs410
+	H1FZQ89CB6AYfrLEyM2o4ljKyVzSlT5Umcp8Lv5xEAZPqmTiQ/sCYuarUV4e5Y0AqltkRjoeFwV
+	VNt5koAMw9YT2m8lNengF0+U6AXsB3QsAKwaSST5ED6R5IFLNShYv8Ig2JdTZ8GBNSJiVKaH+PD
+	+xKZCws9XLranHHL1Dcz2u8tnaHHxxd+P+7wYkpFL6VG1sEeEirFtn9GJtlgGIh6pZtprG6cUkZ
+	z/+sniZU7yzQCUFkm+K6/XQ59+kWczq5Jk/SdRKkdJBOHwnC6x0M5hd4jPo4V0p0EVtdQh01ZSz
+	SpUUEr2X41KECqmTC7FDxSjev65A4tuhY
+X-Google-Smtp-Source: AGHT+IFDQsKgJjn1vFKF2s3Fxd3y5bXHQKgGDaupCdFC2qHxM/nNEqPRZZXYMIGlgyqsvYZzWa3pXA==
+X-Received: by 2002:a05:6512:3da4:b0:545:f4b:ed58 with SMTP id 2adb3069b0e04-54990e5d442mr4212084e87.18.1741596720469;
+        Mon, 10 Mar 2025 01:52:00 -0700 (PDT)
+Received: from razdolb (static.248.157.217.95.clients.your-server.de. [95.217.157.248])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5498b1bc48dsm1369280e87.187.2025.03.10.01.51.57
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 10 Mar 2025 00:02:01 -0700 (PDT)
-From: Abhinav Jain <jain.abhinav177@gmail.com>
-To: leon@kernel.org
-Cc: jain.abhinav177@gmail.com,
-	jgg@ziepe.ca,
-	linux-kernel@vger.kernel.org,
-	linux-rdma@vger.kernel.org
-Subject: Re: [PATCH] RDMA/core: Publish node GUID with the uevent for ib_device
-Date: Mon, 10 Mar 2025 07:01:56 +0000
-Message-Id: <20250310070156.8068-1-jain.abhinav177@gmail.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250309192751.GA7027@unreal>
-References: <20250309192751.GA7027@unreal>
+        Mon, 10 Mar 2025 01:51:59 -0700 (PDT)
+References: <20250303-b4-rkisp-noncoherent-v4-0-e32e843fb6ef@gmail.com>
+ <20250303-b4-rkisp-noncoherent-v4-1-e32e843fb6ef@gmail.com>
+ <8b3dac7baed1de9542452547454c53188c384391.camel@ndufresne.ca>
+User-agent: mu4e 1.10.9; emacs 30.1
+From: Mikhail Rudenko <mike.rudenko@gmail.com>
+To: Nicolas Dufresne <nicolas@ndufresne.ca>
+Cc: Dafna Hirschfeld <dafna@fastmail.com>, Laurent Pinchart
+ <laurent.pinchart@ideasonboard.com>, Mauro Carvalho Chehab
+ <mchehab@kernel.org>, Heiko Stuebner <heiko@sntech.de>, Tomasz Figa
+ <tfiga@chromium.org>, Marek Szyprowski <m.szyprowski@samsung.com>, Hans
+ Verkuil <hverkuil@xs4all.nl>, Sergey  Senozhatsky
+ <senozhatsky@chromium.org>, linux-media@vger.kernel.org,
+ linux-rockchip@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, Mauro  Carvalho Chehab
+ <mchehab+huawei@kernel.org>, stable@vger.kernel.org
+Subject: Re: [PATCH v4 1/2] media: videobuf2: Fix dmabuf cache sync/flush in
+ dma-contig
+Date: Sun, 09 Mar 2025 23:18:50 +0300
+In-reply-to: <8b3dac7baed1de9542452547454c53188c384391.camel@ndufresne.ca>
+Message-ID: <87wmcxs1xw.fsf@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On Sun, 9 Mar 2025 21:27:51 +0200, Leon Romanovsky wrote:
->On Sun, Mar 09, 2025 at 05:57:31PM +0000, Abhinav Jain wrote:
->> As per the comment, modify ib_device_uevent to publish the node
->> GUID alongside device name, upon device state change.
->> 
->> Have compiled the file manually to ensure that it builds. Do not have
->> a readily available IB hardware to test. Confirmed with checkpatch
->> that the patch has no errors/warnings.
+
+Hi Nicolas, Tomasz,
+
+On 2025-03-03 at 10:24 -05, Nicolas Dufresne <nicolas@ndufresne.ca> wrote:
+
+> Hi Mikhail,
 >
->I'm missing motivation for this patch. Why is this change needed?
->
->Thanks
-
-Originally, I was looking at this function in order to solve a syzkaller
-bug. I noticed this comment from Jason and I assumed that the motivation
-would be to identify the node on which the event is happening.
-
-With the name, users can identify nodes however Subnet Manager uses
-node_guid for discovery and configuration of the nodes. To conclude, I
-think just using the node name might not be sufficient for unambiguous
-and reliable device management in the network.
-
->> 
->> Signed-off-by: Abhinav Jain <jain.abhinav177@gmail.com>
+> Le lundi 03 mars 2025 =C3=A0 14:40 +0300, Mikhail Rudenko a =C3=A9crit=C2=
+=A0:
+>> When support for V4L2_FLAG_MEMORY_NON_CONSISTENT was removed in
+>> commit 129134e5415d ("media: media/v4l2: remove
+>> V4L2_FLAG_MEMORY_NON_CONSISTENT flag"),
+>> vb2_dc_dmabuf_ops_{begin,end}_cpu_access() functions were made
+>> no-ops. Later, when support for V4L2_MEMORY_FLAG_NON_COHERENT was
+>> introduced in commit c0acf9cfeee0 ("media: videobuf2: handle
+>> V4L2_MEMORY_FLAG_NON_COHERENT flag"), the above functions remained
+>> no-ops, making cache maintenance for non-coherent dmabufs allocated
+>> by
+>> dma-contig impossible.
+>>
+>> Fix this by reintroducing dma_sync_sgtable_for_{cpu,device} and
+>> {flush,invalidate}_kernel_vmap_range calls to
+>> vb2_dc_dmabuf_ops_{begin,end}_cpu_access() functions for non-coherent
+>> buffers.
+>>
+>> Fixes: c0acf9cfeee0 ("media: videobuf2: handle
+>> V4L2_MEMORY_FLAG_NON_COHERENT flag")
+>> Cc: stable@vger.kernel.org
+>> Signed-off-by: Mikhail Rudenko <mike.rudenko@gmail.com>
 >> ---
->>  drivers/infiniband/core/device.c | 13 +++++++++----
->>  1 file changed, 9 insertions(+), 4 deletions(-)
->> 
->> diff --git a/drivers/infiniband/core/device.c b/drivers/infiniband/core/device.c
->> index 0ded91f056f3..1812038f1a91 100644
->> --- a/drivers/infiniband/core/device.c
->> +++ b/drivers/infiniband/core/device.c
->> @@ -499,12 +499,17 @@ static void ib_device_release(struct device *device)
->>  static int ib_device_uevent(const struct device *device,
->>  			    struct kobj_uevent_env *env)
->>  {
->> -	if (add_uevent_var(env, "NAME=%s", dev_name(device)))
->> +	const struct ib_device *dev =
->> +		container_of(device, struct ib_device, dev);
+>> =C2=A0.../media/common/videobuf2/videobuf2-dma-contig.c=C2=A0 | 22
+>> ++++++++++++++++++++++
+>> =C2=A01 file changed, 22 insertions(+)
+>>
+>> diff --git a/drivers/media/common/videobuf2/videobuf2-dma-contig.c
+>> b/drivers/media/common/videobuf2/videobuf2-dma-contig.c
+>> index
+>> a13ec569c82f6da2d977222b94af32e74c6c6c82..d41095fe5bd21faf815d6b035d7
+>> bc888a84a95d5 100644
+>> --- a/drivers/media/common/videobuf2/videobuf2-dma-contig.c
+>> +++ b/drivers/media/common/videobuf2/videobuf2-dma-contig.c
+>> @@ -427,6 +427,17 @@ static int
+>> =C2=A0vb2_dc_dmabuf_ops_begin_cpu_access(struct dma_buf *dbuf,
+>> =C2=A0				=C2=A0=C2=A0 enum dma_data_direction
+>> direction)
+>> =C2=A0{
+>> +	struct vb2_dc_buf *buf =3D dbuf->priv;
+>> +	struct sg_table *sgt =3D buf->dma_sgt;
 >> +
->> +	if (add_uevent_var(env, "NAME=%s", dev_name(&dev->dev)))
->>  		return -ENOMEM;
->>  
->> -	/*
->> -	 * It would be nice to pass the node GUID with the event...
->> -	 */
->> +	__be64 node_guid_be = dev->node_guid;
->> +	u64 node_guid = be64_to_cpu(node_guid_be);
+>> +	if (!buf->non_coherent_mem)
+>> +		return 0;
 >> +
->> +	if (add_uevent_var(env, "NODE_GUID=0x%llx", node_guid))
->> +		return -ENOMEM;
->>  
->>  	return 0;
->>  }
->> -- 
->> 2.34.1
->> 
+>> +	if (buf->vaddr)
+>> +		invalidate_kernel_vmap_range(buf->vaddr, buf->size);
+>
+> What would make me a lot more confortable with this change is if you
+> enable kernel mappings for one test. This will ensure you cover the
+> call to "invalidate" in your testing. I'd like to know about the
+> performance impact. With this implementation it should be identical to
+> the VB2 one.
+>
+
+I have re-run my tests on RK3399, with 1280x720 XRGB capture buffers (1
+plane, 3686400 bytes). Capture process was pinned to "big" cores running
+at fixed frequency of 1.8 GHz. Libcamera was modified to request buffers
+with V4L2_MEMORY_FLAG_NON_COHERENT flag. DMA_BUF_IOCTL_SYNC ioctls were
+used as appropriate. For kernel mapping effect test, vb2_plane_vaddr
+call was inserted into rkisp1_vb2_buf_init.
+
+The timings are as following:
+
+- memcpy coherent buffer: 7570 +/- 63 us
+- memcpy non-coherent buffer: 1120 +/- 34 us
+
+without kernel mapping:
+
+- ioctl(fd, DMA_BUF_IOCTL_SYNC, {DMA_BUF_SYNC_START|DMA_BUF_SYNC_READ}): 42=
+8 +/- 15 us
+- ioctl(fd, DMA_BUF_IOCTL_SYNC, {DMA_BUF_SYNC_END|DMA_BUF_SYNC_READ}): 422 =
++/- 28 us
+
+with kernel mapping:
+
+- ioctl(fd, DMA_BUF_IOCTL_SYNC, {DMA_BUF_SYNC_START|DMA_BUF_SYNC_READ}): 52=
+6 +/- 13 us
+- ioctl(fd, DMA_BUF_IOCTL_SYNC, {DMA_BUF_SYNC_END|DMA_BUF_SYNC_READ}): 519 =
++/- 38 us
+
+So, even with kernel mapping enabled, speedup is 7570 / (1120 + 526 + 519) =
+=3D 3.5,
+and the use of noncoherent buffers is justified -- at least on this platfor=
+m.
+
+--
+Best regards,
+Mikhail Rudenko
 
