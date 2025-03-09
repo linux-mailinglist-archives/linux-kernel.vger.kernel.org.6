@@ -1,143 +1,169 @@
-Return-Path: <linux-kernel+bounces-552948-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-552950-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 41312A5815C
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 08:35:39 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C9A15A58162
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 08:47:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CB33F188C1C2
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 07:35:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4F1083AE2DC
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 07:47:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3EB817A30E;
-	Sun,  9 Mar 2025 07:35:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E879186294;
+	Sun,  9 Mar 2025 07:47:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=iencinas.com header.i=@iencinas.com header.b="qmrBH+BH"
-Received: from out-186.mta0.migadu.com (out-186.mta0.migadu.com [91.218.175.186])
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="kHtuooKT"
+Received: from out162-62-57-137.mail.qq.com (out162-62-57-137.mail.qq.com [162.62.57.137])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1342224FD
-	for <linux-kernel@vger.kernel.org>; Sun,  9 Mar 2025 07:35:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.186
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 761B217C77;
+	Sun,  9 Mar 2025 07:47:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.57.137
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741505732; cv=none; b=MnVAUapj5ZLr3doZhKj7Ap1HIF9eIVjH6XYwhcYb2DknI5bA7h6TLsbWwquiEF6ZiOiUoOU42EweS/mi9VsyVG6t5ra4Y2evAqK5TYql8i2M+S9avHUxgZWZ/CeeqxJfrhHHoYLhuzRNktLp5eqmF9CUlJ1RklFA2VGrGAcgLII=
+	t=1741506455; cv=none; b=pTzahQLnug0fBcgRZTk549Z28MjMYw//o+YPhZvt3eLsu+a+Z1HbWmAfUhgPQvfkh+Whg7ZoShTZ96cl/Jph1rv+JkWmjejyBiZkn0k35GcUPeAAEumnuAzrlm3BCc2vGmdry8blz+WzKIcpJlGRUlcMwafgsR8nxvLuk1gRWDY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741505732; c=relaxed/simple;
-	bh=3HXNrJC1YJgYhVbPSukVAuN3sS3FuIuuddwY6xtgHCs=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=tDv8EUMkbW08qIAFmXWJZ706MfFMP6EtvI1QhNre2HW2gWXYumiwnGdXhCL+pIH0tF16+QaIl6bgasNEjL4Z+5tw4CL0kEDxTxFmN7ZPPikHzE9oXyEhxW52P+BMWhGIks9Z87HrkPPiX80laBtxv2a/NO5Gbyd8Yv6oTjAW7qY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=iencinas.com; spf=pass smtp.mailfrom=iencinas.com; dkim=pass (2048-bit key) header.d=iencinas.com header.i=@iencinas.com header.b=qmrBH+BH; arc=none smtp.client-ip=91.218.175.186
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=iencinas.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iencinas.com
-Message-ID: <c4517e43-b2e2-485c-b727-7e5d47930ba0@iencinas.com>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=iencinas.com;
-	s=key1; t=1741505727;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=6w89DGn0N8dEcklqSYy76PaYnkGxYFWAY1mpJJ/Sqbo=;
-	b=qmrBH+BHtDuEHGLvw1pAQm35Pbuqqe01jM4GXUFMtIZ7Igqx/uT2j+KksQvC9OcQdKPjcX
-	7dJI3h7KsxFYcWcpayY2e80ni63zzcfRSZHVl/N/f1mUuJbZHieAYWqiRJG8U1lKSn9FCk
-	AE+al8OCsWSOOb9b7gQsAYpLmOB/XuNRx1Gjz2FURuOj5bCiZU9D8bgNDM87z8fFb0f5zy
-	zNGbSMQz4vItCVPoVAAd0Mm4OpsVWnZR36fn6VlKrJUYmdB5qInvLmeKmfdm0vHJKsw1NF
-	VK7oXjAowTuT4w22WtRyaYfyGrrVSrACFaYGBXRPPV+3w7xB+luaZFglM0EtfA==
-Date: Sun, 9 Mar 2025 08:35:22 +0100
+	s=arc-20240116; t=1741506455; c=relaxed/simple;
+	bh=qtXCXe+nNyfcyRAulZDFi2Udoq+tbMD7n9+7CwQJoXc=;
+	h=Message-ID:From:To:Cc:Subject:Date:MIME-Version; b=To7D+9BbLrppEyB5HVeAXrdhEZt2BwC2pjG6wqkCbzUcihaEzQ0sPUIRA4ab1oxcieTa+ykd24lGGE3b5mrbYms8OzGZNG2YlBKu4zMpdUvFBkrXrVzpqF+FEMpOymMKa0JCLs/MzYFnaLWLCGiONv/L7rhLlwV1yE9Tp7HPtos=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=kHtuooKT; arc=none smtp.client-ip=162.62.57.137
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1741506439; bh=UuctHCw54Sbs+GMXZiA+9NBNhsVaLpJkYq7/z98yanc=;
+	h=From:To:Cc:Subject:Date;
+	b=kHtuooKT48tsok0BZV5wfYaQo4lrCy2wxYYfyBLLZMdE25Oo64UsKKI9M/J/sbOEu
+	 ceEmh14M0VjEUWUK7J/5KLgHX8gdhvyhDSqH7BdJCus1esA/z2BYetd3Xe2l5lQOL3
+	 P5cRaZ0gUsJaonoTy5QnPRI+Vmz3Yp9+ahCW0zw0=
+Received: from localhost.localdomain ([59.66.26.122])
+	by newxmesmtplogicsvrszc13-0.qq.com (NewEsmtp) with SMTP
+	id BD13AEE0; Sun, 09 Mar 2025 15:47:17 +0800
+X-QQ-mid: xmsmtpt1741506437ty97nhdku
+Message-ID: <tencent_0A154BBE38E000228C01BE742CB73681FE09@qq.com>
+X-QQ-XMAILINFO: NouDQD3dZCwaaL7UEsvYJy45KdtSWtllmld6g/xFR5bnFZB3OHNNpL+AnFsFCn
+	 5eL0r4MmUInGwGPq3ytPdImyqTee9RnvxXs9dFvi25efOaLjpFRkGY52nhV4jPLTTYhFH0Fg/CFX
+	 JpWCn6Ozzz6XcHh4pJikoOry/g0jBv0idm2Kr/9cUx19Dmf42iQqRBeRv6f1XUkRha3a8Jcv+Hc6
+	 JLWq0x/PKiqcyH8bJVLvAhuN/Bh4+eloxqYwDcgl8UE8Xs+HnaDQ7UM8/tBuid/mIapt9Ux7bkSF
+	 eIp7n52PPc2e2c7XdlxkdRIm2PAVOee51QumLlTPBkJOmEIIaQdAd4oQIZPIo/l0uDOf0WgpBsEf
+	 NjqDNGQV/YhJGBeNiPXL66hO79e9NeuNVmQ2XUB7ewrGMJFwFsqP+kwllDnH2o7hTxs2FEEw7Smy
+	 Nux/fG9SwgsjM973B7j6ENwr4AdfcG2VaTuVLTpHsg3uRCpTWv7LAJJJEE3gggwy1gKY1V3d9+nF
+	 FoEHheeE/KDYhz8FTjOB4AN5yQcEtMhmeZpc5ao3sxa009cnU17P9WhiF2OgWMKcFqK/pqUBnUTV
+	 XgMKMXt3AOUpwam9GweJu1yY9IV/E85fJFWSUZ+B4M2EGAAHbrurK0RDQWif0qmsCDY7B78Lc9FX
+	 mm4AI/YhvFMgo0aVPa97YKKTwDWIFl5Uwi4cBBdi3fp08tn7nECpeLOw6dnRDN0XIMAuB00qbuDB
+	 CY92jN+Sli58OQqwLWA2IYebsTbz3TYYZEjAQsIf+Nt/DtHvJ3o89+6xI7Sx9M58U738SHF5OOEi
+	 EZrmc+CuYiOzvZAxha4LLRNgeAZk6lNUqD8lLSA50gk5wv5+QfT8RTN5ZmHcNtexEjVFaTzmFiYc
+	 fGZS1a3cQNG48fpUAE3AwDKfSUDKO5alV40jy9vugy3dhJ9rk/bt0DVOGeJ1U6CM7wH/peGI3rja
+	 BxkRe8qtPthhmIM2X6rSqi618vJhPtemStqChy5pgt4OQr+SF9xeUN28tvjtUO5ys9hXF+e/c=
+X-QQ-XMRINFO: OWPUhxQsoeAVDbp3OJHYyFg=
+From: Hanyuan Zhao <hanyuan-z@qq.com>
+To: davem@davemloft.net,
+	kuba@kernel.org,
+	andrew+netdev@lunn.ch,
+	edumazet@google.com,
+	pabeni@redhat.com
+Cc: netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Hanyuan Zhao <hanyuan-z@qq.com>
+Subject: [PATCH 1/2] net: enc28j60: support getting irq number from gpio phandle in the device tree
+Date: Sun,  9 Mar 2025 15:47:08 +0800
+X-OQ-MSGID: <20250309074709.127504-1-hanyuan-z@qq.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Ignacio Encinas Rubio <ignacio@iencinas.com>
-Subject: Re: [PATCH] 9p/trans_fd: mark concurrent read and writes to
- p9_conn->err
-To: Dominique Martinet <asmadeus@codewreck.org>
-Cc: linux-kernel-mentees@lists.linux.dev, skhan@linuxfoundation.org,
- Eric Van Hensbergen <ericvh@kernel.org>, Latchesar Ionkov
- <lucho@ionkov.net>, Christian Schoenebeck <linux_oss@crudebyte.com>,
- Sishuai Gong <sishuai.system@gmail.com>, Marco Elver <elver@google.com>,
- v9fs@lists.linux.dev, linux-kernel@vger.kernel.org,
- syzbot+d69a7cc8c683c2cb7506@syzkaller.appspotmail.com,
- syzbot+483d6c9b9231ea7e1851@syzkaller.appspotmail.com
-References: <20250308-p9_conn_err_benign_data_race-v1-1-729e57d5832b@iencinas.com>
- <Z8y_9b6RFZASviUs@codewreck.org>
-Content-Language: en-US
-In-Reply-To: <Z8y_9b6RFZASviUs@codewreck.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
+Content-Transfer-Encoding: 8bit
 
+This patch allows the kernel to automatically requests the pin, configures
+it as an input, and converts it to an IRQ number, according to a GPIO
+phandle specified in device tree. This simplifies the process by
+eliminating the need to manually define pinctrl and interrupt nodes.
+Additionally, it is necessary for platforms that do not support pin
+configuration and properties via the device tree.
 
+Signed-off-by: Hanyuan Zhao <hanyuan-z@qq.com>
+---
+ drivers/net/ethernet/microchip/enc28j60.c | 25 ++++++++++++++++++-----
+ 1 file changed, 20 insertions(+), 5 deletions(-)
 
-On 8/3/25 23:08, Dominique Martinet wrote:
-> Thank for looking into it, I wasn't aware this could be enough to please
-> the KCSAN gods.
-
-Thank you for reviewing it!
-
-> I've just gone over read/write work and I think overall the logic
-> doesn't look too bad as the checks for m->err are just optimizations
-> that could be skipped entierly.
-
-That was my impression too. Thanks for confirming! 
-As far as I know, this is as non-problematic as it gets. 
-
-> So, sure, they could recheck but I don't see the point; if syzbot is
-> happy with this patch I think that's good enough.
-
-I think KCSAN shouldn't complain anymore. However, let me send a v2:
-
->> [1] https://lore.kernel.org/all/ZTZtHdqifXlWG8nN@codewreck.org/
-
-I last-minute edited this snippet because it looks like it should be
-like the rest of them (just a READ_ONCE, no spinlock) 
-
-@@ -673,7 +674,7 @@ static int p9_fd_request(struct p9_client *client, struct p9_req_t *req)
+diff --git a/drivers/net/ethernet/microchip/enc28j60.c b/drivers/net/ethernet/microchip/enc28j60.c
+index d6c9491537e4..b3613e45c900 100644
+--- a/drivers/net/ethernet/microchip/enc28j60.c
++++ b/drivers/net/ethernet/microchip/enc28j60.c
+@@ -24,6 +24,7 @@
+ #include <linux/skbuff.h>
+ #include <linux/delay.h>
+ #include <linux/spi/spi.h>
++#include <linux/of_gpio.h>
  
- 	spin_lock(&m->req_lock);
+ #include "enc28j60_hw.h"
  
--	if (m->err < 0) {
-+	if (READ_ONCE(m->err) < 0) {
- 		spin_unlock(&m->req_lock);
- 		return m->err;
+@@ -1526,6 +1527,7 @@ static int enc28j60_probe(struct spi_device *spi)
+ 	struct net_device *dev;
+ 	struct enc28j60_net *priv;
+ 	int ret = 0;
++	unsigned long irq_flags = IRQF_ONESHOT;
+ 
+ 	if (netif_msg_drv(&debug))
+ 		dev_info(&spi->dev, "Ethernet driver %s loaded\n", DRV_VERSION);
+@@ -1558,20 +1560,33 @@ static int enc28j60_probe(struct spi_device *spi)
+ 		eth_hw_addr_random(dev);
+ 	enc28j60_set_hw_macaddr(dev);
+ 
++	if (spi->irq > 0) {
++		dev->irq = spi->irq;
++	} else {
++		/* Try loading device tree property irq-gpios */
++		struct gpio_desc *irq_gpio_desc = devm_fwnode_gpiod_get_index(&spi->dev,
++				of_fwnode_handle(spi->dev.of_node), "irq", 0, GPIOD_IN, NULL);
++		if (IS_ERR(irq_gpio_desc)) {
++			dev_err(&spi->dev, "unable to get a valid irq gpio\n");
++			goto error_irq;
++		}
++		dev->irq = gpiod_to_irq(irq_gpio_desc);
++		irq_flags |= IRQF_TRIGGER_FALLING;
++	}
++
+ 	/* Board setup must set the relevant edge trigger type;
+ 	 * level triggers won't currently work.
+ 	 */
+-	ret = request_threaded_irq(spi->irq, NULL, enc28j60_irq, IRQF_ONESHOT,
++	ret = request_threaded_irq(dev->irq, NULL, enc28j60_irq, irq_flags,
+ 				   DRV_NAME, priv);
+ 	if (ret < 0) {
+ 		if (netif_msg_probe(priv))
+ 			dev_err(&spi->dev, "request irq %d failed (ret = %d)\n",
+-				spi->irq, ret);
++				dev->irq, ret);
+ 		goto error_irq;
  	}
+ 
+ 	dev->if_port = IF_PORT_10BASET;
+-	dev->irq = spi->irq;
+ 	dev->netdev_ops = &enc28j60_netdev_ops;
+ 	dev->watchdog_timeo = TX_TIMEOUT;
+ 	dev->ethtool_ops = &enc28j60_ethtool_ops;
+@@ -1589,7 +1604,7 @@ static int enc28j60_probe(struct spi_device *spi)
+ 	return 0;
+ 
+ error_register:
+-	free_irq(spi->irq, priv);
++	free_irq(dev->irq, priv);
+ error_irq:
+ 	free_netdev(dev);
+ error_alloc:
+@@ -1601,7 +1616,7 @@ static void enc28j60_remove(struct spi_device *spi)
+ 	struct enc28j60_net *priv = spi_get_drvdata(spi);
+ 
+ 	unregister_netdev(priv->netdev);
+-	free_irq(spi->irq, priv);
++	free_irq(priv->netdev->irq, priv);
+ 	free_netdev(priv->netdev);
+ }
+ 
+-- 
+2.43.0
 
-but as I left it, it doesn't make any sense. It's either a racy read +
-READ_ONCE to make KCSAN happy or a protected read which shouldn't be a
-problem. I'll just drop this hunk and leave it as it was.
-
->> ---
->>  net/9p/trans_fd.c | 11 ++++++-----
->>  1 file changed, 6 insertions(+), 5 deletions(-)
->>
->> diff --git a/net/9p/trans_fd.c b/net/9p/trans_fd.c
->> index 196060dc6138af10e99ad04a76ee36a11f770c65..5458e6530084cabeb01d13e9b9a4b1b8f338e494 100644
->> --- a/net/9p/trans_fd.c
->> +++ b/net/9p/trans_fd.c
->> @@ -194,9 +194,10 @@ static void p9_conn_cancel(struct p9_conn *m, int err)
->>        if (m->err) {
-> 
-> This is under spin lock and I don't see the compiler reordering this
-> read and write, but should this also get READ_ONCE?
-
-It wouldn't hurt, but I don't think it would do anything. spin_lock and
-spin_unlock both emit compiler barriers so that code can't be moved out
-of critical sections (apart from doing actual locking, release-acquire
-ordering ...). I guess the only function of a READ_ONCE here would be to
-ensure atomicity of the read, but 
-
-  1) There are no concurrent writes when this read is happening due to
-  the spinlock being locked
-
-  2) Getting the load teared is almost impossible(?) as it is an aligned
-  4 byte read. Even if the load got garbage, we would just return
-  without reading the actual value.
-
-I'll wait a couple of days to send the v2 in case there is any more
-feedback. 
-
-Thanks again!
 
