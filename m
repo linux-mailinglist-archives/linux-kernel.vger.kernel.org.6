@@ -1,49 +1,49 @@
-Return-Path: <linux-kernel+bounces-553298-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-553300-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 89C1AA58715
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 19:21:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3A28FA5871B
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 19:22:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 54F3C3A539B
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 18:21:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DC4F33A99A7
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 18:21:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0E8F1F8737;
-	Sun,  9 Mar 2025 18:21:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B372204C0E;
+	Sun,  9 Mar 2025 18:21:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b="FCrS7RUD"
-Received: from mx1.sberdevices.ru (mx1.sberdevices.ru [37.18.73.165])
+	dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b="YorzCAHK"
+Received: from mx1.sberdevices.ru (mx2.sberdevices.ru [45.89.224.132])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5137910E5;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10AAB1DF732;
 	Sun,  9 Mar 2025 18:21:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=37.18.73.165
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.89.224.132
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741544497; cv=none; b=JcSkM9i9v/HKkD0CuNlKmIsYTsgai25f6GmqtFnOZPXR5NufzvM5psH0yeLkd9VajzMCqv/nDynwkW+ZOzC4JpaU79dNLGo4ZtKvIWyVe0A9OXc6/ehEPnzsRqiyalwIdJXrQmA6cazRrBHGJx3SK8yUiqBchLJZCQCXYKvp6EQ=
+	t=1741544497; cv=none; b=XxPknS+0v6SZ/eETB0r152VrVmef54V8FXxSKgF+WzBJb+WORZ/yCSf+erKA8JjcYamOWgL5zWC8WWDrN1HiAcemoYYha7PIkMGsAib8tsOKuItfVC7rjSn02vAyRJ5qzEAx4x060Ao+qeBMApfVIhEVDgLKTsT/DGbwRnyMhVE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1741544497; c=relaxed/simple;
-	bh=ULTZgz7wemJg/2kZYe2i3hPuq8ZAwSs1+YjpciWGnDI=;
+	bh=ybkbzx+DIvWdFpyy8EDoKSIvtWeGkBDccrQr3+eS2DI=;
 	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=H9+K/aH3VjykkWiOhYWhptMvyLzg5S6nZSikxskViDHP6v76auX9wAL5RJr8b5lweWF5su8BlNEAT611/r/6CrHuCb2hBbKc/kGwlLaFoDALc5ms00EzQ+hzzY2lmLCtHVwOGWeiq1eqTokBvAZ/kqvj85rrZ+3DL0Rch4JHhz4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com; spf=pass smtp.mailfrom=sberdevices.ru; dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b=FCrS7RUD; arc=none smtp.client-ip=37.18.73.165
+	 MIME-Version:Content-Type; b=UOfpiQh1Y2GDc0ESZGi6gYXJkn18qjphRVKLEAP/LVqs0lZv32l7oGNVuMqpYLQDz9PypdCfwkxzbDoWiiQtKoLzYmeU2oq7dRYYXl2zI3VsDmPfUAEuIx2XA4P8KLgHEnvlZxFOMCk/vThc7wSLvBDnEjxxhDAhLtTmR2acvJA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com; spf=pass smtp.mailfrom=sberdevices.ru; dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b=YorzCAHK; arc=none smtp.client-ip=45.89.224.132
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sberdevices.ru
-Received: from p-infra-ksmg-sc-msk01.sberdevices.ru (localhost [127.0.0.1])
-	by mx1.sberdevices.ru (Postfix) with ESMTP id 7A918100006;
+Received: from p-infra-ksmg-sc-msk02.sberdevices.ru (localhost [127.0.0.1])
+	by mx1.sberdevices.ru (Postfix) with ESMTP id C71EB120006;
 	Sun,  9 Mar 2025 21:21:33 +0300 (MSK)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mx1.sberdevices.ru 7A918100006
+DKIM-Filter: OpenDKIM Filter v2.11.0 mx1.sberdevices.ru C71EB120006
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=salutedevices.com;
 	s=mail; t=1741544493;
-	bh=Pr8V4mkPI24+3PnszozIdpHRsk1mgCHgXbW1+J/O23s=;
+	bh=9SRIX/FvqDap0SMfdebaXOrywr2NEUWz33l2V3WObDM=;
 	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type:From;
-	b=FCrS7RUDp8druoAQeGG/pMztduXYBr/DtzpgFCBvaAnW1BIdcaaY4dxCw9xhnZECM
-	 rjnONwA6LnDB0MggS+iluDj2b8tTAHcwCCccSY/fhnKoHG/LaDRukU6ZjlDmtl8qsK
-	 Xdp68y1j3p9w7GmNb5CgyZBD/ISK6LugIhG+mJH2/h2Otnj3GpIbDGiQUP0iSxhOv1
-	 v5rVSpGf9766cwf410DlmgIaVrx/Ml0H0bHqxVV5sLcCam6kPzrnHznDLS60E6wZLb
-	 fE5FG2LusALvJ2NVmgvz87mxUYdULdWizb85L4aNSzR0dUfdKqnwfhG9u9iJH2HUVJ
-	 FRBynDio+forg==
+	b=YorzCAHKzCsMS+6VKaHX0r5RlLmFzlEIJ7JlD7IdXHtP6t2dQkz5rKTAn6n9WEed0
+	 A0itdLoQHIZ1yhLBh1dp5TrwH3dOlIgKYnPI2bh7P1EgtOCg6hhQir5E05QZynCGtN
+	 ucBR150JdDS/W0FC7Stg07gfPUSBcIAbiubk1hK6p7GZUd4SJrWSD8qNzY06C0F68B
+	 VveyE1XQkT9FHVlmgnDdJzasMNk80iSSgacrKyg2XDh4Es1e2GSjfUituMKr3fkC70
+	 g9GE+Uu0Fq0AF3daNHcEfdUmFwdQGKXvjXjB/6Dz8khv5ox/ISc4uGIoOU5wdWQwJ6
+	 a4e20yZHnPqIQ==
 Received: from smtp.sberdevices.ru (p-exch-cas-a-m1.sberdevices.ru [172.24.201.216])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
@@ -60,9 +60,9 @@ To: Jan Dakinevich <jan.dakinevich@salutedevices.com>, Conor Dooley
 	<martin.blumenstingl@googlemail.com>, Neil Armstrong
 	<neil.armstrong@linaro.org>, Philipp Zabel <p.zabel@pengutronix.de>, Rob
  Herring <robh@kernel.org>
-Subject: [PATCH v2 1/6] ASoC: dt-bindings: meson: meson-axg-audio-arb: claim support of A1 SoC family
-Date: Sun, 9 Mar 2025 21:21:22 +0300
-Message-ID: <20250309182127.1322890-2-jan.dakinevich@salutedevices.com>
+Subject: [PATCH v2 2/6] ASoC: dt-bindings: meson: axg-fifo: claim support of A1 SoC family
+Date: Sun, 9 Mar 2025 21:21:23 +0300
+Message-ID: <20250309182127.1322890-3-jan.dakinevich@salutedevices.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20250309182127.1322890-1-jan.dakinevich@salutedevices.com>
 References: <20250309182127.1322890-1-jan.dakinevich@salutedevices.com>
@@ -85,7 +85,7 @@ X-KSMG-AntiSpam-Rate: 0
 X-KSMG-AntiSpam-Status: not_detected
 X-KSMG-AntiSpam-Method: none
 X-KSMG-AntiSpam-Auth: dkim=none
-X-KSMG-AntiSpam-Info: LuaCore: 51 0.3.51 68896fb0083a027476849bf400a331a2d5d94398, {Tracking_smtp_not_equal_from}, sberdevices.ru:5.0.1,7.1.1;salutedevices.com:7.1.1;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;127.0.0.199:7.1.2;smtp.sberdevices.ru:5.0.1,7.1.1, {Tracking_smtp_domain_mismatch}, {Tracking_smtp_domain_2level_mismatch}, {Tracking_sender_alignment_int}, {Tracking_white_helo}, FromAlignment: n
+X-KSMG-AntiSpam-Info: LuaCore: 51 0.3.51 68896fb0083a027476849bf400a331a2d5d94398, {Tracking_smtp_not_equal_from}, sberdevices.ru:5.0.1,7.1.1;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;127.0.0.199:7.1.2;smtp.sberdevices.ru:5.0.1,7.1.1;salutedevices.com:7.1.1, {Tracking_smtp_domain_mismatch}, {Tracking_smtp_domain_2level_mismatch}, {Tracking_sender_alignment_int}, {Tracking_white_helo}, FromAlignment: n
 X-MS-Exchange-Organization-SCL: -1
 X-KSMG-AntiSpam-Interceptor-Info: scan successful
 X-KSMG-AntiPhishing: Clean
@@ -93,32 +93,30 @@ X-KSMG-LinksScanning: Clean
 X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.0.1.6960, bases: 2025/03/09 17:28:00 #27692143
 X-KSMG-AntiVirus-Status: Clean, skipped
 
-Add "amlogic,meson-a1-audio-arb" compatible string alias to
-"amlogic,meson-sm1-audio-arb".
+Add "amlogic,a1-toddr" and "amlogic,a1-frddr" compatible string aliases
+to "amlogic,sm1-toddr" and "amlogic,sm1-frddr" respectevely.
 
 Signed-off-by: Jan Dakinevich <jan.dakinevich@salutedevices.com>
 ---
- .../bindings/reset/amlogic,meson-axg-audio-arb.yaml    | 10 +++++++---
- 1 file changed, 7 insertions(+), 3 deletions(-)
+ .../devicetree/bindings/sound/amlogic,axg-fifo.yaml       | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/reset/amlogic,meson-axg-audio-arb.yaml b/Documentation/devicetree/bindings/reset/amlogic,meson-axg-audio-arb.yaml
-index bc1d284785e1..57e977db029f 100644
---- a/Documentation/devicetree/bindings/reset/amlogic,meson-axg-audio-arb.yaml
-+++ b/Documentation/devicetree/bindings/reset/amlogic,meson-axg-audio-arb.yaml
-@@ -15,9 +15,13 @@ description: The Amlogic Audio ARB is a simple device which enables or disables
- 
- properties:
-   compatible:
--    enum:
--      - amlogic,meson-axg-audio-arb
--      - amlogic,meson-sm1-audio-arb
-+    oneOf:
-+      - enum:
-+          - amlogic,meson-axg-audio-arb
-+          - amlogic,meson-sm1-audio-arb
+diff --git a/Documentation/devicetree/bindings/sound/amlogic,axg-fifo.yaml b/Documentation/devicetree/bindings/sound/amlogic,axg-fifo.yaml
+index b1b48d683101..1e809c7c2179 100644
+--- a/Documentation/devicetree/bindings/sound/amlogic,axg-fifo.yaml
++++ b/Documentation/devicetree/bindings/sound/amlogic,axg-fifo.yaml
+@@ -25,6 +25,14 @@ properties:
+               - amlogic,g12a-frddr
+               - amlogic,sm1-frddr
+           - const: amlogic,axg-frddr
 +      - items:
-+          - const: amlogic,meson-a1-audio-arb
-+          - const: amlogic,meson-sm1-audio-arb
++          - const: amlogic,a1-toddr
++          - const: amlogic,sm1-toddr
++          - const: amlogic,axg-toddr
++      - items:
++          - const: amlogic,a1-frddr
++          - const: amlogic,sm1-frddr
++          - const: amlogic,axg-frddr
  
    reg:
      maxItems: 1
