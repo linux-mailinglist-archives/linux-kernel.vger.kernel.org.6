@@ -1,133 +1,163 @@
-Return-Path: <linux-kernel+bounces-553116-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-553117-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 465D9A58415
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 13:38:44 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 31E81A58416
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 13:39:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 72AF7169B4C
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 12:38:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6136E169BFC
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 12:39:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 154DF1D61B5;
-	Sun,  9 Mar 2025 12:38:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B8741D63EF;
+	Sun,  9 Mar 2025 12:39:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="esymyqcV"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bgfRWsIU"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E59A640849
-	for <linux-kernel@vger.kernel.org>; Sun,  9 Mar 2025 12:38:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5EC540849;
+	Sun,  9 Mar 2025 12:39:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741523918; cv=none; b=B4SwCLFXkf64Qg1ZNKYLjZoYfOcwYAv2d8SSa7NZgguLvwn4LtyjnXOTSETAMlnLEWSkraxVo1cDgKcsjay5qiH3m/DwMGSj+gh0GOg6KKRbeXqFeFxvUhm1A74lGKYtWZpM3Ik82PMZnVA0kCHvL1SfRvT0AI3gDifRnFp00+w=
+	t=1741523985; cv=none; b=jtqjxnNgXXm7h2qv71+oxKYA0953TWNH/7N63dDe1BWzTxJo4cf2qNQEv8cdKd8FAnXwWhttTkmd28vv69HU6lu07l5yBkAdnqp11F7mEKVj745P7ZsACHrSoKFyijNyoW3g0DU0pVhFjwjQg4KOcP7IeESeif4N+DIR2jayf5c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741523918; c=relaxed/simple;
-	bh=1YuDNW0c+7GLipEH8MlQWl37bkudvBX1WT6vl/BS7zU=;
-	h=Message-ID:Date:MIME-Version:To:From:Subject:Content-Type; b=ipl/CGFDvBWpd8SVbAeyvWr1AZnjyjeTBa8+kY+pb0CDgmWY6sO1/whxpts3+9AQMelLBzMO+B5CCs1ZVCpG+/YapjkxAYpcvCO+AMLzPP3I1aNmhXCZ38crY9FTbhW4dxU+Kv31qCJ5pG8Er/d/2iwhLgr1KGMcJSJDpTdgYi0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=esymyqcV; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 529BhLlW007842;
-	Sun, 9 Mar 2025 12:38:20 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=
-	content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=pp1; bh=z25u1C5IboR8ljLK34Hmmh2M2r05
-	ibUTuM8VlpKwCyI=; b=esymyqcVSn1f6sCXHool+WBm5UIVWJi1eSHnUPUs/jnO
-	k+dTF0pWL4AOxhhg/UIF1ZQ6OuhWdLsGB8BnKQghmyN81rKTqnypEtEqzA0GB/3m
-	/uuRviDeoSLo9GWB77XVdne7rJhGowpYGM6OTJs7iT6UjThIdN2fz67Q1CgKDM0w
-	NjTZiHeiLEtwmn2/73bh2COMz3+WdAHpCVhXGcw7lQtz/mLwA4xj4cFJNiSrtxZN
-	x6Qc/AHzhSCMPMX1F8WV+pYe5RUBTqivEe4moyc8ojzAW09c7IY6rWXv+v7Ei2r0
-	kYdKp7145T2T1H0CyR5Ir11BT0EL/MA6GV/PE8ZCuA==
-Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 458wa4j250-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sun, 09 Mar 2025 12:38:20 +0000 (GMT)
-Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma12.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 5299cF9X006991;
-	Sun, 9 Mar 2025 12:38:19 GMT
-Received: from smtprelay07.dal12v.mail.ibm.com ([172.16.1.9])
-	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 45907st85j-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sun, 09 Mar 2025 12:38:19 +0000
-Received: from smtpav05.dal12v.mail.ibm.com (smtpav05.dal12v.mail.ibm.com [10.241.53.104])
-	by smtprelay07.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 529CcJ0p23790280
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Sun, 9 Mar 2025 12:38:19 GMT
-Received: from smtpav05.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 0E3235805D;
-	Sun,  9 Mar 2025 12:38:19 +0000 (GMT)
-Received: from smtpav05.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 782AA58052;
-	Sun,  9 Mar 2025 12:38:17 +0000 (GMT)
-Received: from [9.61.254.32] (unknown [9.61.254.32])
-	by smtpav05.dal12v.mail.ibm.com (Postfix) with ESMTP;
-	Sun,  9 Mar 2025 12:38:17 +0000 (GMT)
-Message-ID: <70ba4e80-53c4-4583-82f3-2851e0829aa6@linux.ibm.com>
-Date: Sun, 9 Mar 2025 18:08:16 +0530
+	s=arc-20240116; t=1741523985; c=relaxed/simple;
+	bh=lWl5lYord8cuB5ZzfLS6JRfbOoN/JMaoXnsGUHvSaGI=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=Q2XHzgekyZcfI8NIhTQ9ynNO8RxpdJxFCAwPeizm98df+zskMKZlehiiqprgwQb2iClxvETNZQ6VRQixXf6Hi0X1DdCpAW/60JUVjOBNbSGhRVcwie37u9z0QiGODxg8cILyEhqJtCN3bjNXBiEL8EynOAUQc/BkF7Lnol3Ctc4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bgfRWsIU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 6175FC4CEE5;
+	Sun,  9 Mar 2025 12:39:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741523984;
+	bh=lWl5lYord8cuB5ZzfLS6JRfbOoN/JMaoXnsGUHvSaGI=;
+	h=From:Date:Subject:To:Cc:Reply-To:From;
+	b=bgfRWsIUMV70Z7mSZTYp6dYX+Nu0x7I6acmsohXuLMBoS9N0MJkSUEXwyhdsy7zO1
+	 VuLda67M91B31NqAU/RXeyUOlVFC6tA3oLnjr0Y/49hVGuzJYxfvK3gMBs198/m9RQ
+	 fuExHprQ2Uk/gju4rSahrAkOFPoMZlFOAnw+LHqnzPP01CAAqtziO++SGr2FHJ1dHD
+	 IAKmpfNj7j9K6DmObNvxAHVs+X5dB4WEupANow29TPz5yB8hp2Ft9uPDOAeLdIb+sY
+	 Jll9FSaXWPKl8HzgJYHdk+rqnBlpvwJqUUhp3fQR7YqhWR4MLMsTCVJpjJynJrzSn/
+	 PuwcpN6sWHMTQ==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 56DD3C28B25;
+	Sun,  9 Mar 2025 12:39:44 +0000 (UTC)
+From: "Chester A. Unal via B4 Relay" <devnull+chester.a.unal.arinc9.com@kernel.org>
+Date: Sun, 09 Mar 2025 12:39:36 +0000
+Subject: [PATCH] ALSA: hda/realtek: Limit Internal Microphone boost for
+ ALC3246
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Content-Language: en-GB
-To: Stephen Rothwell <sfr@canb.auug.org.au>, linux-kernel@vger.kernel.org,
-        Madhavan Srinivasan <maddy@linux.ibm.com>,
-        linuxppc-dev@lists.ozlabs.org, Michael Ellerman <mpe@ellerman.id.au>
-From: Venkat Rao Bagalkote <venkat88@linux.ibm.com>
-Subject: [linux-next-20250307] Build Failure
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: y3GgWXzXuzgdO767rWyEK9Pzx6fEmJNT
-X-Proofpoint-ORIG-GUID: y3GgWXzXuzgdO767rWyEK9Pzx6fEmJNT
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-09_05,2025-03-07_03,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 impostorscore=0
- suspectscore=0 mlxscore=0 bulkscore=0 phishscore=0 priorityscore=1501
- malwarescore=0 adultscore=0 lowpriorityscore=0 clxscore=1015
- mlxlogscore=689 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2502100000 definitions=main-2503090100
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250309-for-sound-alc256-dell-v1-1-aacd84853907@arinc9.com>
+X-B4-Tracking: v=1; b=H4sIAAeMzWcC/x3MQQrDIBBA0avIrDtgTDW1VwlZiI7NgGhREgKSu
+ 1e6fIv/OzSqTA3eokOlkxuXPDA9BPjd5Q8hh2FQUmk5yxfGUrGVIwd0ySttMFBKaCZrlmitp6e
+ G0X4rRb7+33W77x+M9elUZwAAAA==
+X-Change-ID: 20250308-for-sound-alc256-dell-61967f99ce45
+To: Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
+ Kailang Yang <kailang@realtek.com>, 
+ Stefan Binding <sbinding@opensource.cirrus.com>, 
+ Simon Trimmer <simont@opensource.cirrus.com>, 
+ Joshua Grisham <josh@joshuagrisham.com>
+Cc: alexander.scholten@xpedite-tech.com, dwayne.dupreez@xpedite-tech.com, 
+ zenon@xpedite-tech.com, linux-sound@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, "Chester A. Unal" <chester.a.unal@arinc9.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1741523982; l=3467;
+ i=chester.a.unal@arinc9.com; s=arinc9; h=from:subject:message-id;
+ bh=6CDVT2SLeMufNzb6wH1khK6tsAEt+ToJ1Hx6kvFEPZs=;
+ b=RjzqhlLgi4pwA4YjdKCIz/HMB6cBnKGtclU9g6cSTRfB9RbgpDMgC/y+bJSUKs3jvW4P7PcwI
+ RUJhN/ob/RZBqerIWNCzYZDzEXBhZhPcQJGv2nv+fTUY1l1+yC7IWti
+X-Developer-Key: i=chester.a.unal@arinc9.com; a=ed25519;
+ pk=/g3vBAV0YSvcIpSQ052xJbid7nrPXz8ExGKhTEuc6IY=
+X-Endpoint-Received: by B4 Relay for chester.a.unal@arinc9.com/arinc9 with
+ auth_id=306
+X-Original-From: "Chester A. Unal" <chester.a.unal@arinc9.com>
+Reply-To: chester.a.unal@arinc9.com
 
-Greetings!!,
+From: "Chester A. Unal" <chester.a.unal@arinc9.com>
 
-I see linux-next-20250307 fails to build on IBM Power9 and Power10 servers.
+Internal Microphone is too loud on Dell Latitude 5490, Dell Device
+[1028:0816], which has got ALC3246. I suppose this is the case for all
+devices with ALC3246 which is ALC256 for Dell devices. Therefore, limit the
+Internal Microphone boost for ALC3246. Change
+ALC255_FIXUP_DELL1_MIC_NO_PRESENCE to
+ALC255_FIXUP_DELL1_LIMIT_INT_MIC_BOOST which includes the former fixup.
 
+Signed-off-by: Chester A. Unal <chester.a.unal@arinc9.com>
+---
+I don't know ALSA or the Intel HDA specification very well so feel free to
+correct any incorrect information in the patch log.
 
-Errors:
+I experience another issue with this laptop that is also there on ALC3204.
+Headphones output loops back to Headset Microphone. So if I record with
+this microphone, sysystem audio is recorded as well. I have tried a fair
+share of fixups by compiling snd-hda-codec-realtek.ko with different fixups
+applied for "0x10ec0256, 0x1028", replacing the existing module in
+/lib/modules, and then rebooting.
 
-In file included from ^[[01m^[[K<command-line>^[[m^[[K:
-^[[01m^[[K./usr/include/cxl/features.h:11:10:^[[m^[[K ^[[01;31m^[[Kfatal 
-error: ^[[m^[[Kuuid/uuid.h: No such file or directory
-    11 | #include ^[[01;31m^[[K<uuid/uuid.h>^[[m^[[K
-       |          ^[[01;31m^[[K^~~~~~~~~~~~~^[[m^[[K
-compilation terminated.
-make[4]: *** [usr/include/Makefile:85: usr/include/cxl/features.hdrtest] 
-Error 1
-make[3]: *** [scripts/Makefile.build:461: usr/include] Error 2
-make[2]: *** [scripts/Makefile.build:461: usr] Error 2
-make[2]: *** Waiting for unfinished jobs....
-arch/powerpc/kernel/switch.o: warning: objtool: .text+0x4: 
-intra_function_call not a direct call
-arch/powerpc/crypto/ghashp8-ppc.o: warning: objtool: .text+0x22c: 
-unannotated intra-function call
-arch/powerpc/kvm/book3s_hv_rmhandlers.o: warning: objtool: .text+0xe84: 
-intra_function_call not a direct call
-make[1]: *** [/home/linux_src/linux/Makefile:1997: .] Error 2
-make: *** [Makefile:251: __sub-make] Error 2
+ALC2XX_FIXUP_HEADSET_MIC makes Headset Microphone appear unplugged. But I
+can see on the OS that it detects voice, so, it works. When it appears
+unplugged, Headphones output won't loop back to it. This fixup also makes
+Speakers appear unavailable and makes Microphone disappear, as
+ALC255_FIXUP_DELL1_MIC_NO_PRESENCE won't apply anymore.
 
-Please add below tag, if you happen to fix this issue.
+Another issue is when I toggle capture on Headphone Mic on alsamixer,
+physically no audio will be played on Headphone. Speaker is unaffected. If
+the capture is toggled on anything else, Headphone will play audio.
 
-Reported-by: Venkat Rao Bagalkote <venkat88@linux.ibm.com>
+Tested on Debian Trixie Alpha, kernel 6.12.17. My headphones are
+Tip-Ring-Ring-Sleeve. Here's how I test both issues:
 
+systemctl --user stop pipewire.socket && systemctl --user stop pipewire
+alsamixer -c 0
 
-Regards,
+speaker-test -Dhw:0,0 -c2 -r48000 -FS16_LE -t sine
 
-Venkat.
+arecord -Dhw:0,0 -c2 -r48000 -fS16_LE -d30 test.wav
+aplay -Dhw:0,0 test.wav
+
+Attached is test.wav. The timeline of the recording is:
+- I run speaker-test. Then I run arecord. After that I say: Speaker-test is
+  running. Capture is toggled on Headphone Mic.
+- After about five seconds I say: I am switching capture to Headset Mic.
+- I toggle capture on Headset Mic. After that I say: This is Headset Mic.
+- I kill speaker-test. After that I say: I have killed speaker-test.
+
+Maintainers, please let me know if you have an idea how to fix these two
+issues.
+
+Chester A.
+---
+ sound/pci/hda/patch_realtek.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/sound/pci/hda/patch_realtek.c b/sound/pci/hda/patch_realtek.c
+index d2a1f836dbbf714c26be682133b44cc0bd173ad9..379a325e96641232485a2fc8e6de03798461f466 100644
+--- a/sound/pci/hda/patch_realtek.c
++++ b/sound/pci/hda/patch_realtek.c
+@@ -11799,7 +11799,7 @@ static const struct snd_hda_pin_quirk alc269_fallback_pin_fixup_tbl[] = {
+ 	SND_HDA_PIN_QUIRK(0x10ec0295, 0x1028, "Dell", ALC269_FIXUP_DELL4_MIC_NO_PRESENCE_QUIET,
+ 		{0x19, 0x40000000},
+ 		{0x1b, 0x40000000}),
+-	SND_HDA_PIN_QUIRK(0x10ec0256, 0x1028, "Dell", ALC255_FIXUP_DELL1_MIC_NO_PRESENCE,
++	SND_HDA_PIN_QUIRK(0x10ec0256, 0x1028, "Dell", ALC255_FIXUP_DELL1_LIMIT_INT_MIC_BOOST,
+ 		{0x19, 0x40000000},
+ 		{0x1a, 0x40000000}),
+ 	SND_HDA_PIN_QUIRK(0x10ec0236, 0x1028, "Dell", ALC255_FIXUP_DELL1_LIMIT_INT_MIC_BOOST,
+
+---
+base-commit: b7c90e3e717abff6fe06445b98be306b732bbd2b
+change-id: 20250308-for-sound-alc256-dell-61967f99ce45
+
+Best regards,
+-- 
+Chester A. Unal <chester.a.unal@arinc9.com>
+
 
 
