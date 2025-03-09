@@ -1,215 +1,160 @@
-Return-Path: <linux-kernel+bounces-553025-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-553026-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 520C6A582A4
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 10:23:11 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B7A21A582A6
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 10:23:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2A3393ACFB8
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 09:22:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 20C35189026A
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 09:23:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BDA319DF99;
-	Sun,  9 Mar 2025 09:23:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC65F1A2C29;
+	Sun,  9 Mar 2025 09:23:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="RYFXFspp"
-Received: from mail-yb1-f179.google.com (mail-yb1-f179.google.com [209.85.219.179])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Ab6N48KY"
+Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B424CECF
-	for <linux-kernel@vger.kernel.org>; Sun,  9 Mar 2025 09:23:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A3ED19259F
+	for <linux-kernel@vger.kernel.org>; Sun,  9 Mar 2025 09:23:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741512184; cv=none; b=CI3NZzlriGs6xloKRIYM92oyRwqxrPO/uwHP29Fk+/DkaWRm686g9UfO1Y4dkbjOmzrt0XbUEW5h3B7ttVI6TFEhfEAtYZvyK5rrQHp9Sm9cJalPVgUnmKOEHbsmjjWvGmJgSFk+lc9NRPTZqgwf06UzEbG7amuLXGEG8CBUVXw=
+	t=1741512200; cv=none; b=sAHF8hWWITwVaHUqnZF31peZ4y5wJ6KJUtWAHW35GcbcAiljhMZYz2W7phNoLHu/rQKmVweQxNLzbvX53XB1EDIJO7grvCN0ZrTQj2i2pPWA7Yz8huCRUx/AqZTjg1e4AoAywolCBrjO0u2ETjPzw+lOMNsCy5cdB/VEuc2vbBE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741512184; c=relaxed/simple;
-	bh=wyMnkRcp1Q4wC1S0dfbxMf/xvU3tvTAnQK6pobLfBww=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Fgmvy78xZXhKMil/4ixmdTHV7VwyowJmjigeQjdHCICjWtI5LGd7wLb5wtIN7scE+2TEHmDZQXqDgcse3J/RuumtFeNgnbPA3isjgfb0Q0R5WgDXJcm6WN8c1exa2Ph8wBq41EmBirNwmwFLUhqmy57p5nFSLMUN6E6GLsPGfkQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=RYFXFspp; arc=none smtp.client-ip=209.85.219.179
+	s=arc-20240116; t=1741512200; c=relaxed/simple;
+	bh=64WZrmgyPkgy2YnI7U81yn6KSZ4lJ6AYo9WRW6tDuIQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rjAJupv8dfrPnAzTNZJ7yXWiPpgH9ju5CYBwisLlSiDYKnyzb+e0kD2f41ti5YbVfASdV0KDV4hpwvwZaYBvdeaXN2WbifGNNMj3K7/ecnXtUBISzwHb5j2DTFWVVjJN5K86G0+Lb/umewgAVNxN3070Gl2eoiB4C3qy3EMEWtc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Ab6N48KY; arc=none smtp.client-ip=209.85.218.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yb1-f179.google.com with SMTP id 3f1490d57ef6-e609cff9927so2103588276.3
-        for <linux-kernel@vger.kernel.org>; Sun, 09 Mar 2025 01:23:02 -0800 (PST)
+Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-abfe7b5fbe8so472353966b.0
+        for <linux-kernel@vger.kernel.org>; Sun, 09 Mar 2025 01:23:18 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1741512181; x=1742116981; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=iMh3NDuLrSGAoXMlAYmObZJYcnKtSuzU7ys7GAZPNb4=;
-        b=RYFXFsppLatmam/UUyVNeYIdTCgh3FkjoByQgVwc+RF9uS410SYi3O25YkwHZDGvYe
-         IX4cNbpr0ZXWBEp85I8lqWztStI/27V+2PN8Xdyn3Ixwi0TVhCb81cRoBUC1OiYjKkZT
-         jXV3ZC5PkvJc9oYEH0PpCMvCPFxB6pzXV5mL5Kbpbeh46GrAu/KOLRCbe94e+xhmqNQo
-         pjDQNHK6n0cVADdUwuzcqkiTZT0vM+wlZhammjqgFgakGpcXXWNsPTXntpERx1yCLEX6
-         yAvmryI8i2o6hKeuzlSmHBhW5w/sJNpDFbbzI24Mlbo0RL95yPpSRP1hFEgrYXxvxsMu
-         Aceg==
+        d=linaro.org; s=google; t=1741512197; x=1742116997; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=WquEMt/nHeDbDu+wCTeJFQKwvIymjPr1TDpYSMcRfWU=;
+        b=Ab6N48KYUd0NByEI5BB3psqhklj+00GGIuGJaQNZL4IGNMtzOgG0MyCOJsoSf8Ethc
+         T40UWinA5DgG9RXZKSVL8k6xvYFl1N0inDBPZpXwpO1E40NhEwxTTlIKm8KOo+JWTSb3
+         Pg2VJe82hNpzRLTxKrZBk1y5bsPdjguKP7H7UTGZSXamqAVnLo7EZXOqACSmksIUsDHV
+         VPMaKl6FIKarroYDl1A5Pu3z+UgVDX8wxrypoILOSZ6aoVq3AwBx8+xnKUubS+5shycn
+         d92qZronz82QiYKsqo2Y4GbVfbSenxKdEdiS6BxLIAXQ5ip04kP3p2QLHd5ZHy7kGrcW
+         Tn6w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741512181; x=1742116981;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=iMh3NDuLrSGAoXMlAYmObZJYcnKtSuzU7ys7GAZPNb4=;
-        b=m5HXC/bK57RVy0rmZ5J0ITKJtrcpDVhSthTil3oq04h46IzRr2y/s4+BpUV2tB9CLX
-         eNVlAD559weaJMfKDlDjoRYL/lPNAk43/dZSMTQSbRTOuyN1605fhubRarZrOXveBrwu
-         my9DN1ZBfcnxwzMaUPj0ogzPkRCedzCj6rsJ4kqW6cG03xVdMLcskbz/xk4ERCs5Bom3
-         Et7/fwiFbXbBy9bX5S3III52ok17FlsviPvoYlRQy+EcLqcwGMo0pBH0p11wqh9c97EX
-         /x5Y3wmpVrPseZ5HxciBfRdfcIC95SfawjBKO2MiEFL5UeqpRximXmlMKaeX3ZHUmrBK
-         hF3Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVJEDCdf6JurtcEEA+97yPr4Tq/MHknuRoblxmxWFT8v9b8+FIAL1c3KNrDe1rNyLmyIomz9pF0s5MhQZg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyEUyfawrXPxOBscAFBzoivdsynh0FGfniZqeP3V4jzGixmdl1q
-	pYyS7myfbdtPuY8MVxiNjXNmuNCeTZcqF9zJAXRasaLdPegeW/PKxiiN3L/ZO9fHDkSWoI68ado
-	9tBDl/LopNVpl17oIcbsGshOaUuw7pcrUnXhehA==
-X-Gm-Gg: ASbGncvYnK03jLArV0BWBIfo+fgt8qG+XaFrYge4dbpOpFFgCzz2iLY4bYWalO5Z2lq
-	vGxGkp0QJUxuD72f/CnJQu62JjOz7Lq+lxTWhvrpmSWMuNiz6l6YhNvU7LbmeqJPnoEQ7V2WrB9
-	4y47MuH8GKhxW6qYLmv0HdMxMYLL1TtHU/voCOf4BiNp+4dykPjQI=
-X-Google-Smtp-Source: AGHT+IGwSjssMypxWMqlAgIxRqvqFw5zCtjXcKaNH8uFEv6oSpbLLZZrkI9ebpcft3vvy7bHOrWbWh76EUn4+31AvMw=
-X-Received: by 2002:a05:6902:2702:b0:e5a:e897:2846 with SMTP id
- 3f1490d57ef6-e635c13dc87mr11588234276.16.1741512181600; Sun, 09 Mar 2025
- 01:23:01 -0800 (PST)
+        d=1e100.net; s=20230601; t=1741512197; x=1742116997;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=WquEMt/nHeDbDu+wCTeJFQKwvIymjPr1TDpYSMcRfWU=;
+        b=qztuPm8YtjdGVIlV5dVQO7XZBilu+aNniSZFbQfR9I7xs/6efCjnf74UoTnDSP9JC1
+         pu1MMyLo9H88nZBccBxn5jdTF9/D38P3p0C3Pd9ic0sMw6dJ0gnQPgLrgLCJeAONEEvh
+         wJykTL1XqNXj0CBpq7DuIOK5i9gQae0JBIpM1kAjUjlhLF67JmKHZ1oyiWbzFgb3LONC
+         Q8X0vTKyTvjDVO/q72rYzfcWHXYYjkLizPqzsoHbaCiljbobY5UcjX3LexVWyzoRv11K
+         YxGWnVYLPgnbTeb8+sCrGfLkHaOTqvyLw3Ad8mR5+/RAUDPFFAITm4tHg6AeFDltALWJ
+         tRQw==
+X-Forwarded-Encrypted: i=1; AJvYcCX9tjIHGw7ZG9jkIy1znKWDvuuVo5ka4so6rqldXsTkrcB9ZNHrkXy+t1u/ZsFzn6+f1RFPpdexsYKHSnM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyZot+WoL7d+IaEQYxV/xVMhO3stmoVq2hSTuVKkUM0dGjOp5vK
+	jSrclvanJz0FGWTezaj2mDG1w9gC0z1b9wC5rHqlUm2kfueLk0oxZTx3V7GIUl8=
+X-Gm-Gg: ASbGncu+UwTGklMxcXiNpD8AaUZfMidAVTBr7eXUkXqFNPAuep3tQNb3li9uDpxhomR
+	+1iS3RDbmyh6DzHO++BUGrh5cd1ePHolLKyRh/n5lkE4PVOeIFNXRPelrHFlzKNUbLipLfYYEHY
+	L1s8emf3Ivf0C+Z9NlJSsQC47UB7VFaUhrm2N5R0BKqLqpIA9VrR+uYQ3v20VhXGfdC57nt3soa
+	Nt+DX3OY3FYggTmJ/Oi7z9H5XbTLt3AJqoCsjX5Cn8j3P9/+/hGYwAiIe4f2m1aNWU1NZDrd2yd
+	XJ1uPvaQd8feUAnU9ELYQ3TtDW8jDHXE8IbQVGCKDg==
+X-Google-Smtp-Source: AGHT+IETCUltWmQN+zLCmKRFkdNtCxZ4Os14U+jDnEz2nSP339omXsmyTsnb1B+RdPyq0H+r5s5iRw==
+X-Received: by 2002:a05:6402:1d4c:b0:5e5:b53:fd49 with SMTP id 4fb4d7f45d1cf-5e5e229e46emr24575900a12.3.1741512196682;
+        Sun, 09 Mar 2025 01:23:16 -0800 (PST)
+Received: from linaro.org ([62.231.96.41])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5e5c733fd48sm5071517a12.9.2025.03.09.01.23.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 09 Mar 2025 01:23:15 -0800 (PST)
+Date: Sun, 9 Mar 2025 11:23:12 +0200
+From: Abel Vesa <abel.vesa@linaro.org>
+To: Aleksandrs Vinarskis <alex.vinarskis@gmail.com>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Johan Hovold <johan@kernel.org>,
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+	Rajendra Nayak <quic_rjendra@quicinc.com>,
+	Sibi Sankar <quic_sibis@quicinc.com>,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	Trilok Soni <quic_tsoni@quicinc.com>, linux-arm-msm@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH RESEND v5 0/4] arm64: dts: qcom: x1e80100: crd/t14s:
+ Enable Parade Type-C retimers
+Message-ID: <Z81eAMoXb9li4lba@linaro.org>
+References: <20250220-x1e80100-dts-crd-t14s-enable-typec-retimers-v5-0-380a3e0e7edc@linaro.org>
+ <ea9344b7-6646-4329-b8f6-45d2b51f183b@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250308-phy-sam-hdptx-bpc-v5-0-35087287f9d1@collabora.com> <20250308-phy-sam-hdptx-bpc-v5-7-35087287f9d1@collabora.com>
-In-Reply-To: <20250308-phy-sam-hdptx-bpc-v5-7-35087287f9d1@collabora.com>
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date: Sun, 9 Mar 2025 11:22:50 +0200
-X-Gm-Features: AQ5f1JoAeZL47fdNQ51_XRbhIwKgmeJzZ78g4SD2gNds-cV7TO45RQfFMkCcCBs
-Message-ID: <CAA8EJpoQbvFbNXQ2RB1qY2gHnwZaU-PT-DMLnZkrxkqs2wkXqQ@mail.gmail.com>
-Subject: Re: [PATCH v5 07/12] phy: rockchip: samsung-hdptx: Avoid Hz<->hHz
- unit conversion overhead
-To: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
-Cc: Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>, 
-	Heiko Stuebner <heiko@sntech.de>, Algea Cao <algea.cao@rock-chips.com>, 
-	Sandor Yu <Sandor.yu@nxp.com>, Maxime Ripard <mripard@kernel.org>, kernel@collabora.com, 
-	linux-kernel@vger.kernel.org, linux-phy@lists.infradead.org, 
-	linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ea9344b7-6646-4329-b8f6-45d2b51f183b@gmail.com>
 
-On Sat, 8 Mar 2025 at 14:21, Cristian Ciocaltea
-<cristian.ciocaltea@collabora.com> wrote:
->
-> The ropll_tmds_cfg table used to identify the configuration params for
-> the supported rates expects the search key, i.e. bit_rate member of
-> struct ropll_config, to be provided in hHz rather than Hz (1 hHz = 100
-> Hz).  This requires multiple conversions between these units being
-> performed at runtime.
->
-> Improve implementation clarity and efficiency by consistently using the
-> Hz unit throughout driver's internal data structures and functions.
-> Also rename the rather misleading struct member.
->
-> Signed-off-by: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
-> ---
->  drivers/phy/rockchip/phy-rockchip-samsung-hdptx.c | 79 +++++++++++------------
->  1 file changed, 39 insertions(+), 40 deletions(-)
->
-> diff --git a/drivers/phy/rockchip/phy-rockchip-samsung-hdptx.c b/drivers/phy/rockchip/phy-rockchip-samsung-hdptx.c
-> index 2bf525514c1991a1299265d12e1e85f66333c604..e58a01bdb3ce82d66acdcb02c06de2816288b574 100644
-> --- a/drivers/phy/rockchip/phy-rockchip-samsung-hdptx.c
-> +++ b/drivers/phy/rockchip/phy-rockchip-samsung-hdptx.c
-> @@ -330,7 +330,7 @@ enum dp_link_rate {
->  };
->
->  struct ropll_config {
-> -       u32 bit_rate;
-> +       u32 rate;
+On 25-03-07 23:03:07, Aleksandrs Vinarskis wrote:
+> 
+> 
+> On 2/20/25 18:42, Abel Vesa wrote:
+> > Since the driver and dt-bindings have been alread merged, it has been
+> > agreed offline that there is no point of holding on to these DT patches
+> > even though there are some issues with plug/unplug during suspend in
+> > both pmic-glink-altmode and ucsi-glink. These issues are being worked on
+> > meanwhile. Merging these means that even though this will provide external DP
+> > and USB orientation, plug/unplug during suspend will give some splats
+> > and render both the USB orientation and DP broken. But then, other
+> > X Elite boards already have these nodes described, so lets bring the crd
+> > and t14s to the same level.
+> > 
+> > These patches are just a resend of the ones found in v5 and dropped in the v6
+> > patchset of the driver and dt-bindings.
+> > 
+> > Link to v5: https://lore.kernel.org/all/20241112-x1e80100-ps8830-v5-0-4ad83af4d162@linaro.org/
+> > 
+> > Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
+> 
+> If you will be respinning, could you please add link-frequencies to
+> enable HBR3 speeds, similarly to [1]? Alternatively, I can also send
+> fixups once this series lands.
 
-unsigned long long, please, to match the tmds_char_rate type.
 
->         u8 pms_mdiv;
->         u8 pms_mdiv_afc;
->         u8 pms_pdiv;
-> @@ -410,45 +410,45 @@ struct rk_hdptx_phy {
->  };
->
->  static const struct ropll_config ropll_tmds_cfg[] = {
-> -       { 5940000, 124, 124, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 62, 1, 16, 5, 0,
-> +       { 594000000, 124, 124, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 62, 1, 16, 5, 0,
+It's already re-spun here:
 
-Use ULL suffix
+https://lore.kernel.org/all/20250304-x1e80100-dts-crd-t14s-enable-typec-retimers-v6-0-e5a49fae4e94@linaro.org/
 
->           1, 1, 0, 0x20, 0x0c, 1, 0x0e, 0, 0, },
-> -       { 3712500, 155, 155, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 62, 1, 16, 5, 0,
-> +       { 371250000, 155, 155, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 62, 1, 16, 5, 0,
->           1, 1, 0, 0x20, 0x0c, 1, 0x0e, 0, 0, },
-> -       { 2970000, 124, 124, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 62, 1, 16, 5, 0,
-> +       { 297000000, 124, 124, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 62, 1, 16, 5, 0,
->           1, 1, 0, 0x20, 0x0c, 1, 0x0e, 0, 0, },
-> -       { 1620000, 135, 135, 1, 1, 3, 1, 1, 0, 1, 1, 1, 1, 4, 0, 3, 5, 5, 0x10,
-> +       { 162000000, 135, 135, 1, 1, 3, 1, 1, 0, 1, 1, 1, 1, 4, 0, 3, 5, 5, 0x10,
->           1, 0, 0x20, 0x0c, 1, 0x0e, 0, 0, },
-> -       { 1856250, 155, 155, 1, 1, 3, 1, 1, 1, 1, 1, 1, 1, 62, 1, 16, 5, 0,
-> +       { 185625000, 155, 155, 1, 1, 3, 1, 1, 1, 1, 1, 1, 1, 62, 1, 16, 5, 0,
->           1, 1, 0, 0x20, 0x0c, 1, 0x0e, 0, 0, },
-> -       { 1540000, 193, 193, 1, 1, 5, 1, 1, 1, 1, 1, 1, 1, 193, 1, 32, 2, 1,
-> +       { 154000000, 193, 193, 1, 1, 5, 1, 1, 1, 1, 1, 1, 1, 193, 1, 32, 2, 1,
->           1, 1, 0, 0x20, 0x0c, 1, 0x0e, 0, 0, },
-> -       { 1485000, 0x7b, 0x7b, 1, 1, 3, 1, 1, 1, 1, 1, 1, 1, 4, 0, 3, 5, 5,
-> +       { 148500000, 0x7b, 0x7b, 1, 1, 3, 1, 1, 1, 1, 1, 1, 1, 4, 0, 3, 5, 5,
->           0x10, 1, 0, 0x20, 0x0c, 1, 0x0e, 0, 0, },
-> -       { 1462500, 122, 122, 1, 1, 3, 1, 1, 1, 1, 1, 1, 1, 244, 1, 16, 2, 1, 1,
-> +       { 146250000, 122, 122, 1, 1, 3, 1, 1, 1, 1, 1, 1, 1, 244, 1, 16, 2, 1, 1,
->           1, 0, 0x20, 0x0c, 1, 0x0e, 0, 0, },
-> -       { 1190000, 149, 149, 1, 1, 5, 1, 1, 1, 1, 1, 1, 1, 149, 1, 16, 2, 1, 1,
-> +       { 119000000, 149, 149, 1, 1, 5, 1, 1, 1, 1, 1, 1, 1, 149, 1, 16, 2, 1, 1,
->           1, 0, 0x20, 0x0c, 1, 0x0e, 0, 0, },
-> -       { 1065000, 89, 89, 1, 1, 3, 1, 1, 1, 1, 1, 1, 1, 89, 1, 16, 1, 0, 1,
-> +       { 106500000, 89, 89, 1, 1, 3, 1, 1, 1, 1, 1, 1, 1, 89, 1, 16, 1, 0, 1,
->           1, 0, 0x20, 0x0c, 1, 0x0e, 0, 0, },
-> -       { 1080000, 135, 135, 1, 1, 5, 1, 1, 0, 1, 0, 1, 1, 0x9, 0, 0x05, 0,
-> +       { 108000000, 135, 135, 1, 1, 5, 1, 1, 0, 1, 0, 1, 1, 0x9, 0, 0x05, 0,
->           0x14, 0x18, 1, 0, 0x20, 0x0c, 1, 0x0e, 0, 0, },
-> -       { 855000, 214, 214, 1, 1, 11, 1, 1, 1, 1, 1, 1, 1, 214, 1, 16, 2, 1,
-> +       { 85500000, 214, 214, 1, 1, 11, 1, 1, 1, 1, 1, 1, 1, 214, 1, 16, 2, 1,
->           1, 1, 0, 0x20, 0x0c, 1, 0x0e, 0, 0, },
-> -       { 835000, 105, 105, 1, 1, 5, 1, 1, 1, 1, 1, 1, 1, 42, 1, 16, 1, 0,
-> +       { 83500000, 105, 105, 1, 1, 5, 1, 1, 1, 1, 1, 1, 1, 42, 1, 16, 1, 0,
->           1, 1, 0, 0x20, 0x0c, 1, 0x0e, 0, 0, },
-> -       { 928125, 155, 155, 1, 1, 7, 1, 1, 1, 1, 1, 1, 1, 62, 1, 16, 5, 0,
-> +       { 92812500, 155, 155, 1, 1, 7, 1, 1, 1, 1, 1, 1, 1, 62, 1, 16, 5, 0,
->           1, 1, 0, 0x20, 0x0c, 1, 0x0e, 0, 0, },
-> -       { 742500, 124, 124, 1, 1, 7, 1, 1, 1, 1, 1, 1, 1, 62, 1, 16, 5, 0,
-> +       { 74250000, 124, 124, 1, 1, 7, 1, 1, 1, 1, 1, 1, 1, 62, 1, 16, 5, 0,
->           1, 1, 0, 0x20, 0x0c, 1, 0x0e, 0, 0, },
-> -       { 650000, 162, 162, 1, 1, 11, 1, 1, 1, 1, 1, 1, 1, 54, 0, 16, 4, 1,
-> +       { 65000000, 162, 162, 1, 1, 11, 1, 1, 1, 1, 1, 1, 1, 54, 0, 16, 4, 1,
->           1, 1, 0, 0x20, 0x0c, 1, 0x0e, 0, 0, },
-> -       { 337500, 0x70, 0x70, 1, 1, 0xf, 1, 1, 1, 1, 1, 1, 1, 0x2, 0, 0x01, 5,
-> +       { 33750000, 0x70, 0x70, 1, 1, 0xf, 1, 1, 1, 1, 1, 1, 1, 0x2, 0, 0x01, 5,
->           1, 1, 1, 0, 0x20, 0x0c, 1, 0x0e, 0, 0, },
-> -       { 400000, 100, 100, 1, 1, 11, 1, 1, 0, 1, 0, 1, 1, 0x9, 0, 0x05, 0,
-> +       { 40000000, 100, 100, 1, 1, 11, 1, 1, 0, 1, 0, 1, 1, 0x9, 0, 0x05, 0,
->           0x14, 0x18, 1, 0, 0x20, 0x0c, 1, 0x0e, 0, 0, },
-> -       { 270000, 0x5a, 0x5a, 1, 1, 0xf, 1, 1, 0, 1, 0, 1, 1, 0x9, 0, 0x05, 0,
-> +       { 27000000, 0x5a, 0x5a, 1, 1, 0xf, 1, 1, 0, 1, 0, 1, 1, 0x9, 0, 0x05, 0,
->           0x14, 0x18, 1, 0, 0x20, 0x0c, 1, 0x0e, 0, 0, },
-> -       { 251750, 84, 84, 1, 1, 0xf, 1, 1, 1, 1, 1, 1, 1, 168, 1, 16, 4, 1, 1,
-> +       { 25175000, 84, 84, 1, 1, 0xf, 1, 1, 1, 1, 1, 1, 1, 168, 1, 16, 4, 1, 1,
->           1, 0, 0x20, 0x0c, 1, 0x0e, 0, 0, },
->  };
->
-> @@ -894,10 +894,10 @@ static void rk_hdptx_phy_disable(struct rk_hdptx_phy *hdptx)
->         regmap_write(hdptx->grf, GRF_HDPTX_CON0, val);
->  }
->
-> -static bool rk_hdptx_phy_clk_pll_calc(unsigned int data_rate,
-> +static bool rk_hdptx_phy_clk_pll_calc(unsigned long rate,
+Waiting to be merged.
 
-here and further, unsigned long long
-Also, is it tmds_char_rate?
+Lets make the HBR3 enablement a separate patchset as I'm not able to
+test it in time, if we want external DP to be part of 6.15.
 
->                                       struct ropll_config *cfg)
->  {
-> -       const unsigned int fout = data_rate / 2, fref = 24000;
-> +       const unsigned int fout = rate / 200, fref = 24000;
->         unsigned long k = 0, lc, k_sub, lc_sub;
->         unsigned int fvco, sdc;
->         u32 mdiv, sdiv, n = 8;
-
--- 
-With best wishes
-Dmitry
+> 
+> [1]
+> https://lore.kernel.org/all/20250226231436.16138-1-alex.vinarskis@gmail.com/
+> 
+> Thanks,
+> Alex
+> 
+> > ---
+> > Abel Vesa (4):
+> >        arm64: dts: qcom: x1e80100-crd: Describe the Parade PS8830 retimers
+> >        arm64: dts: qcom: x1e80100-crd: Enable external DisplayPort support
+> >        arm64: dts: qcom: x1e80100-t14s: Describe the Parade PS8830 retimers
+> >        arm64: dts: qcom: x1e80100-t14s: Enable external DisplayPort support
+> > 
+> >   .../dts/qcom/x1e78100-lenovo-thinkpad-t14s.dts     | 321 +++++++++++++-
+> >   arch/arm64/boot/dts/qcom/x1e80100-crd.dts          | 474 ++++++++++++++++++++-
+> >   2 files changed, 785 insertions(+), 10 deletions(-)
+> > ---
+> > base-commit: 50a0c754714aa3ea0b0e62f3765eb666a1579f24
+> > change-id: 20250220-x1e80100-dts-crd-t14s-enable-typec-retimers-325cdb7b097d
+> > 
+> > Best regards,
+> 
 
