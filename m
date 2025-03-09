@@ -1,154 +1,128 @@
-Return-Path: <linux-kernel+bounces-553401-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-553402-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF260A588B6
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 22:59:44 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3A893A588B7
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 23:01:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 336D6188CBE1
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 21:59:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7790A16A045
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 22:01:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F45E22155F;
-	Sun,  9 Mar 2025 21:58:59 +0000 (UTC)
-Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 255D8160783;
+	Sun,  9 Mar 2025 22:01:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="J++TDpzV"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88C69220697;
-	Sun,  9 Mar 2025 21:58:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83C76C2FA
+	for <linux-kernel@vger.kernel.org>; Sun,  9 Mar 2025 22:00:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741557538; cv=none; b=ZF3TU1YWGvosl6clA6v823WeOB38pmWrOTdzM7i5dIxONOVvTupDatJaTDZj059dMLL5DIy1Ii8BYzUL8awSHGPMd4m9mYrsaZTqQffeKE27KlLEBk+FZKjPmevpvt63noquRnDDTfCjah54aTN9kPqeMjKSpUNrs2rsMdypMUY=
+	t=1741557659; cv=none; b=ApfaEke7PYoytgk6E8IIM/ZqNb2H7+R5AV2mbLFgeuOHgE3A4EAPGfCZwXekxEwOjrVZJ4lEDd/7Rgu7U5/W92yNa9oG60BhIm/Fwk6zTVsZnIyxM302gpLQyLFNo+qWuKhsjrFTrsDet9CxKXOyGCy8uMPmL2QtRZL/cpDeLsk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741557538; c=relaxed/simple;
-	bh=KPORZ4ECtNt7LTt+vOl/VNIIvF2i/cF7T8OrZMT/Egw=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=eyV1cCbDxmlJ20GoYgEeD5T/0UP47YY8//ORHDg1bgxVSAzUv7y9PwiKebXAAeaz98UJmI9Hs6cjd2+jDjT6y1vxUaN8vn8yiloA9MvQ299psdLwCNcni37sYyyMwtlIwZ38GkoSPnY68AEaMwyFB0zLSm1nltd6e2s+ToSEOMg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fomichev.me; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.214.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fomichev.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-22423adf751so47350985ad.2;
-        Sun, 09 Mar 2025 14:58:57 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741557536; x=1742162336;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=AT1yjzZG3JBVK21tLLJDqiuhVXZszRPbs9jpjNhIZ/k=;
-        b=AZhq8HOfkF7Td9W6BXO0elSQI+ilwFu/p2qdobFhoND9AoF6DzZKoHDytWRgS9lmk2
-         g2W1+RQMwP4E7qbXqDW/LGCfGM0sH+F8cRmjUgYiiwwfkv1HXBNg7sjLCELFc9x3pY8I
-         Hkrrg6YW4OTgOVsA8daYz3iL7Q0xoL0xgFuueMlM2xZJzf+Z7vpVu7uRQp4EvESE4V3B
-         MkiUrfA2RfwmWKBZuVw3eQPk0luQAIlzzyJeYe9PYTl8+rLnw+OENYQlCTuqfb1K8TUR
-         YGDsrpVRiljFgTXyeyFJm4U0VcJM1XRPcoPI6SEWIgz3IF8vNAtGwEFZEtBacF9qE0GF
-         VJZw==
-X-Forwarded-Encrypted: i=1; AJvYcCXXorpwqoLxkmH+A+KphWtRPOIjb8/1L2OVNrMLDCHH1D0jxZ4EpI4zUcP6GHQiAGFS0IBhMCxsTs1rOc0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxeioaOTuHmcs6SgID5SI2FxIHy+FzEmpJW6kEHNWvBiZTOqAKs
-	tU1sJggJV8KUolsy2YRSOyA8v+iPzWpOiPaxG+GxwDpWQDoYsNk8b1v4Ogw1kg==
-X-Gm-Gg: ASbGncscCKJ7Ojc5/x51EtE17EnWD3JUE5wAG9o5aTs6hrqMfhtnePzBSwDsMeJ2+0U
-	71Wn8pttb7xMj9u+cy3uIFgPEiGxVYQbJiR9brNL+Gf3F2bxbxh7aVkvENUUayY7w0bCML3GDRJ
-	de5T4ZlECr9yDmh4ay9XnaXtPb5Vii8VMTm+K5TLNkC4KgEK0ZqFkwJQIfp/bWl1p7Hk4WY3uUw
-	b0lvlWLOXzQ+3ZwmMPD3KVTEEeeiV5GaWNa7W/0QYnjoCevcWHKv8yzEEjxHRtYpu8sTqco05rk
-	mX5eopY2piwuIUCAOjEie5kMh6kux6YQgdCsAh3etLkJ
-X-Google-Smtp-Source: AGHT+IFYPtt6AoQlpV4TtjEtnkgkhhxlvLCZ+1m3op8XpKGl/s4d4/iqc+otKl2UGr/Ap8wo8qwSkQ==
-X-Received: by 2002:a17:903:2405:b0:221:7eae:163b with SMTP id d9443c01a7336-22428bf5cdcmr208426905ad.46.1741557536566;
-        Sun, 09 Mar 2025 14:58:56 -0700 (PDT)
-Received: from localhost ([2601:646:9e00:f56e:2844:3d8f:bf3e:12cc])
-        by smtp.gmail.com with UTF8SMTPSA id d9443c01a7336-224109ddc89sm64384425ad.36.2025.03.09.14.58.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 09 Mar 2025 14:58:55 -0700 (PDT)
-From: Stanislav Fomichev <sdf@fomichev.me>
-To: netdev@vger.kernel.org
-Cc: davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	linux-kernel@vger.kernel.org,
-	michael.chan@broadcom.com,
-	pavan.chebbi@broadcom.com,
-	andrew+netdev@lunn.ch,
-	horms@kernel.org,
-	sdf@fomichev.me
-Subject: [PATCH net-next v2 3/3] eth: bnxt: add missing netdev lock management to bnxt_dl_reload_up
-Date: Sun,  9 Mar 2025 14:58:51 -0700
-Message-ID: <20250309215851.2003708-3-sdf@fomichev.me>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20250309215851.2003708-1-sdf@fomichev.me>
-References: <20250309215851.2003708-1-sdf@fomichev.me>
+	s=arc-20240116; t=1741557659; c=relaxed/simple;
+	bh=2AwOlmOEhu3yB/ZFUZMUxaC69CB5cnd8T/Ge3O14dyY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=spsKXRovq0kC2Jj1ulBdrkPd6aFLNbvskZ/LhOVCrHj4Ks3OCtIXm8WV2PHrZu4Iv+OgDdMxS19JDJ5jBRq4NRt21+MYMEd0uB99XmGaAwxRwLixGNCuvZ6nIe/i9oVUc16DGzUaaTHJKXaNmPNQzoTeURlUwLHLQKxNWAKDgOE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=J++TDpzV; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1741557655;
+	bh=2AwOlmOEhu3yB/ZFUZMUxaC69CB5cnd8T/Ge3O14dyY=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=J++TDpzVlCkjoNZ2ae2abmOJtcdsXHrqE2QTJgUz5l9o4nR/SbvysGdaNiDyN/8TY
+	 EpfBVAmh+9DE9/NiPAYPaeBW4NWTf374ueN7TXjwgCWBP6WTnpB6fCs1KZVs4bDjlZ
+	 WgNvAUg3r63CQ2MGSUl+Y0phl4m2VxXFq1VakrxbB+CJDN5C4aAtI2wsGXdHEcVAkq
+	 CLyHA+Khi0TZMwImsEncDdpzfbF+aZwyholl36Sbh3C5i5wSknyydYtfehk7/mOJaO
+	 DgBUAiOyYRz7vovByktlgODsOvnVB9Sveaal3tgRva21B0sECn6rG4VeKoDsS+xmdI
+	 Gdtj7Ri4/ZLIg==
+Received: from [192.168.1.90] (unknown [84.232.140.93])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: cristicc)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id DABAC17E09FB;
+	Sun,  9 Mar 2025 23:00:54 +0100 (CET)
+Message-ID: <0fe4388f-3374-409b-8383-ee5200961583@collabora.com>
+Date: Mon, 10 Mar 2025 00:00:52 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 07/12] phy: rockchip: samsung-hdptx: Avoid Hz<->hHz
+ unit conversion overhead
+To: David Laight <david.laight.linux@gmail.com>
+Cc: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+ Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>,
+ Heiko Stuebner <heiko@sntech.de>, Algea Cao <algea.cao@rock-chips.com>,
+ Sandor Yu <Sandor.yu@nxp.com>, Maxime Ripard <mripard@kernel.org>,
+ kernel@collabora.com, linux-kernel@vger.kernel.org,
+ linux-phy@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
+ linux-rockchip@lists.infradead.org
+References: <20250308-phy-sam-hdptx-bpc-v5-0-35087287f9d1@collabora.com>
+ <20250308-phy-sam-hdptx-bpc-v5-7-35087287f9d1@collabora.com>
+ <CAA8EJpoQbvFbNXQ2RB1qY2gHnwZaU-PT-DMLnZkrxkqs2wkXqQ@mail.gmail.com>
+ <a1a3e86a-1906-4797-932d-8e1aadafedde@collabora.com>
+ <20250309144747.744e5197@pumpkin>
+From: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+Content-Language: en-US
+In-Reply-To: <20250309144747.744e5197@pumpkin>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-bnxt_dl_reload_up is completely missing instance lock management
-which can result in `devlink dev reload` leaving with instance
-lock held. Add the missing calls.
+On 3/9/25 4:47 PM, David Laight wrote:
+> On Sun, 9 Mar 2025 12:13:32 +0200
+> Cristian Ciocaltea <cristian.ciocaltea@collabora.com> wrote:
+> 
+>> On 3/9/25 11:22 AM, Dmitry Baryshkov wrote:
+>>> On Sat, 8 Mar 2025 at 14:21, Cristian Ciocaltea
+>>> <cristian.ciocaltea@collabora.com> wrote:  
+>>>>
+>>>> The ropll_tmds_cfg table used to identify the configuration params for
+>>>> the supported rates expects the search key, i.e. bit_rate member of
+>>>> struct ropll_config, to be provided in hHz rather than Hz (1 hHz = 100
+>>>> Hz).  This requires multiple conversions between these units being
+>>>> performed at runtime.
+>>>>
+>>>> Improve implementation clarity and efficiency by consistently using the
+>>>> Hz unit throughout driver's internal data structures and functions.
+>>>> Also rename the rather misleading struct member.
+>>>>
+>>>> Signed-off-by: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+>>>> ---
+>>>>  drivers/phy/rockchip/phy-rockchip-samsung-hdptx.c | 79 +++++++++++------------
+>>>>  1 file changed, 39 insertions(+), 40 deletions(-)
+>>>>
+>>>> diff --git a/drivers/phy/rockchip/phy-rockchip-samsung-hdptx.c b/drivers/phy/rockchip/phy-rockchip-samsung-hdptx.c
+>>>> index 2bf525514c1991a1299265d12e1e85f66333c604..e58a01bdb3ce82d66acdcb02c06de2816288b574 100644
+>>>> --- a/drivers/phy/rockchip/phy-rockchip-samsung-hdptx.c
+>>>> +++ b/drivers/phy/rockchip/phy-rockchip-samsung-hdptx.c
+>>>> @@ -330,7 +330,7 @@ enum dp_link_rate {
+>>>>  };
+>>>>
+>>>>  struct ropll_config {
+>>>> -       u32 bit_rate;
+>>>> +       u32 rate;  
+>>>
+>>> unsigned long long, please, to match the tmds_char_rate type.
+> 
+> Isn't 'bit_rate' more descriptive?
+> But maybe rate_hz to make the units more obvious.
+> 
+> If the max frequency might get near 4Gz then the you need something
 
-Also add netdev_assert_locked to make it clear that the up() method
-is running with the instance lock grabbed.
+The max freq. intended to be handled by the related config table is 600
+MHz, that is for supporting HDMI 2.0 (TMDS).  Anything above that
+requires HDMI 2.1 (FRL), which is currently not provided and would
+anyway not rely on this data structure.
 
-v2:
-- add net/netdev_lock.h include to bnxt_devlink.c for netdev_assert_locked
-
-Fixes: 004b5008016a ("eth: bnxt: remove most dependencies on RTNL")
-Signed-off-by: Stanislav Fomichev <sdf@fomichev.me>
----
- drivers/net/ethernet/broadcom/bnxt/bnxt_devlink.c | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/net/ethernet/broadcom/bnxt/bnxt_devlink.c b/drivers/net/ethernet/broadcom/bnxt/bnxt_devlink.c
-index b6d6fcd105d7..f8fcc8e0e8de 100644
---- a/drivers/net/ethernet/broadcom/bnxt/bnxt_devlink.c
-+++ b/drivers/net/ethernet/broadcom/bnxt/bnxt_devlink.c
-@@ -11,6 +11,7 @@
- #include <linux/netdevice.h>
- #include <linux/vmalloc.h>
- #include <net/devlink.h>
-+#include <net/netdev_lock.h>
- #include "bnxt_hsi.h"
- #include "bnxt.h"
- #include "bnxt_hwrm.h"
-@@ -518,6 +519,8 @@ static int bnxt_dl_reload_up(struct devlink *dl, enum devlink_reload_action acti
- 	struct bnxt *bp = bnxt_get_bp_from_dl(dl);
- 	int rc = 0;
- 
-+	netdev_assert_locked(bp->dev);
-+
- 	*actions_performed = 0;
- 	switch (action) {
- 	case DEVLINK_RELOAD_ACTION_DRIVER_REINIT: {
-@@ -542,6 +545,7 @@ static int bnxt_dl_reload_up(struct devlink *dl, enum devlink_reload_action acti
- 		if (!netif_running(bp->dev))
- 			NL_SET_ERR_MSG_MOD(extack,
- 					   "Device is closed, not waiting for reset notice that will never come");
-+		netdev_unlock(bp->dev);
- 		rtnl_unlock();
- 		while (test_bit(BNXT_STATE_FW_ACTIVATE, &bp->state)) {
- 			if (time_after(jiffies, timeout)) {
-@@ -557,6 +561,7 @@ static int bnxt_dl_reload_up(struct devlink *dl, enum devlink_reload_action acti
- 			msleep(50);
- 		}
- 		rtnl_lock();
-+		netdev_lock(bp->dev);
- 		if (!rc)
- 			*actions_performed |= BIT(DEVLINK_RELOAD_ACTION_DRIVER_REINIT);
- 		clear_bit(BNXT_STATE_FW_ACTIVATE, &bp->state);
-@@ -575,10 +580,9 @@ static int bnxt_dl_reload_up(struct devlink *dl, enum devlink_reload_action acti
- 		}
- 		*actions_performed |= BIT(action);
- 	} else if (netif_running(bp->dev)) {
--		netdev_lock(bp->dev);
- 		netif_close(bp->dev);
--		netdev_unlock(bp->dev);
- 	}
-+	netdev_unlock(bp->dev);
- 	rtnl_unlock();
- 	if (action == DEVLINK_RELOAD_ACTION_DRIVER_REINIT)
- 		bnxt_ulp_start(bp, rc);
--- 
-2.48.1
-
+Regards,
+Cristian
 
