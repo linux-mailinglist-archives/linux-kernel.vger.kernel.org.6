@@ -1,77 +1,77 @@
-Return-Path: <linux-kernel+bounces-553138-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-553139-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9EF41A58465
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 14:32:36 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B1622A58469
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 14:32:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CE73F16B12A
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 13:32:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1EDB41890497
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 13:33:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 482641DE89D;
-	Sun,  9 Mar 2025 13:30:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A426E1DE8B8;
+	Sun,  9 Mar 2025 13:30:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DzEPQPOQ"
-Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SYG1g61R"
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8ECE1DF731;
-	Sun,  9 Mar 2025 13:30:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CF301E521A;
+	Sun,  9 Mar 2025 13:30:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741527049; cv=none; b=PM1ld+39/CafJVbAA/inTWttST+KNs6yWrUr3f1zVIDpNgNEoBYBzmDRtvR+oi7FmQIu08ZNI/u6AMgmpBZffw39SPJrTbK8AlUhp4adE6egkFrx3t/tQoRDHqXM+rrg9/C6ycb4i4Habln8sIAWyE72Is3bU1ly4l/WsMh25Eo=
+	t=1741527051; cv=none; b=X2svrtxle75JiNkJsFRU6X84vEGaO1x1bbbzWJIve8SV+t8CS+C5BAuk53yKipCYrS49V/rx23ZY32oV9d44JlVEXqCIh8RE0BHhCR+vCHFaWD2puF6NYQBBp0bm2U+lEB0hjtA7lmqK31P17Y+taKReUyKIgeNPxoKwW73AuNU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741527049; c=relaxed/simple;
-	bh=E5XDfhhhPBiYqBlcttdcgnUez7WPqQY743rf4tAODF4=;
+	s=arc-20240116; t=1741527051; c=relaxed/simple;
+	bh=+PJI4+Kyd347ETzgLInQ5mg+S7qWNmwJbj/lCsAkVdI=;
 	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=M/FCQ4XxjaWJIUo5+iw3lX2n2X7H6Zm3Ez/yJncOEkE4LQHIr6/yWT9M60jjIJ8HBO6HNQmbjlU3QjTTnnZzIsOrg3kYeYvlNzF25ny1j1SpgzLpVUxT82lIiUd6eFzDUoO8pvYk6Z0etLyOIp9ESUv4+kaTb6CMejomLbGMgu0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DzEPQPOQ; arc=none smtp.client-ip=209.85.221.43
+	 MIME-Version; b=h5fZHFM20UcvLHxZtQqjIEb6KhRVoP061kt4ki9L87bqWnzm5qaUNKLKLKw8cmvaU9mBBl8KjI67ieJYnYPDABR1iMp7UlyELjKWdvPBE2M3fnxRiZNS4IA8qhqCdFRmKR+RguL9SoYXZn9Av14DqaEyIo8ScXuvtjAsGIx/XtY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SYG1g61R; arc=none smtp.client-ip=209.85.128.53
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-39127512371so1840233f8f.0;
-        Sun, 09 Mar 2025 06:30:47 -0700 (PDT)
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-43948021a45so28847015e9.1;
+        Sun, 09 Mar 2025 06:30:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741527046; x=1742131846; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1741527048; x=1742131848; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=BzS4hzE7zDkztDQBx5YAH+xKOh9ZedPuSQIim2JNdCQ=;
-        b=DzEPQPOQ1bzhSg62EQBBFUa7vuepP4BbXz8gMIp+XPEStGwD4tnx6eA12kRupdzmXj
-         VfCFMqwe2L2GqQU3Jd3fU0ryLfM858yiTf4EuXJqEuacun34i1A263f8JM/DUCLARKC9
-         2fXjSCUcIYflAkyggpEw7uqhmvVcJufJeLGdymGxtinlamKpTgpeFIR570eRnGG0Ol/U
-         UEruTaHTpHoxUaiRrwjhrFNK2MFESsRwjOl+g8qLdT2Zo37ELn43fNX1fruFPhpNLqxO
-         WTWEpH5Iw5sytmZ/MnzGmv3pB2TJrQXuQi9ChpaIP8YuevLhAdsiWoUPAQD5VljTeVnx
-         PgDQ==
+        bh=ZbSAM91ADrJHfalqGDD88Hb16SIvmOajhEqLWyeYm6g=;
+        b=SYG1g61R4abYHpixSRBGGSGzPTGInAkBAksF+bhuhNAtvKXwKMhE8oMyGGqFLHNRfr
+         xdT5Pwbkz6SnfPNoxPokPBZOnnCS2fE9Dp1HiPDAiXCF16GD5RVrsazVro26cU4K3T5H
+         BtaUKx35GuU2Cl5r/AnPXJ4A0dq3MWECvYm8dDbmaJjyk5AW4F8Wgav0IAYwc686y5iA
+         s8vCIKQNF6Au4tihHoTLD+VXX/ooohRqeF8KWJ7igdUuDojATJU40V4nDoCvWbpmzcuf
+         lsSgoW8+cjOa8n8ejKn95tGiePcE3UFR2K2SHH7AChsyIebgm6B9SYsTXSAjgP1Fpiiz
+         tCkw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741527046; x=1742131846;
+        d=1e100.net; s=20230601; t=1741527048; x=1742131848;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=BzS4hzE7zDkztDQBx5YAH+xKOh9ZedPuSQIim2JNdCQ=;
-        b=iygvCAaNjGZbhGYZe51VPwu8UKPnFauyqb6me1WZqbk+L8bpcFQYY33TJ67f9leQfB
-         xPVkAFEGyZloMo6KFd77/CLERu+Dg+pYSPzHfaVXQjnTtV+InraAR12ADjuvUeN+GePX
-         1q97ZlfNTWEv6fhzn54pDbfTus9W3AaCpRavE+uPvcAbfR2fmAIz/L76h5ds8Q3Iamb1
-         0V8rAvgTd5WXEJLe5rHBW+J3gXXDjge2zbUfTCCctPtpzdtTinkegakoE13DbtCToupp
-         u3NlyZN/tJe7nr11V4qNVpehclgAxoSC6uz9yT/2nirg1l3bT5oC87FwLcZrWRCHB0dX
-         9b7A==
-X-Forwarded-Encrypted: i=1; AJvYcCUjZcajtAu655obRoVCvp5bUCS9qHM/Wk1UqA3Y8CLPqv7QXS4ECbjJVFwp3i8lZ5xDEtfhIWE4eS9v@vger.kernel.org, AJvYcCUs3ISyEN15f3szbaHyVtFhA+UJduS+UhlgkPhpe7hwolrJ/9sbTnv8RY7R64SOyoiYKgg1nMWyHfJT@vger.kernel.org, AJvYcCWa16atnsp9B5Xwt54hr1tDlAokk88Odg+R/pldGcOQdU2726xjFMm9oVb2dXpoCaUHdmY6Fwlgd3Ns@vger.kernel.org, AJvYcCWu+qwhgSK9k9VQd3cTzmC+2iYvKRkzHg4poai8z21UHXN45JaOkMyzavKszS36rP5+gLssqbhpxPXSFdNq@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy5Se0d3RbNFrrbV69mtOsOCuyTW/KPQPIVzcgEX8AAi56fyjq4
-	7NY1SP/zXlvaktCyom3N4BQaQR207FPsy3BuppCJAAVUSFik+llo
-X-Gm-Gg: ASbGncs1wdPLv/5TBFm3o2gTWs9Y8XPVoNjRYJxToJasykyBRHvSmvTGPWjrkqyfdTO
-	1k5OBE6PIjre5OL4F/KWEZOVKQrilf552sPIjAxZQqzRwf66vyH05mJe/zI/jjsebo2LYk1jXRQ
-	hKXUb0Wl8mYRhB3K+ZMHcnZV2N8IRAzPA0jrqyHoXarLanfqbXyeHWJhGjQwdmTY6I8bWKVW4pV
-	QZIieprtzjiy9eyEbjOzZ1oFHA+dohmdHSVy9lUGvrisYRZctUWbB5pGC2NA4yBlkamAXzJ+jsF
-	+nNOtfjJvI3bu2eJLCS3akIZ8g6MJLV3iREpZpFR8xL3YO/WkmJlqeyPwjYp/KmiDVUOR4Ps+Jl
-	gTvtxZsN8hMzFkA==
-X-Google-Smtp-Source: AGHT+IE6bIHxYXeJLeLHPL+p4IEp/6DdN3f/i6NZYTP+hM3wxLjboSsLeWZHA3qzqc5r29m1QI1i5A==
-X-Received: by 2002:a05:6000:1786:b0:391:48d4:bcf2 with SMTP id ffacd0b85a97d-39148d4bd41mr353208f8f.12.1741527046061;
-        Sun, 09 Mar 2025 06:30:46 -0700 (PDT)
+        bh=ZbSAM91ADrJHfalqGDD88Hb16SIvmOajhEqLWyeYm6g=;
+        b=TFKmEdod9d/IfhtogRcZ1Bc7AFtpRjN6nBGRxBTQZqcOXJZugZDOLcvZzsZS5iCSV3
+         830c9LTmbfhk7jhUv05rBsqrmrcdHKTV2Je7V8URMMLENByTLIjrITb1MHWhe2KjiR+O
+         AJNefOcw3KiyRBgEDseOzWgbrx52NsjX+5hBmv4I1pmfZ5M8ZzsFE76qJPaOLcpZ8kFl
+         NfR6pZAzI/4J0Vhj2sNNqMpXOPme519W5/oDKi+15X5G5Ex83mybJykOlj1pjZBa42RC
+         LoK/j8w8+CmFDZHwQ5a4usGekNLa5Dt6OnZkrIWHrGE592+DJAML9GEEmQyoLqD1EfB2
+         BkgQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU7WStxknV1pfhuM4RV5a+ag+clP/blz1O5pRnwekbgAwndknOWKMVb2TeYlvTfIRq2CsLw6A+En5GJ@vger.kernel.org, AJvYcCX7P8ncUb116oiCsQP6Fr3LERnZMRR813s4fcQwLw96tTd7H9f5dHEX9KMKaaFqPBujIhQd6WigKNXb@vger.kernel.org, AJvYcCXGBtun5Ti+/AYw3pqyXFglZ+jeOnkGk+L6NdOpG4seeiqsTimqXtsE0hzG86AFUS5TgfqMGJfqjij/@vger.kernel.org, AJvYcCXPctNkSYfFMNvXPcFR8k4pogQSGoa8rVDvcio1HE7AXskfolXmtCXwVWz+mDiQVq4DhT5UUvoRCuhqVvnz@vger.kernel.org
+X-Gm-Message-State: AOJu0YzypA9gXTpFY9lSFl2VkPhznmO/G8AgIYhI3QDo9N4XfMmYlsX6
+	xD6SmKbIoWReZ99tDWt682UotWsqTx8+mGCVTj3uvzkQXKDOvMQ9T+nJ4Q==
+X-Gm-Gg: ASbGncukgK4GWSS/9HN1y/kgCDKm+RbfgP2xPeEdjAQlNJzN6ziWU0D0iljLR5YBuSB
+	W1AghdrmROhOUBdM44vVSFBMTQTFlv4CrVlw3qInTB28iurHyXd9kZ4oh6r2hS/4sOlvGkOwn3P
+	OjF/rtXQCeDNnRiKkGiFiCpnEVLIM7fGcdl2Udilrc9J4kQZtReIFvH7bSdpJHQyVRGFrCR6182
+	r1UTuKqRgQxO0v3KZJAc9pk36cAizFnGh+t6oige/zw76FypiLyZzvCgS5kowbuodVvl/tveCYn
+	5mBSd1UalIiUXmcW3utyLLa5UiRoBEAJlFlQsuS+RmNY/+eUtddRm0DYL5wmsR8bJ0xC/FPfQkr
+	6uygJ9t8RHYhplg==
+X-Google-Smtp-Source: AGHT+IFjxljLxw+g6msj/2zStIgexQhH3tclnIAh4+AmOpan6twS1irZOwFGMlz3N6mJw4r5TT41Og==
+X-Received: by 2002:a5d:59af:0:b0:390:f745:bbfb with SMTP id ffacd0b85a97d-39132d7d4e1mr6797683f8f.26.1741527047554;
+        Sun, 09 Mar 2025 06:30:47 -0700 (PDT)
 Received: from localhost.localdomain (93-34-90-129.ip49.fastwebnet.it. [93.34.90.129])
-        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-3912bee262esm11867536f8f.0.2025.03.09.06.30.44
+        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-3912bee262esm11867536f8f.0.2025.03.09.06.30.46
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 09 Mar 2025 06:30:45 -0700 (PDT)
+        Sun, 09 Mar 2025 06:30:47 -0700 (PDT)
 From: Christian Marangi <ansuelsmth@gmail.com>
 To: Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@kernel.org>,
@@ -102,9 +102,9 @@ To: Michael Turquette <mturquette@baylibre.com>,
 	linux-mediatek@lists.infradead.org,
 	linux-usb@vger.kernel.org,
 	upstream@airoha.com
-Subject: [PATCH 05/13] dt-bindings: mfd: add Documentation for Airoha EN7581 SCU
-Date: Sun,  9 Mar 2025 14:29:36 +0100
-Message-ID: <20250309132959.19045-6-ansuelsmth@gmail.com>
+Subject: [PATCH 06/13] dt-bindings: clock: airoha: make reg optional for Airoha EN7581
+Date: Sun,  9 Mar 2025 14:29:37 +0100
+Message-ID: <20250309132959.19045-7-ansuelsmth@gmail.com>
 X-Mailer: git-send-email 2.48.1
 In-Reply-To: <20250309132959.19045-1-ansuelsmth@gmail.com>
 References: <20250309132959.19045-1-ansuelsmth@gmail.com>
@@ -116,94 +116,57 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Add Documentation for Airoha EN7581 SCU.
+The Airoha EN7581 clock-controller registers are placed in the SCU
+(System Controller Unit). Now that additional pheriperals are supported
+for the SCU, a dedicated SCU node is created and the clock-controller is
+moved as a child of such node hence the register property is taken from
+the parent node.
 
-Airoha EN7581 SoC expose registers to control miscellaneous pheriperals
-via the SCU (System Controller Unit).
+To support this, make the reg property optional and provide an
+additional example for this case.
 
-Example of these pheriperals are reset-controller, clock-controller,
-PCIe line speed controller and bits to configure different Serdes ports
-for USB or Ethernet usage.
+Driver supports both old and new implementation by checking the presence
+of the reg property and parsing the register accordingly.
 
 Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
 ---
- .../mfd/airoha,en7581-scu-sysctl.yaml         | 68 +++++++++++++++++++
- 1 file changed, 68 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/mfd/airoha,en7581-scu-sysctl.yaml
+ .../bindings/clock/airoha,en7523-scu.yaml           | 13 ++++++++++++-
+ 1 file changed, 12 insertions(+), 1 deletion(-)
 
-diff --git a/Documentation/devicetree/bindings/mfd/airoha,en7581-scu-sysctl.yaml b/Documentation/devicetree/bindings/mfd/airoha,en7581-scu-sysctl.yaml
-new file mode 100644
-index 000000000000..d7dc66f912c1
---- /dev/null
-+++ b/Documentation/devicetree/bindings/mfd/airoha,en7581-scu-sysctl.yaml
-@@ -0,0 +1,68 @@
-+# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/mfd/airoha,en7581-scu-sysctl.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
+diff --git a/Documentation/devicetree/bindings/clock/airoha,en7523-scu.yaml b/Documentation/devicetree/bindings/clock/airoha,en7523-scu.yaml
+index fe2c5c1baf43..84e6c3d43868 100644
+--- a/Documentation/devicetree/bindings/clock/airoha,en7523-scu.yaml
++++ b/Documentation/devicetree/bindings/clock/airoha,en7523-scu.yaml
+@@ -51,7 +51,6 @@ properties:
+ 
+ required:
+   - compatible
+-  - reg
+   - '#clock-cells'
+ 
+ allOf:
+@@ -66,6 +65,9 @@ allOf:
+ 
+         '#reset-cells': false
+ 
++      required:
++        - reg
 +
-+title: Airoha EN7581 SCU (System Controller Unit)
+   - if:
+       properties:
+         compatible:
+@@ -99,3 +101,12 @@ examples:
+               #reset-cells = <1>;
+       };
+     };
 +
-+maintainers:
-+  - Christian Marangi <ansuelsmth@gmail.com>
-+
-+description:
-+  Airoha EN7581 SoC expose registers to control miscellaneous
-+  pheriperals via the SCU (System Controller Unit).
-+
-+  Example of these pheriperals are reset-controller, clock-controller,
-+  PCIe line speed controller and bits to configure different Serdes ports
-+  for USB or Ethernet usage.
-+
-+properties:
-+  compatible:
-+    items:
-+      - const: airoha,en7581-scu-sysctl
-+      - const: syscon
-+      - const: simple-mfd
-+
-+  reg:
-+    maxItems: 1
-+
-+  clock-controller:
-+    type: object
-+    $ref: /schemas/clock/airoha,en7523-scu.yaml
-+    description:
-+      Child node definition for EN7581 Clock controller
-+
-+  system-controller:
-+    type: object
-+    $ref: /schemas/soc/airoha/airoha,an7581-scu-ssr.yaml
-+    description:
-+      Child node definition for EN7581 System Status Register
-+
-+required:
-+  - compatible
-+  - reg
-+
-+additionalProperties: false
-+
-+examples:
++  # Example with clock-controller in SCU MFD
 +  - |
-+    #include <dt-bindings/soc/airoha,scu-ssr.h>
++    clock-controller {
++      compatible = "airoha,en7581-scu";
 +
-+    system-controller@1fb00000 {
-+        compatible = "airoha,en7581-scu-sysctl", "syscon", "simple-mfd";
-+        reg = <0x1fb00000 0x970>;
-+
-+        clock-controller {
-+            compatible = "airoha,en7581-scu";
-+
-+            #clock-cells = <1>;
-+            #reset-cells = <1>;
-+        };
-+
-+        system-controller {
-+            compatible = "airoha,an7581-scu-ssr";
-+
-+            airoha,serdes-usb2 = <AIROHA_SCU_SSR_USB2_PCIE2>;
-+        };
++      #clock-cells = <1>;
++      #reset-cells = <1>;
 +    };
 -- 
 2.48.1
