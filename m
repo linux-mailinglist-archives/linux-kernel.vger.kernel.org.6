@@ -1,56 +1,92 @@
-Return-Path: <linux-kernel+bounces-553427-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-553428-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2857FA58969
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 00:56:55 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 58F5DA5896D
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 00:58:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AA573188D346
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 23:57:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6612516872B
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 23:58:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFCAC22172C;
-	Sun,  9 Mar 2025 23:56:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E44E221D96;
+	Sun,  9 Mar 2025 23:58:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hUuWq3Up"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="BsseVtY1"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 120FC1CAA6C;
-	Sun,  9 Mar 2025 23:56:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBDE619D060;
+	Sun,  9 Mar 2025 23:58:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741564609; cv=none; b=UmUX9TLvFFoQD+gKYtaTDFf3aJbiAurDvU/RCA1LlQGfiWWJRKkUJhnJZdAuu6+RbowsBvB5XqaWFv6X8fYiFJ30vUrl92JcKSVjmTIamXwqtHXiHYGZwM6sUwIHuEZOxTWDYZWUvzUHrdLDunLCCy7pAdF2d7a4qZIQygfUwvs=
+	t=1741564709; cv=none; b=f2zNGQ3ipYKZ1Vlq9RCwQu1Uw25r/3qDG9D7TEISyM9L8nGaAtHfBtFO6Xs4sp5s3L7WfvI4EonNQ4HzPvS/zgQl+ZqmAydk9hbD54gkICvnnxLDEqtL0zzMuRHlSxHljPTHjV0mVy19eAlJof05nlo34lwrf6UzbzGnwzAzzI8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741564609; c=relaxed/simple;
-	bh=LddSs4hgGqDTjpXUGJlPBDoaDhWj28W3bV0A08SN7UU=;
+	s=arc-20240116; t=1741564709; c=relaxed/simple;
+	bh=3g/+jeRs5nhDAbqAZc0kAv6A5GCo+NTky5mMlZ8s5Zw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=usyKN4U87Y51WyMhekdCLlHXLXD7OrCo393oMFrtFfoj0E7WVy936/JhQmJmtMttA9k4AnU4NA3Rlj7nL9PgFnNv2GebJq7GeWvBtzRcghYDM0faun5eNrHaARYA2uoghWvoPnl5kVlV4zP4DFlvHOwBIt6st2DudC96sJRUvv8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hUuWq3Up; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 50AA5C4CEEC;
-	Sun,  9 Mar 2025 23:56:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741564608;
-	bh=LddSs4hgGqDTjpXUGJlPBDoaDhWj28W3bV0A08SN7UU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=hUuWq3Up4ke7Bjslgu8Mcc/mNbS27HB7l6si5f+DgUOK9Qt0XXPXhzrRdE6lvo9gm
-	 FagZYvpT3Kvh+Nth3ceMziAUkBR3l2U3qqZipJUEi1jlifYs6XU2XD22WZUmenn8ez
-	 x81IFfvfwk7H8TlW4biiH3tUqxtlDfCT9ldkvdC7F7jfI/QAYyPaU+tnTD81d+BkU+
-	 bmI67q3XECknylAsKJJx+D4aqvgERn4ANq4ZPlRY3sPuxyWld8PefbSc+QPgLMIGvC
-	 P2EW5KHpwiXA8bykNYP6uz1apllP41yxO7OuoqG+ey/mt9O4bGExp68tPpS8mhltTJ
-	 IyUxqIJoADe8g==
-Date: Sun, 9 Mar 2025 23:56:47 +0000
-From: Wei Liu <wei.liu@kernel.org>
-To: Saurabh Sengar <ssengar@linux.microsoft.com>
-Cc: kys@microsoft.com, haiyangz@microsoft.com, wei.liu@kernel.org,
-	decui@microsoft.com, deller@gmx.de, akpm@linux-foundation.org,
-	linux-hyperv@vger.kernel.org, linux-fbdev@vger.kernel.org,
+	 Content-Type:Content-Disposition:In-Reply-To; b=EUuF4FJqkTNCHyzJMwAaRe3GPop43j4yAMiq7QXrAdrReLL/nVejDzQuN/1LaprdGfCy+fHKs+2FLHblPSyvj7m9CHSNO7M4Vt1NO6n8MvK/i40cXtSkOXfgnIlB549SWtoZ+PT3U4/ncJbXEDYrDJCBGRHW3YGr7DFYRyxDnGo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=BsseVtY1; arc=none smtp.client-ip=198.175.65.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1741564706; x=1773100706;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=3g/+jeRs5nhDAbqAZc0kAv6A5GCo+NTky5mMlZ8s5Zw=;
+  b=BsseVtY10nORnxgrRtAOVi7iYm6V2jCL5hFT3pJFx1XObJYYOR0Igh5v
+   0oC8YxciN3Va9+n9vrrXaMdmcDbrd/rZh61PPqwnzXINVI9ZJHVxclRix
+   ARc38pRv2bLfUTgmDMFiDFDJtnXMQhoOTZ5qwHJhMVp8Gln+thpGgn3vq
+   9jznR+U7p+Qd4SWTI9Qc/5xeTAGKSsvcjUrE1sPxwuXV7c4Z7tsTutg1s
+   Pygaqt2SQ76Gokxsg3CtiyLt3tHCVcoaDrK2G/aksE2EEF2kIqZ7Rcbik
+   +uRVRCzCS4Jugz4+YHCFpx1zrRnHPRbeQqD5X3eMznC39VVzse3utaSTe
+   g==;
+X-CSE-ConnectionGUID: CEaGGiEzQvqJJKc464NNiA==
+X-CSE-MsgGUID: Z7HyFwCEQT2qAz8WIJhnbw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11368"; a="52756896"
+X-IronPort-AV: E=Sophos;i="6.14,235,1736841600"; 
+   d="scan'208";a="52756896"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Mar 2025 16:58:25 -0700
+X-CSE-ConnectionGUID: AipAg9jNT0is5bFPMhYlNQ==
+X-CSE-MsgGUID: D/npFTWhRJGdziAE2u95Pw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,235,1736841600"; 
+   d="scan'208";a="124439273"
+Received: from lkp-server02.sh.intel.com (HELO a4747d147074) ([10.239.97.151])
+  by fmviesa005.fm.intel.com with ESMTP; 09 Mar 2025 16:58:19 -0700
+Received: from kbuild by a4747d147074 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1trQX8-0003ZI-02;
+	Sun, 09 Mar 2025 23:58:15 +0000
+Date: Mon, 10 Mar 2025 07:57:55 +0800
+From: kernel test robot <lkp@intel.com>
+To: Dmitry Baryshkov <lumag@kernel.org>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Rob Clark <robdclark@gmail.com>,
+	Abhinav Kumar <quic_abhinavk@quicinc.com>,
+	Sean Paul <sean@poorly.run>,
+	Marijn Suijten <marijn.suijten@somainline.org>,
+	Dave Stevenson <dave.stevenson@raspberrypi.com>,
+	=?iso-8859-1?Q?Ma=EDra?= Canal <mcanal@igalia.com>,
+	Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>,
+	Andrzej Hajda <andrzej.hajda@intel.com>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Robert Foss <rfoss@kernel.org>,
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+	Jonas Karlman <jonas@kwiboo.se>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
 	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-	ssengar@microsoft.com, mhklinux@outlook.com
-Subject: Re: [PATCH v3 0/2] fbdev: hyperv_fb: framebuffer release cleanup
-Message-ID: <Z84qv4Fp-A254kTk@liuwe-devbox-ubuntu-v2.lamzopl0uupeniq2etz1fddiyg.xx.internal.cloudapp.net>
-References: <1740845791-19977-1-git-send-email-ssengar@linux.microsoft.com>
+	linux-arm-msm@vger.kernel.org, freedreno@lists.freedesktop.org
+Subject: Re: [PATCH 2/4] drm/msm/hdmi: use new helper for ACR tables
+Message-ID: <202503100745.KWEAWjFD-lkp@intel.com>
+References: <20250309-drm-hdmi-acr-v1-2-bb9c242f4d4b@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -59,28 +95,32 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1740845791-19977-1-git-send-email-ssengar@linux.microsoft.com>
+In-Reply-To: <20250309-drm-hdmi-acr-v1-2-bb9c242f4d4b@linaro.org>
 
-On Sat, Mar 01, 2025 at 08:16:29AM -0800, Saurabh Sengar wrote:
-> This patch series addresses an issue in the unbind path of the hyperv_fb
-> driver, which is resolved in the second patch of this series.
-> 
-> While working on this fix, it was observed that hvfb_putmem() and its
-> child functions could be cleaned up first to simplify the movement of
-> hvfb_putmem(). This cleanup is done in the first patch.
-> 
-> Although hvfb_getmem() could also be cleaned up, it depends on
-> vmbus_allocate_mmio(), which is used by multiple other drivers. Since
-> addressing hvfb_getmem() is independent of this fix, it will be handled
-> in a separate patch series.
-> 
-> [V3]
->  - Add a patch 1 for cleanup of hvfb_putmem()
->  - Use the simplified hvfb_putmem()
-> 
-> Saurabh Sengar (2):
->   fbdev: hyperv_fb: Simplify hvfb_putmem
->   fbdev: hyperv_fb: Allow graceful removal of framebuffer
+Hi Dmitry,
 
-Applied to hyperv-fixes, thanks!
+kernel test robot noticed the following build errors:
+
+[auto build test ERROR on 0a2f889128969dab41861b6e40111aa03dc57014]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Dmitry-Baryshkov/drm-display-hdmi-provide-central-data-authority-for-ACR-params/20250309-161610
+base:   0a2f889128969dab41861b6e40111aa03dc57014
+patch link:    https://lore.kernel.org/r/20250309-drm-hdmi-acr-v1-2-bb9c242f4d4b%40linaro.org
+patch subject: [PATCH 2/4] drm/msm/hdmi: use new helper for ACR tables
+config: arm-randconfig-004-20250310 (https://download.01.org/0day-ci/archive/20250310/202503100745.KWEAWjFD-lkp@intel.com/config)
+compiler: clang version 21.0.0git (https://github.com/llvm/llvm-project e15545cad8297ec7555f26e5ae74a9f0511203e7)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250310/202503100745.KWEAWjFD-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202503100745.KWEAWjFD-lkp@intel.com/
+
+All errors (new ones prefixed by >>, old ones prefixed by <<):
+
+>> ERROR: modpost: "drm_hdmi_acr_get_n_cts" [drivers/gpu/drm/msm/msm.ko] undefined!
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
