@@ -1,162 +1,78 @@
-Return-Path: <linux-kernel+bounces-553323-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-553324-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5BEFFA58772
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 20:01:18 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E5FE1A5877D
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 20:18:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1FB417A40E2
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 19:00:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7F77B188B4DB
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 19:18:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 969D81F0981;
-	Sun,  9 Mar 2025 19:01:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 517E71F5846;
+	Sun,  9 Mar 2025 19:18:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nUDSBA8Q"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VJMVOGHM"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0B50D528;
-	Sun,  9 Mar 2025 19:01:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEB323597C;
+	Sun,  9 Mar 2025 19:18:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741546869; cv=none; b=ms5+LNc4wBinkfr7b8c2A3cP9eixu3hJcCJvG/+t/6AQZcJM0iGZ8Wg1OBIGreaAKV17BgmMiu471UIqpa2dp7eFUFkUV36zdButPVVkaXjBrdopVS+v614aixjBVeUkA0l5aDgMwVRYjWsMjvbzBkVul1ezObLc+t/xM5pzFJk=
+	t=1741547887; cv=none; b=uwlb5LXVa+sSHKsWBpnNILn/vCRRBaSZ+L9zh4fsi5bWXnGAyAT/cVGeMyen1Kme+F3byGJqAHQ+d6KiLPxUZe6+9qPEz/f9d9w3ljOXNv2KJ/rFneWNnIqBaKEZab4bGs+7rkfqKG3J0qb1OndRXZaqJ5Y+/y4Y6cQvdzh73yo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741546869; c=relaxed/simple;
-	bh=kH5JdLfYUUDkMU6DKgUeLSwXtGrR71Mgz2D16I88pkU=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=MwtKXdaYc8p7m8qlcgh/Gr/RNHJhcmAooc4YLvRAXhugBwNesSg/ebbjm3sj5Zl6rCl5mYWI2ncB0fCxowGGeW2H6/jPYVRcV/BBEKYLWJOkhb70rAba5YU9h8YeMKTc7vVhbNu+v/4UhAm+RRNMzacYon1hibrlvoCNyj722r0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nUDSBA8Q; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 661E5C4CEE3;
-	Sun,  9 Mar 2025 19:01:08 +0000 (UTC)
+	s=arc-20240116; t=1741547887; c=relaxed/simple;
+	bh=/53ObuUjLlP/EM59pStyhPSx2g7tcvmB69FL+tVqXwA=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=qmIEKIQGUrW/ifrJKM0f+Emir4FIi137YPUVZsPFIneZRu0FB7sFp6+BvlQ+TA2eTFqYPQaiZVYDapQgoOmDQ28I1YxQO7NGmt1mTrWlrzSuBiucxeZsVeO2aGlbtiXrN4iPKSmPt30UWe89akK/dYhgnEftI43ZL8vlGpOfAHE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VJMVOGHM; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8F85EC4CEE3;
+	Sun,  9 Mar 2025 19:18:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741546868;
-	bh=kH5JdLfYUUDkMU6DKgUeLSwXtGrR71Mgz2D16I88pkU=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=nUDSBA8QYKj4ib20a3S0gzNzWPwUXQt5HPtjgFPa9psXoTr6RhK9erJQDi8sH2xAQ
-	 CJ8Nq6I6tPx27GzYGUBlIIUISD8I0Q2ORxaoLJNzGHrqZz/92qzYOyDsSlFW0MCwlX
-	 tlw0L69rvsptL+078lnlCHn725mVxmdOW1wfi/phzTe7UVzAwtDRoD+qL5wmun1rUJ
-	 GT5Bf8mH/JduCeYEkUVsuVqTQWjwa4+YRVINd7rvlfdcbtW4aTjF7r+AY5Dbgk86jO
-	 wZ8Sif6RHVVQevmi0EAleR9w8jAtgB/h/aju8GsdTfNCIpeLPcE4BENTdB9oJa27Mz
-	 fyH3qk+/qY1dQ==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1trLta-00ByG4-3R;
-	Sun, 09 Mar 2025 19:01:06 +0000
-Date: Sun, 09 Mar 2025 19:01:05 +0000
-Message-ID: <864j02owpa.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Akihiko Odaki <akihiko.odaki@daynix.com>
-Cc: Oliver Upton <oliver.upton@linux.dev>,
-	Joey Gouly <joey.gouly@arm.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Zenghui Yu <yuzenghui@huawei.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	linux-arm-kernel@lists.infradead.org,
-	Andrew Jones <andrew.jones@linux.dev>,
-	kvmarm@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	devel@daynix.com
-Subject: Re: [PATCH v2 3/3] KVM: arm64: PMU: Set raw values from user to PM{C,I}NTEN{SET,CLR}, PMOVS{SET,CLR}
-In-Reply-To: <20250307-pmc-v2-3-6c3375a5f1e4@daynix.com>
-References: <20250307-pmc-v2-0-6c3375a5f1e4@daynix.com>
-	<20250307-pmc-v2-3-6c3375a5f1e4@daynix.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	s=k20201202; t=1741547887;
+	bh=/53ObuUjLlP/EM59pStyhPSx2g7tcvmB69FL+tVqXwA=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+	b=VJMVOGHMkmJ90rZffj2mCUfsohK51mNVYq2TOe/Kr3/l0A67QHbDt09Q62dNLaIJk
+	 sF6cxegknoQVOo36RMnaZ5/76egcykUzKOQc3rRYrSkEz7W2Hu4wgA6TOw2RY8k9/x
+	 EG6c9Zm7+xxiJN2J6PDinZqhh8UNARDLUfrmmVpRLmgkmraWnxw2JGaUJh7Upeeneq
+	 gFFYiSacesqTkNS1oblzFZZnxMRSkrkdOnAtre1AsCNDsgsOmKxZ3vBFrcLSQ3+/DR
+	 w3CnYJd2xVlvy6zWSoQB7aTGZ9OnmSJ7Mp4ePATrP0b1JpNF0o+3d0jywlj8jvglrU
+	 5GibKR2Z3dcTQ==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id AE410380DBC0;
+	Sun,  9 Mar 2025 19:18:42 +0000 (UTC)
+Subject: Re: [GIT PULL] USB driver fixes for 6.14-rc6
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <Z83TQTyh4u64yFKF@kroah.com>
+References: <Z83TQTyh4u64yFKF@kroah.com>
+X-PR-Tracked-List-Id: <linux-usb.vger.kernel.org>
+X-PR-Tracked-Message-Id: <Z83TQTyh4u64yFKF@kroah.com>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usb.git tags/usb-6.14-rc6
+X-PR-Tracked-Commit-Id: b13abcb7ddd8d38de769486db5bd917537b32ab1
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 0dc1f314f854257eb64dcea604a42a55225453a9
+Message-Id: <174154792118.2953179.4577195258374637866.pr-tracker-bot@kernel.org>
+Date: Sun, 09 Mar 2025 19:18:41 +0000
+To: Greg KH <gregkh@linuxfoundation.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, Andrew Morton <akpm@linux-foundation.org>, linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: akihiko.odaki@daynix.com, oliver.upton@linux.dev, joey.gouly@arm.com, suzuki.poulose@arm.com, yuzenghui@huawei.com, catalin.marinas@arm.com, will@kernel.org, linux-arm-kernel@lists.infradead.org, andrew.jones@linux.dev, kvmarm@lists.linux.dev, linux-kernel@vger.kernel.org, devel@daynix.com
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-On Fri, 07 Mar 2025 10:55:30 +0000,
-Akihiko Odaki <akihiko.odaki@daynix.com> wrote:
-> 
-> Commit a45f41d754e0 ("KVM: arm64: Add {get,set}_user for
-> PM{C,I}NTEN{SET,CLR}, PMOVS{SET,CLR}") changed KVM_SET_ONE_REG to update
-> the mentioned registers in a way matching with the behavior of guest
-> register writes. This is a breaking change of a UAPI though the new
-> semantics looks cleaner and VMMs are not prepared for this.
-> 
-> Firecracker, QEMU, and crosvm perform migration by listing registers
-> with KVM_GET_REG_LIST, getting their values with KVM_GET_ONE_REG and
-> setting them with KVM_SET_ONE_REG. This algorithm assumes
-> KVM_SET_ONE_REG restores the values retrieved with KVM_GET_ONE_REG
-> without any alteration. However, bit operations added by the earlier
-> commit do not preserve the values retried with KVM_GET_ONE_REG and
-> potentially break migration.
-> 
-> Remove the bit operations that alter the values retrieved with
-> KVM_GET_ONE_REG.
-> 
-> Fixes: a45f41d754e0 ("KVM: arm64: Add {get,set}_user for PM{C,I}NTEN{SET,CLR}, PMOVS{SET,CLR}")
-> Signed-off-by: Akihiko Odaki <akihiko.odaki@daynix.com>
-> ---
->  arch/arm64/kvm/sys_regs.c | 21 +--------------------
->  1 file changed, 1 insertion(+), 20 deletions(-)
-> 
-> diff --git a/arch/arm64/kvm/sys_regs.c b/arch/arm64/kvm/sys_regs.c
-> index 51054b7befc0b4bd822cecf717ee4a4740c4a685..2f44d4d4f54112787683dd75ea93fd60e92dd31f 100644
-> --- a/arch/arm64/kvm/sys_regs.c
-> +++ b/arch/arm64/kvm/sys_regs.c
-> @@ -1142,26 +1142,7 @@ static bool access_pmu_evtyper(struct kvm_vcpu *vcpu, struct sys_reg_params *p,
->  
->  static int set_pmreg(struct kvm_vcpu *vcpu, const struct sys_reg_desc *r, u64 val)
->  {
-> -	bool set;
-> -
-> -	val &= kvm_pmu_valid_counter_mask(vcpu);
-> -
-> -	switch (r->reg) {
-> -	case PMOVSSET_EL0:
-> -		/* CRm[1] being set indicates a SET register, and CLR otherwise */
-> -		set = r->CRm & 2;
-> -		break;
-> -	default:
-> -		/* Op2[0] being set indicates a SET register, and CLR otherwise */
-> -		set = r->Op2 & 1;
-> -		break;
-> -	}
-> -
-> -	if (set)
-> -		__vcpu_sys_reg(vcpu, r->reg) |= val;
-> -	else
-> -		__vcpu_sys_reg(vcpu, r->reg) &= ~val;
-> -
-> +	__vcpu_sys_reg(vcpu, r->reg) = val & kvm_pmu_valid_counter_mask(vcpu);
->  	kvm_make_request(KVM_REQ_RELOAD_PMU, vcpu);
->  
->  	return 0;
-> 
+The pull request you sent on Sun, 9 Mar 2025 18:43:29 +0100:
 
-Yup, this code was definitely a brain fart. Thanks for spotting it.
-One of the big mistake was to expose both CLR and SET registers to
-userspace (one of the two should have been hidden).
+> git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usb.git tags/usb-6.14-rc6
 
-This requires a Cc to stable@vger.kernel.org so that this can be
-backported to anything from 6.12. It would also help if you put this
-patch at the head of the series, before adding the PMU request (it is
-then likely to be very easy to backport).
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/0dc1f314f854257eb64dcea604a42a55225453a9
 
-With that,
-
-Acked-by: Marc Zyngier <maz@kernel.org>
-
-Thanks,
-
-	M.
+Thank you!
 
 -- 
-Without deviation from the norm, progress is not possible.
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
 
