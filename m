@@ -1,179 +1,240 @@
-Return-Path: <linux-kernel+bounces-552880-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-552881-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 47749A58060
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 03:52:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 298EAA58063
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 03:59:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BED10188C0E7
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 02:52:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7222B188E30F
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 02:59:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30C703F9D5;
-	Sun,  9 Mar 2025 02:52:41 +0000 (UTC)
-Received: from mail-il1-f207.google.com (mail-il1-f207.google.com [209.85.166.207])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D0503C463;
+	Sun,  9 Mar 2025 02:59:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmx.de header.i=deller@gmx.de header.b="ZjSPWoGV"
+Received: from mout.gmx.net (mout.gmx.net [212.227.15.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 396392557A
-	for <linux-kernel@vger.kernel.org>; Sun,  9 Mar 2025 02:52:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.207
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85B67328B6;
+	Sun,  9 Mar 2025 02:58:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741488760; cv=none; b=JmYgjASWcDip/gz/riW+6tNcXyFXJ64/4oKROHxXnYUeA2wtcHn7QCD/5kPZguQbRI4T7lagVcyZsuI0fHzpKnvnUu8DW4gxijkh+Sl3bJQBO9JKGTPZxPkIXJ5ShqKg4k2OiM8fTzEFliseU4OAeCKYS4geLZulqAf7UvcAhdg=
+	t=1741489142; cv=none; b=H2sIovLieeWc/B8y45hCtOyHkDB6Iq1le2Ide8th6s3iKxEnGrz7f94MPuFaC/H8sQdALzf8SgZebfPWfNGqAWe7+70kSc/QMXNqCY0+5J7Z6XsirbMeG14tsIyFfTioszCherbv0AT6oE0NnlnbRc18iSAsx9VshUGLzg6xEzY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741488760; c=relaxed/simple;
-	bh=IAF6tIlCZ771DQ7D/fW4IofhwRm1wGqrFwMlnS/Mw5w=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=dDIf8X31IxW3xnS6o5nWMEUB6vBBESCoqOYwBCIMpEX/2tQ0kseG1GN/toagvbabb2jHE6RNiiCjqvjSUvsFkmSOGWp0YLjGPhWSiq16IR4nPudSVg+6TB6TOZOMjI8QEU5NfsVODOpeKNmDQwBTyzbJ1ArHLh98fbIGj4aDarc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.207
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f207.google.com with SMTP id e9e14a558f8ab-3d05b1ae6e3so28672235ab.0
-        for <linux-kernel@vger.kernel.org>; Sat, 08 Mar 2025 18:52:38 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741488758; x=1742093558;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=LoNwlPHGgWrJYVppCXZabpLb34WQ3gVLmP7cpmCDknI=;
-        b=ma+TGPGMwEDJEoV6Qofy2zmzZ2YHv1PYn/zWWGalqnlQyoS7yXvFcxDMVhNvWKXADI
-         a47VPpGDrGTyhrheFMlPXlHh0dpOaFICQN2HYIyJzm+wudbM1RzYKLwqaXV1FpXzkmdH
-         2QLC2WRf9jto1fGDiFCLtgpyh2P887PsoAbkb0eQ9aW/ZT2+I40TVAcXb40U2NicgswK
-         k9bCdWKxZoYDz7lA80JArFYWePkgBOzk2VxUJOfdOVxRGZdoCeRy7d1SJfuGjChkcO2G
-         Pw2oT/KB5eqiLVRmIqUSZMH3bHjATpHoj6wObOeBcRDdITjf6uFt/p341C7KX7A8+kmr
-         /C8A==
-X-Forwarded-Encrypted: i=1; AJvYcCVo1vbPwHYD0nIaPcVTLJVUR+FR7KWGDVzto/C5GSR1varLNSU9Sja+LAxYLIh49dlUrVlPiLL3+Dbd5Jg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyn6BaCO8l9ZDpZV7CB1kpbIKItoE3MD7x7Mx+er7Bi5ARpcp4b
-	bleerYA9JBPgqyPG3T1gdNgUAaq13br+EK84OmBwUMjveBwE1edVvdvUJP6SAAt8oYJvrktERCX
-	O2aXpy2rijen88r5jfTzwLBHtkaEQn51KJwnF8tQ7EPay22OseYfqb3U=
-X-Google-Smtp-Source: AGHT+IFr9O8/YhatesoKbYIzMB5FoK9myw8WHXXuTPRkLDN4JKxY6KI/JsGeB9U353W2PzTRCca6QV81t/45BQoYLxUpP90o/vRD
+	s=arc-20240116; t=1741489142; c=relaxed/simple;
+	bh=/YqmdkIusG/eMi12DlFGEFauLN+qccwZw8Ds229EQB0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Xuqzgzf+EVLLr7zET+h/WNZh3FL9yxQ0A95EhgDfAUrXl2Z1KX32xEAsmzb5PIllTiTgrRypKi7EwkKRmbHcj+lRKkqa/ijXg42TSRnLuadQiBGn56q9A1U0obH2eohNSCh1oAsWke6FUu1yY3oSRwip3JpouEPmAe6W0IOGJK0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=deller@gmx.de header.b=ZjSPWoGV; arc=none smtp.client-ip=212.227.15.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
+	s=s31663417; t=1741489120; x=1742093920; i=deller@gmx.de;
+	bh=nJBkMsS0v7qRX5aa5e+44c/E2mxBpR2Z9drP3iujy58=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=ZjSPWoGVfnFecFQnqiRuoZk3ARKST6TKeOCRDllcrSLVge83Sip/idtcxaUYLfoX
+	 ubGiycKBLcVe4iS6TgCfkVgj4u3tp4kA31vTH//E5K8+gW1bCQrS3J/Yuman0PdhP
+	 TL80WbR3DdwnrjpFr3lBoFPT8i4H8OQTiQzZS/bw9H61dtSZ0VMCLvdhIY8UnG2Xg
+	 tOGxc1rbFX1OZBlwS1UouXJmZClnNuSFRWmFJ+Kgq4JlTDV3RRHrbNccIrZ/RmZnW
+	 IVNB11xgG94MAgWFbVHEHuSyd/0DPjJ56EMDFVWH7T6P9e9brzAGAZgk9Qoyvwb3R
+	 SRUbVS/imUwEHV/q+Q==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from [192.168.20.173] ([109.250.63.121]) by mail.gmx.net (mrgmx004
+ [212.227.17.190]) with ESMTPSA (Nemesis) id 1M3lc9-1trNim3l9n-00GPup; Sun, 09
+ Mar 2025 03:58:39 +0100
+Message-ID: <24668c7d-6333-423e-bd48-28af1431b263@gmx.de>
+Date: Sun, 9 Mar 2025 03:58:38 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:174b:b0:3d4:4134:521a with SMTP id
- e9e14a558f8ab-3d441990392mr118888325ab.12.1741488758297; Sat, 08 Mar 2025
- 18:52:38 -0800 (PST)
-Date: Sat, 08 Mar 2025 18:52:38 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67cd0276.050a0220.14db68.006c.GAE@google.com>
-Subject: [syzbot] [efi?] [fs?] possible deadlock in efivarfs_actor
-From: syzbot <syzbot+019072ad24ab1d948228@syzkaller.appspotmail.com>
-To: ardb@kernel.org, jk@ozlabs.org, linux-efi@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/1] fbdev: hyperv_fb: Fix hang in kdump kernel when on
+ Hyper-V Gen 2 VMs
+To: mhklinux@outlook.com, haiyangz@microsoft.com, wei.liu@kernel.org,
+ decui@microsoft.com, javierm@redhat.com, thomas.tai@oracle.com
+Cc: tzimmermann@suse.de, kasong@redhat.com, dri-devel@lists.freedesktop.org,
+ linux-fbdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-hyperv@vger.kernel.org
+References: <20250218230130.3207-1-mhklinux@outlook.com>
+Content-Language: en-US
+From: Helge Deller <deller@gmx.de>
+Autocrypt: addr=deller@gmx.de; keydata=
+ xsFNBF3Ia3MBEAD3nmWzMgQByYAWnb9cNqspnkb2GLVKzhoH2QD4eRpyDLA/3smlClbeKkWT
+ HLnjgkbPFDmcmCz5V0Wv1mKYRClAHPCIBIJgyICqqUZo2qGmKstUx3pFAiztlXBANpRECgwJ
+ r+8w6mkccOM9GhoPU0vMaD/UVJcJQzvrxVHO8EHS36aUkjKd6cOpdVbCt3qx8cEhCmaFEO6u
+ CL+k5AZQoABbFQEBocZE1/lSYzaHkcHrjn4cQjc3CffXnUVYwlo8EYOtAHgMDC39s9a7S90L
+ 69l6G73lYBD/Br5lnDPlG6dKfGFZZpQ1h8/x+Qz366Ojfq9MuuRJg7ZQpe6foiOtqwKym/zV
+ dVvSdOOc5sHSpfwu5+BVAAyBd6hw4NddlAQUjHSRs3zJ9OfrEx2d3mIfXZ7+pMhZ7qX0Axlq
+ Lq+B5cfLpzkPAgKn11tfXFxP+hcPHIts0bnDz4EEp+HraW+oRCH2m57Y9zhcJTOJaLw4YpTY
+ GRUlF076vZ2Hz/xMEvIJddRGId7UXZgH9a32NDf+BUjWEZvFt1wFSW1r7zb7oGCwZMy2LI/G
+ aHQv/N0NeFMd28z+deyxd0k1CGefHJuJcOJDVtcE1rGQ43aDhWSpXvXKDj42vFD2We6uIo9D
+ 1VNre2+uAxFzqqf026H6cH8hin9Vnx7p3uq3Dka/Y/qmRFnKVQARAQABzRxIZWxnZSBEZWxs
+ ZXIgPGRlbGxlckBnbXguZGU+wsGRBBMBCAA7AhsDBQsJCAcCBhUKCQgLAgQWAgMBAh4BAheA
+ FiEERUSCKCzZENvvPSX4Pl89BKeiRgMFAl3J1zsCGQEACgkQPl89BKeiRgNK7xAAg6kJTPje
+ uBm9PJTUxXaoaLJFXbYdSPfXhqX/BI9Xi2VzhwC2nSmizdFbeobQBTtRIz5LPhjk95t11q0s
+ uP5htzNISPpwxiYZGKrNnXfcPlziI2bUtlz4ke34cLK6MIl1kbS0/kJBxhiXyvyTWk2JmkMi
+ REjR84lCMAoJd1OM9XGFOg94BT5aLlEKFcld9qj7B4UFpma8RbRUpUWdo0omAEgrnhaKJwV8
+ qt0ULaF/kyP5qbI8iA2PAvIjq73dA4LNKdMFPG7Rw8yITQ1Vi0DlDgDT2RLvKxEQC0o3C6O4
+ iQq7qamsThLK0JSDRdLDnq6Phv+Yahd7sDMYuk3gIdoyczRkXzncWAYq7XTWl7nZYBVXG1D8
+ gkdclsnHzEKpTQIzn/rGyZshsjL4pxVUIpw/vdfx8oNRLKj7iduf11g2kFP71e9v2PP94ik3
+ Xi9oszP+fP770J0B8QM8w745BrcQm41SsILjArK+5mMHrYhM4ZFN7aipK3UXDNs3vjN+t0zi
+ qErzlrxXtsX4J6nqjs/mF9frVkpv7OTAzj7pjFHv0Bu8pRm4AyW6Y5/H6jOup6nkJdP/AFDu
+ 5ImdlA0jhr3iLk9s9WnjBUHyMYu+HD7qR3yhX6uWxg2oB2FWVMRLXbPEt2hRGq09rVQS7DBy
+ dbZgPwou7pD8MTfQhGmDJFKm2jvOwU0EXchrcwEQAOsDQjdtPeaRt8EP2pc8tG+g9eiiX9Sh
+ rX87SLSeKF6uHpEJ3VbhafIU6A7hy7RcIJnQz0hEUdXjH774B8YD3JKnAtfAyuIU2/rOGa/v
+ UN4BY6U6TVIOv9piVQByBthGQh4YHhePSKtPzK9Pv/6rd8H3IWnJK/dXiUDQllkedrENXrZp
+ eLUjhyp94ooo9XqRl44YqlsrSUh+BzW7wqwfmu26UjmAzIZYVCPCq5IjD96QrhLf6naY6En3
+ ++tqCAWPkqKvWfRdXPOz4GK08uhcBp3jZHTVkcbo5qahVpv8Y8mzOvSIAxnIjb+cklVxjyY9
+ dVlrhfKiK5L+zA2fWUreVBqLs1SjfHm5OGuQ2qqzVcMYJGH/uisJn22VXB1c48yYyGv2HUN5
+ lC1JHQUV9734I5cczA2Gfo27nTHy3zANj4hy+s/q1adzvn7hMokU7OehwKrNXafFfwWVK3OG
+ 1dSjWtgIv5KJi1XZk5TV6JlPZSqj4D8pUwIx3KSp0cD7xTEZATRfc47Yc+cyKcXG034tNEAc
+ xZNTR1kMi9njdxc1wzM9T6pspTtA0vuD3ee94Dg+nDrH1As24uwfFLguiILPzpl0kLaPYYgB
+ wumlL2nGcB6RVRRFMiAS5uOTEk+sJ/tRiQwO3K8vmaECaNJRfJC7weH+jww1Dzo0f1TP6rUa
+ fTBRABEBAAHCwXYEGAEIACAWIQRFRIIoLNkQ2+89Jfg+Xz0Ep6JGAwUCXchrcwIbDAAKCRA+
+ Xz0Ep6JGAxtdEAC54NQMBwjUNqBNCMsh6WrwQwbg9tkJw718QHPw43gKFSxFIYzdBzD/YMPH
+ l+2fFiefvmI4uNDjlyCITGSM+T6b8cA7YAKvZhzJyJSS7pRzsIKGjhk7zADL1+PJei9p9idy
+ RbmFKo0dAL+ac0t/EZULHGPuIiavWLgwYLVoUEBwz86ZtEtVmDmEsj8ryWw75ZIarNDhV74s
+ BdM2ffUJk3+vWe25BPcJiaZkTuFt+xt2CdbvpZv3IPrEkp9GAKof2hHdFCRKMtgxBo8Kao6p
+ Ws/Vv68FusAi94ySuZT3fp1xGWWf5+1jX4ylC//w0Rj85QihTpA2MylORUNFvH0MRJx4mlFk
+ XN6G+5jIIJhG46LUucQ28+VyEDNcGL3tarnkw8ngEhAbnvMJ2RTx8vGh7PssKaGzAUmNNZiG
+ MB4mPKqvDZ02j1wp7vthQcOEg08z1+XHXb8ZZKST7yTVa5P89JymGE8CBGdQaAXnqYK3/yWf
+ FwRDcGV6nxanxZGKEkSHHOm8jHwvQWvPP73pvuPBEPtKGLzbgd7OOcGZWtq2hNC6cRtsRdDx
+ 4TAGMCz4j238m+2mdbdhRh3iBnWT5yPFfnv/2IjFAk+sdix1Mrr+LIDF++kiekeq0yUpDdc4
+ ExBy2xf6dd+tuFFBp3/VDN4U0UfG4QJ2fg19zE5Z8dS4jGIbLg==
+In-Reply-To: <20250218230130.3207-1-mhklinux@outlook.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:mjL3hSxydgxv7auKb+SF1HiGYsIAUsuqH4aH6FyBTYujmpsQrlr
+ mVRi1TjTwptv0fzG3qplQmey45gO+xpH2l7vdBQdCxuQq36Uh0Zb7hczbnMI00hkvC8P71L
+ zAEGWlfYgYFxMVAnxECokdx4vBaao1qvoqPk3Ogw8/FpOEIViSc19mK8T/FLXiFIdCZNjLO
+ utPCl0/kTBxN+Y3JygsXQ==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:SVlwpZIM65s=;hImY14q1ReQCkPBo9c3HVJW24Vi
+ bySCSPP22C2nUvsMCaajKmS7Ixn8lCf1z9NhNY57sh5h57LWGdkOTAre915uDf8vkJTImdJps
+ RziLMSvb6H9Ed1xeh0kniBLhqd9V4iNUbOf44e5vRBACzEnEZKXx/RyQjsFjDl2sB3fhnOsOg
+ 8p4sem9b8tesVNGN7QR756mHdCXHyiG4+RKEAinPvCR5payYzLvXsVzmLNwtqLx1yQIUaGP6X
+ 8OHtelwCBxnzSfrmzjLLkbRbY6mpeiAu5x/P3WM8QCyyfUcGxXU3ous33EdXt2vNUf5abJon1
+ qCFnxw1k56rLVn2gvD11kSa7mPaQgxIq+kLZ8uFhzYijzixoI2cM9lqK5XuyxT+ZDyCrTjMhV
+ Ms5j/ELgFb4W1lOxb2U1Rvx1I+n3tjQHEZ6FECK/aug59YYkVkYtS4w+UaBBioeIP/tJm/R9t
+ ZxZKECUD1nY8ap2T0vnzq5eIoM8Bbnesmc9FnuwTdp3nrivyxd8+wNo6QRQvguCFBUtrEvYYG
+ bgN+K9XWkxJsms1O2e8rbsLz42Qz/i9xadErW3Jja0Okycywb6ZlvIaZ8qe4oiyKV51vUS3NE
+ ii0nfdTumZKx5PKJV4vIe3bbxsNyi6hLgLnktHd2fU4dT84tgTiKMsW1DAaXhxPTyDgp7l4ct
+ JeeYpqzTV666IFgsa1Xi6I9kjaXdNQLcisTo8wqS6HxxGfOLdvxBvQhDdn5rfvOvN6rdGZNYn
+ AD0VtqctXP3g0bGkvGAv8MALw4fpmBTb7hLjj09cqGID48Mtgo7FfQNDSa8gyF71BmGwmmjO5
+ ywEKx4kBxP4fDz7ojBFjztWMwZE9QzHq9xuDNM/Ut/ve21+VZ3GphoOg8OK55qG0Khkqj176V
+ Xh3CRwq9C5jPy2qFF7e37FFYnxOvojtiNua+CWsk2SXBfVZjl29Y7SR+hkPeYOimeGySa4YHk
+ oPsGuseex5JPD1mZpAFNUFuAgUTNj38Gh9ZEQVUk++n0DFTQxzfMIgznKcCV7gskjlV/XFJMA
+ xYfFXBuakM5ExaHtfI2HBXzXsnFpf3IV9HFB7aN+Yh7XVRJfmkH9sEeLhpewVSPj6bkzmvvg6
+ iMnB0O2r2RpAErPWwCOoht4dZ25wVoYhlNK4VXlrerpGTk/tuNFFNIDHGUZ/Qzv+J90RkiFG9
+ sw0EYyxp7PKwwXxzwPnC5dg0BDnA576PygDymsHoch/IHNeRY9U7aNj1DxCP8WFhkc+MIwA+l
+ pSZYl1Dx/aDBVHKRkqTgHe/k6T6T0I00ukvxGrNSkClDyRguhhwUtogKh2HYGDsyqWcwcSxSk
+ kvETH+12UG5nZcavO9srgVygPbj7tI46tNi8TTXBVGSBJnuoieYMOuvsZG+m8SLY+KxCQBgJZ
+ A046kIBgGH147jaPBx8F35NqIgc/m49ZsYKB4nNhW8TzAMT0kt3PAGgcpibUepBWYRx0dVcxO
+ fyK9rIw==
 
-Hello,
+On 2/19/25 00:01, mhkelley58@gmail.com wrote:
+> From: Michael Kelley <mhklinux@outlook.com>
+>
+> Gen 2 Hyper-V VMs boot via EFI and have a standard EFI framebuffer
+> device. When the kdump kernel runs in such a VM, loading the efifb
+> driver may hang because of accessing the framebuffer at the wrong
+> memory address.
+>
+> The scenario occurs when the hyperv_fb driver in the original kernel
+> moves the framebuffer to a different MMIO address because of conflicts
+> with an already-running efifb or simplefb driver. The hyperv_fb driver
+> then informs Hyper-V of the change, which is allowed by the Hyper-V FB
+> VMBus device protocol. However, when the kexec command loads the kdump
+> kernel into crash memory via the kexec_file_load() system call, the
+> system call doesn't know the framebuffer has moved, and it sets up the
+> kdump screen_info using the original framebuffer address. The transition
+> to the kdump kernel does not go through the Hyper-V host, so Hyper-V
+> does not reset the framebuffer address like it would do on a reboot.
+> When efifb tries to run, it accesses a non-existent framebuffer
+> address, which traps to the Hyper-V host. After many such accesses,
+> the Hyper-V host thinks the guest is being malicious, and throttles
+> the guest to the point that it runs very slowly or appears to have hung.
+>
+> When the kdump kernel is loaded into crash memory via the kexec_load()
+> system call, the problem does not occur. In this case, the kexec command
+> builds the screen_info table itself in user space from data returned
+> by the FBIOGET_FSCREENINFO ioctl against /dev/fb0, which gives it the
+> new framebuffer location.
+>
+> This problem was originally reported in 2020 [1], resulting in commit
+> 3cb73bc3fa2a ("hyperv_fb: Update screen_info after removing old
+> framebuffer"). This commit solved the problem by setting orig_video_isVG=
+A
+> to 0, so the kdump kernel was unaware of the EFI framebuffer. The efifb
+> driver did not try to load, and no hang occurred. But in 2024, commit
+> c25a19afb81c ("fbdev/hyperv_fb: Do not clear global screen_info")
+> effectively reverted 3cb73bc3fa2a. Commit c25a19afb81c has no reference
+> to 3cb73bc3fa2a, so perhaps it was done without knowing the implications
+> that were reported with 3cb73bc3fa2a. In any case, as of commit
+> c25a19afb81c, the original problem came back again.
+>
+> Interestingly, the hyperv_drm driver does not have this problem because
+> it never moves the framebuffer. The difference is that the hyperv_drm
+> driver removes any conflicting framebuffers *before* allocating an MMIO
+> address, while the hyperv_fb drivers removes conflicting framebuffers
+> *after* allocating an MMIO address. With the "after" ordering, hyperv_fb
+> may encounter a conflict and move the framebuffer to a different MMIO
+> address. But the conflict is essentially bogus because it is removed
+> a few lines of code later.
+>
+> Rather than fix the problem with the approach from 2020 in commit
+> 3cb73bc3fa2a, instead slightly reorder the steps in hyperv_fb so
+> conflicting framebuffers are removed before allocating an MMIO address.
+> Then the default framebuffer MMIO address should always be available, an=
+d
+> there's never any confusion about which framebuffer address the kdump
+> kernel should use -- it's always the original address provided by
+> the Hyper-V host. This approach is already used by the hyperv_drm
+> driver, and is consistent with the usage guidelines at the head of
+> the module with the function aperture_remove_conflicting_devices().
+>
+> This approach also solves a related minor problem when kexec_load()
+> is used to load the kdump kernel. With current code, unbinding and
+> rebinding the hyperv_fb driver could result in the framebuffer moving
+> back to the default framebuffer address, because on the rebind there
+> are no conflicts. If such a move is done after the kdump kernel is
+> loaded with the new framebuffer address, at kdump time it could again
+> have the wrong address.
+>
+> This problem and fix are described in terms of the kdump kernel, but
+> it can also occur with any kernel started via kexec.
+>
+> See extensive discussion of the problem and solution at [2].
+>
+> [1] https://lore.kernel.org/linux-hyperv/20201014092429.1415040-1-kasong=
+@redhat.com/
+> [2] https://lore.kernel.org/linux-hyperv/BLAPR10MB521793485093FDB448F7B2=
+E5FDE92@BLAPR10MB5217.namprd10.prod.outlook.com/
+>
+> Reported-by: Thomas Tai <thomas.tai@oracle.com>
+> Fixes: c25a19afb81c ("fbdev/hyperv_fb: Do not clear global screen_info")
+> Signed-off-by: Michael Kelley <mhklinux@outlook.com>
+> ---
+> The "Fixes" tag uses commit c25a19afb81c because that's where the proble=
+m
+> was re-exposed, and how far back a stable backport is needed. But I've
+> taken a completely different, and hopefully better, approach in the
+> solution that isn't related to the code changes in c25a19afb81c.
+>
+>   drivers/video/fbdev/hyperv_fb.c | 20 +++++++++++++-------
+>   1 file changed, 13 insertions(+), 7 deletions(-)
 
-syzbot found the following issue on:
+applied to fbdev tree.
 
-HEAD commit:    e056da87c780 Merge remote-tracking branch 'will/for-next/p..
-git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-kernelci
-console output: https://syzkaller.appspot.com/x/log.txt?x=14ce9c64580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=d6b7e15dc5b5e776
-dashboard link: https://syzkaller.appspot.com/bug?extid=019072ad24ab1d948228
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-userspace arch: arm64
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=111ed7a0580000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=13b97c64580000
-
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/3d8b1b7cc4c0/disk-e056da87.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/b84c04cff235/vmlinux-e056da87.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/2ae4d0525881/Image-e056da87.gz.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+019072ad24ab1d948228@syzkaller.appspotmail.com
-
-efivarfs: resyncing variable state
-============================================
-WARNING: possible recursive locking detected
-6.14.0-rc4-syzkaller-ge056da87c780 #0 Not tainted
---------------------------------------------
-syz-executor772/6443 is trying to acquire lock:
-ffff0000c6826558 (&sb->s_type->i_mutex_key#16){++++}-{4:4}, at: inode_lock include/linux/fs.h:877 [inline]
-ffff0000c6826558 (&sb->s_type->i_mutex_key#16){++++}-{4:4}, at: efivarfs_actor+0x1b8/0x2b8 fs/efivarfs/super.c:422
-
-but task is already holding lock:
-ffff0000c6c7a558 (&sb->s_type->i_mutex_key#16){++++}-{4:4}, at: iterate_dir+0x3b4/0x5f4 fs/readdir.c:101
-
-other info that might help us debug this:
- Possible unsafe locking scenario:
-
-       CPU0
-       ----
-  lock(&sb->s_type->i_mutex_key#16);
-  lock(&sb->s_type->i_mutex_key#16);
-
- *** DEADLOCK ***
-
- May be due to missing lock nesting notation
-
-3 locks held by syz-executor772/6443:
- #0: ffff80008fc57208 (system_transition_mutex){+.+.}-{4:4}, at: lock_system_sleep+0x68/0xc0 kernel/power/main.c:56
- #1: ffff80008fc75d70 ((pm_chain_head).rwsem){++++}-{4:4}, at: blocking_notifier_call_chain+0x58/0xa0 kernel/notifier.c:379
- #2: ffff0000c6c7a558 (&sb->s_type->i_mutex_key#16){++++}-{4:4}, at: iterate_dir+0x3b4/0x5f4 fs/readdir.c:101
-
-stack backtrace:
-CPU: 0 UID: 0 PID: 6443 Comm: syz-executor772 Not tainted 6.14.0-rc4-syzkaller-ge056da87c780 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 12/27/2024
-Call trace:
- show_stack+0x2c/0x3c arch/arm64/kernel/stacktrace.c:466 (C)
- __dump_stack lib/dump_stack.c:94 [inline]
- dump_stack_lvl+0xe4/0x150 lib/dump_stack.c:120
- dump_stack+0x1c/0x28 lib/dump_stack.c:129
- print_deadlock_bug+0x4e8/0x668 kernel/locking/lockdep.c:3039
- check_deadlock kernel/locking/lockdep.c:3091 [inline]
- validate_chain kernel/locking/lockdep.c:3893 [inline]
- __lock_acquire+0x6240/0x7904 kernel/locking/lockdep.c:5228
- lock_acquire+0x23c/0x724 kernel/locking/lockdep.c:5851
- down_write+0x50/0xc0 kernel/locking/rwsem.c:1577
- inode_lock include/linux/fs.h:877 [inline]
- efivarfs_actor+0x1b8/0x2b8 fs/efivarfs/super.c:422
- dir_emit include/linux/fs.h:3849 [inline]
- dcache_readdir+0x2dc/0x4e8 fs/libfs.c:209
- iterate_dir+0x46c/0x5f4 fs/readdir.c:108
- efivarfs_pm_notify+0x2f4/0x350 fs/efivarfs/super.c:517
- notifier_call_chain+0x1c4/0x550 kernel/notifier.c:85
- blocking_notifier_call_chain+0x70/0xa0 kernel/notifier.c:380
- pm_notifier_call_chain+0x2c/0x3c kernel/power/main.c:109
- snapshot_release+0x128/0x1b8 kernel/power/user.c:125
- __fput+0x340/0x760 fs/file_table.c:464
- ____fput+0x20/0x30 fs/file_table.c:492
- task_work_run+0x230/0x2e0 kernel/task_work.c:227
- resume_user_mode_work include/linux/resume_user_mode.h:50 [inline]
- do_notify_resume+0x178/0x1f4 arch/arm64/kernel/entry-common.c:151
- exit_to_user_mode_prepare arch/arm64/kernel/entry-common.c:169 [inline]
- exit_to_user_mode arch/arm64/kernel/entry-common.c:178 [inline]
- el0_svc+0xac/0x168 arch/arm64/kernel/entry-common.c:745
- el0t_64_sync_handler+0x84/0x108 arch/arm64/kernel/entry-common.c:762
- el0t_64_sync+0x198/0x19c arch/arm64/kernel/entry.S:600
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+Thanks!
+Helge
 
