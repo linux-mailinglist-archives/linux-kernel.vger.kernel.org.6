@@ -1,376 +1,144 @@
-Return-Path: <linux-kernel+bounces-553104-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-553105-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1A312A583DF
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 12:56:36 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id ACD9BA583E2
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 13:03:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7A229188AB7B
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 11:56:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 875FF3ADABD
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 12:03:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DB551CAA85;
-	Sun,  9 Mar 2025 11:56:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35B1F1CEAC2;
+	Sun,  9 Mar 2025 12:03:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="s2b+9s+3"
-Received: from smtp.smtpout.orange.fr (smtp-15.smtpout.orange.fr [80.12.242.15])
-	(using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MMN3iFTt"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3ADA110E5;
-	Sun,  9 Mar 2025 11:56:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A7992B9A4;
+	Sun,  9 Mar 2025 12:03:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741521385; cv=none; b=E7bHHxOjJwTSncNhCCZTj81wKAPKOMyEX41bc2TteFOiFMm/CoWE8D+xj6EFtkGckkBoUTSRCny1T0lbPk+EsNA05l5BP4nuGC45o0qNU+kGxn92ISW+o8J6U2+Spt40h0NuByTAXDGRPNA9tAI8BX3V2VCoD2LQ7miWXfpkCUg=
+	t=1741521820; cv=none; b=bRJLPMyRNJH4gQsRPkNSttKdVHXLgWPoPVMwFiWaK0Cj265HRTNdVlMdkuN/Hmsyx4SaDmDtLPD2+B+zo4gviREExT4wIzy1W2DYSDMQ+ucRT8iTj5NVyqsLzaRcrhDr977YVK3GA8nljJsSYMYhG8kKiOfTmCngueqHWcW/Hw8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741521385; c=relaxed/simple;
-	bh=JDUMq0R5Umlo/3rTwDj0VAv71rMgmH8LLUmYjZiD3Do=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ZX26i+JSj83QQQ1vw40V+jedTpMCfwr37RoQPr8BmKvrsIEhKra1q/mu4XCl03OLVEVIj1B+IAzSMiemoXQ5NHocM+1wEgcGkHd19mdE6Cnl7kbT1NhRfAyCsFJxQxB3EMkpg/n1Hp0glJwdaMcH68G1Rmx1WzzgRwX9+p4vQcU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=s2b+9s+3; arc=none smtp.client-ip=80.12.242.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Received: from fedora.home ([90.11.132.44])
-	by smtp.orange.fr with ESMTPA
-	id rFGQtpkDgPGDMrFGTtbkkZ; Sun, 09 Mar 2025 12:56:19 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1741521379;
-	bh=H0s5CDqPZDbyKDmt23WAeBdwAAE/k7OMy3tznpH5qp0=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=s2b+9s+3BQROKzRSjzGc2G8ccWqS9fED8EA6UGQEVSwMPCz/7MoPjoXWA2zLkzSlz
-	 Jpk1g5TVXoldiCZbYdXZKTMq9iu2akQWGVEdkTcbV/Z7vyq7pUnMvssi8cc8WbP6F4
-	 ADpyPtMrWQZ+DGpUOWbl1jIVvE8qtwbFJfr1wyjwFGnkdEqwmu+XE7Vd6fsP3iTe2Y
-	 McRVkWUc6ngWJJGe06ZNcthOs91hCSlL2tyjJyW+j2SlCIXwnSqj4rR6DTCpM90Hlm
-	 eaBZiDtLaNkyz+Si3szhJ5ky+YZVuGL+FNIEbyqJb0zzYLLOnGMrq76D8iH6IJ48yR
-	 vUPhAasLmAH6A==
-X-ME-Helo: fedora.home
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sun, 09 Mar 2025 12:56:19 +0100
-X-ME-IP: 90.11.132.44
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: Steven Rostedt <rostedt@goodmis.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Cc: linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	linux-trace-kernel@vger.kernel.org
-Subject: [PATCH] tracing: Constify struct event_trigger_ops
-Date: Sun,  9 Mar 2025 12:56:06 +0100
-Message-ID: <66e8f990e649678e4be37d4d1a19158ca0dea2f4.1741521295.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.48.1
+	s=arc-20240116; t=1741521820; c=relaxed/simple;
+	bh=x8LiHcCv8DTXMAg2ZcZKR2faXOH9UvWMVP3REFZJBHc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HHcBvJ55IeVY307lBCvRxeOIAnn5y9ZBA9yW6BuPGRGBQ5AoF85YXJrjjX8A3tT1GlAjUrOBefMtwI/yj6PzWkgfGeybU/4BM3VH67OJABHLlg/qrE4gF4Z3k8vXRHcj79mhaLMNktrnAzZQDq9drTtiElr9vwt3gQK2IPYnBB8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MMN3iFTt; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DD0CFC4CEE5;
+	Sun,  9 Mar 2025 12:03:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741521819;
+	bh=x8LiHcCv8DTXMAg2ZcZKR2faXOH9UvWMVP3REFZJBHc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=MMN3iFTtKavUVNDKnRfSBedIJcy4ZJzQvZLr7uIufEVSHRR1ZoxrNAVbq+N4I0AJS
+	 MXWAqypAHyLu860XVaJ9HolV8bZebhOJR3DbWWOm2oPMsyLPvLuQzsHyq77WGGuG0K
+	 1TPUvSi00ykZ8CVUwsHaOKsMdvAo4cJCuwdMm3RKY/mD93O6zHbbuwexP7zSEcMgfQ
+	 T/WNkljDQHub56fTSTgfgdeTuVBWsJTtpIMXYaSNUEXorrN4EoW7rddkjRCQiiOvW2
+	 5XnXS/MkyFfmAZRpFp7smfbHx2AhYYnYVyfQkZc3iSsuM9rqumwc+7edu1yVDhSyXv
+	 ruUNUCYoPgzhQ==
+Date: Sun, 9 Mar 2025 13:03:31 +0100
+From: Christian Brauner <brauner@kernel.org>
+To: Pratyush Yadav <ptyadav@amazon.de>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, 
+	linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>, 
+	Eric Biederman <ebiederm@xmission.com>, Arnd Bergmann <arnd@arndb.de>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Jan Kara <jack@suse.cz>, Hugh Dickins <hughd@google.com>, 
+	Alexander Graf <graf@amazon.com>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, 
+	David Woodhouse <dwmw2@infradead.org>, James Gowans <jgowans@amazon.com>, 
+	Mike Rapoport <rppt@kernel.org>, Paolo Bonzini <pbonzini@redhat.com>, 
+	Pasha Tatashin <tatashin@google.com>, Anthony Yznaga <anthony.yznaga@oracle.com>, 
+	Dave Hansen <dave.hansen@intel.com>, David Hildenbrand <david@redhat.com>, 
+	Jason Gunthorpe <jgg@nvidia.com>, Matthew Wilcox <willy@infradead.org>, 
+	Wei Yang <richard.weiyang@gmail.com>, Andrew Morton <akpm@linux-foundation.org>, 
+	linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org, linux-mm@kvack.org, 
+	kexec@lists.infradead.org
+Subject: Re: [RFC PATCH 1/5] misc: introduce FDBox
+Message-ID: <20250309-unerwartet-alufolie-96aae4d20e38@brauner>
+References: <20250307005830.65293-1-ptyadav@amazon.de>
+ <20250307005830.65293-2-ptyadav@amazon.de>
+ <20250307-sachte-stolz-18d43ffea782@brauner>
+ <mafs0ikokidqz.fsf@amazon.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <mafs0ikokidqz.fsf@amazon.de>
 
-'event_trigger_ops mwifiex_if_ops' are not modified in these drivers.
+On Sat, Mar 08, 2025 at 12:10:12AM +0000, Pratyush Yadav wrote:
+> Hi Christian,
+> 
+> Thanks for the review!
 
-Constifying these structures moves some data to a read-only section, so
-increase overall security, especially when the structure holds some
-function pointers.
+No worries, I'm not trying to be polemic. It's just that this whole
+proposed concept is pretty lightweight in terms of thinking about
+possible implications.
 
-On a x86_64, with allmodconfig, as an example:
-Before:
-======
-   text	   data	    bss	    dec	    hex	filename
-  31368	   9024	   6200	  46592	   b600	kernel/trace/trace_events_trigger.o
+> > This use-case is covered with systemd's fdstore and it's available to
+> > unprivileged userspace. Stashing arbitrary file descriptors in the
+> > kernel in this way isn't a good idea.
+> 
+> For one, it can't be arbitrary FDs, but only explicitly enabled ones.
+> Beyond that, while not intended, there is no way to stop userspace from
+> using it as a stash. Stashing FDs is a needed operation for this to
+> work, and there is no way to guarantee in advance that userspace will
+> actually use it for KHO, and not just stash it to grab back later.
 
-After:
-=====
-   text	   data	    bss	    dec	    hex	filename
-  31752	   8608	   6200	  46560	   b5e0	kernel/trace/trace_events_trigger.o
+As written it can't ever function as a generic file descriptor store.
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
-Compile tested-only.
----
- kernel/trace/trace.h                |  4 +--
- kernel/trace/trace_eprobe.c         |  6 ++---
- kernel/trace/trace_events_hist.c    | 20 +++++++--------
- kernel/trace/trace_events_trigger.c | 38 ++++++++++++++---------------
- 4 files changed, 34 insertions(+), 34 deletions(-)
+It only allows fully privileged processes to stash file descriptors.
+Which makes it useless for generic userspace. A generic fdstore should
+have a model that makes it usable unprivileged it probably should also
+be multi-instance and work easily with namespaces. This doesn't and
+hitching it on devtmpfs and character devices is guaranteed to not work
+well with such use-cases.
 
-diff --git a/kernel/trace/trace.h b/kernel/trace/trace.h
-index 5307daa2dacb..abab9442ac0e 100644
---- a/kernel/trace/trace.h
-+++ b/kernel/trace/trace.h
-@@ -1718,7 +1718,7 @@ struct event_trigger_data {
- 	unsigned long			count;
- 	int				ref;
- 	int				flags;
--	struct event_trigger_ops	*ops;
-+	const struct event_trigger_ops	*ops;
- 	struct event_command		*cmd_ops;
- 	struct event_filter __rcu	*filter;
- 	char				*filter_str;
-@@ -1963,7 +1963,7 @@ struct event_command {
- 	int			(*set_filter)(char *filter_str,
- 					      struct event_trigger_data *data,
- 					      struct trace_event_file *file);
--	struct event_trigger_ops *(*get_trigger_ops)(char *cmd, char *param);
-+	const struct event_trigger_ops *(*get_trigger_ops)(char *cmd, char *param);
- };
- 
- /**
-diff --git a/kernel/trace/trace_eprobe.c b/kernel/trace/trace_eprobe.c
-index af9fa0632b57..c08355c3ef32 100644
---- a/kernel/trace/trace_eprobe.c
-+++ b/kernel/trace/trace_eprobe.c
-@@ -478,7 +478,7 @@ static void eprobe_trigger_func(struct event_trigger_data *data,
- 	__eprobe_trace_func(edata, rec);
- }
- 
--static struct event_trigger_ops eprobe_trigger_ops = {
-+static const struct event_trigger_ops eprobe_trigger_ops = {
- 	.trigger		= eprobe_trigger_func,
- 	.print			= eprobe_trigger_print,
- 	.init			= eprobe_trigger_init,
-@@ -507,8 +507,8 @@ static void eprobe_trigger_unreg_func(char *glob,
- 
- }
- 
--static struct event_trigger_ops *eprobe_trigger_get_ops(char *cmd,
--							char *param)
-+static const struct event_trigger_ops *eprobe_trigger_get_ops(char *cmd,
-+							      char *param)
- {
- 	return &eprobe_trigger_ops;
- }
-diff --git a/kernel/trace/trace_events_hist.c b/kernel/trace/trace_events_hist.c
-index ad7419e24055..0a962e929243 100644
---- a/kernel/trace/trace_events_hist.c
-+++ b/kernel/trace/trace_events_hist.c
-@@ -6191,7 +6191,7 @@ static void event_hist_trigger_free(struct event_trigger_data *data)
- 	}
- }
- 
--static struct event_trigger_ops event_hist_trigger_ops = {
-+static const struct event_trigger_ops event_hist_trigger_ops = {
- 	.trigger		= event_hist_trigger,
- 	.print			= event_hist_trigger_print,
- 	.init			= event_hist_trigger_init,
-@@ -6223,15 +6223,15 @@ static void event_hist_trigger_named_free(struct event_trigger_data *data)
- 	}
- }
- 
--static struct event_trigger_ops event_hist_trigger_named_ops = {
-+static const struct event_trigger_ops event_hist_trigger_named_ops = {
- 	.trigger		= event_hist_trigger,
- 	.print			= event_hist_trigger_print,
- 	.init			= event_hist_trigger_named_init,
- 	.free			= event_hist_trigger_named_free,
- };
- 
--static struct event_trigger_ops *event_hist_get_trigger_ops(char *cmd,
--							    char *param)
-+static const struct event_trigger_ops *event_hist_get_trigger_ops(char *cmd,
-+								  char *param)
- {
- 	return &event_hist_trigger_ops;
- }
-@@ -6826,38 +6826,38 @@ hist_enable_count_trigger(struct event_trigger_data *data,
- 	hist_enable_trigger(data, buffer, rec, event);
- }
- 
--static struct event_trigger_ops hist_enable_trigger_ops = {
-+static const struct event_trigger_ops hist_enable_trigger_ops = {
- 	.trigger		= hist_enable_trigger,
- 	.print			= event_enable_trigger_print,
- 	.init			= event_trigger_init,
- 	.free			= event_enable_trigger_free,
- };
- 
--static struct event_trigger_ops hist_enable_count_trigger_ops = {
-+static const struct event_trigger_ops hist_enable_count_trigger_ops = {
- 	.trigger		= hist_enable_count_trigger,
- 	.print			= event_enable_trigger_print,
- 	.init			= event_trigger_init,
- 	.free			= event_enable_trigger_free,
- };
- 
--static struct event_trigger_ops hist_disable_trigger_ops = {
-+static const struct event_trigger_ops hist_disable_trigger_ops = {
- 	.trigger		= hist_enable_trigger,
- 	.print			= event_enable_trigger_print,
- 	.init			= event_trigger_init,
- 	.free			= event_enable_trigger_free,
- };
- 
--static struct event_trigger_ops hist_disable_count_trigger_ops = {
-+static const struct event_trigger_ops hist_disable_count_trigger_ops = {
- 	.trigger		= hist_enable_count_trigger,
- 	.print			= event_enable_trigger_print,
- 	.init			= event_trigger_init,
- 	.free			= event_enable_trigger_free,
- };
- 
--static struct event_trigger_ops *
-+static const struct event_trigger_ops *
- hist_enable_get_trigger_ops(char *cmd, char *param)
- {
--	struct event_trigger_ops *ops;
-+	const struct event_trigger_ops *ops;
- 	bool enable;
- 
- 	enable = (strcmp(cmd, ENABLE_HIST_STR) == 0);
-diff --git a/kernel/trace/trace_events_trigger.c b/kernel/trace/trace_events_trigger.c
-index d45448947094..b66b6d235d91 100644
---- a/kernel/trace/trace_events_trigger.c
-+++ b/kernel/trace/trace_events_trigger.c
-@@ -825,7 +825,7 @@ struct event_trigger_data *event_trigger_alloc(struct event_command *cmd_ops,
- 					       void *private_data)
- {
- 	struct event_trigger_data *trigger_data;
--	struct event_trigger_ops *trigger_ops;
-+	const struct event_trigger_ops *trigger_ops;
- 
- 	trigger_ops = cmd_ops->get_trigger_ops(cmd, param);
- 
-@@ -1367,38 +1367,38 @@ traceoff_trigger_print(struct seq_file *m, struct event_trigger_data *data)
- 				   data->filter_str);
- }
- 
--static struct event_trigger_ops traceon_trigger_ops = {
-+static const struct event_trigger_ops traceon_trigger_ops = {
- 	.trigger		= traceon_trigger,
- 	.print			= traceon_trigger_print,
- 	.init			= event_trigger_init,
- 	.free			= event_trigger_free,
- };
- 
--static struct event_trigger_ops traceon_count_trigger_ops = {
-+static const struct event_trigger_ops traceon_count_trigger_ops = {
- 	.trigger		= traceon_count_trigger,
- 	.print			= traceon_trigger_print,
- 	.init			= event_trigger_init,
- 	.free			= event_trigger_free,
- };
- 
--static struct event_trigger_ops traceoff_trigger_ops = {
-+static const struct event_trigger_ops traceoff_trigger_ops = {
- 	.trigger		= traceoff_trigger,
- 	.print			= traceoff_trigger_print,
- 	.init			= event_trigger_init,
- 	.free			= event_trigger_free,
- };
- 
--static struct event_trigger_ops traceoff_count_trigger_ops = {
-+static const struct event_trigger_ops traceoff_count_trigger_ops = {
- 	.trigger		= traceoff_count_trigger,
- 	.print			= traceoff_trigger_print,
- 	.init			= event_trigger_init,
- 	.free			= event_trigger_free,
- };
- 
--static struct event_trigger_ops *
-+static const struct event_trigger_ops *
- onoff_get_trigger_ops(char *cmd, char *param)
- {
--	struct event_trigger_ops *ops;
-+	const struct event_trigger_ops *ops;
- 
- 	/* we register both traceon and traceoff to this callback */
- 	if (strcmp(cmd, "traceon") == 0)
-@@ -1491,21 +1491,21 @@ snapshot_trigger_print(struct seq_file *m, struct event_trigger_data *data)
- 				   data->filter_str);
- }
- 
--static struct event_trigger_ops snapshot_trigger_ops = {
-+static const struct event_trigger_ops snapshot_trigger_ops = {
- 	.trigger		= snapshot_trigger,
- 	.print			= snapshot_trigger_print,
- 	.init			= event_trigger_init,
- 	.free			= event_trigger_free,
- };
- 
--static struct event_trigger_ops snapshot_count_trigger_ops = {
-+static const struct event_trigger_ops snapshot_count_trigger_ops = {
- 	.trigger		= snapshot_count_trigger,
- 	.print			= snapshot_trigger_print,
- 	.init			= event_trigger_init,
- 	.free			= event_trigger_free,
- };
- 
--static struct event_trigger_ops *
-+static const struct event_trigger_ops *
- snapshot_get_trigger_ops(char *cmd, char *param)
- {
- 	return param ? &snapshot_count_trigger_ops : &snapshot_trigger_ops;
-@@ -1586,21 +1586,21 @@ stacktrace_trigger_print(struct seq_file *m, struct event_trigger_data *data)
- 				   data->filter_str);
- }
- 
--static struct event_trigger_ops stacktrace_trigger_ops = {
-+static const struct event_trigger_ops stacktrace_trigger_ops = {
- 	.trigger		= stacktrace_trigger,
- 	.print			= stacktrace_trigger_print,
- 	.init			= event_trigger_init,
- 	.free			= event_trigger_free,
- };
- 
--static struct event_trigger_ops stacktrace_count_trigger_ops = {
-+static const struct event_trigger_ops stacktrace_count_trigger_ops = {
- 	.trigger		= stacktrace_count_trigger,
- 	.print			= stacktrace_trigger_print,
- 	.init			= event_trigger_init,
- 	.free			= event_trigger_free,
- };
- 
--static struct event_trigger_ops *
-+static const struct event_trigger_ops *
- stacktrace_get_trigger_ops(char *cmd, char *param)
- {
- 	return param ? &stacktrace_count_trigger_ops : &stacktrace_trigger_ops;
-@@ -1711,28 +1711,28 @@ void event_enable_trigger_free(struct event_trigger_data *data)
- 	}
- }
- 
--static struct event_trigger_ops event_enable_trigger_ops = {
-+static const struct event_trigger_ops event_enable_trigger_ops = {
- 	.trigger		= event_enable_trigger,
- 	.print			= event_enable_trigger_print,
- 	.init			= event_trigger_init,
- 	.free			= event_enable_trigger_free,
- };
- 
--static struct event_trigger_ops event_enable_count_trigger_ops = {
-+static const struct event_trigger_ops event_enable_count_trigger_ops = {
- 	.trigger		= event_enable_count_trigger,
- 	.print			= event_enable_trigger_print,
- 	.init			= event_trigger_init,
- 	.free			= event_enable_trigger_free,
- };
- 
--static struct event_trigger_ops event_disable_trigger_ops = {
-+static const struct event_trigger_ops event_disable_trigger_ops = {
- 	.trigger		= event_enable_trigger,
- 	.print			= event_enable_trigger_print,
- 	.init			= event_trigger_init,
- 	.free			= event_enable_trigger_free,
- };
- 
--static struct event_trigger_ops event_disable_count_trigger_ops = {
-+static const struct event_trigger_ops event_disable_count_trigger_ops = {
- 	.trigger		= event_enable_count_trigger,
- 	.print			= event_enable_trigger_print,
- 	.init			= event_trigger_init,
-@@ -1916,10 +1916,10 @@ void event_enable_unregister_trigger(char *glob,
- 		data->ops->free(data);
- }
- 
--static struct event_trigger_ops *
-+static const struct event_trigger_ops *
- event_enable_get_trigger_ops(char *cmd, char *param)
- {
--	struct event_trigger_ops *ops;
-+	const struct event_trigger_ops *ops;
- 	bool enable;
- 
- #ifdef CONFIG_HIST_TRIGGERS
--- 
-2.48.1
+It also has big time security issues and implications. Any file you
+stash in there will have the credentials of the opener attached to it.
+So if someone stashes anything in there you need permission mechanisms
+that ensures that Joe Random can't via FDBOX_GET_FD pull out a file for
+e.g., someone else's cgroup and happily migrate processses under the
+openers credentials or mess around some random executing binary.
 
+So you need a model of who is allowed to pull out what file descriptors
+from a file descriptor stash. What are the semantics for that? What's
+the security model for that? What are possible corner cases?
+
+For systemd's userspace fstore that's covered by policy it can implement
+quite easily what fds it accepts. For the kernel it's a lot more
+complicated.
+
+If someone puts in file descriptors for a bunch of files in there opened
+in different mount namespaces then this will pin said mount namespaces.
+If the last process in the mount namespace exists the mount namespace
+would be cleaned up but not anymore. The mount namespace would stay
+pinned. Not wrong, but needs to be spelled out what the implications of
+this are.
+
+What if someone puts a file descriptor from devtmpfs or for /dev/fdbox
+into an fdbox? Even if that's blocked, what happens if someone creates a
+detached bind-mount of a /dev/fdbox mount and mounts it into a different
+mount namespace and then puts a file descriptor for that mount namespace
+into the fdbox? Tons of other scenarios come to mind. Ignoring when
+networking is brought into the mix as well.
+
+It's not done by just letting the kernel stash some files and getting
+them out later somehow and then see whether it's somehow useful in the
+future for other stuff. A generic globally usable fdstore is not
+happening without a clear and detailed analysis what the semantics are
+going to be.
+
+So either that work is done right from the start or that stashing files
+goes out the window and instead that KHO part is implemented in a way
+where during a KHO dump relevant userspace is notified that they must
+now serialize their state into the serialization stash. And no files are
+actually kept in there at all.
 
