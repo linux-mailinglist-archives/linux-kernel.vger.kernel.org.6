@@ -1,91 +1,53 @@
-Return-Path: <linux-kernel+bounces-553330-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-553331-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E068BA58788
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 20:27:08 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A0019A5878A
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 20:28:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1B58416971C
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 19:27:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B4C0F169688
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 19:28:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83A2621422E;
-	Sun,  9 Mar 2025 19:27:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EE54214215;
+	Sun,  9 Mar 2025 19:27:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="XSUrHM+A"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qn2YikpJ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E67A16A959;
-	Sun,  9 Mar 2025 19:26:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE52F1A3BD7;
+	Sun,  9 Mar 2025 19:27:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741548419; cv=none; b=l578v+JZQhBvpBUTsea7SlK83Wy4DBH1AtrNvNVWarbbCY1EwhOVw7zfq64tjuhR3L12MGYpla1JAs9oL7HeK2viGOi4heRYEN79IiIpkt9e7+Bk7xwGx1KCDJzxDETyU3rArvdu6W9O+18+nWD5s4Zm3AbtjWlMJyuuSLdQDQo=
+	t=1741548476; cv=none; b=UFQXyS6DWRcody8iy4vSGpl38ZOhqyAuedzD9DIZ2vsuw55ydZ69R1ts4AKRMIZaw4yS6X5V0H+bEBC1vn7rQWh5pyAqYBPiv4TLrpKwXHngEtxqPwhC4YGJIOVK9CrrC+emLrUlIGu5gULFrNW8g3Mlerb3Rbz5qrXL+11/Nfc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741548419; c=relaxed/simple;
-	bh=Dk3dyE0dtJPnVxAV4n6omrRWpps5/OsjqC9n7SUzIAY=;
+	s=arc-20240116; t=1741548476; c=relaxed/simple;
+	bh=JYaY8MKtsgOY+Detg3srKTHyA3OWinQ5pCvNMEp0BeY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LpSTyFgyQJAtXQ+POHxHm+iQ+CkpBiiW9j3YQy30TQqX1bXF/k8LqmKnoSeOwFwnnFtUf4ExOJD//NHruhwuLGpEB3W6WuUJMFPmgHqbkTrZMdL/2TCP6oT5d6mDmNyoutMA0hMJNbpAuWGcGYZCAOhwsx4cj/zsFNG7L/LRirU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=XSUrHM+A; arc=none smtp.client-ip=192.198.163.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1741548417; x=1773084417;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=Dk3dyE0dtJPnVxAV4n6omrRWpps5/OsjqC9n7SUzIAY=;
-  b=XSUrHM+AvsgTkyH0jGb22UiXdwXBsmFvcXnT3sZ22xM5Ul1w6rEkEPge
-   YwRKUryn52j66sBKjF+qpOtILcJdV79HgdC8srvwuPs3bW8sXA6Zj3VUg
-   jsNwkNLe+qXh/fKZkDOTmgHeZXyCT23F1loDFzizOFPYyNTCi1AveU2RU
-   5QwcnSn9RWbYS7DjqSjZJ0a5mWTvZ89bIVYGQQYQlC/ZcAL989ug8vWkW
-   iROywfm8lleMk7HvHLnnVii6RO9n+O+cwZdJkcn5BtNPtSIh+LpvtKcgg
-   E++5g1ZUcQxsIbxwqqQ3tfGjwqbk/x7NVYFLugZoxVFSMT8GO/bxQuqVz
-   Q==;
-X-CSE-ConnectionGUID: HCja15hSQ/m3UipVP6OQwg==
-X-CSE-MsgGUID: ghOLCTDiSx6uq0puh8hl2w==
-X-IronPort-AV: E=McAfee;i="6700,10204,11368"; a="42414966"
-X-IronPort-AV: E=Sophos;i="6.14,235,1736841600"; 
-   d="scan'208";a="42414966"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Mar 2025 12:26:56 -0700
-X-CSE-ConnectionGUID: UsC/pV4tTLOMuh37iVyUtw==
-X-CSE-MsgGUID: 5kmuBSalTDaAtTsev3gd4A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,234,1736841600"; 
-   d="scan'208";a="120288769"
-Received: from lkp-server02.sh.intel.com (HELO a4747d147074) ([10.239.97.151])
-  by fmviesa010.fm.intel.com with ESMTP; 09 Mar 2025 12:26:52 -0700
-Received: from kbuild by a4747d147074 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1trMIT-0003PE-1U;
-	Sun, 09 Mar 2025 19:26:49 +0000
-Date: Mon, 10 Mar 2025 03:26:18 +0800
-From: kernel test robot <lkp@intel.com>
-To: Christian Marangi <ansuelsmth@gmail.com>, Lee Jones <lee@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Vladimir Oltean <olteanv@gmail.com>,
-	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	Maxime Chevallier <maxime.chevallier@bootlin.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org, upstream@airoha.com
-Cc: oe-kbuild-all@lists.linux.dev, netdev@vger.kernel.org
-Subject: Re: [net-next PATCH v12 05/13] dt-bindings: mfd: Document support
- for Airoha AN8855 Switch SoC
-Message-ID: <202503100331.nksmBPCd-lkp@intel.com>
-References: <20250309172717.9067-6-ansuelsmth@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=fGc9dQfKLfXShD1AQwLbRb84Sya/PuEUHTHXxR9ZCAyFX6BJZI/BInOTfpm42C6u9caOSjPniHm2zmQ1/DVulHHOsSLMTnS/JzuVPJsd2vHJm1tPYNO42ExPZejm38M+bbyLnA1ZZZFEktY4RGYjySYXIgupXVW5yBF9qvogESA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qn2YikpJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CF2A8C4CEE3;
+	Sun,  9 Mar 2025 19:27:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741548476;
+	bh=JYaY8MKtsgOY+Detg3srKTHyA3OWinQ5pCvNMEp0BeY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=qn2YikpJwGMwava0sNGyH5F8PNTUz3txm8ljZ+vFMbYBAzo3zHUYl2C7Tc7MmRwmm
+	 oFM7gFki4bbfzC3N3IRRJi6ebq0YiGY0CvmItk1v6u7rfxzrwdZyrX6Rw2QRZZ1Rwm
+	 yqdvvyyojmu5oCx8AX0c9IS12StFxJpvPH+VWPtxoGy2MzLuGo5MURmIbW20414tjI
+	 q0aNjGdP7W2DdGpnk2jPWpBjC+k2ZUpUSDBHe+Kjo7obKueFuHI+gkCgyL2FsMZMJA
+	 UMH2OeVJR3hgRgu7FSgg5EHZ0YU8W2Vsv2QNxRS0V5+Vb/pgLolr1Xu+a7D6oHyPzo
+	 AUakDOXLMW3yw==
+Date: Sun, 9 Mar 2025 21:27:51 +0200
+From: Leon Romanovsky <leon@kernel.org>
+To: Abhinav Jain <jain.abhinav177@gmail.com>
+Cc: jgg@ziepe.ca, linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] RDMA/core: Publish node GUID with the uevent for
+ ib_device
+Message-ID: <20250309192751.GA7027@unreal>
+References: <20250309175731.7185-1-jain.abhinav177@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -94,39 +56,55 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250309172717.9067-6-ansuelsmth@gmail.com>
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20250309175731.7185-1-jain.abhinav177@gmail.com>
 
-Hi Christian,
+On Sun, Mar 09, 2025 at 05:57:31PM +0000, Abhinav Jain wrote:
+> As per the comment, modify ib_device_uevent to publish the node
+> GUID alongside device name, upon device state change.
+>=20
+> Have compiled the file manually to ensure that it builds. Do not have
+> a readily available IB hardware to test. Confirmed with checkpatch
+> that the patch has no errors/warnings.
 
-kernel test robot noticed the following build warnings:
+I'm missing motivation for this patch. Why is this change needed?
 
-[auto build test WARNING on net-next/main]
+Thanks
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Christian-Marangi/dt-bindings-nvmem-Document-support-for-Airoha-AN8855-Switch-EFUSE/20250310-013306
-base:   net-next/main
-patch link:    https://lore.kernel.org/r/20250309172717.9067-6-ansuelsmth%40gmail.com
-patch subject: [net-next PATCH v12 05/13] dt-bindings: mfd: Document support for Airoha AN8855 Switch SoC
-reproduce: (https://download.01.org/0day-ci/archive/20250310/202503100331.nksmBPCd-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202503100331.nksmBPCd-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
-   Warning: Documentation/translations/ja_JP/SubmittingPatches references a file that doesn't exist: linux-2.6.12-vanilla/Documentation/dontdiff
-   Warning: Documentation/translations/zh_CN/admin-guide/README.rst references a file that doesn't exist: Documentation/dev-tools/kgdb.rst
-   Warning: Documentation/translations/zh_CN/dev-tools/gdb-kernel-debugging.rst references a file that doesn't exist: Documentation/dev-tools/gdb-kernel-debugging.rst
-   Warning: Documentation/translations/zh_TW/admin-guide/README.rst references a file that doesn't exist: Documentation/dev-tools/kgdb.rst
-   Warning: Documentation/translations/zh_TW/dev-tools/gdb-kernel-debugging.rst references a file that doesn't exist: Documentation/dev-tools/gdb-kernel-debugging.rst
->> Warning: MAINTAINERS references a file that doesn't exist: Documentation/devicetree/bindings/mfd/airoha,an8855-mfd.yaml
-   Warning: MAINTAINERS references a file that doesn't exist: Documentation/devicetree/bindings/misc/fsl,qoriq-mc.txt
-   Warning: MAINTAINERS references a file that doesn't exist: Documentation/devicetree/bindings/leds/backlight/ti,lp8864.yaml
-   Warning: lib/Kconfig.debug references a file that doesn't exist: Documentation/dev-tools/fault-injection/fault-injection.rst
-   Using alabaster theme
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+>=20
+> Signed-off-by: Abhinav Jain <jain.abhinav177@gmail.com>
+> ---
+>  drivers/infiniband/core/device.c | 13 +++++++++----
+>  1 file changed, 9 insertions(+), 4 deletions(-)
+>=20
+> diff --git a/drivers/infiniband/core/device.c b/drivers/infiniband/core/d=
+evice.c
+> index 0ded91f056f3..1812038f1a91 100644
+> --- a/drivers/infiniband/core/device.c
+> +++ b/drivers/infiniband/core/device.c
+> @@ -499,12 +499,17 @@ static void ib_device_release(struct device *device)
+>  static int ib_device_uevent(const struct device *device,
+>  			    struct kobj_uevent_env *env)
+>  {
+> -	if (add_uevent_var(env, "NAME=3D%s", dev_name(device)))
+> +	const struct ib_device *dev =3D
+> +		container_of(device, struct ib_device, dev);
+> +
+> +	if (add_uevent_var(env, "NAME=3D%s", dev_name(&dev->dev)))
+>  		return -ENOMEM;
+> =20
+> -	/*
+> -	 * It would be nice to pass the node GUID with the event...
+> -	 */
+> +	__be64 node_guid_be =3D dev->node_guid;
+> +	u64 node_guid =3D be64_to_cpu(node_guid_be);
+> +
+> +	if (add_uevent_var(env, "NODE_GUID=3D0x%llx", node_guid))
+> +		return -ENOMEM;
+> =20
+>  	return 0;
+>  }
+> --=20
+> 2.34.1
+>=20
 
