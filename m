@@ -1,102 +1,103 @@
-Return-Path: <linux-kernel+bounces-552907-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-552908-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7AB4AA580DB
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 06:48:32 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9282CA580DE
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 06:49:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 013591890D23
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 05:48:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 739933A8200
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 05:48:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D58933F9;
-	Sun,  9 Mar 2025 05:47:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35747C133;
+	Sun,  9 Mar 2025 05:48:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="eyEXKFXh"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27F53C133;
-	Sun,  9 Mar 2025 05:47:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Gr6eMVcB"
+Received: from mail-yb1-f182.google.com (mail-yb1-f182.google.com [209.85.219.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B949433AC;
+	Sun,  9 Mar 2025 05:48:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741499249; cv=none; b=SJOTf3sEOVMK7R7dYsIgjAad27bwG1sEjCJ+KGKk2YQUk/i0NZBeWR2aTAcvPWDV6GDztP1t4mRA6yGOWm1kbHY39jwKs1YYTycF33Uu7yXZbLgr8uH/5UC68PzuFrDmcCfJp6txH+Fx1MaKI++Smnb7IszMko9GfOAWrdD1Cw8=
+	t=1741499336; cv=none; b=Yy+zWmXZQZLDFOh0ZqRmCdyfurVxD2gCVFwH1bXDH/PAVBS6m/5//dEa/3WgWXv/RdYDAcrpJIQ220+suXsOnDAr+0VXuGjREjDr5LO9svrZcnq+XUQiPfnEzqjmEKR/ypitYTxHtxXhoaaSRwFIUmpWN9ZNaOhZTUQgMMGtZhU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741499249; c=relaxed/simple;
-	bh=Qy03Kzd1sCrX+TA3t2MlFCTfEPD3qurJBVVaywkl5VQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KpbDP4HotH/lqGWl/j4TV4G8gndSUYaWqlqhI5azALmNxgDRxacGp/WsP8lti5zL4wH1VjBVpsae8tjbeZGU8rCMOhSrTLAmWlG5LwsxBVfpSExcvS1D4eo8IcuL3KkPoTWZXXiJZWsENWXX8fIwnVaDv1FdMqiw+vcoSfHgcig=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=eyEXKFXh; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: by linux.microsoft.com (Postfix, from userid 1127)
-	id C08812111406; Sat,  8 Mar 2025 21:47:27 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com C08812111406
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1741499247;
-	bh=gLvp5ZqYmwas6pmP/dNAwRvYqTVCi/4Uh5B5do6+cfk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=eyEXKFXhpeu5ozpLKrIH4i8WXSRM+4Zq+OI5R6NqFPV+Ai7TUbHcboHCMi2vMNOG6
-	 eik3tBSFBzua8N1uzqP5y1+owQP6CmICJpduZPeGEv0CQiS347hZkDT2w4uhoDmfmb
-	 t/75qve62f+MwtxORfl5PGdId10l+UV8CQRpZfRw=
-Date: Sat, 8 Mar 2025 21:47:27 -0800
-From: Saurabh Singh Sengar <ssengar@linux.microsoft.com>
-To: longli@linuxonhyperv.com
-Cc: "K. Y. Srinivasan" <kys@microsoft.com>,
-	Haiyang Zhang <haiyangz@microsoft.com>,
-	Wei Liu <wei.liu@kernel.org>, Dexuan Cui <decui@microsoft.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	linux-hyperv@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Long Li <longli@microsoft.com>
-Subject: Re: [Patch v2] uio_hv_generic: Set event for all channels on the
- device
-Message-ID: <20250309054727.GA24737@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
-References: <1740780854-7844-1-git-send-email-longli@linuxonhyperv.com>
+	s=arc-20240116; t=1741499336; c=relaxed/simple;
+	bh=0+vUFsq883gp4a88Om3aIZZNxVbvT/09ZAgkqJiFKhE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=K/xmCKwpY/6JS50UKv7IBZnv+qIwdS54rb6geUnUgGitVd4JA8uoDGCg5MQrzPG8z3+77xB4oA82RmgLmw8Mp31kuKvAslE0SvevxAZQ0aGdlMlWM4QafGrJ943F+fFrKdY4ot4WCaMS7NiW+DAr93yOPC3Zbx7h6hlBxlPw0Xg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Gr6eMVcB; arc=none smtp.client-ip=209.85.219.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yb1-f182.google.com with SMTP id 3f1490d57ef6-e6343c68b8fso2330832276.2;
+        Sat, 08 Mar 2025 21:48:55 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741499334; x=1742104134; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=0+vUFsq883gp4a88Om3aIZZNxVbvT/09ZAgkqJiFKhE=;
+        b=Gr6eMVcB+Y2Vy9y0zuoL2aI64RrY8EDw7VOqoNjJmslhcV4q84NnNa8MoU4IvXOJyS
+         gNibIYYKzmjKck5Ly7x4q3W2TStNY4mWJ4IcdDjHLviO6usSNMdMLMTyAEMhYME7Abdw
+         CDZLJqwEFG6tAekSadTNy27/UAOWXsCN16zVk5SZEUaddiXj6Ld2lnsKW/zYlpi/hZ0j
+         icd8Q+7YhllmnPbRz6N4jD/L+L2cepswHPVUseDOEF3As2JtbTOIyiPIg52TJqRx36UD
+         dTLvieuWGl6NglUfCCgRtz1N4H8VwuBscpLMQgJJqdHbzrxWcq14Rzs1Nl/ljsx8TD3Z
+         5FNQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741499334; x=1742104134;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=0+vUFsq883gp4a88Om3aIZZNxVbvT/09ZAgkqJiFKhE=;
+        b=pXR5B2d5kEkUXFEA//PCK+z6qk2X9uM5lG0sUWFmKq+uXg8Pfk51GckgRIPbq0pkhv
+         ZT+4pCcb22RhAZxpWPghs9kRyl/L3cYAMMwpAKAhFrJ77mREs0FfgWuUOrPOfryDzlXP
+         EQJmoFxjZMXERqEdBuObHX3mpaLVe9P1zd+/E+JyCRGWLdiMcbDDjsDMtiDh9N0ckev+
+         9KSE5gOQg0xw4WaDPvFuLVz3fG6iT5uIXx5cwhzL8WvwrGU9wweGMae3Nl+0kP/zXqws
+         yh+rh0ra2vsXeoC8D+k8tB4qyYZWfXGcryfHVu2Hzn3O8LqRoZHtfgAtdK5yDvYcDnJ3
+         2l4A==
+X-Forwarded-Encrypted: i=1; AJvYcCVgLce0Nt/ZzaFOJUoYVxMHbl2uQhu0RgMqJcL+XqmjU/jUbZECwh5Fb6hHg8IbeN/th33fDijJlY+qPeA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxfU3O10Mw/tFE37ER/jS7S/PQokK4sK8RvGjBMeAE9JFMVjP2a
+	NNaEhij3rzOeapK1a0Vk6KmIfFXl7rcaEcq6WrXzzIFf5ceFGkRvUaNAlCeNjGbIMDx54eM6Yz6
+	qTvywpldzEjjcx2K+iFBlqAZGYnA=
+X-Gm-Gg: ASbGncvlLWAfpVCQOR5d/FyquMrLv9P0POuSPgzNulVGaZIq5kwVguDzqjPalx9oNOk
+	IQO3abUjeN3QI8Cc9hZf5a0ELV/4uz4nnPWlbKImEPFtoM8k0AnQJJsH3hVkhc+tvf7N+lFtyMr
+	CPiAJLb1KpPWk3c4bDM3zSRQ==
+X-Google-Smtp-Source: AGHT+IGkM54VeRWhECXsPDF52IJ3lObNKFVMQZNCzIi+4MVCGhChHnkm7xcYx4R3VwX820vnJT8hwqDQG3epj7DrCI4=
+X-Received: by 2002:a05:6902:1201:b0:e57:87b3:d2e0 with SMTP id
+ 3f1490d57ef6-e635c10191cmr13060935276.3.1741499334070; Sat, 08 Mar 2025
+ 21:48:54 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1740780854-7844-1-git-send-email-longli@linuxonhyperv.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+References: <20250305155712.49833-2-simeddon@gmail.com> <20250308144357.20f24fa6@jic23-huawei>
+ <20250308144944.668d79b5@jic23-huawei>
+In-Reply-To: <20250308144944.668d79b5@jic23-huawei>
+From: Siddharth Menon <simeddon@gmail.com>
+Date: Sun, 9 Mar 2025 11:18:18 +0530
+X-Gm-Features: AQ5f1Jr8iMs5wRpKB_SDTiXKTS02-KTePjS_i1SGrxVLXCES9nMY-YEBd4G5tA0
+Message-ID: <CAGd6pzO492FA4bijFgkGvusrbqo2mkT=kpkY150Xg-nMfHrpZw@mail.gmail.com>
+Subject: Re: [PATCH 0/2] iio: accel: adis16203: cleanup and standardization
+To: Jonathan Cameron <jic23@kernel.org>
+Cc: linux-iio@vger.kernel.org, marcelo.schmitt1@gmail.com, 
+	gregkh@linuxfoundation.org, lars@metafoo.de, Michael.Hennerich@analog.com, 
+	linux-kernel@vger.kernel.org, linux-staging@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Feb 28, 2025 at 02:14:14PM -0800, longli@linuxonhyperv.com wrote:
-> From: Long Li <longli@microsoft.com>
-> 
-> Hyper-V may offer a non latency sensitive device with subchannels without
-> monitor bit enabled. The decision is entirely on the Hyper-V host not
-> configurable within guest.
-> 
-> When a device has subchannels, also signal events for the subchannel
-> if its monitor bit is disabled.
-> 
-> Signed-off-by: Long Li <longli@microsoft.com>
-> ---
-> Change log
-> v2: Use vmbus_set_event() to avoid additional check on monitored bit
->     Lock vmbus_connection.channel_mutex when going through subchannels
-> 
->  drivers/uio/uio_hv_generic.c | 32 ++++++++++++++++++++++++++------
->  1 file changed, 26 insertions(+), 6 deletions(-)
-> 
-> diff --git a/drivers/uio/uio_hv_generic.c b/drivers/uio/uio_hv_generic.c
-> index 3976360d0096..45be2f8baade 100644
-> --- a/drivers/uio/uio_hv_generic.c
-> +++ b/drivers/uio/uio_hv_generic.c
-> @@ -65,6 +65,16 @@ struct hv_uio_private_data {
->  	char	send_name[32];
->  };
->  
-> +static void set_event(struct vmbus_channel *channel, s32 irq_state)
-> +{
-> +	channel->inbound.ring_buffer->interrupt_mask = !irq_state;
-> +	if (!channel->offermsg.monitor_allocated && irq_state) {
-> +		/* MB is needed for host to see the interrupt mask first */
-> +		virt_mb();
+On Sat, 8 Mar 2025 at 20:19, Jonathan Cameron <jic23@kernel.org> wrote:
+>
+> > I'm not going to apply these because I think you correct
+> > identified that the device support should just be added
+> > to the adis16201 driver and this one dropped.
+> > Good thing you were more awake on this than me ;)
+> >
+> Sorry - wrong person.
 
-Why is memory barrier not getting called for 'faster' channels ?
+Well, I=E2=80=99ll assume these won't be getting applied.
 
-- Saurabh
+Siddharth Menon
 
