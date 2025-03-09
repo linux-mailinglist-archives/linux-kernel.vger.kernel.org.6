@@ -1,158 +1,203 @@
-Return-Path: <linux-kernel+bounces-553093-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-553094-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9B44AA5838B
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 12:12:55 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E018BA5838E
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 12:17:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C27CF16DB51
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 11:12:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1128018960FB
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 11:18:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE0771C5D60;
-	Sun,  9 Mar 2025 11:12:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B04B81C5D75;
+	Sun,  9 Mar 2025 11:17:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Y4+RH5HL"
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="RiZ855jm"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 773981537A7;
-	Sun,  9 Mar 2025 11:12:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 512E074C08;
+	Sun,  9 Mar 2025 11:17:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741518768; cv=none; b=dw8vVuLw0RdgggPwc65vBA4Oq76Fei2OnUbVKXuWyxM2bXEpxIhJQbWYAmBhlFQnFSdlVLWS62Eiispp63hIXO/biNgqCp/08hS+KEbNuKnu2cVQjYMMXmmB90bQSJE+UeKoUILuTmXxolpurlYCBr+0tciyrCAFF7RhyZxNOnw=
+	t=1741519063; cv=none; b=Avf1SN6ZKXRobITOX15vJQ5FbZSaC2c6rhq4vmi9y2Vu1Gmhb/kz6NcaCSerUsBKtsdJJ9d4oi9YOQxAAewcp6u7QJDlLaKj8BlVJO2s+0H3aD8f+mW3pck96fvCTwXia04PzQc4JbWtRAl9Lgk41UM9+fh8L2QKXIlPCqFGIeE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741518768; c=relaxed/simple;
-	bh=R1/ra110SempN8LYaPUNnLAkhoOs41pIzMor/3d07BQ=;
+	s=arc-20240116; t=1741519063; c=relaxed/simple;
+	bh=QSf+jvHlxj/q/MmnvoCuSlyJ7jRPtTkcssl0GlRqrOE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KpzagQZ4q1fl8g6QL/Y5wI7Tx2zeyylH0HMvB4/O5rFIBGOF/RuRAjkaZpMhRJELKR1bZkuR01b7LFb1KUOeLVH6gDX3JDHg2TA3quBfYo+3yATvJil8DWCn9huow4xG6cBjKwn2FxiCwfQT2O9Z3RqwlKDY5m3y/VXa8893sTI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Y4+RH5HL; arc=none smtp.client-ip=209.85.128.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-43cf628cb14so746035e9.1;
-        Sun, 09 Mar 2025 04:12:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741518765; x=1742123565; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=pLoLQv1oy3J8TFf2ZoD9HQxdL8JjlROz1Fj/a+R3JZU=;
-        b=Y4+RH5HL1EMOsWbU7+Fnnn0jpgZNU87rNUbvI5XKl2mFha6Pgkf/CDTJMF8S8eR2wX
-         6Bb8WpvNNQJxC2jH5TwSD//7OH+PndPocL4tyVTR29KavvHye0UHMTD8N+Vpjy1pqO7D
-         s3//uNkr1CPcRshuzUp0ZJ3+U094lcoH5Io51hXr3Ej7SgEHrGpHT9LjE5NA5Ip2nOiT
-         L3gBJmrVE1ZIeNuZIICkk94ORql7634Wv47PXrRX2u9Sj/7nlSdQBewq4xJC3cV9a46I
-         tP4JmfaoqoAFNAgFuNL1Uy9iCq4rfBLabQv56rJcvsKy3PZmqFbcNUGxi06IO653U13j
-         pzQg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741518765; x=1742123565;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=pLoLQv1oy3J8TFf2ZoD9HQxdL8JjlROz1Fj/a+R3JZU=;
-        b=CG5jAJi6kO4QP/iUMteSIeu880khnRoCdy7wyz/o8p4tt5QfWRBACsT57KThMOUtMm
-         Nhgg/tOZbkmRZzBsqf2OJjXkQKkBSAV5D1H+57vB6uPjsMzlxWPMrybYuUw32LmyjTLQ
-         yCy+KKcm/zvm2UH54jwyTNOF+xORHGmkRGngqKFvCdVIi1m/ZdUJhU4QZn8sqrgBG27Q
-         sYfxH93g67JnMTCuGLjlmzJRgMxBSkfGrY+f86Yi+qDEJq+r/js6QR647LzEkwZc8rrh
-         MU4CurWVP/CRZltTzMFtPugzgIS+q6KT5Yrba0oejSGQft8UbUqAp4eJqORAtqQ5l9KX
-         OvOw==
-X-Forwarded-Encrypted: i=1; AJvYcCVv/ncGfgZCN7KJt0IieOCCgYe62QC9buRH97Df8jg/kxd0yBKKW8bFJZ7dFAdmCSDBrthe8ZNotYGZwh50g/GJYGxbBsk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxbHCVWrQReGiBF7GtI2Ah1Pd8c+OhPokxRSCgkdFCuLHyFCCmU
-	POJpwF4ZUkZMG8z5IuhzjdhFwutY0s9fw6IZhRptnormdiAnuRhwMh6Muw==
-X-Gm-Gg: ASbGncu0NFiCwmnWUEUc/H82z8SRRL64fgYtAMMKE61zPZSZKUN5Szc0YJ7TPDgokJA
-	kWc9uWfRl4FkxjI9FL0FwDj72FpmesMZwe2dDFbQZTREfeU9ugT+vOFAlACQPKsqSQfw+rE5dOl
-	w06BoFZNrEc9Z1izO7dq2W7VlZsGUSwoEt4VWW0xf4PHHjwQASK+ERm8TN+UwgOahnEChBJIcT4
-	Q03FdsdmV4gjN+dxUACkklPOxznqPbXlRG+yEsUSubZxuxe6dCF8TGavVW156NgR/M8RONC5eed
-	oZBlUW7lkh2G6fJFBbfabqvW7g04ud5L0PIqI24XMQ==
-X-Google-Smtp-Source: AGHT+IG3/C8RXlmkY2CUPmeYDdxB6zY0IIjtYLFX1U9txnudgTJDegFVLenHDSK9U88TwDD2wtedcw==
-X-Received: by 2002:a05:600c:354b:b0:439:4b23:9e8e with SMTP id 5b1f17b1804b1-43ce4ab02eamr36510695e9.3.1741518764241;
-        Sun, 09 Mar 2025 04:12:44 -0700 (PDT)
-Received: from localhost ([2a02:168:59f0:1:b0ab:dd5e:5c82:86b0])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-43ceaac390bsm44649605e9.35.2025.03.09.04.12.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 09 Mar 2025 04:12:43 -0700 (PDT)
-Date: Sun, 9 Mar 2025 12:12:39 +0100
-From: =?iso-8859-1?Q?G=FCnther?= Noack <gnoack3000@gmail.com>
-To: Paul Moore <paul@paul-moore.com>
-Cc: linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
-Subject: Re: [RFC PATCH] MAINTAINERS: add an explicit credentials entry
-Message-ID: <20250309.5ddca2aac3f6@gnoack.org>
-References: <20250304222304.214704-2-paul@paul-moore.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZP1r9K2Hzb7F0en7Gxa2B6CQTz4KTEyPPnRLJKKjl58K9jgTrwa6TAHFg7uMap9QGWdh3isrnts3HQig9SLVi5g7WRdcL5dZc+PPh8axgv/mb7hIxmQuf/qaubGD+KYsinIeUHghPJIIQSgAxgyzUssWEsd/hRpPJjE/gmAbDaM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=RiZ855jm; arc=none smtp.client-ip=198.175.65.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1741519061; x=1773055061;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=QSf+jvHlxj/q/MmnvoCuSlyJ7jRPtTkcssl0GlRqrOE=;
+  b=RiZ855jmQWBSz26S4zRkb7igb0MhIoLDl/cG7mUMOj1fmsaK0+Yc2t6Q
+   A0RzMiUD3zYr6eWtyRR5YZpgY+hWpa8B184Br87513F57xfNfgxbkweaJ
+   7JHmiPQCYZu6eGlHkzbbzHsWrCUSzt/P4NoILqTzpQeIqS8coxMpTVfLj
+   KqHhLynN/7kbTO+lvKtx9dwryi0AwNuZxf6YO0D8CluvX54SbpgfGt+9z
+   OKQsGqGLkFolPRwHhhm3NAK3c/XbA21DEaLXkjxwKd/qGP4xvDmjcBDmC
+   uKjuH5AeR60lFH0SUQRuVc0CeVyKbbRYpqL4io0CLCtnG7491AM0IRcdk
+   w==;
+X-CSE-ConnectionGUID: arb/cAIPQz+UU8daj++qPQ==
+X-CSE-MsgGUID: 5Enr/MEwTPCdgMIcF+wyYQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11367"; a="42637762"
+X-IronPort-AV: E=Sophos;i="6.14,234,1736841600"; 
+   d="scan'208";a="42637762"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Mar 2025 04:17:40 -0700
+X-CSE-ConnectionGUID: 8vBYysMdRN67j6N62vJNtw==
+X-CSE-MsgGUID: 4wn1WTrARm2da30ZvQlYVg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,234,1736841600"; 
+   d="scan'208";a="142962768"
+Received: from lkp-server02.sh.intel.com (HELO a4747d147074) ([10.239.97.151])
+  by fmviesa002.fm.intel.com with ESMTP; 09 Mar 2025 04:17:39 -0700
+Received: from kbuild by a4747d147074 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1trEf2-00032E-1e;
+	Sun, 09 Mar 2025 11:17:36 +0000
+Date: Sun, 9 Mar 2025 19:16:38 +0800
+From: kernel test robot <lkp@intel.com>
+To: Neeraj Sanjay Kale <neeraj.sanjaykale@nxp.com>, marcel@holtmann.org,
+	luiz.dentz@gmail.com
+Cc: oe-kbuild-all@lists.linux.dev, linux-bluetooth@vger.kernel.org,
+	linux-kernel@vger.kernel.org, amitkumar.karwar@nxp.com,
+	neeraj.sanjaykale@nxp.com
+Subject: Re: [PATCH v2 2/3] Bluetooth: btnxpuart: Handle bootloader error
+ during cmd5 and cmd7
+Message-ID: <202503091936.x9Evtskg-lkp@intel.com>
+References: <20250306180931.57705-2-neeraj.sanjaykale@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250304222304.214704-2-paul@paul-moore.com>
+In-Reply-To: <20250306180931.57705-2-neeraj.sanjaykale@nxp.com>
 
-Hello Paul and Serge!
+Hi Neeraj,
 
-On Tue, Mar 04, 2025 at 05:23:05PM -0500, Paul Moore wrote:
-> The lack of an explicit credential (kernel/cred.c) entry has caused
-> confusion in the past among new, and not-so-new developers, about where
-> to send credential patches for discussion and merging.  Those patches
-> that are sent can often rot on the mailing lists for months as there
-> is no clear maintainer tasked with reviewing and merging patches.
-> 
-> I'm volunteering for the cred maintainer role to try and reduce the
-> confusion and help cred patches find their way up to Linus' tree.  As
-> there generally aren't a lot of cred patches I'll start with simply
-> folding them into the LSM tree, but if this changes I'll setup a
-> dedicated cred tree.
-> 
-> Signed-off-by: Paul Moore <paul@paul-moore.com>
-> ---
->  MAINTAINERS | 8 ++++++++
->  1 file changed, 8 insertions(+)
-> 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 896a307fa065..68e4656c15ea 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -6139,6 +6139,14 @@ L:	linux-input@vger.kernel.org
->  S:	Maintained
->  F:	drivers/hid/hid-creative-sb0540.c
->  
-> +CREDENTIALS
-> +M:	Paul Moore <paul@paul-moore.com>
-> +L:	linux-security-module@vger.kernel.org
-> +S:	Supported
-> +T:	git https://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/lsm.git
-> +F:	include/linux/cred.h
-> +F:	kernel/cred.c
+kernel test robot noticed the following build warnings:
 
-Maybe also add the documentation:
+[auto build test WARNING on bluetooth/master]
+[also build test WARNING on linus/master v6.14-rc5 next-20250307]
+[cannot apply to bluetooth-next/master]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-+F:	Documentation/security/credentials.rst
+url:    https://github.com/intel-lab-lkp/linux/commits/Neeraj-Sanjay-Kale/Bluetooth-btnxpuart-Handle-bootloader-error-during-cmd5-and-cmd7/20250307-021228
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/bluetooth/bluetooth.git master
+patch link:    https://lore.kernel.org/r/20250306180931.57705-2-neeraj.sanjaykale%40nxp.com
+patch subject: [PATCH v2 2/3] Bluetooth: btnxpuart: Handle bootloader error during cmd5 and cmd7
+config: microblaze-randconfig-r123-20250309 (https://download.01.org/0day-ci/archive/20250309/202503091936.x9Evtskg-lkp@intel.com/config)
+compiler: microblaze-linux-gcc (GCC) 14.2.0
+reproduce: (https://download.01.org/0day-ci/archive/20250309/202503091936.x9Evtskg-lkp@intel.com/reproduce)
 
-This documents the prepare_creds()/commit_creds()/abort_creds()
-"transactional" API that tasks should use to change credentials.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202503091936.x9Evtskg-lkp@intel.com/
 
-> +
->  INTEL CRPS COMMON REDUNDANT PSU DRIVER
->  M:	Ninad Palsule <ninad@linux.ibm.com>
->  L:	linux-hwmon@vger.kernel.org
-> -- 
-> 2.48.1
-> 
+sparse warnings: (new ones prefixed by >>)
+>> drivers/bluetooth/btnxpuart.c:1113:24: sparse: sparse: restricted __le16 degrades to integer
+   drivers/bluetooth/btnxpuart.c:1119:24: sparse: sparse: restricted __le16 degrades to integer
 
-Acked-by: Günther Noack <gnoack3000@gmail.com>
+vim +1113 drivers/bluetooth/btnxpuart.c
 
-Thank you both for stepping up to establish a clearer ownership for
-credentials!  There is a need for authoritative decisions in that
-area, and it has been difficult to find the right contacts for
-credentials on earlier patches as well, such as:
+  1089	
+  1090	static int nxp_recv_fw_req_v3(struct hci_dev *hdev, struct sk_buff *skb)
+  1091	{
+  1092		struct btnxpuart_dev *nxpdev = hci_get_drvdata(hdev);
+  1093		struct v3_data_req *req;
+  1094		__u16 len = 0;
+  1095		__u32 offset;
+  1096	
+  1097		if (!process_boot_signature(nxpdev))
+  1098			goto free_skb;
+  1099	
+  1100		req = skb_pull_data(skb, sizeof(*req));
+  1101		if (!req || !nxpdev->fw)
+  1102			goto free_skb;
+  1103	
+  1104		if (!req->error) {
+  1105			nxp_send_ack(NXP_ACK_V3, hdev);
+  1106			if (nxpdev->timeout_changed == cmd_sent)
+  1107				nxpdev->timeout_changed = changed;
+  1108			if (nxpdev->baudrate_changed == cmd_sent)
+  1109				nxpdev->baudrate_changed = changed;
+  1110		} else {
+  1111			nxp_handle_fw_download_error(hdev, req);
+  1112			if (nxpdev->timeout_changed == cmd_sent &&
+> 1113			    req->error == NXP_CRC_RX_ERROR) {
+  1114				nxpdev->fw_v3_offset_correction -= nxpdev->fw_v3_prev_sent;
+  1115				nxpdev->timeout_changed = not_changed;
+  1116			}
+  1117			/* After baudrate change, it is normal to get ACK Timeout error */
+  1118			if (nxpdev->baudrate_changed == cmd_sent &&
+  1119			    req->error == NXP_CRC_RX_ERROR) {
+  1120				nxpdev->fw_v3_offset_correction -= nxpdev->fw_v3_prev_sent;
+  1121				nxpdev->baudrate_changed = not_changed;
+  1122			}
+  1123			goto free_skb;
+  1124		}
+  1125	
+  1126		len = __le16_to_cpu(req->len);
+  1127	
+  1128		if (nxpdev->timeout_changed != changed) {
+  1129			nxp_fw_change_timeout(hdev, len);
+  1130			nxpdev->timeout_changed = cmd_sent;
+  1131			goto free_skb;
+  1132		}
+  1133	
+  1134		if (nxpdev->baudrate_changed != changed) {
+  1135			if (nxp_fw_change_baudrate(hdev, len)) {
+  1136				nxpdev->baudrate_changed = cmd_sent;
+  1137				serdev_device_set_baudrate(nxpdev->serdev,
+  1138							   HCI_NXP_SEC_BAUDRATE);
+  1139				serdev_device_set_flow_control(nxpdev->serdev, true);
+  1140				nxpdev->current_baudrate = HCI_NXP_SEC_BAUDRATE;
+  1141			}
+  1142			goto free_skb;
+  1143		}
+  1144	
+  1145		if (req->len == 0) {
+  1146			bt_dev_info(hdev, "FW Download Complete: %zu bytes",
+  1147				   nxpdev->fw->size);
+  1148			clear_bit(BTNXPUART_FW_DOWNLOADING, &nxpdev->tx_state);
+  1149			wake_up_interruptible(&nxpdev->fw_dnld_done_wait_q);
+  1150			goto free_skb;
+  1151		}
+  1152	
+  1153		offset = __le32_to_cpu(req->offset);
+  1154		if (offset < nxpdev->fw_v3_offset_correction) {
+  1155			/* This scenario should ideally never occur. But if it ever does,
+  1156			 * FW is out of sync and needs a power cycle.
+  1157			 */
+  1158			bt_dev_err(hdev, "Something went wrong during FW download");
+  1159			bt_dev_err(hdev, "Please power cycle and try again");
+  1160			goto free_skb;
+  1161		}
+  1162	
+  1163		nxpdev->fw_dnld_v3_offset = offset - nxpdev->fw_v3_offset_correction;
+  1164		serdev_device_write_buf(nxpdev->serdev, nxpdev->fw->data +
+  1165					nxpdev->fw_dnld_v3_offset, len);
+  1166	
+  1167	free_skb:
+  1168		nxpdev->fw_v3_prev_sent = len;
+  1169		kfree_skb(skb);
+  1170		return 0;
+  1171	}
+  1172	
 
-https://lore.kernel.org/all/20240805-remove-cred-transfer-v2-0-a2aa1d45e6b8@google.com/
-(patch by Jann Horn: "get rid of cred_transfer")
-
-https://lore.kernel.org/all/20250221184417.27954-2-gnoack3000@gmail.com/
-(patch by me, multithreaded Landlock enablement)
-
-Thanks,
-–Günther
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
