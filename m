@@ -1,167 +1,97 @@
-Return-Path: <linux-kernel+bounces-553357-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-553358-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 480E0A587FE
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 20:55:54 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F894A58800
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 20:56:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 144AE3AD448
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 19:55:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DDA89188DC96
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 19:56:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 386E021A45D;
-	Sun,  9 Mar 2025 19:55:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3E6821A45A;
+	Sun,  9 Mar 2025 19:56:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JqTEi/uc"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jicQ10rx"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8340F1DA109;
-	Sun,  9 Mar 2025 19:55:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A4921DA109;
+	Sun,  9 Mar 2025 19:56:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741550146; cv=none; b=pGyAEkmQ99fH5ldpt7uhNbkMd711eWQFBnMFOlP4fX3QbzOnIar/x4amJqaAddBLfS6jXU+q2f33hTkw99nrzxj2/pDUP/34d0+ZzF3hq2UJS5wYp37e/Asj+4iFE/sEbKkXgFSHhuWoBqIfe55aABGtmdGX7n3EilveIYovMFg=
+	t=1741550202; cv=none; b=ATAimBnqYTACeNz6V8DSPmUBFoylgzhFUh2fq+tBJYW+mGJ+WbVCuHPdxUpFfHA7XxREfZy4mhdHEktgVtXbPmVBtPDR1PLIEovWh2MY/tQDE7Uuht4U9tf3Op1+X0KpvQQq4DUqkdvohkEX4ni07TUmbGBR5JgeERGaFM6Da6g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741550146; c=relaxed/simple;
-	bh=zAPNcUFsX5MrJrlX6bLNUJsHyy42N48ffEZW73+2rUY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ifm6GTg2Z+OuNAbNSPR8qkdxM5i7EiYP4Ka0UX+wccYK0rP91fvg2d5DFBSgbrZKyMQgX/N7Mhm+buYObjzcB2Y1EC9QNJj/RysgoXYDiFJWhVMykboukBxYWNmB+hkD4e/pVHLpyZF8GrAi9kPGUydSe+uyYERl7QDAvBsWOOo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JqTEi/uc; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DB7F6C4CEE3;
-	Sun,  9 Mar 2025 19:55:41 +0000 (UTC)
+	s=arc-20240116; t=1741550202; c=relaxed/simple;
+	bh=9zth3ji/1gSASSbT74qef/gpNPTW4q7Xzz9+gH90Nws=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=Ov02k0g0p/vj0jPmMW9XdBR8DeJRLi0LL6sD09ge2BsT76KrEhQLV/SJTwmFx8ZLs5f6x1+CVDmL6UI8dtdE4eNGqWcwrGhB8iSdEHCOpbyS2it8gELF7LIa0wosnjgkF/k42T+cQawr5oWe8F3vORO199u4I5+wZHe3A7NPO7M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jicQ10rx; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 63392C4CEE3;
+	Sun,  9 Mar 2025 19:56:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741550146;
-	bh=zAPNcUFsX5MrJrlX6bLNUJsHyy42N48ffEZW73+2rUY=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=JqTEi/uccPc2B7x4ifj3kLnrDXYgD3cQF7rNBNLDwcagkvL26TaEemWzJVflcHOxY
-	 LJ0t9HR7PSsIaUyORMb3C2lRqAwFCMAiOIb0vgLjQvubvWupkyntj+wY2/uqLd4PMB
-	 0ZPZJlWeBwMXr4O2CpK7Oqf1Vndw/UaiAecqMHv2hra0xZ6NGhB8BozYy1aCa+K3VY
-	 T7pJTI5x8BiW/uI2+pG8lPfFHMYC/5isjtDvRtuUZlYYMvQQz3OnO+OiLzAFUneaeb
-	 C843b9O7Qq3t4AZwOkEq5lcmvfSF46Alo7tUSSpYXmcJzcOrowTMOoZkATQa2bcot3
-	 cFCXuz3yoP0VA==
-Message-ID: <49d6bdfd-a2d3-48e6-aabc-e6674256e5a8@kernel.org>
-Date: Sun, 9 Mar 2025 20:55:39 +0100
+	s=k20201202; t=1741550202;
+	bh=9zth3ji/1gSASSbT74qef/gpNPTW4q7Xzz9+gH90Nws=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=jicQ10rx8YCGb1nPT0GsF8Ry7D154mk/tl64osb5PD/y/trtNC1eYWB0RG6HadmAj
+	 vku4gl6GxXYHX/CK3nCWiMAY89EVbvOP29WJEEDaBiCwtWGPdBOqJxZn9wfkYU6Okd
+	 vUz0JObz4x9qxurQFGFLcM2sEW2Ttn2/qqXu7c1sDGFyu7vaFPmIYguxq83kUzgvT8
+	 JNlC/HBu+mEfP6Wo6kI1T+CKIblCSzTPBmcRPyNYrFO6oYbSkby8UdcXv11t84Srh7
+	 togOcLPwFW9v5JnB3Isvvrb8secp7GYyEUjQYdzp4O4B6wEytF4txoZMR6kdAgphWi
+	 nOG/BiVJQ3MTw==
+From: Miguel Ojeda <ojeda@kernel.org>
+To: chenhuacai@loongson.cn
+Cc: chenhuacai@kernel.org,
+	gregkh@linuxfoundation.org,
+	jpoimboe@kernel.org,
+	kernel@xen0n.name,
+	linux-kernel@vger.kernel.org,
+	loongarch@lists.linux.dev,
+	peterz@infradead.org,
+	sashal@kernel.org,
+	stable@vger.kernel.org,
+	Miguel Ojeda <ojeda@kernel.org>
+Subject: Re: [PATCH 6.12/6.13] loongarch: Use ASM_REACHABLE
+Date: Sun,  9 Mar 2025 20:56:22 +0100
+Message-ID: <20250309195622.1541936-1-ojeda@kernel.org>
+In-Reply-To: <20250308053753.3632741-1-chenhuacai@loongson.cn>
+References: <20250308053753.3632741-1-chenhuacai@loongson.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 1/6] dt-bindings: iio: filter: Add lpf/hpf freq margins
-To: Sam Winchenbach <sam.winchenbach@framepointer.org>
-Cc: linux-kernel@vger.kernel.org, lars@metafoo.de,
- Michael.Hennerich@analog.com, antoniu.miclaus@analog.com, jic23@kernel.org,
- robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- linux-iio@vger.kernel.org, devicetree@vger.kernel.org, bpellegrino@arka.org
-References: <20250306183314.150253-1-sam.winchenbach@framepointer.org>
- <20250307-handsome-merry-alpaca-17da9f@krzk-bin>
- <Z8r45sR7uy0b4UEQ@65YTFL3.secure.tethers.com>
-Content-Language: en-US
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <Z8r45sR7uy0b4UEQ@65YTFL3.secure.tethers.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 07/03/2025 14:47, Sam Winchenbach wrote:
-> On Fri, Mar 07, 2025 at 09:34:24AM +0100, Krzysztof Kozlowski wrote:
->> On Thu, Mar 06, 2025 at 01:33:09PM -0500, Sam Winchenbach wrote:
->>> Adds two properties to add a margin when automatically finding the
->>> corner frequencies.
->>>
->>> Signed-off-by: Sam Winchenbach <sam.winchenbach@framepointer.org>
->>> ---
->>>  .../bindings/iio/filter/adi,admv8818.yaml     | 23 +++++++++++++++++++
->>>  1 file changed, 23 insertions(+)
->>>
->>> diff --git a/Documentation/devicetree/bindings/iio/filter/adi,admv8818.yaml b/Documentation/devicetree/bindings/iio/filter/adi,admv8818.yaml
->>> index b77e855bd594..3f9c61547a78 100644
->>> --- a/Documentation/devicetree/bindings/iio/filter/adi,admv8818.yaml
->>> +++ b/Documentation/devicetree/bindings/iio/filter/adi,admv8818.yaml
->>> @@ -44,6 +44,27 @@ properties:
->>>    '#clock-cells':
->>>      const: 0
->>>  
->>> +
->>
->> Unnecessary blank line
->>
-> 
-> Noted for v6.
-> 
->>> +  adi,lpf-margin-hz:
->>> +    description:
->>> +      Sets the minimum distance (in Hz) between the fundamental
->>> +      frequency of `rf_in` and the corner frequency of the low-pass, output
->>> +      filter when operatred in 'auto' mode. The selected low-pass corner
->>> +      frequency will be greater than, or equal to, `rf_in` + `lpf-margin-hz`. If
->>> +      not setting is found that satisfies this relationship the filter will be
->>> +      put into 'bypass'.
->>> +    default: 0
->>
->> hz are 32-bit, not 64-bit, so I think you need:
->>
->>   default: [0, 0]
->>   minItems: 2
->>   maxItems: 2
->>
-> 
-> I think I finally understand - "-hz" is a schema type defined as a uint32. 
+On Sat, 08 Mar 2025 13:37:53 +0800 Huacai Chen <chenhuacai@loongson.cn> wrote:
+>
+> From: Peter Zijlstra <peterz@infradead.org>
+>
+> commit 624bde3465f660e54a7cd4c1efc3e536349fead5 upstream.
+>
+> annotate_reachable() is unreliable since the compiler is free to place
+> random code inbetween two consecutive asm() statements.
+>
+> This removes the last and only annotate_reachable() user.
+>
+> Backport to solve a build error since relevant commits have already been
+> backported.
+>
+> Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+> Acked-by: Josh Poimboeuf <jpoimboe@kernel.org>
+> Link: https://lore.kernel.org/r/20241128094312.133437051@infradead.org
+> Closes: https://lore.kernel.org/loongarch/20250307214943.372210-1-ojeda@kernel.org/
+> Signed-off-by: Huacai Chen <chenhuacai@loongson.cn>
 
-No, it is uint32-array.
+This indeed removes the build failure for me -- built-tested for loongarch64
+(together with the rest of the Rust long backport series):
 
-> Is that correct? I am really surprised that `dt_binding_check` did not complain about it being 64-bits.  I will update these to `-mhz` and make them uint32 in v6.
+Tested-by: Miguel Ojeda <ojeda@kernel.org>
 
-so your code worked fine, because it assumed you will pass two 32-bit
-integers, so two items. That's why I proposed to define the number of
-items, even though it looks odd, but that's result of 32-bit value.
+Thanks!
 
-Maybe we need "-hz-64" or "-64-hz" property suffix?
-
-Best regards,
-Krzysztof
+Cheers,
+Miguel
 
