@@ -1,163 +1,140 @@
-Return-Path: <linux-kernel+bounces-553117-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-553118-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 31E81A58416
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 13:39:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0EA88A58418
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 13:41:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6136E169BFC
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 12:39:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 49BD5169CE7
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 12:41:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B8741D63EF;
-	Sun,  9 Mar 2025 12:39:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8FE21D6DA3;
+	Sun,  9 Mar 2025 12:41:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bgfRWsIU"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iliK6akz"
+Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com [209.85.216.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5EC540849;
-	Sun,  9 Mar 2025 12:39:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01C8040849;
+	Sun,  9 Mar 2025 12:41:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741523985; cv=none; b=jtqjxnNgXXm7h2qv71+oxKYA0953TWNH/7N63dDe1BWzTxJo4cf2qNQEv8cdKd8FAnXwWhttTkmd28vv69HU6lu07l5yBkAdnqp11F7mEKVj745P7ZsACHrSoKFyijNyoW3g0DU0pVhFjwjQg4KOcP7IeESeif4N+DIR2jayf5c=
+	t=1741524099; cv=none; b=lM/icdBKbBxkhQBZ5AfGznTmvq2tQ/HXQQ7AYQRzix7dKeD0ffGw6lJDG++avVXCubxSJy8An5/YhSzsJf7UJHCb4hGMLx02YkBTruzVHODG8TsfAkXpiC25lhHUKZsy5SN/Mm0Xp0a0A/96o9m3tHOfXChJiSfFW0Ey0LGE3zM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741523985; c=relaxed/simple;
-	bh=lWl5lYord8cuB5ZzfLS6JRfbOoN/JMaoXnsGUHvSaGI=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=Q2XHzgekyZcfI8NIhTQ9ynNO8RxpdJxFCAwPeizm98df+zskMKZlehiiqprgwQb2iClxvETNZQ6VRQixXf6Hi0X1DdCpAW/60JUVjOBNbSGhRVcwie37u9z0QiGODxg8cILyEhqJtCN3bjNXBiEL8EynOAUQc/BkF7Lnol3Ctc4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bgfRWsIU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 6175FC4CEE5;
-	Sun,  9 Mar 2025 12:39:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741523984;
-	bh=lWl5lYord8cuB5ZzfLS6JRfbOoN/JMaoXnsGUHvSaGI=;
-	h=From:Date:Subject:To:Cc:Reply-To:From;
-	b=bgfRWsIUMV70Z7mSZTYp6dYX+Nu0x7I6acmsohXuLMBoS9N0MJkSUEXwyhdsy7zO1
-	 VuLda67M91B31NqAU/RXeyUOlVFC6tA3oLnjr0Y/49hVGuzJYxfvK3gMBs198/m9RQ
-	 fuExHprQ2Uk/gju4rSahrAkOFPoMZlFOAnw+LHqnzPP01CAAqtziO++SGr2FHJ1dHD
-	 IAKmpfNj7j9K6DmObNvxAHVs+X5dB4WEupANow29TPz5yB8hp2Ft9uPDOAeLdIb+sY
-	 Jll9FSaXWPKl8HzgJYHdk+rqnBlpvwJqUUhp3fQR7YqhWR4MLMsTCVJpjJynJrzSn/
-	 PuwcpN6sWHMTQ==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 56DD3C28B25;
-	Sun,  9 Mar 2025 12:39:44 +0000 (UTC)
-From: "Chester A. Unal via B4 Relay" <devnull+chester.a.unal.arinc9.com@kernel.org>
-Date: Sun, 09 Mar 2025 12:39:36 +0000
-Subject: [PATCH] ALSA: hda/realtek: Limit Internal Microphone boost for
- ALC3246
+	s=arc-20240116; t=1741524099; c=relaxed/simple;
+	bh=NIt+fjpsQJoN/ng/Mqi+At1plZSlaOyMv2eBpoBoMUo=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=PFvRe5Pdd+vr/LqgSQNoHo9dUs1rmFeqaUArMzplqBkwpAjPF1y1aY/QYr9CetS5gA4T+2mVcmqVSB+QjH+P1GpE4xsxIxKUnXp9ujUGiKQbBpzOAD6SSlmF48zrU6px4HB27w++3AZfMgfWQOpZDFyVrzTr1S5jPDMXXSMrKTI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iliK6akz; arc=none smtp.client-ip=209.85.216.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f52.google.com with SMTP id 98e67ed59e1d1-2ff6ae7667dso6471272a91.0;
+        Sun, 09 Mar 2025 05:41:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741524097; x=1742128897; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=3heT3TehvrAt/IC6wSWllFV3+o7dpz5h1Lr7V7n2HJU=;
+        b=iliK6akzzwA7gDruZdnjjTZu+7Ew4699//H5Wc5Z75xIknnhNRu1u3LJ/oBLJ3omTW
+         HltdMu7XCRapALkpReNQmzrCapGgM/BfdedzAsatEzfiPerCkYNnm6ZXs3+CLa+vWT6N
+         kjZs+4izfcOGefh9UZKaqRRG4GCpzSrMCsUovfNw8/G9YTN4TFJaDvrpfg1L1kC8wz4G
+         7bGRVT6RX1/X/mkDXwZUa7J31MRFpblcEoS4CqsO2kHjAwWZtKiw4yQEPFtuOWYjdag3
+         JZkaYM79vPSktXq8QYON+Kl0YeBgODxA1IPBpIoTXIGM2FN6f85Ftye3UUXASCPV2kKM
+         JpYA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741524097; x=1742128897;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=3heT3TehvrAt/IC6wSWllFV3+o7dpz5h1Lr7V7n2HJU=;
+        b=XViiEBcJEbydTpD7ILGap/vi4+ECSH889Qe+uSwOQqhxhurg1X3dZrN44JleKXledK
+         xdkcP62Sl/qNDaqjilxpM/R+7dLEhQ2Ku9EyHqywixwaFh8lKX0Yc59hYhAvMe6e3x/v
+         q06d7BSBcV1Uj2qHZkIIdRfdEK5HsRR+ak+S4HfZIOKCAad+sCIEzc+DSzv5+bkaiZj4
+         CSOWCMHPXQylqiW1iKvp0kG8GIEOxisY8m0XRQl0/Y41GdQuLe1QeB8a6FWa7GlUoI4M
+         4/xYdQsqRRUFK6sONrREkUkKCOSovn6wOTRemJQ/ZEGUOLNe7cqsKFC9f9S6v2aYu9Lv
+         SQvQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUFNaOUPn8sgxA2YRSSGFKE4ps0VtxZamsksQFu640UpDY48Jf77DNxssbHVDbIPi0ByBsbQGBud5pO3Y8=@vger.kernel.org, AJvYcCV612B1Tsf56uVPXwKGzF1uSEgEgKDlFXzQkF6+NBpBM4lipF3ev1v2MTH8VoCwgzcT3YUxI10jt4JV@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw/zJPgZPzimue4nEtRc59NSWyvFrltZSJJqeM/zy4VVieu5ASM
+	v2Vr4XeVxKXBpbMbuuBJ3Du+jNprpUBi1UvUmC94jxVPaJxzQsUJ
+X-Gm-Gg: ASbGncuKuzUKWWXKQa2FM7PPgwQ2xpeRqLdlaIbkMx/hqoxu66TZZBrNkvaIRtmcN6r
+	7W01xTbkXP75hTAk/8RJVZZe6Zt1PMZYie6eqksmFJtV4QUxfGv5d4FnoISuncttatoNiJ+feZo
+	ZwsYljSLuvoQCVUDUQMuixugqzrQNauuifQS9LBdrqMaMrhCMCIkwCQSJOgwN15v8LVQJgf/G2F
+	GL2uP52Dk9tJCaSLJe2+6IGMezbEYAMonGJ5RX61CMY3lTHyQ+RY3qT+FBIfG7q51rm2WqB/peU
+	DtOU8K024QPYNlmW6HkGACURkTKK1eQ3YIIskHZ/kdicTLcjwaMlP3r1oyYH
+X-Google-Smtp-Source: AGHT+IFu2X8y0Xhh768uWe61TmX6SKsfM5J5IifCobUJX7M1EYUMJX9eUXflb5qFK1PMqHHrmjgsig==
+X-Received: by 2002:a17:90b:350d:b0:2fa:137f:5c61 with SMTP id 98e67ed59e1d1-2ff7ce7ab5emr20089393a91.12.1741524097203;
+        Sun, 09 Mar 2025 05:41:37 -0700 (PDT)
+Received: from localhost.localdomain ([119.28.17.178])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2ff728a901bsm6056388a91.49.2025.03.09.05.41.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 09 Mar 2025 05:41:36 -0700 (PDT)
+From: Jinliang Zheng <alexjlzheng@gmail.com>
+X-Google-Original-From: Jinliang Zheng <alexjlzheng@tencent.com>
+To: david@fromorbit.com
+Cc: alexjlzheng@gmail.com,
+	alexjlzheng@tencent.com,
+	cem@kernel.org,
+	dchinner@redhat.com,
+	djwong@kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-xfs@vger.kernel.org
+Subject: Re: [PATCH] xfs: don't allow log recover IO to be throttled
+Date: Sun,  9 Mar 2025 20:41:33 +0800
+Message-ID: <20250309124133.1453369-1-alexjlzheng@tencent.com>
+X-Mailer: git-send-email 2.41.1
+In-Reply-To: <Z8YU-BYfB2SCwtW6@dread.disaster.area>
+References: <Z8YU-BYfB2SCwtW6@dread.disaster.area>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250309-for-sound-alc256-dell-v1-1-aacd84853907@arinc9.com>
-X-B4-Tracking: v=1; b=H4sIAAeMzWcC/x3MQQrDIBBA0avIrDtgTDW1VwlZiI7NgGhREgKSu
- 1e6fIv/OzSqTA3eokOlkxuXPDA9BPjd5Q8hh2FQUmk5yxfGUrGVIwd0ySttMFBKaCZrlmitp6e
- G0X4rRb7+33W77x+M9elUZwAAAA==
-X-Change-ID: 20250308-for-sound-alc256-dell-61967f99ce45
-To: Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
- Kailang Yang <kailang@realtek.com>, 
- Stefan Binding <sbinding@opensource.cirrus.com>, 
- Simon Trimmer <simont@opensource.cirrus.com>, 
- Joshua Grisham <josh@joshuagrisham.com>
-Cc: alexander.scholten@xpedite-tech.com, dwayne.dupreez@xpedite-tech.com, 
- zenon@xpedite-tech.com, linux-sound@vger.kernel.org, 
- linux-kernel@vger.kernel.org, "Chester A. Unal" <chester.a.unal@arinc9.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1741523982; l=3467;
- i=chester.a.unal@arinc9.com; s=arinc9; h=from:subject:message-id;
- bh=6CDVT2SLeMufNzb6wH1khK6tsAEt+ToJ1Hx6kvFEPZs=;
- b=RjzqhlLgi4pwA4YjdKCIz/HMB6cBnKGtclU9g6cSTRfB9RbgpDMgC/y+bJSUKs3jvW4P7PcwI
- RUJhN/ob/RZBqerIWNCzYZDzEXBhZhPcQJGv2nv+fTUY1l1+yC7IWti
-X-Developer-Key: i=chester.a.unal@arinc9.com; a=ed25519;
- pk=/g3vBAV0YSvcIpSQ052xJbid7nrPXz8ExGKhTEuc6IY=
-X-Endpoint-Received: by B4 Relay for chester.a.unal@arinc9.com/arinc9 with
- auth_id=306
-X-Original-From: "Chester A. Unal" <chester.a.unal@arinc9.com>
-Reply-To: chester.a.unal@arinc9.com
+Content-Transfer-Encoding: 8bit
 
-From: "Chester A. Unal" <chester.a.unal@arinc9.com>
+On Tue, 4 Mar 2025 07:45:44 +1100, Dave Chinner wrote:
+> On Mon, Mar 03, 2025 at 07:23:01PM +0800, Jinliang Zheng wrote:
+> > When recovering a large filesystem, avoid log recover IO being
+> > throttled by rq_qos_throttle().
+> 
+> Why?
+> 
+> The only writes to the journal during recovery are to clear stale
+> blocks - it's only a very small part of the IO that journal recovery
+> typically does. What problem happens when these writes are
+> throttled?
 
-Internal Microphone is too loud on Dell Latitude 5490, Dell Device
-[1028:0816], which has got ALC3246. I suppose this is the case for all
-devices with ALC3246 which is ALC256 for Dell devices. Therefore, limit the
-Internal Microphone boost for ALC3246. Change
-ALC255_FIXUP_DELL1_MIC_NO_PRESENCE to
-ALC255_FIXUP_DELL1_LIMIT_INT_MIC_BOOST which includes the former fixup.
+Sorry for the late reply, I was struggling with my work. :-(
 
-Signed-off-by: Chester A. Unal <chester.a.unal@arinc9.com>
----
-I don't know ALSA or the Intel HDA specification very well so feel free to
-correct any incorrect information in the patch log.
+Recently, we encountered the problem of xfs log IO being throttled in
+the Linux distribution version maintained by ourselves. To be more
+precise, it was indirectly throttled by the IO issued by the LVM layer.
+For details, see [1] please.
 
-I experience another issue with this laptop that is also there on ALC3204.
-Headphones output loops back to Headset Microphone. So if I record with
-this microphone, sysystem audio is recorded as well. I have tried a fair
-share of fixups by compiling snd-hda-codec-realtek.ko with different fixups
-applied for "0x10ec0256, 0x1028", replacing the existing module in
-/lib/modules, and then rebooting.
+After this problem was solved, we naturally checked other related log
+IO paths, hoping that they would not be throttled by wbt_wait(), that
+is, we hoped that they would be marked with REQ_SYNC | REQ_IDLE.
 
-ALC2XX_FIXUP_HEADSET_MIC makes Headset Microphone appear unplugged. But I
-can see on the OS that it detects voice, so, it works. When it appears
-unplugged, Headphones output won't loop back to it. This fixup also makes
-Speakers appear unavailable and makes Microphone disappear, as
-ALC255_FIXUP_DELL1_MIC_NO_PRESENCE won't apply anymore.
+For log recover IO, in the LVM scenario, we are not sure whether it
+will be affected by IO on other LVs on the same PV. In addition, we
+did not find any obvious side effects of this patch. An ounce of
+prevention is worth a pound of cure, and we think it is more
+appropriate to add REQ_IDLE here.
 
-Another issue is when I toggle capture on Headphone Mic on alsamixer,
-physically no audio will be played on Headphone. Speaker is unaffected. If
-the capture is toggled on anything else, Headphone will play audio.
+Of course, if there is really a reason not to consider being throttled,
+please forgive me for disturbing you.
 
-Tested on Debian Trixie Alpha, kernel 6.12.17. My headphones are
-Tip-Ring-Ring-Sleeve. Here's how I test both issues:
+[1] https://lore.kernel.org/linux-xfs/20250220112014.3209940-1-alexjlzheng@tencent.com/
 
-systemctl --user stop pipewire.socket && systemctl --user stop pipewire
-alsamixer -c 0
+Thank you very much. :)
+Jinliang Zheng
 
-speaker-test -Dhw:0,0 -c2 -r48000 -FS16_LE -t sine
-
-arecord -Dhw:0,0 -c2 -r48000 -fS16_LE -d30 test.wav
-aplay -Dhw:0,0 test.wav
-
-Attached is test.wav. The timeline of the recording is:
-- I run speaker-test. Then I run arecord. After that I say: Speaker-test is
-  running. Capture is toggled on Headphone Mic.
-- After about five seconds I say: I am switching capture to Headset Mic.
-- I toggle capture on Headset Mic. After that I say: This is Headset Mic.
-- I kill speaker-test. After that I say: I have killed speaker-test.
-
-Maintainers, please let me know if you have an idea how to fix these two
-issues.
-
-Chester A.
----
- sound/pci/hda/patch_realtek.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/sound/pci/hda/patch_realtek.c b/sound/pci/hda/patch_realtek.c
-index d2a1f836dbbf714c26be682133b44cc0bd173ad9..379a325e96641232485a2fc8e6de03798461f466 100644
---- a/sound/pci/hda/patch_realtek.c
-+++ b/sound/pci/hda/patch_realtek.c
-@@ -11799,7 +11799,7 @@ static const struct snd_hda_pin_quirk alc269_fallback_pin_fixup_tbl[] = {
- 	SND_HDA_PIN_QUIRK(0x10ec0295, 0x1028, "Dell", ALC269_FIXUP_DELL4_MIC_NO_PRESENCE_QUIET,
- 		{0x19, 0x40000000},
- 		{0x1b, 0x40000000}),
--	SND_HDA_PIN_QUIRK(0x10ec0256, 0x1028, "Dell", ALC255_FIXUP_DELL1_MIC_NO_PRESENCE,
-+	SND_HDA_PIN_QUIRK(0x10ec0256, 0x1028, "Dell", ALC255_FIXUP_DELL1_LIMIT_INT_MIC_BOOST,
- 		{0x19, 0x40000000},
- 		{0x1a, 0x40000000}),
- 	SND_HDA_PIN_QUIRK(0x10ec0236, 0x1028, "Dell", ALC255_FIXUP_DELL1_LIMIT_INT_MIC_BOOST,
-
----
-base-commit: b7c90e3e717abff6fe06445b98be306b732bbd2b
-change-id: 20250308-for-sound-alc256-dell-61967f99ce45
-
-Best regards,
--- 
-Chester A. Unal <chester.a.unal@arinc9.com>
-
-
+> 
+> -Dave.
+> -- 
+> Dave Chinner
+> david@fromorbit.com
 
