@@ -1,161 +1,114 @@
-Return-Path: <linux-kernel+bounces-553066-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-553067-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 40D01A582F6
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 11:19:29 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CFDC8A582F9
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 11:19:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 14A8E3AE419
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 10:19:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 18BA4169CA2
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 10:19:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D81731A840D;
-	Sun,  9 Mar 2025 10:19:23 +0000 (UTC)
-Received: from mail-il1-f205.google.com (mail-il1-f205.google.com [209.85.166.205])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13C5018C008;
+	Sun,  9 Mar 2025 10:19:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Mw6d6KP0"
+Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com [209.85.208.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0389EAC7
-	for <linux-kernel@vger.kernel.org>; Sun,  9 Mar 2025 10:19:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.205
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0270199949
+	for <linux-kernel@vger.kernel.org>; Sun,  9 Mar 2025 10:19:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741515563; cv=none; b=BMFRvQfpQQWWK6YrHD42wCm0xr7gYOH+wBC0T3LHmo0c2k9abVB3vUkibMJ8LxAQrn0cUfKFzgWVqjNW350rBtYhwWcOkfefKtT5b7tLsKTixK2GSX5IU+5RdFqgGWRxB6uscktGtdSNRpgu/6Jb7OFQiX8KiBg4/5DIUYbEdt4=
+	t=1741515588; cv=none; b=VZgtkYkDLPF3B27szuPSwzsB4fIv0LIP0ySLw6mzq/J5aFNvsktQmxYTqyEMJLZCRf00mWjWz3jKUd4EJNnuD+DrljmSwr8sKrRr4IZJtGP2Z5LXldyHAEux5CX7P0jn4FOQpicqh5Rt/tYKSV1BLMybUN7fH0bX4qcChe5EAaw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741515563; c=relaxed/simple;
-	bh=P3w9VELhttHHLA5S72L9ssLnAB9ai/XhYofAnXm2ax4=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=i/TfkzAP1FFzIc2wmawJs+HMp7ptQ46sb0b7KaLoWoVwoopna1Px5Eh8oPn/SzlwXeiQGLhAy65GYcnRI8LPQSSTRhJxgb3XbuKWq3rcs5W6w8qUaDgG/N39+Z0zGX5LX4J+WyPsVJ5nHUEb0Aq/NV44BHEyCNu9+6kWPIbzBIo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.205
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f205.google.com with SMTP id e9e14a558f8ab-3d2a40e470fso26635065ab.3
-        for <linux-kernel@vger.kernel.org>; Sun, 09 Mar 2025 03:19:21 -0700 (PDT)
+	s=arc-20240116; t=1741515588; c=relaxed/simple;
+	bh=Rz0dhl+0OSiXEy+n9YrxBnJOx9ffum11zQsQG6UtEok=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FBWJayxqoAvUmyBv9EZmPH6HiW5n52d6pwpBhH5/Qjp0+CtuRopIHysbYlpEqHhrAtsYv76TsEg8DO0f69pK+6zmGTFp0UEmQ5oxxuxJU8XGhA8JpH2jrci3BTGZPYR/IIDBoz9S4EqTXJIfumjJihDxJOwwq7jPDgelrKktZMQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Mw6d6KP0; arc=none smtp.client-ip=209.85.208.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f176.google.com with SMTP id 38308e7fff4ca-307c13298eeso39004861fa.0
+        for <linux-kernel@vger.kernel.org>; Sun, 09 Mar 2025 03:19:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1741515585; x=1742120385; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=6s2IN28UcJK9AIeEgePs+AKeLtN5DfXNmrIRckMBKOk=;
+        b=Mw6d6KP0AR4AESDAWb621eIf/0fKTsS4+52EWi4D18r/3LWKydb7Xx21oXk51v5itC
+         GNzpdYHVa90GsaDYIDWk/spKUrX0dS7QYgtYIGEl9COgBPAyzXUaPzHPzwb5B2jSIJjS
+         BXtVV0DBpe5PCK+6/m/HY5EAQlWTxkd12EfHUZpaa01s8kwzd3E4dlYVNvy22hX0rJzj
+         mN3DtFH9dnDo+0GCrHOq9JW9BARGOSBkq+W+jNCBr7lQT4X2vibaR42pQzmcQuVjWh0I
+         va/U2s9ovD2+gr+kBDn2oZF584kbhLtKSkVP17AcwlkUgqojNoMbXvidiXUVkG/k1IdD
+         hrqg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741515561; x=1742120361;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=RAxv8kiv3mmXBiHZOc3sflvV1FtjTdvV5UgG/FYak5M=;
-        b=s0yN/IwdIDR3BxCtQ0LrcyAT4+giJF/tlZBfN9Nn6x0dDmGuKjD9y3VG3qYUTKKxLY
-         I4gc5R2NSiDeuBCMQy1rKMz67pBL5v78cnor3kkIjPsGHexsDR8VDJBF8tUv8hNEJpI+
-         /xHbmc5Wyt1JCkS8zOa9t9DIkyJ77gbvS8HwuPJ0i5Qo4FYODwSiBAlm5iI328UJoCXM
-         T+kzquVkbSNcFZQ1cDW9oHvprIBFa2zjumLy8Xsic8fP+VNZPR+1S+WSg7JicEE7GMEh
-         +gPe2+ajjE0PmbAAz15pVU+bqnvS3wbdKQgQJK6YYXR6gHfB27cZmdZ4G3T+WWzLxYAn
-         9XUA==
-X-Gm-Message-State: AOJu0Yy08KU7iwZ+ZetJesZsDhRWATJcIBI9lWnlD1FACk6DFGgvtrmd
-	lrhVyb6QCJwYIDapjHlanUu+4qtoIbMFoERZLJujiQYJ5DxMXCX5WtOyVa/FM7cl73jBAc47F6w
-	ijZhnWhUiGJYKMXTkXk/Q8Kb26Il51aWNLFATa3z+fl9cD1YstzjliiBpog==
-X-Google-Smtp-Source: AGHT+IGMAYT/0tknWFOM0eABwtpAw4Q6cD/tgjurgtJE/6IHt5anmpJCHEgiQjf2m4pWJHsBwytorRq072k7ZZO0qwuwNsGRo87a
+        d=1e100.net; s=20230601; t=1741515585; x=1742120385;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=6s2IN28UcJK9AIeEgePs+AKeLtN5DfXNmrIRckMBKOk=;
+        b=dZYzJFgrpvyvsdaO6IzMo2lU13slQ/2xT9f5P47efkp4ImMUXX3mbKRbuIt09RFVCU
+         xlkmhJojApciS4w9Oill/+um6SmfjL6A1FpQpNr4J58YcIRQHPJJbwMH3MwwijEKRtvP
+         1x/iLo7mTkDp/nyPRHeF3fmNIgvRODUX1bP/bLkUnKineH0U3QVyV19nEWVQB7Ypv/to
+         7eGv5tNasodcPSGMwE3xoYN/SN19a/PfZk/sEnQAtRgA+KsOE/M0nX24QLi3yB75z1h8
+         I9cc3icvwmAvo5GFoIABD1mahIfTA+DMNAqUWfGT869xRd2ApPZswGmGyaY6dhVyW9nZ
+         bidg==
+X-Forwarded-Encrypted: i=1; AJvYcCWoSzBs7ziz0nP540ti3C6pOrAqYJ+LWyZg4AZKe+OyoisXH3L3zhZGJM+qv1m3y2gTk2okOFW/CfhTJGg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzJ6K+trsrM6aI+sk5oNHWQTwhoanPMBUlXkmG2CxtAzyVrnkkQ
+	5pnZiwww9/CkJ8CxxUJkXb5hSGJGVeky8Lk8PAwSL2n7NvxgjctEYtWsNu3Lx9g=
+X-Gm-Gg: ASbGncvr3pI8QY+uKXss8bAXDhH9ic29ANwDn6tL1iu6GRvhA1fBHmk6gnt55HlefV6
+	n9Z+EmNbavVjol4LGNmWEAwsEnqaq7IZhDZBb8TeCc6yq6sfRohFk+5xh/8peV8tJct/GYDAOga
+	MLRfngzeJqGK35L4uNfkG9ff6JIOgOsIrF60zNYb8ZILkHJWIvJwDe8g2du3OIa1pQzNw3yU3UZ
+	hGi0CZGozUjTdKUqSRrp59Vuu2NdwmfUCoppzYXvObHsRrzQ7EcrkIDft/CZlhjhjhGxtBNG8rQ
+	Dwv5L069oxZ2van8OIltqSOOl4knWvBC68SOnMhUmIcjKam4U8Y7USHLf2oBOF9WS2u5rbzEaHX
+	ooFnO1DQrBaRS4RVjyFXZdyRSz04JzuGncZ0=
+X-Google-Smtp-Source: AGHT+IHlBdJ1qjhe/o7S4dso2ZCEpH6o3JPt/ko/A+fRZieBU37zQ/ClCK+PPXWZo0QJwKYGgx8DEw==
+X-Received: by 2002:a2e:a985:0:b0:30b:c36c:ba96 with SMTP id 38308e7fff4ca-30bfe3eeeafmr15772901fa.1.1741515584802;
+        Sun, 09 Mar 2025 03:19:44 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-30bee0c8565sm11460361fa.53.2025.03.09.03.19.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 09 Mar 2025 03:19:43 -0700 (PDT)
+Date: Sun, 9 Mar 2025 12:19:41 +0200
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Qasim Ijaz <qasdev00@gmail.com>
+Cc: robdclark@gmail.com, quic_abhinavk@quicinc.com, sean@poorly.run, 
+	marijn.suijten@somainline.org, airlied@gmail.com, simona@ffwll.ch, quic_jesszhan@quicinc.com, 
+	linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] drm/msm/dpu: reorder pointer operations after sanity
+ checks to avoid NULL deref
+Message-ID: <s3zlxsj6gsmoz3rc5fqopi7etfibaurkz5oo5wgvurebx2z3zt@t3h73v5lcmhi>
+References: <20250309095525.7738-1-qasdev00@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:174b:b0:3d4:2a4e:1272 with SMTP id
- e9e14a558f8ab-3d441a46c62mr117794165ab.19.1741515561024; Sun, 09 Mar 2025
- 03:19:21 -0700 (PDT)
-Date: Sun, 09 Mar 2025 03:19:21 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67cd6b29.050a0220.24a339.00c9.GAE@google.com>
-Subject: [syzbot] [kernel?] WARNING: locking bug in alloc_pid
-From: syzbot <syzbot+21e941390e11695ad9e1@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250309095525.7738-1-qasdev00@gmail.com>
 
-Hello,
+On Sun, Mar 09, 2025 at 09:55:25AM +0000, Qasim Ijaz wrote:
+> _dpu_encoder_trigger_start dereferences "struct dpu_encoder_phys *phys"
+> before the sanity checks which can lead to a NULL pointer dereference if
+> phys is NULL.
+>  
+> Fix this by reordering the dereference after the sanity checks.
+>  
+> Fixes: 8144d17a81d9 ("drm/msm/dpu: Skip trigger flush and start for CWB")
+> Signed-off-by: Qasim Ijaz <qasdev00@gmail.com>
+> ---
+> v2:
+> - Moved Signed-off tag below Fixes tag
+> - Moved dpu_enc declaration to the top and initialisation below sanity checks
+> 
 
-syzbot found the following issue on:
-
-HEAD commit:    e056da87c780 Merge remote-tracking branch 'will/for-next/p..
-git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-kernelci
-console output: https://syzkaller.appspot.com/x/log.txt?x=1103d7a0580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=d6b7e15dc5b5e776
-dashboard link: https://syzkaller.appspot.com/bug?extid=21e941390e11695ad9e1
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-userspace arch: arm64
-
-Unfortunately, I don't have any reproducer for this issue yet.
-
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/3d8b1b7cc4c0/disk-e056da87.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/b84c04cff235/vmlinux-e056da87.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/2ae4d0525881/Image-e056da87.gz.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+21e941390e11695ad9e1@syzkaller.appspotmail.com
-
-------------[ cut here ]------------
-Looking for class "->lock" with key init_kmem_cache_cpus.__key, but found a different class "&c->lock" with the same key
-WARNING: CPU: 1 PID: 7232 at kernel/locking/lockdep.c:941 look_up_lock_class+0xec/0x160 kernel/locking/lockdep.c:938
-Modules linked in:
-CPU: 1 UID: 0 PID: 7232 Comm: syz.1.161 Not tainted 6.14.0-rc4-syzkaller-ge056da87c780 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 12/27/2024
-pstate: 604000c5 (nZCv daIF +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-pc : look_up_lock_class+0xec/0x160 kernel/locking/lockdep.c:938
-lr : look_up_lock_class+0xec/0x160 kernel/locking/lockdep.c:938
-sp : ffff80009edc7120
-x29: ffff80009edc7120 x28: dfff800000000000 x27: 0000000000000000
-x26: ffff800097797900 x25: ffff800097797000 x24: 0000000000000001
-x23: 0000000000000000 x22: 1ffff00011f780cb x21: ffff8000977f86e0
-x20: fffffdffbf7049e0 x19: ffff80009326a528 x18: 0000000000000008
-x17: 202c79656b5f5f2e x16: ffff8000832b5180 x15: 0000000000000001
-x14: 1fffe000366f60f2 x13: 0000000000000000 x12: 0000000000000000
-x11: 0000000000080000 x10: 000000000007e053 x9 : 97b380b684c48600
-x8 : 97b380b684c48600 x7 : 0000000000000001 x6 : 0000000000000001
-x5 : ffff80009edc68d8 x4 : ffff80008fcaf780 x3 : ffff800080741744
-x2 : 0000000000000001 x1 : 0000000100000001 x0 : 0000000000000000
-Call trace:
- look_up_lock_class+0xec/0x160 kernel/locking/lockdep.c:938 (P)
- register_lock_class+0x8c/0x6b4 kernel/locking/lockdep.c:1292
- __lock_acquire+0x18c/0x7904 kernel/locking/lockdep.c:5103
- lock_acquire+0x23c/0x724 kernel/locking/lockdep.c:5851
- local_lock_acquire+0x3c/0x98 include/linux/local_lock_internal.h:29
- ___slab_alloc+0xcd0/0xf4c mm/slub.c:3875
- __slab_alloc+0x74/0xd0 mm/slub.c:3916
- __slab_alloc_node mm/slub.c:3991 [inline]
- slab_alloc_node mm/slub.c:4152 [inline]
- kmem_cache_alloc_noprof+0x300/0x410 mm/slub.c:4171
- alloc_pid+0xac/0xba8 kernel/pid.c:184
- copy_process+0x1a4c/0x322c kernel/fork.c:2419
- kernel_clone+0x1d8/0x82c kernel/fork.c:2815
- __do_sys_clone kernel/fork.c:2958 [inline]
- __se_sys_clone kernel/fork.c:2926 [inline]
- __arm64_sys_clone+0x1f8/0x270 kernel/fork.c:2926
- __invoke_syscall arch/arm64/kernel/syscall.c:35 [inline]
- invoke_syscall+0x98/0x2b8 arch/arm64/kernel/syscall.c:49
- el0_svc_common+0x1e0/0x23c arch/arm64/kernel/syscall.c:132
- do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:151
- el0_svc+0x54/0x168 arch/arm64/kernel/entry-common.c:744
- el0t_64_sync_handler+0x84/0x108 arch/arm64/kernel/entry-common.c:762
- el0t_64_sync+0x198/0x19c arch/arm64/kernel/entry.S:600
-irq event stamp: 1218
-hardirqs last  enabled at (1217): [<ffff80008b7e75f8>] __raw_spin_unlock_irqrestore include/linux/spinlock_api_smp.h:151 [inline]
-hardirqs last  enabled at (1217): [<ffff80008b7e75f8>] _raw_spin_unlock_irqrestore+0x38/0x98 kernel/locking/spinlock.c:194
-hardirqs last disabled at (1218): [<ffff800080b57dc8>] ___slab_alloc+0xca4/0xf4c mm/slub.c:3875
-softirqs last  enabled at (800): [<ffff800080311b48>] softirq_handle_end kernel/softirq.c:407 [inline]
-softirqs last  enabled at (800): [<ffff800080311b48>] handle_softirqs+0xb44/0xd34 kernel/softirq.c:589
-softirqs last disabled at (777): [<ffff800080020dbc>] __do_softirq+0x14/0x20 kernel/softirq.c:595
----[ end trace 0000000000000000 ]---
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+-- 
+With best wishes
+Dmitry
 
