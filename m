@@ -1,119 +1,97 @@
-Return-Path: <linux-kernel+bounces-553245-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-553246-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4912BA58640
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 18:32:23 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 79A50A58643
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 18:32:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 16545188C6BB
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 17:32:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5A1C5188C4FB
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 17:32:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FB0E1F099E;
-	Sun,  9 Mar 2025 17:30:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="CKAGUGdU"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C48401EF362;
+	Sun,  9 Mar 2025 17:30:37 +0000 (UTC)
+Received: from mail-pj1-f48.google.com (mail-pj1-f48.google.com [209.85.216.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 044031E98F8;
-	Sun,  9 Mar 2025 17:30:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAB151DF244;
+	Sun,  9 Mar 2025 17:30:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741541408; cv=none; b=lj6Cv9pXYLp63U3lOdN5DtxEFm9KL4SfrMc8LuzxvI0YXoGNI4jmuOpEQ+b8cej9gVIa73DtVC71ypVkOjnAQr1PrhEFlwO2x8OwztM51nMfbC4ZZM+xkI9jUjfJY6PmM0axwi7w+4zUKGfG1BreG2k7G+FeZBZhPq8XFtDd1ps=
+	t=1741541437; cv=none; b=CrEtwLZA/lVENOR33AjM2BRj9U2Wps/MF8K53ATjY/0hYMFteh4xbxfaXaC3XmPTDsffH8GF1a7fnz+Bj+6A3LqQ0qHkplp/IeT+ZO/6oN0x+rZ78jx2jDESVothbWsCEzEHIrsCX+fbtqVIZloZubIMJhEi49NTwCdsjwo3VLY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741541408; c=relaxed/simple;
-	bh=NBHMxEzCCfSdjqrL75N+ctfjfe/b2U+RJPdkNTWuPkg=;
+	s=arc-20240116; t=1741541437; c=relaxed/simple;
+	bh=obtrS+d8UAUERpS0/OTSNClgbsftnRfpO5KNU2vfjD8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kOpbGrRzACMn9uy2QsJQujLYQbCbhNC8OlXO5hG5oNAcbzupm8stMH3IXGwOnbSCisZDg/nhgNrM9+v1dBVkH99q12oC/ZS1eZVqBCbCbuWxn3HCUisikfykkeC9wZ4kUz09LY8ySrJ0Snhs40V35Od7xhsgCoLEn+AnpPOJY+8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=CKAGUGdU; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 8119840E0214;
-	Sun,  9 Mar 2025 17:29:55 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id jY-gbk4qE0X4; Sun,  9 Mar 2025 17:29:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1741541391; bh=V2ZqBwyXro5zqn3KAotpK1GPzA6yL7YjkTWyX1JdXnM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=CKAGUGdUJ+yjbjqKhtqS2QhBMyARyh2oQFoonRepdter6J1EKAINqUzg+0gb8h+jI
-	 ZN+sn9Y1gi0HbIe4BrPnbfNNJgUS0mRrhIfXLn7gOrtNiDsCCCvWgZ4HhgzVjQ7ea/
-	 gFV9TRgGJ9EQ8D54lnbke3VnR1+gWzqRWAg0YWq+EPYWcB1nVo95Me62lIEDFeoUx7
-	 YQ+g0Z27nZ/JYi+NGaiFioY6Fyr6fHO7pJ2BCh+UYcgBOd+MexDthmHGr442rMzQqP
-	 DZyZtz/Z10KhFwJTuBOKWX4x53rRlkvFsAJgFTOTc/s6eI77UssqRIrIN8F56rg1SS
-	 6NQK1p2UVR1Ng9KKU/2+UONAmY1/ranhDNPc8rX4rFOhuJhbfwDdKs0uIE5IYPAVwD
-	 3QuBLPwfptOJKpR1X/voYw74HEm4Y7vOz5KI2GbHfgD0y+pX3fBtIL4zeyRCHEndDs
-	 V/Ianieh3lKzve6aXpf4zrzfhFYbrSRJeo6xRR58//D03EVyjAQeOvw+yWh7f0lC9Q
-	 dKJGihBdI7+SprjjFNeE0KhM8uR5dyKslgCcHoZ4w0SDApYzhKdwDUhC2QLgXNuVlM
-	 U0QvvFKGfN4Xaa0l68dfVrL+cHGtH/pmhGrNy52I5F46UZcdE9sAH1fJFZe3LzRR+h
-	 BTjoj5hbQgq9jvnCys+fbmVA=
-Received: from zn.tnic (pd95303ce.dip0.t-ipconnect.de [217.83.3.206])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 0194040E0202;
-	Sun,  9 Mar 2025 17:29:30 +0000 (UTC)
-Date: Sun, 9 Mar 2025 18:29:20 +0100
-From: Borislav Petkov <bp@alien8.de>
-To: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	daniel.sneddon@linux.intel.com, tony.luck@intel.com,
-	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-	linux-perf-users@vger.kernel.org,
-	Josh Poimboeuf <jpoimboe@kernel.org>,
-	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Ricardo Neri <ricardo.neri-calderon@linux.intel.com>,
-	"Liang, Kan" <kan.liang@linux.intel.com>,
-	Andrew Cooper <andrew.cooper3@citrix.com>,
-	Brice Goglin <brice.goglin@gmail.com>,
-	Mario Limonciello <mario.limonciello@amd.com>,
-	Perry Yuan <Perry.Yuan@amd.com>,
-	Dapeng Mi <dapeng1.mi@linux.intel.com>
-Subject: Re: [PATCH v7 1/4] x86/cpu: Name CPU matching macro more generically
- (and shorten)
-Message-ID: <20250309172920.GBZ83P8ClXskqjmira@fat_crate.local>
-References: <20250306-add-cpu-type-v7-0-f903fb022fd4@linux.intel.com>
- <20250306-add-cpu-type-v7-1-f903fb022fd4@linux.intel.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=qs8xdY/qfpYS9FAUy0o+p6gW3yhPwtpcVgHZn/WIfA+KMD/hqqRWici+p7Apkr2vUySNZpm0Do7Q51dk9HGK9Ek8f2+Ia4UV+5e17V5eOni071X0k0I+BEpiPbO2iFnqggDSbwtAZkOYtjCyAbf2/YJPvZAwkpjaFFD2eNHaOmE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.216.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f48.google.com with SMTP id 98e67ed59e1d1-2ff4a4f901fso5000427a91.2;
+        Sun, 09 Mar 2025 10:30:35 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741541435; x=1742146235;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=CLc8HkRgJEtGD/xcqKDdNwiIpd6+ivyRsBlqxhytBJM=;
+        b=nkYT6pQheHb9Ah4R1vNUpxBTt0ndAansLceNXI9FHhWyJ/usSAzt0EZrzKW8jpU0EZ
+         fXv2KW6h3I8+8OFVlI7k1t8ge2nKG5wF+iZhtIZ4oglE8AJIGEc9tPTfACHKLej2DMIH
+         WiUjRj7ZZtDsp0r4DIImCCvj0JorkgHFdzkvtOcDULL8EAiwZaOn3U4o/NUotyEA91Qd
+         Et6pYytc3tihYh3PM65LHMo5IH6QIcvb3TXfnwP58XvFaRpUe3O6L0QvfIjl7Y/1crvX
+         fgIrWyBJPsqf0UZNaEeKFykhVagcqYL+mOa8XCBTR1MtL3WGBQTcZPKClKmYx2Cuizkc
+         RH3w==
+X-Forwarded-Encrypted: i=1; AJvYcCV61O3T3dxW6GtpT3d/Ui8aD0+VAx3hPzhXsjtWX9cC5v1NsnAqKshkU6driv1CHxF93eyQ6ENIrJIB@vger.kernel.org, AJvYcCWzN899QClMalfexgnry3N3PMmwLIQMVu4+hsZkZ2Cci5m2PjpG8lYpNjf/U+DcBHFBRgdgJLMD2c6tMoXb@vger.kernel.org, AJvYcCXAPvEERnTRMQw1N2YFWZhljqfVln7rvq0x+K9Qgm3JH6gpu/49dSsGsE98GY6dRebHWbOpWsr6YGC8@vger.kernel.org
+X-Gm-Message-State: AOJu0YwdUO3rZxMgFTOkrqp92infd2oy71hG38Sk+VhqtCiLlqorBb6c
+	Y7mYyUJ8+KVn1ymoY7fny+0p27RRxaxdA2ETX5gqBU20oMfbPwis
+X-Gm-Gg: ASbGncvQAcmBE4yrmlkrKplj0rDZsvuJMfcy/D4XkHjTVvI1Q2M+Zsni9CAwIhA5MnC
+	Yv/RB+07DieptbPIWqaLBBrY6c9qpE5gyY/UVwypEaaVJuVvPRiWTKHMfUSBuvmYQ+2KoRnYU/C
+	Fs2zKynZE4KEmEBNmzoe5QlBL/0fheJN35E6yVDerwrKRPUiSa6KVc488xUHnEEmoQkp3ZvvwHb
+	23ordm24qmlgKub+hC0WDOojSe8cWTTH52xoOeqWe6L2sXgGRoQehV0P5NQTEM10QEg1t0CtYWu
+	L5viUFU1anApwlv9KIoUXJRUBdxBOBhqkITLjx2zco0IhMYOVCRHZJneSxGV0gQbzEpuuTJsiDw
+	1Qqk=
+X-Google-Smtp-Source: AGHT+IELOVc3WS4SI8h7Ae0Bns9EpCBz3SlqLqlHoKFpe0zAs1WqEuSMT9JP/GFYJnKot+7d4D7VGQ==
+X-Received: by 2002:a17:90b:390c:b0:2fa:157e:c790 with SMTP id 98e67ed59e1d1-2ff7ce63257mr16329321a91.5.1741541435081;
+        Sun, 09 Mar 2025 10:30:35 -0700 (PDT)
+Received: from localhost (fpd11144dd.ap.nuro.jp. [209.17.68.221])
+        by smtp.gmail.com with UTF8SMTPSA id 98e67ed59e1d1-2ff6933a9cesm6391731a91.7.2025.03.09.10.30.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 09 Mar 2025 10:30:34 -0700 (PDT)
+Date: Mon, 10 Mar 2025 02:30:32 +0900
+From: Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>
+To: Thippeswamy Havalige <thippeswamy.havalige@amd.com>
+Cc: bhelgaas@google.com, lpieralisi@kernel.org,
+	manivannan.sadhasivam@linaro.org, robh@kernel.org,
+	krzk+dt@kernel.org, conor+dt@kernel.org, linux-pci@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	michal.simek@amd.com, bharat.kumar.gogada@amd.com
+Subject: Re: [PATCH v5 0/3] Add support for Versal Net CPM5N Root Port
+ controller
+Message-ID: <20250309173032.GA2564088@rocinante>
+References: <20250224155025.782179-1-thippeswamy.havalige@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250306-add-cpu-type-v7-1-f903fb022fd4@linux.intel.com>
+In-Reply-To: <20250224155025.782179-1-thippeswamy.havalige@amd.com>
 
-On Thu, Mar 06, 2025 at 06:18:03PM -0800, Pawan Gupta wrote:
-> @@ -106,13 +94,10 @@
->   * @_data:	Driver specific data or NULL. The internal storage
->   *		format is unsigned long. The supplied value, pointer
->   *		etc. is casted to unsigned long internally.
-> - *
-> - * The steppings arguments of X86_MATCH_VENDOR_FAM_MODEL_STEPPINGS_FEATURE() is
-> - * set to wildcards.
->   */
-> -#define X86_MATCH_VENDOR_FAM_MODEL_FEATURE(vendor, family, model, feature, data) \
-> -	X86_MATCH_VENDOR_FAM_MODEL_STEPPINGS_FEATURE(vendor, family, model, \
-> -						X86_STEPPING_ANY, feature, data)
-> +#define X86_MATCH_VENDOR_FAM_MODEL_FEATURE(vendor, family, model, feature, data)	\
-> +	X86_MATCH_CPU(X86_VENDOR_##vendor, family, model, X86_STEPPING_ANY,		\
-> +		      feature, data)
->  
+Hello,
 
-That one is unused. Zap it.
+> Add support for Versal Net CPM5NC Root Port controller 0.
+> 
+> The Versal-Net ACAP devices include CCIX-PCIe Module (CPM). The integrated
+> block for CPM5NC along with the integrated bridge can function as PCIe Root
+> Port.
+> 
+> Bridge error in Versal-Net CPM5NC are handled using Versal-Net CPM5N
+> specific interrupt line & there is no support for legacy interrupts.
 
--- 
-Regards/Gruss,
-    Boris.
+Applied to controller/xilinx-cpm, thank you!
 
-https://people.kernel.org/tglx/notes-about-netiquette
+	Krzysztof
 
