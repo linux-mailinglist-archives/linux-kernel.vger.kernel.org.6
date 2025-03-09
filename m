@@ -1,198 +1,105 @@
-Return-Path: <linux-kernel+bounces-553344-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-553345-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 20FCCA587E2
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 20:43:05 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 04B89A587E6
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 20:44:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 52B0116A54C
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 19:43:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D399F3ACCD9
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 19:44:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30B1C21519B;
-	Sun,  9 Mar 2025 19:43:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A13421578A;
+	Sun,  9 Mar 2025 19:44:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.de header.i=deller@gmx.de header.b="mKgPp9dG"
-Received: from mout.gmx.net (mout.gmx.net [212.227.17.21])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HVhlJey3"
+Received: from mail-pj1-f50.google.com (mail-pj1-f50.google.com [209.85.216.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1191A1A3BD7;
-	Sun,  9 Mar 2025 19:42:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33A791EF36B;
+	Sun,  9 Mar 2025 19:44:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741549379; cv=none; b=iG+M+LbQa+ZmNTqKFSh7FAKTx58yjqFnXjKB2BsbVqszMc5G4ZKX+jTFhWi5k9foehSc3Ubtntsq257UXH5okU7IUwsEAvnt/51MP40PeQ1ybOBc+C8PDv4fOr5SVIyVNe5FnKsmYhrvB9+L9RrAqn1VPXOuO02GKk8k6SHV3Wg=
+	t=1741549449; cv=none; b=tjgbzIs7CBepnURJSBMpEB59tsh8V1XQ2VdmXJl9+exFXbmHLK1HjX6zKWiObzP/09InSar0tFkTtFI+9vdQH1XVOYo2sR28hGXmsqukp+u66MnBUum/mm6KWUixZjPNu9YUg2vK9otWyduyssmxD4nk4puiGOwWGU5oGGC/TDk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741549379; c=relaxed/simple;
-	bh=gq0mcMpdRvpKQFab/eqaOrf7Nvs1FIIz46vi04XhkDk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=j2hJ0tOUNtl0R4XnaJJ3aVyi0/nt2eT/iQV52fO6MeSja/flDFw7QfhKO028jc2TMFlEmkY5EfA+RY5OAUmdUmRwptpDKJI4n1DNnBRUZTX7HCYD+riaiHB5e2gkiFzmNfUmzY7rgm5dj1kykafJgByc4KWMTsmCPq2TG4n76iY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=deller@gmx.de header.b=mKgPp9dG; arc=none smtp.client-ip=212.227.17.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
-	s=s31663417; t=1741549369; x=1742154169; i=deller@gmx.de;
-	bh=UXfwqVzh+kdj7oJHScsByow/u5h/HWf/HAGnPCLphFA=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=mKgPp9dG6o+AJZwafbyHJko/eb1JBUdOORDnr+vSEaNEqE3dAGm7j9UHUAZ2QMcJ
-	 9eiSKKxacIT/qvKXDioGVxis3yvdNSE9cznDBlf3rfdD0p+FO5waYbjXwNDfx8krD
-	 JdIg93ISTh580tLzOsh4lYlOXzYOFA6CVV2kK2/WB2h5UmnHgq8FuOzLftgC3xvGw
-	 7WP7IvR1zN3JyQM4nHHIpaSJipLGSIn2Pq4aKMX42FzgEVEoUww1di3B2sbVGrU62
-	 mWRICciiLXaewFcaFrrcrpJdCOHvITh5WTpuyHk6KZoeds8fpuYl93skHadhoc+uf
-	 pq0ovPH2OnszM1166Q==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from [192.168.20.173] ([109.250.63.121]) by mail.gmx.net (mrgmx104
- [212.227.17.168]) with ESMTPSA (Nemesis) id 1M26vB-1tosVM1SyP-000pZq; Sun, 09
- Mar 2025 20:42:49 +0100
-Message-ID: <0a15e04f-bd6d-4c2b-a8e1-708880fa433c@gmx.de>
-Date: Sun, 9 Mar 2025 20:42:46 +0100
+	s=arc-20240116; t=1741549449; c=relaxed/simple;
+	bh=cPQCmsYr2PzipMe6z22fZFkIXFoEDcH2N0IJnkDAk7I=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=unUj9+xhfv5HEW+GXWeong1LBOQ9xgDtSoBQ2eXqWmenRy5OGHjvsAWaK5KmNtWJpQ2gyoC4Tmgc3JVdUp8tUxYbKGxQsnZgUQMyVJDUvjQHUTHZQWJGF9LMI+w1wheNaWtXlE4QiYhN1XAebfrKFACKvhczCdE5dIJrfy75ydc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HVhlJey3; arc=none smtp.client-ip=209.85.216.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f50.google.com with SMTP id 98e67ed59e1d1-2ff62f9b6e4so992187a91.0;
+        Sun, 09 Mar 2025 12:44:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741549447; x=1742154247; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=cPQCmsYr2PzipMe6z22fZFkIXFoEDcH2N0IJnkDAk7I=;
+        b=HVhlJey36WYDY+shES65ydlT7XlrhoB1e0rEPDTD+e8/qf6OgxxqO/Tp3Ekj+ubhc8
+         0RjMnl0wSf3MCF9TKdvk2iCDyfeaVNwcEmK3cC9MZ4qm1U0iZn4SwdFmsxFY3BRPfjIi
+         4aYt1H1a4ytjKkjH9EmwSK3VNlHlz+oohb6H7f9P6pKMMOO+u3c11SK8OtPFlvNykonM
+         fHOCNAa+g6oK+J9eY+u8XwcfNsa3WoNhqTZRRtJdovncP3fwWdEPf5VSaar6SJg3vHEi
+         X7GCUJBi/v0y0BrWleEKGLQtNEdwhIIRj2dTZolkaJL6l4I4AcJyuL3J9/BGdSVokHjk
+         m/3g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741549447; x=1742154247;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=cPQCmsYr2PzipMe6z22fZFkIXFoEDcH2N0IJnkDAk7I=;
+        b=qU0IOx02xoL5WX2NBKbWAPe65L2BTokfxalCdjdVGdjYDHHty/xzLaBzVN7jdl8TrE
+         9DsfEMmeW35bvivAz63qGGec6s/BwiL/RGaNeKZCbiEprtBbCublAm0qwzvVebmBq7zF
+         kvbV0k+nLoS2kgpdxpp/zHqEcxOuwbBxwNdLLsKz4qE4cJa80Yl3twbdHtO7QIJGSQWP
+         RHte6alvAj34kCGOLQFg7CrkdwUWI4hECnmhiawMRiY/5i6tKyFkqmXUTMaGX6a0qyLl
+         Bk6e70Slo9oGDPB/tXb4IUmFhepuOzERLdYcoNlxrh5spAH4/DhzDZGdW2Y6p+xcACgJ
+         5SAw==
+X-Forwarded-Encrypted: i=1; AJvYcCUgSPQLFLo8lJpPc492tHhkiniXXhBAkWISn04U11kVKd7dEUFtpC9vzFqJnrqvD2r3YTcTxog9H14Egzxs2l8=@vger.kernel.org, AJvYcCVbp3ao6ks2nz0lXHOF6g08r8SJHho+TvxEqe2ULq4Q9p3HroBkriJxOICB8Rh3ZB9iLnne9RGr4ha1Y4U=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyUGMN/JoGO+X1iK1rA6ajcG2VMw4edUxLC6z5dq5dHbRp3GI4e
+	nb2VDbZdkikpHb0jWul0MDwYshGYxsNlxoJA8UKa9H77ldYkQ8FI31ZtGuwjYqnHtrfa6CG4mR3
+	UJ1XBigmaEFTc9GImnAC5EfBreok=
+X-Gm-Gg: ASbGncuJws7CXw4HLHFGldl/N3czkwqXlVXQiXvYr9KL95jjz1pLsMhkrjAU7GVl+q/
+	8s/75SPHi7k+h2dN2lsccOlCxk+O33qvMBNdyll/hs/AaOysDerqM6y2LSAodVlP0vCJtsFNttQ
+	BQDMBR0mKiTB9apV8xTd6/CWPA4A==
+X-Google-Smtp-Source: AGHT+IEMc4kBT97Jfzxo5YsrypzNB9u7BtESDdjeS9ngtC7b8j/ybOgQTqQF7M/R/EzqFCxACzFfUgRXd6RAc/LZO9g=
+X-Received: by 2002:a17:90b:4c42:b0:2ff:78dd:2875 with SMTP id
+ 98e67ed59e1d1-300a57877a8mr3860566a91.5.1741549447386; Sun, 09 Mar 2025
+ 12:44:07 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] fbdev: fsl-diu-fb: add missing device_remove_file()
-To: Shixiong Ou <oushixiong1025@163.com>, Timur Tabi <timur@kernel.org>
-Cc: linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org,
- linux-kernel@vger.kernel.org, Shixiong Ou <oushixiong@kylinos.cn>
-References: <20250309081607.27784-1-oushixiong1025@163.com>
-Content-Language: en-US
-From: Helge Deller <deller@gmx.de>
-Autocrypt: addr=deller@gmx.de; keydata=
- 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
-In-Reply-To: <20250309081607.27784-1-oushixiong1025@163.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+References: <20250210-cursor-between-v7-0-36f0215181ed@google.com>
+In-Reply-To: <20250210-cursor-between-v7-0-36f0215181ed@google.com>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Sun, 9 Mar 2025 20:43:54 +0100
+X-Gm-Features: AQ5f1JqgsI6yQkAem1iAPMXfe34pY7vHQKjlO59Yy1AZAbfA0rDC2Z9Pn7eatk4
+Message-ID: <CANiq72nnEB4ZBUzwpw+dH7fQsjNCn++cZM5Rirweadwy0LZwyA@mail.gmail.com>
+Subject: Re: [PATCH v7 0/2] Make the Rust linked list cursor point between elements
+To: Alice Ryhl <aliceryhl@google.com>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Trevor Gross <tmgross@umich.edu>, rust-for-linux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:D7fGuBp8cJ0wUshZgQSWt3vgrCfTuK0biq/pBNWOOGrfpZm/G3n
- RrcTFpInKIQPaCExlvV1tWXTUblBMoSymbEtAR+5jSDqYKMIAMwwuNrDQQ410P55wJcBITo
- /3CK2UA6/gtWDrAccfYR2nBpcssbJWBdQB/t9PyXqIul7OGs6AXWUoYGbTtWk9wHe2/3jNy
- na6P+oU/rkJL191ZrAj3g==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:ccEv3COVVx4=;f+7gJ6DQA02p/CKE1MxM2wvtsGC
- zhptwHZ169f7ub6f1Rl6SHfpin/CSw/LrekG4NKCz4l93iu7mAB1tXjqh8Oms/7zQOsU9aeD0
- a/Q9T/K5PXZjY4WV65JrpxeqSkF/DpccjvtjP1l7mONw4/bIsesyhmRPy4PjUlT8/g5z66tSu
- WouJlddlde7wfk9umDkdO3sYyp/uZk/R8OxpbZxpiOJlKPSE1uymGpXf3bs3RmaAV//SXbxme
- eqy4OAwILAloOZO7QqpeG3/Hp0gArKz+Lm5ssjj5dBZWPJODM+v33GIOs4hdjfnr9gY6blDQv
- J2ceGcEqgYUj++KK8Xh+nJCF/GrKFeyTalf5MY6x7dnGuOpTMXKLdydFu8pGX87fbuTTim9MW
- CGFFIzwGKctEExMLFtPnnVUlNGUXK1ZaCM7m01qwZ+8CTtu6HRjNbrDib5uomWnXaXekHeiXO
- NBebKAMDaNTXWw4Op/sP6FmiRGLaXLiaHQOkkEvMR1l8uHfYc9k/r0Mk+Ods+TF6tooblGURh
- KlTqN9lS6eVwW+tlqE6V5sOehVhAXFRx/kiGeXvqqNEjyYW3f65dJ9Ls9gJ3FgCM7tk5ZrrSu
- kLD+INx1xLm/rsLwJVvOtvBL0/AKGE2zGXcxuFcwCFc2EBuTuj5U5ZvlBH3pML/CRA57GK3vb
- 7qogNHal5rnyIzG/Jj6K7Psq+xO9en6qrf6CtH2LPdUr+uKIvz3h7wcGIddYXwkr3CcZWRtHg
- Z9brWYehqaVXSq+oj1MWbELHm7Gh1YM59Rz8tT3thwkwyAfW/b+/o+YdNefvG6VTmkPWJ23Ow
- wMKAHjmIFKspYtd4QjbhY3TRTvyNrZqDVOBV/dY2HKAcckNHni7z5R3wDAzthjSPkzig1gJ6R
- e33bPqnog6j9ZG7Dc6ogLlkB+R9/X8CGuNw2a7ZZfyHhpKWUqm2SiJ+ljOReAcKlSIOV/cLi6
- 0JXsuLso5gWQaxNi+lPQekrJc+flRiHHv3VpOeo6zc6Gp1uP3biBRurI2AjkjvOusxjlZa+w+
- pSbUnJXDG5JMNQ3VUwUKixxN3mT6bBTnJpwwUycuzeP66YoL5J9vp2ZDXIrvjcxHxbmVjdiK/
- yEVfUJvtJqML+Lms/Zatfro3fWLDTgDhhurgQO1p7a7jeVbKlr/hQ1Lis3LJ2vAJDg7wc3kU6
- k+N5UW1UdOF3jeimULti12zXWKhfO14BJVrQ+GioPFlW6U1kgWbeJsczIX3B2AQi2k5buJX5z
- +9V2sV9JZPU7CbQGdIAgBVem0FWkCmfoOMzVDuvlyglB3bFXbTfaILko/D57PGtxp4zqq0jXD
- /N31PijMtPXNbpWS41yX5hKhq1Q6xuJv4Jn+larPqv5Ic2EyHWcBSKIFMlIGTNgNY5Bj/UnWN
- 0NCd76k6lhCzQ260gAYaHdBbyeFyRtTtT38rMdiNBr/WJK+d9pUgLSlv36
 
-On 3/9/25 09:16, Shixiong Ou wrote:
-> From: Shixiong Ou <oushixiong@kylinos.cn>
+On Mon, Feb 10, 2025 at 10:54=E2=80=AFAM Alice Ryhl <aliceryhl@google.com> =
+wrote:
 >
-> Call device_remove_file() when driver remove.
+> Please see the commit message of the last patch for more details and
+> motivation.
 >
-> Signed-off-by: Shixiong Ou <oushixiong@kylinos.cn>
-> ---
-> v1->v2:
-> 	add has_sysfs_attrs flag.
->
->   drivers/video/fbdev/fsl-diu-fb.c | 6 ++++++
->   1 file changed, 6 insertions(+)
->
-> diff --git a/drivers/video/fbdev/fsl-diu-fb.c b/drivers/video/fbdev/fsl-=
-diu-fb.c
-> index 5ac8201c3533..57f7fe6a4c76 100644
-> --- a/drivers/video/fbdev/fsl-diu-fb.c
-> +++ b/drivers/video/fbdev/fsl-diu-fb.c
-> @@ -384,6 +384,7 @@ struct fsl_diu_data {
->   	__le16 next_cursor[MAX_CURS * MAX_CURS] __aligned(32);
->   	uint8_t edid_data[EDID_LENGTH];
->   	bool has_edid;
-> +	bool has_dev_attr;
->   } __aligned(32);
->
->   /* Determine the DMA address of a member of the fsl_diu_data structure=
- */
-> @@ -1809,6 +1810,7 @@ static int fsl_diu_probe(struct platform_device *p=
-dev)
->   			data->dev_attr.attr.name);
->   	}
->
-> +	data->has_dev_attr =3D true;
->   	dev_set_drvdata(&pdev->dev, data);
->   	return 0;
->
-> @@ -1827,6 +1829,10 @@ static void fsl_diu_remove(struct platform_device=
- *pdev)
->   	int i;
->
->   	data =3D dev_get_drvdata(&pdev->dev);
-> +
-> +	if (data->has_dev_attr)
+> Signed-off-by: Alice Ryhl <aliceryhl@google.com>
 
-Looking at other drivers (e.g. drivers/net/can/usb/esd_usb.c) it seems
-that device_remove_file() is ok even if it's not fully initialized...
+Applied to `rust-next` -- thanks everyone!
 
-I think you can drop those extra checks.
-
-Helge
-
-
-> +		device_remove_file(&pdev->dev, &data->dev_attr);
-> +
->   	disable_lcdc(&data->fsl_diu_info[0]);
->
->   	free_irq(data->irq, data->diu_reg);
-
+Cheers,
+Miguel
 
