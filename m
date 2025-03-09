@@ -1,162 +1,157 @@
-Return-Path: <linux-kernel+bounces-553259-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-553255-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7FF6EA58672
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 18:49:40 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 21841A58666
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 18:43:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AEE73166164
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 17:49:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4F11B160C59
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 17:43:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 281301EF364;
-	Sun,  9 Mar 2025 17:49:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 895681EDA2F;
+	Sun,  9 Mar 2025 17:43:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b="kBT2v4Ni"
-Received: from mx1.sberdevices.ru (mx1.sberdevices.ru [37.18.73.165])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="eoM2n4m7"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E06E1C5D78;
-	Sun,  9 Mar 2025 17:49:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=37.18.73.165
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF7161E32D4;
+	Sun,  9 Mar 2025 17:43:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741542573; cv=none; b=ZwsWuzJRGWCQ4ZLZ5B6Cr8E4chUbXHce+yQVwTFErrTQSQcn4IorfukoMIlmpLNAvAbMaO0cjXF3L49reOHF73grO5jC2oHUNYHawdEVg4iBKx9BO7R3mFMiTe87ohiKSebG3Y5PV39OtVJhBt0MZUV7H8hUHWpfmsAerKh/mcQ=
+	t=1741542213; cv=none; b=Yi+t6pW8qPLEEraLAKExa7u+oKQRRNTQH3mVIk0MnsiJJd9IBss84IpPrOxOakq9DIebVU9Q3uzzmvUkCMkc2MlyN5zZAftp0+TW5L04H5243uHRRO/Z+lMjPopSWqGavoOKOiJ+yp6J510Se57YwUS+IKkv+dwz8UG/4BE6YLA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741542573; c=relaxed/simple;
-	bh=0jA0jE1d3VZYRFj2dEWSaC1XvTehPnfNraI7FcCBe0A=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type; b=bUbxZ4HWlsDpNusCNEfi12Hlz6ZEnrXAnUZ25BqCLYIoW1AthqKNUHh5LtiVJtdUvDKTFwNi/6yw46U3DTqFeaPoAHGA9izoM2F3vhzK0ZHITdL+UCXDBr9mYfhslYIeFqVmUvYy18PqrTFz5gmxHGbGVUeXom6qeFl2+lMQuo8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com; spf=pass smtp.mailfrom=sberdevices.ru; dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b=kBT2v4Ni; arc=none smtp.client-ip=37.18.73.165
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sberdevices.ru
-Received: from p-infra-ksmg-sc-msk01.sberdevices.ru (localhost [127.0.0.1])
-	by mx1.sberdevices.ru (Postfix) with ESMTP id 9F05E100002;
-	Sun,  9 Mar 2025 20:43:47 +0300 (MSK)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mx1.sberdevices.ru 9F05E100002
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=salutedevices.com;
-	s=mail; t=1741542227;
-	bh=GrOqXh07i7N0ySZW77DG1Gd9b3sEB1loXlmnzaagEgc=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type:From;
-	b=kBT2v4NiGr2uN1XxQGXDawKdR83CBuFr8XbrHnis/gXRMCafPD9f5oUi0PyzXlZTZ
-	 US9RXHF0zY0PgHPwOcOFAw/JOnCjFncciXovVJgW76N2rx4BI88t5JsU5vXgCL5WzV
-	 MDx2+i4SCN0l7ycLBqbOHihDKWQoe/GnzA9P3FBm7a09KCYphGQLa2xIPPsfTuqGEi
-	 66Pwo1JVAl3MU55y0FyXXA0I3BAtJ0r4DEfRgjoXh+knAYVmO9HmsMgTxnhn9R+wg6
-	 hAsPi6KclBNhiOH2kcnj1mwBQ91C6Z1SnlI2j1gg1tb72EPHzBahVDlVuSOPCto6+S
-	 sw+fh8zXF9oOA==
-Received: from smtp.sberdevices.ru (p-exch-cas-a-m1.sberdevices.ru [172.24.201.216])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by mx1.sberdevices.ru (Postfix) with ESMTPS;
-	Sun,  9 Mar 2025 20:43:47 +0300 (MSK)
-From: Jan Dakinevich <jan.dakinevich@salutedevices.com>
-To: Jan Dakinevich <jan.dakinevich@salutedevices.com>, Conor Dooley
-	<conor+dt@kernel.org>, <devicetree@vger.kernel.org>, Jerome Brunet
-	<jbrunet@baylibre.com>, Kevin Hilman <khilman@baylibre.com>, Krzysztof
- Kozlowski <krzk+dt@kernel.org>, <linux-amlogic@lists.infradead.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-clk@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, Martin Blumenstingl
-	<martin.blumenstingl@googlemail.com>, Michael Turquette
-	<mturquette@baylibre.com>, Neil Armstrong <neil.armstrong@linaro.org>, Rob
- Herring <robh@kernel.org>, Stephen Boyd <sboyd@kernel.org>
-Subject: [PATCH v6 0/4] Add A1 Soc audio clock controller driver
-Date: Sun, 9 Mar 2025 20:43:18 +0300
-Message-ID: <20250309174322.1321201-1-jan.dakinevich@salutedevices.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1741542213; c=relaxed/simple;
+	bh=kooIwOa6gEwB7oowS6HnKkkk+bXe9+cqX/oG5DutbCI=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=p82HAW9CLUDiL3fbnIM/5FOzxaJTyIhdSWsv2OKZPWbrJT0aM+25OJu0QPx+bDYlu52amcJSE0ftLX4pBL4pXbtu/Z5OFGqputpBRdFCfr+01s9xSaL8MhIP9SFdDq/KuFjEg5x7EONFL8+u2xyxIi3qzOU41F7Gs07cZ4aeq8g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=eoM2n4m7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 57DA3C4CEE3;
+	Sun,  9 Mar 2025 17:43:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1741542212;
+	bh=kooIwOa6gEwB7oowS6HnKkkk+bXe9+cqX/oG5DutbCI=;
+	h=Date:From:To:Cc:Subject:From;
+	b=eoM2n4m7hMlsupBdio1sV6TdFuFaJb59mZseqCvOGjPfAQmlAvSk06Xg2GMtLXzd6
+	 Py6HhqhNqDk8AwcDXOmuoNFMwKgVtnFZuEHNoG5RMsYKpugscXTR2hvpeS9li0Kv5e
+	 TlJKUpUwFezap/iS5kmQ8/FrlkOQEiBs6pKuXROU=
+Date: Sun, 9 Mar 2025 18:43:29 +0100
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>, linux-kernel@vger.kernel.org,
+	linux-usb@vger.kernel.org
+Subject: [GIT PULL] USB driver fixes for 6.14-rc6
+Message-ID: <Z83TQTyh4u64yFKF@kroah.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: p-i-exch-a-m2.sberdevices.ru (172.24.196.120) To
- p-exch-cas-a-m1.sberdevices.ru (172.24.201.216)
-X-KSMG-Rule-ID: 1
-X-KSMG-Message-Action: clean
-X-KSMG-AntiSpam-Lua-Profiles: 191599 [Mar 09 2025]
-X-KSMG-AntiSpam-Version: 6.1.1.11
-X-KSMG-AntiSpam-Envelope-From: YVDakinevich@sberdevices.ru
-X-KSMG-AntiSpam-Rate: 0
-X-KSMG-AntiSpam-Status: not_detected
-X-KSMG-AntiSpam-Method: none
-X-KSMG-AntiSpam-Auth: dkim=none
-X-KSMG-AntiSpam-Info: LuaCore: 51 0.3.51 68896fb0083a027476849bf400a331a2d5d94398, {Tracking_smtp_not_equal_from}, {Tracking_uf_ne_domains}, d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;smtp.sberdevices.ru:7.1.1,5.0.1;127.0.0.199:7.1.2;lore.kernel.org:7.1.1;sberdevices.ru:7.1.1,5.0.1;salutedevices.com:7.1.1, {Tracking_smtp_domain_mismatch}, {Tracking_smtp_domain_2level_mismatch}, {Tracking_sender_alignment_int}, {Tracking_white_helo}, FromAlignment: n
-X-MS-Exchange-Organization-SCL: -1
-X-KSMG-AntiSpam-Interceptor-Info: scan successful
-X-KSMG-AntiPhishing: Clean, bases: 2025/03/09 17:18:00
-X-KSMG-LinksScanning: Clean, bases: 2025/03/09 17:18:00
-X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.0.1.6960, bases: 2025/03/09 15:22:00 #27687174
-X-KSMG-AntiVirus-Status: Clean, skipped
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-This series adds support for audio clock and reset controllers on A1 SoC family.
+The following changes since commit 0ad2507d5d93f39619fc42372c347d6006b64319:
 
-Depends on [7]
+  Linux 6.14-rc3 (2025-02-16 14:02:44 -0800)
 
-Changes v5 [5] -> v6
- - use __devm_auxiliary_device_create() helper that is being introduced in [7]
+are available in the Git repository at:
 
-Changes v4 [4] -> v5
- - moved changes of aux reset driver to series [6]
- - added reset controller on top of audio-vad
- - merged into single file
- - reworked variables/defines naming
- - added clk81 clock hierarchy
- - added TDMIN_VAD-related clocks
- - excluded DT patch (it will submitted separately)
+  git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usb.git tags/usb-6.14-rc6
 
-Changes v3 [3] -> v4
- - Use auxiliary reset device implemented in [4]
- - Split the driver into files
- - Use common with axg-audio yaml schema
- - Unify clock-names with axg-audio
+for you to fetch changes up to b13abcb7ddd8d38de769486db5bd917537b32ab1:
 
-Changes v2 [2] -> v3
- - reset:
-   * added auxiliary device
- - yaml:
-   * added declaration of optional clocks
-   * fixed names in example and another cosmetics
- - clocks:
-   * reworked naming
-   * stop using of "core" clock name
-   * fixed wrong parenting
+  usb: typec: ucsi: Fix NULL pointer access (2025-03-06 16:55:46 +0100)
 
-Changes v1 [1] -> v2:
- - Detached from v1's series (patch 2, 3, 4, 25)
- - Reuse some of defines from axg-audio
- - Split the controller into two memory regions
+----------------------------------------------------------------
+USB fixes for 6.14-rc6
 
-Links:
- [1] https://lore.kernel.org/lkml/20240314232201.2102178-1-jan.dakinevich@salutedevices.com/
- [2] https://lore.kernel.org/lkml/20240328010831.884487-1-jan.dakinevich@salutedevices.com/
- [3] https://lore.kernel.org/lkml/20240419125812.983409-1-jan.dakinevich@salutedevices.com/
- [4] https://lore.kernel.org/all/20240913121152.817575-1-jan.dakinevich@salutedevices.com/
- [5] https://lore.kernel.org/all/20241112230443.1406460-1-jan.dakinevich@salutedevices.com/
- [6] https://lore.kernel.org/all/20241112230056.1406222-1-jan.dakinevich@salutedevices.com/
- [7] https://lore.kernel.org/all/20250218-aux-device-create-helper-v4-0-c3d7dfdea2e6@baylibre.com/
+Here are some small USB driver fixes for some reported issues for
+6.14-rc6.  These contain:
+  - typec driver fixes
+  - dwc3 driver fixes
+  - xhci driver fixes
+  - renesas controller fixes
+  - gadget driver fixes
+  - a new USB quirk added
 
-Jan Dakinevich (4):
-  clk: meson: axg: share the set of audio helper macros
-  dt-bindings: clock: axg-audio: document A1 SoC audio clock controller
-    driver
-  clk: meson: a1: add the audio clock controller driver
-  arm64: dts: meson: a1: add the audio clock controller
+All of these have been in linux-next with no reported issues.
 
- .../clock/amlogic,axg-audio-clkc.yaml         |   4 +
- arch/arm64/boot/dts/amlogic/meson-a1.dtsi     |  49 +
- drivers/clk/meson/Kconfig                     |  14 +
- drivers/clk/meson/Makefile                    |   1 +
- drivers/clk/meson/a1-audio.c                  | 856 ++++++++++++++++++
- drivers/clk/meson/axg-audio.c                 | 215 +----
- drivers/clk/meson/meson-audio.h               | 156 ++++
- .../dt-bindings/clock/amlogic,a1-audio-clkc.h | 139 +++
- 8 files changed, 1254 insertions(+), 180 deletions(-)
- create mode 100644 drivers/clk/meson/a1-audio.c
- create mode 100644 drivers/clk/meson/meson-audio.h
- create mode 100644 include/dt-bindings/clock/amlogic,a1-audio-clkc.h
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
--- 
-2.34.1
+----------------------------------------------------------------
+Andrei Kuchynski (1):
+      usb: typec: ucsi: Fix NULL pointer access
 
+AngeloGioacchino Del Regno (1):
+      usb: typec: tcpci_rt1711h: Unmask alert interrupts to fix functionality
+
+Badhri Jagan Sridharan (1):
+      usb: dwc3: gadget: Prevent irq storm when TH re-executes
+
+Christian A. Ehrhardt (1):
+      acpi: typec: ucsi: Introduce a ->poll_cci method
+
+Claudiu Beznea (3):
+      usb: renesas_usbhs: Call clk_put()
+      usb: renesas_usbhs: Use devm_usb_get_phy()
+      usb: renesas_usbhs: Flush the notify_hotplug_work
+
+Fedor Pchelkin (1):
+      usb: typec: ucsi: increase timeout for PPM reset operations
+
+Marc Zyngier (1):
+      xhci: Restrict USB4 tunnel detection for USB3 devices to Intel hosts
+
+Marek Szyprowski (1):
+      usb: gadget: Fix setting self-powered state on suspend
+
+Miao Li (1):
+      usb: quirks: Add DELAY_INIT and NO_LPM for Prolific Mass Storage Card Reader
+
+Michal Pecio (2):
+      usb: xhci: Enable the TRB overfetch quirk on VIA VL805
+      usb: xhci: Fix host controllers "dying" after suspend and resume
+
+Nikita Zhandarovich (1):
+      usb: atm: cxacru: fix a flaw in existing endpoint checks
+
+Pawel Laszczak (1):
+      usb: hub: lack of clearing xHC resources
+
+Prashanth K (3):
+      usb: gadget: u_ether: Set is_suspend flag if remote wakeup fails
+      usb: gadget: Set self-powered based on MaxPower and bmAttributes
+      usb: gadget: Check bmAttributes only if configuration is valid
+
+Thinh Nguyen (1):
+      usb: dwc3: Set SUSPENDENABLE soon after phy init
+
+ drivers/usb/atm/cxacru.c                | 13 ++---
+ drivers/usb/core/hub.c                  | 33 +++++++++++++
+ drivers/usb/core/quirks.c               |  4 ++
+ drivers/usb/dwc3/core.c                 | 85 +++++++++++++++++++--------------
+ drivers/usb/dwc3/core.h                 |  2 +-
+ drivers/usb/dwc3/drd.c                  |  4 +-
+ drivers/usb/dwc3/gadget.c               | 10 ++--
+ drivers/usb/gadget/composite.c          | 17 +++++--
+ drivers/usb/gadget/function/u_ether.c   |  4 +-
+ drivers/usb/host/xhci-hub.c             |  8 ++++
+ drivers/usb/host/xhci-mem.c             |  3 +-
+ drivers/usb/host/xhci-pci.c             | 10 ++--
+ drivers/usb/host/xhci.c                 |  6 ++-
+ drivers/usb/host/xhci.h                 |  2 +-
+ drivers/usb/renesas_usbhs/common.c      |  6 ++-
+ drivers/usb/renesas_usbhs/mod_gadget.c  |  2 +-
+ drivers/usb/typec/tcpm/tcpci_rt1711h.c  | 11 +++++
+ drivers/usb/typec/ucsi/ucsi.c           | 25 +++++-----
+ drivers/usb/typec/ucsi/ucsi.h           |  2 +
+ drivers/usb/typec/ucsi/ucsi_acpi.c      | 21 +++++---
+ drivers/usb/typec/ucsi/ucsi_ccg.c       |  1 +
+ drivers/usb/typec/ucsi/ucsi_glink.c     |  1 +
+ drivers/usb/typec/ucsi/ucsi_stm32g0.c   |  1 +
+ drivers/usb/typec/ucsi/ucsi_yoga_c630.c |  1 +
+ 24 files changed, 189 insertions(+), 83 deletions(-)
 
