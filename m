@@ -1,228 +1,184 @@
-Return-Path: <linux-kernel+bounces-553101-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-553102-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D2372A583D2
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 12:38:17 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id F3913A583D4
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 12:40:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0BFC71692C7
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 11:38:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 68594189443F
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 11:40:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2720F1C5496;
-	Sun,  9 Mar 2025 11:38:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ZVy66t1v"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FD061B415F;
+	Sun,  9 Mar 2025 11:40:29 +0000 (UTC)
+Received: from mail-il1-f207.google.com (mail-il1-f207.google.com [209.85.166.207])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 967591A2C0E;
-	Sun,  9 Mar 2025 11:38:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F17B15A864
+	for <linux-kernel@vger.kernel.org>; Sun,  9 Mar 2025 11:40:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.207
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741520290; cv=none; b=ACcVSSHffvbBADac7ze+LhPs8xBfwLkgvOscXH8qZBvila5myhtQixGQ5X8CPQJGtmHxKlRNk9dLekkRZMf8K3MTEmbMZTKmT/Nid8mpkUsR2e+30UXFEeoXm/TBMwNUdFmiBnXchZU3Vuis1ZU/QEyICgNY8IFYn4W1/YkScgc=
+	t=1741520428; cv=none; b=EUXJY2VEUo+ZNz/aDn7DkVFL8EOkZfMyFv8bBubWGzKRq5husMfpT1WfDZp8f8y9pm1g1287/VesXHqQDV2cO9eR+d24C+QMSVEajmryZdVP2S1VlBEq3z2TgOzM6cgSV6+8p7marOxqcZyL6r5U8pASbPmn7SQrCZO3NDxbSi8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741520290; c=relaxed/simple;
-	bh=4nucg4CoauwA5kAPnRFSbGlLG8bVoifutuzMWDupJwo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kxVlt9JnE6VXmLGmcyWjvYIx+S/e0hfxvZGX+EjHKx2waIsMQJFxk5rMjH0J8EdDOLboC9x8xicrfcnJBnYzU8iFz7eFkEX1LPk19RKQ9r+BKclgcnDy1FZe/cGJCZCvJgJLtNDn7yIsb43gR7/a6Hm7eKOPuVv3ndtFq7xNE3A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ZVy66t1v; arc=none smtp.client-ip=192.198.163.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1741520288; x=1773056288;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=4nucg4CoauwA5kAPnRFSbGlLG8bVoifutuzMWDupJwo=;
-  b=ZVy66t1vTpgQTHeu4/wAw0NlsZ/d6jWbbB0pu/wMRDKIvzDVwbJV2dwa
-   PXk7cIuJTCmoCAjiGLD1HRpFOdceeSJeCUijGRLtfO7zBMOlkSW4Sp4uO
-   I5WyLSRHXYBkk60F/b+cBF/8IhUrNNtK2EuBGBEuxRWuLnKy/N4wfZrvS
-   h2+qY+Tbf5dfnD9Ui7DuHUgCHawZ9BkjdtFufS0TFZt23Vu52k3CvZfoz
-   cZ9+S8gMBe3wk4WqyF3XMpY4t1TDVO8gW7TEuq/WjAwphmJ+iuqZZT15r
-   ajTRCyFBuOLZiYk1z8mK6Mejc7T/UXN3utSLtAeTrCZzx2V6DdrtviGdQ
-   A==;
-X-CSE-ConnectionGUID: dVaAOyK9R6WsNDQS/IixHA==
-X-CSE-MsgGUID: LS1uHXxDRZ+eGItUMpx3Cw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11367"; a="30100072"
-X-IronPort-AV: E=Sophos;i="6.14,234,1736841600"; 
-   d="scan'208";a="30100072"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Mar 2025 04:38:07 -0700
-X-CSE-ConnectionGUID: w5jE01DjQaGnYl4VkIt9VQ==
-X-CSE-MsgGUID: f5fOJWxjTFWCT8UaKUILFQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,234,1736841600"; 
-   d="scan'208";a="119710154"
-Received: from lkp-server02.sh.intel.com (HELO a4747d147074) ([10.239.97.151])
-  by orviesa006.jf.intel.com with ESMTP; 09 Mar 2025 04:38:01 -0700
-Received: from kbuild by a4747d147074 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1trEyl-00033I-1s;
-	Sun, 09 Mar 2025 11:37:59 +0000
-Date: Sun, 9 Mar 2025 19:37:54 +0800
-From: kernel test robot <lkp@intel.com>
-To: Alice Ryhl <aliceryhl@google.com>, Miguel Ojeda <ojeda@kernel.org>,
-	Matthew Wilcox <willy@infradead.org>,
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	Vlastimil Babka <vbabka@suse.cz>,
-	John Hubbard <jhubbard@nvidia.com>,
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Arnd Bergmann <arnd@arndb.de>, Jann Horn <jannh@google.com>,
-	Suren Baghdasaryan <surenb@google.com>
-Cc: oe-kbuild-all@lists.linux.dev,
-	Linux Memory Management List <linux-mm@kvack.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Trevor Gross <tmgross@umich.edu>, linux-kernel@vger.kernel.org,
-	rust-for-linux@vger.kernel.org, Alice Ryhl <aliceryhl@google.com>
-Subject: Re: [PATCH v15 5/9] mm: rust: add mmput_async support
-Message-ID: <202503091916.QousmtcY-lkp@intel.com>
-References: <20250304-vma-v15-5-5c641b31980a@google.com>
+	s=arc-20240116; t=1741520428; c=relaxed/simple;
+	bh=A7jmwshfHMtHvmApSaG25IVfOUzBcuAuyZmSDluHo48=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=guUIx8D5DTkBT2bLtNSvvN+TuZKJZFod5ddm310O4cXVMYDp2YtoOfifMmEbMi1WsJurSpYVewM9BLeMpoHNmNH5+NXDaH0fsPvZcezw42ddUEBN2yMTv7E8qZpa87r95JP/u/8g2vuDtsqg4fyuwFfa25Z97bQMRgwfMYJoTrk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.207
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f207.google.com with SMTP id e9e14a558f8ab-3d44b221f0dso31651755ab.1
+        for <linux-kernel@vger.kernel.org>; Sun, 09 Mar 2025 04:40:26 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741520426; x=1742125226;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=p9PJXD/jSiwFyiuecIvnhM1qNW/tF7+/fyvR00xRfU0=;
+        b=I7N5chac2e3DZFFxxAA7YefDU/UrOsZIScMj6Q2rwj6yUuJW804kRJHqL3tyCzr5Ps
+         PgTlO+syZEybY2gB9GE3bxGx6waPpCKcTevYedNQQziK+JgtffdfTzA9phFrjZiY35MF
+         pxCqFqqOsBiWciMrXCLGPkkIREvkegh8o0TM/b5SZd79nX2O8GBVBheecSb1vxxhsqnO
+         OXBJbwN4BUbXzh9/Nberdp5r9S1qGX1QG89cdiB8aYQ6hx2qwVaDKrehOM3oacYX2aG8
+         x1Ev7dvYdc9H8nS7vNOXLvvKR7oxahrx2UGUwHbB1dMZQkgoRjlbmFy9M4rLGMAr+6hq
+         rS/A==
+X-Forwarded-Encrypted: i=1; AJvYcCV7jeDaWbM7stntaFROImF71a+d3ydruba+wOuSMdp0SJcFcv3wi8FvA3eCNviMFTihGrCcvANIXxDEIxE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx9yPqedW4NMT/XfC4HKkTmvzlIjX6sh5Pof0cHYOZa7ASN8yNU
+	S6WoWai1BIsdGFVyt5/087mgjYYvzL1oWCf0SVRQTCjRmWoMsvAddeu741UExtXzRywqc/UMiE6
+	nN9ej1E1cKjKSiwlEGLXIFBKjFBqsT3njeZL5T41Xp+u7pH2UJvzBo2g=
+X-Google-Smtp-Source: AGHT+IErptT0tInK262zP60/UqsMh6kXrpP3aaCRPMgoIPi1iPw09F23416AriWDQdT2Iz6XIGCs2mgG3fb80/3Zuwfh7m6Xy5CY
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250304-vma-v15-5-5c641b31980a@google.com>
+X-Received: by 2002:a05:6e02:3008:b0:3d3:d07d:20a3 with SMTP id
+ e9e14a558f8ab-3d4418cf719mr115685665ab.10.1741520425780; Sun, 09 Mar 2025
+ 04:40:25 -0700 (PDT)
+Date: Sun, 09 Mar 2025 04:40:25 -0700
+In-Reply-To: <67483b75.050a0220.253251.007c.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <67cd7e29.050a0220.e1a89.0007.GAE@google.com>
+Subject: Re: [syzbot] [ocfs2?] KASAN: slab-out-of-bounds Read in ocfs2_dx_dir_lookup_rec
+From: syzbot <syzbot+20282c1b2184a857ac4c@syzkaller.appspotmail.com>
+To: jlbec@evilplan.org, joseph.qi@linux.alibaba.com, 
+	linux-kernel@vger.kernel.org, mark@fasheh.com, ocfs2-devel@lists.linux.dev, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Alice,
+syzbot has found a reproducer for the following issue on:
 
-kernel test robot noticed the following build errors:
+HEAD commit:    b7c90e3e717a Merge tag 'x86-urgent-2025-03-08' of git://gi..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=14f8fa54580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=2040405600e83619
+dashboard link: https://syzkaller.appspot.com/bug?extid=20282c1b2184a857ac4c
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=17c58664580000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=17b1d878580000
 
-[auto build test ERROR on a64dcfb451e254085a7daee5fe51bf22959d52d3]
+Downloadable assets:
+disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7feb34a89c2a/non_bootable_disk-b7c90e3e.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/b1f83f46f4b5/vmlinux-b7c90e3e.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/7d502ab93205/bzImage-b7c90e3e.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/e57bf738b48c/mount_7.gz
+  fsck result: OK (log: https://syzkaller.appspot.com/x/fsck.log?x=171a1fa0580000)
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Alice-Ryhl/mm-rust-add-abstraction-for-struct-mm_struct/20250304-195314
-base:   a64dcfb451e254085a7daee5fe51bf22959d52d3
-patch link:    https://lore.kernel.org/r/20250304-vma-v15-5-5c641b31980a%40google.com
-patch subject: [PATCH v15 5/9] mm: rust: add mmput_async support
-config: riscv-randconfig-r113-20250309 (https://download.01.org/0day-ci/archive/20250309/202503091916.QousmtcY-lkp@intel.com/config)
-compiler: clang version 21.0.0git (https://github.com/llvm/llvm-project e15545cad8297ec7555f26e5ae74a9f0511203e7)
-reproduce: (https://download.01.org/0day-ci/archive/20250309/202503091916.QousmtcY-lkp@intel.com/reproduce)
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+20282c1b2184a857ac4c@syzkaller.appspotmail.com
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202503091916.QousmtcY-lkp@intel.com/
+On-disk corruption discovered. Please run fsck.ocfs2 once the filesystem is unmounted.
+OCFS2: File system is now read-only.
+(syz-executor398,5304,0):ocfs2_find_entry_dx:1029 ERROR: status = -30
+Oops: general protection fault, probably for non-canonical address 0xdffffc0000000000: 0000 [#1] PREEMPT SMP KASAN NOPTI
+KASAN: null-ptr-deref in range [0x0000000000000000-0x0000000000000007]
+CPU: 0 UID: 0 PID: 5304 Comm: syz-executor398 Not tainted 6.14.0-rc5-syzkaller-00234-gb7c90e3e717a #0
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+RIP: 0010:ocfs2_dx_dir_lookup_rec+0x325/0x810 fs/ocfs2/dir.c:812
+Code: 20 48 83 c3 40 48 89 d8 48 c1 e8 03 42 80 3c 28 00 74 08 48 89 df e8 4a 4b 6f fe 48 8b 03 48 89 44 24 30 4c 89 e0 48 c1 e8 03 <42> 0f b6 04 28 84 c0 0f 85 c0 03 00 00 45 8b 3c 24 4c 89 f0 48 c1
+RSP: 0018:ffffc9000d14eb40 EFLAGS: 00010246
+RAX: 0000000000000000 RBX: ffff8880447788b8 RCX: ffff8880006f2440
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: ffff8880447788a0
+RBP: ffffc9000d14ec50 R08: ffffffff83b9ce2e R09: ffffc9000d14ece0
+R10: 23ec6d672c196c9a R11: 608b7c562adf3b03 R12: 0000000000000000
+R13: dffffc0000000000 R14: ffff8880491092c0 R15: ffff8880491092c0
+FS:  000055556a600380(0000) GS:ffff88801fc00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 000055721be84000 CR3: 000000003ef6e000 CR4: 0000000000352ef0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ ocfs2_dx_dir_lookup+0x163/0x930 fs/ocfs2/dir.c:860
+ ocfs2_dx_dir_search fs/ocfs2/dir.c:920 [inline]
+ ocfs2_find_entry_dx fs/ocfs2/dir.c:1034 [inline]
+ ocfs2_find_entry+0x1309/0x2570 fs/ocfs2/dir.c:1071
+ ocfs2_check_dir_for_entry+0x17b/0x4a0 fs/ocfs2/dir.c:2040
+ ocfs2_mknod+0x83c/0x2b30 fs/ocfs2/namei.c:288
+ ocfs2_create+0x1ab/0x470 fs/ocfs2/namei.c:673
+ lookup_open fs/namei.c:3651 [inline]
+ open_last_lookups fs/namei.c:3750 [inline]
+ path_openat+0x193c/0x3590 fs/namei.c:3986
+ do_filp_open+0x27f/0x4e0 fs/namei.c:4016
+ do_sys_openat2+0x13e/0x1d0 fs/open.c:1428
+ do_sys_open fs/open.c:1443 [inline]
+ __do_sys_openat fs/open.c:1459 [inline]
+ __se_sys_openat fs/open.c:1454 [inline]
+ __x64_sys_openat+0x247/0x2a0 fs/open.c:1454
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f4c42698bf9
+Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 61 17 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007ffef4145088 EFLAGS: 00000246 ORIG_RAX: 0000000000000101
+RAX: ffffffffffffffda RBX: 00007f4c426649e3 RCX: 00007f4c42698bf9
+RDX: 0000000000105042 RSI: 0000400000000080 RDI: 00000000ffffff9c
+RBP: 0000400000000040 R08: 00000000000b45f8 R09: 00000000000b45f8
+R10: 00000000000001ff R11: 0000000000000246 R12: 0000000000000001
+R13: 00007ffef4145258 R14: 0000000000000001 R15: 0000000000000001
+ </TASK>
+Modules linked in:
+---[ end trace 0000000000000000 ]---
+RIP: 0010:ocfs2_dx_dir_lookup_rec+0x325/0x810 fs/ocfs2/dir.c:812
+Code: 20 48 83 c3 40 48 89 d8 48 c1 e8 03 42 80 3c 28 00 74 08 48 89 df e8 4a 4b 6f fe 48 8b 03 48 89 44 24 30 4c 89 e0 48 c1 e8 03 <42> 0f b6 04 28 84 c0 0f 85 c0 03 00 00 45 8b 3c 24 4c 89 f0 48 c1
+RSP: 0018:ffffc9000d14eb40 EFLAGS: 00010246
+RAX: 0000000000000000 RBX: ffff8880447788b8 RCX: ffff8880006f2440
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: ffff8880447788a0
+RBP: ffffc9000d14ec50 R08: ffffffff83b9ce2e R09: ffffc9000d14ece0
+R10: 23ec6d672c196c9a R11: 608b7c562adf3b03 R12: 0000000000000000
+R13: dffffc0000000000 R14: ffff8880491092c0 R15: ffff8880491092c0
+FS:  000055556a600380(0000) GS:ffff88801fc00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 000055721bea2000 CR3: 000000003ef6e000 CR4: 0000000000352ef0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+----------------
+Code disassembly (best guess):
+   0:	20 48 83             	and    %cl,-0x7d(%rax)
+   3:	c3                   	ret
+   4:	40                   	rex
+   5:	48 89 d8             	mov    %rbx,%rax
+   8:	48 c1 e8 03          	shr    $0x3,%rax
+   c:	42 80 3c 28 00       	cmpb   $0x0,(%rax,%r13,1)
+  11:	74 08                	je     0x1b
+  13:	48 89 df             	mov    %rbx,%rdi
+  16:	e8 4a 4b 6f fe       	call   0xfe6f4b65
+  1b:	48 8b 03             	mov    (%rbx),%rax
+  1e:	48 89 44 24 30       	mov    %rax,0x30(%rsp)
+  23:	4c 89 e0             	mov    %r12,%rax
+  26:	48 c1 e8 03          	shr    $0x3,%rax
+* 2a:	42 0f b6 04 28       	movzbl (%rax,%r13,1),%eax <-- trapping instruction
+  2f:	84 c0                	test   %al,%al
+  31:	0f 85 c0 03 00 00    	jne    0x3f7
+  37:	45 8b 3c 24          	mov    (%r12),%r15d
+  3b:	4c 89 f0             	mov    %r14,%rax
+  3e:	48                   	rex.W
+  3f:	c1                   	.byte 0xc1
 
-All errors (new ones prefixed by >>):
 
-   820 |         insl(addr, buffer, count);
-   |         ^~~~~~~~~~~~~~~~~~~~~~~~~
-   arch/riscv/include/asm/io.h:106:53: note: expanded from macro 'insl'
-   106 | #define insl(addr, buffer, count) __insl(PCI_IOBASE + (addr), buffer, count)
-   |                                          ~~~~~~~~~~ ^
-   In file included from rust/helpers/helpers.c:10:
-   In file included from rust/helpers/blk.c:3:
-   In file included from include/linux/blk-mq.h:5:
-   In file included from include/linux/blkdev.h:9:
-   In file included from include/linux/blk_types.h:10:
-   In file included from include/linux/bvec.h:10:
-   In file included from include/linux/highmem.h:12:
-   In file included from include/linux/hardirq.h:11:
-   In file included from ./arch/riscv/include/generated/asm/hardirq.h:1:
-   In file included from include/asm-generic/hardirq.h:17:
-   In file included from include/linux/irq.h:20:
-   In file included from include/linux/io.h:14:
-   In file included from arch/riscv/include/asm/io.h:136:
-   include/asm-generic/io.h:829:2: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-   829 |         outsb(addr, buffer, count);
-   |         ^~~~~~~~~~~~~~~~~~~~~~~~~~
-   arch/riscv/include/asm/io.h:118:55: note: expanded from macro 'outsb'
-   118 | #define outsb(addr, buffer, count) __outsb(PCI_IOBASE + (addr), buffer, count)
-   |                                            ~~~~~~~~~~ ^
-   In file included from rust/helpers/helpers.c:10:
-   In file included from rust/helpers/blk.c:3:
-   In file included from include/linux/blk-mq.h:5:
-   In file included from include/linux/blkdev.h:9:
-   In file included from include/linux/blk_types.h:10:
-   In file included from include/linux/bvec.h:10:
-   In file included from include/linux/highmem.h:12:
-   In file included from include/linux/hardirq.h:11:
-   In file included from ./arch/riscv/include/generated/asm/hardirq.h:1:
-   In file included from include/asm-generic/hardirq.h:17:
-   In file included from include/linux/irq.h:20:
-   In file included from include/linux/io.h:14:
-   In file included from arch/riscv/include/asm/io.h:136:
-   include/asm-generic/io.h:838:2: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-   838 |         outsw(addr, buffer, count);
-   |         ^~~~~~~~~~~~~~~~~~~~~~~~~~
-   arch/riscv/include/asm/io.h:119:55: note: expanded from macro 'outsw'
-   119 | #define outsw(addr, buffer, count) __outsw(PCI_IOBASE + (addr), buffer, count)
-   |                                            ~~~~~~~~~~ ^
-   In file included from rust/helpers/helpers.c:10:
-   In file included from rust/helpers/blk.c:3:
-   In file included from include/linux/blk-mq.h:5:
-   In file included from include/linux/blkdev.h:9:
-   In file included from include/linux/blk_types.h:10:
-   In file included from include/linux/bvec.h:10:
-   In file included from include/linux/highmem.h:12:
-   In file included from include/linux/hardirq.h:11:
-   In file included from ./arch/riscv/include/generated/asm/hardirq.h:1:
-   In file included from include/asm-generic/hardirq.h:17:
-   In file included from include/linux/irq.h:20:
-   In file included from include/linux/io.h:14:
-   In file included from arch/riscv/include/asm/io.h:136:
-   include/asm-generic/io.h:847:2: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-   847 |         outsl(addr, buffer, count);
-   |         ^~~~~~~~~~~~~~~~~~~~~~~~~~
-   arch/riscv/include/asm/io.h:120:55: note: expanded from macro 'outsl'
-   120 | #define outsl(addr, buffer, count) __outsl(PCI_IOBASE + (addr), buffer, count)
-   |                                            ~~~~~~~~~~ ^
-   In file included from rust/helpers/helpers.c:10:
-   In file included from rust/helpers/blk.c:3:
-   In file included from include/linux/blk-mq.h:5:
-   In file included from include/linux/blkdev.h:9:
-   In file included from include/linux/blk_types.h:10:
-   In file included from include/linux/bvec.h:10:
-   In file included from include/linux/highmem.h:12:
-   In file included from include/linux/hardirq.h:11:
-   In file included from ./arch/riscv/include/generated/asm/hardirq.h:1:
-   In file included from include/asm-generic/hardirq.h:17:
-   In file included from include/linux/irq.h:20:
-   In file included from include/linux/io.h:14:
-   In file included from arch/riscv/include/asm/io.h:136:
-   include/asm-generic/io.h:1175:55: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-   1175 |         return (port > MMIO_UPPER_LIMIT) ? NULL : PCI_IOBASE + port;
-   |                                                   ~~~~~~~~~~ ^
-   clang diag: arch/riscv/include/asm/io.h:104:53: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-   clang diag: arch/riscv/include/asm/io.h:105:53: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-   clang diag: arch/riscv/include/asm/io.h:106:53: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-   clang diag: arch/riscv/include/asm/io.h:118:55: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-   clang diag: arch/riscv/include/asm/io.h:119:55: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-   clang diag: arch/riscv/include/asm/io.h:120:55: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-   clang diag: include/asm-generic/io.h:1175:55: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-   7 warnings generated.
-   clang diag: arch/riscv/include/asm/io.h:104:53: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-   clang diag: arch/riscv/include/asm/io.h:105:53: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-   clang diag: arch/riscv/include/asm/io.h:106:53: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-   clang diag: arch/riscv/include/asm/io.h:118:55: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-   clang diag: arch/riscv/include/asm/io.h:119:55: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-   clang diag: arch/riscv/include/asm/io.h:120:55: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-   clang diag: include/asm-generic/io.h:1175:55: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-   clang diag: arch/riscv/include/asm/io.h:104:53: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-   clang diag: arch/riscv/include/asm/io.h:105:53: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-   clang diag: arch/riscv/include/asm/io.h:106:53: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-   clang diag: arch/riscv/include/asm/io.h:118:55: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-   clang diag: arch/riscv/include/asm/io.h:119:55: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-   clang diag: arch/riscv/include/asm/io.h:120:55: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-   clang diag: include/asm-generic/io.h:1175:55: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
->> error[E0425]: cannot find function `mmput_async` in crate `bindings`
-   --> rust/kernel/mm.rs:143:28
-   |
-   143 |         unsafe { bindings::mmput_async(obj.cast().as_ptr()) };
-   |                            ^^^^^^^^^^^ not found in `bindings`
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+---
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
 
