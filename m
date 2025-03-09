@@ -1,120 +1,135 @@
-Return-Path: <linux-kernel+bounces-553011-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-553012-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1FFBBA5828B
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 10:11:33 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 45715A5828E
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 10:14:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A51C6188F88E
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 09:11:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F31313AE77C
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 09:14:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 890DD192D87;
-	Sun,  9 Mar 2025 09:11:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0242219F104;
+	Sun,  9 Mar 2025 09:14:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="htxjI+im"
-Received: from mout.web.de (mout.web.de [212.227.15.14])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="mF+pIM8K"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8A7F13665A;
-	Sun,  9 Mar 2025 09:11:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56BC614D70E;
+	Sun,  9 Mar 2025 09:14:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741511487; cv=none; b=kNg2plslHa7l9MVrUBHRckJTNA8m/msmCtX8S1gc4hnPqXK/Aal065Ob0qtfY1cDjueuZFEFLlrly4G8qMXP6XtxzYpmuyhP7Of+BOKlMUPqTZjzVThP5T3qr2/t1HDCuA9Z8R5Kq4265rTNbaIHvSqi2sTdN7P6BqIm5SyEL8Q=
+	t=1741511687; cv=none; b=OBfBxeAbU51HBEPMCN3nISjrMRDtOkpGeF2B4dRMGI5nopPLAPj7RqIElkyuZpetPqiJyWytmfZqEKqdT0ORzniumWOO8zBMsgrIw41s2iXCE2N12SrmSQN/PZBBc2iAeulfmM0TLa2k/wG/byBcXPbgeffxa2w9Iu6sC2G0Cd8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741511487; c=relaxed/simple;
-	bh=x2FOu/NEuxoDkVGrXkaSP5DObgEbImR6WKbHG6zGlH0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=VIqCNg1YIoWl3XFS6jLmTePfRul45oxGz6GKNWsU2bkiecyfg37BdMI+aNVey3OOnMuPtPgRG2q/Z/qtP80pVwfZyGHKwGQffmoEblQARYEWWbnPmrdFc5gyBgDwWp7Px4XdQYvq7sZLVkDVfOiJzTYTlg0viVcMnla6ju9XQmg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=htxjI+im; arc=none smtp.client-ip=212.227.15.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1741511455; x=1742116255; i=markus.elfring@web.de;
-	bh=NNw+IpOz6QFWkFjAytzQgKRkDlBIIWXGBoDjRDdjOOw=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=htxjI+imTsbIH7QGW8/cff0en0KghccmAuDm0nSHAYj594nwiuqPbzNoMstcVN4+
-	 nZg/8r9GpalH6nHA9N5+fUm/iNa5siZhL6TniqHfeOezYiKqlyFkghWHTmkOTuZbZ
-	 clCR3YeoF7JgUNk6p6MsKnhe+RKB/Zmnu4/tRpVhVhSc17fsmhdd+YWRhnku6gbZB
-	 8rEp+T35vvTNYYr5bh5sxS4Phms/hZRpXId4aVwAGu8DwzU0mPAyGlrMQa7FEXxHJ
-	 Jgdah0Ml/cwE361TUPDg5iSK3/3zMSGsCQJIdqn9FJ1y/FobJd2r7/tgLBhmormLC
-	 CyoBJ76jGuxfHELqlg==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.29] ([94.31.93.26]) by smtp.web.de (mrweb006
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1MkEhR-1tOUdz3uiv-00ayWF; Sun, 09
- Mar 2025 10:10:54 +0100
-Message-ID: <8545206d-4a7d-4e0f-812b-dadf923b5b5c@web.de>
-Date: Sun, 9 Mar 2025 10:10:38 +0100
+	s=arc-20240116; t=1741511687; c=relaxed/simple;
+	bh=aK4ddDcxtFJ7lB6ezpnifndlbSfF66rpQY92j4prjdU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Q3Pzxyc+jI+B84QcmnkMl1oap5imXGLK1JU9Sdu1jaP/lji3sqDJjCkH4uY8swQY4JEZJ8CEBn0AvDuQZOsiRcQNYRoVF20AToumhcGPbCjjON8x0SsAnE16xLzCEkxqooP4Rl8tNrUJiv5DrKYtuGwxZnagHzlww+kwOuwaVfo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=mF+pIM8K; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2BA69C4CEE5;
+	Sun,  9 Mar 2025 09:14:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1741511686;
+	bh=aK4ddDcxtFJ7lB6ezpnifndlbSfF66rpQY92j4prjdU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=mF+pIM8KBqC/G6pPebNDNayB8PQXlehhZD5mNNaXeOIKl4rJWNxuQ+rRg+QVu6tp8
+	 ClLUY7Fn17AvbzFkWfT/K3MTPinCYwwkC1vuN2MAyhcUMr0L0W/9xVJS2YpSqjUvI/
+	 F9t4n1CXcgBIFlKU3dtCQMnQfFcEltjzKsVaSsLc=
+Date: Sun, 9 Mar 2025 10:13:30 +0100
+From: "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>
+To: Aditya Garg <gargaditya08@live.com>
+Cc: "bhelgaas@google.com" <bhelgaas@google.com>,
+	"joro@8bytes.org" <joro@8bytes.org>,
+	"will@kernel.org" <will@kernel.org>,
+	"robin.murphy@arm.com" <robin.murphy@arm.com>,
+	"andriy.shevchenko@linux.intel.com" <andriy.shevchenko@linux.intel.com>,
+	"linux-staging@lists.linux.dev" <linux-staging@lists.linux.dev>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	"linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+	"iommu@lists.linux.dev" <iommu@lists.linux.dev>,
+	Aun-Ali Zaidi <admin@kodeit.net>, "paul@mrarm.io" <paul@mrarm.io>,
+	Orlando Chamberlain <orlandoch.dev@gmail.com>
+Subject: Re: [PATCH RFC] staging: Add driver to communicate with the T2
+ Security Chip
+Message-ID: <2025030913-sensitize-exposable-abce@gregkh>
+References: <1A12CB39-B4FD-4859-9CD7-115314D97C75@live.com>
+ <2B62772A-4292-4673-8F86-9D27D7AB4EE6@live.com>
+ <2025030939-moonrise-zipfile-97cf@gregkh>
+ <PN3PR01MB9597AEE275F867871BD9A5DFB8D72@PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/9] dmaengine: idxd: fix memory leak in error handling
- path of idxd_setup_wqs()
-To: Shuai Xue <xueshuai@linux.alibaba.com>, dmaengine@vger.kernel.org,
- Dave Jiang <dave.jiang@intel.com>, Fenghua Yu <fenghuay@nvidia.com>,
- Vinicius Costa Gomes <vinicius.gomes@intel.com>,
- Vinod Koul <vkoul@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>
-References: <20250309062058.58910-1-xueshuai@linux.alibaba.com>
- <20250309062058.58910-2-xueshuai@linux.alibaba.com>
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20250309062058.58910-2-xueshuai@linux.alibaba.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:NDfhp9xDAjhXIW48oUhsX5EZ/dMGLjtrOrNECUeNnWudo7qoykv
- nWr/F6lOSxOXOLCPMh3Er6DnrF4odOoaokRszeh9uU0TJZKrKFJzt88+PspG/+5nttSiFTF
- op8mt/PGonYalAZS971hDKBfLXHR2MRirAmMKM6vO8tPNcHha2+EfyEu0wCLF1N/i9SstSK
- gkkarvLgTv63zq75mNbDA==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:h7zrdXulUqw=;x/qIdJKV62xiP3MzcL8gxyvIUal
- eVF2ibsi5YKn4No8JLkdXz7rmbH1k8vku+8S5hdlhbmT9lCP7u7msUCEPRNqB4bIlQ6EdUCWG
- mqK8UHgJwIHGC2fEwI64X2KdIsjDvNWMl609005Dpw+DomrH9++dUBWSNhJ4iOFOpsnXA79Kv
- vPrKen95R5PSvxDFeqd/a3Jjmep7k5l3DB7kc9mnPpFcLLFuDL3mIOPkYI6OueX2rnKzL6Eoq
- gfAS/WnABBgJNTeaD7uaglA56oQdGaFJcfmHK9yWTI60UIP2L5cAcC3kd2rDF8KMt8ff2f2ie
- 9dGovVniy6Adj7z2e7nwQTWtFzf5IeoK31LC6vuh77TGTxCZL0J/WLPHNk7olGP6bzQjno9sV
- at+YweYAs+9A6mEstDS4Gx1LY2aAvgrhU0cmNOGXcubbQvg98JuVB8+Ib5dlRXn2aei8TVpCg
- yvZQx/mrb9FK5cN6zMo1cBsxPXawJXsaMRpK8B8UKrw1TT7oiv9VLTa1ugdDQrLUU7qlrekNr
- P8vNxuX4AN06FwuH22UEk7QuFhw0BL284sMdxQt/mfezFpIET982psQ4Hoa4G1Na2fPuLg1/v
- K4i1MeYSuFmY5Y3x24dHGzFzDBSLoSHdIn/LHjSMfD+r1tLEi2fMhwyEPP7fWSXB1Bf6nc7Zs
- RK5fTtdyz5HtwUCjAgxn3IJh2gKpDzZsWcNQWK21p4njPdulMmirjULky8gGSllrvOKPxbAry
- /TaqEfKcPbTSSxH5ptR45k4Xo2ZsJ0MXLUgVkqA4ziPh3Ss9YAqur/oNzkhh1MsoW5AAGeK70
- ELz034CRhwbVSSa9093Z/KowW7kGtwOHn/EN6mbo/K3IC5Gg4EP2W6+tOx/NP1so1y3FGxs/d
- bfvSBiq89hLCF2agZ0MYdWYjqJHgRXAQvLCfdE17OXg2HAweunycTmUBpJhj7z0m3LXNwO8rv
- jgrz0TTHq+eVZqvm5I2sekPeY/oEEqgC+8WM5zCLPUaWr5xpeRoG5iABN22N6KJmzM+LflMnm
- wEnE5EwC21DRoywuq9r5Lu9F2VkUeQMgK8efG211pHAFaGrJj3aTrcS3T5tG9VdCOPYA5NyJr
- of7FiRFpBbu3/8pJ2Ybz5DmDg7K8f+5I/jkPn5N+1LV/Eg6IPicVWJBgri7xLNM1fxbNc+XCM
- kjKxLQKDif/AO6f2fgQ9IBexkc3c+OJ7UhEVTz/G+JAlZMddajYTNMbbOjGYzuoZ5DNoDmngj
- rZfv3+OmDpAgE6q95+z2pjIS5r2qKbb1ZswXbluVd4GPa6l2SEvaOFOl+CZjQ4cB72Hp+zuZa
- q3T/Zly43hppIkcSOSMv3PQD+6MY80eE6qMEOPU9QUGxB6kF/OSEKbuC0fuFnpWyR6X9gvssh
- 4B6VWPsjixMdrlUXirAxYqw0+5Uas5ko8RRmTsc0pI+j5wXWbwofyqfP758LZk+tQIRkWWdEX
- 2P1pLw1Pycj++udyOqPnACDDuIqI=
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <PN3PR01MB9597AEE275F867871BD9A5DFB8D72@PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM>
 
-=E2=80=A6
-> +++ b/drivers/dma/idxd/init.c
-=E2=80=A6
-> @@ -203,7 +201,6 @@ static int idxd_setup_wqs(struct idxd_device *idxd)
->  		wq->enqcmds_retries =3D IDXD_ENQCMDS_RETRIES;
->  		wq->wqcfg =3D kzalloc_node(idxd->wqcfg_size, GFP_KERNEL, dev_to_node(=
-dev));
->  		if (!wq->wqcfg) {
-> -			put_device(conf_dev);
->  			rc =3D -ENOMEM;
->  			goto err;
->  		}
+On Sun, Mar 09, 2025 at 09:00:07AM +0000, Aditya Garg wrote:
+> 
+> 
+> > On 9 Mar 2025, at 2:21 PM, gregkh@linuxfoundation.org wrote:
+> > 
+> > ﻿On Sun, Mar 09, 2025 at 08:44:16AM +0000, Aditya Garg wrote:
+> >> 
+> >> 
+> >>>> On 9 Mar 2025, at 2:10 PM, Aditya Garg <gargaditya08@live.com> wrote:
+> >>> 
+> >>> From: Paul Pawlowski <paul@mrarm.io>
+> >>> 
+> >>> This patch adds a driver named apple-bce, to add support for the T2
+> >>> Security Chip found on certain Macs.
+> >>> 
+> >>> The driver has 3 main components:
+> >>> 
+> >>> BCE (Buffer Copy Engine) - this is what the files in the root directory
+> >>> are for. This estabilishes a basic communication channel with the T2.
+> >>> VHCI and Audio both require this component.
+> >>> 
+> >>> VHCI - this is a virtual USB host controller; keyboard, mouse and
+> >>> other system components are provided by this component (other
+> >>> drivers use this host controller to provide more functionality).
+> >>> 
+> >>> Audio - a driver for the T2 audio interface, currently only audio
+> >>> output is supported.
+> >>> 
+> >>> Currently, suspend and resume for VHCI is broken after a firmware
+> >>> update in iBridge since macOS Sonoma.
+> >>> 
+> >>> Signed-off-by: Paul Pawlowski <paul@mrarm.io>
+> >>> Signed-off-by: Aditya Garg <gargaditya08@live.com>
+> >>> 
+> >> 
+> >> FWIW, I am aware of the missing maintainers file and still not removed Linux version checks in the driver.
+> >> 
+> >> My main purpose of sending this was to know the views of the maintainers about the code quality, and whether this qualifies for staging or not.
+> > 
+> > I have to ask why do you want this in drivers/staging/ at all?  Why not
+> > take the day or so to clean up the code to be the proper style and
+> > handle the needed issues and then submit it to the normal part of the
+> > kernel?
+> > 
+> > Putting code in staging actually takes more work to clean it up and get
+> > it out of there than just doing it all at once out-of-tree.  So we need
+> > a good reason why it is in here, as well as what the plan is to get it
+> > out of staging entirely.  So a TODO file in the directory for the driver
+> > is required here.
+> 
+> I see. I was of the view that staging is more of like a place to keep beta drivers
 
-I suggest to move such an error code assignment also to the end of this fu=
-nction implementation.
+No, staging is for code that has obvious problems as to why it can't be
+merged into the real part of the kernel.  I'm glad to take it but you
+have to have a TODO file listing what needs to be done and who is going
+to be responsible for reviewing patches and the like.
 
-Regards,
-Markus
+But really, take the day or so to clean it up and get it merged
+properly, what's preventing this from happening?
+
+thanks,
+
+greg k-h
 
