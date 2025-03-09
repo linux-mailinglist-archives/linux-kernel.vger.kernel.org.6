@@ -1,138 +1,141 @@
-Return-Path: <linux-kernel+bounces-553047-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-553049-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1A4A6A582DA
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 10:55:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 487ABA582DD
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 10:57:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E71A93AE92F
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 09:55:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1DD373ACA4C
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 09:57:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4222A1B4140;
-	Sun,  9 Mar 2025 09:55:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5FB11B3957;
+	Sun,  9 Mar 2025 09:57:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="i5ZWXOxF"
-Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Y5d8GoY9"
+Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1ABE42D78A;
-	Sun,  9 Mar 2025 09:55:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2DEC1B3922
+	for <linux-kernel@vger.kernel.org>; Sun,  9 Mar 2025 09:57:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741514132; cv=none; b=npdoh2/RasPg6bq95XCEnKhB+eiKFgcoA5jMu2fLjJ3XCkF185ept9LqYUhb9LzuVBZj/gBS4KzH9h2isLFErRkudjGpg7EDBFONC61sk0BGjy2gVK175Ku6JN64jk2Dgf2ARw0P8brIB1hvk6slfioDI5jtNFBoTvm6JArwIkc=
+	t=1741514255; cv=none; b=cXD/S4LEfPq1vB7rAOnj3xAsdLrogMthhF07BMCgCDI5Bm8jv5l+/675gF0jwO2G7/VN183YaRp5xw3BFVwt/2UQh5MZ+rhRgDFXWvV2etlE7vSvET1+g/llOF8FmbEvmXAxl/zAlEICJmzzjdldkHS4KD6XaidzmbiA9V2KFH8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741514132; c=relaxed/simple;
-	bh=CvXbtCAoJTdLfyTEWw2u3IH8iXW9jb/+ApAkyDmMQKk=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=bsDKLHATIGhzWc2TnDHaAw90ubClbB3Gi3xpW5TbDThEDeCynwA1vy0LOlKlxO5gI2SEcS6qvLyo10D6C45zGy34vP0x/ikVIaL8mjTu6XijZwJpTFudcfixcmnmPDk9Fyg8bzXat5hSJfXw+oA3255nZAvkcgLDdVdamdA1N7E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=i5ZWXOxF; arc=none smtp.client-ip=209.85.221.48
+	s=arc-20240116; t=1741514255; c=relaxed/simple;
+	bh=vEBmhpd0DuxHrvuafKk+qU5O1OZoIjryryuVpwvwb7I=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Mvsw7YX2kLfyfmiBeWs/QGQOfhNNLjIcQ2k1Vua894KmuGt6nt43rvg6ySswKxEwnRs2bPBQ1ibNDitGNhDRcwH04/Ed7Z+QKVMF1Y2YPdUArxzcJe15xjohx06CnHtF0uE7PVKyqCVYElMng8ssYYBfm2rO8s5umSowo7AYOBk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Y5d8GoY9; arc=none smtp.client-ip=209.85.208.175
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-38f406e9f80so2475972f8f.2;
-        Sun, 09 Mar 2025 01:55:30 -0800 (PST)
+Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-30bf5d7d107so21247861fa.2
+        for <linux-kernel@vger.kernel.org>; Sun, 09 Mar 2025 01:57:33 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741514129; x=1742118929; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=8ZpuHav96lrk832Cicku4PQcIvGBzmRkHChNSbUFJB4=;
-        b=i5ZWXOxFN70zCN5iujYvkgJ2Kgvi+bHWO5rXfHe3fjolSLXChQtJt8RHDfmBz5qcMD
-         lOHhcDLhBkPju/8doqGzu26A8WjbXcvRhGateMDECQXTR0t6AxLQFPyX5kg2a3Adnyrs
-         7fvO1qS2BqJnkJiYH2T3qEGENev2lVu+25xeudftkS5cGTVZbQX7J8utPqUmWiClb8c/
-         YMqUKZ14F+2/v9XN8evGZUuTTJsru9X0X7IjUWhqgumaUc6EuYIoG+jaAKANz9VPd682
-         DSGlXFYa5vSy4oL5CTM/CHQrUg3nWgHYQWIYp9LsdkFWm08e2gA+H8nQQNPMW3QXVkhs
-         Qxtw==
+        d=gmail.com; s=20230601; t=1741514252; x=1742119052; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=vEBmhpd0DuxHrvuafKk+qU5O1OZoIjryryuVpwvwb7I=;
+        b=Y5d8GoY9ASvWvG+/mo0dLl03trZ87z8axI2ehaK31fN6xViQXYp3EjWJgaUYe6dx3F
+         gpcUHquU0ZXwXt5gkoje+koiCpRDQ/4XrTSJr2GLAFt+b2ZBkBS4xH0UagAxJkBqnsMv
+         eViZVQXGIPTabPerduLY8hS4k0KuBD6st7WnJcv5DcWg7VIQz1dXJ8ibbA43lDLpaO8d
+         On2UX40YQ49eTQm8/TdCsEjsmidMboOPwEKxmTShVhd4SxqXK9Czo6XCP3iRd07Ql7M+
+         wEySj5fnfc8lOLO2QV4rkQF1TISX7pKx1g8rZrL3hT/1ellLC+ysnpgmxKSvM0YVs9TG
+         OJqg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741514129; x=1742118929;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=8ZpuHav96lrk832Cicku4PQcIvGBzmRkHChNSbUFJB4=;
-        b=UcIE1+c/Cont+jpimY6ax1uVKwS6df3kvPrFRobHa10MEjYO4a06GjVjVPbORtdx7L
-         BlIadMM8gETB98t5Ud2vVxbiNRwOlWX5qFdnYN5xiSOx45aN5wNQ0mBQNST1AUyPzoiw
-         SUilPh2mr7eS9lHb5W4y6xKWmB9ruuIYcr6OpOpZGJvBebrN5oFKxlYrRdpr3DM9CpPW
-         C6pab66Z6BykPgxsDTvZi7X2RAZVdandx0E6bvCNn7XWxN4tShysJeWcGBzwRodntTwR
-         fKnv24AbcOuiwy2o37f+dSBefdtKhiY0Zx5xLvKrjvTWD8h5U0+Aqto7IKB9mmWQDmua
-         N6+A==
-X-Forwarded-Encrypted: i=1; AJvYcCWAFGsBUas1khKWiif1YWTYCcHeav+RPfuAWHO1gwivCXm90VEijmKZLJgDCjXkJDLoCt0vDFnjepj7Tbs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzMM29EklMkMkPPdAOJp0qBZ3vQ2gOqikM7JosfvvOmyfwbumi1
-	IzXy6XyKKeYQk/rFTV6fhFbwFkbwGmNjUbq7Zzy9CffCWaUxSrDt
-X-Gm-Gg: ASbGnctY1Ekq9k+s066DlNYd1/q6Mza6MOgRpje5yepxOksY8yulMsxCaw8S/sRA/SE
-	cwaw4hzO6uzRzEmyNPJWTP7uo5HM539T6hK8ZzNCFNh2U8hDyw1gCPL0MPrADoNFpz/d4052CvE
-	XpSUB/t4TrzNHMMmxrwRM5x4gN/pROK/5MYYLeDSUxi5xfmA9qf4TZXm11XK0OEyGOUlFdNUHMW
-	ot/C+t/L3sxNmLL9NswgnsZPIx5+f6k8Rlst/pPzQjHt2jWxiKPaPneRI/hMfqKgSx37vSZvyp0
-	LxmoyreRaoA1CX9vN3ei+5DqCr8xwghKtlp5CQuDzOXAew==
-X-Google-Smtp-Source: AGHT+IHfI/VJZftDRqHYeb3Xwib26RWuigXJPjvLBRgin8Bg+mZushMIzjAxfzKYiLNvU6b4hTnErA==
-X-Received: by 2002:a5d:6d8a:0:b0:391:12a5:3cb3 with SMTP id ffacd0b85a97d-39132d2af8bmr6599086f8f.3.1741514129156;
-        Sun, 09 Mar 2025 01:55:29 -0800 (PST)
-Received: from qasdev.Home ([2a02:c7c:6696:8300:8afb:1194:b90e:9410])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3912c0e2bb7sm11567926f8f.63.2025.03.09.01.55.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 09 Mar 2025 01:55:27 -0800 (PST)
-From: Qasim Ijaz <qasdev00@gmail.com>
-To: robdclark@gmail.com,
-	quic_abhinavk@quicinc.com,
-	dmitry.baryshkov@linaro.org,
-	sean@poorly.run,
-	marijn.suijten@somainline.org,
-	airlied@gmail.com,
-	simona@ffwll.ch,
-	quic_jesszhan@quicinc.com
-Cc: linux-arm-msm@vger.kernel.org,
-	dri-devel@lists.freedesktop.org,
-	freedreno@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2] drm/msm/dpu: reorder pointer operations after sanity checks to avoid NULL deref 
-Date: Sun,  9 Mar 2025 09:55:25 +0000
-Message-Id: <20250309095525.7738-1-qasdev00@gmail.com>
-X-Mailer: git-send-email 2.39.5
+        d=1e100.net; s=20230601; t=1741514252; x=1742119052;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=vEBmhpd0DuxHrvuafKk+qU5O1OZoIjryryuVpwvwb7I=;
+        b=mZqb4xQTRK54yN+OmtnjwXjdLScf3QX+Z6Wg45imed5ejBJjFQIVeFwH3Fz59zGDXS
+         ng1ALnq40ypsmwSP6ThTbLJCOijZSwZR4xgnultdgrwdDxENJDxtsXrplwypYWWqjDGR
+         ClJQ0tLI8NwjdxSxEDZvizw1j41Iw2mImQ3NS6k8JkbRrcm0Z4uczrs2b9WnT9ZFPhjJ
+         YznbRjEaqZNMSIgme+FJT/8egQzpJmsk21oV7fN7qrcH5C39pE+RJNGVFA0zds8Vl9Ba
+         DmEXuoFEZxayj4UM6Bg0KGq4SWMgIxVNesCoCnryoPLcfb1T9GF3Kn5VwHVHkAR6Elbh
+         KnaQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVTVXM6/ivjHsb3xlDC4XJQHaQoX+4ec8VNrJK3XcFY0FUz2u8fTaaSBy20X6JfySWHOM74M/gsCsQjLgo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyJEbfY5zOfQEXw1uh3u7xPaCPTi74WO2m9w6/YPylgv8+Swso2
+	EIQWRQhE1I62Vlv9i5LVS+YXYK+/gjhsjiqGp3gF3canSCJ85JatLQuM6Tn/v4L3cZXEpZEWFz+
+	llQFY5xaUPNKqU1aSXI/ueFewhBo=
+X-Gm-Gg: ASbGncvZ9kNg9fS75uvUPNsnCZbOS3I1mXUXa2CKViKie0zNoo4xpSi0sVrtGgFasuH
+	T1ltcYm8Uet/kXyIU8FQw8k8bL5YnEpYgCa3k1PPj9A/1wShBK8e4pCba1uNvl1ZIDPd4tKaAkG
+	BSQ4XDS4VJ/H2m7KjzwyQO5tjRnQ==
+X-Google-Smtp-Source: AGHT+IFlSjlqbP5a/MMYQDbhi1k5WqBr8vhXIzQju8i5ukelCWeiOa/0RsngZgpJPftPd6QNHxz0CkNqiZTVsLu/BFY=
+X-Received: by 2002:a2e:2c0c:0:b0:302:1cdd:73c6 with SMTP id
+ 38308e7fff4ca-30bf453bb4amr29092671fa.20.1741514251329; Sun, 09 Mar 2025
+ 01:57:31 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250228123825.2729925-1-ubizjak@gmail.com> <20f1af22-71dc-4d62-9615-03030012222e@intel.com>
+ <954c7084-3d6f-47b8-b6cc-08a912eda74c@zytor.com> <CAFULd4Z0FugNh7+6c5Di_o6zKTNOmkNytEpn0kfPhinFQEOSzA@mail.gmail.com>
+ <20250309094613.50e930de@pumpkin>
+In-Reply-To: <20250309094613.50e930de@pumpkin>
+From: Uros Bizjak <ubizjak@gmail.com>
+Date: Sun, 9 Mar 2025 10:57:19 +0100
+X-Gm-Features: AQ5f1JpqcBwXu2sIPHF9O0bKjyWOrf8zRGhDtd7jI2v30wEOw6HH1e7vscN6RYc
+Message-ID: <CAFULd4Z9_5oUA2aNUd5+4MM=N2Tphj4NDuYDrtwE6sXRKy-tXw@mail.gmail.com>
+Subject: Re: [PATCH -tip] x86/locking/atomic: Use asm_inline for atomic
+ locking insns
+To: David Laight <david.laight.linux@gmail.com>
+Cc: "H. Peter Anvin" <hpa@zytor.com>, Dave Hansen <dave.hansen@intel.com>, x86@kernel.org, 
+	linux-kernel@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>, 
+	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@kernel.org>, Borislav Petkov <bp@alien8.de>, 
+	Dave Hansen <dave.hansen@linux.intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-_dpu_encoder_trigger_start dereferences "struct dpu_encoder_phys *phys"
-before the sanity checks which can lead to a NULL pointer dereference if
-phys is NULL.
- 
-Fix this by reordering the dereference after the sanity checks.
- 
-Fixes: 8144d17a81d9 ("drm/msm/dpu: Skip trigger flush and start for CWB")
-Signed-off-by: Qasim Ijaz <qasdev00@gmail.com>
----
-v2:
-- Moved Signed-off tag below Fixes tag
-- Moved dpu_enc declaration to the top and initialisation below sanity checks
+On Sun, Mar 9, 2025 at 10:46=E2=80=AFAM David Laight
+<david.laight.linux@gmail.com> wrote:
+>
+> On Sun, 9 Mar 2025 08:50:08 +0100
+> Uros Bizjak <ubizjak@gmail.com> wrote:
+>
+> > On Sat, Mar 8, 2025 at 8:08=E2=80=AFPM H. Peter Anvin <hpa@zytor.com> w=
+rote:
+> ...
+> > > In fact, I would wonder if we shouldn't simply do:
+> > >
+> > > #define asm __asm__ __inline__
+> > > #define asm_noinline __asm__
+> > >
+> > > ... in other words, to make asm inline an opt-out instead of an opt-i=
+n.
+>
+> The asm statements themselves get inlined (typically they are in an
+> always_inline wrapper), the size affects whether the calling code is inli=
+ned.
+> You are now in the 'games' of I$ fetches, overall code size and TLB looku=
+ps
+> (not helped by the speculative execution mitigations for 'ret').
+>
+> > > It is comparatively unusual that we do complex things in inline assem=
+bly
+> > > that we would want gcc to treat as something that should be avoided.
+> >
+> > I don't think we need such radical changes. There are only a few
+> > groups of instructions, nicely hidden behind macros, that need asm
+> > noinline. Alternatives (gcc counted them as 20 - 23 instructions) are
+> > already using asm inline (please see
+> > arch/x86/include/asm/alternative.h) in their high-level macros, and my
+> > proposed patch converts all asm using LOCK_PREFIX by amending macros
+> > in 7 header files.
+>
+> The other ones that are likely to get mis-sized are the ones that change
+> the section to add annotations.
+> The size overestimate may be better in order to reduce the number of
+> annotations?
 
- drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+Yes, this is why I think it is better to use asm inline on a per-case
+basis. While ALTERNATIVE and LOCK_HERE instructions result in one insn
+(and can be trivially amended with asm inline to instruct the compiler
+about this fact), this may not always be the case.
 
-diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c
-index 0eed93a4d056..0bd1f2bfaaff 100644
---- a/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c
-+++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c
-@@ -1667,7 +1667,7 @@ static void _dpu_encoder_trigger_flush(struct drm_encoder *drm_enc,
-  */
- static void _dpu_encoder_trigger_start(struct dpu_encoder_phys *phys)
- {
--	struct dpu_encoder_virt *dpu_enc = to_dpu_encoder_virt(phys->parent);
-+	struct dpu_encoder_virt *dpu_enc;
- 
- 	if (!phys) {
- 		DPU_ERROR("invalid argument(s)\n");
-@@ -1678,6 +1678,8 @@ static void _dpu_encoder_trigger_start(struct dpu_encoder_phys *phys)
- 		DPU_ERROR("invalid pingpong hw\n");
- 		return;
- 	}
-+
-+	dpu_enc = to_dpu_encoder_virt(phys->parent);
- 
- 	if (phys->parent->encoder_type == DRM_MODE_ENCODER_VIRTUAL &&
- 	    dpu_enc->cwb_mask) {
--- 
-2.39.5
-
+Uros.
 
