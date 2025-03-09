@@ -1,77 +1,76 @@
-Return-Path: <linux-kernel+bounces-553319-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-553320-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E65EA5876B
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 19:56:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9B800A5876A
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 19:56:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1968C7A30B5
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 18:55:31 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0E5F87A4BF9
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 18:55:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EDAA209F5B;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 352911F8739;
 	Sun,  9 Mar 2025 18:56:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="FePMpa+e"
-Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="BUvAfBfP"
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B0CD1EF386
-	for <linux-kernel@vger.kernel.org>; Sun,  9 Mar 2025 18:56:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3BE41F8737
+	for <linux-kernel@vger.kernel.org>; Sun,  9 Mar 2025 18:56:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741546573; cv=none; b=SNIgGi8OjflkXtBAktEDsispKDjI/iAMUm8WEq60jl8qherMXRZkL+LvBW7DlOMTs+xSG4mrBW63m2X+xc/ie40cJL5nW+KqdhGqNM3WJTwi4XyG465eIy0h8jnb5xC5p4hdDuYKDvdxHZ29VrYJ+XkXqA6o+KddGmgBSYD3++g=
+	t=1741546573; cv=none; b=Z023f5Im27Fymq1bT1mTG4Drboe2P+gnfp3dqxyTcQkEOaYQCHhS09NfEYs3yQTC0uBUIDcVcN1/SWXKb70MgzDrjlTYlJfQ7mzARVsPJJL+bwTPlNJ+R7LLC5pgkAMdTzGPbjhwjUFdwlaIvHOypu+EbW92p1TacAuToE/2pww=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1741546573; c=relaxed/simple;
-	bh=PMxfEyfyZ/xtzQEVKECKbubBazRu2cYpgYqd02Y9UV0=;
+	bh=kUxIzjT34djjsSWrouN9kcaq2cVWYfP4zf9wrxF60YQ=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=KofTgwE0DdFBDfpfdVEGBOnIcLVIxBHaHnRsmjwK+h4zgqhonCoPgUiLfU3mDlWtj8KU24zjEdP8akskevO3OuvDLTIfZV/bt7Ev8BTpj8sLMsX9FNhFWzWyeSicxni4WBJI8i0rW5ZnRM/NcyOF/0DNzzuGW98DXZ/1FJJt+dU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=FePMpa+e; arc=none smtp.client-ip=209.85.221.53
+	 MIME-Version; b=n25iYMSE1fJKC0jnwp1IADypbS52OM4l+FXZ8GPoZR+L4m3LrnbkDpU6bsXkeWPNZuhbY8Y5F4U8ICX83mLXy0JSvFMDnUL0onXnGHIdQwuOhcChZjK3UC70YQqq55bEmBDVtDjYbdPa9sRvGAy6V2jyTWJ7ygZ7xOMkb/iU+IY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=BUvAfBfP; arc=none smtp.client-ip=209.85.128.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-3912622c9c0so179725f8f.3
-        for <linux-kernel@vger.kernel.org>; Sun, 09 Mar 2025 11:56:10 -0700 (PDT)
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-43ceeb85ab2so616595e9.0
+        for <linux-kernel@vger.kernel.org>; Sun, 09 Mar 2025 11:56:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1741546569; x=1742151369; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1741546570; x=1742151370; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=FKRLg92c6C6VQuMYXP20YZZyOfIPnqquJNnWGRCRNdM=;
-        b=FePMpa+eZGb7wNEQN6WeyzksAs3Bt6YDyQo7FLS0wDGJp18/bILN+vuxJoLVrzflw5
-         rUfgg1Osa/LEVSgVTvvxAeFpQl4QU9GuI2jdZAwLgllh6EA8CHBuqF+uaR0zJ2Oyq2Wd
-         KcPwn9LHljIJhfXruhnrbM/Te42mj+5GjlZe+4oU7hM3HRF9RA2uwPU21Pyc/tumF0Kq
-         8tJbxMXEQknrqAN/ogd8ZX8Ki4RnQ0nC3j8J3dbfH8bKKZJKyTjI2/k+Ozkxh2+Tgb9F
-         F0c2KsZlbS4lE2821gtwtFrGzspeMv0vRPeeuukiI7klF3GNiWfRiKMSX+Sy3qaBMVEZ
-         Jm6w==
+        bh=csnV4M7t8mG+4gzOzlbb+RIrtUw1t0+Fx7m4dlnVHBE=;
+        b=BUvAfBfPzS8V5fAnWkJ1+FUAenq+Lgdi/BXByG7jddMToWlLBusdiYntynvy17Lzzd
+         aG5Alq7Ai0X9s7ghBLejAxE3irhkno0QvQMvOWPnlHfbIQyEg5UKcfjGuMHc7fXENqW6
+         pwqETGZLEHYs0BCBCeHuj7OQ7QVCs0uU3x4jrXIi3cMD4GflM4kmg21fLp6IxnsIOHfI
+         zNixhMvQxoOagigtHK0IJ9/jKdcyClc8VnZQ2XJ4JEwuYS18eZwpVzHANxnlbxj0Ei4h
+         vyvMgRW56JzIKvHIvNUMW5E745TE8vdXY7cfg9iFCym02/yVwMcasEecbORouV0wAGas
+         8OLw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741546569; x=1742151369;
+        d=1e100.net; s=20230601; t=1741546570; x=1742151370;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=FKRLg92c6C6VQuMYXP20YZZyOfIPnqquJNnWGRCRNdM=;
-        b=c6skDj/wheFNDxaGNswt8rUP5tYVaRvjC2SBuTaCkKaCEtzuPuZF/OTMnwD3VPL5/Z
-         FeN9dz7g8D8MOALCUdNrSwVQ+25Q9zx1gHGLAnnUhQT+8yNAga39/X1nQMiEXY9FEo4O
-         3F0W3oGImhK6IfeM7n9vLjDe4woeJPQ8fIAcqRfvrcLDOxopU6O+kndqd3bDZ8Vipf/F
-         nDYAOYObCjTsnQ0+d+VM5wYy6ijLQMV7mfTPFimogfvpxsCqZiIsi+HnhuRvy2W3axrW
-         ScY9Csw2wP2yd+9JG1aZD/KDfnUVG74nXldqQ2jSt9tHA1HlKnGQeqGrJK4bCax/HAxM
-         MEzg==
-X-Forwarded-Encrypted: i=1; AJvYcCVLhCNOGlkODnRZGjGjqtrRmElXmAcjXXfZ9x11tor48HPCSieBUF8aU+d23tAZc7kqpa4QluKUGFUEiOU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy337Fir3a6OmAZeLpl2zFlWnr1v/WR46cPMTZcWD+JBVlYqaFK
-	GvoM0ddsJJRE51GJLMClPXJZ3qcdNz1HJ4SKpFvcF9V8ah7NX4IFtplZTG/BZCrANaR/GArmQGc
-	ul3I=
-X-Gm-Gg: ASbGncuznQaBvg3B5mduTjsQFnj2Vc/pSSpDFqU/1WdqXMwrLtjXoVcdRPUMTfnY3JW
-	FCUtlVthUONa7EekVAywmAWkMqQf6FDexiw12uk35eaOB10uYgbuNZlhEK7Zgqa7jljhQM1cm/v
-	mElHkADj6qYe/5ryJOuhLV7SuXF08jc3bLplmwKzovS4AqlwVnlUy94bk1ombFdrC9CuK4ANJMI
-	V2Z/wEwNu1WodM7B1xY+eYA7/mz3peYE70Ed5rCtYxyEXdLXbXXSdkutyzhFH3B1x/OUC51xD7p
-	/gVJYqIrpzyBmNRTq1aBbJDJCgsS0eF1mOLXantRU1gBeV3QxHoVqFR/gNA=
-X-Google-Smtp-Source: AGHT+IFgAZkZaPTg34kk+B+P+zg3fnOit9vmY6MmBLyv17DTPt6JikKSZWSxHbdBl0XNWFJgN8f7ow==
-X-Received: by 2002:a05:600c:1da2:b0:439:930a:58a6 with SMTP id 5b1f17b1804b1-43ce6ef2478mr13617275e9.8.1741546568817;
-        Sun, 09 Mar 2025 11:56:08 -0700 (PDT)
+        bh=csnV4M7t8mG+4gzOzlbb+RIrtUw1t0+Fx7m4dlnVHBE=;
+        b=Q+Gsiusy86S4Z5HPfi9EGe9rsKHvc5EYwe3i58qju0X0pxOG5xAoQr1IAdxaGSLph5
+         Zqkpss2/sCfqz0vLXYIo5iud2D3RuL7KZh7pFEy9Yx4w/5CcgEXsZPKRnjXmmzcXUzJc
+         ac6Ot+oLJ8VLINDUxHys6tSFyKD9cbnIH3I0pr3QmmjW4budHVGim51nJH7QKbec/k2n
+         E9kKOq/UEG4+Oqx9V9NCII+s3Tu1+FEPjKmNFVqLvDjnKGoU+MrObA+5go/5e+X5cEzY
+         LqDpmPmCNzAuKXi5/dwtiauSTSMpdI7m/ALxgO4vBkuHS2N2DLFJbZ7UDoEyu9cRcGN0
+         IksA==
+X-Forwarded-Encrypted: i=1; AJvYcCU2e2xR0NVSOK2Nn2JKxBW2PqOhTeV30MV0jhq5oNlcuVoB79rUurBC/gSo217vNNFef+YaFQX+gLhSXfQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz6XJndE2zi2sxEh3A+pbVOSTqbqwwdTp7jamboXA+PL/wf6MED
+	pJFRFYt/+eGrGiP9R3A2ubtVpITV18IFVsZi04ptDQG3QEHfmBF4+Oj1pjAAmD4=
+X-Gm-Gg: ASbGncvXpvDmPIAfkKWjMxOEmbLlW7qJ9mNLpdiFUVDRistDC8aay0Cgkq096Vw5muD
+	NiK6xEkvD2vRiz6X7qrAYNyTF5EtyTEXtb8S5xtTV6i+mbQa7U7niiztn3AovvQOkusCTz6/k3h
+	6NMRS0AH9PKgaWolJdwY1M6BUx0hcU3Od8howmP+5ZPDGV7IMobaLHHZ15Ap8ACVECFQp4dgvbn
+	6c7BZLlacLOkMxIJnrZxj7Hs3z/n4xwO/wxVLSBJMBHc67+rGacxbXWCmaLVwfvn2N2WJsu62DE
+	zYJpMVBMPSGO1spILjT6+pH//rOCRDOUaXgWCTBSZyhA3YeJ52zpediPsOo=
+X-Google-Smtp-Source: AGHT+IHOjQZl6au5AX9pwx89qj1PiY9uUWPbWjZhcAqE7l92MV4Sd5wk3pnxNKw3T6EVY3vWBvszTg==
+X-Received: by 2002:a05:600c:3588:b0:43b:ca39:a9b8 with SMTP id 5b1f17b1804b1-43ce6b12816mr15245875e9.2.1741546570242;
+        Sun, 09 Mar 2025 11:56:10 -0700 (PDT)
 Received: from krzk-bin.. ([178.197.206.225])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43cee22c13fsm44263945e9.40.2025.03.09.11.56.07
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43cee22c13fsm44263945e9.40.2025.03.09.11.56.09
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 09 Mar 2025 11:56:08 -0700 (PDT)
+        Sun, 09 Mar 2025 11:56:09 -0700 (PDT)
 From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 To: Arnd Bergmann <arnd@arndb.de>,
 	soc@lists.linux.dev
@@ -82,9 +81,9 @@ Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
 	linux-samsung-soc@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [GIT PULL 2/4] arm64: dts: samsung: DTS for v6.15
-Date: Sun,  9 Mar 2025 19:55:56 +0100
-Message-ID: <20250309185601.10616-2-krzysztof.kozlowski@linaro.org>
+Subject: [GIT PULL 3/4] ARM: samsung: soc/drivers for v6.15
+Date: Sun,  9 Mar 2025 19:55:57 +0100
+Message-ID: <20250309185601.10616-3-krzysztof.kozlowski@linaro.org>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20250309185601.10616-1-krzysztof.kozlowski@linaro.org>
 References: <20250309185601.10616-1-krzysztof.kozlowski@linaro.org>
@@ -94,7 +93,6 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
 The following changes since commit 2014c95afecee3e76ca4a56956a936e23283f05b:
@@ -103,100 +101,27 @@ The following changes since commit 2014c95afecee3e76ca4a56956a936e23283f05b:
 
 are available in the Git repository at:
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-dt64-6.15
+  https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-soc-6.15
 
-for you to fetch changes up to 056106b030b73c7d53749469bd1cdbc89b4d2daf:
+for you to fetch changes up to c8222ef6cf29dd7cad21643228f96535cc02b327:
 
-  arm64: dts: tesla: Change labels to lower-case (2025-03-07 16:05:35 +0100)
-
-----------------------------------------------------------------
-Samsung DTS ARM64 changes for v6.15
-
-1. Google GS101:
- - Disable GSA core pinctrl because its registers are not available for
-   normal world.
- - Add APM (Active Power Management) mailbox and the ACPM firmware nodes.
- - Add new boards: Google Pixel 6 Pro (Raven).
- - Enable framebuffer and reboot-mode.
-
-2. Exynos990:
- - Add PERIS clock controller, MCT timer
-
-3. Exynos8895:
- - Define all remaining serial engine (USI) and syscon nodes, add MMC.
- - Enable microSD and touchsreen on Samsung Galaxy S8 (dreamlte).
-
-4. ExynosAutov920: Add UFS and CPU cache information.
-
-5. Various cleanups.
-
-This includes two topic branches with DT bindings, which might be shared
-with other trees depending on needs:
-1. for-v6.15/samsung-clk-dt-bindings with Exynos990 clock controller
-   header constants.
-2. for-v6.15/samsung-soc-dt-bindings with Exynos USI serial engines
-   header constants rework.
+  soc: samsung: exynos-chipid: Add NULL pointer check in exynos_chipid_probe() (2025-02-15 14:37:19 +0100)
 
 ----------------------------------------------------------------
-André Draszik (7):
-      dt-bindings: arm: google: add gs101-raven
-      arm64: dts: exynos: gs101-oriole: configure simple-framebuffer
-      arm64: dts: exynos: gs101-oriole: move common Pixel6 & 6Pro parts into a .dtsi
-      arm64: dts: exynos: gs101-raven: add new board file
-      arm64: dts: exynos: gs101: drop explicit regmap from reboot nodes
-      arm64: dts: exynos: gs101: align poweroff writes with downstream
-      arm64: dts: exynos: gs101: add reboot-mode support (SYSIP_DAT0)
+Samsung mach/soc changes for v6.15
 
-Devang Tailor (1):
-      arm64: dts: exynosautov920: add CPU cache information
+1. S3C: Drop linux/fb.h header.
+2. Exynos ChipID: Check if memory allocation succeeded.
 
-Igor Belwon (3):
-      dt-bindings: clock: exynos990: Add CMU_PERIS block
-      arm64: dts: exynos990: Add CMU_PERIS and MCT nodes
-      arm64: dts: exynos990: Rename and sort PMU nodes
+----------------------------------------------------------------
+Chenyuan Yang (1):
+      soc: samsung: exynos-chipid: Add NULL pointer check in exynos_chipid_probe()
 
-Ivaylo Ivanov (6):
-      dt-bindings: soc: samsung: usi: add USIv1 and samsung,exynos8895-usi
-      arm64: dts: exynos8895: add syscon nodes for peric0/1 and fsys0/1
-      arm64: dts: exynos8895: define all usi nodes
-      arm64: dts: exynos8895: add a node for mmc
-      arm64: dts: exynos8895-dreamlte: enable support for microSD storage
-      arm64: dts: exynos8895-dreamlte: enable support for the touchscreen
+Thomas Zimmermann (1):
+      ARM: s3c: Do not include <linux/fb.h>
 
-Krzysztof Kozlowski (5):
-      Merge branch 'for-v6.15/samsung-clk-dt-bindings' into next/dt64
-      Merge branch 'for-v6.15/samsung-soc-dt-bindings' into next/dt64
-      arm64: dts: exynos8895: Rename PMU nodes to fixup sorting
-      arm64: dts: exynos: gs101: Change labels to lower-case
-      arm64: dts: tesla: Change labels to lower-case
-
-Peter Griffin (1):
-      arm64: dts: exynos: gs101: disable pinctrl_gsacore node
-
-Sowon Na (1):
-      arm64: dts: exynosautov920: add ufs phy for ExynosAutov920 SoC
-
-Tudor Ambarus (3):
-      arm64: dts: exynos: gs101: add SRAM node
-      arm64: dts: exynos: gs101: add AP to APM mailbox node
-      arm64: dts: exynos: gs101: add ACPM protocol node
-
- Documentation/devicetree/bindings/arm/google.yaml  |   3 +-
- .../bindings/clock/samsung,exynos990-clock.yaml    |  19 +
- .../bindings/soc/samsung/exynos-usi.yaml           |  99 ++-
- arch/arm64/boot/dts/exynos/exynos8895-dreamlte.dts |  72 ++
- arch/arm64/boot/dts/exynos/exynos8895.dtsi         | 956 ++++++++++++++++++++-
- arch/arm64/boot/dts/exynos/exynos990.dtsi          |  92 +-
- arch/arm64/boot/dts/exynos/exynosautov920.dtsi     | 138 +++
- arch/arm64/boot/dts/exynos/google/Makefile         |   1 +
- arch/arm64/boot/dts/exynos/google/gs101-oriole.dts | 267 +-----
- .../boot/dts/exynos/google/gs101-pixel-common.dtsi | 294 +++++++
- arch/arm64/boot/dts/exynos/google/gs101-raven.dts  |  29 +
- arch/arm64/boot/dts/exynos/google/gs101.dtsi       |  66 +-
- arch/arm64/boot/dts/tesla/fsd.dtsi                 |  26 +-
- include/dt-bindings/clock/samsung,exynos990.h      |  21 +
- include/dt-bindings/soc/samsung,exynos-usi.h       |  17 +-
- 15 files changed, 1721 insertions(+), 379 deletions(-)
- create mode 100644 arch/arm64/boot/dts/exynos/google/gs101-pixel-common.dtsi
- create mode 100644 arch/arm64/boot/dts/exynos/google/gs101-raven.dts
+ arch/arm/mach-s3c/devs.c                   | 1 -
+ arch/arm/mach-s3c/setup-fb-24bpp-s3c64xx.c | 1 -
+ drivers/soc/samsung/exynos-chipid.c        | 2 ++
+ 3 files changed, 2 insertions(+), 2 deletions(-)
 
