@@ -1,217 +1,147 @@
-Return-Path: <linux-kernel+bounces-553146-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-553147-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0525AA58485
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 14:34:52 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B4C04A5848C
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 14:41:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BA61618911A5
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 13:34:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 433E43ADB4C
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 13:41:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73E3520C019;
-	Sun,  9 Mar 2025 13:31:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B13FE1DD0EF;
+	Sun,  9 Mar 2025 13:41:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iKqV2HIZ"
-Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dZy+j99A"
+Received: from mail-pl1-f196.google.com (mail-pl1-f196.google.com [209.85.214.196])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5C901F8759;
-	Sun,  9 Mar 2025 13:31:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF6041CC8B0;
+	Sun,  9 Mar 2025 13:41:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.196
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741527062; cv=none; b=LDCBTnRnMgmxBc8QMVJ9pQH3PGh6weicO34RAiKsIBeRJW0u1tPuHKa9o/96Gxyg8gwAg0Kc77qHGVkzqh8CDy56TbTWgBHseI/zgxb7Mk+a4AexZuSoxAdq7GUFm4c7WmvWxNpfKfIjsPL3hcOa8SiWdMTARtnwIco16mHQZHQ=
+	t=1741527670; cv=none; b=CseRxX/+UU46QL+ZWParpah/6OGC5r4exa1Incuka7ri6NP+BNKYk89B69773AR6/dn8nZOvWZl9hrbN3xSSXkZRVYfZyKzsPMXmLkeRhxRtfFOniJYGC/knylrjnFHbcdhUDlQB1eil4vU63SlAcJEtJmArH0oGGed6y3Bw0ZQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741527062; c=relaxed/simple;
-	bh=aVuFqOdr80HqAFZupDZ37gDkuuBV/y6GSWN/z2KbYZU=;
-	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=TvAInUzyk1TTXo6dX2Yv+c0JfIFr/OH50b+whsK0NGWqavJ8El5XX6DpWITBsi7yK8JAySF3sJzsmclzUWa/DlKYrXBA1k8gdnVAkEb3IXrjGiavW2JBfzeoDKRLnqO2BNIbGr+jyCqADD42FBBljy51ITVmCe70ceeptrqsdkg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iKqV2HIZ; arc=none smtp.client-ip=209.85.221.53
+	s=arc-20240116; t=1741527670; c=relaxed/simple;
+	bh=fLQGO5wiRlZUKjdUjb206YTBiUBA4D9ukOUBp9rUGdo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=pVZdJh3pH/MJCkmowACkVdNLpbYBHA+fKCFcWVxGl041bWcPoFfDnWYZKAw2gQJfCEpeAqXHT8Ypl/rlxaH8GVEyqRLNdHA3nlbdNbTFW2bIat+CmH30Psg4NLFO3eB0nRFP9UHC5GGOEEhRwzneTnrMYylUUdUXpqWsklq6pJE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dZy+j99A; arc=none smtp.client-ip=209.85.214.196
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-39104c1cbbdso1597664f8f.3;
-        Sun, 09 Mar 2025 06:31:00 -0700 (PDT)
+Received: by mail-pl1-f196.google.com with SMTP id d9443c01a7336-2239c066347so56554275ad.2;
+        Sun, 09 Mar 2025 06:41:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741527059; x=1742131859; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=PUXPbCfIsepDY+Mn7pTqtiR4N56X9o4JrkeUo/O+gyc=;
-        b=iKqV2HIZowYItzc86M+rgrpTPYeco0PLLbegiIAuIBBjEjGo8lX9K2hsW6ItkBvUb0
-         rJ3lN+V43cM9B0tQGczub2B8+e0UcrzDsXHME9rxcVAlEuwlUvz40UyR0vNUeYIgX4t8
-         fENm74piiwZB99xZinT6y1Ss9luCIOOmO17/z6I4JMsCsGnifS6rB2FuVrZS+W6U7Mus
-         AT+/PGDBDgMQCLUeyEM3Rd9cfP7PN3Fu84F25cSXcGp51uOzyP75hYADE5euERTLOIR5
-         JTmZECGBS+j4s/uvrvGlHxuVPnKBwMvCC7d+TKPkTNNbGe0xGVtePNqNdT6q7yCw4hEY
-         6Lfw==
+        d=gmail.com; s=20230601; t=1741527668; x=1742132468; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=LbqFVYGZKiXAHZ9rqZe+rnsj7EpBf3DH/8Ue+vs/s7U=;
+        b=dZy+j99A6lc+e7y/Qzm6Q/1YoWVfMsfZGoIK0xCSx8Lwc5xeDjobk9XNJd/XQiJQcl
+         fKTkMAID7+x41913IaPmy7gthptTfzpQCY6E9bgYEl7g9VUtH7rszLt3z9xOq14xzg7P
+         cz5V0nBjPCzBMASmcwDMaNVNolWbqo/D/cjl5Zy5P7V/HASGSFU2BFnE4apStu40BYDv
+         9an5/hEmzDW1YKnddc/OdDjymcY2wWBHIVm5h/vmFl4T1LcNr583+O/w7ggHosgXtrVK
+         hW+fKFL/J6a80Vq746AxAp3tMPTKTvMdHQIp5ptlKp9v0TRdDq9eTICjhMDm7VyhTupm
+         ui4g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741527059; x=1742131859;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=PUXPbCfIsepDY+Mn7pTqtiR4N56X9o4JrkeUo/O+gyc=;
-        b=ceyQYAyit9MmZOfxJGvmULb5LguH70iR0IEY7mP9xAyV3knfC//yd6jqE1SNYdwoZU
-         A+NEIkVSNKjAFyln9uC+vdOhpCh0uzCj34fyZzcKrEe4IfGu4ogUfIVBEBr8gscb0k63
-         chEOczwahCH+nVm0LW+E7Ju1ik4r/qluDM5OaLKKX07k7EJMrbaHy83VQ8M/p5k6ikCi
-         gymO+ujnIe8D5LGxUl2TXOPXqLuABhlE8KdVCfVWHpO0mXv3k4Lw3Cy3NiP8EMR2a5vu
-         Y7qMLzf4mXo4W9PmIGrMAyqAvCWG1s2ZVTg5NBHxrnVyQ0WM+pwWWK0nnUwHQp2xwmqw
-         niQA==
-X-Forwarded-Encrypted: i=1; AJvYcCUNTBn/uAH5XAlyrYsck+PR6b0SDNC8Oz1yKvm6NgagKrYocppKOn5SzaGtqPZs2St6gVNWWw7OER4b@vger.kernel.org, AJvYcCVEFJdYbTiY2P3AoOCk/KwHfmL97LMn+tulDjxqe7+LsQ3NJopLxcvpjEeHBVoAE3zyBNLH6Rej/WKV@vger.kernel.org, AJvYcCWP57Mr+9stLlMPBbJJm9TeX+Yzsb6dbBIWfZfeInR7tf/52ZtUgfdf5ji9T35+9L7yOwX1J/FJ6gF/@vger.kernel.org, AJvYcCXJ50KHL4zbL9PpBH14hSmnlGFtnWOAcNeZPKbEW9xYN1UGRK1CgXabKoWYEBRTKDVJ2/EdJ2Fc2ex1vX6T@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy+XvT52v9YoQMRhe4yDQlJINQr1fMqRx7rASLitke/2Hr6z1n0
-	NtnWFbtT45uwZS0KWD4F2F4//Qci1MiO/qtyXFv4w44sEXF+amEL
-X-Gm-Gg: ASbGncvkNL5VXF5FZWftHmazrxc81apOhYuLdsO4lK6610zy+vC1yWHLClkYBydoGmc
-	ZMLXN4JVlT8+Iu0yJoz/SdiXkp9YsxbT/qu3A5fJR8EezpiclUGG6r7naW3dGsWbjxnQd5s4FhX
-	kLqkwFsrZCRO7oeZuoorBjQQoIlKu2SEo2XO5Fn/esMGV704vgcWpT19ni3DZRK4LYCjGIvdCg+
-	4XJjRu7LcwIuSwOXiflFlCse7o762yc4KbNpAciDWDcZ5NFlsZwjVmA0VeTsWMD9zCuIoJelucr
-	XlLurKptnielpFOignYeop9zjFA1O0vSl1IpMikmOAiEAV8KejFm9yTvosb+j/3ZXrVpSBsECjw
-	Rc4PY3AI0X8imEA==
-X-Google-Smtp-Source: AGHT+IHb6GE+RdsoNUn0+3sL37pgWMjh5/VzLN7RX2rS7tVvUpl9i16EKbDnFhvFgXvM+UgMM2DmzQ==
-X-Received: by 2002:a05:6000:1846:b0:391:2192:ccd6 with SMTP id ffacd0b85a97d-39132dd6afcmr7499960f8f.39.1741527059081;
-        Sun, 09 Mar 2025 06:30:59 -0700 (PDT)
-Received: from localhost.localdomain (93-34-90-129.ip49.fastwebnet.it. [93.34.90.129])
-        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-3912bee262esm11867536f8f.0.2025.03.09.06.30.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 09 Mar 2025 06:30:58 -0700 (PDT)
-From: Christian Marangi <ansuelsmth@gmail.com>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Lee Jones <lee@kernel.org>,
-	Christian Marangi <ansuelsmth@gmail.com>,
-	Vinod Koul <vkoul@kernel.org>,
-	Kishon Vijay Abraham I <kishon@kernel.org>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Lorenzo Bianconi <lorenzo@kernel.org>,
-	Daniel Danzberger <dd@embedd.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Nikita Shubin <nikita.shubin@maquefel.me>,
-	Guo Ren <guoren@kernel.org>,
-	Yangyu Chen <cyy@cyyself.name>,
-	Ben Hutchings <ben@decadent.org.uk>,
-	Felix Fietkau <nbd@nbd.name>,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-phy@lists.infradead.org,
-	linux-mediatek@lists.infradead.org,
-	linux-usb@vger.kernel.org,
-	upstream@airoha.com
-Subject: [PATCH 13/13] arm64: dts: airoha: en7581: add USB and SCU SSR nodes
-Date: Sun,  9 Mar 2025 14:29:44 +0100
-Message-ID: <20250309132959.19045-14-ansuelsmth@gmail.com>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20250309132959.19045-1-ansuelsmth@gmail.com>
-References: <20250309132959.19045-1-ansuelsmth@gmail.com>
+        d=1e100.net; s=20230601; t=1741527668; x=1742132468;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=LbqFVYGZKiXAHZ9rqZe+rnsj7EpBf3DH/8Ue+vs/s7U=;
+        b=WFRCj04H7h5vMg7NHlu7BYMTq1l5XByuzvyWvVADkqIZNcZkmb11QI3pEVDAN0o8Ou
+         gVvssHzJqtSnT7ZKuATB+xo3DgGXSZTS6PNgi4XRlI+lkNWG4MwrfuNJJR0YcbgUo194
+         328PbtsAb8jME0rK4gwhWqtmFWC4nd0/XPH1v/fnXcFMnfds9zY/R77VMQUV4jE5EaaL
+         NoAK26PBqJUBCP6pOTDo3L3EumhzYvn62tSlHs7rfVeq9LO6MybQ+CZENdMadNwoPP8z
+         9qsm1MJHz0UXqE7NxBtBDmy2qZ+w8SOv1YRk05VLIEQRlO/u24CKLzGPeOQ76+T80i7m
+         VnkA==
+X-Forwarded-Encrypted: i=1; AJvYcCU4pxKYCowU7A0H88lZIu1N7tPwQcBBEIJIe/Z39TiPE2qGuxOOBph/QM9XOusUOYoVa0bhBfMAPMz/eos=@vger.kernel.org, AJvYcCX0WUPa+TwSxc5Miy2+Z595KX+nprvF+KjotaUHSpvFwlI0tMUqy1gqJDbx+4SXY7e6VsD2Kk014x5PP87K@vger.kernel.org, AJvYcCXDaD8JcHay07zKcbU1GHcyE95AUMCxDMx/Lin50xLMNPDJ9HlaL3EZKm+r7mPJBx9iIl0=@vger.kernel.org, AJvYcCXKttusgU40iG9k4AOvniQ1Ji9na6JPjvMqOiDp/5NoOJdkdqIVbSSUshxJa0xA/9PIkci5cgkf@vger.kernel.org, AJvYcCXPgiTER58b3naZxw7Nv0LzRavi41sCfH8KMcQpmDL1LsIFuKp4HzL8nuiK/Ko8YBjuruH8TZSOTA6E@vger.kernel.org, AJvYcCXpYURkqSH2a27S1k6L4gK6XM7GREtpsp9IqzjLLdyjy3eNLHgKouqmn7X1qbKZccuBtMcrsk3MC6bE@vger.kernel.org
+X-Gm-Message-State: AOJu0YwT5GiCO+CGOMi4fz838i7o3QhNpxlxhJ2CLYVsEEi2oYiXhuKi
+	08LCEUGi5oz7hqtIVi4qJzSb71/rVgYbBYVibPOaeG8TATTwuWPK
+X-Gm-Gg: ASbGnctlwAfgPZ6UvKrp6DxeT8cTrjY+6xcODqrIBWSHh3i5aFgropbQ9tEUjxT+aWp
+	4Ijy96OUipYiuJ3zq4Qv018FlTVdQE38mE9r3+1c4DkI0sNdpdPWQ4OhbNX23Tl9dxYudAo3yRw
+	6qMHFebk0EyT5zcNDv32nIx+swtfCYVApWvBx13OLddNujtpX0saIZksmwgAZaxllj74OYvXfce
+	hrjz59n6TQnXI3X0NRyX5YiEQIY+WN3VO7/eNM5nSr5hULcsBz3q/bHvNEVgYBY/wgaFylsv/dU
+	q+bxUN4phtCu7JSBcRB74e3q48qW/1HKPZ8LFWykh4bwocUEHmfpn+eMSymRyVqjlfacXp5DEsi
+	NF7YIgRQ1t3tPAgXjump9bh4t3M2KQQ==
+X-Google-Smtp-Source: AGHT+IFypNCMIn41ibdTDNx4lnj5ojm64dR+2U0xpw0STk3CxsR4PZycEa3AfGJqpDAqBoyMWdx6gQ==
+X-Received: by 2002:a05:6a00:2e17:b0:736:5c8e:bab8 with SMTP id d2e1a72fcca58-736aa9c1effmr17581861b3a.3.1741527667817;
+        Sun, 09 Mar 2025 06:41:07 -0700 (PDT)
+Received: from ?IPV6:2409:8a55:301b:e120:c508:514a:4065:877? ([2409:8a55:301b:e120:c508:514a:4065:877])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-736d4d14f66sm619646b3a.82.2025.03.09.06.40.59
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 09 Mar 2025 06:41:07 -0700 (PDT)
+Message-ID: <cce03970-d66f-4344-b496-50ecf59483a6@gmail.com>
+Date: Sun, 9 Mar 2025 21:40:52 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] mm: alloc_pages_bulk: remove assumption of populating
+ only NULL elements
+To: Dave Chinner <david@fromorbit.com>, Yunsheng Lin <linyunsheng@huawei.com>
+Cc: Yishai Hadas <yishaih@nvidia.com>, Jason Gunthorpe <jgg@ziepe.ca>,
+ Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>,
+ Kevin Tian <kevin.tian@intel.com>,
+ Alex Williamson <alex.williamson@redhat.com>, Chris Mason <clm@fb.com>,
+ Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>,
+ Gao Xiang <xiang@kernel.org>, Chao Yu <chao@kernel.org>,
+ Yue Hu <zbestahu@gmail.com>, Jeffle Xu <jefflexu@linux.alibaba.com>,
+ Sandeep Dhavale <dhavale@google.com>, Carlos Maiolino <cem@kernel.org>,
+ "Darrick J. Wong" <djwong@kernel.org>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Jesper Dangaard Brouer <hawk@kernel.org>,
+ Ilias Apalodimas <ilias.apalodimas@linaro.org>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Simon Horman <horms@kernel.org>, Trond Myklebust <trondmy@kernel.org>,
+ Anna Schumaker <anna@kernel.org>, Chuck Lever <chuck.lever@oracle.com>,
+ Jeff Layton <jlayton@kernel.org>, Neil Brown <neilb@suse.de>,
+ Olga Kornievskaia <okorniev@redhat.com>, Dai Ngo <Dai.Ngo@oracle.com>,
+ Tom Talpey <tom@talpey.com>, Luiz Capitulino <luizcap@redhat.com>,
+ Mel Gorman <mgorman@techsingularity.net>, kvm@vger.kernel.org,
+ virtualization@lists.linux.dev, linux-kernel@vger.kernel.org,
+ linux-btrfs@vger.kernel.org, linux-erofs@lists.ozlabs.org,
+ linux-xfs@vger.kernel.org, linux-mm@kvack.org, netdev@vger.kernel.org,
+ linux-nfs@vger.kernel.org
+References: <20250228094424.757465-1-linyunsheng@huawei.com>
+ <Z8a3WSOrlY4n5_37@dread.disaster.area>
+ <91fcdfca-3e7b-417c-ab26-7d5e37853431@huawei.com>
+ <Z8vnKRJlP78DHEk6@dread.disaster.area>
+Content-Language: en-US
+From: Yunsheng Lin <yunshenglin0825@gmail.com>
+In-Reply-To: <Z8vnKRJlP78DHEk6@dread.disaster.area>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Add SCU SSR and USB nodes required for USB support of Airoha EN7581. SCU
-SSR node is required to read and configure the current Serdes mode of
-the USB PHYs.
+On 3/8/2025 2:43 PM, Dave Chinner wrote:
 
-Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
----
- arch/arm64/boot/dts/airoha/en7581.dtsi | 61 ++++++++++++++++++++++++++
- 1 file changed, 61 insertions(+)
+...
 
-diff --git a/arch/arm64/boot/dts/airoha/en7581.dtsi b/arch/arm64/boot/dts/airoha/en7581.dtsi
-index dfc12fa99748..5975da11ace0 100644
---- a/arch/arm64/boot/dts/airoha/en7581.dtsi
-+++ b/arch/arm64/boot/dts/airoha/en7581.dtsi
-@@ -3,6 +3,7 @@
- #include <dt-bindings/interrupt-controller/irq.h>
- #include <dt-bindings/interrupt-controller/arm-gic.h>
- #include <dt-bindings/clock/en7523-clk.h>
-+#include <dt-bindings/phy/phy.h>
- #include <dt-bindings/reset/airoha,en7581-reset.h>
- 
- / {
-@@ -183,6 +184,10 @@ scuclk: clock-controller {
- 				#clock-cells = <1>;
- 				#reset-cells = <1>;
- 			};
-+
-+			scu_ssr: system-controller {
-+				compatible = "airoha,an7581-scu-ssr";
-+			};
- 		};
- 
- 		uart1: serial@1fbf0000 {
-@@ -200,6 +205,62 @@ rng@1faa1000 {
- 			interrupts = <GIC_SPI 35 IRQ_TYPE_LEVEL_HIGH>;
- 		};
- 
-+		usb0: usb@1fab0000 {
-+			compatible = "mediatek,mtk-xhci";
-+			reg = <0x0 0x1fab0000 0x0 0x3e00>,
-+				<0x0 0x1fab3e00 0x0 0x100>;
-+			reg-names = "mac", "ippc";
-+			interrupts = <GIC_SPI 33 IRQ_TYPE_LEVEL_HIGH>;
-+
-+			phys = <&usb0_u2 PHY_TYPE_USB2>, <&usb0_u3 PHY_TYPE_USB3>;
-+
-+			status = "disabled";
-+		};
-+
-+		phy@1fac0000 {
-+			compatible = "airoha,an7581-usb-phy";
-+			reg = <0x0 0x1fac0000 0x0 0x10000>;
-+
-+			airoha,port-id = <0>;
-+			airoha,scu-ssr = <&scu_ssr>;
-+
-+			usb0_u2: usb2-phy {
-+				#phy-cells = <1>;
-+			};
-+
-+			usb0_u3: usb3-phy {
-+				#phy-cells = <1>;
-+			};
-+		};
-+
-+		usb1: usb@1fad0000 {
-+			compatible = "mediatek,mtk-xhci";
-+			reg = <0x0 0x1fad0000 0x0 0x3e00>,
-+				<0x0 0x1fad3e00 0x0 0x100>;
-+			reg-names = "mac", "ippc";
-+			interrupts = <GIC_SPI 150 IRQ_TYPE_LEVEL_HIGH>;
-+
-+			phys = <&usb1_u2 PHY_TYPE_USB2>, <&usb0_u3 PHY_TYPE_USB3>;
-+
-+			status = "disabled";
-+		};
-+
-+		phy@1fae0000 {
-+			compatible = "airoha,an7581-usb-phy";
-+			reg = <0x0 0x1fae0000 0x0 0x10000>;
-+
-+			airoha,port-id = <1>;
-+			airoha,scu-ssr = <&scu_ssr>;
-+
-+			usb1_u2: usb2-phy {
-+				#phy-cells = <1>;
-+			};
-+
-+			usb1_u3: usb3-phy {
-+				#phy-cells = <1>;
-+			};
-+		};
-+
- 		system-controller@1fbf0200 {
- 			compatible = "airoha,en7581-gpio-sysctl", "syscon",
- 				     "simple-mfd";
--- 
-2.48.1
+>> I tested XFS using the below cmd and testcase, testing seems
+>> to be working fine, or am I missing something obvious here
+>> as I am not realy familiar with fs subsystem yet:
+> 
+> That's hardly what I'd call a test. It barely touches the filesystem
+> at all, and it is not exercising memory allocation failure paths at
+> all.
+> 
+> Go look up fstests and use that to test the filesystem changes you
+> are making. You can use that to test btrfs and NFS, too.
+
+Thanks for the suggestion.
+I used the below xfstests to do the testing in a VM, the smoke testing
+seems fine for now, will do a full testing too:
+https://github.com/tytso/xfstests-bld
+
+Also, it seems the fstests doesn't support erofs yet?
+
+> 
+> -Dave.
+> 
 
 
