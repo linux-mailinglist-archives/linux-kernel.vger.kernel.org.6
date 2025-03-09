@@ -1,122 +1,110 @@
-Return-Path: <linux-kernel+bounces-553158-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-553159-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 20718A584F2
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 15:34:15 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8AEEFA584F5
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 15:36:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EB1F53A71C0
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 14:34:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C7C93169B46
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 14:36:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7FAA1DDC1D;
-	Sun,  9 Mar 2025 14:34:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 995A41DE2C7;
+	Sun,  9 Mar 2025 14:36:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="YrxIco/d"
-Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YlOLQg3P"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A46519E999;
-	Sun,  9 Mar 2025 14:34:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E50BD1C2DC8;
+	Sun,  9 Mar 2025 14:36:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741530847; cv=none; b=KEJ8gIE4KlNSlQr45vbzQsGQrNL3mUGRatECEjyGCHGbPOml3C6iTnKBhZPG9MB5PO2ipNjgN8DLXBxZBiL4GxKx0I0jZDVSYvwtO8aCo8ilZHaT0yUa4JDkpwy5DengtwF4FkZ+4LYtI5zEbbx5s4ug70abP3scrib7boTDuo4=
+	t=1741531005; cv=none; b=pk3ncBXmjm2ABdo3MCl6QbLxnLai8pBkNhFi9OuUXkpRLAl7AkEvaad7TzmGveHRwKE3yDYSDlGRFUkWEPl7A9Yx0XDVjeAaIOQwwS8gTn2S9FU9ysK22KpjY8ClY8Q1XS8rCt0lLvcDCoW3n+CD4Fdj3hEuiEKvM3adEO/huks=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741530847; c=relaxed/simple;
-	bh=3JJGZMJpB7+V80Clbzkplw/qm4VlJ1qS7WZ8lR/zBa4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=UypRmRw92fUYaIv2xqCfsx7Y0T0b4uNsumfi4O7qdpgHTJkQtjna8xutL8w0eVLB0vxL74Q85lxiJ57GYsWCtwNyruMPrjbN85LadJf4X5jDBcEsG0ymaxQbVOrGQz8pui++ECWxP8nPk0dIS6tYUEPzGT7yny8QZrLidzAeKQI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=YrxIco/d; arc=none smtp.client-ip=46.235.229.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
-	; s=bytemarkmx; h=MIME-Version:Message-ID:Date:Subject:From:Content-Type:From
-	:Subject; bh=T2cFjlJIrVRM69qletiJGY6RJ3yS/PGLw1X+m0oQKn8=; b=YrxIco/dTxoQcefG
-	/4Qj+fTyhIfxj4u8lNXtIYBHgNM0B49JN7/jg0GtaEVwMpIh4wGPnQqA/dBgGccCAJ/wWHK0ifSwQ
-	0yTZYsXAXblWCyFLsXsR7Kw5JW+2zPdp79jDs1driYo3q5OY+sqvc9rj0lHzxJbtGN1M6XW3rZD8o
-	I/bYnYJ226lyXV5dnexTVPnL1Da9AMQuy9lmfI0mRsboPbAb+gT//lWoXFXBQQzutz5TyTPvc0WAz
-	z7DJgIQUTZwc/1ii4rsO+obcUYxEPDiHiuyecv5E9U/1+wVpgGukKB5QD2DjUzXPsEvemzJ8Ljbfu
-	lXa1yqfu2ok28kJE7Q==;
-Received: from localhost ([127.0.0.1] helo=dalek.home.treblig.org)
-	by mx.treblig.org with esmtp (Exim 4.96)
-	(envelope-from <linux@treblig.org>)
-	id 1trHiu-003iFV-2S;
-	Sun, 09 Mar 2025 14:33:48 +0000
-From: linux@treblig.org
-To: kashyap.desai@broadcom.com,
-	sumit.saxena@broadcom.com,
-	shivasharan.srikanteshwara@broadcom.com,
-	chandrakanth.patil@broadcom.com
-Cc: James.Bottomley@HansenPartnership.com,
-	martin.petersen@oracle.com,
-	megaraidlinux.pdl@broadcom.com,
-	linux-scsi@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	"Dr. David Alan Gilbert" <linux@treblig.org>
-Subject: [PATCH] scsi: megaraid_sas: static most module parameters
-Date: Sun,  9 Mar 2025 14:33:48 +0000
-Message-ID: <20250309143348.32896-1-linux@treblig.org>
-X-Mailer: git-send-email 2.48.1
+	s=arc-20240116; t=1741531005; c=relaxed/simple;
+	bh=DYe8HUJy8kkP+7yQkU7dXVRL2fEX/sK2cxo3m1sVBZ0=;
+	h=Date:From:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hEtWkx1JEamnYWJBHN9RuJDIln4LoTJwmhrMG4xvFHXfJG37itnDpxfsrgze4vFiZKEmYFg7Z1bWc42b8OQDBeOLQ4pNCRNv/Iektyir5XYK0bWRkaVPvlHxShlbSWndmXIEdlBxp7/0AzPR9AJ0Mp5a8prdw2/76N1krXqrvY4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YlOLQg3P; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2F7F1C4CEE3;
+	Sun,  9 Mar 2025 14:36:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741531003;
+	bh=DYe8HUJy8kkP+7yQkU7dXVRL2fEX/sK2cxo3m1sVBZ0=;
+	h=Date:From:Cc:Subject:References:In-Reply-To:From;
+	b=YlOLQg3Pfr5rPOiqsOgcXPYxWoi6EOfz0ffZPeOgQeSIPZSyl04RGttxrXIgpxD8Y
+	 dtF3lqztalSnxpkp7ZUqfT7WuCZCwJe40agWk8hE1naPT24GHuY7gw8HDSZV2B65OJ
+	 HpyrobADB5/Y0G6mMiylDM3GQ6EhQIbLJi2gqhKLv0nZlGV4R0nhkUYoChTKEOjNNv
+	 ABYTituRn62KGX3B6YYEMyF5HNmrvmLhq8nIn+yWXqTKzOl35WD5cuWTBOX4itFFZT
+	 40VAKVlLDLMPHPLdfsvAsCeLrAoSaomd4Y6t+fEzMf1mtzkEbtwCwYbpQ5d5OfHTxm
+	 aEYzYxGQDGe4Q==
+Date: Sun, 9 Mar 2025 04:36:42 -1000
+From: Tejun Heo <tj@kernel.org>
+Cc: kuniyu@amazon.com, linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+	cgroups@vger.kernel.org, "David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Willem de Bruijn <willemb@google.com>,
+	Leon Romanovsky <leon@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+	Christian Brauner <brauner@kernel.org>,
+	Lennart Poettering <mzxreary@0pointer.de>,
+	Luca Boccassi <bluca@debian.org>,
+	Johannes Weiner <hannes@cmpxchg.org>,
+	Michal =?iso-8859-1?Q?Koutn=FD?= <mkoutny@suse.com>,
+	Shuah Khan <shuah@kernel.org>
+Subject: Re: [PATCH net-next 0/4] Add getsockopt(SO_PEERCGROUPID) and fdinfo
+ API to retreive socket's peer cgroup id
+Message-ID: <Z82neltmT_hbEpYy@slm.duckdns.org>
+References: <20250309132821.103046-1-aleksandr.mikhalitsyn@canonical.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250309132821.103046-1-aleksandr.mikhalitsyn@canonical.com>
+84;0;0cTo: Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
 
-From: "Dr. David Alan Gilbert" <linux@treblig.org>
+On Sun, Mar 09, 2025 at 02:28:11PM +0100, Alexander Mikhalitsyn wrote:
+> 1. Add socket cgroup id and socket's peer cgroup id in socket's fdinfo
+> 2. Add SO_PEERCGROUPID which allows to retrieve socket's peer cgroup id
+> 3. Add SO_PEERCGROUPID kselftest
+> 
+> Generally speaking, this API allows race-free resolution of socket's peer cgroup id.
+> Currently, to do that SCM_CREDENTIALS/SCM_PIDFD -> pid -> /proc/<pid>/cgroup sequence
+> is used which is racy.
+> 
+> As we don't add any new state to the socket itself there is no potential locking issues
+> or performance problems. We use already existing sk->sk_cgrp_data.
+> 
+> We already have analogical interfaces to retrieve this
+> information:
+> - inet_diag: INET_DIAG_CGROUP_ID
+> - eBPF: bpf_sk_cgroup_id
+> 
+> Having getsockopt() interface makes sense for many applications, because using eBPF is
+> not always an option, while inet_diag has obvious complexety and performance drawbacks
+> if we only want to get this specific info for one specific socket.
+> 
+> Idea comes from UAPI kernel group:
+> https://uapi-group.org/kernel-features/
+> 
+> Huge thanks to Christian Brauner, Lennart Poettering and Luca Boccassi for proposing
+> and exchanging ideas about this.
+> 
+> Git tree:
+> https://github.com/mihalicyn/linux/tree/so_peercgroupid
 
-Most of the module parameters are only used locally in the same
-C file; so static them.
+From cgroup POV:
 
-Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
----
- drivers/scsi/megaraid/megaraid_sas_base.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+Acked-by: Tejun Heo <tj@kernel.org>
 
-diff --git a/drivers/scsi/megaraid/megaraid_sas_base.c b/drivers/scsi/megaraid/megaraid_sas_base.c
-index d85f990aec88..28c75865967a 100644
---- a/drivers/scsi/megaraid/megaraid_sas_base.c
-+++ b/drivers/scsi/megaraid/megaraid_sas_base.c
-@@ -93,7 +93,7 @@ static unsigned int scmd_timeout = MEGASAS_DEFAULT_CMD_TIMEOUT;
- module_param(scmd_timeout, int, 0444);
- MODULE_PARM_DESC(scmd_timeout, "scsi command timeout (10-90s), default 90s. See megasas_reset_timer.");
- 
--int perf_mode = -1;
-+static int perf_mode = -1;
- module_param(perf_mode, int, 0444);
- MODULE_PARM_DESC(perf_mode, "Performance mode (only for Aero adapters), options:\n\t\t"
- 		"0 - balanced: High iops and low latency queues are allocated &\n\t\t"
-@@ -105,15 +105,15 @@ MODULE_PARM_DESC(perf_mode, "Performance mode (only for Aero adapters), options:
- 		"default mode is 'balanced'"
- 		);
- 
--int event_log_level = MFI_EVT_CLASS_CRITICAL;
-+static int event_log_level = MFI_EVT_CLASS_CRITICAL;
- module_param(event_log_level, int, 0644);
- MODULE_PARM_DESC(event_log_level, "Asynchronous event logging level- range is: -2(CLASS_DEBUG) to 4(CLASS_DEAD), Default: 2(CLASS_CRITICAL)");
- 
--unsigned int enable_sdev_max_qd;
-+static unsigned int enable_sdev_max_qd;
- module_param(enable_sdev_max_qd, int, 0444);
- MODULE_PARM_DESC(enable_sdev_max_qd, "Enable sdev max qd as can_queue. Default: 0");
- 
--int poll_queues;
-+static int poll_queues;
- module_param(poll_queues, int, 0444);
- MODULE_PARM_DESC(poll_queues, "Number of queues to be use for io_uring poll mode.\n\t\t"
- 		"This parameter is effective only if host_tagset_enable=1 &\n\t\t"
-@@ -122,7 +122,7 @@ MODULE_PARM_DESC(poll_queues, "Number of queues to be use for io_uring poll mode
- 		"High iops queues are not allocated &\n\t\t"
- 		);
- 
--int host_tagset_enable = 1;
-+static int host_tagset_enable = 1;
- module_param(host_tagset_enable, int, 0444);
- MODULE_PARM_DESC(host_tagset_enable, "Shared host tagset enable/disable Default: enable(1)");
- 
+Thanks.
+
 -- 
-2.48.1
-
+tejun
 
