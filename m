@@ -1,148 +1,85 @@
-Return-Path: <linux-kernel+bounces-553075-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-553076-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D60A2A58336
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 11:46:28 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5437DA58338
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 11:46:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1E31016C047
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 10:46:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 375243AE6BD
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 10:46:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B608C1C5D47;
-	Sun,  9 Mar 2025 10:46:24 +0000 (UTC)
-Received: from mail-il1-f208.google.com (mail-il1-f208.google.com [209.85.166.208])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B0321C5799;
+	Sun,  9 Mar 2025 10:46:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=proton.me header.i=@proton.me header.b="BFJcg3i0"
+Received: from mail-4322.protonmail.ch (mail-4322.protonmail.ch [185.70.43.22])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCB9B1B4151
-	for <linux-kernel@vger.kernel.org>; Sun,  9 Mar 2025 10:46:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.208
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 057191C5D44;
+	Sun,  9 Mar 2025 10:46:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.22
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741517184; cv=none; b=NoZ31B0Zmqn06JdazYEwmEinZYLOXINxaPWL+DyL+q/h4YzOA+IWKQQ4O0BWHPSldf7VAZccRVyml7qyCDwOh9X9jAE6vzwmRMeUEV2C7R8q668PpxcTgxiSdqRK7y4jLAfss7iY92/kptVdqGa++8Swd7M1jdUvDJCkPYea8Lg=
+	t=1741517199; cv=none; b=X4Ub5pWaEhM7afC4La1diHJB+yaJnS/VJ3mcwZvo7eYzaeLtRC86CTp+m+NMdkLXDpvfPXMuUeTjwRKIctlsc0jbCDwQ5CacqFuqQJ89R480DU4wMC+YKlRAREhtvPlXaxDwe/Z2ho9MgssfJq66YDWEPA1pZskpxryBSpZOAYU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741517184; c=relaxed/simple;
-	bh=FVqO0IZhKzpyNhoeFF+PIXD3POnSYl1Rj54YaoYG5VY=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=QpwxyuAeEMnpaAaduGBpM2sS+SehCyiARE/pmHs2h0MXqIm6aRae22Hn3rnFQxOjpLBoWcFCooTSBicz1Zh/z+CIzzju/HdUbegIcd2hJ+zIh6ODZH5un3AQwpwLIUxHpS8ehd5zzn2UgQV3xLAZoDuUj0DRgjQSjV7pdMI+2+o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.208
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f208.google.com with SMTP id e9e14a558f8ab-3ce3bbb2b9dso32584565ab.3
-        for <linux-kernel@vger.kernel.org>; Sun, 09 Mar 2025 03:46:22 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741517182; x=1742121982;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Eco3k+TBsDkbmpqvhJ0sYzrtK8q7foQl94kdUFDByJQ=;
-        b=GYmCH3kjE9vhon6xYnMP1TAfxMZa/4YS8jjTu2BAQG34XW3xM+nNssLfMHAOFyNFew
-         xBMd5mmYTUde+d5c/SozwWPhOkL+8eXs18I6nr/DTaxcpfDPcgD7xGKFo0+u98d1Jop4
-         INb7LdMUAQPa4z/rpQfXXU2TGL0NMvdzeHp4kAYqHizRdYA6MZJZ3qf8X1xC9rjzx6Gm
-         qeVJIGHnuaEYjCK34DsWqQPRqBuD/4KUNBhk8DP0pXHVfVJIUeq0jQa/BzUJO+OWMiFj
-         fnhDoqlDqfSKDsUerv0IvX8D12WXcLWoAUg037FrrCwkL/cfcIRQD8bZbnUCAsMqTyaF
-         FgNw==
-X-Forwarded-Encrypted: i=1; AJvYcCWa4krIH5WHZO7qZ3FqPEoZ5ZB2LNLgczahMpscxFf/V3B1ybX0+Qxw5oKJ8B6UYZvjLL91ra8Tr78O2CQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwD77cq7zOSOvr6UUnffNnmcHOiAD3ratg1oQPdIrB/X4fNWyoF
-	2v405MT+Bt2qCcMBC77Ct/DhyI/FGH4HnBaYmEdlOFxaEH1SHu6ogwI8WwTYd9ATaGjD5EyjI1r
-	/OukORudJYrDuxKu9vqaUau5sjr34uC/jXQ17AK8oXKi1T+rnOsdoFlg=
-X-Google-Smtp-Source: AGHT+IHXNtwZ3elpyiLwduLxCpHFyTJc4L8eQ/csKiv/3aVcqzCU3ghy5QLbu6JvNnz1rMIkZXlGG7QXOpuUO4MorT5peQ9+Fj6I
+	s=arc-20240116; t=1741517199; c=relaxed/simple;
+	bh=K9bwZnbaYdHSuSAVeV0+hTESIYX1CxBK0FUvducPYZc=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=JHmqsENGLhdgoZHOF/uQlcrPY1mDqfsG/hHHA8Xi24WATHdraJBPaSaokdiTrkMLzuKDVt4ADTqNNCsE1rPVTl/OqMc9WGU4G5UlrjuJHTChyjLQNpgPLfYBUW6DdHUkmtjKh/J5hpcGKZ8ZD551mnMhbQq6rK4OOa1wSQ1VRR8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=BFJcg3i0; arc=none smtp.client-ip=185.70.43.22
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
+	s=mf7c7zjixvfpfdegtz3lis33je.protonmail; t=1741517194; x=1741776394;
+	bh=5xhYrjSTqoAtpk/MmRkmGqw7guw56xwxoOH7W3SVX2w=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector:List-Unsubscribe:List-Unsubscribe-Post;
+	b=BFJcg3i0E2kuIx3svhplMxSu7NtvjIC8aN0P3PtOg77zRJUbLMX5ga+UmGubXAM1q
+	 qr8uu5uaUKK0nffNT8SMUdO+OtftUFTCl1t5j4/La5NL/bY4QFWed4eLxH/5Z0q4e0
+	 A7MUnmPMFHcUKUataeEnoptcT/DDIMpHwSCrJAm/NgCpi+6G5amB3Qt0mXsApoYC9c
+	 ei4RaZvdkF6nriq5nArGT+Npn2eqKUIR6QPadtj9lxhYkj/95Tx8dCJQ4G272dRGoZ
+	 5XUwS6dzHCIouYv3xoqtWus532+S6pig84VuRbGNMVdG6genFkkb71ORSgVotvrM8q
+	 AbKv8mY7fNbFQ==
+Date: Sun, 09 Mar 2025 10:46:27 +0000
+To: Andreas Hindborg <a.hindborg@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, Anna-Maria Behnsen <anna-maria@linutronix.de>, Frederic Weisbecker <frederic@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Danilo Krummrich <dakr@kernel.org>
+From: Benno Lossin <benno.lossin@proton.me>
+Cc: Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, Lyude Paul <lyude@redhat.com>, Guangbo Cui <2407018371@qq.com>, Dirk Behme <dirk.behme@gmail.com>, Daniel Almeida <daniel.almeida@collabora.com>, Tamir Duberstein <tamird@gmail.com>, Markus Elfring <Markus.Elfring@web.de>, rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v11 10/13] rust: hrtimer: implement `HrTimerPointer` for `Pin<Box<T>>`
+Message-ID: <D8BOBGBX8X4S.1L3PO31142PE@proton.me>
+In-Reply-To: <20250307-hrtimer-v3-v6-12-rc2-v11-10-7934aefd6993@kernel.org>
+References: <20250307-hrtimer-v3-v6-12-rc2-v11-0-7934aefd6993@kernel.org> <20250307-hrtimer-v3-v6-12-rc2-v11-10-7934aefd6993@kernel.org>
+Feedback-ID: 71780778:user:proton
+X-Pm-Message-ID: d07c69c4a717b2b7ba69da8b7987bb6618b20b39
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:180c:b0:3d4:276:9a1b with SMTP id
- e9e14a558f8ab-3d441a06d98mr94835815ab.16.1741517182016; Sun, 09 Mar 2025
- 03:46:22 -0700 (PDT)
-Date: Sun, 09 Mar 2025 03:46:21 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67cd717d.050a0220.e1a89.0006.GAE@google.com>
-Subject: [syzbot] [can?] KCSAN: data-race in can_send / can_send (5)
-From: syzbot <syzbot+78ce4489b812515d5e4d@syzkaller.appspotmail.com>
-To: linux-can@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	mkl@pengutronix.de, socketcan@hartkopp.net, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-Hello,
+On Fri Mar 7, 2025 at 10:38 PM CET, Andreas Hindborg wrote:
+> Allow `Pin<Box<T>>` to be the target of a timer callback.
+>
+> Acked-by: Frederic Weisbecker <frederic@kernel.org>
+> Reviewed-by: Lyude Paul <lyude@redhat.com>
+> Signed-off-by: Andreas Hindborg <a.hindborg@kernel.org>
 
-syzbot found the following issue on:
+With the safety comment adjusted as I mentioned in the other thread:
 
-HEAD commit:    0f52fd4f67c6 Merge tag 'bcachefs-2025-03-06' of git://evil..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=12d12a54580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=523b0e2f15224775
-dashboard link: https://syzkaller.appspot.com/bug?extid=78ce4489b812515d5e4d
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-
-Unfortunately, I don't have any reproducer for this issue yet.
-
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/eb0d7b540c67/disk-0f52fd4f.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/51c261332ad9/vmlinux-0f52fd4f.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/38914a4790c8/bzImage-0f52fd4f.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+78ce4489b812515d5e4d@syzkaller.appspotmail.com
-
-==================================================================
-BUG: KCSAN: data-race in can_send / can_send
-
-read-write to 0xffff888117566290 of 8 bytes by interrupt on cpu 0:
- can_send+0x5a2/0x6d0 net/can/af_can.c:290
- bcm_can_tx+0x314/0x420 net/can/bcm.c:314
- bcm_tx_timeout_handler+0xea/0x280
- __run_hrtimer kernel/time/hrtimer.c:1801 [inline]
- __hrtimer_run_queues+0x20d/0x5e0 kernel/time/hrtimer.c:1865
- hrtimer_run_softirq+0xe4/0x2c0 kernel/time/hrtimer.c:1882
- handle_softirqs+0xbf/0x280 kernel/softirq.c:561
- run_ksoftirqd+0x1c/0x30 kernel/softirq.c:950
- smpboot_thread_fn+0x31c/0x4c0 kernel/smpboot.c:164
- kthread+0x4ae/0x520 kernel/kthread.c:464
- ret_from_fork+0x4b/0x60 arch/x86/kernel/process.c:148
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
-
-read-write to 0xffff888117566290 of 8 bytes by interrupt on cpu 1:
- can_send+0x5a2/0x6d0 net/can/af_can.c:290
- bcm_can_tx+0x314/0x420 net/can/bcm.c:314
- bcm_tx_timeout_handler+0xea/0x280
- __run_hrtimer kernel/time/hrtimer.c:1801 [inline]
- __hrtimer_run_queues+0x20d/0x5e0 kernel/time/hrtimer.c:1865
- hrtimer_run_softirq+0xe4/0x2c0 kernel/time/hrtimer.c:1882
- handle_softirqs+0xbf/0x280 kernel/softirq.c:561
- run_ksoftirqd+0x1c/0x30 kernel/softirq.c:950
- smpboot_thread_fn+0x31c/0x4c0 kernel/smpboot.c:164
- kthread+0x4ae/0x520 kernel/kthread.c:464
- ret_from_fork+0x4b/0x60 arch/x86/kernel/process.c:148
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
-
-value changed: 0x0000000000002b9d -> 0x0000000000002b9e
-
-Reported by Kernel Concurrency Sanitizer on:
-CPU: 1 UID: 0 PID: 23 Comm: ksoftirqd/1 Tainted: G        W          6.14.0-rc5-syzkaller-00109-g0f52fd4f67c6 #0
-Tainted: [W]=WARN
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 02/12/2025
-==================================================================
-
+Reviewed-by: Benno Lossin <benno.lossin@proton.me>
 
 ---
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+Cheers,
+Benno
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+> ---
+>  rust/kernel/time/hrtimer.rs      |   3 +
+>  rust/kernel/time/hrtimer/tbox.rs | 118 +++++++++++++++++++++++++++++++++=
+++++++
+>  2 files changed, 121 insertions(+)
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
 
