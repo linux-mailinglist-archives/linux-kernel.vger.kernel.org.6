@@ -1,197 +1,128 @@
-Return-Path: <linux-kernel+bounces-553247-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-553249-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B826A5864C
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 18:33:19 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D70ECA58654
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 18:35:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8562D188C0B7
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 17:33:16 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 843E77A2B03
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 17:34:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE9051E98F8;
-	Sun,  9 Mar 2025 17:33:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Y8l0st9r"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE4AE1E9B0E;
+	Sun,  9 Mar 2025 17:35:09 +0000 (UTC)
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2315813B2A4;
-	Sun,  9 Mar 2025 17:33:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E71A1DF42;
+	Sun,  9 Mar 2025 17:35:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741541581; cv=none; b=QI7y+Z6g/Zaw+6ly0TefQ8T0BJqJ80XjJoQ7FHYiwiJTY9qonHdIR6jTv3NILjI34JPtSzm0/Rrwa7IOsvLfkCqvyu3oaknGfh01dmEJcHqO+WYbjti/gg9h9QZbwLrvjk9u5qBoI/OXAxNK//N+Srsxf7qJiCHyh01pxN1HM2U=
+	t=1741541709; cv=none; b=HEJIGYFYUhMCCSEH+F91AhH8gTdnVc+PiTPi6jDKYBGQJ7cP5Rby+ngOwqoCP1WpOgAbs5Ql9vg4CpNhflbArmA/9cmvGHx1f99xTHQ9lX+dd4LC5bmdEzGyQfH0GewJbL+Ij9SaCzHp+YxXmogSIQzNqpanlxZngeT1jucYXpo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741541581; c=relaxed/simple;
-	bh=1UgctfymUV83xC3ix68vRlr3FAGTggR5aGYQLCNzbDI=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=c2EuKmcvUL+YqL4g4yCcnM6Tt4TS3hYai4EaX/GDMl5vDghuScTfDhweG9W2KbHxX4YX2AuGdYgDXwGv0o39TphKNWX6CzqYEx5mXTXXfwP2OerM8kBCehjTne60hv4egfrvJ5HPbOHU7W3DyK0UfbXXiL8SmgTrdNONpWptoC4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Y8l0st9r; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 73D34C4CEE5;
-	Sun,  9 Mar 2025 17:32:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741541580;
-	bh=1UgctfymUV83xC3ix68vRlr3FAGTggR5aGYQLCNzbDI=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=Y8l0st9r5NUNHRLdUc6QAuvfdp7z/SGXIVYgdibKL3oMiKK/TWKbgUu7of3jDgSJT
-	 xa1+UvktOZf0ZyjgzcCB1VpcCY/RKn8nBSglNhwCA4obeuG7RDSB3iWMVUsU7W2DAr
-	 ubx4ZOMoG4vanFDBA+k9aONrtifQ7qKeL9dyoh/2DOjpUR7Wk6u21gPeGBKYjyoX/X
-	 46lReRVXDgt4bRDZ2s5wJ2Yh0XD/nkaAxQxZwLUrTEGDFolP7YD56S7J2kLZKHnK4h
-	 29GCa+GzIk5hMQASMu/mSknKEcaB58Abch9CZMJDhQcOFqqxdb71s6ENh/rUiR6rIX
-	 NxD45unJiPLzQ==
-Date: Sun, 9 Mar 2025 17:32:50 +0000
-From: Jonathan Cameron <jic23@kernel.org>
-To: David Jander <david@protonic.nl>
-Cc: Uwe =?UTF-8?B?S2xlaW5lLUvDtm5pZw==?= <u.kleine-koenig@baylibre.com>,
- linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org, Jonathan Corbet
- <corbet@lwn.net>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
- <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
- devicetree@vger.kernel.org, linux-doc@vger.kernel.org, Nuno Sa
- <nuno.sa@analog.com>, Oleksij Rempel <o.rempel@pengutronix.de>, Greg
- Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: Re: [RFC PATCH 1/7] drivers: Add motion control subsystem
-Message-ID: <20250309173250.68956c88@jic23-huawei>
-In-Reply-To: <20250306102540.7f0f6146@erd003.prtnl>
-References: <20250227162823.3585810-1-david@protonic.nl>
-	<20250227162823.3585810-2-david@protonic.nl>
-	<6c6cqaxmsy7miesel4ghdeiea6nrpe4gti4xf5enfyg4uqro5u@vpmtd2t7gydi>
-	<20250305164046.4de5b6ef@erd003.prtnl>
-	<mzxammninwmak5ti4c6is4pbdx3xzzziiwbxiwrldjyxgae4ok@ocec24vu4txa>
-	<20250306102540.7f0f6146@erd003.prtnl>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.48; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1741541709; c=relaxed/simple;
+	bh=R1HcZEoim7RkU2s3cAzwwS4sVdwcrpbNQ3WffTXn9mM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FoHXbDrSEUYW5dWXNYKMAdsprGdn5S044XIPdQjDA5sj77/nlQNduqFTOsrlPkk5grPB8qBfhPDLxhM0QWD03/Qg8YFjEFDc9ezAQ4GTvpYWybuZJHF8tfTlkMGZPuli7dnXBFLxsUQdejH4bM0F5Pkk2HF8odzsCYIZ5V8qCbY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.214.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-22113560c57so63609955ad.2;
+        Sun, 09 Mar 2025 10:35:06 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741541706; x=1742146506;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=lqfgSnF+WviyCGuHYaz7kEPSmau08UBaZRQ3w6s7VbQ=;
+        b=QSzdH+XdClwGTXW2tHGPFIJqyfDgrURJQqHHs+/IO1OCXLmOgkPOdKiMjlF1OolfB8
+         v94lxQQYcw9EO4/oC7YZq6cqkZXC/RzVXijvdqW0geEnGKHzvyfPxweuolRDKYQxxSN7
+         FDw+icyaxGScNpwKnMVDKWUNU7EfHu/u4na/EgrPtaadx3NK5IKJ23X5m00Hp/s6sCmW
+         y72UPOgW2BWKCOni7swZSeIapvodUGvC/rVDF6NWwmgDTssl4J0CiDxUR57I60LRFhp2
+         iPjHAb8nCzlI85/M+z9IeHerqY3NAIIuVVG7V1IyW5MQzePhjYcWRy9iaXbVRjLDt6zC
+         JH3Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUESqf55HBvo4Y8LXQ22N6M3K1/Lupl+5TyTvSpOChS4mdOWuZX85imtpw0SgngepoYZ1zpneZQyczp@vger.kernel.org, AJvYcCVkQBe7Zkwa5b4OHO7FyMzNWjYHzq7NSCku4JzEVwURwaeYHeDI9qh7zWcJVHfpABYJnYrRtPi1EAIu@vger.kernel.org, AJvYcCXdDuWV0PbPrFNS9x1x/9TGVuabaSwwdrSbj0pSRkX6S3TDx4g2PoAfrcy/U4y3BrleHUGU41JgEgKYoUoK@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxz1Ou6cg2CzJ+JHvsRW3++OgW5iuWZoxp0V49SAImmTw0FN84v
+	XLXJjjxx8K7GawE6PmMWB4k+b9TOmx+T9OFAzi9CPFb21l6nX9CM
+X-Gm-Gg: ASbGncvrytGIFcuxL4mn36/uvVKGG2kL4FH5hQyUyPaGdbMP/Q/8vOWMHGp5Zg3TvE/
+	iBAGz7pFap1DTN5H+gJ0u9d0Ep7R1M7zk0OL8LNflXFyRmoLk/P/TgXhkHEnNkJ50+SSCXyaCkZ
+	t0czd3rFQb3mU2axwGS88+Jb1r7an2H7vNLweUrboO6j9IrqfxZWqIlgEKl3LVe3FZW/pZ0VMs1
+	bSxlanfuSpNDFfN700DxTlb6eYez8IvzYWnCdAtV9q9L5uxhZNvHfotRZp3IJ3qzhGvxzE7s2rq
+	/GwTBZUCLbTl8VYzy2U3sgI4Pdw9jgPHnsQKuKEpe6SYPUnh/Yqwjgq+/fKj3BJ8Ce43h1FJBh1
+	fzH8=
+X-Google-Smtp-Source: AGHT+IHVZbyUWkJbEz7fVY1tLMRkANLMWGHI0dBoEjw74h/W7/m++eJqTOXwGGMJyEQB9vKsowPLBA==
+X-Received: by 2002:a17:903:2445:b0:21f:52e:939e with SMTP id d9443c01a7336-2242899465emr214237965ad.28.1741541706127;
+        Sun, 09 Mar 2025 10:35:06 -0700 (PDT)
+Received: from localhost (fpd11144dd.ap.nuro.jp. [209.17.68.221])
+        by smtp.gmail.com with UTF8SMTPSA id d9443c01a7336-22410aa8a86sm62324315ad.240.2025.03.09.10.35.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 09 Mar 2025 10:35:05 -0700 (PDT)
+Date: Mon, 10 Mar 2025 02:35:03 +0900
+From: Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>
+To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Cc: Thippeswamy Havalige <thippeswamy.havalige@amd.com>,
+	bhelgaas@google.com, lpieralisi@kernel.org, robh@kernel.org,
+	krzk+dt@kernel.org, conor+dt@kernel.org, linux-pci@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	michal.simek@amd.com, bharat.kumar.gogada@amd.com
+Subject: Re: [PATCH v5 1/3] PCI: xilinx-cpm: Fix IRQ domain leak in error
+ path of probe.
+Message-ID: <20250309173503.GB2564088@rocinante>
+References: <20250224155025.782179-1-thippeswamy.havalige@amd.com>
+ <20250224155025.782179-2-thippeswamy.havalige@amd.com>
+ <20250304154608.5nmg4afotcp6hfym@thinkpad>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250304154608.5nmg4afotcp6hfym@thinkpad>
 
-On Thu, 6 Mar 2025 10:25:40 +0100
-David Jander <david@protonic.nl> wrote:
+Hello,
 
-> On Thu, 6 Mar 2025 00:21:22 +0100
-> Uwe Kleine-K=C3=B6nig <u.kleine-koenig@baylibre.com> wrote:
->=20
-> > Hello David,
-> >=20
-> > On Wed, Mar 05, 2025 at 04:40:45PM +0100, David Jander wrote: =20
-> > > On Fri, 28 Feb 2025 17:44:27 +0100
-> > > Uwe Kleine-K=C3=B6nig <u.kleine-koenig@baylibre.com> wrote:   =20
-> > > > On Thu, Feb 27, 2025 at 05:28:17PM +0100, David Jander wrote:
-> > > > [...]   =20
-> > > > > +static int motion_open(struct inode *inode, struct file *file)
-> > > > > +{
-> > > > > +	int minor =3D iminor(inode);
-> > > > > +	struct motion_device *mdev =3D NULL, *iter;
-> > > > > +	int err;
-> > > > > +
-> > > > > +	mutex_lock(&motion_mtx);     =20
-> > > >=20
-> > > > If you use guard(), error handling gets a bit easier.   =20
-> > >=20
-> > > This looks interesting. I didn't know about guard(). Thanks. I see the
-> > > benefits, but in some cases it also makes the locked region less clea=
-rly
-> > > visible. While I agree that guard() in this particular place is nice,
-> > > I'm hesitant to try and replace all mutex_lock()/_unlock() calls with=
- guard().
-> > > Let me know if my assessment of the intended use of guard() is incorr=
-ect.   =20
-> >=20
-> > I agree that guard() makes it harder for non-trivial functions to spot
-> > the critical section. In my eyes this is outweight by not having to
-> > unlock in all exit paths, but that might be subjective. Annother
-> > downside of guard is that sparse doesn't understand it and reports
-> > unbalanced locking. =20
->=20
-> What I was referring to, and what I want to know is, is it okay to mix gu=
-ard()
-> with lock/unlock? I.e. Use guard() when there are multiple exit paths inv=
-olved
-> and revert back to simple lock/unlock if it is just to encase a handful of
-> non-exiting operations?
+[...]
+> > The IRQ domain allocated for the PCIe controller is not freed if
+> > resource_list_first_type returns NULL, leading to a resource leak.
+> > 
+> > This fix ensures properly cleaning up the allocated IRQ domain in the error
+> > path.
+> > 
+> 
+> Missing Fixes tag.
 
-Mixing is fine.  In some cases scoped_guard() can also make things
-clearer though at the cost of increased indent.
+Done.
 
-> >=20
-> > Sad, so a userspace process still has to know some internal things about
-> > the motor it drives. :-\ =20
->=20
-> Unfortunately that is almost impossible to avoid entirely.
-> You can replace one stepper motor driver with another that might have
-> different micro-stepping subdivision, by looking at struct
-> mot_capabilities.subdiv, but a simple brushed DC motor just isn't able to
-> replace a stepper motor in all but the most trivial applications. I also =
-think
-> that burdening the kernel with all sorts of complicated math to model the
-> mechanical conversion factors involved in anything that's connected to the
-> motor drive shaft is overkill. As well as trying to emulate all missing
-> capabilities from a motion device that is lacking that functionality nati=
-vely.
->=20
-> So just like in IIO you cannot just replace one ADC with any other, in LM=
-C you
-> also cannot replace any device with any other.
->=20
-> That's why there is struct mot_capabilities and MOT_IOCTL_GET_CAPA. It en=
-ables
-> user-space to optionally support different devices more easily. It is pro=
-bably
-> best used in conjunction with a LMC user-space library, although I don't =
-want
-> to rely on such a library for being able to use LMC. There is some middle
-> ground here I guess... just like in IIO.
->=20
-> One thing I could try to improve though, is to include some additional
-> information in struct mot_capabilities that tells something more about the
-> nature of the used units, just like the speed_conv and accel_conv constan=
-ts do
-> for time conversion. Something that can be placed in the device tree (pos=
-sibly
-> in a motor child-node connected to the motor-controller) that contains so=
-me
-> conversion constant for distance. That way, if one were to (for example)
-> replace a stepper motor with a BLDC motor + encoder in a new hardware
-> revision, this constant could be used to make the units backwards compati=
-ble.
->=20
-> As background information: A stepper motor controller counts distance in =
-steps
-> and/or micro-steps. There are mot_capabilities.subdiv micro-steps in each
-> step. The amount of angle the actual motor shaft advances with each whole=
- step
-> depends on the motor construction and is often 200 steps per revolution (=
-1.8
-> degrees), but can vary from 4 to 400 steps per revolution depending on the
-> motor. So it is not only the controller that matters but also the type of
-> motor. This suggests the need of motor sub-nodes in the device-tree if one
-> wanted to extend the hardware knowledge further down from the motor drive=
-r.
-> But then there are gear boxes, pulleys, etc... it's basically conversion
-> factors all the way down. How many of them is sensible to bother the kern=
-el
-> with?
+> > Signed-off-by: Thippeswamy Havalige <thippeswamy.havalige@amd.com>
+> > ---
+> >  drivers/pci/controller/pcie-xilinx-cpm.c | 4 +++-
+> >  1 file changed, 3 insertions(+), 1 deletion(-)
+> > 
+> > diff --git a/drivers/pci/controller/pcie-xilinx-cpm.c b/drivers/pci/controller/pcie-xilinx-cpm.c
+> > index 81e8bfae53d0..660b12fc4631 100644
+> > --- a/drivers/pci/controller/pcie-xilinx-cpm.c
+> > +++ b/drivers/pci/controller/pcie-xilinx-cpm.c
+> > @@ -583,8 +583,10 @@ static int xilinx_cpm_pcie_probe(struct platform_device *pdev)
+> >  		return err;
+> >  
+> >  	bus = resource_list_first_type(&bridge->windows, IORESOURCE_BUS);
+> > -	if (!bus)
+> > +	if (!bus) {
+> > +		xilinx_cpm_free_irq_domains(port);
+> 
+> Why can't you use existing 'err_parse_dt' label? If the reason is the name, just
+> change it to actual error case. Like, 'err_free_irq_domains'.
 
-I'd have a motor description that is sufficient to be able to swap steppers
-between hardware versions and present sufficient info to userspace to allow
-a library to hide those differences. That description might well be of
-an aggregate device consisting of motor and whatever mechanics to get you
-to the point you care about (actuator motion).  Hardest bit will be documen=
-ting
-'where' in the system the DT is describing.
+Done.
 
-It's not that heavily used but we do have analog front ends in IIO that
-provide a not dissimilar thing to the various potential mechanisms here.
+I took care of the review feedback and added missing "Fixes:" tag, and
+changed the code to use an existing goto label.  Both changes are already
+on the branch.
 
-Jonathan
+Thank you!
 
-
->=20
-> Best regards,
->=20
-
+	Krzysztof
 
