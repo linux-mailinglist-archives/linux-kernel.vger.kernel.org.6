@@ -1,560 +1,139 @@
-Return-Path: <linux-kernel+bounces-553016-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-553017-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9116CA58297
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 10:17:46 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9AF66A58298
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 10:18:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 08CB7188DBFD
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 09:17:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2E6A9188D5F1
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 09:18:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7F8D1A08DB;
-	Sun,  9 Mar 2025 09:17:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37DF619F103;
+	Sun,  9 Mar 2025 09:18:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ixit.cz header.i=@ixit.cz header.b="2uIc5rHn"
-Received: from ixit.cz (ip-89-177-23-149.bb.vodafone.cz [89.177.23.149])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="u7bST9Sl"
+Received: from mail-yw1-f173.google.com (mail-yw1-f173.google.com [209.85.128.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1D2DC2FD;
-	Sun,  9 Mar 2025 09:17:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.177.23.149
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDD2017ADE8
+	for <linux-kernel@vger.kernel.org>; Sun,  9 Mar 2025 09:17:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741511856; cv=none; b=WrUqFBjzl9RJtxxYXP9F5umgOihoZUZlwAPnZDFZD2L6FbqSerdoPIN8R2T0Sfq1xpwQND3CI8vaNv8f1lZBUM4Zn7cUK+tA8esVs724xNtmmvM3eUatQ1uTDCXwCU6+LGGDQoO1TWdYTqXSA8me2+r2Sx9tJ1y5tq1QtR0cEIw=
+	t=1741511879; cv=none; b=lCmDkBPlujfkP6O9s6hzbqIAM/W9L38y773zQRtulBT09K4glEYrKibyr1kn3hAxTk+aiSYFrJ1bbrL6dbmwdyPIMgpiK07UN1FkIUKo9sFIKVS4wpQ7jfswMTmSu2IjkXIosp6qGhIv06l5G9OvL2JyZU/+ipkxlBXnEh2g2A8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741511856; c=relaxed/simple;
-	bh=JDQ3H9F/p5iNmdnwEyMhD1EBVlM5FKft5xwk3qf7y9A=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=WfiHAB7c4pCFTmYzcEkFErZvTms9MwlA7RD9tooWLnwKf0+ga3mCbJL3oPDZGXpVhMglOkogG4+/VTGH+uSCZFpFXFtSlTYj+WBtThjj99nNTCQJtDJg53plLr1ylrH5wHu/wDq6KknJ8YUrQCqPqOH7BmkpQMsHj8OqrI0EdzU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ixit.cz; spf=pass smtp.mailfrom=ixit.cz; dkim=pass (1024-bit key) header.d=ixit.cz header.i=@ixit.cz header.b=2uIc5rHn; arc=none smtp.client-ip=89.177.23.149
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ixit.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ixit.cz
-Received: from [10.0.0.200] (unknown [10.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by ixit.cz (Postfix) with ESMTPSA id 9E51A1669F4;
-	Sun,  9 Mar 2025 10:17:29 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ixit.cz; s=dkim;
-	t=1741511849;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=69Fuo4py2NXnhITT1eKwEmPko6LKD9oV+W4Tc0mnlQA=;
-	b=2uIc5rHnxIe9u2gqjIG52kXvqBzwUPGZdq8vAhN9wYn3YRYnQQoACdWEtU714QeMCCaNPO
-	gcQfwYkLGpkAO3NJHNRWFyCtcmaoKucubmsKqEwXvNsNgbc445+2Mi52KHdfa5lldMxn/f
-	8+kai+saixmumzd/AtNjPGbbgL1GYzc=
-Message-ID: <88da307c-0403-405d-8356-c8baeb18eaba@ixit.cz>
-Date: Sun, 9 Mar 2025 10:17:29 +0100
+	s=arc-20240116; t=1741511879; c=relaxed/simple;
+	bh=1WAfpS9djc2Vef9uTMYeMxtcZmvL1He6joBABBwhNuA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=eHTknWQUt0Stsppb8xkQzyDZmzhobWSYxg/XA5q7Jsv7FWRWxnLB3Fc6Dhh8Fc273nvk0Kttqz8/pp8uscOQq0637YogpNdnqY3LKg/V9+nKSaWJB+zn/PN703CcBy5F+HRirx84K7pORCvOABeBLyCan/8QoTHKTm2lb236cvw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=u7bST9Sl; arc=none smtp.client-ip=209.85.128.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yw1-f173.google.com with SMTP id 00721157ae682-6fda22908d9so23784337b3.1
+        for <linux-kernel@vger.kernel.org>; Sun, 09 Mar 2025 01:17:57 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1741511877; x=1742116677; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=ZIwW4mMqcjhikStJ4LuoRwMzffSHbBGrUJN18yF51J4=;
+        b=u7bST9SlY8RxR7TzzH58lXgnA3Y86bspba1JrnXWb8UStHY6uhH1hWFsdL1Wyp+1qM
+         S6y/7wY4D+ByFOV1jGK6T0XnMe6OwDca6r7xZSGNm/Iv9XXjC1vjJtOgSg3IquEMuDWD
+         +3sokkUl6QFSt+O/a04fmA2yKDNDbhwtM1xMM7cmf2/z691ieJ/PDdaMV0X+O97592eo
+         dXwEFo8L12Jfcddwy7dm5eHPh958mX53KgFjFkER2n1phezsoKPsjiJOfTNbQg6zy+/E
+         pwN+AwDSKbUJyWAp/57Bu5ky61HJPcbs9c9EcmjMYiEsqf/hQG1LP8CQON2XRSGK4Qn0
+         zJDg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741511877; x=1742116677;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ZIwW4mMqcjhikStJ4LuoRwMzffSHbBGrUJN18yF51J4=;
+        b=rhBomTmrV3Uzb+GD2NtFmjUggikRZNP1ZufIia1f9GEzpLa+rZtMcF1eg27yYWjfwE
+         vzUzZaHILUcpV1X0/hUCLx817pOs+ORkAYeMsAiEXZed+bl2GJRHhSi67HmjjuzIA5iK
+         8da/bYRCrFuMZob3FmZygnxlQV2OE2NQPYDSaI3rXUCemw1WmKbDGdq4eFKEdvwHS08u
+         TLzEMU8y14WYMKiD79L29CAeI7Yd8O8dYgkeaVyDvMOgByscRnO+b3MXs1FIPzzQK2YN
+         uWdZcEfWn9nSRdd7x+xWkRmwnFp+38GczFIleEEEdVIH02DJTCS/SLLAs0yLzjsH9XWf
+         200A==
+X-Forwarded-Encrypted: i=1; AJvYcCWps1LsJxwZrXR7yJW4SEDoH0BCsiySgkaEl5E5Ps6q9tFP82iQkpLRzPY3tQzMDvGPRp8DW94H4wTN3MQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzzpQ91Sze3mydS2a0S5kwLjwc0ie+dXnW5vf41VcTZCyp82Kxu
+	MRujaW8IN0gNEs51JBF8QSFiHt6s4oUFC8e91GTgeYV4GIt8/BYSd+d5oTjbzqLYbo8x6pFJGvv
+	nvitB18Hs+kggEIdITl3AdRl4RaWMTkJkbkJr1A==
+X-Gm-Gg: ASbGncv3JalhToWEqnSbw4j0VbuEPjR0X7hOLFlgtB/wU7KZLHXll9G3GMpMYqfkfGi
+	tRVvBZ9PewdWk5rlFVXAohxmEPvWat5zk2G1WS7SGGTYnA5dWOAmk/dhlDX6/YjltQDLZEqJa/4
+	fi8QzU4gF4i5QTjMCPcfHb7P/fuMwjHKQ2N2U29wOf
+X-Google-Smtp-Source: AGHT+IF5EPBAwX/vFFn1MyOCNXGFDeVtGYDbOKvZ8oN+itZnMpk7nJvsL5ZhfsKbFo9VQ/c2bu3NL+W9hdt3Gt+ff7Q=
+X-Received: by 2002:a05:690c:3612:b0:6fd:2192:cf3c with SMTP id
+ 00721157ae682-6febf3b7663mr133674427b3.34.1741511876931; Sun, 09 Mar 2025
+ 01:17:56 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird Beta
-Subject: Re: [PATCH v3] ARM: dts: nexus4: Initial dts
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc: Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Kees Cook <kees@kernel.org>,
- Tony Luck <tony.luck@intel.com>, "Guilherme G. Piccoli"
- <gpiccoli@igalia.com>, linux-arm-msm@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-hardening@vger.kernel.org, Ivan Belokobylskiy <belokobylskij@gmail.com>
-References: <20250309-lg-nexus4-mako-v3-1-1dc2807df296@ixit.cz>
- <l4lv22oi2ktubf7aveqxqtwb7zz7cfrzdayuxxgwdj46ygubfs@qpl6ut37taoe>
-Content-Language: en-US
-From: David Heidelberg <david@ixit.cz>
-Autocrypt: addr=david@ixit.cz; keydata=
- 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
-In-Reply-To: <l4lv22oi2ktubf7aveqxqtwb7zz7cfrzdayuxxgwdj46ygubfs@qpl6ut37taoe>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20250308-phy-sam-hdptx-bpc-v5-0-35087287f9d1@collabora.com> <20250308-phy-sam-hdptx-bpc-v5-3-35087287f9d1@collabora.com>
+In-Reply-To: <20250308-phy-sam-hdptx-bpc-v5-3-35087287f9d1@collabora.com>
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Date: Sun, 9 Mar 2025 11:17:46 +0200
+X-Gm-Features: AQ5f1Jo12FGGsHm8kzdQ4xf0NIPejEccC7plOVJMbEqHfZYKsXU52PdjyJ4Y43Q
+Message-ID: <CAA8EJprBcGz0tZ5SDVC_WK2bzjXZAtOj+LfGnSxmwktvaQw=VQ@mail.gmail.com>
+Subject: Re: [PATCH v5 03/12] phy: rockchip: samsung-hdptx: Fix clock ratio setup
+To: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+Cc: Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>, 
+	Heiko Stuebner <heiko@sntech.de>, Algea Cao <algea.cao@rock-chips.com>, 
+	Sandor Yu <Sandor.yu@nxp.com>, Maxime Ripard <mripard@kernel.org>, kernel@collabora.com, 
+	linux-kernel@vger.kernel.org, linux-phy@lists.infradead.org, 
+	linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
 
-Hello Dmitry!
+On Sat, 8 Mar 2025 at 14:21, Cristian Ciocaltea
+<cristian.ciocaltea@collabora.com> wrote:
+>
+> The switch from 1/10 to 1/40 clock ratio must happen when exceeding the
+> 340 MHz rate limit of HDMI 1.4, i.e. when entering the HDMI 2.0 domain,
+> and not before.
 
-Thank you for looking into it. See replies.
+Am I correct that the only functional change is a switch from
+greater-or-equal to simple greater?
 
-On 09/03/2025 09:33, Dmitry Baryshkov wrote:
-> On Sun, Mar 09, 2025 at 01:45:51AM +0100, David Heidelberg via B4 Relay wrote:
->> From: Ivan Belokobylskiy <belokobylskij@gmail.com>
->>
->> Add initial support for LG Nexus 4 (mako).
->>
->> Features currently working: regulators, eMMC, WiFi, and volume keys.
->>
->> Signed-off-by: Ivan Belokobylskiy <belokobylskij@gmail.com>
->> Signed-off-by: David Heidelberg <david@ixit.cz>
->> ---
->> Changes in v3:
->> - rebased against next-20250307
->> - dropped backlight until driver gets converted to DT
->>
->> Changes in v2:
->> - lge vendor doesn't exist anymore, rename to lg
->> - sdcc@ to mmc@ to comply with dt-schema
->> ---
->>   arch/arm/boot/dts/qcom/Makefile                    |   1 +
->>   .../boot/dts/qcom/qcom-apq8064-lg-nexus4-mako.dts  | 342 +++++++++++++++++++++
->>   2 files changed, 343 insertions(+)
->>
->> diff --git a/arch/arm/boot/dts/qcom/Makefile b/arch/arm/boot/dts/qcom/Makefile
->> index f06c6d425e91dd73c2b453d15543d95bd32383b9..0c1d116f6e84f76994aa8c8286350bdcd1657a42 100644
->> --- a/arch/arm/boot/dts/qcom/Makefile
->> +++ b/arch/arm/boot/dts/qcom/Makefile
->> @@ -12,6 +12,7 @@ dtb-$(CONFIG_ARCH_QCOM) += \
->>   	qcom-apq8064-ifc6410.dtb \
->>   	qcom-apq8064-sony-xperia-lagan-yuga.dtb \
->>   	qcom-apq8064-asus-nexus7-flo.dtb \
->> +	qcom-apq8064-lg-nexus4-mako.dtb \
->>   	qcom-apq8074-dragonboard.dtb \
->>   	qcom-apq8084-ifc6540.dtb \
->>   	qcom-apq8084-mtp.dtb \
->> diff --git a/arch/arm/boot/dts/qcom/qcom-apq8064-lg-nexus4-mako.dts b/arch/arm/boot/dts/qcom/qcom-apq8064-lg-nexus4-mako.dts
->> new file mode 100644
->> index 0000000000000000000000000000000000000000..bcb57675aa24892b290d543601f7a6b36b6a65f6
->> --- /dev/null
->> +++ b/arch/arm/boot/dts/qcom/qcom-apq8064-lg-nexus4-mako.dts
->> @@ -0,0 +1,342 @@
->> +// SPDX-License-Identifier: GPL-2.0-only
->> +#include "qcom-apq8064-v2.0.dtsi"
->> +#include <dt-bindings/gpio/gpio.h>
->> +#include <dt-bindings/input/input.h>
->> +#include <dt-bindings/mfd/qcom-rpm.h>
->> +#include <dt-bindings/pinctrl/qcom,pmic-gpio.h>
->> +/ {
->> +	model = "LG Nexus 4 (mako)";
->> +	compatible = "lg,nexus4-mako", "qcom,apq8064";
->> +
->> +	aliases {
->> +		serial0 = &gsbi7_serial;
->> +		serial1 = &gsbi6_serial;
->> +		serial2 = &gsbi4_serial;
->> +	};
->> +
->> +	chosen {
->> +		stdout-path = "serial2:115200n8";
->> +	};
->> +
->> +	reserved-memory {
->> +		#address-cells = <1>;
->> +		#size-cells = <1>;
->> +		ranges;
->> +
->> +		ramoops@88d00000{
->> +			compatible = "ramoops";
->> +			reg = <0x88d00000 0x100000>;
->> +			record-size = <0x00020000>;
->> +			console-size = <0x00020000>;
->> +			ftrace-size = <0x00020000>;
->> +		};
->> +	};
->> +
->> +	battery_cell: battery-cell {
->> +		compatible = "simple-battery";
->> +		constant-charge-current-max-microamp = <900000>;
->> +		operating-range-celsius = <0 45>;
->> +	};
->> +
->> +	soc {
->> +		rpm@108000 {
-> 
-> Please use &rpm { ... }; instead.
-> 
->> +			regulators {
->> +				vdd_l1_l2_l12_l18-supply = <&pm8921_s4>;
->> +				vin_lvs1_3_6-supply = <&pm8921_s4>;
-> 
-> Please move vin_lvs2-supply here.
-> 
->> +				vin_lvs4_5_7-supply = <&pm8921_s4>;
->> +
-> 
-> Please move vdd_l1_l2_l12_l18 here.
-> 
->> +				vdd_l24-supply = <&pm8921_s1>;
->> +				vdd_l25-supply = <&pm8921_s1>;
->> +				vin_lvs2-supply = <&pm8921_s1>;
->> +
->> +				vdd_l26-supply = <&pm8921_s7>;
->> +				vdd_l27-supply = <&pm8921_s7>;
->> +				vdd_l28-supply = <&pm8921_s7>;
->> +
->> +				/* Buck SMPS */
->> +				s1 {
->> +					regulator-always-on;
->> +					regulator-min-microvolt = <1225000>;
->> +					regulator-max-microvolt = <1225000>;
->> +					qcom,switch-mode-frequency = <3200000>;
->> +					bias-pull-down;
->> +				};
-> 
-> empty line
-> 
->> +				s2 {
->> +					regulator-min-microvolt = <1300000>;
->> +					regulator-max-microvolt = <1300000>;
->> +					qcom,switch-mode-frequency = <1600000>;
->> +					bias-pull-down;
->> +				};
->> +
->> +				/* msm otg HSUSB_VDDCX */
->> +				s3 {
->> +					regulator-min-microvolt = <500000>;
->> +					regulator-max-microvolt = <1150000>;
->> +					qcom,switch-mode-frequency = <4800000>;
->> +					bias-pull-down;
->> +				};
->> +
->> +				/*
->> +				 * msm_sdcc.1-sdc-vdd_io
->> +				 * tabla2x-slim-CDC_VDDA_RX
->> +				 * tabla2x-slim-CDC_VDDA_TX
->> +				 * tabla2x-slim-CDC_VDD_CP
->> +				 * tabla2x-slim-VDDIO_CDC
->> +				 */
->> +				s4 {
->> +					regulator-always-on;
->> +					regulator-min-microvolt	= <1800000>;
->> +					regulator-max-microvolt	= <1800000>;
->> +					qcom,switch-mode-frequency = <1600000>;
->> +					bias-pull-down;
->> +					qcom,force-mode = <QCOM_RPM_FORCE_MODE_AUTO>;
->> +				};
->> +
->> +				/*
->> +				 * supply vdd_l26, vdd_l27, vdd_l28
->> +				 */
->> +				s7 {
->> +					regulator-min-microvolt = <1300000>;
->> +					regulator-max-microvolt = <1300000>;
->> +					qcom,switch-mode-frequency = <3200000>;
->> +				};
->> +
->> +				s8 {
->> +					regulator-min-microvolt = <2200000>;
->> +					regulator-max-microvolt = <2200000>;
->> +					qcom,switch-mode-frequency = <1600000>;
->> +				};
->> +
->> +				l1 {
->> +					regulator-min-microvolt = <1100000>;
->> +					regulator-max-microvolt = <1100000>;
->> +					regulator-always-on;
->> +					bias-pull-down;
->> +				};
->> +
->> +				/* mipi_dsi.1-dsi1_pll_vdda */
->> +				l2 {
->> +					regulator-min-microvolt = <1200000>;
->> +					regulator-max-microvolt = <1200000>;
->> +					bias-pull-down;
->> +				};
->> +
->> +				/* msm_otg-HSUSB_3p3 */
->> +				l3 {
->> +					regulator-min-microvolt = <3075000>;
->> +					regulator-max-microvolt = <3500000>;
->> +					bias-pull-down;
->> +				};
->> +
->> +				/* msm_otg-HSUSB_1p8 */
->> +				l4 {
->> +					regulator-always-on;
->> +					regulator-min-microvolt = <1800000>;
->> +					regulator-max-microvolt = <1800000>;
->> +				};
->> +
->> +				/* msm_sdcc.1-sdc_vdd */
->> +				l5 {
->> +					regulator-min-microvolt = <2950000>;
->> +					regulator-max-microvolt = <2950000>;
->> +					bias-pull-down;
->> +				};
->> +
->> +				/* earjack_debug */
->> +				l6 {
->> +					regulator-min-microvolt = <3000000>;
->> +					regulator-max-microvolt = <3000000>;
->> +					bias-pull-down;
->> +				};
->> +
->> +				/* mipi_dsi.1-dsi_vci */
->> +				l8 {
->> +					regulator-min-microvolt = <2800000>;
->> +					regulator-max-microvolt = <3000000>;
->> +					bias-pull-down;
->> +				};
->> +
->> +				/* wcnss_wlan.0-iris_vddpa */
->> +				l10 {
->> +					regulator-min-microvolt = <2900000>;
->> +					regulator-max-microvolt = <2900000>;
->> +					bias-pull-down;
->> +				};
->> +
->> +				/* mipi_dsi.1-dsi1_avdd */
->> +				l11 {
->> +					regulator-min-microvolt = <2850000>;
->> +					regulator-max-microvolt = <2850000>;
->> +					bias-pull-down;
->> +				};
->> +
->> +				/* touch_vdd */
->> +				l15 {
->> +					regulator-min-microvolt = <1800000>;
->> +					regulator-max-microvolt = <2950000>;
->> +					bias-pull-down;
->> +				};
->> +
->> +				/* slimport_dvdd */
->> +				l18 {
->> +					regulator-min-microvolt = <1100000>;
->> +					regulator-max-microvolt = <1100000>;
->> +					bias-pull-down;
->> +				};
->> +
->> +				/* touch_io */
->> +				l22 {
->> +					regulator-min-microvolt = <1800000>;
->> +					regulator-max-microvolt = <1800000>;
->> +					bias-pull-down;
->> +				};
->> +
->> +				/*
->> +				 * mipi_dsi.1-dsi_vddio
->> +				 * pil_qdsp6v4.1-pll_vdd
->> +				 * pil_qdsp6v4.2-pll_vdd
->> +				 * msm_ehci_host.0-HSUSB_1p8
->> +				 * msm_ehci_host.1-HSUSB_1p8
->> +				 */
->> +				l23 {
->> +					regulator-min-microvolt = <1800000>;
->> +					regulator-max-microvolt = <1800000>;
->> +					bias-pull-down;
->> +				};
->> +
->> +				/*
->> +				 * tabla2x-slim-CDC_VDDA_A_1P2V
->> +				 * tabla2x-slim-VDDD_CDC_D
->> +				 */
->> +				l24 {
->> +					regulator-min-microvolt = <750000>;
->> +					regulator-max-microvolt = <1150000>;
->> +					bias-pull-down;
->> +				};
->> +
->> +				l25 {
->> +					regulator-min-microvolt = <1250000>;
->> +					regulator-max-microvolt = <1250000>;
->> +					regulator-always-on;
->> +					bias-pull-down;
->> +				};
->> +
->> +				l26 {
->> +					regulator-min-microvolt = <375000>;
->> +					regulator-max-microvolt = <1050000>;
->> +					regulator-always-on;
->> +					bias-pull-down;
->> +				};
->> +
->> +				l27 {
->> +					regulator-min-microvolt = <1100000>;
->> +					regulator-max-microvolt = <1100000>;
->> +				};
->> +
->> +				l28 {
->> +					regulator-min-microvolt = <1050000>;
->> +					regulator-max-microvolt = <1050000>;
->> +					bias-pull-down;
->> +				};
->> +
->> +				/* wcnss_wlan.0-iris_vddio */
->> +				lvs1 {
->> +					bias-pull-down;
->> +				};
->> +
->> +				/* wcnss_wlan.0-iris_vdddig */
->> +				lvs2 {
->> +					bias-pull-down;
->> +				};
->> +
->> +				lvs3 {
->> +					bias-pull-down;
->> +				};
->> +
->> +				lvs4 {
->> +					bias-pull-down;
->> +				};
->> +
->> +				lvs5 {
->> +					bias-pull-down;
->> +				};
->> +
->> +				/* mipi_dsi.1-dsi_iovcc */
->> +				lvs6 {
->> +					bias-pull-down;
->> +				};
->> +
->> +				/*
->> +				 * pil_riva-pll_vdd
->> +				 * lvds.0-lvds_vdda
->> +				 * mipi_dsi.1-dsi1_vddio
->> +				 * hdmi_msm.0-hdmi_vdda
->> +				 */
->> +				lvs7 {
->> +					bias-pull-down;
->> +				};
->> +
->> +				ncp {
->> +					regulator-min-microvolt = <1800000>;
->> +					regulator-max-microvolt = <1800000>;
->> +					qcom,switch-mode-frequency = <1600000>;
->> +				};
->> +			};
->> +		};
->> +	};
->> +};
->> +
->> +&pmicintc {
->> +	keypad@148 {
->> +		compatible = "qcom,pm8921-keypad";
->> +		reg = <0x148>;
->> +		interrupt-parent = <&pmicintc>;
->> +		interrupts = <74 1>, <75 1>;
-> 
-> IRQ_TYPE_EDGE_RISING
-> 
-> 
->> +		linux,keymap = <
->> +			MATRIX_KEY(0, 0, KEY_VOLUMEDOWN)
->> +			MATRIX_KEY(0, 1, KEY_VOLUMEUP)
->> +		>;
->> +
->> +		keypad,num-rows = <1>;
->> +		keypad,num-columns = <5>;
->> +		debounce = <15>;
->> +		scan-delay = <32>;
->> +		row-hold = <91500>;
->> +	};
->> +};
->> +
->> +&gsbi1 {
->> +	status = "okay";
-> 
-> Status should be the last property. Add empty line before it (here and
-> further)
-> 
->> +	qcom,mode = <GSBI_PROT_I2C>;
->> +};
->> +
->> +&gsbi1_i2c {
->> +	status = "okay";
->> +	clock-frequency = <200000>;
->> +	pinctrl-0 = <&i2c1_pins>;
->> +	pinctrl-names = "default";
-> 
-> I don't see i2c1_pins being defined. Did it pass the build?
-> Also there is already a pinctrl for this device. Why do you need to
-> overwrite it?
-> 
->> +};
->> +
->> +&gsbi4 {
->> +	status = "okay";
->> +	qcom,mode = <GSBI_PROT_I2C_UART>;
->> +};
->> +
->> +&gsbi4_serial {
->> +	status = "okay";
->> +	pinctrl-names = "default";
->> +	pinctrl-0 = <&gsbi4_uart_pin_a>;
-> 
-> Unnecessary, can be dropped. It's set in qcom-apq8064.dtsi.
-> 
->> +};
->> +
->> +/* eMMC */
->> +&sdcc1 {
->> +	status = "okay";
->> +	vmmc-supply = <&pm8921_l5>;
->> +	vqmmc-supply = <&pm8921_s4>;
->> +};
->> +
->> +&riva {
->> +	status = "okay";
->> +	pinctrl-names = "default";
->> +	pinctrl-0 = <&riva_wlan_pin_a>;
-> 
-> Where is it defined? Also pinctrl-names should come after pinctrl-N.
+>
+> While at it, introduce a define for this rate limit constant.
+>
+> Fixes: 553be2830c5f ("phy: rockchip: Add Samsung HDMI/eDP Combo PHY driver")
+> Signed-off-by: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+> ---
+>  drivers/phy/rockchip/phy-rockchip-samsung-hdptx.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/phy/rockchip/phy-rockchip-samsung-hdptx.c b/drivers/phy/rockchip/phy-rockchip-samsung-hdptx.c
+> index f88369864c50e4563834ccbb26f1f9f440e99271..cf2c3a46604cb9d8c26fe5ec8346904e0b62848f 100644
+> --- a/drivers/phy/rockchip/phy-rockchip-samsung-hdptx.c
+> +++ b/drivers/phy/rockchip/phy-rockchip-samsung-hdptx.c
+> @@ -320,6 +320,7 @@
+>  #define LN3_TX_SER_RATE_SEL_HBR2_MASK  BIT(3)
+>  #define LN3_TX_SER_RATE_SEL_HBR3_MASK  BIT(2)
+>
+> +#define HDMI14_MAX_RATE                        340000000
+>  #define HDMI20_MAX_RATE                        600000000
+>
+>  enum dp_link_rate {
+> @@ -1072,7 +1073,7 @@ static int rk_hdptx_ropll_tmds_mode_config(struct rk_hdptx_phy *hdptx,
+>
+>         regmap_write(hdptx->regmap, LNTOP_REG(0200), 0x06);
+>
+> -       if (rate >= 3400000) {
+> +       if (rate > HDMI14_MAX_RATE / 100) {
+>                 /* For 1/40 bitrate clk */
+>                 rk_hdptx_multi_reg_write(hdptx, rk_hdtpx_tmds_lntop_highbr_seq);
+>         } else {
+>
+> --
+> 2.48.1
+>
 
-definition is kinda aside in qcom-apq8064-pins.dtsi .
-
-All other suggestions incorporated, if it's OK otherwise, let me send v2
-
-Thank you
-David
-
-> 
->> +};
->>
->> ---
->> base-commit: 0a2f889128969dab41861b6e40111aa03dc57014
->> change-id: 20250309-lg-nexus4-mako-da0833885b26
->>
->> Best regards,
->> -- 
->> David Heidelberg <david@ixit.cz>
->>
->>
-> 
 
 -- 
-David Heidelberg
-
+With best wishes
+Dmitry
 
