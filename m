@@ -1,136 +1,111 @@
-Return-Path: <linux-kernel+bounces-553121-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-553122-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10A36A58424
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 13:51:30 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E4D01A58425
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 13:53:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CCF487A51AD
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 12:50:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BD9E23AB575
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 12:52:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8CCE1D61B9;
-	Sun,  9 Mar 2025 12:51:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7F0A1CC8B0;
+	Sun,  9 Mar 2025 12:53:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZJM3u6CX"
-Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="g6yBAGBN"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E71740849;
-	Sun,  9 Mar 2025 12:51:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64284192580
+	for <linux-kernel@vger.kernel.org>; Sun,  9 Mar 2025 12:53:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741524681; cv=none; b=IVF3iAtUtqzVIvJCAB14jmmcg6pyhCBydZvGNddLRfeiNSyHPLQoFUZeY15s0S/N6UAafZtH8LI+1guJu5a3iXZ3KMeC1X3C/YnDf9ANppmKyNY+N++lCRElsC5YUEcVYzopT5Qha0rc0fmDuwfO39LDyNsEWlNGA2juaA6ltDE=
+	t=1741524782; cv=none; b=jCX/YPuNCcyMOBPLo1eyPbmFwXLRRze3T02P/uTKRDZoWMIFOmk80d5q3JfjgUKGtgbACvr3aXxeMCLoPeJAJQabsH+3zy4rwBdk8gYzFcZfyDLz+CLN9/s8Tj607d2G6hcQciDlbojq/pQJC7x4WdL5/akAg96Yj1Bk9Qlqla8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741524681; c=relaxed/simple;
-	bh=+Iz1/STkZsl6Qt0No+jbhF8zFhsRbcGfp/VaE+EiszQ=;
-	h=Content-Type:From:Mime-Version:Subject:Date:Message-Id:References:
-	 Cc:In-Reply-To:To; b=sRn0/cHpFsVq7C9+ikkmGC+lofvxQAndFcgnkPdVpTuHb2tJpvO+gN2LKLxLbLuzfrb5NmT6c/taKHtzfrn9w6c8q0KbGLKxFPkVH/+fVUgSTnsZ9GKDecY/YV+OInGgnzfUijy5JEN+9RyHMe+mqDEukk91/cHzxNTFEZdFjJ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZJM3u6CX; arc=none smtp.client-ip=209.85.208.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-5e5b56fc863so4616910a12.3;
-        Sun, 09 Mar 2025 05:51:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741524676; x=1742129476; darn=vger.kernel.org;
-        h=to:in-reply-to:cc:references:message-id:date:subject:mime-version
-         :from:content-transfer-encoding:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=juHFm7Io04+HJg8np5JkFCyDzrtheq4bEz92iaonhGM=;
-        b=ZJM3u6CXCwps3lU3xbDdLzLSrG/9UJW0Aw6GZ0YRSm/RPbrBHh6ProvZ4KC229UTNc
-         mbw0p2lMzjbfrtdbcs5XPZQPvXTuwMakJBgMLkLvjo3n8jDz5Zgif0fPsLEUyoU2hY2P
-         TrmCIMJl4lPIxwhNBLx+Ehh0FpFbdAoYhsLSfbVCAOUqgx8snqmQwLpz7KRDLwKugeRi
-         XB0wALVFHfpZrpk9VMC0qkBQEx52iC/beNV6mg/Ejzz3lhMkK/lrw6f5W/L+U5DGtyp2
-         zhXJjfLQjBArh5Dy/bBuLo2EF8jCMaV9FoiZRGyONiOZqFabHKXnWPPlryES385EcPvL
-         c9hg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741524676; x=1742129476;
-        h=to:in-reply-to:cc:references:message-id:date:subject:mime-version
-         :from:content-transfer-encoding:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=juHFm7Io04+HJg8np5JkFCyDzrtheq4bEz92iaonhGM=;
-        b=r4SgTgW+D/Qts34Slrar6k8LjDqLbwWfiObYzVPd/0CWheYoVB1Bip7SgoHDUnXhuA
-         rxs47yINtCLZ4jx4Oomk8Qkpamm0XYit32y2lmSq7CDjp9ab+7JxzyYxC7KbiI0JQw2K
-         OK6HLzCYKmvh01b4xdrOTgmO86YPhGTwEuYNkxQ37sFLIhPGZWf3F38ZkKdUyOBgmr4J
-         lyxYVlztiEa95WOxFFBxczuvAWa80O9gNuz2x35cnvuVYldeZCgrDvdbhLQ9vmMswzXn
-         QJe/4kHDfY/oxP5juQXkVDrXHp8P+pe06KRpq7Yhtvx3Dad91zUNUh5ms/lWbEXkzBt8
-         qVrA==
-X-Forwarded-Encrypted: i=1; AJvYcCW6zH0vcGgVMKSwbuaz3bqmrmov/B3dfXq/dq5yfw1m/QJiPIQ4ChFI3tvTdlVgqnxfslBKn5371oLoPwU=@vger.kernel.org, AJvYcCWfWPuY2LHCpc9cAuaJ7FEGPMef+kjBzE9loKWuyI7eX9Ko3iCRe9e476bLzHT/3SDNk3V4VE+d1J/Qi761VtPtLBF+UA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwsAJSEI9d6b9Cuu6TNIOfSlKYe8W6dfmVbLKmqCG3y9i+6YXzH
-	a7j7f0DEdGNLSx1yDqE88rZCLkCW+i5bW71/dgsH9QT/MtdxlkxcRKybzBcI
-X-Gm-Gg: ASbGncuwDtwcbCdgiM3P4m+nCNGU/+gNqs4IIX8JOZzeyoRHxXBMizAubmKHEypQgX+
-	YdC/OvWG8wk3cHQJSx4QhyX/7zngCsEtjfDMBl/bQgA6mhazg6dcA/4a7Y5nDoJGDND+skS4fyT
-	1jA4IhlcluZRjezo5YYonUhqyjWqjnXJtRGwrIzy3tLw8WpeaLkz+KLLZpw3Om+DnMD5ylrI+g8
-	v7zExaKirBsjTu69pPCRJUsSBFCADC75I8h6uAHe3HpgvzZtFhIn/68yFXFiaHxcQF7Kf4r8XZI
-	FzDKs0AnXqL+nMDS8pV+/iJxpRHtuokfJhGXsse6aXFhPy1SiNKDmQ6Mg03ok84R9V7wzbI=
-X-Google-Smtp-Source: AGHT+IFX/qTtBfk0Mho2kJIlb5qdFgqaWund3g4q5leqWSlItvCEwakE17E5a/P01CaecNdNjqeZTg==
-X-Received: by 2002:a17:907:1ca4:b0:abe:cccd:9222 with SMTP id a640c23a62f3a-ac252f3ed45mr1095618166b.54.1741524675729;
-        Sun, 09 Mar 2025 05:51:15 -0700 (PDT)
-Received: from smtpclient.apple ([109.78.84.229])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac2399d4877sm586181766b.169.2025.03.09.05.51.14
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 09 Mar 2025 05:51:14 -0700 (PDT)
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-From: Rayan Margham <rayanmargham4@gmail.com>
+	s=arc-20240116; t=1741524782; c=relaxed/simple;
+	bh=rFcg4i8UNUAEkwLzVb0iN9+Z2k+kmMA5Ez9PqfYOedk=;
+	h=Date:From:To:Cc:Subject:Message-ID; b=Ez2Ert3WZzZEbnfJ6Jgz9jt1iFOr/coPli1LVCgcHvPGPPsK/oIQ/9MIGnJFT+Fw8GRpSwrCMDMJCwC/KjNWNbyofcpHja32A5K2ZG77k4amNfipJfuBw7iIZoIWieReVpnRvvs3VcvxQX2NPC8GawwKZiZKAaHFx019nwljX20=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=g6yBAGBN; arc=none smtp.client-ip=198.175.65.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1741524781; x=1773060781;
+  h=date:from:to:cc:subject:message-id;
+  bh=rFcg4i8UNUAEkwLzVb0iN9+Z2k+kmMA5Ez9PqfYOedk=;
+  b=g6yBAGBNl5zCzhIGWadILUr4AzZJy4hyZPy8XGfAtYSjZTOPYseBR0+6
+   Dt8ilRzKD/WcQmACpvqLt6mdYUbgNlBgDt3pFANEAbwF5oeS3xEzqokBk
+   ul0SOUZj83+bUTaV6cg8z45Sr7veZcClFONpG5EpKnSscXAi4vpSJigfy
+   mTB/flXyUUUuS1YJopgyMTJ80E3GK6vJ5KegGG1jUtqLywfsJFvjZT9yr
+   oMYGF1LTL7Q9+quFIyqUxAmhUZFceKSx84Z0XV6cC/K3vSoy4047PNdJx
+   LPCPz9y7YYznFwbvb5ogwmlKWWMrgbNyOi6MeH/biT5WOdf5PT3+G0zfQ
+   Q==;
+X-CSE-ConnectionGUID: oRf3HTaURnSe+0k+csd5Mw==
+X-CSE-MsgGUID: jCTpGfoQRJKDGQdc4R8nZg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11368"; a="46305433"
+X-IronPort-AV: E=Sophos;i="6.14,234,1736841600"; 
+   d="scan'208";a="46305433"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Mar 2025 05:53:00 -0700
+X-CSE-ConnectionGUID: pNyBP95wRxyLCBfmux/Gkw==
+X-CSE-MsgGUID: PVJTamVXQWaB5HUr1V0cfg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,234,1736841600"; 
+   d="scan'208";a="119921550"
+Received: from lkp-server02.sh.intel.com (HELO a4747d147074) ([10.239.97.151])
+  by fmviesa008.fm.intel.com with ESMTP; 09 Mar 2025 05:52:59 -0700
+Received: from kbuild by a4747d147074 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1trG9I-00036q-2b;
+	Sun, 09 Mar 2025 12:52:56 +0000
+Date: Sun, 09 Mar 2025 20:52:55 +0800
+From: kernel test robot <lkp@intel.com>
+To: "x86-ml" <x86@kernel.org>
+Cc: linux-kernel@vger.kernel.org
+Subject: [tip:x86/boot] BUILD SUCCESS
+ 558fc8e1869ca6e1eb99a1e2b52f6c35424d4adf
+Message-ID: <202503092049.yttdQGqR-lkp@intel.com>
+User-Agent: s-nail v14.9.24
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (1.0)
-Subject: Re: [RFC PATCH v2 0/3] platform/x86: acer-wmi: Add fan control support
-Date: Sun, 9 Mar 2025 12:51:03 +0000
-Message-Id: <637B90F3-58C6-43B6-9822-5314C62138C6@gmail.com>
-References: <f5d8b82d-c711-4611-b257-b4297f172bb1@gmx.de>
-Cc: jlee@suse.com, basak.sb2006@gmail.com, kuurtb@gmail.com,
- hdegoede@redhat.com, ilpo.jarvinen@linux.intel.com,
- platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <f5d8b82d-c711-4611-b257-b4297f172bb1@gmx.de>
-To: Armin Wolf <W_Armin@gmx.de>
-X-Mailer: iPhone Mail (22B91)
 
-I=E2=80=99m so sorry I=E2=80=99ve been in a mental health unit for the past m=
-onth, are you still working on the driver I would love to test anything you p=
-rovide me now
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86/boot
+branch HEAD: 558fc8e1869ca6e1eb99a1e2b52f6c35424d4adf  x86/boot: Do not test if AC and ID eflags are changeable on x86_64
 
-Bestest regards
-Rayan Margham=20
+elapsed time: 958m
 
-> On 5 Mar 2025, at 00:24, Armin Wolf <W_Armin@gmx.de> wrote:
->=20
-> =EF=BB=BFAm 15.02.25 um 18:45 schrieb Armin Wolf:
->=20
->> This experimental patch series aims to add fan control support to the
->> acer-wmi driver. The patches are compile-tested only and need to be
->> tested on real hardware to verify that they actually work.
->>=20
->> I CCed two users who requested support for this feature. I would be
->> very happy if both of you could test those patches and report back.
->>=20
->> I am ready to help you both with compiling a custom linux kernel for
->> testing this series.
->=20
-> Any updates from the two people with Acer hardware?
->=20
-> Thanks,
-> Armin Wolf
->=20
->> Changes since v2:
->> - remove duplicate include and replace hwmon_pwm_mode with
->>   hwmon_pwm_enable in second patch
->>=20
->> Armin Wolf (3):
->>   platform/x86: acer-wmi: Fix setting of fan behavior
->>   platform/x86: acer-wmi: Add fan control support
->>   platform/x86: acer-wmi: Enable fan control for PH16-72 and PT14-51
->>=20
->>  drivers/platform/x86/acer-wmi.c | 298 +++++++++++++++++++++++++++++---
->>  1 file changed, 273 insertions(+), 25 deletions(-)
->>=20
->> --
->> 2.39.5
->>=20
->>=20
+configs tested: 19
+configs skipped: 123
+
+The following configs have been built successfully.
+More configs may be tested in the coming days.
+
+tested configs:
+i386                         allmodconfig    gcc-12
+i386                          allnoconfig    gcc-12
+i386                         allyesconfig    gcc-12
+i386    buildonly-randconfig-001-20250309    clang-19
+i386    buildonly-randconfig-002-20250309    clang-19
+i386    buildonly-randconfig-003-20250309    gcc-11
+i386    buildonly-randconfig-004-20250309    gcc-12
+i386    buildonly-randconfig-005-20250309    clang-19
+i386    buildonly-randconfig-006-20250309    clang-19
+i386                            defconfig    clang-19
+x86_64                        allnoconfig    clang-19
+x86_64                       allyesconfig    clang-19
+x86_64  buildonly-randconfig-001-20250309    gcc-12
+x86_64  buildonly-randconfig-002-20250309    gcc-11
+x86_64  buildonly-randconfig-003-20250309    gcc-12
+x86_64  buildonly-randconfig-004-20250309    gcc-12
+x86_64  buildonly-randconfig-005-20250309    clang-19
+x86_64  buildonly-randconfig-006-20250309    clang-19
+x86_64                          defconfig    gcc-11
+
+--
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
