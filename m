@@ -1,164 +1,162 @@
-Return-Path: <linux-kernel+bounces-553112-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-553113-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1F5DA583FC
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 13:16:08 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DCD71A58402
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 13:19:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B9C0B1891AE3
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 12:16:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 584B83AEAC1
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 12:19:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AB161D5AAD;
-	Sun,  9 Mar 2025 12:15:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 563A51D5ACD;
+	Sun,  9 Mar 2025 12:19:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="q614rjf/"
-Received: from smtp-relay-internal-0.canonical.com (smtp-relay-internal-0.canonical.com [185.125.188.122])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="oX1YZjPS"
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D3C717A2E3
-	for <linux-kernel@vger.kernel.org>; Sun,  9 Mar 2025 12:15:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.122
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AE52211C;
+	Sun,  9 Mar 2025 12:19:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741522558; cv=none; b=sIIj7cepMatl4If3PpV37a8Qna6QETfuWtdOtO6hfz+KBIiNqchcbKEnZQICjje9CsFirp28jjsgcrfDor13srwO8PzGqirxBGVhIDADWe0ohiwmHFPQYIHSdL9Ch740gY1HuqIUGL3jopBfZgjvc2J6Fv4qIA5xn5VaomgqJjg=
+	t=1741522763; cv=none; b=Iq7CamF3246UcUAKvleLR6P4vpNCV1WVLjkyo7iVPhbynKsOke3GY2wPWorgotBNVal0WWWM7h2VwSFXAUrMUvNb7Vvd7VBKOd7pNZkqmdJWwuDuj39osreKO/ADGlrJTDVlaQYwtYIj9ePOcVPZIbv6/VQXZl4KOY3RUXlaknk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741522558; c=relaxed/simple;
-	bh=tg28/9hanaFbrmazqnyGo9rUsvy3BxgiFLHrwpc0Hds=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=WhP+oiD4z80d5cgCIJRMjjCQh8WmVy1SMpB1ID3zP558SsE4tTAtGI+oq6K0NXOqBRxl6T/7GQb3PwOZvYuy+LBocp49JRXrA9fefkmFS7mig7EgGpd2Hj7X/yH5HnL+RR1u0x5fKFskBkxJbHFvemK6Oux/NlS+tM77EcKrkLU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=q614rjf/; arc=none smtp.client-ip=185.125.188.122
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
-Received: from mail-ej1-f69.google.com (mail-ej1-f69.google.com [209.85.218.69])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id AE4CE3F849
-	for <linux-kernel@vger.kernel.org>; Sun,  9 Mar 2025 12:15:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-	s=20210705; t=1741522547;
-	bh=7oajGXmwoZ14RjsiUyyOZit7FlCk8P+EMjDV4rSKNPI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version;
-	b=q614rjf/GR05v7Dah5LZVVGfDb7Bb6OE3Ot5+F+HVVXrf6ZM3G/0R+cyNGS47c238
-	 0FKZxq6kpaiH5a/Bu3zY8itD1TM2d88DSsa71kRHLzJ1GsDizT+TDX1tyii74Zw9uU
-	 i6yN4lx7OM/06P02Mk3AyHpu6Ri8GWS3eUTrtX3cBpjL7fPfNCTQhmHSG25/sJNY+P
-	 xMRnM0A5mpkqL47htD66QVk3ZWY1oDw+sSIFK9PO5NUR8Ty2/FK4+ivjMnlyav5KWT
-	 Y/u9KXaCFHoWX6B64Uo15x634syrPc+h6UzpT3aH2AvUyn08hXR+Pfubqc6k1Luh20
-	 nVPf0Muyah2oA==
-Received: by mail-ej1-f69.google.com with SMTP id a640c23a62f3a-ac287f284f8so36253066b.0
-        for <linux-kernel@vger.kernel.org>; Sun, 09 Mar 2025 05:15:47 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741522546; x=1742127346;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=7oajGXmwoZ14RjsiUyyOZit7FlCk8P+EMjDV4rSKNPI=;
-        b=XPCRfdSkojIlHN2E49sv7cXaTRZCIE1FUpj/zHxhA+9y9YpydGcWP/0GMGbxE4trFd
-         tPuvXtsxQNr04xjHXkB+VmmcwH7aYhx7jGhImCKJeAQ8hnOzN7/y9n3BViT3o/9fI/Kz
-         7LDM5PMV/Vx1ipuHwxxpUCznvQTheKz3ENc2uYz0KzOT0RgBYh8T8KWTLVTepJGByN4c
-         2h24am0XGjieKqo6x7zG9FTgfgGg0CQYuffPMR7JEyqO2L0gQtDR/yprFYa6EXLUFFYN
-         dYXv9tBHR55wc2hOoOBfsJZvIXTC/N5NfEH4qwwFxH85fLdQPjwBNC3QyMmzXw+ve/t/
-         VCAg==
-X-Forwarded-Encrypted: i=1; AJvYcCXbs7FJ8/pzl+VFSM/vGXP8nXqmTTHH5RjMdg2nTZWybP4JEPHRayTqFSB6KshQCedCohoULGJNiNu6z3U=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw8DEQKf1985t/Wx5hze+SDN8/14u7UL+4WWaxtM7QT/s0GYIzd
-	UjdtMLb8zHfD7R3XMy0m1fL+Lri1fI9Wfv3pTbvzBVcTPln5hnRLbcAoovRmSLlwkZBm8MZBanD
-	ddHR7Rm5HY7K80QMmgmzceQ/quxSL9ETQ+a3bSQljBCUg0Q5LJ2CgbNsiVegypULRZ4UBYoAIiA
-	TiZ0XwPgS8kg==
-X-Gm-Gg: ASbGncuzHlcqgX4PGd769UjwspwYuoLXz3NakCt880C4VGVs5pE8N/mnMcU/Js3wkA+
-	casuqIcXmIv4ibwBtpIply5RUl15SueOb7codV7Wz8ClbTm2grAhjwSTsZDNtldlkDV+BtFOOtJ
-	CsDhjmRclcyOl4FN2yOvL9Y56X3Fdy35iTBkbdGH9nIMg89M5BngxP7JyMuaqVIZccXWthdKGDW
-	X2fHrRHbioueQtFGyMdmF24ErGbzkVtcjHsuH5LdngiR7ap8oTb46Eb/NykOP7yrxJrQAjEKQS7
-	4Rh7zc+FG9z9wuNBmDnUy87kwWNUaiDWFMPyaFCk2PRxHyI4FQ==
-X-Received: by 2002:a17:907:3f9b:b0:ac1:e332:b1f6 with SMTP id a640c23a62f3a-ac252102b70mr1161848066b.0.1741522546041;
-        Sun, 09 Mar 2025 05:15:46 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IF+yHI6fDgActxSSCyVGaL5W4KOO55ngcP2uSoo0/npYO4T8MWeQ2E1aCzAa+KpyTjjPU5KmQ==
-X-Received: by 2002:a17:907:3f9b:b0:ac1:e332:b1f6 with SMTP id a640c23a62f3a-ac252102b70mr1161846366b.0.1741522545691;
-        Sun, 09 Mar 2025 05:15:45 -0700 (PDT)
-Received: from localhost.localdomain ([188.192.113.77])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac296998256sm69160066b.46.2025.03.09.05.15.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 09 Mar 2025 05:15:45 -0700 (PDT)
-From: Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
-To: edumazet@google.com
-Cc: Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>,
-	linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org,
-	Jakub Kicinski <kuba@kernel.org>,
-	Vadim Fedorenko <vadim.fedorenko@linux.dev>,
-	Willem de Bruijn <willemb@google.com>,
-	Jason Xing <kerneljasonxing@gmail.com>,
-	Anna Emese Nyiri <annaemesenyiri@gmail.com>,
-	Alexander Mikhalitsyn <alexander@mihalicyn.com>
-Subject: [PATCH net-next] tools headers: Sync uapi/asm-generic/socket.h with the kernel sources
-Date: Sun,  9 Mar 2025 13:15:24 +0100
-Message-ID: <20250309121526.86670-1-aleksandr.mikhalitsyn@canonical.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1741522763; c=relaxed/simple;
+	bh=7sRUR7aLQX7IAeaQn8fJoeQ7LQHllbHbgib8KkJCZIc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gKG8P1qSCCrXYkIOr/qkvbqL4M5krEa5xmbdBPujbAgak/8A4BYFN9QO7rPBUrWPYMr0wPxilS7L0c13jl9fJ21REnVUKRd0ytU+m3AxIxPMBkphmDS5BKimNi4d9bS7/IONId+s/BdFL+29FCr+y5o029sbevZh62JW+2fido4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=oX1YZjPS; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:
+	Content-Transfer-Encoding:Content-Type:MIME-Version:References:Message-ID:
+	Subject:Cc:To:From:Date:Reply-To:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=OMe7X162PbDqxZBfjfEZb0yB4rbjLUrUqRTmqcMmD3s=; b=oX1YZjPSAQKU3UNOsLDu2gjBmb
+	UxrHVxYi7zyyfKsU2/azO2LEFgyG2OVO5dsFHwonypD4Vp0IKKHUNj9I3q6G3Z4krTozlD5tAS01W
+	V0T3EPVX6uxHShf5NQQpXYwRbvd8XBsRDQpwxZAKaFoTIudUk0IblZEW9ftEnDl+Gk+xhn0pWtA4R
+	8IRWI1OJj8V29WT3PF5t+wgA/6uFjTjETvhU/JmWnIxabJRJaDTdv9yVlGedayTA717/p+sfZ55/e
+	ecbvfTgy646NnQC8PAqdNhNlhEvRs/jQtyiDDKuWA0YYpwfT9pl069hoy68F0LhKu3bWmpqc3JuT/
+	26k5FttQ==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:35288)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <linux@armlinux.org.uk>)
+	id 1trFcT-0001Ht-2w;
+	Sun, 09 Mar 2025 12:19:02 +0000
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
+	(envelope-from <linux@shell.armlinux.org.uk>)
+	id 1trFcN-0001Rl-1P;
+	Sun, 09 Mar 2025 12:18:55 +0000
+Date: Sun, 9 Mar 2025 12:18:55 +0000
+From: "Russell King (Oracle)" <linux@armlinux.org.uk>
+To: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Cc: Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Giuseppe Cavallaro <peppe.cavallaro@st.com>,
+	Jose Abreu <joabreu@synopsys.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	netdev@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+	Biju Das <biju.das.jz@bp.renesas.com>,
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: Re: [PATCH net-next v2 3/3] net: stmmac: Add DWMAC glue layer for
+ Renesas GBETH
+Message-ID: <Z82HL6NX0B1SdgPU@shell.armlinux.org.uk>
+References: <20250308200921.1089980-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20250308200921.1089980-4-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <Z81WVNGlvRNW5JFk@shell.armlinux.org.uk>
+ <CA+V-a8stuYLJMA5UEKpyLpH1kcgEvA=b5BzUOEaCKcfNtdSSfg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <CA+V-a8stuYLJMA5UEKpyLpH1kcgEvA=b5BzUOEaCKcfNtdSSfg@mail.gmail.com>
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
-This also fixes a wrong definitions for SCM_TS_OPT_ID & SO_RCVPRIORITY.
+On Sun, Mar 09, 2025 at 11:24:57AM +0000, Lad, Prabhakar wrote:
+> Hi Russell,
+> 
+> Thank you for the review.
+> 
+> On Sun, Mar 9, 2025 at 8:50 AM Russell King (Oracle)
+> <linux@armlinux.org.uk> wrote:
+> >
+> > On Sat, Mar 08, 2025 at 08:09:21PM +0000, Prabhakar wrote:
+> > > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> > >
+> > > Add the DWMAC glue layer for the GBETH IP found in the Renesas RZ/V2H(P)
+> > > SoC.
+> > >
+> > > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> > > ---
+> > > v1->v2
+> > > - Dropped __initconst for renesas_gbeth_clks array
+> > > - Added clks_config callback
+> > > - Dropped STMMAC_FLAG_RX_CLK_RUNS_IN_LPI flag as this needs
+> > >   investigation.
+> >
+> > I thought you had got to the bottom of this, and it was a bug in your
+> > clock driver?
+> >
+> I have added a fix in the clock driver to ignore CLK_MON bits for
+> external clocks. The main reason for dropping this flag was despite
+> trying the below i.e. adding phy_eee_rx_clock_stop() just before
+> unregister_netdev() in stmmac_dvr_remove() still doesnt stop the Rx
+> clocks.
 
-Accidentally found while working on another patchset.
+That's not unexpected, because phy_eee_rx_clock_stop() does not control
+a clock gate.
 
-Cc: linux-kernel@vger.kernel.org
-Cc: netdev@vger.kernel.org
-Cc: Eric Dumazet <edumazet@google.com>
-Cc: Jakub Kicinski <kuba@kernel.org>
-Cc: Vadim Fedorenko <vadim.fedorenko@linux.dev>
-Cc: Willem de Bruijn <willemb@google.com>
-Cc: Jason Xing <kerneljasonxing@gmail.com>
-Cc: Anna Emese Nyiri <annaemesenyiri@gmail.com>
-Fixes: a89568e9be75 ("selftests: txtimestamp: add SCM_TS_OPT_ID test")
-Fixes: e45469e594b2 ("sock: Introduce SO_RCVPRIORITY socket option")
-Signed-off-by: Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
----
- tools/include/uapi/asm-generic/socket.h | 21 +++++++++++++++++++--
- 1 file changed, 19 insertions(+), 2 deletions(-)
+What phy_eee_rx_clock_stop() does is control the clock stop enable bit
+in the PHY. Please see IEEE 802.3 section 45.2.3.1.4 and other sections
+referred to from that section to gain the appropriate understanding.
 
-diff --git a/tools/include/uapi/asm-generic/socket.h b/tools/include/uapi/asm-generic/socket.h
-index ffff554a5230..aa5016ff3d91 100644
---- a/tools/include/uapi/asm-generic/socket.h
-+++ b/tools/include/uapi/asm-generic/socket.h
-@@ -119,14 +119,31 @@
- 
- #define SO_DETACH_REUSEPORT_BPF 68
- 
-+#define SO_PREFER_BUSY_POLL	69
-+#define SO_BUSY_POLL_BUDGET	70
-+
-+#define SO_NETNS_COOKIE		71
-+
-+#define SO_BUF_LOCK		72
-+
-+#define SO_RESERVE_MEM		73
-+
-+#define SO_TXREHASH		74
-+
- #define SO_RCVMARK		75
- 
- #define SO_PASSPIDFD		76
- #define SO_PEERPIDFD		77
- 
--#define SCM_TS_OPT_ID		78
-+#define SO_DEVMEM_LINEAR	78
-+#define SCM_DEVMEM_LINEAR	SO_DEVMEM_LINEAR
-+#define SO_DEVMEM_DMABUF	79
-+#define SCM_DEVMEM_DMABUF	SO_DEVMEM_DMABUF
-+#define SO_DEVMEM_DONTNEED	80
-+
-+#define SCM_TS_OPT_ID		81
- 
--#define SO_RCVPRIORITY		79
-+#define SO_RCVPRIORITY		82
- 
- #if !defined(__KERNEL__)
- 
+The point of adding the phy_eee_rx_clock_stop() call before
+stmmac_dvr_remove() was to _test_ (and *only as a test* - a point that
+I did stress) to see whether preventing the PHY from stopping it's
+receive clock solved the reset timeout on module reload. This test
+only makes sense if STMMAC_FLAG_RX_CLK_RUNS_IN_LPI has not been set.
+
+As I understand it, you have found the real issue why that occurs, so
+it seems there is little need to continue with that test if, and only
+if, everything is now working reliably when removing and re-inserting
+the module.
+
+The key point here is "reliably". The receive side of the link *could*
+enter or exit LPI at *any* moment - it depends in the link partner. If
+the PHY has permission to stop it's receive clock, then this might lead
+to stmmac_reset() timing out because the PHY has stopped it's receive
+clock _if_ the receive-side LPI persists longer than the reset timeout.
+
+At this point, I am not certain what the current situation is. Are you
+now setting STMMAC_FLAG_RX_CLK_RUNS_IN_LPI because it solves a problem?
+If the answer is yes, then there is still a bug in the driver that needs
+to be solved and I've presented several solutions to that.
+
+I want to remove STMMAC_FLAG_RX_CLK_RUNS_IN_LPI from the stmmac driver
+so I'm going to NACK patches that add new uses. Sorry, but we need to
+solve the root problem, and stop hacking around it with flags to change
+behaviours.
+
 -- 
-2.43.0
-
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
