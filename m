@@ -1,119 +1,74 @@
-Return-Path: <linux-kernel+bounces-553038-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-553039-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E5CAA582C4
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 10:42:01 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B9F07A582C9
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 10:43:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 54C0A3A8A4D
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 09:41:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2300E1887713
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 09:43:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CB2F1A9B3B;
-	Sun,  9 Mar 2025 09:41:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="t9aE+AIC"
-Received: from smtp-190d.mail.infomaniak.ch (smtp-190d.mail.infomaniak.ch [185.125.25.13])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0FF21AA78E;
+	Sun,  9 Mar 2025 09:43:08 +0000 (UTC)
+Received: from Chamillionaire.breakpoint.cc (Chamillionaire.breakpoint.cc [91.216.245.30])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DCC6EAC7
-	for <linux-kernel@vger.kernel.org>; Sun,  9 Mar 2025 09:41:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.25.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 692961A2399;
+	Sun,  9 Mar 2025 09:43:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.216.245.30
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741513313; cv=none; b=Yo12vqRHcG5psCmn1rTXd9ucX5eJISHuU/V77ikDoFkULAsmlhAh73f3RkjuSrTxGQVh4xWGUnw/2WjkWUVALlG4u6M7BDcHgjTVlAN0oqpZ5/F3R0Ph0CyLGeLSkmEiPseGc0WhP6V6eSSEY6N/f3GJp28q6+9616z7msu0+jM=
+	t=1741513388; cv=none; b=eO+MhBUldylHMSlV6reQyYLpP6N72mD0/PCEwL0tlG5vPg02tf2UsS6JbZugdF3YqnxHt3TZj+X1uHPRiXhWCyRZIt70skTWSHDc3N45CyJYwVsV5D/8PG+DnW7dyJhATDgeFfCuwh0su/dtKrIw+zVD8oWLMTXbJNdbtoxtDJ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741513313; c=relaxed/simple;
-	bh=1sV88catGBLBt67g4ta/h4L5l4cH+JnasGAkXXakRb4=;
+	s=arc-20240116; t=1741513388; c=relaxed/simple;
+	bh=4jvXtCiBGGzihH3212h9WgJUU9eBgKW9QxvkQL2DjS8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WFWKnuiedDZXJZWa2RPVk5v7BkX6/M3rdkqe2LkXaEq17DL1xSIlEHohqon2f++LuarlzLqIirITd8a6A9cZWFhiAtqg5vWvqaEWVorNkkGK/5FT63RyITlxgoo2IEb3DsVyqO/bNGpTu8PGad6hlc9jtAsJPX0+YUqZYtuN6o0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=t9aE+AIC; arc=none smtp.client-ip=185.125.25.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
-Received: from smtp-4-0000.mail.infomaniak.ch (smtp-4-0000.mail.infomaniak.ch [10.7.10.107])
-	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4Z9ZmV0Xg1zCBg;
-	Sun,  9 Mar 2025 10:41:46 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1741513305;
-	bh=x6XlMZAJyO6mfNKQu0BsQoXE/LYgw7nuIaIwpx1cXzs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=t9aE+AICsBRV/plyXsP7UM4rnGKYiATycGLIm2DUv/g99vQsLvplSwY6AybBDDWuu
-	 XwkBHfPMH0OOEnyLcaJkfmHIBfCO0KaiK2mOQ1SxsPLtyG8EpXT5nTDlYMHjx5TSb/
-	 pQt243xocyHRJD3zUHX6LbvfthlXy5jsJ0DUeJHU=
-Received: from unknown by smtp-4-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4Z9ZmS02L1z5LZ;
-	Sun,  9 Mar 2025 10:41:43 +0100 (CET)
-Date: Sun, 9 Mar 2025 10:41:42 +0100
-From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To: Eric Paris <eparis@redhat.com>, Paul Moore <paul@paul-moore.com>, 
-	=?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>, "Serge E . Hallyn" <serge@hallyn.com>
-Cc: Ben Scarlato <akhna@google.com>, 
-	Casey Schaufler <casey@schaufler-ca.com>, Charles Zaffery <czaffery@roblox.com>, 
-	Daniel Burgener <dburgener@linux.microsoft.com>, Francis Laniel <flaniel@linux.microsoft.com>, 
-	James Morris <jmorris@namei.org>, Jann Horn <jannh@google.com>, Jeff Xu <jeffxu@google.com>, 
-	Jorge Lucangeli Obes <jorgelo@google.com>, Kees Cook <kees@kernel.org>, 
-	Konstantin Meskhidze <konstantin.meskhidze@huawei.com>, Matt Bobrowski <mattbobrowski@google.com>, 
-	Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>, Phil Sutter <phil@nwl.cc>, 
-	Praveen K Paladugu <prapal@linux.microsoft.com>, Robert Salvet <robert.salvet@roblox.com>, 
-	Shervin Oloumi <enlightened@google.com>, Song Liu <song@kernel.org>, 
-	Tahera Fahimi <fahimitahera@gmail.com>, Tingmao Wang <m@maowtm.org>, Tyler Hicks <code@tyhicks.com>, 
-	audit@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org
-Subject: Re: [PATCH v6 00/26] Landlock audit support
-Message-ID: <20250309.iug3oocuJohL@digikod.net>
-References: <20250308184422.2159360-1-mic@digikod.net>
+	 Content-Type:Content-Disposition:In-Reply-To; b=L8nm64TqN1eEklsOMxQX8Hhb7GeDpKYAsw9hAvmcicCMaXXcSts43V7z1KXqhIv2vOQIJQllGWiC/uEHtEujj9ldK+IgRjzcU+tiDAeITPQ826FmyHlKbWsHDRiVzRdHYNubo8XY9EiL7YkFoVRunfu3RkiUAwNG+cw4WO0Uq1M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=strlen.de; spf=pass smtp.mailfrom=strlen.de; arc=none smtp.client-ip=91.216.245.30
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=strlen.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=strlen.de
+Received: from fw by Chamillionaire.breakpoint.cc with local (Exim 4.92)
+	(envelope-from <fw@strlen.de>)
+	id 1trDBP-00020x-AW; Sun, 09 Mar 2025 10:42:55 +0100
+Date: Sun, 9 Mar 2025 10:42:55 +0100
+From: Florian Westphal <fw@strlen.de>
+To: Kohei Enju <enjuk@amazon.com>
+Cc: netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	bpf@vger.kernel.org,
+	syzbot+83fed965338b573115f7@syzkaller.appspotmail.com,
+	Pablo Neira Ayuso <pablo@netfilter.org>,
+	Jozsef Kadlecsik <kadlec@netfilter.org>,
+	"David S . Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Simon Horman <horms@kernel.org>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Jesper Dangaard Brouer <hawk@kernel.org>,
+	John Fastabend <john.fastabend@gmail.com>,
+	Yi-Hung Wei <yihung.wei@gmail.com>, Florian Westphal <fw@strlen.de>,
+	kohei.enju@gmail.com
+Subject: Re: [PATCH net v1] netfilter: nf_conncount: Fully initialize struct
+ nf_conncount_tuple in insert_tree()
+Message-ID: <20250309094255.GA7435@breakpoint.cc>
+References: <20250309080816.87224-2-enjuk@amazon.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250308184422.2159360-1-mic@digikod.net>
-X-Infomaniak-Routing: alpha
+In-Reply-To: <20250309080816.87224-2-enjuk@amazon.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 
-On Sat, Mar 08, 2025 at 07:43:56PM +0100, Mickaël Salaün wrote:
-> Hi,
-> 
-> This patch series adds audit support to Landlock.
-> 
-> Logging denied requests is useful for different use cases:
-> - sysadmins: to look for users' issues,
-> - security experts: to detect attack attempts,
-> - power users: to understand denials,
-> - developers: to ease sandboxing support and get feedback from users.
-> 
-> Because of its unprivileged nature, Landlock can compose standalone
-> security policies (i.e. domains).  To make logs useful, they need to
-> contain the most relevant Landlock domain that denied an action, and the
-> reason of such denial.  This translates to the latest nested domain and
-> the related blockers: missing access rights or other kind of
-> restrictions.
-> 
-> # Main changes from previous version
-> 
-> Renamed the landlock_restrict_self(2) flags to improve clarity and
-> consistency, and slightly change the semantic of the first one:
-> - LANDLOCK_RESTRICT_SELF_LOG_SAME_EXEC_OFF: do not log denied access
->   caused by a task with the same executable (i.e. before any new
->   execve(2));
-> - LANDLOCK_RESTRICT_SELF_LOG_CROSS_EXEC_ON: log denied access for
->   processes resulting from an execve(2), which is not the case by
->   default.
-> - LANDLOCK_RESTRICT_SELF_LOG_SUBDOMAINS_OFF: do not log denied access
->   from future nested domains.
-> 
-> These new LANDLOCK_RESTRICT_SELF_LOG_SAME_EXEC_OFF and
-> LANDLOCK_RESTRICT_SELF_LOG_CROSS_EXEC_ON are not incompatible anymore.
+Kohei Enju <enjuk@amazon.com> wrote:
+> Since commit b36e4523d4d5 ("netfilter: nf_conncount: fix garbage
+> collection confirm race"), `cpu` and `jiffies32` were introduced to
+> the struct nf_conncount_tuple.
 
-As you can see in the patches, it's not
-LANDLOCK_RESTRICT_SELF_LOG_CROSS_EXEC_ON but
-LANDLOCK_RESTRICT_SELF_LOG_NEW_EXEC_ON now.  I think "new_exec" makes
-more sense than "cross_exec", especially compared to "same_exec", but
-I'm open to suggestions.
-
-Anyway, this patch series should land Monday in linux-next.  In the
-meantime you can find it here:
-https://web.git.kernel.org/pub/scm/linux/kernel/git/mic/linux.git/log/?h=next
+Reviewed-by: Florian Westphal <fw@strlen.de>
 
