@@ -1,157 +1,170 @@
-Return-Path: <linux-kernel+bounces-553373-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-553374-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C610EA5883E
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 21:47:57 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B0D6A58843
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 21:49:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E093F16B190
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 20:47:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A477C188C7FD
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 20:49:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4824621A45A;
-	Sun,  9 Mar 2025 20:47:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9096221D3FF;
+	Sun,  9 Mar 2025 20:49:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cylriMDo"
-Received: from mail-pj1-f48.google.com (mail-pj1-f48.google.com [209.85.216.48])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KpS6HHWH"
+Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A76218C011;
-	Sun,  9 Mar 2025 20:47:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 800D21EF386;
+	Sun,  9 Mar 2025 20:49:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741553269; cv=none; b=mIIfZ7o8tUB6r7l1A0Sw+q2c/Y8hR6uss3scijrTbRKIqgnruCAMm0n6hA88eFhCt4Fgb/JB5Nq1zHs+hLjp3MD7I8Aa09+jNEStEbC2sq/wf908GBCOrpX2TEOnvy5wj1hCoybTJ6L8XstqlFf9r24N8w//QvfEu/yksrCSK8U=
+	t=1741553376; cv=none; b=cym+d+9a9sGhQM5LCZwIcGqgmtf2fIv4d6TCcIjQj+wKpIvyyHE5pKGwfnKNSaaj9Gp7ilgtfZksaOhziwepzGqAuTmeiRyd+lpq+BkjMKmXkp0W71aPdkhvdoOsYzdzdtvO38x5efgGg8uG177fy8S4/CRObeA7KcYgeNEXBGY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741553269; c=relaxed/simple;
-	bh=IIdeN1kpFUETW+hkKD26O5zuLSVodU5nvIQlOtSKnJM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=RttEumjKWjOgC+29E+fOrWFlO+/6jatfDxICSwE9By1I439ti+QzgarmzL/U/TtAtOA/SeNYcNILq1nDb+IpBvEeCbPuLpbwuYgJH6fiXFgLDD3pt21eNgKIBjDwu7U4jw0ZrDES9M4RP2fp6EpbuAkP3e4HWSr9SaczfiWyrTc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cylriMDo; arc=none smtp.client-ip=209.85.216.48
+	s=arc-20240116; t=1741553376; c=relaxed/simple;
+	bh=sVMlgFXYI7g+vJR6TKddPiu5AZClUdsWRZqI8kc3mRo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BssBGevz/tr4nDMnKqOZDzGJwP3WLBK687TDpGsEQDgiznNp8UITTjL+KvFEjR4ok6/TBRNukYgEWtgc6QxctOLgl6mKs6xTgDQ6OPuZvivxwzdIRsqINhjLB6xmm6tkEvgyDQcEPXip9q4b+sPWS7OA1y4eYcRwW6LwSICOfNw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KpS6HHWH; arc=none smtp.client-ip=209.85.214.177
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f48.google.com with SMTP id 98e67ed59e1d1-2ff7cf59a8fso757308a91.3;
-        Sun, 09 Mar 2025 13:47:48 -0700 (PDT)
+Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-223594b3c6dso61403995ad.2;
+        Sun, 09 Mar 2025 13:49:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741553267; x=1742158067; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=K44Z7DuR2sJPBt/x+nc+HSqeieqPDVCAVsmBItqywyE=;
-        b=cylriMDo4X2BI4ndZmdZ+1xjK/bdwxDo71O/BKCLkbbbZC++nakGSR7IP+UyL4OYif
-         mWMg2Ta0Pg38xUiRTfPPoV/6Bamxq9HIek4LPpDcQNhl3Ao0nrgYLg0sUrUZ0RhmEwGX
-         sbl6X+ese3QMBgKgjZYPGZGLje664f22ItXNV6Z/KUcMlFrbnHW7U6v2XV/XKjsHXDPe
-         7GDe1jiBmdnbFMMZ7aRte1UQbVBelsUVy3pNnz+QDwtxLo/x8E59gXvh7sIc+uoFqoHU
-         v1nSs2v2M2mSbOJ8EJnOaU1SbKZAD404cdMDIFILUMnb/n2NzrUJWWRZrNjKaamc66Rz
-         +oWg==
+        d=gmail.com; s=20230601; t=1741553375; x=1742158175; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=+Ymok4K4qVgWMasIZ+aZcHfy9Zvm1PfjXlbvHfdpv2Y=;
+        b=KpS6HHWHc4LkJvJAeJ7NaEPtVxLIhHcsnyX6PuOZUzmvMDAKTm+hYqM+U+5PI1fXih
+         HkocWNL266FnB85+Rv8WZCSJYi0ElU+Zm2zXAX1LBUA6v9DU1M/zeVjMCop0SAWAiep3
+         Xkv+uWBr2ZeXfvPgAtmzsSAuvRC4WBJswRn2KmWUd+z33blE1+EHps6WxtFvr9UCDCji
+         fF14Muc+iwqmjUlD4X/VhSlyUItoEwvRk5/rePgwTbC8ofKOqPW3X+ReRCKG+s6DvvRt
+         HjPT0wZjZLbUOzljzmG1w0REA2tHYLO5Mr+v7pTun++nQt+7gbAe9upMEWpkUYhvaYKM
+         47+w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741553267; x=1742158067;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=K44Z7DuR2sJPBt/x+nc+HSqeieqPDVCAVsmBItqywyE=;
-        b=fXpicDkMD50zoctY1jBtlnREqvDz2sjh7eNEpeupy6gN6MXAnp/1+MU/NefWCt6kRL
-         JbpiuUy4/+SsPNjfmhfCn+ZGQLOLSbjl554vCTb3dEwAo4V6GB6shgReMus81+NNmaef
-         fyUUEK1hFRBVXHsea12FBoywnako+JnhURmGdQ7AFOKYgxWBrELAwWB5P9c3EfsS8F2R
-         ss3Cq0jtgR1jgjuOPWdKWCfiN8BLbNPidUYaQzEiIlEihklUkQgwczQSqQ7fPmTki6fc
-         Clx/axgli/rOs4E9fdJRpGVbY52P5+dyYSseA6DaWd3KikaiGeIL9FuzrTBje7BTM1m+
-         GokA==
-X-Forwarded-Encrypted: i=1; AJvYcCURmS7pr3RND8sZKSxLB3fKk42ZgR30Tp4KMNGGZO7z63XNvIUH7DHZIyEyDcgUZmAfBJPNH7ix7fo2eWY=@vger.kernel.org, AJvYcCWjfcEBFLi59PwYCyQjRC/1ZTQw/wDzmO5GAdASxvm5aAspUlN1hgCHIk/WXxo/SRnpcj+PHBEX98eMBQUmv2s=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwhkiqKTls3h2mQz+YuUXuMAbIC4jrl3aRgDiXCFyfiYNh6SVW3
-	fBS3POEQqJuxX7ZsHSBi1COM13O+c6/2s5qAIIG2vFKiLDgMyCurZSXMPw+96E2ja19HojnYyzc
-	MdpeQrjIApTEppY+AN+fDORHOFIM=
-X-Gm-Gg: ASbGnct1ecKa5UtG1MG9Sm1UYt976T5/lIe6Decdg96Gc+jbpPkSoEP/C8hUYIgExSS
-	wYuWB5AstU6VPOydYjDG5r9qEQw1ZSh/2LTEEbX9Om4CC74V0LgHsGAHe78b1lmYA32JaLgkHGB
-	A1XoSVqrRQ/ggTW9UklgEUxE3d7g==
-X-Google-Smtp-Source: AGHT+IE9m6d05Vs3kBPf9WYfP6L9f9fGtqqjKeiTF3mJO+jV/KfWSyEpQ19ctMp3X/RZ+Dum29WiMpFS6K4cpfS2gjk=
-X-Received: by 2002:a17:90b:4c42:b0:2ff:78dd:2875 with SMTP id
- 98e67ed59e1d1-300a57877a8mr3929049a91.5.1741553267456; Sun, 09 Mar 2025
- 13:47:47 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1741553375; x=1742158175;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=+Ymok4K4qVgWMasIZ+aZcHfy9Zvm1PfjXlbvHfdpv2Y=;
+        b=IMbi/Dl1Eq5sH3L9kE6LFlAzJEX8T9t83+tRuAsUVKXLnCHZIZ04GcFXyoig+yOhtn
+         fujGVJnO8LsKnUY48gvhL1BYOyq8QunS7U8QTN/bwhZRtNTGVOL/nKvbEZXfFc9E+2Jt
+         L7O/x2hC3REVNL4jeTTGE/yKO9vk50ybb2+XbIZG854eimqnw1Y7jSgPUsVnqJuPduNP
+         jdIT/6mWFAkIpD2dS0jzfw1tl8xx2Sw+f2CAczgii4DjUadn2wGj8qTm3npz2daCcRH7
+         zkgebA7Zs8wI9tjLwk5J0Suz7vg3FNl8zlz2H6pH36cJGiDgiU6p11s2izWy5xo88xIs
+         7yJA==
+X-Forwarded-Encrypted: i=1; AJvYcCUAnhQ9t0qICrMQr8ldQlBlZ054ZEJ5jnYHBqOpVEXfsaBTqlmEO9v0Spb11V5Dm8aSSFQaPaor64To@vger.kernel.org, AJvYcCUcpOwVhUm/VOgdZQ/BtwBphjkW4cHM/Z5EEP5scnIRF2xBgLQeTNk72bMT+6zKeDbXYszLhPLDrMF3wBl8@vger.kernel.org, AJvYcCVCsx59vYP83gXUMxyAxtE8nTdWpeuvPg7otpQrQQ6PLQUzP9rL/Ybna3TrcAsKsAQZJs3uI1Il4b6f@vger.kernel.org, AJvYcCWBQ9R/0rxeOZUN1zmC45ppzSbYOqvyJV2fZHQ8TCpEcRueg9GJORr7sIm0ujaicL+dS6205BJF1YNB@vger.kernel.org
+X-Gm-Message-State: AOJu0YwPACDndp92h49BUdfySb1Lmsh6sqrU3LAgZKGV0Z9kJEB5dIrF
+	A+FCGx9dMdBKrwXwtKneHj1cJLRoArqvxO2bGgA9eB5VzRGuJy0R
+X-Gm-Gg: ASbGncuo+8PoFrhNWe/yOuQSHE881RdCaeaCPMFtgDJZgJScZVneultzvs+YhAIXyai
+	Fm8jzKNZdvwV8hvAOMsVWQIW1qgZL3FsZDXAH0UuM3qCM294q0qXoxE4VCkuF0oJZCIW3OjtXsv
+	B+H8r/f1bsaUs7pIUUY6wpPVT3xVRTG7OojfO9xEdi5VQ5fkoamL6dpXe7+hI40U6rKFZp8OnqP
+	cfUi0pOZ0ZRa8uUCwhECpMDeYS0x+fuN9xpjNy5bPyCyRRJ1aisF5oP6FqzMhZqmpt0gd5v9FIt
+	TZuM/F+PmlaiuxkDpam1xRVYHcnvzrW8e+fnADyd/Nw914gokQuULC/t6ZNYSRBbWhzyDq5b
+X-Google-Smtp-Source: AGHT+IGgIPes28XROfmEhOPj/ChhxDfpGBkxv23MfingUFJ3I+yMwDE65ANstHXsl9HArbcKzSpX3Q==
+X-Received: by 2002:a17:90b:28c5:b0:2ee:e113:815d with SMTP id 98e67ed59e1d1-2ff7ce6f0demr18243256a91.8.1741553374683;
+        Sun, 09 Mar 2025 13:49:34 -0700 (PDT)
+Received: from HYB-DlYm71t3hSl.ad.analog.com ([2a02:2455:1853:7000:fc49:126f:e12d:f79c])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2ff4e789387sm8397251a91.25.2025.03.09.13.49.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 09 Mar 2025 13:49:34 -0700 (PDT)
+Date: Sun, 9 Mar 2025 21:49:24 +0100
+From: Jorge Marques <gastmaier@gmail.com>
+To: David Lechner <dlechner@baylibre.com>
+Cc: Jorge Marques <jorge.marques@analog.com>, 
+	Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>, 
+	Michael Hennerich <Michael.Hennerich@analog.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Jonathan Corbet <corbet@lwn.net>, linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-doc@vger.kernel.org
+Subject: Re: [PATCH 3/4] docs: iio: new docs for ad4052 driver
+Message-ID: <e3p2r2fet2spkrxv7x76gunlivrp3vng22wktz4fkww5nkckt7@jpgne4uerr3c>
+References: <20250306-iio-driver-ad4052-v1-0-2badad30116c@analog.com>
+ <20250306-iio-driver-ad4052-v1-3-2badad30116c@analog.com>
+ <CAMknhBFiZZUtCkTjQ=AVSgwqe=wCkMnqAmaTqvW_X6fm1OKuYA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250303-export-macro-v3-0-41fbad85a27f@google.com>
-In-Reply-To: <20250303-export-macro-v3-0-41fbad85a27f@google.com>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Sun, 9 Mar 2025 21:47:35 +0100
-X-Gm-Features: AQ5f1Jr2HZqZdaFpyMuYK5NFXHysFVDHD5Dul0EsJZjAk3dtFTlU_uTpx7nkwUI
-Message-ID: <CANiq72kY+h9jsFbVBq2_Z4YDUyPCSWuFX0Q5hUyfxsraNV-C4Q@mail.gmail.com>
-Subject: Re: [PATCH v3 0/5] Check Rust signatures at compile time
-To: Alice Ryhl <aliceryhl@google.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Miguel Ojeda <ojeda@kernel.org>, 
-	Petr Mladek <pmladek@suse.com>, Steven Rostedt <rostedt@goodmis.org>, 
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
-	Rasmus Villemoes <linux@rasmusvillemoes.dk>, Sergey Senozhatsky <senozhatsky@chromium.org>, 
-	Andrew Morton <akpm@linux-foundation.org>, Boqun Feng <boqun.feng@gmail.com>, 
-	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Trevor Gross <tmgross@umich.edu>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Tamir Duberstein <tamird@gmail.com>, 
-	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, 
-	dri-devel@lists.freedesktop.org, Simona Vetter <simona.vetter@ffwll.ch>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMknhBFiZZUtCkTjQ=AVSgwqe=wCkMnqAmaTqvW_X6fm1OKuYA@mail.gmail.com>
 
-On Mon, Mar 3, 2025 at 9:45=E2=80=AFAM Alice Ryhl <aliceryhl@google.com> wr=
-ote:
->
-> Rust has two different tools for generating function declarations to
-> call across the FFI boundary:
->
-> * bindgen. Generates Rust declarations from a C header.
-> * cbindgen. Generates C headers from Rust declarations.
->
-> However, we only use bindgen in the kernel. This means that when C code
-> calls a Rust function by name, its signature must be duplicated in both
-> Rust code and a C header, and the signature needs to be kept in sync
-> manually.
->
-> Introducing cbindgen as a mandatory dependency to build the kernel would
-> be a rather complex and large change, so we do not consider that at this
-> time. Instead, to eliminate this manual checking, introduce a new macro
-> that verifies at compile time that the two function declarations use the
-> same signature. The idea is to run the C declaration through bindgen,
-> and then have rustc verify that the function pointers have the same
-> type.
->
-> The signature must still be written twice, but at least you can no
-> longer get it wrong. If the signatures don't match, you will get errors
-> that look like this:
->
-> error[E0308]: `if` and `else` have incompatible types
->   --> <linux>/rust/kernel/print.rs:22:22
->    |
-> 21 | #[export]
->    | --------- expected because of this
-> 22 | unsafe extern "C" fn rust_fmt_argument(
->    |                      ^^^^^^^^^^^^^^^^^ expected `u8`, found `i8`
->    |
->    =3D note: expected fn item `unsafe extern "C" fn(*mut u8, *mut u8, *mu=
-t c_void) -> *mut u8 {bindings::rust_fmt_argument}`
->               found fn item `unsafe extern "C" fn(*mut i8, *mut i8, *cons=
-t c_void) -> *mut i8 {print::rust_fmt_argument}`
->
-> It is unfortunate that the error message starts out by saying "`if` and
-> `else` have incompatible types", but I believe the rest of the error
-> message is reasonably clear and not too confusing.
->
-> The main commit of this series is "rust: add #[export] macro".
->
-> Signed-off-by: Alice Ryhl <aliceryhl@google.com>
+> > +.. list-table:: Driver attributes
+> > +   :header-rows: 1
+> > +
+> > +   * - Attribute
+> > +     - Description
+> > +   * - ``in_voltage0_raw``
+> > +     - Raw ADC voltage value
+> > +   * - ``in_voltage0_oversampling_ratio``
+> > +     - Enable the device's burst averaging mode to over sample using
+> > +       the internal sample rate.
+> > +   * - ``in_voltage0_oversampling_ratio_available``
+> > +     - List of available oversampling values. Value 0 disable the burst
+> > +       averaging mode.
+> > +   * - ``sample_rate``
+> > +     - Device internal sample rate used in the burst averaging mode.
+> > +   * - ``sample_rate_available``
+> > +     - List of available sample rates.
+> 
+> Why not using the standard sampling_frequency[_available] attributes?
+Because sampling_frequency is the sampling frequency for the pwm trigger
+during buffer readings.
+sample_rate is the internal device clock used during monitor and burst
+averaging modes.
 
-Applied to `rust-next` -- thanks everyone!
+> > +
+> > +Threshold events
+> > +================
+> > +
+> > +The ADC supports a monitoring mode to raise threshold events.
+> > +The driver supports a single interrupt for both rising and falling
+> > +readings.
+> > +
+> > +During monitor mode, the device is busy since other transactions
+> > +require to put the device in configuration mode first.
+> 
+> This isn't so clear to me. Is this saying that events do not work
+> while doing a buffered read? Do you need to do need to read the
+> in_voltage0_raw input to trigger an event?
+> 
+No, the device monitor mode and trigger mode autonomously samples using the
+internal clock set with the sample rate property.
+I rephrased that to:
 
-    [ Removed period as requested by Andy. - Miguel ]
+ The feature is enabled/disabled by setting ``thresh_either_en``.
+ During monitor mode, the device continuously operate in autonomous mode until
+ put back in configuration mode, due to this, the device returns busy until the
+ feature is disabled.
 
-    [ Fixed `rustfmt`. Moved on top the unsafe requirement comment to follo=
-w
-      the usual style, and slightly reworded it for clarity. Formatted
-      bindings helper comment. - Miguel ]
+The reasoning is that during configuration mode no ADC
+conversion is done, including if the previous mode was autonomous.
+If instead of return busy the driver hided this and resumed monitor mode
+after the access, a hidden (to the user) monitoring down-time would and
+thresholds crossings could be lost, undermining the feature.
 
-Cheers,
-Miguel
+> > +SPI offload support
+> > +===================
+> > +
+> > +To be able to achieve the maximum sample rate, the driver can be used with the
+> > +`AXI SPI Engine`_ to provide SPI offload support.
+> > +
+> > +.. _AXI SPI Engine: http://analogdevicesinc.github.io/hdl/projects/ad4052_ardz/index.html
+> 
+> This diagram show a PWM connected to the CNV pin on the ADC, but I
+> didn't see a pwms property in the DT bindings to describe this.
+> 
+It is not clear to me where the pwm property should be in the DT
+bindings, since the PWM node now belongs to the offload-capable SPI controller.
+
+> I didn't have time to read the full datasheet or look at the driver
+> code yet, but can do that next week.
+Ok, thank you for the review
+
+Jorge
 
