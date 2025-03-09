@@ -1,194 +1,269 @@
-Return-Path: <linux-kernel+bounces-552889-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-552890-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 73565A58080
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 04:44:54 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 038F2A58082
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 04:53:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8345A16CD1C
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 03:44:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1A2FF16284A
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 03:53:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CEB642A93;
-	Sun,  9 Mar 2025 03:44:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="lV98qk01"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76C263C463;
+	Sun,  9 Mar 2025 03:53:05 +0000 (UTC)
+Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFF911A28D
-	for <linux-kernel@vger.kernel.org>; Sun,  9 Mar 2025 03:44:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E0C72F37
+	for <linux-kernel@vger.kernel.org>; Sun,  9 Mar 2025 03:53:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741491887; cv=none; b=mkY7+Uf/cQTNGm4CurL8N9yBmUUvlCs2ni7wRLYnGWPeDMfh5YQjhsuImjMtbTHKxYg8h4e9peKYFfAhanrmqmfgLq7fyMW5kSHcj+YUI01HMMVYaVfBRfRnYnGJHMQh7/88KsuWrre4mq2p81ayK9VJEivuZw7HKONc0f8F8ng=
+	t=1741492384; cv=none; b=Dmc+fKqvy9LaGzMyY+u8J0D67INLH0S/tExJA7Tu+qMB4veeOtnAS8a36qwLQAlJesEX54BiOmC4tHgpSvRzcHbYUb25oLbSm3yeGfI1OS3ztSVIcuFCBKacPKC1OuaYXfO/tlivPFqdhNtVqQ0JJJRAljhDgw9t7sHgJTWPhIo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741491887; c=relaxed/simple;
-	bh=RALp9BMQ9cOmrwYJIltlX5wqFF7sURv6namzNpE1PkA=;
-	h=Date:From:To:Cc:Subject:Message-ID; b=RF3o5hi1pzjpoLjXScOr62XzaRJWcBURD1HDGQYLWZr/MQAeUZXDGGXtXvRRAV1cw6JIS6SdEK1Ed9JxQQi6CDEnZ4PaWAxQsNy45/PLKTj7vNgV6dhCB3VUSfezjXShoIa3/sUFbbZa08HZPEj/HjczRTGn3NLPcdRTkt1vw74=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=lV98qk01; arc=none smtp.client-ip=198.175.65.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1741491885; x=1773027885;
-  h=date:from:to:cc:subject:message-id;
-  bh=RALp9BMQ9cOmrwYJIltlX5wqFF7sURv6namzNpE1PkA=;
-  b=lV98qk01gd0Sf5hA2H6ngrM70VYMi1WcBffyOZR1Xp/mEQtQUK5jvoTX
-   kJf1EMjaEQc2mwmaXCpJuBvuMMJLVU0APU3Ff8CHpxQ+dNfoFUvjA9i9G
-   Zxzi17XbvBHF0OKFyjAxBzBUvJnEhI8Wt+UcRKSuqbAERudsp70hHgQpd
-   +0F9X6kvvqAGLJD2FRNXr/lQUOI2vsAYmBbTKL6nzo1cUY4LL9ufDTG4g
-   zpU+Q8KpsLpgxSmVRZLk8SAAuLBJ1GEbJQtl/7cqFxEnLSie3Mgg1V203
-   8aCxLy6yjz9TUaxQqwdc0It5j3Z+ezIEShNLj16vgW0KZtUeP7m/7oy6y
-   g==;
-X-CSE-ConnectionGUID: swn4M/ZtR8ib0UAnVvH6ZQ==
-X-CSE-MsgGUID: 3i0FlxqRSWuLHxWkmBF3lA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11367"; a="53888856"
-X-IronPort-AV: E=Sophos;i="6.14,233,1736841600"; 
-   d="scan'208";a="53888856"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Mar 2025 19:44:45 -0800
-X-CSE-ConnectionGUID: rEDd7Jy8RbeaNAckZ9fODQ==
-X-CSE-MsgGUID: WajyHC7TRfek6Qy1u3ILRQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,233,1736841600"; 
-   d="scan'208";a="119676685"
-Received: from lkp-server02.sh.intel.com (HELO a4747d147074) ([10.239.97.151])
-  by fmviesa007.fm.intel.com with ESMTP; 08 Mar 2025 19:44:43 -0800
-Received: from kbuild by a4747d147074 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tr7aj-0002d2-0K;
-	Sun, 09 Mar 2025 03:44:41 +0000
-Date: Sun, 09 Mar 2025 11:44:25 +0800
-From: kernel test robot <lkp@intel.com>
-To: "Gustavo A. R. Silva" <gustavoars@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>
-Subject: [gustavoars:testing/wfamnae-next20250304] BUILD SUCCESS
- 3475d5861c29d5b71a64f80b954611eaca2e488f
-Message-ID: <202503091119.Q82aOMNP-lkp@intel.com>
-User-Agent: s-nail v14.9.24
+	s=arc-20240116; t=1741492384; c=relaxed/simple;
+	bh=x5LLZ1U5v+49lSBN6jfeM7E4693CODIGp9VtkjaEh0c=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=QMOXxU3oU/TdM6idCHFLTpiQwZPpOEjpvG/6/CiW0D4dVo9mlDnw9KH12YwO32id5GeUB05c+5q3v7GH7+NB+uQYdce1OjDSLDQTOahNOr2SC4OZy+6e5rXdlTJunIkHBCjb3EzCA/Zj3bBQLqupfCwlgqBowgFW9whFctKWBkQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3d3dee8d31aso24954045ab.2
+        for <linux-kernel@vger.kernel.org>; Sat, 08 Mar 2025 19:53:02 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741492382; x=1742097182;
+        h=content-transfer-encoding:to:from:subject:message-id:in-reply-to
+         :date:mime-version:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=SvqPAIaNQZmRU7jbCRbH5Ee4tS37t5FD6S5+BhtkN28=;
+        b=R6TFe7eZamQwBeXvnem1HE+Ky4wUhfwViZi7aTDXc8zLv9E3VeCEcqyfo6qX/pBCLb
+         8CPsK3T2A8BteHeJohBgwqS+nCLe1X7IN6FynPlbS+C9nOoosHk80/t0tLgBaMxBn+Fc
+         gEaVKmb/KIUm9tJl6G+ODRZV33nSjv8aigS/so7lWg73N3awxjYgZy6pMZz4FdUZFTkC
+         mitUF5L/ErX6DfFD9kaJ/E8StJe1XTV9y3OQWa25aU2XUuboOBJMuK0V/L6VYBZCxhJM
+         wYRm/XHDblMPzfGrRTJb9pzc64Idojz/8yNYztlD8eF9pipTaky9Hul/l+SsUKwAh80n
+         GVlg==
+X-Forwarded-Encrypted: i=1; AJvYcCUk3Wmh7YMHMmaRLAiYYPqSJLL0xvn7WIMpQ/QD8sTDvJrK7F59HtCoOGrvafwzqtXot4nZMkCLq0BX5hM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzKdieuW4l2sdpHCMLw6fGmGyzT+oKD7/R306siclDiWYdhRMWG
+	zXOOPVshw3rPujMTKme/40m8OyboHd+xdvJpQyGth24Lt5j73CF578SLodD5tG9r7H2KR6OKwV/
+	EkYddtfkhEj3z4Rdm3VrHGytJjE/hwuhkqbgYKIX7GQ8ec4U0vPTRHQw=
+X-Google-Smtp-Source: AGHT+IEHpUg1J5UcQ+/RQXj1b7z9D6QjOn+R3jNOIHS1UEUeM+a9oSYi9JV9ZRjIE9iPcuni2FWN9c/YLEi5LQWUesOf1UhktBgc
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+X-Received: by 2002:a92:c24b:0:b0:3d4:3ab3:e1c9 with SMTP id
+ e9e14a558f8ab-3d441a06d8cmr105181595ab.15.1741492382240; Sat, 08 Mar 2025
+ 19:53:02 -0800 (PST)
+Date: Sat, 08 Mar 2025 19:53:02 -0800
+In-Reply-To: <tencent_8D996B4FAD8DDEA5E10D92922A5D9C5DC907@qq.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <67cd109e.050a0220.14db68.006f.GAE@google.com>
+Subject: Re: [syzbot] [xfs?] [mm?] WARNING: bad unlock balance in __mm_populate
+From: syzbot <syzbot+8f9f411152c9539f4e59@syzkaller.appspotmail.com>
+To: eadavis@qq.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/gustavoars/linux.git testing/wfamnae-next20250304
-branch HEAD: 3475d5861c29d5b71a64f80b954611eaca2e488f  drm/amd/pm: Avoid multiple -Wflex-array-member-not-at-end warnings
+Hello,
 
-elapsed time: 1445m
+syzbot tried to test the proposed patch but the build/boot failed:
 
-configs tested: 102
-configs skipped: 4
+failed to copy syz-execprog to VM: timedout after 1m0s ["scp" "-P" "22" "-F=
+" "/dev/null" "-o" "UserKnownHostsFile=3D/dev/null" "-o" "IdentitiesOnly=3D=
+yes" "-o" "BatchMode=3Dyes" "-o" "StrictHostKeyChecking=3Dno" "-o" "Connect=
+Timeout=3D10" "-v" "/syzkaller/jobs-2/linux/gopath/src/github.com/google/sy=
+zkaller/bin/linux_arm64/syz-execprog" "root@10.128.1.50:./syz-execprog"]
+Executing: program /usr/bin/ssh host 10.128.1.50, user root, command sftp
+OpenSSH_9.2p1 Debian-2+deb12u4, OpenSSL 3.0.15 3 Sep 2024
+debug1: Reading configuration data /dev/null
+debug1: Connecting to 10.128.1.50 [10.128.1.50] port 22.
+debug1: fd 3 clearing O_NONBLOCK
+debug1: Connection established.
+debug1: identity file /root/.ssh/id_rsa type -1
+debug1: identity file /root/.ssh/id_rsa-cert type -1
+debug1: identity file /root/.ssh/id_ecdsa type -1
+debug1: identity file /root/.ssh/id_ecdsa-cert type -1
+debug1: identity file /root/.ssh/id_ecdsa_sk type -1
+debug1: identity file /root/.ssh/id_ecdsa_sk-cert type -1
+debug1: identity file /root/.ssh/id_ed25519 type -1
+debug1: identity file /root/.ssh/id_ed25519-cert type -1
+debug1: identity file /root/.ssh/id_ed25519_sk type -1
+debug1: identity file /root/.ssh/id_ed25519_sk-cert type -1
+debug1: identity file /root/.ssh/id_xmss type -1
+debug1: identity file /root/.ssh/id_xmss-cert type -1
+debug1: identity file /root/.ssh/id_dsa type -1
+debug1: identity file /root/.ssh/id_dsa-cert type -1
+debug1: Local version string SSH-2.0-OpenSSH_9.2p1 Debian-2+deb12u4
+debug1: Remote protocol version 2.0, remote software version OpenSSH_9.1
+debug1: compat_banner: match: OpenSSH_9.1 pat OpenSSH* compat 0x04000000
+debug1: Authenticating to 10.128.1.50:22 as 'root'
+debug1: load_hostkeys: fopen /etc/ssh/ssh_known_hosts: No such file or dire=
+ctory
+debug1: load_hostkeys: fopen /etc/ssh/ssh_known_hosts2: No such file or dir=
+ectory
+debug1: SSH2_MSG_KEXINIT sent
+debug1: SSH2_MSG_KEXINIT received
+debug1: kex: algorithm: sntrup761x25519-sha512@openssh.com
+debug1: kex: host key algorithm: ssh-ed25519
+debug1: kex: server->client cipher: chacha20-poly1305@openssh.com MAC: <imp=
+licit> compression: none
+debug1: kex: client->server cipher: chacha20-poly1305@openssh.com MAC: <imp=
+licit> compression: none
+debug1: expecting SSH2_MSG_KEX_ECDH_REPLY
+debug1: SSH2_MSG_KEX_ECDH_REPLY received
+debug1: Server host key: ssh-ed25519 SHA256:JxoRyAn13fCyQtNtBXvSgkCC2njD9yP=
+7DAIyaauX8OU
+debug1: load_hostkeys: fopen /etc/ssh/ssh_known_hosts: No such file or dire=
+ctory
+debug1: load_hostkeys: fopen /etc/ssh/ssh_known_hosts2: No such file or dir=
+ectory
+Warning: Permanently added '10.128.1.50' (ED25519) to the list of known hos=
+ts.
+debug1: rekey out after 134217728 blocks
+debug1: SSH2_MSG_NEWKEYS sent
+debug1: expecting SSH2_MSG_NEWKEYS
+debug1: SSH2_MSG_NEWKEYS received
+debug1: rekey in after 134217728 blocks
+debug1: Will attempt key: /root/.ssh/id_rsa=20
+debug1: Will attempt key: /root/.ssh/id_ecdsa=20
+debug1: Will attempt key: /root/.ssh/id_ecdsa_sk=20
+debug1: Will attempt key: /root/.ssh/id_ed25519=20
+debug1: Will attempt key: /root/.ssh/id_ed25519_sk=20
+debug1: Will attempt key: /root/.ssh/id_xmss=20
+debug1: Will attempt key: /root/.ssh/id_dsa=20
+debug1: SSH2_MSG_EXT_INFO received
+debug1: kex_input_ext_info: server-sig-algs=3D<ssh-ed25519,sk-ssh-ed25519@o=
+penssh.com,ssh-rsa,rsa-sha2-256,rsa-sha2-512,ssh-dss,ecdsa-sha2-nistp256,ec=
+dsa-sha2-nistp384,ecdsa-sha2-nistp521,sk-ecdsa-sha2-nistp256@openssh.com,we=
+bauthn-sk-ecdsa-sha2-nistp256@openssh.com>
+debug1: kex_input_ext_info: publickey-hostbound@openssh.com=3D<0>
+debug1: SSH2_MSG_SERVICE_ACCEPT received
+Authenticated to 10.128.1.50 ([10.128.1.50]:22) using "none".
+debug1: channel 0: new session [client-session] (inactive timeout: 0)
+debug1: Requesting no-more-sessions@openssh.com
+debug1: Entering interactive session.
+debug1: pledge: network
+debug1: client_input_global_request: rtype hostkeys-00@openssh.com want_rep=
+ly 0
+debug1: Sending subsystem: sftp
+debug1: pledge: fork
+scp: debug1: stat remote: No such file or directory
 
-The following configs have been built successfully.
-More configs may be tested in the coming days.
 
-tested configs:
-alpha                             allnoconfig    gcc-14.2.0
-arc                              allmodconfig    gcc-13.2.0
-arc                               allnoconfig    gcc-13.2.0
-arc                              allyesconfig    gcc-13.2.0
-arc                   randconfig-001-20250308    gcc-13.2.0
-arc                   randconfig-002-20250308    gcc-13.2.0
-arc                    vdk_hs38_smp_defconfig    gcc-13.2.0
-arm                              allmodconfig    gcc-14.2.0
-arm                               allnoconfig    clang-17
-arm                              allyesconfig    gcc-14.2.0
-arm                     am200epdkit_defconfig    gcc-14.2.0
-arm                   randconfig-001-20250308    gcc-14.2.0
-arm                   randconfig-002-20250308    gcc-14.2.0
-arm                   randconfig-003-20250308    gcc-14.2.0
-arm                   randconfig-004-20250308    gcc-14.2.0
-arm64                             allnoconfig    gcc-14.2.0
-arm64                 randconfig-001-20250308    gcc-14.2.0
-arm64                 randconfig-002-20250308    gcc-14.2.0
-arm64                 randconfig-003-20250308    clang-16
-arm64                 randconfig-004-20250308    gcc-14.2.0
-csky                              allnoconfig    gcc-14.2.0
-csky                  randconfig-001-20250308    gcc-14.2.0
-csky                  randconfig-002-20250308    gcc-14.2.0
-hexagon                           allnoconfig    clang-21
-hexagon               randconfig-001-20250308    clang-19
-hexagon               randconfig-002-20250308    clang-21
-i386                             allmodconfig    gcc-12
-i386                              allnoconfig    gcc-12
-i386                             allyesconfig    gcc-12
-i386        buildonly-randconfig-001-20250308    gcc-12
-i386        buildonly-randconfig-002-20250308    gcc-11
-i386        buildonly-randconfig-003-20250308    clang-19
-i386        buildonly-randconfig-004-20250308    clang-19
-i386        buildonly-randconfig-005-20250308    clang-19
-i386        buildonly-randconfig-006-20250308    gcc-12
-i386                                defconfig    clang-19
-loongarch                         allnoconfig    gcc-14.2.0
-loongarch             randconfig-001-20250308    gcc-14.2.0
-loongarch             randconfig-002-20250308    gcc-14.2.0
-m68k                             allmodconfig    gcc-14.2.0
-m68k                              allnoconfig    gcc-14.2.0
-m68k                             allyesconfig    gcc-14.2.0
-microblaze                        allnoconfig    gcc-14.2.0
-mips                              allnoconfig    gcc-14.2.0
-nios2                             allnoconfig    gcc-14.2.0
-nios2                 randconfig-001-20250308    gcc-14.2.0
-nios2                 randconfig-002-20250308    gcc-14.2.0
-openrisc                          allnoconfig    gcc-14.2.0
-openrisc                            defconfig    gcc-14.2.0
-parisc                            allnoconfig    gcc-14.2.0
-parisc                              defconfig    gcc-14.2.0
-parisc                randconfig-001-20250308    gcc-14.2.0
-parisc                randconfig-002-20250308    gcc-14.2.0
-parisc64                         alldefconfig    gcc-14.1.0
-powerpc                           allnoconfig    gcc-14.2.0
-powerpc               randconfig-001-20250308    clang-18
-powerpc               randconfig-002-20250308    gcc-14.2.0
-powerpc               randconfig-003-20250308    gcc-14.2.0
-powerpc64             randconfig-001-20250308    gcc-14.2.0
-powerpc64             randconfig-003-20250308    clang-21
-riscv                             allnoconfig    gcc-14.2.0
-riscv                               defconfig    clang-19
-riscv                 randconfig-001-20250308    clang-21
-riscv                 randconfig-002-20250308    gcc-14.2.0
-s390                             allmodconfig    clang-19
-s390                              allnoconfig    clang-15
-s390                             allyesconfig    gcc-14.2.0
-s390                                defconfig    clang-15
-s390                  randconfig-001-20250308    clang-19
-s390                  randconfig-002-20250308    clang-17
-sh                               allmodconfig    gcc-14.2.0
-sh                                allnoconfig    gcc-14.2.0
-sh                               allyesconfig    gcc-14.2.0
-sh                        apsh4ad0a_defconfig    gcc-14.2.0
-sh                                  defconfig    gcc-14.2.0
-sh                    randconfig-001-20250308    gcc-14.2.0
-sh                    randconfig-002-20250308    gcc-14.2.0
-sparc                            allmodconfig    gcc-14.2.0
-sparc                             allnoconfig    gcc-14.2.0
-sparc                 randconfig-001-20250308    gcc-14.2.0
-sparc                 randconfig-002-20250308    gcc-14.2.0
-sparc64                             defconfig    gcc-14.2.0
-sparc64               randconfig-001-20250308    gcc-14.2.0
-sparc64               randconfig-002-20250308    gcc-14.2.0
-um                                allnoconfig    clang-18
-um                                  defconfig    clang-21
-um                             i386_defconfig    gcc-12
-um                    randconfig-001-20250308    gcc-12
-um                    randconfig-002-20250308    gcc-12
-um                           x86_64_defconfig    clang-15
-x86_64                            allnoconfig    clang-19
-x86_64                           allyesconfig    clang-19
-x86_64      buildonly-randconfig-001-20250308    gcc-12
-x86_64      buildonly-randconfig-002-20250308    clang-19
-x86_64      buildonly-randconfig-003-20250308    gcc-12
-x86_64      buildonly-randconfig-004-20250308    clang-19
-x86_64      buildonly-randconfig-005-20250308    clang-19
-x86_64      buildonly-randconfig-006-20250308    clang-19
-x86_64                              defconfig    gcc-11
-xtensa                            allnoconfig    gcc-14.2.0
-xtensa                randconfig-001-20250308    gcc-14.2.0
-xtensa                randconfig-002-20250308    gcc-14.2.0
 
---
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+
+syzkaller build log:
+go env (err=3D<nil>)
+GO111MODULE=3D'auto'
+GOARCH=3D'amd64'
+GOBIN=3D''
+GOCACHE=3D'/syzkaller/.cache/go-build'
+GOENV=3D'/syzkaller/.config/go/env'
+GOEXE=3D''
+GOEXPERIMENT=3D''
+GOFLAGS=3D''
+GOHOSTARCH=3D'amd64'
+GOHOSTOS=3D'linux'
+GOINSECURE=3D''
+GOMODCACHE=3D'/syzkaller/jobs-2/linux/gopath/pkg/mod'
+GONOPROXY=3D''
+GONOSUMDB=3D''
+GOOS=3D'linux'
+GOPATH=3D'/syzkaller/jobs-2/linux/gopath'
+GOPRIVATE=3D''
+GOPROXY=3D'https://proxy.golang.org,direct'
+GOROOT=3D'/syzkaller/jobs-2/linux/gopath/pkg/mod/golang.org/toolchain@v0.0.=
+1-go1.23.6.linux-amd64'
+GOSUMDB=3D'sum.golang.org'
+GOTMPDIR=3D''
+GOTOOLCHAIN=3D'auto'
+GOTOOLDIR=3D'/syzkaller/jobs-2/linux/gopath/pkg/mod/golang.org/toolchain@v0=
+.0.1-go1.23.6.linux-amd64/pkg/tool/linux_amd64'
+GOVCS=3D''
+GOVERSION=3D'go1.23.6'
+GODEBUG=3D''
+GOTELEMETRY=3D'local'
+GOTELEMETRYDIR=3D'/syzkaller/.config/go/telemetry'
+GCCGO=3D'gccgo'
+GOAMD64=3D'v1'
+AR=3D'ar'
+CC=3D'gcc'
+CXX=3D'g++'
+CGO_ENABLED=3D'1'
+GOMOD=3D'/syzkaller/jobs-2/linux/gopath/src/github.com/google/syzkaller/go.=
+mod'
+GOWORK=3D''
+CGO_CFLAGS=3D'-O2 -g'
+CGO_CPPFLAGS=3D''
+CGO_CXXFLAGS=3D'-O2 -g'
+CGO_FFLAGS=3D'-O2 -g'
+CGO_LDFLAGS=3D'-O2 -g'
+PKG_CONFIG=3D'pkg-config'
+GOGCCFLAGS=3D'-fPIC -m64 -pthread -Wl,--no-gc-sections -fmessage-length=3D0=
+ -ffile-prefix-map=3D/tmp/go-build579354154=3D/tmp/go-build -gno-record-gcc=
+-switches'
+
+git status (err=3D<nil>)
+HEAD detached at c390174278
+nothing to commit, working tree clean
+
+
+tput: No value for $TERM and no -T specified
+tput: No value for $TERM and no -T specified
+Makefile:31: run command via tools/syz-env for best compatibility, see:
+Makefile:32: https://github.com/google/syzkaller/blob/master/docs/contribut=
+ing.md#using-syz-env
+go list -f '{{.Stale}}' ./sys/syz-sysgen | grep -q false || go install ./sy=
+s/syz-sysgen
+make .descriptions
+tput: No value for $TERM and no -T specified
+tput: No value for $TERM and no -T specified
+Makefile:31: run command via tools/syz-env for best compatibility, see:
+Makefile:32: https://github.com/google/syzkaller/blob/master/docs/contribut=
+ing.md#using-syz-env
+bin/syz-sysgen
+touch .descriptions
+GOOS=3Dlinux GOARCH=3Darm64 go build "-ldflags=3D-s -w -X github.com/google=
+/syzkaller/prog.GitRevision=3Dc3901742785ff25afdc6f470af7b25b69d7c4f2f -X '=
+github.com/google/syzkaller/prog.gitRevisionDate=3D20250301-144328'" -o ./b=
+in/linux_arm64/syz-execprog github.com/google/syzkaller/tools/syz-execprog
+mkdir -p ./bin/linux_arm64
+aarch64-linux-gnu-g++ -o ./bin/linux_arm64/syz-executor executor/executor.c=
+c \
+	-O2 -pthread -Wall -Werror -Wparentheses -Wunused-const-variable -Wframe-l=
+arger-than=3D16384 -Wno-stringop-overflow -Wno-array-bounds -Wno-format-ove=
+rflow -Wno-unused-but-set-variable -Wno-unused-command-line-argument -stati=
+c-pie -std=3Dc++17 -I. -Iexecutor/_include   -DGOOS_linux=3D1 -DGOARCH_arm6=
+4=3D1 \
+	-DHOSTGOOS_linux=3D1 -DGIT_REVISION=3D\"c3901742785ff25afdc6f470af7b25b69d=
+7c4f2f\"
+/usr/lib/gcc-cross/aarch64-linux-gnu/12/../../../../aarch64-linux-gnu/bin/l=
+d: /tmp/cc23BeDc.o: in function `Connection::Connect(char const*, char cons=
+t*)':
+executor.cc:(.text._ZN10Connection7ConnectEPKcS1_[_ZN10Connection7ConnectEP=
+KcS1_]+0xd8): warning: Using 'gethostbyname' in statically linked applicati=
+ons requires at runtime the shared libraries from the glibc version used fo=
+r linking
+
+
+
+Tested on:
+
+commit:         77c95b8c Merge remote-tracking branch 'will/for-next/p..
+git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.g=
+it for-kernelci
+kernel config:  https://syzkaller.appspot.com/x/.config?x=3Dafb3000d0159783=
+f
+dashboard link: https://syzkaller.appspot.com/bug?extid=3D8f9f411152c9539f4=
+e59
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debia=
+n) 2.40
+userspace arch: arm64
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=3D132554b79800=
+00
+
 
