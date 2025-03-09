@@ -1,114 +1,166 @@
-Return-Path: <linux-kernel+bounces-553067-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-553069-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CFDC8A582F9
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 11:19:54 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AE041A582FF
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 11:24:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 18BA4169CA2
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 10:19:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 32FA93AE605
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 10:23:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13C5018C008;
-	Sun,  9 Mar 2025 10:19:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1971C1AC892;
+	Sun,  9 Mar 2025 10:24:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Mw6d6KP0"
-Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com [209.85.208.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="p0/qQf7d"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0270199949
-	for <linux-kernel@vger.kernel.org>; Sun,  9 Mar 2025 10:19:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A7782114;
+	Sun,  9 Mar 2025 10:23:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741515588; cv=none; b=VZgtkYkDLPF3B27szuPSwzsB4fIv0LIP0ySLw6mzq/J5aFNvsktQmxYTqyEMJLZCRf00mWjWz3jKUd4EJNnuD+DrljmSwr8sKrRr4IZJtGP2Z5LXldyHAEux5CX7P0jn4FOQpicqh5Rt/tYKSV1BLMybUN7fH0bX4qcChe5EAaw=
+	t=1741515840; cv=none; b=oaEH4DZid+W2QMR0C9WknwDY3ZzbBlCPHSxZaiWUyeyPenLabEbvHdFohEhfG800th9Jwd1GP2I4cQA5wno+/eHRad7QRtJBVMH7KKDzi+5AjvaTBe8kczH37idEiN4Au/5k/huv7PraLa+XPIj1Lvy7knMFgBmgmyuMZ8FOJeE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741515588; c=relaxed/simple;
-	bh=Rz0dhl+0OSiXEy+n9YrxBnJOx9ffum11zQsQG6UtEok=;
+	s=arc-20240116; t=1741515840; c=relaxed/simple;
+	bh=s4OlYYrHmgxAkduxUPPzl6dmn5j30zeeUCSL98+gt0M=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FBWJayxqoAvUmyBv9EZmPH6HiW5n52d6pwpBhH5/Qjp0+CtuRopIHysbYlpEqHhrAtsYv76TsEg8DO0f69pK+6zmGTFp0UEmQ5oxxuxJU8XGhA8JpH2jrci3BTGZPYR/IIDBoz9S4EqTXJIfumjJihDxJOwwq7jPDgelrKktZMQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Mw6d6KP0; arc=none smtp.client-ip=209.85.208.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f176.google.com with SMTP id 38308e7fff4ca-307c13298eeso39004861fa.0
-        for <linux-kernel@vger.kernel.org>; Sun, 09 Mar 2025 03:19:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1741515585; x=1742120385; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=6s2IN28UcJK9AIeEgePs+AKeLtN5DfXNmrIRckMBKOk=;
-        b=Mw6d6KP0AR4AESDAWb621eIf/0fKTsS4+52EWi4D18r/3LWKydb7Xx21oXk51v5itC
-         GNzpdYHVa90GsaDYIDWk/spKUrX0dS7QYgtYIGEl9COgBPAyzXUaPzHPzwb5B2jSIJjS
-         BXtVV0DBpe5PCK+6/m/HY5EAQlWTxkd12EfHUZpaa01s8kwzd3E4dlYVNvy22hX0rJzj
-         mN3DtFH9dnDo+0GCrHOq9JW9BARGOSBkq+W+jNCBr7lQT4X2vibaR42pQzmcQuVjWh0I
-         va/U2s9ovD2+gr+kBDn2oZF584kbhLtKSkVP17AcwlkUgqojNoMbXvidiXUVkG/k1IdD
-         hrqg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741515585; x=1742120385;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=6s2IN28UcJK9AIeEgePs+AKeLtN5DfXNmrIRckMBKOk=;
-        b=dZYzJFgrpvyvsdaO6IzMo2lU13slQ/2xT9f5P47efkp4ImMUXX3mbKRbuIt09RFVCU
-         xlkmhJojApciS4w9Oill/+um6SmfjL6A1FpQpNr4J58YcIRQHPJJbwMH3MwwijEKRtvP
-         1x/iLo7mTkDp/nyPRHeF3fmNIgvRODUX1bP/bLkUnKineH0U3QVyV19nEWVQB7Ypv/to
-         7eGv5tNasodcPSGMwE3xoYN/SN19a/PfZk/sEnQAtRgA+KsOE/M0nX24QLi3yB75z1h8
-         I9cc3icvwmAvo5GFoIABD1mahIfTA+DMNAqUWfGT869xRd2ApPZswGmGyaY6dhVyW9nZ
-         bidg==
-X-Forwarded-Encrypted: i=1; AJvYcCWoSzBs7ziz0nP540ti3C6pOrAqYJ+LWyZg4AZKe+OyoisXH3L3zhZGJM+qv1m3y2gTk2okOFW/CfhTJGg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzJ6K+trsrM6aI+sk5oNHWQTwhoanPMBUlXkmG2CxtAzyVrnkkQ
-	5pnZiwww9/CkJ8CxxUJkXb5hSGJGVeky8Lk8PAwSL2n7NvxgjctEYtWsNu3Lx9g=
-X-Gm-Gg: ASbGncvr3pI8QY+uKXss8bAXDhH9ic29ANwDn6tL1iu6GRvhA1fBHmk6gnt55HlefV6
-	n9Z+EmNbavVjol4LGNmWEAwsEnqaq7IZhDZBb8TeCc6yq6sfRohFk+5xh/8peV8tJct/GYDAOga
-	MLRfngzeJqGK35L4uNfkG9ff6JIOgOsIrF60zNYb8ZILkHJWIvJwDe8g2du3OIa1pQzNw3yU3UZ
-	hGi0CZGozUjTdKUqSRrp59Vuu2NdwmfUCoppzYXvObHsRrzQ7EcrkIDft/CZlhjhjhGxtBNG8rQ
-	Dwv5L069oxZ2van8OIltqSOOl4knWvBC68SOnMhUmIcjKam4U8Y7USHLf2oBOF9WS2u5rbzEaHX
-	ooFnO1DQrBaRS4RVjyFXZdyRSz04JzuGncZ0=
-X-Google-Smtp-Source: AGHT+IHlBdJ1qjhe/o7S4dso2ZCEpH6o3JPt/ko/A+fRZieBU37zQ/ClCK+PPXWZo0QJwKYGgx8DEw==
-X-Received: by 2002:a2e:a985:0:b0:30b:c36c:ba96 with SMTP id 38308e7fff4ca-30bfe3eeeafmr15772901fa.1.1741515584802;
-        Sun, 09 Mar 2025 03:19:44 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-30bee0c8565sm11460361fa.53.2025.03.09.03.19.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 09 Mar 2025 03:19:43 -0700 (PDT)
-Date: Sun, 9 Mar 2025 12:19:41 +0200
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Qasim Ijaz <qasdev00@gmail.com>
-Cc: robdclark@gmail.com, quic_abhinavk@quicinc.com, sean@poorly.run, 
-	marijn.suijten@somainline.org, airlied@gmail.com, simona@ffwll.ch, quic_jesszhan@quicinc.com, 
-	linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] drm/msm/dpu: reorder pointer operations after sanity
- checks to avoid NULL deref
-Message-ID: <s3zlxsj6gsmoz3rc5fqopi7etfibaurkz5oo5wgvurebx2z3zt@t3h73v5lcmhi>
-References: <20250309095525.7738-1-qasdev00@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=bDdoX+cm4wwLmPdqnOuxbAKV0zaE8JWXvMq4tyKmqYHYCMgEpdlP9eya84LtL+6bdiltP1tv2uIzB2TccHq6N/vfrT17bpqqz0NRaZTdIKnBT0A5e0MJTqCxjV3WHLviZD4YjgPfolYdcdl7ZdJPm+k+Mo2pw2iiiPQ5VaLJZFo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=p0/qQf7d; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 25358C4CEE5;
+	Sun,  9 Mar 2025 10:23:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1741515839;
+	bh=s4OlYYrHmgxAkduxUPPzl6dmn5j30zeeUCSL98+gt0M=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=p0/qQf7dbD1L/RE4VY7VRk5SHv13Ank8EeC7HdjaJUEqaRcajePJA1U0KNKe7MW69
+	 ZZKiur1ARxaCX4qN8Q236I1rnzq0+Kud1hLv77mnCSTSte3y1PPuNjZW8OcIqlXrQ6
+	 RK1+GlxIqL1eFPdysvH6YBZh4b1arYfz3jrRhDTw=
+Date: Sun, 9 Mar 2025 11:22:43 +0100
+From: "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>
+To: Aditya Garg <gargaditya08@live.com>
+Cc: "bhelgaas@google.com" <bhelgaas@google.com>,
+	"joro@8bytes.org" <joro@8bytes.org>,
+	"will@kernel.org" <will@kernel.org>,
+	"robin.murphy@arm.com" <robin.murphy@arm.com>,
+	"andriy.shevchenko@linux.intel.com" <andriy.shevchenko@linux.intel.com>,
+	"linux-staging@lists.linux.dev" <linux-staging@lists.linux.dev>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	"linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+	"iommu@lists.linux.dev" <iommu@lists.linux.dev>,
+	Aun-Ali Zaidi <admin@kodeit.net>, "paul@mrarm.io" <paul@mrarm.io>,
+	Orlando Chamberlain <orlandoch.dev@gmail.com>
+Subject: Re: [PATCH RFC] staging: Add driver to communicate with the T2
+ Security Chip
+Message-ID: <2025030929-cryptic-ducky-9e23@gregkh>
+References: <2025030931-tattoo-patriarch-006d@gregkh>
+ <PN3PR01MB9597793C256B5A16048ADBFDB8D72@PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM>
+ <2025030937-antihero-sandblast-7c87@gregkh>
+ <PN3PR01MB9597F037471B133B54BA25BCB8D72@PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM>
+ <2025030935-contently-handbrake-9239@gregkh>
+ <PN3PR01MB9597F040DD8F5A9B1A65B397B8D72@PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM>
+ <2025030909-recoup-unafraid-1df0@gregkh>
+ <PN3PR01MB95970E60B250F91CA8E12720B8D72@PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM>
+ <2025030901-deceiver-jolliness-53f5@gregkh>
+ <PN3PR01MB9597B64008E01DC0336FAE37B8D72@PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250309095525.7738-1-qasdev00@gmail.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <PN3PR01MB9597B64008E01DC0336FAE37B8D72@PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM>
 
-On Sun, Mar 09, 2025 at 09:55:25AM +0000, Qasim Ijaz wrote:
-> _dpu_encoder_trigger_start dereferences "struct dpu_encoder_phys *phys"
-> before the sanity checks which can lead to a NULL pointer dereference if
-> phys is NULL.
->  
-> Fix this by reordering the dereference after the sanity checks.
->  
-> Fixes: 8144d17a81d9 ("drm/msm/dpu: Skip trigger flush and start for CWB")
-> Signed-off-by: Qasim Ijaz <qasdev00@gmail.com>
-> ---
-> v2:
-> - Moved Signed-off tag below Fixes tag
-> - Moved dpu_enc declaration to the top and initialisation below sanity checks
+On Sun, Mar 09, 2025 at 10:12:06AM +0000, Aditya Garg wrote:
 > 
+> 
+> > On 9 Mar 2025, at 3:26 PM, gregkh@linuxfoundation.org wrote:
+> > 
+> > ﻿On Sun, Mar 09, 2025 at 09:52:43AM +0000, Aditya Garg wrote:
+> >> 
+> >> 
+> >>>> On 9 Mar 2025, at 3:21 PM, gregkh@linuxfoundation.org wrote:
+> >>> 
+> >>> ﻿On Sun, Mar 09, 2025 at 09:41:29AM +0000, Aditya Garg wrote:
+> >>>> 
+> >>>> 
+> >>>>>> On 9 Mar 2025, at 3:09 PM, gregkh@linuxfoundation.org wrote:
+> >>>>> 
+> >>>>> ﻿On Sun, Mar 09, 2025 at 09:28:01AM +0000, Aditya Garg wrote:
+> >>>>>> 
+> >>>>>> 
+> >>>>>>>> On 9 Mar 2025, at 2:46 PM, gregkh@linuxfoundation.org wrote:
+> >>>>>>> 
+> >>>>>>> ﻿On Sun, Mar 09, 2025 at 09:03:29AM +0000, Aditya Garg wrote:
+> >>>>>>>> 
+> >>>>>>>> 
+> >>>>>>>>>> On 9 Mar 2025, at 2:24 PM, gregkh@linuxfoundation.org wrote:
+> >>>>>>>>> 
+> >>>>>>>>> ﻿On Sun, Mar 09, 2025 at 08:40:31AM +0000, Aditya Garg wrote:
+> >>>>>>>>>> From: Paul Pawlowski <paul@mrarm.io>
+> >>>>>>>>>> 
+> >>>>>>>>>> This patch adds a driver named apple-bce, to add support for the T2
+> >>>>>>>>>> Security Chip found on certain Macs.
+> >>>>>>>>>> 
+> >>>>>>>>>> The driver has 3 main components:
+> >>>>>>>>>> 
+> >>>>>>>>>> BCE (Buffer Copy Engine) - this is what the files in the root directory
+> >>>>>>>>>> are for. This estabilishes a basic communication channel with the T2.
+> >>>>>>>>>> VHCI and Audio both require this component.
+> >>>>>>>>> 
+> >>>>>>>>> So this is a new "bus" type?  Or a platform resource?  Or something
+> >>>>>>>>> else?
+> >>>>>>>> 
+> >>>>>>>> It's a PCI device
+> >>>>>>> 
+> >>>>>>> Great, but then is the resources split up into smaller drivers that then
+> >>>>>>> bind to it?  How does the other devices talk to this?
+> >>>>>> 
+> >>>>>> We technically can split up these 3 into separate drivers and put then into their own trees.
+> >>>>> 
+> >>>>> That's fine, but you say that the bce code is used by the other drivers,
+> >>>>> right?  So there is some sort of "tie" between these, and that needs to
+> >>>>> be properly conveyed in the device tree in sysfs as that will be
+> >>>>> required for proper resource management.
+> >>>> 
+> >>>> Yes there needs to be a tie, basically first establish a communication with the t2 using bce and then the other 2 come into the picture. I did get a basic idea from what the maintainers want, and this will be some work to do. Thanks for your inputs!
+> >>> 
+> >>> If there is "communication" then that's a bus in the driver model
+> >>> scheme, so just use that, right?
+> >> 
+> >> So basically RE the whole driver to see what exactly should be use?
+> > 
+> > I'm sorry, I can not parse this.
+> 
+> 
+> I was asking that should I introduce a completely new bus instead of
+> pci and probably reverse engineer the original macOS driver to see
+> what exactly is going on there?
 
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
--- 
-With best wishes
-Dmitry
+No, if it's a PCI device on a PCI bus, then use the PCI api for all of
+that.
+
+It's what that PCI device "exposes" here, are the other devices, like
+the USB host controller, hanging off of that, or are they real PCI
+devices as well?
+
+What exactly does this BCE driver do?
+
+> I might not have been clear, but I'm not the author of this patch.
+
+That's fine, but why doesn't the original author want to do this work?
+Have you asked them if they want this code included in the kernel tree?
+Who is going to do the maintenance for it and who is going to answer
+questions like the ones I have here?
+
+And again, what is with the new user/kernel api being added?  What is
+all of that for?
+
+thanks,
+
+greg k-h
 
