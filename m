@@ -1,218 +1,128 @@
-Return-Path: <linux-kernel+bounces-552861-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-552862-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42AC5A58001
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 01:30:14 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4085DA58003
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 01:31:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 56F5516B3FC
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 00:30:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C6CCA3ADB7D
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 00:31:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CB44C2C8;
-	Sun,  9 Mar 2025 00:30:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F4819460;
+	Sun,  9 Mar 2025 00:31:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="TtNcHS+Z"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=ethancedwards.com header.i=@ethancedwards.com header.b="sQYvBX8c"
+Received: from mout-p-101.mailbox.org (mout-p-101.mailbox.org [80.241.56.151])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 414084C7C;
-	Sun,  9 Mar 2025 00:30:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23F962914;
+	Sun,  9 Mar 2025 00:31:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741480207; cv=none; b=mBpeDQMMwpAV3ixaZ3d7A7bc19ztBamew1z2fQqGGKpUkVHH04cLieM8V7H4u7UtqXYk4NQTcflz9nDuZswJLG+4WKj3QCXLm0rfkl1LJo7WYZfZH/4ZXkaEfyUwR5VTpQf1I3qj0v8Mpc6GLJJ4l4BuiEj6Vve3Oh2kiwUnFtA=
+	t=1741480269; cv=none; b=KT35mMRwvGP5ujGCapTzYaJ7/9F6cKifshEwbvh5lswZ18+Hr0UU7vDxk5as4q0Dow+UUYVgs1iMnRmtKEWd3KzYVtpqA4Ud8NIjeS/iFggeCQmy+d+SFBkAa9h1wLdf0rCzEGr9h0iloki9d+mPqM6pavmtxOtTOvfSfj2keQE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741480207; c=relaxed/simple;
-	bh=aMolwN56vF2dftuMD+Bec1QBO1irjOfXAUGJ0/PDgfk=;
-	h=Date:From:To:Cc:Subject:Message-Id:Mime-Version:Content-Type; b=LOgZg8gauvEV/XvBCW1/Kq8kXiYr5TN5NqVXap60s8hgmMoYhnu2Ffn8B53iKeAdRbQjE9jZLwnUTAuuZVCfh3gGReJuq8I7hCjuiCXnAM3Aiu+8qYUzxEHHtAEvjpDkio7cjEXL1dsDUta9UKodIt7CzLB905lwiu7eKpQlsU4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=TtNcHS+Z; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7CC48C4CEE0;
-	Sun,  9 Mar 2025 00:30:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1741480206;
-	bh=aMolwN56vF2dftuMD+Bec1QBO1irjOfXAUGJ0/PDgfk=;
-	h=Date:From:To:Cc:Subject:From;
-	b=TtNcHS+ZAaw0oWdNaW8cHdE6L5BWVwfSrp+G7KHXAmk6KNHui5BTmAzBqSIWR7lzE
-	 f9MdzCfACs6AAe0CwgLZIUSqDa2mwfyescncViNdfu8OaVXX5M9/xV3oUqfJndflPR
-	 9h3Pza3QjWOpvaBnMUKD9rH5pu2ajb17cUDYLPlM=
-Date: Sat, 8 Mar 2025 16:30:05 -0800
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: mm-commits@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-mm@kvack.org
-Subject: [GIT PULL] hotfixes for 6.14-rcc6
-Message-Id: <20250308163005.6af4c2fc9651b33f4b0d326d@linux-foundation.org>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1741480269; c=relaxed/simple;
+	bh=HnksT8mSXFPdsYEwYEbQasBkNVX/yh2ujjHTAjEraco=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=dvhM1Z/2+UFMC3ne4+Vld0oiQnTcCae+TDGJd5yHbQ33dGHktFsqCpJKyIupajWziV7NngJwM1DixgfjoWuXIhf+bbroCGu66B62x3AaPBRBghzOcznwAuzykEsogRr9LIfcSOmwIpQipJKa5eMx3mBRIXE/boXJlnumJvXS8nM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ethancedwards.com; spf=pass smtp.mailfrom=ethancedwards.com; dkim=pass (2048-bit key) header.d=ethancedwards.com header.i=@ethancedwards.com header.b=sQYvBX8c; arc=none smtp.client-ip=80.241.56.151
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ethancedwards.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ethancedwards.com
+Received: from smtp202.mailbox.org (smtp202.mailbox.org [10.196.197.202])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-101.mailbox.org (Postfix) with ESMTPS id 4Z9LXy6Tjcz9scd;
+	Sun,  9 Mar 2025 01:30:58 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ethancedwards.com;
+	s=MBO0001; t=1741480259;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=nw5BrMpWLwOkdKLfm5BC4XDDbHFMMDfyo9rI+ZmiLnU=;
+	b=sQYvBX8cQof5sXBhThSn//SbOyGSP2UipkdG50cAyiygr8+EkF5bIk2pI/CFs0wMNygbef
+	vtX8O5XfMt+SxzCifOihxzZBwOjjlTQ4KlG0AvxQlNFPAOPKg8xi6aVSVVRcTaJ5NkqSKs
+	L14Fnd7VkeJgLqE6SO1j9lhvN3GbZEYivTQiHEj5MqgApFXdfQ/dC8+occdUmjb9uy4TM5
+	odzw00vTGX6bH3zFaQMDJp0m0t+SHmfw6bYZbtkowvldlRjyWNYtWC0rzdali6DiIy1omy
+	7jxgp8tZApggohf7ZlofFh1g4vLJDbZaH1b/9snfGruiCPMjv14zQnYTJur74A==
+From: Ethan Carter Edwards <ethan@ethancedwards.com>
+Date: Sat, 08 Mar 2025 19:30:52 -0500
+Subject: [PATCH] crypto: axis/artpec6: change from kzalloc to kcalloc in
+ artpec6_crypto_probe()
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250308-artpec6-devm_kcalloc-v1-1-37886eaebd16@ethancedwards.com>
+X-B4-Tracking: v=1; b=H4sIADvhzGcC/x3MSQqAMAxA0atI1hZaJ9SriEiMUYNTaUUE8e4Wl
+ 2/x/wOenbCHOnrA8SVejj3AxBHQjPvESoZgSHSS61SXCt1pmQo18LV1C+G6HqQqNIaoQOrLDEJ
+ qHY9y/9umfd8PyZ7im2YAAAA=
+X-Change-ID: 20250308-artpec6-devm_kcalloc-9a11cc6acb84
+To: Jesper Nilsson <jesper.nilsson@axis.com>, 
+ Lars Persson <lars.persson@axis.com>, 
+ Herbert Xu <herbert@gondor.apana.org.au>, 
+ "David S. Miller" <davem@davemloft.net>
+Cc: linux-arm-kernel@axis.com, linux-crypto@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org, 
+ Ethan Carter Edwards <ethan@ethancedwards.com>
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1739;
+ i=ethan@ethancedwards.com; h=from:subject:message-id;
+ bh=HnksT8mSXFPdsYEwYEbQasBkNVX/yh2ujjHTAjEraco=;
+ b=LS0tLS1CRUdJTiBQR1AgTUVTU0FHRS0tLS0tCgpvd0o0bkp2QXk4ekFKWGJEOXFoNThlVGp6e
+ GhQcXlVeHBKOTVhSnZlVXhEek52UGMzRlc3RGxxdk1lSW9rdWFvCnpPSFcrVy80UDJUU0NqNkgr
+ M3M3U2xrWXhMZ1laTVVVV2Y3bktLYzkxSnloc1BPdlN4UE1IRllta0NFTVhKd0MKTUpFSnJZd01
+ wMzBaNUthY21zdHJYSGQ3NVZrRDlyTWNHc2ZZOWUxdVBiTHFPTFcxY3Z2TElvYi9EcHZuSG52eg
+ phZTlxdzhubkZGaG1mYjl2ZEQvaDg0TFZWdzY5UC9IR2JVSERUVDRBZ1A1Uk9BPT0KPVBpSFAKL
+ S0tLS1FTkQgUEdQIE1FU1NBR0UtLS0tLQo=
+X-Developer-Key: i=ethan@ethancedwards.com; a=openpgp;
+ fpr=2E51F61839D1FA947A7300C234C04305D581DBFE
 
+We are trying to get rid of all multiplications from allocation
+functions to prevent potential integer overflows. Here the
+multiplication is probably safe, but using kcalloc() is more
+appropriate and improves readability. This patch has no effect
+on runtime behavior.
 
-Linus, pleae merge this batch of hotfixes, thanks.
+Link: https://github.com/KSPP/linux/issues/162 [1]
+Link: https://www.kernel.org/doc/html/next/process/deprecated.html#open-coded-arithmetic-in-allocator-arguments
 
+Signed-off-by: Ethan Carter Edwards <ethan@ethancedwards.com>
+---
+ drivers/crypto/axis/artpec6_crypto.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-The following changes since commit 8344017aaf32a7532cff293eb3df7fd2265ebafd:
+diff --git a/drivers/crypto/axis/artpec6_crypto.c b/drivers/crypto/axis/artpec6_crypto.c
+index 1c1f57baef0ea9f4ecf7ab39f2c0e9e4327ef568..500b08e42282608348481b759e0b79d25f0b5db0 100644
+--- a/drivers/crypto/axis/artpec6_crypto.c
++++ b/drivers/crypto/axis/artpec6_crypto.c
+@@ -2897,13 +2897,13 @@ static int artpec6_crypto_probe(struct platform_device *pdev)
+ 	tasklet_init(&ac->task, artpec6_crypto_task,
+ 		     (unsigned long)ac);
+ 
+-	ac->pad_buffer = devm_kzalloc(&pdev->dev, 2 * ARTPEC_CACHE_LINE_MAX,
++	ac->pad_buffer = devm_kcalloc(&pdev->dev, 2, ARTPEC_CACHE_LINE_MAX,
+ 				      GFP_KERNEL);
+ 	if (!ac->pad_buffer)
+ 		return -ENOMEM;
+ 	ac->pad_buffer = PTR_ALIGN(ac->pad_buffer, ARTPEC_CACHE_LINE_MAX);
+ 
+-	ac->zero_buffer = devm_kzalloc(&pdev->dev, 2 * ARTPEC_CACHE_LINE_MAX,
++	ac->zero_buffer = devm_kcalloc(&pdev->dev, 2, ARTPEC_CACHE_LINE_MAX,
+ 				      GFP_KERNEL);
+ 	if (!ac->zero_buffer)
+ 		return -ENOMEM;
 
-  test_xarray: fix failure in check_pause when CONFIG_XARRAY_MULTI is not d=
-efined (2025-02-17 22:40:04 -0800)
+---
+base-commit: 0a2f889128969dab41861b6e40111aa03dc57014
+change-id: 20250308-artpec6-devm_kcalloc-9a11cc6acb84
 
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm tags/mm-hotfixes-st=
-able-2025-03-08-16-27
-
-for you to fetch changes up to 8fe9ed44dc29fba0786b7e956d2e87179e407582:
-
-  mm/page_alloc: fix uninitialized variable (2025-03-05 21:36:20 -0800)
-
-----------------------------------------------------------------
-33 hotfixes.  24 are cc:stable and the remainder address post-6.13 issues
-or aren't considered necessary for -stable kernels.
-
-26 are for MM and 7 are for non-MM.
-
-- "mm: memory_failure: unmap poisoned folio during migrate properly"
-  from Ma Wupeng fixes a couple of two year old bugs involving the
-  migration of hwpoisoned folios.
-
-- "selftests/damon: three fixes for false results" from SeongJae Park
-  fixes three one year old bugs in the SAMON selftest code.
-
-The remainder are singletons and doubletons.  Please see the individual
-changelogs for details.
-
-----------------------------------------------------------------
-Baolin Wang (1):
-      mm: shmem: fix potential data corruption during shmem swapin
-
-Barry Song (1):
-      mm: fix kernel BUG when userfaultfd_move encounters swapcache
-
-Brian Geffon (1):
-      mm: fix finish_fault() handling for large folios
-
-Gabriel Krisman Bertazi (1):
-      Revert "mm/page_alloc.c: don't show protection in zone's ->lowmem_res=
-erve[] for empty zone"
-
-Ge Yang (1):
-      mm/hugetlb: wait for hugetlb folios to be freed
-
-Hao Zhang (1):
-      mm/page_alloc: fix uninitialized variable
-
-Haoxiang Li (3):
-      m68k: sun3: add check for __pgd_alloc()
-      rapidio: fix an API misues when rio_add_net() fails
-      rapidio: add check for rio_add_net() in rio_scan_alloc_net()
-
-John Hubbard (1):
-      Revert "selftests/mm: remove local __NR_* definitions"
-
-Kemeng Shi (3):
-      mm: swap: add back full cluster when no entry is reclaimed
-      mm: swap: use correct step in loop to wait all clusters in wait_for_a=
-llocation()
-      mm, swap: avoid BUG_ON in relocate_cluster()
-
-Lorenzo Stoakes (1):
-      mm: abort vma_modify() on merge out of memory failure
-
-Ma Wupeng (3):
-      mm: memory-failure: update ttu flag inside unmap_poisoned_folio
-      mm: memory-hotplug: check folio ref count first in do_migrate_range
-      hwpoison, memory_hotplug: lock folio before unmap hwpoisoned folio
-
-Mike Snitzer (1):
-      NFS: fix nfs_release_folio() to not deadlock via kcompactd writeback
-
-Qi Zheng (1):
-      arm: pgtable: fix NULL pointer dereference issue
-
-Ricardo Ca=F1uelo Navarro (1):
-      mm: shmem: remove unnecessary warning in shmem_writepage()
-
-Ryan Roberts (1):
-      mm: don't skip arch_sync_kernel_mappings() in error paths
-
-Sebastian Andrzej Siewior (1):
-      dma: kmsan: export kmsan_handle_dma() for modules
-
-SeongJae Park (4):
-      selftests/damon/damos_quota_goal: handle minimum quota that cannot be=
- further reduced
-      selftests/damon/damos_quota: make real expectation of quota exceeds
-      selftests/damon/damon_nr_regions: set ops update for merge results ch=
-eck to 100ms
-      selftests/damon/damon_nr_regions: sort collected regiosn before check=
-ing with min/max boundaries
-
-Su Hui (1):
-      include/linux/log2.h: mark is_power_of_2() with __always_inline
-
-Sumit Garg (1):
-      MAINTAINERS: .mailmap: update Sumit Garg's email address
-
-Sun YangKai (1):
-      mm: zswap: use ATOMIC_LONG_INIT to initialize zswap_stored_pages
-
-Suren Baghdasaryan (2):
-      userfaultfd: do not block on locking a large folio with raised refcou=
-nt
-      userfaultfd: fix PTE unmapping stack-allocated PTE copies
-
-Ujwal Kundur (1):
-      Documentation: fix doc link to fault-injection.rst
-
-gao xu (1):
-      mm: fix possible NULL pointer dereference in __swap_duplicate
-
- .mailmap                                          |   1 +
- MAINTAINERS                                       |   6 +-
- arch/arm/mm/fault-armv.c                          |  37 +++++---
- arch/m68k/include/asm/sun3_pgalloc.h              |   6 +-
- drivers/rapidio/devices/rio_mport_cdev.c          |   3 +-
- drivers/rapidio/rio-scan.c                        |   5 +-
- fs/nfs/file.c                                     |   3 +-
- include/linux/compaction.h                        |   5 +
- include/linux/hugetlb.h                           |   5 +
- include/linux/log2.h                              |   2 +-
- include/linux/sched.h                             |   2 +-
- lib/Kconfig.debug                                 |   2 +-
- mm/compaction.c                                   |   3 +
- mm/hugetlb.c                                      |   8 ++
- mm/internal.h                                     |   5 +-
- mm/kmsan/hooks.c                                  |   1 +
- mm/memory-failure.c                               |  63 +++++++------
- mm/memory.c                                       |  21 +++--
- mm/memory_hotplug.c                               |  26 +++---
- mm/page_alloc.c                                   |   4 +-
- mm/page_isolation.c                               |  10 ++
- mm/shmem.c                                        |  33 ++++++-
- mm/swapfile.c                                     |  12 ++-
- mm/userfaultfd.c                                  | 107 ++++++++++++++++++=
-----
- mm/vma.c                                          |  12 ++-
- mm/vmalloc.c                                      |   4 +-
- mm/zswap.c                                        |   2 +-
- tools/testing/selftests/damon/damon_nr_regions.py |   2 +
- tools/testing/selftests/damon/damos_quota.py      |   9 +-
- tools/testing/selftests/damon/damos_quota_goal.py |   3 +
- tools/testing/selftests/mm/hugepage-mremap.c      |   2 +-
- tools/testing/selftests/mm/ksm_functional_tests.c |   8 +-
- tools/testing/selftests/mm/memfd_secret.c         |  14 ++-
- tools/testing/selftests/mm/mkdirty.c              |   8 +-
- tools/testing/selftests/mm/mlock2.h               |   1 -
- tools/testing/selftests/mm/protection_keys.c      |   2 +-
- tools/testing/selftests/mm/uffd-common.c          |   4 +
- tools/testing/selftests/mm/uffd-stress.c          |  15 ++-
- tools/testing/selftests/mm/uffd-unit-tests.c      |  14 ++-
- 39 files changed, 348 insertions(+), 122 deletions(-)
+Best regards,
+-- 
+Ethan Carter Edwards <ethan@ethancedwards.com>
 
 
