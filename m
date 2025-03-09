@@ -1,166 +1,206 @@
-Return-Path: <linux-kernel+bounces-553069-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-553068-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE041A582FF
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 11:24:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E0B6A582FD
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 11:23:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 32FA93AE605
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 10:23:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0F35D3AA5BE
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 10:23:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1971C1AC892;
-	Sun,  9 Mar 2025 10:24:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3C6C1A8418;
+	Sun,  9 Mar 2025 10:23:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="p0/qQf7d"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BxRBlECN"
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A7782114;
-	Sun,  9 Mar 2025 10:23:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DB58ECF
+	for <linux-kernel@vger.kernel.org>; Sun,  9 Mar 2025 10:23:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741515840; cv=none; b=oaEH4DZid+W2QMR0C9WknwDY3ZzbBlCPHSxZaiWUyeyPenLabEbvHdFohEhfG800th9Jwd1GP2I4cQA5wno+/eHRad7QRtJBVMH7KKDzi+5AjvaTBe8kczH37idEiN4Au/5k/huv7PraLa+XPIj1Lvy7knMFgBmgmyuMZ8FOJeE=
+	t=1741515798; cv=none; b=AIjPfQHSM2GtxICrgminPTxD0SNLAYVAdA+Zv1GuZvxIryjE/5tE2fDU+q3PoUuSHflFCdZ+pclbjUthEwm0Ud+za6UrtZoi5yMCir+NVPTSWM9dpyp4eOMzOa3uACEW4gO2iIa1DIGmsmtK8+bGJBBtOkeeYQcfz8b7lrerqxs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741515840; c=relaxed/simple;
-	bh=s4OlYYrHmgxAkduxUPPzl6dmn5j30zeeUCSL98+gt0M=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bDdoX+cm4wwLmPdqnOuxbAKV0zaE8JWXvMq4tyKmqYHYCMgEpdlP9eya84LtL+6bdiltP1tv2uIzB2TccHq6N/vfrT17bpqqz0NRaZTdIKnBT0A5e0MJTqCxjV3WHLviZD4YjgPfolYdcdl7ZdJPm+k+Mo2pw2iiiPQ5VaLJZFo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=p0/qQf7d; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 25358C4CEE5;
-	Sun,  9 Mar 2025 10:23:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1741515839;
-	bh=s4OlYYrHmgxAkduxUPPzl6dmn5j30zeeUCSL98+gt0M=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=p0/qQf7dbD1L/RE4VY7VRk5SHv13Ank8EeC7HdjaJUEqaRcajePJA1U0KNKe7MW69
-	 ZZKiur1ARxaCX4qN8Q236I1rnzq0+Kud1hLv77mnCSTSte3y1PPuNjZW8OcIqlXrQ6
-	 RK1+GlxIqL1eFPdysvH6YBZh4b1arYfz3jrRhDTw=
-Date: Sun, 9 Mar 2025 11:22:43 +0100
-From: "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>
-To: Aditya Garg <gargaditya08@live.com>
-Cc: "bhelgaas@google.com" <bhelgaas@google.com>,
-	"joro@8bytes.org" <joro@8bytes.org>,
-	"will@kernel.org" <will@kernel.org>,
-	"robin.murphy@arm.com" <robin.murphy@arm.com>,
-	"andriy.shevchenko@linux.intel.com" <andriy.shevchenko@linux.intel.com>,
-	"linux-staging@lists.linux.dev" <linux-staging@lists.linux.dev>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	"linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-	"iommu@lists.linux.dev" <iommu@lists.linux.dev>,
-	Aun-Ali Zaidi <admin@kodeit.net>, "paul@mrarm.io" <paul@mrarm.io>,
-	Orlando Chamberlain <orlandoch.dev@gmail.com>
-Subject: Re: [PATCH RFC] staging: Add driver to communicate with the T2
- Security Chip
-Message-ID: <2025030929-cryptic-ducky-9e23@gregkh>
-References: <2025030931-tattoo-patriarch-006d@gregkh>
- <PN3PR01MB9597793C256B5A16048ADBFDB8D72@PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM>
- <2025030937-antihero-sandblast-7c87@gregkh>
- <PN3PR01MB9597F037471B133B54BA25BCB8D72@PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM>
- <2025030935-contently-handbrake-9239@gregkh>
- <PN3PR01MB9597F040DD8F5A9B1A65B397B8D72@PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM>
- <2025030909-recoup-unafraid-1df0@gregkh>
- <PN3PR01MB95970E60B250F91CA8E12720B8D72@PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM>
- <2025030901-deceiver-jolliness-53f5@gregkh>
- <PN3PR01MB9597B64008E01DC0336FAE37B8D72@PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM>
+	s=arc-20240116; t=1741515798; c=relaxed/simple;
+	bh=iPcGYSG8X5xwOD70QJav+rFZeT8t7y6pb+RIl+F6H+k=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=XULFYFjI28yUClNZrczAUzyCJqOcS76rSyYmYHQVA60TeO1gzdKyxyKWbgFzMFDdUhd0/maUxgyf/Az7Ntji9soMzJF4RML2MJI3G7odwbQNPFVqfvf03/fYturnCRSGXNXjG1xLCoN3iOOcx2L8IOmVo84NcEzeVYP8eKEZA8E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BxRBlECN; arc=none smtp.client-ip=209.85.128.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-43cf680d351so528685e9.0
+        for <linux-kernel@vger.kernel.org>; Sun, 09 Mar 2025 03:23:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741515795; x=1742120595; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=jOrSY62ly9MyAZzU/mRzG/6yK32MDIUREu5DDgJTTrs=;
+        b=BxRBlECNyHYRq8pJHkad2PCLrI1ffl6cexKKk+fLrbatquNIw8vP7HSB32rQbl5PtH
+         +U6pWlE3jScayGYUeBAY0QjRLc8bdc0VDc8Nt7A8TNOJyJB1Rq97FktsesYZvDT13z06
+         RO8Eu9X4YUVngR1ykouZFDZul2gMJjLGJ538SSDtDMbaVQIUfsuCvrI8hs3I0By1gYaK
+         KRDMrj8H2opQPz/k82+B9M+Vo3nPyD4L6vx+zqt18uCt/2Yo/Elwszpcj/oa8fMe1S26
+         lI+ssAyuchh1ZYxiOgLrKTWFvoFcPQme+igvjBxWTMBMHrHjqTaXexo4Ss1NczVQa3gZ
+         wT1Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741515795; x=1742120595;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=jOrSY62ly9MyAZzU/mRzG/6yK32MDIUREu5DDgJTTrs=;
+        b=W//0JSpj7nlKId74qXCaUdHFv2f/QLNgbkncQBFy0yiSVvux5FtKdW2i1iKoQY7/35
+         iHkAQbu+FdfpTOx/JE+iUdod8kxBjMeTEeGJdhISs4C13taQS9RtmliuOUhvLsKaCauU
+         5HnOBw/BP8TncMWBm01dl10xWEBFaefyBAw77tXuKjAS8F9zHKDk5aofAenQVVM7343k
+         DQfZWXgJYhkz8bZ7qkLIzCZHQGDkSeFdctJNLV80ZQR79tFYRrpqt2aQNtjm7+cw7ItC
+         ZS0y2OrRZxcvQkWUPO9vwoUewzreS5DuICOct+bWrIk/CPYT6b2JZHBf0o+mxIelUtme
+         2oTg==
+X-Forwarded-Encrypted: i=1; AJvYcCXkmMmWMAd2p2s3D6hX0TnPIXFIEnbL06cfGr/9eiVMoG2p+9UVdboMECXXREdEAi9JDu3irogXT7VVWe8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzIijHiUtbjtuaPiCO8E6kRoxQ1WXiY7UQ7NtkwHvdtW9KrwmyC
+	yvGlftQNi0vlWW1bWfOXMq/IFzmrX4kloDj2eJchGgf9G9tnFCC6
+X-Gm-Gg: ASbGncs1m1wBjiwC4sN8zk6T9XqKBaxZUngyyal27gL5YcRch4qo5YQn8l/ahI+QgfJ
+	PjhKKVR9+lmDdhM7MVbcDMAlmWAkB3DtQ2PJWQwlYrKY4Ep9Tk9+3QGMsGILu8F8iHJoEoNaDLh
+	b5aZC1YEJeA79Wg7P8yVfq+mhcMp9yXBLGInhdsTYsoX2ccYEEdrgFij5ipwEwIxFU3a5dMKHN6
+	Ai/dqw5GocCZTZKumUjTM3yknGk2w8CZyWP2BvpeIF/CMayiO0r9PcAz02EWSUeEmC0RhzuuehD
+	apK0TCcIusVWhHUDnFo7yVdciNu8Zy5qq5hruPUhOh75xcuww1Mz4BQrsnlOexuwAMypGI4+Gy6
+	Ed7q02Ek=
+X-Google-Smtp-Source: AGHT+IHbscHwInTJT24NNcdcbyXR3Qc8dNdzXdp1UDpEDUqPcYTQseTkyV6/M+R7pmGC6z1uWCUoyw==
+X-Received: by 2002:a05:600c:754:b0:43b:bfa7:c7d with SMTP id 5b1f17b1804b1-43ce4aa8771mr34972875e9.2.1741515794376;
+        Sun, 09 Mar 2025 03:23:14 -0700 (PDT)
+Received: from pumpkin (82-69-66-36.dsl.in-addr.zen.co.uk. [82.69.66.36])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43cf0c42eb6sm21134605e9.16.2025.03.09.03.23.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 09 Mar 2025 03:23:13 -0700 (PDT)
+Date: Sun, 9 Mar 2025 10:23:12 +0000
+From: David Laight <david.laight.linux@gmail.com>
+To: Vincent Mailhol <mailhol.vincent@wanadoo.fr>
+Cc: Yury Norov <yury.norov@gmail.com>, Lucas De Marchi
+ <lucas.demarchi@intel.com>, Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+ Jani Nikula <jani.nikula@linux.intel.com>, Joonas Lahtinen
+ <joonas.lahtinen@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>,
+ Tvrtko Ursulin <tursulin@ursulin.net>, David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>, Andrew Morton <akpm@linux-foundation.org>,
+ linux-kernel@vger.kernel.org, intel-gfx@lists.freedesktop.org,
+ dri-devel@lists.freedesktop.org, Andi Shyti <andi.shyti@linux.intel.com>,
+ David Laight <David.Laight@ACULAB.COM>, Dmitry Baryshkov
+ <dmitry.baryshkov@linaro.org>, Andy Shevchenko
+ <andriy.shevchenko@linux.intel.com>
+Subject: Re: [PATCH v5 1/7] bits: split the definition of the asm and
+ non-asm GENMASK()
+Message-ID: <20250309102312.4ff08576@pumpkin>
+In-Reply-To: <20250309015853.01412484@pumpkin>
+References: <20250306-fixed-type-genmasks-v5-0-b443e9dcba63@wanadoo.fr>
+	<20250306-fixed-type-genmasks-v5-1-b443e9dcba63@wanadoo.fr>
+	<20250306192331.2701a029@pumpkin>
+	<bdce7d99-7f02-4667-acda-9ffc62c92af2@wanadoo.fr>
+	<20250309015853.01412484@pumpkin>
+X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <PN3PR01MB9597B64008E01DC0336FAE37B8D72@PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Sun, Mar 09, 2025 at 10:12:06AM +0000, Aditya Garg wrote:
+On Sun, 9 Mar 2025 01:58:53 +0000
+David Laight <david.laight.linux@gmail.com> wrote:
+
+> On Fri, 7 Mar 2025 18:58:08 +0900
+> Vincent Mailhol <mailhol.vincent@wanadoo.fr> wrote:
 > 
-> 
-> > On 9 Mar 2025, at 3:26 PM, gregkh@linuxfoundation.org wrote:
+> > On 07/03/2025 at 04:23, David Laight wrote:  
+> > > On Thu, 06 Mar 2025 20:29:52 +0900
+> > > Vincent Mailhol via B4 Relay <devnull+mailhol.vincent.wanadoo.fr@kernel.org> wrote:
+> > >     
+> > >> From: Vincent Mailhol <mailhol.vincent@wanadoo.fr>
+> > >>
+> > >> In an upcoming change, GENMASK() and its friends will indirectly
+> > >> depend on sizeof() which is not available in asm.
+> > >>
+> > >> Instead of adding further complexity to __GENMASK() to make it work
+> > >> for both asm and non asm, just split the definition of the two
+> > >> variants.    
+> > > ...    
+> > >> +#else /* defined(__ASSEMBLY__) */
+> > >> +
+> > >> +#define GENMASK(h, l)		__GENMASK(h, l)
+> > >> +#define GENMASK_ULL(h, l)	__GENMASK_ULL(h, l)    
+> > > 
+> > > What do those actually expand to now?
+> > > As I've said a few times both UL(0) and ULL(0) are just (0) for __ASSEMBLY__
+> > > so the expansions of __GENMASK() and __GENMASK_ULL() contained the
+> > > same numeric constants.    
 > > 
-> > ﻿On Sun, Mar 09, 2025 at 09:52:43AM +0000, Aditya Garg wrote:
-> >> 
-> >> 
-> >>>> On 9 Mar 2025, at 3:21 PM, gregkh@linuxfoundation.org wrote:
-> >>> 
-> >>> ﻿On Sun, Mar 09, 2025 at 09:41:29AM +0000, Aditya Garg wrote:
-> >>>> 
-> >>>> 
-> >>>>>> On 9 Mar 2025, at 3:09 PM, gregkh@linuxfoundation.org wrote:
-> >>>>> 
-> >>>>> ﻿On Sun, Mar 09, 2025 at 09:28:01AM +0000, Aditya Garg wrote:
-> >>>>>> 
-> >>>>>> 
-> >>>>>>>> On 9 Mar 2025, at 2:46 PM, gregkh@linuxfoundation.org wrote:
-> >>>>>>> 
-> >>>>>>> ﻿On Sun, Mar 09, 2025 at 09:03:29AM +0000, Aditya Garg wrote:
-> >>>>>>>> 
-> >>>>>>>> 
-> >>>>>>>>>> On 9 Mar 2025, at 2:24 PM, gregkh@linuxfoundation.org wrote:
-> >>>>>>>>> 
-> >>>>>>>>> ﻿On Sun, Mar 09, 2025 at 08:40:31AM +0000, Aditya Garg wrote:
-> >>>>>>>>>> From: Paul Pawlowski <paul@mrarm.io>
-> >>>>>>>>>> 
-> >>>>>>>>>> This patch adds a driver named apple-bce, to add support for the T2
-> >>>>>>>>>> Security Chip found on certain Macs.
-> >>>>>>>>>> 
-> >>>>>>>>>> The driver has 3 main components:
-> >>>>>>>>>> 
-> >>>>>>>>>> BCE (Buffer Copy Engine) - this is what the files in the root directory
-> >>>>>>>>>> are for. This estabilishes a basic communication channel with the T2.
-> >>>>>>>>>> VHCI and Audio both require this component.
-> >>>>>>>>> 
-> >>>>>>>>> So this is a new "bus" type?  Or a platform resource?  Or something
-> >>>>>>>>> else?
-> >>>>>>>> 
-> >>>>>>>> It's a PCI device
-> >>>>>>> 
-> >>>>>>> Great, but then is the resources split up into smaller drivers that then
-> >>>>>>> bind to it?  How does the other devices talk to this?
-> >>>>>> 
-> >>>>>> We technically can split up these 3 into separate drivers and put then into their own trees.
-> >>>>> 
-> >>>>> That's fine, but you say that the bce code is used by the other drivers,
-> >>>>> right?  So there is some sort of "tie" between these, and that needs to
-> >>>>> be properly conveyed in the device tree in sysfs as that will be
-> >>>>> required for proper resource management.
-> >>>> 
-> >>>> Yes there needs to be a tie, basically first establish a communication with the t2 using bce and then the other 2 come into the picture. I did get a basic idea from what the maintainers want, and this will be some work to do. Thanks for your inputs!
-> >>> 
-> >>> If there is "communication" then that's a bus in the driver model
-> >>> scheme, so just use that, right?
-> >> 
-> >> So basically RE the whole driver to see what exactly should be use?
+> > Indeed, in asm, the UL(0) and ULL(0) expands to the same thing: 0.
 > > 
-> > I'm sorry, I can not parse this.
+> > But the two macros still expand to something different on 32 bits
+> > architectures:
+> > 
+> >   * __GENMASK:
+> > 
+> >       (((~(0)) << (l)) & (~(0) >> (32 - 1 - (h))))
+> > 
+> >   * __GENMASK_ULL:
+> > 
+> >       (((~(0)) << (l)) & (~(0) >> (64 - 1 - (h))))
+> > 
+> > On 64 bits architecture these are the same.  
 > 
+> I've just fed those into godbolt (https://www.godbolt.org/z/Ter6WE9qE) as:
+> int fi(void)
+> {
+>     int v;
+>     asm("mov $(((~(0)) << (8)) & (~(0) >> (32 - 1 - (15)))),%0": "=r" (v));
+>     return v -(((~(0u)) << (8)) & (~(0u) >> (32 - 1 - (15))));
+> }
 > 
-> I was asking that should I introduce a completely new bus instead of
-> pci and probably reverse engineer the original macOS driver to see
-> what exactly is going on there?
+> gas warns:
+> <source>:4: Warning: 0xffffffffff00 shortened to 0xffffff00
+> 
+> unsigned long long fll(void)
+> {
+>     unsigned long long v;
+>     asm("mov $(((~(0)) << (8)) & (~(0) >> (64 - 1 - (15)))),%0": "=r" (v));
+>     return v -(((~(0ull)) << (8)) & (~(0ull) >> (64 - 1 - (15))));
+> }
+> 
+> (for other architectures you'll need to change the opcode)
+> 
+> For x86 and x86-32 the assembler seems to be doing 64bit maths with unsigned
+> right shifts - so the second function (with the 64 in it) generates 0xff00.
+> I doubt a 32bit only assembler does 64bit maths, but the '>> 48' above
+> might get masked to a '>> 16' by the cpu and generate the correct result.
+> 
+> So __GENMASK() is likely to be broken for any assembler that supports 64bits
+> when generating 32bit code.
+> __GENMASK_ULL() works (assuming all have unsigned >>) on 64bit assemblers
+> (even when generating 32bit code). It may work on some 32bit assemblers.
 
-No, if it's a PCI device on a PCI bus, then use the PCI api for all of
-that.
+I've remembered my 'pi' has a 32bit userspace (on a 64bit kernel).
+I quick test of "mov %0,#(...)" and bits 11..8 gives the correct output
+for size '32' but the error message:
+/tmp/ccPB7bWh.s:26: Warning: shift count out of range (56 is not between 0 and 31)
+with size '64'.
 
-It's what that PCI device "exposes" here, are the other devices, like
-the USB host controller, hanging off of that, or are they real PCI
-devices as well?
+Assuming that part of the gnu assembler is consistent across architectures
+you can't use either GENMASK in asm for 32bit architectures.
 
-What exactly does this BCE driver do?
+Any change (probably including removing the asm support for the uapi) isn't
+going to make things worse!
 
-> I might not have been clear, but I'm not the author of this patch.
+	David
 
-That's fine, but why doesn't the original author want to do this work?
-Have you asked them if they want this code included in the kernel tree?
-Who is going to do the maintenance for it and who is going to answer
-questions like the ones I have here?
+> 
+> Since most uses in the header files will be GENMASK() I doubt (hope) no
+> asm code actually uses the values!
+> The headers assemble - but that is about all that can be said.
+> 
+> Bags of worms :-)
+> 
+> 	David
+> 
 
-And again, what is with the new user/kernel api being added?  What is
-all of that for?
-
-thanks,
-
-greg k-h
 
