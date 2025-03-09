@@ -1,191 +1,202 @@
-Return-Path: <linux-kernel+bounces-552954-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-552956-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 437A1A5816E
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 09:07:38 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 96CDEA58176
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 09:09:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 16E6D3AD0CC
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 08:07:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 39774188EF5D
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 08:09:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D8DA183CCA;
-	Sun,  9 Mar 2025 08:07:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA9ED18E361;
+	Sun,  9 Mar 2025 08:08:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="D2QOP4hJ"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="AL/PJjho"
+Received: from smtp-fw-80006.amazon.com (smtp-fw-80006.amazon.com [99.78.197.217])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A423B10E5
-	for <linux-kernel@vger.kernel.org>; Sun,  9 Mar 2025 08:07:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C0B014A4E7;
+	Sun,  9 Mar 2025 08:08:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=99.78.197.217
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741507651; cv=none; b=P8kO+PioZ9thqRKKEzCah9PvkmAaliFTw1nAjVmreoqmqixY/G07qDlwlK69PK+g9r+DlYKwY8AbOVRrtTMNaKyK3BIL0gH5Y2ig9DnB9tBGdxpJSeQ6kiX6L88xEjQBhos2HjuC4sCP0rAB5KLNMx19FXhtdqj/BNUCFW/MvTk=
+	t=1741507739; cv=none; b=UZzs9xzbCQWe/Rd6Y0gMJ33xAJrdvIz9O2R4+PwIOPbNHiG12FWRdCQfi03ubpqK15dk7xIlwkEBHm2luKJjya4Bu72VMoaAp69Mmq01u3sFOm2xilaWTHb5DmV0Qxi52ajgpvfxQkyzd3Zx77cbwkp2dolbqUIGEumz2u8ctWU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741507651; c=relaxed/simple;
-	bh=99NEVqvBP5TRbaKk01Oc0W/ttk9cc30UFtifsXasBuM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=XC/DXJbRD7gWlVQDTPJio8M4V1atZcIKQ3rxQHJaQHOjKy8RYXx9ymuWt5Foso5OdCsNBixSsgFQ8Czu4Swypewo/6mt+B5YjeBUOakBkP2k2m9SuaxoSaItHWcMOJffNQAFtHqhfuAbctCDkpE1hZxqy6ed6B+YhlrxZNMIhzs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=D2QOP4hJ; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1741507648;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=bMxc923CRiMks37b+Jjb8HyITgLj/wOpsi581iiQzTY=;
-	b=D2QOP4hJGDSz5OG25vbvgjp/IX9k8W5RWmjqjOFh8HDXbWwMYry7860zOqYIJ4TIuTWaOX
-	qAiIC/z3eUskaMj7QE46YSrtHwi3W6OWlZJ5D07oSuZ/jzHHpWtoTGf2r/moNxxwwDwaZW
-	G4vwTTjJ2+UaeQidSiji/jwT5E1yz6E=
-Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
- [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-527-ezbuFoReP3mZ2qPn0Xmh2g-1; Sun, 09 Mar 2025 04:07:26 -0400
-X-MC-Unique: ezbuFoReP3mZ2qPn0Xmh2g-1
-X-Mimecast-MFC-AGG-ID: ezbuFoReP3mZ2qPn0Xmh2g_1741507645
-Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-391425471ddso241667f8f.0
-        for <linux-kernel@vger.kernel.org>; Sun, 09 Mar 2025 00:07:26 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741507645; x=1742112445;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=bMxc923CRiMks37b+Jjb8HyITgLj/wOpsi581iiQzTY=;
-        b=H57L00odNynpxzTm4lrECgtVgxI7OsC1VH6+n7Y/zTP9YR7fOZhDMlrbea4cVP1YOp
-         +XwKNefd2yP6lbHpAR0art6rBO51YRdXZl+wpsUEVLBPuTftAYhnCs3mIJivPUqBNJQe
-         ksWA3rGek+1aSGqoQX4j7ph8gv0fwpLg77qLd5uc246oqZ0BiUgQST7141D+mEjzeztd
-         DLlAY+S4WzzrWx5ieL7w811VmGKiV6k0Q8Nll6ulURJmv2l20JbFmq0w7SNd4n3sM0/b
-         aw8Dc0isMQnkc+1bfcTFYq5gqsyZabsx1EnkHWaPEFs10bLlfsQB8i8xw/9hC2uQOk8g
-         HvIg==
-X-Forwarded-Encrypted: i=1; AJvYcCVDcn0iOAZqSH3z1ATVz6a3zGn+KfpiFk+Yi6KwEifhzYTrh4Eh68OmZfUQfcDQ4dQRgK6U3Tr76GwO1hA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzxLMVGUjCb8oJpiZchD+ggYZHLPrTIjssmUEc/rHxdEOQcG+mD
-	/biWY5Qgjgdi8JurwMAggOywPo7WekgWaGp9HThjOQyLIQAWQHrDKVackszitAbb1Oau4HRySww
-	UK/5EswrA1BYMtrQDI68lSTZ9ltQprFgX54HYbCCVuyHEGsdCsOQaqWFGjNAexC1ASvScbPa3sm
-	uzKweRTor8GNyyzp/UDlOO3s6jlld09dyy82Pj
-X-Gm-Gg: ASbGncuGR4XuVcIxQP+teMvUgIUZqHAeqEQ03D8V4QhuOxrrpQXnsP/v/Y0jzurpRSh
-	5jKmplVyh1l9qdNDLqS9DMLT7/LQw2uWfKCNQ8oyduqW66SEX9FvqrvqjVchHaKmrxTajgcY4CQ
-	==
-X-Received: by 2002:a05:6000:4102:b0:391:487f:27e7 with SMTP id ffacd0b85a97d-391487f2b5amr87716f8f.55.1741507645473;
-        Sun, 09 Mar 2025 00:07:25 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IGhD/61rkcaEIdwMrtxevM0JBg/y05qGnnJvvH/bQYC44QrzoG0yv2gURYtI+KKv8IIxwg7AZ5hOgrh770quwo=
-X-Received: by 2002:a05:6000:4102:b0:391:487f:27e7 with SMTP id
- ffacd0b85a97d-391487f2b5amr87696f8f.55.1741507645022; Sun, 09 Mar 2025
- 00:07:25 -0800 (PST)
+	s=arc-20240116; t=1741507739; c=relaxed/simple;
+	bh=mVGo6cZizCxBMHTz6A8TFTXzta23bxReakaQRj6g5n4=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=hlYbIEc/TJyaQW5KKMP/Okz8hKUnXCnc7cU/s4vnvNzbY2yWUSizWmAHtAKMbd7Ce++4fOFkybo9gl4Z9Z6ig26XgXf9pnfkrmefhzW8LeyQSO9MZSWGndxyVRbiT0xrQfQazc2Krl3y55UqT7owBTga5QRkYRXrBgAjJFSbS/w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.co.jp; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=AL/PJjho; arc=none smtp.client-ip=99.78.197.217
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.jp
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
+  t=1741507737; x=1773043737;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=DycMLRtBjeeykWMU7bu/+eHYSnqYqv4lVfemfVZdWgo=;
+  b=AL/PJjhoJ76vNz7OV/d+Sjy3yDBDvUNjJ2Yak0mRGGTZmslyXmkCgwsX
+   zLCDCZU7GkKBCfchQSR9ECy1KP2TsCuXsHTLRn7W7mydxXqiGU5rN6/2K
+   D3nXoWRwvgn+gOovYfWCI/T6TDnJdpSEb8kmCMCMqKXOq2cvo16TOt3qT
+   4=;
+X-IronPort-AV: E=Sophos;i="6.14,233,1736812800"; 
+   d="scan'208";a="30072758"
+Received: from pdx4-co-svc-p1-lb2-vlan3.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.25.36.214])
+  by smtp-border-fw-80006.pdx80.corp.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Mar 2025 08:08:56 +0000
+Received: from EX19MTAUWB001.ant.amazon.com [10.0.7.35:36675]
+ by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.62.245:2525] with esmtp (Farcaster)
+ id fac3bf64-0b79-435d-a327-294bd6fc7f01; Sun, 9 Mar 2025 08:08:55 +0000 (UTC)
+X-Farcaster-Flow-ID: fac3bf64-0b79-435d-a327-294bd6fc7f01
+Received: from EX19D003ANC003.ant.amazon.com (10.37.240.197) by
+ EX19MTAUWB001.ant.amazon.com (10.250.64.248) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
+ Sun, 9 Mar 2025 08:08:55 +0000
+Received: from b0be8375a521.amazon.com (10.118.253.182) by
+ EX19D003ANC003.ant.amazon.com (10.37.240.197) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
+ Sun, 9 Mar 2025 08:08:48 +0000
+From: Kohei Enju <enjuk@amazon.com>
+To: <netfilter-devel@vger.kernel.org>, <coreteam@netfilter.org>,
+	<netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<bpf@vger.kernel.org>
+CC: <syzbot+83fed965338b573115f7@syzkaller.appspotmail.com>, Pablo Neira Ayuso
+	<pablo@netfilter.org>, Jozsef Kadlecsik <kadlec@netfilter.org>, "David S .
+ Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, "Jakub
+ Kicinski" <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Simon Horman
+	<horms@kernel.org>, Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann
+	<daniel@iogearbox.net>, Jesper Dangaard Brouer <hawk@kernel.org>, "John
+ Fastabend" <john.fastabend@gmail.com>, Yi-Hung Wei <yihung.wei@gmail.com>,
+	Florian Westphal <fw@strlen.de>, <kohei.enju@gmail.com>, Kohei Enju
+	<enjuk@amazon.com>
+Subject: [PATCH net v1] netfilter: nf_conncount: Fully initialize struct nf_conncount_tuple in insert_tree()
+Date: Sun, 9 Mar 2025 17:07:38 +0900
+Message-ID: <20250309080816.87224-2-enjuk@amazon.com>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250308010347.1014779-1-seanjc@google.com>
-In-Reply-To: <20250308010347.1014779-1-seanjc@google.com>
-From: Paolo Bonzini <pbonzini@redhat.com>
-Date: Sun, 9 Mar 2025 09:06:54 +0100
-X-Gm-Features: AQ5f1JoolazH4jL0h1xGLNNnbKtztmE1g0HsqhOFa3fHrQo1Y-uGVjTz1XGfUfY
-Message-ID: <CABgObfYO8tEYYTDfmf+F-GA3aOCrRn6_Os6uhry9EJ4F3QHkUw@mail.gmail.com>
-Subject: Re: [GIT PULL] KVM: x86: Fixes for 6.14-rcN
-To: Sean Christopherson <seanjc@google.com>
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: EX19D032UWA001.ant.amazon.com (10.13.139.62) To
+ EX19D003ANC003.ant.amazon.com (10.37.240.197)
 
-On Sat, Mar 8, 2025 at 2:03=E2=80=AFAM Sean Christopherson <seanjc@google.c=
-om> wrote:
->
-> Please pull a handful of fixes for 6.14.  The DEBUGCTL changes are the mo=
-st
-> urgent, as they fix a bug that was introduced in 6.13 that results in Ste=
-am
-> (and other applications) getting killed due to unexpected #DBs.
->
-> The following changes since commit c2fee09fc167c74a64adb08656cb993ea47519=
-7e:
->
->   KVM: x86: Load DR6 with guest value only before entering .vcpu_run() lo=
-op (2025-02-12 08:59:38 -0800)
->
-> are available in the Git repository at:
->
->   https://github.com/kvm-x86/linux.git tags/kvm-x86-fixes-6.14-rcN.2
->
-> for you to fetch changes up to f9dc8fb3afc968042bdaf4b6e445a9272071c9f3:
->
->   KVM: x86: Explicitly zero EAX and EBX when PERFMON_V2 isn't supported b=
-y KVM (2025-03-04 09:19:18 -0800)
+Since commit b36e4523d4d5 ("netfilter: nf_conncount: fix garbage
+collection confirm race"), `cpu` and `jiffies32` were introduced to
+the struct nf_conncount_tuple.
 
-Pulled, thanks.
+The commit made nf_conncount_add() initialize `conn->cpu` and
+`conn->jiffies32` when allocating the struct.
+In contrast, count_tree() was not changed to initialize them.
 
-Paolo
+By commit 34848d5c896e ("netfilter: nf_conncount: Split insert and
+traversal"), count_tree() was split and the relevant allocation
+code now resides in insert_tree().
+Initialize `conn->cpu` and `conn->jiffies32` in insert_tree().
 
-> ----------------------------------------------------------------
-> KVM x86 fixes for 6.14-rcN #2
->
->  - Set RFLAGS.IF in C code on SVM to get VMRUN out of the STI shadow.
->
->  - Ensure DEBUGCTL is context switched on AMD to avoid running the guest =
-with
->    the host's value, which can lead to unexpected bus lock #DBs.
->
->  - Suppress DEBUGCTL.BTF on AMD (to match Intel), as KVM doesn't properly
->    emulate BTF.  KVM's lack of context switching has meant BTF has always=
- been
->    broken to some extent.
->
->  - Always save DR masks for SNP vCPUs if DebugSwap is *supported*, as the=
- guest
->    can enable DebugSwap without KVM's knowledge.
->
->  - Fix a bug in mmu_stress_tests where a vCPU could finish the "writes to=
- RO
->    memory" phase without actually generating a write-protection fault.
->
->  - Fix a printf() goof in the SEV smoke test that causes build failures w=
-ith
->    -Werror.
->
->  - Explicitly zero EAX and EBX in CPUID.0x8000_0022 output when PERFMON_V=
-2
->    isn't supported by KVM.
->
-> ----------------------------------------------------------------
-> Sean Christopherson (11):
->       KVM: SVM: Set RFLAGS.IF=3D1 in C code, to get VMRUN out of the STI =
-shadow
->       KVM: selftests: Assert that STI blocking isn't set after event inje=
-ction
->       KVM: SVM: Drop DEBUGCTL[5:2] from guest's effective value
->       KVM: SVM: Suppress DEBUGCTL.BTF on AMD
->       KVM: x86: Snapshot the host's DEBUGCTL in common x86
->       KVM: SVM: Manually context switch DEBUGCTL if LBR virtualization is=
- disabled
->       KVM: x86: Snapshot the host's DEBUGCTL after disabling IRQs
->       KVM: SVM: Save host DR masks on CPUs with DebugSwap
->       KVM: SVM: Don't rely on DebugSwap to restore host DR0..DR3
->       KVM: selftests: Ensure all vCPUs hit -EFAULT during initial RO stag=
-e
->       KVM: selftests: Fix printf() format goof in SEV smoke test
->
-> Xiaoyao Li (1):
->       KVM: x86: Explicitly zero EAX and EBX when PERFMON_V2 isn't support=
-ed by KVM
->
->  arch/x86/include/asm/kvm_host.h                    |  1 +
->  arch/x86/kvm/cpuid.c                               |  2 +-
->  arch/x86/kvm/svm/sev.c                             | 24 +++++++----
->  arch/x86/kvm/svm/svm.c                             | 49 ++++++++++++++++=
-++++++
->  arch/x86/kvm/svm/svm.h                             |  2 +-
->  arch/x86/kvm/svm/vmenter.S                         | 10 +----
->  arch/x86/kvm/vmx/vmx.c                             |  8 +---
->  arch/x86/kvm/vmx/vmx.h                             |  2 -
->  arch/x86/kvm/x86.c                                 |  2 +
->  tools/testing/selftests/kvm/mmu_stress_test.c      | 21 ++++++----
->  .../selftests/kvm/x86/nested_exceptions_test.c     |  2 +
->  tools/testing/selftests/kvm/x86/sev_smoke_test.c   |  3 +-
->  12 files changed, 91 insertions(+), 35 deletions(-)
->
+BUG: KMSAN: uninit-value in find_or_evict net/netfilter/nf_conncount.c:117 [inline]
+BUG: KMSAN: uninit-value in __nf_conncount_add+0xd9c/0x2850 net/netfilter/nf_conncount.c:143
+ find_or_evict net/netfilter/nf_conncount.c:117 [inline]
+ __nf_conncount_add+0xd9c/0x2850 net/netfilter/nf_conncount.c:143
+ count_tree net/netfilter/nf_conncount.c:438 [inline]
+ nf_conncount_count+0x82f/0x1e80 net/netfilter/nf_conncount.c:521
+ connlimit_mt+0x7f6/0xbd0 net/netfilter/xt_connlimit.c:72
+ __nft_match_eval net/netfilter/nft_compat.c:403 [inline]
+ nft_match_eval+0x1a5/0x300 net/netfilter/nft_compat.c:433
+ expr_call_ops_eval net/netfilter/nf_tables_core.c:240 [inline]
+ nft_do_chain+0x426/0x2290 net/netfilter/nf_tables_core.c:288
+ nft_do_chain_ipv4+0x1a5/0x230 net/netfilter/nft_chain_filter.c:23
+ nf_hook_entry_hookfn include/linux/netfilter.h:154 [inline]
+ nf_hook_slow+0xf4/0x400 net/netfilter/core.c:626
+ nf_hook_slow_list+0x24d/0x860 net/netfilter/core.c:663
+ NF_HOOK_LIST include/linux/netfilter.h:350 [inline]
+ ip_sublist_rcv+0x17b7/0x17f0 net/ipv4/ip_input.c:633
+ ip_list_rcv+0x9ef/0xa40 net/ipv4/ip_input.c:669
+ __netif_receive_skb_list_ptype net/core/dev.c:5936 [inline]
+ __netif_receive_skb_list_core+0x15c5/0x1670 net/core/dev.c:5983
+ __netif_receive_skb_list net/core/dev.c:6035 [inline]
+ netif_receive_skb_list_internal+0x1085/0x1700 net/core/dev.c:6126
+ netif_receive_skb_list+0x5a/0x460 net/core/dev.c:6178
+ xdp_recv_frames net/bpf/test_run.c:280 [inline]
+ xdp_test_run_batch net/bpf/test_run.c:361 [inline]
+ bpf_test_run_xdp_live+0x2e86/0x3480 net/bpf/test_run.c:390
+ bpf_prog_test_run_xdp+0xf1d/0x1ae0 net/bpf/test_run.c:1316
+ bpf_prog_test_run+0x5e5/0xa30 kernel/bpf/syscall.c:4407
+ __sys_bpf+0x6aa/0xd90 kernel/bpf/syscall.c:5813
+ __do_sys_bpf kernel/bpf/syscall.c:5902 [inline]
+ __se_sys_bpf kernel/bpf/syscall.c:5900 [inline]
+ __ia32_sys_bpf+0xa0/0xe0 kernel/bpf/syscall.c:5900
+ ia32_sys_call+0x394d/0x4180 arch/x86/include/generated/asm/syscalls_32.h:358
+ do_syscall_32_irqs_on arch/x86/entry/common.c:165 [inline]
+ __do_fast_syscall_32+0xb0/0x110 arch/x86/entry/common.c:387
+ do_fast_syscall_32+0x38/0x80 arch/x86/entry/common.c:412
+ do_SYSENTER_32+0x1f/0x30 arch/x86/entry/common.c:450
+ entry_SYSENTER_compat_after_hwframe+0x84/0x8e
+
+Uninit was created at:
+ slab_post_alloc_hook mm/slub.c:4121 [inline]
+ slab_alloc_node mm/slub.c:4164 [inline]
+ kmem_cache_alloc_noprof+0x915/0xe10 mm/slub.c:4171
+ insert_tree net/netfilter/nf_conncount.c:372 [inline]
+ count_tree net/netfilter/nf_conncount.c:450 [inline]
+ nf_conncount_count+0x1415/0x1e80 net/netfilter/nf_conncount.c:521
+ connlimit_mt+0x7f6/0xbd0 net/netfilter/xt_connlimit.c:72
+ __nft_match_eval net/netfilter/nft_compat.c:403 [inline]
+ nft_match_eval+0x1a5/0x300 net/netfilter/nft_compat.c:433
+ expr_call_ops_eval net/netfilter/nf_tables_core.c:240 [inline]
+ nft_do_chain+0x426/0x2290 net/netfilter/nf_tables_core.c:288
+ nft_do_chain_ipv4+0x1a5/0x230 net/netfilter/nft_chain_filter.c:23
+ nf_hook_entry_hookfn include/linux/netfilter.h:154 [inline]
+ nf_hook_slow+0xf4/0x400 net/netfilter/core.c:626
+ nf_hook_slow_list+0x24d/0x860 net/netfilter/core.c:663
+ NF_HOOK_LIST include/linux/netfilter.h:350 [inline]
+ ip_sublist_rcv+0x17b7/0x17f0 net/ipv4/ip_input.c:633
+ ip_list_rcv+0x9ef/0xa40 net/ipv4/ip_input.c:669
+ __netif_receive_skb_list_ptype net/core/dev.c:5936 [inline]
+ __netif_receive_skb_list_core+0x15c5/0x1670 net/core/dev.c:5983
+ __netif_receive_skb_list net/core/dev.c:6035 [inline]
+ netif_receive_skb_list_internal+0x1085/0x1700 net/core/dev.c:6126
+ netif_receive_skb_list+0x5a/0x460 net/core/dev.c:6178
+ xdp_recv_frames net/bpf/test_run.c:280 [inline]
+ xdp_test_run_batch net/bpf/test_run.c:361 [inline]
+ bpf_test_run_xdp_live+0x2e86/0x3480 net/bpf/test_run.c:390
+ bpf_prog_test_run_xdp+0xf1d/0x1ae0 net/bpf/test_run.c:1316
+ bpf_prog_test_run+0x5e5/0xa30 kernel/bpf/syscall.c:4407
+ __sys_bpf+0x6aa/0xd90 kernel/bpf/syscall.c:5813
+ __do_sys_bpf kernel/bpf/syscall.c:5902 [inline]
+ __se_sys_bpf kernel/bpf/syscall.c:5900 [inline]
+ __ia32_sys_bpf+0xa0/0xe0 kernel/bpf/syscall.c:5900
+ ia32_sys_call+0x394d/0x4180 arch/x86/include/generated/asm/syscalls_32.h:358
+ do_syscall_32_irqs_on arch/x86/entry/common.c:165 [inline]
+ __do_fast_syscall_32+0xb0/0x110 arch/x86/entry/common.c:387
+ do_fast_syscall_32+0x38/0x80 arch/x86/entry/common.c:412
+ do_SYSENTER_32+0x1f/0x30 arch/x86/entry/common.c:450
+ entry_SYSENTER_compat_after_hwframe+0x84/0x8e
+
+Reported-by: syzbot+83fed965338b573115f7@syzkaller.appspotmail.com
+Closes: https://syzkaller.appspot.com/bug?extid=83fed965338b573115f7
+Fixes: b36e4523d4d5 ("netfilter: nf_conncount: fix garbage collection confirm race")
+Signed-off-by: Kohei Enju <enjuk@amazon.com>
+---
+ net/netfilter/nf_conncount.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/net/netfilter/nf_conncount.c b/net/netfilter/nf_conncount.c
+index 4890af4dc263..4d7cc94cb151 100644
+--- a/net/netfilter/nf_conncount.c
++++ b/net/netfilter/nf_conncount.c
+@@ -377,6 +377,8 @@ insert_tree(struct net *net,
+ 
+ 	conn->tuple = *tuple;
+ 	conn->zone = *zone;
++	conn->cpu = raw_smp_processor_id();
++	conn->jiffies32 = (u32)jiffies;
+ 	memcpy(rbconn->key, key, sizeof(u32) * data->keylen);
+ 
+ 	nf_conncount_list_init(&rbconn->list);
+-- 
+2.48.1
 
 
