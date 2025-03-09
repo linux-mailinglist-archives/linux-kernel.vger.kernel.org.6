@@ -1,134 +1,376 @@
-Return-Path: <linux-kernel+bounces-553103-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-553104-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 86D39A583DA
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 12:46:37 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1A312A583DF
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 12:56:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B5DD916B877
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 11:46:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7A229188AB7B
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 11:56:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D13021C82F4;
-	Sun,  9 Mar 2025 11:46:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DB551CAA85;
+	Sun,  9 Mar 2025 11:56:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kukRWH4K"
-Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="s2b+9s+3"
+Received: from smtp.smtpout.orange.fr (smtp-15.smtpout.orange.fr [80.12.242.15])
+	(using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 468FD137E;
-	Sun,  9 Mar 2025 11:46:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3ADA110E5;
+	Sun,  9 Mar 2025 11:56:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741520786; cv=none; b=h6DpZSVWsrcYhm+qR1Kgwi4LjR7PRCD3dX9j9V8KzBwUWEdWmaQBLhqu6xBb+y6BT9kQn/LfHFQ/19ir50p7rutgtcTJMJfOsDnqJT5VHYvH1hcfC7Zz8lCwW3TWkCAZK+jekUoM8trbQZFFlMmYMnHIJqGz9NXnM1GjckLZ2jo=
+	t=1741521385; cv=none; b=E7bHHxOjJwTSncNhCCZTj81wKAPKOMyEX41bc2TteFOiFMm/CoWE8D+xj6EFtkGckkBoUTSRCny1T0lbPk+EsNA05l5BP4nuGC45o0qNU+kGxn92ISW+o8J6U2+Spt40h0NuByTAXDGRPNA9tAI8BX3V2VCoD2LQ7miWXfpkCUg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741520786; c=relaxed/simple;
-	bh=bSXg2zabw7qKisgsVgjD6bCGbNw/2WZDn8ufJFEDH14=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ijaO1+FKlFHvXHcuIoWGwaSUjejSOapWQDGzVL5RtfSGx0KQwkNDSmxAMh6aoAAPSMFA3tuBzD+jnEb4zLmKiaUDufA6LWg7fIGs9y93P5jwNu1ErCBFF07lVmJHvI+rTQJpmQYwO0m4QFrk2+IO2fsWqPkufcdn692JG31hIWg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kukRWH4K; arc=none smtp.client-ip=209.85.218.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-aaf900cc7fbso678014766b.3;
-        Sun, 09 Mar 2025 04:46:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741520782; x=1742125582; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=OCu0vN4H8XwwS+13HQgSYHgbkhWHfbQF4cgbHHPiSUw=;
-        b=kukRWH4KyzJD+fXLrWzXaXd2VSXRq9GVPDAtL9DxEbdqN10bMsDYhj0ufcNnDyjbmm
-         UiaMjC6t8OEEdB/j6wcVydjBk5QFARfsWBb3Ugpap3P/IG79galfFSanHa7jin1X9hQV
-         tGH5nJltMJkgcNGNZ6zM6C2Hlj0JoWJyj7W1h4cgr5XxnFGY89j2jW1iLFbmtAAXQCGx
-         cV8bDCdoJH7n2w57WGRBzvMVCovPk/cg/OBJlrtHIeI0hlNnpycmVvqJAxF9Z+st15GU
-         DbbvpT+0lOJQ5ziQTqwPdp5k8tgReP7blmhv0IECVEHNkQN5RTclLWspQHcr6m/QYhGH
-         DVqw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741520782; x=1742125582;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=OCu0vN4H8XwwS+13HQgSYHgbkhWHfbQF4cgbHHPiSUw=;
-        b=GOU6t1+Dc13+y5ydrY1hKqiW5WDN7PWaWbS8Mnc5aDQ9v8n1PhleaJIcIw7VGiQ/ho
-         UVEYPy0Ulj627EDd4e6SuHJNGDlZlTE5JxKaoz4YVJutUgdZXt50dU+MugaRgbloPrkv
-         xRc6OVckUdduitQWtRMeK7lh7ys5JQUUMPcwWt8mSqxtjRJy1t7oqucQO8ZwW2mHS8rK
-         Ftm4QvhZUK7oymWyGPToAL+BeW9M6IcOkj70dMCG9ICAM923HD3sr8rGgThVxM4lJ122
-         MPsfBDQ5VXVjhqtPQ/ZsV44kC8WDCATbmxOxzYV5Wsv/rp0womQ6cEn9bZTS8/V1On10
-         nZJw==
-X-Forwarded-Encrypted: i=1; AJvYcCWS8xO9aVQ95zP3afwOZ7kDQlZ5d+plCd5Rf/VFbfl03FVL+Qc8O77sJiZRl4H1yYusgO4+/ltmxC2Ezw==@vger.kernel.org, AJvYcCXMWzDxj2CNZG+nraP4yezf7QtSlvOC8XdHg1We0nntR6nY8A4cQi+09jqHTOAzk1OAeqJ71yuuxBnUIyg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxSohCrImdlDPLRdhR7TbtnHrLMOp7/vpMJHM6uw/bgjhslJLcN
-	xsMdbeygDiRyKn65wP8WiWnFWKUsdcEKgYlg6bZr66OWyrub+mAb
-X-Gm-Gg: ASbGnctKOgE8gP5xalYcuBGK0uot119Y44rB5GF/Pi89E9c9TN8RyfFZUAAkG1ZCMML
-	QVsmcNrBrrEbfICr2aTzkyT9P87CylQ8Aw9ifG0xreLEFyPvBoJO9/ok2wKTNo32ee9KJERraTH
-	n4rufX8jrYoBtXKSc8cAvuHlHC9PM/cdrBL6trX9+pau+/aHeGMrPLYQv2P9HbAoOKl24ddL61+
-	ZuJ5j16Fe/0hEAMcKaHz4HSqI84L/XdlXjY2SZEngS5Im5F2p8mjEt/Bn0mAOeiKF1nQHZQRQ2g
-	fwnd2PET7awYGJERN0OoVGgyevqJNR+0ylC4Xw8U2g7GgEqoLRn4yQDNKPav3Z5gvg==
-X-Google-Smtp-Source: AGHT+IFbrSPJmJebinSVh5WJ3B/eEqdgNq4/X/xaPiP+Hd/vZ5pL3AqNBcKkELkot7YrNNw06xoQaA==
-X-Received: by 2002:a17:907:3f2a:b0:abf:7a26:c47e with SMTP id a640c23a62f3a-ac252e9e7cfmr1088030666b.43.1741520782067;
-        Sun, 09 Mar 2025 04:46:22 -0700 (PDT)
-Received: from [172.27.60.223] ([193.47.165.251])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac2811e5b32sm187067666b.159.2025.03.09.04.46.20
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 09 Mar 2025 04:46:21 -0700 (PDT)
-Message-ID: <d415dada-f1cb-486d-b018-171777bfaab6@gmail.com>
-Date: Sun, 9 Mar 2025 13:46:19 +0200
+	s=arc-20240116; t=1741521385; c=relaxed/simple;
+	bh=JDUMq0R5Umlo/3rTwDj0VAv71rMgmH8LLUmYjZiD3Do=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ZX26i+JSj83QQQ1vw40V+jedTpMCfwr37RoQPr8BmKvrsIEhKra1q/mu4XCl03OLVEVIj1B+IAzSMiemoXQ5NHocM+1wEgcGkHd19mdE6Cnl7kbT1NhRfAyCsFJxQxB3EMkpg/n1Hp0glJwdaMcH68G1Rmx1WzzgRwX9+p4vQcU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=s2b+9s+3; arc=none smtp.client-ip=80.12.242.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+Received: from fedora.home ([90.11.132.44])
+	by smtp.orange.fr with ESMTPA
+	id rFGQtpkDgPGDMrFGTtbkkZ; Sun, 09 Mar 2025 12:56:19 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1741521379;
+	bh=H0s5CDqPZDbyKDmt23WAeBdwAAE/k7OMy3tznpH5qp0=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=s2b+9s+3BQROKzRSjzGc2G8ccWqS9fED8EA6UGQEVSwMPCz/7MoPjoXWA2zLkzSlz
+	 Jpk1g5TVXoldiCZbYdXZKTMq9iu2akQWGVEdkTcbV/Z7vyq7pUnMvssi8cc8WbP6F4
+	 ADpyPtMrWQZ+DGpUOWbl1jIVvE8qtwbFJfr1wyjwFGnkdEqwmu+XE7Vd6fsP3iTe2Y
+	 McRVkWUc6ngWJJGe06ZNcthOs91hCSlL2tyjJyW+j2SlCIXwnSqj4rR6DTCpM90Hlm
+	 eaBZiDtLaNkyz+Si3szhJ5ky+YZVuGL+FNIEbyqJb0zzYLLOnGMrq76D8iH6IJ48yR
+	 vUPhAasLmAH6A==
+X-ME-Helo: fedora.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Sun, 09 Mar 2025 12:56:19 +0100
+X-ME-IP: 90.11.132.44
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: Steven Rostedt <rostedt@goodmis.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Cc: linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	linux-trace-kernel@vger.kernel.org
+Subject: [PATCH] tracing: Constify struct event_trigger_ops
+Date: Sun,  9 Mar 2025 12:56:06 +0100
+Message-ID: <66e8f990e649678e4be37d4d1a19158ca0dea2f4.1741521295.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net v3] net/mlx5: handle errors in
- mlx5_chains_create_table()
-To: Wentao Liang <vulab@iscas.ac.cn>, saeedm@nvidia.com, leon@kernel.org,
- andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
- kuba@kernel.org, pabeni@redhat.com
-Cc: netdev@vger.kernel.org, linux-rdma@vger.kernel.org,
- linux-kernel@vger.kernel.org, Tariq Toukan <tariqt@nvidia.com>
-References: <20250307021820.2646-1-vulab@iscas.ac.cn>
-Content-Language: en-US
-From: Tariq Toukan <ttoukan.linux@gmail.com>
-In-Reply-To: <20250307021820.2646-1-vulab@iscas.ac.cn>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
+'event_trigger_ops mwifiex_if_ops' are not modified in these drivers.
 
+Constifying these structures moves some data to a read-only section, so
+increase overall security, especially when the structure holds some
+function pointers.
 
-On 07/03/2025 4:18, Wentao Liang wrote:
-> In mlx5_chains_create_table(), the return value of mlx5_get_fdb_sub_ns()
-> and mlx5_get_flow_namespace() must be checked to prevent NULL pointer
-> dereferences. If either function fails, the function should log error
-> message with mlx5_core_warn() and return error pointer.
-> 
-> Fixes: 39ac237ce009 ("net/mlx5: E-Switch, Refactor chains and priorities")
-> Signed-off-by: Wentao Liang <vulab@iscas.ac.cn>
-> ---
-> [v1]->[v2]: Add Fixes tag and branch target. Change return value.
-> [v2]->[v3]: Change Fixes tag. Move change history.
-> ---
->   drivers/net/ethernet/mellanox/mlx5/core/lib/fs_chains.c | 5 +++++
->   1 file changed, 5 insertions(+)
-> 
-> diff --git a/drivers/net/ethernet/mellanox/mlx5/core/lib/fs_chains.c b/drivers/net/ethernet/mellanox/mlx5/core/lib/fs_chains.c
-> index a80ecb672f33..711d14dea248 100644
-> --- a/drivers/net/ethernet/mellanox/mlx5/core/lib/fs_chains.c
-> +++ b/drivers/net/ethernet/mellanox/mlx5/core/lib/fs_chains.c
-> @@ -196,6 +196,11 @@ mlx5_chains_create_table(struct mlx5_fs_chains *chains,
->   		ns = mlx5_get_flow_namespace(chains->dev, chains->ns);
->   	}
->   
-> +	if (!ns) {
-> +		mlx5_core_warn(chains->dev, "Failed to get flow namespace\n");
-> +		return ERR_PTR(-EOPNOTSUPP);
-> +	}
-> +
->   	ft_attr.autogroup.num_reserved_entries = 2;
->   	ft_attr.autogroup.max_num_groups = chains->group_num;
->   	ft = mlx5_create_auto_grouped_flow_table(ns, &ft_attr);
+On a x86_64, with allmodconfig, as an example:
+Before:
+======
+   text	   data	    bss	    dec	    hex	filename
+  31368	   9024	   6200	  46592	   b600	kernel/trace/trace_events_trigger.o
 
-Reviewed-by: Tariq Toukan <tariqt@nvidia.com>
+After:
+=====
+   text	   data	    bss	    dec	    hex	filename
+  31752	   8608	   6200	  46560	   b5e0	kernel/trace/trace_events_trigger.o
 
-Thanks.
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+Compile tested-only.
+---
+ kernel/trace/trace.h                |  4 +--
+ kernel/trace/trace_eprobe.c         |  6 ++---
+ kernel/trace/trace_events_hist.c    | 20 +++++++--------
+ kernel/trace/trace_events_trigger.c | 38 ++++++++++++++---------------
+ 4 files changed, 34 insertions(+), 34 deletions(-)
+
+diff --git a/kernel/trace/trace.h b/kernel/trace/trace.h
+index 5307daa2dacb..abab9442ac0e 100644
+--- a/kernel/trace/trace.h
++++ b/kernel/trace/trace.h
+@@ -1718,7 +1718,7 @@ struct event_trigger_data {
+ 	unsigned long			count;
+ 	int				ref;
+ 	int				flags;
+-	struct event_trigger_ops	*ops;
++	const struct event_trigger_ops	*ops;
+ 	struct event_command		*cmd_ops;
+ 	struct event_filter __rcu	*filter;
+ 	char				*filter_str;
+@@ -1963,7 +1963,7 @@ struct event_command {
+ 	int			(*set_filter)(char *filter_str,
+ 					      struct event_trigger_data *data,
+ 					      struct trace_event_file *file);
+-	struct event_trigger_ops *(*get_trigger_ops)(char *cmd, char *param);
++	const struct event_trigger_ops *(*get_trigger_ops)(char *cmd, char *param);
+ };
+ 
+ /**
+diff --git a/kernel/trace/trace_eprobe.c b/kernel/trace/trace_eprobe.c
+index af9fa0632b57..c08355c3ef32 100644
+--- a/kernel/trace/trace_eprobe.c
++++ b/kernel/trace/trace_eprobe.c
+@@ -478,7 +478,7 @@ static void eprobe_trigger_func(struct event_trigger_data *data,
+ 	__eprobe_trace_func(edata, rec);
+ }
+ 
+-static struct event_trigger_ops eprobe_trigger_ops = {
++static const struct event_trigger_ops eprobe_trigger_ops = {
+ 	.trigger		= eprobe_trigger_func,
+ 	.print			= eprobe_trigger_print,
+ 	.init			= eprobe_trigger_init,
+@@ -507,8 +507,8 @@ static void eprobe_trigger_unreg_func(char *glob,
+ 
+ }
+ 
+-static struct event_trigger_ops *eprobe_trigger_get_ops(char *cmd,
+-							char *param)
++static const struct event_trigger_ops *eprobe_trigger_get_ops(char *cmd,
++							      char *param)
+ {
+ 	return &eprobe_trigger_ops;
+ }
+diff --git a/kernel/trace/trace_events_hist.c b/kernel/trace/trace_events_hist.c
+index ad7419e24055..0a962e929243 100644
+--- a/kernel/trace/trace_events_hist.c
++++ b/kernel/trace/trace_events_hist.c
+@@ -6191,7 +6191,7 @@ static void event_hist_trigger_free(struct event_trigger_data *data)
+ 	}
+ }
+ 
+-static struct event_trigger_ops event_hist_trigger_ops = {
++static const struct event_trigger_ops event_hist_trigger_ops = {
+ 	.trigger		= event_hist_trigger,
+ 	.print			= event_hist_trigger_print,
+ 	.init			= event_hist_trigger_init,
+@@ -6223,15 +6223,15 @@ static void event_hist_trigger_named_free(struct event_trigger_data *data)
+ 	}
+ }
+ 
+-static struct event_trigger_ops event_hist_trigger_named_ops = {
++static const struct event_trigger_ops event_hist_trigger_named_ops = {
+ 	.trigger		= event_hist_trigger,
+ 	.print			= event_hist_trigger_print,
+ 	.init			= event_hist_trigger_named_init,
+ 	.free			= event_hist_trigger_named_free,
+ };
+ 
+-static struct event_trigger_ops *event_hist_get_trigger_ops(char *cmd,
+-							    char *param)
++static const struct event_trigger_ops *event_hist_get_trigger_ops(char *cmd,
++								  char *param)
+ {
+ 	return &event_hist_trigger_ops;
+ }
+@@ -6826,38 +6826,38 @@ hist_enable_count_trigger(struct event_trigger_data *data,
+ 	hist_enable_trigger(data, buffer, rec, event);
+ }
+ 
+-static struct event_trigger_ops hist_enable_trigger_ops = {
++static const struct event_trigger_ops hist_enable_trigger_ops = {
+ 	.trigger		= hist_enable_trigger,
+ 	.print			= event_enable_trigger_print,
+ 	.init			= event_trigger_init,
+ 	.free			= event_enable_trigger_free,
+ };
+ 
+-static struct event_trigger_ops hist_enable_count_trigger_ops = {
++static const struct event_trigger_ops hist_enable_count_trigger_ops = {
+ 	.trigger		= hist_enable_count_trigger,
+ 	.print			= event_enable_trigger_print,
+ 	.init			= event_trigger_init,
+ 	.free			= event_enable_trigger_free,
+ };
+ 
+-static struct event_trigger_ops hist_disable_trigger_ops = {
++static const struct event_trigger_ops hist_disable_trigger_ops = {
+ 	.trigger		= hist_enable_trigger,
+ 	.print			= event_enable_trigger_print,
+ 	.init			= event_trigger_init,
+ 	.free			= event_enable_trigger_free,
+ };
+ 
+-static struct event_trigger_ops hist_disable_count_trigger_ops = {
++static const struct event_trigger_ops hist_disable_count_trigger_ops = {
+ 	.trigger		= hist_enable_count_trigger,
+ 	.print			= event_enable_trigger_print,
+ 	.init			= event_trigger_init,
+ 	.free			= event_enable_trigger_free,
+ };
+ 
+-static struct event_trigger_ops *
++static const struct event_trigger_ops *
+ hist_enable_get_trigger_ops(char *cmd, char *param)
+ {
+-	struct event_trigger_ops *ops;
++	const struct event_trigger_ops *ops;
+ 	bool enable;
+ 
+ 	enable = (strcmp(cmd, ENABLE_HIST_STR) == 0);
+diff --git a/kernel/trace/trace_events_trigger.c b/kernel/trace/trace_events_trigger.c
+index d45448947094..b66b6d235d91 100644
+--- a/kernel/trace/trace_events_trigger.c
++++ b/kernel/trace/trace_events_trigger.c
+@@ -825,7 +825,7 @@ struct event_trigger_data *event_trigger_alloc(struct event_command *cmd_ops,
+ 					       void *private_data)
+ {
+ 	struct event_trigger_data *trigger_data;
+-	struct event_trigger_ops *trigger_ops;
++	const struct event_trigger_ops *trigger_ops;
+ 
+ 	trigger_ops = cmd_ops->get_trigger_ops(cmd, param);
+ 
+@@ -1367,38 +1367,38 @@ traceoff_trigger_print(struct seq_file *m, struct event_trigger_data *data)
+ 				   data->filter_str);
+ }
+ 
+-static struct event_trigger_ops traceon_trigger_ops = {
++static const struct event_trigger_ops traceon_trigger_ops = {
+ 	.trigger		= traceon_trigger,
+ 	.print			= traceon_trigger_print,
+ 	.init			= event_trigger_init,
+ 	.free			= event_trigger_free,
+ };
+ 
+-static struct event_trigger_ops traceon_count_trigger_ops = {
++static const struct event_trigger_ops traceon_count_trigger_ops = {
+ 	.trigger		= traceon_count_trigger,
+ 	.print			= traceon_trigger_print,
+ 	.init			= event_trigger_init,
+ 	.free			= event_trigger_free,
+ };
+ 
+-static struct event_trigger_ops traceoff_trigger_ops = {
++static const struct event_trigger_ops traceoff_trigger_ops = {
+ 	.trigger		= traceoff_trigger,
+ 	.print			= traceoff_trigger_print,
+ 	.init			= event_trigger_init,
+ 	.free			= event_trigger_free,
+ };
+ 
+-static struct event_trigger_ops traceoff_count_trigger_ops = {
++static const struct event_trigger_ops traceoff_count_trigger_ops = {
+ 	.trigger		= traceoff_count_trigger,
+ 	.print			= traceoff_trigger_print,
+ 	.init			= event_trigger_init,
+ 	.free			= event_trigger_free,
+ };
+ 
+-static struct event_trigger_ops *
++static const struct event_trigger_ops *
+ onoff_get_trigger_ops(char *cmd, char *param)
+ {
+-	struct event_trigger_ops *ops;
++	const struct event_trigger_ops *ops;
+ 
+ 	/* we register both traceon and traceoff to this callback */
+ 	if (strcmp(cmd, "traceon") == 0)
+@@ -1491,21 +1491,21 @@ snapshot_trigger_print(struct seq_file *m, struct event_trigger_data *data)
+ 				   data->filter_str);
+ }
+ 
+-static struct event_trigger_ops snapshot_trigger_ops = {
++static const struct event_trigger_ops snapshot_trigger_ops = {
+ 	.trigger		= snapshot_trigger,
+ 	.print			= snapshot_trigger_print,
+ 	.init			= event_trigger_init,
+ 	.free			= event_trigger_free,
+ };
+ 
+-static struct event_trigger_ops snapshot_count_trigger_ops = {
++static const struct event_trigger_ops snapshot_count_trigger_ops = {
+ 	.trigger		= snapshot_count_trigger,
+ 	.print			= snapshot_trigger_print,
+ 	.init			= event_trigger_init,
+ 	.free			= event_trigger_free,
+ };
+ 
+-static struct event_trigger_ops *
++static const struct event_trigger_ops *
+ snapshot_get_trigger_ops(char *cmd, char *param)
+ {
+ 	return param ? &snapshot_count_trigger_ops : &snapshot_trigger_ops;
+@@ -1586,21 +1586,21 @@ stacktrace_trigger_print(struct seq_file *m, struct event_trigger_data *data)
+ 				   data->filter_str);
+ }
+ 
+-static struct event_trigger_ops stacktrace_trigger_ops = {
++static const struct event_trigger_ops stacktrace_trigger_ops = {
+ 	.trigger		= stacktrace_trigger,
+ 	.print			= stacktrace_trigger_print,
+ 	.init			= event_trigger_init,
+ 	.free			= event_trigger_free,
+ };
+ 
+-static struct event_trigger_ops stacktrace_count_trigger_ops = {
++static const struct event_trigger_ops stacktrace_count_trigger_ops = {
+ 	.trigger		= stacktrace_count_trigger,
+ 	.print			= stacktrace_trigger_print,
+ 	.init			= event_trigger_init,
+ 	.free			= event_trigger_free,
+ };
+ 
+-static struct event_trigger_ops *
++static const struct event_trigger_ops *
+ stacktrace_get_trigger_ops(char *cmd, char *param)
+ {
+ 	return param ? &stacktrace_count_trigger_ops : &stacktrace_trigger_ops;
+@@ -1711,28 +1711,28 @@ void event_enable_trigger_free(struct event_trigger_data *data)
+ 	}
+ }
+ 
+-static struct event_trigger_ops event_enable_trigger_ops = {
++static const struct event_trigger_ops event_enable_trigger_ops = {
+ 	.trigger		= event_enable_trigger,
+ 	.print			= event_enable_trigger_print,
+ 	.init			= event_trigger_init,
+ 	.free			= event_enable_trigger_free,
+ };
+ 
+-static struct event_trigger_ops event_enable_count_trigger_ops = {
++static const struct event_trigger_ops event_enable_count_trigger_ops = {
+ 	.trigger		= event_enable_count_trigger,
+ 	.print			= event_enable_trigger_print,
+ 	.init			= event_trigger_init,
+ 	.free			= event_enable_trigger_free,
+ };
+ 
+-static struct event_trigger_ops event_disable_trigger_ops = {
++static const struct event_trigger_ops event_disable_trigger_ops = {
+ 	.trigger		= event_enable_trigger,
+ 	.print			= event_enable_trigger_print,
+ 	.init			= event_trigger_init,
+ 	.free			= event_enable_trigger_free,
+ };
+ 
+-static struct event_trigger_ops event_disable_count_trigger_ops = {
++static const struct event_trigger_ops event_disable_count_trigger_ops = {
+ 	.trigger		= event_enable_count_trigger,
+ 	.print			= event_enable_trigger_print,
+ 	.init			= event_trigger_init,
+@@ -1916,10 +1916,10 @@ void event_enable_unregister_trigger(char *glob,
+ 		data->ops->free(data);
+ }
+ 
+-static struct event_trigger_ops *
++static const struct event_trigger_ops *
+ event_enable_get_trigger_ops(char *cmd, char *param)
+ {
+-	struct event_trigger_ops *ops;
++	const struct event_trigger_ops *ops;
+ 	bool enable;
+ 
+ #ifdef CONFIG_HIST_TRIGGERS
+-- 
+2.48.1
+
 
