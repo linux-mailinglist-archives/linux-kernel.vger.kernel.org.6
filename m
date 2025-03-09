@@ -1,79 +1,72 @@
-Return-Path: <linux-kernel+bounces-553115-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-553116-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 468FAA58407
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 13:28:18 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 465D9A58415
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 13:38:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 806E31686DE
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 12:28:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 72AF7169B4C
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 12:38:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 734A71D5CEA;
-	Sun,  9 Mar 2025 12:28:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 154DF1D61B5;
+	Sun,  9 Mar 2025 12:38:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ug5jSivZ"
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="esymyqcV"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25FB52A8C1;
-	Sun,  9 Mar 2025 12:28:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E59A640849
+	for <linux-kernel@vger.kernel.org>; Sun,  9 Mar 2025 12:38:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741523288; cv=none; b=hkHbnF8WyaFJlKVFEbWAAbjUqwXERu7fEWdVaAiwqnsjaw8U8hkCrJ8czlgJxzW9UOE7qOCdw4rBNB9C6VjOtwXR5HD0Fcj+LiUaLaZW8aYoeD+ug4iVWQLLRTvy7j4NXqrLXJluApVIQ5jd6zCa3DhLjU7b+8Kd6J8loSleSTA=
+	t=1741523918; cv=none; b=B4SwCLFXkf64Qg1ZNKYLjZoYfOcwYAv2d8SSa7NZgguLvwn4LtyjnXOTSETAMlnLEWSkraxVo1cDgKcsjay5qiH3m/DwMGSj+gh0GOg6KKRbeXqFeFxvUhm1A74lGKYtWZpM3Ik82PMZnVA0kCHvL1SfRvT0AI3gDifRnFp00+w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741523288; c=relaxed/simple;
-	bh=Q/8ho1ZPlzJ4nVNZTI/wYYtiJyJFUkXUDFvNcQZFKT8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=kOmY1ZpvZMCfTlyqC1UVq9GskplgIAplo0lbJNOSpPFmnHGtm/2bbpgkus1F0L/GxdLx4sMYXvrQSWAQgpQeeN57a0nwBtgm9uZPhvu92pu3XS6kJGJVWW5QdZvLpiMmuYAg7/h+M40WBBFntg4D4RwBwTOO4oiRiMNcsE9JaQg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ug5jSivZ; arc=none smtp.client-ip=209.85.128.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-43bcc04d4fcso19464385e9.2;
-        Sun, 09 Mar 2025 05:28:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741523285; x=1742128085; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=jaCjmy/2wA14pbhhG2CRaGe/sVh+09XO5wxJxcfM2WQ=;
-        b=Ug5jSivZhQcLu75xxMboRSNZglpyiFdhMo/3aGcZxTlCzHT+yBcUlaIyFHynyVEjaE
-         Og1TNZp54dXC96HZs4aJq3bXbmUJvDjKeckudAIf+LylqEbhBWlH2LI6rrKjXDhZwyqS
-         zFb+l8GczhKpEI1nI04kps+XRnkOaGWoslu/lv4iPNPYTofdhxfr7tWmaX0MUDfwL/KA
-         XXl7w29YF85XatNf0pJK9PeWiAP6S9WmNAYnBfX4wew+gKIjiyPJG7LHS5ZUQexvzBAe
-         ATDWzrlntLtEa0N9TQWVA2OY5HzZjoCrWbqckk71knqD9cb3+FmzW0OYT83R8k4kfl4W
-         mZ4Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741523285; x=1742128085;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=jaCjmy/2wA14pbhhG2CRaGe/sVh+09XO5wxJxcfM2WQ=;
-        b=TXva2XzkTibuMqMzbTF/7df3NJzF50TaEmeBwL1AaOnC8ZzZrsxxLC0kzEOTBjIgvz
-         C0Z1psM6DOcu30WW0JgQm9IU7MrKB7hlqweLGvu1lQha/0ZIevD29gXtbxHeyTNhB/kp
-         gltHw8ko2hH2t7048YlPqeKwZKIdAFi3Jablp+U0O9Qgk64BkSujM9ht2Pov7FxHyDzl
-         0vGMGupF1biCBhkMQP1UR9PHohncIuMnA9YvUR9tHcYYQCveHYVQu9wpgLKjmsFMhJgW
-         l1gBzVjTi0f3oFliXygW4nZQi8hh4wGatOWPfWzFSx/NzBOfOomzRWhyo0ZLNR10gOml
-         gizg==
-X-Forwarded-Encrypted: i=1; AJvYcCU3kjCI2ABHWCulAh1aTbCKz4gSgmBhvkMoLgXQdzC+DlIBjFrGBNE7W3m+jcUZBB+5dWteHDDoNyhnN447@vger.kernel.org, AJvYcCUn+QupypbKCXLMq0id0IeW98OBZoVQ3x58bSDCTwiI1bQ2jcrwWrrg8k5VyxgNcDZAbO9iRAOI0DGJnp9mZw==@vger.kernel.org, AJvYcCX0NzcaN6G42thjG34C9pjZRsLMCcmdPbsr+8/EUbK04eQbLwDTHbdCvkRzf7hsEsJeBS5Yin7jEPwA@vger.kernel.org
-X-Gm-Message-State: AOJu0YzuZJXtVZ6pyiml9+3JpbJxUF5GdvoNeCy2fW0W7kFObGrtsRe4
-	snsOgkkQmF39pOpJYO/6+arZKvYIa2wzTMQQgdHdgeLIL4BXIfPZ1wvck3o=
-X-Gm-Gg: ASbGncvsIiyPPQJxkQkzmdcbAEd72N7wK6wC9NOhg+a/2V7Xe2f0+Z1i+12T7HbnK8M
-	pVQo8HILAlmjq4iO4fDxRpYfvkl7oTOfPIWmD76GT6qjpaaI9aEvxkkJ9CmcRc+NPiDEoWUspB8
-	A/XhCxX0yk1WZ8syoaL2s3l8FpmAqz+9qoMKN/agWDorLYZhqty/a0DHD6v7dOHjP2xpqzINOVp
-	f0vYNtCCLzCkvsFtT0d5jYCk23yDHsKuNZPC19iZl9ZDsSAS47fThA5DMHR4LLHLsZQ2dkap0Fc
-	MklAljUDLBRyf6ZXLkiWnaT6WxN9BSUy32GsrrqYibYjn6SU3DK4wvi64Z+zVJXsjYa8pwaw8p0
-	EE/hxQV4gjeBYJFSBFZiTdg==
-X-Google-Smtp-Source: AGHT+IFSO5uThCc8aF0617UoNV6mIu70QgwC87l0qV/cAQ+YxnazTbkI0OmibCRClFRWINwkmuItzw==
-X-Received: by 2002:a05:600c:3b82:b0:43b:c3b0:56af with SMTP id 5b1f17b1804b1-43c601e1314mr71367915e9.14.1741523284803;
-        Sun, 09 Mar 2025 05:28:04 -0700 (PDT)
-Received: from [192.168.20.192] (adsl-178-39-53-103.adslplus.ch. [178.39.53.103])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43ce3f573f6sm39528065e9.0.2025.03.09.05.28.03
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 09 Mar 2025 05:28:04 -0700 (PDT)
-Message-ID: <33b00810-2fd3-4a38-bfdd-47f543cb51bd@gmail.com>
-Date: Sun, 9 Mar 2025 13:28:03 +0100
+	s=arc-20240116; t=1741523918; c=relaxed/simple;
+	bh=1YuDNW0c+7GLipEH8MlQWl37bkudvBX1WT6vl/BS7zU=;
+	h=Message-ID:Date:MIME-Version:To:From:Subject:Content-Type; b=ipl/CGFDvBWpd8SVbAeyvWr1AZnjyjeTBa8+kY+pb0CDgmWY6sO1/whxpts3+9AQMelLBzMO+B5CCs1ZVCpG+/YapjkxAYpcvCO+AMLzPP3I1aNmhXCZ38crY9FTbhW4dxU+Kv31qCJ5pG8Er/d/2iwhLgr1KGMcJSJDpTdgYi0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=esymyqcV; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 529BhLlW007842;
+	Sun, 9 Mar 2025 12:38:20 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=
+	content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=pp1; bh=z25u1C5IboR8ljLK34Hmmh2M2r05
+	ibUTuM8VlpKwCyI=; b=esymyqcVSn1f6sCXHool+WBm5UIVWJi1eSHnUPUs/jnO
+	k+dTF0pWL4AOxhhg/UIF1ZQ6OuhWdLsGB8BnKQghmyN81rKTqnypEtEqzA0GB/3m
+	/uuRviDeoSLo9GWB77XVdne7rJhGowpYGM6OTJs7iT6UjThIdN2fz67Q1CgKDM0w
+	NjTZiHeiLEtwmn2/73bh2COMz3+WdAHpCVhXGcw7lQtz/mLwA4xj4cFJNiSrtxZN
+	x6Qc/AHzhSCMPMX1F8WV+pYe5RUBTqivEe4moyc8ojzAW09c7IY6rWXv+v7Ei2r0
+	kYdKp7145T2T1H0CyR5Ir11BT0EL/MA6GV/PE8ZCuA==
+Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 458wa4j250-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sun, 09 Mar 2025 12:38:20 +0000 (GMT)
+Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma12.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 5299cF9X006991;
+	Sun, 9 Mar 2025 12:38:19 GMT
+Received: from smtprelay07.dal12v.mail.ibm.com ([172.16.1.9])
+	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 45907st85j-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sun, 09 Mar 2025 12:38:19 +0000
+Received: from smtpav05.dal12v.mail.ibm.com (smtpav05.dal12v.mail.ibm.com [10.241.53.104])
+	by smtprelay07.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 529CcJ0p23790280
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Sun, 9 Mar 2025 12:38:19 GMT
+Received: from smtpav05.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 0E3235805D;
+	Sun,  9 Mar 2025 12:38:19 +0000 (GMT)
+Received: from smtpav05.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 782AA58052;
+	Sun,  9 Mar 2025 12:38:17 +0000 (GMT)
+Received: from [9.61.254.32] (unknown [9.61.254.32])
+	by smtpav05.dal12v.mail.ibm.com (Postfix) with ESMTP;
+	Sun,  9 Mar 2025 12:38:17 +0000 (GMT)
+Message-ID: <70ba4e80-53c4-4583-82f3-2851e0829aa6@linux.ibm.com>
+Date: Sun, 9 Mar 2025 18:08:16 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,97 +74,60 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RESEND v5 0/4] arm64: dts: qcom: x1e80100: crd/t14s:
- Enable Parade Type-C retimers
-To: Abel Vesa <abel.vesa@linaro.org>
-Cc: Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Johan Hovold <johan@kernel.org>,
- Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
- Rajendra Nayak <quic_rjendra@quicinc.com>,
- Sibi Sankar <quic_sibis@quicinc.com>,
- Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
- Trilok Soni <quic_tsoni@quicinc.com>, linux-arm-msm@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250220-x1e80100-dts-crd-t14s-enable-typec-retimers-v5-0-380a3e0e7edc@linaro.org>
- <ea9344b7-6646-4329-b8f6-45d2b51f183b@gmail.com>
- <Z81eAMoXb9li4lba@linaro.org>
-Content-Language: en-US
-From: Aleksandrs Vinarskis <alex.vinarskis@gmail.com>
-In-Reply-To: <Z81eAMoXb9li4lba@linaro.org>
+Content-Language: en-GB
+To: Stephen Rothwell <sfr@canb.auug.org.au>, linux-kernel@vger.kernel.org,
+        Madhavan Srinivasan <maddy@linux.ibm.com>,
+        linuxppc-dev@lists.ozlabs.org, Michael Ellerman <mpe@ellerman.id.au>
+From: Venkat Rao Bagalkote <venkat88@linux.ibm.com>
+Subject: [linux-next-20250307] Build Failure
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: y3GgWXzXuzgdO767rWyEK9Pzx6fEmJNT
+X-Proofpoint-ORIG-GUID: y3GgWXzXuzgdO767rWyEK9Pzx6fEmJNT
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-09_05,2025-03-07_03,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 impostorscore=0
+ suspectscore=0 mlxscore=0 bulkscore=0 phishscore=0 priorityscore=1501
+ malwarescore=0 adultscore=0 lowpriorityscore=0 clxscore=1015
+ mlxlogscore=689 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2502100000 definitions=main-2503090100
+
+Greetings!!,
+
+I see linux-next-20250307 fails to build on IBM Power9 and Power10 servers.
 
 
+Errors:
 
-On 3/9/25 10:23, Abel Vesa wrote:
-> On 25-03-07 23:03:07, Aleksandrs Vinarskis wrote:
->>
->>
->> On 2/20/25 18:42, Abel Vesa wrote:
->>> Since the driver and dt-bindings have been alread merged, it has been
->>> agreed offline that there is no point of holding on to these DT patches
->>> even though there are some issues with plug/unplug during suspend in
->>> both pmic-glink-altmode and ucsi-glink. These issues are being worked on
->>> meanwhile. Merging these means that even though this will provide external DP
->>> and USB orientation, plug/unplug during suspend will give some splats
->>> and render both the USB orientation and DP broken. But then, other
->>> X Elite boards already have these nodes described, so lets bring the crd
->>> and t14s to the same level.
->>>
->>> These patches are just a resend of the ones found in v5 and dropped in the v6
->>> patchset of the driver and dt-bindings.
->>>
->>> Link to v5: https://lore.kernel.org/all/20241112-x1e80100-ps8830-v5-0-4ad83af4d162@linaro.org/
->>>
->>> Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
->>
->> If you will be respinning, could you please add link-frequencies to
->> enable HBR3 speeds, similarly to [1]? Alternatively, I can also send
->> fixups once this series lands.
-> 
-> 
-> It's already re-spun here:
-> 
-> https://lore.kernel.org/all/20250304-x1e80100-dts-crd-t14s-enable-typec-retimers-v6-0-e5a49fae4e94@linaro.org/
-> 
-> Waiting to be merged.
+In file included from ^[[01m^[[K<command-line>^[[m^[[K:
+^[[01m^[[K./usr/include/cxl/features.h:11:10:^[[m^[[K ^[[01;31m^[[Kfatal 
+error: ^[[m^[[Kuuid/uuid.h: No such file or directory
+    11 | #include ^[[01;31m^[[K<uuid/uuid.h>^[[m^[[K
+       |          ^[[01;31m^[[K^~~~~~~~~~~~~^[[m^[[K
+compilation terminated.
+make[4]: *** [usr/include/Makefile:85: usr/include/cxl/features.hdrtest] 
+Error 1
+make[3]: *** [scripts/Makefile.build:461: usr/include] Error 2
+make[2]: *** [scripts/Makefile.build:461: usr] Error 2
+make[2]: *** Waiting for unfinished jobs....
+arch/powerpc/kernel/switch.o: warning: objtool: .text+0x4: 
+intra_function_call not a direct call
+arch/powerpc/crypto/ghashp8-ppc.o: warning: objtool: .text+0x22c: 
+unannotated intra-function call
+arch/powerpc/kvm/book3s_hv_rmhandlers.o: warning: objtool: .text+0xe84: 
+intra_function_call not a direct call
+make[1]: *** [/home/linux_src/linux/Makefile:1997: .] Error 2
+make: *** [Makefile:251: __sub-make] Error 2
 
-My bad, somehow missed the respin.
+Please add below tag, if you happen to fix this issue.
 
-> 
-> Lets make the HBR3 enablement a separate patchset as I'm not able to
-> test it in time, if we want external DP to be part of 6.15.
-> 
+Reported-by: Venkat Rao Bagalkote <venkat88@linux.ibm.com>
 
-Sure. Will send as follow up once its merged.
 
-Thanks,
-Alex
+Regards,
 
->>
->> [1]
->> https://lore.kernel.org/all/20250226231436.16138-1-alex.vinarskis@gmail.com/
->>
->> Thanks,
->> Alex
->>
->>> ---
->>> Abel Vesa (4):
->>>         arm64: dts: qcom: x1e80100-crd: Describe the Parade PS8830 retimers
->>>         arm64: dts: qcom: x1e80100-crd: Enable external DisplayPort support
->>>         arm64: dts: qcom: x1e80100-t14s: Describe the Parade PS8830 retimers
->>>         arm64: dts: qcom: x1e80100-t14s: Enable external DisplayPort support
->>>
->>>    .../dts/qcom/x1e78100-lenovo-thinkpad-t14s.dts     | 321 +++++++++++++-
->>>    arch/arm64/boot/dts/qcom/x1e80100-crd.dts          | 474 ++++++++++++++++++++-
->>>    2 files changed, 785 insertions(+), 10 deletions(-)
->>> ---
->>> base-commit: 50a0c754714aa3ea0b0e62f3765eb666a1579f24
->>> change-id: 20250220-x1e80100-dts-crd-t14s-enable-typec-retimers-325cdb7b097d
->>>
->>> Best regards,
->>
+Venkat.
 
 
