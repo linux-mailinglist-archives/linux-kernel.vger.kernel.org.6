@@ -1,160 +1,153 @@
-Return-Path: <linux-kernel+bounces-553026-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-553029-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B7A21A582A6
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 10:23:24 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 14E2CA582AC
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 10:26:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 20C35189026A
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 09:23:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 49ED016AAAE
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 09:26:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC65F1A2C29;
-	Sun,  9 Mar 2025 09:23:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB5021A08B1;
+	Sun,  9 Mar 2025 09:26:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Ab6N48KY"
-Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="vEDNglcP"
+Received: from mail-yb1-f180.google.com (mail-yb1-f180.google.com [209.85.219.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A3ED19259F
-	for <linux-kernel@vger.kernel.org>; Sun,  9 Mar 2025 09:23:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 769ABECF
+	for <linux-kernel@vger.kernel.org>; Sun,  9 Mar 2025 09:26:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741512200; cv=none; b=sAHF8hWWITwVaHUqnZF31peZ4y5wJ6KJUtWAHW35GcbcAiljhMZYz2W7phNoLHu/rQKmVweQxNLzbvX53XB1EDIJO7grvCN0ZrTQj2i2pPWA7Yz8huCRUx/AqZTjg1e4AoAywolCBrjO0u2ETjPzw+lOMNsCy5cdB/VEuc2vbBE=
+	t=1741512406; cv=none; b=e+/DnGdvrN5JLpMWqWpnCyJKdGv+/YFqEjQrSKZtAR15VA9zEZFw7DjV8bqKMOhzuQHpUPgtTRUsCtzKuU0JgwHpOpaPD6Mjjl8FBT0luDTLizbW/TnwkId44aIdSdQPGUfGoF8iRgBE8mlIdt0dK14LzgregqTUBBkFC3i5MCM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741512200; c=relaxed/simple;
-	bh=64WZrmgyPkgy2YnI7U81yn6KSZ4lJ6AYo9WRW6tDuIQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rjAJupv8dfrPnAzTNZJ7yXWiPpgH9ju5CYBwisLlSiDYKnyzb+e0kD2f41ti5YbVfASdV0KDV4hpwvwZaYBvdeaXN2WbifGNNMj3K7/ecnXtUBISzwHb5j2DTFWVVjJN5K86G0+Lb/umewgAVNxN3070Gl2eoiB4C3qy3EMEWtc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Ab6N48KY; arc=none smtp.client-ip=209.85.218.45
+	s=arc-20240116; t=1741512406; c=relaxed/simple;
+	bh=ik8X4IEQqDHG4yAjGI+QpJp8re+baTrHsLFeLL7+3Kw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=KaGeJD9zZojJzDDdkTm2rvIapsMswwXz8vU101UGdi2AtqOa4feEqaKHbGKYX+AJpuHbk1YhrU6cdQE1DwWNFd2JYutmTziDuSjzm5tDel4zb356HumZtydLRXy1+klUUavRbAxm9t4Ss6ort3XKhY0ZfVil/kS3lp3cyqlo440=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=vEDNglcP; arc=none smtp.client-ip=209.85.219.180
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-abfe7b5fbe8so472353966b.0
-        for <linux-kernel@vger.kernel.org>; Sun, 09 Mar 2025 01:23:18 -0800 (PST)
+Received: by mail-yb1-f180.google.com with SMTP id 3f1490d57ef6-e636585c375so1351094276.1
+        for <linux-kernel@vger.kernel.org>; Sun, 09 Mar 2025 01:26:44 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1741512197; x=1742116997; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=WquEMt/nHeDbDu+wCTeJFQKwvIymjPr1TDpYSMcRfWU=;
-        b=Ab6N48KYUd0NByEI5BB3psqhklj+00GGIuGJaQNZL4IGNMtzOgG0MyCOJsoSf8Ethc
-         T40UWinA5DgG9RXZKSVL8k6xvYFl1N0inDBPZpXwpO1E40NhEwxTTlIKm8KOo+JWTSb3
-         Pg2VJe82hNpzRLTxKrZBk1y5bsPdjguKP7H7UTGZSXamqAVnLo7EZXOqACSmksIUsDHV
-         VPMaKl6FIKarroYDl1A5Pu3z+UgVDX8wxrypoILOSZ6aoVq3AwBx8+xnKUubS+5shycn
-         d92qZronz82QiYKsqo2Y4GbVfbSenxKdEdiS6BxLIAXQ5ip04kP3p2QLHd5ZHy7kGrcW
-         Tn6w==
+        d=linaro.org; s=google; t=1741512403; x=1742117203; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=y+UfwYvKoniH4ediByf7+QM/x5ez72G5r941EDLOy/s=;
+        b=vEDNglcPMlZJKyeRwmdYJLaLyHYG57ezjXrzV9DPNeSOFoEQmdo48ogYdjki63b49R
+         E8WqEcEpGi+0NvTZcVxZfAC5IACb59aih/ATZJsk7WIAz6VO+oRaIg9a285YFAHtWZE+
+         39+cdk+Slzp1H4HT0HTs5D/INfxZJMlaVSQk0R062ztW2ap8Yf9SMdvWI8HHaC/DVinS
+         Rwa4wJ+82/pCpAN/AZPDGSNOlaesEz7SHoO8tWVCDsx04DMhJRQ5pdAnitalxku3E+9N
+         WNsXCFPgSwQMDGbzyxq0uDLE1o3jXo52VP94kuV4NgsyEu4JlvcINqB4hE3uqEXtUEUW
+         qhfw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741512197; x=1742116997;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=WquEMt/nHeDbDu+wCTeJFQKwvIymjPr1TDpYSMcRfWU=;
-        b=qztuPm8YtjdGVIlV5dVQO7XZBilu+aNniSZFbQfR9I7xs/6efCjnf74UoTnDSP9JC1
-         pu1MMyLo9H88nZBccBxn5jdTF9/D38P3p0C3Pd9ic0sMw6dJ0gnQPgLrgLCJeAONEEvh
-         wJykTL1XqNXj0CBpq7DuIOK5i9gQae0JBIpM1kAjUjlhLF67JmKHZ1oyiWbzFgb3LONC
-         Q8X0vTKyTvjDVO/q72rYzfcWHXYYjkLizPqzsoHbaCiljbobY5UcjX3LexVWyzoRv11K
-         YxGWnVYLPgnbTeb8+sCrGfLkHaOTqvyLw3Ad8mR5+/RAUDPFFAITm4tHg6AeFDltALWJ
-         tRQw==
-X-Forwarded-Encrypted: i=1; AJvYcCX9tjIHGw7ZG9jkIy1znKWDvuuVo5ka4so6rqldXsTkrcB9ZNHrkXy+t1u/ZsFzn6+f1RFPpdexsYKHSnM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyZot+WoL7d+IaEQYxV/xVMhO3stmoVq2hSTuVKkUM0dGjOp5vK
-	jSrclvanJz0FGWTezaj2mDG1w9gC0z1b9wC5rHqlUm2kfueLk0oxZTx3V7GIUl8=
-X-Gm-Gg: ASbGncu+UwTGklMxcXiNpD8AaUZfMidAVTBr7eXUkXqFNPAuep3tQNb3li9uDpxhomR
-	+1iS3RDbmyh6DzHO++BUGrh5cd1ePHolLKyRh/n5lkE4PVOeIFNXRPelrHFlzKNUbLipLfYYEHY
-	L1s8emf3Ivf0C+Z9NlJSsQC47UB7VFaUhrm2N5R0BKqLqpIA9VrR+uYQ3v20VhXGfdC57nt3soa
-	Nt+DX3OY3FYggTmJ/Oi7z9H5XbTLt3AJqoCsjX5Cn8j3P9/+/hGYwAiIe4f2m1aNWU1NZDrd2yd
-	XJ1uPvaQd8feUAnU9ELYQ3TtDW8jDHXE8IbQVGCKDg==
-X-Google-Smtp-Source: AGHT+IETCUltWmQN+zLCmKRFkdNtCxZ4Os14U+jDnEz2nSP339omXsmyTsnb1B+RdPyq0H+r5s5iRw==
-X-Received: by 2002:a05:6402:1d4c:b0:5e5:b53:fd49 with SMTP id 4fb4d7f45d1cf-5e5e229e46emr24575900a12.3.1741512196682;
-        Sun, 09 Mar 2025 01:23:16 -0800 (PST)
-Received: from linaro.org ([62.231.96.41])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5e5c733fd48sm5071517a12.9.2025.03.09.01.23.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 09 Mar 2025 01:23:15 -0800 (PST)
-Date: Sun, 9 Mar 2025 11:23:12 +0200
-From: Abel Vesa <abel.vesa@linaro.org>
-To: Aleksandrs Vinarskis <alex.vinarskis@gmail.com>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Johan Hovold <johan@kernel.org>,
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-	Rajendra Nayak <quic_rjendra@quicinc.com>,
-	Sibi Sankar <quic_sibis@quicinc.com>,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	Trilok Soni <quic_tsoni@quicinc.com>, linux-arm-msm@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH RESEND v5 0/4] arm64: dts: qcom: x1e80100: crd/t14s:
- Enable Parade Type-C retimers
-Message-ID: <Z81eAMoXb9li4lba@linaro.org>
-References: <20250220-x1e80100-dts-crd-t14s-enable-typec-retimers-v5-0-380a3e0e7edc@linaro.org>
- <ea9344b7-6646-4329-b8f6-45d2b51f183b@gmail.com>
+        d=1e100.net; s=20230601; t=1741512403; x=1742117203;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=y+UfwYvKoniH4ediByf7+QM/x5ez72G5r941EDLOy/s=;
+        b=ft1RHCi6JezHFNkFnJdEewXv+amlhdoWu9K9xWbmfeYXQUW+Iq8osuMdxsztAKns9P
+         E1LVOOHv4qsjsaDm2IrSQJhb8zV0Q6f77481Z9NoTxRCIEpYn+BGF5fIW1NHrWC53rgC
+         TTdFP/ButaCN97o9hM/V7fiY9/2+xYKM+23QDNrKEblIZHR86Q4GTTW7jrqyf8gpVRRi
+         xEuRgu//3vlbHZPwb0esa3h3CszPTFxj0fpllKbYj/JYbHlQAT1B0guNSc8cI+eqh0KV
+         qh5ycCBlQnACMTqQ0bwt1gRI7uQ0dlx/AbjNkU6X83kCALQl/uvtjcGx6GPmm/X01Mgj
+         QVYA==
+X-Forwarded-Encrypted: i=1; AJvYcCWaajvS/akmKL8bpPOblkECeTi3UoIUbLFwfwndSRyWVY4ibulEuEMWkXVae9qVx1l5emOCDj5Oot4sOBo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy+vWlMLO75F9qopAlsVugU1TKbU0D/BQMePIdgDJl+IME3ZmMV
+	yYtu3B19prGQV++hheQGaj79xLu82Nz106IlgQbrM96PRQgKkms1A3puVmQwVC05SNX7tYoPw1x
+	Ef4jEvXquLNnUSbbovV3cLScEdrIPiqGUlWcA0A==
+X-Gm-Gg: ASbGncvKaJGk3KDwJIYQ0L6uagBcJhVU/2yAR/GmMw0Ow+r4LIIRCLjSHM9nYtNFpfl
+	xjG87n/e1XWdyvvNmvzcxqsqYqy4ZyzICM2UdksHgfc0w13P5m6m03kfRjlH0jJapF8q/1JxuIc
+	z9en8wOe8Mn6rzbtVdyxxiZpn6gX5PtS4kbgT+0kvf
+X-Google-Smtp-Source: AGHT+IEN3V2OLC8hZDOELnAVWI6ww13m5GBnJ8YaCGEl0AbmzOskx9R9Se1xuJeZm/tmBc9JT8v5uFIi9nlaU4PorAA=
+X-Received: by 2002:a05:6902:2683:b0:e60:b17c:423f with SMTP id
+ 3f1490d57ef6-e635c17bdb5mr13660886276.28.1741512403353; Sun, 09 Mar 2025
+ 01:26:43 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ea9344b7-6646-4329-b8f6-45d2b51f183b@gmail.com>
+References: <20250308-phy-sam-hdptx-bpc-v5-0-35087287f9d1@collabora.com> <20250308-phy-sam-hdptx-bpc-v5-8-35087287f9d1@collabora.com>
+In-Reply-To: <20250308-phy-sam-hdptx-bpc-v5-8-35087287f9d1@collabora.com>
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Date: Sun, 9 Mar 2025 11:26:32 +0200
+X-Gm-Features: AQ5f1JqfxNZ22KnfkCh9BmlsU97_eUwp8gZfAiDHoYY-EuyqHBEuJ0Y2Zcaf2N0
+Message-ID: <CAA8EJpoGu4Tq-wt09Jj+b+=eJ3dNXhPWVOg4DyCQxrJbFNFfYw@mail.gmail.com>
+Subject: Re: [PATCH v5 08/12] phy: rockchip: samsung-hdptx: Setup TMDS char
+ rate via phy_configure_opts_hdmi
+To: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+Cc: Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>, 
+	Heiko Stuebner <heiko@sntech.de>, Algea Cao <algea.cao@rock-chips.com>, 
+	Sandor Yu <Sandor.yu@nxp.com>, Maxime Ripard <mripard@kernel.org>, kernel@collabora.com, 
+	linux-kernel@vger.kernel.org, linux-phy@lists.infradead.org, 
+	linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
 
-On 25-03-07 23:03:07, Aleksandrs Vinarskis wrote:
-> 
-> 
-> On 2/20/25 18:42, Abel Vesa wrote:
-> > Since the driver and dt-bindings have been alread merged, it has been
-> > agreed offline that there is no point of holding on to these DT patches
-> > even though there are some issues with plug/unplug during suspend in
-> > both pmic-glink-altmode and ucsi-glink. These issues are being worked on
-> > meanwhile. Merging these means that even though this will provide external DP
-> > and USB orientation, plug/unplug during suspend will give some splats
-> > and render both the USB orientation and DP broken. But then, other
-> > X Elite boards already have these nodes described, so lets bring the crd
-> > and t14s to the same level.
-> > 
-> > These patches are just a resend of the ones found in v5 and dropped in the v6
-> > patchset of the driver and dt-bindings.
-> > 
-> > Link to v5: https://lore.kernel.org/all/20241112-x1e80100-ps8830-v5-0-4ad83af4d162@linaro.org/
-> > 
-> > Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
-> 
-> If you will be respinning, could you please add link-frequencies to
-> enable HBR3 speeds, similarly to [1]? Alternatively, I can also send
-> fixups once this series lands.
+On Sat, 8 Mar 2025 at 14:21, Cristian Ciocaltea
+<cristian.ciocaltea@collabora.com> wrote:
+>
+> The current workaround to setup the TMDS character rate relies on the
+> unconventional usage of phy_set_bus_width().
+>
+> Make use of the recently introduced HDMI PHY configuration API to
+> properly handle the setup.  The workaround will be dropped as soon as
+> the switch has been completed on both ends.
+>
+> Rename rk_hdptx_phy_verify_config() to rk_hdptx_phy_verify_dp_config()
+> and introduce the rk_hdptx_phy_verify_hdmi_config() helper to check the
+> HDMI parameters during phy_configure().
+>
+> Signed-off-by: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+> ---
+>  drivers/phy/rockchip/phy-rockchip-samsung-hdptx.c | 64 +++++++++++++++++------
+>  1 file changed, 47 insertions(+), 17 deletions(-)
+>
+
+> @@ -1469,8 +1474,27 @@ static int rk_hdptx_phy_power_off(struct phy *phy)
+>         return rk_hdptx_phy_consumer_put(hdptx, false);
+>  }
+>
+> -static int rk_hdptx_phy_verify_config(struct rk_hdptx_phy *hdptx,
+> -                                     struct phy_configure_opts_dp *dp)
+> +static int rk_hdptx_phy_verify_hdmi_config(struct rk_hdptx_phy *hdptx,
+> +                                          struct phy_configure_opts_hdmi *hdmi)
+> +{
+> +       int i;
+> +
+> +       if (!hdmi->tmds_char_rate || hdmi->tmds_char_rate > HDMI20_MAX_RATE)
+> +               return -EINVAL;
+> +
+> +       for (i = 0; i < ARRAY_SIZE(ropll_tmds_cfg); i++)
+> +               if (hdmi->tmds_char_rate == ropll_tmds_cfg[i].rate)
+> +                       break;
+
+return 0;
+
+> +
+> +       if (i == ARRAY_SIZE(ropll_tmds_cfg) &&
+
+Then you can drop the first clause in the if
+
+> +           !rk_hdptx_phy_clk_pll_calc(hdmi->tmds_char_rate, NULL))
+> +               return -EINVAL;
+> +
+> +       return 0;
+> +}
+> +
+> +static int rk_hdptx_phy_verify_dp_config(struct rk_hdptx_phy *hdptx,
+> +                                        struct phy_configure_opts_dp *dp)
+>  {
+>         int i;
+>
 
 
-It's already re-spun here:
 
-https://lore.kernel.org/all/20250304-x1e80100-dts-crd-t14s-enable-typec-retimers-v6-0-e5a49fae4e94@linaro.org/
-
-Waiting to be merged.
-
-Lets make the HBR3 enablement a separate patchset as I'm not able to
-test it in time, if we want external DP to be part of 6.15.
-
-> 
-> [1]
-> https://lore.kernel.org/all/20250226231436.16138-1-alex.vinarskis@gmail.com/
-> 
-> Thanks,
-> Alex
-> 
-> > ---
-> > Abel Vesa (4):
-> >        arm64: dts: qcom: x1e80100-crd: Describe the Parade PS8830 retimers
-> >        arm64: dts: qcom: x1e80100-crd: Enable external DisplayPort support
-> >        arm64: dts: qcom: x1e80100-t14s: Describe the Parade PS8830 retimers
-> >        arm64: dts: qcom: x1e80100-t14s: Enable external DisplayPort support
-> > 
-> >   .../dts/qcom/x1e78100-lenovo-thinkpad-t14s.dts     | 321 +++++++++++++-
-> >   arch/arm64/boot/dts/qcom/x1e80100-crd.dts          | 474 ++++++++++++++++++++-
-> >   2 files changed, 785 insertions(+), 10 deletions(-)
-> > ---
-> > base-commit: 50a0c754714aa3ea0b0e62f3765eb666a1579f24
-> > change-id: 20250220-x1e80100-dts-crd-t14s-enable-typec-retimers-325cdb7b097d
-> > 
-> > Best regards,
-> 
+-- 
+With best wishes
+Dmitry
 
