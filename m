@@ -1,148 +1,190 @@
-Return-Path: <linux-kernel+bounces-553152-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-553153-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0AB5CA584E2
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 15:19:56 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 43636A584E6
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 15:20:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CFAF33A7630
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 14:19:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7A6B316AEDF
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 14:20:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7AD31DE3A8;
-	Sun,  9 Mar 2025 14:19:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EA4E1DD894;
+	Sun,  9 Mar 2025 14:20:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="jF2AaZSX"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
+	dkim=pass (2048-bit key) header.d=gmx.de header.i=deller@gmx.de header.b="Al6M4roF"
+Received: from mout.gmx.net (mout.gmx.net [212.227.15.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63A6D1D6DAD
-	for <linux-kernel@vger.kernel.org>; Sun,  9 Mar 2025 14:19:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 271DA14D2BB;
+	Sun,  9 Mar 2025 14:20:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741529983; cv=none; b=inzHBkLLOFLbgXezeTbCdb6jTsl/uct/v6UJiIupSFYEWKeyMXmpEMRtb+joRiBvJnI0Y4Ab4MUH9lpBGMqC/zTUND66+zIEnU2sUgn4F6gnxxlGsA3juusb+ak/NfZFFkvnL1ZNqCbHR74ChEotwBg5X3V7EzGa04hTWo/HFSo=
+	t=1741530029; cv=none; b=ag6uFx0pI74fDXkIvGgc0NtyNmiermMOksZ6i5F7Wmu4nk/uHxqXtAlmMpA34hnXgYXkzJa7NI1Kk+ln6VALUzPjLVd7R8EjrPy0wyoljUARi08QquhYwjt12L5Jdxg2u2sgSuoYgYdqtWf2hbQOtfUCbTSOxkldziw1bpiB1PU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741529983; c=relaxed/simple;
-	bh=ZG2rzKu6iXilCkrrkwptgdpwn28MXDhu6DMLhGe1TIA=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=PRqQHpdryefXT2FGiaQsE5LHDQrgdgDl9HHAzBe3zZKn2rf07SxIXdIrftBcWpATuuT0FT6T+R5nLZII0NxDli6071YRAmvQGkcGwJz+UKDQPhxdiFSNbmmYypBCy1zmoLoxjrdv5xaUAEUaG4XR53gyjHWHw6BMwvO2qQ7I69Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=jF2AaZSX; arc=none smtp.client-ip=198.175.65.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1741529981; x=1773065981;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=ZG2rzKu6iXilCkrrkwptgdpwn28MXDhu6DMLhGe1TIA=;
-  b=jF2AaZSXgrkopYSdVstPEgdhQXkpX1jF7eLAqcK9WPaVWhHH7GjZaObR
-   AJbVWhpi4we+0//xeKqM5+ZpvuvWv6TkSsTLK24I8iOM37XgP+qjxePt2
-   d7rs78IsmfTW2GvV799BsHQFPxgd2k5z3ydRH+2jPSUNHad9hC7oyd8Or
-   MDZsuSLXHJWNHO/7+RaVmQ16RnBVrGOvwA3vE/2qaNPSRE20bqitBL0Bw
-   5oasdLP3ABrUBGRorWSfjBLQnqbBFEvUCisnwzExnhgMOUhMyfVrpxFS+
-   RNeExC+Z7vpnh1g8tE4/ehK6H0jmVd63lbGkoItftAfpUyuh5HCDpblAb
-   g==;
-X-CSE-ConnectionGUID: hiyeKpclS/ixlCzYOdnbIQ==
-X-CSE-MsgGUID: 5hZPWicDQy22QRDKRFjA1A==
-X-IronPort-AV: E=McAfee;i="6700,10204,11368"; a="42568596"
-X-IronPort-AV: E=Sophos;i="6.14,234,1736841600"; 
-   d="scan'208";a="42568596"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Mar 2025 07:19:41 -0700
-X-CSE-ConnectionGUID: COab6tBdQ4WTqq6hRftOIg==
-X-CSE-MsgGUID: Z8dMQavqQrSFOfV67h0yRg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
-   d="scan'208";a="120666787"
-Received: from lkp-server02.sh.intel.com (HELO a4747d147074) ([10.239.97.151])
-  by orviesa008.jf.intel.com with ESMTP; 09 Mar 2025 07:19:40 -0700
-Received: from kbuild by a4747d147074 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1trHV6-0003As-2u;
-	Sun, 09 Mar 2025 14:19:34 +0000
-Date: Sun, 9 Mar 2025 22:19:01 +0800
-From: kernel test robot <lkp@intel.com>
-To: Mark Brown <broonie@kernel.org>
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
-	Takashi Iwai <tiwai@suse.de>
-Subject: drivers/most/most_snd.c:58: warning: Excess struct member 'opened'
- description in 'channel'
-Message-ID: <202503092254.0yxhP6hv-lkp@intel.com>
+	s=arc-20240116; t=1741530029; c=relaxed/simple;
+	bh=A2qhr0oIy8zcdiNAvOe/9Zpzz25jGlOVzUwwjtl+7Fg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=fXaQmGcCoe74NDmzoPAdR2yEHllJappbe7csQ4xcaJCT9dKkLyKgh7ghLZASAjwooFm+w/pXsSmSg/ggjfb8wmkMP3KV6i0C5gwAhPsdtUChs4OD9TyR+y8YBYqtclgh0V8lzbWKKr8vMXrvm6nHe5WaQcjxLgY1Ti7hq3pUbXc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=deller@gmx.de header.b=Al6M4roF; arc=none smtp.client-ip=212.227.15.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
+	s=s31663417; t=1741530005; x=1742134805; i=deller@gmx.de;
+	bh=l2/iG8WKtiNO+mz+C3vHD3EsnLQNxECdkNSFLgEYfS4=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=Al6M4roFMILcRHikaMXvoQw0aUiKqEv2inbBH2Sr2sFdQtvjEaoZ8uqwpOdLZZzk
+	 Qi0PKCQtdDVXNAN6H1MLkgyiLU0foX1ok9ikiYia+PX0ovxJeD1hPlXYZ0ZAqYeMk
+	 7hqzwh78PacTB/qfmrb1XC6Jn8AKsVBFwXn+DtOfQV6tH5RspKL14YHy+ZHT02IQK
+	 HUx9+QW4rceBt+jfuKV1V0jC1GxXLjLQhbteWRyzGUhimAoyGRapVf8dgBGVf2A1Z
+	 AicnB2GHzRgpghz+0SmIpkFq0SWohFzT8FbFGy4De3g4GRXw57IvXFcODyLlxGYhF
+	 2melBE2fB/jb9Al1zw==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from [192.168.20.173] ([109.250.63.121]) by mail.gmx.net (mrgmx005
+ [212.227.17.190]) with ESMTPSA (Nemesis) id 1MhU5R-1tMdNu1SD5-00bqKV; Sun, 09
+ Mar 2025 15:20:05 +0100
+Message-ID: <fc8f7246-2e05-4433-85d8-65dbed723826@gmx.de>
+Date: Sun, 9 Mar 2025 15:20:04 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/1] fbdev: hyperv_fb: Fix hang in kdump kernel when on
+ Hyper-V Gen 2 VMs
+To: Michael Kelley <mhklinux@outlook.com>,
+ "wei.liu@kernel.org" <wei.liu@kernel.org>
+Cc: "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+ "linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>
+References: <20250218230130.3207-1-mhklinux@outlook.com>
+ <24668c7d-6333-423e-bd48-28af1431b263@gmx.de>
+ <SN6PR02MB4157594508B80319444C6C24D4D72@SN6PR02MB4157.namprd02.prod.outlook.com>
+Content-Language: en-US
+From: Helge Deller <deller@gmx.de>
+Autocrypt: addr=deller@gmx.de; keydata=
+ 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
+In-Reply-To: <SN6PR02MB4157594508B80319444C6C24D4D72@SN6PR02MB4157.namprd02.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:l70lS2fMfJxjdlphzMlS2nvWxd1I98pF1dIsGqawjoEGjZG074S
+ khIHmH+AlgLRErba8t9RP9JTC5pGBidh7FK3p14ISZLtVb8fWeqH6135L/MGk1I9UwfNiFs
+ 6220HUhpOK3Bz2BOP5v263T6BJ4Aq81uP9fgkkzHcBz1eoO+KCFXRERhyNtNUrbR6Xzh7EF
+ LglDCD1Qzfe82z3JT2qaA==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:vGdK+Z0kilA=;JpL4QeABnVv/sJkRK/eOzZB/e01
+ ujDrvqwQW/2bvgvZv7JeEERECgFMRWMtjHcAgSACL0xZTg2BLSK+LT6ZQW0gNtXrmuTnH9ZJE
+ AjiG2cqorPObhYkJezlwFL6ybt+kUGppLMrLd/vdxdFGR0fVutbFqaZ3U5Dkx9VRj1Tz5t6Jg
+ dJf8tX0qgZWrMVBtTiylSopy8yPwL3keK/PivD7tdKPe5dg1RCOfK+hyx+Gfnb0Ow3cQ17XQw
+ vJ9ddt7cyyMjWpsyuIx1uNo3V/KlRlJug/IoW6CD4/gcQna4fdl+xEIfWeN7IrRBmNj+l59ab
+ Rdp5TO3e07uhSoGg2c0PyyyuduRakXJQcjpEBZ0KFCCyfl2BBg1hqJyCOmUGccunY7npUI2fQ
+ wZ+ZkoPZc1xhPB3AKamUDSvB88kCOH9qk/a5xFDugoKcb1EZGgPwJBXtGc6/Eqe6BI1HxKVtU
+ qXpw6ra5ETZDg4C3wkEZCet6/GCvTgToGpZU+eHybNpXlGT8IlyA7k9805sIXocmYNBD9CHfI
+ VRiCR2Dd7vf5OkAoWZMHh1c5F49j+L1kIum86g4OYgukvHXypFV6HWqEJOP+oH0cjDUKwQCmN
+ ak2Cb8pd2eU/Oxv9Kz0yZd/7ZAy7lxd+IWMdhKl49QXO01cwkdq9Pkv2spUiYrLejPsJsreX4
+ C5x+miIBEApKsaLTj1M8ixWwngzAJk2VkEWZ7zZZGp3ndvKdCKXBqrfdsBMo3aJfMRT8z6bCR
+ FFRHqrCZJtpE/ckmihawGSxU/sSDD97LpyXBMTSN+Fwb4N6WhOqrwPU+wFbJZGIoxow8W30cF
+ jodnkbX4Xkk639vniL2Qz1klgpn/um4y1NKKM8/HyVdwQZMMnzVP4Ny0j/Jegdu3JscpO1bpQ
+ 7CYFW9uqF7Dgyq0lP85wDzmh14wJKWCw1j7bpvH1RWNHpRnwjxTWf06mPyFTCSkoVdQrqEg6K
+ 8ktzMyQWkX/Jk1tMTKsBHEWS7TObHSTwhqaBJ4kO06sIIKt8FNJ2zhNwdZMFBQITlsS/EJYrq
+ Bt6BOqN20zIxAj3/ZCeN4axRseBkWXLHimztF5uwgYBzjkh0pc80aYmGIgL7Bq3XzOc4/iAyC
+ n1Jb9+gv7SG1htI13IdgNOff+CJbxinPJgMbRycwoz07SUCX3PPlzd8FsDH5z0DEyKDLgeGJQ
+ VPwYPWB3DowGSgqtm7DEdSCnpAqOetKLj6t/yKHmh5NV3yhR3jBDRq2fFTXuzOVEQoORYLnfv
+ eUvTogLQdSePYu0fcgIhDmVnPelEm7hglYi1DXwnFPVA094Scd7K9/BhvDAg3Mc+Lukj9Zq1I
+ oQ+TOngX9XXXIo6ZzjO8uPcxhHsxBUFoiG+DRYWv88AFSwYUfBiUZHEueuqJXoROdy/NeLcbe
+ ASjsQ7Vmj86qrjyYN+eXd+tCbcpyIHgrQ7JiRsmsz/LIBl0mPkL3pQojUz73Gqli3owuqJDSF
+ k9FInNg==
 
-Hi Mark,
+On 3/9/25 05:10, Michael Kelley wrote:
+> From: Helge Deller <deller@gmx.de> Sent: Saturday, March 8, 2025 6:59 PM
+>>
+>> On 2/19/25 00:01, mhkelley58@gmail.com wrote:
+>>> From: Michael Kelley <mhklinux@outlook.com>
+>>>
+> [snip]
+>
+>>>
+>>> Reported-by: Thomas Tai <thomas.tai@oracle.com>
+>>> Fixes: c25a19afb81c ("fbdev/hyperv_fb: Do not clear global screen_info=
+")
+>>> Signed-off-by: Michael Kelley <mhklinux@outlook.com>
+>>> ---
+>>> The "Fixes" tag uses commit c25a19afb81c because that's where the prob=
+lem
+>>> was re-exposed, and how far back a stable backport is needed. But I've
+>>> taken a completely different, and hopefully better, approach in the
+>>> solution that isn't related to the code changes in c25a19afb81c.
+>>>
+>>>    drivers/video/fbdev/hyperv_fb.c | 20 +++++++++++++-------
+>>>    1 file changed, 13 insertions(+), 7 deletions(-)
+>>
+>> applied to fbdev tree.
+>>
+>
+> Thank you!
+>
+> Related, I noticed the patch "fbdev: hyperv_fb: iounmap() the correct
+> memory when removing a device" is also in the fbdev for-next branch.
+> Wei Liu previously applied this patch to the hyperv-fixes tree (see [1])
+> and it's already in linux-next. Won't having it also in fbdev produce a
+> merge conflict?
+> [1] https://lore.kernel.org/linux-hyperv/Z6wHDw8BssJyQHiM@liuwe-devbox-d=
+ebian-v2/
 
-FYI, the error/warning still remains.
+Thanks Michael!
+I now dropped that patch from the fbdev tree to avoid collisions.
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-head:   1110ce6a1e34fe1fdc1bfe4ad52405f327d5083b
-commit: 512d092d78823f9813f4af38090b33c454137a4c ALSA: Enable build with UML
-date:   1 year, 8 months ago
-config: um-randconfig-001-20240624 (https://download.01.org/0day-ci/archive/20250309/202503092254.0yxhP6hv-lkp@intel.com/config)
-compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250309/202503092254.0yxhP6hv-lkp@intel.com/reproduce)
+Btw, I'm fine if we agree that all hyperv-fbdev fixes & patches go through
+hyperv or other trees. Just let me know.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202503092254.0yxhP6hv-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
->> drivers/most/most_snd.c:58: warning: Excess struct member 'opened' description in 'channel'
-
-
-vim +58 drivers/most/most_snd.c
-
-54b4856fb36246 drivers/staging/most/aim-sound/sound.c Christian Gromm 2015-07-24  26  
-54b4856fb36246 drivers/staging/most/aim-sound/sound.c Christian Gromm 2015-07-24  27  /**
-54b4856fb36246 drivers/staging/most/aim-sound/sound.c Christian Gromm 2015-07-24  28   * struct channel - private structure to keep channel specific data
-54b4856fb36246 drivers/staging/most/aim-sound/sound.c Christian Gromm 2015-07-24  29   * @substream: stores the substream structure
-fba3993e86cc44 drivers/most/most_snd.c                Randy Dunlap    2023-01-12  30   * @pcm_hardware: low-level hardware description
-54b4856fb36246 drivers/staging/most/aim-sound/sound.c Christian Gromm 2015-07-24  31   * @iface: interface for which the channel belongs to
-54b4856fb36246 drivers/staging/most/aim-sound/sound.c Christian Gromm 2015-07-24  32   * @cfg: channel configuration
-54b4856fb36246 drivers/staging/most/aim-sound/sound.c Christian Gromm 2015-07-24  33   * @card: registered sound card
-54b4856fb36246 drivers/staging/most/aim-sound/sound.c Christian Gromm 2015-07-24  34   * @list: list for private use
-54b4856fb36246 drivers/staging/most/aim-sound/sound.c Christian Gromm 2015-07-24  35   * @id: channel index
-54b4856fb36246 drivers/staging/most/aim-sound/sound.c Christian Gromm 2015-07-24  36   * @period_pos: current period position (ring buffer)
-54b4856fb36246 drivers/staging/most/aim-sound/sound.c Christian Gromm 2015-07-24  37   * @buffer_pos: current buffer position (ring buffer)
-54b4856fb36246 drivers/staging/most/aim-sound/sound.c Christian Gromm 2015-07-24  38   * @is_stream_running: identifies whether a stream is running or not
-54b4856fb36246 drivers/staging/most/aim-sound/sound.c Christian Gromm 2015-07-24  39   * @opened: set when the stream is opened
-54b4856fb36246 drivers/staging/most/aim-sound/sound.c Christian Gromm 2015-07-24  40   * @playback_task: playback thread
-54b4856fb36246 drivers/staging/most/aim-sound/sound.c Christian Gromm 2015-07-24  41   * @playback_waitq: waitq used by playback thread
-fba3993e86cc44 drivers/most/most_snd.c                Randy Dunlap    2023-01-12  42   * @copy_fn: copy function for PCM-specific format and width
-54b4856fb36246 drivers/staging/most/aim-sound/sound.c Christian Gromm 2015-07-24  43   */
-54b4856fb36246 drivers/staging/most/aim-sound/sound.c Christian Gromm 2015-07-24  44  struct channel {
-54b4856fb36246 drivers/staging/most/aim-sound/sound.c Christian Gromm 2015-07-24  45  	struct snd_pcm_substream *substream;
-d801887248312f drivers/staging/most/aim-sound/sound.c Christian Gromm 2015-09-28  46  	struct snd_pcm_hardware pcm_hardware;
-54b4856fb36246 drivers/staging/most/aim-sound/sound.c Christian Gromm 2015-07-24  47  	struct most_interface *iface;
-54b4856fb36246 drivers/staging/most/aim-sound/sound.c Christian Gromm 2015-07-24  48  	struct most_channel_config *cfg;
-54b4856fb36246 drivers/staging/most/aim-sound/sound.c Christian Gromm 2015-07-24  49  	struct snd_card *card;
-54b4856fb36246 drivers/staging/most/aim-sound/sound.c Christian Gromm 2015-07-24  50  	struct list_head list;
-54b4856fb36246 drivers/staging/most/aim-sound/sound.c Christian Gromm 2015-07-24  51  	int id;
-54b4856fb36246 drivers/staging/most/aim-sound/sound.c Christian Gromm 2015-07-24  52  	unsigned int period_pos;
-54b4856fb36246 drivers/staging/most/aim-sound/sound.c Christian Gromm 2015-07-24  53  	unsigned int buffer_pos;
-54b4856fb36246 drivers/staging/most/aim-sound/sound.c Christian Gromm 2015-07-24  54  	bool is_stream_running;
-54b4856fb36246 drivers/staging/most/aim-sound/sound.c Christian Gromm 2015-07-24  55  	struct task_struct *playback_task;
-54b4856fb36246 drivers/staging/most/aim-sound/sound.c Christian Gromm 2015-07-24  56  	wait_queue_head_t playback_waitq;
-54b4856fb36246 drivers/staging/most/aim-sound/sound.c Christian Gromm 2015-07-24  57  	void (*copy_fn)(void *alsa, void *most, unsigned int bytes);
-54b4856fb36246 drivers/staging/most/aim-sound/sound.c Christian Gromm 2015-07-24 @58  };
-54b4856fb36246 drivers/staging/most/aim-sound/sound.c Christian Gromm 2015-07-24  59  
-
-:::::: The code at line 58 was first introduced by commit
-:::::: 54b4856fb3624609dd5d9ed013bfec7d67083622 Staging: most: add MOST driver's aim-sound module
-
-:::::: TO: Christian Gromm <christian.gromm@microchip.com>
-:::::: CC: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Helge
 
