@@ -1,186 +1,171 @@
-Return-Path: <linux-kernel+bounces-552874-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-552875-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 55658A58045
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 02:59:10 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B146CA58048
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 03:00:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 91917188F990
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 01:59:17 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6001B7A6662
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 01:59:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 835E8182BD;
-	Sun,  9 Mar 2025 01:59:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9113918AE2;
+	Sun,  9 Mar 2025 02:00:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QBAcePZy"
-Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=gmx.de header.i=deller@gmx.de header.b="tgsqWNBv"
+Received: from mout.gmx.net (mout.gmx.net [212.227.17.22])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32570C2FD
-	for <linux-kernel@vger.kernel.org>; Sun,  9 Mar 2025 01:59:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EFE54C70;
+	Sun,  9 Mar 2025 02:00:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.22
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741485542; cv=none; b=UK1U0TVE1k9DM9ay2csvRqesc2BrnWcpmyVX8Li455Mlu2ZVcDKbNMob7LmKtiS7FYwvJZxsRh+DJB4QKZU0eefcs0eB5xc1c0QhC3UeRijiZOswKf49S03os4alNcnXLWK2bslhx1PVtiuDpvac9egAMZUTilHDwk6xQBTGrlk=
+	t=1741485646; cv=none; b=K6enw6mUwGFsbRX+h8EUHbAwBkwWaJjLvOg0bcCh1ojF0hSHbFXX0asyaiylmN7a7Pdqoc1Zq0VzCZNSer125x//79S7G6fsWJszDbzxXUEmuhxTx5HBBs3n/WqBDWoWkLbMYaTbyBsya39jeP5pPP3iiLTU9xhFKqn84i1cUNI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741485542; c=relaxed/simple;
-	bh=jFFdOLDX5FzlEc88EzHrdvlUQPuvmbq5OFjIfKH59kU=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=PM73My50BtP5tUJhQsYOiBMkNWXX3tLcgHlnxEB83vtyIBHMBCmT1dpVDYDH++iczkjxBPIFepwQEPyoSbtjYP2bn6hN+tyndm52A+W7x4tdRNmAkVKbIpliognN3AsanYH9Y7bMLRIgymIB6lUPdMPqO93aQJCpynYgoqGrVzc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QBAcePZy; arc=none smtp.client-ip=209.85.218.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-ac27cb35309so94723766b.2
-        for <linux-kernel@vger.kernel.org>; Sat, 08 Mar 2025 17:59:00 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741485539; x=1742090339; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=CQPV71ADDI/mWsm8CeKOioi3PQYjTezoJGiR28RCRSY=;
-        b=QBAcePZyrvNGSGFfEwEyO+z9xG4NDZRLHIWNZxEGpaSwLFzxc3MLsKNZ9D9LQPJx9q
-         YHO3yb2mMt+L/PiXCQ9B4UKmvZCVjmUhV3SM04/GTFb2I3KUuHWpDQ8yxLRKCNMdmIXu
-         SJma5KfAeY3mgxAUDjmegvy+d1GuMva7MC0MqOmMDybbkqFfE+bMtC2RzMVGYIOHIjx7
-         IUEc0hqLnGTKaqB6erhGEBAcY5duGqxXpkMz1XMWX17CszjXFjq+3ss1OhsJN3lBQpUd
-         oeb9+XopZJD7NLeNQmFpJEsNIFkpFiRy0qD+GgSRZuRTKBLkY++hw0DmT677iM0jhJs5
-         3Rgw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741485539; x=1742090339;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=CQPV71ADDI/mWsm8CeKOioi3PQYjTezoJGiR28RCRSY=;
-        b=lCvp9I9grjh/PEucWg0wOv4d7C3tTeLesFA3wTKLWpUONadBRxwrvoZP6nNc8rC5Sp
-         vadm0zKLFLwigxdmJFVuAY7bJC104IFkxtnQc41g36HeN3J6cDA74iFZh3X3OlK+3Y6f
-         yRjgvE1UlHcMF9asS3p6fZejuAfOfGgLMsbh2eSy2iO3A2nBUaeDQCSk2O1cVBexL34F
-         nwlkUgX9DrU9UwNgEZf8DMDp5Zf3U/V3BTzFGx6+0Hu1B35w0USQ0xlJlBJ52Xx1E9dX
-         ikwrCiXw80gd1JlFYVTb/crNx1oJsxeBm4mqNwpXYXP8KdTFDYc3T1etTN0/3iVpsuAW
-         IB0g==
-X-Forwarded-Encrypted: i=1; AJvYcCUQb8Shn0sjCGqZmPgz9kgOVvoE4piOpQWu5FLyPHuKG10MtP6QvyvTROb3Ng7MEx+YJC5T9w2pY+qH/Rw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzL5VP6AHwtePKuOi5r0RoEfL6q7Ukk84IgZkZQeuVcnvYBkJmv
-	xy7pLrl5bchY0tJUYl7PhPRnIcskggSvQbOoHwCrsCoAcjz4FCaoAZaFXA==
-X-Gm-Gg: ASbGncv8JZIb0i/OFZKsX6sblUdUBpug1AgelRAcblo0Jgv1zsrtqC9GZ3drKZjGRUS
-	lUilOZLOHnRcw3y5slErj7zijFIDCnKeefuVKFEAZvT7Keu7yMiOPdjvvH6WhK+hOFzOcISfYyZ
-	JvpJVxohUCeh9UVaAvm7SeJ/hNOAODL6++qRyPfO7Nb8xbdlJ42LpVgR+uRYqZ4b//4e/6oggGw
-	2imGqZIWiRH51nxSv//WOQQ4oXz09eJ3s3QID8jYAI6hMt9f4qklorSqfEu1YxBCELF68YUFycf
-	4gNPLRduJP/PF+/r3kVlf4tSguHe1vTrCf7oGXwwc2lt6w4SzFQtjoLE8jk8qiluLT489ZTqEYi
-	wxmT5c2v9WOvZcL0e8A==
-X-Google-Smtp-Source: AGHT+IHm3r6u0Tc1JavXfFI/s+U8dwCNj8qWrGb6bQH+IsLrTWsHG6S8/8z8ZR3B4eeZ93W15hty9A==
-X-Received: by 2002:a17:907:7255:b0:abf:51b7:608a with SMTP id a640c23a62f3a-ac252738131mr911910566b.5.1741485539107;
-        Sat, 08 Mar 2025 17:58:59 -0800 (PST)
-Received: from pumpkin (82-69-66-36.dsl.in-addr.zen.co.uk. [82.69.66.36])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac287653d1esm79429666b.125.2025.03.08.17.58.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 08 Mar 2025 17:58:58 -0800 (PST)
-Date: Sun, 9 Mar 2025 01:58:53 +0000
-From: David Laight <david.laight.linux@gmail.com>
-To: Vincent Mailhol <mailhol.vincent@wanadoo.fr>
-Cc: Yury Norov <yury.norov@gmail.com>, Lucas De Marchi
- <lucas.demarchi@intel.com>, Rasmus Villemoes <linux@rasmusvillemoes.dk>,
- Jani Nikula <jani.nikula@linux.intel.com>, Joonas Lahtinen
- <joonas.lahtinen@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>,
- Tvrtko Ursulin <tursulin@ursulin.net>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>, Andrew Morton <akpm@linux-foundation.org>,
- linux-kernel@vger.kernel.org, intel-gfx@lists.freedesktop.org,
- dri-devel@lists.freedesktop.org, Andi Shyti <andi.shyti@linux.intel.com>,
- David Laight <David.Laight@ACULAB.COM>, Dmitry Baryshkov
- <dmitry.baryshkov@linaro.org>, Andy Shevchenko
- <andriy.shevchenko@linux.intel.com>
-Subject: Re: [PATCH v5 1/7] bits: split the definition of the asm and
- non-asm GENMASK()
-Message-ID: <20250309015853.01412484@pumpkin>
-In-Reply-To: <bdce7d99-7f02-4667-acda-9ffc62c92af2@wanadoo.fr>
-References: <20250306-fixed-type-genmasks-v5-0-b443e9dcba63@wanadoo.fr>
-	<20250306-fixed-type-genmasks-v5-1-b443e9dcba63@wanadoo.fr>
-	<20250306192331.2701a029@pumpkin>
-	<bdce7d99-7f02-4667-acda-9ffc62c92af2@wanadoo.fr>
-X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
+	s=arc-20240116; t=1741485646; c=relaxed/simple;
+	bh=wQRSa9oEBYAoh8caaqUmYqfpDL03N8sOx/3f3+v8l9k=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=lPgfWhQpNbEEg74keUa9y7AjVYSwCDz04NHfMDaxRglX2FdpL/eoXPV7mmV2+KhuXU4WDVJw07nomTs9kjqQIKcCzZKNOJQmu4JzQj7zs67Qbfn5d94zpELyOVvDfWKhGTR+5AXtAu3o5D03C9y0sOoV3cEHtW/dj4gtPr2cpZ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=deller@gmx.de header.b=tgsqWNBv; arc=none smtp.client-ip=212.227.17.22
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
+	s=s31663417; t=1741485638; x=1742090438; i=deller@gmx.de;
+	bh=Nv7q73JewaaMP/j8eSwUqHgxHRPYRCgSF5TBSrI+cXI=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=tgsqWNBvR8iNMbjK9gIf1isiv+mJxQJs5c1XHjdWQglQMIXiqsmax/ljie12AiN+
+	 rtXXZMbtrKCRCdm+nd736M0UzCYbYTpCAXXOn3yXGgcR6uNSkE92fiEwuM6mzuoW8
+	 YLrHfDk5LYr0p1uRE3jhCWDdQJlWBlHI3u03gFdZ/I/w3lFl06nLEU2j5oFzU1vjG
+	 O+f0i1RCUAIbn4ayytQCFRdkfhuK1WkBVluMeKCiivifTiKqSCNb2IZ3YYFvh0Mhr
+	 9y7Y5gmIYB4GPNnR493ri9vAgIYrDvmo5R5Fxx5/IsgAIU/OY4NHheyrCZDujrZM+
+	 MXjXZRGB8nTXekFaNw==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from [192.168.20.173] ([109.250.63.121]) by mail.gmx.net (mrgmx105
+ [212.227.17.168]) with ESMTPSA (Nemesis) id 1M7K3Y-1tsBMv3jpc-00CI6G; Sun, 09
+ Mar 2025 03:00:38 +0100
+Message-ID: <e88f483c-1439-40f2-8945-dfa4de373153@gmx.de>
+Date: Sun, 9 Mar 2025 03:00:35 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] fbdev: lcdcfb: Register sysfs groups through driver core
+To: oushixiong1025@163.com
+Cc: Thomas Zimmermann <tzimmermann@suse.de>,
+ Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+ Lee Jones <lee@kernel.org>, =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?=
+ <u.kleine-koenig@baylibre.com>, Arnd Bergmann <arnd@arndb.de>,
+ linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org, Shixiong Ou <oushixiong@kylinos.cn>
+References: <20250219084427.244985-1-oushixiong1025@163.com>
+Content-Language: en-US
+From: Helge Deller <deller@gmx.de>
+Autocrypt: addr=deller@gmx.de; keydata=
+ xsFNBF3Ia3MBEAD3nmWzMgQByYAWnb9cNqspnkb2GLVKzhoH2QD4eRpyDLA/3smlClbeKkWT
+ HLnjgkbPFDmcmCz5V0Wv1mKYRClAHPCIBIJgyICqqUZo2qGmKstUx3pFAiztlXBANpRECgwJ
+ r+8w6mkccOM9GhoPU0vMaD/UVJcJQzvrxVHO8EHS36aUkjKd6cOpdVbCt3qx8cEhCmaFEO6u
+ CL+k5AZQoABbFQEBocZE1/lSYzaHkcHrjn4cQjc3CffXnUVYwlo8EYOtAHgMDC39s9a7S90L
+ 69l6G73lYBD/Br5lnDPlG6dKfGFZZpQ1h8/x+Qz366Ojfq9MuuRJg7ZQpe6foiOtqwKym/zV
+ dVvSdOOc5sHSpfwu5+BVAAyBd6hw4NddlAQUjHSRs3zJ9OfrEx2d3mIfXZ7+pMhZ7qX0Axlq
+ Lq+B5cfLpzkPAgKn11tfXFxP+hcPHIts0bnDz4EEp+HraW+oRCH2m57Y9zhcJTOJaLw4YpTY
+ GRUlF076vZ2Hz/xMEvIJddRGId7UXZgH9a32NDf+BUjWEZvFt1wFSW1r7zb7oGCwZMy2LI/G
+ aHQv/N0NeFMd28z+deyxd0k1CGefHJuJcOJDVtcE1rGQ43aDhWSpXvXKDj42vFD2We6uIo9D
+ 1VNre2+uAxFzqqf026H6cH8hin9Vnx7p3uq3Dka/Y/qmRFnKVQARAQABzRxIZWxnZSBEZWxs
+ ZXIgPGRlbGxlckBnbXguZGU+wsGRBBMBCAA7AhsDBQsJCAcCBhUKCQgLAgQWAgMBAh4BAheA
+ FiEERUSCKCzZENvvPSX4Pl89BKeiRgMFAl3J1zsCGQEACgkQPl89BKeiRgNK7xAAg6kJTPje
+ uBm9PJTUxXaoaLJFXbYdSPfXhqX/BI9Xi2VzhwC2nSmizdFbeobQBTtRIz5LPhjk95t11q0s
+ uP5htzNISPpwxiYZGKrNnXfcPlziI2bUtlz4ke34cLK6MIl1kbS0/kJBxhiXyvyTWk2JmkMi
+ REjR84lCMAoJd1OM9XGFOg94BT5aLlEKFcld9qj7B4UFpma8RbRUpUWdo0omAEgrnhaKJwV8
+ qt0ULaF/kyP5qbI8iA2PAvIjq73dA4LNKdMFPG7Rw8yITQ1Vi0DlDgDT2RLvKxEQC0o3C6O4
+ iQq7qamsThLK0JSDRdLDnq6Phv+Yahd7sDMYuk3gIdoyczRkXzncWAYq7XTWl7nZYBVXG1D8
+ gkdclsnHzEKpTQIzn/rGyZshsjL4pxVUIpw/vdfx8oNRLKj7iduf11g2kFP71e9v2PP94ik3
+ Xi9oszP+fP770J0B8QM8w745BrcQm41SsILjArK+5mMHrYhM4ZFN7aipK3UXDNs3vjN+t0zi
+ qErzlrxXtsX4J6nqjs/mF9frVkpv7OTAzj7pjFHv0Bu8pRm4AyW6Y5/H6jOup6nkJdP/AFDu
+ 5ImdlA0jhr3iLk9s9WnjBUHyMYu+HD7qR3yhX6uWxg2oB2FWVMRLXbPEt2hRGq09rVQS7DBy
+ dbZgPwou7pD8MTfQhGmDJFKm2jvOwU0EXchrcwEQAOsDQjdtPeaRt8EP2pc8tG+g9eiiX9Sh
+ rX87SLSeKF6uHpEJ3VbhafIU6A7hy7RcIJnQz0hEUdXjH774B8YD3JKnAtfAyuIU2/rOGa/v
+ UN4BY6U6TVIOv9piVQByBthGQh4YHhePSKtPzK9Pv/6rd8H3IWnJK/dXiUDQllkedrENXrZp
+ eLUjhyp94ooo9XqRl44YqlsrSUh+BzW7wqwfmu26UjmAzIZYVCPCq5IjD96QrhLf6naY6En3
+ ++tqCAWPkqKvWfRdXPOz4GK08uhcBp3jZHTVkcbo5qahVpv8Y8mzOvSIAxnIjb+cklVxjyY9
+ dVlrhfKiK5L+zA2fWUreVBqLs1SjfHm5OGuQ2qqzVcMYJGH/uisJn22VXB1c48yYyGv2HUN5
+ lC1JHQUV9734I5cczA2Gfo27nTHy3zANj4hy+s/q1adzvn7hMokU7OehwKrNXafFfwWVK3OG
+ 1dSjWtgIv5KJi1XZk5TV6JlPZSqj4D8pUwIx3KSp0cD7xTEZATRfc47Yc+cyKcXG034tNEAc
+ xZNTR1kMi9njdxc1wzM9T6pspTtA0vuD3ee94Dg+nDrH1As24uwfFLguiILPzpl0kLaPYYgB
+ wumlL2nGcB6RVRRFMiAS5uOTEk+sJ/tRiQwO3K8vmaECaNJRfJC7weH+jww1Dzo0f1TP6rUa
+ fTBRABEBAAHCwXYEGAEIACAWIQRFRIIoLNkQ2+89Jfg+Xz0Ep6JGAwUCXchrcwIbDAAKCRA+
+ Xz0Ep6JGAxtdEAC54NQMBwjUNqBNCMsh6WrwQwbg9tkJw718QHPw43gKFSxFIYzdBzD/YMPH
+ l+2fFiefvmI4uNDjlyCITGSM+T6b8cA7YAKvZhzJyJSS7pRzsIKGjhk7zADL1+PJei9p9idy
+ RbmFKo0dAL+ac0t/EZULHGPuIiavWLgwYLVoUEBwz86ZtEtVmDmEsj8ryWw75ZIarNDhV74s
+ BdM2ffUJk3+vWe25BPcJiaZkTuFt+xt2CdbvpZv3IPrEkp9GAKof2hHdFCRKMtgxBo8Kao6p
+ Ws/Vv68FusAi94ySuZT3fp1xGWWf5+1jX4ylC//w0Rj85QihTpA2MylORUNFvH0MRJx4mlFk
+ XN6G+5jIIJhG46LUucQ28+VyEDNcGL3tarnkw8ngEhAbnvMJ2RTx8vGh7PssKaGzAUmNNZiG
+ MB4mPKqvDZ02j1wp7vthQcOEg08z1+XHXb8ZZKST7yTVa5P89JymGE8CBGdQaAXnqYK3/yWf
+ FwRDcGV6nxanxZGKEkSHHOm8jHwvQWvPP73pvuPBEPtKGLzbgd7OOcGZWtq2hNC6cRtsRdDx
+ 4TAGMCz4j238m+2mdbdhRh3iBnWT5yPFfnv/2IjFAk+sdix1Mrr+LIDF++kiekeq0yUpDdc4
+ ExBy2xf6dd+tuFFBp3/VDN4U0UfG4QJ2fg19zE5Z8dS4jGIbLg==
+In-Reply-To: <20250219084427.244985-1-oushixiong1025@163.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:2g9LTpSp5bLNqSSewIt9NQ7qAMuxvFHZweNuCCcp31D1/7qhW4N
+ xRNKvDYSy4XhDGwy3F2o4JdEBD5yjuTUV+nr3Kms4VMU/nW5j1NnN16jg3WeXh0/j8etTgv
+ P9cVPR8AbI+qpxr8+3Jk4ckbvic3+4TXLUz+PN5AypoJHpTABlCpDIxdnlz/7qOboLSJj8H
+ L0P4c1pi9s9dCB/tmqqAA==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:aBWmrqUcUKc=;KbW3XNSUl3sl4yfSDDLejpzHFBZ
+ PYGrQQSrAuUJWsj/r4EnKhx56Vi7HRxnZcFijJNdpSdMeUxvsOVN3cJNieod8Mo4zB4xOsZKk
+ uuvLDH99mQbuC8XJ28v6KBDvGxmZET8vWhLLBevZU7Kbs5RT22ZOlOYcIs+cBYM4HPIeW7gI9
+ 13guhXFbnejOoOPiCIfo7FO0mRHbZs6u8nOGnnCtXoh1j0SCd6eXhkvIRLszBKBYoJR3cqDsy
+ 7cEVXdYw4B+eSSEhAr0C7Y4d86K1xn9v6T7AtP9YxMTjP2mVli7CvDtUYMnrpCRAA0FSPu2r5
+ HEAsUV8cROsRyvrSAhsOxlAVbqUDvBxTjuruBwlKxQruU0bKbXXjnLNzmSqZjSX3Vkk4XKlzd
+ OOayXAOGK59xL9vjYsfUJHYqIkeEY5UKpygR7TlA1JYQH5nvWRUtRGKbB6fBhsOa5IRay5gjn
+ ogXgDMViFcgAXM5NfaGntbGL6tWPhTGmqA5Gc/NJ53AOCgS2ONZJ5vN4sO5oya5Q7ToU+/Ew6
+ FcGbBBdpw//b8XxS983D4mvYwX2OhqLn3iGSCaEFctuTvesX0c/cQ6p4WQQ3vB5xu+KxlbTrN
+ uPZOrqsCyWlfOFjt/VQPf62lwne5wFycDJS9I/XpMGDk9lSEjOEWmD4Dr6gLWTsGcq0MteB1o
+ DLzlatY1lqRz1LF/4hCcMNI8bAHUFStYDbbwFjdt5vi8a4tK46bgqEtgLaQa/TZhOrv9b+kKS
+ h+DQJjqJLuqz3Dc16r9ZX0jc4TlNkj0v0PFKQ104dAcsMAvCU2TRBQoXTuQfXNvvypd9VvVpf
+ J+GjD9Y3UXXLO6UBlD0i7nbSHUOu9r58Zu2MVa+vHwcYN8Q5pSl2OnQyr1aO73OjVgETIWl9Y
+ 3UH0aW1sRwHAzdnIX0b4xuEFmDRDcurolJEQ6fuZLIHsjw+23E8pez7+XcaTyGN8TUYcfA/5H
+ 4u6esnL0ciV39Ptkg6rlvuE9XWZuVRsJuy6ZcltFDXjsrk8p9afNopdL8EDzop68yVpM1K97J
+ AI/OTM1yc9C0r4JcgtGO6hg99jPL2ItxauDUP1NpEfaauXGQUaytE7k6FmCJxID9IuAentaZC
+ PaGqApv6HLQlHMwxNxKurntN3KYk3fY+WPvfpKj1SVU80FS9hX2zW9mu2JvGMX+Bs35XBG9Iq
+ GjSR4Cg2HLgsM9lnvnMG9p+aDdyJaXFdr9iV8bfU5vBpicqIB1WkavrqR9PeDsUX4AfxTG9Nv
+ taHhdkuoWJw/lkRCqD9mPwxbs8T+S4w7pHHLnYBDKa7wIf26y14mDcQU80UNMzfdSlB8V2Vcs
+ UmP1oG7ta0Dc7eeAH5Bno49hJq/ogHnXGciP1lO1zKSQBgfvGZtz2r8/JAw8GYHiwPko19Heo
+ FZCax0uC81ilHFRk93jJgg7JlUJ2VhQNmQR03zfzKLwYOvPZETMS5lDMpD
 
-On Fri, 7 Mar 2025 18:58:08 +0900
-Vincent Mailhol <mailhol.vincent@wanadoo.fr> wrote:
+On 2/19/25 09:44, oushixiong1025@163.com wrote:
+> From: Shixiong Ou <oushixiong@kylinos.cn>
+>
+> [WHY]
+>     1. The driver forgot to call device_remove_file()
+>     in sh_mobile_lcdc_overlay_fb_unregister(), and there was
+>     no error handling when calling device_create_file() failed.
+>
+>     2. This should probably use device_add_group() instead of
+>     individual files to simplify both creation and removal. [Arnd]
+>
+>     3. The driver core can register and cleanup sysfs groups already.
+>     as commit 95cdd538e0e5 ("fbdev: efifb: Register sysfs groups
+>     through driver core").
+>
+> [HOW]
+>     Register sysfs groups through driver core.
+>
+> Signed-off-by: Shixiong Ou <oushixiong@kylinos.cn>
+> ---
+>   drivers/video/fbdev/sh_mobile_lcdcfb.c | 29 ++++++++++++--------------
+>   1 file changed, 13 insertions(+), 16 deletions(-)
 
-> On 07/03/2025 at 04:23, David Laight wrote:
-> > On Thu, 06 Mar 2025 20:29:52 +0900
-> > Vincent Mailhol via B4 Relay <devnull+mailhol.vincent.wanadoo.fr@kernel.org> wrote:
-> >   
-> >> From: Vincent Mailhol <mailhol.vincent@wanadoo.fr>
-> >>
-> >> In an upcoming change, GENMASK() and its friends will indirectly
-> >> depend on sizeof() which is not available in asm.
-> >>
-> >> Instead of adding further complexity to __GENMASK() to make it work
-> >> for both asm and non asm, just split the definition of the two
-> >> variants.  
-> > ...  
-> >> +#else /* defined(__ASSEMBLY__) */
-> >> +
-> >> +#define GENMASK(h, l)		__GENMASK(h, l)
-> >> +#define GENMASK_ULL(h, l)	__GENMASK_ULL(h, l)  
-> > 
-> > What do those actually expand to now?
-> > As I've said a few times both UL(0) and ULL(0) are just (0) for __ASSEMBLY__
-> > so the expansions of __GENMASK() and __GENMASK_ULL() contained the
-> > same numeric constants.  
-> 
-> Indeed, in asm, the UL(0) and ULL(0) expands to the same thing: 0.
-> 
-> But the two macros still expand to something different on 32 bits
-> architectures:
-> 
->   * __GENMASK:
-> 
->       (((~(0)) << (l)) & (~(0) >> (32 - 1 - (h))))
-> 
->   * __GENMASK_ULL:
-> 
->       (((~(0)) << (l)) & (~(0) >> (64 - 1 - (h))))
-> 
-> On 64 bits architecture these are the same.
+applied.
 
-I've just fed those into godbolt (https://www.godbolt.org/z/Ter6WE9qE) as:
-int fi(void)
-{
-    int v;
-    asm("mov $(((~(0)) << (8)) & (~(0) >> (32 - 1 - (15)))),%0": "=r" (v));
-    return v -(((~(0u)) << (8)) & (~(0u) >> (32 - 1 - (15))));
-}
-
-gas warns:
-<source>:4: Warning: 0xffffffffff00 shortened to 0xffffff00
-
-unsigned long long fll(void)
-{
-    unsigned long long v;
-    asm("mov $(((~(0)) << (8)) & (~(0) >> (64 - 1 - (15)))),%0": "=r" (v));
-    return v -(((~(0ull)) << (8)) & (~(0ull) >> (64 - 1 - (15))));
-}
-
-(for other architectures you'll need to change the opcode)
-
-For x86 and x86-32 the assembler seems to be doing 64bit maths with unsigned
-right shifts - so the second function (with the 64 in it) generates 0xff00.
-I doubt a 32bit only assembler does 64bit maths, but the '>> 48' above
-might get masked to a '>> 16' by the cpu and generate the correct result.
-
-So __GENMASK() is likely to be broken for any assembler that supports 64bits
-when generating 32bit code.
-__GENMASK_ULL() works (assuming all have unsigned >>) on 64bit assemblers
-(even when generating 32bit code). It may work on some 32bit assemblers.
-
-Since most uses in the header files will be GENMASK() I doubt (hope) no
-asm code actually uses the values!
-The headers assemble - but that is about all that can be said.
-
-Bags of worms :-)
-
-	David
-
+Thanks!
+Helge
 
