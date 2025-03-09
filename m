@@ -1,136 +1,228 @@
-Return-Path: <linux-kernel+bounces-553100-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-553101-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E13B2A583D1
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 12:36:50 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D2372A583D2
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 12:38:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A90C23A9D79
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 11:36:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0BFC71692C7
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 11:38:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17A3C1B0411;
-	Sun,  9 Mar 2025 11:36:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2720F1C5496;
+	Sun,  9 Mar 2025 11:38:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MHlPGVIR"
-Received: from mail-qv1-f41.google.com (mail-qv1-f41.google.com [209.85.219.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ZVy66t1v"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F6942B9A4
-	for <linux-kernel@vger.kernel.org>; Sun,  9 Mar 2025 11:36:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 967591A2C0E;
+	Sun,  9 Mar 2025 11:38:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741520204; cv=none; b=RzGNI91jY/9UcsoJLFoEyRY91XkAFNxr3+UgT6L6y/tb/wTF11EVKQpTH+26h7YQ0jBcF/051YbSNYNG1ckEdgsCuCg4vgqKvSOz1UWlqPnFUvuMIxamlpLoypxt+TJ9pbNQiPURoIyTZzknfdRvmMqnKPWMhmk5jNWoTHqrecE=
+	t=1741520290; cv=none; b=ACcVSSHffvbBADac7ze+LhPs8xBfwLkgvOscXH8qZBvila5myhtQixGQ5X8CPQJGtmHxKlRNk9dLekkRZMf8K3MTEmbMZTKmT/Nid8mpkUsR2e+30UXFEeoXm/TBMwNUdFmiBnXchZU3Vuis1ZU/QEyICgNY8IFYn4W1/YkScgc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741520204; c=relaxed/simple;
-	bh=vzoBOry61iQHIztimHhCz4wnuOq9GcoQJ0JTUfGsGIc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=tbxYxPkYA8KpOp1BIWTmrZrufa0uXNELZxpO30YdGEwYxx8D/MeUa+CpSecyB440p5VgmYyJOyatnPje8jiOVQD3H5GNpsVMAGv3w3emcD13yqbrMl3M5RpkanV9au+aXUVNpXTiuk6PQ285ywrVjMGqupQ+OajI+O2c1R94yUU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MHlPGVIR; arc=none smtp.client-ip=209.85.219.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f41.google.com with SMTP id 6a1803df08f44-6e41e18137bso22862286d6.1
-        for <linux-kernel@vger.kernel.org>; Sun, 09 Mar 2025 04:36:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741520202; x=1742125002; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=/a161bk7fNRzS2BH1BQSETx7mHbFCGZ6TGnzwioWVeM=;
-        b=MHlPGVIRuIZVNW3oaF7J3SBkGi34gHUIgXntR4VTuO/MKYXUTMLG9xaipXEbbGpeuY
-         Q+P+RXmpjOvCYkhYLMgXUUhfaopCh6sCocYXwFe0HidgeqhV4LONU7M9zkhmN7XZqaTi
-         N0gTNkPitB/vA5jek8QUGm6QxZRFj46T23d2xRtkWhkb9NHO3oxNtfD5bgJndUvN/TVo
-         86y4Muy7GMbIBrbQbqrM+Wqez0BpKSK2wBxmGjnGn06BIuZRTs/nvw62IAIZcOsKRriL
-         B7zUqm1ixMhwioDy27VQ3OTK2zo8lzQw12gC12+8hYDrYm0o/uWrxtr4Sju55ZF1nX06
-         6+kw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741520202; x=1742125002;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=/a161bk7fNRzS2BH1BQSETx7mHbFCGZ6TGnzwioWVeM=;
-        b=Hhadq0wyju7E4GbQQzBBTMzN+A1cWFX9EJwZ0KLGtTIYVQLXNjdQXMabKelmnpi6H8
-         tNjmTni0VBI38YW9H8UzV7dXelE1bQvSBOz6clkPnXlVuCu6+vSiQzm+wPcl8BRl+T3a
-         6EtU4qoEGuZNvZu7DLlOMqWYbyD8kLE+UKtkfVBnyO1A4nsBt6QHw6KZMywCdEXBcvq7
-         CoZfox13clzl7ANsx9XRYxPDsofzOwdJPwA7e4oIWa8PYfnD+1d+mYvCMt1f6zBoXtx5
-         jpQf0JY0rguC4KPg+LVWiCAPNzpgqcxBgFlUs7R7v/7CWuIAG7SkwA7l6uMP3c/UrLU2
-         mSaQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXrfjxRScaejJlkvNTpQdBskpajtOi++LVhNXuMm/2PMR1XLKupuIVf2yDLExgSh38AdzVrn8kJtmb9rqU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyp32ZScqNje4T4uBSxzWCG7qLLwxbV5hmL53FOR8HvLeTPISTY
-	RjNAntQTGBf9hALkay3EnDMgSoZ5aW+SSY95aZhcfLKb8W7USYsggD/wnw96wt8Ao8aM1AtjRID
-	Uv4AYrD+ffeNdTzJQNkFyyhO6xO0=
-X-Gm-Gg: ASbGncvGfDxi/Rbrshk8NEu9QOvHsdHI3bkumsIzQg6s4ycGLTfpwtH/ZxdbyazPvD6
-	Ehoa1EJXKCzq/RWcpYlO4AlVMG15Vkxw6Ql0WCOir7kkEIy3DJQut/azTG3h/LAeH2MuKj1B+kB
-	+Nx+mvUI3/J69SWlYMZxCq/jUrsfg=
-X-Google-Smtp-Source: AGHT+IGvbRQ8MS07Ogxb7SEFwlPv9437lh5kEBC/VJnAquLYsy+9V+4d/utrdinZhbdwoXr7/IYHTdxhiIbgiBCj55s=
-X-Received: by 2002:a05:6214:dcf:b0:6e8:eee6:8518 with SMTP id
- 6a1803df08f44-6e9006049aamr156248146d6.19.1741520201777; Sun, 09 Mar 2025
- 04:36:41 -0700 (PDT)
+	s=arc-20240116; t=1741520290; c=relaxed/simple;
+	bh=4nucg4CoauwA5kAPnRFSbGlLG8bVoifutuzMWDupJwo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kxVlt9JnE6VXmLGmcyWjvYIx+S/e0hfxvZGX+EjHKx2waIsMQJFxk5rMjH0J8EdDOLboC9x8xicrfcnJBnYzU8iFz7eFkEX1LPk19RKQ9r+BKclgcnDy1FZe/cGJCZCvJgJLtNDn7yIsb43gR7/a6Hm7eKOPuVv3ndtFq7xNE3A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ZVy66t1v; arc=none smtp.client-ip=192.198.163.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1741520288; x=1773056288;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=4nucg4CoauwA5kAPnRFSbGlLG8bVoifutuzMWDupJwo=;
+  b=ZVy66t1vTpgQTHeu4/wAw0NlsZ/d6jWbbB0pu/wMRDKIvzDVwbJV2dwa
+   PXk7cIuJTCmoCAjiGLD1HRpFOdceeSJeCUijGRLtfO7zBMOlkSW4Sp4uO
+   I5WyLSRHXYBkk60F/b+cBF/8IhUrNNtK2EuBGBEuxRWuLnKy/N4wfZrvS
+   h2+qY+Tbf5dfnD9Ui7DuHUgCHawZ9BkjdtFufS0TFZt23Vu52k3CvZfoz
+   cZ9+S8gMBe3wk4WqyF3XMpY4t1TDVO8gW7TEuq/WjAwphmJ+iuqZZT15r
+   ajTRCyFBuOLZiYk1z8mK6Mejc7T/UXN3utSLtAeTrCZzx2V6DdrtviGdQ
+   A==;
+X-CSE-ConnectionGUID: dVaAOyK9R6WsNDQS/IixHA==
+X-CSE-MsgGUID: LS1uHXxDRZ+eGItUMpx3Cw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11367"; a="30100072"
+X-IronPort-AV: E=Sophos;i="6.14,234,1736841600"; 
+   d="scan'208";a="30100072"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Mar 2025 04:38:07 -0700
+X-CSE-ConnectionGUID: w5jE01DjQaGnYl4VkIt9VQ==
+X-CSE-MsgGUID: f5fOJWxjTFWCT8UaKUILFQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,234,1736841600"; 
+   d="scan'208";a="119710154"
+Received: from lkp-server02.sh.intel.com (HELO a4747d147074) ([10.239.97.151])
+  by orviesa006.jf.intel.com with ESMTP; 09 Mar 2025 04:38:01 -0700
+Received: from kbuild by a4747d147074 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1trEyl-00033I-1s;
+	Sun, 09 Mar 2025 11:37:59 +0000
+Date: Sun, 9 Mar 2025 19:37:54 +0800
+From: kernel test robot <lkp@intel.com>
+To: Alice Ryhl <aliceryhl@google.com>, Miguel Ojeda <ojeda@kernel.org>,
+	Matthew Wilcox <willy@infradead.org>,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	John Hubbard <jhubbard@nvidia.com>,
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Arnd Bergmann <arnd@arndb.de>, Jann Horn <jannh@google.com>,
+	Suren Baghdasaryan <surenb@google.com>
+Cc: oe-kbuild-all@lists.linux.dev,
+	Linux Memory Management List <linux-mm@kvack.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Trevor Gross <tmgross@umich.edu>, linux-kernel@vger.kernel.org,
+	rust-for-linux@vger.kernel.org, Alice Ryhl <aliceryhl@google.com>
+Subject: Re: [PATCH v15 5/9] mm: rust: add mmput_async support
+Message-ID: <202503091916.QousmtcY-lkp@intel.com>
+References: <20250304-vma-v15-5-5c641b31980a@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <11d36fdd-55c2-4f3b-96b1-dd442f759ba0@paulmck-laptop> <87plir32as.ffs@tglx>
-In-Reply-To: <87plir32as.ffs@tglx>
-From: Yafang Shao <laoar.shao@gmail.com>
-Date: Sun, 9 Mar 2025 19:36:05 +0800
-X-Gm-Features: AQ5f1Joz5qKEagUlUblBmAY47Yv_3oeGk7YC2Z4_6_8dMsbR4hOfoDvmkDborgs
-Message-ID: <CALOAHbDhKzaj93PcQReEGk-omw7s5xXVj_X=+by1r6c0G4aV3A@mail.gmail.com>
-Subject: Re: [PATCH v2] clocksource: Defer marking clocksources unstable to kthread
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: paulmck@kernel.org, linux-kernel@vger.kernel.org, jstultz@google.com, 
-	sboyd@kernel.org, christian@heusel.eu, kernel-team@meta.com, 
-	Peter Zijlstra <peterz@infradead.org>, =?UTF-8?Q?Michal_Koutn=C3=BD?= <mkoutny@suse.com>, 
-	Vincent Guittot <vincent.guittot@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250304-vma-v15-5-5c641b31980a@google.com>
 
-On Sun, Mar 9, 2025 at 12:38=E2=80=AFAM Thomas Gleixner <tglx@linutronix.de=
-> wrote:
->
-> On Thu, Mar 06 2025 at 08:06, Paul E. McKenney wrote:
-> > The clocksource watchdog marks clocksources unstable from within a time=
-r
-> > handler.  On x86, this marking involves an on_each_cpu_cond_mask(),
-> > which in turn invokes smp_call_function_many_cond(), which may not be
-> > invoked from a timer handler.  Doing so results in:
-> >
-> > WARNING: CPU: 3 PID: 0 at kernel/smp.c:815 smp_call_function_many_cond+=
-0x46b/0x4c0
-> >
-> > Fix this by deferring the marking to the clocksource watchdog kthread.
-> > Note that marking unstable is already deferred, so deferring it a bit
-> > more should be just fine.
->
-> While this can be done, that's papering over the underlying problem,
-> which was introduced with:
->
->   8722903cbb8f ("sched: Define sched_clock_irqtime as static key")
->
-> That added the static key switch, which is causing the problem. And
-> "fixing" this in the clocksource watchdog is incomplete because the same
-> problem exists during CPU hotplug when the TSC synchronization declares
-> the TSC unstable. It's the exactly same problem as was fixed via:
->
->  6577e42a3e16 ("sched/clock: Fix up clear_sched_clock_stable()")
->
-> So as this got introduced in the 6.14 merge window, the proper fix is to
-> revert commit 8722903cbb8f and send it back to the drawing board. It was
-> clearly never tested with the various possibilities which invoke
-> mark_tsc*_unstable().
+Hi Alice,
 
-Hello Thomas,
+kernel test robot noticed the following build errors:
 
-It has been reverted by the following commit
-b9f2b29b9494 ("sched: Don't define sched_clock_irqtime as static key")
+[auto build test ERROR on a64dcfb451e254085a7daee5fe51bf22959d52d3]
 
-https://web.git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git/commit/?id=
-=3Db9f2b29b94943b08157e3dfc970baabc7944dbc3
+url:    https://github.com/intel-lab-lkp/linux/commits/Alice-Ryhl/mm-rust-add-abstraction-for-struct-mm_struct/20250304-195314
+base:   a64dcfb451e254085a7daee5fe51bf22959d52d3
+patch link:    https://lore.kernel.org/r/20250304-vma-v15-5-5c641b31980a%40google.com
+patch subject: [PATCH v15 5/9] mm: rust: add mmput_async support
+config: riscv-randconfig-r113-20250309 (https://download.01.org/0day-ci/archive/20250309/202503091916.QousmtcY-lkp@intel.com/config)
+compiler: clang version 21.0.0git (https://github.com/llvm/llvm-project e15545cad8297ec7555f26e5ae74a9f0511203e7)
+reproduce: (https://download.01.org/0day-ci/archive/20250309/202503091916.QousmtcY-lkp@intel.com/reproduce)
 
---=20
-Regards
-Yafang
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202503091916.QousmtcY-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+   820 |         insl(addr, buffer, count);
+   |         ^~~~~~~~~~~~~~~~~~~~~~~~~
+   arch/riscv/include/asm/io.h:106:53: note: expanded from macro 'insl'
+   106 | #define insl(addr, buffer, count) __insl(PCI_IOBASE + (addr), buffer, count)
+   |                                          ~~~~~~~~~~ ^
+   In file included from rust/helpers/helpers.c:10:
+   In file included from rust/helpers/blk.c:3:
+   In file included from include/linux/blk-mq.h:5:
+   In file included from include/linux/blkdev.h:9:
+   In file included from include/linux/blk_types.h:10:
+   In file included from include/linux/bvec.h:10:
+   In file included from include/linux/highmem.h:12:
+   In file included from include/linux/hardirq.h:11:
+   In file included from ./arch/riscv/include/generated/asm/hardirq.h:1:
+   In file included from include/asm-generic/hardirq.h:17:
+   In file included from include/linux/irq.h:20:
+   In file included from include/linux/io.h:14:
+   In file included from arch/riscv/include/asm/io.h:136:
+   include/asm-generic/io.h:829:2: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+   829 |         outsb(addr, buffer, count);
+   |         ^~~~~~~~~~~~~~~~~~~~~~~~~~
+   arch/riscv/include/asm/io.h:118:55: note: expanded from macro 'outsb'
+   118 | #define outsb(addr, buffer, count) __outsb(PCI_IOBASE + (addr), buffer, count)
+   |                                            ~~~~~~~~~~ ^
+   In file included from rust/helpers/helpers.c:10:
+   In file included from rust/helpers/blk.c:3:
+   In file included from include/linux/blk-mq.h:5:
+   In file included from include/linux/blkdev.h:9:
+   In file included from include/linux/blk_types.h:10:
+   In file included from include/linux/bvec.h:10:
+   In file included from include/linux/highmem.h:12:
+   In file included from include/linux/hardirq.h:11:
+   In file included from ./arch/riscv/include/generated/asm/hardirq.h:1:
+   In file included from include/asm-generic/hardirq.h:17:
+   In file included from include/linux/irq.h:20:
+   In file included from include/linux/io.h:14:
+   In file included from arch/riscv/include/asm/io.h:136:
+   include/asm-generic/io.h:838:2: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+   838 |         outsw(addr, buffer, count);
+   |         ^~~~~~~~~~~~~~~~~~~~~~~~~~
+   arch/riscv/include/asm/io.h:119:55: note: expanded from macro 'outsw'
+   119 | #define outsw(addr, buffer, count) __outsw(PCI_IOBASE + (addr), buffer, count)
+   |                                            ~~~~~~~~~~ ^
+   In file included from rust/helpers/helpers.c:10:
+   In file included from rust/helpers/blk.c:3:
+   In file included from include/linux/blk-mq.h:5:
+   In file included from include/linux/blkdev.h:9:
+   In file included from include/linux/blk_types.h:10:
+   In file included from include/linux/bvec.h:10:
+   In file included from include/linux/highmem.h:12:
+   In file included from include/linux/hardirq.h:11:
+   In file included from ./arch/riscv/include/generated/asm/hardirq.h:1:
+   In file included from include/asm-generic/hardirq.h:17:
+   In file included from include/linux/irq.h:20:
+   In file included from include/linux/io.h:14:
+   In file included from arch/riscv/include/asm/io.h:136:
+   include/asm-generic/io.h:847:2: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+   847 |         outsl(addr, buffer, count);
+   |         ^~~~~~~~~~~~~~~~~~~~~~~~~~
+   arch/riscv/include/asm/io.h:120:55: note: expanded from macro 'outsl'
+   120 | #define outsl(addr, buffer, count) __outsl(PCI_IOBASE + (addr), buffer, count)
+   |                                            ~~~~~~~~~~ ^
+   In file included from rust/helpers/helpers.c:10:
+   In file included from rust/helpers/blk.c:3:
+   In file included from include/linux/blk-mq.h:5:
+   In file included from include/linux/blkdev.h:9:
+   In file included from include/linux/blk_types.h:10:
+   In file included from include/linux/bvec.h:10:
+   In file included from include/linux/highmem.h:12:
+   In file included from include/linux/hardirq.h:11:
+   In file included from ./arch/riscv/include/generated/asm/hardirq.h:1:
+   In file included from include/asm-generic/hardirq.h:17:
+   In file included from include/linux/irq.h:20:
+   In file included from include/linux/io.h:14:
+   In file included from arch/riscv/include/asm/io.h:136:
+   include/asm-generic/io.h:1175:55: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+   1175 |         return (port > MMIO_UPPER_LIMIT) ? NULL : PCI_IOBASE + port;
+   |                                                   ~~~~~~~~~~ ^
+   clang diag: arch/riscv/include/asm/io.h:104:53: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+   clang diag: arch/riscv/include/asm/io.h:105:53: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+   clang diag: arch/riscv/include/asm/io.h:106:53: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+   clang diag: arch/riscv/include/asm/io.h:118:55: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+   clang diag: arch/riscv/include/asm/io.h:119:55: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+   clang diag: arch/riscv/include/asm/io.h:120:55: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+   clang diag: include/asm-generic/io.h:1175:55: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+   7 warnings generated.
+   clang diag: arch/riscv/include/asm/io.h:104:53: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+   clang diag: arch/riscv/include/asm/io.h:105:53: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+   clang diag: arch/riscv/include/asm/io.h:106:53: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+   clang diag: arch/riscv/include/asm/io.h:118:55: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+   clang diag: arch/riscv/include/asm/io.h:119:55: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+   clang diag: arch/riscv/include/asm/io.h:120:55: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+   clang diag: include/asm-generic/io.h:1175:55: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+   clang diag: arch/riscv/include/asm/io.h:104:53: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+   clang diag: arch/riscv/include/asm/io.h:105:53: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+   clang diag: arch/riscv/include/asm/io.h:106:53: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+   clang diag: arch/riscv/include/asm/io.h:118:55: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+   clang diag: arch/riscv/include/asm/io.h:119:55: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+   clang diag: arch/riscv/include/asm/io.h:120:55: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+   clang diag: include/asm-generic/io.h:1175:55: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+>> error[E0425]: cannot find function `mmput_async` in crate `bindings`
+   --> rust/kernel/mm.rs:143:28
+   |
+   143 |         unsafe { bindings::mmput_async(obj.cast().as_ptr()) };
+   |                            ^^^^^^^^^^^ not found in `bindings`
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
