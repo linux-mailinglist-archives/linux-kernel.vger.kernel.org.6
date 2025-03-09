@@ -1,181 +1,163 @@
-Return-Path: <linux-kernel+bounces-552895-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-552896-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16FD0A58099
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 06:06:31 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C2ACEA5809B
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 06:14:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 969163ABACA
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 05:06:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C890D16AFE0
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 05:14:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F73A136351;
-	Sun,  9 Mar 2025 05:06:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A066313EFE3;
+	Sun,  9 Mar 2025 05:13:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="ZqyLlcpG"
-Received: from out203-205-221-173.mail.qq.com (out203-205-221-173.mail.qq.com [203.205.221.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ebt6D/eF"
+Received: from mail-yw1-f173.google.com (mail-yw1-f173.google.com [209.85.128.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75C7535280;
-	Sun,  9 Mar 2025 05:06:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78C94347B4;
+	Sun,  9 Mar 2025 05:13:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741496783; cv=none; b=FcfCCZli/pmhny7L8cueU6MC2VXTdXD3boYdsOrHw89nGf3w4wizJ+lOQ16UezZQpkrN3pZisLQ7DpqElElIFlfYTrmc1SFu20W56r5M2CcYdYULUeH2rNisjpp6vPVH9dqK1G48YSs7m4eCmmPqDHB5msKIHkQdVLg03zsPCDU=
+	t=1741497234; cv=none; b=rAYlKpBQJnIsSqI676E8PiB6JtvbfgYdMMZ7A8ZdtW0usRJTXpeP2wbjzWaywyzNlkHqchoxIQXLvO2LbkFfDjp1AuLqfARuig/rTYHgNgWKU5N2nJ3mCAGvuQ3aaMvuzmQJiNdW3ouwhFxEIIeLN9eaug75RYooEOfWrAQ5ULI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741496783; c=relaxed/simple;
-	bh=ap14RnM0FXHiW/c1s1yggxVd0fRMyWGdyxBDMRKs5g4=;
-	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
-	 MIME-Version; b=Wm3WhazhUVNNFSrVxZsJ1jGCQysRIVfuTimkwsYO353wFPzOmSWh5ttI0JvcUY2BoRv26Fv6Inj2fp963zTMvDmdDoTYCIeK4Dj+PBEjrOps5luJgX560KQVES///AGWgoyqRaifdPTzS34nGxdzP2Jb7D2hE+vSoUWSIrL53+w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=ZqyLlcpG; arc=none smtp.client-ip=203.205.221.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1741496468; bh=zsWjWchoYt4RUeJrfVrKynL/2TGiCO85mo2XGyQv9tY=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=ZqyLlcpG0KDJDenOjbu5amYOIR7g56xBxidFf2mpEeFJuTVjFNTvfTI81KH18j9kt
-	 EvmUPR7GbE2p9ve2UzWwxf8ph0F5V1hY2PQZToAGn3GA6LcwS2eET41Qv8xARUETfW
-	 Z5zh/+oFk3MFoNm02fYWvt4zs8NnWX85XSNX8A/k=
-Received: from pek-lxu-l1.wrs.com ([114.244.57.157])
-	by newxmesmtplogicsvrszc13-0.qq.com (NewEsmtp) with SMTP
-	id DC1984B7; Sun, 09 Mar 2025 12:55:01 +0800
-X-QQ-mid: xmsmtpt1741496101ta2qaz7oj
-Message-ID: <tencent_0BEE86CD3878D26D402DDD6F949484E96E0A@qq.com>
-X-QQ-XMAILINFO: N7MBeL6vDXVdHGCMEieOPTrj7H4vCU2dXZZuxupGB4Mm831JCzHmWX2hs9ROHF
-	 XCXxAwrJqidJgFeUQ9s4snV/CMkKNNy7isxOPeikc9plSlyKbmqzNioxN2LXQgDklcoCG7uMvOOH
-	 OI9iakV2BDj+w3UuJ4Qw9wnaiQ2XrGGbR/j4R2iu2Eq5YRsCMDKJMuSnbCrOlIPNYpnMGAKzjFDt
-	 szyCm1cU3QmGStBA2UVTTOd1r4N0kJqj24qY2iPPoTj0R6Rp1CTCBhwwoxMXG9lBZjNpcD33I9ru
-	 ipN9J7kvDw9VSAGg8YNC2g/Qovi2SM6kByyyCjiDtCjjHGtGTE1XIjqwCD/6WZTwC2aKAykUNhFZ
-	 oXM3aJSBbwQMWXuznZdMS8ZD7KzkIlp25kehKqXlrEKDWQzCEY3dHRTjfdEaPO/vpENyqmSRSq4q
-	 IQIiLRIzzduDwMkIxlWEh2dwp5NESs/uv89P2yrQMtiMebMs4+mbgmh+mVApHPUO13sZxuRlKbVG
-	 KJalETTyVXDqm9BhOcffuDUzWugmcccBOu46wt3HKFgKJdIABurBu1w5un4vR6s3Rk99L4tt34eQ
-	 roJkvCapEuXeHdOTef9Z908FrVxH1h/3P5eWJqzld2KPjVaXow/wc6m/PtmNGdJxIyex700DLPg+
-	 rEa67EujRYm6Z1gn99+fFJKCd9BVg9amiuhU/+VivFhhwGZDMAlgv36CgGrEO/DfLGQG9Im+cEG9
-	 dOHhL0NZCnLTWNY6vh6N2+j/6GOBXxVWNdD32NO2EGC7ej2HQZ8+JN13pyHxMwbGJt/oANsgu49j
-	 JSXCWAiegYaxsvR7wJ6VZibzL+OSOe+q6TMj5XJVXLSNB4TdaQ5Zo42pA15BO2R/ahZNGNvLFYh5
-	 6f8/dDZMpVWYvTncJTu06MEuJ4cWyGdj2SwFiMlZ/3
-X-QQ-XMRINFO: OD9hHCdaPRBwq3WW+NvGbIU=
-From: Edward Adam Davis <eadavis@qq.com>
-To: syzbot+00c633585760c05507c3@syzkaller.appspotmail.com
-Cc: linux-kernel@vger.kernel.org,
-	omosnace@redhat.com,
-	paul@paul-moore.com,
-	selinux@vger.kernel.org,
-	stephen.smalley.work@gmail.com,
-	syzkaller-bugs@googlegroups.com
-Subject: [PATCH] selinux: read and write sid under lock
-Date: Sun,  9 Mar 2025 12:55:02 +0800
-X-OQ-MSGID: <20250309045501.2651020-2-eadavis@qq.com>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <67cb894d.050a0220.d8275.0232.GAE@google.com>
-References: <67cb894d.050a0220.d8275.0232.GAE@google.com>
+	s=arc-20240116; t=1741497234; c=relaxed/simple;
+	bh=P+vZtA3HhV5tsZzaez4Fwli02DW+nObRXpoeW+8tkBM=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=LCtOtfEPKwzEgQnMVadXWS05mBIeOUU4EZpqR+Nmc5XGVb/mS1690bplOJ3H4tTnLRBtidge1siYRPkGPNc49P4totpsxno3fzUsOm4jW4bnJfIS8+sUnZUOVwq1GITMnFkDizq7dkzhhh+GjCNc+H7XjEGsu1HLs0k5Ke4P6VM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ebt6D/eF; arc=none smtp.client-ip=209.85.128.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f173.google.com with SMTP id 00721157ae682-6f47ed1f40dso24222127b3.1;
+        Sat, 08 Mar 2025 21:13:52 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741497231; x=1742102031; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=CK1cxf14FFn9JPBzBDVf0xP/aDOa6U25KDBn97pLSso=;
+        b=Ebt6D/eF2PhmAF+/jntqnEdPf81Qx0rwatDjnH/qGWHOnHy/fKHIoxv5kWw48ffCdu
+         25u7o7ytiua/EDeTr7yqRLl0eu80059Ve7wK6z8galBnsLyR5M7EZhynHKa+/9u7kSU/
+         3MbIOXNoARuhOjuThgbhmsyRSZuHceBtHaqkgmCtLlIjLi4kvUCt6bGUkYpgafb9YpfL
+         6KkJm1UiX1c0p/B7yvl0xr484q9DNMG2ecSv23tP6mxQy1hGwUQXCo5Rpf+GONhotA1V
+         pKMsLw+6lfXftc2Hu59QRie+hGFCA0SzLuTaNWZQu4akgs5Q5kHl4xro6m7bufO1O6UC
+         YjeA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741497231; x=1742102031;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=CK1cxf14FFn9JPBzBDVf0xP/aDOa6U25KDBn97pLSso=;
+        b=C3bYZSRnKQ/jkd6hQ1cO84k6tUQQr06Kw6y9N3HOyOrZdoqAndF9e1C21FRmwP7xEw
+         OjXE+APxWyCIdK4vaL5ZbDL0c+q4zYaoO1UvWcsHwVWxIOWQtmCk5U2ZmIZ6VZ4VarQx
+         BP67u5Wejm85VAbCcr5AkcuQUni4VabD4qunHbz0wdidum6Yo7Pntm+LtmE++5SQbH0f
+         wR5DHaR9HVqewYQ95QZ/y29E9Dzh10Dp+Nk3MsPqyexUN+rOI4eILvDsBfb8ef33aVmO
+         fN6uO5RythXIuo+ffDOBGvbyH+eTjWXY8f/UI7Hj81QdUpusmSpMBM6ipi3rpjNbrvSm
+         Kkmg==
+X-Forwarded-Encrypted: i=1; AJvYcCXAQlh9djUxyiTVV4AoIWvbAgV6hwv+hhl3lemUKntippX94rh0xNCleTEvc25+RIPpD/xEjAf2YCTvyAQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyOB98NorTsBU4zXZnSpbHBX+TWbOyM3+SPhG87diLMNJFQRkNq
+	doUKW/lXIZCa1Fha0PitPRaPVwGoQVsZ3QizajLOboqCPHYP+Rrs
+X-Gm-Gg: ASbGncvvcCA2QR1wLxFtZEmQ6N+MFUWi8XvKtz2lKuHNubSEGlA0gP322fTffUGZc9J
+	8OTjTMU11Wb9GIC0lLWOMLskBLM7nLpdnWyu0JMtAB0RInphTM3ANwawTzmf/0y7qYyrPul3Wcg
+	EAQX+cRb2mOPKaYkhleHfL7oiyLV4zZwUvxeit5AB0Q8rQcazHpCKCyBJys1cFQFyli63zeqpzA
+	mm4VyJt56mzLjQ6b4twe3PX7Au9cxnVl4vib4GR4jQxGRCHfqe5o/orUTF7VqLWW0+BaQVGb3h/
+	NZs+mkZBw9kvnpJK99B4TBGWNKGHv1/JB3R4OH47RCtSGQ==
+X-Google-Smtp-Source: AGHT+IFchlBvxUpvbNSRW7QGcdcS/9kltouLO1RXp76mD1YDjdyaSWUTZtC+t7/W80lWexuKkq9lTg==
+X-Received: by 2002:a05:690c:7207:b0:6f6:d405:7010 with SMTP id 00721157ae682-6febf39bb73mr126654507b3.29.1741497231247;
+        Sat, 08 Mar 2025 21:13:51 -0800 (PST)
+Received: from [192.168.100.70] ([2800:bf0:82:3d2:9e61:1a62:1a8c:3e62])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-6feb2a1bfc5sm15232747b3.24.2025.03.08.21.13.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 08 Mar 2025 21:13:50 -0800 (PST)
+From: Kurt Borja <kuurtb@gmail.com>
+Subject: [PATCH RFC v2 0/2] platform/x86: alienware-wmi-wmax: Extend
+ support to many devices
+Date: Sun, 09 Mar 2025 00:13:39 -0500
+Message-Id: <20250309-awcc-uid-v2-0-5338c6380b2f@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAIMjzWcC/2WPy07DMBBFfyXyGqOJE7+yQkLiA9iiLvwYNyM1D
+ dhpCqry75gUsWF5Z0bnzL2xgpmwsKG5sYwrFZrPNYiHhoXRnY/IKdbMBAgJHRjuriHwC0WuMID
+ yXkgtIqvn7xkTfe6oN/b68swO92HGj0vFLr+bP2qV3JmSj9eJJ+2jbS0IL/Ww9j9E7wryME8TL
+ UODUqPzKJKHvrcSUKUUE0JroDM1912sD3m9a0cqy5y/9lZru3v/F1hbDlx1CowV0Xgrn46To9N
+ jNbLDtm3fbRky7BwBAAA=
+X-Change-ID: 20250308-awcc-uid-6ec06bb2572d
+To: Armin Wolf <W_Armin@gmx.de>, Hans de Goede <hdegoede@redhat.com>, 
+ =?utf-8?q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Cc: platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Dell.Client.Kernel@dell.com, Kurt Borja <kuurtb@gmail.com>
+X-Mailer: b4 0.14.2
 
-syzbot reported a data-race in selinux_socket_post_create /
-selinux_socket_sock_rcv_skb. [1]
+Hi all,
 
-When creating the socket path and receiving the network data packet path,
-effective data access protection is not performed when reading and writing
-the sid, resulting in a race condition.
+After a few months of searching for acpidumps of elegible laptops, I
+came to the conclusion that if I continue this way, many devices will
+never get support for this interface. This is due to very few users
+uploading acpidumps of their machines or contacting me of that matter.
 
-Add a lock to synchronize the two.
+With this patchset, hopefully all (or almost all) elegible devices will
+get support.
 
-[1]
-BUG: KCSAN: data-race in selinux_socket_post_create / selinux_socket_sock_rcv_skb
+I'm submitting this as an RFC because I'm extending the WMI API and also
+extending support to many unknown laptops models.
 
-write to 0xffff88811b989e30 of 4 bytes by task 3803 on cpu 0:
- selinux_socket_post_create+0x1b5/0x2a0 security/selinux/hooks.c:4681
- security_socket_post_create+0x5b/0xa0 security/security.c:4577
- __sock_create+0x35b/0x5a0 net/socket.c:1571
- sock_create net/socket.c:1606 [inline]
- __sys_socket_create net/socket.c:1643 [inline]
- __sys_socket+0xae/0x240 net/socket.c:1690
- __do_sys_socket net/socket.c:1704 [inline]
- __se_sys_socket net/socket.c:1702 [inline]
- __x64_sys_socket+0x3f/0x50 net/socket.c:1702
- x64_sys_call+0x2cf2/0x2dc0 arch/x86/include/generated/asm/syscalls_64.h:42
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xc9/0x1c0 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
+This depends on
 
-read to 0xffff88811b989e30 of 4 bytes by task 3805 on cpu 1:
- selinux_socket_sock_rcv_skb+0x72/0x6a0 security/selinux/hooks.c:5129
- security_sock_rcv_skb+0x3d/0x80 security/security.c:4781
- sk_filter_trim_cap+0xca/0x3c0 net/core/filter.c:151
- sk_filter include/linux/filter.h:1062 [inline]
- sock_queue_rcv_skb_reason+0x28/0xc0 net/core/sock.c:527
- sock_queue_rcv_skb include/net/sock.h:2403 [inline]
- packet_rcv_spkt+0x2f7/0x3b0 net/packet/af_packet.c:1967
- deliver_skb net/core/dev.c:2449 [inline]
- __netif_receive_skb_core+0x48f/0x2350 net/core/dev.c:5737
- __netif_receive_skb_list_core+0x115/0x520 net/core/dev.c:5968
- __netif_receive_skb_list net/core/dev.c:6035 [inline]
- netif_receive_skb_list_internal+0x4e4/0x660 net/core/dev.c:6126
- netif_receive_skb_list+0x31/0x230 net/core/dev.c:6178
- xdp_recv_frames net/bpf/test_run.c:280 [inline]
- xdp_test_run_batch net/bpf/test_run.c:361 [inline]
- bpf_test_run_xdp_live+0xe10/0x1040 net/bpf/test_run.c:390
- bpf_prog_test_run_xdp+0x51d/0x8b0 net/bpf/test_run.c:1316
- bpf_prog_test_run+0x20f/0x3a0 kernel/bpf/syscall.c:4407
- __sys_bpf+0x400/0x7a0 kernel/bpf/syscall.c:5813
- __do_sys_bpf kernel/bpf/syscall.c:5902 [inline]
- __se_sys_bpf kernel/bpf/syscall.c:5900 [inline]
- __x64_sys_bpf+0x43/0x50 kernel/bpf/syscall.c:5900
- x64_sys_call+0x2914/0x2dc0 arch/x86/include/generated/asm/syscalls_64.h:322
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xc9/0x1c0 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
+	platform/x86: alienware-wmi-wmax: HWMON support + DebugFS + Improvements 
 
-value changed: 0x00000003 -> 0x00000087
+series, because I made a few generalizations there that work even for
+Alienware desktops.
 
-Reported-by: syzbot+00c633585760c05507c3@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=00c633585760c05507c3
-Signed-off-by: Edward Adam Davis <eadavis@qq.com>
+I sent a v2 right away because I made some silly mistakes. Sorry for the
+noise.
+
+Signed-off-by: Kurt Borja <kuurtb@gmail.com>
 ---
- security/selinux/hooks.c | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+Changes in v2:
 
-diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
-index 7b867dfec88b..ea5d0273f9d5 100644
---- a/security/selinux/hooks.c
-+++ b/security/selinux/hooks.c
-@@ -4677,8 +4677,10 @@ static int selinux_socket_post_create(struct socket *sock, int family,
- 
- 	if (sock->sk) {
- 		sksec = selinux_sock(sock->sk);
-+		spin_lock(&sksec->lock);
- 		sksec->sclass = sclass;
- 		sksec->sid = sid;
-+		spin_unlock(&sksec->lock);
- 		/* Allows detection of the first association on this socket */
- 		if (sksec->sclass == SECCLASS_SCTP_SOCKET)
- 			sksec->sctp_assoc_state = SCTP_ASSOC_UNSET;
-@@ -5126,7 +5128,7 @@ static int selinux_socket_sock_rcv_skb(struct sock *sk, struct sk_buff *skb)
- 	int err, peerlbl_active, secmark_active;
- 	struct sk_security_struct *sksec = selinux_sock(sk);
- 	u16 family = sk->sk_family;
--	u32 sk_sid = sksec->sid;
-+	u32 sk_sid;
- 	struct common_audit_data ad;
- 	struct lsm_network_audit net;
- 	char *addrp;
-@@ -5155,6 +5157,9 @@ static int selinux_socket_sock_rcv_skb(struct sock *sk, struct sk_buff *skb)
- 	if (err)
- 		return err;
- 
-+	spin_lock(&sksec->lock);
-+	sk_sid = sksec->sid;
-+	spin_unlock(&sksec->lock);
- 	if (peerlbl_active) {
- 		u32 peer_sid;
- 
+[1/2]
+  - Add kernel-doc to wmidev_get_acpi_device_uid()
+
+[2/2]
+  - Reworked logic a bit to include a check for !uid before calling
+    strncmp()
+
+Link to v1: https://lore.kernel.org/r/20250308-awcc-uid-v1-0-6360892d8b95@gmail.com
+
+---
+Kurt Borja (2):
+      platform/x86: wmi: Add wmidev_get_acpi_device_uid()
+      platform/x86: alienware-wmi-wmax: Check for AWCC support using _UID
+
+ drivers/platform/x86/dell/alienware-wmi-wmax.c | 15 +++++++++------
+ drivers/platform/x86/wmi.c                     | 20 +++++++++++++++++---
+ include/linux/wmi.h                            |  2 ++
+ 3 files changed, 28 insertions(+), 9 deletions(-)
+---
+base-commit: e57eabe2fb044950e6ffdfe01803895043dec0b7
+change-id: 20250308-awcc-uid-6ec06bb2572d
+prerequisite-change-id: 20250305-hwm-f7bd91902b57:v4
+prerequisite-patch-id: 06ff44ce0c6f9bce77eb61a08f358240f1485914
+prerequisite-patch-id: d270ae9f1f681a6b6b9685cc13802e8baba0105f
+prerequisite-patch-id: 5f744ce03af74a23560118b761ac6529a7c9b172
+prerequisite-patch-id: 22c6c5256aee2c17bcd710ec1493b1abccd414cf
+prerequisite-patch-id: 75191e2094746de3c12fdd885885d18b2239af89
+prerequisite-patch-id: 9f26a3b64824b4f175bbea47c8c9a59fd67f3316
+prerequisite-patch-id: 4ff2263e236230e1f96703265d135f0b90390ebd
+prerequisite-patch-id: b8844283f8bb46c05ba2e9d7b901bdedfd941731
+prerequisite-patch-id: c5122bcce8e7330cdbb18c5d43e321ce69116272
+prerequisite-patch-id: ed78dcf947e19652f175d124ade13c08eb3950cc
+prerequisite-patch-id: d46a626481e1c49bdd91f6add36f4d6b89edde3e
+prerequisite-patch-id: e68a77ec73be34006d5dd754592285e44ffc7f68
+
+Best regards,
 -- 
-2.43.0
+ ~ Kurt
 
 
