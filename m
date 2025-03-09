@@ -1,155 +1,115 @@
-Return-Path: <linux-kernel+bounces-552871-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-552872-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5ADD8A5803B
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 02:21:20 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 48B2FA5803C
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 02:28:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 205DD3A96FA
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 01:21:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 75EE216A928
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 01:28:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1797F9FE;
-	Sun,  9 Mar 2025 01:21:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1021917BA5;
+	Sun,  9 Mar 2025 01:27:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="fg2taCzt"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+	dkim=pass (2048-bit key) header.d=ethancedwards.com header.i=@ethancedwards.com header.b="yPNZGgS2"
+Received: from mout-p-103.mailbox.org (mout-p-103.mailbox.org [80.241.56.161])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF2F94409
-	for <linux-kernel@vger.kernel.org>; Sun,  9 Mar 2025 01:21:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A9789460;
+	Sun,  9 Mar 2025 01:27:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.161
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741483274; cv=none; b=aS00YPQhJQdqveSnKnOhwZ8Yjze6mI4241yInEgw38VpU/NqJY2gRHtAqR0hTp2z1U4SMM9hXNfFhNyi67qjOUA8PMbJXitf2XpUP9r0wwDQvaQwGNuywYhXes+eddy+4DF8iPPNGemc3LywUuQurdj68ptxQaWO1zllJHEAlWQ=
+	t=1741483678; cv=none; b=kAOK8rktVTeHVyQc03kdn8RbN8qE/O4FF8Zi49kUowcPDnbk0AwHDd4QLq+sZmtVFay7M+huMyaep8Qzi6aELF/lL7tvdm1m/F8MawRBjJkjfdbPwEslvK+3j6qWch0S+4NNJxDyHHY/tsNRpmR30sudJLCVvI3vhjuXsKSejRE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741483274; c=relaxed/simple;
-	bh=cGkivsymHRXVnrP9lyYyEANpUn08btgowTnQ9VkpRFs=;
-	h=Date:From:To:Cc:Subject:Message-ID; b=q4qTC9VI9mGPXf90M+rEQHK56V3SMs4XIyyPYBmC6LsMsVD113UV1fZzOH6vK+iDoLJh6JMwU1+zYXKesXikpWLKBs71NuYycqc5ExKQCPbDgTGPNzr1R9RGK6p17UmEqfwWU8HzF1PCjReY0LAt5ffTmm6qpA87bxhkyKTxfJo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=fg2taCzt; arc=none smtp.client-ip=198.175.65.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1741483273; x=1773019273;
-  h=date:from:to:cc:subject:message-id;
-  bh=cGkivsymHRXVnrP9lyYyEANpUn08btgowTnQ9VkpRFs=;
-  b=fg2taCzt8AUdEjXe+0Suluw2IhgudX+0engIx/XA0c54yb/gkzK2dEee
-   rOmCsrlMZgTtXvivPqbATGtGSdc6HLTFd/zdM3zCXSA5VrOKrO0FR+J9u
-   6vNDWPlckiwApUDuADRD5/PAtwYZdHtHgrBWlQBKb0rl8p0Pt3qjqvIXj
-   HiYBazZPPVVhUdWayg5FRrspzL0o2Vt7uzn23Z36a2zeVM5po6g5hNoF1
-   VjpCtNfJDTa7o6BlUwqPyzfOImHsFEfvZmvZlRgx1efhubNP/0Pwz/LTt
-   a+hlTiMIIs0T/E3qmCzWlswNkRdIkbyQYCNZ6luLO59lUSOVl29OR1yVW
-   g==;
-X-CSE-ConnectionGUID: pySzHkHlRyyI0/vq6fMkrQ==
-X-CSE-MsgGUID: oiuyRlIZRcKCSGRQDrMXYA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11367"; a="59915710"
-X-IronPort-AV: E=Sophos;i="6.14,233,1736841600"; 
-   d="scan'208";a="59915710"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Mar 2025 17:21:12 -0800
-X-CSE-ConnectionGUID: z33ecgYDQ3OhkGQR+gMu7w==
-X-CSE-MsgGUID: EjV+fLqUR9GrI/rZsyZ46A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,233,1736841600"; 
-   d="scan'208";a="119398198"
-Received: from lkp-server02.sh.intel.com (HELO a4747d147074) ([10.239.97.151])
-  by orviesa009.jf.intel.com with ESMTP; 08 Mar 2025 17:21:11 -0800
-Received: from kbuild by a4747d147074 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tr5Lo-0002WI-2w;
-	Sun, 09 Mar 2025 01:21:08 +0000
-Date: Sun, 09 Mar 2025 09:20:17 +0800
-From: kernel test robot <lkp@intel.com>
-To: "x86-ml" <x86@kernel.org>
-Cc: linux-kernel@vger.kernel.org
-Subject: [tip:locking/core] BUILD SUCCESS
- f73ca66f0d7f4371d172d6f5b1f9a00e367ba921
-Message-ID: <202503090911.GCnwGtAs-lkp@intel.com>
-User-Agent: s-nail v14.9.24
+	s=arc-20240116; t=1741483678; c=relaxed/simple;
+	bh=xJPFbbCqg6D1eGooecE45eWO6eo2FRhq7cqhpX/lTuc=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=owcoF3zNbbulzWIK3JbH6Qj9/4aRCMU3A/BMz4/p8p6aWRU9XsRPP+4czWNzpu9DmiQ89VvG8JB/5W9SiX5+mA6O1i4V+3fqKjOU6WpUusgi4t8DsICdi9xkPlUZAO52Rkr6zZjzVjq6jQxNftoVEexueBRvffhMJnh7JIxXjy8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ethancedwards.com; spf=pass smtp.mailfrom=ethancedwards.com; dkim=pass (2048-bit key) header.d=ethancedwards.com header.i=@ethancedwards.com header.b=yPNZGgS2; arc=none smtp.client-ip=80.241.56.161
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ethancedwards.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ethancedwards.com
+Received: from smtp2.mailbox.org (smtp2.mailbox.org [IPv6:2001:67c:2050:b231:465::2])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-103.mailbox.org (Postfix) with ESMTPS id 4Z9MpT5LQ6z9sTd;
+	Sun,  9 Mar 2025 02:27:45 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ethancedwards.com;
+	s=MBO0001; t=1741483666;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=tuC52dWg8Ua+xArW/iLzWfqJB+lNGdXuO8bhICk80qY=;
+	b=yPNZGgS2P5Xhj0FZuR4IlwaaqI0vgSIw1KOnJx9YPo2OpM0jtus0XMuoK5e+vFbkeqYCNy
+	HXWfI0cqPhV1rEfb8zhCEyye2+df8V8c4DF24QGgufrGl1jxnyl9zOdO5rBrfWl1DWCRyM
+	oo6+aef6h8pB9kCkc5viO/c1C2fsTPtSJqE4//im+/evGsgRNMFWiBbtshD5cUfM/A9Vrs
+	eWRIAGSxt00ML7+27GPZnHDSQXZCDmq5orb57AtNUC6MRlohBf/bPdW4HE7vdaBSrVVCVk
+	J5Fz9+3yU3Ok5DxcCZ8/VkpbhpnjnOdairkKMzbE8Pr/HMa8Gf+nYfIM4dXVbQ==
+From: Ethan Carter Edwards <ethan@ethancedwards.com>
+Date: Sat, 08 Mar 2025 20:27:41 -0500
+Subject: [PATCH] efi: efibc: change kmalloc(size * count, ...) to
+ kmalloc_array()
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250308-efibc-kmalloc_array-v1-1-7bfc4013986f@ethancedwards.com>
+X-B4-Tracking: v=1; b=H4sIAIzuzGcC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDI1MDYwML3dS0zKRk3ezcxJyc/OT4xKKixErdpERzCwNL80QDcwMLJaDOgiK
+ gqgqwqdGxtbUAQ0c37GUAAAA=
+X-Change-ID: 20250308-efibc-kmalloc_array-ba78097a0708
+To: Ard Biesheuvel <ardb@kernel.org>
+Cc: linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-hardening@vger.kernel.org, 
+ Ethan Carter Edwards <ethan@ethancedwards.com>
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1167;
+ i=ethan@ethancedwards.com; h=from:subject:message-id;
+ bh=xJPFbbCqg6D1eGooecE45eWO6eo2FRhq7cqhpX/lTuc=;
+ b=LS0tLS1CRUdJTiBQR1AgTUVTU0FHRS0tLS0tCgpvd0o0bkp2QXk4ekFKWGJEOXFoNThlVGp6e
+ GhQcXlVeHBKOTUxeXRlOWlmMVhiWFdsWTJicHo5ZVppYnFLS0oyCitBcWpqK0R0dE96Y3p5dldu
+ WFB2S0dWaEVPTmlrQlZUWlBtZm81ejJVSE9Hd3M2L0xrMHdjMWlaUUlZd2NIRUsKd0VUVUZ6RXl
+ yUGgvdzVOTDVMM3IyZnZobjdmRTdBOHB1YnJzNWk3UlY4OGkwM2RMbXljZWZzZndUMjBuMDZ4Zg
+ oxcVlpOWJuM3ZxeWNWZUpmZTBrbWk2dE83cnJkeGNONzFxeXo1d0FBcE9wUkhBPT0KPXlLWGMKL
+ S0tLS1FTkQgUEdQIE1FU1NBR0UtLS0tLQo=
+X-Developer-Key: i=ethan@ethancedwards.com; a=openpgp;
+ fpr=2E51F61839D1FA947A7300C234C04305D581DBFE
+X-Rspamd-Queue-Id: 4Z9MpT5LQ6z9sTd
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git locking/core
-branch HEAD: f73ca66f0d7f4371d172d6f5b1f9a00e367ba921  rust: lockdep: Use Pin for all LockClassKey usages
+Open coded arithmetic in allocator arguments is discouraged. Helper
+functions like kcalloc or, in this case, kmalloc_array are preferred.
 
-elapsed time: 1446m
+Link: https://www.kernel.org/doc/html/latest/process/deprecated.html#open-coded-arithmetic-in-allocator-arguments
 
-configs tested: 63
-configs skipped: 2
+Signed-off-by: Ethan Carter Edwards <ethan@ethancedwards.com>
+---
+ drivers/firmware/efi/efibc.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-The following configs have been built successfully.
-More configs may be tested in the coming days.
+diff --git a/drivers/firmware/efi/efibc.c b/drivers/firmware/efi/efibc.c
+index 4f9fb086eab7b0e22252d22e59e5aae55865322d..0a7c764dcc614fbba3cbcd94183dc07939837a03 100644
+--- a/drivers/firmware/efi/efibc.c
++++ b/drivers/firmware/efi/efibc.c
+@@ -47,7 +47,7 @@ static int efibc_reboot_notifier_call(struct notifier_block *notifier,
+ 	if (ret || !data)
+ 		return NOTIFY_DONE;
+ 
+-	wdata = kmalloc(MAX_DATA_LEN * sizeof(efi_char16_t), GFP_KERNEL);
++	wdata = kmalloc_array(MAX_DATA_LEN, sizeof(efi_char16_t), GFP_KERNEL);
+ 	if (!wdata)
+ 		return NOTIFY_DONE;
+ 
 
-tested configs:
-arc                   randconfig-001-20250308    gcc-13.2.0
-arc                   randconfig-002-20250308    gcc-13.2.0
-arm                   randconfig-001-20250308    gcc-14.2.0
-arm                   randconfig-002-20250308    gcc-14.2.0
-arm                   randconfig-003-20250308    gcc-14.2.0
-arm                   randconfig-004-20250308    gcc-14.2.0
-arm64                 randconfig-001-20250308    gcc-14.2.0
-arm64                 randconfig-002-20250308    gcc-14.2.0
-arm64                 randconfig-003-20250308    clang-16
-arm64                 randconfig-004-20250308    gcc-14.2.0
-csky                  randconfig-001-20250308    gcc-14.2.0
-csky                  randconfig-002-20250308    gcc-14.2.0
-hexagon               randconfig-001-20250308    clang-19
-hexagon               randconfig-002-20250308    clang-21
-i386        buildonly-randconfig-001-20250308    gcc-12
-i386        buildonly-randconfig-002-20250308    gcc-11
-i386        buildonly-randconfig-003-20250308    clang-19
-i386        buildonly-randconfig-004-20250308    clang-19
-i386        buildonly-randconfig-005-20250308    clang-19
-i386        buildonly-randconfig-006-20250308    gcc-12
-loongarch             randconfig-001-20250308    gcc-14.2.0
-loongarch             randconfig-002-20250308    gcc-14.2.0
-m68k                              allnoconfig    gcc-14.2.0
-microblaze                        allnoconfig    gcc-14.2.0
-mips                              allnoconfig    gcc-14.2.0
-nios2                             allnoconfig    gcc-14.2.0
-nios2                 randconfig-001-20250308    gcc-14.2.0
-nios2                 randconfig-002-20250308    gcc-14.2.0
-parisc                randconfig-001-20250308    gcc-14.2.0
-parisc                randconfig-002-20250308    gcc-14.2.0
-powerpc               randconfig-001-20250308    clang-18
-powerpc               randconfig-002-20250308    gcc-14.2.0
-powerpc               randconfig-003-20250308    gcc-14.2.0
-powerpc64             randconfig-001-20250308    gcc-14.2.0
-powerpc64             randconfig-003-20250308    clang-21
-riscv                 randconfig-001-20250308    clang-21
-riscv                 randconfig-002-20250308    gcc-14.2.0
-s390                             allmodconfig    clang-19
-s390                             allyesconfig    gcc-14.2.0
-s390                  randconfig-001-20250308    clang-19
-s390                  randconfig-002-20250308    clang-17
-sh                               allmodconfig    gcc-14.2.0
-sh                                allnoconfig    gcc-14.2.0
-sh                               allyesconfig    gcc-14.2.0
-sh                    randconfig-001-20250308    gcc-14.2.0
-sh                    randconfig-002-20250308    gcc-14.2.0
-sparc                            allmodconfig    gcc-14.2.0
-sparc                             allnoconfig    gcc-14.2.0
-sparc                 randconfig-001-20250308    gcc-14.2.0
-sparc                 randconfig-002-20250308    gcc-14.2.0
-sparc64               randconfig-001-20250308    gcc-14.2.0
-sparc64               randconfig-002-20250308    gcc-14.2.0
-um                    randconfig-001-20250308    gcc-12
-um                    randconfig-002-20250308    gcc-12
-x86_64      buildonly-randconfig-001-20250308    gcc-12
-x86_64      buildonly-randconfig-002-20250308    clang-19
-x86_64      buildonly-randconfig-003-20250308    gcc-12
-x86_64      buildonly-randconfig-004-20250308    clang-19
-x86_64      buildonly-randconfig-005-20250308    clang-19
-x86_64      buildonly-randconfig-006-20250308    clang-19
-xtensa                            allnoconfig    gcc-14.2.0
-xtensa                randconfig-001-20250308    gcc-14.2.0
-xtensa                randconfig-002-20250308    gcc-14.2.0
+---
+base-commit: 0a2f889128969dab41861b6e40111aa03dc57014
+change-id: 20250308-efibc-kmalloc_array-ba78097a0708
 
---
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Best regards,
+-- 
+Ethan Carter Edwards <ethan@ethancedwards.com>
+
 
