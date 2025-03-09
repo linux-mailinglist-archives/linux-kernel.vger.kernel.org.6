@@ -1,138 +1,285 @@
-Return-Path: <linux-kernel+bounces-553182-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-553186-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2294CA5854D
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 16:06:06 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A1E7A58554
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 16:22:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7E04F188AE4B
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 15:06:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B03EC3A4701
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 15:22:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 999701DDC07;
-	Sun,  9 Mar 2025 15:05:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84DDC1DE8BF;
+	Sun,  9 Mar 2025 15:22:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HoChI9Ul"
-Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gCJOO/i8"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0A8610E5
-	for <linux-kernel@vger.kernel.org>; Sun,  9 Mar 2025 15:05:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DAC31C5F1F;
+	Sun,  9 Mar 2025 15:22:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741532759; cv=none; b=ZgOS7NC1AOVEU86zJ8dLSHFUL29rAVSQh1LqrhX79nZ+2N+LbQLGX6g4RyQ3hO4FEt7H4Egq8f22h6oMTBP08+wgSi4W//g/G3CQoRFw+Rr5W8E4BcRG9mUfBuya2snFyB29ctTK7hpNgr0vTH2EtpIWdoeCVb4YZI0oJAGt+V0=
+	t=1741533741; cv=none; b=CWgyq69fgzEXUuDSNoT3SiPnv331eDlYwySTZosvvr636tLtkLkmer1270aak4k/x0NolvBFUoQ4e/fqzAyiZJ2I3Glb+Kphg7zW5uPc+qfIYxXfcOUY5Y0Z/1b62h2As7FxqPPWgHUn6fH7HnnCOCzp70PX8EcvRQ/aP/dKBzg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741532759; c=relaxed/simple;
-	bh=ebfZERffrcxvr64/MPxzlnS0hE43Pk0ur9n5LoJtHXE=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=BkDzjLySyMJ9W2vvwiWYPF6EMK9W0euc0h2BUj6AQW2HmjWxP1qPYbUezc32NVrdeL4m2a9AC4hPxupHYXQrNbzbL5oXqgBqzbd12wkISHZ8BfCkSvPQNzYubvvY4j49ksr3pBW8WpRRYnkiCQGUNUalWGxyQTxVLPsuSG0pSyc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HoChI9Ul; arc=none smtp.client-ip=209.85.214.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-224341bbc1dso29680935ad.3
-        for <linux-kernel@vger.kernel.org>; Sun, 09 Mar 2025 08:05:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741532757; x=1742137557; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=2Ozonw66VG2iXCj9BlQvmRvg7NIoSJ4Sd9BE/3KwnJQ=;
-        b=HoChI9UliBE1uLkgziFNiOfBxjVZ4tg+sDbec2OfQ+QONOajED++IOSHX+Am7oedzV
-         JIPcVjZD/7EMHO6bsOVh62Vd7xfSys0wANc7zWdJG9xRlxhIOE2pyXnEnLfVPrYe31oH
-         lXSd1sW8yUFQB80jfOaUegOr8v9RYrbnpH7EQ471cufgQkurTdDikdbAwvVEfscJjWtR
-         9SH4wEDBHmPjD/n6Uxy8buZKdLA4CwfL9ypfheEeqcW2IgcZACudzR8CiJmkkyLxguEB
-         4b94EOK1slaT3LtygQjD7gJ5UmLD795l49QFqjzheN7pgyBKblBRsX8GDFYKOL9uV1xZ
-         iGjw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741532757; x=1742137557;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=2Ozonw66VG2iXCj9BlQvmRvg7NIoSJ4Sd9BE/3KwnJQ=;
-        b=b8nRDabBFA+/zT1+/89dKyrCQbzqXsnQneXG8v578+wAJh8U6UgOzDwI9sqRWZKMB3
-         +7zM4y0fnZondAOYmmpQxBRB/T6xU25BoCL+vqvjtAqoV7GJjY4czqZxOOwwLQJVxiFD
-         FRmkge99Q9khZ80Ugfzi6JV/UDSjmYHfi6eqScn8iKlQ7t+Fhch2tnKi+W1FGmpLIfMB
-         cxFXwHTvHC6+iZLyAbF5+dQUW4qCYaA1lJTX3zYSiqNnU3h5aTfuFQ60SsvPDAfJ2/BE
-         Kf5mJZT1Z1LYGIFHytisW+5w04GKYsKmeUojsiRX04Gn9lt4jQ1BqCNKQ2r1ohPRrCZx
-         d7Mg==
-X-Forwarded-Encrypted: i=1; AJvYcCVg83j6zwDLZOdSMmfTgwkv/row1+O2rnDNfyImqQVv71/LQS7Vdma+rFdAZKrXwLmVTw1dec7H8K0FUY8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx3V/QrRdBO6DHf21s+huCGlhGBdV73/oxcE//qpMDchx9szT+9
-	MB6/J/QpqIbTI3T51lzz9gtD6amXGYYetggXeAhSR0x/kGDQKW9G
-X-Gm-Gg: ASbGnctNc4jlEx6d/aTZromSLHVhwVF99w/GoXO0PnbpyCZ0/aYjnyMFqs/BORD4G7K
-	zCdJmCsxohoOgmFn/uflTeFV9xSbFYXBMfbOZzA5aAuRFW+uLObNHMK3mz1gq0i4GzOqA2UMQM+
-	cfIS8ZRhsupZlfIvM2VHEFS9MTqa3uUUEClArCAdpy2C7k8etLxlDOXtsEUq9l9LIXUVb7frA4v
-	ePS5RgC788E6mFZkpnK4CeHdmFKA4GkPWN8lP2BrMSwh+34l7xTEvOhEOW/irfZmFjRUudCVS04
-	JqJ/Aq6xe2tvG9BHTms+HpD5usCzmADUFCyoeBObIHVCxsP+UWF9+PsOBY+IMOeDuyUN
-X-Google-Smtp-Source: AGHT+IF3XolKks3dhcsCKSfRs574KeRdphITuYA1m1fhh5tR6rQlFLzi7EK3NZkkbjX9v78orRXH+Q==
-X-Received: by 2002:a05:6a00:1703:b0:730:9801:d3e2 with SMTP id d2e1a72fcca58-736aa9df8afmr16477900b3a.8.1741532756844;
-        Sun, 09 Mar 2025 08:05:56 -0700 (PDT)
-Received: from localhost.localdomain ([240e:3b1:300a:bd50:c889:b2e6:3a9c:90dd])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-736ad0f7eaasm4772168b3a.76.2025.03.09.08.05.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 09 Mar 2025 08:05:56 -0700 (PDT)
-From: Qiuer Zhu <chaozyhaha@gmail.com>
-To: peterz@infradead.org,
-	frederic@kernel.org,
-	tglx@linutronix.de
-Cc: chaozyhaha@gmail.com,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] time: Add macros to prevent duplicate inclusion of headers
-Date: Sun,  9 Mar 2025 23:05:24 +0800
-Message-Id: <20250309150524.760-1-chaozyhaha@gmail.com>
-X-Mailer: git-send-email 2.32.0.windows.2
+	s=arc-20240116; t=1741533741; c=relaxed/simple;
+	bh=QRJ7QTG5yNt6evMXhX7ixdnIHqL692llSEHd4bfPaIQ=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=tuYa9WfJN0BcMPsoutWHch8BTT6bgdosE2e6WmXqiM0vu3IBkmCTahgAvS5tfrAIy67ccsQMuho3ZKXV7l9YYCp6//7eM2ZMDt1IhvUWtymwFmCAQ1LNCepfgvxNQUuWztl0cbEbpjxGDYHWR5XE5Hi6Ed5VMKDnw2h7sr6Go2M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gCJOO/i8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 11332C4CEED;
+	Sun,  9 Mar 2025 15:22:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741533741;
+	bh=QRJ7QTG5yNt6evMXhX7ixdnIHqL692llSEHd4bfPaIQ=;
+	h=From:Subject:Date:To:Cc:From;
+	b=gCJOO/i8nC+GVGSV/WYJhQM2CZmpwD/QiLwU/hlLYbmISumcMobY3Upwc8jRMXGe2
+	 551bqpprBzZXn1TbtpUfGPWg9L7K3TJxdWJZx3BpwAS7YEBYPMpd4JFE9U+xn77FLk
+	 +9MIk6k76PKTjZiNqDeo8qjkHOW8HlwnKPkoTu0NFR7CovB0ePXUSicI4sp768I11+
+	 FlW1DQuspEkooQgc7wZULxA5z9u8CIvGNJ4drSG25tpwGdBlq9R0NyuM6Q4p98DZOC
+	 GAC1BUMHSFzp3WEXoS+QXgZVpVXvav0uVuG5niYF2Oc2ap0ynfRfFxsOCmW2/JFudl
+	 gOuqHBn/umnnA==
+From: Andreas Hindborg <a.hindborg@kernel.org>
+Subject: [PATCH v12 00/13] hrtimer Rust API
+Date: Sun, 09 Mar 2025 16:18:51 +0100
+Message-Id: <20250309-hrtimer-v3-v6-12-rc2-v12-0-73586e2bd5f1@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAFuxzWcC/43TzW7bMAwH8FcJfJ4MkaIks6e+x7CDPuhG6OJ0s
+ mdsKPruUxJsyeAZGHQxBfx/omTwvZulFpm7p8N7V2UtczlPrQD8dOjSMUwvokpuGx1qJNDg1bE
+ u5SRVrUatTgGqmlAh2JxcBMdx7Fr0rcpYflzdz19afSzzcq4/r8escNm9gprQaiZnqEeHzpMCN
+ Z3K80mWML+FJH1+7S75Fe8ZBo+I3nAPyAN620KhP5Ypx3N9eX6VOsnXvn3ekuZPcr/9VmhlOXi
+ bYiTKYaPQXUHtdhRqiktxSMZ54wbcKPZB2e3FNiUaSqhDwhT9RnG/FasB9I7imjJ6yFaP4Ogfv
+ fi7gtrsKL4pMDAQebSGeaMMDwoMO8rQFBqy5KjBSjQbhR8UpB2FL/8oZhNHncSltFFA3xmj956
+ 3vVhbafTCxJADbR34Lwea49lQkDE75r9v9XEbgirfvreZWm6T0MUwi0rn06ksTwfUQIltGCWJG
+ PEuBQrWsXWBjRM0OJhR29iwj1+oTD4YqAMAAA==
+X-Change-ID: 20241017-hrtimer-v3-v6-12-rc2-215dc6b169bf
+To: Miguel Ojeda <ojeda@kernel.org>, 
+ Anna-Maria Behnsen <anna-maria@linutronix.de>, 
+ Frederic Weisbecker <frederic@kernel.org>, 
+ Thomas Gleixner <tglx@linutronix.de>, Danilo Krummrich <dakr@kernel.org>
+Cc: Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
+ Gary Guo <gary@garyguo.net>, 
+ =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+ Benno Lossin <benno.lossin@proton.me>, Alice Ryhl <aliceryhl@google.com>, 
+ Trevor Gross <tmgross@umich.edu>, Lyude Paul <lyude@redhat.com>, 
+ Guangbo Cui <2407018371@qq.com>, Dirk Behme <dirk.behme@gmail.com>, 
+ Daniel Almeida <daniel.almeida@collabora.com>, 
+ Tamir Duberstein <tamird@gmail.com>, Markus Elfring <Markus.Elfring@web.de>, 
+ rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Andreas Hindborg <a.hindborg@kernel.org>
+X-Mailer: b4 0.15-dev
+X-Developer-Signature: v=1; a=openpgp-sha256; l=9031; i=a.hindborg@kernel.org;
+ h=from:subject:message-id; bh=QRJ7QTG5yNt6evMXhX7ixdnIHqL692llSEHd4bfPaIQ=;
+ b=owEBbQKS/ZANAwAIAeG4Gj55KGN3AcsmYgBnzbFiXfyS+TVncB9enLq4fV5i2ZvjZohvl1Ant
+ 26L6sRhtsyJAjMEAAEIAB0WIQQSwflHVr98KhXWwBLhuBo+eShjdwUCZ82xYgAKCRDhuBo+eShj
+ dwO0D/9Hsha3m0DspN9LL+WlLu+K+pqjPFZgtA9/7ZuVOPjzegKqmluzAGMaUvpduRHXVwiqwvN
+ s/3xXaie3fsl8S36Y5IO46ykLt1cWvzh6h/i2s0PpkSFGZFFcl7b2JZCVXH8nC+p5rcXgv80gVh
+ UrrZ7Q81okoqEHdCeRs9TgSjtbGvey/MQ1L0oe8pUJhU5DUG48eVXj7ADLItkn5/Be+MlR1dikx
+ YF/5pgQUWke6Gpwne9mIbL/+k/CgphNSnCjsgHEuk8TJulauzdAUFSPF5eDl71tX+plRklcEI94
+ LROyVWqCurzQOZDno8VqxLzLpPqImZARgfhw7YAe3/A6CAY6Lq66miSGxckXfTV86u+3JNsT8Px
+ hjXwpNYsMU4SWl1lIqMvh0ebNdyykyDUz3lWmGfnOhYtb+BeXJq21uQBYc+4GATE3CoCiCfbL96
+ O+BAwG6Zwwb45ybOnJV0H9Oc/59HrNXE/2o3Uo6WLEHeNHKrGmn8JU0mkevRoDMHBWdwPvaaEZi
+ V6VUW3q7UufCUsv09uHF5MDGBJT1HLbqLINST/RWmRiF8MT0wgUJltaNr6aLv+kEpCjQe4peNvs
+ E2sMsQu/u+Mete8CeibEdwfDA45CME9JBWRU05TffYZIJwTRZMMHBw92J08FK4ISsME6yMvuzmw
+ X9YhGAt7//X6nuQ==
+X-Developer-Key: i=a.hindborg@kernel.org; a=openpgp;
+ fpr=3108C10F46872E248D1FB221376EB100563EF7A7
 
-Add macros to prevent duplicate inclusion of tick-internal.h
-and posix-timers.h.
+Add support for using the `hrtimer` subsystem from Rust code.
 
-Signed-off-by: Qiuer Zhu <chaozyhaha@gmail.com>
+Add support for timer mode and clock source configuration during timer
+initialization. Do not add examples and functionality to execute closures at
+timer expiration , as these depend on either atomics [3] or `SpinLockIrq` [4],
+which are still being worked on.
+
+This series is a dependency for unmerged features of the Rust null block driver
+[1], and for rkvms [2].
+
+Link: https://git.kernel.org/pub/scm/linux/kernel/git/a.hindborg/linux.git/log/?h=rnull-v6.11-rc2 [1]
+Link: https://gitlab.freedesktop.org/lyudess/linux/-/tree/rvkms-wip [2]
+Link: https://lore.kernel.org/rust-for-linux/20240612223025.1158537-1-boqun.feng@gmail.com/ [3]
+Link: https://lore.kernel.org/rust-for-linux/20240916213025.477225-1-lyude@redhat.com/ [4]
+Signed-off-by: Andreas Hindborg <a.hindborg@kernel.org>
 ---
- kernel/time/posix-timers.h  | 5 +++++
- kernel/time/tick-internal.h | 5 +++++
- 2 files changed, 10 insertions(+)
+Changes in v12:
+- Fix `PantomData` type in `PinMutHrTimerHandle`.
+- Fix safety requirement for `HasHrTImer`.
+- Update safety comments in `RawTimerCallback` implementations.
+- Link to v11: https://lore.kernel.org/r/20250307-hrtimer-v3-v6-12-rc2-v11-0-7934aefd6993@kernel.org
 
-diff --git a/kernel/time/posix-timers.h b/kernel/time/posix-timers.h
-index 61906f0688c1..5166b832143f 100644
---- a/kernel/time/posix-timers.h
-+++ b/kernel/time/posix-timers.h
-@@ -1,4 +1,7 @@
- /* SPDX-License-Identifier: GPL-2.0 */
-+#ifndef _POSIX_TIMERS_H
-+#define _POSIX_TIMERS_H
-+
- #define TIMER_RETRY 1
- 
- enum posix_timer_state {
-@@ -50,3 +53,5 @@ int common_timer_set(struct k_itimer *timr, int flags,
- 		     struct itimerspec64 *old_setting);
- void posix_timer_set_common(struct k_itimer *timer, struct itimerspec64 *new_setting);
- int common_timer_del(struct k_itimer *timer);
-+
-+#endif
-diff --git a/kernel/time/tick-internal.h b/kernel/time/tick-internal.h
-index faac36de35b9..bcccc0975f70 100644
---- a/kernel/time/tick-internal.h
-+++ b/kernel/time/tick-internal.h
-@@ -1,4 +1,7 @@
- /* SPDX-License-Identifier: GPL-2.0 */
-+#ifndef _TICK_INTERNAL_H
-+#define _TICK_INTERNAL_H
-+
- /*
-  * tick internal variable and functions used by low/high res code
-  */
-@@ -213,3 +216,5 @@ void hrtimers_resume_local(void);
- #endif
- 
- extern ssize_t sysfs_get_uname(const char *buf, char *dst, size_t cnt);
-+
-+#endif
+Changes in v11:
+- Change the way we invent a `Pin<&mut T>` in `Pin<Box<_> as
+  RawHrTimerCallback>::run`.
+- Use `Pin<&'a mut T>` as `CallbackTarget` for `RawHrTimerCallback`.
+- Remove unnecessary trait bounds on `HrTimerPointer` impls.
+- Use a pointer rather than a reference in `PinMutTimerHandle`.
+- Properly format `impl_has_hr_timer`.
+- Add invariant to `BoxHrTimerHandle`.
+- Fix safety comment in `<Pin<&mut T> as RawHrTimerCallback>::run`.
+- Use `Pin::get_unchecked_mut` rather than `Deref::deref` to get a pointer in
+  `<Pin<&'a mut T> as UnsafeHrTimerPointer>::start`.
+- Fix safety comment in `<Pin<&'a T> as RawHrTimerCallback<'a, T>>::run`.
+- Use `Pin::get_ref` rather than `Deref::deref` in `<Pin<&'a T> as
+  UnsafeHrTimerPointer>::start`.
+- Fix safety comment in `<Arc<T> as RawHrTimerCallback>::run`.
+- Fix a typo in docs for `HrTimerPointer::start`.
+- Fix safety requirements for `HasHrTimer::raw_get_timer` and
+  `HasHrTimer::c_timer_ptr`.
+- Remove unused documentation link in `HasHrTimer` docs.
+- Update documentation for `RawTimerCallback::CallbackTarget`.
+- Link to v10: https://lore.kernel.org/r/20250307-hrtimer-v3-v6-12-rc2-v10-0-0cf7e9491da4@kernel.org
+
+Changes in v10:
+- Use imperative language for all commit messages.
+- Spelling and grammar fixes for documentation.
+- Consistently use `this` as argument name for functions taking a pointer to
+  `Self`.
+- Correct module documentation describing states.
+- Derive some standard traits for configuration enums.
+- Rephrase documentation for function that refrain from crating references.
+- Use "has returned" rather than "has finished executing" when describing
+  handler termination.
+- Simplify documentation of `HrTimer::cancel`.
+- Fix a documentation bug in the description of `Sync` requirement for
+  `HrTimerPointer`.
+- Consistently use the wording "contains" about types that contain another type.
+- Remove `OFFSET` from `HasHrTimer`.
+- Use direct mapping for enumerations where applicable.
+- Remove `RUST_HRTIMER` kconfig.
+- Add Frederic Weisbecker and Lyude Paul as reviewers.
+- Add Thomas Gleixner and Anna-Maria Behnsen as reviewers.
+- Change `ClockSource` to `ClockId` and move to `time` module.
+- Add scm tree to maintainer entry.
+- Add a note about effects of timer operations concurrent with cancel operation.
+- Update documentation for CLOCK_REALTIME and CLOCK_TAI.
+- Link to v9: https://lore.kernel.org/r/20250224-hrtimer-v3-v6-12-rc2-v9-0-5bd3bf0ce6cc@kernel.org
+
+Changes in v9:
+- Hide `From` conversions for opaque enums.
+- Add kconfig entry for rust hrtimer API.
+- Move `CallbackTargetParameter` to `RawHrTimerPointer`
+- Shorten first paragraphs for clock source descriptions.
+- Link `HrTimerHandle::cancel` in docs.
+- Clarify exclusive/shared access to callback parameter in docs.
+- Improve documentation for functions that avoid creating references.
+- Expand safety requirement for `HasHrTimer::start`.
+- Update module level documentation and diagram.
+- Use `NonNull` to store pointer in BoxHrTimerHandle.
+- Add a note to `HrTimerHandle` safety requirement.
+- Link to v8: https://lore.kernel.org/r/20250218-hrtimer-v3-v6-12-rc2-v8-0-48dedb015eb3@kernel.org
+
+Changes in v8:
+- Publicly expose timer handles.
+- Link to v7: https://lore.kernel.org/r/20250203-hrtimer-v3-v6-12-rc2-v7-0-189144725399@kernel.org
+
+Changes in v7:
+- fix a typo in commit message for "rust: time: Add Ktime::from_ns()"
+- fix a typo in safety comment in `HrTimer::new`
+- fix a typo in `HrTimer::raw_cancel`
+- fix a typo in the vocabulary
+- fix a typo in `HrTimerCallback` docs
+- refactor module documentation
+- add an ascii state diagram to module documentation
+- specify reason for adding `Arc::as_ptr`'
+- change `boxed` to `this` in `Box::into_pin`
+- change `from_ns` to `from_nanos` to align with std
+- imporove safety comment for `impl Send for HrTimer`
+- remove useless paragraph in docs for `HrTimerPointer`
+- rephrase docs for `HrTimerPointer::TimerHandle`
+- update docs for `HrTimerCallback::CallbackTarget`
+- explain how users should use safe functions for cancelling a timer
+- rename generics for consistency
+- remove a note about storing mode in `HrTimer` - this is still required
+- rebase on v6.14-rc1
+- Link to v6: https://lore.kernel.org/r/20250110-hrtimer-v3-v6-12-rc2-v6-0-f71d50f16482@kernel.org
+
+Changes in v6:
+- prefix all hrtimer related type names with `Hr`
+- add a few links for type names in the documentation
+- Link to v5: https://lore.kernel.org/r/20241217-hrtimer-v3-v6-12-rc2-v5-0-b34c20ac2cb7@kernel.org
+
+Changes in v5:
+- Fix a typo in `impl_has_timer`
+- Implement `Box::into_pin` in terms of `impl From<Box> for Pin<Box>`
+- Link to v4: https://lore.kernel.org/r/20241206-hrtimer-v3-v6-12-rc2-v4-0-6cb8c3673682@kernel.org
+
+Changes in v4:
+- rebase on v6.13-rc1 and adapt to kernel `Box`
+- add a missing safety comment to `hrtimer::start`
+- use `hrtimer_setup`
+- fix a build issue when `bindings::hrtimer_restart` is signed
+- fix a memory leak where box was not destroyed
+- fix a documentation typo
+- remove `as` coercion at multiple locations
+- use fully qualified syntax when invoking `deref`
+- move `hrtimer` into `time` module
+- Link to v3: https://lore.kernel.org/r/20241017-hrtimer-v3-v6-12-rc2-v3-0-59a75cbb44da@kernel.org
+
+Changes in v3:
+- support timer mode selection
+- support clock source selection
+- eliminate `Arc::clone_from_raw` in favor of using `ArcBorrow`
+- make `Arc::as_ptr` an associated method
+- update safety requirement for `ArcBorrow::from_raw`
+- remove examples (pending `SpinLockIrq` and `CondVar` patches)
+- remove `start_function` (v2 `schedule_function`, pending `SpinLockIrq` and `CondVar` patches)
+- change function naming from schedule/armed to start/running
+- add vocabulary to documentation
+- update safety comment in `Arc::as_ptr`
+- Link to v2: https://lore.kernel.org/r/20240917222739.1298275-1-a.hindborg@kernel.org
+
+Changes in v2:
+- use a handle to own the timer callback target
+- add ability to for callback to reschedule timer
+- improve `impl_has_timer` to allow generics
+- add support for stack allocated timers
+- add support for scheduling closures
+- use `Ktime` for setting expiration
+- use `CondVar` instead of `AtomicBool` in examples
+- rebase on 6.11
+- improve documentation
+- Link to v1: https://lore.kernel.org/r/20240425094634.262674-1-nmi@metaspace.dk
+
+---
+Andreas Hindborg (13):
+      rust: hrtimer: introduce hrtimer support
+      rust: sync: add `Arc::as_ptr`
+      rust: hrtimer: implement `HrTimerPointer` for `Arc`
+      rust: hrtimer: allow timer restart from timer handler
+      rust: hrtimer: add `UnsafeHrTimerPointer`
+      rust: hrtimer: add `hrtimer::ScopedHrTimerPointer`
+      rust: hrtimer: implement `UnsafeHrTimerPointer` for `Pin<&T>`
+      rust: hrtimer: implement `UnsafeHrTimerPointer` for `Pin<&mut T>`
+      rust: alloc: add `Box::into_pin`
+      rust: hrtimer: implement `HrTimerPointer` for `Pin<Box<T>>`
+      rust: hrtimer: add `HrTimerMode`
+      rust: hrtimer: add clocksource selection through `ClockId`
+      rust: hrtimer: add maintainer entry
+
+ MAINTAINERS                         |  15 ++
+ rust/kernel/alloc/kbox.rs           |   6 +
+ rust/kernel/sync/arc.rs             |  13 +-
+ rust/kernel/time.rs                 |  68 +++++
+ rust/kernel/time/hrtimer.rs         | 518 ++++++++++++++++++++++++++++++++++++
+ rust/kernel/time/hrtimer/arc.rs     | 100 +++++++
+ rust/kernel/time/hrtimer/pin.rs     | 104 ++++++++
+ rust/kernel/time/hrtimer/pin_mut.rs | 108 ++++++++
+ rust/kernel/time/hrtimer/tbox.rs    | 120 +++++++++
+ 9 files changed, 1050 insertions(+), 2 deletions(-)
+---
+base-commit: 2014c95afecee3e76ca4a56956a936e23283f05b
+change-id: 20241017-hrtimer-v3-v6-12-rc2-215dc6b169bf
+
+Best regards,
 -- 
-2.32.0.windows.2
+Andreas Hindborg <a.hindborg@kernel.org>
+
 
 
