@@ -1,78 +1,132 @@
-Return-Path: <linux-kernel+bounces-553329-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-553330-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0732EA58784
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 20:25:05 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E068BA58788
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 20:27:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3378616959E
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 19:25:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1B58416971C
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 19:27:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21EA51DED7B;
-	Sun,  9 Mar 2025 19:24:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83A2621422E;
+	Sun,  9 Mar 2025 19:27:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qXKBHVuY"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="XSUrHM+A"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80D5416A959;
-	Sun,  9 Mar 2025 19:24:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E67A16A959;
+	Sun,  9 Mar 2025 19:26:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741548298; cv=none; b=TTH47smEzklm8wqmKXNBoTc/0cBzS9F5MGXMWiVcnHWjLwO4un5X4KFTNIf4v49MCEq6X+87fJvrxLiHdN4RoQko0YLVyfVqw2TOfolJYqwebwHUZgJcdPtqpND4A9EQXZ9ZITi8SvF/VV1MHhE4eDKSQKxhzj9jtfwc+K/MKo0=
+	t=1741548419; cv=none; b=l578v+JZQhBvpBUTsea7SlK83Wy4DBH1AtrNvNVWarbbCY1EwhOVw7zfq64tjuhR3L12MGYpla1JAs9oL7HeK2viGOi4heRYEN79IiIpkt9e7+Bk7xwGx1KCDJzxDETyU3rArvdu6W9O+18+nWD5s4Zm3AbtjWlMJyuuSLdQDQo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741548298; c=relaxed/simple;
-	bh=t+TCr/rNXaxXnCs8S15I4r34Ms4YY3Gqirl372fdgLw=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=oWhTA7gT6ImqYLlnH+tp0nzSg7voIrfzR4lZyV+SPB8MWZv9pyMiK+rT4Bt/NfSw8oc5STAxIeKdSu1Rh/6cwLajjm4CF1L1cFPyl2/JQRzPOF1fjq1bEUBLcGljoIRAzTsMXBZn5tjBjEQgq+4W8MtwMIWtX8iUdtT+i6RgZX8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qXKBHVuY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 60C32C4CEE3;
-	Sun,  9 Mar 2025 19:24:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741548298;
-	bh=t+TCr/rNXaxXnCs8S15I4r34Ms4YY3Gqirl372fdgLw=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=qXKBHVuYl4xajSt/lvW96yelCR+K/vwh1dKwhAstMSkST0LwX3Xcj0/JKM3OtyYhx
-	 kBbdc1mGxr2d+5WiZfCL1jtA5sUZyyuraen5cM1OjDEoYBhF3z+e6uLBGS8j4Txpz+
-	 PeRMA8Ih2+LrrccLH5+H2wDiwUPZRsMOaovvltANFRcsMed2GaK1AcMcdr9lmiROqW
-	 yc5Wen16iNyktRzAs12gTI3NsknUl+U9e6ca5t2wRxdnaQWDtK5Ndv8xFnZp9CQWHv
-	 5Ws0LN7jfJwMKzLXT1t2ohuaEx71HZCzzS+kaIBft963qZSDClRsiUn75T+H2mMEVr
-	 +9AmEaZGTdpMQ==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 70FDA380DBC0;
-	Sun,  9 Mar 2025 19:25:33 +0000 (UTC)
-Subject: Re: [GIT PULL] Kbuild fixes for v6.14-rc6
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <CAK7LNAS_En5ooXYfjWEZVbwBcymDaEwGs8ug6w4-82pGa4+VpA@mail.gmail.com>
-References: <CAK7LNAS_En5ooXYfjWEZVbwBcymDaEwGs8ug6w4-82pGa4+VpA@mail.gmail.com>
-X-PR-Tracked-List-Id: <linux-kbuild.vger.kernel.org>
-X-PR-Tracked-Message-Id: <CAK7LNAS_En5ooXYfjWEZVbwBcymDaEwGs8ug6w4-82pGa4+VpA@mail.gmail.com>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/masahiroy/linux-kbuild.git tags/kbuild-fixes-v6.14-3
-X-PR-Tracked-Commit-Id: b5e3956535466187657563b754ba0f1da8626c7f
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 9712d38c87087ae34f8cede6583092c272507c52
-Message-Id: <174154833211.2955722.9510509873077625807.pr-tracker-bot@kernel.org>
-Date: Sun, 09 Mar 2025 19:25:32 +0000
-To: Masahiro Yamada <masahiroy@kernel.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+	s=arc-20240116; t=1741548419; c=relaxed/simple;
+	bh=Dk3dyE0dtJPnVxAV4n6omrRWpps5/OsjqC9n7SUzIAY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LpSTyFgyQJAtXQ+POHxHm+iQ+CkpBiiW9j3YQy30TQqX1bXF/k8LqmKnoSeOwFwnnFtUf4ExOJD//NHruhwuLGpEB3W6WuUJMFPmgHqbkTrZMdL/2TCP6oT5d6mDmNyoutMA0hMJNbpAuWGcGYZCAOhwsx4cj/zsFNG7L/LRirU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=XSUrHM+A; arc=none smtp.client-ip=192.198.163.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1741548417; x=1773084417;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=Dk3dyE0dtJPnVxAV4n6omrRWpps5/OsjqC9n7SUzIAY=;
+  b=XSUrHM+AvsgTkyH0jGb22UiXdwXBsmFvcXnT3sZ22xM5Ul1w6rEkEPge
+   YwRKUryn52j66sBKjF+qpOtILcJdV79HgdC8srvwuPs3bW8sXA6Zj3VUg
+   jsNwkNLe+qXh/fKZkDOTmgHeZXyCT23F1loDFzizOFPYyNTCi1AveU2RU
+   5QwcnSn9RWbYS7DjqSjZJ0a5mWTvZ89bIVYGQQYQlC/ZcAL989ug8vWkW
+   iROywfm8lleMk7HvHLnnVii6RO9n+O+cwZdJkcn5BtNPtSIh+LpvtKcgg
+   E++5g1ZUcQxsIbxwqqQ3tfGjwqbk/x7NVYFLugZoxVFSMT8GO/bxQuqVz
+   Q==;
+X-CSE-ConnectionGUID: HCja15hSQ/m3UipVP6OQwg==
+X-CSE-MsgGUID: ghOLCTDiSx6uq0puh8hl2w==
+X-IronPort-AV: E=McAfee;i="6700,10204,11368"; a="42414966"
+X-IronPort-AV: E=Sophos;i="6.14,235,1736841600"; 
+   d="scan'208";a="42414966"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Mar 2025 12:26:56 -0700
+X-CSE-ConnectionGUID: UsC/pV4tTLOMuh37iVyUtw==
+X-CSE-MsgGUID: 5kmuBSalTDaAtTsev3gd4A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,234,1736841600"; 
+   d="scan'208";a="120288769"
+Received: from lkp-server02.sh.intel.com (HELO a4747d147074) ([10.239.97.151])
+  by fmviesa010.fm.intel.com with ESMTP; 09 Mar 2025 12:26:52 -0700
+Received: from kbuild by a4747d147074 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1trMIT-0003PE-1U;
+	Sun, 09 Mar 2025 19:26:49 +0000
+Date: Mon, 10 Mar 2025 03:26:18 +0800
+From: kernel test robot <lkp@intel.com>
+To: Christian Marangi <ansuelsmth@gmail.com>, Lee Jones <lee@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Vladimir Oltean <olteanv@gmail.com>,
+	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	Maxime Chevallier <maxime.chevallier@bootlin.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org, upstream@airoha.com
+Cc: oe-kbuild-all@lists.linux.dev, netdev@vger.kernel.org
+Subject: Re: [net-next PATCH v12 05/13] dt-bindings: mfd: Document support
+ for Airoha AN8855 Switch SoC
+Message-ID: <202503100331.nksmBPCd-lkp@intel.com>
+References: <20250309172717.9067-6-ansuelsmth@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250309172717.9067-6-ansuelsmth@gmail.com>
 
-The pull request you sent on Mon, 10 Mar 2025 03:21:47 +0900:
+Hi Christian,
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/masahiroy/linux-kbuild.git tags/kbuild-fixes-v6.14-3
+kernel test robot noticed the following build warnings:
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/9712d38c87087ae34f8cede6583092c272507c52
+[auto build test WARNING on net-next/main]
 
-Thank you!
+url:    https://github.com/intel-lab-lkp/linux/commits/Christian-Marangi/dt-bindings-nvmem-Document-support-for-Airoha-AN8855-Switch-EFUSE/20250310-013306
+base:   net-next/main
+patch link:    https://lore.kernel.org/r/20250309172717.9067-6-ansuelsmth%40gmail.com
+patch subject: [net-next PATCH v12 05/13] dt-bindings: mfd: Document support for Airoha AN8855 Switch SoC
+reproduce: (https://download.01.org/0day-ci/archive/20250310/202503100331.nksmBPCd-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202503100331.nksmBPCd-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+   Warning: Documentation/translations/ja_JP/SubmittingPatches references a file that doesn't exist: linux-2.6.12-vanilla/Documentation/dontdiff
+   Warning: Documentation/translations/zh_CN/admin-guide/README.rst references a file that doesn't exist: Documentation/dev-tools/kgdb.rst
+   Warning: Documentation/translations/zh_CN/dev-tools/gdb-kernel-debugging.rst references a file that doesn't exist: Documentation/dev-tools/gdb-kernel-debugging.rst
+   Warning: Documentation/translations/zh_TW/admin-guide/README.rst references a file that doesn't exist: Documentation/dev-tools/kgdb.rst
+   Warning: Documentation/translations/zh_TW/dev-tools/gdb-kernel-debugging.rst references a file that doesn't exist: Documentation/dev-tools/gdb-kernel-debugging.rst
+>> Warning: MAINTAINERS references a file that doesn't exist: Documentation/devicetree/bindings/mfd/airoha,an8855-mfd.yaml
+   Warning: MAINTAINERS references a file that doesn't exist: Documentation/devicetree/bindings/misc/fsl,qoriq-mc.txt
+   Warning: MAINTAINERS references a file that doesn't exist: Documentation/devicetree/bindings/leds/backlight/ti,lp8864.yaml
+   Warning: lib/Kconfig.debug references a file that doesn't exist: Documentation/dev-tools/fault-injection/fault-injection.rst
+   Using alabaster theme
 
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
