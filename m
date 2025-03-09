@@ -1,84 +1,86 @@
-Return-Path: <linux-kernel+bounces-553128-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-553129-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 422E0A5843F
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 14:29:53 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 36961A58441
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 14:30:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CE5237A27F9
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 13:28:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 660C716AFB1
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 13:30:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC4E91DC04A;
-	Sun,  9 Mar 2025 13:29:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1749F1DC05F;
+	Sun,  9 Mar 2025 13:29:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="M8119lH0"
-Received: from smtp-relay-internal-1.canonical.com (smtp-relay-internal-1.canonical.com [185.125.188.123])
+	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="oRlxWnyb"
+Received: from smtp-relay-internal-0.canonical.com (smtp-relay-internal-0.canonical.com [185.125.188.122])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 194881DFE8
-	for <linux-kernel@vger.kernel.org>; Sun,  9 Mar 2025 13:29:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.123
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D851F1D88DB
+	for <linux-kernel@vger.kernel.org>; Sun,  9 Mar 2025 13:29:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.122
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741526981; cv=none; b=QNQmC/0Y4O4ifgJc4vIhdTQRDoq81UTU7hMxEHX83szysic36PmfymH7i7HKnj28lKRfzqr0PBcRLKuHSK7cmi82tdOGaubrHDRhH2w1itqF6ItYeZUVPMTcN8E5Zc0cwAaaPQo8yd48JUOOlE+ldYReJZX9cn7YwpDfgl6UV2M=
+	t=1741526993; cv=none; b=go3LPliuRoYpRb6AfvuhiN8Jz43mUEzMpk4AyVkGk7RSAXvXftGYL7uDQjVDE1BqkHThi5e7HzpufDdXrVln2YfHKfy5Q3L/GKZVbx3A791vJX/h9UAClcdX4qv1TIjGUIH5n2ZobMer4XHSFQvhWuqtVEeUlQxEBpk0chygWQU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741526981; c=relaxed/simple;
-	bh=BFBez99hJQWF8yQf0dUSZg1LTudTSAcMT/T2RWUc2CQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=i9ffX2FLBX80j3/NtckjxBTTJFg/dsGjkmdWBiJXiip4yLhfK3yfGZcRK84pG+erSX+WmjmWyB1gJ9nLInDqf93VdanfhJeH1P6HIPX2IFMaA+J8ECHdHqJ84+cFjCva7cBD8YQWzpFqgX0CwwqWra4+xpbkJSUMzdQJ2X36M8E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=M8119lH0; arc=none smtp.client-ip=185.125.188.123
+	s=arc-20240116; t=1741526993; c=relaxed/simple;
+	bh=vnuWxUByDaK53vFXT9n7vqyzxlt2qtW+8f94W06a7gQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=re/E3lwm69LuGyV3t5m8NAbN44fGjrIE3ZMh7v3cV0rJMvQCT8DSnFoEf4RqLFoFNpna9YTT6hIjk5NPexIewPvvWV0mzQPw3qMk4wF349rz2YL5oECxRs3JJdvlZtS8GQTYMcl7jyNm4FTn3iStPfVQIi0enIIQIDWmcZKJoxU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=oRlxWnyb; arc=none smtp.client-ip=185.125.188.122
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
 Received: from mail-ej1-f71.google.com (mail-ej1-f71.google.com [209.85.218.71])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 4DE003F129
-	for <linux-kernel@vger.kernel.org>; Sun,  9 Mar 2025 13:29:35 +0000 (UTC)
+	by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id ACFBB3FCCD
+	for <linux-kernel@vger.kernel.org>; Sun,  9 Mar 2025 13:29:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-	s=20210705; t=1741526975;
-	bh=mqFbLsvDYgZMcATbnfiiqW+yfZu2sdh4iXGZzYCmKWw=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type;
-	b=M8119lH0pfHCJbNhXIm2r/DHRXG4z7vOaLDab29P3gn6o9KHsx9F7dyE0U47u0Qaw
-	 M+qaOskcoGWuYp3cQ0WqSr8NnK/zq1Nm2+FuTwf6DVdabsubrnjox0FmvQ4fSKjFbI
-	 u5495eUJ5ufQWHO1PxS1D2VXeyN4XuZb/+m2n+xCcqXt4CNbWakfkP5w7DJ4kgkINz
-	 1WDTsX1I+VnXcFaUIEigkcxekCRQBuEfj5LIEwMAaaFy8tlUiNAarWrpy37ntw4sEc
-	 nn5dNaJVzjctqkv8IFCh7DDZHZgc6Xsiw2uQpCpN4EkD3gB1KG71OrAuVOM5MxcXMx
-	 8kQZQmWKauJNA==
-Received: by mail-ej1-f71.google.com with SMTP id a640c23a62f3a-ac27ea62032so63499066b.1
-        for <linux-kernel@vger.kernel.org>; Sun, 09 Mar 2025 06:29:35 -0700 (PDT)
+	s=20210705; t=1741526981;
+	bh=shYgV0qT/lqjUQTrvdmbHNW7lzUO23tYACdmBi90n70=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type;
+	b=oRlxWnybkcFDjXZsxKiEarmghlZFXhhgwlib0iMzHEtAJpZDHI4dAcGennsqiJXr3
+	 r0EzFpAoiY0KogG/FbKFw1P2MbYVrlOfqdMspqiBRA3mQFYQYkMZq9IpRPFS7QOEZH
+	 g3ygKbbzX8P9TiW2oZ83wFxUGgIMqPTNj9PpThtiGYv47AGYp+XJukEdFM6+8oGCLF
+	 IgZLOltJRmMVvrAsOzMIcbTt29lvcrUprulE+vByl+eMW557c1CwXSHBsTgatRu/VO
+	 Y4WL1S2/bA/up5Kp9OjyB/I5As0HVsEa5AWIJzR/k7fvkl7tXP85q/eOwQuQjycJCU
+	 dxnVnR4YrV9IA==
+Received: by mail-ej1-f71.google.com with SMTP id a640c23a62f3a-ac28a2c7c48so59421966b.3
+        for <linux-kernel@vger.kernel.org>; Sun, 09 Mar 2025 06:29:41 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741526975; x=1742131775;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=mqFbLsvDYgZMcATbnfiiqW+yfZu2sdh4iXGZzYCmKWw=;
-        b=rGjEOIRD6BGDRVztWkPX1h+qUWhuYltKq5Sl3kU4/AU498tM1YlKXhFfTYqGrxAhPr
-         HE/ELE0dwzjs2GdITpc+afkEml7mKVVaFOoXBKybYgMIsPFt0fy2GVU3RtxRK/nAAdXQ
-         tD+VFr/9+HGuU2QSLj4DyRThZFRWMtdUXyk+YCTYuR1Ik36R1WUrtbhaZaNHhpycA0V1
-         I8Iy0iWjpb2FrMYRC7jwYu/r4bIIfC6JK5oQVYV3qEL6K7GvPBE+lQuO6pJZFuWe4xHs
-         /+ASH0JnvqQuj7Iie+BMCa0Ba1AsY4w+SBK4Eq0qmHxJ8BgfeI9dS6wr2A93nO8G2JaA
-         kbfg==
-X-Forwarded-Encrypted: i=1; AJvYcCW12DeCrR5jbpSJdx3UmBkhI6/NTAolDrJfUc1H4Y/BXhTjhMeikWRt6/M+/tEkzys+QoykebQJf+RCzXo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyQ3Px+8Zh2GKQ0jejzNok2eBug52mTKnUtObY5hkB1Qi+A9MqG
-	aLBpUhv3HqzDk/BUn9Ud5Zznzv0RU92Roypg7ipF1VKQ5Riu4U9bLsgUZlNuLsIXqRb+i4rT3AK
-	+fE8Ac7DhF8cI9x4EH1pGzbPEwHlrnu1ephBX9wVBeQ9I8X3gATowqEq2UuZsZImcWIt9qzWnC+
-	Hhag==
-X-Gm-Gg: ASbGnct4hRchXDOxKYQpYvOmJtIvKTur3RH06vBA1O0Bp3xa/hMchuwPqIs3zHje/pM
-	SfPkexQpgYfoGtjJb+8/lldVzJkZibXz0hw/aFpM5N9pC6gyHpLZbBj5EE7goUfGGBoEAVJm2rz
-	b/6Kfr2WxsMVPBMX6TFeyZlTsFTGeNtXzVktMwPatEp0vcr+tGGp9bc5JsioKzDRbe1xETarC4o
-	Qjhrp1kZSabp2ZtB/kcH+Pso6XerBdQOzjQERQBdw50V7DV22Na3CBLUg2N90WexTJYCmcYXCH7
-	uGPDPVAn9+h016q84Mmegqhu4hXYnj8EgzF/2ZHj47dpKQmFD37PMB+XZevC+ZMkqxh6mw7exgo
-	QUvrbK2l8fVKGEyONWQ==
-X-Received: by 2002:a17:906:c514:b0:abf:4e8b:73e with SMTP id a640c23a62f3a-ac252e9cd5bmr962216066b.39.1741526974743;
-        Sun, 09 Mar 2025 06:29:34 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHWUIep2IRy9s5FbXJl+MjjuqqYaufw0PZ6Ppq51ixYq/v5+9VpIwIXq+cg1UIFg1fYCs++7g==
-X-Received: by 2002:a17:906:c514:b0:abf:4e8b:73e with SMTP id a640c23a62f3a-ac252e9cd5bmr962212766b.39.1741526974364;
-        Sun, 09 Mar 2025 06:29:34 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1741526979; x=1742131779;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=shYgV0qT/lqjUQTrvdmbHNW7lzUO23tYACdmBi90n70=;
+        b=prkzc+sSfLfgSY1148n32JnKmHx7ZgpmrMkcTowmpDi54SlSxuM/GibAeI708XjFSl
+         cqhQtomipqeAljpYfq3hQMqt/dVDdeGgHUzEKf8rCtjER+EI4Pn4CjRExPRHfsjNok8z
+         BlI9pCG/zez5L0H7meFRqD+aNyYQ2pkhEbVUOC4ZbPYEBInsw/wPGy4CEmrMCMk8Uazm
+         ApWWTbn1LhdY9YfRcBQHR6Z19YbI419d23wgy1fto2FBQZgpNckDjSUlM/WjJxTItFZB
+         ffuYijj2ElKu4Vx/SckKUEcJQgsoE81lET0joT7kG3K2HRCVqcSkRme07pkg3ZbDhb4P
+         uyBw==
+X-Forwarded-Encrypted: i=1; AJvYcCUODOtkwtHhaPY8WkgSb/HFMctrN6RvJYu39DVMhoFQBTjtP6xA1Q/GJowR4fq6Q1+nlFekCv9K+Gc6haE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YypMjyTkd4wL+NriM4V/MokBSARdaDACQA9+48g1JUyt0jg6NNY
+	XDOqP31tQqOLyStRkcw2qKutHKORG8znu8fDiZ5skNkwoORfDVkTmkIxxZOcDyCfsyvIQ132Bqj
+	1aYVYHieAiwMpEOu2WA5XH1mFAeITf6C5s6lLr3Ch/ToQPKGkC3jRJJ1Ft808yJYVmNWXMWkS2G
+	hh+/QtdKU5Vg==
+X-Gm-Gg: ASbGnctbAM6xJsnvUCBQUPs0idt7sCYkBxK3FK4SuuzF5pueOTHA4wopNtZIcj0Qss8
+	3miX9X1TUhofyBPKAqkudAZ/rn2C7rDmOyYZTWl3Hdi/WgHUMhAOXVq9/wlQeJCs0QfAOR3U5Hk
+	FUGqJCB0IuOk3J0N+Lms4cblqZiLO5czKg6w9WXWCzc2zkkrYg/EBIO50uPox3i1lppR0C9JgMQ
+	Cp8P9SeIqPhA7VcpOWFlyRxDG85NQm9SDqtcWX4j3rsWZw4ttFXVjOvFMFgaDGBpHeh4HYdihEe
+	pS8Ufm/W7nqGadUDR1DN+cO6AFBiXl8OgUbcirwZvHImhVHmG4LI1L9Tmpqk2b4fK0x8TPxdDoT
+	jAslVAyFDjwHYPJTU0A==
+X-Received: by 2002:a17:907:c302:b0:ac2:f93:b7c5 with SMTP id a640c23a62f3a-ac2526e1ba9mr1073987466b.31.1741526979545;
+        Sun, 09 Mar 2025 06:29:39 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEWS1LQrRdoibpiP6escIaOL/a7XzBpJqfiCaikM73Pa+IXdnzBUWE6E4F2v53XQL0h2fMQ5g==
+X-Received: by 2002:a17:907:c302:b0:ac2:f93:b7c5 with SMTP id a640c23a62f3a-ac2526e1ba9mr1073984866b.31.1741526979165;
+        Sun, 09 Mar 2025 06:29:39 -0700 (PDT)
 Received: from localhost.localdomain (ipbcc0714d.dynamic.kabel-deutschland.de. [188.192.113.77])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac25943f55csm435897366b.137.2025.03.09.06.29.33
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac25943f55csm435897366b.137.2025.03.09.06.29.38
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 09 Mar 2025 06:29:33 -0700 (PDT)
+        Sun, 09 Mar 2025 06:29:38 -0700 (PDT)
 From: Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
 To: kuniyu@amazon.com
 Cc: Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>,
@@ -97,12 +99,13 @@ Cc: Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>,
 	Luca Boccassi <bluca@debian.org>,
 	Tejun Heo <tj@kernel.org>,
 	Johannes Weiner <hannes@cmpxchg.org>,
-	=?UTF-8?q?Michal=20Koutn=C3=BD?= <mkoutny@suse.com>,
-	Shuah Khan <shuah@kernel.org>
-Subject: [PATCH net-next 0/4] Add getsockopt(SO_PEERCGROUPID) and fdinfo API to retreive socket's peer cgroup id
-Date: Sun,  9 Mar 2025 14:28:11 +0100
-Message-ID: <20250309132821.103046-1-aleksandr.mikhalitsyn@canonical.com>
+	=?UTF-8?q?Michal=20Koutn=C3=BD?= <mkoutny@suse.com>
+Subject: [PATCH net-next 1/4] net: unix: print cgroup_id and peer_cgroup_id in fdinfo
+Date: Sun,  9 Mar 2025 14:28:12 +0100
+Message-ID: <20250309132821.103046-2-aleksandr.mikhalitsyn@canonical.com>
 X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20250309132821.103046-1-aleksandr.mikhalitsyn@canonical.com>
+References: <20250309132821.103046-1-aleksandr.mikhalitsyn@canonical.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -111,35 +114,6 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-
-1. Add socket cgroup id and socket's peer cgroup id in socket's fdinfo
-2. Add SO_PEERCGROUPID which allows to retrieve socket's peer cgroup id
-3. Add SO_PEERCGROUPID kselftest
-
-Generally speaking, this API allows race-free resolution of socket's peer cgroup id.
-Currently, to do that SCM_CREDENTIALS/SCM_PIDFD -> pid -> /proc/<pid>/cgroup sequence
-is used which is racy.
-
-As we don't add any new state to the socket itself there is no potential locking issues
-or performance problems. We use already existing sk->sk_cgrp_data.
-
-We already have analogical interfaces to retrieve this
-information:
-- inet_diag: INET_DIAG_CGROUP_ID
-- eBPF: bpf_sk_cgroup_id
-
-Having getsockopt() interface makes sense for many applications, because using eBPF is
-not always an option, while inet_diag has obvious complexety and performance drawbacks
-if we only want to get this specific info for one specific socket.
-
-Idea comes from UAPI kernel group:
-https://uapi-group.org/kernel-features/
-
-Huge thanks to Christian Brauner, Lennart Poettering and Luca Boccassi for proposing
-and exchanging ideas about this.
-
-Git tree:
-https://github.com/mihalicyn/linux/tree/so_peercgroupid
 
 Cc: linux-kernel@vger.kernel.org
 Cc: netdev@vger.kernel.org
@@ -158,29 +132,57 @@ Cc: Luca Boccassi <bluca@debian.org>
 Cc: Tejun Heo <tj@kernel.org>
 Cc: Johannes Weiner <hannes@cmpxchg.org>
 Cc: "Michal Koutný" <mkoutny@suse.com>
-Cc: Shuah Khan <shuah@kernel.org>
+Signed-off-by: Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
+---
+ net/unix/af_unix.c | 21 +++++++++++++++++++++
+ 1 file changed, 21 insertions(+)
 
-Alexander Mikhalitsyn (4):
-  net: unix: print cgroup_id and peer_cgroup_id in fdinfo
-  net: core: add getsockopt SO_PEERCGROUPID
-  tools/testing/selftests/cgroup/cgroup_util: add cg_get_id helper
-  tools/testing/selftests/cgroup: add test for SO_PEERCGROUPID
-
- arch/alpha/include/uapi/asm/socket.h          |   2 +
- arch/mips/include/uapi/asm/socket.h           |   2 +
- arch/parisc/include/uapi/asm/socket.h         |   2 +
- arch/sparc/include/uapi/asm/socket.h          |   2 +
- include/uapi/asm-generic/socket.h             |   2 +
- net/core/sock.c                               |  17 +
- net/unix/af_unix.c                            |  84 +++++
- tools/include/uapi/asm-generic/socket.h       |   2 +
- tools/testing/selftests/cgroup/Makefile       |   2 +
- tools/testing/selftests/cgroup/cgroup_util.c  |  15 +
- tools/testing/selftests/cgroup/cgroup_util.h  |   2 +
- .../selftests/cgroup/test_so_peercgroupid.c   | 308 ++++++++++++++++++
- 12 files changed, 440 insertions(+)
- create mode 100644 tools/testing/selftests/cgroup/test_so_peercgroupid.c
-
+diff --git a/net/unix/af_unix.c b/net/unix/af_unix.c
+index 7f8f3859cdb3..2b2c0036efc9 100644
+--- a/net/unix/af_unix.c
++++ b/net/unix/af_unix.c
+@@ -117,6 +117,7 @@
+ #include <linux/file.h>
+ #include <linux/btf_ids.h>
+ #include <linux/bpf-cgroup.h>
++#include <linux/cgroup.h>
+ 
+ static atomic_long_t unix_nr_socks;
+ static struct hlist_head bsd_socket_buckets[UNIX_HASH_SIZE / 2];
+@@ -861,6 +862,11 @@ static void unix_show_fdinfo(struct seq_file *m, struct socket *sock)
+ 	int nr_fds = 0;
+ 
+ 	if (sk) {
++#ifdef CONFIG_SOCK_CGROUP_DATA
++		struct sock *peer;
++		u64 sk_cgroup_id = 0;
++#endif
++
+ 		s_state = READ_ONCE(sk->sk_state);
+ 		u = unix_sk(sk);
+ 
+@@ -874,6 +880,21 @@ static void unix_show_fdinfo(struct seq_file *m, struct socket *sock)
+ 			nr_fds = unix_count_nr_fds(sk);
+ 
+ 		seq_printf(m, "scm_fds: %u\n", nr_fds);
++
++#ifdef CONFIG_SOCK_CGROUP_DATA
++		sk_cgroup_id = cgroup_id(sock_cgroup_ptr(&sk->sk_cgrp_data));
++		seq_printf(m, "cgroup_id: %llu\n", sk_cgroup_id);
++
++		peer = unix_peer_get(sk);
++		if (peer) {
++			u64 peer_cgroup_id = 0;
++
++			peer_cgroup_id = cgroup_id(sock_cgroup_ptr(&peer->sk_cgrp_data));
++			sock_put(peer);
++
++			seq_printf(m, "peer_cgroup_id: %llu\n", peer_cgroup_id);
++		}
++#endif
+ 	}
+ }
+ #else
 -- 
 2.43.0
 
