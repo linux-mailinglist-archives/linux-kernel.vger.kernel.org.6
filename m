@@ -1,33 +1,33 @@
-Return-Path: <linux-kernel+bounces-553200-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-553201-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A9D4A5856E
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 16:42:24 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A08B5A58578
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 16:47:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C7A02168DEC
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 15:42:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 75A3F3AAA90
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 15:46:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E11A1DE883;
-	Sun,  9 Mar 2025 15:42:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74C231DE8A6;
+	Sun,  9 Mar 2025 15:46:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="KaWJLlHj"
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="rbmnHJiW"
 Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1D242F2A;
-	Sun,  9 Mar 2025 15:42:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 196398836;
+	Sun,  9 Mar 2025 15:46:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741534937; cv=none; b=IpgVpnk4cXXnr67UJ6VENRpFjTpRwfBWNe9XTiRR9XVsCklhLYujocZJyA+9GZBv2oI59TkrPxLKfxMt5ea5V5t4xVvY6wVxxbWEsVdeZURUjX3Kfz8oNnzz245+Je4MwAQtYJbObLaaAlWonr+g4OabUSowiyBi26Wfs0wtXCg=
+	t=1741535217; cv=none; b=VHspcF/glRCTZSBrVIP9yjQRhzFSCoH4guI7i6g9nPjOn+eYSn68daHuKdM2/SM1ymFCmu7cMYbYTR+0U9klnoBvInem4O0eN92jGcvkzH1cbiQ5hr+GzrZbJGDqMmoj0ZyNTaY8fkH8Q99QAQPtyF3o5OT/WsXxhOGx3siADWY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741534937; c=relaxed/simple;
-	bh=jbTJeeexZjCf9NgxRdnyO5JuA1DQv/k912qe8bU/ZYg=;
+	s=arc-20240116; t=1741535217; c=relaxed/simple;
+	bh=OqIURxiKQqRpTrx/sTIzJKqubsWIT5kp5CUKfwFi9p8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fnrddnC6L+L9bg264nHWtMEB8dsUtG5V/yO4df7BDnQdmT9BRC0YKJ+VWHOiq5XG3ZCwdAGDSqd1hNb0iz1dwppz2W2x24gD+RAM+FgmaNTmVC2Ypz5inV8Hja7rr1mJfiMuFUBHo9fLVa4UN/UjCx5ZMOKqovCXnitUQpnkAH0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=KaWJLlHj; arc=none smtp.client-ip=156.67.10.101
+	 Content-Type:Content-Disposition:In-Reply-To; b=plkxqBOKHHhzH+tUQ9EH8+/+w+wTWgVagFM12NWh8qhj3GKefeIQClp/9lALn65evS7C46LKhN5sOAAYIxiTrze66piozVYsnw+uDHthcXmuWr76t8/7JehknknExg2AjwfcMuTjWt694BOWug5LagyiGJ5S1IAgW4vz7DnMby8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=rbmnHJiW; arc=none smtp.client-ip=156.67.10.101
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
@@ -35,22 +35,22 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
 	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
 	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
 	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=kzT4fEimiizy2hN2XSadxcNOjH99UUHO6I4bFOwXNVw=; b=KaWJLlHjL3khdssdsXGtpjx+z+
-	Cz/ocJ/yxhj6RZmMD+HhTnLIiwuI+yfn4+459s+m7wmNtS1cu3+SRKd21eDG5nvYvvZQXNJkDxpRo
-	v7E0cwd8onAiZ740Aq2nJkg+RFfrnpWnEIlTIEEiGEhgit0xp1Vq1zETIgioP8CU9KLY=;
+	bh=d8uFgmPJEzex6xleGPGMhuPODKGJhQE42y/cWzBkaxw=; b=rbmnHJiWvIguG1SnZFs2WBypEN
+	78QWwPpC2VxRr4+o5JIfakVqQU8ZUtEHsDheu9DQCD4AGTzm7NA0non9+ZUg3Q2G5EcmilAGx5yQ3
+	FdsdjIOHsxA3Pu+Ki3vrMmF+AZBg8RW0xdmeC9G2rmaRrSASxck1nxWobJxxEMWsyqdQ=;
 Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
 	(envelope-from <andrew@lunn.ch>)
-	id 1trImn-003kGI-UZ; Sun, 09 Mar 2025 16:41:53 +0100
-Date: Sun, 9 Mar 2025 16:41:53 +0100
+	id 1trIrY-003kLm-8D; Sun, 09 Mar 2025 16:46:48 +0100
+Date: Sun, 9 Mar 2025 16:46:48 +0100
 From: Andrew Lunn <andrew@lunn.ch>
 To: Hanyuan Zhao <hanyuan-z@qq.com>
 Cc: davem@davemloft.net, kuba@kernel.org, andrew+netdev@lunn.ch,
 	edumazet@google.com, pabeni@redhat.com, netdev@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] net: enc28j60: support getting irq number from gpio
- phandle in the device tree
-Message-ID: <2b09bea7-2a61-4697-a9c1-6a42cf8570c4@lunn.ch>
-References: <tencent_0A154BBE38E000228C01BE742CB73681FE09@qq.com>
+Subject: Re: [PATCH 2/2] dt-bindings: net: add enc28j60's irq-gpios node
+ description and binding example
+Message-ID: <a406f363-0f2d-4ebb-8eec-053d9d148502@lunn.ch>
+References: <tencent_8031D017AFE5E266C43F62C916C709009E06@qq.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -59,9 +59,9 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <tencent_0A154BBE38E000228C01BE742CB73681FE09@qq.com>
+In-Reply-To: <tencent_8031D017AFE5E266C43F62C916C709009E06@qq.com>
 
-On Sun, Mar 09, 2025 at 03:47:08PM +0800, Hanyuan Zhao wrote:
+On Sun, Mar 09, 2025 at 03:48:38PM +0800, Hanyuan Zhao wrote:
 > This patch allows the kernel to automatically requests the pin, configures
 > it as an input, and converts it to an IRQ number, according to a GPIO
 > phandle specified in device tree. This simplifies the process by
@@ -71,57 +71,37 @@ On Sun, Mar 09, 2025 at 03:47:08PM +0800, Hanyuan Zhao wrote:
 > 
 > Signed-off-by: Hanyuan Zhao <hanyuan-z@qq.com>
 > ---
->  drivers/net/ethernet/microchip/enc28j60.c | 25 ++++++++++++++++++-----
->  1 file changed, 20 insertions(+), 5 deletions(-)
+>  .../bindings/net/microchip,enc28j60.txt       | 24 +++++++++++++++++++
+>  1 file changed, 24 insertions(+)
 > 
-> diff --git a/drivers/net/ethernet/microchip/enc28j60.c b/drivers/net/ethernet/microchip/enc28j60.c
-> index d6c9491537e4..b3613e45c900 100644
-> --- a/drivers/net/ethernet/microchip/enc28j60.c
-> +++ b/drivers/net/ethernet/microchip/enc28j60.c
-> @@ -24,6 +24,7 @@
->  #include <linux/skbuff.h>
->  #include <linux/delay.h>
->  #include <linux/spi/spi.h>
-> +#include <linux/of_gpio.h>
->  
->  #include "enc28j60_hw.h"
->  
-> @@ -1526,6 +1527,7 @@ static int enc28j60_probe(struct spi_device *spi)
->  	struct net_device *dev;
->  	struct enc28j60_net *priv;
->  	int ret = 0;
-> +	unsigned long irq_flags = IRQF_ONESHOT;
->  
->  	if (netif_msg_drv(&debug))
->  		dev_info(&spi->dev, "Ethernet driver %s loaded\n", DRV_VERSION);
-> @@ -1558,20 +1560,33 @@ static int enc28j60_probe(struct spi_device *spi)
->  		eth_hw_addr_random(dev);
->  	enc28j60_set_hw_macaddr(dev);
->  
-> +	if (spi->irq > 0) {
-> +		dev->irq = spi->irq;
-> +	} else {
-> +		/* Try loading device tree property irq-gpios */
-> +		struct gpio_desc *irq_gpio_desc = devm_fwnode_gpiod_get_index(&spi->dev,
-> +				of_fwnode_handle(spi->dev.of_node), "irq", 0, GPIOD_IN, NULL);
-> +		if (IS_ERR(irq_gpio_desc)) {
-> +			dev_err(&spi->dev, "unable to get a valid irq gpio\n");
-> +			goto error_irq;
-> +		}
-> +		dev->irq = gpiod_to_irq(irq_gpio_desc);
+> diff --git a/Documentation/devicetree/bindings/net/microchip,enc28j60.txt b/Documentation/devicetree/bindings/net/microchip,enc28j60.txt
+> index a8275921a896..e6423635e55b 100644
+> --- a/Documentation/devicetree/bindings/net/microchip,enc28j60.txt
+> +++ b/Documentation/devicetree/bindings/net/microchip,enc28j60.txt
 
-My understanding is that you should not need most of this. The IRQ
-core will handle converting a GPIO to an interrupt, if you just list
-is as an interrupt source in the normal way.
+The DT Maintainers have a strong preference that you first convert to
+yaml, and then make extension.
 
-> +		irq_flags |= IRQF_TRIGGER_FALLING;
+> @@ -8,6 +8,8 @@ the SPI master node.
+>  Required properties:
+>  - compatible: Should be "microchip,enc28j60"
+>  - reg: Specify the SPI chip select the ENC28J60 is wired to
+> +
+> +Required interrupt properties with pin control subsystem:
+>  - interrupts: Specify the interrupt index within the interrupt controller (referred
+>                to above in interrupt-parent) and interrupt type. The ENC28J60 natively
+>                generates falling edge interrupts, however, additional board logic
 
-You say:
+You should be able to use the interrupts property and just point it
+at a GPIO controller that supports interrupts.
+
+We really need a better understanding of:
 
 > Additionally, it is necessary for platforms that do not support pin
 > configuration and properties via the device tree.
 
-Are you talking about ACPI?
+    Andrew
 
-	Andrew
+---
+pw-bot: cr
 
