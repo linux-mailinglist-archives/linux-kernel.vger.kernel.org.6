@@ -1,275 +1,131 @@
-Return-Path: <linux-kernel+bounces-552859-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-552860-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DD933A57FF9
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 01:14:46 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 96410A58000
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 01:24:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EAB9416AE2F
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 00:14:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C483916AAFD
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 00:24:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AE911FB3;
-	Sun,  9 Mar 2025 00:14:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B89658BE8;
+	Sun,  9 Mar 2025 00:24:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="Itiz5jKJ"
-Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Be4m0mGT"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D431036C;
-	Sun,  9 Mar 2025 00:14:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09D6D4A3E;
+	Sun,  9 Mar 2025 00:24:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741479278; cv=none; b=tvy2wnFwORPgAuWAuGaemD1kjsE/DnK9/RzqjoZwipW7VNxyNAVVKT7OCzgtvv0kPyyHZ1qcWJC2DWkZry9ACJ3pv+121zEKqDNE3UWCkjyKRXKyPpvilLN7PpSBZJjnlZWDbXuWHDSH0GiOMBU+xUmU15xBISM54BIti6Yp7EU=
+	t=1741479890; cv=none; b=m4e8NLQvqHlRCzsRnbtg35V/YGo3zBwPQRr2yc4vkXIUvQENGwtsLR8Cpvpn5v4J/LwOGt0c7of8DUqUHgClraF+5PrQ8VMn9BQ+eYOeqp7nyi0bW9c+9hvg6ePQ07XNYYwEeeM31sQQW4c98Na5lkWdwitS+oBIPUGU0YuQA10=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741479278; c=relaxed/simple;
-	bh=7e6eKxmRQ+Br0gKpgH4VgGDaoif0AE8vbkrrsG0rv+4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=lGc2hYVPufy8EfcZA+Yryw2GCOcV3++/JQ/UywPzzhZNONsKqHvPFsR+H1UzZp2WX3P0mO6k7Bc/w9UGvdH5oHYs9ckzw2Hi4CxN1B122RQLSn420h+uMu8zj9kGD7ISo4QMyEEtG+NAcn4xQhJhtJIzqs9xbesCmhVCHuWwdEk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=Itiz5jKJ; arc=none smtp.client-ip=46.235.229.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
-	; s=bytemarkmx; h=MIME-Version:Message-ID:Date:Subject:From:Content-Type:From
-	:Subject; bh=KwUUZ+KPJTmyLfJTwCs4KiNUfyZmVdVVhPGradVNjU8=; b=Itiz5jKJlch+/7Gd
-	5BRWKa573vYnoIKEJBSYYnw04uKUN4oowQLUcR4+qwrn5VFDWJK2ZrjydPHDmxUmUTRYBNq9CnyRC
-	MnQWa3qXcKEMUGuo4EYz3gDEwCCB+rtF9J1SHgcuKrmxxv8V9c7Rp/0DolrOCT8O3nLdCHynaPm1P
-	xH602utCQ2jn4P+h/VBKtKeAWo8px+AJvd8c10tXgDkmWRRLY7ibcv792cpTa4rOXdXIY789aJlzS
-	h3ZsR72PqxD1R/DXJvQT+8sYBt8jO+z9Gmh638yKs5MlaHYG4vOnZ3kCHLajfwiq31HbU68v2CqsT
-	8/KMyZecFmIB3jZ+5Q==;
-Received: from localhost ([127.0.0.1] helo=dalek.home.treblig.org)
-	by mx.treblig.org with esmtp (Exim 4.96)
-	(envelope-from <linux@treblig.org>)
-	id 1tr4JL-003f6z-2z;
-	Sun, 09 Mar 2025 00:14:31 +0000
-From: linux@treblig.org
-To: isely@pobox.com,
-	mchehab@kernel.org
-Cc: linux-media@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	"Dr. David Alan Gilbert" <linux@treblig.org>
-Subject: [PATCH] media: pvrusb2: Remove unused pvr2_std_create_enum
-Date: Sun,  9 Mar 2025 00:14:31 +0000
-Message-ID: <20250309001431.260682-1-linux@treblig.org>
-X-Mailer: git-send-email 2.48.1
+	s=arc-20240116; t=1741479890; c=relaxed/simple;
+	bh=szqCjg4d8QsrF+kYbNSWgnbNPQ3W+ripzXsLT+GOp7c=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=EMExjbvuKWku+em4/TtOYvzVpQHX+LOajm0RoQ+MeHUwwLAjlythXHi9oTuSvVl+4Zo32qqH1IDhI97i6CYk8HecBkNxP2GGJGiIg4f9GyWb/bJteIXUW1B9Bs3nk9N4nq20tyyGYAhdjTiCpsYtB9rMz2/0PTQTxKKwEHjViyI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Be4m0mGT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B35A5C4CEE0;
+	Sun,  9 Mar 2025 00:24:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741479889;
+	bh=szqCjg4d8QsrF+kYbNSWgnbNPQ3W+ripzXsLT+GOp7c=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Be4m0mGThOYM6JcXqk8+uCCQv6Ltc1Zpke8d5hMkVHlxB0l6HdKQxVCG3IpCuqbky
+	 adQIKvBUBLCy/Pa17Ab8DG8QoudztNygRbTGYjoqpEQh8liSD0ml0x7rV5M6XfSOH4
+	 8XY7TSIOXqi3N8Xn7PzN349nXzXJFf1i+ewclW1N88Bn9cbrRYHdyXZlE2U3FcycIy
+	 r8PyRPZjyicCKZIS9w2ZhsE0jXfr3zmzMHxILXUtLyUsRWgfCff5nilcKeC3qiWO/o
+	 3HRHrZ7vZU5HFDEttyxmSuLbSkEeGamw9/lhLB+Wweam0CWtFKxkXITEeRMOFGwKTI
+	 UQO0pbMTpRjhg==
+Date: Sun, 9 Mar 2025 01:24:46 +0100
+From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
+To: Heiko Stuebner <heiko@sntech.de>
+Cc: Chukun Pan <amadeus@jmu.edu.cn>, Rob Herring <robh@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Jonas Karlman <jonas@kwiboo.se>, Yao Zi <ziyao@disroot.org>, linux-arm-kernel@lists.infradead.org, 
+	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-pwm@vger.kernel.org
+Subject: Re: [PATCH 1/2] dt-bindings: pwm: rockchip: Add rockchip,rk3528-pwm
+Message-ID: <dit7oqsrs2g5rxor6aakprqw22yyovvcel5tnd2cteydtpt7zg@ndf4cmiamoit>
+References: <20250307120004.959980-1-amadeus@jmu.edu.cn>
+ <20250307120004.959980-2-amadeus@jmu.edu.cn>
+ <pnlkcc2rl7fegltovgtvp4xdxhonw72rclvhn7qmvb7xyuullm@xf5x6lcigji3>
+ <5942715.DvuYhMxLoT@phil>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="z34uotnwfhj7flql"
+Content-Disposition: inline
+In-Reply-To: <5942715.DvuYhMxLoT@phil>
 
-From: "Dr. David Alan Gilbert" <linux@treblig.org>
 
-pvr2_std_create_enum() has been unused since 2012's
-commit c0bb609fdc0b ("[media] pvrusb2: Get rid of obsolete code for video
-standard enumeration")
+--z34uotnwfhj7flql
+Content-Type: text/plain; protected-headers=v1; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH 1/2] dt-bindings: pwm: rockchip: Add rockchip,rk3528-pwm
+MIME-Version: 1.0
 
-Remove it.
+Hey Heiko,
 
-Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
----
- drivers/media/usb/pvrusb2/pvrusb2-std.c | 167 ------------------------
- drivers/media/usb/pvrusb2/pvrusb2-std.h |   6 -
- 2 files changed, 173 deletions(-)
+On Sat, Mar 08, 2025 at 05:25:09PM +0100, Heiko Stuebner wrote:
+> Am Freitag, 7. M=E4rz 2025, 18:07:47 MEZ schrieb Uwe Kleine-K=F6nig:
+> > On Fri, Mar 07, 2025 at 08:00:03PM +0800, Chukun Pan wrote:
+> > > Document pwm compatible for rk3528 which is fallback compatible
+> > > of rk3328-pwm group.
+> > >=20
+> > > Signed-off-by: Chukun Pan <amadeus@jmu.edu.cn>
+> >=20
+> > to prevent binding warnings it's probably sensible to let both patches
+> > go in via the same tree at the same time. Feel free to take the binding
+> > patch via rockchip/arm-soc.
+> >=20
+> > Acked-by: Uwe Kleine-K=F6nig <ukleinek@kernel.org>
+>=20
+> You already have the rk3562 binding in your for-next branch [0], which
+> could create merge-conflicts later on.
 
-diff --git a/drivers/media/usb/pvrusb2/pvrusb2-std.c b/drivers/media/usb/pvrusb2/pvrusb2-std.c
-index e7ab41401577..81c994e62241 100644
---- a/drivers/media/usb/pvrusb2/pvrusb2-std.c
-+++ b/drivers/media/usb/pvrusb2/pvrusb2-std.c
-@@ -212,173 +212,6 @@ unsigned int pvr2_std_id_to_str(char *bufPtr, unsigned int bufSize,
- }
- 
- 
--// Template data for possible enumerated video standards.  Here we group
--// standards which share common frame rates and resolution.
--static struct v4l2_standard generic_standards[] = {
--	{
--		.id             = (TSTD_B|TSTD_B1|
--				   TSTD_D|TSTD_D1|
--				   TSTD_G|
--				   TSTD_H|
--				   TSTD_I|
--				   TSTD_K|TSTD_K1|
--				   TSTD_L|
--				   V4L2_STD_SECAM_LC |
--				   TSTD_N|TSTD_Nc),
--		.frameperiod    =
--		{
--			.numerator  = 1,
--			.denominator= 25
--		},
--		.framelines     = 625,
--		.reserved       = {0,0,0,0}
--	}, {
--		.id             = (TSTD_M|
--				   V4L2_STD_NTSC_M_JP|
--				   V4L2_STD_NTSC_M_KR),
--		.frameperiod    =
--		{
--			.numerator  = 1001,
--			.denominator= 30000
--		},
--		.framelines     = 525,
--		.reserved       = {0,0,0,0}
--	}, { // This is a total wild guess
--		.id             = (TSTD_60),
--		.frameperiod    =
--		{
--			.numerator  = 1001,
--			.denominator= 30000
--		},
--		.framelines     = 525,
--		.reserved       = {0,0,0,0}
--	}, { // This is total wild guess
--		.id             = V4L2_STD_NTSC_443,
--		.frameperiod    =
--		{
--			.numerator  = 1001,
--			.denominator= 30000
--		},
--		.framelines     = 525,
--		.reserved       = {0,0,0,0}
--	}
--};
--
--static struct v4l2_standard *match_std(v4l2_std_id id)
--{
--	unsigned int idx;
--	for (idx = 0; idx < ARRAY_SIZE(generic_standards); idx++) {
--		if (generic_standards[idx].id & id) {
--			return generic_standards + idx;
--		}
--	}
--	return NULL;
--}
--
--static int pvr2_std_fill(struct v4l2_standard *std,v4l2_std_id id)
--{
--	struct v4l2_standard *template;
--	int idx;
--	unsigned int bcnt;
--	template = match_std(id);
--	if (!template) return 0;
--	idx = std->index;
--	memcpy(std,template,sizeof(*template));
--	std->index = idx;
--	std->id = id;
--	bcnt = pvr2_std_id_to_str(std->name,sizeof(std->name)-1,id);
--	std->name[bcnt] = 0;
--	pvr2_trace(PVR2_TRACE_STD,"Set up standard idx=%u name=%s",
--		   std->index,std->name);
--	return !0;
--}
--
--/* These are special cases of combined standards that we should enumerate
--   separately if the component pieces are present. */
--static v4l2_std_id std_mixes[] = {
--	V4L2_STD_PAL_B | V4L2_STD_PAL_G,
--	V4L2_STD_PAL_D | V4L2_STD_PAL_K,
--	V4L2_STD_SECAM_B | V4L2_STD_SECAM_G,
--	V4L2_STD_SECAM_D | V4L2_STD_SECAM_K,
--};
--
--struct v4l2_standard *pvr2_std_create_enum(unsigned int *countptr,
--					   v4l2_std_id id)
--{
--	unsigned int std_cnt = 0;
--	unsigned int idx,bcnt,idx2;
--	v4l2_std_id idmsk,cmsk,fmsk;
--	struct v4l2_standard *stddefs;
--
--	if (pvrusb2_debug & PVR2_TRACE_STD) {
--		char buf[100];
--		bcnt = pvr2_std_id_to_str(buf,sizeof(buf),id);
--		pvr2_trace(
--			PVR2_TRACE_STD,"Mapping standards mask=0x%x (%.*s)",
--			(int)id,bcnt,buf);
--	}
--
--	*countptr = 0;
--	std_cnt = 0;
--	fmsk = 0;
--	for (idmsk = 1, cmsk = id; cmsk; idmsk <<= 1) {
--		if (!(idmsk & cmsk)) continue;
--		cmsk &= ~idmsk;
--		if (match_std(idmsk)) {
--			std_cnt++;
--			continue;
--		}
--		fmsk |= idmsk;
--	}
--
--	for (idx2 = 0; idx2 < ARRAY_SIZE(std_mixes); idx2++) {
--		if ((id & std_mixes[idx2]) == std_mixes[idx2]) std_cnt++;
--	}
--
--	/* Don't complain about ATSC standard values */
--	fmsk &= ~CSTD_ATSC;
--
--	if (fmsk) {
--		char buf[100];
--		bcnt = pvr2_std_id_to_str(buf,sizeof(buf),fmsk);
--		pvr2_trace(
--			PVR2_TRACE_ERROR_LEGS,
--			"***WARNING*** Failed to classify the following standard(s): %.*s",
--			bcnt,buf);
--	}
--
--	pvr2_trace(PVR2_TRACE_STD,"Setting up %u unique standard(s)",
--		   std_cnt);
--	if (!std_cnt) return NULL; // paranoia
--
--	stddefs = kcalloc(std_cnt, sizeof(struct v4l2_standard),
--			  GFP_KERNEL);
--	if (!stddefs)
--		return NULL;
--
--	for (idx = 0; idx < std_cnt; idx++)
--		stddefs[idx].index = idx;
--
--	idx = 0;
--
--	/* Enumerate potential special cases */
--	for (idx2 = 0; (idx2 < ARRAY_SIZE(std_mixes)) && (idx < std_cnt);
--	     idx2++) {
--		if (!(id & std_mixes[idx2])) continue;
--		if (pvr2_std_fill(stddefs+idx,std_mixes[idx2])) idx++;
--	}
--	/* Now enumerate individual pieces */
--	for (idmsk = 1, cmsk = id; cmsk && (idx < std_cnt); idmsk <<= 1) {
--		if (!(idmsk & cmsk)) continue;
--		cmsk &= ~idmsk;
--		if (!pvr2_std_fill(stddefs+idx,idmsk)) continue;
--		idx++;
--	}
--
--	*countptr = std_cnt;
--	return stddefs;
--}
--
- v4l2_std_id pvr2_std_get_usable(void)
- {
- 	return CSTD_ALL;
-diff --git a/drivers/media/usb/pvrusb2/pvrusb2-std.h b/drivers/media/usb/pvrusb2/pvrusb2-std.h
-index d8b4c6dc72fe..74b05ecb9708 100644
---- a/drivers/media/usb/pvrusb2/pvrusb2-std.h
-+++ b/drivers/media/usb/pvrusb2/pvrusb2-std.h
-@@ -23,12 +23,6 @@ int pvr2_std_str_to_id(v4l2_std_id *idPtr,const char *bufPtr,
- unsigned int pvr2_std_id_to_str(char *bufPtr, unsigned int bufSize,
- 				v4l2_std_id id);
- 
--// Create an array of suitable v4l2_standard structures given a bit mask of
--// video standards to support.  The array is allocated from the heap, and
--// the number of elements is returned in the first argument.
--struct v4l2_standard *pvr2_std_create_enum(unsigned int *countptr,
--					   v4l2_std_id id);
--
- // Return mask of which video standard bits are valid
- v4l2_std_id pvr2_std_get_usable(void);
- 
--- 
-2.48.1
+Oh indeed.
 
+> This patch already contains it, so should fit neatly onto your branch.
+>=20
+> And binding warnings only come from linux-next, so won't trigger as the
+> pwm will feed the binding there too :-)
+>=20
+> So I guess it might be better to take the binding through the pwm tree
+> and me then picking up the dts patch.
+
+Fine for me, so I applied the first patch to
+
+https://git.kernel.org/pub/scm/linux/kernel/git/ukleinek/linux.git pwm/for-=
+next
+
+=2E
+
+Best regards
+Uwe
+
+--z34uotnwfhj7flql
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmfM37oACgkQj4D7WH0S
+/k75Swf7Bf2agH4VhhrJhceAjdIf6UQBP4yoTIlhuCQDNgORf85O2aCq9ThJxGAc
+CY2k7Hkupfg6o2VHtsaIpRv9hBxyvKUIejmE1bS575NuAUAsyTya32Wsjyjyxho0
+0Hee8EhcDdcsZ9cZW6pYnoJkPlFrPTT39WRG3VRW8m3nS4Qb77HKbu/6YRjZoKVQ
+Hw/yk0FI2YP9rvIpT6qf5e1TdWKzB25Mqt9A0n2C9ureAOso8ufB+P1vHX5lb4I4
+bI6Iemr0pvmAwC3qAzDJ/oKldaOKlD5pUFofTyPy3YWXpTKknHL9XnNEPOBQ5P9S
+RLq9fYax8rVmmepGRTC6XluJOCDk+w==
+=iOg2
+-----END PGP SIGNATURE-----
+
+--z34uotnwfhj7flql--
 
