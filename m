@@ -1,132 +1,138 @@
-Return-Path: <linux-kernel+bounces-553048-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-553047-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A4795A582DC
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 10:56:39 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1A4A6A582DA
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 10:55:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 60A397A4F14
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 09:55:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E71A93AE92F
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 09:55:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2A611B4151;
-	Sun,  9 Mar 2025 09:56:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4222A1B4140;
+	Sun,  9 Mar 2025 09:55:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="xsi/ClbD"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="i5ZWXOxF"
+Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE32B2D78A;
-	Sun,  9 Mar 2025 09:56:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1ABE42D78A;
+	Sun,  9 Mar 2025 09:55:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741514189; cv=none; b=BWN9qLg89M+Vuac0pbnzikwmD6Ki5xLU++8cWMnTXUrZ5ghTYqtDNrDvbLgcva64CVfvIjbzoXKDY5edyrCAVJGZ+vgX/Ql9qoc4/POASTgklTtT+/z0zT6nLRY1oZIQxhBPTQBIt+k9+UTGladjVRft+glXJIRjRxvx+PAX8xM=
+	t=1741514132; cv=none; b=npdoh2/RasPg6bq95XCEnKhB+eiKFgcoA5jMu2fLjJ3XCkF185ept9LqYUhb9LzuVBZj/gBS4KzH9h2isLFErRkudjGpg7EDBFONC61sk0BGjy2gVK175Ku6JN64jk2Dgf2ARw0P8brIB1hvk6slfioDI5jtNFBoTvm6JArwIkc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741514189; c=relaxed/simple;
-	bh=huC0iybV3NgoQGgAkddJITpWfu30ofxovlfYYAx92xE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pgEdCYgYmoF8e92jiLzrPPHqRMDJZthz26EtEv/VhFen9XN2db8dfpJxybp0zldS6AGicTrSaniS/ih0Kl7w3DcRoTCx1JHmP8jyXjTJT9q2xCr/snHlBTFGwyxT4PuNnrnTvN49TZiF3DBlBEfTZKlPC6h+rYvkA1nXnYDqr7M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=xsi/ClbD; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3F625C4CEE5;
-	Sun,  9 Mar 2025 09:56:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1741514188;
-	bh=huC0iybV3NgoQGgAkddJITpWfu30ofxovlfYYAx92xE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=xsi/ClbDrXEBsaITnP9UKIlK3u244C6Y6RmWLG83ubwKjrlUfcVncRkb0ub/3eUYX
-	 qKe7KS5fWQryykBLLmXT7v9nafrpXo57B+jsN3SrpG3eVKyjjiIUjfgQxq78V8GwJR
-	 6es/dIuMuBRMWHBMIzf3f2lgVhPTRCqJv+BTwEMY=
-Date: Sun, 9 Mar 2025 10:55:12 +0100
-From: "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>
-To: Aditya Garg <gargaditya08@live.com>
-Cc: "bhelgaas@google.com" <bhelgaas@google.com>,
-	"joro@8bytes.org" <joro@8bytes.org>,
-	"will@kernel.org" <will@kernel.org>,
-	"robin.murphy@arm.com" <robin.murphy@arm.com>,
-	"andriy.shevchenko@linux.intel.com" <andriy.shevchenko@linux.intel.com>,
-	"linux-staging@lists.linux.dev" <linux-staging@lists.linux.dev>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	"linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-	"iommu@lists.linux.dev" <iommu@lists.linux.dev>,
-	Aun-Ali Zaidi <admin@kodeit.net>, "paul@mrarm.io" <paul@mrarm.io>,
-	Orlando Chamberlain <orlandoch.dev@gmail.com>
-Subject: Re: [PATCH RFC] staging: Add driver to communicate with the T2
- Security Chip
-Message-ID: <2025030901-deceiver-jolliness-53f5@gregkh>
-References: <1A12CB39-B4FD-4859-9CD7-115314D97C75@live.com>
- <2025030931-tattoo-patriarch-006d@gregkh>
- <PN3PR01MB9597793C256B5A16048ADBFDB8D72@PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM>
- <2025030937-antihero-sandblast-7c87@gregkh>
- <PN3PR01MB9597F037471B133B54BA25BCB8D72@PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM>
- <2025030935-contently-handbrake-9239@gregkh>
- <PN3PR01MB9597F040DD8F5A9B1A65B397B8D72@PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM>
- <2025030909-recoup-unafraid-1df0@gregkh>
- <PN3PR01MB95970E60B250F91CA8E12720B8D72@PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM>
+	s=arc-20240116; t=1741514132; c=relaxed/simple;
+	bh=CvXbtCAoJTdLfyTEWw2u3IH8iXW9jb/+ApAkyDmMQKk=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=bsDKLHATIGhzWc2TnDHaAw90ubClbB3Gi3xpW5TbDThEDeCynwA1vy0LOlKlxO5gI2SEcS6qvLyo10D6C45zGy34vP0x/ikVIaL8mjTu6XijZwJpTFudcfixcmnmPDk9Fyg8bzXat5hSJfXw+oA3255nZAvkcgLDdVdamdA1N7E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=i5ZWXOxF; arc=none smtp.client-ip=209.85.221.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-38f406e9f80so2475972f8f.2;
+        Sun, 09 Mar 2025 01:55:30 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741514129; x=1742118929; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=8ZpuHav96lrk832Cicku4PQcIvGBzmRkHChNSbUFJB4=;
+        b=i5ZWXOxFN70zCN5iujYvkgJ2Kgvi+bHWO5rXfHe3fjolSLXChQtJt8RHDfmBz5qcMD
+         lOHhcDLhBkPju/8doqGzu26A8WjbXcvRhGateMDECQXTR0t6AxLQFPyX5kg2a3Adnyrs
+         7fvO1qS2BqJnkJiYH2T3qEGENev2lVu+25xeudftkS5cGTVZbQX7J8utPqUmWiClb8c/
+         YMqUKZ14F+2/v9XN8evGZUuTTJsru9X0X7IjUWhqgumaUc6EuYIoG+jaAKANz9VPd682
+         DSGlXFYa5vSy4oL5CTM/CHQrUg3nWgHYQWIYp9LsdkFWm08e2gA+H8nQQNPMW3QXVkhs
+         Qxtw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741514129; x=1742118929;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=8ZpuHav96lrk832Cicku4PQcIvGBzmRkHChNSbUFJB4=;
+        b=UcIE1+c/Cont+jpimY6ax1uVKwS6df3kvPrFRobHa10MEjYO4a06GjVjVPbORtdx7L
+         BlIadMM8gETB98t5Ud2vVxbiNRwOlWX5qFdnYN5xiSOx45aN5wNQ0mBQNST1AUyPzoiw
+         SUilPh2mr7eS9lHb5W4y6xKWmB9ruuIYcr6OpOpZGJvBebrN5oFKxlYrRdpr3DM9CpPW
+         C6pab66Z6BykPgxsDTvZi7X2RAZVdandx0E6bvCNn7XWxN4tShysJeWcGBzwRodntTwR
+         fKnv24AbcOuiwy2o37f+dSBefdtKhiY0Zx5xLvKrjvTWD8h5U0+Aqto7IKB9mmWQDmua
+         N6+A==
+X-Forwarded-Encrypted: i=1; AJvYcCWAFGsBUas1khKWiif1YWTYCcHeav+RPfuAWHO1gwivCXm90VEijmKZLJgDCjXkJDLoCt0vDFnjepj7Tbs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzMM29EklMkMkPPdAOJp0qBZ3vQ2gOqikM7JosfvvOmyfwbumi1
+	IzXy6XyKKeYQk/rFTV6fhFbwFkbwGmNjUbq7Zzy9CffCWaUxSrDt
+X-Gm-Gg: ASbGnctY1Ekq9k+s066DlNYd1/q6Mza6MOgRpje5yepxOksY8yulMsxCaw8S/sRA/SE
+	cwaw4hzO6uzRzEmyNPJWTP7uo5HM539T6hK8ZzNCFNh2U8hDyw1gCPL0MPrADoNFpz/d4052CvE
+	XpSUB/t4TrzNHMMmxrwRM5x4gN/pROK/5MYYLeDSUxi5xfmA9qf4TZXm11XK0OEyGOUlFdNUHMW
+	ot/C+t/L3sxNmLL9NswgnsZPIx5+f6k8Rlst/pPzQjHt2jWxiKPaPneRI/hMfqKgSx37vSZvyp0
+	LxmoyreRaoA1CX9vN3ei+5DqCr8xwghKtlp5CQuDzOXAew==
+X-Google-Smtp-Source: AGHT+IHfI/VJZftDRqHYeb3Xwib26RWuigXJPjvLBRgin8Bg+mZushMIzjAxfzKYiLNvU6b4hTnErA==
+X-Received: by 2002:a5d:6d8a:0:b0:391:12a5:3cb3 with SMTP id ffacd0b85a97d-39132d2af8bmr6599086f8f.3.1741514129156;
+        Sun, 09 Mar 2025 01:55:29 -0800 (PST)
+Received: from qasdev.Home ([2a02:c7c:6696:8300:8afb:1194:b90e:9410])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3912c0e2bb7sm11567926f8f.63.2025.03.09.01.55.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 09 Mar 2025 01:55:27 -0800 (PST)
+From: Qasim Ijaz <qasdev00@gmail.com>
+To: robdclark@gmail.com,
+	quic_abhinavk@quicinc.com,
+	dmitry.baryshkov@linaro.org,
+	sean@poorly.run,
+	marijn.suijten@somainline.org,
+	airlied@gmail.com,
+	simona@ffwll.ch,
+	quic_jesszhan@quicinc.com
+Cc: linux-arm-msm@vger.kernel.org,
+	dri-devel@lists.freedesktop.org,
+	freedreno@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2] drm/msm/dpu: reorder pointer operations after sanity checks to avoid NULL deref 
+Date: Sun,  9 Mar 2025 09:55:25 +0000
+Message-Id: <20250309095525.7738-1-qasdev00@gmail.com>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <PN3PR01MB95970E60B250F91CA8E12720B8D72@PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM>
 
-On Sun, Mar 09, 2025 at 09:52:43AM +0000, Aditya Garg wrote:
-> 
-> 
-> > On 9 Mar 2025, at 3:21 PM, gregkh@linuxfoundation.org wrote:
-> > 
-> > ﻿On Sun, Mar 09, 2025 at 09:41:29AM +0000, Aditya Garg wrote:
-> >> 
-> >> 
-> >>>> On 9 Mar 2025, at 3:09 PM, gregkh@linuxfoundation.org wrote:
-> >>> 
-> >>> ﻿On Sun, Mar 09, 2025 at 09:28:01AM +0000, Aditya Garg wrote:
-> >>>> 
-> >>>> 
-> >>>>>> On 9 Mar 2025, at 2:46 PM, gregkh@linuxfoundation.org wrote:
-> >>>>> 
-> >>>>> ﻿On Sun, Mar 09, 2025 at 09:03:29AM +0000, Aditya Garg wrote:
-> >>>>>> 
-> >>>>>> 
-> >>>>>>>> On 9 Mar 2025, at 2:24 PM, gregkh@linuxfoundation.org wrote:
-> >>>>>>> 
-> >>>>>>> ﻿On Sun, Mar 09, 2025 at 08:40:31AM +0000, Aditya Garg wrote:
-> >>>>>>>> From: Paul Pawlowski <paul@mrarm.io>
-> >>>>>>>> 
-> >>>>>>>> This patch adds a driver named apple-bce, to add support for the T2
-> >>>>>>>> Security Chip found on certain Macs.
-> >>>>>>>> 
-> >>>>>>>> The driver has 3 main components:
-> >>>>>>>> 
-> >>>>>>>> BCE (Buffer Copy Engine) - this is what the files in the root directory
-> >>>>>>>> are for. This estabilishes a basic communication channel with the T2.
-> >>>>>>>> VHCI and Audio both require this component.
-> >>>>>>> 
-> >>>>>>> So this is a new "bus" type?  Or a platform resource?  Or something
-> >>>>>>> else?
-> >>>>>> 
-> >>>>>> It's a PCI device
-> >>>>> 
-> >>>>> Great, but then is the resources split up into smaller drivers that then
-> >>>>> bind to it?  How does the other devices talk to this?
-> >>>> 
-> >>>> We technically can split up these 3 into separate drivers and put then into their own trees.
-> >>> 
-> >>> That's fine, but you say that the bce code is used by the other drivers,
-> >>> right?  So there is some sort of "tie" between these, and that needs to
-> >>> be properly conveyed in the device tree in sysfs as that will be
-> >>> required for proper resource management.
-> >> 
-> >> Yes there needs to be a tie, basically first establish a communication with the t2 using bce and then the other 2 come into the picture. I did get a basic idea from what the maintainers want, and this will be some work to do. Thanks for your inputs!
-> > 
-> > If there is "communication" then that's a bus in the driver model
-> > scheme, so just use that, right?
-> 
-> So basically RE the whole driver to see what exactly should be use?
+_dpu_encoder_trigger_start dereferences "struct dpu_encoder_phys *phys"
+before the sanity checks which can lead to a NULL pointer dereference if
+phys is NULL.
+ 
+Fix this by reordering the dereference after the sanity checks.
+ 
+Fixes: 8144d17a81d9 ("drm/msm/dpu: Skip trigger flush and start for CWB")
+Signed-off-by: Qasim Ijaz <qasdev00@gmail.com>
+---
+v2:
+- Moved Signed-off tag below Fixes tag
+- Moved dpu_enc declaration to the top and initialisation below sanity checks
 
-I'm sorry, I can not parse this.
+ drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c
+index 0eed93a4d056..0bd1f2bfaaff 100644
+--- a/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c
++++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c
+@@ -1667,7 +1667,7 @@ static void _dpu_encoder_trigger_flush(struct drm_encoder *drm_enc,
+  */
+ static void _dpu_encoder_trigger_start(struct dpu_encoder_phys *phys)
+ {
+-	struct dpu_encoder_virt *dpu_enc = to_dpu_encoder_virt(phys->parent);
++	struct dpu_encoder_virt *dpu_enc;
+ 
+ 	if (!phys) {
+ 		DPU_ERROR("invalid argument(s)\n");
+@@ -1678,6 +1678,8 @@ static void _dpu_encoder_trigger_start(struct dpu_encoder_phys *phys)
+ 		DPU_ERROR("invalid pingpong hw\n");
+ 		return;
+ 	}
++
++	dpu_enc = to_dpu_encoder_virt(phys->parent);
+ 
+ 	if (phys->parent->encoder_type == DRM_MODE_ENCODER_VIRTUAL &&
+ 	    dpu_enc->cwb_mask) {
+-- 
+2.39.5
+
 
