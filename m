@@ -1,191 +1,109 @@
-Return-Path: <linux-kernel+bounces-553354-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-553355-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 520EDA587F8
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 20:50:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8787DA587F9
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 20:51:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 815DE16AEE8
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 19:50:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A0C4916AEBA
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 19:51:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2256218AD6;
-	Sun,  9 Mar 2025 19:50:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1396218EB5;
+	Sun,  9 Mar 2025 19:51:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vL4uHPJ9"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TGxoYFV1"
+Received: from mail-pj1-f43.google.com (mail-pj1-f43.google.com [209.85.216.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5082217F48;
-	Sun,  9 Mar 2025 19:50:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA057218AD6;
+	Sun,  9 Mar 2025 19:51:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741549850; cv=none; b=O8dCXTg7rIJQDgk6nwgw0SfoOQSNbTjfU8Jl0zf6jAwoqFO0go+YY6juTlwGIebB7Ory2bFA41HrRMVTla93Si+jjUH2LVtr1BbxiCZwrw96vqLgv+UP5G9CtoecJ+/Mnbu21ZHUPN6m8OlelVe7sJg5EJ5Iv9Ssfmj5mCA70SE=
+	t=1741549866; cv=none; b=X1LLTpMePssyzYYIptl1xfucp8JpZHRUf7/g9rTIicJUt6MF2Lw/V98njU2GI5ve5cCkzS/Uk2jvKdl9864HqsibFaEd79PGePlTS+1kcoO3AMm/kr5y0z4RNzowjlOEPRq6Ilsn9vBlbfVvS9gOHGXKuIBSegmXaMV0NoTYzLw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741549850; c=relaxed/simple;
-	bh=8ySbkKhFRXNuJHrR+dQojieyUf+Le6VlZ6dqAVE1rBA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=J9UuMLxCMGcaW20YuUdHXqyYJc6O6SBN4gahnoTBbZ5QsBvqRDPNIRv+j6G5gVFprqWhQZCl8FzRSSXV+udNjstJwMabzmzAnsBTg5uNsZrEoy6mbZSWZccj7x7rX8eQSYntiK+BauCREJuUZmzbuwA2aApVrUin4sW9ekHJsnI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vL4uHPJ9; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D01DDC4CEED;
-	Sun,  9 Mar 2025 19:50:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741549849;
-	bh=8ySbkKhFRXNuJHrR+dQojieyUf+Le6VlZ6dqAVE1rBA=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=vL4uHPJ9xNFvMEfLN4Ec7wuCyQBk4CvGg96VRLiQVjTdErydTSp7ri+PuMR/AqNvE
-	 Kmgts1dW8zJBzTEUubXkXyzukwbGalmCnd/ojq/0vSQE12plU3rrF54+8cge6/zdoz
-	 Bbnjlswtzje1uBkOeg6DHIWLXh07ojZf0+S86fVRH1SplUiVWdh0Rq58oevPcccqC1
-	 tu0B8TVkzt2MJsS4wJjDkZPYnQfIRa1yNK1V7pmaD2/CCmWCK3bbQAdvYACbUdlPqT
-	 Z80aksp2iPxS9LGFWTaCTU8qI5zHnwm9m6z3Fr2E2A8w72C8vFdVyOpUDGr50KAjPO
-	 TaRGpHsWSquBQ==
-Message-ID: <668ada6a-3e53-474d-be81-d69d75277c26@kernel.org>
-Date: Sun, 9 Mar 2025 20:50:39 +0100
+	s=arc-20240116; t=1741549866; c=relaxed/simple;
+	bh=dzyVokZIpDqiotKHrpU8Dw2U/v6X92xZQXOd24xBzNU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=CRxETNpOKuwPdTN0lcUqiWF2g2K2Zu43GLILEy9rGs7ZCMbInJtzKp0wPHRWdzEijZi3lyTKEi4CWKXmdSWh+fQDGNDrpZSsHYozi9DUxwx9VOGN3GeDtg7HclH3y/k/cdiqB83kArf5zhn5CVO6ZKU6IiH1nJYum8sG2Hv0Eqs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TGxoYFV1; arc=none smtp.client-ip=209.85.216.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f43.google.com with SMTP id 98e67ed59e1d1-2ff6ce72844so896750a91.2;
+        Sun, 09 Mar 2025 12:51:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741549864; x=1742154664; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=dzyVokZIpDqiotKHrpU8Dw2U/v6X92xZQXOd24xBzNU=;
+        b=TGxoYFV16etpuUChScwsIxAON3KPVfuWBfSTbJ572dSPYDRKMWVvINqoiaN+GW9Dlh
+         66Fc4uNHDFMetGvOLwC30gstV+3qYSU1UW9AYzrnsXkqFHpxyIou+ecdQp34n+pnTHyi
+         mU1R6MzsUgA417cduxEqDhW4xw4/CZNG3sAw7ykp113noD+MVM6wDvmCUKGAKK/k1Nfg
+         iGvFYfmHWsRUPpgtnoDrDCET9BQhdymcQjy6nXOPv8a5j/FGz/gQHfWdXVaR5GfgBS7p
+         FwYmEMoQQg+nUnFVpo9Uow3xItgeMDghmxcD58ZgD4JuzO4LWBXovpaQHL62BETVHfAG
+         tgeg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741549864; x=1742154664;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=dzyVokZIpDqiotKHrpU8Dw2U/v6X92xZQXOd24xBzNU=;
+        b=cj+Y1GIikMHs/xL+L/VReaGRfOQDqfmhulZtRXr2Xkwjb/AKx1by6x6mX5/31J9Sfz
+         h7yRJOZv2DXte8RAi1Vvr2Y36k8ChThghRCcASpYg0QLbnGitbSnIhsNUIMouhP9Wtn6
+         HZ2hjSfc645X7zUbZL8IiThdwgyqJq/EJolS2Ude6nI5H9mte1htX8Jdilj9MMHPSjuD
+         VctreyyI9xre/aypJRmy/Hu6vO+jO0xqTcqhkrOK3LsOGFtNDQCCOtDengczdI+v+OLa
+         ZLfaOXbwvLDZxVUPHI+Qd3/zSayKHuneXGYCH9iothl6BhCBteitiuYVt9sLHa9MGEQ5
+         7pyw==
+X-Forwarded-Encrypted: i=1; AJvYcCVVp6zN4M5AM2qXDyfOUnqpVEBFtUzfYJ9+Ey57JB+IcgMzHIcZsiHBX+acJiBiKw30UP5Aw5Ox5lrlP8/Or/s=@vger.kernel.org, AJvYcCX2o1f2aWHHHnp1l9s+R+wQ/VCKELNMYqUW3aAhWsAlQFficBuC38VqUceLX+zMjLoCr4FvdprsoRcEso0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz+7Z7HjjUrPLozIPqfpF8ypfMQR/NFfIUUZb+zAJSAUDqNPXYL
+	8D3xOjpNvXwc3BGrSGjLh/MqvzZ+AFQG1G3ZBA5XW1CRjLwQYa4jm0KZ/VqWfrXUyG6p4ESap4K
+	sYxhwDEs8A15mzpRiJJZMJsmvrR8=
+X-Gm-Gg: ASbGncvqQhFFm7FO5mNFoz4Agtnwu7SuODBFC62+gNwG1Z/JJ6jhmcLv6gvO//2Q7fy
+	3XP+lAYTMurySTaCaifnpcHWdHNDKaeRYYWpAPS3y//ZFwrsd5wpdgvKurTb3WJ/kSzCZFpbuT/
+	YV4SSgeKLf5OH89m607rZnKKdYbtKXivPkqT/M
+X-Google-Smtp-Source: AGHT+IHGCe9s2WblTrFMgpH8Di+4cRVJg4iC6xm/DMHz20ImOgtpVp9OzKQEgou6f82JbNw9B8+VEacVtEr6D7BHyc4=
+X-Received: by 2002:a17:90b:1b0c:b0:2ff:7970:d2b6 with SMTP id
+ 98e67ed59e1d1-300a5788588mr4066553a91.5.1741549864193; Sun, 09 Mar 2025
+ 12:51:04 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 01/19] dt-bindings: mfd: mediatek: mt6397: Add accdet
- subnode
-To: =?UTF-8?B?TsOtY29sYXMgRi4gUi4gQS4gUHJhZG8=?= <nfraprado@collabora.com>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Matthias Brugger
- <matthias.bgg@gmail.com>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- Sen Chu <sen.chu@mediatek.com>, Sean Wang <sean.wang@mediatek.com>,
- Macpaul Lin <macpaul.lin@mediatek.com>, Lee Jones <lee@kernel.org>,
- Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
- kernel@collabora.com, linux-sound@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
- linux-pm@vger.kernel.org
-References: <20250305-mt6359-accdet-dts-v4-0-e5ffa5ee9991@collabora.com>
- <20250305-mt6359-accdet-dts-v4-1-e5ffa5ee9991@collabora.com>
- <20250306-certain-jasmine-mastiff-fd67ba@krzk-bin>
- <2fa6037d-b5e9-45b2-a5d5-dbc92fb3434b@notapiano>
- <0663e03e-e331-4a06-be95-ce8d9059ed6b@kernel.org>
- <cb2820d8-84e8-49ca-b497-1ea815679a3d@notapiano>
-Content-Language: en-US
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <cb2820d8-84e8-49ca-b497-1ea815679a3d@notapiano>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20250308164258.811040-1-ojeda@kernel.org>
+In-Reply-To: <20250308164258.811040-1-ojeda@kernel.org>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Sun, 9 Mar 2025 20:50:51 +0100
+X-Gm-Features: AQ5f1Jp1Zj_Zln5b8Z8a8RBt1caexSZN8jo1ccd2tN0YFf2udtob6FXxDOKD408
+Message-ID: <CANiq72me1J36RdY8_hYhOcMCF9qJH31HnE1Wwboqdz5UbNHN9g@mail.gmail.com>
+Subject: Re: [PATCH] MAINTAINERS: rust: add tree field for RUST [ALLOC]
+To: Miguel Ojeda <ojeda@kernel.org>
+Cc: Alex Gaynor <alex.gaynor@gmail.com>, Danilo Krummrich <dakr@kernel.org>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, rust-for-linux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, patches@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 07/03/2025 14:22, Nícolas F. R. A. Prado wrote:
-> On Fri, Mar 07, 2025 at 08:11:26AM +0100, Krzysztof Kozlowski wrote:
->> On 06/03/2025 13:19, Nícolas F. R. A. Prado wrote:
->>>>>    It is interfaced to host controller using SPI interface by a proprietary hardware
->>>>>    called PMIC wrapper or pwrap. MT6397/MT6323 PMIC is a child device of pwrap.
->>>>> @@ -224,6 +225,30 @@ properties:
->>>>>      description:
->>>>>        Pin controller
->>>>>  
->>>>> +  accdet:
->>>>> +    type: object
->>>>> +    additionalProperties: false
->>>>> +    description:
->>>>> +      The Accessory Detection module found on the PMIC allows detecting audio
->>>>> +      jack insertion and removal, as well as identifying the type of events
->>>>> +      connected to the jack.
->>>>> +
->>>>> +    properties:
->>>>> +      compatible:
->>>>> +        const: mediatek,mt6359-accdet
->>>>
->>>> You just removed the other file, no folding happened here. Drop the
->>>> accdet node and fold this into parent.
->>>
->>> Sorry, I'm still not sure what you mean by folding here then. Right now the
->>> accdet is a subnode of the PMIC. If you want me to remove the accdet node, where
->>
->> Yes
->>
->>> would its compatible and property go?
->>
->> compatible: nowhere, because it is close to redundancy.
->>
->> property: to the parent pmic node.
->>
->>     pmic {
->>         compatible = "mediatek,mt6359";
->>         interrupt-controller;
->>         #interrupt-cells = <2>;
->>
->>         mediatek,hp-eint-high;
->>     };
-> 
-> I'm not sure that's right. The ACCDET submodule does have some resources, IRQs,
-> that it registers in its mfd cell, see patch 2 of this series [1]. It also has
+On Sat, Mar 8, 2025 at 5:43=E2=80=AFPM Miguel Ojeda <ojeda@kernel.org> wrot=
+e:
+>
+> In the Rust subsystem we are starting to add new subentries which will
+> have their own trees. Those trees will be part of linux-next and will
+> be sent as PRs to be merged into rust-next.
+>
+> Thus do the same for the existing subentry we already have: RUST [ALLOC].
+>
+> Cc: Danilo Krummrich <dakr@kernel.org>
+> Signed-off-by: Miguel Ojeda <ojeda@kernel.org>
 
-Binding is supposed to be complete, so why suddenly we have here some
-resources which you did not add?
+Applied to `rust-next` -- thanks everyone!
 
-Post complete binding, so you will get proper review.
-
-> its own driver (sound/soc/codecs/mt6359-accdet.c) that probes based on this
-
-Drivers do not define bindings.
-
-> compatible and handles those interrupts. Why would it not get its own node like
-
-Sorry, cannot go. You cannot document binding post factum and claim "I
-have a driver which uses that compatible".
-
-This would be a nice way to bypass review.
-
-> the other MFD cells?
-
-I explained why. I gave you the exact reason.
-
-Best regards,
-Krzysztof
+Cheers,
+Miguel
 
