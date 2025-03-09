@@ -1,58 +1,68 @@
-Return-Path: <linux-kernel+bounces-552926-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-552929-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B905A58117
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 07:22:41 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DB2F3A5811F
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 07:23:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C7A3B16A4D1
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 06:22:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6662A188B8FA
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 06:23:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F8221A3A95;
-	Sun,  9 Mar 2025 06:21:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA82517A2E8;
+	Sun,  9 Mar 2025 06:23:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="UpKr4eUQ"
-Received: from out30-101.freemail.mail.aliyun.com (out30-101.freemail.mail.aliyun.com [115.124.30.101])
+	dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b="lR7IReWJ"
+Received: from mail.mainlining.org (mail.mainlining.org [5.75.144.95])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F2ED189B8D;
-	Sun,  9 Mar 2025 06:21:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DD43C2FD;
+	Sun,  9 Mar 2025 06:23:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.75.144.95
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741501278; cv=none; b=C5qRE21sE1OxNx8veJ2JP0e0tLyYlA9oiVhAyvNBW15lHb53K3+CxbUJs3Sxkt2GpDT3AfVDtpSi85CaMsgAVY2PTVBIZd/GIJRagSiuUFCG3bQiC5ZnHq5KGOJ/K0tLoudLTK29FWCavl5nhecLA7M3BnKOEkJqntdkisybFWE=
+	t=1741501408; cv=none; b=sFRF7sWt3+/4FQlv1MhoXU4J7kMIEOdrnXSCHWIsqk3pWTlcvIFkPOEJnrjZx22gkOjqqhMSr6UsphXRcRMGo8801Rn3jjo1mU1i/UimQPyKmien3dg/+Tzj1pzA1hI9EUbSvL1vQVropdOM+Y6L2E0AkiAUqXHpK0rfboSLcHU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741501278; c=relaxed/simple;
-	bh=rFJg6wX+4DM5TwYS6r8tr1DJyb+oo7EumjnC/NyCmXo=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=SX1VtPUJAgc6jvKXKYWIDE11y/YjTRlVOkz73OtUjvDVcOD5sSIO9+IkPH1oDX/+7ftBKXJTigQHNK8sSQPRQCCaLqMrMqIZtsI8CwiCVzjPp09qhx6NaUhNMddidHyjfXZyTHhitjB7M5PiSsJ8P6uPhyzPDJdMZGsdCyX5bDk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=UpKr4eUQ; arc=none smtp.client-ip=115.124.30.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1741501266; h=From:To:Subject:Date:Message-ID:MIME-Version;
-	bh=GnnFGqjb+BGHMl8EqY9dK4ejKzhYXIwh/TR7Rbf7cvs=;
-	b=UpKr4eUQ+jjVnA1x9JOC1p0jmYQWYBIA+DS5HV+75+DDZ75VLnHid2rkYFUnFVSeYjQcdaUFiUSi7cXBoybnFsUzWhVvM64KeOMN0G0muDFOPCVYp+dZW1j0kHbjFlNcBsNsE6UatEIk05hlrOOJw+Fk6ziw8D1mcPcy1NcIhGc=
-Received: from localhost.localdomain(mailfrom:xueshuai@linux.alibaba.com fp:SMTPD_---0WQwVyl5_1741501265 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Sun, 09 Mar 2025 14:21:05 +0800
-From: Shuai Xue <xueshuai@linux.alibaba.com>
-To: vinicius.gomes@intel.com,
-	dave.jiang@intel.com,
-	Markus.Elfring@web.de,
-	fenghuay@nvidia.com,
-	vkoul@kernel.org
-Cc: xueshuai@linux.alibaba.com,
-	dmaengine@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v3 9/9] dmaengine: idxd: Refactor remove call with idxd_cleanup() helper
-Date: Sun,  9 Mar 2025 14:20:58 +0800
-Message-ID: <20250309062058.58910-10-xueshuai@linux.alibaba.com>
-X-Mailer: git-send-email 2.44.0
-In-Reply-To: <20250309062058.58910-1-xueshuai@linux.alibaba.com>
-References: <20250309062058.58910-1-xueshuai@linux.alibaba.com>
+	s=arc-20240116; t=1741501408; c=relaxed/simple;
+	bh=dF3VxYoF+dkfdZ3N/XrJO/aMWFrQcMCJwYA1XTQCm2k=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=T7x050J64SrQlIanUmmDOJU6l/ftEL0lw+zWIOTOmxjP8ovuEBnIx8yzVSMumBhZ3hM9X1i01lVqzJIeseaC0ygtKu8u9odkUVyaTgG6Cz+E8Zjv30pJ+wns7jTV83iPd3UaDm6DeMLn4YjOHTGxXJs+EtU5+CpuV6ZguxZmjsU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mainlining.org; spf=pass smtp.mailfrom=mainlining.org; dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b=lR7IReWJ; arc=none smtp.client-ip=5.75.144.95
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mainlining.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mainlining.org
+Received: from karma.space.aachen.ccc.de (xdsl-78-35-222-202.nc.de [78.35.222.202])
+	by mail.mainlining.org (Postfix) with ESMTPSA id 5ED52BBABE;
+	Sun,  9 Mar 2025 06:23:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mainlining.org;
+	s=psm; t=1741501397;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=wqHEMGgvsfH4PlxVNe6pU2cYUZvDBjSj3/m0k8x2fi0=;
+	b=lR7IReWJZAnu0GH3kJ5TDE2eZxGg3JXwvhz0tVlA8FeU/hytk9K/KeoST0NofACvdUUURR
+	5L28G8tDYfuINigvTaYn+Kj7dkTbJ1wyYbXFtzyj2kPyOsNEPUU+NkuFJkB2FsbmYt0hqj
+	1wYlRFK1R91NPg6AcaFJqZi9vQQ0RIcO9qWvKLED9v6Da8GPZbkEq/BKNcCvTriXMhsg8H
+	0cvTVKTFXUiZiH/OhPle0EowbIVNdD9L55KNJH+Na94Yvme+RJMrGtTgpORgKwaLkOPPYM
+	4XEyK0tSKZEjD6DT/q1egQBVauZw2J6kV3bTNGWzET0TXAOCnKwQ6jVTkgt63Q==
+From: Jens Reidel <adrian@mainlining.org>
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Bastien Nocera <hadess@hadess.net>,
+	Hans de Goede <hdegoede@redhat.com>,
+	Neil Armstrong <neil.armstrong@linaro.org>
+Cc: Luca Weiss <luca.weiss@fairphone.com>,
+	linux-input@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	phone-devel@vger.kernel.org,
+	linux@mainlining.org,
+	~postmarketos/upstreaming@lists.sr.ht,
+	Jens Reidel <adrian@mainlining.org>
+Subject: [PATCH v4 0/2] Add Goodix Berlin-A series support
+Date: Sun,  9 Mar 2025 07:23:13 +0100
+Message-ID: <20250309062315.35720-1-adrian@mainlining.org>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -61,56 +71,65 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The idxd_cleanup() helper cleans up perfmon, interrupts, internals and
-so on. Refactor remove call with the idxd_cleanup() helper to avoid code
-duplication. Note, this also fixes the missing put_device() for idxd
-groups, enginces and wqs.
+This series adds support for the Goodix Berlin-A series touch ICs
+(gt9897). This was tested on a Xiaomi 11 Lite 5G NE (xiaomi-lisa),
+which uses the gt9897 IC connected over SPI. I am not aware of any
+device that has gt9897 connected over I2C and therefore could not
+test it, so I didn't add a compatible in the I2C driver.
 
-Fixes: bfe1d56091c1 ("dmaengine: idxd: Init and probe for Intel data accelerators")
-Cc: stable@vger.kernel.org
-Suggested-by: Vinicius Costa Gomes <vinicius.gomes@intel.com>
-Signed-off-by: Shuai Xue <xueshuai@linux.alibaba.com>
----
- drivers/dma/idxd/init.c | 14 ++------------
- 1 file changed, 2 insertions(+), 12 deletions(-)
+Changes in v4:
+- Fix the build for the i2c driver
+- Add Neil's R-b tag (patch no. 2)
+- Link to v3:
+  https://lore.kernel.org/all/20250307094823.478152-1-adrian@mainlining.org/
 
-diff --git a/drivers/dma/idxd/init.c b/drivers/dma/idxd/init.c
-index ecb8d534fac4..22b411b470be 100644
---- a/drivers/dma/idxd/init.c
-+++ b/drivers/dma/idxd/init.c
-@@ -1310,7 +1310,6 @@ static void idxd_shutdown(struct pci_dev *pdev)
- static void idxd_remove(struct pci_dev *pdev)
- {
- 	struct idxd_device *idxd = pci_get_drvdata(pdev);
--	struct idxd_irq_entry *irq_entry;
- 
- 	idxd_unregister_devices(idxd);
- 	/*
-@@ -1323,21 +1322,12 @@ static void idxd_remove(struct pci_dev *pdev)
- 	get_device(idxd_confdev(idxd));
- 	device_unregister(idxd_confdev(idxd));
- 	idxd_shutdown(pdev);
--	if (device_pasid_enabled(idxd))
--		idxd_disable_system_pasid(idxd);
- 	idxd_device_remove_debugfs(idxd);
--
--	irq_entry = idxd_get_ie(idxd, 0);
--	free_irq(irq_entry->vector, irq_entry);
--	pci_free_irq_vectors(pdev);
-+	idxd_cleanup(idxd);
- 	pci_iounmap(pdev, idxd->reg_base);
--	if (device_user_pasid_enabled(idxd))
--		idxd_disable_sva(pdev);
--	pci_disable_device(pdev);
--	destroy_workqueue(idxd->wq);
--	perfmon_pmu_remove(idxd);
- 	put_device(idxd_confdev(idxd));
- 	idxd_free(idxd);
-+	pci_disable_device(pdev);
- }
- 
- static struct pci_driver idxd_pci_driver = {
+Changes in v3:
+- Store the ic data in the goodix_berlin_core struct and pass it to
+  goodix_berlin_probe from the i2c/spi probes (requested by Neil)
+- Resent from my now preferred e-mail for kernel work
+- Link to v2:
+  https://lore.kernel.org/all/20250214052959.222668-1-adrian@travitia.xyz/
+
+Changes in v2:
+- Added Rob's A-b tag (patch no. 1)
+- Added Luca's T-b tag (patch no. 2)
+- Updated the i2c and spi device id tables with the driver data and
+  switched to spi_get_device_match_data where possible (requested by
+  Neil)
+- Switched to device_get_match_data in goodix_berlin_core.c
+- Move all revision specific addresses and other properties into the
+  goodix_berlin_ic_data struct (requested by Dmitry)
+- Link to v1:
+  https://lore.kernel.org/all/20250203174309.21574-1-adrian@travitia.xyz/
+
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To: Rob Herring <robh@kernel.org>
+To: Krzysztof Kozlowski <krzk+dt@kernel.org>
+To: Conor Dooley <conor+dt@kernel.org>
+To: Bastien Nocera <hadess@hadess.net>
+To: Hans de Goede <hdegoede@redhat.com>
+To: Neil Armstrong <neil.armstrong@linaro.org>
+Cc: Luca Weiss <luca.weiss@fairphone.com>
+Cc: linux-input@vger.kernel.org
+Cc: devicetree@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Cc: phone-devel@vger.kernel.org
+Cc: linux@mainlining.org
+Cc: ~postmarketos/upstreaming@lists.sr.ht
+Signed-off-by: Jens Reidel <adrian@mainlining.org>
+
+Jens Reidel (2):
+  dt-bindings: input: goodix,gt9916: Document gt9897 compatible
+  Input: goodix_berlin - Add support for Berlin-A series
+
+ .../input/touchscreen/goodix,gt9916.yaml      |  1 +
+ drivers/input/touchscreen/goodix_berlin.h     | 16 ++++++-
+ .../input/touchscreen/goodix_berlin_core.c    | 21 ++++----
+ drivers/input/touchscreen/goodix_berlin_i2c.c | 14 ++++--
+ drivers/input/touchscreen/goodix_berlin_spi.c | 48 ++++++++++++++-----
+ 5 files changed, 74 insertions(+), 26 deletions(-)
+
 -- 
-2.39.3
+2.48.1
 
 
