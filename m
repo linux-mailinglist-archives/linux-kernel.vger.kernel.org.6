@@ -1,113 +1,114 @@
-Return-Path: <linux-kernel+bounces-553036-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-553035-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E73B8A582BC
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 10:39:20 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F560A582B9
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 10:38:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C4B1A3A85A1
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 09:39:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8A23B168A1A
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 09:38:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CFDD1A9B34;
-	Sun,  9 Mar 2025 09:39:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 355DB19D89D;
+	Sun,  9 Mar 2025 09:38:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="k4IQdwkP"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="DXafd6GD"
+Received: from mout.web.de (mout.web.de [212.227.15.4])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40298EAC7;
-	Sun,  9 Mar 2025 09:39:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FA0AC2C8;
+	Sun,  9 Mar 2025 09:38:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741513152; cv=none; b=Q7ktrDMnSM8mJj7T3X05bfTVOs9UZhmqj8P1YLu3PKI7JBTn1NFVX/bYYdeiDY6bwuHBkMGtCCCJCEcyD97anwVyMQF4jCfTKqa4m5VumRu0bbodKxM36LIKVpC+Dmglv4atTaE0Ipv/ctkP0Ryqt4LVyhKVm6wS2oyBYclj3wk=
+	t=1741513125; cv=none; b=tbpLUue1ezlxvqV2nF57CXOPKtRNuYIKXfDqygy19KB1kgUHyjDVgqYamSFyiLxq38vmBD37Y7R0E3mY9ctXrZO97aKIRX43zW0KrMZSBtxu2hBT4QGduVG+qvwUH0uZim25of8NE69vh+LBEMInrQvrYQJ9XHqSO+hVExS05Vo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741513152; c=relaxed/simple;
-	bh=30EPtgIO0gOgovBW9OPvD/glEOOua8MuO2Ju4ocSWCg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XgktOj7ZZpDlBTcDddzwdJ2oy7iK7rDQLyfwWqPrvMfL+rbDEXX4nYfbqRyyQePdifgqUY9i0JrWFQhMCB+ICwpdVP4sO1i1JkRCUJ7s0K69cK6ry6j3euDC2d0QuO2vaF5YJBnAsvT7V1X0/EKEHjfjHtptQJig39u2V2+us8U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=k4IQdwkP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1F777C4CEE5;
-	Sun,  9 Mar 2025 09:39:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1741513151;
-	bh=30EPtgIO0gOgovBW9OPvD/glEOOua8MuO2Ju4ocSWCg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=k4IQdwkP9FwJ74xa28X0TJT483QmWn1Y5f/vdayKfrVldDuYLn51c4PZDuM1hYm2G
-	 tF4Bqf4LiJbRYB9LWIm1Qv/HWCBOxUQwomM3KXl4RffZXmQpy0v6irqqvZZgw3fDSC
-	 obO33AfCuYPK44b3Y3kPaqoY8AWKZnlmhw3Uibms=
-Date: Sun, 9 Mar 2025 10:37:55 +0100
-From: "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>
-To: Aditya Garg <gargaditya08@live.com>
-Cc: "bhelgaas@google.com" <bhelgaas@google.com>,
-	"joro@8bytes.org" <joro@8bytes.org>,
-	"will@kernel.org" <will@kernel.org>,
-	"robin.murphy@arm.com" <robin.murphy@arm.com>,
-	"andriy.shevchenko@linux.intel.com" <andriy.shevchenko@linux.intel.com>,
-	"linux-staging@lists.linux.dev" <linux-staging@lists.linux.dev>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	"linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-	"iommu@lists.linux.dev" <iommu@lists.linux.dev>,
-	Aun-Ali Zaidi <admin@kodeit.net>, "paul@mrarm.io" <paul@mrarm.io>,
-	Orlando Chamberlain <orlandoch.dev@gmail.com>
-Subject: Re: [PATCH RFC] staging: Add driver to communicate with the T2
- Security Chip
-Message-ID: <2025030935-contently-handbrake-9239@gregkh>
-References: <1A12CB39-B4FD-4859-9CD7-115314D97C75@live.com>
- <2025030931-tattoo-patriarch-006d@gregkh>
- <PN3PR01MB9597793C256B5A16048ADBFDB8D72@PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM>
- <2025030937-antihero-sandblast-7c87@gregkh>
- <PN3PR01MB9597F037471B133B54BA25BCB8D72@PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM>
+	s=arc-20240116; t=1741513125; c=relaxed/simple;
+	bh=qSmwB1sdxs9Oc8+2jfP69kYazQsA4dTlEuWulBogzPc=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=Zsk31dQ8BX41azIDlSWQuJ7ky7JB98WSKc7gh6Ubks1T5nBubcUGDVQDlir20unh/fSea/jCQLg2tEAyB+tWbmQRPTZgPrNa7hoN6+q2EQxLWudqT2VqLj7I0sLj1BxBrbG8GfUNSFrsMYRjBpslhuHKB4/uMotxCWhOhuEzUwE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=DXafd6GD; arc=none smtp.client-ip=212.227.15.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1741513093; x=1742117893; i=markus.elfring@web.de;
+	bh=qSmwB1sdxs9Oc8+2jfP69kYazQsA4dTlEuWulBogzPc=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=DXafd6GDJ3xGD39lW0RGupKx9lgoCHYJObMA0wirdB0LigusxIviiKqliAXeO5aL
+	 /GKNe4aRM2nS4IITbRx6CVNtZYrS0wiKbUIU3BtYzVfT9PvsyNN2ehJYgvbJR4P3K
+	 1NVrhNS/L6zyHzVIRwfbu+v1usWuItepOQsNplRxmpKvr1zWsYjwMobaLJzsm4WL0
+	 pfPfIFMEP+Rk0hE1NTlThe/ShJPYfQL3qrOksDlaLDgHQHYV7R1ZROsIn/kUfVQ0e
+	 ZkB/g+zmH44yKfjPWP3Vbwn6SIHxLJ9Mf91j0PxlSgwbaSiAyAIKzMacB0IefD1wY
+	 jA1nGu5vaT32zkAMyw==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.29] ([94.31.93.26]) by smtp.web.de (mrweb006
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1N3oyy-1t9FPJ1De4-00uvAK; Sun, 09
+ Mar 2025 10:38:13 +0100
+Message-ID: <54844369-238b-42e8-8fdb-6aa650c37134@web.de>
+Date: Sun, 9 Mar 2025 10:38:12 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <PN3PR01MB9597F037471B133B54BA25BCB8D72@PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM>
+User-Agent: Mozilla Thunderbird
+To: Qasim Ijaz <qasdev00@gmail.com>, bpf@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>, Andrii Nakryiko <andrii@kernel.org>,
+ Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>,
+ Eduard Zingerman <eddyz87@gmail.com>, Hao Luo <haoluo@google.com>,
+ Jiri Olsa <jolsa@kernel.org>, John Fastabend <john.fastabend@gmail.com>,
+ KP Singh <kpsingh@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>,
+ Song Liu <song@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>,
+ Yonghong Song <yonghong.song@linux.dev>
+References: <20250308215605.4774-1-qasdev00@gmail.com>
+Subject: Re: [PATCH] bpf: add missing NULL check for __dev_get_by_index
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20250308215605.4774-1-qasdev00@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:w/s5CVCe40JbqXEwZN+yPWuhVD8GS/asS/zTbjza8EDJ2eUdRI+
+ x8G783xitKhI9cRhRX4ZUfLMtA5sv3gpYJrMYMXB3gc9XsgrfB0SDZHjK2PBX453WPPLmt5
+ US0Az9UfrMOQg101FN+fIIe+nKjw0CP1t9qKrQvqDtCO7iOSMtmPP5qfI9ncfKYmRArimeb
+ eoBcI8LhDLD6pxm3Drvcw==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:q/pfvWaAT4o=;YNjp0KedE7pfA6E5Xb7Fe4MuPbC
+ k1iauQjKuJRcCJh6JNfCmepGwefQy1NrfndcpsPGSmZVmTpZzI3KAY5eIU8u5sHTP0jWJ1IFF
+ w/fiT31QfsTxUeB/Qbl2q2Z6PHppcx80N3N1CALtiFdAfVqsaS/Ry0hYw8rUWw38iEruqaeVt
+ twcyc65vMe5+aBsxhl57nhrDRdx2EJ7Do+rPWE7+Pm4Zx8mx/x4IS8ejtY1225lZObwbwjfSJ
+ e7xtIeWb03rHWnNqhkE7RqiKL41BkXFMSPqQu30jBXAoFkTsxrcN8FQ+JYePSB5/uhliWqq/Z
+ Y2kbPKc1vx1HVGDM/xv6kL5En0iLI6q7/h4xRb9wT83WkRCVHkj/9QKULDW7vAkBJUWEDC7ip
+ 4fKjln0tuX2QBUBxZPVVXGIoqVifL27z7ohsYbufN15e7BJpjlj6W1iQzns6BKmiox0Fs2ZT0
+ ps++13gAEW/lvT9E9ikZ/tKYGeIkzSyHJFCTUyvZEPePhsgNyfPWYIBMxZXJVwrTRG5sImuzC
+ Ck/sitRqmiyf3sFhrrXWyAjtkWCfKnqvt3AaKf2d8I+Nf3p/Bfhvdh1PxXvpNBiFJUFlKNRdk
+ fz0feoHfU3ANgfZRZMVT88FPd+cAJ/OS/SmbSHjNIDAE2N5uRmJDojuNMV5rUVxB4k8bUqn4b
+ jDyg+U8O7yq0duX1vCARcOyJ7EHaFc4lfSBAgHgiUr86Xd+rss7t9byG3sXQEjYUXq44U9UdQ
+ 4ucYWF+IvQXNTBiembrrZ9sLFIFtFdxp7JTbACE39vVrl//NP+lqjclPxgsiAwmY2ftEasKcu
+ C+TzxV2yE/0LW5q8PXKwO1vTwDBgGUrOHuwVaKL2BiLbXTXpSdC7xY9fZF2z/f8K767tL5ymA
+ nmPzX29cggTFbjEyrSAgG63dmvEQWAPqTnE0D9LVcmvw8JWOCwjOKW7u9PRlUrplgZ+ofQ9Go
+ RkSrVQZSlht07hRcKHYO3wlmFBNYGFw1CLKa/cHY6DfBKMu8pCisd4F9MzsgZlwVn/aneNvj7
+ RCGNLL63yUxlvYB+OD023c6oMXfVxgirzowCl21WXp3u0bfsP+roP6sT0f4XWasiliOeWKT3E
+ ydTbQ5L0AsQRPldcHDFPFobFdgfUOoRi8w871cQDF/bEoK7W6BRW7JyE4zHhfU6DLTx+xyLsV
+ ZS2nvhdtBTWt7ZnMt4UXjeQOlkfnEJ5/zlM24xJC2C9teDPNo1V+7HBfwUpZ9K9l/5LqFIob6
+ KeYelR3Nb7HiLRnGyLIs87plCIDEkpQdZqU659vlwj88TLfdBgxAC55vvmkeLpJQAmc42/gNq
+ HUMlFzM6FQE+ZTRmTrsDSsAQP7OY7JS4WT4ruktPfB1x0QWRW15+OvSi3wnMh1W5dyLu4/C81
+ hmAoQho2h0IZF+1RFgiex5EVhTZ6JQSnVPXOUeI7Jymm/9iuFjDTMuIjurftZ23FQwDHzso2N
+ eViWZ8HJL+1wGJeQi8fC/17e3Xdk=
 
-On Sun, Mar 09, 2025 at 09:28:01AM +0000, Aditya Garg wrote:
-> 
-> 
-> > On 9 Mar 2025, at 2:46 PM, gregkh@linuxfoundation.org wrote:
-> > 
-> > ﻿On Sun, Mar 09, 2025 at 09:03:29AM +0000, Aditya Garg wrote:
-> >> 
-> >> 
-> >>>> On 9 Mar 2025, at 2:24 PM, gregkh@linuxfoundation.org wrote:
-> >>> 
-> >>> ﻿On Sun, Mar 09, 2025 at 08:40:31AM +0000, Aditya Garg wrote:
-> >>>> From: Paul Pawlowski <paul@mrarm.io>
-> >>>> 
-> >>>> This patch adds a driver named apple-bce, to add support for the T2
-> >>>> Security Chip found on certain Macs.
-> >>>> 
-> >>>> The driver has 3 main components:
-> >>>> 
-> >>>> BCE (Buffer Copy Engine) - this is what the files in the root directory
-> >>>> are for. This estabilishes a basic communication channel with the T2.
-> >>>> VHCI and Audio both require this component.
-> >>> 
-> >>> So this is a new "bus" type?  Or a platform resource?  Or something
-> >>> else?
-> >> 
-> >> It's a PCI device
-> > 
-> > Great, but then is the resources split up into smaller drivers that then
-> > bind to it?  How does the other devices talk to this?
-> 
-> We technically can split up these 3 into separate drivers and put then into their own trees.
+=E2=80=A6
+> We should handle this case by adding a NULL check
+> and cleaning up if it does happened.
 
-That's fine, but you say that the bce code is used by the other drivers,
-right?  So there is some sort of "tie" between these, and that needs to
-be properly conveyed in the device tree in sysfs as that will be
-required for proper resource management.
+Please improve such a change description another bit.
 
-thanks,
+See also:
+https://web.git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tre=
+e/Documentation/process/submitting-patches.rst?h=3Dv6.14-rc5#n94
 
-greg k-h
+Regards,
+Markus
 
