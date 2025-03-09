@@ -1,210 +1,193 @@
-Return-Path: <linux-kernel+bounces-553398-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-553399-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D376A588B0
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 22:57:40 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CBC5AA588B2
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 22:59:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 32FD216A0F6
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 21:57:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0B757188CAAC
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 21:59:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21EEE21E0BE;
-	Sun,  9 Mar 2025 21:57:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jvdp6uGf"
-Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C7C021D5BD;
+	Sun,  9 Mar 2025 21:58:56 +0000 (UTC)
+Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE1EF1EF368;
-	Sun,  9 Mar 2025 21:57:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E718184F;
+	Sun,  9 Mar 2025 21:58:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741557446; cv=none; b=HT2L0EEeorfWFIpTQC2Rp7DTR3IgRi0zSTt6swFHY4r7Xpbtt6FdcpKLp8PKpEo3cjF0hlgDwh89osUCT1EAaPSb2A4nx5pJpK0tF7MozHZBb/C7OHdlKssbOu3CWvPzKn43SoMuidm7ORatZagXbY0QRDL21mAqEsDTManN6Qg=
+	t=1741557535; cv=none; b=lkEKQLhMyz324W2TiBnUR0yWnnAZ7ZYl6CKf2Jls7Fw/ib7a8WU77gCWavruMBAErrowwaps1PZvY+HD6QeL8w2c5sGOIJuKNoxsrjUpUeSe/zXSkxoleU/uEmOXfbVSg0gSzD9fGyaKTqTzRfBVnexT0vF/SZNwt9O/pYIy83I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741557446; c=relaxed/simple;
-	bh=Pn56n8GBE8UCxvs12+4IV/Um/R07UV7tjGPzLbAQ+OQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dyNRkNVoKgcMN7fMzR3xFRXaAMmU91x1tcUBvEz/vno7i3142L8zwRb6VyDWCHcD8B/KqDAkVlSoJg3wiBE8AeVx6xm662RXwpNfX5AA6hq/UGA+LczVmSEOoPLjlg9/c92cSJrbHFLN0fKbrkO8meynEnD846Tz1+SMfVcyhLc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jvdp6uGf; arc=none smtp.client-ip=209.85.221.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+	s=arc-20240116; t=1741557535; c=relaxed/simple;
+	bh=4X/7zgS7ELg+HZ3HeMP8NM2MJngTXfSPwy5i4ADSnrY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=GXycVhvizK6P9DTspA138wR/adsHFe/IsmU+WZUszP5MgNoPPOrXjW2CpVEE0hnH5Uy1VRShydt0KWA4q9YycXFkeHpYhPgBv6YWdMaVgTucsG8Ov5e94MhtqA+RaFKM+OsV6O8i78EvSCZaECVGyJkUFyYlUGbDvMjU+T5KCYA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fomichev.me; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.214.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fomichev.me
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-3914bc3e01aso9182f8f.2;
-        Sun, 09 Mar 2025 14:57:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741557443; x=1742162243; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=NSfpy4/Aj1B+p0UMwIBKpz+PCflfZnDM7kqd3UIKSwE=;
-        b=jvdp6uGfPrmf1+UBFcYqGC1lmWW++7AyWkvbkbCmp2yxFym/4Xal2JT9Lu2uiWRvyf
-         T60/iKLr8PdAvWE09oEmEHQI2yovnJwHTN8Ry9Eq39O6KIOT5iAe0BQCUb6Ry3P5Jipi
-         KeRQEnfaqRL9fE7oMj89JpAREYInEO0woZryvCRUAFR5sxOgreIhyhea2G89n3n5NKWT
-         +6Iusm4UISGcjaqOK42X14YBWb5Nlr/1mS1qUaOhIlFhCRaHzyd6YCgbL6aWmlvpG3Ru
-         pW/xQpi/pG0Wos5xxsGLNkIFjTjcIO86Axi/muwJsC8V9kymec6x876cQUp8iaDvJtXm
-         vBKw==
+Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-22423adf751so47350785ad.2;
+        Sun, 09 Mar 2025 14:58:53 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741557443; x=1742162243;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=NSfpy4/Aj1B+p0UMwIBKpz+PCflfZnDM7kqd3UIKSwE=;
-        b=lBpm1bBR8IjM5LcmFShmjqjT5ZOVOrw8jsRqCf+Xic2o3J8sHEDyX7BiHBjYqji045
-         30a25ZR+rfRetYrOiSU1DYwJKqF+x8hhRGi9jDGG2agMau4hFFVBBW8udAngaLPMOiH7
-         e3L5LuuOmJR1j8r4sH1XE72C94fLVte8muNfhR0+BJISmxFs1BSwn5Rl9ne1lJq7nMWH
-         fcM+4u1jxJe5nuqilzg7+l7Q7yOc9wSUQH7jlUGP/4tXFqVxpJcQcE3G2A6KDWQlX9eg
-         +MRWvFLmtJ1LXNw7igDU4b6r/UOGFeRwvRrsRONNC9bUlaV2X0i4+c8HCzy9yBoRNoF1
-         tRRw==
-X-Forwarded-Encrypted: i=1; AJvYcCUVUBJqT+7ulBNhWvrVNbFAVup//vwoD7aPSEJc8o2WLhjJtZilT8SBv00N34/9ZJLEbBS/8T9CxaZw@vger.kernel.org, AJvYcCWlOEe7FNe6+VmWR4mY8YgdawwYOMCjg6pm8iFNAaRFgnRaFv7UMkOeToWnXrV7BwFdUjlss9Tr@vger.kernel.org, AJvYcCX7DmFHk4b4pSQgUOCYPL65XpqJ9y+epI8M1jQnagrcQYdWQrgtzfwXIy//pkr5PQK9yUI+ThbL9v1zDeM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxiiTV3Uo97XEgnidfDnlTU86EeHeu8AmGXUwvKZ7Wv90SLqwnb
-	I248VQV5fmZf4beYndW6H89oEboGF3u7ftN/hKj8meh7pCMQV91l
-X-Gm-Gg: ASbGnctOjbmMXrOkuYg1gmA2cqk0AenA8tMvZyDYv5n8YlOrJ8aqTMJugvpKfqwNfyy
-	YBOe1fm7aLYOEzV+/75sH47ddU9U6X3LxnD0yz14VZP0TNGUfIO2Dh7Ig6EePog2n8ndga/iELe
-	7W4z5YtkQaMr7ZfBzGpDVY5ZB+GIPawhVZfvFAjgT5m4t05YUTPS8eHrpAdOTqnI90HBGAhdKam
-	Ts0Lq9XF+FvAzt/HIhDi+0q29119vB7VcLfnX96wa+doFBs+kYlZIk4skaCJyT7lpZEmsi/aowa
-	Oq8yqxpjyze6uToGM1dBOMaHVRTjTIVzkc3GlkhQVTIs4RVaZf12DpsW5eNJ8rieODYlU0aYYNA
-	o9SyK4ihdmuT//HA10Ws7Aw==
-X-Google-Smtp-Source: AGHT+IHlFjNw4bjS7AfhnTSwAFcFZZVIoiG6l6ku1hA+7wcsMiJQFaX7fACndu509scn+6IFClWZYA==
-X-Received: by 2002:a05:6000:1a87:b0:391:2391:2f79 with SMTP id ffacd0b85a97d-39132d98a8emr7605490f8f.43.1741557442749;
-        Sun, 09 Mar 2025 14:57:22 -0700 (PDT)
-Received: from [192.168.0.66] (host-89-241-216-251.as13285.net. [89.241.216.251])
-        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-3912c0193bfsm13121734f8f.55.2025.03.09.14.57.21
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 09 Mar 2025 14:57:22 -0700 (PDT)
-Message-ID: <dc8894f5-8960-4e0f-93ff-47f305cd902e@gmail.com>
-Date: Sun, 9 Mar 2025 21:57:21 +0000
+        d=1e100.net; s=20230601; t=1741557533; x=1742162333;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=/2a7SmoeHEGl5Onz+EkPEONR/nzaHnY5dSapcOuXjhI=;
+        b=SEuW/r67Ejgl/PZ97Bl8itGME3DAvzwH3l4pZ+xW8+H4MJo3wU+JiUugcp6BXPXUQl
+         vpVFTwCHdfMDToy1V3MP415qOJY8h7gq/HMggS+z33Xkcm4cgPMiwPhK6vxWIS5nPgAZ
+         OaaJII1PIAPEc6bt0JKhr5yJ2ESTVW0iWzGnmA0n5v7JzRR2r99O1WGkCjiuNTRKBkM3
+         +N8t0BpqKEIeY1rLh7p0hZguON1alS0E6V4k4ynvwPRlKVwFWURRLHHEGWTfnMTzRG1i
+         DkXIXYteFn5AMGXQX+JhZmeqUCsb44XU51Fp51uLTVGoGGWqXWAoaQTdtwibrkzluzNK
+         hgLg==
+X-Forwarded-Encrypted: i=1; AJvYcCXK5w2Eh8qlS6Nc2MG/Wx7t8yxtNRvGOLhd5o9GZ0434P56iWDLUN4brVxJpmxJNUKiawEz+33m8MUxNsQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzjyzoirfpfFs2d0JHcbTVr4PPJy6u/O01MadboeIuUGMSPU0ZE
+	wmAn0Uz0rqjLjPqKzyalPXkIBT8Ohj1yJL9P8P50fsB1CRETkzosumQ7BZ2pmQ==
+X-Gm-Gg: ASbGncvYSzjmJCEUanODbpc0IPUPBcA7qfIAQm+dFLwU+Oaqi7B+F/y5VNCj+stkJWf
+	4sfeS++ggSZmx4PucvoAZo3UT9N5hxmTvqRn9EnZbqQ2xRwoV7yPPqjODHBAUdnhCfCZLjqBmsu
+	DUkq9m1hJTU2TPIUmh7Zm6sW6eNPmm1mBs0qtQyMjhCseR6e6E1IpilHEim4Bt43Lgl2VB79LCu
+	WTw+w7slE2jIiTtvzgO8EKtM5RBhCYgOhlE7LTAZ0TLiU789qpLYq5xSxFHVhoog+38h9eoxM9x
+	EITyTkKtnFAQVk4Ty/ccdG6W2AwwYKdqhDDUiWNG7MC0
+X-Google-Smtp-Source: AGHT+IEIG8or6GL0eh1I/QPMKJErwzbv6I3ycNlqGgoU6gz3cV/s86x613AlIQ8V/6WeUGXMDfXSVg==
+X-Received: by 2002:a05:6a00:1703:b0:736:57cb:f2aa with SMTP id d2e1a72fcca58-736aa9fdbbamr16512880b3a.13.1741557533175;
+        Sun, 09 Mar 2025 14:58:53 -0700 (PDT)
+Received: from localhost ([2601:646:9e00:f56e:2844:3d8f:bf3e:12cc])
+        by smtp.gmail.com with UTF8SMTPSA id 41be03b00d2f7-af28126d69bsm6340302a12.51.2025.03.09.14.58.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 09 Mar 2025 14:58:52 -0700 (PDT)
+From: Stanislav Fomichev <sdf@fomichev.me>
+To: netdev@vger.kernel.org
+Cc: davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	linux-kernel@vger.kernel.org,
+	michael.chan@broadcom.com,
+	pavan.chebbi@broadcom.com,
+	andrew+netdev@lunn.ch,
+	horms@kernel.org,
+	sdf@fomichev.me
+Subject: [PATCH net-next v2 1/3] eth: bnxt: switch to netif_close
+Date: Sun,  9 Mar 2025 14:58:49 -0700
+Message-ID: <20250309215851.2003708-1-sdf@fomichev.me>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Betterbird (Linux)
-Subject: Re: [PATCH v1] usb: core: fix pipe creation for get_bMaxPacketSize0
-To: Alan Stern <stern@rowland.harvard.edu>
-Cc: eichest@gmail.com, francesco.dolcini@toradex.com,
- gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
- linux-usb@vger.kernel.org, stable@vger.kernel.org,
- stefan.eichenberger@toradex.com
-References: <Z6HxHXrmeEuTzE-c@eichest-laptop>
- <857c8982-f09f-4788-b547-1face254946d@gmail.com>
- <1005263f-0a07-4dae-b74f-28e6ae3952bf@rowland.harvard.edu>
- <cf6c9693-49ae-4511-8f16-30168567f877@gmail.com>
- <04cb3076-6e34-432f-9400-0df84c054e5c@rowland.harvard.edu>
- <bf0fda83-d97d-4a50-94d6-a2d70607a917@gmail.com>
- <73963187-6dcb-480d-ae35-2cee11001834@rowland.harvard.edu>
-Content-Language: en-US
-From: Colin Evans <colin.evans.parkstone@gmail.com>
-In-Reply-To: <73963187-6dcb-480d-ae35-2cee11001834@rowland.harvard.edu>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-On 09/03/2025 21:01, Alan Stern wrote:
-> On Sat, Mar 08, 2025 at 11:19:22PM +0000, Colin Evans wrote:
->> I believe I have the information requested. The output of usbmon for the "problem" scenario is
->> large, I hope it doesn't exceed any email attachment limits, but if it does I will have to work
->> out another way to share it.
->>
->> It may be that 30s of data is more than is needed. If that's the case I can easily run a shorter
->> usbmon cycle.
-> It is a lot more than needed, but that's okay.
->
->> Additional Observations
->> -----------------------
->> It appears that having pretty much any external device plugged into a motherboard port connected
->> to the _problem_ controller is enough to suppress the stream of "usb usb2-port4: Cannot enable.
->> Maybe the USB cable is bad?" dmesg errors.
->>
->> For these tests the results named "working" had a USB2.0 memory stick plugged
->   into one
->> of the top 4 USB ports on the motherboard, while the "problem" results didn't.
->>
->> For info- the older machine that exhibits this problem ("machine 1") also shows device manager
->> errors if booted into Windows 10, suggesting that machine may in fact have a motherboard
->> hardware fault.
->>
->> However "machine 2" (which is less than 2 weeks old), shows no errors when booted into Windows.
-> Well, I have no idea what Windows is doing on that machine.
->
-> The usbmon trace shows that port 4 on bus 2 generates a continual
-> stream of link-state-change events, constantly interrupting the system
-> and consuming computational resources.  That's why the performance
-> goes way down.
->
-> I can't tell what's causing those link-state changes.  It _looks_ like
-> what you would get if there was an intermittent electrical connection
-> causing random voltage fluctuations.  Whatever the cause is, plugging
-> in the memory stick does seem to suppress those changes; they don't
-> show up at all in the "working" trace.
->
-> In theory, turning off power to port 4 might stop all the events from
-> being reported.  You can try this to see if it works:
->
-> 	echo 1 >/sys/bus/usb/devices/2-0:1.0/usb2-port4/disable
->
-> Alan Stern
+All (error) paths that call dev_close are already holding instance lock,
+so switch to netif_close to avoid the deadlock.
 
-Thank you, that is very helpful, for a couple of reasons.
+v2:
+- add missing EXPORT_MODULE for netif_close
 
-"Machine 2" is a new build, so if (as it sounds) the motherboard has a 
-hardware problem, then I need to
-look into returning it.
+Fixes: 004b5008016a ("eth: bnxt: remove most dependencies on RTNL")
+Reported-by: Jakub Kicinski <kuba@kernel.org>
+Signed-off-by: Stanislav Fomichev <sdf@fomichev.me>
+---
+ drivers/net/ethernet/broadcom/bnxt/bnxt.c         | 12 ++++++------
+ drivers/net/ethernet/broadcom/bnxt/bnxt_devlink.c |  4 ++--
+ net/core/dev.c                                    |  1 +
+ 3 files changed, 9 insertions(+), 8 deletions(-)
 
-BTW- it seems I spoke too soon about the USB stick suppressing the 
-error. After a couple of reboots with
-it in place the problem re-occurred. It does seem that connecting a hub 
-(switch) is the  only way
-to reliably stop the error. The switch has a bunch of wiring connected 
-to USB peripherals and other
-machines. I would have guessed that might make the likelihood of picking 
-up electrical noise
-actually worse, but that seems not to be the case here.
-
-"Machine 1" is several years old, it's actually the guts of the same PC 
-that was upgraded to make M/c 2.
-It's not usable, or sellable, with this performance hit happening. I 
-have tried all the external USB ports
-on this machine and not found the failing controller, my guess is it's 
-going to be one that supports
-some of the on-board USB headers.
-
-I had been looking on the web for a way to shut down the problem port, 
-or worst case the whole hub,
-however all the Linux examples I found worked by either-
-
-a) Preventing the loading of the driver for the chipset, by type. 
-However that would kill all ports supported by
-     the same type of controller, and this motherboard has multiple 
-controllers of the same type onboard.
-
-b) Shutting down a port by searching for the connected device 
-identifier. However in these cases there
-     _are_ no connected devlces, the fault happens when the controller 
-is not connected to anything.
-
-Hopefully the command you recommended will do the trick, I will let you 
-know.
-
-Would I be correct in thinking this would need to be run at every boot, 
-some time after device enumeration,
-or would it need to be run after every re-enumeration of devices after a 
-USB device is connected /
-disconnected? Not sure how to achieve that.
-
-I very much appreciate your help in identifying the fault. Thank you.
-
-Regards: C Evans
-
+diff --git a/drivers/net/ethernet/broadcom/bnxt/bnxt.c b/drivers/net/ethernet/broadcom/bnxt/bnxt.c
+index b09171110ec4..66dfaf7e3776 100644
+--- a/drivers/net/ethernet/broadcom/bnxt/bnxt.c
++++ b/drivers/net/ethernet/broadcom/bnxt/bnxt.c
+@@ -12802,7 +12802,7 @@ int bnxt_open_nic(struct bnxt *bp, bool irq_re_init, bool link_re_init)
+ 		rc = __bnxt_open_nic(bp, irq_re_init, link_re_init);
+ 	if (rc) {
+ 		netdev_err(bp->dev, "nic open fail (rc: %x)\n", rc);
+-		dev_close(bp->dev);
++		netif_close(bp->dev);
+ 	}
+ 	return rc;
+ }
+@@ -12840,7 +12840,7 @@ int bnxt_half_open_nic(struct bnxt *bp)
+ half_open_err:
+ 	bnxt_free_skbs(bp);
+ 	bnxt_free_mem(bp, true);
+-	dev_close(bp->dev);
++	netif_close(bp->dev);
+ 	return rc;
+ }
+ 
+@@ -14195,7 +14195,7 @@ void bnxt_fw_reset(struct bnxt *bp)
+ 			netdev_err(bp->dev, "Firmware reset aborted, rc = %d\n",
+ 				   n);
+ 			clear_bit(BNXT_STATE_IN_FW_RESET, &bp->state);
+-			dev_close(bp->dev);
++			netif_close(bp->dev);
+ 			goto fw_reset_exit;
+ 		} else if (n > 0) {
+ 			u16 vf_tmo_dsecs = n * 10;
+@@ -14810,7 +14810,7 @@ static void bnxt_fw_reset_abort(struct bnxt *bp, int rc)
+ 	if (bp->fw_reset_state != BNXT_FW_RESET_STATE_POLL_VF)
+ 		bnxt_dl_health_fw_status_update(bp, false);
+ 	bp->fw_reset_state = 0;
+-	dev_close(bp->dev);
++	netif_close(bp->dev);
+ }
+ 
+ static void bnxt_fw_reset_task(struct work_struct *work)
+@@ -16276,7 +16276,7 @@ int bnxt_restore_pf_fw_resources(struct bnxt *bp)
+ 
+ 	if (netif_running(bp->dev)) {
+ 		if (rc)
+-			dev_close(bp->dev);
++			netif_close(bp->dev);
+ 		else
+ 			rc = bnxt_open_nic(bp, true, false);
+ 	}
+@@ -16669,7 +16669,7 @@ static void bnxt_shutdown(struct pci_dev *pdev)
+ 		goto shutdown_exit;
+ 
+ 	if (netif_running(dev))
+-		dev_close(dev);
++		netif_close(dev);
+ 
+ 	bnxt_ptp_clear(bp);
+ 	bnxt_clear_int_mode(bp);
+diff --git a/drivers/net/ethernet/broadcom/bnxt/bnxt_devlink.c b/drivers/net/ethernet/broadcom/bnxt/bnxt_devlink.c
+index b06fcddfc81c..b6d6fcd105d7 100644
+--- a/drivers/net/ethernet/broadcom/bnxt/bnxt_devlink.c
++++ b/drivers/net/ethernet/broadcom/bnxt/bnxt_devlink.c
+@@ -461,7 +461,7 @@ static int bnxt_dl_reload_down(struct devlink *dl, bool netns_change,
+ 		if (rc) {
+ 			NL_SET_ERR_MSG_MOD(extack, "Failed to deregister");
+ 			if (netif_running(bp->dev))
+-				dev_close(bp->dev);
++				netif_close(bp->dev);
+ 			netdev_unlock(bp->dev);
+ 			rtnl_unlock();
+ 			break;
+@@ -576,7 +576,7 @@ static int bnxt_dl_reload_up(struct devlink *dl, enum devlink_reload_action acti
+ 		*actions_performed |= BIT(action);
+ 	} else if (netif_running(bp->dev)) {
+ 		netdev_lock(bp->dev);
+-		dev_close(bp->dev);
++		netif_close(bp->dev);
+ 		netdev_unlock(bp->dev);
+ 	}
+ 	rtnl_unlock();
+diff --git a/net/core/dev.c b/net/core/dev.c
+index 1cb134ff7327..a9f2dc31ed2c 100644
+--- a/net/core/dev.c
++++ b/net/core/dev.c
+@@ -1760,6 +1760,7 @@ void netif_close(struct net_device *dev)
+ 		list_del(&single);
+ 	}
+ }
++EXPORT_SYMBOL(netif_close);
+ 
+ int dev_setup_tc(struct net_device *dev, enum tc_setup_type type,
+ 		 void *type_data)
 -- 
+2.48.1
 
-*Mr. C. J. Evans
-Parkstone
-Davis Street
-Hurst
-RG10 0TH
-
-Tel: 0118 9340297
-Mob: 07434 491984
-*
 
