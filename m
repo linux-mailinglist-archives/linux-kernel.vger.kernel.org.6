@@ -1,161 +1,408 @@
-Return-Path: <linux-kernel+bounces-552909-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-552910-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF731A580E0
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 06:49:21 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 00A26A580E1
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 06:50:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 33D5516BC97
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 05:49:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EC75918907EA
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 05:50:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B812183CC7;
-	Sun,  9 Mar 2025 05:49:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32D0783CC7;
+	Sun,  9 Mar 2025 05:50:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="SuT3BGxR"
-Received: from lelvem-ot01.ext.ti.com (lelvem-ot01.ext.ti.com [198.47.23.234])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="tvZ6mTkF"
+Received: from out-188.mta0.migadu.com (out-188.mta0.migadu.com [91.218.175.188])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC953C133;
-	Sun,  9 Mar 2025 05:49:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.234
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 515267E1
+	for <linux-kernel@vger.kernel.org>; Sun,  9 Mar 2025 05:50:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741499354; cv=none; b=C2XhzPC/8nR98QSPNrJmIdwLsxvu53JTUGP3Avsh0qMNaxA4gIgnlkoDOi03KlAz/oB+L4fCccc72o/WFviOBcsnkFq9OPZuk5seg3I75OkYQwneDYsi1dB3h2WRL5dAfIrxiw7Vbn1wDyAebEUTLlFtm4d7Xfmb7IwAw8hMF7A=
+	t=1741499431; cv=none; b=L5Gp8+k7IxKuzvP358zbEiCM/zQ6QD5x6YrO1wR2dxLOH+JrQfaWcneXX8O3BwJym2nIquAYkycH8HM4lo7PqSJfFE3qLSgjPyBWkGch0bOHCyvfgNIK/xOEjPYncY+WvBH3LnF+FXYLMDE7RcSGTUSGIMqof0P/2pwlRJzhIuk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741499354; c=relaxed/simple;
-	bh=bZPxp5jV+AkHzYA9fBKSNqPc/s0C8RUHq888V7WhoKs=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YrogzbInOTKwd4c3ggLnXhIdprounyfTMSaEOED3RrmjYk93jEd5vxg1zoNuwfKZncJQtz6gIDg0p7mwv28N0wXg+C0kncPENmD1onGA2UljA26TwWlGM/Xw8WnKyoZG57hnQhPqobO8oiKy/SM/IPDDeSwkHEqsfMJZ12FEbV4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=SuT3BGxR; arc=none smtp.client-ip=198.47.23.234
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-	by lelvem-ot01.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 5295mbLP215684
-	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Sat, 8 Mar 2025 23:48:37 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1741499317;
-	bh=ea59vFEkWPlyDnUdJd9y2Dei3RIVNR+SOpDzlFnCTgw=;
-	h=Date:From:To:CC:Subject:References:In-Reply-To;
-	b=SuT3BGxRgQ8WpSibgdCw9v+eOJnZBRF48pwoG/yOKZtqXRpKHbFuwTEsROm9GTjnc
-	 qagtwOlP3r0sle3aw1iGODRhFI0q1w5W/lSonDGbj8rP5Eswu9pecuZJWj0cVKMea2
-	 E3oc1Orf9yCVAgVI44M24V69MKVEBg2hvBPcJ/eM=
-Received: from DFLE100.ent.ti.com (dfle100.ent.ti.com [10.64.6.21])
-	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 5295mbuN022019
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Sat, 8 Mar 2025 23:48:37 -0600
-Received: from DFLE105.ent.ti.com (10.64.6.26) by DFLE100.ent.ti.com
- (10.64.6.21) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Sat, 8
- Mar 2025 23:48:36 -0600
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE105.ent.ti.com
- (10.64.6.26) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Sat, 8 Mar 2025 23:48:36 -0600
-Received: from localhost (uda0492258.dhcp.ti.com [10.24.72.113])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 5295mZEC019524;
-	Sat, 8 Mar 2025 23:48:36 -0600
-Date: Sun, 9 Mar 2025 11:18:35 +0530
-From: Siddharth Vadapalli <s-vadapalli@ti.com>
-To: Hans Zhang <18255117159@163.com>
-CC: Siddharth Vadapalli <s-vadapalli@ti.com>, <lpieralisi@kernel.org>,
-        <kw@linux.com>, <manivannan.sadhasivam@linaro.org>, <robh@kernel.org>,
-        <bhelgaas@google.com>, <bwawrzyn@cisco.com>,
-        <thomas.richard@bootlin.com>,
-        <wojciech.jasko-EXT@continental-corporation.com>,
-        <linux-pci@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [v2] PCI: cadence: Add configuration space capability search API
-Message-ID: <20250309054835.4ydiq4xpguxtbvkf@uda0492258>
-References: <20250308133903.322216-1-18255117159@163.com>
- <20250309023839.2cakdpmsbzn6pm7g@uda0492258>
- <3e6645a8-6de9-4125-8444-fa1a4f526881@163.com>
+	s=arc-20240116; t=1741499431; c=relaxed/simple;
+	bh=1lY5nIB2MgyHuOjA2d63l4+aiCpFm/bmOgp7kpNGmcU=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=qBKDCFyb3zpwAQ5RKV1rpADq0pXwKt61+QDQnba75vwbn7IN7gptbBb7wU3tKb9Xc9LZ/JedxCyIL34IoOGYlo4ubnUxYB4UScYgoDkvi8tL2DIsN6P0sCKv7pZ4GVLJyHdpCAeQOndHcQaLfJkoT8zSXAgUDr0ybNm+kitmxkI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=tvZ6mTkF; arc=none smtp.client-ip=91.218.175.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1741499425;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=WPTHGH5cc2nw0Xi+BBFhxPbBypT69Y37X694zXELdgc=;
+	b=tvZ6mTkFZ+aU2f2K3I+FdHOrtDUkFZ1LZDs8lsnYbQPGmjgG2cgSFyQzykUiBfx+SdGD/j
+	4rLcmGIvyLvmq2k0J0trZQNR8SynLjcxrmSIYOisLUvh/MhMBxjPs3xZTtTh+KUdfld9Js
+	ac81LbNQLWfwtrSCJi88hJVjZS2lo4k=
+From: Wen Yang <wen.yang@linux.dev>
+To: Christian Brauner <brauner@kernel.org>,
+	Jan Kara <jack@suse.cz>,
+	Alexander Viro <viro@zeniv.linux.org.uk>
+Cc: Wen Yang <wen.yang@linux.dev>,
+	Jens Axboe <axboe@kernel.dk>,
+	Dylan Yudaken <dylany@fb.com>,
+	David Woodhouse <dwmw@amazon.co.uk>,
+	Paolo Bonzini <pbonzini@redhat.com>,
+	Dave Young <dyoung@redhat.com>,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v3] eventfd: introduce configurable maximum value for eventfd
+Date: Sun,  9 Mar 2025 13:50:03 +0800
+Message-Id: <20250309055003.32194-1-wen.yang@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <3e6645a8-6de9-4125-8444-fa1a4f526881@163.com>
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-On Sun, Mar 09, 2025 at 11:18:21AM +0800, Hans Zhang wrote:
-> 
-> 
-> On 2025/3/9 10:38, Siddharth Vadapalli wrote:
-> > On Sat, Mar 08, 2025 at 09:39:03PM +0800, Hans Zhang wrote:
-> > > Add configuration space capability search API using struct cdns_pcie*
-> > > pointer.
-> > > 
-> > > The offset address of capability or extended capability designed by
-> > > different SOC design companies may not be the same. Therefore, a flexible
-> > > public API is required to find the offset address of a capability or
-> > > extended capability in the configuration space.
-> > > 
-> > > Signed-off-by: Hans Zhang <18255117159@163.com>
-> > > ---
-> > > Changes since v1:
-> > > https://lore.kernel.org/linux-pci/20250123070935.1810110-1-18255117159@163.com
-> > > 
-> > > - Added calling the new API in PCI-Cadence ep.c.
-> > > - Add a commit message reason for adding the API.
-> > 
-> > In reply to your v1 patch, you have mentioned the following:
-> > "Our controller driver currently has no plans for upstream and needs to
-> > wait for notification from the boss."
-> > at:
-> > https://lore.kernel.org/linux-pci/fcfd4827-4d9e-4bcd-b1d0-8f9e349a6be7@163.com/
-> > 
-> > Since you have posted this patch, does it mean that you will be
-> > upstreaming your driver as well? If not, we still end up in the same
-> > situation as earlier where the Upstream Linux has APIs to support a
-> > Downstream driver.
-> > 
-> > Bjorn indicated the above already at:
-> > https://lore.kernel.org/linux-pci/20250123170831.GA1226684@bhelgaas/
-> > and you did agree to do so. But this patch has no reference to the
-> > upstream driver series which shall be making use of the APIs in this
-> > patch.
-> 
-> Hi Siddharth,
-> 
-> 
-> Bjorn:
->   If/when you upstream code that needs this interface, include this
->   patch as part of the series.  As Siddharth pointed out, we avoid
->   merging code that has no upstream users.
-> 
-> 
-> Hans: This user is: pcie-cadence-ep.c. I think this is an optimization of
-> Cadence common code. I think this is an optimization of Cadence common code.
-> Siddharth, what do you think?
+For the NON-SEMAPHORE eventfd, a write (2) call adds the 8-byte integer
+value provided in its buffer to the counter, while a read (2) returns the
+8-byte value containing the value and resetting the counter value to 0.
+Therefore, the accumulated value of multiple writes can be retrieved by a
+single read.
 
-This seems to be an extension of the driver rather than an optimization.
-At first glance, though it seems like this patch is enabling code-reuse,
-it is actually attempting to walk through the config space registers to
-identify a capability. Prior to this patch, those offsets were hard-coded,
-saving the trouble of having to walk through the capability pointers to
-arrive at the capability.
+Currently, the reading thread is waked up immediately after the writing
+thread writes eventfd, and the maximum value of the counter is ULLONG_MAX,
+therefore, in the ping pong scene with frequent reading and writing,
+the CPU will be exhausted.
 
-This patch will affect the following functions:
-01. cdns_pcie_get_fn_from_vfn()
-02. cdns_pcie_ep_write_header()
-03. cdns_pcie_ep_set_msi()
-04. cdns_pcie_ep_get_msi()
-05. cdns_pcie_ep_get_msix()
-06. cdns_pcie_ep_set_msix()
-07. cdns_pcie_ep_send_msi_irq()
-08. cdns_pcie_ep_map_msi_irq()
-09. cdns_pcie_ep_send_msix_irq()
-10. cdns_pcie_ep_start()
-which will now take longer to get to the capability whose offset was
-known. I understand that you wish to extend these functions to support
-your SoC where the offsets don't match the hard-coded ones.
+By introducing the configurable maximum counter, we could achieve flow
+control and reduce unnecessary CPU overhead.
 
-I will let Bjorn and others share their views on this patch.
+We may use the following test code:
+	#define _GNU_SOURCE
+	#include <assert.h>
+	#include <errno.h>
+	#include <getopt.h>
+	#include <pthread.h>
+	#include <poll.h>
+	#include <stdlib.h>
+	#include <stdio.h>
+	#include <unistd.h>
+	#include <string.h>
+	#include <sys/eventfd.h>
+	#include <sys/prctl.h>
+	#include <sys/ioctl.h>
 
-Regards,
-Siddharth.
+	#define EFD_IOC_SET_MAXIMUM     _IOW('E', 0, __u64)
+	#define EFD_IOC_GET_MAXIMUM     _IOR('E', 0, __u64)
+
+	struct param {
+		int fd;
+		int cpu;
+	};
+
+	static void publish(void *data)
+	{
+		struct param * param = (struct param *)data;
+		unsigned long long value = 1;
+		cpu_set_t cpuset;
+
+		prctl(PR_SET_NAME, "publish");
+		CPU_ZERO(&cpuset);
+		CPU_SET(param->cpu, &cpuset);
+		sched_setaffinity(0, sizeof(cpuset), &cpuset);
+
+		while (1)
+			eventfd_write(param->fd, value);
+	}
+
+	static void subscribe(void *data)
+	{
+		struct param *param = (struct param *)data;
+		unsigned long long value = 0;
+		struct pollfd pfds[1];
+		cpu_set_t cpuset;
+
+		prctl(PR_SET_NAME, "subscribe");
+		CPU_ZERO(&cpuset);
+		CPU_SET(param->cpu, &cpuset);
+		sched_setaffinity(0, sizeof(cpuset), &cpuset);
+
+		pfds[0].fd = param->fd;
+		pfds[0].events = POLLIN;
+
+		while(1) {
+			poll(pfds, 1, -1);
+			if(pfds[0].revents & POLLIN) {
+				read(param->fd, &value, sizeof(value));
+			}
+		}
+	}
+
+	static void usage(void)
+	{
+		printf("Usage: \n");
+		printf("\t");
+		printf("<-p cpuid> <-s cpuid> <-m maximum> \n");
+	}
+
+	int main(int argc, char *argv[])
+	{
+		struct param sub_param = {0};
+		struct param pub_param = {0};
+		char *optstr = "p:s:m:";
+		int opt, ret, fd;
+		__u64 maximum;
+		pid_t pid;
+
+		if (argc < 2) {
+			usage();
+			return 1;
+		}
+
+		while((opt = getopt(argc, argv, optstr)) != -1){
+			switch(opt) {
+				case 'p':
+					pub_param.cpu = atoi(optarg);
+					break;
+				case 's':
+					sub_param.cpu = atoi(optarg);
+					break;
+				case 'm':
+					maximum = atoi(optarg);
+					break;
+				case '?':
+					usage();
+					return -1;
+			}
+		}
+
+		fd = eventfd(0, EFD_CLOEXEC);
+		assert(fd);
+
+		ret = ioctl(fd, EFD_IOC_SET_MAXIMUM, &maximum);
+		if (ret) {
+			printf("error=%s\n", strerror(errno));
+			return -1;
+		}
+
+		sub_param.fd = fd;
+		pub_param.fd = fd;
+
+		pid = fork();
+		if (pid == 0)
+			subscribe(&sub_param);
+		else if (pid > 0)
+			publish(&pub_param);
+		else {
+			printf("XXX: fork error!\n");
+			return -1;
+		}
+
+		return 0;
+	}
+
+$ ./a.out  -p 2 -s 3 -m 6553500
+-----cpu2-usage----------cpu3-usage----
+usr sys idl wai stl:usr sys idl wai stl
+ 47  53   0   0   0: 46  54   0   0   0
+ 53  47   0   0   0: 45  54   1   0   0
+ 56  44   0   0   0: 48  52   0   0   0
+ 53  47   0   0   0: 45  55   0   0   0
+
+$ ./a.out  -p 2 -s 3 -m 100
+-----cpu2-usage----------cpu3-usage----
+usr sys idl wai stl:usr sys idl wai stl
+ 41  59   0   0   0: 33  65   2   0   0
+ 46  54   0   0   0: 30  67   2   0   0
+ 38  62   0   0   0: 33  65   2   0   0
+ 37  63   0   0   0: 31  66   3   0   0
+
+$ ./a.out  -p 2 -s 3 -m 10
+-----cpu2-usage----------cpu3-usage----
+usr sys idl wai stl:usr sys idl wai stl
+ 37  43  20   0   0: 21  42  37   0   0
+ 30  47  23   0   0: 20  42  38   0   0
+ 39  39  23   0   0: 24  37  39   0   0
+ 39  40  22   0   0: 23  41  36   0   0
+
+Signed-off-by: Wen Yang <wen.yang@linux.dev>
+Cc: Al Viro <viro@zeniv.linux.org.uk>
+Cc: Jens Axboe <axboe@kernel.dk>
+Cc: Christian Brauner <brauner@kernel.org>
+Cc: Jan Kara <jack@suse.cz>
+Cc: Dylan Yudaken <dylany@fb.com>
+Cc: David Woodhouse <dwmw@amazon.co.uk>
+Cc: Paolo Bonzini <pbonzini@redhat.com>
+Cc: Dave Young <dyoung@redhat.com>
+Cc: linux-fsdevel@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+---
+v3: simply achieve flow control by configuring the maximum value of counter
+v2: fix compilation errors 
+https://lore.kernel.org/all/20240811085954.17162-1-wen.yang@linux.dev/
+v1: https://lore.kernel.org/all/20240519144124.4429-1-wen.yang@linux.dev/
+
+ fs/eventfd.c                 | 63 ++++++++++++++++++++++++++++++++----
+ include/uapi/linux/eventfd.h |  3 ++
+ 2 files changed, 59 insertions(+), 7 deletions(-)
+
+diff --git a/fs/eventfd.c b/fs/eventfd.c
+index af42b2c7d235..cb004aded4df 100644
+--- a/fs/eventfd.c
++++ b/fs/eventfd.c
+@@ -39,6 +39,7 @@ struct eventfd_ctx {
+ 	 * also, adds to the "count" counter and issue a wakeup.
+ 	 */
+ 	__u64 count;
++	__u64 maximum;
+ 	unsigned int flags;
+ 	int id;
+ };
+@@ -49,7 +50,7 @@ struct eventfd_ctx {
+  * @mask: [in] poll mask
+  *
+  * This function is supposed to be called by the kernel in paths that do not
+- * allow sleeping. In this function we allow the counter to reach the ULLONG_MAX
++ * allow sleeping. In this function we allow the counter to reach the maximum
+  * value, and we signal this as overflow condition by returning a EPOLLERR
+  * to poll(2).
+  */
+@@ -70,7 +71,7 @@ void eventfd_signal_mask(struct eventfd_ctx *ctx, __poll_t mask)
+ 
+ 	spin_lock_irqsave(&ctx->wqh.lock, flags);
+ 	current->in_eventfd = 1;
+-	if (ctx->count < ULLONG_MAX)
++	if (ctx->count < ctx->maximum)
+ 		ctx->count++;
+ 	if (waitqueue_active(&ctx->wqh))
+ 		wake_up_locked_poll(&ctx->wqh, EPOLLIN | mask);
+@@ -119,7 +120,7 @@ static __poll_t eventfd_poll(struct file *file, poll_table *wait)
+ {
+ 	struct eventfd_ctx *ctx = file->private_data;
+ 	__poll_t events = 0;
+-	u64 count;
++	u64 count, max;
+ 
+ 	poll_wait(file, &ctx->wqh, wait);
+ 
+@@ -162,12 +163,13 @@ static __poll_t eventfd_poll(struct file *file, poll_table *wait)
+ 	 *     eventfd_poll returns 0
+ 	 */
+ 	count = READ_ONCE(ctx->count);
++	max = READ_ONCE(ctx->maximum);
+ 
+ 	if (count > 0)
+ 		events |= EPOLLIN;
+-	if (count == ULLONG_MAX)
++	if (count == max)
+ 		events |= EPOLLERR;
+-	if (ULLONG_MAX - 1 > count)
++	if (max - 1 > count)
+ 		events |= EPOLLOUT;
+ 
+ 	return events;
+@@ -244,6 +246,11 @@ static ssize_t eventfd_read(struct kiocb *iocb, struct iov_iter *to)
+ 	return sizeof(ucnt);
+ }
+ 
++static inline bool eventfd_is_writable(const struct eventfd_ctx *ctx)
++{
++	return (ctx->maximum > ctx->count) && (ctx->maximum - ctx->count > ucnt);
++}
++
+ static ssize_t eventfd_write(struct file *file, const char __user *buf, size_t count,
+ 			     loff_t *ppos)
+ {
+@@ -259,11 +266,11 @@ static ssize_t eventfd_write(struct file *file, const char __user *buf, size_t c
+ 		return -EINVAL;
+ 	spin_lock_irq(&ctx->wqh.lock);
+ 	res = -EAGAIN;
+-	if (ULLONG_MAX - ctx->count > ucnt)
++	if (eventfd_is_writable(ctx))
+ 		res = sizeof(ucnt);
+ 	else if (!(file->f_flags & O_NONBLOCK)) {
+ 		res = wait_event_interruptible_locked_irq(ctx->wqh,
+-				ULLONG_MAX - ctx->count > ucnt);
++				eventfd_is_writable(ctx));
+ 		if (!res)
+ 			res = sizeof(ucnt);
+ 	}
+@@ -299,6 +306,46 @@ static void eventfd_show_fdinfo(struct seq_file *m, struct file *f)
+ }
+ #endif
+ 
++static long eventfd_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
++{
++	struct eventfd_ctx *ctx = file->private_data;
++	void __user *argp = (void __user *)arg;
++	int ret = 0;
++	__u64 max;
++
++	if (!argp)
++		return -EINVAL;
++
++	switch (cmd) {
++	case EFD_IOC_SET_MAXIMUM: {
++		if (copy_from_user(&max, argp, sizeof(max)))
++			return -EFAULT;
++
++		spin_lock_irq(&ctx->wqh.lock);
++		if (ctx->count >= max)
++			ret = -EINVAL;
++		else
++			ctx->maximum = max;
++		spin_unlock_irq(&ctx->wqh.lock);
++		break;
++	}
++	case EFD_IOC_GET_MAXIMUM: {
++		spin_lock_irq(&ctx->wqh.lock);
++		max = ctx->maximum;
++		spin_unlock_irq(&ctx->wqh.lock);
++
++		if (copy_to_user(argp, &max, sizeof(max)))
++			ret = -EFAULT;
++		break;
++	}
++	default:
++		ret = -ENOENT;
++		break;
++	}
++
++	return ret;
++}
++
+ static const struct file_operations eventfd_fops = {
+ #ifdef CONFIG_PROC_FS
+ 	.show_fdinfo	= eventfd_show_fdinfo,
+@@ -308,6 +355,7 @@ static const struct file_operations eventfd_fops = {
+ 	.read_iter	= eventfd_read,
+ 	.write		= eventfd_write,
+ 	.llseek		= noop_llseek,
++	.unlocked_ioctl	= eventfd_ioctl,
+ };
+ 
+ /**
+@@ -398,6 +446,7 @@ static int do_eventfd(unsigned int count, int flags)
+ 	init_waitqueue_head(&ctx->wqh);
+ 	ctx->count = count;
+ 	ctx->flags = flags;
++	ctx->maximum = ULLONG_MAX;
+ 	ctx->id = ida_alloc(&eventfd_ida, GFP_KERNEL);
+ 
+ 	flags &= EFD_SHARED_FCNTL_FLAGS;
+diff --git a/include/uapi/linux/eventfd.h b/include/uapi/linux/eventfd.h
+index 2eb9ab6c32f3..96e6430a3d12 100644
+--- a/include/uapi/linux/eventfd.h
++++ b/include/uapi/linux/eventfd.h
+@@ -8,4 +8,7 @@
+ #define EFD_CLOEXEC O_CLOEXEC
+ #define EFD_NONBLOCK O_NONBLOCK
+ 
++#define EFD_IOC_SET_MAXIMUM	_IOW('E', 0, __u64)
++#define EFD_IOC_GET_MAXIMUM	_IOR('E', 0, __u64)
++
+ #endif /* _UAPI_LINUX_EVENTFD_H */
+-- 
+2.25.1
+
 
