@@ -1,93 +1,165 @@
-Return-Path: <linux-kernel+bounces-553097-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-553098-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 159B9A583CA
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 12:29:30 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4FCDBA583CC
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 12:32:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 33956188BFFA
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 11:29:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 183FE3A8EE4
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 11:32:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BDB41C8FD7;
-	Sun,  9 Mar 2025 11:29:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FA651624F7;
+	Sun,  9 Mar 2025 11:32:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="Wag6z+xR"
-Received: from xmbghk7.mail.qq.com (xmbghk7.mail.qq.com [43.163.128.47])
+	dkim=pass (2048-bit key) header.d=svenpeter.dev header.i=@svenpeter.dev header.b="PQU72ehj";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="u9EwQZBU"
+Received: from fout-a3-smtp.messagingengine.com (fout-a3-smtp.messagingengine.com [103.168.172.146])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 634851C760A;
-	Sun,  9 Mar 2025 11:29:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=43.163.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B0DB2CCC0
+	for <linux-kernel@vger.kernel.org>; Sun,  9 Mar 2025 11:32:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.146
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741519759; cv=none; b=VpHZjnYKpv1TWWwSVjBfvNQmGBPFFYqWhH4Iz7+Q2jTjZSBOvI+HQLvco7ajJ5oxmZrtngA6mlTPHxqOBlDzeHC//Wwa0Jl2ks9x2vSLb3dc+SKLGLSwJCKOP8xCHGEw9CRuEp3s70ygWN7HvPnXTIfWq5o4lNyFIlX9K/GSkMA=
+	t=1741519950; cv=none; b=bQQ/hssfYfK+sJiWFTaW+UdpRB14FidJ/8hYsoEUpyPl9NH42C62bmRaRaNWeFtd9lG0l2s/aVh2bkpVJZE9sGcSSVuqGRUTaNPI5QR04NAWZWMJfPh7RiCe3n0wWJniyq7vTlZWyTzPTmz6YdQMWlD5Cu3E7orhGN0Mf8alPq0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741519759; c=relaxed/simple;
-	bh=gjmBtwkxraqEUHtHWraa+U7E9VcknomSTbZ+eqKIuUo=;
-	h=In-Reply-To:References:From:To:Subject:Mime-Version:Content-Type:
-	 Date:Message-ID; b=VtoeNwiaPm70b9Rr52SGD/kqhvMW3tLGHzr8eN97YnPLJ9/DUO3LXsZsPWYtrn0Md5P5y7Culf/2WBCHmAqycAS6/POJHxNxx1M0bS/fNcda3r9bSICdq/6ekVbyXWRLF6K4SLyXTg8F7NFCHxYaF1HCWF4dcTI16quWvPIPTu0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=Wag6z+xR; arc=none smtp.client-ip=43.163.128.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1741519747; bh=gjmBtwkxraqEUHtHWraa+U7E9VcknomSTbZ+eqKIuUo=;
-	h=In-Reply-To:References:From:To:Subject:Date;
-	b=Wag6z+xR6iIOtebSitjxmKNIAKth0ToBQXxaIozDUu7Djq4h1KMLGwkKP5oMYHeYy
-	 rfdLhI5tuDGtZb9Qk3Et/qUJuvficupeV07u4caF8ZdFIwzcagkLbOv+5DvJFCEvnt
-	 CigGG5EeSbtOBxnLh2wqY7TIeQEZI+QiU0m/Cvjk=
-X-QQ-FEAT: oHWrrGTW1dCGJEu1CuC8+nIWkvSYK6n9
-X-QQ-SSF: 00000000000000F0000000000000
-X-QQ-XMRINFO: NyFYKkN4Ny6FSmKK/uo/jdU=
-X-QQ-XMAILINFO: NjvKFBGFVoSKRtubLSRFl91sHy8fFFpoEZkZpYqL1Ar7TWS6S38NTr3Ti7OnPw
-	 5Y+T1DJGxFGK6ee4LuQQVGsciJEznk1PVzQxdtvqgOscg6ry5DCLvn4xAI2fbAgyeyDsWfVQ3BGfb
-	 hiM4PLW9EdWpy/02pIMVObGjmO2NFRDhjzT6wUSjoRvdZoyvbp4E/kK7T55mQB1TUIZtxoJ4VPaO4
-	 vbbxj2B2QDiPPBiM2OS9H7c9H0FwUpTfaInwdc/KhoPtcEsIr/TYXBsh2dkr/VNtVFLyRpGw8Hbhh
-	 7ivUt2PBsX31q+KhSyAPa4JDOh0thX05XVBugEHsYtRghPowaUuc9vJ8cL7no/OnCUUXcWtoXJecE
-	 HB+4io7/IARPOPy4jgMO+w5DYjLUfZ8I1zW354S2YR81Hg+qLWRUmeJGYdaAm1/qEENAruopqGJmY
-	 0cc/L3DM7i0mvsvaiHAcGdAzk188JP6UhaiZInWAGla8vhubJG712D/b1JYL7tZNd5IKLb46701mA
-	 jkvh/Jp05OE2tJlEKBqVQkVTqpzB/YRnjq6jbkNv53hNuEppFbPZTCvD4tNd8Qe6FOarBdA7yAydz
-	 kjwep/+jn9X1z4hp2k79PU2vp/PH6tCh6IS37WWBtDMOO+FQFJNE0skDbbzfadC5nodWouPtzl/ze
-	 QgtOoiTC/mn64PAf6mkVS1TUebcqqWT1YBNqIFVkhMWDZdHEjVuzIuqP+te7OczryKhFSZ4Pa8spM
-	 KbmlPv/zSOzO3a928mNUWvX0DgQ3jnI8JpHMaIcrY436w3S0khU96fAiIgqjquv/dVZN577Bo16Ov
-	 D4aDaxzwJL7/UVB47AlsZaaYrxK68xbibjZX+268Mj300pFnJ9jTM6Z5rvSd5WyEmJSxT6ULudaAM
-	 /bdY1ni9vpVdzn66g03pbqNoRLhEE0dLCYP2MIzd12U1BpKYse8T/iv4AQvc5llNhsYZW9F39gKoz
-	 OlDkA2Kz1jPCuPETR7T8V3af8APlk=
-X-HAS-ATTACH: no
-X-QQ-BUSINESS-ORIGIN: 2
-In-Reply-To: <tencent_990EBC6CCCD75C06EE08FB64E67D322AED07@qq.com>
-References: <tencent_990EBC6CCCD75C06EE08FB64E67D322AED07@qq.com>
-X-QQ-STYLE: 
-X-QQ-mid: webmail284t1741519736t2275304
-From: "=?ISO-8859-1?B?ZmZoZ2Z2?=" <744439878@qq.com>
-To: "=?ISO-8859-1?B?amdn?=" <jgg@ziepe.ca>, "=?ISO-8859-1?B?bGVvbg==?=" <leon@kernel.org>, "=?ISO-8859-1?B?Y21laW9oYXM=?=" <cmeiohas@nvidia.com>, "=?ISO-8859-1?B?bWljaGFlbGd1cg==?=" <michaelgur@nvidia.com>, "=?ISO-8859-1?B?aHVhbmdqdW54aWFuNg==?=" <huangjunxian6@hisilicon.com>, "=?ISO-8859-1?B?bGl5dXl1Ng==?=" <liyuyu6@huawei.com>, "=?ISO-8859-1?B?cGhhZGRhZA==?=" <phaddad@nvidia.com>, "=?ISO-8859-1?B?bGludXg=?=" <linux@treblig.org>, "=?ISO-8859-1?B?bWFya3poYW5n?=" <markzhang@nvidia.com>, "=?ISO-8859-1?B?amJpLm9jdGF2ZQ==?=" <jbi.octave@gmail.com>, "=?ISO-8859-1?B?ZHNhaGVybg==?=" <dsahern@kernel.org>, "=?ISO-8859-1?B?bGludXgtcmRtYQ==?=" <linux-rdma@vger.kernel.org>, "=?ISO-8859-1?B?bGludXgta2VybmVs?=" <linux-kernel@vger.kernel.org>
-Subject: Re:kernel bug found and root cause analysis
+	s=arc-20240116; t=1741519950; c=relaxed/simple;
+	bh=KRY3h/y6Mm8gGXlg5rX8HYhOitbw1P/955MyYYkxzMo=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=MAVQStXGjbhY4FEfIoLI1zYLmfHyfmRIelyjNtbtKWLbIaUObKFC2xmb228DURQzmXRGU1SILxUJNxvXjSYAdJqAPSqlDKWMpIuaKLVAIdYbL/Kbu8mZGn93FgSewaY2IJj3hgu27VLLuySvH56KZ0sA5ZaS5IpsMk9Jj4usm3A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=svenpeter.dev; spf=pass smtp.mailfrom=svenpeter.dev; dkim=pass (2048-bit key) header.d=svenpeter.dev header.i=@svenpeter.dev header.b=PQU72ehj; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=u9EwQZBU; arc=none smtp.client-ip=103.168.172.146
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=svenpeter.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=svenpeter.dev
+Received: from phl-compute-13.internal (phl-compute-13.phl.internal [10.202.2.53])
+	by mailfout.phl.internal (Postfix) with ESMTP id 6E2A9138277C;
+	Sun,  9 Mar 2025 07:32:26 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-13.internal (MEProxy); Sun, 09 Mar 2025 07:32:26 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=svenpeter.dev;
+	 h=cc:cc:content-transfer-encoding:content-type:date:date:from
+	:from:in-reply-to:message-id:mime-version:reply-to:subject
+	:subject:to:to; s=fm2; t=1741519946; x=1741606346; bh=Cp91pbB5DN
+	2RZua8Qzi2EZ3MeEoU2r2L7P3lFPNnfBY=; b=PQU72ehjmMOLtRay+y0HSuFSMg
+	CJsQjmj6Xxn6dAsD2MFECU4nHG3PRAqH33ktLvgp+dmlQ/GP0K/4jDbL6Z4Lk4y9
+	ZWSD0oWQPitmZjueSe4B6BcuN7qHQwNfqLUxwrcUKv3NGqEtg50EIj2l3hxb+9Qn
+	gDd+3UEyeq2hFr/J2GhWBjwuxpvAF+7KAlKKTBwiPfA8XHy5xxsQ8zOTWPVmAmhv
+	b8qpo4UiCGJGkCs7a6cZ2pgogE7myPTBIa+06uwRqQTO1NknO4DqVK83pUK60nPN
+	a3jIobf1fNhkLjfSSQ0gSMWdXt11eRpEGn9cCtuXzsK94FXzhUk6zba7ti5A==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:date:date:feedback-id:feedback-id:from:from
+	:in-reply-to:message-id:mime-version:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=
+	1741519946; x=1741606346; bh=Cp91pbB5DN2RZua8Qzi2EZ3MeEoU2r2L7P3
+	lFPNnfBY=; b=u9EwQZBU2ecARqRlwjNuXFotaZQIfFKVF7Eve4ypZ9BjdIUJaqA
+	a90V7dnjKUAStnU3atPwt1EvftBMCJqYpHufat0JVN/bZZ0ZwgKCL2MYq+Z+FSXf
+	cfa8bIgtc6KooCCoW30Rt8BrPmuAiN5vM/Lmk//qW7cEjcCKqb+4cqR67EDbn6s8
+	v8dug2SMkcimAmg7Fl9qVkNtBQbjZnl3zgFmNWyyzrB2cWKxcBlOx9FrV8jI/kvh
+	caxMTxA3Xf4XG6tRXJRVVr1nPorjW1DNedzyp88+ySdqtCd+IoXydxG1t+4/A9qT
+	yDh7KpPCxy8XZJi92JWXHFwFgonMHcffoAA==
+X-ME-Sender: <xms:SXzNZ25iLS_exPE_cN1I1JaG2f1JDlX9osjrHo3wonjzmRjksf32kQ>
+    <xme:SXzNZ_7YH0baFb4_jYaWuseCv0oQ1vvaTcnZ7kVRxKpTmQJSsWpIcTJ6579IXp27T
+    FGxL6yyXwOrVDNkZWg>
+X-ME-Received: <xmr:SXzNZ1fwC76ILiwN1yjLQJDR50RsJ-GhwvrWZZPfVK1wq_lMa_T2iYpJ47cFPJvPHK7hAoSV8UHIfYWXlm_md4frNjs28M7RplHrxpQDozOE7BiQNwmKAEWguVJMscw>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdduudeifeegucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
+    pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucenucfjughrpefhvf
+    evufffkffoggfgsedtkeertdertddtnecuhfhrohhmpefuvhgvnhcurfgvthgvrhcuoehs
+    vhgvnhesshhvvghnphgvthgvrhdruggvvheqnecuggftrfgrthhtvghrnhepjeelveffvd
+    efgeeuteefueetgeeghfelveevheeugefftdelleeuudefvefhieelnecuffhomhgrihhn
+    pehkvghrnhgvlhdrohhrghdpghhithhhuhgsrdgtohhmnecuvehluhhsthgvrhfuihiivg
+    eptdenucfrrghrrghmpehmrghilhhfrhhomhepshhvvghnsehsvhgvnhhpvghtvghrrdgu
+    vghvpdhnsggprhgtphhtthhopeegpdhmohguvgepshhmthhpohhuthdprhgtphhtthhope
+    hsohgtsehlihhsthhsrdhlihhnuhigrdguvghvpdhrtghpthhtoheprghsrghhiheslhhi
+    shhtshdrlhhinhhugidruggvvhdprhgtphhtthhopehlihhnuhigqdgrrhhmqdhkvghrnh
+    gvlheslhhishhtshdrihhnfhhrrgguvggrugdrohhrghdprhgtphhtthhopehlihhnuhig
+    qdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrgh
+X-ME-Proxy: <xmx:SnzNZzLrGuwSnzZhhua0RIYir2QSycKhL4Nr0VfLVJi0kRiRSciAmQ>
+    <xmx:SnzNZ6LUICEe7rI2mDX8zXiVGzm3kOFOU2awiOoGMZQgYT7OZvScHA>
+    <xmx:SnzNZ0yxQpzmG6s-jypPAZftYb7FnRZjZRVgwKMfQCQV705_fjcRmg>
+    <xmx:SnzNZ-JWXUCxzguKEGVoLSGTM7WlBUrGX1zMSR2-SAWCV5b6VnwCqQ>
+    <xmx:SnzNZ_EfmoYfk3PkPkvj65VP3uGWSz83iIRnyv4w5J502ZWNWMMF9BG4>
+Feedback-ID: i51094778:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sun,
+ 9 Mar 2025 07:32:24 -0400 (EDT)
+From: Sven Peter <sven@svenpeter.dev>
+To: soc@lists.linux.dev
+Cc: asahi@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [GIT PULL] Third and final batch of Apple SoC DT updates for v6.15
+Date: Sun,  9 Mar 2025 12:32:12 +0100
+Message-Id: <20250309113212.48137-1-sven@svenpeter.dev>
+X-Mailer: git-send-email 2.39.3 (Apple Git-146)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain;
-	charset="ISO-8859-1"
-Content-Transfer-Encoding: base64
-Date: Sun, 9 Mar 2025 07:28:56 -0400
-X-Priority: 3
-Message-ID: <tencent_E59865C88AB5A1F1683137721DB9A1ED2B09@qq.com>
-X-QQ-MIME: TCMime 1.0 by Tencent
-X-Mailer: QQMail 2.x
-X-QQ-Mailer: QQMail 2.x
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-c29ycnksIHRoZSBidWcgdGl0bGUgdW5kZXIgImN1dCBoZXJlIiB3YXMgbWlzdGFrZW5seSB3
-cml0dGVuIGFzICJCVUc6IGNvcnJ1cHRlZCBsaXN0IGluIGZpeF9mdWxsbmVzc19ncm91cCIs
-IHdoaWNoIHNob3VsZCBiZSAiSU5GTzogdGFzayBodW5nIGluIGliX2VudW1fYWxsX3JvY2Vf
-bmV0ZGV2cyIKCgombmJzcDsKCgoKCi0tLS0tLS0tLS0tLS0tLS0tLSZuYnNwO09yaWdpbmFs
-Jm5ic3A7LS0tLS0tLS0tLS0tLS0tLS0tCgoKLS0tLS0tLS0tLS0tWyBjdXQgaGVyZSBdLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0KQlVHOiBjb3JydXB0ZWQg
-bGlzdCBpbiBmaXhfZnVsbG5lc3NfZ3JvdXAKPT09PT09PT09PT09PT09PT09PT09PT09PT09
-PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09CklORk86IHRhc2sga3dv
-cmtlci91ODo1OjEyNjE4IGJsb2NrZWQgZm9yIG1vcmUgdGhhbiAxNDMgc2Vjb25kcy4KJm5i
-c3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7IE5vdCB0YWludGVkIDYuMTQuMC1yYzUtZGly
-dHkgIzI=
+Hi,
 
+This is our final pull request for Apple SoC device tree updates for v6.15
+based on the previous one [1].
+Drivers for the M1/M2 touchbar screen and pre-M1 (iPhone, etc.) backlight
+have been merged since then and this batch includes the required device tree
+nodes. Both drivers and these commits have been part of -next for at least a
+few days. The corresponding drivers are scheduled to be included in the 6.15
+merge window as well.
+
+
+
+Best,
+
+Sven
+
+
+[1] https://lore.kernel.org/soc/20250302115808.59172-1-sven@svenpeter.dev/
+
+The following changes since commit 44db68dee1f77260d7037319e911e9883a6ffe0e:
+
+  arm64: dts: apple: Add touchbar digitizer nodes (2025-02-26 15:33:46 +0000)
+
+are available in the Git repository at:
+
+  https://github.com/AsahiLinux/linux.git tags/asahi-soc-dt-6.15-v3
+
+for you to fetch changes up to e1bc21d8f8fde47173073a2d6233f5faa4864cfc:
+
+  arm64: dts: apple: t8015: Add backlight nodes (2025-03-06 20:54:28 +0100)
+
+----------------------------------------------------------------
+Apple SoC DT updates for 6.15, final batch:
+
+- Added touchbar screen nodes for M1/M2 platforms
+- Added backlight nodes for iPhone, iPad and iPod touch
+
+----------------------------------------------------------------
+Nick Chan (5):
+      arm64: dts: apple: s5l8960x: Add backlight nodes
+      arm64: dts: apple: t7000: Add backlight nodes
+      arm64: dts: apple: s800-0-3: Add backlight nodes
+      arm64: dts: apple: t8010: Add backlight nodes
+      arm64: dts: apple: t8015: Add backlight nodes
+
+Sasha Finkelstein (1):
+      arm64: dts: apple: Add touchbar screen nodes
+
+ arch/arm64/boot/dts/apple/s5l8960x-5s.dtsi     |  4 ++
+ arch/arm64/boot/dts/apple/s5l8960x.dtsi        |  7 +++
+ arch/arm64/boot/dts/apple/s800-0-3-common.dtsi |  4 ++
+ arch/arm64/boot/dts/apple/s800-0-3.dtsi        |  7 +++
+ arch/arm64/boot/dts/apple/t7000-handheld.dtsi  |  4 ++
+ arch/arm64/boot/dts/apple/t7000.dtsi           |  7 +++
+ arch/arm64/boot/dts/apple/t8010-common.dtsi    |  4 ++
+ arch/arm64/boot/dts/apple/t8010.dtsi           |  7 +++
+ arch/arm64/boot/dts/apple/t8015-8.dtsi         |  4 ++
+ arch/arm64/boot/dts/apple/t8015.dtsi           |  7 +++
+ arch/arm64/boot/dts/apple/t8103-j293.dts       | 31 +++++++++++++
+ arch/arm64/boot/dts/apple/t8103.dtsi           | 61 ++++++++++++++++++++++++++
+ arch/arm64/boot/dts/apple/t8112-j493.dts       | 31 +++++++++++++
+ arch/arm64/boot/dts/apple/t8112.dtsi           | 61 ++++++++++++++++++++++++++
+ 14 files changed, 239 insertions(+)
 
