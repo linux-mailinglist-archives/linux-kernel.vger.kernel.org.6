@@ -1,85 +1,85 @@
-Return-Path: <linux-kernel+bounces-553171-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-553172-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D7E9A58523
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 15:58:14 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 89714A58524
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 15:58:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0B1F5160F70
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 14:58:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4325B188EFE2
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 14:58:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDEAA1DE3DC;
-	Sun,  9 Mar 2025 14:57:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7ACC51E1E01;
+	Sun,  9 Mar 2025 14:57:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="IfSBg2tE"
-Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="dunwmoFI"
+Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F0F31DEFF4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E4F91DF24A
 	for <linux-kernel@vger.kernel.org>; Sun,  9 Mar 2025 14:57:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741532258; cv=none; b=IQ34CR3Ej16ZspzP9JeED6GE9IiAjef9dY0IHOZ9/0ozOPkbxYoKy/7/GeAYRb6nvKLnS1N5lDH9KQHQm4FJCd10DC2UKPH6zn0lOKT/PErWe66tATcNkgt29jZpNvLcr1bKkml38WdINcOSDPSgkRNwAxXjkM322EJIah7LoXQ=
+	t=1741532258; cv=none; b=Xzk2TPd2/DtzTUVVL7C7fPF7LB+OwKL/S1Erh8wEkcJNPlxnMKZnbcr78OsOT+/YX/3N3GfnfgEIZlJgMyESU8h4S1hCC6ohK/V2ymdKiw0Ix6d2bEMu70vYO6jQmWgXXPFBKGeztveWfEV40PV2XeB7xW/smtJSKwc5fOQJMtI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1741532258; c=relaxed/simple;
-	bh=pN/3K0c07mgtPTRPXPCJpX/AGnbpoFURyIzTH/nlVaY=;
+	bh=7MXpC1UsPTFkEH6w3Dr3IjWHrLN92YVeJc/OuOPJTDw=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=IJHk8vMPLZbjvtHzr5v/yc7Ey+e0fUbv4FicpwqZ7lUZQMXny+8lh7ri6MDq/13Q/EYUGznnsB6VMGLDlsLWnRICcuAAMpH08Vh7iJ2n10gqyzi5s4jP+DmB6b6JCuB0hJLgHEOks2i0U0Mw+HRt7qJ/n380tCM0egz00db9MdY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=IfSBg2tE; arc=none smtp.client-ip=209.85.221.48
+	 MIME-Version; b=BRSK2YDbuVoHxZ08fFuYgFEILche7rCeUbZLsmMFEam8A6ERkmkEScs5VfveTCrKoDZrryoE8wsWKr0XUsxMNHi/3SIQifuxVULBRFHZjc8aW7MV9zE/N96C2ERr1nUtunH3gJeRhjn5m5MW1O8vFzFi1dwjUdOl5+sB3fp5z34=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=dunwmoFI; arc=none smtp.client-ip=209.85.221.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-3913d45a148so802219f8f.3
+Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-39104c1cbbdso1615929f8f.3
         for <linux-kernel@vger.kernel.org>; Sun, 09 Mar 2025 07:57:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google; t=1741532255; x=1742137055; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=9r0/g7jMkIS31rWPP+0eYALjsbxAMAbdDJjBS2LpzoY=;
-        b=IfSBg2tEwCxUlHUtzq6Sd9gbDu/cWIfuW2FWaNvmG5+RBSuaHJ9kNkNdBBP2Y48GEH
-         wxTf2sINOPs71hJYHI23/m59VAOqU2DSSisDftARnm+KiqTO+V+BkrWTvKzsqSPXE7f9
-         iJJEWNyC5Ab21QxdqmpsZbMgyTaIxrjZ330pgaal5g8SjjtPsNY69KBs64Q3u9nG1BPe
-         QZt8uAkme2M2Bhxw32HD3wEAtlyAjGaHtl3wLgzuFA96FTa/d3OcxoXG1IrpV/l12NLc
-         rF5tW0K0GWMydaRpdmfKjQ/p5Zheg5/NmPk08SG5ZRxLG78ezz6KdptzboAfLVVjSEdO
-         WTOg==
+        bh=u0Dr+cnFlbJ+1l2BNrPM33eKwGXGKx+rxyRsMaRmDtw=;
+        b=dunwmoFIRcwTNom8pcSHxdoz+bLq7n1bvfJaWM8L5ZeNj7DF+sjC25Ib+InRV4yq5E
+         2MACxCfKcleeVL3slamby400hruo0lXS217xJBSZfXDf7FudOp4tkxnAtZFfq/gVbT2p
+         kN22DU30Xx6yA/LdDhfYTbKtAH8FQDtgFWbcwoZAI+S6e+CZshvlS6/UXisLi2ITrwd/
+         zUQSaqrcIEz8DCX21RoVZJyCQY4PBtB+3vuZcUlSjDEjTi5FibK+Mnbn2l4JRbgeqLFM
+         faVAwyBmJ5MS9K/QAFxgUzaZpBfCfW3Wd60bcZw+568OT4WyWFQGNUXPDzrDOA11BVuY
+         baUQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20230601; t=1741532255; x=1742137055;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=9r0/g7jMkIS31rWPP+0eYALjsbxAMAbdDJjBS2LpzoY=;
-        b=QGPZuB47Oi7G26MwSdWdQADfZGZeA+4IH0kPKm1Zop+25dQq6fPfNbxI7LFyFGIhSL
-         C2znZn3IeI1qZ4GbuG9fYgPvSTyiqrJl6AjNo10mTMa5aLTWEXzMtmUNZC4fgPHnFnDZ
-         mtw/i6Iu8kDih/8H38mR11JCEWyHANQk8If2G9Y02TY5WsHkVdO2GOyMpludQyoIMpxN
-         8dfEN2vR14tMVKaxSDraFDO75wwYbcUlNnew7qgyba1chkwUWOcaWYASoKG2U7TuuW4n
-         T4Kx/W+QOHtirU2CLNZOnwIyJ2VI6x49XYA3t6213vc/ve3L0X7QnBTPWhT54r3le9Wf
-         g0/g==
-X-Gm-Message-State: AOJu0Yw0mud8KiaXm5xUplKf2DqfTc5aQ2rgVG5G686M0X4KAlqL7VXr
-	A87Q+rWqDbqPJDhkr88/JzioKuC/UiEJzbkDZkybht8Z3knxyVqtoZXtm4eViuw=
-X-Gm-Gg: ASbGnct+She35jLFN1SmtRlFjtZ86Dqw6ebRmUrvm3UuAhzLlJzkElS6VXC+NWiUxXn
-	ciOGUoWrH4m/dWWxekGG0eF1TdaO2TmsM0na6FHOqI/iMUZQ4PWqGfKkicWqy2T7hQGKCtwW+Hb
-	fZXWBgHwBUZ0QRXtqTRQnBq8ZNunNZevwAm1wmK4sKRUFACtdEZPLMr8w55ucJjZIbxtqEZAGI2
-	evfjXIAnb+iMSSv7mric8e6uye336QqJkdxY7F+2TekPmeYwUGeMuE5nNr9+WW51Ankm5exoRpl
-	+KdP30yXooXZWHriZC08geUB6cfk+//21oBwj3zzm9SCcGAvou31bLLHnnpusm1I5+frB0kTfNg
-	XOz1m
-X-Google-Smtp-Source: AGHT+IFc6TseDpHfLdz/7p5kDlMaSOndsEKWUw95bi6AwAuygsgDOCdntYQD7jLj3rNYJMBEZKCwFQ==
-X-Received: by 2002:adf:cb01:0:b0:390:f6aa:4e7c with SMTP id ffacd0b85a97d-39132d7b7f5mr4878970f8f.28.1741532254768;
-        Sun, 09 Mar 2025 07:57:34 -0700 (PDT)
+        bh=u0Dr+cnFlbJ+1l2BNrPM33eKwGXGKx+rxyRsMaRmDtw=;
+        b=WHxk0v3LwSQl99OJq4P+rZgfJDUqn7dLlYRcVDl+VtVVj7klsToDPL2ZCDF76/HWZU
+         /PG0s+1SdW9VGwLDqAjhRge3PUrLHYTRnRy9wFvpGSiv7vsaF2wCs4STkHgi0EjOzNgG
+         SuXY/YoDDwdyRBR+WeFG2tqymtJdXfskWn4E/0IRkO4CQ1L4JVaVRyaD77nBgTUTjcsz
+         Z/56IgXcp0fJ+FO12sf237j4af8ZpKk2XMU84TH8gdTDKT6pFMEaJYhh52JhA5ETRIsX
+         s9T5Z5H11f/cA4RPwC1VCX3JDS9Pc1Ou854yk+LMtLKgndoGcPop5byrbbFJnDd/Fp7w
+         Ou7A==
+X-Gm-Message-State: AOJu0YzbSGlDj4iPrX4NPjwxaQ5AUYkP2qc5jmgfX0KzFRtVrmbdFSx+
+	mCgtW6Phw1xucwwAl6OFJMvq3/+4i2Fk+nOFypTVwnI8DcxY7398jZhBdVR9c14=
+X-Gm-Gg: ASbGncuvHthRcjwSPOs+e/x/eUoZVsjOoObGc2AmxNDxCBu/b77rGHZ6efHGb/TRoPn
+	nHntQpTpgFnM7KQVgX38zZzhoq99zXV4Uzy7izysvoDo2WYg3yMhPsLb+Ye4bWroFROkA1JvnHZ
+	kwBJkm6nhS6ulNsk+BcP9f7Y09l5znLcTzNqTABB+Cl2B0wf+38K6sJt2JG/29kndhZV/ONawoG
+	HT2i7bKEphKx3V5PAvpIvr8I1mT1Zayacxkh/8cNA6JwAmRVFLzV8VV4heQV/paR2Pdf60aVViu
+	13TPRxJw0LpefDUnNz/jLvdoxDK3qIZRL+M/dLfDEamOO00e+64t03WPqnyXwsXGkLBtIJz5jeV
+	tjIoa
+X-Google-Smtp-Source: AGHT+IHVMeEHCPvnbe81adI9R9VIsgLbgmc8FJIIRnHJFfaVMElB/PN9M4K1iowdklqV8Hgk7Sq4yA==
+X-Received: by 2002:a05:6000:2ac:b0:390:f400:2083 with SMTP id ffacd0b85a97d-39132b5bb58mr7115047f8f.0.1741532255475;
+        Sun, 09 Mar 2025 07:57:35 -0700 (PDT)
 Received: from localhost.localdomain ([5.133.47.210])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3912c1031fdsm11744899f8f.89.2025.03.09.07.57.33
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3912c1031fdsm11744899f8f.89.2025.03.09.07.57.34
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 09 Mar 2025 07:57:33 -0700 (PDT)
+        Sun, 09 Mar 2025 07:57:35 -0700 (PDT)
 From: srinivas.kandagatla@linaro.org
 To: gregkh@linuxfoundation.org
 Cc: linux-kernel@vger.kernel.org,
-	Heiko Stuebner <heiko@sntech.de>,
-	Nicolas Frattaroli <nicolas.frattaroli@collabora.com>,
+	Akhil P Oommen <quic_akhilpo@quicinc.com>,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
 	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Subject: [PATCH v2 04/13] nvmem: rockchip-otp: add rk3576 variant data
-Date: Sun,  9 Mar 2025 14:56:54 +0000
-Message-Id: <20250309145703.12974-5-srinivas.kandagatla@linaro.org>
+Subject: [PATCH v2 05/13] dt-bindings: nvmem: qfprom: Add X1E80100 compatible
+Date: Sun,  9 Mar 2025 14:56:55 +0000
+Message-Id: <20250309145703.12974-6-srinivas.kandagatla@linaro.org>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20250309145703.12974-1-srinivas.kandagatla@linaro.org>
 References: <20250309145703.12974-1-srinivas.kandagatla@linaro.org>
@@ -89,52 +89,33 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1278; i=srinivas.kandagatla@linaro.org; h=from:subject; bh=3Ys4IkX8eCFRNDyZ5cOnVGSBTrGSodl3ymtNu0NI9Wg=; b=owEBbQGS/pANAwAKAXqh/VnHNFU3AcsmYgBnzaw5zrcabPVsgwcqQzznbddwl7Md0kDIrrWvM 52dXNcO/WyJATMEAAEKAB0WIQQi509axvzi9vce3Y16of1ZxzRVNwUCZ82sOQAKCRB6of1ZxzRV N0jDB/9WwG+CkweFPv2/bZixcM8RV4VCTwisdA0KTd/Nzn51fg5SqfOz58B43vAL+gufCQv8BCB ldeSqAVEVBNH6p8Oqalew5DC4h9H+NDmGYB4eG194GB6n8Go1lDOgDr0ydH+abmMwZeFgRkcynA NwH5i0VeV/3aHkpSVOoyANsQzrVIo4vIjHvVniN4eMbmLXoOFpcrp0JxKj6PInGwUnxMcz9cUx9 Sbii0y3kIwkTOnXnDJ9FPjAWwxA/VHs/zTKqiOAnLx7kK2iDRQlCzmWnLvVOOTGLBQicRtFzaEL Y0AA64qDf9u6pRs4rs9GmLP9xmRVW94F5/IGQUx+NIJik9O+
+X-Developer-Signature: v=1; a=openpgp-sha256; l=884; i=srinivas.kandagatla@linaro.org; h=from:subject; bh=zQ+XDU22w1KeN1u2R0sBn32K6zj/nRUuBnAFl5n+VVw=; b=owEBbQGS/pANAwAKAXqh/VnHNFU3AcsmYgBnzaw5h90iMu8k4UWTZMM/77qH5t4+r/N3S94Id NPORNO+EZKJATMEAAEKAB0WIQQi509axvzi9vce3Y16of1ZxzRVNwUCZ82sOQAKCRB6of1ZxzRV N3YIB/0Zd+VRU9ZvS45/uMJJEIOPGwGxPpUa033H4d+DaJ/tpYtFXY47ujcix26FO5+s735qfof isFvUhm2VWAjL24VVjhdXVPr5QLC9cwYhAvR3lLG/EwkYyfkefstcCYvBl/VSzQzT3qijhvjdR8 iD/LgzRQMFAlNi5QmY4uyuM1/CExL6HllalfKe3ZyvQTbZFplJiqsyN3IMANyaBt0ACf/C6S75I hdDpYnsi7anKyzov71lK3joEuUBe3kWxD0afs/t7SlQAjcxU1VY1I60KHr0amGt2cA8psReNTuw YmpkMr0spPDP64wArMUgvEvuE68Di4PrcAGM85f3FT/XkX30
 X-Developer-Key: i=srinivas.kandagatla@linaro.org; a=openpgp; fpr=ED6472765AB36EC43B3EF97AD77E3FC0562560D6
 Content-Transfer-Encoding: 8bit
 
-From: Heiko Stuebner <heiko@sntech.de>
+From: Akhil P Oommen <quic_akhilpo@quicinc.com>
 
-The variant works very similar to the rk3588, just with a different
-read-offset and size.
+Document compatible string for the QFPROM on X1E80100 platform.
 
-Signed-off-by: Heiko Stuebner <heiko@sntech.de>
-Tested-by: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
+Signed-off-by: Akhil P Oommen <quic_akhilpo@quicinc.com>
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 ---
- drivers/nvmem/rockchip-otp.c | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+ Documentation/devicetree/bindings/nvmem/qcom,qfprom.yaml | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/nvmem/rockchip-otp.c b/drivers/nvmem/rockchip-otp.c
-index 3edfbfc2d722..d88f12c53242 100644
---- a/drivers/nvmem/rockchip-otp.c
-+++ b/drivers/nvmem/rockchip-otp.c
-@@ -274,6 +274,14 @@ static const struct rockchip_data px30_data = {
- 	.reg_read = px30_otp_read,
- };
+diff --git a/Documentation/devicetree/bindings/nvmem/qcom,qfprom.yaml b/Documentation/devicetree/bindings/nvmem/qcom,qfprom.yaml
+index d37f544ab8aa..a85f817b015d 100644
+--- a/Documentation/devicetree/bindings/nvmem/qcom,qfprom.yaml
++++ b/Documentation/devicetree/bindings/nvmem/qcom,qfprom.yaml
+@@ -50,6 +50,7 @@ properties:
+           - qcom,sm8450-qfprom
+           - qcom,sm8550-qfprom
+           - qcom,sm8650-qfprom
++          - qcom,x1e80100-qfprom
+       - const: qcom,qfprom
  
-+static const struct rockchip_data rk3576_data = {
-+	.size = 0x100,
-+	.read_offset = 0x700,
-+	.clks = px30_otp_clocks,
-+	.num_clks = ARRAY_SIZE(px30_otp_clocks),
-+	.reg_read = rk3588_otp_read,
-+};
-+
- static const char * const rk3588_otp_clocks[] = {
- 	"otp", "apb_pclk", "phy", "arb",
- };
-@@ -295,6 +303,10 @@ static const struct of_device_id rockchip_otp_match[] = {
- 		.compatible = "rockchip,rk3308-otp",
- 		.data = &px30_data,
- 	},
-+	{
-+		.compatible = "rockchip,rk3576-otp",
-+		.data = &rk3576_data,
-+	},
- 	{
- 		.compatible = "rockchip,rk3588-otp",
- 		.data = &rk3588_data,
+   reg:
 -- 
 2.25.1
 
