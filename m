@@ -1,92 +1,88 @@
-Return-Path: <linux-kernel+bounces-553217-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-553218-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E45B0A585CB
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 17:20:10 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F73FA585D0
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 17:27:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2DD2816A2B7
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 16:20:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C7D2D188CA52
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 16:27:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 171121DE8B8;
-	Sun,  9 Mar 2025 16:20:04 +0000 (UTC)
-Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6D031DEFDA;
+	Sun,  9 Mar 2025 16:27:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TLE73B1p"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43CBB1FB3
-	for <linux-kernel@vger.kernel.org>; Sun,  9 Mar 2025 16:20:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 089E31FB3;
+	Sun,  9 Mar 2025 16:27:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741537203; cv=none; b=UE2cSBHmhRjgbC5qk/tDx6KKUsKToJi0kvGxlicYHUSwKkPtTUNACUBxJJQcXXW0z+UCJEAA4hvlmR8/1FF8MaiLKRgZvW9+pLenKlq7MirOspWywTDCBMfYZN82JncUYdw7WXJqx2+PMwnvKyX0IA0DwI5svzx0dBqu3n2vgvg=
+	t=1741537642; cv=none; b=i1qk7LJXHTkXNHwXqyEvlHD7FPjTyFc9t/E3h5pVK2NzmOFRZBnwjibGiD7NbD34oKkMasrrrE12Nsirvz0lRNL4Kd67ZpbtITKj57nht5aHPDFXtjQbydW7pTr/65khWUg5eFc78d4/STmZ3tlad7Abg138o0Aul7oGdhIHxt4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741537203; c=relaxed/simple;
-	bh=UJv+3p818hAynouGODGqPemY4sdL2sg5sl1CQD4WCAY=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=KWnbnTu0IE6EIqF39DPuaz4fbu2Z/ywQK0kNk0BGCfo6SsmdXO3fUvYA96VCaEPjgbGbUrKRBrx8BFA1N/+/7elNb+RzNoX4EwbuvFPgTwnvn3N7mn7vNTFFc/03JXAWC9q/oA/jw3GYzP4+1e5KrFdvFEjl/69M4Mj29JzNsAg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-84cdae60616so285628139f.3
-        for <linux-kernel@vger.kernel.org>; Sun, 09 Mar 2025 09:20:02 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741537201; x=1742142001;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=kvHzXY7sxLiJE9tWVn3P+7dA0tfrkLHjWoYFez7ztlI=;
-        b=UfYBXorZrw/MJBaFiZKHge1O3LItK2bVrmm0Z3EDXidDFh/S0bdIl1gGUuMDO5XS/7
-         EemaTN63oX+rfY0nZcWB97FDUKMsuIwqdg+wHGlxI3buBPHRHplBVFyj6v8cNjoxqouX
-         LfU20JUEpNOMA5Dt6f4ptHBcvNSUMt3XUrDCubO7MEwqf6hz3YbmYMYKrk7h9PIbScfJ
-         2QELe7WVUSJ+LUGOnghV26fMrmRW3TWojulmgTdBVIUWWYv2CTL/XNWggoBLME0K9xM+
-         lh1lAnUOkeCxvECttuny1UsehjAvLAUvLyud0yT0HOxzmQyvDXMkHfD2Zj51rL79K984
-         gq1g==
-X-Forwarded-Encrypted: i=1; AJvYcCXA6jbH+OG3jSepcHNi9a/PJ1Xe0ydLILhwC17ty+IID5dLjww7MRJavz+3CQdULp8xMPavcSWQuO3+7Ng=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzeWfeEShkevexIvqrjqv3tz6QJxNfyaOJr/I6yRp3uvBv077ym
-	+atvnO3Vy7vXoTie2qHcriNNAmvbn6cxCDo4QbBpAnnwzayHNApAUSJsWesMsW1i1hlvyFAubAN
-	wS79AcOkJhgScwuy2NTd16khDC4sZ8iyF4InBXbt/+huwiGA6GvtDqLU=
-X-Google-Smtp-Source: AGHT+IGzBV6/Mmw1jYJbp4k4xeAwt6EP5l8CLTLHNIXSvmWfgnNG3Eq5hlJ73B1hltOvdNhKNoHGM4Vwa3Q3wdVte9AmRIZsV4VY
+	s=arc-20240116; t=1741537642; c=relaxed/simple;
+	bh=8e/5ur58bSJgjkeEWsX6y+bon511MWJmlit6ItFUr44=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=En0wJOyaz/Cfsv2VpIIllkso7pHcgdMLJ2xorFA+HrFkFFXljo3PCLh0rs8j7IkTXhX1A7bXMQjscyzmeeq+wgRDbLaBbkR6BfOSAu5KemWXgsgEkpnlVbxzsFuM54XVugDLFFwMJqti1Mc8IQZeeoXAQAbeSa2v2MrbqMJ4ki4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TLE73B1p; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CD451C4CEE3;
+	Sun,  9 Mar 2025 16:27:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741537641;
+	bh=8e/5ur58bSJgjkeEWsX6y+bon511MWJmlit6ItFUr44=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=TLE73B1pWA7tLK0ZFvJAd6SZQ0+zb8v7ZZHS+pdowbvX5g8M7qwMBUvVPGlOMtSld
+	 CjAvEU7VkvuZMQ3ufQM9+PELBDa007eVxDCfgJNpQa1+dpIc5WwxjWowcbAiMjZaHH
+	 CK+GuQ5wvLrTl8CYS93+UZ9LJD6GkoCb6B9jYyv5wFhXNVnGUgall9PMnsJF/vgdOq
+	 S1uiGU6HxzseHnYtTAlpMVGaxIJnOlAN/91pldT4SbCQX4AQMVICnyfftg2QL6tUt7
+	 LxS1CIECknIaPNsDLm3lLCd6ZSB7Xcbk38x3K+AGF4R7qb9nBreCt6ppPYIYhSLQ+r
+	 2Mt246D1SOFgQ==
+Date: Sun, 9 Mar 2025 16:27:16 +0000
+From: Jonathan Cameron <jic23@kernel.org>
+To: Siddharth Menon <simeddon@gmail.com>
+Cc: linux-iio@vger.kernel.org, marcelo.schmitt1@gmail.com,
+ gregkh@linuxfoundation.org, lars@metafoo.de, Michael.Hennerich@analog.com,
+ linux-kernel@vger.kernel.org, linux-staging@lists.linux.dev
+Subject: Re: [PATCH 0/2] iio: accel: adis16203: cleanup and standardization
+Message-ID: <20250309162716.753286c2@jic23-huawei>
+In-Reply-To: <CAGd6pzO492FA4bijFgkGvusrbqo2mkT=kpkY150Xg-nMfHrpZw@mail.gmail.com>
+References: <20250305155712.49833-2-simeddon@gmail.com>
+	<20250308144357.20f24fa6@jic23-huawei>
+	<20250308144944.668d79b5@jic23-huawei>
+	<CAGd6pzO492FA4bijFgkGvusrbqo2mkT=kpkY150Xg-nMfHrpZw@mail.gmail.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.48; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:240b:b0:3d3:fbae:3978 with SMTP id
- e9e14a558f8ab-3d4418ed8e7mr107345105ab.9.1741537201441; Sun, 09 Mar 2025
- 09:20:01 -0700 (PDT)
-Date: Sun, 09 Mar 2025 09:20:01 -0700
-In-Reply-To: <CAOQ4uxj49ndz2oJcQMhZcXTAJ+_atUULNLPzLAw-BLzEdFwV+A@mail.gmail.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67cdbfb1.050a0220.3d01d1.0000.GAE@google.com>
-Subject: Re: [syzbot] [xfs?] WARNING in fsnotify_file_area_perm
-From: syzbot <syzbot+7229071b47908b19d5b7@syzkaller.appspotmail.com>
-To: akpm@linux-foundation.org, amir73il@gmail.com, axboe@kernel.dk, 
-	brauner@kernel.org, cem@kernel.org, chandan.babu@oracle.com, 
-	djwong@kernel.org, jack@suse.cz, josef@toxicpanda.com, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-mm@kvack.org, linux-xfs@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-Hello,
+On Sun, 9 Mar 2025 11:18:18 +0530
+Siddharth Menon <simeddon@gmail.com> wrote:
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+> On Sat, 8 Mar 2025 at 20:19, Jonathan Cameron <jic23@kernel.org> wrote:
+> > =20
+> > > I'm not going to apply these because I think you correct
+> > > identified that the device support should just be added
+> > > to the adis16201 driver and this one dropped.
+> > > Good thing you were more awake on this than me ;)
+> > > =20
+> > Sorry - wrong person. =20
+>=20
+> Well, I=E2=80=99ll assume these won't be getting applied.
 
-Reported-by: syzbot+7229071b47908b19d5b7@syzkaller.appspotmail.com
-Tested-by: syzbot+7229071b47908b19d5b7@syzkaller.appspotmail.com
+Yes, sorry you wasted your time on this!
 
-Tested on:
+Jonathan
 
-commit:         b63f532f fsnotify: avoid pre-content events when fault..
-git tree:       https://github.com/amir73il/linux fsnotify-mmap
-console output: https://syzkaller.appspot.com/x/log.txt?x=11fd1fa0580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=afb3000d0159783f
-dashboard link: https://syzkaller.appspot.com/bug?extid=7229071b47908b19d5b7
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-userspace arch: arm64
+>=20
+> Siddharth Menon
+>=20
 
-Note: no patches were applied.
-Note: testing is done by a robot and is best-effort only.
 
