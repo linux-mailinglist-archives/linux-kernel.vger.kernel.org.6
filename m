@@ -1,140 +1,128 @@
-Return-Path: <linux-kernel+bounces-553256-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-553257-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D3E25A5866A
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 18:46:00 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E326A5866B
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 18:47:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A7B473A9DAC
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 17:45:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 28300188623F
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 17:47:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 490CF1EF36D;
-	Sun,  9 Mar 2025 17:45:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 970FD1EF364;
+	Sun,  9 Mar 2025 17:47:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HB9QplTG"
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="U4gtr/9v"
+Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23123F4F1;
-	Sun,  9 Mar 2025 17:45:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C31F1F4F1;
+	Sun,  9 Mar 2025 17:47:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741542351; cv=none; b=PhyHle9YucD2x8BdM0DIVbE/e/YjKakL+QAnwlHPKNIIZ98O7jgkC2HF3FjnWHdpEELG83mjrnSO8EBQi9bc1e4f0XiFB60yd5oZV7gnClWmjOK70okTR7nH2VP05c3T8/CmdJo4IuMgDQDqOCHiRBEU13O+f1jfkJmSblBSjHo=
+	t=1741542440; cv=none; b=FM/wFHEBJmrkPRWXb+WLFxvWXTEUErWhq0yFxiIf3g3iIu/auvpCAS9He52GIBloulNN/mb+s9oYEMO++qel+VkOl07gLXqY37Es0RRbsb7BbZse2p7sKONK7GDbXUSTVPnIcD0LhVr0E0YFjEvdci6DHZMzr0TaeZKjKx4J3JA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741542351; c=relaxed/simple;
-	bh=Ts4nRRhjYyME+pC7r6xMDOAjdA6nK3OzbkGfMevUYTw=;
-	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZVZO8P1b1yU5/Yf3n7zMAgRmi5i/fO02xD39GmGiLJWNZlkJU++lkvibWfJaG3JkxB6TyOlOPw8Z0gbQ2dcw9y/vV5YWCSRLFftSLpvvHZO43IO00ZyG33SDwr7bnEjGnwVCcxypd1EgxRyG2Gbf0itrpJTBM991md+jx3KD9D0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HB9QplTG; arc=none smtp.client-ip=209.85.128.43
+	s=arc-20240116; t=1741542440; c=relaxed/simple;
+	bh=HfqB+ra69dPFuR3ZyPW+9h+o/dVuinOJtECSahu2qbk=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=bwLtMLnRnXmXrI28KYp4OYBIXtSKwSjOK0n/JmJI8+AM/4Tyr0RIpti4nEKC7fdGUnl/whqEOktivagoesCvfOLl2bWcJv30bYxRb+0+i0NOTDEGOh8oo00A6u/hTJVMz+US2YF5xqYvREmG7U9GnQh6pVSVpSJyBL+c/O6k4ck=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=U4gtr/9v; arc=none smtp.client-ip=209.85.214.174
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-438a39e659cso19444745e9.2;
-        Sun, 09 Mar 2025 10:45:49 -0700 (PDT)
+Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-225477548e1so15582865ad.0;
+        Sun, 09 Mar 2025 10:47:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741542348; x=1742147148; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:subject:cc
-         :to:from:date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=mYVeDPxjhFeZxy0KwWJDY/eKgxnMZAxnPE/IYVsYVHI=;
-        b=HB9QplTGsXH27nqPQ8Y5IY1YVylqDo24WCnOWLL6CF61OwAge7VCx5eHJa9o2R0XNf
-         K2D0ip4rlJCyOok39f+De/KlTNpBQ2c1MMOEuQpQRulxIGMzjkTEmRfHP1ups+lqA3xN
-         p+hJi3yOgRPPYIRziU7D08N7+IFRcmjqMGnnPPLSskQnZed9KfIwmmpAC1ZfBXrkJzHt
-         i7GoeV9uPq5aSYckQgCMcw0kTbS7vptCRjHhrz04SP0Olb638PmZKa7twPMZoXOnFRX2
-         kylaFSWfFh9rSi2g4/nZiXvzoe+SNwFEI2OK0qmEIFhx8S7P4L/jhgi72HnGf22dsNjZ
-         Oa6A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741542348; x=1742147148;
-        h=in-reply-to:content-disposition:mime-version:references:subject:cc
-         :to:from:date:message-id:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1741542437; x=1742147237; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=mYVeDPxjhFeZxy0KwWJDY/eKgxnMZAxnPE/IYVsYVHI=;
-        b=jW42SiZvW0InLg0oklmsmotbFyWe60Qu2ThZVso1w/OvqfrnldLyVeC6M55W5Y29R5
-         /YCFXIvRHXjX6pe03eLOaokz72Xpa2sn4YogvhiJjV0OHCpvI8EWAau6gL1gdrzhXsZ8
-         mgtL7+nO1Q8VThnE2L/vGaXsscpObUmgCZ8wzQuXfcmlT7xzLy8isJI9PXYOgnbEWX41
-         nDskVf5YhnCwV2h10m4EO74kTsFh/H5INucRG36viUJA5cPIuW5DQ+MbA3CL+oc3jLjl
-         4FYnhxHDfhcAnwTSZRhqmFTpfkAhRfAxhWMs1BE4van6fbgcZwa10zb8P4zcSmPwKefH
-         SKmQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU58qDcWrPK2+uieHm3XlEtvTOEbhkgoPM9du7sZ5Yc36bRU1J6Pg/kZXtNc2sKRL6LcRDkTifuvOLs@vger.kernel.org, AJvYcCVxcUaLujUf8qStb84mXBM9Y1DMZu6ATWR1Krz5DHLq5qJ3C6qqgoJ8SHDng8m2weEfcItjcC/D@vger.kernel.org, AJvYcCWGQIkfeo4UCJ4puEGb5j5fIwdJx1kMKUZbaFvR0IyheH+3/G7roWfsQ9aaLLUE+gMnEbxKYHFowk9ap5fz@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy6xlS0h70L9kL1edJajXjSr/t870M+wFttlU11aw1bHboZlOzf
-	WgPsgMcxstZOtUsaWHTK8KLOlq2K5wXlRlpqTd2y9UFe7DKt5ik9
-X-Gm-Gg: ASbGncsjP/cPyvD1V9svx0gRQZ5hZ2EFHj6igfNWV1ee3GILxX4i+Nz9kKNnCbw2i7A
-	JhmQ61LKOVQ7Unci0jIXo3peMiB2KxieZPVM0oBMez6LclR/5KC/8LlZa5swknktHE2bCi4zlpG
-	pipynWD2R6EmWAx2PayXtRlfU0WBG+dGwEZKlucYWfWdNaMFlpzy1aSg3YVoD4J+IFeIf4PY39K
-	UIUydt5xk48xLiARsBfemdqjgcsi6SJukulDF4CiWiMTfz6lB5mXFVcDVvUpmHOufuGFncw0P9f
-	eLkiDmEBQ8i5JSIyU0k0VY8jxKt2QF+onAdwG0UkUe6zdwtEGyUOxzMd3C3OvfYExJObZ0181xt
-	Z
-X-Google-Smtp-Source: AGHT+IGp7jEKMgtsCA2TGbrvYbtqFa4WUNvO5evZDxVuTRVZ2MCZ3kALyJRYRl99L7jGJPY9VOa7nA==
-X-Received: by 2002:a5d:64ce:0:b0:391:3bba:7f18 with SMTP id ffacd0b85a97d-3913bba8128mr2360645f8f.12.1741542346719;
-        Sun, 09 Mar 2025 10:45:46 -0700 (PDT)
-Received: from Ansuel-XPS. (93-34-90-129.ip49.fastwebnet.it. [93.34.90.129])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3912c102e01sm12708957f8f.93.2025.03.09.10.45.44
+        bh=JW0Ijt8WDfro2KH1U/Yil1BXF8JyA3zRUqtElft2AgE=;
+        b=U4gtr/9v5kgj3cdMEhvRn6bDnaEXP9lrwBRQB56kuJeoSY4BX4Wj/BQYtE+5PDm9Gv
+         5q4b5brOoe+sJNtQXp68AOcYj8P1mRTJHgO1ZaLfpBRDcjmMfTQyL4z6lb90TiG/179w
+         x++secvU+5aQhhSY/hsFlncVA91v/IImZ4WGXShpYO8d7qNJX9Iz4CKVVkCBmCtb8Y7g
+         1ZIq/uXjpnhF7Cg91Qie/y5daWvrpMup1iFwodN3ja7rO09RHwBMeXj9V0tvlMC2k9em
+         qlFRNPWM0kl+7rajVMFO5DoiWp3hrYX10ZSyOqLGoeCn9M495bSnNsgQVJvDugwAPT/q
+         JbiA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741542437; x=1742147237;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=JW0Ijt8WDfro2KH1U/Yil1BXF8JyA3zRUqtElft2AgE=;
+        b=jC9UedmHiq3d9S1i3j8kjsdiCCWRuj9Vrc39fKvbu8rUodybA5E1XGmlOTPy+R9Bgz
+         lEBV0kZ5H6A/XrfsFD0BqAOz2Cua8cNGDH4wPC+HgRj0YXaI0qXzHlZ8txWg0KKKUEGB
+         mibVINChwiKfresgoD4Lu7FCPaed7Ha+nXEvb3pBXpMstlHSNymzmRsFZmFnj+EINQ2L
+         OVSrG9uKBXKsQBdr1XYcIWpH8VcqD114orvJdV6WaDieYLKDouyCY18jYJXiFhIma+Dm
+         ETSxeL4kHv1B02/Ygk/R2bkJB+daXOh+zIAUncqO/WJToAKfO828QTaSFrCCse8M+Fbu
+         svug==
+X-Forwarded-Encrypted: i=1; AJvYcCU/nzZ9fuq/EAwhzsuz8bs7QNrNYUXqCgFniVlYPPnIIDQFXpawumchKypoirow5btpowcoSxO5Wswapz6mIOo=@vger.kernel.org, AJvYcCW3wn4pPLXNxm/yUee1Nn13bMfoJz0M/IMoul0TdplW7DnfzcgLMcdk+4OPQ4j5+s1BGjJ10Ka10GjkK5E=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwU/suzOLoPjrsMiwIJLKckbfx3YH2wtmpibO9Greb88vUHhjmz
+	ly7JIaviYSM/4pMz5crOJVRLmfKi6UBz9QkUvxUI6Ze5WR6xnoEp
+X-Gm-Gg: ASbGncvdhNxEjaT+CbGW9E7quIQ26ikSghD9nAkWLvHyARaIXNh0X1IET/sTnV9Dd+j
+	Pn3TmJsgRHH/Jh+TtekPMYpmJYfw9g0uCWiIBe52rNVBy9tPN1H9wJ1AClgQImFEcFTc5qXEyiF
+	wBQKl24MrpeznjGgyFDtnwDrkPVnWgUOLxRg3W+JCloZmuyN+gWjcXaijdBCu62HjHu8yxPFWKB
+	hazVOyaftjY2W2gWUnh0hwOrKjxb2abCosm7ebaW4OUaMAMXsnIcVsUNC0gbtVKLv23nW/cy6fh
+	jMblXeElKFkV45QrgmOF18/Q68aGfSB0bAyUTjEngR70RDhAjw6a
+X-Google-Smtp-Source: AGHT+IHxEAcPqGX8pdSGz4HO3VaYjHB80YV0+hGS1utKqObvUBBpG8rAuDg49C1i9Tu/LjKgKu460A==
+X-Received: by 2002:a05:6a00:2d90:b0:736:a694:1a0c with SMTP id d2e1a72fcca58-736aab1677bmr17551539b3a.21.1741542436821;
+        Sun, 09 Mar 2025 10:47:16 -0700 (PDT)
+Received: from linuxsimoes.. ([187.120.156.44])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-736bd615191sm3210335b3a.128.2025.03.09.10.47.09
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 09 Mar 2025 10:45:45 -0700 (PDT)
-Message-ID: <67cdd3c9.df0a0220.1c827e.b244@mx.google.com>
-X-Google-Original-Message-ID: <Z83TxxTXxVGMYZzu@Ansuel-XPS.>
-Date: Sun, 9 Mar 2025 18:45:43 +0100
-From: Christian Marangi <ansuelsmth@gmail.com>
-To: "Russell King (Oracle)" <linux@armlinux.org.uk>
-Cc: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Vladimir Oltean <olteanv@gmail.com>,
-	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Maxime Chevallier <maxime.chevallier@bootlin.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org, netdev@vger.kernel.org,
-	upstream@airoha.com
-Subject: Re: [net-next PATCH v12 07/13] net: mdio: regmap: add support for
- multiple valid addr
-References: <20250309172717.9067-1-ansuelsmth@gmail.com>
- <20250309172717.9067-8-ansuelsmth@gmail.com>
- <Z83RsW1_bzoEWheo@shell.armlinux.org.uk>
+        Sun, 09 Mar 2025 10:47:16 -0700 (PDT)
+From: Guilherme Giacomo Simoes <trintaeoitogc@gmail.com>
+To: daniel@sedlak.dev
+Cc: a.hindborg@kernel.org,
+	alex.gaynor@gmail.com,
+	aliceryhl@google.com,
+	apw@canonical.com,
+	arnd@arndb.de,
+	aswinunni01@gmail.com,
+	axboe@kernel.dk,
+	benno.lossin@proton.me,
+	bhelgaas@google.com,
+	bjorn3_gh@protonmail.com,
+	boqun.feng@gmail.com,
+	charmitro@posteo.net,
+	dakr@kernel.org,
+	dwaipayanray1@gmail.com,
+	ethan.twardy@gmail.com,
+	fujita.tomonori@gmail.com,
+	gary@garyguo.net,
+	gregkh@linuxfoundation.org,
+	joe@perches.com,
+	linux-kernel@vger.kernel.org,
+	lukas.bulwahn@gmail.com,
+	ojeda@kernel.org,
+	pbonzini@redhat.com,
+	rust-for-linux@vger.kernel.org,
+	tmgross@umich.edu,
+	trintaeoitogc@gmail.com,
+	walmeida@microsoft.com
+Subject: Re: [PATCH V7 2/2] checkpatch: check format of Vec<String> in modules
+Date: Sun,  9 Mar 2025 14:47:02 -0300
+Message-Id: <20250309174702.844914-1-trintaeoitogc@gmail.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <d2fe8cfc-df97-4947-bcbc-7d43b5c24ecc@sedlak.dev>
+References: <d2fe8cfc-df97-4947-bcbc-7d43b5c24ecc@sedlak.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z83RsW1_bzoEWheo@shell.armlinux.org.uk>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Sun, Mar 09, 2025 at 05:36:49PM +0000, Russell King (Oracle) wrote:
-> On Sun, Mar 09, 2025 at 06:26:52PM +0100, Christian Marangi wrote:
-> > +/* If a non empty valid_addr_mask is passed, PHY address and
-> > + * read/write register are encoded in the regmap register
-> > + * by placing the register in the first 16 bits and the PHY address
-> > + * right after.
-> > + */
-> > +#define MDIO_REGMAP_PHY_ADDR		GENMASK(20, 16)
-> > +#define MDIO_REGMAP_PHY_REG		GENMASK(15, 0)
-> 
-> Clause 45 PHYs have 5 bits of PHY address, then 5 bits of mmd address,
-> and then 16 bits of register address - significant in that order. Can
-> we adjust the mask for the PHY address later to add the MMD between
-> the PHY address and register number?
->
+Daniel Sedlak <daniel@sedlak.dev> wrote:
+> ThanksSmall grammar nit. "Prefer to declare…"
+Okay, I will fix this and send a v9
 
-Honestly to future proof this, I think a good idea might be to add
-helper to encode these info and use Clause 45 format even for C22.
-Maybe we can use an extra bit to signal if the format is C22 or C45.
+> Small grammar nit. Shouldn't this be rather: "Prefer to align 
+> parameters" or "Prefer aligned parameters"?
+"Prefere aligned parameters" seems better to me
 
-BIT(26) 0: C22 1:C45
-GENMASK(25, 21) PHY ADDR
-GENMASK(20, 16) MMD ADDR
-GENMASK(15, 0) REG
-
-What do you think?
-
--- 
-	Ansuel
+Thanks,
+Guilherme
 
