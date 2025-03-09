@@ -1,79 +1,80 @@
-Return-Path: <linux-kernel+bounces-552896-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-552897-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2ACEA5809B
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 06:14:01 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3A5A8A5809E
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 06:14:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C890D16AFE0
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1D7B83ADD7A
 	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 05:14:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A066313EFE3;
-	Sun,  9 Mar 2025 05:13:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF7181547FF;
+	Sun,  9 Mar 2025 05:13:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ebt6D/eF"
-Received: from mail-yw1-f173.google.com (mail-yw1-f173.google.com [209.85.128.173])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fQjfopDM"
+Received: from mail-yw1-f180.google.com (mail-yw1-f180.google.com [209.85.128.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78C94347B4;
-	Sun,  9 Mar 2025 05:13:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7373145A18;
+	Sun,  9 Mar 2025 05:13:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741497234; cv=none; b=rAYlKpBQJnIsSqI676E8PiB6JtvbfgYdMMZ7A8ZdtW0usRJTXpeP2wbjzWaywyzNlkHqchoxIQXLvO2LbkFfDjp1AuLqfARuig/rTYHgNgWKU5N2nJ3mCAGvuQ3aaMvuzmQJiNdW3ouwhFxEIIeLN9eaug75RYooEOfWrAQ5ULI=
+	t=1741497236; cv=none; b=V8q6DjmhZ8Fqwa1IUr3bfYPEjbd2FeA0aCz1AiqhlgtQrjWhhuCwno6zkhDR1215C5wLv/fdHF6vCVkC/Jetwu3z7gwK84bkiZLws/TVa9BStnCLUkDULkBLRK5VULiJcE1ujfzdUSbUkGCmRf+C5UpKuTa873vydyFaJGTTsFw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741497234; c=relaxed/simple;
-	bh=P+vZtA3HhV5tsZzaez4Fwli02DW+nObRXpoeW+8tkBM=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=LCtOtfEPKwzEgQnMVadXWS05mBIeOUU4EZpqR+Nmc5XGVb/mS1690bplOJ3H4tTnLRBtidge1siYRPkGPNc49P4totpsxno3fzUsOm4jW4bnJfIS8+sUnZUOVwq1GITMnFkDizq7dkzhhh+GjCNc+H7XjEGsu1HLs0k5Ke4P6VM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ebt6D/eF; arc=none smtp.client-ip=209.85.128.173
+	s=arc-20240116; t=1741497236; c=relaxed/simple;
+	bh=dAjiu/yWwvAspPsxJlkw4RUfA7t93gSnJV9SzsY9+8w=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=O7i49L1r/hlHmis9WAYg8i7KRkQFEtSPg++zxPlS7l0nH0CQoyQSKogOQsKAo98Yptp12f2j8P1AzJPb/Y0nQ2pMgK7qsJKC1WpBelb//gWYi6eZ2Aq4DOo1Ih4rZExfeKyDk8rzNIuYnBTi1vw6YXmo5bdp0YjEdVL9+StCmA8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fQjfopDM; arc=none smtp.client-ip=209.85.128.180
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f173.google.com with SMTP id 00721157ae682-6f47ed1f40dso24222127b3.1;
-        Sat, 08 Mar 2025 21:13:52 -0800 (PST)
+Received: by mail-yw1-f180.google.com with SMTP id 00721157ae682-6febbd3b75cso23320137b3.0;
+        Sat, 08 Mar 2025 21:13:54 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741497231; x=1742102031; darn=vger.kernel.org;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=CK1cxf14FFn9JPBzBDVf0xP/aDOa6U25KDBn97pLSso=;
-        b=Ebt6D/eF2PhmAF+/jntqnEdPf81Qx0rwatDjnH/qGWHOnHy/fKHIoxv5kWw48ffCdu
-         25u7o7ytiua/EDeTr7yqRLl0eu80059Ve7wK6z8galBnsLyR5M7EZhynHKa+/9u7kSU/
-         3MbIOXNoARuhOjuThgbhmsyRSZuHceBtHaqkgmCtLlIjLi4kvUCt6bGUkYpgafb9YpfL
-         6KkJm1UiX1c0p/B7yvl0xr484q9DNMG2ecSv23tP6mxQy1hGwUQXCo5Rpf+GONhotA1V
-         pKMsLw+6lfXftc2Hu59QRie+hGFCA0SzLuTaNWZQu4akgs5Q5kHl4xro6m7bufO1O6UC
-         YjeA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741497231; x=1742102031;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=gmail.com; s=20230601; t=1741497233; x=1742102033; darn=vger.kernel.org;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=CK1cxf14FFn9JPBzBDVf0xP/aDOa6U25KDBn97pLSso=;
-        b=C3bYZSRnKQ/jkd6hQ1cO84k6tUQQr06Kw6y9N3HOyOrZdoqAndF9e1C21FRmwP7xEw
-         OjXE+APxWyCIdK4vaL5ZbDL0c+q4zYaoO1UvWcsHwVWxIOWQtmCk5U2ZmIZ6VZ4VarQx
-         BP67u5Wejm85VAbCcr5AkcuQUni4VabD4qunHbz0wdidum6Yo7Pntm+LtmE++5SQbH0f
-         wR5DHaR9HVqewYQ95QZ/y29E9Dzh10Dp+Nk3MsPqyexUN+rOI4eILvDsBfb8ef33aVmO
-         fN6uO5RythXIuo+ffDOBGvbyH+eTjWXY8f/UI7Hj81QdUpusmSpMBM6ipi3rpjNbrvSm
-         Kkmg==
-X-Forwarded-Encrypted: i=1; AJvYcCXAQlh9djUxyiTVV4AoIWvbAgV6hwv+hhl3lemUKntippX94rh0xNCleTEvc25+RIPpD/xEjAf2YCTvyAQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyOB98NorTsBU4zXZnSpbHBX+TWbOyM3+SPhG87diLMNJFQRkNq
-	doUKW/lXIZCa1Fha0PitPRaPVwGoQVsZ3QizajLOboqCPHYP+Rrs
-X-Gm-Gg: ASbGncvvcCA2QR1wLxFtZEmQ6N+MFUWi8XvKtz2lKuHNubSEGlA0gP322fTffUGZc9J
-	8OTjTMU11Wb9GIC0lLWOMLskBLM7nLpdnWyu0JMtAB0RInphTM3ANwawTzmf/0y7qYyrPul3Wcg
-	EAQX+cRb2mOPKaYkhleHfL7oiyLV4zZwUvxeit5AB0Q8rQcazHpCKCyBJys1cFQFyli63zeqpzA
-	mm4VyJt56mzLjQ6b4twe3PX7Au9cxnVl4vib4GR4jQxGRCHfqe5o/orUTF7VqLWW0+BaQVGb3h/
-	NZs+mkZBw9kvnpJK99B4TBGWNKGHv1/JB3R4OH47RCtSGQ==
-X-Google-Smtp-Source: AGHT+IFchlBvxUpvbNSRW7QGcdcS/9kltouLO1RXp76mD1YDjdyaSWUTZtC+t7/W80lWexuKkq9lTg==
-X-Received: by 2002:a05:690c:7207:b0:6f6:d405:7010 with SMTP id 00721157ae682-6febf39bb73mr126654507b3.29.1741497231247;
-        Sat, 08 Mar 2025 21:13:51 -0800 (PST)
+        bh=cclqe9iQWV2U0fDaf7eY7iycznFLnFRbLLgatWO9y0I=;
+        b=fQjfopDM17w8O+0vlVfRNBC7533b7EGjl7frGP91DvkVB3pePratQ+4YeQ36NM8N6o
+         piidOUSqy3qVi/yGiilSqxTKQvxmczFQEp0g8Qn2dPItay+IgibGcmdwmVB/vC3uc6Cx
+         Yit/ceSWc9QEjIE7wYhODa277lr3SJ29yEVwRk0s0DHjFOPsKrgE/kGsnyD6E8SNceiq
+         OPp/27/W+iTnnKTgc5OxufYBo7OBVc7LTziwaIlPx/Yw0d2zD2hZzSLtA91Q0+aj01f1
+         Q1SzI/VTrhjQpuX4EMsBmAqqTiBbFwGWO6pW2xyK5k7tSogj2tqNqUsnLVkds86CvT9C
+         I05w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741497233; x=1742102033;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=cclqe9iQWV2U0fDaf7eY7iycznFLnFRbLLgatWO9y0I=;
+        b=beytTRq0UlgjHwanAQyC5fL8HVYw5H6KpVaVX8wudetAwKaWQUdeJZLyZ1VdTTFxH5
+         7ddPcO004uNUg5p9Z8gFE0TFg9QWy39zdQ1CB8RAaLJt0Q+ZobMSxfEKYbptkEvYWxqf
+         4sdTo4Xa9t25cqRhQK0F1SH9YHWodM7AqQAZQN/ylswHWWfJKR6qNC7e4+H+fXIQ3xaV
+         AldIdMYOfiFc/7NOthVsCibrSZgVyDV3clYMqvAKOaKrFw453kmpO/WY3kgfPdvMktLg
+         /yTF5tUY4StyXdGC5dLdWJ8X2mdjsQU2nH/bs54gMDuZVq8umY4MlFc0hHAmNKhdwfQ/
+         GF6Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXotrimmjB//Plk1F+R/qk5LfJhThHG9HEXzIg64bm2P6ursd62KJwYsr6FXakjr7F2GmtHrhQwk6+gYvs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzRhJ3DFbBV8iManL+Ze7uJXMQwnGplsOv0FwxMAUbH99AJFJgT
+	nYPrBcnvc7LMcibp5t7TkyfDVCF7zToOmC58L2g5nWb/BPqKf0ErMoFfCDKS
+X-Gm-Gg: ASbGnctWMjtiRGZ1GEq7godzcdOA8nLf0AswFiPobK+as8uDz9DM15msuAtwmo1qeQM
+	KMQFNXrxAu+i3RkGH9NTwVqYEDURCgdBi2j4ohGFkkjvAD847QCUXOT4pSnbqC4qKPtp8yj0Ldi
+	2N2nIKT8wYxhOEhfrFSmVFpfpir44D79xuYIw99gyHBQsKTCj5Nki8miN2Gvf6E1z7yTczbx7VX
+	zJUUE0wbUqyMaL6xB+dSU+YOj4yCLTbtIgJZXJKqfz3sYU+JAG2Kt96Y7C8oW5ztWfUGMkRbE1F
+	Ti+akrSpCUvVkfxWBZI4LzW21qYjzPgLgEzvKwgdLMAQ5w==
+X-Google-Smtp-Source: AGHT+IF57dBxKvLHhrEFhZKjQKB1oJd7fiNJroHfSoxnvsFKpmpOMAWjypEIkqCa2PY4iisS0uyhcg==
+X-Received: by 2002:a05:690c:2e03:b0:6fb:9c08:496d with SMTP id 00721157ae682-6febf3c2cbcmr99636317b3.30.1741497233570;
+        Sat, 08 Mar 2025 21:13:53 -0800 (PST)
 Received: from [192.168.100.70] ([2800:bf0:82:3d2:9e61:1a62:1a8c:3e62])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-6feb2a1bfc5sm15232747b3.24.2025.03.08.21.13.48
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-6feb2a1bfc5sm15232747b3.24.2025.03.08.21.13.51
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 08 Mar 2025 21:13:50 -0800 (PST)
+        Sat, 08 Mar 2025 21:13:52 -0800 (PST)
 From: Kurt Borja <kuurtb@gmail.com>
-Subject: [PATCH RFC v2 0/2] platform/x86: alienware-wmi-wmax: Extend
- support to many devices
-Date: Sun, 09 Mar 2025 00:13:39 -0500
-Message-Id: <20250309-awcc-uid-v2-0-5338c6380b2f@gmail.com>
+Date: Sun, 09 Mar 2025 00:13:40 -0500
+Subject: [PATCH RFC v2 1/2] platform/x86: wmi: Add
+ wmidev_get_acpi_device_uid()
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,82 +83,83 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAIMjzWcC/2WPy07DMBBFfyXyGqOJE7+yQkLiA9iiLvwYNyM1D
- dhpCqry75gUsWF5Z0bnzL2xgpmwsKG5sYwrFZrPNYiHhoXRnY/IKdbMBAgJHRjuriHwC0WuMID
- yXkgtIqvn7xkTfe6oN/b68swO92HGj0vFLr+bP2qV3JmSj9eJJ+2jbS0IL/Ww9j9E7wryME8TL
- UODUqPzKJKHvrcSUKUUE0JroDM1912sD3m9a0cqy5y/9lZru3v/F1hbDlx1CowV0Xgrn46To9N
- jNbLDtm3fbRky7BwBAAA=
-X-Change-ID: 20250308-awcc-uid-6ec06bb2572d
+Message-Id: <20250309-awcc-uid-v2-1-5338c6380b2f@gmail.com>
+References: <20250309-awcc-uid-v2-0-5338c6380b2f@gmail.com>
+In-Reply-To: <20250309-awcc-uid-v2-0-5338c6380b2f@gmail.com>
 To: Armin Wolf <W_Armin@gmx.de>, Hans de Goede <hdegoede@redhat.com>, 
  =?utf-8?q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
 Cc: platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org, 
  Dell.Client.Kernel@dell.com, Kurt Borja <kuurtb@gmail.com>
 X-Mailer: b4 0.14.2
 
-Hi all,
-
-After a few months of searching for acpidumps of elegible laptops, I
-came to the conclusion that if I continue this way, many devices will
-never get support for this interface. This is due to very few users
-uploading acpidumps of their machines or contacting me of that matter.
-
-With this patchset, hopefully all (or almost all) elegible devices will
-get support.
-
-I'm submitting this as an RFC because I'm extending the WMI API and also
-extending support to many unknown laptops models.
-
-This depends on
-
-	platform/x86: alienware-wmi-wmax: HWMON support + DebugFS + Improvements 
-
-series, because I made a few generalizations there that work even for
-Alienware desktops.
-
-I sent a v2 right away because I made some silly mistakes. Sorry for the
-noise.
+Add a non-deprecated version of wmi_get_acpi_device_uid().
 
 Signed-off-by: Kurt Borja <kuurtb@gmail.com>
 ---
-Changes in v2:
+ drivers/platform/x86/wmi.c | 20 +++++++++++++++++---
+ include/linux/wmi.h        |  2 ++
+ 2 files changed, 19 insertions(+), 3 deletions(-)
 
-[1/2]
-  - Add kernel-doc to wmidev_get_acpi_device_uid()
+diff --git a/drivers/platform/x86/wmi.c b/drivers/platform/x86/wmi.c
+index e46453750d5f1475eb87342b1c5fd04fe20df335..39f379777ad08efd3cda7313f293522c68773dbe 100644
+--- a/drivers/platform/x86/wmi.c
++++ b/drivers/platform/x86/wmi.c
+@@ -636,7 +636,6 @@ EXPORT_SYMBOL_GPL(wmi_has_guid);
+  */
+ char *wmi_get_acpi_device_uid(const char *guid_string)
+ {
+-	struct wmi_block *wblock;
+ 	struct wmi_device *wdev;
+ 	char *uid;
+ 
+@@ -644,8 +643,7 @@ char *wmi_get_acpi_device_uid(const char *guid_string)
+ 	if (IS_ERR(wdev))
+ 		return NULL;
+ 
+-	wblock = container_of(wdev, struct wmi_block, dev);
+-	uid = acpi_device_uid(wblock->acpi_device);
++	uid = wmidev_get_acpi_device_uid(wdev);
+ 
+ 	wmi_device_put(wdev);
+ 
+@@ -653,6 +651,22 @@ char *wmi_get_acpi_device_uid(const char *guid_string)
+ }
+ EXPORT_SYMBOL_GPL(wmi_get_acpi_device_uid);
+ 
++/**
++ * wmidev_get_acpi_device_uid() - Get _UID name of a WMI device
++ * @wdev: A wmi bus device from a driver
++ *
++ * Find the _UID of the ACPI device associated with this WMI device.
++ *
++ * Return: The ACPI _UID field or NULL if there is no _UID
++ */
++char *wmidev_get_acpi_device_uid(struct wmi_device *wdev)
++{
++	struct wmi_block *wblock = container_of(wdev, struct wmi_block, dev);
++
++	return acpi_device_uid(wblock->acpi_device);
++}
++EXPORT_SYMBOL_GPL(wmidev_get_acpi_device_uid);
++
+ /*
+  * sysfs interface
+  */
+diff --git a/include/linux/wmi.h b/include/linux/wmi.h
+index 10751c8e5e6a0ad3ac9ae317b6f8ecfb14c9a983..625c52ee125219aaa23cf946333af33ad118aafa 100644
+--- a/include/linux/wmi.h
++++ b/include/linux/wmi.h
+@@ -46,6 +46,8 @@ extern union acpi_object *wmidev_block_query(struct wmi_device *wdev,
+ 
+ acpi_status wmidev_block_set(struct wmi_device *wdev, u8 instance, const struct acpi_buffer *in);
+ 
++char *wmidev_get_acpi_device_uid(struct wmi_device *wdev);
++
+ u8 wmidev_instance_count(struct wmi_device *wdev);
+ 
+ /**
 
-[2/2]
-  - Reworked logic a bit to include a check for !uid before calling
-    strncmp()
-
-Link to v1: https://lore.kernel.org/r/20250308-awcc-uid-v1-0-6360892d8b95@gmail.com
-
----
-Kurt Borja (2):
-      platform/x86: wmi: Add wmidev_get_acpi_device_uid()
-      platform/x86: alienware-wmi-wmax: Check for AWCC support using _UID
-
- drivers/platform/x86/dell/alienware-wmi-wmax.c | 15 +++++++++------
- drivers/platform/x86/wmi.c                     | 20 +++++++++++++++++---
- include/linux/wmi.h                            |  2 ++
- 3 files changed, 28 insertions(+), 9 deletions(-)
----
-base-commit: e57eabe2fb044950e6ffdfe01803895043dec0b7
-change-id: 20250308-awcc-uid-6ec06bb2572d
-prerequisite-change-id: 20250305-hwm-f7bd91902b57:v4
-prerequisite-patch-id: 06ff44ce0c6f9bce77eb61a08f358240f1485914
-prerequisite-patch-id: d270ae9f1f681a6b6b9685cc13802e8baba0105f
-prerequisite-patch-id: 5f744ce03af74a23560118b761ac6529a7c9b172
-prerequisite-patch-id: 22c6c5256aee2c17bcd710ec1493b1abccd414cf
-prerequisite-patch-id: 75191e2094746de3c12fdd885885d18b2239af89
-prerequisite-patch-id: 9f26a3b64824b4f175bbea47c8c9a59fd67f3316
-prerequisite-patch-id: 4ff2263e236230e1f96703265d135f0b90390ebd
-prerequisite-patch-id: b8844283f8bb46c05ba2e9d7b901bdedfd941731
-prerequisite-patch-id: c5122bcce8e7330cdbb18c5d43e321ce69116272
-prerequisite-patch-id: ed78dcf947e19652f175d124ade13c08eb3950cc
-prerequisite-patch-id: d46a626481e1c49bdd91f6add36f4d6b89edde3e
-prerequisite-patch-id: e68a77ec73be34006d5dd754592285e44ffc7f68
-
-Best regards,
 -- 
- ~ Kurt
+2.48.1
 
 
