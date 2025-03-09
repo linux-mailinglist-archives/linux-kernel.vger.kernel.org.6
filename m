@@ -1,170 +1,160 @@
-Return-Path: <linux-kernel+bounces-553213-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-553211-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id F10BBA585C1
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 17:12:08 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9178BA585B4
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 17:05:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B6C3716B064
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 16:12:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6479A3A75F9
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 16:05:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C040D1E32D4;
-	Sun,  9 Mar 2025 16:11:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B3581DE8A6;
+	Sun,  9 Mar 2025 16:05:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="AM2/bmW6"
-Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XnSVatdS"
+Received: from mail-ua1-f48.google.com (mail-ua1-f48.google.com [209.85.222.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CC8B1C1ADB;
-	Sun,  9 Mar 2025 16:11:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 868A9184F;
+	Sun,  9 Mar 2025 16:05:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741536708; cv=none; b=mwwxwWMEcexdIOjuNc0whUnjLUeUh4AGSFnUCVxfPp7FixaMLGXCoNphN4+X7q3Uirq2WPEkVpkzgD22n52C1clwX/OoH/iDRXFjzPh844+pP2ZCwiUUWAcOXepbujCC2wq+XuhCNqHxnsPS3pVDorzc/fllKqtcgyadpqng8v0=
+	t=1741536317; cv=none; b=X3LVnNUOvCTfzReKGjt05gjbw8c2dz+IBuWGR1i1QZPqek3puFFDWZ0K7D8DbHVwtu5N6jTN8YN6IzSAWmKsNck9XzXeZ6mnTIB+GcKcpMhuz11rx2+XEZX1TvUkRP7CpwiWoEgUXGsCL3StIm6W73/b8wJWMZqC/6MIGkOzq1s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741536708; c=relaxed/simple;
-	bh=cYAeS9+iVeuoEKPY0soxgWjQHLxWo/CJqXIGMP5cXTg=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
-	 MIME-Version:Content-Type; b=LJXxCe+0ePbImRN8BYYIxIpJJEsKz9MAGA9TYTB42dr/CgULJAzTEQdM3Ekey9OZEe6M2AX3so+3Pm2IJE+FcZCwbQDlOiifzXwRCNYFLRxrb/yCOBu/65cyIVvdDIy30HsiFQ5fgYohahjTpTijuOyZ8kpEMUJEwEzV4O8+PfE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=AM2/bmW6; arc=none smtp.client-ip=198.137.202.136
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
-Received: from [127.0.0.1] ([76.133.66.138])
-	(authenticated bits=0)
-	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 529G7ORJ1263742
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
-	Sun, 9 Mar 2025 09:07:25 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 529G7ORJ1263742
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-	s=2025021701; t=1741536453;
-	bh=seT44xgoWZ5mbi6YMs1X0xb2oeGYrNPZX+/U1qdQGTg=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
-	b=AM2/bmW6qzoT4YywJnfg+kFnRXlll5tS36arYnqSjApIypQlKimmdfCt9YyV+hD5i
-	 dwEfkCUr9AtGwtNwd8jvLKVyhS9+DVOhMt0UxbaU8XLll4G1zqhZUN5wna9XCG0iyW
-	 78qL6sdm7Dmrl0dpbYygV8vUvwurgNltciei2+BotvHSOlc5nLcyRz7FcLa20sqElN
-	 aaLYBYPsfdON+oOvyxzkWw0OSqmFW0xR+GLH1tZOAogct9w6ii64Fkp372iR+MOFjL
-	 L/PbfQo7+FF9HFkiZXRXnx5Nau5yXjNHZfL42nnEtecfgu8tqCoFLf4g4XN6869eDo
-	 eXA4gSO7d9tjA==
-Date: Sun, 09 Mar 2025 09:00:58 -0700
-From: "H. Peter Anvin" <hpa@zytor.com>
-To: Kuan-Wei Chiu <visitorckw@gmail.com>
-CC: David Laight <david.laight.linux@gmail.com>,
-        Andrew Cooper <andrew.cooper3@citrix.com>,
-        Laurent.pinchart@ideasonboard.com, airlied@gmail.com,
-        akpm@linux-foundation.org, alistair@popple.id.au,
-        andrew+netdev@lunn.ch, andrzej.hajda@intel.com,
-        arend.vanspriel@broadcom.com, awalls@md.metrocast.net, bp@alien8.de,
-        bpf@vger.kernel.org, brcm80211-dev-list.pdl@broadcom.com,
-        brcm80211@lists.linux.dev, dave.hansen@linux.intel.com,
-        davem@davemloft.net, dmitry.torokhov@gmail.com,
-        dri-devel@lists.freedesktop.org, eajames@linux.ibm.com,
-        edumazet@google.com, eleanor15x@gmail.com, gregkh@linuxfoundation.org,
-        hverkuil@xs4all.nl, jernej.skrabec@gmail.com, jirislaby@kernel.org,
-        jk@ozlabs.org, joel@jms.id.au, johannes@sipsolutions.net,
-        jonas@kwiboo.se, jserv@ccns.ncku.edu.tw, kuba@kernel.org,
-        linux-fsi@lists.ozlabs.org, linux-input@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
-        linux-mtd@lists.infradead.org, linux-serial@vger.kernel.org,
-        linux-wireless@vger.kernel.org, linux@rasmusvillemoes.dk,
-        louis.peens@corigine.com, maarten.lankhorst@linux.intel.com,
-        mchehab@kernel.org, mingo@redhat.com, miquel.raynal@bootlin.com,
-        mripard@kernel.org, neil.armstrong@linaro.org, netdev@vger.kernel.org,
-        oss-drivers@corigine.com, pabeni@redhat.com,
-        parthiban.veerasooran@microchip.com, rfoss@kernel.org, richard@nod.at,
-        simona@ffwll.ch, tglx@linutronix.de, tzimmermann@suse.de,
-        vigneshr@ti.com, x86@kernel.org, yury.norov@gmail.com
-Subject: Re: [PATCH v3 00/16] Introduce and use generic parity16/32/64 helper
-User-Agent: K-9 Mail for Android
-In-Reply-To: <Z824SgB9Dt5zdWYc@visitorckw-System-Product-Name>
-References: <4732F6F6-1D41-4E3F-BE24-E54489BC699C@zytor.com> <efc2ee9d-5382-457f-b471-f3c44b81a190@citrix.com> <5A790652-1B22-4D13-AAC5-5D9931E90903@zytor.com> <20250307195310.58abff8c@pumpkin> <EB85C3C1-8A0D-4CB9-B501-BFEABDF3E977@zytor.com> <Z824SgB9Dt5zdWYc@visitorckw-System-Product-Name>
-Message-ID: <EF4335E0-F8EB-4642-BD09-B16BCCF23F95@zytor.com>
+	s=arc-20240116; t=1741536317; c=relaxed/simple;
+	bh=1dug6tuMzl79qjj9p0x90LqVI5l1SsUtVT9qTZFaXnE=;
+	h=Mime-Version:Content-Type:Date:Message-Id:From:To:Cc:Subject:
+	 References:In-Reply-To; b=u/3rak/G8tuLYs7E3kl0nGSShWzJ4eY0nytN/Qd58BWR91S1Y8fCgxUzQ7O2H+Le4twFHpq5iJeVEy9sSlGPvpZz+PzUpa7pPFAJdV73KeDJWY+pv0rIbAobwvZ9bm8QgsRcnW+OvPabOCad0z1xEa6QYEebME5grKBApHSZGOA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XnSVatdS; arc=none smtp.client-ip=209.85.222.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ua1-f48.google.com with SMTP id a1e0cc1a2514c-86d587dbc15so606996241.1;
+        Sun, 09 Mar 2025 09:05:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741536314; x=1742141114; darn=vger.kernel.org;
+        h=in-reply-to:references:subject:cc:to:from:message-id:date
+         :content-transfer-encoding:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=EWkRnX3QsMWBcGgnuSQDdkHTRxtHOBOp1UfOK3Y2j0k=;
+        b=XnSVatdS8/0me9RdWb7TbKZQm+OqjSgayX+ILV7AA5+5lgRt+Gc0Zz4HX+fkVbVFMx
+         fZrh2Qa+Gy/gf3WZdQ/UVz01nD6MUluzAYeCIfHxsb1qfqTHzqcpKYA7O50uj15fshRL
+         XIEkoUSAtnUVJjZER/qORR0SQDC8hFw57+PRNhA+liFG/Z3cb5UhbItEo6hDZ8cnOeWa
+         Sdw3BLNg3y8C+vufTduWYNNm6By6AtAil3WBNGoJetNBsh0Jkj5Tm4XXwO8Rquut9Cez
+         RtcDd2FGw9JdZOeIpKd+80B0+f5qb0ST2M5y5MeU+Z9pdnne9ZplHk7I3J66b6lE7Ulp
+         jvRA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741536314; x=1742141114;
+        h=in-reply-to:references:subject:cc:to:from:message-id:date
+         :content-transfer-encoding:mime-version:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=EWkRnX3QsMWBcGgnuSQDdkHTRxtHOBOp1UfOK3Y2j0k=;
+        b=jBO3n8NyX2J6qhhTViFWdw/+oWmS0X0L9Hpmd/6APFDdCHNXqrt2SFkOwZvbiOAaKo
+         WraGpqUgHcM2XkSUqw0dXj5X7y73me+1ZVdN8MEwoFTCzwWxOF13MVMCma/XFsfC5yHX
+         hrX56Ig3axQQkutUYAj5jbaUV3GYSGB/HjXY5Xgwa1v8nix5//0234jSjDojTQofyiYc
+         inDpGUGfPoLp47qWs1fdt+r/lHUbBAgU6AliAzcls0z89WpM/r9nL8OCoqHy32aBM8WP
+         bXZPmrSHTORA0SvX25TW8FiOgP1PBDRN72xrZFcdJoSFxA8FkkskvWKxP3eDfsvpjtdS
+         JJ9Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWOpo0ydL/XSsPa02Kxhtj4vR7TQfYvBBM7S37e5l2MZFudEHA86qJOXC9voC7hiSbZDuLKbCNTumP6p+R/@vger.kernel.org, AJvYcCXHlJiZMKWoDO7I1WnrWHZatvaTsOY8RbJzwKFxRKr0VFbp6t0EYyX+46hEElWR/L23l1pE23y6mgL31A==@vger.kernel.org, AJvYcCXkHLgZX3xDEqppdJni1gQTrG5d41ikaB8/jUyHf5LPLX9vYW7vNAzQNCOMLN8mWVK27rqkHZMomPwUCI3r9vvNJbwi6A==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy3ZKWXIuCuR/b8NtY2BxNC8//SSZBwbISq8RiuRcLKPGH+hTR2
+	I0dwmfP6q7rtrc1xq0UNur9VWqLRw5eWrRzMOEOPn8hRpKW7webt
+X-Gm-Gg: ASbGncvj59wTpSPVcwiLj0a/VHkYL/aIEYaJYiWtA7Y0yr8OA0lunhog570GueTKP2G
+	M4UwTvNIbwbjIIRmIvgtAnKZBC9uID6ixVIVa615e6gKKCh9Nnb3IRABdXRy9dUmsqAtlEeE6lr
+	0Jy/KGFCzhoYCkc73C57H4wOS2nAsGoxyhJHGMqmkU/I3VM7vHG7qRh0SJcvE+rWRV38h7qMG0i
+	vNj7ALs8WhjsSIlcVQ9UdTSN//GhN6DaWJKAiGa7mv9KDW3rjegQVeAcHUSsTXpl1EZK//sdn27
+	UZkS7DqDXmSMBPdDg4iDmfdz7RZBESvA7Qdt
+X-Google-Smtp-Source: AGHT+IFE0VVNJOJlt2Gf4A845cRSe8thFkhp8epWmNKJhbRDSow/TTW3MEwZYPYNrcR5FkQl0u+L3w==
+X-Received: by 2002:a67:f304:0:b0:4bd:379c:4037 with SMTP id ada2fe7eead31-4c31b718467mr3124720137.9.1741536314101;
+        Sun, 09 Mar 2025 09:05:14 -0700 (PDT)
+Received: from localhost ([2800:bf0:82:3d2:9e61:1a62:1a8c:3e62])
+        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-86d519139a7sm556002241.10.2025.03.09.09.05.11
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 09 Mar 2025 09:05:13 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
+Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Sun, 09 Mar 2025 11:05:09 -0500
+Message-Id: <D8BV3JTOCPI1.3OY62UIJOLJQL@gmail.com>
+From: "Kurt Borja" <kuurtb@gmail.com>
+To: "Guenter Roeck" <linux@roeck-us.net>, =?utf-8?q?Ilpo_J=C3=A4rvinen?=
+ <ilpo.jarvinen@linux.intel.com>, "Armin Wolf" <W_Armin@gmx.de>
+Cc: "Hans de Goede" <hdegoede@redhat.com>,
+ <platform-driver-x86@vger.kernel.org>, <Dell.Client.Kernel@dell.com>,
+ <linux-kernel@vger.kernel.org>, "Jean Delvare" <jdelvare@suse.com>,
+ <linux-hwmon@vger.kernel.org>, "Bagas Sanjaya" <bagasdotme@gmail.com>
+Subject: Re: [PATCH v4 00/12] platform/x86: alienware-wmi-wmax: HWMON
+ support + DebugFS + Improvements
+X-Mailer: aerc 0.20.1-0-g2ecb8770224a
+References: <20250308-hwm-v4-0-afa1342828f5@gmail.com>
+ <a5a159ee-5623-454f-8b27-352603c5d1e8@roeck-us.net>
+In-Reply-To: <a5a159ee-5623-454f-8b27-352603c5d1e8@roeck-us.net>
 
-On March 9, 2025 8:48:26 AM PDT, Kuan-Wei Chiu <visitorckw@gmail=2Ecom> wro=
-te:
->On Fri, Mar 07, 2025 at 12:07:02PM -0800, H=2E Peter Anvin wrote:
->> On March 7, 2025 11:53:10 AM PST, David Laight <david=2Elaight=2Elinux@=
-gmail=2Ecom> wrote:
->> >On Fri, 07 Mar 2025 11:30:35 -0800
->> >"H=2E Peter Anvin" <hpa@zytor=2Ecom> wrote:
->> >
->> >> On March 7, 2025 10:49:56 AM PST, Andrew Cooper <andrew=2Ecooper3@ci=
-trix=2Ecom> wrote:
->> >> >> (int)true most definitely is guaranteed to be 1=2E =20
->> >> >
->> >> >That's not technically correct any more=2E
->> >> >
->> >> >GCC has introduced hardened bools that intentionally have bit patte=
-rns
->> >> >other than 0 and 1=2E
->> >> >
->> >> >https://gcc=2Egnu=2Eorg/gcc-14/changes=2Ehtml
->> >> >
->> >> >~Andrew =20
->> >>=20
->> >> Bit patterns in memory maybe (not that I can see the Linux kernel us=
-ing them) but
->> >> for compiler-generated conversations that's still a given, or the ma=
-nager isn't C
->> >> or anything even remotely like it=2E
->> >>=20
->> >
->> >The whole idea of 'bool' is pretty much broken by design=2E
->> >The underlying problem is that values other than 'true' and 'false' ca=
-n
->> >always get into 'bool' variables=2E
->> >
->> >Once that has happened it is all fubar=2E
->> >
->> >Trying to sanitise a value with (say):
->> >int f(bool v)
->> >{
->> >	return (int)v & 1;
->> >}   =20
->> >just doesn't work (see https://www=2Egodbolt=2Eorg/z/MEndP3q9j)
->> >
->> >I really don't see how using (say) 0xaa and 0x55 helps=2E
->> >What happens if the value is wrong? a trap or exception?, good luck re=
-covering
->> >from that=2E
->> >
->> >	David
+Hi Guenter,
+
+On Sat Mar 8, 2025 at 4:23 PM -05, Guenter Roeck wrote:
+> On 3/8/25 12:23, Kurt Borja wrote:
+>> Hi all,
 >>=20
->> Did you just discover GIGO?
+>> This set mainly adds hwmon and manual fan control support (patches 7-8)
+>> to the alienware-wmi driver, after some improvements.
+>>=20
+>> I have a question for anyone that may know how to solve it. In version 2
+>> of these series the kernel test robot found a build error
+>>=20
+>> 	https://lore.kernel.org/platform-driver-x86/202503051819.bQ9P70Og-lkp@i=
+ntel.com/
+>>=20
+>> I think this happened because
+>>=20
+>> 	CONFIG_ALIENWARE_WMI=3Dy
+>>=20
+>> while
+>>=20
+>> 	CONFIG_ACPI_PLATFORM_PROFILE=3Dm
+>> 	CONFIG_HWMON=3Dm
+>>=20
+>> How should I Kconfig to avoid this?
+>>=20
 >
->Thanks for all the suggestions=2E
+> If hwmon is considered to be mandatory, you'll need
+> 	depends on HWMON=3Dy
 >
->I don't have a strong opinion on the naming or return type=2E I'm still a
->bit confused about whether I can assume that casting bool to int always
->results in 0 or 1=2E
+> Alternative would be to use
+> 	depends on HWMON=3Dy || HWMON=3Dn
 >
->If that's the case, since most people prefer bool over int as the
->return type and some are against introducing u1, my current plan is to
->use the following in the next version:
+> and use IS_ENABLED(). Something like
 >
->bool parity_odd(u64 val);
+> 	if (IS_ENABLED(CONFIG_HWMON) && awcc->hwmon) {
+> 		ret =3D awcc_hwmon_init(wdev);
+> 		if (ret)
+> 			return ret;
+> 	}
 >
->This keeps the bool return type, renames the function for better
->clarity, and avoids extra maintenance burden by having just one
->function=2E
->
->If I can't assume that casting bool to int always results in 0 or 1,
->would it be acceptable to keep the return type as int?
->
->Would this work for everyone?
->
->Regards,
->Kuan-Wei
+> Using IS_REACHABLE() would be another option.
 
-You *CAN* safely assume that bool is an integer type which always has the =
-value 0 or 1=2E
+Oh - Now I understand why I saw this pattern in a few drivers. I'll
+think about this option for the next revision.
+
+>
+> The CONFIG_ACPI_PLATFORM_PROFILE problem is probably similar. You can not
+> have CONFIG_ALIENWARE_WMI as boolean depending on code which can be built
+> as module.
+
+Actually ALIENWARE_WMI is tristate, but the symbol that actually pulls
+the dependency is ALIENWARE_WMI_WMAX, which is indeed bool.
+
+Thank you, this gave me the clue to fix the issue!
+
+--=20
+ ~ Kurt
+
+>
+> Guenter
+
 
