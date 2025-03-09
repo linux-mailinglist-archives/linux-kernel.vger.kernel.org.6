@@ -1,81 +1,103 @@
-Return-Path: <linux-kernel+bounces-553024-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-553027-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8F0C4A582A3
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 10:21:50 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 72C6FA582A9
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 10:23:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 69FD43AE703
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 09:21:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0B774188FE18
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 09:23:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E38C192B71;
-	Sun,  9 Mar 2025 09:21:45 +0000 (UTC)
-Received: from mail115-69.sinamail.sina.com.cn (mail115-69.sinamail.sina.com.cn [218.30.115.69])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 714F61A3177;
+	Sun,  9 Mar 2025 09:23:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="w6zC3R3t"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18CAEECF
-	for <linux-kernel@vger.kernel.org>; Sun,  9 Mar 2025 09:21:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=218.30.115.69
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C355D19259F;
+	Sun,  9 Mar 2025 09:23:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741512104; cv=none; b=aw5bedtDWASEXDkhMMnpFiwOOMp6AAqvWSapvdepfw6Qj6Q596Ur3ivnfEug765gcUJ2tomhRTsbkRDgeCCB8mB7vkArPYVKJO2QiAiVQOJvp/sTc78Wnfv6YiiqGEfxJ+0ZoR74VEG2Gs69IrjhvafQL5jpJRg4Kz/qrSBN8I0=
+	t=1741512207; cv=none; b=VMQu7zkP6YBn0/BjU4XVIKKj94pdaKWZUUDgSt7T3RifDVgUSjZHQRPxMwjapOTz1HCJpVW97daQxbGDS2sRkbNJd2cyfZ7qC5kxyQl+Fz46WY3esGsDL9Mk7SN+cAzBDhkCjAUGp9/O1gCznBu140do08HPeBo0OH6qREf4Rq0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741512104; c=relaxed/simple;
-	bh=wb2dlZ1czPHYBDPN2EQ5rW6W9Rqar227Dhf4ktCWlGs=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=EVX6U3Z6YOfagdLd3GGTx1K629UgFiel6QqrZXA9Yz6jEvxSyrqnDgxb8NKY9KljLNaWuJAOLp0bQxc4UtyDFc5XH23dSb3gj+7jkqYgB2fpwsDUNboo3rSqSF/KscMqWq1Xvl+hTlPIPJBAMXCFHHT+zdrn6o8G1VGqkStK0Qs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; arc=none smtp.client-ip=218.30.115.69
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
-X-SMAIL-HELO: localhost.localdomain
-Received: from unknown (HELO localhost.localdomain)([113.88.50.225])
-	by sina.com (10.185.250.22) with ESMTP
-	id 67CD5D98000005D3; Sun, 9 Mar 2025 17:21:30 +0800 (CST)
-X-Sender: hdanton@sina.com
-X-Auth-ID: hdanton@sina.com
-Authentication-Results: sina.com;
-	 spf=none smtp.mailfrom=hdanton@sina.com;
-	 dkim=none header.i=none;
-	 dmarc=none action=none header.from=hdanton@sina.com
-X-SMAIL-MID: 7779057602345
-X-SMAIL-UIID: BED1A7793C434C4C92132C0004974D3C-20250309-172130-1
-From: Hillf Danton <hdanton@sina.com>
-To: syzbot <syzbot+019072ad24ab1d948228@syzkaller.appspotmail.com>
-Cc: linux-kernel@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [efi?] [fs?] possible deadlock in efivarfs_actor
-Date: Sun,  9 Mar 2025 17:21:19 +0800
-Message-ID: <20250309092120.3184-1-hdanton@sina.com>
-In-Reply-To: <67cd0276.050a0220.14db68.006c.GAE@google.com>
-References: 
+	s=arc-20240116; t=1741512207; c=relaxed/simple;
+	bh=THgUwDalBcg4erMWitkeLHzuSldpSihPUeUF48weiAc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ksuM7mnRN5iLx+cXhSHeCAcze4S4WQk9w4n/Fc0SIgHHx1XMVYZykbEuNJyr4tlGWuONTZx5QTEW7yCXLf4KapVe1HcG5blqgT0vhzqB1fy7FRz/nZIRl59weWnFE4kjJyDUP7MuDU2oM/5XbYAwVbcrTFZBiW9MWwgCJXHfm3E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=w6zC3R3t; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 113A5C4CEED;
+	Sun,  9 Mar 2025 09:23:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1741512207;
+	bh=THgUwDalBcg4erMWitkeLHzuSldpSihPUeUF48weiAc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=w6zC3R3tXZy0yHQwQxUYIacl2K+sbrGGIalVm84cgx2UQtS7T19HTtIvG3qpXprbp
+	 pNKXkfZEGtVcS0nlIkHR1EOewVTtruvbkDWbTYEsgqEfPaYBmZZb68xRr6EAfPvXja
+	 1Af3xesPtbn/RSegBWX9uNKD99uMjKOEXrEMN+bY=
+Date: Sun, 9 Mar 2025 10:22:11 +0100
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Guenter Roeck <linux@roeck-us.net>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev,
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+	akpm@linux-foundation.org, shuah@kernel.org, patches@kernelci.org,
+	lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+	f.fainelli@gmail.com, sudipm.mukherjee@gmail.com,
+	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org,
+	hargar@microsoft.com, broonie@kernel.org
+Subject: Re: [PATCH 6.12 000/148] 6.12.18-rc2 review
+Message-ID: <2025030902-avert-scored-a9c6@gregkh>
+References: <20250306151415.047855127@linuxfoundation.org>
+ <1c813c9d-de04-487c-a350-13577dbdd881@roeck-us.net>
+ <3d99c624-88a8-4a98-b614-7565aa5dc4ba@roeck-us.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <3d99c624-88a8-4a98-b614-7565aa5dc4ba@roeck-us.net>
 
-On Sat, 08 Mar 2025 18:52:38 -0800
-> syzbot found the following issue on:
+On Sat, Mar 08, 2025 at 10:24:37AM -0800, Guenter Roeck wrote:
+> On Sat, Mar 08, 2025 at 07:15:35AM -0800, Guenter Roeck wrote:
+> > On Thu, Mar 06, 2025 at 04:20:53PM +0100, Greg Kroah-Hartman wrote:
+> > > This is the start of the stable review cycle for the 6.12.18 release.
+> > > There are 148 patches in this series, all will be posted as a response
+> > > to this one.  If anyone has any issues with these being applied, please
+> > > let me know.
+> > > 
+> > > Responses should be made by Sat, 08 Mar 2025 15:13:38 +0000.
+> > > Anything received after that time might be too late.
+> > > 
+> > v6.12.18:
+> > 
+> > Building loongarch:defconfig ... failed
+> > --------------
+> > Error log:
+> > In file included from include/linux/bug.h:5,
+> >                  from include/linux/thread_info.h:13,
+> >                  from include/asm-generic/current.h:6,
+> >                  from ./arch/loongarch/include/generated/asm/current.h:1,
+> >                  from include/linux/sched.h:12,
+> >                  from arch/loongarch/kernel/asm-offsets.c:8:
+> > include/linux/thread_info.h: In function 'check_copy_size':
+> > arch/loongarch/include/asm/bug.h:47:9: error: implicit declaration of function 'annotate_reachable'
+> > 
+> > This is not surprising:
+> > 
+> > $ git grep annotate_reachable
+> > arch/loongarch/include/asm/bug.h:       annotate_reachable();
+> > 
+> > Caused by 2cfd0e5084e3 ("objtool: Remove annotate_{,un}reachable()").
+> > 
 > 
-> HEAD commit:    e056da87c780 Merge remote-tracking branch 'will/for-next/p..
-> git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-kernelci
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=13b97c64580000
+> The same problem also affects v6.13.6.
 
-#syz test upstream  master
+Now fixed up in the queues, thanks.
 
---- x/fs/efivarfs/super.c
-+++ y/fs/efivarfs/super.c
-@@ -421,7 +421,7 @@ static bool efivarfs_actor(struct dir_co
- 	if (err)
- 		size = 0;
- 
--	inode_lock(inode);
-+	inode_lock_nested(inode, I_MUTEX_CHILD);
- 	i_size_write(inode, size);
- 	inode_unlock(inode);
- 
---
+greg k-h
 
