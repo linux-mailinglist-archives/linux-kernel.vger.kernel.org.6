@@ -1,132 +1,140 @@
-Return-Path: <linux-kernel+bounces-553392-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-553393-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 81064A5889D
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 22:49:17 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 479E1A588A1
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 22:51:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 506ED3AB2D5
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 21:49:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A75D1188DA14
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 21:51:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CCB921C182;
-	Sun,  9 Mar 2025 21:49:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CBCC21D5BD;
+	Sun,  9 Mar 2025 21:51:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EMXNBvO6"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="mZJxB7us"
+Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 935EC16B3B7;
-	Sun,  9 Mar 2025 21:49:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 518221F5827
+	for <linux-kernel@vger.kernel.org>; Sun,  9 Mar 2025 21:51:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741556950; cv=none; b=jBThs6jM6Z9XdgBnX+WsR5hqKulQleIxN6i7DXOK/V54fij4YsT5wB6K6xXKFPVXgE1HQCWtAMAHLEDHtqX2XvuEETQ+JzoENYdHVbMJZrfxLCNnTNkmM0m2wmrKsEU0H1oJdrOFROuIoW+wNkvC3G7eJTXTKHjH6C+21P8VpK4=
+	t=1741557074; cv=none; b=Kl+mRnX7VVGqd3kZO7OO/0O7PM76fVy4vys9R+83Xr+bSG+/B5v6I0GpMqH21wL/nZSFtLKhii1c3kCcc8boG2nI29xLu16KrAOhoAwRSGt7mEZ3Kg/w4AO0whTgkMhuxsbhDeJIph7I1Rm356yOroPV05rCFIbHOg9McDZU8Hw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741556950; c=relaxed/simple;
-	bh=E1l/O9YZeI+myHOBN9lIwYaG7N6QrE+xuS3xGAhnwmY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=JYHuYrjGccLpvw+Zo8pfX6x5sOKqrBKR/DSYAOS6lUwKKX6PYTo6bsD3XGNWVThEqPuh3o8eluOw+sbEGs5m5HKiLUR4uwj0FPnhyeGivbpaFlw/uhMkxGlqMFknO3u2wk1VWSauMyqRdnsssWN8VkG0dit4StgMMmzVTDidN0g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EMXNBvO6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B8DA9C4CEE3;
-	Sun,  9 Mar 2025 21:49:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741556950;
-	bh=E1l/O9YZeI+myHOBN9lIwYaG7N6QrE+xuS3xGAhnwmY=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=EMXNBvO6eQo4v+yaUwdbcjFiJEWSJDeE6HvpYnIj3cpQV80nQjRYrOhRvff7p3q0U
-	 uQ9dp/4jPKDFufj/k60sBXc0VHa68TZBCZGQi2KtYrjylDuzEy2MmOL/oUwhRlEh6Z
-	 WL5qKMp46NZwWrNL7LF1V2HcuQm/SUdBy+dmZzlR6XglMF2/etknYFd7sYg7REyJet
-	 k7tGC6Usnsyd+oKDCan1gAo2m25xFp1KNjS4jZdiO1zV0+Q1RFfIcN9dBLiGiCMxbG
-	 bEU8uLMrKEJ/e242bYcDzmy3Y+3ADwUYOGv1UexexS71A3OLY0NpArxy4qTuThkqp7
-	 EFqJga69iSyAg==
-From: Miguel Ojeda <ojeda@kernel.org>
-To: aliceryhl@google.com
-Cc: a.hindborg@kernel.org,
-	alex.gaynor@gmail.com,
-	benno.lossin@proton.me,
-	bjorn3_gh@protonmail.com,
-	boqun.feng@gmail.com,
-	gary@garyguo.net,
-	lina@asahilina.net,
-	linux-kernel@vger.kernel.org,
-	miguel.ojeda.sandonis@gmail.com,
-	ojeda@kernel.org,
-	oliver.mangold@pm.me,
-	rust-for-linux@vger.kernel.org,
-	tmgross@umich.edu,
-	patches@lists.linux.dev
-Subject: [PATCH] rust: kbuild: provide `RUSTC_HAS_DO_NOT_RECOMMEND` symbol
-Date: Sun,  9 Mar 2025 22:48:57 +0100
-Message-ID: <20250309214857.1559606-1-ojeda@kernel.org>
-In-Reply-To: <Z8sXqXgfhHbNpG6B@google.com>
-References: <Z8sXqXgfhHbNpG6B@google.com>
+	s=arc-20240116; t=1741557074; c=relaxed/simple;
+	bh=F1FrAhqe1gDWi8xlo4HpXF2wBOUM+KcW2zALRt2drk8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Pok1pSDMGougSVJUVM2RLLDlP0zBHjpOEo5h6mfXytTB5OlcMaSUGj90LlJ6Ce8bfhxN/nQY65tqQ1XaDr+V4MZrna78D5yiWDgsdMxt2XOGFimHwfrzWegrDAwEJSG9utqnxP7m0lNbvX6XXnb8oG60e8ThpdTakGvVEm1QVzc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=mZJxB7us; arc=none smtp.client-ip=209.85.214.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
+Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-224171d6826so45863145ad.3
+        for <linux-kernel@vger.kernel.org>; Sun, 09 Mar 2025 14:51:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1741557072; x=1742161872; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=wtQlZm6zttB+fiTHsUvomrcaKMWy8CxBSny2Xz7D1/k=;
+        b=mZJxB7usCFOpdhMxPogYwsPajD+HSuIwxBZZ264YG/qFwEE4TDPUEDhCO0A6O8g6uC
+         b8Nv/cmIOLpi5rs6ASLdBg/ZxEkcNZ75+NwIB5cltgpCgtco1X7VJR2u0rfSi8G48Baj
+         S/SYev6baCCr2KQz9WsNsa9U5I61qijAKqyMXLfbYm+FW8PEBPlj8gzgj1WbF/cI0S3E
+         Kk88vPHJUehFKpNANCYW2Xznb8IB3eBAT4S62UYoTSCETVAqYQYWFR2vPpLDpdFkd8Mw
+         obz/4PxFBRptgHlVgngNgyt9VntWKnsq8iD12ixEyvlGUyuaWzV5vcwr7ABhhiJPyNC5
+         xVkw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741557072; x=1742161872;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=wtQlZm6zttB+fiTHsUvomrcaKMWy8CxBSny2Xz7D1/k=;
+        b=bSKFRiJtZDpmis5KEsiDZsSG5TqWzflaCBUII/1522jd3j+iIUw6bBAU1gIDeCfjiU
+         /9/DGr6qjDax16peT7OEQM9l1lu23GapHP4gVpRhXrBn+Cuh2hxmNwORp9nyhaJZNWha
+         /8vrhWWawM7T1U1WrREZCJo4cqzbG+vMESyjAvsbfvQvfL8Nx/SGJJVwD+pKAV86XyhA
+         9YGiOKrJk8bv4R3FoD5EYOFnQdGiV9D8L7MloPZnEHe5uSBUl8xxbyOHfyjvhWDnDV8b
+         Ua5KBgCY6qplnVttfiqRoA6UhMQh4yU0WIh888SnObJ2Ul3/SAj2dnSWuKO1Ha0AocbP
+         6l/w==
+X-Forwarded-Encrypted: i=1; AJvYcCUnbutJ4kOg5dUmvF68nKgZkBR5zdKjzk/wl6Dh5tFKKJUhdGVWleK7rSFD9KZb7oWBrYwdewG26JOjUrg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwEcOv2Hy5VdPAPGGbLoTKJqccOAsT2OV8iw5LW9gzIkddtUwzG
+	G2e/MBsneb5b0YoaYkdUFH6FZV9nsR/n9pvO5Hz0afXg3qFNyIe/vJfzhj8G16flMZoGWj6glh2
+	K
+X-Gm-Gg: ASbGncuaVssg5XhmKWGGfzCi6jyPAS3o1mD1UJP+q99HwZ7jkTFjOL9IptnRUKOAXGs
+	bWn5VeAjI/SdQgQBVWpMYIUy1en/tW7ZrktQkvAdPmL6m0CfbQqS+spCeprf6wmRg3F1ON8AFfw
+	MyyTpCOu08mXHExIB66XpdZPrJtPDOqmSWmFwhfr/xvFw1NrsMoqG+KsM68/Oe66p74gYGK6DgS
+	o28lFGj4lBHjH870UJ1sdrbmRDgh0B0E/Ysnc6hBVn/GDiqTgFuFTmiF1UibY9hNCU9EnKEDx3Y
+	jcI+a3Dhq54RtuiOcnKR/ldIEqc7Kr2nQ+lhhypapQh6r2Hd11tpp/rM7sid3gpaaanHyLR/BNp
+	NC9OtqV+GuX1OJLko5KOT
+X-Google-Smtp-Source: AGHT+IFmE/y2ukJ1h6orczK3sejJrk1ZhdcmorRtk38tGOzGDUfVjo6i5W3u8DPicjhnFh7GQsAsuA==
+X-Received: by 2002:a05:6a20:4393:b0:1f5:7873:304b with SMTP id adf61e73a8af0-1f57873325amr2358526637.26.1741557072470;
+        Sun, 09 Mar 2025 14:51:12 -0700 (PDT)
+Received: from dread.disaster.area (pa49-186-89-135.pa.vic.optusnet.com.au. [49.186.89.135])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-af50b2d4c9fsm4345121a12.76.2025.03.09.14.51.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 09 Mar 2025 14:51:11 -0700 (PDT)
+Received: from dave by dread.disaster.area with local (Exim 4.98)
+	(envelope-from <david@fromorbit.com>)
+	id 1trOY8-0000000B2Ns-3N8c;
+	Mon, 10 Mar 2025 08:51:08 +1100
+Date: Mon, 10 Mar 2025 08:51:08 +1100
+From: Dave Chinner <david@fromorbit.com>
+To: John Garry <john.g.garry@oracle.com>
+Cc: brauner@kernel.org, djwong@kernel.org, cem@kernel.org,
+	linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, ojaswin@linux.ibm.com,
+	ritesh.list@gmail.com, martin.petersen@oracle.com, tytso@mit.edu,
+	linux-ext4@vger.kernel.org
+Subject: Re: [PATCH v4 05/12] iomap: Support SW-based atomic writes
+Message-ID: <Z84NTP5tyHEVLNbA@dread.disaster.area>
+References: <20250303171120.2837067-1-john.g.garry@oracle.com>
+ <20250303171120.2837067-6-john.g.garry@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250303171120.2837067-6-john.g.garry@oracle.com>
 
-Rust 1.85.0 (current stable version) stabilized [1]
-`#[diagnostic::do_not_recommend]` [2].
+On Mon, Mar 03, 2025 at 05:11:13PM +0000, John Garry wrote:
+> Currently atomic write support requires dedicated HW support. This imposes
+> a restriction on the filesystem that disk blocks need to be aligned and
+> contiguously mapped to FS blocks to issue atomic writes.
+> 
+> XFS has no method to guarantee FS block alignment for regular,
+> non-RT files. As such, atomic writes are currently limited to 1x FS block
+> there.
+> 
+> To deal with the scenario that we are issuing an atomic write over
+> misaligned or discontiguous data blocks - and raise the atomic write size
+> limit - support a SW-based software emulated atomic write mode. For XFS,
+> this SW-based atomic writes would use CoW support to issue emulated untorn
+> writes.
+> 
+> It is the responsibility of the FS to detect discontiguous atomic writes
+> and switch to IOMAP_DIO_ATOMIC_SW mode and retry the write. Indeed,
+> SW-based atomic writes could be used always when the mounted bdev does
+> not support HW offload, but this strategy is not initially expected to be
+> used.
 
-In order to use it across all supported Rust versions, introduce a new
-Kconfig symbol for it.
+So now seeing how these are are to be used, these aren't "hardware"
+and "software" atomic IOs. They are block layer vs filesystem atomic
+IOs.
 
-This allows to perform conditional compilation based on it, e.g. on the
-use site to enable the attribute:
+We can do atomic IOs in software in the block layer drivers (think
+loop or dm-thinp) rather than off-loading to storage hardware.
 
-    #[cfg_attr(RUSTC_HAS_DO_NOT_RECOMMEND, diagnostic::do_not_recommend)]
-    impl A for i32 {}
+Hence I think these really need to be named after the layer that
+will provide the atomic IO guarantees, because "hw" and "sw" as they
+are currently used are not correct. e.g something like
+IOMAP_FS_ATOMIC and IOMAP_BDEV_ATOMIC which indicates which layer
+should be providing the atomic IO constraints and guarantees.
 
-An alternative would have been to `allow` the following warning:
+-Dave.
 
-    #![allow(unknown_or_malformed_diagnostic_attributes)]
-
-However, that would lose the checking for typos across all versions,
-which we do not want to lose.
-
-One can also use the Kconfig symbol to allow the warning in older
-compilers instead, to avoid repeating the `cfg_attr` line above in all
-use sites:
-
-    #![cfg_attr(
-        not(RUSTC_HAS_DO_NOT_RECOMMEND),
-        expect(unknown_or_malformed_diagnostic_attributes)
-    )]
-
-That still loses the checking for typos in older versions, but we still
-keep it in newer ones, thus we should still catch mistakes eventually.
-
-In this case we can promote it to `expect` as shown above, so that we do
-not forget to remove these lines if we stop using the attribute somewhere.
-
-Link: https://github.com/rust-lang/rust/pull/132056 [1]
-Link: https://doc.rust-lang.org/reference/attributes/diagnostics.html#the-diagnosticdo_not_recommend-attribute [2]
-Link: https://lore.kernel.org/rust-for-linux/CANiq72mYfhuRWkjomb1vOMMPOaxvdS6qjfVLAwxUw6ecdqyh2A@mail.gmail.com/
-Signed-off-by: Miguel Ojeda <ojeda@kernel.org>
----
- init/Kconfig | 3 +++
- 1 file changed, 3 insertions(+)
-
-diff --git a/init/Kconfig b/init/Kconfig
-index d0d021b3fa3b..213b4cc9310a 100644
---- a/init/Kconfig
-+++ b/init/Kconfig
-@@ -132,6 +132,9 @@ config CC_HAS_COUNTED_BY
- config RUSTC_HAS_COERCE_POINTEE
- 	def_bool RUSTC_VERSION >= 108400
-
-+config RUSTC_HAS_DO_NOT_RECOMMEND
-+	def_bool RUSTC_VERSION >= 108500
-+
- config PAHOLE_VERSION
- 	int
- 	default $(shell,$(srctree)/scripts/pahole-version.sh $(PAHOLE))
-
-base-commit: 7eb172143d5508b4da468ed59ee857c6e5e01da6
---
-2.48.1
+-- 
+Dave Chinner
+david@fromorbit.com
 
