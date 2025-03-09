@@ -1,149 +1,124 @@
-Return-Path: <linux-kernel+bounces-552884-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-552886-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A3363A58074
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 04:12:59 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 16F4EA5807D
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 04:34:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 860F43AF7D6
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 03:12:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 415D31890F8B
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 03:34:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A87D570825;
-	Sun,  9 Mar 2025 03:12:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B953835977;
+	Sun,  9 Mar 2025 03:34:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ZHYqUUTt"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16F45450EE;
-	Sun,  9 Mar 2025 03:12:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="OcGRrHIw"
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.2])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEFDC2F37;
+	Sun,  9 Mar 2025 03:34:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.2
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741489971; cv=none; b=cOZx5w1TUB3cskPXdhkI+KgXWO2/z2NnM4urWNnlLx1QGBEiTNx1MKOSddcxkA3BgyOQd9Jaqoc9Mli/i4ehwjm2e7i/5YtqvPjj5RyOs5MM/WYrZNzCtyQkMbwlYgNSxuqFPaqQiDEaGiWTnhQyiFLM/E7EGi/Bz5PsTroxqX0=
+	t=1741491284; cv=none; b=Z4Udv8tVtRS+4480ETGxM5o8YRbaCnXHZyF3US4tAZaci3rgDO81z1Q9FBuCLVYQR4RsN/oxgo1mDkwaYJhtMLZpl0R/glV80e17hXP9x88U7PHv1idywGAe9i3IQqoXNTlINAxfnla/jPg9KKFsxfRFAtcxPYV85R0BdwwaZNA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741489971; c=relaxed/simple;
-	bh=DHi9MJPnGZGRDihEky9eZ9K5pTtJu5JwGfbsXs63aYM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PoUqPmDwInnYEa/rxktx9XzQUvknSCBTxglFq/yaQ/zh8I0YHtt8BXUetfdQDv9UT9QG3K9Fqi3Pe69R+jY/RrpC+jy3GEffQmPINdaeRZMRL4YB3w9Dh5maLBeGzX2c7xUkNaEH/UZudc1hthBGiQbpcUaqLt1ODR4wtL/SO2M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ZHYqUUTt; arc=none smtp.client-ip=192.198.163.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1741489968; x=1773025968;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=DHi9MJPnGZGRDihEky9eZ9K5pTtJu5JwGfbsXs63aYM=;
-  b=ZHYqUUTts+vqJUrt3xOJdH+jr3CsKOgyhEpTPNeEK9isI78jW9M3Rhuk
-   MfE/2my59jzYhMZRuT5+4lK8yscTiRRLJhZVy7TruHADvXn9udxmIR3Mm
-   pX3qcSiVqKXUe8DEkTWK9AcbvgWKeg0Diw5asSTWa4TELkfY1/xCZKuUl
-   2jVjWWjaFB6KsiHKRkxkYwr1uKJOut5sYeBvYQcB+xkJ/owAj/zokNRXB
-   hadKI0/qbixoXsKxB+xkMm8EQjTwR3rGEGiCxV4NmlEpIiJ2J1bSpniX5
-   eFuXLXMRP05zZ+bsD1D0bAMYeO1FJqRfSwpOdFSklLLx6Wm8EylO4SbDd
-   g==;
-X-CSE-ConnectionGUID: Ap2KxEffR16AduqtilWUPQ==
-X-CSE-MsgGUID: BCSulzu7R/KECY5rPHEY9w==
-X-IronPort-AV: E=McAfee;i="6700,10204,11367"; a="46422512"
-X-IronPort-AV: E=Sophos;i="6.14,233,1736841600"; 
-   d="scan'208";a="46422512"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Mar 2025 19:12:47 -0800
-X-CSE-ConnectionGUID: DqzgJJ8mTwWR1tSSMsjUwA==
-X-CSE-MsgGUID: YMO4U9C0R/6Uf0PY2hDqTA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,233,1736841600"; 
-   d="scan'208";a="119656338"
-Received: from lkp-server02.sh.intel.com (HELO a4747d147074) ([10.239.97.151])
-  by orviesa006.jf.intel.com with ESMTP; 08 Mar 2025 19:12:41 -0800
-Received: from kbuild by a4747d147074 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tr75i-0002bY-13;
-	Sun, 09 Mar 2025 03:12:38 +0000
-Date: Sun, 9 Mar 2025 11:12:14 +0800
-From: kernel test robot <lkp@intel.com>
-To: Dmitry Baryshkov <lumag@kernel.org>, Rob Clark <robdclark@gmail.com>,
-	Abhinav Kumar <quic_abhinavk@quicinc.com>,
-	Sean Paul <sean@poorly.run>,
-	Marijn Suijten <marijn.suijten@somainline.org>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Kuogee Hsieh <quic_khsieh@quicinc.com>,
-	Krishna Manikandan <quic_mkrishn@quicinc.com>,
-	Jonathan Marek <jonathan@marek.ca>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
-	Joerg Roedel <joro@8bytes.org>,
-	Konrad Dybcio <konradybcio@kernel.org>
-Cc: oe-kbuild-all@lists.linux.dev, linux-arm-msm@vger.kernel.org,
-	dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	iommu@lists.linux.dev, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 06/10] drm/msm/mdss: add SAR2130P device configuration
-Message-ID: <202503091045.4UVScL8t-lkp@intel.com>
-References: <20250308-sar2130p-display-v1-6-1d4c30f43822@linaro.org>
+	s=arc-20240116; t=1741491284; c=relaxed/simple;
+	bh=ZEljvK6TXXkF9KIDjBL54vkzcwco5AbxJYqi+1Fp/SM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=nsBja2s2mYUDtG8ZwmyqBW9uS6sAoji6HXuaNT2Lgtb+YbtO9SoMO+IpV+Lg0UVI7Tfi0hfM7HgUFWg8lDsFBAMb9fv1EZiAvdLdhENOOgEr1uUK605CcBOsi8urC71iClDE1lJNEDy6sVyJlvZW93MSmqELnh89GsvmMmwLLxM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=OcGRrHIw; arc=none smtp.client-ip=220.197.31.2
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=Message-ID:Date:MIME-Version:Subject:From:
+	Content-Type; bh=i8QHOBFSPFU1eJvG1lLQptd27nYiLV+ujTCG8nZRuW0=;
+	b=OcGRrHIwxzEF4gniP4y+nPj063t1Frs1OEEVBg4xmTjc5O7/hraogVLXpmCd2+
+	JoOOdmH8f6fZCSWqoIdUqP17HiJJyccYjyaFK83XxESlxfedZz/pEi5i8rlzYV22
+	f5lEJ8Fy7/0+1isr9xKxNUnlqzb9pnerjeYmb8N//Wdeg=
+Received: from [192.168.71.45] (unknown [])
+	by gzga-smtp-mtada-g1-4 (Coremail) with SMTP id _____wCHD1N9CM1nRqkUQg--.47998S2;
+	Sun, 09 Mar 2025 11:18:22 +0800 (CST)
+Message-ID: <3e6645a8-6de9-4125-8444-fa1a4f526881@163.com>
+Date: Sun, 9 Mar 2025 11:18:21 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250308-sar2130p-display-v1-6-1d4c30f43822@linaro.org>
-
-Hi Dmitry,
-
-kernel test robot noticed the following build errors:
-
-[auto build test ERROR on 0a2f889128969dab41861b6e40111aa03dc57014]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Dmitry-Baryshkov/dt-bindings-display-msm-dp-controller-describe-SAR2130P/20250308-094544
-base:   0a2f889128969dab41861b6e40111aa03dc57014
-patch link:    https://lore.kernel.org/r/20250308-sar2130p-display-v1-6-1d4c30f43822%40linaro.org
-patch subject: [PATCH 06/10] drm/msm/mdss: add SAR2130P device configuration
-config: arm-randconfig-004-20250309 (https://download.01.org/0day-ci/archive/20250309/202503091045.4UVScL8t-lkp@intel.com/config)
-compiler: arm-linux-gnueabi-gcc (GCC) 14.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250309/202503091045.4UVScL8t-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202503091045.4UVScL8t-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
->> drivers/gpu/drm/msm/msm_mdss.c:599:10: error: 'const struct msm_mdss_data' has no member named 'ubwc_static'
-     599 |         .ubwc_static = 1,
-         |          ^~~~~~~~~~~
-   drivers/gpu/drm/msm/msm_mdss.c:600:29: warning: initialized field overwritten [-Woverride-init]
-     600 |         .highest_bank_bit = 0,
-         |                             ^
-   drivers/gpu/drm/msm/msm_mdss.c:600:29: note: (near initialization for 'sar2130p_data.highest_bank_bit')
+User-Agent: Mozilla Thunderbird
+Subject: Re: [v2] PCI: cadence: Add configuration space capability search API
+To: Siddharth Vadapalli <s-vadapalli@ti.com>
+Cc: lpieralisi@kernel.org, kw@linux.com, manivannan.sadhasivam@linaro.org,
+ robh@kernel.org, bhelgaas@google.com, bwawrzyn@cisco.com,
+ thomas.richard@bootlin.com, wojciech.jasko-EXT@continental-corporation.com,
+ linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250308133903.322216-1-18255117159@163.com>
+ <20250309023839.2cakdpmsbzn6pm7g@uda0492258>
+Content-Language: en-US
+From: Hans Zhang <18255117159@163.com>
+In-Reply-To: <20250309023839.2cakdpmsbzn6pm7g@uda0492258>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:_____wCHD1N9CM1nRqkUQg--.47998S2
+X-Coremail-Antispam: 1Uf129KBjvJXoW7ZF1xJFWxZFykGrWrXF1DJrb_yoW8Cw1DpF
+	4DXF9YkF1DGr47Crs7Ww4jvFyjg395Ja4UK3s8Cw1rZrs09F1YkFsa9w4UZF97WrZ293WF
+	v3yYgrsrtw12vFDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07UhZ2-UUUUU=
+X-CM-SenderInfo: rpryjkyvrrlimvzbiqqrwthudrp/xtbBDwsLo2fNB2cgcQAAs3
 
 
-vim +599 drivers/gpu/drm/msm/msm_mdss.c
 
-   594	
-   595	static const struct msm_mdss_data sar2130p_data = {
-   596		.ubwc_enc_version = UBWC_3_0, /* 4.0.2 in hw */
-   597		.ubwc_dec_version = UBWC_4_3,
-   598		.ubwc_swizzle = 6,
- > 599		.ubwc_static = 1,
-   600		.highest_bank_bit = 0,
-   601		.macrotile_mode = 1,
-   602		.reg_bus_bw = 74000,
-   603	};
-   604	
+On 2025/3/9 10:38, Siddharth Vadapalli wrote:
+> On Sat, Mar 08, 2025 at 09:39:03PM +0800, Hans Zhang wrote:
+>> Add configuration space capability search API using struct cdns_pcie*
+>> pointer.
+>>
+>> The offset address of capability or extended capability designed by
+>> different SOC design companies may not be the same. Therefore, a flexible
+>> public API is required to find the offset address of a capability or
+>> extended capability in the configuration space.
+>>
+>> Signed-off-by: Hans Zhang <18255117159@163.com>
+>> ---
+>> Changes since v1:
+>> https://lore.kernel.org/linux-pci/20250123070935.1810110-1-18255117159@163.com
+>>
+>> - Added calling the new API in PCI-Cadence ep.c.
+>> - Add a commit message reason for adding the API.
+> 
+> In reply to your v1 patch, you have mentioned the following:
+> "Our controller driver currently has no plans for upstream and needs to
+> wait for notification from the boss."
+> at:
+> https://lore.kernel.org/linux-pci/fcfd4827-4d9e-4bcd-b1d0-8f9e349a6be7@163.com/
+> 
+> Since you have posted this patch, does it mean that you will be
+> upstreaming your driver as well? If not, we still end up in the same
+> situation as earlier where the Upstream Linux has APIs to support a
+> Downstream driver.
+> 
+> Bjorn indicated the above already at:
+> https://lore.kernel.org/linux-pci/20250123170831.GA1226684@bhelgaas/
+> and you did agree to do so. But this patch has no reference to the
+> upstream driver series which shall be making use of the APIs in this
+> patch.
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Hi Siddharth,
+
+
+Bjorn:
+   If/when you upstream code that needs this interface, include this
+   patch as part of the series.  As Siddharth pointed out, we avoid
+   merging code that has no upstream users.
+
+
+Hans: This user is: pcie-cadence-ep.c. I think this is an optimization 
+of Cadence common code. I think this is an optimization of Cadence 
+common code. Siddharth, what do you think?
+
+
+Best regards,
+Hans
+
+
 
