@@ -1,170 +1,141 @@
-Return-Path: <linux-kernel+bounces-553042-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-553043-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 378C6A582CE
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 10:50:04 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AB091A582D0
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 10:50:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 73ECD169897
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 09:50:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 40AA9188AC9A
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 09:50:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7D601B0F26;
-	Sun,  9 Mar 2025 09:49:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C39D81B3922;
+	Sun,  9 Mar 2025 09:50:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="DZmnhS/l"
-Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.4])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E3DC1AC43A;
-	Sun,  9 Mar 2025 09:49:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.4
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jQZZ7z8E"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C3171AC43A;
+	Sun,  9 Mar 2025 09:50:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741513799; cv=none; b=iPMmP2WzFJmjSmer4o/O+LwusvyJHiHUu1bCFKvkn1fwKotmFQ+SYSEbp4Q+GPdGeDFkFm3Gsij0+ZHlqBWtpB8Q34wg0YRCdmiSdTxrieNScyb8EsW5ntTcRluJE3oj6lWK0p5ZkrEs0e4XE8gzDXr7Y81xMeDUNJtAsdK5G9U=
+	t=1741513830; cv=none; b=g3ybwocqnxkCfh0goiGrcZ7mZM1u4/gNQvpDdfErM96knxaRgF0c6GjpeqjF3vCj7TQ3aRiaeci+Lzu6pg8yShF+sz2DB77fFGa+FSD23kW87CzTHM6PIxrub+RXpuz0Sz2tboQCeE7TAXV+x/Nvp81hZJIpBhl4wkBzu49H8zc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741513799; c=relaxed/simple;
-	bh=VxJvVn6qaRu0WEzuAQdi5gaBI4IgpefPj5pgizkVmH4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Htgz5yp/yyFQ0dRT23503ut/nzh5tGrT/L4WociWPOxe1J8nfY2Mkr4akdDsKRZy8sbENJuc4ytYaVQFpOIh54VJ9gUNg5nGNZisRu6VReejm1v64N4/JU6ljc8HOmkBcL1q8VJCFNGZPLFbOrbJr1yYStmHc0+z5Dg1C+kIdRk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=DZmnhS/l; arc=none smtp.client-ip=117.135.210.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=Message-ID:Date:MIME-Version:Subject:From:
-	Content-Type; bh=D0D4APOoeYC81PF9TRG8I9kzmofvMySqAZ9SAcnxvBs=;
-	b=DZmnhS/lIVwn/yubSTMxmdq6LpOYSPKVJUiGEZ1x2JQXNhdMJnIzdLeIV2Qdg6
-	r8o7cPHgyoIneXfvYgM+62HyXpFP+WlcBIycoGQszZ99GL/SwwOEq4j8e2q0W3fb
-	eHD2lnckm0BEOGql1FguTlTczGvihYaLf8DWRShHdkjyk=
-Received: from [192.168.71.45] (unknown [])
-	by gzga-smtp-mtada-g0-0 (Coremail) with SMTP id _____wBHf_oWZM1n+J9ZRg--.21878S2;
-	Sun, 09 Mar 2025 17:49:10 +0800 (CST)
-Message-ID: <bf9fc865-58b9-45ed-a346-ce82899d838c@163.com>
-Date: Sun, 9 Mar 2025 17:49:09 +0800
+	s=arc-20240116; t=1741513830; c=relaxed/simple;
+	bh=tiwOz2CJXeEBUYBXyjl0p2i46BaZuqvQgxrveRtJGHg=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=ScBFF0LN5miecnnvFlB6x5L5dJZzTeRyPoh2OrSqVxW0EPJ2+T0QbNrctUbBMYPbHsTIzL1BLcszdT+g4+MwDxJ6EgDAgkR1/jzkdryEsLpfoOl7AsnM9fnzGIKrkznYze65DAZ9/ea+mtgZ4cngspJI/qDGFB8puVdKR6k/9I4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jQZZ7z8E; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 80096C4CEED;
+	Sun,  9 Mar 2025 09:50:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741513829;
+	bh=tiwOz2CJXeEBUYBXyjl0p2i46BaZuqvQgxrveRtJGHg=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=jQZZ7z8En4yKLZCgZmMQmlYMa0ziakAk81L/oXSBWXZhFoL5h271cptaKzA9lX/nD
+	 T31xkehvSO/EK1FgsIO/+AWQMwIFh65LV/ey+vJfEqPE3TuCPHkftZnfmbYKEWVVxe
+	 ME/jn50lgO02r0UbnleW2hRH5ZNma5Rd4rnl94B691OuhaBDlm+ywYJeLRv4GIOhPn
+	 I6HL99f/9PIPh15sgXci4WeXKjSDeDZRDZgkSz4EYOaREiX/19TnYcDyBIHk+jmdL7
+	 Q44ktCWz6zFqZLUiJ+3PMBwGyaE5jIGyzbXxl7e6y37qQsuOTO289JtqKvl6zX3tzU
+	 n97fyJ47zX1Ng==
+From: Andreas Hindborg <a.hindborg@kernel.org>
+To: "Benno Lossin" <benno.lossin@proton.me>
+Cc: "Miguel Ojeda" <ojeda@kernel.org>,  "Anna-Maria Behnsen"
+ <anna-maria@linutronix.de>,  "Frederic Weisbecker" <frederic@kernel.org>,
+  "Thomas Gleixner" <tglx@linutronix.de>,  "Danilo Krummrich"
+ <dakr@kernel.org>,  "Alex Gaynor" <alex.gaynor@gmail.com>,  "Boqun Feng"
+ <boqun.feng@gmail.com>,  "Gary Guo" <gary@garyguo.net>,  =?utf-8?Q?Bj?=
+ =?utf-8?Q?=C3=B6rn?= Roy Baron
+ <bjorn3_gh@protonmail.com>,  "Alice Ryhl" <aliceryhl@google.com>,  "Trevor
+ Gross" <tmgross@umich.edu>,  "Lyude Paul" <lyude@redhat.com>,  "Guangbo
+ Cui" <2407018371@qq.com>,  "Dirk Behme" <dirk.behme@gmail.com>,  "Daniel
+ Almeida" <daniel.almeida@collabora.com>,  "Tamir Duberstein"
+ <tamird@gmail.com>,  "Markus Elfring" <Markus.Elfring@web.de>,
+  <rust-for-linux@vger.kernel.org>,  <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v11 08/13] rust: hrtimer: implement
+ `UnsafeHrTimerPointer` for `Pin<&mut T>`
+In-Reply-To: <D8BMSSM6IGCD.2TWTNMT3D8OT9@proton.me> (Benno Lossin's message of
+	"Sun, 09 Mar 2025 09:35:00 +0000")
+References: <20250307-hrtimer-v3-v6-12-rc2-v11-0-7934aefd6993@kernel.org>
+	<20250307-hrtimer-v3-v6-12-rc2-v11-8-7934aefd6993@kernel.org>
+	<mDdj26GcOkyF_DHZKNEf6Q1HfA3BKDP2yfrVlr0zKu8TpJxw3eYs_-Mn9aVmnlEHGPUL_l6KTq2WjKJpjAjqnQ==@protonmail.internalid>
+	<D8BMSSM6IGCD.2TWTNMT3D8OT9@proton.me>
+User-Agent: mu4e 1.12.7; emacs 29.4
+Date: Sun, 09 Mar 2025 10:49:15 +0100
+Message-ID: <87ldtelejo.fsf@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [v2] PCI: cadence: Add configuration space capability search API
-To: Siddharth Vadapalli <s-vadapalli@ti.com>
-Cc: lpieralisi@kernel.org, kw@linux.com, manivannan.sadhasivam@linaro.org,
- robh@kernel.org, bhelgaas@google.com, bwawrzyn@cisco.com,
- thomas.richard@bootlin.com, wojciech.jasko-EXT@continental-corporation.com,
- linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250308133903.322216-1-18255117159@163.com>
- <20250309023839.2cakdpmsbzn6pm7g@uda0492258>
- <3e6645a8-6de9-4125-8444-fa1a4f526881@163.com>
- <20250309054835.4ydiq4xpguxtbvkf@uda0492258>
-Content-Language: en-US
-From: Hans Zhang <18255117159@163.com>
-In-Reply-To: <20250309054835.4ydiq4xpguxtbvkf@uda0492258>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:_____wBHf_oWZM1n+J9ZRg--.21878S2
-X-Coremail-Antispam: 1Uf129KBjvJXoWxCFyfXFWDAFWUJw4UtryrZwb_yoWrGF48pa
-	yDXFyFkF4kJrW29rs2gan0qFyFq3s3JryUG34DGw15Zrn09F12yF4I9r45uF97CrZ7uF1Y
-	v390qrZ7Xan8A37anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07Uf739UUUUU=
-X-CM-SenderInfo: rpryjkyvrrlimvzbiqqrwthudrp/1tbiWw0Lo2fNW1rYVAAAsZ
+Content-Type: text/plain
+
+"Benno Lossin" <benno.lossin@proton.me> writes:
+
+> On Fri Mar 7, 2025 at 10:38 PM CET, Andreas Hindborg wrote:
+>> Allow pinned mutable references to structs that contain a `HrTimer` node to
+>> be scheduled with the `hrtimer` subsystem.
+>>
+>> Acked-by: Frederic Weisbecker <frederic@kernel.org>
+>> Reviewed-by: Lyude Paul <lyude@redhat.com>
+>> Signed-off-by: Andreas Hindborg <a.hindborg@kernel.org>
+>
+> One problem below, with that fixed:
+>
+> Reviewed-by: Benno Lossin <benno.lossin@proton.me>
+
+Thanks, will fix.
+
+>
+>> ---
+>>  rust/kernel/time/hrtimer.rs         |   2 +
+>>  rust/kernel/time/hrtimer/pin_mut.rs | 110 ++++++++++++++++++++++++++++++++++++
+>>  2 files changed, 112 insertions(+)
+>>
+>> diff --git a/rust/kernel/time/hrtimer.rs b/rust/kernel/time/hrtimer.rs
+>> index fee8e44447ee..ab0950a964e8 100644
+>> --- a/rust/kernel/time/hrtimer.rs
+>> +++ b/rust/kernel/time/hrtimer.rs
+>> @@ -433,3 +433,5 @@ unsafe fn timer_container_of(
+>>  pub use arc::ArcHrTimerHandle;
+>>  mod pin;
+>>  pub use pin::PinHrTimerHandle;
+>> +mod pin_mut;
+>> +pub use pin_mut::PinMutHrTimerHandle;
+>> diff --git a/rust/kernel/time/hrtimer/pin_mut.rs b/rust/kernel/time/hrtimer/pin_mut.rs
+>> new file mode 100644
+>> index 000000000000..007f47d26df6
+>> --- /dev/null
+>> +++ b/rust/kernel/time/hrtimer/pin_mut.rs
+>> @@ -0,0 +1,110 @@
+>> +// SPDX-License-Identifier: GPL-2.0
+>> +
+>> +use super::{
+>> +    HasHrTimer, HrTimer, HrTimerCallback, HrTimerHandle, RawHrTimerCallback, UnsafeHrTimerPointer,
+>> +};
+>> +use crate::time::Ktime;
+>> +use core::{marker::PhantomData, pin::Pin, ptr::NonNull};
+>> +
+>> +/// A handle for a `Pin<&mut HasHrTimer>`. When the handle exists, the timer might
+>> +/// be running.
+>> +pub struct PinMutHrTimerHandle<'a, T>
+>> +where
+>> +    T: HasHrTimer<T>,
+>> +{
+>> +    pub(crate) inner: NonNull<T>,
+>> +    _p: PhantomData<&'a T>,
+>
+> This should be `PhantomData<&'a mut T>`.
+
+Nice catch!
 
 
-
-On 2025/3/9 13:48, Siddharth Vadapalli wrote:
-> On Sun, Mar 09, 2025 at 11:18:21AM +0800, Hans Zhang wrote:
->>
->>
->> On 2025/3/9 10:38, Siddharth Vadapalli wrote:
->>> On Sat, Mar 08, 2025 at 09:39:03PM +0800, Hans Zhang wrote:
->>>> Add configuration space capability search API using struct cdns_pcie*
->>>> pointer.
->>>>
->>>> The offset address of capability or extended capability designed by
->>>> different SOC design companies may not be the same. Therefore, a flexible
->>>> public API is required to find the offset address of a capability or
->>>> extended capability in the configuration space.
->>>>
->>>> Signed-off-by: Hans Zhang <18255117159@163.com>
->>>> ---
->>>> Changes since v1:
->>>> https://lore.kernel.org/linux-pci/20250123070935.1810110-1-18255117159@163.com
->>>>
->>>> - Added calling the new API in PCI-Cadence ep.c.
->>>> - Add a commit message reason for adding the API.
->>>
->>> In reply to your v1 patch, you have mentioned the following:
->>> "Our controller driver currently has no plans for upstream and needs to
->>> wait for notification from the boss."
->>> at:
->>> https://lore.kernel.org/linux-pci/fcfd4827-4d9e-4bcd-b1d0-8f9e349a6be7@163.com/
->>>
->>> Since you have posted this patch, does it mean that you will be
->>> upstreaming your driver as well? If not, we still end up in the same
->>> situation as earlier where the Upstream Linux has APIs to support a
->>> Downstream driver.
->>>
->>> Bjorn indicated the above already at:
->>> https://lore.kernel.org/linux-pci/20250123170831.GA1226684@bhelgaas/
->>> and you did agree to do so. But this patch has no reference to the
->>> upstream driver series which shall be making use of the APIs in this
->>> patch.
->>
->> Hi Siddharth,
->>
->>
->> Bjorn:
->>    If/when you upstream code that needs this interface, include this
->>    patch as part of the series.  As Siddharth pointed out, we avoid
->>    merging code that has no upstream users.
->>
->>
->> Hans: This user is: pcie-cadence-ep.c. I think this is an optimization of
->> Cadence common code. I think this is an optimization of Cadence common code.
->> Siddharth, what do you think?
-> 
-> This seems to be an extension of the driver rather than an optimization.
-> At first glance, though it seems like this patch is enabling code-reuse,
-> it is actually attempting to walk through the config space registers to
-> identify a capability. Prior to this patch, those offsets were hard-coded,
-> saving the trouble of having to walk through the capability pointers to
-> arrive at the capability.
-
-Hi Siddharth,
-
-Prior to this patch, I don't think hard-coded is that reasonable. 
-Because the SOC design of each company does not guarantee that the 
-offset of each capability is the same. This parameter can be configured 
-when selecting PCIe configuration options. The current code that just 
-happens to hit the offset address is the same.
-
-You can refer to the pci_find_*capability() or dw_pcie_find_*capability 
-API. The meaning of their appearance is the same as what I said, and the 
-design of each company may be different.
 
 Best regards,
-Hans
+Andreas Hindborg
 
-> 
-> This patch will affect the following functions:
-> 01. cdns_pcie_get_fn_from_vfn()
-> 02. cdns_pcie_ep_write_header()
-> 03. cdns_pcie_ep_set_msi()
-> 04. cdns_pcie_ep_get_msi()
-> 05. cdns_pcie_ep_get_msix()
-> 06. cdns_pcie_ep_set_msix()
-> 07. cdns_pcie_ep_send_msi_irq()
-> 08. cdns_pcie_ep_map_msi_irq()
-> 09. cdns_pcie_ep_send_msix_irq()
-> 10. cdns_pcie_ep_start()
-> which will now take longer to get to the capability whose offset was
-> known. I understand that you wish to extend these functions to support
-> your SoC where the offsets don't match the hard-coded ones.
->
-In my opinion, hard-coded is not universal.
-
-> I will let Bjorn and others share their views on this patch.
-> 
-> Regards,
-> Siddharth.
 
 
