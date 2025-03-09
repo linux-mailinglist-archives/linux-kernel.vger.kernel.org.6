@@ -1,118 +1,113 @@
-Return-Path: <linux-kernel+bounces-552878-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-552879-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A471A58052
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 03:39:23 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 80212A5805D
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 03:51:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A713616A2C3
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 02:39:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 23214188C1BD
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 02:51:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55DE92260C;
-	Sun,  9 Mar 2025 02:39:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2B3835972;
+	Sun,  9 Mar 2025 02:51:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="DZD6WF0F"
-Received: from fllvem-ot03.ext.ti.com (fllvem-ot03.ext.ti.com [198.47.19.245])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Nignk+6X"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B197E29B0;
-	Sun,  9 Mar 2025 02:39:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.245
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B82A514A85;
+	Sun,  9 Mar 2025 02:51:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741487955; cv=none; b=bOFNCCCW4u2szKmPnrNQ+bCkMTS1uU7godbubzL6hT32PxPPMC2+5rdMMJEfMEUZrBW+6a2hN5sB5I/gT6TgFlErDhFtAohp7P6X/btmfwXfOJMlPHSF5ctyHz6ICLsh8PoZibEYyJyx0IkjBeCmKHao6MCAnTWBuPO3D86091g=
+	t=1741488691; cv=none; b=dbMfTPvf8/r+6zJve6ujcRqlitmiW85TpPe2qUZUQgvTDhxbAY+Nc9TnUUCIMiKP0KhL+gyb5Wgub7G5o6sKKieeCP86Cm3D0gzIcP69ztP3R+1qgbyM5qnfrXYkgXZKTA1DP7ISA72Sus4U3K8mtX1nGgbquGDfcTk3IvuMj+c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741487955; c=relaxed/simple;
-	bh=UJasqy5JbugTN9l6LuKDna9yZBWsmyaJYNLnfmnYuCc=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CkddTmiU31Hf7YkuwftQ00yMUezGxZOrsrfJYGUgHA1V80hly0BOYtfRn20L//nw0fRkGpx219c4VBS+C4dVc/ynExIDDmaAKNEbTq2i0VgK6X+p/+5uDg99YNESqCAtlK+OJpylluIwibqRP2tsTtTFWV9Q69ibRq9b2b5IbBY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=DZD6WF0F; arc=none smtp.client-ip=198.47.19.245
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-	by fllvem-ot03.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 5292cfeo076920
-	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Sat, 8 Mar 2025 20:38:41 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1741487921;
-	bh=pJVN+AQ19yCWW6/96Nn8te8YLXyUbINan32HfKWJ2rw=;
-	h=Date:From:To:CC:Subject:References:In-Reply-To;
-	b=DZD6WF0FCmYGN4JVRnzFtpupgSKLc8DD8koKWyH6GphB6CwhRnxeXUN5Hs1kbE8gg
-	 0Fw/9oQb87uWdb3tuDSY+Ze3HGk5dxMA8oGIqNc2Ldv8bzub820smjosJEXfXXiipl
-	 A9bvmBTiI19jxJ+n7KGMn6ch/1uL559+zv7zSPpg=
-Received: from DFLE107.ent.ti.com (dfle107.ent.ti.com [10.64.6.28])
-	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 5292cf0B059943
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Sat, 8 Mar 2025 20:38:41 -0600
-Received: from DFLE101.ent.ti.com (10.64.6.22) by DFLE107.ent.ti.com
- (10.64.6.28) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Sat, 8
- Mar 2025 20:38:40 -0600
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE101.ent.ti.com
- (10.64.6.22) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Sat, 8 Mar 2025 20:38:40 -0600
-Received: from localhost (uda0492258.dhcp.ti.com [10.24.72.113])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 5292cdPF057956;
-	Sat, 8 Mar 2025 20:38:40 -0600
-Date: Sun, 9 Mar 2025 08:08:39 +0530
-From: Siddharth Vadapalli <s-vadapalli@ti.com>
-To: Hans Zhang <18255117159@163.com>
-CC: <lpieralisi@kernel.org>, <kw@linux.com>,
-        <manivannan.sadhasivam@linaro.org>, <robh@kernel.org>,
-        <bhelgaas@google.com>, <bwawrzyn@cisco.com>, <s-vadapalli@ti.com>,
-        <thomas.richard@bootlin.com>,
-        <wojciech.jasko-EXT@continental-corporation.com>,
-        <linux-pci@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [v2] PCI: cadence: Add configuration space capability search API
-Message-ID: <20250309023839.2cakdpmsbzn6pm7g@uda0492258>
-References: <20250308133903.322216-1-18255117159@163.com>
+	s=arc-20240116; t=1741488691; c=relaxed/simple;
+	bh=+AxKQzQOhFvyAjlz5Ur/xA8zBv34fgRsUJBCR73dObM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uOuagLYWuhf/khAdmwXgRHF5w3W6ND0WL+69prAKh97Twbf2J+27fQilaNs7wmYZc0wLIO6xkyQ4fX/aZhItmWZ+4EILg7CosKSoXJ/UF644H1OvlfvqY7pE0+jTpsTup6EoJ4nSv61WH922DaJ8skj9Gl1QeMZYpe1v4CpRjkI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Nignk+6X; arc=none smtp.client-ip=192.198.163.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1741488690; x=1773024690;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=+AxKQzQOhFvyAjlz5Ur/xA8zBv34fgRsUJBCR73dObM=;
+  b=Nignk+6X5m/DDD0/excdVZGpeQaQCZfAVdLlljII+ypjmL25SyV08sVX
+   2Fiqz5fHPTgqq4VtIajNbKlHUQzyI/ncDozDLm9xMeCmfM6UJsDXk7xzE
+   2dE6HDte/5dNGFLuKd6Torls2LxTUCjmGbqS7EgIvUhu53bQafDeaKqDy
+   l5wGVU9B7ZfXB3g+aRSsgEoJkDTSW3ZKFvOhmqZyCGMG9VhZzLqmyi8Nk
+   G0YH0wKToQ641ExRmFrhv1xsCs0JM9dlnTewEB1ODArlfFJTqgq+iFKOG
+   jI+o8HCyb36upvW6plqZqWR71/PRKG9pyVXcHQ9fECWeRW0oiTG6msT8I
+   A==;
+X-CSE-ConnectionGUID: 0SYZgyh+QmC9wMqMn5LRbA==
+X-CSE-MsgGUID: k4cFiNEfTTCxZDKJBv/D9Q==
+X-IronPort-AV: E=McAfee;i="6700,10204,11367"; a="41666197"
+X-IronPort-AV: E=Sophos;i="6.14,233,1736841600"; 
+   d="scan'208";a="41666197"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Mar 2025 18:51:29 -0800
+X-CSE-ConnectionGUID: HiQhBS2oTKiKQ/8IseH6xA==
+X-CSE-MsgGUID: E3Auo7O4QWawkzLNtPKfXQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,233,1736841600"; 
+   d="scan'208";a="119670936"
+Received: from lkp-server02.sh.intel.com (HELO a4747d147074) ([10.239.97.151])
+  by fmviesa007.fm.intel.com with ESMTP; 08 Mar 2025 18:51:26 -0800
+Received: from kbuild by a4747d147074 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tr6lA-0002aG-0r;
+	Sun, 09 Mar 2025 02:51:24 +0000
+Date: Sun, 9 Mar 2025 10:50:43 +0800
+From: kernel test robot <lkp@intel.com>
+To: Stanislav Fomichev <sdf@fomichev.me>, netdev@vger.kernel.org
+Cc: oe-kbuild-all@lists.linux.dev, davem@davemloft.net, edumazet@google.com,
+	kuba@kernel.org, pabeni@redhat.com, linux-kernel@vger.kernel.org,
+	michael.chan@broadcom.com, pavan.chebbi@broadcom.com,
+	andrew+netdev@lunn.ch, sdf@fomichev.me
+Subject: Re: [PATCH net-next 1/3] eth: bnxt: switch to netif_close
+Message-ID: <202503091014.T0oUWfdo-lkp@intel.com>
+References: <20250308010840.910382-1-sdf@fomichev.me>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250308133903.322216-1-18255117159@163.com>
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+In-Reply-To: <20250308010840.910382-1-sdf@fomichev.me>
 
-On Sat, Mar 08, 2025 at 09:39:03PM +0800, Hans Zhang wrote:
-> Add configuration space capability search API using struct cdns_pcie*
-> pointer.
-> 
-> The offset address of capability or extended capability designed by
-> different SOC design companies may not be the same. Therefore, a flexible
-> public API is required to find the offset address of a capability or
-> extended capability in the configuration space.
-> 
-> Signed-off-by: Hans Zhang <18255117159@163.com>
-> ---
-> Changes since v1:
-> https://lore.kernel.org/linux-pci/20250123070935.1810110-1-18255117159@163.com
-> 
-> - Added calling the new API in PCI-Cadence ep.c.
-> - Add a commit message reason for adding the API.
+Hi Stanislav,
 
-In reply to your v1 patch, you have mentioned the following:
-"Our controller driver currently has no plans for upstream and needs to
-wait for notification from the boss."
-at:
-https://lore.kernel.org/linux-pci/fcfd4827-4d9e-4bcd-b1d0-8f9e349a6be7@163.com/
+kernel test robot noticed the following build errors:
 
-Since you have posted this patch, does it mean that you will be
-upstreaming your driver as well? If not, we still end up in the same
-situation as earlier where the Upstream Linux has APIs to support a
-Downstream driver.
+[auto build test ERROR on net-next/main]
 
-Bjorn indicated the above already at:
-https://lore.kernel.org/linux-pci/20250123170831.GA1226684@bhelgaas/
-and you did agree to do so. But this patch has no reference to the
-upstream driver series which shall be making use of the APIs in this
-patch.
+url:    https://github.com/intel-lab-lkp/linux/commits/Stanislav-Fomichev/eth-bnxt-request-unconditional-ops-lock/20250308-091318
+base:   net-next/main
+patch link:    https://lore.kernel.org/r/20250308010840.910382-1-sdf%40fomichev.me
+patch subject: [PATCH net-next 1/3] eth: bnxt: switch to netif_close
+config: arm-randconfig-004-20250309 (https://download.01.org/0day-ci/archive/20250309/202503091014.T0oUWfdo-lkp@intel.com/config)
+compiler: arm-linux-gnueabi-gcc (GCC) 14.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250309/202503091014.T0oUWfdo-lkp@intel.com/reproduce)
 
-Regards,
-Siddharth.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202503091014.T0oUWfdo-lkp@intel.com/
+
+All errors (new ones prefixed by >>, old ones prefixed by <<):
+
+WARNING: modpost: missing MODULE_DESCRIPTION() in arch/arm/probes/kprobes/test-kprobes.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in mm/kasan/kasan_test.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in lib/slub_kunit.o
+>> ERROR: modpost: "netif_close" [drivers/net/ethernet/broadcom/bnxt/bnxt_en.ko] undefined!
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
