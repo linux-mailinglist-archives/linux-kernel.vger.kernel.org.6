@@ -1,48 +1,49 @@
-Return-Path: <linux-kernel+bounces-553190-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-553184-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 461B1A58558
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 16:23:44 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 81A7CA58552
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 16:22:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BFBCF16351D
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 15:23:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1DB873AA8E4
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 15:22:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76AAD1E5205;
-	Sun,  9 Mar 2025 15:22:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF8E81DE8B9;
+	Sun,  9 Mar 2025 15:22:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WvMiLCwa"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rsHnY3lw"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC2531DF268;
-	Sun,  9 Mar 2025 15:22:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17CFB46426;
+	Sun,  9 Mar 2025 15:22:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741533774; cv=none; b=VnW5aw5k0WwvD/yJo68uw3TaVpI3d63Q5Mfe2E5YpMlnVmk2je/sx7wNhff5EWG6nIQVLfLxQAKBjq8p3cYOwW1Lu77F3rg8M+u578cQSKzIrsFUHjso0Aqb1dAbllinIp/V7NhmvzHg9D/F8c4gpQg+CymAtFmCIHhDDGMscWc=
+	t=1741533725; cv=none; b=tLLXXdqAJaHzRj4PBimvuKjhM6DD4eDv+NuoEX8uRSmj8F8P9GRrNWmddjEUKsggcqgpYFS5kXt4AoullI6lHHyGgeQuAsmHtAO5c/Y63jpw5lM9ikCkBnl2EgFcZppJciexduvzFCT64w7/2v7lsabSzI8jG7mL078hIe3StTU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741533774; c=relaxed/simple;
-	bh=DwVZIip6YffDFOKj/P5+b+mVe4Ium7/J5/6ey3jh4Lg=;
+	s=arc-20240116; t=1741533725; c=relaxed/simple;
+	bh=Ky9iD1F674vvwmdNmX1iOwy1bdlneXIh0b9IeMManG4=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=nJRnkLMi2/5FNYitnGUlcIfY4XwSbyTY38+vG1KUjomdotif0+IjCkPhwtjNklO96NgLX2aXv7yEZ1+jUk9yegguOT6r3tg5TyKzXld7/6rqL4UlaAfbm9a9i0Gjc6BW+bgWfIIUvnboMv9oE8JykY9wH6n42NG8APk1GXw63kM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WvMiLCwa; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6E8E5C4CEF0;
-	Sun,  9 Mar 2025 15:22:47 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=U2Zrs69IP8qT+4RTQ5wcpX9bY5iFvz2H9kp4udAYtmgiHh0tOlg6K8QDKgdihncTrMuy6dW5cOWHkvplYtZRIYERkTKmurZn9JWY7GoqKEQ+Wx8ucC9N3kXd0y5eNLdwa8i+jTNJ8OnwjkODfHB+bqQaLZS6qPUi6RbTZGDEwyo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rsHnY3lw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 454A0C4CEE5;
+	Sun,  9 Mar 2025 15:21:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741533774;
-	bh=DwVZIip6YffDFOKj/P5+b+mVe4Ium7/J5/6ey3jh4Lg=;
+	s=k20201202; t=1741533724;
+	bh=Ky9iD1F674vvwmdNmX1iOwy1bdlneXIh0b9IeMManG4=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=WvMiLCwaN9iRE2PJLvEIURPdJbfcx9XuM4dv0gnRkbD5LHbEDX8hFIyTXBX1kRxN9
-	 qDkA8RltR1l14LFPTA3M5MAtvrGPTO+cg9fFcva9C+sYdsQi5+pEbLyUjlBYMiNxl5
-	 H6xgKhOXKzn7XxYypF0LmO51cUxNOlm6N7Y4p1tcLMljXrqQOgjmgZFViicspBv605
-	 +ifwAHwwCwKu5MoRIvJBAcGpwjE+97CSd6IS/G9XocV8g7kKxsh18Hp/X++Q5V8g61
-	 LdWTRtVcFATkQvrMWmugwrLcQEKtqGoqhs0WitPuuyvitm2fZE33AxT8sJBUwATzyr
-	 +VU+YYrTkipnw==
+	b=rsHnY3lw7fSzz9P4LG73Au2fTiZc3Cql5uie1eKH8I2EuurKLubFgvh55+LlBz7BN
+	 NWpFg3RHMZiX02eeh1QDUrTzcpn7mT9k98mZXwSC9+wUWd+yrq4mOLK4MD0oxRVUIk
+	 RSRcxgTzE1H3qd+XSW/vko6rIrvGXGNmaJUbF4+q8Kc0Lkk3Jd4z8L2Sm8mbIGySp/
+	 znh4qhLnJfXPa1EZfLsw/LF7lfU0QL7xw6CVJoN8Xcoabq3Z9Dcio15DZGQxHgw3bK
+	 vZgs+xJA0rwSPqLNYbjhKytuMN0z+8l85OkOkHyEqtmhI/8JgoxwGhoQaUWfTBfl93
+	 gEjie2XGJMqww==
 From: Andreas Hindborg <a.hindborg@kernel.org>
-Date: Sun, 09 Mar 2025 16:18:56 +0100
-Subject: [PATCH v12 05/13] rust: hrtimer: add `UnsafeHrTimerPointer`
+Date: Sun, 09 Mar 2025 16:18:57 +0100
+Subject: [PATCH v12 06/13] rust: hrtimer: add
+ `hrtimer::ScopedHrTimerPointer`
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -51,7 +52,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250309-hrtimer-v3-v6-12-rc2-v12-5-73586e2bd5f1@kernel.org>
+Message-Id: <20250309-hrtimer-v3-v6-12-rc2-v12-6-73586e2bd5f1@kernel.org>
 References: <20250309-hrtimer-v3-v6-12-rc2-v12-0-73586e2bd5f1@kernel.org>
 In-Reply-To: <20250309-hrtimer-v3-v6-12-rc2-v12-0-73586e2bd5f1@kernel.org>
 To: Miguel Ojeda <ojeda@kernel.org>, 
@@ -69,70 +70,76 @@ Cc: Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>,
  rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, 
  Andreas Hindborg <a.hindborg@kernel.org>
 X-Mailer: b4 0.15-dev
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2216; i=a.hindborg@kernel.org;
- h=from:subject:message-id; bh=DwVZIip6YffDFOKj/P5+b+mVe4Ium7/J5/6ey3jh4Lg=;
- b=owEBbQKS/ZANAwAIAeG4Gj55KGN3AcsmYgBnzbFrduYuZDMu3VkzOXc0pl/c6PQOsXoR93SMy
- ASfP2X8qhWJAjMEAAEIAB0WIQQSwflHVr98KhXWwBLhuBo+eShjdwUCZ82xawAKCRDhuBo+eShj
- d3A9D/44BsscnA2s+Mkhz2BcQ1kjqzljdUTnre8L99O2WD4G9kv9h1EFODep106880asrsZPfjO
- 4H5p3wDlZMZqswhPf/pyGWUHjeQwgZvvbWmV1yRpWt6jAJ5I8QmD8cirDwOXI5h8wcxZBgeuim8
- wKyZlTq4/+BHV+MFYgZjBJEaGwL6Lz1WCuBX7WvGCIyBxnfbLtJTASf7gJFQhv4FMFWyaHCHaXr
- LhOP43c+xgifqOzWXghxVmwXllvShqp9QNGys0lK15tPfrJs80CxPgmHIeyFwok+BSJssoCy5ez
- /oNmRNTuw9ToepZtjBNjv3f/IC8keImdqPaS4smeFZUxAsteCKXPHSM+B7T4YfI4uEBxvl5MvYg
- 6TOalYVZveTnwm5ZX1jBrUVXdSPDhMTAhprBewAyNpyVxN/Iezf5dAEGtYbiQzfSLl1pNlnxz0F
- ielqe+NjPgys5gdpGtMGOy+eowT/jlKP+jk8aCiz9zOAXprtvom2O2Ac78gbSBCEfsLvBOUTjqD
- DWtIb6r3ES1d8jliF/PXx+klLZdNmF0xEApUaTkM+zwWBg85vpkKYewb+G2D+klYIFZ+ucQ5PbZ
- bTMasPsFC2w7kBE0erqSw+t/Va0TUC7/4+NZ23Y/bVFu8UnAnM++VhImv8e66Z/9qgOwXgOPdwU
- 1ggUruqA+UbOHCg==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2186; i=a.hindborg@kernel.org;
+ h=from:subject:message-id; bh=Ky9iD1F674vvwmdNmX1iOwy1bdlneXIh0b9IeMManG4=;
+ b=owEBbQKS/ZANAwAIAeG4Gj55KGN3AcsmYgBnzbFsX5ukJ8Jdm2B5D7ifYODzlQf7PI7W5bbhI
+ 3p+koP4ElGJAjMEAAEIAB0WIQQSwflHVr98KhXWwBLhuBo+eShjdwUCZ82xbAAKCRDhuBo+eShj
+ d1AGEAC9jBl6aWS8sob+yPtYSFcUVFlFlzLaZbonK9O7AXrfFoqrJXZ1Wf2fowhYrVpH6GcE+WQ
+ ZrNiixRd1a84JsgBKMS6ljQbLnAwSrclGv2imlYgYEYpqtzLQ1c6T3XqRVO+a0qhsqn6Ik204Qe
+ 4KP0GglEQK/n/KBmiPw6TWwWxO5wQAmuEha1LY0rSFcQO6Vyv22w2oA69TV0KB4T/ddjeKYXqab
+ mRT66/9/9GF2TJGbQPyYwm+IeVNBut5HDN+kJxsQtwfYtqvjiECjIgzM1TdEyYTs+AIrF999k7k
+ PlI2HHe3bRmWxWwQOk6cvzlwXAZ2dpJS0F3rxCWS+GkzZjWFBF03Xi6KQdGIoAA0RDb2AT+0cxl
+ kjAiZvzgJsdifz3H1wPSdRz+y34p2VFJ2cKZb+bELaLmuAKknEnaTuAXHd2NWnbtxB6YE8U5rdt
+ eNykYtTCfcXdEU6CTL7XomsVHF/xKZj43/TGo5dCRNSyuWHLZOTFo6vkPVNnVp8wRtqDVOYEHPC
+ 46nJ3rlwD1NkWEe3I4qhQ9bKw6D2AWyBzzfiBGbjVxJGKFtOxRsUqmxVLCUu6xrNnHuvQLL+Vmg
+ rFISarivNNVPnq7561DZ0Bj0uga+aTJzanI1IhRVl9DId/trqfpeAt07Yv9UhepxKi7Tfxm5LvU
+ wBVjmBNJ6752DzA==
 X-Developer-Key: i=a.hindborg@kernel.org; a=openpgp;
  fpr=3108C10F46872E248D1FB221376EB100563EF7A7
 
-Add a trait to allow unsafely queuing stack allocated timers.
+Add the trait `ScopedHrTimerPointer` to allow safe use of stack allocated
+timers. Safety is achieved by pinning the stack in place while timers are
+running.
+
+Implement the trait for all types that implement `UnsafeHrTimerPointer`.
 
 Acked-by: Frederic Weisbecker <frederic@kernel.org>
 Reviewed-by: Benno Lossin <benno.lossin@proton.me>
 Reviewed-by: Lyude Paul <lyude@redhat.com>
 Signed-off-by: Andreas Hindborg <a.hindborg@kernel.org>
 ---
- rust/kernel/time/hrtimer.rs | 31 +++++++++++++++++++++++++++++++
- 1 file changed, 31 insertions(+)
+ rust/kernel/time/hrtimer.rs | 33 +++++++++++++++++++++++++++++++++
+ 1 file changed, 33 insertions(+)
 
 diff --git a/rust/kernel/time/hrtimer.rs b/rust/kernel/time/hrtimer.rs
-index 78afb093aee8..0a9ca18df665 100644
+index 0a9ca18df665..f9b2323a305a 100644
 --- a/rust/kernel/time/hrtimer.rs
 +++ b/rust/kernel/time/hrtimer.rs
-@@ -188,6 +188,37 @@ pub trait HrTimerPointer: Sync + Sized {
-     fn start(self, expires: Ktime) -> Self::TimerHandle;
+@@ -219,6 +219,39 @@ pub unsafe trait UnsafeHrTimerPointer: Sync + Sized {
+     unsafe fn start(self, expires: Ktime) -> Self::TimerHandle;
  }
  
-+/// Unsafe version of [`HrTimerPointer`] for situations where leaking the
-+/// [`HrTimerHandle`] returned by `start` would be unsound. This is the case for
-+/// stack allocated timers.
-+///
-+/// Typical implementers are pinned references such as [`Pin<&T>`].
++/// A trait for stack allocated timers.
 +///
 +/// # Safety
 +///
-+/// Implementers of this trait must ensure that instances of types implementing
-+/// [`UnsafeHrTimerPointer`] outlives any associated [`HrTimerPointer::TimerHandle`]
-+/// instances.
-+pub unsafe trait UnsafeHrTimerPointer: Sync + Sized {
-+    /// A handle representing a running timer.
-+    ///
-+    /// # Safety
-+    ///
-+    /// If the timer is running, or if the timer callback is executing when the
-+    /// handle is dropped, the drop method of [`Self::TimerHandle`] must not return
-+    /// until the timer is stopped and the callback has completed.
-+    type TimerHandle: HrTimerHandle;
++/// Implementers must ensure that `start_scoped` does not return until the
++/// timer is dead and the timer handler is not running.
++pub unsafe trait ScopedHrTimerPointer {
++    /// Start the timer to run after `expires` time units and immediately
++    /// after call `f`. When `f` returns, the timer is cancelled.
++    fn start_scoped<T, F>(self, expires: Ktime, f: F) -> T
++    where
++        F: FnOnce() -> T;
++}
 +
-+    /// Start the timer after `expires` time units. If the timer was already
-+    /// running, it is restarted at the new expiry time.
-+    ///
-+    /// # Safety
-+    ///
-+    /// Caller promises keep the timer structure alive until the timer is dead.
-+    /// Caller can ensure this by not leaking the returned [`Self::TimerHandle`].
-+    unsafe fn start(self, expires: Ktime) -> Self::TimerHandle;
++// SAFETY: By the safety requirement of [`UnsafeHrTimerPointer`], dropping the
++// handle returned by [`UnsafeHrTimerPointer::start`] ensures that the timer is
++// killed.
++unsafe impl<T> ScopedHrTimerPointer for T
++where
++    T: UnsafeHrTimerPointer,
++{
++    fn start_scoped<U, F>(self, expires: Ktime, f: F) -> U
++    where
++        F: FnOnce() -> U,
++    {
++        // SAFETY: We drop the timer handle below before returning.
++        let handle = unsafe { UnsafeHrTimerPointer::start(self, expires) };
++        let t = f();
++        drop(handle);
++        t
++    }
 +}
 +
  /// Implemented by [`HrTimerPointer`] implementers to give the C timer callback a
