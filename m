@@ -1,146 +1,136 @@
-Return-Path: <linux-kernel+bounces-553371-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-553372-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B8C65A58836
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 21:42:28 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A040A5883B
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 21:44:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0B4233AB668
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 20:42:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 43B7D3AB37E
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Mar 2025 20:44:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4864D21D584;
-	Sun,  9 Mar 2025 20:42:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F15E121D3FD;
+	Sun,  9 Mar 2025 20:44:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eiRxylOy"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TlZh2hlb"
+Received: from mail-vk1-f181.google.com (mail-vk1-f181.google.com [209.85.221.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89DB4160783;
-	Sun,  9 Mar 2025 20:42:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAA5F10E5
+	for <linux-kernel@vger.kernel.org>; Sun,  9 Mar 2025 20:44:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741552939; cv=none; b=NlDn1D7DK+43/DFLtkxm7q8IkNLmW69+zaj/o3zJucitEitQTmsFZwFqveb5pph8G65aN2Ii4TLwrS73yYclsZZfsRjBi6VwbPFfzuaxSQSaPm4OIWPtyfwrSC5IavARR04RKSStIayxaWOIXSQMfZJjOxsz/rrzgJjzKG0Jc2U=
+	t=1741553078; cv=none; b=bT8tp2e4h8Vut7h5Z7U1eNQ8P8dw8N3rHa1yD0uBEzPMUoRFmY4fTZDBsmfV4BQm7v30NlnyQ8hvkEC2FITM5/SkK8v9ZqNmIu2kBmE1+2Ecz1HgQr6eMCZzH2fTSPktRpuf4QgGwT37p0KOUWDtxTD2sHzp5Xe3v/f0DRa+ug4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741552939; c=relaxed/simple;
-	bh=jTfqTCbDUL9De+VnUopmQtOgbCkPufvbtvYfClQfw3A=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iGgZgc8ha02K/ZXsGAFkdTSxaaBa2jZ/jhR/Ug0iTaCrbaWU1DTGngrSK/MKL2fK6cFrPg1PQcVuCLyn+o5IdA7aOT9OZ4F46Mc5xKSHLVosd1lNM3ZJvhxZVBc8kioV37oJqQ5RiDyxoOZhvQqNzTrXdRRchCF+KsGGnj/2qaM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eiRxylOy; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 80657C4CEE3;
-	Sun,  9 Mar 2025 20:42:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741552938;
-	bh=jTfqTCbDUL9De+VnUopmQtOgbCkPufvbtvYfClQfw3A=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=eiRxylOyLMLaJ81IdMWw8ncRE02cscEzs8gNprls/nRLpwRkWvRLIruRbc8cSUgVk
-	 u18ftdQYxxz1oeRSdaCWkZ9Tm4+klEs3T0H/AKBNVbvvxRESVR27ywt+Hz0sODXUQ4
-	 Maq931lEl6zr6M0qv3vfYoHDw2bbNQJ33+4u1UYcdiFcT2ZemrO7ecq/rcP4MffB9P
-	 lgdENq+VeZ+NWyIGvnCMPjcubCCptvDadloW4984f5GgT+YUQFCD9IK7cCxRol4fGk
-	 XQPY0ChzIPp3HBaDmA4d7aX7iTSbv1cPhKlzv5zHUz0xikesxujYrUzk43A/NdSeeK
-	 HeXuHcaJdiyHQ==
-Date: Sun, 9 Mar 2025 21:42:11 +0100
-From: Nathan Chancellor <nathan@kernel.org>
-To: kernel test robot <lkp@intel.com>, wangweidong.a@awinic.com
-Cc: lgirdwood@gmail.com, broonie@kernel.org, robh@kernel.org,
-	krzk+dt@kernel.org, conor+dt@kernel.org, perex@perex.cz,
-	tiwai@suse.com, ivprusov@salutedevices.com, jack.yu@realtek.com,
-	zhoubinbin@loongson.cn, luca.ceresoli@bootlin.com,
-	quic_pkumpatl@quicinc.com, paulha@opensource.cirrus.com,
-	rf@opensource.cirrus.com, nuno.sa@analog.com,
-	linux-sound@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, llvm@lists.linux.dev,
-	oe-kbuild-all@lists.linux.dev, yijiangtao@awinic.com
-Subject: Re: [PATCH V2 2/2] ASoC: codecs: Add aw88166 amplifier driver
-Message-ID: <20250309204211.GA960576@ax162>
-References: <20250228034958.181934-3-wangweidong.a@awinic.com>
- <202503081433.xufVVq8t-lkp@intel.com>
+	s=arc-20240116; t=1741553078; c=relaxed/simple;
+	bh=PpnuZiV1qC8ZAbQfa0GH9u2LrWp6a3ioj+AJFobenAo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=WaSG8KTDoLBmqcCSuf4NLJIFKxmRdEBnnNv7cg+LDA2YlAK00Qflhnm57VVds5A3eUuVZY5HhSAXZ25qqDwaT0hm6IL1AeMTJvgEIFl8nuo/ieuTxn8CckusnFwpS923koqZrUvXk8m0yksHxW7UsE2AU1134YVYGVLp0lpy9q4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TlZh2hlb; arc=none smtp.client-ip=209.85.221.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f181.google.com with SMTP id 71dfb90a1353d-51eb1818d4fso3906872e0c.1
+        for <linux-kernel@vger.kernel.org>; Sun, 09 Mar 2025 13:44:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741553075; x=1742157875; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=yvrDsI1J3tG/TSDdED8w2Ch7rRwrU6CBDxBSV0mPWdQ=;
+        b=TlZh2hlb2hGi3BcM0OF7Zn66bx5l98XZvKYUi9jZ34Zui90Tb5OK+BE85Y6M/ozJtk
+         85rcKZ7Iun4r860CoUDAqnPjtbvCnrCPPhKNDXzZno0UI9kRqol19u3sIFH9nZgm1I1p
+         IM97t1A5rmxqRFAQIm4IhNKXuaWukd9yE8mLQi67e/v9hs2WtePZqSAU3sxlX6Qq+Bxd
+         089GbT2HXm+pSjqE+F5YoeAbR7HoL9lDI2ZdFwWakbYg2lv5slh23ah1WCryargJpkIF
+         UYfQ/KskDFjn8S0E4Kv1tpyhGeI9NKAGOp1BZ8Ur7odU7uEHnqtHlGdGpAogOlglUrPw
+         4Kqw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741553075; x=1742157875;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=yvrDsI1J3tG/TSDdED8w2Ch7rRwrU6CBDxBSV0mPWdQ=;
+        b=farHg2iUQewquphRSG03LMEh0x42RBH/2v1J2Qd/sZ7AE9gn51x1PvrS85SAzhZpW2
+         1vUOFnwS7h3ImAaaX1ScyDRMj3cJ0e1zaINsLmmW+NmxVefmXJTZ/BJ33ZCm86uc4WOe
+         hQeqQoZC+cdvZc1yzqT5H+Ujwk2xqDVMRXDsNfVA0Qdm5USBGc7R4UV7eJN7a23x3t72
+         VBYNel89XEp36j34L6FCikK94g40RS9x6rrRbOVNCzCMVN2NxuZ4AUYA8qE9w1Ym6lzj
+         CZgKD5qo3F9PQ9XpzQCjjEqPULk9tlEHCEDfckmRe8G2SAFVLTPFYINoPH3YX0wZlE6k
+         v8lA==
+X-Forwarded-Encrypted: i=1; AJvYcCV5DOdmcN+jlNiezJz27GDd+sAbX34aEWYYe/gUc04mPFW+1hFhnc1sONNqPRzb0rs8+E5FpN3UJZw7qXg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzZIroEAA/2l29r5p3JhQrEs6hDiHEr3NGwpkunXc5drCr0eFpb
+	YvwPrIs358PbZtw0dwW3fTsXpEgtyKhQecaxgacJdWE0QojMo3A4I3+EL0QjSvbyJcfJzbbsugl
+	CBdGcH8ji33Ltx/8//dRc3TBjOlY=
+X-Gm-Gg: ASbGncvJFx01fB6fxbYiUcbFzmOkkXac9rJvANWsF/5v9CKtM1Q2XEJxADIl/RjkxP6
+	16uyBfijL0jM3yE/4AOnSP8gJiNlq2Y+BPt6b3mALHX1lrDTqOnmIbovBgeRWR9lvd3LYj5Qu6i
+	SSLthpiiNAd+/e/5FT/gkXzqLw4A==
+X-Google-Smtp-Source: AGHT+IF4rSovFL92tiVeoNmP5FW72Wgm2iOpb/wwZFrycgcomuo9wT0IlSjS9+PtPLBPjoTIr73RgtmsgZ6scrTwal4=
+X-Received: by 2002:a05:6122:54b:b0:520:4996:7cf2 with SMTP id
+ 71dfb90a1353d-523e417412amr6593147e0c.10.1741553075580; Sun, 09 Mar 2025
+ 13:44:35 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <202503081433.xufVVq8t-lkp@intel.com>
+References: <20250307120141.1566673-1-qun-wei.lin@mediatek.com>
+ <20250307120141.1566673-3-qun-wei.lin@mediatek.com> <CAGsJ_4xtp9iGPQinu5DOi3R2B47X9o=wS94GdhdY-0JUATf5hw@mail.gmail.com>
+ <CAKEwX=OP9PJ9YeUvy3ZMQPByH7ELHLDfeLuuYKvPy3aCQCAJwQ@mail.gmail.com>
+ <20250309010541.3152-1-hdanton@sina.com> <CAKEwX=Mwh9SKWfmaS9q4fym7L-v5m6GmvJrQF8eFizJJd904rA@mail.gmail.com>
+In-Reply-To: <CAKEwX=Mwh9SKWfmaS9q4fym7L-v5m6GmvJrQF8eFizJJd904rA@mail.gmail.com>
+From: Barry Song <21cnbao@gmail.com>
+Date: Mon, 10 Mar 2025 09:44:24 +1300
+X-Gm-Features: AQ5f1JrAaeOU1N8syinZxuUc9DAB-NUSYostf2nwMh6oACAXHjD8P521aBmLDzY
+Message-ID: <CAGsJ_4wFfqFZQw-TOM83gUEV_rN6uio1sujXdjCRKTOipPM2SQ@mail.gmail.com>
+Subject: Re: [PATCH 2/2] kcompressd: Add Kcompressd for accelerated zram compression
+To: Nhat Pham <nphamcs@gmail.com>
+Cc: Hillf Danton <hdanton@sina.com>, Qun-Wei Lin <qun-wei.lin@mediatek.com>, 
+	Sergey Senozhatsky <senozhatsky@chromium.org>, linux-kernel@vger.kernel.org, linux-mm@kvack.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Sat, Mar 08, 2025 at 02:20:22PM +0800, kernel test robot wrote:
-> Hi,
-> 
-> kernel test robot noticed the following build warnings:
-> 
-> [auto build test WARNING on 1e15510b71c99c6e49134d756df91069f7d18141]
-> 
-> url:    https://github.com/intel-lab-lkp/linux/commits/wangweidong-a-awinic-com/ASoC-dt-bindings-Add-schema-for-awinic-aw88166/20250228-115709
-> base:   1e15510b71c99c6e49134d756df91069f7d18141
-> patch link:    https://lore.kernel.org/r/20250228034958.181934-3-wangweidong.a%40awinic.com
-> patch subject: [PATCH V2 2/2] ASoC: codecs: Add aw88166 amplifier driver
-> config: x86_64-buildonly-randconfig-004-20250308 (https://download.01.org/0day-ci/archive/20250308/202503081433.xufVVq8t-lkp@intel.com/config)
-> compiler: clang version 19.1.7 (https://github.com/llvm/llvm-project cd708029e0b2869e80abe31ddb175f7c35361f90)
-> reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250308/202503081433.xufVVq8t-lkp@intel.com/reproduce)
-> 
-> If you fix the issue in a separate patch/commit (i.e. not just a new version of
-> the same patch/commit), kindly add following tags
-> | Reported-by: kernel test robot <lkp@intel.com>
-> | Closes: https://lore.kernel.org/oe-kbuild-all/202503081433.xufVVq8t-lkp@intel.com/
-> 
-> All warnings (new ones prefixed by >>):
-> 
-> >> sound/soc/codecs/snd-soc-aw88166.o: warning: objtool: .text.aw_dev_dsp_update_cfg: unexpected end of section
+On Mon, Mar 10, 2025 at 8:56=E2=80=AFAM Nhat Pham <nphamcs@gmail.com> wrote=
+:
+>
+> On Sat, Mar 8, 2025 at 5:05=E2=80=AFPM Hillf Danton <hdanton@sina.com> wr=
+ote:
+> >
+> > Could you explain what nr_kcompressd means, Qun-Wei, to quiesce barking=
+ lads?
+>
+> Who's the "barking lads" you are referring to? Please mind your language.
 
-Neat, it looks like LTO allows clang to figure out that through inlining
-that...
+I also feel extremely uncomfortable. In Eastern culture, this is an extreme=
+ly
+vulgar word, more offensive than any others.
 
-  | static int aw_dev_dsp_read(struct aw_device *aw_dev,
-  |         unsigned short dsp_addr, unsigned int *dsp_data, unsigned char data_type)
-  | {
-  |     ...
-  |     case AW88166_DSP_32_DATA:
-  |         ret = aw_dev_dsp_read_32bit(aw_dev, dsp_addr, dsp_data);
-  |         if (ret)
-  |             dev_err(aw_dev->dev, "read dsp_addr[0x%x] 32r-bit dsp_data[0x%x] failed",
-  |                     (u32)dsp_addr, *dsp_data);
+I strongly feel that this violates the mutual respect within the Linux
+community. This is a serious case of verbal abuse.
 
-                                       ^ This is an uninitialized read...
+Regardless of the existence of nr_kcompressd, it is still unacceptable to
+invent an interface that requires users to figure out how to set it up, whi=
+le
+kswapd can launch threads based on NUMA nodes.
+This should be transparent to users, just as kswapd does.
 
-  | static int aw_dev_dsp_read_32bit(struct aw_device *aw_dev,
-  |         unsigned short dsp_addr, unsigned int *dsp_data)
-  | {
-  |     unsigned int temp_data;
-  |     int ret;
-  |
-  |     ret = regmap_write(aw_dev->regmap, AW88166_DSPMADD_REG, dsp_addr);
-  |     if (ret) {
-  |         dev_err(aw_dev->dev, "%s write error, ret=%d", __func__, ret);
-  |         return ret;
-  |     }
-  |
-  |     ret = regmap_read(aw_dev->regmap, AW88166_DSPMDAT_REG, &temp_data);
-  |     if (ret) {
-  |         dev_err(aw_dev->dev, "%s read error, ret=%d", __func__, ret);
-  |         return ret;
-  |     }
-  |     *dsp_data = temp_data;
+void __meminit kswapd_run(int nid)
 
-when either of the two error statements occur before this assignment...
+{
+        ...
+        if (!pgdat->kswapd) {
+                pgdat->kswapd =3D kthread_create_on_node(kswapd, pgdat,
+nid, "kswapd%d", nid);
+                ...
+        }
+        pgdat_kswapd_unlock(pgdat);
+}
 
-  | static int aw_dev_get_ra(struct aw_cali_desc *cali_desc)
-  | {
-  |     struct aw_device *aw_dev =
-  |         container_of(cali_desc, struct aw_device, cali_desc);
-  |     u32 dsp_ra;
-  |     int ret;
-  |
-  |     ret = aw_dev_dsp_read(aw_dev, AW88166_DSP_REG_CFG_ADPZ_RA,
-  |                 &dsp_ra, AW88166_DSP_32_DATA);
+On the other hand, no one will know how to set up the proper number of
+threads, while direct reclaim can utilize each CPU.
 
-                    ^ because it was not initialized prior to this point.
+Therefore, listing nr_kcompressd does not change the essence of my
+question.
 
-Initializng dsp_ra to 0 in aw_dev_get_ra() resolves the issue but that
-may or may not be correct, it just shows where the issue lies.
-
-Cheers,
-Nathan
+Thanks
+Barry
 
