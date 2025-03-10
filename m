@@ -1,71 +1,63 @@
-Return-Path: <linux-kernel+bounces-553622-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-553623-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 02EB2A58C96
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 08:15:45 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 011FBA58C9C
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 08:16:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 917CD7A36FF
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 07:14:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8D32D3A97A3
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 07:16:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 691791D61B7;
-	Mon, 10 Mar 2025 07:15:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E81A1B423B;
+	Mon, 10 Mar 2025 07:16:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ij88EF5R"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="iCfdHmgt"
+Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C74721CAA70;
-	Mon, 10 Mar 2025 07:15:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5D441B4153;
+	Mon, 10 Mar 2025 07:16:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741590929; cv=none; b=k8nI70JUN07n6cDVcSN/2XqYjvtbAD7TixhjI39wiVNLtq8mYfElNkZkZjgm2gfW8NUjTI5JfegA1eKWKEziZvllaoUrfwrf+aidfpU77dYxt6LKF6/nRhvNTBkfL4DFQffD8MWuWIECLUZ0yJ8O6C8m55+Q0Q78BtijUEHOMWQ=
+	t=1741590989; cv=none; b=Xd5Q9hDc0CNw/XV5S0IN/M1bcIWcRvPkuiW1tkk68kMz0wX86fhbXpi1CiNp9W2B+EvWq06RNfGOb+jPzCa2p2ZBxDrFH4CU0XCweRrncuCZNIsUe7unB3FDNriSW+xlInfYR84pbC88i+SaF9QueliD/FWQ5P2atOOm/nruSY0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741590929; c=relaxed/simple;
-	bh=gFnHB2SIZMW1uSMUca45r2RzoCogViTde2yZGSQuqLA=;
+	s=arc-20240116; t=1741590989; c=relaxed/simple;
+	bh=ZSuThKs4RRRiIQBWC7D0j8baNXGHTK3a7S1ckfF9qdA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CincbYb1Odi51WB49p9LYwrg+pJw4YmzocrVct7Ev1AawcnSLSMVtHQ2+bOBh6XfVsTk9GFtHRgoEk2Be+NHNhKubqtjQZBBW1Wh3HGxXvDft4naUaDc7fxlvAg5nxrha0oUkbklVzETi/M5Kn6vJmfkQBn/sRwhfnp79Y65bHQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ij88EF5R; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5CD83C4CEED;
-	Mon, 10 Mar 2025 07:15:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741590929;
-	bh=gFnHB2SIZMW1uSMUca45r2RzoCogViTde2yZGSQuqLA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ij88EF5R72C3F+9cFoXWHdVZq2x2+W/f+rn4Pn/I0LNvZbHVd+s8qpu4/ovfVXDNa
-	 cyg05y5KxMMpOLEkCSXo8t91RTM35OpK9I0t9mJTyTCMAVCDZ2611g0v9DMr5fmtUu
-	 VGG2LfI7DzS4HlQIMlGSECnVr0QmsM4GTFBcOu2FJleAMDxkt8C3sm0KUfv0AP2wnu
-	 CAhV8Zu/mMp0DYmeqJDWCrrfyBALULQBQN6v5rv/ss4BRtY4oHcBDofqGlVkKmVLaU
-	 tvvitlIIWvaLkxE28fo8RLJ7ri36gwGqWIVuNCF4Nduh63fW3W82nMhqspS2idnpqK
-	 yXq3s5fiKGISw==
-Date: Mon, 10 Mar 2025 12:45:25 +0530
-From: Vinod Koul <vkoul@kernel.org>
-To: Krishna Kurapati <krishna.kurapati@oss.qualcomm.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Kishon Vijay Abraham I <kishon@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-	Johan Hovold <johan+linaro@kernel.org>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-	linux-phy@lists.infradead.org
-Subject: Re: (subset) [PATCH v3 0/3] Add support for USB controllers on QCS615
-Message-ID: <Z86RjQOSfWOGWeoj@vaman>
-References: <173505391861.950293.11120368190852109172.b4-ty@kernel.org>
- <anfqf3jvh7timbvbfqfidylb4iro47cdinbb2y64fdalbiszum@2s3n7axnxixb>
- <Z2sJK9g7hiHnPwYA@vaman>
- <i7gptvn2fitpqypycjhsyjnp63s2w5omx4jtpubylfc3hx3m5l@jbuin5uvxuoc>
- <Z2sOl9ltv0ug4d82@vaman>
- <318620fc-e174-4ef3-808a-69fe1d4e1df5@oss.qualcomm.com>
- <f607aa9b-018c-4df6-9921-725693353f65@oss.qualcomm.com>
- <CAA8EJpr48k_tHKk-uVpAH7TMcp0-V97x6ztdFrbv0Go0a6kD2g@mail.gmail.com>
- <Z683g5yuSu1Pi0pM@vaman>
- <163cab94-3271-44ed-a211-300087f4bd83@oss.qualcomm.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=ch9TwQxIGgFLysx1DW/A+cTq7O4w/OJnORmfNIXz7BuxwV8Qz3OGmoTHwp9y467B4ctU3Z6pw1XI2rYVNR6527CbM/0p14NoYOeU4Se/5LAHrIDSjMiycktHHShYwA+YDOqV2bPqhUsWjoYLVqb0DnD/dbwOANiUtJFl1UQ75RU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=iCfdHmgt; arc=none smtp.client-ip=178.21.23.139
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
+Received: from mail01.disroot.lan (localhost [127.0.0.1])
+	by disroot.org (Postfix) with ESMTP id A9FC82591A;
+	Mon, 10 Mar 2025 08:16:18 +0100 (CET)
+X-Virus-Scanned: SPAM Filter at disroot.org
+Received: from layka.disroot.org ([127.0.0.1])
+ by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
+ id 0QO2kUGrrvhG; Mon, 10 Mar 2025 08:16:18 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
+	t=1741590978; bh=ZSuThKs4RRRiIQBWC7D0j8baNXGHTK3a7S1ckfF9qdA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=iCfdHmgtbmqK8KQ3CKJXUznYpU7FQEJMgb78NWQR2d/qNTzzWwFfgdofObg9+B41p
+	 LhZlu+K9VHzifZnDVyKdO/xKBRnl+xAU4s4pA4zaQ43aqHj+5N+4M6glv7M4ISRWVA
+	 pCl9LPavMwU022eFNBiY7EgPRMCRkmPdT2dN2/yw93HLUaIFYF+/81NzB2ykfQrmMg
+	 ABQNBBa4sgKYyoKPyu0cxjPNnNy5cDWLgH7T0czc/YvzGlmoQN6X4a8aO9BbitRkBM
+	 dgaH/z7CjJ8qu7bAcXRtSFCWh2Btc1c23VlM4ZJjGlIbsGcjNgrvopi3JMirl4xfpd
+	 m66kMTlO7QTmQ==
+Date: Mon, 10 Mar 2025 07:15:58 +0000
+From: Yao Zi <ziyao@disroot.org>
+To: Chukun Pan <amadeus@jmu.edu.cn>
+Cc: andi.shyti@kernel.org, conor+dt@kernel.org, devicetree@vger.kernel.org,
+	heiko@sntech.de, jonas@kwiboo.se, krzk+dt@kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-i2c@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-rockchip@lists.infradead.org
+Subject: Re: [PATCH 3/3] arm64: dts: rockchip: Add onboard EEPROM for Radxa
+ E20C
+Message-ID: <Z86RrlBTvt9d40Dk@pie>
+References: <20250309070603.35254-4-ziyao@disroot.org>
+ <20250310070023.52290-1-amadeus@jmu.edu.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -74,34 +66,36 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <163cab94-3271-44ed-a211-300087f4bd83@oss.qualcomm.com>
+In-Reply-To: <20250310070023.52290-1-amadeus@jmu.edu.cn>
 
-On 06-03-25, 18:53, Krishna Kurapati wrote:
+On Mon, Mar 10, 2025 at 03:00:23PM +0800, Chukun Pan wrote:
+> Hi,
 > 
+> > +&i2c1 {
+> > +	pinctrl-names = "default";
+> > +	pinctrl-0 = <&i2c1m0_xfer>;
+> > +	status = "okay";
+> > +
+> > +	eeprom@50 {
+> > +		compatible = "belling,bl24c16a", "atmel,24c16";
+> > +		reg = <0x50>;
+> > +		pagesize = <16>;
+> > +		vcc-supply = <&vcc_3v3>;
+> > +	};
+> > +};
 > 
-> On 2/14/2025 6:00 PM, Vinod Koul wrote:
-> > On 23-01-25, 09:23, Dmitry Baryshkov wrote:
-> > > On Thu, 23 Jan 2025 at 09:00, Krishna Kurapati
-> > > <krishna.kurapati@oss.qualcomm.com> wrote:
-> > 
-> > > > > As mentioned in the cover letter, the bindings of phy have been merged
-> > > > > from v1.
-> > > > 
-> > > > Hi Vinod,
-> > > > 
-> > > >    Can you help in taking in the patch-3. As mentioned in previous mail,
-> > > > the bindings are merged and present in linux-next.
-> > 
-> > Can you pls post it after rebasing
-> > 
-> 
-> Hi Vinod,
-> 
->  I see the patch-3 is applying cleanly on top of latest linux next. Do you
-> suggest sending a rebase or v3 is fine ?
+> This eeprom stores the device information written by the manufacturer,
+> such as mac address and sn. So it should be marked as read-only.
 
-Please rebase on phy/next and resend
+Thanks, this makes sense.
 
--- 
-~Vinod
+> Thanks,
+> Chukun
+> 
+> -- 
+> 2.25.1
+> 
+
+Best regards,
+Yao Zi
 
