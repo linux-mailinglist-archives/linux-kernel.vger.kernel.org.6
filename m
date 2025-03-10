@@ -1,199 +1,159 @@
-Return-Path: <linux-kernel+bounces-555054-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-555055-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA7D8A5A4F7
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 21:28:53 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1049DA5A4F9
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 21:29:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 93C3C18875AE
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 20:28:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 31964163BA0
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 20:29:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B80B1DED5E;
-	Mon, 10 Mar 2025 20:28:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0C0F1DE8AB;
+	Mon, 10 Mar 2025 20:29:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="gJ1fYbVK"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="VCkHgt/J"
+Received: from mail-yw1-f182.google.com (mail-yw1-f182.google.com [209.85.128.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF21CEC5;
-	Mon, 10 Mar 2025 20:28:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B52131CAA6C
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 20:29:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741638519; cv=none; b=kssGcObmDWt3uEWBRhH2lbiGsy8VRCCCFM7IEF6ZqLx9oym9EZ3vQgoKZiYh641dywnbXru4DBdQqpdAwQz29FsbWlpI+7ovliZiI+GH5RtUuuqrgFew6f7dE1Mae7esrEA9yueLTZk0kSkntgEtN76dWdhHrgxGyKkyzfI9HOA=
+	t=1741638582; cv=none; b=TxBTA0LWqMr6xy7GL45OTt/MFEdTK+OIoV6eMIhxHGO+79YeYwmll5hXG97i3HFydoAKd8s6ve+0TMmEoDOxbiQrAfA4ZpHBU5HsgxBCO5mMOPu+C0q6iCAGGCdPA0YM+/zNg+38Cc4OXl16ktc6XwX5TMqutXMZ+SkpiOuSiu0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741638519; c=relaxed/simple;
-	bh=HSsMnI4cC6mW97nelx12+H+5tkQ+KC89ClBZc2VpfjA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DFXT/Xo/V0gr+UFNAjBg+8TYWLVsKvcyOuALKUJEAlpdTBl7aq0fWDrg3eOZCQeU2iPxgY9mQ3iZrnWVVL8qy9H7GWFgsrUp6AxZlb4j7pH2ML1YKJX3FS1i2R12o+oprCtMQvJPKYd80atGNXgVXt2Fnx3q0wD/Y8Dy3Wim5s0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=gJ1fYbVK; arc=none smtp.client-ip=192.198.163.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1741638518; x=1773174518;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=HSsMnI4cC6mW97nelx12+H+5tkQ+KC89ClBZc2VpfjA=;
-  b=gJ1fYbVKWx7lk0+nRyTGH7QX6MRmLfgh05FgPvlU5RupZrpwIlGgRlnC
-   crlG1rozB1Wq0W1rKnV4DLA1YgxlQNIGVBnHXqvV8LSMUJeQxUQC/jQZb
-   YMVa4OhSGw+WBh6k+DmwoM0ulkOV0gN4bSoWOcLYP61uJfwejdIqrRMvv
-   JA7iDSiNkyHIcFGoCYZBypZ0aL4VeOLF0bDKYjP6dZVGmwD6z58NZn8vm
-   j/e3X4DdrfB6ocYeFhGlg3wRGnGOvzqK6ah19x0d4ZnYzzD2RgnYU1qIZ
-   PVbujRyN8mW1K6e4u7A3iqYS4rs2uc/6ibREyQg0bH0NU6FbTBrNgnAxL
-   g==;
-X-CSE-ConnectionGUID: wtHPDtytSxWeDYHRw3tXcw==
-X-CSE-MsgGUID: jE2CWlK9RVKwojzh7Kdujg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11369"; a="53281775"
-X-IronPort-AV: E=Sophos;i="6.14,237,1736841600"; 
-   d="scan'208";a="53281775"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Mar 2025 13:28:36 -0700
-X-CSE-ConnectionGUID: Io1LQZW1SMCWx8jlCrJC6w==
-X-CSE-MsgGUID: TkRSYNbZTDiqa6hIOx+iIQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,237,1736841600"; 
-   d="scan'208";a="157305575"
-Received: from aschofie-mobl2.amr.corp.intel.com (HELO aschofie-mobl2.lan) ([10.125.111.66])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Mar 2025 13:28:35 -0700
-Date: Mon, 10 Mar 2025 13:28:33 -0700
-From: Alison Schofield <alison.schofield@intel.com>
-To: Shiju Jose <shiju.jose@huawei.com>
-Cc: "linux-cxl@vger.kernel.org" <linux-cxl@vger.kernel.org>,
-	"dan.j.williams@intel.com" <dan.j.williams@intel.com>,
-	"dave@stgolabs.net" <dave@stgolabs.net>,
-	Jonathan Cameron <jonathan.cameron@huawei.com>,
-	"dave.jiang@intel.com" <dave.jiang@intel.com>,
-	"vishal.l.verma@intel.com" <vishal.l.verma@intel.com>,
-	"ira.weiny@intel.com" <ira.weiny@intel.com>,
-	"david@redhat.com" <david@redhat.com>,
-	"Vilas.Sridharan@amd.com" <Vilas.Sridharan@amd.com>,
-	"linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>,
-	"linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>,
-	"linux-mm@kvack.org" <linux-mm@kvack.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"bp@alien8.de" <bp@alien8.de>,
-	"tony.luck@intel.com" <tony.luck@intel.com>,
-	"rafael@kernel.org" <rafael@kernel.org>,
-	"lenb@kernel.org" <lenb@kernel.org>,
-	"mchehab@kernel.org" <mchehab@kernel.org>,
-	"leo.duran@amd.com" <leo.duran@amd.com>,
-	"Yazen.Ghannam@amd.com" <Yazen.Ghannam@amd.com>,
-	"rientjes@google.com" <rientjes@google.com>,
-	"jiaqiyan@google.com" <jiaqiyan@google.com>,
-	"Jon.Grimm@amd.com" <Jon.Grimm@amd.com>,
-	"dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
-	"naoya.horiguchi@nec.com" <naoya.horiguchi@nec.com>,
-	"james.morse@arm.com" <james.morse@arm.com>,
-	"jthoughton@google.com" <jthoughton@google.com>,
-	"somasundaram.a@hpe.com" <somasundaram.a@hpe.com>,
-	"erdemaktas@google.com" <erdemaktas@google.com>,
-	"pgonda@google.com" <pgonda@google.com>,
-	"duenwen@google.com" <duenwen@google.com>,
-	"gthelen@google.com" <gthelen@google.com>,
-	"wschwartz@amperecomputing.com" <wschwartz@amperecomputing.com>,
-	"dferguson@amperecomputing.com" <dferguson@amperecomputing.com>,
-	"wbs@os.amperecomputing.com" <wbs@os.amperecomputing.com>,
-	"nifan.cxl@gmail.com" <nifan.cxl@gmail.com>,
-	tanxiaofei <tanxiaofei@huawei.com>,
-	"Zengtao (B)" <prime.zeng@hisilicon.com>,
-	Roberto Sassu <roberto.sassu@huawei.com>,
-	"kangkang.shen@futurewei.com" <kangkang.shen@futurewei.com>,
-	wanghuiqiang <wanghuiqiang@huawei.com>,
-	Linuxarm <linuxarm@huawei.com>
-Subject: Re: [PATCH 1/8] cxl: Add helper function to retrieve a feature entry
-Message-ID: <Z89LcUIWO9m8Vtru@aschofie-mobl2.lan>
-References: <20250227223816.2036-1-shiju.jose@huawei.com>
- <20250227223816.2036-2-shiju.jose@huawei.com>
- <Z8tGz33l9vDzuJLy@aschofie-mobl2.lan>
- <e8e33d46aa1b478db601de29e047cb5f@huawei.com>
+	s=arc-20240116; t=1741638582; c=relaxed/simple;
+	bh=hWy1NNmb+wDtSIi4PW/nVnogw+nRN5uXUX33xLXpMkM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Nw39Sj4aGkiBLx7hYkoxP8/nOFNHtZCD8vTVls9crJFYkr457YAH+YViGZQVla8sR8T+aJUMRJZ/KsGbgJv9BiZRzAJ6rVeuQO3gBF/CDbkevta7vkG+przzDJxjBrP0pa3vMmMYbP4mXBNP9G1ZuAtirvtY8S/K+9v4QqGHltU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=VCkHgt/J; arc=none smtp.client-ip=209.85.128.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+Received: by mail-yw1-f182.google.com with SMTP id 00721157ae682-6fd8be1e534so43849567b3.3
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 13:29:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1741638579; x=1742243379; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=tDUgfGNw9ICwKZepnDkVTHAQdOKERWg4DcwDZnus3D8=;
+        b=VCkHgt/JZaaPTIXA8KjXEbI/hOwbz0aOVcm/oBCsfOFjj6uJr0x5WBJDnoWAsMMxvO
+         Exp+6wdYV9OaAKx9zo6vTBRZEKbonGGANBBFg0IWysKG7StkZfwI6dLqzKp75MmiKb+j
+         KW4aq4+WJZeX9+pqCPAx9T/KelJWUbF/2OGOnnC19dNeNQegA5WMs6cqrbndgbfiaZpi
+         FWDovvyZQvAOiC3FVMW0UbRTGJF9YNGCxX7VMkh3JlNhl9eacFHYVkjtAfbgo1t1g2Go
+         IyuG3jXM8xPopjWsa/DN9XwtNNtmHscFyFgt7wbyELF2ZwI741u8ak0+gJVjIz/M9cys
+         f5sw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741638579; x=1742243379;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=tDUgfGNw9ICwKZepnDkVTHAQdOKERWg4DcwDZnus3D8=;
+        b=VQK/Sp71id09IiId22Prp5tH/0weCnZ2zwQjYeNIfZ0g/lN5ouNQGhs12h1VGQTbxO
+         FXaW39qb+AXiU1OsATRHYngwLkjfX4mqmaDKE4Bo3CwJL2o3GRs1vS0jV/0klaJMMrzS
+         vN3Qt8ti9S5mReUIN1njW7aOKp+TSIfyKbNj1l9BqjsjS4q3eA9hp51NyyAAF2enUm7a
+         KvJw0Pnpgp9C86NGVktGxjlhHLTYNWm4H+7SD/WW011OKiIPg99/QmOzc4VHi7oE64FT
+         LJTeqtKDdJQfA3k7Jpi8Lncl14HaLQW9mrgo0pHsqHhG85z24psCN32/ZuF3q7kNYHfH
+         3Btw==
+X-Gm-Message-State: AOJu0YwIzrMPGZ/OlWF6tROkyJ2zQhvQTPhAQ9DofaBH/pInfW8P7i6G
+	RV7q+GbzFnFbJtjEZFsus4tKVh/9EvN3ykQNmIJqhNBGzxXEoZrhBAb8Rk21p21dQq4zIrK54u4
+	JWKmGGIWqbnOhRgXf0zWC6r+SKOWtqk5srWvr
+X-Gm-Gg: ASbGncs4oT8FdiNsIsyYi4j8Sqlhkj/pNQY/K9gfwAojEfuFdth2uNIGfnx1RAX0qc8
+	WhivdGISch4PUGWvVWDJ3YourBvg5eGaAc3w/ZmhT+oRybIo7wVGFAmpDIvcRgB1hnTMHhP35UJ
+	GXmmXfXuykuktXGjD5eYlxu0O3iRxS6I2caLJM
+X-Google-Smtp-Source: AGHT+IHo9iy1GNgVzKJMJvK8t10zpvURWG53DXUjC0ljR28U670/ZoBhoVEa4msK2fl4fpIGkvkg9EPXy5FjpxcyQvg=
+X-Received: by 2002:a05:690c:25c9:b0:6fb:5498:70fa with SMTP id
+ 00721157ae682-6febf2fc84dmr218686397b3.18.1741638579693; Mon, 10 Mar 2025
+ 13:29:39 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <e8e33d46aa1b478db601de29e047cb5f@huawei.com>
+References: <20250304222304.214704-2-paul@paul-moore.com> <20250309.5ddca2aac3f6@gnoack.org>
+In-Reply-To: <20250309.5ddca2aac3f6@gnoack.org>
+From: Paul Moore <paul@paul-moore.com>
+Date: Mon, 10 Mar 2025 16:29:29 -0400
+X-Gm-Features: AQ5f1Jo6QOPoGUFGOIb3gjnWMhzQIShhWRjzY8eEyp8Wz0ElgezHE72pke3O1VI
+Message-ID: <CAHC9VhQRWOJkSTsYDGHArmm212CW+EOia-b0hR_r9HrCxspLcg@mail.gmail.com>
+Subject: Re: [RFC PATCH] MAINTAINERS: add an explicit credentials entry
+To: =?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack3000@gmail.com>
+Cc: linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Mar 10, 2025 at 06:15:38PM +0000, Shiju Jose wrote:
-> >-----Original Message-----
-> >From: Alison Schofield <alison.schofield@intel.com>
-> >Sent: 07 March 2025 19:20
-> >To: Shiju Jose <shiju.jose@huawei.com>
-> [...]
-> >> +struct cxl_feat_entry *cxl_get_feature_entry(struct cxl_dev_state *cxlds,
-> >> +					     const uuid_t *feat_uuid)
-> >> +{
-> >> +	struct cxl_features_state *cxlfs = to_cxlfs(cxlds);
-> >> +	struct cxl_feat_entry *feat_entry;
-> >> +	int count;
-> >> +
-> >> +	/*
-> >> +	 * Retrieve the feature entry from the supported features list,
-> >> +	 * if the feature is supported.
-> >> +	 */
-> >> +	feat_entry = cxlfs->entries->ent;
+On Sun, Mar 9, 2025 at 7:12=E2=80=AFAM G=C3=BCnther Noack <gnoack3000@gmail=
+.com> wrote:
+>
+> Hello Paul and Serge!
+>
+> On Tue, Mar 04, 2025 at 05:23:05PM -0500, Paul Moore wrote:
+> > The lack of an explicit credential (kernel/cred.c) entry has caused
+> > confusion in the past among new, and not-so-new developers, about where
+> > to send credential patches for discussion and merging.  Those patches
+> > that are sent can often rot on the mailing lists for months as there
+> > is no clear maintainer tasked with reviewing and merging patches.
 > >
-> >Do we need some NULL checking here on cxlfs, entries
-> 
-> Hi Alison,
-> 
-> Thanks for the feedbacks.
-> We had check on cxlfs before
-> https://lore.kernel.org/all/20250122235159.2716036-5-dave.jiang@intel.com/
-> but removed because of the following comment.
-> https://lore.kernel.org/all/20250124150150.GZ5556@nvidia.com/
-
-Hi Shiju,
-
-I have not followed all along, so yeah my questions may be a bit pesky
-at this point. I did see the comment linked above about how the driver
-must be bound at this point. I think my question is a bit different.
-
-Are each of these guaranteed not to be NULL here:
-
-to_cxlfs(cxlds)
-cxlfs->entries
-cxlfs->entries->ent
-
-If these cannot be NULL, then all good.
-
---Alison
-
-
-
+> > I'm volunteering for the cred maintainer role to try and reduce the
+> > confusion and help cred patches find their way up to Linus' tree.  As
+> > there generally aren't a lot of cred patches I'll start with simply
+> > folding them into the LSM tree, but if this changes I'll setup a
+> > dedicated cred tree.
 > >
+> > Signed-off-by: Paul Moore <paul@paul-moore.com>
+> > ---
+> >  MAINTAINERS | 8 ++++++++
+> >  1 file changed, 8 insertions(+)
 > >
-> >> +	for (count = 0; count < cxlfs->entries->num_features; count++,
-> >> +feat_entry++) {
+> > diff --git a/MAINTAINERS b/MAINTAINERS
+> > index 896a307fa065..68e4656c15ea 100644
+> > --- a/MAINTAINERS
+> > +++ b/MAINTAINERS
+> > @@ -6139,6 +6139,14 @@ L:     linux-input@vger.kernel.org
+> >  S:   Maintained
+> >  F:   drivers/hid/hid-creative-sb0540.c
 > >
-> >Was num_features previously validated?
-> Not in the caller. Had check for num_features here before in cxl_get_feature_entry()
-> as seen in the above link.
-> >
-> >> +		if (uuid_equal(&feat_entry->uuid, feat_uuid))
-> >> +			return feat_entry;
-> >> +	}
-> >> +
-> >> +	return ERR_PTR(-ENOENT);
-> >
-> >Why not just return NULL?
-> Will do.
-> >
-> >
-> >> +}
-> >> +
-> >>  size_t cxl_get_feature(struct cxl_mailbox *cxl_mbox, const uuid_t *feat_uuid,
-> >>  		       enum cxl_get_feat_selection selection,
-> >>  		       void *feat_out, size_t feat_out_size, u16 offset,
-> >> --
-> >> 2.43.0
-> >>
-> 
-> Thanks,
-> Shiju
-> 
+> > +CREDENTIALS
+> > +M:   Paul Moore <paul@paul-moore.com>
+> > +L:   linux-security-module@vger.kernel.org
+> > +S:   Supported
+> > +T:   git https://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/lsm.g=
+it
+> > +F:   include/linux/cred.h
+> > +F:   kernel/cred.c
+>
+> Maybe also add the documentation:
+>
+> +F:     Documentation/security/credentials.rst
+>
+> This documents the prepare_creds()/commit_creds()/abort_creds()
+> "transactional" API that tasks should use to change credentials.
+
+Thanks.  Serge already posted a patch to add the doc page, we should be all=
+ set.
+
+> Acked-by: G=C3=BCnther Noack <gnoack3000@gmail.com>
+>
+> Thank you both for stepping up to establish a clearer ownership for
+> credentials!  There is a need for authoritative decisions in that
+> area, and it has been difficult to find the right contacts for
+> credentials on earlier patches as well, such as:
+>
+> https://lore.kernel.org/all/20240805-remove-cred-transfer-v2-0-a2aa1d45e6=
+b8@google.com/
+> (patch by Jann Horn: "get rid of cred_transfer")
+>
+> https://lore.kernel.org/all/20250221184417.27954-2-gnoack3000@gmail.com/
+> (patch by me, multithreaded Landlock enablement)
+
+Yeah, the cred_transfer/keyctl issue is particularly nasty and needs
+to be revisited.  If memory serves there was still a compatibility
+issue with Jann's patch, but we may want to consider merging that into
+-next just to see if userspace still cares.  It's on my todo list to
+take a closer look when I have the time.
+
+--=20
+paul-moore.com
 
