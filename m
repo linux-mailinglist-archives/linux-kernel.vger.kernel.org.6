@@ -1,60 +1,73 @@
-Return-Path: <linux-kernel+bounces-553928-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-553929-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0AB8AA590CB
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 11:10:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0BC10A590CE
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 11:11:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BFCBE3ABE1B
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 10:09:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C2F2D3ABDF5
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 10:11:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCF2222576A;
-	Mon, 10 Mar 2025 10:09:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC99722576C;
+	Mon, 10 Mar 2025 10:11:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="t4Y00iF/"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="FqsZU7h4"
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 238A92248A8;
-	Mon, 10 Mar 2025 10:09:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A50672248A8;
+	Mon, 10 Mar 2025 10:11:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741601399; cv=none; b=hZ19c0K+moufS3PXMJnzCkC0dZ8XxxZzcywaYDqc7S7S5FwJGKXUO4EWv08pTfhO0qcSaLZWw0sLRxkU7TvXhpsm8L+ciXoH2/MXkcGI+ZdtjG6fRAlEtCDqKDvxbBuZdVTzr0WRr7VvOcDN83b98rYWgnGXkRwnAcHeCEXNwZU=
+	t=1741601510; cv=none; b=WlRmj74Z505FQtCX0U3xAb9FWXx+r0KTc+SM+NxtRzEt3esqd0Y3f+VZMd3uwVzMmrEnZ5gIuLJ0vPEPIY8X1ZjxgGFozp6B98RlPfbkoL5dlS6/s2ZnLRUGsrrcywumN81wFUhGsYeg5BaV9V2OZauCuAPlGbPnjphaE/4g/FY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741601399; c=relaxed/simple;
-	bh=lfgb+4yconhWI0GihEGvBTzUmrfm3IiGF84oD4PW/BI=;
+	s=arc-20240116; t=1741601510; c=relaxed/simple;
+	bh=S2CAI/GwCWwg1zpG0amZRD2jcsE02Fs8i/iVqiK1tmA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MfcD7XJVdxDhPtU4sH9x0WU0H06p1pCcmgGIRnsuU7UDgfCICjP1WLw2I/nM8hdAEzx54nMjeVAfOF4EvCowS09cDMjgWAbyL4H0WLHIjpcl3ex3g782oRM7X1rI5dkb7tv8LDqXw+oQ+CBrVNjqhPRoY4UM+SNQfm8De6ZbaFg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=t4Y00iF/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8D14FC4CEE5;
-	Mon, 10 Mar 2025 10:09:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741601397;
-	bh=lfgb+4yconhWI0GihEGvBTzUmrfm3IiGF84oD4PW/BI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=t4Y00iF/XZiFLpxSZjMhOXUB3swUXhsjOtQn11daJRKHt/bIiWQSILaMpudvcGeTT
-	 kF4YXcjvEQOj5xrMM5VbsNBimcQvXmc0cdk9dHbiQrJSI3LDy5zcfMjPNBBKQGz6C/
-	 3YfkL3pnsQrek9w0uvkFGJflrKFjQcWH82XHXOYr1L5zjOD5eYC3AzWc0ieIiQXMKW
-	 xbc2b9xRgmbaQYEG6PiMKIH8wcJs09Cz1hMeq5Muxx6zHn1wPGa6fxDQtJfdD+NjyJ
-	 BqIoLzPvbnShbwYYEtlFuKOqW50LyMG0fZKyEGQsN7I6QREtJiES1tad6fhf8nV435
-	 BoVFCe9UC99tQ==
-Received: from johan by xi.lan with local (Exim 4.97.1)
-	(envelope-from <johan@kernel.org>)
-	id 1tra52-000000006bM-3NnW;
-	Mon, 10 Mar 2025 11:09:52 +0100
-Date: Mon, 10 Mar 2025 11:09:52 +0100
-From: Johan Hovold <johan@kernel.org>
-To: Miaoqing Pan <quic_miaoqing@quicinc.com>
-Cc: quic_jjohnson@quicinc.com, ath11k@lists.infradead.org,
-	linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org,
-	johan+linaro@kernel.org
-Subject: Re: [PATCH v2 ath-next 2/2] wifi: ath11k: fix HTC rx insufficient
- length
-Message-ID: <Z866cCj8SWyZjCoP@hovoldconsulting.com>
-References: <20250310010217.3845141-1-quic_miaoqing@quicinc.com>
- <20250310010217.3845141-3-quic_miaoqing@quicinc.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=IppMduDZaBDnnzMKlw6qsOv5JakmVAlzqsw8iv3KKyeCZb9apmJm9EVD+N64nFNeFwV8HQA8z4rQC2iBCuiTKrTpZXb4cMHTdcsKHpjNCFEvb90elgFJE0K6e143E2d7J8KTQRnB+VafKF4jUKgC5xOFEhkcM4v5LGChwdpat/E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=FqsZU7h4; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=65ElcLaZXauxRclZo3e6HBBHjana+/mlWD2Luml/jxU=; b=FqsZU7h4CqwEIbzGsqc7lXV4xk
+	ctKf+8scSkmTeuYEGWDrDgzdWqopyOX9zZjoE7wlFTuD8Xp96jrvSeDN25kku5A9AOKPotIEsdIk/
+	ubL+/4sQBytzg4hPGloN2nbEgvg6CkE4o6p7ADKXW9SkFQeUoHsKTd+7ebJXiSgGqNhkTbPM1YIiJ
+	khHA5+3DCRMzv7jsbHamDI+QGpDE+B/I5yctI7j6DSvf5jdexXkFNAYPR8x+pkOb98P9j+Ov2HGhp
+	yuxQCJXXTbOYo4eQwlFQDqyd3RTmREGCLpdvyNse1UL/EwyCG6uBH3miJUGvbNXc8qghT1CIBf5Jh
+	4jbL0dsQ==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:43554)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <linux@armlinux.org.uk>)
+	id 1tra6f-0002Mc-0j;
+	Mon, 10 Mar 2025 10:11:33 +0000
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
+	(envelope-from <linux@shell.armlinux.org.uk>)
+	id 1tra6b-0002NY-2M;
+	Mon, 10 Mar 2025 10:11:29 +0000
+Date: Mon, 10 Mar 2025 10:11:29 +0000
+From: "Russell King (Oracle)" <linux@armlinux.org.uk>
+To: Oleksij Rempel <o.rempel@pengutronix.de>
+Cc: Thangaraj.S@microchip.com, andrew+netdev@lunn.ch, davem@davemloft.net,
+	Rengarajan.S@microchip.com, Woojung.Huh@microchip.com,
+	pabeni@redhat.com, edumazet@google.com, kuba@kernel.org,
+	phil@raspberrypi.org, kernel@pengutronix.de,
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+	UNGLinuxDriver@microchip.com
+Subject: Re: [PATCH net-next v2 1/7] net: usb: lan78xx: Convert to PHYlink
+ for improved PHY and MAC management
+Message-ID: <Z8660bKssi3rX_ny@shell.armlinux.org.uk>
+References: <20250307182432.1976273-1-o.rempel@pengutronix.de>
+ <20250307182432.1976273-2-o.rempel@pengutronix.de>
+ <1bb51aad80be4bb5e0413089e1b1bf747db4e123.camel@microchip.com>
+ <Z863zsYNM8hkfB19@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -63,76 +76,26 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250310010217.3845141-3-quic_miaoqing@quicinc.com>
+In-Reply-To: <Z863zsYNM8hkfB19@pengutronix.de>
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
-On Mon, Mar 10, 2025 at 09:02:17AM +0800, Miaoqing Pan wrote:
-> A relatively unusual race condition occurs between host software
-> and hardware, where the host sees the updated destination ring head
-> pointer before the hardware updates the corresponding descriptor.
-> When this situation occurs, the length of the descriptor returns 0.
-
-I still think this description is too vague and it doesn't explain how
-this race is even possible. It sounds like there's a bug somewhere in
-the driver or firmware, but if this really is an indication the hardware
-is broken as your reply here seems to suggest:
-
-	https://lore.kernel.org/lkml/bc187777-588c-4fa0-ba8c-847e91c78d43@quicinc.com/
-
-then that too should be highlighted in the commit message (e.g. by
-describing this as "working around broken hardware").
-
-> The current error handling method is to increment descriptor tail
-> pointer by 1, but 'sw_index' is not updated, causing descriptor and
-> skb to not correspond one-to-one, resulting in the following error:
+On Mon, Mar 10, 2025 at 10:58:38AM +0100, Oleksij Rempel wrote:
+> Hi Thangaraj,
 > 
-> ath11k_pci 0006:01:00.0: HTC Rx: insufficient length, got 1488, expected 1492
-> ath11k_pci 0006:01:00.0: HTC Rx: insufficient length, got 1460, expected 1484
+> On Mon, Mar 10, 2025 at 09:29:45AM +0000, Thangaraj.S@microchip.com wrote:
+> > > -       mii_adv_to_linkmode_adv_t(fc, mii_adv);
+> > > -       linkmode_or(phydev->advertising, fc, phydev->advertising);
+> > > +       phy_suspend(phydev);
+> > > 
+> > 
+> > Why phy_suspend called in the init? Is there any specific reason?
 > 
-> To address this problem, temporarily skip processing the current
-> descriptor and handle it again next time. However, to prevent this
-> descriptor from continuously returning 0, use skb cb to set a flag.
-> If the length returns 0 again, this descriptor will be discarded.
+> In my tests with EVB-LAN7801-EDS, the attached PHY stayed UP in initial
+> state.
 
-The ath12k ring-buffer handling looks very similar. Do you need a
-corresponding workaround in ath12k_ce_completed_recv_next()? Or are you
-sure that this (hardware) bug only affects ath11k devices?
- 
->  	*nbytes = ath11k_hal_ce_dst_status_get_length(desc);
-> -	if (*nbytes == 0) {
-> -		ret = -EIO;
-> -		goto err;
-> +	if (unlikely(*nbytes == 0)) {
-> +		struct ath11k_skb_rxcb *rxcb =
-> +			ATH11K_SKB_RXCB(pipe->dest_ring->skb[sw_index]);
-> +
-> +		/* A relatively unusual race condition occurs between host
-> +		 * software and hardware, where the host sees the updated
-> +		 * destination ring head pointer before the hardware updates
-> +		 * the corresponding descriptor.
-> +		 *
-> +		 * Temporarily skip processing the current descriptor and handle
-> +		 * it again next time. However, to prevent this descriptor from
-> +		 * continuously returning 0, set 'is_desc_len0' flag. If the
-> +		 * length returns 0 again, this descriptor will be discarded.
-> +		 */
-> +		if (!rxcb->is_desc_len0) {
-> +			rxcb->is_desc_len0 = true;
-> +			ret = -EIO;
-> +			goto err;
-> +		}
->  	}
+Why is that an issue?
 
-I'm still waiting for feedback from one user that can reproduce the
-ring-buffer corruption very easily, but another user mentioned seeing
-multiple zero-length descriptor warnings over the weekend when running
-with this patch:
-
-	ath11k_pci 0006:01:00.0: rxed invalid length (nbytes 0, max 2048)
-
-Are there ever any valid reasons for seeing a zero-length descriptor
-(i.e. unrelated to the race at hand)? IIUC the warning would only be
-printed when processing such descriptors a second time (i.e. when
-is_desc_len0 is set).
-
-Johan
+-- 
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
