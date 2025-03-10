@@ -1,146 +1,132 @@
-Return-Path: <linux-kernel+bounces-554404-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-554405-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 60E86A5974C
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 15:16:14 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 899DDA59752
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 15:16:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3CC801682B1
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 14:16:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C5591165870
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 14:16:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1750922B8B3;
-	Mon, 10 Mar 2025 14:15:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BA8222B8AC;
+	Mon, 10 Mar 2025 14:16:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="TnDzu/4W"
-Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Q+/0KZ9i"
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0D8122CBDC
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 14:15:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E0D922B5B6;
+	Mon, 10 Mar 2025 14:16:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741616126; cv=none; b=J3Gqft4nn1gLpzVRGFJwW7qEeiQtRp1c+PZkUbPAPRcXYccJVTSBQE+0E4XiTf9s6lIsLDA/iYEPCWSNorFD4fk2DJ20y32eaJf+k1BkS9uvu4nySsh4F1akjC6H7hLsLhFQ3Var7rOWfmsJDgJcHHv8Bf9LUs9/qNlsUHA+OKk=
+	t=1741616185; cv=none; b=dmJhdb0IDtiXrp9kXbA/o4QbXOhRGmQN78r/Owj+Xkh/IZBEiM4cYQjeSsEpOFwd++zjoaZbfbu9pMgBIXUQECd5HfhdzCPJw7QZVXHdRsjkTC2mr4LizhcP2+Mz3rNjnvTz3YPZjwqsSyjWDrtRyzeMaP61H1gdTc3QzPfgjfQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741616126; c=relaxed/simple;
-	bh=fqTqMIhWNpfM5LYJZu3n6CNwSGS8W23mDWqQ26Vmdao=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=fl8s2KvXGx6pFh1yo5fw5G2m7JJ3QCOEgpkJ1n5FbIvwRKAzxHITh9irKzji6WtBB0o0Wv+ULBmuPTto2uSu5dLgEdqaev0r6lSzCZnNAxqS3HOVFdEfH3NSu5rHy7wjbi0j/+ioo776su9H/EdyuQNif0UZumWhY2Xnjug0Q2Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=TnDzu/4W; arc=none smtp.client-ip=209.85.221.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-39141ffa9fcso1284151f8f.0
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 07:15:24 -0700 (PDT)
+	s=arc-20240116; t=1741616185; c=relaxed/simple;
+	bh=2dSebWRuPJTUB45SrVW2KKIGck6aWcSHUgcwqRikNog=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=YSq5TXcewivURJyry8TbqKDluU9I1/Cq8KRY3K6drBCVmuy9mu2WRVVjy+8c+VD7NVwo6Qys2/jqIr1Va3qT2mI4eJGx9cYyIp+FF5Z6R9kpzrW/vfaLrs7wH4ht1+EFSNR7Xre6iMSvBrottWNGBXWNKXHwdesNcrts0orU7po=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Q+/0KZ9i; arc=none smtp.client-ip=209.85.214.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-22423adf751so59361315ad.2;
+        Mon, 10 Mar 2025 07:16:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1741616123; x=1742220923; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=LmTqTAHRMrZdwKLgsfK2/thaztYYY0csGZPufN3JueY=;
-        b=TnDzu/4WKNvtx/XtijuxPIJZZcLUWn+L6CKsnatweFO7z7Bmr4srqtWvqGoRRzWmBQ
-         lFq3EX6s0dNQhzHtjH79RdRMtx3bgA4ARMT5lg+8M46CF7V7mvj7D4ygMzCV3C6cWhAt
-         Ujuddxr5b/gTquY66kXK4CN5ko7prJeZVscs+Er9VY1HSIyhUsFeFwGm1SAUInpd5bwY
-         +Dvt+9wO16srPLSn5Knu5CQ8Zt3nOIVNaJSWni5zyZ06oVIhedUPrT+vNSTWDqf1jq+x
-         V1W4W7l2yz2GKqF/IvlKEHqeQQ7WLZW7IMNTWAkpI2mdDJWhQ1Qxd6x9NPJu5YCEdUd6
-         Oa0g==
+        d=gmail.com; s=20230601; t=1741616183; x=1742220983; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=OwQv6TuGx9vxNTr7ThxKtvNtNQNQuCBCeSGuS/Ah7kM=;
+        b=Q+/0KZ9iWnYEyDf9XZSaC0CJEMUdPJsXaa38fmRYOIePwTbvNzEWGm5kg+Z30rcBFZ
+         V++fd9wUJf9sgHhp2/cbVLtFDeyAD9bJMewEO5Y1JGGDLwkm0VZyl5mrqF37yjA4iSnL
+         ONEyps71S0Na46zOLpbEUk0dedh9J0+Fy+5ejVKtR74Zrm1uckezwvcwvYs5dAE64q4a
+         8w9JvN7+vyv70ga2AnA8JPZ/128/NpuMAIHHXkp5qcGY96XOF9WQhZDYH2HrTjYsCXB9
+         7mE239hcJfEF6WsxblzSia9YMk6Z5qi4BvYFHiMTIMvs3QO8SldEp0iViVlqClxUKhhb
+         OWcg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741616123; x=1742220923;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=LmTqTAHRMrZdwKLgsfK2/thaztYYY0csGZPufN3JueY=;
-        b=IlMGrgL8siXcnkhpWmjE0Iz0ZtduoQmpWVIIgpyH+osXPJx8Ajk9GbpQ3xTzYWZHWX
-         FsfSn+/dEztpZWTQpngjoLJUn9Tqmmq9u4xZZgL1KMAh/l/8lvxzePlebdcf3sG3Whje
-         TmP3xLbVNYFua+jaGcYUb9yQgp4f17CwqygxAxDc75Z123ooVOHMmIN5VENlfeDhL4+w
-         OUeGh6n4maF19gQDsciFtUmrhDpM9lpFitkNxCgG/Hhl0OhFDYveA/hvr7/nYmXxznN4
-         WIZBvt4zFo/T1vzjLIx9QzTpTCBQFdtCeAx2TuAMaS4rtauYYnKwVyCdCcU3D5UVJC/J
-         j+XA==
-X-Forwarded-Encrypted: i=1; AJvYcCXU1QTUcyIzE+kF192BK+C/T9d1mSjhwmlRgOwwx6yokcyu8OBpYe/yURAtrOeXofvYUo+Ef1JR2iR9LHw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyWQn7XURRW1x6lv91/NNeAo4oWZHw2xqCDISbvblxJQ+FRZUI1
-	Hth03wdbzCPRVRY4gAV1WMLAj494Zjo6/E5OzM5G5ZTnv3/DEntnMRHtmT9MfHY=
-X-Gm-Gg: ASbGncvLZXv8V56IW7jfBIsjXovZClaKDhFxdB6tQvUbLHe1fVvflwpe74r2BUrrA8Y
-	dc7l1a9XYfzreLMddf7DSP/ash7qVlGnFToBmDJED0ZUcStFRaYvl6P0dHQyXCAyC1lqu16FN5s
-	AQWZAtA3bSEIHSNODTql0uLLe1FukNQbw5DoVgszyNzJH0DDCS2LXDqCRnWfHI6Q5dEQofsL190
-	JdppFmrbHJ1LgETDrRnd4OFGBMQvuc3w2N8wU9vjFHTk2iVX9ST0v7uRpHCuc5EClYv0mNccoNO
-	w9+AQOSnytrI3RxvKWqmEeIXieSMrWM7f/NJXse/eO4=
-X-Google-Smtp-Source: AGHT+IFGVt+pDHq6EUpM/aSC+I2TplLZ4xEg3fnnc4wQ8YzS/eyx+MSJesISoV8khPoQ4Ai4zCCC4g==
-X-Received: by 2002:a5d:6d09:0:b0:38f:4d20:4a17 with SMTP id ffacd0b85a97d-39132d1f8acmr10073432f8f.13.1741616122894;
-        Mon, 10 Mar 2025 07:15:22 -0700 (PDT)
-Received: from hackbox.lan ([62.231.96.41])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43bdd8da097sm149824545e9.17.2025.03.10.07.15.21
+        d=1e100.net; s=20230601; t=1741616183; x=1742220983;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=OwQv6TuGx9vxNTr7ThxKtvNtNQNQuCBCeSGuS/Ah7kM=;
+        b=Ltp2KUQ8k/sTcy7Faq5f1UP19Aofyx/wcojyUywK7B3lI9N6kknHHaiatOlLLuTsXp
+         uM+i2DjJhFUuIzuDDmVjCh740q2tGoOCO9rI9eQXg2JIql/ADD+KoeZwk15bxw/+rrhx
+         6EkkI89JWya8rWmxugGud4F9+Kq6duMcLvmzQnDPn/A1kO+y5rlixNge2+qtt3YmfY+b
+         rQrOlbg7iiOPg+H4eqNUSiuEAspBB0jpglHr1kl0A1BWyOIlulnZwzY6xIdfAWaYrVz5
+         GJ0I3RTlThn+dQu1ve1/WVpBdQrbMEhXEqcLAfFoDSE3OKeiWzttv2sdEW0DSsRVng3v
+         ex7w==
+X-Gm-Message-State: AOJu0Yx9UmWM2UetC5Q+pa3qVJAAFTYxjFhphzBzMOYOWSNIFfYAfOac
+	ldvfnjmC8VoRb3w9Bw8DwxRinvPXsqmdvjIhwqGBV4sr1apNlvyV90sSMw==
+X-Gm-Gg: ASbGnctcaL8/WMg4bjvME5SniBTvU+0DXpHuMFj470ATWEtDlRwkUIw4YL2ecl5jMEf
+	g8peUQ1S1BmuJxX6xgntyhc78ndOwm1rkkXncnIItPtkry3vdKjCWNxHrsVU2Pe5IGhWP0Wepur
+	+ucr40ty0kQ/m1/CtlO/1In/0ob9QQJZ/iT5PCMFfwyTmRGTdwkyEKp6tKxr0Rq7EFUiWv5LvCR
+	4zHdUMQvdBPpKGzDwJZ9FrBLl7Iq4vV23TqL37Z9GNuwBQX47eDys1hwKogB6Lhkff1uZHrboxA
+	PFK7FgIv9ilvRxabEXGdSgqpdQKNrMDBDGSZ88I+mqG6R44=
+X-Google-Smtp-Source: AGHT+IFiDclXx6Zc3RzJ+ThsxsojtpZJDy/BegzJ8asrbtKDLpfeDFn/S6sOnYfiGgiagiH4iwtXdQ==
+X-Received: by 2002:a17:902:e842:b0:224:26fd:82e5 with SMTP id d9443c01a7336-225931ad6e5mr279325ad.48.1741616183086;
+        Mon, 10 Mar 2025 07:16:23 -0700 (PDT)
+Received: from gmail.com ([103.210.134.81])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22410aa4e94sm78290415ad.221.2025.03.10.07.16.20
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 10 Mar 2025 07:15:22 -0700 (PDT)
-From: Abel Vesa <abel.vesa@linaro.org>
-To: Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>
-Cc: Johan Hovold <johan@kernel.org>,
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-	linux-arm-msm@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Sebastian Reichel <sre@kernel.org>
-Subject: [PATCH v2 3/3] arm64: dts: qcom: x1e78100-t14s: Add OLED variant
-Date: Mon, 10 Mar 2025 16:15:04 +0200
-Message-Id: <20250310141504.3008517-4-abel.vesa@linaro.org>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250310141504.3008517-1-abel.vesa@linaro.org>
-References: <20250310141504.3008517-1-abel.vesa@linaro.org>
+        Mon, 10 Mar 2025 07:16:22 -0700 (PDT)
+Date: Mon, 10 Mar 2025 19:46:16 +0530
+From: Brahmajit <brahmajit.xyz@gmail.com>
+To: linux-kernel <linux-kernel@vger.kernel.org>
+Cc: linux-wireless@vger.kernel.org, johannes.berg@intel.com, 
+	ilan.peer@intel.com, miriam.rachel.korenblit@intel.com
+Subject: Possible Null pointer dereferences in net/mac80211/parse.c
+Message-ID: <qriquzbudggauxqm5oz55zvkh3uhpk5icx6icnacyzzijdtivr@m37pbcwiqblb>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 
-Since the Lenovo Thinkpad T14s Gen6 is available with an OLED, add
-dedicated a dedicated dts for it.
+Coverity Scan reports that there might be a possible NULL pointer
+dereferences in net/mac80211/parse.c: 1061 in
+ieee802_11_parse_elems_full(). I understand that these reports are not
+always correct.
 
-This is needed because the backlight is handled differently for OLED
-panels when compared to LCD ones.
+I'm not sure whether the syntax
+struct ieee80211_elems_parse_params sub = {};
+is correct or falls under C11 standard[0].
 
-Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
----
- arch/arm64/boot/dts/qcom/Makefile                    |  1 +
- .../dts/qcom/x1e78100-lenovo-thinkpad-t14s-oled.dts  | 12 ++++++++++++
- 2 files changed, 13 insertions(+)
- create mode 100644 arch/arm64/boot/dts/qcom/x1e78100-lenovo-thinkpad-t14s-oled.dts
+initializer:
+         assignment-expression
+         { initializer-list }
+         { initializer-list , }
+initializer-list:
+         designation(opt) initializer
+         initializer-list , designation(opt) initializer
 
-diff --git a/arch/arm64/boot/dts/qcom/Makefile b/arch/arm64/boot/dts/qcom/Makefile
-index b54f45b3bec8..df8d63560d06 100644
---- a/arch/arm64/boot/dts/qcom/Makefile
-+++ b/arch/arm64/boot/dts/qcom/Makefile
-@@ -290,6 +290,7 @@ dtb-$(CONFIG_ARCH_QCOM)	+= sm8750-mtp.dtb
- dtb-$(CONFIG_ARCH_QCOM)	+= sm8750-qrd.dtb
- dtb-$(CONFIG_ARCH_QCOM)	+= x1e001de-devkit.dtb
- dtb-$(CONFIG_ARCH_QCOM)	+= x1e78100-lenovo-thinkpad-t14s.dtb
-+dtb-$(CONFIG_ARCH_QCOM)	+= x1e78100-lenovo-thinkpad-t14s-oled.dtb
- dtb-$(CONFIG_ARCH_QCOM)	+= x1e80100-asus-vivobook-s15.dtb
- dtb-$(CONFIG_ARCH_QCOM)	+= x1e80100-crd.dtb
- dtb-$(CONFIG_ARCH_QCOM)	+= x1e80100-dell-xps13-9345.dtb
-diff --git a/arch/arm64/boot/dts/qcom/x1e78100-lenovo-thinkpad-t14s-oled.dts b/arch/arm64/boot/dts/qcom/x1e78100-lenovo-thinkpad-t14s-oled.dts
-new file mode 100644
-index 000000000000..be65fafafa73
---- /dev/null
-+++ b/arch/arm64/boot/dts/qcom/x1e78100-lenovo-thinkpad-t14s-oled.dts
-@@ -0,0 +1,12 @@
-+// SPDX-License-Identifier: BSD-3-Clause
-+/*
-+ * Copyright (c) 2025, Linaro Limited
-+ */
-+
-+#include "x1e78100-lenovo-thinkpad-t14s.dtsi"
-+
-+/ {
-+	model = "Lenovo ThinkPad T14s Gen 6 (OLED)";
-+	compatible = "lenovo,thinkpad-t14s-oled", "lenovo,thinkpad-t14s",
-+		     "qcom,x1e78100", "qcom,x1e80100";
-+};
+I'm aware that C23 allows empty initialization[1].
+
+braced-initializer:
+                    { }
+                    { initializer-list }
+                    { initializer-list , }
+
+Considering [0], if we do something like
+
+--- a/net/mac80211/parse.c
++++ b/net/mac80211/parse.c
+@@ -997,7 +997,7 @@ ieee80211_mle_defrag_epcs(struct ieee80211_elems_parse *elems_parse)
+ struct ieee802_11_elems *
+ ieee802_11_parse_elems_full(struct ieee80211_elems_parse_params *params)
+ {
+-       struct ieee80211_elems_parse_params sub = {};
++       struct ieee80211_elems_parse_params sub = { 0 };
+        struct ieee80211_elems_parse *elems_parse;
+        const struct element *non_inherit = NULL;
+        struct ieee802_11_elems *elems;
+
+Would it be incorrect? Would appreciate some feedback.
+
+[0]: https://www.open-std.org/jtc1/sc22/wg14/www/docs/n1570.pdf
+[1]: https://www.open-std.org/jtc1/sc22/wg14/www/docs/n3054.pdf
 -- 
-2.34.1
-
+Regards,
+Brahmajit
 
