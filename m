@@ -1,161 +1,93 @@
-Return-Path: <linux-kernel+bounces-554731-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-554732-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 79F8CA59BB4
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 17:54:33 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 82157A59BB5
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 17:54:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F2E2C1888166
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 16:54:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3D039169B12
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 16:54:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85F6622FF31;
-	Mon, 10 Mar 2025 16:53:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1DF52343AB;
+	Mon, 10 Mar 2025 16:53:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="T90BZrzK"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DIVdvhd6"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6CAA216392;
-	Mon, 10 Mar 2025 16:53:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15EB7230D3D;
+	Mon, 10 Mar 2025 16:53:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741625596; cv=none; b=BdTkF07lo/P+nEycTrsjOAKL088DTE8BdsbtxRRTTBFF+NFhSc7vA/CShJq5mXDq6Kb2D7rwXIDSa6D85KgaDBz/hBWD11blfUgkTztg99dqjffiPB/45Dgo4+R+MFeTIHRTO7Z8UHXuQcSA1JUrINYcOVvXPHxzyD3dl8tOoKQ=
+	t=1741625603; cv=none; b=kC7p842ak9eGfvYHHPmlka1dtTmdw7AqF3ooTbg/Oj4T2NPgTsHYu5bp82z57J7rQsX56i4FldzVnDe7YDtMDOa6zOrv/+ncoRcL5QNrv4ahfY2SxI1Z9qv52r1xac8aYEPUjeZCZjduwg1GnbBZS2wmyHDcj5nekqALXNnkBck=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741625596; c=relaxed/simple;
-	bh=1BgaCQUGjQAOFM2D533osL0JWW3ihZoxHt/01NLC7o4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Pj21qTRPn/AUC2LgaWTeenPX7AF5KQScM0fRw3WXKfGIowYpq/LrITMuidieP1+/rvJ+VZZ1CTg10FXhut6sKAadwYS+6uvypAlXB7qFNQAlKdv5Zr3V0bT/8xurU5BpotCC+G4zHVMIQPkwXxL+OS4uJOe3VnTNeHqtOrpgoDw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=T90BZrzK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6D301C4CEE5;
-	Mon, 10 Mar 2025 16:53:14 +0000 (UTC)
+	s=arc-20240116; t=1741625603; c=relaxed/simple;
+	bh=HBDhINxnPgvOAIWPpnpaFKFbX8KU13d1faK9QcRfp1M=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=KofvllsGm2j3EW2lTciHVVxtDr2/MjypCiawlgxq+v3h5oypEvhG3uLZv2j05765kbvz9G08a3YfI5KfwULHvBBGxQytx26DbT5dqhn2qLIsw7blQZ4zhYK8Lv/YvouRmD225uI4j+lhoq3Bzy1a4/A77y2OriWkx4ZJETo6tHE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DIVdvhd6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 73539C4CEE5;
+	Mon, 10 Mar 2025 16:53:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741625595;
-	bh=1BgaCQUGjQAOFM2D533osL0JWW3ihZoxHt/01NLC7o4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=T90BZrzKkMaFjQSN1Wg9F/kJ/P0/1qgdM5YfI/PPzUXluWCl/0lAsIuPt4k3EisEJ
-	 6g5WBqtRXrh0DztHQE16HokVpCRvdv3gXBFYJEc1ns+kyMsYAoTvsHv+1DZtP/RdZK
-	 iuXuFB+zwH89BPHlDjijaLla71syZ8n+Dhhg9qViTmcScJY3zpkZgooDXLykJTZvck
-	 IB/uTUXesE9e/kJZQ8MyRb42iANVgt2fbt2+PwNNAnqiFW7G13vJiylJEqlqXH8H1J
-	 HULez/bKqe48z/oNYxTLZbiVWDg8EQAQ9JvQOhkAgn3WUw6tdm8nLLlLRV8IMJvME5
-	 6IA/VEFHVgVhw==
-Date: Mon, 10 Mar 2025 16:53:13 +0000
-From: Wei Liu <wei.liu@kernel.org>
-To: Roman Kisel <romank@linux.microsoft.com>
-Cc: Wei Liu <wei.liu@kernel.org>, arnd@arndb.de, bhelgaas@google.com,
-	bp@alien8.de, catalin.marinas@arm.com, conor+dt@kernel.org,
-	dave.hansen@linux.intel.com, decui@microsoft.com,
-	haiyangz@microsoft.com, hpa@zytor.com, joey.gouly@arm.com,
-	krzk+dt@kernel.org, kw@linux.com, kys@microsoft.com,
-	lenb@kernel.org, lpieralisi@kernel.org,
-	manivannan.sadhasivam@linaro.org, mark.rutland@arm.com,
-	maz@kernel.org, mingo@redhat.com, oliver.upton@linux.dev,
-	rafael@kernel.org, robh@kernel.org, ssengar@linux.microsoft.com,
-	sudeep.holla@arm.com, suzuki.poulose@arm.com, tglx@linutronix.de,
-	will@kernel.org, yuzenghui@huawei.com, devicetree@vger.kernel.org,
-	kvmarm@lists.linux.dev, linux-acpi@vger.kernel.org,
-	linux-arch@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-hyperv@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-pci@vger.kernel.org, x86@kernel.org, apais@microsoft.com,
-	benhill@microsoft.com, bperkins@microsoft.com,
-	sunilmut@microsoft.com
-Subject: Re: [PATCH hyperv-next v5 06/11] arm64, x86: hyperv: Report the VTL
- the system boots in
-Message-ID: <Z88Y-R7BnXa4Xi3I@liuwe-devbox-ubuntu-v2.lamzopl0uupeniq2etz1fddiyg.xx.internal.cloudapp.net>
-References: <20250307220304.247725-1-romank@linux.microsoft.com>
- <20250307220304.247725-7-romank@linux.microsoft.com>
- <Z84yyAqkqJ2ZyAd-@liuwe-devbox-ubuntu-v2.lamzopl0uupeniq2etz1fddiyg.xx.internal.cloudapp.net>
- <2342dda1-2976-4506-ab68-640739a1bd5b@linux.microsoft.com>
+	s=k20201202; t=1741625602;
+	bh=HBDhINxnPgvOAIWPpnpaFKFbX8KU13d1faK9QcRfp1M=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=DIVdvhd678HNL0faoELOfUPwicMwcwH+Arwd45toviruHfiau6Zg7APdPI7ZuA0RO
+	 69VlLuS8TqzutYj4w7dpuNsI2FXMZjWJbDHYEzQbC2136tOx1nInRQERf0ahGauFD4
+	 bjbtdEHDouBxw+hTPIidf1Ukb+mmoWZ+GyiS8q8GmIdP4FS5g98cHOYeb2fZH7jMgl
+	 EX+KdhWDv7XaCC1ZVdjwdjW/PdARLR1zQpCYGmjkIw3hFqCpU5ZZBoAxc7E2lHgcog
+	 3RJN3LswI3IuXGEPZgHkCDrhYyRyRDqcPwXZwgclfx9RN9GdPGhJuc3APwoyhO5SbL
+	 TcAFDWlANyc4g==
+From: SeongJae Park <sj@kernel.org>
+To: SeongJae Park <sj@kernel.org>
+Cc: Arnd Bergmann <arnd@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Hyeongtak Ji <hyeongtak.ji@sk.com>,
+	Honggyu Kim <honggyu.kim@sk.com>,
+	Usama Arif <usamaarif642@gmail.com>,
+	damon@lists.linux.dev,
+	linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] mm/damon/sysfs-schemes: avoid Wformat-security warning
+Date: Mon, 10 Mar 2025 09:53:20 -0700
+Message-Id: <20250310165320.652617-1-sj@kernel.org>
+X-Mailer: git-send-email 2.39.5
+In-Reply-To: <20250310161758.606151-1-sj@kernel.org>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <2342dda1-2976-4506-ab68-640739a1bd5b@linux.microsoft.com>
+Content-Transfer-Encoding: 8bit
 
-On Mon, Mar 10, 2025 at 09:42:15AM -0700, Roman Kisel wrote:
-> 
-> 
-> On 3/9/2025 5:31 PM, Wei Liu wrote:
-> > On Fri, Mar 07, 2025 at 02:02:58PM -0800, Roman Kisel wrote:
-> > > The hyperv guest code might run in various Virtual Trust Levels.
-> > > 
-> > > Report the level when the kernel boots in the non-default (0)
-> > > one.
-> > > 
-> > > Signed-off-by: Roman Kisel <romank@linux.microsoft.com>
-> > > ---
-> > >   arch/arm64/hyperv/mshyperv.c | 2 ++
-> > >   arch/x86/hyperv/hv_vtl.c     | 2 +-
-> > >   2 files changed, 3 insertions(+), 1 deletion(-)
-> > > 
-> > > diff --git a/arch/arm64/hyperv/mshyperv.c b/arch/arm64/hyperv/mshyperv.c
-> > > index a7db03f5413d..3bc16dbee758 100644
-> > > --- a/arch/arm64/hyperv/mshyperv.c
-> > > +++ b/arch/arm64/hyperv/mshyperv.c
-> > > @@ -108,6 +108,8 @@ static int __init hyperv_init(void)
-> > >   	if (ms_hyperv.priv_high & HV_ACCESS_PARTITION_ID)
-> > >   		hv_get_partition_id();
-> > >   	ms_hyperv.vtl = get_vtl();
-> > > +	if (ms_hyperv.vtl > 0) /* non default VTL */
-> > 
-> > "non-default".
-> > 
-> 
-> Thanks, will fix that!
-> 
-> > > +		pr_info("Linux runs in Hyper-V Virtual Trust Level %d\n", ms_hyperv.vtl);
-> > >   	ms_hyperv_late_init();
-> > > diff --git a/arch/x86/hyperv/hv_vtl.c b/arch/x86/hyperv/hv_vtl.c
-> > > index 4e1b1e3b5658..c21bee7e8ff3 100644
-> > > --- a/arch/x86/hyperv/hv_vtl.c
-> > > +++ b/arch/x86/hyperv/hv_vtl.c
-> > > @@ -24,7 +24,7 @@ static bool __init hv_vtl_msi_ext_dest_id(void)
-> > >   void __init hv_vtl_init_platform(void)
-> > >   {
-> > > -	pr_info("Linux runs in Hyper-V Virtual Trust Level\n");
-> > > +	pr_info("Linux runs in Hyper-V Virtual Trust Level %d\n", ms_hyperv.vtl);
-> > 
-> > Where isn't there a check for ms_hyperv.vtl > 0 here?
-> > 
-> 
-> On x86, there is
-> 
-> #ifdef CONFIG_HYPERV_VTL_MODE
-> void __init hv_vtl_init_platform(void);
-> int __init hv_vtl_early_init(void);
-> #else
-> static inline void __init hv_vtl_init_platform(void) {}
-> static inline int __init hv_vtl_early_init(void) { return 0; }
-> #endif
-> 
-> > Please be consistent across different architectures.
-> > 
-> 
-> In the earlier versions of the patch series, I had that piece
-> from the above mirrored in the arm64, and there was advice on
-> removing the function as it contained just one statement.
-> I'll revisit the approach, thanks for your help!
+On Mon, 10 Mar 2025 09:17:58 -0700 SeongJae Park <sj@kernel.org> wrote:
 
-As long as the output is consistent across different architectures, I'm
-good.
+> On Mon, 10 Mar 2025 14:51:37 +0100 Arnd Bergmann <arnd@kernel.org> wrote:
+> 
+> > From: Arnd Bergmann <arnd@arndb.de>
+> > 
+> > This warning is for potentially user-defined format strings:
+> > 
+> > mm/damon/sysfs-schemes.c:1664:4: error: format string is not a string literal (potentially insecure) [-Werror,-Wformat-security]
+> >  1664 |                         name);
+> > 
+> > Change this to use "%s" as the format and the name as the argument.
+> 
+> Thank you for this patch!
 
-Wei.
+I also found there is another similar issue and sent another patch[1] for that.
+Thank you again for sharing the issue.
 
-> 
-> > >   	x86_platform.realmode_reserve = x86_init_noop;
-> > >   	x86_platform.realmode_init = x86_init_noop;
-> > > -- 
-> > > 2.43.0
-> > > 
-> > > 
-> 
-> -- 
-> Thank you,
-> Roman
-> 
+[1] https://lore.kernel.org/20250310165009.652491-1-sj@kernel.org
+
+
+Thanks,
+SJ
+
+[...]
 
