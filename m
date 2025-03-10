@@ -1,237 +1,111 @@
-Return-Path: <linux-kernel+bounces-554032-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-554033-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B1EFDA591FD
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 11:55:52 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 08E82A5920B
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 11:57:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7F6AA16CC1E
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 10:55:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1602D3A90C2
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 10:55:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 542AB22A7F1;
-	Mon, 10 Mar 2025 10:53:46 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AD6C227E94
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 10:53:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18EF122AE4E;
+	Mon, 10 Mar 2025 10:54:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="iQXiWrOF"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7C6F226551;
+	Mon, 10 Mar 2025 10:54:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741604025; cv=none; b=EMVAzv3g7aOlBEMSZvYxsVQ0X/1pp1alkCtHppuvbNEgoePn8ZNqjBFOqvPt5l7yyToY3qxkU28g1nn1rG/Z5AsuHzipQnvzALQpewDRUWr5VR5qM5cAS469GCxzjZTDwzENArS8p0Zsg2Z09pgqrgvDbfuEhRxQUodjIvNlgto=
+	t=1741604046; cv=none; b=KzQwGRKaGtpgk5Sn8j8Eft27K3vmF9dpz3nILKCPAoFLr+eGAjNwSsxnT9RqWTv5prb1uQsKo0gyIZ4nG7Wa+RL23rEULVnWgZFmJpUcqVlKCeYPa6LehUIjFA0yQQl7DiTTh01HFmLxinHem8Ppxa/tfm9S8JdKrA97zF1BMAE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741604025; c=relaxed/simple;
-	bh=kLQPSTKYeEXqLjLThv353A1zrewHsiXzhvlDGG/344Y=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=bgbYUnTez5yPj7KGLrxQvnolEye4RGxdcpe4owSJWKv4yhidEJK0jVu6+E3J6kcwg64FXFUIlusljxGJEILCl2QzjGEGLQyh9abU5Zjhi9RZm2DSNWIpz5/nEw7Byyg6hAoSoDvkyM++G5yWCCc427I3E00oBH07RqSABX7U1wA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D765A153B;
-	Mon, 10 Mar 2025 03:53:54 -0700 (PDT)
-Received: from [192.168.178.6] (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 093983F5A1;
-	Mon, 10 Mar 2025 03:53:40 -0700 (PDT)
-Message-ID: <80c2c9f4-eb84-4a43-9c48-8f776615b45a@arm.com>
-Date: Mon, 10 Mar 2025 11:53:33 +0100
+	s=arc-20240116; t=1741604046; c=relaxed/simple;
+	bh=u2MGQHdDaiZeIev78bZy1eKc33/NKy5fd0vcNmADJxw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pj0pYRtqG2aMAvlHIhSky+pMFudYzkHB3c5kSmTVigyyrVb7azE14KVNiFxl8lulLlkKDGHHbSyJDPIFsLY8/54V6u/mgHrJxSr64UA+LLNN4LyYokXTK/9JfTyqtdZtiRF6XukSsqSP32UrEX8jeKGQEUv5ibQ7rdk7P9uUF4g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=iQXiWrOF; arc=none smtp.client-ip=192.198.163.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1741604045; x=1773140045;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=u2MGQHdDaiZeIev78bZy1eKc33/NKy5fd0vcNmADJxw=;
+  b=iQXiWrOFyeqtKez9Irf3mYhM8aIJS+2WtqATXSTrsDETHEyVkHOLVBM0
+   bcZNNemvYE6LC1sZBL7YxGMtA/FAok2LjRHn2Jv02pfee+z/ZPko5VucR
+   6IOUI55D3KSykM+zjTa63hfmKdcZTnrW6ef5//Z8s+l7OCRvKnrXnVuYW
+   Mutpgm3byLQaRsSTXs+Jz6vGngJOW46Pzhqv7zjyAZ9oTh8LVDlhl+1dQ
+   L1hFHNX4pseath43bk4HToMNQeUzR85/ezzzfUzqdUAfolp2n2917wgwX
+   P0kId9vpPZ8YabifpQ7iTaIiloPuMER/LsDpKSZQk7QA9O3zPxY2rG8MI
+   A==;
+X-CSE-ConnectionGUID: 2L2nkd5lRwWZFKJFMiwr6g==
+X-CSE-MsgGUID: tyf48xQcTT2P52Yz3qAplQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11368"; a="41842590"
+X-IronPort-AV: E=Sophos;i="6.14,235,1736841600"; 
+   d="scan'208";a="41842590"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Mar 2025 03:54:04 -0700
+X-CSE-ConnectionGUID: pGZrVqOlQeeULPw4XNpgqw==
+X-CSE-MsgGUID: j4/LTaz7TPi1TY6JDLp5Bw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,235,1736841600"; 
+   d="scan'208";a="119936919"
+Received: from turnipsi.fi.intel.com (HELO kekkonen.fi.intel.com) ([10.237.72.44])
+  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Mar 2025 03:54:01 -0700
+Received: from kekkonen.localdomain (localhost [127.0.0.1])
+	by kekkonen.fi.intel.com (Postfix) with SMTP id 561E111F7F0;
+	Mon, 10 Mar 2025 12:53:57 +0200 (EET)
+Date: Mon, 10 Mar 2025 10:53:57 +0000
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+From: Sakari Ailus <sakari.ailus@linux.intel.com>
+To: Raag Jadav <raag.jadav@intel.com>
+Cc: eugen.hristev@linaro.org, mchehab@kernel.org,
+	nicolas.ferre@microchip.com, alexandre.belloni@bootlin.com,
+	claudiu.beznea@tuxon.dev, hugues.fruchet@foss.st.com,
+	alain.volmat@foss.st.com, mcoquelin.stm32@gmail.com,
+	alexandre.torgue@foss.st.com, andriy.shevchenko@linux.intel.com,
+	hverkuil-cisco@xs4all.nl, linux-media@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 0/2] Convert media drivers to use devm_kmemdup_array()
+Message-ID: <Z87ExUkOnaHpfxfE@kekkonen.localdomain>
+References: <20250228073649.152157-1-raag.jadav@intel.com>
+ <Z86KeDfg9GwFBpGQ@black.fi.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] sched/uclamp: Let each sched_class handle uclamp
-To: Xuewen Yan <xuewen.yan94@gmail.com>
-Cc: Hongyan Xia <hongyan.xia2@arm.com>, Ingo Molnar <mingo@redhat.com>,
- Peter Zijlstra <peterz@infradead.org>, Juri Lelli <juri.lelli@redhat.com>,
- Vincent Guittot <vincent.guittot@linaro.org>,
- Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>,
- Mel Gorman <mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>,
- Tejun Heo <tj@kernel.org>, David Vernet <void@manifault.com>,
- Andrea Righi <arighi@nvidia.com>, Changwoo Min <changwoo@igalia.com>,
- linux-kernel@vger.kernel.org, Xuewen Yan <xuewen.yan@unisoc.com>
-References: <84441660bef0a5e67fd09dc3787178d0276dad31.1740664400.git.hongyan.xia2@arm.com>
- <4394f2a7-b4e8-419a-a299-f1afa560c944@arm.com>
- <CAB8ipk_627GF+TV5u=6DK_3aRUHW8qGYwmN+KXMq_Cg-+Say1Q@mail.gmail.com>
- <bf5a70bf-3d13-4b3b-a3ef-804998b21fe9@arm.com>
- <CAB8ipk-SUFDATb=euJQFebxQ513SRwTEpSbBSD6K=batQKELHg@mail.gmail.com>
-Content-Language: en-US
-From: Dietmar Eggemann <dietmar.eggemann@arm.com>
-In-Reply-To: <CAB8ipk-SUFDATb=euJQFebxQ513SRwTEpSbBSD6K=batQKELHg@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z86KeDfg9GwFBpGQ@black.fi.intel.com>
 
-On 10/03/2025 03:41, Xuewen Yan wrote:
-> On Sat, Mar 8, 2025 at 2:32 AM Dietmar Eggemann
-> <dietmar.eggemann@arm.com> wrote:
->>
->> On 06/03/2025 13:01, Xuewen Yan wrote:
->>> On Thu, Mar 6, 2025 at 2:24 AM Dietmar Eggemann
->>> <dietmar.eggemann@arm.com> wrote:
->>>>
->>>> On 27/02/2025 14:54, Hongyan Xia wrote:
->>>>
->>>> [...]
->>>>
->>>>> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
->>>>> index 857808da23d8..7e5a653811ad 100644
->>>>> --- a/kernel/sched/fair.c
->>>>> +++ b/kernel/sched/fair.c
->>>>> @@ -6941,8 +6941,10 @@ enqueue_task_fair(struct rq *rq, struct task_struct *p, int flags)
->>>>>        * Let's add the task's estimated utilization to the cfs_rq's
->>>>>        * estimated utilization, before we update schedutil.
->>>>>        */
->>>>> -     if (!(p->se.sched_delayed && (task_on_rq_migrating(p) || (flags & ENQUEUE_RESTORE))))
->>>>> +     if (!(p->se.sched_delayed && (task_on_rq_migrating(p) || (flags & ENQUEUE_RESTORE)))) {
->>>>> +             uclamp_rq_inc(rq, p);
->>>>>               util_est_enqueue(&rq->cfs, p);
->>>>> +     }
->>>>
->>>> So you want to have p uclamp-enqueued so that its uclamp_min value
->>>> counts for the cpufreq_update_util()/cfs_rq_util_change() calls later in
->>>> enqueue_task_fair?
->>>>
->>>>   if (p->in_iowait)
->>>>     cpufreq_update_util(rq, SCHED_CPUFREQ_IOWAIT);
->>>>
->>>>   enqueue_entity() -> update_load_avg() -> cfs_rq_util_change() ->
->>>>   cpufreq_update_util()
->>>>
->>>> But if you do this before requeue_delayed_entity() (1) you will not
->>>> uclamp-enqueue p which got his ->sched_delayed just cleared in (1)?
->>>>
->>>
->>> Could we change to the following:
->>>
->>> when enqueue:
->>>
->>> -     if (!(p->se.sched_delayed && (task_on_rq_migrating(p) || (flags
->>> & ENQUEUE_RESTORE))))
->>> +     if (!(p->se.sched_delayed && !(flags & ENQUEUE_DELAYED)))
->>
->> Why you want to check ENQUEUE_DELAYED as well here? Isn't
->> !p->se.sched_delayed implying !ENQUEUE_DELAYED).
+Hi Raag,
+
+On Mon, Mar 10, 2025 at 08:45:12AM +0200, Raag Jadav wrote:
+> On Fri, Feb 28, 2025 at 01:06:47PM +0530, Raag Jadav wrote:
+> > This series converts media drivers to use the newly introduced[1]
+> > devm_kmemdup_array() helper. This depends on changes available on
+> > immutable tag[2].
+> > 
+> > [1] https://lore.kernel.org/r/20250212062513.2254767-1-raag.jadav@intel.com
+> > [2] https://lore.kernel.org/r/Z7xGpz3Q4Zj6YHx7@black.fi.intel.com
 > 
-> Indeed, the (!(p->se.sched_delayed && !(flags & ENQUEUE_DELAYED))) is equal to
-> the  (!(p->se.sched_delayed && (task_on_rq_migrating(p) || (flags &
-> ENQUEUE_RESTORE)))).
-> I just think it might be easier to read using the ENQUEUE_DELAYED flag.
-> Because we only allow enq the uclamp and util_est when wake up the delayed-task.
+> Bump, anything I can do to move this forward?
 
-OK, I see.
+The patches these depend on (those adding devm_kmemdup_array()) aren't in
+the Media tree yet. They don't seem urgent though so I'd just wait.
 
-So that means we would not have to move the uclamp handling into the sched
-classes necessarily, we could use flags in enqueue_task() as well:
+Speaking of the patches themselves: I'd use *array instead of array[0] for
+sizeof argument.
 
--->8--
-
-Subject: [PATCH] Align uclamp and util_est and call before freq update
-
-Signed-off-by: Dietmar Eggemann <dietmar.eggemann@arm.com>
----
- kernel/sched/core.c | 14 ++++++++------
- kernel/sched/fair.c |  4 ++--
- 2 files changed, 10 insertions(+), 8 deletions(-)
-
-diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-index b60916d77482..f833108a3b2d 100644
---- a/kernel/sched/core.c
-+++ b/kernel/sched/core.c
-@@ -1747,7 +1747,8 @@ static inline void uclamp_rq_dec_id(struct rq *rq, struct task_struct *p,
- 	}
- }
- 
--static inline void uclamp_rq_inc(struct rq *rq, struct task_struct *p)
-+static inline void uclamp_rq_inc(struct rq *rq, struct task_struct *p,
-+				 int flags)
- {
- 	enum uclamp_id clamp_id;
- 
-@@ -1763,7 +1764,7 @@ static inline void uclamp_rq_inc(struct rq *rq, struct task_struct *p)
- 	if (unlikely(!p->sched_class->uclamp_enabled))
- 		return;
- 
--	if (p->se.sched_delayed)
-+	if (p->se.sched_delayed && !(flags & ENQUEUE_DELAYED))
- 		return;
- 
- 	for_each_clamp_id(clamp_id)
-@@ -2067,12 +2068,13 @@ void enqueue_task(struct rq *rq, struct task_struct *p, int flags)
- 	if (!(flags & ENQUEUE_NOCLOCK))
- 		update_rq_clock(rq);
- 
--	p->sched_class->enqueue_task(rq, p, flags);
- 	/*
--	 * Must be after ->enqueue_task() because ENQUEUE_DELAYED can clear
--	 * ->sched_delayed.
-+	 * Can be before ->enqueue_task() because uclamp considers the
-+	 * ENQUEUE_DELAYED task before its ->sched_delayed gets cleared
-+	 * in ->enqueue_task().
- 	 */
--	uclamp_rq_inc(rq, p);
-+	uclamp_rq_inc(rq, p, flags);
-+	p->sched_class->enqueue_task(rq, p, flags);
- 
- 	psi_enqueue(p, flags);
- 
-diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index 061a29e88ee2..e26d1dfea601 100644
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -6951,7 +6951,7 @@ enqueue_task_fair(struct rq *rq, struct task_struct *p, int flags)
- 	 * Let's add the task's estimated utilization to the cfs_rq's
- 	 * estimated utilization, before we update schedutil.
- 	 */
--	if (!(p->se.sched_delayed && (task_on_rq_migrating(p) || (flags & ENQUEUE_RESTORE))))
-+	if (!p->se.sched_delayed || (flags & ENQUEUE_DELAYED))
- 		util_est_enqueue(&rq->cfs, p);
- 
- 	if (flags & ENQUEUE_DELAYED) {
-@@ -7193,7 +7193,7 @@ static int dequeue_entities(struct rq *rq, struct sched_entity *se, int flags)
-  */
- static bool dequeue_task_fair(struct rq *rq, struct task_struct *p, int flags)
- {
--	if (!(p->se.sched_delayed && (task_on_rq_migrating(p) || (flags & DEQUEUE_SAVE))))
-+	if (!p->se.sched_delayed)
- 		util_est_dequeue(&rq->cfs, p);
- 
- 	util_est_update(&rq->cfs, p, flags & DEQUEUE_SLEEP);
 -- 
-2.34.1
+Regards,
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+Sakari Ailus
 
