@@ -1,260 +1,144 @@
-Return-Path: <linux-kernel+bounces-553955-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-553956-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9DBC4A59117
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 11:25:37 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B10AA5911B
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 11:26:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 29F25188F53C
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 10:25:45 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id ADA977A225C
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 10:25:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90A23226CE0;
-	Mon, 10 Mar 2025 10:25:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77A7E226533;
+	Mon, 10 Mar 2025 10:26:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=iki.fi header.i=@iki.fi header.b="sZ7xHOF7"
-Received: from meesny.iki.fi (meesny.iki.fi [195.140.195.201])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="GANWGPn4"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A61BD225797;
-	Mon, 10 Mar 2025 10:25:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=195.140.195.201
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741602320; cv=pass; b=QMy4ERn02ZI2wghSj9OB7+FvcyJIb1eQ+xQtpxt54Ldd3wZ5+lY9R4LC7o8aumGXd/EjAl1ibXXzqZIP7Fwaqyb0lcSTghm2EL7NYswF2USzwORDlejl5cy2cpF2/cUYQCZfg7Dz0OeCg7Pc2CegF+RLW6iB8vyPL5DOcFFA6/c=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741602320; c=relaxed/simple;
-	bh=hzvCCp7hE1VHF1M93UATEhcDu5LaeDH+ubaeNpDVLbM=;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 967BA1A7046
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 10:26:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741602398; cv=none; b=RepbFs1av1CnpHQ4+CwR4gHyqFcWf4L/GfgjSSeQeoRT67dGdvtFt+s4hT7srzPi/4z69Sv1B6cwhwX/CgodKajaoaFi0aw34V7EMgKXgSYt0Lb6j/u6bgVFJjIKudZaYih4vgACrAmCoXG2o/DmBsMWqMTvT6TUqpzkK3UyEyA=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741602398; c=relaxed/simple;
+	bh=oCS5Xfj4X/FFcAUnAUdKi51IRu8AeeZmD8qMXspWZeA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qJwXVFxSFi7uxckWTxIdFyRrWXBbmex4GU4fbsB2pVZPNgRgANqDxUrtTjCCEGOYswltQTuT9fDd4KxXY79cHC2LkgcrQh41bciIH+//yDFB9X01Fgzd+blLXeOJGhXzz9i8ghxkf3JOftt0sMwA4UVLojhcRK3ZSR9puq76LdY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iki.fi; spf=pass smtp.mailfrom=iki.fi; dkim=pass (1024-bit key) header.d=iki.fi header.i=@iki.fi header.b=sZ7xHOF7; arc=pass smtp.client-ip=195.140.195.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iki.fi
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iki.fi
-Received: from hillosipuli.retiisi.eu (2a00-1190-d1dd-0-c641-1eff-feae-163c.v6.cust.suomicom.net [IPv6:2a00:1190:d1dd:0:c641:1eff:feae:163c])
+	 Content-Type:Content-Disposition:In-Reply-To; b=i3fhuaQwTJMyOK6XDHwLqZrJRN81ET8Cr0pUPVWSy0jkt3fhScrasaLQNg9xf84iaKbfkYBHUwxVDSBgse5Iiw+FrCRmIBYO1A7Hvk7cTNrEM7WtduXpdjeTEFe+OqbF64dXyTQpxuK/zTa0vehtRnhMZazgG0g13Dx+ZSh2YDU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=GANWGPn4; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 6407840E01AD;
+	Mon, 10 Mar 2025 10:26:34 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id QWrDmRuwhB90; Mon, 10 Mar 2025 10:26:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1741602389; bh=evJgpKIxgP0x4EAJW7cWZK1RzQrhPq55MehaqfbmoOA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=GANWGPn4iQ+WgUAcQPG5O9CfcQQhbw0AMMRmVaDQmH9CNZFuIUT2BMAs6P/fuAB6u
+	 nr842tG4sHdHv60lhNi4Cy92DF1LCgIvMHeecMWE4PvOH935Fku+1/6tu6kwTdkrDd
+	 hVftCNIfmAdkUAl2UwszYf7dZ0y/nB30WjqCdtXsO51+ZlqKDNxmXQ6xPFYQ36AXxI
+	 JL6Cezwtnf6hbkiA2cZz6NsVSUn9gQGf+wNBMnsnBxzb/v0tVOdOQ/4TErF4PqfiD7
+	 yCz1KCYxxft/ipSgZloWiRt3wKDWZYVzxVX3l8PSELiWeaycJEbU7R8aBXdT4D+H1a
+	 aXDcONaWk/WI86l7s/FZHLwiQZ/Q1WTX/3uI8wxkT8zKmIlDcblfeylJj4bgE1oB0Z
+	 3nS/DvgVh5d/2L7AMpOAxQXk5RYscX6ck7LfhSWQqbUFqHUwktQ72UaRTHb8gljAf1
+	 6koFq5WF37zOcwXgDejf+S9Z6WjKYqNwIU8GMeL7swC4lbCBT4apf5dJSCQV6Tvw/B
+	 Ssuud/EgefXnrgb/YW/QwoHnDbYw/jnlSJLtK7nYI1o+x5yjRHzKzE+19GJwcrx1H9
+	 qagMukFdUc3kUuCAc38FfSiS1ij+K5xHPYH8snYq++Z1d7JFKdf2VIb94iUPGWub16
+	 PBWRWLo3t7Kv6Q32Tjjd1/IM=
+Received: from zn.tnic (pd95303ce.dip0.t-ipconnect.de [217.83.3.206])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
 	(No client certificate requested)
-	(Authenticated sender: sailus)
-	by meesny.iki.fi (Postfix) with ESMTPSA id 4ZBCh125fyzyT0;
-	Mon, 10 Mar 2025 12:25:05 +0200 (EET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=iki.fi; s=meesny;
-	t=1741602308;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Rqphmd21bOkdXsuSWrt33WicDw56krWCddUo2Bhz1zE=;
-	b=sZ7xHOF7Oan5NNSDXvxp1e0VKFUe4VYxlrtSJEDrnoq9d81lIHeModlB6azC8Hr2rtyxnz
-	nOlMLlBDiL7ZSAOwYESC1KRHx7nwvrAClLR5z1Bo3BUeZ229b2zedzgUo4fal2HPwY29gE
-	ZNv6z1uQXUDDsO49u/4yZckTm535Lxw=
-ARC-Seal: i=1; s=meesny; d=iki.fi; t=1741602308; a=rsa-sha256; cv=none;
-	b=ysSrW01wgE/Uwql8eegaOY1vWm5yuAyMz9ZLw/vbaO2/LlKplPRUhLfwZ9QYHhHd09XuUT
-	8R6JetviriF8NqnA2NtJLKvbdoLBqIioSjRU5XPc9vKdQaZBrEhXFDEq2T3g7AKSk78SZG
-	DfrlnjrLXJvHlnI+OgeQREZGZoT32KA=
-ARC-Authentication-Results: i=1;
-	ORIGINATING;
-	auth=pass smtp.auth=sailus smtp.mailfrom=sakari.ailus@iki.fi
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=iki.fi;
-	s=meesny; t=1741602308;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Rqphmd21bOkdXsuSWrt33WicDw56krWCddUo2Bhz1zE=;
-	b=eWSILLlusI23VAAXDpL3Zq70o/OfyX74lU3Y9ikUD4m4iK4gJvdGH79yMXLYKYiw1l9KFq
-	mefPQuHMrXFREKljV2q28I3vVW79G60GPJHYSit2hGpR/G5QMki0e+oIKsHig/2O+HzmmW
-	e7rtGlwQd5O0a5qevF4uP5tSYfF4Nkk=
-Received: from valkosipuli.retiisi.eu (valkosipuli.localdomain [192.168.4.2])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by hillosipuli.retiisi.eu (Postfix) with ESMTPS id 942A6634C93;
-	Mon, 10 Mar 2025 12:25:04 +0200 (EET)
-Date: Mon, 10 Mar 2025 10:25:04 +0000
-From: Sakari Ailus <sakari.ailus@iki.fi>
-To: Mathis Foerst <mathis.foerst@mt.com>
-Cc: Dan Carpenter <dan.carpenter@linaro.org>, linux-kernel@vger.kernel.org,
-	Steve Longerbeam <slongerbeam@gmail.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>, linux-media@vger.kernel.org,
-	linux-staging@lists.linux.dev, imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org, manuel.traut@mt.com,
-	mathis.foerst@zuehlke.com
-Subject: Re: [PATCH v1 1/1] media: imx: csi: Parse link configuration from
- fw_node
-Message-ID: <Z86-AFnPQ2wXKidi@valkosipuli.retiisi.eu>
-References: <20250305113802.897087-1-mathis.foerst@mt.com>
- <20250305113802.897087-2-mathis.foerst@mt.com>
- <Z8nOTrjEW_OYBGlq@valkosipuli.retiisi.eu>
- <84aa2d87-d7f1-46c9-b28d-6f0e9a78788d@stanley.mountain>
- <Z8oQCuqKVH225lPw@valkosipuli.retiisi.eu>
- <Z8r21Z2HthBwGDSq@mt.com>
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 2B6C140E015D;
+	Mon, 10 Mar 2025 10:26:13 +0000 (UTC)
+Date: Mon, 10 Mar 2025 11:26:07 +0100
+From: Borislav Petkov <bp@alien8.de>
+To: Ajay Kaher <ajay.kaher@broadcom.com>
+Cc: kevinloughlin@google.com, bcm-kernel-feedback-list@broadcom.com,
+	tglx@linutronix.de, mingo@redhat.com, dave.hansen@linux.intel.com,
+	x86@kernel.org, hpa@zytor.com, virtualization@lists.linux.dev,
+	linux-kernel@vger.kernel.org, ye.li@broadcom.com,
+	bo.gan@broadcom.com, vamsi-krishna.brahmajosyula@broadcom.com,
+	alexey.makhalov@broadcom.com, vasavi.sirnapalli@broadcom.com,
+	florian.fainelli@broadcom.com
+Subject: Re: [PATCH] sev-snp: parse MP tables for VMware hypervisor
+Message-ID: <20250310102607.GDZ86-P3VFA-x2iy4l@fat_crate.local>
+References: <20241219114400.858980-1-ajay.kaher@broadcom.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <Z8r21Z2HthBwGDSq@mt.com>
+In-Reply-To: <20241219114400.858980-1-ajay.kaher@broadcom.com>
 
-Hi Mathis,
+On Thu, Dec 19, 2024 at 11:44:00AM +0000, Ajay Kaher wrote:
+> For VMware hypervisor, SEV-SNP enabled VM's could boot without UEFI.
+> In this case, mpparse_find_mptable() has to be called to parse MP
+> tables which contains boot information.
+> 
+> Fixes: 0f4a1e80989a ("x86/sev: Skip ROM range scans and validation for SEV-SNP guests")
+> Signed-off-by: Ajay Kaher <ajay.kaher@broadcom.com>
+> Signed-off-by: Ye Li <ye.li@broadcom.com>
+> Tested-by: Ye Li <ye.li@broadcom.com>
 
-On Fri, Mar 07, 2025 at 02:38:29PM +0100, Mathis Foerst wrote:
-> Hi Sakari, Hi Dan,
-> 
-> thanks a lot for your feedback.
-> 
-> On Thu, Mar 06, 2025 at 09:13:46PM +0000, Sakari Ailus wrote:
-> > Hi Dan,
-> > 
-> > On Thu, Mar 06, 2025 at 10:07:20PM +0300, Dan Carpenter wrote:
-> > > On Thu, Mar 06, 2025 at 04:33:18PM +0000, Sakari Ailus wrote:
-> > > > Hi Mathis,
-> > > > 
-> > > > Thanks for the patch.
-> > > > 
-> > > > On Wed, Mar 05, 2025 at 12:38:02PM +0100, Mathis Foerst wrote:
-> > > > > The imx-media-csi driver requires upstream camera drivers to implement
-> > > > > the subdev-pad-op "get_mbus_config" [0]. Camera drivers that don't
-> > > > > implement this function are not usable on the i.MX6.
-> > > > > 
-> > > > > The docs for get_mbus_config [1] say:
-> > > > > @get_mbus_config: get the media bus configuration of a remote sub-device.
-> > > > >             The media bus configuration is usually retrieved from the
-> > > > >             firmware interface at sub-device probe time, immediately
-> > > > >             applied to the hardware and eventually adjusted by the
-> > > > >             driver.
-> > > > > 
-> > > > > Currently, the imx-media-csi driver is not incorporating the information
-> > > > > from the firmware interface and therefore relies on the implementation of
-> > > > > get_mbus_config by the camera driver.
-> > > > > 
-> > > > > To be compatible with camera drivers not implementing get_mbus_config
-> > > > > (which is the usual case), use the bus information from the fw interface:
-> > > > > 
-> > > > > The camera does not necessarily has a direct media bus link to the CSI as
-> > > > > the video-mux and/or the MIPI CSI-2 receiver of the i.MX6 might be in
-> > > > > between them on the media pipeline.
-> > > > > The CSI driver already implements the functionality to find the connected
-> > > > > camera sub-device to call get_mbus_config on it.
-> > > > > 
-> > > > > At this point the driver is modified as follows:
-> > > > > In the case that get_mbus_config is not implemented by the upstream
-> > > > > camera, try to get its endpoint configuration from the firmware interface
-> > > > > usign v4l2_fwnode_endpoint_parse.
-> > > > > For the supported mbus_types (V4L2_MBUS_PARALLEL, V4L2_MBUS_BT656 and
-> > > > > V4L2_MBUS_CSI2_DPHY), extract the mbus_config from the endpoint
-> > > > > configuration.
-> > > > > For all other mbus_types, return an error.
-> > > > > 
-> > > > > Note that parsing the mbus_config from the fw interface is not done during
-> > > > > probing because the camera that's connected to the CSI can change based on
-> > > > > the selected input of the video-mux at runtime.
-> > > > > 
-> > > > > [0] drivers/staging/media/imx/imx-media-csi.c - line 211..216
-> > > > > [1] include/media/v4l2-subdev.h - line 814
-> > > > > 
-> > > > > Signed-off-by: Mathis Foerst <mathis.foerst@mt.com>
-> > > > > ---
-> > > > >  drivers/staging/media/imx/imx-media-csi.c | 36 ++++++++++++++++++++---
-> > > > >  1 file changed, 32 insertions(+), 4 deletions(-)
-> > > > > 
-> > > > > diff --git a/drivers/staging/media/imx/imx-media-csi.c b/drivers/staging/media/imx/imx-media-csi.c
-> > > > > index 3edbc57be2ca..394a9321a10b 100644
-> > > > > --- a/drivers/staging/media/imx/imx-media-csi.c
-> > > > > +++ b/drivers/staging/media/imx/imx-media-csi.c
-> > > > > @@ -169,6 +169,8 @@ static int csi_get_upstream_mbus_config(struct csi_priv *priv,
-> > > > >  {
-> > > > >  	struct v4l2_subdev *sd, *remote_sd;
-> > > > >  	struct media_pad *remote_pad;
-> > > > > +	struct fwnode_handle *ep_node;
-> > > > > +	struct v4l2_fwnode_endpoint ep = { .bus_type = 0 };
-> > > > 
-> > > > Are there any defaults in DT bindings (other than 0's)? Also initialising a
-> > > > field to zero this way is redundant, just use {}.
-> > > > 
-> > > 
-> > > I was going to respond in much the same way.  This is equivalen to:
-> > > 
-> > > struct v4l2_fwnode_endpoint ep = { .bus_type = V4L2_MBUS_UNKNOWN };
-> > 
-> > Thinking about this in a context of parsing the endpoint, in fact the
-> > bus_type should be specified. Presumably the hardware is D-PHY, so the
-> > correct value would be V4L2_MBUS_CSI2_DPHY. This way
-> > v4l2_fwnode_endpoint_parse() doesn't need to guess.
-> 
-> I think we must use "bus_type = V4L2_MBUS_UNKNOWN" here:
-> 
-> The i.MX6 has two types of camera interfaces: Parallel and MIPI CSI-2.
-> They are connected either directly or via a video-mux to the CSIs
-> (See IMX6DQRM.pdf - Figure 9-3 for the connection diagram)
-> 
-> Pre-defining V4L2_MBUS_CSI2_DPHY here would let
-> v4l2_fwnode_endpoint_parse() fail if the camera uses the parallel bus.
-> 
-> We could distinguish between MIPI CSI-2 and Parallel input by checking
-> the grp_id of the upstream device like it's already done in
-> csi_get_upstream_mbus_config().
-> But for the Parallel case we still can't know if we should set bus_type
-> to V4L2_MBUS_PARALLEL or to V4L2_MBUS_BT656 - the i.MX6 supports both
-> formats on the parallel interface.
-> 
-> That's why I would argue that v4l2_fwnode_endpoint_parse() must figure
-> out the bus_type from the fw node.
+That SOB chain is wrong. Ye's SOB means, he's sending the patch but that
+doesn't look like it.
 
-Right, nowadays you can indeed do this -- it wasn't a long ago when you
-couldn't. I presume the bindings do specify the bus-type property is
-mandatory? Where are the bindings btw.?
+> ---
+>  arch/x86/kernel/cpu/vmware.c | 7 +++++++
+>  1 file changed, 7 insertions(+)
+> 
+> diff --git a/arch/x86/kernel/cpu/vmware.c b/arch/x86/kernel/cpu/vmware.c
+> index 00189cd..3e2594d 100644
+> --- a/arch/x86/kernel/cpu/vmware.c
+> +++ b/arch/x86/kernel/cpu/vmware.c
+> @@ -26,6 +26,7 @@
+>  #include <linux/export.h>
+>  #include <linux/clocksource.h>
+>  #include <linux/cpu.h>
+> +#include <linux/efi.h>
+>  #include <linux/reboot.h>
+>  #include <linux/static_call.h>
+>  #include <asm/div64.h>
+> @@ -35,6 +36,8 @@
+>  #include <asm/apic.h>
+>  #include <asm/vmware.h>
+>  #include <asm/svm.h>
+> +#include <asm/mem_encrypt.h>
+> +#include <asm/efi.h>
+>  
+>  #undef pr_fmt
+>  #define pr_fmt(fmt)	"vmware: " fmt
+> @@ -429,6 +432,10 @@ static void __init vmware_platform_setup(void)
+>  		pr_warn("Failed to get TSC freq from the hypervisor\n");
+>  	}
+>  
+> +	if (sev_status & MSR_AMD64_SEV_SNP_ENABLED &&
 
-> 
-> > 
-> > > 
-> > > > >  	int ret;
-> > > > >  
-> > > > >  	if (!priv->src_sd)
-> > > > > @@ -210,11 +212,37 @@ static int csi_get_upstream_mbus_config(struct csi_priv *priv,
-> > > > >  
-> > > > >  	ret = v4l2_subdev_call(remote_sd, pad, get_mbus_config,
-> > > > >  			       remote_pad->index, mbus_cfg);
-> > > > > -	if (ret == -ENOIOCTLCMD)
-> > > > > -		v4l2_err(&priv->sd,
-> > > > > -			 "entity %s does not implement get_mbus_config()\n",
-> > > > > -			 remote_pad->entity->name);
-> > > > > +	if (ret == -ENOIOCTLCMD) {
-> > > > 
-> > > > 	if (!ret)
-> > > > 		return 0;
-> > > > 
-> > > > And you can unindent the rest.
-> > > 
-> > > I was going to say this too but then I thought actually this needs to
-> > > be:
-> > > 
-> > > 	if (ret != -ENOIOCTLCMD)
-> > > 		return ret;
-> > > 
-> > > Which is weird.  Better to break all the new code into a separate
-> > > helper function.
-> > > 
-> > > 	if (ret == -ENOIOCTLCMD)
-> > > 		ret = parse_fw_link_config_stuff();
-> > > 
-> > > 	return ret;
-> 
-> Good point. I factored out a helper function as suggested.
-> 
-> > 
-> > Indeed. get_mbus_config() presumably wouldn't return an error but
-> > correctness is usually a good idea.
-> > 
+cpu_feature_enabled(X86_FEATURE_SEV_SNP)
+
+> +	    !efi_enabled(EFI_BOOT))
+> +		x86_init.mpparse.find_mptable = mpparse_find_mptable;
+> +
+>  	vmware_paravirt_ops_setup();
+>  
+>  #ifdef CONFIG_X86_IO_APIC
+> -- 
 
 -- 
-Regards,
+Regards/Gruss,
+    Boris.
 
-Sakari Ailus
+https://people.kernel.org/tglx/notes-about-netiquette
 
