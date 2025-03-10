@@ -1,141 +1,128 @@
-Return-Path: <linux-kernel+bounces-553565-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-553566-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42575A58BAD
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 06:26:33 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 962D3A58BB0
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 06:28:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BFBBF7A48E0
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 05:25:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D259D16A185
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 05:28:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D58B91C5D79;
-	Mon, 10 Mar 2025 05:26:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A4B01C5F18;
+	Mon, 10 Mar 2025 05:28:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="Q1xcQq+7"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3F3D1C5D53;
-	Mon, 10 Mar 2025 05:26:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rIDX2/E4"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A9CD2F28;
+	Mon, 10 Mar 2025 05:28:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741584385; cv=none; b=lh7xgv8QSXfGWXgfiFN0ccP6zp0TthcHmH+GKTWop+h573QXkbWldnU05i+xYk57hJu68s81uZQKQ6Labwegfpva8/XMeGaikZaj9DWVGFI1c+mOgMPQ6/L4ql6sUFTIJu+t10HN8T6WX5PpmGL7fF7cpk3S+VH/xAxabv2g0AI=
+	t=1741584530; cv=none; b=tq0AocbHdfc0WPqXytpLpfP4PZZLzfGffSuHRluJcCmSKuBfrJ91H/KXW3wVhn8a/WCqiseW1VRBMfgw2NdcjioitV0SaIUDaIPP51yBD1sJDkxiDqlBMc/fADygsQdp+caFpAakcHDPczQ0cEKU+T5UE3FAxA+21bTGITD6//0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741584385; c=relaxed/simple;
-	bh=sWokZzYxm1CeYRCiODzRXUpzs0uUoJmauuGQM4qMOHk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=H73DN07v+yLQgENzPCTjbullOmRSKJcHVTfxJx+sPNiSTb40403nM5yB4nSVWi8ky4x8ske26mfmWrFsumGETxNVuia4k7QhjAqu5thR6jBBeAjnoYekdKfVZjy3L5z08t2Zj92I1hT+tzWQTtd6F+sCKVBGlCItZMYR+2mXk0o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=Q1xcQq+7; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: from [100.79.210.62] (unknown [4.194.122.170])
-	by linux.microsoft.com (Postfix) with ESMTPSA id 6F4D521104A7;
-	Sun,  9 Mar 2025 22:26:18 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 6F4D521104A7
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1741584383;
-	bh=+UbeTRTcINNlR4Gih81eaCwNs9yvnE21ELsLzgn4KcY=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Q1xcQq+73dAl58mRgBpFOYVbowai+v05Ls2mWkhKKeYYXJmk+a4cMMB1zBIYQI/xL
-	 H6/hdxFI994dIxlN3vKmtLugwzGHwS9IfkGNUZ0vXUGHW/sYtv/XQkWzCyot6DmDh1
-	 a1oeAkB/1qwZsTxXQbOzk+jeekdgkKF5B5r5Zt9U=
-Message-ID: <61eb1bb6-2ccf-4d89-be47-34bfe0ea9778@linux.microsoft.com>
-Date: Mon, 10 Mar 2025 10:56:12 +0530
+	s=arc-20240116; t=1741584530; c=relaxed/simple;
+	bh=xZ+9XNOyt3FXchZM+SS0uxDvW1K/kZComkL9YrJmHt0=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=Maj5UlnxzaWj4stapCroCeuNZbil8fJOXGqT3jxCqF3zNEkMWomlNY1e7Xqzt8yXk6Bu4H+6BvdaW23TgN/PhM6vxchL8rpjFiRwjViOfdRzx9Z2Ofs+a1RklWsryWTvMl8Mwuigk8QWGV7zQUZ8RTe154lcLSYkZ5bSNB99YoU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rIDX2/E4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id D5884C4CEE5;
+	Mon, 10 Mar 2025 05:28:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741584529;
+	bh=xZ+9XNOyt3FXchZM+SS0uxDvW1K/kZComkL9YrJmHt0=;
+	h=From:Date:Subject:To:Cc:Reply-To:From;
+	b=rIDX2/E4lBsqXjsNuAig5eNGi7BrcvYB10j9RmMexEjuoC36aFp4MPj7rJv9/5/QL
+	 v6xYqDwvhlyE4OMaZWi7Nt+4iqMGLIiOdF5FzoVCVYk8BhYQbUeNsEBjv4o40dHNRf
+	 QWMVf4F2U08l/OwZ/SNwW3ZgqMoajp0T4AnghkWkaS9HDdGXtZ8gtjV5LTnXnZQaNS
+	 kh/GdSoLnbvXgm85wOcEjzqAf/DwgQTIaz03otY+4Vw840fSRvd8g2ejqWsyPJowM+
+	 PwRQEvKYgxL02xQ/rSbRKTdg2+mWXUZv1LcqV3/vmlQS1q2kwQee5oQhY5VahbPmnk
+	 gQbsbIWXJ4vGw==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BE6A0C282DE;
+	Mon, 10 Mar 2025 05:28:49 +0000 (UTC)
+From: Aaron Kling via B4 Relay <devnull+webgeek1234.gmail.com@kernel.org>
+Date: Mon, 10 Mar 2025 00:28:48 -0500
+Subject: [PATCH v2] cpufreq: tegra186: Share policy per cluster
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4] sched/topology: Enable topology_span_sane check only
- for debug builds
-To: K Prateek Nayak <kprateek.nayak@amd.com>,
- Valentin Schneider <vschneid@redhat.com>, Ingo Molnar <mingo@redhat.com>,
- Peter Zijlstra <peterz@infradead.org>, Juri Lelli <juri.lelli@redhat.com>,
- Vincent Guittot <vincent.guittot@linaro.org>,
- Dietmar Eggemann <dietmar.eggemann@arm.com>,
- Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>,
- Mel Gorman <mgorman@suse.de>
-Cc: stable@vger.kernel.org, linux-kernel@vger.kernel.org,
- Steve Wahl <steve.wahl@hpe.com>,
- Saurabh Singh Sengar <ssengar@linux.microsoft.com>, srivatsa@csail.mit.edu,
- Michael Kelley <mhklinux@outlook.com>,
- Shrikanth Hegde <sshegde@linux.ibm.com>
-References: <20250306055354.52915-1-namjain@linux.microsoft.com>
- <xhsmhwmd2ds0o.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
- <81b11433-58ac-4a2c-a497-d6d91e330810@linux.microsoft.com>
- <d033e4cc-728e-41cd-8fd8-616b2eb7709f@amd.com>
-Content-Language: en-US
-From: Naman Jain <namjain@linux.microsoft.com>
-In-Reply-To: <d033e4cc-728e-41cd-8fd8-616b2eb7709f@amd.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250310-cpufreq-t186-share-policy-v2-1-d0b743cd051f@gmail.com>
+X-B4-Tracking: v=1; b=H4sIAI94zmcC/0XMTQ7CIBBA4as0rJ2GGQTRlfcwLhCnLbEtFepfm
+ t5d4sblt3hvEZlT4CwO1SISP0MOcSygTSV858aWIVyLBUnSUqEEPz2axHeY0RrInUsMU+yD/4C
+ jndFkldWKROmnxE14/96nc3GT4gBzl9j9j4QGjbTS1GqP2hhAePGlZb4hqe2xHVzoax8Hsa5fr
+ JkUUqsAAAA=
+X-Change-ID: 20250310-cpufreq-t186-share-policy-a27652838532
+To: "Rafael J. Wysocki" <rafael@kernel.org>, 
+ Viresh Kumar <viresh.kumar@linaro.org>, 
+ Thierry Reding <thierry.reding@gmail.com>, 
+ Jonathan Hunter <jonathanh@nvidia.com>
+Cc: linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Aaron Kling <luceoscutum@gmail.com>, 
+ Sumit Gupta <sumitg@nvidia.com>, Thierry Reding <treding@nvidia.com>, 
+ Aaron Kling <webgeek1234@gmail.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1741584529; l=1424;
+ i=webgeek1234@gmail.com; s=20250217; h=from:subject:message-id;
+ bh=/U0Kh7Cb90mT2b4NourHWsyj9SF5IW5h30D3gxH4nRw=;
+ b=PCFAeC5Bm9uq1dNxo+stUss63q42Esm2EXmtWsfRFbcc7mCaEnG69ijd77iec6/SSgX0SLsY2
+ 7c7GqheMqsXCAi4IEEqCtMGlQOdU0Y8jYktpuRf1ba8fqUhWhflzU0x
+X-Developer-Key: i=webgeek1234@gmail.com; a=ed25519;
+ pk=TQwd6q26txw7bkK7B8qtI/kcAohZc7bHHGSD7domdrU=
+X-Endpoint-Received: by B4 Relay for webgeek1234@gmail.com/20250217 with
+ auth_id=342
+X-Original-From: Aaron Kling <webgeek1234@gmail.com>
+Reply-To: webgeek1234@gmail.com
 
+From: Aaron Kling <luceoscutum@gmail.com>
 
+This functionally brings tegra186 in line with tegra210 and tegra194,
+sharing a cpufreq policy between all cores in a cluster.
 
-On 3/7/2025 9:11 PM, K Prateek Nayak wrote:
-> Hello Naman,
-> 
-> On 3/7/2025 8:35 PM, Naman Jain wrote:
->>
->>
->> On 3/6/2025 10:18 PM, Valentin Schneider wrote:
->>> On 06/03/25 11:23, Naman Jain wrote:
->>>> diff --git a/kernel/sched/topology.c b/kernel/sched/topology.c
->>>> index c49aea8c1025..666f0a18cc6c 100644
->>>> --- a/kernel/sched/topology.c
->>>> +++ b/kernel/sched/topology.c
->>>> @@ -2359,6 +2359,13 @@ static bool topology_span_sane(struct 
->>>> sched_domain_topology_level *tl,
->>>>   {
->>>>        int i = cpu + 1;
->>>>
->>>> +    /* Skip the topology sanity check for non-debug, as it is a 
->>>> time-consuming operation */
->>>> +    if (!sched_debug()) {
->>>> +        pr_info_once("%s: Skipping topology span sanity check. Use 
->>>> `sched_verbose` boot parameter to enable it.\n",
->>>> +                 __func__);
->>>
->>> FWIW I'm not against this change, however if you want to add messaging
->>> about sched_verbose I'd put that in e.g. sched_domain_debug() (as a 
->>> print
->>> once like you've done here) with something along the lines of:
->>>
->>>    "Scheduler topology debugging disabled, add 'sched_verbose' to the 
->>> cmdline to enable it"
->>
->>
->> Thank you so much for reviewing.
->> Please correct me if I misunderstood. Are you proposing below change?
->>
->> --- a/kernel/sched/topology.c
->> +++ b/kernel/sched/topology.c
->> @@ -2361,7 +2361,7 @@ static bool topology_span_sane(struct 
->> sched_domain_topology_level *tl,
->>
->>          /* Skip the topology sanity check for non-debug, as it is a 
->> time-consuming operation */
->>          if (!sched_debug()) {
->> -               pr_info_once("%s: Skipping topology span sanity check. 
->> Use `sched_verbose` boot parameter to enable it.\n",
->> +               pr_info_once("%s: Scheduler topology debugging 
->> disabled, add 'sched_verbose' to the cmdline to enable it\n",
->>                               __func__);
->>                  return true;
->>          }
->>
-> 
-> I think Valentin meant moving the same pr_info_once() to the early exit
-> case in sched_domain_debug() for "!sched_debug_verbose" to notify the
-> user that sched_debug() is disabled and they can turn it on using
-> "sched_verbose" as opposed to announcing it from topology_span_sane().
+Reviewed-by: Sumit Gupta <sumitg@nvidia.com>
+Acked-by: Thierry Reding <treding@nvidia.com>
+Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
+---
+ drivers/cpufreq/tegra186-cpufreq.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-Sure, thanks. Sent v5 with this change.
+diff --git a/drivers/cpufreq/tegra186-cpufreq.c b/drivers/cpufreq/tegra186-cpufreq.c
+index c7761eb99f3ccc3e85389cb1e79d338c47584ae3..92aa50f0166601e7b077a4127eba0cb60181dee3 100644
+--- a/drivers/cpufreq/tegra186-cpufreq.c
++++ b/drivers/cpufreq/tegra186-cpufreq.c
+@@ -73,11 +73,18 @@ static int tegra186_cpufreq_init(struct cpufreq_policy *policy)
+ {
+ 	struct tegra186_cpufreq_data *data = cpufreq_get_driver_data();
+ 	unsigned int cluster = data->cpus[policy->cpu].bpmp_cluster_id;
++	u32 cpu;
+ 
+ 	policy->freq_table = data->clusters[cluster].table;
+ 	policy->cpuinfo.transition_latency = 300 * 1000;
+ 	policy->driver_data = NULL;
+ 
++	/* set same policy for all cpus in a cluster */
++	for (cpu = 0; cpu < ARRAY_SIZE(tegra186_cpus); cpu++) {
++		if (data->cpus[cpu].bpmp_cluster_id == cluster)
++			cpumask_set_cpu(cpu, policy->cpus);
++	}
++
+ 	return 0;
+ }
+ 
 
-Regards,
-Naman
-> 
+---
+base-commit: 1110ce6a1e34fe1fdc1bfe4ad52405f327d5083b
+change-id: 20250310-cpufreq-t186-share-policy-a27652838532
+
+Best regards,
+-- 
+Aaron Kling <webgeek1234@gmail.com>
+
 
 
