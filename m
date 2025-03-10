@@ -1,194 +1,187 @@
-Return-Path: <linux-kernel+bounces-553893-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-553894-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF41AA5904B
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 10:52:01 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C1EFFA59051
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 10:53:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2FEF4188D2EA
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 09:52:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4EC4B188E82E
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 09:53:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68B0D2253ED;
-	Mon, 10 Mar 2025 09:51:56 +0000 (UTC)
-Received: from relay5-d.mail.gandi.net (relay5-d.mail.gandi.net [217.70.183.197])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C99B2253FC;
+	Mon, 10 Mar 2025 09:53:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="e7FE5Dfz"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D619017A2E7
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 09:51:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1EE021D585;
+	Mon, 10 Mar 2025 09:53:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741600316; cv=none; b=TXK387wJG7NdNkdb338PEaD35M9w+GAKh1/aS5YEoaD/IdKV6FZ08hu0hag0xpbBrEVqMRlP0sEuYWHl2updVhhgP+BMxdzO3rMil/8k3kGKUzeKAUacDdHsEbyDs2nU03Pqvuqfh31TQDkdN8ZDV2TXoRa1r3qtFSIDFq4euno=
+	t=1741600397; cv=none; b=BRHVbB111Gxnax49gXmLPOCn+S1fv9mioYSNP8GWBnXGbKdNkOqOC2rK8UM9hCWA8Rt6bdgxA/8HrjGUvJ2vHcEEcs8kHiJ2zVy+hFHyVpE0M/jf0IJSn/lR85406uUq6mtwFR+cigaRwmq8DhSlZSM3XhtDikXR9k7ymTOZGqU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741600316; c=relaxed/simple;
-	bh=gmxFtjMteVui9x27eFqfr1NYcGv8Yb2TXHpW8smvi1Q=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=NIfwUJzWRiApXqinF/Ll4/32Tw24Y2G3dEfhi+wdinTK/FfEyKsHxjnmbDnFpGAwiSAd6RxPN4eV5MHo8x3AnMtqdSWDomnvA0c8eh+O3sdSilmck+tgCrZf4vE7iUOl0F4lwQd6flDRsHH7sA4+RY5sILHfr0BEvxPBIQqn3+M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr; spf=pass smtp.mailfrom=ghiti.fr; arc=none smtp.client-ip=217.70.183.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ghiti.fr
-Received: by mail.gandi.net (Postfix) with ESMTPSA id A04AC4330C;
-	Mon, 10 Mar 2025 09:51:50 +0000 (UTC)
-Message-ID: <5074e2d2-f458-4bbd-a9e1-7e8d9f7e32e9@ghiti.fr>
-Date: Mon, 10 Mar 2025 10:51:50 +0100
+	s=arc-20240116; t=1741600397; c=relaxed/simple;
+	bh=C8cQBoSLgcQl6tmD3Xal2tFbWst3CZYzZlbhfgxnR8I=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Wnz8mI9HzUuloGHxtrQSziXGPap66WYSPHl3IVRpp43VED0Ua7ZuBp1I4gVAvOZsUBOE1O5RgjT8W9mQV+221+xB0H3chL7Jjeoj3Q/rGDjXrWgE1tAHt2zu+mjxIYksP+9o3uGr2r2xjXmO4zSr6vtLNJyfPQUZYU6IHTRgjps=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=e7FE5Dfz; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 450ADC4CEE5;
+	Mon, 10 Mar 2025 09:53:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741600396;
+	bh=C8cQBoSLgcQl6tmD3Xal2tFbWst3CZYzZlbhfgxnR8I=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=e7FE5DfzHboSIvO5aiHAlSQ6D2hWo3tT4t6XteTOws1h+83pp7enNxpUqjQ7UylSL
+	 bmjDnqykEs7XyNzSI/QQfptktGsTuvXWOzBLfd98Xb8mos7gElcihUuPu6TS5aF/Og
+	 2jiuUHYqsg4Qk4zb0P391BlcP6FNMA83O0cIXVphEkHMrqcuh7KerRZjoGADBZV7SR
+	 RCwVyZS/sdGx0xvFGB/d11mPyszuAkA3y6VX9tvAkw/IGeqYCFtRYO4KMZQBt+FRpb
+	 WlUlrSZn2MLnYS6MZQVn7NQ7F7Wm5vSWr0d4Rv3sYI9afbf1bbO61fOHv9uF8v4bik
+	 7y177l72prllw==
+Date: Mon, 10 Mar 2025 10:53:14 +0100
+From: Maxime Ripard <mripard@kernel.org>
+To: Liu Ying <victor.liu@nxp.com>
+Cc: Rob Herring <robh@kernel.org>, 
+	Alexander Stein <alexander.stein@ew.tq-group.com>, dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, andrzej.hajda@intel.com, 
+	neil.armstrong@linaro.org, rfoss@kernel.org, Laurent.pinchart@ideasonboard.com, 
+	jonas@kwiboo.se, jernej.skrabec@gmail.com, maarten.lankhorst@linux.intel.com, 
+	tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch
+Subject: Re: [PATCH 3/5] dt-bindings: display: simple-bridge: Document DPI
+ color encoder
+Message-ID: <20250310-orthodox-unyielding-kagu-decaf9@houat>
+References: <20250304101530.969920-1-victor.liu@nxp.com>
+ <20250304101530.969920-4-victor.liu@nxp.com>
+ <20250304152320.GA2630063-robh@kernel.org>
+ <1891036.atdPhlSkOF@steina-w>
+ <20250305163805.GA2071011-robh@kernel.org>
+ <7d98163d-10c8-457d-92e7-6a1d6e379beb@nxp.com>
+ <20250306-kangaroo-of-pastoral-typhoon-8aefb2@houat>
+ <20250306203444.GA570402-robh@kernel.org>
+ <3836a4d2-ef4e-427e-a820-39dd4823458b@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 2/4] riscv: entry: Split ret_from_fork() into user and
- kernel
-Content-Language: en-US
-To: Charlie Jenkins <charlie@rivosinc.com>,
- Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
- <palmer@dabbelt.com>, Huacai Chen <chenhuacai@kernel.org>,
- WANG Xuerui <kernel@xen0n.name>, Thomas Gleixner <tglx@linutronix.de>,
- Peter Zijlstra <peterz@infradead.org>, Andy Lutomirski <luto@kernel.org>,
- Alexandre Ghiti <alexghiti@rivosinc.com>
-Cc: linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
- loongarch@lists.linux.dev
-References: <20250305-riscv_optimize_entry-v5-0-6507b5dff3ce@rivosinc.com>
- <20250305-riscv_optimize_entry-v5-2-6507b5dff3ce@rivosinc.com>
-From: Alexandre Ghiti <alex@ghiti.fr>
-In-Reply-To: <20250305-riscv_optimize_entry-v5-2-6507b5dff3ce@rivosinc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdduudeltdegucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefkffggfgfuvfevfhfhjggtgfesthejredttddvjeenucfhrhhomheptehlvgigrghnughrvgcuifhhihhtihcuoegrlhgvgiesghhhihhtihdrfhhrqeenucggtffrrghtthgvrhhnpefhlefhffeggfeftddvtdeukeelgfehkeehhfeuheehleefkeelgffglefghfffueenucffohhmrghinhepvghnthhrhidrshgsnecukfhppedvtddtudemkeeiudemfeefkedvmegvfheltdemhedvkeemudhfieejmeekudegudemkeegvgeknecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepvddttddumeekiedumeeffeekvdemvghfledtmeehvdekmedufheijeemkedugedumeekgegvkedphhgvlhhopeglkffrggeimedvtddtudemkeeiudemfeefkedvmegvfheltdemhedvkeemudhfieejmeekudegudemkeegvgekngdpmhgrihhlfhhrohhmpegrlhgvgiesghhhihhtihdrfhhrpdhnsggprhgtphhtthhopeduvddprhgtphhtthhopegthhgrrhhlihgvsehrihhvohhsihhntgdrtghomhdprhgtphhtthhopehprghulhdrfigrlhhmshhlvgihsehsihhfihhvvgdrtghomhdprhgtphhtthhopehprghlm
- hgvrhesuggrsggsvghlthdrtghomhdprhgtphhtthhopegthhgvnhhhuhgrtggriheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepkhgvrhhnvghlseigvghntdhnrdhnrghmvgdprhgtphhtthhopehtghhlgieslhhinhhuthhrohhnihigrdguvgdprhgtphhtthhopehpvghtvghriiesihhnfhhrrgguvggrugdrohhrghdprhgtphhtthhopehluhhtoheskhgvrhhnvghlrdhorhhg
-X-GND-Sasl: alex@ghiti.fr
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="nokzvrads2o637d3"
+Content-Disposition: inline
+In-Reply-To: <3836a4d2-ef4e-427e-a820-39dd4823458b@nxp.com>
 
-Hi Charlie,
 
-On 06/03/2025 01:43, Charlie Jenkins wrote:
-> This function was unified into a single function in commit ab9164dae273
-> ("riscv: entry: Consolidate ret_from_kernel_thread into ret_from_fork").
-> However that imposed a performance degradation. Partially reverting this
-> commit to have ret_from_fork() split again results in a 1% increase on
-> the number of times fork is able to be called per second.
->
-> Signed-off-by: Charlie Jenkins <charlie@rivosinc.com>
-> ---
->   arch/riscv/include/asm/asm-prototypes.h |  3 ++-
->   arch/riscv/kernel/entry.S               | 13 ++++++++++---
->   arch/riscv/kernel/process.c             | 17 +++++++++++------
->   3 files changed, 23 insertions(+), 10 deletions(-)
->
-> diff --git a/arch/riscv/include/asm/asm-prototypes.h b/arch/riscv/include/asm/asm-prototypes.h
-> index 733ff609778797001006c33bba9e3cc5b1f15387..bfc8ea5f9319b19449ec59493b45b926df888832 100644
-> --- a/arch/riscv/include/asm/asm-prototypes.h
-> +++ b/arch/riscv/include/asm/asm-prototypes.h
-> @@ -52,7 +52,8 @@ DECLARE_DO_ERROR_INFO(do_trap_ecall_s);
->   DECLARE_DO_ERROR_INFO(do_trap_ecall_m);
->   DECLARE_DO_ERROR_INFO(do_trap_break);
->   
-> -asmlinkage void ret_from_fork(void *fn_arg, int (*fn)(void *), struct pt_regs *regs);
-> +asmlinkage void ret_from_fork_kernel(void *fn_arg, int (*fn)(void *), struct pt_regs *regs);
-> +asmlinkage void ret_from_fork_user(struct pt_regs *regs);
->   asmlinkage void handle_bad_stack(struct pt_regs *regs);
->   asmlinkage void do_page_fault(struct pt_regs *regs);
->   asmlinkage void do_irq(struct pt_regs *regs);
-> diff --git a/arch/riscv/kernel/entry.S b/arch/riscv/kernel/entry.S
-> index b2dc5e7c7b3a843fa4aa02eba2a911eb3ce31d1f..0fb338000c6dc0358742cd03497fa54b9e9d1aec 100644
-> --- a/arch/riscv/kernel/entry.S
-> +++ b/arch/riscv/kernel/entry.S
-> @@ -319,14 +319,21 @@ SYM_CODE_END(handle_kernel_stack_overflow)
->   ASM_NOKPROBE(handle_kernel_stack_overflow)
->   #endif
->   
-> -SYM_CODE_START(ret_from_fork_asm)
-> +SYM_CODE_START(ret_from_fork_kernel_asm)
->   	call schedule_tail
->   	move a0, s1 /* fn_arg */
->   	move a1, s0 /* fn */
->   	move a2, sp /* pt_regs */
-> -	call ret_from_fork
-> +	call ret_from_fork_kernel
->   	j ret_from_exception
-> -SYM_CODE_END(ret_from_fork_asm)
-> +SYM_CODE_END(ret_from_fork_kernel_asm)
-> +
-> +SYM_CODE_START(ret_from_fork_user_asm)
-> +	call schedule_tail
-> +	move a0, sp /* pt_regs */
-> +	call ret_from_fork_user
-> +	j ret_from_exception
-> +SYM_CODE_END(ret_from_fork_user_asm)
->   
->   #ifdef CONFIG_IRQ_STACKS
->   /*
-> diff --git a/arch/riscv/kernel/process.c b/arch/riscv/kernel/process.c
-> index 7b0a0bfe29aec896c2bdd8976d855dd390de88d7..485ec7a80a56097e8905cd6395af29633846b5c8 100644
-> --- a/arch/riscv/kernel/process.c
-> +++ b/arch/riscv/kernel/process.c
-> @@ -38,7 +38,8 @@ unsigned long __stack_chk_guard __read_mostly;
->   EXPORT_SYMBOL(__stack_chk_guard);
->   #endif
->   
-> -extern asmlinkage void ret_from_fork_asm(void);
-> +extern asmlinkage void ret_from_fork_kernel_asm(void);
-> +extern asmlinkage void ret_from_fork_user_asm(void);
->   
->   void noinstr arch_cpu_idle(void)
->   {
-> @@ -208,14 +209,18 @@ int arch_dup_task_struct(struct task_struct *dst, struct task_struct *src)
->   	return 0;
->   }
->   
-> -asmlinkage void ret_from_fork(void *fn_arg, int (*fn)(void *), struct pt_regs *regs)
-> +asmlinkage void ret_from_fork_kernel(void *fn_arg, int (*fn)(void *), struct pt_regs *regs)
->   {
-> -	if (unlikely(fn))
-> -		fn(fn_arg);
-> +	fn(fn_arg);
->   
->   	syscall_exit_to_user_mode(regs);
->   }
->   
-> +asmlinkage void ret_from_fork_user(struct pt_regs *regs)
-> +{
-> +	syscall_exit_to_user_mode(regs);
-> +}
-> +
->   int copy_thread(struct task_struct *p, const struct kernel_clone_args *args)
->   {
->   	unsigned long clone_flags = args->flags;
-> @@ -238,6 +243,7 @@ int copy_thread(struct task_struct *p, const struct kernel_clone_args *args)
->   
->   		p->thread.s[0] = (unsigned long)args->fn;
->   		p->thread.s[1] = (unsigned long)args->fn_arg;
-> +		p->thread.ra = (unsigned long)ret_from_fork_kernel_asm;
->   	} else {
->   		*childregs = *(current_pt_regs());
->   		/* Turn off status.VS */
-> @@ -247,12 +253,11 @@ int copy_thread(struct task_struct *p, const struct kernel_clone_args *args)
->   		if (clone_flags & CLONE_SETTLS)
->   			childregs->tp = tls;
->   		childregs->a0 = 0; /* Return value of fork() */
-> -		p->thread.s[0] = 0;
-> +		p->thread.ra = (unsigned long)ret_from_fork_user_asm;
->   	}
->   	p->thread.riscv_v_flags = 0;
->   	if (has_vector() || has_xtheadvector())
->   		riscv_v_thread_alloc(p);
-> -	p->thread.ra = (unsigned long)ret_from_fork_asm;
->   	p->thread.sp = (unsigned long)childregs; /* kernel sp */
->   	return 0;
->   }
->
+--nokzvrads2o637d3
+Content-Type: text/plain; protected-headers=v1; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH 3/5] dt-bindings: display: simple-bridge: Document DPI
+ color encoder
+MIME-Version: 1.0
 
-As I had noted in v2, this won't bring any performance improvement on 
-real hardware, so I'm not convinced we need this patch.
+On Fri, Mar 07, 2025 at 11:25:40AM +0800, Liu Ying wrote:
+> On 03/07/2025, Rob Herring wrote:
+> > On Thu, Mar 06, 2025 at 12:35:49PM +0100, Maxime Ripard wrote:
+> >> On Thu, Mar 06, 2025 at 03:02:41PM +0800, Liu Ying wrote:
+> >>> On 03/06/2025, Rob Herring wrote:
+> >>>> On Wed, Mar 05, 2025 at 10:35:26AM +0100, Alexander Stein wrote:
+> >>>>> Hi,
+> >>>>>
+> >>>>> Am Dienstag, 4. M=E4rz 2025, 16:23:20 CET schrieb Rob Herring:
+> >>>>>> On Tue, Mar 04, 2025 at 06:15:28PM +0800, Liu Ying wrote:
+> >>>>>>> A DPI color encoder, as a simple display bridge, converts input D=
+PI color
+> >>>>>>> coding to output DPI color coding, like Adafruit Kippah DPI hat[1=
+] which
+> >>>>>>> converts input 18-bit pixel data to 24-bit pixel data(with 2 low =
+padding
+> >>>>>>> bits in every color component though). Document the DPI color enc=
+oder.
+> >>>>>>
+> >>>>>> Why do we need a node for this? Isn't this just wired how it is wi=
+red=20
+> >>>>>> and there's nothing for s/w to see or do? I suppose if you are try=
+ing to=20
+> >>>>>> resolve the mode with 24-bit on one end and 18-bit on the other en=
+d, you=20
+> >>>>>> need to allow that and not require an exact match. You still might=
+ need=20
+> >>>>>> to figure out which pins the 18-bit data comes out on, but you hav=
+e that=20
+> >>>>>> problem with an 18-bit panel too. IOW, how is this any different i=
+f you=20
+> >>>>>> have an 18-bit panel versus 24-bit panel?
+> >>>>>
+> >>>>> Especially panel-simple.c has a fixed configuration for each displa=
+y, such as:
+> >>>>>> .bus_format =3D MEDIA_BUS_FMT_RGB666_1X18
+> >>>>>
+> >>>>> How would you allow or even know it should be addressed as
+> >>>>> MEDIA_BUS_FMT_RGB888_1X24 instead? I see different ways:
+> >>>>> 1. Create a new display setting/compatible
+> >>>>> 2. Add an overwrite property to the displays
+> >>>>> 3. Use a (transparent) bridge (this series)
+> >>>>>
+> >>>>> Number 1 is IMHO out of question.=20
+> >>>>
+> >>>> Agreed.
+> >>>>
+> >>>>> I personally don't like number 2 as this
+> >>>>> feels like adding quirks to displays, which they don't have.
+> >>>>
+> >>>> This is what I would do except apply it to the controller side. We k=
+now=20
+> >>>> the panel side already. This is a board variation, so a property mak=
+es=20
+> >>>> sense. I don't think you need any more than knowing what's on each e=
+nd.=20
+> >>>
+> >>> With option 2, no matter putting a property in source side or sink si=
+de,
+> >>> impacted display drivers and DT bindings need to be changed, once a b=
+oard
+> >>> manipulates the DPI color coding.  This adds burdens and introduces n=
+ew
+> >>> versions of those DT bindings.  Is this what we want?
+> >>
+> >> There's an option 4: make it a property of the OF graph endpoints. In
+> >> essence, it's similar to properties that are already there like
+> >> lane-mapping, and it wouldn't affect the panel drivers, or create an
+> >> intermediate bridge.
+> >=20
+> > Yes, that's actually where I meant to put the property(ies).
+>=20
+> Put optional dpi-color-coding or something else in endpoint-base?
 
-IMO, we should merge micro-optimizations like this if they really bring 
-something.
+I'm not sure what you mean by endpoint base, but it would be just like
+data-lanes, on the endpoint itself, right next to remote-endpoint. Given
+the nomenclature we have, something like "color-format" or
+"color-encoding", and taking the media format bus as value.
 
-Thanks,
+> Assuming it's optional, then it implies that it will overwrite OS's
+> setting, which sounds kinda awkward, because it is supposed to be
+> required to describe the actual color coding.
 
-Alex
+I'm sorry, I don't understand what you mean here. Your bridge would have
+been optional as well, right?
 
+Worst case scenario, your driver could make that property mandatory on
+its endpoints. Plenty of drivers are doing it.
+
+Maxime
+
+--nokzvrads2o637d3
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCZ862iQAKCRDj7w1vZxhR
+xfjPAP9Q21oDiutNW4kjM5Uqr1gdJjlndAkKPdt4WIFvmF8NagD7BJzqcRLgcvQ2
+oQiFDp8F/4TL/si8mNvOwh7oIGZonwo=
+=j0ea
+-----END PGP SIGNATURE-----
+
+--nokzvrads2o637d3--
 
