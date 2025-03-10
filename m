@@ -1,155 +1,99 @@
-Return-Path: <linux-kernel+bounces-553820-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-553821-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 52ECBA58F39
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 10:15:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 48AADA58F3B
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 10:16:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0931D1887CE7
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 09:15:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EF8B2188692A
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 09:16:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D54482248B8;
-	Mon, 10 Mar 2025 09:15:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23FAC2248AA;
+	Mon, 10 Mar 2025 09:15:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Ri0b0wyF"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="1hc1VQ9+"
+Received: from mail-wm1-f74.google.com (mail-wm1-f74.google.com [209.85.128.74])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C3AE1361;
-	Mon, 10 Mar 2025 09:15:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0450D1361
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 09:15:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741598122; cv=none; b=O+J5Lm32DhCYEyvxnvHuTt837MID2q96bnBgNHweEAExflQYCDVGQaOWsb0S4qzsBRooGzL7eWKmOTdk+J5v3RNXhlAAdDNlaenWSuJEorH8H5GgHDwv9Q9AASLOzGtsI7GPacoxS2BTkfoQCyoyKFYrjQG+GFk2oR71HF+2pt0=
+	t=1741598153; cv=none; b=hDjSfa3keL3j5UG0FPeS64ZLA2GY1YIwPqC/b7jRajSJknxJknUVkDM6aIjUGoGdQLa3DMkiz0Hb7icnF5JSWuJW52SyNpVAJKGi8mvGvFroPXpgVSdF2i8hmfHUZXZRk7OMngYjc23ArgYXRo45LjtTI6wepayPFjMVOvE1QCI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741598122; c=relaxed/simple;
-	bh=XdSb86AZgBBvCfKshDgW/RerWUgRLdy+SuiU+8N73CQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=iMpkNjK+W070LOVQ9wbB2o5E4wTJZHcXPbeMoP2gFXfxMt7PdSFl2iPPVo0aIg51uoGgQrPqfM544mjx/pz/L3gJjiu4Cl0WS+mwYoRkfVLraXq7vdGSDMv2p2XFwURMbsar/YMElWBUhaJB2FRWqTmnshx/lN1s96m9CXqI/ZM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Ri0b0wyF; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 529La2gE014060;
-	Mon, 10 Mar 2025 09:15:05 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	emCEPnGAgBEvgFMwBTfT/bBd93PEBF8nxLoLKxqgSSE=; b=Ri0b0wyFa9ury9oV
-	2QBOGDT7Dj48KSkhAnsGyolHYYOZemWGzPp4SB9wWIWja+GncMWfxQWzgffWTKuR
-	5u2cUnjR2Gmuozvdwg6VxISgk0tBSb3ZvKJcDeb3Sd8uDdYrQJoTgZfzsRgB+rxi
-	gnPkTsflpotERgRmhApI/n2s3jBdM9sEPz/uCrjqln7IleNS6RYk+ynmHN0brKiE
-	7wC0ETskiUTFa9aTFaqaHx7oK+0eulWWxrJUfI6BW+ZQBR/Tug5zI5RcGUJqAkVS
-	cxcAQnuayVxqSUZjMg6YFts6kiszfxGwxNCh0PwC4Sut/RDw8j16D6i+EfWQmSin
-	jlK0lw==
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 458f2mc8t5-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 10 Mar 2025 09:15:05 +0000 (GMT)
-Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
-	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 52A9F43f011069
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 10 Mar 2025 09:15:04 GMT
-Received: from [10.64.68.153] (10.80.80.8) by nalasex01c.na.qualcomm.com
- (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 10 Mar
- 2025 02:14:59 -0700
-Message-ID: <55e62062-f85f-484d-b577-87e10e73ab31@quicinc.com>
-Date: Mon, 10 Mar 2025 17:14:57 +0800
+	s=arc-20240116; t=1741598153; c=relaxed/simple;
+	bh=KjSoU6/mBbGahQ04HV4jjvNKb9ObDoSCk+0lV+80R4w=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=fRwN7MsA+V9dWenR/U+wHPGk6KkBEuht5Z89jDtWGeSMJR44U/PGplnM2cq42l6Oqstv1C0gn8nD3Pq1x9KQc8PwqWWzqQ+eVAxI4AVp7cf66w+awKIzdzb9ZXHzLTHF8uE3GWbRlTL8gZsFLujdVisSECLJOmCkGhNYifh6hL4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=1hc1VQ9+; arc=none smtp.client-ip=209.85.128.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
+Received: by mail-wm1-f74.google.com with SMTP id 5b1f17b1804b1-43cf64f1dc5so3626215e9.2
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 02:15:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1741598150; x=1742202950; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=jC9dwmLMGrJONvWdmLchB8OrIEYq2jjVi0+jpdkBizI=;
+        b=1hc1VQ9+HImo9HXOoLOaEZ4Z2hS7xQpfWafecn9cL21vx40Ck9OzJp9L5FOQIrNG7+
+         Shn3OySkR1iHegJt9I79hQOs5Tdli+sbiV1+kGUHsI4shJMBld0GIzWo94AGW0GpJ6AL
+         LRVwpcp3WPjNUSK9lg5jjZ7VI2hOsaKpxVqViVQedrR3fBnIrpkMANaITQdWmgx4E+LX
+         MRvJENo1oOjVngr+W8afvO9mIZXAsCPXpaAo2VSAubvaSD4M9FwhaP9HEfOf94zh09Jl
+         32ivivoo2QhiK2MaJqDYLp9YPVyQ5UfQVYTatoEFi3ztVBKS7TfmAFcvSK9qT2KYnGEc
+         P6EA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741598150; x=1742202950;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=jC9dwmLMGrJONvWdmLchB8OrIEYq2jjVi0+jpdkBizI=;
+        b=Xn+aKdFLkSsOiHEoLBf9ur/JUyUbea3b0C2+ba/1T9O13sK/WI5cJpbm61/P5jJPUB
+         eFdcFjz/y3HxiEofdimlpi0FEEgdD6ZFyIu9/wiNzG1glCnsrJFooBf6XRL3JU6RkuNF
+         Fb+lZCI3PgtZzAT6cb6GCQwLsZZSZB7rarAzLw0Y4NurARx6Z6HlYIvPY2zFhE/Fn/Lc
+         n4OnRXWMD9YlnSnDcuWHFtNCLapPvx9JPkqADF8dme/cbfGMPLaNMtRXOhQ10zOuteer
+         QF+sNnAzKYLy1GaqA0mzd8H6+dbLpvIwwc8TuN7s+DUvKs9vooBoCoaqTFt2m5PD6Jva
+         xyyw==
+X-Forwarded-Encrypted: i=1; AJvYcCXOLkWFn40xhmYH3kB0LaHvO9tDDZoCLBFjV6D2nYaRC/tmSqCIa7V64st5++Q7oC1bmjYHetgVC9tMwbg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxs+fnFVnePxzS2zdajpdP4PQE2XZ/fvB4IHXKGDvob5RAJJsz9
+	m/74GqWBCmpiG9n7NFHOTT0jwWxUJn1aPlwZ36hBe+hOwImIAnw/i8fiu/JmkxYiFhqcLBpmloI
+	htbj7mU10Rfsdgg==
+X-Google-Smtp-Source: AGHT+IFld+YMbPi6vF1aQtVy8e1i98OzUQUBy9QMXqfEE1Pf4Daw9v+O6rr7flwQQrudHMtNoS+bOOx/1S6RKQs=
+X-Received: from wmqa4.prod.google.com ([2002:a05:600c:3484:b0:43c:fc61:959c])
+ (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a05:600c:4fc1:b0:43b:cd0d:9466 with SMTP id 5b1f17b1804b1-43c601d9251mr66339335e9.9.1741598150298;
+ Mon, 10 Mar 2025 02:15:50 -0700 (PDT)
+Date: Mon, 10 Mar 2025 09:15:47 +0000
+In-Reply-To: <20250308-comment-fix-v1-1-4bba709fd36d@posteo.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 1/4] coresight: tmc: Introduce new APIs to get the RWP
- offset of ETR buffer
-To: Krzysztof Kozlowski <krzk@kernel.org>,
-        Suzuki K Poulose
-	<suzuki.poulose@arm.com>,
-        Mike Leach <mike.leach@linaro.org>,
-        James Clark
-	<james.clark@linaro.org>,
-        Alexander Shishkin
-	<alexander.shishkin@linux.intel.com>,
-        Maxime Coquelin
-	<mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>
-CC: Tingwei Zhang <quic_tingweiz@quicinc.com>,
-        Jinlong Mao
-	<quic_jinlmao@quicinc.com>, <coresight@lists.linaro.org>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>
-References: <20250310090407.2069489-1-quic_jiegan@quicinc.com>
- <20250310090407.2069489-2-quic_jiegan@quicinc.com>
- <b724d9c1-cd73-4e4e-aed1-101049204c90@kernel.org>
-Content-Language: en-US
-From: Jie Gan <quic_jiegan@quicinc.com>
-In-Reply-To: <b724d9c1-cd73-4e4e-aed1-101049204c90@kernel.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01c.na.qualcomm.com (10.47.97.35)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: Bx8FOf-cxt4eCrRdwCyPwLGbAr0Djaq2
-X-Proofpoint-ORIG-GUID: Bx8FOf-cxt4eCrRdwCyPwLGbAr0Djaq2
-X-Authority-Analysis: v=2.4 cv=ab+bnQot c=1 sm=1 tr=0 ts=67cead99 cx=c_pps a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17 a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=Con8ddXmaDJE1B7ER5wA:9 a=QEXdDO2ut3YA:10
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-10_03,2025-03-07_03,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0
- mlxlogscore=697 priorityscore=1501 lowpriorityscore=0 bulkscore=0
- mlxscore=0 impostorscore=0 phishscore=0 clxscore=1015 spamscore=0
- adultscore=0 suspectscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2502100000
- definitions=main-2503100072
+Mime-Version: 1.0
+References: <20250308-comment-fix-v1-1-4bba709fd36d@posteo.net>
+Message-ID: <Z86tw6ugdwfJCTnu@google.com>
+Subject: Re: [PATCH] rust: task: fix `SAFETY` comment for Task::wake_up
+From: Alice Ryhl <aliceryhl@google.com>
+To: Panagiotis Foliadis <pfoliadis@posteo.net>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	"=?utf-8?B?QmrDtnJu?= Roy Baron" <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>, 
+	Andreas Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>, 
+	Christian Brauner <brauner@kernel.org>, rust-for-linux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
 
-
-
-On 3/10/2025 5:07 PM, Krzysztof Kozlowski wrote:
-> On 10/03/2025 10:04, Jie Gan wrote:
->> +static long tmc_sg_get_rwp_offset(struct tmc_drvdata *drvdata)
->> +{
->> +	struct etr_buf *etr_buf = drvdata->sysfs_buf;
->> +	struct etr_sg_table *etr_table = etr_buf->private;
->> +	struct tmc_sg_table *table = etr_table->sg_table;
->> +	long w_offset;
->> +	u64 rwp;
->> +
->> +	rwp = tmc_read_rwp(drvdata);
->> +	w_offset = tmc_sg_get_data_page_offset(table, rwp);
->> +
->> +	return w_offset;
->> +}
->> +
->> +/*
->> + * Retrieve the offset to the write pointer of the ETR buffer based on whether
->> + * the memory mode is SG, flat or reserved.
->> + */
->> +long tmc_get_rwp_offset(struct tmc_drvdata *drvdata)
+On Sat, Mar 08, 2025 at 04:49:05PM +0000, Panagiotis Foliadis wrote:
+> The `SAFETY` comment inside the `wake_up` function references
+> erroneously the `signal_pending` function instead of the
+> `wake_up_process` which is actually called. Fix the comment
+> to reference the correct function.
 > 
-> You need kerneldoc for exports.
+> Fixes: fe95f58320e6 ("rust: task: adjust safety comments in Task methods")
+> Signed-off-by: Panagiotis Foliadis <pfoliadis@posteo.net>
 
-Hi Krzysztof,
+Thanks.
 
-Sorry for the insufficient description for an export function. Will fix 
-it in next version.
-
-Thanks,
-Jie
-
-> 
-> 
-> Best regards,
-> Krzysztof
-
+Reviewed-by: Alice Ryhl <aliceryhl@google.com>
 
