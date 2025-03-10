@@ -1,300 +1,207 @@
-Return-Path: <linux-kernel+bounces-554430-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-554431-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9BF17A59799
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 15:31:15 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D446A5979D
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 15:31:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1D22C188834A
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 14:31:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7894916CED1
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 14:31:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6DB417A2E3;
-	Mon, 10 Mar 2025 14:31:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3749619D8A0;
+	Mon, 10 Mar 2025 14:31:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="VyDWjMf4"
-Received: from YT6PR01CU002.outbound.protection.outlook.com (mail-canadacentralazon11022099.outbound.protection.outlook.com [40.107.193.99])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="zjZDxRjw"
+Received: from mail-ot1-f45.google.com (mail-ot1-f45.google.com [209.85.210.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A92891386DA
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 14:31:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.193.99
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741617069; cv=fail; b=rk4MJK0oS2t2aIoIVbWsr2ndEVjbRE2Dq00o11KoQ5r1dFH8ovAZC+WIbsZEULHTXQOfhNZbGyrHKth+Niu0eADAU5LA0MPVHKw9eXRk9HnweG4khoBle6DhfDqLSsMvV8/r2fHCZ1H5h6fIzMmzBmvC4Fo4Iwf3q54/Bb56JSE=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741617069; c=relaxed/simple;
-	bh=Ovr+QECZtjqilrieUcro/AymNldCSq357zcOBmswyTI=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=ByoiPw47CKd1sf903PM+V2Z9/L5m2GArueq6SkrFaYbYRczjP1hnNPS1CeuTiWRY6vAreSKE+BXrRYX/3M7jgPcJ+Ip8vmSknt9KkFBJP/rm0l3PzRZHPVNc2cfqrwbNCdEPxg1GTMw7OGjQ0Uw1PSiyn7huiFm257W/ZoA8Zlc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com; spf=pass smtp.mailfrom=efficios.com; dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b=VyDWjMf4; arc=fail smtp.client-ip=40.107.193.99
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=efficios.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=b3y3nLgtJNxbYBcj1lQw19YufKIH62oVZ9GiJqaAgXBzGHXajvMIbLOIXfKspiKnOimJxl5VZsuLsUZfxdeV84J5r0AEdbAqg8PdinbEoQuH8EKtAGJJ1BfRiw6Dj2FRn/1hCMZyc7uHYH7MTE9te47l6gcO7tOVwB6OqWWcQKnbrJ7pAaIS+gsgZeiaxM7yQpZtu2iUvKGuxjcKY2bnKDUAM6oce5UgcWp54zxPpkc3Rwn42UgSib+GFZs7m2w/JlFthcMQknzwXX59e7j9eh0cNIf5Ot7ZhvfrnysE60kGOKAARCroD3XCWiWtqtL/Ttd3sW5cyvX4xHqmeMZABQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Drhq8sYj+vOAm4tk2eDn95GUEKyjz+CSSvQj1T4I9Ek=;
- b=ymgZiw5cfw2InQ/va8dS7+gUxSbVzr7pQaMhD5N4Ij/iAcwAxIoN790ss6hT0VacAkkRrmuYIHx3zmXZompAhBcg3KIz6WAqlL5g3atzZ3+Ew4hxkvEH2LgOo+JusVLYqvn92OOgjqe5FtAUHBODetKyaYwhuOWfs2SH32hpLU3D1Ug2Wmwmn8CdK7+xRHj92XAvXe/NAhx9io9e2qwSpSMxjODdn8B7k5NAjEgAzdEobBI1vUMH93cc9HddXiwRreADRziYNPFX+L5FfEuELzO2RWupNC1RQpfNHQ9IivTkpbOIQzWP2nZtMWsIrzr0Xm2jyvNb4gM6ta2NcOoA4g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=efficios.com; dmarc=pass action=none header.from=efficios.com;
- dkim=pass header.d=efficios.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=efficios.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Drhq8sYj+vOAm4tk2eDn95GUEKyjz+CSSvQj1T4I9Ek=;
- b=VyDWjMf43MEtl+CE6TAHMkym/96baYHsw4pkGg7GWfdLAl8S7wkjDp7a50ieZ7e7JXcRSJ5LxSWNjY2MpPDJzD8nSdgO9bRZx7db6DV7fSoBFPhTcwBQOfO/y8W8BGC5i648RsW1lFcA9ZwhqSubiFd8emsI+zVKzOS7grR7ibZ2KAmsZvRIEEPN/Y6tV9toFXmPJVvYO8JzZn3CQlBbK4oyUNt14+aAnhlSddFyQCknzQUVGG5CjdYDLx99y9+ib4HkoakILt0lt5JHdcUrwMrnepzD0vMz7La4tE2oUEurTE9ASwt8/2YVcLQt1qMHyhT3GmkKwfPd0aWJk3lZvA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=efficios.com;
-Received: from YT3PR01MB9171.CANPRD01.PROD.OUTLOOK.COM (2603:10b6:b01:a0::18)
- by YQBPR0101MB9983.CANPRD01.PROD.OUTLOOK.COM (2603:10b6:c01:7b::7) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8511.27; Mon, 10 Mar
- 2025 14:31:05 +0000
-Received: from YT3PR01MB9171.CANPRD01.PROD.OUTLOOK.COM
- ([fe80::5393:fe91:357f:3ccf]) by YT3PR01MB9171.CANPRD01.PROD.OUTLOOK.COM
- ([fe80::5393:fe91:357f:3ccf%6]) with mapi id 15.20.8511.026; Mon, 10 Mar 2025
- 14:31:03 +0000
-Message-ID: <28358cb6-135b-4126-ab80-f2e2d0cb4389@efficios.com>
-Date: Mon, 10 Mar 2025 10:31:02 -0400
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 3/4] rseq: Make rseq work with protection keys
-To: Dmitry Vyukov <dvyukov@google.com>, peterz@infradead.org,
- boqun.feng@gmail.com, tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
- dave.hansen@linux.intel.com, hpa@zytor.com, aruna.ramakrishna@oracle.com,
- elver@google.com
-Cc: "Paul E. McKenney" <paulmck@kernel.org>, x86@kernel.org,
- linux-kernel@vger.kernel.org
-References: <cover.1740664852.git.dvyukov@google.com>
- <e534910c51271eebf4055a92f3b1c5ac998988bc.1740664852.git.dvyukov@google.com>
- <CACT4Y+bxV-keWg6-NGnA2k039gzMf_9COCe+zQWpcup8bMhToQ@mail.gmail.com>
-Content-Language: en-US
-From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-In-Reply-To: <CACT4Y+bxV-keWg6-NGnA2k039gzMf_9COCe+zQWpcup8bMhToQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: YQBPR0101CA0222.CANPRD01.PROD.OUTLOOK.COM
- (2603:10b6:c01:67::33) To YT3PR01MB9171.CANPRD01.PROD.OUTLOOK.COM
- (2603:10b6:b01:a0::18)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A10801AA1C9
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 14:31:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.45
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741617110; cv=none; b=mnZbI0PDQ/bDlCTUzlSmavSZ4y1JTkFV37DAGOZiS8PLkVi4Nzh6Z606RbwOp/0az0d6hwKjQSipyE8J+AyJbEFYKeK6QbFKoF6qPi9dp50Mlgf/KgSWHc5tq1S8TsYPEREjs6r9ltBrjXFqEST3IZaaJpRi2maR7Wu/gUO9IZM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741617110; c=relaxed/simple;
+	bh=Ps//DGpFqXWp3GsLNV4yd8lxmyS5d53siUwV+54hi8g=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=XVuwoNbMJKr9LtH1A6exuzVU7R3xMxOMqXQrVKKAoCyXF/UgI9YRFGchSRvNmlRnEXMWJ3E38/jddF/VF9PClPH0pw+y/wXa0Xpr9M+3bC16OyVr+Qz2+iH2Xeuj1ONxFBF0jS8z0vvmLDbCS/J/nOhHUsGiBtdR6HB9che2dqo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=zjZDxRjw; arc=none smtp.client-ip=209.85.210.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-ot1-f45.google.com with SMTP id 46e09a7af769-7271cc3d73eso2434376a34.1
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 07:31:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1741617107; x=1742221907; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=QnKDL7IGSLQdY1Ps1imHuBBiZbH4iwSQV6FmwECIlQg=;
+        b=zjZDxRjwQKuwZjY/0xjdZUUGpRd3s6FJgyUWIGiXdAV+d9gW/VmDFDdghG5sEG4a8t
+         0WePsyHb+4ZDP0MruABVypM8kWu2hB4E+1mWIaOeDuv+2fTBIqd7UhXZvr1NpU8hGP0Q
+         nCmbC9AU+LButRlxHyVJX9ucMPz61jUM+GEp0UDOiQYAjda/HLL+FYE1uP0fmByXBI/V
+         MT3cD4ZqQiBEhtyqf7Q3PFyZhYPR0AREZ3E60GsqMRcIt59hxBRwBj/92oeVm+FgwmHc
+         9B2Eu6bIGZkQu6Vbq2VdIfL4+6WrWlVlQok0fiermsFzXcmFDpqt+Wot0cXgWSC1Ebbh
+         oDiQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741617107; x=1742221907;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=QnKDL7IGSLQdY1Ps1imHuBBiZbH4iwSQV6FmwECIlQg=;
+        b=JJA9pcdj71FaVnOrMKzOW5PgEShKvoxzTTFqrScVudXLgsfzBmYCxE08QeKAsn/VEB
+         CyvuLgwsmw3CvJLTXJohVXkIXOQlxRgucHAOkOn+Ok4in6rq7/n034xceaSOOlj089jZ
+         RY5/zasG9ZovN9Lu5ONuGVUbxRz+wg9XEGPaCZzF8bzpKuSz3ywOlX1MTTLnvHxEvqj+
+         me09Yde9w+RxhXDoy0vX0dHzywCZ0IX9MVYbxvP5aaDGUHWagMcqV7NnDppDuE1OFmnH
+         Khu0mv7v9nAzwL27iQxTUJ+fkRPBj/jvsTrD9kVFZ2N6R9rn0HhX5sEqp3dH/kOl8ejG
+         kzpg==
+X-Forwarded-Encrypted: i=1; AJvYcCWkPVD6q4MRfI3v/2Pny/r1Y1fok+4+ijEV62az9XH7McBTHnX8aS4y1RLbdWYb9sPw6LC2HnkbHgAl4Jw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzF75hucnLJIhuRndiGaS9CCbgD5ifMRKZlwEqDmRTXn4sn8Zfb
+	pzQuEcDPlHR1MWpEpjFcV8M8/mY8rzeUBJikz5E3EvR8MUPHw+jC+iC4tq4gxm8=
+X-Gm-Gg: ASbGncvcryTQ67/4iZSIUAWXdKF5SAAhORJcHYWEhRaEF3aAStNvCzXod4jDyQSEgOX
+	k7KYPKllJt7n3v56Y/hI9nr6PiYoNOB7G81Mg5Q2QuQ13hRTKYRQIEXZ3W8p5l/hwQqJePBt6tS
+	Maq3fePblu3ABCUZsgPbAtGVHpUoS9eTZEPL1U3O4qfurDTqoKuX3Lsd2tOkKYcRqzFBG84P7Dd
+	ibmg4h88pN8/WKddKbJMXAxxmjUUzm2kgpE2MwwAphMhB1frBqrVgj8KkCY+tK8QtL9uP8UHmRR
+	7oqgUZF05tauNCJzTK4ScaVP+JtyOP3Kt8LzZLEcokDK5+eK8j47XhdcpcLHLE5937KuGPtbSLi
+	vNz56Bw==
+X-Google-Smtp-Source: AGHT+IFc5FQqx7D/Eko7oVMCmMY7qbffM3dUKH8YN9GD9Mq5nGldBPuykkjjjWS+hnzU6NmCsbTHdw==
+X-Received: by 2002:a05:6830:6e05:b0:72b:81a8:dea5 with SMTP id 46e09a7af769-72b81a8e17bmr2820014a34.17.1741617107592;
+        Mon, 10 Mar 2025 07:31:47 -0700 (PDT)
+Received: from [192.168.0.142] (ip98-183-112-25.ok.ok.cox.net. [98.183.112.25])
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-72b7a3a2385sm1014002a34.57.2025.03.10.07.31.45
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 10 Mar 2025 07:31:47 -0700 (PDT)
+Message-ID: <6ca1eafd-276d-421b-8d35-bd3e363803d1@baylibre.com>
+Date: Mon, 10 Mar 2025 09:31:45 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: YT3PR01MB9171:EE_|YQBPR0101MB9983:EE_
-X-MS-Office365-Filtering-Correlation-Id: 6cb45d14-8296-43c2-09cd-08dd5fe02fcd
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|1800799024|376014|7416014|7053199007|921020;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?UUVGWnh5NGpqelErNHZ4K0NieWxyMUppaVZTK2svYkFCLzE3eDdmT0ZDSXBF?=
- =?utf-8?B?dm95TG5xd2gxSXRSeG1DcFZRREprdERMWHhodThBZ1RQaklWUEhkVmFHRG1T?=
- =?utf-8?B?ZTNxTTFLUitCaFMzTUthdFhlM1ZyYUR6UHZnOUcyeEsxTlZ3bGlhOWxVVDh6?=
- =?utf-8?B?akczcWxHdDErVzBqdFgrVDBoUjlzNDdtcEU4a3JhakZ2elZPNE9jd0ZyM0NF?=
- =?utf-8?B?ODdyMFRQM3FDVGY3OHBJUk5IUnpXRG11TU85ejNTaGdGK29RWlBmb0MvcTY3?=
- =?utf-8?B?VEVEZDd5WWxBTVJ6TFkwblhrS0JBNU5pZ2UyT3lzSkN0T3F3cUpWV0YwdTND?=
- =?utf-8?B?TVhPdTZXTWJlNUlXVEhMcmx1K05EejJZditKTjRuQ0RwKzJFaFJuRTR5cXZL?=
- =?utf-8?B?Nmd5NDUrR21rU2xiclVPTkxRY3h6a0hSUGMzb054emR5T1VGYnl4SXZQcVpZ?=
- =?utf-8?B?T0xMUDZzQ2FIbXYrbWVwUEh4MkE5THA4SExxNUFlbmR1MjVsTWJQeGFuaHFK?=
- =?utf-8?B?N0xDU3lYQ0laeHExcDBEQnRBT3NjUGM5RmlMMXM3UjY0QUpLZVBhZ1A5L3pS?=
- =?utf-8?B?VS9Wa1I2amN2bjFwU3M4d29DbWM3eTIrQjdtOW4zZGlIZ0dESXlUU3I5Nncr?=
- =?utf-8?B?Mmhic0Nod3NQdXBOTzArY0tYeG9hOHRDMVdqM0JadmF5aXAwK1ZjeWpsSTV5?=
- =?utf-8?B?T21PdlY4RHgwczRxT0FPTDFWNWJhM0ZVbG5zS3JOUUVBVWVRdVFKcTdwb1ZZ?=
- =?utf-8?B?YVVGVjlVeGFnZGJGSDY2bnB6SFdiTG5ITURjVGlwRmdWL1MydWZ5OERadnp4?=
- =?utf-8?B?WXJEMU9Pc1Q5QVJER0wyLzdVNDJKcHRCc09wY3ZQdFVBaTEyakdZY2l3VG1r?=
- =?utf-8?B?UU00RDF3UEFZVWIwRjhwODV3STdrWDRRRmIrR3BtWm01RncwMXAvbVZSZ0c5?=
- =?utf-8?B?c213aHpKQ0tBcXhFZjBkZXp2Zzd1SzE4VHByUG0yMTZTTjNpOW01UjdyN3NC?=
- =?utf-8?B?UnRhTnRITTdYUmpuM2huWk1vUE5YVmV4K1R5cVJONXowYzdwNWFNUW9SSk5S?=
- =?utf-8?B?bUhVaHFCTmhjQnZsdHhnZml3UEtOcHR3UWJHaDgzZkNMdk1WeXJrR0cyb2lv?=
- =?utf-8?B?dEU3L0dRamtqOTJSNHZGendKbXc0TkZzek1MbnQzb3Jkc3k5WkVvMkRHOEE0?=
- =?utf-8?B?cEpidnJEQW1wWFovKyszZ1B3cWwxUURONTY1eTRUdVVCUTRZTUdVNjNCSUdB?=
- =?utf-8?B?R0RObHppNnoycnpsOWxNRWJiYnh4RldmRDBhaWMwTlNFMTUwZmhJMFgybkVo?=
- =?utf-8?B?RHl3NW1MV2lHbjBwZDJnWGJaMGlocFlXSHQvcmJ1RjRFOFhqTXUxRm9nWTBV?=
- =?utf-8?B?MVQ0bWk0WmNwR3RDRUlMZFhJVXFxay9MTVlFMm9INWpVQklGeDNvSkQyU25H?=
- =?utf-8?B?U0tpWU1qbzcvSWl4RE1vbnF0N0p4QXpwbkVPQTB3dTloeXZGc25LaStiZTNn?=
- =?utf-8?B?OXFSbXFUUmJtK3k5OTFwZkQ5OHJ2TlJsdytNVUFXaUhRMTBVTzcrV0o1NHhB?=
- =?utf-8?B?WmNtclJlL2FxeSs0YWpNYXZWZjRoazlLMThaK01HbHFKaVlTTDRGTG44TjND?=
- =?utf-8?B?c0dIcjBTZ2k0dDNVVmtxZ0ZQU3I5VnlXSlllam1hb05KdSs1KzJlTnpHVGFh?=
- =?utf-8?B?ZXc1SGR2YjhJWENYL1hJUHlhenI0SDM1OHBWL0x0b3hPdFV4dzFlcjA1NzBp?=
- =?utf-8?B?TXhURzl6Yi9KaXlkUHd6Z3ZwTlFZQnRtNkYrTHppb1dwY1NBQzc3V0RmaENJ?=
- =?utf-8?Q?dfGPfmQg3Dn2Z0Q4La+oi0jvFv0g7vUTji6bg=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:YT3PR01MB9171.CANPRD01.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7416014)(7053199007)(921020);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?UjZQbXZldkZHcDd5OSs1dkFjUFo0WjVBcExTdGE0UjlJOHFxN2RVWXJ0RnhM?=
- =?utf-8?B?cU9Rb1ZkUFptU1hlUnJOa1AyS2pHUDNiYWxSOVZWMVRZN25SaGFOUy8xZExr?=
- =?utf-8?B?WU9ZOU5HQnRDRlJGeFBxazNYbnpXVDVadTZwRnBaaC9oaFduSTNEYzBmZ1Uw?=
- =?utf-8?B?Y24vUDdUL1J0MTJSUjVLUytqZ0ZwYWhnSVNwU2ZLVkM3MmNMTFQ4VDYrQmdk?=
- =?utf-8?B?UFdtbFc2OUY4TzVreGdiVUs4SXd4bTU3YVl2Q0ptaXhBUDlhajBGZElHL3BO?=
- =?utf-8?B?ZFU0NVI4cFRIbVRxbGJQcUY3SHpFbjVKTzJQZ2V4R0ZKYUJpSFhTYTArL3lR?=
- =?utf-8?B?cDBUaGRibXZzclBpVHRYQUdKOGFuSE9ab3ZIdEdPSGJicWhGc0dYOHk2ZnBs?=
- =?utf-8?B?Tk9RVWVSTFlrcTMzQ2xvTnRDbVltb2xaLzYwZkZzL3YycE5HZktWTXYvcW1a?=
- =?utf-8?B?N0dFODFZUWVvM1QwREh0eW85YnRsZG9LSEV2dGszMXRsL1pvRGV4VGlKdjBa?=
- =?utf-8?B?MW9Qa0JLbWNESi84cFlCOVg5Mzl4Rm5EaWVwSWtzb29ZelFwa1BheE1VVk1X?=
- =?utf-8?B?U1lOT2VUa0RnSG1DN0wvOThnU01GQVVqejlidVZ2Q1dGMnhiNlp0N0xCQWsr?=
- =?utf-8?B?NDhtODN3em9ZMVNnd0lwVkcwQ2d5MmYyUlVjcjFXditUWDdtTjBPQm1GSzA5?=
- =?utf-8?B?eFVMVXM3SFc4RWZ1VHZGaEhTQXd0dXc1aU9WZVRmUDZjbFd2M3M2ZGJacGdU?=
- =?utf-8?B?VWZEeG5tZFpIYzl3VU8wWWFRWUJuU2t3WWpuM0tzVXpOSnZIMjhtRXk1ZkJa?=
- =?utf-8?B?TWo5cy9GV2NpSEd1WitOMEVVemU1OEhjVkFTQkw5bkNrWm9BSkhobjFVV1Ar?=
- =?utf-8?B?U1ZvTVN0ODhJS2UxVEQ1R0xDblhXSmxUbCtjNWlSVHd4Q1o4QkhNU0ZHWTVs?=
- =?utf-8?B?NjY1Y1hDWEVaWXZ4YXdCSDVKWllheUpPdG95U21aTmFHMFJ6bU8yei9JQXNh?=
- =?utf-8?B?c3J2OUZzNzRJV0JyY05QQ1Y2LzNBVDJmL3R0UmwyVDN0dWF3dmladjlXdlEy?=
- =?utf-8?B?Tmw2WEpVSXNtOFVQaXIzU2JFbHZlTVN6NFhYSHQ5QWdQZGE4dW5xM2x1T284?=
- =?utf-8?B?Q3g2Mk5DMlhpaWgySk9uUGdiZkdYbnVPWWlmS1NkYlNjMUNQMXRzc3lsczhE?=
- =?utf-8?B?RFl4NmhMbW81MStqa3RzZDVBc2Z5OXNGS3FHMVI3MzhGZ3Q4c3dtR092U2c3?=
- =?utf-8?B?OTdmTEVYK2J3UVFNYi9mcGx1TzYvcG1XN1VZWDlBSlJ3SmgxWW10VFc0d2pU?=
- =?utf-8?B?MzEzTCtNZi9BYnV6aW5IKzEzcDY0RUEydmc5VVY2a0hWbm1lOERvN1RuZUly?=
- =?utf-8?B?MkZhUDJnekx1bFNTNnhJaEk5VnhSUm0zSG5YNEQ1aWpOKy9mM3Y0YlNuUHJh?=
- =?utf-8?B?enlIdG1mNjI1dFF1K0pUcStDemY4aVBOcG1yV3E2cU45RTBPVWhpeTJOMVRJ?=
- =?utf-8?B?Qk9NMWlSQllveE1EUTRWMnJVdU9KN2k5RW1SVlA3OFhIc2dtRUFtNDFVY2hT?=
- =?utf-8?B?SkNFSWRMcHJOeDZ4bUVQNjJldUZMNHhRN0FycmpwbFBzTWV0QU9CcXhGSk1V?=
- =?utf-8?B?b3lLRkwzZnB1THJDR2duaG9WdFdDUDh3S2tNNi9jaStlM21SWG5wdjBBRitV?=
- =?utf-8?B?WHVxVjRGVDgyVjZXLzB0N0xFcTN2bnR1OUdTdGxRTWhhRHl1NkFpWVkzTXNI?=
- =?utf-8?B?TVdNbHNhWkZ3RGlmcEtUTExXVW4weVF5eVBaQW83MmNoRjdiL0RZTnpDUmJW?=
- =?utf-8?B?M0V3RDZRcTNZKzcrSEdBSU9IOXN5dWxYbHJKS2tWaWhkUlFOWFUvZnR5WEtk?=
- =?utf-8?B?blJiQ0U0ZktWa2tRWVUrcXRCSWp1NmdTSFpZak5ydXpsK29KQUhhSWVxV0du?=
- =?utf-8?B?blQ1RVMwb1hMektuNTNoVm02bVVnRmUxWS9qUGFYSVFsSGtJOWtKT0xGbWJo?=
- =?utf-8?B?MHR3dXI3TXgzSjBabUhBaVhvT3hqY1ZmYkI3dWlzT3NtUDBVN1FjQi9CYTNh?=
- =?utf-8?B?Rnd6QUJFanNvaUxaWWlacWtEd2pNTUhTY2V5SEdTUXluak83eUxlbHhRaVdF?=
- =?utf-8?B?eUdBelV2MEVTNHk2bUtaMmNsc213L0UzYlRnOEdVWGxuYUI5UUpqNVArMHNC?=
- =?utf-8?Q?84u/317gADzSH/h8UsNyD+o=3D?=
-X-OriginatorOrg: efficios.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 6cb45d14-8296-43c2-09cd-08dd5fe02fcd
-X-MS-Exchange-CrossTenant-AuthSource: YT3PR01MB9171.CANPRD01.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Mar 2025 14:31:03.7354
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4f278736-4ab6-415c-957e-1f55336bd31e
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: KPN/9Sz/ePD0OvY9/Jj5zNTdR0ead8Tf+JNc21QO9xEbIqCHr9uO16ZjQoP4kLYwUshu229wl0NieIaRszIp7MaXUvGyWzVJhUThTWOOCNw=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: YQBPR0101MB9983
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 3/4] docs: iio: new docs for ad4052 driver
+To: Jorge Marques <gastmaier@gmail.com>
+Cc: Jorge Marques <jorge.marques@analog.com>,
+ Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>,
+ Michael Hennerich <Michael.Hennerich@analog.com>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
+ linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-doc@vger.kernel.org
+References: <20250306-iio-driver-ad4052-v1-0-2badad30116c@analog.com>
+ <20250306-iio-driver-ad4052-v1-3-2badad30116c@analog.com>
+ <CAMknhBFiZZUtCkTjQ=AVSgwqe=wCkMnqAmaTqvW_X6fm1OKuYA@mail.gmail.com>
+ <e3p2r2fet2spkrxv7x76gunlivrp3vng22wktz4fkww5nkckt7@jpgne4uerr3c>
+Content-Language: en-US
+From: David Lechner <dlechner@baylibre.com>
+In-Reply-To: <e3p2r2fet2spkrxv7x76gunlivrp3vng22wktz4fkww5nkckt7@jpgne4uerr3c>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On 2025-03-08 05:02, Dmitry Vyukov wrote:
-> On Thu, 27 Feb 2025 at 15:03, Dmitry Vyukov <dvyukov@google.com> wrote:
+On 3/9/25 3:49 PM, Jorge Marques wrote:
+>>> +.. list-table:: Driver attributes
+>>> +   :header-rows: 1
+>>> +
+>>> +   * - Attribute
+>>> +     - Description
+>>> +   * - ``in_voltage0_raw``
+>>> +     - Raw ADC voltage value
+>>> +   * - ``in_voltage0_oversampling_ratio``
+>>> +     - Enable the device's burst averaging mode to over sample using
+>>> +       the internal sample rate.
+>>> +   * - ``in_voltage0_oversampling_ratio_available``
+>>> +     - List of available oversampling values. Value 0 disable the burst
+>>> +       averaging mode.
+>>> +   * - ``sample_rate``
+>>> +     - Device internal sample rate used in the burst averaging mode.
+>>> +   * - ``sample_rate_available``
+>>> +     - List of available sample rates.
 >>
->> If an application registers rseq, and ever switches to another pkey
->> protection (such that the rseq becomes inaccessible), then any
->> context switch will cause failure in __rseq_handle_notify_resume()
->> attempting to read/write struct rseq and/or rseq_cs. Since context
->> switches are asynchronous and are outside of the application control
->> (not part of the restricted code scope), temporarily switch to
->> pkey value that allows access to the 0 (default) PKEY.
->>
->> Signed-off-by: Dmitry Vyukov <dvyukov@google.com>
->> Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
->> Cc: Peter Zijlstra <peterz@infradead.org>
->> Cc: "Paul E. McKenney" <paulmck@kernel.org>
->> Cc: Boqun Feng <boqun.feng@gmail.com>
->> Cc: Thomas Gleixner <tglx@linutronix.de>
->> Cc: Ingo Molnar <mingo@redhat.com>
->> Cc: Borislav Petkov <bp@alien8.de>
->> Cc: Dave Hansen <dave.hansen@linux.intel.com>
->> Cc: "H. Peter Anvin" <hpa@zytor.com>
->> Cc: Aruna Ramakrishna <aruna.ramakrishna@oracle.com>
->> Cc: x86@kernel.org
->> Cc: linux-kernel@vger.kernel.org
->> Fixes: d7822b1e24f2 ("rseq: Introduce restartable sequences system call")
-> 
-> Any remaining concerns with this series?
-> 
-> What tree should it go into?
+>> Why not using the standard sampling_frequency[_available] attributes?
+> Because sampling_frequency is the sampling frequency for the pwm trigger
+> during buffer readings.
+> sample_rate is the internal device clock used during monitor and burst
+> averaging modes.
 
-Usually the rseq bits go through the -tip tree.
+I haven't done a chips with a monitor mode yet where we aren't reading
+the samples, so hopefully Jonathan will chime in here on the usual way
+to handle that.
 
-Thanks,
-
-Mathieu
+For the burst averaging mode, I understand the need for a separate attribute
+now. I would suggest to call this the conversion_frequency rather than
+sampling_rate since IIO already defines "sampling" to be the data read
+from the chip to Linux even if it is an averaged value, it still counts
+as one sample.
 
 > 
->> ---
->> Changes in v6:
->>   - Added a comment to struct rseq with MPK rules
+>>> +
+>>> +Threshold events
+>>> +================
+>>> +
+>>> +The ADC supports a monitoring mode to raise threshold events.
+>>> +The driver supports a single interrupt for both rising and falling
+>>> +readings.
+>>> +
+>>> +During monitor mode, the device is busy since other transactions
+>>> +require to put the device in configuration mode first.
 >>
->> Changes in v4:
->>   - Added Fixes tag
+>> This isn't so clear to me. Is this saying that events do not work
+>> while doing a buffered read? Do you need to do need to read the
+>> in_voltage0_raw input to trigger an event?
 >>
->> Changes in v3:
->>   - simplify control flow to always enable access to 0 pkey
->>
->> Changes in v2:
->>   - fixed typos and reworded the comment
->> ---
->>   include/uapi/linux/rseq.h |  4 ++++
->>   kernel/rseq.c             | 11 +++++++++++
->>   2 files changed, 15 insertions(+)
->>
->> diff --git a/include/uapi/linux/rseq.h b/include/uapi/linux/rseq.h
->> index c233aae5eac90..019fd248cf749 100644
->> --- a/include/uapi/linux/rseq.h
->> +++ b/include/uapi/linux/rseq.h
->> @@ -58,6 +58,10 @@ struct rseq_cs {
->>    * contained within a single cache-line.
->>    *
->>    * A single struct rseq per thread is allowed.
->> + *
->> + * If struct rseq or struct rseq_cs is used with Memory Protection Keys,
->> + * then the assigned pkey should either be accessible whenever these structs
->> + * are registered/installed, or they should be protected with pkey 0.
->>    */
->>   struct rseq {
->>          /*
->> diff --git a/kernel/rseq.c b/kernel/rseq.c
->> index 2cb16091ec0ae..9d9c976d3b78c 100644
->> --- a/kernel/rseq.c
->> +++ b/kernel/rseq.c
->> @@ -10,6 +10,7 @@
->>
->>   #include <linux/sched.h>
->>   #include <linux/uaccess.h>
->> +#include <linux/pkeys.h>
->>   #include <linux/syscalls.h>
->>   #include <linux/rseq.h>
->>   #include <linux/types.h>
->> @@ -402,11 +403,19 @@ static int rseq_ip_fixup(struct pt_regs *regs)
->>   void __rseq_handle_notify_resume(struct ksignal *ksig, struct pt_regs *regs)
->>   {
->>          struct task_struct *t = current;
->> +       pkey_reg_t saved_pkey;
->>          int ret, sig;
->>
->>          if (unlikely(t->flags & PF_EXITING))
->>                  return;
->>
->> +       /*
->> +        * Enable access to the default (0) pkey in case the thread has
->> +        * currently disabled access to it and struct rseq/rseq_cs has
->> +        * 0 pkey assigned (the only supported value for now).
->> +        */
->> +       saved_pkey = enable_zero_pkey_val();
->> +
->>          /*
->>           * regs is NULL if and only if the caller is in a syscall path.  Skip
->>           * fixup and leave rseq_cs as is so that rseq_sycall() will detect and
->> @@ -419,9 +428,11 @@ void __rseq_handle_notify_resume(struct ksignal *ksig, struct pt_regs *regs)
->>          }
->>          if (unlikely(rseq_update_cpu_node_id(t)))
->>                  goto error;
->> +       write_pkey_val(saved_pkey);
->>          return;
->>
->>   error:
->> +       write_pkey_val(saved_pkey);
->>          sig = ksig ? ksig->sig : 0;
->>          force_sigsegv(sig);
->>   }
->> --
->> 2.48.1.658.g4767266eb4-goog
->>
+> No, the device monitor mode and trigger mode autonomously samples using the
+> internal clock set with the sample rate property.
+> I rephrased that to:
+> 
+>  The feature is enabled/disabled by setting ``thresh_either_en``.
+>  During monitor mode, the device continuously operate in autonomous mode until
+>  put back in configuration mode, due to this, the device returns busy until the
+>  feature is disabled.
 
+This is better, thanks.
 
--- 
-Mathieu Desnoyers
-EfficiOS Inc.
-https://www.efficios.com
+> 
+> The reasoning is that during configuration mode no ADC
+> conversion is done, including if the previous mode was autonomous.
+> If instead of return busy the driver hided this and resumed monitor mode
+> after the access, a hidden (to the user) monitoring down-time would and
+> thresholds crossings could be lost, undermining the feature.
+> 
+>>> +SPI offload support
+>>> +===================
+>>> +
+>>> +To be able to achieve the maximum sample rate, the driver can be used with the
+>>> +`AXI SPI Engine`_ to provide SPI offload support.
+>>> +
+>>> +.. _AXI SPI Engine: http://analogdevicesinc.github.io/hdl/projects/ad4052_ardz/index.html
+>>
+>> This diagram show a PWM connected to the CNV pin on the ADC, but I
+>> didn't see a pwms property in the DT bindings to describe this.
+>>
+> It is not clear to me where the pwm property should be in the DT
+> bindings, since the PWM node now belongs to the offload-capable SPI controller.
+
+If the PWM output is connected to the CNV pin of the ADC, then the PWM
+consumer property belongs in the ADC devicetree node.
+
+If the PWM output is connected directly to the SPI offload trigger input
+then then it should use the trigger-sources bindings in the SPI controller.
+
+From the diagram in the link you gave, it seems clear to me that the
+PWM is connected to the CNV pin on the ADC and GP1 is connected to the
+SPI offload trigger input on the SPI controller.
+
+So the ADC node gets pwms and #trigger-source-cells properties and the
+SPI controller gets a trigger-sources property that is a phandle to the
+ADC node.
+
+> 
+>> I didn't have time to read the full datasheet or look at the driver
+>> code yet, but can do that next week.
+> Ok, thank you for the review
+> 
+> Jorge
+
 
