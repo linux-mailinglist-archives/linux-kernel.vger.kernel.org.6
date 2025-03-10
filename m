@@ -1,217 +1,240 @@
-Return-Path: <linux-kernel+bounces-553750-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-553751-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3150DA58E6E
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 09:42:29 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 80E29A58E70
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 09:42:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5F75F1669F5
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2ED523AA486
 	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 08:42:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A708322422D;
-	Mon, 10 Mar 2025 08:42:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 528D722371F;
+	Mon, 10 Mar 2025 08:42:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CeYDNCM5"
-Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nSZi0KGd"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A02B22370A;
-	Mon, 10 Mar 2025 08:42:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97701223706;
+	Mon, 10 Mar 2025 08:42:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741596141; cv=none; b=hbgnpQ4XAUx9gKnzqS5Ley7i7MJw1oP+7dMyBWw4Eyx+RIVek77nSJpsVlCfpGNYVFx0phAg4AYEhsRZr4N+RwGnrFuLlVjslGMYtb8KPT+bp5aleFTlgQrK/EqzXbTqo05Y88sGOAP5qIgZPhR4v6VTNNQ1folvn7x8dmtnOJs=
+	t=1741596156; cv=none; b=YB2ELOJr1ESfVSx/0vBAvtlGuiWLM1zL8GdbfVM3Q6gnrKq0LUHz43qb8QVDfrx8E5HADn2Hv03CmVeJi6sUpujGErmo7JeTJov3zIMLntdygIhWCepnghj8kNsyh3bvp5Vzpq5IIzQtVmh4GjZTI1vYBWqz7sfxOvGsLO+onQo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741596141; c=relaxed/simple;
-	bh=PXuQmvsVxN3m72BnR6ST/tTb9xlntmcfVC+/hzMx5Xg=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=IzgnUSB0aPy6m32RmklRnO5miSFwbLxBsx80+Zs+KG4TIQfuDKCzugiota2P1HZ9pQZdIOnGYolKwRQmKnl0zoF66je2RVQRUV8WE3yiMSyQsoh4uS991Ci6gAKF2fOTUzORFhuqBdkXWfCZnBAXSZeMCCOBSASrkgS5GIoGRsg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CeYDNCM5; arc=none smtp.client-ip=209.85.208.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-5e56b229d60so9140607a12.0;
-        Mon, 10 Mar 2025 01:42:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741596137; x=1742200937; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=YfIpDSCu41Ig3X26NPNtdponl0+k33/p8Qk35er3Ujs=;
-        b=CeYDNCM5Vt7llbEY6iJDs1C0aQ4tTSFaDeq3bM2m0cxtHm5WXuNZn9UE0G+BLqE5Mg
-         vnPPPZhXb4qXTpijCJ+h0DZf7+BXc5sq6CWJNXASWAwoG/1aIwBWjuHeFJHxAEcNBFlu
-         spkkvHQYXmbBrtiiTzKp7JoS6QCH/Ojk6TUcbAZvGx60Tf0NwgqcPZiIp6kE/3/IPxf+
-         8IiLFz5ejrYLk4IlzwiWDREmEPzAQxl0d/jJZtFUJaemgAJbw/HtQvoVLWsRRYEMemYx
-         GyU/o9xVGueNcYx1mXxugz8nj6ZAZywdcfkZF88ui7ama+fgm0vdkM/GGiCXXwZl2zhr
-         n85g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741596137; x=1742200937;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=YfIpDSCu41Ig3X26NPNtdponl0+k33/p8Qk35er3Ujs=;
-        b=tdTpf6nYDY0X3f0jPBxi/K1M5CQZNxUx/ITcPryZoJDic5h5a9d9innvVb7iR95ypv
-         +H/WVNcgQAwzfIcQ/8+LOAFfyWHSDRaWOcmiPb19Pis2wa7tBeOMnzUI9Dn9DkHxdkGP
-         KuZ/h4rNJqGAjRiXrpvaTfQ2FYtf1xa/h+1sQ3BRhc7ZT43RAzK8q4ftfdguCTY9+oS6
-         I+9tNbea1sKfcn+SiQIRjG7vOeRlEj+InLkylk2xGDeARv3eaTp7CiteRJEPzGCFZ250
-         bfqujd1qfU7mDGrqNKl1kaIgeXThE1lpV8bmcCchFyXck1UmFe0Y0muD8b4jBQv0+UNb
-         ZQfg==
-X-Forwarded-Encrypted: i=1; AJvYcCUsQROZA55sn9vaCmfnrWuvx7SJrZgq7DStOV2UL1s7D6p0dVm2YliKXPUGs5VQbfMlGBB/Dzc1G3Ei9io=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyJsrM5/eXWFZGRYl/8C6WNRnAO2MzcrktFlVQjuycA/jeB0cCX
-	6qAsO56BmM3SitbOEfqH8uQXsYelaqXq3QytI/prgrgTL/is434T
-X-Gm-Gg: ASbGncvB1yyiBhYtNZdk5Q+poni8QyKAykZrQEqZFIPeWH8jEB56GI2pxRYnClMeZvW
-	1Sqn5aWUCvCBmLAuEsA/4E4X4jpCUa4RRp58OBbLsgWdl2lDTdY0LOL0QvrQ7tNrtp8dQxPp9hv
-	nUU0B4OrI1VasbXPGHYDtX7ggsbZQsaDWwC7HPHc5HYCft7YqXk0wMWdbq+q3ugcU95X5qr/UuD
-	qC6HQnnzwq5NIvzIRnIkTw8Ooo8ndidcTpurDOCOEh8lzawpjwvHOsuSGRdP9tDHQ0QnTgMgq9e
-	gG6enNCerHSTwpSQZ5DMAARswb4PUVA7/wQ2Nf9qLfHXFTgFG9PgaCxTxrIXSQ==
-X-Google-Smtp-Source: AGHT+IG4/ADwP8W171t4vUpwm7B2Fco1Sd49nJ2HQ6NR6fVUcMZufAZlzTFmYs6O+Ku0Nps74N6p1w==
-X-Received: by 2002:a17:907:3906:b0:abf:6e9:3732 with SMTP id a640c23a62f3a-ac26c9d4a9dmr875613866b.3.1741596137279;
-        Mon, 10 Mar 2025 01:42:17 -0700 (PDT)
-Received: from foxbook (adts246.neoplus.adsl.tpnet.pl. [79.185.230.246])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac23943897esm737671766b.13.2025.03.10.01.42.16
-        (version=TLS1_2 cipher=AES128-SHA bits=128/128);
-        Mon, 10 Mar 2025 01:42:16 -0700 (PDT)
-Date: Mon, 10 Mar 2025 09:42:13 +0100
-From: Michal Pecio <michal.pecio@gmail.com>
-To: Mathias Nyman <mathias.nyman@intel.com>, Greg Kroah-Hartman
- <gregkh@linuxfoundation.org>
-Cc: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 6/6] usb: xhci: Update comments about Stop Endpoint races
-Message-ID: <20250310094213.3afca51c@foxbook>
-In-Reply-To: <20250310093605.2b3d0425@foxbook>
-References: <20250310093605.2b3d0425@foxbook>
+	s=arc-20240116; t=1741596156; c=relaxed/simple;
+	bh=ZGGntPjsCyYb/Jm7tB8b/sjMmcPSAq01Cv44HcpGxEg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=o8CMq80U+3ydPliA4L1ONiO/FsvMFNeNjSOk2uFYXq3qIJwQhLSi3K5VPJOB5wEmNZmry8Ar4IltPjl6plqYhKH6rg5obtkb9vfTXSCZd13p729anPwTU6LvT7E+h0/00urxEBNr8U5ozS9zm37YHfb5Hh4zfJms336Aq9Vfkuk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nSZi0KGd; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5CE7FC4CEE5;
+	Mon, 10 Mar 2025 08:42:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741596155;
+	bh=ZGGntPjsCyYb/Jm7tB8b/sjMmcPSAq01Cv44HcpGxEg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=nSZi0KGdMx59+kT/EtfX5i3FYs6DEkLL/1Wxb3sOWbrE/qxah/c7o5lLgpHf46Lov
+	 /bQ0QNTjMbJkNtvkYbhtp+vWP0loZZIobFowh85fx24O7UEGDBAuz+P2QBHO/yb9Zz
+	 rrumMy23wzIaiPLMcDYOBmGsPoq9G5dao/4YVjGDgaC99UOlLSM8gIV6Qa2fCUB+Sc
+	 OMfeNqZeuStXBcPc+f1wilAkOzaU9zcP8S2b4vPij/BA8XlqdBtPUxD4oijGJY2r93
+	 sXQzEB+908ptkKBrK9jQgjuKWwgP81OBe64rN3HqrMFqxTjZM+m99b3B3CMEkX55Yq
+	 4SyPkYULV+0JA==
+Date: Mon, 10 Mar 2025 09:42:29 +0100
+From: Ingo Molnar <mingo@kernel.org>
+To: "Huang, Kai" <kai.huang@intel.com>
+Cc: "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
+	"vdronov@redhat.com" <vdronov@redhat.com>,
+	"jarkko@kernel.org" <jarkko@kernel.org>,
+	"dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
+	"tglx@linutronix.de" <tglx@linutronix.de>,
+	"hpa@zytor.com" <hpa@zytor.com>,
+	"mingo@redhat.com" <mingo@redhat.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"bp@alien8.de" <bp@alien8.de>, "x86@kernel.org" <x86@kernel.org>
+Subject: [PATCH -v3] x86/sgx: Warn explicitly if X86_FEATURE_SGX_LC is not
+ enabled
+Message-ID: <Z86l9WiiP_4bFC8q@gmail.com>
+References: <20250309172215.21777-2-vdronov@redhat.com>
+ <c21c89d29f006945b6be7624599809b36574530e.camel@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <c21c89d29f006945b6be7624599809b36574530e.camel@intel.com>
 
-The switch statement has grown beyond its original EP_STATE_HALTED case,
-so move related comments inside this case and shorten them somewhat.
 
-Shorten EP_STATE_STOPPED comments, add some common context at the top.
+* Huang, Kai <kai.huang@intel.com> wrote:
 
-Signed-off-by: Michal Pecio <michal.pecio@gmail.com>
+> On Sun, 2025-03-09 at 18:22 +0100, Vladis Dronov wrote:
+> > A kernel requires X86_FEATURE_SGX_LC to be able to create SGX enclaves.
+> 
+> The kernel requires ...
+> 
+> > There is quite a number of hardware which has X86_FEATURE_SGX but not
+> > X86_FEATURE_SGX_LC. A kernel running on such a hardware does not create
+> > /dev/sgx_enclave file silently. Explicitly warn if X86_FEATURE_SGX_LC
+> > is not enabled to properly nofity a user about this condition.
+> 			     ^
+> 			     notify
+> 
+> And I don't think "notify" is correct because the reality is the 
+> kernel only prints some error message so that the user can check and 
+> see when it wants.
+> 
+> How about:
+> 
+> Explicitly print error message if X86_FEATURE_SGX_LC is not present 
+> so that the users can be aware of this condition which results in SGX 
+> driver being disabled.
+> 
+> > 
+> > The X86_FEATURE_SGX_LC is a CPU feature that enables LE hash MSRs to be
+> > writable when running native enclaves, i.e. using a custom root key rather
+> > than the Intel proprietary key for enclave signing.
+> 
+> Using "root key" can be controversial.  Let's just say "key" instead.
+> 
+> And the X86_FEATURE_SGX_LC feature itself doesn't automatically enable LE MSRs
+> to be writable.  We still need to opt-in in the 'feature control' MSR.
+
+Why would it be controversial?
+
+> How about:
+> 
+> The X86_FEATURE_SGX_LC, a.k.a. SGX Launch Control, is a CPU feature 
+> that enables LE (Launch Enclave) hash MSRs to be writable (with 
+> additional opt-in required in the 'feature control' MSR) when running 
+> enclaves, i.e., using a custom key rather than the Intel proprietary 
+> key for enclave signing.
+
+
+> > Signed-off-by: Vladis Dronov <vdronov@redhat.com>
+> 
+> I think this message will be useful for someone who knows SGX in 
+> general but doesn't know that Linux SGX driver requires the LE MSRs 
+> to be writable, thus requires the CPU supports SGX_LC feature bit.
+> 
+> With the above addressed, feel free to add:
+> 
+> Acked-by: Kai Huang <kai.huang@intel.com>
+
+Thanks, I've edited the changelog to be a bit clearer.
+
+I also added an error message when the driver fails to register, and 
+made all 3 failure error messages consistent and refer back to the 
+/dev/sgx_enclave device node name.
+
+I also included part of this commit message note:
+
+> > an out-of-commit-message note:
+> > 
+> > I've hit this issue myself and have spent some time researching where is
+> > my /dev/sgx_enclave file on an SGX-enabled hardware, so this is a bit
+> > personal.
+> > 
+> > Links related:
+> > https://github.com/intel/linux-sgx/issues/837
+> > https://patchwork.kernel.org/project/platform-driver-x86/patch/20180827185507.17087-3-jarkko.sakkinen@linux.intel.com/
+
+Because this experience reflects arguably poor usability: people see 
+'SGX' in their /proc/cpuinfo file, think that their hardware is 'SGX 
+enabled' and are wondering why the hell the /dev/sgx_enclave device 
+node is not created, right?
+
+I also Cc:-ed more SGX people.
+
+See the full -v3 patch below.
+
+Is the device node misnamed, should it be /dev/sgx_lc_enclave? Should 
+we hide the SGX feature bit from cpuinfo when SGX_LC is not present, so 
+that people don't go on a wild goose chase?
+
+Thanks,
+
+	Ingo
+
+======================================>
+From: Vladis Dronov <vdronov@redhat.com>
+Date: Sun, 9 Mar 2025 18:22:16 +0100
+Subject: [PATCH] x86/sgx: Warn explicitly if X86_FEATURE_SGX_LC is not enabled
+
+The kernel requires X86_FEATURE_SGX_LC to be able to create SGX enclaves,
+not just X86_FEATURE_SGX.
+
+There is quite a number of hardware which has X86_FEATURE_SGX but not
+X86_FEATURE_SGX_LC. A kernel running on such hardware does not create
+the /dev/sgx_enclave file and does so silently.
+
+Explicitly warn if X86_FEATURE_SGX_LC is not enabled to properly notify
+users that the kernel disabled the SGX driver.
+
+The X86_FEATURE_SGX_LC, a.k.a. SGX Launch Control, is a CPU feature
+that enables LE (Launch Enclave) hash MSRs to be writable (with
+additional opt-in required in the 'feature control' MSR) when running
+enclaves, i.e. using a custom root key rather than the Intel proprietary
+key for enclave signing.
+
+I've hit this issue myself and have spent some time researching where
+my /dev/sgx_enclave file went on SGX-enabled hardware.
+
+Related links:
+
+  https://github.com/intel/linux-sgx/issues/837
+  https://patchwork.kernel.org/project/platform-driver-x86/patch/20180827185507.17087-3-jarkko.sakkinen@linux.intel.com/
+
+[ mingo: Made the error message a bit more verbose, and added other cases
+         where the kernel fails to create the /dev/sgx_enclave device node. ]
+
+Signed-off-by: Vladis Dronov <vdronov@redhat.com>
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Acked-by: Kai Huang <kai.huang@intel.com>
+Cc: Jarkko Sakkinen <jarkko@kernel.org>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Sean Christopherson <sean.j.christopherson@intel.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Link: https://lore.kernel.org/r/20250309172215.21777-2-vdronov@redhat.com
 ---
- drivers/usb/host/xhci-ring.c | 70 ++++++++++++++++++++----------------
- 1 file changed, 39 insertions(+), 31 deletions(-)
+ arch/x86/kernel/cpu/sgx/driver.c | 10 +++++++---
+ 1 file changed, 7 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/usb/host/xhci-ring.c b/drivers/usb/host/xhci-ring.c
-index 241cd82672a6..759e8f612b4d 100644
---- a/drivers/usb/host/xhci-ring.c
-+++ b/drivers/usb/host/xhci-ring.c
-@@ -1199,20 +1199,21 @@ static void xhci_handle_cmd_stop_ep(struct xhci_hcd *xhci, int slot_id,
- 	trace_xhci_handle_cmd_stop_ep(ep_ctx);
+diff --git a/arch/x86/kernel/cpu/sgx/driver.c b/arch/x86/kernel/cpu/sgx/driver.c
+index 22b65a5f5ec6..40c3347ac65d 100644
+--- a/arch/x86/kernel/cpu/sgx/driver.c
++++ b/arch/x86/kernel/cpu/sgx/driver.c
+@@ -150,13 +150,15 @@ int __init sgx_drv_init(void)
+ 	u64 xfrm_mask;
+ 	int ret;
  
- 	if (comp_code == COMP_CONTEXT_STATE_ERROR) {
--	/*
--	 * If stop endpoint command raced with a halting endpoint we need to
--	 * reset the host side endpoint first.
--	 * If the TD we halted on isn't cancelled the TD should be given back
--	 * with a proper error code, and the ring dequeue moved past the TD.
--	 * If streams case we can't find hw_deq, or the TD we halted on so do a
--	 * soft reset.
--	 *
--	 * Proper error code is unknown here, it would be -EPIPE if device side
--	 * of enadpoit halted (aka STALL), and -EPROTO if not (transaction error)
--	 * We use -EPROTO, if device is stalled it should return a stall error on
--	 * next transfer, which then will return -EPIPE, and device side stall is
--	 * noted and cleared by class driver.
--	 */
-+
-+		/*
-+		 * This happens if the endpoint was not in the Running state. Its state now may
-+		 * be other than at the time the command failed. We need to look at the Endpoint
-+		 * Context and driver state to figure out what went wrong and what to do next.
-+		 *
-+		 * Many HCs are kind enough to hide their internal state transitions from us and
-+		 * never fail Stop Endpoint after a doorbell ring. Others, including vendors like
-+		 * NEC, ASMedia or Intel, may fail the command and begin running microseconds or
-+		 * even milliseconds later (up to an ESIT on NEC periodic endpoints).
-+		 *
-+		 * We may see Running or Halted state after the command really failed on Stopped.
-+		 * We may see Stopped after it failed on Halted, if somebody resets the endpoint.
-+		 */
-+
- 		switch (GET_EP_CTX_STATE(ep_ctx)) {
- 		case EP_STATE_HALTED:
- 			xhci_dbg(xhci, "Stop ep completion raced with stall\n");
-@@ -1222,8 +1223,23 @@ static void xhci_handle_cmd_stop_ep(struct xhci_hcd *xhci, int slot_id,
- 			 */
- 			if (ep->ep_state & EP_HALTED)
- 				goto reset_done;
--
-+			/*
-+			 * Maybe reset failed with -ENOMEM. We are paranoid that a buggy HC may
-+			 * mishandle the race and produce no transfer event before this command
-+			 * completion. Or the endpoint actually was restarting, rejected Stop
-+			 * Endpoint, then started and halted. The transfer event may only come
-+			 * after this completion and some ASMedia HCs don't report such events.
-+			 *
-+			 * Try to reset the host endpoint now. Locate the halted TD, update its
-+			 * status and cancel it. Reset EP completion takes care of the rest.
-+			 *
-+			 * Proper status is unknown here, it would be -EPIPE if the device side
-+			 * endpoint stalled and -EPROTO otherwise (Transaction Error, etc).
-+			 * We use -EPROTO, if device is stalled it should keep returning STALL
-+			 * on future transfers which will hopefully receive normal handling.
-+			 */
- 			if (ep->ep_state & EP_HAS_STREAMS) {
-+				/* We don't know which stream failed, attempt Soft Retry */
- 				reset_type = EP_SOFT_RESET;
- 			} else {
- 				reset_type = EP_HARD_RESET;
-@@ -1231,39 +1247,31 @@ static void xhci_handle_cmd_stop_ep(struct xhci_hcd *xhci, int slot_id,
- 				if (td)
- 					td->status = -EPROTO;
- 			}
--			/* reset ep, reset handler cleans up cancelled tds */
- 			err = xhci_handle_halted_endpoint(xhci, ep, td, reset_type);
- 			xhci_dbg(xhci, "Stop ep completion resetting ep, status %d\n", err);
- 			if (err)
-+				/* persistent problem or disconnection, we must give back TDs */
- 				break;
- reset_done:
- 			/* Reset EP handler will clean up cancelled TDs */
- 			ep->ep_state &= ~EP_STOP_CMD_PENDING;
- 			return;
-+
- 		case EP_STATE_STOPPED:
- 			/*
--			 * Per xHCI 4.6.9, Stop Endpoint command on a Stopped
--			 * EP is a Context State Error, and EP stays Stopped.
--			 *
--			 * But maybe it failed on Halted, and somebody ran Reset
--			 * Endpoint later. EP state is now Stopped and EP_HALTED
--			 * still set because Reset EP handler will run after us.
-+			 * Maybe the command failed in Halted state and the transfer event queued
-+			 * Reset Endpoint. The endpoint is now Stopped and EP_HALTED is still set,
-+			 * because Reset Endpoint completion handler will run after this one.
- 			 */
- 			if (ep->ep_state & EP_HALTED)
- 				break;
- 			/*
--			 * On some HCs EP state remains Stopped for some tens of
--			 * us to a few ms or more after a doorbell ring, and any
--			 * new Stop Endpoint fails without aborting the restart.
--			 * This handler may run quickly enough to still see this
--			 * Stopped state, but it will soon change to Running.
--			 *
--			 * Assume this bug on unexpected Stop Endpoint failures.
--			 * Keep retrying until the EP starts and stops again.
-+			 * We don't queue Stop Endpoint on Stopped endpoints. Assume the pending
-+			 * restart case and keep retrying until it starts and stops again.
- 			 */
- 			fallthrough;
-+
- 		case EP_STATE_RUNNING:
--			/* Race, HW handled stop ep cmd before ep was running */
- 			xhci_dbg(xhci, "Stop ep completion ctx error, ctx_state %d\n",
- 					GET_EP_CTX_STATE(ep_ctx));
- 			/*
--- 
-2.48.1
+-	if (!cpu_feature_enabled(X86_FEATURE_SGX_LC))
++	if (!cpu_feature_enabled(X86_FEATURE_SGX_LC)) {
++		pr_err("SGX disabled: SGX launch control CPU feature is not available, /dev/sgx_enclave disabled.\n");
+ 		return -ENODEV;
++	}
+ 
+ 	cpuid_count(SGX_CPUID, 0, &eax, &ebx, &ecx, &edx);
+ 
+ 	if (!(eax & 1))  {
+-		pr_err("SGX disabled: SGX1 instruction support not available.\n");
++		pr_err("SGX disabled: SGX1 instruction support not available, /dev/sgx_enclave disabled.\n");
+ 		return -ENODEV;
+ 	}
+ 
+@@ -173,8 +175,10 @@ int __init sgx_drv_init(void)
+ 	}
+ 
+ 	ret = misc_register(&sgx_dev_enclave);
+-	if (ret)
++	if (ret) {
++		pr_err("SGX disabled: Unable to register the /dev/sgx_enclave driver (%d).\n", ret);
+ 		return ret;
++	}
+ 
+ 	return 0;
+ }
 
