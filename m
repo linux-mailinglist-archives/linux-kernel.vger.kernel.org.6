@@ -1,109 +1,121 @@
-Return-Path: <linux-kernel+bounces-553717-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-553718-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C6F3A58E10
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 09:24:07 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A405BA58E14
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 09:24:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B1F163AC5BC
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 08:23:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E159F16A7AB
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 08:24:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD9F3223333;
-	Mon, 10 Mar 2025 08:23:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D684522371E;
+	Mon, 10 Mar 2025 08:24:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fooishbar.org header.i=@fooishbar.org header.b="ZXtYA+4A"
-Received: from mail-qt1-f179.google.com (mail-qt1-f179.google.com [209.85.160.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="NeCcaNX7"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A79C14A09E
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 08:23:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FFFE2236EE;
+	Mon, 10 Mar 2025 08:23:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741595027; cv=none; b=pv5FgNKflQ8pY0Ces14pZ1gbO83W0+kxQ0ULFNyAW7aHGM+aV7JvKiG+k/Ra5Vr22G6Re17h0TItefS3xY4GA1kGRG9dwYjCdTW7bsu6UGTf7FhuxqACASKf3Ky8JPUaT5YxZhlBLjTJ36mlyvZV9lMpIG5e/SHds9OVM5kumWQ=
+	t=1741595044; cv=none; b=OKAEigsAajACsPEM7G1aNCKt0zrcWSC0DKks3ckZ4QkXfi0sBVB+Bfu6Kvive1cIQrhi0/UMXrRhR34FtwYBkGVyE9mesGJvU72h0eKuYy/WI4oY1uKHuHhwqGPcS1xi7IXS3rhEE24nfu4m+l6QRaFrr/9ebfMufHG/1qfa6E8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741595027; c=relaxed/simple;
-	bh=Ivx/6EEyCTtnvCErNeMLytYw3JO2KfbbSfvqVn7RN1A=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=XVKOZPSMcNiXZjgibUb5W7KmpuxyNAg3m5oLEttqKAZjqGJKfOatUApyNAg95bfBBxAEQlJTczob/IkGXQBBiSndRvOWxXTng2dWZVVLfEJZMsu2x8YB0SsF/xwaMo3hTnhS9qPm/bNGjJVoUKXcc92cRcdX6GdHG7bn9kWqF+I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fooishbar.org; spf=pass smtp.mailfrom=fooishbar.org; dkim=pass (2048-bit key) header.d=fooishbar.org header.i=@fooishbar.org header.b=ZXtYA+4A; arc=none smtp.client-ip=209.85.160.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fooishbar.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fooishbar.org
-Received: by mail-qt1-f179.google.com with SMTP id d75a77b69052e-474faf23fbeso49671461cf.2
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 01:23:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fooishbar.org; s=google; t=1741595023; x=1742199823; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=Ivx/6EEyCTtnvCErNeMLytYw3JO2KfbbSfvqVn7RN1A=;
-        b=ZXtYA+4AITxBSkj1mqYzXxt7za0Mug9GjtCVLUc0Sp+hITuCASF7dyFnbXS85vUwXm
-         BmIPN0FIsb7WVPJhQiis91Dh77+pcFvi9eV9KpApIjTEhlImpJlKgwIbb0Lk/+uAW2fM
-         NjKr0DWynLnvl/PF9p+Hju/dXOPeC3QyxqkRHCy6f9ib1yn5Zzgs4zbPvEh5QnqYBV49
-         FmCCOm7Uty+hmbzawvG4TrJP8OFvr3mdGXF//c8wjGRRUIJcK6A1YafnhrF+2ScNuuiC
-         u7vPgNi6IaOriRqf2IHXp7zS88Kd4HbOu5KDmzU1A1oVttRXC7fxr4bTzx7kxrDVLm5T
-         AM7w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741595023; x=1742199823;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Ivx/6EEyCTtnvCErNeMLytYw3JO2KfbbSfvqVn7RN1A=;
-        b=Pikk0ef25MfXSmJWwdPh6Op9WFr5/LKBG3yePrgI9W93gVd2SZXIMcAyO/QZy/AZut
-         4kf+65CLjKDLR7wDsaWC8kHJet2OPit/weVzwwfV7WvuhF8K9KsWAAnSn5u1/4pe1/LW
-         gJWptoPd1kKETMcgV/+J6OKXiEOEG9oT7OIOK6Uh2ih9pYd/lVR2aTHmr0PVekHuF1pJ
-         t4v5mRQsKwdsfs9WmXhaj5li+c6uSL0sY4SS+hyzDTQuxwdBA+/K5WgiS4uJ7BY2BvZB
-         0Ass+8bL2Rid+qZFiRXs7qDkHTTqQJMBad9SI0VWFGvzUYVgVZMQD3meB7nIinvSyWkx
-         a23A==
-X-Forwarded-Encrypted: i=1; AJvYcCX3Cb8VJxgS6i6vrwux1zU6zdSZfZGAdzoJB1J8GfBCnm2C2cqAB6mNuUPPw5qyZrw7e10JuRDE8QEkyww=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzktg/0noT1Ufgx5MxLnykP4mgMKqJsmNVsrmAhaKV8jx86nB/g
-	ON2aW1aZ+PlydjnmSxUZ10RF6EastyvTSdmbcLWgmVgADwr1aa9wwHOLCoWu+T79Ob2pQZVUeji
-	Vs9YaBRsaI2bUq/dc++6ifTYvPzSzsfE3kWld/A==
-X-Gm-Gg: ASbGnctkN6lfjZ65MPmfRxZflLmfdHgnwFQCM75kBjo8k1oTSjkUrHpRM2wyTDQg45h
-	xzIHJN13mMpMfrhU7RZVuR6Rq9Ju5g5pD4ujeVuVdGEG8HRmGpRLEbnvRWGGhU8B7WNaDKtRLXl
-	6QJGQKqM7F8QPL2tCMg9YW9Av+sUQ=
-X-Google-Smtp-Source: AGHT+IHX/ie+SCwilG9VkCigXT7dVOX7s13SM5HyamqcMyXKzLgr5BlSUTLW598RuV9I7TxHm+K7rOgy8bC/hIiXpus=
-X-Received: by 2002:a05:6214:da9:b0:6d4:238e:35b0 with SMTP id
- 6a1803df08f44-6e90060411amr182729926d6.17.1741595022743; Mon, 10 Mar 2025
- 01:23:42 -0700 (PDT)
+	s=arc-20240116; t=1741595044; c=relaxed/simple;
+	bh=wDUt90Ru1pIsLbuQaEl1/JJ92mn4IFdSALT9enUC0Zk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fZIKRT3z1zdQ00AsGtLGuvkN7N+ajufz473asw+8/nstr2zEqPGvYCbZzBD9IHhsMqtkQ89BXXaWpnglfuM0mvni/cY6SH32Ae6mTptmLpqPtOnIIMLSYbrWNopFf9y3HRqFxTe7yMJXmdnGntVo3I3kcDMZ6I7TqMPXCqoL0mc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=NeCcaNX7; arc=none smtp.client-ip=192.198.163.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1741595042; x=1773131042;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=wDUt90Ru1pIsLbuQaEl1/JJ92mn4IFdSALT9enUC0Zk=;
+  b=NeCcaNX7i9BJWq4O6CV+jxRS4NbMYDJShewxSWeslW+RqWxkaNIciz9/
+   1oDxIdzkwBl1QmFlNOCIb6fPphpdR0EjsCCO61LwHFyKKMmD/wKEtLE4t
+   tHabTQj6bRWnBfdxn6FK1okU4sYZX8um/Nab0BUivVEb/mc4kl9o3o2MP
+   DGL02yQhXsfRiS4pACU90fDPi98S4Tn43a9fAQp5/hyulF5X/nL9tGbf/
+   6xXC5P9xjJEIi7wbEY8/uCz3p32qpyLceDGYvTEnQSdNtaczbL4zgvT4n
+   07QIRhWzpWkuvd7Pd3AqCN1HJ7oPMyARDPY2oVRIMTXRP2aDVjoIMNsn7
+   Q==;
+X-CSE-ConnectionGUID: FssS8ukdRlintfeHZuHctA==
+X-CSE-MsgGUID: z/qQHn14RzCewYUPudVCww==
+X-IronPort-AV: E=McAfee;i="6700,10204,11368"; a="42452034"
+X-IronPort-AV: E=Sophos;i="6.14,235,1736841600"; 
+   d="scan'208";a="42452034"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Mar 2025 01:23:57 -0700
+X-CSE-ConnectionGUID: +bOE7dHbRoqsk9GwXYWRSQ==
+X-CSE-MsgGUID: uueDdXFiROSxh6W7LvQjPA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,235,1736841600"; 
+   d="scan'208";a="125170132"
+Received: from smile.fi.intel.com ([10.237.72.58])
+  by orviesa005.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Mar 2025 01:23:51 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1trYQO-00000001Bqq-066w;
+	Mon, 10 Mar 2025 10:23:48 +0200
+Date: Mon, 10 Mar 2025 10:23:47 +0200
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Matti Vaittinen <mazziesaccount@gmail.com>
+Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
+	Jonathan Cameron <jic23@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Daniel Scally <djrscally@gmail.com>,
+	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Danilo Krummrich <dakr@kernel.org>,
+	Claudiu Manoil <claudiu.manoil@nxp.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org,
+	netdev@vger.kernel.org
+Subject: Re: [PATCH v5 02/10] property: Add functions to count named child
+ nodes
+Message-ID: <Z86hk7iXRA5GeOtr@smile.fi.intel.com>
+References: <cover.1740993491.git.mazziesaccount@gmail.com>
+ <5e35f44db2b4ed43f75c4c53fd0576df9ad24ab2.1740993491.git.mazziesaccount@gmail.com>
+ <Z8WZh5EzFqxvU5rb@smile.fi.intel.com>
+ <39cbe817-fef4-405c-b30c-79b592c0bcfe@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250217053719.442644-1-vignesh.raman@collabora.com>
-In-Reply-To: <20250217053719.442644-1-vignesh.raman@collabora.com>
-From: Daniel Stone <daniel@fooishbar.org>
-Date: Mon, 10 Mar 2025 08:23:31 +0000
-X-Gm-Features: AQ5f1JppnRfUR_zOw553KNwUL6uzyjdZezy5exd4nob7qrMJgxJe74M-TX4Aplg
-Message-ID: <CAPj87rNUMDMUtrfV=8c_+T5VQ0FykjpR5JW5dgO4grYXpabSdQ@mail.gmail.com>
-Subject: Re: [PATCH v3 0/3] drm/ci: enable lockdep detection
-To: Vignesh Raman <vignesh.raman@collabora.com>
-Cc: dri-devel@lists.freedesktop.org, daniels@collabora.com, 
-	helen.fornazier@gmail.com, airlied@gmail.com, simona.vetter@ffwll.ch, 
-	robdclark@gmail.com, guilherme.gallo@collabora.com, 
-	sergi.blanch.torne@collabora.com, valentine.burley@collabora.com, 
-	jani.nikula@linux.intel.com, dmitry.baryshkov@linaro.org, mripard@kernel.org, 
-	boqun.feng@gmail.com, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <39cbe817-fef4-405c-b30c-79b592c0bcfe@gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-Hi Vignesh,
+On Mon, Mar 10, 2025 at 08:23:15AM +0200, Matti Vaittinen wrote:
+> On 03/03/2025 13:59, Andy Shevchenko wrote:
+> > On Mon, Mar 03, 2025 at 01:31:45PM +0200, Matti Vaittinen wrote:
 
-On Mon, 17 Feb 2025 at 05:37, Vignesh Raman <vignesh.raman@collabora.com> wrote:
-> This patch series enables lockdep detection in drm-ci. Any lockdep
-> failures will be shown as warnings in the pipeline. This series
-> also enables CONFIG_DEBUG_WW_MUTEX_SLOWPATH for mutex slowpath
-> debugging and refactors software-driver stage jobs.
->
-> Test run with this series,
-> https://gitlab.freedesktop.org/vigneshraman/linux/-/pipelines/1366054
+...
 
-Series is:
-Reviewed-by: Daniel Stone <daniels@collabora.com>
+> > Also do we care about secondary fwnodes?
+> 
+> We have the device_get_child_node_count().
+> device_get_child_node_count_named() should follow the same logic.
 
-Please merge at will.
+Okay, so we don't care about them right now.
 
-Cheers,
-Daniel
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
 
