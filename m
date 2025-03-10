@@ -1,152 +1,89 @@
-Return-Path: <linux-kernel+bounces-555009-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-555011-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4DEA6A5A472
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 21:11:30 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 01860A5A477
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 21:12:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7DAB216FC97
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 20:11:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A3CC5188F0C5
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 20:12:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5C641DDA09;
-	Mon, 10 Mar 2025 20:11:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A946D1DE4F9;
+	Mon, 10 Mar 2025 20:12:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bsbernd.com header.i=@bsbernd.com header.b="hiO6ZetK";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="ZddtfY0f"
-Received: from fout-a7-smtp.messagingengine.com (fout-a7-smtp.messagingengine.com [103.168.172.150])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="q9IvGUo+"
+Received: from out-188.mta0.migadu.com (out-188.mta0.migadu.com [91.218.175.188])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C80F1CEADB;
-	Mon, 10 Mar 2025 20:11:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.150
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04A041DE2AD
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 20:12:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741637482; cv=none; b=hgayji8dYL7dvvjM5MQ0V9iRuD82NAy+Bdx/PSgGZLc78ZCDmEkBgqX91smj+AJ2Ln762n5gPKFGu5HWkTJLn3Yu9JDqmVVHZsTSWO10pUWP1u6LHPgTU5hNCwy3L2WtoUBXa1Tsu9nhjlCzDZJ3X9ttdq/nIN82xFBXW4r57uM=
+	t=1741637542; cv=none; b=X7D840VaoSL7xF3xnAGgJJv1uOG3HlvabP+y8Zwu7brNcOo7A5/8Mv38cLTD9WEaeOx2lRHws86MxkAC4u/VbWLJoUzloI3EYmiL02nLifajGATRDm7PHIFj1u7yqmeQyrCJP/IckWuZJq44sEoEIykhn05GJcDqOw28pBPQGXg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741637482; c=relaxed/simple;
-	bh=NTmmEk6Y/0bEQNAiPtlqnmpvVmyBIl52/5IQxvWQLEQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=M91EOgJPuL7KP+ElR3kfl0Y/eQG3ASkpsPQRBEZrd6XJemZCc5O6b2EBP4/S2pf0Obmpt5lMtU7L9bT2KYeo/owQCjgpAbU+I+Bq9JUQdkjucBT3jaIGXxqcruOJZTVxe1aMCarICkyc73WX7pdPLuE/sCJRoLomWD3vDTViRVg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bsbernd.com; spf=pass smtp.mailfrom=bsbernd.com; dkim=pass (2048-bit key) header.d=bsbernd.com header.i=@bsbernd.com header.b=hiO6ZetK; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=ZddtfY0f; arc=none smtp.client-ip=103.168.172.150
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bsbernd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bsbernd.com
-Received: from phl-compute-07.internal (phl-compute-07.phl.internal [10.202.2.47])
-	by mailfout.phl.internal (Postfix) with ESMTP id 19C471382CF1;
-	Mon, 10 Mar 2025 16:11:19 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-07.internal (MEProxy); Mon, 10 Mar 2025 16:11:19 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bsbernd.com; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm3; t=1741637479;
-	 x=1741723879; bh=dCX5pMMbMGFfjWv/fglntdoyDzZ8q91V84L27+XBwpE=; b=
-	hiO6ZetKav547Lt+ZrrSdskO7FE7UOfjG+wyue6wNBS/tTlJLpuyz8lrLwcz86BT
-	9oOEx3cLPpfNvmYmV7JvRjGc6CMOi9ZElB/ZjbziHZP2xzg7jaPfuwrC9y+URImL
-	m1ktBvqpBj2bkqQ1Vk7v0ttAQuG4X0omvh4B+9hi/f1UMO4cgMQ5xTx1t3Zcyps/
-	tzofuDV7irzhGB7+syccomlpMdYxWEe026LCYGIrzrLSQ4Irsy0JFKLFYfUsKL6G
-	+Yj17hiTC9GI73z3B4t/mUdT7aMhLDouoqKiMe66mxt+VkPFhubGZ0VfGydlwBlv
-	PGz58RkaYhDpTVd9QGsXrQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1741637479; x=
-	1741723879; bh=dCX5pMMbMGFfjWv/fglntdoyDzZ8q91V84L27+XBwpE=; b=Z
-	ddtfY0f34QxCq6wcEKGa4VQOkds+kpIhDFkH3/q6GzYC/U6+84MASYbAZQOocrkB
-	jIAGF7xP2Kg6BirpfH04NuMtCk84V+Nm8oQx/B64ZD0fkWY/Ug6ptr2+gyWwMiX+
-	92dBW0Z39d2fHDQYyPOyhXOUDoqa8r/JGBKVR9Tsh0qBQIwSlmc5H8yTOCX23ufL
-	5PwqeEm9jI+a00Rk33swa2wW0Zul2ya1hZ+wWUAlofwApUBLoX6DiMxygiJFOT8d
-	apDjOoIZCuYFl1emDG3K+LJ24llCogMRG/w7Sdfsirs5FaTnomTgu5SYAQGs8FaJ
-	9zTeDq94VZvK2Hjq+Hi5Q==
-X-ME-Sender: <xms:ZkfPZ03YOAnqfK7PWJyHazXjkyhldlQMWQB25nFZ9U3Y3XYqcRDR_Q>
-    <xme:ZkfPZ_Fie3RB2wUH7sXe1dmBROWXGmR71-PAWWQ2pHYPdVypp6yLlNSrr8Tg2e482
-    eDxt05W1lBt2PvI>
-X-ME-Received: <xmr:ZkfPZ87--Z5YbLFQFi7VxWqJQMaUAvoUWYb1yIbOcfcrxbZ6gX5OJwls3lr71MDPWPUsQ8UHdOATE7ltnofH8xQEX69DUb6_RcozxGCEhTDbkn8x_Gb->
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdduvddtvdejucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
-    pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
-    gvnhhtshculddquddttddmnecujfgurhepkfffgggfuffvvehfhfgjtgfgsehtjeertddt
-    vdejnecuhfhrohhmpeeuvghrnhguucfutghhuhgsvghrthcuoegsvghrnhgusegsshgsvg
-    hrnhgurdgtohhmqeenucggtffrrghtthgvrhhnpeeugfevvdeggeeutdelgffgiefgffej
-    heffkedtieduffehledvfeevgeejhedtjeenucffohhmrghinhepghhithhhuhgsrdgtoh
-    hmnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepsggv
-    rhhnugessghssggvrhhnugdrtghomhdpnhgspghrtghpthhtohepjedpmhhouggvpehsmh
-    htphhouhhtpdhrtghpthhtohepmhhikhhlohhssehsiigvrhgvughirdhhuhdprhgtphht
-    thhopehluhhishesihhgrghlihgrrdgtohhmpdhrtghpthhtohepsghstghhuhgsvghrth
-    esuggunhdrtghomhdprhgtphhtthhopegurghvihgusehfrhhomhhorhgsihhtrdgtohhm
-    pdhrtghpthhtohepmhhhrghrvhgvhiesjhhumhhpthhrrgguihhnghdrtghomhdprhgtph
-    htthhopehlihhnuhigqdhfshguvghvvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhr
-    tghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhg
-X-ME-Proxy: <xmx:ZkfPZ939KRpJniMCDKAIQL1oZwx5fLzCnj1b9kMS53RWOTmFoOTBmQ>
-    <xmx:ZkfPZ3Fp9cfth7i76Qm5PQfvd9lzD0GnsL6YF-lRimdhZsK2nB7Bow>
-    <xmx:ZkfPZ28HTFMsAXZ1tAmP2ZdMbzTFpoIosfEANAFa_JXlDrf4GfRysg>
-    <xmx:ZkfPZ8l1_lTgxWC8ga-iWdekOhYM6xy3ll0xajymSoc9dIKDC6jfSw>
-    <xmx:Z0fPZ22Lt7HCiYTtGAFV42gRfmpEcbXTKuWPeTHnz58gki7DG59Pty1J>
-Feedback-ID: i5c2e48a5:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 10 Mar 2025 16:11:17 -0400 (EDT)
-Message-ID: <0bd342bf-df71-4026-8d26-2c990e99b40d@bsbernd.com>
-Date: Mon, 10 Mar 2025 21:11:14 +0100
+	s=arc-20240116; t=1741637542; c=relaxed/simple;
+	bh=wR8SPqhsmSNOVZUWlxT7wNJ39fRP7kFdMF+NO05Y8SA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=C95CVWT1ESp+OZ4VpZae/n6lXQCqOCaOXKhil8frTzWzkfxB4V+PEjpd6oXi6lauRZqhOxP2zpjJfnWTy8uZW+mRTe4qwttXLUukb/ErKBJnFGBppwX+gT41CsB7eQg/ckX+5FHIXnQRfHYDwFqmPKDrMIifF/V3HAiJDIf7Cv0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=q9IvGUo+; arc=none smtp.client-ip=91.218.175.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Mon, 10 Mar 2025 16:12:03 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1741637527;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=qp0f29NCVdpVlEUgIWjKinIfJ4eChsq5fWyGlN5hbjc=;
+	b=q9IvGUo+YAlF/+hspPBj0hm5Vn0feaVD/Yal3Y/cjkKUz5/AVIhkprA65qccIjETDk3CWT
+	HOZZ1Qbcu+jDWLXZtr43D4tC+gcQp+BZip3Fg503MH4x0UDG4kV6p1KtbK1i5q8ozfW4dA
+	17oLqBB4q6qhMocoSSTW6N0m8wdWerk=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Kent Overstreet <kent.overstreet@linux.dev>
+To: Thorsten Blum <thorsten.blum@linux.dev>
+Cc: linux-bcachefs@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] bcachefs: Fix error type in bch2_alloc_v3_validate()
+Message-ID: <vmzrwmv5o5pnajw6yhklf6ouixo5raw3ophxmzocva3qag4xpy@u6l67hs6rhov>
+References: <20250310192028.442751-2-thorsten.blum@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v8] fuse: add more control over cache invalidation
- behaviour
-To: Miklos Szeredi <miklos@szeredi.hu>, Luis Henriques <luis@igalia.com>
-Cc: Bernd Schubert <bschubert@ddn.com>, Dave Chinner <david@fromorbit.com>,
- Matt Harvey <mharvey@jumptrading.com>, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250226091451.11899-1-luis@igalia.com>
- <87msdwrh72.fsf@igalia.com>
- <CAJfpegvcEgJtmRkvHm+WuPQgdyeCQZggyExayc5J9bdxWwOm4w@mail.gmail.com>
-From: Bernd Schubert <bernd@bsbernd.com>
-Content-Language: en-US, de-DE, fr
-In-Reply-To: <CAJfpegvcEgJtmRkvHm+WuPQgdyeCQZggyExayc5J9bdxWwOm4w@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250310192028.442751-2-thorsten.blum@linux.dev>
+X-Migadu-Flow: FLOW_OUT
 
-
-
-On 3/10/25 17:42, Miklos Szeredi wrote:
-> On Fri, 7 Mar 2025 at 16:31, Luis Henriques <luis@igalia.com> wrote:
+On Mon, Mar 10, 2025 at 08:20:29PM +0100, Thorsten Blum wrote:
+> Use error type alloc_v3_unpack_error in bch2_alloc_v3_validate().
 > 
->> Any further feedback on this patch, or is it already OK for being merged?
-> 
-> The patch looks okay.  I have ideas about improving the name, but that can wait.
-> 
-> What I think is still needed is an actual use case with performance numbers.
-> 
->> And what about the extra call to shrink_dcache_sb(), do you think that
->> would that be acceptable?  Maybe that could be conditional, by for example
->> setting a flag.
-> 
-> My wish would be a more generic "garbage collection" mechanism that
-> would collect stale cache entries and get rid of them in the
-> background.  Doing that synchronously doesn't really make sense, IMO.
-> 
-> But that can be done independently of this patch, obviously.
+> Fixes: b65db750e2bb ("bcachefs: Enumerate fsck errors")
+> Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
 
-Can't that be done in fuse-server? Maybe we should improve
-notifications to allow a batch of invalidations?
+Thanks, applied
 
-I'm a bit thinking about
-https://github.com/libfuse/libfuse/issues/1131
-
-I.e. userspace got out of FDs and my guess is it happens
-because of dentry/inode cache in the kernel. Here userspace
-could basically need to create its own LRU and then send
-invalidations. It also could be done in kernel,
-but kernel does not know amount of max open userspace FDs.
-We could add it into init-reply, but wouldn't be better
-to keep what we can in userspace?
-
-
-Thanks,
-Bernd
+> ---
+>  fs/bcachefs/alloc_background.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/fs/bcachefs/alloc_background.c b/fs/bcachefs/alloc_background.c
+> index ecad4a78c3f7..4dfcf3e6fffd 100644
+> --- a/fs/bcachefs/alloc_background.c
+> +++ b/fs/bcachefs/alloc_background.c
+> @@ -232,7 +232,7 @@ int bch2_alloc_v3_validate(struct bch_fs *c, struct bkey_s_c k,
+>  	int ret = 0;
+>  
+>  	bkey_fsck_err_on(bch2_alloc_unpack_v3(&u, k),
+> -			 c, alloc_v2_unpack_error,
+> +			 c, alloc_v3_unpack_error,
+>  			 "unpack error");
+>  fsck_err:
+>  	return ret;
+> -- 
+> 2.48.1
+> 
 
