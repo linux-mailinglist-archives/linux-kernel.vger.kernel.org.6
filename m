@@ -1,115 +1,156 @@
-Return-Path: <linux-kernel+bounces-554062-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-554063-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 65381A59260
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 12:11:50 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7021FA59263
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 12:12:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A43BC16BB38
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 11:11:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9F2323ABCDA
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 11:12:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA5872288C6;
-	Mon, 10 Mar 2025 11:11:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="KQ0f2W+o"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5CB0227BB9;
+	Mon, 10 Mar 2025 11:12:07 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA5FB227581;
-	Mon, 10 Mar 2025 11:11:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FC66226D0A;
+	Mon, 10 Mar 2025 11:12:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741605090; cv=none; b=Gtq4YhrPWeyCnIUtGxICKjIV7BAHObZogo8LkWv8d5StnPJBbBrZ5atj0ieLUokEL19CG6xsoQm/zGnoduHBGBbbe97TO7+AnDkm6kE6cJkHPTAxoRMCbgtABPBWsSvR0KJl1SgaCriTq6EFXXXvv3ZNrJnq5iDkBPw8NU4qbRg=
+	t=1741605127; cv=none; b=bNDr4LIOIk+ibu1YYM/pp7AG6hZYT48VzhBEoeZwsmO8NQHSFoai7tcCyCt0WxTpv4Vm2Hbgm4MStrvRE0B+tQtRdW6mOC/KpS8FZLgz/cFZA7bkrKKi4maFhYBHHkEs0jcBgSE6cXxRLQl7AT+YALhzBUE7DQqWRMEvaQ+KcvE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741605090; c=relaxed/simple;
-	bh=UxOUffZNESsbT7Z8GSqYcfxxCZg7cmpwRMjI71zfCXU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DTgNNY1U10lLLKKdCqJIQEejzSQbRvKw/TPdoEnFCEjgZhOv/0O0r/+N6sdTnwa723lSJ5jiQfTPKHERs/CUY7xyCNeftN8j4LiOWIwqDurIO6vUMMsov9zMHCGS8u11vjrd7ypuvgWYJCCUgFVf1R+8Hsi4EkKqUc1jiPY3rJ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=KQ0f2W+o; arc=none smtp.client-ip=198.175.65.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1741605089; x=1773141089;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=UxOUffZNESsbT7Z8GSqYcfxxCZg7cmpwRMjI71zfCXU=;
-  b=KQ0f2W+oybCtodNpu8GCcIfn/wRVmgtldIHQnRmjrHAE98ufhCZxZzsf
-   Yx88d/FtsOV9kRI8nGbren/4ZxiaqED6UVVghaMywdmuwi4KS/ZuTuRu7
-   bLdftLGPqEef36DUqIAqyQCizBzSFF6tfSEXEfQSoWFf1FLa0m5nTR640
-   +6QsylhDBiEfvvJxkGjirytYsyJy72lNy+dMvV5/Fp1emnUKfC1nY0uLh
-   IdGoDxerNFGSNx9P8l9330RgDYuaZcpgW4dQwOPtF5Z8vbz1PKkAGuPhr
-   wD/L2hBCWXZi9cT5omPBTDjVH0rmIENnZFtaN8ZGX4XmY9shwdKYDrYax
-   A==;
-X-CSE-ConnectionGUID: cfJMhILOTze/KIu9RTA/5g==
-X-CSE-MsgGUID: goA/J/jWR1KLeUnKX4daCw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11368"; a="42787617"
-X-IronPort-AV: E=Sophos;i="6.14,235,1736841600"; 
-   d="scan'208";a="42787617"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Mar 2025 04:11:28 -0700
-X-CSE-ConnectionGUID: qJDWkpdYR4WjODFSm7tG8A==
-X-CSE-MsgGUID: lkCayGBqTPmjAy8j5OjF3Q==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,235,1736841600"; 
-   d="scan'208";a="120668568"
-Received: from turnipsi.fi.intel.com (HELO kekkonen.fi.intel.com) ([10.237.72.44])
-  by fmviesa009-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Mar 2025 04:11:26 -0700
-Received: from kekkonen.localdomain (localhost [127.0.0.1])
-	by kekkonen.fi.intel.com (Postfix) with ESMTP id A323A11F7F0;
-	Mon, 10 Mar 2025 13:11:23 +0200 (EET)
-Date: Mon, 10 Mar 2025 11:11:23 +0000
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-From: Sakari Ailus <sakari.ailus@linux.intel.com>
-To: git@apitzsch.eu
-Cc: Ricardo Ribalda <ribalda@kernel.org>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org,
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH RESEND 0/4] media: i2c: imx214: Add support for 23.88MHz
- clock
-Message-ID: <Z87I2xh0HY-YD_tZ@kekkonen.localdomain>
-References: <20250308-imx214_clk_freq-v1-0-467a4c083c35@apitzsch.eu>
+	s=arc-20240116; t=1741605127; c=relaxed/simple;
+	bh=TXUoktJdyf6ivHZnEYLZuYpDFxsN2x7ZsoaDsXfSzfs=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=H4BVL7+K+QtP4QabHYZxtvsTBzm88yMy66qRnX7t2irotO8Uwkh1qJCC46FGRGVqXgkzSEH2ztqa3+3zl0NrAGNoh+M1jTlkf0zJCbwbH8M2aQKy4VBTnqUdGGbkMs1ilDlVEYyrApDndjz7au/BS+kwQKG+JPl6wGI0Qxp0bos=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.216])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4ZBDgJ1Z38z6K94v;
+	Mon, 10 Mar 2025 19:09:32 +0800 (CST)
+Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
+	by mail.maildlp.com (Postfix) with ESMTPS id 9545A140516;
+	Mon, 10 Mar 2025 19:12:01 +0800 (CST)
+Received: from frapeml500007.china.huawei.com (7.182.85.172) by
+ frapeml500008.china.huawei.com (7.182.85.71) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Mon, 10 Mar 2025 12:12:01 +0100
+Received: from frapeml500007.china.huawei.com ([7.182.85.172]) by
+ frapeml500007.china.huawei.com ([7.182.85.172]) with mapi id 15.01.2507.039;
+ Mon, 10 Mar 2025 12:12:01 +0100
+From: Shiju Jose <shiju.jose@huawei.com>
+To: Daniel Ferguson <danielf@os.amperecomputing.com>,
+	"linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>,
+	"linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>, "bp@alien8.de"
+	<bp@alien8.de>, "tony.luck@intel.com" <tony.luck@intel.com>,
+	"rafael@kernel.org" <rafael@kernel.org>, "lenb@kernel.org" <lenb@kernel.org>,
+	"mchehab@kernel.org" <mchehab@kernel.org>, "leo.duran@amd.com"
+	<leo.duran@amd.com>, "Yazen.Ghannam@amd.com" <Yazen.Ghannam@amd.com>
+CC: "linux-cxl@vger.kernel.org" <linux-cxl@vger.kernel.org>,
+	"dan.j.williams@intel.com" <dan.j.williams@intel.com>, "dave@stgolabs.net"
+	<dave@stgolabs.net>, Jonathan Cameron <jonathan.cameron@huawei.com>,
+	"dave.jiang@intel.com" <dave.jiang@intel.com>, "alison.schofield@intel.com"
+	<alison.schofield@intel.com>, "vishal.l.verma@intel.com"
+	<vishal.l.verma@intel.com>, "ira.weiny@intel.com" <ira.weiny@intel.com>,
+	"david@redhat.com" <david@redhat.com>, "Vilas.Sridharan@amd.com"
+	<Vilas.Sridharan@amd.com>, "linux-mm@kvack.org" <linux-mm@kvack.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"rientjes@google.com" <rientjes@google.com>, "jiaqiyan@google.com"
+	<jiaqiyan@google.com>, "Jon.Grimm@amd.com" <Jon.Grimm@amd.com>,
+	"dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
+	"naoya.horiguchi@nec.com" <naoya.horiguchi@nec.com>, "james.morse@arm.com"
+	<james.morse@arm.com>, "jthoughton@google.com" <jthoughton@google.com>,
+	"somasundaram.a@hpe.com" <somasundaram.a@hpe.com>, "erdemaktas@google.com"
+	<erdemaktas@google.com>, "pgonda@google.com" <pgonda@google.com>,
+	"duenwen@google.com" <duenwen@google.com>, "gthelen@google.com"
+	<gthelen@google.com>, "wschwartz@amperecomputing.com"
+	<wschwartz@amperecomputing.com>, "dferguson@amperecomputing.com"
+	<dferguson@amperecomputing.com>, "wbs@os.amperecomputing.com"
+	<wbs@os.amperecomputing.com>, "nifan.cxl@gmail.com" <nifan.cxl@gmail.com>,
+	tanxiaofei <tanxiaofei@huawei.com>, "Zengtao (B)" <prime.zeng@hisilicon.com>,
+	Roberto Sassu <roberto.sassu@huawei.com>, "kangkang.shen@futurewei.com"
+	<kangkang.shen@futurewei.com>, wanghuiqiang <wanghuiqiang@huawei.com>,
+	Linuxarm <linuxarm@huawei.com>
+Subject: RE: [PATCH v2 3/3] ras: mem: Add memory ACPI RAS2 driver
+Thread-Topic: [PATCH v2 3/3] ras: mem: Add memory ACPI RAS2 driver
+Thread-Index: AQHbjfjWvkdDRJ1spk2t3VxaCsibfrNoKYKAgAQFsPA=
+Date: Mon, 10 Mar 2025 11:12:01 +0000
+Message-ID: <85e788be5df3483082744a8904560979@huawei.com>
+References: <20250305180225.1226-1-shiju.jose@huawei.com>
+ <20250305180225.1226-4-shiju.jose@huawei.com>
+ <0d9066de-769a-44d0-bece-26f1313ce006@os.amperecomputing.com>
+In-Reply-To: <0d9066de-769a-44d0-bece-26f1313ce006@os.amperecomputing.com>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250308-imx214_clk_freq-v1-0-467a4c083c35@apitzsch.eu>
 
-Hi André,
-
-On Sat, Mar 08, 2025 at 10:47:54PM +0100, André Apitzsch via B4 Relay wrote:
-> The imx214 driver currently supports only a 24MHz external clock. But
-> there are devices, like Qualcomm-MSM8916-based phones, which cannot
-> provide this frequency. To make the sensor usable by those devices, add
-> support for 23.88MHz clock.
-> 
-> Signed-off-by: André Apitzsch <git@apitzsch.eu>
-> ---
-> André Apitzsch (4):
->       media: i2c: imx214: Calculate link bit rate from clock frequency
->       media: i2c: imx214: Prepare for variable clock frequency
->       media: i2c: imx214: Read clock frequency from device tree
->       media: i2c: imx214: Add support for 23.88MHz clock
-> 
->  drivers/media/i2c/imx214.c | 188 +++++++++++++++++++++++++++++++++++----------
->  1 file changed, 146 insertions(+), 42 deletions(-)
-
-Thanks for the patches.
-
-Do you think the driver could use the CCS PLL calculator? The PLL appears
-to be compliant. The AR0234 driver will do the same. (The sensor might just
-work with the CCS driver, too, but that's another discussion.)
-
--- 
-Kind regards,
-
-Sakari Ailus
+Pi0tLS0tT3JpZ2luYWwgTWVzc2FnZS0tLS0tDQo+RnJvbTogRGFuaWVsIEZlcmd1c29uIDxkYW5p
+ZWxmQG9zLmFtcGVyZWNvbXB1dGluZy5jb20+DQo+U2VudDogMDcgTWFyY2ggMjAyNSAyMTo1Mg0K
+PlRvOiBTaGlqdSBKb3NlIDxzaGlqdS5qb3NlQGh1YXdlaS5jb20+OyBsaW51eC1lZGFjQHZnZXIu
+a2VybmVsLm9yZzsgbGludXgtDQo+YWNwaUB2Z2VyLmtlcm5lbC5vcmc7IGJwQGFsaWVuOC5kZTsg
+dG9ueS5sdWNrQGludGVsLmNvbTsgcmFmYWVsQGtlcm5lbC5vcmc7DQo+bGVuYkBrZXJuZWwub3Jn
+OyBtY2hlaGFiQGtlcm5lbC5vcmc7IGxlby5kdXJhbkBhbWQuY29tOw0KPllhemVuLkdoYW5uYW1A
+YW1kLmNvbQ0KPkNjOiBsaW51eC1jeGxAdmdlci5rZXJuZWwub3JnOyBkYW4uai53aWxsaWFtc0Bp
+bnRlbC5jb207IGRhdmVAc3Rnb2xhYnMubmV0Ow0KPkpvbmF0aGFuIENhbWVyb24gPGpvbmF0aGFu
+LmNhbWVyb25AaHVhd2VpLmNvbT47IGRhdmUuamlhbmdAaW50ZWwuY29tOw0KPmFsaXNvbi5zY2hv
+ZmllbGRAaW50ZWwuY29tOyB2aXNoYWwubC52ZXJtYUBpbnRlbC5jb207IGlyYS53ZWlueUBpbnRl
+bC5jb207DQo+ZGF2aWRAcmVkaGF0LmNvbTsgVmlsYXMuU3JpZGhhcmFuQGFtZC5jb207IGxpbnV4
+LW1tQGt2YWNrLm9yZzsgbGludXgtDQo+a2VybmVsQHZnZXIua2VybmVsLm9yZzsgcmllbnRqZXNA
+Z29vZ2xlLmNvbTsgamlhcWl5YW5AZ29vZ2xlLmNvbTsNCj5Kb24uR3JpbW1AYW1kLmNvbTsgZGF2
+ZS5oYW5zZW5AbGludXguaW50ZWwuY29tOw0KPm5hb3lhLmhvcmlndWNoaUBuZWMuY29tOyBqYW1l
+cy5tb3JzZUBhcm0uY29tOyBqdGhvdWdodG9uQGdvb2dsZS5jb207DQo+c29tYXN1bmRhcmFtLmFA
+aHBlLmNvbTsgZXJkZW1ha3Rhc0Bnb29nbGUuY29tOyBwZ29uZGFAZ29vZ2xlLmNvbTsNCj5kdWVu
+d2VuQGdvb2dsZS5jb207IGd0aGVsZW5AZ29vZ2xlLmNvbTsNCj53c2Nod2FydHpAYW1wZXJlY29t
+cHV0aW5nLmNvbTsgZGZlcmd1c29uQGFtcGVyZWNvbXB1dGluZy5jb207DQo+d2JzQG9zLmFtcGVy
+ZWNvbXB1dGluZy5jb207IG5pZmFuLmN4bEBnbWFpbC5jb207IHRhbnhpYW9mZWkNCj48dGFueGlh
+b2ZlaUBodWF3ZWkuY29tPjsgWmVuZ3RhbyAoQikgPHByaW1lLnplbmdAaGlzaWxpY29uLmNvbT47
+IFJvYmVydG8NCj5TYXNzdSA8cm9iZXJ0by5zYXNzdUBodWF3ZWkuY29tPjsga2FuZ2thbmcuc2hl
+bkBmdXR1cmV3ZWkuY29tOw0KPndhbmdodWlxaWFuZyA8d2FuZ2h1aXFpYW5nQGh1YXdlaS5jb20+
+OyBMaW51eGFybQ0KPjxsaW51eGFybUBodWF3ZWkuY29tPg0KPlN1YmplY3Q6IFJlOiBbUEFUQ0gg
+djIgMy8zXSByYXM6IG1lbTogQWRkIG1lbW9yeSBBQ1BJIFJBUzIgZHJpdmVyDQo+DQo+DQo+PiAr
+c3RhdGljIGludCByYXMyX2h3X3NjcnViX3JlYWRfc2l6ZShzdHJ1Y3QgZGV2aWNlICpkZXYsIHZv
+aWQNCj4+ICsqZHJ2X2RhdGEsIHU2NCAqc2l6ZSkgew0KPj4gKwlzdHJ1Y3QgcmFzMl9tZW1fY3R4
+ICpyYXMyX2N0eCA9IGRydl9kYXRhOw0KPj4gKwlpbnQgcmV0Ow0KPj4gKw0KPj4gKwlpZiAocmFz
+Ml9jdHgtPmJnX3NjcnViKQ0KPj4gKwkJcmV0dXJuIC1FQlVTWTsNCj4+ICsNCj4+ICsJcmV0ID0g
+cmFzMl91cGRhdGVfcGF0cm9sX3NjcnViX3BhcmFtc19jYWNoZShyYXMyX2N0eCk7DQo+PiArCWlm
+IChyZXQpDQo+PiArCQlyZXR1cm4gcmV0Ow0KPj4gKw0KPj4gKwkqc2l6ZSA9IHJhczJfY3R4LT5z
+aXplOw0KPj4gKw0KPj4gKwlyZXR1cm4gMDsNCj4+ICt9DQo+DQo+Q2FsbGluZyByYXMyX3VwZGF0
+ZV9wYXRyb2xfc2NydWJfcGFyYW1zX2NhY2hlIGhlcmUgaXMgcHJvYmxlbWF0aWMuDQo+DQo+SW1h
+Z2luZToNCj4gIGVjaG8gMHgxMDAwID4gc2l6ZQ0KPiAgY2F0IHNpemUNCj4gIGVjaG8gMHgyMDAw
+MDAwMDAwID4gYWRkcg0KPg0KPldoYXQgaGFwcGVucyBoZXJlPyBXaGF0IGhhcHBlbnMgaXMgdGhl
+IHNjcnViIHJhbmdlIGlzIG5vdCB3aGF0IHlvdSBleHBlY3QgaXQNCj50byBiZS4gIE9uY2UgeW91
+IGNhdCBzaXplLCB5b3UgcmVzZXQgdGhlIHNpemUgZnJvbSB3aGF0IHlvdSBpbml0aWFsbHkgc2V0
+IGl0IHRvLg0KPkkgZG9uJ3QgdGhpbmsgdGhhdCBpcyB3aGF0IGFueW9uZSB3aWxsIGV4cGVjdC4g
+SXQgY2VydGFpbmx5IGNhdXNlZCB1cyB0byBzdHVtYmxlDQo+d2hpbGUgdGVzdGluZy4NCg0KVGhp
+cyBpcyBhbiBleHBlY3RlZCBiZWhhdmlvciBhbmQgdGhpcyBleHRyYSBjYWxsIHdhcyBhZGRlZCBo
+ZXJlIHdoZW4gY2hhbmdlZCB1c2luZyBhdHRyaWJ1dGUgJ2FkZHInIHRvIHN0YXJ0DQp0aGUgb24t
+ZGVtYW5kICBzY3J1YiBvcGVyYXRpb24gaW5zdGVhZCBvZiBwcmV2aW91cyBzZXBhcmF0ZSBhdHRy
+aWJ1dGUgJyBlbmFibGVfb25fZGVtYW5kJyB0byBzdGFydA0KdGhlIG9uLWRlbWFuZCBzY3J1YiBv
+cGVyYXRpb24sIGFjY29yZGluZyB0byBCb3Jpc2xhdidzIHN1Z2dlc3Rpb24gaW4gdjEzLg0KDQog
+UGxlYXNlIHNlZSB0aGUgZm9sbG93aW5nIGNvbW1lbnQgaW4gdGhlIHJhczJfaHdfc2NydWJfcmVh
+ZF9hZGRyKCkgZm5jdGlvbiwNCiJVc2Vyc3BhY2Ugd2lsbCBnZXQgdGhlIHN0YXR1cyBvZiB0aGUg
+ZGVtYW5kIHNjcnViYmluZyB0aHJvdWdoIHRoZSBhZGRyZXNzIHJhbmdlDQpyZWFkIGZyb20gdGhl
+IGZpcm13YXJlLiBXaGVuIHRoZSBkZW1hbmQgc2NydWJiaW5nIGlzIGZpbmlzaGVkIGZpcm13YXJl
+IG11c3QgcmVzZXQgYWN0dWFsIA0KYWRkcmVzcyByYW5nZSB0byAwLiBPdGhlcndpc2UgdXNlcnNw
+YWNlIGFzc3VtZXMgZGVtYW5kIHNjcnViYmluZyBpcyBpbiBwcm9ncmVzcy4iDQoNCkhlcmUgc3lz
+ZnMgYXR0cmlidXRlcyAnYWRkcicgYW5kICdzaXplJyBpcyByZWFkaW5nIHRoZSBmaWVsZDogQWN0
+dWFsIEFkZHJlc3MgUmFuZ2Ugb2YgDQpUYWJsZSA1Ljg3OiBQYXJhbWV0ZXIgQmxvY2sgU3RydWN0
+dXJlIGZvciBQQVRST0xfU0NSVUIsIHdyaXR0ZW4gYnkgdGhlIGZpcm13YXJlLg0KICANCkluIG15
+IG9waW5pb24sIHJlYWRpbmcgYmFjayB0aGUgYWRkcmVzcyByYW5nZSBzaXplIHNldCBpbiB0aGUg
+c3lzZnMgYmVmb3JlIGFjdHVhbGx5IHdyaXRpbmcNCnRoZSBhZGRyZXNzIHJhbmdlIHRvIHRoZSBm
+aXJtd2FyZSBhbmQgc3RhcnRpbmcgdGhlIG9uLWRlbWFuZCBzY3J1YiBvcGVyYXRpb24gZG9lc24n
+dCANCmhvbGQgbXVjaCBzaWduaWZpY2FuY2U/DQoNCj4NCj5SZWdhcmRzLA0KPn5EYW5pZWwNCg0K
+VGhhbmtzLA0KU2hpanUNCg==
 
