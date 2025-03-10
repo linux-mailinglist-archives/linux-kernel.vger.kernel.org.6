@@ -1,85 +1,59 @@
-Return-Path: <linux-kernel+bounces-554629-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-554628-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D041FA59AA7
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 17:08:03 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 66573A59AA4
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 17:07:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 40EBC188F62D
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 16:08:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C4881188EFC0
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 16:07:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F143122F15B;
-	Mon, 10 Mar 2025 16:07:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FB3122E3FD;
+	Mon, 10 Mar 2025 16:07:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="UeHp2oRJ"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MFa36S2+"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBC6821E0BF;
-	Mon, 10 Mar 2025 16:07:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C5314B5AE;
+	Mon, 10 Mar 2025 16:07:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741622875; cv=none; b=oC2TjdgW1mW2+psEQDujJxwIg5Nt1e6LqkuIUKct1TRaa4fmK4tKyCgXYTSQNR/z5dvQJlbvU1WgG77wuwbMgfLML2Bh+MK6kMq+1QTKi49Udvgy/ZVSdy/stQ6yghEn4/262WPCZR+aTbZ2OXGEY/eqaApDfkBlIAd3YtrfyzI=
+	t=1741622843; cv=none; b=Qtn8fbgacdyCf5nwC1oePjy0aT+2dYxE/+VZBYERxp62fJafTQxNaeVCRCqMok9i8/fMVMuGqbs97BmGM0mxVQ8HwV68bkWALWdlaSmAzu/urB/LHJZdjWbUx8PBoEIkZrO52rmySMovykf13oaf1iX3TEGwZJKOyFERsVn2yqc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741622875; c=relaxed/simple;
-	bh=GfYXbXdVM2junb3FP9MdUtt3UzjUNiOmD6x2DR0SHJc=;
+	s=arc-20240116; t=1741622843; c=relaxed/simple;
+	bh=WLjGO0Yf+HEuQSLO0MZCDJSF/aVI6xMKp97hSUYkCGE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=L1JGxnYHfNKGpH1H+XF6cYwoxNCOYnTOTVJWD+7g1Tv+8synXXlRmUMzO4HriUuhs6fNnaH1/kEYiV6U9s9bjizt/93jP4awe17I9oPAi7Jhhs3qjKcDSV2tZj+JC8cmOdeThXNSRqYBBPoB3cJfZN0TW1yY8mqBrsCI10hitoo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=UeHp2oRJ; arc=none smtp.client-ip=198.175.65.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1741622874; x=1773158874;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=GfYXbXdVM2junb3FP9MdUtt3UzjUNiOmD6x2DR0SHJc=;
-  b=UeHp2oRJ0bL0MnRAR6w5U0Nxny5IpZl+S3wIz6rcc01+iEERzutj7bs7
-   0b55VDoPzi9nA0YgurzEerpQts/0uuG3TfFK0noqK90b8Q9Sjq4DRWLCu
-   lsD4A5mc6WZZYE3eB+AhE4NroBgxATYEcRYS3opBl2qMaCA5hYXuQ+xRW
-   Eus4iRDfB3rye4ho7xNJZ7NiFKH9y/AkahDFrIXj3pv5zdXPQl3ZPpXi+
-   4IbwmeHxxgTBNq5cNS9kuZ+7MjUCHNds6UNkfBFxSMBGsx5X1XcH0IZLB
-   QfPTGBgY0yKTPpb+X2HlVparq4ozSBps4Pi7UCyLVjl/gyFbQGBPCS7eC
-   g==;
-X-CSE-ConnectionGUID: kLodOL+pTkGM+lCFDLoobA==
-X-CSE-MsgGUID: HR56QVZLSmijD91DO76+Eg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11369"; a="52835384"
-X-IronPort-AV: E=Sophos;i="6.14,236,1736841600"; 
-   d="scan'208";a="52835384"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Mar 2025 09:07:16 -0700
-X-CSE-ConnectionGUID: 0qDULhEgQ7manLBV/PWGSg==
-X-CSE-MsgGUID: 1g1wHcYZRlepn4CPQeyaXQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,236,1736841600"; 
-   d="scan'208";a="120929319"
-Received: from msridhar-mobl.amr.corp.intel.com (HELO desk) ([10.125.145.183])
-  by orviesa008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Mar 2025 09:07:16 -0700
-Date: Mon, 10 Mar 2025 09:07:09 -0700
-From: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
-To: Borislav Petkov <bp@alien8.de>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	daniel.sneddon@linux.intel.com, tony.luck@intel.com,
-	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-	linux-perf-users@vger.kernel.org,
-	Josh Poimboeuf <jpoimboe@kernel.org>,
-	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Ricardo Neri <ricardo.neri-calderon@linux.intel.com>,
-	"Liang, Kan" <kan.liang@linux.intel.com>,
-	Andrew Cooper <andrew.cooper3@citrix.com>,
-	Brice Goglin <brice.goglin@gmail.com>,
-	Mario Limonciello <mario.limonciello@amd.com>,
-	Perry Yuan <Perry.Yuan@amd.com>,
-	Dapeng Mi <dapeng1.mi@linux.intel.com>
-Subject: Re: [PATCH v7 2/4] x86/cpu: Add cpu_type to struct x86_cpu_id
-Message-ID: <20250310160709.5cxlvwv6flaeu75o@desk>
-References: <20250306-add-cpu-type-v7-0-f903fb022fd4@linux.intel.com>
- <20250306-add-cpu-type-v7-2-f903fb022fd4@linux.intel.com>
- <20250309173239.GCZ83Qt2uxtPvMNxVL@fat_crate.local>
+	 Content-Type:Content-Disposition:In-Reply-To; b=OsvOABl13qE5YenMtlFj+tqdZ+87ALhu1gOkdxPPMB3636X911JL6Yn+YOOOxm9V3fiGcoRd//PxzjXm9yjLC2Ch2jM38LE2Flax96IvgM6U4IMYbwWcs9G1iotMptQc+TDeWCfwhn5Z3ZkmIRPqrZemPuqtZNhi6yh2NFT2Kwk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MFa36S2+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E4720C4CEEB;
+	Mon, 10 Mar 2025 16:07:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741622843;
+	bh=WLjGO0Yf+HEuQSLO0MZCDJSF/aVI6xMKp97hSUYkCGE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=MFa36S2+7+HVx4RtmmRn/LwIPsD2F+0JsJjtyZ/sLSEiS/445Ytc60kO442SbiQ0D
+	 qTsxGct937C2ujyOivwiDXQVuQGRLgdZFCTme6IEq/6gUXxsu7XGRIApyQmDmRmErf
+	 sFN8hqpGoOtp1Q6LuwKqc3awx565PF6TukGDSul68YoVVzVDZM9JaGwQtkStE9mRVn
+	 tCyjhA6o1fZdh0RYfKgu1CPvGM93AcJmCe+VrqVKq4K3wxUUBqJQQ6llVhqF1vRJVT
+	 UJfytJT2tYQ37ffllXcxs2IyUGNOFNJkIClhw2wMwgkOPOEyBhZIK7IibMa0AzYc7X
+	 mDXifZYKfHB7Q==
+Date: Mon, 10 Mar 2025 06:07:21 -1000
+From: Tejun Heo <tj@kernel.org>
+To: Andrea Righi <arighi@nvidia.com>
+Cc: David Vernet <void@manifault.com>, Changwoo Min <changwoo@igalia.com>,
+	bpf@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 3/6] sched_ext: idle: Introduce the concept of allowed
+ CPUs
+Message-ID: <Z88OOena_fucXLVl@slm.duckdns.org>
+References: <20250307200502.253867-1-arighi@nvidia.com>
+ <20250307200502.253867-4-arighi@nvidia.com>
+ <Z8twc3pc7I9SyIMC@slm.duckdns.org>
+ <Z8voSv70QuxuZa5Z@gpd3>
+ <Z82sImYF7jOgPGbL@slm.duckdns.org>
+ <Z822PGZLYl1Vima4@gpd3>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -88,23 +62,31 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250309173239.GCZ83Qt2uxtPvMNxVL@fat_crate.local>
+In-Reply-To: <Z822PGZLYl1Vima4@gpd3>
 
-On Sun, Mar 09, 2025 at 06:32:39PM +0100, Borislav Petkov wrote:
-> On Thu, Mar 06, 2025 at 06:18:20PM -0800, Pawan Gupta wrote:
-> > diff --git a/include/linux/mod_devicetable.h b/include/linux/mod_devicetable.h
-> > index d67614f7b7f1..18e996acb49a 100644
-> > --- a/include/linux/mod_devicetable.h
-> > +++ b/include/linux/mod_devicetable.h
-> > @@ -692,6 +692,7 @@ struct x86_cpu_id {
-> >  	__u16 feature;	/* bit index */
-> >  	/* Solely for kernel-internal use: DO NOT EXPORT to userspace! */
-> >  	__u16 flags;
-> > +	__u8  cpu_type;
+Hello,
+
+On Sun, Mar 09, 2025 at 04:39:40PM +0100, Andrea Righi wrote:
+> > Would just using a pre-allocated cpumask to do pre-and on @cpus_allowed
+> > work? This won't only be used for topology support (e.g. soft partitioning
+> > in scx_layered and scx_mitosis may want to use multi-topology-unit spanning
+> > subsets) and I'm not sure assuming and optimizing for that is a good idea
+> > for generic API.
 > 
-> The struct is called "x86_cpu_id" and all its members describe a CPU. There's
-> no need to have more "cpu_" redundancy in the member names - just call that
-> "type".  It is clear that it is about a CPU's type.
+> We can pre-allocate two additional (per-cpu) cpumasks to do:
+>  - cpumask_and(numa_cpus, numa_span(cpu), cpus_allowed)
+>  - cpumask_and(llc_cpus, llc_span(cpu), cpus_allowed)
+> 
+> And update/use them only when it's needed. In this way the API would be
+> generic without making any implicit assumption about @cpus_allowed.
 
-Makes sense, I will change it to "type".
+I'm not quite following why two masks would be necessary. The user is
+providing two masks and and'ing those two masks result in a single
+cpus_allowed mask which can then be passed down to the existing pick
+functions, no?
+
+Thanks.
+
+-- 
+tejun
 
