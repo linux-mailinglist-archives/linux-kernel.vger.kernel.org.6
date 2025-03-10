@@ -1,197 +1,115 @@
-Return-Path: <linux-kernel+bounces-553611-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-553612-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D2FC6A58C71
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 08:05:00 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 61636A58C76
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 08:06:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 49AB37A2363
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 07:03:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0622B188C434
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 07:06:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 627041D5AB8;
-	Mon, 10 Mar 2025 07:04:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C67A1D5AD9;
+	Mon, 10 Mar 2025 07:06:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=daynix-com.20230601.gappssmtp.com header.i=@daynix-com.20230601.gappssmtp.com header.b="QZRBYT7/"
-Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DwMkueU8"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E0DD1C07D9
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 07:04:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 876E71D54FA;
+	Mon, 10 Mar 2025 07:06:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741590290; cv=none; b=Fi+fyWMloS0jsW8/Zc/F+2O/8BUlErPjOiRmaJN/bX9aFMjzj8umeWBvA+8IHhNts4ox5sWEc7LZegJM9p4Qa1B+QaDzwfF7tF9kth9WTeJx8G2KvrP8JcDjdxfylrCoLCPJ9KGE+j7iX9Sl5/Ny2CRKJbCz27BJA9ZL/0OK8RU=
+	t=1741590370; cv=none; b=W7CL1zly6dh08x0cYNfwZvOw3+FE03tggMUU7BshvTU9oLw/z/uvk68q7XiFSP2leUggD8e9mLi4XerGvJsOGZdFsTpceWUxQIY2Vk8vTlRk3V2mnXv4rvVWCNIkFe1gKQV/Wdv6ggYthLSEQ00CVAflsUTCnj+ZKeJuWLHl+nY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741590290; c=relaxed/simple;
-	bh=eSw/Sz1ql/4UPcLEbJRVUH0uYPxF2xmC0A18fnAZuI4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=IckVc/0ULZI+Uc/b9L7NsgXZRrDLh1SqfqmUSuCMRnREumbGizOMrOcbRBLWnq5TE+tdROpIAu64haclWb4qwWozcC3jY7baYKXHf/A5XlhlmBTefpvZvvbI+V8/GIfVl3XuFds47CyLC4TUB9CMdVbvt3uyuVE83HIJNQ6dDr0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=daynix.com; spf=pass smtp.mailfrom=daynix.com; dkim=pass (2048-bit key) header.d=daynix-com.20230601.gappssmtp.com header.i=@daynix-com.20230601.gappssmtp.com header.b=QZRBYT7/; arc=none smtp.client-ip=209.85.214.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=daynix.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=daynix.com
-Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-2234e4b079cso65467415ad.1
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 00:04:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=daynix-com.20230601.gappssmtp.com; s=20230601; t=1741590288; x=1742195088; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Z4zUjmNxjokxBeO8EjZH90AMO+cgLdiVs95Lgo++StE=;
-        b=QZRBYT7/pUx1N5WjjIh58q+/IinjLV3aq0UR9zGCTNxVna0gfBnE9gUO8W4GuVM9KA
-         aXu0TGNLBTvShFK8ky5kFa+mBCVnbzcSPm6vG9pdeZNO3EyOZ4DBu0fksbpXqnIhuwNL
-         xEsrLyqVKi+jnkBwXgx5FsdLc7LEKJkinZtQGEHh9kZd3bkFzQI+gKlwnuQEg5BQkvkX
-         HxCDTgg0yUZJOLlF8ic1Bi2VoU4YMXRfO9wYbI5HdOdHcSk6mPFQ+UqIAtysplhtjrP8
-         XVw77g1RD0BBt3zcQosaTS1XIvITQ01qguj0TkwT+IoPolx2Hr1pDl6gbOH9qtQMrkr2
-         DbLQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741590288; x=1742195088;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Z4zUjmNxjokxBeO8EjZH90AMO+cgLdiVs95Lgo++StE=;
-        b=vVWgPf4yO0XAPDSpNf47zqw2mv/ihfXkk+HvQeiIAJZaak5ROV1cW7hRZUzhiKkPE+
-         XHNnBiGRELL3DICbZ3QeMBZvVCfWLYLm8+1jZC7ESj1UWJ6BBGMUscy+OrTQjJFjEHR8
-         cahlvbvlZdjau2uKWGmedwiiScdFTFXgr2OTH3qslC9XAHsiZcDbeAmye2HlZdmj18Yf
-         0QdPI3+gxD5E0Kjv4Uh0NCCV7cHZFRDCEhnJpTxc1DPz9Ux8pJ+7jkUhSLrRYJJVxthf
-         j41LCiJj7tgoDvBJUyoyTN9XcVV+cMYaxFOwp3Jxe3UUAE03fNPCMc7BQFSDRMj/0+ZV
-         2Jww==
-X-Forwarded-Encrypted: i=1; AJvYcCUMZXrAvfWL7pZUb4gvrz7C5g4uHpqIOtcC7JT9JR0LW7FrVIfiwRJSemwBpkhgoxFX9bqLB9+7c4eyyTo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxdv+f9J1T7cLEQGUeUKCbAxFD2OxwRlY830Q/M3nRw5I3G3e/P
-	mNsH9d3ORMnszfaUT1HYouu7/O/Zhs2g5lmzxX/2ykVgVpqc4Oo7OxKqE6iaY8w=
-X-Gm-Gg: ASbGnctema+USIivCn6IoJbWpSDC5CPmw5TZLQ3MvnAYq4ZLbQ+0QNxoe2eLiLvA7E+
-	GkeIFu5SIM9LCUxftplj5OgM3OSkg7+vf7zJXiXNqltiC81sg5OKSWjq/9GjULatFkmh+2Odot2
-	KqJtDlMC2CKrbgRop/ivz6FAOENTWDJ6UeU9QxLaeLrzzPWnowH+iSgjtSv27x1wnlFI80fs+Yd
-	mE6RtGTcEyIEZXoVLYmOebu+dVB10F9qFhpwhrMQYLrNKzZLl0cHkVo5UXvadayPNsD8p7tKzc5
-	3czJFmy3V7n2aEtkSgiLSHURfSkEYhOkNDP06he9+dK18eEYs+ZURPDejA==
-X-Google-Smtp-Source: AGHT+IFkDjhIOqYcqagzT94jgytjjwhSIQTT2o6zqPzPIQtmCm+lioqyAyJhjHPUINzm2ba//BDswA==
-X-Received: by 2002:a17:902:ea07:b0:224:a79:5fe4 with SMTP id d9443c01a7336-2242888681cmr196310675ad.2.1741590288383;
-        Mon, 10 Mar 2025 00:04:48 -0700 (PDT)
-Received: from [157.82.205.237] ([157.82.205.237])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22410a7f93esm70081685ad.142.2025.03.10.00.04.44
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 10 Mar 2025 00:04:48 -0700 (PDT)
-Message-ID: <2e550452-a716-4c3f-9d5a-3882d2c9912a@daynix.com>
-Date: Mon, 10 Mar 2025 16:04:43 +0900
+	s=arc-20240116; t=1741590370; c=relaxed/simple;
+	bh=dely0WkpZhW9G5y6TR4CN3t7bLGidi5lnjr6+/I7Dw4=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=ZeLFgThqRyHgrc9AKYPLn4pkzJ3vyMjTJSKqTmhjquVFbsNxhz0NfwmL4KM8MuOwpnvUN2gZ7i0iqawDWxBS71Za8HSOBpIYQ52pQ5fa4IEnUNthL/4FD/unotZfKIpFzCJumW6IGe2QwW08j1DCgxfCQroIDGTL4bCCBGSJn2Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DwMkueU8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C2168C4CEE5;
+	Mon, 10 Mar 2025 07:06:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741590369;
+	bh=dely0WkpZhW9G5y6TR4CN3t7bLGidi5lnjr6+/I7Dw4=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=DwMkueU846Ed+Gmf8Ltu6fs8CAyhNAws8EahO5MyBVLHSbML8mIyiv3rW3EIpRct4
+	 AHA5LnSwMfhnVwbZ0xQicPctAJ/w4nPy7r1SIfN6xw3czauXVsdeAhb1Cd/O87euTu
+	 6mEcWc1A/CEoPk9mxIKIA9N1eMpywrgqe8MqM0acHkqSYgDUm0cGVG2rpmKEDevX4L
+	 oRNzE9jzijfEpHsBxrEcTXFtu1SKqUKj7Z9YhCBSspT5cQZQKJZgO6XXWlala9S2mR
+	 ulEUfUGlTJq/U7A/q+5B/jWizv6eg9ISp2gFAHWgDPAhY9PfsNPQrNnU98mN3AYDYm
+	 zUgTGsaYq2y7g==
+From: Vinod Koul <vkoul@kernel.org>
+To: linux-sound@vger.kernel.org, broonie@kernel.org, tiwai@suse.de, 
+ Bard Liao <yung-chuan.liao@linux.intel.com>
+Cc: vinod.koul@linaro.org, linux-kernel@vger.kernel.org, 
+ pierre-louis.bossart@linux.dev, bard.liao@intel.com
+In-Reply-To: <20250227140615.8147-1-yung-chuan.liao@linux.intel.com>
+References: <20250227140615.8147-1-yung-chuan.liao@linux.intel.com>
+Subject: Re: [PATCH v4 00/16] SoundWire/ASoC: add SDW BPT/BRA support
+Message-Id: <174159036743.426660.895612998776430727.b4-ty@kernel.org>
+Date: Mon, 10 Mar 2025 12:36:07 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v9 6/6] vhost/net: Support
- VIRTIO_NET_F_HASH_REPORT
-To: Jason Wang <jasowang@redhat.com>
-Cc: Jonathan Corbet <corbet@lwn.net>,
- Willem de Bruijn <willemdebruijn.kernel@gmail.com>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- "Michael S. Tsirkin" <mst@redhat.com>, Xuan Zhuo
- <xuanzhuo@linux.alibaba.com>, Shuah Khan <shuah@kernel.org>,
- linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
- netdev@vger.kernel.org, kvm@vger.kernel.org,
- virtualization@lists.linux-foundation.org, linux-kselftest@vger.kernel.org,
- Yuri Benditovich <yuri.benditovich@daynix.com>,
- Andrew Melnychenko <andrew@daynix.com>,
- Stephen Hemminger <stephen@networkplumber.org>, gur.stavi@huawei.com,
- Lei Yang <leiyang@redhat.com>, Simon Horman <horms@kernel.org>
-References: <20250307-rss-v9-0-df76624025eb@daynix.com>
- <20250307-rss-v9-6-df76624025eb@daynix.com>
- <CACGkMEuccQ6ah-aZ3tcW1VRuetEoPA_NaLxLT+9fb0uAab8Agg@mail.gmail.com>
-Content-Language: en-US
-From: Akihiko Odaki <akihiko.odaki@daynix.com>
-In-Reply-To: <CACGkMEuccQ6ah-aZ3tcW1VRuetEoPA_NaLxLT+9fb0uAab8Agg@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14.2
 
-On 2025/03/10 13:43, Jason Wang wrote:
-> On Fri, Mar 7, 2025 at 7:02 PM Akihiko Odaki <akihiko.odaki@daynix.com> wrote:
->>
->> VIRTIO_NET_F_HASH_REPORT allows to report hash values calculated on the
->> host. When VHOST_NET_F_VIRTIO_NET_HDR is employed, it will report no
->> hash values (i.e., the hash_report member is always set to
->> VIRTIO_NET_HASH_REPORT_NONE). Otherwise, the values reported by the
->> underlying socket will be reported.
->>
->> VIRTIO_NET_F_HASH_REPORT requires VIRTIO_F_VERSION_1.
->>
->> Signed-off-by: Akihiko Odaki <akihiko.odaki@daynix.com>
->> Tested-by: Lei Yang <leiyang@redhat.com>
->> ---
->>   drivers/vhost/net.c | 49 +++++++++++++++++++++++++++++--------------------
->>   1 file changed, 29 insertions(+), 20 deletions(-)
->>
->> diff --git a/drivers/vhost/net.c b/drivers/vhost/net.c
->> index b9b9e9d40951856d881d77ac74331d914473cd56..16b241b44f89820a42c302f3586ea6bb5e0d4289 100644
->> --- a/drivers/vhost/net.c
->> +++ b/drivers/vhost/net.c
->> @@ -73,6 +73,7 @@ enum {
->>          VHOST_NET_FEATURES = VHOST_FEATURES |
->>                           (1ULL << VHOST_NET_F_VIRTIO_NET_HDR) |
->>                           (1ULL << VIRTIO_NET_F_MRG_RXBUF) |
->> +                        (1ULL << VIRTIO_NET_F_HASH_REPORT) |
->>                           (1ULL << VIRTIO_F_ACCESS_PLATFORM) |
->>                           (1ULL << VIRTIO_F_RING_RESET)
->>   };
->> @@ -1097,9 +1098,11 @@ static void handle_rx(struct vhost_net *net)
->>                  .msg_controllen = 0,
->>                  .msg_flags = MSG_DONTWAIT,
->>          };
->> -       struct virtio_net_hdr hdr = {
->> -               .flags = 0,
->> -               .gso_type = VIRTIO_NET_HDR_GSO_NONE
->> +       struct virtio_net_hdr_v1_hash hdr = {
->> +               .hdr = {
->> +                       .flags = 0,
->> +                       .gso_type = VIRTIO_NET_HDR_GSO_NONE
->> +               }
->>          };
->>          size_t total_len = 0;
->>          int err, mergeable;
->> @@ -1110,7 +1113,6 @@ static void handle_rx(struct vhost_net *net)
->>          bool set_num_buffers;
->>          struct socket *sock;
->>          struct iov_iter fixup;
->> -       __virtio16 num_buffers;
->>          int recv_pkts = 0;
->>
->>          mutex_lock_nested(&vq->mutex, VHOST_NET_VQ_RX);
->> @@ -1191,30 +1193,30 @@ static void handle_rx(struct vhost_net *net)
->>                          vhost_discard_vq_desc(vq, headcount);
->>                          continue;
->>                  }
->> +               hdr.hdr.num_buffers = cpu_to_vhost16(vq, headcount);
->>                  /* Supply virtio_net_hdr if VHOST_NET_F_VIRTIO_NET_HDR */
->>                  if (unlikely(vhost_hlen)) {
->> -                       if (copy_to_iter(&hdr, sizeof(hdr),
->> -                                        &fixup) != sizeof(hdr)) {
->> +                       if (copy_to_iter(&hdr, vhost_hlen,
->> +                                        &fixup) != vhost_hlen) {
->>                                  vq_err(vq, "Unable to write vnet_hdr "
->>                                         "at addr %p\n", vq->iov->iov_base);
->>                                  goto out;
-> 
-> Is this an "issue" specific to RSS/HASH? If it's not, we need a separate patch.
-> 
-> Honestly, I'm not sure if it's too late to fix this.
 
-There is nothing wrong with the current implementation. The current 
-implementation fills the header with zero except num_buffers, which it 
-fills some real value. This functionality is working fine with 
-VIRTIO_NET_F_MRG_RXBUF and VIRTIO_F_VERSION_1, which change the header size.
-
-Now I'm adding VIRTIO_NET_F_HASH_REPORT and it adds the hash_report 
-field, which also needs to be initialized with zero, so I'm making sure 
-vhost_net will also initialize it.
-
-Regards,
-Akihiko Odaki
-
+On Thu, 27 Feb 2025 22:05:59 +0800, Bard Liao wrote:
+> This series adds support for SoundWire BPT/BRA. The change is mainly on
+> the SoundWire tree. It is better to go through the SoundWire tree with
+> Mark's Acked-by tag.
 > 
-> Others look fine.
+> v2:
+>  - Add MODULE_DESCRIPTION in the "ASoC: SOF: Intel: hda-sdw-bpt: add
+>    helpers for SoundWire BPT DMA" patch.
 > 
-> Thanks
-> 
+> [...]
+
+Applied, thanks!
+
+[01/16] Documentation: driver: add SoundWire BRA description
+        commit: 3641c6392695b0846e80a4c1245d7139c8ed7d48
+[02/16] soundwire: cadence: add BTP support for DP0
+        commit: 3e3ae0c8fccc51021136b192ec88e94a1bc5704c
+[03/16] soundwire: extend sdw_stream_type to BPT
+        commit: df896e4f7cf5cc3abffb186e2b6815b785500b57
+[04/16] soundwire: stream: extend sdw_alloc_stream() to take 'type' parameter
+        commit: dc90bbefa792031d89fe2af9ad4a6febd6be96a9
+[05/16] soundwire: stream: special-case the bus compute_params() routine
+        commit: 00f57195f10fa7e2fa2ceeac0b2768ae544fee2e
+[06/16] soundwire: stream: reuse existing code for BPT stream
+        commit: b422b7237ead30bfb90f52c7563ef518a5849cd9
+[07/16] soundwire: bus: add send_async/wait APIs for BPT protocol
+        commit: 9a756289ac5a8517dc643555d784d830b61576ad
+[08/16] soundwire: bus: add bpt_stream pointer
+        commit: 8e4a239b403bd8aed8787798de8e4e42f79246c2
+[09/16] soundwire: cadence: add BTP/BRA helpers to format data
+        commit: 8eb5d7ade8b1ed1678cdc5340ef3f6d346eed9be
+[10/16] soundwire: intel_auxdevice: add indirection for BPT send_async/wait
+        commit: 7f17a73a7dd8252aa88c6f5e23310861de3d5423
+[11/16] ASoC: SOF: Intel: hda-sdw-bpt: add helpers for SoundWire BPT DMA
+        commit: 5d5cb86fb46ea1c7efd3b894f63fe364e5847043
+[12/16] soundwire: intel: add BPT context definition
+        commit: 5cdc23764da8be3c1b2c022ddce95dd8e49673da
+[13/16] soundwire: intel_ace2x: add BPT send_async/wait callbacks
+        commit: 4c1ce9f37d8a809dcdfba082cc9003880efa0a63
+[14/16] ASoC: SOF: Intel: hda-sdw-bpt: add CHAIN_DMA support
+        commit: 3394e2b125043aeede344d28fc73b3c0d2a5c21f
+[15/16] soundwire: debugfs: add interface for BPT/BRA transfers
+        commit: bb5cb09eedce756eaeb66c69b6dac0f16e464e24
+[16/16] ASoC: rt711-sdca: add DP0 support
+        commit: 9452422fc321f105a38435bc72afe5fd2c51882b
+
+Best regards,
+-- 
+~Vinod
+
 
 
