@@ -1,71 +1,81 @@
-Return-Path: <linux-kernel+bounces-554234-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-554235-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D19B8A59506
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 13:46:34 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 07934A5950B
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 13:48:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BB2AC188248D
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 12:46:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4A77A7A5E6E
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 12:47:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A69C226193;
-	Mon, 10 Mar 2025 12:46:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 533EC22172D;
+	Mon, 10 Mar 2025 12:48:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=8bytes.org header.i=@8bytes.org header.b="cWLCqolv"
-Received: from mail.8bytes.org (mail.8bytes.org [85.214.250.239])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B99012206AB
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 12:46:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.214.250.239
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741610779; cv=none; b=nDpPw8c+HOeCtGPxqvsihBjNjROSTfh5sqsqlUsrBiG6+hMKxpFHWnF2ITv8RNid28T4ppUzVAc2u09hnEok6OBmVeuDZhqaCuxhuKGvLJy1PSVM0YDeIyN9QDr7pPWez0yYT4QF267QnrmujyNBvj2kEtVxcoou+mGc4aj0Rx4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741610779; c=relaxed/simple;
-	bh=0nO/xIXwJzgoohFYLquOfcauO0xNrITVqz/4/CuB8Vo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ggPS4CUzLrcPjgn71v5RyH7U7GlOll7/ISw0O4DglRyFRBiSCpa31lSK7HTTDRTwUCeW3DJk9CqOgTmCNS+dLVHnaq/6I6q+6iQ+R+BL3gF/eByJUWHRn+Q/qdZdkDp8c3XbhS0Sj+fcSkB7+KeA+cmrqRyQUxT4CcNpmOQ0SsI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=8bytes.org; spf=pass smtp.mailfrom=8bytes.org; dkim=pass (2048-bit key) header.d=8bytes.org header.i=@8bytes.org header.b=cWLCqolv; arc=none smtp.client-ip=85.214.250.239
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=8bytes.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=8bytes.org
-Received: from 8bytes.org (p4ffe03ae.dip0.t-ipconnect.de [79.254.3.174])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="VsAyhZK1"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.8bytes.org (Postfix) with ESMTPSA id 532DE45265;
-	Mon, 10 Mar 2025 13:46:14 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=8bytes.org;
-	s=default; t=1741610774;
-	bh=0nO/xIXwJzgoohFYLquOfcauO0xNrITVqz/4/CuB8Vo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=cWLCqolvrtaMsr3ySSe1f86PECMhMQVtno5DjUqXSpLihEACGRKlplPETnru1nIrO
-	 GP2PolUz+6JkpjHwc6HhaghR3s1XnrOMEo0/W53PUGQIEQ23hlnCYwPaYvvHKdBq8F
-	 y05OHIfn4/HmeSN73c2yj03g1wSFUSQZeR7ZIUk3KpJy+SBwq3V3qV7dxP3+ZGALHP
-	 xXXbBEMFm6k3xXjhDJzojSjZAOQFMa3RDBuHSAjTdNC89wHyPbz4C88iiwgMyDgJIH
-	 qBJjUURjmUkCXClZyIVu+/PJUMjUb7RiJjifbUbVdEvuZFzwmONIX+8s3d7H7nlqaC
-	 dZStc0JpWacyw==
-Date: Mon, 10 Mar 2025 13:46:13 +0100
-From: Joerg Roedel <joro@8bytes.org>
-To: Borislav Petkov <bp@alien8.de>
-Cc: "Alexey Gladkov (Intel)" <alexey.gladkov@intel.com>,
-	"Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-	Dave Hansen <dave.hansen@intel.com>, Joerg Roedel <jroedel@suse.de>,
-	Ingo Molnar <mingo@kernel.org>, x86@kernel.org, hpa@zytor.com,
-	Tom Lendacky <thomas.lendacky@amd.com>,
-	Nikunj A Dadhania <nikunj@amd.com>, linux-kernel@vger.kernel.org,
-	Larry.Dewey@amd.com
-Subject: Re: [PATCH] x86/sev: Make SEV_STATUS available via SYSFS
-Message-ID: <Z87fFRbg9V_x3u1v@8bytes.org>
-References: <Z8g4sU_dsZgY0PuS@gmail.com>
- <20250305115035.GEZ8g6i7NTiSfkxk7J@fat_crate.local>
- <Z8hYEsHvwUwlOold@suse.de>
- <20250305153705.GKZ8hvoaz2GPt2rGtu@fat_crate.local>
- <b0cf4bfc-bf22-4986-9e76-62e3f54179ea@intel.com>
- <2koe2zg26fndx6d6jcmbg6dzybbgldgrjufupj74nvmav2dmqg@w6bknhosl64h>
- <Z8le_TWUJNebrfs7@8bytes.org>
- <Z8l66FFgPu5hWtuI@agladkov-desk>
- <Z86-3n1-MArVLM9Z@8bytes.org>
- <20250310110202.GEZ87GqgEJyhJtde0I@fat_crate.local>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F039322171C
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 12:48:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741610922; cv=none; b=bFnjnvYTbx/xhe9COAExwORRUvWJudLPatTe2UEzgrdpSiqQOBDHN9yjDXqpP4DNioJIAL7nh8zx5UF2t2xBVl60QWit7VI/sV3atxfoWVgN87RTg7U5/RDObFjjSKHKt1Jqcgpotbq9wtxrtMIzy3jhlupNxKShRSlS4UfqzpU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741610922; c=relaxed/simple;
+	bh=xSWb5REeYFPZwi1QUoJuIX4lM1Cr4JUM9JjHTFSxWoU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RG5j9dcV7lBs6QDCYGfbzxeWIQ7TeMSY66VkhEck/2vaEfWtggZtiIfUoExsSZFWMhlBZPi/GAJUNt/G0wPovUMQj5Gi0+X8TAC0Ut2HlepRMqsnmu0tf+rGL5AJuh9fQpd/cexLSM/P9mNmdggGB6RnI81RxGL+Wyo+K1j+Rt0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=VsAyhZK1; arc=none smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1741610921; x=1773146921;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=xSWb5REeYFPZwi1QUoJuIX4lM1Cr4JUM9JjHTFSxWoU=;
+  b=VsAyhZK1oY+9zJmEJPv6eX/HlKxDyh1XYCATBROGT6LnMrd/BjjKKeky
+   hJBVD+qhZ7NbHEjvxzT3FifUCPHlp3YajWLwQvKA1WxrjoB/+oAjIzI94
+   HSbyBfNlouylX+Z22vqf+fltH14/W53cTOU0bZKZSTrd9TfHpucmPUZ/p
+   U0KMBiSMuvHG8zwwQw3jxEdBsqqxnkG69jafP12hObK5rd1L98bj1VaTw
+   EVg/N4cPE6NFhgs2mf6ehq31e4DF3Qg7yB91wu6E+V6c7d+hgnX4PQk+/
+   QW6rZa/UtHpJodjTmrrDAKl/28tCfQgD/kTyWc+NnFWNDB+DsBp7Bac6t
+   w==;
+X-CSE-ConnectionGUID: jQZmaMzhTjy5XFYFprrIGQ==
+X-CSE-MsgGUID: OvM1O+NiQV2FA8ek6sWFhQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11369"; a="65059386"
+X-IronPort-AV: E=Sophos;i="6.14,236,1736841600"; 
+   d="scan'208";a="65059386"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Mar 2025 05:48:40 -0700
+X-CSE-ConnectionGUID: QuT5wmvcRcGZWfrVWsfu1A==
+X-CSE-MsgGUID: +IN/u0q+QcKsj7aOhMegpQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,236,1736841600"; 
+   d="scan'208";a="120183702"
+Received: from lkp-server02.sh.intel.com (HELO a4747d147074) ([10.239.97.151])
+  by fmviesa008.fm.intel.com with ESMTP; 10 Mar 2025 05:48:35 -0700
+Received: from kbuild by a4747d147074 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1trcXr-0004F6-1s;
+	Mon, 10 Mar 2025 12:47:57 +0000
+Date: Mon, 10 Mar 2025 20:47:16 +0800
+From: kernel test robot <lkp@intel.com>
+To: Vincent Guittot <vincent.guittot@linaro.org>, mingo@redhat.com,
+	peterz@infradead.org, juri.lelli@redhat.com,
+	dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
+	mgorman@suse.de, vschneid@redhat.com, lukasz.luba@arm.com,
+	rafael.j.wysocki@intel.com, pierre.gondois@arm.com,
+	linux-kernel@vger.kernel.org
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	qyousef@layalina.io, hongyan.xia2@arm.com, christian.loehle@arm.com,
+	luis.machado@arm.com, qperret@google.com,
+	Vincent Guittot <vincent.guittot@linaro.org>
+Subject: Re: [PATCH 5/7 v5] sched/fair: Add push task mechanism for EAS
+Message-ID: <202503102022.MhverD5b-lkp@intel.com>
+References: <20250302210539.1563190-6-vincent.guittot@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -74,52 +84,109 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250310110202.GEZ87GqgEJyhJtde0I@fat_crate.local>
+In-Reply-To: <20250302210539.1563190-6-vincent.guittot@linaro.org>
 
-On Mon, Mar 10, 2025 at 12:02:02PM +0100, Borislav Petkov wrote:
-> ... or you can drop the "common" thing and use only the "coco":
->
-> /sys/hypervisor/coco
+Hi Vincent,
 
-Common is less likely to be mistaken for a hypervisor name than coco.
-But if there is agreement on that naming I can live with that.
+kernel test robot noticed the following build errors:
 
-> and then you kinda denote that while it is the hypervisor hierarchy, it is
-> related to confidential computing so it could be consumed by guests too.
-> 
-> But I still don't see why we can't simply do
-> 
-> /sys/guest
-> 
-> It is just another sysfs node. Or is there a particular reason to stick to
-> /sys/hypervisor?
+[auto build test ERROR on tip/sched/core]
+[also build test ERROR on peterz-queue/sched/core linus/master v6.14-rc6 next-20250307]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-/sys/hypervisor/ has the best-fitting name imho. Unfortunately it is
-taken in a very non-generic way by Xen, with no clean way to make it
-more generic without breaking Xen or increase the mess. So /sys/guest
-might be a viable alternative. /sys/guest/xen/ could then link to
-/sys/hypervisor/.
+url:    https://github.com/intel-lab-lkp/linux/commits/Vincent-Guittot/sched-fair-Filter-false-overloaded_group-case-for-EAS/20250303-050850
+base:   tip/sched/core
+patch link:    https://lore.kernel.org/r/20250302210539.1563190-6-vincent.guittot%40linaro.org
+patch subject: [PATCH 5/7 v5] sched/fair: Add push task mechanism for EAS
+config: arm-realview_defconfig (https://download.01.org/0day-ci/archive/20250310/202503102022.MhverD5b-lkp@intel.com/config)
+compiler: clang version 19.1.7 (https://github.com/llvm/llvm-project cd708029e0b2869e80abe31ddb175f7c35361f90)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250310/202503102022.MhverD5b-lkp@intel.com/reproduce)
 
-> And putting it in sysfs still doesn't solve the human-readable aspect: dumping
-> a raw SEV_STATUS might as well be simply reading the MSR and if someone wants
-> to read it, someone would need to go count bits. Imagine the following
-> scenario: a user reports a bug, you say, ok, send me
-> 
-> /sys/hypervisor/coco/sev/sev_status
-> 
-> you get it and you dump it through your script or start looking at the bits.
-> Yeah, we all have scripts for that but it ain't too user-friendly...
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202503102022.MhverD5b-lkp@intel.com/
 
-Right, it is not really a good human-readable interface. On the other
-side SYSFS was always an interface targeted more towards tooling than
-humans, therefore the one-datum-per-file rule. The use-case I want to
-target with this patch is also tooling-related.
+All errors (new ones prefixed by >>):
 
-We can add a human-readable version of the coco-features somewhere else,
-if wanted.  You already suggested /proc/cpuinfo, which in itself is
-designed for direct human consumption.
+>> kernel/sched/fair.c:8675:36: error: no member named 'pushable_tasks' in 'struct cfs_rq'
+    8675 |         return !plist_head_empty(&rq->cfs.pushable_tasks);
+         |                                   ~~~~~~~ ^
+   kernel/sched/fair.c:8685:33: error: no member named 'pushable_tasks' in 'struct cfs_rq'
+    8685 |         p = plist_first_entry(&rq->cfs.pushable_tasks,
+         |                                ~~~~~~~ ^
+   include/linux/plist.h:233:27: note: expanded from macro 'plist_first_entry'
+     233 |         container_of(plist_first(head), type, member)
+         |                                  ^~~~
+   include/linux/container_of.h:19:26: note: expanded from macro 'container_of'
+      19 |         void *__mptr = (void *)(ptr);                                   \
+         |                                 ^~~
+   kernel/sched/fair.c:8685:33: error: no member named 'pushable_tasks' in 'struct cfs_rq'
+    8685 |         p = plist_first_entry(&rq->cfs.pushable_tasks,
+         |                                ~~~~~~~ ^
+   include/linux/plist.h:233:27: note: expanded from macro 'plist_first_entry'
+     233 |         container_of(plist_first(head), type, member)
+         |                                  ^~~~
+   include/linux/container_of.h:20:30: note: expanded from macro 'container_of'
+      20 |         static_assert(__same_type(*(ptr), ((type *)0)->member) ||       \
+         |                                     ^~~
+   include/linux/compiler_types.h:483:63: note: expanded from macro '__same_type'
+     483 | #define __same_type(a, b) __builtin_types_compatible_p(typeof(a), typeof(b))
+         |                                                               ^
+   include/linux/build_bug.h:77:50: note: expanded from macro 'static_assert'
+      77 | #define static_assert(expr, ...) __static_assert(expr, ##__VA_ARGS__, #expr)
+         |                                                  ^~~~
+   include/linux/build_bug.h:78:56: note: expanded from macro '__static_assert'
+      78 | #define __static_assert(expr, msg, ...) _Static_assert(expr, msg)
+         |                                                        ^~~~
+   kernel/sched/fair.c:8685:33: error: no member named 'pushable_tasks' in 'struct cfs_rq'
+    8685 |         p = plist_first_entry(&rq->cfs.pushable_tasks,
+         |                                ~~~~~~~ ^
+   include/linux/plist.h:233:27: note: expanded from macro 'plist_first_entry'
+     233 |         container_of(plist_first(head), type, member)
+         |                                  ^~~~
+   include/linux/container_of.h:21:23: note: expanded from macro 'container_of'
+      21 |                       __same_type(*(ptr), void),                        \
+         |                                     ^~~
+   include/linux/compiler_types.h:483:63: note: expanded from macro '__same_type'
+     483 | #define __same_type(a, b) __builtin_types_compatible_p(typeof(a), typeof(b))
+         |                                                               ^
+   include/linux/build_bug.h:77:50: note: expanded from macro 'static_assert'
+      77 | #define static_assert(expr, ...) __static_assert(expr, ##__VA_ARGS__, #expr)
+         |                                                  ^~~~
+   include/linux/build_bug.h:78:56: note: expanded from macro '__static_assert'
+      78 | #define __static_assert(expr, msg, ...) _Static_assert(expr, msg)
+         |                                                        ^~~~
+   kernel/sched/fair.c:8697:41: error: no member named 'pushable_tasks' in 'struct cfs_rq'
+    8697 |         plist_del(&p->pushable_tasks, &rq->cfs.pushable_tasks);
+         |                                        ~~~~~~~ ^
+   kernel/sched/fair.c:8772:42: error: no member named 'pushable_tasks' in 'struct cfs_rq'
+    8772 |                 plist_del(&p->pushable_tasks, &rq->cfs.pushable_tasks);
+         |                                                ~~~~~~~ ^
+   kernel/sched/fair.c:8779:43: error: no member named 'pushable_tasks' in 'struct cfs_rq'
+    8779 |                         plist_del(&p->pushable_tasks, &rq->cfs.pushable_tasks);
+         |                                                        ~~~~~~~ ^
+   kernel/sched/fair.c:8781:43: error: no member named 'pushable_tasks' in 'struct cfs_rq'
+    8781 |                         plist_add(&p->pushable_tasks, &rq->cfs.pushable_tasks);
+         |                                                        ~~~~~~~ ^
+   kernel/sched/fair.c:13572:27: error: no member named 'pushable_tasks' in 'struct cfs_rq'
+    13572 |         plist_head_init(&cfs_rq->pushable_tasks);
+          |                          ~~~~~~  ^
+   9 errors generated.
 
-Regards,
 
-	Joerg
+vim +8675 kernel/sched/fair.c
+
+  8672	
+  8673	static inline int has_pushable_tasks(struct rq *rq)
+  8674	{
+> 8675		return !plist_head_empty(&rq->cfs.pushable_tasks);
+  8676	}
+  8677	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
