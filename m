@@ -1,63 +1,101 @@
-Return-Path: <linux-kernel+bounces-553623-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-553624-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 011FBA58C9C
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 08:16:38 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 45804A58CA0
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 08:17:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8D32D3A97A3
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 07:16:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 724C816A5E9
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 07:17:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E81A1B423B;
-	Mon, 10 Mar 2025 07:16:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BFD41D5AA0;
+	Mon, 10 Mar 2025 07:17:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="iCfdHmgt"
-Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kroah.com header.i=@kroah.com header.b="YCSnSpI9";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="J7sE2/bH"
+Received: from fhigh-b2-smtp.messagingengine.com (fhigh-b2-smtp.messagingengine.com [202.12.124.153])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5D441B4153;
-	Mon, 10 Mar 2025 07:16:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 382B71B4153;
+	Mon, 10 Mar 2025 07:17:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.153
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741590989; cv=none; b=Xd5Q9hDc0CNw/XV5S0IN/M1bcIWcRvPkuiW1tkk68kMz0wX86fhbXpi1CiNp9W2B+EvWq06RNfGOb+jPzCa2p2ZBxDrFH4CU0XCweRrncuCZNIsUe7unB3FDNriSW+xlInfYR84pbC88i+SaF9QueliD/FWQ5P2atOOm/nruSY0=
+	t=1741591045; cv=none; b=hPm7lJtK2UuXJxlWsuDj3yoFvLEcGh01Ki2kFzf2kKlL1XBJ5kfyHx/FV9Nbjowrlq04ANql0XTTph/EiT7qHgJpMGuzEp3IoZVdZJn5+jwEtegf6YPgFxvhcxFpzb2YgmiR0yzA5mh6PReLoZM4Jkt/fk+h77HqkX4AWrxakp4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741590989; c=relaxed/simple;
-	bh=ZSuThKs4RRRiIQBWC7D0j8baNXGHTK3a7S1ckfF9qdA=;
+	s=arc-20240116; t=1741591045; c=relaxed/simple;
+	bh=9L8JCBhgoFxdIePQoDp94udzf7pnTqrsbwNxET6a7Mg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ch9TwQxIGgFLysx1DW/A+cTq7O4w/OJnORmfNIXz7BuxwV8Qz3OGmoTHwp9y467B4ctU3Z6pw1XI2rYVNR6527CbM/0p14NoYOeU4Se/5LAHrIDSjMiycktHHShYwA+YDOqV2bPqhUsWjoYLVqb0DnD/dbwOANiUtJFl1UQ75RU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=iCfdHmgt; arc=none smtp.client-ip=178.21.23.139
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
-Received: from mail01.disroot.lan (localhost [127.0.0.1])
-	by disroot.org (Postfix) with ESMTP id A9FC82591A;
-	Mon, 10 Mar 2025 08:16:18 +0100 (CET)
-X-Virus-Scanned: SPAM Filter at disroot.org
-Received: from layka.disroot.org ([127.0.0.1])
- by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
- id 0QO2kUGrrvhG; Mon, 10 Mar 2025 08:16:18 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
-	t=1741590978; bh=ZSuThKs4RRRiIQBWC7D0j8baNXGHTK3a7S1ckfF9qdA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=iCfdHmgtbmqK8KQ3CKJXUznYpU7FQEJMgb78NWQR2d/qNTzzWwFfgdofObg9+B41p
-	 LhZlu+K9VHzifZnDVyKdO/xKBRnl+xAU4s4pA4zaQ43aqHj+5N+4M6glv7M4ISRWVA
-	 pCl9LPavMwU022eFNBiY7EgPRMCRkmPdT2dN2/yw93HLUaIFYF+/81NzB2ykfQrmMg
-	 ABQNBBa4sgKYyoKPyu0cxjPNnNy5cDWLgH7T0czc/YvzGlmoQN6X4a8aO9BbitRkBM
-	 dgaH/z7CjJ8qu7bAcXRtSFCWh2Btc1c23VlM4ZJjGlIbsGcjNgrvopi3JMirl4xfpd
-	 m66kMTlO7QTmQ==
-Date: Mon, 10 Mar 2025 07:15:58 +0000
-From: Yao Zi <ziyao@disroot.org>
-To: Chukun Pan <amadeus@jmu.edu.cn>
-Cc: andi.shyti@kernel.org, conor+dt@kernel.org, devicetree@vger.kernel.org,
-	heiko@sntech.de, jonas@kwiboo.se, krzk+dt@kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-i2c@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-rockchip@lists.infradead.org
-Subject: Re: [PATCH 3/3] arm64: dts: rockchip: Add onboard EEPROM for Radxa
- E20C
-Message-ID: <Z86RrlBTvt9d40Dk@pie>
-References: <20250309070603.35254-4-ziyao@disroot.org>
- <20250310070023.52290-1-amadeus@jmu.edu.cn>
+	 Content-Type:Content-Disposition:In-Reply-To; b=LulswUemrwLMib5mXHpOKlvqQzgTWMLhdTptkYT7VRKP7r567DxK8UfmLG7FhypD+0pYRxD25K4RpPuHIXtno0WIbjwEMMNA5Q8AcVeHVZVrcVILVqAdxHfFeV1krW0KkgD3+ZEoPxS/FZEGu/saduhHSprjJOILJLkUU3Ymuac=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kroah.com; spf=pass smtp.mailfrom=kroah.com; dkim=pass (2048-bit key) header.d=kroah.com header.i=@kroah.com header.b=YCSnSpI9; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=J7sE2/bH; arc=none smtp.client-ip=202.12.124.153
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kroah.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kroah.com
+Received: from phl-compute-04.internal (phl-compute-04.phl.internal [10.202.2.44])
+	by mailfhigh.stl.internal (Postfix) with ESMTP id EE75F2540146;
+	Mon, 10 Mar 2025 03:17:21 -0400 (EDT)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-04.internal (MEProxy); Mon, 10 Mar 2025 03:17:22 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kroah.com; h=cc
+	:cc:content-type:content-type:date:date:from:from:in-reply-to
+	:in-reply-to:message-id:mime-version:references:reply-to:subject
+	:subject:to:to; s=fm1; t=1741591041; x=1741677441; bh=I6iCa18A/p
+	d2A9SeKJfs9/4Am1VGJRgjZyfzz/7cgMs=; b=YCSnSpI9lrANtHYc5QQFjusx+7
+	5q7OB5PDB2A70lHcgJ3m0Ffk0zv8ByD1ulfBMfSC6KTTYGVGG9gQpXhyrslSdmaR
+	W76Lf2TdiOkz00llD/J8gbOANFUAS5HRtanPZOIg1SVQdNXau34tzYuIW/b4RCq6
+	kFfi4xM9m2b+YgKsWeeSkeRBqfOy/gn6QcwrhIPoTvNiCUK2m+LCuTklGVe3Bdvy
+	1k6xLCix5uLKSyGBrp8Wwp8ofvscI5N8s3EDigqug2DRRiV3auknUPoiPkTgqlIK
+	l/MbyhTDpaJ15vuOL8/U8BFuxFT0YTzeAp8n+VAL9ehQJpyJCPuQe7xT7Kiw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=
+	1741591041; x=1741677441; bh=I6iCa18A/pd2A9SeKJfs9/4Am1VGJRgjZyf
+	zz/7cgMs=; b=J7sE2/bHPs4mM1TAR73K78Auxfh0JjF8gBjJ+q8/Cd1PEbAXW7U
+	A8o7Bn6cAoKv18Lk+zeNt4niwzMVktK2XQ4owow9WQsHqxt1ThdEU5QwkRVXJGvA
+	LF4qKFv/I7LD6fsfaRh+iGJ/Es3qiAjixxeL0oTFy/d5rHV/k16O0D7vxDaxNUp+
+	iboECaz7K2GS2hTVKkf0Uq6bjxapYouI+v47voru+HbjW9ChbUjQpeTVpvRNua8x
+	6zEKg3smIr5ssh0o7OVM6+8dpF+D+mFeDQ6+HrhXEBIyxNq0FTWI3BN5jA/pctWr
+	l8bI4BuH38cPO067q4IsjHJMg/jUAOljRqw==
+X-ME-Sender: <xms:AJLOZ7cZ4YH04XNn4zqTklGi2FOduzIU64meXkY0NZR1s42DxhVVVw>
+    <xme:AJLOZxN5nDjsPwPCrlxrEtL__GEpoW1RPQ5yBgyI_cAF8nmdO3sRzrQbPjQtYSNRR
+    Q8p-sTKQSn-Gg>
+X-ME-Received: <xmr:AJLOZ0j3Sr5ZPZSBEMuLfX8Fl1IDkxTuE6EsDuqSB4LEK1RwjUPLj6RlyZXPRR8epnXXsmwtsHObUYIld6yyRp92nvv-OlBLCJzbTQ>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdduudekjeduucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
+    pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
+    gvnhhtshculddquddttddmnecujfgurhepfffhvfevuffkfhggtggujgesthdtredttddt
+    vdenucfhrhhomhepifhrvghgucfmjfcuoehgrhgvgheskhhrohgrhhdrtghomheqnecugg
+    ftrfgrthhtvghrnhepheegvdevvdeljeeugfdtudduhfekledtiefhveejkeejuefhtdeu
+    fefhgfehkeetnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrh
+    homhepghhrvghgsehkrhhorghhrdgtohhmpdhnsggprhgtphhtthhopeduvddpmhhouggv
+    pehsmhhtphhouhhtpdhrtghpthhtohepshhfrhestggrnhgsrdgruhhughdrohhrghdrrg
+    hupdhrtghpthhtoheplhhksegtqddqvgdruggvpdhrtghpthhtohepughmihhtrhihrdgs
+    rghrhihshhhkohhvsehlihhnrghrohdrohhrghdprhgtphhtthhopegsohguuggrhhekje
+    elgeesghhmrghilhdrtghomhdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhg
+    vghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhnvgigthesvhhgvg
+    hrrdhkvghrnhgvlhdrohhrgh
+X-ME-Proxy: <xmx:AJLOZ89lWQu1VcP4aH9xlmZE4Hx_4w8salYJGTp3hBxfCqg73NNaIQ>
+    <xmx:AJLOZ3sXoL-7_5sScP_l5Rk5zEv96IjNMLxS-mDHGT7j5597iGPacw>
+    <xmx:AJLOZ7EdjTySaap-b9QteRGShIBmQ1tFwgZTqTYnTkliAqGHyZcOYQ>
+    <xmx:AJLOZ-M7jOBdvvxM3m3S6Y045TRYPLWCNrWU27VAGV2Qw4mXqLFOig>
+    <xmx:AZLOZwH7mgUizHWuhsNQmY-F4HsFfiz4IsoEcfckm3TmvI3et8I8W_KI>
+Feedback-ID: i787e41f1:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
+ 10 Mar 2025 03:17:20 -0400 (EDT)
+Date: Mon, 10 Mar 2025 08:17:17 +0100
+From: Greg KH <greg@kroah.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: "Christian A. Ehrhardt" <lk@c--e.de>,
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+	Fedor Pchelkin <boddah8794@gmail.com>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>
+Subject: Re: linux-next: manual merge of the usb tree with the usb.current
+ tree
+Message-ID: <2025031003-stimulus-overwrite-6e88@gregkh>
+References: <20250220141559.71d7db7c@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,36 +104,53 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250310070023.52290-1-amadeus@jmu.edu.cn>
+In-Reply-To: <20250220141559.71d7db7c@canb.auug.org.au>
 
-On Mon, Mar 10, 2025 at 03:00:23PM +0800, Chukun Pan wrote:
-> Hi,
+On Thu, Feb 20, 2025 at 02:15:59PM +1100, Stephen Rothwell wrote:
+> Hi all,
 > 
-> > +&i2c1 {
-> > +	pinctrl-names = "default";
-> > +	pinctrl-0 = <&i2c1m0_xfer>;
-> > +	status = "okay";
-> > +
-> > +	eeprom@50 {
-> > +		compatible = "belling,bl24c16a", "atmel,24c16";
-> > +		reg = <0x50>;
-> > +		pagesize = <16>;
-> > +		vcc-supply = <&vcc_3v3>;
-> > +	};
-> > +};
+> Today's linux-next merge of the usb tree got a conflict in:
 > 
-> This eeprom stores the device information written by the manufacturer,
-> such as mac address and sn. So it should be marked as read-only.
-
-Thanks, this makes sense.
-
-> Thanks,
-> Chukun
+>   drivers/usb/typec/ucsi/ucsi_acpi.c
+> 
+> between commit:
+> 
+>   976e7e9bdc77 ("acpi: typec: ucsi: Introduce a ->poll_cci method")
+> 
+> from the usb.current tree and commit:
+> 
+>   f9cf5401526c ("usb: typec: ucsi: acpi: move LG Gram quirk to ucsi_gram_sync_control()")
+> 
+> from the usb tree.
+> 
+> I fixed it up (see below) and can carry the fix as necessary. This
+> is now fixed as far as linux-next is concerned, but any non trivial
+> conflicts should be mentioned to your upstream maintainer when your tree
+> is submitted for merging.  You may also want to consider cooperating
+> with the maintainer of the conflicting tree to minimise any particularly
+> complex conflicts.
 > 
 > -- 
-> 2.25.1
+> Cheers,
+> Stephen Rothwell
 > 
+> diff --cc drivers/usb/typec/ucsi/ucsi_acpi.c
+> index ac1ebb5d9527,ada5d0d21ee6..000000000000
+> --- a/drivers/usb/typec/ucsi/ucsi_acpi.c
+> +++ b/drivers/usb/typec/ucsi/ucsi_acpi.c
+> @@@ -131,25 -131,7 +137,8 @@@ static int ucsi_gram_sync_control(struc
+>   static const struct ucsi_operations ucsi_gram_ops = {
+>   	.read_version = ucsi_acpi_read_version,
+>   	.read_cci = ucsi_acpi_read_cci,
+>  +	.poll_cci = ucsi_acpi_poll_cci,
+> - 	.read_message_in = ucsi_gram_read_message_in,
+> + 	.read_message_in = ucsi_acpi_read_message_in,
+>   	.sync_control = ucsi_gram_sync_control,
+>   	.async_control = ucsi_acpi_async_control
+>   };
 
-Best regards,
-Yao Zi
+This is now fixed up in my tree, thanks.
+
+greg k-h
+
 
