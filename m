@@ -1,179 +1,142 @@
-Return-Path: <linux-kernel+bounces-555169-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-555170-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 92D7EA5A65A
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 22:43:02 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B2812A5A65D
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 22:44:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C3AA4171F02
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 21:43:01 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0E1D67A4BFC
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 21:43:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6F901E47A5;
-	Mon, 10 Mar 2025 21:42:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A70D1E47A5;
+	Mon, 10 Mar 2025 21:44:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Wk22D0YR"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="RC7gRiAC"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA8D41581F9;
-	Mon, 10 Mar 2025 21:42:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CAEE1581F9;
+	Mon, 10 Mar 2025 21:44:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741642974; cv=none; b=Qz3ZWC59Hb+W5DebG5J4fGzB3S977K5Nxpc6NIJJoFKOcMFzA2ZtXiOAw86+MH8ahPnSz010vnrPR2VPxZVLVil1w7wDGkj8KuFen3EAlpaQXhxen8yQokhKGkHW+s77InbeCDYKT/jV6wtiqImAq+r3ipf8/wN4NU83Xkw0nHs=
+	t=1741643065; cv=none; b=psc317zFOCbOZEo9zhvw7EPnQnMxnceYMILrMon0CErY8usSNuLUYq3qPjXCcV5RoEpEkzJ5JftnxEMAkWpy36EiW2rMUG4q7oOOgIirpwp8hlA4I0o8O9WIvDZbZ/DNs3DCMl9jz7v4GotkjJq2UGdshf96LxG4uhTQeZqGDrI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741642974; c=relaxed/simple;
-	bh=Hgfqycyk5WAvowUEhLw7wDnMIf6XtuNalb//mZR8AGY=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=WHbKGBbokUAvF+jBKCvHATJWu+0Vyrq7oUcOX6GKrhE91bAho4sEJVbZ9JkmdRtwHC7cHqBSM880vAgpWpJrIS7wHet9V+1hmay6u5YlwdOqardabvX2LbTPehHyQWUKyLs6HHbEuGsZjyUKVIRDr/yaTiK1rQs0xWRaC98UThI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Wk22D0YR; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4DFACC4CEE5;
-	Mon, 10 Mar 2025 21:42:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741642973;
-	bh=Hgfqycyk5WAvowUEhLw7wDnMIf6XtuNalb//mZR8AGY=;
-	h=From:To:Cc:Subject:Date:From;
-	b=Wk22D0YR3b17pAiC+UtyGJTkNn4f/SCu58jZlCG8EtJEsYJE0ZTS7FDv7FGYZgvo3
-	 Zw8aIH8Jp1FwXbXAKz+bXKMERwjfFMFrUhJ0bUcw9ic883MXTGjJpiXBmpnrELzxZu
-	 Mr58Hq9+71qorcYrzyL+gee8iYn8JNfHk+Q7POStc5sVPiu5Le65C7DRvQIfu/QqHc
-	 Q59Vnn81tapAcI+efnO87N5WZNvAhSAit/vSYI+8ZgxhWImDr35+sZnF9RQ+XRNZAw
-	 JmkXhvO5xve9PBgSf/UKOUo/1PYDM7dqDlsGK0bSJwkKR2cA3JYZeD9eBe9rwNQ4Sl
-	 4C8cAPiiEkUmg==
-From: Kees Cook <kees@kernel.org>
-To: Miguel Ojeda <ojeda@kernel.org>
-Cc: Kees Cook <kees@kernel.org>,
-	Arnd Bergmann <arnd@arndb.de>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Len Brown <lenb@kernel.org>,
-	Marco Elver <elver@google.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
-	Hao Luo <haoluo@google.com>,
-	Masahiro Yamada <masahiroy@kernel.org>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Johannes Weiner <hannes@cmpxchg.org>,
-	linux-acpi@vger.kernel.org,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
-	Bill Wendling <morbo@google.com>,
-	Justin Stitt <justinstitt@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Alexander Potapenko <glider@google.com>,
-	Yafang Shao <laoar.shao@gmail.com>,
-	Jan Hendrik Farr <kernel@jfarr.cc>,
-	Tony Ambardar <tony.ambardar@gmail.com>,
-	Alexander Lobakin <aleksander.lobakin@intel.com>,
-	Alice Ryhl <aliceryhl@google.com>,
-	Tejun Heo <tj@kernel.org>,
-	Yoann Congal <yoann.congal@smile.fr>,
-	Roman Gushchin <roman.gushchin@linux.dev>,
-	Jens Axboe <axboe@kernel.dk>,
-	Chen Ridong <chenridong@huawei.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Jann Horn <jannh@google.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	linux-kernel@vger.kernel.org,
-	llvm@lists.linux.dev,
-	linux-hardening@vger.kernel.org
-Subject: [PATCH] compiler_types: Introduce __nonstring_array
-Date: Mon, 10 Mar 2025 14:42:48 -0700
-Message-Id: <20250310214244.work.194-kees@kernel.org>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1741643065; c=relaxed/simple;
+	bh=G7Fme57u2IzU0aCRudFHsqV8wPt8fHJGI84qD4gstHk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=J+nu4W+kEnyg0QmvQ82rRbMPFN76i5LarDMyFF0Hkq9tE7EFdqtrAlX+gidJpGctGUtK2usoKF+RTFPkpc/OFjG0XOS7C4tu2N4foGSliLWUlbGx2haUmN51wNWcDROFC3PYL3O/lddoEML4JglydtDe+n1+xrDDIKY6Z+oA2wI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=RC7gRiAC; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id A959A40E0217;
+	Mon, 10 Mar 2025 21:44:20 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id V8iI1EDRSufR; Mon, 10 Mar 2025 21:44:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1741643056; bh=YrWW6plKqCIN0T1rbvfgL9glpKdkbBP+e8JtMnvli14=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=RC7gRiACbr5X2bOvgLgQHCbYrfco5yY5J4Zyzf1tmLdAua6uP6NdKhnSP7EdroM6p
+	 68eXZ/A6rncjQlT88g/IM0ocOOOKQBoKd5kjHYHc78pwZbfE8oR7eE2S+bxh5a3jUt
+	 i3fhlUaVxs58JY3i++65Kq08aO/RkftEWfBmXxxcDiGU9YWC4Svhucg0zjDYSzPOTC
+	 4/Lx1h8l2qYxz7fLoVLsMIE8Ueo3JfpVBH8wN2JYpnLLRqKRs6v2VW44oVhvo3NsYr
+	 pPDiG+53Jc1qReJr5hLePbxKU+YSr5M5Cm3GltXwes8zI+XEuiuMpVH4FBlCxKJ5Nm
+	 XkFUJh17/yacZzUVcHpNlp0IOpR+06B3pxDBOu3lbSmsJIvg+L0/aTcfrQjHUGYmGQ
+	 4JkBd7Lt5DDHvK7lgYZ+L5AJ+OghMqDi8Xmn+SlksSy6lfHjiAhhIVc+MgCSMjZZG4
+	 cDQ7vl3vgyTqpCzakt+/6tqG9SKHKSD3ZlCv24bnXCjj1tgXrHp13A3Wb2L3ECCrYg
+	 QgKVISQPzNvvdu795eWiGTXfdlD+gNxS/gz7t33zi+2vHbzWzIJQUyALpJXc0nne2v
+	 6PgcaM9RegqMtqeYGqs9SUITZXoDbdcxh7J3LXSIBwg82/V9Ie3K8BjdTezhDZ1lvC
+	 KuyiROtXrBe0rCJNiNxGuXd0=
+Received: from zn.tnic (pd95303ce.dip0.t-ipconnect.de [217.83.3.206])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 31B8C40E015D;
+	Mon, 10 Mar 2025 21:44:03 +0000 (UTC)
+Date: Mon, 10 Mar 2025 22:44:02 +0100
+From: Borislav Petkov <bp@alien8.de>
+To: Ard Biesheuvel <ardb@kernel.org>
+Cc: Brian Gerst <brgerst@gmail.com>, Oleg Nesterov <oleg@redhat.com>,
+	linux-kernel@vger.kernel.org, x86@kernel.org,
+	Ingo Molnar <mingo@kernel.org>, "H . Peter Anvin" <hpa@zytor.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Uros Bizjak <ubizjak@gmail.com>, stable@vger.kernel.org,
+	Fangrui Song <i@maskray.me>, Nathan Chancellor <nathan@kernel.org>,
+	Andy Lutomirski <luto@kernel.org>
+Subject: Re: [PATCH] x86/stackprotector: fix build failure with
+ CONFIG_STACKPROTECTOR=n
+Message-ID: <20250310214402.GBZ89dIo_NLF4zOSKh@fat_crate.local>
+References: <20241105155801.1779119-1-brgerst@gmail.com>
+ <20241105155801.1779119-2-brgerst@gmail.com>
+ <20241206123207.GA2091@redhat.com>
+ <CAMj1kXGKCJfBVqgsqjX1bA_SY=503Z-tJV893y5JAwoVs0BUfw@mail.gmail.com>
+ <20241206142152.GB31748@redhat.com>
+ <CAMj1kXGo5yv56VvNMvYBohxgyoyDtZhr4d4kjRdGTDQchHW0Gw@mail.gmail.com>
+ <CAMzpN2iUi_q_CfDa53H8MEV_zkb8NRtXtQPvOwDrEks58=3uAg@mail.gmail.com>
+ <CAMj1kXF8PZq4660mzNYcT=QmWywB1gOOfZGzZhi1sQxQacUX=g@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=4227; i=kees@kernel.org; h=from:subject:message-id; bh=Hgfqycyk5WAvowUEhLw7wDnMIf6XtuNalb//mZR8AGY=; b=owGbwMvMwCVmps19z/KJym7G02pJDOnnY250lb4+9jb5eIJS+5/U8MWXp+Qst9x3Yqqd93nNg MnXEhwndJSyMIhxMciKKbIE2bnHuXi8bQ93n6sIM4eVCWQIAxenAEwk/CzDf9eb1ZL5xsK7Ox6a dWptfW1umrQ/PPH6fWmtGbVi7n5aNgz/NH09gypDt73QUtNrmx0wYxWr98x/dmGb97hmvX0jPWc GJwA=
-X-Developer-Key: i=kees@kernel.org; a=openpgp; fpr=A5C3F68F229DD60F723E6E138972F4DFDC6DC026
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <CAMj1kXF8PZq4660mzNYcT=QmWywB1gOOfZGzZhi1sQxQacUX=g@mail.gmail.com>
 
-GCC has expanded support of the "nonstring" attribute so that it can be
-applied to arrays of character arrays[1], which is needed to identify
-correct static initialization of those kinds of objects. Since this was
-not supported prior to GCC 15, we need to distinguish the usage of Linux's
-existing __nonstring macro for the attribute for non-multi-dimensional
-char arrays. Until GCC 15 is the minimum version, use __nonstring_array to
-mark arrays of non-string character arrays. (Regular non-string character
-arrays can continue to use __nonstring.)
+Just to report this, bisection tomorrow unless someone figures it out in the
+meantime...
 
-This allows for changes like this:
+This is 64-bit, allmodconfig, clang:
 
--static const char table_sigs[][ACPI_NAMESEG_SIZE] __initconst = {
-+static const char table_sigs[][ACPI_NAMESEG_SIZE] __nonstring_array __initconst = {
-        ACPI_SIG_BERT, ACPI_SIG_BGRT, ACPI_SIG_CPEP, ACPI_SIG_ECDT,
+clang --version
+Ubuntu clang version 15.0.7
+Target: x86_64-pc-linux-gnu
+Thread model: posix
+InstalledDir: /usr/bin
 
-Which will silence the coming -Wunterminated-string-initialization
-warnings in GCC 15:
+This guy:
 
-In file included from ../include/acpi/actbl.h:371,                                                                   from ../include/acpi/acpi.h:26,                                                                     from ../include/linux/acpi.h:26,
-                 from ../drivers/acpi/tables.c:19:
-../include/acpi/actbl1.h:30:33: warning: initializer-string for array of 'char' truncates NUL terminator but destination lacks 'nonstring' attribute (5 chars into 4 available) [-Wunterminated-string-initialization]
-   30 | #define ACPI_SIG_BERT           "BERT"  /* Boot Error Record Table */
-      |                                 ^~~~~~                                                      ../drivers/acpi/tables.c:400:9: note: in expansion of macro 'ACPI_SIG_BERT'                           400 |         ACPI_SIG_BERT, ACPI_SIG_BGRT, ACPI_SIG_CPEP, ACPI_SIG_ECDT,
-      |         ^~~~~~~~~~~~~                                                                       ../include/acpi/actbl1.h:31:33: warning: initializer-string for array of 'char' truncates NUL terminator but destination lacks 'nonstring' attribute (5 chars into 4 available) [-Wunterminated-string-initialization]
-   31 | #define ACPI_SIG_BGRT           "BGRT"  /* Boot Graphics Resource Table */
-      |                                 ^~~~~~
+Ubuntu clang version 18.1.3 (1ubuntu1)
+Target: x86_64-pc-linux-gnu
+Thread model: posix
+InstalledDir: /usr/bin
 
-Link: https://gcc.gnu.org/bugzilla/show_bug.cgi?id=117178 [1]
-Signed-off-by: Kees Cook <kees@kernel.org>
----
-Cc: Miguel Ojeda <ojeda@kernel.org>
-Cc: Arnd Bergmann <arnd@arndb.de>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: Len Brown <lenb@kernel.org>
-Cc: Marco Elver <elver@google.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Przemek Kitszel <przemyslaw.kitszel@intel.com>
-Cc: Hao Luo <haoluo@google.com>
-Cc: Masahiro Yamada <masahiroy@kernel.org>
-Cc: Christophe Leroy <christophe.leroy@csgroup.eu>
-Cc: Johannes Weiner <hannes@cmpxchg.org>
-Cc: linux-acpi@vger.kernel.org
----
- include/linux/compiler_types.h | 12 ++++++++++++
- init/Kconfig                   |  3 +++
- 2 files changed, 15 insertions(+)
+on the other box builds fine.
 
-diff --git a/include/linux/compiler_types.h b/include/linux/compiler_types.h
-index 981cc3d7e3aa..7ccea700b46d 100644
---- a/include/linux/compiler_types.h
-+++ b/include/linux/compiler_types.h
-@@ -348,6 +348,18 @@ struct ftrace_likely_data {
- # define __counted_by(member)
- #endif
- 
-+/*
-+ * Optional: only supported since gcc >= 15
-+ * Optional: not supported by Clang
-+ *
-+ * gcc: https://gcc.gnu.org/bugzilla/show_bug.cgi?id=117178
-+ */
-+#ifdef CONFIG_CC_HAS_MULTIDIMENSIONAL_NONSTRING
-+# define __nonstring_array		__attribute__((__nonstring__))
-+#else
-+# define __nonstring_array
-+#endif
-+
- /*
-  * Apply __counted_by() when the Endianness matches to increase test coverage.
-  */
-diff --git a/init/Kconfig b/init/Kconfig
-index d0d021b3fa3b..723dc69507d6 100644
---- a/init/Kconfig
-+++ b/init/Kconfig
-@@ -129,6 +129,9 @@ config CC_HAS_COUNTED_BY
- 	# https://github.com/llvm/llvm-project/pull/112636
- 	depends on !(CC_IS_CLANG && CLANG_VERSION < 190103)
- 
-+config CC_HAS_MULTIDIMENSIONAL_NONSTRING
-+	def_bool $(success,echo 'char tag[][4] __attribute__((__nonstring__)) = { };' | $(CC) $(CLANG_FLAGS) -x c - -c -o /dev/null -Werror)
-+
- config RUSTC_HAS_COERCE_POINTEE
- 	def_bool RUSTC_VERSION >= 108400
- 
+tip/master:
+
+commit bc6bc2e1d7fa7e950c5ffb1ddf19bbaf15ad8863 (HEAD, refs/remotes/tip/master)
+Merge: f00b8d0b903a 72dafb567760
+Author: Ingo Molnar <mingo@kernel.org>
+Date:   Mon Mar 10 21:57:15 2025 +0100
+
+    Merge branch into tip/master: 'x86/sev'
+    
+     # New commits in x86/sev:
+        72dafb567760 ("x86/sev: Add missing RIP_REL_REF() invocations during sme_enable()")
+    
+    Signed-off-by: Ingo Molnar <mingo@kernel.org>
+
+
+vmlinux.o: warning: objtool: set_ftrace_ops_ro+0x30: relocation to !ENDBR: .text+0x180475
+Absolute reference to symbol '__ref_stack_chk_guard' not permitted in .head.text
+make[3]: *** [arch/x86/Makefile.postlink:28: vmlinux] Error 1
+make[2]: *** [scripts/Makefile.vmlinux:77: vmlinux] Error 2
+make[2]: *** Deleting file 'vmlinux'
+make[1]: *** [/home/amd/kernel/linux/Makefile:1234: vmlinux] Error 2
+make[1]: *** Waiting for unfinished jobs....
+make: *** [Makefile:251: __sub-make] Error 2
+
 -- 
-2.34.1
+Regards/Gruss,
+    Boris.
 
+https://people.kernel.org/tglx/notes-about-netiquette
 
