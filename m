@@ -1,318 +1,208 @@
-Return-Path: <linux-kernel+bounces-554825-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-554826-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E39C5A59FC4
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 18:43:36 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 374A4A59FCB
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 18:43:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9BFB6170A9B
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 17:43:27 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7E0C87A5128
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 17:42:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B8C42253FE;
-	Mon, 10 Mar 2025 17:43:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F248C233737;
+	Mon, 10 Mar 2025 17:43:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="Ql0wvn0j"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E72032236FB
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 17:43:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="V3IjL0ca"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C302622DFB1;
+	Mon, 10 Mar 2025 17:43:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741628601; cv=none; b=gHg+uFtQ5Lf5FPHD/pPEMrgqjzj9Q9bLM6rosKYq5lwEda91ETQOxjmihQF7dPh/ItLGfArcCO37e01CifXND668X1kiymszxwEQl38XiHlfPFkYwu8o7BGjBleCibxr4r2NkCZm6FF89P7VsGLGVD96J7A/PblFrSRzbK4sHeY=
+	t=1741628610; cv=none; b=Fe6rDyhHaiuKZmFsW3TiKJyhyWlOE2N3Mi921rt+SiCmCP+nuGf9jwizqcOSsVXKkSut9TP/0nTc5NNrXB0AeqqykWr2mcl6Mx+RD/4m+hQRbbYp9y1qTSNyDyjEwJwGyf2Ah23vmTFoEcMLMu/ThH+ZlemEI0vqWI8ppbHDzbw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741628601; c=relaxed/simple;
-	bh=cB8pswrYyE2LYANxEdFIleLyRXmPMV3MtZQNDyvR0Lw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=drfTfxTo5fvrV3NiJwptJ8IT3X9KJN6WVgtppytXEaECGkBx9hkL5q9FBFP2fLjdD/4racOP3rIvIa3pke4tL/+BWbAF0Sd6QJCw4wSfIHGX4C5IGILPTNCVXYMGwbUv25bqWx9hB1DxiYcgq8S8tm7+kvrYn78w+ckhHh+2ZDo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=Ql0wvn0j; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52A9pptJ005321
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 17:43:19 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	o4LclDHorCJURc3TarmwS3fQFDxMEl4ZP6Fc0OfzUGg=; b=Ql0wvn0jXLRmfmff
-	Pl4De6r1IfkFfyg+55TeBIZAdmkyYyuyTOf4txe65DZBVxMkbnJ1QywojtSG4Hw/
-	B7Y1vTZQCY5xRFTDV9TDJP9SjTkHUyjk+dSmJhdOcTU67bRrYw8pe9J20q30V46L
-	jju7oCEhzezP+/VvDRelyxymvt1lAKjeYUvF39YuXBCWLv0ezC1JesxFd8uoJ1e2
-	BRAQGNtrTOK3fFFXGrRpeGy77UAtZ/MhPSyZ+n4ROgtFpIhFdBoUd8lyw0rSU/Ma
-	nosghQk2ZBhRi62GAoonnu7ETC9blYcYYFm2oYaXt5xVFo44en+WL2ZH6ma/cOMB
-	JgcBiQ==
-Received: from mail-pl1-f197.google.com (mail-pl1-f197.google.com [209.85.214.197])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 458f6ads1w-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 17:43:18 +0000 (GMT)
-Received: by mail-pl1-f197.google.com with SMTP id d9443c01a7336-2240fea0482so118129405ad.3
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 10:43:18 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741628598; x=1742233398;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=o4LclDHorCJURc3TarmwS3fQFDxMEl4ZP6Fc0OfzUGg=;
-        b=KYRLryhioBM/x1GHc0ruNVbq9n9yYBhqzgMt+MPFSm5YHob99ExaNe+y6KBNYnxoMG
-         jIG3DGdN31Fe3ZCGjKqQMj5PGxJMMXbvhd715sJDN5uKeyikg2wVhw5Q8X+WaWiNi6c+
-         LVolz0keXOgNFUEHRRe8MDkBssvOIkwtuusTM78AUY/lUKwj0r2myZ/W26vrpGMwQ06Y
-         S7bXRJmAbAzewJkTRSomsVIphofkEFWYSGnr+Wd9ocm3WsRW4KmRevkMFPqGqt9wfsQd
-         M5wOWNo9jDJv46x8BM3NdqR8o6yjucFM6J6W3kvWqOPOwhqKHKWZ14oI5RGzWhMocRg0
-         wnXQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWGK2uEUwMtN0MxQ5msWtJRkho12y/ZwEXGm3xl9+p+rtNdKNc6wCmgsc1Xd1VYdw5PBr+/7P51YWm166Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy8E4OMNYQvo7lY5PzOqiHXsn436Qw5JhWHjyZEwxeGMoAzrEvT
-	R3wFdC0FFUxH90byxLVgt5eO1aySepZhRaRYc80PHNhPT/I0JvUPXvkeQsTK7Zu1cC2ObQMpdYb
-	AhkHZOj8mu5SMWMSVtKfA6sSCnAnwuXhj745UzgNS975jODzeUDO4kuOq+VoC/yE=
-X-Gm-Gg: ASbGnctLSK8dbWFhcjoz/ih92i3eyAq7EcPqtMtBw3VfegdgD8WBHwt1hQrDIIbLpAZ
-	02Lh7oP++lGLrEIJdKfZgT4PzFHlBqyJC8Ca5FYlCrdWn9Q4aYcmzE0FeX0yj3em/eVQRiQZDnQ
-	TLRsEn6PWUshIanfsMwSKoY/DzX8OvTDL5bNFJmMZWCL4h4Zm9Z+oQ4yybY/zeBfMvnsa236Lay
-	V65Yhqa0KVxdn7+FEWwd3JZjHXqvOOFaASg13EXCPyi7vgsgrmKxDMtei8aGNJKbH7cOrOKmsrC
-	Xj+itzW2ysW5t8nHpkcn5tVxWIlpQ9QF6a/fQ1/hmldoPVFf5alqjgHMhKAbsANszC4L1XqAaOf
-	EDhyow4lTZA==
-X-Received: by 2002:a17:902:f686:b0:224:5a8:ba29 with SMTP id d9443c01a7336-22428ad1f1dmr230620875ad.43.1741628596823;
-        Mon, 10 Mar 2025 10:43:16 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHSoXZwl/xRJnBvMNjgKI4bwG+zoNAL5zhn2MR//FnzJEQ5Lx0UFNv9uhZTM9ssO7gjvzuuiw==
-X-Received: by 2002:a17:902:f686:b0:224:5a8:ba29 with SMTP id d9443c01a7336-22428ad1f1dmr230619475ad.43.1741628594912;
-        Mon, 10 Mar 2025 10:43:14 -0700 (PDT)
-Received: from [10.71.110.252] (i-global254.qualcomm.com. [199.106.103.254])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22410ab3c10sm80826755ad.249.2025.03.10.10.43.13
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 10 Mar 2025 10:43:14 -0700 (PDT)
-Message-ID: <020a5173-512a-4fc0-9838-aa3c2f482323@oss.qualcomm.com>
-Date: Mon, 10 Mar 2025 10:42:59 -0700
+	s=arc-20240116; t=1741628610; c=relaxed/simple;
+	bh=nVu5HN6r55xWpWlJj8oBTLsoBZcAk38gbF4FNnZ7ZFc=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=U97sVm/a9FmA2SQBsj/6QAga8tzz3B5DXdKybbxB4IzNFUic82Kwka+4BBG4InUBNjqwyBe6v0oZ9On3Dd0bWTo65sQU1dz+lws78cRs/MBF8d7eqPWZRLDt9peSG0JHuwPYf6t72dNhUpdgYtouv5y9CsYVpTVXbiooiJVXnsc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=V3IjL0ca; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: from narnia (unknown [167.220.2.28])
+	by linux.microsoft.com (Postfix) with ESMTPSA id A18EC2038F31;
+	Mon, 10 Mar 2025 10:43:20 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com A18EC2038F31
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1741628608;
+	bh=ggsx2Gq6zrbtpEOFlIbtQA76waAnu6lidjNvvMFeczU=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=V3IjL0caWZjWbSBABQ34XNSIVJ7jmgbqqeoGaUPq04B6WbaFpIiLfHxOqBFezDIfq
+	 kqbjHVvQ2XI9oiVBOf+z0OZIcozNsk4VOj8LjvlXx9qklkgvetClV3iYXgNoYDkS0K
+	 FYtHdXFstUZI/9BUpaItT9ACuyGIqsTfktYx7uWc=
+From: Blaise Boscaccy <bboscaccy@linux.microsoft.com>
+To: Song Liu <song@kernel.org>
+Cc: Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+ "Serge E. Hallyn" <serge@hallyn.com>, Alexei Starovoitov <ast@kernel.org>,
+ Daniel Borkmann <daniel@iogearbox.net>, John Fastabend
+ <john.fastabend@gmail.com>, Andrii Nakryiko <andrii@kernel.org>, Martin
+ KaFai Lau <martin.lau@linux.dev>, Eduard Zingerman <eddyz87@gmail.com>,
+ Yonghong Song <yonghong.song@linux.dev>, KP Singh <kpsingh@kernel.org>,
+ Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, Jiri
+ Olsa <jolsa@kernel.org>, Stephen Smalley <stephen.smalley.work@gmail.com>,
+ Ondrej Mosnacek <omosnace@redhat.com>, Mykola Lysenko <mykolal@fb.com>,
+ Shuah Khan <shuah@kernel.org>, Kumar Kartikeya Dwivedi <memxor@gmail.com>,
+ Matt Bobrowski <mattbobrowski@google.com>, Xu Kuohai
+ <xukuohai@huawei.com>, linux-kernel@vger.kernel.org,
+ linux-security-module@vger.kernel.org, bpf@vger.kernel.org,
+ selinux@vger.kernel.org, linux-kselftest@vger.kernel.org
+Subject: Re: [PATCH v6 bpf-next 2/2] selftests/bpf: Add a kernel flag test
+ for LSM bpf hook
+In-Reply-To: <CAPhsuW6-XmcFLT0xkMJJVEu4hSKQ1efEGdnogCuazBOctNTtfw@mail.gmail.com>
+References: <20250308013314.719150-1-bboscaccy@linux.microsoft.com>
+ <20250308013314.719150-3-bboscaccy@linux.microsoft.com>
+ <CAPhsuW6-XmcFLT0xkMJJVEu4hSKQ1efEGdnogCuazBOctNTtfw@mail.gmail.com>
+Date: Mon, 10 Mar 2025 10:43:18 -0700
+Message-ID: <87v7sgye6h.fsf@microsoft.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 2/2] firmware: qcom_scm: Support multiple waitq
- contexts
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, linux-arm-msm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel@oss.qualcomm.com,
-        Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-        Prasad Sodagudi <prasad.sodagudi@oss.qualcomm.com>,
-        Satya Durga Srinivasu Prabhala <quic_satyap@quicinc.com>,
-        Trilok Soni <quic_tsoni@quicinc.com>
-References: <20250227-multi_waitq_scm-v5-0-16984ea97edf@oss.qualcomm.com>
- <20250227-multi_waitq_scm-v5-2-16984ea97edf@oss.qualcomm.com>
- <CAMRc=MeDcMbH=xFZnr=_NZPQ2X9eOfRoRHnS1LJ6M54KwHMVRQ@mail.gmail.com>
-Content-Language: en-US
-From: Unnathi Chalicheemala <unnathi.chalicheemala@oss.qualcomm.com>
-In-Reply-To: <CAMRc=MeDcMbH=xFZnr=_NZPQ2X9eOfRoRHnS1LJ6M54KwHMVRQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Authority-Analysis: v=2.4 cv=WsDRMcfv c=1 sm=1 tr=0 ts=67cf24b6 cx=c_pps a=cmESyDAEBpBGqyK7t0alAg==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17 a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=EUspDBNiAAAA:8 a=3kMJlp3iliGaCrkfHV8A:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
- a=1OuFwYUASf3TG4hYMiVC:22
-X-Proofpoint-GUID: CwwnGcQC2tIG1IEybkXnA3rrQZL2R0jX
-X-Proofpoint-ORIG-GUID: CwwnGcQC2tIG1IEybkXnA3rrQZL2R0jX
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-10_06,2025-03-07_03,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 suspectscore=0
- lowpriorityscore=0 priorityscore=1501 bulkscore=0 adultscore=0
- impostorscore=0 phishscore=0 mlxscore=0 mlxlogscore=999 clxscore=1015
- spamscore=0 classifier=spam authscore=0 authtc=n/a authcc= route=outbound
- adjust=0 reason=mlx scancount=1 engine=8.19.0-2502100000
- definitions=main-2503100138
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On 3/4/2025 4:49 AM, Bartosz Golaszewski wrote:
-> On Fri, Feb 28, 2025 at 6:40 AM Unnathi Chalicheemala
-> <unnathi.chalicheemala@oss.qualcomm.com> wrote:
->>
->> Currently, only a single waitqueue context exists, with waitqueue id zero.
->> Multi-waitqueue mechanism is added in firmware to support the case when
->> multiple VMs make SMC calls or single VM making multiple calls on same CPU.
->>
->> When VMs make SMC call, firmware will allocate waitqueue context assuming
->> the SMC call to be a blocking call. SMC calls that cannot acquire resources
->> are returned to sleep in the calling VM. When resource is available, VM
->> will be notified to wake sleeping thread and resume SMC call.
->> SM8650 firmware can allocate two such waitq contexts so create these two
->> waitqueue contexts.
->>
->> Unique waitqueue contexts are supported by a dynamically sized array where
->> each unique wq_ctx is associated with a struct completion variable for easy
->> lookup. To get the number of waitqueue contexts directly from firmware,
->> qcom_scm_query_waitq_cnt() is introduced. On older targets which support
-> 
-> Seems like it's actually called qcom_scm_query_waitq_count
-> 
+Song Liu <song@kernel.org> writes:
 
-Yes my bad. Will correct this in next series.
-
->> only a single waitqueue, wq_cnt is set to 1 as SCM call for
->> query_waitq_cnt() is not implemented for single waitqueue case.
+> On Fri, Mar 7, 2025 at 5:33=E2=80=AFPM Blaise Boscaccy
+> <bboscaccy@linux.microsoft.com> wrote:
 >>
->> Signed-off-by: Unnathi Chalicheemala <unnathi.chalicheemala@oss.qualcomm.com>
+>> This test exercises the kernel flag added to security_bpf by
+>> effectively blocking light-skeletons from loading while allowing
+>> normal skeletons to function as-is. Since this should work with any
+>> arbitrary BPF program, an existing program from LSKELS_EXTRA was
+>> used as a test payload.
+>>
+>> Signed-off-by: Blaise Boscaccy <bboscaccy@linux.microsoft.com>
 >> ---
->>  drivers/firmware/qcom/qcom_scm.c | 75 ++++++++++++++++++++++++++++------------
->>  1 file changed, 53 insertions(+), 22 deletions(-)
+>>  .../selftests/bpf/prog_tests/kernel_flag.c    | 43 +++++++++++++++++++
+>>  .../selftests/bpf/progs/test_kernel_flag.c    | 28 ++++++++++++
+>>  2 files changed, 71 insertions(+)
+>>  create mode 100644 tools/testing/selftests/bpf/prog_tests/kernel_flag.c
+>>  create mode 100644 tools/testing/selftests/bpf/progs/test_kernel_flag.c
 >>
->> diff --git a/drivers/firmware/qcom/qcom_scm.c b/drivers/firmware/qcom/qcom_scm.c
->> index 1aa42685640da8a14191557896fbb49423697a10..ec139380ce5ba6d11f1023258e1d36edcf3d9d45 100644
->> --- a/drivers/firmware/qcom/qcom_scm.c
->> +++ b/drivers/firmware/qcom/qcom_scm.c
->> @@ -47,7 +47,7 @@ struct qcom_scm {
->>         struct clk *iface_clk;
->>         struct clk *bus_clk;
->>         struct icc_path *path;
->> -       struct completion waitq_comp;
->> +       struct completion *waitq;
->>         struct reset_controller_dev reset;
->>
->>         /* control access to the interconnect path */
->> @@ -57,6 +57,7 @@ struct qcom_scm {
->>         u64 dload_mode_addr;
->>
->>         struct qcom_tzmem_pool *mempool;
->> +       unsigned int wq_cnt;
->>  };
->>
->>  struct qcom_scm_current_perm_info {
->> @@ -2118,6 +2119,25 @@ static int qcom_scm_fill_irq_fwspec_params(struct irq_fwspec *fwspec, u32 virq)
->>         return 0;
->>  }
->>
->> +static int qcom_scm_query_waitq_count(struct qcom_scm *scm)
+>> diff --git a/tools/testing/selftests/bpf/prog_tests/kernel_flag.c b/tool=
+s/testing/selftests/bpf/prog_tests/kernel_flag.c
+>> new file mode 100644
+>> index 0000000000000..479ad5de3737e
+>> --- /dev/null
+>> +++ b/tools/testing/selftests/bpf/prog_tests/kernel_flag.c
+>> @@ -0,0 +1,43 @@
+>> +// SPDX-License-Identifier: GPL-2.0
+>> +/* Copyright (c) 2025 Microsoft */
+>> +#include <test_progs.h>
+>> +#include "kfunc_call_test.skel.h"
+>> +#include "kfunc_call_test.lskel.h"
+>> +#include "test_kernel_flag.skel.h"
+>> +
+>> +void test_kernel_flag(void)
 >> +{
+>> +       struct test_kernel_flag *lsm_skel;
+>> +       struct kfunc_call_test *skel =3D NULL;
+>> +       struct kfunc_call_test_lskel *lskel =3D NULL;
 >> +       int ret;
->> +       struct qcom_scm_desc desc = {
->> +               .svc = QCOM_SCM_SVC_WAITQ,
->> +               .cmd = QCOM_SCM_WAITQ_GET_INFO,
->> +               .owner = ARM_SMCCC_OWNER_SIP
->> +       };
->> +       struct qcom_scm_res res;
 >> +
->> +       ret = qcom_scm_call_atomic(scm->dev, &desc, &res);
-> 
-> This can fail for a multitude of reasons - some of which we may want
-> to propagate to the caller, how about being more fine-grained and
-> using __qcom_scm_is_call_available() to check if
-> QCOM_SCM_WAITQ_GET_INFO is available first?
-> 
-
-I agree, will return 1 in the case call is unavailable.
-
-Thanks for your review Bartosz!
-
->> +       if (ret) {
->> +               dev_err(scm->dev, "Multi-waitqueue support unavailable\n");
-> 
-> Is this an error though? From the commit message it seems it's normal
-> operation on older platforms?
-> 
-> Bartosz
-> 
-> 
->> +               return 1;
->> +       }
+>> +       lsm_skel =3D test_kernel_flag__open_and_load();
+>> +       if (!ASSERT_OK_PTR(lsm_skel, "lsm_skel"))
+>> +               return;
 >> +
->> +       return res.result[0] & GENMASK(7, 0);
+>> +       ret =3D test_kernel_flag__attach(lsm_skel);
+>> +       if (!ASSERT_OK(ret, "test_kernel_flag__attach"))
+>> +               goto close_prog;
+>> +
+>> +       lsm_skel->bss->monitored_pid =3D getpid();
+>
+> We usually set monitored_pid before attaching the program.
+>
+
+Okay, copy that.=20
+
+>> +
+>> +       /* Test with skel. This should pass the gatekeeper */
+>> +       skel =3D kfunc_call_test__open_and_load();
+>> +       if (!ASSERT_OK_PTR(skel, "skel"))
+>> +               goto close_prog;
+>> +
+>> +       /* Test with lskel. This should fail due to blocking kernel-base=
+d bpf() invocations */
+>> +       lskel =3D kfunc_call_test_lskel__open_and_load();
+>> +       if (!ASSERT_ERR_PTR(lskel, "lskel"))
+>> +               goto close_prog;
+>> +
+>> +close_prog:
+>> +       if (skel)
+>> +               kfunc_call_test__destroy(skel);
+>> +       if (lskel)
+>> +               kfunc_call_test_lskel__destroy(lskel);
+>> +
+>> +       lsm_skel->bss->monitored_pid =3D 0;
+>> +       test_kernel_flag__destroy(lsm_skel);
 >> +}
+>> diff --git a/tools/testing/selftests/bpf/progs/test_kernel_flag.c b/tool=
+s/testing/selftests/bpf/progs/test_kernel_flag.c
+>> new file mode 100644
+>> index 0000000000000..9ca01aadb6656
+>> --- /dev/null
+>> +++ b/tools/testing/selftests/bpf/progs/test_kernel_flag.c
+>> @@ -0,0 +1,28 @@
+>> +// SPDX-License-Identifier: GPL-2.0
 >> +
->>  static int qcom_scm_get_waitq_irq(void)
->>  {
->>         int ret;
->> @@ -2149,42 +2169,40 @@ static int qcom_scm_get_waitq_irq(void)
->>         return ret;
->>  }
->>
->> -static int qcom_scm_assert_valid_wq_ctx(u32 wq_ctx)
->> +static struct completion *qcom_scm_get_completion(u32 wq_ctx)
->>  {
->> -       /* FW currently only supports a single wq_ctx (zero).
->> -        * TODO: Update this logic to include dynamic allocation and lookup of
->> -        * completion structs when FW supports more wq_ctx values.
->> -        */
->> -       if (wq_ctx != 0) {
->> -               dev_err(__scm->dev, "Firmware unexpectedly passed non-zero wq_ctx\n");
->> -               return -EINVAL;
->> -       }
->> +       struct completion *wq;
->>
->> -       return 0;
->> +       if (WARN_ON_ONCE(wq_ctx >= __scm->wq_cnt))
->> +               return ERR_PTR(-EINVAL);
+>> +/*
+>> + * Copyright (C) 2025 Microsoft Corporation
+>> + *
+>> + * Author: Blaise Boscaccy <bboscaccy@linux.microsoft.com>
+>> + */
 >> +
->> +       wq = &__scm->waitq[wq_ctx];
+>> +#include "vmlinux.h"
+>> +#include <errno.h>
+>> +#include <bpf/bpf_helpers.h>
+>> +#include <bpf/bpf_tracing.h>
 >> +
->> +       return wq;
->>  }
->>
->>  int qcom_scm_wait_for_wq_completion(u32 wq_ctx)
->>  {
->> -       int ret;
->> +       struct completion *wq;
->>
->> -       ret = qcom_scm_assert_valid_wq_ctx(wq_ctx);
->> -       if (ret)
->> -               return ret;
->> +       wq = qcom_scm_get_completion(wq_ctx);
->> +       if (IS_ERR(wq))
->> +               return PTR_ERR(wq);
->>
->> -       wait_for_completion(&__scm->waitq_comp);
->> +       wait_for_completion(wq);
->>
->>         return 0;
->>  }
->>
->>  static int qcom_scm_waitq_wakeup(unsigned int wq_ctx)
->>  {
->> -       int ret;
->> +       struct completion *wq;
->>
->> -       ret = qcom_scm_assert_valid_wq_ctx(wq_ctx);
->> -       if (ret)
->> -               return ret;
->> +       wq = qcom_scm_get_completion(wq_ctx);
->> +       if (IS_ERR(wq))
->> +               return PTR_ERR(wq);
->>
->> -       complete(&__scm->waitq_comp);
->> +       complete(wq);
->>
->>         return 0;
->>  }
->> @@ -2260,6 +2278,7 @@ static int qcom_scm_probe(struct platform_device *pdev)
->>         struct qcom_tzmem_pool_config pool_config;
->>         struct qcom_scm *scm;
->>         int irq, ret;
->> +       int i;
->>
->>         scm = devm_kzalloc(&pdev->dev, sizeof(*scm), GFP_KERNEL);
->>         if (!scm)
->> @@ -2270,7 +2289,19 @@ static int qcom_scm_probe(struct platform_device *pdev)
->>         if (ret < 0)
->>                 return ret;
->>
->> -       init_completion(&scm->waitq_comp);
->> +       ret = qcom_scm_query_waitq_count(scm);
->> +       if (ret < 0)
->> +               return ret;
+>> +char _license[] SEC("license") =3D "GPL";
 >> +
->> +       scm->wq_cnt = ret;
+>> +__u32 monitored_pid;
 >> +
->> +       scm->waitq = devm_kcalloc(&pdev->dev, scm->wq_cnt, sizeof(*scm->waitq), GFP_KERNEL);
->> +       if (!scm->waitq)
->> +               return -ENOMEM;
+>> +SEC("lsm.s/bpf")
+>> +int BPF_PROG(bpf, int cmd, union bpf_attr *attr, unsigned int size, boo=
+l kernel)
+>> +{
+>> +       __u32 pid;
 >> +
->> +       for (i = 0; i < scm->wq_cnt; i++)
->> +               init_completion(&scm->waitq[i]);
->> +
->>         mutex_init(&scm->scm_bw_lock);
->>
->>         scm->path = devm_of_icc_get(&pdev->dev, NULL);
->>
->> --
->> 2.34.1
->>
->>
+>> +       pid =3D bpf_get_current_pid_tgid() >> 32;
+>> +       if (!kernel || pid !=3D monitored_pid)
+>> +               return 0;
+>
+> We are blocking lskel load for the pid. This could make
+> parallel testing (test_progs -j) flaky. We should probably
+> change the logic to filtering on monitored_tiid.
+>
 
+Curious on this for my own edification. The
+
+pid =3D bpf_get_current_pid_tgid() >> 32;
+
+is used extensively in the current test suite in a bunch of other
+tests. Why does that not cause an issue with the other tests during
+parallel testing?=20
+
+> Thanks,
+> Song
+>
+>> +       else
+>> +               return -EINVAL;
+>> +}
+>> --
+>> 2.48.1
+>>
+>>
 
