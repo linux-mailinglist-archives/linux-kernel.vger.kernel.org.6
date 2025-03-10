@@ -1,104 +1,133 @@
-Return-Path: <linux-kernel+bounces-553738-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-553740-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D2E9A58E4E
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 09:38:32 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EDE67A58E51
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 09:39:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F1E7216BC0B
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 08:38:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 98BA93AD919
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 08:38:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD09D223705;
-	Mon, 10 Mar 2025 08:38:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D475D22370D;
+	Mon, 10 Mar 2025 08:38:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BQPa0jwa"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MsRYYhbj"
+Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08D1B1D5142;
-	Mon, 10 Mar 2025 08:38:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DA2F22331C;
+	Mon, 10 Mar 2025 08:38:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741595901; cv=none; b=Re6IR3jfF1rUH3L0T2w3AMhuWGy7EHFwIGQJWsLfPVkDG9H79dxFWAqfpzvp7sLgXwH6YlD53pQyFIUqOr0zZ1w/A39HyiBxVpKYqpeYFywg4bcoj0Rc0ScC3bVtzsh3AcPLdRuhuFIF9oFhngpRnry2uPwcPOj1Vh65SWZ6Z14=
+	t=1741595931; cv=none; b=NWf/vUpGHGj2bQ8hixDLA/iF4QRxhEPEfeil//A69Nle5bJ3rDNmFGhZ4doh8u7nAbxFmDv0EbeA0M7P6CH+o3bybkrLyIjCZ3DxWFyb//pfK+lmElVGHo2Fl9DnK0fxDdVgugx/q7KvBjkGLfFRmIxz4SBgMnYIJXZ4g8NLjJU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741595901; c=relaxed/simple;
-	bh=r4/JPIW6MjEsja8Y5IUSOTA1XlmLtgY4IVJWbznTO8c=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SfOi5V44Wtua0JDhIZRSc/sP1wXRiox8ccKniyN9x+2pgIhwy3B2XXhSQjFUnAuYXpNIMa8n9tLrxta+/IYJU+HSPX6G6cS22sB5iX8TG9zcF8T2U6EWQZ6CeeDak0n07LIhQ/d1Nyt93EYzwiqCTkNQd2ZLGvFDH/Jhz7tCC2A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BQPa0jwa; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 975F8C4CEE5;
-	Mon, 10 Mar 2025 08:38:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741595900;
-	bh=r4/JPIW6MjEsja8Y5IUSOTA1XlmLtgY4IVJWbznTO8c=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=BQPa0jwa5JqeaOt1cjSzr9z9tpr6jtYK1lHAYg7b2vRUcDnms7auuiuqdV8wBH7Xw
-	 EUS+AxlHGWEr34gVfJqpD0xFC8dR0GxmbvkLy3kMHkQqTRjE20B6D6s4Ulm3bgHS1O
-	 /16bQ9BxGC3AfCIVZZIXwH4GcmmAlZvTMornvlaKpUh/wLh0NQklS3OkyHyUu7NipP
-	 irHVymfYyhvT+o2bZfh8DdKZWp3HzLdEC8JbxPzMpxtG15IBczR8tNqdPSaOtBVVAc
-	 ZkEDX6ZaQtlhe8Kj4XfP8XbPRvnB65IdhHEG0SV4z7NBjSMycqZ8xV9d9J1GLmrZj+
-	 Tigqn6u37+9TQ==
-Date: Mon, 10 Mar 2025 09:38:16 +0100
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Ziyue Zhang <quic_ziyuzhan@quicinc.com>
-Cc: bhelgaas@google.com, lpieralisi@kernel.org, kw@linux.com, 
-	manivannan.sadhasivam@linaro.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
-	vkoul@kernel.org, kishon@kernel.org, andersson@kernel.org, konradybcio@kernel.org, 
-	dmitry.baryshkov@linaro.org, neil.armstrong@linaro.org, abel.vesa@linaro.org, 
-	quic_qianyu@quicinc.com, quic_krichai@quicinc.com, johan+linaro@kernel.org, 
-	linux-arm-msm@vger.kernel.org, linux-pci@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-phy@lists.infradead.org
-Subject: Re: [PATCH v3 2/4] arm64: dts: qcom: qcs615: enable pcie
-Message-ID: <20250310-neon-wealthy-sheep-2da4cd@krzk-bin>
-References: <20250310065613.151598-1-quic_ziyuzhan@quicinc.com>
- <20250310065613.151598-3-quic_ziyuzhan@quicinc.com>
+	s=arc-20240116; t=1741595931; c=relaxed/simple;
+	bh=X/GmOW/hNTjDdVCoJzXZunwFoXnbdmHANH3kWmdFLtQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=o4Wqvs1fahCewj1SetNKxVlR/bv/YSkZ5vPso65Yy+0JY5q+cEetm/HfA0jTtiAfRqDG0zny01+fv8uj2HNgugKQjAPdXTEDHcBtyev0xuQubOywwu8I+YUY7obsR9LJ16mDMcemrRs1JftYkM7byhvJAdzSPHMhqO74WG4gBDc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MsRYYhbj; arc=none smtp.client-ip=209.85.218.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-aaf0f1adef8so690560066b.3;
+        Mon, 10 Mar 2025 01:38:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741595928; x=1742200728; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Mc4o3nge4FTwi3uakH4SDvIBS7mKNo+if4JgTye23cA=;
+        b=MsRYYhbjr6++41TqfLsUQMaOKmWdCUTT9BsNWIMDAt91jRlIbdcgDIUJVrMoTjHdqc
+         rNfzJsyxTKdlbQTxo63pE6RZc4A5lJjKIIEKg2NXzpNY8DSMxDCrB2hDnL8LsfM4I2eu
+         mKDsf6usYy7rbTJXbUaSMmOJCgmbTknVmSHSJQ/aUdjVIedMzRqlH4DhSiuOr/74MesB
+         iMYQQvqwv6iHTqtsiMvNdbNKTTjmRV2jeocjl15i1+/A+lpBEsEER0sryDtVO+vUiddp
+         8L75rhpgfBGeXidytc0FOHL8JKRg9/zolxfNJho779PQrskMeP1M5et0eXUEphLXixFH
+         lROg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741595928; x=1742200728;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Mc4o3nge4FTwi3uakH4SDvIBS7mKNo+if4JgTye23cA=;
+        b=Rrjq6K5ALfN/BxeYS8CSEor7YGEBSN24m6sJYdYOGXiAVzfV90t3zzHVP33/ninges
+         r75f2x3bVypGVi2qRBk/p0zJzwZpQzHUxGOz4L/5ZbNJuGOvMfPOPDtfPg9GvFP+oXt3
+         9gKFLCVhtGNr6b5WrucY3d8Wd8lRStLj958MJcXnAGUSrEoNNgd//zjMa3wlGYoa38Mg
+         JLNpEJ/r09qBEqcHsf8TUahdIov1qLBsjayj2J8lR05XNJhjATGlToc9C4iiQ+YYWA0G
+         kvlvN3E7AmcofWTM96IDad06A73GI3UPBSlvFw0K93gEaxF9S6CuRKZKayHnRDtp0skB
+         oozg==
+X-Forwarded-Encrypted: i=1; AJvYcCUzJKpU8pYEnw5geYW1VjvytpgGOCjP40WFgd4zmMCC4xczwf2GW+0/qbeYsjsD5pnYAOLhKGx70ctLVLk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxwMoIEAiHtUJuMMFNkc6Y0GyTqsF/19viOOfrrQQolg0sYHbHV
+	QcYqe2Hvnn428D5rCoGmlMFHYlIy0bkeY/Z26HE7sXTTpva4cxOWz6lyWQ==
+X-Gm-Gg: ASbGncuvkqgCY99koP81/b3w9uJaCtp76mJNr7g0SpoKpA81ox+rql7d7lz5FNqMmhB
+	FI97RINcOAfGCOcausSdifsIBbYl8oiEBGQ8h3m9DxyZky1DJp1JVUJ7hE+PyXZZzz+1GlxaX/P
+	MvvcOaPzT5bki5VHk9vsKzAg3DY7AtTU70yVxVmWcy+ioOyc7+vIjRxHarRkbPi66iUgJGPcEnG
+	Bh6OgKzjYQXoGJ5oa3aBf1XWaiR4Uv6PW18rXh8xw1HTOkPJJHI8sFdmCaJ63Gj6A6ZkLfcRx5T
+	sCCzAiuH4WaUg4Zhy61ho9rgz9njOTtDNiRuhTtiRH2az6KKblvz/LzvXANAxQ==
+X-Google-Smtp-Source: AGHT+IEc16nb0VGL5o8sirLNt5/Ky3SosovsNBGOGfy/haFuQaDfONZlrOGAj3TmCCvKy8gZcDROWA==
+X-Received: by 2002:a17:907:3f96:b0:abf:62a4:14ef with SMTP id a640c23a62f3a-ac25274a051mr1533256066b.9.1741595927450;
+        Mon, 10 Mar 2025 01:38:47 -0700 (PDT)
+Received: from foxbook (adts246.neoplus.adsl.tpnet.pl. [79.185.230.246])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac2a4541360sm111134466b.6.2025.03.10.01.38.46
+        (version=TLS1_2 cipher=AES128-SHA bits=128/128);
+        Mon, 10 Mar 2025 01:38:46 -0700 (PDT)
+Date: Mon, 10 Mar 2025 09:38:44 +0100
+From: Michal Pecio <michal.pecio@gmail.com>
+To: Mathias Nyman <mathias.nyman@intel.com>, Greg Kroah-Hartman
+ <gregkh@linuxfoundation.org>
+Cc: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 3/6] usb: xhci: Only set EP_HARD_CLEAR_TOGGLE after queuing
+ Reset Endpoint
+Message-ID: <20250310093844.19e0dbdd@foxbook>
+In-Reply-To: <20250310093605.2b3d0425@foxbook>
+References: <20250310093605.2b3d0425@foxbook>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250310065613.151598-3-quic_ziyuzhan@quicinc.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Mon, Mar 10, 2025 at 02:56:11PM +0800, Ziyue Zhang wrote:
-> From: Krishna chaitanya chundru <quic_krichai@quicinc.com>
-> 
-> Add configurations in devicetree for PCIe0, including registers, clocks,
-> interrupts and phy setting sequence.
-> 
-> Signed-off-by: Krishna chaitanya chundru <quic_krichai@quicinc.com>
-> Signed-off-by: Ziyue Zhang <quic_ziyuzhan@quicinc.com>
-> ---
->  arch/arm64/boot/dts/qcom/qcs615.dtsi | 142 +++++++++++++++++++++++++++
->  1 file changed, 142 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/qcom/qcs615.dtsi b/arch/arm64/boot/dts/qcom/qcs615.dtsi
-> index f4abfad474ea..282072084435 100644
-> --- a/arch/arm64/boot/dts/qcom/qcs615.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/qcs615.dtsi
-> @@ -1001,6 +1001,148 @@ mmss_noc: interconnect@1740000 {
->  			qcom,bcm-voters = <&apps_bcm_voter>;
->  		};
->  
-> +	pcie: pcie@1c08000 {
+The flag tells xhci_endpoint_reset() that toggle/sequence state
+is being cleared or has been cleared by Reset Endpoint.
 
-Incorrect indentation (I am not going to look at anything else here).
+This only works if we actually queue the Reset Endpoint command.
 
-Binding wasn't tested (you expect community to be the tools), this has
-obvious style issue, so I really do not believe you performed internal
-review.
+Impact should be minimal, because the endpoint can't start running
+with wrong toggle state if it's still halted, and class driver is
+unlikely to usb_clear_halt() if the halted TD isn't given back (it
+should normally unlink all URBs first before calling that).
 
-Quality of patches recently coming from quicinc is really poor. That's
-one more example. I raised it internally and it seems it reaches people
-slow, so here you have a public nagging.
+But it looks wrong and could cause problems if the code changes.
 
-Do the internal review before you post.
+Signed-off-by: Michal Pecio <michal.pecio@gmail.com>
+---
+ drivers/usb/host/xhci-ring.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-Best regards,
-Krzysztof
-
+diff --git a/drivers/usb/host/xhci-ring.c b/drivers/usb/host/xhci-ring.c
+index 8aab077d6183..9e4940220252 100644
+--- a/drivers/usb/host/xhci-ring.c
++++ b/drivers/usb/host/xhci-ring.c
+@@ -988,7 +988,6 @@ static int xhci_handle_halted_endpoint(struct xhci_hcd *xhci,
+ 
+ 	/* add td to cancelled list and let reset ep handler take care of it */
+ 	if (reset_type == EP_HARD_RESET) {
+-		ep->ep_state |= EP_HARD_CLEAR_TOGGLE;
+ 		if (td && list_empty(&td->cancelled_td_list)) {
+ 			list_add_tail(&td->cancelled_td_list, &ep->cancelled_td_list);
+ 			td->cancel_status = TD_HALTED;
+@@ -1006,6 +1005,8 @@ static int xhci_handle_halted_endpoint(struct xhci_hcd *xhci,
+ 		return err;
+ 
+ 	ep->ep_state |= EP_HALTED;
++	if (reset_type == EP_HARD_RESET)
++		ep->ep_state |= EP_HARD_CLEAR_TOGGLE;
+ 
+ 	xhci_ring_cmd_db(xhci);
+ 
+-- 
+2.48.1
 
