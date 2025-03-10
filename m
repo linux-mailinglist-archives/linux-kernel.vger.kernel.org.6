@@ -1,142 +1,205 @@
-Return-Path: <linux-kernel+bounces-554822-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-554820-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 04195A59F97
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 18:41:32 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 42745A59F92
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 18:41:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2AAE0169F22
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 17:41:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 140463A7BD9
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 17:40:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A3C8223702;
-	Mon, 10 Mar 2025 17:41:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A94C722D4C3;
+	Mon, 10 Mar 2025 17:40:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="KpmEM4VC"
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VvF1LjyN"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 863C822172E
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 17:41:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFC96230BC5;
+	Mon, 10 Mar 2025 17:40:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741628475; cv=none; b=oih3BokfONCqjFkStBwfhXhb2KCCQylxuUWfU297phyYvUs0yVZlObyv8mKtqq1G67vKVyp16epw8NhgUkrAq8e4U4BhpBHIdQE3auMuYLRH1F3mHU4zL5OrLUp/OKIS9Y9OJUcuDiTX8NWwVytD9LGk7fLVFaYW26k1cjJ3opE=
+	t=1741628440; cv=none; b=tuLVuxTrayh7iWzWn/04cJvp+Lnep+p+LLOgKEOwDc3jv7z/GmJ66LavnlEdXsMV995eZUTNBirmwKy/Z4U7wlXArcOf4QohijgCTd+LPU8zSV+rD3NqQytSluBMJ0EldRt7uLiZjNzkZj/9X63PkjIhhnJaxPK+XB8OL8+c19Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741628475; c=relaxed/simple;
-	bh=vap/8qEfDYJND2AdXVA7z71mlnRugvEHBnTI0XUnheM=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=BzN1QR/4lsfgIx3hwq7qEcIm0/NQ+GvKI+QZ3c8K36+UDzFEj9hbSS2RoEPHE7dXFQAU8+h4NYfIVu48TcnZksnEm6OL5U5QT5bVNEBuicOIyP/isdw75vZ30co+52qcwOit6LWQZL+AM2aNVbi2khsVPS4f/yBxKjNsi5q2WY8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=KpmEM4VC; arc=none smtp.client-ip=209.85.128.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-43bb6b0b898so38572365e9.1
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 10:41:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1741628472; x=1742233272; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=HgWPLY44UYfs7OSbFs+4rgP587/bNJC0XV4YHVYL62k=;
-        b=KpmEM4VCpQxR5yAEKq+3oWWvTUofGix+mTld+3nmxJU/Oh8m214gB29pN9TrR6kkVU
-         RrE3PkbvEuhY4lyeEzjEI8nvzocypDdWn2YS5Xrzy30FjrWcrQi7xTG6fP+oRi/iQWRQ
-         WmAEb34+PFXbiypd6pLQLeHVYztSIv4Ytp9EbSySwjq2XL6YeneNg2wkRrwk9QXiU30a
-         R0GtnUadDcv1oVlF5mb3fNUrxKdX5NLbfmvLZqcXQ2T6Jm/4CbYbOfNgLIc7aDjDPgD1
-         SIaC19V1CgjEBM3IaKMMtD8EadqKE5Q9jh14FsE1MtBR4Jt8GP+bKp/DGKQ88ww5BItn
-         Gbgg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741628472; x=1742233272;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=HgWPLY44UYfs7OSbFs+4rgP587/bNJC0XV4YHVYL62k=;
-        b=kWLvi8hmf5WukNRLgzePM6rrxtjo9+1kMqvJsGlyXJZAt9r6KRnNKrJ+5gbsjYIHq9
-         6IlBq8fVZNjsAgnuAeiLSZvCEz8rfxp3aU+BI3ecXAQPoT5zCd+VqIdrUZg4Gr6PpAvR
-         u0YGfQi3y1sXLcukhZ4/WIiZjuvUI+o5iBHhVxsljSus8IcA2obBiS/BRxXBaRA/1Rwg
-         FoPUzDKouAFEgnEzsBgmyxsrahU5y3cR+LuzqjiZA+VhbmFKaQEyP87mEifYh6BXUv3y
-         HExoeVkixL63Zs/l9RUbUKDMwomCjqgeB+cTGsQISn835i57E9or/xDO3pM0B59Q9VDR
-         Jr3Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWLued0aG9Bpzh9Guvi/O2mXDw0w3Hood4HbcZvn32cFUYCeFKbfr5SpBAUqoVC+f4urwlKJJAg0PWvaxQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyUw0r396g7oULAisOqedDn1OBjubE1QKOE0hepYlzZ+sAoy2vf
-	rxaLGWJrhqYpbTLm/PH3MEBkUx7KStvLOkluJOXAY1oVTytqzWPlpRoCSgNEzhk=
-X-Gm-Gg: ASbGnctRnCWiVCJzWbMdhbmjF2F+zaEEAL61BS6ekUPEtZh8plTKF4EQPM0+j0DXT0k
-	WXixIAuftY58Lh82T8x6hV9qvG+Xd0GbTbg3QNfkQKhLMHwNYFQZ8wgGW1ihHJpqK7AMpQAPOCc
-	x5NKGNmFzkFuh0vXCgyqWxGhbCK3/pwDDq8HYE/x26XkS0FnfNqXyK7N5/iuHZ6wYUhEwUZhoHV
-	Hi6KOwYIiaPRBgFnCzRB2PliD4d1ZGVIQ50hBaFQ3lOsccgpg2/N3tXRiKxo7OEEtStZONqr0V7
-	WVoo64Mty09Dm3UWPEqo95ujMXjbTQVQTh7ZNfFvpypguPuFAoKRD1aeY2WLnqmC9iMytF7nlTD
-	eGRAoyGnL08lJXYHQh4M=
-X-Google-Smtp-Source: AGHT+IF2E0/FEPYOs2Ol5yXnd/QF0za9bgmKGmRzY5a5rBVIupAH5/HrBOSGOMwS07vxF3l2bXd4bA==
-X-Received: by 2002:a5d:5f94:0:b0:38f:4d20:4a17 with SMTP id ffacd0b85a97d-392641bcf76mr754572f8f.13.1741628471882;
-        Mon, 10 Mar 2025 10:41:11 -0700 (PDT)
-Received: from [127.0.1.1] (host-82-56-170-15.retail.telecomitalia.it. [82.56.170.15])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3912bfba8a9sm15597038f8f.9.2025.03.10.10.41.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 10 Mar 2025 10:41:11 -0700 (PDT)
-From: Angelo Dureghello <adureghello@baylibre.com>
-X-Google-Original-From: Angelo Dureghello <adureghello@baylibre.org>
-Date: Mon, 10 Mar 2025 18:39:53 +0100
-Subject: [PATCH v4 2/2] doc: iio: ad7380: describe offload support
+	s=arc-20240116; t=1741628440; c=relaxed/simple;
+	bh=/HSXNv6jjAsvPNyHRljUMfbh7KlOC2ngXOFs6zAfk84=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=uDjMfDePC8Cu1OJCKVX8HIJPfBwtIwrgcju73JkKcUH6wCKKpIgEMfHtmA1aWVEBQ/NpAJal9/qAmSmSTNFWtA1gAUIMnuIDvdQuGByfOFPjaEIdhQz4jzAadIjgIiWI1kPlx7buhmq4nzV3zgESQ5icZo9INfdHHAJuSfZ+Qiw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VvF1LjyN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DD8CCC4CEEC;
+	Mon, 10 Mar 2025 17:40:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741628439;
+	bh=/HSXNv6jjAsvPNyHRljUMfbh7KlOC2ngXOFs6zAfk84=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=VvF1LjyN6hol5ApChxSIKL9i1sN5DyrBVGAP1DW7djfZER1h39Fftx9arwwUTH8iv
+	 ebhegtRdiAweL6n/sKFSQM9jnZz6PNuBH08e2okZB7dVzJ6NmwfM7RH0lmgua8/JvS
+	 6apFviR4/5lcXx6xh2OtzlrE2kOeoXL0vSC2bE4hxBfe7dQMtBlMmc7+lW/h7D6vkw
+	 2C+LGsAsfHI9rMwJ+wMpvV0b8gxzFS6k1RXc7qUxHQz1CPbMylZWpD+BFSm6u9Ro9K
+	 w/P5HthKbOvlQOdIsod7A3CTeOsKFfh78jN5LBcCxVOcDbj/s3zxr4DLvCqUFcrVPC
+	 l4pGFCRZPaVNw==
+Message-ID: <09d4966a-5804-40a4-9c5f-356a954a7704@kernel.org>
+Date: Mon, 10 Mar 2025 18:40:22 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH hyperv-next v5 07/11] dt-bindings: microsoft,vmbus: Add
+ interrupts and DMA coherence
+To: Roman Kisel <romank@linux.microsoft.com>
+Cc: arnd@arndb.de, bhelgaas@google.com, bp@alien8.de,
+ catalin.marinas@arm.com, conor+dt@kernel.org, dave.hansen@linux.intel.com,
+ decui@microsoft.com, haiyangz@microsoft.com, hpa@zytor.com,
+ joey.gouly@arm.com, krzk+dt@kernel.org, kw@linux.com, kys@microsoft.com,
+ lenb@kernel.org, lpieralisi@kernel.org, manivannan.sadhasivam@linaro.org,
+ mark.rutland@arm.com, maz@kernel.org, mingo@redhat.com,
+ oliver.upton@linux.dev, rafael@kernel.org, robh@kernel.org,
+ ssengar@linux.microsoft.com, sudeep.holla@arm.com, suzuki.poulose@arm.com,
+ tglx@linutronix.de, wei.liu@kernel.org, will@kernel.org,
+ yuzenghui@huawei.com, devicetree@vger.kernel.org, kvmarm@lists.linux.dev,
+ linux-acpi@vger.kernel.org, linux-arch@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-hyperv@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, x86@kernel.org,
+ apais@microsoft.com, benhill@microsoft.com, bperkins@microsoft.com,
+ sunilmut@microsoft.com
+References: <20250307220304.247725-1-romank@linux.microsoft.com>
+ <20250307220304.247725-8-romank@linux.microsoft.com>
+ <20250310-demonic-ferret-of-judgment-5dbdbf@krzk-bin>
+ <c7f9d861-f617-4064-8c98-2ace06e9c25e@linux.microsoft.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <c7f9d861-f617-4064-8c98-2ace06e9c25e@linux.microsoft.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250310-wip-bl-spi-offload-ad7380-v4-2-b184b37b7c72@baylibre.com>
-References: <20250310-wip-bl-spi-offload-ad7380-v4-0-b184b37b7c72@baylibre.com>
-In-Reply-To: <20250310-wip-bl-spi-offload-ad7380-v4-0-b184b37b7c72@baylibre.com>
-To: Jonathan Cameron <jic23@kernel.org>, 
- Lars-Peter Clausen <lars@metafoo.de>, 
- Michael Hennerich <Michael.Hennerich@analog.com>, 
- =?utf-8?q?Nuno_S=C3=A1?= <nuno.sa@analog.com>, 
- David Lechner <dlechner@baylibre.com>, Jonathan Corbet <corbet@lwn.net>
-Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-doc@vger.kernel.org, Angelo Dureghello <adureghello@baylibre.com>
-X-Mailer: b4 0.14.2
 
-From: Angelo Dureghello <adureghello@baylibre.com>
+On 10/03/2025 18:05, Roman Kisel wrote:
+> 
+> 
+> On 3/10/2025 2:28 AM, Krzysztof Kozlowski wrote:
+>> On Fri, Mar 07, 2025 at 02:02:59PM -0800, Roman Kisel wrote:
+>>> To boot on ARM64, VMBus requires configuring interrupts. Missing
+>>> DMA coherence property is sub-optimal as the VMBus transations are
+>>> cache-coherent.
+>>>
+>>> Add interrupts to be able to boot on ARM64. Add DMA coherence to
+>>> avoid doing extra work on maintaining caches on ARM64.
+>>
+>> How do you add it?
+>>
+> 
+> I added properties to the node. Should I fix the description, or I am
+> misunderstanding the question?
 
-Add a section to the ad7380 documentation describing how to use the
-driver with SPI offloading.
+I saw interrupts in the schema, but I did not see dma-coherence. I also
+did not see any DTS patches here, so I don't understand what node you
+are referring to.
 
-Signed-off-by: Angelo Dureghello <adureghello@baylibre.com>
----
- Documentation/iio/ad7380.rst | 18 ++++++++++++++++++
- 1 file changed, 18 insertions(+)
+> 
+>>>
+>>> Signed-off-by: Roman Kisel <romank@linux.microsoft.com>
+>>> ---
+>>>   .../devicetree/bindings/bus/microsoft,vmbus.yaml          | 8 +++++++-
+>>>   1 file changed, 7 insertions(+), 1 deletion(-)
+>>>
+>>> diff --git a/Documentation/devicetree/bindings/bus/microsoft,vmbus.yaml b/Documentation/devicetree/bindings/bus/microsoft,vmbus.yaml
+>>> index a8d40c766dcd..3ab7d0116626 100644
+>>> --- a/Documentation/devicetree/bindings/bus/microsoft,vmbus.yaml
+>>> +++ b/Documentation/devicetree/bindings/bus/microsoft,vmbus.yaml
+>>> @@ -28,13 +28,16 @@ properties:
+>>>   required:
+>>>     - compatible
+>>>     - ranges
+>>> +  - interrupts
+>>>     - '#address-cells'
+>>>     - '#size-cells'
+>>>   
+>>> -additionalProperties: false
+>>> +additionalProperties: true
+>>
+>> This is neither explained in commit msg nor correct.
+>>
+> 
+> Not explained, as there is no good explanation as described below.
+> 
+>> Drop the change. You cannot have device bindings ending with 'true'
+>> here - see talks, example-bindings, writing-schema and whatever resource
+>> is there.
+>>
+> 
+> Thanks, I'll put more effort into bringing this into a better form!
+> If you have time, could you comment on the below?
+> 
+> The Documentation says
+> 
+>    * additionalProperties: true
+>      Rare case, used for schemas implementing common set of properties.
+> Such schemas are supposed to be referenced by other schemas, which then 
+> use 'unevaluatedProperties: false'.  Typically bus or common-part schemas.
+> 
+> This is a bus so I added that line to the YAML, and I saw it in many
 
-diff --git a/Documentation/iio/ad7380.rst b/Documentation/iio/ad7380.rst
-index 35232a0e3ad730c19b5201b74280bdb6deaa9667..24a92a1c4371db6b59ef47edf06cee860641ebbf 100644
---- a/Documentation/iio/ad7380.rst
-+++ b/Documentation/iio/ad7380.rst
-@@ -178,6 +178,24 @@ Unimplemented features
- - Power down mode
- - CRC indication
- 
-+SPI offload support
-+===================
-+
-+To be able to achieve the maximum sample rate, the driver can be used with the
-+`AXI SPI Engine`_ to provide SPI offload support.
-+
-+.. _AXI SPI Engine: http://analogdevicesinc.github.io/hdl/projects/pulsar_adc/index.html
-+
-+When SPI offload is being used, some attributes will be different.
-+
-+* ``trigger`` directory is removed.
-+* ``in_voltage0_sampling_frequency`` attribute is added for setting the sample
-+  rate.
-+* ``in_voltage0_sampling_frequency_available`` attribute is added for querying
-+  the max sample rate.
-+* ``timestamp`` channel is removed.
-+* Buffer data format may be different compared to when offload is not used,
-+  e.g. the ``in_voltage0_type`` attribute.
- 
- Device buffers
- ==============
+If this is a bus, then where is schema using it for
+bus-attached-devices? You cannot have bus without devices.
 
--- 
-2.48.1
+You *must* fulfill that part:
+"Such schemas are supposed to be referenced by other schemas, which then"
 
+instead of calling it bus...
+
+Please upstream bindings for the bus devices and extend the example here
+with these devices.
+
+Or this is not bus (calling something vmpony does not make it a pony).
+
+
+Best regards,
+Krzysztof
 
