@@ -1,71 +1,53 @@
-Return-Path: <linux-kernel+bounces-553961-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-553962-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 36CE0A5912A
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 11:28:58 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7260AA5912C
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 11:29:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 95F8016C660
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 10:28:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ED35C16C79B
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 10:29:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EA6222686B;
-	Mon, 10 Mar 2025 10:28:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=8bytes.org header.i=@8bytes.org header.b="co7ImiSq"
-Received: from mail.8bytes.org (mail.8bytes.org [85.214.250.239])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3C6122655F
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 10:28:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.214.250.239
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4166722686B;
+	Mon, 10 Mar 2025 10:28:58 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E343192D83
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 10:28:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741602531; cv=none; b=ZiE+e6D6PFVVh2EZ6bLMvM5/G8HypsjJg3Op1zW/1dxTyCtG23fPeb5AHYAuppNAEEIYcIk29cSyqY+JQzi8WsLy0NWnXrXAXwdbUjtcfACEe5sMD/TcUwYYTXR9ZE8LehKPn3CoyyfA/29ZBBMG+jLEz8vX1vlOpyqfzXGM6DQ=
+	t=1741602537; cv=none; b=NVmVoJKIi3qXLW3mQFFFSp8ZExLqWtFWsJV914jx9ksFYR3hbe9W9YHe4+RmCaYN3+URswKAC4pol0RaUeZtbkchnOnabPHwSLDWJ9GqPRBT1RXQ5CfhGU+Eol2/MW4SppQnIAvRWRKvwspdyd69Qv4Bv2y1TqCT9ErW+f4peKw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741602531; c=relaxed/simple;
-	bh=kLfnEMOXAxhAFecv9HaLPhaymuo+G/PKU83ccJFceLs=;
+	s=arc-20240116; t=1741602537; c=relaxed/simple;
+	bh=z1Wk2/HaEkzThRf/Hg2dlYcz58pnBl7uXrEqc2h+iJ8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gGeZWk+y09TERXvR0IRObkKKKSUy5q3LqDB2+cVK92zF+SFowPzLRX8ifk+zfKKBNeoXfkD9Es4g50JQhL4vVisfzdZzzRxOq9Il1vO4RFuJrlThPw+ZsH77lVaXehXnTLlwWpZVFRyINYmG9hnMt89S5madUV4mEzePO0Y7w8k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=8bytes.org; spf=pass smtp.mailfrom=8bytes.org; dkim=pass (2048-bit key) header.d=8bytes.org header.i=@8bytes.org header.b=co7ImiSq; arc=none smtp.client-ip=85.214.250.239
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=8bytes.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=8bytes.org
-Received: from 8bytes.org (p4ffe03ae.dip0.t-ipconnect.de [79.254.3.174])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mail.8bytes.org (Postfix) with ESMTPSA id 4F01044F29;
-	Mon, 10 Mar 2025 11:28:47 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=8bytes.org;
-	s=default; t=1741602527;
-	bh=kLfnEMOXAxhAFecv9HaLPhaymuo+G/PKU83ccJFceLs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=co7ImiSqZPwgYs7VEgmBOb6mK5f8wwq0UQWAuQkpe1QtRkTVO8kZcn1G7LNsI1+34
-	 40kQC+H+AROkoTQ+Le6cbSFO/htA0SpP8KZMsE+Q/1MlxfknYRezFAz85t3FgRI3K2
-	 KyG34DA5MB/FIkZU3ODXjMvQZSTBcdBhXr28sOpLiU+8QvD4fvDkFWwoOBeFQa1HRo
-	 zULELbSO6JQTUpT3ZNA1E7bkUPWxIfhCRAOChrQdx5DGJ7/rpfhIrdRtqVQxnUwDi6
-	 ri+aRuWTU2XaC69Ld1XYPbDDurnudvskb/U4vUGkgkWa4QcZNggh0Sp5TxFmcIxbW5
-	 sa60PWX3UvMWA==
-Date: Mon, 10 Mar 2025 11:28:46 +0100
-From: Joerg Roedel <joro@8bytes.org>
-To: "Alexey Gladkov (Intel)" <alexey.gladkov@intel.com>
-Cc: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-	Dave Hansen <dave.hansen@intel.com>, Borislav Petkov <bp@alien8.de>,
-	Joerg Roedel <jroedel@suse.de>, Ingo Molnar <mingo@kernel.org>,
-	x86@kernel.org, hpa@zytor.com,
-	Tom Lendacky <thomas.lendacky@amd.com>,
-	Nikunj A Dadhania <nikunj@amd.com>, linux-kernel@vger.kernel.org,
-	Larry.Dewey@amd.com
-Subject: Re: [PATCH] x86/sev: Make SEV_STATUS available via SYSFS
-Message-ID: <Z86-3n1-MArVLM9Z@8bytes.org>
-References: <Z8g01YhM_FtdB5n6@gmail.com>
- <20250305113155.GCZ8g2K1XEdgynTA9D@fat_crate.local>
- <Z8g4sU_dsZgY0PuS@gmail.com>
- <20250305115035.GEZ8g6i7NTiSfkxk7J@fat_crate.local>
- <Z8hYEsHvwUwlOold@suse.de>
- <20250305153705.GKZ8hvoaz2GPt2rGtu@fat_crate.local>
- <b0cf4bfc-bf22-4986-9e76-62e3f54179ea@intel.com>
- <2koe2zg26fndx6d6jcmbg6dzybbgldgrjufupj74nvmav2dmqg@w6bknhosl64h>
- <Z8le_TWUJNebrfs7@8bytes.org>
- <Z8l66FFgPu5hWtuI@agladkov-desk>
+	 Content-Type:Content-Disposition:In-Reply-To; b=XYy9C7GfRR6uRsgn0Cb7tKwR9fQFgHSioReiXlaMMj+yg226kN9UGmmurKjMuMQCYBMpyv5qiS6RhIDO+e144COGCIFcHcG3s7YwUv9aVsgc1siqL9XNig0XH0tNLprYrC2+WKjWUsEoKtmuL9U0aUANyYY6MloK8ilkjU919F8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0D645153B;
+	Mon, 10 Mar 2025 03:29:07 -0700 (PDT)
+Received: from J2N7QTR9R3.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id A759B3F673;
+	Mon, 10 Mar 2025 03:28:53 -0700 (PDT)
+Date: Mon, 10 Mar 2025 10:28:47 +0000
+From: Mark Rutland <mark.rutland@arm.com>
+To: Anshuman Khandual <anshuman.khandual@arm.com>
+Cc: linux-arm-kernel@lists.infradead.org,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Andrey Ryabinin <ryabinin.a.a@gmail.com>,
+	Alexander Potapenko <glider@google.com>,
+	Andrey Konovalov <andreyknvl@gmail.com>,
+	Dmitry Vyukov <dvyukov@google.com>,
+	Ard Biesheuvel <ardb@kernel.org>,
+	Ryan Roberts <ryan.roberts@arm.com>, linux-kernel@vger.kernel.org,
+	kasan-dev@googlegroups.com
+Subject: Re: [PATCH V2] arm64/mm: Define PTDESC_ORDER
+Message-ID: <Z86-34-fgk7iskX_@J2N7QTR9R3.cambridge.arm.com>
+References: <20250310040115.91298-1-anshuman.khandual@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -74,38 +56,167 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <Z8l66FFgPu5hWtuI@agladkov-desk>
+In-Reply-To: <20250310040115.91298-1-anshuman.khandual@arm.com>
 
-On Thu, Mar 06, 2025 at 11:37:28AM +0100, Alexey Gladkov (Intel) wrote:
-> I was thinking to suggest something like that
+On Mon, Mar 10, 2025 at 09:31:15AM +0530, Anshuman Khandual wrote:
+> diff --git a/arch/arm64/include/asm/kernel-pgtable.h b/arch/arm64/include/asm/kernel-pgtable.h
+> index fd5a08450b12..78c7e03a0e35 100644
+> --- a/arch/arm64/include/asm/kernel-pgtable.h
+> +++ b/arch/arm64/include/asm/kernel-pgtable.h
+> @@ -45,11 +45,14 @@
+>  #define SPAN_NR_ENTRIES(vstart, vend, shift) \
+>  	((((vend) - 1) >> (shift)) - ((vstart) >> (shift)) + 1)
+>  
+> -#define EARLY_ENTRIES(vstart, vend, shift, add) \
+> -	(SPAN_NR_ENTRIES(vstart, vend, shift) + (add))
+> +/* Number of VA bits resolved by a single translation table level */
+> +#define PTDESC_TABLE_SHIFT	(PAGE_SHIFT - PTDESC_ORDER)
+
+To be clear, when I suggested adding PTDESC_TABLE_SHIFT, I expected that
+it would be used consistently in place of (PAGE_SHIFT - PTDESC_ORDER),
+and not only replacing that within the EARLY_ENTRIES() macro
+specifically.
+
+Mark.
+
+> -#define EARLY_LEVEL(lvl, lvls, vstart, vend, add)	\
+> -	(lvls > lvl ? EARLY_ENTRIES(vstart, vend, SWAPPER_BLOCK_SHIFT + lvl * (PAGE_SHIFT - 3), add) : 0)
+> +#define EARLY_ENTRIES(lvl, vstart, vend) \
+> +	SPAN_NR_ENTRIES(vstart, vend, SWAPPER_BLOCK_SHIFT + lvl * PTDESC_TABLE_SHIFT)
+> +
+> +#define EARLY_LEVEL(lvl, lvls, vstart, vend, add) \
+> +	((lvls) > (lvl) ? EARLY_ENTRIES(lvl, vstart, vend) + (add) : 0)
+>  
+>  #define EARLY_PAGES(lvls, vstart, vend, add) (1 	/* PGDIR page */				\
+>  	+ EARLY_LEVEL(3, (lvls), (vstart), (vend), add) /* each entry needs a next level page table */	\
+> diff --git a/arch/arm64/include/asm/pgtable-hwdef.h b/arch/arm64/include/asm/pgtable-hwdef.h
+> index a9136cc551cc..3c544edc3968 100644
+> --- a/arch/arm64/include/asm/pgtable-hwdef.h
+> +++ b/arch/arm64/include/asm/pgtable-hwdef.h
+> @@ -7,40 +7,43 @@
+>  
+>  #include <asm/memory.h>
+>  
+> +#define PTDESC_ORDER 3
+> +
+>  /*
+>   * Number of page-table levels required to address 'va_bits' wide
+>   * address, without section mapping. We resolve the top (va_bits - PAGE_SHIFT)
+> - * bits with (PAGE_SHIFT - 3) bits at each page table level. Hence:
+> + * bits with (PAGE_SHIFT - PTDESC_ORDER) bits at each page table level. Hence:
+>   *
+> - *  levels = DIV_ROUND_UP((va_bits - PAGE_SHIFT), (PAGE_SHIFT - 3))
+> + *  levels = DIV_ROUND_UP((va_bits - PAGE_SHIFT), (PAGE_SHIFT - PTDESC_ORDER))
+>   *
+>   * where DIV_ROUND_UP(n, d) => (((n) + (d) - 1) / (d))
+>   *
+>   * We cannot include linux/kernel.h which defines DIV_ROUND_UP here
+>   * due to build issues. So we open code DIV_ROUND_UP here:
+>   *
+> - *	((((va_bits) - PAGE_SHIFT) + (PAGE_SHIFT - 3) - 1) / (PAGE_SHIFT - 3))
+> + *	((((va_bits) - PAGE_SHIFT) + (PAGE_SHIFT - PTDESC_ORDER) - 1) / (PAGE_SHIFT - PTDESC_ORDER))
+>   *
+>   * which gets simplified as :
+>   */
+> -#define ARM64_HW_PGTABLE_LEVELS(va_bits) (((va_bits) - 4) / (PAGE_SHIFT - 3))
+> +#define ARM64_HW_PGTABLE_LEVELS(va_bits) \
+> +	(((va_bits) - PTDESC_ORDER - 1) / (PAGE_SHIFT - PTDESC_ORDER))
+>  
+>  /*
+>   * Size mapped by an entry at level n ( -1 <= n <= 3)
+> - * We map (PAGE_SHIFT - 3) at all translation levels and PAGE_SHIFT bits
+> + * We map (PAGE_SHIFT - PTDESC_ORDER) at all translation levels and PAGE_SHIFT bits
+>   * in the final page. The maximum number of translation levels supported by
+>   * the architecture is 5. Hence, starting at level n, we have further
+>   * ((4 - n) - 1) levels of translation excluding the offset within the page.
+>   * So, the total number of bits mapped by an entry at level n is :
+>   *
+> - *  ((4 - n) - 1) * (PAGE_SHIFT - 3) + PAGE_SHIFT
+> + *  ((4 - n) - 1) * (PAGE_SHIFT - PTDESC_ORDER) + PAGE_SHIFT
+>   *
+>   * Rearranging it a bit we get :
+> - *   (4 - n) * (PAGE_SHIFT - 3) + 3
+> + *   (4 - n) * (PAGE_SHIFT - PTDESC_ORDER) + PTDESC_ORDER
+>   */
+> -#define ARM64_HW_PGTABLE_LEVEL_SHIFT(n)	((PAGE_SHIFT - 3) * (4 - (n)) + 3)
+> +#define ARM64_HW_PGTABLE_LEVEL_SHIFT(n)	((PAGE_SHIFT - PTDESC_ORDER) * (4 - (n)) + PTDESC_ORDER)
+>  
+> -#define PTRS_PER_PTE		(1 << (PAGE_SHIFT - 3))
+> +#define PTRS_PER_PTE		(1 << (PAGE_SHIFT - PTDESC_ORDER))
+>  
+>  /*
+>   * PMD_SHIFT determines the size a level 2 page table entry can map.
+> @@ -49,7 +52,7 @@
+>  #define PMD_SHIFT		ARM64_HW_PGTABLE_LEVEL_SHIFT(2)
+>  #define PMD_SIZE		(_AC(1, UL) << PMD_SHIFT)
+>  #define PMD_MASK		(~(PMD_SIZE-1))
+> -#define PTRS_PER_PMD		(1 << (PAGE_SHIFT - 3))
+> +#define PTRS_PER_PMD		(1 << (PAGE_SHIFT - PTDESC_ORDER))
+>  #endif
+>  
+>  /*
+> @@ -59,14 +62,14 @@
+>  #define PUD_SHIFT		ARM64_HW_PGTABLE_LEVEL_SHIFT(1)
+>  #define PUD_SIZE		(_AC(1, UL) << PUD_SHIFT)
+>  #define PUD_MASK		(~(PUD_SIZE-1))
+> -#define PTRS_PER_PUD		(1 << (PAGE_SHIFT - 3))
+> +#define PTRS_PER_PUD		(1 << (PAGE_SHIFT - PTDESC_ORDER))
+>  #endif
+>  
+>  #if CONFIG_PGTABLE_LEVELS > 4
+>  #define P4D_SHIFT		ARM64_HW_PGTABLE_LEVEL_SHIFT(0)
+>  #define P4D_SIZE		(_AC(1, UL) << P4D_SHIFT)
+>  #define P4D_MASK		(~(P4D_SIZE-1))
+> -#define PTRS_PER_P4D		(1 << (PAGE_SHIFT - 3))
+> +#define PTRS_PER_P4D		(1 << (PAGE_SHIFT - PTDESC_ORDER))
+>  #endif
+>  
+>  /*
+> diff --git a/arch/arm64/kernel/pi/map_range.c b/arch/arm64/kernel/pi/map_range.c
+> index 2b69e3beeef8..f74335e13929 100644
+> --- a/arch/arm64/kernel/pi/map_range.c
+> +++ b/arch/arm64/kernel/pi/map_range.c
+> @@ -31,7 +31,7 @@ void __init map_range(u64 *pte, u64 start, u64 end, u64 pa, pgprot_t prot,
+>  {
+>  	u64 cmask = (level == 3) ? CONT_PTE_SIZE - 1 : U64_MAX;
+>  	pteval_t protval = pgprot_val(prot) & ~PTE_TYPE_MASK;
+> -	int lshift = (3 - level) * (PAGE_SHIFT - 3);
+> +	int lshift = (3 - level) * (PAGE_SHIFT - PTDESC_ORDER);
+>  	u64 lmask = (PAGE_SIZE << lshift) - 1;
+>  
+>  	start	&= PAGE_MASK;
+> diff --git a/arch/arm64/mm/kasan_init.c b/arch/arm64/mm/kasan_init.c
+> index b65a29440a0c..211821f80571 100644
+> --- a/arch/arm64/mm/kasan_init.c
+> +++ b/arch/arm64/mm/kasan_init.c
+> @@ -190,7 +190,7 @@ static void __init kasan_pgd_populate(unsigned long addr, unsigned long end,
+>   */
+>  static bool __init root_level_aligned(u64 addr)
+>  {
+> -	int shift = (ARM64_HW_PGTABLE_LEVELS(vabits_actual) - 1) * (PAGE_SHIFT - 3);
+> +	int shift = (ARM64_HW_PGTABLE_LEVELS(vabits_actual) - 1) * (PAGE_SHIFT - PTDESC_ORDER);
+>  
+>  	return (addr % (PAGE_SIZE << shift)) == 0;
+>  }
+> @@ -245,7 +245,7 @@ static int __init root_level_idx(u64 addr)
+>  	 */
+>  	u64 vabits = IS_ENABLED(CONFIG_ARM64_64K_PAGES) ? VA_BITS
+>  							: vabits_actual;
+> -	int shift = (ARM64_HW_PGTABLE_LEVELS(vabits) - 1) * (PAGE_SHIFT - 3);
+> +	int shift = (ARM64_HW_PGTABLE_LEVELS(vabits) - 1) * (PAGE_SHIFT - PTDESC_ORDER);
+>  
+>  	return (addr & ~_PAGE_OFFSET(vabits)) >> (shift + PAGE_SHIFT);
+>  }
+> @@ -269,7 +269,7 @@ static void __init clone_next_level(u64 addr, pgd_t *tmp_pg_dir, pud_t *pud)
+>   */
+>  static int __init next_level_idx(u64 addr)
+>  {
+> -	int shift = (ARM64_HW_PGTABLE_LEVELS(vabits_actual) - 2) * (PAGE_SHIFT - 3);
+> +	int shift = (ARM64_HW_PGTABLE_LEVELS(vabits_actual) - 2) * (PAGE_SHIFT - PTDESC_ORDER);
+>  
+>  	return (addr >> (shift + PAGE_SHIFT)) % PTRS_PER_PTE;
+>  }
+> -- 
+> 2.25.1
 > 
-> /sys/firmware/coco/tdx/...
-> /sys/firmware/coco/sev/...
-
-So on a second thought I'd like to vote for the /sys/hypervisor/
-hierarchy. The `firmware` term is a bit amibious here, the TDX module
-can be seen as a kind of firmware for the guest OS, but realistically it
-is more like another hypervisor sitting between KVM and the guest.
-
-Also the settings on the SEV side that need to be exposed (VMPL and
-SEV_STATUS) are CPU properties, but on the other side also set by some
-form of hypervisor (either KVM/QEMU, the SVSM, or some other paravisor
-in-between).
-
-Overall /sys/hypervisor/ seems to be the best-fitting location for all
-this data. To avoid ambiguation I propose:
-
-	/sys/hypervisor/common/[coco/]tdx/
-	/sys/hypervisor/common/[coco/]sev/
-
-Using `common` makes it clear that this directory does not point to some
-sort of Hypervisor, but to data common to all hypervisors. Using another
-`coco` subdirectory is not necessary in my view, but if people think it
-should exist I am fine with that.
-
-Is this something we can agree on?
-
-Regards,
-
-	Joerg
 
