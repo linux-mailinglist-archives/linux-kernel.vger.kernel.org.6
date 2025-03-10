@@ -1,101 +1,105 @@
-Return-Path: <linux-kernel+bounces-554411-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-554413-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A45AA59764
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 15:20:40 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 36423A59769
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 15:21:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C873D188C969
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 14:20:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 50486188C969
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 14:21:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CFC522B8C5;
-	Mon, 10 Mar 2025 14:20:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B83122C35D;
+	Mon, 10 Mar 2025 14:21:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="aPmiX69n"
-Received: from relay3-d.mail.gandi.net (relay3-d.mail.gandi.net [217.70.183.195])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="JJchKHzH"
+Received: from out-172.mta0.migadu.com (out-172.mta0.migadu.com [91.218.175.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED9FE22AE7E;
-	Mon, 10 Mar 2025 14:20:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBE9322B8B1
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 14:20:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741616433; cv=none; b=Wkou7kxvMlXGKEWfV59GPODTyBrIAidr22K8BNz6AM4b+nhJtxpFyMRRlLE8Uw0muyzoisowQ6JKjcL/uQDq2873D48cRMdmvbJidNCN08xpDOwV1zoFw2eUM2aCXCn5WNtS48oZ8lvU1N/p/Ds7lftZhx+vozcfofiZ2Gfms7Q=
+	t=1741616460; cv=none; b=uAOgdR3haxawadPFmqTnlQNftubQvCEn0pQDhM1BUHIs9TmNOhEb4XKXv/0nh/zInDUbDo4DDvzRECZX5HYyzMJVpWwf0j6ReAf+aaa0szY8xv9j0P93VfFybS9Z9Xo+NFScLJqLO5Zgz+J+DAQ8cvvh4Wm1/ZUlj22lWYLL3EU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741616433; c=relaxed/simple;
-	bh=Pcjf/q8GOhh0QnIRascQPs5dvt067o8TXug5OHGtutY=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Q8FAVUYEL+ZUNF8TTuh56BgdR2zl65rIa3WZ/Lj8gJmljyHsqZvAjsLhlEjRvPi3T2OWQaSbi8zJ5GTr64HQbK8uFE2TDH7OyoEWxLtsGdHks8tz+3ucwi57aLiMqqXDCSs7Ap9syeSfz649FAvoTDmhB4UncjdZ9wUgparobBE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=aPmiX69n; arc=none smtp.client-ip=217.70.183.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 3F8D420487;
-	Mon, 10 Mar 2025 14:20:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1741616423;
+	s=arc-20240116; t=1741616460; c=relaxed/simple;
+	bh=mIv5Wqu3QOJsZQZWRs7TmKsn4yWI20rQHtYvAoK2M8g=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ieTdsYefHOjJaUSge8TWcpgmtvK+l1nlKgJLND4xBP0EVX5+65nRwkKSzpclGk0z9B/NCFiPZGPGyjC62/ZtA1nKdid0okg19+rzYRB1cnxHNiscXCyIIjSdn/kSLdYfNZXiDkspXQ7pZtNRguhY+Qol49HadIxeH3IWSxMr9Yw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=JJchKHzH; arc=none smtp.client-ip=91.218.175.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1741616456;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Pcjf/q8GOhh0QnIRascQPs5dvt067o8TXug5OHGtutY=;
-	b=aPmiX69nCJQDGMo7eE5YBNro6eQyWrzFBEbRru7Q1v8yMVA8t9JmrdYoEh+wy86LuXDsR+
-	Fu/sAkdiGACrLFT4+ZKEyLCmsGdUjA0axsE//cexrM+6BgJQAUwt0ZrunKYpMaK3W0eaSQ
-	q510xmnA0KS3rEJQbfYrUDj+GGNt05zEuBoCSXjD8O5QT7eqgKvAzD+UHLdvzF3R3vnlZm
-	A1NEmLnXaLA3Znei+OkqKDUl3aWDoFP0meO7GBkymzaV0RyKGSNBADMyLCyNfwRjoeJRQC
-	Q/TsGFZMaSCnILqaK0z7WSfGlinc75Euq8/9nCVl7mr5qO128xOly7GwoQQz+Q==
-Date: Mon, 10 Mar 2025 15:20:14 +0100
-From: Kory Maincent <kory.maincent@bootlin.com>
-To: Choong Yong Liang <yong.liang.choong@linux.intel.com>
-Cc: Andrew Lunn <andrew+netdev@lunn.ch>, "David S . Miller"
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub Kicinski
- <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Maxime Coquelin
- <mcoquelin.stm32@gmail.com>, Alexandre Torgue
- <alexandre.torgue@foss.st.com>, Dan Carpenter <dan.carpenter@linaro.org>,
- netdev@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next v1 1/1] stmmac: intel: Fix warning message for
- return value in intel_tsn_lane_is_available()
-Message-ID: <20250310152014.1d593255@kmaincent-XPS-13-7390>
-In-Reply-To: <20250310050835.808870-1-yong.liang.choong@linux.intel.com>
-References: <20250310050835.808870-1-yong.liang.choong@linux.intel.com>
-Organization: bootlin
-X-Mailer: Claws Mail 4.0.0 (GTK+ 3.24.33; x86_64-pc-linux-gnu)
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=ICiNP7fiGGOS+dJlGwjHfX6msknfaoabh2apeLXLkmk=;
+	b=JJchKHzHNQp4llO40Pmqh6nbaTWzj65Pc30BlocsRxiklfLu3uKsUgio3JAGS+wAnJWjrr
+	9t8vETPGpHaMAJMIGpyMMC+1dCKFDjNsOT/BiGtW+MAj/fZlT1lKnj1Nx+ii6sJMnjto8q
+	2kzml6Bb6qYYYp2ybwZEoT2snGUv5d8=
+From: Jiayuan Chen <jiayuan.chen@linux.dev>
+To: bpf@vger.kernel.org,
+	qmo@kernel.org
+Cc: daniel@iogearbox.net,
+	linux-kernel@vger.kernel.org,
+	ast@kernel.org,
+	davem@davemloft.net,
+	kuba@kernel.org,
+	hawk@kernel.org,
+	john.fastabend@gmail.com,
+	andrii@kernel.org,
+	martin.lau@linux.dev,
+	eddyz87@gmail.com,
+	song@kernel.org,
+	yonghong.song@linux.dev,
+	kpsingh@kernel.org,
+	sdf@fomichev.me,
+	haoluo@google.com,
+	jolsa@kernel.org,
+	mrpre@163.com,
+	Jiayuan Chen <jiayuan.chen@linux.dev>
+Subject: [PATCH bpf-next v1 0/2] bpftool: Using the right format specifiers
+Date: Mon, 10 Mar 2025 22:20:35 +0800
+Message-ID: <20250310142037.45932-1-jiayuan.chen@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdduudelheekucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpeffhffvvefukfgjfhhoofggtgfgsehtqhertdertdejnecuhfhrohhmpefmohhrhicuofgrihhntggvnhhtuceokhhorhihrdhmrghinhgtvghnthessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepgfdutdefvedtudegvefgvedtgfdvhfdtueeltefffefffffhgfetkedvfeduieeinecuffhomhgrihhnpegsohhothhlihhnrdgtohhmnecukfhppeegiedrudekkedrvdefledruddtnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepgeeirddukeekrddvfeelrddutddphhgvlhhopehkmhgrihhntggvnhhtqdgirffuqddufedqjeefledtpdhmrghilhhfrhhomhepkhhorhihrdhmrghinhgtvghnthessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepudegpdhrtghpthhtohephihonhhgrdhlihgrnhhgrdgthhhoohhngheslhhinhhugidrihhnthgvlhdrtghomhdprhgtphhtthhopegrnhgurhgvfidonhgvthguvghvsehluhhnnhdrtghhpdhrtghpthhtohepuggrvhgvmhesuggrvhgvmhhlohhfthdrnhgvthdprhgtphhtthhopegvughumhgriigvthesghhoo
- hhglhgvrdgtohhmpdhrtghpthhtohepkhhusggrsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehprggsvghnihesrhgvughhrghtrdgtohhmpdhrtghpthhtohepmhgtohhquhgvlhhinhdrshhtmhefvdesghhmrghilhdrtghomhdprhgtphhtthhopegrlhgvgigrnhgurhgvrdhtohhrghhuvgesfhhoshhsrdhsthdrtghomh
-X-GND-Sasl: kory.maincent@bootlin.com
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-On Mon, 10 Mar 2025 13:08:35 +0800
-Choong Yong Liang <yong.liang.choong@linux.intel.com> wrote:
+This patch adds the -Wformat-signedness compiler flag to detect and
+prevent format string errors, where signed or unsigned types are
+mismatched with format specifiers. Additionally, it fixes some format
+string errors that were not fully addressed by the previous patch [1].
 
-> Fix the warning "warn: missing error code? 'ret'" in the
-> intel_tsn_lane_is_available() function.
->=20
-> The function now returns 0 to indicate that a TSN lane was found and
-> returns -EINVAL when it is not found.
->=20
-> Fixes: a42f6b3f1cc1 ("net: stmmac: configure SerDes according to the
-> interface mode")
-> Signed-off-by: Choong Yong Liang <yong.liang.choong@linux.intel.com>
 
-This patch is a fix it should go net instead net-next.
-Could you resend the patch with net prefix?
+[1] https://lore.kernel.org/bpf/20250207123706.727928-1-mrpre@163.com/T/#u
 
-Reviewed-by: Kory Maincent <kory.maincent@bootlin.com>
+Jiayuan Chen (2):
+  bpftool: Add -Wformat-signedness flag to detect format errors
+  bpftool: Using the right format specifiers
 
-Thank you!
---=20
-K=C3=B6ry Maincent, Bootlin
-Embedded Linux and kernel engineering
-https://bootlin.com
+ kernel/bpf/disasm.c                |  4 ++--
+ tools/bpf/bpftool/Makefile         |  2 +-
+ tools/bpf/bpftool/btf.c            | 14 +++++++-------
+ tools/bpf/bpftool/btf_dumper.c     |  2 +-
+ tools/bpf/bpftool/cgroup.c         |  2 +-
+ tools/bpf/bpftool/common.c         |  4 ++--
+ tools/bpf/bpftool/jit_disasm.c     |  3 ++-
+ tools/bpf/bpftool/map_perf_ring.c  |  6 +++---
+ tools/bpf/bpftool/net.c            |  4 ++--
+ tools/bpf/bpftool/netlink_dumper.c |  5 ++---
+ tools/bpf/bpftool/prog.c           | 12 ++++++------
+ tools/bpf/bpftool/tracelog.c       |  2 +-
+ tools/bpf/bpftool/xlated_dumper.c  |  6 +++---
+ 13 files changed, 33 insertions(+), 33 deletions(-)
+
+-- 
+2.47.1
+
 
