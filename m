@@ -1,116 +1,124 @@
-Return-Path: <linux-kernel+bounces-553516-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-553518-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 02244A58AD1
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 04:23:38 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9A2FEA58AD6
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 04:30:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4554F1677AF
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 03:23:37 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1CA147A4416
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 03:29:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F37F21B6CE5;
-	Mon, 10 Mar 2025 03:23:30 +0000 (UTC)
-Received: from cstnet.cn (smtp21.cstnet.cn [159.226.251.21])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1345213AD05;
+	Mon, 10 Mar 2025 03:30:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="cBodNsDw"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 940F8134B0;
-	Mon, 10 Mar 2025 03:23:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9752722EE4
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 03:30:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741577010; cv=none; b=dePKmMZyp4AKSFpNS5IGMpBOPmsJm+oLF0oUq+D0/SCBDT77b1f7yGgB4OfFWn7DWmUXYMHcjqzulE0jrMgV5pzC8OAlUNTC30ItTQd9zGC4e1aM4S2Un3k6GTHxVy5dcxuyHOFZa5q/otJPrNH4P0810hXSS/hlH/s2uPFslKw=
+	t=1741577428; cv=none; b=G/H8RnUVzozIkh2Gb/FtwEbmaAifP/TL/1Ohjxt2a5litwZm0BbB6/DDb1MKxwuFpYMtcM02XTP0FqRtoX6dQBxa89dYWMTJvsgn6s+JbRuHR5T/F/aExb1mE81db6k6z4sEz32/1u/MdKRMPGlliuo0BfADbp5M0W/ctCk0aFU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741577010; c=relaxed/simple;
-	bh=aYUfje9ofaVdnHGyw9wdFQ8lL76PJ2JFYEel/KKirGI=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=SVBtSljAUb38tiEgevZbsmT3PNkBSXKVoyxN/xmpo0YH7KfEBfz5en20PsMXe62m/eE5bSW5blgGUN2TBnbcN8ruCe9f3EAYh0CRX/Rjr3bgsQx4jQjLkb3HXG94PYrwuLbgzeP8bTf+crCFsnuL6P1vyOaXnKW1MvSZS6u77BU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from localhost (unknown [124.16.138.129])
-	by APP-01 (Coremail) with SMTP id qwCowAA3PtIeW85nRjffEw--.25187S2;
-	Mon, 10 Mar 2025 11:23:11 +0800 (CST)
-From: Chen Ni <nichen@iscas.ac.cn>
-To: andrii@kernel.org,
-	eddyz87@gmail.com,
-	mykolal@fb.com,
-	ast@kernel.org,
-	daniel@iogearbox.net,
-	martin.lau@linux.dev,
-	song@kernel.org,
-	yonghong.song@linux.dev,
-	john.fastabend@gmail.com,
-	kpsingh@kernel.org,
-	sdf@fomichev.me,
-	haoluo@google.com,
-	jolsa@kernel.org,
-	shuah@kernel.org,
-	aspsk@isovalent.com,
-	bpf@vger.kernel.org,
-	linux-kselftest@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Chen Ni <nichen@iscas.ac.cn>
-Subject: [PATCH] selftests/bpf: Convert comma to semicolon
-Date: Mon, 10 Mar 2025 11:20:45 +0800
-Message-Id: <20250310032045.651068-1-nichen@iscas.ac.cn>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1741577428; c=relaxed/simple;
+	bh=rUuBL6PtG4GanBirNtMdXheUFQk65PZlZYaCRo+8M3Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BQDkq5qmyzBdsWi+dTyPiLcDL25vDuvJUr/RgiYgf6FosDx1gXP3DrGJQogBnD3luTbI3EianDV3vmAWIiAbbuFhl+iR0k/c3NObruLgZyN57AOtT2bRGYWrJBqkZyZCyX60rucrpAJuRKseGDBcNQEYkRL9ka3NUnt3iIn6yu8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=cBodNsDw; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1741577425;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=XvsmY/JjLBpjK3oBugk8F8gXHOkWN8ooUJaY0xPdhNg=;
+	b=cBodNsDwPwoP9HKwKi7weGTybTB0u01Ptxd3Yp7uwA/de686y7AagVNXTtQXIMByeWIWAY
+	jQCAZ9wm2jdz8YoT330AjjJ7v1W6USPxvQySeyhP1gSul/MKMgAsSYiYdCkUXtTtq9p0rC
+	A+z5CcLlcwj/+4x9xXe7Z8B3x6XBkSk=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-137-5DRDCMvMM2OaPcK41SI6KQ-1; Sun,
+ 09 Mar 2025 23:30:22 -0400
+X-MC-Unique: 5DRDCMvMM2OaPcK41SI6KQ-1
+X-Mimecast-MFC-AGG-ID: 5DRDCMvMM2OaPcK41SI6KQ_1741577420
+Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 449081956080;
+	Mon, 10 Mar 2025 03:30:20 +0000 (UTC)
+Received: from localhost (unknown [10.72.112.225])
+	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 85B60180094A;
+	Mon, 10 Mar 2025 03:30:17 +0000 (UTC)
+Date: Mon, 10 Mar 2025 11:30:12 +0800
+From: Baoquan He <bhe@redhat.com>
+To: akpm@linux-foundation.org
+Cc: kexec@lists.infradead.org, Ondrej Kozina <okozina@redhat.com>,
+	Milan Broz <gmazyland@gmail.com>,
+	Thomas Staudt <tstaudt@de.ibm.com>,
+	Daniel P =?iso-8859-1?Q?=2E_Berrang=E9?= <berrange@redhat.com>,
+	Kairui Song <ryncsn@gmail.com>, Pingfan Liu <kernelfans@gmail.com>,
+	Dave Young <dyoung@redhat.com>, linux-kernel@vger.kernel.org,
+	x86@kernel.org, Dave Hansen <dave.hansen@intel.com>,
+	Vitaly Kuznetsov <vkuznets@redhat.com>, Coiby Xu <coxu@redhat.com>,
+	dwmw2@infradead.org
+Subject: Re: [PATCH v8 0/7] Support kdump with LUKS encryption by reusing
+ LUKS volume keys
+Message-ID: <Z85cxCfnRkLve16D@MiWiFi-R3L-srv>
+References: <20250207080818.129165-1-coxu@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:qwCowAA3PtIeW85nRjffEw--.25187S2
-X-Coremail-Antispam: 1UD129KBjvdXoW7Gr4rCw4kuw4kuw1xGrW3ZFb_yoWkZFbEgr
-	4Yqws7CFs5Ca4vyr1UC3WSgF1rC34UKrWxKryvq3y3Aw1UJF45GF4kCry8Ja93ZrW5GrW3
-	tFs8J3yakrW3WjkaLaAFLSUrUUUUbb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUbfAFF20E14v26ryj6rWUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
-	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
-	A2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr0_
-	Cr1l84ACjcxK6I8E87Iv67AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVCY1x0267AKxVW8Jr
-	0_Cr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj
-	6xIIjxv20xvE14v26r126r1DMcIj6I8E87Iv67AKxVW8Jr0_Cr1UMcvjeVCFs4IE7xkEbV
-	WUJVW8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7Cj
-	xVA2Y2ka0xkIwI1lc7CjxVAaw2AFwI0_GFv_Wrylc2xSY4AK67AK6r48MxAIw28IcxkI7V
-	AKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCj
-	r7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVW8ZVWrXwCIc40Y0x0EwIxGrwCI42IY6x
-	IIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAI
-	w20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x
-	0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7sR_iiSDUUUUU==
-X-CM-SenderInfo: xqlfxv3q6l2u1dvotugofq/
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250207080818.129165-1-coxu@redhat.com>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
 
-Replace comma between expressions with semicolons.
+Hi Andrew,
 
-Using a ',' in place of a ';' can have unintended side effects.
-Although that is not the case here, it is seems best to use ';'
-unless ',' is intended.
+On 02/07/25 at 04:08pm, Coiby Xu wrote:
+......snip...
 
-Found by inspection.
-No functional change intended.
-Compile tested only.
+Ping again.
 
-Signed-off-by: Chen Ni <nichen@iscas.ac.cn>
----
- tools/testing/selftests/bpf/prog_tests/fd_array.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+This patchset is adding a generic infrastructure for luks support in
+crash dumping, and it adds the support in x86 ARCH. Since the x86
+related change is only located in kdump only files, won't impact other
+x86 codes. Could you consider pick this into your tree?
 
-diff --git a/tools/testing/selftests/bpf/prog_tests/fd_array.c b/tools/testing/selftests/bpf/prog_tests/fd_array.c
-index a1d52e73fb16..9add890c2d37 100644
---- a/tools/testing/selftests/bpf/prog_tests/fd_array.c
-+++ b/tools/testing/selftests/bpf/prog_tests/fd_array.c
-@@ -83,8 +83,8 @@ static inline int bpf_prog_get_map_ids(int prog_fd, __u32 *nr_map_ids, __u32 *ma
- 	int err;
- 
- 	memset(&info, 0, len);
--	info.nr_map_ids = *nr_map_ids,
--	info.map_ids = ptr_to_u64(map_ids),
-+	info.nr_map_ids = *nr_map_ids;
-+	info.map_ids = ptr_to_u64(map_ids);
- 
- 	err = bpf_prog_get_info_by_fd(prog_fd, &info, &len);
- 	if (!ASSERT_OK(err, "bpf_prog_get_info_by_fd"))
--- 
-2.25.1
+And by the way, this is a kdump only fix, not related to KHO (Kexec
+HandOver) which David suggested to adapt to earlier. Explained it here
+to remove misunderstanding. 
+
+Thanks
+Baoquan
+
+>  Documentation/admin-guide/kdump/kdump.rst |  32 ++
+>  arch/x86/kernel/crash.c                   |  26 +-
+>  arch/x86/kernel/kexec-bzimage64.c         |  11 +
+>  arch/x86/kernel/machine_kexec_64.c        |  22 ++
+>  include/linux/crash_core.h                |   7 +-
+>  include/linux/crash_dump.h                |   2 +
+>  include/linux/kexec.h                     |  34 ++
+>  kernel/Kconfig.kexec                      |  10 +
+>  kernel/Makefile                           |   1 +
+>  kernel/crash_dump_dm_crypt.c              | 459 ++++++++++++++++++++++
+>  kernel/kexec_file.c                       |   3 +
+>  11 files changed, 604 insertions(+), 3 deletions(-)
+>  create mode 100644 kernel/crash_dump_dm_crypt.c
+> 
+> 
+> base-commit: bb066fe812d6fb3a9d01c073d9f1e2fd5a63403b
+> -- 
+> 2.48.1
+> 
 
 
