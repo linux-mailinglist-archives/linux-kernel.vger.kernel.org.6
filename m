@@ -1,113 +1,145 @@
-Return-Path: <linux-kernel+bounces-554917-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-554918-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF615A5A35C
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 19:44:06 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CE1A7A5A35F
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 19:45:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8BE9E17612B
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 18:43:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 876AE3A6C15
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 18:44:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BD07238147;
-	Mon, 10 Mar 2025 18:43:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pHbrf96w"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7B2A23645D;
-	Mon, 10 Mar 2025 18:43:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EBFE2356CB;
+	Mon, 10 Mar 2025 18:45:01 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B1A4223702;
+	Mon, 10 Mar 2025 18:44:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741632182; cv=none; b=F2j0Z6p9xx5g9IqeAO5ERv4xL5s7o5bAUuTswcOlNqwJ8sbB9LpZl8+WijDaemLgWV0h1OzLIiRdsZOQLbUmnyCKU3IHQpS5wXvK1mpVS16cWMRnFj9obJAJnLN1n9fEzdknWb9hCT2XtVHZTQAvO0txV7BpgEaNU6WqxYaw1ro=
+	t=1741632300; cv=none; b=cDHZ7I8u61z4y7jQjyOGC5mklQI+2wcV0RJyxF0qTsu/AtZno32iLaVtPWE4p9ygDHNRMeOHvqfCRgePriUCT3zuKYww13OYzy9U08agR8x8LeEe/bArVpBbjsQB9sbfLCl/ZNL5NIiIAwlNpVfOoQPW20ewktSg/8kMn/IZu48=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741632182; c=relaxed/simple;
-	bh=B1dwEYHZKnLt80ZUErOw0CDO1S8uFBV9OslqHOT3lqM=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=VkjuAFGYZwDSNlSdQi2E7fM0MovpGMqk30P6zHaHtpUvRDctaEWHu/wx9Rwed0zsbojMAmEvRCaUoIMReDTKEi8LQHv6Er2RYsxerqdX0GKy82mQ6Slp1arJ5oNKu7GXRTAOLCPbhMjzKWJ8gocyOrPfprqpVWQ9ZHP+tuQIwZA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pHbrf96w; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2B62FC4CEEC;
-	Mon, 10 Mar 2025 18:43:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741632182;
-	bh=B1dwEYHZKnLt80ZUErOw0CDO1S8uFBV9OslqHOT3lqM=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=pHbrf96wz8OzDHLNDfbXY1BIyfwMdFcuG5XHQVwk4xV5A53jiJy+bC9xGKa7qzoE+
-	 jxu825YojH3DcmmsoSt0U8j5bNu862tTht9+pYHrcGQwV2ITXkXi54j2ibmAkOMbbf
-	 GdkLKyobc3HxMEhLPjTBDPjDS7AgVu8+c5pG0lslbs00ScJrHr72ODuU937MipHLbh
-	 7UiOuQ0oA0X96c7RtG4nsRua6CDyuDbrBnw3pNVBSXNyNEFGN0p10dSixIuQJ031k8
-	 gL/nLbKwBD4S9Q56DnlYrHHzy1EldzitQyqyN1rRFrnClGKOS8BU1PULZpe9JHFJfU
-	 fjTd4GeUXnAGg==
-Date: Mon, 10 Mar 2025 13:43:00 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: linux-pci@vger.kernel.org
-Cc: Alex Williamson <alex.williamson@redhat.com>,
-	Ilpo =?utf-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>,
-	Keith Busch <kbusch@kernel.org>, Todd Kjos <tkjos@google.com>,
-	Dan Williams <dan.j.williams@intel.com>,
-	Dave Jiang <dave.jiang@intel.com>, linux-kernel@vger.kernel.org,
-	Bjorn Helgaas <bhelgaas@google.com>
-Subject: Re: [PATCH] PCI: Log debug messages about reset method
-Message-ID: <20250310184300.GA561876@bhelgaas>
+	s=arc-20240116; t=1741632300; c=relaxed/simple;
+	bh=U9hKR3bNU8b0tHM96qWPZktlGi9udBVKJaA14lysXVE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=R6gTkH2AIXZ22mTR9uVrcysn2es+HW5DLOm8Ux7eVvsgSoBkfk9py6NViDdbDu4uOJgatxggHTUaz/Hsc7wgFDjAu+7zZHjQnCjlzX4k2Qg6OFFn/VOztQ5q/hbj3NT1WJ4ftIF14y5CQm6bCEwTENctzgcT324gOCDdq0wq5Bk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id ADD28152B;
+	Mon, 10 Mar 2025 11:45:08 -0700 (PDT)
+Received: from [10.57.39.174] (unknown [10.57.39.174])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 9AB873F673;
+	Mon, 10 Mar 2025 11:44:53 -0700 (PDT)
+Message-ID: <0b057c55-fe02-4c83-af69-37770dc83eb8@arm.com>
+Date: Mon, 10 Mar 2025 18:44:51 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250303204220.197172-1-helgaas@kernel.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC 06/12] dma: direct: Provide accessor to dmem region
+To: Maxime Ripard <mripard@kernel.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+ Marek Szyprowski <m.szyprowski@samsung.com>,
+ Sumit Semwal <sumit.semwal@linaro.org>,
+ =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
+ Benjamin Gaignard <benjamin.gaignard@collabora.com>,
+ Brian Starkey <Brian.Starkey@arm.com>, John Stultz <jstultz@google.com>,
+ "T.J. Mercier" <tjmercier@google.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>, Tomasz Figa <tfiga@chromium.org>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>, Hans Verkuil
+ <hverkuil@xs4all.nl>,
+ Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+ linux-mm@kvack.org, linux-kernel@vger.kernel.org, iommu@lists.linux.dev,
+ linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ linaro-mm-sig@lists.linaro.org
+References: <20250310-dmem-cgroups-v1-0-2984c1bc9312@kernel.org>
+ <20250310-dmem-cgroups-v1-6-2984c1bc9312@kernel.org>
+ <2af9ea85-b31d-49c9-b574-38c33cc89cef@arm.com>
+ <20250310-expert-piculet-of-fascination-3813cd@houat>
+From: Robin Murphy <robin.murphy@arm.com>
+Content-Language: en-GB
+In-Reply-To: <20250310-expert-piculet-of-fascination-3813cd@houat>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon, Mar 03, 2025 at 02:42:20PM -0600, Bjorn Helgaas wrote:
-> From: Bjorn Helgaas <bhelgaas@google.com>
+On 2025-03-10 4:28 pm, Maxime Ripard wrote:
+> On Mon, Mar 10, 2025 at 02:56:37PM +0000, Robin Murphy wrote:
+>> On 2025-03-10 12:06 pm, Maxime Ripard wrote:
+>>> Consumers of the direct DMA API will have to know which region their
+>>> device allocate from in order for them to charge the memory allocation
+>>> in the right one.
+>>
+>> This doesn't seem to make much sense - dma-direct is not an allocator
+>> itself, it just provides the high-level dma_alloc_attrs/dma_alloc_pages/etc.
+>> interfaces wherein the underlying allocations _could_ come from CMA, but
+>> also a per-device coherent/restricted pool, or a global coherent/atomic
+>> pool, or the regular page allocator, or in one weird corner case the SWIOTLB
+>> buffer, or...
 > 
-> Log pci_dbg() messages about the reset methods we attempt and any errors
-> (-ENOTTY means "try the next method").
+> I guess it wasn't super clear, but what I meant is that it's an
+> allocator to the consumer: it gets called, and returns a buffer. How it
+> does so is transparent to the device, and on the other side of the
+> abstraction.
 > 
-> Set CONFIG_DYNAMIC_DEBUG=y and enable by booting with
-> dyndbg="file drivers/pci/* +p" or enable at runtime:
-> 
->   # echo "file drivers/pci/* +p" > /sys/kernel/debug/dynamic_debug/control
-> 
-> Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
+> I do agree that the logic is complicated to follow, and that's what I
+> was getting at in the cover letter.
 
-Applied to pci/reset for v6.15.
+Right, but ultimately my point is that when we later end up with:
 
-> ---
->  drivers/pci/pci.c | 7 ++++++-
->  1 file changed, 6 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
-> index 869d204a70a3..3d13bb8e5c53 100644
-> --- a/drivers/pci/pci.c
-> +++ b/drivers/pci/pci.c
-> @@ -5230,6 +5230,7 @@ const struct pci_reset_fn_method pci_reset_fn_methods[] = {
->  int __pci_reset_function_locked(struct pci_dev *dev)
->  {
->  	int i, m, rc;
-> +	const struct pci_reset_fn_method *method;
->  
->  	might_sleep();
->  
-> @@ -5246,9 +5247,13 @@ int __pci_reset_function_locked(struct pci_dev *dev)
->  		if (!m)
->  			return -ENOTTY;
->  
-> -		rc = pci_reset_fn_methods[m].reset_fn(dev, PCI_RESET_DO_RESET);
-> +		method = &pci_reset_fn_methods[m];
-> +		pci_dbg(dev, "reset via %s\n", method->name);
-> +		rc = method->reset_fn(dev, PCI_RESET_DO_RESET);
->  		if (!rc)
->  			return 0;
-> +
-> +		pci_dbg(dev, "%s failed with %d\n", method->name, rc);
->  		if (rc != -ENOTTY)
->  			return rc;
->  	}
-> -- 
-> 2.34.1
-> 
+struct dmem_cgroup_region *
+dma_get_dmem_cgroup_region(struct device *dev)
+{
+	if (dma_alloc_direct(dev, get_dma_ops(dev)))
+		return dma_direct_get_dmem_cgroup_region(dev);
+
+		= dma_contiguous_get_dmem_cgroup_region(dev);
+
+it's objectively wrong given what dma_alloc_direct() means in context:
+
+void *dma_alloc_attrs(...)
+{
+	if (dma_alloc_direct(dev, ops))
+		cpu_addr = dma_direct_alloc(...);
+
+where dma_direct_alloc() may then use at least 5 different allocation 
+methods, only one of which is CMA. Accounting things which are not CMA 
+to CMA seems to thoroughly defeat the purpose of having such 
+fine-grained accounting at all.
+
+This is why the very notion of "consumers of dma-direct" should 
+fundamentally not be a thing IMO. Drivers consume the DMA API 
+interfaces, and the DMA API ultimately consumes various memory 
+allocators, but what happens in between is nobody else's business; 
+dma-direct happens to represent *some* paths between the two, but there 
+are plenty more paths to the same (and different) allocators through 
+other DMA API implementations as well. Which route a particular call 
+takes to end up at a particular allocator is not meaningful unless you 
+are the DMA ops dispatch code.
+
+Or to put it another way, to even go for the "dumbest possible correct 
+solution", the plumbing of dma_get_dmem_cgroup_region() would need to be 
+about as complex and widespread as the plumbing of dma_alloc_attrs() 
+itself ;)
+
+I think I see why a simple DMA attribute couldn't be made to work, as 
+dmem_cgroup_uncharge() can't simply look up the pool the same way 
+dmem_cgroup_try_charge() found it, since we still need a cg for that and 
+get_current_dmemcs() can't be assumed to be stable over time, right?
+At the point I'm probably starting to lean towards a whole new DMA op 
+with a properly encapsulated return type (and maybe a long-term goal of 
+consolidating the 3 or 4 different allocation type we already have), or 
+just have a single dmem region for "DMA API memory" and don't care where 
+it came from (although I do see the issues with that too - you probably 
+wouldn't want to ration a device-private pool the same way as global 
+system memory, for example)
+
+Thanks,
+Robin.
 
