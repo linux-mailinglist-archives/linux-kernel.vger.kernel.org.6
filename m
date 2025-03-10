@@ -1,45 +1,45 @@
-Return-Path: <linux-kernel+bounces-554796-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-554797-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6988DA59DC1
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 18:25:05 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D8051A59DC5
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 18:25:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C36097A5CB5
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 17:24:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 09E1716FD1C
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 17:25:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22CCC236429;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C045223718D;
 	Mon, 10 Mar 2025 17:23:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="krWQwApA"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Set4HVYi"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79651236A6A
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 17:23:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29118236A98
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 17:23:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741627413; cv=none; b=bnTJOnk7okOCTKuyLBkFEnIvMqzldkK24SF8KyhUYQXwbmvt3CAV3b3zEfvwjwJRUCP670lb6W9ozoF4axP6D+P/deglPO5CpWTHkO0ffzV6zLc1fShAemY/Z8heStdZGLzaaKmBj0rpE9jeveVArSyOHmVIiC8xkF+DqHKYL88=
+	t=1741627414; cv=none; b=U/IEmKgGssL0K4o7l5E341GFp2g0q+LYlwSgMyrRmphfwVn3p3uXHFkFZf8DCX0gApuvPhhSxX0/VJVV1NuQ/fgtWAkwzN4pxrZ6hwJN/5GxHY8EKZIVhgdvvDDmYo1pxPmYx7GU8pZ0Ky4ecUidEw+fcu2vNj3XzrzPT1HZm6E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741627413; c=relaxed/simple;
-	bh=XwNyPWkuo3x8UEQgYUucQN44sSUMxDXOQT6wzHvLom0=;
+	s=arc-20240116; t=1741627414; c=relaxed/simple;
+	bh=P3FkpaakjLXsflqPzPkcSxDHFwcvtfrO/BuhT1Vlk/c=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=d84ItyLXBmMQegyKWh/BYGIS4C0o2pxRodsiGEspcTmmnxMl1gld4wUuW4E1dfyH5mF2HFYi5ZMH5F9+13ZwcRav6ieWNxZ+T1uDR963X0VET/0+qB+02+fwC9jTFASA2Jd3izgUJpAiAFlNzH1T2fcgfNskFLw/sLx7ivKuuJY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=krWQwApA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BC673C4CEEC;
-	Mon, 10 Mar 2025 17:23:32 +0000 (UTC)
+	 MIME-Version; b=qxUFztfYw9JOnirpH/pLeINQFAKjovHpiIy1BitgRqkUxY1qPxqLvFgkmzCF+6jQQdjkvntCG2xz0aXSsEeZxee2F9dPYY4Sp/3c+rZHOb9HpsE2E3f0K7DC6gbW3g8l8wI8MrH02FTrjnAj7q4yCGA+TzZrPa3s08blZE84N30=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Set4HVYi; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D4A8CC4CEF3;
+	Mon, 10 Mar 2025 17:23:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741627412;
-	bh=XwNyPWkuo3x8UEQgYUucQN44sSUMxDXOQT6wzHvLom0=;
+	s=k20201202; t=1741627414;
+	bh=P3FkpaakjLXsflqPzPkcSxDHFwcvtfrO/BuhT1Vlk/c=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=krWQwApAFooJw8RDR+VQklpBSPp/jb0qvzqLu5pCDpb7eW76XF5JyZwxHg4cy4FEU
-	 XvMGRSStteW7kyuxgIk/BsxYaqWeRdLQaa6PTij9bEWwE2+rClOI+uMaCmLkdK2M8K
-	 8MzU+FiOthWHwlK/bdFrs0qShtkdkmaAE2UaZYZM8XMrmJtSnawjt/mLWf6uLnDD0d
-	 C+kVoxCRMP9beh4TlBf27mnPlUXccx8TLOwatzKscv0CoCZgrpLWWu7zmxnnpVRCyE
-	 Liha99fJhrQLYsMoDyQNiPeJZ4C//wNOTCnt8/6+cNVwvl2dr6Jp1ifIZUVfh+ZNIy
-	 g/6Q0LWdHYpWA==
+	b=Set4HVYiJXagZv6AHBunmJA2YaxUOJNXk/xAV/vhDbFjpU1vNEeI+SBBALuj/M05i
+	 KURLdN1pNktQabof22sMSLvUlHkADTNX1hIHgdSslYYSh8X5MurEWENbg0as8amXZ8
+	 3j67efJT7/8ngHcGzDhAqL3JWDpqLWmrNa3eE93RbLgP3ZaGBOJN+U3MkkZUcfemAX
+	 j2w0y5eq4tpmZ16QqA+T7gOEJOtMnGL7tyQX/IHV0A4AE+tJiAxejseb4ofZt0hmKP
+	 64a4hJBNiaED6o2r144J+62wh3s3o/d4eb9OVTVKRL8Ck59jNEoJ81sBI1Qo/AZK4L
+	 t4BlhlGEzf4NQ==
 From: SeongJae Park <sj@kernel.org>
 To: Andrew Morton <akpm@linux-foundation.org>
 Cc: SeongJae Park <sj@kernel.org>,
@@ -51,9 +51,9 @@ Cc: SeongJae Park <sj@kernel.org>,
 	kernel-team@meta.com,
 	linux-kernel@vger.kernel.org,
 	linux-mm@kvack.org
-Subject: [PATCH 8/9] mm/madvise: batch tlb flushes for [process_]madvise(MADV_{DONTNEED[_LOCKED],FREE})
-Date: Mon, 10 Mar 2025 10:23:17 -0700
-Message-Id: <20250310172318.653630-9-sj@kernel.org>
+Subject: [PATCH 9/9] mm/madvise: remove !tlb support from madvise_{dontneed,free}_single_vma()
+Date: Mon, 10 Mar 2025 10:23:18 -0700
+Message-Id: <20250310172318.653630-10-sj@kernel.org>
 X-Mailer: git-send-email 2.39.5
 In-Reply-To: <20250310172318.653630-1-sj@kernel.org>
 References: <20250310172318.653630-1-sj@kernel.org>
@@ -65,137 +65,74 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-MADV_DONTNEED[_LOCKED] and MADV_FREE internal logics for
-[process_]madvise() can be invoked with batched tlb flushes.  Update
-vector_madvise() and do_madvise(), which are called for the two system
-calls  respectively, to use those in the efficient way.  Initialize an
-mmu_gather object before starting the internal works, and flush the
-gathered tlb entries at once after all the internal works are done.
+madvise_dontneed_single_vma() and madvise_free_single_vma() support both
+batched tlb flushes and unbatched tlb flushes use cases depending on
+received tlb parameter's value.  The supports were for safe and fine
+transition of the usages from the unbatched flushes to the batched ones.
+Now the transition is done, and therefore there is no real unbatched tlb
+flushes use case.  Remove the code for supporting the no more being used
+cases.
 
 Signed-off-by: SeongJae Park <sj@kernel.org>
 ---
- mm/madvise.c | 51 +++++++++++++++++++++++++++++++++++++++++++++++----
- 1 file changed, 47 insertions(+), 4 deletions(-)
+ mm/madvise.c | 19 ++-----------------
+ 1 file changed, 2 insertions(+), 17 deletions(-)
 
 diff --git a/mm/madvise.c b/mm/madvise.c
-index d7ea71c6422c..d5f4ce3041a4 100644
+index d5f4ce3041a4..25af0a24c00b 100644
 --- a/mm/madvise.c
 +++ b/mm/madvise.c
-@@ -905,6 +905,7 @@ static bool madvise_dontneed_free_valid_vma(struct vm_area_struct *vma,
- 
- struct madvise_behavior {
- 	int behavior;
-+	struct mmu_gather *tlb;
+@@ -795,18 +795,11 @@ static const struct mm_walk_ops madvise_free_walk_ops = {
  };
  
- static long madvise_dontneed_free(struct vm_area_struct *vma,
-@@ -964,9 +965,11 @@ static long madvise_dontneed_free(struct vm_area_struct *vma,
- 	}
+ static int madvise_free_single_vma(
+-		struct mmu_gather *caller_tlb, struct vm_area_struct *vma,
++		struct mmu_gather *tlb, struct vm_area_struct *vma,
+ 		unsigned long start_addr, unsigned long end_addr)
+ {
+ 	struct mm_struct *mm = vma->vm_mm;
+ 	struct mmu_notifier_range range;
+-	struct mmu_gather self_tlb;
+-	struct mmu_gather *tlb;
+-
+-	if (caller_tlb)
+-		tlb = caller_tlb;
+-	else
+-		tlb = &self_tlb;
  
- 	if (behavior == MADV_DONTNEED || behavior == MADV_DONTNEED_LOCKED)
--		return madvise_dontneed_single_vma(NULL, vma, start, end);
-+		return madvise_dontneed_single_vma(
-+				madv_behavior->tlb, vma, start, end);
- 	else if (behavior == MADV_FREE)
--		return madvise_free_single_vma(NULL, vma, start, end);
-+		return madvise_free_single_vma(
-+				madv_behavior->tlb, vma, start, end);
- 	else
- 		return -EINVAL;
+ 	/* MADV_FREE works for only anon vma at the moment */
+ 	if (!vma_is_anonymous(vma))
+@@ -822,8 +815,6 @@ static int madvise_free_single_vma(
+ 				range.start, range.end);
+ 
+ 	lru_add_drain();
+-	if (!caller_tlb)
+-		tlb_gather_mmu(tlb, mm);
+ 	update_hiwater_rss(mm);
+ 
+ 	mmu_notifier_invalidate_range_start(&range);
+@@ -832,9 +823,6 @@ static int madvise_free_single_vma(
+ 			&madvise_free_walk_ops, tlb);
+ 	tlb_end_vma(tlb, vma);
+ 	mmu_notifier_invalidate_range_end(&range);
+-	if (!caller_tlb)
+-		tlb_finish_mmu(tlb);
+-
+ 	return 0;
  }
-@@ -1639,6 +1642,32 @@ static void madvise_unlock(struct mm_struct *mm, int behavior)
- 		mmap_read_unlock(mm);
+ 
+@@ -866,10 +854,7 @@ static long madvise_dontneed_single_vma(struct mmu_gather *tlb,
+ 		.even_cows = true,
+ 	};
+ 
+-	if (!tlb)
+-		zap_page_range_single(vma, start, end - start, &details);
+-	else
+-		unmap_vma_single(tlb, vma, start, end - start, &details);
++	unmap_vma_single(tlb, vma, start, end - start, &details);
+ 	return 0;
  }
  
-+static bool madvise_batch_tlb_flush(int behavior)
-+{
-+	switch (behavior) {
-+	case MADV_DONTNEED:
-+	case MADV_DONTNEED_LOCKED:
-+		return true;
-+	default:
-+		return false;
-+	}
-+}
-+
-+static void madvise_init_tlb(struct madvise_behavior *madv_behavior,
-+		struct mm_struct *mm)
-+{
-+	if (!madvise_batch_tlb_flush(madv_behavior->behavior))
-+		return;
-+	tlb_gather_mmu(madv_behavior->tlb, mm);
-+}
-+
-+static void madvise_finish_tlb(struct madvise_behavior *madv_behavior)
-+{
-+	if (!madvise_batch_tlb_flush(madv_behavior->behavior))
-+		return;
-+	tlb_finish_mmu(madv_behavior->tlb);
-+}
-+
- static bool is_valid_madvise(unsigned long start, size_t len_in, int behavior)
- {
- 	size_t len;
-@@ -1791,14 +1820,20 @@ static int madvise_do_behavior(struct mm_struct *mm,
- int do_madvise(struct mm_struct *mm, unsigned long start, size_t len_in, int behavior)
- {
- 	int error;
--	struct madvise_behavior madv_behavior = {.behavior = behavior};
-+	struct mmu_gather tlb;
-+	struct madvise_behavior madv_behavior = {
-+		.behavior = behavior,
-+		.tlb = &tlb,
-+	};
- 
- 	if (madvise_should_skip(start, len_in, behavior, &error))
- 		return error;
- 	error = madvise_lock(mm, behavior);
- 	if (error)
- 		return error;
-+	madvise_init_tlb(&madv_behavior, mm);
- 	error = madvise_do_behavior(mm, start, len_in, &madv_behavior);
-+	madvise_finish_tlb(&madv_behavior);
- 	madvise_unlock(mm, behavior);
- 
- 	return error;
-@@ -1815,13 +1850,18 @@ static ssize_t vector_madvise(struct mm_struct *mm, struct iov_iter *iter,
- {
- 	ssize_t ret = 0;
- 	size_t total_len;
--	struct madvise_behavior madv_behavior = {.behavior = behavior};
-+	struct mmu_gather tlb;
-+	struct madvise_behavior madv_behavior = {
-+		.behavior = behavior,
-+		.tlb = &tlb,
-+	};
- 
- 	total_len = iov_iter_count(iter);
- 
- 	ret = madvise_lock(mm, behavior);
- 	if (ret)
- 		return ret;
-+	madvise_init_tlb(&madv_behavior, mm);
- 
- 	while (iov_iter_count(iter)) {
- 		unsigned long start = (unsigned long)iter_iov_addr(iter);
-@@ -1850,14 +1890,17 @@ static ssize_t vector_madvise(struct mm_struct *mm, struct iov_iter *iter,
- 			}
- 
- 			/* Drop and reacquire lock to unwind race. */
-+			madvise_finish_tlb(&madv_behavior);
- 			madvise_unlock(mm, behavior);
- 			madvise_lock(mm, behavior);
-+			madvise_init_tlb(&madv_behavior, mm);
- 			continue;
- 		}
- 		if (ret < 0)
- 			break;
- 		iov_iter_advance(iter, iter_iov_len(iter));
- 	}
-+	madvise_finish_tlb(&madv_behavior);
- 	madvise_unlock(mm, behavior);
- 
- 	ret = (total_len - iov_iter_count(iter)) ? : ret;
 -- 
 2.39.5
 
