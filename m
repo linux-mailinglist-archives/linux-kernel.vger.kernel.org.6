@@ -1,123 +1,105 @@
-Return-Path: <linux-kernel+bounces-554303-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-554304-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5DED6A595F0
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 14:17:50 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7EAA7A595F4
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 14:18:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DFC8A1619CD
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 938843AE4D1
 	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 13:17:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A16ED229B1A;
-	Mon, 10 Mar 2025 13:17:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F98922A4E0;
+	Mon, 10 Mar 2025 13:17:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FuN1v38g"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="l0cy2i+0"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AEDFA930;
-	Mon, 10 Mar 2025 13:17:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A286DA930;
+	Mon, 10 Mar 2025 13:17:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741612663; cv=none; b=ffqpFd4f12fRmOvnOZZyyDxhRYBT782uhY8dM5r/sl6FoPeLBCtWMyZNfBwsDZz81KdrDP2trMl825jDpCZEihcvNhVjrbb48iNTqhYS2ROoyJM3IF97wmVy0tihiG+gHnMY1I9w+3yn8h+IBVZU3q3Eps1QyOFTahqoGnn6jBs=
+	t=1741612670; cv=none; b=YHPfoVvsKh2vEvxsTYOP9UznDdDF66oJnY05K2Xn0tEzRUvplejc1+rR9vN6YX1TVjlUar8mkwei7grvmEUCrB9/m1I0g+DA5hakE87a4uFJ0/dWy6O3bGl/7+lTkIt/NYtA55QYKdNYKxqgqkmE1aQcglV4MNSmUYJh3LGKD6Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741612663; c=relaxed/simple;
-	bh=D4ThZR3jOk0y/K5Wa32G2qe5CNpAq9YoiQUxj3GtUtk=;
+	s=arc-20240116; t=1741612670; c=relaxed/simple;
+	bh=4ZqG39C5Pf1QNEH581g9JUhd773SjHjH1W/XN4R90kM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=U2yuDUuyU3JdYQ8fAexnoU0SdcHItTYXnsxHzbnuX5ahYGbox23JNdF5ZNeAWHS25idb7g+/K9FkhPhVG5TowzeanAibK5k3zMWv2VrfAFTXV4YLOVzfbc3lR2KVtbN+ZRk66DRE/Tv7A+GdG3mGb9+GtGqKPzQ2nIK/XnnlDyQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FuN1v38g; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A097BC4CEE5;
-	Mon, 10 Mar 2025 13:17:40 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=gXgvkONvj0sDXfMnXs5ZhK3wtgl+96zht5s+68mrWgQ7AvhKh/dJGExB5/AONojgntVxNjnl5Fe4Lak9Nt6t/AiOJN91DLhYsSL4U86FlvFfHXSSqfboLa5bm7Sso00JOTe81vWyKS+cI81EbkWcEnrwWvqcpBQ7Ykd++qVTkBo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=l0cy2i+0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B87D4C4CEE5;
+	Mon, 10 Mar 2025 13:17:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741612662;
-	bh=D4ThZR3jOk0y/K5Wa32G2qe5CNpAq9YoiQUxj3GtUtk=;
+	s=k20201202; t=1741612670;
+	bh=4ZqG39C5Pf1QNEH581g9JUhd773SjHjH1W/XN4R90kM=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=FuN1v38gbxiyLJTAddq+jPOChcbi2gv3rO59J3QhrQg2EgEOGCzL/jrvZqdkFgCjP
-	 sG4bhuXx7F1C1pMbq1BsHdOK3jKtcEDEipxrIIulAzriYpMt6iBOCk+0WWSR9J23X0
-	 Bk1NsuQEHTQ7j8hLYgK1GD6WtFuJ7DYTFBrVN/GnX//E/XQoG4nuaM3qCb4he5Ylzj
-	 m2nmDAD1s2hRatjxaX/BrFqgUiGzQ5KGEBpibUps/hTqhbLC4iT690cAgwT/UuCMan
-	 gxKG/AiLowxzcyzfF943lnFtQI2F07NktFXDgEbtcohvFjdoE3JWkPeAk4joj3jjAQ
-	 bpp35+pVSzcsA==
-Date: Mon, 10 Mar 2025 14:17:37 +0100
-From: Carlos Maiolino <cem@kernel.org>
-To: Jinliang Zheng <alexjlzheng@gmail.com>
-Cc: david@fromorbit.com, alexjlzheng@tencent.com, dchinner@redhat.com, 
-	djwong@kernel.org, linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org
-Subject: Re: [PATCH] xfs: don't allow log recover IO to be throttled
-Message-ID: <67tqyedixro6clydwtp5y2ro6wnlr7fp4sfnpz33l4pf6oy4ir@6yr23tubzsjx>
-References: <Z8YU-BYfB2SCwtW6@dread.disaster.area>
- <_ZfLT1KGyZTATXmYjqB5UWMekyyMj9vA74kup6rJl_QFrfD1mrV6h5qbes1b-pHbq95yM6dtQKek3uIce95VPg==@protonmail.internalid>
- <20250309124133.1453369-1-alexjlzheng@tencent.com>
+	b=l0cy2i+02xhEoPTuiAszjprYlougcvywMXyIRcJqQDZN0By0NVslsy8cdRhL46nH7
+	 AvSMgJ3n6XiCG4WhTsSwuKyW73hzeJIzhuoHKcHV4E4V0Ead9RAwWM9lP8hpLh+7x+
+	 Tk6g7mlSZbVD6q3pEzZxS47X/4f1iLVSbqBMbS7719rHlUwmWp+qm//dLCmF/F1EGQ
+	 Y4gz/xfVz+X4pn+qTQdZVEGNncnPjALvI8dGZjMt9/OL5+VV4F/Z/69lsbEjF7I9RF
+	 AbPobtS5X9jKqnUqFXlHHfWK9T0sbEeZotEeGvBbacNk88edjN134aalObDqJRubLb
+	 H5Daac2fyQr7Q==
+Date: Mon, 10 Mar 2025 13:17:45 +0000
+From: Mark Brown <broonie@kernel.org>
+To: Oleksij Rempel <o.rempel@pengutronix.de>
+Cc: "David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Woojung Huh <woojung.huh@microchip.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>, kernel@pengutronix.de,
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+	UNGLinuxDriver@microchip.com, Phil Elwell <phil@raspberrypi.org>
+Subject: Re: [PATCH net v1 1/1] net: usb: lan78xx: Sanitize return values of
+ register read/write functions
+Message-ID: <92b0588d-df0b-4f97-99db-d607de774728@sirena.org.uk>
+References: <20250307101223.3025632-1-o.rempel@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="l3HifBw0bN+3GatU"
+Content-Disposition: inline
+In-Reply-To: <20250307101223.3025632-1-o.rempel@pengutronix.de>
+X-Cookie: You have a truly strong individuality.
+
+
+--l3HifBw0bN+3GatU
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250309124133.1453369-1-alexjlzheng@tencent.com>
+Content-Transfer-Encoding: quoted-printable
 
-On Sun, Mar 09, 2025 at 08:41:33PM +0800, Jinliang Zheng wrote:
-> On Tue, 4 Mar 2025 07:45:44 +1100, Dave Chinner wrote:
-> > On Mon, Mar 03, 2025 at 07:23:01PM +0800, Jinliang Zheng wrote:
-> > > When recovering a large filesystem, avoid log recover IO being
-> > > throttled by rq_qos_throttle().
-> >
-> > Why?
-> >
-> > The only writes to the journal during recovery are to clear stale
-> > blocks - it's only a very small part of the IO that journal recovery
-> > typically does. What problem happens when these writes are
-> > throttled?
-> 
-> Sorry for the late reply, I was struggling with my work. :-(
-> 
-> Recently, we encountered the problem of xfs log IO being throttled in
-> the Linux distribution version maintained by ourselves. To be more
-> precise, it was indirectly throttled by the IO issued by the LVM layer.
-> For details, see [1] please.
+On Fri, Mar 07, 2025 at 11:12:23AM +0100, Oleksij Rempel wrote:
+> usb_control_msg() returns the number of transferred bytes or a negative
+> error code. The current implementation propagates the transferred byte
+> count, which is unintended. This affects code paths that assume a
+> boolean success/failure check, such as the EEPROM detection logic.
+>=20
+> Fix this by ensuring lan78xx_read_reg() and lan78xx_write_reg() return
+> only 0 on success and preserve negative error codes.
 
-Ok, so you properly fixed the problem on the DM layer.
+Tested-by: Mark Brown <broonie@kernel.org>
 
-> 
-> After this problem was solved, we naturally checked other related log
-> IO paths, hoping that they would not be throttled by wbt_wait(), that
-> is, we hoped that they would be marked with REQ_SYNC | REQ_IDLE.
-> 
-> For log recover IO, in the LVM scenario, we are not sure whether it
-> will be affected by IO on other LVs on the same PV. In addition, we
-> did not find any obvious side effects of this patch. An ounce of
-> prevention is worth a pound of cure, and we think it is more
-> appropriate to add REQ_IDLE here.
+This fixes NFS boot on the Raspberry Pi 3+, it'd be good to get it into
+v6.14.
 
-If you notice any problem with this that you're trying to fix, or if
-this change improves anything, please specify that in the commit message
- - also addressing comments by Christoph, i.e. xfs_rw_bdev shouldn't be
-messing with request ops - Just because it has no side-effects is not
-a good reason. Regular Log IO being throttled by the DM layer is indeed
-a problem, but considering the very small amount of data written here
-during log recovery doesn't seem a good use of REQ_IDLE.
+--l3HifBw0bN+3GatU
+Content-Type: application/pgp-signature; name="signature.asc"
 
-So, for now, NAK.
+-----BEGIN PGP SIGNATURE-----
 
-Carlos
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmfO5ngACgkQJNaLcl1U
+h9CWbgf/YvMxNz/qhTlv3AYOZk5I4nBX9bOxERFS7Sp/H0sDcC610uSKp3TXNPDp
+2s1HDKI6gS3YxuG+qWEe7HVOZPF5TOpN22UIN+s9YJ+eV7/d088hbl5KkwNjfMNc
+W15vBIgEhGcnKMhz0ZZMOURzklFjp7id9s2f5MdU3y5YvCdrFFs/nj4i11JHdpj3
+GkRux67ifQ6t7sEMpGB6Po15zX5A603wYTDuiKZ5MQ/9szUIPjWQTT78UNKN8ZkU
+fALRy0yd3UGWwRAUJYcOm8Oxk3mhePqizm4jDylyHMjVg33gQCW8Hg9hnR8b42pi
+RBBWJu3TwqIsqWGZf+CaDtUAPqWlZQ==
+=XDSV
+-----END PGP SIGNATURE-----
 
-
-> 
-> Of course, if there is really a reason not to consider being throttled,
-> please forgive me for disturbing you.
-> 
-> [1] https://lore.kernel.org/linux-xfs/20250220112014.3209940-1-alexjlzheng@tencent.com/
-> 
-> Thank you very much. :)
-> Jinliang Zheng
-> 
-> >
-> > -Dave.
-> > --
-> > Dave Chinner
-> > david@fromorbit.com
+--l3HifBw0bN+3GatU--
 
