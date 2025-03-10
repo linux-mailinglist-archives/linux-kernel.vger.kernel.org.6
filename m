@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-554097-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-554098-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7256EA592E9
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 12:42:40 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7411EA592EE
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 12:43:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A359F166D4E
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 11:42:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 307E33A6601
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 11:43:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B826122170A;
-	Mon, 10 Mar 2025 11:42:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 197EE22170A;
+	Mon, 10 Mar 2025 11:43:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dy+BQ3th"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Y1fF+ejS"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19BEE21D3EB;
-	Mon, 10 Mar 2025 11:42:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C36C18D63E;
+	Mon, 10 Mar 2025 11:43:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741606953; cv=none; b=cn+DwPNovAJvLPiAXWlkqLqg3M9cYEeKkfeLWhi7/c05dWvsIemvgVO2L+H4kJEGYsh+ON8m1a0iNqtv8YUSYToHzo3SwmHh86RTjevTUZJMSDWDHNUvc9mkBEV29a+cVosUWXqgmFHCIHD0xCcX51sqEvjfAJ5fJ5MnK1gpn2M=
+	t=1741607019; cv=none; b=urnipCVDvPJGzOhqUPeX1mJ0CnhxRBtvjpTkb40iGPx4M9KkIoOeRK56SY2ZZlTyPS7ul3g4TgIHnpVKitCMK5MUWFJVha8gGAZRvPZ/JxiBwxsQoXpo6G0L4AXCJPpn6ugTuFwEzP1AczjKS7JPkj2e6FVBewoo/fUrzevXNy0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741606953; c=relaxed/simple;
-	bh=YloHviLRFlUFPEF9ijYfWaGssLrwGDxErOdmeO+w8Ic=;
+	s=arc-20240116; t=1741607019; c=relaxed/simple;
+	bh=tQwFxFodDyYLTyLCaNMHIBv2+xezKs5dn2xjZoV+LO8=;
 	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=hihdf9pzBLvVFJadxv2z4Hd6j3rdv/M/TryHfXwpvpONrdhulWIW9qPigPk3FCEq968lm758Am2vBswGCK8XwvnAYHp+geNq1M/WJDdx4mkcEX9dJqOmOxOJiHiTDWjqMgBE/sMC5bGN7dynKeO73NtoFN67VvwXeapEchIwAOo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dy+BQ3th; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 215A7C4CEE5;
-	Mon, 10 Mar 2025 11:42:26 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=NKUd8rm/rD6guJ15FixWFxFYPfiyH8/CpdEBEnrEf4IhuB9lDegDY8a4+DsFEuBNVWxUz1TBA/XWcHEJnGNmkFax4D8Y4arnF6R4fapCrrrDHqmRAMHgYfzGG9pfY5Gn82WXeWO5FSHwTcyzbq5m/bSS64Z4Xw0S0GxMn9WQobQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Y1fF+ejS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A9FDCC4CEE5;
+	Mon, 10 Mar 2025 11:43:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741606952;
-	bh=YloHviLRFlUFPEF9ijYfWaGssLrwGDxErOdmeO+w8Ic=;
+	s=k20201202; t=1741607019;
+	bh=tQwFxFodDyYLTyLCaNMHIBv2+xezKs5dn2xjZoV+LO8=;
 	h=Date:Subject:To:References:From:In-Reply-To:From;
-	b=dy+BQ3thZ59bMEEOmG5gyz2x5bgCXFrZhcyuAki0f4jEJdpIXz8heytHO1OKRZp39
-	 d+2zBy7yet3ekB6qcepXnxXPsXjkYimxYnjzIDTOMG4nRS4dr2H9TByKzBnzR9FpoD
-	 esmNAz0+yAoxPbE7ebA7hXpOgGnY4OvSnTh+Fat07d3r9hGK754HbK+exVu7VF7Ula
-	 9deHSmqm3/g5BSUfgJpJi3udFnPbEUjnViBQXrvlZpUcuF9PRADMYUwpwPfS0+4gw7
-	 VdlBLr4CNBGp1ayaYIxBZv5xirr03PLMht53ckDW9eyM+GZ7GpLvA0Bc2mIhDsddHQ
-	 r77ZQ8PvT73mA==
-Message-ID: <a12afc26-2e8e-42cc-ac68-27ba8906707f@kernel.org>
-Date: Mon, 10 Mar 2025 12:42:23 +0100
+	b=Y1fF+ejSeQjhZG03rGEzTxp4uHwG4FJ88H+cfBpnOWdfhlXWFidYySRC0n7RvTvY8
+	 o78WgeYmEpny+6uUDNOEAM4GBB56bsnkguIYCeaAJDgmdYZ9IbxZiogpahqH2Rtynb
+	 UdI36etroRrla+LhumrlCCR1Dmdc2Z/6RdfAp6kv/Lb9F8vKZHT740yXpJXvU04MVJ
+	 0PA/LAXPiuLAr2gmuVNGQ8bQW+RqKEZXJC+pQZdsZbSqBKMStOFVYJO2GSRquFZ9lZ
+	 ubOB9bhKTjJ51nuW3AEa8PGsaROhbykS+YoofW9AbNWH485bqFvsdB7lZNOICaiNgL
+	 0zb9KBCim9gnQ==
+Message-ID: <58466532-3e17-4968-bade-210f478ccc76@kernel.org>
+Date: Mon, 10 Mar 2025 12:43:29 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,7 +49,7 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/3] dt-binding: aspeed: Add LPC PCC controller
+Subject: Re: [PATCH v2 3/3] soc: aspeed: lpc-pcc: Add PCC controller support
 To: Kevin Chen <kevin_chen@aspeedtech.com>, "lee@kernel.org"
  <lee@kernel.org>, "robh@kernel.org" <robh@kernel.org>,
  "krzk+dt@kernel.org" <krzk+dt@kernel.org>,
@@ -63,14 +63,11 @@ To: Kevin Chen <kevin_chen@aspeedtech.com>, "lee@kernel.org"
  "linux-arm-kernel@lists.infradead.org"
  <linux-arm-kernel@lists.infradead.org>,
  "linux-aspeed@lists.ozlabs.org" <linux-aspeed@lists.ozlabs.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- Mo Elbadry <elbadrym@google.com>
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 References: <20250304104434.481429-1-kevin_chen@aspeedtech.com>
- <20250304104434.481429-2-kevin_chen@aspeedtech.com>
- <8740eeb8-9467-48bb-a911-e70c3da3c45a@kernel.org>
- <PSAPR06MB494973DC08A8105EA05FBE6D89D62@PSAPR06MB4949.apcprd06.prod.outlook.com>
- <e17cdf9d-ba96-41d2-9656-9e50d0e0795a@kernel.org>
- <TY0PR06MB496045B19DCB149EC902D0FF89D62@TY0PR06MB4960.apcprd06.prod.outlook.com>
+ <20250304104434.481429-4-kevin_chen@aspeedtech.com>
+ <2fd83d68-7104-4755-a0f0-8ce4a2601e09@kernel.org>
+ <TY0PR06MB496072786197162F19ED7DDD89D62@TY0PR06MB4960.apcprd06.prod.outlook.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -116,32 +113,42 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <TY0PR06MB496045B19DCB149EC902D0FF89D62@TY0PR06MB4960.apcprd06.prod.outlook.com>
+In-Reply-To: <TY0PR06MB496072786197162F19ED7DDD89D62@TY0PR06MB4960.apcprd06.prod.outlook.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 10/03/2025 10:49, Kevin Chen wrote:
->>>>> +            compatible = "aspeed,ast2600-lpc-pcc";
->>>>> +            reg = <0x0 0x140>;
->>>>> +            interrupts = <GIC_SPI 145 IRQ_TYPE_LEVEL_HIGH>;
->>>>> +            pcc-ports = <0x80>;
->>>>
->>>> So what 0x80 stands for?
->>> Host as x86 architecture would access the 0x80 port, which is mapped to the
->> BMC PCC HW module.
->>> As a result, x86 can keep the port-mmaped I/O usage and access the BMC
->> device, which is needed to know which port using in the PCC module in BMC.
+On 10/03/2025 11:05, Kevin Chen wrote:
+>> On 04/03/2025 11:44, Kevin Chen wrote:
+>>> +
+>>> +static int aspeed_pcc_probe(struct platform_device *pdev) {
+>>> +	int rc;
+>>> +	struct aspeed_pcc_ctrl *pcc;
+>>> +	struct device *dev;
+>>> +	uint32_t fifo_size = PAGE_SIZE;
+>>> +
+>>> +	dev = &pdev->dev;
 >>
->> And on different boards this is not 0x80?
-> The port-mmaped I/O defined in the intel legacy document as the example usage.
-> For example, the common usage agreement of port-mmaped I/O are the following. But this setting can be modified due to the host usage. We provide the flexibility to modify the I/O port settings.
-> KCS : 0xCA2(CMD)/CA3(Data)
-> BT : 0xE4/E5/E6
-> SNOOP/PCC : 0x80/81/82/83
-> Mailbox : 0xCC0
-> SuperIO : 0x2E/2F or 0x4E/0x4F
-> System UART : 0x3F8/2F8/3E8/2E8
-So which boards have it modified?
+>> This goes to declaration.
+> OK. I will move it to declaration.
+> 
+>>
+>>> +
+>>> +	pcc = devm_kzalloc(&pdev->dev, sizeof(*pcc), GFP_KERNEL);
+>>
+>> Maybe my previous comment was not clear, but you agreed with it. Anyway
+>> nothing improved here.
+> Could I reserve the pcc variable using for the pcc_ctrl data structure?
+> Pcc_ctrl data include the regmap/irq/io_port/dma/kfifo.
+> If I change the name to dev, it does not make sense for these data to be.
+> 
+>>
+>> If you have 'dev' variable, use it.
+> Do you mean just use the pdev->dev not local dev variable?
+What is the point of this:
+dev = &pdev->dev;
+
+if you do not use 'dev'? If you come with a reason, sure. If you do not
+have such, then everything should use 'dev', not pdev->dev.
 
 Best regards,
 Krzysztof
