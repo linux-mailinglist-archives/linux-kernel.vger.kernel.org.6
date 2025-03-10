@@ -1,119 +1,204 @@
-Return-Path: <linux-kernel+bounces-554078-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-554075-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 280BEA592B1
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 12:24:11 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F743A592A7
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 12:22:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6634016A759
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 11:24:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F2484188E6FA
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 11:22:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6645D220697;
-	Mon, 10 Mar 2025 11:23:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=avm.de header.i=@avm.de header.b="Q7MDSz7T"
-Received: from mail.avm.de (mail.avm.de [212.42.244.119])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07ACD21E0BE
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 11:23:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.42.244.119
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D79D121E097;
+	Mon, 10 Mar 2025 11:22:43 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3BE928EA
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 11:22:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741605838; cv=none; b=nxZNu1kmhs4N00ZFaEYNsF357wBCxFttV0JhW4ONMxiByEy0nzxx8ikZedBjuJ2rOHC5/DJetmKa/QQc0qQbE2YnE4zpgAgFoU45NanfcnJI/Rpk7VhJnmWbuZxrs9FCOxTFkCfDadkAUUJ0/tWeuk5CXrY9O/7AivpkrwsWyZY=
+	t=1741605763; cv=none; b=q+uOshGFjdZKJSv4DLyqOwRDZq/a7SwVIJXxo7CmSqkDP4rbHMiuNCJtBcPm+boSqeeAqG1lEAfjXlXy3YKNBuKEWBrP5mu932zrRCOueJvaqjN7boZp4Sb3zYDaXzKJ+RU3fEvO5atKEtfHBgbULUi34FcJys0gnrSBiVhZi6U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741605838; c=relaxed/simple;
-	bh=wKISntxfKZCLCKAKO+8OeRVGz+AW4fz6x3QOe90BYFE=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=qmeeDZe3lLiOCoOq/h5xf3UsTr1mqfKRVXJ0Y7Jhm2NxDqL6YSqFaBB58y73BbOyF8XPN/NjdhUFJCaknffiCH/WrcTbemP3GH4mWp4KaNEqiH1GbmyQAFy+W43hc3rqOixU6cYVtzW0BWzcRdUbsiMAMM7zkmKAcdRq2OTicn0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=avm.de; spf=pass smtp.mailfrom=avm.de; dkim=pass (1024-bit key) header.d=avm.de header.i=@avm.de header.b=Q7MDSz7T; arc=none smtp.client-ip=212.42.244.119
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=avm.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=avm.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=avm.de; s=mail;
-	t=1741605766; bh=wKISntxfKZCLCKAKO+8OeRVGz+AW4fz6x3QOe90BYFE=;
-	h=From:To:Cc:Subject:Date:From;
-	b=Q7MDSz7TgWWNz6bfk9tPmhEFSUGronD3cPMw/YaloiKz6lgDVKVweKun5aL2vfBH4
-	 TS/1yIhJ4YHVDoL+cPrShs9zfBNGADE7+lWpBG9myfjz6TwNQ15pnq4bLMDMEK42Zt
-	 IdHmYvXDLzvb6cM3tdhgv9N/sOVSxebf9m5qylGY=
-Received: from [2001:bf0:244:244::71] (helo=mail.avm.de)
-	by mail.avm.de with ESMTP (eXpurgate 4.52.1)
-	(envelope-from <phahn-oss@avm.de>)
-	id 67cecb86-1471-7f0000032729-7f000001d8f2-1
-	for <multiple-recipients>; Mon, 10 Mar 2025 12:22:46 +0100
-Received: from mail-auth.avm.de (dovecot-mx-01.avm.de [IPv6:2001:bf0:244:244::71])
-	by mail.avm.de (Postfix) with ESMTPS;
-	Mon, 10 Mar 2025 12:22:46 +0100 (CET)
-From: Philipp Hahn <phahn-oss@avm.de>
-To: linux-kernel@vger.kernel.org
-Cc: Philipp Hahn <phahn-oss@avm.de>,
-	Andy Whitcroft <apw@canonical.com>,
-	Joe Perches <joe@perches.com>,
-	Dwaipayan Ray <dwaipayanray1@gmail.com>,
-	Lukas Bulwahn <lukas.bulwahn@gmail.com>,
-	Philipp Hahn <p.hahn@avm.de>
-Subject: [PATCH] checkpatch: Describe --min-conf-desc-length
-Date: Mon, 10 Mar 2025 12:22:27 +0100
-Message-Id: <c71c170c90eba26265951e248adfedd3245fe575.1741605695.git.p.hahn@avm.de>
+	s=arc-20240116; t=1741605763; c=relaxed/simple;
+	bh=hqRn07KR0r9PP3fU7g1RkOqJHjTZe11hpeinO1FMmEg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=XIOa+63Bg41Oz9gC9eYm6Z8swBciBwVvFgx5FEMiYkub2+z3bg+9DXcazXDfPXccBq3DViKVo9iiRLpBzffIdxeCRMjMiJ0prjX06nKLPH33oIQX95mPiPDXj678ipOBXUdrIpPitJee7DCTX22ud+EpeqzqXFkHLAycj6Oy3kI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 964B41516;
+	Mon, 10 Mar 2025 04:22:51 -0700 (PDT)
+Received: from [192.168.178.6] (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id CC9123F5A1;
+	Mon, 10 Mar 2025 04:22:37 -0700 (PDT)
+Message-ID: <65365ec7-6a16-4e66-8005-e78788cbedfa@arm.com>
+Date: Mon, 10 Mar 2025 12:22:36 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Organization: AVM GmbH, Berlin, Germany
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] sched/uclamp: Let each sched_class handle uclamp
+To: Xuewen Yan <xuewen.yan94@gmail.com>
+Cc: Hongyan Xia <hongyan.xia2@arm.com>, Ingo Molnar <mingo@redhat.com>,
+ Peter Zijlstra <peterz@infradead.org>, Juri Lelli <juri.lelli@redhat.com>,
+ Vincent Guittot <vincent.guittot@linaro.org>,
+ Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>,
+ Mel Gorman <mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>,
+ Tejun Heo <tj@kernel.org>, David Vernet <void@manifault.com>,
+ Andrea Righi <arighi@nvidia.com>, Changwoo Min <changwoo@igalia.com>,
+ linux-kernel@vger.kernel.org, Xuewen Yan <xuewen.yan@unisoc.com>
+References: <84441660bef0a5e67fd09dc3787178d0276dad31.1740664400.git.hongyan.xia2@arm.com>
+ <4394f2a7-b4e8-419a-a299-f1afa560c944@arm.com>
+ <CAB8ipk_627GF+TV5u=6DK_3aRUHW8qGYwmN+KXMq_Cg-+Say1Q@mail.gmail.com>
+ <bf5a70bf-3d13-4b3b-a3ef-804998b21fe9@arm.com>
+ <CAB8ipk-SUFDATb=euJQFebxQ513SRwTEpSbBSD6K=batQKELHg@mail.gmail.com>
+ <80c2c9f4-eb84-4a43-9c48-8f776615b45a@arm.com>
+ <CAB8ipk8pEvOtCm-d0o1rsekwxPWUHk9iBGtt9TLTWW-iWTQKiA@mail.gmail.com>
+From: Dietmar Eggemann <dietmar.eggemann@arm.com>
+Content-Language: en-US
+In-Reply-To: <CAB8ipk8pEvOtCm-d0o1rsekwxPWUHk9iBGtt9TLTWW-iWTQKiA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-purgate-ID: 149429::1741605766-6FDC59D3-D1867036/0/0
-X-purgate-type: clean
-X-purgate-size: 2342
-X-purgate-Ad: Categorized by eleven eXpurgate (R) https://www.eleven.de
-X-purgate: This mail is considered clean (visit https://www.eleven.de for further information)
-X-purgate: clean
 
-Neither the warning nor the help message gives any hint on the unit for
-length: Could be meters, inches, bytes, characters or ... lines.
+On 10/03/2025 12:03, Xuewen Yan wrote:
+> Hi Dietmar,
+> 
+> On Mon, Mar 10, 2025 at 6:53 PM Dietmar Eggemann
+> <dietmar.eggemann@arm.com> wrote:
+>>
+>> On 10/03/2025 03:41, Xuewen Yan wrote:
+>>> On Sat, Mar 8, 2025 at 2:32 AM Dietmar Eggemann
+>>> <dietmar.eggemann@arm.com> wrote:
+>>>>
+>>>> On 06/03/2025 13:01, Xuewen Yan wrote:
+>>>>> On Thu, Mar 6, 2025 at 2:24 AM Dietmar Eggemann
+>>>>> <dietmar.eggemann@arm.com> wrote:
+>>>>>>
+>>>>>> On 27/02/2025 14:54, Hongyan Xia wrote:
+>>>>>>
+>>>>>> [...]
+>>>>>>
+>>>>>>> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+>>>>>>> index 857808da23d8..7e5a653811ad 100644
+>>>>>>> --- a/kernel/sched/fair.c
+>>>>>>> +++ b/kernel/sched/fair.c
+>>>>>>> @@ -6941,8 +6941,10 @@ enqueue_task_fair(struct rq *rq, struct task_struct *p, int flags)
+>>>>>>>        * Let's add the task's estimated utilization to the cfs_rq's
+>>>>>>>        * estimated utilization, before we update schedutil.
+>>>>>>>        */
+>>>>>>> -     if (!(p->se.sched_delayed && (task_on_rq_migrating(p) || (flags & ENQUEUE_RESTORE))))
+>>>>>>> +     if (!(p->se.sched_delayed && (task_on_rq_migrating(p) || (flags & ENQUEUE_RESTORE)))) {
+>>>>>>> +             uclamp_rq_inc(rq, p);
+>>>>>>>               util_est_enqueue(&rq->cfs, p);
+>>>>>>> +     }
+>>>>>>
+>>>>>> So you want to have p uclamp-enqueued so that its uclamp_min value
+>>>>>> counts for the cpufreq_update_util()/cfs_rq_util_change() calls later in
+>>>>>> enqueue_task_fair?
+>>>>>>
+>>>>>>   if (p->in_iowait)
+>>>>>>     cpufreq_update_util(rq, SCHED_CPUFREQ_IOWAIT);
+>>>>>>
+>>>>>>   enqueue_entity() -> update_load_avg() -> cfs_rq_util_change() ->
+>>>>>>   cpufreq_update_util()
+>>>>>>
+>>>>>> But if you do this before requeue_delayed_entity() (1) you will not
+>>>>>> uclamp-enqueue p which got his ->sched_delayed just cleared in (1)?
+>>>>>>
+>>>>>
+>>>>> Could we change to the following:
+>>>>>
+>>>>> when enqueue:
+>>>>>
+>>>>> -     if (!(p->se.sched_delayed && (task_on_rq_migrating(p) || (flags
+>>>>> & ENQUEUE_RESTORE))))
+>>>>> +     if (!(p->se.sched_delayed && !(flags & ENQUEUE_DELAYED)))
+>>>>
+>>>> Why you want to check ENQUEUE_DELAYED as well here? Isn't
+>>>> !p->se.sched_delayed implying !ENQUEUE_DELAYED).
+>>>
+>>> Indeed, the (!(p->se.sched_delayed && !(flags & ENQUEUE_DELAYED))) is equal to
+>>> the  (!(p->se.sched_delayed && (task_on_rq_migrating(p) || (flags &
+>>> ENQUEUE_RESTORE)))).
+>>> I just think it might be easier to read using the ENQUEUE_DELAYED flag.
+>>> Because we only allow enq the uclamp and util_est when wake up the delayed-task.
+>>
+>> OK, I see.
+>>
+>> So that means we would not have to move the uclamp handling into the sched
+>> classes necessarily, we could use flags in enqueue_task() as well:
+>>
+>> -->8--
+>>
+>> Subject: [PATCH] Align uclamp and util_est and call before freq update
+>>
+>> Signed-off-by: Dietmar Eggemann <dietmar.eggemann@arm.com>
+>> ---
+>>  kernel/sched/core.c | 14 ++++++++------
+>>  kernel/sched/fair.c |  4 ++--
+>>  2 files changed, 10 insertions(+), 8 deletions(-)
+>>
+>> diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+>> index b60916d77482..f833108a3b2d 100644
+>> --- a/kernel/sched/core.c
+>> +++ b/kernel/sched/core.c
+>> @@ -1747,7 +1747,8 @@ static inline void uclamp_rq_dec_id(struct rq *rq, struct task_struct *p,
+>>         }
+>>  }
+>>
+>> -static inline void uclamp_rq_inc(struct rq *rq, struct task_struct *p)
+>> +static inline void uclamp_rq_inc(struct rq *rq, struct task_struct *p,
+>> +                                int flags)
+>>  {
+>>         enum uclamp_id clamp_id;
+>>
+>> @@ -1763,7 +1764,7 @@ static inline void uclamp_rq_inc(struct rq *rq, struct task_struct *p)
+>>         if (unlikely(!p->sched_class->uclamp_enabled))
+>>                 return;
+>>
+>> -       if (p->se.sched_delayed)
+>> +       if (p->se.sched_delayed && !(flags & ENQUEUE_DELAYED))
+>>                 return;
+>>
+>>         for_each_clamp_id(clamp_id)
+>> @@ -2067,12 +2068,13 @@ void enqueue_task(struct rq *rq, struct task_struct *p, int flags)
+>>         if (!(flags & ENQUEUE_NOCLOCK))
+>>                 update_rq_clock(rq);
+>>
+>> -       p->sched_class->enqueue_task(rq, p, flags);
+>>         /*
+>> -        * Must be after ->enqueue_task() because ENQUEUE_DELAYED can clear
+>> -        * ->sched_delayed.
+>> +        * Can be before ->enqueue_task() because uclamp considers the
+>> +        * ENQUEUE_DELAYED task before its ->sched_delayed gets cleared
+>> +        * in ->enqueue_task().
+>>          */
+>> -       uclamp_rq_inc(rq, p);
+>> +       uclamp_rq_inc(rq, p, flags);
+>> +       p->sched_class->enqueue_task(rq, p, flags);
+>>
+>>         psi_enqueue(p, flags);
+>>
+> 
+> I submitted a patch similar to yours before:
+> 
+> https://lore.kernel.org/all/CAB8ipk_AvaOWp9QhmnFDdbFSWcKLhCH151=no6kRO2z+pSJfyQ@mail.gmail.com/
+> 
+> And Hongyan fears that as more complexity goes into each sched_class
+> like delayed dequeue,
+> so it's better to just let the sched_class handle how uclamp is
+> enqueued and dequeued within itself rather than leaking into core.c.
 
-Extend the output of `--help` to name the unit "lines" and the default:
--  --min-conf-desc-length=n   set the min description length, if shorter, warn
-+  --min-conf-desc-length=n   set the minimum description length for config symbols
-+                             in lines, if shorter, warn (default 4)
+Ah, OK. Your patch didn't have 'sched' in the subject so I didn't see it
+immediately.
 
-Include the minimum number of lines as other error messages already do:
-- WARNING: please write a help paragraph that fully describes the config symbol
-+ WARNING: please write a help paragraph that fully describes the config symbol with at least 4 lines
+I would prefer that uclamp stays in core.c. ENQUEUE_DELAYED among all
+the other flags is already used there (ttwu_runnable()).
 
-Cc: Andy Whitcroft <apw@canonical.com>
-Cc: Joe Perches <joe@perches.com>
-Cc: Dwaipayan Ray <dwaipayanray1@gmail.com>
-Cc: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Signed-off-by: Philipp Hahn <p.hahn@avm.de>
----
- scripts/checkpatch.pl | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
-
-diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
-index 7b28ad331742..784912f570e9 100755
---- a/scripts/checkpatch.pl
-+++ b/scripts/checkpatch.pl
-@@ -113,7 +113,8 @@ Options:
-   --max-line-length=n        set the maximum line length, (default $max_line_length)
-                              if exceeded, warn on patches
-                              requires --strict for use with --file
--  --min-conf-desc-length=n   set the min description length, if shorter, warn
-+  --min-conf-desc-length=n   set the minimum description length for config symbols
-+                             in lines, if shorter, warn (default $min_conf_desc_length)
-   --tab-size=n               set the number of spaces for tab (default $tabsize)
-   --root=PATH                PATH to the kernel tree root
-   --no-summary               suppress the per-file summary
-@@ -3645,7 +3646,7 @@ sub process {
- 			    $help_length < $min_conf_desc_length) {
- 				my $stat_real = get_stat_real($linenr, $ln - 1);
- 				WARN("CONFIG_DESCRIPTION",
--				     "please write a help paragraph that fully describes the config symbol\n" . "$here\n$stat_real\n");
-+				     "please write a help paragraph that fully describes the config symbol with at least $min_conf_desc_length lines\n" . "$here\n$stat_real\n");
- 			}
- 		}
- 
--- 
-2.34.1
-
+task_struct contains  sched_{,rt_,dl_}entity}. We just have to be
+careful when switching policies.
 
