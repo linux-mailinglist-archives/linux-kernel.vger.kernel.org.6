@@ -1,64 +1,57 @@
-Return-Path: <linux-kernel+bounces-554569-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-554571-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 81DFCA59A0B
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 16:34:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id DFB59A59A10
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 16:35:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3F0373AA23D
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 15:34:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9BE543AA497
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 15:34:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DFB122B5AB;
-	Mon, 10 Mar 2025 15:34:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C936422D4F4;
+	Mon, 10 Mar 2025 15:35:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="QxB/lbdc"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=ariel.dalessandro@collabora.com header.b="QAvzpGjK"
+Received: from sender3-pp-f112.zoho.com (sender3-pp-f112.zoho.com [136.143.184.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D499D2206BE;
-	Mon, 10 Mar 2025 15:34:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741620850; cv=none; b=HCDryE7yyCKZZGsdTx9EOGLE6O19w2w6530zqodJoTzeqkB1ONOSom9ATFcR8teeOnNK8trSpGUdkQkrp4f4nHJPaVauY7oDF513ZAeMsbF+nFRbt/C6Yyu6vSkYQ5HloYsMFttkMnbHTFDor9DmnHvQhDATjkAftk4qjGmct9M=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741620850; c=relaxed/simple;
-	bh=od6OgXKRdSosxkM09V+gA4vcysLkIiN3641sJedhtWg=;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A4D21C68B6
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 15:35:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.184.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741620904; cv=pass; b=YE6kuN8j0P7YZe+P7Z88W3t6Iuu2GEdcy1dDKBJ9fIlDpI0mVQ5HmA1fTugtJIyl7tG5K66KaT6eBJ140utXIKkG3aufZldb7ZJ4BuJ75eW+3qKhqgDUqEYKli659iSd656joqDjkYfruhaA9WiMEb4YaBFyxkIMFeKDWP6I7NQ=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741620904; c=relaxed/simple;
+	bh=Nx555+NtSDzXz90QOuxjrITiDLAiiZFLg+hfDKtRm5g=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dgOweIMjJ47bvqsbSIyu4UpuPKfHojXPs7mj31bCY6EyT+MVTxiPo9ZRQr5Ix16aUhuyWEi4z9Bs4b1arWYwHX5YJt4BsXl0r0Xc7xX0AYkW9BKzvU2fa8NcYis/Y7xnXI8H1rUFIraNERLAbzgC0OxRM8TUZajhjzSz1+8Oj98=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=QxB/lbdc; arc=none smtp.client-ip=192.198.163.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1741620849; x=1773156849;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=od6OgXKRdSosxkM09V+gA4vcysLkIiN3641sJedhtWg=;
-  b=QxB/lbdcDQA31kiFUdsED3TXCbk2VIMzNqfLgzrxGorK20vX05jQFTT9
-   o5S3B6npt4pf6pEE5U1i3OubpMjNr7XfXvf2ue3bwcgal6vyEEThQvJMf
-   j7oi2wQzm5C7pBvzFtjDxp9El3YPpcxMxKFypMJdGL66kK2iWfRbtyVhd
-   7mdchprvalBvWcX/GRY1lA9pVw515/yngqWgNo+sRyxtp6aa4B59v1Xij
-   PFB3ik3IiH1BTP3zU29hQpSMV1msFQsz7uDL8KfPQ3sPa06n1sYHzfl9M
-   iXiCkH9tCJ+dfyaqAelcmSIkgvLGpS9smJP9KXQC0GCG3C5I13c06u2xk
-   A==;
-X-CSE-ConnectionGUID: G4pJnzNrSIauH/BBDXC9Pw==
-X-CSE-MsgGUID: AImg92PFRCScg92YZzPGQA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11369"; a="41870233"
-X-IronPort-AV: E=Sophos;i="6.14,236,1736841600"; 
-   d="scan'208";a="41870233"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Mar 2025 08:34:08 -0700
-X-CSE-ConnectionGUID: jEc/8p7yS1eaxZ7ep2CEEQ==
-X-CSE-MsgGUID: /y8bZ5LxSyWdDZehi768mQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,236,1736841600"; 
-   d="scan'208";a="150984930"
-Received: from dnelso2-mobl.amr.corp.intel.com (HELO [10.125.111.63]) ([10.125.111.63])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Mar 2025 08:34:07 -0700
-Message-ID: <1deab9b3-4447-4b21-87ce-7d787f43ebc1@intel.com>
-Date: Mon, 10 Mar 2025 08:34:05 -0700
+	 In-Reply-To:Content-Type; b=JxVShEdO+HTjIUWE7sxwnEaL4KQaO2HApC3pXP+VlnH99yQ3+m4qL/MTdundPJcdY3RjGatkHMOdhnqN/o3xTDw6pUEtMIu/9mfkIG+Qv6sU9yp1/4dQgkMMApO52e8+18f/jgNhBZ+9/gep80na1m6lE4Ray+UAKBS/2iJmEgs=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=ariel.dalessandro@collabora.com header.b=QAvzpGjK; arc=pass smtp.client-ip=136.143.184.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1741620879; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=DzrekeHXCnD07yLLuY9kF+sth2UjlCNk1s4871aVms+4GuRthn3JEvdxKgxfzhK86oZN9tYQfOOr1lctAG3C8BXNlGtD/0PXLonNfc5Re6jMkXHSZA5dfp1EK296TxYgR8SVRuzm2uTXGyD8M17dNwdLazp0DE4vUNn0vOE3ToM=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1741620879; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=fKGYjqu4Ev4SqaAEdORO3V9LqmGHctq0CSPM/977IfQ=; 
+	b=NmOrwpT6AAtoZP/TrXyYOBgChsgLjxIZSqYOTj2kLm8PrTfQoFNQMDecXKoKob5fLRfl//k6lsMrc7zwohpl7RrCCE6Spdbv/8RN32yI04udiOTGDWTNocaVnmOr4f1Cow9NajLBj2MGjtCHkkyrCrYzHRprOcleMUyJ8ecC9vA=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=ariel.dalessandro@collabora.com;
+	dmarc=pass header.from=<ariel.dalessandro@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1741620879;
+	s=zohomail; d=collabora.com; i=ariel.dalessandro@collabora.com;
+	h=Message-ID:Date:Date:MIME-Version:Subject:Subject:To:To:Cc:Cc:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
+	bh=fKGYjqu4Ev4SqaAEdORO3V9LqmGHctq0CSPM/977IfQ=;
+	b=QAvzpGjK9VnN7UqGBMBTo+N83eYP0pmKLVdfSpxGEldWGMlefXxFCAdtRaa/uv7j
+	n/QO+HCaIe+qZhGDy/ljjHKyoVgrv0e9G47YaMSVGKg24OBWLRHicomssfyk9qT9+7T
+	lHsYJ6dz1rt9hmjwuFZfgnPR2TGdg+m8JGmt9tSM=
+Received: by mx.zohomail.com with SMTPS id 1741620876294195.17720317390024;
+	Mon, 10 Mar 2025 08:34:36 -0700 (PDT)
+Message-ID: <ec151d39-2cb2-4f67-a23a-dafc421fff75@collabora.com>
+Date: Mon, 10 Mar 2025 12:34:30 -0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,59 +59,69 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 5/9] dmaengine: idxd: Add missing cleanups in cleanup
- internals
-To: Shuai Xue <xueshuai@linux.alibaba.com>, vinicius.gomes@intel.com,
- Markus.Elfring@web.de, fenghuay@nvidia.com, vkoul@kernel.org
-Cc: dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250309062058.58910-1-xueshuai@linux.alibaba.com>
- <20250309062058.58910-6-xueshuai@linux.alibaba.com>
+Subject: Re: [RFC PATCH 3/4] drm/panfrost: Support ARM_64_LPAE_S1 page table
+To: Boris Brezillon <boris.brezillon@collabora.com>
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+ robh@kernel.org, steven.price@arm.com, maarten.lankhorst@linux.intel.com,
+ mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch
+References: <20250226183043.140773-1-ariel.dalessandro@collabora.com>
+ <20250226183043.140773-4-ariel.dalessandro@collabora.com>
+ <20250227155539.59944e18@collabora.com>
 Content-Language: en-US
-From: Dave Jiang <dave.jiang@intel.com>
-In-Reply-To: <20250309062058.58910-6-xueshuai@linux.alibaba.com>
-Content-Type: text/plain; charset=UTF-8
+From: Ariel D'Alessandro <ariel.dalessandro@collabora.com>
+In-Reply-To: <20250227155539.59944e18@collabora.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
+X-ZohoMailClient: External
 
+Hi Boris,
 
-
-On 3/8/25 11:20 PM, Shuai Xue wrote:
-> The idxd_cleanup_internals() function only decreases the reference count
-> of groups, engines, and wqs but is missing the step to release memory
-> resources.
+On 2/27/25 11:55 AM, Boris Brezillon wrote:
+> On Wed, 26 Feb 2025 15:30:42 -0300
+> Ariel D'Alessandro <ariel.dalessandro@collabora.com> wrote:
 > 
-> To fix this, use the cleanup helper to properly release the memory
-> resources.
+>> @@ -642,8 +713,15 @@ struct panfrost_mmu *panfrost_mmu_ctx_create(struct panfrost_device *pfdev)
+>>   		.iommu_dev	= pfdev->dev,
+>>   	};
+>>   
+>> -	mmu->pgtbl_ops = alloc_io_pgtable_ops(ARM_MALI_LPAE, &mmu->pgtbl_cfg,
+>> -					      mmu);
+>> +	if (panfrost_has_hw_feature(pfdev, HW_FEATURE_AARCH64_MMU)) {
+>> +		fmt = ARM_64_LPAE_S1;
+>> +		mmu->enable = mmu_lpae_s1_enable;
+>> +	} else {
+>> +		fmt = ARM_MALI_LPAE;
+>> +		mmu->enable = mmu_mali_lpae_enable;
+>> +	}
 > 
-> Fixes: ddf742d4f3f1 ("dmaengine: idxd: Add missing cleanup for early error out in probe call")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Shuai Xue <xueshuai@linux.alibaba.com>
-Reviewed-by: Dave Jiang <dave.jiang@intel.com>
+> How about we stick to the legacy pgtable format for all currently
+> supported GPUs, and make this an opt-in property attached to the
+> compatible. This way, we can progressively move away from the legacy
+> format once enough testing has been done, while allowing support for
+> GPUs that can't use the old format because the cachability/shareability
+> configuration is too limited.
 
-> ---
->  drivers/dma/idxd/init.c | 11 +++--------
->  1 file changed, 3 insertions(+), 8 deletions(-)
-> 
-> diff --git a/drivers/dma/idxd/init.c b/drivers/dma/idxd/init.c
-> index 7334085939dc..cf5dc981be32 100644
-> --- a/drivers/dma/idxd/init.c
-> +++ b/drivers/dma/idxd/init.c
-> @@ -408,14 +408,9 @@ static int idxd_setup_groups(struct idxd_device *idxd)
->  
->  static void idxd_cleanup_internals(struct idxd_device *idxd)
->  {
-> -	int i;
-> -
-> -	for (i = 0; i < idxd->max_groups; i++)
-> -		put_device(group_confdev(idxd->groups[i]));
-> -	for (i = 0; i < idxd->max_engines; i++)
-> -		put_device(engine_confdev(idxd->engines[i]));
-> -	for (i = 0; i < idxd->max_wqs; i++)
-> -		put_device(wq_confdev(idxd->wqs[i]));
-> +	idxd_clean_groups(idxd);
-> +	idxd_clean_engines(idxd);
-> +	idxd_clean_wqs(idxd);
->  	destroy_workqueue(idxd->wq);
->  }
->  
+Indeed, that's a better way to go.
+
+Specifically, what you mean is: keep the same compatible string and add 
+a new property to the `panfrost_compatible` private data for that 
+specific variant? E.g.
+
+In drivers/gpu/drm/panfrost/panfrost_drv.c:
+```
+struct panfrost_compatible mediatek_mt8188_data
+[...]
+{ .compatible = "mediatek,mt8188-mali", .data = &mediatek_mt8188_data },
+```
+
+Thanks,
+
+-- 
+Ariel D'Alessandro
+Software Engineer
+
+Collabora Ltd.
+Platinum Building, St John's Innovation Park, Cambridge CB4 0DS, UK 
+Registered in England & Wales, no. 5513718
 
 
