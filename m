@@ -1,199 +1,228 @@
-Return-Path: <linux-kernel+bounces-554007-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-553991-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0BAE4A591C0
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 11:50:39 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A66E1A59195
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 11:47:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3C25E16AD19
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 10:50:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 169661890509
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 10:47:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDB7822B8C0;
-	Mon, 10 Mar 2025 10:47:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A4E1227B9E;
+	Mon, 10 Mar 2025 10:47:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="0BPdbfJl"
-Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2061.outbound.protection.outlook.com [40.107.244.61])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="MKsE1Ajc"
+Received: from out.smtpout.orange.fr (out-18.smtpout.orange.fr [193.252.22.18])
+	(using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABE162288FB;
-	Mon, 10 Mar 2025 10:47:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.244.61
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741603677; cv=fail; b=c12vyfarsI6JNiWibFH9391/y3PG1E/q20b7HJCVNgspOsevsbTwlBmffecEBWmLyXTXH6d1ljwg+q596VZAwWyEPvrbnlnTxqW5G0tqfmg2t8i+E71gHY7v/A9Dr01zK/NmOvQiceqLr0HI60kxm+TTdm7+pHrPBxz9snQ3cWA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741603677; c=relaxed/simple;
-	bh=iB2t9pXFURk/F/2uMiKSfkhm4pi3bVitsR7gBIBr7fA=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=KVJAtTC0F+Kcw6uT8yPMfze5qCbUeyJ6H5s0j+7ek8hp92Fu++ABWJ5V10mDkjURZ1UX0ZFDtZ+JbUkWmyhWREJ6roye9Xs+OXSGoKDeYqX3lSOoeo8k1ea1f8jevf5MT/Z91GEo0cuhrr+DVldSHSgnLwnSECfXB/DzvV0uYYA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=0BPdbfJl; arc=fail smtp.client-ip=40.107.244.61
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=NYqtlgd25cLf3lP/oh/6bp2Ia2lrfCw184GfwoNiA3S8P9TMyASJr9Dz4p9A7aprx/SztNqGn5mvXnBN9ITr1Pduf6Qw3IfqEBWKFcomAjpQymeuHQsLrti/P7Im2i4rD7BUvP/Jt9769CDGRmRb637J2x5sJScU7SQkY6t8gNV6KYl5QkeA3OL5GJ9yTUFmpi7ZEgDZdL3pzhr2/EnuJ4SMB6e6rH7v9KSEhpBpxAOdOWPNGJICtwsydap1FH6rTQjrNhYp9m/wnUk4qd4NpXOfEoUcjLAr5pjLGoNW+CH16wtpdbtn2NTlRVmsbp0EPP4rmQ8OUgN88WM6RlDFZg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=+qdJd8btDNX0m8iv+SlQPUFAv2LDwGt/NQYFMd/sl6s=;
- b=lcmTVJuj3BfqHFEEFhTv+zZ5Zg20INZRjSVSF/rJp4Ik3zaz1JK0BZzvGPeoxDYTgsez5zfXFpEhg82aBthtn4xF2ytRaMPoCTnnxpoctno6n11GIoyKQJDpcUGGXh1OPDbAZZpPewJD2umhA9rNjx68aX1b5k+yCnlDrrBfpeGuca+fkdReQOVnfn0uM0E2w+MQ/KiADg5ZMvtNADClKo2tdrMby4Gfhk/G8xxbK4VnFdXzI2PE6pCM0kSnONUy6Z0GtRGT7xfj27gEAIL6qXr0K8fa+BJabXUDZQ8aU4YmuOhTU0DlfEoARbPyV0Z8cCcAuiXwtcPIeErQe2eQxQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=kernel.org smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=+qdJd8btDNX0m8iv+SlQPUFAv2LDwGt/NQYFMd/sl6s=;
- b=0BPdbfJl9KXGqT/TqVslB1SysRsnQLCR0MLttqnC+GIdkKQF8ZjBQp/1pfPSXkja17VrSTX57rCG7fblSyq9rtUOtR9KwKGuQdkDCUsZBP+h0mVXMn/YfNNi0Z0eydyZHjxCcfK+MsJNDiTj76wZ8gqCcltaGdkcgdtxgU9qVLQ=
-Received: from PH7P223CA0005.NAMP223.PROD.OUTLOOK.COM (2603:10b6:510:338::7)
- by PH0PR12MB8050.namprd12.prod.outlook.com (2603:10b6:510:26e::9) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8511.26; Mon, 10 Mar
- 2025 10:47:51 +0000
-Received: from SJ1PEPF000026C3.namprd04.prod.outlook.com
- (2603:10b6:510:338:cafe::7) by PH7P223CA0005.outlook.office365.com
- (2603:10b6:510:338::7) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8511.23 via Frontend Transport; Mon,
- 10 Mar 2025 10:47:50 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- SJ1PEPF000026C3.mail.protection.outlook.com (10.167.244.100) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.8534.20 via Frontend Transport; Mon, 10 Mar 2025 10:47:50 +0000
-Received: from SATLEXMB04.amd.com (10.181.40.145) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 10 Mar
- 2025 05:47:49 -0500
-Received: from prasad-lnx-mach.amd.com (10.180.168.240) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server id 15.1.2507.39 via Frontend
- Transport; Mon, 10 Mar 2025 05:47:46 -0500
-From: Venkata Prasad Potturu <venkataprasad.potturu@amd.com>
-To: <broonie@kernel.org>, <alsa-devel@alsa-project.org>
-CC: <Vijendar.Mukunda@amd.com>, <mario.limonciello@amd.com>,
-	<Basavaraj.Hiregoudar@amd.com>, <Sunil-kumar.Dommati@amd.com>,
-	<syed.sabakareem@amd.com>, Venkata Prasad Potturu
-	<venkataprasad.potturu@amd.com>, Liam Girdwood <lgirdwood@gmail.com>,
-	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Jeff Johnson
-	<quic_jjohnson@quicinc.com>, Greg KH <gregkh@linuxfoundation.org>, "Peter
- Zijlstra" <peterz@infradead.org>, "open list:SOUND - SOC LAYER / DYNAMIC
- AUDIO POWER MANAGEM..." <linux-sound@vger.kernel.org>, open list
-	<linux-kernel@vger.kernel.org>
-Subject: [PATCH 14/14] ASoC: amd: acp: Fix for enabling DMIC on acp platforms via _DSD entry
-Date: Mon, 10 Mar 2025 16:16:01 +0530
-Message-ID: <20250310104601.7325-15-venkataprasad.potturu@amd.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20250310104601.7325-1-venkataprasad.potturu@amd.com>
-References: <20250310104601.7325-1-venkataprasad.potturu@amd.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 064FC227B9F
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 10:46:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.252.22.18
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741603620; cv=none; b=E7tljAv+nAQLwFxy6DJES8jlgyWpNQTAOW019UctolFBeFScWp2lb3VPQftfITEgtfe0/LkFNkq5LUn0/UBwSnFJKUQGOMihZfny/M3CtE/vWgt2mq69e44renv9EIVkbtkavIJCkgh3rieek7oOIyy68TQWurTRr4y7fDZzDLE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741603620; c=relaxed/simple;
+	bh=werN9mZ2wg+YvLowvzIJiio61Fy7BVWnTM1tWOzX5Kc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=avtUdyWrrb+84bXHyHrdN7PoNvF47F9Ug+9JG7+5TGR2aisCIUCoBDO1ZKvrPhf3J+sRK9fue5lkb7A/Y5EQ0azIz8a3RqmVV3+WD4JKxti/ivA6i2Y9TjR4P/pYkPD6c1a9av4QwXX6Y2kxXuRnQYUcQwOm+pYVwWQQRA/DNmI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=MKsE1Ajc; arc=none smtp.client-ip=193.252.22.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+Received: from [172.16.82.72] ([124.33.176.97])
+	by smtp.orange.fr with ESMTPA
+	id raebt34wJACDNraeftbFlA; Mon, 10 Mar 2025 11:46:49 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1741603609;
+	bh=SM+GH4W9Mgpq6UbMamTcytvpYPgAzdTWefneB42yE/0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:From;
+	b=MKsE1Ajc+m6LGBqtCOp+fWLgINX4uVO2Wrtli0Wf+5I3+tbC5y8eUDQpVvSr+sVVq
+	 LGT5lUHG3IOlheI+5av6dg7E+H+0dAGJ9PmK1E3z4ldjAqjbTNpWRlcModsGvkIBPK
+	 McEgwDJzub0wiygpF9OLg8yJkqz4zrzyRupxB2fdmvNSwVVbeynkkDf1dMT4h/QfzF
+	 anmuTlXxHZ6Y3C0MFmb/Nmz76K5aADaLEu1rl0GYuQbLqM89s9tFFezxlxTjRqYZl6
+	 N7de4kkml1YTIY+mUr4sBP5yGotFwTIY862lumo4VGXwgMSi0hlFMI0ujKlRCKXBst
+	 4aDTEeuoMWKIA==
+X-ME-Helo: [172.16.82.72]
+X-ME-Auth: bWFpbGhvbC52aW5jZW50QHdhbmFkb28uZnI=
+X-ME-Date: Mon, 10 Mar 2025 11:46:49 +0100
+X-ME-IP: 124.33.176.97
+Message-ID: <d3c88533-2af7-4dc4-87e3-e6d03cd965b5@wanadoo.fr>
+Date: Mon, 10 Mar 2025 19:46:36 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-Received-SPF: None (SATLEXMB04.amd.com: venkataprasad.potturu@amd.com does not
- designate permitted sender hosts)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ1PEPF000026C3:EE_|PH0PR12MB8050:EE_
-X-MS-Office365-Filtering-Correlation-Id: 9a88ec52-c9df-4b1d-03cc-08dd5fc10128
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|82310400026|7416014|376014|36860700013|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?qpYnYJLXb+fQWh8zSZ0Ffm1Xg+88M5KDnFnh4sZzNblZVdjSTTLpCI16uaFs?=
- =?us-ascii?Q?QukTq5EbEjLkbqQ0kTpCD9U3N1BL9YV+IxeyUZ1HxCczMqktq1RJhmo8+62N?=
- =?us-ascii?Q?aoG5xa0xcuy+oz4I23gTEAKVta9uA1aU/KFECTOyzn9eIkzwpfB8UgBwCw7R?=
- =?us-ascii?Q?zfI/TfHAfWDaX22i3tmum5JaKOKcpffgLBdvY6z2/Vz8NDnXM/Ciin9cle9H?=
- =?us-ascii?Q?pxSf8y+rbn275jIRxR0UNju9KhhRd9s49+OJg3q0K9itL3ix8PCsWTeoCCBS?=
- =?us-ascii?Q?f6PCewrPJ/tIViLHJyxO93Hua91sDPeZa+L2BMyf3hEEt0TMW9E+1Mj9LyOU?=
- =?us-ascii?Q?mhantDI2I81oUjYIc8i6ugzG+M3ICLV5IN3ijj3SWpQ1bipAVPyHYSqh5tbl?=
- =?us-ascii?Q?lzTif6g0WWpvsqKdoKeqcx1lCCD16m0URdu6UHeI1TkSy/Kjsn0glhWeGhwT?=
- =?us-ascii?Q?pU38ECFdTEqVKXxIiGdEE8LFhbMptIKhzEEmKFc9v968aHcXgYe0yy/RMV6k?=
- =?us-ascii?Q?uWWqIi0Nwl8sH3gkwOs4yOIyqLccYTle0kTuAbKoYDRwwXAjBUxl5HxzxI7e?=
- =?us-ascii?Q?vbfGmkLQV7ZFUotdBdK06AHoSC7mxtw64QQlwGt2BHBbKXpIKYfhpud+TK8K?=
- =?us-ascii?Q?a6cukfh8z9Tex6hjmvC5iD1U2s41XvWCXuWb1nuz6ZZKxXfPkzfPbuznM0nS?=
- =?us-ascii?Q?C8fQRyDzecwUUySOSeoNqJVU0f4F4IDAeemXVX+s7md+rS/ZlzTxDQVvdMUr?=
- =?us-ascii?Q?S9UQhKlD8l4bo841hoWtE5zl8TrnyYdClybEQDs87bkjpBp/hKsy7XmrqAiL?=
- =?us-ascii?Q?K2bcRWF+EfJW1/mb9PjlLjc5cyPfepdCBfUmEj1Hy1Vvsxf06dT1zBkotEuD?=
- =?us-ascii?Q?usri3Yvwp+oy19dOSwLavoKMKIGGPMR0WJNV4Tf6dPqfo8k9vmeX3DCVULdm?=
- =?us-ascii?Q?dmyCCvuxUQLX6TcPxKl/ALiQyFuBNsIvYOfmFuP4zwMTUltA7eeovzQuXOhk?=
- =?us-ascii?Q?qxsisNAviSrfdzX1puaG5pCyof9yPwRw+DRytygwQXXqhzaD6ffjYSVSdp3t?=
- =?us-ascii?Q?LpWciNv2vUjJgChjDwysPYxPcuBSFatPu4XLU4etyloqiWnONIm5dgttzupv?=
- =?us-ascii?Q?/hZ1qFtBn96I3o8yz0Qs0ZpRmNbtK1Qc5F2Egg6lCpb+Js1ILI/uAzbbnfSC?=
- =?us-ascii?Q?mwk7jZuydsVkKEz6yHxTYCCwFjEG/ylkDH1KMdHtJFHSfrQiNTGmiiSYMRco?=
- =?us-ascii?Q?l1qSRshhi37A/AvZSEKSh8GvkX55Pa7rYBE1uIx8ydStMqt3Zwc6JH4AUmWr?=
- =?us-ascii?Q?QA6ul2SZoz+iQLsUZuFkuTDEyURHqpIiBzpF3LMNlMHKk7Q0aND7JXfCPQFU?=
- =?us-ascii?Q?fOV2eZjD8T+Mlr29stWmFOeoGs0SgbsMxuXxljN63JyWwzbMyJXguCpd4Im6?=
- =?us-ascii?Q?Zav1ig40tYUZo98xVLpsru4P7Kd/59pPT0eQ+NEL1lU0E9XNoLK14UCtPrOg?=
- =?us-ascii?Q?RugIG6wyvU3xgds=3D?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(7416014)(376014)(36860700013)(1800799024);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Mar 2025 10:47:50.7485
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 9a88ec52-c9df-4b1d-03cc-08dd5fc10128
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	SJ1PEPF000026C3.namprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR12MB8050
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 1/7] bits: split the definition of the asm and non-asm
+ GENMASK()
+To: David Laight <david.laight.linux@gmail.com>
+Cc: Yury Norov <yury.norov@gmail.com>,
+ Lucas De Marchi <lucas.demarchi@intel.com>,
+ Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+ Jani Nikula <jani.nikula@linux.intel.com>,
+ Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+ Rodrigo Vivi <rodrigo.vivi@intel.com>, Tvrtko Ursulin
+ <tursulin@ursulin.net>, David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>, Andrew Morton <akpm@linux-foundation.org>,
+ linux-kernel@vger.kernel.org, intel-gfx@lists.freedesktop.org,
+ dri-devel@lists.freedesktop.org, Andi Shyti <andi.shyti@linux.intel.com>,
+ David Laight <David.Laight@ACULAB.COM>,
+ Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+ Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+References: <20250306-fixed-type-genmasks-v5-0-b443e9dcba63@wanadoo.fr>
+ <20250306-fixed-type-genmasks-v5-1-b443e9dcba63@wanadoo.fr>
+ <20250306192331.2701a029@pumpkin>
+ <bdce7d99-7f02-4667-acda-9ffc62c92af2@wanadoo.fr>
+ <20250309015853.01412484@pumpkin> <20250309102312.4ff08576@pumpkin>
+Content-Language: en-US
+From: Vincent Mailhol <mailhol.vincent@wanadoo.fr>
+Autocrypt: addr=mailhol.vincent@wanadoo.fr; keydata=
+ xjMEZluomRYJKwYBBAHaRw8BAQdAf+/PnQvy9LCWNSJLbhc+AOUsR2cNVonvxhDk/KcW7FvN
+ LFZpbmNlbnQgTWFpbGhvbCA8bWFpbGhvbC52aW5jZW50QHdhbmFkb28uZnI+wrIEExYKAFoC
+ GwMFCQp/CJcFCwkIBwICIgIGFQoJCAsCBBYCAwECHgcCF4AWIQTtj3AFdOZ/IOV06OKrX+uI
+ bbuZwgUCZx41XhgYaGtwczovL2tleXMub3BlbnBncC5vcmcACgkQq1/riG27mcIYiwEAkgKK
+ BJ+ANKwhTAAvL1XeApQ+2NNNEwFWzipVAGvTRigA+wUeyB3UQwZrwb7jsQuBXxhk3lL45HF5
+ 8+y4bQCUCqYGzjgEZx4y8xIKKwYBBAGXVQEFAQEHQJrbYZzu0JG5w8gxE6EtQe6LmxKMqP6E
+ yR33sA+BR9pLAwEIB8J+BBgWCgAmFiEE7Y9wBXTmfyDldOjiq1/riG27mcIFAmceMvMCGwwF
+ CQPCZwAACgkQq1/riG27mcJU7QEA+LmpFhfQ1aij/L8VzsZwr/S44HCzcz5+jkxnVVQ5LZ4B
+ ANOCpYEY+CYrld5XZvM8h2EntNnzxHHuhjfDOQ3MAkEK
+In-Reply-To: <20250309102312.4ff08576@pumpkin>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Add condition check to register ACP PDM sound card by reading
-_WOV acpi entry.
+On 09/03/2025 at 19:23, David Laight wrote:
+> On Sun, 9 Mar 2025 01:58:53 +0000
+> David Laight <david.laight.linux@gmail.com> wrote:
+> 
+>> On Fri, 7 Mar 2025 18:58:08 +0900
+>> Vincent Mailhol <mailhol.vincent@wanadoo.fr> wrote:
+>>
+>>> On 07/03/2025 at 04:23, David Laight wrote:  
+>>>> On Thu, 06 Mar 2025 20:29:52 +0900
+>>>> Vincent Mailhol via B4 Relay <devnull+mailhol.vincent.wanadoo.fr@kernel.org> wrote:
+>>>>     
+>>>>> From: Vincent Mailhol <mailhol.vincent@wanadoo.fr>
+>>>>>
+>>>>> In an upcoming change, GENMASK() and its friends will indirectly
+>>>>> depend on sizeof() which is not available in asm.
+>>>>>
+>>>>> Instead of adding further complexity to __GENMASK() to make it work
+>>>>> for both asm and non asm, just split the definition of the two
+>>>>> variants.    
+>>>> ...    
+>>>>> +#else /* defined(__ASSEMBLY__) */
+>>>>> +
+>>>>> +#define GENMASK(h, l)		__GENMASK(h, l)
+>>>>> +#define GENMASK_ULL(h, l)	__GENMASK_ULL(h, l)    
+>>>>
+>>>> What do those actually expand to now?
+>>>> As I've said a few times both UL(0) and ULL(0) are just (0) for __ASSEMBLY__
+>>>> so the expansions of __GENMASK() and __GENMASK_ULL() contained the
+>>>> same numeric constants.    
+>>>
+>>> Indeed, in asm, the UL(0) and ULL(0) expands to the same thing: 0.
+>>>
+>>> But the two macros still expand to something different on 32 bits
+>>> architectures:
+>>>
+>>>   * __GENMASK:
+>>>
+>>>       (((~(0)) << (l)) & (~(0) >> (32 - 1 - (h))))
+>>>
+>>>   * __GENMASK_ULL:
+>>>
+>>>       (((~(0)) << (l)) & (~(0) >> (64 - 1 - (h))))
+>>>
+>>> On 64 bits architecture these are the same.  
+>>
+>> I've just fed those into godbolt (https://www.godbolt.org/z/Ter6WE9qE) as:
+>> int fi(void)
+>> {
+>>     int v;
+>>     asm("mov $(((~(0)) << (8)) & (~(0) >> (32 - 1 - (15)))),%0": "=r" (v));
+>>     return v -(((~(0u)) << (8)) & (~(0u) >> (32 - 1 - (15))));
+>> }
+>>
+>> gas warns:
+>> <source>:4: Warning: 0xffffffffff00 shortened to 0xffffff00
+>>
+>> unsigned long long fll(void)
+>> {
+>>     unsigned long long v;
+>>     asm("mov $(((~(0)) << (8)) & (~(0) >> (64 - 1 - (15)))),%0": "=r" (v));
+>>     return v -(((~(0ull)) << (8)) & (~(0ull) >> (64 - 1 - (15))));
+>> }
+>>
+>> (for other architectures you'll need to change the opcode)
+>>
+>> For x86 and x86-32 the assembler seems to be doing 64bit maths with unsigned
+>> right shifts - so the second function (with the 64 in it) generates 0xff00.
+>> I doubt a 32bit only assembler does 64bit maths, but the '>> 48' above
+>> might get masked to a '>> 16' by the cpu and generate the correct result.
+>>
+>> So __GENMASK() is likely to be broken for any assembler that supports 64bits
+>> when generating 32bit code.
+>> __GENMASK_ULL() works (assuming all have unsigned >>) on 64bit assemblers
+>> (even when generating 32bit code). It may work on some 32bit assemblers.>
+> I've remembered my 'pi' has a 32bit userspace (on a 64bit kernel).
+> I quick test of "mov %0,#(...)" and bits 11..8 gives the correct output
+> for size '32' but the error message:
+> /tmp/ccPB7bWh.s:26: Warning: shift count out of range (56 is not between 0 and 31)
+> with size '64'.
+> 
+> Assuming that part of the gnu assembler is consistent across architectures
+> you can't use either GENMASK in asm for 32bit architectures.
+> 
+> Any change (probably including removing the asm support for the uapi) isn't
+> going to make things worse!
+> 
+> 	David
+> 
+>>
+>> Since most uses in the header files will be GENMASK() I doubt (hope) no
+>> asm code actually uses the values!
 
-Fixes: 09068d624c49 ("ASoC: amd: acp: fix for acp platform device creation failure")
+After reading your message, I wanted to understand where these
+GENMASK*() were used in asm code. It happens that most of the
+architectures simply don't use it!
 
-Signed-off-by: Venkata Prasad Potturu <venkataprasad.potturu@amd.com>
----
- sound/soc/amd/acp/acp-legacy-common.c | 10 +++++++++-
- 1 file changed, 9 insertions(+), 1 deletion(-)
+I see these are using in aarch64, but that's about it.
 
-diff --git a/sound/soc/amd/acp/acp-legacy-common.c b/sound/soc/amd/acp/acp-legacy-common.c
-index 988b7a17b2f4..255f90ca956a 100644
---- a/sound/soc/amd/acp/acp-legacy-common.c
-+++ b/sound/soc/amd/acp/acp-legacy-common.c
-@@ -13,6 +13,7 @@
-  */
- 
- #include "amd.h"
-+#include <linux/acpi.h>
- #include <linux/pci.h>
- #include <linux/export.h>
- 
-@@ -511,7 +512,9 @@ void check_acp_config(struct pci_dev *pci, struct acp_chip_info *chip)
- {
- 	struct acpi_device *pdm_dev;
- 	const union acpi_object *obj;
--	u32 pdm_addr;
-+	acpi_handle handle;
-+	acpi_integer dmic_status;
-+	u32 pdm_addr, ret;
- 
- 	switch (chip->acp_rev) {
- 	case ACP_RN_PCI_ID:
-@@ -543,6 +546,11 @@ void check_acp_config(struct pci_dev *pci, struct acp_chip_info *chip)
- 						   obj->integer.value == pdm_addr)
- 				chip->is_pdm_dev = true;
- 		}
-+
-+		handle = ACPI_HANDLE(&pci->dev);
-+		ret = acpi_evaluate_integer(handle, "_WOV", NULL, &dmic_status);
-+		if (!ACPI_FAILURE(ret))
-+			chip->is_pdm_dev = dmic_status;
- 	}
- }
- EXPORT_SYMBOL_NS_GPL(check_acp_config, "SND_SOC_ACP_COMMON");
--- 
-2.39.2
+I couldn't find any use of neither GENMASK() nor GENMASK_ULL() in x86,
+arm 32 bits, m68k or powerpc asm code (I did not check the other
+architectures).
 
+aarch64 uses both the long and long long variants, but this being a 64
+bits architecture, these are the same. So OK.
+
+So, this goes into the same direction as you: I guess that the fact that
+no one noticed the issue is that no one uses this on a 32 bits arch,
+probably for historical reasons, i.e. the asm code was written before
+the introduction of the GENMASK() macros.
+
+>> The headers assemble - but that is about all that can be said.
+>>
+>> Bags of worms :-)
+
++1 (I will not open that bag)
+
+I think that the asm and non asm variant should have used a different
+implementation from the begining. By wanting to have a single variant
+that fit both the asm and the C code, we have a complex result that is
+hard to understand and maintain (c.f. the bug which you pointed out
+which have been unnoticed for ever).
+
+But now that it is in the uapi, I am not sure of what is the best
+approach. I sincerely hope that we can just modify it with no userland
+impact.
+
+Well, just to make it clear, I am not touching the asm part. I
+acknowledge the issue, but I do not think that I have the skill to fix it.
+
+
+Yours sincerely,
+Vincent Mailhol
 
