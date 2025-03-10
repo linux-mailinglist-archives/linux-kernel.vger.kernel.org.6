@@ -1,116 +1,93 @@
-Return-Path: <linux-kernel+bounces-554894-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-554892-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF2D7A5A327
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 19:38:40 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A1989A5A322
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 19:38:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CF07B170687
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 18:38:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4DE5D1883910
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 18:38:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EB90236446;
-	Mon, 10 Mar 2025 18:38:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD2F4234984;
+	Mon, 10 Mar 2025 18:38:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="W8NzDphX"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rQpdnkA7"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60BC223314B;
-	Mon, 10 Mar 2025 18:38:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4453717A2E8;
+	Mon, 10 Mar 2025 18:38:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741631892; cv=none; b=m+TRRHB+aGz5fIEyw9YGgPbmZDSyprzrmhzOckeiO8bN1gye8PeBo4gXETj38TgP1vWRpDBhDHVfCrjE7IFo9DvRSdaTqCbie0rYb/4D94R6MGloUTcKYJj/q3LnWN9QUEXD+cSZmzI4fFrbjD2P8OzN81VPaLmh8j5PYi1MXIU=
+	t=1741631883; cv=none; b=bTz2lSvyZ4XYqY3VPQX9m+kpf+Ed5hOS5qw5cmOXS6jiSuCo7AOLr0n4aAWDtqXdJ738UxHEUmnjU6M8fG4LEMC9WvSzM9DqRUktsruuYb8zQi3RJ11DwARRbBTMrrhsJcllyAClPkfBrxebvsuY4OXIKeEQkvBPoF+qx5blFS4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741631892; c=relaxed/simple;
-	bh=77AYLHKjJDUAxlPSNSjE5Yx8FldJR4VJKjnY8y5KFC8=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=glNHExND8i3Wmunv00L1lTO64p3H52iZ74ivssblO0yHsk1bV/oBlbeAiVE2Xgg4LKMGW6/D//3+9qiVvTBwJMqo6eGGMdUvNRa3SLCL4ptmnZz1Qb8O7XPluGIknzYyp4EnEjIjZztRCP8prmIWv3drIqyz20EJ1Ji/On6rGCA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=W8NzDphX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D2665C4CEE5;
-	Mon, 10 Mar 2025 18:38:11 +0000 (UTC)
+	s=arc-20240116; t=1741631883; c=relaxed/simple;
+	bh=LVB/LqaahZ8gGbPqHcZJ5mQIkiJOmxQolT0W/AYlvZs=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=nTe1WGIUmuEDSNg7QQcpLywB0bDQ77573L8GfE8b7KG8vXeMDOQbgynUYqneW18Oh8WC7qWFmAlaA6jG2ot/PFPTBkkoUxZxtibpPai7D2T6XJNdfhxdqw76MSs+CuuxcntI/q0RsAeDEdnx9PAU68R6XfVzAHfrRg1SvXtUdOY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rQpdnkA7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C1CE2C4CEEC;
+	Mon, 10 Mar 2025 18:38:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741631891;
-	bh=77AYLHKjJDUAxlPSNSjE5Yx8FldJR4VJKjnY8y5KFC8=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=W8NzDphXo/nNkSy2eE9KbOus63p6o6k/4t1IVYntijYbmyxZJlVJ2lX3dtAU41WeM
-	 OLLR6SREBaAvk1MWsGMqCErLVHdM/CmaJ9Vj+Vif2CHNER9hb3BuZTCJeDQgpVP4xw
-	 JwHYOM9emfgViENCO1xd6Ijvjt0zFjGcNogIRWaQ8WNGjKVURkhWttDS8qRXyvafUA
-	 HInMTI/wluAjpPCG5O7v7FcGCpDRptgfQrTKTR7EMRmirja357w7S+TlHYX/7+N2dP
-	 UqIymHEnO86xnuKklz9D6sqf12qlLVA0iTAiXqLc67ombhVHtYM1/c19ST1Hm1gN+3
-	 WNOMrYvdWpCHg==
+	s=k20201202; t=1741631882;
+	bh=LVB/LqaahZ8gGbPqHcZJ5mQIkiJOmxQolT0W/AYlvZs=;
+	h=Date:From:To:Cc:Subject:Reply-To:From;
+	b=rQpdnkA7yyTigYWe7XQTYKESp7rRfhfcgobb/yUGEsPaCUp28CwgFsd9kwIsgz+O7
+	 yeVcVh271D6h1LkAfjCZ053X24C10cSw+hTdanUE7b2589IdadYI68aETIN2KMcgwC
+	 uM8iSnw3FIIkcoY/zWFtlZRg2PtoSh7VcPv07dAW5FxAcmhSx1yzd4XfBflHXik4pi
+	 KyNABGQ8HPk/aP5oj0jqGSXGncjVsbIrGzHr4VEMBp2ug4VWcnky6KGMRIUu6QXQ4P
+	 utDZRw5GxCzes6N57+67Odz83kNIHJPgFuIaXznMytn8hBaHREsIA9GeByFYhQFfUJ
+	 LlNwRp+auGyzg==
 Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id 8DBAACE079A; Mon, 10 Mar 2025 11:38:11 -0700 (PDT)
+	id 63B67CE079A; Mon, 10 Mar 2025 11:38:02 -0700 (PDT)
+Date: Mon, 10 Mar 2025 11:38:02 -0700
 From: "Paul E. McKenney" <paulmck@kernel.org>
 To: rcu@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	kernel-team@meta.com,
-	rostedt@goodmis.org,
-	"Paul E. McKenney" <paulmck@kernel.org>
-Subject: [PATCH 1/9] rcutorture: Make srcu_lockdep.sh check kernel Kconfig
-Date: Mon, 10 Mar 2025 11:38:01 -0700
-Message-Id: <20250310183809.3576320-1-paulmck@kernel.org>
-X-Mailer: git-send-email 2.40.1
-In-Reply-To: <4bf081c8-9299-4ee3-b337-d5b751cef6be@paulmck-laptop>
-References: <4bf081c8-9299-4ee3-b337-d5b751cef6be@paulmck-laptop>
+Cc: linux-kernel@vger.kernel.org, kernel-team@meta.com, rostedt@goodmis.org
+Subject: [PATCH 0/9] RCU torture-test changes for v6.16
+Message-ID: <4bf081c8-9299-4ee3-b337-d5b751cef6be@paulmck-laptop>
+Reply-To: paulmck@kernel.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-The srcu_lockdep.sh currently blindly trusts the rcutorture SRCU-P
-scenario to build its kernel with lockdep enabled.  Of course, this
-dependency might not be obvious to someone rebalancing SRCU scenarios.
-This commit therefore adds code to srcu_lockdep.sh that verifies that
-the .config file has lockdep enabled.
+Hello!
 
-Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
----
- .../testing/selftests/rcutorture/bin/srcu_lockdep.sh  | 11 ++++++++++-
- 1 file changed, 10 insertions(+), 1 deletion(-)
+The following series improves testing of SRCU-fast and SRCU up/down:
 
-diff --git a/tools/testing/selftests/rcutorture/bin/srcu_lockdep.sh b/tools/testing/selftests/rcutorture/bin/srcu_lockdep.sh
-index 2db12c5cad9c6..b94f6d3445c6c 100755
---- a/tools/testing/selftests/rcutorture/bin/srcu_lockdep.sh
-+++ b/tools/testing/selftests/rcutorture/bin/srcu_lockdep.sh
-@@ -39,8 +39,9 @@ do
- 	shift
- done
- 
--err=
- nerrs=0
-+
-+# Test lockdep's handling of deadlocks.
- for d in 0 1
- do
- 	for t in 0 1 2
-@@ -52,6 +53,12 @@ do
- 			tools/testing/selftests/rcutorture/bin/kvm.sh --allcpus --duration 5s --configs "SRCU-P" --kconfig "CONFIG_FORCE_NEED_SRCU_NMI_SAFE=y" --bootargs "rcutorture.test_srcu_lockdep=$val rcutorture.reader_flavor=0x2" --trust-make --datestamp "$ds/$val" > "$T/kvm.sh.out" 2>&1
- 			ret=$?
- 			mv "$T/kvm.sh.out" "$RCUTORTURE/res/$ds/$val"
-+			if ! grep -q '^CONFIG_PROVE_LOCKING=y' .config
-+			then
-+				echo "rcu_torture_init_srcu_lockdep:Error: CONFIG_PROVE_LOCKING disabled in rcutorture SRCU-P scenario"
-+				nerrs=$((nerrs+1))
-+				err=1
-+			fi
- 			if test "$d" -ne 0 && test "$ret" -eq 0
- 			then
- 				err=1
-@@ -71,6 +78,8 @@ do
- 		done
- 	done
- done
-+
-+# Set up exit code.
- if test "$nerrs" -ne 0
- then
- 	exit 1
--- 
-2.40.1
+1.	Make srcu_lockdep.sh check kernel Kconfig.
 
+2.	Make srcu_lockdep.sh check reader-conflict handling.
+
+3.	Split out beginning and end from rcu_torture_one_read().
+
+4.	Make torture.sh --do-rt use CONFIG_PREEMPT_RT.
+
+5.	Add tests for SRCU up/down reader primitives.
+
+6.	Pull rcu_torture_updown() loop body into new function.
+
+7.	Comment invocations of tick_dep_set_task().
+
+8.	Complain if an ->up_read() is delayed more than 10 seconds.
+
+9.	Check for ->up_read() without matching ->down_read().
+
+						Thanx, Paul
+
+------------------------------------------------------------------------
+
+ b/kernel/rcu/rcutorture.c                                |  124 ++++--
+ b/tools/testing/selftests/rcutorture/bin/srcu_lockdep.sh |   11 
+ b/tools/testing/selftests/rcutorture/bin/torture.sh      |   12 
+ kernel/rcu/rcutorture.c                                  |  297 ++++++++++++---
+ tools/testing/selftests/rcutorture/bin/srcu_lockdep.sh   |   31 +
+ 5 files changed, 383 insertions(+), 92 deletions(-)
 
