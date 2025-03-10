@@ -1,101 +1,90 @@
-Return-Path: <linux-kernel+bounces-553732-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-553733-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F1CDA58E34
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 09:31:56 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4FD44A58E3E
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 09:35:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A9693188E9CC
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 08:32:03 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 098B77A5A70
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 08:34:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6783D2222DC;
-	Mon, 10 Mar 2025 08:31:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18BFC223706;
+	Mon, 10 Mar 2025 08:35:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=8bytes.org header.i=@8bytes.org header.b="ikXX1Iyt"
-Received: from mail.8bytes.org (mail.8bytes.org [85.214.250.239])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB15617BA6
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 08:31:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.214.250.239
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741595510; cv=none; b=Rqe8d/6EEvPxKO1XoziAcmoLxmUDnBVTi3xFCykhoyNPaHpDoD9rxhodDz3fX+hI794st/paEfaaotUMpdMOdhfYyQw/ulVBufmMoyQxtVdLw4UbBzCsf9B81r0o3x5z5JzmaTcdeGxmA9Ehx7hNyIwXwNWWYxhudAqTOMWmtv8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741595510; c=relaxed/simple;
-	bh=3vl10KU33CDG6uF+Ma1XE6fxWf0kXpX43klRjqGvjF8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EqF/K967w+sBwwFA0AXMQJfZ7U7MqBsbZPrqCBRB9LaVoa937T19r++NE+kintq3CSFzJbDs0taWb8FXTeI7knSEbt0c456szxOQQXIcINol1DzzyGVIcouPZp3UxCqzoJaq0gwTYNx3Sf6p1hGuG7AElR0ypuHpBufk+2aZCN0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=8bytes.org; spf=pass smtp.mailfrom=8bytes.org; dkim=pass (2048-bit key) header.d=8bytes.org header.i=@8bytes.org header.b=ikXX1Iyt; arc=none smtp.client-ip=85.214.250.239
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=8bytes.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=8bytes.org
-Received: from 8bytes.org (p4ffe03ae.dip0.t-ipconnect.de [79.254.3.174])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KwPF2jWA"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.8bytes.org (Postfix) with ESMTPSA id 3ACA144C5C;
-	Mon, 10 Mar 2025 09:31:47 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=8bytes.org;
-	s=default; t=1741595507;
-	bh=3vl10KU33CDG6uF+Ma1XE6fxWf0kXpX43klRjqGvjF8=;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 684C12046BF;
+	Mon, 10 Mar 2025 08:35:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741595709; cv=none; b=cdIpQ9l9Q9NVdKmcXKxSyK+DQxAZl0A2mceHvAZM7kThjKtz3vgom/PgL0LppoUcSPK3jtOiJOv0YyAMgy/sq2cdOeCMJIEg3pfSPJ/hpXaY4rwt0jQkGbDA32KW2cHdupoqEX+XxcDrow5dDXd9b3IEJz3U/lGl6fLBGMWafiI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741595709; c=relaxed/simple;
+	bh=FDc8n1PfVplUqR6TlrIzRSO+eMe/vmEGQ617VBj5ULM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=X7jA1yjagv4F0TPcJd1H+HXb06OrdVCKzwXf1mjVpk82/gU25QWyRe+SgR8tKQB3E7ygWyo4Jp6edG3NELOgYcFPbWxABn+R6QzZ78NI5OjJ5ah+9HmbXP8cT801ugsEbK8UKY8SkXRUaetL4P2iBnOg0sjwVWwsqXmc9XxuG5c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KwPF2jWA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E3CBBC4CEE5;
+	Mon, 10 Mar 2025 08:35:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741595708;
+	bh=FDc8n1PfVplUqR6TlrIzRSO+eMe/vmEGQ617VBj5ULM=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ikXX1Iyti49HeA5hJ4hkLsG11glf2mTTE7Ixs3lnPZEcgpgUO2ac4yC/SdgZa2YYr
-	 VGWTrtotRfrEZMZ4lTjMkO138ke6bSjgm6y0PFtrNhtl694qotEDm9qTihXGcJnwBc
-	 viuR+D+csfcsnnNrPg4N69DPgxhmvXg7WCjvT0usF61AtxHrB6zuMxkgTQdHA67WVO
-	 A/EW1TB6vZylRm4h5SLUUsh9Ntp/UKtN8L/tCxMtezrfVV7Tmjy52/420kkGpJsYLB
-	 lQuWNxCl0dHs806ODt5BMv8GvIKpnn//Q7UlGYd2VunlVEm/gm4NkzJVojENPis2i2
-	 Nzgh0vq79DoCQ==
-Date: Mon, 10 Mar 2025 09:31:46 +0100
-From: Joerg Roedel <joro@8bytes.org>
-To: Lu Baolu <baolu.lu@linux.intel.com>
-Cc: iommu@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/6] [PULL REQUEST] Intel IOMMU updates for v6.15
-Message-ID: <Z86jcijk6U-3Li5G@8bytes.org>
-References: <20250310024749.3702681-1-baolu.lu@linux.intel.com>
+	b=KwPF2jWAZQad3jgjs9AggH945mKE24H04MeiEP9rxZ3fttzLqvBqQYIstb7g0EqiE
+	 fKZyYRMi+Yga/mq7FcNClkG0RtlYd6z0NzLdpCspseE37UzxsirOVtPcMoYZ+B4SM8
+	 rYA89edVwCKeKTLhmeSeavVQFBC4w/6Ft0YhjuG4pjLX2JcAK0AkyL1o16qsCffWJz
+	 XhDWDV95MbWRSrc9zfEUJCGDsaY6wqa4PZfPC8dkoL/b/VEPqkrsqrIJGeh7NhBtQE
+	 d2wvJ7VNHxHpWkVaON2ugCgIkLZmnAJ9Hub/Si1rB+D4iXOBE4dvSS9ue+3GgHpODZ
+	 bQG938Iv2QTgQ==
+Date: Mon, 10 Mar 2025 09:35:04 +0100
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Ziyue Zhang <quic_ziyuzhan@quicinc.com>, bhelgaas@google.com, 
+	lpieralisi@kernel.org, kw@linux.com, manivannan.sadhasivam@linaro.org, robh@kernel.org, 
+	krzk+dt@kernel.org, conor+dt@kernel.org, vkoul@kernel.org, kishon@kernel.org, 
+	andersson@kernel.org, konradybcio@kernel.org, dmitry.baryshkov@linaro.org, 
+	neil.armstrong@linaro.org, abel.vesa@linaro.org
+Cc: quic_qianyu@quicinc.com, quic_krichai@quicinc.com, 
+	johan+linaro@kernel.org, linux-arm-msm@vger.kernel.org, linux-pci@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-phy@lists.infradead.org
+Subject: Re: [PATCH v3 1/4] dt-bindings: PCI: qcom: Document the QCS615 PCIe
+ Controller
+Message-ID: <20250310-bronze-chameleon-of-karma-57cd1b@krzk-bin>
+References: <20250310065613.151598-1-quic_ziyuzhan@quicinc.com>
+ <20250310065613.151598-2-quic_ziyuzhan@quicinc.com>
+ <f679c5a0-5044-4cff-8c3b-5051b1b873f9@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250310024749.3702681-1-baolu.lu@linux.intel.com>
+In-Reply-To: <f679c5a0-5044-4cff-8c3b-5051b1b873f9@kernel.org>
 
-On Mon, Mar 10, 2025 at 10:47:43AM +0800, Lu Baolu wrote:
-> Hi Joerg,
+On Mon, Mar 10, 2025 at 08:18:35AM +0100, Krzysztof Kozlowski wrote:
+> On 10/03/2025 07:56, Ziyue Zhang wrote:
+> > From: Krishna chaitanya chundru <quic_krichai@quicinc.com>
+> > 
+> > Add dedicated schema for the PCIe controllers found on QCS615.
+> > Due to qcs615's clock-names do not match any of the existing
+> > dt-bindings, a new compatible for qcs615 is needed.
+> > 
+> > Signed-off-by: Krishna chaitanya chundru <quic_krichai@quicinc.com>
+> > Signed-off-by: Ziyue Zhang <quic_ziyuzhan@quicinc.com>
+> > ---
 > 
-> The following changes have been queued for v6.15-rc1. They are about new
-> features and code refactoring, including:
-> 
->  - Checking for SVA support in domain allocation and attach paths
->  - Move PCI ATS and PRI configuration into probe paths
->  - Fix a pentential hang on reboot -f
->  - Miscellaneous cleanups
-> 
-> These patches are based on v6.14-rc6. Please consider them for the
-> iommu/vt-d branch.
-> 
-> Best regards,
-> baolu
-> 
-> Jason Gunthorpe (2):
->   iommu/vt-d: Use virt_to_phys()
->   iommu/vt-d: Check if SVA is supported when attaching the SVA domain
-> 
-> Lu Baolu (3):
->   iommu/vt-d: Move scalable mode ATS enablement to probe path
->   iommu/vt-d: Move PRI enablement in probe path
->   iommu/vt-d: Cleanup intel_context_flush_present()
-> 
-> Yunhui Cui (1):
->   iommu/vt-d: Fix system hang on reboot -f
-> 
->  drivers/iommu/intel/iommu.c | 237 +++++++++++++-----------------------
->  drivers/iommu/intel/iommu.h |  28 +----
->  drivers/iommu/intel/pasid.c |  43 ++-----
->  drivers/iommu/intel/prq.c   |   2 +-
->  drivers/iommu/intel/svm.c   |  43 +++++++
->  5 files changed, 143 insertions(+), 210 deletions(-)
+> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-Applied, thanks Baolu.
+Sigh, this wasn't ever tested.
+
+NAK
+
+Best regards,
+Krzysztof
+
 
