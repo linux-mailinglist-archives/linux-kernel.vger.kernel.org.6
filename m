@@ -1,234 +1,297 @@
-Return-Path: <linux-kernel+bounces-554339-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-554338-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 04F24A59665
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 14:32:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id E2922A59664
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 14:32:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 255C516566E
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 13:32:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1DD01165272
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 13:32:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0961A22ACDC;
-	Mon, 10 Mar 2025 13:32:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="loGHcEf0"
-Received: from smtp-relay-internal-0.canonical.com (smtp-relay-internal-0.canonical.com [185.125.188.122])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1ECFF22A4D3;
+	Mon, 10 Mar 2025 13:32:23 +0000 (UTC)
+Received: from mail-il1-f207.google.com (mail-il1-f207.google.com [209.85.166.207])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 873E322A819
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 13:32:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.122
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC4FE846D
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 13:32:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.207
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741613548; cv=none; b=vCwPFCqpvXHRcokl5fyFU9BZC309mysL//jdnwZfiw749ORwGP3QhgBFc/XbLLg19KKe6IdDZiX/JsJwSmidIHnPBI9PsgVWgVmVNAcNhpv2xwcc3zVWnOTIqHj5fiVtWsh4k+sJvePApqZvVWFGNHn+Sr7iLKqo1xV8/rIKLPs=
+	t=1741613542; cv=none; b=nsQppVMf1oV5S3oAu4BTbapJ5iCrkH9iu8nqpLFmEcP3GvE/OYOEdXMiwfZvYXOSl6PJHcfkpbLjBzIWHMALGbxORo+ehA+UZuODxxPFR289sO3d0IMGTl1XxO9KMV7etk4YPEzjKIH7DQChEpzCYdEN/ZKpL9+y8tc+ev6JsxA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741613548; c=relaxed/simple;
-	bh=mLdxVos0hPyLd2bmuvUrymnzAJjvTnjjfAT+4GunGm8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dOqgh0epC4yznBwUZiK6hQgheyoR08ZvDHADvV4262cjPH4Kmw4OTQXGHNgJ4GuvGn2W1k9VO0B5xBpO3Ax5OraC8sOFw9SY76H/SrsqTrEHHtD2l/n8DXhytsbgjA1wgI/nN8L6sC72zlSHHybp2OTEE3YMs9/A8NDtdo1nxYE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=loGHcEf0; arc=none smtp.client-ip=185.125.188.122
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
-Received: from mail-pj1-f71.google.com (mail-pj1-f71.google.com [209.85.216.71])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id B57503F5B0
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 13:32:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-	s=20210705; t=1741613536;
-	bh=HaCDmfpp8ZRPXhUw4ZNlmKPznZLLlpm1APhqUxOUw6M=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:In-Reply-To;
-	b=loGHcEf0YAv1ppFDAeIRIRnx5q+dbD9a3fuw83OK50wvYOC00Pf62JnW3qgi9NGBM
-	 OjmBE2kBej3NtHu1QIV8dQ2yx3sVM42XGwPhJtZujjgWiTEwv/1CSZMC9lWGisf9uf
-	 oz/GS5ZpU2lH+/jHv/xH6fBrpm6tBMog2t0YVib/1Rtc5+bH7HrQhzH4MukSodpcqd
-	 qKHR/hz23omI40dOzIcJhurftwH0WmLF11EsutTvOprCL26AbeCiBO6hgcukU8OM51
-	 JBl2E/IZ5x2Zq+5dk4RK9s41WcOCP+BfAjyniuOZvxik0TuIfqeNCHpkCoPtoyF5Pg
-	 s1r5RiEKcvSoQ==
-Received: by mail-pj1-f71.google.com with SMTP id 98e67ed59e1d1-2ff7aecba07so5709848a91.2
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 06:32:16 -0700 (PDT)
+	s=arc-20240116; t=1741613542; c=relaxed/simple;
+	bh=MxUGtItzdHn9mOpY/sYS15j1TuaN+v05N+60iPhkelo=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=uyce72wsCyjoSIZXz8KPBwH6Zd1rzmpQp+2ZRPY0PSwUN7qmpYP1MQe+4ZNf1PYJ317iz8KCTKcJIAb66A2Rni3suznyFX0JojuwLZ85wL+g1Efkl7v096EOHSWRicIZoLNjT4AV41HyH4lJdTz4lzB3IUti03frSFa901TtCyU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.207
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f207.google.com with SMTP id e9e14a558f8ab-3d2b3a2f2d4so82197975ab.0
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 06:32:19 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741613535; x=1742218335;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=HaCDmfpp8ZRPXhUw4ZNlmKPznZLLlpm1APhqUxOUw6M=;
-        b=Fcb+Di2/HhGmvqAOq3u0aVZ4IAZUZqI7nuFag747EiTsr3DMCEgOzYINVS0K7xbD8z
-         7uj2o9sZSwm7xQeMtJIJyppu4aaVhPrdWz9NISBAGHHNYX8nrbkEZuGvrIXlPjv4TUhB
-         2h938CYSV3CteVGMjwAgSbKgT2RNe0MOssNin9cThu2owGr/DIEGGDq38pwa8yNXVzvy
-         yoQf6omuAKATAM0LqKnAxkOY+cRI+nzPy7kwqf9zXVJqSZV7IxlYh2tI8lEu8wY6n0mR
-         MIlyM7BA+mULNuDMTXCiZ1ymPF2ec/X1fhe8fkzIzNJQDUR6m8AtlAqUWtFohD7YVIN1
-         xasA==
-X-Forwarded-Encrypted: i=1; AJvYcCVfK4394/fgzI+rqJ6xW+WhF1/ut0kGKQJdFTX0YHOOFeF6PaL6YZRZtAbzdIl2Q4QA6OtkF+4p+cUiBU0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxuDvTZvyryTM44QPzTTttODc3cUc2/awNzvH45EpGFrA0SAMIk
-	CLbhRredm0GMOr0BTaXbuemJ+6/QrtGbCeSVy4Ojxi7J4t1fpK4hkVMNJ1WqRqk8l66GsU/BdEY
-	eko37Row+eIJfCuKOPcs28tPhm4Vhj1wFdATrwBO+ldOrw4YVU8dI7v1izIPugK4GYdLviiy4r1
-	lbPw==
-X-Gm-Gg: ASbGncvM54XI3IO97i1NPhpJOfNAtiHKZUphZ5Ap9NPOsGFn4DU1RMjqNGAvkxqA38Y
-	DGjRy10DGpv1knFYpwon06BBfLCLE2mEj0VK7FrJA9STqwT+UsVawYTNv+QR/EuCSK2cyT7SLoH
-	0YQLRY/HLVCz5RlBQp5MwiYVZgoGvXrv2ctqfkjBZzZR7it2ISBl4RQMJnUzyo4fXc4ZihqPx9P
-	yKvryyESDKjCQIgZjbTSuJcJvPUY/prJYUCmiTBhNW0YS8Mtpr3EsBTCSooAfaaWIayHgIPuV8I
-	9IfHQfV/T3dWsJsFUg==
-X-Received: by 2002:a17:90b:394d:b0:2fe:a545:4c84 with SMTP id 98e67ed59e1d1-2ff7cf13eddmr17068166a91.34.1741613535215;
-        Mon, 10 Mar 2025 06:32:15 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGHz263sGPsYQaHEeN0+wO5Ne+rOpPHxsfXurrvf0VqTDGXjQ+3335KRj6Lff0lJoRAFMdhBw==
-X-Received: by 2002:a17:90b:394d:b0:2fe:a545:4c84 with SMTP id 98e67ed59e1d1-2ff7cf13eddmr17068137a91.34.1741613534819;
-        Mon, 10 Mar 2025 06:32:14 -0700 (PDT)
-Received: from localhost ([240f:74:7be:1:55b0:de12:de5a:26cc])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2ff4e7747aesm9740634a91.20.2025.03.10.06.32.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 10 Mar 2025 06:32:14 -0700 (PDT)
-Date: Mon, 10 Mar 2025 22:32:12 +0900
-From: Koichiro Den <koichiro.den@canonical.com>
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: linux-gpio@vger.kernel.org, geert+renesas@glider.be, 
-	linus.walleij@linaro.org, maciej.borzecki@canonical.com, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 0/9] Introduce configfs-based interface for
- gpio-aggregator
-Message-ID: <oedikhiegt3iqj7xg4vtfhlqxihicd7bdtaglk73q2m3c42zla@roh336fpkszm>
-References: <20250224143134.3024598-1-koichiro.den@canonical.com>
- <CAMRc=Me9_EvVj2U-wGWjoVyH_igZBtUs1ymtE=4_r2EkSBAAcA@mail.gmail.com>
+        d=1e100.net; s=20230601; t=1741613539; x=1742218339;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=MYbgyRHeKh0XqiQ7QhQ5H2YnwJA15iAWXtoBQzsrzf4=;
+        b=RgecIeCf2YyRPHSRlOpwdS+EpXSjpbu5vy5r8u/o3ytm+s8SJfC7cn3+gFgsA1Vv1T
+         DtX43GCvYmS+vz9hOFT7YgV0MAs7aana9Zv4XTkdZFl0ojRv2fZSAIAbxnm9uNNFG1pA
+         5xXP2cQf48XxJHpkygXq8vEQkZ2wStuVw1SP3A8g2CFUIt5P/BhhLFHzhcxqmKEYhLUC
+         sUI9Fx3QdujbkmscM+L3ayCZrJrf2+gzStcI/xP4OGFpwUNdrNy0rMGP8xKneOHRQf2D
+         g5uR75L+FyDX1+87wkx1QK6vV3jvMTNmMa92WElp8dbVZyxl98NXLfa7eHlL4cp/G54d
+         67Fw==
+X-Forwarded-Encrypted: i=1; AJvYcCXqgo2mtLPSzlOgIzLVNM2fKxuystq2TF4s7XlzXWVA7f8l3onxAlVncrPnZ9YxoPVkkK+pa7Ut6iJowag=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzT/VS2+GiIcHKHWwUyBNTA3kYSNcEKh1RKkt0oeRF+6E+mXckn
+	zoG3I930D8Qn0bvxA4hXuIwtrJjLdf+w8rWCaBMac+eypihwrGraxiCVDWgMt9GvnWJ7N5d7TIY
+	zhnj69jCgXINJ0+9v0r+v4ozhEZua4S6/ijtVVdM7ZP25b8HobNYwYJw=
+X-Google-Smtp-Source: AGHT+IHmHfUuR/BiTP5jRpcYaVKXUZbY62Rqb4KGVUm3T0/7rpOiKrlRD0FFRirPI8NXEhNGxCbIPp05yU3ji1AuoN1qxV1m0Gbu
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAMRc=Me9_EvVj2U-wGWjoVyH_igZBtUs1ymtE=4_r2EkSBAAcA@mail.gmail.com>
+X-Received: by 2002:a05:6e02:168b:b0:3d4:3db1:77ae with SMTP id
+ e9e14a558f8ab-3d4419f4f33mr199534665ab.18.1741613538796; Mon, 10 Mar 2025
+ 06:32:18 -0700 (PDT)
+Date: Mon, 10 Mar 2025 06:32:18 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <67cee9e2.050a0220.1939a6.0004.GAE@google.com>
+Subject: [syzbot] [media?] KASAN: slab-use-after-free Read in vidtv_mux_init
+From: syzbot <syzbot+0d33ab192bd50b6c91e6@syzkaller.appspotmail.com>
+To: dwlsalmeida@gmail.com, linux-kernel@vger.kernel.org, 
+	linux-media@vger.kernel.org, mchehab@kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon, Mar 10, 2025 at 11:19:40AM GMT, Bartosz Golaszewski wrote:
-> On Mon, Feb 24, 2025 at 3:31 PM Koichiro Den <koichiro.den@canonical.com> wrote:
-> >
-> > This patch series introduces a configfs-based interface to gpio-aggregator
-> > to address limitations in the existing 'new_device' interface.
-> >
-> > The existing 'new_device' interface has several limitations:
-> >
-> >   Issue#1. No way to determine when GPIO aggregator creation is complete.
-> >   Issue#2. No way to retrieve errors when creating a GPIO aggregator.
-> >   Issue#3. No way to trace a GPIO line of an aggregator back to its
-> >            corresponding physical device.
-> >   Issue#4. The 'new_device' echo does not indicate which virtual
-> >            gpiochip<N> was created.
-> >   Issue#5. No way to assign names to GPIO lines exported through an
-> >            aggregator.
-> >
-> > Although Issue#1 to #3 could technically be resolved easily without
-> > configfs, using configfs offers a streamlined, modern, and extensible
-> > approach, especially since gpio-sim and gpio-virtuser already utilize
-> > configfs.
-> >
-> > This v5 patch series includes 9 patches:
-> >
-> >   Patch#1: Fix an issue that was spotted during v3 preparation.
-> >   Patch#2: Reorder functions to prepare for configfs introduction.
-> >   Patch#3: Add aggr_alloc() to reduce code duplication.
-> >   Patch#4: Introduce basic configfs interface. Address Issue#1 to #4.
-> >   Patch#5: Address Issue#5.
-> >   Patch#6: Prepare for Patch#7.
-> >   Patch#7: Expose devices created with sysfs to configfs.
-> >   Patch#8: Suppress deferred probe for purely configfs-based aggregators.
-> >   Patch#9: Documentation for the new configfs interface.
-> >
-> > N.B. This v5 is based on the latest gpio/for-next commit as of writing this:
-> >      * 45af02f06f69 ("gpio: virtuser: convert to use dev-sync-probe utilities")
-> >
-> >
-> > v4->v5 changes:
-> >   - Rebased off of the latest gpio/for-next, that includes the patch series:
-> >     "Add synchronous fake device creation utility for GPIO drivers"
-> >     (https://lore.kernel.org/all/20250221133501.2203897-1-koichiro.den@canonical.com/)
-> >
-> > v3->v4 changes:
-> >   - Splitted off the introduction of gpio-pseudo.[ch] and conversions.
-> >   - Reordered commits to place a fix commit first.
-> >   - Squashed the trivial update for gpio-aggregator's conversion to gpio-pseudo
-> >     into the primary commit "gpio: aggregator: introduce basic configfs interface"
-> >     as it is only meaningful when combined.
-> >
-> > v2->v3 changes:
-> >   - Addressed feedback from Bartosz:
-> >     * Factored out the common mechanism for synchronizing platform device
-> >       probe by adding gpio-pseudo.[ch].
-> >     * Renamed "_auto." prefix to "_sysfs." for auto-generated
-> >       configfs entries corresponding to sysfs-created devices.
-> >     * Squashed v2 Patch#3 into its predecessor.
-> >   - Addressed feedback from Geert:
-> >     * Factored out duplicate code in struct gpio_aggregator initialization
-> >       by adding gpio_alloc()/gpio_free() functions. Note that v2 Patch#7
-> >       was dropped for other reasons as mentioned below, so aggr_free() in
-> >       v3 is unrelated to the same-named function in v2.
-> >     * Removed redundant parsing of gpio-line-names and unnecessary
-> >       chip->names assignments; squashed v2 Patch#4 + v2 Patch#5 into v3
-> >       Patch#9.
-> >     * Updated to use sysfs_emit().
-> >     * Updated Kconfig (select CONFIGFS_FS).
-> >     * Fixed typos, coding style issues, missing const qualifiers, and other
-> >       minor issues.
-> >   - Resolved an issue that was spotted during v3 preparation. See Patch#2.
-> >   - Reordered resource initialization order in gpio_aggregator_init() to
-> >     both eliminate a potential race condition (as noted in the source code
-> >     comment) and simplify the code. See Patch#8. This enabled:
-> >     * Removal of v2 Patch#7.
-> >     * Merging of aggr_unregister_lines() and aggr_free_lines() into a
-> >       unified function.
-> >   - Disabled 'delete_device' functionality for devices created via configfs
-> >     for simplicity. It was mistakenly allowed in v2 and proved buggy. See
-> >     Patch #8.
-> >
-> > RFC->v2 changes:
-> >   - Addressed feedback from Bartosz:
-> >     * Expose devices created with sysfs to configfs.
-> >     * Drop 'num_lines' attribute.
-> >     * Fix bugs and crashes.
-> >     * Organize internal symbol prefixes more cleanly.
-> >   - Split diffs for improved reviewability.
-> >   - Update kernel doc to reflect the changes.
-> >
-> > v4: https://lore.kernel.org/all/20250217143531.541185-1-koichiro.den@canonical.com/
-> > v3: https://lore.kernel.org/all/20250216125816.14430-1-koichiro.den@canonical.com/
-> > v2: https://lore.kernel.org/all/20250203031213.399914-1-koichiro.den@canonical.com/
-> > RFC (v1): https://lore.kernel.org/linux-gpio/20250129155525.663780-1-koichiro.den@canonical.com/T/#u
-> >
-> >
-> > *** BLURB HERE ***
-> >
-> > Koichiro Den (9):
-> >   gpio: aggregator: protect driver attr handlers against module unload
-> >   gpio: aggregator: reorder functions to prepare for configfs
-> >     introduction
-> >   gpio: aggregator: add aggr_alloc()/aggr_free()
-> >   gpio: aggregator: introduce basic configfs interface
-> >   gpio: aggregator: add 'name' attribute for custom GPIO line names
-> >   gpio: aggregator: rename 'name' to 'key' in aggr_parse()
-> >   gpio: aggregator: expose aggregator created via legacy sysfs to
-> >     configfs
-> >   gpio: aggregator: cancel deferred probe for devices created via
-> >     configfs
-> >   Documentation: gpio: document configfs interface for gpio-aggregator
-> >
-> >  .../admin-guide/gpio/gpio-aggregator.rst      |  107 ++
-> >  drivers/gpio/Kconfig                          |    2 +
-> >  drivers/gpio/gpio-aggregator.c                | 1129 ++++++++++++++---
-> >  3 files changed, 1050 insertions(+), 188 deletions(-)
-> >
-> > --
-> > 2.45.2
-> >
-> 
-> I did some more testing as I want to pick it up for v6.15 but I now
-> noticed that we're hitting the lockdep_assert_held(&aggr->lock) splat
-> in aggr_line_add(). Could you please look into it?
+Hello,
 
-Thanks. Could you share with me a sample splat?
+syzbot found the following issue on:
 
-Koichiro
+HEAD commit:    848e07631744 Merge tag 'hid-for-linus-2025030501' of git:/..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=12e38a64580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=bed8205d3b84ef81
+dashboard link: https://syzkaller.appspot.com/bug?extid=0d33ab192bd50b6c91e6
+compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=138afda8580000
 
-> 
-> Bartosz
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/6a6c7015dd03/disk-848e0763.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/66cbd3af2068/vmlinux-848e0763.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/1c1ceeb2230c/bzImage-848e0763.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+0d33ab192bd50b6c91e6@syzkaller.appspotmail.com
+
+RBP: 00007fff4b19a7ec R08: 0000000b4b19a87f R09: 00000000000927c0
+R10: 0000000000000001 R11: 0000000000000246 R12: 0000000000000003
+R13: 00000000000927c0 R14: 000000000001d553 R15: 00007fff4b19a840
+ </TASK>
+==================================================================
+BUG: KASAN: slab-use-after-free in vidtv_mux_pid_ctx_init drivers/media/test-drivers/vidtv/vidtv_mux.c:78 [inline]
+BUG: KASAN: slab-use-after-free in vidtv_mux_init+0xac2/0xbe0 drivers/media/test-drivers/vidtv/vidtv_mux.c:524
+Read of size 8 at addr ffff88802fa42acc by task syz.2.37/6059
+
+CPU: 0 UID: 0 PID: 6059 Comm: syz.2.37 Not tainted 6.14.0-rc5-syzkaller-00039-g848e07631744 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 02/12/2025
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:94 [inline]
+ dump_stack_lvl+0x116/0x1f0 lib/dump_stack.c:120
+ print_address_description mm/kasan/report.c:408 [inline]
+ print_report+0xc3/0x670 mm/kasan/report.c:521
+ kasan_report+0xd9/0x110 mm/kasan/report.c:634
+ vidtv_mux_pid_ctx_init drivers/media/test-drivers/vidtv/vidtv_mux.c:78 [inline]
+ vidtv_mux_init+0xac2/0xbe0 drivers/media/test-drivers/vidtv/vidtv_mux.c:524
+ vidtv_start_streaming drivers/media/test-drivers/vidtv/vidtv_bridge.c:194 [inline]
+ vidtv_start_feed+0x334/0x4c0 drivers/media/test-drivers/vidtv/vidtv_bridge.c:239
+ dmx_section_feed_start_filtering+0x3a5/0x660 drivers/media/dvb-core/dvb_demux.c:973
+ dvb_dmxdev_feed_start drivers/media/dvb-core/dmxdev.c:508 [inline]
+ dvb_dmxdev_feed_restart.isra.0+0x457/0x530 drivers/media/dvb-core/dmxdev.c:537
+ dvb_dmxdev_filter_stop+0x2b4/0x3a0 drivers/media/dvb-core/dmxdev.c:564
+ dvb_dmxdev_filter_free drivers/media/dvb-core/dmxdev.c:840 [inline]
+ dvb_demux_release+0x92/0x550 drivers/media/dvb-core/dmxdev.c:1246
+ __fput+0x3ff/0xb70 fs/file_table.c:464
+ task_work_run+0x14e/0x250 kernel/task_work.c:227
+ exit_task_work include/linux/task_work.h:40 [inline]
+ do_exit+0xad8/0x2d70 kernel/exit.c:938
+ do_group_exit+0xd3/0x2a0 kernel/exit.c:1087
+ __do_sys_exit_group kernel/exit.c:1098 [inline]
+ __se_sys_exit_group kernel/exit.c:1096 [inline]
+ __x64_sys_exit_group+0x3e/0x50 kernel/exit.c:1096
+ x64_sys_call+0x151f/0x1720 arch/x86/include/generated/asm/syscalls_64.h:232
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f871d58d169
+Code: Unable to access opcode bytes at 0x7f871d58d13f.
+RSP: 002b:00007fff4b19a788 EFLAGS: 00000246 ORIG_RAX: 00000000000000e7
+RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007f871d58d169
+RDX: 0000000000000064 RSI: 0000000000000000 RDI: 0000000000000000
+RBP: 00007fff4b19a7ec R08: 0000000b4b19a87f R09: 00000000000927c0
+R10: 0000000000000001 R11: 0000000000000246 R12: 0000000000000003
+R13: 00000000000927c0 R14: 000000000001d553 R15: 00007fff4b19a840
+ </TASK>
+
+Allocated by task 6059:
+ kasan_save_stack+0x33/0x60 mm/kasan/common.c:47
+ kasan_save_track+0x14/0x30 mm/kasan/common.c:68
+ poison_kmalloc_redzone mm/kasan/common.c:377 [inline]
+ __kasan_kmalloc+0xaa/0xb0 mm/kasan/common.c:394
+ kmalloc_noprof include/linux/slab.h:901 [inline]
+ kzalloc_noprof include/linux/slab.h:1037 [inline]
+ vidtv_psi_pat_table_init+0x46/0x2c0 drivers/media/test-drivers/vidtv/vidtv_psi.c:970
+ vidtv_channel_si_init+0x67/0x1a90 drivers/media/test-drivers/vidtv/vidtv_channel.c:423
+ vidtv_mux_init+0x526/0xbe0 drivers/media/test-drivers/vidtv/vidtv_mux.c:519
+ vidtv_start_streaming drivers/media/test-drivers/vidtv/vidtv_bridge.c:194 [inline]
+ vidtv_start_feed+0x334/0x4c0 drivers/media/test-drivers/vidtv/vidtv_bridge.c:239
+ dmx_section_feed_start_filtering+0x3a5/0x660 drivers/media/dvb-core/dvb_demux.c:973
+ dvb_dmxdev_feed_start drivers/media/dvb-core/dmxdev.c:508 [inline]
+ dvb_dmxdev_feed_restart.isra.0+0x457/0x530 drivers/media/dvb-core/dmxdev.c:537
+ dvb_dmxdev_filter_stop+0x2b4/0x3a0 drivers/media/dvb-core/dmxdev.c:564
+ dvb_dmxdev_filter_free drivers/media/dvb-core/dmxdev.c:840 [inline]
+ dvb_demux_release+0x92/0x550 drivers/media/dvb-core/dmxdev.c:1246
+ __fput+0x3ff/0xb70 fs/file_table.c:464
+ task_work_run+0x14e/0x250 kernel/task_work.c:227
+ exit_task_work include/linux/task_work.h:40 [inline]
+ do_exit+0xad8/0x2d70 kernel/exit.c:938
+ do_group_exit+0xd3/0x2a0 kernel/exit.c:1087
+ __do_sys_exit_group kernel/exit.c:1098 [inline]
+ __se_sys_exit_group kernel/exit.c:1096 [inline]
+ __x64_sys_exit_group+0x3e/0x50 kernel/exit.c:1096
+ x64_sys_call+0x151f/0x1720 arch/x86/include/generated/asm/syscalls_64.h:232
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+Freed by task 6059:
+ kasan_save_stack+0x33/0x60 mm/kasan/common.c:47
+ kasan_save_track+0x14/0x30 mm/kasan/common.c:68
+ kasan_save_free_info+0x3b/0x60 mm/kasan/generic.c:576
+ poison_slab_object mm/kasan/common.c:247 [inline]
+ __kasan_slab_free+0x51/0x70 mm/kasan/common.c:264
+ kasan_slab_free include/linux/kasan.h:233 [inline]
+ slab_free_hook mm/slub.c:2353 [inline]
+ slab_free mm/slub.c:4609 [inline]
+ kfree+0x2c4/0x4d0 mm/slub.c:4757
+ vidtv_channel_si_init+0x34a/0x1a90 drivers/media/test-drivers/vidtv/vidtv_channel.c:499
+ vidtv_mux_init+0x526/0xbe0 drivers/media/test-drivers/vidtv/vidtv_mux.c:519
+ vidtv_start_streaming drivers/media/test-drivers/vidtv/vidtv_bridge.c:194 [inline]
+ vidtv_start_feed+0x334/0x4c0 drivers/media/test-drivers/vidtv/vidtv_bridge.c:239
+ dmx_section_feed_start_filtering+0x3a5/0x660 drivers/media/dvb-core/dvb_demux.c:973
+ dvb_dmxdev_feed_start drivers/media/dvb-core/dmxdev.c:508 [inline]
+ dvb_dmxdev_feed_restart.isra.0+0x457/0x530 drivers/media/dvb-core/dmxdev.c:537
+ dvb_dmxdev_filter_stop+0x2b4/0x3a0 drivers/media/dvb-core/dmxdev.c:564
+ dvb_dmxdev_filter_free drivers/media/dvb-core/dmxdev.c:840 [inline]
+ dvb_demux_release+0x92/0x550 drivers/media/dvb-core/dmxdev.c:1246
+ __fput+0x3ff/0xb70 fs/file_table.c:464
+ task_work_run+0x14e/0x250 kernel/task_work.c:227
+ exit_task_work include/linux/task_work.h:40 [inline]
+ do_exit+0xad8/0x2d70 kernel/exit.c:938
+ do_group_exit+0xd3/0x2a0 kernel/exit.c:1087
+ __do_sys_exit_group kernel/exit.c:1098 [inline]
+ __se_sys_exit_group kernel/exit.c:1096 [inline]
+ __x64_sys_exit_group+0x3e/0x50 kernel/exit.c:1096
+ x64_sys_call+0x151f/0x1720 arch/x86/include/generated/asm/syscalls_64.h:232
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+The buggy address belongs to the object at ffff88802fa42ac0
+ which belongs to the cache kmalloc-32 of size 32
+The buggy address is located 12 bytes inside of
+ freed 32-byte region [ffff88802fa42ac0, ffff88802fa42ae0)
+
+The buggy address belongs to the physical page:
+page: refcount:0 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x2fa42
+flags: 0xfff00000000000(node=0|zone=1|lastcpupid=0x7ff)
+page_type: f5(slab)
+raw: 00fff00000000000 ffff88801b041780 dead000000000122 0000000000000000
+raw: 0000000000000000 0000000000400040 00000000f5000000 0000000000000000
+page dumped because: kasan: bad access detected
+page_owner tracks the page as allocated
+page last allocated via order 0, migratetype Unmovable, gfp_mask 0x52cc0(GFP_KERNEL|__GFP_NOWARN|__GFP_NORETRY|__GFP_COMP), pid 5963, tgid 5963 (syz-executor), ts 120407289997, free_ts 120403969520
+ set_page_owner include/linux/page_owner.h:32 [inline]
+ post_alloc_hook+0x181/0x1b0 mm/page_alloc.c:1551
+ prep_new_page mm/page_alloc.c:1559 [inline]
+ get_page_from_freelist+0xfce/0x2f80 mm/page_alloc.c:3477
+ __alloc_frozen_pages_noprof+0x221/0x2470 mm/page_alloc.c:4739
+ alloc_pages_mpol+0x1fc/0x540 mm/mempolicy.c:2270
+ alloc_slab_page mm/slub.c:2423 [inline]
+ allocate_slab mm/slub.c:2587 [inline]
+ new_slab+0x23d/0x330 mm/slub.c:2640
+ ___slab_alloc+0xc5d/0x1720 mm/slub.c:3826
+ __slab_alloc.constprop.0+0x56/0xb0 mm/slub.c:3916
+ __slab_alloc_node mm/slub.c:3991 [inline]
+ slab_alloc_node mm/slub.c:4152 [inline]
+ __kmalloc_cache_noprof+0xfa/0x410 mm/slub.c:4320
+ kmalloc_noprof include/linux/slab.h:901 [inline]
+ kzalloc_noprof include/linux/slab.h:1037 [inline]
+ ref_tracker_alloc+0x17c/0x5b0 lib/ref_tracker.c:203
+ __netdev_tracker_alloc include/linux/netdevice.h:4282 [inline]
+ netdev_tracker_alloc include/linux/netdevice.h:4294 [inline]
+ netdev_get_by_index+0x7c/0xb0 net/core/dev.c:990
+ fib6_nh_init+0x792/0x1da0 net/ipv6/route.c:3548
+ ip6_route_info_create+0x1073/0x1910 net/ipv6/route.c:3814
+ ip6_route_add+0x26/0x1c0 net/ipv6/route.c:3858
+ addrconf_add_mroute+0x1de/0x350 net/ipv6/addrconf.c:2549
+ addrconf_add_dev+0x14e/0x1c0 net/ipv6/addrconf.c:2567
+ addrconf_dev_config net/ipv6/addrconf.c:3475 [inline]
+ addrconf_init_auto_addrs+0x380/0x820 net/ipv6/addrconf.c:3563
+page last free pid 6059 tgid 6059 stack trace:
+ reset_page_owner include/linux/page_owner.h:25 [inline]
+ free_pages_prepare mm/page_alloc.c:1127 [inline]
+ free_frozen_pages+0x6db/0xfb0 mm/page_alloc.c:2660
+ tlb_batch_list_free mm/mmu_gather.c:159 [inline]
+ tlb_finish_mmu+0x237/0x7b0 mm/mmu_gather.c:491
+ exit_mmap+0x40e/0xba0 mm/mmap.c:1297
+ __mmput+0x12a/0x410 kernel/fork.c:1356
+ mmput+0x62/0x70 kernel/fork.c:1378
+ exit_mm kernel/exit.c:570 [inline]
+ do_exit+0x9ba/0x2d70 kernel/exit.c:925
+ do_group_exit+0xd3/0x2a0 kernel/exit.c:1087
+ __do_sys_exit_group kernel/exit.c:1098 [inline]
+ __se_sys_exit_group kernel/exit.c:1096 [inline]
+ __x64_sys_exit_group+0x3e/0x50 kernel/exit.c:1096
+ x64_sys_call+0x151f/0x1720 arch/x86/include/generated/asm/syscalls_64.h:232
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+Memory state around the buggy address:
+ ffff88802fa42980: 00 00 00 05 fc fc fc fc 00 00 05 fc fc fc fc fc
+ ffff88802fa42a00: 00 00 02 fc fc fc fc fc 00 00 00 00 fc fc fc fc
+>ffff88802fa42a80: 00 00 00 04 fc fc fc fc fa fb fb fb fc fc fc fc
+                                              ^
+ ffff88802fa42b00: fa fb fb fb fc fc fc fc fa fb fb fb fc fc fc fc
+ ffff88802fa42b80: fa fb fb fb fc fc fc fc fa fb fb fb fc fc fc fc
+==================================================================
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
