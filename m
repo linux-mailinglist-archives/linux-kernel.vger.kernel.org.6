@@ -1,134 +1,111 @@
-Return-Path: <linux-kernel+bounces-554468-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-554469-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 54439A59818
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 15:50:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id C3AE7A59819
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 15:50:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F3C8F1889A20
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 14:50:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6EF311889A4D
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 14:50:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AE5F22AE75;
-	Mon, 10 Mar 2025 14:50:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 914EB22A7EA;
+	Mon, 10 Mar 2025 14:50:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="p+osrAFi"
-Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XHyVXBF4"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37E6622A7E1;
-	Mon, 10 Mar 2025 14:50:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F25041991CA
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 14:50:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741618212; cv=none; b=EIfvqAVrgAjQEtqJJldpI58SVP5wdEVq5aEQwukfo//2mbY98imeZB9+aMtd1ipiDah3uF3c/hOns1A3+YL0n0knaZftOCZrTp2xmlHHfa3TIycBmGmiytML8QHYEX2N6WSmsd2VNIbIZAO4UXCr3UrP3a50+prEjXzdUb/Q1Tc=
+	t=1741618218; cv=none; b=CNoQSTpLKamNIzvnqQZn7t+hHXoDxQfj2HW9jAZmM2F4NaT7iZF6swIo38iCGx/hfgd8Rjyt0NqAt0pIPswNHWpWbxdGiiD1PO/1yqRe87wPvxwVk1/NlapYvgUrxO9xEjNqi/aqEJmHhxe+CPCkPHgnbPsitpYwikJWH3/2rxA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741618212; c=relaxed/simple;
-	bh=ewGaDkOFqPyjeN9+k3ufHGI4cxFZ8zLEpKatYvaSQnA=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
-	 MIME-Version:Content-Type; b=ogqKuYXWsXET8RZvKf4t/a8H5BvZPEEHUlcvSuAacO62+6qqOPtQ0IBqDL8MWjoemd6l5eTNHBLrKMU0wlDug4Xt7i2ZxsY4LzRQ6CJFcnyRAJJWd0hysmAvnYKJad10r6wP+Q/ZRBoMkgYo6tamP3zl63LXMSY/H32YXrDDrxA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=p+osrAFi; arc=none smtp.client-ip=198.137.202.136
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
-Received: from [127.0.0.1] ([76.133.66.138])
-	(authenticated bits=0)
-	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 52AEnxqX1654648
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
-	Mon, 10 Mar 2025 07:49:59 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 52AEnxqX1654648
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-	s=2025021701; t=1741618200;
-	bh=QzcilB+KSVBYSQc9ikBLH3zjKH5ws08Aa5y2Evv5Vmk=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
-	b=p+osrAFiTakr3GTVYWgkJtMn6AfFuG90Iv69diq4MOr7NoSqi+tXTrfGY/v/LSy64
-	 ZuhwKBOnrbK/4IESjwpcHUZaXdAYG0ydHl0wRUH4LUkhG5DFGPe1tuh73CLiisdhGk
-	 DzPl0UXL+Sykz9L7q2IiBAKB3d7HgbhC5NOLRp45wN5Ux4mFgb73GHwJwORJtqYS1f
-	 U7YCCiaWxKN0qONXF6+uCqCHG6L6dAZqseRJC523Z/hs1b49dwMlMGVX1xs5wQWN5+
-	 ysR1eG37ktY0zQJkvVPCvMRVnh1QHZq9xYyfXnBqeSWmKJ7einIw4THnuD2U5yFE9B
-	 wNK02O/tp2BoQ==
-Date: Mon, 10 Mar 2025 07:49:56 -0700
-From: "H. Peter Anvin" <hpa@zytor.com>
-To: Josh Poimboeuf <jpoimboe@kernel.org>
-CC: Ingo Molnar <mingo@kernel.org>, linux-kernel@vger.kernel.org,
-        tip-bot2 for Josh Poimboeuf <tip-bot2@linutronix.de>,
-        linux-tip-commits@vger.kernel.org,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Brian Gerst <brgerst@gmail.com>, x86@kernel.org
-Subject: =?US-ASCII?Q?Re=3A_=5Btip=3A_x86/asm=5D_x86/asm=3A_Make_ASM=5FCALL?=
- =?US-ASCII?Q?=5FCONSTRAINT_conditional_on_frame_pointers?=
-User-Agent: K-9 Mail for Android
-In-Reply-To: <20250308013814.sa745d25m3ddlu2b@jpoimboe>
-References: <174108458405.14745.4864877018394987266.tip-bot2@tip-bot2> <90B1074B-E7D4-4CE0-8A82-ADEB7BAED7AD@zytor.com> <Z8t7ubUE5P7woAr5@gmail.com> <20250307232157.comm4lycebr7zmre@jpoimboe> <A669251B-7414-4EE7-B0AD-735E845C0B5B@zytor.com> <20250308013814.sa745d25m3ddlu2b@jpoimboe>
-Message-ID: <1602F93C-94B6-40DA-A2F6-B8D4C0E24C1F@zytor.com>
+	s=arc-20240116; t=1741618218; c=relaxed/simple;
+	bh=7GX4AWwaxobu32YDGZtV8fLDRqJFyzG/nb/RigoR1W4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pEcAtiTG2sJweUHaX1I7RHh+9hzaGmC/AkbnMAYAqR4SdRs9aliTOh/MMdVXkBMx6Q4ShKuL9UMQOmRFdsyBp6KcBsUzD2SVBukvQPMI7hlY0thIZYq3GMtJdlW1iEIc7ye5HHL0h2JlgNfHXlZYmvm4ceoChsS48H4AQtywutY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XHyVXBF4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BA5C5C4CEED;
+	Mon, 10 Mar 2025 14:50:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741618217;
+	bh=7GX4AWwaxobu32YDGZtV8fLDRqJFyzG/nb/RigoR1W4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=XHyVXBF4g7bEOyHDbW75xL81PBZOtR+0hsFPEG3Rd8BxLfDYHqtsGA5rH4GLzvoZn
+	 OkDwUEISQtf/rQnrHLgzGAzbj+b2mxrJL+fP4jA1wL4sYrGeExvIbtepI/2gqcbfEX
+	 +Kyp1YIdhn6N4RkcoWRB0fnsUm7mn95cLLq0gaZ3iszwckzZbv/XFLs6rBRr+fSu7n
+	 bVXVDlSiZ4ond9l3nr1+UPAY0S5bYu0Wln6uTqYnVH05qAUPdL1fnwRtpoTmkcXV/a
+	 9EjaFGNhlXVde1V6nEd0PRhVL6fBY8j4kJVmTKoJuhoUSXn/oCRG3KozeAjPWT4cwG
+	 7z9axMBMm5Gxg==
+Date: Mon, 10 Mar 2025 15:50:09 +0100
+From: Alexey Gladkov <legion@kernel.org>
+To: Borislav Petkov <bp@alien8.de>
+Cc: Juergen Gross <jgross@suse.com>, Joerg Roedel <joro@8bytes.org>,
+	"Alexey Gladkov (Intel)" <alexey.gladkov@intel.com>,
+	"Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+	Dave Hansen <dave.hansen@intel.com>, Joerg Roedel <jroedel@suse.de>,
+	Ingo Molnar <mingo@kernel.org>, x86@kernel.org, hpa@zytor.com,
+	Tom Lendacky <thomas.lendacky@amd.com>,
+	Nikunj A Dadhania <nikunj@amd.com>, linux-kernel@vger.kernel.org,
+	Larry.Dewey@amd.com
+Subject: Re: [PATCH] x86/sev: Make SEV_STATUS available via SYSFS
+Message-ID: <Z878IRbbzIbUDQvj@example.org>
+References: <b0cf4bfc-bf22-4986-9e76-62e3f54179ea@intel.com>
+ <2koe2zg26fndx6d6jcmbg6dzybbgldgrjufupj74nvmav2dmqg@w6bknhosl64h>
+ <Z8le_TWUJNebrfs7@8bytes.org>
+ <Z8l66FFgPu5hWtuI@agladkov-desk>
+ <Z86-3n1-MArVLM9Z@8bytes.org>
+ <Z87L0bRi8tcAIsDw@example.org>
+ <e9d58d64-ab0f-49e8-ac87-c02bda6bc837@suse.com>
+ <Z87ce37GjCqpOLCW@8bytes.org>
+ <b2e585a7-edd5-4b13-b904-3d0913177aee@suse.com>
+ <20250310133833.GHZ87rWfuV6WgQTsoh@fat_crate.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250310133833.GHZ87rWfuV6WgQTsoh@fat_crate.local>
 
-On March 7, 2025 5:38:14 PM PST, Josh Poimboeuf <jpoimboe@kernel=2Eorg> wro=
-te:
->On Fri, Mar 07, 2025 at 03:29:00PM -0800, H=2E Peter Anvin wrote:
->> On March 7, 2025 3:21:57 PM PST, Josh Poimboeuf <jpoimboe@kernel=2Eorg>=
- wrote:
->> >On Sat, Mar 08, 2025 at 12:05:29AM +0100, Ingo Molnar wrote:
->> >>=20
->> >> * H=2E Peter Anvin <hpa@zytor=2Ecom> wrote:
->> >>=20
->> >> > > #endif /* __ASSEMBLY__ */
->> >> >=20
->> >> > So we are going to be using this version despite the gcc maintaine=
-rs=20
->> >> > telling us it is not supported?
->> >>=20
->> >> No, neither patches are in the x86 tree at the moment=2E
->> >
->> >FWIW, the existing ASM_CALL_CONSTRAINT is also not supported, so this
->> >patch wouldn't have changed anything in that respect=2E
->> >
->> >Regardless I plan to post a new patch set soon with a bunch of cleanup=
-s=2E
->> >
->> >It will keep the existing ASM_CALL_CONSTRAINT in place for GCC, and wi=
-ll
->> >use the new __builtin_frame_address(0) input constraint for Clang only=
-=2E
->> >
->> >There will be a new asm_call() interface to hide the mess=2E
->> >
->>=20
->> Alternatively, you can co-opt the gcc BR I already filed on this and
->> argue there that there are new reasons to support the alternate
->> construct=2E
->
->We hopefully won't need those hacks much longer anyway, as I'll have
->another series to propose removing frame pointers for x86-64=2E
->
->x86-32 can keep frame pointers, but doesn't need the constraints=2E  It's
->not supported for livepatch so it doesn't need to be 100% reliable=2E
->Worst case, an unwind skips a frame, but the call address still shows up
->on stack trace dumps prepended with '?'=2E
->
->I plan to do the asm_call() series before the FP removal series because
->it's presumably less disruptive, and it has a bunch more orthogonal
->cleanups=2E
->
+On Mon, Mar 10, 2025 at 02:38:33PM +0100, Borislav Petkov wrote:
+> On Mon, Mar 10, 2025 at 01:49:46PM +0100, Juergen Gross wrote:
+> > 1. Only name the hypervisor nearest to the guest (similar to running Xen on
+> >    top of another hypervisor in nested virtualization, which would still
+> >    say "xen").
+> > 
+> > 2. Add another entry for naming the outer hypervisor(s) (if possible).
+> > 
+> > 3. Name all known hypervisor levels, like "kvm,svsm" or "svsm,kvm").
+> 
+> /sys/guest it is then.
+> 
+> Let's just keep /sys/hypervisor alone and as Joerg said, we can link to it
+> from /sys/guest.
+> 
+> I guess that sounds ok...
 
-I should probably clarify that this wasn't flippant, but a serious request=
-=2E
+Am I understand correctly that you and Joerg are proposing
 
-If this works by accident on existing gcc, and works on clang, that is a v=
-ery good reason for making it the supported way of doing this going forward=
- for both compilers=2E Per-compiler hacks are nasty, and although we are pr=
-etty good about coping with them in the kernel, some user space app develop=
-er is guaranteed to get it wrong=2E=20
+/sys/guest/tdx/...
+/sys/guest/sev/...
 
-Frame pointers are actually more relevant in user space because user space=
- tends to be compiled with a wider range of debug and architecture options,=
- and of course there is simply way more user space code out there=2E
+?
+
+Which path to use for the host side ?
+
+For guest: /sys/coco/guest/{tdx,sev}/...
+For host:  /sys/coco/host/{tdx,sev}/...
+
+Maybe it would be better to add the "coco" subdirectory or something like
+that ?
+
+-- 
+Rgrds, legion
+
 
