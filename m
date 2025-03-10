@@ -1,171 +1,90 @@
-Return-Path: <linux-kernel+bounces-553759-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-553760-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 01EDFA58E81
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 09:46:59 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7DEF6A58E82
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 09:47:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 938E43A6607
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 08:46:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 411C63A67FF
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 08:47:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D0CB224231;
-	Mon, 10 Mar 2025 08:46:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QibrLrOH"
-Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com [209.85.208.169])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D3B3224232;
+	Mon, 10 Mar 2025 08:47:14 +0000 (UTC)
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A251B22422E;
-	Mon, 10 Mar 2025 08:46:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49A63170826
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 08:47:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741596412; cv=none; b=sxWJcLM8o0ofhCqyIXjLrNGz+4uLjUFD5igN2aC2vF0a0uMEYQCt2yqg+zQLRtTWANti9pP6ku4Wk/pkCRLcCMJ8U7Ph5Iz2e+pvBvUT2GSleg1KPyFskOvEhy8DD1SuzGnRChzDFTom60+FTYEbnyWAvp5y+/BE5/rU3TUJQ7I=
+	t=1741596433; cv=none; b=mT0LpwQg87cILB4Cq/8fqdq5kkDFSzighhVBSFLGSVWnbk10DR9GEP8CwQcsWXpzHdIruPdYs7V7SmS5Kd9+nLAf6cB4T8eZzQ9aK6smVbYRXb0fyiqTxvhaJOre1C3/JYQ8m52aEmTxjY5l2eHjbOKbOx3dMd+ZjuhFAhDAAWY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741596412; c=relaxed/simple;
-	bh=mh8HyHXQ6/d/FhUCIKGxcKlG3XXGbsIm6XfUMld4Jvk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Bndo6Ofn11VzWGSRXOG26QDoCrzx4vp//0QltOFsSJ7/ioe8wXvDdBOTjfQL4FqPIk3t14nOi0Pf5/tHOc5R2ZW7Hq16k0CyulUNO1P/TefmvYDZx9iE+bTL5J3dR8KCq78B6t/ENXnIbKGFzZkTBZtDMiFYIP7In175kYPcUNc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QibrLrOH; arc=none smtp.client-ip=209.85.208.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+	s=arc-20240116; t=1741596433; c=relaxed/simple;
+	bh=DItlkzr2g/B9nWTj2UVQXdaXC7POZqiNBC6hEJmbNWo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=QpCzARQkr6Ete2wC/uAw7grMDi87yF44EqqF0nkuXBiopyzMrwqVOIoTiO5ZzePuDv9TX74ohlePC8lBdTLMEVHPObhUWmEWrNKQov7zjZtKptM0i57/vy2D9Gq2/XnKvcf3VLGcLt0wy57qUwAuSJQH0u40tQElwAO0BmEPgZk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-30bee1cb370so35731641fa.1;
-        Mon, 10 Mar 2025 01:46:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741596409; x=1742201209; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=4kxFdKMeEv/lKowIGUHk9sdguJMU85BbPfG1wmxgoUc=;
-        b=QibrLrOHC9h34H4hSNPjOETIucZgsDJMXx7PuLUq0+V5kz1i5g2q83eKRnfpQDoHo7
-         /0vCM8fESQhiVUKkch9/B9rqDGpo4ll6J2rDGSU6zGv53Sf2zb3Rip1WRKG3CLc4XHzN
-         knjtZCaINAFTDnPuq07QJ48U4edUX+I/EQromq7CScjvhXQGZuFeSV51qSWqGwc+FU1J
-         SPZGmXfmit+T6qN81w5SrNHqKkilJYagtgnqyeBxep1dr23qFbS2mzmWUJDP1rOJJwic
-         w7nDliW9F6dNnmhAD+EjnfXhR5S7vzgoXCXvb71kuk0mnD2i4m7y4c4UWGKknRVdP6u2
-         jGTg==
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-43bc63876f1so33556755e9.3
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 01:47:11 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741596409; x=1742201209;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=4kxFdKMeEv/lKowIGUHk9sdguJMU85BbPfG1wmxgoUc=;
-        b=bQC6vVRIYhSex/hgnalgxydikvCI9yb/QrYJhowU6dVN5THqmjd3uE+G97lsWlOHmC
-         J/FBfzyXM/1RnX38wCP/fT9h45JdVGZy+UHmFtP7ouPcJJXxkOp22WPsylEoQJQbyUWj
-         eZFypNsQhjVSgFnUABkoBJllLTwC0ydeGQo5T3zGgQPBiJTGomDN/iykrY1oXQ4L4SvK
-         2Ajd6XtN2mRb+bJW9rd7CYlegVKRN3ljdtyqpIdwNboGTTwAkupHSLEi8diUuW++W1Dr
-         6KStQHfLaUfDIdLOyofwFVt2o2Hehg9YLPyZduyexm7RnRc3Orv+FcfhpU0c+gqAZ1Mm
-         PLPw==
-X-Forwarded-Encrypted: i=1; AJvYcCUsKyYyCCdgElBT9OHArZlmQDWMSCCBEH+8qY1pCekEmwQobfV5BhNboHKmR8rxJ89CG2x3k0F+NCySKRBh@vger.kernel.org, AJvYcCWI+R/y8Ujh0L6xBZN+GlC9OPY7UKk/pHA8FrBjcwp4koxbh/T7LlBvI9jv7+0I66iTdZSwkqisZ/k=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzNiufGbcDWkdY6Xc6cjJTj+JQ4fw0rx2NQ3e0WXpEEh+F+7d8m
-	hx2mFpmU1hOiJ4QSDcNjk18sVsod/TYcFqdNcKK1EH8lJTLqmwIq
-X-Gm-Gg: ASbGncsUo3EJZ8v8MF69gJmq3AJ0cZLsF8id5qD6c4E/u2Xwvki3nxfuNa6PxbM4uMt
-	bZ2IwzJwxoI7ka86ZXB33CrB+8rijBpstdkiDii8dIfxnPykiRdQf+ZcmHjsCYgtIOz4Q+Ui8tI
-	6vXttcGjU59L0GvQLCYT0pKnIatUJbYMQ3aY5WKCrgnuz57JOqmfFyvcE1Yf7pAxl5Z2i75N2E4
-	Q2S48DH88SkAAoPl+m5TkY2NrVhpSID8USwUGJes5BVz7LT2JtYYYP//P/NKeNV1FsxxSnnwwgb
-	4J5UYmxz3+vsQtyuKY/PA68ia0Z2erKxri1VOsPPiY+cW2RwOizmKtna4Jw4NWFABIZmHWfuQAQ
-	IfyVijqbuIBmj6CUSGwkCCl0OpFf4TJTliKmw
-X-Google-Smtp-Source: AGHT+IFRw2fsCIEHOiOk/9zkIwvF6fmRqOfBPkp/8Z+uXYcVOozuo8aAY27GOYneOIaMTBztMNgwhQ==
-X-Received: by 2002:a05:651c:1541:b0:30b:c6fe:4530 with SMTP id 38308e7fff4ca-30bf44e5a77mr40068971fa.3.1741596408322;
-        Mon, 10 Mar 2025 01:46:48 -0700 (PDT)
-Received: from ?IPV6:2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703? ([2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-30c03a3e556sm8129041fa.16.2025.03.10.01.46.46
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 10 Mar 2025 01:46:46 -0700 (PDT)
-Message-ID: <a6fcc1af-5fb8-48bd-8ed8-6fb16b1a5d4c@gmail.com>
-Date: Mon, 10 Mar 2025 10:46:45 +0200
+        d=1e100.net; s=20230601; t=1741596430; x=1742201230;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=kPPYfHjW9LOl7mwKsENaGcZH5O/veKl4xmyfKUC9VtE=;
+        b=w41iA/xjhuAAfIpWW8LrsW17ZZ/nWE2nCjBE8V5DO2jl+ZCqTz29IdlDJmdTAz0DtK
+         gEavdlgZaG07Zw4c0ZItUTa4yNs5kJ/Z1mAqZrY6qU4tJ/5Os/53qqw8XiIJ9Fuk5bEB
+         yu0d+yLXseIXk5cTBuoTYWzTnf8kHrEGPSEWwr9I1t+0TR/5eb1NcbMw8EFtL39ke6wU
+         Sz/vCQOlq4Hvc8DsAiX4I0RqKC6NrBa7/fZc4oX1tLTeOUacClTa1Fb9ssgSh/y8xJrm
+         pJ/KODfy7gAfv29lr7jIBZTE7kB0kA7AIHc7HFvJqrHLPmem1PJ8HE3WWKVh1rZD2fh4
+         hpcg==
+X-Gm-Message-State: AOJu0YxDn3DJigPSpXoDJHhKASRJLG83btYxGucw3sp1LkvEV2iHErJS
+	IobIjuaM8ovm4jp+pdKxDmL8Cx9qe+NQp9RK+lkmcgflvnp4kIujuOFvAA==
+X-Gm-Gg: ASbGncsHiCpA/kUvETUb38b4yO2tWAj8g8t3UWxQbMROx37wEQjqWgtYLxeCF0jIi46
+	8sBeSId9LBPlgFlvbtpa80WQYdhVOHw1OUGaQk02FRxxDySebib7fN9kBWWVqFo9nbZSKmZpMyE
+	Vwcf0iMQhld1tsERujk1WwbxITie/QbU400/vsYoJNXAl+XnFOVogAoIHVxjb64VHIaI+CYl6wD
+	sq+LXWPgINd9KzP4A/ehOAO3g7alDw/kibqjz8rbU9XveNalKljmps8JujK6lTh8BqM8pdxlFiw
+	dyiLlOd9Snc75sEaIy9Nt+AwDVtgIaYIRk4QbeY1hMauv48QaQywQE3/nS2jEEThzf4345YwTrK
+	V7SheqvfX0yVan4hUo3tyz78O/BQ=
+X-Google-Smtp-Source: AGHT+IH0qoXrg896WV1Vg1+kR0nyNfo2wlNj0wVfH/F6dtta2oEDp1gaqTVt0Ji3OYMBl4E+i5z6mg==
+X-Received: by 2002:a05:600c:4f0c:b0:43c:eeee:b713 with SMTP id 5b1f17b1804b1-43ceeeeb9e3mr29203425e9.20.1741596430296;
+        Mon, 10 Mar 2025 01:47:10 -0700 (PDT)
+Received: from nuc.fritz.box (p200300f6f7433100fa633ffffe02074c.dip0.t-ipconnect.de. [2003:f6:f743:3100:fa63:3fff:fe02:74c])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43ce70d13b4sm77093465e9.38.2025.03.10.01.47.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 10 Mar 2025 01:47:09 -0700 (PDT)
+From: Johannes Thumshirn <jth@kernel.org>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: linux-kernel@vger.kernel.org,
+	Haoxiang Li <haoxiang_li2024@163.com>,
+	Johannes Thumshirn <jth@kernel.org>
+Subject: [PATCH 0/1] mcb: update for 6.15
+Date: Mon, 10 Mar 2025 09:46:56 +0100
+Message-ID: <cover.1741596225.git.jth@kernel.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 07/10] iio: adc: Support ROHM BD79124 ADC
-To: Jonathan Cameron <jic23@kernel.org>
-Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
- Lars-Peter Clausen <lars@metafoo.de>, Nuno Sa <nuno.sa@analog.com>,
- David Lechner <dlechner@baylibre.com>,
- Javier Carrasco <javier.carrasco.cruz@gmail.com>,
- Olivier Moysan <olivier.moysan@foss.st.com>,
- Guillaume Stols <gstols@baylibre.com>,
- Dumitru Ceclan <mitrutzceclan@gmail.com>,
- Trevor Gamblin <tgamblin@baylibre.com>,
- Matteo Martelli <matteomartelli3@gmail.com>,
- Alisa-Dariana Roman <alisadariana@gmail.com>,
- Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
- =?UTF-8?Q?Jo=C3=A3o_Paulo_Gon=C3=A7alves?= <joao.goncalves@toradex.com>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org
-References: <cover.1740993491.git.mazziesaccount@gmail.com>
- <60a55e4027cf9335b37d4affc11d805a1504cab7.1740993491.git.mazziesaccount@gmail.com>
- <20250308164441.00f64ab2@jic23-huawei>
-Content-Language: en-US, en-AU, en-GB, en-BW
-From: Matti Vaittinen <mazziesaccount@gmail.com>
-In-Reply-To: <20250308164441.00f64ab2@jic23-huawei>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 08/03/2025 18:44, Jonathan Cameron wrote:
-> On Mon, 3 Mar 2025 13:33:39 +0200
-> Matti Vaittinen <mazziesaccount@gmail.com> wrote:
-> 
->> The ROHM BD79124 is a 12-bit, 8-channel, SAR ADC. The ADC supports
->> an automatic measurement mode, with an alarm interrupt for out-of-window
->> measurements. The window is configurable for each channel.
->>
->> The I2C protocol for manual start of the measurement and data reading is
->> somewhat peculiar. It requires the master to do clock stretching after
->> sending the I2C slave-address until the slave has captured the data.
->> Needless to say this is not well suopported by the I2C controllers.
->>
->> Thus the driver does not support the BD79124's manual measurement mode
->> but implements the measurements using automatic measurement mode relying
->> on the BD79124's ability of storing latest measurements into register.
->>
->> The driver does also support configuring the threshold events for
->> detecting the out-of-window events.
->>
->> The BD79124 keeps asserting IRQ for as long as the measured voltage is
->> out of the configured window. Thus the driver masks the received event
->> for a fixed duration (1 second) when an event is handled. This prevents
->> the user-space from choking on the events
->>
->> The ADC input pins can be also configured as general purpose outputs.
->> Those pins which don't have corresponding ADC channel node in the
->> device-tree will be controllable as GPO.
->>
->> Signed-off-by: Matti Vaittinen <mazziesaccount@gmail.com>
-> Hi Matti
-> 
-> Just a few really trivial comments.  If all else in the
-> set was resolved I'd probably have applied with a tweak or two
-> 
-> Thanks,
-> 
-> Jonathan
-> 
->>   obj-$(CONFIG_SC27XX_ADC) += sc27xx_adc.o
->> diff --git a/drivers/iio/adc/rohm-bd79124.c b/drivers/iio/adc/rohm-bd79124.c
->> new file mode 100644
->> index 000000000000..466c7decf8fc
->> --- /dev/null
->> +++ b/drivers/iio/adc/rohm-bd79124.c
->> @@ -0,0 +1,1108 @@
-> ...
-> 
->> +
->> +/* Read-only regs */
-> 
-> Given naming this is pretty obvious.
- > I would drop the comment
+Hi Greg,
 
-I will drop this, although I am not sure it is as self explatonary as 
-one thinks. I've seen people getting this wrong because the logic of 
-regmap-ranges is kind of reversed. (Eg, read-only is done by adding 
-range to wr_tables and not to rd_tables - as a no-range).
+Here's an update for drivers/mcb for 6.15 from Haoxiang Li fixing a double
+free in an error path in chameleon_parse_gdd().
 
-Thanks for the review, and rest of the comments just agreed with.
+Haoxiang Li (1):
+  mcb: fix a double free bug in chameleon_parse_gdd()
 
--- Matti
+ drivers/mcb/mcb-parse.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+-- 
+2.43.0
+
 
