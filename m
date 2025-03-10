@@ -1,141 +1,121 @@
-Return-Path: <linux-kernel+bounces-553647-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-553650-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9C59A58CE6
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 08:28:49 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 52131A58CEE
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 08:31:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8C0667A3BF5
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 07:27:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 903C216A5A5
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 07:31:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43A9E1D7999;
-	Mon, 10 Mar 2025 07:28:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE31120C019;
+	Mon, 10 Mar 2025 07:30:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="l4M6tjjF"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KIMYRQWO"
+Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CD97347B4;
-	Mon, 10 Mar 2025 07:28:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D0621B2194;
+	Mon, 10 Mar 2025 07:30:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741591719; cv=none; b=Cc0cwAK0JDQfAkr4UOH3IFjVPYzhX6ol6PXxS/dHqqxWvUV3gh1GNwbYqcKmDb1SrYIJM4moFEt8gr2CENs2NLXOrhczuNz1m25c+Qi4J0WOzN8etVuZpJm7WyAaqIZO8oOH9Uw1PVyB/R7KroHadwnt03ADTL4Y7oZk+TIvzq8=
+	t=1741591856; cv=none; b=hKqk60Ql9eT6XMCR3rY+CUB97tCZQEIq80Wx1D/A5eEhdKEMZPlQ0kOSiR3uIVMLNmjJnYGsOyGoKuMacRj2cVJg6L1VYjQ2GDKliIRel3MUOjfjkImzanv4CCzLam+/LmfyCPfFJqwmk4+4W5kmx7zw/swWKaQ/nwuCNPwTbcg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741591719; c=relaxed/simple;
-	bh=1g5F+A1cBRXVc1hiVX4P5/HWsys7JL9H0jyHVwU6T2Q=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qB7z7g9Io08aJlIiLSED9LTjiWCpOv5VDf5W9mcbmBcc0f2CbSyNoKM/Zmxxb7GiXuIlKVx2HSmKk3lkGrsDvNYYeRvzzu1fzIV1xfvKy5LWFExqUn5+vAVLo6qEPgnv3GknhL1mWjaG0McS1y4JQbbtp/oX/OuDBCD2iwqJPKk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=l4M6tjjF; arc=none smtp.client-ip=198.175.65.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1741591718; x=1773127718;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=1g5F+A1cBRXVc1hiVX4P5/HWsys7JL9H0jyHVwU6T2Q=;
-  b=l4M6tjjFiXCJt7S0t89Khv9kDCKSH8Ijr7y+SLdQkqDbawL+ITs/JnD6
-   ZfZL9NUvoDcE9FMvDoJ5AX2Dl11rQltyfx6oZMJWulpnIbXXVrMY3/YDA
-   4XkaRcXOPPfk/nUXlk/0TLkod+TfWm4vRCpXry2geEExNlMdI501vWPEf
-   NrEjs0BqXbgXUFxxKPV+d3pSQRbHaUKSzd4ivfWiDlAFZfRMus/9SJXYt
-   c1UimNJD5UYEZp8p19mHPYEX8SFrUMzHIb4i9GA/B4fUDI7jIVftDMkew
-   +XCiLfFNlJNFFBWOAA5AXC9N0mSzlsGngJ6TSWm/MguF17qH9wN5XE/Zt
-   w==;
-X-CSE-ConnectionGUID: 1V3TB6CQRzaTSeon5MTCEw==
-X-CSE-MsgGUID: 8nQfB0bJQhucJWcSSa0GEg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11368"; a="46219362"
-X-IronPort-AV: E=Sophos;i="6.14,235,1736841600"; 
-   d="scan'208";a="46219362"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Mar 2025 00:28:37 -0700
-X-CSE-ConnectionGUID: RhJG3G7RQdGEhvRarNRaTg==
-X-CSE-MsgGUID: vmNY4aaCRemkotsM1388SA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,235,1736841600"; 
-   d="scan'208";a="124508676"
-Received: from xiaoyaol-hp-g830.ccr.corp.intel.com (HELO [10.124.247.1]) ([10.124.247.1])
-  by fmviesa005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Mar 2025 00:28:34 -0700
-Message-ID: <85ed4258-6a8e-4820-8627-29fff61572d2@intel.com>
-Date: Mon, 10 Mar 2025 15:28:30 +0800
+	s=arc-20240116; t=1741591856; c=relaxed/simple;
+	bh=84FRLwi3VEAwx0R6siAMlBRl+tmVlak6qHOsl3RR3Vs=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=pD1NkckvjhTFJK3nvHg8SoMgMrvL4jJJ+lSAxQR/agIhkcyZFkjBHTna4I4QqY6U8E1OZHRiSgJSTm8P3I1Z3oXcJRdeOeUIN9h0tYeo9L+Gvm9T9Uy/MO1yJdQ36UAG0nFEFTDnH6YQ3+RUSizQGV8WHvC9wKzkxusst7gDeN8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KIMYRQWO; arc=none smtp.client-ip=209.85.214.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-2234e4b079cso65794455ad.1;
+        Mon, 10 Mar 2025 00:30:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741591854; x=1742196654; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=dmUbl1SNPN33YKejJF44kES5GFJl90ttXQH6Y+6xWoY=;
+        b=KIMYRQWOUaj0yAaKVZZ1tMIEI2M/3qGPIoYeA7u0UNa1gGRLIJQD41Q4wBOfY3la37
+         OfRepmrWpKXxKFqRxOby1gInloYPX8RKEitjytGOuX9r0cNEbZ3WYg6H92CBkg5mDd/n
+         8IZsnRYYnYDD5CUGoyJvLhpJzTD/gRRPytgEiaduDpwc8d19PUj913b8T90oyhbV/eYG
+         tPnA9oSzoeuzOpXsgefE42LqNw2uf0DGvSg0UgsH4v8cHPRsqs8tuMzmYSpjsV9Lp4Vx
+         I4e1amnGaFSIYKcq1BIm7BtO/WzTAiFxepz8lRTzsVympILWo65C4NhS239QuY9YFqq+
+         v6Kw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741591854; x=1742196654;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=dmUbl1SNPN33YKejJF44kES5GFJl90ttXQH6Y+6xWoY=;
+        b=N+tsvCdANKZ2F1lKtZy9iTlTR9sVwmXjgLHk3Hga+fmlc5+/cTcY3vobkQSL9a4l9M
+         yxMh/BfCsxJE9Gp6XwiqBimAgexrj6xuSu2rl3fq1dV5FoPVXCpfPfSAcZ0SN8N4rgD6
+         OAEUOYQ2PU3Vo+2a4udHqwTPVWOfBFj1U93AHYeOPBxrAcSUGYdueXW37bWN14fg2iOc
+         HF1/UqIaGnOGPvdIomj+Q5cG0xiw7jZ1b9NHepHl30CzA2+a8TjtYvloHbCE3zNsz6Cf
+         6iRVIuDNfZJrKWPanpMI5yNaWCxUpnRbw3ojE9EGPM+fhuQxVdSRCijEzCQOr1g/7Bzw
+         TnDg==
+X-Forwarded-Encrypted: i=1; AJvYcCVKI0aMZFHaRdCDVMgvSiwYJr6IlA2Php5+6ywtMQMwY1hATmblUSdZwMrnM276Xd6FtR2zjU6ibMw/quAb9Iw=@vger.kernel.org, AJvYcCVg3EuUyYPrnkaJHiMa4bfOeXgGoOcE/01AV8OBsCU3M2aIi/zE/6dxs1OYz5yUvCtVmPeeVsAo/gRwBDM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxYR0rMETwTpNM6mR7z5VBcN/PN9Jy58UHHGDCXR548XZGti1l/
+	yV7hwuNxZnjVXhVtG4ZUMxmlygViaMbl6OERtx0PG/Ky4soeSqLw
+X-Gm-Gg: ASbGncs1BF8sio2C1oGBKsW19Gm0Ut2nFX54GyFDIvjcaHPC4J3ObPgI4NmcBTj5EIR
+	xt4IuH64iu5dzD2n4xrUprHEmmitg0jviVgX+3P9MbeVbxiCEejx/pbldJ0kJqhXMfJyy9+opYd
+	POlQHq7ZVN93odlRq1MdhE2l5PdYRmq2jMOEU26UtLQndnqUHSVvkV0GRIsY2QPKcw2ren4ENLn
+	ECHxUHUX3prmMzknUj9NdgsVd32mEP7XncnY+FyA8S7Nkyww+RvW/SzVcAd/0fHuEvy4mnRWlC6
+	ktNwBDe+MJfHcSu7OxRGqrU+Bo+2YoQlczQ72CoQpUbcHa7TMj5pOJkxcSdfIpSEJz2HURQytQ=
+	=
+X-Google-Smtp-Source: AGHT+IGaLXdVookzjXhdP3t9TWNQSkoPex+/Iu3eVAiYGn0yVxQx1WSTeEMykevSKZRXTuYM7jsRtA==
+X-Received: by 2002:a17:902:f686:b0:224:1ec0:8a1d with SMTP id d9443c01a7336-22428ab535bmr179596005ad.30.1741591853594;
+        Mon, 10 Mar 2025 00:30:53 -0700 (PDT)
+Received: from vaxr-ASUSPRO-D840MB-M840MB.. ([2001:288:7001:2703:7ad0:37c7:5275:4b0])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22410a7f773sm70840715ad.117.2025.03.10.00.30.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 10 Mar 2025 00:30:52 -0700 (PDT)
+From: I Hsin Cheng <richard120310@gmail.com>
+To: ojeda@kernel.org
+Cc: alex.gaynor@gmail.com,
+	boqun.feng@gmail.com,
+	gary@garyguo.net,
+	bjorn3_gh@protonmail.com,
+	benno.lossin@proton.me,
+	a.hindborg@kernel.org,
+	aliceryhl@google.com,
+	tmgross@umich.edu,
+	rust-for-linux@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	skhan@linuxfoundation.org,
+	linux-kernel-mentees@lists.linux.dev,
+	jserv@ccns.ncku.edu.tw,
+	I Hsin Cheng <richard120310@gmail.com>
+Subject: [RFC PATCH 0/2] rust: list: Add examples for linked list
+Date: Mon, 10 Mar 2025 15:30:38 +0800
+Message-ID: <20250310073040.423383-1-richard120310@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 09/10] KVM: TDX: Save and restore IA32_DEBUGCTL
-To: Paolo Bonzini <pbonzini@redhat.com>, linux-kernel@vger.kernel.org,
- kvm@vger.kernel.org
-Cc: adrian.hunter@intel.com, seanjc@google.com, rick.p.edgecombe@intel.com
-References: <20250307212053.2948340-1-pbonzini@redhat.com>
- <20250307212053.2948340-10-pbonzini@redhat.com>
-Content-Language: en-US
-From: Xiaoyao Li <xiaoyao.li@intel.com>
-In-Reply-To: <20250307212053.2948340-10-pbonzini@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 3/8/2025 5:20 AM, Paolo Bonzini wrote:
-> From: Adrian Hunter <adrian.hunter@intel.com>
-> 
-> Save the IA32_DEBUGCTL MSR before entering a TDX VCPU and restore it
-> afterwards.  The TDX Module preserves bits 1, 12, and 14, so if no
-> other bits are set, no restore is done.
+This patch series introduce runnable examples for linked list. They also
+serve as the unit tests for the methods for "List".
+A new initialized method is also introduced for "ListLinks", in order to
+provide the ability to create a new "ListLinks" instance, and provide
+simplicity for the examples.
 
-Reviewed-by: Xiayao Li <xiaoyao.li@intel.com>
+If there exists a convenient and proper way to handle the return type
+of "ListLinks::new()", e.g. "ListLinks::try_pin_init()" , then the
+method won't be needed.
 
-> Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
-> Message-ID: <20250129095902.16391-12-adrian.hunter@intel.com>
-> Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
-> ---
->   arch/x86/kvm/vmx/tdx.c | 11 ++++++++++-
->   1 file changed, 10 insertions(+), 1 deletion(-)
-> 
-> diff --git a/arch/x86/kvm/vmx/tdx.c b/arch/x86/kvm/vmx/tdx.c
-> index 5625b0801ce8..25972e12504b 100644
-> --- a/arch/x86/kvm/vmx/tdx.c
-> +++ b/arch/x86/kvm/vmx/tdx.c
-> @@ -683,6 +683,8 @@ void tdx_prepare_switch_to_guest(struct kvm_vcpu *vcpu)
->   	else
->   		vt->msr_host_kernel_gs_base = read_msr(MSR_KERNEL_GS_BASE);
->   
-> +	vt->host_debugctlmsr = get_debugctlmsr();
-> +
->   	vt->guest_state_loaded = true;
->   }
->   
-> @@ -826,11 +828,15 @@ static void tdx_load_host_xsave_state(struct kvm_vcpu *vcpu)
->   	if (kvm_host.xss != (kvm_tdx->xfam & kvm_caps.supported_xss))
->   		wrmsrl(MSR_IA32_XSS, kvm_host.xss);
->   }
-> -EXPORT_SYMBOL_GPL(kvm_load_host_xsave_state);
+I Hsin Cheng (2):
+  rust: list: Implement normal initializer for ListLinks
+  rust: list: Add examples for linked list
 
-This needs to be cleaned up in patch 05;
+ rust/kernel/list.rs | 100 ++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 100 insertions(+)
 
-> +
-> +#define TDX_DEBUGCTL_PRESERVED (DEBUGCTLMSR_BTF | \
-> +				DEBUGCTLMSR_FREEZE_PERFMON_ON_PMI | \
-> +				DEBUGCTLMSR_FREEZE_IN_SMM)
->   
->   fastpath_t tdx_vcpu_run(struct kvm_vcpu *vcpu, bool force_immediate_exit)
->   {
->   	struct vcpu_tdx *tdx = to_tdx(vcpu);
-> +	struct vcpu_vt *vt = to_vt(vcpu);
->   
->   	/*
->   	 * force_immediate_exit requires vCPU entering for events injection with
-> @@ -846,6 +852,9 @@ fastpath_t tdx_vcpu_run(struct kvm_vcpu *vcpu, bool force_immediate_exit)
->   
->   	tdx_vcpu_enter_exit(vcpu);
->   
-> +	if (vt->host_debugctlmsr & ~TDX_DEBUGCTL_PRESERVED)
-> +		update_debugctlmsr(vt->host_debugctlmsr);
-> +
->   	tdx_load_host_xsave_state(vcpu);
->   	tdx->guest_entered = true;
->   
+-- 
+2.43.0
 
 
