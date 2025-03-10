@@ -1,86 +1,46 @@
-Return-Path: <linux-kernel+bounces-554646-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-554647-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 41469A59ADF
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 17:24:28 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 89942A59AE1
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 17:24:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 800D416D339
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 16:24:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C7F5316D505
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 16:24:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5EF522FDE4;
-	Mon, 10 Mar 2025 16:24:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="BlZ+lzak"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37E7F22D4FA;
-	Mon, 10 Mar 2025 16:24:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35DDE22FDF9;
+	Mon, 10 Mar 2025 16:24:52 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AF641D79BE
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 16:24:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741623859; cv=none; b=tnGWUpY+EmdXI6W7tYrmmzcA2CbHAnHxBnSV7wFjaaEYOEFeC+HpGMpq37vboG91yJW+wD6H41zT8W8d81XzZ/SHujwatiUqcvRfpF22e6uzMfF3Lz38W8uqmkvnRxgfS/bF2Ms206P8+BoBx0gpmNt8RPQG5FTAntx3R1sb8vQ=
+	t=1741623891; cv=none; b=mH62aDRdauZFNiAvuzD+72fa5upFtfDDxPo6UL58sTksxs+iu4YSAaaY8Bc7TySNGh4JsETaQWp2UlrDP/BkGjyNxQGYKeb4oML5orU6uKeVMDF1agFxmbDaKU7ffS+KxjvzmFmR/ybUcgriigApiBTQM56ejRwOQBOSC+5ecN8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741623859; c=relaxed/simple;
-	bh=s+wjRBUMqIcGIqIJM5croAQ+6hfrceKBMzBSBv4TLDE=;
+	s=arc-20240116; t=1741623891; c=relaxed/simple;
+	bh=N7uxSTMMV0X8JjCCOcoELnB4MKWzT6xSv4Lh+AP9cGw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=b/YMFSmhiTQ3H8oC24gcRv2yRChsP6ADZzsR7BvgENptC1C9sO+x2mZMVv0QgpbdiaAoYjcHT0oxEob2ZAWN+g+loV350cvkxfTmpfJ57fuJDXnFuYFAxY9lPaA/m+x3XJcMUynb4YWrDjiNJzZtK3sBAuywOWYhgx1x5fyGJxY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=BlZ+lzak; arc=none smtp.client-ip=192.198.163.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1741623857; x=1773159857;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=s+wjRBUMqIcGIqIJM5croAQ+6hfrceKBMzBSBv4TLDE=;
-  b=BlZ+lzakLdl17JdBxOMNsv95JcrUVBHUCEL2gfFCcTEVzTbj6BzvO9Cw
-   m+sKkKcfxkRMxGiWO1jr+S5eSsuj0EOgTrkQs3aqwVuA5eSQp69Tf3/rs
-   DAzGsEJ2mFgTv1peKw1vW4nV6ElAYPyWqeiILiVyhEc548+jkMVUCuWtx
-   gnXl69vSESUx5taqKqqlGVIEpaQsGrNWlSHoARvXSrVF7UpHTk9IloQlk
-   3r2uFQQ5b5Lw0NVa04IeB8Vnkl1hmatKmIhkTueUfrEBxSRWc6tjJA9WU
-   74wwPxE4irthgkvD68JgEJAiRxHSW8jtUtX8K56DCln9TA00PxhrLYwAg
-   Q==;
-X-CSE-ConnectionGUID: Vy6qCJfwSLWLNYmW12R2LA==
-X-CSE-MsgGUID: 2OMSKKpERlCWDaeejLVLuQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11369"; a="42508525"
-X-IronPort-AV: E=Sophos;i="6.14,236,1736841600"; 
-   d="scan'208";a="42508525"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Mar 2025 09:24:16 -0700
-X-CSE-ConnectionGUID: zuvTN6jrSJemMHXBIeGbQg==
-X-CSE-MsgGUID: DIZRdAo2RKKHwhexYGDqSA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,236,1736841600"; 
-   d="scan'208";a="120931977"
-Received: from msridhar-mobl.amr.corp.intel.com (HELO desk) ([10.125.145.183])
-  by orviesa008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Mar 2025 09:24:16 -0700
-Date: Mon, 10 Mar 2025 09:24:09 -0700
-From: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
-To: Borislav Petkov <bp@alien8.de>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	daniel.sneddon@linux.intel.com, tony.luck@intel.com,
-	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-	linux-perf-users@vger.kernel.org,
-	Josh Poimboeuf <jpoimboe@kernel.org>,
-	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Ricardo Neri <ricardo.neri-calderon@linux.intel.com>,
-	"Liang, Kan" <kan.liang@linux.intel.com>,
-	Andrew Cooper <andrew.cooper3@citrix.com>,
-	Brice Goglin <brice.goglin@gmail.com>,
-	Mario Limonciello <mario.limonciello@amd.com>,
-	Perry Yuan <Perry.Yuan@amd.com>,
-	Dapeng Mi <dapeng1.mi@linux.intel.com>
-Subject: Re: [PATCH v7 3/4] x86/cpu: Update x86_match_cpu() to also use
- cpu-type
-Message-ID: <20250310162409.5gnesmcz4fdon5al@desk>
-References: <20250306-add-cpu-type-v7-0-f903fb022fd4@linux.intel.com>
- <20250306-add-cpu-type-v7-3-f903fb022fd4@linux.intel.com>
- <20250310104844.GDZ87DjFQef8GaREqg@fat_crate.local>
+	 Content-Type:Content-Disposition:In-Reply-To; b=RI6Yv5U9KYcFUgr6cE56UcUeZ8WmtKb05noouJK5in2i0RfFukDq7NdNOM7P8n2gTN9rIw/YDgqw6LVBNAxX9t6tpWu51Ms66RgHmYE4pcQcfq8oRgshu+tGHxO7At8gIyDYsOT4TnD9Jl/Z7qZIdA0rOBSplDPFH7QjNpXV0ZE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id DA7F31692;
+	Mon, 10 Mar 2025 09:24:59 -0700 (PDT)
+Received: from J2N7QTR9R3.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 798013F5A1;
+	Mon, 10 Mar 2025 09:24:47 -0700 (PDT)
+Date: Mon, 10 Mar 2025 16:24:41 +0000
+From: Mark Rutland <mark.rutland@arm.com>
+To: Yue Haibing <yuehaibing@huawei.com>
+Cc: catalin.marinas@arm.com, will@kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH -next] arm64/fpsimd: Remove unused declaration
+ fpsimd_kvm_prepare()
+Message-ID: <Z88SSYFJo9R_YgO3@J2N7QTR9R3.cambridge.arm.com>
+References: <20250309070723.1390958-1-yuehaibing@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -89,19 +49,38 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250310104844.GDZ87DjFQef8GaREqg@fat_crate.local>
+In-Reply-To: <20250309070723.1390958-1-yuehaibing@huawei.com>
 
-On Mon, Mar 10, 2025 at 11:48:44AM +0100, Borislav Petkov wrote:
-> On Thu, Mar 06, 2025 at 06:18:36PM -0800, Pawan Gupta wrote:
-> > +static bool x86_match_vendor_cpu_type(struct cpuinfo_x86 *c, const struct x86_cpu_id *m)
-> > +{
-> > +	if (m->cpu_type == X86_CPU_TYPE_ANY)
-> > +		return true;
-> > +
-> > +	/* Hybrid CPUs are special, they are assumed to match all cpu-types */
-> > +	if (boot_cpu_has(X86_FEATURE_HYBRID_CPU))
+On Sun, Mar 09, 2025 at 03:07:23PM +0800, Yue Haibing wrote:
+> Commit fbc7e61195e2 ("KVM: arm64: Unconditionally save+flush host
+> FPSIMD/SVE/SME state") removed the implementation but leave declaration.
 > 
-> check_for_deprecated_apis: WARNING: arch/x86/kernel/cpu/match.c:25: Do not use boot_cpu_has() - use cpu_feature_enabled() instead.
+> Signed-off-by: Yue Haibing <yuehaibing@huawei.com>
 
-Will do. Thanks for the review.
+My bad. Looks like a sensible cleanup.
+
+Acked-by: Mark Rutland <mark.rutland@arm.com>
+
+Mark.
+
+> ---
+>  arch/arm64/include/asm/fpsimd.h | 1 -
+>  1 file changed, 1 deletion(-)
+> 
+> diff --git a/arch/arm64/include/asm/fpsimd.h b/arch/arm64/include/asm/fpsimd.h
+> index f2a84efc3618..564bc09b3e06 100644
+> --- a/arch/arm64/include/asm/fpsimd.h
+> +++ b/arch/arm64/include/asm/fpsimd.h
+> @@ -80,7 +80,6 @@ extern void fpsimd_signal_preserve_current_state(void);
+>  extern void fpsimd_preserve_current_state(void);
+>  extern void fpsimd_restore_current_state(void);
+>  extern void fpsimd_update_current_state(struct user_fpsimd_state const *state);
+> -extern void fpsimd_kvm_prepare(void);
+>  
+>  struct cpu_fp_state {
+>  	struct user_fpsimd_state *st;
+> -- 
+> 2.34.1
+> 
+> 
 
