@@ -1,123 +1,84 @@
-Return-Path: <linux-kernel+bounces-554102-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-554104-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1646A59302
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 12:47:06 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A2FDFA59306
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 12:48:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2BC1916A96E
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 11:47:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E0D8E16B74E
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 11:48:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F116322172E;
-	Mon, 10 Mar 2025 11:46:59 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCD1E221579;
-	Mon, 10 Mar 2025 11:46:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7150E221728;
+	Mon, 10 Mar 2025 11:48:50 +0000 (UTC)
+Received: from TWMBX01.aspeed.com (mail.aspeedtech.com [211.20.114.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C106A25761;
+	Mon, 10 Mar 2025 11:48:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.20.114.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741607219; cv=none; b=P9ii1mjq5YEYa6X2iHh9q+ijaG7CJ+9XwU/ZCbqOwKAPF2FObVxr7tktTSA36vh7P8gS6a+MZ+mH2EHlV7fA0y6V1F3IsvrA5mG/koty4wmpINC7u0xEIcQ4my7KkKycP5Ft2Tn6BiOnOS2CNUxB3YuAmBXddMFPNR6CeKeoHEE=
+	t=1741607330; cv=none; b=j4npjAnWgIZxoXnz96Bcxo4OCs0Dj1AToybqtF8n+QclOQfiM3jGKPPcnovVjXvcTnLDA77HWUWUlje8/LSOodTU6UPNMC5Knw5yDZSrR+EilIZpx51G4DOyhPrlx/VuPb+i3TqrIu7g8Kl3OFJ7/rhLXbMfxmjHGZLE2JY1vxg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741607219; c=relaxed/simple;
-	bh=yf2cqzHBcdtuOPkuJYsk+j/uy92hemtTG5BduORTtLk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ssGUGVBVDqiQemGo5Xa3rTwPSKeIr+Odx0Fg0OA25Esz2omjfedSCS521VtAYKJfeQXZHYwjYWRjeRZObyxLkDUfJptaKOLrKCb7Ypag5MpJmXXNWF+pEohFoZ7Lrrn2ypTRmRXsNDO94WeoE+uECgcpKlsEp937GSDF4XI1tio=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A643B1516;
-	Mon, 10 Mar 2025 04:47:07 -0700 (PDT)
-Received: from localhost (e132581.arm.com [10.1.196.87])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id BEDD03F5A1;
-	Mon, 10 Mar 2025 04:46:55 -0700 (PDT)
-Date: Mon, 10 Mar 2025 11:46:51 +0000
-From: Leo Yan <leo.yan@arm.com>
-To: Yuanfang Zhang <quic_yuanfang@quicinc.com>
-Cc: Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Mike Leach <mike.leach@linaro.org>,
-	James Clark <james.clark@linaro.org>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, kernel@quicinc.com,
-	linux-kernel@vger.kernel.org, coresight@lists.linaro.org,
-	linux-arm-kernel@lists.infradead.org, kernel@oss.qualcomm.com,
-	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH v2 3/5] coresight-tnoc: add nodes to configure flush
-Message-ID: <20250310114651.GD9682@e132581.arm.com>
-References: <20250226-trace-noc-driver-v2-0-8afc6584afc5@quicinc.com>
- <20250226-trace-noc-driver-v2-3-8afc6584afc5@quicinc.com>
- <20250227162349.GB2157064@e132581.arm.com>
- <7c702a81-fb6c-4399-8d7d-d8c4ad9a8c65@quicinc.com>
+	s=arc-20240116; t=1741607330; c=relaxed/simple;
+	bh=AOxcym5RQZaf22q5ZinS6zoGzPoqCfNVaKFxfoC9o94=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=oEpPlLjALr7ws+/a4KFCEhcyoukjol13NIIX91Peq3+hfMD0vDqZmp39NIU2+uMwiNKcY/RPR8QCV9Xnzxebe5rXd3MNCl2K+lJpJ3KfhT36FQZcr7qPWqmImqR4jmbFRJXZbKkJVlL1Xk7palZ4NrJtW053vKbeaAV0e2FmyDo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aspeedtech.com; spf=pass smtp.mailfrom=aspeedtech.com; arc=none smtp.client-ip=211.20.114.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aspeedtech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aspeedtech.com
+Received: from TWMBX01.aspeed.com (192.168.0.62) by TWMBX01.aspeed.com
+ (192.168.0.62) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1258.12; Mon, 10 Mar
+ 2025 19:48:40 +0800
+Received: from aspeed-fw03.aspeedtech.com (192.168.10.13) by
+ TWMBX01.aspeed.com (192.168.0.62) with Microsoft SMTP Server id 15.2.1258.12
+ via Frontend Transport; Mon, 10 Mar 2025 19:48:40 +0800
+From: Kevin Chen <kevin_chen@aspeedtech.com>
+To: <lee@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+	<conor+dt@kernel.org>, <joel@jms.id.au>, <andrew@codeconstruct.com.au>,
+	<derek.kiernan@amd.com>, <dragan.cvetic@amd.com>, <arnd@arndb.de>,
+	<gregkh@linuxfoundation.org>, <devicetree@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-aspeed@lists.ozlabs.org>,
+	<linux-kernel@vger.kernel.org>
+CC: Kevin Chen <kevin_chen@aspeedtech.com>
+Subject: [PATCH v3 0/3] Add AST2600 LPC PCC support
+Date: Mon, 10 Mar 2025 19:48:36 +0800
+Message-ID: <20250310114839.3098148-1-kevin_chen@aspeedtech.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <7c702a81-fb6c-4399-8d7d-d8c4ad9a8c65@quicinc.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-On Thu, Mar 06, 2025 at 04:39:27PM +0800, Yuanfang Zhang wrote:
+--
+v3
+aspeed-lpc-pcc.c:
+ -- Add ida_free and fix the dev usage with removing some debug messages.
+aspeed-lpc.yaml:
+ -- Add description about the pcc-ports usage.
 
-[...]
+v2:
+ -- Change driver path to drivers/misc
 
-> >> +static ssize_t flush_req_store(struct device *dev,
-> >> +                              struct device_attribute *attr,
-> >> +                              const char *buf,
-> >> +                              size_t size)
-> >> +{
+Kevin Chen (3):
+  dt-binding: aspeed: Add LPC PCC controller
+  ARM: dts: aspeed-g6: Add AST2600 LPC PCC support
+  soc: aspeed: lpc-pcc: Add PCC controller support
 
-...
+ .../devicetree/bindings/mfd/aspeed-lpc.yaml   |  38 ++
+ arch/arm/boot/dts/aspeed/aspeed-g6.dtsi       |   7 +
+ drivers/misc/Kconfig                          |  10 +
+ drivers/misc/Makefile                         |   1 +
+ drivers/misc/aspeed-lpc-pcc.c                 | 440 ++++++++++++++++++
+ 5 files changed, 496 insertions(+)
+ create mode 100644 drivers/misc/aspeed-lpc-pcc.c
 
-> >> +       reg = readl_relaxed(drvdata->base + TRACE_NOC_CTRL);
-> >> +       reg = reg | TRACE_NOC_CTRL_FLUSHREQ;
-> >> +       writel_relaxed(reg, drvdata->base + TRACE_NOC_CTRL);
-> > 
-> > How can userspace determine when to trigger a flush?
-> It can be triggered under any circumstances.
-> > 
-> > Generally, a driver kicks off a flush operation for a hardware before
-> > reading data from buffer or when disable a link path.  I don't know the
-> > hardware mechanism of TNOC, but seems to me, it does not make sense to
-> > let the userspace to trigger a hardware flush, given the userspace has
-> > no knowledge for device's state.
->
-> TNOC supports the aforementioned flush operation, and it also adds this
-> flush functionality, allowing users to set the flush themselves.
+-- 
+2.34.1
 
-I am still not convinced for providing knobs to allow userspace to
-directly control hardware.
-
-A low level driver should have sufficient information to know when and
-how it triggers a flush.  E.g., CoreSight ETF (coresight-tmc-etf.c) can
-act as a link, in this case, it calls the tmc_flush_and_stop() function
-to flush its buffer when it is stopped.  A flushing is triggered when a
-session is terminated (either is a perf session or a Sysfs session).
-
-Why not TNOC driver do the flushing same as other drivers?  It can flush
-the data before a hardware link is to be disabled.  I don't think flush
-operations are required at any time.
-
-Seems to me, exposing APIs to userspace for flushing operations also
-will introduce potential security risk.  A malicious software might
-attack system with triggering tons of flushing in short time.
-
-> > Furthermore, based on my understanding for patch 02 and 03, the working
-> > flow is also concerned me.  IIUC, you want to use the driver to create
-> > a linkage and then use userspace program to poll state and trigger
-> > flushing.  Could you explain why use this way for managing the device?
-> > 
-> TNOC support flush just like other links. This interface simply provides
-> customers with an additional option to trigger the flush.
-
-This is not true for Arm CoreSight components.  My understanding is Arm
-CoreSight drivers never provides an API to userspace to manually trigger
-flush operations.
-
-Thanks,
-Leo
 
