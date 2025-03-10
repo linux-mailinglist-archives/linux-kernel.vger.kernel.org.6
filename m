@@ -1,113 +1,114 @@
-Return-Path: <linux-kernel+bounces-554959-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-554961-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A87E2A5A3DE
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 20:35:47 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id ED2E9A5A3E4
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 20:38:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 564B8189214B
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 19:35:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2D7161740B7
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 19:38:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D72242356D7;
-	Mon, 10 Mar 2025 19:35:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cKskT/AX"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3716E1CAA60;
-	Mon, 10 Mar 2025 19:35:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07A5623644F;
+	Mon, 10 Mar 2025 19:37:45 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A0572356CC;
+	Mon, 10 Mar 2025 19:37:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741635339; cv=none; b=ehvIDCafMqsBeEpnitS1iqCLiKAZgs0epvXoX11mShjJac0wujR9/1NFW8Flv2wKXJf0QXbXmcTBVLmWa5GQJsWD3v/JcDkIQmrXju3rESa5+viyQPfz9EzV/NJO4Cbmik7nFD5G81FVk62LyQOQ38tUcv3nu1Hq3EC2mmEhAYs=
+	t=1741635464; cv=none; b=f09Z+QxytirLFmSe4+cCwWXKpQ47PoOBR3aKG833jwyWFeyl9IKb2uIhG7sn3Ullq0tycS9gIvv9NVqoYRoM5aDd+sjsp3ZYUQ6017W+5xcojctji9kucHQLfJiz525TmZs2dX5FXxfYq4CAZKhIRpxlJmUz6hGXZpwnFopHV8Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741635339; c=relaxed/simple;
-	bh=mqvIm7CQVKu0FB11g1YGAcy3O/ZG5gcTFuHUtGtOHXA=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=E94h+YeuhG4orq7VbGc4vT1qOwiHlsiwHRk1/EDyB3TIWXZhgKMhDnoK5WGdLvlB/mKpaC52CyvgK9Hv+JfHXvyauyLb3VteJ4wiNXkJnGGsWNG21qh8TtVaBENPvLikOapvTlFCOWALp00A2Ax3QI3RIx2HY6ahDHyLlMF0/yQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cKskT/AX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3F14CC4CEE5;
-	Mon, 10 Mar 2025 19:35:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741635338;
-	bh=mqvIm7CQVKu0FB11g1YGAcy3O/ZG5gcTFuHUtGtOHXA=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=cKskT/AX2L6B8zrQve0N9GOi524W0eT7Eh3oPQs7POL4LZp4yyppUCR7PDCMma7zP
-	 dw3yobp4X0gZ7uo32XDZfCTfjyLwN75xK7uctKZOgr9IaELke4rA/wE3W6bYqV8twm
-	 LgpOLV1OpZ5QP04ZhSWpd4pz7VSSHo6qfW1oyYRuakJzHOuqOj5Gun/HSyRFzvtF9n
-	 dhtdWCjXFP39EkQ+j4vO4ynXjOaqK6cxHYg+0Eddyam/2POJHyJ/rSyFhMn4CxJ/uD
-	 R4CAW3af5r7Dx/XcT00wMZpA94AxUOzMm/EU5UDDocanIo5OzqRY8tIBBBW6eVRGSh
-	 gwtt3hNtpsMaw==
-Date: Mon, 10 Mar 2025 19:35:28 +0000
-From: Jonathan Cameron <jic23@kernel.org>
-To: Jorge Marques <gastmaier@gmail.com>
-Cc: Conor Dooley <conor@kernel.org>, Jorge Marques
- <jorge.marques@analog.com>, Lars-Peter Clausen <lars@metafoo.de>, Michael
- Hennerich <Michael.Hennerich@analog.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Jonathan Corbet <corbet@lwn.net>, David Lechner
- <dlechner@baylibre.com>, linux-iio@vger.kernel.org,
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
- linux-doc@vger.kernel.org
-Subject: Re: [PATCH 2/4] dt-bindings: iio: adc: Add adi,ad4052
-Message-ID: <20250310193528.35d35c2e@jic23-huawei>
-In-Reply-To: <sf7hqjyzal2jmbrf72xxj4cewrkq6bsjwlkbinqv2zan57cq3s@hwhfwmabtk5q>
-References: <20250306-iio-driver-ad4052-v1-0-2badad30116c@analog.com>
-	<20250306-iio-driver-ad4052-v1-2-2badad30116c@analog.com>
-	<20250306-promotion-tarmac-bc5172f38f31@spud>
-	<sf7hqjyzal2jmbrf72xxj4cewrkq6bsjwlkbinqv2zan57cq3s@hwhfwmabtk5q>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.48; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1741635464; c=relaxed/simple;
+	bh=c1iYrSO8Kd/12THIxsVRKDsAM0Bj4Yao50BlyA3CgBM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Mr6wJ87uhj6dXvwYVxAM8dKmaUlUMmmqt6xllOd0gjQETRNLzzOj8MZkNznn+LBEISL6tcHrXzVIKgyLv0PinomdJA+fsVhBrez7pET/bZ7G7L74cFCyoyg+x6yV/GPaZ1uw5oQeBufRBqSSCa7OLsigDztwGBpcSAa4tARd1QE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8194A152B;
+	Mon, 10 Mar 2025 12:37:52 -0700 (PDT)
+Received: from J2N7QTR9R3 (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B96A83F694;
+	Mon, 10 Mar 2025 12:37:38 -0700 (PDT)
+Date: Mon, 10 Mar 2025 19:37:32 +0000
+From: Mark Rutland <mark.rutland@arm.com>
+To: Catalin Marinas <catalin.marinas@arm.com>
+Cc: Kees Cook <kees@kernel.org>, Peter Collingbourne <pcc@google.com>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Andy Shevchenko <andy@kernel.org>,
+	Andrey Konovalov <andreyknvl@gmail.com>,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-hardening@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, stable@vger.kernel.org
+Subject: Re: [PATCH] string: Disable read_word_at_a_time() optimizations if
+ kernel MTE is enabled
+Message-ID: <Z88_fFgr23_EtHMf@J2N7QTR9R3>
+References: <20250308023314.3981455-1-pcc@google.com>
+ <202503071927.1A795821A@keescook>
+ <Z88jbhobIz2yWBbJ@arm.com>
+ <Z88r5qFLOSo0itaq@J2N7QTR9R3.cambridge.arm.com>
+ <Z88yC7Oaj9DGaswc@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z88yC7Oaj9DGaswc@arm.com>
 
-On Sun, 9 Mar 2025 20:43:55 +0100
-Jorge Marques <gastmaier@gmail.com> wrote:
-
-> > > +  compatible:
-> > > +    enum:
-> > > +      - adi,ad4050
-> > > +      - adi,ad4052
-> > > +      - adi,ad4056
-> > > +      - adi,ad4058  
+On Mon, Mar 10, 2025 at 06:40:11PM +0000, Catalin Marinas wrote:
+> On Mon, Mar 10, 2025 at 06:13:58PM +0000, Mark Rutland wrote:
+> > On Mon, Mar 10, 2025 at 05:37:50PM +0000, Catalin Marinas wrote:
+> > > On Fri, Mar 07, 2025 at 07:36:31PM -0800, Kees Cook wrote:
+> > > > On Fri, Mar 07, 2025 at 06:33:13PM -0800, Peter Collingbourne wrote:
+> > > > > The optimized strscpy() and dentry_string_cmp() routines will read 8
+> > > > > unaligned bytes at a time via the function read_word_at_a_time(), but
+> > > > > this is incompatible with MTE which will fault on a partially invalid
+> > > > > read. The attributes on read_word_at_a_time() that disable KASAN are
+> > > > > invisible to the CPU so they have no effect on MTE. Let's fix the
+> > > > > bug for now by disabling the optimizations if the kernel is built
+> > > > > with HW tag-based KASAN and consider improvements for followup changes.
+> > > > 
+> > > > Why is faulting on a partially invalid read a problem? It's still
+> > > > invalid, so ... it should fault, yes? What am I missing?
+> > > 
+> > > read_word_at_a_time() is used to read 8 bytes, potentially unaligned and
+> > > beyond the end of string. The has_zero() function is then used to check
+> > > where the string ends. For this uses, I think we can go with
+> > > load_unaligned_zeropad() which handles a potential fault and pads the
+> > > rest with zeroes.
 > > 
-> > Can you mention in your commit message what differs between these
-> > devices that makes picking one as the "base"/fallback compatible
-> > unsuitable please?  
-> Sure, to be added:
-> 
->  Each variant of the family differs in speed and resolution, resulting
->  in different scan types and spi word sizes, that are matched by the
->  compatible with the chip_info.
->  The device contains two required interrupts (gp0, gp1) and one optional
->  gpio (cnv).
-
-Explain why the interrupts are required.  That is unusual.
-
-Note the driver can be stricter than the binding, so it may make sense
-to require them in the driver, but leave it flexible in the binding.
-If someone has a board without them wired, then they can look at adding
-polling or timing logic to avoid the need for the interrupt lines or
-at reducing functionality of the driver.
-
-> 
-> > > +
-> > > +  vdd-supply: true
-> > > +  vdd_1_8-supply: true  
+> > If we only care about synchronous and asymmetric modes, that should be
+> > possible, but that won't work in asynchronous mode. In asynchronous mode
+> > the fault will accumulate into TFSR and will be detected later
+> > asynchronously where it cannot be related to its source and fixed up.
 > > 
-> > You're allowed to use . in property names, and the _s should be -s.
-> > That said, vdd and vdd 1.8? Shouldn't both have the voltage in them in
-> > that case?  
-> I overlooked the supplies, the correct are vdd, vio as mandatory,
-> and vref is optional.
+> > That means that both read_word_at_a_time() and load_unaligned_zeropad()
+> > are dodgy in async mode.
 > 
-> Jorge
+> load_unaligned_zeropad() has a __mte_enable_tco_async() call to set
+> PSTATE.TCO if in async mode, so that's covered. read_word_at_a_time() is
+> indeed busted and I've had Vincezo's patches for a couple of years
+> already, they just never made it to the list.
 
+Sorry, I missed the __mte_{enable,disable}_tco_async() calls. So long as
+we're happy to omit the check in that case, that's fine.
+
+I was worried that ex_handler_load_unaligned_zeropad() might not do the
+right thing in response to a tag check fault (e.g. access the wrong 8
+bytes), but it looks as though that's ok due to the way it generates the
+offset and the aligned pointer.
+
+If load_unaligned_zeropad() is handed a string that starts with an
+unexpected tag (and even if that starts off aligned),
+ex_handler_load_unaligned_zeropad() will access that and cause another
+tag check fault, which will be reported.
+
+Mark.
 
