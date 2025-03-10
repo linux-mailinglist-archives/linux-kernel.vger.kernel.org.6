@@ -1,143 +1,219 @@
-Return-Path: <linux-kernel+bounces-553489-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-553490-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA085A58A62
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 03:19:51 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F349A58A64
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 03:20:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D897A18898F9
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 02:19:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AFC203A9428
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 02:19:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56256198E8C;
-	Mon, 10 Mar 2025 02:19:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="FBz5KbE4"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DAEC1A8F94;
+	Mon, 10 Mar 2025 02:19:46 +0000 (UTC)
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B58214885B
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 02:19:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1BD319DF99;
+	Mon, 10 Mar 2025 02:19:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741573179; cv=none; b=rGdhqEqROrEb+XAVle6wxQ8eyFrFlDIN/SssRB5Scsrzp+JnBneVIFBvY+ZaLAPKIYoqLwLo9KOZDbpI6s44g6nXmoamXmmK+QC8zsWIi1od/BKoCgc3bFNJWkElhq255JTn6x+C+gnvTtLcE40kQjzXsTBomIPWckWVVXhaQEU=
+	t=1741573186; cv=none; b=BBoHPiBOxeppVxjaFCENKbgCNtS6bVkrgiJzjl/8NiZAYR7yvzggQgBE48y4h+t1HeuqzlkSg64N21FXnoJt/D86q1jhTvMViiTZX04KUu6un1jVkeaG6sUY0SkYAY4RY0zy1YQdAAueZ46MZejiMcUKMhEQWluG2/G63sRu7ps=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741573179; c=relaxed/simple;
-	bh=AtJz09iFJfguCxcJpJrTrHp/B802QUOltbOGPdkAKoc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=LfF3hqB11p195O9xDVWl6zg8A/asUhOwQV0IfP01uPIRgarK1q68UH0CkuRanWFd0LI7Pg3bHFuRY4z9W/UPglsUirkuqkhcO0GSv0TYIJonqPdWLSyZNJdqfpOTvIZ6AAyyquKEVsv7vBWp2jLl34gzvYfv7ppaG7ys1Q9J9G4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=FBz5KbE4; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1741573177;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=txux+cFqmLt2vXZPROSLCC6ehPEuq9MQWbslAZa6/aU=;
-	b=FBz5KbE4NOV1zW9gn0zp6rDC3Z8AuPuTqzpjuSQZx/1mahOIHo5W3hfymRMjvyPLO53AMW
-	+6eeVzfCm4lxiYpyHJuDIFCcrL1jWvYnBQjaf/jPe+LARCp3WjSWLpRP3OmqyTJAtRHFCv
-	umAdHfs3NhegB9Uu2p9YLbBT7tqn9dQ=
-Received: from mail-pj1-f71.google.com (mail-pj1-f71.google.com
- [209.85.216.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-557-VFuaTEqRP8y6BiwdfE-jwA-1; Sun, 09 Mar 2025 22:19:35 -0400
-X-MC-Unique: VFuaTEqRP8y6BiwdfE-jwA-1
-X-Mimecast-MFC-AGG-ID: VFuaTEqRP8y6BiwdfE-jwA_1741573174
-Received: by mail-pj1-f71.google.com with SMTP id 98e67ed59e1d1-2ff4b130bb2so6226556a91.0
-        for <linux-kernel@vger.kernel.org>; Sun, 09 Mar 2025 19:19:34 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741573174; x=1742177974;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=txux+cFqmLt2vXZPROSLCC6ehPEuq9MQWbslAZa6/aU=;
-        b=RwPifcbSmTqKI0X5eKp7/aQr4r14FD7y7NA0QBLRCITDVc7R6HYGCge4uAK9cLmuE3
-         CNSiRwGNxx40fBSH1RPTpjM7XxbX47j6lMEnmlkZpNK+V5Y3/9zedozySKAVN3qmYVua
-         U9Fe15TplCDZAd7HXo+iQ3iQS9lqwXHiA7uv7ixJN6/bC0OEXWOF1FZa08uDL8B8L21M
-         FMv2GwPoN29ySc6Xwzl56U/atqXPbzDH+2kZz0KlC4fLvXQ8SaN8irGEmZOMdz1rZY3N
-         upXwoNbaP0e93hkuUtWU1C45O1djgxQD268J8/ufPgsstjJA0RMMpAuY+X6cSx9hOqBS
-         byUw==
-X-Forwarded-Encrypted: i=1; AJvYcCWK2lLdEOR5D91To0FGaXTzJvn/7bzZoNG4/xCDD96veWqu7bcEbN59mpnif8w1qVXKorYFfwif3xHJRfc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzA87e8Riz1t1HwSwDLMdW+5Tm67VNhiPdbyo+e7krZpwHnVTVQ
-	NISPqMhXM8pW7o6D47iEoYI6dAqosvampdPqh3LHY/xNY/gJX8Qncpah8tWLpDfW1JwsqRguDw2
-	OtvQDaeK4vdoZkzmWY8kw0pMjtbs0QNrEzlSQo4F0haoAicV0mxKjE6MXQfNrkrm+Q6d1GM0QIH
-	QQL3HQ65IOwF3eIMePuA8OSKBUbrvX0sz8OMqr
-X-Gm-Gg: ASbGncuC3hIyY3/McR8GjgaRxb/mn6DXkjnyEMtLPmo0iw0FCJPcVkcgqCD983bSyII
-	p6/YFZiev9tbyz3pJjgkzzsAW6AfZdzVhQcM9gDJsmb0g/D+p72z++sS37BwFY6KVHNCDIvh1SQ
-	==
-X-Received: by 2002:a17:90b:4ad2:b0:2fa:137f:5c5c with SMTP id 98e67ed59e1d1-2ff7ce59712mr17785012a91.1.1741573174024;
-        Sun, 09 Mar 2025 19:19:34 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFfi1kUcnjN/MGKScrpXZXxg0LHhjJwKWatCBlfrt9ASrGU0RhKt2zcjhKxKIGQsohJlSyTaOwlLcFFR/095Oc=
-X-Received: by 2002:a17:90b:4ad2:b0:2fa:137f:5c5c with SMTP id
- 98e67ed59e1d1-2ff7ce59712mr17784996a91.1.1741573173619; Sun, 09 Mar 2025
- 19:19:33 -0700 (PDT)
+	s=arc-20240116; t=1741573186; c=relaxed/simple;
+	bh=+UkM0OEN4rOw6DU7+Tx/C6WWCe6zyQipbpvPzubAuLE=;
+	h=Subject:References:From:To:Cc:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=ItrNkdlCJSmZ4VRF4f8GIt0+kx2ZrH4HtS9N/OJc7iSWST7kc/WlAUXKDGsdcHXiBX6hJhAxCYuy3e0ZmCiCvHq0sdYMwsA6qchRgMIpxgUPRuz+P9/db4Dtyz9aeQ4McVdgOqTXet06BhDWT9UEry2mAOmgE+5nskfH1cDBGGM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.235])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4ZB0vS0TxFz4f3lwf;
+	Mon, 10 Mar 2025 10:19:16 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 59FA21A06DC;
+	Mon, 10 Mar 2025 10:19:38 +0800 (CST)
+Received: from [10.174.176.117] (unknown [10.174.176.117])
+	by APP4 (Coremail) with SMTP id gCh0CgBnyl43TM5nOgYyGA--.16576S2;
+	Mon, 10 Mar 2025 10:19:38 +0800 (CST)
+Subject: =?UTF-8?Q?=5bRESEND=5d_Fwd=3a_=5bBUG=5d_list_corruption_in_=5f=5fbp?=
+ =?UTF-8?Q?f=5flru=5fnode=5fmove_=28=29_=e3=80=90_bug_found_and_suggestions_?=
+ =?UTF-8?Q?for_fixing_it=e3=80=91?=
+References: <263a77e4-9ba8-f9e2-4aaf-5e2854d487e5@huaweicloud.com>
+From: Hou Tao <houtao@huaweicloud.com>
+To: Strforexc yn <strforexc@gmail.com>
+Cc: Martin KaFai Lau <martin.lau@linux.dev>,
+ "Alexei Starovoitov," <ast@kernel.org>,
+ Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>,
+ Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
+ Yonghong Song <yonghong.song@linux.dev>,
+ John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>,
+ Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>,
+ Jiri Olsa <jolsa@kernel.org>, linux-kernel@vger.kernel.org,
+ bpf@vger.kernel.org
+X-Forwarded-Message-Id: <263a77e4-9ba8-f9e2-4aaf-5e2854d487e5@huaweicloud.com>
+Message-ID: <2e946e29-ccd3-3a12-d6b4-d44d778c9223@huaweicloud.com>
+Date: Mon, 10 Mar 2025 10:19:35 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.6.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250307011215.266806-1-jdamato@fastly.com> <20250307011215.266806-4-jdamato@fastly.com>
-In-Reply-To: <20250307011215.266806-4-jdamato@fastly.com>
-From: Jason Wang <jasowang@redhat.com>
-Date: Mon, 10 Mar 2025 10:19:22 +0800
-X-Gm-Features: AQ5f1Jqyyv20MK_Tuve32OgEwQce7uxyuKX5GI5kUQGIUUAGsE7tTG42f1QJ5Ec
-Message-ID: <CACGkMEuwTaH9fTXC00633RsiKd9BMZSAaPG17i-+MPagGwn0dQ@mail.gmail.com>
-Subject: Re: [PATCH net-next v6 3/4] virtio-net: Map NAPIs to queues
-To: Joe Damato <jdamato@fastly.com>
-Cc: netdev@vger.kernel.org, mkarsten@uwaterloo.ca, 
-	gerhard@engleder-embedded.com, xuanzhuo@linux.alibaba.com, kuba@kernel.org, 
-	mst@redhat.com, leiyang@redhat.com, =?UTF-8?Q?Eugenio_P=C3=A9rez?= <eperezma@redhat.com>, 
-	Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>, 
-	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, 
-	"open list:VIRTIO CORE AND NET DRIVERS" <virtualization@lists.linux.dev>, open list <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <263a77e4-9ba8-f9e2-4aaf-5e2854d487e5@huaweicloud.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgBnyl43TM5nOgYyGA--.16576S2
+X-Coremail-Antispam: 1UD129KBjvJXoW3JrW7XrWftFW3uF1fGFy3urg_yoW3JFy8pF
+	45GFWUGr48Xr17AFW7Jr10kr4fGF1UAF4UJr17Gr10yF15ua1Utr1Utr47AF98Jr45Xr1f
+	twn0qw48trW7GaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUU9Ib4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
+	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
+	6I80ewAv7VC0I7IYx2IY67AKxVWUGVWUXwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
+	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7Mxk0xIA0c2IE
+	e2xFo4CEbIxvr21lc7CjxVAaw2AFwI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4I
+	kC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWU
+	WwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr
+	0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWU
+	JVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJb
+	IYCTnIWIevJa73UjIFyTuYvjxUOBMKDUUUU
+X-CM-SenderInfo: xkrx3t3r6k3tpzhluzxrxghudrp/
 
-On Fri, Mar 7, 2025 at 9:12=E2=80=AFAM Joe Damato <jdamato@fastly.com> wrot=
-e:
->
-> Use netif_queue_set_napi to map NAPIs to queue IDs so that the mapping
-> can be accessed by user apps. Note that the netif_queue_set_napi
-> currently requires RTNL, so care must be taken to ensure RTNL is held on
-> paths where this API might be reached.
->
-> The paths in the driver where this API can be reached appear to be:
->
->   - ndo_open, ndo_close, which hold RTNL so no driver change is needed.
->   - rx_pause, rx_resume, tx_pause, tx_resume are reached either via
->     an ethtool ioctl or via XSK - neither path requires a driver change.
->   - power management paths (which call open and close), which have been
->     updated to hold/release RTNL.
->
-> $ ethtool -i ens4 | grep driver
-> driver: virtio_net
->
-> $ sudo ethtool -L ens4 combined 4
->
-> $ ./tools/net/ynl/pyynl/cli.py \
->        --spec Documentation/netlink/specs/netdev.yaml \
->        --dump queue-get --json=3D'{"ifindex": 2}'
-> [{'id': 0, 'ifindex': 2, 'napi-id': 8289, 'type': 'rx'},
->  {'id': 1, 'ifindex': 2, 'napi-id': 8290, 'type': 'rx'},
->  {'id': 2, 'ifindex': 2, 'napi-id': 8291, 'type': 'rx'},
->  {'id': 3, 'ifindex': 2, 'napi-id': 8292, 'type': 'rx'},
->  {'id': 0, 'ifindex': 2, 'type': 'tx'},
->  {'id': 1, 'ifindex': 2, 'type': 'tx'},
->  {'id': 2, 'ifindex': 2, 'type': 'tx'},
->  {'id': 3, 'ifindex': 2, 'type': 'tx'}]
->
-> Note that virtio_net has TX-only NAPIs which do not have NAPI IDs, so
-> the lack of 'napi-id' in the above output is expected.
->
-> Signed-off-by: Joe Damato <jdamato@fastly.com>
-> ---
+Resend due to the HTML part in the reply. Sorry for the inconvenience.
 
-Acked-by: Jason Wang <jasowang@redhat.com>
+Hi,
 
-Thanks
+On 3/5/2025 9:28 PM, Strforexc yn wrote:
+> Hi Maintainers,
+>
+> When using our customized Syzkaller to fuzz the latest Linux kernel,
+> the following crash was triggered.
+> Kernel Config : https://github.com/Strforexc/LinuxKernelbug/blob/main/.config
+>
+> A kernel BUG was reported due to list corruption during BPF LRU node movement.
+> The issue occurs when the node being moved is the sole element in its list and
+> also the next_inactive_rotation candidate. After moving, the list became empty,
+> but next_inactive_rotation incorrectly pointed to the moved node, causing later
+> operations to corrupt the list.
+
+The list being pointed by next_inactive_rotation is a doubly linked list
+(aka, struct list_head), therefore, there are at least two nodes in the
+non-empty list: the head of the list and the sole element. When the node
+is the last element in the list, next_inactive_rotation will be pointed
+to the head of the list after the move. So I don't think the analysis
+and the fix below is correct.
+>
+> Here is my fix suggestion:
+> The fix checks if the node was the only element before adjusting
+> next_inactive_rotation. If so, it sets the pointer to NULL, preventing invalid
+> access.
+>
+> diff --git a/kernel/bpf/bpf_lru_list.c b/kernel/bpf/bpf_lru_list.c
+> index XXXXXXX..XXXXXXX 100644
+> --- a/kernel/bpf/bpf_lru_list.c
+> +++ b/kernel/bpf/bpf_lru_list.c
+> @@ -119,8 +119,13 @@ static void __bpf_lru_node_move(struct bpf_lru_list *l,
+>   * move the next_inactive_rotation pointer also.
+>   */
+>   if (&node->list == l->next_inactive_rotation)
+> - l->next_inactive_rotation = l->next_inactive_rotation->prev;
+> -
+> + {
+> + if (l->next_inactive_rotation->prev == &node->list) {
+> + l->next_inactive_rotation = NULL;
+> + } else {
+> + l->next_inactive_rotation = l->next_inactive_rotation->prev;
+> + }
+> + }
+>   list_move(&node->list, &l->lists[tgt_type]);
+>  }
+>
+> -- 2.34.1 Our knowledge of the kernel is somewhat limited, and we'd
+> appreciate it if you could determine if there is such an issue. If
+> this issue doesn't have an impact, please ignore it ☺. If you fix this
+> issue, please add the following tag to the commit: Reported-by:
+> Zhizhuo Tang strforexctzzchange@foxmail.com, Jianzhou Zhao
+> xnxc22xnxc22@qq.com, Haoran Liu <cherest_san@163.com> Last is my
+> report： vmalloc memory list_add corruption. next->prev should be prev
+> (ffffe8ffac433e40), but was 50ffffe8ffac433e. (next=ffffe8ffac433e41).
+> ------------[ cut here ]------------ kernel BUG at
+> lib/list_debug.c:29! Oops: invalid opcode: 0000 [#1] PREEMPT SMP KASAN
+> PTI CPU: 0 UID: 0 PID: 14524 Comm: syz.0.285 Not tainted
+> 6.14.0-rc5-00013-g99fa936e8e4f #1 Hardware name: QEMU Standard PC
+> (i440FX + PIIX, 1996), BIOS 1.15.0-1 04/01/2014 RIP:
+> 0010:__list_add_valid_or_report+0xfc/0x1a0 lib/list_debug.c:29
+
+I suspect that the content of lists[BPF_LRU_LIST_T_ACTIVE].next has been
+corrupted, because the pointer itself should be at least 8-bytes
+aligned, but its value is 0xffffe8ffac433e41. Also only the last bit of
+the next pointer is different with the address of
+list[BPF_LRU_LIST_T_ACTIVE] itelse (aka 0xffffe8ffac433e40).
+
+> Code: 00 00 00 00 fc ff df 48 c1 ea 03 80 3c 02 00 0f 85 a6 00 00 00
+> 49 8b 54 24 08 4c 89 e1 48 c7 c7 c0 1f f2 8b e8 55 54 d3 fc 90 <0f> 0b
+> 48 89 f7 48 89 34 24 e8 16 54 33 fd 48 8b 34 24 48 b8 00 00 RSP:
+> 0018:ffffc900033779b0 EFLAGS: 00010046 RAX: 0000000000000075 RBX:
+> ffffc900035777c8 RCX: 0000000000000000 RDX: 0000000000000000 RSI:
+> 0000000000000000 RDI: 0000000000000000 RBP: ffffe8ffac433e40 R08:
+> 0000000000000000 R09: 0000000000000000 R10: 0000000000000000 R11:
+> 0000000000000000 R12: ffffe8ffac433e41 R13: ffffc900035777c8 R14:
+> ffffe8ffac433e49 R15: ffffe8ffac433e50 FS: 00007fef15ddd640(0000)
+> GS:ffff88802b600000(0000) knlGS:0000000000000000 CS: 0010 DS: 0000 ES:
+> 0000 CR0: 0000000080050033 CR2: 00007ffd53abb238 CR3: 00000000296f4000
+> CR4: 00000000000006f0 DR0: 0000000000000000 DR1: 0000000000000000 DR2:
+> 0000000000000000 DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7:
+> 0000000000000400 Call Trace: <TASK> __list_add_valid
+> include/linux/list.h:88 [inline] __list_add include/linux/list.h:150
+> [inline] list_add include/linux/list.h:169 [inline] list_move
+> include/linux/list.h:299 [inline] __bpf_lru_node_move+0x21a/0x480
+> kernel/bpf/bpf_lru_list.c:126
+> __bpf_lru_list_rotate_inactive+0x20f/0x310
+> kernel/bpf/bpf_lru_list.c:196 __bpf_lru_list_rotate
+> kernel/bpf/bpf_lru_list.c:247 [inline] bpf_percpu_lru_pop_free
+> kernel/bpf/bpf_lru_list.c:417 [inline] bpf_lru_pop_free+0x157/0x370
+> kernel/bpf/bpf_lru_list.c:502 prealloc_lru_pop+0x23/0xf0
+> kernel/bpf/hashtab.c:308 htab_lru_map_update_elem+0x14c/0xbe0
+> kernel/bpf/hashtab.c:1251 bpf_map_update_value+0x675/0xf50
+> kernel/bpf/syscall.c:289 generic_map_update_batch+0x44a/0x5f0
+> kernel/bpf/syscall.c:1963 bpf_map_do_batch+0x4be/0x610
+> kernel/bpf/syscall.c:5303 __sys_bpf+0x1002/0x1630
+> kernel/bpf/syscall.c:5859 __do_sys_bpf kernel/bpf/syscall.c:5902
+> [inline] __se_sys_bpf kernel/bpf/syscall.c:5900 [inline]
+> __x64_sys_bpf+0x78/0xc0 kernel/bpf/syscall.c:5900 do_syscall_x64
+> arch/x86/entry/common.c:52 [inline] do_syscall_64+0xcb/0x260
+> arch/x86/entry/common.c:83 entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> RIP: 0033:0x7fef14fb85ad Code: 02 b8 ff ff ff ff c3 66 0f 1f 44 00 00
+> f3 0f 1e fa 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c
+> 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7
+> d8 64 89 01 48 RSP: 002b:00007fef15ddcf98 EFLAGS: 00000246 ORIG_RAX:
+> 0000000000000141 RAX: ffffffffffffffda RBX: 00007fef15245fa0 RCX:
+> 00007fef14fb85ad RDX: 0000000000000038 RSI: 0000400000000000 RDI:
+> 000000000000001a RBP: 00007fef1506a8d6 R08: 0000000000000000 R09:
+> 0000000000000000 R10: 0000000000000000 R11: 0000000000000246 R12:
+> 0000000000000000 R13: 0000000000000000 R14: 00007fef15245fa0 R15:
+> 00007fef15dbd000 </TASK> Modules linked in: ---[ end trace
+> 0000000000000000 ]--- RIP: 0010:__list_add_valid_or_report+0xfc/0x1a0
+> lib/list_debug.c:29 Code: 00 00 00 00 fc ff df 48 c1 ea 03 80 3c 02 00
+> 0f 85 a6 00 00 00 49 8b 54 24 08 4c 89 e1 48 c7 c7 c0 1f f2 8b e8 55
+> 54 d3 fc 90 <0f> 0b 48 89 f7 48 89 34 24 e8 16 54 33 fd 48 8b 34 24 48
+> b8 00 00 RSP: 0018:ffffc900033779b0 EFLAGS: 00010046 RAX:
+> 0000000000000075 RBX: ffffc900035777c8 RCX: 0000000000000000 RDX:
+> 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000 RBP:
+> ffffe8ffac433e40 R08: 0000000000000000 R09: 0000000000000000 R10:
+> 0000000000000000 R11: 0000000000000000 R12: ffffe8ffac433e41 R13:
+> ffffc900035777c8 R14: ffffe8ffac433e49 R15: ffffe8ffac433e50 FS:
+> 00007fef15ddd640(0000) GS:ffff88802b600000(0000)
+> knlGS:0000000000000000 CS: 0010 DS: 0000 ES: 0000 CR0:
+> 0000000080050033 CR2: 00007ffd53abb238 CR3: 00000000296f4000 CR4:
+> 00000000000006f0 DR0: 0000000000000000 DR1: 0000000000000000 DR2:
+> 0000000000000000 DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7:
+> 0000000000000400 Regards, Strforexc .
 
 
