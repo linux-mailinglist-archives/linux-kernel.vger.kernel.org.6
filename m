@@ -1,136 +1,100 @@
-Return-Path: <linux-kernel+bounces-554814-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-554815-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B5C7CA59EE4
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 18:35:16 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 46F8BA59F0A
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 18:36:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 004BE16D4C6
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 17:35:16 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DFC857A7CDE
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 17:35:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FAC722ACDC;
-	Mon, 10 Mar 2025 17:35:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB53F233716;
+	Mon, 10 Mar 2025 17:36:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="TKhga+c9"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4827E1DE89C;
-	Mon, 10 Mar 2025 17:35:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="gZPDXt9d";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ca8QtXAg"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEE6822ACDC
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 17:36:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741628107; cv=none; b=Q9uOda5Xzf7JVadLcmAHrBRF8YAntdjoY9XvJsopg822dDSDQRQdM3VliqRB5L6ZoU18Cu9ygapgh8UeMPU29C+7HwHGxBg/fDfXL84oQ2JeznZiLdsOGAiRFet+8BPU/ZKKkCKlSM1hv24LIGp0qBkAL3vdLjOaKH3E5Ar66L4=
+	t=1741628182; cv=none; b=Wm5WcloAuAZ9a7vqttmkbJe1r0s5gMHhX+EpE8k0WMgtYSEGxNUWAeXZNcERphnjt528R+SZLQiofTrMtai+2KiXMJFVm0DfbBS5si2qCf+ojh8M9Qk8X+HcE7mhaBxQV2eV3aceE2aaKQxtYNhTkyre95caG1XjrzX6lLv9c0E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741628107; c=relaxed/simple;
-	bh=Hq7MojTzFFLgMgx4YbvO4dGDGVR8qIrMvtm/qCi9a/o=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=QnPGmK/+JGTFazka1m8ehcVlNhF16KCOi4l11svdvxipCE/VWZrdLqcxtG4bA7XQ/3L071Xv3VSbD8ACJugH06YPQwKBElzMCmih+AzqUwG/FRgnrgRRPiRflGjQOevilrqm/6cccIe6QkmoJE1upEoi+G3Pu4anSNNCoiuaB3M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=TKhga+c9; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: from [10.137.184.60] (unknown [131.107.160.188])
-	by linux.microsoft.com (Postfix) with ESMTPSA id 64E3B2038F33;
-	Mon, 10 Mar 2025 10:35:05 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 64E3B2038F33
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1741628105;
-	bh=1+ofQwuGVRqhE03VmsYlGEcNUurWgNiie1yoZECtaVQ=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=TKhga+c9cuJgMknPM13jAgQP1DCYNGUPpcl+c1m94c8yVqD62xkfoXvk7bLjOxBY2
-	 Jd/ln5jDO+gGUjD6Z3n3nQwi1hJPN7SvGVn7aNlAeIKOpA9Lr5y1NMvcg21OqMdsUE
-	 Sb7ps3xymomjl6NcnK+v0qVmLnYE/BpYP3OBs4GY=
-Message-ID: <e0dce529-0777-491d-aced-1e9ead31ac17@linux.microsoft.com>
-Date: Mon, 10 Mar 2025 10:35:05 -0700
+	s=arc-20240116; t=1741628182; c=relaxed/simple;
+	bh=z5sUIvzdZ0AUC0NapioUuyYM7Y5jBE1sjAN+n8md1Ws=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=IUWy0+o9rKhqt4GlX+A2EnBShVIpvYk/jPitIXPUvHWrxSeYfHqukHNIBikqqMMfuq++bxazInXsd9zlO8MEmUgxPu4/I7l5AUR6bINLHsQScTbyW+9JNWFKPK/hlouhnahsm8+n+SHtq97675NCLYbg7VmJo44F64IMBVxRvR0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=gZPDXt9d; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ca8QtXAg; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1741628179;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=YZnHsW8cWnv4gIIkwuFEngafSnbmEjJNlaPaEk7LW+Q=;
+	b=gZPDXt9dmPGmZhUhIw6rVICIT5mTzAGWIPbY8MqqLil2yZpe1X91/VRDgarAV5/gwwqv8n
+	nS2SUq9s+5sRH5GYq9Cvf5aCr2TeXc86CYwfz3jhwHsnjLK8h8KRHru5B0jPPmc0gz2YZd
+	2XRqLhZiQH8gOsDf2UdfFR8kskbLLJWHtR6M0jYm23LouuKt/2ax1ry5UfStQRmGbrzt3H
+	U4D5NS8WkLKf14tADOhw/IfdyIbrZ78mgOwWSC37KGeQRrdYUJDsonpmFV2YvM3WjSks04
+	vsy0h4+E2qzbdOG6WhGf6MGm0rGDMTIcBiRRdmw/uEOXKFxqq9ITJRPkDFrfOg==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1741628179;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=YZnHsW8cWnv4gIIkwuFEngafSnbmEjJNlaPaEk7LW+Q=;
+	b=ca8QtXAgcM9A/mm6UkSWj/pIHIRDuJRfNJUstkO0ykH4QbYXIUsrRPgPezTaCnzJigsU9r
+	yBx3rLsIzfkIVyAA==
+To: Frederic Weisbecker <frederic@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, Anna-Maria Behnsen
+ <anna-maria@linutronix.de>, Benjamin Segall <bsegall@google.com>, Eric
+ Dumazet <edumazet@google.com>, Andrey Vagin <avagin@openvz.org>, Pavel
+ Tikhomirov <ptikhomirov@virtuozzo.com>, Peter Zijlstra
+ <peterz@infradead.org>, Cyrill Gorcunov <gorcunov@gmail.com>
+Subject: Re: [patch V3 10/18] posix-timers: Make lock_timer() use guard()
+In-Reply-To: <Z87Tj5BryQd9Rya8@pavilion.home>
+References: <20250308155501.391430556@linutronix.de>
+ <20250308155624.087465658@linutronix.de> <Z87Tj5BryQd9Rya8@pavilion.home>
+Date: Mon, 10 Mar 2025 18:36:18 +0100
+Message-ID: <87o6y823fx.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH hyperv-next v5 03/11] Drivers: hv: Enable VTL mode for
- arm64
-To: Arnd Bergmann <arnd@arndb.de>, Michael Kelley <mhklinux@outlook.com>
-Cc: apais@microsoft.com, benhill@microsoft.com, bperkins@microsoft.com,
- sunilmut@microsoft.com, bhelgaas@google.com, Borislav Petkov <bp@alien8.de>,
- Catalin Marinas <catalin.marinas@arm.com>, Conor Dooley
- <conor+dt@kernel.org>, Dave Hansen <dave.hansen@linux.intel.com>,
- Dexuan Cui <decui@microsoft.com>, Haiyang Zhang <haiyangz@microsoft.com>,
- "H. Peter Anvin" <hpa@zytor.com>, Joey Gouly <joey.gouly@arm.com>,
- krzk+dt@kernel.org, =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>,
- "K. Y. Srinivasan" <kys@microsoft.com>, Len Brown <lenb@kernel.org>,
- Lorenzo Pieralisi <lpieralisi@kernel.org>,
- Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
- Mark Rutland <mark.rutland@arm.com>, Marc Zyngier <maz@kernel.org>,
- Ingo Molnar <mingo@redhat.com>, Oliver Upton <oliver.upton@linux.dev>,
- "Rafael J . Wysocki" <rafael@kernel.org>, Rob Herring <robh@kernel.org>,
- ssengar@linux.microsoft.com, Sudeep Holla <sudeep.holla@arm.com>,
- Suzuki K Poulose <suzuki.poulose@arm.com>,
- Thomas Gleixner <tglx@linutronix.de>, Wei Liu <wei.liu@kernel.org>,
- Will Deacon <will@kernel.org>, Zenghui Yu <yuzenghui@huawei.com>,
- devicetree@vger.kernel.org, kvmarm@lists.linux.dev,
- linux-acpi@vger.kernel.org, Linux-Arch <linux-arch@vger.kernel.org>,
- linux-arm-kernel@lists.infradead.org, linux-hyperv@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, x86@kernel.org
-References: <20250307220304.247725-1-romank@linux.microsoft.com>
- <20250307220304.247725-4-romank@linux.microsoft.com>
- <e0f81049-688e-4f53-a002-5d246281bf8d@app.fastmail.com>
-Content-Language: en-US
-From: Roman Kisel <romank@linux.microsoft.com>
-In-Reply-To: <e0f81049-688e-4f53-a002-5d246281bf8d@app.fastmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
+On Mon, Mar 10 2025 at 12:57, Frederic Weisbecker wrote:
+> Le Sat, Mar 08, 2025 at 05:48:34PM +0100, Thomas Gleixner a =C3=A9crit :
+>> --- a/kernel/time/posix-timers.c
+>> +++ b/kernel/time/posix-timers.c
+>> @@ -63,9 +63,18 @@ static struct k_itimer *__lock_timer(tim
+>>=20=20
+>>  static inline void unlock_timer(struct k_itimer *timr)
+>>  {
+>> -	spin_unlock_irq(&timr->it_lock);
+>> +	if (likely((timr)))
+>> +		spin_unlock_irq(&timr->it_lock);
+>>  }
+>>=20=20
+>> +#define scoped_timer_get_or_fail(_id)					\
+>> +	scoped_cond_guard(lock_timer, return -EINVAL, _id)
+>
+> I'm not really fond of the fact this hides a return.
 
+I could drop the macro and let the call sites all do:
 
-On 3/8/2025 1:05 PM, Arnd Bergmann wrote:
-> On Fri, Mar 7, 2025, at 23:02, Roman Kisel wrote:
->> @@ -5,18 +5,20 @@ menu "Microsoft Hyper-V guest support"
->>   config HYPERV
->>   	tristate "Microsoft Hyper-V client drivers"
->>   	depends on (X86 && X86_LOCAL_APIC && HYPERVISOR_GUEST) \
->> -		|| (ACPI && ARM64 && !CPU_BIG_ENDIAN)
->> +		|| (ARM64 && !CPU_BIG_ENDIAN)
->> +	depends on (ACPI || HYPERV_VTL_MODE)
->>   	select PARAVIRT
->>   	select X86_HV_CALLBACK_VECTOR if X86
->> -	select OF_EARLY_FLATTREE if OF
->>   	help
->>   	  Select this option to run Linux as a Hyper-V client operating
->>   	  system.
->>
->>   config HYPERV_VTL_MODE
->>   	bool "Enable Linux to boot in VTL context"
->> -	depends on X86_64 && HYPERV
->> +	depends on (X86_64 || ARM64)
->>   	depends on SMP
->> +	select OF_EARLY_FLATTREE
->> +	select OF
->>   	default n
->>   	help
-> 
-> Having the dependency below the top-level Kconfig entry feels a little
-> counterintuitive. You could flip that back as it was before by doing
-> 
->        select HYPERV_VTL_MODE if !ACPI
->        depends on ACPI || SMP
-> 
-> in the HYPERV option, leaving the dependency on HYPERV in
-> HYPERV_VTL_MODE.
-> 
+	scoped_cond_guard(lock_timer, return -EINVAL, $d)
 
-I was implementing Michael's suggestion, and might've gone a bit
-overboard, my bad. I'll fix this, thanks a lot for reviewing!
-
-> Is OF_EARLY_FLATTREE actually needed on x86?
-> 
-
-No, it is not needed on x86. It is only needed when VTL mode is used.
-
->        Arnd
-
--- 
-Thank you,
-Roman
-
+But I'm not sure it's much better :)
 
