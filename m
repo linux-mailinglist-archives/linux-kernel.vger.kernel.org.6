@@ -1,99 +1,90 @@
-Return-Path: <linux-kernel+bounces-553936-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-553937-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2BF63A590E4
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 11:17:15 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 18830A590E6
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 11:17:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6A3BE16C1C4
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 10:17:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 559EE3A76A6
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 10:17:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33D82225A39;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3EE7226878;
+	Mon, 10 Mar 2025 10:17:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VPxsdkTk"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C4ED226541;
 	Mon, 10 Mar 2025 10:17:07 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7596921D3E3;
-	Mon, 10 Mar 2025 10:17:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741601826; cv=none; b=u8Yt07PM28nq6lc34Ayu5EV2wTnykZQWtz0xrbtcxucXvKZuOkl9XLvUOiGohflJjcjlmJeifeerMCgjsKh0wI8ROCJvfSbVKodNZOOZWeIlx0lRd1GQccMq0ILgto1MdbgbmiHPfpOH+Q3f1OxSOI5Q/caUzqIvTQJpXuMNj0g=
+	t=1741601828; cv=none; b=SEoMgNRqNeUi7LzmG1bMG5PqXDc1p/YCNmDHonG4DDjSI5bJBX9gvnMTvc1317U8iksnnMmxA2uMV/ZqZf2tNYyUAw8HFte5vDqVRWBZX2bkgZI7ugcSJVtrpu+myQmXxNw1qJxL13ENq/F/RO+GoqpBGphhU+0WWGE7yQwhaqs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741601826; c=relaxed/simple;
-	bh=VdiFGG0LHyqR9ddNJJxQnF4BX6jvBn63DiEsNBQTkUw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=M8L2R0EXoBsQIYHeemkRVFb29Rg+gmkpslmNg/ESn0feX9PyOviVBen548rNyB2bv7CSlIn7Ctaf6oczZw+QqksihB+18vooXOs5CCREt+EeiCrnJ76jc9C0u+J1O8t3l+bJ6sDmkewinR1Ol1zj7Tp3oOwe7WN2Cm3GQxNw4gI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 3737E153B;
-	Mon, 10 Mar 2025 03:17:16 -0700 (PDT)
-Received: from [10.1.197.1] (ewhatever.cambridge.arm.com [10.1.197.1])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 78ECD3F673;
-	Mon, 10 Mar 2025 03:17:03 -0700 (PDT)
-Message-ID: <23943463-94d0-4e37-b5fa-5efb20015063@arm.com>
-Date: Mon, 10 Mar 2025 10:17:02 +0000
+	s=arc-20240116; t=1741601828; c=relaxed/simple;
+	bh=3bQKUh9/WHcVsfFHSkppMzH72EwhpdPqoUM2LhQMk3c=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WEsnRhVlegEbukWF/4yz2D2QtyNIEt+N31xItSL06b1KIHn9OC23BGVJPsOzjr2bOc1xK4Q3pRUHxFq1vzJc214bjzrU54LaGV2/83Gb9618pDxstJFC20eyyS11hUl80YJIMHNVn3wIdsI7sCgOVHpRmtw3aFYkC7nuC65LcEk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VPxsdkTk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4D246C4CEF1;
+	Mon, 10 Mar 2025 10:17:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741601827;
+	bh=3bQKUh9/WHcVsfFHSkppMzH72EwhpdPqoUM2LhQMk3c=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=VPxsdkTkyuW/m469BaBT7WTlnbCVcIoazoYb+UUHgouaASXxBp6zD33s3RKRwARuy
+	 PQ1mg/7nsdg8YgZvmHApu5/6CDmcdiHfYfn0/317DW5U0GEx3YpjmQrWwlgkAMCP0d
+	 9RR/BVctg9yLgY/o+bxSfxXKOV+N1f2Xn7RESBs+0bMvgBLIKKuGXouvICLQHrgfhH
+	 /7kSW8D770ucZOAHOQcyII5WtfBsu73taB4o1xduWJNjkgX7uzDaNFjbRYa+LXLj1c
+	 /sPCSCVjFGJRzXJDTZWrrvvWcEDRIlI2Zydzbe2CquRDhCLyUFeF24wjcqyXSi1aFx
+	 nuML3CoPAiM6Q==
+Date: Mon, 10 Mar 2025 12:17:02 +0200
+From: Leon Romanovsky <leon@kernel.org>
+To: Abhinav Jain <jain.abhinav177@gmail.com>
+Cc: jgg@ziepe.ca, linux-kernel@vger.kernel.org, linux-rdma@vger.kernel.org
+Subject: Re: [PATCH] RDMA/core: Publish node GUID with the uevent for
+ ib_device
+Message-ID: <20250310101702.GC7027@unreal>
+References: <20250309192751.GA7027@unreal>
+ <20250310070156.8068-1-jain.abhinav177@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] coresight: add verification process for
- coresight_etm_get_trace_id
-To: Jie Gan <quic_jiegan@quicinc.com>, Mike Leach <mike.leach@linaro.org>,
- James Clark <james.clark@linaro.org>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Tingwei Zhang <quic_tingweiz@quicinc.com>,
- Jinlong Mao <quic_jinlmao@quicinc.com>, coresight@lists.linaro.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-arm-msm@vger.kernel.org
-References: <20250310022348.1654501-1-quic_jiegan@quicinc.com>
-Content-Language: en-US
-From: Suzuki K Poulose <suzuki.poulose@arm.com>
-In-Reply-To: <20250310022348.1654501-1-quic_jiegan@quicinc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20250310070156.8068-1-jain.abhinav177@gmail.com>
 
-On 10/03/2025 02:23, Jie Gan wrote:
-> The coresight_etm_get_trace_id function is a global function. The
-> verification process for 'csdev' is required prior to its usage.
-> 
-> Fixes: c367a89dec26 ("Coresight: Add trace_id function to retrieving the trace ID")
-> Signed-off-by: Jie Gan <quic_jiegan@quicinc.com>
-> ---
->   drivers/hwtracing/coresight/coresight-core.c | 7 +++++--
->   1 file changed, 5 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/hwtracing/coresight/coresight-core.c b/drivers/hwtracing/coresight/coresight-core.c
-> index bd0a7edd38c9..5a7cd2376e2d 100644
-> --- a/drivers/hwtracing/coresight/coresight-core.c
-> +++ b/drivers/hwtracing/coresight/coresight-core.c
-> @@ -1616,9 +1616,12 @@ EXPORT_SYMBOL_GPL(coresight_remove_driver);
->   int coresight_etm_get_trace_id(struct coresight_device *csdev, enum cs_mode mode,
->   			       struct coresight_device *sink)
->   {
-> -	int trace_id;
-> -	int cpu = source_ops(csdev)->cpu_id(csdev);
-> +	int cpu, trace_id;
-> +
-> +	if (csdev->type != CORESIGHT_DEV_TYPE_SOURCE && !source_ops(csdev)->cpu_id)
+On Mon, Mar 10, 2025 at 07:01:56AM +0000, Abhinav Jain wrote:
+> On Sun, 9 Mar 2025 21:27:51 +0200, Leon Romanovsky wrote:
+> >On Sun, Mar 09, 2025 at 05:57:31PM +0000, Abhinav Jain wrote:
+> >> As per the comment, modify ib_device_uevent to publish the node
+> >> GUID alongside device name, upon device state change.
+> >>=20
+> >> Have compiled the file manually to ensure that it builds. Do not have
+> >> a readily available IB hardware to test. Confirmed with checkpatch
+> >> that the patch has no errors/warnings.
+> >
+> >I'm missing motivation for this patch. Why is this change needed?
+> >
+> >Thanks
+>=20
+> Originally, I was looking at this function in order to solve a syzkaller
+> bug. I noticed this comment from Jason and I assumed that the motivation
+> would be to identify the node on which the event is happening.
+>=20
+> With the name, users can identify nodes however Subnet Manager uses
+> node_guid for discovery and configuration of the nodes. To conclude, I
+> think just using the node name might not be sufficient for unambiguous
+> and reliable device management in the network.
 
-That must be :
+Up till now, it was sufficient. Let's add new uevent when actual use case
+will be needed.
 
-	csdev->type != CORESIGHT_DEV_TYPE_SOURCE || !source_ops(csdev)->cpu_id)
-
-
-Suzuki
-
-
-> +		return -EINVAL;
->   
-> +	cpu = source_ops(csdev)->cpu_id(csdev);
->   	switch (mode) {
->   	case CS_MODE_SYSFS:
->   		trace_id = coresight_trace_id_get_cpu_id(cpu);
-
+Thanks
 
