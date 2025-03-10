@@ -1,132 +1,157 @@
-Return-Path: <linux-kernel+bounces-555007-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-555008-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 06AA6A5A46E
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 21:10:57 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 14FECA5A470
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 21:11:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B37853AD4D9
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 20:10:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9C411188F30C
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 20:11:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15FBC1DE3AE;
-	Mon, 10 Mar 2025 20:10:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 770211DE3CE;
+	Mon, 10 Mar 2025 20:11:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HP+Xdh33"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="h/3mSgiR"
+Received: from mail-ot1-f42.google.com (mail-ot1-f42.google.com [209.85.210.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 725FA2AE66;
-	Mon, 10 Mar 2025 20:10:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AB861CEADB;
+	Mon, 10 Mar 2025 20:10:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741637450; cv=none; b=E4O/ES3Cy/CqB/YH92BhT2DttXjbQyYMKBQBKS64SWBiFOyT15zaxiTpjFDW7yNZA3WF24Dj/pBoVWKUltuHpsjGDzUwVL3/c2m+0ZuDBsngad7eAmajRZ9g16rwVGrU1jFA/TlVbQ+Uvo1rKYiYoepxBEylsm4x11ZihnygNTs=
+	t=1741637460; cv=none; b=lkepewgh2rEZHmo3ItIM14rxxKylhjXFNd3saVzF4woQuJ+QfqPVbahlL2sbwm5Yog5h5qo2B9I1fTLDxIBiOg4tQxFUpH952WUwA1n3o/dBezUxknjzSQgm4xWV7cawSU0y5qQfdngGnu0u0pGfTEBiH6LlNQW/dLytnfHCyvU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741637450; c=relaxed/simple;
-	bh=YCidwkOf/4nqRNk0rsw+7UAt6a1E1LiTz9KuaxwUN7Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=iMWHKGWGo7a97WFGMlwZzk+hTnLitPqjaUR27Mmh6XGgaY5CPPE4B9PDEJ9D/UUpsfcyNwP3nBR91QSlfZ47yy+bRof143qmx/uX2ffKKlYnC2+1+OMPLjquofX8ghM5hy93fzeIuKEZ5UR1hBs49vaTqVc/xAnGNGAZMPOB8ww=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HP+Xdh33; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DCF16C4CEE5;
-	Mon, 10 Mar 2025 20:10:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741637449;
-	bh=YCidwkOf/4nqRNk0rsw+7UAt6a1E1LiTz9KuaxwUN7Y=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=HP+Xdh33WuAuziPpOWZuXXDZDqN1q5WOkUdMRJPyRQxodxPStAVUB9brjIkKR1PNg
-	 pYQG9X1caVZtPXQ47LwPPopNUyM7M16rFXwd+Aw3t1JzP2Q6r9OUUuZPFgn5wSbGKA
-	 60sY18c0rkn7OIHp0hIseeNOrXIA/AAZheBF95nEFF3UB8zOLLSCrSSXqeSxcChRXt
-	 XC1HiB/bwV32m/C9fZaj4Y0Ae8cgpcXN0Z6VumocZ1XQDBiwlvHZ6hM5qxxLF4ZQpb
-	 RGEloHiBzFE1cJ86JWBW3c050yC0wXR5BaaNsnbpo3mpIQlutygjHglGjUbItmuIgb
-	 Wxr7YezeRDTew==
-Date: Mon, 10 Mar 2025 20:10:42 +0000
-From: Jonathan Cameron <jic23@kernel.org>
-To: Lothar Rubusch <l.rubusch@gmail.com>
-Cc: lars@metafoo.de, Michael.Hennerich@analog.com,
- cosmin.tanislav@analog.com, linux-iio@vger.kernel.org,
- linux-kernel@vger.kernel.org, Marcelo Schmitt <marcelo.schmitt1@gmail.com>
-Subject: Re: [PATCH v2 1/1] iio: accel: adxl367: fix setting odr for
- activity time update
-Message-ID: <20250310201042.0e8f06d7@jic23-huawei>
-In-Reply-To: <20250309193515.2974-1-l.rubusch@gmail.com>
-References: <20250309193515.2974-1-l.rubusch@gmail.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.48; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1741637460; c=relaxed/simple;
+	bh=C06OSe92qZNkhxGJUCfWRsA88nGUGD0FjeOnBZu2ZQM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=hDSAApWMxDA3K2NlF6jLdvvIKqIstR0CbhTfqrU0Q84LQEDbScBH08ixjy/4icyicJYt/TV72ftJWw2HO9HuSUnzTR08aYbZG602680KtvJeMB79su+6DuitRCy+m7zD0ruBrLAw8IjgffqOS1qPqAJK7aBIy1qLLLwleTC2xiM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=h/3mSgiR; arc=none smtp.client-ip=209.85.210.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ot1-f42.google.com with SMTP id 46e09a7af769-7273f35b201so2529981a34.1;
+        Mon, 10 Mar 2025 13:10:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741637458; x=1742242258; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=c5TbDrsGnQlptLNjUMLC35cBuMe6dbso9ql7uhEJozw=;
+        b=h/3mSgiRiQD54SVxZr+hRdH/OE96zWWn04h+x46ebgJqyLHg1xJhMAeW+4wp6b7JIp
+         4517Rl5/hZ9qaCjXblOLOMPQgv0wjbb6UBdyp45vB4r6ViaAdVb7N9zo0FEmPC0xgC0Y
+         edNZhYNYALuKHQhhxHB9Hhb+BUN9799fHiZKBWF+S83gAqHirL0Ws70apBhA/MdgSISJ
+         cLbKYgJf/8vBVi7LD65ClwcCg515ndIsRJMyK/F+je+BjMqvc6Nv9Nhwd2Qm2sYi46EK
+         NTNVnBOnp5UXGMTZjxmxpFcROazA48lAxC9EaH+6H37fgTzY0narqOmq6pPe2KHBSCmG
+         f6LA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741637458; x=1742242258;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=c5TbDrsGnQlptLNjUMLC35cBuMe6dbso9ql7uhEJozw=;
+        b=iNkxWUvTt2OIAu85jIBLfN2tUIRDPV2LVCJojVBdRICfGodk/IdqWREVmWBj2iicPG
+         Cq1jsTHtdQ0O4n/hxSbegkDOg/cVndMwXD663sIbW72vtOzDqiinTqYu6ENJoIN5+vWD
+         FPwUroY6r3MUgiIDXwNYA10fOwwbe5dOps6HfAnT27nRPGTnZHzAjr0RvRQQJ9I6znCk
+         KX70mvHaWHVztdqiylDNQ/DEfpvq1wG3k5kJAwwP78lz2+658pDqeniDKsK+NGHyRPaY
+         cm1WBV4mux8IMBxOlUxG/LEAYyihuDtUF0tIqe/7Wtep2bvxSyVbpKfhWA6YrhrYByuH
+         Q9Tg==
+X-Forwarded-Encrypted: i=1; AJvYcCV2xIdV5TWJpp2Zu0fCyLEbYMq0mwnaBazEoOC1nY3/B9wQeS9+M9/Ak6OW3BxneGzlc1Q+P94j9brJbgQ=@vger.kernel.org, AJvYcCVi/oTCx7Ml9W4FGxyMfqdcA1TZkLXL4fqoKUUfvIFdvKllNF13K6CE2DDoBwRbYNY/kAjqDp6j@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx5XMasBS0j3O8PEJhIIcwvtM+51Ix1Py94S7pEm0GbugktSOcY
+	s1FvD6btEI64zlohyubAJ6k6JEgaNY5nVExjAU+skwusXRt2nbwy
+X-Gm-Gg: ASbGncuz2UsgbmKgao8gkUFW7P1s6KZWNzF30pEeXyJ5ycsGf+akBTDV577Z7dOELCu
+	4Dp1CxJCTsAgFEfK66GYiSDkZu31xgZjsq945xUl/k0NKl13ubV4WKS82QSUJ6owYabNQwHvEs4
+	FsX50GxjV2bKV7tmpUrvK54noWiO0iFsAQgaafRU+phePGhwij6aZlLe3lbQFrkmIFyr3cFlXeb
+	avAjwXoF6jVm2clRoFkS2FBgsefbVgoh4RA73cx/aDEAxYnIMDqubDvuZpaWV9Mvs4cGqCGoS/6
+	J90Bnlj8z4zFtvqkfzs0duJGQ82jyXr8e/mH28GUgSY2VWCrSKFWHSFhlFioDl9tuCdPzOl3
+X-Google-Smtp-Source: AGHT+IF2adSKtfNpM4XnTYxyh6huf8QXX8KaP5AthKLksUKJqP3gmtNc6tq8iaTxguliYCDdyncN6g==
+X-Received: by 2002:a05:6808:350b:b0:3f4:7f2:a773 with SMTP id 5614622812f47-3f697b3aad4mr7894485b6e.7.1741637458362;
+        Mon, 10 Mar 2025 13:10:58 -0700 (PDT)
+Received: from [10.67.48.245] ([192.19.223.252])
+        by smtp.gmail.com with ESMTPSA id 5614622812f47-3f95edab2fcsm335691b6e.11.2025.03.10.13.10.55
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 10 Mar 2025 13:10:57 -0700 (PDT)
+Message-ID: <d5e3826f-6514-44f7-acde-897a036fbf96@gmail.com>
+Date: Mon, 10 Mar 2025 13:10:55 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 6.13 000/207] 6.13.7-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org,
+ linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+ lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+ sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
+ conor@kernel.org, hargar@microsoft.com, broonie@kernel.org
+References: <20250310170447.729440535@linuxfoundation.org>
+Content-Language: en-US
+From: Florian Fainelli <f.fainelli@gmail.com>
+Autocrypt: addr=f.fainelli@gmail.com; keydata=
+ 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
+ WlfRzlpjIPmdjgoicA==
+In-Reply-To: <20250310170447.729440535@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On Sun,  9 Mar 2025 19:35:15 +0000
-Lothar Rubusch <l.rubusch@gmail.com> wrote:
-
-> Fix setting the odr value to update activity time based on frequency
-> derrived by recent odr, and not by obsolete odr value.
+On 3/10/25 10:03, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.13.7 release.
+> There are 207 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 > 
-> The [small] bug: When _adxl367_set_odr() is called with a new odr value,
-> it first writes the new odr value to the hardware register
-> ADXL367_REG_FILTER_CTL.
-> Second, it calls _adxl367_set_act_time_ms(), which calls
-> adxl367_time_ms_to_samples(). Here st->odr still holds the old odr value.
-> This st->odr member is used to derrive a frequency value, which is
-> applied to update ADXL367_REG_TIME_ACT. Hence, the idea is to update
-> activity time, based on possibilities and power consumption by the
-> current ODR rate.
-> Finally, when the function calls return, again in _adxl367_set_odr() the
-> new ODR is assigned to st->odr.
+> Responses should be made by Wed, 12 Mar 2025 17:04:00 +0000.
+> Anything received after that time might be too late.
 > 
-> The fix: When setting a new ODR value is set to ADXL367_REG_FILTER_CTL,
-> also ADXL367_REG_TIME_ACT should probably be updated with a frequency
-> based on the recent ODR value and not the old one. Changing the location
-> of the assignment to st->odr fixes this.
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.13.7-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.13.y
+> and the diffstat can be found below.
 > 
-> Fixes: cbab791c5e2a5 ("iio: accel: add ADXL367 driver")
-> Signed-off-by: Lothar Rubusch <l.rubusch@gmail.com>
-> Reviewed-by: Marcelo Schmitt <marcelo.schmitt1@gmail.com>
-> ---
-Change log missing, but I assume it's just the Fixes tag.
-If so, I would have been fine with that just being in a reply
-to the v1. Anyhow, new patch is fine too so applied to the
-fixes-togreg branch of iio.git.  I may well queue this up for
-the merge window rather than send another pull request this cycle.
-
-Thanks
-
-Jonathan
-
-
->  drivers/iio/accel/adxl367.c | 10 +++-------
->  1 file changed, 3 insertions(+), 7 deletions(-)
+> thanks,
 > 
-> diff --git a/drivers/iio/accel/adxl367.c b/drivers/iio/accel/adxl367.c
-> index add4053e7a02..0c04b2bb7efb 100644
-> --- a/drivers/iio/accel/adxl367.c
-> +++ b/drivers/iio/accel/adxl367.c
-> @@ -601,18 +601,14 @@ static int _adxl367_set_odr(struct adxl367_state *st, enum adxl367_odr odr)
->  	if (ret)
->  		return ret;
->  
-> +	st->odr = odr;
-> +
->  	/* Activity timers depend on ODR */
->  	ret = _adxl367_set_act_time_ms(st, st->act_time_ms);
->  	if (ret)
->  		return ret;
->  
-> -	ret = _adxl367_set_inact_time_ms(st, st->inact_time_ms);
-> -	if (ret)
-> -		return ret;
-> -
-> -	st->odr = odr;
-> -
-> -	return 0;
-> +	return _adxl367_set_inact_time_ms(st, st->inact_time_ms);
->  }
->  
->  static int adxl367_set_odr(struct iio_dev *indio_dev, enum adxl367_odr odr)
+> greg k-h
 
+On ARCH_BRCMSTB using 32-bit and 64-bit ARM kernels, build tested on 
+BMIPS_GENERIC:
+
+Tested-by: Florian Fainelli <florian.fainelli@broadcom.com>
+-- 
+Florian
 
