@@ -1,151 +1,219 @@
-Return-Path: <linux-kernel+bounces-554099-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-554100-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0BBC8A592F1
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 12:44:36 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7199EA592FA
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 12:46:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4A43C168E5D
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 11:44:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E7EF8188D439
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 11:46:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BAC5D221711;
-	Mon, 10 Mar 2025 11:44:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA0EC221703;
+	Mon, 10 Mar 2025 11:46:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ssDbcpOK"
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Z8a1yOY7"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DF1B18FDAB
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 11:44:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A7FF19F103;
+	Mon, 10 Mar 2025 11:46:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741607068; cv=none; b=Nhw9/89ULUzseSbFnKm1M5gUTxbi4nj7AnydoIdvom4d7PuYc1I7zMCXF/FVCUH0geU+Xa1Wp663WRu/Per1azdhcP2DhU02K/is3U5vIpIf88mNJOBuNcA03AjRg36zjBWk4cgXBM83tCQuWVVG4VEZhDn72DC+18v3I6I405o=
+	t=1741607161; cv=none; b=dqVnJNsLyXqf2wjW9V2sl7TbnNTZrICmXWRYNvyQ+egeOZaIj9H9YdrhvLtMpeitmHD0qglgn2tWjLviuqeRx6+zOyO0XwgnIiq9grkkab8wuGjriIkTx5or+sSSimFXlEJnB5d7PSyEDTA/SmEWqnFqBSrBV3wG7F3ipMEu6R8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741607068; c=relaxed/simple;
-	bh=0IrI9FdaopGtKLOIXX1VUbBx9Fs7ebXPM1YkORinNVg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=HxFDSEKxbKlRK7YfrQYDlaYdiNTHMaw56+YzxIwEjM3AxjgkP+LOeSP/8y0brIXdij1X7vlw9UUw/lIB4+LTTVL8T/v8Tlm6OZ0ea2jk1A5vAfxM3JUvG722zMIDlfRGVcTtfnFpvbWk4z1hzAep/IBgVzk5QTaX4r4iYU5GiwE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ssDbcpOK; arc=none smtp.client-ip=209.85.128.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-43cfe574976so2169205e9.1
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 04:44:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1741607065; x=1742211865; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=0IrI9FdaopGtKLOIXX1VUbBx9Fs7ebXPM1YkORinNVg=;
-        b=ssDbcpOKw2Svsx5osKAkflwtEvh16vn5iXyIJXZQ3a+pKrhXiy9Nfng5y71PgM32g7
-         6fyGLNEgOY4hyXXqvu+K5Y3y1cdU+vQR6AeHyKiJCXrAk25UTYlesg+PijcCya4k7O5/
-         PFjgswoosbYnaHd7u7IdrN83BUozlNbgFV/EdvoVDRzYVOzScjPiZARz8VyJoLwz+XtX
-         uyyUVN5rGPqn/ZuiN73GwdZ4OoXbwGqE8TrqpFvUWYUDN5GwgiLvNM+C6QlzSuSndE3k
-         /GdNrqxmECAXwQd3rohn/Cw/K7RmwPkQcQuj+WmZUun0NXevagXy4AKA45jIx3gIGPm0
-         /TJA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741607065; x=1742211865;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=0IrI9FdaopGtKLOIXX1VUbBx9Fs7ebXPM1YkORinNVg=;
-        b=vzmTXplv5Y87A3FhNmghSSm9naIwYHuu911cyec+NmnzqR3HhDvx+EWmllqFIQU6Rh
-         KFqu5dat34vhDUZ5+uRRvxv1OK11mR5O+QvBfAtTp/8Sgp5zPiLbov7Z89Yemt/qZqOk
-         xMDEKy8vB/aSAmLW781KJXO3DaQaXciPy2rF9V0AJLySSin2dyl+1aSEJDhjd244NEVp
-         UxhSHZhW/p9gKg92G5qOsUNSKDW0qzjX6Rn1uL1vKT75Q7+W0H7pX2/TKtIIIFQszUTg
-         /QjevyysbYYh6oQFrWvEmU9jfrE9YdNPSfwK3hoVBoussq1bywXP36uUJ+ihPDKkVUX/
-         SFLw==
-X-Forwarded-Encrypted: i=1; AJvYcCWLKRg9RqggN7BOaQnqOYPvvbQbPfKsTGgbF7BTS8W0E4Ka2zeHQt21q8G+1iB9J+iOMuAR/6LG2JEb750=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzMx+ZwNMiz9EwlRrmOxN02+xQNNffwSA+OQMQEfmuOddeSkaub
-	Rq27teReI5veQsPhkoR12mZTHZOqb/JQt0Zh8KjdNRp9DL92276ZsFiFe8+hqVI0xBzJee1fA8/
-	3GuGQ9gmOR5vZh+9UBATKfI86mCKcCxtJFfoA
-X-Gm-Gg: ASbGncvAijls5197WQC5AxcqLW/v4731PrFumeI1UT3lM7j/9qrIFJ8puBu+H2+oZtn
-	ziGTwHmikGESJW4cOZa89cKoJzQQte024+FT6BS7v8Z6uiLcEnSk+Xvpd5xtefmcv/3BQa1hfuX
-	zQ61io1N2gjJ+WCh6lTcITTcPN8YWoeKgTm8806myH7+oZtFw2y39jqw==
-X-Google-Smtp-Source: AGHT+IE7B1UYHeaXlm+Rs1PUlDtw0KdbyXU2RKfDQAGpxGR6ZJC6Lkc9/sArkb3lz0K5BFbuAd57jS8ndRkY2yPVbGI=
-X-Received: by 2002:a05:6000:1849:b0:391:3fd2:610f with SMTP id
- ffacd0b85a97d-3913fd26306mr4676571f8f.13.1741607064635; Mon, 10 Mar 2025
- 04:44:24 -0700 (PDT)
+	s=arc-20240116; t=1741607161; c=relaxed/simple;
+	bh=ANGJH8Sj9o9T5oT7alkDK/1d7R9Ia3tZGYd5lKf8fqs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=qt5eZgDjdXpczkYb18xMHa6SKFd8wu+l3RCU87D7NWulTcFk1S/JLR8X12skTbjd6wk1jFIMyw+HXkbwAjB+JmfGpRWgC0FejuTn0XzhzJ+RoifXHHDPxZckOvv1cAQStCH4+Dv3tHeYyzRv5s6LkL6LMHX4xl57b+K1Ah6r8+E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Z8a1yOY7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EAEB8C4CEEA;
+	Mon, 10 Mar 2025 11:45:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741607160;
+	bh=ANGJH8Sj9o9T5oT7alkDK/1d7R9Ia3tZGYd5lKf8fqs=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=Z8a1yOY73nzdKnQqqd1RoncZdbvX0JV+OFmccCLWVdfwADrRgyVFtMHpwWddqaSNp
+	 xd8CsXPfGcBed9yj+7BlKG1Cski0vLwZcAE8NoP10Lfz/RkB5BHkKszgqJoNbZ2N0p
+	 kVwBzTPOgxSX58gjsPLIFjSTIUaU4JcEHjvcDVN5JYhtvDqIMng7LUagHA2wqTBPzK
+	 ktT89I6GI5sMmzSfyadBpkc1lpzCz0ek3fX6/iOFLp+laY2yhfHTgyMhEiFfXtS/xS
+	 83vQI4yhM0m4aafWM15625GRWp8cnXp9aQw2Otkd5UGPF9kwZ0bCR/L+AURGoy9ATq
+	 JV8qC75kDgTuw==
+Message-ID: <1091b3cc-d24f-4a45-ae9e-d439b94267da@kernel.org>
+Date: Mon, 10 Mar 2025 12:45:52 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250310073040.423383-1-richard120310@gmail.com>
- <20250310073040.423383-2-richard120310@gmail.com> <Z860iWGtaEFMD2hj@google.com>
- <Z87JpNJU5gxN0YgS@vaxr-BM6660-BM6360>
-In-Reply-To: <Z87JpNJU5gxN0YgS@vaxr-BM6660-BM6360>
-From: Alice Ryhl <aliceryhl@google.com>
-Date: Mon, 10 Mar 2025 12:44:12 +0100
-X-Gm-Features: AQ5f1JpNF9ypxpEOLJQP_OHzmzJH77QM5OOCwzuX8EZKFBAaIB9z1lOqXLa0UJA
-Message-ID: <CAH5fLgiUj7R4SvKYT3HGxqSDnjs4T6EKB91bX1JFe-a9a=fHsg@mail.gmail.com>
-Subject: Re: [RFC PATCH 1/2] rust: list: Implement normal initializer for ListLinks
-To: I Hsin Cheng <richard120310@gmail.com>
-Cc: ojeda@kernel.org, alex.gaynor@gmail.com, boqun.feng@gmail.com, 
-	gary@garyguo.net, bjorn3_gh@protonmail.com, benno.lossin@proton.me, 
-	a.hindborg@kernel.org, tmgross@umich.edu, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, skhan@linuxfoundation.org, 
-	linux-kernel-mentees@lists.linux.dev, jserv@ccns.ncku.edu.tw
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] dt-bindings: leds: add Texas Instruments TPS6131x
+ flash LED driver
+To: Matthias Fend <matthias.fend@emfend.at>, Pavel Machek <pavel@ucw.cz>,
+ Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
+Cc: linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, bsp-development.geo@leica-geosystems.com
+References: <20250228-leds-tps6131x-v1-0-d1071d90f9ea@emfend.at>
+ <20250228-leds-tps6131x-v1-1-d1071d90f9ea@emfend.at>
+ <d5e73894-0e30-499f-a723-2ada72d3b864@kernel.org>
+ <d30e5994-9e7a-4f0c-96e6-14fe6f132f5f@emfend.at>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <d30e5994-9e7a-4f0c-96e6-14fe6f132f5f@emfend.at>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Mon, Mar 10, 2025 at 12:14=E2=80=AFPM I Hsin Cheng <richard120310@gmail.=
-com> wrote:
->
-> On Mon, Mar 10, 2025 at 09:44:41AM +0000, Alice Ryhl wrote:
-> > On Mon, Mar 10, 2025 at 03:30:39PM +0800, I Hsin Cheng wrote:
-> > > Currently ListLinks only supports to create an initializer through
-> > > "new()", which will need further initialization because the return ty=
-pe
-> > > of "new()" is "impl Pininit<Self>". Not even "ListLinksSlefPtr" use t=
-he
-> > > method to create a new instance of "ListLinks".
-> > >
-> > > Implement a normal method to create a new instance of type "ListLinks=
-".
-> > > This may be redundant as long as there exist a convenient and proper =
-way
-> > > to deal with "ListLinks::new()".
-> > >
-> > > For now it's introduce for the simplicity of examples in the followin=
-g
-> > > patches.
-> > >
-> > > Signed-off-by: I Hsin Cheng <richard120310@gmail.com>
-> >
-> > This change is not good. The ListLinks type has an invariant about when
-> > the pointers are null. The existing constructor argues that the
-> > invariant is satisfied because pin-init initializers can't be used in a=
-n
-> > existing Arc. Why is that satisfied here?
-> >
-> > Alice
->
-> Hi Alice,
->
-> Thanks for your kindly review. Indeed , I was trying to find a way to
-> cope with "ListLinks::new()", wondering if there's any macros like
-> "ListLinks::try_pin_init!()" to help us deal with "impl PinInit", so I
-> try to send a RFC patch for it.
->
-> Sorry I overlooked "commit 52ae96f"[1], it demonstrate a good way to
-> handle the basic structure for "List", I'll fix the patch and send a v2
-> as soon as possible.
->
-> Still I would love to ask why don't we provide "ListLinks::pin_init" or
-> "ListLinks::try_pin_init" to support for the pin-init initializer
-> returned by "ListLink::new()" ? Maybe there're special reasons behind
-> the pin-init initializer here ? I would love to learn if that's
-> possible.
->
-> I tried "Kbox::pint_init" but it
-> wouldn't give variable of type "ListLinks".
+On 10/03/2025 09:40, Matthias Fend wrote:
+> Hi Krzysztof,
+> 
+> thanks for your review.
+> 
+> Am 10.03.2025 um 08:49 schrieb Krzysztof Kozlowski:
+>> On 28/02/2025 11:31, Matthias Fend wrote:
+>>> +
+>>> +properties:
+>>> +  compatible:
+>>> +    enum:
+>>> +      - ti,tps61310
+>>> +      - ti,tps61311
+>>> +
+>>> +  reg:
+>>> +    maxItems: 1
+>>> +
+>>> +  '#address-cells':
+>>> +    const: 1
+>>> +
+>>> +  '#size-cells':
+>>> +    const: 0
+>>
+>> Why do you need these two?
+> 
+> As a template, I also used recently added bindings 
+> (silergy,sy7802.yaml). These entries come from there, but as I 
+> understand it, they are supposed to be removed, right?
 
-Please see the examples from:
-https://lore.kernel.org/rust-for-linux/20250210-cursor-between-v7-2-36f0215=
-181ed@google.com/
+They make no sense based on the bindings.
 
-Alice
+> 
+>>
+>>> +
+>>> +  reset-gpios:
+>>> +    maxItems: 1
+>>> +    description: GPIO connected to NRESET pin
+>>> +
+>>> +  ti,valley-current-limit:
+>>> +    type: boolean
+>>> +    description:
+>>> +      Reduce the valley peak current limit from 1750mA to 1250mA (TPS61310) or
+>>> +      from 2480mA to 1800mA (TPS61311).
+>>> +
+>>> +  led:
+>>
+>> Why do you have only one led node? Description says three: LED1-3,
+>> unless these are just sinks which always have to be connected to the
+>> same LED?
+> 
+> That is basically correct. If you just want to switch the 3 LEDs on or 
+> off, you could map that accordingly.
+> In detail, however, the 3 channels are not really independent of each 
+> other. All channels share, for example, the flash controller, the safety 
+> timers and the operating mode. In addition, two channels share the 
+> configuration registers. It is therefore not possible to use one channel 
+> as a flash and another as a normal LED.
+> For use as an LED flash controller (what the chip actually is), it 
+> therefore only makes sense if one or more channels are combined.
+
+You define the binding which will be set in stone. This binding says it
+is not possible to use two or three LEDs. I am fine with this, but be
+aware of it and explain this in binding description.
+
+> 
+>>
+>>> +    type: object
+>>> +    $ref: common.yaml#
+>>> +    unevaluatedProperties: false
+>>> +
+>>> +    properties:
+>>> +      led-sources:
+>>> +        allOf:
+>>
+>> Drop allOf
+>>
+>>> +          - minItems: 1
+>>> +            maxItems: 3
+>>> +            items:
+>>> +              enum: [1, 2, 3]
+>>> +
+>>> +      led-max-microamp:
+>>> +        anyOf:
+>>
+>> oneOf
+>>
+>>> +          - minimum: 25000
+>>> +            maximum: 350000
+>>> +            multipleOf: 50000
+>>> +          - minimum: 25000
+>>> +            maximum: 525000
+>>
+>> Why two different values?
+> 
+> The channels can in principle be configured in 25mA steps.
+> If only the two channels that share the configuration register are used, 
+> the step size doubles to 50mA. The maximum current values ​​for such a 
+> configuration are also different.
+> There are of course several other combinations of channels that would 
+> result in different maximum values, but since the step size is an 
+> important value for the API, I wanted to describe these two cases 
+> explicitly.
+> 
+ok
+
+Best regards,
+Krzysztof
 
