@@ -1,199 +1,337 @@
-Return-Path: <linux-kernel+bounces-553812-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-553822-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C99D9A58F21
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 10:12:52 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 223BFA58F46
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 10:19:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 485E4188FA47
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 09:13:00 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8FC937A39EA
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 09:18:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C37AE2248A8;
-	Mon, 10 Mar 2025 09:12:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F2EA2248B9;
+	Mon, 10 Mar 2025 09:19:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=live.com header.i=@live.com header.b="vKkH1b2u"
-Received: from PNZPR01CU001.outbound.protection.outlook.com (mail-centralindiaazolkn19011036.outbound.protection.outlook.com [52.103.68.36])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=haloniitty.fi header.i=@haloniitty.fi header.b="qK+V4wuc"
+Received: from whm50.louhi.net (whm50.louhi.net [77.240.19.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47C12170826;
-	Mon, 10 Mar 2025 09:12:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.103.68.36
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741597966; cv=fail; b=FksjEYHIGXEcVmsZuD/LKTau3Uv7sVLMm+Dsn5S7OuvNLICij6GCPQ9cLTII5pjOdmdky63TbjelNTitmdzmkvCXeab4ZR2Tr8fpDdvlX94y6ico/rBsbPWfOe6wpMhtrDdnKqu4bMca2a97C/nF6SMigl3aiZaSOkO+v3mZXGA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741597966; c=relaxed/simple;
-	bh=Hd6y0t7ybwlnGFKggZ0+d1s87oGPE1rRMDOzDiMCMXc=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=IDjfi5vT2cSL9uQnnwShGcPmUdkef9h3FQ1Vz6jx3KoYk4lnYRv1HJWDBOoNth30ByVWBJ+FuubAApTSQ46SysIlC3QYrfIR3t5oM6lDL/4hgqPBqXzpBXjaJ//PuPT9t2MUyCPirub41GkRK3S3Uv9bdStwYnNvyjnDzRLe8mI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=live.com; spf=pass smtp.mailfrom=live.com; dkim=pass (2048-bit key) header.d=live.com header.i=@live.com header.b=vKkH1b2u; arc=fail smtp.client-ip=52.103.68.36
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=live.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=live.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=bxAgG5ncGc/ngURwz+rEAzhCqQyLvunEByBm6hM6BjlF1gBMiHBlFw5f+D8yFTZw2W6o9yYf9wBKh+r+fcnqVgwwOkQmZ8ktie4aJLn6RdYrPrdD9IHGcvXIa2/D7Ynbli7C3DrBLhXFMHMju/yTCGzQRTBy2re4DtqldKZTkmthzp28daw5Kw/awdrA/P363Lhe25qHrcaECCKcQNyDgoBIa6erjhXwpZJsAQv7L9F0z1sXAtqHF5HJ0kUhCHM5jFOaZb/OiBeMtQkdMVIHcLpa3LWqjm1J+rPvf4oJOaontlZYlOr6MC8uoH30p/B/R5/Lssxp8gkAe9e3qREG+w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=74JDL78FFxPmkNw5CBr/tGtgziCBGn5Q7VmZhATL5CM=;
- b=BPcefS3SP7yEevj+mzXBc5ylxE9sBJ4YFeFPgwkDIwuRH8NPvHIoXjzPNwJswH16WLP4TISdW8Garhofi2YC082mX95PmGOFXZwRd3xun33fo/MYSpXkdtCULufQpSksNw/EzUz642/hnteODy5MBLjbeZ4eGrfWY8FTchn4zYigQgRHWS3RleZ34c3Y/pzf/2irN8O23aqwii6VsVwWkYrDWZs/ncnZRFUaD2IK5DFSOI1roJx5dcIpde7XdikQsQbpUmfBQvayiAS4JWLi4iYLfhnoeBXLOLnBTkrBn95Vl+wYDkm/Xp2mKws4AfBSzvlv0jFy28Gj0steTkssbw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=live.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=74JDL78FFxPmkNw5CBr/tGtgziCBGn5Q7VmZhATL5CM=;
- b=vKkH1b2ugy1qT33Gl2aZOMhRs5FVrW+taWCGAQEWWUk58s9WWFobdXuOqlulgP+DctOpCIxHdWJ9IkEGVirtJUS7V83h0qeEyGQFdba8ktgmzneadBYhhR08gYAaMpqT5QJHcxCG1OtjKjLm2ePyvrA+15cX1afw+/yk4cg93xuaIyZg8pO1gz+Sajk8RPRjkd/toqzvQto4LWue89m+ILYEHS0bhhH8WxCJqeNJabap3CnS8VMC3vgFA0+HV38ZHuZ7UVLVjHKc8F/mxsLyLwXLF9XstMqW4u+FO4y82uMGGpYeLwQ66eVi4kJQK3xecI0VsHEv74xTgOxlE0or5Q==
-Received: from PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM (2603:1096:c01:f7::14)
- by MAYPR01MB10587.INDPRD01.PROD.OUTLOOK.COM (2603:1096:a01:159::5) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8511.26; Mon, 10 Mar
- 2025 09:12:37 +0000
-Received: from PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM
- ([fe80::324:c085:10c8:4e77]) by PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM
- ([fe80::324:c085:10c8:4e77%7]) with mapi id 15.20.8511.025; Mon, 10 Mar 2025
- 09:12:37 +0000
-From: Aditya Garg <gargaditya08@live.com>
-To: Jiri Kosina <jikos@kernel.org>, Jiri Kosina <jkosina@suse.com>, Benjamin
- Tissoires <benjamin.tissoires@redhat.com>, "bentiss@kernel.org"
-	<bentiss@kernel.org>
-CC: Kerem Karabay <kekrby@gmail.com>, Orlando Chamberlain
-	<orlandoch.dev@gmail.com>, Aun-Ali Zaidi <admin@kodeit.net>, Linux Kernel
- Mailing List <linux-kernel@vger.kernel.org>, "linux-input@vger.kernel.org"
-	<linux-input@vger.kernel.org>
-Subject: [PATCH RESEND 2/5] HID: multitouch: support getting the tip state
- from HID_DG_TOUCH fields in Apple Touch Bar
-Thread-Topic: [PATCH RESEND 2/5] HID: multitouch: support getting the tip
- state from HID_DG_TOUCH fields in Apple Touch Bar
-Thread-Index: AQHbkZyR09yrvivHAU+hr8BQkrWIYQ==
-Date: Mon, 10 Mar 2025 09:12:37 +0000
-Message-ID: <0699DD36-24C5-4859-85BF-75480B87128F@live.com>
-References: <ECE4880B-2A87-4147-B83B-2D832639F3B2@live.com>
-In-Reply-To: <ECE4880B-2A87-4147-B83B-2D832639F3B2@live.com>
-Accept-Language: en-IN, en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-x-ms-exchange-messagesentrepresentingtype: 1
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: PN3PR01MB9597:EE_|MAYPR01MB10587:EE_
-x-ms-office365-filtering-correlation-id: 89a5e1cf-a026-42e0-5512-08dd5fb3b389
-x-microsoft-antispam:
- BCL:0;ARA:14566002|7092599003|461199028|15080799006|19110799003|8060799006|8062599003|41001999003|440099028|102099032|3412199025;
-x-microsoft-antispam-message-info:
- =?us-ascii?Q?CEf/Uscj3XroRPIea890KzTP+BqPNTT+u532gC9kkU33Cz1ZvOhcKBHO6Px5?=
- =?us-ascii?Q?i+erWh6SuRQb3X09+Lp3YzB5zfRTPDvx+HfaNtlBaM0lKaBb+aspD7skTrCM?=
- =?us-ascii?Q?TPKoC5/0rjMP2zmQfjUobqUYRGgUFQVst6p+Pz0DBFz70xgPCwbOGLBKIugw?=
- =?us-ascii?Q?6d1r1qadAkKBKbo/f/4Xe/ywwi3bQzA5wlftI6nodyBmvVnUM07WZQ3VCZJg?=
- =?us-ascii?Q?/Kc6JAQIc1GGWXAad5tkTcmVUbs/kna2Jwsv1boBURtDI7Hhm43lFzGuS/MO?=
- =?us-ascii?Q?xfJSRTfHaFmpY1qbupMsYxNdzqJnM6NTM17zPtuFD2wxgCzwcQ6W6NbUrUaB?=
- =?us-ascii?Q?tnrRv7iMMwy8VVVSAsjK5X0iFKkJds+2JWFjFgIbsRJZArr754K9xf3nASSP?=
- =?us-ascii?Q?US1513TvAEJan8fUEDwtrs64GtWTe5ZSvRck/bF7TvTYA+lOYwOhBlqbLjtv?=
- =?us-ascii?Q?w/Y7BPiO0wYZmbcSyvfpWIQjQ8xpNdy7e+QB3WPRuYDxXOWK6VDjlsjFz/sC?=
- =?us-ascii?Q?U9vg9tsf19a1g0og6A/tn51E5OfknUI700onj+Eo2kdhWvuYSDdRK1uvmkhU?=
- =?us-ascii?Q?vdlB0Mwm4BkTf/3hvoPjFsDbtqVz5R+CdLsENZ7GRhavwTkXiHnfXgUh0002?=
- =?us-ascii?Q?FwdumKcbypOxUesMDyAqBSIzyKFYSg9F1DXxXwPM+eaReyYpFEDaWTlZIKGA?=
- =?us-ascii?Q?51O2y1foX1Qyxz74I9lq4HI2upsVkGFVOETyVYs+rrk8C1bznPkYuF03jrc4?=
- =?us-ascii?Q?oiCxHfcmbHf8oifFqeFT8SicJEicfAfEYkv0IZtFNZs6Z31msMoc3NWvxNep?=
- =?us-ascii?Q?wXhLtK3hjjy4TkS6+7JRUhifElADhgP6l3q80YNCbp57VQCmY3yIbwOnKBBp?=
- =?us-ascii?Q?j/P+bCTnjszh5+R8MVL2a2G6jaZ0qLu8HMppcj2FEwOMr4RB131TOGIhQtLY?=
- =?us-ascii?Q?UAYwbbC3cWe3uKGfs/HEPk9+lmwLOmloRwFKcIyZ5hPwDY4Nut7dgr/XoV6C?=
- =?us-ascii?Q?XS1n42YbXbwB4j0g4n80yW1tlAhJ08g+2hkAV1AF1KA9SCC98wghKpT3GTdy?=
- =?us-ascii?Q?ggW1LqsLK3qkbOYAGfEGDVk2rpErST4TPpWwyDiHRYzUy1TDbOw=3D?=
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?gGtc6CVbjAa+k+xaURvQllSlFvG0m6lRExVRcpi8VUCzeDxv+h0T23aFjdsV?=
- =?us-ascii?Q?4k4p8hCzmjv1U4LLI1I48fei7CDJC6/kJ1JHmJOTWFAeF4IFZAeAa5ydkFkk?=
- =?us-ascii?Q?k79yDps7v/rKzPGZMt7mDmq2nFiFyx67Mf9/V3/wAOoL5ksB1LKyr+svM17K?=
- =?us-ascii?Q?4cKHm4Quyxi/xJcUbfmJ2QlcK10p18+4oX6O7266JmaBg1UOFqJfmmSZeBzc?=
- =?us-ascii?Q?Xcq9ZF+ndK15TAX/k02uqc4ch/WzeBForqWworkWt/I0kcsa03xgZ8ru9YVy?=
- =?us-ascii?Q?ndiooNgTgd7UXLnBPcD8n4bUd2/xiHVkiM6S5xkHSiqGtB0kdQMxkdPf8O64?=
- =?us-ascii?Q?etaVmHXOxXebJueO1mhMp9SIj2+0ul+SVUBmmvZA+L4vbL6tPNOVXxcUvQXk?=
- =?us-ascii?Q?4XLO0p4GU5Ta3djQC1MCmmL2IT+fR5aAvgLfAmfMigQeOS/wmVnq6MXbiAp5?=
- =?us-ascii?Q?1XJCWsKQgPz5JmbdLRJBYJJrhmCXYtTsDz3Or2h2bE+kqc+PsI/Fy6TVxeQe?=
- =?us-ascii?Q?KtOInd1vIgFNfuj76QMZwBCqMyhvqkggeETNbmymLTI4SKcoo0p3xIr5hMx2?=
- =?us-ascii?Q?eUDOGipRFKwt9rZ4FCiwf/pPikZhfEHf3bD9xIig2Dgh0jZ2KwwbhWNgaQNI?=
- =?us-ascii?Q?GN6UhRzRw6/Go7a0lbd2b9p/ipBnPRYKUUfGxPciKRud7H/8+Ts6dXIb6GGl?=
- =?us-ascii?Q?N3jieL4vjCHY6fG9xyle/mLx7VKajwPiWOLw8uidfIRFxvdzUoMGZ6NKdnVi?=
- =?us-ascii?Q?IVuoIhc+GCb+tUzWw/kxUrmhenKps2185/r2zRmYs73T+ktGVoHiUIOMdH0S?=
- =?us-ascii?Q?5gZf03GtvVZQWsEjzfvDnSLIH0xf5RIkXKroD+Nfojjb9gqfXcVxW7eccKu3?=
- =?us-ascii?Q?IROfy31ar+j4/9qIO6/RIoVxUyL8ZgY6ND01oDmSnKYjmOdQH2dEuRYk5tGT?=
- =?us-ascii?Q?Qx7PmRC1Kv4fGTBIpM2BEgg90sNY5xItzCBPlLMuqs4C/ioMWhOr9uGU67Db?=
- =?us-ascii?Q?Wkv0h4gL3d6JNGqI8GFr90JO1nU0XCIshVi2eMRqDeYltGFYVaaEGo9Prai5?=
- =?us-ascii?Q?VGK6DSCyVgaDHlJkzc7FoSUx/h6eJOFyrPvoUSS/0VLBlHsVEyUdlM08p8XP?=
- =?us-ascii?Q?/cbbWXVE3MCfbhphEeIW7BQnj1E0C2CGiReV6c3BD6P1xS++7rf7KgenR3/d?=
- =?us-ascii?Q?SdQeQMglCH0NsSnz9DE8EyVPHk86gpXrmsksl/UijHfPci3XyPjeR+uEZqs2?=
- =?us-ascii?Q?wtixu/VELQF9ztG/NeMe?=
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <1C5914A3117585449ECC60BC8227CEAD@INDPRD01.PROD.OUTLOOK.COM>
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B24FA170826;
+	Mon, 10 Mar 2025 09:19:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=77.240.19.51
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741598345; cv=none; b=bbsCNDgMwQr3iePbwt8Geb1n/mdCSlCyjA9BJoBdCHziJ5m0e/xg7MJ7mZBxTndynrVt9g/1JzIYpbuAlFilfZAOhoA7KIPUeveTOXNR1vvhN86DtRck+7APHsc+W/DKdSbcYzJA0hAWYhwzNsPaEka//mRRHNl5NALpDRRg/1c=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741598345; c=relaxed/simple;
+	bh=TKc2U347FukTETBcOg3oDnIRF/XzQbbD0zzbzORHsG0=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=nnehGbXk1k1pIm0UbJD69TGCuIrwP9XSCIUXVexIHOy/+Ev3r8ZTwVYtO1065+I1KV35L90ciCxiyQZR8XY0/ZcdPlor3B+tl5AC3655MJ2mRt+zFCNEE0vNuzKwGxX/xCTNgWl4yxmrOzug6Wwzm8lgHCFzyE5EmFU4nyzj2IE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=haloniitty.fi; spf=pass smtp.mailfrom=haloniitty.fi; dkim=pass (2048-bit key) header.d=haloniitty.fi header.i=@haloniitty.fi header.b=qK+V4wuc; arc=none smtp.client-ip=77.240.19.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=haloniitty.fi
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=haloniitty.fi
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=haloniitty.fi; s=default; h=Content-Type:MIME-Version:References:
+	In-Reply-To:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=aHsXF/th7Qp5UlegwhFSAEpyRDH/WRYr3dD5gq1T1R8=; b=qK+V4wucF6xP3y2SgHCo7pwXtZ
+	zKsevhk+NgWRFHXOUBlAxhRO5Ig4aOqT6i5H2vMCD65eEpAT0CbaUael/S6gIgFHuKhSXTEk295Op
+	yVvcytdL+6akXCtoAVyFjhZQACe1C8HQ2a7aBebJCFEt0NDnOpZei0/Vt0Qz5OfCtBxCQxC8CcXJg
+	7qg/tU/AYOYvBVUcR3jqMPUdJPF+SAZDU12BL+OmVBfpIXD6oH/PM/Fl1rzt+wtduQQf5PGAuPfSR
+	c2PoVwnQJ6hN5OshyLGNAodViHlgL5nCVV8jCAdliR+LA4CJGILvSD/YNROnOV+jZ1Vg6HFbod8Qu
+	Ab31Btlw==;
+Received: from [194.136.85.206] (port=57892 helo=eldfell)
+	by whm50.louhi.net with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.98.1)
+	(envelope-from <pekka.paalanen@haloniitty.fi>)
+	id 1trZCF-000000001cy-2moR;
+	Mon, 10 Mar 2025 11:13:15 +0200
+Date: Mon, 10 Mar 2025 11:12:59 +0200
+From: Pekka Paalanen <pekka.paalanen@haloniitty.fi>
+To: Maxime Ripard <mripard@kernel.org>
+Cc: Louis Chauvet <louis.chauvet@bootlin.com>, Rodrigo Siqueira
+ <rodrigosiqueiramelo@gmail.com>, Melissa Wen <melissa.srw@gmail.com>,
+ =?UTF-8?B?TWHDrXJh?= Canal <mairacanal@riseup.net>, Haneen Mohammed
+ <hamohammed.sa@gmail.com>, Maarten Lankhorst
+ <maarten.lankhorst@linux.intel.com>, Thomas Zimmermann
+ <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
+ rdunlap@infradead.org, arthurgrillo@riseup.net, Jonathan Corbet
+ <corbet@lwn.net>, Simona Vetter <simona@ffwll.ch>, Simona Vetter
+ <simona.vetter@ffwll.ch>, dri-devel@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org, jeremie.dautheribes@bootlin.com,
+ miquel.raynal@bootlin.com, thomas.petazzoni@bootlin.com,
+ seanpaul@google.com, marcheu@google.com, nicolejadeyee@google.com,
+ linux-doc@vger.kernel.org
+Subject: Re: [PATCH v16 5/7] drm/vkms: Create KUnit tests for YUV
+ conversions
+Message-ID: <20250310111259.4e18d550@eldfell>
+In-Reply-To: <6fa7a17f-3932-4b93-a3c7-885619f8ec73@bootlin.com>
+References: <20250121-yuv-v16-0-a61f95a99432@bootlin.com>
+	<20250121-yuv-v16-5-a61f95a99432@bootlin.com>
+	<qwym5wty72f6o4dfz2iduamkpuom6jt5txskknovqxzagruusx@zuytk7awe2uw>
+	<Z5dkd3npNtzPWCrP@louis-chauvet-laptop>
+	<20250205-pristine-perch-of-abundance-7abac1@houat>
+	<Z6OEd329pDNRrL5v@louis-chauvet-laptop>
+	<20250219-inventive-micro-parrot-c24846@houat>
+	<ce5fb86d-f3bc-4196-9cfd-8af41a83beb1@bootlin.com>
+	<20250307-glaring-kiwi-of-teaching-d5ddd4@houat>
+	<6fa7a17f-3932-4b93-a3c7-885619f8ec73@bootlin.com>
+X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: sct-15-20-7719-20-msonline-outlook-ae5c4.templateTenant
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
-X-MS-Exchange-CrossTenant-Network-Message-Id: 89a5e1cf-a026-42e0-5512-08dd5fb3b389
-X-MS-Exchange-CrossTenant-originalarrivaltime: 10 Mar 2025 09:12:37.2352
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: 00000000-0000-0000-0000-000000000000
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MAYPR01MB10587
+Content-Type: multipart/signed; boundary="Sig_/fFoK6zyuMmWcASjFqjoAznd";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - whm50.louhi.net
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - haloniitty.fi
+X-Get-Message-Sender-Via: whm50.louhi.net: authenticated_id: pekka.paalanen@haloniitty.fi
+X-Authenticated-Sender: whm50.louhi.net: pekka.paalanen@haloniitty.fi
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 
-From: Kerem Karabay <kekrby@gmail.com>
+--Sig_/fFoK6zyuMmWcASjFqjoAznd
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-In Apple Touch Bar, the tip state is contained in fields with the
-HID_DG_TOUCH usage. This feature is gated by a quirk in order to
-prevent breaking other devices, see commit c2ef8f21ea8f
-("HID: multitouch: add support for trackpads").
+On Fri, 7 Mar 2025 15:50:41 +0100
+Louis Chauvet <louis.chauvet@bootlin.com> wrote:
 
-Signed-off-by: Kerem Karabay <kekrby@gmail.com>
-Co-developed-by: Aditya Garg <gargaditya08@live.com>
-Signed-off-by: Aditya Garg <gargaditya08@live.com>
----
- drivers/hid/hid-multitouch.c | 15 +++++++++++----
- 1 file changed, 11 insertions(+), 4 deletions(-)
+> Le 07/03/2025 =C3=A0 11:20, Maxime Ripard a =C3=A9crit=C2=A0:
+> > On Wed, Feb 19, 2025 at 02:35:14PM +0100, Louis Chauvet wrote: =20
+> >>
+> >>
+> >> Le 19/02/2025 =C3=A0 11:15, Maxime Ripard a =C3=A9crit=C2=A0: =20
+> >>> On Wed, Feb 05, 2025 at 04:32:07PM +0100, Louis Chauvet wrote: =20
+> >>>> On 05/02/25 - 09:55, Maxime Ripard wrote: =20
+> >>>>> On Mon, Jan 27, 2025 at 11:48:23AM +0100, Louis Chauvet wrote: =20
+> >>>>>> On 26/01/25 - 18:06, Maxime Ripard wrote: =20
+> >>>>>>> On Tue, Jan 21, 2025 at 11:48:06AM +0100, Louis Chauvet wrote: =20
+> >>>>>>>> +static struct yuv_u8_to_argb_u16_case yuv_u8_to_argb_u16_cases[=
+] =3D {
+> >>>>>>>> +	/*
+> >>>>>>>> +	 * colour.RGB_to_YCbCr(<rgb color in 16 bit form>,
+> >>>>>>>> +	 *                     K=3Dcolour.WEIGHTS_YCBCR["ITU-R BT.601"=
+],
+> >>>>>>>> +	 *                     in_bits =3D 16,
+> >>>>>>>> +	 *                     in_legal =3D False,
+> >>>>>>>> +	 *                     in_int =3D True,
+> >>>>>>>> +	 *                     out_bits =3D 8,
+> >>>>>>>> +	 *                     out_legal =3D False,
+> >>>>>>>> +	 *                     out_int =3D True)
+> >>>>>>>> +	 *
+> >>>>>>>> +	 * Test cases for conversion between YUV BT601 full range and =
+RGB
+> >>>>>>>> +	 * using the ITU-R BT.601 weights.
+> >>>>>>>> +	 */ =20
+> >>>>>>>
+> >>>>>>> What are the input and output formats?
+> >>>>>>>
+> >>>>>>> Ditto for all the other tests. =20
+> >>>>>>
+> >>>>>> There is no really "input" and "output" format, they are reference=
+ values
+> >>>>>> for conversion, you should be able to use it in both direction. Th=
+ey are
+> >>>>>> generated by RGB_to_YCbCr (RGB input, YUV output) just because it =
+was
+> >>>>>> easier to create the colors from RGB values. =20
+> >>>>>
+> >>>>> RGB and YUV aren't formats, they are color models. XRGB8888 is a fo=
+rmat.
+> >>>>> NV12 is a format.
+> >>>>> =20
+> >>>>>> If you think we should specify what is was used as input and outpu=
+t to
+> >>>>>> generate those values, I can modify the comment to:
+> >>>>>>
+> >>>>>> 	Tests cases for color conversion generated by converting RGB
+> >>>>>> 	values to YUV BT601 full range using the ITU-R BT.601 weights. =20
+> >>>>>
+> >>>>> My point is that those comments should provide a way to reimplement=
+ the
+> >>>>> test from scratch, and compare to the actual implementation. It's u=
+seful
+> >>>>> when you have a test failure and start to wonder if the implementat=
+ion
+> >>>>> or the test is at fault.
+> >>>>>
+> >>>>> By saying only RGB and YUV, you can't possibly do that. =20
+> >>>>
+> >>>> I understand your concern, but I believe there might be a slight
+> >>>> misunderstanding. The table in question stores reference values for
+> >>>> specific color models, not formats. Therefore, it doesn't specify any
+> >>>> particular format like XRGB8888 or NV12.
+> >>>>
+> >>>> To clarify this, I can rename the format_pair struct to value_pair. =
+This
+> >>>> should make it clearer that we are dealing with color model values r=
+ather
+> >>>> than formats.
+> >>>>
+> >>>> If you want to test a specific format conversion, such as
+> >>>> YUV420_to_argbu16, you would need to follow a process like this:
+> >>>>
+> >>>> 	// Recreate a YUV420 data
+> >>>> 	plane_1[0] =3D test_case.yuv.y
+> >>>> 	plane_2[0] =3D test_case.yuv.u
+> >>>> 	plane_2[1] =3D test_case.yuv.v
+> >>>>
+> >>>> 	// convertion to test from YUV420 format to argb_u16
+> >>>> 	rgb_u16 =3D convert_YUV420_to_argbu16(plane_1, plane_2)
+> >>>>
+> >>>> 	// ensure the conversion is valid
+> >>>> 	assert_eq(rgb_u16, test_case.rgb)
+> >>>>
+> >>>> The current test is not performing this kind of format conversion.
+> >>>> Instead, it verifies that for given (y, u, v) values, the correct (r=
+, g,
+> >>>> b, a) values are obtained. =20
+> >>>
+> >>> You already stated that you check for the A, R, G, and B components. =
+On
+> >>> how many bits are the values you are comparing stored? The YUV values
+> >>> you are comparing are stored on how many bits for each channel? With
+> >>> subsampling?
+> >>>
+> >>> If you want to compare values, you need to encode a given color into
+> >>> bits, and the way that encoding is done is what the format is about.
+> >>>
+> >>> You might not compare the memory layout but each component individual=
+ly,
+> >>> but it's still a format. =20
+> >>
+> >> Sorry, I think I misunderstood what a format really is. =20
+> >=20
+> > Ultimately, a format is how a given "color value" is stored. How many
+> > bits will you use? If you have an unaligned number of bits, how many
+> > bits of padding you'll use, where the padding is? If there's multiple
+> > bytes, what's the endianness?
+> >=20
+> > The answer to all these questions is "the format", and that's why
+> > there's so many of them. =20
+>=20
+> Thanks!
+>=20
+> >> But even with this explanation, I don't understand well what you ask
+> >> me to change. Is this better:
+> >>
+> >> The values are computed by converting RGB values, with each component =
+stored
+> >> as u16, to YUV values, with each component stored as u8. The conversio=
+n is
+> >> done from RGB full range to YUV BT601 full range using the ITU-R BT.601
+> >> weights.
+> >>
+> >> TBH, I do not understand what you are asking for exactly. Can you plea=
+se
+> >> give the sentence you expect directly? =20
+> >=20
+> > The fourcc[1] code for the input and output format would be nice. And if
+> > you can't, an ad-hoc definition of the format, answering the questions I
+> > mentionned earlier (and in the previous mail for YUV). =20
+>=20
+> I don't think any fourcc code will apply in this case, the tests use=20
+> internal VKMS structures pixel_argb_16 and pixel_yuv_u8. How do I=20
+> describe them better? If I add this comment for the structures, is it=20
+> enough?
+>=20
+> /**
+>   * struct pixel_argb_u16 - Internal representation of a pixel color.
+>   * @r: Red component value, stored in 16 bits, without padding, using
+>   *     machine endianness
+>   * @b: [...]
+>   *
+>   * The goal of this structure is to keep enough precision to ensure
+>   * correct composition results in VKMS and simplifying color
+>   * manipulation by splitting each component into its own field.
+>   * Caution: the byte ordering of this structure is machine-dependent,
+>   * you can't cast it directly to AR48 or xR48.
+>   */
+> struct pixel_argb_u16 {
+> 	u16 a, r, g, b;
+> };
+>=20
+> (ditto for pixel_yuv_u8)
+>=20
+> > I'm really
+> > surprised about the RGB component values being stored on 16 bits though.
+> > It's super unusual, to the point where it's almost useless for us to
+> > test, and we should probably use 8 bits values. =20
+>=20
+> We need to have 16 bits because some of the writeback formats are 16 bits.
 
-diff --git a/drivers/hid/hid-multitouch.c b/drivers/hid/hid-multitouch.c
-index 6e7f34a47..70fdd8cf9 100644
---- a/drivers/hid/hid-multitouch.c
-+++ b/drivers/hid/hid-multitouch.c
-@@ -827,6 +827,17 @@ static int mt_touch_input_mapping(struct hid_device *h=
-dev, struct hid_input *hi,
-=20
- 			MT_STORE_FIELD(confidence_state);
- 			return 1;
-+		case HID_DG_TOUCH:
-+			/*
-+			 * Legacy devices use TIPSWITCH and not TOUCH.
-+			 * One special case here is of the Apple Touch Bars.
-+			 * In these devices, the tip state is contained in
-+			 * fields with the HID_DG_TOUCH usage.
-+			 * Let's just ignore this field for other devices.
-+			 */
-+			if (!(cls->quirks & MT_QUIRK_APPLE_TOUCHBAR))
-+				return -1;
-+			fallthrough;
- 		case HID_DG_TIPSWITCH:
- 			if (field->application !=3D HID_GD_SYSTEM_MULTIAXIS)
- 				input_set_capability(hi->input,
-@@ -897,10 +908,6 @@ static int mt_touch_input_mapping(struct hid_device *h=
-dev, struct hid_input *hi,
- 		case HID_DG_CONTACTMAX:
- 			/* contact max are global to the report */
- 			return -1;
--		case HID_DG_TOUCH:
--			/* Legacy devices use TIPSWITCH and not TOUCH.
--			 * Let's just ignore this field. */
--			return -1;
- 		}
- 		/* let hid-input decide for the others */
- 		return 0;
---=20
-2.43.0
+Hi Maxime,
 
+Louis' proposed comment is good and accurate. I can elaborate further on
+it.
+
+pixel_argb_u16 is an internal structure used only for temporary pixel
+storage: the intermediate format. It's aim is to make computations on
+pixel values easy: every input format is converted to it before
+computations, and after computations it is converted to each output
+format. This allows VKMS to implement computations, e.g. a matrix
+operation, in simple code for only one cpu-endian "pixel format", the
+intermediate format. (drm_fourcc.h has no cpu-endian formats at all,
+and that is good.)
+
+That VKMS never stores complete images in the intermediate format. To
+strike a balance between temporary memory requirements and
+computational overhead, VKMS processes images line-by-line. Only one
+(or two) line's worth of pixels is needed to be kept in memory per
+source or destination framebuffer at a time.
+
+16-bit precision is required not just because some writeback and
+framebuffer formats are 16-bit. We also need extra precision due to the
+color value encoding. Transfer functions can convert pixel data between
+the optical and electrical domains. Framebuffers usually contain
+electrical domain data, because it takes less bits per pixel in order
+to achieve a specific level of visual image quality (think of color
+gradient banding). However, some computations, like color space
+conversion with a matrix, must be done in the optical domain, which
+requires more bits per pixel in order to not degrade the image quality.
+
+In the future I would even expect needing 32-bit or even 64-bit per
+channel precision in the intermediate format once higher-than-16 bits
+per channel framebuffer formats require testing.
+
+YUV can work with 8 bits per pixel for now, because in practice YUV is
+always stored in electrical domain due its definition. YUV in optical
+domain is simply never used. However, there are framebuffer formats
+with more than 8 bits of YUV channels, so this may need extending too.
+
+
+Thanks,
+pq
+
+--Sig_/fFoK6zyuMmWcASjFqjoAznd
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEEJQjwWQChkWOYOIONI1/ltBGqqqcFAmfOrRsACgkQI1/ltBGq
+qqe1tg//TcEfVsZK/Chn4rCT2I+Cx0znJU3Z5Wkq2TSIQju88TlsxpThp0wJCYJB
+Fx6Wnxw29CQChkh+nv628Its/2mLzucO2Wpk+CF1vj7iZQuDFLJz7IWogBmD7dqz
+4PktXoYGlBM9hXJ7bFytQv+uTebAtZUKsIAfEY+rVVXqKjub5YwxhaQpP+P6QaNv
+VukUqEMofEyvYtZd9MMfouyT4yiUAaqBDA2fJVr3rfU0OsMKSic1V2Yad875v+ut
+pxZFvy4CQV1egSvPCLvbnBUbIHG3iKSWlsG1dxsO2IW2hPwL9yQos3L37o0rlJhR
+HJbgVQDHIG7exigPOPsV5gkkNxjOSmzozw/HOJahkELoOTkb8ug+WHf4d+6ns7Mz
+JbuRYTILGd3+QJIbPJanORU0WCiCn7xAy9IMWRFd2/r4I2pZIW9q5/2qS2ocZg06
+vB/L4v/L9mbh+J6fZ+SN2ejNAfWb4ZxapYfaWfWuvzRyIoRraQS/+wD1yrP4Z3hz
+wSWkRejD5/I3O/IfhYg4NeqHwQ7jOxK3okKElbcAPsiiSoio0eKb6kYtEDLv33dr
+PtAYUVp0hj7bqHt8wFJu66cZkvRwpAAkH3QeLBAC4BRO1SYhjtnVJr7b5dfBQkLZ
+g+gR5E108Imdq9+obN8H4X63XJN9JyA6mnN0zt/yd5Wwn29sa30=
+=HvDc
+-----END PGP SIGNATURE-----
+
+--Sig_/fFoK6zyuMmWcASjFqjoAznd--
 
