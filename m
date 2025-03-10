@@ -1,308 +1,145 @@
-Return-Path: <linux-kernel+bounces-553805-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-553806-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C3BF7A58F01
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 10:06:55 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F80BA58F07
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 10:07:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4341F18857E6
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 09:07:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CD54A16BB81
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 09:07:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 093AB224B1F;
-	Mon, 10 Mar 2025 09:06:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90EAC2248A4;
+	Mon, 10 Mar 2025 09:07:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Exx7efPT";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="e2ZE6Glk"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ROKa6JMy"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 058E22248B8;
-	Mon, 10 Mar 2025 09:06:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFEAC224220;
+	Mon, 10 Mar 2025 09:07:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741597574; cv=none; b=udtGItobfxEaHXVGxNGKVNZy+/JoTmmpFVWvS7KTcbAh27CZNtTgAf06uk6Vwnt2/abpYF9advZR/4hs3jYinrPlW75jJgI2y8fkn3n1FmrDPa1Eq5lcYXWc/NA5/kGbrzPCmyCQh/8zun8yVUymGuk+KOHndKnrjdI2FYpyWKc=
+	t=1741597652; cv=none; b=qWNOP4xGNbaPbgoy+Es71GWqBct8S9sJKms4iJvS1dDFfiDo61ikjEAmHGW/XXQ8rf2azoBNxfQxF6whTdRcwnFrGRGUziS2OBS7r3n4FTJ+oFfpOwuzR0Ih15Wux5ZAO+1rDBMaq+xDCQSug73jpn8XUg2snoXbRWAwKUQz3C4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741597574; c=relaxed/simple;
-	bh=iOWGkRjFFddBIAycRMahXNq96e0vLW0EL8aSFSEP84U=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=U3C9lhKnzcAvcXR1XD+jD66JNF2EATYG4S1mTUUY0Iq/kgxhchM8xcGFRcYW72AxLjtnCxbtoXqX0JGBJJ5DXkvlOv/2Rjy8wURf003xdfC5/xKG0vCQT/ATwYeI851kGmrKCbQ0Uj8zH116i9EWTO+Scmmf1RWTX5OretX5YCs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Exx7efPT; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=e2ZE6Glk; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Mon, 10 Mar 2025 09:06:09 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1741597570;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=W4wJ2sIIwhcOUGs9JobgLwt71IeiDW1faKbkzASGaqg=;
-	b=Exx7efPTPBA/1qGA7ZZmr1Of4UgysTdqflWKMKkRq/Jfgov+A7FFF3fdw1bGAClLBo2eb9
-	lRe41/nFv545AdKPkXS8qTK1zSKNX3Ke3oXpqKVTOsmRNNWlhxMl4PQk4g4SKF6hSFEdrq
-	c6PbdpwCJWvVScLky0rGd+1nUEQMyjnqTCdooGe8XmP6Ut2lJSiEsHhqi/1HIsBSvHx662
-	dH7kri4qb6n0YyAtSHFq6Osg/tdJv5Bxj6s0+d+v+fgrRmtG3ifQB8LqTa42X0vs42InEg
-	OgBJvuDLD3e7NaF/Uvr1oaBEzrjIKKm7a162aFzTGJAXu9W5BKBDBOvpi/bQRg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1741597570;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=W4wJ2sIIwhcOUGs9JobgLwt71IeiDW1faKbkzASGaqg=;
-	b=e2ZE6Glk/jeEsZKd1wbYo3CPHyrVA/5zcH9NErBQWXIU1eGu5KHgXrtDiSY4CvDstyCzMD
-	7zOaqmqpfxJcf9Aw==
-From: "tip-bot2 for Jiri Slaby (SUSE)" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: irq/core] irqdomain: Remove extern from function declarations
-Cc: "Jiri Slaby (SUSE)" <jirislaby@kernel.org>,
- Thomas Gleixner <tglx@linutronix.de>, x86@kernel.org,
- linux-kernel@vger.kernel.org, maz@kernel.org
-In-Reply-To: <20250115085409.1629787-2-jirislaby@kernel.org>
-References: <20250115085409.1629787-2-jirislaby@kernel.org>
+	s=arc-20240116; t=1741597652; c=relaxed/simple;
+	bh=qqZhkPRwUpaoAjzdi9JHwcv9INAknt/YcI8iZPeoNfo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=e3gNTUpjKFyfJ0Kzy0X1OJZfwBljONOpgApcBulRbtqS9bEbJGLsl808MvP6usEA8uPJUQIXRNBvtpoJgowJ22IL0W2qfus73Jp25A8TWDzIcNyf2FUpSk8ocT3vq4nf/w07PRPKwgnSZ9wZ8O/H3BSL0mh9AIVbpa24tUbhRDg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ROKa6JMy; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0A548C4CEE5;
+	Mon, 10 Mar 2025 09:07:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741597651;
+	bh=qqZhkPRwUpaoAjzdi9JHwcv9INAknt/YcI8iZPeoNfo=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=ROKa6JMyCGoEK1zQZ+eBDyj+9hajyMmPMUo7p+ulN5c9OciTut+lyLieibDtMKm+k
+	 +34mUJ1+bQNND/80CkFxp1gNAq/0l/C3PdHkixjHL10WU3ncQXusTkGHL8HevDyAnP
+	 FwOwrUWavuWxXpyc6bT9o3YCBYxq/uab27I3jsoljb8MbJ73Kku/9GunWxIwtvxMUS
+	 41LXhWzVdBgyEWT2ciP6fbLx1jpsiil+14U9o/NXpmUJBkgfKOFj0tt23ngXDaJxCW
+	 xuiyLHB0GUMYNjYaaMc6uW1AtXs0MDLdPvxHhnxSAW1R8M/KbYdtVslWNivVVqFAuj
+	 SkB+EFV0WQQtg==
+Message-ID: <b724d9c1-cd73-4e4e-aed1-101049204c90@kernel.org>
+Date: Mon, 10 Mar 2025 10:07:20 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <174159756975.14745.11627303933338941071.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 1/4] coresight: tmc: Introduce new APIs to get the RWP
+ offset of ETR buffer
+To: Jie Gan <quic_jiegan@quicinc.com>,
+ Suzuki K Poulose <suzuki.poulose@arm.com>, Mike Leach
+ <mike.leach@linaro.org>, James Clark <james.clark@linaro.org>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+ Alexandre Torgue <alexandre.torgue@foss.st.com>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>
+Cc: Tingwei Zhang <quic_tingweiz@quicinc.com>,
+ Jinlong Mao <quic_jinlmao@quicinc.com>, coresight@lists.linaro.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+ linux-stm32@st-md-mailman.stormreply.com
+References: <20250310090407.2069489-1-quic_jiegan@quicinc.com>
+ <20250310090407.2069489-2-quic_jiegan@quicinc.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20250310090407.2069489-2-quic_jiegan@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-The following commit has been merged into the irq/core branch of tip:
+On 10/03/2025 10:04, Jie Gan wrote:
+> +static long tmc_sg_get_rwp_offset(struct tmc_drvdata *drvdata)
+> +{
+> +	struct etr_buf *etr_buf = drvdata->sysfs_buf;
+> +	struct etr_sg_table *etr_table = etr_buf->private;
+> +	struct tmc_sg_table *table = etr_table->sg_table;
+> +	long w_offset;
+> +	u64 rwp;
+> +
+> +	rwp = tmc_read_rwp(drvdata);
+> +	w_offset = tmc_sg_get_data_page_offset(table, rwp);
+> +
+> +	return w_offset;
+> +}
+> +
+> +/*
+> + * Retrieve the offset to the write pointer of the ETR buffer based on whether
+> + * the memory mode is SG, flat or reserved.
+> + */
+> +long tmc_get_rwp_offset(struct tmc_drvdata *drvdata)
 
-Commit-ID:     aa4a1d5b198314e9ef02844d0f9426efd5127f74
-Gitweb:        https://git.kernel.org/tip/aa4a1d5b198314e9ef02844d0f9426efd5127f74
-Author:        Jiri Slaby (SUSE) <jirislaby@kernel.org>
-AuthorDate:    Wed, 15 Jan 2025 09:53:50 +01:00
-Committer:     Thomas Gleixner <tglx@linutronix.de>
-CommitterDate: Mon, 10 Mar 2025 10:01:20 +01:00
+You need kerneldoc for exports.
 
-irqdomain: Remove extern from function declarations
 
-'extern' is not needed for function declarations. So remove it from
-irqdomain.h. Note that the declarations are now unified as some had
-'extern' and some did not.
-
-Signed-off-by: Jiri Slaby (SUSE) <jirislaby@kernel.org>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Link: https://lore.kernel.org/all/20250115085409.1629787-2-jirislaby@kernel.org
-
----
- include/linux/irqdomain.h | 140 ++++++++++++++++++-------------------
- 1 file changed, 71 insertions(+), 69 deletions(-)
-
-diff --git a/include/linux/irqdomain.h b/include/linux/irqdomain.h
-index e432b6a..5c0ec33 100644
---- a/include/linux/irqdomain.h
-+++ b/include/linux/irqdomain.h
-@@ -350,13 +350,13 @@ struct irq_domain *irq_domain_create_legacy(struct fwnode_handle *fwnode,
- 					    irq_hw_number_t first_hwirq,
- 					    const struct irq_domain_ops *ops,
- 					    void *host_data);
--extern struct irq_domain *irq_find_matching_fwspec(struct irq_fwspec *fwspec,
--						   enum irq_domain_bus_token bus_token);
--extern void irq_set_default_host(struct irq_domain *host);
--extern struct irq_domain *irq_get_default_host(void);
--extern int irq_domain_alloc_descs(int virq, unsigned int nr_irqs,
--				  irq_hw_number_t hwirq, int node,
--				  const struct irq_affinity_desc *affinity);
-+struct irq_domain *irq_find_matching_fwspec(struct irq_fwspec *fwspec,
-+					    enum irq_domain_bus_token bus_token);
-+void irq_set_default_host(struct irq_domain *host);
-+struct irq_domain *irq_get_default_host(void);
-+int irq_domain_alloc_descs(int virq, unsigned int nr_irqs,
-+			   irq_hw_number_t hwirq, int node,
-+			   const struct irq_affinity_desc *affinity);
- 
- static inline struct fwnode_handle *of_node_to_fwnode(struct device_node *node)
- {
-@@ -370,8 +370,8 @@ static inline bool is_fwnode_irqchip(const struct fwnode_handle *fwnode)
- 	return fwnode && fwnode->ops == &irqchip_fwnode_ops;
- }
- 
--extern void irq_domain_update_bus_token(struct irq_domain *domain,
--					enum irq_domain_bus_token bus_token);
-+void irq_domain_update_bus_token(struct irq_domain *domain,
-+				 enum irq_domain_bus_token bus_token);
- 
- static inline
- struct irq_domain *irq_find_matching_fwnode(struct fwnode_handle *fwnode,
-@@ -454,7 +454,7 @@ static inline struct irq_domain *irq_domain_add_nomap(struct device_node *of_nod
- 	return IS_ERR(d) ? NULL : d;
- }
- 
--extern unsigned int irq_create_direct_mapping(struct irq_domain *host);
-+unsigned int irq_create_direct_mapping(struct irq_domain *host);
- #endif
- 
- static inline struct irq_domain *irq_domain_add_tree(struct device_node *of_node,
-@@ -507,19 +507,19 @@ static inline struct irq_domain *irq_domain_create_tree(struct fwnode_handle *fw
- 	return IS_ERR(d) ? NULL : d;
- }
- 
--extern void irq_domain_remove(struct irq_domain *host);
-+void irq_domain_remove(struct irq_domain *host);
- 
--extern int irq_domain_associate(struct irq_domain *domain, unsigned int irq,
--					irq_hw_number_t hwirq);
--extern void irq_domain_associate_many(struct irq_domain *domain,
--				      unsigned int irq_base,
--				      irq_hw_number_t hwirq_base, int count);
-+int irq_domain_associate(struct irq_domain *domain, unsigned int irq,
-+			 irq_hw_number_t hwirq);
-+void irq_domain_associate_many(struct irq_domain *domain,
-+			       unsigned int irq_base,
-+			       irq_hw_number_t hwirq_base, int count);
- 
--extern unsigned int irq_create_mapping_affinity(struct irq_domain *host,
--				      irq_hw_number_t hwirq,
--				      const struct irq_affinity_desc *affinity);
--extern unsigned int irq_create_fwspec_mapping(struct irq_fwspec *fwspec);
--extern void irq_dispose_mapping(unsigned int virq);
-+unsigned int irq_create_mapping_affinity(struct irq_domain *host,
-+					 irq_hw_number_t hwirq,
-+					 const struct irq_affinity_desc *affinity);
-+unsigned int irq_create_fwspec_mapping(struct irq_fwspec *fwspec);
-+void irq_dispose_mapping(unsigned int virq);
- 
- static inline unsigned int irq_create_mapping(struct irq_domain *host,
- 					      irq_hw_number_t hwirq)
-@@ -527,9 +527,9 @@ static inline unsigned int irq_create_mapping(struct irq_domain *host,
- 	return irq_create_mapping_affinity(host, hwirq, NULL);
- }
- 
--extern struct irq_desc *__irq_resolve_mapping(struct irq_domain *domain,
--					      irq_hw_number_t hwirq,
--					      unsigned int *irq);
-+struct irq_desc *__irq_resolve_mapping(struct irq_domain *domain,
-+				       irq_hw_number_t hwirq,
-+				       unsigned int *irq);
- 
- static inline struct irq_desc *irq_resolve_mapping(struct irq_domain *domain,
- 						   irq_hw_number_t hwirq)
-@@ -587,19 +587,21 @@ int irq_reserve_ipi(struct irq_domain *domain, const struct cpumask *dest);
- int irq_destroy_ipi(unsigned int irq, const struct cpumask *dest);
- 
- /* V2 interfaces to support hierarchy IRQ domains. */
--extern struct irq_data *irq_domain_get_irq_data(struct irq_domain *domain,
--						unsigned int virq);
--extern void irq_domain_set_info(struct irq_domain *domain, unsigned int virq,
--				irq_hw_number_t hwirq,
--				const struct irq_chip *chip,
--				void *chip_data, irq_flow_handler_t handler,
--				void *handler_data, const char *handler_name);
--extern void irq_domain_reset_irq_data(struct irq_data *irq_data);
-+struct irq_data *irq_domain_get_irq_data(struct irq_domain *domain,
-+					 unsigned int virq);
-+void irq_domain_set_info(struct irq_domain *domain, unsigned int virq,
-+			 irq_hw_number_t hwirq,
-+			 const struct irq_chip *chip,
-+			 void *chip_data, irq_flow_handler_t handler,
-+			 void *handler_data, const char *handler_name);
-+void irq_domain_reset_irq_data(struct irq_data *irq_data);
- #ifdef	CONFIG_IRQ_DOMAIN_HIERARCHY
--extern struct irq_domain *irq_domain_create_hierarchy(struct irq_domain *parent,
--			unsigned int flags, unsigned int size,
--			struct fwnode_handle *fwnode,
--			const struct irq_domain_ops *ops, void *host_data);
-+struct irq_domain *irq_domain_create_hierarchy(struct irq_domain *parent,
-+					       unsigned int flags,
-+					       unsigned int size,
-+					       struct fwnode_handle *fwnode,
-+					       const struct irq_domain_ops *ops,
-+					       void *host_data);
- 
- static inline struct irq_domain *irq_domain_add_hierarchy(struct irq_domain *parent,
- 					    unsigned int flags,
-@@ -613,13 +615,13 @@ static inline struct irq_domain *irq_domain_add_hierarchy(struct irq_domain *par
- 					   ops, host_data);
- }
- 
--extern int __irq_domain_alloc_irqs(struct irq_domain *domain, int irq_base,
--				   unsigned int nr_irqs, int node, void *arg,
--				   bool realloc,
--				   const struct irq_affinity_desc *affinity);
--extern void irq_domain_free_irqs(unsigned int virq, unsigned int nr_irqs);
--extern int irq_domain_activate_irq(struct irq_data *irq_data, bool early);
--extern void irq_domain_deactivate_irq(struct irq_data *irq_data);
-+int __irq_domain_alloc_irqs(struct irq_domain *domain, int irq_base,
-+			    unsigned int nr_irqs, int node, void *arg,
-+			    bool realloc,
-+			    const struct irq_affinity_desc *affinity);
-+void irq_domain_free_irqs(unsigned int virq, unsigned int nr_irqs);
-+int irq_domain_activate_irq(struct irq_data *irq_data, bool early);
-+void irq_domain_deactivate_irq(struct irq_data *irq_data);
- 
- static inline int irq_domain_alloc_irqs(struct irq_domain *domain,
- 			unsigned int nr_irqs, int node, void *arg)
-@@ -628,32 +630,32 @@ static inline int irq_domain_alloc_irqs(struct irq_domain *domain,
- 				       NULL);
- }
- 
--extern int irq_domain_alloc_irqs_hierarchy(struct irq_domain *domain,
--					   unsigned int irq_base,
--					   unsigned int nr_irqs, void *arg);
--extern int irq_domain_set_hwirq_and_chip(struct irq_domain *domain,
--					 unsigned int virq,
--					 irq_hw_number_t hwirq,
--					 const struct irq_chip *chip,
--					 void *chip_data);
--extern void irq_domain_free_irqs_common(struct irq_domain *domain,
--					unsigned int virq,
--					unsigned int nr_irqs);
--extern void irq_domain_free_irqs_top(struct irq_domain *domain,
--				     unsigned int virq, unsigned int nr_irqs);
--
--extern int irq_domain_push_irq(struct irq_domain *domain, int virq, void *arg);
--extern int irq_domain_pop_irq(struct irq_domain *domain, int virq);
--
--extern int irq_domain_alloc_irqs_parent(struct irq_domain *domain,
--					unsigned int irq_base,
--					unsigned int nr_irqs, void *arg);
--
--extern void irq_domain_free_irqs_parent(struct irq_domain *domain,
--					unsigned int irq_base,
--					unsigned int nr_irqs);
--
--extern int irq_domain_disconnect_hierarchy(struct irq_domain *domain,
-+int irq_domain_alloc_irqs_hierarchy(struct irq_domain *domain,
-+				    unsigned int irq_base,
-+				    unsigned int nr_irqs, void *arg);
-+int irq_domain_set_hwirq_and_chip(struct irq_domain *domain,
-+				  unsigned int virq,
-+				  irq_hw_number_t hwirq,
-+				  const struct irq_chip *chip,
-+				  void *chip_data);
-+void irq_domain_free_irqs_common(struct irq_domain *domain,
-+				 unsigned int virq,
-+				 unsigned int nr_irqs);
-+void irq_domain_free_irqs_top(struct irq_domain *domain,
-+			      unsigned int virq, unsigned int nr_irqs);
-+
-+int irq_domain_push_irq(struct irq_domain *domain, int virq, void *arg);
-+int irq_domain_pop_irq(struct irq_domain *domain, int virq);
-+
-+int irq_domain_alloc_irqs_parent(struct irq_domain *domain,
-+				 unsigned int irq_base,
-+				 unsigned int nr_irqs, void *arg);
-+
-+void irq_domain_free_irqs_parent(struct irq_domain *domain,
-+				 unsigned int irq_base,
-+				 unsigned int nr_irqs);
-+
-+int irq_domain_disconnect_hierarchy(struct irq_domain *domain,
- 					   unsigned int virq);
- 
- static inline bool irq_domain_is_hierarchy(struct irq_domain *domain)
+Best regards,
+Krzysztof
 
