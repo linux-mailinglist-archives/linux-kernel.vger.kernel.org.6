@@ -1,164 +1,137 @@
-Return-Path: <linux-kernel+bounces-554473-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-554474-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BE13FA59832
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 15:52:11 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CD606A59835
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 15:52:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 49FB816B3EC
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 14:52:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B5FAC188DFAE
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 14:52:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 028F722C352;
-	Mon, 10 Mar 2025 14:51:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A93E22D4DD;
+	Mon, 10 Mar 2025 14:52:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="H7409yuq"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="KFd9FhJa"
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F48A21E0BC;
-	Mon, 10 Mar 2025 14:51:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E036422B59D
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 14:52:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741618316; cv=none; b=ACg82+HU1Z4sXKYVDKujdr80gdtAm6aD+D031tWhp3oai/xVlqW9HNcdVzhn4pSBIQ+QYUlClXurv9zWjrovJ9UgeUaq3Qfowrey26R66a1x8N0eLCnv3JBSUnoW+ODbInBJb1ehc/xcaNIgJzUXDdaWcYwk8Hj6AQA6txCqe60=
+	t=1741618330; cv=none; b=rzupSNIqbB1R8EKrnxnuSxHMDVdJupz+JYjH8CiURpw9Yg73s+Q/lvIV771MXlyxsdabOkhsjpbWkwR1jFtMwdr1Myu8dCWt2dwk9UFuABINK4vk+MJ1xpE2KcT43Wonnayh190b9mCu/7H0DFioklKDVx2MoCiHQL0BICpMGHA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741618316; c=relaxed/simple;
-	bh=+cPLjXP4iMtW2gfETY5BkkAwJuMynf54n7/Iq22bkaE=;
+	s=arc-20240116; t=1741618330; c=relaxed/simple;
+	bh=La8fa582+cudZWU7EBZb+kiU11zXIyrob0PJV2PXjfg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Kk1ETzLamXVT8cagIof2/zoAfh7SLCVzYVPO2I1gwzYNBMhy9WeDm6X33OXOja8p0eNle2SuelOUgO9M0Q5TYVF3e9zXMk4AczbJh2q/C7E1t3iiZjsshriNWVYwNqBspSwunLv8RYFBOnQWcgjf/NPfJI/47legIz8XIUbvomM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=H7409yuq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DB345C4CEE5;
-	Mon, 10 Mar 2025 14:51:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741618316;
-	bh=+cPLjXP4iMtW2gfETY5BkkAwJuMynf54n7/Iq22bkaE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=H7409yuqWipbxdKZvkJga0dVijZa9ow0I0Os0thYD4d5XiCaB3xiMFxk3z2b5tw4f
-	 4k5B7J2Ge1YICIkoIkp6kF855MjiBFqFF4Fg0kW1nK5IKkc+QQF7O6sA5RJDG6yceD
-	 d0JygFpJlmjE+dUVtrGxznyBnZFeGaR0GjyMuWT1Wrv9PCOi2M/rEhwgtSdfSRdP6a
-	 F5d5UDpbiT8MQJbJIMyaYmzT4S3Q5CwCXyI3BXw2CWPnIkX+D+AzEexzxB+lZxhjSg
-	 kDrMDKMyoUvtoeb9VuX9nbZ1WeYHS68cafEMl+s2NdPz5kzxGAcmxptvt8jVgFGLdW
-	 GVwsgM0sQqM9Q==
-Date: Mon, 10 Mar 2025 15:51:53 +0100
-From: Maxime Ripard <mripard@kernel.org>
-To: Dmitry Baryshkov <lumag@kernel.org>
-Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, Rob Clark <robdclark@gmail.com>, 
-	Abhinav Kumar <quic_abhinavk@quicinc.com>, Sean Paul <sean@poorly.run>, 
-	Marijn Suijten <marijn.suijten@somainline.org>, Dave Stevenson <dave.stevenson@raspberrypi.com>, 
-	=?utf-8?B?TWHDrXJh?= Canal <mcanal@igalia.com>, Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>, 
-	Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
-	Robert Foss <rfoss@kernel.org>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
-	Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
-	freedreno@lists.freedesktop.org
-Subject: Re: [PATCH 3/4] drm/vc4: use new helper to get ACR values
-Message-ID: <20250310-invisible-married-firefly-945c84@houat>
-References: <20250309-drm-hdmi-acr-v1-0-bb9c242f4d4b@linaro.org>
- <20250309-drm-hdmi-acr-v1-3-bb9c242f4d4b@linaro.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=bZ6Rt04nlaGxwV2HoSNcm/0/zEOM7EJ2lrTvDcSqKDCU5BNvEAHYuQ/44Ym1BPdtkhOaFavt+S70cVucHkboz20n4MnsmcubAG3bNZZuYaqQVNmThQR5529tdr0VP1cHNa1cn1pyAYmorKVRyL9LD6nzm1X3flwIezfDWzLARs0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=KFd9FhJa; arc=none smtp.client-ip=209.85.128.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-4393dc02b78so25444445e9.3
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 07:52:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1741618327; x=1742223127; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=oJhmOti6S9aSxHFcfgWlRYy87Ur6fs4aWozpDuFk45g=;
+        b=KFd9FhJapk9LSPrTSWPYVYrj9OPaxtDOWFbamAr2nAK3v58lTN7B1G/K5ZL/s6+++r
+         Ej66R0z7uvendhA6TlVMinoHfN91/7IQfe36jmXtlxy62nz44IqciyX6wdOLXT0dIOkj
+         59kDKpM7uYwhvFNKmFd/4qv8kevkUtZq1xhGXaNMZYvmvyIUHd6mBTJYdkyBo//EDdEX
+         7dS41EdawFpgPDo7Av8GqU1gbK2iqC+O6YjxlXVpZDkUP1SBBZ94U+beNZx9e5ngdl3T
+         R4PA32rtAdERI02fVx4CEnQYQr+qhb5QgFIwheqvM/c1Sek1g0esxv+hXFD6Aal95DQS
+         9hmg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741618327; x=1742223127;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=oJhmOti6S9aSxHFcfgWlRYy87Ur6fs4aWozpDuFk45g=;
+        b=eTFv6gWUyp19AVFLoP4D4cZmCl6izOQOST5gQq5hUsYMMPCQVUyQRa4ssN7MTg0dT3
+         91yFdc6RWyP4bGDWnzAD48kh2Zmm9H/j/XIuOUpuoBFVJ49Fp6Y0ugBnxyuxasZybN9w
+         S3a1sy7wG66u3NzLck+14tubgz4I/QVGZr5V6q7sr0GRpzUcr/0zUrFcvMGlrH0Qoxvf
+         +SOTo7S+aRoKoaB8LRMs2aSRs1LhpwmCGmJDKdV4gF/TQSLhhWGUgGYUoEz8kDT0n8ba
+         6UDCh8Bnk24n1ybH1VufBJ7Acfc4oDkLHe1O0Tg90MR2Hc/DbrOd9ZOCBRaVbr9sDtZm
+         K9bw==
+X-Forwarded-Encrypted: i=1; AJvYcCXEEi11CxZQvAuuPpwZFs9xUjygRiUX2mmEB4vfUCp7Ji0syKOiGuMcBdgG5S7h17n2e66owRJbuVfqEJo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzePhM8A64y/KfLzIwcW9Kk9W+xFGTu/O3CU26snM70bx9HStH4
+	x0o0nQ0hOULnpbLtRvMLS6flFZsGZXvDKMCPGXrWckcm/RN3vakpldiL5NvqK/o=
+X-Gm-Gg: ASbGncsXWBXt/RBPZZUK/fItjlhsnM9Tqk2Ut7KlREGRxFT65YVxZ+yiVE+kRBaUXjn
+	ugQIeOiLdEmaI/UHR8DbWV893KTsHhSU/Qo7k9mW4NOKREu0Iw4cxEQnERVTQpaylXEDrj52DKa
+	+eHr/1zybrO+Ayb+VC74M62jiVzzT5mmTEwDSYwNzp3/UqRLgtOO0ELSrRGgmayLJWMVqPa2nWh
+	r9mnwYLRHe4eECaZ7cKrc/3brXWvXCGuubv5SE7IZWIsv8yBV7s8nrA5170I8saOpgO8funj1nf
+	f/T3IQDzm7M+i45UMxeSGKXsGjTLl1Q0NPwh2pSCPAzI5ymhLw==
+X-Google-Smtp-Source: AGHT+IEWXxlykPP+DK6XBhySTuz9TVLUo/1Ocj0YrcVL3sXXqxgbc5YK7TpnRor10s4o+P6MhNGnfg==
+X-Received: by 2002:a05:600c:1c2a:b0:43b:c95f:fd9 with SMTP id 5b1f17b1804b1-43c5a5e9074mr106986775e9.5.1741618327226;
+        Mon, 10 Mar 2025 07:52:07 -0700 (PDT)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-43cef25f075sm63882915e9.28.2025.03.10.07.52.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 10 Mar 2025 07:52:06 -0700 (PDT)
+Date: Mon, 10 Mar 2025 17:52:03 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Cc: Shyam Sundar S K <Shyam-sundar.S-k@amd.com>,
+	Hans de Goede <hdegoede@redhat.com>,
+	Patil Rajesh Reddy <Patil.Reddy@amd.com>,
+	Mario Limonciello <mario.limonciello@amd.com>,
+	platform-driver-x86@vger.kernel.org,
+	LKML <linux-kernel@vger.kernel.org>,
+	kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] platform/x86/amd/pmf: fix cleanup in
+ amd_pmf_init_smart_pc()
+Message-ID: <4a14c0a5-d6f8-4df9-b947-a0d3c3ef02b3@stanley.mountain>
+References: <43ad5358-f5b2-4cfc-85b4-e7ab8c7cf329@stanley.mountain>
+ <32c6c456-94f0-f077-040c-09f67d60953a@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="yetzpwkdskyj7s7k"
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20250309-drm-hdmi-acr-v1-3-bb9c242f4d4b@linaro.org>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <32c6c456-94f0-f077-040c-09f67d60953a@linux.intel.com>
 
+On Mon, Mar 10, 2025 at 02:43:51PM +0200, Ilpo Järvinen wrote:
+> On Mon, 10 Mar 2025, Dan Carpenter wrote:
+> 
+> > There are a couple problems in this code:
+> > 
+> > First, if amd_pmf_tee_init() fails then the function returns directly
+> > instead of cleaning up.  We cannot simply do a "goto error;" because
+> > that would lead to a double free.  I have re-written this code to
+> > use an unwind ladder to free the allocations.
+> 
+> Thanks Dan,
+> 
+> Could you please amend this with the information of what is getting 
+> double freed, it took considerable amount of time for me to figure out.
+> I assume it's ->fw_shm_pool ?
+> 
 
---yetzpwkdskyj7s7k
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH 3/4] drm/vc4: use new helper to get ACR values
-MIME-Version: 1.0
+Yes, that's it.  Sure, I can re-write that.
 
-On Sun, Mar 09, 2025 at 10:13:58AM +0200, Dmitry Baryshkov wrote:
-> From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
->=20
-> Use drm_hdmi_acr_get_n_cts() helper instead of calculating N and CTS
-> values in the VC4 driver.
->=20
-> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> ---
->  drivers/gpu/drm/vc4/vc4_hdmi.c | 10 +++-------
->  drivers/gpu/drm/vc4/vc4_hdmi.h |  7 +++++++
->  2 files changed, 10 insertions(+), 7 deletions(-)
->=20
-> diff --git a/drivers/gpu/drm/vc4/vc4_hdmi.c b/drivers/gpu/drm/vc4/vc4_hdm=
-i.c
-> index 37238a12baa58a06a5d6f40d1ab64abc7fac60d7..f24bcc2f3a2ac39aaea061b80=
-9940978341472f4 100644
-> --- a/drivers/gpu/drm/vc4/vc4_hdmi.c
-> +++ b/drivers/gpu/drm/vc4/vc4_hdmi.c
-> @@ -1637,6 +1637,7 @@ static void vc4_hdmi_encoder_atomic_mode_set(struct=
- drm_encoder *encoder,
->  		      &crtc_state->adjusted_mode);
->  	vc4_hdmi->output_bpc =3D conn_state->hdmi.output_bpc;
->  	vc4_hdmi->output_format =3D conn_state->hdmi.output_format;
-> +	vc4_hdmi->tmds_char_rate =3D conn_state->hdmi.tmds_char_rate;
->  	mutex_unlock(&vc4_hdmi->mutex);
->  }
-> =20
-> @@ -1829,17 +1830,12 @@ static void vc4_hdmi_audio_set_mai_clock(struct v=
-c4_hdmi *vc4_hdmi,
-> =20
->  static void vc4_hdmi_set_n_cts(struct vc4_hdmi *vc4_hdmi, unsigned int s=
-amplerate)
->  {
-> -	const struct drm_display_mode *mode =3D &vc4_hdmi->saved_adjusted_mode;
-> -	u32 n, cts;
-> -	u64 tmp;
-> +	unsigned int n, cts;
-> =20
->  	lockdep_assert_held(&vc4_hdmi->mutex);
->  	lockdep_assert_held(&vc4_hdmi->hw_lock);
-> =20
-> -	n =3D 128 * samplerate / 1000;
-> -	tmp =3D (u64)(mode->clock * 1000) * n;
-> -	do_div(tmp, 128 * samplerate);
-> -	cts =3D tmp;
-> +	drm_hdmi_acr_get_n_cts(vc4_hdmi->tmds_char_rate, samplerate, &n, &cts);
-> =20
->  	HDMI_WRITE(HDMI_CRP_CFG,
->  		   VC4_HDMI_CRP_CFG_EXTERNAL_CTS_EN |
-> diff --git a/drivers/gpu/drm/vc4/vc4_hdmi.h b/drivers/gpu/drm/vc4/vc4_hdm=
-i.h
-> index e3d989ca302b72533c374dfa3fd0d5bd7fe64a82..0a775dbfe99d45521f3d0a201=
-6555aefa81d7934 100644
-> --- a/drivers/gpu/drm/vc4/vc4_hdmi.h
-> +++ b/drivers/gpu/drm/vc4/vc4_hdmi.h
-> @@ -211,6 +211,13 @@ struct vc4_hdmi {
->  	 * KMS hooks. Protected by @mutex.
->  	 */
->  	enum hdmi_colorspace output_format;
-> +
-> +	/**
-> +	 * @tmds_char_rate: Copy of
-> +	 * @drm_connector_state.hdmi.tmds_char_rate for use outside of
-> +	 * KMS hooks. Protected by @mutex.
-> +	 */
-> +	unsigned long long tmds_char_rate;
->  };
+> > Second, if amd_pmf_start_policy_engine() fails on every iteration though
+> > the loop then the code calls amd_pmf_tee_deinit() twice which is also a
+> > double free.  Call amd_pmf_tee_deinit() inside the loop for each failed
+> > iteration.  Also on that path the error codes are not necessarily
+> > negative kernel error codes.  Set the error code to -EINVAL.
+> 
+> Maybe I should start to consistently reject any attempt to use 
+> cleanup/deinit helper functions instead of a proper rollback. It 
+> seems a pattern that is very prone to errors like this.
 
-This should be in drm_connector_hdmi if it's useful
+I do not like deinit functions.  They are so hard to review.  But I
+detected this bug because of a Smatch warning:
 
-Maxime
+drivers/platform/x86/amd/pmf/tee-if.c:540 amd_pmf_init_smart_pc() warn: missing unwind goto?
 
---yetzpwkdskyj7s7k
-Content-Type: application/pgp-signature; name="signature.asc"
+regards,
+dan carpenter
 
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCZ878iQAKCRDj7w1vZxhR
-xQseAQC+BQZnmiKndaggxmUm0sEkFhpfjicrrGoOt7H59orkFwD9EstW6eFlKDYW
-8d1txYOJxyXd+JV9+7mb36x2tXEVOQg=
-=xuB9
------END PGP SIGNATURE-----
-
---yetzpwkdskyj7s7k--
 
