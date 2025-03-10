@@ -1,250 +1,135 @@
-Return-Path: <linux-kernel+bounces-554439-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-554436-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 13820A597B6
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 15:36:22 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 92EE4A597AE
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 15:35:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2888116D565
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 14:36:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8477F3AB383
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 14:35:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1938022CBF5;
-	Mon, 10 Mar 2025 14:35:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 161CE22D4D3;
+	Mon, 10 Mar 2025 14:35:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IzSkuC0R"
-Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IeenkXay"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB90D22D799;
-	Mon, 10 Mar 2025 14:35:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61F7522A4D3;
+	Mon, 10 Mar 2025 14:35:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741617327; cv=none; b=sQXwFQ6l1+k1K1Pw802cWuW7HGQg8R3YE4g6EEGZbvEZid0zlfhExgKMNi2iEELChdnOPNusOlJonOiggty5Z2M9nznypb0zJrinB5G/KW4HO/5RYGkuQJEmmeOI5qxg8/v/MtpuUxGmwbZ9fv/FtwOZ0qJZzYErkhxwgPwlLNw=
+	t=1741617315; cv=none; b=g0G/Xq7oxdm4fOA4Q+T5/bbSr4hpI+8VWDHKzpgGfO1dpw/D59VJezJ4dskQ7vNc9MgtG6lZsGIJVq2nZ21yGjlmAsQk1x8KWvthRrZijMBvQYo2VX1sF62EZ6pzh1xE8x3SR9D4+RnEhsH3mJP0sYCUbGt8YjMZ/aGW2i9atQ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741617327; c=relaxed/simple;
-	bh=Rgk1KHQBs1SxsiATAGYhTal7QoOm4Z7AqmiLmcjUZ00=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=QlTQJkjE5ipP+VsZ9zXQUvauoF5ahbWw8HMCzOSgqsQXcfyHkqZRajurrDOIqbMftA6C+koshQexGhU99+L9iQ+0tUKW3Y9WZVH6X2lr64QCYg+D78C9WoYGgcSE/kfFO/2Vda3zGWrlQRBgaaWP6TQ04NaD1IqgJL3BXEnfPdk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IzSkuC0R; arc=none smtp.client-ip=209.85.214.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-22337bc9ac3so81816175ad.1;
-        Mon, 10 Mar 2025 07:35:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741617325; x=1742222125; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ZPurFq/fNhKB6tsK5KqiD0Uogf6Ze1eS/AV3KtY1Z/8=;
-        b=IzSkuC0Rx4VKC8WqeBZ7gKoRP+giHexitGt9iRW2B2tZ0AKBG/eDd12lBTkFVNjXfU
-         dIVnUHBJuLr0mw1U1WWqO3LWPkFI5fjyIrHG61CfwNCzgLYFwiFV/p2YRa4wNIRZ6WYY
-         A5qbmzb+3elABYEw46xOROZ+5lkQG9XI9vjW5wChG76GukJao24VCnRuCQhJqMCi8lDV
-         2aeO7KVS84OAXh63J36UuEwxMt+Bn+nMWr0ZxV6OGdgsDFY/CxAN+eehrMl9ctS/fNd9
-         LQZgByKAeP3qOmXoR/LoEyyHupWCZ4GhH4JnF61YSqtNQ8cS+ghTJZGcdVSsGKUJog9n
-         wu7g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741617325; x=1742222125;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ZPurFq/fNhKB6tsK5KqiD0Uogf6Ze1eS/AV3KtY1Z/8=;
-        b=P7fWmoqAkQrq2tXtrfXSiaqIEcOiGn9HEAKtNBKGzuMnQwg4KhHbRGsohX1yT6Fka6
-         FZ7kqiY2tkFJTg4vFP2jLaZxesggUIscFtbw4ZzS9bfhK6WPUmKpVERstANBG1Xh+x4R
-         gCLoLLTTDoG7jHQqlKkzvgRoG5wVNrTc8MgL+AnGIIwoQTasN4hI5b67mwLqy7HZ0jzN
-         rNwNv3FPO8296Hk6kxNXpZVl6wBFoYnZUkUirRUfE+Z+AW+SIlBnh22/SFhnApmBtrUC
-         h2ViUNuk2a8ooT+e3TLcmVytJmSn9D8d20Orhu/rbFout1DWEhTBLOLzgn3AMeeiKvmu
-         tAcQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU9HmdS6bGzXnCQR6nq09SuBx3AlaindFFUfFVXLpZkYQy0OIBbd/tNgWcZPCL7nnzFeZ6h8DVHVzBnGpI=@vger.kernel.org, AJvYcCV/zz58CJCAe11eeTwYUsy0y50bBy/BhBqioCw3togSEn6uZDcRMJUSDa/bM4pk3Rc9dWUC7SWYoESBw9Yr6FWwo+M=@vger.kernel.org, AJvYcCWhZEC7kOAXX54pE94sLuqfRPX4W7PihLhI0L2bsgw3veR3Q/wEfTLTUO6eiJ7cqM5JUe9nAVJ0zmg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwtCr6QiLBWCc1RxF7c2wrKDe7NXepiqvS7BUPra6YDaPskiSSO
-	SgVDydUoR4OAODjL+OjpKHf9B6GYo6bPoKn7tM9nmdZ9zpNcdG2t
-X-Gm-Gg: ASbGnctVALVBe66l6ajkC9ypqLtvJRsJ+kPnoFD56opYYi/kxaXhRldT9y8FTEhUblg
-	10qaFNVPdus5nYFrTce5em2ODrPxE2DhdK2pyWrQvtnEKcz/3Nu83fKNflcBidAQtaeyhJs71lk
-	ZOnMX4gOitHtmFU/cAr92VETWeOmoogZgZisyYzWywZDCjNLyNfIEIBGgXmDGVMG9G1Pb69x2cd
-	HVyVaukXFdVobsco1KUZPWueyo8VB2S6HhaMX7sI/BDlrcH48dLYpRaKipc+J/gFnGgEBvn62hE
-	2zbF1i4DcMhNRgXi5GHmXtNkUVWtTEcaM8Hgjt31++uBPbnXu0DZMYqIxjky4If1aslHAg==
-X-Google-Smtp-Source: AGHT+IFlxn30vbYNMpCGqOkZQC/33f6L8EuwlU4MuG+cJmyHdrmp3tS4C+2fi8L46Nfo+WlDit4hVA==
-X-Received: by 2002:a05:6a21:618f:b0:1f5:6b36:f574 with SMTP id adf61e73a8af0-1f58cbdd3e9mr5565637.38.1741617324889;
-        Mon, 10 Mar 2025 07:35:24 -0700 (PDT)
-Received: from localhost.localdomain ([103.221.69.50])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-af281096763sm7785900a12.30.2025.03.10.07.35.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 10 Mar 2025 07:35:24 -0700 (PDT)
-From: Anand Moon <linux.amoon@gmail.com>
-To: Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Zhang Rui <rui.zhang@intel.com>,
-	Lukasz Luba <lukasz.luba@arm.com>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	linux-pm@vger.kernel.org (open list:SAMSUNG THERMAL DRIVER),
-	linux-samsung-soc@vger.kernel.org (open list:SAMSUNG THERMAL DRIVER),
-	linux-arm-kernel@lists.infradead.org (moderated list:ARM/SAMSUNG S3C, S5P AND EXYNOS ARM ARCHITECTURES),
-	linux-kernel@vger.kernel.org (open list)
-Cc: Anand Moon <linux.amoon@gmail.com>
-Subject: [PATCH v4 4/4] drivers/thermal/exymos: Use guard notation when acquiring mutex
-Date: Mon, 10 Mar 2025 20:04:45 +0530
-Message-ID: <20250310143450.8276-5-linux.amoon@gmail.com>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20250310143450.8276-1-linux.amoon@gmail.com>
-References: <20250310143450.8276-1-linux.amoon@gmail.com>
+	s=arc-20240116; t=1741617315; c=relaxed/simple;
+	bh=b08aAQ44suZ87Xe2zqcpVzFlmw5lKdQuzSMVWAV8bIc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=LrSR8vZbbgHX9YIiIOUooPjy4ATHxyefQkmais4DK2YRFOCGyYKzglgm7D919iJr1tW2c8Tz4A8k0TsQk21rVI6c36AdZ+Apa+lpr4hpCdsWmtuFTxzBhxqrwa9qc0y7yK5cUpvOZCMs8bN2l+wS8vcyTvBzBpVR59bNomfZh3Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IeenkXay; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 356E3C4CEE5;
+	Mon, 10 Mar 2025 14:35:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741617314;
+	bh=b08aAQ44suZ87Xe2zqcpVzFlmw5lKdQuzSMVWAV8bIc=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=IeenkXaywcwgJ3PcYpQXiQN7NJUml07AKlh4VZWZbRNtMOXFaZzS7fG3/wUioP5fB
+	 VLEsndpZKBpP89LiSiwe53h+wkoreXmMHxSHx6FjCN+bMWuGtdzvzKFj7ZiI2znZq0
+	 VVoQjYvW9VaxgOOwRfpRrgnoQSA5BMftcMq7yCTEiRnzqH5/R3qUQy4ugQ+pl9Yp10
+	 kTjqnjWnjmS4H2oMJ0OCrAENsZ9NWBjmCtA1QpMIvnYjBsFOlFK11OB7p5E5buSEAo
+	 aTCHoiA56fmeKti7u31wf6FhUzjFyKiulUVW5Y24nNa1frcosvkXJGMwEi/zqURgie
+	 2+DxYkFeZlXLQ==
+Message-ID: <cfd2c51a-cf2a-45f1-a926-65388d2c3ed6@kernel.org>
+Date: Mon, 10 Mar 2025 15:35:08 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/3] arm64: dts: qcom: x1e78100-t14s: Add LCD variant
+ with backlight support
+To: Abel Vesa <abel.vesa@linaro.org>, Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
+Cc: Johan Hovold <johan@kernel.org>,
+ Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+ linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Sebastian Reichel <sre@kernel.org>
+References: <20250310141504.3008517-1-abel.vesa@linaro.org>
+ <20250310141504.3008517-3-abel.vesa@linaro.org>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20250310141504.3008517-3-abel.vesa@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Using guard notation makes the code more compact and error handling
-more robust by ensuring that mutexes are released in all code paths
-when control leaves critical section.
+On 10/03/2025 15:15, Abel Vesa wrote:
+> Due to the fact that Lenovo Thinkpad T14s Gen6 is available with both
+> OLED and LCD, the backlight control differs HW-wise. For the LCD variant,
+> the panel's backlight is controlled via one of the PWMs provided by the
+> PMK8550 PMIC. For the OLED variant, the backlight is internal to the
+> panel and therefore it is not described in devicetree.
+> 
+> For this reason, create a generic dtsi for the T14s by renaming the
+> existing dts. While at it, add a node name to panel and drop the enable
+> gpio and pinctrl properties from the panel node. Then add the LCD variant
+> dts file with the old name and describe all backlight related nodes.
+> 
+> So the existing dts will now be used for LCD variant while for OLED new
+> dts will be added.
+> 
+> Tested-by: Sebastian Reichel <sre@kernel.org>
+> Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
 
-Signed-off-by: Anand Moon <linux.amoon@gmail.com>
----
-v4: used DEFINE_GUARD macro to guard exynos_tmu_data structure.
-    However, incorporating guard(exynos_tmu_data)(data); results
-    in a recursive deadlock with the mutex during initialization, as this
-    data structure is common to all the code configurations of Exynos TMU
-v3: New patch
----
- drivers/thermal/samsung/exynos_tmu.c | 25 +++++++++++--------------
- 1 file changed, 11 insertions(+), 14 deletions(-)
 
-diff --git a/drivers/thermal/samsung/exynos_tmu.c b/drivers/thermal/samsung/exynos_tmu.c
-index a71cde0a4b17e..85f88c5e0f11c 100644
---- a/drivers/thermal/samsung/exynos_tmu.c
-+++ b/drivers/thermal/samsung/exynos_tmu.c
-@@ -12,6 +12,7 @@
-  */
- 
- #include <linux/clk.h>
-+#include <linux/cleanup.h>
- #include <linux/io.h>
- #include <linux/interrupt.h>
- #include <linux/module.h>
-@@ -199,6 +200,9 @@ struct exynos_tmu_data {
- 	void (*tmu_clear_irqs)(struct exynos_tmu_data *data);
- };
- 
-+DEFINE_GUARD(exynos_tmu_data, struct exynos_tmu_data *,
-+	     mutex_lock(&_T->lock), mutex_unlock(&_T->lock))
-+
- /*
-  * TMU treats temperature as a mapped temperature code.
-  * The temperature is converted differently depending on the calibration type.
-@@ -256,7 +260,7 @@ static int exynos_tmu_initialize(struct platform_device *pdev)
- 	unsigned int status;
- 	int ret = 0;
- 
--	mutex_lock(&data->lock);
-+	guard(mutex)(&data->lock);
- 	clk_enable(data->clk);
- 	clk_enable(data->clk_sec);
- 
-@@ -270,7 +274,6 @@ static int exynos_tmu_initialize(struct platform_device *pdev)
- 
- 	clk_disable(data->clk_sec);
- 	clk_disable(data->clk);
--	mutex_unlock(&data->lock);
- 
- 	return ret;
- }
-@@ -292,13 +295,12 @@ static int exynos_thermal_zone_configure(struct platform_device *pdev)
- 		return ret;
- 	}
- 
--	mutex_lock(&data->lock);
-+	guard(mutex)(&data->lock);
- 	clk_enable(data->clk);
- 
- 	data->tmu_set_crit_temp(data, temp / MCELSIUS);
- 
- 	clk_disable(data->clk);
--	mutex_unlock(&data->lock);
- 
- 	return 0;
- }
-@@ -325,12 +327,11 @@ static void exynos_tmu_control(struct platform_device *pdev, bool on)
- {
- 	struct exynos_tmu_data *data = platform_get_drvdata(pdev);
- 
--	mutex_lock(&data->lock);
-+	guard(mutex)(&data->lock);
- 	clk_enable(data->clk);
- 	data->tmu_control(pdev, on);
- 	data->enabled = on;
- 	clk_disable(data->clk);
--	mutex_unlock(&data->lock);
- }
- 
- static void exynos_tmu_update_bit(struct exynos_tmu_data *data, int reg_off,
-@@ -645,7 +646,7 @@ static int exynos_get_temp(struct thermal_zone_device *tz, int *temp)
- 		 */
- 		return -EAGAIN;
- 
--	mutex_lock(&data->lock);
-+	guard(mutex)(&data->lock);
- 	clk_enable(data->clk);
- 
- 	value = data->tmu_read(data);
-@@ -655,7 +656,6 @@ static int exynos_get_temp(struct thermal_zone_device *tz, int *temp)
- 		*temp = code_to_temp(data, value) * MCELSIUS;
- 
- 	clk_disable(data->clk);
--	mutex_unlock(&data->lock);
- 
- 	return ret;
- }
-@@ -720,11 +720,10 @@ static int exynos_tmu_set_emulation(struct thermal_zone_device *tz, int temp)
- 	if (temp && temp < MCELSIUS)
- 		goto out;
- 
--	mutex_lock(&data->lock);
-+	guard(mutex)(&data->lock);
- 	clk_enable(data->clk);
- 	data->tmu_set_emulation(data, temp);
- 	clk_disable(data->clk);
--	mutex_unlock(&data->lock);
- 	return 0;
- out:
- 	return ret;
-@@ -760,14 +759,13 @@ static irqreturn_t exynos_tmu_threaded_irq(int irq, void *id)
- 
- 	thermal_zone_device_update(data->tzd, THERMAL_EVENT_UNSPECIFIED);
- 
--	mutex_lock(&data->lock);
-+	guard(mutex)(&data->lock);
- 	clk_enable(data->clk);
- 
- 	/* TODO: take action based on particular interrupt */
- 	data->tmu_clear_irqs(data);
- 
- 	clk_disable(data->clk);
--	mutex_unlock(&data->lock);
- 
- 	return IRQ_HANDLED;
- }
-@@ -987,7 +985,7 @@ static int exynos_set_trips(struct thermal_zone_device *tz, int low, int high)
- {
- 	struct exynos_tmu_data *data = thermal_zone_device_priv(tz);
- 
--	mutex_lock(&data->lock);
-+	guard(mutex)(&data->lock);
- 	clk_enable(data->clk);
- 
- 	if (low > INT_MIN)
-@@ -1000,7 +998,6 @@ static int exynos_set_trips(struct thermal_zone_device *tz, int low, int high)
- 		data->tmu_disable_high(data);
- 
- 	clk_disable(data->clk);
--	mutex_unlock(&data->lock);
- 
- 	return 0;
- }
--- 
-2.48.1
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
+Best regards,
+Krzysztof
 
