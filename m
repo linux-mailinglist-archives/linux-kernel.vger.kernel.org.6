@@ -1,73 +1,61 @@
-Return-Path: <linux-kernel+bounces-553728-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-553729-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4CA04A58E2B
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 09:29:44 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 657D5A58E2D
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 09:30:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 32A60188E809
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 08:29:51 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 045887A4274
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 08:29:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BA3D2236EE;
-	Mon, 10 Mar 2025 08:29:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68846222589;
+	Mon, 10 Mar 2025 08:30:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=8bytes.org header.i=@8bytes.org header.b="pLvQJdim"
+	dkim=pass (2048-bit key) header.d=8bytes.org header.i=@8bytes.org header.b="lQvNuWi2"
 Received: from mail.8bytes.org (mail.8bytes.org [85.214.250.239])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 562FF22330F;
-	Mon, 10 Mar 2025 08:29:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5564117C77
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 08:30:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.214.250.239
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741595357; cv=none; b=sZTcqN5QlKXqU4y8qIpw3ON9Zy9vMXF51GmnC7zNOo+UWysjYX35C+uyo1gOgkg04X2ANFknapRlI9xGQ/6PaMr/AvTuo/sTNBnmmMarz0dLyqFMvVgydstv/VUv0SZcj2PTN+TDKme0tPbAl5c/YBDV70bXPGBrP3CBLsHaE/M=
+	t=1741595416; cv=none; b=RQXYj/ybexzQGr/7GNX62h8CbRHyHXgqntvGgwNXK+fkewVBVmwkWmSdUQ3T9j94X4NLu1fAYQNyRMalLoMwar05G03jMXZ3yxvox26qdT3R5HAaGrxBgW+Z3A27HgDAsoT7TPS8WU/9NE1RkCnCSF8F13pLPeqENfec0S/Isvc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741595357; c=relaxed/simple;
-	bh=frX4G4i69BdoHfaR05B7WfBtiGFjU59BqKAKCBlX6vc=;
+	s=arc-20240116; t=1741595416; c=relaxed/simple;
+	bh=Ub4+sfEkaTuvoiFXp6g227hjeLcn8Ebx9FY2V0fxJtw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QZ0oklARkZ+OlLgPGFXjzBHs44wcQzH/4ONOsKD3xsj/x1JkPff8hdTHWQmSCNs3gG7gahKIk/HwAv4SWwQzG12T/F7JOvJOOyRbMmoTToJrE2IO+omg0t0dS5h9ToHjhs4KBv3Zj/zIi9cw+RH6A6SbCs0gHriWAID/KRyxZco=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=8bytes.org; spf=pass smtp.mailfrom=8bytes.org; dkim=pass (2048-bit key) header.d=8bytes.org header.i=@8bytes.org header.b=pLvQJdim; arc=none smtp.client-ip=85.214.250.239
+	 Content-Type:Content-Disposition:In-Reply-To; b=iYGdlKrS9r1yTmlNx79uNDSYtXHxjp2f+MtEyc7zU5AqwI5iMOH8asMgMNIxFzB99d7DYy5ZSKalMU9845JP2/2S1w6XvXSwZcNyuC3zrfJQqdVCAR5/yys2CLAaQzDZ6HMyLmHrgyBaGdw0p22KoqJSZRcjzgR3DYRklHL7W4g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=8bytes.org; spf=pass smtp.mailfrom=8bytes.org; dkim=pass (2048-bit key) header.d=8bytes.org header.i=@8bytes.org header.b=lQvNuWi2; arc=none smtp.client-ip=85.214.250.239
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=8bytes.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=8bytes.org
 Received: from 8bytes.org (p4ffe03ae.dip0.t-ipconnect.de [79.254.3.174])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mail.8bytes.org (Postfix) with ESMTPSA id 1364A45229;
-	Mon, 10 Mar 2025 09:29:14 +0100 (CET)
+	by mail.8bytes.org (Postfix) with ESMTPSA id 500134501F;
+	Mon, 10 Mar 2025 09:30:13 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=8bytes.org;
-	s=default; t=1741595354;
-	bh=frX4G4i69BdoHfaR05B7WfBtiGFjU59BqKAKCBlX6vc=;
+	s=default; t=1741595413;
+	bh=Ub4+sfEkaTuvoiFXp6g227hjeLcn8Ebx9FY2V0fxJtw=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=pLvQJdim6IyNh9OflrLb5oh+e8PpvuLCM7gou4Gbs0/mv/l0Y/CTYc5KJYczw60zh
-	 tyB81d0pFn7H4QWWzddDp47l9aIy2fBqzokWlz0g3XJfyBzaHLj7Cw/XF+dOnvcUgx
-	 ltV0QEF5YEldt6xlVgABrLyQ8mNC66Vlbe9G+8u9THehDW1Rde0MdBuqOWbjX1VyNw
-	 rqWATAisQ6IvQiG29+Xa3szaWqDZjlEB62Nqd/BeNV2EBXhGcEyXVkAdSJvBAaYkOy
-	 u8HEDFkVKAkbbvlEbGh0YDF5gu1Oor0qHpQjrXpS2vPEDIswU1Ee60j+y7dGCO00PP
-	 lG20mHqj4VUaA==
-Date: Mon, 10 Mar 2025 09:29:12 +0100
+	b=lQvNuWi29bFC2oHJB1sakgj/Xa1ojVvvIbN8BMQLpWEe6loDPNAM3dGciN840ldP2
+	 H77ItSolIsdRKb9zeboBBneqiALH6v1sKK0Lu+id5BBzTnSrFOcDy4ah7sLu85sOKK
+	 z/S9N5ZvXL2cIeSGCg1KwpsV4kyTb9+bOVgX5mWxQKNOJ36zvgXHG8qYkKZmhrh2M5
+	 qAznYyosQp7K7N5GGrVIbmgixd0rue0gaFOzvGEzD3SH/EgtHNKD2hC27YojPoPA9i
+	 hCkKqjjR8q7AOrgkpp8Tsdmf9Jqy6+XELbyZf/Q91OEtyVTfo+dHsViB1Elc1d6QcR
+	 aRZdY0NHghOGQ==
+Date: Mon, 10 Mar 2025 09:30:12 +0100
 From: Joerg Roedel <joro@8bytes.org>
-To: Robin Murphy <robin.murphy@arm.com>
-Cc: Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Hanjun Guo <guohanjun@huawei.com>,
-	Sudeep Holla <sudeep.holla@arm.com>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Len Brown <lenb@kernel.org>, Russell King <linux@armlinux.org.uk>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Danilo Krummrich <dakr@kernel.org>,
-	Stuart Yoder <stuyoder@gmail.com>,
-	Laurentiu Tudor <laurentiu.tudor@nxp.com>,
-	Nipun Gupta <nipun.gupta@amd.com>,
-	Nikhil Agarwal <nikhil.agarwal@amd.com>,
-	Will Deacon <will@kernel.org>, Rob Herring <robh@kernel.org>,
-	Saravana Kannan <saravanak@google.com>,
-	Bjorn Helgaas <bhelgaas@google.com>, linux-acpi@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	iommu@lists.linux.dev, devicetree@vger.kernel.org,
-	linux-pci@vger.kernel.org,
-	Charan Teja Kalla <quic_charante@quicinc.com>
-Subject: Re: [PATCH v2 0/4] iommu: Fix the longstanding probe issues
-Message-ID: <Z86i2BHhmAINErv_@8bytes.org>
-References: <cover.1740753261.git.robin.murphy@arm.com>
+To: fnkl.kernel@gmail.com
+Cc: Sven Peter <sven@svenpeter.dev>, Janne Grunau <j@jannau.net>,
+	Alyssa Rosenzweig <alyssa@rosenzweig.io>,
+	Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
+	asahi@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+	iommu@lists.linux.dev, linux-kernel@vger.kernel.org,
+	Hector Martin <marcan@marcan.st>
+Subject: Re: [PATCH v3 0/2] iommu: apple-dart: Support the ISP DART
+Message-ID: <Z86jFK0IS5aja6mC@8bytes.org>
+References: <20250307-isp-dart-v3-0-684fe4489591@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -76,39 +64,15 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <cover.1740753261.git.robin.murphy@arm.com>
+In-Reply-To: <20250307-isp-dart-v3-0-684fe4489591@gmail.com>
 
-On Fri, Feb 28, 2025 at 03:46:29PM +0000, Robin Murphy wrote:
-> This spin irons out a couple of issues which v1 had. Firstly there
-> should now be no change in behaviour for the weird of_dma_configure()
-> calls, other than possibly getting the warning if they deserve it.
-> Secondly I think there was still a possibility for probe to run via
-> the replay path while its "real" probe was waiting to reacquire the
-> lock; this is now solved by making dev->iommu a reliable indicator of
-> the probe lifecycle, with a couple more prep patches.
+On Fri, Mar 07, 2025 at 09:07:44PM +0100, Sasha Finkelstein via B4 Relay wrote:
+> Hector Martin (2):
+>       iommu: apple-dart: Increase MAX_DARTS_PER_DEVICE to 3
+>       iommu: apple-dart: Allow mismatched bypass support
 > 
-> Thanks,
-> Robin.
-> 
-> 
-> Robin Murphy (4):
->   iommu: Handle race with default domain setup
->   iommu: Resolve ops in iommu_init_device()
->   iommu: Keep dev->iommu state consistent
->   iommu: Get DT/ACPI parsing into the proper probe path
-> 
->  drivers/acpi/arm64/dma.c        |  5 +++
->  drivers/acpi/scan.c             |  7 -----
->  drivers/amba/bus.c              |  3 +-
->  drivers/base/platform.c         |  3 +-
->  drivers/bus/fsl-mc/fsl-mc-bus.c |  3 +-
->  drivers/cdx/cdx.c               |  3 +-
->  drivers/iommu/iommu-priv.h      |  2 ++
->  drivers/iommu/iommu.c           | 55 ++++++++++++++++++++++++---------
->  drivers/iommu/of_iommu.c        | 13 ++++++--
->  drivers/of/device.c             |  7 ++++-
->  drivers/pci/pci-driver.c        |  3 +-
->  11 files changed, 74 insertions(+), 30 deletions(-)
+>  drivers/iommu/apple-dart.c | 19 +++++++++++++------
+>  1 file changed, 13 insertions(+), 6 deletions(-)
 
-Applied, thanks Robin.
+Applied, thanks.
 
