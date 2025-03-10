@@ -1,119 +1,93 @@
-Return-Path: <linux-kernel+bounces-554243-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-554241-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EB786A5951F
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 13:51:31 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E1823A59518
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 13:50:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 28BA13B202B
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 12:51:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5A93A16C4C2
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 12:50:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F04C228CB0;
-	Mon, 10 Mar 2025 12:51:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CABD7229B00;
+	Mon, 10 Mar 2025 12:50:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MhLDU9d6"
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nX2LXMqE"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53793227B9E;
-	Mon, 10 Mar 2025 12:50:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22F6C226D1B;
+	Mon, 10 Mar 2025 12:50:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741611060; cv=none; b=XkUU+Lg6IbCXbt0tyoOQowcjgQ4IlaOwP9236oOs0aqmPKlJXjR5/ZWwFvY1FNgFa5X5maPlGF3wWhlm1ImG4IMEvh9V9aRldFimM83s5ACZb3MMeSbHaLzSMez/X1ihHbhypYwLRwndj2LgfW7T7cDLoFyt3G8dxP0f/RengyE=
+	t=1741611027; cv=none; b=VP1mlKH7JTGLm42v6i+s0USt1EY9rY2jnKj++WeHA1j5i1hf8RZ8kykTbHB1Bl1Wvkq9dcQZDP9blJaWAkagyoyLjIjvbBKEgQthuPz5Ta6ue8+WfGTWfymUhS+gFYeqtk7QUAjQsWxxKFDshFsLi8my2dlS/3rqCi+Zz0UFb2I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741611060; c=relaxed/simple;
-	bh=m7RpVIHY+r0sfU2i8cmIAET2MityHo7vaehhJ6cZD5Q=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=bKLHYyTCKZ+fwEZh1WdzesGLNEcU8ArWThpSA9x5NW52Hw5lWsI/A/iM0C3hRx4GY4sl34oia1z6ZgjwH6vY6cHl+IwJjpXMNRGax6nHwVpxK2Qbe/R4hpdAFV7KEVDI0U88I8UpJ7d4NIKI4g7PihsEH0avFdhcQkGbG8GVuWM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MhLDU9d6; arc=none smtp.client-ip=209.85.218.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-ac2902f7c2aso209033466b.1;
-        Mon, 10 Mar 2025 05:50:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741611056; x=1742215856; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=m7RpVIHY+r0sfU2i8cmIAET2MityHo7vaehhJ6cZD5Q=;
-        b=MhLDU9d6JMxTIliQCHLpM10w6CGvtoeDzsGFSZHJzwOcySGufaePLvVFVVeYr3zEap
-         nTKVhklOSxVFf3lHBoPHGs/cM2INkWarqU7LYaRe89DaN9g1TzHbeN0c6rjHngSHPm2X
-         qiMDxNPWhFaqnWQfqiwYBYYPHmFv5OTu7WdEZoQmJ6HRgaDY4KvT8rv0VME+vvArJkWR
-         dfwmUjd16QgXQUq93RSJsA9L1ZQy5tvPuZIdCI0opn/M0KQRgzIC0EEclIo8r+SmpMOI
-         2ln4aYYGj2an42EquunFpJuzGzB/aycwpYvXr0q4PT9ThE9Fhr0/rowCBUbfZRczvGFK
-         I6aw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741611056; x=1742215856;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=m7RpVIHY+r0sfU2i8cmIAET2MityHo7vaehhJ6cZD5Q=;
-        b=NI9J7f4hTwX74G7RUj/XpRmBCN+phaapa4N6AjFHoIkHYETyVaZXQK8lOSoU1cJi7u
-         Hw09cX5N6VMQWQ+pKkYMt99VinLOatcnYMIp6DTevYpRxzAzoiDuE4Sj4tVZvniCA56V
-         /xHtfi7LnZeiRDuDN6Uf86Bbx5jpcZhMk3DU6XmQqTM3EYbetR7eEgQ1xpUAOBbB7G+Z
-         MIpi4LR2rL6Om3anIjMr5yd6PJg+fltcq0URXK0Pmh6mAzad0NKOKr9xpkbxLCXy4ORk
-         jmb7j/xxc6ARe4vhgDSs045EvXoLVCs5xoI2iIlpiHVQ+ZMej7kDGCqTeFbZQXUlzlUh
-         4MdQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVngT/eGuXSkVBFvfIaxcE3PjwMqHOWPGWdfrnrgZhSmz0l4CYifEMTXqHVaQO5vffwQmiXmz+qY0iipQ==@vger.kernel.org, AJvYcCX30wDtwmzgb1asSgy0Ap/6GJn5qZeUrvxjcQrrSACJtxLGFOG6hSAWR0fNj2cCa78l4/9MzS5KUdbT@vger.kernel.org, AJvYcCXT9b0adJGTOVUeB5h5kUY9q5n3a2bXrqMHxgdRt6/Ad8zLe22SMep755/Ukmx9TfYNaPHMHbh0Cs6CAxTb@vger.kernel.org
-X-Gm-Message-State: AOJu0YzbFZr3gurbwQqmBGJ8GdztkbgvcRa2mdwJqhRB9yWzGVGhBS8z
-	YJiBx8GXtl8tenzaQplCU5FiFHQY/8xxDiFCNofVJN7u/PbQkm/R9CYOrWH8UN9bU2C589oq5DH
-	3n+uMiwd8nCKTfJZdeBL6hfX8QAU=
-X-Gm-Gg: ASbGncsjof+fWUVpqBxkB2q+BsG2tXYo3A5tRDR0dOYjHzopWC3gc3mYHSGJ00Q5Ayy
-	89gFD09rSuHMCjL2yKhD643thCmP3ldXq977z/ievpDxc5eEY4ejncYTCDKeK+rW+8tQrBKwfnc
-	tkA/J0WDvaMFkPxjNHM4GVqnVlNVWf10JKqwCGbJpDzls2
-X-Google-Smtp-Source: AGHT+IEEhoCLJZRXY4Rijvv9tI0tLl/IUwNp5Orm1PRrbMcRZugzWXJ7hXwK/krnr0EUihHMQKx/Fjue7P0l/J3Yjb0=
-X-Received: by 2002:a17:906:99c2:b0:abf:4708:863e with SMTP id
- a640c23a62f3a-ac252fb9b4emr1577886666b.39.1741611056422; Mon, 10 Mar 2025
- 05:50:56 -0700 (PDT)
+	s=arc-20240116; t=1741611027; c=relaxed/simple;
+	bh=cwRxbSYGPKZURVn4Ulz5UQrnvelO0Eq/qUFVt1xOCi8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HibQ5hn6b8CzJ4Kv9VHdQkUS4PxUJ92WhBFm0UzKedbHMnAX5e9b603Jn7stlhsx04UZvYo4sgVMy6kp7L+MXCCQPV7VIZEPf50duYUGEyJcMw463ZqoUj6KrDDuyKOAIUjuNKXSp6RIVJHSYFxKZBZV3rzw7OWO7NUngfd2GVY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nX2LXMqE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7C40CC4CEE5;
+	Mon, 10 Mar 2025 12:50:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741611026;
+	bh=cwRxbSYGPKZURVn4Ulz5UQrnvelO0Eq/qUFVt1xOCi8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=nX2LXMqEKvvhandPRi5CCpzEZSMwiY3SyDANr1bp1xCcCzJI+qpr37uJZGupLOBW/
+	 9lihcf6CYjnHHGicwkahaA1zmO4+JXuoPjRCRgoYyXFw+myxw7D0HTc+u+hnu9f32x
+	 Szxx2IITjFpbY96qm+/YpmdpwqDFVCR6JFvQi9U2R3wrB5fSu5QD7J9H9mecgONG/5
+	 /emb+uicouqoGUWc5ZY0LL4X7hPTvGhPuEwXlME9fHMXvKsRpQ664dal7RS3e4ybPk
+	 K6LL/ZvQaYpxXhp89VdWJjS4XdDbScvNMWXQ9UoFCQ55gaXQDi3sd4qEXJarVufhJB
+	 kQ7MFckkj9NBg==
+Date: Mon, 10 Mar 2025 07:50:24 -0500
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Konrad Dybcio <konradybcio@kernel.org>
+Cc: Krishna Kurapati <quic_kriskura@quicinc.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	linux-usb@vger.kernel.org,
+	Marijn Suijten <marijn.suijten@somainline.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+	devicetree@vger.kernel.org, Wesley Cheng <quic_wcheng@quicinc.com>
+Subject: Re: [PATCH v2] dt-bindings: usb: qcom,dwc3: Synchronize minItems for
+ interrupts and -names
+Message-ID: <174161102447.3880921.7318967910714477223.robh@kernel.org>
+References: <20250308-topic-dt_bindings_fixes_usb-v2-1-3169a3394d5b@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <1740611284-27506-1-git-send-email-nunodasneves@linux.microsoft.com>
- <1740611284-27506-6-git-send-email-nunodasneves@linux.microsoft.com>
-In-Reply-To: <1740611284-27506-6-git-send-email-nunodasneves@linux.microsoft.com>
-From: Tianyu Lan <ltykernel@gmail.com>
-Date: Mon, 10 Mar 2025 20:50:20 +0800
-X-Gm-Features: AQ5f1JrW4lh036PUCGXkQlwffXrplxrlmEnJajhWhVG9u6jh4khODFbp1KsY5xA
-Message-ID: <CAMvTesAh9hK3r81TqbSwB58c1zuXpMzhk=7=gt2cR1QvpJC35Q@mail.gmail.com>
-Subject: Re: [PATCH v5 05/10] acpi: numa: Export node_to_pxm()
-To: Nuno Das Neves <nunodasneves@linux.microsoft.com>
-Cc: linux-hyperv@vger.kernel.org, x86@kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	linux-arch@vger.kernel.org, linux-acpi@vger.kernel.org, kys@microsoft.com, 
-	haiyangz@microsoft.com, wei.liu@kernel.org, mhklinux@outlook.com, 
-	decui@microsoft.com, catalin.marinas@arm.com, will@kernel.org, 
-	tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, 
-	dave.hansen@linux.intel.com, hpa@zytor.com, daniel.lezcano@linaro.org, 
-	joro@8bytes.org, robin.murphy@arm.com, arnd@arndb.de, 
-	jinankjain@linux.microsoft.com, muminulrussell@gmail.com, 
-	skinsburskii@linux.microsoft.com, mrathor@linux.microsoft.com, 
-	ssengar@linux.microsoft.com, apais@linux.microsoft.com, 
-	Tianyu.Lan@microsoft.com, stanislav.kinsburskiy@gmail.com, 
-	gregkh@linuxfoundation.org, vkuznets@redhat.com, prapal@linux.microsoft.com, 
-	muislam@microsoft.com, anrayabh@linux.microsoft.com, rafael@kernel.org, 
-	lenb@kernel.org, corbet@lwn.net
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250308-topic-dt_bindings_fixes_usb-v2-1-3169a3394d5b@oss.qualcomm.com>
 
-On Thu, Feb 27, 2025 at 7:10=E2=80=AFAM Nuno Das Neves
-<nunodasneves@linux.microsoft.com> wrote:
->
-> node_to_pxm() is used by hv_numa_node_to_pxm_info().
-> That helper will be used by Hyper-V root partition module code
-> when CONFIG_MSHV_ROOT=3Dm.
->
-> Signed-off-by: Nuno Das Neves <nunodasneves@linux.microsoft.com>
+
+On Sat, 08 Mar 2025 17:24:15 +0100, Konrad Dybcio wrote:
+> From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+> 
+> It makes sense that ARRAY_SIZE(prop) should == ARRAY_SIZE(prop-names),
+> so allow that to happen with interrupts.
+> 
+> Fixes bogus warnings such as:
+> usb@c2f8800: interrupt-names: ['pwr_event', 'qusb2_phy', 'hs_phy_irq'] is too short
+> 
+> Fixes: 53c6d854be4e ("dt-bindings: usb: dwc3: Clean up hs_phy_irq in binding")
+> Signed-off-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
 > ---
+> Changes in v2:
+> - Use a better reference in the Fixes tag
+> - Link to v1: https://lore.kernel.org/r/20250306-topic-dt_bindings_fixes_usb-v1-1-e1e6a5bde871@oss.qualcomm.com
+> ---
+>  Documentation/devicetree/bindings/usb/qcom,dwc3.yaml | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
 
-Reviewed-by: Tianyu Lan <tiala@microsoft.com>
+Acked-by: Rob Herring (Arm) <robh@kernel.org>
 
-
---=20
-Thanks
-Tianyu Lan
 
