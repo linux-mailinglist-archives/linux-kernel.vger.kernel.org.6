@@ -1,163 +1,121 @@
-Return-Path: <linux-kernel+bounces-553941-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-553942-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB0ADA590F3
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 11:20:21 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 19644A590FA
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 11:21:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5D87B3ABDBF
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 10:20:09 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A2BFF7A4EFB
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 10:20:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 142F0226529;
-	Mon, 10 Mar 2025 10:20:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A8EC22577E;
+	Mon, 10 Mar 2025 10:20:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="LxHS36tT"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="Vz5X2esZ"
+Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C099A2253A5;
-	Mon, 10 Mar 2025 10:20:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1646221D5A0
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 10:20:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741602008; cv=none; b=OKa6PJ5zgDhV4sXTxMg/1ggI9SxQyXkgXwW2dBruNXR1IkWl3OxL/Qpq1cl5JA3y6hx7LyWhwLYlWtG3kXAg67gTHxleiXpVVHJXJMB862eCabYqgXzx1hy10dSvlrS/XoeLQDPCcr/5QDHlIHgbvXMwsg/W2L6v55ldMvqch0g=
+	t=1741602052; cv=none; b=C74Y5JPmwzNSKkUPNcgNTJ9ttpVxiYSl90D4DP4oRd73hmS+feDBSDL9yYXGLjjKnKUd3/doWphJBpiLldgIzQcuW7Dm5C0SeOcYtcRkG7MMQQNx5B70dewfWc3+mWiRmGZxQBS/UERh6VI2I2no/t7vMja3YbFYBoPeDZt8H1M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741602008; c=relaxed/simple;
-	bh=8qM1aVMmeGgCsR7IRGnjZZf9UubaZgxvBRXuVoJZQ18=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=HRXAxCst/rwd1Dl5hsP/52EOcQ4eW72O50Jw2Y772ISa5Jmfw8aPoIcbY8ZWq5bPi5P5VU8q8EK4WVDu3VVHLkM2QznRc8rhDecwZ7gjB2uva/2lEZWq4fUvdlD93dTXdWEAnLAe2LZfCiiiaTMA6CD5W+6y2hlE9RBVad0NlP8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=LxHS36tT; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52A9dkt2022356;
-	Mon, 10 Mar 2025 10:19:57 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	hl+H8c0VN2y3MHqhFSWjgt5uhq3MRlviyoIT8w9wikY=; b=LxHS36tTTwZkJeYc
-	odgeJYMl6ajG0uY1C68s2eFXH5HT5EpAMRps51OfPSBk5o7w08orWB8MnkbYck7h
-	HtNQIEJ5gWhk2V7joG4ws+rfL6YA5Z0HIeYejcjVId7X/kncS+Yn8mul7JHQY6wp
-	IRc2tgyZuVLPUXkIiuoEFGIRoYkUgrtXDhfrShWyZxYv/ylBwit3kTZoQI/Qx/DR
-	kLn4kgLBTCwNnrBqKX9/hA2e0MTq4m/I72vdmToIvYZIKLpa2G5FMQ4P+Ue0UjgY
-	fbUFhtGqBEtGhD4MKarpptkXa8uo9LjtcN2ve03HseWW0VnA3FE8NTCX0NSRe78l
-	+kYxYA==
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 458eyucffy-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 10 Mar 2025 10:19:57 +0000 (GMT)
-Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
-	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 52AAJuke028140
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 10 Mar 2025 10:19:56 GMT
-Received: from [10.64.68.153] (10.80.80.8) by nalasex01c.na.qualcomm.com
- (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 10 Mar
- 2025 03:19:53 -0700
-Message-ID: <3fcbf259-aea5-4170-b988-1c23a3472a00@quicinc.com>
-Date: Mon, 10 Mar 2025 18:19:51 +0800
+	s=arc-20240116; t=1741602052; c=relaxed/simple;
+	bh=JL/iJrs0I5b9N2nPbKpSW6ls+LbJc9PGy7+bMaAhX1c=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=krVXghzp3bquQiBjkrxfAEYVYEEe8971feo2Z0znkecF/T+Q7UeW7ixXrOxm4FKudnd5w77xULxIFCOe8LVLJgPii+CdJJ2e03dWskKu66Oq27zkJPZFsojBXIbabFXqrfNQjuci4cYV8FTdBEQs/VNNMDlX6Wol+lOpLL3Qf9E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=Vz5X2esZ; arc=none smtp.client-ip=209.85.221.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-390cf7458f5so3815037f8f.2
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 03:20:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1741602049; x=1742206849; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=/apE3VuG/fufAOpi2xtHrpN+LPCwiTLqat5jnVcZLFc=;
+        b=Vz5X2esZCUrYGhNvwmZms3LEf5m2fIIeP8Qo4q6XsYGl7HrRHu5lq5wZ/dYrtbeyFf
+         +e3E3DU7L9sMiDZjtKg750KT2ni/jqa96gskQn3XzM54acNmqEixqTPsO7SG21OrzIU8
+         l9NKsvIyvj6pOl+Q4aNwB8OndREXTmKfQXohyJU++oswyLIWsRJl/uExzw0YoY4NK5EZ
+         +tV0Df8DXb3LwWicZlgj1V/2zX6uaJrDzah3yy/KYWWi5VINzGQUEL4npoFAUal9PzPq
+         uaW2Vi790cQeT/KuuwUDSd8/Teq60q032FZAVNhBQlg10uMh/VshKAOLQLBNMAFOA4AL
+         zOHg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741602049; x=1742206849;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=/apE3VuG/fufAOpi2xtHrpN+LPCwiTLqat5jnVcZLFc=;
+        b=A00QpNKnHaAef62Psp+VyJfYmNNiOhDu4vXeuY/yJ0aQi4tZUg/SPGo3lyh8ecjllo
+         vzz+FB0mB3TKh3p+CO68k2n7w4fP15bJNAJ3MjhohW4Dx5YasEBvlwBqAWVkqkHmlosu
+         KTadnZyk0QVNj+JPIQI41ausp7CMCpGEQoKiyoUhI7P0jMsJ+W3EPDLDjg94lVUgoVHS
+         CqQtaJ5J3EXIAPPS5ZWyuBVFLl+A6XHNmyhIau8bZSJgYApMSph1U+NKXK84xn0PYTr/
+         ujql+hetFljCt9HmMwPhwMmj7xsm8vH6rIeivBXlTOkDhhz6PSqo2Gpx8LOrZ0/6q4MK
+         9e3g==
+X-Forwarded-Encrypted: i=1; AJvYcCXwSwv5vLiQRu2++1+P3SmWf9MjzIBHItHg1U0vAXIoQ2udiij5aiTxLRTnItdyNhByv/1H5taG4yJzXX4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxW0mupX9wr53iI4J/DH2u3+h3/7l5mxZ0S4L1bkq1waTv36F0G
+	xjdI3CgfhNWhdVITqcFNaxn0bx/6dlanqEUCi74sPB93esSOMOrVUlmSwOe5TEl/9rtZXLEG2cJ
+	A
+X-Gm-Gg: ASbGncu/2t54uS6gEopDGXTgAAZwuk8NWreR4MVYbF3yJLF88/kddAfVhMI4CELXRdC
+	+kAdNtcLy/H0GF9MW/7yO0Xan3P88pVGwJa1zraZIsTp2FP1IGFoSALWhMtQ/visNmoEpGznqvC
+	35EBkZQq5eUF/ChhomxN8v3P5FID58z2qnHrnjHRLic9FIx4aJU6xlMYSnnXYeETrG02Vduq5kv
+	axrBle7oNwf/ieMx9cFcU0LQPfqjgT7T60vAni54SGjUgqdhhOc1OaLkdWaXlt4zRgGHCygu3vg
+	SMKLCkyVhyn3k+pw7PpbpaztGySTgo1+iW+etDOp1Cgl
+X-Google-Smtp-Source: AGHT+IFfzfWd3QOlDox/vtQwZeERmiQYf6W46ID0K0ZY6jsQM3TpjDckCeiqjrDVUJkjElclE1Hehw==
+X-Received: by 2002:a5d:59a8:0:b0:391:328d:65a2 with SMTP id ffacd0b85a97d-39132da24ddmr10077276f8f.38.1741602049284;
+        Mon, 10 Mar 2025 03:20:49 -0700 (PDT)
+Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:2711:39c0:fb51:b639])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3912bfdfa52sm14068218f8f.21.2025.03.10.03.20.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 10 Mar 2025 03:20:48 -0700 (PDT)
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+To: Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Stefan Agner <stefan@agner.ch>,
+	linux-gpio@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Frank Li <Frank.Li@nxp.com>
+Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+	imx@lists.linux.dev
+Subject: Re: [PATCH] dt-bindings: gpio: vf610: Add i.MX94 support
+Date: Mon, 10 Mar 2025 11:20:46 +0100
+Message-ID: <174160204380.20418.6002822066800519604.b4-ty@linaro.org>
+X-Mailer: git-send-email 2.45.2
+In-Reply-To: <20250306170921.241690-1-Frank.Li@nxp.com>
+References: <20250306170921.241690-1-Frank.Li@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] coresight: add verification process for
- coresight_etm_get_trace_id
-To: Suzuki K Poulose <suzuki.poulose@arm.com>,
-        Mike Leach
-	<mike.leach@linaro.org>,
-        James Clark <james.clark@linaro.org>,
-        "Alexander
- Shishkin" <alexander.shishkin@linux.intel.com>
-CC: Tingwei Zhang <quic_tingweiz@quicinc.com>,
-        Jinlong Mao
-	<quic_jinlmao@quicinc.com>, <coresight@lists.linaro.org>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-msm@vger.kernel.org>
-References: <20250310022348.1654501-1-quic_jiegan@quicinc.com>
- <23943463-94d0-4e37-b5fa-5efb20015063@arm.com>
-Content-Language: en-US
-From: Jie Gan <quic_jiegan@quicinc.com>
-In-Reply-To: <23943463-94d0-4e37-b5fa-5efb20015063@arm.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01c.na.qualcomm.com (10.47.97.35)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Authority-Analysis: v=2.4 cv=cbIormDM c=1 sm=1 tr=0 ts=67cebccd cx=c_pps a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17 a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=sWKEhP36mHoA:10 a=COk6AnOGAAAA:8 a=Z-hf14rMMggIjEe8M9kA:9
- a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10 a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-ORIG-GUID: j3XkgYo3YQJ347maH5L7Z7l8rzPymOpt
-X-Proofpoint-GUID: j3XkgYo3YQJ347maH5L7Z7l8rzPymOpt
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-10_04,2025-03-07_03,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0 mlxscore=0
- impostorscore=0 bulkscore=0 suspectscore=0 priorityscore=1501 phishscore=0
- malwarescore=0 adultscore=0 clxscore=1015 spamscore=0 mlxlogscore=999
- classifier=spam authscore=0 authtc=n/a authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2502100000
- definitions=main-2503100081
+
+From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
 
-
-On 3/10/2025 6:17 PM, Suzuki K Poulose wrote:
-> On 10/03/2025 02:23, Jie Gan wrote:
->> The coresight_etm_get_trace_id function is a global function. The
->> verification process for 'csdev' is required prior to its usage.
->>
->> Fixes: c367a89dec26 ("Coresight: Add trace_id function to retrieving 
->> the trace ID")
->> Signed-off-by: Jie Gan <quic_jiegan@quicinc.com>
->> ---
->>   drivers/hwtracing/coresight/coresight-core.c | 7 +++++--
->>   1 file changed, 5 insertions(+), 2 deletions(-)
->>
->> diff --git a/drivers/hwtracing/coresight/coresight-core.c b/drivers/ 
->> hwtracing/coresight/coresight-core.c
->> index bd0a7edd38c9..5a7cd2376e2d 100644
->> --- a/drivers/hwtracing/coresight/coresight-core.c
->> +++ b/drivers/hwtracing/coresight/coresight-core.c
->> @@ -1616,9 +1616,12 @@ EXPORT_SYMBOL_GPL(coresight_remove_driver);
->>   int coresight_etm_get_trace_id(struct coresight_device *csdev, enum 
->> cs_mode mode,
->>                      struct coresight_device *sink)
->>   {
->> -    int trace_id;
->> -    int cpu = source_ops(csdev)->cpu_id(csdev);
->> +    int cpu, trace_id;
->> +
->> +    if (csdev->type != CORESIGHT_DEV_TYPE_SOURCE && ! 
->> source_ops(csdev)->cpu_id)
-> 
-> That must be :
-> 
->      csdev->type != CORESIGHT_DEV_TYPE_SOURCE || !source_ops(csdev)- 
->  >cpu_id)
+On Thu, 06 Mar 2025 12:09:21 -0500, Frank Li wrote:
+> Add compatible string "fsl,imx94-gpio" for the i.MX94 chip, which is
+> backward compatible with i.MX8ULP. Set it to fall back to
+> "fsl,imx8ulp-gpio".
 > 
 > 
-> Suzuki
 
-Hi Suzuki,
+Applied, thanks!
 
-Yes, you are right. I made a big mistake. It should return an error 
-number if one of the conditions failed.
+[1/1] dt-bindings: gpio: vf610: Add i.MX94 support
+      commit: e93160942585832a1836381018daf9729eb9ca64
 
-Sorry about that, will send another patch to fix it.
-
-Thanks,
-Jie
-
-> 
-> 
->> +        return -EINVAL;
->> +    cpu = source_ops(csdev)->cpu_id(csdev);
->>       switch (mode) {
->>       case CS_MODE_SYSFS:
->>           trace_id = coresight_trace_id_get_cpu_id(cpu);
-> 
-
+Best regards,
+-- 
+Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
