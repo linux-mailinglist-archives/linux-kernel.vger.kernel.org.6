@@ -1,105 +1,168 @@
-Return-Path: <linux-kernel+bounces-554304-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-554306-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7EAA7A595F4
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 14:18:15 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 75922A59609
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 14:20:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 938843AE4D1
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 13:17:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0E4603A95E6
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 13:20:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F98922A4E0;
-	Mon, 10 Mar 2025 13:17:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D71421A9B3B;
+	Mon, 10 Mar 2025 13:20:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="l0cy2i+0"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="filiGp9+"
+Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A286DA930;
-	Mon, 10 Mar 2025 13:17:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E6BC227E8F;
+	Mon, 10 Mar 2025 13:20:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741612670; cv=none; b=YHPfoVvsKh2vEvxsTYOP9UznDdDF66oJnY05K2Xn0tEzRUvplejc1+rR9vN6YX1TVjlUar8mkwei7grvmEUCrB9/m1I0g+DA5hakE87a4uFJ0/dWy6O3bGl/7+lTkIt/NYtA55QYKdNYKxqgqkmE1aQcglV4MNSmUYJh3LGKD6Y=
+	t=1741612816; cv=none; b=uLmLsAjPKFr+4JTrPI71wAV2OhJ7sn6pDXPzJGWsHwy/29PiP9So2za61F25/mBGDidyI6WhfL9Lz60B1XuQBhOZ2yaXNSYqt7aES0dnHFDzEifRJVtniJf/11aLtr/c2YQKBwscUc6mlDsPzCKdgbEudREO6oXx5O3BvhPZtZQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741612670; c=relaxed/simple;
-	bh=4ZqG39C5Pf1QNEH581g9JUhd773SjHjH1W/XN4R90kM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gXgvkONvj0sDXfMnXs5ZhK3wtgl+96zht5s+68mrWgQ7AvhKh/dJGExB5/AONojgntVxNjnl5Fe4Lak9Nt6t/AiOJN91DLhYsSL4U86FlvFfHXSSqfboLa5bm7Sso00JOTe81vWyKS+cI81EbkWcEnrwWvqcpBQ7Ykd++qVTkBo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=l0cy2i+0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B87D4C4CEE5;
-	Mon, 10 Mar 2025 13:17:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741612670;
-	bh=4ZqG39C5Pf1QNEH581g9JUhd773SjHjH1W/XN4R90kM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=l0cy2i+02xhEoPTuiAszjprYlougcvywMXyIRcJqQDZN0By0NVslsy8cdRhL46nH7
-	 AvSMgJ3n6XiCG4WhTsSwuKyW73hzeJIzhuoHKcHV4E4V0Ead9RAwWM9lP8hpLh+7x+
-	 Tk6g7mlSZbVD6q3pEzZxS47X/4f1iLVSbqBMbS7719rHlUwmWp+qm//dLCmF/F1EGQ
-	 Y4gz/xfVz+X4pn+qTQdZVEGNncnPjALvI8dGZjMt9/OL5+VV4F/Z/69lsbEjF7I9RF
-	 AbPobtS5X9jKqnUqFXlHHfWK9T0sbEeZotEeGvBbacNk88edjN134aalObDqJRubLb
-	 H5Daac2fyQr7Q==
-Date: Mon, 10 Mar 2025 13:17:45 +0000
-From: Mark Brown <broonie@kernel.org>
-To: Oleksij Rempel <o.rempel@pengutronix.de>
-Cc: "David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Woojung Huh <woojung.huh@microchip.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>, kernel@pengutronix.de,
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-	UNGLinuxDriver@microchip.com, Phil Elwell <phil@raspberrypi.org>
-Subject: Re: [PATCH net v1 1/1] net: usb: lan78xx: Sanitize return values of
- register read/write functions
-Message-ID: <92b0588d-df0b-4f97-99db-d607de774728@sirena.org.uk>
-References: <20250307101223.3025632-1-o.rempel@pengutronix.de>
+	s=arc-20240116; t=1741612816; c=relaxed/simple;
+	bh=2AHxYwcyOZBFHgTfNokaRNt0i2/xdNHTQ7pLuqe2Xh8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=lgS5wrycCgK2lK/mSNmkEVhNADYxhr1lRwL6HIfuDvs8kRylRmxBuCRqo/gECftY7zFSpD7WMQyCNflsRpfM/sF5mqfNlGxs9urlNk9ahPlomGBbDs7Fh4G+sqQOeWHLNpFPCsGxl3EOI215znxGfqAvuiVcL/SRx8td24+kkxI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=filiGp9+; arc=none smtp.client-ip=209.85.208.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-30bfe0d2b6dso25455351fa.3;
+        Mon, 10 Mar 2025 06:20:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741612812; x=1742217612; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=uIN9qnJPxF5d49Ai441xtWm1lqpAVaRoxtSwVCRC5ZE=;
+        b=filiGp9+xzlHum3ErH0AIIDBE27e6UdZgG/MA20QntA3LgVDrj1SX1N1evJ3WGq7C4
+         kRPE5FY20XFHtEwRALOuAy70J8gHUZmF17ETWlagNVzh/OlNvFdnRF0k+F2M1kPRq2BR
+         ytzgsgcrSzeY3YcCBfDNXpH7UUieCPOpBWoFNnchv1hf9/w6ELi+DUc0sAu3hmJAHDOx
+         jLxJLXbwcuUH0PvimKn34WEOnOXT9YgkKwqiSyJEFuYnakkYbLtGR1MeI/9q3Z24i0Nh
+         MMDr/JHUuHV47Uee9bczLLbBL+6D1eMsfMxjLUuf4/B/q1xLqLAJtdZMsDEucZnl9DvE
+         xFNQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741612812; x=1742217612;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=uIN9qnJPxF5d49Ai441xtWm1lqpAVaRoxtSwVCRC5ZE=;
+        b=JIa5mJ1LmzpWT2a2vjN8MKp6Mr9ra4dbom1KSmfWNCkj7GJ1IM3RCKTWlloEQ5y6mL
+         xK0BlaA4Nt2wnzsyMaxewByA7bGJ0jNClCwBt5E7XlhIuLj6cSN+9hVOml2WfTOkMGsP
+         uFu7ud+IYxCHbriMoJwiL4qWmbUIxIDp41vK21IS2lSffUS+g6xx25ARGlJjb3Q71xv/
+         wP2+DyGT/0L6UM7I3OgbgWMxN4TSsK+K2gSCz4YWYbeMnkSV3BIfLt3sNuPGh+V5xVmv
+         Rcru7C7kEKiPSp7IKSwuYQRAOuunyeycUG4U140WNJkJj6fefDMjeXUPBoYpWr5BQ7Y+
+         zgww==
+X-Forwarded-Encrypted: i=1; AJvYcCVDUz7oePTIkYS2F8lk2Qmza8d/ElnxVUQjTrq/JnEifSPH5iZLBdHjolBANoyK9qfgKFOE9X+6fTJED6M=@vger.kernel.org, AJvYcCVGspokqkWDhbIPCiXTsPp2RgByF2ORnBKPyeQ/+vLlFyECMeqyR+H7OFbCYikFVNKdeKQ+VrnZRCCEDtNR1+roFkU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxrz+DSIIxM3K+ljhgzo3ZE/MELgv8fJ3+WnwnZGpu8I50PZ7AT
+	oWgLUVb+sxfnIJkWqwouLWPMktyshoBQccAcNupvYTIqmamY+Yv4
+X-Gm-Gg: ASbGncv+/DKgLjaJqxVQ4nyk64U2WBL87+b4Nmyfl3tvfDkYxqvsxZrPeO7C3IW+AES
+	e9w8ENCiHMf21mZSgHRskI3P+d7aiP/7NmeLrcdJwM0OMbpgf8df9hvWwvT8+RbxS89ov4mmIJ4
+	J5cxASrFXsmMNaVBNBYX/nASRx3bX2r5yBpBxXSGP5Kll2DcXB0dF0w8Hj0CRexA2dJWNl7wnPG
+	R0pWT/j+ydtiTXpqHA//CLd8NG6BXGe5QEHhia6Yygtg/Vtyw2Tq0h/j6qpmbVDcVwHSMIbmBJY
+	CPoj72smfvWRHuNv6+Eh0LlNQB4GK77/Wxwf2InK+8iBgqcBDNN6zXNf6TV+ZCKxu1aKTgckU9/
+	Hfr5GKTS6JsF5qFhv7j5f3UlNqg==
+X-Google-Smtp-Source: AGHT+IEF1Q5OiufZ1ooC9SoR2jkBeuL8mpXvsPLmTBTbXNvs5wA77q8kyDlOtMByfhSrkrTpiQUACA==
+X-Received: by 2002:a05:651c:19a1:b0:307:9555:dc5e with SMTP id 38308e7fff4ca-30bf44ed6d8mr42550331fa.3.1741612812228;
+        Mon, 10 Mar 2025 06:20:12 -0700 (PDT)
+Received: from ?IPV6:2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703? ([2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-30c13a0e20asm4133221fa.49.2025.03.10.06.20.10
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 10 Mar 2025 06:20:11 -0700 (PDT)
+Message-ID: <475375c9-9d72-4583-a21e-37b17c6b8c46@gmail.com>
+Date: Mon, 10 Mar 2025 15:20:10 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="l3HifBw0bN+3GatU"
-Content-Disposition: inline
-In-Reply-To: <20250307101223.3025632-1-o.rempel@pengutronix.de>
-X-Cookie: You have a truly strong individuality.
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 04/15] gpio: bd71828: use new line value setter callbacks
+To: Bartosz Golaszewski <brgl@bgdev.pl>, Ray Jui <rjui@broadcom.com>,
+ Broadcom internal kernel review list
+ <bcm-kernel-feedback-list@broadcom.com>,
+ Linus Walleij <linus.walleij@linaro.org>,
+ Florian Fainelli <florian.fainelli@broadcom.com>,
+ Scott Branden <sbranden@broadcom.com>,
+ Marek Vasut <marek.vasut+renesas@gmail.com>, Michael Buesch <m@bues.ch>,
+ Thomas Richard <thomas.richard@bootlin.com>,
+ Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>,
+ Benson Leung <bleung@chromium.org>, Guenter Roeck <groeck@chromium.org>,
+ Andy Shevchenko <andy@kernel.org>,
+ Support Opensource <support.opensource@diasemi.com>
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-renesas-soc@vger.kernel.org, chrome-platform@lists.linux.dev,
+ Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+References: <20250310-gpiochip-set-conversion-v1-0-03798bb833eb@linaro.org>
+ <20250310-gpiochip-set-conversion-v1-4-03798bb833eb@linaro.org>
+Content-Language: en-US, en-AU, en-GB, en-BW
+From: Matti Vaittinen <mazziesaccount@gmail.com>
+In-Reply-To: <20250310-gpiochip-set-conversion-v1-4-03798bb833eb@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
+On 10/03/2025 14:40, Bartosz Golaszewski wrote:
+> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> 
+> struct gpio_chip now has callbacks for setting line values that return
+> an integer, allowing to indicate failures. Convert the driver to using
+> them.
+> 
+> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> ---
+>   drivers/gpio/gpio-bd71828.c | 15 ++++++---------
+>   1 file changed, 6 insertions(+), 9 deletions(-)
+> 
+> diff --git a/drivers/gpio/gpio-bd71828.c b/drivers/gpio/gpio-bd71828.c
+> index b2ccc320c7b5..4ba151e5cf25 100644
+> --- a/drivers/gpio/gpio-bd71828.c
+> +++ b/drivers/gpio/gpio-bd71828.c
+> @@ -16,10 +16,9 @@ struct bd71828_gpio {
+>   	struct gpio_chip gpio;
+>   };
+>   
+> -static void bd71828_gpio_set(struct gpio_chip *chip, unsigned int offset,
+> -			     int value)
+> +static int bd71828_gpio_set(struct gpio_chip *chip, unsigned int offset,
+> +			    int value)
+>   {
+> -	int ret;
+>   	struct bd71828_gpio *bdgpio = gpiochip_get_data(chip);
+>   	u8 val = (value) ? BD71828_GPIO_OUT_HI : BD71828_GPIO_OUT_LO;
+>   
+> @@ -28,12 +27,10 @@ static void bd71828_gpio_set(struct gpio_chip *chip, unsigned int offset,
+>   	 * we are dealing with - then we are done
+>   	 */
+>   	if (offset == HALL_GPIO_OFFSET)
+> -		return;
+> +		return 0;
 
---l3HifBw0bN+3GatU
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Should this be -EINVAL (or, can this check be just dropped?) Value of an 
+input pin is tried to be set.
 
-On Fri, Mar 07, 2025 at 11:12:23AM +0100, Oleksij Rempel wrote:
-> usb_control_msg() returns the number of transferred bytes or a negative
-> error code. The current implementation propagates the transferred byte
-> count, which is unintended. This affects code paths that assume a
-> boolean success/failure check, such as the EEPROM detection logic.
->=20
-> Fix this by ensuring lan78xx_read_reg() and lan78xx_write_reg() return
-> only 0 on success and preserve negative error codes.
+>   
+> -	ret = regmap_update_bits(bdgpio->regmap, GPIO_OUT_REG(offset),
+> -				 BD71828_GPIO_OUT_MASK, val);
+> -	if (ret)
+> -		dev_err(bdgpio->dev, "Could not set gpio to %d\n", value);
+> +	return regmap_update_bits(bdgpio->regmap, GPIO_OUT_REG(offset),
+> +				  BD71828_GPIO_OUT_MASK, val);
+>   }
+>   
+>   static int bd71828_gpio_get(struct gpio_chip *chip, unsigned int offset)
+> @@ -112,7 +109,7 @@ static int bd71828_probe(struct platform_device *pdev)
+>   	bdgpio->gpio.set_config = bd71828_gpio_set_config;
+>   	bdgpio->gpio.can_sleep = true;
+>   	bdgpio->gpio.get = bd71828_gpio_get;
+> -	bdgpio->gpio.set = bd71828_gpio_set;
+> +	bdgpio->gpio.set_rv = bd71828_gpio_set;
+>   	bdgpio->gpio.base = -1;
+>   
+>   	/*
+> 
 
-Tested-by: Mark Brown <broonie@kernel.org>
-
-This fixes NFS boot on the Raspberry Pi 3+, it'd be good to get it into
-v6.14.
-
---l3HifBw0bN+3GatU
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmfO5ngACgkQJNaLcl1U
-h9CWbgf/YvMxNz/qhTlv3AYOZk5I4nBX9bOxERFS7Sp/H0sDcC610uSKp3TXNPDp
-2s1HDKI6gS3YxuG+qWEe7HVOZPF5TOpN22UIN+s9YJ+eV7/d088hbl5KkwNjfMNc
-W15vBIgEhGcnKMhz0ZZMOURzklFjp7id9s2f5MdU3y5YvCdrFFs/nj4i11JHdpj3
-GkRux67ifQ6t7sEMpGB6Po15zX5A603wYTDuiKZ5MQ/9szUIPjWQTT78UNKN8ZkU
-fALRy0yd3UGWwRAUJYcOm8Oxk3mhePqizm4jDylyHMjVg33gQCW8Hg9hnR8b42pi
-RBBWJu3TwqIsqWGZf+CaDtUAPqWlZQ==
-=XDSV
------END PGP SIGNATURE-----
-
---l3HifBw0bN+3GatU--
 
