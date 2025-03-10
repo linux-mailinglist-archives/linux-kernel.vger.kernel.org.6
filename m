@@ -1,111 +1,126 @@
-Return-Path: <linux-kernel+bounces-554160-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-554162-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2FF8DA593AB
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 13:10:04 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BB420A593BB
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 13:11:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A00FB169122
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 12:09:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 99FDB16DAF0
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 12:10:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0872922D795;
-	Mon, 10 Mar 2025 12:06:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80E6B226CFA;
+	Mon, 10 Mar 2025 12:09:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="PMerF2i+"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Y96JWYN8"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B356522D4E6;
-	Mon, 10 Mar 2025 12:06:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79B1322423E;
+	Mon, 10 Mar 2025 12:09:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741608410; cv=none; b=IfI53JOlgrYmEwyotXsaaosEkLeqDoZ9dq4EQn8zQxdEBoYmRKdFy6PblPsXuH8ns4OJmYjdhxO6ILgdEjnb+1HaYXLG+Qql/vMU0gQ31aO7/hNU5E6Gvoe5fNtI5xrDr3bIuirWpdf0EwdVTi5VPBWQs6xMO1JBH7h367YoMEw=
+	t=1741608586; cv=none; b=B+tAeMkmMn4PtbCs0Osv1jVZ3hJXkMG4YSKRtAKl4o2IL62efXJRhUpaxl1jvPtlrNkK7EJrIxb/z7asYBlKA/AfoJF8fWBRRD7LydPZ2Ym30Kmp6KIYVgQD7tmO6BqT2phwCCWslfH59JZ5vbFAoL3j8ly2CWlXzuJXVTcahLk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741608410; c=relaxed/simple;
-	bh=oTcn8IMMp7J1wt266fCA1Jle5k8bB37spAnXUecjtG0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UCkNURjUb9o8T8kId1/1NgMdy/ToS38PvkOVZ/R36Cjcdn3ymx6V0nXblyN3D6EB6Rk0j0K+2szZpYy6hP65LhHjqlFSSchnGdc9dPCeieK+L37xTq81dQRTdIWlpMJgiIaQDKVn1cBE+RuQ1khgtEfJM1UZ7z6knTzEXzWLeag=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=PMerF2i+; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Transfer-Encoding:Content-Disposition:
-	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:From:
-	Sender:Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:Content-Type:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Content-Disposition:
-	In-Reply-To:References; bh=a9Hd9pLgYLGyaK3mL9Xf/nhr5CbuLlp8ERW+lfTDT6s=; b=PM
-	erF2i+giPdoPrSpDdLb8GXvSJp1A3FSGfAszlQbglscUlhQinUoCzf9bnny1gNEFEH4s+xqufBpBP
-	9NNeYJbG5x/yp5jN1sA9VOFV06mmaJxhKF9rtzeWsG7elV4T5MVP8e3uUJFjSLK4tc4fMHny7jx2b
-	HXNw+t0/t+LgE6o=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1trbty-00400s-78; Mon, 10 Mar 2025 13:06:34 +0100
-Date: Mon, 10 Mar 2025 13:06:34 +0100
-From: Andrew Lunn <andrew@lunn.ch>
-To: hanyuan-z <hanyuan-z@qq.com>
-Cc: davem <davem@davemloft.net>, kuba <kuba@kernel.org>,
-	andrew+netdev <andrew+netdev@lunn.ch>,
-	edumazet <edumazet@google.com>, pabeni <pabeni@redhat.com>,
-	netdev <netdev@vger.kernel.org>,
-	linux-kernel <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 1/2] net: enc28j60: support getting irq number from
- gpiophandle in the device tree
-Message-ID: <41ba1d79-b7d7-4c58-b151-d4304a1c8ca7@lunn.ch>
-References: <tencent_0A154BBE38E000228C01BE742CB73681FE09@qq.com>
- <2b09bea7-2a61-4697-a9c1-6a42cf8570c4@lunn.ch>
- <tencent_BE0060E3A7AF384BAF4DA37FD2121B8E1D07@qq.com>
+	s=arc-20240116; t=1741608586; c=relaxed/simple;
+	bh=ww3Eu/NZe1gPd9/SR83ncH625Q4WvNV25ldoR32BOyA=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type; b=DwUfR0Piyk7o+NdWKzBkWwnv5NsDFiU8UxkNKiMT8Qyx6ZpEyNRlkcj/hmi5xSK5299zvC2KE4S5pqWaqE63SvlVhRDLnDznWmq6Mv5tXQlr7IsdoPBaOHz9f6BBtH3y/CQnFm7WeI2U/WTxhOlKBbZRYL4EaC4/y/5RUBqu7AE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Y96JWYN8; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52AA0R9D016566;
+	Mon, 10 Mar 2025 12:09:25 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=TKz3OR1pLumuAjoEZdvb6s
+	Q1Epml2YTOuj985ElE6k0=; b=Y96JWYN8HdtZoYPpYLlLpr9n1+QUrvnSTgBbsu
+	cHL6kzhxkrfwPviwx9/lRX2I2fg2g9RjHDOB3ORdG1GA+aLiaX/vr8Q5GSpjglL9
+	oR9uLk7IsvhE2ybaihwVO6pztNEZssluP+pmI3mnQsHSu3QmNDaPqT1+qH6H5Zpf
+	Drxo+D/VHFzBR4jyFpQv7Uq3jyWubTDVbnR+KowaRYBfXBao/W5o22oZPYhfO9js
+	p0t8jX91641WYMX+62DhPi2sFSSefdrDHoZAqSmOvd7KD1nseJ9OkR5qiQmKZZIY
+	Z7LWws2cy7FHO/0mzbG710yHDJk8xXDJlFEWaA/fFBqQpF4w==
+Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 458eypcpsk-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 10 Mar 2025 12:09:24 +0000 (GMT)
+Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
+	by NASANPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 52AC9OBi011386
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 10 Mar 2025 12:09:24 GMT
+Received: from hu-mdalam-blr.qualcomm.com (10.80.80.8) by
+ nasanex01a.na.qualcomm.com (10.52.223.231) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Mon, 10 Mar 2025 05:09:21 -0700
+From: Md Sadre Alam <quic_mdalam@quicinc.com>
+To: <manivannan.sadhasivam@linaro.org>, <miquel.raynal@bootlin.com>,
+        <richard@nod.at>, <vigneshr@ti.com>, <broonie@kernel.org>,
+        <bbrezillon@kernel.org>, <linux-mtd@lists.infradead.org>,
+        <linux-arm-msm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-spi@vger.kernel.org>
+Subject: [PATCH v3 0/4] QPIC v2 fixes for SDX75
+Date: Mon, 10 Mar 2025 17:39:02 +0530
+Message-ID: <20250310120906.1577292-1-quic_mdalam@quicinc.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <tencent_BE0060E3A7AF384BAF4DA37FD2121B8E1D07@qq.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01a.na.qualcomm.com (10.52.223.231)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Authority-Analysis: v=2.4 cv=A9yWP7WG c=1 sm=1 tr=0 ts=67ced674 cx=c_pps a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17 a=GEpy-HfZoHoA:10 a=Vs1iUdzkB0EA:10 a=xRkTYtAs_KQTFvTIrP4A:9
+X-Proofpoint-ORIG-GUID: NvRxWxIVbo-vMcsUNZlAAmvxQQ26N7Qq
+X-Proofpoint-GUID: NvRxWxIVbo-vMcsUNZlAAmvxQQ26N7Qq
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-10_05,2025-03-07_03,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 lowpriorityscore=0 bulkscore=0 clxscore=1011
+ priorityscore=1501 malwarescore=0 impostorscore=0 spamscore=0
+ suspectscore=0 phishscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2502100000
+ definitions=main-2503100096
 
-On Mon, Mar 10, 2025 at 10:20:01AM +0800, hanyuan-z wrote:
-> Hi&nbsp;Andrew,&nbsp;<br/><br/>&gt;&nbsp;My&nbsp;understanding&nbsp;is&nb=
-sp;that&nbsp;you&nbsp;should&nbsp;not&nbsp;need&nbsp;most&nbsp;of&nbsp;this=
-=2E&nbsp;The&nbsp;IRQ<br/>&gt;&nbsp;core&nbsp;will&nbsp;handle&nbsp;convert=
-ing&nbsp;a&nbsp;GPIO&nbsp;to&nbsp;an&nbsp;interrupt,&nbsp;if&nbsp;you&nbsp;=
-just&nbsp;list<br/>&gt;&nbsp;is&nbsp;as&nbsp;an&nbsp;interrupt&nbsp;source&=
-nbsp;in&nbsp;the&nbsp;normal&nbsp;way.<br/><br/>&gt;&nbsp;You&nbsp;say:<br/=
->&gt;<br/>&gt;&nbsp;&gt;&nbsp;Additionally,&nbsp;it&nbsp;is&nbsp;necessary&=
-nbsp;for&nbsp;platforms&nbsp;that&nbsp;do&nbsp;not&nbsp;support&nbsp;pin<br=
-/>&gt;&nbsp;&gt;&nbsp;configuration&nbsp;and&nbsp;properties&nbsp;via&nbsp;=
-the&nbsp;device&nbsp;tree.<br/>&gt;<br/>&gt;&nbsp;Are&nbsp;you&nbsp;talking=
-&nbsp;about&nbsp;ACPI?<br/><br/>Thanks&nbsp;for&nbsp;your&nbsp;review.&nbsp=
-;Let&nbsp;me&nbsp;explain&nbsp;them.<br/><br/>I&nbsp;understand&nbsp;that&n=
-bsp;specifying&nbsp;the&nbsp;interrupt&nbsp;as:<br/><br/>&nbsp;&nbsp;&nbsp;=
-&nbsp;interrupts&nbsp;=3D&nbsp;&lt;&amp;gpio2&nbsp;23&nbsp;IRQ_TYPE_LEVEL_L=
-OW&gt;;<br/><br/>would&nbsp;also&nbsp;work,&nbsp;and&nbsp;the&nbsp;IRQ&nbsp=
-;subsystem&nbsp;will&nbsp;properly&nbsp;handle&nbsp;the<br/>conversion&nbsp=
-;during&nbsp;the&nbsp;SPI&nbsp;probe.&nbsp;However,&nbsp;my&nbsp;problem&nb=
-sp;is&nbsp;that&nbsp;the<br/>GPIO&nbsp;pin&nbsp;itself&nbsp;needs&nbsp;to&n=
-bsp;be&nbsp;explicitly&nbsp;requested&nbsp;and&nbsp;configured&nbsp;a<br/>a=
-n&nbsp;input&nbsp;before&nbsp;it&nbsp;can&nbsp;be&nbsp;used&nbsp;as&nbsp;an=
-&nbsp;IRQ&nbsp;pin.<br/><br/>My&nbsp;embedded&nbsp;platform&nbsp;has&nbsp;l=
-imited&nbsp;support,&nbsp;it&nbsp;only&nbsp;provides&nbsp;a<br/>hard-coded&=
-nbsp;pin&nbsp;control&nbsp;driver&nbsp;and&nbsp;does&nbsp;not&nbsp;support&=
-nbsp;configuring<br/>pinctrl&nbsp;properties&nbsp;in&nbsp;the&nbsp;device&n=
-bsp;tree.&nbsp;So,&nbsp;there&nbsp;is&nbsp;no&nbsp;generic<br/>way&nbsp;to&=
-nbsp;request&nbsp;the&nbsp;pin&nbsp;and&nbsp;set&nbsp;its&nbsp;direction&nb=
-sp;via&nbsp;device&nbsp;tree&nbsp;bindings.<br/><br/>I&nbsp;noticed&nbsp;th=
-at&nbsp;some&nbsp;existing&nbsp;NIC&nbsp;drivers&nbsp;solve&nbsp;this&nbsp;=
-issue&nbsp;by&nbsp;specifying<br/>`irq-gpios`&nbsp;in&nbsp;the&nbsp;device&=
-nbsp;tree,&nbsp;which&nbsp;ensures&nbsp;that&nbsp;the&nbsp;GPIO&nbsp;is&nbs=
-p;properly<br/>initialized&nbsp;before&nbsp;being&nbsp;converted&nbsp;to&nb=
-sp;an&nbsp;IRQ.<br/><br/>That&nbsp;was&nbsp;my&nbsp;motivation&nbsp;for&nbs=
-p;these&nbsp;patches.<br/><br/>And&nbsp;my&nbsp;changes&nbsp;are&nbsp;not&n=
-bsp;related&nbsp;to&nbsp;ACPI&nbsp;in&nbsp;any&nbsp;way=E2=80=94they&nbsp;a=
-re&nbsp;mainly<br/>focused&nbsp;on&nbsp;device&nbsp;tree&nbsp;handling.<br/=
-><br/>Thanks,&nbsp;&nbsp;<br/>Hanyuan&nbsp;Zhao&nbsp;&nbsp;<br/>
+v3:
+ * Updated commit message
+ * updated qpic_v2 to qpic_version2
+ * Removed dev_cmd_reg_start = 0 in sdx55_nandc_props {}
+ * Added new patch to add nand_offset in spi_qpic_snand
+   driver
 
-Please use plain text for emails.
+v2:
+ * Updated commit message
+ * Added stable kernel tag
+ * Added Fixes tag
+ * Renamed the variable from offset_from_qpic to nandc_offset
+ * Set buf_count to 512 in the parameter page read
+ * Replaced the buf_count value of 512 with the len in bytes 
 
-	Andrew
+v1:
+ * These patches will fix the following:
+ * 1) onfi param page read which was broken by exec_op() patch.
+ * 2) Fixed offset passed to BAM from QPIC base
+
+Md Sadre Alam (4):
+  mtd: rawnand: qcom: Pass 18 bit offset from QPIC base address to BAM
+  mtd: rawnand: qcom: Fix last codeword read in
+    qcom_param_page_type_exec()
+  mtd: rawnand: qcom: Fix read len for onfi param page
+  spi: spi-qpic-snand: set nandc_offset for ipq9574
+
+ drivers/mtd/nand/raw/qcom_nandc.c    | 18 +++++++++++++++---
+ drivers/spi/spi-qpic-snand.c         |  1 +
+ include/linux/mtd/nand-qpic-common.h |  3 ++-
+ 3 files changed, 18 insertions(+), 4 deletions(-)
+
+-- 
+2.34.1
+
 
