@@ -1,109 +1,103 @@
-Return-Path: <linux-kernel+bounces-554923-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-554924-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 83737A5A36F
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 19:54:13 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BDE2FA5A373
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 19:54:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2A67B188F295
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 18:54:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 787D3188DD9A
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 18:54:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3F4A236437;
-	Mon, 10 Mar 2025 18:53:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kDAJ1GJS"
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA56D2356D4;
-	Mon, 10 Mar 2025 18:53:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72E69230987;
+	Mon, 10 Mar 2025 18:54:20 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FB8717A2E8;
+	Mon, 10 Mar 2025 18:54:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741632825; cv=none; b=j3qZd6vbfOSxDy8+jTJVqrz5gz4TSVbITJqpq2i3rLZx5ODDNM+4R+4QvRcCc1i+Q6rvqVoh4YNPF/TdWIoieKQJq1XtHyfSoWJxAHoBIJ+xvJAiFfHc00CCYw10LlNZD23EmNoUqj0HidWeLdcni59hJwvlttjaQqnrJTFh5j0=
+	t=1741632860; cv=none; b=GIXdIeJN9qIRrntMRcJuxxiGrybiwAjWecVPjkmipMAjLSxBhjYLPJ0lR3XL9n/dqtYpATXlTkC1u7lEx/9nwq84Mf7KAkedZ64YmnPbCdoB9epIIvjEUtTahFKmTD5rJfKxB5wT+e1MI/FBruqaHdv1oOYVH5vYXs85DvUFqAY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741632825; c=relaxed/simple;
-	bh=UcDA6ns2OOIbj22cvfia0voAZtpRl7BvOqrCGYinyu8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Kl06lW75619MuU4dQIn0a4yRgPNbsI7tR3hxpsBgD6+KxxIXl94Pt/6s9W4ViUrwYcfQtXl8Glt8oLfYHyeqRtI0nv9jxBltZvAP8Piop4N4lR5vT6/2kmN4hMWObcpxNyWj073KU6FSPPad6YarRwgq+r8ET+QYpscoCRo5k14=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kDAJ1GJS; arc=none smtp.client-ip=209.85.214.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-224341bbc1dso54403815ad.3;
-        Mon, 10 Mar 2025 11:53:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741632823; x=1742237623; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=bf58kJmAztwK2cJKrlusPlp/m2t2eqheCrXfAo917yk=;
-        b=kDAJ1GJS8JPHjpGStkDkjoutXDpAVcY+JtOuRXMw68y6MsIUImD+OtE52Dlhod8GlR
-         rK+eNtvbokAbwf7npf/pTfJaTVlCFHID1MRHb/DJgzd+p7NFRaVC/e8QgbaFkpPjFqgc
-         yqJUjIHkeKkzpambeMalx2LTRzVUkew7BeHKTPpeTR75kCKPtkqcBuX/ox0UmfEftW/6
-         EZzQk11N5c7YCY8YakM6MyVZgm9jkU33Li9VQDkQt/y6k99eOJ6zb2y71CooGUw75IUh
-         5SuWhHQB69iUqez22UA8YrCdVKvMtT/6XjguXMNCBf2Ww+HJok4/U045JkubGH5zrvUf
-         vIdA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741632823; x=1742237623;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=bf58kJmAztwK2cJKrlusPlp/m2t2eqheCrXfAo917yk=;
-        b=tF9Uq8pbGIS6YTuL8DHrQXE6XD3Irui+raQC48QUNVxgHdmiuoS08K1Rg7UQXqHMBb
-         DoHio1StlcbVQZ/nwkoTOUs9cQt8Gg0TSrdB2r8BCQHb2tQ4uFGOfcZI+r5gJGCTytHU
-         3lWqJF1O8OLFlmTNt74VLg6n8/4UFDg4tOtublDDUFiRtLoVqhyZ2zFkclBXph2WIb3L
-         xklW55EsDa8y/WcKlEAPanCYrTX3QXEwqwotVBB6Osq/1pJmKUb8Zmyb80kG6Ez7q3p4
-         F+EyKf9URwKKa7OzWW0VriZ4cW+ZacoBVw0w5+OxZfFHok+zkVVNYbgoboCx/JiIqpzV
-         Hxyg==
-X-Forwarded-Encrypted: i=1; AJvYcCUHLqr1MvXwHV5p45Z03CPEJ12z1o7HXDc478hcyw9XRQfpP1LjVhL21OoHn6q2FflBATf29BkyJizP@vger.kernel.org, AJvYcCVb4i+yWuWpF64WUgjjo61YNUCWx0RZFGjYYnXzjozwMEXlGLB0tS8rsKbqFSAIqxRNVWD1f6z9Jq+rz5U=@vger.kernel.org, AJvYcCWa/N0foVPY3/D87Q6UaNrtYZAwatT1pwW+9BCUm+nZEg/zpHEqV8oHjO8gQaKh4Nd5QAtyZk5LYgZ1uN0m@vger.kernel.org, AJvYcCWeqUyBPUaxziyAW9YoMNa7+O6vgeJ9Osta/P2Yh0x9e+puTLz9MA1pzBjO1vyNMJqWmmRLlwuJFd2//i0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyxWpWATYpStLK0n+1QFfRrmtx5/hBVdRIhq8Lt9bQGh+IpeenO
-	BERkm5voR2sDoN+v62hqTTxIe6z8awmClnssazs2zVojLf9DTuox
-X-Gm-Gg: ASbGncvswg0Rn2XIMmacfvHoIZmbMaTSeEEaCFrqUHXD2zG8DW8zWbwkia/DsPlf7uP
-	KDm0aT4Fm3qp/Fl1ZkCSEd08I8DoK0/tHJf+hK32WChHtO/HN2RPBI817XrzI+DZ58tQthjV5I7
-	HMVPRrNUL41Pp6hUOdLsU4AVVmcdxmTAvLIjtIK2lny4/5tIyC8kqe8SbNB5Ibdout9WBENmVlU
-	BSkdIC7xc+ohlIwox0yXfa+GvcDFBBLnl8IGdZiR3KuWx/NVVwNsvdyvaS7xWNtJd78iQHyJmGX
-	e9TRYa/J/ztdYTK/nu1DipnR5XzztQ98IRCrsTUA9lF9
-X-Google-Smtp-Source: AGHT+IG8bsKLqFkwaIahuQSaDYQrFEsJ5iiPIYNO/LVxmoqH7Da/WkO3iAcA2T70KKZ39rq0aWAg0A==
-X-Received: by 2002:a17:903:2f86:b0:220:c63b:d93c with SMTP id d9443c01a7336-225931ad50bmr11928595ad.44.1741632822874;
-        Mon, 10 Mar 2025 11:53:42 -0700 (PDT)
-Received: from google.com ([2620:15c:9d:2:eb9f:29c2:9ede:46d])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-736cc153016sm3716292b3a.173.2025.03.10.11.53.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 10 Mar 2025 11:53:42 -0700 (PDT)
-Date: Mon, 10 Mar 2025 11:53:39 -0700
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To: Jens Reidel <adrian@mainlining.org>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Bastien Nocera <hadess@hadess.net>,
-	Hans de Goede <hdegoede@redhat.com>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Luca Weiss <luca.weiss@fairphone.com>, linux-input@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	phone-devel@vger.kernel.org, linux@mainlining.org,
-	~postmarketos/upstreaming@lists.sr.ht
-Subject: Re: [PATCH v4 0/2] Add Goodix Berlin-A series support
-Message-ID: <Z881MwZjmu0sUXMI@google.com>
-References: <20250309062315.35720-1-adrian@mainlining.org>
+	s=arc-20240116; t=1741632860; c=relaxed/simple;
+	bh=hT3x+r+R8WhMdNfqjVdlozV1NUSgalwcbMabl58jFOc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=HCK4O5ue8SeEvrmjJ165l1a+Jcy4JPLpuh8Zo1p7nP+w2ei++O5N/a9ZEWSxQNC8DpQS4F82m14wRkL+En/iuUAduMlloCnB7RSdTallGgDYr3vnatuYLjNxKwnNIloyHwgqmaMM+Mu5qSyatK7WcnjrYgbKeGkeOTpzUrLc+ck=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 03222152B;
+	Mon, 10 Mar 2025 11:54:29 -0700 (PDT)
+Received: from [192.168.178.6] (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 872983F673;
+	Mon, 10 Mar 2025 11:54:14 -0700 (PDT)
+Message-ID: <797146a4-97d6-442e-b2d3-f7c4f438d209@arm.com>
+Date: Mon, 10 Mar 2025 19:54:13 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250309062315.35720-1-adrian@mainlining.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 4/8] sched/deadline: Rebuild root domain accounting
+ after every update
+To: Juri Lelli <juri.lelli@redhat.com>, linux-kernel@vger.kernel.org,
+ cgroups@vger.kernel.org
+Cc: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
+ Vincent Guittot <vincent.guittot@linaro.org>,
+ Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>,
+ Mel Gorman <mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>,
+ Waiman Long <longman@redhat.com>, Tejun Heo <tj@kernel.org>,
+ Johannes Weiner <hannes@cmpxchg.org>, =?UTF-8?Q?Michal_Koutn=C3=BD?=
+ <mkoutny@suse.com>, Qais Yousef <qyousef@layalina.io>,
+ Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+ Swapnil Sapkal <swapnil.sapkal@amd.com>,
+ Shrikanth Hegde <sshegde@linux.ibm.com>, Phil Auld <pauld@redhat.com>,
+ luca.abeni@santannapisa.it, tommaso.cucinotta@santannapisa.it,
+ Jon Hunter <jonathanh@nvidia.com>
+References: <20250310091935.22923-1-juri.lelli@redhat.com>
+ <Z86yxn12saDHLSy3@jlelli-thinkpadt14gen4.remote.csb>
+From: Dietmar Eggemann <dietmar.eggemann@arm.com>
+Content-Language: en-US
+In-Reply-To: <Z86yxn12saDHLSy3@jlelli-thinkpadt14gen4.remote.csb>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Sun, Mar 09, 2025 at 07:23:13AM +0100, Jens Reidel wrote:
-> This series adds support for the Goodix Berlin-A series touch ICs
-> (gt9897). This was tested on a Xiaomi 11 Lite 5G NE (xiaomi-lisa),
-> which uses the gt9897 IC connected over SPI. I am not aware of any
-> device that has gt9897 connected over I2C and therefore could not
-> test it, so I didn't add a compatible in the I2C driver.
+On 10/03/2025 10:37, Juri Lelli wrote:
+> Rebuilding of root domains accounting information (total_bw) is
+> currently broken on some cases, e.g. suspend/resume on aarch64. Problem
 
-Applied the lot, thank you.
+Nit: Couldn't spot any arch dependency here. I guess it was just tested
+on Arm64 platforms so far.
 
--- 
-Dmitry
+[...]
+
+> diff --git a/kernel/sched/topology.c b/kernel/sched/topology.c
+> index 44093339761c..363ad268a25b 100644
+> --- a/kernel/sched/topology.c
+> +++ b/kernel/sched/topology.c
+> @@ -2791,6 +2791,7 @@ void partition_sched_domains_locked(int ndoms_new, cpumask_var_t doms_new[],
+>  	ndoms_cur = ndoms_new;
+>  
+>  	update_sched_domain_debugfs();
+> +	dl_rebuild_rd_accounting();
+
+Won't dl_rebuild_rd_accounting()'s lockdep_assert_held(&cpuset_mutex)
+barf when called via cpuhp's:
+
+sched_cpu_deactivate()
+
+  cpuset_cpu_inactive()
+
+    partition_sched_domains()
+
+      partition_sched_domains_locked()
+
+        dl_rebuild_rd_accounting()
+
+?
+
+[...]
 
