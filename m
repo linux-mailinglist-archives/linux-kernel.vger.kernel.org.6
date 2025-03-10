@@ -1,234 +1,218 @@
-Return-Path: <linux-kernel+bounces-553477-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-553478-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 21F2EA58A29
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 02:55:21 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DE2A5A58A2E
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 02:59:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 930DA188A004
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 01:55:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DF6031886C46
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 01:59:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B797156861;
-	Mon, 10 Mar 2025 01:55:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4AC6618A6AE;
+	Mon, 10 Mar 2025 01:58:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="T8fswk2i"
-Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2079.outbound.protection.outlook.com [40.107.223.79])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="MkvJBEHt"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF8F0AD2F;
-	Mon, 10 Mar 2025 01:55:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.79
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741571714; cv=fail; b=bouILw0iaTGNkJhNrhMiDbxhVE8Cdo9tdjSxMywKF6Ta6SBCv0U9JMJjMIfhHxDka6vaxX5f3LCKrmUrF2JE5bHY8hmwO0PMiBuagBFOby1b8Kp8dtt17lC33kMcUn0AyKjddWIeW/C4AYG4hK6z43KoaxYc0jaaz9F3Bc/2/oA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741571714; c=relaxed/simple;
-	bh=zR76B7PS0L/CzfJ6BU1WQpc06kK6GUOOo1oY3l7yi68=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=cWLnCkzogTeDh+LD4PDq4GSzder35zdqDIe9f64oq4zLwZ+MYoh4yvjiZUlmxynwRJiWsLEVp8vrIdnVkd6cdXCsPUcSpKxsihYFuirKEEpOE8MhsxxZelAM58oaOHIoovOz5ip4nucHY8/gdUcwY92tVf0DCsUWhwVknW1NNy8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=T8fswk2i; arc=fail smtp.client-ip=40.107.223.79
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=iToHNFP38S4BF0dINJnM4Q14vp5Ir/8YQSVG8ST/cXosMZ57PBSIS4BcjmaltzjRxFsfUqiQ0Nd5hqSGoCsWuNF81+oGnbogbUYxeY6CUA56OW/z3MGI27PdaBitov1Kg4hA0IByF/ZSubxxxit3+P1QbBBeSXxbgqSQFIHshzSP1fKgjCnly1xg6vcug2rCL07hQu+8Tn6MYzqgSEPaNRv42g4e92lmQX0mckTyImud3POyoD/A1r9cwqot+eMNp2vTjjTIyvbOJy4jYdx6junr1p4j2ECVyHsBz04yzjbEesdaJWA2D5wKvR3qBDDZz01p1POQwyR/0S3k7lzznA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=SYFUqVfOWcUGJBN8EXUKVjz7fJBAPJKYeTPDGmXvtts=;
- b=lov+TVHTISdGEokK7L82MmT0jG5KoflmPZAIILtwWLQfRQbAQhPFahGgjh35+KJYVI30uPvHpdv/z6lkXd/1wInD80NTlL5U8s3Eer0am39wu1aoAbtiPL9cdnOSV7upWSZwqq94Ai28aEUeO74jGpB5NCnJLFcFyO9ciqgBqeE9wTD99sXxI2AGk9X/hPyAC9S7HpvKSpcII6BU6PeIkJTqdGMWVy8iwNpiwppDUryFgKxU39j8ESrgnsPnnuODOwDe4aIGcrs6dsCaASkRHHPvR+5NHuJQksJAoTm0uZN79/pBP+tz/8MNxk9h06iz8IDf1W/ZItBUh/AMAmPviA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=SYFUqVfOWcUGJBN8EXUKVjz7fJBAPJKYeTPDGmXvtts=;
- b=T8fswk2imPndhASBUaaUg1efTIn+A4vDQ9ZUO88NhcX/RHwiRCarQ1OET1DYC8ZCTfhpgpqCqILelqn3QIz/KptNE67FLxSNE/nWmqtsaArZ3PRW8zi8iNiZ+yecN7qr+qBBM/ETcHa5dowiiXjJFrU8fNj9FxGbHrO8/lHHukfsZoD9wImt7KccVxy1UQmsloy2E2ZgVRk3t6kdhSujgFXWl3B7zgmlPzXddrBvS0TsFLzNshnBodEYqJqFlOz6lmElL5alWh6gLRIl27t41w/VXHXa/g4Muul5ICQmthm5IRVPB2iFMsBxuahG9UyLnnTNVITrm/Zn6FAKiWLPXw==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from SN7PR12MB8059.namprd12.prod.outlook.com (2603:10b6:806:32b::7)
- by PH7PR12MB8593.namprd12.prod.outlook.com (2603:10b6:510:1b1::7) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8511.26; Mon, 10 Mar
- 2025 01:55:09 +0000
-Received: from SN7PR12MB8059.namprd12.prod.outlook.com
- ([fe80::4ee2:654e:1fe8:4b91]) by SN7PR12MB8059.namprd12.prod.outlook.com
- ([fe80::4ee2:654e:1fe8:4b91%4]) with mapi id 15.20.8511.025; Mon, 10 Mar 2025
- 01:55:09 +0000
-Date: Sun, 9 Mar 2025 21:55:07 -0400
-From: Joel Fernandes <joelagnelf@nvidia.com>
-To: "Uladzislau Rezki (Sony)" <urezki@gmail.com>
-Cc: "Paul E . McKenney" <paulmck@kernel.org>,
-	Boqun Feng <boqun.feng@gmail.com>, RCU <rcu@vger.kernel.org>,
-	LKML <linux-kernel@vger.kernel.org>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	Cheung Wall <zzqq0103.hey@gmail.com>,
-	Neeraj upadhyay <Neeraj.Upadhyay@amd.com>,
-	Joel Fernandes <joel@joelfernandes.org>,
-	Oleksiy Avramchenko <oleksiy.avramchenko@sony.com>
-Subject: Re: [PATCH v4 3/3] rcu: Use _full() API to debug synchronize_rcu()
-Message-ID: <20250310015507.GA3993297@joelnvbox>
-References: <20250227131613.52683-1-urezki@gmail.com>
- <20250227131613.52683-3-urezki@gmail.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250227131613.52683-3-urezki@gmail.com>
-X-ClientProxiedBy: BL0PR1501CA0008.namprd15.prod.outlook.com
- (2603:10b6:207:17::21) To SN7PR12MB8059.namprd12.prod.outlook.com
- (2603:10b6:806:32b::7)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C825B33991;
+	Mon, 10 Mar 2025 01:58:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741571929; cv=none; b=OPo2rLVDvh7n6VW/Yv+KD7Ry1eSxGiYdTCq7E8gCmTbhzUxqnu9VA3zv0TRF/o3bVZZeOGBzIuhWAOtdPOS4uY+hbag/r11eo3/7Uhx7fWX6po9HenhfSM8vc+ZgML8vMxfZGm3iRzdaaSMFkkeAlU5C57HMJmG7jxq62/zx/lE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741571929; c=relaxed/simple;
+	bh=6P/sYsBlPXI28YDPL6e6GYfTaKI9Syduhlo2Whk9kB4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=a07WP4u98tI1Y//QmqtVJJIE7s8cQAjUnV2QmLaCuDjEAlMRlwRkJIXxzuhYEjT15xEXVITrdJOaIHoV/gUvktkDJB3uIbUWJoRsABGUwoPS8YSir230Ad+zIfR+zvKrChKqZ/orXnvqvyBFsPPHWI8FTn9smvc5e8X8eKAISXY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=MkvJBEHt; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 529MiPoD030297;
+	Mon, 10 Mar 2025 01:58:44 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	7JC319lKqZ7+vrTPClXjMYMJqgypPY72vRxSw96Gvac=; b=MkvJBEHtlosz/Fgz
+	s73A1C4PIwDWz+v7MECqXuMe5OEtMnCKC1eNtmJun2lUt08LatyE/7KzKqSwt13r
+	dB0wsFUvj1V+ZhBIfJLLgV2rMT2ShJJhy+zjYYIUqQv6p41+WruIaueFWFaJSj8f
+	tASVv8hgdvavheNmO5zzYdDpkxQwrTErZ0Qq8nXCHcJ0BWTFOYUqNfkDO7kFA81P
+	N30m+QFmYlml91+N1TKd2uBf4a0ReU8mzA6Yk1Pe7eF4YVEPZ1hvtaQuamrQHbAc
+	GPumqVwQsA0nZbaPznhL3Zniacpyvxkt1jdgxKUmZrhMQmwT9DuwodhSbsFFJwQw
+	6ifUnA==
+Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 458eyt34w7-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 10 Mar 2025 01:58:43 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 52A1wgTY006829
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 10 Mar 2025 01:58:42 GMT
+Received: from [10.216.28.75] (10.80.80.8) by nasanex01b.na.qualcomm.com
+ (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Sun, 9 Mar 2025
+ 18:58:36 -0700
+Message-ID: <f1dd5c1f-3bfb-427b-8e17-030776df38a1@quicinc.com>
+Date: Mon, 10 Mar 2025 07:28:33 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SN7PR12MB8059:EE_|PH7PR12MB8593:EE_
-X-MS-Office365-Filtering-Correlation-Id: c41c1777-2a25-461a-451c-08dd5f7696a6
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|7416014|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?B4DeMXWmj+iP7BSAKXSaDB8IYxXdmtTahlwhKBqH1ixhK2fGQajL+ZgtqUvW?=
- =?us-ascii?Q?i1SO+AGdVHrVm/8tewiUEDqlsuo9IpCqfBQTcVCTJzWuVFBsbOT+es7QHhZ4?=
- =?us-ascii?Q?GWPxxRqfHmP2IUTq+8fvUW+jxIq2vAUYgkNNe1HeP4byGWa3X3/tjmypvNSv?=
- =?us-ascii?Q?n4QecknF8lakmTkAdu4V/hUgpDwii6V8G+D3Qs+Gl/nCSHUyQLfBvKnGJA1M?=
- =?us-ascii?Q?o1stY80ZMVtvyITj/ZaJTC8NWicFKrylZrVNyU4wN+0QO/3+ytTNKXMLxTqY?=
- =?us-ascii?Q?t6WCdv81xLBNr5TDPRv0qfUd6LQ89eKW9TCpZ4MFVPhNc3cLNg5ZJ2uYCMQL?=
- =?us-ascii?Q?IigYbsuiUy7/Ja8+k0fidCFUHmSTXTM4LKvYy6xNqBfeP5SM5l0i4J9mipJt?=
- =?us-ascii?Q?9Piz/xy4buXOHpKddmHotOUY5qp5d2GmuFSnHv/Fk+vwuX7jpMcazUGJT98W?=
- =?us-ascii?Q?tFIHHM/iKVwkdoFzMwi0oVXSo1D5h0dHfJN93wBF7Tikp9LXSXnBGPu9NwEQ?=
- =?us-ascii?Q?pSftNoy4FLUr8Yju4ZYefoFq/RDb4y9TXXiINeLdIzrquukywXoiW4MzMGGT?=
- =?us-ascii?Q?gCkzghQnwzT1PT57iZc0ePDhen5Kfu/tNB/40boqKSJz37sDAmcfieKZgOBE?=
- =?us-ascii?Q?je9yw97GidEo3N2eV/tHkQ0YBFwevf+fLMUdgrx1auaN0XmNqZLd7R9dPd/o?=
- =?us-ascii?Q?Mz4X127ge86D14LiPlzuZMY1BndBlqH2f8kiaCHJls7ToXjZvCeGBD3RA+9T?=
- =?us-ascii?Q?Wb3S7mejFm4gDMHsL7JlDBI4VbWX80Oq+5Gpqwq0wgAwxJUAFcBhrMW7QpY5?=
- =?us-ascii?Q?n/XrsPn62Huoh1Z6DDGynPYA8wQdjugg9OmyWIbyKoKYGDquBBxB18loMtZF?=
- =?us-ascii?Q?9F53yzJcgxeuARRl5qdX6jYSzaD8dondPqG3dQJWzAruIKYHQskq+nL/mJ8f?=
- =?us-ascii?Q?nybScnxQsrcGEuG1pGDBJWnpGHmcEgNh9SQc+BG3G/uMRgGrvNQ67XYmvpN8?=
- =?us-ascii?Q?yAlFqY4FTJGh8DfrCZFu6UZhvhE7bkAYhHbwp4FZTH+xU13ol62yzVb19Emc?=
- =?us-ascii?Q?Tw4NG7Bbh4vI+FavAvVP4y0pPS6T/sPIyRT40YN3FEE38G5KNpGBSUpnmie7?=
- =?us-ascii?Q?vHFZSoWLiUAM05I/1f0epAsRUQDgABP+jHWL6gbymaCwIWxjZTW/cI2+7Gjb?=
- =?us-ascii?Q?bqqnyxutyh6RPSX5VXUy8C1lvQE0YdiuWK+utgS988KP615HxIGrgowqvb/R?=
- =?us-ascii?Q?ZPfbpIRGv5oRt07yQAQ5fOPXIpAJSR7sMXfVOmo7IZ2bMREzx7vvlQ8SW01S?=
- =?us-ascii?Q?IrY+9tehuLWMRFXXRHVzaaT+LSg6XjUPabAq1XG7yXRAyOH/Pqng4a2Ur/Ja?=
- =?us-ascii?Q?lMjzW79Jo7+NvFDOTR1t7jqbGlc0?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SN7PR12MB8059.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(7416014)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?0NdivAkAwIjx9R5K4TO4tbERBve68l1fwVzrd2MpzPR2t/1Uyd7b/SzT/pM+?=
- =?us-ascii?Q?YRijzLz1pIYXVBTp7KFwZv4bdXdh+Ue1JuDZPi5QNRw6Os5yLYrfCvgvmnvX?=
- =?us-ascii?Q?EUHDLfkePaC9uoRnReJ/QpK6TIfQDAoPqS+MHpRF4Tt/ZKt75w3Q+bNJeuTx?=
- =?us-ascii?Q?x8ip43OyCJZ/frMoyZiN3WVH2Nr3xxyqC2pmGnmZQ7N32o2Cb9bfHNtKnlqU?=
- =?us-ascii?Q?9VJtEY5FsUZb3nzo1kDN+s3OC0h3R0fAPlyoze+35aGLrYG5Enu14t/U7aQO?=
- =?us-ascii?Q?resbmM1dmkujLAL/VACPHh+qT72NIpQYzjrc6mx2BouvX+qy1rsl5CIjL1Xg?=
- =?us-ascii?Q?7Rwi0DBZiQqPc+IOMZLsk+OnWh96oViYTFi4djcdIuqH7cddm6ngUIbVywo+?=
- =?us-ascii?Q?P+NuTiVQkNumXwVcVn6fL2KdnwG0KZQg0DTz+JY+Oqqjqb1Y6gu44BvcsrTX?=
- =?us-ascii?Q?Yv1FBfoPzwJYgDrY5fMUvV/aKF94HzXnjbjnnaf3+cN2XavuIhRDurNMdIdS?=
- =?us-ascii?Q?wY1W2X3vKScAZQb1vVQA7y2G68Pq8ZN7lO88MJ2ILh7SjZEPQC+HCBvs3pJm?=
- =?us-ascii?Q?dOVn7gP1muE5YToUgMRG1PLxG9ecLcagqhhd7oc3SYsGy55uLB2I5JIz7Eak?=
- =?us-ascii?Q?78l02NY9Yx1GMIWak6SLxDowvFGCJRLI1iO2lUFTjSJ+d7qFLmXwNW6ucTLC?=
- =?us-ascii?Q?a6yJt95CHY2MTctYLm5zls+r4mwugOO8JI+SPzUFMYJYS/W0QcFBt2JIs1JZ?=
- =?us-ascii?Q?Kq6MV4nE5PeVvmAa1gbdhi5pXwSSH+juEpvABsFglzCxWLqqe+HkqckHh18E?=
- =?us-ascii?Q?36rxdJMsELLL/tlYzUovLslDvWiJclucsK3dP2Yb5hZglfyQA4q/Hm7og33x?=
- =?us-ascii?Q?HoQgU80B2ml4pSmgr156VubHhbzIxbLYPW5ZIBaeTX5RIcET7lTn8bwSPz7z?=
- =?us-ascii?Q?Dmxy42m3RtaarZ5a4WDVF5ae4pljzvzy+irplOyuI3LMfYBLx3Iu4a9hgMT6?=
- =?us-ascii?Q?3MvQ69Lfa47Uwu3GnKHnAYIdexfwy7f7Df6Llia93+ni2QzV8/NYO9Z3cc9X?=
- =?us-ascii?Q?6byoV1Rs7SbLzCxXqNyiVMmAb1sv0tJQViInQSVaCzo82CZ8cNkrd88NbNRB?=
- =?us-ascii?Q?MFT6+yvLyUBYcEg1i+JqrPDHdgL/Bf5POkM9dj69B8eYdO/Q8i9FZNgdnQuQ?=
- =?us-ascii?Q?EaTmv73Ce4gKFBMwIXk/JiolWr6jN7aC9Afwmd5P6yreGE/J7VrqULn+glpP?=
- =?us-ascii?Q?tyhWMtLuwlL0IqrC20cLzAJ9KJJXy1uJ2t5UPtJ3Ci61UL4F4ndK9Bzda3Lp?=
- =?us-ascii?Q?yzJaZj5UJHCVUjob/XWMKPxPWpRVs8990Q/F5QZ/RdW02Iw1bjmp+RkCiaWu?=
- =?us-ascii?Q?h87B/+MAvCusvSUG9plyq/1sVUYi6OUrSmAGdFAKoA7w67xSntg3NGPV/BDb?=
- =?us-ascii?Q?0KUZ+UWI769XHpOwgSkldkZ+fG+aIgj1ssVMI32EZOBCRn3azhiIZxz0Aj8a?=
- =?us-ascii?Q?9B4Z17aTBqmh5hnfdIDK9fQcdi5CIXHDChqKa0HHqV0UtgQX6eLVZmxPcIMW?=
- =?us-ascii?Q?IeSp1LLAIjCQJJbQCEJc5iH39nE4oOe2tGRYW9KX?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: c41c1777-2a25-461a-451c-08dd5f7696a6
-X-MS-Exchange-CrossTenant-AuthSource: SN7PR12MB8059.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Mar 2025 01:55:09.6063
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: NT/TyM3r+cHp0oEwK+YYNS5twRx8VuK31B50kVA7k1JMzr4sZ7vRY0KtAY/Pc9skrvXQGK5j4xsz1favUL22Qw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB8593
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V9 4/7] interconnect: qcom: icc-rpmh: Add dynamic icc node
+ id support
+To: Mike Tipton <quic_mdtipton@quicinc.com>
+CC: Georgi Djakov <djakov@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio
+	<konradybcio@kernel.org>,
+        Odelu Kukatla <quic_okukatla@quicinc.com>,
+        "Jeff
+ Johnson" <jeff.johnson@oss.qualcomm.com>,
+        Jagadeesh Kona
+	<quic_jkona@quicinc.com>,
+        Sibi Sankar <quic_sibis@quicinc.com>, <linux-arm-msm@vger.kernel.org>,
+        <linux-pm@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+References: <20250227155213.404-1-quic_rlaggysh@quicinc.com>
+ <20250227155213.404-5-quic_rlaggysh@quicinc.com>
+ <20250307035357.GA7435@hu-mdtipton-lv.qualcomm.com>
+Content-Language: en-US
+From: Raviteja Laggyshetty <quic_rlaggysh@quicinc.com>
+In-Reply-To: <20250307035357.GA7435@hu-mdtipton-lv.qualcomm.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: RJrcnw5ojGXVqg8O4O9pz_BuYZHRkJWH
+X-Authority-Analysis: v=2.4 cv=CupFcm4D c=1 sm=1 tr=0 ts=67ce4753 cx=c_pps a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17 a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=COk6AnOGAAAA:8 a=sHi-3QDVYUbo2YnzGAgA:9 a=QEXdDO2ut3YA:10
+ a=mn1kVZPsorgl7L_8cYVa:22 a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-GUID: RJrcnw5ojGXVqg8O4O9pz_BuYZHRkJWH
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-10_01,2025-03-07_03,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 clxscore=1015
+ suspectscore=0 phishscore=0 adultscore=0 impostorscore=0 malwarescore=0
+ bulkscore=0 spamscore=0 mlxlogscore=999 lowpriorityscore=0
+ priorityscore=1501 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2502100000
+ definitions=main-2503100014
 
-Hi Uladzislau,
 
-On Thu, Feb 27, 2025 at 02:16:13PM +0100, Uladzislau Rezki (Sony) wrote:
-> Switch for using of get_state_synchronize_rcu_full() and
-> poll_state_synchronize_rcu_full() pair to debug a normal
-> synchronize_rcu() call.
+
+On 3/7/2025 9:23 AM, Mike Tipton wrote:
+> On Thu, Feb 27, 2025 at 03:52:10PM +0000, Raviteja Laggyshetty wrote:
+>> To facilitate dynamic node ID support, the driver now uses
+>> node pointers for links instead of static node IDs.
+>> Additionally, the default node ID is set to -1 to prompt
+>> the ICC framework for dynamic node ID allocation.
+>>
+>> Signed-off-by: Raviteja Laggyshetty <quic_rlaggysh@quicinc.com>
+>> ---
+>>  drivers/interconnect/qcom/icc-rpmh.c | 16 ++++++++++++++--
+>>  drivers/interconnect/qcom/icc-rpmh.h |  3 ++-
+>>  2 files changed, 16 insertions(+), 3 deletions(-)
+>>
+>> diff --git a/drivers/interconnect/qcom/icc-rpmh.c b/drivers/interconnect/qcom/icc-rpmh.c
+>> index f2d63745be54..2e654917f535 100644
+>> --- a/drivers/interconnect/qcom/icc-rpmh.c
+>> +++ b/drivers/interconnect/qcom/icc-rpmh.c
+>> @@ -285,13 +285,25 @@ int qcom_icc_rpmh_probe(struct platform_device *pdev)
+>>  			ret = PTR_ERR(node);
+>>  			goto err_remove_nodes;
+>>  		}
+>> +		qn->id = node->id;
+>>  
+>>  		node->name = qn->name;
+>>  		node->data = qn;
+>>  		icc_node_add(node, provider);
+>>  
+>> -		for (j = 0; j < qn->num_links; j++)
+>> -			icc_link_create(node, qn->links[j]);
+>> +		for (j = 0; j < qn->num_links; j++) {
+>> +			struct qcom_icc_node *qn_link_node = qn->link_nodes[j];
+>> +			struct icc_node *link_node;
+>> +
+>> +			if (qn_link_node) {
+>> +				link_node = icc_node_create(qn_link_node->id);
+>> +				qn_link_node->id = link_node->id;
+>> +				icc_link_create(node, qn_link_node->id);
+>> +			} else {
+>> +				/* backward compatibility for target using static IDs */
+>> +				icc_link_create(node, qn->links[j]);
+>> +			}
+>> +		}
+>>  
+>>  		data->nodes[i] = node;
+>>  	}
+>> diff --git a/drivers/interconnect/qcom/icc-rpmh.h b/drivers/interconnect/qcom/icc-rpmh.h
+>> index 82344c734091..cf4aa69c707c 100644
+>> --- a/drivers/interconnect/qcom/icc-rpmh.h
+>> +++ b/drivers/interconnect/qcom/icc-rpmh.h
+>> @@ -95,7 +95,8 @@ struct qcom_icc_qosbox {
+>>  struct qcom_icc_node {
+>>  	const char *name;
+>>  	u16 links[MAX_LINKS];
+>> -	u16 id;
+>> +	struct qcom_icc_node *link_nodes[MAX_LINKS];
 > 
-> Just using "not" full APIs to identify if a grace period is
-> passed or not might lead to a false-positive kernel splat.
+> This is very inefficient. MAX_LINKS = 128, which means we're adding an
+> additional 1KB *per-node*. The vast majority of nodes don't come
+> anywhere close to this number of links, so this is almost entirely
+> unused and wasted space.
 > 
-> It can happen, because get_state_synchronize_rcu() compresses
-> both normal and expedited states into one single unsigned long
-> value, so a poll_state_synchronize_rcu() can miss GP-completion
-> when synchronize_rcu()/synchronize_rcu_expedited() concurrently
-> run.
+> As an example: sa8775p has 193 nodes, so we're adding 193K to the driver
+> from this alone. The current driver size is 84K, and the size after this
+> change is 283K.
+> 
+> Instead of embedding this array with a hardcoded size, we could point to
+> an array that's sized for the number of links required by the node:
+> 
+>     - struct qcom_icc_node *link_nodes[MAX_LINKS];
+>     + struct qcom_icc_node **link_nodes;
+> 
+> Then when initializing the arrays, we could:
+> 
+>     - .link_nodes = { &qns_a1noc_snoc },
+>     + .link_nodes = (struct qcom_icc_node *[]) { &qns_a1noc_snoc },
+> 
+> And for handling compatiblity with older drivers, we'd check for
+> link_nodes != NULL instead of checking the array indices.
+> 
+> Doing it this way would reduce the new sa8775p size from 283K to 88K.
+> 
+> A similar argument could be made for qcom_icc_node::links, since that's
+> also hardcoded to MAX_LINKS. But it's not quite as bad since it's an
+> array of u16 rather than an array of pointers. Still, if we implemented
+> similar changes for qcom_icc_node::links, then we'd save almost 256B
+> per-node, which for sa8775p would reduce the size by roughly another
+> 50K. If we're ultimately planning on switching all the old drivers over
+> to link_nodes, then we could just wait and get rid of links entirely.
+> Regardless, optimizing links doesn't have to happen in this series, but
+> I don't want to further bloat the size from the addition of link_nodes.
+> 
 
-Agreed, I provided a scenario below but let me know if I missed anything.
+Ok Mike, I would make use of struct qcom_icc_node **link_nodes instead
+of *link_nodes[MAX_LINKS] in the next patch series, we can clean up the
+links[MAX_LINKS] as part of another patch series. This suggestion does
+help in reducing size of the driver.
 
-> To address this, switch to poll_state_synchronize_rcu_full() and
-> get_state_synchronize_rcu_full() APIs, which use separate variables
-> for expedited and normal states.
-
-Reviewed-by: Joel Fernandes <joelagnelf@nvidia.com>
-
-For completeness and just to clarify how this may happen, firstly as noted:
-rcu_poll_gp_seq_start/end() is called for both begin/end of normal and exp
-GPs thus compressing the use of the rcu_state.gp_seq_polled counter for
-both normal and exp GPs.
-
-Then if we intersperse synchronize_rcu() with synchronize_rcu_expedited(),
-something like the following may happen.
-
-CPU 0					CPU 1
-
-					synchronize_rcu_expedited()
-					// -> rcu_poll_gp_seq_start()
-					// This does rcu_seq_start on the
-					// gp_seq_polled and
-					// notes the started gp_seq_polled
-					// (say its 5)
-synchronize_rcu()
- -> synchronize_rcu_normal()
-  -> rs.head.func =
-     get_state_synchronize_rcu();
-     // saves the value 12
- 
-
- -> rcu_gp_init()
-  -> rcu_poll_gp_seq_start()
-  // rcu_seq_start does nothing
-  // but notes the pre-started
-  // gp_seq_polled (value 5)
-
--> rcu_gp_cleanup()
-  // -> rcu_poll_gp_seq_end()
-  // ends the gp_seq_polled since it
-  // matches prior saved gp_seq_polled (5)
-  // new gp_seq_polled is 8.
-
-                        /*  NORMAL GP COMPLETES  */
-
-rcu_gp_cleanup()
- -> rcu_sr_normal_gp_cleanup()
-   -> rcu_sr_normal_complete()
-     -> poll_state_synchronize_rcu()
-       -> returns FALSE because gp_seq_polled is still 8.
-       -> Warning (false positive)
-
-
-
-thanks,
-
-  - Joel
+>> +	int id;
+>>  	u16 num_links;
+>>  	u16 channels;
+>>  	u16 buswidth;
+>> -- 
+>> 2.43.0
+>>
+>>
 
 
