@@ -1,177 +1,105 @@
-Return-Path: <linux-kernel+bounces-555096-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-555097-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4CFEBA5A559
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 21:53:45 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 011B0A5A55B
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 21:54:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7E5F7167104
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 20:53:44 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 871DD7A360C
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 20:52:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3E6B1DF72E;
-	Mon, 10 Mar 2025 20:53:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 960BE1DF996;
+	Mon, 10 Mar 2025 20:53:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eW6F9tgz"
-Received: from mail-yw1-f175.google.com (mail-yw1-f175.google.com [209.85.128.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sw9qVRn+"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A98D1DEFE1;
-	Mon, 10 Mar 2025 20:53:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E58501DED4B;
+	Mon, 10 Mar 2025 20:53:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741640019; cv=none; b=hRNQ9Z/UA//JshY4liPUtp74wGvkJKy31sw0nyv3Uy0HfR5p1FDKBsUQs/sPmk5mBCdw0UejIs8YV7wd4Cy9wR7Y3CrsqKLHaa5e2zzwKKg/0cpOYWCj65kwZeflaUnCf5sn24w9kFLrAnQ5e7qo2++htXBoi6KFNzzj/BHmwRo=
+	t=1741640025; cv=none; b=aI5cEe1ZResRNzlUZYP+Cjdn1Zy9QIsU+88o5q6CR7moZa7/Z4hhza4Ck2ZsJgSUcVSmAjmkKtsxel6vmM39fxPFfSzUYZ+K/g+X/feZHR58tOMyckm3adEX2l2sVCqYbjj0swZAVNcSdUBesPuJH9SvNpkfBvWUXvE8mVm12fc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741640019; c=relaxed/simple;
-	bh=oWjyctOfAZzqZ28wEHoJvG0ah9LKIBMklEVvWnYtIAg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ekWsMP3hdTLZdTfUfb5jsAu0qHYAHX1Xc08zMK9kqlsmIKTjRjpZ2fIijounfOgqIgQRlms4q/hPrs13YN2ssj/r+7jG2V4uSVETR7xrdSNtkk/bccooVa2tQn1DIIaFHCyxInrR4OuZNlKXtmaY0sImf7XdcBhqPm1xvfxbJ30=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eW6F9tgz; arc=none smtp.client-ip=209.85.128.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f175.google.com with SMTP id 00721157ae682-6fee3632ef1so1409337b3.1;
-        Mon, 10 Mar 2025 13:53:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741640016; x=1742244816; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=AQJmqf4BapFKGOdAG0jiNyOkcaDWGjY4CREwm8k1wPk=;
-        b=eW6F9tgzq83YTnZw0gTIhlx9QfVCyNN+sOoep1DqrwBCn6+SZSFq5b6Jo15hO9GrXs
-         9LAgKNQfLQuVPcPsDwur/PGjTKIDcZ/0CxO4rnRBvH0xoTeGLCcE8eSa3vISWYFqoO+L
-         wgbzAdeShiF717P+/Mi8ozPk2Kmw2+3i9erN0HIiHad0LyITWSHL1YoGqxN/qSfU2EoS
-         Ne72Vli5zyJKyhEAPSpu/iFfl7hJ8rMrpJkPKo0CPUMXJR5RzA36uNpNHn30xq8wXb4a
-         jXHLLmXr5sihh5e2vxhVgJUgqmVgWwRrqLf5U0UrP27qqwJZSu6CsCzVaZsCzkTp3pO6
-         JdPg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741640016; x=1742244816;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=AQJmqf4BapFKGOdAG0jiNyOkcaDWGjY4CREwm8k1wPk=;
-        b=NloccpHMLbMOM94eLLmrNfO2DgIXS5QnkbAUPk5Vz1l+Xz13qRcaWrcUQYhvOtghPT
-         S4kmoqMpR1aDzUJjZoZoW0a9zbTVcSe1uSM7490FOS1ImMZoeXATf8CEEU2RzqlVPwK5
-         uucc8uUVio4luituRvvQRWcCdyexM5ha26qgMF5rtFysekVrHVNFnilXLOK7xwsfOhOS
-         VPT6/MkYDCzsZPhjjCBAD/RShC9ZquGw+B8UPhuKFGON6G3wryAQuBwpziZIuVumwv0S
-         06JbaivY0IMddimWzOLljW5RanGs0LLjnm5Kzx5fS1BHlfBBy7So6/RdOEbXqQ0Ux65k
-         8gXg==
-X-Forwarded-Encrypted: i=1; AJvYcCW98OTdQYT3/cBtQ4lwJdKLqkrJ1bodEsy8OasDjvc792zwr/E6FiiNw0/lMzSTxdRHIXktMA3oLoPxWKRX@vger.kernel.org, AJvYcCXRqxRjCCKcjT3tw3jzxuM90Kys6Z7QQc/eQU2XFldJsRIL6LwrfEk7YokUQ/5AE/YWAvgxrIP6wPo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwIYCwmpeYOohK+idsFUICA5t/XhZ9K0LjFz0kvoeMdnRTpILMS
-	B96YZ64IdbmyNUKfNjOT7uhl/KBy1bkpFKn0UX+o+fTZexEh3fi+dYAUOlh+yv4xIUDJJ9h2QnI
-	08w4QnbgdT0ainvEqsS7o2zFEBq0=
-X-Gm-Gg: ASbGncsQGiDdMxBhNU8E3HTre/Lj1vqIH169XRdwSEpeF0oQGS4+T83mnDgkhUtFJlW
-	DVJYJr0du69hnFlQCoQ8nXvkvcZHnxCXPGap4b4qzy9w8UqRsn3S39UM+l86ydFKNmLzn04Wqr5
-	3dBC3nzwx121oCBGTOLkGaoMwT8g==
-X-Google-Smtp-Source: AGHT+IHs+DO2QF+x6qYrqQUIG520UyB96W2qoPNqT27M7cudtiD2mizo6Lfop72+jk+PccWblhdrd4UF/u5dcrrYZdY=
-X-Received: by 2002:a05:6902:470b:b0:e60:87a0:6219 with SMTP id
- 3f1490d57ef6-e63b4e4c51dmr623081276.0.1741640016248; Mon, 10 Mar 2025
- 13:53:36 -0700 (PDT)
+	s=arc-20240116; t=1741640025; c=relaxed/simple;
+	bh=A9JcAFLg7LIrSagO1s2xx6JEqd8Xa6VdLK+LOHobkuE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sS5Zyc4EaIkuuzyBXCMHpnwEuv/LvwDPKbNNc169Gf5Z7jgUW2M+7GFLoslratAmKXxDCwJJFO6CWcVjvCNDkdXeiXZUetJsQtnN6/jfaHz35E3yq3vZxHfGDKEW+f0M1vAE7BOnf357+++JGoxzD/lZCWsC7oRHYrTcWdOhip0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sw9qVRn+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 04D81C4CEE5;
+	Mon, 10 Mar 2025 20:53:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741640024;
+	bh=A9JcAFLg7LIrSagO1s2xx6JEqd8Xa6VdLK+LOHobkuE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=sw9qVRn+XkwEA4ysm8oZ72FhwGa/JOaoxyC6brDaROWhbuyidFm41oakGCFj8SS9G
+	 vx9/zxEp05mXzxBoxL7zNl46IPi0Lg5BSfGtPzxxH91xmItEZSprjlKXTaRlKDfdRx
+	 hDmGRDsFbXqiA/yw9i5571dcbs/FB4kzXi9zgnDrFS1hvtKU1GdkoqyQpjlGeyUNJG
+	 Q5FrNkeTIt6kKZrntFFdQSq7lIDQj0ERi+QEuvmoWdrrhfzpMZiBXNEX5rVUcLdQl6
+	 RYo3furw2hV2K9UD80KCKic6gObCT909tWSoVxyNKmWIfvWsynYxMExvq1dj7HXDsp
+	 3kV1H7atTKMsA==
+Date: Mon, 10 Mar 2025 17:53:41 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Ian Rogers <irogers@google.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Kan Liang <kan.liang@linux.intel.com>,
+	Yicong Yang <yangyicong@hisilicon.com>,
+	James Clark <james.clark@linaro.org>,
+	"Dr. David Alan Gilbert" <linux@treblig.org>,
+	Levi Yun <yeoreum.yun@arm.com>, Ze Gao <zegao2021@gmail.com>,
+	Weilin Wang <weilin.wang@intel.com>, Xu Yang <xu.yang_2@nxp.com>,
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Howard Chu <howardchu95@gmail.com>
+Subject: Re: [PATCH v2 07/11] perf python: Update ungrouped evsel leader in
+ clone
+Message-ID: <Z89RVc4HuASuVVVv@x1>
+References: <20250228222308.626803-1-irogers@google.com>
+ <20250228222308.626803-8-irogers@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250309193515.2974-1-l.rubusch@gmail.com> <20250310201042.0e8f06d7@jic23-huawei>
-In-Reply-To: <20250310201042.0e8f06d7@jic23-huawei>
-From: Lothar Rubusch <l.rubusch@gmail.com>
-Date: Mon, 10 Mar 2025 21:53:00 +0100
-X-Gm-Features: AQ5f1JpUtcf7mzG5cibNdqFYPsXsd_4bN6DiPt3VYpdSp_G16QTdHZNX_yO27W4
-Message-ID: <CAFXKEHb1zCpNX_t70dTCM6yBoU=gegcf4bJZyx8iWSEC+ibmMg@mail.gmail.com>
-Subject: Re: [PATCH v2 1/1] iio: accel: adxl367: fix setting odr for activity
- time update
-To: Jonathan Cameron <jic23@kernel.org>
-Cc: lars@metafoo.de, Michael.Hennerich@analog.com, cosmin.tanislav@analog.com, 
-	linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Marcelo Schmitt <marcelo.schmitt1@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250228222308.626803-8-irogers@google.com>
 
-Hi Jonathan,
+On Fri, Feb 28, 2025 at 02:23:04PM -0800, Ian Rogers wrote:
+> evsels are cloned in the python code as they form part of the Python
+> object pyrf_evsel. The cloning doesn't update the evsel's leader, do
+> this for the case of an evsel being ungrouped.
 
-On Mon, Mar 10, 2025 at 9:10=E2=80=AFPM Jonathan Cameron <jic23@kernel.org>=
- wrote:
->
-> On Sun,  9 Mar 2025 19:35:15 +0000
-> Lothar Rubusch <l.rubusch@gmail.com> wrote:
->
-> > Fix setting the odr value to update activity time based on frequency
-> > derrived by recent odr, and not by obsolete odr value.
-> >
-> > The [small] bug: When _adxl367_set_odr() is called with a new odr value=
-,
-> > it first writes the new odr value to the hardware register
-> > ADXL367_REG_FILTER_CTL.
-> > Second, it calls _adxl367_set_act_time_ms(), which calls
-> > adxl367_time_ms_to_samples(). Here st->odr still holds the old odr valu=
-e.
-> > This st->odr member is used to derrive a frequency value, which is
-> > applied to update ADXL367_REG_TIME_ACT. Hence, the idea is to update
-> > activity time, based on possibilities and power consumption by the
-> > current ODR rate.
-> > Finally, when the function calls return, again in _adxl367_set_odr() th=
-e
-> > new ODR is assigned to st->odr.
-> >
-> > The fix: When setting a new ODR value is set to ADXL367_REG_FILTER_CTL,
-> > also ADXL367_REG_TIME_ACT should probably be updated with a frequency
-> > based on the recent ODR value and not the old one. Changing the locatio=
-n
-> > of the assignment to st->odr fixes this.
-> >
-> > Fixes: cbab791c5e2a5 ("iio: accel: add ADXL367 driver")
-> > Signed-off-by: Lothar Rubusch <l.rubusch@gmail.com>
-> > Reviewed-by: Marcelo Schmitt <marcelo.schmitt1@gmail.com>
-> > ---
-> Change log missing, but I assume it's just the Fixes tag.
-> If so, I would have been fine with that just being in a reply
-> to the v1. Anyhow, new patch is fine too so applied to the
-> fixes-togreg branch of iio.git.  I may well queue this up for
-> the merge window rather than send another pull request this cycle.
->
+Reviewed-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 
-Yes, it is actually just the fixes tag and reviewed-by tag. I'm sorry
-for the missing log.
-
-Best,
-L
-
-> Thanks
->
-> Jonathan
->
->
-> >  drivers/iio/accel/adxl367.c | 10 +++-------
-> >  1 file changed, 3 insertions(+), 7 deletions(-)
-> >
-> > diff --git a/drivers/iio/accel/adxl367.c b/drivers/iio/accel/adxl367.c
-> > index add4053e7a02..0c04b2bb7efb 100644
-> > --- a/drivers/iio/accel/adxl367.c
-> > +++ b/drivers/iio/accel/adxl367.c
-> > @@ -601,18 +601,14 @@ static int _adxl367_set_odr(struct adxl367_state =
-*st, enum adxl367_odr odr)
-> >       if (ret)
-> >               return ret;
-> >
-> > +     st->odr =3D odr;
-> > +
-> >       /* Activity timers depend on ODR */
-> >       ret =3D _adxl367_set_act_time_ms(st, st->act_time_ms);
-> >       if (ret)
-> >               return ret;
-> >
-> > -     ret =3D _adxl367_set_inact_time_ms(st, st->inact_time_ms);
-> > -     if (ret)
-> > -             return ret;
-> > -
-> > -     st->odr =3D odr;
-> > -
-> > -     return 0;
-> > +     return _adxl367_set_inact_time_ms(st, st->inact_time_ms);
-> >  }
-> >
-> >  static int adxl367_set_odr(struct iio_dev *indio_dev, enum adxl367_odr=
- odr)
->
+- Arnaldo
+ 
+> Reviewed-by: Howard Chu <howardchu95@gmail.com>
+> Signed-off-by: Ian Rogers <irogers@google.com>
+> ---
+>  tools/perf/util/python.c | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/tools/perf/util/python.c b/tools/perf/util/python.c
+> index 4a3015e7dc83..e244cc74f16d 100644
+> --- a/tools/perf/util/python.c
+> +++ b/tools/perf/util/python.c
+> @@ -1312,6 +1312,8 @@ static PyObject *pyrf_evsel__from_evsel(struct evsel *evsel)
+>  	evsel__init(&pevsel->evsel, &evsel->core.attr, evsel->core.idx);
+>  
+>  	evsel__clone(&pevsel->evsel, evsel);
+> +	if (evsel__is_group_leader(evsel))
+> +		evsel__set_leader(&pevsel->evsel, &pevsel->evsel);
+>  	return (PyObject *)pevsel;
+>  }
+>  
+> -- 
+> 2.48.1.711.g2feabab25a-goog
 
