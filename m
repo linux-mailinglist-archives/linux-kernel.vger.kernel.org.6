@@ -1,90 +1,109 @@
-Return-Path: <linux-kernel+bounces-554331-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-554330-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id BE773A59646
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 14:28:35 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 782ADA59645
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 14:28:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2ADB47A5A7F
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 13:27:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 236FB164EE1
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 13:28:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0551122A818;
-	Mon, 10 Mar 2025 13:28:22 +0000 (UTC)
-Received: from verein.lst.de (verein.lst.de [213.95.11.211])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C949322A7E1;
+	Mon, 10 Mar 2025 13:28:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="K8HvQ0cb"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E22C1227EA0
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 13:28:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30D9B229B23;
+	Mon, 10 Mar 2025 13:28:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741613301; cv=none; b=fQTafHtavxbtoeG/m1y/h5oNrJGMHiyS0T4n3rwp2i3P1XkbUk4KlUizu++xOcOhCq/yg8t0fRZ0DduaUwoAR5o14xam67C4XQSoc2/X5z0B2bC3fMQ7Trx/ML8MZhLatbPaGFRWB+bfUm34X1/l06sBr+L7/Quz2HiE2mmR7Dc=
+	t=1741613300; cv=none; b=SfUwQy+gWAEmkIsLaHAOGbg1VFfXqrPvSPlu9BBTV8uM9kuCTvMKPQCZJECcFRLgTQmMo63joN4Yzp4ttTB/GSh8TBxZ56gKDSa2ZgjhEeSTdC54fl+O7H2qAys4/IJwM49Ebd+veqxi6xN5ayl8qdQeC+Jp2ZoWPBXneR+sSjQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741613301; c=relaxed/simple;
-	bh=qZzsgzBHn6Cmkaes12sBstWbDAq01HmfuX9Of2oYJ5o=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=c6hOD+fhSOo834DqzeXn1NeajssYlVp9/V3RZ3jTcCP3iot82OvRff5Iy+Qn+52VMwCt6uM/RO2yJovt9qXnB/I8mwUli6doI5DWtJhqr6FcYlXfrwEsjzguGMW3Yx4/ndUeF27fX6KMxin0c0P4EPRI5gzQmtMli/Uivrh4ABY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
-Received: by verein.lst.de (Postfix, from userid 2407)
-	id 5DE6667373; Mon, 10 Mar 2025 14:28:13 +0100 (CET)
-Date: Mon, 10 Mar 2025 14:28:13 +0100
-From: Christoph Hellwig <hch@lst.de>
-To: Keith Busch <kbusch@kernel.org>
-Cc: Christoph Hellwig <hch@lst.de>, Hannes Reinecke <hare@suse.de>,
-	Sagi Grimberg <sagi@grimberg.me>,
-	Nilay Shroff <nilay@linux.ibm.com>,
-	John Meneghini <jmeneghi@redhat.com>, bmarzins@redhat.com,
-	Bryan Gurney <bgurney@redhat.com>, linux-nvme@lists.infradead.org,
-	linux-kernel@vger.kernel.org, Marco Patalano <mpatalan@redhat.com>,
-	axboe@kernel.dk
-Subject: Re: [PATCH] nvme: remove multipath module parameter
-Message-ID: <20250310132813.GA8956@lst.de>
-References: <20250305141554.GA18065@lst.de> <Z8hrJ5JVqi7TgFCn@kbusch-mbp> <20250305235119.GB896@lst.de> <Z8jk-D3EjEdyBIU5@kbusch-mbp> <20250306000348.GA1233@lst.de> <1ffebf60-5672-4cd0-bb5a-934376c16694@suse.de> <20250306141837.GA21353@lst.de> <Z8m4vzE36UHWjwep@kbusch-mbp> <20250306151654.GA22810@lst.de> <Z8pB9jQALxMN6WaA@kbusch-mbp>
+	s=arc-20240116; t=1741613300; c=relaxed/simple;
+	bh=nFQwviuFLEUXVD+O9mQqYEB6Xvy0zQX1YL6lxlu9H3o=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=DWOgZ8C6eRh6i3HsSUu+wnDE1VdPxMIkE4+hh7ocrNumvInk6et4qQJhg/fM/wiUU3Fko6+NzF1mwsWtdjiv8ho1kn7x58I8E+LkXPZk6RFAdtpueKGZmhgWOK1lWpVAduKx7oH3Vdk9j7RkwYn4AAaEs/xcWxuI057f0lw566Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=K8HvQ0cb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C3054C4CEE5;
+	Mon, 10 Mar 2025 13:28:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741613300;
+	bh=nFQwviuFLEUXVD+O9mQqYEB6Xvy0zQX1YL6lxlu9H3o=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=K8HvQ0cb0DZX+8lfGqS9AkInhopSbA2mtcQD1LQmSsE0PDIWkzni571GZvs+4AAsP
+	 Zqn+2awCsTjb+C5jR+pbbwu9bkCQniSLWOvOUN5SjIE1q2p8noJDYnjxBuY0FPyn1S
+	 nQBVO60XbxEjQAbrRkdcktUM7JZwZuexS4wD3Uz320sJ44Ls7mG5bvKopLGrX6sn/E
+	 WkN63/g6sXpdJ6ChNJo8tIsF6p4SlUc8qSnbQITkcybLm0Rw3wGWx5o1j3+cF1YrB0
+	 PLL1WDOhVdx3i0SiyRjR1KNDPWnAeAo19H6c/R/OilV1MKlbLRL8fylM63bTznc4iq
+	 fxfD+hdoXxrxw==
+Message-ID: <40064e3d-e8c6-42ee-80e9-a87f4140ecc0@kernel.org>
+Date: Mon, 10 Mar 2025 13:28:16 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z8pB9jQALxMN6WaA@kbusch-mbp>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] bpf: bpftool: Setting error code in do_loader()
+To: nswon <swnam0729@gmail.com>, Alexei Starovoitov <ast@kernel.org>,
+ Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>,
+ Martin KaFai Lau <martin.lau@linux.dev>, Eduard Zingerman
+ <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
+ Yonghong Song <yonghong.song@linux.dev>,
+ John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>,
+ Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>,
+ Jiri Olsa <jolsa@kernel.org>
+Cc: bpf@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250310052555.53483-1-swnam0729@gmail.com>
+From: Quentin Monnet <qmo@kernel.org>
+Content-Language: en-GB
+In-Reply-To: <20250310052555.53483-1-swnam0729@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, Mar 06, 2025 at 05:46:46PM -0700, Keith Busch wrote:
-> On Thu, Mar 06, 2025 at 04:16:54PM +0100, Christoph Hellwig wrote:
-> > On Thu, Mar 06, 2025 at 08:01:19AM -0700, Keith Busch wrote:
-> > 
-> > > Or consider a true multiport PCIe where each port connects to a
-> > > different host. Each host sees a single port so they're not using
-> > > multipath capabilities, and the admin wants the MD behavior that removes
-> > > a disk on hot plug. Or even if one host sees both paths of a multiport
-> > > PCIe, they still might want that hot plug behavior. The module parameter
-> > > makes that possible, so some equivalent should be available before
-> > > removing it.
-> > 
-> > A module-wide parameter is absolutely the wrong way to configure it.
-> > You'd ad best want it per-controller or even per-namespace.  One
-> > tradeoff would be to disable the multipath code for private namespaces,
-> > although that would cause problems when rescanning changes the flag.
+2025-03-10 14:25 UTC+0900 ~ nswon <swnam0729@gmail.com>
+> missing error code in do_loader()
+> bpf_object__open_file() failed, but return 0
+> This means the command's exit status code was successful, so make sure to return the correct error code.
 > 
-> It's not really about private vs. shared namespaces, though.
+> Link: https://lore.kernel.org/bpf/d3b5b4b4-19bb-4619-b4dd-86c958c4a367@stanley.mountain/t/#u
+> Closes: https://github.com/libbpf/bpftool/issues/156
+> Signed-off-by: nswon <swnam0729@gmail.com>
 
-PArt of it is about that.  A private namespace can't have another
-path.
+
+Thanks for this!
+
+Others may correct me if I'm wrong, but I think you should sign off with
+your full name here (although it doesn't strictly have to be a full
+name, the patch submission docs mention in should be a "known identity"
+so I'm not sure whether a GitHub handle, for example, is acceptable).
 
 
-> There
-> really is no programatic way for the driver to know what behavior the
-> admin needs out of their system without user input. If you don't want a
-> module parameter, then the driver will just have to default to
-> something, then the user will have to do something to change it later.
-> Not very pleasant compared to a simple one time boot parameter.
+> ---
+>  tools/bpf/bpftool/prog.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/tools/bpf/bpftool/prog.c b/tools/bpf/bpftool/prog.c
+> index e71be67f1d86..641802e308f4 100644
+> --- a/tools/bpf/bpftool/prog.c
+> +++ b/tools/bpf/bpftool/prog.c
+> @@ -1928,6 +1928,7 @@ static int do_loader(int argc, char **argv)
+>  
+>  	obj = bpf_object__open_file(file, &open_opts);
+>  	if (!obj) {
+> +		err = libbpf_get_error(obj);
 
-The point is that different devices want different behavior.  Think of
-a fabrics attached array vs a usb4 dongle used by the admin.
 
+This is the correct way to retrieve the error code, but given that
+bpftool does nothing with this error code, could we instead simply
+return -1 to remain consistent with the other locations where we call
+bpf_object__open_file() in the tool, please?
+
+Thanks,
+Quentin
 
