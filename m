@@ -1,128 +1,138 @@
-Return-Path: <linux-kernel+bounces-554989-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-554990-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 22387A5A434
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 20:58:51 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F2210A5A437
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 20:59:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CE18C3A7982
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 19:58:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A17F03AA3C8
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 19:59:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C6E31DE2C6;
-	Mon, 10 Mar 2025 19:58:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C21C81DE2D8;
+	Mon, 10 Mar 2025 19:59:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="T9es5BKE"
-Received: from mail-qt1-f181.google.com (mail-qt1-f181.google.com [209.85.160.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="3SbeLVv1";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ERBjMpka"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 168F015B971
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 19:58:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C04C71DE2C7;
+	Mon, 10 Mar 2025 19:59:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741636725; cv=none; b=Urd/jJ/sPi8jeqFJyEZYtyk72K2nmbDTLXUBX4d0MNxmcwQcWs48k35yhKVxwaMBxV3bk3dyRxnHvswohUftMl9PiBWLZCFFLUiV2TM0SJdTiNK5iBvqYlAK6PPClXOmsRsdw6GJBRvr8J4Bn0nK9HYy3eYAYa6TUhaoiHRgUZQ=
+	t=1741636749; cv=none; b=pBDPJgXIlnGUyXPnVHkP7KTnL0E1xrNKDpwGqcMYZ9Yityw0rfAE6U4Etxv0ztmsuyvnLy4yv+DgZQyPlIzIah3STYX4nArqlxrEmXGkrtB+xUndRv71mp+5CdBQiaXcD3kZL/h439YaGvXS3GargFXyJBn1EtoLckw+yhh7d7I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741636725; c=relaxed/simple;
-	bh=BkkDL48kiKo+5qqGRWHrngtLxhgjyU+pX8OARxDkQNk=;
-	h=Date:Message-ID:MIME-Version:Content-Type:From:To:Subject:
-	 References:In-Reply-To; b=XgE38Na/ep56qHpKsvTKWGAMRFhvr9D6WHL5ta2StGC8B7KBTTRN909XV52FgPGceQ55Kqi5lDoCiBvsUbE7hoJ9z0GguBTlodGe8DbXMKTlQO5YTpmG/sHNNORiVFj89uq97q5+JV/2TkmtA0GhMtJW4XO9VXzM2ecvh6r6lvs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=T9es5BKE; arc=none smtp.client-ip=209.85.160.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
-Received: by mail-qt1-f181.google.com with SMTP id d75a77b69052e-47692b9d059so10599791cf.3
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 12:58:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1741636723; x=1742241523; darn=vger.kernel.org;
-        h=in-reply-to:references:subject:to:from:content-transfer-encoding
-         :mime-version:message-id:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=i6wuWmMKRARxB1Eg/CdF6hbh9IpfkyXmqRnG/h85u4Y=;
-        b=T9es5BKEwpymJXt5h6/MNJNkEvScBzF2XwT8QpAEAkNcvv3FeaWrPM1gb+qxwbQLyy
-         UKQQOWGBh7DKJqpBTJub3PtPNO9OVdUgCKH/YSJBAlPpRjqs+Z1IJwWg8JlY2SHvNQ/y
-         ZhzeohIlFa6cwDRIyG2qoyufQAOwWly92M1AvF+neRvnOK20ApKharzMvhGi20RAf3mV
-         rl1r/cRLHmfoL/utC8z/1hIElhMb3Fb7ddwVFpsJjgSVqPRxx15uovHswKw9dXYOP6WF
-         lL46bgKU0aKrY25Pj1Bjyo68cx2UZ55tC4gsRpjtrtfFJzxmlxxLqQkYYmHyUHEbenPL
-         BEoA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741636723; x=1742241523;
-        h=in-reply-to:references:subject:to:from:content-transfer-encoding
-         :mime-version:message-id:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=i6wuWmMKRARxB1Eg/CdF6hbh9IpfkyXmqRnG/h85u4Y=;
-        b=uRaWpsEDiYBem0K6cfDuzt8bKCgVdI8v4kakNDvcfRnU3vm/4XLQHgPeLr570588dX
-         thThajBDJeS1T2YvFk7V2dZsU0rqmEzPEazP2Xp3nisKN6O2D8cY6T/dotRb0zSawnX8
-         Kp1JK0Rf4mpeSMpCEBRPxTqkzA2IpNOb8MMrWePHDG2LJ9bcn3kxAjVjQRl81xaw4eXa
-         rtZh7214zTWdnZSSpGPn8pcDusXn9DgTUaoD6JU0kJOdoOcBVHZmGcdgc5fdWJnM8XKt
-         jbwKLuxQ+rM3b/apNT0jFQGnALj5gHjaIhIexpDqtF0yiSoD9LgmzXctof6e6pwg2Vh3
-         eIXg==
-X-Forwarded-Encrypted: i=1; AJvYcCXnjC2Nzgk22oOLADB/mq3gv3+K7s9z2/a8fujOjTQXxvjAfZQxSkgBG9fQiUnhQzl4OJfXxgqDQGFM5NI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzssmDh/P8RuPRiUT1K5ZW8UZGOfFmctOUMH4sW2NNRwVAjg7lj
-	GY+nhsEtJXLhB6E5De6apOK+w2AZkDrt4YEfMjpQRIWZk8xno+v3Q0OP/7wyFaeIJdDWwwtEOW0
-	=
-X-Gm-Gg: ASbGncuzx71UPlLarJMbTjbEsB0+Tjmk9bcg35QSYUAxFYMvUW+ccGZQHEhHrTE+F6c
-	zjFmk0k8rPTnwOXRAuawVk9E8H/UohZy2z2R67KLqIvJONv+pVspPcbw2048nZ0fCbloJV4hXWI
-	pMm4Q5kmcEd2IvxyfKhvkkDohek9A5oMoeMfPY/PKWdJJLFP2FKDzBtX2n1MeVlpae/Mnvh0Jm+
-	RrV6mPaeApU0hCULuCuXB+ys1CoWy5Fbyepn5FytCMUuu808/WcJFduDVk+UwMfrM0VXGiRzbJr
-	Gkv/+jlMrQmDnziW4/SabaFKGJjMS6cqpVGdZHL0SHHb0MapaTPjFb4O6L/YkbB9ke5sYvALquU
-	LE+yQqVqAJE4+JQ==
-X-Google-Smtp-Source: AGHT+IE15sVjFBcy+dpjt3Puf1WtPde/5nHjna93sAeAuE8+auuzNiDYrxeI+gkgjLXTbTf8g4XQqA==
-X-Received: by 2002:ac8:5d52:0:b0:476:7327:383d with SMTP id d75a77b69052e-47673274363mr105538361cf.9.1741636722791;
-        Mon, 10 Mar 2025 12:58:42 -0700 (PDT)
-Received: from localhost (pool-71-126-255-178.bstnma.fios.verizon.net. [71.126.255.178])
-        by smtp.gmail.com with UTF8SMTPSA id d75a77b69052e-476772de5absm29514021cf.66.2025.03.10.12.58.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 10 Mar 2025 12:58:42 -0700 (PDT)
-Date: Mon, 10 Mar 2025 15:58:41 -0400
-Message-ID: <f44bad6065bbf45c02dc7caf90ed0e7e@paul-moore.com>
+	s=arc-20240116; t=1741636749; c=relaxed/simple;
+	bh=H5ycHYupR28l1HqDSyLBg9rTOcsIGNw4x4qnabynmmM=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=VSekre8FiCnh/eHev1zXSnMCsQXSnbI0lsNLP+vgzJWPQ4+t+MhaTo8eDGYlPT8IWJkBr08f+eXpAGO7UjQU1ObDPZyXQR3ne+EB/Jrr9gHCts5XcvUSkUSlYSSab5rQoOGOQuBMtfyIaqgoHov1wLmbFpHeYytQPCSFzYkZ4pU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=3SbeLVv1; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ERBjMpka; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Mon, 10 Mar 2025 19:59:04 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1741636746;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=uLGE1KdgCPQhUtvXDXBlsuV2cfjDAG5GjUb0ed3g0a8=;
+	b=3SbeLVv11xKGSdx6ouLcfcYMFTE+OctQlV7xqzUDglkuieS0pqg5NF2rYsKEuAqdTO72qG
+	V3IZ4PZnosx0r8nhkWcFotynMRV7nBUFzLBX4/Oc/Rx4jqqC4qtfFHIf9PofmIr8jyVir5
+	9Oe+J+mQc9Yv/pEZyHACxcFfbB3O9m+xg6JqQvhtq9JMEzvI/1rO3qv4q89y0HFhihr9FL
+	9qVJmaYl4yABsqCxpTL0wjvWwzaQcZS51KInydJkVHvzeAavFTUvkrEV5PRnz7JaZStR7w
+	7bXSzOGVHLw7sBY0W50KXScY2cYmdMfIZjJs+qzXtZV7CPVoswUdwIsRV8WFoA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1741636746;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=uLGE1KdgCPQhUtvXDXBlsuV2cfjDAG5GjUb0ed3g0a8=;
+	b=ERBjMpkaI3HlSlM+1HMdfFEb9hY6loJPHSakz/UY8ZxxpgvGR5gubuimWUWDbfwySs8Axq
+	SdvQATqtC4tamODw==
+From: "tip-bot2 for Thorsten Blum" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: perf/core] perf/core: Remove optional 'size' arguments from
+ strscpy() calls
+Cc: Thorsten Blum <thorsten.blum@linux.dev>, Ingo Molnar <mingo@kernel.org>,
+ x86@kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20250310192336.442994-1-thorsten.blum@linux.dev>
+References: <20250310192336.442994-1-thorsten.blum@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 
-Content-Type: text/plain; charset=UTF-8 
-Content-Transfer-Encoding: 8bit 
-X-Mailer: pstg-pwork:20250310_1216/pstg-lib:20250310_1216/pstg-pwork:20250310_1216
-From: Paul Moore <paul@paul-moore.com>
-To: sergeh@kernel.org, linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
-Subject: Re: [PATCH] MAINTAINERS: add Serge Hallyn as maintainer for creds
-References: <Z82Sug-XLC1r5wKE@lei>
-In-Reply-To: <Z82Sug-XLC1r5wKE@lei>
+MIME-Version: 1.0
+Message-ID: <174163674500.14745.11511940835737633546.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 
-On Mar  9, 2025 sergeh@kernel.org wrote:
-> 
-> Also add the documentation file as suggested by Günther Noack.
-> 
-> Signed-off-by: Serge Hallyn <sergeh@kernel.org>
-> ---
->  MAINTAINERS | 2 ++
->  1 file changed, 2 insertions(+)
+The following commit has been merged into the perf/core branch of tip:
 
-I adjusted the subject line to reflect that you chose the reviewer role,
-but otherwise this looks good, merged into lsm/dev.  Thanks!
+Commit-ID:     fd3f5d385a52531589c8a7a26d9e108aa1d3f52e
+Gitweb:        https://git.kernel.org/tip/fd3f5d385a52531589c8a7a26d9e108aa1d3f52e
+Author:        Thorsten Blum <thorsten.blum@linux.dev>
+AuthorDate:    Mon, 10 Mar 2025 20:23:35 +01:00
+Committer:     Ingo Molnar <mingo@kernel.org>
+CommitterDate: Mon, 10 Mar 2025 20:50:30 +01:00
 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 68e4656c15ea..54b47bfc4abd 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -6141,11 +6141,13 @@ F:	drivers/hid/hid-creative-sb0540.c
->  
->  CREDENTIALS
->  M:	Paul Moore <paul@paul-moore.com>
-> +R:	Serge Hallyn <sergeh@kernel.org>
->  L:	linux-security-module@vger.kernel.org
->  S:	Supported
->  T:	git https://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/lsm.git
->  F:	include/linux/cred.h
->  F:	kernel/cred.c
-> +F:	Documentation/security/credentials.rst
->  
->  INTEL CRPS COMMON REDUNDANT PSU DRIVER
->  M:	Ninad Palsule <ninad@linux.ibm.com>
-> -- 
-> 2.34.1
+perf/core: Remove optional 'size' arguments from strscpy() calls
 
---
-paul-moore.com
+The 'size' parameter is optional and strscpy() automatically determines
+the length of the destination buffer using sizeof() if the argument is
+omitted. This makes the explicit sizeof() calls unnecessary.
+
+Furthermore, KSYM_NAME_LEN is equal to sizeof(name) and can also be
+removed. Remove them to shorten and simplify the code.
+
+Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Link: https://lore.kernel.org/r/20250310192336.442994-1-thorsten.blum@linux.dev
+---
+ kernel/events/core.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/kernel/events/core.c b/kernel/events/core.c
+index f159dba..e7d0b05 100644
+--- a/kernel/events/core.c
++++ b/kernel/events/core.c
+@@ -8665,7 +8665,7 @@ static void perf_event_comm_event(struct perf_comm_event *comm_event)
+ 	unsigned int size;
+ 
+ 	memset(comm, 0, sizeof(comm));
+-	strscpy(comm, comm_event->task->comm, sizeof(comm));
++	strscpy(comm, comm_event->task->comm);
+ 	size = ALIGN(strlen(comm)+1, sizeof(u64));
+ 
+ 	comm_event->comm = comm;
+@@ -9109,7 +9109,7 @@ static void perf_event_mmap_event(struct perf_mmap_event *mmap_event)
+ 	}
+ 
+ cpy_name:
+-	strscpy(tmp, name, sizeof(tmp));
++	strscpy(tmp, name);
+ 	name = tmp;
+ got_name:
+ 	/*
+@@ -9533,7 +9533,7 @@ void perf_event_ksymbol(u16 ksym_type, u64 addr, u32 len, bool unregister,
+ 	    ksym_type == PERF_RECORD_KSYMBOL_TYPE_UNKNOWN)
+ 		goto err;
+ 
+-	strscpy(name, sym, KSYM_NAME_LEN);
++	strscpy(name, sym);
+ 	name_len = strlen(name) + 1;
+ 	while (!IS_ALIGNED(name_len, sizeof(u64)))
+ 		name[name_len++] = '\0';
 
