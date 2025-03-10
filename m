@@ -1,187 +1,122 @@
-Return-Path: <linux-kernel+bounces-553894-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-553895-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C1EFFA59051
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 10:53:23 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E9683A59056
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 10:55:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4EC4B188E82E
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 09:53:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3362216BBBB
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 09:55:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C99B2253FC;
-	Mon, 10 Mar 2025 09:53:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4609D2253ED;
+	Mon, 10 Mar 2025 09:55:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="e7FE5Dfz"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="x4mX5j1e"
+Received: from out30-113.freemail.mail.aliyun.com (out30-113.freemail.mail.aliyun.com [115.124.30.113])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1EE021D585;
-	Mon, 10 Mar 2025 09:53:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8348021D585
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 09:55:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.113
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741600397; cv=none; b=BRHVbB111Gxnax49gXmLPOCn+S1fv9mioYSNP8GWBnXGbKdNkOqOC2rK8UM9hCWA8Rt6bdgxA/8HrjGUvJ2vHcEEcs8kHiJ2zVy+hFHyVpE0M/jf0IJSn/lR85406uUq6mtwFR+cigaRwmq8DhSlZSM3XhtDikXR9k7ymTOZGqU=
+	t=1741600511; cv=none; b=nFeCYBHCXWeAXiAumc07eWp7XUDm70D0b8KU05HKjCpzubvuM9/Nhd7ljK497a9AqeTSRRZB4DKW3Iz9hwGePafIYBgZ6Cg5yIOgvYKASzY0b+8CV2c8dysJ+8wIJ4buywWbP2ktDOxqTDnwzjEKgCHYyDHWfza9tXnjXJQIYnQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741600397; c=relaxed/simple;
-	bh=C8cQBoSLgcQl6tmD3Xal2tFbWst3CZYzZlbhfgxnR8I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Wnz8mI9HzUuloGHxtrQSziXGPap66WYSPHl3IVRpp43VED0Ua7ZuBp1I4gVAvOZsUBOE1O5RgjT8W9mQV+221+xB0H3chL7Jjeoj3Q/rGDjXrWgE1tAHt2zu+mjxIYksP+9o3uGr2r2xjXmO4zSr6vtLNJyfPQUZYU6IHTRgjps=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=e7FE5Dfz; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 450ADC4CEE5;
-	Mon, 10 Mar 2025 09:53:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741600396;
-	bh=C8cQBoSLgcQl6tmD3Xal2tFbWst3CZYzZlbhfgxnR8I=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=e7FE5DfzHboSIvO5aiHAlSQ6D2hWo3tT4t6XteTOws1h+83pp7enNxpUqjQ7UylSL
-	 bmjDnqykEs7XyNzSI/QQfptktGsTuvXWOzBLfd98Xb8mos7gElcihUuPu6TS5aF/Og
-	 2jiuUHYqsg4Qk4zb0P391BlcP6FNMA83O0cIXVphEkHMrqcuh7KerRZjoGADBZV7SR
-	 RCwVyZS/sdGx0xvFGB/d11mPyszuAkA3y6VX9tvAkw/IGeqYCFtRYO4KMZQBt+FRpb
-	 WlUlrSZn2MLnYS6MZQVn7NQ7F7Wm5vSWr0d4Rv3sYI9afbf1bbO61fOHv9uF8v4bik
-	 7y177l72prllw==
-Date: Mon, 10 Mar 2025 10:53:14 +0100
-From: Maxime Ripard <mripard@kernel.org>
-To: Liu Ying <victor.liu@nxp.com>
-Cc: Rob Herring <robh@kernel.org>, 
-	Alexander Stein <alexander.stein@ew.tq-group.com>, dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, andrzej.hajda@intel.com, 
-	neil.armstrong@linaro.org, rfoss@kernel.org, Laurent.pinchart@ideasonboard.com, 
-	jonas@kwiboo.se, jernej.skrabec@gmail.com, maarten.lankhorst@linux.intel.com, 
-	tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch
-Subject: Re: [PATCH 3/5] dt-bindings: display: simple-bridge: Document DPI
- color encoder
-Message-ID: <20250310-orthodox-unyielding-kagu-decaf9@houat>
-References: <20250304101530.969920-1-victor.liu@nxp.com>
- <20250304101530.969920-4-victor.liu@nxp.com>
- <20250304152320.GA2630063-robh@kernel.org>
- <1891036.atdPhlSkOF@steina-w>
- <20250305163805.GA2071011-robh@kernel.org>
- <7d98163d-10c8-457d-92e7-6a1d6e379beb@nxp.com>
- <20250306-kangaroo-of-pastoral-typhoon-8aefb2@houat>
- <20250306203444.GA570402-robh@kernel.org>
- <3836a4d2-ef4e-427e-a820-39dd4823458b@nxp.com>
+	s=arc-20240116; t=1741600511; c=relaxed/simple;
+	bh=9qLcUTgDOtr7F0Rf4V9h6zxgl+pjpEZVf1/2gdGEq1E=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=gD6FQkAIBAp6b8ZC4Nk1nuQIpUiJPk89RsuAM3FkhVxowd+NtRCry92EK2bY4E70+Bqp0WiNhglDt/IBXvgE4kUwfPShRiEMSucImjAM2aaBuiRJ8ZQBHrs9l/TrhNMa/Dmttazz4N/0/kx3F4thZUfksnweDG9cHEyPvkr0x9k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=x4mX5j1e; arc=none smtp.client-ip=115.124.30.113
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1741600504; h=From:To:Subject:Date:Message-ID:MIME-Version;
+	bh=bZhSrM1L07Py6ctqUAfultvaxatD2fvpBC6cnUPSk6Y=;
+	b=x4mX5j1eedTUEIrLTI/bGI/5SoZJ4PyIjSVrncV3f1CBrxacuvDlLd6qLLA0keyvA/xyS+5ZSsu3aa4CBr/3M7VOukuH+uKdl41vqYg+SQIT5K97cFqzlj22eBJLwAQMQ/nMd/l+J4IwsQBrA2o41VvAl3kecMEZPORK2s/uNI0=
+Received: from x31i01179.sqa.na131.tbsite.net(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0WR1F3up_1741600500 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Mon, 10 Mar 2025 17:55:04 +0800
+From: Gao Xiang <hsiangkao@linux.alibaba.com>
+To: linux-erofs@lists.ozlabs.org
+Cc: LKML <linux-kernel@vger.kernel.org>,
+	Gao Xiang <hsiangkao@linux.alibaba.com>
+Subject: [PATCH 00/10] erofs: 48-bit layout support
+Date: Mon, 10 Mar 2025 17:54:50 +0800
+Message-ID: <20250310095459.2620647-1-hsiangkao@linux.alibaba.com>
+X-Mailer: git-send-email 2.43.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="nokzvrads2o637d3"
-Content-Disposition: inline
-In-Reply-To: <3836a4d2-ef4e-427e-a820-39dd4823458b@nxp.com>
+Content-Transfer-Encoding: 8bit
 
+Hi folks,
 
---nokzvrads2o637d3
-Content-Type: text/plain; protected-headers=v1; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH 3/5] dt-bindings: display: simple-bridge: Document DPI
- color encoder
-MIME-Version: 1.0
+The current 32-bit block addressing limits EROFS to a 16TiB maximum
+volume size with 4KiB blocks.  However, several new use cases now
+require larger capacity support:
+ - Massive datasets for model training to boost random sampling
+   performance for each epoch;
+ - Object storage clients using EROFS direct passthrough.
 
-On Fri, Mar 07, 2025 at 11:25:40AM +0800, Liu Ying wrote:
-> On 03/07/2025, Rob Herring wrote:
-> > On Thu, Mar 06, 2025 at 12:35:49PM +0100, Maxime Ripard wrote:
-> >> On Thu, Mar 06, 2025 at 03:02:41PM +0800, Liu Ying wrote:
-> >>> On 03/06/2025, Rob Herring wrote:
-> >>>> On Wed, Mar 05, 2025 at 10:35:26AM +0100, Alexander Stein wrote:
-> >>>>> Hi,
-> >>>>>
-> >>>>> Am Dienstag, 4. M=E4rz 2025, 16:23:20 CET schrieb Rob Herring:
-> >>>>>> On Tue, Mar 04, 2025 at 06:15:28PM +0800, Liu Ying wrote:
-> >>>>>>> A DPI color encoder, as a simple display bridge, converts input D=
-PI color
-> >>>>>>> coding to output DPI color coding, like Adafruit Kippah DPI hat[1=
-] which
-> >>>>>>> converts input 18-bit pixel data to 24-bit pixel data(with 2 low =
-padding
-> >>>>>>> bits in every color component though). Document the DPI color enc=
-oder.
-> >>>>>>
-> >>>>>> Why do we need a node for this? Isn't this just wired how it is wi=
-red=20
-> >>>>>> and there's nothing for s/w to see or do? I suppose if you are try=
-ing to=20
-> >>>>>> resolve the mode with 24-bit on one end and 18-bit on the other en=
-d, you=20
-> >>>>>> need to allow that and not require an exact match. You still might=
- need=20
-> >>>>>> to figure out which pins the 18-bit data comes out on, but you hav=
-e that=20
-> >>>>>> problem with an 18-bit panel too. IOW, how is this any different i=
-f you=20
-> >>>>>> have an 18-bit panel versus 24-bit panel?
-> >>>>>
-> >>>>> Especially panel-simple.c has a fixed configuration for each displa=
-y, such as:
-> >>>>>> .bus_format =3D MEDIA_BUS_FMT_RGB666_1X18
-> >>>>>
-> >>>>> How would you allow or even know it should be addressed as
-> >>>>> MEDIA_BUS_FMT_RGB888_1X24 instead? I see different ways:
-> >>>>> 1. Create a new display setting/compatible
-> >>>>> 2. Add an overwrite property to the displays
-> >>>>> 3. Use a (transparent) bridge (this series)
-> >>>>>
-> >>>>> Number 1 is IMHO out of question.=20
-> >>>>
-> >>>> Agreed.
-> >>>>
-> >>>>> I personally don't like number 2 as this
-> >>>>> feels like adding quirks to displays, which they don't have.
-> >>>>
-> >>>> This is what I would do except apply it to the controller side. We k=
-now=20
-> >>>> the panel side already. This is a board variation, so a property mak=
-es=20
-> >>>> sense. I don't think you need any more than knowing what's on each e=
-nd.=20
-> >>>
-> >>> With option 2, no matter putting a property in source side or sink si=
-de,
-> >>> impacted display drivers and DT bindings need to be changed, once a b=
-oard
-> >>> manipulates the DPI color coding.  This adds burdens and introduces n=
-ew
-> >>> versions of those DT bindings.  Is this what we want?
-> >>
-> >> There's an option 4: make it a property of the OF graph endpoints. In
-> >> essence, it's similar to properties that are already there like
-> >> lane-mapping, and it wouldn't affect the panel drivers, or create an
-> >> intermediate bridge.
-> >=20
-> > Yes, that's actually where I meant to put the property(ies).
->=20
-> Put optional dpi-color-coding or something else in endpoint-base?
+This extends core on-disk structures to support 48-bit block addressing,
+such as inodes, device slots, and inode chunks.
 
-I'm not sure what you mean by endpoint base, but it would be just like
-data-lanes, on the endpoint itself, right next to remote-endpoint. Given
-the nomenclature we have, something like "color-format" or
-"color-encoding", and taking the media format bus as value.
+In addition, it introduces an mtime field to 32-byte compact inodes for
+basic timestamp support, as well as expands the superblock root NID to
+an 8-byte rootnid_8b for out-of-place update incremental builds.
 
-> Assuming it's optional, then it implies that it will overwrite OS's
-> setting, which sounds kinda awkward, because it is supposed to be
-> required to describe the actual color coding.
+In order to support larger images beyond 32-bit block addressing and
+efficient indexing of large compression units for compressed data, and
+to better support popular compression algorithms (mainly Zstd) that
+still lack native fixed-sized output compression support, introduce
+byte-oriented encoded extents, so that these compressors are allowed
+to retain their current methods.
 
-I'm sorry, I don't understand what you mean here. Your bridge would have
-been optional as well, right?
+Therefore, it speeds up Zstd image building a lot by using:
+Processor: Intel(R) Xeon(R) Platinum 8163 CPU @ 2.50GHz * 96
+Dataset: enwik9
+Build time Size Type Command Line
+3m52.339s 266653696 FO -C524288 -zzstd,22
+3m48.549s 266174464 FO -E48bit -C524288 -zzstd,22
+0m12.821s 272134144 FI -E48bit -C1048576 --max-extent-bytes=1048576 -zzstd,22
 
-Worst case scenario, your driver could make that property mandatory on
-its endpoints. Plenty of drivers are doing it.
+It has been stress-tested on my local setup for a while without any
+strange happens.
 
-Maxime
+Thanks,
+Gao Xiang
 
---nokzvrads2o637d3
-Content-Type: application/pgp-signature; name="signature.asc"
+Gao Xiang (10):
+  erofs: get rid of erofs_map_blocks_flatmode()
+  erofs: simplify erofs_{read,fill}_inode()
+  erofs: add 48-bit block addressing on-disk support
+  erofs: implement 48-bit block addressing for unencoded inodes
+  erofs: support dot-omitted directories
+  erofs: initialize decompression early
+  erofs: add encoded extent on-disk definition
+  erofs: implement encoded extent metadata
+  erofs: support unaligned encoded data
+  erofs: enable 48-bit layout support
 
------BEGIN PGP SIGNATURE-----
+ fs/erofs/Kconfig             |  14 +--
+ fs/erofs/data.c              | 133 +++++++++++-------------
+ fs/erofs/decompressor.c      |   2 +-
+ fs/erofs/dir.c               |   7 +-
+ fs/erofs/erofs_fs.h          | 191 ++++++++++++++++-------------------
+ fs/erofs/inode.c             | 126 +++++++++++------------
+ fs/erofs/internal.h          |  30 +++---
+ fs/erofs/super.c             |  49 ++++-----
+ fs/erofs/sysfs.c             |   2 +
+ fs/erofs/zdata.c             |  96 +++++++++---------
+ fs/erofs/zmap.c              | 166 +++++++++++++++++++++++++-----
+ include/trace/events/erofs.h |   2 +-
+ 12 files changed, 455 insertions(+), 363 deletions(-)
 
-iHUEABYKAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCZ862iQAKCRDj7w1vZxhR
-xfjPAP9Q21oDiutNW4kjM5Uqr1gdJjlndAkKPdt4WIFvmF8NagD7BJzqcRLgcvQ2
-oQiFDp8F/4TL/si8mNvOwh7oIGZonwo=
-=j0ea
------END PGP SIGNATURE-----
+-- 
+2.43.5
 
---nokzvrads2o637d3--
 
