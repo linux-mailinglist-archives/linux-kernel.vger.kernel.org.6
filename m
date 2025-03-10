@@ -1,116 +1,138 @@
-Return-Path: <linux-kernel+bounces-553555-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-553556-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 456E6A58B8A
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 06:08:59 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E7546A58B8D
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 06:09:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6C25F1691DA
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 05:08:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 53A1D7A3830
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 05:08:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD8921C4609;
-	Mon, 10 Mar 2025 05:08:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D48C41C760D;
+	Mon, 10 Mar 2025 05:08:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Lmdk8Bs/"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gwuDQEje"
+Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B7491BD4E4;
-	Mon, 10 Mar 2025 05:08:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CDB01BD4E4;
+	Mon, 10 Mar 2025 05:08:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741583332; cv=none; b=DffN7yKLDS8DeWvvIDTQiIiqcMzhQ6za/mnmHMhVK2r7vjsbmPaHu4vVI55rpNkn9O3ipGA/Hllowjkkb/h+4A64fZaU+9e5dxJFxOEeBJp7aBWV/ogtA55W24K8UOHTl9OHxLAnhzTqB3lR4e0ag+UfONpT8I/aZBipNv9727c=
+	t=1741583337; cv=none; b=on1ZXqDUzCAElounhPJKTLp3qQxXzoPD4D7UjMuqAoGFmZ7a1NPyi4DVBnQ2YZ4fK5f92j3kGPcJqRS0SUm1iOTFMh8Lckl+2UiYzsaqcfhOpDx5UoVz0lTDEzGXgSI1TQTPzarQMUJ5GXny/24/tphmApgup2KioqPiycb33yw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741583332; c=relaxed/simple;
-	bh=vZk5dZKIa4Fkbt7Ox6MVoxXVuECx2sVWiZptJoBL78g=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=OeeFyJCJJpKgnuzFhStv/mNRsvW7azDnXSTeHjMxwNuraPUFKVnRRuZ8pK/dVOsSuIFQuAt3nN/xPje3Uta0Q2Pp1HM2hBrYIu3Kii+iUWecfsF7LDpn4YV6hdXoKq5kEIJTnN89WyjH8BwzfaT5UYg0aD1gh4D0eUSGJuUfPMg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Lmdk8Bs/; arc=none smtp.client-ip=192.198.163.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1741583330; x=1773119330;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=vZk5dZKIa4Fkbt7Ox6MVoxXVuECx2sVWiZptJoBL78g=;
-  b=Lmdk8Bs/XfrwUnaD47WXWwI206/2jp/0kZO0G2M5uktQLENbQ015hPpL
-   YovYKcU3m2bbnQ1DqCRTReuNcbiKU6TOe+qsvBqHokA8Waq4R0GNDhBdt
-   YVbUt6nIsWTC3Snitdevc23sVIXy/xzu1Ylr/QtYPsHSS1tsaeg5USlc7
-   4zUD2jS+RffZ83HXATkYsdoWgX7gtidCxjy/4ASksQiTEgU8VW+Q5BDJn
-   AOLnhulrVtrF+mA2IilCuvAdd0IzGuEbapiVNgFoDvbKWb60I3fLUbFAl
-   GEBF/PLqZ9ismimAPH8Lc9mlK3x/tFo8Vig5cgLpUKtTjSGZss3+L7CUR
-   Q==;
-X-CSE-ConnectionGUID: RDViUJghTA25a/DhE+NwXA==
-X-CSE-MsgGUID: VV1USEwjRwG1uOwwzBx20A==
-X-IronPort-AV: E=McAfee;i="6700,10204,11368"; a="42779845"
-X-IronPort-AV: E=Sophos;i="6.14,235,1736841600"; 
-   d="scan'208";a="42779845"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Mar 2025 22:08:49 -0700
-X-CSE-ConnectionGUID: Gq4sFC+MRZCgyTTGigxMtg==
-X-CSE-MsgGUID: HPWWkEnYTUCNLCdy22OdpQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
-   d="scan'208";a="124050655"
-Received: from yongliang-ubuntu20-ilbpg12.png.intel.com ([10.88.227.39])
-  by fmviesa003.fm.intel.com with ESMTP; 09 Mar 2025 22:08:47 -0700
-From: Choong Yong Liang <yong.liang.choong@linux.intel.com>
-To: Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S . Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Dan Carpenter <dan.carpenter@linaro.org>
-Cc: netdev@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH net-next v1 1/1] stmmac: intel: Fix warning message for return value in intel_tsn_lane_is_available()
-Date: Mon, 10 Mar 2025 13:08:35 +0800
-Message-Id: <20250310050835.808870-1-yong.liang.choong@linux.intel.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1741583337; c=relaxed/simple;
+	bh=626TycVV3BpUI2CH+NTcstOHpWvHFuXqScOhMeYrbxM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=fzxaLNrderIPsO9pxfz5BA72HcKKCs/zSTz3c6AH9K+cOUCkRpNWBBjn+6PD4ql7BlUXfyXwxP2cewCjQetxN4ADKWb6nNrps25jdDnKG+dS7+ns01kSNEyTpMcOWPYcXmT0Tz/zknH8HausbJGgsXLEkT3VRYmwbp/DGE59+wI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gwuDQEje; arc=none smtp.client-ip=209.85.167.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-5498c156f1dso4359731e87.3;
+        Sun, 09 Mar 2025 22:08:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741583333; x=1742188133; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=GiuaRc+FvUTa6VQc150ltZP2w6zS+qt51yDmDvWWO90=;
+        b=gwuDQEjeMr5kUUeb8HDIm9DZWzKOYLuaS9Yhybw7uh5A3m1PNE7XJhU9dqAFMzEeIA
+         CawEORp6S1n8KDTBe0UeCbz6+pgAesVYCcr7skZmL87uoo9f45ZLcvbS+drgQEmhztKd
+         D6SWkBEbLDcC6Pm4gShtaRaKoC/FqKo1og14AGmUdFqVR0sMRuWqoHhJ+yXY8yBqGqC/
+         OClIll6lBKtyfLjZu0N0bEFF1SiDAtCUWqu5b/8k1ZTxEe9h3KTLXQVERBqT/Sl43/sj
+         yYdjUPHwPZgbMuwzxk0A3OsTVeryokDB96+2Bl6YszpyEsQ65WbJziXKKe3bNrN81YL+
+         oXXw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741583333; x=1742188133;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=GiuaRc+FvUTa6VQc150ltZP2w6zS+qt51yDmDvWWO90=;
+        b=XB3ldo3wK9cBa3U1HU/YsGqynILSMd13yyIUGg8RTL18aeumRY/QBAYzjNtZzvP7WP
+         u1ogc/D5qVrvX9UUlfz2gW6vfXg8SXIRrb23jrFv9MZn0mQiAH/i1FgyEU+I4hG3suCA
+         HMbVhNG3JSRz919AkXnEGfrJJ3oFiIPC+gD6n8KgFOq1nx4FKe1h3M3b3h53XqX8ATJy
+         nEHvNWSzUFZ8Mr52eCDXw9Mp32Z3LsnKk4WuXrVG0yE0ercQO/dXz1QL6kMo4DdDvSN6
+         PSRTikeM+mySNwTRx5ZMh8oMxgFjd+qxFEfAJDoPhVghjPPi3xFtx4mpOAHDFZg+X/lw
+         C+5A==
+X-Forwarded-Encrypted: i=1; AJvYcCUKTYAI0zif0vH8OH0vOdXjyVtIosJBB0pDwxFAVq6jk444DzGSRSLYD3GqWzWbBrLiA6N8UOvnYJO3p2s=@vger.kernel.org, AJvYcCUSY+L6UNQAPQryOe+xC4cpc46RTRQ+yjK+3vMef2U0HznftfONHO5loh080bPYl7gUMfJdoHgPsCA=@vger.kernel.org, AJvYcCX8vFCs9XHQraP2p53/VEH6dRxZ3bdrEGiAhhtWBWJMEJ0g5eUApB1nWKwLUCzebM4IIpO59MAbozBUZhQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzxFp3bAugymZ6sNSFxXvkF7/sjKVmXBZBGNlnSneVld1MOBbUJ
+	GuGMlybgc0Zvi3MYR7VIx16e0/ByOAkc44+5fRq0qOhBK5k2kytgC2yggfbQBl/oCMIPutRJHxy
+	e8qnhQHwBnTHrPkmiUuvrmZNDIuM=
+X-Gm-Gg: ASbGncuv/YTRC3He7yCfMX1JkHicAW3PKLbfyX83G0tm76cahFDJi3CoySZuvEF0O6W
+	P1utheI+095bFvNXP4dlbd6YUt2tXcmbhjiDLY587EWhKCJbXP9dFhCm44ff6rxflRk2ixRWyZV
+	0H4N4gy0hIpaUm56I1x41r5NOQeQ==
+X-Google-Smtp-Source: AGHT+IGRAKwpZcXi8TZgTZaYl3kR823ieCuZRyLnerwdPkqxoRbv1pSf0kPCfErdVeDkAUyWoWjTGoBOJQICAKi6um4=
+X-Received: by 2002:a05:6512:1112:b0:546:2fde:d2d9 with SMTP id
+ 2adb3069b0e04-54990e672cbmr3817902e87.28.1741583333258; Sun, 09 Mar 2025
+ 22:08:53 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250216160806.391566-1-webgeek1234@gmail.com> <20250310044553.zupmsoi4d3errjvs@vireshk-i7>
+In-Reply-To: <20250310044553.zupmsoi4d3errjvs@vireshk-i7>
+From: Aaron Kling <webgeek1234@gmail.com>
+Date: Mon, 10 Mar 2025 00:08:41 -0500
+X-Gm-Features: AQ5f1Jpydkg7kBiKMLUlhT2KRAElIeoskeYm2st52SvxcpXbPVCQs2PxD5ub3iY
+Message-ID: <CALHNRZ-YpkSmLipQJ6i8XR+R-4ReLp1fd=jx0X1V8vDvuPG-gA@mail.gmail.com>
+Subject: Re: [PATCH] cpufreq: tegra186: Share policy per cluster
+To: Viresh Kumar <viresh.kumar@linaro.org>
+Cc: Aaron Kling <luceoscutum@gmail.com>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+	Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, 
+	linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Fix the warning "warn: missing error code? 'ret'" in the
-intel_tsn_lane_is_available() function.
+On Sun, Mar 9, 2025 at 11:45=E2=80=AFPM Viresh Kumar <viresh.kumar@linaro.o=
+rg> wrote:
+>
+> On 16-02-25, 10:08, Aaron Kling wrote:
+> > This functionally brings tegra186 in line with tegra210 and tegra194,
+> > sharing a cpufreq policy between all cores in a cluster.
+> >
+> > Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
+> > ---
+> >  drivers/cpufreq/tegra186-cpufreq.c | 7 +++++++
+> >  1 file changed, 7 insertions(+)
+> >
+> > diff --git a/drivers/cpufreq/tegra186-cpufreq.c b/drivers/cpufreq/tegra=
+186-cpufreq.c
+> > index c7761eb99f3cc..c832a1270e688 100644
+> > --- a/drivers/cpufreq/tegra186-cpufreq.c
+> > +++ b/drivers/cpufreq/tegra186-cpufreq.c
+> > @@ -73,11 +73,18 @@ static int tegra186_cpufreq_init(struct cpufreq_pol=
+icy *policy)
+> >  {
+> >       struct tegra186_cpufreq_data *data =3D cpufreq_get_driver_data();
+> >       unsigned int cluster =3D data->cpus[policy->cpu].bpmp_cluster_id;
+> > +     u32 cpu;
+> >
+> >       policy->freq_table =3D data->clusters[cluster].table;
+> >       policy->cpuinfo.transition_latency =3D 300 * 1000;
+> >       policy->driver_data =3D NULL;
+> >
+> > +     /* set same policy for all cpus in a cluster */
+> > +     for (cpu =3D 0; cpu < (sizeof(tegra186_cpus)/sizeof(struct tegra1=
+86_cpufreq_cpu)); cpu++) {
+>
+> Can't you use ARRAY_SIZE here ?
 
-The function now returns 0 to indicate that a TSN lane was found and
-returns -EINVAL when it is not found.
+I could, just wasn't aware of that macro. Is that enough to send a v2 over?
+>
+> > +             if (data->cpus[cpu].bpmp_cluster_id =3D=3D cluster)
+> > +                     cpumask_set_cpu(cpu, policy->cpus);
+> > +     }
+> > +
+> >       return 0;
+>
+> --
+> viresh
 
-Fixes: a42f6b3f1cc1 ("net: stmmac: configure SerDes according to the interface mode")
-Signed-off-by: Choong Yong Liang <yong.liang.choong@linux.intel.com>
----
- drivers/net/ethernet/stmicro/stmmac/dwmac-intel.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-intel.c b/drivers/net/ethernet/stmicro/stmmac/dwmac-intel.c
-index 9c8de47ee149..5910571a954f 100644
---- a/drivers/net/ethernet/stmicro/stmmac/dwmac-intel.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-intel.c
-@@ -494,10 +494,10 @@ static int intel_tsn_lane_is_available(struct net_device *ndev,
- 			if ((rbuf.buf[0] >>
- 				(4 * (intel_priv->tsn_lane_regs[j] % 8)) &
- 					B_PCH_FIA_PCR_L0O) == 0xB)
--				return ret;
-+				return 0;
- 	}
- 
--	return ret;
-+	return -EINVAL;
- }
- 
- static int intel_set_reg_access(const struct pmc_serdes_regs *regs, int max_regs)
--- 
-2.34.1
-
+Sincerely,
+Aaron
 
