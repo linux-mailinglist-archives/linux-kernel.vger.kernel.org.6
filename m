@@ -1,136 +1,308 @@
-Return-Path: <linux-kernel+bounces-553441-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-553442-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF924A589B0
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 01:33:38 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8A4ABA589B4
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 01:37:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 779273ABB67
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 00:33:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D800A188BF7A
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 00:37:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E1723987D;
-	Mon, 10 Mar 2025 00:33:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7313B34CF5;
+	Mon, 10 Mar 2025 00:37:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="l54C/qJC"
-Received: from out30-99.freemail.mail.aliyun.com (out30-99.freemail.mail.aliyun.com [115.124.30.99])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=temperror (0-bit key) header.d=realtek.com header.i=@realtek.com header.b="jVzJU6wj"
+Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65B46632;
-	Mon, 10 Mar 2025 00:33:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.99
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEF04D2FB;
+	Mon, 10 Mar 2025 00:36:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.75.126.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741566802; cv=none; b=gnBZT+TQr3TJ3+cRNC3lSSs6+xXeDdDZDIJfNkr5aO+L1mCTg/L2zcByaD6dDwGT9z8+GUJmep+4KO3PdIncjEwBVYJy2FaMElRutH3nDqkMYb6Epta4qx3Hc6mK6mju+t1M6VB3U39OZ882uygesEAE3n4b8wc1hHPampJV8wI=
+	t=1741567019; cv=none; b=H7K59h3Y3rpRRBtrmTxiXWou1jfSyuFFatAhIzYxz/IBYmJ4Y0e4jfbWKClERQWNrpyG819ClaciV0VL0WDCXMZDXL5uAhVO3gWqgUwViZeEsxEn6WNeQLs8KAb97kWv0tcmOi9vzbu6hMhlQzoF/dMxIUUWWDX1veysm0DLsAo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741566802; c=relaxed/simple;
-	bh=8gtiSOPBeO2O6YcASdsqnV2fsibaolJ2lK9ihz7fKME=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Om9I2WGSrpMovl+ToOoYrT42qHy3J0kR/WGMK6+B7rwkh7Qczd9sYjoHm5k1p+7pJINFdNoYnvbQHZ7PPwyxCLkGMFcodpfqYjfMfuVowAQQEsBXUOb3nZSpeXgiLgeyxAvQ/KEeSzZFtMH5s9bxCcEJCjKp+Udk3WerX0X8ANw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=l54C/qJC; arc=none smtp.client-ip=115.124.30.99
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1741566795; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=i9xoUJAz+Ulc3f5EECn+evsDiO91i2wyeFM4yQAvw+Q=;
-	b=l54C/qJCqjoLb2HMsxvD9kS4XgpLrA1qEEH3b8Hoon1p1tNMcRpBf2328jSpdnGZvuHHZf1TOjFufL5ER1O43HgSGrfveqL5OCZ6n/64bq/f8ucP7oJ62CgOza7e5bjBZlwwET39G2OvwMnLHi9ub0TEZ01S1QnFi+EKETryenU=
-Received: from 30.134.66.95(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0WQy811n_1741566764 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Mon, 10 Mar 2025 08:33:11 +0800
-Message-ID: <625983f8-7e52-4f6c-97bb-629596341181@linux.alibaba.com>
-Date: Mon, 10 Mar 2025 08:32:42 +0800
+	s=arc-20240116; t=1741567019; c=relaxed/simple;
+	bh=4h1t9rN4ICMWhjBR/mCrdznTowjXzA9D5KrBreqnjN8=;
+	h=From:To:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=QzzvgJjGFb7+3Bgd64I6ATlDvCSx9S0WqQuEk+2RQDPTvjHWNWmxTP8Id39Y1yLHPL98824AvoH7rRrEZQDxl2iHAoOumiKk/grOHxf9Pzq9Ze1Ox7ZgTeQ8NiP7HfTEkQuhWYuWPml+sRfPOZT+Va4DQPvCrCapEL5olM8ot/M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; dkim=temperror (0-bit key) header.d=realtek.com header.i=@realtek.com header.b=jVzJU6wj; arc=none smtp.client-ip=211.75.126.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=realtek.com
+X-SpamFilter-By: ArmorX SpamTrap 5.78 with qID 52A0X9axC2169990, This message is accepted by code: ctloc85258
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=realtek.com; s=dkim;
+	t=1741566789; bh=4h1t9rN4ICMWhjBR/mCrdznTowjXzA9D5KrBreqnjN8=;
+	h=From:To:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:Content-Transfer-Encoding:MIME-Version;
+	b=jVzJU6wjtNydKyYe0mZj7EChudlvOaFqZDGY6mI5DpgLA2NfS1tMRnktXBeXVEkEU
+	 0W4K15+myTRgA74H4poeQilm05D6x3GJmW2c/36nlWcTarsgxzmENhSHMpYDl8yVQN
+	 RwCnv/Xze6oVQmZCel14Z1x0INWzPVnQkGEMNzGQHVrnvjd+7gfihYgeg90NKEBXst
+	 inN8VbDWWA5QwA9ct0WHjnmTJL6CqvxC+FDIdmqF/HNtK9LQKinYJjtK6srZX+dgr2
+	 H57opsnwqzmdpJGkMME8H7CoUzj+wljC0ZXQ8Tj40lQRT2eJhtI0CYdnrFj8RXRFwb
+	 BYhUl6iOFLwlQ==
+Received: from mail.realtek.com (rtexh36505.realtek.com.tw[172.21.6.25])
+	by rtits2.realtek.com.tw (8.15.2/3.06/5.92) with ESMTPS id 52A0X9axC2169990
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 10 Mar 2025 08:33:09 +0800
+Received: from RTEXMBS02.realtek.com.tw (172.21.6.95) by
+ RTEXH36505.realtek.com.tw (172.21.6.25) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Mon, 10 Mar 2025 08:33:10 +0800
+Received: from RTEXMBS04.realtek.com.tw (172.21.6.97) by
+ RTEXMBS02.realtek.com.tw (172.21.6.95) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.35; Mon, 10 Mar 2025 08:33:09 +0800
+Received: from RTEXMBS04.realtek.com.tw ([fe80::4c19:b586:6e71:3622]) by
+ RTEXMBS04.realtek.com.tw ([fe80::4c19:b586:6e71:3622%5]) with mapi id
+ 15.01.2507.035; Mon, 10 Mar 2025 08:33:09 +0800
+From: Ping-Ke Shih <pkshih@realtek.com>
+To: Shengyu Qu <wiagn233@outlook.com>, "nbd@nbd.name" <nbd@nbd.name>,
+        "lorenzo@kernel.org" <lorenzo@kernel.org>,
+        "ryder.lee@mediatek.com"
+	<ryder.lee@mediatek.com>,
+        "shayne.chen@mediatek.com"
+	<shayne.chen@mediatek.com>,
+        "sean.wang@mediatek.com"
+	<sean.wang@mediatek.com>,
+        "johannes@sipsolutions.net"
+	<johannes@sipsolutions.net>,
+        "matthias.bgg@gmail.com"
+	<matthias.bgg@gmail.com>,
+        "angelogioacchino.delregno@collabora.com"
+	<angelogioacchino.delregno@collabora.com>,
+        "miriam.rachel.korenblit@intel.com" <miriam.rachel.korenblit@intel.com>,
+        "howard-yh.hsu@mediatek.com" <howard-yh.hsu@mediatek.com>,
+        "greearb@candelatech.com" <greearb@candelatech.com>,
+        "chui-hao.chiu@mediatek.com" <chui-hao.chiu@mediatek.com>,
+        "mingyen.hsieh@mediatek.com" <mingyen.hsieh@mediatek.com>,
+        "quic_adisi@quicinc.com" <quic_adisi@quicinc.com>,
+        "sujuan.chen@mediatek.com"
+	<sujuan.chen@mediatek.com>,
+        "gustavoars@kernel.org" <gustavoars@kernel.org>,
+        "bo.jiao@mediatek.com" <bo.jiao@mediatek.com>,
+        "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>,
+        "linux-mediatek@lists.infradead.org"
+	<linux-mediatek@lists.infradead.org>
+Subject: RE: [PATCH v9 RESEND] wifi: mt76: mt7915: add wds support when wed is enabled
+Thread-Topic: [PATCH v9 RESEND] wifi: mt76: mt7915: add wds support when wed
+ is enabled
+Thread-Index: AQHbkD+97GjFG0DhG0q+h/KT1ZUhfbNrhPNA
+Date: Mon, 10 Mar 2025 00:33:08 +0000
+Message-ID: <b6b52bfcdb614137ac63fddfdaf9cb97@realtek.com>
+References: <TYCPR01MB84376C7074C566865654F05098D42@TYCPR01MB8437.jpnprd01.prod.outlook.com>
+In-Reply-To: <TYCPR01MB84376C7074C566865654F05098D42@TYCPR01MB8437.jpnprd01.prod.outlook.com>
+Accept-Language: en-US, zh-TW
+Content-Language: zh-TW
+x-kse-serverinfo: RTEXMBS02.realtek.com.tw, 9
+x-kse-antispam-interceptor-info: fallback
+x-kse-antivirus-interceptor-info: fallback
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] mm: alloc_pages_bulk: remove assumption of populating
- only NULL elements
-To: Yunsheng Lin <yunshenglin0825@gmail.com>,
- Dave Chinner <david@fromorbit.com>, Yunsheng Lin <linyunsheng@huawei.com>
-Cc: Yishai Hadas <yishaih@nvidia.com>, Jason Gunthorpe <jgg@ziepe.ca>,
- Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>,
- Kevin Tian <kevin.tian@intel.com>,
- Alex Williamson <alex.williamson@redhat.com>, Chris Mason <clm@fb.com>,
- Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>,
- Gao Xiang <xiang@kernel.org>, Chao Yu <chao@kernel.org>,
- Yue Hu <zbestahu@gmail.com>, Jeffle Xu <jefflexu@linux.alibaba.com>,
- Sandeep Dhavale <dhavale@google.com>, Carlos Maiolino <cem@kernel.org>,
- "Darrick J. Wong" <djwong@kernel.org>,
- Andrew Morton <akpm@linux-foundation.org>,
- Jesper Dangaard Brouer <hawk@kernel.org>,
- Ilias Apalodimas <ilias.apalodimas@linaro.org>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Simon Horman <horms@kernel.org>, Trond Myklebust <trondmy@kernel.org>,
- Anna Schumaker <anna@kernel.org>, Chuck Lever <chuck.lever@oracle.com>,
- Jeff Layton <jlayton@kernel.org>, Neil Brown <neilb@suse.de>,
- Olga Kornievskaia <okorniev@redhat.com>, Dai Ngo <Dai.Ngo@oracle.com>,
- Tom Talpey <tom@talpey.com>, Luiz Capitulino <luizcap@redhat.com>,
- Mel Gorman <mgorman@techsingularity.net>, kvm@vger.kernel.org,
- virtualization@lists.linux.dev, linux-kernel@vger.kernel.org,
- linux-btrfs@vger.kernel.org, linux-erofs@lists.ozlabs.org,
- linux-xfs@vger.kernel.org, linux-mm@kvack.org, netdev@vger.kernel.org,
- linux-nfs@vger.kernel.org
-References: <20250228094424.757465-1-linyunsheng@huawei.com>
- <Z8a3WSOrlY4n5_37@dread.disaster.area>
- <91fcdfca-3e7b-417c-ab26-7d5e37853431@huawei.com>
- <Z8vnKRJlP78DHEk6@dread.disaster.area>
- <cce03970-d66f-4344-b496-50ecf59483a6@gmail.com>
-From: Gao Xiang <hsiangkao@linux.alibaba.com>
-In-Reply-To: <cce03970-d66f-4344-b496-50ecf59483a6@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-KSE-AntiSpam-Interceptor-Info: fallback
 
+Shengyu Qu <wiagn233@outlook.com> wrote:
+> @@ -1280,6 +1292,34 @@ static void mt7915_sta_set_4addr(struct ieee80211_=
+hw *hw,
+>         if (!msta->wcid.sta)
+>                 return;
+>=20
+> +       if (mtk_wed_device_active(&dev->mt76.mmio.wed) &&
+> +           !is_mt7915(&dev->mt76) &&
+> +           (msta->wcid.idx < min || msta->wcid.idx > max - 1)) {
+> +               pre_sta =3D kmemdup(sta, sizeof(*sta) + sizeof(*msta), GF=
+P_KERNEL | __GFP_ZERO);
 
+Need to check if pre_sta !=3D NULL before using.=20
 
-On 2025/3/9 21:40, Yunsheng Lin wrote:
-> On 3/8/2025 2:43 PM, Dave Chinner wrote:
-> 
-> ...
-> 
->>> I tested XFS using the below cmd and testcase, testing seems
->>> to be working fine, or am I missing something obvious here
->>> as I am not realy familiar with fs subsystem yet:
->>
->> That's hardly what I'd call a test. It barely touches the filesystem
->> at all, and it is not exercising memory allocation failure paths at
->> all.
->>
->> Go look up fstests and use that to test the filesystem changes you
->> are making. You can use that to test btrfs and NFS, too.
-> 
-> Thanks for the suggestion.
-> I used the below xfstests to do the testing in a VM, the smoke testing
-> seems fine for now, will do a full testing too:
-> https://github.com/tytso/xfstests-bld
-> 
-> Also, it seems the fstests doesn't support erofs yet?
+> +               pre_msta =3D (struct mt7915_sta *)pre_sta->drv_priv;
+> +
+> +               flags =3D test_bit(MT_WCID_FLAG_4ADDR, &msta->wcid.flags)=
+ ?
+> +                       MT76_WED_WDS_ACTIVE : MT76_WED_ACTIVE;
+> +
+> +               tmp_idx =3D __mt76_wcid_alloc(dev->mt76.wcid_mask, MT7915=
+_WTBL_STA, flags);
+> +               if (tmp_idx =3D=3D -1)
 
-erofs is an read-only filesystem, and almost all xfstests
-cases is unsuitable for erofs since erofs needs to preset
-dataset in advance for runtime testing and only
-read-related interfaces are cared:
+At other places, it checks this by 'idx < 0'.=20
 
-You could check erofs-specfic test cases here:
-https://git.kernel.org/pub/scm/linux/kernel/git/xiang/erofs-utils.git/log/?h=experimental-tests
+> +                       goto error;
+> +               pre_msta->wcid.idx =3D (u16)tmp_idx;
+> +               mt7915_mac_sta_add(&dev->mt76, vif, pre_sta);
+> +               rcu_assign_pointer(dev->mt76.wcid[tmp_idx], &msta->wcid);
+> +
+> +               tmp_idx =3D msta->wcid.idx;
+> +               msta->wcid.idx =3D pre_msta->wcid.idx;
+> +               pre_msta->wcid.idx =3D (u16)tmp_idx;
+> +               rcu_assign_pointer(dev->mt76.wcid[tmp_idx], NULL);
+> +
+> +               synchronize_rcu();
+> +               mt7915_mac_sta_remove(&dev->mt76, vif, pre_sta);
+> +
+> +error:
+> +               kfree(pre_sta);
+> +       }
+> +
+>         mt76_connac_mcu_wtbl_update_hdr_trans(&dev->mt76, vif, sta);
+>  }
+>=20
 
-Also the stress test:
-https://git.kernel.org/pub/scm/linux/kernel/git/xiang/erofs-utils.git/commit/?id=6fa861e282408f8df9ab1654b77b563444b17ea1
+[...]
 
-BTW, I don't like your new interface either, I don't know
-why you must insist on this work now that others are
-already nak this.  Why do you insist on it so much?
+> diff --git a/drivers/net/wireless/mediatek/mt76/mt7915/mcu.c
+> b/drivers/net/wireless/mediatek/mt76/mt7915/mcu.c
+> index 9d790f234e82..32c5aa1a361e 100644
+> --- a/drivers/net/wireless/mediatek/mt76/mt7915/mcu.c
+> +++ b/drivers/net/wireless/mediatek/mt76/mt7915/mcu.c
+> @@ -2385,10 +2385,20 @@ int mt7915_mcu_init_firmware(struct mt7915_dev *d=
+ev)
+>=20
+>         mt76_connac_mcu_del_wtbl_all(&dev->mt76);
+>=20
+> -       if ((mtk_wed_device_active(&dev->mt76.mmio.wed) &&
+> -            is_mt7915(&dev->mt76)) ||
+> -           !mtk_wed_get_rx_capa(&dev->mt76.mmio.wed))
+> -               mt7915_mcu_wa_cmd(dev, MCU_WA_PARAM_CMD(CAPABILITY), 0, 0=
+, 0);
+> +#ifdef CONFIG_NET_MEDIATEK_SOC_WED
 
-Thanks,
-Gao Xiang
+if (IS_ENABLED(CONFIG_NET_MEDIATEK_SOC_WED) ... ?
 
-> 
->>
->> -Dave.
->>
+> +       if (mtk_wed_device_active(&dev->mt76.mmio.wed)) {
+> +               if (is_mt7915(&dev->mt76) ||
+> +                   !mtk_wed_get_rx_capa(&dev->mt76.mmio.wed))
+> +                       ret =3D mt7915_mcu_wa_cmd(dev, MCU_WA_PARAM_CMD(C=
+APABILITY),
+> +                                               0, 0, 0);
+> +               else
+> +                       ret =3D mt7915_mcu_wa_cmd(dev, MCU_WA_PARAM_CMD(S=
+ET),
+> +                                               MCU_WA_PARAM_WED_VERSION,
+> +                                               dev->mt76.mmio.wed.rev_id=
+, 0);
+> +               if (ret)
+> +                       return ret;
+> +       }
+> +#endif
+>=20
+>         ret =3D mt7915_mcu_set_mwds(dev, 1);
+>         if (ret)
+> diff --git a/drivers/net/wireless/mediatek/mt76/mt7915/mcu.h
+> b/drivers/net/wireless/mediatek/mt76/mt7915/mcu.h
+> index 49476a4182fd..c3dd0cb4a5d3 100644
+> --- a/drivers/net/wireless/mediatek/mt76/mt7915/mcu.h
+> +++ b/drivers/net/wireless/mediatek/mt76/mt7915/mcu.h
+> @@ -278,6 +278,7 @@ enum {
+>         MCU_WA_PARAM_PDMA_RX =3D 0x04,
+>         MCU_WA_PARAM_CPU_UTIL =3D 0x0b,
+>         MCU_WA_PARAM_RED =3D 0x0e,
+> +       MCU_WA_PARAM_WED_VERSION =3D 0x32,
+>         MCU_WA_PARAM_RED_SETTING =3D 0x40,
+>  };
+>=20
+> diff --git a/drivers/net/wireless/mediatek/mt76/util.c b/drivers/net/wire=
+less/mediatek/mt76/util.c
+> index 95b3dc96e4c4..7fac9c79ebdf 100644
+> --- a/drivers/net/wireless/mediatek/mt76/util.c
+> +++ b/drivers/net/wireless/mediatek/mt76/util.c
+> @@ -42,9 +42,11 @@ bool ____mt76_poll_msec(struct mt76_dev *dev, u32 offs=
+et, u32 mask, u32 val,
+>  }
+>  EXPORT_SYMBOL_GPL(____mt76_poll_msec);
+>=20
+> -int mt76_wcid_alloc(u32 *mask, int size)
+> +int __mt76_wcid_alloc(u32 *mask, int size, u8 flag)
+>  {
+>         int i, idx =3D 0, cur;
+> +       int min =3D MT76_WED_WDS_MIN;
+> +       int max =3D MT76_WED_WDS_MAX;
+
+In reverse X'mas tree order?
+
+>=20
+>         for (i =3D 0; i < DIV_ROUND_UP(size, 32); i++) {
+>                 idx =3D ffs(~mask[i]);
+> @@ -53,16 +55,45 @@ int mt76_wcid_alloc(u32 *mask, int size)
+>=20
+>                 idx--;
+>                 cur =3D i * 32 + idx;
+> -               if (cur >=3D size)
+> +
+> +               switch (flag) {
+> +               case MT76_WED_ACTIVE:
+> +                       if (cur >=3D min && cur < max)
+> +                               continue;
+> +
+> +                       if (cur >=3D size) {
+> +                               u32 end =3D max - min - 1;
+> +
+> +                               i =3D min / 32;
+> +                               idx =3D ffs(~mask[i] & GENMASK(end, 0));
+> +                               if (!idx)
+> +                                       goto error;
+> +                               idx--;
+> +                               cur =3D min + idx;
+> +                       }
+> +
+>                         break;
+> +               case MT76_WED_WDS_ACTIVE:
+> +                       if (cur < min)
+> +                               continue;
+> +                       if (cur >=3D max)
+> +                               goto error;
+> +
+> +                       break;
+> +               default:
+> +                       if (cur >=3D size)
+> +                               goto error;
+> +                       break;
+> +               }
+>=20
+>                 mask[i] |=3D BIT(idx);
+>                 return cur;
+>         }
+>=20
+> +error:
+>         return -1;
+>  }
+> -EXPORT_SYMBOL_GPL(mt76_wcid_alloc);
+> +EXPORT_SYMBOL_GPL(__mt76_wcid_alloc);
+>=20
+>  int mt76_get_min_avg_rssi(struct mt76_dev *dev, u8 phy_idx)
+>  {
+> diff --git a/drivers/net/wireless/mediatek/mt76/util.h b/drivers/net/wire=
+less/mediatek/mt76/util.h
+> index 260965dde94c..99b7263c0a20 100644
+> --- a/drivers/net/wireless/mediatek/mt76/util.h
+> +++ b/drivers/net/wireless/mediatek/mt76/util.h
+> @@ -27,7 +27,12 @@ enum {
+>  #define MT76_INCR(_var, _size) \
+>         (_var =3D (((_var) + 1) % (_size)))
+>=20
+> -int mt76_wcid_alloc(u32 *mask, int size);
+> +int __mt76_wcid_alloc(u32 *mask, int size, u8 flags);
+> +
+> +static inline int mt76_wcid_alloc(u32 *mask, int size)
+> +{
+> +       return __mt76_wcid_alloc(mask, size, 0);
+
+return __mt76_wcid_alloc(mask, size, MT76_WED_DEFAULT); ?
+
+> +}
+>=20
+>  static inline void
+>  mt76_wcid_mask_set(u32 *mask, int idx)
+> --
+> 2.48.1
 
 
