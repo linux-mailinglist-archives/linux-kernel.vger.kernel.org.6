@@ -1,131 +1,122 @@
-Return-Path: <linux-kernel+bounces-554594-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-554595-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D202DA59A49
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 16:46:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id C057BA59A50
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 16:48:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1C76816BD0A
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 15:46:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0AFAF16C604
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 15:48:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AE87192B82;
-	Mon, 10 Mar 2025 15:46:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 405FD22B8CA;
+	Mon, 10 Mar 2025 15:48:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=ariel.dalessandro@collabora.com header.b="hECOg93O"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NiqDy+7a"
+Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D2B41DFF0
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 15:46:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741621583; cv=pass; b=PwfXd9NBxTK9cmohPh4/1UM1mz+I4CIpU2Q8/hG+wudjgljSkhc8JVqijyaXrOGzohjQOx2gWij66+GVgj9X6KgTw4HDl8rxgeza0FiL/Vlt6ZLmzyobvoUTusnTTZSjsYgca3K/60i/8DB4B3CpjKZFNKwhpr3yV9HIkU7jUkk=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741621583; c=relaxed/simple;
-	bh=xeWecSXJ/ohfo6cOCW3SNIJLTn+7ggJs0DzfdMQCmZk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=DJc1rBy6ezF+y9BF2MHiq0JNGHDTab/hsAL3kJ3vGKveQE+Q7QgLcWVz1fnvmTUr1WG5NadjzkO9uRFGL3g7l02XHdcEllsLt74CnyCxAm4sQWJdbv2C9z3cSSJ0YV3iw0SuFAOgp+a02Cl6hGVbt9Ds1GsFrpotBuqNq/rogMc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=ariel.dalessandro@collabora.com header.b=hECOg93O; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1741621569; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=NiHi27hdfQxbeW3CxdZzSRA4K8O8/l6SjnpHs7duMHLEy4dE8oIYRLiDNPlqAJ1isWWnvvAd6koFCCs+ia3Lg8VrivMrQ1joLVu2easq+Z4mfy6LPZp5CG+pIU46rZyEZPbVPoWDT6FgJC019FSUIy6UcwA6ty818xPuHL6ktY4=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1741621569; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=nteUPilcCeVNoxHOhuQ2B/1Kq1k+d99vAmMwSOhuO1k=; 
-	b=Wf4EZ5HjBzs4Eo1DdCVBtixBqviwh7FP2WhB/xImrKi1S49sPwRkbS0ttEAbvQXX1GhBWsX1B90ei/Qq8rLGjG+Jyzj/wqbXxXkYKn4PbG4mAjYGErOsylUqH18S0STcvt/HuEDRGDcH9/vl2Q6RzjypifS4pL+pMKlsob0MDB0=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=ariel.dalessandro@collabora.com;
-	dmarc=pass header.from=<ariel.dalessandro@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1741621569;
-	s=zohomail; d=collabora.com; i=ariel.dalessandro@collabora.com;
-	h=Message-ID:Date:Date:MIME-Version:Subject:Subject:To:To:Cc:Cc:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
-	bh=nteUPilcCeVNoxHOhuQ2B/1Kq1k+d99vAmMwSOhuO1k=;
-	b=hECOg93O14P+PU8FRdiwCKOM+wz6C4qoEWp0Pe+407qBRy71Fp43CpF8AdrfR6lI
-	wCLZj8OKW0mIsrYIejIrOBQ3oUj4KuX1t7HAr4gtEKLnOJaJbrRHt4sSequOrzrSXZH
-	D1HcX0cmV+JlthV03oCKWR7NP09LkJ/+dt6Cvgto=
-Received: by mx.zohomail.com with SMTPS id 1741621566672706.8975406997224;
-	Mon, 10 Mar 2025 08:46:06 -0700 (PDT)
-Message-ID: <bc587831-97b2-4991-9d5e-71e6962c63a1@collabora.com>
-Date: Mon, 10 Mar 2025 12:46:01 -0300
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06D67192B82;
+	Mon, 10 Mar 2025 15:48:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741621692; cv=none; b=keaVvbcKWAWfZJ2g5mISwNtaGSUeNbgxahyDqun8HTTDDp1aU4wKipXRRK4Wdl3IhOsWBAvn9wYE8R0IkE939C0xXCxI2Wh3+IJ+1wgMiibNMwlVXO67xPOTZtDQcLBffWXA5iD91QxZrMqJbWtEI3UxKz7IP/vu3b7mrdvURRs=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741621692; c=relaxed/simple;
+	bh=SIVt748yjhXN61lTCBdrIOqbrGqJcOCWdZVCSIknig8=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=g2Vn45m4FZ4MO8e2XuQNzIlkVnTJ059Ij1R4+Rh9Q2HoePUWopOPcBlvFFWjCzbyzHfwPIkWhmhl5A7560fImyY4k7YMGYFpaqEtHHL07rRreST5ygHLE9BvVjqM6nmXQXAloRwBB/nNoYYFFJRAiLOuvDhJ+8+BAdu+y+DpMww=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NiqDy+7a; arc=none smtp.client-ip=209.85.208.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-5e61da95244so3523435a12.2;
+        Mon, 10 Mar 2025 08:48:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741621689; x=1742226489; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=z8Qki/M6cF25Z9mXICuii0r2Qp6u8hLmIzSqDO0dJFc=;
+        b=NiqDy+7ackWTgRDsNW/LE0yOUyht9F3k2TLbgy+0VInJ/ph5G9FR7QiTgc0Lpk0CK4
+         /0PNhOx+hN1i9+7j3fMujfZNjYnSD+VkYbR46wZCIYwe5l/BT2DsV7g02z0JQ+mD5HSK
+         hP0oGOV/E3ZJNvGB0pozhNifchdC0s/TNbOV8Agc66XsKT88/5l7chjBy38bQJGABfv/
+         v3CUhX07HYMbbXK3zRu6BG7WOx1JaxgXdmf3SxgE0vReyBss/3rUkAhHDH4g2eZ/AWFv
+         brpSLgTkWV2JG+sB1ZKXcRrF+TT73o5QWZIckVNj1RajS582pLlICTfZb6H17C/0Pd/A
+         E+VA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741621689; x=1742226489;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=z8Qki/M6cF25Z9mXICuii0r2Qp6u8hLmIzSqDO0dJFc=;
+        b=sHC33i9GkEOICfcYxB33E3uLqar4a1RgPKm2FUOwzkUrxfF3aKCRpkkV4V8j+um38l
+         xaU0PgC5LyCr1bXg4JwmEpXQGDbzm0/CGu3udBB3nrrYhHWGyN64Gn4TenK5rSCdK8Q/
+         yUzkxkBYeQAeMZzGoI5ZngHHzoZJM64t6sMMkDmVSuMl/c/Lqp+jBA2KQMEd7vsBwqNr
+         Umi17cvUThF+NmEgh/pWPHle213B1EQgjd+RpesLMAKKFXGGHp1cYHl7UH/RFb7hOc1N
+         TBCM0jeEAe7KImoTR/WpgPl9bhFJk3tcj/CdMfAS16fAZvnWlZw0zSxCbqrryPX/f32f
+         fnYg==
+X-Forwarded-Encrypted: i=1; AJvYcCUEO5HigeX+YfvH3VrEcVXmOiOM/vXLGxOEjNnsABHs/Gw4MH11QETYSAaommRvsBWJc2AgikT4PHL+amXv@vger.kernel.org, AJvYcCXECFzgyn21tNbrOL9J3eyiKlgislPFW5XIBCiXV95F3eZ1/F4ixgzdbUbxopQHTSt6fDEwVYS6gPUY@vger.kernel.org
+X-Gm-Message-State: AOJu0YwJuG5ksAz39fnFyQxfY7VGNClErTycC10km7NuQgr0xigThMtU
+	u1C1CK0VTe4nPpTvUAWo01x2GxEIHglWJs0DiOyHRXq/ynQaV7hs
+X-Gm-Gg: ASbGnctMe/LSxnMDH9rsvef8585quSQNgi9MRLKGgc1IXp5EMuc/ZsvE+GIYTTX2F4D
+	TX2Rzi+iZqJG30SLR+O7WE8thAvnC2IvrpG/+ljRgTRf8KlGlOe5kYYy9s9RVC1M16Wj4TxNDVn
+	G1Rc5XyHSbz49bDJT/3Gv7aEV8IsrQSztSmZERCqVvKujIcUB1KVmQOy0KXdIsfMp+Zu1AHsAVf
+	6gyNNN7QbXeLQ/NH86Dw8m7TbrsmDIJvZ3XjHgOdFn6HYZ04zVli41fqrVwyKqTT52h7PNHoDcz
+	6NNqLu02qdAI3xjVQQzEz9i5jltX0EJx1TSpAqRnN0vrvqXV
+X-Google-Smtp-Source: AGHT+IEdg7fwP49o1tXyXWKqfxK/eu1a7dIocwJZ5jiVtXvBnrVoYPaIUXHxtiURUXgbSYhcfA+iyA==
+X-Received: by 2002:a05:6402:2550:b0:5e1:8604:9a2d with SMTP id 4fb4d7f45d1cf-5e5e229949amr16131275a12.4.1741621689100;
+        Mon, 10 Mar 2025 08:48:09 -0700 (PDT)
+Received: from wslxew242.. ([188.193.103.108])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5e5c766d0e0sm7252732a12.64.2025.03.10.08.48.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 10 Mar 2025 08:48:08 -0700 (PDT)
+From: =?UTF-8?q?Goran=20Ra=C4=91enovi=C4=87?= <goran.radni@gmail.com>
+To: Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>
+Cc: =?UTF-8?q?Goran=20Ra=C4=91enovi=C4=87?= <gradenovic@ultratronik.de>,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 1/4] dt-bindings: vendor-prefixes: Add Ultratronik
+Date: Mon, 10 Mar 2025 16:47:58 +0100
+Message-ID: <20250310154804.326943-2-goran.radni@gmail.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20250310154804.326943-1-goran.radni@gmail.com>
+References: <20250310154804.326943-1-goran.radni@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 3/4] drm/panfrost: Support ARM_64_LPAE_S1 page table
-To: Steven Price <steven.price@arm.com>, dri-devel@lists.freedesktop.org,
- linux-kernel@vger.kernel.org
-Cc: boris.brezillon@collabora.com, robh@kernel.org,
- maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de,
- airlied@gmail.com, simona@ffwll.ch
-References: <20250226183043.140773-1-ariel.dalessandro@collabora.com>
- <20250226183043.140773-4-ariel.dalessandro@collabora.com>
- <6cdaafa2-68f9-4d5b-abe5-5c9c549e3c6e@arm.com>
-Content-Language: en-US
-From: Ariel D'Alessandro <ariel.dalessandro@collabora.com>
-In-Reply-To: <6cdaafa2-68f9-4d5b-abe5-5c9c549e3c6e@arm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ZohoMailClient: External
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Hi Steven,
+From: Goran Rađenović <gradenovic@ultratronik.de>
 
-On 2/27/25 11:44 AM, Steven Price wrote:
-> On 26/02/2025 18:30, Ariel D'Alessandro wrote:
->> Bifrost MMUs support AArch64 4kB granule specification. However,
->> panfrost only enables MMU in legacy mode, despite the presence of the
->> HW_FEATURE_AARCH64_MMU feature flag.
->>
->> This commit adds support to use page tables according to AArch64 4kB
->> granule specification. This feature is enabled conditionally based on
->> the GPU model's HW_FEATURE_AARCH64_MMU feature flag.
->>
->> Signed-off-by: Ariel D'Alessandro <ariel.dalessandro@collabora.com>
-> 
-> I find some of the naming confusing here. The subject calls it
-> 'ARM_64_LPAE_S1' which in an unfortunate name from the iommu code.
-> 
-> AIUI, LPAE is the "Large Physical Address Extension" and is a v7 feature
-> for 32 bit. "LEGACY" (as Bifrost calls it) mode is a (modified) version
-> of LPAE, which in Linux we've called "mali_lpae".
-> 
-> What you're adding support for is AARCH64_4K which is the v8 64 bit
-> mode. So I think it's worth including the "64" part of the name of the
-> mmu_lpae_s1_enable() function. Personally I'd be tempted to drop the
-> "_s1" part, but I guess there's a small chance someone will find a use
-> for the second stage one day.
+Ultratronik GmbH is a German electronics company:
+https://www.ultratronik-ems.de/
 
-Yes, overall agreed. I'll definitely keep the "64_4k" part of the name 
-explicit and also keep the "mali_lpae" for the legacy mode. Will send a 
-patchset v1 soon with all this, we can continue reviewing it there.
+Signed-off-by: Goran Rađenović <gradenovic@ultratronik.de>
+---
+ Documentation/devicetree/bindings/vendor-prefixes.yaml | 2 ++
+ 1 file changed, 2 insertions(+)
 
-> 
-> Note also that it's not necessarily a clear-cut improvement to use
-> AARCH64_4K over LEGACY. I wouldn't be surprised if this actually causes
-> (minor) performance regressions on some platforms. Sadly I don't have
-> access to a range of hardware to test this on.
-
-FWIW, I'm using Mesa CI [0] to test this as much as possible, at least 
-to detect any (major) regressions. As proposed by Boris, we should use a 
-property to progressively enable this feature.
-
-Thanks!
-
-[0] https://gitlab.freedesktop.org/mesa/mesa/
-
+diff --git a/Documentation/devicetree/bindings/vendor-prefixes.yaml b/Documentation/devicetree/bindings/vendor-prefixes.yaml
+index 5079ca6ce1d1..563d319fb73e 100644
+--- a/Documentation/devicetree/bindings/vendor-prefixes.yaml
++++ b/Documentation/devicetree/bindings/vendor-prefixes.yaml
+@@ -1599,6 +1599,8 @@ patternProperties:
+     description: U.S. Robotics Corporation
+   "^utoo,.*":
+     description: Aigo Digital Technology Co., Ltd.
++  "^ux,.*":
++    description: Ultratronik GmbH
+   "^v3,.*":
+     description: V3 Semiconductor
+   "^vaisala,.*":
 -- 
-Ariel D'Alessandro
-Software Engineer
-
-Collabora Ltd.
-Platinum Building, St John's Innovation Park, Cambridge CB4 0DS, UK 
-Registered in England & Wales, no. 5513718
+2.43.0
 
 
