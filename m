@@ -1,296 +1,177 @@
-Return-Path: <linux-kernel+bounces-553469-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-553452-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B34A2A58A13
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 02:30:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id B6132A589E0
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 02:16:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4BB3D3AA90E
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 01:30:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8075B3A9B1B
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 01:16:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7678214AD29;
-	Mon, 10 Mar 2025 01:30:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4990612A177;
+	Mon, 10 Mar 2025 01:16:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="d73oH79L"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="A2HtYue1"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C1BE11CBA;
-	Mon, 10 Mar 2025 01:30:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D3BA81E;
+	Mon, 10 Mar 2025 01:16:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741570238; cv=none; b=DOwc8ldJtcIIo2N9dosR9EvW/X6ln4uYV8ArQfrd8FyZjEjZAbbK9JY0FrBA4ugSlUoyuMHeOJpKROzR8YErrESCJ1USkgqF4pzcuqs3OXFRCNvk2sBQOzM8igddY9hKeTgv1/BoP2lSqkjD94RVXgfoaZGGTdNOfSgtO0DyVvg=
+	t=1741569375; cv=none; b=hoZ9ub2D87PCE85SfHa0uBZ5t9aHiopT7fhL2BQDHX/p8jWZznol3/QpaWDRF+31eAufDaH0gHVb05h/0v3uBYAqcEFOIFuy/G1lsALAPDMHHPfFIt4oqF7U5EBYyNGvTFu24SEe+S8f06ntsysDTuSpVQxICcqBuYf7jrF/FaI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741570238; c=relaxed/simple;
-	bh=nY48KGtzim/Et7OdgnAyeUqF4DZ8WmMB2K4F0Yv9nwQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=bFbLH7XqGR7Gv+Mz1QE/FoZdCp19Q3eHCCQi7zCx8Tk1IP3GtBc7Nydqr7haBApdG1HJZLZTVuxKva9CJ6prhvLHF/Mt40Fyezu5qmZse2a7UUNhT+vROZjrQpsC8nq1QHfXT9G1n/f9E+u1sD8/OyQ8D9ZWN+iGOI3NAxVtJO8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=d73oH79L; arc=none smtp.client-ip=192.198.163.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1741570237; x=1773106237;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references;
-  bh=nY48KGtzim/Et7OdgnAyeUqF4DZ8WmMB2K4F0Yv9nwQ=;
-  b=d73oH79LtJTY4rnMjCwfxFT/ja3C9A65BNPRgej+YrW/ZlmCiQfNhixs
-   kvVZ8M2Y9Z1+kpubFBQ/UGc5MJa1pqWkc0DVL5ShvOiYOsPRxT7aqWKtJ
-   u05zAi8Asl0pT5WDnTVxS1OlieN7EXJZkbOfl5SI6TQIPhxnXrZRHj1Cs
-   0pNhcK4zrZv3j1zfQStppkbOFi/TQQ5c+HAhGkqIsI6t6lDFtqT0qQNy3
-   4d72DlayYYjntqs6FWOvhGhy3c41Iz6CiTsIG+z6+rB1z3rnVNyv2K5UD
-   dSZVGI+ySOm+5Pj83lpef63LuwYqqgVs939Mx1v16Lj9zZ7+PtUh5LOSM
-   w==;
-X-CSE-ConnectionGUID: wjm/NnS8QeWMeFLavpMMCA==
-X-CSE-MsgGUID: WFefyQbDSp2/kKGHFcabSw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11368"; a="67914686"
-X-IronPort-AV: E=Sophos;i="6.14,235,1736841600"; 
-   d="scan'208";a="67914686"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Mar 2025 18:30:37 -0700
-X-CSE-ConnectionGUID: gfCIPxKZRBiaSXky6ed+9g==
-X-CSE-MsgGUID: aWPHqpWsS5S8WQEaSTRQIA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,235,1736841600"; 
-   d="scan'208";a="124925773"
-Received: from qiuxu-clx.sh.intel.com ([10.239.53.109])
-  by fmviesa004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Mar 2025 18:30:33 -0700
-From: Qiuxu Zhuo <qiuxu.zhuo@intel.com>
-To: Tony Luck <tony.luck@intel.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Jason Baron <jbaron@akamai.com>
-Cc: Qiuxu Zhuo <qiuxu.zhuo@intel.com>,
-	James Morse <james.morse@arm.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Robert Richter <rric@kernel.org>,
-	Gary Wang <gary.c.wang@intel.com>,
-	Yi Lai <yi1.lai@intel.com>,
-	linux-edac@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 11/11] EDAC/ie31200: Switch Raptor Lake-S to interrupt mode
-Date: Mon, 10 Mar 2025 09:14:11 +0800
-Message-Id: <20250310011411.31685-12-qiuxu.zhuo@intel.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20250310011411.31685-1-qiuxu.zhuo@intel.com>
-References: <20250226015202.36576-1-qiuxu.zhuo@intel.com>
- <20250310011411.31685-1-qiuxu.zhuo@intel.com>
+	s=arc-20240116; t=1741569375; c=relaxed/simple;
+	bh=fItbnL0VfJSCXWPmbaXP/wonhs74sgjKr0ENQ6tOn88=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Pgr2/9dKIacGF0y6fcoJQGin0NcM/5Wl7P3rlaqSFfJ3QypUDyZz4lPNCKrsohpie18hMDsy4vgVNm7D2Sw8yNaDWO3q0bVO9/mMD5hg452A4pjP9dBB7nWrSEQDFiBcHSBDkGwSIAhKTO3QN2WWRd8eHkKKWG1eFAetwgascf8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=A2HtYue1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3B82DC4CEE3;
+	Mon, 10 Mar 2025 01:16:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741569374;
+	bh=fItbnL0VfJSCXWPmbaXP/wonhs74sgjKr0ENQ6tOn88=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=A2HtYue1etjgjLFvcSzEWnKt7vtjBGU3/LluPT4Gt1uWAPxhX268bAstUqUVg7V8M
+	 cAFL+RDVkw7qtrJJIgivE0bh06IsKj+boJ0uqUaxcVFSNpNQoBiQ4I8ESZSxv6C8HJ
+	 aab452vHSI3hQgKUZhqRzfYzi1sUQkDXOiyp/aUzT6L36YTDQvj/KGUJ2CQitPstLp
+	 PyW8MhjPvPWXc2zS8x8A9wjeuoLrReX+N7Y20PiBPHSfwEGL19bE/6NOOl07rCCMUu
+	 m/23Z7pw6gChKciHiM5Bfs7fEw1QWrYHpbFTRaXUYwI+k4ZZ8pz1I3hKsgzBZ6ExAL
+	 6TjNPU5EogXsg==
+Date: Mon, 10 Mar 2025 09:16:04 +0800
+From: Peter Chen <peter.chen@kernel.org>
+To: Pawel Laszczak <pawell@cadence.com>
+Cc: "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+	"stern@rowland.harvard.edu" <stern@rowland.harvard.edu>,
+	"krzysztof.kozlowski@linaro.org" <krzysztof.kozlowski@linaro.org>,
+	"christophe.jaillet@wanadoo.fr" <christophe.jaillet@wanadoo.fr>,
+	"javier.carrasco@wolfvision.net" <javier.carrasco@wolfvision.net>,
+	"make_ruc2021@163.com" <make_ruc2021@163.com>,
+	"peter.chen@nxp.com" <peter.chen@nxp.com>,
+	"linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	Pawel Eichler <peichler@cadence.com>,
+	"stable@vger.kernel.org" <stable@vger.kernel.org>
+Subject: Re: [PATCH v3] usb: hub: lack of clearing xHC resources
+Message-ID: <Z849VPcttlQXTEoW@nchen-desktop>
+References: <20250228074307.728010-1-pawell@cadence.com>
+ <PH7PR07MB953841E38C088678ACDCF6EEDDCC2@PH7PR07MB9538.namprd07.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <PH7PR07MB953841E38C088678ACDCF6EEDDCC2@PH7PR07MB9538.namprd07.prod.outlook.com>
 
-Raptor Lake-S SoCs notify correctable memory errors via CMCI (Corrected
-Machine Check Interrupt). Switch Raptor Lake-S EDAC support from polling
-to interrupt mode by registering the callback to the MCE decode notifier
-chain.
+On 25-02-28 07:50:25, Pawel Laszczak wrote:
+> The xHC resources allocated for USB devices are not released in correct
+> order after resuming in case when while suspend device was reconnected.
+> 
+> This issue has been detected during the fallowing scenario:
+> - connect hub HS to root port
+> - connect LS/FS device to hub port
+> - wait for enumeration to finish
+> - force host to suspend
+> - reconnect hub attached to root port
+> - wake host
+> 
+> For this scenario during enumeration of USB LS/FS device the Cadence xHC
+> reports completion error code for xHC commands because the xHC resources
+> used for devices has not been properly released.
+> XHCI specification doesn't mention that device can be reset in any order
+> so, we should not treat this issue as Cadence xHC controller bug.
+> Similar as during disconnecting in this case the device resources should
+> be cleared starting form the last usb device in tree toward the root hub.
+> To fix this issue usbcore driver should call hcd->driver->reset_device
+> for all USB devices connected to hub which was reconnected while
+> suspending.
+> 
+> Fixes: 3d82904559f4 ("usb: cdnsp: cdns3 Add main part of Cadence USBSSP DRD Driver")
+> cc: <stable@vger.kernel.org>
+> Signed-off-by: Pawel Laszczak <pawell@cadence.com>
 
-Note that as Raptor Lake-S SoCs may not recover from uncorrectable memory
-errors, the system will hang as soon as this type of error occurs, and the
-registered callback on the MCE decode chain will not be executed. This is
-the expected behavior.
+Tested at Cixtech sky1 SoC which uses Cadence USB SSP IP.
 
-Tested-by: Gary Wang <gary.c.wang@intel.com>
-Signed-off-by: Qiuxu Zhuo <qiuxu.zhuo@intel.com>
----
- drivers/edac/Kconfig        |  2 +-
- drivers/edac/ie31200_edac.c | 83 ++++++++++++++++++++++++++++++++++---
- 2 files changed, 78 insertions(+), 7 deletions(-)
+Tested-by: Peter Chen <peter.chen@cixtech.com>
 
-diff --git a/drivers/edac/Kconfig b/drivers/edac/Kconfig
-index 703522d5d6c3..19ad3c3b675d 100644
---- a/drivers/edac/Kconfig
-+++ b/drivers/edac/Kconfig
-@@ -196,7 +196,7 @@ config EDAC_I3200
- 
- config EDAC_IE31200
- 	tristate "Intel e312xx"
--	depends on PCI && X86
-+	depends on PCI && X86 && X86_MCE_INTEL
- 	help
- 	  Support for error detection and correction on the Intel
- 	  E3-1200 based DRAM controllers.
-diff --git a/drivers/edac/ie31200_edac.c b/drivers/edac/ie31200_edac.c
-index 8c0a2beec537..204834149579 100644
---- a/drivers/edac/ie31200_edac.c
-+++ b/drivers/edac/ie31200_edac.c
-@@ -51,6 +51,7 @@
- #include <linux/edac.h>
- 
- #include <linux/io-64-nonatomic-lo-hi.h>
-+#include <asm/mce.h>
- #include "edac_module.h"
- 
- #define EDAC_MOD_STR "ie31200_edac"
-@@ -123,6 +124,7 @@ static int ie31200_registered = 1;
- 
- struct res_config {
- 	enum mem_type mtype;
-+	bool cmci;
- 	int imc_num;
- 	/* Host MMIO configuration register */
- 	u64 reg_mchbar_mask;
-@@ -172,6 +174,7 @@ struct ie31200_error_info {
- 	u16 errsts;
- 	u16 errsts2;
- 	u64 eccerrlog[IE31200_CHANNELS];
-+	u64 erraddr;
- };
- 
- static const struct ie31200_dev_info ie31200_devs[] = {
-@@ -327,13 +330,13 @@ static void ie31200_process_error_info(struct mem_ctl_info *mci,
- 		log = info->eccerrlog[channel];
- 		if (log & cfg->reg_eccerrlog_ue_mask) {
- 			edac_mc_handle_error(HW_EVENT_ERR_UNCORRECTED, mci, 1,
--					     0, 0, 0,
-+					     info->erraddr >> PAGE_SHIFT, 0, 0,
- 					     field_get(cfg->reg_eccerrlog_rank_mask, log),
- 					     channel, -1,
- 					     "ie31200 UE", "");
- 		} else if (log & cfg->reg_eccerrlog_ce_mask) {
- 			edac_mc_handle_error(HW_EVENT_ERR_CORRECTED, mci, 1,
--					     0, 0,
-+					     info->erraddr >> PAGE_SHIFT, 0,
- 					     field_get(cfg->reg_eccerrlog_syndrome_mask, log),
- 					     field_get(cfg->reg_eccerrlog_rank_mask, log),
- 					     channel, -1,
-@@ -342,14 +345,20 @@ static void ie31200_process_error_info(struct mem_ctl_info *mci,
- 	}
- }
- 
--static void ie31200_check(struct mem_ctl_info *mci)
-+static void __ie31200_check(struct mem_ctl_info *mci, struct mce *mce)
- {
- 	struct ie31200_error_info info;
- 
-+	info.erraddr = mce ? mce->addr : 0;
- 	ie31200_get_and_clear_error_info(mci, &info);
- 	ie31200_process_error_info(mci, &info);
- }
- 
-+static void ie31200_check(struct mem_ctl_info *mci)
-+{
-+	__ie31200_check(mci, NULL);
-+}
-+
- static void __iomem *ie31200_map_mchbar(struct pci_dev *pdev, struct res_config *cfg, int mc)
- {
- 	union {
-@@ -459,7 +468,7 @@ static int ie31200_register_mci(struct pci_dev *pdev, struct res_config *cfg, in
- 	mci->mod_name = EDAC_MOD_STR;
- 	mci->ctl_name = ie31200_devs[mc].ctl_name;
- 	mci->dev_name = pci_name(pdev);
--	mci->edac_check = ie31200_check;
-+	mci->edac_check = cfg->cmci ? NULL : ie31200_check;
- 	mci->ctl_page_to_phys = NULL;
- 	priv = mci->pvt_info;
- 	priv->window = window;
-@@ -499,6 +508,58 @@ static int ie31200_register_mci(struct pci_dev *pdev, struct res_config *cfg, in
- 	return ret;
- }
- 
-+static void mce_check(struct mce *mce)
-+{
-+	struct ie31200_priv *priv;
-+	int i;
-+
-+	for (i = 0; i < IE31200_IMC_NUM; i++) {
-+		priv = ie31200_pvt.priv[i];
-+		if (!priv)
-+			continue;
-+
-+		__ie31200_check(priv->mci, mce);
-+	}
-+}
-+
-+static int mce_handler(struct notifier_block *nb, unsigned long val, void *data)
-+{
-+	struct mce *mce = (struct mce *)data;
-+	char *type;
-+
-+	if (mce->kflags & MCE_HANDLED_CEC)
-+		return NOTIFY_DONE;
-+
-+	/*
-+	 * Ignore unless this is a memory related error.
-+	 * Don't check MCI_STATUS_ADDRV since it's not set on some CPUs.
-+	 */
-+	if ((mce->status & 0xefff) >> 7 != 1)
-+		return NOTIFY_DONE;
-+
-+	type = mce->mcgstatus & MCG_STATUS_MCIP ?  "Exception" : "Event";
-+
-+	edac_dbg(0, "CPU %d: Machine Check %s: 0x%llx Bank %d: 0x%llx\n",
-+		 mce->extcpu, type, mce->mcgstatus,
-+		 mce->bank, mce->status);
-+	edac_dbg(0, "TSC 0x%llx\n", mce->tsc);
-+	edac_dbg(0, "ADDR 0x%llx\n", mce->addr);
-+	edac_dbg(0, "MISC 0x%llx\n", mce->misc);
-+	edac_dbg(0, "PROCESSOR %u:0x%x TIME %llu SOCKET %u APIC 0x%x\n",
-+		 mce->cpuvendor, mce->cpuid, mce->time,
-+		 mce->socketid, mce->apicid);
-+
-+	mce_check(mce);
-+	mce->kflags |= MCE_HANDLED_EDAC;
-+
-+	return NOTIFY_DONE;
-+}
-+
-+static struct notifier_block ie31200_mce_dec = {
-+	.notifier_call	= mce_handler,
-+	.priority	= MCE_PRIO_EDAC,
-+};
-+
- static void ie31200_unregister_mcis(void)
- {
- 	struct ie31200_priv *priv;
-@@ -534,6 +595,13 @@ static int ie31200_probe1(struct pci_dev *pdev, struct res_config *cfg)
- 			goto fail_register;
- 	}
- 
-+	if (cfg->cmci) {
-+		mce_register_decode_chain(&ie31200_mce_dec);
-+		edac_op_state = EDAC_OPSTATE_INT;
-+	} else {
-+		edac_op_state = EDAC_OPSTATE_POLL;
-+	}
-+
- 	/* get this far and it's successful. */
- 	edac_dbg(3, "MC: success\n");
- 	return 0;
-@@ -560,9 +628,13 @@ static int ie31200_init_one(struct pci_dev *pdev,
- 
- static void ie31200_remove_one(struct pci_dev *pdev)
- {
-+	struct ie31200_priv *priv = ie31200_pvt.priv[0];
-+
- 	edac_dbg(0, "\n");
- 	pci_dev_put(mci_pdev);
- 	mci_pdev = NULL;
-+	if (priv->cfg->cmci)
-+		mce_unregister_decode_chain(&ie31200_mce_dec);
- 	ie31200_unregister_mcis();
- }
- 
-@@ -612,6 +684,7 @@ static struct res_config skl_cfg = {
- 
- struct res_config rpl_s_cfg = {
- 	.mtype				= MEM_DDR5,
-+	.cmci				= true,
- 	.imc_num			= 2,
- 	.reg_mchbar_mask		= GENMASK_ULL(41, 17),
- 	.reg_mchbar_window_size		= BIT_ULL(16),
-@@ -677,8 +750,6 @@ static int __init ie31200_init(void)
- 	int pci_rc, i;
- 
- 	edac_dbg(3, "MC:\n");
--	/* Ensure that the OPSTATE is set correctly for POLL or NMI */
--	opstate_init();
- 
- 	pci_rc = pci_register_driver(&ie31200_driver);
- 	if (pci_rc < 0)
+Peter
+> 
+> ---
+> Changelog:
+> v3:
+> - Changed patch title
+> - Corrected typo
+> - Moved hub_hc_release_resources above mutex_lock(hcd->address0_mutex)
+> 
+> v2:
+> - Replaced disconnection procedure with releasing only the xHC resources
+> 
+>  drivers/usb/core/hub.c | 33 +++++++++++++++++++++++++++++++++
+>  1 file changed, 33 insertions(+)
+> 
+> diff --git a/drivers/usb/core/hub.c b/drivers/usb/core/hub.c
+> index a76bb50b6202..dcba4281ea48 100644
+> --- a/drivers/usb/core/hub.c
+> +++ b/drivers/usb/core/hub.c
+> @@ -6065,6 +6065,36 @@ void usb_hub_cleanup(void)
+>  	usb_deregister(&hub_driver);
+>  } /* usb_hub_cleanup() */
+>  
+> +/**
+> + * hub_hc_release_resources - clear resources used by host controller
+> + * @udev: pointer to device being released
+> + *
+> + * Context: task context, might sleep
+> + *
+> + * Function releases the host controller resources in correct order before
+> + * making any operation on resuming usb device. The host controller resources
+> + * allocated for devices in tree should be released starting from the last
+> + * usb device in tree toward the root hub. This function is used only during
+> + * resuming device when usb device require reinitialization – that is, when
+> + * flag udev->reset_resume is set.
+> + *
+> + * This call is synchronous, and may not be used in an interrupt context.
+> + */
+> +static void hub_hc_release_resources(struct usb_device *udev)
+> +{
+> +	struct usb_hub *hub = usb_hub_to_struct_hub(udev);
+> +	struct usb_hcd *hcd = bus_to_hcd(udev->bus);
+> +	int i;
+> +
+> +	/* Release up resources for all children before this device */
+> +	for (i = 0; i < udev->maxchild; i++)
+> +		if (hub->ports[i]->child)
+> +			hub_hc_release_resources(hub->ports[i]->child);
+> +
+> +	if (hcd->driver->reset_device)
+> +		hcd->driver->reset_device(hcd, udev);
+> +}
+> +
+>  /**
+>   * usb_reset_and_verify_device - perform a USB port reset to reinitialize a device
+>   * @udev: device to reset (not in SUSPENDED or NOTATTACHED state)
+> @@ -6129,6 +6159,9 @@ static int usb_reset_and_verify_device(struct usb_device *udev)
+>  	bos = udev->bos;
+>  	udev->bos = NULL;
+>  
+> +	if (udev->reset_resume)
+> +		hub_hc_release_resources(udev);
+> +
+>  	mutex_lock(hcd->address0_mutex);
+>  
+>  	for (i = 0; i < PORT_INIT_TRIES; ++i) {
+> -- 
+> 2.43.0
+> 
+
 -- 
-2.17.1
 
+Best regards,
+Peter
 
