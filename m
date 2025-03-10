@@ -1,112 +1,333 @@
-Return-Path: <linux-kernel+bounces-554914-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-554915-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id F1854A5A352
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 19:43:13 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7911AA5A359
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 19:43:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9FB16188F02C
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 18:43:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B4C2E3ABEC8
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 18:43:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85451233D89;
-	Mon, 10 Mar 2025 18:41:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71009236433;
+	Mon, 10 Mar 2025 18:42:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KbaQKioD"
-Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KadxguxH"
+Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C8D0234989;
-	Mon, 10 Mar 2025 18:41:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 360B3235354;
+	Mon, 10 Mar 2025 18:42:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741632092; cv=none; b=SwJMQNwPFRi52GTvU22xf6gKWFQf1iYUJmLUAunSCozW9udzeiFLDuQuPmyLIIrPItrfxi9vN+LuNq3TzroZF+x9NgE7FtLtFXePqrbv3IMw56ml0+4UdZEB2XQzKLi6vAOzD2XeIU6k6rRWqd4iDzjdyu34e6mYOB+V50f1giI=
+	t=1741632166; cv=none; b=dNMGqhoPk4puCiUnrRaYTE4Z8gIMEOxJWEn0oPpmi5arIjtX5xGbdW5LenUgmvyx6G/zHCOuAmhBhohil54kypYV/9F5DDIUhmKhrmBDDHdB3c922fe4BPysFTqwbLVqICUa4kELpFs6GdfSVuSUb3rLvLzMEMG0JOBHSqp6hh4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741632092; c=relaxed/simple;
-	bh=IQ8l5g6sMagIDU+kR0KS3nMtoySw4DwumRcGbI8TyAw=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=khgA2a95mcuFhW70QDUrNeao9V6jxqyqh+OJuYHGwNxzeyj4iJEc85fYc3TIxsk1enDwE9oGNuyOn+5dxGSgikHuuP9usW+1sJccSdq+OmeK0M9oesoQuedsJeE1X+jbJA2r7QJL+6joSd8myDeaSRoU1dj2I5eElBgtDXAOM2M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KbaQKioD; arc=none smtp.client-ip=209.85.214.170
+	s=arc-20240116; t=1741632166; c=relaxed/simple;
+	bh=jFXAO371GmdXTIbUAI5Lw+bN7hY1Tsip5KDQwkkA4s4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=n7ZuvdiJTFsad7boxSqBMiu1857aMHIFIwllw9aazgaxKhUluw1ZHXndm+txHoSU13lVi9J4TbfbdIye5zXRfYPSDgJ432fJTSYug719uwY6X7j0J4ECm+IRQ0zqhrQpW7GNOAvMGcyIj6ZfsIrqlAGi77aMnDrQjc84aH19P+0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KadxguxH; arc=none smtp.client-ip=209.85.218.48
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-22401f4d35aso82113005ad.2;
-        Mon, 10 Mar 2025 11:41:31 -0700 (PDT)
+Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-ab771575040so1034409866b.1;
+        Mon, 10 Mar 2025 11:42:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741632090; x=1742236890; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=B61KUVTuggZHqIjZJXZHkqKcS+C8QJT6SN4kadhnsBk=;
-        b=KbaQKioDbsYkYXZr3SpfsjcONRZtXB1PcGE56rjwVq8L+NVke626EDWXfx27fvou1z
-         2ae0kmIcrTvJneccbnOm5NTh1478gEXRK4QtHkOhu9bwztLZ8jkOnXT5KBdUIwiIAGRY
-         ePZ6xmIsAfZoON68qI5sxMdYbCM0xrRyBAGRft0SJO4SxsLsUiIoIWibGSSLAU9quzGI
-         BtsL6zqx3qovOoBExM2r39yTqHAkxOKMD/Oa4JqrIVykL/9upCA4UMT2Eoqh6anHLbut
-         YjVWQA4aoFwRE2hpFnNMtsfuxtVBskcKGvh04+//FmJEpdrNvAx2EGJNhxzRAVIVBjTa
-         sgZw==
+        d=gmail.com; s=20230601; t=1741632162; x=1742236962; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=XgJCvzIPEwf8mUYv4Q3MVNUs9y7jwf3bddf8AuCY4hU=;
+        b=KadxguxHgmhbYPFmZUJDHdt4YAy/7uR3O4LF8n8/CFvxgWjeV+p9jjIPuvqXROuawW
+         nxWVzSlXBwAFQs8X0/EdX2Z5bqyfX2E1RSXs7mHWacvhkX/GIW7T58/RFtIPcG/NS8Lr
+         q6CjfjKRdPAkCOooiUtaQNbwbezsm1A0Nnb1LeZvNEp+HDjVjB8efF1rcMxtSj24hK1n
+         EGn9glSbJ11CbVATE/qQpvGbF2GpJzPw9YDvpLhYHosq17n4tlDRLWjHAPI1F4wZFPNq
+         V4ljmPvSOjDHNiJ+TA0AyYNICxqRemooPfiXL2pDhvwSUYkspDS0wbszDpO5mZ0XfAAq
+         Wj3g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741632090; x=1742236890;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1741632162; x=1742236962;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=B61KUVTuggZHqIjZJXZHkqKcS+C8QJT6SN4kadhnsBk=;
-        b=Leu6gEES2yAEcZWNDDGJL5bzKPTrAB4tJM4TV+njAV/BFkL9Mqf4YwPeiZfZR5ElPa
-         EUQv7chwcTkCJ7ViLT+GXTAoZS1FXg2IeE+oiuT7b94KwLL3RMZxHVsJCgnJagfd4q1Y
-         OGKv7FrW2pbOgydlkXAysoAqPOWCQj5YK0Y2RxGWOde/fubnG8PNxstuAV3kbdpPCZAM
-         epIQAN04LiiTEtdO69rxbFA7nvZ+poHxko/HUDZd/1eddyz2whe7Q8pw7qEoqZxQNBHE
-         Q52guILVAr6kBXkLCfjTj6f1s6ZVv9QRxI5bMtNPO4pLWRTTVyr6ZAfBCcFO2pl0QwVP
-         muyA==
-X-Forwarded-Encrypted: i=1; AJvYcCUPnSBm110K2A4lGBkn5fl3+QlE47G0ucHGm1rOZCwkG+5NgSFTGfmGEyQHads/OgtPUch+0BeB7Jddct5F@vger.kernel.org, AJvYcCV4KML0PnXI8ExioHUc57sWhCBPz15cuV+joHWbh7peOUMTtQR9bsxC6YcejJwO0bIpebQndYWO9Kk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxwNTUkaTqZmRMNJu2to+wVfDQGmWFiXVMmNVo1PkgKldIHsNbT
-	FEckm2rCbbbdGAyQ9I69qCx7YlNbu/WNtc2YAwQTJK0qxFzjTfOz
-X-Gm-Gg: ASbGncszex3qKgY3Y6gAMfKo6PeIKQYeKiRFrXTQnf5ZnxOP9lfYfJb7D8LB96bCaMT
-	1zk6MW3f09G3KaJJpP885yYTJOlAPMn5KQTfUfFo/ibmFhoX1Z04CQsVy6bmQ5d8gvGdHiiB8+p
-	KAe52ThOuVVJlpEns2yMxzA4TdnWf/gcLyYeyMh1Cwgw+uKicJlqHYLDhOBs+l6hgd7yMCKgmwj
-	ZQePA+cf75zJiMBAcoiGBMSCu4+2jse4ACLzm6X6qa/80YLrC2dIhIamB12xd1LkQjrz/Ug4+G6
-	0dmwhm6nm+m+1dGCeB/MmZ52LGx9cT8JMAcFeFBSO9Xh
-X-Google-Smtp-Source: AGHT+IHkfNs77dRpHRw7m7Dy6Y50/e2amOEC9HUe81C+pfsC1RfTlvvZDqE9qifdEI1jqZPUU5u+tg==
-X-Received: by 2002:a05:6a21:1fc3:b0:1f5:64a4:aeac with SMTP id adf61e73a8af0-1f58cbb6055mr1152580637.33.1741632090480;
-        Mon, 10 Mar 2025 11:41:30 -0700 (PDT)
-Received: from arch.lan ([103.6.150.165])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-736cbe3fb3fsm3648696b3a.83.2025.03.10.11.41.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 10 Mar 2025 11:41:30 -0700 (PDT)
-From: kth <kangtaeho2456@gmail.com>
-To: corbet@lwn.net
-Cc: kangtaeho2456@gmail.com,
-	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] fs: Fix typo from smpfs to smbfs in filesystem documentation
-Date: Tue, 11 Mar 2025 02:41:29 +0800
-Message-ID: <20250310184129.328482-1-kangtaeho2456@gmail.com>
-X-Mailer: git-send-email 2.48.1
+        bh=XgJCvzIPEwf8mUYv4Q3MVNUs9y7jwf3bddf8AuCY4hU=;
+        b=dhm99PZ5M8UDQbEUo7PPu2++l4gRHr0wUCXHWNhqPyOl74bA744vV00otLwbVx5K/E
+         C6gxWW+t2Nd1LPY9QbVdLDtoFBBvz9Nxc+fY4rDwuTAxDMcwUyiSUSJw/4J+cEVgVzmI
+         ta91jnFv2TePv5apbXbjdwJE2sM8ZoNQ+9DXdJIWCTdhas0/a8lG4iLIEia6J6Q1cgFt
+         Tbkf/HJo3p9d2sdEdT+ZgWZntUyW2jOm9iJIi4h7TpeqChScDYZ5rY/PB9ZLXEdoc7WV
+         gHMwYDTh1hOGib6vhLS2KbRH9YIm+RM9+FltU5HDD/qZafuDrH6+Urtrkc1INpoy1sm1
+         HnLg==
+X-Forwarded-Encrypted: i=1; AJvYcCV5GfhBbDkxWceRXpLkK+xZPvC+Ut6hLqgH+saGvkw8fQl83oUEj0WqWHFCj+U5SSUqy5c2FIA6XleKxZIX@vger.kernel.org, AJvYcCV6zGhK7f7+6VSTgeDrR3dySQ2UfxydHW2dvg9czHLgOQuv8Gi8bFhFgCridIGUMHt6gPC+Sz6dKqdp9wwo@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx9fkWbzI6JcxMSrUhKYQaABWZ7+RYss3qZLITsKBcHNfpCdi1R
+	APCuaC3ACXXM2dXUrCel9BMvktGQ1ngOTFmvAloTIagPfGft4kAiVi63cw3e1qYuKGcRwvPWtml
+	a4JMf2RjWdlNYtpOlffGfAqvQInM=
+X-Gm-Gg: ASbGnctH4AkHQHTdkzqGZwBuS+C8CO6sFWmVc1boWnn/L84WJjcJ5idvyvPcJ1CfirE
+	69Ann6TVNJSFeiOQ6jWI48DgAvscKSdO99QnX+3GVjuL8P7KhFnayqmgWW2klD9i9kPasQzYwkL
+	l9bBFYKjV5amW5BvVXAt7vRkk=
+X-Google-Smtp-Source: AGHT+IHvhXHY7HeoNi8ADifMjcj4l/umqgtrbcmBIb0z1G71TTHxvNq1iGQY0NuQb3PuBVLrfBKn4VoSEs7tmCDu5bA=
+X-Received: by 2002:a17:907:c08c:b0:ac2:a1c9:4a98 with SMTP id
+ a640c23a62f3a-ac2ba49ba2amr68646066b.9.1741632162272; Mon, 10 Mar 2025
+ 11:42:42 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250307-dp-hdmi-audio-v5-0-f3be215fdb78@linaro.org>
+ <20250307-dp-hdmi-audio-v5-1-f3be215fdb78@linaro.org> <20250310-unnatural-puffin-of-revolution-59d726@houat>
+In-Reply-To: <20250310-unnatural-puffin-of-revolution-59d726@houat>
+From: Dmitry Baryshkov <dbaryshkov@gmail.com>
+Date: Mon, 10 Mar 2025 20:42:29 +0200
+X-Gm-Features: AQ5f1JplfZRW_V6D8vq8XsAv5sIxbwbs1c2mxo_HjHGDckih5ta9pgAGYn2lcQE
+Message-ID: <CALT56yPKe8+tSyChAo6ypHR8EWUpqeJDNM6mcOBUnFwFE7rg4w@mail.gmail.com>
+Subject: Re: [PATCH v5 1/2] drm/bridge: split HDMI Audio from DRM_BRIDGE_OP_HDMI
+To: Maxime Ripard <mripard@kernel.org>
+Cc: Dmitry Baryshkov <lumag@kernel.org>, Andrzej Hajda <andrzej.hajda@intel.com>, 
+	Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>, 
+	Jernej Skrabec <jernej.skrabec@gmail.com>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Thomas Zimmermann <tzimmermann@suse.de>, 
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Rob Clark <robdclark@gmail.com>, 
+	Abhinav Kumar <quic_abhinavk@quicinc.com>, Sean Paul <sean@poorly.run>, 
+	Marijn Suijten <marijn.suijten@somainline.org>, Hermes Wu <Hermes.wu@ite.com.tw>, 
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+	linux-arm-msm@vger.kernel.org, freedreno@lists.freedesktop.org
+Content-Type: text/plain; charset="UTF-8"
 
-The documentation incorrectly referred to 'smbfs' as 'smpfs'. This change corrects that typo to ensure the documentation is accurate and not misleading.
+On Mon, 10 Mar 2025 at 16:55, Maxime Ripard <mripard@kernel.org> wrote:
+>
+> Hi,
+>
+> On Fri, Mar 07, 2025 at 07:55:52AM +0200, Dmitry Baryshkov wrote:
+> > From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> >
+> > As pointed out by Laurent, OP bits are supposed to describe operations.
+> > Split DRM_BRIDGE_OP_HDMI_AUDIO from DRM_BRIDGE_OP_HDMI instead of
+> > overloading DRM_BRIDGE_OP_HDMI.
+> >
+> > Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> > ---
+> >  drivers/gpu/drm/bridge/lontium-lt9611.c        |  2 +-
+> >  drivers/gpu/drm/bridge/synopsys/dw-hdmi-qp.c   |  1 +
+> >  drivers/gpu/drm/display/drm_bridge_connector.c | 59 +++++++++++++++++---------
+> >  drivers/gpu/drm/msm/hdmi/hdmi_bridge.c         |  1 +
+> >  include/drm/drm_bridge.h                       | 23 ++++++++--
+> >  5 files changed, 61 insertions(+), 25 deletions(-)
+> >
+> > diff --git a/drivers/gpu/drm/bridge/lontium-lt9611.c b/drivers/gpu/drm/bridge/lontium-lt9611.c
+> > index 026803034231f78c17f619dc04119bdd9b2b6679..3b93c17e25c18ae0d13e9bb74553cf21dcc39f9d 100644
+> > --- a/drivers/gpu/drm/bridge/lontium-lt9611.c
+> > +++ b/drivers/gpu/drm/bridge/lontium-lt9611.c
+> > @@ -1130,7 +1130,7 @@ static int lt9611_probe(struct i2c_client *client)
+> >       lt9611->bridge.of_node = client->dev.of_node;
+> >       lt9611->bridge.ops = DRM_BRIDGE_OP_DETECT | DRM_BRIDGE_OP_EDID |
+> >                            DRM_BRIDGE_OP_HPD | DRM_BRIDGE_OP_MODES |
+> > -                          DRM_BRIDGE_OP_HDMI;
+> > +                          DRM_BRIDGE_OP_HDMI | DRM_BRIDGE_OP_HDMI_AUDIO;
+> >       lt9611->bridge.type = DRM_MODE_CONNECTOR_HDMIA;
+> >       lt9611->bridge.vendor = "Lontium";
+> >       lt9611->bridge.product = "LT9611";
+> > diff --git a/drivers/gpu/drm/bridge/synopsys/dw-hdmi-qp.c b/drivers/gpu/drm/bridge/synopsys/dw-hdmi-qp.c
+> > index 6166f197e37b552cb8a52b7b0d23ffc632f54557..5e5f8c2f95be1f5c4633f1093b17a00f9425bb37 100644
+> > --- a/drivers/gpu/drm/bridge/synopsys/dw-hdmi-qp.c
+> > +++ b/drivers/gpu/drm/bridge/synopsys/dw-hdmi-qp.c
+> > @@ -1077,6 +1077,7 @@ struct dw_hdmi_qp *dw_hdmi_qp_bind(struct platform_device *pdev,
+> >       hdmi->bridge.ops = DRM_BRIDGE_OP_DETECT |
+> >                          DRM_BRIDGE_OP_EDID |
+> >                          DRM_BRIDGE_OP_HDMI |
+> > +                        DRM_BRIDGE_OP_HDMI_AUDIO |
+> >                          DRM_BRIDGE_OP_HPD;
+> >       hdmi->bridge.of_node = pdev->dev.of_node;
+> >       hdmi->bridge.type = DRM_MODE_CONNECTOR_HDMIA;
+> > diff --git a/drivers/gpu/drm/display/drm_bridge_connector.c b/drivers/gpu/drm/display/drm_bridge_connector.c
+> > index 30c736fc0067e31a97db242e5b16ea8a5b4cf359..030f98d454608a63154827c65d4822d378df3b4c 100644
+> > --- a/drivers/gpu/drm/display/drm_bridge_connector.c
+> > +++ b/drivers/gpu/drm/display/drm_bridge_connector.c
+> > @@ -98,6 +98,13 @@ struct drm_bridge_connector {
+> >        * HDMI connector infrastructure, if any (see &DRM_BRIDGE_OP_HDMI).
+> >        */
+> >       struct drm_bridge *bridge_hdmi;
+> > +     /**
+> > +      * @bridge_hdmi_audio:
+> > +      *
+> > +      * The bridge in the chain that implements necessary support for the
+> > +      * HDMI Audio infrastructure, if any (see &DRM_BRIDGE_OP_HDMI_AUDIO).
+> > +      */
+> > +     struct drm_bridge *bridge_hdmi_audio;
+> >  };
+> >
+> >  #define to_drm_bridge_connector(x) \
+> > @@ -433,7 +440,7 @@ static int drm_bridge_connector_audio_startup(struct drm_connector *connector)
+> >               to_drm_bridge_connector(connector);
+> >       struct drm_bridge *bridge;
+> >
+> > -     bridge = bridge_connector->bridge_hdmi;
+> > +     bridge = bridge_connector->bridge_hdmi_audio;
+> >       if (!bridge)
+> >               return -EINVAL;
+> >
+> > @@ -451,7 +458,7 @@ static int drm_bridge_connector_audio_prepare(struct drm_connector *connector,
+> >               to_drm_bridge_connector(connector);
+> >       struct drm_bridge *bridge;
+> >
+> > -     bridge = bridge_connector->bridge_hdmi;
+> > +     bridge = bridge_connector->bridge_hdmi_audio;
+> >       if (!bridge)
+> >               return -EINVAL;
+> >
+> > @@ -464,7 +471,7 @@ static void drm_bridge_connector_audio_shutdown(struct drm_connector *connector)
+> >               to_drm_bridge_connector(connector);
+> >       struct drm_bridge *bridge;
+> >
+> > -     bridge = bridge_connector->bridge_hdmi;
+> > +     bridge = bridge_connector->bridge_hdmi_audio;
+> >       if (!bridge)
+> >               return;
+> >
+> > @@ -478,7 +485,7 @@ static int drm_bridge_connector_audio_mute_stream(struct drm_connector *connecto
+> >               to_drm_bridge_connector(connector);
+> >       struct drm_bridge *bridge;
+> >
+> > -     bridge = bridge_connector->bridge_hdmi;
+> > +     bridge = bridge_connector->bridge_hdmi_audio;
+> >       if (!bridge)
+> >               return -EINVAL;
+> >
+> > @@ -576,6 +583,21 @@ struct drm_connector *drm_bridge_connector_init(struct drm_device *drm,
+> >                               max_bpc = bridge->max_bpc;
+> >               }
+> >
+> > +             if (bridge->ops & DRM_BRIDGE_OP_HDMI_AUDIO) {
+> > +                     if (bridge_connector->bridge_hdmi_audio)
+> > +                             return ERR_PTR(-EBUSY);
+> > +
+> > +                     if (!bridge->hdmi_audio_max_i2s_playback_channels &&
+> > +                         !bridge->hdmi_audio_spdif_playback)
+> > +                             return ERR_PTR(-EINVAL);
+> > +
+> > +                     if (!bridge->funcs->hdmi_audio_prepare ||
+> > +                         !bridge->funcs->hdmi_audio_shutdown)
+> > +                             return ERR_PTR(-EINVAL);
+> > +
+> > +                     bridge_connector->bridge_hdmi_audio = bridge;
+> > +             }
+> > +
+> >               if (!drm_bridge_get_next_bridge(bridge))
+> >                       connector_type = bridge->type;
+> >
+> > @@ -611,22 +633,6 @@ struct drm_connector *drm_bridge_connector_init(struct drm_device *drm,
+> >                                              max_bpc);
+> >               if (ret)
+> >                       return ERR_PTR(ret);
+> > -
+> > -             if (bridge->hdmi_audio_max_i2s_playback_channels ||
+> > -                 bridge->hdmi_audio_spdif_playback) {
+> > -                     if (!bridge->funcs->hdmi_audio_prepare ||
+> > -                         !bridge->funcs->hdmi_audio_shutdown)
+> > -                             return ERR_PTR(-EINVAL);
+> > -
+> > -                     ret = drm_connector_hdmi_audio_init(connector,
+> > -                                                         bridge->hdmi_audio_dev,
+> > -                                                         &drm_bridge_connector_hdmi_audio_funcs,
+> > -                                                         bridge->hdmi_audio_max_i2s_playback_channels,
+> > -                                                         bridge->hdmi_audio_spdif_playback,
+> > -                                                         bridge->hdmi_audio_dai_port);
+> > -                     if (ret)
+> > -                             return ERR_PTR(ret);
+> > -             }
+> >       } else {
+> >               ret = drmm_connector_init(drm, connector,
+> >                                         &drm_bridge_connector_funcs,
+> > @@ -635,6 +641,19 @@ struct drm_connector *drm_bridge_connector_init(struct drm_device *drm,
+> >                       return ERR_PTR(ret);
+> >       }
+> >
+> > +     if (bridge_connector->bridge_hdmi_audio) {
+> > +             bridge = bridge_connector->bridge_hdmi_audio;
+> > +
+> > +             ret = drm_connector_hdmi_audio_init(connector,
+> > +                                                 bridge->hdmi_audio_dev,
+> > +                                                 &drm_bridge_connector_hdmi_audio_funcs,
+> > +                                                 bridge->hdmi_audio_max_i2s_playback_channels,
+> > +                                                 bridge->hdmi_audio_spdif_playback,
+> > +                                                 bridge->hdmi_audio_dai_port);
+> > +             if (ret)
+> > +                     return ERR_PTR(ret);
+> > +     }
+> > +
+> >       drm_connector_helper_add(connector, &drm_bridge_connector_helper_funcs);
+> >
+> >       if (bridge_connector->bridge_hpd)
+> > diff --git a/drivers/gpu/drm/msm/hdmi/hdmi_bridge.c b/drivers/gpu/drm/msm/hdmi/hdmi_bridge.c
+> > index 1456354c8af4bc7f655e8a47e958e9e0b99b7d29..ab6c8bc4a30b681f7de8ca7031f833795d1f7d94 100644
+> > --- a/drivers/gpu/drm/msm/hdmi/hdmi_bridge.c
+> > +++ b/drivers/gpu/drm/msm/hdmi/hdmi_bridge.c
+> > @@ -515,6 +515,7 @@ int msm_hdmi_bridge_init(struct hdmi *hdmi)
+> >       bridge->ops = DRM_BRIDGE_OP_HPD |
+> >               DRM_BRIDGE_OP_DETECT |
+> >               DRM_BRIDGE_OP_HDMI |
+> > +             DRM_BRIDGE_OP_HDMI_AUDIO |
+> >               DRM_BRIDGE_OP_EDID;
+> >       bridge->hdmi_audio_max_i2s_playback_channels = 8;
+> >       bridge->hdmi_audio_dev = &hdmi->pdev->dev;
+> > diff --git a/include/drm/drm_bridge.h b/include/drm/drm_bridge.h
+> > index d4c75d59fa12be1bd7375ce3ea56415235781b28..dff8cf035b30d5c7e00bfdf5d6e12802559823ba 100644
+> > --- a/include/drm/drm_bridge.h
+> > +++ b/include/drm/drm_bridge.h
+> > @@ -693,8 +693,10 @@ struct drm_bridge_funcs {
+> >       /**
+> >        * @hdmi_audio_prepare:
+> >        * Configures HDMI-encoder for audio stream. Can be called multiple
+> > -      * times for each setup. Mandatory if HDMI audio is enabled in the
+> > -      * bridge's configuration.
+> > +      * times for each setup.
+> > +      *
+> > +      * This callback is optional but it must be implemented by bridges that
+> > +      * set the DRM_BRIDGE_OP_HDMI_AUDIO flag in their &drm_bridge->ops.
+> >        *
+> >        * Returns:
+> >        * 0 on success, a negative error code otherwise
+> > @@ -707,8 +709,10 @@ struct drm_bridge_funcs {
+> >       /**
+> >        * @hdmi_audio_shutdown:
+> >        *
+> > -      * Shut down the audio stream. Mandatory if HDMI audio is enabled in
+> > -      * the bridge's configuration.
+> > +      * Shut down the audio stream.
+> > +      *
+> > +      * This callback is optional but it must be implemented by bridges that
+> > +      * set the DRM_BRIDGE_OP_HDMI_AUDIO flag in their &drm_bridge->ops.
+> >        *
+> >        * Returns:
+> >        * 0 on success, a negative error code otherwise
+> > @@ -814,6 +818,17 @@ enum drm_bridge_ops {
+> >        * drivers.
+> >        */
+> >       DRM_BRIDGE_OP_HDMI = BIT(4),
+> > +     /**
+> > +      * @DRM_BRIDGE_OP_HDMI_AUDIO: The bridge provides HDMI audio operations.
+> > +      * Bridges that set this flag must implement the
+> > +      * &drm_bridge_funcs->hdmi_audio_prepare and
+> > +      * &drm_bridge_funcs->hdmi_audio_shutdown callbacks.
+> > +      *
+> > +      * Note: currently there can be at most one bridge in a chain that sets
+> > +      * this bit. This is to simplify corresponding glue code in connector
+> > +      * drivers.
+> > +      */
+> > +     DRM_BRIDGE_OP_HDMI_AUDIO = BIT(5),
+>
+> We should make this conditional on HDMI being set. It doesn't make sense
+> to have OP_HDMI_AUDIO enabled when OP_HDMI isn't.
 
-Signed-off-by: Kang Taeho <kangtaeho2456@gmail.com>
----
- Documentation/admin-guide/highuid.rst | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+It totally does. In the second patch I'm using OP_HDMI_AUDIO for the
+DisplayPort driver.
 
-diff --git a/Documentation/admin-guide/highuid.rst b/Documentation/admin-guide/highuid.rst
-index 6ee70465c0ea..9239067563a1 100644
---- a/Documentation/admin-guide/highuid.rst
-+++ b/Documentation/admin-guide/highuid.rst
-@@ -64,7 +64,7 @@ What's left to be done for 32-bit UIDs on all Linux architectures:
- 
-   Other filesystems have not been checked yet.
- 
--- The ncpfs and smpfs filesystems cannot presently use 32-bit UIDs in
-+- The ncpfs and smbfs filesystems cannot presently use 32-bit UIDs in
-   all ioctl()s. Some new ioctl()s have been added with 32-bit UIDs, but
-   more are needed. (as well as new user<->kernel data structures)
- 
+>
+> This should be mentioned in the documentation, and possibly with a
+> sanity check at initialization.
+
+
+
 -- 
-2.48.1
-
+With best wishes
+Dmitry
 
