@@ -1,195 +1,146 @@
-Return-Path: <linux-kernel+bounces-553493-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-553494-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F3CDA58A6F
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 03:24:47 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AF0FFA58A76
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 03:25:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9ECDB169786
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 02:24:46 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DDFB17A51A3
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 02:24:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3076C19AD89;
-	Mon, 10 Mar 2025 02:24:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4EAC1A7264;
+	Mon, 10 Mar 2025 02:24:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="oOb3M20s"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Tv0H9t4Z"
+Received: from mail-pj1-f42.google.com (mail-pj1-f42.google.com [209.85.216.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74CA5190674;
-	Mon, 10 Mar 2025 02:24:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BF59170A11;
+	Mon, 10 Mar 2025 02:24:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741573475; cv=none; b=VjfKmfzlFnKjMLzg79lT4EG3MtSFLb9XWVYj5ko9HmRaRKq06d6UymuuVFVzIn4ax+xyftmpRJXRTmptXNxTDh3hMF1P7QVzEKUDh9hP7ZWftgIBN48vnCpxJLlEaDJ30w3V4JaHyhvYT7oFt0BD1SqvC8aRwW9TDkDrCtkqwi4=
+	t=1741573489; cv=none; b=bQ4RpGPCd/VaPRs5AnjSSv4yYJ2EqpYQid+OKLft4ogGHYjB9NFyGS2vAcMwlieYGsVpzYxDROUwuM28kCUsK2BPauV1goNW7I7+e/Ti0XyC7vbPynRE3Qt71aP6WvlXYD1Hu6jyNZ0HxqVRpXRrbJppgOdMARnIZTZqlQRIRkU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741573475; c=relaxed/simple;
-	bh=ahJW1eRggySdKhNYEq4e4OHlBcX9x0Hyt+5+EXAIke8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=CG0X5yieGPOmEJyxMDUTKKIX/4lsQPCfTbh2eJlrhZN2WdTj8zm0GcZVl0+pZhBtmq+1ZshwV60pXTfy0BaykKT5lHRyOKpLRSyfwEQmGanPXMcFGz78PN85+bynMDlLHAAlhMqTW+YaF7yFMbI1+oTtVSff/VaMWTMViRQGLuY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=oOb3M20s; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 529HndiR004071;
-	Mon, 10 Mar 2025 02:24:29 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	ifC3tTkxRuQxKuY61odXeH7wVTwit3C7QPfnkAFRCqw=; b=oOb3M20sNfRvlkXS
-	BuPD9mgMDNmNT9tyxgviv2+7vshu7f5538s+qnpFEZuUHNzR3gzF8bDkjUdDdXm3
-	0PbQ/JBi39QpUj5K+RFmBeZH6eCKploH7e8V3RRHZKXL1XDFy+7dF7gcbWm3Fjx7
-	6e1StroYOIJD4TEoNpsfnalzaUBQfZIMF/RX1ux7RHjx3cKmqf74WAaATS9MC+/p
-	Yn3+Un5YW/fGA3pKqQIo2bTllHefnmOpl1AThYImhszvHKkYM8Zy3VQs3tjG5wJL
-	kY/pNCZHTFEb9DDRZ4e9EIlgJPQcWCd34RPbYpPUK+0SuuY47LNe76YKBiVQZ0vZ
-	OFwW+A==
-Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 458eyt36h7-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 10 Mar 2025 02:24:28 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 52A2ORYH018693
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 10 Mar 2025 02:24:27 GMT
-Received: from [10.216.28.75] (10.80.80.8) by nasanex01b.na.qualcomm.com
- (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Sun, 9 Mar 2025
- 19:24:20 -0700
-Message-ID: <5278cb2e-6111-4e57-86b3-987f6f9eabf6@quicinc.com>
-Date: Mon, 10 Mar 2025 07:54:15 +0530
+	s=arc-20240116; t=1741573489; c=relaxed/simple;
+	bh=AIBUsJ/+UQ0z6zW9MVzwQe6CPRtiPuYH7kM/aGJmeAg=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=azZDzz+RYWNvMAZx03VbVXH7VXQ13hlxZGPbH+yz7GrbIV2BJmZs48wilBtYZ7PUQc3xFJDxFTtxEckAwn1Vjo0t8AgX9sWquwb82hEjTjikMMBmyFniLczYob/ZxnK9iYMHzCZhAkxSOOYTy6gMAyNAIUGzDCWoSanQ+SotlTI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Tv0H9t4Z; arc=none smtp.client-ip=209.85.216.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f42.google.com with SMTP id 98e67ed59e1d1-2ff6a98c638so6972091a91.0;
+        Sun, 09 Mar 2025 19:24:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741573487; x=1742178287; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=8UgdkfR5ZJpIqw3CxaKBXneuVyU1q32SHQHrzDgtsJo=;
+        b=Tv0H9t4Z3tXZ09oTXqSxuhDREdnjojZ2dTqBVRzFuDGERFM6ivJFEhYRlIR9z8wEbL
+         Bow1TEME1s45cyhgtzh8eChDsUVnFOaxzV8Qazk5XG2iBV3ueBfOK8pGV9OrNc3lv7WK
+         uIrx1r0PLBXXdkdOQmneBVSXY/lHI1Cjs+pRX3+XbJIyKBcfnyWbLQ6OPhALdLiDvte0
+         EJCNYa3IU9w41AQrCSuirxNydn6c5tiwzT6I2WoRu3QRxG0OsX+gwzROYtX0XuRu/fCu
+         zWHHkc5OhkeFQulCAOX+PVB5ceKPEzPRhQ94ffe86Gde6FwuM6ADrunrC4RpvBAWgGXS
+         JG+Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741573487; x=1742178287;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=8UgdkfR5ZJpIqw3CxaKBXneuVyU1q32SHQHrzDgtsJo=;
+        b=J+0BHeGf0S5zQNurGeP069xk4ZhwR5ZHKA4FZMVF/J8nNVkCLAJi6e8nLoqpxPlKQe
+         YW/p7zvaPUTfYg+1ivsek1fQj9H7eQemqg/XaOSv7Na+0kVPzhYfYxk/M0Dq21cpBS4u
+         83TkVKMIssJXZ7joJvBI27ERJhoVsZD6wj6YTrHhTvfLlkkBiBPEtQkU0+I0IKjdSTr8
+         mDfdj3mWYktQ47k2crQPcp+67JE+7iK2c8jobYK41cK8m4jgeHTeNvDS/MMxokR4Fbex
+         oBGDTjHPA0VpHOYUEOVR60cAl35CGmJTeCCNT9tDI3iA7b7NMHklTqI6gEnNsqdaAeAw
+         688g==
+X-Forwarded-Encrypted: i=1; AJvYcCUQqiTSNaf3MBHeT0ZQX09nFUFgcxH+CwhgotSe9mf8e3+sZn5+O6nrih83mZdsdvrCrCw=@vger.kernel.org, AJvYcCXhkqiCYtPC73bB6382f49J18SZgQEiN/yCvSYhiX3iA4BzF8eiX62S8KNixLxsUs0xmbAKSO64Gofgbge3@vger.kernel.org, AJvYcCXxm6U/05mWl1Q4q/c1P1E/GRZFBFdbIuGjBBMXW3IkhPINPfh/jiXTw+mfeu987ULLlmFV9ENu@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx8yRnCldkU0mgTSp8D9TXo8rEdpQt986Uszmu6IGg4DTyk/55J
+	S2exBb0AuE2nVFYN5Ro3u02Ui1B+ka+wn8xF+D8NDzG0ltna+I2z
+X-Gm-Gg: ASbGncsP7RQnKjYibuUE8JRPdbcVQDOc05TXYgh9zpeufKgwBomIvY5MypPVgd49q4i
+	wDN0ekP+8/ePQn0kuVZKMGcp0SO07jOPg/57zhsbVR4xfXgNloh8D6VItVFtp42xlPDpode6+vt
+	RBiu5k5pOhLdnZcJju7AiAENAbX+ARN+rz1l2Pi0e/G7KFVZ4xPt0QeN/dJDeGDHdafDhWrEPF+
+	+M35sJChKmbe5LO/IWu5a7PDgoHPJblS7/dtjLHEb0Hfsi05nJYkcX5bFI+wMaTX2pzG94JOykg
+	tlcQwjRaZSqiMlkI8YSWPvdf7BQjtU0/0J0MZA==
+X-Google-Smtp-Source: AGHT+IEu8uuETGfMoaM3EPE2WfaTTndfm3F2AV9+L8B8fVo7WT9YAUCmxKGewCLzkt/NfrR5yWSoUw==
+X-Received: by 2002:a17:90b:4cca:b0:2ff:72f8:3708 with SMTP id 98e67ed59e1d1-2ff7ce837c9mr21980902a91.17.1741573486614;
+        Sun, 09 Mar 2025 19:24:46 -0700 (PDT)
+Received: from localhost ([144.24.43.60])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2ff4e7ffdd3sm8645058a91.39.2025.03.09.19.24.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 09 Mar 2025 19:24:46 -0700 (PDT)
+Date: Mon, 10 Mar 2025 10:24:32 +0800
+From: Furong Xu <0x1207@gmail.com>
+To: Faizal Rahim <faizal.abdul.rahim@linux.intel.com>
+Cc: Tony Nguyen <anthony.l.nguyen@intel.com>, Przemek Kitszel
+ <przemyslaw.kitszel@intel.com>, Andrew Lunn <andrew+netdev@lunn.ch>, "David
+ S . Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Maxime
+ Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue
+ <alexandre.torgue@foss.st.com>, Simon Horman <horms@kernel.org>, Russell
+ King <linux@armlinux.org.uk>, Alexei Starovoitov <ast@kernel.org>, Daniel
+ Borkmann <daniel@iogearbox.net>, Jesper Dangaard Brouer <hawk@kernel.org>,
+ John Fastabend <john.fastabend@gmail.com>, Russell King
+ <rmk+kernel@armlinux.org.uk>, Vladimir Oltean <vladimir.oltean@nxp.com>,
+ Serge Semin <fancer.lancer@gmail.com>, Xiaolei Wang
+ <xiaolei.wang@windriver.com>, Suraj Jaiswal <quic_jsuraj@quicinc.com>, Kory
+ Maincent <kory.maincent@bootlin.com>, Gal Pressman <gal@nvidia.com>, Jesper
+ Nilsson <jesper.nilsson@axis.com>, Choong Yong Liang
+ <yong.liang.choong@linux.intel.com>, Chwee-Lin Choong
+ <chwee.lin.choong@intel.com>, Kunihiko Hayashi
+ <hayashi.kunihiko@socionext.com>, Vinicius Costa Gomes
+ <vinicius.gomes@intel.com>, intel-wired-lan@lists.osuosl.org,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-stm32@st-md-mailman.stormreply.com,
+ linux-arm-kernel@lists.infradead.org, bpf@vger.kernel.org
+Subject: Re: [PATCH iwl-next v9 03/14] net: ethtool: mm: reset verification
+ status when link is down
+Message-ID: <20250310102432.000032ad@gmail.com>
+In-Reply-To: <20250309104648.3895551-4-faizal.abdul.rahim@linux.intel.com>
+References: <20250309104648.3895551-1-faizal.abdul.rahim@linux.intel.com>
+	<20250309104648.3895551-4-faizal.abdul.rahim@linux.intel.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V9 4/7] interconnect: qcom: icc-rpmh: Add dynamic icc node
- id support
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-CC: Georgi Djakov <djakov@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio
-	<konradybcio@kernel.org>,
-        Odelu Kukatla <quic_okukatla@quicinc.com>,
-        "Jeff
- Johnson" <jeff.johnson@oss.qualcomm.com>,
-        Mike Tipton <mdtipton@quicinc.com>,
-        Jagadeesh Kona <quic_jkona@quicinc.com>,
-        Sibi Sankar
-	<quic_sibis@quicinc.com>, <linux-arm-msm@vger.kernel.org>,
-        <linux-pm@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20250227155213.404-1-quic_rlaggysh@quicinc.com>
- <20250227155213.404-5-quic_rlaggysh@quicinc.com>
- <gxqjfabcqafqjzzwc3seadfuldqfxlfappsotjbhkbirvorcyd@mahdpv6klwn5>
-Content-Language: en-US
-From: Raviteja Laggyshetty <quic_rlaggysh@quicinc.com>
-In-Reply-To: <gxqjfabcqafqjzzwc3seadfuldqfxlfappsotjbhkbirvorcyd@mahdpv6klwn5>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: -R2GEnEa9YBghtOxKBoD6wD5MTZDPELS
-X-Authority-Analysis: v=2.4 cv=CupFcm4D c=1 sm=1 tr=0 ts=67ce4d5c cx=c_pps a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17 a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=COk6AnOGAAAA:8 a=L8qSQLY5uW4YFV_B7Q0A:9 a=3ZKOabzyN94A:10
- a=QEXdDO2ut3YA:10 a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-GUID: -R2GEnEa9YBghtOxKBoD6wD5MTZDPELS
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-10_01,2025-03-07_03,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 clxscore=1015
- suspectscore=0 phishscore=0 adultscore=0 impostorscore=0 malwarescore=0
- bulkscore=0 spamscore=0 mlxlogscore=999 lowpriorityscore=0
- priorityscore=1501 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2502100000
- definitions=main-2503100017
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
+On Sun,  9 Mar 2025 06:46:37 -0400
+Faizal Rahim <faizal.abdul.rahim@linux.intel.com> wrote:
 
-
-On 2/27/2025 9:46 PM, Dmitry Baryshkov wrote:
-> On Thu, Feb 27, 2025 at 03:52:10PM +0000, Raviteja Laggyshetty wrote:
->> To facilitate dynamic node ID support, the driver now uses
->> node pointers for links instead of static node IDs.
->> Additionally, the default node ID is set to -1 to prompt
->> the ICC framework for dynamic node ID allocation.
->>
->> Signed-off-by: Raviteja Laggyshetty <quic_rlaggysh@quicinc.com>
->> ---
->>  drivers/interconnect/qcom/icc-rpmh.c | 16 ++++++++++++++--
->>  drivers/interconnect/qcom/icc-rpmh.h |  3 ++-
->>  2 files changed, 16 insertions(+), 3 deletions(-)
->>
->> diff --git a/drivers/interconnect/qcom/icc-rpmh.c b/drivers/interconnect/qcom/icc-rpmh.c
->> index f2d63745be54..2e654917f535 100644
->> --- a/drivers/interconnect/qcom/icc-rpmh.c
->> +++ b/drivers/interconnect/qcom/icc-rpmh.c
->> @@ -285,13 +285,25 @@ int qcom_icc_rpmh_probe(struct platform_device *pdev)
->>  			ret = PTR_ERR(node);
->>  			goto err_remove_nodes;
->>  		}
->> +		qn->id = node->id;
->>  
->>  		node->name = qn->name;
->>  		node->data = qn;
->>  		icc_node_add(node, provider);
->>  
->> -		for (j = 0; j < qn->num_links; j++)
->> -			icc_link_create(node, qn->links[j]);
->> +		for (j = 0; j < qn->num_links; j++) {
->> +			struct qcom_icc_node *qn_link_node = qn->link_nodes[j];
->> +			struct icc_node *link_node;
->> +
->> +			if (qn_link_node) {
->> +				link_node = icc_node_create(qn_link_node->id);
->> +				qn_link_node->id = link_node->id;
->> +				icc_link_create(node, qn_link_node->id);
+> When the link partner goes down, "ethtool --show-mm" still displays
+> "Verification status: SUCCEEDED," reflecting a previous state that is
+> no longer valid.
 > 
-> I really don't like the idea of reading the ->id back. I think in the
-> last cycle I have already asked to add an API to link two nodes instead
-> of linking a node and an ID. Is there an issue with such an API?
-
-Yes, the link pointer may or may not be initialized during the link
-creation as the link can belong to other provider which is yet to probe.
-So, it is not possible to pass two node pointers as arguments for linking.
-
-RPMh driver has multiple providers and during the creation of links,
-nodes associated with other providers are created in the icc_link_create
-API. When the actual provider to which the link belongs is probed, its
-initialization/node creation is skipped by checking the ID. To ensure
-proper tracking of node initialization and prevent re-initialization, it
-is essential to read back and store the node’s ID in qnode.
-
-
+> Reset the verification status to ensure it reflects the current state.
 > 
->> +			} else {
->> +				/* backward compatibility for target using static IDs */
->> +				icc_link_create(node, qn->links[j]);
->> +			}
->> +		}
->>  
->>  		data->nodes[i] = node;
->>  	}
->> diff --git a/drivers/interconnect/qcom/icc-rpmh.h b/drivers/interconnect/qcom/icc-rpmh.h
->> index 82344c734091..cf4aa69c707c 100644
->> --- a/drivers/interconnect/qcom/icc-rpmh.h
->> +++ b/drivers/interconnect/qcom/icc-rpmh.h
->> @@ -95,7 +95,8 @@ struct qcom_icc_qosbox {
->>  struct qcom_icc_node {
->>  	const char *name;
->>  	u16 links[MAX_LINKS];
->> -	u16 id;
->> +	struct qcom_icc_node *link_nodes[MAX_LINKS];
->> +	int id;
->>  	u16 num_links;
->>  	u16 channels;
->>  	u16 buswidth;
->> -- 
->> 2.43.0
->>
+> Signed-off-by: Faizal Rahim <faizal.abdul.rahim@linux.intel.com>
+> ---
+>  net/ethtool/mm.c | 4 ++++
+>  1 file changed, 4 insertions(+)
 > 
+> diff --git a/net/ethtool/mm.c b/net/ethtool/mm.c
+> index bfd988464d7d..ad9b40034003 100644
+> --- a/net/ethtool/mm.c
+> +++ b/net/ethtool/mm.c
+> @@ -415,6 +415,10 @@ void ethtool_mmsv_link_state_handle(struct ethtool_mmsv *mmsv, bool up)
+>  		/* New link => maybe new partner => new verification process */
+>  		ethtool_mmsv_apply(mmsv);
+>  	} else {
+> +		/* Reset the reported verification state while the link is down */
+> +		if (mmsv->verify_enabled)
+> +			mmsv->status = ETHTOOL_MM_VERIFY_STATUS_INITIAL;
+> +
+>  		/* No link or pMAC not enabled */
+>  		ethtool_mmsv_configure_pmac(mmsv, false);
+>  		ethtool_mmsv_configure_tx(mmsv, false);
+
+Reviewed-by: Furong Xu <0x1207@gmail.com>
 
 
