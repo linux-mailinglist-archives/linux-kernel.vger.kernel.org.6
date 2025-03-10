@@ -1,141 +1,96 @@
-Return-Path: <linux-kernel+bounces-555163-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-555164-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC701A5A647
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 22:32:44 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8A003A5A649
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 22:32:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4A92C3AAD07
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 21:32:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9DE063ACA7E
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 21:32:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C05141E1A3B;
-	Mon, 10 Mar 2025 21:32:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="U71XJsGa"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE4551E1A3F;
+	Mon, 10 Mar 2025 21:32:47 +0000 (UTC)
+Received: from mail.hallyn.com (mail.hallyn.com [178.63.66.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A2FD1DFFD;
-	Mon, 10 Mar 2025 21:32:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB08E1E0DFE;
+	Mon, 10 Mar 2025 21:32:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.63.66.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741642357; cv=none; b=iIgvsWiPQ3Pi5AzgLdR4y/vUEs3i/2Y2VkZRVrYklWvnLsgXzWHgcSVUHnZ3ZeVhV3k7rBldwPiTGmqGa1jVto4z9viL6ESyhUqvLhVOAjPdxmTelbriLVleCamN4RyH/sNRZUB7YlTtj5DTzF6fyKqAoovIzH33yDuHB2j/77k=
+	t=1741642367; cv=none; b=JQEFcGkp1o9Lbx+4g9IpVc1kzbj5ODvw8sAIZfY2HClcWK49zRzvED99P+DWDPgxhK1391sLGI15Bqo5eySG3IOR3jhtMyeoYjQqvtrVx7RRUvjkWYcXUUzcJiZlLeMGaejjcH4NUV35fenm4to8ckY/C6A8ZdVlEMqpiSapZRg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741642357; c=relaxed/simple;
-	bh=A/Y97OyCtIpCIInftpTnduWsM/mIIWYNQHFylpxNUOs=;
+	s=arc-20240116; t=1741642367; c=relaxed/simple;
+	bh=3Fxs7rJSV0qaeyavlJF+FRPmeiUQukJOaWpfRx2dHeY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=o8ixlZs4mGBRjtsFVhYuA2xLua1rRTDm7W6qBbDu2CMNUOek/rOxlAqK4wrKGTHGKgJZPeatV2T5RSHK3uoGIqtTmAabD0tvYaL2ok4UDqpZfdin8BfODy36TmH+ZnyP0RLn/HkXtRxvtOVPGGcJOEVIxUjoacpM+mW6u8B31C0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=U71XJsGa; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 09F57C4CEEA;
-	Mon, 10 Mar 2025 21:32:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741642356;
-	bh=A/Y97OyCtIpCIInftpTnduWsM/mIIWYNQHFylpxNUOs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=U71XJsGarAJIJG9qAJrsmW0AHilfVhNgqDerCnrWNUPIuwcSQ1ozZ5gBJM6OCfK76
-	 MlBVoe9xAe57bLu3dLg8cW1lwfoevg7m6EbVjSzkkcytIQX3toQj7drHoatstuFZDu
-	 tTp2YY+B6onJAJPKU5kGW7FlJGWwAuvRsahEwznoDK2EETkNZQIfiZmDnjFV3PXpYJ
-	 mqWQpcqkk8b8eE4rHgxrUxFvz+h5+Mh2AKJNfYd8IBVzqVIMJnS9KKAfUXHjwqPx8c
-	 TM/68lsxCOBIhw5fbf2atWqAFOk3CGR1amKjWFpG0ziSXc0d8e9vbrEi1jAu5O/aWg
-	 mxwSbKhyNSL4Q==
-Date: Mon, 10 Mar 2025 14:32:34 -0700
-From: Namhyung Kim <namhyung@kernel.org>
-To: Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: Stephen Brennan <stephen.s.brennan@oracle.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>, Mark Rutland <mark.rutland@arm.com>,
-	"Liang, Kan" <kan.liang@linux.intel.com>,
-	linux-perf-users@vger.kernel.org,
-	James Clark <james.clark@linaro.org>,
-	Ian Rogers <irogers@google.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Chaitanya S Prakash <chaitanyas.prakash@arm.com>,
-	linux-kernel@vger.kernel.org, Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Athira Rajeev <atrajeev@linux.vnet.ibm.com>
-Subject: Re: [PATCH v3 0/3] Support .gnu_debugdata for symbols in perf
-Message-ID: <Z89acl2ZP4j3iS12@google.com>
-References: <20250307232206.2102440-1-stephen.s.brennan@oracle.com>
- <Z88KyA4PCzhMa-fK@x1>
+	 Content-Type:Content-Disposition:In-Reply-To; b=FyufvPnlEkjc7X0xoasEH5X9ORbQbqDXMY9s+X7w3lh2gC/rEVZrMJ8jYyqtmVj2/6Cj6Tn9MlfykdGlCEPRXxNmDFxwccH3X3rIv19z4aPybpEpt0iJvOqT1aCp60oZX6+1N2OwyA00ZOX/HH3arcCXhmh6hxnrB/XF8Qe9br8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hallyn.com; spf=pass smtp.mailfrom=mail.hallyn.com; arc=none smtp.client-ip=178.63.66.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hallyn.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mail.hallyn.com
+Received: by mail.hallyn.com (Postfix, from userid 1001)
+	id 447BD622; Mon, 10 Mar 2025 16:32:37 -0500 (CDT)
+Date: Mon, 10 Mar 2025 16:32:37 -0500
+From: "Serge E. Hallyn" <serge@hallyn.com>
+To: Paul Moore <paul@paul-moore.com>
+Cc: sergeh@kernel.org, linux-kernel@vger.kernel.org,
+	linux-security-module@vger.kernel.org
+Subject: Re: [PATCH] MAINTAINERS: add Serge Hallyn as maintainer for creds
+Message-ID: <20250310213237.GA195898@mail.hallyn.com>
+References: <Z82Sug-XLC1r5wKE@lei>
+ <f44bad6065bbf45c02dc7caf90ed0e7e@paul-moore.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <Z88KyA4PCzhMa-fK@x1>
+In-Reply-To: <f44bad6065bbf45c02dc7caf90ed0e7e@paul-moore.com>
 
-On Mon, Mar 10, 2025 at 12:52:40PM -0300, Arnaldo Carvalho de Melo wrote:
-> On Fri, Mar 07, 2025 at 03:22:00PM -0800, Stephen Brennan wrote:
-> > Hello all,
-> >
-> > This series adds the ability to read symbols from the ".gnu_debugdata" section
-> > of DSOs. More details are the cover letter of v1. This only has one small change
-> > from v2: it adds the missing entry in dso__symtab_origin(). Its lack resulted in
-> > truncating the output of symbols in "perf report -v" -- thanks to Arnaldo for
-> > testing and catching that.
-> >
-> > v2: https://lore.kernel.org/linux-perf-users/20250220185512.3357820-1-stephen.s.brennan@oracle.com/
-> > v1: https://lore.kernel.org/linux-perf-users/20250213190542.3249050-1-stephen.s.brennan@oracle.com/
-> >
-> > Stephen Brennan (3):
-> >   tools: perf: add dummy functions for !HAVE_LZMA_SUPPORT
-> >   tools: perf: add LZMA decompression from FILE
-> >   tools: perf: support .gnu_debugdata for symbols
-> 
-> Next time please follow the convention on subject lines in tools/perf:
-> 
-> 36e7748d33bf6a82 (perf-tools-next/perf-tools-next) perf tests: Fix data symbol test with LTO builds
-> e1f5bb18a7b25cac perf report: Fix memory leaks in the hierarchy mode
-> e242df05ee5f2ab0 perf report: Use map_symbol__copy() when copying callchains
-> 4c3f09e35ca999f6 perf annotate: Return errors from disasm_line__parse_powerpc()
-> dab8c32ece27c7d8 perf annotate: Add annotation_options.disassembler_used
-> b0920abe0d529101 perf report: Do not process non-JIT BPF ksymbol events
-> 2c744f38da7aeae7 perf test: Fix leak in "Synthesize attr update" test
-> 41453107bfc30083 perf machine: Fix insertion of PERF_RECORD_KSYMBOL related kernel maps
-> e0e4e0b8b7fabd8c perf maps: Add missing map__set_kmap_maps() when replacing a kernel map
-> 0d11fab32714a2da perf maps: Fixup maps_by_name when modifying maps_by_address
-> f7a46e028c394cd4 perf machine: Fixup kernel maps ends after adding extra maps
-> 25d9c0301d36f4d8 perf maps: Set the kmaps for newly created/added kernel maps
-> 99deaf5578cd768f perf maps: Introduce map__set_kmap_maps() for kernel maps
-> 74fb903b212925ca perf script: Fix output type for dynamically allocated core PMU's
-> 957d194163bf983d perf bench: Fix perf bench syscall loop count
-> b627b443ccfbdd2c perf test: Simplify data symbol test
-> f04c7ef35256beea perf test: Add timeout to datasym workload
-> 15bcfb96d0ddbc1b perf test: Add trace record and replay test
-> 38672c5033c3aebc perf test: Skip perf trace tests when running as non-root
-> 3fb29a7514e727ca perf test: Skip perf probe tests when running as non-root
-> â¬¢ [acme@toolbox perf-tools-next]$
-> 
-> I.e. perf, followed by the tool or class (machine, maps, etc), followed
-> by : and then the summary, starting with a capital letter.
-
-Yep, I can fix them this time but please follow the convention next
-time.
-
-> 
-> I retested and everything looks great, so please add my:
-> 
-> Reviewed-by: Arnaldo Carvalho de Melo <acme@redhat.com>
-> Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
-
-Thanks for the review!
-Namhyung
-
-> 
-> >  tools/perf/util/compress.h   |  20 +++++++
-> >  tools/perf/util/dso.c        |   3 +
-> >  tools/perf/util/dso.h        |   1 +
-> >  tools/perf/util/lzma.c       |  29 ++++++----
-> >  tools/perf/util/symbol-elf.c | 106 ++++++++++++++++++++++++++++++++++-
-> >  tools/perf/util/symbol.c     |   2 +
-> >  6 files changed, 148 insertions(+), 13 deletions(-)
+On Mon, Mar 10, 2025 at 03:58:41PM -0400, Paul Moore wrote:
+> On Mar  9, 2025 sergeh@kernel.org wrote:
 > > 
+> > Also add the documentation file as suggested by Günther Noack.
+> > 
+> > Signed-off-by: Serge Hallyn <sergeh@kernel.org>
+> > ---
+> >  MAINTAINERS | 2 ++
+> >  1 file changed, 2 insertions(+)
+> 
+> I adjusted the subject line to reflect that you chose the reviewer role,
+> but otherwise this looks good, merged into lsm/dev.  Thanks!
+
+Oh, did I?  I went back and forth, and actually *intended* M, but must
+have left my git index out of sorts :)  No problem - reviewer probably
+makes more sense.
+
+thanks,
+-serge
+
+> > diff --git a/MAINTAINERS b/MAINTAINERS
+> > index 68e4656c15ea..54b47bfc4abd 100644
+> > --- a/MAINTAINERS
+> > +++ b/MAINTAINERS
+> > @@ -6141,11 +6141,13 @@ F:	drivers/hid/hid-creative-sb0540.c
+> >  
+> >  CREDENTIALS
+> >  M:	Paul Moore <paul@paul-moore.com>
+> > +R:	Serge Hallyn <sergeh@kernel.org>
+> >  L:	linux-security-module@vger.kernel.org
+> >  S:	Supported
+> >  T:	git https://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/lsm.git
+> >  F:	include/linux/cred.h
+> >  F:	kernel/cred.c
+> > +F:	Documentation/security/credentials.rst
+> >  
+> >  INTEL CRPS COMMON REDUNDANT PSU DRIVER
+> >  M:	Ninad Palsule <ninad@linux.ibm.com>
 > > -- 
-> > 2.43.5
+> > 2.34.1
+> 
+> --
+> paul-moore.com
 
