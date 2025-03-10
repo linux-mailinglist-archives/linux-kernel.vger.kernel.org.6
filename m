@@ -1,113 +1,144 @@
-Return-Path: <linux-kernel+bounces-553593-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-553594-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CFF6EA58C1F
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 07:38:49 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D4D40A58C22
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 07:39:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 47C49188AD19
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 06:38:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 511C6188ACBC
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 06:39:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F9051CAA60;
-	Mon, 10 Mar 2025 06:38:44 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 571CB1B87F0
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 06:38:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90BC61CDA0B;
+	Mon, 10 Mar 2025 06:39:00 +0000 (UTC)
+Received: from inva021.nxp.com (inva021.nxp.com [92.121.34.21])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82CE11C5D7E;
+	Mon, 10 Mar 2025 06:38:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=92.121.34.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741588724; cv=none; b=mmwMjQwLcvEoRj0DmbtjAmT4aq4d/pdTwJHw8tNvnzzqZuT/GjGFN6ZW4SQQguuY9PYWRkFWbBqUQ4eQI44QN426M4ypp85NWKteq1eFqiS4sETbGsQ7eJI2WRzSbVgVIEo7mGsxIZfACXmurhyH1pJT/RDMprbOrV9umk35kIo=
+	t=1741588740; cv=none; b=VPJlGHB/rvySPbUo0H5RqdgZzG8NRI0DnnBSLuFcl+QuuwzMve+rDGLWFYBZGyQmUsT9GTTWsBk39aWoaTuAP7/NILpcACvevj4joZgzfj4dvZHkNmzqYl4vG9zULCep8/xrYrHcd//GNpTOnLoB/ehzQk0YpKMQc9SRQwpVgFs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741588724; c=relaxed/simple;
-	bh=GcUQaczN2hMHgbVRjK+6slnDE3ztZsb62TwjLId28Ck=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=XnBkTeDUACl731anS+9AEuodxkWm6Rz1I7/DH0qzFcIOvdN5yApWNUJgrguf+T0hNhFmItDYT7wg7iZO3w3Ih1w3ZGWd9s/19Vj93rN60k8Hv8fomKqJS1bLNiI++bTVgfAotmqUex81D8BQdW4nzl6a7HHyFHqb/QX9QeBa4hY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 3A3DC15A1;
-	Sun,  9 Mar 2025 23:38:52 -0700 (PDT)
-Received: from [10.163.42.69] (unknown [10.163.42.69])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id A4AF43F673;
-	Sun,  9 Mar 2025 23:38:36 -0700 (PDT)
-Message-ID: <aae26951-3409-476c-b31d-1738cafe730a@arm.com>
-Date: Mon, 10 Mar 2025 12:08:36 +0530
+	s=arc-20240116; t=1741588740; c=relaxed/simple;
+	bh=tZOgiknuCCubhajeAM4Mx79q2OJ2RkOqlALyn/E/1EA=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=RuDo8qnl460Qe0grNeJLZZyx8qA/JJOJufNWlaWlIe7vGDI+7Ffo6eOMuC7EZPNfeHDMiW1SP0Gp5E5Bc+Y0VmlZcNC2u9wB/XbNuwGkAVqc9i3Hy0CxVY4ipz6fOSmebWqtJ/VMs507cJ+pbJt2gUjA0I24MdP5ir0MM2QM6D0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; arc=none smtp.client-ip=92.121.34.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+Received: from inva021.nxp.com (localhost [127.0.0.1])
+	by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 89F082020FC;
+	Mon, 10 Mar 2025 07:38:51 +0100 (CET)
+Received: from aprdc01srsp001v.ap-rdc01.nxp.com (aprdc01srsp001v.ap-rdc01.nxp.com [165.114.16.16])
+	by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 3DED12020EC;
+	Mon, 10 Mar 2025 07:38:51 +0100 (CET)
+Received: from lsv03305.swis.in-blr01.nxp.com (lsv03305.swis.in-blr01.nxp.com [92.120.147.118])
+	by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id B9B241800081;
+	Mon, 10 Mar 2025 14:38:49 +0800 (+08)
+From: Pankit Garg <pankit.garg@nxp.com>
+To: linux-rtc@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	conor+dt@kernel.org,
+	robh@kernel.org,
+	alexandre.belloni@bootlin.com
+Cc: vikash.bansal@nxp.com,
+	priyanka.jain@nxp.com,
+	daniel.aguirre@nxp.com,
+	shashank.rebbapragada@nxp.com,
+	aman.kumarpandey@nxp.com,
+	Pankit Garg <pankit.garg@nxp.com>
+Subject: [PATCH 1/2] dt-bindings: rtc: Add pcf85053a support
+Date: Mon, 10 Mar 2025 12:08:45 +0530
+Message-Id: <20250310063846.1867615-1-pankit.garg@nxp.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V2 0/8] arm64/mm: Drop PXD_TABLE_BIT
-To: arm-kernel@lists.infradead.org
-Cc: Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>,
- James Morse <james.morse@arm.com>, Catalin Marinas
- <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
- Ard Biesheuvel <ardb@kernel.org>, Ryan Roberts <ryan.roberts@arm.com>,
- Mark Rutland <mark.rutland@arm.com>, kvmarm@lists.linux.dev,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20250221044227.1145393-1-anshuman.khandual@arm.com>
-Content-Language: en-US
-From: Anshuman Khandual <anshuman.khandual@arm.com>
-In-Reply-To: <20250221044227.1145393-1-anshuman.khandual@arm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Virus-Scanned: ClamAV using ClamSMTP
 
-On 2/21/25 10:12, Anshuman Khandual wrote:
-> Remove the PXX_TABLE_BIT definitions and instead rely on PXX_TYPE_MASK,
-> PXX_TYPE_SECT and PXX_TYPE_TABLE. The latter versions are more abstract
-> and also include the PTE_VALID bit.
-> 
-> This abstraction is valuable for the impending D128 page table support,
-> which doesn't have a single page table bit to determine table vs block.
-> Instead it has the skip level (SKL) field, where it will consider 0 to
-> mean table and any other value to mean a block entry. So PXX_TABLE_BIT
-> therefore doesn't fit into the D128 model well, but the type fields do.
-> 
-> This series applies on v6.14-rc3.
-> 
-> Changes in V2:
-> 
-> - Changed pmd_mkhuge() and pud_mkhuge() implementation
-> - Changed pud_bad() implementation with an additional patch
-> 
-> Changes in V1:
-> 
-> https://lore.kernel.org/all/20241005123824.1366397-1-anshuman.khandual@arm.com/
-> 
-> Cc: Marc Zyngier <maz@kernel.org>
-> Cc: Oliver Upton <oliver.upton@linux.dev>
-> Cc: James Morse <james.morse@arm.com>
-> Cc: Catalin Marinas <catalin.marinas@arm.com>
-> Cc: Will Deacon <will@kernel.org>
-> Cc: Ard Biesheuvel <ardb@kernel.org>
-> Cc: Ryan Roberts <ryan.roberts@arm.com>
-> Cc: Mark Rutland <mark.rutland@arm.com>
-> Cc: kvmarm@lists.linux.dev
-> Cc: linux-arm-kernel@lists.infradead.org
-> Cc: linux-kernel@vger.kernel.org
-> 
-> Anshuman Khandual (6):
->   KVM: arm64: ptdump: Test PMD_TYPE_MASK for block mapping
->   arm64/ptdump: Test PMD_TYPE_MASK for block mapping
->   arm64/mm: Clear PXX_TYPE_MASK in mk_[pmd|pud]_sect_prot()
->   arm64/mm: Clear PXX_TYPE_MASK and set PXD_TYPE_SECT in [pmd|pud]_mkhuge()
->   arm64/mm: Check PXD_TYPE_TABLE in [p4d|pgd]_bad()
->   arm64/mm: Drop PXD_TABLE_BIT
-> 
-> Ryan Roberts (2):
->   arm64/mm: Check PUD_TYPE_TABLE in pud_bad()
->   arm64/mm: Check pmd_table() in pmd_trans_huge()
-> 
->  arch/arm64/include/asm/pgtable-hwdef.h |  5 --
->  arch/arm64/include/asm/pgtable.h       | 65 ++++++++++++++++++--------
->  arch/arm64/kvm/ptdump.c                |  4 +-
->  arch/arm64/mm/ptdump.c                 |  4 +-
->  4 files changed, 50 insertions(+), 28 deletions(-)
->
+Add device tree bindings for NXP PCF85053a RTC chip.
 
-Gentle ping again. Does this series look okay or is there any objection ?
+Signed-off-by: Pankit Garg <pankit.garg@nxp.com>
+---
+ .../bindings/rtc/nxp,pcf85053a.yaml           | 44 +++++++++++++++++++
+ MAINTAINERS                                   |  6 +++
+ 2 files changed, 50 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/rtc/nxp,pcf85053a.yaml
+
+diff --git a/Documentation/devicetree/bindings/rtc/nxp,pcf85053a.yaml b/Documentation/devicetree/bindings/rtc/nxp,pcf85053a.yaml
+new file mode 100644
+index 000000000000..177afbe128d4
+--- /dev/null
++++ b/Documentation/devicetree/bindings/rtc/nxp,pcf85053a.yaml
+@@ -0,0 +1,44 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++# Copyright 2025 NXP
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/rtc/nxp,pcf85053a.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: NXP PCF85053A Real Time Clock
++
++allOf:
++  - $ref: rtc.yaml#
++
++maintainers:
++  - Pankit Garg <pankit.garg@nxp.com>
++
++properties:
++  compatible:
++    enum:
++      - nxp,pcf85053a
++
++  reg:
++    maxItems: 1
++
++  interrupts:
++    maxItems: 1
++
++required:
++  - compatible
++  - reg
++
++additionalProperties: false
++
++examples:
++  - |
++    i2c {
++        #address-cells = <1>;
++        #size-cells = <0>;
++
++        rtc@6f {
++          compatible = "nxp,pcf85053a";
++          reg = <0x6f>;
++        };
++      };
++...
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 8e0736dc2ee0..21a05e169564 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -17158,6 +17158,12 @@ S:	Maintained
+ F:	Documentation/devicetree/bindings/sound/nxp,tfa989x.yaml
+ F:	sound/soc/codecs/tfa989x.c
+ 
++NXP RTC PCF85053A DRIVER
++M:	Pankit Garg<pankit.garg@nxp.com>
++L:	linux-kernel@vger.kernel.org
++S:	Maintained
++F:	Documentation/devicetree/bindings/rtc/nxp,pcf85053a.yaml
++
+ NZXT-KRAKEN2 HARDWARE MONITORING DRIVER
+ M:	Jonas Malaco <jonas@protocubo.io>
+ L:	linux-hwmon@vger.kernel.org
+-- 
+2.25.1
+
 
