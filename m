@@ -1,100 +1,134 @@
-Return-Path: <linux-kernel+bounces-555127-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-555135-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 97D27A5A5CF
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 22:13:31 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 64254A5A5F0
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 22:16:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 20574189416E
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 21:13:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 640967A9362
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 21:14:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 866B11E2821;
-	Mon, 10 Mar 2025 21:13:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FC681E32C6;
+	Mon, 10 Mar 2025 21:14:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="CzUGMiJ2"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FNTnyBgv"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B47421E22E6;
-	Mon, 10 Mar 2025 21:13:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6DA51E0E0B;
+	Mon, 10 Mar 2025 21:13:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741641185; cv=none; b=ruvarS258cgyn7fcdEWVwZtrQB48ft3Pg6qdWgtaWAeSTHPSmmzoW+4PoHkdGHqqdoHpw/vbvuZxzGYBzwdRENXlG45Qriz5DHeobpzl1Nd5Wg/Ke0O9/cPRODAtQ8vV0M+c8nad2fO49yGytfLMJHrMliqTE3HDPWGxsJHicmE=
+	t=1741641239; cv=none; b=upn8UEZyNUe4fy0uABe9mjy8htLsQfPBL/1GmffTLJ1vu9dYi1T+oltUeJnxZTA8gr/lMMKAVcazTTx39SSMlRBdY+snwskcPu6sIgegobqDLIKBqAhXDTGEYiG6c29q+8wB3/P1tzMlaRGPs7WoU3PyNyt1KeGLnJtPGkOn9K4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741641185; c=relaxed/simple;
-	bh=+Kv/6kjMA/uFZCgoFF2u5xmnuCS9pwMnmJLH8opwzfU=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=n6AvkYDO+b4tHbbIoL41GlolGIixroJZs6AciX7KxPR9BaPIwpL0pyCzWcmF+u7jgdJ6XLJevR/M6pJj7s9IIkANke4VD6YhVnKr7Gp6paeNa4ihA21/Y7sxIe/bGHrQ5FlbhBV04DLfH6pM3eIvs+XfyTvAWNFBm1frf1F/Jz0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=CzUGMiJ2; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1741641181;
-	bh=wP7pYElV020dzStrLF11BHJwsXoWPu24x/+zB8gtJUg=;
-	h=Date:From:To:Cc:Subject:From;
-	b=CzUGMiJ2RhhgZ2jLOHxC8C39RP8E7MbWkAN+UmXzyrlhf4NrOTceP9yurzpUmkiNK
-	 +U7t0kE+ecPpmSngliFWluR32+4XCBRH/xDUENbp4iqmFR5ltL3gEvTQXnoQxEGNnT
-	 c6YdKYuuly6BJ4bmrHCPsdZIu7hud00DOBdElz8o3WPuWZuHcKSvtcY5xa4TZZgdcj
-	 RhUpoBGdWDmA6UTd+tnr2cH9GN5u3b4kg+Z0cjAdUznYxSrzLguuI9A6WVxmnKVeqm
-	 ys4LPNK4gJrLyMWosmljhoF1IiOP4kPR6vVgEQ1wA7CgS5E81+Gh5ZYmAuY92wN/g6
-	 rCLjv4bkxEItA==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4ZBV3d5HrJz4x3p;
-	Tue, 11 Mar 2025 08:13:01 +1100 (AEDT)
-Date: Tue, 11 Mar 2025 08:13:01 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: "Paul E. McKenney" <paulmck@kernel.org>, Frederic Weisbecker
- <frederic@kernel.org>, Neeraj Upadhyay <neeraj.upadhyay@kernel.org>, Boqun
- Feng <boqun.feng@gmail.com>, Uladzislau Rezki <urezki@gmail.com>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
- Mailing List <linux-next@vger.kernel.org>
-Subject: linux-next: Signed-off-by missing for commit in the rcu tree
-Message-ID: <20250311081301.6a22ab25@canb.auug.org.au>
+	s=arc-20240116; t=1741641239; c=relaxed/simple;
+	bh=ofonAGYkuJD+XxID+8fbp4tmBpONyoJozUMiWHGHFQE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FCXW3goRyaKJKMXmasOP5V2Rw5III1D7Op2TzrCywGGYFKiwwgfki4jb0I1P/iFTwIzEmvm2XKBiW+90o3nvnfCg+sJdoFXxSr69QmdMCh89y+4r6gw0uaNvzOqhq8ZmVsgiFQa6Q8CyUGztKNYl8ecSsDrpIBh/cL4cHd1G39Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FNTnyBgv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7F158C4CEE5;
+	Mon, 10 Mar 2025 21:13:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741641238;
+	bh=ofonAGYkuJD+XxID+8fbp4tmBpONyoJozUMiWHGHFQE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=FNTnyBgv5ZEXhsVleSIt/nVR2j56/f24Rg4RVedUFhX5n270mDWY6b0dr0Q0f4G14
+	 oy9OXWlXqizoY/fHnfvLTjOxr8jXxALGJYrs2jUx6n6kkltQ33LnqwQUahx04ifAEP
+	 PMrwASNRu4epFCiVK1FcJHK6xDtP9Oqi2qbGMc2BSQvCanH8uVgPEmp9d+rd9ruvTD
+	 LjaQUu/3cOx2BhU8ZdEszGUM9ZO9iFPXNXcIT02CvvpqEs8e0qdpAqION12AZ4Rgpm
+	 EiZMIx5XfgDBhx2dps5nH7w2g4OtqbfY6viJUoL9WPgkSMw3jJNEkw141OggFku+Di
+	 aIaqYbnloVKnw==
+Date: Mon, 10 Mar 2025 14:13:56 -0700
+From: Namhyung Kim <namhyung@kernel.org>
+To: Yujie Liu <yujie.liu@intel.com>
+Cc: linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	"Liang, Kan" <kan.liang@linux.intel.com>,
+	Andi Kleen <ak@linux.intel.com>,
+	Martin Liska <martin.liska@hey.com>, Leo Yan <leo.yan@arm.com>
+Subject: Re: [PATCH] perf script: Update brstack syntax documentation
+Message-ID: <Z89WFKPIxWBgN6q2@google.com>
+References: <20250225061736.1698175-1-yujie.liu@intel.com>
+ <Z8q51Mcz/9QenjnC@yujie-X299>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/sk9dF9WeMSb1MTQ+m.X3fMj";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <Z8q51Mcz/9QenjnC@yujie-X299>
 
---Sig_/sk9dF9WeMSb1MTQ+m.X3fMj
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Hello,
 
-Hi all,
+On Fri, Mar 07, 2025 at 05:18:12PM +0800, Yujie Liu wrote:
+> Hi, friendly ping on this perf script doc fix. Thanks.
 
-Commits
+Sorry for the late reply.
 
-  fcb83ae12343 ("Revert "rcu/nocb: Fix rcuog wake-up from offline softirq"")
-  c37cf754ebf5 ("rcu: Remove swake_up_one_online() bandaid")
+> 
+> On Tue, Feb 25, 2025 at 02:17:36PM +0800, Yujie Liu wrote:
+> > The following commits appended new fields to the end of the branch info
+> > list, such as branch type and branch speculation info.
+> > 
+> > commit 1f48989cdc7d ("perf script: Output branch sample type")
+> > commit 6ade6c646035 ("perf script: Show branch speculation info")
+> > 
+> > Update brstack syntax documentation to be consistent with the latest
+> > branch info list. Improve the descriptions to help users interpret the
+> > fields accurately.
 
-are missing a Signed-off-by from their committer.
+Thanks for your work, but can you please update it again with recent
+changes from Leo?
 
---=20
-Cheers,
-Stephen Rothwell
+https://lore.kernel.org/linux-perf-users/20250304111240.3378214-1-leo.yan@arm.com/
 
---Sig_/sk9dF9WeMSb1MTQ+m.X3fMj
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+Thanks,
+Namhyung
 
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmfPVd0ACgkQAVBC80lX
-0Gyi1Af7B61gT9q9ebrn1QHv4P969NJAzfrMabQSqawba1P9JqeVDPy0qJQ4sAvF
-er8fDbIGDagVOJ7tcQiNk78Mef1uCFnU6RIEEoDEjFTM0XSUD+xwr402/QnJx1jt
-TLntSlwTvX0ecZPgZaAXZgUaycmi+el/aeBcwULPbYudHd467IVEOvn//eL5IEfB
-cAPiSt6epoU5rOzricw/0lUiVMiqW4NZ2TIal7hkD9LXzY+pAsBamJDsXF1lPYzq
-wDgcozSKOybXvAzaJw0TuK0waKtxPu0eRg6VncLhPBRprpl7/gKp7uZmbpv5IoQm
-Gj6zj9kIYk7c/zLCBvOJcJbb/3N4qQ==
-=XTFi
------END PGP SIGNATURE-----
-
---Sig_/sk9dF9WeMSb1MTQ+m.X3fMj--
+> > 
+> > Signed-off-by: Yujie Liu <yujie.liu@intel.com>
+> > ---
+> >  tools/perf/Documentation/perf-script.txt | 16 +++++++++-------
+> >  1 file changed, 9 insertions(+), 7 deletions(-)
+> > 
+> > diff --git a/tools/perf/Documentation/perf-script.txt b/tools/perf/Documentation/perf-script.txt
+> > index b72866ef270b..8bd105084280 100644
+> > --- a/tools/perf/Documentation/perf-script.txt
+> > +++ b/tools/perf/Documentation/perf-script.txt
+> > @@ -239,13 +239,15 @@ OPTIONS
+> >  	i.e., -F "" is not allowed.
+> >  
+> >  	The brstack output includes branch related information with raw addresses using the
+> > -	/v/v/v/v/cycles syntax in the following order:
+> > -	FROM: branch source instruction
+> > -	TO  : branch target instruction
+> > -        M/P/-: M=branch target mispredicted or branch direction was mispredicted, P=target predicted or direction predicted, -=not supported
+> > -	X/- : X=branch inside a transactional region, -=not in transaction region or not supported
+> > -	A/- : A=TSX abort entry, -=not aborted region or not supported
+> > -	cycles
+> > +	FROM/TO/PRED/INTX/ABORT/CYCLES/TYPE/SPEC syntax in the following order:
+> > +	FROM  : branch source instruction
+> > +	TO    : branch target instruction
+> > +	PRED  : M=branch target mispredicted or branch direction was mispredicted, P=target predicted or direction predicted, -=not supported
+> > +	INTX  : X=branch inside a transactional region, -=not in transaction region or not supported
+> > +	ABORT : A=TSX abort entry, -=not aborted region or not supported
+> > +	CYCLES: the number of cycles that have elapsed since the last branch was recorded
+> > +	TYPE  : branch type
+> > +	SPEC  : branch speculation info
+> >  
+> >  	The brstacksym is identical to brstack, except that the FROM and TO addresses are printed in a symbolic form if possible.
+> >  
+> > -- 
+> > 2.34.1
+> > 
 
