@@ -1,168 +1,129 @@
-Return-Path: <linux-kernel+bounces-553783-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-553784-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA4BAA58EBD
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 09:59:11 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 068EDA58EBE
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 10:00:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4CD967A5FDD
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 08:58:09 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 881237A5D2D
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 08:58:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F600224243;
-	Mon, 10 Mar 2025 08:59:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7542022423A;
+	Mon, 10 Mar 2025 08:59:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Pb2Ky157"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cWoaYac+"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29C8E223308;
-	Mon, 10 Mar 2025 08:58:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D52AA11CBA;
+	Mon, 10 Mar 2025 08:59:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741597140; cv=none; b=AWbb66vQD7KngUC+R+T8YF450Vz5a0GIDXUHCl0AqTNpHBRd1dhN4Ky+bZFCYB/yoF/YGs5JQwRtmZWm153wTghPko10YWSZctGoKjRrGGWIc/GLqGQjrjMg24GeuRdL9EEXXdQiYzKgQyihlqf1BlqndhKSL3Z8Lesxhy9Eh6k=
+	t=1741597190; cv=none; b=FZQ5nXA6aA6I8UuNIQ28qwIipqtVCgNH4t0DnqZVLMsHokRLtknSB+pBykNEqP8ZO9Z0YYkBfez4gwXc2ztz4xYBsnOjbBJt4y8sAqv2WgCq6/g2twZotSK2rmlX13oe+OzM6nSkW7R7TfnwcDYUl2o9mymnVRWpgvCsz19W0iQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741597140; c=relaxed/simple;
-	bh=KIM3t3dN6h/fqGn9hUl2zN2xK77J0d1+U2gTRG47DLE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=g15T1YZOloz6Qs17mF3m8TdmuHmRe95aA4CTexAPA0LUvc7Ec+egmXZHlyJZZtVLL7lidByF1mR+b/1M5JqMUSzvMbNrF9Ri/wxfzl0BEJjHC5ZeldZIIAGUY3dowsbbpxA5hDgdoRQqX1KYI4K8+grEfeXC0zXyj/uE2RCUIc0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Pb2Ky157; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 529MIZZ1010474;
-	Mon, 10 Mar 2025 08:58:48 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	m2upaeJf0rzuqnQovlmbtPWsRA0OgIqAkIFQGolBRPI=; b=Pb2Ky157GjAGMryS
-	Y/qoSHlos2TE3uVvKC5+RVCkkUJMXfZ1VaF8X85HZ0udYub00Ep9CyA2wm8lyQ5e
-	nz5vv23a6cvCiSVNa8b76HKjoJovsDz8XjKAJLp24NVX0ZTaXHk1zis6Xk7E1G8s
-	Zwai01MI2UnZBryHF4Xd2puXRecycz7F5VG2PKJVQlRkUhpfLYIh1w5Jt/2c+yTb
-	J+cOVML3HuexY25Gr4nanARPFXzikA/DOEeuC6TRholHFVJZ3+fRZUVRNfALJ6jn
-	Zbs1Sofwn9+NlzFT3gt2geBlUx6qsAQH/4XGigtDODYsebMzuXD9xYDKE+jKQVaE
-	tczxzw==
-Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 458f6ac8ks-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 10 Mar 2025 08:58:48 +0000 (GMT)
-Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
-	by NASANPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 52A8wl9C023922
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 10 Mar 2025 08:58:47 GMT
-Received: from [10.239.28.138] (10.80.80.8) by nasanex01c.na.qualcomm.com
- (10.45.79.139) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 10 Mar
- 2025 01:58:44 -0700
-Message-ID: <e556e3c9-93ee-494a-be35-9353dc5718e4@quicinc.com>
-Date: Mon, 10 Mar 2025 16:58:42 +0800
+	s=arc-20240116; t=1741597190; c=relaxed/simple;
+	bh=GQQBIdIOKWJxe3LiUtKXXMYyWtF11k9WGbe7caGN000=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=AC7044V+laWPpqY2fjFiScL3mXuihTjUEVcGUFGOk8UgSne007CnY2XRaSRZlgUw4Pg47oxXYSJLlXtwsSXEh+nlOXaxBfuMbv5ydMoQZO+Cn9zN5MvXKVEoqKgyHnSK1eF8DI8+GWfrDdOTKnniIE5W/xDXjTWI7E9VKgJA4Qc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cWoaYac+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A678CC4CEE5;
+	Mon, 10 Mar 2025 08:59:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741597190;
+	bh=GQQBIdIOKWJxe3LiUtKXXMYyWtF11k9WGbe7caGN000=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=cWoaYac+uJiF2IyNaXA2a2CSYqnDWmgRmWyjGLxr4jw3XtHHltce34kRf8jL0Z+ew
+	 nG9eD3HVsiRpLX2EFe3SuY7s4JJEOdJg8i8add2Pl17TkDBT6Y2XGQOaEirGDidu6X
+	 N+dn+oy75vklG3F+g13fO2U5IXqnf6FQ8x/fgKABTKpAZba6X10qE0qsFaasquMBJI
+	 Kf1XlyyvGV5bWWOCrCDyio7JqcN6su3TuszPRSxUxJcnLbRmUfH40EuU9WX4fYLVm0
+	 /BYUepK0Ta/n3FTTSYnoKBz8r07hZKxA26fFd3mX/8YmP7gfS2fHL6ZnrCD7mKW4vP
+	 hWltLvTnqNnwA==
+Date: Mon, 10 Mar 2025 17:59:46 +0900
+From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, Mark
+ Rutland <mark.rutland@arm.com>, Mathieu Desnoyers
+ <mathieu.desnoyers@efficios.com>, Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: [RFC PATCH v2 1/3] tracing: Show last module text symbols in
+ the stacktrace
+Message-Id: <20250310175946.c317afa1ae89540cb1076940@kernel.org>
+In-Reply-To: <20250306194627.59452513@gandalf.local.home>
+References: <173920222697.826592.3726270716809214055.stgit@devnote2>
+	<173920223724.826592.12665655620615313089.stgit@devnote2>
+	<20250306194627.59452513@gandalf.local.home>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 0/2] phy: qcom: qmp-pcie: Add PCIe PHY no_csr reset
- support
-To: <vkoul@kernel.org>, <kishon@kernel.org>, <p.zabel@pengutronix.de>,
-        <dmitry.baryshkov@linaro.org>, <abel.vesa@linaro.org>,
-        <quic_qianyu@quicinc.com>, <neil.armstrong@linaro.org>,
-        <manivannan.sadhasivam@linaro.org>, <quic_devipriy@quicinc.com>,
-        <konrad.dybcio@oss.qualcomm.com>, <linux-arm-msm@vger.kernel.org>,
-        <linux-phy@lists.infradead.org>, <linux-kernel@vger.kernel.org>
-References: <20250226103600.1923047-1-quic_wenbyao@quicinc.com>
-Content-Language: en-US
-From: "Wenbin Yao (Consultant)" <quic_wenbyao@quicinc.com>
-In-Reply-To: <20250226103600.1923047-1-quic_wenbyao@quicinc.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01c.na.qualcomm.com (10.45.79.139)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Authority-Analysis: v=2.4 cv=WsDRMcfv c=1 sm=1 tr=0 ts=67cea9c8 cx=c_pps a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17 a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=VwQbUJbxAAAA:8 a=COk6AnOGAAAA:8 a=7YptvZ3fydEw2Y-QB6AA:9
- a=QEXdDO2ut3YA:10 a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-GUID: j-lWSNpmGh4X7HbiHVLoRMxg8XcSMW_8
-X-Proofpoint-ORIG-GUID: j-lWSNpmGh4X7HbiHVLoRMxg8XcSMW_8
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-10_03,2025-03-07_03,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 suspectscore=0
- lowpriorityscore=0 priorityscore=1501 bulkscore=0 adultscore=0
- impostorscore=0 phishscore=0 mlxscore=0 mlxlogscore=999 clxscore=1015
- spamscore=0 classifier=spam authscore=0 authtc=n/a authcc= route=outbound
- adjust=0 reason=mlx scancount=1 engine=8.19.0-2502100000
- definitions=main-2503100070
 
-On 2/26/2025 6:35 PM, Wenbin Yao wrote:
-> The series aims to skip phy register programming and drive PCIe PHY with
-> register setting programmed in bootloader by simply toggling no_csr reset,
-> which once togglled, PHY hardware will be reset while PHY registers are
-> retained.
->
-> First, determine whether PHY setting can be skipped by checking
-> QPHY_START_CTRL register and the existence of nocsr reset. If it is
-> programmed and no_csr reset is supported, do no_csr reset and skip BCR
-> reset which will reset entire PHY.
->
-> This series also remove has_nocsr_reset flag in qmp_phy_cfg structure and
-> decide whether the PHY supports nocsr reset by checking the existence of
-> nocsr reset in device tree.
->
-> The series are tested on X1E80100-QCP and HDK8550.
->
-> The commit messages of this patchset have been modified based on comments
-> and suggestions.
->
-> Changes in v5:
-> - Add a check whether the init sequences are exist if the PHY needs to be
->    initialized to Patch 2/2.
-> - Link to v4: https://lore.kernel.org/all/20250220102253.755116-1-quic_wenbyao@quicinc.com/
->
-> Changes in v4:
-> - Add Philipp's Reviewed-by tag to Patch 1/2.
-> - Use PHY instead of phy in comments in Patch 2/2.
-> - Use "if (qmp->nocsr_reset)" instead of "if (!qmp->nocsr_reset)" in
->    function qmp_pcie_exit for readability in Patch 2/2.
-> - Use goto statements in function qmp_pcie_power_on and qmp_pcie_power_off
->    for readability in Patch 2/2.
-> - Refine the comment of why not checking qmp->skip_init when reset PHY in
->    function qmp_pcie_power_off in Patch 2/2.
-> - Link to v3: https://lore.kernel.org/all/20250214104539.281846-1-quic_wenbyao@quicinc.com/
->
-> Changes in v3:
-> - Replace devm_reset_control_get_exclusive with
->    devm_reset_control_get_optional_exclusive when get phy_nocsr reset
->    control in Patch 1/2.
-> - Do not ignore -EINVAL when get phy_nocsr reset control in Patch 1/2.
-> - Replace phy_initialized with skip_init in struct qmp_pcie in Patch 2/2.
-> - Add a comment to why not check qmp->skip_init in function
->    qmp_pcie_power_off in Patch 2/2.
-> - Link to v2: https://lore.kernel.org/all/20250211094231.1813558-1-quic_wenbyao@quicinc.com/
->
-> Changes in v2:
-> - Add Abel's and Manivannan's Reviewed-by tag to Patch 1/2.
-> - Refine commit msg of Patch 2/2.
-> - Link to v1: https://lore.kernel.org/all/20250121094140.4006801-1-quic_wenbyao@quicinc.com/
->
-> Konrad Dybcio (1):
->    phy: qcom: pcie: Determine has_nocsr_reset dynamically
->
-> Qiang Yu (1):
->    phy: qcom: qmp-pcie: Add PHY register retention support
->
->   drivers/phy/qualcomm/phy-qcom-qmp-pcie.c | 86 +++++++++++++++++-------
->   1 file changed, 63 insertions(+), 23 deletions(-)
->
->
-> base-commit: bcf2acd8f64b0a5783deeeb5fd70c6163ec5acd7
+On Thu, 6 Mar 2025 19:46:27 -0500
+Steven Rostedt <rostedt@goodmis.org> wrote:
 
-Hi, do you have any futher comments?
+> On Tue, 11 Feb 2025 00:43:57 +0900
+> "Masami Hiramatsu (Google)" <mhiramat@kernel.org> wrote:
+> 
+> > From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+> > 
+> > Since the previous boot trace buffer can include module text address in
+> > the stacktrace. As same as the kernel text address, convert the module
+> > text address using the module address information.
+> > 
+> > Signed-off-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+> > ---
+> >  Changes in v2:
+> >   - Add LRU based removed module information override.
+> 
+> I don't think we should bother supporting removal of modules yet.
+> 
+> It also makes this patch way too complex for what it should do.
+> 
+> >   - Fix to move module_delta initialization after tr->scratch check.
+> 
+> >   - Fix to make mod_delta on all loaded modules correctly.
+> 
+> Should be a separate patch.
+> 
+> >   - (Note, I don't add uname check yet)
+> >   - Fix mod_addr_comp() overflow issue.
+> >   - Add pr_info() when failed to allocate module_delta.
+> 
+> So basically this patch should just add the code to handle finding the
+> module for stack traces. Not to mention, I have code that depends on that,
+> but this patch currently does way to much.
+> 
+> Can you just send a patch that adds the trace_adjust_address() (although, I
+> would shorten it to "trace_addr_adjust()").
+> 
+> And add what is needed to update the trace_stack_print().
+> 
+> You can base it off of the ring-buffer/for-next branch.
+
+OK, BTW, if we always need tscratch, we can move module_delta in it.
+Let's reimplement it.
+
+Thanks,
+
+> 
+> Thanks,
+> 
+> -- Steve
+> 
+> 
+> > ---
+> >  kernel/trace/trace.c        |  173 ++++++++++++++++++++++++++++++++++++++++---
+> >  kernel/trace/trace.h        |    4 +
+> >  kernel/trace/trace_output.c |    3 -
+> >  3 files changed, 167 insertions(+), 13 deletions(-)
+> > 
+
 
 -- 
-With best wishes
-Wenbin
-
+Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
