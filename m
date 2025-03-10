@@ -1,141 +1,135 @@
-Return-Path: <linux-kernel+bounces-555148-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-555149-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 49D23A5A61C
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 22:21:37 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E3A80A5A620
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 22:25:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5315D1894415
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 21:21:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 944D53AEE6A
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 21:25:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DA921DD525;
-	Mon, 10 Mar 2025 21:21:30 +0000 (UTC)
-Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A2F81E0B86;
+	Mon, 10 Mar 2025 21:25:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hLFP3xl/"
+Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 479C71DE3BA;
-	Mon, 10 Mar 2025 21:21:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFB0D1DF72D
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 21:25:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741641689; cv=none; b=me+BG847rfpfBhbDV14bLBX9ZxnvGwNRXMIOPpaR8AR8BxkM7v33tVo6uEgIOWxCajoZXBHAJZ2pFkZvi2k4/MrXMAbsnhW/LTx4vU5Iin21dVYQuc/KECu2oQmmZVcrpqD3D9gtzv3N5/UdWtTKBZ/7dQR4AmDXj6p0EdbWjDM=
+	t=1741641930; cv=none; b=O9yWgn0l3APk6EpQGg1r5sJR8sEFChJCRhDMFiQXFiUqjQ0vbf8lVmGy7byGon2NYJJvtacF0yygegyJCVrIf4b6c40XvOTf6MPEpCN09pG35Af0UzTsVLIx/V9J+9YrFgMkMrm4UiN0bT9MZ5Nc1roaut//YD7zSvg4KDTh2bk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741641689; c=relaxed/simple;
-	bh=55gYSMCeb2lNFNYGnplbiMul5XobGAuSXz2YriBA5Co=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Lm4p6maahm36pvPruZlFSLVx54BbBoM2jW9MQQpDFwmMASVrsf/ujRwiZRFwMnw3v4vE3WELYN+1dNLOejGdG+raj/DlSYQiTOzXrNGxyj01fomdYsSYPxVJitGMM1iqD0QQI7sG9ZyRgo8bXW3vwwVn+jIOMM48MzqZMufDhYk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.214.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com
+	s=arc-20240116; t=1741641930; c=relaxed/simple;
+	bh=mbee9zDsL47q7YEX/GK5uiod8mXkmh+aOjFFXgwJhFU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=n6yOgGyd+m5UBRg3Zjf7oze367tBtuvI6oLpd+cXIq6sAzxakaRvSQL5OFlO6Ig6mUl1jW/GOejn9QLvMZwEvbYrgileqLiYzqxBXy6ASmwJLLL2CC7lnrT7IN8B+Ir43JZEpxOLEF+SKYk+5CzJuZyZzX9dpCPLzcJybSv6Nm0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hLFP3xl/; arc=none smtp.client-ip=209.85.208.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-2239c066347so82744765ad.2;
-        Mon, 10 Mar 2025 14:21:27 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741641687; x=1742246487;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-30bd21f887aso42924341fa.1
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 14:25:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741641927; x=1742246727; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=sMtQuAslL24bZk7YWf+WGgK/9+eBDYJFSWGMHnXsle0=;
-        b=TGy+E0WP/edFKpvLnYe+drcvoIZ4ewkgpMfHDhPaoARQijnI4G7gjfD5/cwCArzCNN
-         xeift7UkqaBs5Y79wqUvsFXKaxzyyLW5N4qMbmojV20RJr978+edN4l1dDbZCaWCvsSK
-         QRalE4HDniF+7QoSCL7JJG/2MP8ImgurNJ5UAQEJzxZ1EXZyTnmSY38+WxSS/6QNNl4h
-         l+VOB7MVotq/6ED6d9ZVmORbFAxQDDfxR4J2eYX7HlYHhL/NqVly+GoR8f2IcX10wkda
-         D+QB7LAKdxsHYHxBI+kTeNMi7JiPlTfZ0kIpwS5OcdR1caN8m/EDFFjq9Sou+2fazqB3
-         HCPg==
-X-Forwarded-Encrypted: i=1; AJvYcCUhjC1+GoAl4KjDj5+0ig3Fjt5KnaDgABeC1JnuvyuyBruoYXR1RFVpHlCHBKVimKOVvDvPQ22adIIb@vger.kernel.org, AJvYcCVINCTYNil+6wyRGUiBIDundke3BWHEwHoY272RefAmDS6xGseLZ2dNZD9TPwaFEGnt+EJHCrDIdSYMTX7+@vger.kernel.org, AJvYcCWdklPMMjwD0a+waKBfqhdWZGsQ92BguRUvh9TCHXXi9pgaceA++gmLwPPM4+BpH+UVjfvG9byhen+P@vger.kernel.org, AJvYcCXIB/y0t/Ru65X7QMbue1fPMz3Qe7jEyDyf/pNPh4D6JUuqMuOCCT13fwlOcTGOoaPPt+YBF7HDgNXNxg==@vger.kernel.org, AJvYcCXKagc49jved4a/1qciS8ALIDmanDE92VmkujYamYjnYs4mfdxXhEWjGmNRBp3h4Cs84qtEs3K8gDwv@vger.kernel.org
-X-Gm-Message-State: AOJu0YxsXJtpUDYVNqFZ5OBxt1pqXTSaOCoLuYzQHZcTXGaYk8U2FkdF
-	TqF/UY+qVF/g0Oo9yaqvWkmZ2emcBAX2GLX49CW2pw5KDpO03ZpRtZ+NeZcvz4Y=
-X-Gm-Gg: ASbGncvpncpq3LbJYqEsgM5xd59xxSf0luw8GKouPKbtEaqee8p9o0+j8hbrH4Io1+Q
-	vOPghoivtrkAj5go4/e4pjOxhxT/i2yvUVwjPrBRZ3wvOyvkoC4XwygSPeImBpHfhI0gNeDnE9+
-	t4KwiqBoN21xl4uDEb4oZdToqVPqGvBzbvGp5EqDfvd+LQBBn9YyaZ4UJb9GJoDdYdeMyOX/mtR
-	Z+q+arcMAFbjh1TwASjvggQAqQ2ozu3Hevj+L97rQMM2W9pBCvo/laqohKxrsVwhXSIRcBdKZrt
-	KLQVG5oj6IJuNh+mCEVhjNCVAIRBGcswm5naac65+P7Xlgt0+SNZ5AD/1xd30prip6iLnCd5n6C
-	i28o=
-X-Google-Smtp-Source: AGHT+IHnwh7FGubECk4Ug2ue3ZTg7THVvARHNItmJN6zeeu4Ty1YJPgJTQfB1QWA0ZY2KF85fbkAsA==
-X-Received: by 2002:a17:903:40cb:b0:224:c47:cb7 with SMTP id d9443c01a7336-22428505f24mr254867065ad.0.1741641687444;
-        Mon, 10 Mar 2025 14:21:27 -0700 (PDT)
-Received: from localhost (fpd11144dd.ap.nuro.jp. [209.17.68.221])
-        by smtp.gmail.com with UTF8SMTPSA id d9443c01a7336-224109df232sm83277565ad.41.2025.03.10.14.21.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 10 Mar 2025 14:21:27 -0700 (PDT)
-Date: Tue, 11 Mar 2025 06:21:25 +0900
-From: Krzysztof Wilczynski <kw@linux.com>
-To: Andrea della Porta <andrea.porta@suse.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>, Bartosz Golaszewski <brgl@bgdev.pl>,
-	Derek Kiernan <derek.kiernan@amd.com>,
-	Dragan Cvetic <dragan.cvetic@amd.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Saravana Kannan <saravanak@google.com>, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-pci@vger.kernel.org, linux-gpio@vger.kernel.org,
-	Masahiro Yamada <masahiroy@kernel.org>,
-	Stefan Wahren <wahrenst@gmx.net>,
-	Herve Codina <herve.codina@bootlin.com>,
-	Luca Ceresoli <luca.ceresoli@bootlin.com>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	Andrew Lunn <andrew@lunn.ch>
-Subject: Re: [PATCH v7 03/11] dt-bindings: pci: Add common schema for devices
- accessible through PCI BARs
-Message-ID: <20250310212125.GB2377483@rocinante>
-References: <cover.1738963156.git.andrea.porta@suse.com>
- <c0acc51a7210fb30cae7b26f4ad1f0449beed95e.1738963156.git.andrea.porta@suse.com>
+        bh=LO6QTemDMrMG2OjKYGqYGVR+F6C3d0fV5feJCy24eBA=;
+        b=hLFP3xl/uK6tzFjt+Xm1XpMN6dLod0tbeQA/EbPeOune2qSRdGZC3gGOiNjxiz9kEq
+         San+RO5fLbBrjnfC0zPPuYAlwAZheJAxrbDX1LJQbjj/EBDq6nQtIhQq1RiE42iEZ9np
+         tkjIh1W8kAKZGWNBAiiIfocHKPG3Z7FM8R7MSNC14kL7yREInbReuLAxv9sqq+qQ8WAh
+         Qli2udPjv9ISdGssRaooO+UnlxJm8M60GqA6WOwmZa4GMkAdzfh3jjqGdE8t2LxR4P2t
+         ieGi5oOukouxfGQLPYAclfXCpw03QcV2HtE0egemsOJajcdHIVlAZ67PuGw1iINJJKgk
+         ezrQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741641927; x=1742246727;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=LO6QTemDMrMG2OjKYGqYGVR+F6C3d0fV5feJCy24eBA=;
+        b=Q65FKjgeRdrQP+FMX6ID3ixtWN8yvh3BBBHurFNX7Vdu21tJxSIX4Sj7riqDDJevsn
+         sOm/12lvneENn8XuV/NXDf3hHp3C7S17Tip0g+X5ghGHuU6dIn3Pq8aKPlP9jceUv5hD
+         9L44SCnD+T9nDU3238YVVXKzEyUAAdg27xoMgIiJ+qc8GXNKcS1TCwMjqZAU5na+oxrC
+         7lb2ibwbSUW5OjtEQLc+/gotedKITawNY/9f52CYRcissHCG9SX1YpnNkSfsenaKQlB6
+         Lt9xDu0IQRzf0Jrsl76md8k+KavBpYEHV/1TljQNponmjx5U5cHRvizkwtV2lPypxDdS
+         2UGw==
+X-Forwarded-Encrypted: i=1; AJvYcCVwYftvsBTvxIcCKBhmXx7IC8TEOHkfyPJQd6Hdmq3KYDYpi4j8TYlCJq5NcSOufsrRItAQDrvSLCvsIgk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywm0PkZxWvBLjJ/X/8cQkaC8PIJGxB5NL8x5FG4x7C9b7xJTlab
+	CYsrdvNkl+sZgXy4h4aQb+kzqm0ad9AlIdZGaI11n46o3ZJ7leyUGRZ8LtuUGrv2oSwH+zWbDon
+	EygbBniDIEkKNKg4x70cvSsnQTSqV6vi20uc=
+X-Gm-Gg: ASbGnctzWKjKZvsn0cFw0Fs87JgvYeJDZFwrvymlVs8gsWfdBUEUw6zWYDx1GIPPDJJ
+	ovLl75kFRgCCmJNrU+vW0x9KXliqpw954dPpLg6frhOF0K+Gb4j4QvZ/7zm0uyywKrPTyTNLK+d
+	WDQmYOpV1DxTcF4mxPcSFWR/4utA==
+X-Google-Smtp-Source: AGHT+IH0yuBC0YetMAfQtKZSM9HyYE8/BiGs28wOM3Wr7WvUAqI1itQB0w8X1W80UVFrjmIpk3woHvi0NXG7xNoKLQ0=
+X-Received: by 2002:a2e:740a:0:b0:30b:efa5:69a8 with SMTP id
+ 38308e7fff4ca-30bf463abcbmr37818741fa.36.1741641926587; Mon, 10 Mar 2025
+ 14:25:26 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <c0acc51a7210fb30cae7b26f4ad1f0449beed95e.1738963156.git.andrea.porta@suse.com>
+References: <20250310200817.33581-1-ubizjak@gmail.com> <Z89ImJlHFLJUDhFM@gmail.com>
+In-Reply-To: <Z89ImJlHFLJUDhFM@gmail.com>
+From: Uros Bizjak <ubizjak@gmail.com>
+Date: Mon, 10 Mar 2025 22:25:15 +0100
+X-Gm-Features: AQ5f1JrteqIt7vuzO07tztTO06KvAIK08Yv5KPI98K9Dj7Ud_RRrf_E8Z8HXFNM
+Message-ID: <CAFULd4byd1v26FVJFEWedPCvpCSsSKUj0PKz8gOzdfMqdcOoAQ@mail.gmail.com>
+Subject: Re: [PATCH] x86/hweight: Fix and improve __arch_hweight{32,64}() assembly
+To: Ingo Molnar <mingo@kernel.org>
+Cc: x86@kernel.org, linux-kernel@vger.kernel.org, 
+	Thomas Gleixner <tglx@linutronix.de>, Borislav Petkov <bp@alien8.de>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, "H. Peter Anvin" <hpa@zytor.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello,
+On Mon, Mar 10, 2025 at 9:16=E2=80=AFPM Ingo Molnar <mingo@kernel.org> wrot=
+e:
+>
+>
+> * Uros Bizjak <ubizjak@gmail.com> wrote:
+>
+> > a) Use ASM_CALL_CONSTRAINT to prevent inline asm that includes call
+> > instruction from being scheduled before the frame pointer gets set
+> > up by the containing function, causing objtool to print a "call
+> > without frame pointer save/setup" warning.
+> >
+> > b) Use asm_inline to instruct the compiler that the size of asm()
+> > is the minimum size of one instruction, ignoring how many instructions
+> > the compiler thinks it is. ALTERNATIVE macro that expands to several
+> > pseudo directives causes instruction length estimate to count
+> > more than 20 instructions.
+> >
+> > c) Use named operands in inline asm.
+> >
+> > More inlining causes slight increase in the code size:
+> >
+> >    text    data     bss     dec     hex filename
+> > 27261832        4640296  814660 32716788        1f337f4 vmlinux-new.o
+> > 27261222        4640320  814660 32716202        1f335aa vmlinux-old.o
+>
+> What is the per call/inlining-instance change in code size, measured in
+> fast-path instruction bytes? Also, exception code or cold branches near
+> the epilogue of the function after the main RET don't fully count as a
+> size increase.
+>
+> This kind of normalization and filtering of changes to relevant
+> generated instructions is a better metric than some rather meaningless
+> '+610 bytes of code' figure.
+>
+> Also, please always specify the kind of config you used for building
+> the vmlinux.
 
-[...]
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index d45c88955072..af2e4652bf3b 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -19752,6 +19752,7 @@ RASPBERRY PI RP1 PCI DRIVER
->  M:	Andrea della Porta <andrea.porta@suse.com>
->  S:	Maintained
->  F:	Documentation/devicetree/bindings/clock/raspberrypi,rp1-clocks.yaml
-> +F:	Documentation/devicetree/bindings/pci/pci-ep-bus.yaml
->  F:	Documentation/devicetree/bindings/pinctrl/raspberrypi,rp1-gpio.yaml
->  F:	include/dt-bindings/clock/rp1.h
->  F:	include/dt-bindings/misc/rp1.h
+Sorry, this just slipped my mind. x86_64 defconfig - I'll note this in
+the revised commit entry.
 
-I would be happy to pick this via the PCI tree as per the standard
-operating procedure.  However, the MAINTAINERS changes do not exist
-for us yet, and are added in the first patch of the series, which is
-not ideal.
+BTW: The difference between old and new number of inlined __sw_hweight
+calls is: 367 -> 396. I'll try to analyze this some more.
 
-I can add the missing dependency manually, but that would cause issues
-for linux-next tree, which is also not ideal.
-
-I saw some review feedback, as such, when you are going to be sending
-another version, can you make MAINTAINERS changes to be the last patch,
-perhaps.  Basically, something standalone that perhaps whoever will pick
-the misc patch could also pick and apply at the same time.
-
-Alternatively, someone else picking up the PCI dt-bindings would work, too.
-
-Your thoughts?
-
-Thank you!
-
-	Krzysztof
+Thanks,
+Uros.
 
