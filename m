@@ -1,69 +1,450 @@
-Return-Path: <linux-kernel+bounces-554334-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-554337-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8DA23A5964D
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 14:29:47 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 86F42A59662
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 14:32:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8CB70164861
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 13:29:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3FE123A4E72
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 13:31:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB1C8227EA0;
-	Mon, 10 Mar 2025 13:29:37 +0000 (UTC)
-Received: from verein.lst.de (verein.lst.de [213.95.11.211])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10EC02222B5;
+	Mon, 10 Mar 2025 13:31:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=ashley.smith@collabora.com header.b="g6JAj/Cs"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42576846D
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 13:29:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741613377; cv=none; b=bteCnGfX/Y0dKSycYM+FaIQMbzSGoEhXPEeqNAQZpqu2svtmeMh2ZmfqP7QwSJsFZEdkmZjLKzgJtbsLFASbnsANxCv7wzbvltdBBH5DL7SULLCmZQlB+qTgg2/6zYbYXYo6R8vy0BlP/Icla+j5W5w1LXR8Y30FGjK4sFaX8ow=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741613377; c=relaxed/simple;
-	bh=nu6mXMhR4+TWShaYO112XXeIDNz9PClLxgCUD4clIVE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=X0cSKD+dd3V8bnMMKybQ8QptCQ/ffBJ1z0+PofnC6CPvD/DJbjZSMTCwTS0/1K6dgVecg6Ip1TA/JdxZFZs70VTUG025jtBPp9t+VB0Z7st7GecYUbsS10/pVLECewcWOdEoK7owec/mxjplnSTUSOhvEqIaWC09jIzZeIvUIx4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
-Received: by verein.lst.de (Postfix, from userid 2407)
-	id 088C167373; Mon, 10 Mar 2025 14:29:32 +0100 (CET)
-Date: Mon, 10 Mar 2025 14:29:31 +0100
-From: Christoph Hellwig <hch@lst.de>
-To: Nilay Shroff <nilay@linux.ibm.com>
-Cc: Keith Busch <kbusch@kernel.org>, Christoph Hellwig <hch@lst.de>,
-	Hannes Reinecke <hare@suse.de>, Sagi Grimberg <sagi@grimberg.me>,
-	John Meneghini <jmeneghi@redhat.com>, bmarzins@redhat.com,
-	Bryan Gurney <bgurney@redhat.com>, linux-nvme@lists.infradead.org,
-	linux-kernel@vger.kernel.org, Marco Patalano <mpatalan@redhat.com>,
-	axboe@kernel.dk
-Subject: Re: [PATCH] nvme: remove multipath module parameter
-Message-ID: <20250310132931.GB8956@lst.de>
-References: <Z8jk-D3EjEdyBIU5@kbusch-mbp> <20250306000348.GA1233@lst.de> <1ffebf60-5672-4cd0-bb5a-934376c16694@suse.de> <20250306141837.GA21353@lst.de> <Z8m4vzE36UHWjwep@kbusch-mbp> <20250306151654.GA22810@lst.de> <Z8pB9jQALxMN6WaA@kbusch-mbp> <b2c9df64-0afc-46cd-9e8d-6a3f41a4f1c7@linux.ibm.com> <Z8sUB2bbbMsurZmu@kbusch-mbp> <69cdaf9d-2fb4-4ee0-9c32-cc946405a23a@linux.ibm.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 273BC79C0
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 13:31:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741613514; cv=pass; b=Bi3mrhHxaXJSKIE4x0IGk0MfmagPqo1MGOEWgDXqjwK9m4SS+pKjCbg2e9hdFssrN+Jxoa4IQ05Ge9opfRLkvYIHh5GSChDF73U9WYynmh0gt9B8aH0ZiRS507tOzKnlF5DONMRWdabaA1OTkvIn4211mnE/SLU6pklCAQwubJE=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741613514; c=relaxed/simple;
+	bh=FMU6I/tO3LmWNK7ZIbrIdNR6j/Z6m8fLpqi2TtzMVxk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=J9upOGn7JrZyLS8mUDg/piuij7FT4ZEynp8xIOs8wZJRU1v/O2ur8JeUJPyGnJxhrvya+GMoc5biTY/FHrqgu4aNm9Hy6OEXXs0Y213XKC0MWG7DnpHpQqdAlkFxsW09IZ6JDVwElqYLDOvVyNCmoZwVwHnRJFwmzHBq1yWjR+Q=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=ashley.smith@collabora.com header.b=g6JAj/Cs; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1741613485; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=MFaD2OrSyuWsCEX5aPSlo8Y8ylCMaBEdaOP1Oo6HOuNfsFqnEIWOBAxBoUWd7nPGaeOkgvxdCcRbL3xIy/3Wto8DLoxE/ezVGGuwkmkrkaewK1wP/dI7YXg0dJCUTJWwW8jscBtG4EZFMsDEel4vwf80YzdJ7oflSBtickaJf+g=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1741613485; h=Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=hAGNFKs8bMDJwHMCEhNn1+Z5G6tbqj4exrl0Q3vZrb0=; 
+	b=RFe0EhK6nDt0cs8UkevnJJkLk7q2sifaIXhGrq+i23a5rKQEfT34g1Wmt6tP+EZdLUQrHrwcbsdOJgEWVTJIMdDUXuB9Ne0QBsOWc1vejRVfdfdQUgWR2B/+L3kc77ds6wvSZYxOeo6NKbEDE5d4nDfeQmRvipElTQGSYgfaFLU=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=ashley.smith@collabora.com;
+	dmarc=pass header.from=<ashley.smith@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1741613485;
+	s=zohomail; d=collabora.com; i=ashley.smith@collabora.com;
+	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-ID:MIME-Version:Content-Transfer-Encoding:Message-Id:Reply-To;
+	bh=hAGNFKs8bMDJwHMCEhNn1+Z5G6tbqj4exrl0Q3vZrb0=;
+	b=g6JAj/CsjTB+IjIL2OzoHNCp23D60KHTfrSi1npgGBiJ5EJU7jBiPW9jQ3VBJ1Jp
+	VNH2aVjFuiunBeXR8t7ou19RyoBA7K/JU+hhF0MQuQpI0pmAUS2/wcWOZtoLkpAmobG
+	Kcf3ohwixHP/4fuO8in6w0QjTg3sqihCAC3JY7AQ=
+Received: by mx.zohomail.com with SMTPS id 17416134824891012.3118705215352;
+	Mon, 10 Mar 2025 06:31:22 -0700 (PDT)
+From: Ashley Smith <ashley.smith@collabora.com>
+To: Boris Brezillon <boris.brezillon@collabora.com>,
+	Steven Price <steven.price@arm.com>,
+	Liviu Dudau <liviu.dudau@arm.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	Heiko Stuebner <heiko@sntech.de>
+Cc: kernel@collabora.com,
+	Ashley Smith <ashley.smith@collabora.com>,
+	Daniel Stone <daniels@collabora.com>,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2] drm/panthor: Make the timeout per-queue instead of per-job
+Date: Mon, 10 Mar 2025 13:30:09 +0000
+Message-ID: <20250310133050.280614-1-ashley.smith@collabora.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <69cdaf9d-2fb4-4ee0-9c32-cc946405a23a@linux.ibm.com>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+Content-Transfer-Encoding: 8bit
+X-ZohoMailClient: External
 
-On Sun, Mar 09, 2025 at 10:53:19PM +0530, Nilay Shroff wrote:
-> Yes agreed however it seems advantages of using an indirect call outweighs 
-> using the short cut to blk_mq_submit_bio. Moreover it seems the cost of 
-> indirect call is trivial because we already cache the nexthop. 
+The timeout logic provided by drm_sched leads to races when we try
+to suspend it while the drm_sched workqueue queues more jobs. Let's
+overhaul the timeout handling in panthor to have our own delayed work
+that's resumed/suspended when a group is resumed/suspended. When an
+actual timeout occurs, we call drm_sched_fault() to report it
+through drm_sched, still. But otherwise, the drm_sched timeout is
+disabled (set to MAX_SCHEDULE_TIMEOUT), which leaves us in control of
+how we protect modifications on the timer.
 
-Indirect calls are never cheap unfortunately.
+One issue seems to be when we call drm_sched_suspend_timeout() from
+both queue_run_job() and tick_work() which could lead to races due to
+drm_sched_suspend_timeout() not having a lock. Another issue seems to
+be in queue_run_job() if the group is not scheduled, we suspend the
+timeout again which undoes what drm_sched_job_begin() did when calling
+drm_sched_start_timeout(). So the timeout does not reset when a job
+is finished.
 
-> If you and Christoph are busy with other work then in that case I'll be 
-> glad to pursue this further if you agree.
+Co-developed-by: Boris Brezillon <boris.brezillon@collabora.com>
+Signed-off-by: Boris Brezillon <boris.brezillon@collabora.com>
+Tested-by: Daniel Stone <daniels@collabora.com>
+Fixes: de8548813824 ("drm/panthor: Add the scheduler logical block")
+Signed-off-by: Ashley Smith <ashley.smith@collabora.com>
+---
+ drivers/gpu/drm/panthor/panthor_sched.c | 233 +++++++++++++++++-------
+ 1 file changed, 167 insertions(+), 66 deletions(-)
 
-I'm not working in this area at the moment, so from my POV feel free
-to go ahead.
+diff --git a/drivers/gpu/drm/panthor/panthor_sched.c b/drivers/gpu/drm/panthor/panthor_sched.c
+index 4d31d1967716..5f02d2ec28f9 100644
+--- a/drivers/gpu/drm/panthor/panthor_sched.c
++++ b/drivers/gpu/drm/panthor/panthor_sched.c
+@@ -360,17 +360,20 @@ struct panthor_queue {
+ 	/** @entity: DRM scheduling entity used for this queue. */
+ 	struct drm_sched_entity entity;
+ 
+-	/**
+-	 * @remaining_time: Time remaining before the job timeout expires.
+-	 *
+-	 * The job timeout is suspended when the queue is not scheduled by the
+-	 * FW. Every time we suspend the timer, we need to save the remaining
+-	 * time so we can restore it later on.
+-	 */
+-	unsigned long remaining_time;
++	/** @timeout: Queue timeout related fields. */
++	struct {
++		/** @timeout.work: Work executed when a queue timeout occurs. */
++		struct delayed_work work;
+ 
+-	/** @timeout_suspended: True if the job timeout was suspended. */
+-	bool timeout_suspended;
++		/**
++		 * @timeout.remaining: Time remaining before a queue timeout.
++		 *
++		 * When the timer is running, this value is set to MAX_SCHEDULE_TIMEOUT.
++		 * When the timer is suspended, it's set to the time remaining when the
++		 * timer was suspended.
++		 */
++		unsigned long remaining;
++	} timeout;
+ 
+ 	/**
+ 	 * @doorbell_id: Doorbell assigned to this queue.
+@@ -1031,6 +1034,82 @@ group_unbind_locked(struct panthor_group *group)
+ 	return 0;
+ }
+ 
++static bool
++group_is_idle(struct panthor_group *group)
++{
++	struct panthor_device *ptdev = group->ptdev;
++	u32 inactive_queues;
++
++	if (group->csg_id >= 0)
++		return ptdev->scheduler->csg_slots[group->csg_id].idle;
++
++	inactive_queues = group->idle_queues | group->blocked_queues;
++	return hweight32(inactive_queues) == group->queue_count;
++}
++
++static void
++queue_suspend_timeout(struct panthor_queue *queue)
++{
++	unsigned long qtimeout, now;
++	struct panthor_group *group;
++	struct panthor_job *job;
++	bool timer_was_active;
++
++	spin_lock(&queue->fence_ctx.lock);
++
++	/* Already suspended, nothing to do. */
++	if (queue->timeout.remaining != MAX_SCHEDULE_TIMEOUT)
++		goto out_unlock;
++
++	job = list_first_entry_or_null(&queue->fence_ctx.in_flight_jobs,
++				       struct panthor_job, node);
++	group = job ? job->group : NULL;
++
++	/* If the queue is blocked and the group is idle, we want the timer to
++	 * keep running because the group can't be unblocked by other queues,
++	 * so it has to come from an external source, and we want to timebox
++	 * this external signalling.
++	 */
++	if (group && (group->blocked_queues & BIT(job->queue_idx)) &&
++	    group_is_idle(group))
++		goto out_unlock;
++
++	now = jiffies;
++	qtimeout = queue->timeout.work.timer.expires;
++
++	/* Cancel the timer. */
++	timer_was_active = cancel_delayed_work(&queue->timeout.work);
++	if (!timer_was_active || !job)
++		queue->timeout.remaining = msecs_to_jiffies(JOB_TIMEOUT_MS);
++	else if (time_after(qtimeout, now))
++		queue->timeout.remaining = qtimeout - now;
++	else
++		queue->timeout.remaining = 0;
++
++	if (WARN_ON_ONCE(queue->timeout.remaining > msecs_to_jiffies(JOB_TIMEOUT_MS)))
++		queue->timeout.remaining = msecs_to_jiffies(JOB_TIMEOUT_MS);
++
++out_unlock:
++	spin_unlock(&queue->fence_ctx.lock);
++}
++
++static void
++queue_resume_timeout(struct panthor_queue *queue)
++{
++	spin_lock(&queue->fence_ctx.lock);
++
++	/* When running, the remaining time is set to MAX_SCHEDULE_TIMEOUT. */
++	if (queue->timeout.remaining != MAX_SCHEDULE_TIMEOUT) {
++		mod_delayed_work(queue->scheduler.timeout_wq,
++				 &queue->timeout.work,
++				 queue->timeout.remaining);
++
++		queue->timeout.remaining = MAX_SCHEDULE_TIMEOUT;
++	}
++
++	spin_unlock(&queue->fence_ctx.lock);
++}
++
+ /**
+  * cs_slot_prog_locked() - Program a queue slot
+  * @ptdev: Device.
+@@ -1069,10 +1148,8 @@ cs_slot_prog_locked(struct panthor_device *ptdev, u32 csg_id, u32 cs_id)
+ 			       CS_IDLE_EMPTY |
+ 			       CS_STATE_MASK |
+ 			       CS_EXTRACT_EVENT);
+-	if (queue->iface.input->insert != queue->iface.input->extract && queue->timeout_suspended) {
+-		drm_sched_resume_timeout(&queue->scheduler, queue->remaining_time);
+-		queue->timeout_suspended = false;
+-	}
++	if (queue->iface.input->insert != queue->iface.input->extract)
++		queue_resume_timeout(queue);
+ }
+ 
+ /**
+@@ -1099,14 +1176,7 @@ cs_slot_reset_locked(struct panthor_device *ptdev, u32 csg_id, u32 cs_id)
+ 			       CS_STATE_STOP,
+ 			       CS_STATE_MASK);
+ 
+-	/* If the queue is blocked, we want to keep the timeout running, so
+-	 * we can detect unbounded waits and kill the group when that happens.
+-	 */
+-	if (!(group->blocked_queues & BIT(cs_id)) && !queue->timeout_suspended) {
+-		queue->remaining_time = drm_sched_suspend_timeout(&queue->scheduler);
+-		queue->timeout_suspended = true;
+-		WARN_ON(queue->remaining_time > msecs_to_jiffies(JOB_TIMEOUT_MS));
+-	}
++	queue_suspend_timeout(queue);
+ 
+ 	return 0;
+ }
+@@ -1888,19 +1958,6 @@ tick_ctx_is_full(const struct panthor_scheduler *sched,
+ 	return ctx->group_count == sched->csg_slot_count;
+ }
+ 
+-static bool
+-group_is_idle(struct panthor_group *group)
+-{
+-	struct panthor_device *ptdev = group->ptdev;
+-	u32 inactive_queues;
+-
+-	if (group->csg_id >= 0)
+-		return ptdev->scheduler->csg_slots[group->csg_id].idle;
+-
+-	inactive_queues = group->idle_queues | group->blocked_queues;
+-	return hweight32(inactive_queues) == group->queue_count;
+-}
+-
+ static bool
+ group_can_run(struct panthor_group *group)
+ {
+@@ -2888,35 +2945,50 @@ void panthor_fdinfo_gather_group_samples(struct panthor_file *pfile)
+ 	xa_unlock(&gpool->xa);
+ }
+ 
+-static void group_sync_upd_work(struct work_struct *work)
++static bool queue_check_job_completion(struct panthor_queue *queue)
+ {
+-	struct panthor_group *group =
+-		container_of(work, struct panthor_group, sync_upd_work);
++	struct panthor_syncobj_64b *syncobj = NULL;
+ 	struct panthor_job *job, *job_tmp;
++	bool cookie, progress = false;
+ 	LIST_HEAD(done_jobs);
+-	u32 queue_idx;
+-	bool cookie;
+ 
+ 	cookie = dma_fence_begin_signalling();
+-	for (queue_idx = 0; queue_idx < group->queue_count; queue_idx++) {
+-		struct panthor_queue *queue = group->queues[queue_idx];
+-		struct panthor_syncobj_64b *syncobj;
++	spin_lock(&queue->fence_ctx.lock);
++	list_for_each_entry_safe(job, job_tmp, &queue->fence_ctx.in_flight_jobs, node) {
++		if (!syncobj) {
++			struct panthor_group *group = job->group;
+ 
+-		if (!queue)
+-			continue;
++			syncobj = group->syncobjs->kmap +
++				  (job->queue_idx * sizeof(*syncobj));
++		}
+ 
+-		syncobj = group->syncobjs->kmap + (queue_idx * sizeof(*syncobj));
++		if (syncobj->seqno < job->done_fence->seqno)
++			break;
+ 
+-		spin_lock(&queue->fence_ctx.lock);
+-		list_for_each_entry_safe(job, job_tmp, &queue->fence_ctx.in_flight_jobs, node) {
+-			if (syncobj->seqno < job->done_fence->seqno)
+-				break;
++		list_move_tail(&job->node, &done_jobs);
++		dma_fence_signal_locked(job->done_fence);
++	}
+ 
+-			list_move_tail(&job->node, &done_jobs);
+-			dma_fence_signal_locked(job->done_fence);
+-		}
+-		spin_unlock(&queue->fence_ctx.lock);
++	if (list_empty(&queue->fence_ctx.in_flight_jobs)) {
++		/* If we have no job left, we cancel the timer, and reset remaining
++		 * time to its default so it can be restarted next time
++		 * queue_resume_timeout() is called.
++		 */
++		cancel_delayed_work(&queue->timeout.work);
++		queue->timeout.remaining = msecs_to_jiffies(JOB_TIMEOUT_MS);
++
++		/* If there's no job pending, we consider it progress to avoid a
++		 * spurious timeout if the timeout handler and the sync update
++		 * handler raced.
++		 */
++		progress = true;
++	} else if (!list_empty(&done_jobs)) {
++		mod_delayed_work(queue->scheduler.timeout_wq,
++				 &queue->timeout.work,
++				 msecs_to_jiffies(JOB_TIMEOUT_MS));
++		progress = true;
+ 	}
++	spin_unlock(&queue->fence_ctx.lock);
+ 	dma_fence_end_signalling(cookie);
+ 
+ 	list_for_each_entry_safe(job, job_tmp, &done_jobs, node) {
+@@ -2926,6 +2998,27 @@ static void group_sync_upd_work(struct work_struct *work)
+ 		panthor_job_put(&job->base);
+ 	}
+ 
++	return progress;
++}
++
++static void group_sync_upd_work(struct work_struct *work)
++{
++	struct panthor_group *group =
++		container_of(work, struct panthor_group, sync_upd_work);
++	u32 queue_idx;
++	bool cookie;
++
++	cookie = dma_fence_begin_signalling();
++	for (queue_idx = 0; queue_idx < group->queue_count; queue_idx++) {
++		struct panthor_queue *queue = group->queues[queue_idx];
++
++		if (!queue)
++			continue;
++
++		queue_check_job_completion(queue);
++	}
++	dma_fence_end_signalling(cookie);
++
+ 	group_put(group);
+ }
+ 
+@@ -3173,17 +3266,6 @@ queue_run_job(struct drm_sched_job *sched_job)
+ 	queue->iface.input->insert = job->ringbuf.end;
+ 
+ 	if (group->csg_id < 0) {
+-		/* If the queue is blocked, we want to keep the timeout running, so we
+-		 * can detect unbounded waits and kill the group when that happens.
+-		 * Otherwise, we suspend the timeout so the time we spend waiting for
+-		 * a CSG slot is not counted.
+-		 */
+-		if (!(group->blocked_queues & BIT(job->queue_idx)) &&
+-		    !queue->timeout_suspended) {
+-			queue->remaining_time = drm_sched_suspend_timeout(&queue->scheduler);
+-			queue->timeout_suspended = true;
+-		}
+-
+ 		group_schedule_locked(group, BIT(job->queue_idx));
+ 	} else {
+ 		gpu_write(ptdev, CSF_DOORBELL(queue->doorbell_id), 1);
+@@ -3192,6 +3274,7 @@ queue_run_job(struct drm_sched_job *sched_job)
+ 			pm_runtime_get(ptdev->base.dev);
+ 			sched->pm.has_ref = true;
+ 		}
++		queue_resume_timeout(queue);
+ 		panthor_devfreq_record_busy(sched->ptdev);
+ 	}
+ 
+@@ -3241,6 +3324,11 @@ queue_timedout_job(struct drm_sched_job *sched_job)
+ 
+ 	queue_start(queue);
+ 
++	/* We already flagged the queue as faulty, make sure we don't get
++	 * called again.
++	 */
++	queue->scheduler.timeout = MAX_SCHEDULE_TIMEOUT;
++
+ 	return DRM_GPU_SCHED_STAT_NOMINAL;
+ }
+ 
+@@ -3283,6 +3371,17 @@ static u32 calc_profiling_ringbuf_num_slots(struct panthor_device *ptdev,
+ 	return DIV_ROUND_UP(cs_ringbuf_size, min_profiled_job_instrs * sizeof(u64));
+ }
+ 
++static void queue_timeout_work(struct work_struct *work)
++{
++	struct panthor_queue *queue = container_of(work, struct panthor_queue,
++						   timeout.work.work);
++	bool progress;
++
++	progress = queue_check_job_completion(queue);
++	if (!progress)
++		drm_sched_fault(&queue->scheduler);
++}
++
+ static struct panthor_queue *
+ group_create_queue(struct panthor_group *group,
+ 		   const struct drm_panthor_queue_create *args)
+@@ -3298,7 +3397,7 @@ group_create_queue(struct panthor_group *group,
+ 		 * their profiling status.
+ 		 */
+ 		.credit_limit = args->ringbuf_size / sizeof(u64),
+-		.timeout = msecs_to_jiffies(JOB_TIMEOUT_MS),
++		.timeout = MAX_SCHEDULE_TIMEOUT,
+ 		.timeout_wq = group->ptdev->reset.wq,
+ 		.name = "panthor-queue",
+ 		.dev = group->ptdev->base.dev,
+@@ -3321,6 +3420,8 @@ group_create_queue(struct panthor_group *group,
+ 	if (!queue)
+ 		return ERR_PTR(-ENOMEM);
+ 
++	queue->timeout.remaining = msecs_to_jiffies(JOB_TIMEOUT_MS);
++	INIT_DELAYED_WORK(&queue->timeout.work, queue_timeout_work);
+ 	queue->fence_ctx.id = dma_fence_context_alloc(1);
+ 	spin_lock_init(&queue->fence_ctx.lock);
+ 	INIT_LIST_HEAD(&queue->fence_ctx.in_flight_jobs);
+
+base-commit: b72f66f22c0e39ae6684c43fead774c13db24e73
+-- 
+2.43.0
 
 
