@@ -1,201 +1,196 @@
-Return-Path: <linux-kernel+bounces-554617-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-554618-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 15778A59A87
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 16:58:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B715A59A88
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 16:58:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CAC881662EF
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 15:58:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B7196161FA6
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 15:58:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7015022FAC3;
-	Mon, 10 Mar 2025 15:57:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B8C322F392;
+	Mon, 10 Mar 2025 15:57:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="jxNLpEhn"
-Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2045.outbound.protection.outlook.com [40.107.237.45])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Ph2ws8m+"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEA0E22DF8E;
-	Mon, 10 Mar 2025 15:57:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.237.45
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741622259; cv=fail; b=e1sbUN5+cZKe7I4gcN5T5jBJ4dBOBmoanq/nyK7eGxRiK+uEwQs2CO6S/urfFWV6CLk253w7wKbnLVZWYg5SrhJaeaWy309nOB1z2yMG5R+gUO5gW25rR6bFL9YYLB3Jp6Nvpj0Cnwe+fOTUJkB0Kb+ewYcIV5rUPm/4VOoVYvc=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741622259; c=relaxed/simple;
-	bh=nn+2oLoCNngrGEYfdAa3Sh4AxAok8z77W8bp9rNUU2g=;
-	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=a6zIzI10vHCdxGM+bd01nT1HtZn3TJQ8Q6rSn2YCsxah2z36fvs+p66sII0ZUj9L8cF/kJf7lSUqDZ9uFDMv48PYbuzkisnIiKQLNAql0Ion2NWbRmVXBp/1hEaUOoioiJm0/lQ1NQpNJm2ixJLugFoSlw2pbhcR2HDC9ngO3cg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=jxNLpEhn; arc=fail smtp.client-ip=40.107.237.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=BHIZBEnuUdGWmHyTGCzFL6Z424RjjWia7MkJ6qA2ZpeSYxdQ2GyOmF6gaYDwef9edWNC54frWSHz3p9ynn0iwdqWxBuLvSEOpGblyCjLCOmfGFcDMwAcQfUCDHjvBBoLzPpPnuO7r0rqlDY/eZz7i2jV4B/syvxkWbTgPzEXsgzyDVSxrkL3Y9ZmJ+c8BOI1V6jumMg73JsOaqXYksxYv8miguPvevM+gfEq7cJJk9Q0BIz0ktQuJRTZnAOVVTPaunjsuOWEodJD9H3tl3JJ7Rwy5R1J67dqCBdzZpPI9rTa8qRshBBK8VU+VkFpR0zP4Ve6cp1YQ0AzFNgayo+nYA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=ccYvPW6dm8ctnBwDkHi2b+M5i+J3C6lOo76iC+lf4R4=;
- b=hsYmwrNSFiJ9nIyoEeidkPSIPeKDUdLRBlVkiPH7aQh9udiM9HJc+Dvpt7hN2QEzJ5PgM4XOYcfTVXnbtf8jgGf+GbNmaUge5WsbCM+UoijgS/wN/CLHurrQ/NN2vS5SDgbzIapiZgIKrzvGJqM6NLL2Ifs7vU62gkByc+VPU3Ian8XD9TGODVZCnaEtYVbB9zzXoB/r/7PBpIYhWGc9swrd2g/3eHpOr2Z6Yu3lIqiPd2qE7ROvYQZJ0wYgFaklKZyb9jlHFXJ2lc0CO56Gu2RPNt0tH7HrGK1dE1FwVRFSJsMNHBoMr75UHHtcZHwE/j7x87gqORji5URT0+u8WQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ccYvPW6dm8ctnBwDkHi2b+M5i+J3C6lOo76iC+lf4R4=;
- b=jxNLpEhnKoG/dIJ37P0Mt14KDL8ClNbs01kUd1AbTjSnE9Ulpoms3VisN5PZEwQ0SFUNKLFVt3DXyPE9eOaW0BZJGpFfsdNHufLjo51fTnBTQdywdKaZaGvF40/OLvUK4m3edAt0M0mZO0T/Ch1+esivs9/RD7ax+na1t2c9iUk4ul92onH8YyNmNhHKExzF/E5JcSyfRt6V2IzlT8aWMvchMkoR3Ob1ZUEZ2UcUVxrvQJOkYYRrOXrmVh1glxwJEp0sJ9W5+54Pq0+Mv/NSd9zDd4mcx7rrOlu0Yk3PLxWzre6lNqAEJkpxsD8N1IaoT58C1UueS4o+NXkU4FwdFA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from DS7PR12MB9473.namprd12.prod.outlook.com (2603:10b6:8:252::5) by
- SN7PR12MB6691.namprd12.prod.outlook.com (2603:10b6:806:271::9) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8511.27; Mon, 10 Mar 2025 15:57:34 +0000
-Received: from DS7PR12MB9473.namprd12.prod.outlook.com
- ([fe80::5189:ecec:d84a:133a]) by DS7PR12MB9473.namprd12.prod.outlook.com
- ([fe80::5189:ecec:d84a:133a%5]) with mapi id 15.20.8511.026; Mon, 10 Mar 2025
- 15:57:34 +0000
-From: Zi Yan <ziy@nvidia.com>
-To: linux-mm@kvack.org,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Hugh Dickins <hughd@google.com>,
-	"Matthew Wilcox (Oracle)" <willy@infradead.org>,
-	Luis Chamberlain <mcgrof@kernel.org>,
-	Pankaj Raghav <p.raghav@samsung.com>
-Cc: Ryan Roberts <ryan.roberts@arm.com>,
-	"Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
-	David Hildenbrand <david@redhat.com>,
-	Yang Shi <yang@os.amperecomputing.com>,
-	Miaohe Lin <linmiaohe@huawei.com>,
-	Kefeng Wang <wangkefeng.wang@huawei.com>,
-	Yu Zhao <yuzhao@google.com>,
-	John Hubbard <jhubbard@nvidia.com>,
-	Baolin Wang <baolin.wang@linux.alibaba.com>,
-	linux-kselftest@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	Zi Yan <ziy@nvidia.com>,
-	stable@vger.kernel.org
-Subject: [PATCH] mm/huge_memory: drop beyond-EOF folios with the right number of refs.
-Date: Mon, 10 Mar 2025 11:57:27 -0400
-Message-ID: <20250310155727.472846-1-ziy@nvidia.com>
-X-Mailer: git-send-email 2.47.2
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: MN2PR14CA0026.namprd14.prod.outlook.com
- (2603:10b6:208:23e::31) To DS7PR12MB9473.namprd12.prod.outlook.com
- (2603:10b6:8:252::5)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 043C322FDFF
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 15:57:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741622270; cv=none; b=YWy6PHyZoHFA/kE8GyUMgeX5IAV2Uw0DVuaCdVUfpisnYYOXZU1Q5bDwzilbrkUltXe+OBznosIBf6YjXA4+RFpX4c31I13eB+DxL4/CjcNmkBOsfYGGm4qxYwmm88MaROyzhXxUrSxHyJdc3UvPypqFfz2qxm6E5KeavEHhQZQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741622270; c=relaxed/simple;
+	bh=Hk7v68TTqyirNYChluVcrz+uWtVpA4knyrH4vJdLGl0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cQduB9+ekgBzg4kNUL3qFxMqxy6gA6GNg4DEkuOUGHYdnwgMxPrnMgwMZKhK32+EFqWOERiY0dPrndngLXqg48NlEzdjkx6piZeuVGPXVDglSC5cKAJ0xi1eePvFCzGoOHdPG5d8gVeR4NFZC+Tt+lri+Np9qfz3cJY2BmZaDtE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=Ph2ws8m+; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Transfer-Encoding:
+	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
+	Sender:Reply-To:Content-ID:Content-Description;
+	bh=SqHo59XzDIpVuxGbXgfioutIlx7pzM5Dqoc/EIKtcAo=; b=Ph2ws8m+fPmsAbZx2b4TTMyfMo
+	QYisSQ/gjqYi/Dy2lgoJI/n6/hvNm0cizy1No/4r6TR2XLSawyJFc/5uRO4Y4zQVU0OA1Pa1NloT0
+	S3t+C3oYPnrHC6/QxkGW9TYWsgx8gBHHE0WcDdhdXI2yIH3yYgMBDwJzbBbXtTejU8QJSwa2T1pHr
+	uWCcIJvCCDE/g/e3jg9KkFVxmsa36tsYaU5Tjg47xvMwSC6uMumNFV2xNHJ6SkM8H2rQ7DR1Hc1O/
+	WniNJtMovtgeld/UZlTkMJOGeOgTVmSgW/EIWVTP/xUIs+aWG5cjXNjKrI0bQ2kHZ9XghiGyV5bzI
+	rKTmIKYQ==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1trfVe-00000001uDL-2w8T;
+	Mon, 10 Mar 2025 15:57:42 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 069BB300599; Mon, 10 Mar 2025 16:57:42 +0100 (CET)
+Date: Mon, 10 Mar 2025 16:57:41 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc: linux-kernel@vger.kernel.org,
+	=?iso-8859-1?Q?Andr=E9?= Almeida <andrealmeid@igalia.com>,
+	Darren Hart <dvhart@infradead.org>,
+	Davidlohr Bueso <dave@stgolabs.net>, Ingo Molnar <mingo@redhat.com>,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Valentin Schneider <vschneid@redhat.com>,
+	Waiman Long <longman@redhat.com>
+Subject: Re: [PATCH v9 00/11] futex: Add support task local hash maps.
+Message-ID: <20250310155741.GF19344@noisy.programming.kicks-ass.net>
+References: <20250225170914.289358-1-bigeasy@linutronix.de>
+ <20250303105416.GY11590@noisy.programming.kicks-ass.net>
+ <20250303141753.tF-FoCm1@linutronix.de>
+ <20250303164015.HHfy1Ibj@linutronix.de>
+ <20250304145837.a8g07J-k@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS7PR12MB9473:EE_|SN7PR12MB6691:EE_
-X-MS-Office365-Filtering-Correlation-Id: 91c82ef4-1e5a-499f-bff3-08dd5fec45b4
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|376014|1800799024|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?kT8chveS/eMHSzu8CXbHzXJrfnrhjqaalSj1lAoOyZhTjUgzPDSnt3vF6Bcb?=
- =?us-ascii?Q?u9pYZx0NMlAiUJFZscuts+blyE20Ph6ZLKOETz/FcNYSyM7XB93O7tYcRA5P?=
- =?us-ascii?Q?AOF1zw0byJ/gasggKB17DTqKiyMG1QqiquepE2xmzwLHYslZxwsoDvI70zf7?=
- =?us-ascii?Q?CDba6nm5Dbi9Vz0pgutnJZl1xCQ+JNBUTAnwQy7rI1X6De6ghWR9hKQ/wiSV?=
- =?us-ascii?Q?pyGI/AW/sPycfsHVT+egsr0A5ePKc7nmN4/AtSvIh0wr2Cd8NpVNU+5g5LaR?=
- =?us-ascii?Q?FDQjGWEEc+2gMRQbk1lHrNpQA/663tPqok5vlmFZeVFvA9lcJS9174e1BvTv?=
- =?us-ascii?Q?m5cX4D0AnNgm1SEhOHIQ9wOEHxDrh/lPj5S6jWvRToqygaSHy8ySGVipfRP3?=
- =?us-ascii?Q?UEnxkWMs5+L29EgMrte1ha/qUrgAUd+Ppzsdw+8Dozt4r5wnMt4Cd0eRnF+E?=
- =?us-ascii?Q?NFMiDqpDdJCv2J+yA5IPYhin36gd4oHrewA5Iyrn7orEwg6ulnCtQwggK5cF?=
- =?us-ascii?Q?P5v8T0qcdG2qcyW9y1SQJ1uTjtFH87YWFST8xrqrHSkHygbUkUlK0vCYuh6t?=
- =?us-ascii?Q?nGmPPigfs7qPvrlIUIeaDLZYpzgD8NFpIZK+c4JC+D3RzekqcVrwZMxU3FJw?=
- =?us-ascii?Q?DM7zldln4XbCckESAfcH2a0iWaS+aGnWWjO7Uf+RDKN4F5+fs0PTpOX+j2tZ?=
- =?us-ascii?Q?D8RoTw/w/3yFZ91mjEtrD612xB+bwvwsuh5TS7U4AeouX9v5a7fqLAkzR6WM?=
- =?us-ascii?Q?GdTgq3TofMSGHMmFQsjs/0arp1SIQfXMp18cKQKQ0ODABSl1gjiKrEdK0Z8B?=
- =?us-ascii?Q?NA00jHPWktZM5Lddsav0gRwImrewTbp+wPL5r1EknnJ/kiQcSHz8yoeSUcRJ?=
- =?us-ascii?Q?YhM5xXr+UZiI1XUmEVpkikgi5KegtyOZ7FbWFvcFXPsUIcnbxLTDSFwQQZbp?=
- =?us-ascii?Q?zFN5tVlxKNxXcBvOpE82Jh9NeC7ZjC2E6XNKwTdLcaKMNXPieonTtFhm8ZQa?=
- =?us-ascii?Q?V5sOM4hOen3qJPULnE/mAQssF3W7J6F1zk5O2xaicTWFuP13zmTW+XS2M9+Z?=
- =?us-ascii?Q?PCU1k5YKO1MH2g4XQcfSi3Bq16/MP77OmwGjpuClt3E4pCLcRgiQtuHps3mz?=
- =?us-ascii?Q?AVN4xjfVugUWgsIsz+PLwNJWSgzPlO5DvNScJZfjJTA49lxIK0YxRvkTG66E?=
- =?us-ascii?Q?0o/vn/cYIu8ECZUtDp8gS6KRVE7n/eJRy4a9B25emlVxd/y1KhVBk6GRPxgv?=
- =?us-ascii?Q?4k+W74uJPGVU3LI3xlVyEpfgkbHxMDKeb2YNIV1W/n3f37GoOB1TVTFCJ1ss?=
- =?us-ascii?Q?Oa1W1NoRWjVUvERuG8ZfXd+IKPoTWL1NhRwBfYGHbPKqNrAun3sJF3OZGF4j?=
- =?us-ascii?Q?2hvfMMJzukeV6KScVssx/RQpcv24?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR12MB9473.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?67IXBwOMfSnaretTO5rUdXrmJNZA4coQfYKKqEtKGEPOTczwcmiGJXefIHRW?=
- =?us-ascii?Q?aMcwC8yz1K8T91pF7iMp4v6hxEBVNXDw/l92MEsn0vJwhiMZjDX40DTNdTrY?=
- =?us-ascii?Q?t9lM0nvKVkq3j1y83itvHm46koy8NlS26ozHB5S8QSru7ecxiJvqUPxzaeRF?=
- =?us-ascii?Q?ke4pchmZtx86PZibAAfXekcuUADv+G5Xh4XAOV+kSbcbwSLgQwPCgFYdLhN5?=
- =?us-ascii?Q?M+82Jk25dC2OAZTNdLjRkmkTmkeBypcNzsYOZb0GJfRwpFPZ/ZHv6YL18+EW?=
- =?us-ascii?Q?C41ONsiYFvUlm1yKXJ0f5CUF8nKq5iUL6aMlvKWVpjm7OANgTr1lYlm50D/L?=
- =?us-ascii?Q?pwyjjcQBNl2ZH04E2b5cJs445GT8P1J31p2cjNiII1kYIj4bdDygoCUl+yeT?=
- =?us-ascii?Q?adybtcA883T779uictKRrtiRzWAYBAaYRZ5P82mbGi9+6YtJ0pOMgCC8iWGu?=
- =?us-ascii?Q?qDEs/nlrT4QknoSYxWcC4Gwhns5cjDfVmrofPMCrh7+BLO6XtbpZyXuP6ugg?=
- =?us-ascii?Q?Govhipzqb+LOtkSMMFKyQmCYQ3Cgw6boM6BB6vhSmlmM7gAKi5COuMDeRLaa?=
- =?us-ascii?Q?dQw2o2fRi8dwSTXuNiJ8uRjWh/aP5/lNhR3AP4euRg6V5hJOpPpzit6UeVPB?=
- =?us-ascii?Q?9+VewKOqa/Ym5usR3OvrfsOXCLQ8U2V9UNmSH4naZL8kN7SWkeR9O4XV+uGX?=
- =?us-ascii?Q?0kjXM5AxeTSxkcojxQE+rAbhOCMMklPq2M3waGPsdilwQQbR+aKXfSthhmMb?=
- =?us-ascii?Q?oksqBF2Grzij7NUa4v9+U/d71JCbzR32WdGv6irc7m2LYu+h5FIQZenMI1mK?=
- =?us-ascii?Q?5rn29EG8kE8RspWgntK1wZ7Ta43XNSn2DgJKHLt1oq8e6jYQloTPvs3ocGsK?=
- =?us-ascii?Q?Alyi+iC6Zup8obquHKgeJJOErig5QeG35AgL+ESFWiWj3aP3fAZlrnEDnTZ2?=
- =?us-ascii?Q?hPutrRHwQ83einxAST+3BsRxegqNm+EszZ3QQmzrmEHeerOddZ+85gx0iZJR?=
- =?us-ascii?Q?NFG7tNOBK0kmryPe+grcld7a80Nf3ppdAFXA+tmeAXioR8BVc1J0tZo9T8Kw?=
- =?us-ascii?Q?SoyKXeTFkyyK5RvCKy2QX0sCRp8zTe8JvCQLVxSkapZrokGHFLWVLOuzK81A?=
- =?us-ascii?Q?Ktwg0AzTflONlRubUoS+SSkybHYqdUJ3X8hOlu4pVXUFHKhrkgIR5Dqr7A6i?=
- =?us-ascii?Q?VG4UqngYGfEqE1hptgh1Sr6m2if3I5sOMuMaUxTFAW1+UY6uShYwSjlEYFmF?=
- =?us-ascii?Q?CzP5+Hqzq07apJV3t4zg7yMRjGQPy68KubJp843Gp11zno5w/bnnBTpKA8NY?=
- =?us-ascii?Q?0Q8O+0RQ2yYy18U9/FCIzIb8cn+DyZ8zlmGVBY9JkCemA6r9V0Hbf1T1hLi7?=
- =?us-ascii?Q?SfOn5Rw0xgbDgjvzsZV1MzsBaTlw8015YtWAqnytH5D480XksrGnlrYmd2Od?=
- =?us-ascii?Q?kYR8Nq9SZhowIpcdCcv9V7RE2YWwZzX9AVovlAE530lWPxm9hcKAiuW67VZm?=
- =?us-ascii?Q?Z7+EltORiNB6TIMo9DvcWyRDQy6cCMsbSUCH+j56dArrj/tTN6T++xvWIZO8?=
- =?us-ascii?Q?j5rtGV3rQnu53rBUsFBeDrBZYnFJvAI8H1pMxQRE?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 91c82ef4-1e5a-499f-bff3-08dd5fec45b4
-X-MS-Exchange-CrossTenant-AuthSource: DS7PR12MB9473.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Mar 2025 15:57:34.4221
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: vNYxpBq62BuGcjfkCkRlAPQG0d0PGAwOMF7tms9rq7yh/ERAPG0xdyszKB95XeCZ
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR12MB6691
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250304145837.a8g07J-k@linutronix.de>
 
-When an after-split folio is large and needs to be dropped due to EOF,
-folio_put_refs(folio, folio_nr_pages(folio)) should be used to drop
-all page cache refs. Otherwise, the folio will not be freed, causing
-memory leak.
+On Tue, Mar 04, 2025 at 03:58:37PM +0100, Sebastian Andrzej Siewior wrote:
+> On 2025-03-03 17:40:16 [+0100], To Peter Zijlstra wrote:
+> …
+> > You avoided the two states by dropping refcount only there is no !new
+> > pointer. That should work.
+> …
+> > My first few tests succeeded. And I have a few RCU annotations, which I
+> > post once I complete them and finish my requeue-pi tests.
+> 
+> get_futex_key() has this:
+> |…
+> |         if (!fshared) {
+> |…
+> |                 if (IS_ENABLED(CONFIG_MMU))
+> |                         key->private.mm = mm;
+> |                 else
+> |                         key->private.mm = NULL;
+> |
+> |                 key->private.address = address;
+> |
+> 
+> and now __futex_hash_private() has this:
+> | {
+> |         if (!futex_key_is_private(key))
+> |                 return NULL;
+> |
+> |         if (!fph)
+> |                 fph = rcu_dereference(key->private.mm->futex_phash);
+> 
+> Dereferencing mm won't work on !CONFIG_MMU. We could limit private hash
+> to !CONFIG_BASE_SMALL && CONFIG_MMU.
 
-This leak would happen on a filesystem with blocksize > page_size and
-a truncate is performed, where the blocksize makes folios split to
->0 order ones, causing truncated folios not being freed.
+Humph, yeah, not sure we should care about !MMU.
 
-Fixes: c010d47f107f ("mm: thp: split huge page to any lower order pages")
-Reported-by: Hugh Dickins <hughd@google.com>
-Closes: https://lore.kernel.org/all/fcbadb7f-dd3e-21df-f9a7-2853b53183c4@google.com/
-Cc: stable@vger.kernel.org
-Signed-off-by: Zi Yan <ziy@nvidia.com>
----
- mm/huge_memory.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> Ignoring this, I managed to crash the box on top of 49fd6b8f5d59
+> ("futex: Implement FUTEX2_MPOL"). I had one commit on top to make the
+> prctl not blocking (make futex_hash_allocate(, false)). This is simulate
+> the fork resize. The backtrace:
+> | [   T8658] BUG: unable to handle page fault for address: fffffffffffffff0
+> | [   T8658] #PF: supervisor read access in kernel mode
+> | [   T8658] #PF: error_code(0x0000) - not-present page
+> | [   T8658] PGD 2c5a067 P4D 2c5a067 PUD 2c5c067 PMD 0
+> | [   T8658] Oops: Oops: 0000 [#1] PREEMPT_RT SMP NOPTI
+> | [   T8658] CPU: 6 UID: 1001 PID: 8658 Comm: thread-create-l Not tainted 6.14.0-rc4+ #188 676565269ee73396c27dead3a66b3f774bd9af57
+> | [   T8658] Hardware name: Intel Corporation S2600CP/S2600CP, BIOS SE5C600.86B.02.03.0003.041920141333 04/19/2014
+> | [   T8658] RIP: 0010:plist_check_list+0xb/0xa0
+> | [   T8658] Code: cc cc 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 00 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 41 54 49 89 fc 55 53 48 83 ec 10 <48> 8b 1f 48 8b 43 08 48 39 c7  74 27 48 8b 4f 08 50 49 89 f8 48 89
+> | [   T8658] RSP: 0018:ffffc90022e27c90 EFLAGS: 00010286
+> | [   T8658] RAX: 0000000000000000 RBX: ffffc90022e27e00 RCX: 0000000000000000
+> | [   T8658] RDX: ffff888558da02a8 RSI: ffff888558da02a8 RDI: fffffffffffffff0
+> | [   T8658] RBP: 0000000000000000 R08: 0000000000000000 R09: ffff8885680dc980
+> | [   T8658] R10: 0000031e8e1a7200 R11: ffff888574990028 R12: fffffffffffffff0
+> | [   T8658] R13: ffff888558da02a8 R14: ffffc90022e27e48 R15: ffffc90022e27d38
+> | [   T8658] FS:  00007f741af9e6c0(0000) GS:ffff8885a7c2b000(0000) knlGS:0000000000000000
+> | [   T8658] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> | [   T8658] CR2: fffffffffffffff0 CR3: 00000006d7aca005 CR4: 00000000000626f0
+> | [   T8658] Call Trace:
+> | [   T8658]  <TASK>
+> | [   T8658]  plist_del+0x28/0x100
+> | [   T8658]  __futex_unqueue+0x29/0x40
+> | [   T8658]  futex_unqueue_pi+0x1f/0x40
+> | [   T8658]  futex_lock_pi+0x24d/0x420
+> | [   T8658]  do_futex+0x57/0x190
+> | [   T8658]  __x64_sys_futex+0xfe/0x1a0
+> 
+> It takes about 1h+ to reproduce. And only on one particular stubborn
+> box. This originates from futex_unqueue_pi() after
+> futex_q_lockptr_lock(). I have another crash within
+> futex_q_lockptr_lock() (in spin_lock()).
+> 
+> This looks like the locking task was not enqueued in the hash bucket
+> during the resize. This means there was a timeout and the unlocking task
+> removed it while looking for the next owner. But the unlocking part
+> acquired an additional reference to avoid a resize in that case. So,
+> confused I am.
 
-diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-index 3d3ebdc002d5..373781b21e5c 100644
---- a/mm/huge_memory.c
-+++ b/mm/huge_memory.c
-@@ -3304,7 +3304,7 @@ static void __split_huge_page(struct page *page, struct list_head *list,
- 				folio_account_cleaned(tail,
- 					inode_to_wb(folio->mapping->host));
- 			__filemap_remove_folio(tail, NULL);
--			folio_put(tail);
-+			folio_put_refs(tail, folio_nr_pages(tail));
- 		} else if (!folio_test_anon(folio)) {
- 			__xa_store(&folio->mapping->i_pages, tail->index,
- 					tail, 0);
--- 
-2.47.2
+Yeah, weird that.
+
+> I reverted to 50ca0ec83226 ("futex: Resize local futex hash table based
+> on number of threads."), have the another "always resize hack" and so
+> far it looks good.
+> Looking at __futex_pivot_hash() there is this:
+> |         if (fph) {
+> |                 if (rcuref_read(&fph->users) != 0) {
+> |                         mm->futex_phash_new = new;
+> |                         return false;
+> |                 }
+> |
+> |                 futex_rehash_private(fph, new);
+> |         }
+> 
+> So we stash the new pointer as long as rcuref_read() does not return 0.
+> How stable is rcuref_read()'s 0 return actually? The code says:
+> 
+> | static inline unsigned int rcuref_read(rcuref_t *ref)
+> | {
+> |         unsigned int c = atomic_read(&ref->refcnt);
+> |
+> |         /* Return 0 if within the DEAD zone. */
+> |         return c >= RCUREF_RELEASED ? 0 : c + 1;
+> | }
+> 
+> so if it got negative on its final put, the c becomes -1/ 0xff…ff. This
+> +1 will be 0 and we do a resize. But it is negative and did not reach
+> RCUREF_DEAD yet so it can be bumbed back to positive. It will not be
+> deconstructed because the cmpxchg in rcuref_put_slowpath() fails. So it
+> will remains active. But we do a resize here and end up with to private
+> hash. That is why I had the `released' member.
+
+I am not quite sure I follow. If rcuref_put_slowpath() returns true;
+then the value has been set to DEAD (high nibble E), any concurrent
+inc/dec will move it away from that a little, but it will always be set
+back to DEAD (IOW, you need 1<<29 concurrent modifications into the same
+direction to push it out of the DEAD range).
+
+As long as it is within those 29 bits of DEAD, rcuref_read() should
+return 0.
 
 
