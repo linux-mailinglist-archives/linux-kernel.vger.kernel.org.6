@@ -1,64 +1,79 @@
-Return-Path: <linux-kernel+bounces-554561-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-554562-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE1E1A599EC
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 16:25:23 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 70BE0A599F5
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 16:28:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9B304188C578
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 15:25:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 170A91887341
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 15:28:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A96222DFFC;
-	Mon, 10 Mar 2025 15:24:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A64ED22A4C3;
+	Mon, 10 Mar 2025 15:27:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="mG1Puc7b"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mEgXoxV5"
+Received: from mail-pj1-f49.google.com (mail-pj1-f49.google.com [209.85.216.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC9EA22DFEF;
-	Mon, 10 Mar 2025 15:24:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC06933991;
+	Mon, 10 Mar 2025 15:27:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741620289; cv=none; b=Oy4rT8bV8JM5fuEWxHiRFjym39nuDoetXuN7lk8Ml87EF7yljxbkp/3B2ULSz1/8BOdvi27+FxQ3xEPSf0g9ai/xRehnVbQ+GPuktAVopfdgpyDT6g4BX2x1nqPOz5FGCsVthFkcf6wFBtXo9bAiP8bNMgnammCtqLGlSNKEU8k=
+	t=1741620474; cv=none; b=AEGN4oXTux9f8AEqljuTKRvQPHQfj03pGo9xs2ExMAbUegm+nbGFqrw+Ruq0BSptWQD1VXFkqUZSgRWkfa2QqFRdpZBX1lBw3DNuI3w+ZU7rkGWiRAfXDs/qgKF+GahlexIaxGN8HY137i1ii6Z1wt9qjeWEH4ionYTMn3YVZKE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741620289; c=relaxed/simple;
-	bh=7tpV5sa+GTwYPbJyMwGRi8u1w9+/bMIElwEpk5G+vNw=;
+	s=arc-20240116; t=1741620474; c=relaxed/simple;
+	bh=GHeCIejBa/8qy5r/VRqpKCRr3L5Bhtrr8ga8SUaRi/M=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=I7LxU7Xnqb0TlSO5hamIdcX96AISyVpAKJasEsJXlr1M0A/GCAt0f7G+nsSNDJHB95ABmhnQLVr4IkHWUhQWLoG174znBaw86+OMGvZ4v3g3bmgmO6STqpdvptfZ7WlvRv7n69gkiW5OmJ0VRhNa9gwyUO/yd1HsV2ojiyd+xjM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=mG1Puc7b; arc=none smtp.client-ip=192.198.163.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1741620288; x=1773156288;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=7tpV5sa+GTwYPbJyMwGRi8u1w9+/bMIElwEpk5G+vNw=;
-  b=mG1Puc7bMr13hivUHwCy+Xv2fQEJ0A9eYBbOcLWQhhSvF4865KUED4Ec
-   CaWeeeWHJvIHp5rDI/rvtyHOixstUVe3pnOYMlU7yJSSN3CqP0pmFTeSk
-   GOwvPfquHSni7GJCv0s7EOyVjBr9rQFXGQc1eotCbZjlVYQJ9jUaX5caL
-   6PyWpT1X+y9EyrzpPp6N4Kekilcg2UtIiiFq4pgb9rpZfXlD1Pr2iTkXK
-   nx48ppD48ueU9zrYV2VZgdybXzC4pCE3Twu3JlJ+jIMGQ5rDdUXE93be2
-   eaLJqYwlH25Wpd3qoD5bQPlPAlfF9+jvNVrz/emVrG1T7q/fBK6I/jvHk
-   w==;
-X-CSE-ConnectionGUID: kvF3fWDGQ3+u87LZdOH6gg==
-X-CSE-MsgGUID: gJ/Dw5GcSXmX3WNJri6U7A==
-X-IronPort-AV: E=McAfee;i="6700,10204,11369"; a="42836650"
-X-IronPort-AV: E=Sophos;i="6.14,236,1736841600"; 
-   d="scan'208";a="42836650"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Mar 2025 08:24:47 -0700
-X-CSE-ConnectionGUID: rPaFCSSTQMKNAkCfiF91Gg==
-X-CSE-MsgGUID: ENAPmGAOR7yAZvEzWfiMTA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,236,1736841600"; 
-   d="scan'208";a="120222645"
-Received: from dnelso2-mobl.amr.corp.intel.com (HELO [10.125.111.63]) ([10.125.111.63])
-  by fmviesa008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Mar 2025 08:24:46 -0700
-Message-ID: <0c2a1f2f-539f-4a94-82f4-57406421a3b8@intel.com>
-Date: Mon, 10 Mar 2025 08:24:44 -0700
+	 In-Reply-To:Content-Type; b=L6M4Sb5D+Wn5F9urmr5AkRceux5sRBB2Mq+hXYbsVk9Emsm4qfHwciSl3Pj2XvcPb9K/NgcGfEg8ozDg3QeDSPEBQKgsv+reW0Ild9CmEIyEOrq2XcQyD/UtbT0qk2ICFhN/+OnVMH1ZPZ2jBEtikm4RhBnZHNnD0jKT/XfnPoY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mEgXoxV5; arc=none smtp.client-ip=209.85.216.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f49.google.com with SMTP id 98e67ed59e1d1-2ff64550991so6689662a91.0;
+        Mon, 10 Mar 2025 08:27:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741620472; x=1742225272; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=90Pr0MLUGkbPrWS0RToq7eybxFstggF7+0XfcgNBeIA=;
+        b=mEgXoxV5v4EsmjKqW4VihjRyDax5RmNlucp27kMP9aF1c8O9v6HlizMDZ2YaEHcHsN
+         1QcSFCDglb//gU0ovvxGV0lZyqr5hpErifRI1Q98WXrW9Bt1A78tQQPjz5wKBPgEumUa
+         xZvXVcDEpCA1sRSrz8MmDsqzT37tixq5AS0APP/lPlxtaoi4718gdK1B+JxQBb47wGjV
+         Fjk81fWzjqf9DJ+OM9u5672jK8/G2I8xBbIY6nvs4oVr+fN7BgZKOwWwJHprhKUdflZ8
+         xizs1vylQJi8UsQTCY5xk/aknSFRxwZqfSW4NWT8PmDW1hAGpiPuSS402CJYxTYKRDvn
+         uCfA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741620472; x=1742225272;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=90Pr0MLUGkbPrWS0RToq7eybxFstggF7+0XfcgNBeIA=;
+        b=h9oFchfraYPMem/1S/PdeUAUS8Lp6RIdgburOVylW7k7b+KHL1ADUoM9YRLLpwjnbX
+         Ster/MoGGxhEN1y0BctZN49P0/bASu97ToUhvDqHB3sbzGzc0BgykHvcq7vku9JPvDDq
+         Uw2N/YNuJs4rpMsy+D8qBesZ6WmbmTltwLNcqKGUgGRQvcVvyNVH83OD/AnN2oa0mjeZ
+         JLbCkMimderwpwevQaS18cCB05IdvryGjB3xMGo9HY6/eiHXHItN0o1KC67sCYKW+wjL
+         Ml3nZ4i6EZajFTrgvLaW/5IxXVeoZLOQqwrtPwyYCMwbNd1JAzfUxs+Ro3M597DxdCWs
+         4Bzg==
+X-Forwarded-Encrypted: i=1; AJvYcCUQ+C0mJj0a1uWwat1g68iisuq7w9whrOUsFQRnXjI7oPil6HTf02W1OM/niLJmyxi4RcDwMmF1RrC+9f2r@vger.kernel.org, AJvYcCWcjI/zlcbej6U0mg40xr0KxOGe/GQZeejFCJiIuUo5Fb0xPvE2twZu0RVgI2JAHqqZuwRHxgBUapY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwwD+NXuwFr06bO90nB4HdAbTVjLee+xfaX5UeCMk+8rwmqHJY+
+	X5/tvtXMRHWjSKbK5MF/HHRzbiuknHGkfD/bMWqH2gw0OswPCVbs52pGCw==
+X-Gm-Gg: ASbGncvbHnkPC3lIsUUR48I9+UdBUmgpriQQYLuScp0JlLZQLRpvdl1LnmOBQbJ4Xz3
+	n55T3NU1aFWYXjUsVtJYcY9/GC0blw1VLhgPbUxLqiZozL6Hm65vfk/yOahf282dDJ1olX3RO6w
+	AE6vXZTXF4kGaUrTDM7Mj0Y1pqlFhnhPNzsV9N3bhqODm8KxDU7of9XwQWPdqHr7+yLjH2kbXW+
+	hVtVjQItslz+boLszcJfQLrutpr9rkzZtr1Oaf1jNyaNdOwvplaP9Eda+1JiqyUrU3isErGYuJD
+	ekgiZghsJ6lKTj4xaw1ucMsZZDHrg/QwAo7bYilu1bDBpHzz1XifrCEVlTJ6UB+KIDHeFS5SxMw
+	s0RgzB3gGUqNEUK0=
+X-Google-Smtp-Source: AGHT+IGA+KcU9d7S2wvRUSFjhmZkHNFVwGagUytgdzcLZ0PnDuYqInqLC+nzd6ZlLMmQ1zmAe19W8A==
+X-Received: by 2002:a17:90b:2d82:b0:2ee:c2b5:97a0 with SMTP id 98e67ed59e1d1-2ff7cf0a651mr22485225a91.25.1741620470515;
+        Mon, 10 Mar 2025 08:27:50 -0700 (PDT)
+Received: from [10.0.2.15] (KD106167137155.ppp-bb.dion.ne.jp. [106.167.137.155])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2ff4d457cd0sm10018080a91.0.2025.03.10.08.27.48
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 10 Mar 2025 08:27:50 -0700 (PDT)
+Message-ID: <bcce7d39-f142-4838-ba23-4fa2dda69fd0@gmail.com>
+Date: Tue, 11 Mar 2025 00:27:47 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,73 +81,71 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] cxl: fix FWCTL dependency
-To: Arnd Bergmann <arnd@kernel.org>, Davidlohr Bueso <dave@stgolabs.net>,
- Jonathan Cameron <jonathan.cameron@huawei.com>,
- Alison Schofield <alison.schofield@intel.com>,
- Vishal Verma <vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>,
- Dan Williams <dan.j.williams@intel.com>, Li Ming <ming.li@zohomail.com>,
- Jason Gunthorpe <jgg@ziepe.ca>
-Cc: Arnd Bergmann <arnd@arndb.de>, Robert Richter <rrichter@amd.com>,
- "Mike Rapoport (Microsoft)" <rppt@kernel.org>,
- Masahiro Yamada <masahiroy@kernel.org>, linux-cxl@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250310135119.4168933-1-arnd@kernel.org>
+Subject: Re: [PATCH V2 1/2] cpumask: Fix kernel-doc formatting errors in
+ cpumask.h
+To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+Cc: Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+ Yury Norov <yury.norov@gmail.com>,
+ Vincent Guittot <vincent.guittot@linaro.org>, linux-doc@vger.kernel.org,
+ Jonathan Corbet <corbet@lwn.net>, linux-kernel@vger.kernel.org,
+ Viresh Kumar <viresh.kumar@linaro.org>, Akira Yokosawa <akiyks@gmail.com>
+References: <cover.1741332579.git.viresh.kumar@linaro.org>
+ <f4ad81150eaa00b43c161f0d1f811f8ecfe21889.1741332579.git.viresh.kumar@linaro.org>
+ <20250310155301.6db5033c@foz.lan>
 Content-Language: en-US
-From: Dave Jiang <dave.jiang@intel.com>
-In-Reply-To: <20250310135119.4168933-1-arnd@kernel.org>
+From: Akira Yokosawa <akiyks@gmail.com>
+In-Reply-To: <20250310155301.6db5033c@foz.lan>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
+Hi,
 
+Mauro Carvalho Chehab wrote:
+> Em Fri,  7 Mar 2025 13:04:51 +0530
+[...]
+>>  /**
+>> - * cpumask_first_and - return the first cpu from *srcp1 & *srcp2
+>> + * cpumask_first_and - return the first cpu from *@srcp1 & *@srcp2
+> 
+> I don't think this would produce the right output. See my other comment.
+> 
+> See, if I add this there:
+> 
+> 	 * cpumask_first_and - return the first cpu from ``*srcp1`` & @srcp2 & *@srp3
+> 
+> The kernel-doc output is:
+> 
+> 	.. c:function:: unsigned int cpumask_first_and (const struct cpumask *srcp1, const struct cpumask *srcp2)
+> 
+> 	   return the first cpu from ``*srcp1`` & **srcp2** & ***srp3**
+> 
+> e.g.:
+> 
+> - srcp1: will not be bold, but it will use a monospaced font and will have 
+> 	 an asterisk;
+> 
+> - srcp2: will be bold, without asterisk;
+> 
+> - srcp3: violates ReST spec: different versions may show it different
+>          and warnings may be issued.
 
-On 3/10/25 6:51 AM, Arnd Bergmann wrote:
-> From: Arnd Bergmann <arnd@arndb.de>
-> 
-> The 'FWCTL' subsystem is selected by CXL_FEATURES, which is a 'bool' symbol
-> with a dependency on CXL_PCI, but referenced by the cxl_core.ko.
-> When cxl_core is built-in, but the cxl_pci.ko driver is a loadable mdoule,
-> this results in a link failure:
-> 
-> ld.lld-21: error: undefined symbol: _fwctl_alloc_device
->>>> referenced by features.c:695 (/home/arnd/arm-soc/drivers/cxl/core/features.c:695)
-> ld.lld-21: error: undefined symbol: fwctl_register
->>>> referenced by features.c:699 (/home/arnd/arm-soc/drivers/cxl/core/features.c:699)
-> ld.lld-21: error: undefined symbol: fwctl_unregister
->>>> referenced by features.c:676 (/home/arnd/arm-soc/drivers/cxl/core/features.c:676)
-> 
-> Move the 'select' into the symbol that controls the core module instead.
-> 
-> Fixes: a53a6004e7a5 ("cxl: Add FWCTL support to CXL")
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+This third pattern is available since commit 69fc23efc7e5 ("kernel-doc:
+Add unary operator * to $type_param_ref") and I haven't heard of any
+regression report.
 
-Acked-by: Dave Jiang <dave.jiang@intel.com>
+Sphinx parses ***srp3** in the following way:
 
-Thanks for the fix Arnd. Jason can you please append this fix to your latest branch? Thanks!
+  - It sees the first ** and start strong emphasis.
+  - It continues that mode until it sees next **.
 
-> ---
->  drivers/cxl/Kconfig | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/cxl/Kconfig b/drivers/cxl/Kconfig
-> index ed49e7e7e5bc..cf1ba673b8c2 100644
-> --- a/drivers/cxl/Kconfig
-> +++ b/drivers/cxl/Kconfig
-> @@ -7,6 +7,7 @@ menuconfig CXL_BUS
->  	select PCI_DOE
->  	select FIRMWARE_TABLE
->  	select NUMA_KEEP_MEMINFO if NUMA_MEMBLKS
-> +	select FWCTL if CXL_FEATURES
->  	help
->  	  CXL is a bus that is electrically compatible with PCI Express, but
->  	  layers three protocols on that signalling (CXL.io, CXL.cache, and
-> @@ -105,7 +106,6 @@ config CXL_MEM
->  config CXL_FEATURES
->  	bool "CXL: Features"
->  	depends on CXL_PCI
-> -	select FWCTL
->  	help
->  	  Enable support for CXL Features. A CXL device that includes a mailbox
->  	  supports commands that allows listing, getting, and setting of
+In the end, Sphinx will produce strongly emphasized "*srp3".
+
+It would be much better to convert *@srp3 into "\*\ **srp3", which will
+result in normal "*" followed by emphasized "srp3", but I didn't go that
+far at that time.  This looked sufficient to me as a band-aid workaround.
+
+Or you are aware of any Sphinx version who doesn't work in this way?
+
+        Thanks, Akira
 
 
