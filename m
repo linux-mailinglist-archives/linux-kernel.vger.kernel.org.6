@@ -1,118 +1,160 @@
-Return-Path: <linux-kernel+bounces-553883-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-553922-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D877EA5901E
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 10:47:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 600ADA590AC
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 11:04:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9544C1887089
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 09:46:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 10E69188C666
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 10:04:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9CF3225A32;
-	Mon, 10 Mar 2025 09:45:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A987E2253E4;
+	Mon, 10 Mar 2025 10:04:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MH2L4TQT"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=hartkopp.net header.i=@hartkopp.net header.b="RO0vRoKG";
+	dkim=permerror (0-bit key) header.d=hartkopp.net header.i=@hartkopp.net header.b="YghSe3s3"
+Received: from mo4-p00-ob.smtp.rzone.de (mo4-p00-ob.smtp.rzone.de [85.215.255.25])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26F601624C3;
-	Mon, 10 Mar 2025 09:45:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741599932; cv=none; b=ZfJpJRpwgnhIv/pYHjKX3rdvI3TTqfyaX0VallWcxngrHIGu5/Jkm2l6FktcH9vMjOTO15INcrMeQ1WwaB3cHZmXs6yIZROByJdNXtNkdquIV+fNt2cnp62q7xrx8o4T80XRvjY8J68RS1WcBZt6fxCdjuxZ6LMAixPUn2W+AUw=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741599932; c=relaxed/simple;
-	bh=RuNQEcmiwzRvpjUFcODBA0Mm17cQbne/86O864Wdscg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AzGcynNmhQRfG10yS/wbeYFyjXWWbkVczHP1H/kqNEfJKqxhRVklMWWOKei0kHt37g4OmLovE2Y4+bjTXccVmVqX2JYYlw6jZExCBv4fWhKabb5Vhyux6QVLA4vmwDBFxpLyCsTdH91lNPHrX6vEgmFRfdh3d0HaAHY9jo9OvlI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MH2L4TQT; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 06967C4CEE5;
-	Mon, 10 Mar 2025 09:45:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741599932;
-	bh=RuNQEcmiwzRvpjUFcODBA0Mm17cQbne/86O864Wdscg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=MH2L4TQTnjAZhVYzcFauyhGYNSN/gunC4BZUJuVp8XqhoovlE518Yr0wDnJGZQ2n9
-	 TvPI+BF77xLsuZP6avPO/cwo+7bkp17gvSZT/c2X6I6Z0YlZr+z60wkJTYBX5136wt
-	 gdnlLfen430m2t4nA3cR1SIuOu0FhQXPCc7sfEFxCatPa1L4YSQyuD9jJnmmrNyM2R
-	 Gu7iLP36pfBOfuw5eLT6hst5NwJZQ+LTLJj9kKZYb27GLBEB6Qx0MhyRBKu+xjOnfZ
-	 gzByfQOT/ja+pHNS5j05nbxoYHlYBB5VxT5nUNsDwRwQ9zG7dx+kJc8pqdHqeIu5jU
-	 Et4/4pVNegMPg==
-Date: Mon, 10 Mar 2025 10:45:28 +0100
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: David Heidelberg <david@ixit.cz>
-Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, "Jason A. Donenfeld" <Jason@zx2c4.com>, 
-	Matthias Schiffer <matthias.schiffer@ew.tq-group.com>, Vincent Huang <vincent.huang@tw.synaptics.com>, 
-	linux-input@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	phone-devel@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht, 
-	Caleb Connolly <caleb.connolly@linaro.org>
-Subject: Re: [PATCH v3 1/7] dt-bindings: input: syna,rmi4: document
- syna,pdt-fallback-desc
-Message-ID: <20250310-hissing-vagabond-pegasus-cc8aed@krzk-bin>
-References: <20250308-synaptics-rmi4-v3-0-215d3e7289a2@ixit.cz>
- <20250308-synaptics-rmi4-v3-1-215d3e7289a2@ixit.cz>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C7501C6F70;
+	Mon, 10 Mar 2025 10:03:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=85.215.255.25
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741601041; cv=pass; b=ldX5jq6u+Zg9+jJUs0Etc0PIDDvzgpQeJl/ZXJ/z2a4PB/9WsVEIJfPj8/xaISRJJ4H0hIePBfCPmpHJTFue7WH+YRSQXG1D9lzKtXHgsvph84PAxB3jraQw9oATc+FRZpoNj//aJmDQhHKMo9aOUClxDQ48SxGaJ6n9z2OxXU8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741601041; c=relaxed/simple;
+	bh=ieVSgl1n+Y3jk7qQKxXYcWYORmovbjqs1XE5G9Qx9SY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=u6rVbFIQwxEDi1Z/HHlYb9wDgmXGOwd2k/90U9xt3Onc3OfrYhoH/HPK4pddSR5Gfcf7XXmJeYoI/sX8nBTt6yXccdN8RagpUmxhPeGXrAuf46cIgCff8pnUJCIAmkXQSIKnsgON5fQ9OKo92W08/63TIFD6gKICG6zGLu5FUiM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=hartkopp.net; spf=pass smtp.mailfrom=hartkopp.net; dkim=pass (2048-bit key) header.d=hartkopp.net header.i=@hartkopp.net header.b=RO0vRoKG; dkim=permerror (0-bit key) header.d=hartkopp.net header.i=@hartkopp.net header.b=YghSe3s3; arc=pass smtp.client-ip=85.215.255.25
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=hartkopp.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hartkopp.net
+ARC-Seal: i=1; a=rsa-sha256; t=1741599957; cv=none;
+    d=strato.com; s=strato-dkim-0002;
+    b=XMs/unWZqB8wrf2Nf8Y3wArQnAXgMyiADzjUEvaob3BiKLsUogNbm6FTmtX35T1CGc
+    LFb00H1iaGAirPfZ5zYasMgLYFrqGjQRM7HbrgO1VC0pqC+jsDxfifHIMESaEki2u/wE
+    vgZYNmwNlApAYQQB7aaJu6mU+il0yD5SPvsYQ8u4ky3hr4sHnlkAtTCVIRkxmhU+TqIE
+    Rkhxswlwc16VrLs6XjTgiq39X9OXBYTydGPSUlMZbXa5QWwfGOszX3Sq7IyheXVLa4qM
+    +3vfQcXI2CaqMjY6tJwb6WjPAfFMGG9niyjO31zak9dQNaoEFgCSVm3ksfhyDZNJhU22
+    /rKw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; t=1741599957;
+    s=strato-dkim-0002; d=strato.com;
+    h=In-Reply-To:From:References:Cc:To:Subject:Date:Message-ID:Cc:Date:
+    From:Subject:Sender;
+    bh=6c0rQTjE4PolH89nIKTpnQcF3fHayb1VmmI7dfoT9P4=;
+    b=ZWyfp2gVUj0vKNvZGBDepWvzLiPtEc1dQUgkc8VbHnXeoyqnBB5cSvLnjTbvRdVIKT
+    YWOxAzXadD/r+2UEm+mpEejiLrG600x5tc+kGX1lt/oRECp2Vg7jvJzInelsDnx9jnJC
+    pRQKI4M0nDu5hADDPpbcl1E/QefohnHM43125Y7O7MArfkotzz4LZVGv1XDv6b861iNv
+    /UsZAns6PWGV2nsc9/xrM8IwHfElr87ABOBkwIB99xfdS4wM7lMRbabfE5006ARtO7Z7
+    och1qps9qC2WzpELaUxdeVkBO86ZxtAY0qZIhvYT+BgJiwxprqkgEas5yrjywqA6H6Pp
+    xzRw==
+ARC-Authentication-Results: i=1; strato.com;
+    arc=none;
+    dkim=none
+X-RZG-CLASS-ID: mo00
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1741599957;
+    s=strato-dkim-0002; d=hartkopp.net;
+    h=In-Reply-To:From:References:Cc:To:Subject:Date:Message-ID:Cc:Date:
+    From:Subject:Sender;
+    bh=6c0rQTjE4PolH89nIKTpnQcF3fHayb1VmmI7dfoT9P4=;
+    b=RO0vRoKG7LNeqtgRq8CgsPHMJeu2fAva5lG1cwGz4gf4Z7jYLMLupMRfd1S9Pdqbdo
+    8W41P94ZFf+d9pFMFJy0HDg/HSUgsE3SjiOL69usgrFYlMsFpdRoF7M847YfUyRRiKO8
+    ZGU7t5TNcftxv/OYPU62Ol8WQcSIE7iNXI7p9I+IuJxSmHF4vhv+2WHE5eG3p9uyWQdL
+    lO/I4ulAVKpU4faJm6CI2hdOcQrRX6xa089LM7MwnKbse0Fy2GRTgiZGF4/nvog0kPrC
+    bHF7FzjeLMHmeo9rM6KcPdp4EI5aqnc780QI6WOwGiPCcxo6AvTREIw9Ce9KJSemHVjA
+    kKQA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; t=1741599957;
+    s=strato-dkim-0003; d=hartkopp.net;
+    h=In-Reply-To:From:References:Cc:To:Subject:Date:Message-ID:Cc:Date:
+    From:Subject:Sender;
+    bh=6c0rQTjE4PolH89nIKTpnQcF3fHayb1VmmI7dfoT9P4=;
+    b=YghSe3s3dQ2MOYRGyhXD6P8gcPlIrc757HmVBsUglVPehubSDGiZOFRy3OaaLLwfDX
+    PNGbXPd7tR+GhOuQ3IBA==
+X-RZG-AUTH: ":P2MHfkW8eP4Mre39l357AZT/I7AY/7nT2yrDxb8mjH4JKvMdQv2tTUsMrZpkO3Mw3lZ/vMMcFB+5xtv9aJ67XA=="
+Received: from [IPV6:2a00:6020:4a8e:5000::9f3]
+    by smtp.strato.de (RZmta 51.3.0 AUTH)
+    with ESMTPSA id K2a3e512A9jvSaS
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256 bits))
+	(Client did not present a certificate);
+    Mon, 10 Mar 2025 10:45:57 +0100 (CET)
+Message-ID: <f8e7f845-253b-47b7-9e09-97a580ce0e5c@hartkopp.net>
+Date: Mon, 10 Mar 2025 10:45:51 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250308-synaptics-rmi4-v3-1-215d3e7289a2@ixit.cz>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [syzbot] [can?] KCSAN: data-race in can_send / can_send (5)
+To: Vincent Mailhol <vincent.mailhol@gmail.com>
+Cc: mkl@pengutronix.de,
+ syzbot <syzbot+78ce4489b812515d5e4d@syzkaller.appspotmail.com>,
+ linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
+ linux-can@vger.kernel.org
+References: <67cd717d.050a0220.e1a89.0006.GAE@google.com>
+ <c9047828-708a-42d8-97f6-fffb7d806679@hartkopp.net>
+ <CAMZ6RqKyMreMfNDmYU=tLyaEcReopmGx2VkBWPB12LLzd5o7Pg@mail.gmail.com>
+Content-Language: en-US
+From: Oliver Hartkopp <socketcan@hartkopp.net>
+In-Reply-To: <CAMZ6RqKyMreMfNDmYU=tLyaEcReopmGx2VkBWPB12LLzd5o7Pg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Sat, Mar 08, 2025 at 03:08:37PM +0100, David Heidelberg wrote:
-> From: Caleb Connolly <caleb.connolly@linaro.org>
+
+
+On 10.03.25 10:29, Vincent Mailhol wrote:
+> On Mon. 10 Mar 2025 at 03:59, Oliver Hartkopp <socketcan@hartkopp.net> wrote:
+
+
+>>> value changed: 0x0000000000002b9d -> 0x0000000000002b9e
+>>>
+>>
+>> Increased by '1' ...
+>>
+>> I assume this problem is caused by increasing the per-netdevice statistic in
+>>
+>> https://elixir.bootlin.com/linux/v6.13.6/source/net/can/af_can.c#L289
+>>
+>> pkg_stats->tx_frames++;
+>> pkg_stats->tx_frames_delta++;
+>>
+>> We update the statistics for the device and in this specific case the
+>> hrtimer fired on two CPUs resulting in a can_send() to the same netdevice.
+>>
+>> Do you agree with this quick analysis?
 > 
-> This new property allows devices to specify some register values which
-> are missing on units with third party replacement displays. These
-> displays use unofficial touch ICs which only implement a subset of the
-> RMI4 specification.
-
-These are different ICs, so they have their own compatibles. Why this
-cannot be deduced from the compatible?
-
+> Ack. Same conclusion here.
 > 
-> Signed-off-by: Caleb Connolly <caleb.connolly@linaro.org>
-> Signed-off-by: David Heidelberg <david@ixit.cz>
-> ---
->  Documentation/devicetree/bindings/input/syna,rmi4.yaml | 18 ++++++++++++++++++
->  1 file changed, 18 insertions(+)
+>> Isn't there some lock-less per-cpu safe statistic handling within netdev
+>> we might pick for our use-case?
 > 
-> diff --git a/Documentation/devicetree/bindings/input/syna,rmi4.yaml b/Documentation/devicetree/bindings/input/syna,rmi4.yaml
-> index b522c8d3ce0db719ff379f2fefbdca79e73d027c..a80ec0c052cb1b7278f0832dd18ebd3256bc0874 100644
-> --- a/Documentation/devicetree/bindings/input/syna,rmi4.yaml
-> +++ b/Documentation/devicetree/bindings/input/syna,rmi4.yaml
-> @@ -49,6 +49,24 @@ properties:
->      description:
->        Delay to wait after powering on the device.
->  
-> +  syna,pdt-fallback-desc:
-> +    $ref: /schemas/types.yaml#/definitions/uint8-matrix
-> +    description:
-> +      This property provides fallback values for certain register fields that
-> +      are missing on devices using third-party replacement displays.
-> +      These unofficial displays contain touch controllers that claim RMI4
-> +      compliance but fail to populate the function_number and function_version
-> +      registers of their Page Descriptor Table (PDT) entries.
-> +
-> +      Since the number of required fallback entries depends on the number of
-> +      Page Descriptor Tables supported by a given device, this property
-> +      should be provided on a best-effort basis.
-> +
-> +    items:
+> I see two solutions. Either we use lock_sock(skb->sk) and
+> release_sock(skb->sk) or we can change the types of
+> can_pkg_stats->tx_frames and can_pkg_stats->tx_frames_delta from long
+> to atomic_long_t.
+> 
+> The atomic_long_t is the closest solution to a lock-less. But my
+> preference goes to the lock_sock() which looks more natural in this
+> context. And look_sock() is just a spinlock which under the hood is
+> also an atomic, so no big penalty either.
 
-min/maxItems here
+When we get skbs from the netdevice (and not from user space), we do not 
+have a valid sk value. It is set to zero.
 
-> +      items:
-> +        - description: The 5th byte of the PDT entry (function number)
-> +        - description: The 4th byte of the PDT entry (version value)
+See:
+https://elixir.bootlin.com/linux/v6.13.6/source/net/can/raw.c#L203
+
+And those skbs can also be forwarded by can-gw using can_send().
+
+Therefore there is no lock_sock() without a valid sk ;-)
+
+When 'atomic_long_t' would also fix this simple statistics handling, we 
+should use that.
 
 Best regards,
-Krzysztof
+Oliver
 
 
