@@ -1,106 +1,166 @@
-Return-Path: <linux-kernel+bounces-554744-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-554746-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 94720A59BE5
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 18:01:36 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 45121A59BEA
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 18:04:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F38483A702A
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 17:01:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 816E81612CF
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 17:04:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B2D2230BD5;
-	Mon, 10 Mar 2025 17:00:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 442E622D7AD;
+	Mon, 10 Mar 2025 17:04:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="s1w14gMk"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="UI0l+O5e"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26BB21E519;
-	Mon, 10 Mar 2025 17:00:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AB2E227E96
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 17:04:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741626056; cv=none; b=PApyR14XsgRcjbCDftYcX0S5ehb4Gj+TYHcvDP1lsJbwZ1DBgnkBw4ij7YS3F3zDOYXU3ybhFmRtM1GmJ6XL8M3x5Ha30VbKemtcAzRFHCcrxb6lH0bDnH8m7+ozSPruwp2WkMvt29HQEwZ4OQL47WdepN81B5EBQK2Ebooddwo=
+	t=1741626253; cv=none; b=bZpm/LOLPZYKAfsSH3zbGv485jnmjgGh+eF/QHIzR9aP3lIgQ2VzEIBnQlMD0v95CmUmfw3nfC2ZtELdKzdOJyxVXZ/4KSMRA96JWnre5HZURSi5G63ftB3fMuHSvx7LcpwDnMFRwYSgVqtNb3JXppnyjduka1kcvlOJMEu4FxU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741626056; c=relaxed/simple;
-	bh=MeG1VCik5Ze8Q6an3AFip2HUlayeAdN3z/xG111Hfxw=;
+	s=arc-20240116; t=1741626253; c=relaxed/simple;
+	bh=2iHTQcPXH1FLrxQMiNT55fa/PnOIlAodbQMDjn30aQc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jeiZRKPG81x/O6awK3ipYUEpeMDuKJjuWYbpGae5UsmaHyJ+zpjx37xrthHEyZPehmG215V5Y8i+WzTBsdZQJ5/5pXThpVJws2RU+yPuHwgukA2sWGahOhvBCVwEiQHlwn7SHYc6vUSRr64IEboGQg7K6BVcEeC+ZAYqaa35HKU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=s1w14gMk; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Transfer-Encoding:
-	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
-	Sender:Reply-To:Content-ID:Content-Description;
-	bh=owMofiDXpcMMHo+/HgqyyJABYuI5qKBiRMXRGlcf8l4=; b=s1w14gMkAYfFDIL9YOPASgbOwx
-	1az5TYCE3Iop3ZjuWP2hMZHc43uhYwtz5t7FlF858GhQVCseu/YIf4c22DkYuRMnqk1hIL35OuVeK
-	a4OD0/z6Wcw9NLx0GUo6uvZO4d3b9LUdnwzgs5xQ13u1WpWMdK6M874QTs8kWKOJf6o8OhIZoPcx/
-	Ro7cyoNQl02p3o07+Rg+Tu5oODc1mDtEjn5oyDd1bpRATMvwcbbGVOV7VFvu1oPLipbVL/Pm3nlBs
-	PNJl+C5UjweOwUlE5arqj9dDswrg62muLoeiuCzqOM5IzKqqIB5wBR5O3U3u0kS8L+wLGYdnMX4Ky
-	l39qbUYg==;
-Received: from willy by casper.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1trgUR-00000008IkT-240a;
-	Mon, 10 Mar 2025 17:00:38 +0000
-Date: Mon, 10 Mar 2025 17:00:31 +0000
-From: Matthew Wilcox <willy@infradead.org>
-To: Zi Yan <ziy@nvidia.com>
-Cc: linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
-	Hugh Dickins <hughd@google.com>,
-	Ryan Roberts <ryan.roberts@arm.com>,
-	"Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
-	David Hildenbrand <david@redhat.com>,
-	Yang Shi <yang@os.amperecomputing.com>,
-	Miaohe Lin <linmiaohe@huawei.com>,
-	Kefeng Wang <wangkefeng.wang@huawei.com>,
-	Yu Zhao <yuzhao@google.com>, John Hubbard <jhubbard@nvidia.com>,
-	Baolin Wang <baolin.wang@linux.alibaba.com>,
-	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Kairui Song <kasong@tencent.com>
-Subject: Re: [PATCH v10 2/8] mm/huge_memory: add two new (not yet used)
- functions for folio_split()
-Message-ID: <Z88ar5YS99HsIRYo@casper.infradead.org>
-References: <20250307174001.242794-1-ziy@nvidia.com>
- <20250307174001.242794-3-ziy@nvidia.com>
- <Z88ToirSWa_meevw@casper.infradead.org>
- <A10312E5-F4CE-4CBA-B7CB-D435DFEA496F@nvidia.com>
- <D94BB56F-4BA0-4376-B5C4-7E38D2D92624@nvidia.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=rL1Rg/HaZH+vh08YSOnOyG5OiB1IYD/dK79rM0+PyE97DOabJJ6me2ciHxDmvsqdJdtfeT0Zo3wQEA/0zsKUwg5H2clPtWguNdDDwA4P7sH1Q+AL295AIkAH4EKF6OaMJyls5zQ2pMdmIBZI5klWhhFPnVzFP7of9NB5xwV0eRA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=UI0l+O5e; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1741626251;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=d7S8yd6R0h6QkbjSSTjEPq0BtEAD/xvKVvoWKNDxzjI=;
+	b=UI0l+O5ehc38NNBR0puKp4TKnmZ2om4xOQML+H3FVI7EzZBYLEjoZ+thsTynl3BVP7y+91
+	yaKy4KG1zNNWBrG/tGRntFncsYXLz/3PePkPbc/RYvSz73MQrDBYJgzy33gvEsW5a/9Ki/
+	qaLwTRKz3LF9issEZKhTsA5nOYhxSt0=
+Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-550-qcA6nO9WNJ6cidPgFWXLFQ-1; Mon,
+ 10 Mar 2025 13:04:08 -0400
+X-MC-Unique: qcA6nO9WNJ6cidPgFWXLFQ-1
+X-Mimecast-MFC-AGG-ID: qcA6nO9WNJ6cidPgFWXLFQ_1741626245
+Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 3444E1800349;
+	Mon, 10 Mar 2025 17:04:03 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.224.34])
+	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 310AD1956094;
+	Mon, 10 Mar 2025 17:03:53 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+	oleg@redhat.com; Mon, 10 Mar 2025 18:03:32 +0100 (CET)
+Date: Mon, 10 Mar 2025 18:03:21 +0100
+From: Oleg Nesterov <oleg@redhat.com>
+To: David Hildenbrand <david@redhat.com>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-trace-kernel@vger.kernel.org,
+	linux-perf-users@vger.kernel.org,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Matthew Wilcox <willy@infradead.org>,
+	Russell King <linux@armlinux.org.uk>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	"Liang, Kan" <kan.liang@linux.intel.com>,
+	Tong Tiangen <tongtiangen@huawei.com>
+Subject: Re: [PATCH -next v1 3/3] kernel/events/uprobes:
+ uprobe_write_opcode() rewrite
+Message-ID: <20250310170320.GC26382@redhat.com>
+References: <20250304154846.1937958-1-david@redhat.com>
+ <20250304154846.1937958-4-david@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <D94BB56F-4BA0-4376-B5C4-7E38D2D92624@nvidia.com>
+In-Reply-To: <20250304154846.1937958-4-david@redhat.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 
-On Mon, Mar 10, 2025 at 12:42:06PM -0400, Zi Yan wrote:
-> > Because of the “Careful” comment. But new_folio->* should be fine,
-> > since it is the same as new_head. So I probably can replace all
-> > new_head with new_folio except those VM_BUG_ON_PAGE checks?
+On 03/04, David Hildenbrand wrote:
+>
+> uprobe_write_opcode() does some pretty low-level things that really, it
+> shouldn't be doing:
 
-Why not also the VM_BUG_ON_PAGE check?  I mean:
+Agreed. Thanks again for doing this.
 
-> @@ -3364,8 +3364,8 @@ static void __split_folio_to_order(struct folio *folio, int old_order,
->  		/* ->mapping in first and second tail page is replaced by other uses */
->  		VM_BUG_ON_PAGE(new_nr_pages > 2 && new_head->mapping != TAIL_MAPPING,
->  			       new_head);
+David, as I said, I can't review. I don't understand this mm/folio magic
+with or without your changes.
 
-		VM_BUG_ON_PAGE(new_nr_pages > 2 && new_folio->mapping != TAIL_MAPPING, new_head);
+However. With your changes the code looks "better" and more understandable
+to me. So I'd vote for your patches even if I can't ack them.
 
-(or we could just ditch the assert entirely; it's not all that useful)
+But I'd like to ask some stupid (no, really) questions.
+__uprobe_write_opcode() does:
 
-> -		new_head->mapping = head->mapping;
-> -		new_head->index = head->index + index;
-> +		new_folio->mapping = head->mapping;
-> +		new_folio->index = head->index + index;
+	/* We're done if we don't find an anonymous folio when unregistering. */
+	if (!folio_test_anon(folio))
+		return is_register ? -EFAULT : 0;
 
-	new_folio->mapping = folio->mapping
-	new_folio->index = folio->index +index;
+Yes, but we do not expect !folio_test_anon() if register == true, right?
+See also below.
 
-(um, and that index + index looks weird; better name might be just 'i')
+	/* Verify that the page content is still as expected. */
+	if (verify_opcode(fw->page, opcode_vaddr, &opcode) <= 0) {
+		set_pte_at(vma->vm_mm, vaddr, fw->ptep, fw->pte);
+		return -EAGAIN;
+	}
+
+The caller, uprobe_write_opcode(), has already called verify_opcode(),
+why do we need to re-check?
+
+But whatever reason we have. Can we change uprobe_write_opcode() to
+"delay" put_page() and instead of
+
+	/* Walk the page tables again, to perform the actual update. */
+	folio = folio_walk_start(&fw, vma, vaddr, 0);
+	if (folio) {
+		ret = __uprobe_write_opcode(vma, &fw, folio, opcode_vaddr,
+					    opcode);
+		folio_walk_end(&fw, vma);
+	} else {
+		ret = -EAGAIN;
+	}
+
+do something like
+
+	/* Walk the page tables again, to perform the actual update. */
+	ret = -EAGAIN;
+	folio = folio_walk_start(&fw, vma, vaddr, 0);
+	if (folio) {
+		if (fw.page == page) {
+			WARN_ON(is_register && !folio_test_anon(folio));
+			ret = __uprobe_write_opcode(vma, &fw, folio, opcode_vaddr,
+					            opcode);
+		}
+		folio_walk_end(&fw, vma);
+	}
+
+?
+
+Once again, I am not trying to review. I am trying to understand the
+basics of your code.
+
+Thanks,
+
+Oleg.
 
 
