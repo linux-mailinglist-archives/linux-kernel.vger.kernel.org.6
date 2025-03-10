@@ -1,66 +1,88 @@
-Return-Path: <linux-kernel+bounces-554969-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-554972-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE374A5A3FB
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 20:46:03 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F809A5A402
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 20:46:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5C3EE174804
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 19:46:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4D04B1892C51
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 19:46:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 816DC4437C;
-	Mon, 10 Mar 2025 19:45:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22DB81DDA17;
+	Mon, 10 Mar 2025 19:46:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CZ5fxrU7"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="bOXb2S3S"
+Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF0D11DDC1D;
-	Mon, 10 Mar 2025 19:45:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FCB4158535
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 19:46:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741635945; cv=none; b=WW1rdUmPOYJ/2qJOtWbcTCAXLE76GA/cTk4P4/Ps1mkSD5I02Qf/JphApVjGIoGNfzwXB2xV1VBeKf3WYfKB1ypN9HTeFmcf9BBUOxW990GH1C2zWipZjxwC5Y6ozp/usfSp2yh0dU0KPJQUJ00sVv+enFrGXwd/NpEqvRrgS8k=
+	t=1741635987; cv=none; b=cctAO6dqYYQrca06In2b87a8xsac0xbuXrevXdXPJhDybkgyfOcGM5ieSOyC2NdxOYx6RKlyVEz2sZNmpKb/mFVpA44JouUcIv8y4U7dkP5XS5T/NwSkQZlv9dVacVAmlYXRiYnBPBLke1k7QL87/5wmdMoqgpcpwBjzSVvKK/E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741635945; c=relaxed/simple;
-	bh=TxvOlHkzSUtLhp0SC2wxUj4g9B1ax/MHJBU7K9Vv988=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UdRlEp8mlpakgVTT4UnVZrdiubsAUO5J7VD1JSmubwlcmv/vQyGqO7LxbnU8VPUvDae6sg782DglomQTBP/QfPDcnoez9x2gbmqDS/tINp4q1yjsAPVCKngXpTwgC/eWG3DyMTkEgcPy6Cd1yD+/f4lXWbCnmFDsdpyclKPsSLM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CZ5fxrU7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 44BD2C4CEEC;
-	Mon, 10 Mar 2025 19:45:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741635944;
-	bh=TxvOlHkzSUtLhp0SC2wxUj4g9B1ax/MHJBU7K9Vv988=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=CZ5fxrU7iDWSu33xD4ohuQdXHoIGbutYoC+CmImigBoMf6F4Lyl7Wh/RC6q4A3TD3
-	 iKrp2FzwTpa+l0btny9W6MjyGMcX8mEVH29dG2XMMBFPXgTw8eR3BEkOlq+fc8J4QS
-	 LZHXf60gPWOTPWnqgf+5zLn4o8kALR6V9elm/OrGYQcJ3t2wQ/+i3o81hL6ijC5XAv
-	 GKZcU7HSZt7fXcyc2r8bJnrthYfaflORyMoom7GshynKsZgD95MXAWq/GQG391ZPid
-	 ZrYKnSIQLgPjU0en2FcRdnx+cesz5bvLRjseiFHCuyFe6dLLixHMHI860WCbI3vdj2
-	 tqb+MO1VX3t+w==
-Date: Mon, 10 Mar 2025 20:45:37 +0100
-From: Ingo Molnar <mingo@kernel.org>
-To: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Andy Lutomirski <luto@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>, Baoquan He <bhe@redhat.com>,
-	Ard Biesheuvel <ardb@kernel.org>,
-	Tom Lendacky <thomas.lendacky@amd.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	Sean Christopherson <seanjc@google.com>,
-	linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org,
-	David Woodhouse <dwmw@amazon.co.uk>
-Subject: Re: [PATCHv4, REBASED 0/4] x86: Reduce code duplication on page
- table initialization
-Message-ID: <Z89BYeK3diXVDJxx@gmail.com>
-References: <20241016111458.846228-1-kirill.shutemov@linux.intel.com>
+	s=arc-20240116; t=1741635987; c=relaxed/simple;
+	bh=yPtT1URqHYreEI5ndrCPZSwQGTTEBPuFfvMnUG3ZU+U=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=AOJt2cbBsQcg5hFKTN8MFdFs/bIWpMKLRYHM1VZmm9LporXsCASz47ZuB4hGjMGekUNRpN6nqqQTn5A1y2q3krGgKNIQb3enb3CYtLK5liISNUP8Od82Z61zZf+Z5wBjHzEFH087rRR+0UJ7wwWlimIeyY4bhDeQidVqJTDa8Pk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=bOXb2S3S; arc=none smtp.client-ip=209.85.221.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-3912fdddf8fso2312828f8f.1
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 12:46:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1741635983; x=1742240783; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=IvLfn3qhWG0LPJSKPMLdwGHyzm3ZQnbWN9kL2fMh4Mw=;
+        b=bOXb2S3SDxRCZR5epXmTDOriYQ2VjsOfjNJGx984+FMp6W8h5nh+TKDpS5g7SAO6+M
+         RByqwmm0F4r95T2ajtEt+9v4TRmDxHRtGxlpZln9Opg+J8FdDqIeN7bmDCFD50fnD6ZW
+         rVzpx9OJrWarbGRpE9j9GwucNMgMnSWSzalz5WIC+41iIXo4V/ksDO14GZL+RW44crk+
+         atYJi3nKRXDmD90yW6UqNLv3q6EI/ovdrPcf2pJcIliABn1dWr4hbHl4S5SmKacwAbON
+         VtDeTzqxAcC2CqGxSJyoo7sWoAltCy63r9iD6neef3L7SwlQ+OcqBkSdzcK98ZXGKLaG
+         RBxg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741635983; x=1742240783;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=IvLfn3qhWG0LPJSKPMLdwGHyzm3ZQnbWN9kL2fMh4Mw=;
+        b=RmDomQt0ghdeeQQGuXCtjKZSoOcqLRm2+lkxLsos26aiPFIGH9jEPv/xAfbd7MhBTh
+         FVUX3aiRxJXdbC/jurqJhGx3unsRoJm0VYig9uCV9Q5TI8FHFMCkOU+G4YVb7h5byJTW
+         FaU81w6aXSA+gXdUPvDMPzkPKJPeyZT09Sl7cIjxEgc43ziGnGVuu+j6ANnEXKYEXdLI
+         A2DD6s8XNjMRakvfBUSmClrHehyoeEp/3B2wQPFZsv3fzMqfr+pdRXBZJ0BksMIeuw9S
+         y3vATMCpMy/dzTsTJgxcUplvz1mXS/ChS18rhEmdpuUnMao13qOAhUWHrkXfsNWKOJFm
+         pqCQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXYgrKGFNMBv0AEllAnMDBoI/qrCyvfobsJ4lgiSi4VkipY2us8hWJJIjw7STJf+V1SLPNDfEbcgV+wVec=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwxALWsoMXPa0okWuBg/PG5IU17vpJV0SLkRK2+c9DM7BQpF7JR
+	6qb6GETs13P03dNAfJtFhU8buDZaJOobCsymnxEyakgDYHHRfcKdnm9SusTSvtA=
+X-Gm-Gg: ASbGnct82SCrfSnfUJvmHtnFXYBZUc4YzVq2TnBlSI2/c4gB7vhPX6b1SbSfCGQs016
+	t2bklafpXk4c/JYL1XrxjQbUrR6c2GqURuwzaIiKLPLEb3Tk3EKJ9QwraKGAO01aZxpv5C7Gfnj
+	XEDpexDFkVVmGrjrkgAzz4VT2QUpQS/nMddafXHE2gS5ei8Rsc2oENtdCPHBWMJOeQBM9axSUqJ
+	p5igWbjZt2AHsulJD4uaDaPdB3Z4yhzDPi0g0vJzyHe7vHej6sCLXy+RGfDg5+mgRm4/m9jnPge
+	VuzLw5XUkZwp8JCGxMiYjcAvXia72IFMvQq6bmcsgxSPqRCFyw==
+X-Google-Smtp-Source: AGHT+IEd/pl739SBNrD6h1Towv44982Wiak2l2/J5QTRayAEyqBes8blAzLgBmUO87jKdAG+98SPfw==
+X-Received: by 2002:a5d:64e4:0:b0:391:865:5a93 with SMTP id ffacd0b85a97d-3926d123ba9mr995249f8f.22.1741635983490;
+        Mon, 10 Mar 2025 12:46:23 -0700 (PDT)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3912c0e3250sm15993154f8f.61.2025.03.10.12.46.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 10 Mar 2025 12:46:23 -0700 (PDT)
+Date: Mon, 10 Mar 2025 22:46:19 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Daniele Ceraolo Spurio <daniele.ceraolospurio@intel.com>,
+	Jani Nikula <jani.nikula@linux.intel.com>
+Cc: Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+	Rodrigo Vivi <rodrigo.vivi@intel.com>,
+	Tvrtko Ursulin <tursulin@ursulin.net>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	John Harrison <John.C.Harrison@intel.com>,
+	intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: [PATCH] drm/i915/gsc: delete a stray tab in
+ intel_gsc_fw_get_binary_info()
+Message-ID: <6152e1ac-745d-4b38-ba49-f013e6760936@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -69,56 +91,29 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241016111458.846228-1-kirill.shutemov@linux.intel.com>
+X-Mailer: git-send-email haha only kidding
 
+This line is indented on tab too far.  Delete the extra tab.
 
-* Kirill A. Shutemov <kirill.shutemov@linux.intel.com> wrote:
+Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+---
+ drivers/gpu/drm/i915/gt/uc/intel_gsc_fw.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> Use kernel_ident_mapping_init() to initialize kernel page tables where
-> possible, replacing manual initialization, reducing code duplication.
-> 
-> v4:
->  - Reviewed-bys from Kai;
->  - Fix comment in acpi_mp_setup_reset() (Rafael);
-> v3:
->  - Reviewed-bys from Tom;
->  - Improve commit messages;
-> v2:
->  - A separate patch to change what PA is mapped at relocate_kernel() VA.
->  - Improve commit messages;
->  - Add Reveiwed-by from Kai;
-> 
-> Kirill A. Shutemov (4):
->   x86/mm/ident_map: Fix virtual address wrap to zero
->   x86/acpi: Replace manual page table initialization with kernel_ident_mapping_init()
->   x86/64/kexec: Map original relocate_kernel() in init_transition_pgtable()
->   x86/64/kexec: Rewrite init_transition_pgtable() with kernel_ident_mapping_init()
-> 
->  arch/x86/include/asm/kexec.h       |  5 +-
->  arch/x86/kernel/acpi/madt_wakeup.c | 73 +++++-------------------
->  arch/x86/kernel/machine_kexec_64.c | 89 +++++++++++-------------------
->  arch/x86/mm/ident_map.c            | 14 +----
->  4 files changed, 50 insertions(+), 131 deletions(-)
+diff --git a/drivers/gpu/drm/i915/gt/uc/intel_gsc_fw.c b/drivers/gpu/drm/i915/gt/uc/intel_gsc_fw.c
+index 5dc0ccd07636..d550eb6edfb8 100644
+--- a/drivers/gpu/drm/i915/gt/uc/intel_gsc_fw.c
++++ b/drivers/gpu/drm/i915/gt/uc/intel_gsc_fw.c
+@@ -230,7 +230,7 @@ int intel_gsc_fw_get_binary_info(struct intel_uc_fw *gsc_fw, const void *data, s
+ 		gt_info(gt, "Invalid GSC firmware for MTL/ARL, got %d.%d.%d.%d but need 102.x.x.x",
+ 			gsc->release.major, gsc->release.minor,
+ 			gsc->release.patch, gsc->release.build);
+-			return -EINVAL;
++		return -EINVAL;
+ 	}
+ 
+ 	if (min_ver.major) {
+-- 
+2.47.2
 
-So looks like this series feel between the cracks during the holiday 
-season.
-
-To help move them along, I've fixed up the first patch with the review 
-feedback clarification requests, and applied patch #1 and #2 to 
-tip:x86/mm:
-
-  4f10ec03fe1e ("x86/mm/ident_map: Fix theoretical virtual address overflow to zero")
-  376daf20eda4 ("x86/acpi: Replace manual page table initialization with kernel_ident_mapping_init()")
-
-Patches #3 and #4 don't apply anymore, due to interference by other 
-work with commits like:
-
-  4b5bc2ec9a23 ("x86/kexec: Allocate PGD for x86_64 transition page tables separately")
-
-If the remaining patches are still relevant, mind porting them to 
-latest -tip?
-
-Thanks,
-
-	Ingo
 
