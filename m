@@ -1,104 +1,58 @@
-Return-Path: <linux-kernel+bounces-554372-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-554373-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 431DDA596EF
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 15:02:11 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 02BCDA596F1
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 15:02:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 24C767A658A
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 14:00:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 98D173A2E83
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 14:02:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C88FC1BC3F;
-	Mon, 10 Mar 2025 14:01:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="AdiD7AQX"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BD69229B0D;
+	Mon, 10 Mar 2025 14:02:13 +0000 (UTC)
+Received: from verein.lst.de (verein.lst.de [213.95.11.211])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A254F11CBA
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 14:01:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3D051D79BE;
+	Mon, 10 Mar 2025 14:02:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741615311; cv=none; b=o9Q8ozenf3J8FBztlcXQikWIoiifnhiVgBOHpKTi9hUAXKdaAJNK4OfkeDr/xQFtYOEb0iDepzGXM4hscKBXRF/60jO1N9xrjxeQ6Dho32EBXUXO/Jz7s3a8PH8+kypaYCcsIKXD/HaT50HEtfjMI+cQzPPeQRPlq3YY18fcCaA=
+	t=1741615332; cv=none; b=d5KwbDM2+NH5+b7V6t/7krNnvBw5iqODl6jHpW5ME0rgYrLEmlxJKBtK0ks2Rkgznp0lla113I3nR7lKiVj24ka90RGWviwdUGbh5+EGhl3PxEFS4wEBaLvanTH6lFF7IukJNyyv6Nq576JXlwMM25K0z52QosAEZ8wKYhY4pKU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741615311; c=relaxed/simple;
-	bh=yCDsSYaRK/VEjlMIlFOopdkFsAI8qdUxSfxn2JA5o1k=;
+	s=arc-20240116; t=1741615332; c=relaxed/simple;
+	bh=M7NmYC/Iylm9myghHwqILim55SAUt9QrM+UZYk0eJlw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mBZHnGqGxHKEypWHCWHl3NarO2iOyMzwhVAisFfw57oqLWz2bAjqES2/p/JNicJAn7sJFFf+HbLlSBfbYkD903Yrn96sT7LFx7SxNaKqTi3/hoxFRvcu3x5mUPTGJSv+a/Rcn5iB++A6+oJG0oL4ecdUObP77HCUuUht2Pto0c0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=AdiD7AQX; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 8584040E0217;
-	Mon, 10 Mar 2025 14:01:47 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id gClL4MeeByiO; Mon, 10 Mar 2025 14:01:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1741615303; bh=J2EqMSZqFGnnRjkBtkxopSMfQEtLpebbT9NzBZrJ3Mw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=AdiD7AQXkeN75sNMUdXgRQXkXMtLl51h6B5yieWFG7I32GNC1c2ZZ3wmAKnyjWR/C
-	 0NWnwMYJX61qTQP/jecTAdiUe2Cv5yYnhvt0Shc6UsMVCjKYMM33/PFmkDnuaMcxhb
-	 hBxxTtG42eQF3E9pKiyMnNYFQMQzQ7B0dXO+wmdwfHOBMikjnd9jNLj8FdRnkUMLNi
-	 VnxyObD5NBjl5tx4TFlCr1DYwSyXNhPCtTDRPX2arRH/MXD9p3YgqonaM9e+/RiMf/
-	 d66dfglKf450pe9rtYOj1nFMNls+gVn18zEITl4GxXj0hp/mgFXcyXLO5xEcqZse/E
-	 XS+axt34ZitKKRI0auvLuPoP7jc6Fo/4mjxdET4NWCR8KC3/+/BzPMJSsi8VbZXPnC
-	 JvrcZej+0Zn+baPpZeH/DpnL2VPlEYSSIREsHGFW6DtFKfoUp3wm1+cMLOLM/dyemn
-	 mYeY2CrUeHaEPUnN4+6ZEngLd5+Yd5IGo1NGB+Z1fCX7RLbjL28pykl28qYRFeYXUI
-	 D/PM61+HZBnrm95lGuIN5/Nv4Ox9xPJUp8oh92YMdx7VXefRTjO5LdB9p0pqPoTYY9
-	 F83oEUO3i730ih7NuSlUB6RN1rT4JzUjGb4SstPxugGhmO/BIBQo2nYBCtc+d4o+WY
-	 v3LkET8wl71kAFccqE4EVikY=
-Received: from zn.tnic (pd95303ce.dip0.t-ipconnect.de [217.83.3.206])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id B61ED40E0214;
-	Mon, 10 Mar 2025 14:01:25 +0000 (UTC)
-Date: Mon, 10 Mar 2025 15:01:24 +0100
-From: Borislav Petkov <bp@alien8.de>
-To: Tom Lendacky <thomas.lendacky@amd.com>
-Cc: Ajay Kaher <ajay.kaher@broadcom.com>, kevinloughlin@google.com,
-	bcm-kernel-feedback-list@broadcom.com, tglx@linutronix.de,
-	mingo@redhat.com, dave.hansen@linux.intel.com, x86@kernel.org,
-	hpa@zytor.com, virtualization@lists.linux.dev,
-	linux-kernel@vger.kernel.org, ye.li@broadcom.com,
-	bo.gan@broadcom.com, vamsi-krishna.brahmajosyula@broadcom.com,
-	alexey.makhalov@broadcom.com, vasavi.sirnapalli@broadcom.com,
-	florian.fainelli@broadcom.com
-Subject: Re: [PATCH] sev-snp: parse MP tables for VMware hypervisor
-Message-ID: <20250310140124.GJZ87wtBf-qMlizKuo@fat_crate.local>
-References: <20241219114400.858980-1-ajay.kaher@broadcom.com>
- <20250310102607.GDZ86-P3VFA-x2iy4l@fat_crate.local>
- <c2f26b4f-e42c-f152-c33d-4c0dd8d68da6@amd.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=ag6vxYudyv6dXYhxAj84etsjrw1bYOj7N7zpnCkWxOA0ladZfD/zLXMVDbHB5RAzdc8VHagaf+2USlDPpvttk9UZf5N3HHD6yqxVdUNab70Jv/YHyJULLfIklIR3KjVjAYhz5wv9kKBp6nRnBx3y8z1xvqdSaiRFp4DaKEISrkc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
+Received: by verein.lst.de (Postfix, from userid 2407)
+	id AB3C167373; Mon, 10 Mar 2025 15:02:06 +0100 (CET)
+Date: Mon, 10 Mar 2025 15:02:06 +0100
+From: hch <hch@lst.de>
+To: Hans Holmberg <Hans.Holmberg@wdc.com>
+Cc: Carlos Maiolino <cem@kernel.org>,
+	"Darrick J . Wong" <djwong@kernel.org>, hch <hch@lst.de>,
+	"linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] xfs: trigger zone GC when out of available rt blocks
+Message-ID: <20250310140206.GA9904@lst.de>
+References: <20250310133848.9856-1-hans.holmberg@wdc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <c2f26b4f-e42c-f152-c33d-4c0dd8d68da6@amd.com>
+In-Reply-To: <20250310133848.9856-1-hans.holmberg@wdc.com>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 
-On Mon, Mar 10, 2025 at 08:12:46AM -0500, Tom Lendacky wrote:
-> >> +	if (sev_status & MSR_AMD64_SEV_SNP_ENABLED &&
-> > 
-> > cpu_feature_enabled(X86_FEATURE_SEV_SNP)
-> 
-> I think this should really be cc_platform_has(CC_ATTR_GUEST_SEV_SNP).
+Looks good:
 
-Ah, we wanna check the guest, sure.
+Reviewed-by: Christoph Hellwig <hch@lst.de>
 
-Thx.
-
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
 
