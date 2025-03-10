@@ -1,127 +1,268 @@
-Return-Path: <linux-kernel+bounces-554189-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-554190-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C3AEAA59433
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 13:24:58 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id BEE24A59450
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 13:27:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E1C4818847AE
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 12:25:03 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2AFD97A3A18
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 12:26:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F02B9227E87;
-	Mon, 10 Mar 2025 12:24:37 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB734226D1B
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 12:24:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741609477; cv=none; b=cATrErUFm1XOX9eTr75wSuTsUi3PstUUZgCzTQMG3YhN3JvlimopZGP+dg9Y15UQxjSiSJorgO4ba9SkToazVWkkOw7Ys6Rb2AL5UDRE3Q1l7mQg834SwOggI797up5f/sk2tvRiIZS0zhTB5llgoIFLGcdbpF30JGjywMIxLcI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741609477; c=relaxed/simple;
-	bh=be7iYBhWCt5fNoFpxb56QSV9NrXBBlZi37xKCzsw8eI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=UCj8TdDGyTQEOyB1o1Mq6CWcHT3gZJewM7D702oJp68bGybxKS3L6RxyNuGLNLpwAxrD7Tm5uPlKk8d2HnE45CNK14GIlNVUKE3criTpXLc9b9arISooncQCRCf242eWKuqRZc6Da+Pl0ItDbgDffuwqtogAXm8RwpMP3flokBM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6F66D152B;
-	Mon, 10 Mar 2025 05:24:46 -0700 (PDT)
-Received: from [192.168.178.6] (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 9B4C03F5A1;
-	Mon, 10 Mar 2025 05:24:32 -0700 (PDT)
-Message-ID: <d2da740a-8786-4726-8467-b7534af3d0e5@arm.com>
-Date: Mon, 10 Mar 2025 13:24:31 +0100
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5668622C35D;
+	Mon, 10 Mar 2025 12:25:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="FtbMLGFM"
+Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2081.outbound.protection.outlook.com [40.107.236.81])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A521E22A4E9
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 12:25:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.236.81
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741609519; cv=fail; b=DrWHHLnjvRk9fIo1zefZbe/cJROG2YHSm9d/qRp4geDmkaGwTI1r+ZAefPzYz5lUGp5mQ/HDFS1rALGfzPUqU6gjUe+JzDnZm3Zs2sWfkUS7uPVd//2JFi4CNWcsYsPLLUWtlDrQeFC6Qo5vhCWG9gpTqMcRwFBgds4Ta8t60/E=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741609519; c=relaxed/simple;
+	bh=V4IUpg3nMKIIg0CqV+dIHEvv6DAeMDckBZDXboEiWpM=;
+	h=Message-ID:Date:Subject:To:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=nMOmovsIYnSI28t6W/tL4V86u2KkYI1tNjs3Bcm2e3MOY74ExH102HdmwdhAat+yGGPOTYXIln1pkOwyT0oJu4VDYm71WzAUda640QsJPD3ATEWnu8ujlO3XPAj5tduVSugoQ89I3p/5SCwO8+HepOqFmdI0klvUp6DJ/aOtWic=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=FtbMLGFM; arc=fail smtp.client-ip=40.107.236.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=s+vdYLozWzMLbUqUHe6gMODoqOJ6WaScm2lxNjW2EXxBf8vCwt+HNAR/dRfQVyTRZQj6WUbnRQPHvFMc4Jr9wm/JYA32qS7FCuz/GbiC4Xu7ygP/UFfMnm0u/+tDu48Tms7z1frH42RKns2TYiiZlJheZpPmgXA2/tyV1NdJ+6U+p+pmtBOk6pzeBbGAF+pK3VMSW5VhAp4ZPFpV5GfqALt/0h+jdVDRz4BZFJ9pAK0NAlWDbJ0kG+lKwGfKfYTyVCprXQ2ehuM0LlrL/fxBMF2s93nzDFEjUdNIWe2BCiN6hKcTQq0YfHkjKIkUu8i3jii1HaR7cenf3MET1hQ7pQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=d5ZPDxdQDSsoAB2qL2NMFx40uzJKBlaqrm3h7psIjSA=;
+ b=SRZBZImZ/Tfrccg1T6QUlT68Vid62Bb8CtW7CnFdewqfC+o1KYPWHg4hLqCGxW+S78UVAy7DN0+nSZoH5c/7B5FgjUwB2aKrW41i/zKboMtimU18WhonYzapQT3nRH+2Z7MxeXcQy948jw3VZj97TqcmtvUnYn0LV9L0Qw1h3A+HLwZeNAPiCmgsdDd2rg0ymPsb37bsBqLyN0cyBjnSumSPcdIsX2T96KietHewsNuzpdjM7Qaj82Xg77NJDh5NWofnRwi6vJAp5NKkgOmLcKv+vSDkr3JzP5aSX5U2GFMeAt7JiZcuBVzKtv4I+YEL/DG/Mg/WyEOw60f9S2ft+g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=d5ZPDxdQDSsoAB2qL2NMFx40uzJKBlaqrm3h7psIjSA=;
+ b=FtbMLGFMR4tfyBMtlF9b7rO3NZ6ouCNyWJYrfE1DpZY3vO7aRWUQVtoIGdQiNTGLolzobpMfK+Gng0mdTO3u76/RY+Ik9Fpp/jfWb6dW7APFCGATofKgPhapon9BlSvnz5rvJkOIiod4dPZsWJaZ4bSshh2SvOvl4uWjUBOPxVs=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from PH7PR12MB5685.namprd12.prod.outlook.com (2603:10b6:510:13c::22)
+ by SA3PR12MB9226.namprd12.prod.outlook.com (2603:10b6:806:396::20) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8511.26; Mon, 10 Mar
+ 2025 12:25:15 +0000
+Received: from PH7PR12MB5685.namprd12.prod.outlook.com
+ ([fe80::46fb:96f2:7667:7ca5]) by PH7PR12MB5685.namprd12.prod.outlook.com
+ ([fe80::46fb:96f2:7667:7ca5%5]) with mapi id 15.20.8511.025; Mon, 10 Mar 2025
+ 12:25:14 +0000
+Message-ID: <4269639b-56e0-4f44-8485-6120eeaf28e5@amd.com>
+Date: Mon, 10 Mar 2025 13:25:09 +0100
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] drm/sched: revert "drm_sched_job_cleanup(): correct false
+ doc"
+To: phasta@kernel.org, =?UTF-8?Q?Christian_K=C3=B6nig?=
+ <ckoenig.leichtzumerken@gmail.com>, matthew.brost@intel.com,
+ dakr@kernel.org, tvrtko.ursulin@igalia.com, dri-devel@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org
+References: <20250310074414.2129157-1-christian.koenig@amd.com>
+ <564be70f7d64c04c1ad77499522d99c64ea4d4d3.camel@mailbox.org>
+Content-Language: en-US
+From: =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>
+In-Reply-To: <564be70f7d64c04c1ad77499522d99c64ea4d4d3.camel@mailbox.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: FR3P281CA0010.DEUP281.PROD.OUTLOOK.COM
+ (2603:10a6:d10:1d::9) To PH7PR12MB5685.namprd12.prod.outlook.com
+ (2603:10b6:510:13c::22)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] sched/uclamp: Let each sched_class handle uclamp
-To: Hongyan Xia <hongyan.xia2@arm.com>, Xuewen Yan <xuewen.yan94@gmail.com>
-Cc: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
- Juri Lelli <juri.lelli@redhat.com>,
- Vincent Guittot <vincent.guittot@linaro.org>,
- Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>,
- Mel Gorman <mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>,
- Tejun Heo <tj@kernel.org>, David Vernet <void@manifault.com>,
- Andrea Righi <arighi@nvidia.com>, Changwoo Min <changwoo@igalia.com>,
- linux-kernel@vger.kernel.org, Xuewen Yan <xuewen.yan@unisoc.com>
-References: <84441660bef0a5e67fd09dc3787178d0276dad31.1740664400.git.hongyan.xia2@arm.com>
- <4394f2a7-b4e8-419a-a299-f1afa560c944@arm.com>
- <CAB8ipk_627GF+TV5u=6DK_3aRUHW8qGYwmN+KXMq_Cg-+Say1Q@mail.gmail.com>
- <bf5a70bf-3d13-4b3b-a3ef-804998b21fe9@arm.com>
- <CAB8ipk-SUFDATb=euJQFebxQ513SRwTEpSbBSD6K=batQKELHg@mail.gmail.com>
- <80c2c9f4-eb84-4a43-9c48-8f776615b45a@arm.com>
- <CAB8ipk8pEvOtCm-d0o1rsekwxPWUHk9iBGtt9TLTWW-iWTQKiA@mail.gmail.com>
- <65365ec7-6a16-4e66-8005-e78788cbedfa@arm.com>
- <84a8f306-e2f6-4c9e-a150-72ee3c187b64@arm.com>
-From: Dietmar Eggemann <dietmar.eggemann@arm.com>
-Content-Language: en-US
-In-Reply-To: <84a8f306-e2f6-4c9e-a150-72ee3c187b64@arm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PH7PR12MB5685:EE_|SA3PR12MB9226:EE_
+X-MS-Office365-Filtering-Correlation-Id: 908fb318-82ff-4518-9f5c-08dd5fce9c57
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?am9iMkx1Rjk4YjQ4MlJieFJUa2s2SCtLQkZrcTVZM3FTZGF4eWM1dUp5SDdn?=
+ =?utf-8?B?WHdkU0piYXhocFhOcE4zd1ZRdEh4TzB6V3hsNnNiSGtPclZpdFJYR2VzZVgr?=
+ =?utf-8?B?NjRIOWtiWWJKSE1HTUpHSEM0R3pIb3pvN3FReUJBZkt3VVVETmkxN3QxQ2Js?=
+ =?utf-8?B?WUxtQ1huWUIwTFhkYzNONDVIS0JXYVFkL0hyUklxblBML0g1dE8rcmMvNmtS?=
+ =?utf-8?B?aWlxcXZnNmxacFA0ODBwbzFrMHRHVE5ockFBbjlHbmlrYXpNM2lKWFZtWWRP?=
+ =?utf-8?B?ZFJQM2JDZ3pFQlh1S0xjZjF2M3NIL0hkVEJIUWQwZVJLaVl0aStVeHpyVGxH?=
+ =?utf-8?B?SE94Mm5wanNOT1k4QkM2TWZTSEhzdlUrdTFOV0trNktvcEtvVXlsWHZBcW14?=
+ =?utf-8?B?cUlVdUJHVTJzdkI3L2RBdUIrTlJZR0tYaVNXZWpYKzRyVVBBMlJ1VnpwT0g3?=
+ =?utf-8?B?MHFmNTBvaGdkbGN5enFhLys5WTVLODZaRnJCTk9VL2M2VjAydWkrelpFOXY5?=
+ =?utf-8?B?ZlhrUUdpeHRqNE9Na3RZS2pYajllU0pUNU5YcFY2Z2xFUnJXM3hkUEFIa2NU?=
+ =?utf-8?B?MjI3c3Y2N21hNGh2UkI1Zkl3Z2JITGh3b0pnYzBya21VeDg3NEpGNmlpZzRN?=
+ =?utf-8?B?SUkrT3I1M3U1RXVwVWhReFk1OTVPNU0xeFJHMjNXbzdMSXphNjdCMVdKb05D?=
+ =?utf-8?B?RVFuNGdUaTFWSXFmR1pRcHRqc2hTakhlWkRha09ra1dMdzM1QmpsS1FtaGNu?=
+ =?utf-8?B?NHZvL3lTQ09SdWlvYXVGSXhoUU1FNjVoRUozaTlzZ2tDSkxySWdKRVJ4MGZx?=
+ =?utf-8?B?cUdLbUhmaDU1Z3c1QUxjcHFLQW5MamJGTHRFdDM5dHo5em5DSlBSei9lUW4r?=
+ =?utf-8?B?VnZXZTNXUnQ3ckt4MkU3dkowZGdvZzJJRllHTUxWU2hSV2VVT0F4d2ZwTFl2?=
+ =?utf-8?B?czI5c0tRa3ZUWW56ODQ1c0o3Q2RyK0VBQXJFa0h0NnByZ20wODEwR3JGR214?=
+ =?utf-8?B?VXhLem5RYVV4V3NhZWFERnZMeFlndEZoYWgyZG54ZUYvWXppanBUaW5weVVL?=
+ =?utf-8?B?ZXVLMjhVU3pTTnR5QXJ4Q0kxU0lkclJmaG9UYUlJb1RURzlQUCtoR3kvd2VW?=
+ =?utf-8?B?UG81YVhSZyt0SnFmRU5vTzNvSU5sZ3Y5MUptSE1UKzZkVm05L2dMVC9Ganp2?=
+ =?utf-8?B?OS8zOVc0Mm5WZFhSSWNVTVlJL2swUHp1MllZMlFreWVrY0d5WEhsMFZYSjUv?=
+ =?utf-8?B?TmpaSCtDaXNkeUI4cWFNM0JsYkhUakxGTVRId0cvWGlEUjViUWh5aVAxam9H?=
+ =?utf-8?B?N2ZvWGhJeGVoN2xDV3ZabzM0bHRxdlpBdndscE1LYzBRVlowM29JUVEyS01q?=
+ =?utf-8?B?UlZCMXFCU1ZPLzRwbXdYR1k5TENsem5MSU9NUlhtcjdBRGR3OXJDQVlUZjND?=
+ =?utf-8?B?SmphQ2pqQjdWd09iaVVlTDZYK0VGV1BCazNub1NIbkVWTXpjMG1KcGZKY1JY?=
+ =?utf-8?B?cThUYkFpVC9uVzJ4WmR0UmtPVjBkZ1NBTUNUd3QxY1dSYWVpMyswdkl3SGNE?=
+ =?utf-8?B?ZmdVRVZQWXNKZ1FVUWZ6eE1xbDExeDNnMVpzYmFOZ2kyTUg4R01EOEpBL2pt?=
+ =?utf-8?B?REtzTjVjRDRoL0dNOHY0Rml2am9iSlBYSHRrWkIrRWpOSzdoSzR0UVB5SVNP?=
+ =?utf-8?B?RlN0UVBEMFRFTVRlVE84SFVEK2VSNXltM0hNV3F4cTNISnJKWUgveWttSmhi?=
+ =?utf-8?B?WVQvUTc3bTN3Y0RnUEhvd3FUYnQvUGllQXBOT1JGeVJYT3d4RWIycHczVVpt?=
+ =?utf-8?B?QjdvdkUwOC8rVmdlSkF5eElsWk5LVUtvMkR2bFdRODJNenliZ1RxakxmQytX?=
+ =?utf-8?Q?19NW5s5nKMLJv?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH7PR12MB5685.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?OW8rUkVIdldCWWoveWZ4Qk1YSTdWWC9MZXQ0TkNmQTVXVUgvR2hpOXYvVlpX?=
+ =?utf-8?B?clZVWEFaUUMyRkw3OWF1RHFoR1R2VHRJdUhTWm1wRXFtTnpwbGJ1bk9wU3N3?=
+ =?utf-8?B?RTdzYU42WGw1cTRrUzEyZmNUc0Y0UzBhTVFXMzJZNDNiV0FvRjFGdjh2czB5?=
+ =?utf-8?B?dXg4MHYvZVlxMVpSdFR0VjVsTTEra0FJa3lNVlpacWw1NjJYVk9VMXZOdVhp?=
+ =?utf-8?B?S0VFcVgxRllsdFBzdkJRUjV4ZW9kaUpRVGlkTTEvNGYwR3lndjdUZDFHeEpX?=
+ =?utf-8?B?c3FwQ2pZck5WSWc3NnI2VlRoOTVvaXVPWG55RldjYXVFd1FWYmg0N29qc2l0?=
+ =?utf-8?B?VzBTc0lTektBc0tPdStWck5WMkEyWHNMVFZPRXMyZVNDKzZPQjJYV21Rb0Qy?=
+ =?utf-8?B?SFdxV282TmNQc2t4VGhVS01adHBnWFhNWHRoWDhRaEhadCthOXJ4WEdLaHd5?=
+ =?utf-8?B?Q2NTMUxiSGZTQURqOGJ5YTVKTTlwMmJUOVovUGlCTEsyeXVRUHVQa1VvNkxF?=
+ =?utf-8?B?N0Z3SDBEaytGbEQwRWdMU1dyc0xhdWkwbE9ZOXQwdXJKeW9tTUIzZUwxSXFl?=
+ =?utf-8?B?V0hjVmZ1cUtIMVozNCt3VjlYVXB2WFlGYkRpaE9nc2laNlJWQXdDcGNBT2dq?=
+ =?utf-8?B?OVJNUlhwb09rVGhLQlNSZzhJVFdVRit2Y3B5L1dXaithdHQ1S1lJNjN1ZW9t?=
+ =?utf-8?B?dU1peDNxK2lzZytGTlZPbHoyMm5NRWNEZElDN3dZcHRmWFA3QjkrV1ZQb0Nz?=
+ =?utf-8?B?NmhISEY2WThZTU5Jb0JSclNqd3pMbVFMU1U5cnZjQm4yMUh1RlNiWjVwZWhH?=
+ =?utf-8?B?MUE1S20zTHk1M2Rzcms5TXpTdVFLUzFhb3k3WSs0ZktQV0hEY0JSU3hxTGxY?=
+ =?utf-8?B?NmhOMjdIeDg1c1NLQ1BRaFl0eDkxZEpGZHlJOEVMZjFBWi9WVWlWZEcrcFBH?=
+ =?utf-8?B?UWVlWVQrYmFNNjdXUUV4ZnRjRnZscVpERFRLdFVnbERQTFJUYVpEY2hXSmFY?=
+ =?utf-8?B?Y2dvL1g2MlF4SFZBUUtYQVUyYzdENmVWNnR6b255a0h3a1kvN29TVFBvdXhG?=
+ =?utf-8?B?dlpnWWhBY3dlL2tQTk9tN1g0aS9qdlQ1ZGZOODZTVkx0bFdTV1hNOGtkcURr?=
+ =?utf-8?B?RVBleTN0LzE3cklZb1JXKytENThoMnJDd0ZzZkdOL3BaVlJ3YXZ4Ky9sU3hH?=
+ =?utf-8?B?UU9YcEV6Nmp5a0lCbmI3alNDekVCVmpyTWE2RzNFTjUyemdaUEpKQm5EN3dH?=
+ =?utf-8?B?MTlMeStGbHR3OWp3Rkd1Nm9CeFRyMVJacjNUbllJeDduQnVZOUNVSGk0c3NM?=
+ =?utf-8?B?VitiSDVEbFdhbTkrekZaamsyTllmeFhpKzlybUxtWmFGSzZNMVlUdks2d1Bu?=
+ =?utf-8?B?SEp5VldadHlXQ2N3cVB5U09GMnFDeTZkTnNVVXpHdDkyci9sYkpGR0ZuRGpy?=
+ =?utf-8?B?dUpheGlScEZ1TVQ4enIzcUhvaG5LUzRkMUpBUGZFV094WE5XWEdVaFRTczIw?=
+ =?utf-8?B?QjIrZTdpTWtweHY3MzJXQThzTXV5cWFZY2pNSWpCSm85c3gzU1B4QzBuYXJy?=
+ =?utf-8?B?dGFTZlJtdmthTE56WkRySEhHOVFEbG53L2hGZUcxSW4ydEl3Zy81WitwYno4?=
+ =?utf-8?B?eVFFWVZkZTRsRWhaeFpJTDIwczNVMytBR3dXSTU5aCtyNTFYcnN3YVA4M0Nv?=
+ =?utf-8?B?ejhYMll6NUtIUUNBbmVFaTZGaFlDRjdtQUlOK1BWRFdnU2FxNngxTE1pTjl4?=
+ =?utf-8?B?TG43c0g2czRmQmt0OTVJdEJyN1VjWjZ3amI5VURnSnd4K1VUcUtDU1NRYk9t?=
+ =?utf-8?B?NVQ4WklSRWdYcUlwS1REdGRMVVNvbmVkMENoMEt5MkhTYVdjOEgraW9mU00x?=
+ =?utf-8?B?TzBrdEx3UWxBeitaSEt0OURNOWc2bnZycCs4QTBtYThyMUQxVFA4Q2xNT0Zz?=
+ =?utf-8?B?QVhyT3dvSWJNQytBQUQ1SHFCN044TVZxTHlncVU4VUR3YXhTWVc5VVhwT1Nl?=
+ =?utf-8?B?Z3FwL2t6aW9WeWVvY0hhaHZ2WnlsUkN1U25tRUU0NWErdWhpajRZTVorRC9m?=
+ =?utf-8?B?Vk53MG4rVFA4ZzdWcUpsSUVrUEd5VHFTNGMvREhzUjEwN1JTdTZROVNPN2FH?=
+ =?utf-8?Q?01aeSXWR9sSfmvn2Mk07D17ja?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 908fb318-82ff-4518-9f5c-08dd5fce9c57
+X-MS-Exchange-CrossTenant-AuthSource: PH7PR12MB5685.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Mar 2025 12:25:14.8948
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: WFIgsczKVDzJFMpuby1DahTgvPrkdbg/zadAr1xRNmqddA/HfydseyGDyWNv2Hfz
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA3PR12MB9226
 
-On 10/03/2025 12:56, Hongyan Xia wrote:
-> On 10/03/2025 11:22, Dietmar Eggemann wrote:
->> On 10/03/2025 12:03, Xuewen Yan wrote:
->>> Hi Dietmar,
->>>
->>> On Mon, Mar 10, 2025 at 6:53 PM Dietmar Eggemann
->>> <dietmar.eggemann@arm.com> wrote:
->>>>
->>>> On 10/03/2025 03:41, Xuewen Yan wrote:
->>>>> On Sat, Mar 8, 2025 at 2:32 AM Dietmar Eggemann
->>>>> <dietmar.eggemann@arm.com> wrote:
->>>>>>
->>>>>> On 06/03/2025 13:01, Xuewen Yan wrote:
->>>>>>> On Thu, Mar 6, 2025 at 2:24 AM Dietmar Eggemann
->>>>>>> <dietmar.eggemann@arm.com> wrote:
->>>>>>>>
->>>>>>>> On 27/02/2025 14:54, Hongyan Xia wrote:
-
-[...]
-
->>> I submitted a patch similar to yours before:
->>>
->>> https://lore.kernel.org/all/CAB8ipk_AvaOWp9QhmnFDdbFSWcKLhCH151=no6kRO2z+pSJfyQ@mail.gmail.com/
->>>
->>> And Hongyan fears that as more complexity goes into each sched_class
->>> like delayed dequeue,
->>> so it's better to just let the sched_class handle how uclamp is
->>> enqueued and dequeued within itself rather than leaking into core.c.
+Am 10.03.25 um 13:11 schrieb Philipp Stanner:
+> On Mon, 2025-03-10 at 08:44 +0100, Christian König wrote:
+>> This reverts commit 44d2f310f008613c1dbe5e234c2cf2be90cbbfab.
+> OK, your arguments with fence ordering are strong. Please update the
+> commit message according to our discussion:
+>
+>> Sorry for the delayed response, I only stumbled over this now while
+>> going
+>> over old mails and then re-thinking my reviewed by for this change.
+> Your RB hadn't even been applied (I merged before you gave it), so you
+> can remove this first paragraph from the commit message
+>
+>> The function drm_sched_job_arm() is indeed the point of no return.
+>> The
+>> background is that it is nearly impossible for the driver to
+>> correctly
+>> retract the fence and signal it in the order enforced by the
+>> dma_fence
+>> framework.
 >>
->> Ah, OK. Your patch didn't have 'sched' in the subject so I didn't see it
->> immediately.
+>> The code in drm_sched_job_cleanup() is for the purpose to cleanup
+>> after
+>> the job was armed through drm_sched_job_arm() *and* processed by the
+>> scheduler.
 >>
->> I would prefer that uclamp stays in core.c. ENQUEUE_DELAYED among all
->> the other flags is already used there (ttwu_runnable()).
+>> The correct approach for error handling in this situation is to set
+>> the
+>> error on the fences and then push to the entity anyway. We can
+>> certainly
+>> improve the documentation, but removing the warning is clearly not a
+>> good
+>> idea.
+> This last paragraph, as per our discussion, seems invalid. We shouldn't
+> have that in the commit log, so that it won't give later hackers
+> browsing it wrong ideas and we end up with someone actually mengling
+> with those fences.
+
+Sure, going to make those updates. I just wanted to give people a possible direction to look into when they really run into a situation where they need to abort some submission very late.
+
+Should I also clarify the comment in drm_sched_job_cleanup()?
+
+Regards,
+Christian.
+
+>
+> Thx
+> P.
+>
+>> Signed-off-by: Christian König <christian.koenig@amd.com>
+>> ---
+>>  drivers/gpu/drm/scheduler/sched_main.c | 12 +++++-------
+>>  1 file changed, 5 insertions(+), 7 deletions(-)
 >>
->> task_struct contains  sched_{,rt_,dl_}entity}. We just have to be
->> careful when switching policies.
-> 
-> I lean towards letting each class handle uclamp. We've seen the trouble
-> with delayed dequeue. Just like the if condition we have for util_est,
-> if uclamp is in each class then we can re-use the condition easily,
-> otherwise we need to carefully synchronize the enqueue/dequeue between
-> core.c and the sub class.
-> 
-> Also I think so far we are assuming delayed dequeue is the only trouble
-> maker. If RT and sched_ext have their own corner cases (I think maybe
-> sched_ext is likely because it may eventually want the ext scheduler to
-> be able to decide on uclamp itself) then the uclamp inc/dec in core.c
-> need to cater for that as well. Once a task is in a class, the variables
-> in another class may be in an undefined state, so checking corner cases
-> for all the sub-classes in a centralized place like core.c may not even
-> be easy to get right.
+>> diff --git a/drivers/gpu/drm/scheduler/sched_main.c
+>> b/drivers/gpu/drm/scheduler/sched_main.c
+>> index 53e6aec37b46..4d4219fbe49d 100644
+>> --- a/drivers/gpu/drm/scheduler/sched_main.c
+>> +++ b/drivers/gpu/drm/scheduler/sched_main.c
+>> @@ -1015,13 +1015,11 @@ EXPORT_SYMBOL(drm_sched_job_has_dependency);
+>>   * Cleans up the resources allocated with drm_sched_job_init().
+>>   *
+>>   * Drivers should call this from their error unwind code if @job is
+>> aborted
+>> - * before it was submitted to an entity with
+>> drm_sched_entity_push_job().
+>> + * before drm_sched_job_arm() is called.
+>>   *
+>> - * Since calling drm_sched_job_arm() causes the job's fences to be
+>> initialized,
+>> - * it is up to the driver to ensure that fences that were exposed to
+>> external
+>> - * parties get signaled. drm_sched_job_cleanup() does not ensure
+>> this.
+>> - *
+>> - * This function must also be called in &struct
+>> drm_sched_backend_ops.free_job
+>> + * After that point of no return @job is committed to be executed by
+>> the
+>> + * scheduler, and this function should be called from the
+>> + * &drm_sched_backend_ops.free_job callback.
+>>   */
+>>  void drm_sched_job_cleanup(struct drm_sched_job *job)
+>>  {
+>> @@ -1032,7 +1030,7 @@ void drm_sched_job_cleanup(struct drm_sched_job
+>> *job)
+>>  		/* drm_sched_job_arm() has been called */
+>>  		dma_fence_put(&job->s_fence->finished);
+>>  	} else {
+>> -		/* aborted job before arming */
+>> +		/* aborted job before committing to run it */
+>>  		drm_sched_fence_free(job->s_fence);
+>>  	}
+>>  
 
-I do understand your concern with sched_ext but I still prefer the less
-invasive change to get uclamp & util_est aligned for fair.c aligned.
-
-AFAICS, related to policy changes, we have a
-SCHED_WARN_ON(p->se.sched_delayed) in switched_to_fair() so far.
 
