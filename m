@@ -1,250 +1,187 @@
-Return-Path: <linux-kernel+bounces-553512-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-553513-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5EC71A58AC6
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 04:04:59 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B0336A58ACB
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 04:10:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 22F283AC720
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 03:04:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4D45A188E0CA
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 03:10:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6989C1ADFFE;
-	Mon, 10 Mar 2025 03:04:52 +0000 (UTC)
-Received: from mail78-60.sinamail.sina.com.cn (mail78-60.sinamail.sina.com.cn [219.142.78.60])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F0291B3955;
+	Mon, 10 Mar 2025 03:10:40 +0000 (UTC)
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4002A136349
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 03:04:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=219.142.78.60
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 037E0374FF;
+	Mon, 10 Mar 2025 03:10:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741575892; cv=none; b=j0OJekns/cS+kQJz1g55Z8rJEEraLzaIcVwYBDYswp3A50Slw392ykTWWOD7G4pgauokHPu+ejprWIanf1yDQS7rJgaW8xCIJeHU0TBeLTEP/PdIAekDar62M28BgIHSx5h/T5oVbnRYzMNwNabfmgtMw90jAs2L63VUhDDjQXA=
+	t=1741576239; cv=none; b=g+t2B/+MSscgXXeZwh75ePYSHB8OU+gxCNmQQvONZA4chWTIUDZQYKzCVVlGTolAYrjFQ632A7RZPN6dSvcha/aqGs538Y0lW5pt4+OdKkDvzzzVw9itTsJbBCeMj1tng+kfk4aXMnSjfHNk5KJKTlzDmHDLyb/Ujj1z9O8WLwM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741575892; c=relaxed/simple;
-	bh=26cx/vvyLmyfjqV5b45btoxXJllLg5LCM9Zt3cXbU8Y=;
-	h=From:To:Cc:Subject:Date:Message-Id; b=G286qHkDN3xbyOhXej68qoVa4pj4q0cROB2mBxjLetsMoBaZzjW4G3U2C0nVim96IJXyTX14Z0qBD2gpDlKm+aCgG/4Hi2t1BhYxUvlAeWKuRWFg9EIqfDTrPgxD4qDFBgOtMlE61yHPjKA2LqxP8kzMfwdAGvlUJnpWOIZe9BU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=everest-semi.com; spf=pass smtp.mailfrom=everest-semi.com; arc=none smtp.client-ip=219.142.78.60
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=everest-semi.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=everest-semi.com
-Received: from unknown (HELO zy-virtual-machine.localdomain)([180.159.108.137])
-	by sina.net (10.185.250.30) with ESMTP
-	id 67CE569D000009D8; Mon, 10 Mar 2025 11:03:58 +0800 (CST)
-X-Sender: zhangyi@everest-semi.com
-X-Auth-ID: zhangyi@everest-semi.com
-Authentication-Results: sina.net;
-	 spf=none smtp.mailfrom=zhangyi@everest-semi.com;
-	 dkim=none header.i=none;
-	 dmarc=none action=none header.from=zhangyi@everest-semi.com
-X-SMAIL-MID: B3C55CFE67994179ABD0A7C2F67E6B58
-X-SMAIL-UIID: B3C55CFE67994179ABD0A7C2F67E6B58-20250310-110358
-From: Zhang Yi <zhangyi@everest-semi.com>
-To: krzk@kernel.org
-Cc: tiwai@suse.com,
-	robh@kernel.org,
-	conor+dt@kernel.org,
-	broonie@kernel.org,
-	devicetree@vger.kernel.org,
-	lgirdwood@gmail.com,
-	linux-kernel@vger.kernel.org,
-	linux-sound@vger.kernel.org,
-	perex@perex.cz
-Subject: RE: [PATCH v4 1/2] ASoC: codecs: add support for ES8389
-Date: Mon, 10 Mar 2025 11:03:57 +0800
-Message-Id: <20250310030357.120390-1-zhangyi@everest-semi.com>
-X-Mailer: git-send-email 2.17.1
+	s=arc-20240116; t=1741576239; c=relaxed/simple;
+	bh=xXaGBY0qEl9SPW5Bo679+FUNfxVcg9fjGHlJEebQb/Y=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=FenoJgXPBQz9PlMIoVAI2PAjBCA7vxU8sx3xAspxac9Q+UptiTyExx/HC1tquqkty2NVYNK++5DN73zDlFeAGBVYZVKDBOQG6ofERVyfMRXGR3gRB/mrZJc3R6QhnVZyFfmBYaxBtVr3XdW1X2ttunqig+37tg4lF8+WfB4D26E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.105])
+	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4ZB1yS1drNzCs6v;
+	Mon, 10 Mar 2025 11:06:56 +0800 (CST)
+Received: from kwepemg500008.china.huawei.com (unknown [7.202.181.45])
+	by mail.maildlp.com (Postfix) with ESMTPS id 03D7614022F;
+	Mon, 10 Mar 2025 11:10:28 +0800 (CST)
+Received: from [127.0.0.1] (10.174.177.71) by kwepemg500008.china.huawei.com
+ (7.202.181.45) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Mon, 10 Mar
+ 2025 11:10:27 +0800
+Message-ID: <098bbcba-c7ba-4527-9486-1d89c902c594@huawei.com>
+Date: Mon, 10 Mar 2025 11:10:26 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 0/3] Fix a BUG_ON crashing the kernel in
+ start_this_handle
+To: Ojaswin Mujoo <ojaswin@linux.ibm.com>
+CC: <linux-ext4@vger.kernel.org>, Theodore Ts'o <tytso@mit.edu>, Jan Kara
+	<jack@suse.cz>, <linux-kernel@vger.kernel.org>, Yang Erkun
+	<yangerkun@huawei.com>
+References: <cover.1741270780.git.ojaswin@linux.ibm.com>
+ <692ab4aa-ff90-4b6f-980d-bfd6c1ca7619@huawei.com>
+ <Z8xBHVU1vChK2rMO@li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com>
+ <Z8xgY07XJuIi49Q9@li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com>
+Content-Language: en-US
+From: Baokun Li <libaokun1@huawei.com>
+In-Reply-To: <Z8xgY07XJuIi49Q9@li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
+ kwepemg500008.china.huawei.com (7.202.181.45)
 
-I apologize for not responding to this review comment.
-But I did view these review comments and fixed the error.
-In the meantime I will modify my cc list, do I need to resend a new version
-of the patch to correct my error in my cc list?
-
-> > +static int es8389_probe(struct snd_soc_component *codec)
-> > +{
-> > +	int ret = 0;
-> > +	struct es8389_private *es8389 = snd_soc_component_get_drvdata(codec);
-> > +
-> > +	ret = device_property_read_u8(codec->dev, "everest,mclk-src", &es8389->mclk_src);
-> > +	if (ret != 0) {
-> > +		dev_dbg(codec->dev, "mclk-src return %d", ret);
-> > +		es8389->mclk_src = ES8389_MCLK_SOURCE;
-> > +	}
-> > +
-> > +	ret = device_property_read_u8(codec->dev, "everest,adc-slot", &es8389->adc_slot);
-> > +	if (ret != 0) {
-> > +		dev_dbg(codec->dev, "adc-slot return %d", ret);
-> > +		es8389->adc_slot = 0x00;
-> > +	}
-> > +
-> > +	ret = device_property_read_u8(codec->dev, "everest,dac-slot", &es8389->dac_slot);
-> > +	if (ret != 0) {
-> > +		dev_dbg(codec->dev, "dac-slot return %d", ret);
-> > +		es8389->dac_slot = 0x00;
-> > +	}
-> > +
-> > +	es8389->dmic = device_property_read_bool(codec->dev,
-> > +			"everest,dmic-enabled");
-> > +	dev_dbg(codec->dev, "dmic-enabled %x", es8389->dmic);
-> > +
-> > +	if (!es8389->adc_slot) {
-> > +		es8389->mclk = devm_clk_get(codec->dev, "mclk");
-> > +		if (IS_ERR(es8389->mclk)) {
-> > +			dev_err(codec->dev, "%s,unable to get mclk\n", __func__);
-> 
-> Syntax is return dev_err_probe. Also, drop __func__.
-
-Ok,I'll fix it
-
-> > +static struct snd_soc_component_driver soc_codec_dev_es8389 = {
-> > +	.probe = es8389_probe,
-> > +	.remove = es8389_remove,
-> > +	.suspend = es8389_suspend,
-> > +	.resume = es8389_resume,
-> > +	.set_bias_level = es8389_set_bias_level,
-> > +
-> > +	.controls = es8389_snd_controls,
-> > +	.num_controls = ARRAY_SIZE(es8389_snd_controls),
-> > +	.dapm_widgets = es8389_dapm_widgets,
-> > +	.num_dapm_widgets = ARRAY_SIZE(es8389_dapm_widgets),
-> > +	.dapm_routes = es8389_dapm_routes,
-> > +	.num_dapm_routes = ARRAY_SIZE(es8389_dapm_routes),
-> > +	.idle_bias_on = 1,
-> > +	.use_pmdown_time = 1,
-> > +};
-> > +
-> > +static struct regmap_config es8389_regmap = {
-> > +	.reg_bits = 8,
-> > +	.val_bits = 8,
-> > +
-> > +	.max_register = ES8389_MAX_REGISTER,
-> > +
-> > +	.volatile_reg = es8389_volatile_register,
-> > +	.cache_type = REGCACHE_MAPLE,
-> > +};
-> > +
-> > +#ifdef CONFIG_OF
-> > +static struct of_device_id es8389_if_dt_ids[] = {
-> > +	{ .compatible = "everest,es8389", },
-> 
-> Bindings are before the user (see DT submitting patches).
-
-Ok,I'll fix it
-
-> > +	{ }
-> > +};
-> > +MODULE_DEVICE_TABLE(of, es8389_if_dt_ids);
-> > +#endif
-> > +
-> > +static void es8389_i2c_shutdown(struct i2c_client *i2c)
-> > +{
-> > +	struct snd_soc_component *component;
-> > +	struct es8389_private *es8389;
-> > +
-> > +	es8389 = i2c_get_clientdata(i2c);
-> > +	component = es8389->component;
-> > +	dev_dbg(component->dev, "Enter into %s\n", __func__);
-> 
-> Please drop simple probe enter/exit debugs. Tracing is for that in
-> general.
-
-I'll drop these.
-
-> > +
-> > +	regmap_write(es8389->regmap, ES8389_MASTER_MODE, 0x28);
-> > +	regmap_write(es8389->regmap, ES8389_HPSW, 0x00);
-> > +	regmap_write(es8389->regmap, ES8389_VMID, 0x00);
-> > +	regmap_write(es8389->regmap, ES8389_RESET, 0x00);
-> > +	regmap_write(es8389->regmap, ES8389_CSM_JUMP, 0xCC);
-> > +	usleep_range(500000, 550000);//500MS
-> > +	regmap_write(es8389->regmap, ES8389_CSM_JUMP, 0x00);
-> > +	regmap_write(es8389->regmap, ES8389_ANA_CTL1, 0x08);
-> > +	regmap_write(es8389->regmap, ES8389_ISO_CTL, 0xC1);
-> > +	regmap_write(es8389->regmap, ES8389_PULL_DOWN, 0x00);
-> > +}
-> > +
-> > +static int es8389_i2c_probe(struct i2c_client *i2c_client)
-> > +{
-> > +	struct es8389_private *es8389;
-> > +	int ret = -1;
-> > +
-> > +	es8389 = devm_kzalloc(&i2c_client->dev,
-> > +			sizeof(*es8389), GFP_KERNEL);
-> 
-> You wrapping is odd: unnecessary and not matching coding style.
-
-Ok,I'll fix it
-
->> +	if (es8389 == NULL)
->> +		return -ENOMEM;
->> +
->> +	i2c_set_clientdata(i2c_client, es8389);
->> +	es8389->regmap = devm_regmap_init_i2c(i2c_client, &es8389_regmap);
->> +	if (IS_ERR(es8389->regmap))
->> +		return dev_err_probe(&i2c_client->dev, PTR_ERR(es8389->regmap),
->> +			"regmap_init() failed\n");
->> +
->> +	ret =  devm_snd_soc_register_component(&i2c_client->dev,
->> +			&soc_codec_dev_es8389,
->> +			&es8389_dai,
->> +			1);
->> +	if (ret < 0) {
->> +		kfree(es8389);
+On 2025/3/8 23:21, Ojaswin Mujoo wrote:
+> On Sat, Mar 08, 2025 at 06:37:41PM +0530, Ojaswin Mujoo wrote:
+>> On Sat, Mar 08, 2025 at 09:09:28AM +0800, Baokun Li wrote:
+>>> On 2025/3/6 22:28, Ojaswin Mujoo wrote:
+>>>> ** Changes since v1 [1] **
+>>>>
+>>>>    * Picked up RVBs from Jan and Ritesh
+>>>>    * In patch 2/3, we now use a flag in sbi instead of SB_ACITVE
+>>>>      to determine when to journal sb vs when to commit directly.
+>>>>    * Added a prep patch 1/3
+>>>>
+>>>> [1] https://lore.kernel.org/linux-ext4/cover.1740212945.git.ojaswin@linux.ibm.com/T/#m5e659425b8c8fe2ac01e7242b77fed315ff89db4
+>>>>
+>>>> @Baokun, I didn't get a chance to look into the journal_inode
+>>>> modifications we were discussing in [2]. I'll try to spend some time and
+>>>> send that as a separate patch. Hope that's okay
+>>>>
+>>>> [2] https://lore.kernel.org/linux-ext4/cover.1740212945.git.ojaswin@linux.ibm.com/T/#mad8feb44d9b6ddadf87830b92caa7b78d902dc05
+>>> That's fine, it's not a priority. And if this patch set makes sure we
+>>> don't crash when things go wrong, I'm okay with leaving it as is.
+>>>
+>>> It's possible that jbd2_journal_commit_transaction() could call
+>>> ext4_handle_error() in other places as the code evolves. Fixing known
+>>> problems and protecting against potential ones is always a good thing.
+>> Yep thats true, I did spend some time on this since the codepath was a
+>> bit unfamiliar to me. Seems like a straighforward enough change. I'll
+>> add it to the next patch.
+>>
+>> thanks,
+>> ojaswin
+> Hey Baokun,
 >
->You have a bug here - double free. You can easily trigger this and see
->the result with KASAN.
+> So while coding this up, I started looking at some codepaths and it got
+> me wondering when can we actually change the sbi->s_es->s_journal_inum
+> (or sbi->s_sbh) from the time it gets populated to the umount time?
+>
+> Since the sbi->s_sbh buffer head is always in memory and never reclaimed
+> due the elevated reference, the only way to modify it should be if we
+> modify the memory page somehow. Or is there some codepath/tooling magic
+> I'm missing that can modify this value?
+For the ext4 file system, s_journal_inum is fixed after mkfs and is not
+expected to be modified. However, the sbi->s_sbh buffer head belongs to
+the block device, so direct write operations to the file system's block
+device /dev/xxx may directly modify sbi->s_sbh.
 
-Ok,I'll fix it
+For example, you can use the following script to trigger a journal bmap
+failure:
 
-> > +		return ret;
-> > +	}
-> > +
-> > +	return ret;
-> > +}
-> > +
-> > +static const struct i2c_device_id es8389_i2c_id[] = {
-> > +	{"es8389"},
-> > +	{ }
-> > +};
-> > +MODULE_DEVICE_TABLE(i2c, es8389_i2c_id);
-> > +
-> > +static struct i2c_driver es8389_i2c_driver = {
-> > +	.driver = {
-> > +		.name	= "es8389",
-> > +		.owner	= THIS_MODULE,
-> 
-> So you sent us an old code, probably based on downstream, duplicating
-> issues we already fixed in upstream.
-> 
-> That's really suboptimal choice.
-> 
-> First, you have the issues here which we already fixed. Second, you ask
-> us to review and find the same problems we already pointed out and
-> fixed.
-> 
-> Instead, please take the newest reviewed driver and use it as base.
+mkfs.ext4 -F /dev/sda
+mount /dev/sda /tmp/test
+dd if=/dev/zero of=/dev/sda bs=4096 count=1
+echo 1 > /tmp/test/file
+umount /tmp/test
 
-Ok,I'll fix it
+(Adding a delay in put_super and performing the script during the delay
+  can trigger the issue described in the patch.)
 
-> > +		.of_match_table = of_match_ptr(es8389_if_dt_ids),
-> > +	},
-> > +	.shutdown = es8389_i2c_shutdown,
-> > +	.probe = es8389_i2c_probe,
-> > +	.id_table = es8389_i2c_id,
-> > +};
-> > +module_i2c_driver(es8389_i2c_driver);
-> > +
-> > +MODULE_DESCRIPTION("ASoC es8389 driver");
-> > +MODULE_AUTHOR("Michael Zhang <zhangyi@everest-semi.com>");
-> > +MODULE_LICENSE("GPL");
-> > +
-> > +
-> 
-> No need for blank lines at the end.
 
-Ok,I'll fix it
+Cheers,
+Baokun
+>
+> Regards,
+> ojaswin
+>>>
+>>> Cheers,
+>>> Baokun
+>>>> ** Original Cover **
+>>>>
+>>>> When running LTP stress tests on ext4, after a multiday run we seemed to
+>>>> have hit the following BUG_ON:
+>>>>
+>>>>    [NIP  : start_this_handle+268]
+>>>>    #3 [c000001067c27a40] start_this_handle at c008000004d40f74 [jbd2]  (unreliable)
+>>>>    #4 [c000001067c27b60] jbd2__journal_start at c008000004d415cc [jbd2]
+>>>>    #5 [c000001067c27be0] update_super_work at c0080000053f9758 [ext4]
+>>>>    #6 [c000001067c27c70] process_one_work at c000000000188790
+>>>>    #7 [c000001067c27d20] worker_thread at c00000000018973c
+>>>>    #8 [c000001067c27dc0] kthread at c000000000196c84
+>>>>    #9 [c000001067c27e10] ret_from_kernel_thread at c00000000000cd64
+>>>>
+>>>> Which comes out to
+>>>>
+>>>>     382   repeat:
+>>>>     383           read_lock(&journal->j_state_lock);
+>>>> * 384           BUG_ON(journal->j_flags & JBD2_UNMOUNT);
+>>>>     385           if (is_journal_aborted(journal) ||
+>>>>     386               (journal->j_errno != 0 && !(journal->j_flags & JBD2_ACK_ERR))) {
+>>>>     387                   read_unlock(&journal->j_state_lock);
+>>>>
+>>>>
+>>>> Initially this seemed like it should never happen but upon crash
+>>>> analysis it seems like it could indeed be hit as described in patch 1/2.
+>>>>
+>>>> I would like to add that through the logs we only knew that:
+>>>>
+>>>> - ext4_journal_bmap -> ext4_map_blocks is failing with EFSCORRUPTED.
+>>>> - update_super_work had hit the BUG_ON
+>>>>
+>>>> I was not able to hit this bug again (without modifying the kernel to
+>>>> inject errors) but the above backtrace seems to be one possible paths
+>>>> where this BUG_ON can be hit. Rest of the analysis and fix is in patch
+>>>> 2/3. Patch 3 is just a small tweak that i found helpful while debugging.
+>>>>
+>>>> That being said, journalling is something I'm not very familiar with and
+>>>> there might be gaps in my understanding so thoughts and suggestions are
+>>>> welcome.
+>>>>
+>>>> Ojaswin Mujoo (3):
+>>>>     ext4: define ext4_journal_destroy wrapper
+>>>>     ext4: avoid journaling sb update on error if journal is destroying
+>>>>     ext4: Make sb update interval tunable
+>>>>
+>>>>    fs/ext4/ext4.h      | 11 +++++++++++
+>>>>    fs/ext4/ext4_jbd2.h | 22 ++++++++++++++++++++++
+>>>>    fs/ext4/super.c     | 35 +++++++++++++++++------------------
+>>>>    fs/ext4/sysfs.c     |  4 ++++
+>>>>    4 files changed, 54 insertions(+), 18 deletions(-)
+>>>>
+
 
