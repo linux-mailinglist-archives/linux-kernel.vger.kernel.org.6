@@ -1,37 +1,37 @@
-Return-Path: <linux-kernel+bounces-554023-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-554024-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6059FA591E5
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 11:54:00 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 446BCA591F5
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 11:55:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 147B91884414
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 10:53:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0D5373AE41F
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 10:53:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7AD822E414;
-	Mon, 10 Mar 2025 10:49:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F9F922E41B;
+	Mon, 10 Mar 2025 10:49:45 +0000 (UTC)
 Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1E0E22E015;
-	Mon, 10 Mar 2025 10:49:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C9ED22F144;
+	Mon, 10 Mar 2025 10:49:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741603782; cv=none; b=rPXqK6nhEvyFoljHhAtP8uSu7zLO+/ES1tYQQarMm7hqZFeN+M22/C27SVn1oT/K76sjSQ1rVN5wsUynEiWZiZgc8jBagY+nvV15wJJogCj9XSVZ9ANrT2VE/SSte4hs2Qoffm76TRxFgyyo1OG3RWn/y/ZBcx2vVQ3d0zCdJUU=
+	t=1741603784; cv=none; b=ujAkBNjsrRbloRg49Cyc0KgKcYq/0K5u9SlgE9yNIK1FW9H+fTUF3UqQHZduahDwx/OG6BEHu8fAHgZCp0j2enwR9UeSs1vRjngAyQjVWoictqg580WbwrQO1r/hJ3zWTGLiZSMyZaisWEasP2wV3fb5nTzfzZ4EWoiRj9yhEg4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741603782; c=relaxed/simple;
-	bh=h1NUjbsWtVI+rR0BWHzHHmfjMA+kj2h8OixpmVCAlv4=;
+	s=arc-20240116; t=1741603784; c=relaxed/simple;
+	bh=42aKcXhK8IV5fPBPTGh2nGPlIREx2MphMV8CwqHXvYM=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=TJKc6wdnO+a6GYtlhrmC754kLHkfI4uRpaQ2mfEe7Pvb3G53jN0ly7nRBxJ0niu9C+baQZTGHQPz+iUlbr94I2NW68228iiH5bTEFQnE9CdBy6g9yWWn4bGetpHoJW4fNBI/kFLrPCMGTe+V4KPdZYScp4Vsjwbd1hTXRKOYWj4=
+	 MIME-Version; b=MyEa1WCu/faDKniidCyWp5c9FV08Q1NzFUJrekKCYNiOWmpOs6NDHf9SUDM18hvdFxVGKEnB2HkOqpcvUtrkbHGR5/Pr5/6cNfDKuiqwmzW1MdkGk++oI4VKusxjmR/8qqSsbhlJPM7fI51Q/zOFaByiw8lrvgl19z8x4+DOTYg=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 2803815A1;
-	Mon, 10 Mar 2025 03:49:52 -0700 (PDT)
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 2AB15153B;
+	Mon, 10 Mar 2025 03:49:54 -0700 (PDT)
 Received: from e132581.cambridge.arm.com (e132581.arm.com [10.1.196.87])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id D07053F5A1;
-	Mon, 10 Mar 2025 03:49:38 -0700 (PDT)
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id E299F3F5A1;
+	Mon, 10 Mar 2025 03:49:40 -0700 (PDT)
 From: Leo Yan <leo.yan@arm.com>
 To: Suzuki K Poulose <suzuki.poulose@arm.com>,
 	Mike Leach <mike.leach@linaro.org>,
@@ -45,9 +45,9 @@ To: Suzuki K Poulose <suzuki.poulose@arm.com>,
 	linux-doc@vger.kernel.org,
 	linux-kernel@vger.kernel.org
 Cc: Leo Yan <leo.yan@arm.com>
-Subject: [PATCH v2 6/8] coresight: perf: Update buffer on AUX pause
-Date: Mon, 10 Mar 2025 10:49:17 +0000
-Message-Id: <20250310104919.58816-7-leo.yan@arm.com>
+Subject: [PATCH v2 7/8] Documentation: coresight: Document AUX pause and resume
+Date: Mon, 10 Mar 2025 10:49:18 +0000
+Message-Id: <20250310104919.58816-8-leo.yan@arm.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20250310104919.58816-1-leo.yan@arm.com>
 References: <20250310104919.58816-1-leo.yan@arm.com>
@@ -59,80 +59,76 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Due to sinks like ETR and ETB don't support interrupt handling, the
-hardware trace data might be lost for continuous running tasks.
-
-This commit takes advantage of the AUX pause for updating trace buffer
-to mitigate the trace data losing issue.
+This adds description for AUX pause and resume.  It gives introduction
+for what's AUX pause and resume and how to use the configuration terms.
+As last, it records several usage examples.
 
 Signed-off-by: Leo Yan <leo.yan@arm.com>
 ---
- .../hwtracing/coresight/coresight-etm-perf.c  | 38 ++++++++++++++++++-
- 1 file changed, 36 insertions(+), 2 deletions(-)
+ .../trace/coresight/coresight-perf.rst        | 50 +++++++++++++++++++
+ 1 file changed, 50 insertions(+)
 
-diff --git a/drivers/hwtracing/coresight/coresight-etm-perf.c b/drivers/hwtracing/coresight/coresight-etm-perf.c
-index d759663a1f7d..667110429de9 100644
---- a/drivers/hwtracing/coresight/coresight-etm-perf.c
-+++ b/drivers/hwtracing/coresight/coresight-etm-perf.c
-@@ -594,14 +594,48 @@ static void etm_event_start(struct perf_event *event, int flags)
- 	return;
- }
+diff --git a/Documentation/trace/coresight/coresight-perf.rst b/Documentation/trace/coresight/coresight-perf.rst
+index d087aae7d492..c49aa05c51eb 100644
+--- a/Documentation/trace/coresight/coresight-perf.rst
++++ b/Documentation/trace/coresight/coresight-perf.rst
+@@ -78,6 +78,56 @@ enabled like::
  
--static void etm_event_pause(struct coresight_device *csdev,
-+static void etm_event_pause(struct perf_event *event,
-+			    struct coresight_device *csdev,
- 			    struct etm_ctxt *ctxt)
- {
-+	int cpu = smp_processor_id();
-+	struct coresight_device *sink;
-+	struct perf_output_handle *handle = &ctxt->handle;
-+	struct list_head *path;
-+	unsigned long size;
-+
- 	if (!ctxt->event_data)
- 		return;
+ Please refer to the kernel configuration help for more information.
  
- 	/* Stop tracer */
- 	coresight_pause_source(csdev);
++Fine-grained tracing with AUX pause and resume
++----------------------------------------------
 +
-+	/* Bail out if no need update buffer */
-+	if (!ctxt->event_data->update_buf_on_pause)
-+		return;
++Arm CoreSight may generate a large amount of hardware trace data, which
++will lead to overhead in recording and distract users when reviewing
++profiling result. To mitigate the issue of excessive trace data, Perf
++provides AUX pause and resume functionality for fine-grained tracing.
 +
-+	if (WARN_ON_ONCE(handle->event != event))
-+		return;
++The AUX pause and resume can be triggered by associated events. These
++events can be ftrace tracepoints (including static and dynamic
++tracepoints) or PMU events (e.g. CPU PMU cycle event). To create a perf
++session with AUX pause / resume, three configuration terms are
++introduced:
 +
-+	path = etm_event_cpu_path(ctxt->event_data, cpu);
-+	sink = coresight_get_sink(path);
-+	if (WARN_ON_ONCE(!sink))
-+		return;
++- "aux-action=start-paused": it is specified for the cs_etm PMU event to
++  launch in a paused state.
++- "aux-action=pause": an associated event is specified with this term
++  to pause AUX trace.
++- "aux-action=resume": an associated event is specified with this term
++  to resume AUX trace.
 +
-+	if (!sink_ops(sink)->update_buffer)
-+		return;
++Some Arm CoreSight sinks (e.g., ETR, ETB) do not support interrupt
++mechanism. As a result, trace data might be lost if it cannot be copied
++to the user space tool in a timely manner. To mitigate trace data lose,
++a configuration term "update_buf_on_pause" can be used for the cs_etm
++PMU event. As its name suggests, it directs the driver to update the
++buffer when the AUX trace is paused. By default, this feature is
++disabled until users explicitly specify "update_buf_on_pause=1".
 +
-+	size = sink_ops(sink)->update_buffer(sink, handle,
-+					     ctxt->event_data->snk_config);
-+	if (READ_ONCE(handle->event)) {
-+		if (!size)
-+			return;
++TRBE has interrupt handling.  To avoid the race condition between the
++AUX pause or resume invoked in NMI and TRBE interrupt handler, the
++driver reports a failure if users try to use "update_buf_on_pause=1" on
++TRBE.
 +
-+		perf_aux_output_end(handle, size);
-+		perf_aux_output_begin(handle, event);
-+	} else {
-+		WARN_ON_ONCE(size);
-+	}
- }
++Example for triggering AUX pause and resume with ftrace tracepoints::
++
++  perf record -e cs_etm/aux-action=start-paused/k,syscalls:sys_enter_openat/aux-action=resume/,syscalls:sys_exit_openat/aux-action=pause/ ls
++
++Example for triggering AUX pause and resume with PMU event::
++
++  perf record -a -e cs_etm/aux-action=start-paused/k \
++        -e cycles/aux-action=pause,period=10000000/ \
++        -e cycles/aux-action=resume,period=1050000/ -- sleep 1
++
++Example for updating buffer on AUX pause::
++
++  perf record -a -e cs_etm/aux-action=start-paused,update_buf_on_pause=1/ \
++        -e cycles/aux-action=pause,period=10000000/ \
++        -e cycles/aux-action=resume,period=1050000/ -- sleep 1
++
+ Perf test - Verify kernel and userspace perf CoreSight work
+ -----------------------------------------------------------
  
- static void etm_event_stop(struct perf_event *event, int mode)
-@@ -615,7 +649,7 @@ static void etm_event_stop(struct perf_event *event, int mode)
- 	struct list_head *path;
- 
- 	if (mode & PERF_EF_PAUSE)
--		return etm_event_pause(csdev, ctxt);
-+		return etm_event_pause(event, csdev, ctxt);
- 
- 	/*
- 	 * If we still have access to the event_data via handle,
 -- 
 2.34.1
 
