@@ -1,175 +1,301 @@
-Return-Path: <linux-kernel+bounces-553774-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-553776-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 15CE0A58EA2
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 09:54:56 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 550AEA58EA7
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 09:55:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C5DC17A2754
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 08:53:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8512416A54C
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 08:55:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE5DF22424E;
-	Mon, 10 Mar 2025 08:54:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10CF022424D;
+	Mon, 10 Mar 2025 08:55:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="VSLQUb2Z"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Z0OlKQ0G"
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 614FD380;
-	Mon, 10 Mar 2025 08:54:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 732B61A724C
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 08:55:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741596886; cv=none; b=J0ojaVk3muoYnS1xAJ/CvTASDN68fys8bkpclK78YILT3LhvVganzbnhIof0XqJ18rwVG3aS5OTBAm6/eDqN60q05a/1QIfrXhakVbYVHCLHPgo7jpPBL2rfKqFnU/N7J5DAYnM4dkoTdGuDAMBkbRwf5APo2+0icNMAft3Ts9o=
+	t=1741596922; cv=none; b=ClgBVcsNPub+iKB6AS3aZmdgYI/vEUpakrOP6V7AhqEJ/VPWPvl74Eqb3uBE8zz/R8EYgHG3O73NdF+FRVQYwx9baK71kylwSak/1KnOODbxuJgV+89D3knHO3ix+E8LIIQECtEkHIc4qQtoW9kmY2Rhec2LnIjZcQLjFKgfd7s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741596886; c=relaxed/simple;
-	bh=79MIzmJSgb0AEYlsUc0kmUThbSkSIYSRseZNAmMcOtE=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=q5lagk1EmsBhMVHJ0qQ3jSLzGnoLn8x74M3Ey639Im5cd3xVKSEBY6/nXReXm0cwgpgs6r2ydZ3zl5QCwd4n9TRDf5FiqJ3qaqU9NhXS4+cmaQQa0GZXyepw7CoBDZk1+WHny1FjZt+XcxBSgCJT1+gqaPfIC1bEpjBcGhm3NbY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=VSLQUb2Z; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 529NI9dY028287;
-	Mon, 10 Mar 2025 08:54:36 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-type:date:from:message-id:mime-version:subject:to; s=
-	qcppdkim1; bh=h+dLEhJ2HnsiI/7pbyyqsuhYD2EbS9UfMhuK8jIsEqA=; b=VS
-	LQUb2ZuFycoEMP6Z6K/ndFByYlwSkTlnbcZGqYJeWDM/+vqTGw4s3AmrD4lVZ6oY
-	0oU5XbyulwWoBS50DLpRZUCO/QpZr2R2ysXbWF62ZNlPeEQhc0So1TWFgxHjTKu4
-	VgbfH5v0KeqGwqHgdui8bd0kbLnrMzvFLuD/CyZF5uZjkqRYHVaiEHnOtK7X8Sct
-	QAECKR6eKJLww/ixLI0zbl731F9qSRMyb0S359o+wLhsgDtLSNkHdBIsTrOtMpEF
-	YSPX8g39oK2IhEBeJzWH2QsWizoM4968YprmZJj1DccmxqXha1l7Hr5k7Ky8pVxI
-	mfgJzs4doWoXty+MPRQA==
-Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 458ewk46gy-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 10 Mar 2025 08:54:36 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 52A8sZYH013853
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 10 Mar 2025 08:54:35 GMT
-Received: from hu-anane-hyd.qualcomm.com (10.80.80.8) by
- nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Mon, 10 Mar 2025 01:54:32 -0700
-From: Anandu Krishnan E <quic_anane@quicinc.com>
-To: <srinivas.kandagatla@linaro.org>, <linux-arm-msm@vger.kernel.org>
-CC: <gregkh@linuxfoundation.org>, <quic_bkumar@quicinc.com>,
-        <quic_ekangupt@quicinc.com>, <linux-kernel@vger.kernel.org>,
-        <quic_chennak@quicinc.com>, <dri-devel@lists.freedesktop.org>,
-        <arnd@arndb.de>
-Subject: [PATCH v3] misc: fastrpc: Add meaningful labels for exit paths
-Date: Mon, 10 Mar 2025 14:24:17 +0530
-Message-ID: <20250310085417.25559-1-quic_anane@quicinc.com>
-X-Mailer: git-send-email 2.17.1
+	s=arc-20240116; t=1741596922; c=relaxed/simple;
+	bh=+Gkinx5fiEq/vJwH/DFqcyN9jU8v6IMHL3kNlgCrDOk=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=smJcoo60HeV3KJeUZpK45TlD1gT36fYbXbE/rezoUyY7APIbUlgdQ8w/hGkpgCxBGQ3fsVk+QTdqx63WdVXupYHQatRn9+ChKpanXB/dUkG0OqdFk4889ClWgeCy30wa6PQLw49GW9m27svz5OfVCLlQazTX4LkBpjfOLAokoXM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Z0OlKQ0G; arc=none smtp.client-ip=209.85.214.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-219f8263ae0so71527765ad.0
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 01:55:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1741596920; x=1742201720; darn=vger.kernel.org;
+        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=2Tm2wvmlbOJnRRib3mELhH6TcvAZa/xniLi1Hhu2zvA=;
+        b=Z0OlKQ0GEtUOCAin9LZtiy0vV0nYqJA4wXoZ/KpH4wghVdNnn20+Kg9856C4AjsTjg
+         R3Ipiuqv7inKKQ3uSOboTuK//AEfQAIRXljc+iRtFwBrpW61+drqIpPgDlLJiF5kNi2O
+         tq+QFtDMiA7DhRqyYr+A8+Dr0Gb35h28cXr41pVc+/KKJVpH9uNqJ6S5eCYpByXhUdD4
+         3ATf0RWGZtKXONvdfcSzM4zkB+7zCh733KZyNmotfq14rj6MoI8CtjHFdOnO63tsivh8
+         EK13Jq9i/bZBXzPFT/rAJb+8TxWvYXpsC1kIWg0RXJbC8QCSdLNXfnpobGXbEbPK5Vwx
+         CwiQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741596920; x=1742201720;
+        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=2Tm2wvmlbOJnRRib3mELhH6TcvAZa/xniLi1Hhu2zvA=;
+        b=Ayllf+pO7nfUr3AXADxn8Wv/2Z89/F60Tl2fNmPNrbAw6eEQkjD32sY+859/H1kbac
+         wupY2EmxhToDxQcan6gXXIqfIDlCOtmXtuGZGE+HPJVTKdfum1T8fkHQkwYAI1XOpeS6
+         yuOz11Iz5j6zKC1F4vezLCXWTdNMBELkVNqhxiw8JidtTFwjUUFI0bp3rfubYSOvZ5RS
+         5cePARdETMSosJcbJuMuFZ+YQcbPOuJfxAUa5tWd5cEhYnAmsUx+Xb8vYY5tRPkpF7Oe
+         h870e049+Lo49gTOFD81JhGqZcs6Wa2xUwJS1wkWcAkzIaOPDLoJVOWFYY36QPnXVcYt
+         vs6A==
+X-Forwarded-Encrypted: i=1; AJvYcCUqMU/RfsSNxn2KD0o+HjRKH4LNKQFB7scbvpDPq8ON2eNiDkL5x4qor3K1tyMOEaOj61IjB1YxeTo7HI0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyq6FsOsJ4HisUoWn4iWU5LLX7RJaCzWpz2ko+CmnnX5pKxUYe3
+	KWTJJktH/2dQbVlXy+xtydwn9EXM0ygn34j9HB2HKiBiS5ziui0nP7QV1KS0Vw==
+X-Gm-Gg: ASbGncusm0s0uURnH1WvTPQROgX4IoDn06IHqQha/9EQ+W7Aa+rm7uIjo7WXZsPtfUH
+	ZhcRPAekzGpAZxWdXdVH+oeNjxKDMlu1rubn9PZedGCk4rktDH3rJSLoPlcOa8GEH0TrgB8ZKiA
+	LcVvRWUC0bu4qnY2DqGKE9us37DciVJSOCPYSR6Gbu72uW3qrLMnvYU+DV2t+Y58NxJI0Kf3hxC
+	X3wobdjHUDeptw7QnSJcIC6htHPYsn5gOCPfbtqIgzDVYIRIeu6ay7/LDgayg8zNFO912cz5xDi
+	q0KHV/fALSPwQywgB8jrLPjt+5r+698OLWIfdWDt4DWtXRwoCtd9kN4DnudN2a61wNZNx4dYbyx
+	KbvBx+kAdmeje4b1brLTIpMHF38tx
+X-Google-Smtp-Source: AGHT+IGVsvgzAwUBvLy58/XpPXaFRBbWWGnJg8e5NysxhOMMoYZ6rY0jW9IEi729pGV2nyMk3NkzQw==
+X-Received: by 2002:a17:902:e802:b0:220:ff3f:6cc0 with SMTP id d9443c01a7336-22428ac9ca5mr222065895ad.38.1741596919463;
+        Mon, 10 Mar 2025 01:55:19 -0700 (PDT)
+Received: from darker.attlocal.net (172-10-233-147.lightspeed.sntcca.sbcglobal.net. [172.10.233.147])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22410aa8ae4sm72469265ad.243.2025.03.10.01.55.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 10 Mar 2025 01:55:18 -0700 (PDT)
+Date: Mon, 10 Mar 2025 01:54:23 -0700 (PDT)
+From: Hugh Dickins <hughd@google.com>
+To: Zi Yan <ziy@nvidia.com>
+cc: Hugh Dickins <hughd@google.com>, Andrew Morton <akpm@linux-foundation.org>, 
+    linux-mm@kvack.org, 
+    "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>, 
+    "Matthew Wilcox (Oracle)" <willy@infradead.org>, 
+    Ryan Roberts <ryan.roberts@arm.com>, David Hildenbrand <david@redhat.com>, 
+    Yang Shi <yang@os.amperecomputing.com>, Miaohe Lin <linmiaohe@huawei.com>, 
+    Kefeng Wang <wangkefeng.wang@huawei.com>, Yu Zhao <yuzhao@google.com>, 
+    John Hubbard <jhubbard@nvidia.com>, 
+    Baolin Wang <baolin.wang@linux.alibaba.com>, 
+    linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org, 
+    Kairui Song <kasong@tencent.com>, Liu Shixin <liushixin2@huawei.com>
+Subject: Re: [PATCH v9 2/8] mm/huge_memory: add two new (not yet used)
+ functions for folio_split()
+In-Reply-To: <D45D4F01-E5A5-47E6-8724-01610CC192CC@nvidia.com>
+Message-ID: <fcbadb7f-dd3e-21df-f9a7-2853b53183c4@google.com>
+References: <20250226210032.2044041-1-ziy@nvidia.com> <20250226210032.2044041-3-ziy@nvidia.com> <2fae27fe-6e2e-3587-4b68-072118d80cf8@google.com> <408B0C17-E144-4729-9461-80E8B5D1360C@nvidia.com> <0582f898-bd35-15cc-6b4d-0a3ad9c2a1a4@google.com>
+ <2D7DFB2E-DB80-4F6C-A580-DEBC70318364@nvidia.com> <176731de-6a3b-270b-6b5d-dfce124c8789@google.com> <D45D4F01-E5A5-47E6-8724-01610CC192CC@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Authority-Analysis: v=2.4 cv=Tr8chCXh c=1 sm=1 tr=0 ts=67cea8cc cx=c_pps a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17 a=GEpy-HfZoHoA:10 a=Vs1iUdzkB0EA:10 a=VwQbUJbxAAAA:8 a=COk6AnOGAAAA:8 a=i2-9LFCxhnPdUyQ0F-UA:9
- a=0bXxn9q0MV6snEgNplNhOjQmxlI=:19 a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-GUID: kgi2LM1fQr1hJpiRCwqlv8ONm9Paf955
-X-Proofpoint-ORIG-GUID: kgi2LM1fQr1hJpiRCwqlv8ONm9Paf955
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-10_03,2025-03-07_03,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0
- priorityscore=1501 mlxlogscore=999 spamscore=0 lowpriorityscore=0
- mlxscore=0 clxscore=1011 phishscore=0 malwarescore=0 impostorscore=0
- bulkscore=0 adultscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2502100000
- definitions=main-2503100069
+Content-Type: multipart/mixed; boundary="-1463770367-310574914-1741596918=:2706"
 
-In the fastrpc_rpmsg_probe function, the exit path labels are not
-intuitive and do not clearly indicate the purpose of the goto
-statements. Rename goto labels to make it more intuitive and to
-align with labels of other functions.
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
-Signed-off-by: Anandu Krishnan E <quic_anane@quicinc.com>
----
-Changes in v3:
- - moved out from patch series to stand-alone patch.
- - Link to v2: https://lore.kernel.org/all/20241223100101.29844-1-quic_anane@quicinc.com/
+---1463770367-310574914-1741596918=:2706
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 
-Changes in v2:
- - Added Fixes: tag and cc:stable.
- - Fixed author name.
- - Link to v1: https://lore.kernel.org/all/20241220061854.24428-1-quic_anane@quicinc.com/
+On Thu, 6 Mar 2025, Zi Yan wrote:
+> On 5 Mar 2025, at 17:38, Hugh Dickins wrote:
+> > On Wed, 5 Mar 2025, Zi Yan wrote:
+> >> On 5 Mar 2025, at 16:03, Hugh Dickins wrote:
+> >>>
+> >>> Beyond checking that, I didn't have time yesterday to investigate
+> >>> further, but I'll try again today (still using last weekend's mm.git)=
+=2E
+> >>
+> >> I am trying to replicate your runs locally. Can you clarify your steps
+> >> of =E2=80=9Ckernel builds on huge tmpfs while swapping to SSD=E2=80=9D=
+? Do you impose
+> >> a memory limit so that anonymous memory is swapped to SSD or make tmpf=
+s
+> >> swap to SSD?
+> >
+> > Yeah, my heart sank a bit when I saw Andrew (with good intention) askin=
+g
+> > you to repeat my testing.
+> >
+> > We could spend weeks going back and forth on that, and neither of us ha=
+s
+> > weeks to spare.
+> >
+> > "To fulfil contractual obligations" I'll mail you the tarfile I send
+> > out each time I'm asked for this; but I haven't updated that tarfile
+> > in four years, whereas I'm frequently tweaking things to match what's
+> > needed (most recently and relevantly, I guess enabling 64kB hugepages
+> > for anon and shmem in addition to the PMD-sized).
+> >
+> > Please don't waste much of your time over trying to replicate what
+> > I'm doing: just give the scripts a glance, as a source for "oh,
+> > I could exercise something like that in my testing too" ideas.
+> >
+> > Yes, I limit physical memory by booting with mem=3D1G, and also apply
+> > lower memcg v1 limits.
+> >
+> > I made a point of saying "SSD" there because I'm not testing zram or
+> > zswap at all, whereas many others are testing those rather than disk.
+> >
+> > swapoff, and ext4 on loop0 on tmpfs, feature in what I exercise, but ar=
+e
+> > NOT relevant to the corruption I'm seeing here - that can occur before
+> > any swapoff, and it's always on the kernel build in tmpfs: the parallel
+> > build in ext4 on loop0 on tmpfs completes successfully.
+>=20
+> Thanks for the scripts. I kinda replicate your setup as follows:
+>=20
+> 1. boot a VM with 1GB memory and 8 cores;
+> 2. mount a tmpfs with huge=3Dalways and 200GB;
+> 3. clone the mainline kernel and use x86_64 defconfig (my gcc 14 gives
+>    errors during the old kernel builds), this takes about 2GB space,
+>    so some of tmpfs is already swapped to SSD;
+> 4. create a new cgroupv2 and set memory.high to 700MB to induce memory
+>    swap during kernel compilation;
+> 5. run =E2=80=9Cwhile true; do echo 1 | sudo tee /proc/sys/vm/compact_mem=
+ory >/dev/null; done=E2=80=9D to trigger compaction all the time;
+> 6. build the kernel with make -j20.
+>=20
+> I ran the above on mm-everything-2025-03-05-03-54 plus the xarray fix v3,
+> folio_split() with your fixes, and Minimize xa_node allocation during
+> xarry split patches. The repo is at: https://github.com/x-y-z/linux-dev/t=
+ree/shmem_fix-mm-everything-2025-03-05-03-54.
+>=20
+> It has ran over night for 30 kernel builds and no crash happened so far.
+> I wonder if you can give my repo a shot.
 
- drivers/misc/fastrpc.c | 16 ++++++++--------
- 1 file changed, 8 insertions(+), 8 deletions(-)
+Thanks for trying, I hope you didn't waste too much time on it,
+I was not optimistic that it could be adapted easily.
 
-diff --git a/drivers/misc/fastrpc.c b/drivers/misc/fastrpc.c
-index 7b7a22c91fe4..378923594f02 100644
---- a/drivers/misc/fastrpc.c
-+++ b/drivers/misc/fastrpc.c
-@@ -2313,7 +2313,7 @@ static int fastrpc_rpmsg_probe(struct rpmsg_device *rpdev)
- 		rmem = of_reserved_mem_lookup(rmem_node);
- 		if (!rmem) {
- 			err = -EINVAL;
--			goto fdev_error;
-+			goto err_free_data;
- 		}
- 
- 		src_perms = BIT(QCOM_SCM_VMID_HLOS);
-@@ -2334,7 +2334,7 @@ static int fastrpc_rpmsg_probe(struct rpmsg_device *rpdev)
- 		data->unsigned_support = false;
- 		err = fastrpc_device_register(rdev, data, secure_dsp, domains[domain_id]);
- 		if (err)
--			goto fdev_error;
-+			goto err_free_data;
- 		break;
- 	case CDSP_DOMAIN_ID:
- 	case CDSP1_DOMAIN_ID:
-@@ -2342,15 +2342,15 @@ static int fastrpc_rpmsg_probe(struct rpmsg_device *rpdev)
- 		/* Create both device nodes so that we can allow both Signed and Unsigned PD */
- 		err = fastrpc_device_register(rdev, data, true, domains[domain_id]);
- 		if (err)
--			goto fdev_error;
-+			goto err_free_data;
- 
- 		err = fastrpc_device_register(rdev, data, false, domains[domain_id]);
- 		if (err)
--			goto populate_error;
-+			goto err_deregister_fdev;
- 		break;
- 	default:
- 		err = -EINVAL;
--		goto fdev_error;
-+		goto err_free_data;
- 	}
- 
- 	kref_init(&data->refcount);
-@@ -2367,17 +2367,17 @@ static int fastrpc_rpmsg_probe(struct rpmsg_device *rpdev)
- 
- 	err = of_platform_populate(rdev->of_node, NULL, NULL, rdev);
- 	if (err)
--		goto populate_error;
-+		goto err_deregister_fdev;
- 
- 	return 0;
- 
--populate_error:
-+err_deregister_fdev:
- 	if (data->fdevice)
- 		misc_deregister(&data->fdevice->miscdev);
- 	if (data->secure_fdevice)
- 		misc_deregister(&data->secure_fdevice->miscdev);
- 
--fdev_error:
-+err_free_data:
- 	kfree(data);
- 	return err;
- }
--- 
-2.17.1
+You appeared to be suggesting above that I try your setup, which did
+not reproduce the corruption, instead of mine which did.  And later you
+appeared to conclude that all is good because you saw no corruption.
 
+No. I continued with my setup (working on mm-everything-2025-03-08-00-43),
+have now root-caused the corruption, and have the fix: as so often,
+it is obvious in retrospect.
+
+After looking at enough of the fixdep failures and their .o.d files,
+I found them consistent with seeing the head page of a large folio
+in place of its first tail (presumably while racing a split).
+
+And the debug patch to filemap_get_entry() below (not something we want
+to go into the tree, but good for confirmation - maybe it will even
+show warnings on your setup) confirmed that - well, head in place of
+first tail was the majority of cases, but head in place of any tail
+in general.
+
+There's a race between RCU lookup of the xarray and your splitting.
+That's something that normally the xas_reload(&xas) check guards
+against, but it was not effective.
+
+I wasted a day getting it exactly back to front: I thought the problem
+was that __split_unmap_folio() needed to __xa_store the former tail
+before unfreezing it; but the patch reversing that ordering still
+issued some warnings.
+
+No, it's that __split_unmap_folio() must not unfreeze the original
+head until all the xa slots which used to point to it have been
+updated with their new contents (as __split_huge_page() always did).
+
+I've taken the liberty of simplifying the unfreeze calculaton in terms
+of mapping and swap_cache, as we did elsewhere (and after fiddling
+around with the comment above it, just dropped it as adding nothing
+beyond what the code already does).
+
+And there's one other, unrelated change in there: I've changed the
+folio_put() after __filemap_remove_folio() to folio_put_refs().
+I believe that is what's correct there, but please check carefully:
+I'm a little worried that my testing (which I expect to be exercising
+that "beyond EOF" case plenty) has run well both before and after that
+change, whereas I thought there should be a noticeable leak of memory
+while it was just folio_put().
+
+Or maybe my testing is barely exercising anything more than uniform
+splits to 0-order, in which case there's no difference: I imagine
+your selftests (I've not tried them) will do much better on that.
+
+Please fold in the mm/huge_memory.c mods if you are in agreement.
+
+Signed-off-by: Hugh Dickins <<hughd@google.com>
+
+diff --git a/mm/filemap.c b/mm/filemap.c
+index f7281ad22743..34b4fdafec40 100644
+--- a/mm/filemap.c
++++ b/mm/filemap.c
+@@ -1871,6 +1871,15 @@ void *filemap_get_entry(struct address_space *mappin=
+g, pgoff_t index)
+ =09=09folio_put(folio);
+ =09=09goto repeat;
+ =09}
++
++=09if (mapping->host /* filter out swap cache */ &&
++=09    /* !folio_contains(folio, index), but that requires lock */
++=09    WARN_ON(index - folio->index >=3D folio_nr_pages(folio))) {
++=09=09pr_warn("Mismatched index:%#lx\n", index);
++=09=09dump_page(&folio->page, NULL);
++=09=09folio_put(folio);
++=09=09goto repeat;
++=09}
+ out:
+ =09rcu_read_unlock();
+=20
+diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+index 3e05e62fdccb..be0c9873019c 100644
+--- a/mm/huge_memory.c
++++ b/mm/huge_memory.c
+@@ -3787,18 +3787,13 @@ static int __split_unmapped_folio(struct folio *fol=
+io, int new_order,
+ =09=09=09=09=09=09MTHP_STAT_NR_ANON, 1);
+ =09=09=09}
+=20
+-=09=09=09/*
+-=09=09=09 * Unfreeze refcount first. Additional reference from
+-=09=09=09 * page cache.
+-=09=09=09 */
+-=09=09=09folio_ref_unfreeze(release,
+-=09=09=09=091 + ((!folio_test_anon(origin_folio) ||
+-=09=09=09=09     folio_test_swapcache(origin_folio)) ?
+-=09=09=09=09=09     folio_nr_pages(release) : 0));
+-
+ =09=09=09if (release =3D=3D origin_folio)
+ =09=09=09=09continue;
+=20
++=09=09=09folio_ref_unfreeze(release, 1 +
++=09=09=09=09=09((mapping || swap_cache) ?
++=09=09=09=09=09=09folio_nr_pages(release) : 0));
++
+ =09=09=09lru_add_page_tail(origin_folio, &release->page,
+ =09=09=09=09=09=09lruvec, list);
+=20
+@@ -3810,7 +3805,7 @@ static int __split_unmapped_folio(struct folio *folio=
+, int new_order,
+ =09=09=09=09=09folio_account_cleaned(release,
+ =09=09=09=09=09=09inode_to_wb(mapping->host));
+ =09=09=09=09__filemap_remove_folio(release, NULL);
+-=09=09=09=09folio_put(release);
++=09=09=09=09folio_put_refs(release, folio_nr_pages(release));
+ =09=09=09} else if (mapping) {
+ =09=09=09=09__xa_store(&mapping->i_pages,
+ =09=09=09=09=09=09release->index, release, 0);
+@@ -3822,6 +3817,9 @@ static int __split_unmapped_folio(struct folio *folio=
+, int new_order,
+ =09=09}
+ =09}
+=20
++=09folio_ref_unfreeze(origin_folio, 1 +
++=09=09((mapping || swap_cache) ?  folio_nr_pages(origin_folio) : 0));
++
+ =09unlock_page_lruvec(lruvec);
+=20
+ =09if (swap_cache)
+---1463770367-310574914-1741596918=:2706--
 
