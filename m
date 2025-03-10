@@ -1,327 +1,211 @@
-Return-Path: <linux-kernel+bounces-553510-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-553511-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F503A58ABC
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 03:58:15 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8373FA58AC3
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 04:00:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9D729188E30D
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 02:58:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 464B53AC707
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 03:00:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 810D11B0F19;
-	Mon, 10 Mar 2025 02:58:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6840189B8C;
+	Mon, 10 Mar 2025 03:00:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="IY6XfO+c"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=smartx-com.20230601.gappssmtp.com header.i=@smartx-com.20230601.gappssmtp.com header.b="3GbTcvbx"
+Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FA3D17C225;
-	Mon, 10 Mar 2025 02:58:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E3C5184F
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 03:00:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741575484; cv=none; b=tedogHvHM7U0F7AtusUdXSE6D7qudQM3Zs7uBqA3gaTkXgsNU2XdHRDS1vSNaDrgo3RK1SMuF6H12Gf3m/OaXC3ezhrEYyz5+Ua5k8JQKu9KTMO40CuUmid/SRtj2sQ7CY68Zg3CcfZZM0JAPdm5DY1CU3EcNpgiWBmoBmHZNm0=
+	t=1741575622; cv=none; b=W8BQUBzMAH0lG50+4a8r2iR/Hefk5xvO6MwtU/Xgx0aixpeeqc0D0HheDZAg2aQHo5RfZKXl8+kOKABkcuV4BO3Mkg1CW6Dhi/IzsoLdBYL83kUrNZzelNplz6G2s4EcZ2dIECc25YclFioYYKT7JUe7nLPZ94JgXe3N0Yx2E5s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741575484; c=relaxed/simple;
-	bh=e29fZWnuaNP/FqFEDoIvxeI8O6oxKjfJFLcq6t6DOLQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=Jf61YA27xzYBxv9lMNTQkFrYktC+fdMlq75TqZcGvglvuuxh0VSlImlpcGhgvg0bOtVcwF2qZthdfyecEHFuMVJ1LRRK3LwBGD+Kj+XC5grbYLVF2xFG7IFU7yVBlvRJSCEvNMg/p3LFkmfAyjioOKWbwj/fQKhH3cYHpmVIZCc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=IY6XfO+c; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 529MtPYX012672;
-	Mon, 10 Mar 2025 02:57:45 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	qEoCZTviZ2GCsxW2OdhKOgQUL5/J0NoI75VbggP73rw=; b=IY6XfO+cyEyKgtTh
-	VvwZBcAkKx5ZDHo5iFWZd+3zeGNlVAgcUYEEjtGnGFtOHHMr2/7LDIs9+q4PZhnJ
-	zAAl8pQmpSgsxI+jW41MyxCrevjIYKmkwN/Sl1SFPRw9TesoT8SHJxiWXF8zc+1K
-	qeiRCdQQjin5WNF2j21k4fTy9qSnubuDlxM3MPZlx3sbeAfNxSTvaLNyie2Pp8yl
-	U+fXFQp3m642p+ST9DzaYpGTgAfzez4rhzyaZZzyWANZxlDBHE54EMnBNN6FrSEf
-	ACw29qurRz8qqyc7RUorX8y9J4Uc4VZEzS1WBR5EtKwsrv/8sy9QipcWJ2tZV+j7
-	i+7bXg==
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 458ex0uath-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 10 Mar 2025 02:57:45 +0000 (GMT)
-Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
-	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 52A2vi3f005518
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 10 Mar 2025 02:57:44 GMT
-Received: from [10.64.68.153] (10.80.80.8) by nalasex01c.na.qualcomm.com
- (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Sun, 9 Mar 2025
- 19:57:38 -0700
-Message-ID: <942d0b2f-c3c1-466d-b894-9dd32ec4e6a1@quicinc.com>
-Date: Mon, 10 Mar 2025 10:57:36 +0800
+	s=arc-20240116; t=1741575622; c=relaxed/simple;
+	bh=hBx1Gz2StHcPvEa5HNig06dZLy3zDu6fAmDgCL6PcQE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=AtXe4R102snWVGKvdKceuI1ZJtI34NP7UwOjRqcwS99xrGaigMy0bqsU8VwwGImh0J2uIvhC1y6gnGl2hk5AE/0BuyhgCniIEWjtz56NUPM5QSCWCDQw07iaDHlaYtU6UiTkphjtbImEfRFstdk+lLP4Infw/sYJcVj6Uh1Y3nw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=smartx.com; spf=pass smtp.mailfrom=smartx.com; dkim=pass (2048-bit key) header.d=smartx-com.20230601.gappssmtp.com header.i=@smartx-com.20230601.gappssmtp.com header.b=3GbTcvbx; arc=none smtp.client-ip=209.85.214.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=smartx.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=smartx.com
+Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-225477548e1so19198905ad.0
+        for <linux-kernel@vger.kernel.org>; Sun, 09 Mar 2025 20:00:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=smartx-com.20230601.gappssmtp.com; s=20230601; t=1741575619; x=1742180419; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=ZURtJBGMcbFFYH+strzONLA5Vczogwh/5hX0jmuWKyw=;
+        b=3GbTcvbxhgOIbKyKqLObMcycjr9/10/fTr8IVwcu9fYrRlnYxv4fpkgI6JX3AQLpnG
+         emUpVxLwhS+XYua0VTvoEB/VHqzL21q+RF0rzZK3MY6HwDswTAO+txsKDaOwVGm5tlih
+         11wDAbbhu0UtP4PCHBpNOFiEtpTePJJEt0KbkpKw0EN523PrEk7/PdGa/x5LrQVrhCYb
+         biHfyLw6JsuOUc0GAZL9JPv3V/oyYC6pQzqNLyNh8I+inxIZr8/iq0AF675zDAC4LAwG
+         XpOI4T5xkTkJ/y9lgmuwITb77WLG1tYuroUUHd8ML3QerM3iFZ9oOD6KOcyM/P+qHZzp
+         qVTQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741575619; x=1742180419;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ZURtJBGMcbFFYH+strzONLA5Vczogwh/5hX0jmuWKyw=;
+        b=Hl28TqJz4j0oCqkGuuNRA7ZlwXyYC2c207oJEQYWq7nvLaGTvsTQ9Xxs3UrJ2UmPnX
+         Lx2GbMoXQHyahe+B4ei+X4jRUjaDLV0YXhK4Boonp2ILF2QRX5maM0n5TfYgjW90vUhl
+         vwdLrXHtjO7fChqq/UQOuyqNC6GzYVTaCoIV+bQTEacvsxatF6PpF++XVXoa/85Y686O
+         olXW6nlLBfSl7JUkn0lnVI/L7dmEk8L3tWj6gUykL8iJhXoatSVmaBAADRbfQakW9eSR
+         odd37FFVREcGy6JR+COm+Kc+l0yeIqdlb2NVgL+037mIwO2FWJRKBRKErBqF/aXu6AMX
+         m11A==
+X-Forwarded-Encrypted: i=1; AJvYcCVmrwJnQbfI2k1NZ6U3iZbv5H2z5r2yTLalQUFhaYD7JDwztvFBnxK6trG0bLFawTk2774uVVtJOq1ocTc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzf8tx9auYm4LtrmwwvEl+FroFzCPc4qWzG3MWyPneyUjOqkhXm
+	eG0ISafa5/vH0M2NLu1GMa3Fi4PBxot8dQs7FtiY9r3AYNM9aDIdUIbKb14wfL0=
+X-Gm-Gg: ASbGncs8smg4tWRyFMwASGIBAaZmV4rLIIzTcEXwQr4FR01N6mYbK4gQgW7I/pbVQJ2
+	iX7mkFzEwRrzUCbEA63AqcMRG3T40EuHI+92xvuNEW7dw3oFwXJviX4kr6b47iU9Ojct0ttaYgt
+	32x+4P61LBsbW3TzBQSe0zhiP6H4oVkvzEuMoS5dv07ahehA5h3U8MFIL++N8sBmYctehi/0jKk
+	jdTOdSJZUu0XL+Jmww/iAvTMQc2DK+M7OTy+5unod1d+tw7wdEkuMF4h4R9lIHNm9B9d+s5ln6o
+	Mn3ri4PMjW9kqxdb4iddJ4O36/0QGZWQQ6pshVcybio5i5j641csob/4pe7XpvGw36XSmtyLG7+
+	k5IMvTLOlMXmH+jvkQmygDc36t5ySPimmlENZdA+aYVYPfnRdOdc=
+X-Google-Smtp-Source: AGHT+IHyoBkykGXzFkG2jWg3Bd1CqAx1te3/jtilPDZkT9O5/GqnMSo1h3Ly4n5g3i9dKxw5SX8epQ==
+X-Received: by 2002:a17:902:ce0a:b0:220:cb1a:da5 with SMTP id d9443c01a7336-22428c075e3mr224409445ad.40.1741575619196;
+        Sun, 09 Mar 2025 20:00:19 -0700 (PDT)
+Received: from localhost.localdomain (awork062100.netvigator.com. [203.198.28.100])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22410a7f75dsm66678965ad.122.2025.03.09.20.00.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 09 Mar 2025 20:00:18 -0700 (PDT)
+From: Lei Chen <lei.chen@smartx.com>
+To: John Stultz <jstultz@google.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Stephen Boyd <sboyd@kernel.org>
+Cc: Lei Chen <lei.chen@smartx.com>,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] Fix rolling back of CLOCK_MONOTONIC_COARSE
+Date: Mon, 10 Mar 2025 11:00:03 +0800
+Message-ID: <20250310030004.3705801-1-lei.chen@smartx.com>
+X-Mailer: git-send-email 2.44.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v15 10/10] arm64: dts: qcom: sa8775p: Add CTCU and ETR
- nodes
-To: Suzuki K Poulose <suzuki.poulose@arm.com>,
-        Mike Leach
-	<mike.leach@linaro.org>,
-        James Clark <james.clark@linaro.org>,
-        "Alexander
- Shishkin" <alexander.shishkin@linux.intel.com>,
-        Maxime Coquelin
-	<mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>
-CC: Tingwei Zhang <quic_tingweiz@quicinc.com>,
-        Jinlong Mao
-	<quic_jinlmao@quicinc.com>, <coresight@lists.linaro.org>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        Konrad Dybcio
-	<konrad.dybcio@oss.qualcomm.com>
-References: <20250303032931.2500935-1-quic_jiegan@quicinc.com>
- <20250303032931.2500935-11-quic_jiegan@quicinc.com>
- <0be31ecd-4386-4eb6-ad6f-a4409a3fc6ad@arm.com>
-Content-Language: en-US
-From: Jie Gan <quic_jiegan@quicinc.com>
-In-Reply-To: <0be31ecd-4386-4eb6-ad6f-a4409a3fc6ad@arm.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01c.na.qualcomm.com (10.47.97.35)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: tFJVOVLCoCIHttOaOYSCI63izxriGM9H
-X-Authority-Analysis: v=2.4 cv=f/qyBPyM c=1 sm=1 tr=0 ts=67ce5529 cx=c_pps a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17 a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=EUspDBNiAAAA:8 a=COk6AnOGAAAA:8 a=7CQSdrXTAAAA:8
- a=wwPabD9cbYV0bnQw2J4A:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10 a=TjNXssC_j7lpFel5tvFf:22 a=a-qgeE7W1pNrGK8U0ZQC:22
-X-Proofpoint-GUID: tFJVOVLCoCIHttOaOYSCI63izxriGM9H
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-10_01,2025-03-07_03,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 spamscore=0
- bulkscore=0 phishscore=0 lowpriorityscore=0 mlxlogscore=999 clxscore=1015
- priorityscore=1501 malwarescore=0 adultscore=0 suspectscore=0 mlxscore=0
- classifier=spam authscore=0 authtc=n/a authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2502100000
- definitions=main-2503100022
 
+timekeeping_apply_adjustment try to adjust tkr_mono.mult by @mult_adj.
+If @mult_adj > 0, tk->tkr_mono.xtime_nsec will be decreased by @offset.
+Then timekeeping_update flushes shadow_timekeeper to real tk and vdso
+data region. Then rolling back happens.
 
+The drawing below illustrates the reason why timekeeping_apply_adjustment
+descreases tk->tkr_mono.xtime_nsec.
 
-On 3/4/2025 8:28 PM, Suzuki K Poulose wrote:
-> On 03/03/2025 03:29, Jie Gan wrote:
->> Add CTCU and ETR nodes in DT to enable related functionalities.
->>
->> Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
->> Signed-off-by: Jie Gan <quic_jiegan@quicinc.com>
-> 
-> Assuming this goes via the soc tree,
-> 
-> Acked-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+     cycle_interval       offset        clock_delta
+x-----------------------x----------x---------------------------x
 
-Hi Bjorn, Konrad
+P0                      P1         P2                         P3
 
-Gentle ping.
+N(P) means the nano sec count at the point P.
 
-The driver part has applied. BTW, I found this patch has a conflict on 
-tag next-20250307, do you need me to send a new rebased patch?
+Assume timekeeping_apply_adjustment runs at P1, with unaccumulated
+cycles @offset. Then tkr_mono.mult is adjusted from M1 to M2.
 
-Thanks,
-Jie
+Since offset happens before tkr_mono.mult adjustment, so we want to
+achieve:
+N(P3) == offset * M1 + clock_delta * M2 + N(P1)   -------- (1)
 
-> 
-> 
->> ---
->>   arch/arm64/boot/dts/qcom/sa8775p.dtsi | 153 ++++++++++++++++++++++++++
->>   1 file changed, 153 insertions(+)
->>
->> diff --git a/arch/arm64/boot/dts/qcom/sa8775p.dtsi b/arch/arm64/boot/ 
->> dts/qcom/sa8775p.dtsi
->> index 3394ae2d1300..31aa94d2a043 100644
->> --- a/arch/arm64/boot/dts/qcom/sa8775p.dtsi
->> +++ b/arch/arm64/boot/dts/qcom/sa8775p.dtsi
->> @@ -2429,6 +2429,35 @@ crypto: crypto@1dfa000 {
->>               interconnect-names = "memory";
->>           };
->> +        ctcu@4001000 {
->> +            compatible = "qcom,sa8775p-ctcu";
->> +            reg = <0x0 0x04001000 0x0 0x1000>;
->> +
->> +            clocks = <&aoss_qmp>;
->> +            clock-names = "apb";
->> +
->> +            in-ports {
->> +                #address-cells = <1>;
->> +                #size-cells = <0>;
->> +
->> +                port@0 {
->> +                    reg = <0>;
->> +
->> +                    ctcu_in0: endpoint {
->> +                        remote-endpoint = <&etr0_out>;
->> +                    };
->> +                };
->> +
->> +                port@1 {
->> +                    reg = <1>;
->> +
->> +                    ctcu_in1: endpoint {
->> +                        remote-endpoint = <&etr1_out>;
->> +                    };
->> +                };
->> +            };
->> +        };
->> +
->>           stm: stm@4002000 {
->>               compatible = "arm,coresight-stm", "arm,primecell";
->>               reg = <0x0 0x4002000 0x0 0x1000>,
->> @@ -2633,6 +2662,122 @@ qdss_funnel_in1: endpoint {
->>               };
->>           };
->> +        replicator@4046000 {
->> +            compatible = "arm,coresight-dynamic-replicator", 
->> "arm,primecell";
->> +            reg = <0x0 0x04046000 0x0 0x1000>;
->> +
->> +            clocks = <&aoss_qmp>;
->> +            clock-names = "apb_pclk";
->> +
->> +            in-ports {
->> +                port {
->> +                    qdss_rep_in: endpoint {
->> +                        remote-endpoint = <&swao_rep_out0>;
->> +                    };
->> +                };
->> +            };
->> +
->> +            out-ports {
->> +                port {
->> +                    qdss_rep_out0: endpoint {
->> +                        remote-endpoint = <&etr_rep_in>;
->> +                    };
->> +                };
->> +            };
->> +        };
->> +
->> +        tmc_etr: tmc@4048000 {
->> +            compatible = "arm,coresight-tmc", "arm,primecell";
->> +            reg = <0x0 0x04048000 0x0 0x1000>;
->> +
->> +            clocks = <&aoss_qmp>;
->> +            clock-names = "apb_pclk";
->> +            iommus = <&apps_smmu 0x04c0 0x00>;
->> +
->> +            arm,scatter-gather;
->> +
->> +            in-ports {
->> +                port {
->> +                    etr0_in: endpoint {
->> +                        remote-endpoint = <&etr_rep_out0>;
->> +                    };
->> +                };
->> +            };
->> +
->> +            out-ports {
->> +                port {
->> +                    etr0_out: endpoint {
->> +                        remote-endpoint = <&ctcu_in0>;
->> +                    };
->> +                };
->> +            };
->> +        };
->> +
->> +        replicator@404e000 {
->> +            compatible = "arm,coresight-dynamic-replicator", 
->> "arm,primecell";
->> +            reg = <0x0 0x0404e000 0x0 0x1000>;
->> +
->> +            clocks = <&aoss_qmp>;
->> +            clock-names = "apb_pclk";
->> +
->> +            in-ports {
->> +                port {
->> +                    etr_rep_in: endpoint {
->> +                        remote-endpoint = <&qdss_rep_out0>;
->> +                    };
->> +                };
->> +            };
->> +
->> +            out-ports {
->> +                #address-cells = <1>;
->> +                #size-cells = <0>;
->> +
->> +                port@0 {
->> +                    reg = <0>;
->> +
->> +                    etr_rep_out0: endpoint {
->> +                        remote-endpoint = <&etr0_in>;
->> +                    };
->> +                };
->> +
->> +                port@1 {
->> +                    reg = <1>;
->> +
->> +                    etr_rep_out1: endpoint {
->> +                        remote-endpoint = <&etr1_in>;
->> +                    };
->> +                };
->> +            };
->> +        };
->> +
->> +        tmc_etr1: tmc@404f000 {
->> +            compatible = "arm,coresight-tmc", "arm,primecell";
->> +            reg = <0x0 0x0404f000 0x0 0x1000>;
->> +
->> +            clocks = <&aoss_qmp>;
->> +            clock-names = "apb_pclk";
->> +            iommus = <&apps_smmu 0x04a0 0x40>;
->> +
->> +            arm,scatter-gather;
->> +            arm,buffer-size = <0x400000>;
->> +
->> +            in-ports {
->> +                port {
->> +                    etr1_in: endpoint {
->> +                        remote-endpoint = <&etr_rep_out1>;
->> +                    };
->> +                };
->> +            };
->> +
->> +            out-ports {
->> +                port {
->> +                    etr1_out: endpoint {
->> +                        remote-endpoint = <&ctcu_in1>;
->> +                    };
->> +                };
->> +            };
->> +        };
->> +
->>           funnel@4b04000 {
->>               compatible = "arm,coresight-dynamic-funnel", 
->> "arm,primecell";
->>               reg = <0x0 0x4b04000 0x0 0x1000>;
->> @@ -2708,6 +2853,14 @@ out-ports {
->>                   #address-cells = <1>;
->>                   #size-cells = <0>;
->> +                port@0 {
->> +                    reg = <0>;
->> +
->> +                    swao_rep_out0: endpoint {
->> +                        remote-endpoint = <&qdss_rep_in>;
->> +                    };
->> +                };
->> +
->>                   port@1 {
->>                       reg = <1>;
->>                       swao_rep_out1: endpoint {
-> 
+But at P3, the code works as following:
+N(P3) := (offset + clock_delta) * M2 + N(P1)
+       = offset * M2 + clock_delta * M2 + N(P1)
+
+Apprently, N(P3) goes away from equation (1). To correct it, N(P1)
+should be adjusted at P2:
+N(P1) -= offset * (M2 - M1)
+
+To fix this issue, the patch accumulates offset into tk, and export
+N(P2) to real tk and vdso.
+
+tk.tkr_mono := N(P2) = N(P1) + offset * M1
+
+Then at P3, we calculate N(P3) based on N(P2) instead of N(P1):
+N(P3) := N(P2) + clock_delta * M2
+
+Signed-off-by: Lei Chen <lei.chen@smartx.com>
+---
+ kernel/time/timekeeping.c | 44 +++++++++------------------------------
+ 1 file changed, 10 insertions(+), 34 deletions(-)
+
+diff --git a/kernel/time/timekeeping.c b/kernel/time/timekeeping.c
+index 1e67d076f195..65647f7bbc69 100644
+--- a/kernel/time/timekeeping.c
++++ b/kernel/time/timekeeping.c
+@@ -1934,15 +1934,14 @@ static __always_inline void timekeeping_apply_adjustment(struct timekeeper *tk,
+ {
+ 	s64 interval = tk->cycle_interval;
+ 
+-	if (mult_adj == 0) {
++	if (mult_adj == 0)
+ 		return;
+-	} else if (mult_adj == -1) {
++
++	if (mult_adj == -1)
+ 		interval = -interval;
+-		offset = -offset;
+-	} else if (mult_adj != 1) {
++	else if (mult_adj != 1)
+ 		interval *= mult_adj;
+-		offset *= mult_adj;
+-	}
++
+ 
+ 	/*
+ 	 * So the following can be confusing.
+@@ -1963,33 +1962,8 @@ static __always_inline void timekeeping_apply_adjustment(struct timekeeper *tk,
+ 	 * Which can be shortened to:
+ 	 *	xtime_interval += cycle_interval
+ 	 *
+-	 * So offset stores the non-accumulated cycles. Thus the current
+-	 * time (in shifted nanoseconds) is:
+-	 *	now = (offset * adj) + xtime_nsec
+-	 * Now, even though we're adjusting the clock frequency, we have
+-	 * to keep time consistent. In other words, we can't jump back
+-	 * in time, and we also want to avoid jumping forward in time.
+-	 *
+-	 * So given the same offset value, we need the time to be the same
+-	 * both before and after the freq adjustment.
+-	 *	now = (offset * adj_1) + xtime_nsec_1
+-	 *	now = (offset * adj_2) + xtime_nsec_2
+-	 * So:
+-	 *	(offset * adj_1) + xtime_nsec_1 =
+-	 *		(offset * adj_2) + xtime_nsec_2
+-	 * And we know:
+-	 *	adj_2 = adj_1 + 1
+-	 * So:
+-	 *	(offset * adj_1) + xtime_nsec_1 =
+-	 *		(offset * (adj_1+1)) + xtime_nsec_2
+-	 *	(offset * adj_1) + xtime_nsec_1 =
+-	 *		(offset * adj_1) + offset + xtime_nsec_2
+-	 * Canceling the sides:
+-	 *	xtime_nsec_1 = offset + xtime_nsec_2
+-	 * Which gives us:
+-	 *	xtime_nsec_2 = xtime_nsec_1 - offset
+-	 * Which simplifies to:
+-	 *	xtime_nsec -= offset
+++	 * Since mult will be changed, @offset should be accumulated with original
+++	 * mult value
+ 	 */
+ 	if ((mult_adj > 0) && (tk->tkr_mono.mult + mult_adj < mult_adj)) {
+ 		/* NTP adjustment caused clocksource mult overflow */
+@@ -1997,9 +1971,11 @@ static __always_inline void timekeeping_apply_adjustment(struct timekeeper *tk,
+ 		return;
+ 	}
+ 
++	tk->tkr_mono.xtime_nsec += offset * tk->tkr_mono.mult;
++	tk->tkr_mono.cycle_last += offset;
++
+ 	tk->tkr_mono.mult += mult_adj;
+ 	tk->xtime_interval += interval;
+-	tk->tkr_mono.xtime_nsec -= offset;
+ }
+ 
+ /*
+-- 
+2.44.0
 
 
