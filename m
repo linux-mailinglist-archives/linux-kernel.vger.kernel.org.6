@@ -1,133 +1,118 @@
-Return-Path: <linux-kernel+bounces-553498-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-553500-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 63B94A58A7E
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 03:37:03 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BA747A58A87
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 03:42:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1D1673AAA98
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 02:36:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 03A7D16A70B
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 02:42:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DF6919DF8D;
-	Mon, 10 Mar 2025 02:36:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 970DB1A9B34;
+	Mon, 10 Mar 2025 02:42:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="GJSks8Ir"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="BvcY1dUm"
+Received: from out162-62-57-87.mail.qq.com (out162-62-57-87.mail.qq.com [162.62.57.87])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54538170826
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 02:36:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7529F5D477;
+	Mon, 10 Mar 2025 02:41:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.57.87
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741574216; cv=none; b=VTILXTSZHyds+5eOj/09CVk8LvvB00QLTfIjkIGsbHtB48dlZx6ln20oA97StL5+emvj/W3PtC9FfAGMFxsHOlPnV7IN/b23d2aLk17ADXwT5IbqbGTMEjqptRTxT1u7rEVRZMMGS+1vn5eL41Z/KmwHtF7IIlTfmk2SpEPl0Pg=
+	t=1741574524; cv=none; b=Txu6mM7HCt/oQ8JZT4HSZh6v3rOctxYdCVhWZpuN+X40l44ZqqBzarxDwYdDCO4FZwLxi8r/M5cWm8TFnKgDX5prs661tpxnaSdCpnpfkrnBefZUUCLhhQEnVUU9iMYhmcO93I3qf67PpVZYMSDAD3pDPwmpn9JoCps2maxcF7g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741574216; c=relaxed/simple;
-	bh=cdiX3h1BvqRWr2Z/qviPc8TG9q68mLEhMJAyJY6ZZwY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ewtrUawbnD36qH4MWvX4GMSI+xsfKNepv+RPtLEf3typygzkgUAtu2fyhrFSEaZYACpLPXaWXrZtIUJdroBdWqA4vvMDI0qO/1ebLd9oXCix4Wk0qD1HoHOArAEz01DdHWCOuBG544SruuWRvYIwHG4w0JvoNAJOqsV6s9zj7JY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=GJSks8Ir; arc=none smtp.client-ip=198.175.65.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1741574215; x=1773110215;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=cdiX3h1BvqRWr2Z/qviPc8TG9q68mLEhMJAyJY6ZZwY=;
-  b=GJSks8Ir5i8A6kkQOEAifVN9Ct1Bfkmsb7GgTj/7A24pZotgneon+Fwt
-   R8DjpghVfS2Dl1hDPuE98XbuenG/DyhfDYdQLcHZ5FCynTeY/Fr8EaIMk
-   82b1j/RW7hXOzQ2/lMktZJWcVI56+w0L5NJoQmUm6gWodUouJqyFLgUav
-   XaZXsFdiwZ/JFHLUddGO1LeRt7jy6HmZaqU+hGPQh4UsM7TmQ8UKr3IJB
-   dhU/OLw0mqE5KdUmePrXOPpMpEDJ0bHB48qcibAKqkWqWr3OcEouPVBOa
-   DCKo7u7ReBhfp6T9l8AyFjgYrBGUcW8Xlfgt/+2xMzVj4jHNfW+v5sD2c
-   g==;
-X-CSE-ConnectionGUID: KsT0rzqVSDiMwBD6JE8hLw==
-X-CSE-MsgGUID: w8465jG6RPKeTs/0w3TyKQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11368"; a="46337294"
-X-IronPort-AV: E=Sophos;i="6.14,235,1736841600"; 
-   d="scan'208";a="46337294"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Mar 2025 19:36:55 -0700
-X-CSE-ConnectionGUID: CsuFhw/VQI2OJ4dK/s+sGA==
-X-CSE-MsgGUID: oQNSaZhoSF61LWjx5eoRzg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
-   d="scan'208";a="119802310"
-Received: from allen-sbox.sh.intel.com (HELO [10.239.159.30]) ([10.239.159.30])
-  by orviesa010-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Mar 2025 19:36:53 -0700
-Message-ID: <8e021997-3d79-4506-9905-e32631104a81@linux.intel.com>
-Date: Mon, 10 Mar 2025 10:33:41 +0800
+	s=arc-20240116; t=1741574524; c=relaxed/simple;
+	bh=3SRpyOgA9duRpslajNlpqiBZkn/Z2zcniTdYt3dUNoc=;
+	h=Message-ID:From:Content-Type:Mime-Version:Subject:Date:Cc; b=lvTtsYnwd1TjX4zua7hpYvfYa/TPM1MNyQuqrcDLkvMJf42r2jCrSEKlqi3cIIHDYBGshnap2XlcuulwvRMGBlwY2K57zt287pUyKwZPaRxq7UkunekMRt8PNfVifQNzWtjI4NShxsVPeeEgOAvDMGVW1oT5yyMXZrpbqV+pswA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=BvcY1dUm; arc=none smtp.client-ip=162.62.57.87
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1741574510; bh=2Cl3tRVDq1qbWu7JTBmfEOnx9DOF9EVPFt7Dzu8ttYA=;
+	h=From:Subject:Date:Cc;
+	b=BvcY1dUmmiIT7yz+4yH8mi2RI80HUX/tduQmhpr0/YZfYo08HXBbXPw/9o+HYMCC3
+	 EDFG2e5JYH7b3Ysz3wvb3k0sWJiW0Y+nZ5cMO/RwxTp4lw+WPArRFMCkxwTwdm3D9/
+	 gT6n/oI6dRU6lQiue0zNaW0NPFlWIifwXi13d4DI=
+Received: from smtpclient.apple ([183.173.12.99])
+	by newxmesmtplogicsvrszc11-0.qq.com (NewEsmtp) with SMTP
+	id A27AB480; Mon, 10 Mar 2025 10:40:39 +0800
+X-QQ-mid: xmsmtpt1741574439tsfyi9s9c
+Message-ID: <tencent_83CBDD726353E21FBD648E831600C078F205@qq.com>
+X-QQ-XMAILINFO: MQ+wLuVvI2LQxFfzNhMpuBJtr5I357/tGpIXmnb75pGtRkxeoLpEC/r0m5dmaH
+	 RpvcoVm3J1zK5+QQyLz7TEywmTIqu2L7+JvRyxSzFP9P/WBFv6/hBQ1Q5JJ0zipOCmiZjhLBXthi
+	 /WHfFYUMNQc3ZObkUCBPIiz3kS3U8fiDog1hgwoqiIxWG3fXwHfKdbFGbGMP6mHt/w013JFqnZkt
+	 o1qDSLadRNf0hrnIpIhPT2tl9vIX7M/u9uA+gUVY1te178Aua5PHmp7RF8hQ+VDjYx4vLf/OKR53
+	 IGcuqmtRaTLNiO7d0Guastty1s4qAJbQsgunMlnLORFX63llbWaJ8f5mdHfFDEpwmymKpUxCNIg6
+	 CCo30IVBopsjCvAykh2ggzmZ+Z4heMkloDbvMNVHFuZ4C/GRLPMG6NYXxttM5pjC8X1z7phkoh+0
+	 cQlyJ7L1dZY81narQVHdzbmQ8yXeLVsqdyAeHFO8D036RGp0cKFXn5RRoBKLCqQAg9ZCotHgUvdR
+	 UNxFXqtpGEQQmxbUXgP6XJDOH9LXuwJ9xZYCKwhgIGVj5dBacRbfswcMkv6B+MWaVKrcVTePl/BA
+	 e/pt8Ut29qpoC/7Q/AGBPW9jbY4LVOrNU805EKSDDblUg053G752+UEGBEaJBdCNo+7TjHeo7k0B
+	 G5MQKupLIHjjSQC0aRFD5aGiw2Qgn023wQqy3w3tYIJSfMK9LaMZMzoXB0r2tznTV8BdfLPwadR6
+	 H49UyHSsaEKChr2mcr7KeU7mzDMWpjytCP3jJdaJHioLCL7kRS+2HKhlmPA6LHuhVITkGY4IgnLc
+	 UQblvhGxq8sBKPmjXkMow6cSYYpmHHAuEwLGUaNu3kEP9LldoLZEo+srDhm8lq88ElLSvfArKK6D
+	 Yjdb/hKq869H1Ut9fqTRP6oE1Shf+nl4ELIgwmekB1iNUrmJKNccZq7Ug0vcwMSi1bqNX07VhXXT
+	 0e/MJRGUiFZzmkiVmb8ImTCIYPmC1ixxjpKnhZAuCfRIFaYPlbU/X7QRxR9sMB
+X-QQ-XMRINFO: MPJ6Tf5t3I/ycC2BItcBVIA=
+From: hanyuan <hanyuan-z@qq.com>
+Content-Type: text/plain;
+	charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3] iommu/vt-d: fix system hang on reboot -f
-To: Yunhui Cui <cuiyunhui@bytedance.com>, dwmw2@infradead.org,
- joro@8bytes.org, will@kernel.org, robin.murphy@arm.com,
- iommu@lists.linux.dev, linux-kernel@vger.kernel.org
-Cc: Ethan Zhao <haifeng.zhao@linux.intel.com>
-References: <20250303062421.17929-1-cuiyunhui@bytedance.com>
-Content-Language: en-US
-From: Baolu Lu <baolu.lu@linux.intel.com>
-In-Reply-To: <20250303062421.17929-1-cuiyunhui@bytedance.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.400.131.1.6\))
+Subject: Re: [PATCH 1/2] net: enc28j60: support getting irq number from gpio
+ phandle in the device tree
+X-OQ-MSGID: <83925314-B455-4BA0-947F-DD0F6685DC2E@qq.com>
+Date: Mon, 10 Mar 2025 10:40:29 +0800
+Cc: netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+X-Mailer: Apple Mail (2.3826.400.131.1.6)
 
-On 3/3/25 14:24, Yunhui Cui wrote:
-> We found that executing the command ./a.out &;reboot -f (where a.out is a
-> program that only executes a while(1) infinite loop) can probabilistically
-> cause the system to hang in the intel_iommu_shutdown() function, rendering
-> it unresponsive. Through analysis, we identified that the factors
-> contributing to this issue are as follows:
-> 
-> 1. The reboot -f command does not prompt the kernel to notify the
-> application layer to perform cleanup actions, allowing the application to
-> continue running.
-> 
-> 2. When the kernel reaches the intel_iommu_shutdown() function, only the
-> BSP (Bootstrap Processor) CPU is operational in the system.
-> 
-> 3. During the execution of intel_iommu_shutdown(), the function down_write
-> (&dmar_global_lock) causes the process to sleep and be scheduled out.
-> 
-> 4. At this point, though the processor's interrupt flag is not cleared,
->   allowing interrupts to be accepted. However, only legacy devices and NMI
-> (Non-Maskable Interrupt) interrupts could come in, as other interrupts
-> routing have already been disabled. If no legacy or NMI interrupts occur
-> at this stage, the scheduler will not be able to run.
-> 
-> 5. If the application got scheduled at this time is executing a while(1)-
-> type loop, it will be unable to be preempted, leading to an infinite loop
-> and causing the system to become unresponsive.
-> 
-> To resolve this issue, the intel_iommu_shutdown() function should not
-> execute down_write(), which can potentially cause the process to be
-> scheduled out. Furthermore, since only the BSP is running during the later
-> stages of the reboot, there is no need for protection against parallel
-> access to the DMAR (DMA Remapping) unit. Therefore, the following lines
-> could be removed:
-> 
-> down_write(&dmar_global_lock);
-> up_write(&dmar_global_lock);
-> 
-> After testing, the issue has been resolved.
-> 
-> Fixes: 6c3a44ed3c55 ("iommu/vt-d: Turn off translations at shutdown")
-> Co-developed-by: Ethan Zhao<haifeng.zhao@linux.intel.com>
-> Signed-off-by: Ethan Zhao<haifeng.zhao@linux.intel.com>
-> Signed-off-by: Yunhui Cui<cuiyunhui@bytedance.com>
-> ---
->   drivers/iommu/intel/iommu.c | 17 ++++++++++-------
->   1 file changed, 10 insertions(+), 7 deletions(-)
+Hi Andrew,=20
 
-Queued this as a quick fix for iommu/vt-d branch. Should follow up to
-consider the intel_iommu_shutdown() timing issue later.
+> My understanding is that you should not need most of this. The IRQ
+> core will handle converting a GPIO to an interrupt, if you just list
+> is as an interrupt source in the normal way.
 
-Thanks,
-baolu
+> You say:
+>
+> > Additionally, it is necessary for platforms that do not support pin
+> > configuration and properties via the device tree.
+>
+> Are you talking about ACPI?
+
+Thanks for your review. Let me explain them.
+
+I understand that specifying the interrupt as:
+
+    interrupts =3D <&gpio2 23 IRQ_TYPE_LEVEL_LOW>;
+
+would also work, and the IRQ subsystem will properly handle the
+conversion during the SPI probe. However, my problem is that the
+GPIO pin itself needs to be explicitly requested and configured a
+an input before it can be used as an IRQ pin.
+
+My embedded platform has limited support, it only provides a
+hard-coded pin control driver and does not support configuring
+pinctrl properties in the device tree. So, there is no generic
+way to request the pin and set its direction via device tree bindings.
+
+I noticed that some existing NIC drivers solve this issue by specifying
+`irq-gpios` in the device tree, which ensures that the GPIO is properly
+initialized before being converted to an IRQ.
+
+That was my motivation for these patches.
+
+And my changes are not related to ACPI in any way=E2=80=94they are =
+mainly
+focused on device tree handling.
+
+Thanks, =20
+Hanyuan Zhao
+
 
