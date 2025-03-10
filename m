@@ -1,181 +1,177 @@
-Return-Path: <linux-kernel+bounces-553827-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-553828-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 02C5AA58F51
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 10:21:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 521F4A58F57
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 10:22:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B5C573AB8D6
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 09:20:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 150133ABA40
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 09:21:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0998D224AEB;
-	Mon, 10 Mar 2025 09:21:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54F59224B06;
+	Mon, 10 Mar 2025 09:21:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="SOyXETUk"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ovWf9zNy"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBDCC224896
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 09:21:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92CD5537F8;
+	Mon, 10 Mar 2025 09:21:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741598464; cv=none; b=bqmz0NkVH9qMi9flP+mWiJ50EJpGXciiUWFgWnCdkoLkr+FwM9r0Sou5nk2R7dfe504Prc/6DZaVXojG46P3UyVLg8mYX5mEozV9ISVtdhtx3zmbo0+An8KpOvZn5MKOWeva9QJ0s4/rIWgVFhMscnkY/dMns0lWbFLlV6oRpks=
+	t=1741598518; cv=none; b=X4VCUTTdn+9mzPjgUCYnOCHSahwLWz2+X0fX7X2pH19RipKQD9h1r5YzvOVvzXbIF6eBh1kcmKQhypjQfO23Vzwa9e6fnBBuTcQOyFYUx1MoTPbBaD9slKB1bS7DAe1U2Hp43kKOfkBvzBEngaMESY3KbMzX/cr3obgExQ47Mg0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741598464; c=relaxed/simple;
-	bh=X2P8BmFaIfr6ljYnPxqVzE0dAYgml35bG8jKsbvO9OY=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=VBN0oAji38TPqdQVsT97vPtAnMESnqY40DIwyD2Yb5iDgQjTqvjlNzWybHsFErwY8h6sj5Yq5bGFqecsEoranCb0zs/AYiveqQ0/mzn1chnvHIAUj5bx9EQ/ykwFz1x89GiS55UjWyrBDkHLQbSYgCeqHYj5cgpee6GaXbKPKE4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=SOyXETUk; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1741598461;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=LgP9YNR9e/J52BmiorQfd082BVFSTbBL5ZmjdHK0AhI=;
-	b=SOyXETUkOa8UFSZKYOJN8aZ0C3JMH6cHQ602iiWHrxWPHWoanfVYuBXI++PTasHHruGnzQ
-	jjzvp2cGXsFhJ1Gvrdi0F0Vp59VUA1cfmZo8w5/dVF7Wd/bV9FNQ8wCtJekqqPb10Cx1aO
-	zriNTDSNPpZKI/QUBSp/+sRVuJco8cc=
-Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
- [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-600-HdEWECgyOw2uud-B7VHrHg-1; Mon, 10 Mar 2025 05:20:59 -0400
-X-MC-Unique: HdEWECgyOw2uud-B7VHrHg-1
-X-Mimecast-MFC-AGG-ID: HdEWECgyOw2uud-B7VHrHg_1741598459
-Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-3913037ac4eso2101883f8f.2
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 02:20:59 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741598455; x=1742203255;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=LgP9YNR9e/J52BmiorQfd082BVFSTbBL5ZmjdHK0AhI=;
-        b=YPAnv7rnT93bI5qBmaTfJ8RsdVkgwHwuX2odtRaaNc3tyEyrOSIVujq8dBZ0dYrKjj
-         t3ed+FlFLTYg6VtncxXquYYRjLBZk80N36ikU/pI37a9ouYB58QotzYSRfWj2EUrzXv8
-         MgDf/GrllcIv1/QC7GpGCsjqwy4kNFCFl4X6zyMd6iUiV/dTTghElg+T1TbYt9PEaz7h
-         NjMC6NyHrcEHb88+E9MIZeyRjStgoTTx510LWzlsqMkRkbtSsJ6Hr+0jkDclDLcxSxv7
-         Tno1qLGK+YhV85HUUZ3PzsP6yCSB/zJaFFjKhwKmibnRImu54xwH6h/ZeJ2rEomKEIeU
-         F20g==
-X-Gm-Message-State: AOJu0YzppUViZcNRTmoJnA4l6mr1/F4o6IgcB24QbjAW+GzpWqljGQqz
-	sUWue1ze5KZxbjXQLPjTVR4eVmCDNLAzDK6cDOOBEsFq/rVnm02Bs2dn934tgCHn9JMrIKnMV0j
-	GNQrXbERuZA1zEjDspJc2XNvuszmrlFDzmKUVgfnPWZ3r5eOt612p5gPEPwVhZ7MKYhCcUMeGZ0
-	1kb54Vqd/8yPHuyry0xA+hLtw4EzJ6iOQIIQC2SOPanfJ3yrLgktM=
-X-Gm-Gg: ASbGnctJjjHlvfSz0P6pUCadFILZDNVwe/uNWdT9IQ3osA8zO7oz58fcGNVJ806uYlM
-	zc9gL0SoUu+cWb8A6THRKQsLar+VSL9GgPepBst7u9omrQ7M5KbCNRz4DCdQH+s9zbdzutscoyX
-	u2WGnJ2rGWOlMAsdo0J9tcIX/duqeDMCFiZLcuM90FMWHF7U/lpbm+cj3ag8lKObsiAMbTK420P
-	MlwSFo0jvp6XCTC4UJY2S32nHxZ7/DQTM3hciY9KVfyASpF/W6BiyDgZJRZsvvHvYwnNI1VnFCR
-	qBVs5A1Kad8SGSwVcOqw7mAg6hTXbExaIrP5zdheOvU=
-X-Received: by 2002:a5d:59ae:0:b0:391:3cb0:3d8d with SMTP id ffacd0b85a97d-3913cb045f0mr3096434f8f.19.1741598455007;
-        Mon, 10 Mar 2025 02:20:55 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IG77GRbumECCswGopxMwYWJkr98+oUnHKkACcHSO3X9YysXmuX/ZXJS9Id41zSkwFxD762oBw==
-X-Received: by 2002:a5d:59ae:0:b0:391:3cb0:3d8d with SMTP id ffacd0b85a97d-3913cb045f0mr3096405f8f.19.1741598454605;
-        Mon, 10 Mar 2025 02:20:54 -0700 (PDT)
-Received: from jlelli-thinkpadt14gen4.remote.csb ([151.29.49.7])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43ce715731csm78442415e9.2.2025.03.10.02.20.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 10 Mar 2025 02:20:53 -0700 (PDT)
-From: Juri Lelli <juri.lelli@redhat.com>
-To: linux-kernel@vger.kernel.org,
-	cgroups@vger.kernel.org
-Cc: Ingo Molnar <mingo@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Ben Segall <bsegall@google.com>,
-	Mel Gorman <mgorman@suse.de>,
-	Valentin Schneider <vschneid@redhat.com>,
-	Waiman Long <longman@redhat.com>,
-	Tejun Heo <tj@kernel.org>,
-	Johannes Weiner <hannes@cmpxchg.org>,
-	=?UTF-8?q?Michal=20Koutn=C3=BD?= <mkoutny@suse.com>,
-	Qais Yousef <qyousef@layalina.io>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	Swapnil Sapkal <swapnil.sapkal@amd.com>,
-	Shrikanth Hegde <sshegde@linux.ibm.com>,
-	Phil Auld <pauld@redhat.com>,
-	luca.abeni@santannapisa.it,
-	tommaso.cucinotta@santannapisa.it,
-	Jon Hunter <jonathanh@nvidia.com>
-Subject: [PATCH v3 0/8] Fix SCHED_DEADLINE bandwidth accounting during suspend
-Date: Mon, 10 Mar 2025 10:20:42 +0100
-Message-ID: <20250310092050.23052-1-juri.lelli@redhat.com>
-X-Mailer: git-send-email 2.48.1
+	s=arc-20240116; t=1741598518; c=relaxed/simple;
+	bh=QH139OqqRbSYRVUAo0wV8Z6rUvveYBae96OsXGOnYOU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=EP+MdXE8BicOfPuUUtiV919ej2jJGk/1pLvbjet8snJ/Qa+sgQxJA1ZbDRRkYoeqn4oTDl3DehL5rB6pbzKsQnJcrK1xewE8pdhY5q/vPCEkPsUlrucqqjdv6/r5Hxdlc9OaPRrJ4XtDNmeosoVZXteuVJRpOIV8WVLs8BKL71s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ovWf9zNy; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D8B58C4CEE5;
+	Mon, 10 Mar 2025 09:21:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741598518;
+	bh=QH139OqqRbSYRVUAo0wV8Z6rUvveYBae96OsXGOnYOU=;
+	h=Date:Subject:To:References:From:In-Reply-To:From;
+	b=ovWf9zNyYVPDlrK3Hj9zmPJpFt1eqYE9BptUXwjd47GnKdrI5JHA8WkzARd3K+sLZ
+	 a4N1zMuU0JG+WFDOMqO55C2GtMpHok8KFvg1WWl156UpON2bNjq0DHFzQOYv+O2YpK
+	 ZbOKbNsSTlN+x0ZAphboN3xTLs8viUz2FZzUyuwAucqjyy7bXs4CWBpeh1azixf5OT
+	 p22CRjh8eNKnzEuwapcchU9mjHbBCxTrOnnXdD46gdyvXgPzevxzJBrdItH+XQiuE/
+	 d6yxUtqJJfa3nNPR1Qe5ED3Na4QSPJqfAOT5ZRaJrW+bqJjMl7BappibhDhUH6X0YZ
+	 MkYXy4JUQ4NGg==
+Message-ID: <c1227083-a4ea-4dac-a9db-d6a5386c0437@kernel.org>
+Date: Mon, 10 Mar 2025 10:21:45 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 05/13] dt-bindings: mfd: add Documentation for Airoha
+ EN7581 SCU
+To: Christian Marangi <ansuelsmth@gmail.com>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Lee Jones <lee@kernel.org>,
+ Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>,
+ Matthias Brugger <matthias.bgg@gmail.com>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Lorenzo Bianconi <lorenzo@kernel.org>, Daniel Danzberger <dd@embedd.com>,
+ Arnd Bergmann <arnd@arndb.de>, Linus Walleij <linus.walleij@linaro.org>,
+ Nikita Shubin <nikita.shubin@maquefel.me>, Guo Ren <guoren@kernel.org>,
+ Yangyu Chen <cyy@cyyself.name>, Ben Hutchings <ben@decadent.org.uk>,
+ Felix Fietkau <nbd@nbd.name>, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-phy@lists.infradead.org,
+ linux-mediatek@lists.infradead.org, linux-usb@vger.kernel.org,
+ upstream@airoha.com
+References: <20250309132959.19045-1-ansuelsmth@gmail.com>
+ <20250309132959.19045-6-ansuelsmth@gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20250309132959.19045-6-ansuelsmth@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hello!
+On 09/03/2025 14:29, Christian Marangi wrote:
+> Add Documentation for Airoha EN7581 SCU.
+> 
+> Airoha EN7581 SoC expose registers to control miscellaneous pheriperals
+> via the SCU (System Controller Unit).
+> 
+> Example of these pheriperals are reset-controller, clock-controller,
+> PCIe line speed controller and bits to configure different Serdes ports
+> for USB or Ethernet usage.
+> 
+> Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
+> ---
+>  .../mfd/airoha,en7581-scu-sysctl.yaml         | 68 +++++++++++++++++++
+>  1 file changed, 68 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/mfd/airoha,en7581-scu-sysctl.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/mfd/airoha,en7581-scu-sysctl.yaml b/Documentation/devicetree/bindings/mfd/airoha,en7581-scu-sysctl.yaml
+> new file mode 100644
+> index 000000000000..d7dc66f912c1
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/mfd/airoha,en7581-scu-sysctl.yaml
+> @@ -0,0 +1,68 @@
+> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/mfd/airoha,en7581-scu-sysctl.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Airoha EN7581 SCU (System Controller Unit)
+> +
+> +maintainers:
+> +  - Christian Marangi <ansuelsmth@gmail.com>
+> +
+> +description:
+> +  Airoha EN7581 SoC expose registers to control miscellaneous
+> +  pheriperals via the SCU (System Controller Unit).
+> +
+One more comment - there is no such thing as "sysctl" in your hardware.
+Look at the SCU binding which clearly says that it is the hardware you
+are duplicating here, so the "System Control Unit".
 
-Jon reported [1] a suspend regression on a Tegra board configured to
-boot with isolcpus and bisected it to commit 53916d5fd3c0
-("sched/deadline: Check bandwidth overflow earlier for hotplug").
+So you have existing "This node defines the System Control Unit of the
+EN7523 SoC" and you add one more node which defines the "System Control
+Unit", so you have two "System Control Unit" device nodes?
 
-Root cause analysis pointed out that we are currently failing to
-correctly clear and restore bandwidth accounting on root domains after
-changes that initiate from partition_sched_domains(), as it is the case
-for suspend operations on that board.
+Look also what Stephen asked for:
 
-This is v3 [2] of the proposed approach to fix the issue. With respect
-to v2, the following implements the approach by:
+https://lore.kernel.org/all/20220106013100.842FCC36AEB@smtp.kernel.org/
 
-- 01: filter out DEADLINE special tasks
-- 02: preparatory wrappers to be able to grab sched_domains_mutex on
-      UP (added !SMP wrappers back as sched_rt_handler() needs them)
-- 03: generalize unique visiting of root domains so that we can
-      re-use the mechanism elsewhere
-- 04: the bulk of the approach, clean and rebuild after changes
-- 05: clean up a now redundant call
-- 06: remove partition_and_rebuild_sched_domains()
-- 07: stop exposing partition_sched_domains_locked
+so how system-controller can now became clock-controller? Now, it was
+the system controller since the beginning.
 
-I kept Jon and Waiman's Tested-by tags from v2 as there are no
-functional changes in v3.
-
-Please test and review. The set is also available at
-
-git@github.com:jlelli/linux.git upstream/deadline/domains-suspend
-
-Best,
-Juri
-
-1 - https://lore.kernel.org/lkml/ba51a43f-796d-4b79-808a-b8185905638a@nvidia.com/
-2 - v1 https://lore.kernel.org/lkml/20250304084045.62554-1-juri.lelli@redhat.com
-    v2 https://lore.kernel.org/lkml/20250306141016.268313-1-juri.lelli@redhat.com/
-
-Juri Lelli (8):
-  sched/deadline: Ignore special tasks when rebuilding domains
-  sched/topology: Wrappers for sched_domains_mutex
-  sched/deadline: Generalize unique visiting of root domains
-  sched/deadline: Rebuild root domain accounting after every update
-  sched/topology: Remove redundant dl_clear_root_domain call
-  cgroup/cpuset: Remove partition_and_rebuild_sched_domains
-  sched/topology: Stop exposing partition_sched_domains_locked
-  include/{topology,cpuset}: Move dl_rebuild_rd_accounting to cpuset.h
-
- include/linux/cpuset.h         |  5 +++++
- include/linux/sched.h          |  5 +++++
- include/linux/sched/deadline.h |  4 ++++
- include/linux/sched/topology.h | 10 ---------
- kernel/cgroup/cpuset.c         | 27 +++++++++----------------
- kernel/sched/core.c            |  4 ++--
- kernel/sched/deadline.c        | 37 ++++++++++++++++++++--------------
- kernel/sched/debug.c           |  8 ++++----
- kernel/sched/rt.c              |  2 ++
- kernel/sched/sched.h           |  2 +-
- kernel/sched/topology.c        | 32 +++++++++++++----------------
- 11 files changed, 69 insertions(+), 67 deletions(-)
-
-
-base-commit: 80e54e84911a923c40d7bee33a34c1b4be148d7a
--- 
-2.48.1
-
+Best regards,
+Krzysztof
 
