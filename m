@@ -1,117 +1,179 @@
-Return-Path: <linux-kernel+bounces-555168-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-555169-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 05498A5A657
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 22:37:11 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 92D7EA5A65A
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 22:43:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A8A131890AE6
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 21:37:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C3AA4171F02
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 21:43:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 348371E2611;
-	Mon, 10 Mar 2025 21:37:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6F901E47A5;
+	Mon, 10 Mar 2025 21:42:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="VO4vBSUa"
-Received: from mail-yb1-f180.google.com (mail-yb1-f180.google.com [209.85.219.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Wk22D0YR"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5BA41E102E
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 21:37:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA8D41581F9;
+	Mon, 10 Mar 2025 21:42:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741642623; cv=none; b=KORtISMNEMYu4Ni69FrDYSfrl/9i2bibbx1zDJZ0ibCPHL6TAE1cFUAhKQEjPgKKCNQzCDYjqWQIdq4YzVN5Peg4fjAnD3ziByLV575/K0vIMbHi3x2y8Zk4o+67UUVA8AGL4h6Nb8Jfth5A2vxxwyjEp5QlOHhSaNkJJURhRSg=
+	t=1741642974; cv=none; b=Qz3ZWC59Hb+W5DebG5J4fGzB3S977K5Nxpc6NIJJoFKOcMFzA2ZtXiOAw86+MH8ahPnSz010vnrPR2VPxZVLVil1w7wDGkj8KuFen3EAlpaQXhxen8yQokhKGkHW+s77InbeCDYKT/jV6wtiqImAq+r3ipf8/wN4NU83Xkw0nHs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741642623; c=relaxed/simple;
-	bh=ZffuVoKhYwkGsNLqoMxxm9ynreiXL0B3SKGY2kRVw4g=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=rdI0Blk0Tu3g4SSeRtmieoOCYeG18KVkOxg/K3KXJcD7lCcZYpqeWkb+8tnBu7bTXsKysWvVDxtChYrq/IQiMmH0NDDqy0pozdo3Wp9p4QQI6oG/QEGKU/0CBdtjCUzGL4cojqCz/MUGljPxhh0jTSxbkGi+apuJMTxvnuwLWKM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=VO4vBSUa; arc=none smtp.client-ip=209.85.219.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
-Received: by mail-yb1-f180.google.com with SMTP id 3f1490d57ef6-e455bf1f4d3so3646657276.2
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 14:37:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1741642621; x=1742247421; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=gy7RJJZ2+g4pp45KhfK/pE9AJmevdwLrlbqK7A52AiU=;
-        b=VO4vBSUa5swLa3Z0+xq/whMa2b/cXq70dG0qRMODBvn16TgYAmCbxzu4g9iz9jEj5B
-         o7AQoZQE0IAXn7HPtCy72SxSPwvoIejeMTTGReRYbfywoWL9jvJpcMIwZGx3/5n90agI
-         i11OWEacsO5uZOWVXoVsTVN49wFdi5uTGPIr65I2k9accZL0aTxedwAc9vR5naXx5RYB
-         qhjZjQqvP00OL34X5WGFdi3A3VH3Usv0qnYhbI4Kdjw3Wnt4fFgxDCtq1v++gkjfrTP4
-         7WfBenhlWGJn+vSi8HZGnXwAQIV51c+7TmhERxZPZugjh/c9DKsVXDLNCK/2fFrDel/X
-         py8Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741642621; x=1742247421;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=gy7RJJZ2+g4pp45KhfK/pE9AJmevdwLrlbqK7A52AiU=;
-        b=rNHEWEbP81a/gkMWHpIXo2EKAdOZ1YofVW3+yvaiWNd/2hRzTcgxVk1csbTnPdJDDe
-         a/mJZGKR1CxNd4QUl25us+qK5bFzjkEPILMxlvAgHRSLG4CVku+9D2/LnHJbHwD5MYuh
-         i/8+RXC/9qjL5sZCRwYYKeDRA9BF1yqroTmC+EHkO+bA5GDQG1CB1o9u/Ew5aOph938D
-         /HwvTO3/XRGFBEqvHNMmN/zgoxe8IaFjPeJyER5Pb47F3LTEWluTl0yhfEYxdTL7BJYD
-         2QShyGmNB051sgnSPt6VA9CxVszcYqdlAKK6sLDHzACroZBJcMoozXkHX81vb42PYDak
-         sSwg==
-X-Forwarded-Encrypted: i=1; AJvYcCUP8YwgHseiGU/qKhRKkR8XkY0ix/Yt2HZ6fhG4r2FUNvF5xMF+gAWNvCPJy+KwjzWoOyIrRJQWG7JZeik=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyGQvAGY0UUXZ9ucqRCGTA8VgFd+GnFy/Vv6Xb3kEy9iEP6G03H
-	X1QBoF2QlTcwR1mCcqN8ZiRwQQsktms6iQIGa48DP2GioyxEbqEn/MUjIGZmfALTcYkR59MXdwy
-	CxPfo9VtO3+bVG1OQrn/2tErO43g/Zj+7yWWp
-X-Gm-Gg: ASbGnctz6VlLz/Il5FKiodPCQCbhLNocUBAgDQisfN0DV1V+r0HtxvOrCoaOqszSyr/
-	BNd4/8dBWljJwqAhwtMUX6qRiy3GH7pRX0ZGM/6INa7oCQC0t9ImHTlQYzxvYNZ94Iq8fdpDmPM
-	0jlZghy46VpJhHMUl/UnIhFfS3rA==
-X-Google-Smtp-Source: AGHT+IEABKnfIsajujJa9LtUyHzaHv1YlxNSFKNY9reAZnJdFRjFzK8//H8LPSIFRZ3SJpDoJEMId/3T2DG4O3sxnsE=
-X-Received: by 2002:a05:6902:220d:b0:e5b:43e1:2e84 with SMTP id
- 3f1490d57ef6-e635c121f9emr22237146276.5.1741642620692; Mon, 10 Mar 2025
- 14:37:00 -0700 (PDT)
+	s=arc-20240116; t=1741642974; c=relaxed/simple;
+	bh=Hgfqycyk5WAvowUEhLw7wDnMIf6XtuNalb//mZR8AGY=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=WHbKGBbokUAvF+jBKCvHATJWu+0Vyrq7oUcOX6GKrhE91bAho4sEJVbZ9JkmdRtwHC7cHqBSM880vAgpWpJrIS7wHet9V+1hmay6u5YlwdOqardabvX2LbTPehHyQWUKyLs6HHbEuGsZjyUKVIRDr/yaTiK1rQs0xWRaC98UThI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Wk22D0YR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4DFACC4CEE5;
+	Mon, 10 Mar 2025 21:42:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741642973;
+	bh=Hgfqycyk5WAvowUEhLw7wDnMIf6XtuNalb//mZR8AGY=;
+	h=From:To:Cc:Subject:Date:From;
+	b=Wk22D0YR3b17pAiC+UtyGJTkNn4f/SCu58jZlCG8EtJEsYJE0ZTS7FDv7FGYZgvo3
+	 Zw8aIH8Jp1FwXbXAKz+bXKMERwjfFMFrUhJ0bUcw9ic883MXTGjJpiXBmpnrELzxZu
+	 Mr58Hq9+71qorcYrzyL+gee8iYn8JNfHk+Q7POStc5sVPiu5Le65C7DRvQIfu/QqHc
+	 Q59Vnn81tapAcI+efnO87N5WZNvAhSAit/vSYI+8ZgxhWImDr35+sZnF9RQ+XRNZAw
+	 JmkXhvO5xve9PBgSf/UKOUo/1PYDM7dqDlsGK0bSJwkKR2cA3JYZeD9eBe9rwNQ4Sl
+	 4C8cAPiiEkUmg==
+From: Kees Cook <kees@kernel.org>
+To: Miguel Ojeda <ojeda@kernel.org>
+Cc: Kees Cook <kees@kernel.org>,
+	Arnd Bergmann <arnd@arndb.de>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Len Brown <lenb@kernel.org>,
+	Marco Elver <elver@google.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
+	Hao Luo <haoluo@google.com>,
+	Masahiro Yamada <masahiroy@kernel.org>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Johannes Weiner <hannes@cmpxchg.org>,
+	linux-acpi@vger.kernel.org,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
+	Bill Wendling <morbo@google.com>,
+	Justin Stitt <justinstitt@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Alexander Potapenko <glider@google.com>,
+	Yafang Shao <laoar.shao@gmail.com>,
+	Jan Hendrik Farr <kernel@jfarr.cc>,
+	Tony Ambardar <tony.ambardar@gmail.com>,
+	Alexander Lobakin <aleksander.lobakin@intel.com>,
+	Alice Ryhl <aliceryhl@google.com>,
+	Tejun Heo <tj@kernel.org>,
+	Yoann Congal <yoann.congal@smile.fr>,
+	Roman Gushchin <roman.gushchin@linux.dev>,
+	Jens Axboe <axboe@kernel.dk>,
+	Chen Ridong <chenridong@huawei.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Jann Horn <jannh@google.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	linux-kernel@vger.kernel.org,
+	llvm@lists.linux.dev,
+	linux-hardening@vger.kernel.org
+Subject: [PATCH] compiler_types: Introduce __nonstring_array
+Date: Mon, 10 Mar 2025 14:42:48 -0700
+Message-Id: <20250310214244.work.194-kees@kernel.org>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <Z82Sug-XLC1r5wKE@lei> <f44bad6065bbf45c02dc7caf90ed0e7e@paul-moore.com>
- <20250310213237.GA195898@mail.hallyn.com>
-In-Reply-To: <20250310213237.GA195898@mail.hallyn.com>
-From: Paul Moore <paul@paul-moore.com>
-Date: Mon, 10 Mar 2025 17:36:54 -0400
-X-Gm-Features: AQ5f1JoA1yAFuUk_pWTCCQXK_vbLp2GoCURFNTHFh0-PEifsu_ff6RzwzZJnk80
-Message-ID: <CAHC9VhTSdq=zrkmipZJjTMcudbyvHJeq+XR3Td7mr7cEn+GDEA@mail.gmail.com>
-Subject: Re: [PATCH] MAINTAINERS: add Serge Hallyn as maintainer for creds
-To: "Serge E. Hallyn" <serge@hallyn.com>
-Cc: sergeh@kernel.org, linux-kernel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-Developer-Signature: v=1; a=openpgp-sha256; l=4227; i=kees@kernel.org; h=from:subject:message-id; bh=Hgfqycyk5WAvowUEhLw7wDnMIf6XtuNalb//mZR8AGY=; b=owGbwMvMwCVmps19z/KJym7G02pJDOnnY250lb4+9jb5eIJS+5/U8MWXp+Qst9x3Yqqd93nNg MnXEhwndJSyMIhxMciKKbIE2bnHuXi8bQ93n6sIM4eVCWQIAxenAEwk/CzDf9eb1ZL5xsK7Ox6a dWptfW1umrQ/PPH6fWmtGbVi7n5aNgz/NH09gypDt73QUtNrmx0wYxWr98x/dmGb97hmvX0jPWc GJwA=
+X-Developer-Key: i=kees@kernel.org; a=openpgp; fpr=A5C3F68F229DD60F723E6E138972F4DFDC6DC026
+Content-Transfer-Encoding: 8bit
 
-On Mon, Mar 10, 2025 at 5:32=E2=80=AFPM Serge E. Hallyn <serge@hallyn.com> =
-wrote:
-> On Mon, Mar 10, 2025 at 03:58:41PM -0400, Paul Moore wrote:
-> > On Mar  9, 2025 sergeh@kernel.org wrote:
-> > >
-> > > Also add the documentation file as suggested by G=C3=BCnther Noack.
-> > >
-> > > Signed-off-by: Serge Hallyn <sergeh@kernel.org>
-> > > ---
-> > >  MAINTAINERS | 2 ++
-> > >  1 file changed, 2 insertions(+)
-> >
-> > I adjusted the subject line to reflect that you chose the reviewer role=
-,
-> > but otherwise this looks good, merged into lsm/dev.  Thanks!
->
-> Oh, did I?  I went back and forth, and actually *intended* M, but must
-> have left my git index out of sorts :)  No problem - reviewer probably
-> makes more sense.
+GCC has expanded support of the "nonstring" attribute so that it can be
+applied to arrays of character arrays[1], which is needed to identify
+correct static initialization of those kinds of objects. Since this was
+not supported prior to GCC 15, we need to distinguish the usage of Linux's
+existing __nonstring macro for the attribute for non-multi-dimensional
+char arrays. Until GCC 15 is the minimum version, use __nonstring_array to
+mark arrays of non-string character arrays. (Regular non-string character
+arrays can continue to use __nonstring.)
 
-The patch you posted to the mailing list had "R:" before your name :)
+This allows for changes like this:
 
-I'm happy either way, if you would prefer a "M:" just let me know and
-I can update the commit.
+-static const char table_sigs[][ACPI_NAMESEG_SIZE] __initconst = {
++static const char table_sigs[][ACPI_NAMESEG_SIZE] __nonstring_array __initconst = {
+        ACPI_SIG_BERT, ACPI_SIG_BGRT, ACPI_SIG_CPEP, ACPI_SIG_ECDT,
 
---=20
-paul-moore.com
+Which will silence the coming -Wunterminated-string-initialization
+warnings in GCC 15:
+
+In file included from ../include/acpi/actbl.h:371,                                                                   from ../include/acpi/acpi.h:26,                                                                     from ../include/linux/acpi.h:26,
+                 from ../drivers/acpi/tables.c:19:
+../include/acpi/actbl1.h:30:33: warning: initializer-string for array of 'char' truncates NUL terminator but destination lacks 'nonstring' attribute (5 chars into 4 available) [-Wunterminated-string-initialization]
+   30 | #define ACPI_SIG_BERT           "BERT"  /* Boot Error Record Table */
+      |                                 ^~~~~~                                                      ../drivers/acpi/tables.c:400:9: note: in expansion of macro 'ACPI_SIG_BERT'                           400 |         ACPI_SIG_BERT, ACPI_SIG_BGRT, ACPI_SIG_CPEP, ACPI_SIG_ECDT,
+      |         ^~~~~~~~~~~~~                                                                       ../include/acpi/actbl1.h:31:33: warning: initializer-string for array of 'char' truncates NUL terminator but destination lacks 'nonstring' attribute (5 chars into 4 available) [-Wunterminated-string-initialization]
+   31 | #define ACPI_SIG_BGRT           "BGRT"  /* Boot Graphics Resource Table */
+      |                                 ^~~~~~
+
+Link: https://gcc.gnu.org/bugzilla/show_bug.cgi?id=117178 [1]
+Signed-off-by: Kees Cook <kees@kernel.org>
+---
+Cc: Miguel Ojeda <ojeda@kernel.org>
+Cc: Arnd Bergmann <arnd@arndb.de>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: Len Brown <lenb@kernel.org>
+Cc: Marco Elver <elver@google.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Przemek Kitszel <przemyslaw.kitszel@intel.com>
+Cc: Hao Luo <haoluo@google.com>
+Cc: Masahiro Yamada <masahiroy@kernel.org>
+Cc: Christophe Leroy <christophe.leroy@csgroup.eu>
+Cc: Johannes Weiner <hannes@cmpxchg.org>
+Cc: linux-acpi@vger.kernel.org
+---
+ include/linux/compiler_types.h | 12 ++++++++++++
+ init/Kconfig                   |  3 +++
+ 2 files changed, 15 insertions(+)
+
+diff --git a/include/linux/compiler_types.h b/include/linux/compiler_types.h
+index 981cc3d7e3aa..7ccea700b46d 100644
+--- a/include/linux/compiler_types.h
++++ b/include/linux/compiler_types.h
+@@ -348,6 +348,18 @@ struct ftrace_likely_data {
+ # define __counted_by(member)
+ #endif
+ 
++/*
++ * Optional: only supported since gcc >= 15
++ * Optional: not supported by Clang
++ *
++ * gcc: https://gcc.gnu.org/bugzilla/show_bug.cgi?id=117178
++ */
++#ifdef CONFIG_CC_HAS_MULTIDIMENSIONAL_NONSTRING
++# define __nonstring_array		__attribute__((__nonstring__))
++#else
++# define __nonstring_array
++#endif
++
+ /*
+  * Apply __counted_by() when the Endianness matches to increase test coverage.
+  */
+diff --git a/init/Kconfig b/init/Kconfig
+index d0d021b3fa3b..723dc69507d6 100644
+--- a/init/Kconfig
++++ b/init/Kconfig
+@@ -129,6 +129,9 @@ config CC_HAS_COUNTED_BY
+ 	# https://github.com/llvm/llvm-project/pull/112636
+ 	depends on !(CC_IS_CLANG && CLANG_VERSION < 190103)
+ 
++config CC_HAS_MULTIDIMENSIONAL_NONSTRING
++	def_bool $(success,echo 'char tag[][4] __attribute__((__nonstring__)) = { };' | $(CC) $(CLANG_FLAGS) -x c - -c -o /dev/null -Werror)
++
+ config RUSTC_HAS_COERCE_POINTEE
+ 	def_bool RUSTC_VERSION >= 108400
+ 
+-- 
+2.34.1
+
 
