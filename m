@@ -1,231 +1,163 @@
-Return-Path: <linux-kernel+bounces-553940-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-553941-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F2B4A590F1
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 11:20:08 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CB0ADA590F3
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 11:20:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EC8FB3A54C5
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 10:19:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5D87B3ABDBF
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 10:20:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75FDD224234;
-	Mon, 10 Mar 2025 10:19:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 142F0226529;
+	Mon, 10 Mar 2025 10:20:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="EU7gtP7m"
-Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="LxHS36tT"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B26422577E
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 10:19:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C099A2253A5;
+	Mon, 10 Mar 2025 10:20:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741601997; cv=none; b=jZbAfR3GW5JGTgjlQR0K7+oehACcwTFW6d+Civjojmyx5HjFcapyq7sxBp5xsuXg0bv3wCk3DtGLpyd97/llBbgpq2eKQQpwCn5o1TYzcmiOyJl9/jU8vGMzIn5iHzrHI14YliyoudzsOZCYtd/LMTK7HRJhywSIyMoW5c95z4w=
+	t=1741602008; cv=none; b=OKa6PJ5zgDhV4sXTxMg/1ggI9SxQyXkgXwW2dBruNXR1IkWl3OxL/Qpq1cl5JA3y6hx7LyWhwLYlWtG3kXAg67gTHxleiXpVVHJXJMB862eCabYqgXzx1hy10dSvlrS/XoeLQDPCcr/5QDHlIHgbvXMwsg/W2L6v55ldMvqch0g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741601997; c=relaxed/simple;
-	bh=RtaFekXwblCL5xny0i+OXnePQygCdXhoaFdr38QCXa0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=azwoNak1xTsS6etQAdf7l13PzfvmBba11SjcvrgabVW8n72nhwKXtFLfGCGGpR39daIYnXW0Gs144sDmRosM2w0l1dO25dsrtq0A56IoiRHPoQ1GCo+FF6w7xCs+ikEYZamqdxAJca0lMhBTyhuosf5CYYOVfP1jxro8nZC0RvQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=EU7gtP7m; arc=none smtp.client-ip=209.85.167.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-548409cd2a8so3926754e87.3
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 03:19:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1741601993; x=1742206793; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=M0ea9rpf0RxfT/Vd6N8pCsCd6Ja9SG7q7xyK1CsJvJg=;
-        b=EU7gtP7m6FrchmHkLoDjBWXHJTJuJSS/sLhPBK2EW8YJrDzNSZ+QegDw/UenAubybC
-         YI+rtmhIw+XEQ+FCfVUvSApNRgz4sXlTakjoGXw4R1RlFBD4BYh34FHu2vHvsQ5ZO7nA
-         2ffCyeD5H1NmficwKGbQK8VYtxsbtaA1uTw/YthBqJTydt84qKs6MjzEGW+7B9J4J718
-         PnKIhw+f+J95+ZooFcxtJMBJeIph9OUq3siCm+hhjjxDg3PxKFAawWcpQ0eBlBMv8kHq
-         A1cYl8Vw27peUnoWNgIpEE3PPQbBfAzg/pF/0pwf4MNBJvmQ2crpKpLCxRD2zdUgh0Pw
-         BBDg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741601993; x=1742206793;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=M0ea9rpf0RxfT/Vd6N8pCsCd6Ja9SG7q7xyK1CsJvJg=;
-        b=DQiGWVPhxdMtgTfPFQYQSV3/RhDn/uY2j30iJ3CORE+c7F2e8HtS21lALSf6dLslG7
-         BOX89TLwr2W1rNMK87iklnYaVf8jSueb1Ddms+yoGvEG7p9T2Ycs/UrxxRBnCeQI8uwg
-         uWuZoiOEY0h2WdWzrHsn3wotFnW2ROx6alcUJ1QHcthlNmrQvc6niSTChJhFTeQi+VWF
-         7APCQf1h4j3OnMZVkYjmIW0DVX+Mt9k/YlRWN/Yq8MCp6aXim/xdC+SPkcVVm5AsxY2R
-         hErZ2gc2ONE99hmdq1uJgK6ELlutsTVyABdsMsK381q/Dgf423v26Icr0YkuQOIlNqcJ
-         NpUQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXGbE+0wcOKeKJuC1eMD7r0bXW4gX7yyKJPNkvIYJVanif3S0BNRtqfCX3KXYDe9JQn14c0UY7bQLiIEio=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwfmGwNkERFO3ZeVTrvRg5WUGkom/WVrmQdPSEDbJx4wA23BkYE
-	d6NKNigmP/FCSTvJJJxjqzFni21I7TrtMlg/H2xPOF+dm/UFHXBOHSN7r1q4ruIygJEGzJ6lByD
-	xu8y+/++nhkRU19vD0REtOX+sleoVnTgojmOz2A==
-X-Gm-Gg: ASbGncsp4o9vd7GwjSXFCatLpl5JXO/PyoqPQcVssf/oNvFD3OGjGQBsC7QNbw1INMG
-	TUtpBybkR8NclVKyfxmgfUqvhXfE7OvAw8iR3rsz6mBDyJnhWiLMhUEMp73vOtnHDdxv2IkUN9/
-	gKuNg/4zcNt3V1CAr7NG1ZNjME+nZ+jEAd3hze3XnwLCQ3wrcinOztgXIt729X2kW21qBi
-X-Google-Smtp-Source: AGHT+IEABh8IrPMTThOhDVsksod2Hr14fbs/1C61hSgDvNeuiLAsoP+iy1hA2dllbYoJaGeIioTibtolKmO543XJ5zY=
-X-Received: by 2002:a05:6512:1112:b0:549:5850:f275 with SMTP id
- 2adb3069b0e04-54990ec8e60mr4130983e87.50.1741601993369; Mon, 10 Mar 2025
- 03:19:53 -0700 (PDT)
+	s=arc-20240116; t=1741602008; c=relaxed/simple;
+	bh=8qM1aVMmeGgCsR7IRGnjZZf9UubaZgxvBRXuVoJZQ18=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=HRXAxCst/rwd1Dl5hsP/52EOcQ4eW72O50Jw2Y772ISa5Jmfw8aPoIcbY8ZWq5bPi5P5VU8q8EK4WVDu3VVHLkM2QznRc8rhDecwZ7gjB2uva/2lEZWq4fUvdlD93dTXdWEAnLAe2LZfCiiiaTMA6CD5W+6y2hlE9RBVad0NlP8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=LxHS36tT; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52A9dkt2022356;
+	Mon, 10 Mar 2025 10:19:57 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	hl+H8c0VN2y3MHqhFSWjgt5uhq3MRlviyoIT8w9wikY=; b=LxHS36tTTwZkJeYc
+	odgeJYMl6ajG0uY1C68s2eFXH5HT5EpAMRps51OfPSBk5o7w08orWB8MnkbYck7h
+	HtNQIEJ5gWhk2V7joG4ws+rfL6YA5Z0HIeYejcjVId7X/kncS+Yn8mul7JHQY6wp
+	IRc2tgyZuVLPUXkIiuoEFGIRoYkUgrtXDhfrShWyZxYv/ylBwit3kTZoQI/Qx/DR
+	kLn4kgLBTCwNnrBqKX9/hA2e0MTq4m/I72vdmToIvYZIKLpa2G5FMQ4P+Ue0UjgY
+	fbUFhtGqBEtGhD4MKarpptkXa8uo9LjtcN2ve03HseWW0VnA3FE8NTCX0NSRe78l
+	+kYxYA==
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 458eyucffy-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 10 Mar 2025 10:19:57 +0000 (GMT)
+Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
+	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 52AAJuke028140
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 10 Mar 2025 10:19:56 GMT
+Received: from [10.64.68.153] (10.80.80.8) by nalasex01c.na.qualcomm.com
+ (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 10 Mar
+ 2025 03:19:53 -0700
+Message-ID: <3fcbf259-aea5-4170-b988-1c23a3472a00@quicinc.com>
+Date: Mon, 10 Mar 2025 18:19:51 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250224143134.3024598-1-koichiro.den@canonical.com>
-In-Reply-To: <20250224143134.3024598-1-koichiro.den@canonical.com>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Mon, 10 Mar 2025 11:19:40 +0100
-X-Gm-Features: AQ5f1JoGOup15qJPVY7rRCGOZp1japOrRce4fQGe-xgPn_abAC22timyMKW0Csw
-Message-ID: <CAMRc=Me9_EvVj2U-wGWjoVyH_igZBtUs1ymtE=4_r2EkSBAAcA@mail.gmail.com>
-Subject: Re: [PATCH v5 0/9] Introduce configfs-based interface for gpio-aggregator
-To: Koichiro Den <koichiro.den@canonical.com>
-Cc: linux-gpio@vger.kernel.org, geert+renesas@glider.be, 
-	linus.walleij@linaro.org, maciej.borzecki@canonical.com, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] coresight: add verification process for
+ coresight_etm_get_trace_id
+To: Suzuki K Poulose <suzuki.poulose@arm.com>,
+        Mike Leach
+	<mike.leach@linaro.org>,
+        James Clark <james.clark@linaro.org>,
+        "Alexander
+ Shishkin" <alexander.shishkin@linux.intel.com>
+CC: Tingwei Zhang <quic_tingweiz@quicinc.com>,
+        Jinlong Mao
+	<quic_jinlmao@quicinc.com>, <coresight@lists.linaro.org>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-msm@vger.kernel.org>
+References: <20250310022348.1654501-1-quic_jiegan@quicinc.com>
+ <23943463-94d0-4e37-b5fa-5efb20015063@arm.com>
+Content-Language: en-US
+From: Jie Gan <quic_jiegan@quicinc.com>
+In-Reply-To: <23943463-94d0-4e37-b5fa-5efb20015063@arm.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01c.na.qualcomm.com (10.47.97.35)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Authority-Analysis: v=2.4 cv=cbIormDM c=1 sm=1 tr=0 ts=67cebccd cx=c_pps a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17 a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=sWKEhP36mHoA:10 a=COk6AnOGAAAA:8 a=Z-hf14rMMggIjEe8M9kA:9
+ a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10 a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-ORIG-GUID: j3XkgYo3YQJ347maH5L7Z7l8rzPymOpt
+X-Proofpoint-GUID: j3XkgYo3YQJ347maH5L7Z7l8rzPymOpt
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-10_04,2025-03-07_03,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0 mlxscore=0
+ impostorscore=0 bulkscore=0 suspectscore=0 priorityscore=1501 phishscore=0
+ malwarescore=0 adultscore=0 clxscore=1015 spamscore=0 mlxlogscore=999
+ classifier=spam authscore=0 authtc=n/a authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2502100000
+ definitions=main-2503100081
 
-On Mon, Feb 24, 2025 at 3:31=E2=80=AFPM Koichiro Den <koichiro.den@canonica=
-l.com> wrote:
->
-> This patch series introduces a configfs-based interface to gpio-aggregato=
-r
-> to address limitations in the existing 'new_device' interface.
->
-> The existing 'new_device' interface has several limitations:
->
->   Issue#1. No way to determine when GPIO aggregator creation is complete.
->   Issue#2. No way to retrieve errors when creating a GPIO aggregator.
->   Issue#3. No way to trace a GPIO line of an aggregator back to its
->            corresponding physical device.
->   Issue#4. The 'new_device' echo does not indicate which virtual
->            gpiochip<N> was created.
->   Issue#5. No way to assign names to GPIO lines exported through an
->            aggregator.
->
-> Although Issue#1 to #3 could technically be resolved easily without
-> configfs, using configfs offers a streamlined, modern, and extensible
-> approach, especially since gpio-sim and gpio-virtuser already utilize
-> configfs.
->
-> This v5 patch series includes 9 patches:
->
->   Patch#1: Fix an issue that was spotted during v3 preparation.
->   Patch#2: Reorder functions to prepare for configfs introduction.
->   Patch#3: Add aggr_alloc() to reduce code duplication.
->   Patch#4: Introduce basic configfs interface. Address Issue#1 to #4.
->   Patch#5: Address Issue#5.
->   Patch#6: Prepare for Patch#7.
->   Patch#7: Expose devices created with sysfs to configfs.
->   Patch#8: Suppress deferred probe for purely configfs-based aggregators.
->   Patch#9: Documentation for the new configfs interface.
->
-> N.B. This v5 is based on the latest gpio/for-next commit as of writing th=
-is:
->      * 45af02f06f69 ("gpio: virtuser: convert to use dev-sync-probe utili=
-ties")
->
->
-> v4->v5 changes:
->   - Rebased off of the latest gpio/for-next, that includes the patch seri=
-es:
->     "Add synchronous fake device creation utility for GPIO drivers"
->     (https://lore.kernel.org/all/20250221133501.2203897-1-koichiro.den@ca=
-nonical.com/)
->
-> v3->v4 changes:
->   - Splitted off the introduction of gpio-pseudo.[ch] and conversions.
->   - Reordered commits to place a fix commit first.
->   - Squashed the trivial update for gpio-aggregator's conversion to gpio-=
-pseudo
->     into the primary commit "gpio: aggregator: introduce basic configfs i=
-nterface"
->     as it is only meaningful when combined.
->
-> v2->v3 changes:
->   - Addressed feedback from Bartosz:
->     * Factored out the common mechanism for synchronizing platform device
->       probe by adding gpio-pseudo.[ch].
->     * Renamed "_auto." prefix to "_sysfs." for auto-generated
->       configfs entries corresponding to sysfs-created devices.
->     * Squashed v2 Patch#3 into its predecessor.
->   - Addressed feedback from Geert:
->     * Factored out duplicate code in struct gpio_aggregator initializatio=
-n
->       by adding gpio_alloc()/gpio_free() functions. Note that v2 Patch#7
->       was dropped for other reasons as mentioned below, so aggr_free() in
->       v3 is unrelated to the same-named function in v2.
->     * Removed redundant parsing of gpio-line-names and unnecessary
->       chip->names assignments; squashed v2 Patch#4 + v2 Patch#5 into v3
->       Patch#9.
->     * Updated to use sysfs_emit().
->     * Updated Kconfig (select CONFIGFS_FS).
->     * Fixed typos, coding style issues, missing const qualifiers, and oth=
-er
->       minor issues.
->   - Resolved an issue that was spotted during v3 preparation. See Patch#2=
-.
->   - Reordered resource initialization order in gpio_aggregator_init() to
->     both eliminate a potential race condition (as noted in the source cod=
-e
->     comment) and simplify the code. See Patch#8. This enabled:
->     * Removal of v2 Patch#7.
->     * Merging of aggr_unregister_lines() and aggr_free_lines() into a
->       unified function.
->   - Disabled 'delete_device' functionality for devices created via config=
-fs
->     for simplicity. It was mistakenly allowed in v2 and proved buggy. See
->     Patch #8.
->
-> RFC->v2 changes:
->   - Addressed feedback from Bartosz:
->     * Expose devices created with sysfs to configfs.
->     * Drop 'num_lines' attribute.
->     * Fix bugs and crashes.
->     * Organize internal symbol prefixes more cleanly.
->   - Split diffs for improved reviewability.
->   - Update kernel doc to reflect the changes.
->
-> v4: https://lore.kernel.org/all/20250217143531.541185-1-koichiro.den@cano=
-nical.com/
-> v3: https://lore.kernel.org/all/20250216125816.14430-1-koichiro.den@canon=
-ical.com/
-> v2: https://lore.kernel.org/all/20250203031213.399914-1-koichiro.den@cano=
-nical.com/
-> RFC (v1): https://lore.kernel.org/linux-gpio/20250129155525.663780-1-koic=
-hiro.den@canonical.com/T/#u
->
->
-> *** BLURB HERE ***
->
-> Koichiro Den (9):
->   gpio: aggregator: protect driver attr handlers against module unload
->   gpio: aggregator: reorder functions to prepare for configfs
->     introduction
->   gpio: aggregator: add aggr_alloc()/aggr_free()
->   gpio: aggregator: introduce basic configfs interface
->   gpio: aggregator: add 'name' attribute for custom GPIO line names
->   gpio: aggregator: rename 'name' to 'key' in aggr_parse()
->   gpio: aggregator: expose aggregator created via legacy sysfs to
->     configfs
->   gpio: aggregator: cancel deferred probe for devices created via
->     configfs
->   Documentation: gpio: document configfs interface for gpio-aggregator
->
->  .../admin-guide/gpio/gpio-aggregator.rst      |  107 ++
->  drivers/gpio/Kconfig                          |    2 +
->  drivers/gpio/gpio-aggregator.c                | 1129 ++++++++++++++---
->  3 files changed, 1050 insertions(+), 188 deletions(-)
->
-> --
-> 2.45.2
->
 
-I did some more testing as I want to pick it up for v6.15 but I now
-noticed that we're hitting the lockdep_assert_held(&aggr->lock) splat
-in aggr_line_add(). Could you please look into it?
 
-Bartosz
+On 3/10/2025 6:17 PM, Suzuki K Poulose wrote:
+> On 10/03/2025 02:23, Jie Gan wrote:
+>> The coresight_etm_get_trace_id function is a global function. The
+>> verification process for 'csdev' is required prior to its usage.
+>>
+>> Fixes: c367a89dec26 ("Coresight: Add trace_id function to retrieving 
+>> the trace ID")
+>> Signed-off-by: Jie Gan <quic_jiegan@quicinc.com>
+>> ---
+>>   drivers/hwtracing/coresight/coresight-core.c | 7 +++++--
+>>   1 file changed, 5 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/drivers/hwtracing/coresight/coresight-core.c b/drivers/ 
+>> hwtracing/coresight/coresight-core.c
+>> index bd0a7edd38c9..5a7cd2376e2d 100644
+>> --- a/drivers/hwtracing/coresight/coresight-core.c
+>> +++ b/drivers/hwtracing/coresight/coresight-core.c
+>> @@ -1616,9 +1616,12 @@ EXPORT_SYMBOL_GPL(coresight_remove_driver);
+>>   int coresight_etm_get_trace_id(struct coresight_device *csdev, enum 
+>> cs_mode mode,
+>>                      struct coresight_device *sink)
+>>   {
+>> -    int trace_id;
+>> -    int cpu = source_ops(csdev)->cpu_id(csdev);
+>> +    int cpu, trace_id;
+>> +
+>> +    if (csdev->type != CORESIGHT_DEV_TYPE_SOURCE && ! 
+>> source_ops(csdev)->cpu_id)
+> 
+> That must be :
+> 
+>      csdev->type != CORESIGHT_DEV_TYPE_SOURCE || !source_ops(csdev)- 
+>  >cpu_id)
+> 
+> 
+> Suzuki
+
+Hi Suzuki,
+
+Yes, you are right. I made a big mistake. It should return an error 
+number if one of the conditions failed.
+
+Sorry about that, will send another patch to fix it.
+
+Thanks,
+Jie
+
+> 
+> 
+>> +        return -EINVAL;
+>> +    cpu = source_ops(csdev)->cpu_id(csdev);
+>>       switch (mode) {
+>>       case CS_MODE_SYSFS:
+>>           trace_id = coresight_trace_id_get_cpu_id(cpu);
+> 
+
 
