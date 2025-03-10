@@ -1,137 +1,254 @@
-Return-Path: <linux-kernel+bounces-555202-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-555206-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C6631A5A6E2
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 23:17:29 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0131BA5A6F7
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 23:18:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6DC6A7A4E7B
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 22:16:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9022917416B
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 22:18:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 265F11E5B97;
-	Mon, 10 Mar 2025 22:17:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13B161EE001;
+	Mon, 10 Mar 2025 22:18:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CCk6sLe2"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="hsQ57vAi"
+Received: from DM1PR04CU001.outbound.protection.outlook.com (mail-centralusazolkn19010007.outbound.protection.outlook.com [52.103.13.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8745F382;
-	Mon, 10 Mar 2025 22:17:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741645037; cv=none; b=TVfyXYu4lKhET3zYsi45B+v9i/rH557jRKihlKR7xO5n4TLp90EZ8/LcRvIoYFlGfid7XeK8EtlBJuQT8rtiw1VgK5WLDGNaUWIXloS+BcUtLHAdZkmuekQVI2KDvdAjK6+re9DTVKyiPx/hLWJ0uq7kB4+PYp8AU+wcMhBiIbA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741645037; c=relaxed/simple;
-	bh=MMlIFG8Zv8CNscu9Rs/8LPn9paecut0nXKKHd2+sAQo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BvtvWWDjN7mlc2lfdXEAyxg+e5uQXfrpSBZTZqqJB8Y0vmJdA/hYi33p8Dxol42+bkdbVeSgBkusnRE2MEvzHb8vtydt+Es8qIL+G3IpEwNT45H//hhz3H7/pNBWJf2R1kdDLvjU7B29ZZSZvnbk5BF3+WAnui/jf6iPhrhMoQ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CCk6sLe2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 53482C4CEE5;
-	Mon, 10 Mar 2025 22:17:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741645037;
-	bh=MMlIFG8Zv8CNscu9Rs/8LPn9paecut0nXKKHd2+sAQo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=CCk6sLe2Dd91Dh8G6F0l8+Dzz0r0BkNpj6iAF7j2qd/ROJVpkeyiqtAfH+PaeS0bG
-	 JrKo6SoPV9R6DgbEcG23JVX8ZL2Uxy/DQXEy3h9YG+lyeRpW/wbgq+PhVKXC8QSy14
-	 sqgd/c1m1lztc3YVa1uxcfDn1lpP7WwXxt9Sz1Zp8yV8Fb9JZFHscNHKtrrRb/N9zg
-	 49JCfuPsCbiBt6tpYqtZmKDW9XbdvVzrJohJ1oojogE96PazyaEdZVUNGvYQIazMPz
-	 KGjJ2R6pcwWUGOanPp2Ur0EStciAbM9SkY4lbkLi4L2w97BEHDATYaPXle4fqR2NmG
-	 3stzNiVRY+MZg==
-Date: Mon, 10 Mar 2025 15:17:14 -0700
-From: Namhyung Kim <namhyung@kernel.org>
-To: Ian Rogers <irogers@google.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Kan Liang <kan.liang@linux.intel.com>,
-	Yicong Yang <yangyicong@hisilicon.com>,
-	James Clark <james.clark@linaro.org>,
-	"Dr. David Alan Gilbert" <linux@treblig.org>,
-	Levi Yun <yeoreum.yun@arm.com>, Ze Gao <zegao2021@gmail.com>,
-	Weilin Wang <weilin.wang@intel.com>, Xu Yang <xu.yang_2@nxp.com>,
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Howard Chu <howardchu95@gmail.com>
-Subject: Re: [PATCH v2 11/11] perf python tracepoint: Switch to using
- parse_events
-Message-ID: <Z89k6lWxRSBfCGvM@google.com>
-References: <20250228222308.626803-1-irogers@google.com>
- <20250228222308.626803-12-irogers@google.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B08A1E51F6;
+	Mon, 10 Mar 2025 22:18:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.103.13.7
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741645107; cv=fail; b=eKAq750eD/vJdUwGxhFbQ2xU2KGqPdyO2AG3eyVaIu468ncQ+KrBY+eJiDhvSaVQNu/sOnCbp1K5beeGaTqGy6e1x1eDfR50yiUuBBU1+iv/hTLju/hTlJdvtDc70Ky3MMXTNmWoU/XjK29LJXoL5TCgTIjqZ9bbgU3AOfAeFmY=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741645107; c=relaxed/simple;
+	bh=9eGqY5/Z664Kf3KxRPY9+JHj29spOpfkdVABajqn47Y=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=uTDjjqoa6Yqydoaf8ARDSBbsPVwX11siS9QvrC5PDrsUmkCJnOHVD+oIJrU0uIFE/NNysPXRJ34O/fiPWc3Ks5+CvMB3DEdCUNhA3+8rFe9dE8u7MFnFGZiSTeafGIrBDtLFmjiEUz8xLc/6xIAxstUN6gF0yL++cMy/ufEkFQA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=hsQ57vAi; arc=fail smtp.client-ip=52.103.13.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=cjVf0cE5mMb105e+SqRA0Mu09UPLnmPwHmBx5LJ/KF+OL28OAiohJZNTIAD7M5ykZ1Gyc4BuMk+tdTT7x5AXgGwsCgtv3sHXR59OJfiJvQiqmXQep490ox4GNz5ZQiuonXNM/DDodRl76F+rK6Jv4uVNUE1wjjBA99FuyxolEYT4cHDOTJgvhVIseseGZva+DFDRk4w7dqOZXSpKsr4nTo8XD48UjP1HKCtJdaqp+i/4aQAhgii8nqRrXzMUVtefFgt851mgWJj3J34ilFssWtJIBVquuf7dGJVFA6qncZMUnw0w5z/dd06gd+/Rk9P4G143zjzL7jeE1FZ2Jf4UBQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=SQB4EgUL9Tfr/pQZMuSyyXj6MaBdtJZJb/qBrYALqkw=;
+ b=ArnpzOkOPeLHYBun3iui2+LPCAVA7e7D5RRkDIGc5a5Lr3y5vGaicoXxMVaSJYYuyou609zQuGeSU5ytMFCQoSEHfw7j2lK/ln32lSPGJAznpurxc02F0BrAHd+FZmdPxH8jVeXYRhDDW8NtrVN7jeQTL3fZrso+XSRZ+UmXzM35qO0SA1MGQxEGiuVuaZms7nrxxInIG+Q1NTZ4lSdbhtb/OFlQ4NB19UaNvygoTN8lFpu2JDlYSwuHrWnbDUv8jAeA6xxfXrNzJeBxIT1NPa8TeHKZyGRZc3CcFqbOMxIgzvSr1ZAQAH3eqPD8eCEpF/NVeWA9o1I9K61/yasrJA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=SQB4EgUL9Tfr/pQZMuSyyXj6MaBdtJZJb/qBrYALqkw=;
+ b=hsQ57vAiRqkoznXqjBKOA8YVFuT2AQUoFXLNHWuldMBPonuZTW5Mvh2WeBfRKr2Vrbth+wz3hi+ac/28AZy/nR1ZSdBnPcZoCIOqtZUrasjwWw0I8SywlFwgwU3+XKzAqir/BcdDB7cBcn6UeolGFZLGA/XlVw6iZCAB+MLIFMZStwsZBcqZ/8jcUtHcfHXYsbGbZKa5WoYmOABKQHrV/filxvFUB85b2TTWqdhe9OM1tH2OhbQ4rvsAreaqGXzjNuMxrmSPEML0oHEp0pBwudjV2mX9MdUhpI8kRipM45es2SSk4Sj/zE10K/vkaC/Tfuc1OgA+IgNzMZqhuEpegg==
+Received: from BN7PR02MB4148.namprd02.prod.outlook.com (2603:10b6:406:f6::17)
+ by PH7PR02MB8929.namprd02.prod.outlook.com (2603:10b6:510:1fb::7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8511.26; Mon, 10 Mar
+ 2025 22:18:20 +0000
+Received: from BN7PR02MB4148.namprd02.prod.outlook.com
+ ([fe80::1c3a:f677:7a85:4911]) by BN7PR02MB4148.namprd02.prod.outlook.com
+ ([fe80::1c3a:f677:7a85:4911%4]) with mapi id 15.20.8511.026; Mon, 10 Mar 2025
+ 22:18:20 +0000
+From: Michael Kelley <mhklinux@outlook.com>
+To: Arnd Bergmann <arnd@arndb.de>, Roman Kisel <romank@linux.microsoft.com>,
+	"bhelgaas@google.com" <bhelgaas@google.com>, Borislav Petkov <bp@alien8.de>,
+	Catalin Marinas <catalin.marinas@arm.com>, Conor Dooley
+	<conor+dt@kernel.org>, Dave Hansen <dave.hansen@linux.intel.com>, Dexuan Cui
+	<decui@microsoft.com>, Haiyang Zhang <haiyangz@microsoft.com>, "H. Peter
+ Anvin" <hpa@zytor.com>, Joey Gouly <joey.gouly@arm.com>, "krzk+dt@kernel.org"
+	<krzk+dt@kernel.org>, =?iso-8859-2?Q?Krzysztof_Wilczy=F1ski?= <kw@linux.com>,
+	"K. Y. Srinivasan" <kys@microsoft.com>, Len Brown <lenb@kernel.org>, Lorenzo
+ Pieralisi <lpieralisi@kernel.org>, Manivannan Sadhasivam
+	<manivannan.sadhasivam@linaro.org>, Mark Rutland <mark.rutland@arm.com>, Marc
+ Zyngier <maz@kernel.org>, Ingo Molnar <mingo@redhat.com>, Oliver Upton
+	<oliver.upton@linux.dev>, "Rafael J . Wysocki" <rafael@kernel.org>, Rob
+ Herring <robh@kernel.org>, "ssengar@linux.microsoft.com"
+	<ssengar@linux.microsoft.com>, Sudeep Holla <sudeep.holla@arm.com>, Suzuki K
+ Poulose <suzuki.poulose@arm.com>, Thomas Gleixner <tglx@linutronix.de>, Wei
+ Liu <wei.liu@kernel.org>, Will Deacon <will@kernel.org>, Zenghui Yu
+	<yuzenghui@huawei.com>, "devicetree@vger.kernel.org"
+	<devicetree@vger.kernel.org>, "kvmarm@lists.linux.dev"
+	<kvmarm@lists.linux.dev>, "linux-acpi@vger.kernel.org"
+	<linux-acpi@vger.kernel.org>, Linux-Arch <linux-arch@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, "linux-hyperv@vger.kernel.org"
+	<linux-hyperv@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "linux-pci@vger.kernel.org"
+	<linux-pci@vger.kernel.org>, "x86@kernel.org" <x86@kernel.org>
+CC: "apais@microsoft.com" <apais@microsoft.com>, "benhill@microsoft.com"
+	<benhill@microsoft.com>, "bperkins@microsoft.com" <bperkins@microsoft.com>,
+	"sunilmut@microsoft.com" <sunilmut@microsoft.com>
+Subject: RE: [PATCH hyperv-next v5 03/11] Drivers: hv: Enable VTL mode for
+ arm64
+Thread-Topic: [PATCH hyperv-next v5 03/11] Drivers: hv: Enable VTL mode for
+ arm64
+Thread-Index: AQHbj6zpmH+gYA9h/kGlfIiTOb0OO7NpvEQAgAMg+bCAAAf2gIAAB/GQ
+Date: Mon, 10 Mar 2025 22:18:20 +0000
+Message-ID:
+ <BN7PR02MB4148FC15ADF0E49327262B92D4D62@BN7PR02MB4148.namprd02.prod.outlook.com>
+References: <20250307220304.247725-1-romank@linux.microsoft.com>
+ <20250307220304.247725-4-romank@linux.microsoft.com>
+ <e0f81049-688e-4f53-a002-5d246281bf8d@app.fastmail.com>
+ <BN7PR02MB41488C06B7E42830C700318DD4D62@BN7PR02MB4148.namprd02.prod.outlook.com>
+ <119cfb59-d68b-4718-b7cb-90cba67827e8@app.fastmail.com>
+In-Reply-To: <119cfb59-d68b-4718-b7cb-90cba67827e8@app.fastmail.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: BN7PR02MB4148:EE_|PH7PR02MB8929:EE_
+x-ms-office365-filtering-correlation-id: b77af9fd-4164-4f0d-810f-08dd602176ee
+x-microsoft-antispam:
+ BCL:0;ARA:14566002|15080799006|461199028|8062599003|8060799006|19110799003|10035399004|440099028|102099032|3412199025|56899033;
+x-microsoft-antispam-message-info:
+ =?iso-8859-2?Q?yQQILi6VrGtjaEFxoQlcm5yFV+3l9N/wrgIbOe8R4J+2fc/iwPSfrjuzGz?=
+ =?iso-8859-2?Q?e7v3zYaMkdlRBGbepzGtbWon7m1DcNAo01yfxiKPGBWF2b9dLs6gZgIsMa?=
+ =?iso-8859-2?Q?XzipWcGORnugvegdJq7uGDEfYKyXw2cDkcITiFmf0Rbdq58mIvGVjCrbvN?=
+ =?iso-8859-2?Q?3Qer4rVipGfvXiAywuaVC6tIaeiRNeJqBjo8sECMgizLTRrrtLrT8ZsJp1?=
+ =?iso-8859-2?Q?g6nFbNsFFNrWDN2MYashzQLhk0RciSbjv7kKOOWsvMd2/R7HoCxQsKR0Q8?=
+ =?iso-8859-2?Q?7WCmybNOb9N6PCR0fNpkXiZgKD7PcakVXvDuXPRBlfIDPayc8TJfBFaOH/?=
+ =?iso-8859-2?Q?UNISnO3Sn40YuiKRZ+eI19zcmElsuJT5Lyt0EotqbEP5tNWUjDtNZZHcEQ?=
+ =?iso-8859-2?Q?1/6mt+LXXZgoEtQDhW7T01iTnYCdUoSDBe6SQQAYIbjYf7+cjz92pqhu56?=
+ =?iso-8859-2?Q?M62LHAznkNy8a7Y8iYKlPTFsl/lV4JZu5iEf78W689iwJX88zareyruvlA?=
+ =?iso-8859-2?Q?ho0rgHHhgwUR8COcMyws7tOfaclp33bMx7H8kdSU7QUwJxcP2BiJgWq4/X?=
+ =?iso-8859-2?Q?fH1FLa/Im3NDNsT0GCy69R/+PgekBtVKkWMdiBZmKXn8gaePwbvZ87lX9n?=
+ =?iso-8859-2?Q?4M97UxE3UiPSRdukF7GeX7jNTQkVwsFlG7173KIwLqBwhzKBMU3YhvhweE?=
+ =?iso-8859-2?Q?ExqfW49Cl/GxUecwhI22ccILwqjk8nqRZjP090vtHJJwI5z/BKnYr/vSIl?=
+ =?iso-8859-2?Q?IiUATMCPh3nWr1ofnEDqouvsgkYOh3xZ4l/g6BrgoMefnaeRchpg3yJqP6?=
+ =?iso-8859-2?Q?HAQRztXck4ovk3SN3yYa763LUaYYsJ7tsbOHs2khong6UAq9gO0T6TxGdz?=
+ =?iso-8859-2?Q?DVVWUPBHO3qRcUJt+GavY+owX8g4WZw2o3uwhz9jBDM3MZqJrEr7hj7pvZ?=
+ =?iso-8859-2?Q?BVb0TRcduZDul5Pr+oZvxIgCGQO1YGsYMoTG4rTRmyVqohczchkxbb5cwq?=
+ =?iso-8859-2?Q?nZlj52g7heOIlpPQ1WceTqTBSWe6t52EoCCzmE+xQdn2ydcfbXmFgYJ8Vh?=
+ =?iso-8859-2?Q?2f6xnIVYv5Vud2u49+jsTuxQT2uLeURazh5fJuulOUSQwZzSSVmJX5k0OK?=
+ =?iso-8859-2?Q?8SNIV7e5mPcCp1uddOXDNU8wr6RRM=3D?=
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?iso-8859-2?Q?DCstKJ9DzABdmuSpaUca+ctZ0ZsQukkvlQiWmEwxr/1atttSFFWytQ3ZAz?=
+ =?iso-8859-2?Q?+tslEj6O+lNDvR2caPzKhia03smqL2+vk9Nr8PCKZA5ruZQnO2x3ICMJva?=
+ =?iso-8859-2?Q?uffVOlPvNoEKFUQJ+y7jfgwdE7caWkf74Pkk+ZysES6CvvzWmRoChUpruA?=
+ =?iso-8859-2?Q?7MfWE2gB3YEXRrkj/1HxW/iKK4AsWC7XLYkP7YGOqkmwBPTOT4umQdOra1?=
+ =?iso-8859-2?Q?UbhpiKTgvWUKNKKQp/Rz2C+i5om46V1UxgAUarInKx4SzYjUCyjUknGa7n?=
+ =?iso-8859-2?Q?nIgncTZIeiRidGRLmRpyzAA05ARsZcYmq20o0kSeSw7NBv6ANwou7OkxMh?=
+ =?iso-8859-2?Q?0iEo9HIpNufauuXQfsVpfhMf96KqaugEgtfT6KnBpZa2+3dkCMGfuUBqkS?=
+ =?iso-8859-2?Q?KEGzm+nKeHaeSu8/pU7h20MUWJiipBiN36MA32+MBTGlnRFuHyJzI4O1aL?=
+ =?iso-8859-2?Q?t7gdyzLN7kZLcq2/vg9x+sxFWHg4726EZbqK3B5/V7hR8RTGuf/RlQU0vi?=
+ =?iso-8859-2?Q?aSILwICVHIeNZd+sBTAcxSQROUXNOEWvMGskvquWztZGKpa3dE3ZMLo2ep?=
+ =?iso-8859-2?Q?5mM6Pg7W7/avzWx2vit+yy5QWMyJIaI1parcDF5bxoUkZYlsiXd4A4ko9R?=
+ =?iso-8859-2?Q?pCC0KwX7DKH05PSPyZXa7z6+h1lfuD21ZAn4FrAix4C3gfi1RM2wYDV+O5?=
+ =?iso-8859-2?Q?QtuxIrayv21oS6mNnih/wPJ5t7iJSlCKAoFAH88vsv6GedUCgIzRU9eVN4?=
+ =?iso-8859-2?Q?tJUQOwu+8hqYBqPbAAXzfs+38ZH0DOcpdpPY5J8oXIlLLBSRqIrdFLuqNC?=
+ =?iso-8859-2?Q?LBUt2yULR9gRfoFA4643pFV+UOQq3eNY8TmtpQ5KtQS/w87aQM+AOKUSNA?=
+ =?iso-8859-2?Q?9UlmzFhZbNu1DomNb3w+U41sUPNpLiRX2UKltBGjYqILqy//kJHKgKUJM9?=
+ =?iso-8859-2?Q?WRX3VleGpKsbnC0Q4i/RVBbuy76Jdhc15wBr/pOHF77UzE8H3pnahU6y3K?=
+ =?iso-8859-2?Q?PJrMsp8G7VtJ0+/dibjpySMe7EAnPlVfrl7XwNnxaucl19OCUfDHXCkB/e?=
+ =?iso-8859-2?Q?xN1pQYMHg4EAK+UfmmPPDV4ZSxyXCDZyhNn96j1Kq/EyPifck/Up+MWuHZ?=
+ =?iso-8859-2?Q?8SlYJqtLGLZgFN5b6SyN182j7ZIRbo21gOm+w9pQuhR0zyogEeQx6ORjZV?=
+ =?iso-8859-2?Q?H6D7MU2hMFZhqqtgmzAI89n5tsC8FsXpaXPK2hFElMJbH2h/MwOnk8snjq?=
+ =?iso-8859-2?Q?hqok0TyX2vERt+eY7BndHUumf7Hr2/Yom5FSW7jeg=3D?=
+Content-Type: text/plain; charset="iso-8859-2"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250228222308.626803-12-irogers@google.com>
+X-OriginatorOrg: outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: BN7PR02MB4148.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-CrossTenant-Network-Message-Id: b77af9fd-4164-4f0d-810f-08dd602176ee
+X-MS-Exchange-CrossTenant-originalarrivaltime: 10 Mar 2025 22:18:20.1557
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR02MB8929
 
-On Fri, Feb 28, 2025 at 02:23:08PM -0800, Ian Rogers wrote:
-> Rather than manually configuring an evsel, switch to using
-> parse_events for greater commonality with the rest of the perf code.
-> 
-> Reviewed-by: Howard Chu <howardchu95@gmail.com>
-> Signed-off-by: Ian Rogers <irogers@google.com>
-> ---
->  tools/perf/python/tracepoint.py | 23 +++++++++++------------
->  1 file changed, 11 insertions(+), 12 deletions(-)
-> 
-> diff --git a/tools/perf/python/tracepoint.py b/tools/perf/python/tracepoint.py
-> index bba68a6d4515..38b2b6d11f64 100755
-> --- a/tools/perf/python/tracepoint.py
-> +++ b/tools/perf/python/tracepoint.py
-> @@ -5,24 +5,23 @@
->  
->  import perf
->  
-> -class tracepoint(perf.evsel):
-> -    def __init__(self, sys, name):
-> -        config = perf.tracepoint(sys, name)
-> -        perf.evsel.__init__(self,
-> -                            type   = perf.TYPE_TRACEPOINT,
-> -                            config = config,
-> -                            freq = 0, sample_period = 1, wakeup_events = 1,
-> -                            sample_type = perf.SAMPLE_PERIOD | perf.SAMPLE_TID | perf.SAMPLE_CPU | perf.SAMPLE_RAW | perf.SAMPLE_TIME)
-> -
->  def main():
-> -    tp      = tracepoint("sched", "sched_switch")
->      cpus    = perf.cpu_map()
->      threads = perf.thread_map(-1)
-> +    evlist = perf.parse_events("sched:sched_switch", cpus, threads)
-> +    # Disable tracking of mmaps and similar that are unnecessary.
-> +    for ev in evlist:
-> +        ev.tracking = False
-> +    # Configure evsels with default record options.
-> +    evlist.config()
+From: Arnd Bergmann <arnd@arndb.de> Sent: Monday, March 10, 2025 2:21 PM
+>=20
+> On Mon, Mar 10, 2025, at 22:01, Michael Kelley wrote:
+> > From: Arnd Bergmann <arnd@arndb.de> Sent: Saturday, March 8, 2025 1:05 =
+PM
+> >> >  config HYPERV_VTL_MODE
+> >> >  	bool "Enable Linux to boot in VTL context"
+> >> > -	depends on X86_64 && HYPERV
+> >> > +	depends on (X86_64 || ARM64)
+> >> >  	depends on SMP
+> >> > +	select OF_EARLY_FLATTREE
+> >> > +	select OF
+> >> >  	default n
+> >> >  	help
+> >>
+> >> Having the dependency below the top-level Kconfig entry feels a little
+> >> counterintuitive. You could flip that back as it was before by doing
+> >>
+> >>       select HYPERV_VTL_MODE if !ACPI
+> >>       depends on ACPI || SMP
+> >>
+> >> in the HYPERV option, leaving the dependency on HYPERV in
+> >> HYPERV_VTL_MODE.
+> >
+> > I would argue that we don't ever want to implicitly select
+> > HYPERV_VTL_MODE because of some other config setting or
+> > lack thereof.  VTL mode is enough of a special case that it should
+> > only be explicitly selected. If someone omits ACPI, then HYPERV
+> > should not be selectable unless HYPERV_VTL_MODE is explicitly
+> > selected.
+> >
+> > The last line of the comment for HYPERV_VTL_MODE says
+> > "A kernel built with this option must run at VTL2, and will not run
+> > as a normal guest."  In other words, don't choose this unless you
+> > 100% know that VTL2 is what you want.
+>=20
+> It sounds like the latter is the real problem: enabling a feature
+> should never prevent something else from working. Can you describe
+> what VTL context is and why it requires an exception to a rather
+> fundamental rule here? If you build a kernel that runs on every
+> single piece of arm64 hardware and every hypervisor, why can't
+> you add HYPERV_VTL_MODE to that as an option?
+>=20
 
-I think the default option uses frequency of 4000 but tracepoints want
-to use period of 1.  Also I'm not sure if it sets the proper sample type
-bits namely PERF_SAMPLE_RAW.
+VTL =3D Virtual Trust Level, and VSM =3D Virtual Secure Mode, are Hyper-V's
+terminology for offering multiple execution environments with
+hierarchical trust in the context of a single VM. A normal guest
+operating system runs at VTL 0, and there are no other VTLs in use.
+But in some environments, additional software may run as a paravisor
+layer between the normal guest OS and the hypervisor. This software
+runs at some other VTL > 0, and has a higher privilege level within
+the VM than software running at VTL 0 (which is the lowest privilege).
+VTL 2 is used today in the Azure cloud with CoCo VMs to run a
+paravisor, and there may be other uses in the future. See [1] if you
+want more details on VSM and VTLs. Also [2] for the CoCo VM use
+case.
 
-Thanks,
-Namhyung
+Ideally, a Linux kernel image could detect at runtime what VTL it is
+running at, and "do the right thing". Unfortunately, on x86 Linux this
+has proved difficult (or perhaps impossible) because the amount of
+boot-time setup required to ask the question about the current VTL
+is significant. The idiosyncrasies and historical baggage of x86 requires
+that Linux do some x86-specific initialization steps for VTL > 0
+before the question can be asked. Hence the introduction of
+CONFIG_HYPERV_VTL_MODE, and the behavior that when it is
+selected, the kernel image won't run normally in VTL 0.
 
+I'll go out on a limb and say that I suspect on arm64 a runtime
+determination based on querying the VTL *could* be made (though
+I'm not the person writing the code). But taking advantage of that
+on arm64 produces an undesirable dichotomy with x86.
 
-> +    # Simplify the sample_type and read_format of evsels
-> +    for ev in evlist:
-> +        ev.sample_type = ev.sample_type & ~perf.SAMPLE_IP
-> +        ev.read_format = 0
->  
-> -    evlist = perf.evlist(cpus, threads)
-> -    evlist.add(tp)
->      evlist.open()
->      evlist.mmap()
-> +    evlist.enable();
->  
->      while True:
->          evlist.poll(timeout = -1)
-> -- 
-> 2.48.1.711.g2feabab25a-goog
-> 
+Roman may have further thoughts on the topic, but that's
+what I know about how we got here.
+
+Michael
+
+[1] https://learn.microsoft.com/en-us/virtualization/hyper-v-on-windows/tlf=
+s/vsm
+[2] https://techcommunity.microsoft.com/blog/windowsosplatform/openhcl-the-=
+new-open-source-paravisor/4273172
 
