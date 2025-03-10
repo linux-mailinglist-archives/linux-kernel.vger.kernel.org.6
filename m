@@ -1,108 +1,153 @@
-Return-Path: <linux-kernel+bounces-554863-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-554865-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 98F48A5A27D
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 19:20:43 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EB037A5A2A0
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 19:22:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 53C723AF7A8
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 18:20:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9F98E18954CC
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 18:22:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D605D23372C;
-	Mon, 10 Mar 2025 18:20:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53470233731;
+	Mon, 10 Mar 2025 18:22:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="b7jkPBPt"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HxIi/1Wm"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D1D31CAA6C;
-	Mon, 10 Mar 2025 18:20:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BA871C3F34;
+	Mon, 10 Mar 2025 18:22:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741630834; cv=none; b=uks7oyHimBxbo1wwj/yYcRILSR+qQSJ7o4Sa/wd7qvmqr7jxqqVEHGds5z1vidsPdFTEtHITFMSQRKy0AgfsWIsp3X11KHVDoB1G4uSRORb9+HwQWIo1f4gKeAnjJeHNtMTIxSjHGALjXQUixAgMA/bg5ueiGBd09RjKgIZOttM=
+	t=1741630926; cv=none; b=pGfD8l+qyXuUePiCoi1E/GuZx3te7Nx5dDIyVkxJSCyaHRFbIlSpdmdRy5S5kMZzWJCQwAVDAAEs0De7Yp2tVK46okzefZQcn6sfdL1lCQQoItSedqI+AkcgbuuusqlYJN4CXNkH4n3UwE9XmrVcphH39fHB6CVDJcZwvzoF8uA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741630834; c=relaxed/simple;
-	bh=nLQE7s9TKJC/g8NOA5MA1/4Vivx2KbgoqvORMloIWC4=;
+	s=arc-20240116; t=1741630926; c=relaxed/simple;
+	bh=SkjOumrPZ8pqrIzJ1V5CWQluO4ng3WvoP3slVoeW3oo=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=aHLNosyEli+VUSnankKE3lSIC9nau+GT18VOUq3d6AGNHsfmyugrb18jPXbIn4Ly6B/Aod3C15j5Ao7TASZoDomqhzGt2V4w/modgdvSUDwwZTxrkie+E/WtwzTQO7zQPrUi3jUKXmKp0fteFBS4XcYXm7Nn1jgpkWXnK5d1ZQ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=b7jkPBPt; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E06E0C4CEF7;
-	Mon, 10 Mar 2025 18:20:33 +0000 (UTC)
+	 To:Cc:Content-Type; b=UWCdOY4FMrd61/npqd4D5pCxSWV9c9AKKclE6/6OCJ1v6e0qYZbGwVJs/TgnSYHqQ5/R6NHXjyHAeQnFE3FAywdQypJvlNIiGqgjPThaTq+CJSGE93NcKZKrCtnzmUTjcLpyn8M3txTPCq/UCsFK4qsi3urDOzeflAijnKH1CTM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HxIi/1Wm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 226E6C4CEEE;
+	Mon, 10 Mar 2025 18:22:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741630833;
-	bh=nLQE7s9TKJC/g8NOA5MA1/4Vivx2KbgoqvORMloIWC4=;
+	s=k20201202; t=1741630926;
+	bh=SkjOumrPZ8pqrIzJ1V5CWQluO4ng3WvoP3slVoeW3oo=;
 	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=b7jkPBPt6iu6pDdmGfDQB7Wo6/Xp2gwVrN/g4Ow2MF8iojwGIpD/vUlnjuSAtqxKt
-	 ahptvs3cqcGrR1iL8I2t4F5eZ5dtfv095RBUr35PTgi/PdUd2oloRdh3HFWsrCgpAb
-	 PlTBAwrCS5N5sIu/mCd0K0jfVZA4nTL0BaFTjzgvJBmkW2P8VtKP2ZdzMLenDpJ66i
-	 L3OIu9xKOIFDMwvcmAtD8iOYD1qXHDNdiLAAmj4kwiV8paEhjruVail5E7GERnVcKA
-	 353ne1DDJdR2zH+kVEyWfX5+bEF+7+Q9pP4Owem+jlxdKrNsXGAWgRkroMtQcW7txf
-	 Gibz+/2bcaVqQ==
-Received: by mail-il1-f182.google.com with SMTP id e9e14a558f8ab-3d44e0a5c07so4417775ab.2;
-        Mon, 10 Mar 2025 11:20:33 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVaK6aXaOW3rhR6LNcBSjXmUEH6x+G7TvE1+I5+8y0gaSVNtKgLxfNRdWRZ/QEceZulc4qPfiXIhs396RV9l1Di@vger.kernel.org, AJvYcCVygJnaxYh3ky1APjmfziJXMEktppDwlHdeauVrIVWzz2OdZtBhjFHbUGDb5BT/qJ/oj6O4RZqiaGD5M0lM@vger.kernel.org, AJvYcCW0QN8q5hS3QpYVVCWdjPX0vFvZdfNhAedST1hDAPqpVGRZeLL9KUKEbk6dEIScc0Kck2Vdpe48+w==@vger.kernel.org, AJvYcCWbwXjuD06Y4SBPF7uZX3Rzt3ZnIuCK9Df7tC1FAU4rDQBqjWy0NZPhe8gIgbLKF37rWBzmTQgwo1uPDmixC6P1VxPWUTHz@vger.kernel.org, AJvYcCXqGxAaeUVh3PagHx1A1WLLWXUcJwE34DKVZLfvZTo7+MaWLThj2QVUZFS2xioRPOaB3c4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyLWLC31BO7fcCMkDJOC0cdxhg9su5chbTDVMABxhBFYM4LCTXc
-	IWuHgBHebYy+/5uM60kkE5ZAr+CJ+nzGo4KGsZ4qxprwykn5JGsIVdaFfJoIeCKaHk8AEXQnD1a
-	ucFMFE8Ns+woYL8vut/sC7Of2gXo=
-X-Google-Smtp-Source: AGHT+IGMhjAefS9MRtpucYcfJaRq9JkgzJYdAIKNU80R4u6+/tFuHxXxnuio2dnSaR3fNmXgevOCqMDbXexbP1x3IRs=
-X-Received: by 2002:a05:6e02:1749:b0:3d1:968a:6d46 with SMTP id
- e9e14a558f8ab-3d44196905fmr141448625ab.6.1741630833195; Mon, 10 Mar 2025
- 11:20:33 -0700 (PDT)
+	b=HxIi/1Wm03gmXfbzvtISFLsBvvMmetPAt7JCEgwfvNoUzzLDa3+BP9lJGcUMokP4q
+	 RdQJ2Tl9dTM0bT69Z0dDvbOArqtmgpsH8pBpn0NULzDOJIA3K6O/ZsNRAumVqIYfNr
+	 eBe2NpfkqSeve02qTaKaWuzSuRrJ7wLGUc4GKxsm5MExMBnPSrq9y74PTgWgf0A13g
+	 ENgga/+BHraI2lPfLeev3b+en4iA5flMP5OEAVrMiu1P7FgQktLlpdI5tMGJD0ptcD
+	 Pv13FGAvCSA0n7YPSpatPKhw+MaM68+nDRq3Nxe3vkaqM00oBB9k8/j6D6F5icuQfB
+	 9dXLxcY9RhJ4A==
+Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-54943bb8006so5118691e87.0;
+        Mon, 10 Mar 2025 11:22:06 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVdsfrFssH/M8nNjTo7PCKnMBVXR69v5o+Qc84TnJ7/JGqQ+uUYVhf5S8WxcCwSO/SJJMrX6maeb+Y=@vger.kernel.org, AJvYcCWD9aV4MVfa3aTwHJtFJse7G0g1nOxUXmL4SsMyloX4o4XFAJY42HT23j5mw7LnEkEfKG7+g88Wo/N1tmJkMw==@vger.kernel.org, AJvYcCWwIgH5oU00PJuvDOqsI9wXcck+IX7HCl/uwGR0MEW4zJNn0tzIPi+LbgaI5lTxnsD5bmLw6J+Y/v7fm11A@vger.kernel.org
+X-Gm-Message-State: AOJu0YwRJC/IRaHu7U48LPg2cvkJeNnnc+aFSOdmeDib3iCdfpGDEQoW
+	hGobT09OV1Jcfm3Dhfp5uxY5FByW4Wyi7T7AK2s1aolpcQRjW4+0vg8YExaKYvJrhwE9lx78xXQ
+	4b0Dt1qXRcYRPzEbcvXpn1GPYVYM=
+X-Google-Smtp-Source: AGHT+IF7GoDCUbQdzcJ6DIyWWAIySKv+qn9qgrauGfCi9A1X9uKn03VlhxmcPGNsWa43LGR/2J4P1S95NSjRQdBl51Q=
+X-Received: by 2002:a05:6512:b14:b0:545:532:fd2f with SMTP id
+ 2adb3069b0e04-54990e5da2cmr4479337e87.12.1741630924469; Mon, 10 Mar 2025
+ 11:22:04 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250308013314.719150-1-bboscaccy@linux.microsoft.com>
- <20250308013314.719150-3-bboscaccy@linux.microsoft.com> <CAPhsuW6-XmcFLT0xkMJJVEu4hSKQ1efEGdnogCuazBOctNTtfw@mail.gmail.com>
- <87v7sgye6h.fsf@microsoft.com> <CAPhsuW41zvcSK8exRT6Ui1jyQ=OhD8BAdV6bU4nhGQGfV14+Cw@mail.gmail.com>
- <87senkycvf.fsf@microsoft.com>
-In-Reply-To: <87senkycvf.fsf@microsoft.com>
-From: Song Liu <song@kernel.org>
-Date: Mon, 10 Mar 2025 11:20:22 -0700
-X-Gmail-Original-Message-ID: <CAPhsuW5UuaFoSu+bOKmrbk9pAr9TsLu_mtpZqsYx-g_MNefCyA@mail.gmail.com>
-X-Gm-Features: AQ5f1JoVPe5C1Qzcx5JK98PrZBlmBi5hYlTkS9d4QazqaCd27qGZ7JeWVXtjs7M
-Message-ID: <CAPhsuW5UuaFoSu+bOKmrbk9pAr9TsLu_mtpZqsYx-g_MNefCyA@mail.gmail.com>
-Subject: Re: [PATCH v6 bpf-next 2/2] selftests/bpf: Add a kernel flag test for
- LSM bpf hook
-To: Blaise Boscaccy <bboscaccy@linux.microsoft.com>
-Cc: Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
-	"Serge E. Hallyn" <serge@hallyn.com>, Alexei Starovoitov <ast@kernel.org>, 
-	Daniel Borkmann <daniel@iogearbox.net>, John Fastabend <john.fastabend@gmail.com>, 
-	Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>, 
-	Eduard Zingerman <eddyz87@gmail.com>, Yonghong Song <yonghong.song@linux.dev>, 
-	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
-	Jiri Olsa <jolsa@kernel.org>, Stephen Smalley <stephen.smalley.work@gmail.com>, 
-	Ondrej Mosnacek <omosnace@redhat.com>, Mykola Lysenko <mykolal@fb.com>, Shuah Khan <shuah@kernel.org>, 
-	Kumar Kartikeya Dwivedi <memxor@gmail.com>, Matt Bobrowski <mattbobrowski@google.com>, 
-	Xu Kuohai <xukuohai@huawei.com>, linux-kernel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, bpf@vger.kernel.org, 
-	selinux@vger.kernel.org, linux-kselftest@vger.kernel.org
+References: <67cd0276.050a0220.14db68.006c.GAE@google.com> <8cf7d7efdc069772d69f913b02e5f67feadce18e.camel@HansenPartnership.com>
+In-Reply-To: <8cf7d7efdc069772d69f913b02e5f67feadce18e.camel@HansenPartnership.com>
+From: Ard Biesheuvel <ardb@kernel.org>
+Date: Mon, 10 Mar 2025 19:21:53 +0100
+X-Gmail-Original-Message-ID: <CAMj1kXH0Myy3bV-hFNWnoUk6ZAa6MAd1zFTM-X6dXiJPx==w0A@mail.gmail.com>
+X-Gm-Features: AQ5f1JrLbe1rn0WB5HUKTnGtdoEau4kOg9QVT7Mpm8s0v1YpGXXtA4_W0dv3ECE
+Message-ID: <CAMj1kXH0Myy3bV-hFNWnoUk6ZAa6MAd1zFTM-X6dXiJPx==w0A@mail.gmail.com>
+Subject: Re: [syzbot] [efi?] [fs?] possible deadlock in efivarfs_actor
+To: James Bottomley <James.Bottomley@hansenpartnership.com>
+Cc: syzbot <syzbot+019072ad24ab1d948228@syzkaller.appspotmail.com>, jk@ozlabs.org, 
+	linux-efi@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Mon, Mar 10, 2025 at 11:11=E2=80=AFAM Blaise Boscaccy
-<bboscaccy@linux.microsoft.com> wrote:
-[...]
-> >
-> > We are blindly blocking all security_bpf() with kernel=3Dtrue here, so
-> > any lskel load in parallel with this test may fail. On the other hand,
-> > existing tests only block some operations under certain conditions.
-> > For example, test_cgroup1_hierarchy.c only blocks operations for
-> > target_ancestor_cgid.
-> >
-> > Does this make sense?
-> >
+On Mon, 10 Mar 2025 at 17:50, James Bottomley
+<James.Bottomley@hansenpartnership.com> wrote:
 >
-> Not quite. This is only blocking security_bpf where kernel=3Dtrue and
-> pid=3Dmonitored_pid.
+> On Sat, 2025-03-08 at 18:52 -0800, syzbot wrote:
+> > Hello,
+> >
+> > syzbot found the following issue on:
+> >
+> > HEAD commit:    e056da87c780 Merge remote-tracking branch 'will/for-
+> > next/p..
+> > git tree:
+> > git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-
+> > kernelci
+> > console output:
+> > https://syzkaller.appspot.com/x/log.txt?x=14ce9c64580000
+> > kernel config:
+> > https://syzkaller.appspot.com/x/.config?x=d6b7e15dc5b5e776
+> > dashboard link:
+> > https://syzkaller.appspot.com/bug?extid=019072ad24ab1d948228
+> > compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for
+> > Debian) 2.40
+> > userspace arch: arm64
+> > syz repro:
+> > https://syzkaller.appspot.com/x/repro.syz?x=111ed7a0580000
+> > C reproducer:
+> > https://syzkaller.appspot.com/x/repro.c?x=13b97c64580000
+> >
+> > Downloadable assets:
+> > disk image:
+> > https://storage.googleapis.com/syzbot-assets/3d8b1b7cc4c0/disk-e056da87.raw.xz
+> > vmlinux:
+> > https://storage.googleapis.com/syzbot-assets/b84c04cff235/vmlinux-e056da87.xz
+> > kernel image:
+> > https://storage.googleapis.com/syzbot-assets/2ae4d0525881/Image-e056da87.gz.xz
+> >
+> > IMPORTANT: if you fix the issue, please add the following tag to the
+> > commit:
+> > Reported-by: syzbot+019072ad24ab1d948228@syzkaller.appspotmail.com
+> >
+> > efivarfs: resyncing variable state
+> > ============================================
+> > WARNING: possible recursive locking detected
+> > 6.14.0-rc4-syzkaller-ge056da87c780 #0 Not tainted
+> > --------------------------------------------
+> > syz-executor772/6443 is trying to acquire lock:
+> > ffff0000c6826558 (&sb->s_type->i_mutex_key#16){++++}-{4:4}, at:
+> > inode_lock include/linux/fs.h:877 [inline]
+> > ffff0000c6826558 (&sb->s_type->i_mutex_key#16):4}, at:
+> > iterate_dir+0x3b4/0x5f4 fs/readdir.c:101
+> >
+> > other info that might help us debug this:
+> >  Possible unsafe locking scenario:
+> >
+> >        CPU0
+> >        ----
+> >   lock(&sb->s_type->i_mutex_key#16);
+> >   lock(&sb->s_type->i_mutex_key#16);
+> >
+> >  *** DEADLOCK ***
+>
+> I can't figure out how you got here.  the shared lock in readdir.c is
+> on the directory and the inode_lock in the actor is on the files within
+> the directory.  The only way to get those to be the same is if the
+> actor gets called on the '.' element, which efivarfs_pm_notify is
+> supposed to skip with the
+>
+>         file->f_pos = 2;        /* skip . and .. */
+>
+> line.  Emitting the '.' and '..' in positions 0 and 1 is hard coded
+> into libfs.c:dcache_readdir() unless you're also applying a patch that
+> alters that behaviour?
+>
 
-"test_progs -j" runs multiple threads within the process, so all the
-threads are within monotored_pid.
+The repro log also has
 
-Thanks,
-Song
+program crashed: BUG: unable to handle kernel paging request in
+efivarfs_pm_notify
+
+preceding the other log output regarding the locks, so the deadlock
+might be a symptom of another problem.
 
