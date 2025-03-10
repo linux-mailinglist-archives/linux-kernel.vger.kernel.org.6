@@ -1,134 +1,132 @@
-Return-Path: <linux-kernel+bounces-554041-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-554054-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 173B4A59236
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 12:06:40 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 21033A59235
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 12:06:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 903D13AA359
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 11:06:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 81DEC188EF98
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 11:06:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31DCB227EAB;
-	Mon, 10 Mar 2025 10:57:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FCC8227586;
+	Mon, 10 Mar 2025 11:06:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=pm.me header.i=@pm.me header.b="OkhwnAdV"
-Received: from mail-40131.protonmail.ch (mail-40131.protonmail.ch [185.70.40.131])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="EORwAhbX"
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4576B227BAA
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 10:57:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.40.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40C701B4138;
+	Mon, 10 Mar 2025 11:06:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741604246; cv=none; b=ZmngBhrEFagXIsn1/cWhrgJBOldH2aQd27rXCx9K4nv5FNGCVwMte8vmoNCeueHUfVynodhaUnxan7jmZBVVxUacR6kr1GIgHmULK8YmX2kgB4ZNPlXCcZsxaUHQMhUNDaaiQnusKRZi8b5pgP39auo92qHRoKeMtTTfqJwqKwc=
+	t=1741604777; cv=none; b=qx3MQdyDUE2ZDSIumIb5M7SjC0BL7n+gIsBfpOhmOwZ0HelLADswG2/f5kq5/K30MaO2NoynToTmt6a7+Uo9XykjYpLrsabr9cRR2aGYTQWmFrIPqfqRR4AzBorZ/m/lovYd6EQuzSNXGv1YjKxKSVbR9CVg2z5+xkqeh3tYjbw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741604246; c=relaxed/simple;
-	bh=61A/V3lwSclZiCJInLxEmepbN95X1sJN7svSDJK7DL8=;
-	h=Date:To:From:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=FRC/7vokLkAsxrs498cCOA6A5WrFmvp1pB00qeLxhEuldkdMFnqbGWwxIW6dKGiPRwjfsC5A8jYf1Il0suFDvjeO6hdUnfdwPedJ3ljPgjNqaI5KbTibD6AGSAfUaxomJkg8LYUIy5zNLVbUku1IPJWhNrqRezX6haJvsO44kWo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pm.me; spf=pass smtp.mailfrom=pm.me; dkim=pass (2048-bit key) header.d=pm.me header.i=@pm.me header.b=OkhwnAdV; arc=none smtp.client-ip=185.70.40.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pm.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pm.me
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pm.me;
-	s=protonmail3; t=1741604241; x=1741863441;
-	bh=hLncp8wa6eofNjWes0vCOaYEUoMimwk7wJagoEBWPLQ=;
-	h=Date:To:From:Cc:Subject:Message-ID:Feedback-ID:From:To:Cc:Date:
-	 Subject:Reply-To:Feedback-ID:Message-ID:BIMI-Selector:
-	 List-Unsubscribe:List-Unsubscribe-Post;
-	b=OkhwnAdVH6mxIe70vbXH9uMKzaakcvCGlkmAMw0oF7uC2onBQvfXlnuSTeekZZB1Z
-	 0Iriaz7UublqKawcfI9Pwra9Y0Z+NK9glPT9URoXAoHGhZUFVKOoCWJph76DHARziG
-	 3Q2AsrC3YFiX2UybB6div6lQSAO+LbeGNeU+ta63C54lW085778t4Sn1RruR4KNDtJ
-	 nkNcSrTHTVHF8ox+TqrrMA5tYQjiG2lSWs1M2+ZTBff1Gt4rtIMFvmi4hemsk0yaZe
-	 UnqS3VZt/fgtejUXVTbq8KQv0Pn5i3I1WLLF0XNfWXorI+jDn+jlrgT+tbzqgcDiBt
-	 O9YwJCHfVr4kw==
-Date: Mon, 10 Mar 2025 10:57:15 +0000
-To: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, Asahi Lina <lina@asahilina.net>
-From: Oliver Mangold <oliver.mangold@pm.me>
-Cc: rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, Oliver Mangold <oliver.mangold@pm.me>
-Subject: [PATCH v7 0/4] New trait OwnableRefCounted for ARef<->Owned conversion.
-Message-ID: <20250310-unique-ref-v7-0-4caddb78aa05@pm.me>
-Feedback-ID: 31808448:user:proton
-X-Pm-Message-ID: c678b95834604c22f58371b93567e473988925a5
+	s=arc-20240116; t=1741604777; c=relaxed/simple;
+	bh=+vAYszaLuAjc+++c5UH/i1OBbtRd6LtGOcYREzENjkA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HmuZ8DyyTAOF66xUv3V9FXvNy9zbHtDmLpXkm0cKrQwxKvYuAI1wjHnOz282llreAxvKGpqXR5AA6EpnyVOpSpP4ZOuKyEKRMYGKMHMmwVo1JOPmjbieFtmmbderRbasG/f2UwdizDYhyUDQVOsFLk9y/GQ0YH3qA11q4vSgwE0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=EORwAhbX; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=Iw/s6OMG43ULsx4UXStKq7FqeOmxKAHk2WEArxE2pKc=; b=EORwAhbX8xg68mKTCSZ8Cd4emp
+	72FX7gvakjH7BgEDp4dCeBtZPaJNNudFmrcMoRorA8RboAINJFMXRmz18BuRI6UJOfG6NlXKAnStJ
+	U1Bnz8sje/QPQhE/CsOk8XVVF2PoXdiQRWlXF9NWW22HVFvkHssgad2+BiCfQll4YgFMwGm8R+fXm
+	VaFTmKi+Me65kz+CCSq7Qw6IgNgT2YUC11negNR3qvEFMmsdhU1LzWuRLB4SjEEIElcFl+iS+J8UB
+	yQO4ntjt19o3zayOgCKopfjtDFP7Zdg/LozF+SZ6mkUBHm/Poj9rXthJJLKwvw0NzzvM9yqbfC9sf
+	k8tjv3Ow==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:47598)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <linux@armlinux.org.uk>)
+	id 1traxJ-0002RJ-11;
+	Mon, 10 Mar 2025 11:05:57 +0000
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
+	(envelope-from <linux@shell.armlinux.org.uk>)
+	id 1traxF-0002PQ-1W;
+	Mon, 10 Mar 2025 11:05:53 +0000
+Date: Mon, 10 Mar 2025 11:05:53 +0000
+From: "Russell King (Oracle)" <linux@armlinux.org.uk>
+To: Christian Marangi <ansuelsmth@gmail.com>
+Cc: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Vladimir Oltean <olteanv@gmail.com>,
+	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Maxime Chevallier <maxime.chevallier@bootlin.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org, netdev@vger.kernel.org,
+	upstream@airoha.com
+Subject: Re: [net-next PATCH v12 12/13] net: dsa: Add Airoha AN8855 5-Port
+ Gigabit DSA Switch driver
+Message-ID: <Z87HkcdK2QTjooDK@shell.armlinux.org.uk>
+References: <20250309172717.9067-1-ansuelsmth@gmail.com>
+ <20250309172717.9067-13-ansuelsmth@gmail.com>
+ <Z83WgMeg_IxgbxhO@shell.armlinux.org.uk>
+ <67cec5a9.170a0220.93f86.9dcf@mx.google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <67cec5a9.170a0220.93f86.9dcf@mx.google.com>
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
-This allows to convert between ARef<T> and Owned<T> by
-implementing the new trait OwnedRefCounted.
+On Mon, Mar 10, 2025 at 11:57:41AM +0100, Christian Marangi wrote:
+> > > +static int an8855_pcs_config(struct phylink_pcs *pcs, unsigned int neg_mode,
+> > > +			     phy_interface_t interface,
+> > > +			     const unsigned long *advertising,
+> > > +			     bool permit_pause_to_mac)
+> > > +{
+> > > +	struct an8855_priv *priv = container_of(pcs, struct an8855_priv, pcs);
+> > > +	u32 val;
+> > > +	int ret;
+> > > +
+> > > +	/*                   !!! WELCOME TO HELL !!!                   */
+> > > +
+> > [... hell ...]
+> 
+> Will drop :( It was an easter egg for the 300 lines to configure PCS.
 
-This way we will have a shared/unique reference counting scheme
-for types with built-in refcounts in analogy to Arc/UniqueArc.
+That wasn't a request to drop the comment, just that I didn't want to
+include all that in my reply.
 
-Signed-off-by: Oliver Mangold <oliver.mangold@pm.me>
----
-Changes in v7:
-- Squash patch to make Owned::from_raw/into_raw public into parent
-- Added Signed-off-by to other people's commits
-- Link to v6: https://lore.kernel.org/r/20250310-unique-ref-v6-0-1ff5355861=
-7e@pm.me
+> > I guess, however, that as you're only using SGMII with in-band, it
+> > probably doesn't make much difference, but having similar behaviour
+> > in the various drivers helps with ongoing maintenance.
+> 
+> Do we have some driver that implement the logic of skipping the bulk of
+> configuration if the mode doesn't change?
 
-Changes in v6:
-- Changed comments/formatting as suggested by Miguel Ojeda
-- Included and used new config flag RUSTC_HAS_DO_NOT_RECOMMEND,
-  thus no changes to types.rs will be needed when the attribute
-  becomes available.
-- Fixed commit message for Owned patch.
-- Link to v5: https://lore.kernel.org/r/20250307-unique-ref-v5-0-bffeb63327=
-7e@pm.me
+For many, it doesn't matter, but for e.g. xpcs, there may be a reset
+of the XPCS when the mode changes, and there's workarounds for the
+TXGBE - both of those only happen when the interface mode actually
+changes.
 
-Changes in v5:
-- Rebase the whole thing on top of the Ownable/Owned traits by Asahi Lina.
-- Rename AlwaysRefCounted to RefCounted and make AlwaysRefCounted a
-  marker trait instead to allow to obtain an ARef<T> from an &T,
-  which (as Alice pointed out) is unsound when combined with UniqueRef/Owne=
-d.
-- Change the Trait design and naming to implement this feature,
-  UniqueRef/UniqueRefCounted is dropped in favor of Ownable/Owned and
-  OwnableRefCounted is used to provide the functions to convert
-  between Owned and ARef.
-- Link to v4: https://lore.kernel.org/r/20250305-unique-ref-v4-1-a8fdef7b1c=
-2c@pm.me
+Re-reading my .pcs_config() documentation, I really ought to mention
+that .pcs_config() will be called for both interface mode changes and
+for advertisement changes, and should not disrupt the link when
+nothing has changed.
 
-Changes in v4:
-- Just a minor change in naming by request from Andreas Hindborg,
-  try_shared_to_unique() -> try_from_shared(),
-  unique_to_shared() -> into_shared(),
-  which is more in line with standard Rust naming conventions.
-- Link to v3: https://lore.kernel.org/r/Z8Wuud2UQX6Yukyr@mango
-
----
-Asahi Lina (1):
-      rust: types: Add Ownable/Owned types
-
-Miguel Ojeda (1):
-      rust: kbuild: provide `RUSTC_HAS_DO_NOT_RECOMMEND` symbol
-
-Oliver Mangold (2):
-      rust: rename AlwaysRefCounted to RefCounted
-      rust: adding OwnableRefCounted and SimpleOwnableRefCounted
-
- init/Kconfig                    |   3 +
- rust/kernel/block/mq/request.rs |  10 +-
- rust/kernel/cred.rs             |   8 +-
- rust/kernel/device.rs           |   8 +-
- rust/kernel/fs/file.rs          |  10 +-
- rust/kernel/pid_namespace.rs    |   8 +-
- rust/kernel/task.rs             |   6 +-
- rust/kernel/types.rs            | 429 ++++++++++++++++++++++++++++++++++++=
-++--
- 8 files changed, 451 insertions(+), 31 deletions(-)
----
-base-commit: 4b2ee22fe32ea9b255926effbb6f26450607c391
-change-id: 20250305-unique-ref-29fcd675f9e9
-
-Best regards,
---=20
-Oliver Mangold <oliver.mangold@pm.me>
-
-
+-- 
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
