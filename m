@@ -1,829 +1,488 @@
-Return-Path: <linux-kernel+bounces-553491-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-553495-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A323DA58A67
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 03:23:01 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 344FAA58A77
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 03:25:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 68D4F3A96B7
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 02:22:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A14A3188AF31
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 02:25:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8D09192D8E;
-	Mon, 10 Mar 2025 02:22:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04C8019B5B8;
+	Mon, 10 Mar 2025 02:24:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="AJ4KgrnX"
-Received: from out30-113.freemail.mail.aliyun.com (out30-113.freemail.mail.aliyun.com [115.124.30.113])
+	dkim=pass (2048-bit key) header.d=fujitsu.com header.i=@fujitsu.com header.b="aZPCD5bZ"
+Received: from esa3.fujitsucc.c3s2.iphmx.com (esa3.fujitsucc.c3s2.iphmx.com [68.232.151.212])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F4F770814;
-	Mon, 10 Mar 2025 02:22:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.113
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741573373; cv=none; b=MbjEcWzeAZH5vaEFDAg6/xnwnKQuiIphme6uw789bnEopcsXQ1uA+hjQfRDRJxsnREkdEWYeP1k+Sr2356DWf27fW9UUB8PRu4ZRh4T0kRvGveMC5FrAA6hElGxaHKJHPsCfzEFnq+hdhQdJQh8iiCbIZRqNTDB2Wf3O/Jn7fxI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741573373; c=relaxed/simple;
-	bh=A1R7g4zDAU+E4M4BxFXCwJCuJarA454T0dMV3nWTUek=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=ToBZBWftDcFFDXUiNpvNQmDM4Savfohi+mIHuu1uuJkeSwrK1UpBhfSdkctvFYdLHSuOQfvChqdmKnyrLmXkm8kTzUNOzvBkmIwW+m/iX7UjEJK7IitKnfY4gazob2llynjUe1ihBQe7tgkemY/W1kn9MYWd8hkIBLpevj0wKR0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=AJ4KgrnX; arc=none smtp.client-ip=115.124.30.113
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1741573365; h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type;
-	bh=qU37W5kgf5YoBuCts8FpM8WlMw/+BZqrVRTpK5YJPQg=;
-	b=AJ4KgrnXhx1kxoeX7HuVeWn9/Y0NBqE1TgpjHwZQpElpQOAsiXI01EgtxeaXyLIP50nqTQd1PWNE6ukEVRs5sBpqn/7oCMVb+bK5ECAf2fZGb54Oq6ykiUSlTd+EOJVAVJjtnS3K7g0QNfZzz5mTMViLqgDTT348TOOpPak0lCE=
-Received: from DESKTOP-5N7EMDA(mailfrom:ying.huang@linux.alibaba.com fp:SMTPD_---0WQyTgQa_1741573350 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Mon, 10 Mar 2025 10:22:44 +0800
-From: "Huang, Ying" <ying.huang@linux.alibaba.com>
-To: Joshua Hahn <joshua.hahnjy@gmail.com>
-Cc: gourry@gourry.net,  harry.yoo@oracle.com,  honggyu.kim@sk.com,
-  yunjeong.mun@sk.com,  gregkh@linuxfoundation.org,  rakie.kim@sk.com,
-  akpm@linux-foundation.org,  rafael@kernel.org,  lenb@kernel.org,
-  dan.j.williams@intel.com,  Jonathan.Cameron@huawei.com,
-  dave.jiang@intel.com,  horen.chuang@linux.dev,  hannes@cmpxchg.org,
-  osalvador@suse.de,  linux-kernel@vger.kernel.org,
-  linux-acpi@vger.kernel.org,  linux-mm@kvack.org,  kernel-team@meta.com
-Subject: Re: [PATCH v7] mm/mempolicy: Weighted Interleave Auto-tuning
-In-Reply-To: <20250305200506.2529583-1-joshua.hahnjy@gmail.com> (Joshua Hahn's
-	message of "Wed, 5 Mar 2025 12:05:05 -0800")
-References: <20250305200506.2529583-1-joshua.hahnjy@gmail.com>
-Date: Mon, 10 Mar 2025 10:22:30 +0800
-Message-ID: <874j0162vt.fsf@DESKTOP-5N7EMDA>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 073911AF0BB;
+	Mon, 10 Mar 2025 02:24:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=68.232.151.212
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741573494; cv=fail; b=YOcqlqPclTZDUQ/j3Ju3iYvqspAlcBflD95DYAgFC/6L9YrbXE+1SwQ4oQsLyYrJMghdnfI8T1w5koTNnE/j/u1zv+plZffgl3QtBmuwBTFlOHwoo/Yp2zijGQiln3kUMByJmCMWMXKwaBWMiIIp+BVESVRSR2IeGbm/IuJ1KhY=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741573494; c=relaxed/simple;
+	bh=TmIDfBBFhN3wy25iLYI8/hTYl0rWDUiV4/hT6bi/1FM=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=Pfbt4Fi16CEqVqFG6LjdFMO8zMSs5AdOjQ8d0BTxRvPNfvNy6Og1DdgYCnnagspYKdVaboNzcONgoH8owsdF59nJ7S2FmnLHMFsski3UhA5kml4FV2tSiVMVmn1QnK53EAd55VMs1es7u/yTZKHio2P7AIYOqtYZn2l4stiw7D4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fujitsu.com; spf=pass smtp.mailfrom=fujitsu.com; dkim=pass (2048-bit key) header.d=fujitsu.com header.i=@fujitsu.com header.b=aZPCD5bZ; arc=fail smtp.client-ip=68.232.151.212
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fujitsu.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fujitsu.com
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=fujitsu.com; i=@fujitsu.com; q=dns/txt; s=fj1;
+  t=1741573492; x=1773109492;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=TmIDfBBFhN3wy25iLYI8/hTYl0rWDUiV4/hT6bi/1FM=;
+  b=aZPCD5bZsLUYcDQF0e98iHU/eMU+HXFm7/UXGXIRVo/d4frQOxxGT+/e
+   xyx0en9K0d9378okIsiCL5HHyYuBSr+/gP/IEXx4/gKOnpQ9kouIr/S4k
+   dEGDZp7SUGzRJu9nz8AmqfKDIUEca5WkETyx9qTLE0C2Fbe+P1p0KveG+
+   g2R/UZoR2Fnz5B1HZGGAmLi8KeO9YYj5V3PZ+iUf0FA8K258QP5b9LM+9
+   qT/OVh59rH5JEhzApVo/rxbuMVyEHtkqdlYDfjGFhgvJJDQ3miX0Qsml1
+   ZlqsrXT30EtgqGx6w2mdJSVlFnxcCos2F+mN7q6S04sHXqwHt3/H8RoJ3
+   g==;
+X-CSE-ConnectionGUID: MagsAb8aRMWBCVsuvbuWWQ==
+X-CSE-MsgGUID: ckVN79JuTaCGwbaDxr8Izg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11368"; a="60105323"
+X-IronPort-AV: E=Sophos;i="6.14,235,1736780400"; 
+   d="scan'208";a="60105323"
+Received: from mail-japaneastazlp17011026.outbound.protection.outlook.com (HELO TYVP286CU001.outbound.protection.outlook.com) ([40.93.73.26])
+  by ob1.fujitsucc.c3s2.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Mar 2025 11:23:38 +0900
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=hPWbcNlO1XDgcNcTT1w5uoFiaSQoSmPqlpU3FZB+mxOPTDXByNGd80lsh7HA8jR9aD2d2SxGRyy/lFFq8qx5NwUEYEkqgNEhEfyRUGvvnBjdMG43hARuwiBUUX/92WxIvHLmY4M/j47Hd5Y1T6wldVTr3Ew+EzHMe50/9UuV+zVRqz1aK8s+w0cWEncuhqgDUf7OoljI9EfJn04i40Iw/jRrj39ULtzRM+0+P9nyiqw17JDa0iORy3t4FQMIg9qJj/o/kZ1s3OSZYUiCj+jkSVWq7us3X9h4tpQ9z802e2pFJsnZGoVOojGcGX6e2hEOt1MqMbDBPtGq3aI73Joi3A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=r85RpC16ME+O4A8wcEdwzdFUzVEFKSA7bqTW9EpE/lw=;
+ b=nREWLgRGIGFsP2xHIdhHEE/HgTG4Vw3n2PDZ6vGZlWyPRuqmcEE+Tllpor/43VrbmM84pQEWpnQs51PiKZ4kc6USw1TPpA3eu98+T1/7Zm/pwDK8l2MpTlXYg2bqgDITpy5GmbKzujgeo/vryuK8XC4VlkSF6liOkUwB6Jq3bYmMrHMkaKBiOYhzrJ4XZddxX2eFoiObDFqZqEpSlvvHt5cH3AxS32mj+Ki5ca44b7YvjFVF1F2qDa99Hc1j+Uq8xqR/2br2g6MWDSjBZMLf+4L0V/i/PVV6EhVZiRpiOW05uuP1HRzbn9IRUy7JvBlvaNp6nRwBqhwX6HM9h/PpHw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=fujitsu.com; dmarc=pass action=none header.from=fujitsu.com;
+ dkim=pass header.d=fujitsu.com; arc=none
+Received: from TY4PR01MB13777.jpnprd01.prod.outlook.com (2603:1096:405:1f8::9)
+ by TYCPR01MB8804.jpnprd01.prod.outlook.com (2603:1096:400:18d::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8511.26; Mon, 10 Mar
+ 2025 02:23:36 +0000
+Received: from TY4PR01MB13777.jpnprd01.prod.outlook.com
+ ([fe80::60b7:270b:27c7:4fcc]) by TY4PR01MB13777.jpnprd01.prod.outlook.com
+ ([fe80::60b7:270b:27c7:4fcc%4]) with mapi id 15.20.8511.025; Mon, 10 Mar 2025
+ 02:23:35 +0000
+From: "Toshiyuki Sato (Fujitsu)" <fj6611ie@fujitsu.com>
+To: Russell King <linux@armlinux.org.uk>, Greg Kroah-Hartman
+	<gregkh@linuxfoundation.org>, Jiri Slaby <jirislaby@kernel.org>
+CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, "Toshiyuki Sato (Fujitsu)"
+	<fj6611ie@fujitsu.com>
+Subject: RE: [PATCH v3] serial: amba-pl011: Implement nbcon console
+Thread-Topic: [PATCH v3] serial: amba-pl011: Implement nbcon console
+Thread-Index: AQHbdr+P/ilVjo1KfU2BeYco8MFTb7Nr171Q
+Date: Mon, 10 Mar 2025 02:23:35 +0000
+Message-ID:
+ <TY4PR01MB13777DB55F2231F7399E42609D7D62@TY4PR01MB13777.jpnprd01.prod.outlook.com>
+References: <20250204044428.2191983-1-fj6611ie@aa.jp.fujitsu.com>
+In-Reply-To: <20250204044428.2191983-1-fj6611ie@aa.jp.fujitsu.com>
+Accept-Language: ja-JP, en-US
+Content-Language: ja-JP
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+msip_labels:
+ MSIP_Label_1e92ef73-0ad1-40c5-ad55-46de3396802f_ActionId=c97c3413-873c-413f-8be4-6cd03599a34f;MSIP_Label_1e92ef73-0ad1-40c5-ad55-46de3396802f_ContentBits=0;MSIP_Label_1e92ef73-0ad1-40c5-ad55-46de3396802f_Enabled=true;MSIP_Label_1e92ef73-0ad1-40c5-ad55-46de3396802f_Method=Privileged;MSIP_Label_1e92ef73-0ad1-40c5-ad55-46de3396802f_Name=FUJITSU-PUBLIC?;MSIP_Label_1e92ef73-0ad1-40c5-ad55-46de3396802f_SetDate=2025-03-10T02:20:12Z;MSIP_Label_1e92ef73-0ad1-40c5-ad55-46de3396802f_SiteId=a19f121d-81e1-4858-a9d8-736e267fd4c7;
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=fujitsu.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: TY4PR01MB13777:EE_|TYCPR01MB8804:EE_
+x-ms-office365-filtering-correlation-id: b77505a3-c053-494b-1fd1-08dd5f7a8f80
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|376014|366016|1800799024|1580799027|38070700018;
+x-microsoft-antispam-message-info:
+ =?iso-2022-jp?B?VVVwU0VqMUNCYU5FOGxpclNjT0pvZVYwUFJsbENOa1piaFZ3TUFYeUQ5?=
+ =?iso-2022-jp?B?MTZjemt2RFRtSFRrMngvek4rSVJ1MFhBcEkrL2QzU0R4ZXdNalIvTmxB?=
+ =?iso-2022-jp?B?Lzc2dHdRQ3ZqalFQTWh3RGZoYkNSMy9HYzFIOTRnMHdxcHkvZHBZbkx4?=
+ =?iso-2022-jp?B?TmVSWUljcWJON01MSXBKbG95eUd0WUk4S2REc3g0dGgzNFAzbHBTS0R1?=
+ =?iso-2022-jp?B?d0V1Wk53T1NhTUE2bGZ6czBMd2lLREtuQ010M3pXejdhOWlOQjdVT0hp?=
+ =?iso-2022-jp?B?YkREMERZcXlER2tSOE1ubVgvY2xYZHhRdkRmYnJpZURDK055MmpzZEta?=
+ =?iso-2022-jp?B?K1BPNmN1eUJEbVZIeHFnSm1Tbjc0cFg3M2w3T2lzQkpGNlhNOExoNVBG?=
+ =?iso-2022-jp?B?cGZqVUMwQVY2ZURzU1RPSFg0OXovZ2p5QmR4VWJUVXlnWlNWMVVEMUNL?=
+ =?iso-2022-jp?B?UUFOSzNTR2VCNjA2dDA5anozQlpHZzArVVpjRG9aU3p2VVFCektNN0Ny?=
+ =?iso-2022-jp?B?dnNUa243NXlxVDJHbmlibUxTV3BqbGVyWjRUUit0cjdxV1RnRmJCNHR4?=
+ =?iso-2022-jp?B?QlFjWHVYVmVJTEdDb3JRckdXdjZCU29qWjMvQzlWTU9oclpUSjlvOXo3?=
+ =?iso-2022-jp?B?akdtaVhEZE1kNXlRSGZmcjIvUFpyalk2ZE5IcUVNL1d2VHc4WVpaMFly?=
+ =?iso-2022-jp?B?WGcxMnZoaWtqSGxZTnAvVXVFNDV1U1hLU21aQ2RTR3ZmSCs3UTB2cWRU?=
+ =?iso-2022-jp?B?YnpRb1RTMEZDaDlDVUxBYW5iRURHV2hucmlLK2hJRmNLMGlKbVRTeTdN?=
+ =?iso-2022-jp?B?WGhLM2NDYlY1RWFlTERWdkdzN0VYWEllK0E1ZkZ0Yk5sOGxFVnNMam9u?=
+ =?iso-2022-jp?B?WmFteklrRGNOcENvT1h0VWFwVmsrQ2k5UE45Q01XeDhJYXJoQTBiYzdN?=
+ =?iso-2022-jp?B?YVJJU3FmVENPWlFJMmZLR01GczVKUXNRZ2VuQWJEc295SjIzaVgwRy8w?=
+ =?iso-2022-jp?B?NEVaUHEwTU9Gd3FXODJuKzdmTldGMHp6RVdoZGFpY2FLNWJ2Vmw3QmZS?=
+ =?iso-2022-jp?B?UVFvZUt4akIzcVVna3FJWElvYkZPTkEwM2Zua3VtZjZwL0xsS1FyWGMy?=
+ =?iso-2022-jp?B?QTE5SEZHUklaWG5ZMUc1cWtLUm13Q1BlR3JqV3RoR3VvOFdZRkpOOTl4?=
+ =?iso-2022-jp?B?SHlVQVlybjdPR3RoVHF6Mmgvc0dGOWJ4TjlCYjNoMVRCNFpmOFA4SStF?=
+ =?iso-2022-jp?B?T2kxQWppczFMVGh1VGpDMWVCejFSK2xlRU1rdGw0ZWtBRytyM3E0WThk?=
+ =?iso-2022-jp?B?Yi9rbGxES3Fma3BMMi83OFNwSVpldENUV1pYN1cvdEdDNlJJbEl6Ukx6?=
+ =?iso-2022-jp?B?QjhXcWtxLzBXRnAxckh1NVpFWXNYc2gwMjJQZy9RT2l2Q2Rndlk0WVN6?=
+ =?iso-2022-jp?B?bExSaXBFRnUraWFpRUp0YlRxY2Z5UnRjb281N2FvNitBWHVmTUYxLy9y?=
+ =?iso-2022-jp?B?clg4amk4RlpnNUg2cld1ZXBTRjROY1JKbkVlUFNlY2pOTUZYZzhXZlJ6?=
+ =?iso-2022-jp?B?d1NiQUNCYlFDbUpTU0RteHpoSlFjSG5kME1XTUwvZzBvNXNoRERPemZW?=
+ =?iso-2022-jp?B?b3Vpb3hhVm01MVBoMjJnejF3bHBQaCs3NHh5b3h2WTA3Mm4wQ0hSVlJ5?=
+ =?iso-2022-jp?B?UzVHODFUK2crdDZGQkM4S2YzODJEZ1ZKdlpUTHJtUXpVZjRlNStMREhF?=
+ =?iso-2022-jp?B?NGVsVWt6dXdzL2kwanozUkFYNGJRKzRtbG1ldEp5Slc4NFZuZWc3Q0hr?=
+ =?iso-2022-jp?B?SnJFdVZCaVRUSUV3TEVsTm8xZ0N3MEM1Y1Nyd29TOVM3bXpKWlh6Z2FN?=
+ =?iso-2022-jp?B?eEtSU3pycVFVYXkzaytudW9OWkJ4N0hQdWFNMUFjWHYwazNnYlBOOHl3?=
+ =?iso-2022-jp?B?YVFiblh6SVhGWXhDYmdlZXNENVY1RDJUSnBxZ1Zjbk0yOHlhUjBwdnJL?=
+ =?iso-2022-jp?B?UWhHeGpkQnhkNmZLNmpCSzA1NnJrZVZxNmVHWlN0dW1HeHdWV3lPNThE?=
+ =?iso-2022-jp?B?VEVadUhJV2xKTmV3VTRtVkF1OHdOSXM9?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:ja;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TY4PR01MB13777.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024)(1580799027)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?iso-2022-jp?B?YWJrM2ROYmQ2aE5WMTNoN2xXMXFRN0d4RVFVWnZFSFczOEF4c01zWWNI?=
+ =?iso-2022-jp?B?YVlVLzRON2EvWkZmbGlMVno4YUZBYzhXcVpWUmU5RUpKQnhtZlVFT1Aw?=
+ =?iso-2022-jp?B?SzU1cjQ0NmpKNUxnSEdIRTZtMFo3UDU1Wk5OVC9iV3p6bHRSRGJhbVRu?=
+ =?iso-2022-jp?B?TWd3SVVFWmdTbWQvRXI0bW9KOWtlenZMVXJYSWhqRkM1QnN3dFZoT2tK?=
+ =?iso-2022-jp?B?dCszMEwvNE9QOGdRN2E3Slo0Y3hIQUZ4YWRFaVphZ2FqQ1lyTWxvOXhS?=
+ =?iso-2022-jp?B?Tnhubng5OGZrekt3WGdxTFU5OWY4SXc5c3JDa1ZPeGJWYWlBUmZ1a3lu?=
+ =?iso-2022-jp?B?K3VZVjhtdXBZWlRPUnpBdmlpbVk2WTcxMTBxNnUzc2hRSnZzaHZGaTZQ?=
+ =?iso-2022-jp?B?bHRLL2QyUmRQSkt4NTlMUENpZWgwZHNjZTN2N0p5S1Z6cmdIM3c3QzQ2?=
+ =?iso-2022-jp?B?eFZaejRsbFlhcjBjUW9pZ3JsbGdSSFc4NFhjKzlTa01uckVCSFdoYjNo?=
+ =?iso-2022-jp?B?emp4US90bHY3RmhLemhqSjUxcWJLWnlLcVpIV2NuR1pCYzUxd2NteUt5?=
+ =?iso-2022-jp?B?MTRiMUJWZW9MODM5WWoyNEg5ZENEaGFjSXJJSHh1TThuNGxLOEJ3ci82?=
+ =?iso-2022-jp?B?OXZBZU9NMmlrZlZwMGNjV1NDeDIzelc3RE9MTDErQ3ROZDdrK3Z5OFRt?=
+ =?iso-2022-jp?B?eGEvSTMxS3Y2ZGtVcHQrK0t6WDE3RWsyR3dSVUtPbTdnVFA0Zjh1dVJk?=
+ =?iso-2022-jp?B?NUk4ZSt0TmdITmNsRWVyaTlTUjJ4VVlrb1FKcXhaRHltUkRTdnFMQWY0?=
+ =?iso-2022-jp?B?R1B6Si9takE1UkJXR1o0NmpTWFduRXUzaTFxMm9nV09CcTI2Y0kwUlZo?=
+ =?iso-2022-jp?B?cTEvNjVUbjd6R3VvSlN2Q2IzWHRMRjJYazZSTFNORjJ4elMzdlhxbmV0?=
+ =?iso-2022-jp?B?a1RncGNzZCt3akhGUzg0bWhYWUd3dzEyS2dobkZlY0kvSG9ZZVhNV2pB?=
+ =?iso-2022-jp?B?ZnV5ZEQweVFxVzhjK2ZMWTdvMy9zK0VwQ3VYMWc1U0JoNlNHcllOVWVh?=
+ =?iso-2022-jp?B?VXBUb2ZsMDdNaHZyOXYzWXZndVRSS1c1S1BoK0tIOFUvTXVjYW9jTjdm?=
+ =?iso-2022-jp?B?TEVoNlpXUStkUzhQcW1tdHVxSTNJMEpBV2NLaTVNZjV5L0FLSTVjWUlx?=
+ =?iso-2022-jp?B?b2xyV01yNDM0VkdBOVhzOWR5STRzcFp0YWtwQXlQa0Y4bVFqTVFMbzNw?=
+ =?iso-2022-jp?B?c0hjWUpjcVExWS9vZUp2Y2wydFpBaFRrbXM4VTVrbXRqYXlpSnJtL1pX?=
+ =?iso-2022-jp?B?N3psVXBnZTB5WVZtUmZ1THR0RHJCZFhsbzBXQjMvR1R2SEpFc25tZkpG?=
+ =?iso-2022-jp?B?SVpleXdKK0t2TUFWOW0yQlFjdkdaaEZNdjhBbG5UOFNUdmlpOVF5OGE1?=
+ =?iso-2022-jp?B?L00xZFlST3lveVp0WHRJNjZnS0NycE1DdzlVMVpTdy9ORXJIRlg2Uk1D?=
+ =?iso-2022-jp?B?dGViNXNjenQ3SnVyL2RMdGpqU05DQnFENG5MYU1VUGt0azVIZTlDdXlW?=
+ =?iso-2022-jp?B?RlJVSlFNZ21SS3BWYkFyaTZOY1k2NlZISVpnV3pzbW1ib2UyUkNVek8r?=
+ =?iso-2022-jp?B?VmxscUtyTDBMbXJRZDFKdldESWJqTk1zWExNN1NtUUt6ejNZdWhWcGtM?=
+ =?iso-2022-jp?B?UWF0R2VMQ0NENFArZnplSEprRE5pY0RLN0YxdnJRZXJaTFZLUnYvTGNw?=
+ =?iso-2022-jp?B?WnJxbWMrcGw5eEtpYmM3aEdvQWszUXlyS0QxNUNmWmJYbTc0UnVqVmhw?=
+ =?iso-2022-jp?B?bHg1aUkrVnl0S1NzRDhsdUZsNUZKbFhxZnZ2QmZXaHVDbm5RcDJjeVRF?=
+ =?iso-2022-jp?B?NkZCTHlYM25BakNhdDBreTdkbDFCSFRBY1VUMWZwYWhlcWc5SmxmVzMv?=
+ =?iso-2022-jp?B?VkswYmdRVDBjNE5VdkNFZklGUmExMzVzdkpoT3lRSlQydkhjeE5RMGli?=
+ =?iso-2022-jp?B?TnNiaDY0MElQRTNyMVhVWTNtTFdGNHU0aVpHT1dZQmJIdVJETWczVlAv?=
+ =?iso-2022-jp?B?aENUeVZUVStzUDhlS2dEdGFYdXdaTy9GWStUeTdsbWJlVzdyM25JcUo0?=
+ =?iso-2022-jp?B?M2JmaVJQbWVyY2RYNTlKR1dUUnptdHlhQUJwTGp5blM2SVdwa3owZ1A4?=
+ =?iso-2022-jp?B?OXJJQTZNQkJSbElKR2g3NXVxVCtxS2I5bnVXbG5KWEhZdmdLNk5zMG94?=
+ =?iso-2022-jp?B?TVJjZkt3M1VPV0QrL05DUWF0bTdyWWdnOFRRWWtlN2E0a2w0cm1uQ3ZM?=
+ =?iso-2022-jp?B?YUNvLw==?=
+Content-Type: text/plain; charset="iso-2022-jp"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=ascii
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	jJ7tNxPc4OU+rJC2OXtYiaSeAdhHZOHsjOC+gLLbWmhdJC2P6rUU27bGs4znBhZUhZCIRf0yqqofMdu+qRMvifs9R2iTmpaCeiK4JjJSk7C17mcJkR77vhhxsRtnIbjjLaZns5GD8ppiP2ZaumL1nJ0RMgDI6h/VZthZU/Xr5oX+TDUR/L7MQh2FuHFhSZRceEdznAYS3JvdbVti5vYcxXckEcWkOu993urRuD9RhDH8ho4WDe7lgOk3A16cgpGi14o7n1OE9LHw2zpH9zPSn/QDpKVJRLxMhUbMt2FjePDx7Tih36Ogdxsa27JjuKd2LNGkImcXmLoGuoQkE78yX8BA1vEE7eCySAXRYK1mZMEl66034PNkWGPKyD4bE9XI7mnj/8yrJG5abqpUjIQuRC2AiuO3u2A6Ap7dm2dbgBvRSkHBYyGeXUDPmSMBvBwCtVN7SLukR7ptA2EN8DLb+Cz4DQUNkO3x0zbgkmvwmxcw/zRXyebz396bMblxxnBkzJC8nIqeGUsWH8IGbH68TtD0pZHLbcvJLs6lDf3kP8lNyOnXh+xNlRjEcP8M8pMJNigZ5ZLhKyDlDENwNOVJLGObv2loQBH3W6yHYkdLLrmjrCMdlTaJAmz8nukenogl
+X-OriginatorOrg: fujitsu.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: TY4PR01MB13777.jpnprd01.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: b77505a3-c053-494b-1fd1-08dd5f7a8f80
+X-MS-Exchange-CrossTenant-originalarrivaltime: 10 Mar 2025 02:23:35.4621
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: a19f121d-81e1-4858-a9d8-736e267fd4c7
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: IfuFjWraN9k/kaDpqLlsktJHLqCcocDomi+0YDSMRBeePBBxiXY65b9o8V2LYr/c+bwsRQrjMVU4PIpn1zUBL/gldOqWsAXdfg0z/kUclHI=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYCPR01MB8804
 
-Hi, Joshua,
+Dear Reviewers,
 
-Thanks for your new version.
+It has been about a month since this patch was merged into tty-next -> linu=
+x-next.
+I would appreciate any comments or feedback on this patch.
 
-Joshua Hahn <joshua.hahnjy@gmail.com> writes:
+Regards.
+Toshiyuki Sato
 
-> On machines with multiple memory nodes, interleaving page allocations
-> across nodes allows for better utilization of each node's bandwidth.
-> Previous work by Gregory Price [1] introduced weighted interleave, which
-> allowed for pages to be allocated across nodes according to user-set ratios.
->
-> Ideally, these weights should be proportional to their bandwidth, so
-> that under bandwidth pressure, each node uses its maximal efficient
-> bandwidth and prevents latency from increasing exponentially.
->
-> Previously, weighted interleave's default weights were just 1s -- which
-> would be equivalent to the (unweighted) interleave mempolicy, which goes
-> through the nodes in a round-robin fashion, ignoring bandwidth information.
->
-> This patch has two main goals:
-> First, it makes weighted interleave easier to use for users who wish to
-> relieve bandwidth pressure when using nodes with varying bandwidth (CXL).
-> By providing a set of "real" default weights that just work out of the
-> box, users who might not have the capability (or wish to) perform
-> experimentation to find the most optimal weights for their system can
-> still take advantage of bandwidth-informed weighted interleave.
->
-> Second, it allows for weighted interleave to dynamically adjust to
-> hotplugged memory with new bandwidth information. Instead of manually
-> updating node weights every time new bandwidth information is reported
-> or taken off, weighted interleave adjusts and provides a new set of
-> default weights for weighted interleave to use when there is a change
-> in bandwidth information.
->
-> To meet these goals, this patch introduces an auto-configuration mode
-> for the interleave weights that provides a reasonable set of default
-> weights, calculated using bandwidth data reported by the system. In auto
-> mode, weights are dynamically adjusted based on whatever the current
-> bandwidth information reports (and responds to hotplug events).
->
-> This patch still supports users manually writing weights into the nodeN
-> sysfs interface by entering into manual mode. When a user enters manual
-> mode, the system stops dynamically updating any of the node weights,
-> even during hotplug events that shift the optimal weight distribution.
->
-> A new sysfs interface "auto" is introduced, which allows users to switch
-> between the auto (writing 1 or Y) and manual (writing 0 or N) modes. The
-> system also automatically enters manual mode when a nodeN interface is
-> manually written to.
->
-> There is one functional change that this patch makes to the existing
-> weighted_interleave ABI: previously, writing 0 directly to a nodeN
-> interface was said to reset the weight to the system default. Before
-> this patch, the default for all weights were 1, which meant that writing
-> 0 and 1 were functionally equivalent.
 
-Forget to describe the new functionality?
-
-> [1] https://lore.kernel.org/linux-mm/20240202170238.90004-1-gregory.price@memverge.com/
->
-> Suggested-by: Yunjeong Mun <yunjeong.mun@sk.com>
-> Suggested-by: Oscar Salvador <osalvador@suse.de>
-> Suggested-by: Ying Huang <ying.huang@linux.alibaba.com>
-> Suggested-by: Harry Yoo <harry.yoo@oracle.com> 
-> Reviewed-by: Harry Yoo <harry.yoo@oracle.com>
-> Co-developed-by: Gregory Price <gourry@gourry.net>
-> Signed-off-by: Gregory Price <gourry@gourry.net>
-> Signed-off-by: Joshua Hahn <joshua.hahnjy@gmail.com>
+> Implement the callbacks required for an NBCON console [0] on the
+> amba-pl011 console driver.
+>=20
+> Referred to the NBCON implementation work for 8250 [1] and imx [2].
+>=20
+> The normal-priority write_thread checks for console ownership each time a
+> character is printed.
+> write_atomic holds the console ownership until the entire string is print=
+ed.
+>=20
+> UART register operations are protected from other contexts by uart_port_l=
+ock,
+> except for a final flush(nbcon_atomic_flush_unsafe) on panic.
+>=20
+> The patch has been verified to correctly handle the output and competitio=
+n of
+> messages with different priorities and flushing panic message to console =
+after
+> nmi panic using ARM64 QEMU and a physical machine(A64FX).
+>=20
+> Stress testing was conducted on a physical machine(A64FX).
+> The results are as follows:
+>=20
+> - The output speed and volume of messages using the NBCON console were
+>   comparable to the legacy console (data suggests a slight improvement).
+>=20
+> - When inducing a panic (sysrq-triggered or NMI) under heavy contention
+>   on the serial console output,
+>   the legacy console resulted in the loss of some or all crash messages.
+>   However, using the NBCON console, no message loss occurred.
+>=20
+> This testing referenced the NBCON console work for 8250 [3].
+>=20
+> [0] https://lore.kernel.org/all/ZuRRTbapH0DCj334@pathway.suse.cz/
+> [1]
+> https://lore.kernel.org/all/20240913140538.221708-1-john.ogness@linutroni=
+x.d
+> e/T/
+> [2]
+> https://lore.kernel.org/linux-arm-kernel/20240913-serial-imx-nbcon-v3-1-4=
+c62
+> 7302335b@geanix.com/T/
+> [3]
+> https://lore.kernel.org/lkml/ZsdoD6PomBRsB-ow@debarbos-thinkpadt14sgen2
+> i.remote.csb/#t
+>=20
+> Signed-off-by: Toshiyuki Sato <fj6611ie@aa.jp.fujitsu.com>
 > ---
-> Changelog
-> v7:
-> - Wordsmithing
-> - Rename iw_table_lock to wi_state_lock
-> - Clean up reduce_interleave_weights, as suggested by Yunjeong Mun.
->   - Combine iw_table allocation & initialization to be outside the function.
->   - Skip scaling to [1,100] before scaling to [1,weightiness].
-> - Removed the second part of this patch, which prevented creating weight
->   sysfs interfaces for memoryless nodes.
-> - Added Suggested-by tags; I should have done this much, much earlier.
->
-> v6:
-> - iw_weights and mode_auto are combined into one rcu-protected struct.
-> - Protection against memoryless nodes, as suggested by Oscar Salvador
-> - Wordsmithing (documentation, commit message and comments), as suggested
->   by Andrew Morton.
-> - Removed unnecessary #include statement in hmat.c, as pointed out by
->   Harry (Hyeonggon) Yoo and Ying Huang.
-> - Bandwidth values changed from u64_t to unsigned int, as pointed out by
->   Ying Huang and Dan Carpenter.
-> - RCU optimizations, as suggested by Ying Huang.
-> - A second patch is included to fix unintended behavior that creates a
->   weight knob for memoryless nodes as well.
-> - Sysfs show/store functions use str_true_false & kstrtobool.
-> - Fix a build error in 32-bit systems, which are unable to perform
->   64-bit division by casting 64-bit values to 32-bit, if under the range.
->
-> v5:
-> - I accidentally forgot to add the mm/mempolicy: subject tag since v1 of
->   this patch. Added to the subject now!
-> - Wordsmithing, correcting typos, and re-naming variables for clarity.
-> - No functional changes.
->
-> v4:
-> - Renamed the mode interface to the "auto" interface, which now only
->   emits either 'Y' or 'N'. Users can now interact with it by
->   writing 'Y', '1', 'N', or '0' to it.
-> - Added additional documentation to the nodeN sysfs interface.
-> - Makes sure iw_table locks are properly held.
-> - Removed unlikely() call in reduce_interleave_weights.
-> - Wordsmithing
->
-> v3:
-> - Weightiness (max_node_weight) is now fixed to 32.
-> - Instead, the sysfs interface now exposes a "mode" parameter, which
->   can either be "auto" or "manual".
->   - Thank you Hyeonggon and Honggyu for the feedback.
-> - Documentation updated to reflect new sysfs interface, explicitly
->   specifies that 0 is invalid.
->   - Thank you Gregory and Ying for the discussion on how best to
->     handle the 0 case.
-> - Re-worked nodeN sysfs store to handle auto --> manual shifts
-> - mempolicy_set_node_perf internally handles the auto / manual
->   case differently now. bw is always updated, iw updates depend on
->   what mode the user is in.
-> - Wordsmithing comments for clarity.
-> - Removed RFC tag.
->
+> This patch removes the legacy console code.
+> Please comment if you have any concerns.
+>=20
+> Changes in v3:
+> - Add stress test results to patch comments.
+> - based on tty-next branch
+>   https://git.kernel.org/pub/scm/linux/kernel/git/gregkh/tty.git
 > v2:
-> - Name of the interface is changed: "max_node_weight" --> "weightiness"
-> - Default interleave weight table no longer exists. Rather, the
->   interleave weight table is initialized with the defaults, if bandwidth
->   information is available.
->   - In addition, all sections that handle iw_table have been changed
->     to reference iw_table if it exists, otherwise defaulting to 1.
-> - All instances of unsigned long are converted to uint64_t to guarantee
->   support for both 32-bit and 64-bit machines
-> - sysfs initialization cleanup
-> - Documentation has been rewritten to explicitly outline expected
->   behavior and expand on the interpretation of "weightiness".
-> - kzalloc replaced with kcalloc for readability
-> - Thank you Gregory and Hyeonggon for your review & feedback!
->
->  ...fs-kernel-mm-mempolicy-weighted-interleave |  34 +-
->  drivers/base/node.c                           |   9 +
->  include/linux/mempolicy.h                     |   9 +
->  mm/mempolicy.c                                | 318 +++++++++++++++---
->  4 files changed, 311 insertions(+), 59 deletions(-)
->
-> diff --git a/Documentation/ABI/testing/sysfs-kernel-mm-mempolicy-weighted-interleave b/Documentation/ABI/testing/sysfs-kernel-mm-mempolicy-weighted-interleave
-> index 0b7972de04e9..862b19943a85 100644
-> --- a/Documentation/ABI/testing/sysfs-kernel-mm-mempolicy-weighted-interleave
-> +++ b/Documentation/ABI/testing/sysfs-kernel-mm-mempolicy-weighted-interleave
-> @@ -20,6 +20,34 @@ Description:	Weight configuration interface for nodeN
->  		Minimum weight: 1
->  		Maximum weight: 255
->  
-> -		Writing an empty string or `0` will reset the weight to the
-> -		system default. The system default may be set by the kernel
-> -		or drivers at boot or during hotplug events.
-> +		Writing invalid values (i.e. any values not in [1,255],
-> +		empty string, ...) will return -EINVAL.
+> https://lore.kernel.org/all/20250115052749.3205675-1-fj6611ie@aa.jp.fujit=
+su.c
+> om/
+>=20
+> Changes in v2:
+> - Remove the module parameter used to switch between legacy and NBCON.
+> - Remove codes for legacy console.
+> - Fix build errors detected by the test robot.
+> - based on 6.13-rc7
+> v1:
+> https://lore.kernel.org/all/20250108004730.2302996-1-fj6611ie@aa.jp.fujit=
+su.c
+> om/
+>=20
+> Thanks Greg for the comment.
+> ---
+>  drivers/tty/serial/amba-pl011.c | 143
+> ++++++++++++++++++++++----------
+>  1 file changed, 97 insertions(+), 46 deletions(-)
+>=20
+> diff --git a/drivers/tty/serial/amba-pl011.c b/drivers/tty/serial/amba-pl=
+011.c
+> index 04212c823..9a9a1d630 100644
+> --- a/drivers/tty/serial/amba-pl011.c
+> +++ b/drivers/tty/serial/amba-pl011.c
+> @@ -272,6 +272,7 @@ struct uart_amba_port {
+>  	enum pl011_rs485_tx_state	rs485_tx_state;
+>  	struct hrtimer		trigger_start_tx;
+>  	struct hrtimer		trigger_stop_tx;
+> +	bool			console_line_ended;
+>  #ifdef CONFIG_DMA_ENGINE
+>  	/* DMA stuff */
+>  	unsigned int		dmacr;		/* dma control reg */
+> @@ -2366,50 +2367,7 @@ static void pl011_console_putchar(struct uart_port
+> *port, unsigned char ch)
+>  	while (pl011_read(uap, REG_FR) & UART01x_FR_TXFF)
+>  		cpu_relax();
+>  	pl011_write(ch, uap, REG_DR);
+> -}
+> -
+> -static void
+> -pl011_console_write(struct console *co, const char *s, unsigned int coun=
+t) -{
+> -	struct uart_amba_port *uap =3D amba_ports[co->index];
+> -	unsigned int old_cr =3D 0, new_cr;
+> -	unsigned long flags;
+> -	int locked =3D 1;
+> -
+> -	clk_enable(uap->clk);
+> -
+> -	if (oops_in_progress)
+> -		locked =3D uart_port_trylock_irqsave(&uap->port, &flags);
+> -	else
+> -		uart_port_lock_irqsave(&uap->port, &flags);
+> -
+> -	/*
+> -	 *	First save the CR then disable the interrupts
+> -	 */
+> -	if (!uap->vendor->always_enabled) {
+> -		old_cr =3D pl011_read(uap, REG_CR);
+> -		new_cr =3D old_cr & ~UART011_CR_CTSEN;
+> -		new_cr |=3D UART01x_CR_UARTEN | UART011_CR_TXE;
+> -		pl011_write(new_cr, uap, REG_CR);
+> -	}
+> -
+> -	uart_console_write(&uap->port, s, count, pl011_console_putchar);
+> -
+> -	/*
+> -	 *	Finally, wait for transmitter to become empty and restore the
+> -	 *	TCR. Allow feature register bits to be inverted to work around
+> -	 *	errata.
+> -	 */
+> -	while ((pl011_read(uap, REG_FR) ^ uap->vendor->inv_fr)
+> -						& uap->vendor->fr_busy)
+> -		cpu_relax();
+> -	if (!uap->vendor->always_enabled)
+> -		pl011_write(old_cr, uap, REG_CR);
+> -
+> -	if (locked)
+> -		uart_port_unlock_irqrestore(&uap->port, flags);
+> -
+> -	clk_disable(uap->clk);
+> +	uap->console_line_ended =3D (ch =3D=3D '\n');
+>  }
+>=20
+>  static void pl011_console_get_options(struct uart_amba_port *uap, int *b=
+aud,
+> @@ -2472,6 +2430,8 @@ static int pl011_console_setup(struct console *co, =
+char
+> *options)
+>  	if (ret)
+>  		return ret;
+>=20
+> +	uap->console_line_ended =3D true;
 > +
-> +		Changing the weight to a valid value will automatically
-> +		update the system to manual mode as well.
+>  	if (dev_get_platdata(uap->port.dev)) {
+>  		struct amba_pl011_data *plat;
+>=20
+> @@ -2555,14 +2515,105 @@ static int pl011_console_match(struct console *c=
+o,
+> char *name, int idx,
+>  	return -ENODEV;
+>  }
+>=20
+> +static void
+> +pl011_console_write_atomic(struct console *co, struct
+> +nbcon_write_context *wctxt) {
+> +	struct uart_amba_port *uap =3D amba_ports[co->index];
+> +	unsigned int old_cr =3D 0;
 > +
-> +What:		/sys/kernel/mm/mempolicy/weighted_interleave/auto
-> +Date:		February 2025
-> +Contact:	Linux memory management mailing list <linux-mm@kvack.org>
-> +Description:	Auto-weighting configuration interface
+> +	if (!nbcon_enter_unsafe(wctxt))
+> +		return;
 > +
-> +		Configuration mode for weighted interleave. A 'Y' indicates
-> +		that the system is in auto mode, and a 'N' indicates that
-> +		the system is in manual mode.
-
-str_true_false() is used to show the attribute, so the "true/false" will
-be displayed?
-
+> +	clk_enable(uap->clk);
 > +
-> +		In auto mode, all node weights are re-calculated and overwritten
-> +		(visible via the nodeN interfaces) whenever new bandwidth data
-> +		is made available during either boot or hotplug events.
+> +	if (!uap->vendor->always_enabled) {
+> +		old_cr =3D pl011_read(uap, REG_CR);
+> +		pl011_write((old_cr & ~UART011_CR_CTSEN) |
+> (UART01x_CR_UARTEN | UART011_CR_TXE),
+> +				uap, REG_CR);
+> +	}
 > +
-> +		In manual mode, node weights can only be updated by the user.
-> +		Note that nodes that are onlined with previously set weights
-> +		will inherit those weights. If they were not previously set or
-
-s/inherit/reuse/?
-
-However my English is poor, so keep it if you think that is better.
-
-> +		are onlined with missing bandwidth data, the weights will use
-> +		a default weight of 1.
+> +	if (!uap->console_line_ended)
+> +		uart_console_write(&uap->port, "\n", 1,
+> pl011_console_putchar);
+> +	uart_console_write(&uap->port, wctxt->outbuf, wctxt->len,
+> +pl011_console_putchar);
 > +
-> +		Writing Y or 1 to the interface will enable auto mode, while
-
-kstrtobool() is used to parser user input, so maybe something like
-below?
-
-Writing any true value string (e.g., Y or 1) will enable auto mode.
-
-> +		writing N or 0 will enable manual mode. All other strings will
-> +		be ignored, and -EINVAL will be returned.
+> +	while ((pl011_read(uap, REG_FR) ^ uap->vendor->inv_fr) &
+> uap->vendor->fr_busy)
+> +		cpu_relax();
 > +
-> +		Writing a new weight to a node directly via the nodeN interface
-> +		will also automatically update the system to manual mode.
-
-s/update/switch/?
-
-Again, keep your words if think that it's better.
-
-> diff --git a/drivers/base/node.c b/drivers/base/node.c
-> index 0ea653fa3433..f3c01fb90db1 100644
-> --- a/drivers/base/node.c
-> +++ b/drivers/base/node.c
-> @@ -7,6 +7,7 @@
->  #include <linux/init.h>
->  #include <linux/mm.h>
->  #include <linux/memory.h>
-> +#include <linux/mempolicy.h>
->  #include <linux/vmstat.h>
->  #include <linux/notifier.h>
->  #include <linux/node.h>
-> @@ -214,6 +215,14 @@ void node_set_perf_attrs(unsigned int nid, struct access_coordinate *coord,
->  			break;
->  		}
->  	}
+> +	if (!uap->vendor->always_enabled)
+> +		pl011_write(old_cr, uap, REG_CR);
 > +
-> +	/* When setting CPU access coordinates, update mempolicy */
-> +	if (access == ACCESS_COORDINATE_CPU) {
-> +		if (mempolicy_set_node_perf(nid, coord)) {
-> +			pr_info("failed to set mempolicy attrs for node %d\n",
-> +				nid);
+> +	clk_disable(uap->clk);
+> +
+> +	nbcon_exit_unsafe(wctxt);
+> +}
+> +
+> +static void
+> +pl011_console_write_thread(struct console *co, struct
+> +nbcon_write_context *wctxt) {
+> +	struct uart_amba_port *uap =3D amba_ports[co->index];
+> +	unsigned int old_cr =3D 0;
+> +
+> +	if (!nbcon_enter_unsafe(wctxt))
+> +		return;
+> +
+> +	clk_enable(uap->clk);
+> +
+> +	if (!uap->vendor->always_enabled) {
+> +		old_cr =3D pl011_read(uap, REG_CR);
+> +		pl011_write((old_cr & ~UART011_CR_CTSEN) |
+> (UART01x_CR_UARTEN | UART011_CR_TXE),
+> +				uap, REG_CR);
+> +	}
+> +
+> +	if (nbcon_exit_unsafe(wctxt)) {
+> +		int i;
+> +		unsigned int len =3D READ_ONCE(wctxt->len);
+> +
+> +		for (i =3D 0; i < len; i++) {
+> +			if (!nbcon_enter_unsafe(wctxt))
+> +				break;
+> +			uart_console_write(&uap->port, wctxt->outbuf + i, 1,
+> pl011_console_putchar);
+> +			if (!nbcon_exit_unsafe(wctxt))
+> +				break;
 > +		}
 > +	}
->  }
->  EXPORT_SYMBOL_GPL(node_set_perf_attrs);
->  
-> diff --git a/include/linux/mempolicy.h b/include/linux/mempolicy.h
-> index ce9885e0178a..78f1299bdd42 100644
-> --- a/include/linux/mempolicy.h
-> +++ b/include/linux/mempolicy.h
-> @@ -11,6 +11,7 @@
->  #include <linux/slab.h>
->  #include <linux/rbtree.h>
->  #include <linux/spinlock.h>
-> +#include <linux/node.h>
->  #include <linux/nodemask.h>
->  #include <linux/pagemap.h>
->  #include <uapi/linux/mempolicy.h>
-> @@ -56,6 +57,11 @@ struct mempolicy {
->  	} w;
+> +
+> +	while (!nbcon_enter_unsafe(wctxt))
+> +		nbcon_reacquire_nobuf(wctxt);
+> +
+> +	while ((pl011_read(uap, REG_FR) ^ uap->vendor->inv_fr) &
+> uap->vendor->fr_busy)
+> +		cpu_relax();
+> +
+> +	if (!uap->vendor->always_enabled)
+> +		pl011_write(old_cr, uap, REG_CR);
+> +
+> +	clk_disable(uap->clk);
+> +
+> +	nbcon_exit_unsafe(wctxt);
+> +}
+> +
+> +static void
+> +pl011_console_device_lock(struct console *co, unsigned long *flags) {
+> +	__uart_port_lock_irqsave(&amba_ports[co->index]->port, flags); }
+> +
+> +static void
+> +pl011_console_device_unlock(struct console *co, unsigned long flags) {
+> +	__uart_port_unlock_irqrestore(&amba_ports[co->index]->port, flags); }
+> +
+>  static struct uart_driver amba_reg;
+>  static struct console amba_console =3D {
+>  	.name		=3D "ttyAMA",
+> -	.write		=3D pl011_console_write,
+>  	.device		=3D uart_console_device,
+>  	.setup		=3D pl011_console_setup,
+>  	.match		=3D pl011_console_match,
+> -	.flags		=3D CON_PRINTBUFFER | CON_ANYTIME,
+> +	.write_atomic	=3D pl011_console_write_atomic,
+> +	.write_thread	=3D pl011_console_write_thread,
+> +	.device_lock	=3D pl011_console_device_lock,
+> +	.device_unlock	=3D pl011_console_device_unlock,
+> +	.flags		=3D CON_PRINTBUFFER | CON_ANYTIME |
+> CON_NBCON,
+>  	.index		=3D -1,
+>  	.data		=3D &amba_reg,
 >  };
->  
-> +struct weighted_interleave_state {
-> +	bool mode_auto;
+>=20
+> base-commit: 2014c95afecee3e76ca4a56956a936e23283f05b
+> --
+> 2.34.1
 
-Just "auto" looks more natural for me.  However, I have no strong
-opinion on thist.
-
-> +	u8 iw_table[]; /* A null iw_table is interpreted as an array of 1s. */
-
-What is "null" array?
-
-IIUC, iw_state is prevous iw_table now, so we may replace this with,
-
-A null wi_state is interpreted as mode is "auto" and the weight of any
-node is "1".
-
-?
-
-> +};
-> +
->  /*
->   * Support for managing mempolicy data objects (clone, copy, destroy)
->   * The default fast path of a NULL MPOL_DEFAULT policy is always inlined.
-> @@ -178,6 +184,9 @@ static inline bool mpol_is_preferred_many(struct mempolicy *pol)
->  
->  extern bool apply_policy_zone(struct mempolicy *policy, enum zone_type zone);
->  
-> +extern int mempolicy_set_node_perf(unsigned int node,
-> +				   struct access_coordinate *coords);
-> +
->  #else
->  
->  struct mempolicy {};
-> diff --git a/mm/mempolicy.c b/mm/mempolicy.c
-> index bbaadbeeb291..857ea3faa5cb 100644
-> --- a/mm/mempolicy.c
-> +++ b/mm/mempolicy.c
-> @@ -109,6 +109,7 @@
->  #include <linux/mmu_notifier.h>
->  #include <linux/printk.h>
->  #include <linux/swapops.h>
-> +#include <linux/gcd.h>
->  
->  #include <asm/tlbflush.h>
->  #include <asm/tlb.h>
-> @@ -139,31 +140,135 @@ static struct mempolicy default_policy = {
->  static struct mempolicy preferred_node_policy[MAX_NUMNODES];
->  
->  /*
-> - * iw_table is the sysfs-set interleave weight table, a value of 0 denotes
-> - * system-default value should be used. A NULL iw_table also denotes that
-> - * system-default values should be used. Until the system-default table
-> - * is implemented, the system-default is always 1.
-> - *
-> - * iw_table is RCU protected
-> + * weightiness balances the tradeoff between small weights (cycles through nodes
-> + * faster, more fair/even distribution) and large weights (smaller errors
-> + * between actual bandwidth ratios and weight ratios). 32 is a number that has
-> + * been found to perform at a reasonable compromise between the two goals.
->   */
-> -static u8 __rcu *iw_table;
-> -static DEFINE_MUTEX(iw_table_lock);
-> +static const int weightiness = 32;
-> +
-> +/* wi_state is RCU protected */
-
-"__rcu" below can replace the above comments?
-
-> +static struct weighted_interleave_state __rcu *wi_state;
-> +static unsigned int *node_bw_table;
-> +
-> +/*
-> + * wi_state_lock protects both wi_state and node_bw_table.
-> + * node_bw_table is only used by writers to update wi_state.
-> + */
-> +static DEFINE_MUTEX(wi_state_lock);
->  
->  static u8 get_il_weight(int node)
->  {
-> -	u8 *table;
-> -	u8 weight;
-> +	u8 weight = 1;
->  
->  	rcu_read_lock();
-> -	table = rcu_dereference(iw_table);
-> -	/* if no iw_table, use system default */
-> -	weight = table ? table[node] : 1;
-> -	/* if value in iw_table is 0, use system default */
-> -	weight = weight ? weight : 1;
-> +	if (rcu_access_pointer(wi_state))
-> +		weight = rcu_dereference(wi_state)->iw_table[node];
-
-IIUC, wi_state may be changed between rcu_access_pointer() and
-rcu_dereference().  If so, it's better to use rcu_dereference()
-directly.
-
->  	rcu_read_unlock();
-> +
->  	return weight;
->  }
->  
-> +/*
-> + * Convert bandwidth values into weighted interleave weights.
-> + * Call with wi_state_lock.
-> + */
-> +static void reduce_interleave_weights(unsigned int *bw, u8 *new_iw)
-> +{
-> +	u64 sum_bw = 0;
-> +	unsigned int cast_sum_bw, scaling_factor = 1, iw_gcd = 0;
-> +	int nid;
-> +
-> +	for_each_node_state(nid, N_MEMORY)
-> +		sum_bw += bw[nid];
-> +
-> +	/* Scale bandwidths to whole numbers in the range [1, weightiness] */
-> +	for_each_node_state(nid, N_MEMORY) {
-> +		/*
-> +		 * Try not to perform 64-bit division.
-> +		 * If sum_bw < scaling_factor, then sum_bw < U32_MAX.
-> +		 * If sum_bw > scaling_factor, then round the weight up to 1.
-> +		 */
-> +		scaling_factor = weightiness * bw[nid];
-> +		if (bw[nid] && sum_bw < scaling_factor) {
-> +			cast_sum_bw = (unsigned int)sum_bw;
-> +			new_iw[nid] = scaling_factor / cast_sum_bw;
-> +		} else {
-> +			new_iw[nid] = 1;
-> +		}
-> +		if (!iw_gcd)
-> +			iw_gcd = new_iw[nid];
-> +		iw_gcd = gcd(iw_gcd, new_iw[nid]);
-> +	}
-> +
-> +	/* 1:2 is strictly better than 16:32. Reduce by the weights' GCD. */
-> +	for_each_node_state(nid, N_MEMORY)
-> +		new_iw[nid] /= iw_gcd;
-> +}
-> +
-> +int mempolicy_set_node_perf(unsigned int node, struct access_coordinate *coords)
-> +{
-> +	struct weighted_interleave_state *new_wi_state, *old_wi_state = NULL;
-> +	unsigned int *old_bw, *new_bw;
-> +	unsigned int bw_val;
-> +	int i;
-> +
-> +	bw_val = min(coords->read_bandwidth, coords->write_bandwidth);
-> +	new_bw = kcalloc(nr_node_ids, sizeof(unsigned int), GFP_KERNEL);
-> +	if (!new_bw)
-> +		return -ENOMEM;
-> +
-> +	new_wi_state = kzalloc(struct_size(new_wi_state, iw_table, nr_node_ids),
-> +			       GFP_KERNEL);
-
-NIT: because we will always initialize new_wi_state->iw_table[] below,
-we can just use kmalloc() and initailze new_wi_state->mode_auto?
-
-> +	if (!new_wi_state) {
-> +		kfree(new_bw);
-> +		return -ENOMEM;
-> +	}
-> +	for (i = 0; i < nr_node_ids; i++)
-> +		new_wi_state->iw_table[i] = 1;
-> +
-> +	/*
-> +	 * Update bandwidth info, even in manual mode. That way, when switching
-> +	 * to auto mode in the future, iw_table can be overwritten using
-> +	 * accurate bw data.
-> +	 */
-> +	mutex_lock(&wi_state_lock);
-> +
-> +	old_bw = node_bw_table;
-> +	if (old_bw)
-> +		memcpy(new_bw, old_bw, nr_node_ids * sizeof(unsigned int));
-
-I prefer
-
-		memcpy(new_bw, old_bw, nr_node_ids * sizeof(*old_bw));
-
-a little.  But it's not a big deal.
-
-> +	new_bw[node] = bw_val;
-> +	node_bw_table = new_bw;
-> +
-> +	/* wi_state not initialized yet; assume auto == true */
-> +	if (!rcu_access_pointer(wi_state))
-> +		goto reduce;
-> +
-> +	old_wi_state = rcu_dereference_protected(wi_state,
-> +					lockdep_is_held(&wi_state_lock));
-> +	if (old_wi_state->mode_auto)
-
-Because we can use "!old_wi_state || !old_wi_state->mode_auto" here, I
-don't think rcu_access_pointer() above gives us something.
-
-> +		goto reduce;
-> +
-> +	mutex_unlock(&wi_state_lock);
-> +	kfree(new_wi_state);
-> +	kfree(old_bw);
-> +	return 0;
-> +
-> +reduce:
-> +	new_wi_state->mode_auto = true;
-> +	reduce_interleave_weights(new_bw, new_wi_state->iw_table);
-> +	rcu_assign_pointer(wi_state, new_wi_state);
-> +
-> +	mutex_unlock(&wi_state_lock);
-> +	if (old_wi_state) {
-> +		synchronize_rcu();
-> +		kfree(old_wi_state);
-> +	}
-> +	kfree(old_bw);
-> +
-> +	return 0;
-> +}
-> +
->  /**
->   * numa_nearest_node - Find nearest node by state
->   * @node: Node id to start the search
-> @@ -1988,34 +2093,33 @@ static unsigned int weighted_interleave_nid(struct mempolicy *pol, pgoff_t ilx)
->  	u8 *table;
->  	unsigned int weight_total = 0;
->  	u8 weight;
-> -	int nid;
-> +	int nid = 0;
->  
->  	nr_nodes = read_once_policy_nodemask(pol, &nodemask);
->  	if (!nr_nodes)
->  		return numa_node_id();
->  
->  	rcu_read_lock();
-> -	table = rcu_dereference(iw_table);
-> +	if (!rcu_access_pointer(wi_state))
-> +		goto out;
-
-If wi_state == NULL, why should we always return 0?  IIUC, wi_state ==
-NULL means the weight of any node is 1.
-
-> +
-> +	table = rcu_dereference(wi_state)->iw_table;
->  	/* calculate the total weight */
-> -	for_each_node_mask(nid, nodemask) {
-> -		/* detect system default usage */
-> -		weight = table ? table[nid] : 1;
-> -		weight = weight ? weight : 1;
-> -		weight_total += weight;
-> -	}
-> +	for_each_node_mask(nid, nodemask)
-> +		weight_total += table ? table[nid] : 1;
-
-When will table be NULL here?
-
->  
->  	/* Calculate the node offset based on totals */
->  	target = ilx % weight_total;
->  	nid = first_node(nodemask);
->  	while (target) {
->  		/* detect system default usage */
-> -		weight = table ? table[nid] : 1;
-> -		weight = weight ? weight : 1;
-> +		weight = table[nid];
->  		if (target < weight)
->  			break;
->  		target -= weight;
->  		nid = next_node_in(nid, nodemask);
->  	}
-> +out:
->  	rcu_read_unlock();
->  	return nid;
->  }
-> @@ -2411,13 +2515,14 @@ static unsigned long alloc_pages_bulk_weighted_interleave(gfp_t gfp,
->  		struct mempolicy *pol, unsigned long nr_pages,
->  		struct page **page_array)
->  {
-> +	struct weighted_interleave_state *state;
->  	struct task_struct *me = current;
->  	unsigned int cpuset_mems_cookie;
->  	unsigned long total_allocated = 0;
->  	unsigned long nr_allocated = 0;
->  	unsigned long rounds;
->  	unsigned long node_pages, delta;
-> -	u8 *table, *weights, weight;
-> +	u8 *weights, weight;
->  	unsigned int weight_total = 0;
->  	unsigned long rem_pages = nr_pages;
->  	nodemask_t nodes;
-> @@ -2467,17 +2572,19 @@ static unsigned long alloc_pages_bulk_weighted_interleave(gfp_t gfp,
->  		return total_allocated;
->  
->  	rcu_read_lock();
-> -	table = rcu_dereference(iw_table);
-> -	if (table)
-> -		memcpy(weights, table, nr_node_ids);
-> -	rcu_read_unlock();
-> +	if (rcu_access_pointer(wi_state)) {
-> +		state = rcu_dereference(wi_state);
-> +		memcpy(weights, state->iw_table, nr_node_ids * sizeof(u8));
-> +		rcu_read_unlock();
-> +	} else {
-> +		rcu_read_unlock();
-> +		for (i = 0; i < nr_node_ids; i++)
-> +			weights[i] = 1;
-> +	}
->  
->  	/* calculate total, detect system default usage */
-> -	for_each_node_mask(node, nodes) {
-> -		if (!weights[node])
-> -			weights[node] = 1;
-> +	for_each_node_mask(node, nodes)
->  		weight_total += weights[node];
-> -	}
->  
->  	/*
->  	 * Calculate rounds/partial rounds to minimize __alloc_pages_bulk calls.
-> @@ -3402,36 +3509,112 @@ static ssize_t node_show(struct kobject *kobj, struct kobj_attribute *attr,
->  static ssize_t node_store(struct kobject *kobj, struct kobj_attribute *attr,
->  			  const char *buf, size_t count)
->  {
-> +	struct weighted_interleave_state *new_wi_state, *old_wi_state = NULL;
->  	struct iw_node_attr *node_attr;
-> -	u8 *new;
-> -	u8 *old;
->  	u8 weight = 0;
-> +	int i;
->  
->  	node_attr = container_of(attr, struct iw_node_attr, kobj_attr);
->  	if (count == 0 || sysfs_streq(buf, ""))
->  		weight = 0;
-> -	else if (kstrtou8(buf, 0, &weight))
-> +	else if (kstrtou8(buf, 0, &weight) || weight == 0)
->  		return -EINVAL;
->  
-> -	new = kzalloc(nr_node_ids, GFP_KERNEL);
-> -	if (!new)
-> +	new_wi_state = kzalloc(struct_size(new_wi_state, iw_table, nr_node_ids),
-> +			       GFP_KERNEL);
-> +	if (!new_wi_state)
->  		return -ENOMEM;
->  
-> -	mutex_lock(&iw_table_lock);
-> -	old = rcu_dereference_protected(iw_table,
-> -					lockdep_is_held(&iw_table_lock));
-> -	if (old)
-> -		memcpy(new, old, nr_node_ids);
-> -	new[node_attr->nid] = weight;
-> -	rcu_assign_pointer(iw_table, new);
-> -	mutex_unlock(&iw_table_lock);
-> -	synchronize_rcu();
-> -	kfree(old);
-> +	mutex_lock(&wi_state_lock);
-> +	if (rcu_access_pointer(wi_state)) {
-> +		old_wi_state = rcu_dereference_protected(wi_state,
-> +					lockdep_is_held(&wi_state_lock));
-> +		memcpy(new_wi_state->iw_table, old_wi_state->iw_table,
-> +					nr_node_ids * sizeof(u8));
-> +	} else {
-> +		for (i = 0; i < nr_node_ids; i++)
-> +			new_wi_state->iw_table[i] = 1;
-> +	}
-> +	new_wi_state->iw_table[node_attr->nid] = weight;
-> +	new_wi_state->mode_auto = false;
-> +
-> +	rcu_assign_pointer(wi_state, new_wi_state);
-> +	mutex_unlock(&wi_state_lock);
-> +	if (old_wi_state) {
-> +		synchronize_rcu();
-> +		kfree(old_wi_state);
-> +	}
->  	return count;
->  }
->  
->  static struct iw_node_attr **node_attrs;
->  
-> +static ssize_t weighted_interleave_auto_show(struct kobject *kobj,
-> +		struct kobj_attribute *attr, char *buf)
-> +{
-> +	bool wi_auto = true;
-> +
-> +	rcu_read_lock();
-> +	if (rcu_access_pointer(wi_state))
-> +		wi_auto = rcu_dereference(wi_state)->mode_auto;
-> +	rcu_read_unlock();
-> +
-> +	return sysfs_emit(buf, "%s\n", str_true_false(wi_auto));
-> +}
-> +
-> +static ssize_t weighted_interleave_auto_store(struct kobject *kobj,
-> +		struct kobj_attribute *attr, const char *buf, size_t count)
-> +{
-> +	struct weighted_interleave_state *new_wi_state, *old_wi_state = NULL;
-> +	unsigned int *bw;
-> +	bool input;
-> +	int i;
-> +
-> +	if (kstrtobool(buf, &input))
-> +		return -EINVAL;
-> +
-> +	new_wi_state = kzalloc(struct_size(new_wi_state, iw_table, nr_node_ids),
-> +			       GFP_KERNEL);
-> +	if (!new_wi_state)
-> +		return -ENOMEM;
-> +	for (i = 0; i < nr_node_ids; i++)
-> +		new_wi_state->iw_table[i] = 1;
-> +
-> +	mutex_lock(&wi_state_lock);
-> +	if (!input) {
-> +		if (rcu_access_pointer(wi_state)) {
-> +			old_wi_state = rcu_dereference_protected(wi_state,
-> +					lockdep_is_held(&wi_state_lock));
-> +			memcpy(new_wi_state->iw_table, old_wi_state->iw_table,
-> +					nr_node_ids * sizeof(u8));
-> +		}
-> +		goto update_wi_state;
-> +	}
-> +
-> +	bw = node_bw_table;
-> +	if (!bw) {
-> +		mutex_unlock(&wi_state_lock);
-> +		kfree(new_wi_state);
-> +		return -ENODEV;
-> +	}
-> +
-> +	new_wi_state->mode_auto = true;
-> +	reduce_interleave_weights(bw, new_wi_state->iw_table);
-> +
-> +update_wi_state:
-> +	rcu_assign_pointer(wi_state, new_wi_state);
-> +	mutex_unlock(&wi_state_lock);
-> +	if (old_wi_state) {
-> +		synchronize_rcu();
-> +		kfree(old_wi_state);
-> +	}
-> +	return count;
-> +}
-> +
-> +static struct kobj_attribute wi_attr =
-
-NIT: "wi_attr" appears too general for me.  Maybe something like
-"wi_auto_attr"?
-
-> +	__ATTR(auto, 0664, weighted_interleave_auto_show,
-> +			   weighted_interleave_auto_store);
-> +
->  static void sysfs_wi_node_release(struct iw_node_attr *node_attr,
->  				  struct kobject *parent)
->  {
-> @@ -3489,6 +3672,15 @@ static int add_weight_node(int nid, struct kobject *wi_kobj)
->  	return 0;
->  }
->  
-> +static struct attribute *wi_default_attrs[] = {
-> +	&wi_attr.attr,
-> +	NULL
-> +};
-> +
-> +static const struct attribute_group wi_attr_group = {
-> +	.attrs = wi_default_attrs,
-> +};
-> +
->  static int add_weighted_interleave_group(struct kobject *root_kobj)
->  {
->  	struct kobject *wi_kobj;
-> @@ -3505,6 +3697,13 @@ static int add_weighted_interleave_group(struct kobject *root_kobj)
->  		return err;
->  	}
->  
-> +	err = sysfs_create_group(wi_kobj, &wi_attr_group);
-> +	if (err) {
-> +		pr_err("failed to add sysfs [auto]\n");
-> +		kobject_put(wi_kobj);
-> +		return err;
-> +	}
-> +
->  	for_each_node_state(nid, N_POSSIBLE) {
->  		err = add_weight_node(nid, wi_kobj);
->  		if (err) {
-> @@ -3519,15 +3718,22 @@ static int add_weighted_interleave_group(struct kobject *root_kobj)
->  
->  static void mempolicy_kobj_release(struct kobject *kobj)
->  {
-> -	u8 *old;
-> +	struct weighted_interleave_state *old_wi_state;
-> +
-> +	mutex_lock(&wi_state_lock);
-> +	if (!rcu_access_pointer(wi_state)) {
-> +		mutex_unlock(&wi_state_lock);
-> +		goto out;
-> +	}
-> +
-> +	old_wi_state = rcu_dereference_protected(wi_state,
-> +			lockdep_is_held(&wi_state_lock));
->  
-> -	mutex_lock(&iw_table_lock);
-> -	old = rcu_dereference_protected(iw_table,
-> -					lockdep_is_held(&iw_table_lock));
-> -	rcu_assign_pointer(iw_table, NULL);
-> -	mutex_unlock(&iw_table_lock);
-> +	rcu_assign_pointer(wi_state, NULL);
-> +	mutex_unlock(&wi_state_lock);
->  	synchronize_rcu();
-> -	kfree(old);
-> +	kfree(old_wi_state);
-> +out:
->  	kfree(node_attrs);
->  	kfree(kobj);
->  }
->
-> base-commit: 99fa936e8e4f117d62f229003c9799686f74cebc
-
----
-Best Regards,
-Huang, Ying
 
