@@ -1,118 +1,174 @@
-Return-Path: <linux-kernel+bounces-553927-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-553954-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8759EA590BD
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 11:06:25 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 15E31A59116
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 11:25:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2F1713AB694
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 10:06:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5366216C31B
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 10:25:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58EB5225785;
-	Mon, 10 Mar 2025 10:06:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BA59226559;
+	Mon, 10 Mar 2025 10:24:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="u9GKbAz7"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="D7E3vw1X"
+Received: from mail-m15586.qiye.163.com (mail-m15586.qiye.163.com [101.71.155.86])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A56732253EC;
-	Mon, 10 Mar 2025 10:06:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA2B9223716;
+	Mon, 10 Mar 2025 10:24:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=101.71.155.86
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741601174; cv=none; b=OP6f6EhOoPTTuOmw5DiD0al4RjvY3ducF2NuF0COw56pXMGkdEPvi1UBKou3VfNMfx9Bo4n8NLiWrbpG2uLIPMFbZwpLMjcIoW58Qm3i8gKjQbmA87FRGx99bOyjx+VrcK1OHkjRwuuOJtBj+GKeKa86fvnW+FbrMy4vcVfUWrI=
+	t=1741602290; cv=none; b=C24dC28OJA0o7LhbYj8JUHDPUylzB6y93uCAgBaGxzs4QZEW5YDv6jeHL1coGlkYRzZcbodvccyobea448w+de96ytIleAfetXBWDISkvX8tas41xTOyzxqKX5BfPbkOnVFVPSCL4SKtpsPynoy2w34IPd7veo/2PNvDDx2xs/A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741601174; c=relaxed/simple;
-	bh=hP2uUw8I8mbMn2yNz3/uwyIxABFOv5u58HBG32GXAl0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Y/og09s4zi6mFXDLs1276zukpz8YgvTajSfsQdtXsn0lfGjouj5KTXJDcNHmS1AZdZOPc/+zLnBToYlMZvISfCCbw9/L7NgZcQCTdTn/k1opA3LCgtIrC7dJ3TOdkOKZbHwcWCprwGEWEZnKW22FmO2YjaDKlCzzByh/LsdzJgw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=u9GKbAz7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C343DC4CEE5;
-	Mon, 10 Mar 2025 10:06:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741601174;
-	bh=hP2uUw8I8mbMn2yNz3/uwyIxABFOv5u58HBG32GXAl0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=u9GKbAz70zpGllrnCpfsX2csmTb4K9W/vm7OhjijcPXbQES+OwRob6jgbbDN/PU0m
-	 tD7Cd201qFfaCebbzoAFaztXjhlE/G7Ebl7UTbtYNqGVp15bBK/BoCsylzysw8ddRF
-	 BzerdPTJwit9QiydxEEMVxMViLGl1pLOXJQKcwyKGoFCvF7Tw8kUL164GZcMLZrnAF
-	 gXCeMkKpDwPiEif48MlMftai2X2PYEUspi+ub90AdpT2qRMugMVLTbaYw5gfwJhsyV
-	 q3gFV0p7sXX+ZQzheW8ZuFhnyFBh2opWmnPJqsPxjcCijxHw5Onoii0QYmtAbcBvSg
-	 jYs+f05xe7iPA==
-Date: Mon, 10 Mar 2025 11:06:08 +0100
-From: Carlos Maiolino <cem@kernel.org>
-To: John Garry <john.g.garry@oracle.com>
-Cc: brauner@kernel.org, djwong@kernel.org, linux-xfs@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, ojaswin@linux.ibm.com, 
-	ritesh.list@gmail.com, martin.petersen@oracle.com, tytso@mit.edu, 
-	linux-ext4@vger.kernel.org
-Subject: Re: [PATCH v4 11/12] xfs: Update atomic write max size
-Message-ID: <bed7wptkueyxnjvaq4isizybxsagh7vb7nx7efcyamvtzbot5p@oqrij3ahq3vl>
-References: <20250303171120.2837067-1-john.g.garry@oracle.com>
- <2LEUjvzJ3RO3jyirsnti2pPKtOuVZZt-wKhzIi2mfCPwOESoN_SuN9GjHA4Iu_C4LRZQxiZ6dF__eT6u-p8CdQ==@protonmail.internalid>
- <20250303171120.2837067-12-john.g.garry@oracle.com>
+	s=arc-20240116; t=1741602290; c=relaxed/simple;
+	bh=2pIsOvXJeycb7I0Vkk7F9tXEkPBowlnhNuR9vZC2+qI=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=kxhLznnjna5oMBVzYX19OLalwZnMr7euM9JexzRstyGkQfiZmkZvEZ+Tw9gV81jghAJpX6YWZ+p8cQXkVLPwLk4atszHcliJPJVjCIobFK+Iz5bwQaKZzYR+/WD7NoK5V4x1D9BalzA5U5Eabhl7V9/O94ybN4LNMaWoLxJmWCA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=D7E3vw1X; arc=none smtp.client-ip=101.71.155.86
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
+Received: from [172.16.12.26] (unknown [58.22.7.114])
+	by smtp.qiye.163.com (Hmail) with ESMTP id dc09eef1;
+	Mon, 10 Mar 2025 18:09:19 +0800 (GMT+08:00)
+Message-ID: <5dc47134-fabb-4f9c-acc3-8bf37d2cc733@rock-chips.com>
+Date: Mon, 10 Mar 2025 18:09:20 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250303171120.2837067-12-john.g.garry@oracle.com>
+User-Agent: Mozilla Thunderbird
+From: Damon Ding <damon.ding@rock-chips.com>
+Subject: Re: [PATCH v7 10/15] drm/rockchip: analogix_dp: Add support to get
+ panel from the DP AUX bus
+To: Doug Anderson <dianders@chromium.org>
+Cc: heiko@sntech.de, andy.yan@rock-chips.com, hjc@rock-chips.com,
+ robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ andrzej.hajda@intel.com, neil.armstrong@linaro.org, rfoss@kernel.org,
+ Laurent.pinchart@ideasonboard.com, jonas@kwiboo.se,
+ jernej.skrabec@gmail.com, dmitry.baryshkov@linaro.org,
+ sebastian.reichel@collabora.com, cristian.ciocaltea@collabora.com,
+ boris.brezillon@collabora.com, l.stach@pengutronix.de,
+ dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+References: <20250224081325.96724-1-damon.ding@rock-chips.com>
+ <20250224081325.96724-11-damon.ding@rock-chips.com>
+ <CAD=FV=WS_2JAKMyFFmrNtaN7-O4dh2hOXHc25FytDxXAjAr+5A@mail.gmail.com>
+Content-Language: en-US
+In-Reply-To: <CAD=FV=WS_2JAKMyFFmrNtaN7-O4dh2hOXHc25FytDxXAjAr+5A@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
+	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZGUNOTFZDTUsfGh1NGkgaH09WFRQJFh
+	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSU9PT0
+	hVSktLVUpCS0tZBg++
+X-HM-Tid: 0a957f87c7c203a3kunmdc09eef1
+X-HM-MType: 1
+X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6ORQ6Ghw*MDIMNiM5Vjk6LzNK
+	A0IKCg1VSlVKTE9KTUtKSE1KTk5DVTMWGhIXVR8aFhQVVR8SFRw7CRQYEFYYExILCFUYFBZFWVdZ
+	EgtZQVlOQ1VJSVVMVUpKT1lXWQgBWUFJQ01DNwY+
+DKIM-Signature:a=rsa-sha256;
+	b=D7E3vw1XXB1XCYg4ojtoHQqelLn3tRxuF/YnJiS7eKtAHcAJmK6eZVh8POr/PKSys+Oh0rYtPLotv2Gp8EdLwkFeVgjH1md2nhhGOO5PUuohiFVFMSqdP7tYsL4Cg+HhG6fnpIVHcx0r3/pX2DKi4Tz3OBEz6CkZfH4o1zPqTlU=; s=default; c=relaxed/relaxed; d=rock-chips.com; v=1;
+	bh=8oDl0bBs3tCfqgA77qPG8Vr+30J/oYlSYqhSGqmt52Q=;
+	h=date:mime-version:subject:message-id:from;
 
-Hi John.
+Hi Doug,
 
-On Mon, Mar 03, 2025 at 05:11:19PM +0000, John Garry wrote:
-> Now that CoW-based atomic writes are supported, update the max size of an
-> atomic write.
+On 2025/2/25 9:42, Doug Anderson wrote:
+> Hi,
 > 
-> For simplicity, limit at the max of what the mounted bdev can support in
-> terms of atomic write limits. Maybe in future we will have a better way
-> to advertise this optimised limit.
+> On Mon, Feb 24, 2025 at 12:14 AM Damon Ding <damon.ding@rock-chips.com> wrote:
+>>
+>> @@ -392,11 +393,27 @@ static const struct component_ops rockchip_dp_component_ops = {
+>>          .unbind = rockchip_dp_unbind,
+>>   };
+>>
+>> +static int rockchip_dp_link_panel(struct drm_dp_aux *aux)
+>> +{
+>> +       struct analogix_dp_plat_data *plat_data = analogix_dp_aux_to_plat_data(aux);
+>> +       struct rockchip_dp_device *dp = pdata_encoder_to_dp(plat_data);
+>> +       int ret;
+>> +
+>> +       ret = drm_of_find_panel_or_bridge(dp->dev->of_node, 1, 0, &plat_data->panel, NULL);
+>> +       if (ret && ret != -ENODEV)
+>> +               return ret;
 > 
-> In addition, the max atomic write size needs to be aligned to the agsize.
-> Limit the size of atomic writes to the greatest power-of-two factor of the
-> agsize so that allocations for an atomic write will always be aligned
-> compatibly with the alignment requirements of the storage.
-> 
-> For RT inode, just limit to 1x block, even though larger can be supported
-> in future.
-> 
-> Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
-> Signed-off-by: John Garry <john.g.garry@oracle.com>
-> ---
->  fs/xfs/xfs_iops.c  | 13 ++++++++++++-
->  fs/xfs/xfs_mount.c | 28 ++++++++++++++++++++++++++++
->  fs/xfs/xfs_mount.h |  1 +
->  3 files changed, 41 insertions(+), 1 deletion(-)
+> Can you explain why you treat -ENODEV as a non-error case here? Maybe
+> this is for the non-eDP case (AKA the DP case) where there's no
+> further panels or bridges? Maybe a comment would be helpful to remind
+> us?
 > 
 
-> diff --git a/fs/xfs/xfs_mount.h b/fs/xfs/xfs_mount.h
-> index fbed172d6770..bc96b8214173 100644
-> --- a/fs/xfs/xfs_mount.h
-> +++ b/fs/xfs/xfs_mount.h
-> @@ -198,6 +198,7 @@ typedef struct xfs_mount {
->  	bool			m_fail_unmount;
->  	bool			m_finobt_nores; /* no per-AG finobt resv. */
->  	bool			m_update_sb;	/* sb needs update in mount */
-> +	xfs_extlen_t		awu_max;	/* data device max atomic write */
+I think the commit 86caee745e45 ("drm/rockchip: analogix_dp: allow to 
+work without panel") can help the Analogix DP driver work when the 
+bridge is driver-free or when the user uses the eDP IP as a DP.
 
-Could you please rename this to something else? All fields within xfs_mount
-follows the same pattern m_<name>. Perhaps m_awu_max?
-
-I was going to send a patch replacing it once I had this merged, but giving
-Dave's new comments, and the conflicts with zoned devices, you'll need to send a
-V5, so, please include this change if nobody else has any objections on keeping
-the xfs_mount naming convention.
-
-Carlos.
+And I will add some comments in the next version.
 
 > 
->  	/*
->  	 * Bitsets of per-fs metadata that have been checked and/or are sick.
-> --
-> 2.31.1
+>> +       ret = component_add(dp->dev, &rockchip_dp_component_ops);
+>> +       if (ret)
+>> +               return ret;
+>> +
+>> +       return ret;
 > 
+> nit: the above could just be:
+> 
+> return component_add(dp->dev, &rockchip_dp_component_ops);
+> 
+
+Yeah, it is a good idea.
+
+> 
+>> @@ -448,9 +460,16 @@ static int rockchip_dp_probe(struct platform_device *pdev)
+>>          if (IS_ERR(dp->adp))
+>>                  return PTR_ERR(dp->adp);
+>>
+>> -       ret = component_add(dev, &rockchip_dp_component_ops);
+>> -       if (ret)
+>> -               return ret;
+>> +       ret = devm_of_dp_aux_populate_bus(analogix_dp_get_aux(dp->adp), rockchip_dp_link_panel);
+>> +       if (ret) {
+>> +               if (ret != -ENODEV)
+>> +                       return dev_err_probe(dp->dev, ret,
+>> +                                            "failed to populate aux bus : %d\n", ret);
+> 
+> IIRC this -ENODEV case is for old legacy panels that aren't listed
+> under the aux bus in the device tree. Maybe a comment would be helpful
+> to remind us?
+
+I will add a comment here if devm_of_dp_aux_populate_bus() returns -ENODEV.
+
+> 
+> nit: don't need the %d in your error message. dev_err_probe() already
+> prints the error code.
+> 
+
+I will remove it in the next version.
+
+> 
+>> +               ret = rockchip_dp_link_panel(analogix_dp_get_aux(dp->adp));
+>> +               if (ret)
+>> +                       return ret;
+>> +       }
+>>
+>>          return 0;
+> 
+> You can get rid of a few of your return cases by just returning "ret" here.
+> 
+
+Yeah, it is better.
+
+> 
+> -Doug
+> 
+> 
+
+Best regards
+Damon
 
