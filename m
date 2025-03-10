@@ -1,478 +1,179 @@
-Return-Path: <linux-kernel+bounces-555064-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-555065-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B4A62A5A523
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 21:41:02 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 75115A5A526
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 21:41:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E6063172E3D
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ABC793AD34A
 	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 20:41:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 452761DF24A;
-	Mon, 10 Mar 2025 20:40:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B544D1DEFE7;
+	Mon, 10 Mar 2025 20:41:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Xe62Xd7v"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="KLSBTZ4K"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED2BC1DE8AB;
-	Mon, 10 Mar 2025 20:40:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A9B61DF72D;
+	Mon, 10 Mar 2025 20:40:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741639255; cv=none; b=Rs0TnuIjqcpG1So0VfzPTqLCT3BLQH8JXXu7xxTMsBiR0r7qmJcEHRs7pkyPqoBxAWa48AG7zD8KkIoE1Sumxor1lY/5erSfKVt5+d7OfP4S1RqNhXG5mD97cY369dGzFGP16HKgR759DUJtVFxKWlnJBfnIw97H7YqHzx7oO60=
+	t=1741639261; cv=none; b=lyX4QspjP1/zwrCp9moTVvE+snxbgyAhrq6bVgejAdYVVsAGVuP/jG4g3vYgOYfCwYHxmJCg3t9u6Bd8B+brNs8DEupO+l6oGIidqFza+rsoDEpk1ibfR9wmUPNkOXZpDCJZ1Dvauhp/XLj/tHtV83tnMxEg4Oq3zKtEHn5TRTM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741639255; c=relaxed/simple;
-	bh=79Iy4PjlfM8x0qsncGpzq2YIDIllVdVOrTyqu2jRx7Y=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=hxdqUCeS61syX1qw1xWw8EuCKb2X2PphhTSIf4WsDtdO0raPk0+ACr+wQSop5MUOuGR7qCKUztYjm78xN3bIsh8qrFeKCcMiiA4ovuWKS0kqAmIuhpxuR/zepSsBMaFm+wAZavItTVaaP+0kXrZN93iNDEbid3VWDOd5FpiucjI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Xe62Xd7v; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C6E9EC4CEF1;
-	Mon, 10 Mar 2025 20:40:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741639254;
-	bh=79Iy4PjlfM8x0qsncGpzq2YIDIllVdVOrTyqu2jRx7Y=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=Xe62Xd7vrF7V4Wl5SAQxJDeAZGz8DbCOSY5nDksQYWW8wZwVqSULAXGivzjLtmU1T
-	 EbemwITk12pJfDq8jhhfF4A0cyhLYjusWif83Vb0dscUhveZYHrYezJTSJlWNw4qLY
-	 IGPBuQ25updeJmypxIlmM6vnM5j/Afjb8KxF5a4sZ1QeJmRDAbPPJqFx/ubnNqHrqh
-	 YzfSalAdyts208eq3VuOcd5x3cnkG+UvmHeevsh2w7uTvJUPO1gp7khmOc1fqP1L79
-	 SnTA1TalSVuX5BA7TixyTw/QY3kh7Cd6G95Wf7E6aQj1hnZd1P9Xhdqboa5qa3LBOL
-	 Grw2Zj5jtdKsg==
-Received: by mail-yb1-f172.google.com with SMTP id 3f1490d57ef6-e5dcc411189so4339745276.0;
-        Mon, 10 Mar 2025 13:40:54 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVsgQNogW/er8uxbu6q2CaYFl8+99Sh5+I3p44zCW2Nv5uDVZMccEz0YXGqqsbnetH8eYAM8Q==@vger.kernel.org, AJvYcCWUoXg5CUsGf4NOF97yU+sDH7sk09KrnujdYJ2lmbJFoB4j4NquoiMQWGOpS2HfeIMPaLhs5fpNYHNy4N1r@vger.kernel.org, AJvYcCWxwyT0gIiVNxyICjhi8OvDosYPYsn2avutMyw7hOb+pujmIPFNU+f2eYCPRqe0LOGYR/Ds49+Dwmqs01DsvPB8rlQeroFg@vger.kernel.org, AJvYcCXorHoThyJc/dHa9OjfZZCd+CL9dX+j+t+rsQ815B6R1F4Ot27x8f0/GYx5FUDqBzFGI2zrU5KC6giT@vger.kernel.org
-X-Gm-Message-State: AOJu0YzY4qHtOj2s3W3X5TZzL5Yj4RG9Y+Iwh2a5W9MPRhstuQOjvb1Q
-	hfuBou93ARrOK/Nv+54uqRBkG87pp38t5UZl3+nYSJNlBATeYAZArBRfPjKC7Ho4m5nkqmZEvzv
-	FTrwcjAYqcnKP6IhlLVqpoCCPTSc=
-X-Google-Smtp-Source: AGHT+IGW3DJYCB1vqIA1aTnPKAEYaNV4ZR8s/OYmPYNC8BLKT8yN8zj7ypfY8XOqnpiLSHVUsg8tyQ7zTrG8R5Ovs+k=
-X-Received: by 2002:a05:6902:2a8b:b0:e5d:c6e8:2e32 with SMTP id
- 3f1490d57ef6-e635c179f67mr15276065276.24.1741639253935; Mon, 10 Mar 2025
- 13:40:53 -0700 (PDT)
+	s=arc-20240116; t=1741639261; c=relaxed/simple;
+	bh=p7FT2wD3WZKNMVQnP49Wzu1EdaqUzeZXhk1DDsgTN+I=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=p9ORLF+rvyU/gp0B94HWYAqW3kSCsPnaetl8ooUgMAZo357LKg3xHPvule/nJdYLG0o1ncC5MA3lgtlndYL+FLbxSauMNoyaWrmunA0c+Z4DPt6JgMI2U88NvdRgJRG4Pv9LoNgMQyAmlYk7ROsJ6pRqromRESVPjNMjP1hjO8E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=KLSBTZ4K; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52AKFZbd012622;
+	Mon, 10 Mar 2025 20:40:52 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=W9YuYK
+	qO6w28khy+jb3BDttjVL1yDkzw2RZ/N4axoRo=; b=KLSBTZ4Kd0n2+aXrsgXbOJ
+	xPicY7lYsjGAsY6LMaVj09lNRZUOGpGI0sTby/ypWJYxvcoIuonqgZZlFYVj/i45
+	rpflT//Z0+G61ZRIUgqtxuIIn0xG+i6teLC3DWxTMiRb3W4O3Es62k0AzjHeORxY
+	xJa2Htatu2N/uw+8DgfXEyZK1GT2XM1FAoiiAee79ISuRsfmO2etz97y0QP80oRh
+	woqJq70wcn2B3bfYYImFaJrcqLebHOgqQ7SUkl+dwHjptqExj4L9m6IHjm5ViuAA
+	YAGL+gBjOkVe+sl3pn0zyaZfK+yoKF8vKDTRSlSyMJ2wnS7Mbn6sC4jJ5XKwIDKA
+	==
+Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 459rf94y47-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 10 Mar 2025 20:40:52 +0000 (GMT)
+Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 52AIj3Dc014921;
+	Mon, 10 Mar 2025 20:40:51 GMT
+Received: from smtprelay03.dal12v.mail.ibm.com ([172.16.1.5])
+	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 4592ek8anm-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 10 Mar 2025 20:40:51 +0000
+Received: from smtpav05.dal12v.mail.ibm.com (smtpav05.dal12v.mail.ibm.com [10.241.53.104])
+	by smtprelay03.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 52AKeogr30671556
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 10 Mar 2025 20:40:50 GMT
+Received: from smtpav05.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id ABE8E58052;
+	Mon, 10 Mar 2025 20:40:50 +0000 (GMT)
+Received: from smtpav05.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id BF8D558056;
+	Mon, 10 Mar 2025 20:40:49 +0000 (GMT)
+Received: from [9.61.55.227] (unknown [9.61.55.227])
+	by smtpav05.dal12v.mail.ibm.com (Postfix) with ESMTP;
+	Mon, 10 Mar 2025 20:40:49 +0000 (GMT)
+Message-ID: <4a32f00e-a79b-457d-8789-597b9a0e6c9b@linux.ibm.com>
+Date: Mon, 10 Mar 2025 16:40:49 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <1741385035-22090-1-git-send-email-jasjivsingh@linux.microsoft.com>
- <1741385035-22090-2-git-send-email-jasjivsingh@linux.microsoft.com>
-In-Reply-To: <1741385035-22090-2-git-send-email-jasjivsingh@linux.microsoft.com>
-From: Fan Wu <wufan@kernel.org>
-Date: Mon, 10 Mar 2025 13:40:43 -0700
-X-Gmail-Original-Message-ID: <CAKtyLkGcU10+rxKd2uH5Hy2impDih_=AkAgcdu35h+xTeM=+OA@mail.gmail.com>
-X-Gm-Features: AQ5f1JqFWebr2Ri-dP7h4jCTkQyMh1VW_YSShcD9NrRfHs6Rl37FpE3tGPKz9Uc
-Message-ID: <CAKtyLkGcU10+rxKd2uH5Hy2impDih_=AkAgcdu35h+xTeM=+OA@mail.gmail.com>
-Subject: Re: [RFC PATCH v4 1/1] ipe: add errno field to IPE policy load auditing
-To: Jasjiv Singh <jasjivsingh@linux.microsoft.com>
-Cc: corbet@lwn.net, jmorris@namei.org, serge@hallyn.com, eparis@redhat.com, 
-	paul@paul-moore.com, linux-doc@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, audit@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] s390/pci: Fix dev.dma_range_map missing sentinel element
+To: Niklas Schnelle <schnelle@linux.ibm.com>, Joerg Roedel <jroedel@suse.de>,
+        Will Deacon <will@kernel.org>, Gerd Bayer <gbayer@linux.ibm.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>
+Cc: Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
+        Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
+        Alexander Gordeev <agordeev@linux.ibm.com>,
+        Christian Borntraeger <borntraeger@linux.ibm.com>,
+        Sven Schnelle <svens@linux.ibm.com>, iommu@lists.linux.dev,
+        linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org
+References: <20250306-fix_dma_map_alloc-v1-1-b4fa44304eac@linux.ibm.com>
+Content-Language: en-US
+From: Matthew Rosato <mjrosato@linux.ibm.com>
+In-Reply-To: <20250306-fix_dma_map_alloc-v1-1-b4fa44304eac@linux.ibm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: H3MptcF8lDlYcW0Cz2Rw9oJlNh-9qJ5V
+X-Proofpoint-GUID: H3MptcF8lDlYcW0Cz2Rw9oJlNh-9qJ5V
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-10_07,2025-03-07_03,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 mlxlogscore=999
+ phishscore=0 bulkscore=0 mlxscore=0 suspectscore=0 impostorscore=0
+ lowpriorityscore=0 priorityscore=1501 malwarescore=0 adultscore=0
+ clxscore=1011 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2502100000 definitions=main-2503100158
 
-On Fri, Mar 7, 2025 at 2:07=E2=80=AFPM Jasjiv Singh
-<jasjivsingh@linux.microsoft.com> wrote:
-...
-> Signed-off-by: Jasjiv Singh <jasjivsingh@linux.microsoft.com>
+On 3/6/25 10:25 AM, Niklas Schnelle wrote:
+> The fixed commit sets up dev.dma_range_map but missed that this is
+> supposed to be an array of struct bus_dma_region with a sentinel element
+> with the size field set to 0 at the end. This would lead to overruns in
+> e.g. dma_range_map_min(). It could also result in wrong translations
+> instead of DMA_MAPPIN_ERROR in translate_phys_to_dma() if the paddr were
+
+Typo, DMA_MAPPING_ERROR
+
+> to not fit in the aperture. Fix this by using the dma_direct_set_offset()
+> helper which creates a sentinel for us.
+> 
+> Fixes: d236843a6964 ("s390/pci: store DMA offset in bus_dma_region")
+> Signed-off-by: Niklas Schnelle <schnelle@linux.ibm.com>
+
+Thanks for looking into this while I was out.  I confirmed that I can reproduce the potential issue by forcing codepaths - and that your proposed fix also resolves it (by forcing a DMA mapping error instead of using random values for a bus_dma_region).
+
+Reviewed-by: Matthew Rosato <mjrosato@linux.ibm.com>
+
+
 > ---
->  Documentation/admin-guide/LSM/ipe.rst | 69 +++++++++++++++++++--------
->  security/ipe/audit.c                  | 21 ++++++--
->  security/ipe/fs.c                     | 19 ++++++--
->  security/ipe/policy.c                 | 11 ++++-
->  security/ipe/policy_fs.c              | 29 ++++++++---
->  5 files changed, 111 insertions(+), 38 deletions(-)
->
-> diff --git a/Documentation/admin-guide/LSM/ipe.rst b/Documentation/admin-=
-guide/LSM/ipe.rst
-> index f93a467db628..0615941de6e0 100644
-> --- a/Documentation/admin-guide/LSM/ipe.rst
-> +++ b/Documentation/admin-guide/LSM/ipe.rst
-> @@ -423,7 +423,7 @@ Field descriptions:
->
->  Event Example::
->
-> -   type=3D1422 audit(1653425529.927:53): policy_name=3D"boot_verified" p=
-olicy_version=3D0.0.0 policy_digest=3Dsha256:820EEA5B40CA42B51F68962354BA08=
-3122A20BB846F26765076DD8EED7B8F4DB auid=3D4294967295 ses=3D4294967295 lsm=
-=3Dipe res=3D1
-> +   type=3D1422 audit(1653425529.927:53): policy_name=3D"boot_verified" p=
-olicy_version=3D0.0.0 policy_digest=3Dsha256:820EEA5B40CA42B51F68962354BA08=
-3122A20BB846F26765076DD8EED7B8F4DB auid=3D4294967295 ses=3D4294967295 lsm=
-=3Dipe res=3D1 errno=3D0
->     type=3D1300 audit(1653425529.927:53): arch=3Dc000003e syscall=3D1 suc=
-cess=3Dyes exit=3D2567 a0=3D3 a1=3D5596fcae1fb0 a2=3Da07 a3=3D2 items=3D0 p=
-pid=3D184 pid=3D229 auid=3D4294967295 uid=3D0 gid=3D0 euid=3D0 suid=3D0 fsu=
-id=3D0 egid=3D0 sgid=3D0 fsgid=3D0 tty=3Dpts0 ses=3D4294967295 comm=3D"pyth=
-on3" exe=3D"/usr/bin/python3.10" key=3D(null)
->     type=3D1327 audit(1653425529.927:53): PROCTITLE proctitle=3D707974686=
-F6E3300746573742F6D61696E2E7079002D66002E2E
->
-> @@ -433,24 +433,55 @@ This record will always be emitted in conjunction w=
-ith a ``AUDITSYSCALL`` record
->
->  Field descriptions:
->
-> -+----------------+------------+-----------+-----------------------------=
-----------------------+
-> -| Field          | Value Type | Optional? | Description of Value        =
-                      |
-> -+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D+=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D+=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D+
-> -| policy_name    | string     | No        | The policy_name             =
-                      |
-> -+----------------+------------+-----------+-----------------------------=
-----------------------+
-> -| policy_version | string     | No        | The policy_version          =
-                      |
-> -+----------------+------------+-----------+-----------------------------=
-----------------------+
-> -| policy_digest  | string     | No        | The policy hash             =
-                      |
-> -+----------------+------------+-----------+-----------------------------=
-----------------------+
-> -| auid           | integer    | No        | The login user ID           =
-                      |
-> -+----------------+------------+-----------+-----------------------------=
-----------------------+
-> -| ses            | integer    | No        | The login session ID        =
-                      |
-> -+----------------+------------+-----------+-----------------------------=
-----------------------+
-> -| lsm            | string     | No        | The lsm name associated with=
- the event            |
-> -+----------------+------------+-----------+-----------------------------=
-----------------------+
-> -| res            | integer    | No        | The result of the audited op=
-eration(success/fail) |
-> -+----------------+------------+-----------+-----------------------------=
-----------------------+
-> -
-> ++----------------+------------+-----------+-----------------------------=
---------------------------------+
-> +| Field          | Value Type | Optional? | Description of Value        =
-                                |
-> ++=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D+=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D+=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D+
-> +| policy_name    | string     | Yes       | The policy_name             =
-                                |
-> ++----------------+------------+-----------+-----------------------------=
---------------------------------+
-> +| policy_version | string     | Yes       | The policy_version          =
-                                |
-> ++----------------+------------+-----------+-----------------------------=
---------------------------------+
-> +| policy_digest  | string     | Yes       | The policy hash             =
-                                |
-> ++----------------+------------+-----------+-----------------------------=
---------------------------------+
-> +| auid           | integer    | No        | The login user ID           =
-                                |
-> ++----------------+------------+-----------+-----------------------------=
---------------------------------+
-> +| ses            | integer    | No        | The login session ID        =
-                                |
-> ++----------------+------------+-----------+-----------------------------=
---------------------------------+
-> +| lsm            | string     | No        | The lsm name associated with=
- the event                      |
-> ++----------------+------------+-----------+-----------------------------=
---------------------------------+
-> +| res            | integer    | No        | The result of the audited op=
-eration(success/fail)           |
-> ++----------------+------------+-----------+-----------------------------=
---------------------------------+
-> +| errno          | integer    | No        | Error code from policy loadi=
-ng operations (see table below) |
-> ++----------------+------------+-----------+-----------------------------=
---------------------------------+
-> +
-> +Policy error codes (errno):
-> +
-> +The following table lists the error codes that may appear in the errno f=
-ield while loading or updating the policy:
-> +
-> ++----------------+------------------------------------------------------=
---+
-> +| Error Code     | Description                                          =
-  |
-> ++=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D+=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D+
-> +| 0              | No error                                             =
-  |
-
-Nit: How about using "Success" here to match with the function comments.
-
-> ++----------------+------------------------------------------------------=
---+
-> +| -EPERM         | Insufficient permission                              =
-  |
-> ++----------------+------------------------------------------------------=
---+
-> +| -EEXIST        | Same name policy already deployed                    =
-  |
-> ++----------------+------------------------------------------------------=
---+
-> +| -EBADMSG       | Policy is invalid                                    =
-  |
-> ++----------------+------------------------------------------------------=
---+
-> +| -ENOMEM        | Out of memory (OOM)                                  =
-  |
-> ++----------------+------------------------------------------------------=
---+
-> +| -ERANGE        | Policy version number overflow                       =
-  |
-> ++----------------+------------------------------------------------------=
---+
-> +| -EINVAL        | Policy version parsing error                         =
-  |
-> ++----------------+------------------------------------------------------=
---+
-> +| -ENOKEY        | Key used to sign the IPE policy not found in keyring =
-  |
-> ++----------------+------------------------------------------------------=
---+
-> +| -EKEYREJECTED  | IPE signature verification failed                    =
-  |
-
-More accurately should be the IPE policy signature.
-
-> ++----------------+------------------------------------------------------=
---+
-> +| -ESTALE        | Attempting to update an IPE policy with older version=
-  |
-> ++----------------+------------------------------------------------------=
---+
-> +| -ENOENT        | Policy was deleted while updating                    =
-  |
-> ++----------------+------------------------------------------------------=
---+
->
->  1404 AUDIT_MAC_STATUS
->  ^^^^^^^^^^^^^^^^^^^^^
-> diff --git a/security/ipe/audit.c b/security/ipe/audit.c
-> index f05f0caa4850..ac9d68b68b8b 100644
-> --- a/security/ipe/audit.c
-> +++ b/security/ipe/audit.c
-> @@ -21,6 +21,8 @@
->
->  #define AUDIT_POLICY_LOAD_FMT "policy_name=3D\"%s\" policy_version=3D%hu=
-.%hu.%hu "\
->                               "policy_digest=3D" IPE_AUDIT_HASH_ALG ":"
-> +#define AUDIT_POLICY_LOAD_FAIL_FMT "policy_name=3D? policy_version=3D? "=
-\
-> +                                  "policy_digest=3D?"
->  #define AUDIT_OLD_ACTIVE_POLICY_FMT "old_active_pol_name=3D\"%s\" "\
->                                     "old_active_pol_version=3D%hu.%hu.%hu=
- "\
->                                     "old_policy_digest=3D" IPE_AUDIT_HASH=
-_ALG ":"
-> @@ -248,22 +250,31 @@ void ipe_audit_policy_activation(const struct ipe_p=
-olicy *const op,
->  }
->
->  /**
-> - * ipe_audit_policy_load() - Audit a policy being loaded into the kernel=
-.
-> - * @p: Supplies a pointer to the policy to audit.
-> + * ipe_audit_policy_load() - Audit a policy being loaded or failing
-> + *        to load into the kernel.
-
-The brief description needs to fit in a single line, if necessary you
-can create a longer description. See
-https://origin.kernel.org/doc/html/latest/doc-guide/kernel-doc.html.
-
-> + * @p: Supplies a pointer to the policy to audit or an error pointer
-
-> + *        to audit a failure with the associated error code from PTR_ERR=
-(p).
-
-The second line doesn't seem necessary.
-
->   */
->  void ipe_audit_policy_load(const struct ipe_policy *const p)
+> This is based on iommu/next which contains the fixed commit
+> ---
+>  arch/s390/pci/pci_bus.c | 24 +++++++++++-------------
+>  1 file changed, 11 insertions(+), 13 deletions(-)
+> 
+> diff --git a/arch/s390/pci/pci_bus.c b/arch/s390/pci/pci_bus.c
+> index 0e725039861f92925a38f7ff7cb6de6b0d965ac3..14310c3b48860a16de13536adf95ef99e6af21cc 100644
+> --- a/arch/s390/pci/pci_bus.c
+> +++ b/arch/s390/pci/pci_bus.c
+> @@ -287,23 +287,21 @@ static struct zpci_bus *zpci_bus_alloc(int topo, bool topo_is_tid)
+>  static void pci_dma_range_setup(struct pci_dev *pdev)
 >  {
->         struct audit_buffer *ab;
-> +       int err =3D 0;
->
->         ab =3D audit_log_start(audit_context(), GFP_KERNEL,
->                              AUDIT_IPE_POLICY_LOAD);
->         if (!ab)
->                 return;
->
-> -       audit_policy(ab, AUDIT_POLICY_LOAD_FMT, p);
-> -       audit_log_format(ab, " auid=3D%u ses=3D%u lsm=3Dipe res=3D1",
-> +       if (!IS_ERR(p)) {
-> +               audit_policy(ab, AUDIT_POLICY_LOAD_FMT, p);
-> +       } else {
-> +               audit_log_format(ab, AUDIT_POLICY_LOAD_FAIL_FMT);
-> +               err =3D PTR_ERR(p);
-> +       }
-> +
-> +       audit_log_format(ab, " auid=3D%u ses=3D%u lsm=3Dipe res=3D%d errn=
-o=3D%d",
->                          from_kuid(&init_user_ns, audit_get_loginuid(curr=
-ent)),
-> -                        audit_get_sessionid(current));
-> +                        audit_get_sessionid(current), !err, err);
->
->         audit_log_end(ab);
+>  	struct zpci_dev *zdev = to_zpci(pdev);
+> -	struct bus_dma_region *map;
+> -	u64 aligned_end;
+> +	u64 aligned_end, size;
+> +	dma_addr_t dma_start;
+> +	int ret;
+>  
+> -	map = kzalloc(sizeof(*map), GFP_KERNEL);
+> -	if (!map)
+> -		return;
+> -
+> -	map->cpu_start = 0;
+> -	map->dma_start = PAGE_ALIGN(zdev->start_dma);
+> +	dma_start = PAGE_ALIGN(zdev->start_dma);
+>  	aligned_end = PAGE_ALIGN_DOWN(zdev->end_dma + 1);
+> -	if (aligned_end >= map->dma_start)
+> -		map->size = aligned_end - map->dma_start;
+> +	if (aligned_end >= dma_start)
+> +		size = aligned_end - dma_start;
+>  	else
+> -		map->size = 0;
+> -	WARN_ON_ONCE(map->size == 0);
+> +		size = 0;
+> +	WARN_ON_ONCE(size == 0);
+>  
+> -	pdev->dev.dma_range_map = map;
+> +	ret = dma_direct_set_offset(&pdev->dev, 0, dma_start, size);
+> +	if (ret)
+> +		pr_err("Failed to allocate DMA range map for %s\n", pci_name(pdev));
 >  }
-> diff --git a/security/ipe/fs.c b/security/ipe/fs.c
-> index 5b6d19fb844a..db18636470bf 100644
-> --- a/security/ipe/fs.c
-> +++ b/security/ipe/fs.c
-> @@ -133,6 +133,8 @@ static ssize_t getenforce(struct file *f, char __user=
- *data,
->   * * %-ERANGE                  - Policy version number overflow
->   * * %-EINVAL                  - Policy version parsing error
->   * * %-EEXIST                  - Same name policy already deployed
-> + * * %-ENOKEY                  - Key used to sign the IPE policy not fou=
-nd in the keyring
+>  
+>  void pcibios_bus_add_device(struct pci_dev *pdev)
+> 
+> ---
+> base-commit: e840414e5a73ac02ffba6299b46f535a0b7cba98
+> change-id: 20250306-fix_dma_map_alloc-b3b05903dcfb
+> 
+> Best regards,
 
-This line seems to exceed the 80 char line limit, did it pass checkpatch.pl=
-?
-See https://www.kernel.org/doc/html/latest/process/coding-style.html.
-It can be more concise like "Policy signing key not found"
-
-> + * * %-EKEYREJECTED            - IPE signature verification failed
-
-The above comment also applies to here.
-
->   */
->  static ssize_t new_policy(struct file *f, const char __user *data,
->                           size_t len, loff_t *offset)
-> @@ -141,12 +143,17 @@ static ssize_t new_policy(struct file *f, const cha=
-r __user *data,
->         char *copy =3D NULL;
->         int rc =3D 0;
->
-> -       if (!file_ns_capable(f, &init_user_ns, CAP_MAC_ADMIN))
-> -               return -EPERM;
-> +       if (!file_ns_capable(f, &init_user_ns, CAP_MAC_ADMIN)) {
-> +               rc =3D -EPERM;
-> +               goto out;
-> +       }
->
->         copy =3D memdup_user_nul(data, len);
-> -       if (IS_ERR(copy))
-> -               return PTR_ERR(copy);
-> +       if (IS_ERR(copy)) {
-> +               rc =3D PTR_ERR(copy);
-> +               copy =3D NULL;
-> +               goto out;
-> +       }
->
->         p =3D ipe_new_policy(NULL, 0, copy, len);
->         if (IS_ERR(p)) {
-> @@ -161,8 +168,10 @@ static ssize_t new_policy(struct file *f, const char=
- __user *data,
->         ipe_audit_policy_load(p);
->
->  out:
-> -       if (rc < 0)
-> +       if (rc < 0) {
->                 ipe_free_policy(p);
-> +               ipe_audit_policy_load(ERR_PTR(rc));
-> +       }
->         kfree(copy);
->         return (rc < 0) ? rc : len;
-
-Nit: we can change the style of returning like the one in update_policy().
-
->  }
-> diff --git a/security/ipe/policy.c b/security/ipe/policy.c
-> index b628f696e32b..68a2078d5b6a 100644
-> --- a/security/ipe/policy.c
-> +++ b/security/ipe/policy.c
-> @@ -84,8 +84,12 @@ static int set_pkcs7_data(void *ctx, const void *data,=
- size_t len,
->   * ipe_new_policy.
->   *
->   * Context: Requires root->i_rwsem to be held.
-> - * Return: %0 on success. If an error occurs, the function will return
-> - * the -errno.
-> + * Return:
-> + * * %0                                        - Success
-> + * * %-ENOENT                                  - Policy was deleted whil=
-e updating
-> + * * %-EINVAL                                  - Policy name was changed=
- while updating
-This one means "Policy name mismatch".
-> + * * %-ESTALE                                  - Attempting to update an=
- IPE policy
-> + * *                                             with an older version
-
-This one can also be more concise, how about "Policy version too old"
-
-Also the indentation is too much, see
-https://origin.kernel.org/doc/html/latest/doc-guide/kernel-doc.html.
-
->   */
->  int ipe_update_policy(struct inode *root, const char *text, size_t textl=
-en,
->                       const char *pkcs7, size_t pkcs7len)
-> @@ -150,6 +154,9 @@ int ipe_update_policy(struct inode *root, const char =
-*text, size_t textlen,
->   * * %-ENOMEM                                  - Out of memory (OOM)
->   * * %-ERANGE                                  - Policy version number o=
-verflow
->   * * %-EINVAL                                  - Policy version parsing =
-error
-> + * * %-ENOKEY                                  - Key used to sign the IP=
-E policy
-> + *                                               not found in the keyrin=
-g
-> + * * %-EKEYREJECTED                            - IPE signature verificat=
-ion failed
->   */
-
-The above doc style/accuracy issue also applies here.
-
->  struct ipe_policy *ipe_new_policy(const char *text, size_t textlen,
->                                   const char *pkcs7, size_t pkcs7len)
-> diff --git a/security/ipe/policy_fs.c b/security/ipe/policy_fs.c
-> index 3bcd8cbd09df..b70d2518b182 100644
-> --- a/security/ipe/policy_fs.c
-> +++ b/security/ipe/policy_fs.c
-> @@ -12,6 +12,7 @@
->  #include "policy.h"
->  #include "eval.h"
->  #include "fs.h"
-> +#include "audit.h"
->
->  #define MAX_VERSION_SIZE ARRAY_SIZE("65535.65535.65535")
->
-> @@ -282,8 +283,14 @@ static ssize_t getactive(struct file *f, char __user=
- *data,
->   * On success this updates the policy represented by $name,
->   * in-place.
->   *
-> - * Return: Length of buffer written on success. If an error occurs,
-> - * the function will return the -errno.
-> + * Return:
-> + * * Length of buffer written                  - Success
-> + * * %-EPERM                                   - Insufficient permission
-> + * * %-ENOMEM                                  - Out of memory (OOM)
-> + * * %-ENOENT                                  - Policy was deleted whil=
-e updating
-> + * * %-EINVAL                                  - Policy name was changed=
- while updating
-> + * * %-ESTALE                                  - Attempting to update an=
- IPE policy
-> + * *                                             with an older version
->   */
-
-The above doc style/accuracy issue also applies here.
-
--Fan
 
