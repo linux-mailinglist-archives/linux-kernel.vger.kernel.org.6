@@ -1,258 +1,310 @@
-Return-Path: <linux-kernel+bounces-554071-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-554072-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B93EEA5929E
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 12:20:58 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D679EA592A2
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 12:21:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 27CED7A386A
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 11:19:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 58ED0188CB9E
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 11:21:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A615220685;
-	Mon, 10 Mar 2025 11:20:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F33C21E092;
+	Mon, 10 Mar 2025 11:21:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="g17MA3YL";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="Iy9kaepe"
-Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="KKBmAcFC"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E871221D3F7;
-	Mon, 10 Mar 2025 11:20:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741605641; cv=fail; b=DSTb+OyIZ3OlMRgDw4H3E0wGcs4noDaOrQGvg1UW5rVagp2e2y/lelD8pO8ZKseQPEA2ppJEmKqd59E6TNvPoAf119plSaGEzIzUm2R0x3WETotdsCdLj5qTPzVS4x63eC6ti0DNdhnS8PjhslnwUMM1Jiz8NcbmUkVnYzhu53A=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741605641; c=relaxed/simple;
-	bh=THJmrvOA/jK7PvrUcX4cDaP+t597wrXUY1L8I4Ins2g=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=LMbBIXnhyCt2NH3ecYf1fy4XPtsvgEdXhs3bJ6k357faNMCMFMgtyHDOAmyhSSNPcrgltUjfo9yCuaBfcFyBAy0fuNHuoojH9WPa/VaAcmrsxAbK9hpZDKNgQjRT98X72CjpVqdEgMrWrYtKyNJjGpXYliR9BH531hstXr2Hrw8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=g17MA3YL; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=Iy9kaepe; arc=fail smtp.client-ip=205.220.165.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246629.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52A9BiFR019169;
-	Mon, 10 Mar 2025 11:20:32 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=
-	corp-2023-11-20; bh=ZAOVErEgNsxdwzIahhIshrCeLjmC2JnejBwoZIL8JKM=; b=
-	g17MA3YLOKfiqF6KLKVGqOAtOvgy2++HVWVJK/b0HvAirIlewezUldBl8eK7mkkU
-	HqZbTUi/YCv7ZI3E81yJKgThrySpTaYBk6FJlsyTtpgLeAnc/Nmug8p2yyxBtFob
-	2oCLfnKr4awgPwSNsBR1inIPIe9ggX0q8R4T7Dg2VjsDutTr+FCFvx/K+uEhIOA2
-	s9Cnu+Fgp+0bbx13z7Dj5/iRIgG45snVILc+OShGlKv6Jfw5fiGCvwKIaHKw8ZQf
-	xShMwwAq+grtno37A+9oeNLO26JkkAl3gsEG6aI8a2qqHFT/A2Dh1vlM2KI9hjjs
-	6BBV+vnNgiqbp+5mHRpZCQ==
-Received: from phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta01.appoci.oracle.com [138.1.114.2])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 458ds9ja8u-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 10 Mar 2025 11:20:31 +0000 (GMT)
-Received: from pps.filterd (phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 52AAV2mq030529;
-	Mon, 10 Mar 2025 11:20:31 GMT
-Received: from nam11-bn8-obe.outbound.protection.outlook.com (mail-bn8nam11lp2176.outbound.protection.outlook.com [104.47.58.176])
-	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 458gcksmwv-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 10 Mar 2025 11:20:31 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=HpwECXWNrqfG87ivBKHXh5gjS7oBsF3VMt5orVxIaawvRYhpHat/RSCy6B7IezwJcGa0uh7a4wCF1hiLi1jCZuVJ8jEfiKYOYFb+Wyg9zourOerjYNTu9Tpnvs1I2PGz6/L7WOQ2wopEMFQqbGatsLF8+UnrMt6onzuP259PmoOQMw9y4SyTac/GV5rY6pwrGG7ew0VysI/5e0nJ9CObeO7KBperhy6xPc17BHnE4mOs8nY4VWIBK7cmbyVy+MqrlW1T/TjoxwknqXIyZCIvVYXMp7Mi+yxlXgLXH0NXNO+lpVXxMyjJ0AlOVKWWbvBHesLmmb5WmEdx6f6mThToTw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=ZAOVErEgNsxdwzIahhIshrCeLjmC2JnejBwoZIL8JKM=;
- b=nrCKqjvUtYrF2OzD83jcHFt57GV1M2PKIJfk5KJo/KxiT5ALvB4UvFpXtgn548+qK636iJMwFqzT54mye68swIo7MbZM/oOh9f1cjQICw6JqL9O/QaiGQU/Kyyup0fqtFju4IgJ+ih9GJ2qRS526xNuMM472sgNqTCazR2ROS3OG4BCK8vSGrJamH6iMo+SLQr9g1aA8P1CXSsrtJQwWoKBd1PFswUYGHxILqQqLWVmRFsuFScedkMy+oicROAfkIYLy1t8izIa0sGy95Fpmx/yq+2nzsfw+5qhSpG3rx7lMxu9KI9vW7PksmM6d1LUQpsfhXhxGioTyrfI0wGJjyw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ZAOVErEgNsxdwzIahhIshrCeLjmC2JnejBwoZIL8JKM=;
- b=Iy9kaepeSYq/LzryfLuy4QpifKqH5zAP3Rg3IPfzCEZKhU3wwV+ZnQb8WYqLQEXTGxBBpqw1z+fFFnfmUG+tsDaBcN0NqAegn5Npswj3p2xgJ3K4OhAp91cZtPLaa4lLfot9DO5t4O5leeI3bpIaY9J/kLJhzzKLH5QfDKBrpiE=
-Received: from DM6PR10MB4313.namprd10.prod.outlook.com (2603:10b6:5:212::20)
- by LV3PR10MB7964.namprd10.prod.outlook.com (2603:10b6:408:215::22) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8511.26; Mon, 10 Mar
- 2025 11:20:28 +0000
-Received: from DM6PR10MB4313.namprd10.prod.outlook.com
- ([fe80::4f45:f4ab:121:e088]) by DM6PR10MB4313.namprd10.prod.outlook.com
- ([fe80::4f45:f4ab:121:e088%6]) with mapi id 15.20.8511.026; Mon, 10 Mar 2025
- 11:20:27 +0000
-Message-ID: <cb7a9d18-c24d-4d90-881b-1914a760a378@oracle.com>
-Date: Mon, 10 Mar 2025 11:20:23 +0000
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 11/12] xfs: Update atomic write max size
-To: Carlos Maiolino <cem@kernel.org>
-Cc: brauner@kernel.org, djwong@kernel.org, linux-xfs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        ojaswin@linux.ibm.com, ritesh.list@gmail.com,
-        martin.petersen@oracle.com, tytso@mit.edu, linux-ext4@vger.kernel.org
-References: <20250303171120.2837067-1-john.g.garry@oracle.com>
- <2LEUjvzJ3RO3jyirsnti2pPKtOuVZZt-wKhzIi2mfCPwOESoN_SuN9GjHA4Iu_C4LRZQxiZ6dF__eT6u-p8CdQ==@protonmail.internalid>
- <20250303171120.2837067-12-john.g.garry@oracle.com>
- <bed7wptkueyxnjvaq4isizybxsagh7vb7nx7efcyamvtzbot5p@oqrij3ahq3vl>
- <QIPhZNej-x0SeCVuzuqhmRIPUPKvV7w_4DB3ehJ2dYmLS1kwYGIJi1F3F34dhPTCy6oBq_3O-4Kjxxt4cIiP9Q==@protonmail.internalid>
- <c2fdb9bb-e360-4ece-930d-bab4354f1abf@oracle.com>
- <egqflg5pygs4454uz2yjmoachsfwpl3jqlhfy3hp6feptnylcl@74aeqdedvira>
-Content-Language: en-US
-From: John Garry <john.g.garry@oracle.com>
-Organization: Oracle Corporation
-In-Reply-To: <egqflg5pygs4454uz2yjmoachsfwpl3jqlhfy3hp6feptnylcl@74aeqdedvira>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: LO4P265CA0105.GBRP265.PROD.OUTLOOK.COM
- (2603:10a6:600:2c3::7) To DM6PR10MB4313.namprd10.prod.outlook.com
- (2603:10b6:5:212::20)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89410192580;
+	Mon, 10 Mar 2025 11:21:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741605686; cv=none; b=uLC1HwLu+jGT6ASB2Z+hRRJoCdHJHvfeZuXwDAwnNpxNKHw/TZ5UGW+d9f10f4d/DW9XlKW1A9I0/aZTVjkuzXgm8hcHAYVX2ue3H1IrAbwb5MmkxmKGJW10wcBYFUxOzQ2XUxxD65dLT5nAPicsOQwg0+iC0HgeTCeMkRubiFQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741605686; c=relaxed/simple;
+	bh=v+cvV8TZEkE6O3ZZKhoW/Uc7tHVXvXIvFHQFcFDAq0g=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lOxA43ovbryKbfyLs7RtOdBtDfsYg2Z7Hfe9hWJWWOarlG+7Huw+uxOqwLwfCFz3SE8bswWbt69Puchg8FsnWqvUv3beSFi6uPalqlmJQz5/SayhNvH42HDlvjDVHracGHl70qu+6yI/l+H5JytQW9StDI+/GviTk8HGkIiyhi4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=KKBmAcFC; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=gSxstmZW7u9wIdflkH/88t3AUpEgJazDXuWXCe/+pcY=; b=KKBmAcFC+19/DrFQnVn1qKCeLW
+	5tf09XumaqPl+xN6DsBkc2bMnv6anCfxInbYc0OA/TZLtLTtzFotQ+0eZlv/Pltno41Kwk3nKe/4Z
+	9U996QoIYRONIvtGMCwYbvWI6lJMkuQ/yKBhFXiiTG7gjgHp0sf0ds8K5o+9Ql+mGtzy9vQRZ3H9Y
+	cy9Ej9R7ekPmDjq5z58JRehXoAFWiaxJkxtowpDvcBjMUh2EBvLF68LIEWV7DkfSTJ9nN6NQlBwD2
+	Dz2H/N81uHxoZJRDt2mg/6KNT8VCeK2p6b2iOTefqP7QuUJ0yUjvYbHuum3Lp6MgAAEEjwpUOiN5o
+	gzldPpmQ==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1trbC3-00000004E8e-1mO8;
+	Mon, 10 Mar 2025 11:21:11 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 2EBEC300269; Mon, 10 Mar 2025 12:21:10 +0100 (CET)
+Date: Mon, 10 Mar 2025 12:21:10 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: Boqun Feng <boqun.feng@gmail.com>
+Cc: Mikhail Gavrilov <mikhail.v.gavrilov@gmail.com>, dsterba@suse.cz,
+	Btrfs BTRFS <linux-btrfs@vger.kernel.org>,
+	Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+	Chris Murphy <lists@colorremedies.com>,
+	Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>,
+	Waiman Long <longman@redhat.com>,
+	Joel Fernandes <joel@joelfernandes.org>
+Subject: Re: BUG: MAX_LOCKDEP_CHAIN_HLOCKS too low!
+Message-ID: <20250310112110.GR16878@noisy.programming.kicks-ass.net>
+References: <CABXGCsN+BcaGO0+0bJszDPvA=5JF_bOPfXC=OLzMzsXY2M8hyQ@mail.gmail.com>
+ <20220726164250.GE13489@twin.jikos.cz>
+ <CABXGCsN1rzCoYiB-vN5grzsMdvgm1qv2jnWn0enXq5R-wke8Eg@mail.gmail.com>
+ <20230125171517.GV11562@twin.jikos.cz>
+ <CABXGCsOD7jVGYkFFG-nM9BgNq_7c16yU08EBfaUc6+iNsX338g@mail.gmail.com>
+ <Y9K6m5USnON/19GT@boqun-archlinux>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM6PR10MB4313:EE_|LV3PR10MB7964:EE_
-X-MS-Office365-Filtering-Correlation-Id: 33da4f42-72aa-4aa2-0967-08dd5fc58f4d
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|376014|366016|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?R0s1bnFwVkhURWNMK29ja2lxbnVOck5BcjRNOFJkWjdQVEZkOCtGZ21UWk9C?=
- =?utf-8?B?ZGNsSXZVMFl3UW5FVGVZNTVIdEZ6dHR6N0FiY3l6RDhkQzZIYVFaR3NFOTRE?=
- =?utf-8?B?V3dxYXc4S2U4ZlVRU3R3aHZMV28yM002OHo4ZDZ4UXpLVW0wU3FGRmpxamRU?=
- =?utf-8?B?enJNMnY5eG1qTW5BcFF0a1ZLMEMyZUhiNGJLcWhSeUh5OXBjMWJGN3NnNGc4?=
- =?utf-8?B?bjZCZUNaOFNYUys2NEdCUExpTHh0dzFlTVlPczFOL1FLSElnRkJvTW9UWHo4?=
- =?utf-8?B?Qm9jZjYxeGhWVVVGdlBLSmdxQjlNVEhXMVlkVWxwb2UxS3BnNHlLRGZEZHBL?=
- =?utf-8?B?and2Y1l5b1MreHZRVzMwMnlKNmJhMktRbTJJdDVsQW8xekpKNVk5Nk05NTlh?=
- =?utf-8?B?WXUrQkYzNnI4dUxQV1FUVWZxWDdVTW16Nlk4bXg3VTFNd0pRdWVPNDU2NEN5?=
- =?utf-8?B?TENpeVhrUk0raHk1OGRWak9IcmdUbVlQc2tlZnQ1VlV3WFB5ZlhXVGl1dzZj?=
- =?utf-8?B?UFhFdWZrRGMwSXdSWFhQZ0RjMFJLbFNvVC9jYVhTeHpzQkNEUnBZbE5iNDRm?=
- =?utf-8?B?dStIZlE4akR2VUo1aVA3Z0FLSjgvSmFqNVdyOGhZVjQ4dU0zNEI0US9pYkxn?=
- =?utf-8?B?b1hGdzczMFZiSDIyM05ETVRMWXFrL3NpaFFyWXA1SWswTkxqRjhkM1MyNWdt?=
- =?utf-8?B?MU0vakxINEtsWEtXbFU3ZDVhZ0lESUFPMGM0QjZtYysySXhHRUd3VFNCYkFP?=
- =?utf-8?B?RlZONWFaRFovdXVNUEVkSXU1bEVkdmhuSDh5N3Y3TWdjRllidUxWd2poSGF3?=
- =?utf-8?B?UzB0UUgveWJKcFRxZWhVdHcrd0RqTXpEbld1SVMrWUN2d0RwUzZMOERFSzRv?=
- =?utf-8?B?clVGSEpTSEI1UW52b3E4ZnpnRURJdi9mSE1WVXpkcFFkYmJnSzlOU2Y5bTli?=
- =?utf-8?B?NktPWWNDM2ZUZC9leXBDWnEzTWYzMURpSUNPZHhTaS9yTFVBRWt2clp6dU9u?=
- =?utf-8?B?Vmc2cGY4YzJxTHZjb091aTVvR3djcWY1U3loWkozVkNDSUh5ZnpPeWFSaXo5?=
- =?utf-8?B?S1pHOVJocllQbFFQVzZ4UDNnTjZyQm4wTkZ6cTRxMi9MY014dTNLWlZESGV5?=
- =?utf-8?B?R0VpcnFsRTB3TTJmVkZ1TmZTV3puTWdqM2JFWmtSUnUxMW1ZTXBIRDR1djhS?=
- =?utf-8?B?QnVTbVI0ZDhsOWRya1hRYklSWkFUYWxJQnNHVmJNUUlRbG5KNzZEdlVNRTZB?=
- =?utf-8?B?a0J6MDIvYTZ3aG5OTkJ4RDU3YWdDeHU0TDByc09Lb0tZOXZSZUVFZzJuaUdZ?=
- =?utf-8?B?TWNMYmpVMWxqbmkxVTlDUWhKeDZhOXZZakt1QTJ2UmVPQmF5R1ZjdFh3aHJi?=
- =?utf-8?B?NDd0ZkN0U1NXbWFnOWV6MThpenRmeE5Ua1Q2akxFbXplSHFhMHBMZEZoODBL?=
- =?utf-8?B?aTlYeVZVT3lNekNDSnRRTDBLU1YzdkswNXhNcTBmT09wRGVURU9KSHRDTVE2?=
- =?utf-8?B?OGM4SkFhT2N5YWRyczFxU2d2cmwzclVycUNYQUYwQ0dqaW5EYVR5cE9ibTZw?=
- =?utf-8?B?eDlnOTQ0eTd0U3o5ZXp5eDBBaU85R0c2WnBFVy9ZY1QyRkhwbnl6ZHdhSGxE?=
- =?utf-8?B?UmNEa2NGeHcyZ0tjeC9KR0cyT213Ni9lWmxhYzB3M1UyTnVwdlNZOEs4U29y?=
- =?utf-8?B?RUdSZGFTdjY3dnh6em5kRGpVUzg1c1lXcWJEaU5wODVINHowSDFDaDlYRWQ1?=
- =?utf-8?B?UTR4THZZNU1xdCsycHE5UFNxZzYzbTRGVjMxM20wb3JCQ1lkaFQxOGt6NHFM?=
- =?utf-8?B?MFY2VjFyYjJYQ0EwM2NPSjhocnZ5MXBMdVNJUVVIWGtPMFF5S21nM1BOMkZG?=
- =?utf-8?Q?HyIoX8UkIcyg1?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM6PR10MB4313.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(366016)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?bktGYmtPMFM5bmJRbXJVR3ZzNkQ1dFR5NldKc0JaZGwvMG5YVllZNmlvVnZX?=
- =?utf-8?B?TXpNSk1nZVlzUWNOeWxXSXhFbFFpenV0TUYvQ2Q5UXpOSDIrNXE3aWZsNDBI?=
- =?utf-8?B?WTZwbmJOeExpSFI3Y2tKK1hnNktHNjdPNTJjZjI0cHNpTzROb09sTDdRTEFr?=
- =?utf-8?B?UlhDVisyRnZ1SWRmTUgxR1RhSHVyYVdxdXlBNlNzK2JzaFpibUJ4UEtIUGl6?=
- =?utf-8?B?RDZSdDJURTNPQXlOelFXQzMxdmNydXRndGp4SlRRVnRQL2t5aHdOZ2cybTIr?=
- =?utf-8?B?NFhrTUhWR1pERytvQmxnSms1ZHBZdFd0aGRCZkV3b1pxNTVkNThEUHdRL2VO?=
- =?utf-8?B?U1d1TEVDdlRIQWdLRWQwVUhGN20zN2x0U2pUT2oycVYrbHM0M2R2Y2oyTVlQ?=
- =?utf-8?B?ZmxwcDBXcjcxOFh2OWZONkNONERMWEZLUVBybEpWVEdqN29pNzdPVEJoK1Fw?=
- =?utf-8?B?cmh3c2g3dFg3RGVrZW9VQUdVbFBGemlUVTV1VUVtR1FaNzdMZnV5MzFGZDEz?=
- =?utf-8?B?VW44dlN1OXRQTUV5RktEb2wwdi9IWm5HVy9tcElyZnNRdCtrWnB2Z3VEVFVy?=
- =?utf-8?B?bkZiWUhkYy9oOWZIa2Zmd1g1TUlYL3d2NzY3cjlXb1F5NjQrRWswM0xQa1d0?=
- =?utf-8?B?Z2dobDdIblNTbUl6ZFlOOUtsNVRSNktkMHFDMlJlMmFJekJ2TW5MYk9CWitj?=
- =?utf-8?B?Yjd5R1hnR0VYelJmOE0wenhzOXcyVUt1WUlNeEtZRlNSVWlRK3h0bU5wRkN0?=
- =?utf-8?B?ZFRWVDBGbzFwSGJGY2VDTjlqQmdBQWpUR2VvWTllK2ZyZHkyUDRZT0lIQkhn?=
- =?utf-8?B?OUxWNXN1OGxDRnRvNW53aTdXK0RLN0xMZ1cybk5vRFVEU2FSazErNzdZVmhG?=
- =?utf-8?B?dVJDVjZYQ2JhWDlZL2VBdVc0ZmFpL2UxdHRRU25BY0VrRXBYYmswQ3JmckhY?=
- =?utf-8?B?d3h4V2lXK1FBT05qejg0YVUzWWh3MTNLSUpGZVd3NkZvMXlNb0QyYVFIWFdZ?=
- =?utf-8?B?cEFoWmsvamZCMzhYUXNzTkNFdFFRdE53WU4wTDFKQjk5ZE4weHgwL01BbEtY?=
- =?utf-8?B?OGdFWmpWUUY5RndqanliTzh4U3V3aDJPVWplMG5vSmdBYUVNTkgrcEdHYkxZ?=
- =?utf-8?B?aGJGTFpKbFpIVnN4TFB1VXkzQW9GOWpOUEJvelMrbTYvVUZzd0FOOHptUldJ?=
- =?utf-8?B?OExYTi9EbGN6dElPY1FPaDN5Mk5FWk00NXpFMW5OTjEzcmIrSUp3TVZtL0F4?=
- =?utf-8?B?L0RwSDIySTlKcVlzZTlSY0I1VjRDQW1uY3FCa2orY3lseWg1bzEvRURjeC9z?=
- =?utf-8?B?cFhGb3R2a1VTTkJNcElwUEw5NDAzYUUvYXJkRloyZE0yVVhzQ3djYnd2QnVO?=
- =?utf-8?B?RVI3S3V0SDJNUjFydSsxTnFQckpuU1owSFBxWVRyL1JKYTJwdGtPMFYvaTM3?=
- =?utf-8?B?ZmdNSVpxMWg2aHBTVnlGd0ZqclZNNUVrQ1JlVFZxNzQ4Q1NaMVVkK0dSOUpX?=
- =?utf-8?B?YlBkN1hSRDF4Q1lFSXBQQ1kySGhILzE3bjZIRWlWdEI0K2cyNFBld3hDK3Ri?=
- =?utf-8?B?aDFzNWkwZzRQMlRYMlpPZUlTeTZPcmV6a2ZiSVZZTk5hRkJuL2V4bHk4Q1BY?=
- =?utf-8?B?d01QSjc2NTlRK01rZ3dxYmVPK3E5bk84bWZGK2JpNGUwaWdsTmEzdlNUaVRL?=
- =?utf-8?B?K3hLZU9BL0tVaHFkM3FEbkM2VzRRZjllOHBRT1RCU1lxZWU4TkZRdTVxN2Zm?=
- =?utf-8?B?OG90THlZcjBub3ptekpkcFY1MmloM2hsTjI4ZTNFSmJ0NE9NVDZGc3FBZXRX?=
- =?utf-8?B?dUR0SlA2aGg1UUk2dlk1dmdqbW1MdkhoQWFtTDJ5UXg3cXJJNENkY0dNc3NL?=
- =?utf-8?B?cHB0Tkh4OFNqZTBFVFBBQk5FWE13N3A3bkhIN25OTHlROEJRcVpNdklST1BP?=
- =?utf-8?B?Zi9wWVJNMTFqMUFDcmttU3BWd3lOT3FJNTJROWphcnB0WU9FVG5PeDhLa2Vo?=
- =?utf-8?B?NnVya1FtUW5hb2xualpuWThXNU4vcDF3Z2lHUjJrNVcxU0VPTjV4aXFJM2F2?=
- =?utf-8?B?UVF0NVJnR2IwT00wTUp6bFVzTFF5Syt5OTJJVXdRWkVzNnRaN29sMXgrVS9r?=
- =?utf-8?B?Q1I5SzFKZTNvM1Jla3d5Mlp2QkJGS0Z2QjlEdkJYZ1crYkJRK1NiUXNiUXpr?=
- =?utf-8?B?NVE9PQ==?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	kfS+MldbjyyAQd6qadq1K0EqNPsqvHGiyRsfqN1seUZd00sWjtptN9/F5KKAUtXw0Rr++AiB102uULw7WiH6jJZD4C5+4Sp8ynORj3Tcnzp+J/i9Rs6N/kvSzRqnIBfRG/2JXCkYlEchBd7bhbgpiQM1ks95avPKQiCwkK4FOIxhV2buF6xoglCoxEBzvf0Rg6Lef4FAKSpP/25b0WZc8DlTnsscYkncOYXGnM8MCrCn+1Yz29ti26q3VttZodNpYMgbdWa4Q+aqRar2SUP0faUei/iiDlzXMMPMzI6gc4Du5P51U+xPwNbYicNy9OO5JCpaG2fuUMF2xBoQ6fmbZEJj0WfFxHaeHR3JEurgblJUdTxAHU8IhuDb3dGUMnnTZgNV0oG9w240Jpwq+b8muaoGbaTjTnFN1uFlqON63hBaGqPtl0kv1ktC7+4J3NyfmUhyx4s05aAvyybAwtk5XfaJM3FgTU3AZ53PcCb4a/Eew9Zm/I/kWQYGIGju45U3/b9uPoakCo3teiIb7XrNYQZKa8yfZRfsY5IZgdQjNIyBFrUqbgaP/sBupUjxvCpXUeaO/U5RPVjlGIA8d7devZa87aTUqBUQMe5dGK4LVA0=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 33da4f42-72aa-4aa2-0967-08dd5fc58f4d
-X-MS-Exchange-CrossTenant-AuthSource: DM6PR10MB4313.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Mar 2025 11:20:27.5916
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: Vrtwn8hyXx+OCDdEKYAfbdHdBMMWpMCm2h8MBDjK+9PAwvlypVvGhZd2sa8f/jy6jzExO3XyXuKTL4QMMDpyZw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV3PR10MB7964
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-10_04,2025-03-07_03,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0 spamscore=0 phishscore=0
- adultscore=0 mlxscore=0 mlxlogscore=999 malwarescore=0 suspectscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2502100000
- definitions=main-2503100090
-X-Proofpoint-GUID: HnDIf_cHSAMtd7eDeLggE-yaa3ErybIP
-X-Proofpoint-ORIG-GUID: HnDIf_cHSAMtd7eDeLggE-yaa3ErybIP
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Y9K6m5USnON/19GT@boqun-archlinux>
 
-On 10/03/2025 11:11, Carlos Maiolino wrote:
-> On Mon, Mar 10, 2025 at 10:54:23AM +0000, John Garry wrote:
->> On 10/03/2025 10:06, Carlos Maiolino wrote:
->>>> diff --git a/fs/xfs/xfs_mount.h b/fs/xfs/xfs_mount.h
->>>> index fbed172d6770..bc96b8214173 100644
->>>> --- a/fs/xfs/xfs_mount.h
->>>> +++ b/fs/xfs/xfs_mount.h
->>>> @@ -198,6 +198,7 @@ typedef struct xfs_mount {
->>>>    	bool			m_fail_unmount;
->>>>    	bool			m_finobt_nores; /* no per-AG finobt resv. */
->>>>    	bool			m_update_sb;	/* sb needs update in mount */
->>>> +	xfs_extlen_t		awu_max;	/* data device max atomic write */
->>> Could you please rename this to something else? All fields within xfs_mount
->>> follows the same pattern m_<name>. Perhaps m_awu_max?
->> Fine, but I think I then need to deal with spilling multiple lines to
->> accommodate a proper comment.
->>
->>> I was going to send a patch replacing it once I had this merged, but giving
->>> Dave's new comments, and the conflicts with zoned devices, you'll need to send a
->>> V5, so, please include this change if nobody else has any objections on keeping
->>> the xfs_mount naming convention.
->> What branch do you want me to send this against?
-> I just pushed everything to for-next, so you can just rebase it against for-next
-> 
-> Notice this includes the iomap patches you sent in this series which Christian
-> picked up. So if you need to re-work something on the iomap patches, you'll
-> probably need to take this into account.
+On Thu, Jan 26, 2023 at 09:38:35AM -0800, Boqun Feng wrote:
 
-Your branch includes the iomap changes, so hard to deal with.
+> *	warn but not turn off the lockdep: the lock holding chain is
+> 	only a cache for what lock holding combination lockdep has ever
+> 	see, we also record the dependency in the graph. Without the
+> 	lock holding chain, lockdep can still work but just slower.
 
-For the iomap change, Dave was suggesting a name change only, so not a 
-major issue.
+Quite a bit slower, but yeah you can give it a try.
 
-So if we really want to go with a name change, then I could add a patch 
-to change the name only and include in the v5.
+> *	allow dynmaic memory allocation in lockdep: I think this might
+> 	be OK since we have lockdep_recursion to avoid lockdep code ->
+> 	mm code -> lockdep code -> mm code ... deadlock. But maybe I'm
+> 	missing something. And even we allow it, the use of memory
+> 	doesn't change, you will still need that amout of memory to
+> 	track lock holding chains.
 
-Review comments are always welcome, but I wish that they did not come so 
-late...
+I'm not sure what you're proposing, we cannot allocate from the
+__lock_acquire context, which is where you establish the new chain and
+find you're out of storage.
 
-Thanks,
-John
+I suppose you're thinking about doing the above, skipping caching the
+chain and then trying a re-alloc asynchronously?
+
+Anyway, even if we get that to work, we really should keep an eye out
+for silly patterns. Yes, the ever growing pool of locks means that per
+combinatorics we'll have more chains, we still should avoid silly.
+
+
+Notably, looking at my lockdep_chains just now, I notice daft stuff
+like:
+
+irq_context: 0
+[ffffffff849642f0] &pmus_srcu
+
+irq_context: 0
+[ffffffff849642f0] &pmus_srcu
+[ffffffff849642f0] &pmus_srcu
+
+irq_context: 0
+[ffffffff849642f0] &pmus_srcu
+[ffffffff849642f0] &pmus_srcu
+[ffffffff832177a8] pmc_reserve_mutex
+
+irq_context: 0
+[ffffffff849642f0] &pmus_srcu
+[ffffffff849642f0] &pmus_srcu
+[ffffffff832177a8] pmc_reserve_mutex
+[ffffffff83320ac0] fs_reclaim
+
+irq_context: 0
+[ffffffff849642f0] &pmus_srcu
+[ffffffff849642f0] &pmus_srcu
+[ffffffff832177a8] pmc_reserve_mutex
+[ffffffff83320ac0] fs_reclaim
+[ffffffff833238c0] mmu_notifier_invalidate_range_start
+
+
+Similarly:
+
+irq_context: softirq
+[ffffffff84957a70] rcu_read_lock
+[ffffffff84957a70] rcu_read_lock
+[ffffffff849c0801] slock-AF_INET/1
+[ffffffff84957a70] rcu_read_lock
+[ffffffff84957a70] rcu_read_lock
+[ffffffff84957a60] rcu_read_lock_bh
+[ffffffff849c38e0] dev->qdisc_tx_busylock ?: &qdisc_tx_busylock
+[ffff888103bdf290] &sch->root_lock_key#3
+
+and:
+
+irq_context: 0
+[ffffffff83393d18] &inode->i_sb->s_type->i_mutex_dir_key
+[ffffffff84957a70] rcu_read_lock
+[ffffffff84957a70] rcu_read_lock
+[ffffffff84957a70] rcu_read_lock
+[ffffffff83ec00c0] &pool->lock
+[ffffffff83ebf240] &p->pi_lock
+[ffffffff83ec2a80] &rq->__lock
+[ffffffff849587b0] &____s->seqcount
+
+and:
+
+irq_context: 0
+[ffff888106344b38] (wq_completion)usb_hub_wq
+[ffffffff849b7700] (work_completion)(&hub->events)
+[ffffffff83ec6070] &dev->mutex
+[ffffffff83ec6070] &dev->mutex
+[ffffffff83ec6070] &dev->mutex
+[ffffffff83ec6070] &dev->mutex
+[ffffffff83438d68] dquirks_lock
+
+All get extra chains because of the arguably pointless duplication in
+held locks.
+
+
+
+Also, WTF is up with this lock name: :-)
+
+irq_context: softirq
+[ffffffff84965400] &(({ do { const void *__vpp_verify = (typeof((&vmstat_work) + 0))((void *)0); (void)__vpp_verify; } while (0); ({ unsigned long __ptr; __asm__ ("" : "=r"(__ptr) : "0"((typeof(*((&vmstat_work))) *)(( unsigned long)((&vmstat_work))))); (typeof((typeof(*((&vmstat_work))) *)(( unsigned long)((&vmstat_work))))) (__ptr + (((__per_cpu_offset[(cpu)])))); }); }))->timer
+
+
+
+It might make sense to collapse the rcu locks and count them at the
+first instance, instead of tracking them all on the held stack, hmm?
+
+Something a little like the below. I suppose the only problem here is
+that we might miss the wait_type check, although I suppose we muck stuff
+around a bit more.
+
+This isn't going to fix any big amount of resource usage; but all little
+bits help, right :-)
+
+---
+diff --git a/include/linux/lockdep_types.h b/include/linux/lockdep_types.h
+index 9f361d3ab9d9..a9849fea263b 100644
+--- a/include/linux/lockdep_types.h
++++ b/include/linux/lockdep_types.h
+@@ -81,6 +81,7 @@ struct lock_class_key {
+ 
+ extern struct lock_class_key __lockdep_no_validate__;
+ extern struct lock_class_key __lockdep_no_track__;
++extern struct lockdep_map    __lockdep_default_nest__;
+ 
+ struct lock_trace;
+ 
+diff --git a/include/linux/rcupdate.h b/include/linux/rcupdate.h
+index 48e5c03df1dd..2c6b3b0da4f1 100644
+--- a/include/linux/rcupdate.h
++++ b/include/linux/rcupdate.h
+@@ -334,12 +334,12 @@ extern struct lockdep_map rcu_callback_map;
+ 
+ static inline void rcu_lock_acquire(struct lockdep_map *map)
+ {
+-	lock_acquire(map, 0, 0, 2, 0, NULL, _THIS_IP_);
++	lock_acquire(map, 0, 0, 2, 0, &__lockdep_default_nest__, _THIS_IP_);
+ }
+ 
+ static inline void rcu_try_lock_acquire(struct lockdep_map *map)
+ {
+-	lock_acquire(map, 0, 1, 2, 0, NULL, _THIS_IP_);
++	lock_acquire(map, 0, 1, 2, 0, &__lockdep_default_nest__, _THIS_IP_);
+ }
+ 
+ static inline void rcu_lock_release(struct lockdep_map *map)
+diff --git a/include/linux/srcu.h b/include/linux/srcu.h
+index d7ba46e74f58..bcfba95fe14d 100644
+--- a/include/linux/srcu.h
++++ b/include/linux/srcu.h
+@@ -161,7 +161,7 @@ static inline int srcu_read_lock_held(const struct srcu_struct *ssp)
+ /* Annotates a srcu_read_lock() */
+ static inline void srcu_lock_acquire(struct lockdep_map *map)
+ {
+-	lock_map_acquire_read(map);
++	lock_acquire(map, 0, 0, 2, 0, &__lockdep_default_nest__, _THIS_IP_);
+ }
+ 
+ /* Annotates a srcu_read_lock() */
+diff --git a/kernel/locking/lockdep.c b/kernel/locking/lockdep.c
+index b15757e63626..d0c5799763cd 100644
+--- a/kernel/locking/lockdep.c
++++ b/kernel/locking/lockdep.c
+@@ -5003,6 +5003,9 @@ EXPORT_SYMBOL_GPL(__lockdep_no_validate__);
+ struct lock_class_key __lockdep_no_track__;
+ EXPORT_SYMBOL_GPL(__lockdep_no_track__);
+ 
++struct lockdep_map __lockdep_default_nest__ = { .name = "__lockdep_default_nest__" };
++EXPORT_SYMBOL_GPL(__lockdep_default_nest__);
++
+ #ifdef CONFIG_PROVE_LOCKING
+ void lockdep_set_lock_cmp_fn(struct lockdep_map *lock, lock_cmp_fn cmp_fn,
+ 			     lock_print_fn print_fn)
+@@ -5067,6 +5070,9 @@ print_lock_nested_lock_not_held(struct task_struct *curr,
+ 
+ static int __lock_is_held(const struct lockdep_map *lock, int read);
+ 
++static struct held_lock *find_held_lock(struct task_struct *curr,
++					struct lockdep_map *lock,
++					unsigned int depth, int *idx);
+ /*
+  * This gets called for every mutex_lock*()/spin_lock*() operation.
+  * We maintain the dependency maps and validate the locking attempt:
+@@ -5099,6 +5105,7 @@ static int __lock_acquire(struct lockdep_map *lock, unsigned int subclass,
+ 	if (!prove_locking || lock->key == &__lockdep_no_validate__) {
+ 		check = 0;
+ 		lockevent_inc(lockdep_nocheck);
++		nest_lock = &__lockdep_default_nest__;
+ 	}
+ 
+ 	if (subclass < NR_LOCKDEP_CACHING_CLASSES)
+@@ -5138,10 +5145,16 @@ static int __lock_acquire(struct lockdep_map *lock, unsigned int subclass,
+ 
+ 	class_idx = class - lock_classes;
+ 
+-	if (depth && !sync) {
+-		/* we're holding locks and the new held lock is not a sync */
+-		hlock = curr->held_locks + depth - 1;
+-		if (hlock->class_idx == class_idx && nest_lock) {
++	if (nest_lock && depth && !sync) {
++		if (nest_lock == &__lockdep_default_nest__) {
++			hlock = find_held_lock(curr, lock, depth, NULL);
++		} else {
++			hlock = curr->held_locks + depth - 1;
++			if (hlock->class_idx != class_idx)
++				hlock = NULL;
++		}
++
++		if (hlock) {
+ 			if (!references)
+ 				references++;
+ 
+@@ -5222,7 +5235,9 @@ static int __lock_acquire(struct lockdep_map *lock, unsigned int subclass,
+ 	}
+ 	chain_key = iterate_chain_key(chain_key, hlock_id(hlock));
+ 
+-	if (nest_lock && !__lock_is_held(nest_lock, -1)) {
++	if (nest_lock &&
++	    nest_lock != &__lockdep_default_nest__ &&
++	    !__lock_is_held(nest_lock, -1)) {
+ 		print_lock_nested_lock_not_held(curr, hlock);
+ 		return 0;
+ 	}
+@@ -5366,7 +5381,8 @@ static struct held_lock *find_held_lock(struct task_struct *curr,
+ 	}
+ 
+ out:
+-	*idx = i;
++	if (idx)
++		*idx = i;
+ 	return ret;
+ }
+ 
 
