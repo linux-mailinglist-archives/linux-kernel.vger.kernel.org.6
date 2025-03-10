@@ -1,138 +1,101 @@
-Return-Path: <linux-kernel+bounces-554522-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-554520-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 80C17A5993F
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 16:11:48 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 25CE8A5993A
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 16:11:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2CA9C7A6E99
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 15:10:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C467F188A972
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 15:11:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71BAA22B5AB;
-	Mon, 10 Mar 2025 15:11:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="UR/FD+r+"
-Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.2])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 153C222D4DC;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96B6822CBCC;
 	Mon, 10 Mar 2025 15:11:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.2
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=janestreet.com header.i=@janestreet.com header.b="M11WnA1F"
+Received: from mxout5.mail.janestreet.com (mxout5.mail.janestreet.com [64.215.233.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA44622541D
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 15:11:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=64.215.233.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741619474; cv=none; b=atFanMx5pL6+ud/gGzd/RgstUjXBbGgyMjiQCgv5CFC4ih3Fw3Kbl51BpYz6N8WXcXWLzrQh4ShNA7A+imdv7SCYLImxbt1UlecrX/sdlBpO4LcAPYIYxxmTNzly9tA3gXwZsJLtDhnOM4doGC0u9YKzUguX/KPcuOxYqVe65e4=
+	t=1741619471; cv=none; b=S8Z4oSuyy6AC4Kg5x8zz39MoXOCVQJ5h5kJSiHVNJfu53rpHHbxievyjrBl0cX793CMu7EAk1pj3jGT22HCKXo3C9zNXb8gzJb1iXC1v2ysDgb2cXhG3xG/uOwZRLcspZBGhWbAiQKoIjJEao446mC8TlbJlbQeXHpWPYHhDsqk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741619474; c=relaxed/simple;
-	bh=QMcsbQVKT+fiuPq7AGkPf+0PAMbG6qvWcqcMmQ+Wr0c=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=sfy1RXIV/hoe3cCJDzpI6EGb1Mt14ifGvBvbO+jgf8lec5ai+jBVICDiq0+2wrACSvyWqtZugQc11HsnL3o0OxSqpZJjLBmxTd7PO0EYyQqqXkjxS/fjZPGJKR+chD9ctXFzlOynkFkZatwZAUaQZbbj4jWseoxw3KObU4n+D1k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=UR/FD+r+; arc=none smtp.client-ip=117.135.210.2
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=Message-ID:Date:MIME-Version:Subject:From:
-	Content-Type; bh=RJdV8dINmj0DyHz22Fro0RD9n3L+kRh/ucEwMBwHgpM=;
-	b=UR/FD+r+IyZhYJy7xAFkU4MSoKiS3ogTViwPKaS2CYi2flIrr1M7I/cpImtpEr
-	bEJor8ITunQwdcql9KgAlUXT8StrXUqU+Nh4TpBatwBO47+WsMw7GpIgzgK7yceQ
-	np49Tk/ncox8QaK5kjwWg+8SEFAIdSi7Icrc8e3ikeRqk=
-Received: from [192.168.71.45] (unknown [])
-	by gzga-smtp-mtada-g1-0 (Coremail) with SMTP id _____wDnvyTAAM9nvU1pRw--.5995S2;
-	Mon, 10 Mar 2025 23:09:53 +0800 (CST)
-Message-ID: <9eee0ab5-d870-451d-bf38-41578f487854@163.com>
-Date: Mon, 10 Mar 2025 23:09:54 +0800
+	s=arc-20240116; t=1741619471; c=relaxed/simple;
+	bh=sagrptvYS45f2KkZS4wyUyei87EBblAN2ua2KPLJjpY=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=Sr+4g2TQ0fQvAg9NuBNLbtpDm5Tk1VDicohEw0CRIds9pOsNBVN32HRgyrqbamsd+gs7GA1wmRzxZzD3j4RW5W8DtKoDk9Lo/ZuPzQ7f/URFC3stKa7CLcDH6nYgUGAo5dUx81s8aNulBilbBwLvF+gE4q8BT/2SPefJqeGgyRM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=janestreet.com; spf=pass smtp.mailfrom=janestreet.com; dkim=pass (2048-bit key) header.d=janestreet.com header.i=@janestreet.com header.b=M11WnA1F; arc=none smtp.client-ip=64.215.233.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=janestreet.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=janestreet.com
+Date: Mon, 10 Mar 2025 11:11:02 -0400
+From: Nikhil Jha <njha@janestreet.com>
+To: njha@janestreet.com
+Cc: Trond Myklebust <trondmy@kernel.org>, Anna Schumaker <anna@kernel.org>,
+ 	Chuck Lever <chuck.lever@oracle.com>,
+ 	Jeff Layton <jlayton@kernel.org>, Neil Brown <neilb@suse.de>,
+ 	Olga Kornievskaia <okorniev@redhat.com>,
+ 	Dai Ngo <Dai.Ngo@oracle.com>, Tom Talpey <tom@talpey.com>,
+ 	linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 0/2] fix gss seqno handling to be more rfc-compliant
+Message-ID: <20250310A15110284b71e58.njha@janestreet.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [v2] PCI: cadence: Add configuration space capability search API
-To: Siddharth Vadapalli <s-vadapalli@ti.com>
-Cc: lpieralisi@kernel.org, kw@linux.com, manivannan.sadhasivam@linaro.org,
- robh@kernel.org, bhelgaas@google.com, bwawrzyn@cisco.com,
- thomas.richard@bootlin.com, wojciech.jasko-EXT@continental-corporation.com,
- linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250308133903.322216-1-18255117159@163.com>
- <20250309023839.2cakdpmsbzn6pm7g@uda0492258>
- <3e6645a8-6de9-4125-8444-fa1a4f526881@163.com>
- <20250309054835.4ydiq4xpguxtbvkf@uda0492258>
- <bf9fc865-58b9-45ed-a346-ce82899d838c@163.com>
- <20250309100243.ihrxe6vfdugzpzsn@uda0492258>
-Content-Language: en-US
-From: Hans Zhang <18255117159@163.com>
-In-Reply-To: <20250309100243.ihrxe6vfdugzpzsn@uda0492258>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:_____wDnvyTAAM9nvU1pRw--.5995S2
-X-Coremail-Antispam: 1Uf129KBjvJXoWxGF4fAFy8Xr1xZF1UWry5CFg_yoW5AF18pF
-	4Dtryay3WDJa1fZ3s7Ww4vgFyfZ3s7Jw15GF98Kwn5AwsIga42kF4Yyr1rua9rCrZ2qF1j
-	vrW3Xas7CFZ8JaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07UVMKtUUUUU=
-X-CM-SenderInfo: rpryjkyvrrlimvzbiqqrwthudrp/xtbBDwsMo2fO+J-xnQAAsJ
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=janestreet.com;
+  s=waixah; t=1741619462;
+  bh=8+j4RZQxEvPp50n/z3AP4/HWcFwA5ubLD58W/xz/5cI=;
+  h=Date:From:To:Cc:Subject;
+  b=M11WnA1FgrQPOLsZ2FIwMG5sk/gf2v6X65fqWb+RvQbr33rTSTmP7ZuIzNHUlCMSY
+  tbqeEfHXmms1lM8CbnvQYCoPddYFarOb9qYNUeBdqyju2TpOoEoR7j0BhhGpIdqIUs
+  eB7zHoGMZQ/qd+5c2BBkNv1FUeGwH3MSIeu7H7zHpA3fVorQmz501gGOGcjJLCISou
+  H7Qeb5tB3Bd1fl51nzObEBmR2PStPo4Z0tTjaWIg918Ef810mMMjIveoGGMRfxE7pv
+  LYYrYyUHfQLAGdE0nr5gyEZsvNyq642CNABb5dBgcjNX3l/i+3kw2zOW58GOdsDu0O
+  4T/SnH2jjmVWQ==
 
+When the client retransmits an operation (for example, because the
+server is slow to respond), a new GSS sequence number is associated with
+the XID. In the current kernel code the original sequence number is
+discarded. Subsequently, if a response to the original request is
+received there will be a GSS sequence number mismatch. A mismatch will
+trigger another retransmit, possibly repeating the cycle, and after some
+number of failed retries EACCES is returned.
 
+RFC2203, section 5.3.3.1 suggests a possible solution... “cache the
+RPCSEC_GSS sequence number of each request it sends” and "compute the
+checksum of each sequence number in the cache to try to match the
+checksum in the reply's verifier." This is what FreeBSD’s implementation
+does (rpc_gss_validate in sys/rpc/rpcsec_gss/rpcsec_gss.c).
 
-On 2025/3/9 18:02, Siddharth Vadapalli wrote:
->> Hi Siddharth,
->>
->> Prior to this patch, I don't think hard-coded is that reasonable. Because
->> the SOC design of each company does not guarantee that the offset of each
->> capability is the same. This parameter can be configured when selecting PCIe
->> configuration options. The current code that just happens to hit the offset
->> address is the same.
-> 
-> 1. You are modifying the driver for the Cadence PCIe Controller IP and
-> not the one for your SoC (a.k.a the application/glue/wrapper driver).
-> 2. The offsets are tied to the Controller IP and not to your SoC. Any
-> differences that arise due to IP Integration into your SoC should be
-> handled in the Glue driver (the one which you haven't upstreamed yet).
-> 3. If the offsets in the Controller IP itself have changed, this
-> indicates a different IP version which has nothing to do with the SoC
-> that you are using.
-> 
-> Please clarify whether you are facing problems with the offsets due to a
-> difference in the IP Controller Version, or due to the way in which the IP
-> was integrated into your SoC.
-> 
+However, even with this cache, retransmits directly caused by a seqno
+mismatch can still cause a bad message interleaving that results in this
+bug. The RFC already suggests ignoring incorrect seqnos on the server
+side, and this seems symmetric, so this patchset also applies that
+behavior to the client as well.
 
-Hi Siddharth,
+These two patches are *not* dependent on each other. I tested them by
+delaying packets with a Python script hooked up to NFQUEUE. If it would
+be helpful I can send this script along as well.
 
-I have consulted several PCIe RTL designers in the past two days. They 
-told me that the controller IP of Synopsys or Cadence can be configured 
-with the offset address of the capability. I don't think it has anything 
-to do with SOC, it's just a feature of PCIe controller IP. In 
-particular, the number of extended capability is relatively large. When 
-RTL is generated, one more configuration may cause the offset addresses 
-of extended capability to be different. Therefore, it is unreasonable to 
-assign all the offset addresses in advance.
+Nikhil Jha (2):
+  sunrpc: implement rfc2203 rpcsec_gss seqnum cache
+  sunrpc: don't retransmit on seqno events
 
-Here, I want to make Cadence PCIe common driver more general. When we 
-keep developing new SoCs, the capability or extended capability offset 
-address may eventually be inconsistent.
+ include/linux/sunrpc/xprt.h    | 31 +++++++++++++++++++++++++++++-
+ net/sunrpc/auth_gss/auth_gss.c | 35 +++++++++++++++++++++++-----------
+ net/sunrpc/clnt.c              |  9 +++++++--
+ net/sunrpc/xprt.c              |  1 +
+ 4 files changed, 62 insertions(+), 14 deletions(-)
 
-Thank you very much Siddharth for discussing this patch with me. I would 
-like to know what other maintainers have to say about this.
-
->>
->> You can refer to the pci_find_*capability() or dw_pcie_find_*capability API.
->> The meaning of their appearance is the same as what I said, and the design
->> of each company may be different.
-> 
-> These APIs exits since there are multiple users with different Controllers
-> (in the case of pci_find_*capability()) or different versions of the
-> Controller (in the case of dw_pcie_find_*capability) due to which we cannot
-> hard-code offsets. In the case of the Cadence PCIe Controller, I see only
-> one user in Upstream Linux at the moment which happens to be the
-> "pci-j721e.c" driver. Maybe there are other users, but the offsets seem
-> to be compatible with their SoCs in that case.
-
-Yes. Cadence definitely has a lot of customers, and from what I 
-understand, not every customer wants to go upstream on their drive. Most 
-of these customers are just local modifications, probably mimicking the 
-API that the dwc driver already uses. We are, for example.
-
-Best regards,
-Hans
-
+-- 
+2.39.3
 
 
