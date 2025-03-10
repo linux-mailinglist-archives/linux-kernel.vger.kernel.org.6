@@ -1,114 +1,97 @@
-Return-Path: <linux-kernel+bounces-553835-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-553836-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70866A58FA4
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 10:29:00 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1B863A58FA6
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 10:29:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C5ED73AD4EE
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 09:28:47 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A41AC7A5A51
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 09:28:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 028672253F8;
-	Mon, 10 Mar 2025 09:28:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="moRUW5ZQ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 485F82253A7;
-	Mon, 10 Mar 2025 09:28:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B1072253EA;
+	Mon, 10 Mar 2025 09:29:09 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2EBA224B08;
+	Mon, 10 Mar 2025 09:29:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741598929; cv=none; b=jT9sAHGBtI88I7itggDIKZ6dh/DqlW21K/ebQk1hQKQ+SwSripX9ia6xOgpXgkJNq9FH0qR/zfn1/2ikNdLhumkQt1E9NrOnZGxv76V4RoVlR8PLMvfFVam8yZUpRlsLj7u/6pm/tk/RUa4uo12jKRC1yMBeqZ8kOI0Sdl8sg+k=
+	t=1741598949; cv=none; b=cjqTiBxaVV6TaHpkGkP21RyJHv+2zMxwT+EhNnwn99Y6yO4faTlP5CZMQSbJ9KzgtluxwoQSLWEZhs7iDGkEe8Fq7uuS7kQA2eN9TEeDQG8S6ENdgbCfuiP+i/XY1sBVcjL5zIU9gKTBsYwmg1HD0OJmfFH97trcDc8K3LR7/XA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741598929; c=relaxed/simple;
-	bh=5mwoTd08jCfdUhN4DoQ/o5bTO+/4KPbpIou7ZLK5CwE=;
+	s=arc-20240116; t=1741598949; c=relaxed/simple;
+	bh=uZM3lp58dqP9fRo8T3M/Fyf3CLx9G0+yBPauwPD1UJc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nzRqZHjxEwhj8LswIctDdtLWV4r6ogvy2p60FQ08raHR6xqCCSpi2RDJbu6nOMrSBBxufMCO6MhhbzJ9Cr8iU5qn3yAhB3K+/Ddzjl76JU96TqmV9kSBG0RtJXWro40nuc9a1esClJaV7BJ8NO83pGEtnBJiblgmcfK6EJ37jPg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=moRUW5ZQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B3263C4CEE5;
-	Mon, 10 Mar 2025 09:28:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741598928;
-	bh=5mwoTd08jCfdUhN4DoQ/o5bTO+/4KPbpIou7ZLK5CwE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=moRUW5ZQ40mb3/aIpiaUN9HkU77pvem3k8eDxlSM/9lZUaUKukj4CqhZvUe9L77zC
-	 MN+2vbTMTU3+BLE/2ld0UBhKQS5/ba81SV2HVw+ZA3Yz3md1rj9n1oi/rIFpS0ceFQ
-	 /omVZU4PqA9TWL9LfJuqg6P7RCJQ6/BrSt2q3h2CoPNyi/He613YCzZB27Pff6NEjc
-	 YXtecGZz5NtbHWv7fAKwgV9RUZ+ou62yHAHyS6MQV1nL5vhT4TzAPYYIv5ECh/jAne
-	 /yZ6tNsiGfzxvB4H1/ph9rTQtybZmAJtNlXrF3KTZChZqotBBafZrkqj9bmZ4otaFP
-	 DxO9pUqVWT11A==
-Date: Mon, 10 Mar 2025 10:28:44 +0100
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Roman Kisel <romank@linux.microsoft.com>
-Cc: arnd@arndb.de, bhelgaas@google.com, bp@alien8.de, 
-	catalin.marinas@arm.com, conor+dt@kernel.org, dave.hansen@linux.intel.com, 
-	decui@microsoft.com, haiyangz@microsoft.com, hpa@zytor.com, joey.gouly@arm.com, 
-	krzk+dt@kernel.org, kw@linux.com, kys@microsoft.com, lenb@kernel.org, 
-	lpieralisi@kernel.org, manivannan.sadhasivam@linaro.org, mark.rutland@arm.com, 
-	maz@kernel.org, mingo@redhat.com, oliver.upton@linux.dev, rafael@kernel.org, 
-	robh@kernel.org, ssengar@linux.microsoft.com, sudeep.holla@arm.com, 
-	suzuki.poulose@arm.com, tglx@linutronix.de, wei.liu@kernel.org, will@kernel.org, 
-	yuzenghui@huawei.com, devicetree@vger.kernel.org, kvmarm@lists.linux.dev, 
-	linux-acpi@vger.kernel.org, linux-arch@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-hyperv@vger.kernel.org, linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, 
-	x86@kernel.org, apais@microsoft.com, benhill@microsoft.com, 
-	bperkins@microsoft.com, sunilmut@microsoft.com
-Subject: Re: [PATCH hyperv-next v5 07/11] dt-bindings: microsoft,vmbus: Add
- interrupts and DMA coherence
-Message-ID: <20250310-demonic-ferret-of-judgment-5dbdbf@krzk-bin>
-References: <20250307220304.247725-1-romank@linux.microsoft.com>
- <20250307220304.247725-8-romank@linux.microsoft.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=HBnzcIe80e8tOrQboyez21m2q75YLDeeF/gbhYxr1j9YghPv4CKPDhEVADUcO5ALJcDzZFgZ+HNQpPY6UO9WDDxvP+mAAvZbvnN8aaQdDVIpHSAkEaFE7IKzR90cBYk/zf+ifyAGM2KvFRmxDdQ4YuedVcrssxnE6sJ/oZrihSY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4F97815A1;
+	Mon, 10 Mar 2025 02:29:18 -0700 (PDT)
+Received: from bogus (e133711.arm.com [10.1.196.55])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D59473F5A1;
+	Mon, 10 Mar 2025 02:29:03 -0700 (PDT)
+Date: Mon, 10 Mar 2025 09:29:01 +0000
+From: Sudeep Holla <sudeep.holla@arm.com>
+To: Peng Fan <peng.fan@oss.nxp.com>
+Cc: Cristian Marussi <cristian.marussi@arm.com>,
+	Sudeep Holla <sudeep.holla@arm.com>,
+	Saravana Kannan <saravanak@google.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Dong Aisheng <aisheng.dong@nxp.com>,
+	Fabio Estevam <festevam@gmail.com>, Shawn Guo <shawnguo@kernel.org>,
+	Jacky Bai <ping.bai@nxp.com>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Sascha Hauer <s.hauer@pengutronix.de>, <arm-scmi@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>, <linux-gpio@vger.kernel.org>,
+	<imx@lists.linux.dev>, Peng Fan <peng.fan@nxp.com>
+Subject: Re: [PATCH 1/4] firmware: arm_scmi: bus: Bypass setting fwnode for
+ scmi cpufreq
+Message-ID: <Z86w3ZRS6T2MvV3X@bogus>
+References: <Z6uFMW94QNpFxQLK@bogus>
+ <20250212070120.GD15796@localhost.localdomain>
+ <Z6x8cNyDt8rJ73_B@bogus>
+ <CAGETcx87Stfkru9gJrc1sf=PtFGLY7=jrfFaCzK5Z4hq+2TCzg@mail.gmail.com>
+ <Z65U2SMwSiOFYC0v@pluto>
+ <20250218010949.GB22580@nxa18884-linux>
+ <Z7Rf9GPdO2atP89Z@bogus>
+ <20250218133619.GA22647@nxa18884-linux>
+ <Z7Wvyn1QJQMVigf9@bogus>
+ <Z7Z-ZnztmvUxWoQJ@NXL53680.wbi.nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250307220304.247725-8-romank@linux.microsoft.com>
+In-Reply-To: <Z7Z-ZnztmvUxWoQJ@NXL53680.wbi.nxp.com>
 
-On Fri, Mar 07, 2025 at 02:02:59PM -0800, Roman Kisel wrote:
-> To boot on ARM64, VMBus requires configuring interrupts. Missing
-> DMA coherence property is sub-optimal as the VMBus transations are
-> cache-coherent.
-> 
-> Add interrupts to be able to boot on ARM64. Add DMA coherence to
-> avoid doing extra work on maintaining caches on ARM64.
+On Thu, Feb 20, 2025 at 08:59:18AM +0800, Peng Fan wrote:
+>
+> Sorry, if I misunderstood.
+>
+> I will give a look on this and propose a RFC.
+>
+> DT maintainers may ask for a patchset including binding change and
+> driver changes to get a whole view on the compatible stuff.
+>
+> BTW, Cristian, Saravana if you have any objections/ideas or would take on this
+> effort, please let me know.
+>
 
-How do you add it?
+Can you point me to the DTS with which you are seeing this issue ?
+I am trying to reproduce the issue but so far not successful. I did
+move to power-domains for CPUFreq on Juno. IIUC all we need is both cpufreq
+and performance genpd drivers in the kernel and then GPU using perf genpd
+fails with probe deferral right ? I need pointers to reproduce the issue
+so that I can check if what I have cooked up as a solution really works.
 
-> 
-> Signed-off-by: Roman Kisel <romank@linux.microsoft.com>
-> ---
->  .../devicetree/bindings/bus/microsoft,vmbus.yaml          | 8 +++++++-
->  1 file changed, 7 insertions(+), 1 deletion(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/bus/microsoft,vmbus.yaml b/Documentation/devicetree/bindings/bus/microsoft,vmbus.yaml
-> index a8d40c766dcd..3ab7d0116626 100644
-> --- a/Documentation/devicetree/bindings/bus/microsoft,vmbus.yaml
-> +++ b/Documentation/devicetree/bindings/bus/microsoft,vmbus.yaml
-> @@ -28,13 +28,16 @@ properties:
->  required:
->    - compatible
->    - ranges
-> +  - interrupts
->    - '#address-cells'
->    - '#size-cells'
->  
-> -additionalProperties: false
-> +additionalProperties: true
-
-This is neither explained in commit msg nor correct.
-
-Drop the change. You cannot have device bindings ending with 'true'
-here - see talks, example-bindings, writing-schema and whatever resource
-is there.
-
-Best regards,
-Krzysztof
-
+--
+Regards,
+Sudeep
 
