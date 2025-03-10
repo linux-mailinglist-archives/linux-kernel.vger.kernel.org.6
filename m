@@ -1,174 +1,244 @@
-Return-Path: <linux-kernel+bounces-553818-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-553819-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D760A58F33
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 10:14:41 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6993BA58F35
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 10:14:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7AC137A63B5
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 09:13:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9949C166E2F
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 09:14:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A054022423E;
-	Mon, 10 Mar 2025 09:14:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57466224AF1;
+	Mon, 10 Mar 2025 09:14:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="E/DHiQZD"
-Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=live.com header.i=@live.com header.b="ooTcK96b"
+Received: from PNYPR01CU001.outbound.protection.outlook.com (mail-centralindiaazolkn19010015.outbound.protection.outlook.com [52.103.68.15])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2157E13CFB6
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 09:14:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741598072; cv=none; b=GeS0mxus6i6bqLrr+FPWRUV1qNOfk8lzXeJHcHsTsoty9rKvEaRPBnodlS+GiKWcO2bWj/qV16Hsjt7d5oZlFSm8nbEi0935fwepxQz4FAJqPLQ/V5PflYnew5DyUcV69Orr2J1rn3K7vRuV0cI7bpeysJkI5TM+KDZyMdfoYrE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741598072; c=relaxed/simple;
-	bh=Luqd5qJDerYY56SVYxkqiHGsWQEnWc7dsdUx6yqSP0o=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YKdS0z9dWjyAffAQhQYKV5UgwXGXpdhWXm8pjRUzzM5RnxPA3zZjNeUi+XRLWobi2EZi6jbKNfAut8iGXh9u48+8KwnmqB3eA3NDZeTjhw6VhAJSXXGX5je+mYVVXbjOn2WSPvuzSUT57xvdYNVVjiGeZYrQ2uznj+Ib/1Q5TRo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=E/DHiQZD; arc=none smtp.client-ip=209.85.218.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-ac0b6e8d96cso577239966b.0
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 02:14:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1741598067; x=1742202867; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=M2AFDf7Np+5eqeDRg3+giF4aI5aOo69QM3HUv/FvtGA=;
-        b=E/DHiQZDCo6VYJun1JTnzWDLhBf85zmgphPIeB4RtGRyY6s47K+J2TRo/TJsQoyi/W
-         0NhmwGjaZNaDhlDMGD31Ad+/nfbalI0ZTquc8EmZiuUSJpanW0Yp0cxz/vXbsf7piUF+
-         j5QOYeTME2NDkqFcX9sjmIu2tG5WDeMh1OwrlStQjgbUDlbpAa/V25j9/n4qlliDlRwD
-         j0lb6R6bFBUGNzwZ3Kn5iWRxDANQnPXAvfuxBe2e3haZTVFTq0zfIf6NyC3XCngC2HNr
-         LsbIUF9PW6jlUS3tnM+7Oij437CNU4eIux7Be9S68Jze1OtuR4CrawOvtPwXQX8Ef0MW
-         Fpjw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741598067; x=1742202867;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=M2AFDf7Np+5eqeDRg3+giF4aI5aOo69QM3HUv/FvtGA=;
-        b=ggKC2b9ImtHXKnvctirYLoQgHCCQVUwPHWrFzMcUMi0KRLQrD0OHFcHmFediMIFyYu
-         P1JzVGbOvf0Arke6uLvdVEBPZt5a0S1D7BpIDODOimopmc9o/RpUjFCTC03eFZSmKANp
-         7c+D/dlRAWEjmQ63iKjVQ27CyIVlCr1g5bgSBMm8oGUJkx3zdsLzThHz39l3Ckoupx3n
-         S/tvOUxL4yRtdgVrGlWEfQ0KYlPRMwaFCURacG2r4CgLvrj24bUEt0XzSXJMaelelYj5
-         R8IlXlOHmtZl8jdr6uqPn0r2L/9rMkt+FLaUhQP9ECu/UpHWSiMJ0dos08utjEPa6FJs
-         IinQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUbWnssbvMLdZfO+lTJaaQMJxHMlWCLOh2FF1f2xBC0C/Lw2knCl4QR0k7l5fLDoYaOZLxuBcp8L0hmQ5g=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwdWoy+LHR/aU9bIfLxoldHp445RQ1cTcjzZL0e4qlcZdEo1Mln
-	4FUZHNivgh8QmG28h35lKsnzV41Oy4kvyemdHHynPyDc0TANkOltzwaHaSKc9fU=
-X-Gm-Gg: ASbGncuu9wixuJtleFEQ93NO3zsYZiY8nthrrBn3x/uK23JaMD2sDPqEQhbzxwCLnys
-	L54mE9T9fumYlbPT9NBqYO6LiMy3k6Dlm+kzIGsKsfbJ5AwSU7z32Um1EaE3N2SVEPiBPbwpnRV
-	ymjaxDRwuvuR9bn2IyQBnZdcjNXEXHJM0950Tx6REFckxIxTDfLX1UUd1ttBOO+GV5dPtlCcgUw
-	Xq0e/2opihQ58viTHmjLEO8ykbWsa7wreiEKWkNbf6g4aft3w0OCch7yDQUb9Jr6k8fAGf173LW
-	LR9a/IzokUmuy0RTbKVbUM2oZd/dHtvoRlsYpe7LUDodLrLuW3a3XXtKbzqx8LWpkI+5RbbJBPm
-	MTuPMIOw=
-X-Google-Smtp-Source: AGHT+IEtKkKBpM7vJgcnY9TXytbV/kIe46JnVxeVKL/rKi0cxkwuBUhSX1GFWK3r6UV3V93xyzgxSA==
-X-Received: by 2002:a17:907:3f9b:b0:ac1:ea6e:ad64 with SMTP id a640c23a62f3a-ac2526e5e87mr1604200066b.28.1741598067222;
-        Mon, 10 Mar 2025 02:14:27 -0700 (PDT)
-Received: from localhost (p200300f65f2c000400000000000001b9.dip0.t-ipconnect.de. [2003:f6:5f2c:4::1b9])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac29363d604sm226706366b.76.2025.03.10.02.14.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 10 Mar 2025 02:14:26 -0700 (PDT)
-Date: Mon, 10 Mar 2025 10:14:23 +0100
-From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
-To: Dominique Martinet <dominique.martinet@atmark-techno.com>
-Cc: Vinod Koul <vkoul@kernel.org>, 
-	Kishon Vijay Abraham I <kishon@kernel.org>, Adam Ford <aford173@gmail.com>, 
-	Frieder Schrempf <frieder.schrempf@kontron.de>, Marco Felsch <m.felsch@pengutronix.de>, 
-	Lucas Stach <l.stach@pengutronix.de>, linux-phy@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	Makoto Sato <makoto.sato@atmark-techno.com>
-Subject: Re: [PATCH] phy: freescale: fsl-samsung-hdmi: return closest rate
- instead LUT
-Message-ID: <v57uy3gddzcoeg3refyv7h6j3ypx23mobctybt27xzdyqy6bgb@atzdlqlytz3c>
-References: <20250310-8ulp_hdmi-v1-1-a2f231e31987@atmark-techno.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 990A2221F13;
+	Mon, 10 Mar 2025 09:14:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.103.68.15
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741598073; cv=fail; b=kJ9sfZ6wbLJwN7uuwR6mZM+qaV4ZgoaoBOxECBafk+W+mJrqF/C2h+BOtS1svxYaqNxXHPObf7Zh6psfjsvLzRAqbyS4JkaKBvXbJXnanA2b6i+Y9HZLuEDPUU6yn5BAm0FPKfILLwlKVPGfdeiwob7p4t6wa7IY4dHnt+JN91o=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741598073; c=relaxed/simple;
+	bh=A+RnlCnxqk/FXWtfGywQ0faeL9vDUtsw3aN3Cd9Mh8w=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=msmJj96UX0S+/yzEh+CQ46gpHFFF1h/XGgkRTssOxNO5kUnMooPcj/StCjb4AKrUVCG4ITtm73tubqcSZGUPubOHlxOnJGyr5S6engxKF4QwnG5n4sWx67OrrQNoxzobIcVHvhwEP4UU87ZPFSA4mrcr7c7nV5/7LMtjCcj7LpE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=live.com; spf=pass smtp.mailfrom=live.com; dkim=pass (2048-bit key) header.d=live.com header.i=@live.com header.b=ooTcK96b; arc=fail smtp.client-ip=52.103.68.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=live.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=live.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=sZ1fXMWG08Qu78p5CtYF1R+UjvndRcZvHM0+kWulHT/h2uKDH/ZU3dLaK17CBu14NS309t3sK2ODmdH5eW0WMR0m0iHjZZHJbOq2MLjRHX966ECnWv6NKfuM9QtOJM+MbHEoNB/V4UKTcNLfl8BIhXt6cEaik3M0pM1LIWMJM/OJGTXXK/nmjOp56FXJLUZwFg0UQxDJJW3SXB7Qd4J6+6Bkt9MnVfltcfeWdfb3/pzRvr8B2IcttV0LNDSTXSfW8ef4WoGn7tN0Mq9zTiqnZ0ThG4iESFhW8zxh9FLgUecaYmSORLFeo3Zj56JS50Ndw7NU/+YzGacRb98FYUw1dg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=2ReDvTgeIRITbPf0iSR2vMf/gEIGRR9UeRdo6xkH+DY=;
+ b=J+Wt36o21vh574unMwF3yIeLPTjI9w+xzXU4UdZfgoxOAf0B1NUaBTYuVjExRxSi8VzqTjHkuJBnfeNxF5ZohcIfv7T6hEZ7TriAqWd9VGb8Ek/mIVY5iKXw6Ho966c9j3VJbMWYByW3epSJM5lyiZ6kaJDu3k6FIOoOPlEY22yxQap6kRNdnvrCQbEQQWdJezOKVlFOwB272dm158ArABgsIbVI8Gtmhh1cklZiGKJM5A5JbZi3U3bzO2B5idgdi8mfy5fmysleEkOGETw9deKiSmUurGNsD5uVPK/uOiRh51TbcG6UizharM3PmXR+J53PSnX8qb07HIq6TnNwFQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=live.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=2ReDvTgeIRITbPf0iSR2vMf/gEIGRR9UeRdo6xkH+DY=;
+ b=ooTcK96bcYJ8bdio07Me/eW/joGkQvSCaTYODqd7g3f0H2W3fuAFyWMAsuVz/xlmapR2CXW51tNdVE2q15J7vWSCm1RfbOQI0KP0GHzD4LMwW4P67ystOzgu1d5rAGqCi+jEj50ABK1fypHd3/21ot2sUTd7o+derOlgI9Vt0BhIb9rdDn8zEIEHhveikYKv6pjnNQPug+ArT7YsTEzvVhOAbLqiVSsqhcNxdqRmfYjtU9FPcjiZbwy5CT+VsTvNRKTSNzv5NWNySWIBuk/WdWMgV/1HI7k4jsZcz52MOaDoE1ulOXVL+obGQYWW+A81oPRwkD6N0X1WSzI1oSIjeg==
+Received: from PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM (2603:1096:c01:f7::14)
+ by MAYPR01MB10587.INDPRD01.PROD.OUTLOOK.COM (2603:1096:a01:159::5) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8511.26; Mon, 10 Mar
+ 2025 09:14:25 +0000
+Received: from PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM
+ ([fe80::324:c085:10c8:4e77]) by PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM
+ ([fe80::324:c085:10c8:4e77%7]) with mapi id 15.20.8511.025; Mon, 10 Mar 2025
+ 09:14:25 +0000
+From: Aditya Garg <gargaditya08@live.com>
+To: Jiri Kosina <jikos@kernel.org>, Jiri Kosina <jkosina@suse.com>, Benjamin
+ Tissoires <benjamin.tissoires@redhat.com>, "bentiss@kernel.org"
+	<bentiss@kernel.org>
+CC: Kerem Karabay <kekrby@gmail.com>, Orlando Chamberlain
+	<orlandoch.dev@gmail.com>, Aun-Ali Zaidi <admin@kodeit.net>, Linux Kernel
+ Mailing List <linux-kernel@vger.kernel.org>, "linux-input@vger.kernel.org"
+	<linux-input@vger.kernel.org>
+Subject: [PATCH RESEND 5/5] HID: multitouch: add device ID for Apple Touch Bar
+Thread-Topic: [PATCH RESEND 5/5] HID: multitouch: add device ID for Apple
+ Touch Bar
+Thread-Index: AQHbkZzRYjd5SL1F7EiFR2eWmPVTSw==
+Date: Mon, 10 Mar 2025 09:14:25 +0000
+Message-ID: <90644A22-3136-4D4E-864E-7F7210D0C713@live.com>
+References: <ECE4880B-2A87-4147-B83B-2D832639F3B2@live.com>
+In-Reply-To: <ECE4880B-2A87-4147-B83B-2D832639F3B2@live.com>
+Accept-Language: en-IN, en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+x-ms-exchange-messagesentrepresentingtype: 1
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: PN3PR01MB9597:EE_|MAYPR01MB10587:EE_
+x-ms-office365-filtering-correlation-id: 09d882a8-f647-44cd-b072-08dd5fb3f41d
+x-microsoft-antispam:
+ BCL:0;ARA:14566002|15080799006|19110799003|8060799006|8062599003|7092599003|461199028|102099032|3412199025|440099028|41001999003;
+x-microsoft-antispam-message-info:
+ =?us-ascii?Q?Rl4BNZFlNYWho8JR/6oe2WNEGHTEfrCheSU9zp2M6+z+efUzwiWCvEHmhCJC?=
+ =?us-ascii?Q?LgnHQciVslFjsJaHFqBNO2Y4j0qEyKT+yaQ2ZBJP/wPjUpQMEdIS/0UDx8YA?=
+ =?us-ascii?Q?2epyWQVub87Pyql2s/ANiqETtHKzDimkt0LH7NoCO0D0MhtYxIK9plCAKyA/?=
+ =?us-ascii?Q?iLVHEvwZOGeZiVqRvbq+uML34FkBBkv2wlGA9TxlflhDwos6+UtD4AAZWQ8W?=
+ =?us-ascii?Q?LUFsZsAQXM5XO2XAChGaTECSWyoy6e5/PQ3OSL9HYpkn6OcFeOk1/A6kklIu?=
+ =?us-ascii?Q?YObgvnW/bnJGI5uNAi9IllUHY+a1WfNBzMYzp5+yIh23R8QPuAnQbe9ZGvAa?=
+ =?us-ascii?Q?Fi5flFU+ebBggNbhGL3qxUXKNQdvkhkwnB4Hfe9dQ+r6MQ8c2Lp1HH1IHcIE?=
+ =?us-ascii?Q?OI+zfIZ8cgNxd6OX3w9Md3vlwrrbl7Sk+DH+ps12UINne3BIYlcpTu3iZlgA?=
+ =?us-ascii?Q?PLmgIL5INt0oqngH8CmbotYaySeT24ubxR1joOkyC2SmlaYsgCqz8r/B9J1H?=
+ =?us-ascii?Q?NrXS7XkGP1BWNGraYYwxeH32hEKboH15Q8g0vVsf7AzaGEey+0QttN3J9zfK?=
+ =?us-ascii?Q?AuK5T4FbGZJbHMzKb37xxI02ogUTQAezdGkeNNO7P9vyfh6DZoFZ18tyrmR1?=
+ =?us-ascii?Q?9JlhkQKPA8idVxat1J+lg9h1eL5SEqGGGtRZYRkm2vhAE6/yvpr/cJsEHARK?=
+ =?us-ascii?Q?kUaSxlzI/1JCHFzp65LFnEGqT80jYHQhMt73X3kWuMwkMkeWb95IkdGEza+5?=
+ =?us-ascii?Q?BfTAeKsg0MW/n0eUr9DeYdxapHSF3JEJy4w3Y7mgQiaN3KUdCbrFEif6KFlJ?=
+ =?us-ascii?Q?xuuGtglRSYc7dwCXcfkQjw54yoIJaiiqelVqfm7xIC+ScW3o8tkvrDjXHKjc?=
+ =?us-ascii?Q?DSXnHwoh3aCbqd4Vimx/ImwVCcjWnddmAf+XKBkDmRGcozQ5i5B3fZdb3/KN?=
+ =?us-ascii?Q?agGG+2jilKMPLpT01RwGdz5kRSEazNpwn3tXKm0WbFh9XWIz3UEJoEDzaNh3?=
+ =?us-ascii?Q?orG0YPZJ0WS/5yKX+kBUqzHcFKv7zXAFFDWHoMh98WNXyKwjMDPUM7lor7+z?=
+ =?us-ascii?Q?iTDGG0tTyp5O4D6PgdhoofHhQPJh407IWUpUBIfYs3bLBMCFbu8=3D?=
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?+NmjQPkoNfR8zHJ82vEUroUEolDFQBPfGREi0fVKo3F318q4CprzF9a6mxVQ?=
+ =?us-ascii?Q?nLylcdmouj0jbEKnXJW3z5NAFQ1QZgvRCCcDXDsA4w7W1q9NQ8Pa9Go9qu0g?=
+ =?us-ascii?Q?/+J/Z2XkmTkr1gp0gOVAcxphbbmakiaGeyES1bSW4fIuwlqPB3rgKRA79Ig/?=
+ =?us-ascii?Q?eLW5R1FFUE2LrHvIzMeEbBhA05ynmrt3+YHY1agZ9AGIt8NWW9RsFBDU3Tp+?=
+ =?us-ascii?Q?CkNvS13EEnqnE96cOOeoReRwjqz67vLlgcesb129NYv/I/HOxnBNZrPPkYKK?=
+ =?us-ascii?Q?jW3pRb/1eTyo8NBotb9ov/blY4UUiAqHlEktBQ0MNGcBTajDa+5CQj1wQgXD?=
+ =?us-ascii?Q?x2ykFdV0nIHwsczIIDi5tz2yQ21yvyuoZZ9BxgTo7LJVHy+sfgV7tkO8Kg2f?=
+ =?us-ascii?Q?wj7GKYSypHm6EvKkm119cvkivVkrKIW7VxwPaLWRlgBGIEmZJpefjUiaKCfA?=
+ =?us-ascii?Q?68XncgVJxzBKDzPd2nFa4iL/5NUq8jkgzUbcwceS+JelIcSX+uOb3wTRP/S6?=
+ =?us-ascii?Q?4pbLgSdJuOhtpcHWdewMlz92iVorx5MFKbViCHpez5x1Ke4buZ0IY64kMgIf?=
+ =?us-ascii?Q?QcqHMRYISrU/GHhTwFiCo4wOpKcqSFj1lWZHQcKYU24JUfqgFszZ1xhVM/wt?=
+ =?us-ascii?Q?q9WvmuQU8/V2KLHFV+4mHMYj/F4kZq26ZqLfFRgRVWdg/AhxIIVIvXfjjiCx?=
+ =?us-ascii?Q?hVjMGHa1PyNHh1b3A7rCCc+u+zqYjciADSVxO2Gb9dxrfo9mjc+75n5ZKj9o?=
+ =?us-ascii?Q?zfrv4v3u0LiWdWxxLvUbpjfaR7bEXkdO3vHeHoJc3ik729jRvf5v2Ur+nFnE?=
+ =?us-ascii?Q?wqvWVZYlzSMIjlyVe5jcZc2p7vsdcR6uot6OOBiVRUx1ldnOGNLkMKQheBYl?=
+ =?us-ascii?Q?s3oRkNUoNhiGlwN8NemIufdb6lBt98uI+Jly5F/ZV+AQF9yxMFhgBEr9gLDr?=
+ =?us-ascii?Q?Mnl2xqLGLOW6NcvGXteZx0CA5Z41TLJ+VSpukf/6FB2MgyWx9JCV95gguSfX?=
+ =?us-ascii?Q?EmtdwFDV3lOjlq4WbKZzX/9hUWmPBNdhNL0iteeFThVF8UlztgVVnLKu6IGE?=
+ =?us-ascii?Q?K3F6w8xwlfTJVCH9BIfcZEe73hu72Ufd1EdKgmu0rSAACx0iks70UBfME3YS?=
+ =?us-ascii?Q?GFgztBdZ+SGULVVW5SRuwtjEQq/8yN7TEJPaZtYBagmSxQfN9boN3vtSCRyf?=
+ =?us-ascii?Q?T4FOajlgdzDJ3cG4NR7+MfVXCgWZ2b6Wb855M3AL+uTO6WP/jUoKpFYhXIiR?=
+ =?us-ascii?Q?0FXCEGsYIwxnd4njIFLV?=
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <4D970B6309B16E46814A7AA680A33E77@INDPRD01.PROD.OUTLOOK.COM>
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="hbn3u5scrvz7ixpx"
-Content-Disposition: inline
-In-Reply-To: <20250310-8ulp_hdmi-v1-1-a2f231e31987@atmark-techno.com>
+X-OriginatorOrg: sct-15-20-7719-20-msonline-outlook-ae5c4.templateTenant
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-CrossTenant-Network-Message-Id: 09d882a8-f647-44cd-b072-08dd5fb3f41d
+X-MS-Exchange-CrossTenant-originalarrivaltime: 10 Mar 2025 09:14:25.5349
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MAYPR01MB10587
 
+From: Kerem Karabay <kekrby@gmail.com>
 
---hbn3u5scrvz7ixpx
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH] phy: freescale: fsl-samsung-hdmi: return closest rate
- instead LUT
-MIME-Version: 1.0
+This patch adds the device ID of Apple Touch Bar found on x86 MacBook Pros
+to the hid-multitouch driver.
 
-Hello,
+Note that this is device ID is for T2 Macs. Testing on T1 Macs would be
+appreciated.
 
-On Mon, Mar 10, 2025 at 10:21:32AM +0900, Dominique Martinet wrote:
-> From: Makoto Sato <makoto.sato@atmark-techno.com>
->=20
-> If the requested rate is not an exact match of the integer divider
-> phy_clk_round_rate() would return the look up table value,
-> but phy_clk_set_rate() can still use the integer divider if it results
-> in a frequency that is closer than the look up table.
->=20
-> In particular, not returning the actually used value here made the hdmi
-> bridge driver reject a frequency that has an integer divider rate
-> within 0.5% of the target:
-> for 83.5mHz, the integer divider generates 83.2mHz (-0.36%), but the
-> next LUT value (82.5mHz) is 1.2% off which incorrectly rejects modes
-> requiring this frequency.
+Signed-off-by: Kerem Karabay <kekrby@gmail.com>
+Co-developed-by: Aditya Garg <gargaditya08@live.com>
+Signed-off-by: Aditya Garg <gargaditya08@live.com>
+---
+ drivers/hid/Kconfig          |  1 +
+ drivers/hid/hid-multitouch.c | 25 +++++++++++++++++++++----
+ 2 files changed, 22 insertions(+), 4 deletions(-)
 
-Is the unit here MHz or mHz? I suspect the former?
+diff --git a/drivers/hid/Kconfig b/drivers/hid/Kconfig
+index dfc245867..727a2ed0d 100644
+--- a/drivers/hid/Kconfig
++++ b/drivers/hid/Kconfig
+@@ -743,6 +743,7 @@ config HID_MULTITOUCH
+ 	  Say Y here if you have one of the following devices:
+ 	  - 3M PCT touch screens
+ 	  - ActionStar dual touch panels
++	  - Apple Touch Bar on x86 MacBook Pros
+ 	  - Atmel panels
+ 	  - Cando dual touch panels
+ 	  - Chunghwa panels
+diff --git a/drivers/hid/hid-multitouch.c b/drivers/hid/hid-multitouch.c
+index 66e33a482..078ceef62 100644
+--- a/drivers/hid/hid-multitouch.c
++++ b/drivers/hid/hid-multitouch.c
+@@ -221,6 +221,7 @@ static void mt_post_parse(struct mt_device *td, struct =
+mt_application *app);
+ #define MT_CLS_GOOGLE				0x0111
+ #define MT_CLS_RAZER_BLADE_STEALTH		0x0112
+ #define MT_CLS_SMART_TECH			0x0113
++#define MT_CLS_APPLE_TOUCHBAR			0x0114
+ #define MT_CLS_SIS				0x0457
+=20
+ #define MT_DEFAULT_MAXCONTACT	10
+@@ -406,6 +407,12 @@ static const struct mt_class mt_classes[] =3D {
+ 			MT_QUIRK_CONTACT_CNT_ACCURATE |
+ 			MT_QUIRK_SEPARATE_APP_REPORT,
+ 	},
++	{ .name =3D MT_CLS_APPLE_TOUCHBAR,
++		.quirks =3D MT_QUIRK_HOVERING |
++			MT_QUIRK_SLOT_IS_CONTACTID_MINUS_ONE |
++			MT_QUIRK_APPLE_TOUCHBAR,
++		.maxcontacts =3D 11,
++	},
+ 	{ .name =3D MT_CLS_SIS,
+ 		.quirks =3D MT_QUIRK_NOT_SEEN_MEANS_UP |
+ 			MT_QUIRK_ALWAYS_VALID |
+@@ -1807,6 +1814,15 @@ static int mt_probe(struct hid_device *hdev, const s=
+truct hid_device_id *id)
+ 		}
+ 	}
+=20
++	ret =3D hid_parse(hdev);
++	if (ret !=3D 0)
++		return ret;
++
++	if (mtclass->name =3D=3D MT_CLS_APPLE_TOUCHBAR &&
++	    !hid_find_field(hdev, HID_INPUT_REPORT,
++			    HID_DG_TOUCHPAD, HID_DG_TRANSDUCER_INDEX))
++		return -ENODEV;
++
+ 	td =3D devm_kzalloc(&hdev->dev, sizeof(struct mt_device), GFP_KERNEL);
+ 	if (!td) {
+ 		dev_err(&hdev->dev, "cannot allocate multitouch data\n");
+@@ -1854,10 +1870,6 @@ static int mt_probe(struct hid_device *hdev, const s=
+truct hid_device_id *id)
+=20
+ 	timer_setup(&td->release_timer, mt_expired_timeout, 0);
+=20
+-	ret =3D hid_parse(hdev);
+-	if (ret !=3D 0)
+-		return ret;
+-
+ 	if (mtclass->quirks & MT_QUIRK_FIX_CONST_CONTACT_ID)
+ 		mt_fix_const_fields(hdev, HID_DG_CONTACTID);
+=20
+@@ -2339,6 +2351,11 @@ static const struct hid_device_id mt_devices[] =3D {
+ 		MT_USB_DEVICE(USB_VENDOR_ID_XIROKU,
+ 			USB_DEVICE_ID_XIROKU_CSR2) },
+=20
++	/* Apple Touch Bar */
++	{ .driver_data =3D MT_CLS_APPLE_TOUCHBAR,
++		HID_USB_DEVICE(USB_VENDOR_ID_APPLE,
++			USB_DEVICE_ID_APPLE_TOUCHBAR_DISPLAY) },
++
+ 	/* Google MT devices */
+ 	{ .driver_data =3D MT_CLS_GOOGLE,
+ 		HID_DEVICE(HID_BUS_ANY, HID_GROUP_ANY, USB_VENDOR_ID_GOOGLE,
+--=20
+2.43.0
 
-Without having looked in detail, I think it would be nice to reduce code
-duplication between phy_clk_round_rate() and phy_clk_set_rate(). The
-former has
-
-	if (rate > 297000000 || rate < 22250000)
-		return -EINVAL;
-
-which seems to be lacking from the latter so I suspect there are more
-differences between the two functions than fixed here?
-
-Ideally the implementation would look conceptually like:
-
-	static long phy_clk_round_rate(..., unsigned long rate, ...)
-	{
-		hw =3D phy_determine_register_settings_for(rate);
-		if (hw_is_error(hw))
-			return someerror;
-
-		return phy_get_rate_from(hw);
-	}
-
-	static int phy_clk_set_rate(..., unsigned long rate, ...)
-	{
-		hw =3D phy_determine_register_settings_for(rate);
-		if (hw_is_error(hw))
-			return someerror;
-
-		return phy_apply(hw);
-	}
-
-Best regards
-Uwe
-
---hbn3u5scrvz7ixpx
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmfOrW0ACgkQj4D7WH0S
-/k7gagf/Y2P7oymDjrfXm/iN4GTuPoKu5hSM+CyX/Lsjb4YvVl/NK1hJJSmNav5G
-8klQotxMRKJE0ucdaGv9hSgrK8MQuyV440H0f8Idpv1GTHjQiaMi13kMerzfvJIf
-/xVRmw5GO0HV+1NEUS4xTVpUcCNeobAAOw841PY8wyHo8v/ml90LugLVg+wJs9lM
-rCPiv6MbDHyEw9IUnkztM+LK0dnEvxVOmbuGaG6LfG/YBqxhJqrL1EwIsJnsSt4Q
-6xAadOZZvGwgT73BumBalZH0z8xG6CWrHHyoqMQnQ6KE9nhnPouyOT1a35Y281bb
-XjbCmTyQC37mJNKirDEM1K6AMeU5FQ==
-=uTzQ
------END PGP SIGNATURE-----
-
---hbn3u5scrvz7ixpx--
 
