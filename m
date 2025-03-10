@@ -1,125 +1,166 @@
-Return-Path: <linux-kernel+bounces-554207-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-554208-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9DC31A594AC
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 13:39:15 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B9419A594B6
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 13:40:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 867171888373
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 12:39:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EA28D1668D7
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 12:40:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B681B227599;
-	Mon, 10 Mar 2025 12:38:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7EF1226193;
+	Mon, 10 Mar 2025 12:40:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LrNRJdDL"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="Pe8FyqFG"
+Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1067C1C07D9;
-	Mon, 10 Mar 2025 12:38:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 652E9226883
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 12:40:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741610332; cv=none; b=OSppeuPJj5mnnRTQM/nXMQedMNL/OUQQRRb7/vIGwSzcTV+zHCez6HTg1/W5mOrUifa5gJXnJDatcHEewUMhvuoDdO5hXjdn34bJfoCCB/RbwQ2FE1w86UvHFM+A2QVeQu2enTp8oOJxGmUylGJYrI5RlwUlYPUyac1PDvjYKic=
+	t=1741610430; cv=none; b=ofchtqYmrtYRTxwEZFoMQRf4cDnTq44c0zjAX1te9EwXOZwencuc4KvrpcSnYhHPkhkLq9UykuOO/Pb6Pn3ogj8UebmcWoZwU/tSAH/OQFOwuXM7atEWKEshk5gWUoSSXEtcv8bJTD3LvfGIa7VPPPkL3Tt2d+LEPExcbpeUw1A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741610332; c=relaxed/simple;
-	bh=WRKwgp9/W2Uc6gBCt9hZjYK7YEjuemL/fdknnANjgrs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qXf+gp8uOEZAsszZnamfdfhm5ivMSMe5EuCVjdve22pidLPHktnYiqmDsEBQ+YDfB8G9wmzRKy62UHzGro8QZpyjSYjAg/VEF/xpl/HRzYs74PjiuDXAbe1JzwgIhdLBZHM5rmfBjnZkzTq7eSvfhnf5cwzGQS6t2FNFCZF8yec=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LrNRJdDL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DA527C4CEE5;
-	Mon, 10 Mar 2025 12:38:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741610331;
-	bh=WRKwgp9/W2Uc6gBCt9hZjYK7YEjuemL/fdknnANjgrs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=LrNRJdDLtTBy9a0IsCmi6ZPi/OrvBuzzHIrI8BSvn2txMWZVOhyPubuxmrukT1P8a
-	 BkFMpqj9hdJCV3LWELD0lyA+35RRl963k4J2lwCdgEHYaCqEz7jsQAfS0uPi4byZKy
-	 QkHKi00NHG1NYyXjbL8KpIGqPlo9oVf/uf6UUFjqKeN2YTjBZ6k3TN3kqZc76YadEm
-	 hCqGImrv9WuBiLJXSGuTcowGm6DC/c+JktsWvj3j2LzO6QvPtFBF3h5rb4T8hA7yZW
-	 qtWitDPxukyqBsDgzRUxleuanwjrdR3lykxnFDzO5DnDwrfe9hTnhK0e4yxrK3eoIs
-	 MD4JYvPe2/iiQ==
-Date: Mon, 10 Mar 2025 13:38:40 +0100
-From: Carlos Maiolino <cem@kernel.org>
-To: John Garry <john.g.garry@oracle.com>
-Cc: brauner@kernel.org, djwong@kernel.org, linux-xfs@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, ojaswin@linux.ibm.com, 
-	ritesh.list@gmail.com, martin.petersen@oracle.com, tytso@mit.edu, 
-	linux-ext4@vger.kernel.org
-Subject: Re: [PATCH v4 11/12] xfs: Update atomic write max size
-Message-ID: <vdar74f5jw6je4z2lbpconpitcevl2mdp7hatp62tf4kop6fnq@nhtboaaaar4v>
-References: <20250303171120.2837067-1-john.g.garry@oracle.com>
- <2LEUjvzJ3RO3jyirsnti2pPKtOuVZZt-wKhzIi2mfCPwOESoN_SuN9GjHA4Iu_C4LRZQxiZ6dF__eT6u-p8CdQ==@protonmail.internalid>
- <20250303171120.2837067-12-john.g.garry@oracle.com>
- <bed7wptkueyxnjvaq4isizybxsagh7vb7nx7efcyamvtzbot5p@oqrij3ahq3vl>
- <QIPhZNej-x0SeCVuzuqhmRIPUPKvV7w_4DB3ehJ2dYmLS1kwYGIJi1F3F34dhPTCy6oBq_3O-4Kjxxt4cIiP9Q==@protonmail.internalid>
- <c2fdb9bb-e360-4ece-930d-bab4354f1abf@oracle.com>
- <egqflg5pygs4454uz2yjmoachsfwpl3jqlhfy3hp6feptnylcl@74aeqdedvira>
- <Y_Bg5L4XDukci667dxJMc9smhcW9Yz9EtBzX00M1L0lGfTouxvMztMPoBnG7m56FYpJhi_76fdjJ7ShIMbNr4A==@protonmail.internalid>
- <cb7a9d18-c24d-4d90-881b-1914a760a378@oracle.com>
+	s=arc-20240116; t=1741610430; c=relaxed/simple;
+	bh=/8NjX3rOzGTLQ756Q1j66Bv/y8E0Nf+JlzA4oIcsVvo=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=ZbQR913J2PedaUHvhbqIr+HCdm/VkPOZbxOz8K/vEEyS8i1BlpLJrTWLMDjiGZCqnJ1+mp9hseoqdEte+74uMcB3/Y8gXSOEUSWkSeMe7jF054zSjC1bSKK+YktVzEoaZ8AJnvGL/2G5smlP1Nxv5GGppvYj5O2+r0hcRZ2vOFg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=Pe8FyqFG; arc=none smtp.client-ip=209.85.221.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-3912d2c89ecso3577395f8f.2
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 05:40:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1741610426; x=1742215226; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=D0SW/193dSmdJ4hIuDLKeGIYpk3++UwLKAQ2QPtDVJE=;
+        b=Pe8FyqFGEP4HfUQAB2aUsgL2DnXxbIRKLmPaf9zHD3XGYLK29nhrn+NddKP/dIqT2q
+         spks4Wjnn+6HepcSzotBcyIhQuJz2K0Dq+8vaBdsWjm250njkAdmwrKyc0EZwsi6bU/H
+         08gWJBBSa4oRftYIGioOZH70fDnjmmG2I3y0GTGB+0D1AgXboFefXtdrJqLalDgS7TH2
+         dXVwwZ9Yocp0wq4zwt33y+m4FCFfdiUhel+4Xv04DF8J2AFn54ceOR/sTFlrYBfkxyyB
+         PN5BYcpSg/14FbVE+SDGdydWC+fTc3CgoHBvvs1mUpWi/q56jCG5VSqD5//yu4mggInf
+         oKpA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741610426; x=1742215226;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=D0SW/193dSmdJ4hIuDLKeGIYpk3++UwLKAQ2QPtDVJE=;
+        b=AcIN2P19jCaCo+fcWtj5neJRpbGA8KjNKnDyxrMZSRk9GsLX/l3RB9zzNC/U4OWUDA
+         ngI2k28hEzZrtgv6kQBBN259Oclt6fqIJU17ZK6vEQ619shyFRkF06q5aCZYA96UmXZ2
+         YImgNzQVU5wKLYAhtuHPbrt3KY34iTv3qa25f0y/77ecOl/nRvNOfujAYu8rGOcwEthh
+         P134VUOrPTdHP/XVX8Q1MeOt7TRlB+k93428KltytVUwAYJVxkRtCk9R7OGGRlijUY4P
+         Dr6703dNjFWMp4qPioy8jRgIxp28zPdV5yxC3Dsz26F+pEBoqWM1by2UzLo+6E46s2Z1
+         WOJw==
+X-Forwarded-Encrypted: i=1; AJvYcCVeH56WbOdz1JvSI8JgXkfIOZE9TMSEbK4KYuVWBoWrKyJQvn1KcrmU8/oHQnZIV+nTx/oHZSYoJLdZWNY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzS6rXwwsePnB+GcWd2BItHLrr02++XmTnopqaB6Sem4RlgIral
+	/NIqQjFZ7Ve0BlTFiKRcR4O3xFdhOBYMPOIgF1I0fDhTYKWfyDWYt+2D8kBxuHQ=
+X-Gm-Gg: ASbGncu6zO5FoxmEFFnHdWFtgjbhxMNluBeeHvK8mbbPvdAHh0TYmwWOZiS6AZ2iUpG
+	Z4eCk/t2Gtl4sXRvKatvSU699nb1A63NzfhjhgSdOeR/QW5vkgbZ3iaDeSCo172oN0rXRtyZwlQ
+	6rtnCytA5k2nY2G8/q+p+rdd3hskXjfmJWv7MXSfgIltUiZOZzpOZX2whajlutBwPFSm3rIcdha
+	BXfL+hCpwljJHSl1EVBX4RzaOttk+xuQJHZToMexhhkRceKMZyMB8io3ExrKDRR7qfc0IVbXGHp
+	TlkN2YgNHv7X7/CcC6FppqQv5MH6MYmdO/oRrQ==
+X-Google-Smtp-Source: AGHT+IGvPu/1nOs92AdzRzoEoUE+KHkXYbFS1CNbXKzN17IWobEMq+YxPKwtrL34br0uOwNd+vwAKg==
+X-Received: by 2002:a05:6000:18a3:b0:391:29f:4f70 with SMTP id ffacd0b85a97d-39132d308dcmr8761092f8f.3.1741610425580;
+        Mon, 10 Mar 2025 05:40:25 -0700 (PDT)
+Received: from [127.0.1.1] ([2a01:cb1d:dc:7e00:2711:39c0:fb51:b639])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3912bfdfdc5sm14535865f8f.25.2025.03.10.05.40.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 10 Mar 2025 05:40:25 -0700 (PDT)
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Subject: [PATCH 00/15] gpio: more gpio_chip setter conversions
+Date: Mon, 10 Mar 2025 13:40:14 +0100
+Message-Id: <20250310-gpiochip-set-conversion-v1-0-03798bb833eb@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <cb7a9d18-c24d-4d90-881b-1914a760a378@oracle.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAK7dzmcC/x3MSwqAIBRG4a3EHXfBHha0lWgQ9lt3oqIRgbT3r
+ OEZfCdTQhQkmqpMEZck8a5EU1dkjtXtYNlKU6tarbpG8R7Em0MCJ5xsvLsQP8O9wQg9bFZrS0W
+ HCCv3f56X53kB7YYVe2kAAAA=
+To: Ray Jui <rjui@broadcom.com>, 
+ Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, 
+ Linus Walleij <linus.walleij@linaro.org>, 
+ Bartosz Golaszewski <brgl@bgdev.pl>, 
+ Florian Fainelli <florian.fainelli@broadcom.com>, 
+ Scott Branden <sbranden@broadcom.com>, 
+ Matti Vaittinen <mazziesaccount@gmail.com>, 
+ Marek Vasut <marek.vasut+renesas@gmail.com>, Michael Buesch <m@bues.ch>, 
+ Thomas Richard <thomas.richard@bootlin.com>, 
+ Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>, 
+ Benson Leung <bleung@chromium.org>, Guenter Roeck <groeck@chromium.org>, 
+ Andy Shevchenko <andy@kernel.org>, 
+ Support Opensource <support.opensource@diasemi.com>
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-renesas-soc@vger.kernel.org, chrome-platform@lists.linux.dev, 
+ Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+X-Mailer: b4 0.14.1
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1977;
+ i=bartosz.golaszewski@linaro.org; h=from:subject:message-id;
+ bh=/8NjX3rOzGTLQ756Q1j66Bv/y8E0Nf+JlzA4oIcsVvo=;
+ b=owEBbQKS/ZANAwAKARGnLqAUcddyAcsmYgBnzt2xSm4P2dQUEH6/WXgLwh0Og3Dk1vWZ8fyc9
+ 3DxKuhoy8uJAjMEAAEKAB0WIQQWnetsC8PEYBPSx58Rpy6gFHHXcgUCZ87dsQAKCRARpy6gFHHX
+ cu4DEACMU/mbub1Wl/BAjiWgnjjXiGBySayfhIbiMgAGkBuRBylXg8baXdUi0i2sV6iwqrGE9OI
+ s6HWytFr0Toai6HD8p6ilSac1y+EANFTsA6dyxH0lmGfeZr3JEtUtPhcp7tPrqkXV9EQEZa13qa
+ LOiKYFy+5ZAonelieCiU1V6gPkjvE3EefjjB/xtCgJtrXlC55s3e5eCNj/OZ/MsAeGNbsDF5GDR
+ SoKvCr86OQkk5NcO3hJ0FUAeodmCwwAv7jOyPRCtgNLFYelkMXXD4elNoIkAvGkQFVd0GLSZ8gz
+ DZPIHGl00Z3yc4ciDQ6a5eq1daOl2SjjXiIqOwKn+OTTuhuNHNv5u3BxGUF/58kgHQDfjvs8KU9
+ EAHspWUutD4i2GQnQMP6aklZMkvLmR3kukhKE4NKUmw2YLm9T5C1Y4h/S92YhtYNJV6EDJk2Yqf
+ VNnmDw2qQi+gsxBKpBgV8AQl2hOSJQd0Q+tPHpFqNccUWqmAlMplHA41zSVrRdGf3Ho+8OCO0RC
+ VogMfrduLhGTtcvOEdVtWCkNHCJo9pHHKmY9nN4TcC5N1fqAyZJdpWv7TDCSnfBD647CtXn9WuL
+ sgprAl0gX46CqLn65AdKb5Pbb18qBNjd6rzy//bZgue1kaepXWwTgDIx/tCvXy2xm95Vly5eTq1
+ nq3itWNk4h69CVQ==
+X-Developer-Key: i=bartosz.golaszewski@linaro.org; a=openpgp;
+ fpr=169DEB6C0BC3C46013D2C79F11A72EA01471D772
 
-On Mon, Mar 10, 2025 at 11:20:23AM +0000, John Garry wrote:
-> On 10/03/2025 11:11, Carlos Maiolino wrote:
-> > On Mon, Mar 10, 2025 at 10:54:23AM +0000, John Garry wrote:
-> >> On 10/03/2025 10:06, Carlos Maiolino wrote:
-> >>>> diff --git a/fs/xfs/xfs_mount.h b/fs/xfs/xfs_mount.h
-> >>>> index fbed172d6770..bc96b8214173 100644
-> >>>> --- a/fs/xfs/xfs_mount.h
-> >>>> +++ b/fs/xfs/xfs_mount.h
-> >>>> @@ -198,6 +198,7 @@ typedef struct xfs_mount {
-> >>>>    	bool			m_fail_unmount;
-> >>>>    	bool			m_finobt_nores; /* no per-AG finobt resv. */
-> >>>>    	bool			m_update_sb;	/* sb needs update in mount */
-> >>>> +	xfs_extlen_t		awu_max;	/* data device max atomic write */
-> >>> Could you please rename this to something else? All fields within xfs_mount
-> >>> follows the same pattern m_<name>. Perhaps m_awu_max?
-> >> Fine, but I think I then need to deal with spilling multiple lines to
-> >> accommodate a proper comment.
-> >>
-> >>> I was going to send a patch replacing it once I had this merged, but giving
-> >>> Dave's new comments, and the conflicts with zoned devices, you'll need to send a
-> >>> V5, so, please include this change if nobody else has any objections on keeping
-> >>> the xfs_mount naming convention.
-> >> What branch do you want me to send this against?
-> > I just pushed everything to for-next, so you can just rebase it against for-next
-> >
-> > Notice this includes the iomap patches you sent in this series which Christian
-> > picked up. So if you need to re-work something on the iomap patches, you'll
-> > probably need to take this into account.
-> 
-> Your branch includes the iomap changes, so hard to deal with.
+This is another round of GPIO driver conversions to using the
+int-returning value setter callbacks.
 
-> For the iomap change, Dave was suggesting a name change only, so not a
-> major issue.
+Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+---
+Bartosz Golaszewski (15):
+      gpio: bcm-kona: use lock guards
+      gpio: bcm-kona: use new line value setter callbacks
+      gpio: bd71815: use new line value setter callbacks
+      gpio: bd71828: use new line value setter callbacks
+      gpio: bd9571mwv: use new line value setter callbacks
+      gpio: bt8xx: allow to build the module with COMPILE_TEST=y
+      gpio: bt8xx: use lock guards
+      gpio: bt8xx: use new line value setter callbacks
+      gpio: cgbc: use new line value setter callbacks
+      gpio: creg-snps: use new line value setter callbacks
+      gpio: cros-ec: use new line value setter callbacks
+      gpio: crystalcove: use new line value setter callbacks
+      gpio: cs5535: use new line value setter callbacks
+      gpio: da9052: use new line value setter callbacks
+      gpio: da9055: use new line value setter callbacks
 
-If you don't plan to change anything related to the iomap (depending on the path
-the discussion on path 5/12 takes), I believe all you need to do is remove the
-iomap patches from your branch, sending only the xfs patches.
+ drivers/gpio/Kconfig            |  2 +-
+ drivers/gpio/gpio-bcm-kona.c    | 69 +++++++++++++----------------------------
+ drivers/gpio/gpio-bd71815.c     | 15 ++++-----
+ drivers/gpio/gpio-bd71828.c     | 15 ++++-----
+ drivers/gpio/gpio-bd9571mwv.c   |  8 ++---
+ drivers/gpio/gpio-bt8xx.c       | 48 ++++++++++------------------
+ drivers/gpio/gpio-cgbc.c        | 24 ++++++++------
+ drivers/gpio/gpio-creg-snps.c   | 10 +++---
+ drivers/gpio/gpio-cros-ec.c     | 13 +++-----
+ drivers/gpio/gpio-crystalcove.c | 12 +++----
+ drivers/gpio/gpio-cs5535.c      |  6 ++--
+ drivers/gpio/gpio-da9052.c      | 34 +++++++-------------
+ drivers/gpio/gpio-da9055.c      | 14 +++------
+ 13 files changed, 107 insertions(+), 163 deletions(-)
+---
+base-commit: 21c853ad93097619c7966542e838c54c37f57c90
+change-id: 20250310-gpiochip-set-conversion-4ce7e56df55f
 
-> So if we really want to go with a name change, then I could add a patch
-> to change the name only and include in the v5.
-> 
-> Review comments are always welcome, but I wish that they did not come so
-> late...
+Best regards,
+-- 
+Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-That's why I didn't bother asking you to change xfs_mount until now, I'd do it
-myself if you weren't going to send a V5.
-But Dave's comments are more than a mere naming convention, but logic
-adjusting due to operator precedence.
-
-Carlos
-
-> 
-> Thanks,
-> John
 
