@@ -1,124 +1,96 @@
-Return-Path: <linux-kernel+bounces-554836-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-554837-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 302C8A5A131
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 18:58:18 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8A98BA5A143
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 18:59:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D18D218934E3
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 17:58:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4531C3ABA11
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 17:58:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 112FE233721;
-	Mon, 10 Mar 2025 17:58:13 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42A461C4A24;
-	Mon, 10 Mar 2025 17:58:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2061233722;
+	Mon, 10 Mar 2025 17:58:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="j//qbsSw";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="tay6z8pi"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E27E422E418;
+	Mon, 10 Mar 2025 17:58:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741629492; cv=none; b=TNuqsJahexFekkZAabM7p7mmJBwodkd88m9cZTMU3FehXtehgXehm904yxk3Se1HN9HnK6aj58s2MJKveNitJTPr7dIfjnLP2ttL0D3Eg7S9F8v8WVVQTCVC/USnx8uOvC4enIbyiyvXabHzAfTj7prDdEOOPtBu5+G6ARlfAJE=
+	t=1741629537; cv=none; b=PbmdabaKkh9CWEbpcMKXi/fB6faalVE/2I8UjZK6RVyJhvCk7wq3fY2VL2Zm2ZI1597q0/V4WjDEc6F1I9wPnH6uzDhdKmZWJW2BYk8UFYn7bvi/xVswgs+Ht8WCVcZRKMOIMkLr4yRuEKBXqFHT7X5AMR1LnHPGlg0O3XFsvcQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741629492; c=relaxed/simple;
-	bh=oZAX4ZsFkwdrUYXqPWdEuU4XKuGxf5NrIGOTkEDVuB8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=g0sXYMjPgt30MDzj+/IXmkP5h2Q7u069BlsRn/I0Myw9ZxdimVEE1qm28fs5qVVBfZ8yjfo0tyip6Ew3c0rdGjMXRLp6HODRkkQaVuOXgrhpqdqB+NiCbzkg3egBCWBaFkkZ0jdEC4PRpIINt/eyBy3bhojh8z67iXKPpjeeifI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id BCD851516;
-	Mon, 10 Mar 2025 10:58:20 -0700 (PDT)
-Received: from pluto.guest.local (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E3DA83F673;
-	Mon, 10 Mar 2025 10:58:07 -0700 (PDT)
-From: Cristian Marussi <cristian.marussi@arm.com>
-To: linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	arm-scmi@vger.kernel.org
-Cc: sudeep.holla@arm.com,
-	dan.carpenter@linaro.org,
-	Cristian Marussi <cristian.marussi@arm.com>,
-	Huangjie <huangjie1663@phytium.com.cn>,
-	stable@vger.kernel.org
-Subject: [PATCH] firmware: arm_scmi: Fix timeout checks on polling path
-Date: Mon, 10 Mar 2025 17:58:00 +0000
-Message-ID: <20250310175800.1444293-1-cristian.marussi@arm.com>
-X-Mailer: git-send-email 2.47.0
+	s=arc-20240116; t=1741629537; c=relaxed/simple;
+	bh=Al66dsQDQ1AjZ4p3RvfOqWj4xDz7Yh0Li6CQqx31OAA=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=Y4a9Y8tGmlt3dVCTqNOlqcg2UZDTrOFkhxK3oGZVUqAuMGZnPRq96VDQuwMyS/UXIquS8RnvnIgvH51UU+V72Uu4vCKz1+HN2bJQsNO6cl0lGeE4TXy79TXPhhx1Ztq9fDB52NjPDWPbLQg1AM4FkRgrO9OTBnFa8YOlxWZJ2i0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=j//qbsSw; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=tay6z8pi; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1741629534;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=1Ly81vQvGXLIQAxg5uok81uLig8KVjTlFKKgmBlnmwM=;
+	b=j//qbsSwkuy/0qqOlBzR/DCCFBWPkp8dpqdoEsmmHRzZS3qU6u2n2wupSWSz6nM1dpuUri
+	aiLxBe/uYDvzyTjKz0ZvnjLnA1uv9j3zNWECtlFN2n6PjkVPVNkGSaBLsY7jNRCa0oHt+Z
+	TR4Et6ZYlJTN7ceEdWzvdd+J49x8+htWKzrawqyGXmwAEbf9cOxCjQmiuZeoUQK7lu/o09
+	8w+CMSlbnB87sxTKWO5zeS0E+NAL/NZf0OenWsDqsF7VPTwh+A9VeKwvzjemMYwQ83IXaS
+	LkW1H8ID12Cw/KuajwYfbJJaPkUKhk+vx63TXUbvqVyJ0nozoB4BKQ0FKBZ3zw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1741629534;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=1Ly81vQvGXLIQAxg5uok81uLig8KVjTlFKKgmBlnmwM=;
+	b=tay6z8piYzjYTDcVT49X42zfRg7CquVlxe7fBfutBqZbIPgXozgKkKf1wQKrMY9lhcs+Eg
+	x0hweM8q8QaQwsAA==
+To: Xianwei Zhao via B4 Relay <devnull+xianwei.zhao.amlogic.com@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Neil Armstrong
+ <neil.armstrong@linaro.org>, Kevin Hilman <khilman@baylibre.com>, Jerome
+ Brunet <jbrunet@baylibre.com>, Martin Blumenstingl
+ <martin.blumenstingl@googlemail.com>, Heiner Kallweit
+ <hkallweit1@gmail.com>
+Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-amlogic@lists.infradead.org,
+ Xianwei Zhao <xianwei.zhao@amlogic.com>
+Subject: Re: [PATCH v4 2/4] irqchip: Add support for Amlogic A4 and A5 SoCs
+In-Reply-To: <20250307-irqchip-gpio-a4-a5-v4-2-d03a9424151b@amlogic.com>
+References: <20250307-irqchip-gpio-a4-a5-v4-0-d03a9424151b@amlogic.com>
+ <20250307-irqchip-gpio-a4-a5-v4-2-d03a9424151b@amlogic.com>
+Date: Mon, 10 Mar 2025 18:58:53 +0100
+Message-ID: <87ecz422ea.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-Polling mode transactions wait for a reply busy-looping without holding a
-spinlock, but currently the timeout checks are based only on elapsed time:
-as a result we could hit a false positive whenever our busy-looping thread
-is pre-empted and scheduled out for a time greater than the polling
-timeout.
+On Fri, Mar 07 2025 at 16:49, Xianwei Zhao via wrote:
+>  
+>  	if (type == IRQ_TYPE_EDGE_BOTH) {
+>  		val |= BIT(ctl->params->edge_both_offset + idx);
 
-Change the checks at the end of the busy-loop to make sure that the polling
-wasn't indeed successful or an out-of-order reply caused the polling to be
-forcibly terminated.
+Not new, but this really should be 'val = ...'
 
-Fixes: 31d2f803c19c ("firmware: arm_scmi: Add sync_cmds_completed_on_ret transport flag")
-Reported-by: Huangjie <huangjie1663@phytium.com.cn>
-Closes: https://lore.kernel.org/arm-scmi/20250123083323.2363749-1-jackhuang021@gmail.com/
-Signed-off-by: Cristian Marussi <cristian.marussi@arm.com>
-Cc: <stable@vger.kernel.org> # 5.18.x
----
-This fix got to be backported to 5.4/5.10./5.15 due to small changes in the
-context
----
- drivers/firmware/arm_scmi/driver.c | 13 ++++++++-----
- 1 file changed, 8 insertions(+), 5 deletions(-)
+> -		meson_gpio_irq_update_bits(ctl, REG_EDGE_POL_S4,
+> +		meson_gpio_irq_update_bits(ctl, params->edge_pol_reg,
+>  					   BIT(ctl->params->edge_both_offset + idx), val);
 
-diff --git a/drivers/firmware/arm_scmi/driver.c b/drivers/firmware/arm_scmi/driver.c
-index 60050da54bf2..e6cf83950875 100644
---- a/drivers/firmware/arm_scmi/driver.c
-+++ b/drivers/firmware/arm_scmi/driver.c
-@@ -1248,7 +1248,8 @@ static void xfer_put(const struct scmi_protocol_handle *ph,
- }
- 
- static bool scmi_xfer_done_no_timeout(struct scmi_chan_info *cinfo,
--				      struct scmi_xfer *xfer, ktime_t stop)
-+				      struct scmi_xfer *xfer, ktime_t stop,
-+				      bool *ooo)
- {
- 	struct scmi_info *info = handle_to_scmi_info(cinfo->handle);
- 
-@@ -1257,7 +1258,7 @@ static bool scmi_xfer_done_no_timeout(struct scmi_chan_info *cinfo,
- 	 * in case of out-of-order receptions of delayed responses
- 	 */
- 	return info->desc->ops->poll_done(cinfo, xfer) ||
--	       try_wait_for_completion(&xfer->done) ||
-+	       (*ooo = try_wait_for_completion(&xfer->done)) ||
- 	       ktime_after(ktime_get(), stop);
- }
- 
-@@ -1274,15 +1275,17 @@ static int scmi_wait_for_reply(struct device *dev, const struct scmi_desc *desc,
- 		 * itself to support synchronous commands replies.
- 		 */
- 		if (!desc->sync_cmds_completed_on_ret) {
-+			bool ooo = false;
-+
- 			/*
- 			 * Poll on xfer using transport provided .poll_done();
- 			 * assumes no completion interrupt was available.
- 			 */
- 			ktime_t stop = ktime_add_ms(ktime_get(), timeout_ms);
- 
--			spin_until_cond(scmi_xfer_done_no_timeout(cinfo,
--								  xfer, stop));
--			if (ktime_after(ktime_get(), stop)) {
-+			spin_until_cond(scmi_xfer_done_no_timeout(cinfo, xfer,
-+								  stop, &ooo));
-+			if (!ooo && !info->desc->ops->poll_done(cinfo, xfer)) {
- 				dev_err(dev,
- 					"timed out in resp(caller: %pS) - polling\n",
- 					(void *)_RET_IP_);
--- 
-2.47.0
+and this BIT() calculation is obviously redundant as it is the same as @val.
 
+Would be nice to have that cleaned up.
+
+With that fixed:
+
+Reviewed-by: Thomas Gleixner <tglx@linutronix.de>
 
