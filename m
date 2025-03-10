@@ -1,120 +1,350 @@
-Return-Path: <linux-kernel+bounces-553544-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-553547-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B55AAA58B3A
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 05:34:15 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 75C24A58B48
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 05:52:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 103B07A4C66
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 04:33:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F0025188ABF5
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 04:52:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88FD41B6CE0;
-	Mon, 10 Mar 2025 04:34:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 195301C1F1F;
+	Mon, 10 Mar 2025 04:52:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="2UFtLig+"
-Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RWj4s5Tg"
+Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F0F71386C9
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 04:34:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7517222F19;
+	Mon, 10 Mar 2025 04:52:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741581246; cv=none; b=qBj+g7T+UHUI0fz4r8UfdgBs/1J2SqagJOIGzRJlmZjP5o+IDqvDY5OQ4wvHzyOWd5ff8eu/KVlA7qtGblO292bSoK3OT7gr5WBdts7KT2rxc6YsRsALXnpKfy+5PMGu4MsF6ZaIkn7hna/vFs4zve3bioU+xw9yhBV19QZKHws=
+	t=1741582336; cv=none; b=OM6cWFE1T9Zl0HdCkcSwzzW1pOmPEF6QMLuDrxbl5RJr/d67unDuiXwWbHcBSmu78EGlzcy9ZWxVdE8VBWoGF9x5hIQHiva2ZU5uoXK6JsfDSdz+E4DtEvTxXLCp0wmicyytKBjFBKVPv+MKp4XAMshDyQcALnKGzVSA0lHxK6s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741581246; c=relaxed/simple;
-	bh=TWCm+CRWlgu32Y0M73b1SpXa9LjDCzu9iKJJhuYonhs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kZgqvPYAEMbUlojFXECHHfwSBmWXfeijOEafnoIjYa7jeR+IbDV2LI4a/gO6xwNY6fNy46EpcdJdLGCZOv/rAfjScMbH/SDXgTEYpcgCUy221fTQcAhycS71FVJfGYOtjbKMH+V7Vo+P1HjSesgpndCt/MAznwcY4rgc4iJA29w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=2UFtLig+; arc=none smtp.client-ip=209.85.214.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
-Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-224019ad9edso85840565ad.1
-        for <linux-kernel@vger.kernel.org>; Sun, 09 Mar 2025 21:34:05 -0700 (PDT)
+	s=arc-20240116; t=1741582336; c=relaxed/simple;
+	bh=c2Kb6GBTy1FNaZha5z5DlQW5jEUjKvvg42tkxZoyw/c=;
+	h=From:To:Cc:Subject:In-Reply-To:Date:Message-ID:References; b=JMRCQMZi5+9b9XjqwUURNi77Idw7DLsl6FK0bU3JQHDrO7HBhbPLljSK4jitcF7lTDSsjpBU3YUnLFJJy6BQ9Gw3Xdydtzvx+BKUlIcKxshoPBQmk7CutnnyHzAA7cIeH4yRCSH8aZg71r8J/6LHIfe9l8gukFuRypVstZeN9PE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RWj4s5Tg; arc=none smtp.client-ip=209.85.214.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-22401f4d35aso65216405ad.2;
+        Sun, 09 Mar 2025 21:52:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1741581245; x=1742186045; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=13ChRW79RLZKXPIzEEQT8n5qa9QFsChJtd4X7Rr3YO0=;
-        b=2UFtLig+dSFHTn+YHlObETlejP901+y/OCOfhbTZhPoYq41cqrXHa958t1d1fMw+5L
-         G4OTY/JoMR0fv0VjL/94DLUqnNbglmyGELsFWqqHutZlj3s6gYtoV9wxhyl5NCoxzqKz
-         t1PRkHtd5H4NYL9naS4RKyTvd0laTp/oPzW0cLqDTSS6NY1WGUkMcrY5ITcUTU3QPSgW
-         NKDim4ulDuSb3JntC7qD6V+4fuL/TFGx34gxZyEUPrGeMh9jSZzLlw3TQBqn8lutXkDb
-         W0yXchjl27LRjtd0DMrgm19OFPzxIZNIoUxLG7xOcCbbo1BV4r1rKkUBNt3y8YNawscY
-         SILg==
+        d=gmail.com; s=20230601; t=1741582334; x=1742187134; darn=vger.kernel.org;
+        h=references:message-id:date:in-reply-to:subject:cc:to:from:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=hPZPoRjcyOE0kbrctulab7lfdybsIPALCBgsQ7KETJ4=;
+        b=RWj4s5TgimPwEt1z/LIzS1fFKm1EMm2XWGhrEDgxENm0SPFsbqtQTxIKZxeofhWfdh
+         IE+E+s03wDU8pi2yXTGUrGKg90Bkh6oGXhM3yZpwv3ArtjQ1NWjAwV1GdiBCgJtVMJ0l
+         ByAjsnVjnJMuGejrv6ZN78YLxVXmJCNXjMIv1YF5KJJqg6mjvytl8h0Gtlk/IkLSdmpG
+         AEYpmlxvoZOwih744Rkbvrxb5MHdo7db50h1I8zUjw3yj9wdK9VIr3Y76ZT8MA2wPoR1
+         tLVltlLCvUxyd4aYvafYUVEAjyFalNE3AK+pX1uCqypauan61K6ZN13xIq+ufNlmGdA2
+         3vnw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741581245; x=1742186045;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=13ChRW79RLZKXPIzEEQT8n5qa9QFsChJtd4X7Rr3YO0=;
-        b=a9fjAbnpV+nKFOwTbx4pbgsA60KhxGkIDtb7ihHHaf7YdW5mXiFgJ/f8bi0LQlKPYL
-         b956/HZ5tf7L/cldX9Dk9G4BEnxs+5yXbjmDrO2HNHvDEmgC3XKuxY3nMttSP91ZT9u2
-         NGLExYweiPg3J32Kh6Ct2Qsl06JMbVbAvjC4GHz9pOIdWeWfn8MDcNEWRf544WFWAxb+
-         rjmx6RmkEFDhymGr3qalXIrvX8Tb0gzszunesiAOwD3g4TI+hHVDWNxwcDd531xngJEp
-         0wIBRUwYlMsHl0fidG/A1+1ZdWwvIk/fxxWGByr9Z4cr6K3gh23DBc9ygop9ZsIitt4F
-         3gKQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVHf1YEPZMryHT+U/89WaJvELGq1qJsQKEJkYM59/R/ROISLX3WsiDahh3PT7TRquvy2ZyEuUjgXrAU5ek=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy0MsspN6bafnWbCk8bGAtns16NWDxti+jZfce1l7VRKmriLt99
-	/k2po1m/tgM3RR7QBrQjrTmKBpFhmwPIIlWPv/TEkEkD8kO7DFATRANFvQoXz14=
-X-Gm-Gg: ASbGnctuMJm/Kec01xB0Tb6dbejScZOmYe9Cuq9UyXj7nPxsOvG7kZf9kxHCTfEUa9M
-	44Geb7FsJiAu1zcCMnd2+SxPN6MXCcmY5/exfZVayHjsIxhJsyUZZVg0QA61Oi70hVg9qsxKRNb
-	DIcux2LfXZ6k4ZJ7206GedYOPBGcG24JgFXpfkXc0BLuOTbptidNcNZVaeT58leRTreqbSCBBV+
-	KC6y3v/koHWxcfzPh17MszS8hkNvUZ9jBXY/a+6A19lY2ymBXVBSU/vA4hx8ofLQrbX2eleHNT1
-	Y78Ho/LbVm6wP+larFQJH1ro2Q+4hzak+RbBuqU=
-X-Google-Smtp-Source: AGHT+IG23e6e0NfcQWHHui1UgTUeATKpxeYS9TWIFzolvcIGQw0afq6BAO5/9cuUmkmceElelfdLBg==
-X-Received: by 2002:a17:902:ea0c:b0:21f:b483:2ad5 with SMTP id d9443c01a7336-2242888b35dmr161699375ad.20.1741581244773;
-        Sun, 09 Mar 2025 21:34:04 -0700 (PDT)
-Received: from ghost ([2601:647:6700:64d0:677:c5f4:a978:3253])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22410a7f999sm67389125ad.141.2025.03.09.21.34.02
+        d=1e100.net; s=20230601; t=1741582334; x=1742187134;
+        h=references:message-id:date:in-reply-to:subject:cc:to:from
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=hPZPoRjcyOE0kbrctulab7lfdybsIPALCBgsQ7KETJ4=;
+        b=j4PXDdE2eCDHIxw8az8IlKnzP+tqDQ9T21B8j6QKEU3UrcObDsYkxzBcJXrS4mbk7j
+         /C7eRqFK0N4umLJrxw2AjIzkN7wu5RjHbBQi9ZTpMbo3Tqse0QrPWhT1w1M3geio1gfR
+         U9zi7rO4Z7VGzGtkySfwic6i7NxcXXY43nGOHs8GWNioEy0OpLZ8Dmrk2odqmx3RcCqh
+         HbxtONJpwub7e7MsllYyfVPjXUNXY3nfqZiVWPlf5Qsx1jhxOGqtvkB1797v60eONpxG
+         p4R3PlrpCUmS1LDTadODWv9TX+CrE2vLeFPwprMIGiOw6fHI7+aBEnCZO5Y8O64gvDkn
+         cdIw==
+X-Forwarded-Encrypted: i=1; AJvYcCXRD/H1zTbgynWhoPLde6THxIFC/C3mArXFrLYct4hXwkqS+dMcMN4qdxC1P8PxXULcuKAvZyUjRGJwmH0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxQbWITBEQ12LtXqqYW8ra+TJFUNWOvoJkF42HeMcRSiaJYsLCp
+	8nnNKDbN8Pim92niMfyX6PHi68rXbf39UtF04I18/zZSqqDwcUBI
+X-Gm-Gg: ASbGncu53JRAEfNSgCpaBSHxbdT40GMgD4WkG1v97lKcGm+3n3XomzHwvNJU7Y6chiL
+	Xo0qgQ163Fx1VMUOaee/YWKfs49Uul+2pIorbng4UWV++dkEOAGcBmzKXyP/lW8zONwna0bpmCB
+	Hr77+0QQ0mtjfeYdFgVbQX+eVY+I9U6K/lTZBmOQPttdfTGqVCT2amufkZEiM/vqVqSFFQDh1Po
+	xkE8Y/NfmPqOLM9GO3ZRdj39TnE78Oyf2zrlKaAPb0b6fdgVeHa9NK9J8q+rTMXWKy+e4B7FqyI
+	2SN6I5V1gD+XzHFk56y9LDrmUZ9/xsuPeQ4=
+X-Google-Smtp-Source: AGHT+IFRtkC/DBfRCvqYBXy5Q8Qy7y8OJI4ja/YusGuNdRdfzfjhOo4bdDCGs3xuzorPAKe2zbXwhQ==
+X-Received: by 2002:a05:6a21:6e4c:b0:1f5:790c:947 with SMTP id adf61e73a8af0-1f5790c0c79mr4641673637.19.1741582333458;
+        Sun, 09 Mar 2025 21:52:13 -0700 (PDT)
+Received: from dw-tp ([129.41.58.7])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-736d47f9da3sm1502444b3a.137.2025.03.09.21.52.10
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 09 Mar 2025 21:34:03 -0700 (PDT)
-Date: Sun, 9 Mar 2025 21:34:00 -0700
-From: Charlie Jenkins <charlie@rivosinc.com>
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Huacai Chen <chenhuacai@kernel.org>,
-	WANG Xuerui <kernel@xen0n.name>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Andy Lutomirski <luto@kernel.org>,
-	Alexandre Ghiti <alexghiti@rivosinc.com>,
-	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
-	loongarch@lists.linux.dev
-Subject: Re: [PATCH v5 4/4] entry: Inline syscall_exit_to_user_mode()
-Message-ID: <Z85ruFUoBQM60Vd8@ghost>
-References: <20250305-riscv_optimize_entry-v5-0-6507b5dff3ce@rivosinc.com>
- <20250305-riscv_optimize_entry-v5-4-6507b5dff3ce@rivosinc.com>
- <87senn3dh1.ffs@tglx>
- <Z8zb-L8bFMh_YHxO@ghost>
- <87jz8y3953.ffs@tglx>
+        Sun, 09 Mar 2025 21:52:12 -0700 (PDT)
+From: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
+To: Ojaswin Mujoo <ojaswin@linux.ibm.com>
+Cc: linux-ext4@vger.kernel.org, Theodore Ts'o <tytso@mit.edu>, Jan Kara <jack@suse.cz>, Baokun Li <libaokun1@huawei.com>, linux-kernel@vger.kernel.org, Mahesh Kumar <maheshkumar657g@gmail.com>
+Subject: Re: [PATCH v2 2/3] ext4: avoid journaling sb update on error if journal is destroying
+In-Reply-To: <Z82EjcExRMc8nz2v@li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com>
+Date: Mon, 10 Mar 2025 10:13:36 +0530
+Message-ID: <871pv5cx6v.fsf@gmail.com>
+References: <cover.1741270780.git.ojaswin@linux.ibm.com> <1bf59095d87e5dfae8f019385ba3ce58973baaff.1741270780.git.ojaswin@linux.ibm.com> <87ldtfhmo7.fsf@gmail.com> <Z8xAmyICsNlln4Y3@li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com> <87ecz7hcw0.fsf@gmail.com> <Z8xbLrdN3L1E50-G@li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com> <87cyergyb1.fsf@gmail.com> <Z82EjcExRMc8nz2v@li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <87jz8y3953.ffs@tglx>
 
-On Sun, Mar 09, 2025 at 09:23:20AM +0100, Thomas Gleixner wrote:
-> On Sat, Mar 08 2025 at 16:08, Charlie Jenkins wrote:
-> > On Sat, Mar 08, 2025 at 01:37:30PM +0100, Thomas Gleixner wrote:
-> >> On Wed, Mar 05 2025 at 16:43, Charlie Jenkins wrote:
-> >> > Architectures using the generic entry code can be optimized by having
-> >> > syscall_exit_to_user_mode inlined.
-> >> 
-> >> That's a pretty handwavy claim. What's the actual benefit in numbers?
-> >
-> > I put the numbers in the cover letter! Here is the data I gathered:
-> 
-> They should be in the change log as the cover letter is not part of what
-> ends up in git.
+Ojaswin Mujoo <ojaswin@linux.ibm.com> writes:
 
-Yes good point. I will add this data here in the next version of the patch.
+> On Sun, Mar 09, 2025 at 12:11:22AM +0530, Ritesh Harjani wrote:
+>> Ojaswin Mujoo <ojaswin@linux.ibm.com> writes:
+>> 
+>> > On Sat, Mar 08, 2025 at 06:56:23PM +0530, Ritesh Harjani wrote:
+>> >> Ojaswin Mujoo <ojaswin@linux.ibm.com> writes:
+>> >> 
+>> >> > On Sat, Mar 08, 2025 at 03:25:04PM +0530, Ritesh Harjani (IBM) wrote:
+>> >> >> Ojaswin Mujoo <ojaswin@linux.ibm.com> writes:
+>> >> >> 
+>> >> >> > Presently we always BUG_ON if trying to start a transaction on a journal marked
+>> >> >> > with JBD2_UNMOUNT, since this should never happen. However, while ltp running
+>> >> >> > stress tests, it was observed that in case of some error handling paths, it is
+>> >> >> > possible for update_super_work to start a transaction after the journal is
+>> >> >> > destroyed eg:
+>> >> >> >
+>> >> >> > (umount)
+>> >> >> > ext4_kill_sb
+>> >> >> >   kill_block_super
+>> >> >> >     generic_shutdown_super
+>> >> >> >       sync_filesystem /* commits all txns */
+>> >> >> >       evict_inodes
+>> >> >> >         /* might start a new txn */
+>> >> >> >       ext4_put_super
+>> >> >> > 	flush_work(&sbi->s_sb_upd_work) /* flush the workqueue */
+>> >> >> >         jbd2_journal_destroy
+>> >> >> >           journal_kill_thread
+>> >> >> >             journal->j_flags |= JBD2_UNMOUNT;
+>> >> >> >           jbd2_journal_commit_transaction
+>> >> >> >             jbd2_journal_get_descriptor_buffer
+>> >> >> >               jbd2_journal_bmap
+>> >> >> >                 ext4_journal_bmap
+>> >> >> >                   ext4_map_blocks
+>> >> >> >                     ...
+>> >> >> >                     ext4_inode_error
+>> >> >> >                       ext4_handle_error
+>> >> >> >                         schedule_work(&sbi->s_sb_upd_work)
+>> >> >> >
+>> >> >> >                                                /* work queue kicks in */
+>> >> >> >                                                update_super_work
+>> >> >> >                                                  jbd2_journal_start
+>> >> >> >                                                    start_this_handle
+>> >> >> >                                                      BUG_ON(journal->j_flags &
+>> >> >> >                                                             JBD2_UNMOUNT)
+>> >> >> >
+>> >> >> > Hence, introduce a new sbi flag s_journal_destroying to indicate journal is
+>> >> >> > destroying only do a journaled (and deferred) update of sb if this flag is not
+>> >> >> > set. Otherwise, just fallback to an un-journaled commit.
+>> >> >> >
+>> >> >> > We set sbi->s_journal_destroying = true only after all the FS updates are done
+>> >> >> > during ext4_put_super() (except a running transaction that will get commited
+>> >> >> > during jbd2_journal_destroy()). After this point, it is safe to commit the sb
+>> >> >> > outside the journal as it won't race with a journaled update (refer
+>> >> >> > 2d01ddc86606).
+>> >> >> >
+>> >> >> > Also, we don't need a similar check in ext4_grp_locked_error since it is only
+>> >> >> > called from mballoc and AFAICT it would be always valid to schedule work here.
+>> >> >> >
+>> >> >> > Fixes: 2d01ddc86606 ("ext4: save error info to sb through journal if available")
+>> >> >> > Reported-by: Mahesh Kumar <maheshkumar657g@gmail.com>
+>> >> >> > Suggested-by: Jan Kara <jack@suse.cz>
+>> >> >> > Signed-off-by: Ojaswin Mujoo <ojaswin@linux.ibm.com>
+>> >> >> > ---
+>> >> >> >  fs/ext4/ext4.h      | 2 ++
+>> >> >> >  fs/ext4/ext4_jbd2.h | 8 ++++++++
+>> >> >> >  fs/ext4/super.c     | 4 +++-
+>> >> >> >  3 files changed, 13 insertions(+), 1 deletion(-)
+>> >> >> >
+>> >> >> > diff --git a/fs/ext4/ext4.h b/fs/ext4/ext4.h
+>> >> >> > index 2b7d781bfcad..d48e93bd5690 100644
+>> >> >> > --- a/fs/ext4/ext4.h
+>> >> >> > +++ b/fs/ext4/ext4.h
+>> >> >> > @@ -1728,6 +1728,8 @@ struct ext4_sb_info {
+>> >> >> >  	 */
+>> >> >> >  	struct work_struct s_sb_upd_work;
+>> >> >> >  
+>> >> >> > +	bool s_journal_destorying;
+>> >> >> > +
+>> >> >> >  	/* Atomic write unit values in bytes */
+>> >> >> >  	unsigned int s_awu_min;
+>> >> >> >  	unsigned int s_awu_max;
+>> >> >> > diff --git a/fs/ext4/ext4_jbd2.h b/fs/ext4/ext4_jbd2.h
+>> >> >> > index 9b3c9df02a39..6bd3ca84410d 100644
+>> >> >> > --- a/fs/ext4/ext4_jbd2.h
+>> >> >> > +++ b/fs/ext4/ext4_jbd2.h
+>> >> >> > @@ -437,6 +437,14 @@ static inline int ext4_journal_destroy(struct ext4_sb_info *sbi, journal_t *jour
+>> >> >> >  {
+>> >> >> >  	int err = 0;
+>> >> >> >  
+>> >> >> > +	/*
+>> >> >> > +	 * At this point all pending FS updates should be done except a possible
+>> >> >> > +	 * running transaction (which will commit in jbd2_journal_destroy). It
+>> >> >> > +	 * is now safe for any new errors to directly commit superblock rather
+>> >> >> > +	 * than going via journal.
+>> >> >> > +	 */
+>> >> >> > +	sbi->s_journal_destorying = true;
+>> >> >> 
+>> >> >> This is not correct right. I think what we decided to set this flag
+>> >> >> before we flush the workqueue. So that we don't schedule any new
+>> >> >> work after this flag has been set. At least that is what I understood.
+>> >> >> 
+>> >> >> [1]: https://lore.kernel.org/all/87eczc6rlt.fsf@gmail.com/
+>> >> >> 
+>> >> >> -ritesh
+>> >> >
+>> >> > Hey Ritesh,
+>> >> >
+>> >> > Yes that is not correct, I missed that in my patch however we realised
+>> >> > that adding it before flush_work() also has issues [1]. More
+>> >> > specifically:
+>> >> 
+>> >> Ohk. right. 
+>> >> 
+>> >> >
+>> >> >                      **kjournald2**
+>> >> >                      jbd2_journal_commit_transaction()
+>> >> >                      ...
+>> >> >                      ext4_handle_error()
+>> >> >                         /* s_journal_destorying is not set */
+>> >> >                         if (journal && !s_journal_destorying)
+>> >> 
+>> >> Then maybe we should not schedule another work to update the superblock
+>> >> via journalling, it the error itself occurred while were trying to
+>> >> commit the journal txn? 
+>> >> 
+>> >> 
+>> >> -ritesh
+>> >
+>> > Hmm, ideally yes that should not happen, but how can we achieve that?
+>> > For example with the trace we saw:
+>> >
+>> >    **kjournald2**
+>> >    jbd2_journal_commit_transaction()
+>> >      jbd2_journal_get_descriptor_buffer
+>> >        jbd2_journal_bmap
+>> >          ext4_journal_bmap
+>> >            ext4_map_blocks
+>> >              ...
+>> >              ext4_inode_error
+>> >                ext4_handle_error
+>> >                  schedule_work(&sbi->s_sb_upd_work)
+>> >
+>> > How do we tell ext4_handle_error that it is in the context of a
+>> > committing txn.
+>> 
+>> So even if we identify that the current
+>> jbd2_journal_commit_transaction() is coming from kjournald2(), that is
+>> sufficient right? Because the only other place where we call
+>> jbd2_journal_commit_transaction() is jbd2_journal_destroy() and that
+>> happens after we can set few things from ext4_put_super() and flush work
+>> is completed, correct? 
+>> 
+>> 
+>> > We can't pass down an argument all the way down 
+>> > cause that is not feasible. An sb level flag will also not work
+>> > I think. Any thoughts on this?
+>> 
+>> I was thinking if we should have a per task flag? Something like
+>> PF_KJOURNALD?  (Similar to how we have PF_KSWAPD or PF_KCOMPACTD)? This
+>> can help us identify if we are a kjournald2() kthread.
+>> 
+>> That will help prevent scheduling another work item to start a new
+>> transaction in case an error occurs while committing the currently
+>> running transaction. Correct?
+>
+> Yes, I like this approach. I think this will also help us avoid the
+> extra checks in ext4_journal_destroy() since the journal will no longer
+> schecule work for updating the sb. Hence we can be sure that after the
+> final flush_work() noone will try to schedule more work or start a new
+> transaction.
+>
+> I'll try to spin up a poc and test it. Does seem like we are out of flags in 
+> task struct though.
+>
+> Regards,
+> ojaswin
+>
+>> 
+>> Now I don't know if we have any free bit available in current->flags. If
+>> not shall we use current->journal_info pointer to have 0th bit as a
+>> flag? Basically override current->journal_info to also store a flag.  We
+>> can create a wrapper to get the journal_info from current by masking
+>> this flag bit and use it to dereference journal_info.
+>
+> Hmm so journal_info will be holding a kernel address of the handle. Is
+> it possible to have it share a flag as well? I thought the address would
+> utilize the full 64bits?
 
-- Charlie
 
+What I meant here was - 
+In general I assume we should be able to play some tricks with a pointer
+which at least should be 4 byte aligned. So we can save some flag bits in
+the lower bits of a pointer.  For e.g. check struct address_space &
+PAGE_MAPPING_FLAGS. There maybe few other examples too.
+
+
+-ritesh
+
+
+>
+> Regards,
+> ojaswin
+>
+>> 
+>> But before going down that road, it's better to know what others think?
+>> 
+>> -ritesh
+>> 
+>> 
+>> >
+>> > regards,
+>> > ojaswin
+>> >
+>> >> 
+>> >> 
+>> >> >   ext4_put_super()
+>> >> >     sbi->s_journal_destorying = true;
+>> >> >     flush_work(&sbi->s_sb_upd_work)
+>> >> >                                       schedule_work()
+>> >> >     jbd2_journal_destroy()
+>> >> >      journal->j_flags |= JBD2_UNMOUNT;
+>> >> >
+>> >> >                                         jbd2_journal_start()
+>> >> >                                          start_this_handle()
+>> >> >                                            BUG_ON(JBD2_UNMOUNT)
+>> >> >
+>> >> > So the right thing to do seems to be that we need to force a journal
+>> >> > commit before the final flush as well. [1] Has more info on this and
+>> >> > some followup discussion as well.
+>> >> >
+>> >> > [1] https://lore.kernel.org/all/cover.1741270780.git.ojaswin@linux.ibm.com/T/#mc8046d47b357665bdbd2878c91e51eb660f94b3e
+>> >> >
+>> >> > Regards,
+>> >> > ojaswin
+>> >> >> 
+>> >> >> 
+>> >> >> > +
+>> >> >> >  	err = jbd2_journal_destroy(journal);
+>> >> >> >  	sbi->s_journal = NULL;
+>> >> >> >  
+>> >> >> > diff --git a/fs/ext4/super.c b/fs/ext4/super.c
+>> >> >> > index 8ad664d47806..31552cf0519a 100644
+>> >> >> > --- a/fs/ext4/super.c
+>> >> >> > +++ b/fs/ext4/super.c
+>> >> >> > @@ -706,7 +706,7 @@ static void ext4_handle_error(struct super_block *sb, bool force_ro, int error,
+>> >> >> >  		 * constraints, it may not be safe to do it right here so we
+>> >> >> >  		 * defer superblock flushing to a workqueue.
+>> >> >> >  		 */
+>> >> >> > -		if (continue_fs && journal)
+>> >> >> > +		if (continue_fs && journal && !EXT4_SB(sb)->s_journal_destorying)
+>> >> >> >  			schedule_work(&EXT4_SB(sb)->s_sb_upd_work);
+>> >> >> >  		else
+>> >> >> >  			ext4_commit_super(sb);
+>> >> >> > @@ -5311,6 +5311,8 @@ static int __ext4_fill_super(struct fs_context *fc, struct super_block *sb)
+>> >> >> >  	spin_lock_init(&sbi->s_error_lock);
+>> >> >> >  	INIT_WORK(&sbi->s_sb_upd_work, update_super_work);
+>> >> >> >  
+>> >> >> > +	sbi->s_journal_destorying = false;
+>> >> >> > +
+>> >> >> >  	err = ext4_group_desc_init(sb, es, logical_sb_block, &first_not_zeroed);
+>> >> >> >  	if (err)
+>> >> >> >  		goto failed_mount3;
+>> >> >> > -- 
+>> >> >> > 2.48.1
 
