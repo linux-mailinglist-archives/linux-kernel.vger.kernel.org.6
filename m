@@ -1,156 +1,105 @@
-Return-Path: <linux-kernel+bounces-554717-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-554718-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3B187A59B80
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 17:50:51 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D0E98A59B83
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 17:51:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E6A0B1889258
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 16:50:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1B360169144
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 16:51:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D623524A065;
-	Mon, 10 Mar 2025 16:42:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEBA4235364;
+	Mon, 10 Mar 2025 16:43:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="adolExQz"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76946233D64;
-	Mon, 10 Mar 2025 16:42:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="e9YzPdcR"
+Received: from mail-qt1-f177.google.com (mail-qt1-f177.google.com [209.85.160.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D49AA230BFA
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 16:43:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741624938; cv=none; b=TugWc3TQ9qRr15FZWa+LA2pVsW44kiMsxIXwKjx+7ucD9qc/Zv2BUjViEyliOMoJfUhI6KZ1RNgengWFlrjuErsh5snvcVDooGiKyBxDfwI+cprwrAAdXUajSgJj1xJyzp6QnZjeXVTFCJbmBhjpHzj8YeGaMQTR2TSAk6AGuKA=
+	t=1741624990; cv=none; b=JcfaiuqeblDXgPtgK30g8ykjPqoBd9XWtp7emXMrzN1984RSc2iOtovn+sKwHDnT5RWVtYn65Rjj4YmFgUyvCdgAcxMk/u/OBgHkuf7HBPrU9LjIMLhTXCnDHNMnJD5GqGvqAnXnjMGUKc66p95xW0mFgOJMR/aChPoZeXuQkNM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741624938; c=relaxed/simple;
-	bh=8rHmoCDx9SLU3IG4xkAenK09evGQcGUPBC/dfid1nr8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=bBpwTa/HeBaKx0dXaPVC8rtk8EgFiTPKmhHbF6vWha+jg3bmHu1ETLCk1wxhoSDAz6VJs+P4i1TYGzMKY04GdZ3uT4ojXcBIJX9r6WNNols0iCIwphgLu+J4EMyLFH0+2QyLoEuO6uvNhqGDB1PB2h8m1r5nCrbIPk8oVYFfgcY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=adolExQz; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: from [10.137.184.60] (unknown [131.107.160.188])
-	by linux.microsoft.com (Postfix) with ESMTPSA id 917D62038F31;
-	Mon, 10 Mar 2025 09:42:15 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 917D62038F31
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1741624935;
-	bh=LN1XhlPdMhhUKdLiwgvqjrH33le8Y4pxVH3hP74M9b0=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=adolExQzIdiGiIImUNH8PIT6jUYPIx/W+TATHEWLnINgGBwZ6f1UJ6VLPct8eOZG1
-	 QWxNjZnyTJVqsNRH80CF3UdDcU3vx6TIUod2y01uAqFHvYQ2H224pVoGrzHDj5UdK0
-	 NOQoc/qdsXI7/FognyHzoybGrl/nnp4HVU46HlNk=
-Message-ID: <2342dda1-2976-4506-ab68-640739a1bd5b@linux.microsoft.com>
-Date: Mon, 10 Mar 2025 09:42:15 -0700
+	s=arc-20240116; t=1741624990; c=relaxed/simple;
+	bh=KeJ1RRzvTqUvULwTdyZYl5//YQOn9JBoSQ1imwwbGMo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=HXi0kTQlWKV2cU9QeiJliNEr2pCwFqBlf1xS99RhKkfxO6lKzOEXV1piIRUuJG4tNbzxUIaWgIzimFuwUV348atBbEAaWwCwDpkQ37Lan2K2+Ma4RT5xCT5CaodotT9yGQT8QtKFWSOm4g5GyLHo6S74f5U86rWA7L14O0Zg2GQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=e9YzPdcR; arc=none smtp.client-ip=209.85.160.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
+Received: by mail-qt1-f177.google.com with SMTP id d75a77b69052e-47698757053so3183551cf.0
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 09:43:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google; t=1741624986; x=1742229786; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=o7+xCb6XzG3joR6a4M5865iGYkCdDkI6eexc4SK+HB0=;
+        b=e9YzPdcR3SFGD+bZJnuWgXoRnN1teJnbhbLGJ02CMSZV/2Sh/iFUP1vtA+FZICDd1h
+         /ojuL8ALW2tgQyVBsfq+shE/L2G1YWwcfx7MgSnvikhjzOwwSlt663tDAohogz99P02b
+         RdYm8pHf0JncWM8AzIv+qaLfAktzdvfUkyHtI=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741624986; x=1742229786;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=o7+xCb6XzG3joR6a4M5865iGYkCdDkI6eexc4SK+HB0=;
+        b=LrGOtEqqqJqEW39OGehYH4yaRsSDZXgNgl/x+phG2DpfG9YYjZwKQzO88n88ZSgJ51
+         oM8lyhqLPEkuwXBNpBKP9iAJ5Xd1Ywi2DlOHaMBC0ALLmIpNh1BImHK/NKEFeumCmVCM
+         vi5b/bp98Jp6tIyo9ggx2KK4cNtgPTGLZs0izYGJ7I73dpAtmSW3rFCcrQ7sMgJ8J7vw
+         xs4DvOpy7xOtlfk56zmivwZr/8bUR2rYsGLffpCm2rYsQH6oTjHNFIM2yw9TURUzxVFJ
+         z8ussrINb0UsNqvNsghFj0vJAZZTkes1q3eEnHMqIgdSAoyytcDwzzzE9y+/UNSehyo1
+         o1JQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWO5LGN8IHwKvX/fyDbbo7fm1VhlCWidqF42wIURZ3rXPgUhEAXQuYZlzuqaoypzmpNO9LDVzRRGCPT/H4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzv2R8FQ7s8WJks9Ia+eJO3NHaZbTlHeSgEFrZxS2W2awUC7gC3
+	zo9RmXwFP5ZLoU4PisGFuB0uX55FzD//jC5KGZkR5rHV2/kvZIBuSeXzhXBa/0h1KOW5rLIcpHl
+	GXZ/yIDe+3uL1g+LJWXwivtl12YJX8ekJ8SHFI0at2aYqQ57bhrA=
+X-Gm-Gg: ASbGnctOBPiaJaXZvoPPQ1kjv6tkaC8eJktLmLxsBebWOvlm+f+uTvlAstdooTdsWW8
+	2wWamPLqjAInJNXzhUCJ9ceWFHjFo9TtqQAFFBnvSqvE7Gn8p03ZWfYWsxhs4bo0DX0xSnftUd4
+	wMUP4qWjxmHigGp5FF6HXju/rECUs=
+X-Google-Smtp-Source: AGHT+IEBIzx9e6K8gY1P3uwG4053vKnCQo/A/45CHTp4TpCwHW2p6fOzKlu/gMvt4iEwPXinaX6bmM7d+7zufNH5siI=
+X-Received: by 2002:ac8:5a4e:0:b0:476:959b:7592 with SMTP id
+ d75a77b69052e-476959b7aadmr25117691cf.17.1741624986587; Mon, 10 Mar 2025
+ 09:43:06 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH hyperv-next v5 06/11] arm64, x86: hyperv: Report the VTL
- the system boots in
-To: Wei Liu <wei.liu@kernel.org>
-Cc: arnd@arndb.de, bhelgaas@google.com, bp@alien8.de,
- catalin.marinas@arm.com, conor+dt@kernel.org, dave.hansen@linux.intel.com,
- decui@microsoft.com, haiyangz@microsoft.com, hpa@zytor.com,
- joey.gouly@arm.com, krzk+dt@kernel.org, kw@linux.com, kys@microsoft.com,
- lenb@kernel.org, lpieralisi@kernel.org, manivannan.sadhasivam@linaro.org,
- mark.rutland@arm.com, maz@kernel.org, mingo@redhat.com,
- oliver.upton@linux.dev, rafael@kernel.org, robh@kernel.org,
- ssengar@linux.microsoft.com, sudeep.holla@arm.com, suzuki.poulose@arm.com,
- tglx@linutronix.de, will@kernel.org, yuzenghui@huawei.com,
- devicetree@vger.kernel.org, kvmarm@lists.linux.dev,
- linux-acpi@vger.kernel.org, linux-arch@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-hyperv@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, x86@kernel.org,
- apais@microsoft.com, benhill@microsoft.com, bperkins@microsoft.com,
- sunilmut@microsoft.com
-References: <20250307220304.247725-1-romank@linux.microsoft.com>
- <20250307220304.247725-7-romank@linux.microsoft.com>
- <Z84yyAqkqJ2ZyAd-@liuwe-devbox-ubuntu-v2.lamzopl0uupeniq2etz1fddiyg.xx.internal.cloudapp.net>
-Content-Language: en-US
-From: Roman Kisel <romank@linux.microsoft.com>
-In-Reply-To: <Z84yyAqkqJ2ZyAd-@liuwe-devbox-ubuntu-v2.lamzopl0uupeniq2etz1fddiyg.xx.internal.cloudapp.net>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20250226091451.11899-1-luis@igalia.com> <87msdwrh72.fsf@igalia.com>
+In-Reply-To: <87msdwrh72.fsf@igalia.com>
+From: Miklos Szeredi <miklos@szeredi.hu>
+Date: Mon, 10 Mar 2025 17:42:53 +0100
+X-Gm-Features: AQ5f1JqEE_1WaqbsqdDTMPa4eJILmqSWGchDRmitOQV2dELsrChoGlHoLVS5zaw
+Message-ID: <CAJfpegvcEgJtmRkvHm+WuPQgdyeCQZggyExayc5J9bdxWwOm4w@mail.gmail.com>
+Subject: Re: [PATCH v8] fuse: add more control over cache invalidation behaviour
+To: Luis Henriques <luis@igalia.com>
+Cc: Bernd Schubert <bschubert@ddn.com>, Dave Chinner <david@fromorbit.com>, 
+	Matt Harvey <mharvey@jumptrading.com>, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
+On Fri, 7 Mar 2025 at 16:31, Luis Henriques <luis@igalia.com> wrote:
 
+> Any further feedback on this patch, or is it already OK for being merged?
 
-On 3/9/2025 5:31 PM, Wei Liu wrote:
-> On Fri, Mar 07, 2025 at 02:02:58PM -0800, Roman Kisel wrote:
->> The hyperv guest code might run in various Virtual Trust Levels.
->>
->> Report the level when the kernel boots in the non-default (0)
->> one.
->>
->> Signed-off-by: Roman Kisel <romank@linux.microsoft.com>
->> ---
->>   arch/arm64/hyperv/mshyperv.c | 2 ++
->>   arch/x86/hyperv/hv_vtl.c     | 2 +-
->>   2 files changed, 3 insertions(+), 1 deletion(-)
->>
->> diff --git a/arch/arm64/hyperv/mshyperv.c b/arch/arm64/hyperv/mshyperv.c
->> index a7db03f5413d..3bc16dbee758 100644
->> --- a/arch/arm64/hyperv/mshyperv.c
->> +++ b/arch/arm64/hyperv/mshyperv.c
->> @@ -108,6 +108,8 @@ static int __init hyperv_init(void)
->>   	if (ms_hyperv.priv_high & HV_ACCESS_PARTITION_ID)
->>   		hv_get_partition_id();
->>   	ms_hyperv.vtl = get_vtl();
->> +	if (ms_hyperv.vtl > 0) /* non default VTL */
-> 
-> "non-default".
-> 
+The patch looks okay.  I have ideas about improving the name, but that can wait.
 
-Thanks, will fix that!
+What I think is still needed is an actual use case with performance numbers.
 
->> +		pr_info("Linux runs in Hyper-V Virtual Trust Level %d\n", ms_hyperv.vtl);
->>   
->>   	ms_hyperv_late_init();
->>   
->> diff --git a/arch/x86/hyperv/hv_vtl.c b/arch/x86/hyperv/hv_vtl.c
->> index 4e1b1e3b5658..c21bee7e8ff3 100644
->> --- a/arch/x86/hyperv/hv_vtl.c
->> +++ b/arch/x86/hyperv/hv_vtl.c
->> @@ -24,7 +24,7 @@ static bool __init hv_vtl_msi_ext_dest_id(void)
->>   
->>   void __init hv_vtl_init_platform(void)
->>   {
->> -	pr_info("Linux runs in Hyper-V Virtual Trust Level\n");
->> +	pr_info("Linux runs in Hyper-V Virtual Trust Level %d\n", ms_hyperv.vtl);
-> 
-> Where isn't there a check for ms_hyperv.vtl > 0 here?
-> 
+> And what about the extra call to shrink_dcache_sb(), do you think that
+> would that be acceptable?  Maybe that could be conditional, by for example
+> setting a flag.
 
-On x86, there is
+My wish would be a more generic "garbage collection" mechanism that
+would collect stale cache entries and get rid of them in the
+background.  Doing that synchronously doesn't really make sense, IMO.
 
-#ifdef CONFIG_HYPERV_VTL_MODE
-void __init hv_vtl_init_platform(void);
-int __init hv_vtl_early_init(void);
-#else
-static inline void __init hv_vtl_init_platform(void) {}
-static inline int __init hv_vtl_early_init(void) { return 0; }
-#endif
+But that can be done independently of this patch, obviously.
 
-> Please be consistent across different architectures.
-> 
-
-In the earlier versions of the patch series, I had that piece
-from the above mirrored in the arm64, and there was advice on
-removing the function as it contained just one statement.
-I'll revisit the approach, thanks for your help!
-
->>   
->>   	x86_platform.realmode_reserve = x86_init_noop;
->>   	x86_platform.realmode_init = x86_init_noop;
->> -- 
->> 2.43.0
->>
->>
-
--- 
-Thank you,
-Roman
-
+Thanks,
+Miklos
 
