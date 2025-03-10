@@ -1,121 +1,145 @@
-Return-Path: <linux-kernel+bounces-554349-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-554350-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6198EA5969F
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 14:45:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id DDBBBA596A1
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 14:46:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 212CE3A58A9
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 13:45:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9CBB33A5A42
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 13:46:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8698F22AE5D;
-	Mon, 10 Mar 2025 13:45:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF14322A807;
+	Mon, 10 Mar 2025 13:46:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TiL87QdQ"
-Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HG4g0V2V"
+Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FE971DE2A7;
-	Mon, 10 Mar 2025 13:45:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 747431F956;
+	Mon, 10 Mar 2025 13:46:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741614334; cv=none; b=Qc+QrOMKx7Ctj4StdFBRT8K0GwtoI7hmam/+CfaJiV1uf2GE2EBu4rsGaxs2/ILqPVxDeUDWuHB9KAsTs6YCC+2QHHTwA+Bup6CdIPgOz8SMIdq+WAjdUbaJPXu2kH5yROoiIXt6sYA80VBFaDc/rov3GLicV+MTp8DNYwFgzQE=
+	t=1741614396; cv=none; b=EBGDxlvUd3J1ibXZDAS9nhieDaEg1TVA5dAydxtJeFLWenNNumXHYeDnGzXNFxKRaUw8qvqBP2bPEPBjk/4Mbm9lNB/4eKyZsb3tVB5x6ocGZvZLjuyHodTnzK+e5CVU2eFJW7Qk6CikusFrYhD53IegBUYNeOCdUMS968aPH6U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741614334; c=relaxed/simple;
-	bh=PrA7rfUbhe2Pewgr5X93FRTG1RoQPZ5lbvHmNEd0rGI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ogdNTOSqAIIhRGX4t6AC2yn+iID3HHxcNWkqx6lbVOP/nR/WVDphdCMqn3+e5w7TuKV+iBvBm3bVDnnX513BLQmvXWPG2QNhigwNuFAAhMarMf3j3mHK51y5EcmhTePfyn4qmK1sGqNKIJWYDMHt8dDmp1wSrmI7Qij3tCLYUms=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TiL87QdQ; arc=none smtp.client-ip=209.85.218.49
+	s=arc-20240116; t=1741614396; c=relaxed/simple;
+	bh=SUrcSvL5qLmeImXtGq+OJxPeZI5A25/7uBfeFpHt9wc=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=Bi5oMwp8tD3TzKpjVwU/H3VexMNxjZvW7a+UyDYfc8PdsMEQ7pSNmmZggx7i4jvO4wrIEX62+9wCnWSc6oxKzEnptBcUr9ks1kRdS4n/vM8hXoEwlbDUP4RzsjQH+mpVzlxArm63g84xN7Xak0KGBhvM4AGsHxWM+HTiE1uD/fI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HG4g0V2V; arc=none smtp.client-ip=209.85.221.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-ac29af3382dso173052366b.2;
-        Mon, 10 Mar 2025 06:45:33 -0700 (PDT)
+Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-39141ffa9fcso1249986f8f.0;
+        Mon, 10 Mar 2025 06:46:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741614332; x=1742219132; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=PrA7rfUbhe2Pewgr5X93FRTG1RoQPZ5lbvHmNEd0rGI=;
-        b=TiL87QdQA8T2KDkVYR2rW7FMa9E3oJgTotd+yIw22oQeOVOu10GtGug+WFh0Oc5BT0
-         WW3v9QQYSHa5hcLgG8gh5kmTFAL8DQoYTWOC8btw1P+YQ7n+PI24ha/zRnzYqJxMuWP5
-         dN0XlGbtBJI9gwGmuNU1Xw4x6ZyvS7jukYzD40iIbAFuYptEi/BENwwnvxoInFl2yoqU
-         ENcDUuX8lvkSUBANUVw8MRKVvWD9a+b8Ce64HK7/M921lmPiC9n0VtIUmwUM7AU0Mps1
-         zVnOEkNTIRsHAMGpjQAXHvv3Bh6OQZ11gvbZy1WTZURM/LgwLmfIZglbDtQwr+pbgbqu
-         wnlw==
+        d=gmail.com; s=20230601; t=1741614393; x=1742219193; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:subject:from:user-agent:mime-version:date:message-id:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=6W2q6ww79dH6unrH45J+euLaeN4QlEFEIMUkdHmeXfg=;
+        b=HG4g0V2Vmv0pfIxVlSxjpsukeuu1fsvekckHY3MWY1lErzbWVrpy0dcK3AKDxmblKK
+         6OR3AtATsM+cZZ1zOb6SxCO+J2btp4R2uICsDIQ7VKf3gGWQeAKBxM0b29G5piNStN1/
+         GWayXvHv6edC8eAETKCRm3svm3xyC57rDlP7dzX5m4YlYDYhK3l9fhitFfJjt9hxF4S2
+         VWN48rMKAjNH94xahSwNbmoVGdLbqyvbQe2QbQ6htXb44UbMkp0rVHG0CaZBSh9tekHu
+         fLvHphjQ6UqZZsBsQFWZPQUilRI9MEbZXKjiUcWLnreIw8slTNMJBJUjT5lUNB+aEweL
+         QEBA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741614332; x=1742219132;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=PrA7rfUbhe2Pewgr5X93FRTG1RoQPZ5lbvHmNEd0rGI=;
-        b=dcla2kofDi2RvabvyrXRYkWNuGwhd1XFq1tRGizTeJK2ueQWeAbCuudolToQHZdiiG
-         P2gelUeT0xS211EaCzl2DMvbDaly+wAkQTYCwDahOk4eCGiOk1DYMhvA4J/1A3aJdfY/
-         BjstTNTHvfla8rMfLAesQLv8TxkCmTjv6PVdMg4w/qqCFathVSzBAZUUxXs3sNzJS2FS
-         a54OjYn6JnCmKxINQcBoNdZCFHKw/6Sp0+dVcIgWmWHvf5W24ALHjuKgKF29FOe7DqBP
-         eIdVgujyBo5Lw/63Q1ch6flA2xRUg3HOZi6KbcxJr+p0VR2xzu7upplwKcft5zrL9+kk
-         OJ5Q==
-X-Forwarded-Encrypted: i=1; AJvYcCULLcCys8FubU4IvD+ajt1p2+mra3PLqDi2ag/4wJRTeRwOicBMmKMHylu+4el9hd8G5r221sJNHY8u@vger.kernel.org, AJvYcCUzAmCg9Xm2DhGcfBXyhjNDI9KBaeTCNWFpM2SfsNEEzwf7s64WTvv7gdHxGGasRIQUkQ7zeI1rhvbyMMy2@vger.kernel.org, AJvYcCV/GLJxbWPciT+UfwE9uxBqWBiTiInuz5Ju8VXCKCiSDcaJfA56tg5A77xmMUDICjpqfDEIErkVjxXwfqjY@vger.kernel.org, AJvYcCWPT47fXmZ29V6UDxQAMEMNTOE+eZ3qAhaS1HyeF5A8ig/gr0F2Pm/bLeK1CD/B+4hYsAWM7ys4RuC9fA==@vger.kernel.org, AJvYcCXMFOxm1IQ4/q9Ev17NaLbWpkNYKV6hOWJh56V1pDUYnKTxQiMefSRqlwbZziJ6iBSxYzOIp3VwhOb8TQ==@vger.kernel.org, AJvYcCXhay8Hw2c/hDFmL0EDkHpKTyhWSmp++/W03L6XbYAKenUn0nIuZq7vTqTRarQr2goDlYaArQf/+8FF@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy6EDLBRZlgruV83NIYhnRUwDXy6teEX720TU5Ur2yD4Q6qmfAi
-	71WSAN06Hmnhf1AT95iBYRo9eFKjTWW3HcvpH7ikXq8txFhQSSvlEuv98l4Isxt4krTxHSABQHM
-	TLvjiekGGf9WY5CYU+JBasfW7LQogT92O8mY=
-X-Gm-Gg: ASbGncu7uLEipZJ+QTXSJqic/do4hiHVE+lIhY0Hs7qW+94eY8m0bOf/6+96MWVr2ED
-	I2LjgqTvnGnCecIY1A7ddO71UPKi1ed4X8ARMt4uYhDr23C0uSVxTISQ9BnNJSBrLMfXELae4ld
-	l87vwHQZJWKSZURBQGAolf6rGf0lmSBRc6i3BklK7Tc1VVCDPRCq1PYMM=
-X-Google-Smtp-Source: AGHT+IFrlV+UOZmk75f6ffZGqWNA8kEVBO9qwi1sfylUDo7SOrHnrhelQqcwKfQa9tx5Jczcf/SvJhuAPzOyWJApbV0=
-X-Received: by 2002:a17:906:33db:b0:ac2:7b8a:7a24 with SMTP id
- a640c23a62f3a-ac27b8aa77emr821669466b.3.1741614331525; Mon, 10 Mar 2025
- 06:45:31 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1741614393; x=1742219193;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:subject:from:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=6W2q6ww79dH6unrH45J+euLaeN4QlEFEIMUkdHmeXfg=;
+        b=tf4mroA6uoNA1GPxkkZS9zfWLxPJtaLf2phCd6wSrgHorsQXBZvwg2MB1lqi+/VnYv
+         aRgJT/KqmGct7/jKrwVMp1jpT8Q6A5+viHNb+Y+1Iu0dQaAVfbCnnMb5QVwG8ZSM6jRc
+         lXM7qxDsOAvR4gcdyzw4waiDDL5tiz5BubVpcv5zXWgxHUxJPmWiZCfqudQ+7TIrJJOM
+         Iv7E58xoLV2Y8axQ6kqaYX76alhI0fs5L/VuIPlm6Por6U5PLKj9OqYZSIDedIDEPKkG
+         +E/x0FKoXyPuzwJ4SRFsDGpzzPKdOfnC5ZmMQh/2z57jmwhXafWwpWTmviJNdEzujQ1r
+         mUnQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUnzyFe5sEZqpE0f+81TJcGjgnJuhbklD+05DrFunaWFdl/ZDy958zMVnQ8csTtEw0FWXba+XE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxSPX33zOWDNbPtTP79gZlCtV2sJ5lgZXb+msnqz/4pEZ4yJKly
+	VpFJRvzJLWPSo4DPKwESo0nd/E3OblBQAf5FzSqIO1kISm+2vz+E
+X-Gm-Gg: ASbGncvVcbSxlxt6dCQS8RJzVuiTz67Ca2eDSL4lEoxyukYHos4vfIogqVoMEiN/LPD
+	LXORfgvu3lV9QUys0hg04OnsiqqkR3nRAvxgV7Zon+OXX11xZBYbHWgeFK4mbpC3wOxl4mJHcSW
+	FWvS8oKazkivPyNvEi1UA5fQuVKN6Qm/cW4XAIZuc8q7vCAWcctWa5qZWSlnLCCR24TWcIE9xX/
+	QipdLoA0H/rdvHgEtLRUQyUcWh+r8jZXw3yyQyvLXH5sITbJ6rvHzG4lRZ3RphKUZ8LLnGCoF1W
+	4XFRL8WoKtk3NTdbgrFOXrPOkZ56X9c791gO/KlGt2VhoMiF07Aao4fj4GMDxmCuVjSzFtgmZVj
+	qjh1xami9d+k=
+X-Google-Smtp-Source: AGHT+IG0rfUbSGfyc0uNEKNiN0VOzWgqrPHplWEWCLgtH8tBnJgmzGNqjOdjIEHokHjixoj8t0wWkA==
+X-Received: by 2002:a05:6000:4102:b0:391:487f:2828 with SMTP id ffacd0b85a97d-391487f2bbdmr2647368f8f.10.1741614392361;
+        Mon, 10 Mar 2025 06:46:32 -0700 (PDT)
+Received: from [93.173.93.237] (93-173-93-237.bb.netvision.net.il. [93.173.93.237])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43ced9a4b19sm68553345e9.29.2025.03.10.06.46.30
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 10 Mar 2025 06:46:31 -0700 (PDT)
+Message-ID: <4cd852e0-6d6d-fcb4-6e4c-e6f861f429db@outbound.gmail.com>
+Date: Mon, 10 Mar 2025 15:45:46 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250307220304.247725-1-romank@linux.microsoft.com> <20250307220304.247725-5-romank@linux.microsoft.com>
-In-Reply-To: <20250307220304.247725-5-romank@linux.microsoft.com>
-From: Tianyu Lan <ltykernel@gmail.com>
-Date: Mon, 10 Mar 2025 21:44:55 +0800
-X-Gm-Features: AQ5f1JqLOmSVWjJdyk8kWYqh8Q05Ls-ycUphJL8s1J0KBJmCwQzJ1qeS4exHJxg
-Message-ID: <CAMvTesC+McATYa-xsi0omJ0LnFUUUooBk_r+oYSHYimyXPz5ZA@mail.gmail.com>
-Subject: Re: [PATCH hyperv-next v5 04/11] Drivers: hv: Provide arch-neutral
- implementation of get_vtl()
-To: Roman Kisel <romank@linux.microsoft.com>
-Cc: arnd@arndb.de, bhelgaas@google.com, bp@alien8.de, catalin.marinas@arm.com, 
-	conor+dt@kernel.org, dave.hansen@linux.intel.com, decui@microsoft.com, 
-	haiyangz@microsoft.com, hpa@zytor.com, joey.gouly@arm.com, krzk+dt@kernel.org, 
-	kw@linux.com, kys@microsoft.com, lenb@kernel.org, lpieralisi@kernel.org, 
-	manivannan.sadhasivam@linaro.org, mark.rutland@arm.com, maz@kernel.org, 
-	mingo@redhat.com, oliver.upton@linux.dev, rafael@kernel.org, robh@kernel.org, 
-	ssengar@linux.microsoft.com, sudeep.holla@arm.com, suzuki.poulose@arm.com, 
-	tglx@linutronix.de, wei.liu@kernel.org, will@kernel.org, yuzenghui@huawei.com, 
-	devicetree@vger.kernel.org, kvmarm@lists.linux.dev, 
-	linux-acpi@vger.kernel.org, linux-arch@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-hyperv@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, x86@kernel.org, 
-	apais@microsoft.com, benhill@microsoft.com, bperkins@microsoft.com, 
-	sunilmut@microsoft.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.10.0
+From: Eli Billauer <eli.billauer@gmail.com>
+Subject: Re: [PATCH] char: xillybus: Fix error handling in
+ xillybus_init_chrdev()
+To: Ma Ke <make24@iscas.ac.cn>, arnd@arndb.de, gregkh@linuxfoundation.org
+Cc: linux-kernel@vger.kernel.org, akpm@linux-foundation.org,
+ stable@vger.kernel.org
+References: <20250310022811.182553-1-make24@iscas.ac.cn>
+Content-Language: en-US
+In-Reply-To: <20250310022811.182553-1-make24@iscas.ac.cn>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Sat, Mar 8, 2025 at 6:04=E2=80=AFAM Roman Kisel <romank@linux.microsoft.=
-com> wrote:
->
-> To run in the VTL mode, Hyper-V drivers have to know what
-> VTL the system boots in, and the arm64/hyperv code does not
-> have the means to compute that.
->
-> Refactor the code to hoist the function that detects VTL,
-> make it arch-neutral to be able to employ it to get the VTL
-> on arm64.
->
-> Signed-off-by: Roman Kisel <romank@linux.microsoft.com>
-> Reviewed-by: Michael Kelley <mhklinux@outlook.com>
+Hello,
+
+Thanks for your patch.
+
+However, as far as I understand, applying it will cause a Use After Free 
+(UAF) error by cdev_del(), as the call to kobject_put() unwinds the 
+memory allocation made by cdev_alloc().
+
+Or have I missed something?
+
+Regards,
+    Eli
+
+On 10/03/2025 4:28, Ma Ke wrote:
+> After cdev_alloc() succeed and cdev_add() failed, call cdev_del() to
+> remove unit->cdev from the system properly.
+> 
+> Found by code review.
+> 
+> Cc: stable@vger.kernel.org
+> Fixes: 8cb5d216ab33 ("char: xillybus: Move class-related functions to new xillybus_class.c")
+> Signed-off-by: Ma Ke <make24@iscas.ac.cn>
 > ---
-Reviewed-by: Tianyu Lan <tiala@microsoft.com>
+>   drivers/char/xillybus/xillybus_class.c | 3 ++-
+>   1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/char/xillybus/xillybus_class.c b/drivers/char/xillybus/xillybus_class.c
+> index c92a628e389e..045e125ec423 100644
+> --- a/drivers/char/xillybus/xillybus_class.c
+> +++ b/drivers/char/xillybus/xillybus_class.c
+> @@ -105,7 +105,7 @@ int xillybus_init_chrdev(struct device *dev,
+>   		dev_err(dev, "Failed to add cdev.\n");
+>   		/* kobject_put() is normally done by cdev_del() */
+>   		kobject_put(&unit->cdev->kobj);
+> -		goto unregister_chrdev;
+> +		goto err_cdev;
+>   	}
+>   
+>   	for (i = 0; i < num_nodes; i++) {
+> @@ -157,6 +157,7 @@ int xillybus_init_chrdev(struct device *dev,
+>   		device_destroy(&xillybus_class, MKDEV(unit->major,
+>   						     i + unit->lowest_minor));
+>   
+> +err_cdev:
+>   	cdev_del(unit->cdev);
+>   
+>   unregister_chrdev:
 
---=20
-Thanks
-Tianyu Lan
 
