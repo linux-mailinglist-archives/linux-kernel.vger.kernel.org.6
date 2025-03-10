@@ -1,192 +1,106 @@
-Return-Path: <linux-kernel+bounces-554090-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-554094-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4DB31A592CE
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 12:37:01 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 197DBA592DE
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 12:38:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BBDFB7A2AD0
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 11:35:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5B9547A62FD
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 11:37:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2798F221573;
-	Mon, 10 Mar 2025 11:36:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="JfCtcZ40"
-Received: from out-178.mta0.migadu.com (out-178.mta0.migadu.com [91.218.175.178])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F735221700;
+	Mon, 10 Mar 2025 11:38:31 +0000 (UTC)
+Received: from smtp134-25.sina.com.cn (smtp134-25.sina.com.cn [180.149.134.25])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85780220697
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 11:36:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4507D221579
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 11:38:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=180.149.134.25
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741606612; cv=none; b=Smjh45/v2wLS6iI1ANzu1cxgnVJCtwBLV7uKY2l+8MQH7hWW0zWCxkcC96KieOC+ZBXT8dP+kLf/iu2gMAYPWwnTqhd5qmPO67aApgIPnhPCQ771uGxFswk5SOx5Vvxhsl2eRmnaujNYM2DXgh1YjZqPwKLRvNE6ao2UA8Znf98=
+	t=1741606710; cv=none; b=P9Uu+gz9abYUi1wgEO+KJ+E8S5hFDE6cVIIYb2mdaI7LYsQDSpjt1FslxUHrccb1x1/oV2yxHr5LvgQSxsvckC+Y9sJvzqb+q8DVKy7x7ULv+AM+NTB1ehAUyJUdA5Np2YktDXlULhjQQVd1QSacnzdWYD4sjnwyeASyG5T1+u4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741606612; c=relaxed/simple;
-	bh=JaApZ7d/+Ggz2krnVT3vjrpaonIRlghHFizWVFRNLkQ=;
-	h=MIME-Version:Date:Content-Type:From:Message-ID:Subject:To:Cc:
-	 In-Reply-To:References; b=hZjYu3cHdOjVeDdwtWVo3/4KObTtsMpRHrxMw1ss6W6Wml1CJLzYZZ+vxJ9wfnuPx7NExWa7WbOBhFNb+AuE+BeZqpDrdtt9IZnW1mjnWwLkv8Aqdl1zRzACs3KnwobumHeDVLdv95A/lwf+6z2jo69AlvTwUagW46JyIjqsIN0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=JfCtcZ40; arc=none smtp.client-ip=91.218.175.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+	s=arc-20240116; t=1741606710; c=relaxed/simple;
+	bh=zJaJ/IUKeSO0/6VNJvyQeUCOz6MLN+/kRupMnl3BPCE=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=skTvJEKTScanFuszmp/NIS4BJ67BZtRE/4ybtNNoxw9G5Xf4wXGp70qeq5HAVZvCw8EtA9MeD8eM/XJjHt9r9hD1SM7b9ZEBWPwNng8T2cODy5FtUwMSSsmBs6xl6lvltlYstIfVyg0YY8lL2SepFxxlcO2emHyVQlb4UOJgWSU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; arc=none smtp.client-ip=180.149.134.25
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
+X-SMAIL-HELO: localhost.localdomain
+Received: from unknown (HELO localhost.localdomain)([113.118.68.168])
+	by sina.com (10.185.250.21) with ESMTP
+	id 67CECEFF00002E2D; Mon, 10 Mar 2025 19:37:37 +0800 (CST)
+X-Sender: hdanton@sina.com
+X-Auth-ID: hdanton@sina.com
+Authentication-Results: sina.com;
+	 spf=none smtp.mailfrom=hdanton@sina.com;
+	 dkim=none header.i=none;
+	 dmarc=none action=none header.from=hdanton@sina.com
+X-SMAIL-MID: 8121563408361
+X-SMAIL-UIID: A2E896C978EA4DB58A42A1A2E3B2E503-20250310-193737-1
+From: Hillf Danton <hdanton@sina.com>
+To: Oleg Nesterov <oleg@redhat.com>
+Cc: K Prateek Nayak <kprateek.nayak@amd.com>,
+	Mateusz Guzik <mjguzik@gmail.com>,
+	"Sapkal, Swapnil" <swapnil.sapkal@amd.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] pipe_read: don't wake up the writer if the pipe is still full
+Date: Mon, 10 Mar 2025 19:37:24 +0800
+Message-ID: <20250310113726.3266-1-hdanton@sina.com>
+In-Reply-To: <20250310110914.GA26382@redhat.com>
+References: <20250304050644.2983-1-hdanton@sina.com> <20250304102934.2999-1-hdanton@sina.com> <20250304233501.3019-1-hdanton@sina.com> <20250305045617.3038-1-hdanton@sina.com> <20250305224648.3058-1-hdanton@sina.com> <20250307060827.3083-1-hdanton@sina.com> <20250307104654.3100-1-hdanton@sina.com> <20250307112920.GB5963@redhat.com> <20250307235645.3117-1-hdanton@sina.com> <20250310104910.3232-1-hdanton@sina.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1741606607;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=oLn3thOLc+VOfKHEltzpNOv/oUESIWK0aGZgVBXpS9g=;
-	b=JfCtcZ40G8NAGBVTYfKtZMCkqctg29fSlsTpEKq0K19h1yqX9qJAQSBSXkrtqusCPMPCmR
-	M4kbtzO/BR1Azsg8Y/n42rgEcUZNono4emHKB0bj4EkSBKGBRoComjlNFEgwYo4LbbvNGZ
-	dJZrZIFA/MyzEHs2Wmxv29knOKuC7Hg=
-Date: Mon, 10 Mar 2025 11:36:44 +0000
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: "Jiayuan Chen" <jiayuan.chen@linux.dev>
-Message-ID: <78ee737400721758fa67b4f285e8ba61dc6b893b@linux.dev>
-TLS-Required: No
-Subject: Re: [PATCH bpf-next v2 1/3] bpf, sockmap: avoid using sk_socket
- after free
-To: "Michal Luczaj" <mhal@rbox.co>, xiyou.wangcong@gmail.com,
- john.fastabend@gmail.com, jakub@cloudflare.com, martin.lau@linux.dev
-Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
- pabeni@redhat.com, horms@kernel.org, andrii@kernel.org,
- eddyz87@gmail.com, mykolal@fb.com, ast@kernel.org, daniel@iogearbox.net,
- song@kernel.org, yonghong.song@linux.dev, kpsingh@kernel.org,
- sdf@fomichev.me, haoluo@google.com, jolsa@kernel.org, shuah@kernel.org,
- sgarzare@redhat.com, netdev@vger.kernel.org, bpf@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
- mrpre@163.com, cong.wang@bytedance.com,
- syzbot+dd90a702f518e0eac072@syzkaller.appspotmail.com
-In-Reply-To: <baeca627-e6f1-4d0a-aea5-fa31689edc4d@rbox.co>
-References: <20250228055106.58071-1-jiayuan.chen@linux.dev>
- <20250228055106.58071-2-jiayuan.chen@linux.dev>
- <baeca627-e6f1-4d0a-aea5-fa31689edc4d@rbox.co>
-X-Migadu-Flow: FLOW_OUT
+Content-Transfer-Encoding: 8bit
 
-March 7, 2025 at 5:45 PM, "Michal Luczaj" <mhal@rbox.co> wrote:
+On Mon, 10 Mar 2025 12:09:15 +0100 Oleg Nesterov
+> On 03/10, Hillf Danton wrote:
+> > On Sun, 9 Mar 2025 18:02:55 +0100 Oleg Nesterov
+> > >
+> > > So (again, in this particular case) we could apply the patch below
+> > > on top of Linus's tree.
+> > >
+> > > So, with or without these changes, the writer should be woken up at
+> > > step-03 in your scenario.
+> > >
+> > Fine, before checking my scenario once more, feel free to pinpoint the
+> > line number where writer is woken up, with the change below applied.
+> 
+>     381          if (wake_writer)
+> ==> 382                  wake_up_interruptible_sync_poll(&pipe->wr_wait, EPOLLOUT | EPOLLWRNORM);
+>     383          if (wake_next_reader)
+>     384                  wake_up_interruptible_sync_poll(&pipe->rd_wait, EPOLLIN | EPOLLRDNORM);
+>     385          kill_fasync(&pipe->fasync_writers, SIGIO, POLL_OUT);
+>     386          if (ret > 0)
+>     387                  file_accessed(filp);
+>     388          return ret;
+> 
+> line 382, no?
+> 
+Yes, but how is the wait loop at line-370 broken?
 
->=20
->=20On 2/28/25 06:51, Jiayuan Chen wrote:
->=20
->=20>=20
->=20> ...
-> >=20
->=20>  static void sk_psock_verdict_data_ready(struct sock *sk)
-> >=20
->=20>  {
-> >=20
->=20>  - struct socket *sock =3D sk->sk_socket;
-> >=20
->=20>  + struct socket *sock;
-> >=20
->=20>  const struct proto_ops *ops;
-> >=20
->=20>  int copied;
-> >=20
->=20>=20=20
->=20>=20
->=20>  trace_sk_data_ready(sk);
-> >=20
->=20>=20=20
->=20>=20
->=20>  + /* We need RCU to prevent the sk_socket from being released.
-> >=20
->=20>  + * Especially for Unix sockets, we are currently in the process
-> >=20
->=20>  + * context and do not have RCU protection.
-> >=20
->=20>  + */
-> >=20
->=20>  + rcu_read_lock();
-> >=20
->=20>  + sock =3D sk->sk_socket;
-> >=20
->=20>  if (unlikely(!sock))
-> >=20
->=20>  - return;
-> >=20
->=20>  + goto unlock;
-> >=20
->=20>  +
-> >=20
->=20>  ops =3D READ_ONCE(sock->ops);
-> >=20
->=20>  if (!ops || !ops->read_skb)
-> >=20
->=20>  - return;
-> >=20
->=20>  + goto unlock;
-> >=20
->=20>  +
-> >=20
->=20>  copied =3D ops->read_skb(sk, sk_psock_verdict_recv);
-> >=20
->=20>  if (copied >=3D 0) {
-> >=20
->=20>  struct sk_psock *psock;
-> >=20
->=20>=20=20
->=20>=20
->=20>  - rcu_read_lock();
-> >=20
->=20>  psock =3D sk_psock(sk);
-> >=20
->=20>  if (psock)
-> >=20
->=20>  sk_psock_data_ready(sk, psock);
-> >=20
->=20>  - rcu_read_unlock();
-> >=20
->=20>  }
-> >=20
->=20>  +unlock:
-> >=20
->=20>  + rcu_read_unlock();
-> >=20
->=20>  }
-> >=20
->=20
-> Hi,
->=20
->=20Doesn't sk_psock_handle_skb() (!ingress path) have the same `struct s=
-ocket`
->=20
->=20release race issue? Any plans on fixing that one, too?
-
-Yes, the send path logic also has similar issues, and after some hacking,
-I was able to reproduce it. Thanks for providing this information.
-I can fix these together in the next revision of this patchset, anyway,
-this patchset still needs further confirmation from the maintainer.
-
->=20
->=20BTW, lockdep (CONFIG_LOCKDEP=3Dy) complains about calling AF_UNIX's
->=20
->=20read_skb() under RCU read lock.
->=20
->=20Thanks,
->=20
->=20Michal
->
-My environment also has LOCKDEP enabled, but I didn't see similar
-warnings.
-Moreover, RCU assertions are typically written as:
-
-WARN_ON_ONCE(!rcu_read_lock_held())
-
-And when LOCKDEP is not enabled, rcu_read_lock_held() defaults to
-returning 1. So, it's unlikely to trigger a warning due to an RCU lock
-being held.
-
-Could you provide more of the call stack?
-
-Thanks.
+ 360                 }
+ 361                 mutex_unlock(&pipe->mutex);
+ 362
+ 363                 BUG_ON(wake_writer);
+ 364                 /*
+ 365                  * But because we didn't read anything, at this point we can
+ 366                  * just return directly with -ERESTARTSYS if we're interrupted,
+ 367                  * since we've done any required wakeups and there's no need
+ 368                  * to mark anything accessed. And we've dropped the lock.
+ 369                  */
+ 370                 if (wait_event_interruptible_exclusive(pipe->rd_wait, pipe_readable(pipe)) < 0)
+ 371                         return -ERESTARTSYS;
+ 372
+ 373                 wake_writer = false;
+ 374                 wake_next_reader = true;
+ 375                 mutex_lock(&pipe->mutex);
 
