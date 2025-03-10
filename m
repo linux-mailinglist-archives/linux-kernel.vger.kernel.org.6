@@ -1,121 +1,109 @@
-Return-Path: <linux-kernel+bounces-553798-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-553778-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA19FA58EEE
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 10:05:24 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CD722A58EB1
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 09:56:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7ACCC3A8B75
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 09:05:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1503516C4E8
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 08:56:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 558A82248BB;
-	Mon, 10 Mar 2025 09:05:07 +0000 (UTC)
-Received: from air.basealt.ru (air.basealt.ru [193.43.8.18])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65272224253;
+	Mon, 10 Mar 2025 08:56:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VS2GD8mC"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B0412236F4
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 09:05:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.43.8.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2574380;
+	Mon, 10 Mar 2025 08:56:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741597507; cv=none; b=gxxfCC+DPFkqbpggZ4VUJYVcMe03C/FLHfjB7SqLrWi4fR7oEhvMH33Af4irz5ifLkFIiDUuOQfloWXkK0qQ7pUgTvXO+LrRisfTzr+PwHlrICOtAoecQ6MIg7IPs0uP6fiMvkdtafIpBYwvBwKTs0xCCqhnVqQ6sQPeTD2eYpQ=
+	t=1741596996; cv=none; b=el34XrQfVrx6LG3Zke2qUf1fl/7/q09J2UpjMMTo7Jma6cP3s0czXVhtKYeNfIiH0HrBFZbreYZt3pLvKyGyPwrXfMG6Gexn40WyYFCVNGItKC7U13tpg1TNEm3JCcXVJ8DzGkPGtlcaVxeNHGKeBiadSkSlLa2FonO8o5bNZAg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741597507; c=relaxed/simple;
-	bh=w3BR6QPDy9hnL6s+qjUkpTKXrUYFLvXNgLVLn6KL2M4=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=tIIv4xuLZsYmThp/o7ymGUzuWwBRpMYEhsrV/7EN6MwFz1m0AuRZzFX4SZd1wdJKf2xxn+wCVxEqHkt38yL5GT+4MG1OvHzjXjG0iHBPKINOBgmxsmzrxgft32xAkY5g3a1xzr8eTxipK/sFP3SNh3OAYVCFfDZXAlO9fVha8MM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=altlinux.org; spf=pass smtp.mailfrom=altlinux.org; arc=none smtp.client-ip=193.43.8.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=altlinux.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=altlinux.org
-Received: from altlinux.malta.altlinux.ru (obninsk.basealt.ru [217.15.195.17])
-	(Authenticated sender: kovalevvv)
-	by air.basealt.ru (Postfix) with ESMTPSA id C5D8123374;
-	Mon, 10 Mar 2025 11:56:02 +0300 (MSK)
-From: Vasiliy Kovalev <kovalev@altlinux.org>
-To: Dave Kleikamp <shaggy@kernel.org>,
-	Edward Adam Davis <eadavis@qq.com>,
-	Rand Deeb <rand.sec96@gmail.com>,
-	jfs-discussion@lists.sourceforge.net,
-	linux-kernel@vger.kernel.org
-Cc: lvc-project@linuxtesting.org,
-	kovalev@altlinux.org
-Subject: [PATCH] jfs: validate AG parameters in dbMount() to prevent crashes
-Date: Mon, 10 Mar 2025 11:56:02 +0300
-Message-Id: <20250310085602.953206-1-kovalev@altlinux.org>
-X-Mailer: git-send-email 2.33.8
+	s=arc-20240116; t=1741596996; c=relaxed/simple;
+	bh=C12mkxyY7Tuz4k36lFMWBiBskfY3UsSgTUDwu4ymK5A=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uSdV37EQfykIFegLlGDNdaPot1IpV2QWO8UZuTT5+uMhYRHAhRSPKi+t0yFkUu4J7wwPhFxg2spYksg/eJJDRdZirs0fLdsyPKOVaohb6pRvtTsmYrShPug0T3uI0qRyEYC7b2frzIeyU2cK96YoFEi9DOMkNo1XZXNM3Y2Zxck=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VS2GD8mC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AF69EC4CEEC;
+	Mon, 10 Mar 2025 08:56:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741596996;
+	bh=C12mkxyY7Tuz4k36lFMWBiBskfY3UsSgTUDwu4ymK5A=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=VS2GD8mC3KF67GsqwrZolL2PJC5nV8QLxQyAj07n3f39prZtkH1iJvEM60yAG3gQD
+	 V6plRwhAVbOW7QKUgyQAJHRX8KqkzSNYtqJVSaCbMIZFHBfrzwotEzdTyBf7nahb1F
+	 ulw5xmNt1ZS0/aH3skbKsPmqAglFS17CXESwCPnsNYfVvt5TieC74ADPeUyUBP34F1
+	 pDsXpTVlIpEGb5v1s3vkFszlbLMYeyG2K7k5dPXep0ShufS8ewpYY5j+8DCkBkiobB
+	 dcRrEG7RKtdyu/gY2i+79yqPKgi/ec7BtqCYNCz/r78UnJa0FdyBemgkAxkJvqs9vk
+	 pVW7xYFBa9f3g==
+Date: Mon, 10 Mar 2025 14:26:26 +0530
+From: Sumit Garg <sumit.garg@kernel.org>
+To: Jens Wiklander <jens.wiklander@linaro.org>
+Cc: linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
+	dri-devel@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org,
+	op-tee@lists.trustedfirmware.org,
+	linux-arm-kernel@lists.infradead.org,
+	Olivier Masse <olivier.masse@nxp.com>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Yong Wu <yong.wu@mediatek.com>,
+	Sumit Semwal <sumit.semwal@linaro.org>,
+	Benjamin Gaignard <benjamin.gaignard@collabora.com>,
+	Brian Starkey <Brian.Starkey@arm.com>,
+	John Stultz <jstultz@google.com>,
+	"T . J . Mercier" <tjmercier@google.com>,
+	Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	azarrabi@qti.qualcomm.com, Simona Vetter <simona.vetter@ffwll.ch>,
+	Daniel Stone <daniel@fooishbar.org>
+Subject: Re: [PATCH v6 01/10] tee: tee_device_alloc(): copy dma_mask from
+ parent device
+Message-ID: <Z86pOi874jfJJSOv@sumit-X1>
+References: <20250305130634.1850178-1-jens.wiklander@linaro.org>
+ <20250305130634.1850178-2-jens.wiklander@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250305130634.1850178-2-jens.wiklander@linaro.org>
 
-Validate db_agheight, db_agwidth, and db_agstart in dbMount to catch
-corrupted metadata early and avoid undefined behavior in dbAllocAG.
-Limits are derived from L2LPERCTL, LPERCTL/MAXAG, and CTLTREESIZE:
+On Wed, Mar 05, 2025 at 02:04:07PM +0100, Jens Wiklander wrote:
+> If a parent device is supplied to tee_device_alloc(), copy the dma_mask
+> field into the new device. This avoids future warnings when mapping a
+> DMA-buf for the device.
+> 
+> Signed-off-by: Jens Wiklander <jens.wiklander@linaro.org>
+> ---
+>  drivers/tee/tee_core.c | 2 ++
+>  1 file changed, 2 insertions(+)
+>
 
-- agheight: 0 to L2LPERCTL/2 (0 to 5) ensures shift
-  (L2LPERCTL - 2*agheight) >= 0.
-- agwidth: 1 to min(LPERCTL/MAXAG, 2^(L2LPERCTL - 2*agheight))
-  ensures agperlev >= 1.
-  - Ranges: 1-8 (agheight 0-3), 1-4 (agheight 4), 1 (agheight 5).
-  - LPERCTL/MAXAG = 1024/128 = 8 limits leaves per AG;
-    2^(10 - 2*agheight) prevents division to 0.
-- agstart: 0 to CTLTREESIZE-1 - agwidth*(MAXAG-1) keeps ti within
-  stree (size 1365).
-  - Ranges: 0-1237 (agwidth 1), 0-348 (agwidth 8).
+Reviewed-by: Sumit Garg <sumit.garg@kernel.org>
 
-UBSAN: shift-out-of-bounds in fs/jfs/jfs_dmap.c:1400:9
-shift exponent -335544310 is negative
-CPU: 0 UID: 0 PID: 5822 Comm: syz-executor130 Not tainted 6.14.0-rc5-syzkaller #0
-Hardware name: Google Compute Engine/Google Compute Engine, BIOS Google 02/12/2025
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:94 [inline]
- dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
- ubsan_epilogue lib/ubsan.c:231 [inline]
- __ubsan_handle_shift_out_of_bounds+0x3c8/0x420 lib/ubsan.c:468
- dbAllocAG+0x1087/0x10b0 fs/jfs/jfs_dmap.c:1400
- dbDiscardAG+0x352/0xa20 fs/jfs/jfs_dmap.c:1613
- jfs_ioc_trim+0x45a/0x6b0 fs/jfs/jfs_discard.c:105
- jfs_ioctl+0x2cd/0x3e0 fs/jfs/ioctl.c:131
- vfs_ioctl fs/ioctl.c:51 [inline]
- __do_sys_ioctl fs/ioctl.c:906 [inline]
- __se_sys_ioctl+0xf5/0x170 fs/ioctl.c:892
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
+-Sumit
 
-Found by Linux Verification Center (linuxtesting.org) with Syzkaller.
-
-Cc: stable@vger.kernel.org
-Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
-Reported-by: syzbot+fe8264911355151c487f@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=fe8264911355151c487f
-Signed-off-by: Vasiliy Kovalev <kovalev@altlinux.org>
----
- fs/jfs/jfs_dmap.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
-
-diff --git a/fs/jfs/jfs_dmap.c b/fs/jfs/jfs_dmap.c
-index 26e89d0c69b61..cfb21f15f5971 100644
---- a/fs/jfs/jfs_dmap.c
-+++ b/fs/jfs/jfs_dmap.c
-@@ -194,7 +194,11 @@ int dbMount(struct inode *ipbmap)
- 	    !bmp->db_numag || (bmp->db_numag > MAXAG) ||
- 	    (bmp->db_maxag >= MAXAG) || (bmp->db_maxag < 0) ||
- 	    (bmp->db_agpref >= MAXAG) || (bmp->db_agpref < 0) ||
--	    !bmp->db_agwidth ||
-+	    bmp->db_agheight < 0 || bmp->db_agheight > (L2LPERCTL >> 1) ||
-+	    bmp->db_agwidth < 1 || bmp->db_agwidth > (LPERCTL / MAXAG) ||
-+	    bmp->db_agwidth > (1 << (L2LPERCTL - (bmp->db_agheight << 1))) ||
-+	    bmp->db_agstart < 0 || bmp->db_agstart >
-+	    (CTLTREESIZE - 1 - bmp->db_agwidth * (MAXAG - 1)) ||
- 	    (bmp->db_agl2size > L2MAXL2SIZE - L2MAXAG) ||
- 	    (bmp->db_agl2size < 0) ||
- 	    ((bmp->db_mapsize - 1) >> bmp->db_agl2size) > MAXAG) {
--- 
-2.42.2
-
+> diff --git a/drivers/tee/tee_core.c b/drivers/tee/tee_core.c
+> index d113679b1e2d..685afcaa3ea1 100644
+> --- a/drivers/tee/tee_core.c
+> +++ b/drivers/tee/tee_core.c
+> @@ -922,6 +922,8 @@ struct tee_device *tee_device_alloc(const struct tee_desc *teedesc,
+>  	teedev->dev.class = &tee_class;
+>  	teedev->dev.release = tee_release_device;
+>  	teedev->dev.parent = dev;
+> +	if (dev)
+> +		teedev->dev.dma_mask = dev->dma_mask;
+>  
+>  	teedev->dev.devt = MKDEV(MAJOR(tee_devt), teedev->id);
+>  
+> -- 
+> 2.43.0
+> 
 
