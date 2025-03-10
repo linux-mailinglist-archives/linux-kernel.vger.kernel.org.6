@@ -1,144 +1,99 @@
-Return-Path: <linux-kernel+bounces-554867-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-554868-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C387A5A2AA
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 19:22:50 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 17C0EA5A2B3
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 19:23:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 77AAE175AEC
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 18:22:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7F5541895CF5
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 18:23:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 748BC234989;
-	Mon, 10 Mar 2025 18:22:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DA35230D0F;
+	Mon, 10 Mar 2025 18:22:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.de header.i=ceggers@gmx.de header.b="ArICW5M5"
-Received: from mout.gmx.net (mout.gmx.net [212.227.17.20])
+	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="kCXUGGLZ"
+Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8DDD1B395F;
-	Mon, 10 Mar 2025 18:22:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0707222576A
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 18:22:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741630958; cv=none; b=N1trypSJdL1T2uyY77HDgh5FHqYnkP34gyn0jFN/8qbd0JShDWbPWd0tc8n+qwNTgBx3k6GSTv3pUr9d9cwrW+p7PhEFDvWERNAG60BdcJd/72X8h9iYauhyKy+nmn+lHhTcOlWDxOC5WEm4zuLWnfmR1jiTjMR1DcQ35vVQ/Lg=
+	t=1741630969; cv=none; b=er4H79YZXuKgSZo00Q8j8SR7u8KyQ9FWLycJ8Ig8tN0+OiPeTkEtjLQ+ijc53lg4TIfXmq3Ks1eEGRkssL6j1WwIe3NQ/bT26CHQHyJq9vqlXezi3+HauuwT2YsTjM13NZ5Dy0ZWkzXXYFm/QVfUr7o7EbNFZ8/UkpasG2VU2SI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741630958; c=relaxed/simple;
-	bh=Zx2HmYMc3XVimy/gJooeQF2i7I8bjdI1jLPVeuMiqYY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=FQ6pf/4kXk48Ol+Rz8uOca+k5yfnHJLtFwtVnCOCPSdLyTnpFnD/OmHM4JUgeDF1FLWfLfbUbzHE9CyAZ/R3yOMv+svj9p8YY7VHi23fFgqBjg4bdUlOJNW0ZPScFHpklrM/htTE1dyFJzcUpe873K2d3trI9XD31VSkM1JsFXo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=ceggers@gmx.de header.b=ArICW5M5; arc=none smtp.client-ip=212.227.17.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
-	s=s31663417; t=1741630946; x=1742235746; i=ceggers@gmx.de;
-	bh=Whq6S+7iGQAr3A+cExD85fkuRzBWgcHyyOaCGKz8V8I=;
-	h=X-UI-Sender-Class:From:To:Cc:Subject:Date:Message-ID:In-Reply-To:
-	 References:MIME-Version:Content-Transfer-Encoding:Content-Type:cc:
-	 content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=ArICW5M5BtIGquAGu89S/TyhTdq5d+D57/lI11xpK+75s5/lshSB5IvJzfYAzIfE
-	 NK2O6wyoRUL5pcZE40gT95uXeABti1/OCxWllS3vXSttTx8CK2nYCDqidTtmIRUsf
-	 xd3r2pPln42ca4vaqJcKlbYBalkNHb5LmloqAj9OOyZkSe9z5fPOrKUKQnQO9Bjbj
-	 /kQ8TPtq7tfE8uv87OVi4TxL3z8ZdXX+rqBHMYiIfj1C3Nn6ODbwhMgdL6b0CI/Hc
-	 IGZO5ukCkIMUfEFCnTT/Y/Q/U8qG9SGQKvVdL62CGUDuwbINs7N13p+2DLP4So8jZ
-	 FQq8wao7ccIqyR3AEw==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from zbook-studio-g3.localnet ([95.114.251.201]) by mail.gmx.net
- (mrgmx105 [212.227.17.168]) with ESMTPSA (Nemesis) id
- 1MhU5b-1tMElu3OU7-00it1J; Mon, 10 Mar 2025 19:22:25 +0100
-From: Christian Eggers <ceggers@gmx.de>
-To: Christian Eggers <ceggers@arri.de>, Mark Brown <broonie@kernel.org>
-Cc: Liam Girdwood <lgirdwood@gmail.com>,
- Douglas Anderson <dianders@chromium.org>, linux-kernel@vger.kernel.org,
- stable@vger.kernel.org
-Subject:
- Re: [PATCH 2/2] regulator: assert that dummy regulator has been probed before
- using it
-Date: Mon, 10 Mar 2025 19:22:24 +0100
-Message-ID: <4945392.OV4Wx5bFTl@zbook-studio-g3>
-In-Reply-To: <3d195bf7-de99-4fe9-87b0-291e156f083c@sirena.org.uk>
-References:
- <20250310163302.15276-1-ceggers@arri.de>
- <20250310163302.15276-2-ceggers@arri.de>
- <3d195bf7-de99-4fe9-87b0-291e156f083c@sirena.org.uk>
+	s=arc-20240116; t=1741630969; c=relaxed/simple;
+	bh=UmxXhTzy9h0qJSNTG7IlXLTwXqZI4SJ+MJycH8hMpnE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Emcn1o/hoEb6Eu3aVjamB6eEbQX9yaZtpJzSGB4ERK3EVJ5DpSikxoM5O61/0Yq6ABDk2oDBnbvs3HPQ/iIHG6iAWryMk66b+YBIrdgyxXCL8RjYjGenqJrRBwlVSYvsnOPL7OmfngPQ01qOuOmhAaQW4OKI88GjviE+FmGLwRE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=kCXUGGLZ; arc=none smtp.client-ip=159.69.126.157
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
+	s=mail; t=1741630956;
+	bh=UmxXhTzy9h0qJSNTG7IlXLTwXqZI4SJ+MJycH8hMpnE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=kCXUGGLZYhDrHiNj4BvA012LnKz+GcVZe/yZTR5zxmlvQwSJErFpE/q8mx3vIY58i
+	 3yQrfiXW8tAD2FbWzbQr6DvoUvmWUAjqzGxHllGIIJ8vC0Rejd8sSPjsNHv064OIYx
+	 a9O4cnj1mKJqpl/Dgk5ojwBbNUW3FZB+MwZUTlOE=
+Date: Mon, 10 Mar 2025 19:22:35 +0100
+From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
+To: "Paul E. McKenney" <paulmck@kernel.org>
+Cc: Willy Tarreau <w@1wt.eu>, Shuah Khan <skhan@linuxfoundation.org>, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [GIT PULL] nolibc changes for v6.15
+Message-ID: <3598f2c8-e04a-4e4a-ae1f-db2201fff802@t-8ch.de>
+References: <25e1c397-d554-4334-b344-56ec252564c1@t-8ch.de>
+ <00c760a8-0075-486f-9456-63ae07ecb341@paulmck-laptop>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="iso-8859-1"
-X-Provags-ID: V03:K1:mSecFvwDdmDDHNBkAxGC/N1fqI4dr2nlOihHZQSA/JKRstn18gK
- swYL9oHmWu1vgrqc/fGVbciCZKNwvi9//8+hH3K2Rt9wt97Wm6xxsOJ2Q8kuATnKIW0LWBm
- PKDj4iP0we+NLPkiiajwZonm8W5XBQweBrj+wXDs90ekJQ+pnl+d8u7fdyLBcrBUYfRz6Xv
- wh+HRTA3nsbMIt+i7FHtw==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:RrMt41El9TA=;w5qik2fQinE+qvz+FqZmhH4srQS
- k/v/gW3aXQudlgjpYkkFuPN8hDh86fbAhDfO9zFlSQi4QG5X7xlQebArd5wU9R1MLjVXaZCEk
- cSDFGyXS6Fzw+ueGAnIkFJP/3amTb3seXVqeNmzedZEbPIqH3imPVwH0yLtfFibntvtJEGJtM
- +1U511DZbe3NgIsGnljeQBLjQk0zP80w4HWzpEdGpWd7EOuus/+OAUaD9qJynqWAFvUFaBRS3
- f8SB7lKiIzOG7pFnbmKMQp565x6tui2YZ8rKRXhkSXTJjCqBgzHOxNfVeti5HLDYQWy1LvkhE
- q/WvgdGTNdPOQX1Y6zJNOM5pAu5YzUjTamukCXtV1d35V9BQCVDFA4Kj+v99gzwpAj/CcTNle
- C0ijsg0HHmoxs5gfLSvTBEiUNp0NYYWcOCuAWxO2johmpKJAejCcHxp+/H8R0o0hCwQlCJfKj
- BzIrN4QAr+HEfHNIyutpJ6OzIgCr47t5srUDXBebLiWAXsaMW07npTtwTmj7pW0yUikhjfIG6
- xuTBVjOaTx6LorvJq7hRherwqCGIKcsZLPP+Cw4VNomAkir46ql54r/rB5WtkK3QNkwPc2Q9o
- rvpbY0pm/CvJbSKwjdHQUKTc/W299DCUN9K5ARHYPwIz7oqCTrqht8mdmrCaoweVxFvrl+Mnt
- PDuKC7PYJS7Bet9LpwQd22fjtQMXS5JK11+ut35kV2YBDNSSSDEWG1ylnbIneGPrER2/0CINe
- orO7tEchaQbhwUscr+Bllob3DMXZsv0ymHzcuV+sRW11OCPkx6BvYXXvrFM97I6htXSKMH4bV
- K+atjtWzrxcbQCixC/dYQPdSlbIIVRJCdaz1Fbb8uSPhCyT9e48df37nyxRNJ8HZ73b1+npbu
- dMj2bBl0j7xfYPwCE9jxHOlBQ7HypzXL6sIZ7kl+cF8tRcvDJlrGS+3zNfZOaOGDTEeHe5K+N
- A2a1jOh4iD5iVSxz0SnFylkzSWIJ9jZZp0VUYSKk0A8rP9NnM+yW+V7lTr/Xzz7L2ZcygsSBe
- rAD8zcu2IfxOVEUulR6Dq81TTaUynxNf30VQ+Z8usH1chy5N8ET4u9Yo+efznUs3JcDEJ69U1
- 29z9KkOxRCgHQxaZGJeLlPw/DhgA+uYnUG6xMNhYPuUcjT5mXKGHDl770tv0+nPPn4xqK2qm8
- h646cPiZXLOWNM8X9im9H9hkxzA+dWf4Tc3OP8TT0W1jRtLcPPdNbusuGReOHh4VS99Iehu1Y
- 7RLmvv0GzNvS/NMlRwxkoO+6WhLTs/SNzbQMuVoy4mlwmERWPbjcVbpzWBjlHQLo4hTt1IfEN
- j6mRTtqFDlmJEsKuhK/FQ0UeabTrZVNXzI3RHEcZVglItrcy37UlzrW/o+vqACdUNixObhhjo
- OIFpWF5dxb0Nx6duOSeH3aMeSs8M6zgLNGVko2kqe2c4+wdQ5Bfz6as8JAq7VTb8DfrrqJP8Z
- IPtqH7Q==
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <00c760a8-0075-486f-9456-63ae07ecb341@paulmck-laptop>
 
-Am Montag, 10. M=E4rz 2025, 18:23:02 CET schrieb Mark Brown:
-> On Mon, Mar 10, 2025 at 05:33:02PM +0100, Christian Eggers wrote:
-> > Due to asynchronous driver probing there is a chance that the dummy
-> > regulator hasn't already been probed when first accessing it.
-> >=20
-> >  		if (have_full_constraints()) {
-> >  	=09
-> >  			r =3D dummy_regulator_rdev;
-> >=20
-> > +			BUG_ON(!r);
-> >=20
-> >  			get_device(&r->dev);
-> >  	=09
-> >  		} else {
-> >  	=09
-> >  			dev_err(dev, "Failed to resolve %s-supply for=20
-%s\n",
-> >=20
-> > @@ -2086,6 +2087,7 @@ static int regulator_resolve_supply(struct
-> > regulator_dev *rdev)>=20
-> >  			goto out;
-> >  	=09
-> >  		}
-> >  		r =3D dummy_regulator_rdev;
-> >=20
-> > +		BUG_ON(!r);
->=20
-> This doesn't actually help anything
-My idea was to help identifying the problem (if it is reintroduced again=20
-later).
+On 2025-03-10 10:09:49-0700, Paul E. McKenney wrote:
+> On Sat, Mar 08, 2025 at 02:06:21PM +0100, Thomas Weißschuh wrote:
+> > The following changes since commit 2014c95afecee3e76ca4a56956a936e23283f05b:
+> > 
+> >   Linux 6.14-rc1 (2025-02-02 15:39:26 -0800)
+> > 
+> > are available in the Git repository at:
+> > 
+> >   https://git.kernel.org/pub/scm/linux/kernel/git/nolibc/linux-nolibc.git tags/nolibc-20250308-for-6.15-1
+> > 
+> > for you to fetch changes up to bceb73904c855c78402dca94c82915f078f259dd:
+> > 
+> >   tools/nolibc: don't use asm/ UAPI headers (2025-03-08 13:18:27 +0100)
+> 
+> Thank you, I have pulled this in and will expose it to -next testing.
 
-> I'd expect this to trigger probe deferral.
-I can check for this tomorrow.  But is it worth to use deferred probing
-for a shared "NOP" driver which doesn't access any hardware?  Or would this=
-=20
-only introduce overhead for nothing?
+Thanks!
 
-regards,
-Christian
+> Results from "make run":
+> 
+> 198 test(s): 198 passed,   0 skipped,   0 failed => status: success
+> 
+> Results from "make user":
+> 
+> 198 test(s): 196 passed,   2 skipped,   0 failed => status: warning
+> 
+> I don't understand the "warning" given that the "run.out" file has all
+> "OK" aside from the two "SKIPPED" tests.  Or maybe I am just forgetting
+> how this works.  ;-)
+
+A skipped test will mark the whole run as "warning".
+
+Maybe we'll adopt the kselftest harness at some point and align with the
+rest of the selftests.
+
+<snip>
 
 
-
-
+Thomas
 
