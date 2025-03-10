@@ -1,104 +1,121 @@
-Return-Path: <linux-kernel+bounces-554347-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-554349-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DBE1CA59689
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 14:42:11 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6198EA5969F
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 14:45:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BF45D168176
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 13:42:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 212CE3A58A9
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 13:45:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78E0722A807;
-	Mon, 10 Mar 2025 13:42:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8698F22AE5D;
+	Mon, 10 Mar 2025 13:45:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vEkU6G3e"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TiL87QdQ"
+Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C70BA221729;
-	Mon, 10 Mar 2025 13:42:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FE971DE2A7;
+	Mon, 10 Mar 2025 13:45:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741614124; cv=none; b=OPcx9q75B0Zf00x9N51rmZKZpfjjS6FQ6eSQHd6aRhvfjMmWj8MnR6Z5CSc+FYkP5hf6vBQpoycEDPFC3ryoxeHJX+OjYiOUDq5fB4we6zuxAFUKL/3sl0lMMg5Uca2nJdyp5ghtqOIs4kY8IRzLfnf6PtBnUsB6hskPXdqQ4IA=
+	t=1741614334; cv=none; b=Qc+QrOMKx7Ctj4StdFBRT8K0GwtoI7hmam/+CfaJiV1uf2GE2EBu4rsGaxs2/ILqPVxDeUDWuHB9KAsTs6YCC+2QHHTwA+Bup6CdIPgOz8SMIdq+WAjdUbaJPXu2kH5yROoiIXt6sYA80VBFaDc/rov3GLicV+MTp8DNYwFgzQE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741614124; c=relaxed/simple;
-	bh=YseASnTCb4kJt65uee0yzPI779rItNm4h9T31KLhRjo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MHzmlp4K5brtTn82ghDvwAmaAxPN/pDUzD9o0rt/Ki4AZ0c9s+wQQ6ab6d3mpB8ssts2lqX+DMZYKBiew42Yk5JhOZiB1egqkRHyZqH0KTGTv0ah2LECTRTFSW8AySYBEaa5xBZzlr1Mh2Ake0xJXFmNRKOuAqFDuq3Q9vH3iug=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vEkU6G3e; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CCF5DC4CEE5;
-	Mon, 10 Mar 2025 13:42:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741614124;
-	bh=YseASnTCb4kJt65uee0yzPI779rItNm4h9T31KLhRjo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=vEkU6G3eAlqAtIwRrw13bpL0WHsyI6ESgyEcZW/5gWXnKG9Yu0xxgq6NYRYu6k9/7
-	 82jeC5iEvmMbik+xKl05RQVfCLuREzkQhSEnVhMwbG8PULXMKdLvL36AXARGUM9lID
-	 214ovhePlm1eRVoH2HkYH1ug+yeYzgcDiqNr9F2DXVJCCk2lgcRh5PmgLccCjuI0zS
-	 WthRbQ+ldEPuNjCnHIhkZlq8h77WCfRc9wh9g5DGf7mSE2uU+0DVY80GfW2FoKFLRA
-	 cuPzevocXdHPBmH3lseH3ejBzHomsnZ2+BL22Xv95YK/0i6VkB9AxVtnNAwPWV4+e3
-	 VFucZ9yfbxEOg==
-Date: Mon, 10 Mar 2025 14:41:59 +0100
-From: Joel Granados <joel.granados@kernel.org>
-To: Heiko Carstens <hca@linux.ibm.com>
-Cc: Kees Cook <kees@kernel.org>, Steven Rostedt <rostedt@goodmis.org>, 
-	Masami Hiramatsu <mhiramat@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, "David S. Miller" <davem@davemloft.net>, 
-	Andreas Larsson <andreas@gaisler.com>, Vasily Gorbik <gor@linux.ibm.com>, 
-	Alexander Gordeev <agordeev@linux.ibm.com>, Christian Borntraeger <borntraeger@linux.ibm.com>, 
-	Sven Schnelle <svens@linux.ibm.com>, Gerald Schaefer <gerald.schaefer@linux.ibm.com>, 
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-trace-kernel@vger.kernel.org, sparclinux@vger.kernel.org, linux-s390@vger.kernel.org
-Subject: Re: [PATCH v2 6/6] s390: mv s390 sysctls into their own file under
- arch/s390 dir
-Message-ID: <r73ph4ht5ejeeuj65nxocmqp7pury2mekz2lz3r6fs264s24c4@ransymcrzk2h>
-References: <20250306-jag-mv_ctltables-v2-0-71b243c8d3f8@kernel.org>
- <20250306-jag-mv_ctltables-v2-6-71b243c8d3f8@kernel.org>
- <20250307152620.9880F75-hca@linux.ibm.com>
+	s=arc-20240116; t=1741614334; c=relaxed/simple;
+	bh=PrA7rfUbhe2Pewgr5X93FRTG1RoQPZ5lbvHmNEd0rGI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ogdNTOSqAIIhRGX4t6AC2yn+iID3HHxcNWkqx6lbVOP/nR/WVDphdCMqn3+e5w7TuKV+iBvBm3bVDnnX513BLQmvXWPG2QNhigwNuFAAhMarMf3j3mHK51y5EcmhTePfyn4qmK1sGqNKIJWYDMHt8dDmp1wSrmI7Qij3tCLYUms=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TiL87QdQ; arc=none smtp.client-ip=209.85.218.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-ac29af3382dso173052366b.2;
+        Mon, 10 Mar 2025 06:45:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741614332; x=1742219132; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=PrA7rfUbhe2Pewgr5X93FRTG1RoQPZ5lbvHmNEd0rGI=;
+        b=TiL87QdQA8T2KDkVYR2rW7FMa9E3oJgTotd+yIw22oQeOVOu10GtGug+WFh0Oc5BT0
+         WW3v9QQYSHa5hcLgG8gh5kmTFAL8DQoYTWOC8btw1P+YQ7n+PI24ha/zRnzYqJxMuWP5
+         dN0XlGbtBJI9gwGmuNU1Xw4x6ZyvS7jukYzD40iIbAFuYptEi/BENwwnvxoInFl2yoqU
+         ENcDUuX8lvkSUBANUVw8MRKVvWD9a+b8Ce64HK7/M921lmPiC9n0VtIUmwUM7AU0Mps1
+         zVnOEkNTIRsHAMGpjQAXHvv3Bh6OQZ11gvbZy1WTZURM/LgwLmfIZglbDtQwr+pbgbqu
+         wnlw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741614332; x=1742219132;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=PrA7rfUbhe2Pewgr5X93FRTG1RoQPZ5lbvHmNEd0rGI=;
+        b=dcla2kofDi2RvabvyrXRYkWNuGwhd1XFq1tRGizTeJK2ueQWeAbCuudolToQHZdiiG
+         P2gelUeT0xS211EaCzl2DMvbDaly+wAkQTYCwDahOk4eCGiOk1DYMhvA4J/1A3aJdfY/
+         BjstTNTHvfla8rMfLAesQLv8TxkCmTjv6PVdMg4w/qqCFathVSzBAZUUxXs3sNzJS2FS
+         a54OjYn6JnCmKxINQcBoNdZCFHKw/6Sp0+dVcIgWmWHvf5W24ALHjuKgKF29FOe7DqBP
+         eIdVgujyBo5Lw/63Q1ch6flA2xRUg3HOZi6KbcxJr+p0VR2xzu7upplwKcft5zrL9+kk
+         OJ5Q==
+X-Forwarded-Encrypted: i=1; AJvYcCULLcCys8FubU4IvD+ajt1p2+mra3PLqDi2ag/4wJRTeRwOicBMmKMHylu+4el9hd8G5r221sJNHY8u@vger.kernel.org, AJvYcCUzAmCg9Xm2DhGcfBXyhjNDI9KBaeTCNWFpM2SfsNEEzwf7s64WTvv7gdHxGGasRIQUkQ7zeI1rhvbyMMy2@vger.kernel.org, AJvYcCV/GLJxbWPciT+UfwE9uxBqWBiTiInuz5Ju8VXCKCiSDcaJfA56tg5A77xmMUDICjpqfDEIErkVjxXwfqjY@vger.kernel.org, AJvYcCWPT47fXmZ29V6UDxQAMEMNTOE+eZ3qAhaS1HyeF5A8ig/gr0F2Pm/bLeK1CD/B+4hYsAWM7ys4RuC9fA==@vger.kernel.org, AJvYcCXMFOxm1IQ4/q9Ev17NaLbWpkNYKV6hOWJh56V1pDUYnKTxQiMefSRqlwbZziJ6iBSxYzOIp3VwhOb8TQ==@vger.kernel.org, AJvYcCXhay8Hw2c/hDFmL0EDkHpKTyhWSmp++/W03L6XbYAKenUn0nIuZq7vTqTRarQr2goDlYaArQf/+8FF@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy6EDLBRZlgruV83NIYhnRUwDXy6teEX720TU5Ur2yD4Q6qmfAi
+	71WSAN06Hmnhf1AT95iBYRo9eFKjTWW3HcvpH7ikXq8txFhQSSvlEuv98l4Isxt4krTxHSABQHM
+	TLvjiekGGf9WY5CYU+JBasfW7LQogT92O8mY=
+X-Gm-Gg: ASbGncu7uLEipZJ+QTXSJqic/do4hiHVE+lIhY0Hs7qW+94eY8m0bOf/6+96MWVr2ED
+	I2LjgqTvnGnCecIY1A7ddO71UPKi1ed4X8ARMt4uYhDr23C0uSVxTISQ9BnNJSBrLMfXELae4ld
+	l87vwHQZJWKSZURBQGAolf6rGf0lmSBRc6i3BklK7Tc1VVCDPRCq1PYMM=
+X-Google-Smtp-Source: AGHT+IFrlV+UOZmk75f6ffZGqWNA8kEVBO9qwi1sfylUDo7SOrHnrhelQqcwKfQa9tx5Jczcf/SvJhuAPzOyWJApbV0=
+X-Received: by 2002:a17:906:33db:b0:ac2:7b8a:7a24 with SMTP id
+ a640c23a62f3a-ac27b8aa77emr821669466b.3.1741614331525; Mon, 10 Mar 2025
+ 06:45:31 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250307152620.9880F75-hca@linux.ibm.com>
+References: <20250307220304.247725-1-romank@linux.microsoft.com> <20250307220304.247725-5-romank@linux.microsoft.com>
+In-Reply-To: <20250307220304.247725-5-romank@linux.microsoft.com>
+From: Tianyu Lan <ltykernel@gmail.com>
+Date: Mon, 10 Mar 2025 21:44:55 +0800
+X-Gm-Features: AQ5f1JqLOmSVWjJdyk8kWYqh8Q05Ls-ycUphJL8s1J0KBJmCwQzJ1qeS4exHJxg
+Message-ID: <CAMvTesC+McATYa-xsi0omJ0LnFUUUooBk_r+oYSHYimyXPz5ZA@mail.gmail.com>
+Subject: Re: [PATCH hyperv-next v5 04/11] Drivers: hv: Provide arch-neutral
+ implementation of get_vtl()
+To: Roman Kisel <romank@linux.microsoft.com>
+Cc: arnd@arndb.de, bhelgaas@google.com, bp@alien8.de, catalin.marinas@arm.com, 
+	conor+dt@kernel.org, dave.hansen@linux.intel.com, decui@microsoft.com, 
+	haiyangz@microsoft.com, hpa@zytor.com, joey.gouly@arm.com, krzk+dt@kernel.org, 
+	kw@linux.com, kys@microsoft.com, lenb@kernel.org, lpieralisi@kernel.org, 
+	manivannan.sadhasivam@linaro.org, mark.rutland@arm.com, maz@kernel.org, 
+	mingo@redhat.com, oliver.upton@linux.dev, rafael@kernel.org, robh@kernel.org, 
+	ssengar@linux.microsoft.com, sudeep.holla@arm.com, suzuki.poulose@arm.com, 
+	tglx@linutronix.de, wei.liu@kernel.org, will@kernel.org, yuzenghui@huawei.com, 
+	devicetree@vger.kernel.org, kvmarm@lists.linux.dev, 
+	linux-acpi@vger.kernel.org, linux-arch@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-hyperv@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, x86@kernel.org, 
+	apais@microsoft.com, benhill@microsoft.com, bperkins@microsoft.com, 
+	sunilmut@microsoft.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Mar 07, 2025 at 04:26:20PM +0100, Heiko Carstens wrote:
-> On Thu, Mar 06, 2025 at 12:29:46PM +0100, joel granados wrote:
-> > Move s390 sysctls (spin_retry and userprocess_debug) into their own
-> > files under arch/s390. We create two new sysctl tables
-> > (2390_{fault,spin}_sysctl_table) which will be initialized with
-> > arch_initcall placing them after their original place in proc_root_init.
-> > 
-> > This is part of a greater effort to move ctl tables into their
-> > respective subsystems which will reduce the merge conflicts in
-> > kernel/sysctl.c.
-> > 
-> > Signed-off-by: joel granados <joel.granados@kernel.org>
-> > ---
-> >  arch/s390/lib/spinlock.c | 18 ++++++++++++++++++
-> >  arch/s390/mm/fault.c     | 17 +++++++++++++++++
-> >  kernel/sysctl.c          | 18 ------------------
-> >  3 files changed, 35 insertions(+), 18 deletions(-)
-> 
-> Acked-by: Heiko Carstens <hca@linux.ibm.com>
-> 
-> How should this go upstream? Will you take care of this, or should
-> this go via the s390 tree?
+On Sat, Mar 8, 2025 at 6:04=E2=80=AFAM Roman Kisel <romank@linux.microsoft.=
+com> wrote:
+>
+> To run in the VTL mode, Hyper-V drivers have to know what
+> VTL the system boots in, and the arm64/hyperv code does not
+> have the means to compute that.
+>
+> Refactor the code to hoist the function that detects VTL,
+> make it arch-neutral to be able to employ it to get the VTL
+> on arm64.
+>
+> Signed-off-by: Roman Kisel <romank@linux.microsoft.com>
+> Reviewed-by: Michael Kelley <mhklinux@outlook.com>
+> ---
+Reviewed-by: Tianyu Lan <tiala@microsoft.com>
 
-thx for the review
-
-It would be great if you can push it through the s390 tree. However, if
-it is not possible to do so, please let me know and I'll add it to the
-sysctl-next changes.
-
-Best
-
--- 
-
-Joel Granados
+--=20
+Thanks
+Tianyu Lan
 
