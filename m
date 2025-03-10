@@ -1,240 +1,189 @@
-Return-Path: <linux-kernel+bounces-553671-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-553633-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 86FE3A58D3F
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 08:48:54 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 35423A58CB5
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 08:22:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F2CE27A3B29
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 07:47:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A5CA1188ECAA
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 07:22:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 947E0221F31;
-	Mon, 10 Mar 2025 07:48:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A57701D6DA1;
+	Mon, 10 Mar 2025 07:21:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=emfend.at header.i=@emfend.at header.b="ec2DCLHu"
-Received: from lx20.hoststar.hosting (lx20.hoststar.hosting [168.119.41.54])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="G2q588JQ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91B4A1BBBE5;
-	Mon, 10 Mar 2025 07:48:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=168.119.41.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6FFE1D5AAD;
+	Mon, 10 Mar 2025 07:21:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741592922; cv=none; b=ba1wdnhRYNUMe997nMGoyWPW6O75kBK9Ld+mN9I+9JW18p94UiRHM04Uh4ktcF/4OTkwNYFigqnMeZURcHlUL/IZeP8P/ROWYgQDyQ7Kt9lGxhVPbP6NQFB2viK1oQOxUM4+q8YHavxfqgIj78aaQd1JgyAgYIPMFGG6z+/vOEc=
+	t=1741591309; cv=none; b=euD7EgKRupDyc6hy/J07IB7Tf8VtNYrR3fdD0b1PduIuw1GT0lQfaLa5Q3OeHVnS2anmRAX9TW/lDuBu8eJaWTRhkmcQf+/JQ7W90Qc02zk0TljonZh4yMH4Qw2keXNM0y+UxX04USSKdKeatb/XfJdF+tPsEoHcV4VK8082Hcs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741592922; c=relaxed/simple;
-	bh=7J/AqRAt74cKmUNfaN9qV/4SLC68LKViiljhp7ABqlg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=aGusvQOBcOe8cUur3QxgcYgVEbMt6T/sA6d/0EzDP7gvSgGzb5JCkvoKgBogq38nSqtDerrf0JeEuLw7nrADzq9pyL4GnwXuBfm+hPZ5bbnKrUFSljiNrex/OozUcdMg6Q60JSBoZjdl8cLD2GTdcD1FMFwq8HnBy2hwNlQ9Kx0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=emfend.at; spf=pass smtp.mailfrom=emfend.at; dkim=pass (1024-bit key) header.d=emfend.at header.i=@emfend.at header.b=ec2DCLHu; arc=none smtp.client-ip=168.119.41.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=emfend.at
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=emfend.at
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=emfend.at;
-	 s=mail; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References
-	:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=pOu5saDPfrFBVdo11dFqR8ynsYHet3YtuqUt+9ehiS8=; b=ec2DCLHuzy+3VS3CURJ6Erpt/4
-	+g8DlS7tVi7wcqzyivixGBT2rebERwS77F85EErdz3ODqrovY19a46kpPVr/e82/Odz3pHgjjHL5I
-	vAtWsF2gdXXXmhI5bBvuKqRgCrPWlqMs6gKSiCQ95p60xW1CJGvxKV+xX0GFqHSCox1A=;
-Received: from 194-208-208-245.tele.net ([194.208.208.245]:51473 helo=[192.168.0.218])
-	by lx20.hoststar.hosting with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305_SHA256
-	(Exim 4.93)
-	(envelope-from <matthias.fend@emfend.at>)
-	id 1trXRe-000KEN-Dn; Mon, 10 Mar 2025 08:21:03 +0100
-Message-ID: <025cf7b9-2aa5-4651-91f5-d4b596d654ed@emfend.at>
-Date: Mon, 10 Mar 2025 08:20:59 +0100
+	s=arc-20240116; t=1741591309; c=relaxed/simple;
+	bh=bwzwOjpoJdTp8dStniYCS+eiqWFCsaTpoCpnmRYoBVQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=XTUfMnS079z3IZ9MMfJelUSFFm9AXsdxL3gNjfwjoehjE9nyBNvyLYxpptkRdGf+QQbBIbkjavremBTKzclNSBybHrKeSIzOPg9ikhiei74dkbEKQGgJaaZU4mLJUczu8nUQlVGFIkSqsf82z8ayiMHloOKjoxJccUmw0gaYUB0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=G2q588JQ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 55C27C4CEE5;
+	Mon, 10 Mar 2025 07:21:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741591309;
+	bh=bwzwOjpoJdTp8dStniYCS+eiqWFCsaTpoCpnmRYoBVQ=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=G2q588JQEantEptls1igKb1mCeSfH0cMWDtWBrm35xkL9CaLjxWwxAnJPpsOe5Qft
+	 gZaw/kn0KbqvcWeuy6qer3a2ZwLeywtAxbQB+z5IJc5Olwhfq0h9rLClfmIigdvEnD
+	 Xoeh8nDmG8nWK0dcT+0yPwH+se0FuMRDysYq4Vx6I2MASDUwff9loljo3qXg/dutqa
+	 fL95cvVm3Tc+7+HmVr29TgIuUoIuc6bzZCqFRrcdTW0/2MHaiNXurDrPVrVjXhSlf5
+	 J4Y0yZwxK59Rkvzt1S6eiswe3UMv2UUg9PvifQomJbPF9lerc+0qAtlddPT6wrA0zV
+	 mK2QFRvujxR2Q==
+Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-30761be8fa8so42718641fa.2;
+        Mon, 10 Mar 2025 00:21:49 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCV+sjia7lDk3ELfd1/1oNb6Iu3tH9Z2avt8Bsh3xI781LuGFoYMNKZZ/l/C2paW2HaIluW6lyQGyYhnqVrD@vger.kernel.org, AJvYcCV2imihIXc3eMrJYFwAo9jgs+5DLsWX3mpSAoayFrPaIsMXd0dVZr8/Mg1CqBeY//Qz+0gLcBclQlR7RdTOwA==@vger.kernel.org, AJvYcCWdOFOs89rsP1Wnpf/RODGTFS3qwE7gWAcRER49Z19KG/x8k3/Y+P/nLMZ4YuE19XJIuGfuOO+iGCE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwVmnANHeuyrLkJ3L4w7OAfCxVKs1hGz2i96LEv+ezC5rffhI49
+	Dqg8ECcVqtGfKEUlBgMyMc4YvYD/a3B0/6CSpu4T6dGTLLd0GRjhVOcdvJbTIezKQAw4rqaLpyj
+	D2LrPy9JL8SiiDetGVCy/hWrOeO8=
+X-Google-Smtp-Source: AGHT+IGge2A+fnL8sOyilyTq9nCYuH103mq7sQ/sC1+LPZhomoy5MIoKYB8jPThuj9l7/H8hSZJKNPij57l1IvvXYPA=
+X-Received: by 2002:a2e:960a:0:b0:307:e498:1254 with SMTP id
+ 38308e7fff4ca-30bf4613baemr36896451fa.35.1741591307671; Mon, 10 Mar 2025
+ 00:21:47 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] dt-bindings: leds: add Texas Instruments TPS6131x
- flash LED driver
-To: Conor Dooley <conor@kernel.org>
-Cc: Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, linux-leds@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- bsp-development.geo@leica-geosystems.com
-References: <20250228-leds-tps6131x-v1-0-d1071d90f9ea@emfend.at>
- <20250228-leds-tps6131x-v1-1-d1071d90f9ea@emfend.at>
- <20250228-zipfile-net-69e4bbebd8d6@spud>
-Content-Language: de-DE
-From: Matthias Fend <matthias.fend@emfend.at>
-In-Reply-To: <20250228-zipfile-net-69e4bbebd8d6@spud>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Spam-Score: 
-X-Spam-Bar: 
-X-Spam-Report: 
+References: <67cd0276.050a0220.14db68.006c.GAE@google.com>
+In-Reply-To: <67cd0276.050a0220.14db68.006c.GAE@google.com>
+From: Ard Biesheuvel <ardb@kernel.org>
+Date: Mon, 10 Mar 2025 08:21:36 +0100
+X-Gmail-Original-Message-ID: <CAMj1kXER-4ErtQiU6oPWfOEsmTz8pqPOsQ3GB8EGQeHhHXS0_w@mail.gmail.com>
+X-Gm-Features: AQ5f1Jp_t0I_OP6aZ1QHAnkD4_UsvVHnzfc1Q5x29HnwX01uUG60SpbDECqNSO8
+Message-ID: <CAMj1kXER-4ErtQiU6oPWfOEsmTz8pqPOsQ3GB8EGQeHhHXS0_w@mail.gmail.com>
+Subject: Re: [syzbot] [efi?] [fs?] possible deadlock in efivarfs_actor
+To: syzbot <syzbot+019072ad24ab1d948228@syzkaller.appspotmail.com>, 
+	"James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>
+Cc: jk@ozlabs.org, linux-efi@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Conor,
+(cc James)
 
-Am 28.02.2025 um 19:24 schrieb Conor Dooley:
-> On Fri, Feb 28, 2025 at 11:31:23AM +0100, Matthias Fend wrote:
->> Document Texas Instruments TPS61310/TPS61311 flash LED driver devicetree
->> bindings.
->>
->> Signed-off-by: Matthias Fend <matthias.fend@emfend.at>
->> ---
->>   .../devicetree/bindings/leds/ti,tps6131x.yaml      | 123 +++++++++++++++++++++
->>   1 file changed, 123 insertions(+)
->>
->> diff --git a/Documentation/devicetree/bindings/leds/ti,tps6131x.yaml b/Documentation/devicetree/bindings/leds/ti,tps6131x.yaml
->> new file mode 100644
->> index 0000000000000000000000000000000000000000..c08b3cef7abcec07237d3271456ff1f888b2b809
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/leds/ti,tps6131x.yaml
-> 
-> With a filename matching one of the compatibles in the file,
-> Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
-
-thank you very much for your feedback.
-Since I found different variants in the LED bindings, I wasn't quite 
-sure here.
-So is it okay if I simply rename the file to 'ti,tps61310.yaml', even 
-though there are multiple compatible strings and the driver is called 
-leds-tps6131x?
-
-Thanks
-  ~Matthias
-
-> 
-> Cheers,
-> Conor.
-> 
->> @@ -0,0 +1,123 @@
->> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
->> +%YAML 1.2
->> +---
->> +$id: http://devicetree.org/schemas/leds/ti,tps6131x.yaml#
->> +$schema: http://devicetree.org/meta-schemas/core.yaml#
->> +
->> +title: Texas Instruments TPS6131X flash LED driver
->> +
->> +maintainers:
->> +  - Matthias Fend <matthias.fend@emfend.at>
->> +
->> +description: |
->> +  The TPS61310/TPS61311 is a flash LED driver with I2C interface.
->> +  Its power stage is capable of supplying a maximum total current of roughly 1500mA.
->> +  The TPS6131x provides three constant-current sinks, capable of sinking
->> +  up to 2 × 400mA (LED1 and LED3) and 800mA (LED2) in flash mode.
->> +  In torch mode, each sink (LED1, LED2, LED3) supports currents up to 175mA.
->> +
->> +  The data sheet can be found at:
->> +    https://www.ti.com/lit/ds/symlink/tps61310.pdf
->> +
->> +properties:
->> +  compatible:
->> +    enum:
->> +      - ti,tps61310
->> +      - ti,tps61311
->> +
->> +  reg:
->> +    maxItems: 1
->> +
->> +  '#address-cells':
->> +    const: 1
->> +
->> +  '#size-cells':
->> +    const: 0
->> +
->> +  reset-gpios:
->> +    maxItems: 1
->> +    description: GPIO connected to NRESET pin
->> +
->> +  ti,valley-current-limit:
->> +    type: boolean
->> +    description:
->> +      Reduce the valley peak current limit from 1750mA to 1250mA (TPS61310) or
->> +      from 2480mA to 1800mA (TPS61311).
->> +
->> +  led:
->> +    type: object
->> +    $ref: common.yaml#
->> +    unevaluatedProperties: false
->> +
->> +    properties:
->> +      led-sources:
->> +        allOf:
->> +          - minItems: 1
->> +            maxItems: 3
->> +            items:
->> +              enum: [1, 2, 3]
->> +
->> +      led-max-microamp:
->> +        anyOf:
->> +          - minimum: 25000
->> +            maximum: 350000
->> +            multipleOf: 50000
->> +          - minimum: 25000
->> +            maximum: 525000
->> +            multipleOf: 25000
->> +
->> +      flash-max-microamp:
->> +        anyOf:
->> +          - minimum: 25000
->> +            maximum: 800000
->> +            multipleOf: 50000
->> +          - minimum: 25000
->> +            maximum: 1500000
->> +            multipleOf: 25000
->> +
->> +      flash-max-timeout-us:
->> +        enum: [ 5300, 10700, 16000, 21300, 26600, 32000, 37300, 68200, 71500,
->> +                102200, 136300, 170400, 204500, 340800, 579300, 852000 ]
->> +
->> +    required:
->> +      - led-sources
->> +      - led-max-microamp
->> +      - flash-max-microamp
->> +      - flash-max-timeout-us
->> +
->> +required:
->> +  - compatible
->> +  - reg
->> +  - '#address-cells'
->> +  - '#size-cells'
->> +  - led
->> +
->> +additionalProperties: false
->> +
->> +examples:
->> +  - |
->> +    #include <dt-bindings/leds/common.h>
->> +    #include <dt-bindings/gpio/gpio.h>
->> +
->> +    i2c {
->> +      #address-cells = <1>;
->> +      #size-cells = <0>;
->> +
->> +      led-controller@33 {
->> +        compatible = "ti,tps61310";
->> +        reg = <0x33>;
->> +        #address-cells = <1>;
->> +        #size-cells = <0>;
->> +
->> +        reset-gpios = <&gpio1 0 GPIO_ACTIVE_LOW>;
->> +
->> +        tps61310_flash: led {
->> +          function = LED_FUNCTION_FLASH;
->> +          color = <LED_COLOR_ID_WHITE>;
->> +          led-sources = <1>, <2>, <3>;
->> +          led-max-microamp = <525000>;
->> +          flash-max-microamp = <1500000>;
->> +          flash-max-timeout-us = <852000>;
->> +        };
->> +      };
->> +    };
->>
->> -- 
->> 2.34.1
->>
-
+On Sun, 9 Mar 2025 at 03:52, syzbot
+<syzbot+019072ad24ab1d948228@syzkaller.appspotmail.com> wrote:
+>
+> Hello,
+>
+> syzbot found the following issue on:
+>
+> HEAD commit:    e056da87c780 Merge remote-tracking branch 'will/for-next/p..
+> git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-kernelci
+> console output: https://syzkaller.appspot.com/x/log.txt?x=14ce9c64580000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=d6b7e15dc5b5e776
+> dashboard link: https://syzkaller.appspot.com/bug?extid=019072ad24ab1d948228
+> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+> userspace arch: arm64
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=111ed7a0580000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=13b97c64580000
+>
+> Downloadable assets:
+> disk image: https://storage.googleapis.com/syzbot-assets/3d8b1b7cc4c0/disk-e056da87.raw.xz
+> vmlinux: https://storage.googleapis.com/syzbot-assets/b84c04cff235/vmlinux-e056da87.xz
+> kernel image: https://storage.googleapis.com/syzbot-assets/2ae4d0525881/Image-e056da87.gz.xz
+>
+> IMPORTANT: if you fix the issue, please add the following tag to the commit:
+> Reported-by: syzbot+019072ad24ab1d948228@syzkaller.appspotmail.com
+>
+> efivarfs: resyncing variable state
+> ============================================
+> WARNING: possible recursive locking detected
+> 6.14.0-rc4-syzkaller-ge056da87c780 #0 Not tainted
+> --------------------------------------------
+> syz-executor772/6443 is trying to acquire lock:
+> ffff0000c6826558 (&sb->s_type->i_mutex_key#16){++++}-{4:4}, at: inode_lock include/linux/fs.h:877 [inline]
+> ffff0000c6826558 (&sb->s_type->i_mutex_key#16){++++}-{4:4}, at: efivarfs_actor+0x1b8/0x2b8 fs/efivarfs/super.c:422
+>
+> but task is already holding lock:
+> ffff0000c6c7a558 (&sb->s_type->i_mutex_key#16){++++}-{4:4}, at: iterate_dir+0x3b4/0x5f4 fs/readdir.c:101
+>
+> other info that might help us debug this:
+>  Possible unsafe locking scenario:
+>
+>        CPU0
+>        ----
+>   lock(&sb->s_type->i_mutex_key#16);
+>   lock(&sb->s_type->i_mutex_key#16);
+>
+>  *** DEADLOCK ***
+>
+>  May be due to missing lock nesting notation
+>
+> 3 locks held by syz-executor772/6443:
+>  #0: ffff80008fc57208 (system_transition_mutex){+.+.}-{4:4}, at: lock_system_sleep+0x68/0xc0 kernel/power/main.c:56
+>  #1: ffff80008fc75d70 ((pm_chain_head).rwsem){++++}-{4:4}, at: blocking_notifier_call_chain+0x58/0xa0 kernel/notifier.c:379
+>  #2: ffff0000c6c7a558 (&sb->s_type->i_mutex_key#16){++++}-{4:4}, at: iterate_dir+0x3b4/0x5f4 fs/readdir.c:101
+>
+> stack backtrace:
+> CPU: 0 UID: 0 PID: 6443 Comm: syz-executor772 Not tainted 6.14.0-rc4-syzkaller-ge056da87c780 #0
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 12/27/2024
+> Call trace:
+>  show_stack+0x2c/0x3c arch/arm64/kernel/stacktrace.c:466 (C)
+>  __dump_stack lib/dump_stack.c:94 [inline]
+>  dump_stack_lvl+0xe4/0x150 lib/dump_stack.c:120
+>  dump_stack+0x1c/0x28 lib/dump_stack.c:129
+>  print_deadlock_bug+0x4e8/0x668 kernel/locking/lockdep.c:3039
+>  check_deadlock kernel/locking/lockdep.c:3091 [inline]
+>  validate_chain kernel/locking/lockdep.c:3893 [inline]
+>  __lock_acquire+0x6240/0x7904 kernel/locking/lockdep.c:5228
+>  lock_acquire+0x23c/0x724 kernel/locking/lockdep.c:5851
+>  down_write+0x50/0xc0 kernel/locking/rwsem.c:1577
+>  inode_lock include/linux/fs.h:877 [inline]
+>  efivarfs_actor+0x1b8/0x2b8 fs/efivarfs/super.c:422
+>  dir_emit include/linux/fs.h:3849 [inline]
+>  dcache_readdir+0x2dc/0x4e8 fs/libfs.c:209
+>  iterate_dir+0x46c/0x5f4 fs/readdir.c:108
+>  efivarfs_pm_notify+0x2f4/0x350 fs/efivarfs/super.c:517
+>  notifier_call_chain+0x1c4/0x550 kernel/notifier.c:85
+>  blocking_notifier_call_chain+0x70/0xa0 kernel/notifier.c:380
+>  pm_notifier_call_chain+0x2c/0x3c kernel/power/main.c:109
+>  snapshot_release+0x128/0x1b8 kernel/power/user.c:125
+>  __fput+0x340/0x760 fs/file_table.c:464
+>  ____fput+0x20/0x30 fs/file_table.c:492
+>  task_work_run+0x230/0x2e0 kernel/task_work.c:227
+>  resume_user_mode_work include/linux/resume_user_mode.h:50 [inline]
+>  do_notify_resume+0x178/0x1f4 arch/arm64/kernel/entry-common.c:151
+>  exit_to_user_mode_prepare arch/arm64/kernel/entry-common.c:169 [inline]
+>  exit_to_user_mode arch/arm64/kernel/entry-common.c:178 [inline]
+>  el0_svc+0xac/0x168 arch/arm64/kernel/entry-common.c:745
+>  el0t_64_sync_handler+0x84/0x108 arch/arm64/kernel/entry-common.c:762
+>  el0t_64_sync+0x198/0x19c arch/arm64/kernel/entry.S:600
+>
+>
+> ---
+> This report is generated by a bot. It may contain errors.
+> See https://goo.gl/tpsmEJ for more information about syzbot.
+> syzbot engineers can be reached at syzkaller@googlegroups.com.
+>
+> syzbot will keep track of this issue. See:
+> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+>
+> If the report is already addressed, let syzbot know by replying with:
+> #syz fix: exact-commit-title
+>
+> If you want syzbot to run the reproducer, reply with:
+> #syz test: git://repo/address.git branch-or-commit-hash
+> If you attach or paste a git patch, syzbot will apply it before testing.
+>
+> If you want to overwrite report's subsystems, reply with:
+> #syz set subsystems: new-subsystem
+> (See the list of subsystem names on the web dashboard)
+>
+> If the report is a duplicate of another one, reply with:
+> #syz dup: exact-subject-of-another-report
+>
+> If you want to undo deduplication, reply with:
+> #syz undup
 
