@@ -1,45 +1,45 @@
-Return-Path: <linux-kernel+bounces-554792-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-554793-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08DA4A59DBD
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 18:24:38 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 82F05A59DBF
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 18:24:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 15559170163
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 17:24:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 356F016DF6B
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 17:24:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2C1A235354;
-	Mon, 10 Mar 2025 17:23:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76C292356AB;
+	Mon, 10 Mar 2025 17:23:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GElwyusP"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hQaulE8A"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A1192343C9
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 17:23:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C042723534F
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 17:23:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741627409; cv=none; b=O2hjtiSDzkl0CZIvAsoNdEBoz+HGTd4F6qC3aGFfv7/ui4bf8N5h1kch1xh1zXeRA/jr5OPd5wX07t1VK5+ynsxNthJ6qAByBTXS6t2Pc68J9YzFgWZ1/jfzkJLaYEhssomzp70/M/twryCya2qvrZIbGgNlIMq/xymIiE1NYig=
+	t=1741627409; cv=none; b=NeWADjDKx9Dmxt6jBX1Hcjd5o+Kk53ecpx41o89QE485tgTf9ifxLkqRbapWD8HPBr+BypW3Uac2AQLdqt3L8glC/5TMygUJRQpGOgZiX1s/OSo4bHEtHMKTJOCVZH61Va1M21rIQVYHwzyP6ZNpCUJLDee87inksMU94/NdWL0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1741627409; c=relaxed/simple;
-	bh=Z3sSqaG1uhkCQqbFP7NKK185LV7FFPBVBGM4l1BKW9I=;
+	bh=4dhdwBK3uXi/DICcheMKZstN40gWxuAC0U5kXen1d3Q=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=iqgtaKHuSGpsvR+3esnN5O3u33YqFActA1xJdsuUE4RqIQ9Z8j16ihlFNif2n7idpMN2dAtWaKFa5wO83oWgcsP5EGSCTs7efl7z+BZCi8TwDP/EVx7sPQPTIb6ARKll+/dkjt7DRh1x8jB+hWd/cToPg2lB96vj8cAkD6jfIV0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GElwyusP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6388BC4CEEC;
-	Mon, 10 Mar 2025 17:23:28 +0000 (UTC)
+	 MIME-Version; b=raBedTbWsx7mvusBbxyyzD7neGGiLTLiAeGrCI+pRhMTnioVi+2CS4vlHw4QLMsCfnE5eK/BNLpGVcZOZfORk/n87lar5eona2gn1Fi0UQUZbautMnOe8sHW8pry2yqDR3KrHVol/YfhkFFyXle5Dyr87EL4RcCo/IU78vvEB40=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hQaulE8A; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 77A85C4CEF7;
+	Mon, 10 Mar 2025 17:23:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741627408;
-	bh=Z3sSqaG1uhkCQqbFP7NKK185LV7FFPBVBGM4l1BKW9I=;
+	s=k20201202; t=1741627409;
+	bh=4dhdwBK3uXi/DICcheMKZstN40gWxuAC0U5kXen1d3Q=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=GElwyusP/WtY+XI/onO9LKP/4XGLXdBGbtjzZdwAGOE+F2xfTt6R/VDsNLdlx+0oZ
-	 BBKfLvM7iAu/KTC55Szh02Mfi4ajdSBhMaMRPxk7Dju5LCrOFP4yvqRnEraUQNijrT
-	 85tjmyujh2l7Yj4mEk5zlXDgXBw3pseUyDEbTrDQ7NCSP0ohbe/IpYetUZD5quIBFk
-	 WRytS3AOLmgHHaThSSqghYVqfm03VCfkdjN9OGQZ0M63Ipvt6NLtyTfhQNsTGzenTU
-	 eASBFEQCg+i6eFPetX/VEhwS5Qx/W4Quts1/SEA7O6vOaH/e+/YIqOC6CeMogn+Gmz
-	 0+QB8QKk5/H8Q==
+	b=hQaulE8A/QMb9rjKSApl6fMLGmwITsJNjmDE/wylUwceFMbDOjyBzaCG+ymEcYxtB
+	 yac+cSxxdxCG0sffnMnnapqPgVDofYfA7hCavPyXj62MObV73yNUVRcBVPpbbJ+pXp
+	 Ao1+ptYPErt93XP/gPcnFn4ayqyp1rMQRPBxYKY2tUtmV9FZGignk+VK9guNz7H9B2
+	 Db0uGgEW7OgM/N+Dwnj8hWTSmB634uk7VEeM0J0r06rbD/IUwDR8mmoXV/y82Sgtj+
+	 lO1ipuZJ8GoK4eZQJxxAMeDsw78WXXsY330Uy2c35Zl4OjMo9XCFhWMFlEFss4ZzH7
+	 QeXzSHEmPnwyg==
 From: SeongJae Park <sj@kernel.org>
 To: Andrew Morton <akpm@linux-foundation.org>
 Cc: SeongJae Park <sj@kernel.org>,
@@ -51,9 +51,9 @@ Cc: SeongJae Park <sj@kernel.org>,
 	kernel-team@meta.com,
 	linux-kernel@vger.kernel.org,
 	linux-mm@kvack.org
-Subject: [PATCH 4/9] mm/madvise: remove len parameter of madvise_do_behavior()
-Date: Mon, 10 Mar 2025 10:23:13 -0700
-Message-Id: <20250310172318.653630-5-sj@kernel.org>
+Subject: [PATCH 5/9] mm/madvise: define and use madvise_behavior struct for madvise_do_behavior()
+Date: Mon, 10 Mar 2025 10:23:14 -0700
+Message-Id: <20250310172318.653630-6-sj@kernel.org>
 X-Mailer: git-send-email 2.39.5
 In-Reply-To: <20250310172318.653630-1-sj@kernel.org>
 References: <20250310172318.653630-1-sj@kernel.org>
@@ -65,54 +65,154 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Because madise_should_skip() logic is factored out, making
-madvise_do_behavior() calculates 'len' on its own rather then receiving
-it as a parameter makes code simpler.  Remove the parameter.
+To implement batched tlb flushes for MADV_DONTNEED[_LOCKED] and
+MADV_FREE, an mmu_gather object in addition to the behavior integer need
+to be passed to the internal logics.  Using a struct can make it easy
+without increasing the number of parameters of all code paths towards
+the internal logic.  Define a struct for the purpose and use it on the
+code path that starts from madvise_do_behavior() and ends on
+madvise_dontneed_free().
 
 Signed-off-by: SeongJae Park <sj@kernel.org>
 ---
- mm/madvise.c | 10 ++++------
- 1 file changed, 4 insertions(+), 6 deletions(-)
+ mm/madvise.c | 36 ++++++++++++++++++++++++------------
+ 1 file changed, 24 insertions(+), 12 deletions(-)
 
 diff --git a/mm/madvise.c b/mm/madvise.c
-index 764ec1f2475b..469c25690a0e 100644
+index 469c25690a0e..ba2a78795207 100644
 --- a/mm/madvise.c
 +++ b/mm/madvise.c
-@@ -1673,7 +1673,7 @@ static bool is_madvise_populate(int behavior)
+@@ -890,11 +890,16 @@ static bool madvise_dontneed_free_valid_vma(struct vm_area_struct *vma,
+ 	return true;
+ }
+ 
++struct madvise_behavior {
++	int behavior;
++};
++
+ static long madvise_dontneed_free(struct vm_area_struct *vma,
+ 				  struct vm_area_struct **prev,
+ 				  unsigned long start, unsigned long end,
+-				  int behavior)
++				  struct madvise_behavior *madv_behavior)
+ {
++	int behavior = madv_behavior->behavior;
+ 	struct mm_struct *mm = vma->vm_mm;
+ 
+ 	*prev = vma;
+@@ -1249,8 +1254,10 @@ static long madvise_guard_remove(struct vm_area_struct *vma,
+ static int madvise_vma_behavior(struct vm_area_struct *vma,
+ 				struct vm_area_struct **prev,
+ 				unsigned long start, unsigned long end,
+-				unsigned long behavior)
++				void *behavior_arg)
+ {
++	struct madvise_behavior *arg = behavior_arg;
++	int behavior = arg->behavior;
+ 	int error;
+ 	struct anon_vma_name *anon_name;
+ 	unsigned long new_flags = vma->vm_flags;
+@@ -1270,7 +1277,7 @@ static int madvise_vma_behavior(struct vm_area_struct *vma,
+ 	case MADV_FREE:
+ 	case MADV_DONTNEED:
+ 	case MADV_DONTNEED_LOCKED:
+-		return madvise_dontneed_free(vma, prev, start, end, behavior);
++		return madvise_dontneed_free(vma, prev, start, end, arg);
+ 	case MADV_NORMAL:
+ 		new_flags = new_flags & ~VM_RAND_READ & ~VM_SEQ_READ;
+ 		break;
+@@ -1487,10 +1494,10 @@ static bool process_madvise_remote_valid(int behavior)
+  */
+ static
+ int madvise_walk_vmas(struct mm_struct *mm, unsigned long start,
+-		      unsigned long end, unsigned long arg,
++		      unsigned long end, void *arg,
+ 		      int (*visit)(struct vm_area_struct *vma,
+ 				   struct vm_area_struct **prev, unsigned long start,
+-				   unsigned long end, unsigned long arg))
++				   unsigned long end, void *arg))
+ {
+ 	struct vm_area_struct *vma;
+ 	struct vm_area_struct *prev;
+@@ -1548,7 +1555,7 @@ int madvise_walk_vmas(struct mm_struct *mm, unsigned long start,
+ static int madvise_vma_anon_name(struct vm_area_struct *vma,
+ 				 struct vm_area_struct **prev,
+ 				 unsigned long start, unsigned long end,
+-				 unsigned long anon_name)
++				 void *anon_name)
+ {
+ 	int error;
+ 
+@@ -1557,7 +1564,7 @@ static int madvise_vma_anon_name(struct vm_area_struct *vma,
+ 		return -EBADF;
+ 
+ 	error = madvise_update_vma(vma, prev, start, end, vma->vm_flags,
+-				   (struct anon_vma_name *)anon_name);
++				   anon_name);
+ 
+ 	/*
+ 	 * madvise() returns EAGAIN if kernel resources, such as
+@@ -1589,7 +1596,7 @@ int madvise_set_anon_name(struct mm_struct *mm, unsigned long start,
+ 	if (end == start)
+ 		return 0;
+ 
+-	return madvise_walk_vmas(mm, start, end, (unsigned long)anon_name,
++	return madvise_walk_vmas(mm, start, end, anon_name,
+ 				 madvise_vma_anon_name);
+ }
+ #endif /* CONFIG_ANON_VMA_NAME */
+@@ -1673,8 +1680,10 @@ static bool is_madvise_populate(int behavior)
  }
  
  static int madvise_do_behavior(struct mm_struct *mm,
--		unsigned long start, size_t len_in, size_t len, int behavior)
-+		unsigned long start, size_t len_in, int behavior)
+-		unsigned long start, size_t len_in, int behavior)
++		unsigned long start, size_t len_in,
++		struct madvise_behavior *madv_behavior)
  {
++	int behavior = madv_behavior->behavior;
  	struct blk_plug plug;
  	unsigned long end;
-@@ -1682,7 +1682,7 @@ static int madvise_do_behavior(struct mm_struct *mm,
- 	if (is_memory_failure(behavior))
- 		return madvise_inject_error(behavior, start, start + len_in);
- 	start = untagged_addr_remote(mm, start);
--	end = start + len;
-+	end = start + PAGE_ALIGN(len_in);
- 
- 	blk_start_plug(&plug);
+ 	int error;
+@@ -1688,7 +1697,7 @@ static int madvise_do_behavior(struct mm_struct *mm,
  	if (is_madvise_populate(behavior))
-@@ -1775,8 +1775,7 @@ int do_madvise(struct mm_struct *mm, unsigned long start, size_t len_in, int beh
+ 		error = madvise_populate(mm, start, end, behavior);
+ 	else
+-		error = madvise_walk_vmas(mm, start, end, behavior,
++		error = madvise_walk_vmas(mm, start, end, madv_behavior,
+ 					  madvise_vma_behavior);
+ 	blk_finish_plug(&plug);
+ 	return error;
+@@ -1769,13 +1778,14 @@ static int madvise_do_behavior(struct mm_struct *mm,
+ int do_madvise(struct mm_struct *mm, unsigned long start, size_t len_in, int behavior)
+ {
+ 	int error;
++	struct madvise_behavior madv_behavior = {.behavior = behavior};
+ 
+ 	if (madvise_should_skip(start, len_in, behavior, &error))
+ 		return error;
  	error = madvise_lock(mm, behavior);
  	if (error)
  		return error;
--	error = madvise_do_behavior(mm, start, len_in, PAGE_ALIGN(len_in),
--			behavior);
-+	error = madvise_do_behavior(mm, start, len_in, behavior);
+-	error = madvise_do_behavior(mm, start, len_in, behavior);
++	error = madvise_do_behavior(mm, start, len_in, &madv_behavior);
  	madvise_unlock(mm, behavior);
  
  	return error;
-@@ -1808,8 +1807,7 @@ static ssize_t vector_madvise(struct mm_struct *mm, struct iov_iter *iter,
+@@ -1792,6 +1802,7 @@ static ssize_t vector_madvise(struct mm_struct *mm, struct iov_iter *iter,
+ {
+ 	ssize_t ret = 0;
+ 	size_t total_len;
++	struct madvise_behavior madv_behavior = {.behavior = behavior};
+ 
+ 	total_len = iov_iter_count(iter);
+ 
+@@ -1807,7 +1818,8 @@ static ssize_t vector_madvise(struct mm_struct *mm, struct iov_iter *iter,
  		if (madvise_should_skip(start, len_in, behavior, &error))
  			ret = error;
  		else
--			ret = madvise_do_behavior(mm, start, len_in,
--					PAGE_ALIGN(len_in), behavior);
-+			ret = madvise_do_behavior(mm, start, len_in, behavior);
+-			ret = madvise_do_behavior(mm, start, len_in, behavior);
++			ret = madvise_do_behavior(mm, start, len_in,
++					&madv_behavior);
  		/*
  		 * An madvise operation is attempting to restart the syscall,
  		 * but we cannot proceed as it would not be correct to repeat
