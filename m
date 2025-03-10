@@ -1,213 +1,136 @@
-Return-Path: <linux-kernel+bounces-554084-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-554085-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A71F0A592C0
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 12:30:44 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EF40AA592C2
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 12:31:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E59FA16B824
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 11:30:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B04343A4CF2
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 11:30:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CC21220689;
-	Mon, 10 Mar 2025 11:30:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8780B19F13C;
+	Mon, 10 Mar 2025 11:30:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="W/004ubo"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="XG4iVgXz"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0C6E2B9A7;
-	Mon, 10 Mar 2025 11:30:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 776251805A;
+	Mon, 10 Mar 2025 11:30:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741606238; cv=none; b=R2ZUK63M1TcUJatDpw65usIHoe8TQAC2BpfvM/xcM/K4eA09tInSLvv9/A6lblELsjAmgb//BiiVWX083DhZDwz/PyqZ+NH5v0RpnbUpAtZXDR0KVt3Hk5EvYCZc+sDd4fbSrEJxG2EHpF9bFva1ruGj95zSgidvNqgeNegz8t0=
+	t=1741606254; cv=none; b=HRzXP8kNw9SJoOm+4/JL/ua/1YDwtA9tcHy8qg1pRxD+v6sc7m49J2yQdUJoU5vSTBlymy9PpWyfdFTwE37Clr48tMdDqXEAMXHhSe2wYX5+l4yb3uzpN5ECh1o/ts1OjoX6vw+yGnTTXfMac4O0gbkiZv6dLkpAnNR8UNnKt80=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741606238; c=relaxed/simple;
-	bh=GRTitHxgBMnFRI7UPKJaKRl2FGqjFtkgd4wwODVouI8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=H8XVtkO6hYcR0x1DpxprpyhpeIJAtiKyoAUvkbpcxr4+59pdxxo561BKWhEX7kSRXHuE772WNkUo22T6JqNZhW4Usv+IzgVRHScJ80YrkJ/3/v7rQJ3U9O6tVc3jG2Jq5BWvohz3c0yObqVMw3fdTzJ+rzidoQYdbWcTcbKLPSc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=W/004ubo; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 7D7D640E0202;
-	Mon, 10 Mar 2025 11:30:34 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id A55peK9z12U5; Mon, 10 Mar 2025 11:30:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1741606230; bh=FQ40DY5DBRyjcJp7Mre2YFktay6WLnANIARN9EWbnug=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=W/004uboNjkm19t99ojDVZ49EecyWv3EQCnz4LR+6cqThDSwGQAZEDMtXWiNe4cqS
-	 S+d9iTLdq98s3oKPSQT+F4Te+P7PUZW50U9lc0de3O2YzS9tV8HKoxz1VaNwUz1zQy
-	 pvl4ShXzKOhDMzVji1zQ3Z/hJyUxG4tkq4tJC7S8cECcp8k2nxfmpqUSYFU+36I79+
-	 cVHcBtlBNdcsMvhx0FWIcC5Tw/1KVMK1dd0wuwlBGF3Gxr87p/kME6HSVW4j2P5/5g
-	 5siMNOT46EAUzNeeuGWgHNkaK5gFg76nnrz6P+8TxPpjBFXy8CKoKuBAvq//ef7m6E
-	 To2YyKgC606x5ss/14N/1Aw8pF/xB68cAQ9GTJE+dbuQdW+6HZbj1YMGnzQFuyTg7O
-	 KFfJAKLGLQkXUxvoSZ+u9x51ukc8c3QkHAdEj296Y1ozVQP8ajfj1T4bOLp1p9dmLw
-	 DwAtxopd5VILVdscF/VJPl5VbCQ8Kmjui1zd7jqW0fGI6du+JIOYTgcGVFngg9ndOx
-	 SAxAC3/4LNk3mLzXjKtWjuTQc8PiSXwT/uC5yQtyf6FfF4b3oXEKQ+bw67jA0Mvngj
-	 JegU6z0wPw0tPgeA/aeLp3swlc0NsS/AkSC/q2ap+VyVcLDDCur2P4mc/QB8/YDlYA
-	 emDk93Vc1EDY8wn4aOGce4aw=
-Received: from zn.tnic (pd95303ce.dip0.t-ipconnect.de [217.83.3.206])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 89D7240E01AD;
-	Mon, 10 Mar 2025 11:30:12 +0000 (UTC)
-Date: Mon, 10 Mar 2025 12:30:06 +0100
-From: Borislav Petkov <bp@alien8.de>
-To: Stefano Garzarella <sgarzare@redhat.com>
-Cc: Jarkko Sakkinen <jarkko@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Claudio Carvalho <cclaudio@linux.ibm.com>,
-	Peter Huewe <peterhuewe@gmx.de>, x86@kernel.org,
-	Dov Murik <dovmurik@linux.ibm.com>, linux-coco@lists.linux.dev,
-	Dionna Glaze <dionnaglaze@google.com>,
-	James Bottomley <James.Bottomley@hansenpartnership.com>,
-	Ingo Molnar <mingo@redhat.com>, Joerg Roedel <jroedel@suse.de>,
-	Jason Gunthorpe <jgg@ziepe.ca>, linux-integrity@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	Tom Lendacky <thomas.lendacky@amd.com>,
-	"H. Peter Anvin" <hpa@zytor.com>
-Subject: Re: [RFC PATCH v2 2/6] x86/sev: add SVSM vTPM probe/send_command
- functions
-Message-ID: <20250310113006.GFZ87NPu-LgFVVtsEG@fat_crate.local>
-References: <20250228170720.144739-1-sgarzare@redhat.com>
- <20250228170720.144739-3-sgarzare@redhat.com>
+	s=arc-20240116; t=1741606254; c=relaxed/simple;
+	bh=Dgj6SEX5lRYAJLTBu9cYyh2ofDqV7FDTJGHm9kmRnss=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=GaqNWsG0AWuyad00rSI4d87luNZ+DmnYhF4je/k7gfqZ2XEERrel4ebnM+yyXHz14h9h7XIuBT/ExyPV8nkGJgyj3IRWDWHirPxUg6aLHfuiO3URQ2e2AexBptiCsR10Z8eedj+oD0R3G7myOPK2LQA5UfjiPw+BQUchL3ouLNg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=XG4iVgXz; arc=none smtp.client-ip=198.175.65.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1741606254; x=1773142254;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=Dgj6SEX5lRYAJLTBu9cYyh2ofDqV7FDTJGHm9kmRnss=;
+  b=XG4iVgXzMleYZTeSMjiTi15CBLfR0F+b7EicooDD/KERhR0I+nq8f0kA
+   H5GYLOV17ppgsJOXAx9BCOdnPET6S1gs2WdI17jEgXtknusByawAvLrv8
+   qw512hoNUjtmZUyWfUvLRBawl0IC/jTmO7EIZal5HAzIuXFZFucMR/Ov9
+   41hfP+wWAOiAO4yrGvUOL5wthm/Hi6kAUUphNUUNop55djK6jkpuf/61I
+   kX9vx2o5U5WGbNT0azsqJasa7q5T07mIAlQUoeBQhHMGL/d3GYE3/Cply
+   BPbZmDKfzM31F4W/YzM/h+RQ7aSyfwMfG9oOSgPpE7HPhMMKXVeK1i6WI
+   Q==;
+X-CSE-ConnectionGUID: ADzvcrbeSPKXE0iEWTYkbA==
+X-CSE-MsgGUID: xDbFTgEQSwWtSrk0UoOTrQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11368"; a="42448777"
+X-IronPort-AV: E=Sophos;i="6.14,235,1736841600"; 
+   d="scan'208";a="42448777"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Mar 2025 04:30:53 -0700
+X-CSE-ConnectionGUID: QJwWIv53Ra+hfKOJGzftNg==
+X-CSE-MsgGUID: 8A/GBRLwQ6ejwJn7LM5oqA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,235,1736841600"; 
+   d="scan'208";a="124574190"
+Received: from aslawinx-mobl.ger.corp.intel.com (HELO [10.94.8.107]) ([10.94.8.107])
+  by fmviesa005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Mar 2025 04:30:47 -0700
+Message-ID: <6e892094-ff90-41ef-ac56-b7fcf6abf2a8@linux.intel.com>
+Date: Mon, 10 Mar 2025 12:30:45 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250228170720.144739-3-sgarzare@redhat.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 03/14] ASoC: amd: acp: Refactor dmic-codec platform device
+ creation
+To: Venkata Prasad Potturu <venkataprasad.potturu@amd.com>,
+ broonie@kernel.org, alsa-devel@alsa-project.org
+Cc: Vijendar.Mukunda@amd.com, mario.limonciello@amd.com,
+ Basavaraj.Hiregoudar@amd.com, Sunil-kumar.Dommati@amd.com,
+ syed.sabakareem@amd.com, Liam Girdwood <lgirdwood@gmail.com>,
+ Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+ Peter Zijlstra <peterz@infradead.org>, Greg KH <gregkh@linuxfoundation.org>,
+ Jeff Johnson <quic_jjohnson@quicinc.com>,
+ "open list:SOUND - SOC LAYER / DYNAMIC AUDIO POWER MANAGEM..."
+ <linux-sound@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
+References: <20250310104601.7325-1-venkataprasad.potturu@amd.com>
+ <20250310104601.7325-4-venkataprasad.potturu@amd.com>
+Content-Language: en-US
+From: =?UTF-8?Q?Amadeusz_S=C5=82awi=C5=84ski?=
+ <amadeuszx.slawinski@linux.intel.com>
+In-Reply-To: <20250310104601.7325-4-venkataprasad.potturu@amd.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Fri, Feb 28, 2025 at 06:07:16PM +0100, Stefano Garzarella wrote:
-> +bool snp_svsm_vtpm_probe(void)
-> +{
-> +	struct svsm_call call = {};
-> +	u64 send_cmd_mask = 0;
-> +	u64 platform_cmds;
-> +	u64 features;
-> +	int ret;
-> +
-> +	/* The vTPM device is available only if we have a SVSM */
+On 3/10/2025 11:45 AM, Venkata Prasad Potturu wrote:
+> Refactor dmic-codec platform driver creation using helper function.
+> 
+> Signed-off-by: Venkata Prasad Potturu <venkataprasad.potturu@amd.com>
+> ---
+>   sound/soc/amd/acp/acp-pci.c | 49 +++++++++++++++++++++++++------------
+>   sound/soc/amd/acp/amd.h     |  1 +
+>   2 files changed, 35 insertions(+), 15 deletions(-)
+> 
 
-s/if we have a SVSM/if an SVSM is present/
+...
 
-> +	if (!snp_vmpl)
-> +		return false;
-> +
-> +	call.caa = svsm_get_caa();
-> +	call.rax = SVSM_VTPM_CALL(SVSM_VTPM_QUERY);
-> +
-> +	ret = svsm_perform_call_protocol(&call);
-> +
+>   	addr = pci_resource_start(pci, 0);
+>   	chip->base = devm_ioremap(&pci->dev, addr, pci_resource_len(pci, 0));
+>   	if (!chip->base) {
+>   		ret = -ENOMEM;
+> -		goto unregister_dmic_dev;
+> +		goto release_regions;
+>   	}
+>   
+>   	chip->acp_hw_ops_init(chip);
+>   	ret = acp_hw_init(chip);
+>   	if (ret)
+> -		goto unregister_dmic_dev;
+> +		goto release_regions;
+>   
+
+...
+
+> @@ -168,8 +187,8 @@ static int acp_pci_probe(struct pci_dev *pci, const struct pci_device_id *pci_id
+>   	pm_runtime_allow(&pci->dev);
+>   	return ret;
+>   
+> -unregister_dmic_dev:
+> -	platform_device_unregister(dmic_dev);
+> +de_init:
+> +	chip->acp_hw_ops->acp_deinit(chip);
+
+On init you call acp_hw_init(), but here you call ->acp_deinit() 
+directly instead of acp_hw_deinit()?
+
+>   release_regions:
+>   	pci_release_regions(pci);
+>   disable_pci:
 
 
-^ Superfluous newline.
-
-> +	if (ret != SVSM_SUCCESS)
-> +		return false;
-> +
-> +	features = call.rdx_out;
-> +	platform_cmds = call.rcx_out;
-> +
-> +	/* No feature supported, it should be zero */
-> +	if (features)
-> +		pr_warn("SNP SVSM vTPM unsupported features: 0x%llx\n",
-> +			features);
-
-So
-
-	return false;
-
-here?
-
-> +
-> +	/* TPM_SEND_COMMAND - platform command 8 */
-> +	send_cmd_mask = 1 << 8;
-
-	BIT_ULL(8);
-
-> +
-> +	return (platform_cmds & send_cmd_mask) == send_cmd_mask;
-> +}
-> +EXPORT_SYMBOL_GPL(snp_svsm_vtpm_probe);
-> +
-> +int snp_svsm_vtpm_send_command(u8 *buffer)
-> +{
-> +	struct svsm_call call = {};
-> +
-> +	call.caa = svsm_get_caa();
-> +	call.rax = SVSM_VTPM_CALL(SVSM_VTPM_CMD);
-> +	call.rcx = __pa(buffer);
-> +
-> +	return svsm_perform_call_protocol(&call);
-> +}
-
-In any case, you can zap all those local vars, use comments instead and slim
-down the function, diff ontop:
-
-diff --git a/arch/x86/coco/sev/core.c b/arch/x86/coco/sev/core.c
-index 3902af4b1385..6d7e97c1f567 100644
---- a/arch/x86/coco/sev/core.c
-+++ b/arch/x86/coco/sev/core.c
-@@ -2631,12 +2631,9 @@ static int snp_issue_guest_request(struct snp_guest_req *req, struct snp_req_dat
- bool snp_svsm_vtpm_probe(void)
- {
- 	struct svsm_call call = {};
--	u64 send_cmd_mask = 0;
--	u64 platform_cmds;
--	u64 features;
- 	int ret;
- 
--	/* The vTPM device is available only if we have a SVSM */
-+	/* The vTPM device is available only if a SVSM is present */
- 	if (!snp_vmpl)
- 		return false;
- 
-@@ -2644,22 +2641,17 @@ bool snp_svsm_vtpm_probe(void)
- 	call.rax = SVSM_VTPM_CALL(SVSM_VTPM_QUERY);
- 
- 	ret = svsm_perform_call_protocol(&call);
--
- 	if (ret != SVSM_SUCCESS)
- 		return false;
- 
--	features = call.rdx_out;
--	platform_cmds = call.rcx_out;
--
- 	/* No feature supported, it should be zero */
--	if (features)
--		pr_warn("SNP SVSM vTPM unsupported features: 0x%llx\n",
--			features);
--
--	/* TPM_SEND_COMMAND - platform command 8 */
--	send_cmd_mask = 1 << 8;
-+	if (call.rdx_out) {
-+		pr_warn("SNP SVSM vTPM unsupported features: 0x%llx\n", call.rdx_out);
-+		return false;
-+	}
- 
--	return (platform_cmds & send_cmd_mask) == send_cmd_mask;
-+	/* Check platform commands is TPM_SEND_COMMAND - platform command 8 */
-+	return (call.rcx_out & BIT_ULL(8)) == BIT_ULL(8);
- }
- EXPORT_SYMBOL_GPL(snp_svsm_vtpm_probe);
- 
-
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
 
