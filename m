@@ -1,86 +1,115 @@
-Return-Path: <linux-kernel+bounces-554647-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-554648-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 89942A59AE1
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 17:24:57 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F3F36A59AE3
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 17:25:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C7F5316D505
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 16:24:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3E73016D9CE
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 16:25:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35DDE22FDF9;
-	Mon, 10 Mar 2025 16:24:52 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AF641D79BE
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 16:24:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 868FC22FE02;
+	Mon, 10 Mar 2025 16:24:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="luj2N4m5"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8ED21D79BE;
+	Mon, 10 Mar 2025 16:24:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741623891; cv=none; b=mH62aDRdauZFNiAvuzD+72fa5upFtfDDxPo6UL58sTksxs+iu4YSAaaY8Bc7TySNGh4JsETaQWp2UlrDP/BkGjyNxQGYKeb4oML5orU6uKeVMDF1agFxmbDaKU7ffS+KxjvzmFmR/ybUcgriigApiBTQM56ejRwOQBOSC+5ecN8=
+	t=1741623899; cv=none; b=FkZMFqE0HhPg4isjSHaDF+ZFSP9GoeApS8npyTqMErLLCBpjj7TQFNbIujmmL0kq5VjXtfbQzBY+0JLmxjW7Awfi1GGfWC4v6lSbgipFT7pYMQ56Kqypoa7sKSocjEHtrWicgdfojZwHDks3e7qVl/4cE2Kw86+C9+diBy6tB3Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741623891; c=relaxed/simple;
-	bh=N7uxSTMMV0X8JjCCOcoELnB4MKWzT6xSv4Lh+AP9cGw=;
+	s=arc-20240116; t=1741623899; c=relaxed/simple;
+	bh=8AeJKXf7KBo0Et5UVJ9a3z/GKSyc6SeP17c6nUihQ0w=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RI6Yv5U9KYcFUgr6cE56UcUeZ8WmtKb05noouJK5in2i0RfFukDq7NdNOM7P8n2gTN9rIw/YDgqw6LVBNAxX9t6tpWu51Ms66RgHmYE4pcQcfq8oRgshu+tGHxO7At8gIyDYsOT4TnD9Jl/Z7qZIdA0rOBSplDPFH7QjNpXV0ZE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id DA7F31692;
-	Mon, 10 Mar 2025 09:24:59 -0700 (PDT)
-Received: from J2N7QTR9R3.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 798013F5A1;
-	Mon, 10 Mar 2025 09:24:47 -0700 (PDT)
-Date: Mon, 10 Mar 2025 16:24:41 +0000
-From: Mark Rutland <mark.rutland@arm.com>
-To: Yue Haibing <yuehaibing@huawei.com>
-Cc: catalin.marinas@arm.com, will@kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH -next] arm64/fpsimd: Remove unused declaration
- fpsimd_kvm_prepare()
-Message-ID: <Z88SSYFJo9R_YgO3@J2N7QTR9R3.cambridge.arm.com>
-References: <20250309070723.1390958-1-yuehaibing@huawei.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=er6BCsP3awHCo4uT6VIMRQ1CE1089lKknWG2xpNhhElCmqkI3oVrpeIFG6MnBpWSquL3rvIcqwZQbKDriS0anNSI54rLuiKdWXT5+/rmOvL+vVGjlQHuNmpif8jOFAFnjdaT7u2eUZ1/II+xNSsmCOj49SxUpM5Kzfvrc6FtPhk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=luj2N4m5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DFEFBC4CEE5;
+	Mon, 10 Mar 2025 16:24:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741623898;
+	bh=8AeJKXf7KBo0Et5UVJ9a3z/GKSyc6SeP17c6nUihQ0w=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=luj2N4m5kv14o7Yc2i/DxNa04kIC73dVLVdrjuO1dq0Idwa6PZ0GbB5Xvunkaz2Iv
+	 Vn6sSCN++sH9UiX6hRwFOPqcOUlSG3qt4kTfz9JzHrsINkdBpCANzE4YS6CHPZiGD2
+	 ruMrJu/GTla4DpIHm3FjS6/WHvxEy9JtmqBH4uD3PtUBwSSwnY5N1R5T7oXPqNHyFn
+	 vjrPPjznzrrsmOiSAST96Bs+T2P0+K1udNGpjzL4FSSlwZl4Iqe5dJVDQ4Bi5hiB26
+	 GuehJwjDXGNcA/2XENy8zI1PWuJksYdPbQx5ieem8Hdlax7V3DTb+TE3WULliAJReJ
+	 4Wb0OzhoGlEfQ==
+Date: Mon, 10 Mar 2025 17:24:53 +0100
+From: Niklas Cassel <cassel@kernel.org>
+To: Eric <eric.4.debian@grabatoulnz.fr>
+Cc: Salvatore Bonaccorso <carnil@debian.org>,
+	Mario Limonciello <mario.limonciello@amd.com>,
+	Christoph Hellwig <hch@infradead.org>,
+	Mika Westerberg <mika.westerberg@linux.intel.com>,
+	Damien Le Moal <dlemoal@kernel.org>,
+	Jian-Hong Pan <jhp@endlessos.org>, regressions@lists.linux.dev,
+	linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+	linux-ide@vger.kernel.org,
+	Dieter Mummenschanz <dmummenschanz@web.de>
+Subject: Re: Regression from 7627a0edef54 ("ata: ahci: Drop low power policy
+ board type") on reboot (but not cold boot)
+Message-ID: <Z88SVcH28cEEingS@ryzen>
+References: <Z8SBZMBjvVXA7OAK@eldamar.lan>
+ <Z8SyVnXZ4IPZtgGN@ryzen>
+ <8763ed79-991a-4a19-abb6-599c47a35514@grabatoulnz.fr>
+ <Z8VLZERz0FpvpchM@x1-carbon>
+ <8b1cbfd4-6877-48ef-b17d-fc10402efbf7@grabatoulnz.fr>
+ <Z8l61Kxss0bdvAQt@ryzen>
+ <Z8l7paeRL9szo0C0@ryzen>
+ <689f8224-f118-47f0-8ae0-a7377c6ff386@grabatoulnz.fr>
+ <Z8rCF39n5GjTwfjP@ryzen>
+ <6d33dbf2-d514-4a45-aa50-861c5f06f747@grabatoulnz.fr>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250309070723.1390958-1-yuehaibing@huawei.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <6d33dbf2-d514-4a45-aa50-861c5f06f747@grabatoulnz.fr>
 
-On Sun, Mar 09, 2025 at 03:07:23PM +0800, Yue Haibing wrote:
-> Commit fbc7e61195e2 ("KVM: arm64: Unconditionally save+flush host
-> FPSIMD/SVE/SME state") removed the implementation but leave declaration.
-> 
-> Signed-off-by: Yue Haibing <yuehaibing@huawei.com>
+On Sat, Mar 08, 2025 at 11:05:36AM +0100, Eric wrote:
+> > $ sudo lspci -nns 0000:00:11.0
+> 00:11.0 SATA controller [0106]: Advanced Micro Devices, Inc. [AMD/ATI]
+> SB7x0/SB8x0/SB9x0 SATA Controller [AHCI mode] [1002:4391] (rev 40)
 
-My bad. Looks like a sensible cleanup.
+Ok, so some old ATI controller that seems to have a bunch of
+workarounds.
 
-Acked-by: Mark Rutland <mark.rutland@arm.com>
+Mario, do you know anything about this AHCI controller?
 
-Mark.
 
-> ---
->  arch/arm64/include/asm/fpsimd.h | 1 -
->  1 file changed, 1 deletion(-)
-> 
-> diff --git a/arch/arm64/include/asm/fpsimd.h b/arch/arm64/include/asm/fpsimd.h
-> index f2a84efc3618..564bc09b3e06 100644
-> --- a/arch/arm64/include/asm/fpsimd.h
-> +++ b/arch/arm64/include/asm/fpsimd.h
-> @@ -80,7 +80,6 @@ extern void fpsimd_signal_preserve_current_state(void);
->  extern void fpsimd_preserve_current_state(void);
->  extern void fpsimd_restore_current_state(void);
->  extern void fpsimd_update_current_state(struct user_fpsimd_state const *state);
-> -extern void fpsimd_kvm_prepare(void);
->  
->  struct cpu_fp_state {
->  	struct user_fpsimd_state *st;
-> -- 
-> 2.34.1
-> 
-> 
+"""
+3.1.4 Offset 0Ch: PI – Ports Implemented
+
+This register indicates which ports are exposed by the HBA.
+It is loaded by the BIOS. It indicates which ports that the HBA supports are
+available for software to use. For example, on an HBA that supports 6 ports
+as indicated in CAP.NP, only ports 1 and 3 could be available, with ports
+0, 2, 4, and 5 being unavailable.
+
+Software must not read or write to registers within unavailable ports.
+
+The intent of this register is to allow system vendors to build platforms
+that support less than the full number of ports implemented on the HBA
+silicon.
+"""
+
+
+It seems quite clear that it is a BIOS bug.
+It is understandable that HBA vendors reuse the same silicon, but I would
+expect BIOS to always write the same value to the PI register.
+
+
+
+Kind regards,
+Niklas
 
