@@ -1,132 +1,130 @@
-Return-Path: <linux-kernel+bounces-554507-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-554509-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2B7D9A598F6
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 16:03:31 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 584C7A598F7
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 16:03:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4078F16ED0D
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 15:02:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0D81A3A4583
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 15:02:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38A2222E3E8;
-	Mon, 10 Mar 2025 14:56:46 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B1D822A4EF;
-	Mon, 10 Mar 2025 14:56:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E325D22DFAE;
+	Mon, 10 Mar 2025 15:00:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AX2SR+SE"
+Received: from mail-pj1-f51.google.com (mail-pj1-f51.google.com [209.85.216.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBF0B2AE66;
+	Mon, 10 Mar 2025 15:00:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741618605; cv=none; b=J3TLlyn0HJgyNOxmDsZhhCX1riJUjlcmCuKzhl6Z4+ubmKDf4EJHLM6xB2RG/BNjPzNKxg1f1CFAW58/npTPTreOG3mBmnsP+cqsebrOzn1yOhzMTJyIesbzc8BNQR/iDUHppjxw5Z7JpNyMFQti6FDOvy/Sv9nZhzlIZ4wKsos=
+	t=1741618856; cv=none; b=gC2+QG6RZ7NgOE1AqjM12JRClHgMBbABbtA/93Y6BufqAnDDIwPKMhRMypzZquZuBYvYXAFW5QgcDfQuz8x/6iTV7WUSOJi47GYTFLtdhAkzlqpYj57trha0qm1JD1cezaS4jiloSg7lglk4H+wHP9ueh96dVT+hXnAFlRXLios=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741618605; c=relaxed/simple;
-	bh=dQqnv6mgf3IwDlnwbZwTB6OKAFN6Up7tjfQY+73RYCo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=X/3cCAxOCUITw8fAOPp3YQC+7YRnWwpoPpZEQ+UDuvx0xvQieNOKbe5wJJOSgwtv0W56Mpb3Ic7JF5gLC5EtNEKiZAJw2KQ5LOs3pe0RvU07loR45WbxripIeega5qnaiQcKpZplNYq4EzqN+0yNpKyy/S8hpxOxd7hlp9rd8J4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C18D226BC;
-	Mon, 10 Mar 2025 07:56:54 -0700 (PDT)
-Received: from [10.57.39.174] (unknown [10.57.39.174])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B0B203F5A1;
-	Mon, 10 Mar 2025 07:56:39 -0700 (PDT)
-Message-ID: <2af9ea85-b31d-49c9-b574-38c33cc89cef@arm.com>
-Date: Mon, 10 Mar 2025 14:56:37 +0000
+	s=arc-20240116; t=1741618856; c=relaxed/simple;
+	bh=fD2jJrazp7IqrQabozk1F5EdljhfR7/yUpDUfEvu004=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=fH/dFSe7mX5vKS22uugpf55wCg3D6w0G/e2Nzul7Tp5zYAS+5Tcl2lG4UEDR0HNO5FmfG3lLFZDtwPElM4no4Z15xsjyahK/B7u9jRXwz2oVI8LHewHzPdyBamN4TOplqoQBKW2vXx3BSSriwJ25upsOCz+jRxAlyeAm9+kHUzk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AX2SR+SE; arc=none smtp.client-ip=209.85.216.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f51.google.com with SMTP id 98e67ed59e1d1-2fd02536660so1204060a91.2;
+        Mon, 10 Mar 2025 08:00:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741618854; x=1742223654; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=pik+SJ6TeRT73WeaopsJrOapXLaVVKqUv0DnQJUUmIc=;
+        b=AX2SR+SEP0d5p1erwV3gXruAF7EB0kGdFn4u6wRj15L2zOGbhR+l1ozwMubbaDa+c/
+         yIe2ChX5m6+OIfU/zw2JDUrVH0tbxNy7Vop0xkJRDZGIYvA4ZyzH+IwZM4AGCtEBUkMF
+         uHjX7XSLYgBnhyWH84AgE/gho8uox6Tv5B1TMK/49IRuiNEy1Ajfe/4uQJNljkX0w28H
+         yesgfhmxNIJ0RpsBrufOJSkcqtHIBwiK4HjZtzz5ArNPRiN0mRXwgH2CZV8TCctuFuJX
+         CQcFn6b2yjaBurpYDDG7rfuPs+alyqrSgD3nP6ZSGmN51UOxJDuNDP+GAl/RBlbMmLio
+         Vtqg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741618854; x=1742223654;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=pik+SJ6TeRT73WeaopsJrOapXLaVVKqUv0DnQJUUmIc=;
+        b=b2zVppaR700Q4b6srwyuVC/AmqeoDHQ75Z7qUNyvvrsPSr4xrYWm7JXysVcU0LpxPI
+         fxEOXkbHCqyvOJHJcaFj16PnsCiC1Tx6VfRk5nsa3UOF/pPq8QwbiYgmVXGSX7IvNNPT
+         KNgtCqtiMqcE9nn4sfPxWuuRJAPf3chldxejqL68ouwvAlJXd6zTa1YbhvBMO3Ot1Fz6
+         9kwgC4wZ3mr8g3AuMMXnh6dnNKP2D/AH5dB+kPoBkoJq+kuj0gJZxDJ+0lds5CzwRTLe
+         7b40enzgHw6vmWV9XqthG+Ri95ngYCQUgivXn01T6eoYng3g6im0gycOjjDP0B20ftlk
+         5fLw==
+X-Forwarded-Encrypted: i=1; AJvYcCUOvYI9I6txN1q10Li7WmDm70Ql1+1wU3wusIZ5n9kz/heZoQAk9mLCs2nwSWpWr/0b2Hz8RE3eaMQ5iXqe@vger.kernel.org, AJvYcCV+srWDXrU3Y5DgdNnc0/bn92tgM5gv1MVmjhC5NLCmDj8ICKqqJMnTlbtsO9wHquWfAKKA0NJdkWTG64cieYw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzV0sfV0DmQqlVWBdkjwds9vpnRePbi5uzc9+ZswldptWmjn6pl
+	WrXWUdAuthPFK9eixBG5D3vdce4R51d+mbi1Zua7Dd+fs1qb0Jqz2J9czFcPBBszyscGbSpeakf
+	hkK28YWLcGWDNcTxLLX8NfPTxK0E=
+X-Gm-Gg: ASbGnct7XiNIIHuxBnrwqq4ByCDDCA0YSF7yNRdNzRN1bclLqPxbX8diTIaWWPnRGet
+	PPrm+de8wykgd/UfOtcRXlT7hx5lxMa+pzGfDJ0u+38da4AsswiL/OuTF42JRssfH1DBU4YKHvZ
+	urT9KnRcbkaiTsm4PtoK2WiotqTA==
+X-Google-Smtp-Source: AGHT+IHuWmERPlE+4ZNLC90fXXCO1PHzcp3LKpUguGUQ5r6EGa2DRmmvlJlS8B4Wb3tJXau9KQwIQ9GO609WUZ393FY=
+X-Received: by 2002:a17:90b:3b4c:b0:2ff:6ac2:c5ae with SMTP id
+ 98e67ed59e1d1-300ff724725mr68013a91.1.1741618854030; Mon, 10 Mar 2025
+ 08:00:54 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC 06/12] dma: direct: Provide accessor to dmem region
-To: Maxime Ripard <mripard@kernel.org>,
- Andrew Morton <akpm@linux-foundation.org>,
- Marek Szyprowski <m.szyprowski@samsung.com>,
- Sumit Semwal <sumit.semwal@linaro.org>,
- =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
- Benjamin Gaignard <benjamin.gaignard@collabora.com>,
- Brian Starkey <Brian.Starkey@arm.com>, John Stultz <jstultz@google.com>,
- "T.J. Mercier" <tjmercier@google.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>, Tomasz Figa <tfiga@chromium.org>,
- Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: Hans Verkuil <hverkuil@xs4all.nl>,
- Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
- linux-mm@kvack.org, linux-kernel@vger.kernel.org, iommu@lists.linux.dev,
- linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
- linaro-mm-sig@lists.linaro.org
-References: <20250310-dmem-cgroups-v1-0-2984c1bc9312@kernel.org>
- <20250310-dmem-cgroups-v1-6-2984c1bc9312@kernel.org>
-From: Robin Murphy <robin.murphy@arm.com>
-Content-Language: en-GB
-In-Reply-To: <20250310-dmem-cgroups-v1-6-2984c1bc9312@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <92b9d527-fa20-4e4d-a4ce-7c442df9df0e@stanley.mountain> <47a52abb-61ae-467c-9cf2-27427a5057ac@amd.com>
+In-Reply-To: <47a52abb-61ae-467c-9cf2-27427a5057ac@amd.com>
+From: Alex Deucher <alexdeucher@gmail.com>
+Date: Mon, 10 Mar 2025 11:00:42 -0400
+X-Gm-Features: AQ5f1Jqm9WMU4lBdVptaUYa6Os9jtW4_wZaL5H0Ev3cSsBOqS0XIQez62ZUgzTc
+Message-ID: <CADnq5_O=aawGH773SZ2KVwvOTRz0CsnoAuGPZTsAR=Fcqy3udA@mail.gmail.com>
+Subject: Re: [PATCH] drm/amdgpu/gfx: delete stray tabs
+To: SRINIVASAN SHANMUGAM <srinivasan.shanmugam@amd.com>
+Cc: Dan Carpenter <dan.carpenter@linaro.org>, Alex Deucher <alexander.deucher@amd.com>, 
+	=?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Hawking Zhang <Hawking.Zhang@amd.com>, Lijo Lazar <lijo.lazar@amd.com>, 
+	Jack Xiao <Jack.Xiao@amd.com>, "Jesse.zhang@amd.com" <Jesse.zhang@amd.com>, Tao Zhou <tao.zhou1@amd.com>, 
+	amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org, 
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 2025-03-10 12:06 pm, Maxime Ripard wrote:
-> Consumers of the direct DMA API will have to know which region their
-> device allocate from in order for them to charge the memory allocation
-> in the right one.
+Applied.  Thanks!
 
-This doesn't seem to make much sense - dma-direct is not an allocator 
-itself, it just provides the high-level 
-dma_alloc_attrs/dma_alloc_pages/etc. interfaces wherein the underlying 
-allocations _could_ come from CMA, but also a per-device 
-coherent/restricted pool, or a global coherent/atomic pool, or the 
-regular page allocator, or in one weird corner case the SWIOTLB buffer, 
-or...
-
-Thanks,
-Robin.
-
-> Let's provide an accessor for that region.
-> 
-> Signed-off-by: Maxime Ripard <mripard@kernel.org>
+On Mon, Mar 10, 2025 at 8:18=E2=80=AFAM SRINIVASAN SHANMUGAM
+<srinivasan.shanmugam@amd.com> wrote:
+>
+>
+> On 3/10/2025 4:17 PM, Dan Carpenter wrote:
+>
+> These lines are indented one tab too far.  Delete the extra tabs.
+>
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 > ---
->   include/linux/dma-direct.h | 2 ++
->   kernel/dma/direct.c        | 8 ++++++++
->   2 files changed, 10 insertions(+)
-> 
-> diff --git a/include/linux/dma-direct.h b/include/linux/dma-direct.h
-> index d7e30d4f7503a898a456df8eedf6a2cd284c35ff..2dd7cbccfaeed81c18c67aae877417fe89f2f2f5 100644
-> --- a/include/linux/dma-direct.h
-> +++ b/include/linux/dma-direct.h
-> @@ -145,6 +145,8 @@ void dma_direct_free_pages(struct device *dev, size_t size,
->   		enum dma_data_direction dir);
->   int dma_direct_supported(struct device *dev, u64 mask);
->   dma_addr_t dma_direct_map_resource(struct device *dev, phys_addr_t paddr,
->   		size_t size, enum dma_data_direction dir, unsigned long attrs);
->   
-> +struct dmem_cgroup_region *dma_direct_get_dmem_cgroup_region(struct device *dev);
-> +
->   #endif /* _LINUX_DMA_DIRECT_H */
-> diff --git a/kernel/dma/direct.c b/kernel/dma/direct.c
-> index 5b4e6d3bf7bcca8930877ba078aed4ce26828f06..ece1361077b6efeec5b202d838750afd967d473f 100644
-> --- a/kernel/dma/direct.c
-> +++ b/kernel/dma/direct.c
-> @@ -42,10 +42,18 @@ u64 dma_direct_get_required_mask(struct device *dev)
->   	u64 max_dma = phys_to_dma_direct(dev, phys);
->   
->   	return (1ULL << (fls64(max_dma) - 1)) * 2 - 1;
+>  drivers/gpu/drm/amd/amdgpu/amdgpu_gfx.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_gfx.c b/drivers/gpu/drm/am=
+d/amdgpu/amdgpu_gfx.c
+> index a194bf3347cb..984e6ff6e463 100644
+> --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_gfx.c
+> +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_gfx.c
+> @@ -2002,8 +2002,8 @@ void amdgpu_gfx_enforce_isolation_handler(struct wo=
+rk_struct *work)
+>   if (adev->kfd.init_complete) {
+>   WARN_ON_ONCE(!adev->gfx.kfd_sch_inactive[idx]);
+>   WARN_ON_ONCE(adev->gfx.kfd_sch_req_count[idx]);
+> - amdgpu_amdkfd_start_sched(adev, idx);
+> - adev->gfx.kfd_sch_inactive[idx] =3D false;
+> + amdgpu_amdkfd_start_sched(adev, idx);
+> + adev->gfx.kfd_sch_inactive[idx] =3D false;
 >   }
->   
-> +#if IS_ENABLED(CONFIG_CGROUP_DMEM)
-> +struct dmem_cgroup_region *
-> +dma_direct_get_dmem_cgroup_region(struct device *dev)
-> +{
-> +	return dma_contiguous_get_dmem_cgroup_region(dev);
-> +}
-> +#endif
-> +
->   static gfp_t dma_direct_optimal_gfp_mask(struct device *dev, u64 *phys_limit)
->   {
->   	u64 dma_limit = min_not_zero(
->   		dev->coherent_dma_mask,
->   		dev->bus_dma_limit);
-> 
-
+>   }
+>   mutex_unlock(&adev->enforce_isolation_mutex);
+>
+> Thanks!
+>
+> Reviewed-by: Srinivasan Shanmugam <srinivasan.shanmugam@amd.com>
 
