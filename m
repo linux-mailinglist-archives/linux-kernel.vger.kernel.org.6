@@ -1,106 +1,147 @@
-Return-Path: <linux-kernel+bounces-554610-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-554612-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 38D6CA59A6E
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 16:56:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 64947A59A78
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 16:57:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 76B66165F99
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 15:56:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6E73B166A53
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 15:57:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD1B722DF8E;
-	Mon, 10 Mar 2025 15:56:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6DB622F140;
+	Mon, 10 Mar 2025 15:57:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="E8GgY0rh"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="L43ANbmv"
+Received: from relay2-d.mail.gandi.net (relay2-d.mail.gandi.net [217.70.183.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A5E41DFF0
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 15:55:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D744B22DF8C;
+	Mon, 10 Mar 2025 15:57:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741622162; cv=none; b=HDNBjhtK2tj2cRFQb05aCUUiS6klLu+u0BuLH3Pxs77u/eNFZiyOuKnxEMq2EQKb7Eq/5VkwlRSULRXbyWLslqtbfDbf4xCcRyU3iLamyV3+PN0EToxmLv8ZUWmdd2ha05xeC3QbAO+3tAxpgtTdVVsJV2aAQ1zWfVxtWQAdopQ=
+	t=1741622231; cv=none; b=hJdDctsxwJPVfwH41BbXWmhhPzJA3rRz/VTdl68Kpbo/LBgR/VHZrq3eugNBv7s0xK+zLQLUTWzDHr24w6rH4MRcee/hPGEz9J6wwucx3mLsxHYA1tzSgGeH4anEFyBzq+V2V4IFoDHR9avAYZIVkNIKRSdk4vl1DjHMyRKwWq4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741622162; c=relaxed/simple;
-	bh=Vpib4HknDTcWF0+SOM32JnezkrePARgvbNr3p5pKfxw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KHTKcjIziCsqw/sZ0Pi3YFNT4dHk+J9HEDMceSmd3wPCwkuqioH4VYE+rOzgKWnf4bT17MkmgZEqQsQYwWFWz7ESTDSomltjnQ0gIG2waYoGSJQBLClv+LLCB98x3kIKusl88JH33gzcd7Fht7rBx33M7cEwiAVB5sRNvkHRZ1A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=E8GgY0rh; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 7EA4B40E0214;
-	Mon, 10 Mar 2025 15:55:57 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id 3rCujaEF5c82; Mon, 10 Mar 2025 15:55:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1741622153; bh=ytO3kw2/VnCOnax+CiIDtQsCcsdLqF1YX6RbNsPln9I=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=E8GgY0rhVvOteJgFJu7PHUiNx4uPmnHsDM7jyNq1S9R0ArkMgvEHev+cJKh/722Wn
-	 9FIGSlHohhe8t3D3cfmNx5RISE4PGsVNYxl9vtd7almZ6aZYMC6p528hRyHTPYXoLL
-	 GGgvYUm9Kw2OlY5ie+bjOPJFXIaHqIjz0zAOU8I5wPhnJZ2M7DFsVTRpDGkISbELbz
-	 LOhDBroNYFIyEaKzECW7B6gKktbHrBV1nuzIoB9xiGuYSKDn6lOo81kE8lxBkgEd92
-	 zKgIPoKXwZTJNq1fGeSRxLvTql3CxzAY3Knd4AUcPObeZ7xhhWYeV+wEuQo0iQBf1h
-	 tV0XPNRlgn/nagokllamFn/tT0qknwoxxAjmQMx67qmNyJu4+64Iqlu9sRqit5V9/6
-	 wWaXGmQ1Vidqg0cj3wfy8DnfaJx3LJuLRZp/G41ir34j7yZtoM/ynRF2TdVzK5Ozc4
-	 SBCO2ehigCxKY1Xd8eeXFhc5u4nfeFoxeiBfnyEgAIILWeqfYnUJIHU3Cb4uZW2g7t
-	 PDeKcSwoqnEoMOGaBvfZACx9fiNUiqCzEbLr1lcKazLhFepNx4SvOjgR9rxH/AUFhJ
-	 2CnNfa3UJBg8PjDL8kjXAlV7/8ZP8XhGaFdNgcnhQ1X+vnwLwk4mQ8ZNzBnJNNhz5j
-	 WTxE47UG/tUzuHdEXALm8RGE=
-Received: from zn.tnic (pd95303ce.dip0.t-ipconnect.de [217.83.3.206])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id E64C440E015D;
-	Mon, 10 Mar 2025 15:55:38 +0000 (UTC)
-Date: Mon, 10 Mar 2025 16:55:37 +0100
-From: Borislav Petkov <bp@alien8.de>
-To: Juergen Gross <jgross@suse.com>
-Cc: Alexey Gladkov <legion@kernel.org>, Joerg Roedel <joro@8bytes.org>,
-	"Alexey Gladkov (Intel)" <alexey.gladkov@intel.com>,
-	"Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-	Dave Hansen <dave.hansen@intel.com>, Joerg Roedel <jroedel@suse.de>,
-	Ingo Molnar <mingo@kernel.org>, x86@kernel.org, hpa@zytor.com,
-	Tom Lendacky <thomas.lendacky@amd.com>,
-	Nikunj A Dadhania <nikunj@amd.com>, linux-kernel@vger.kernel.org,
-	Larry.Dewey@amd.com
-Subject: Re: [PATCH] x86/sev: Make SEV_STATUS available via SYSFS
-Message-ID: <20250310155537.GSZ88LeX9PQQpeCCaU@fat_crate.local>
-References: <Z87L0bRi8tcAIsDw@example.org>
- <e9d58d64-ab0f-49e8-ac87-c02bda6bc837@suse.com>
- <Z87ce37GjCqpOLCW@8bytes.org>
- <b2e585a7-edd5-4b13-b904-3d0913177aee@suse.com>
- <20250310133833.GHZ87rWfuV6WgQTsoh@fat_crate.local>
- <Z878IRbbzIbUDQvj@example.org>
- <20250310151154.GOZ88BOinZVkbYEx0w@fat_crate.local>
- <104b6d4f-2848-42f4-a134-3373d12d9424@suse.com>
- <Z88Iv0w8_l9i7_8l@example.org>
- <57b64adb-c7b6-445c-b01b-7b05bd7c919b@suse.com>
+	s=arc-20240116; t=1741622231; c=relaxed/simple;
+	bh=eGDElqtBJShl5L20wjZ0yk8EVx68/Le8s+EeXvF9c5o=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=oruIDBqrIvPI/CA0859YTeka8yDX5M5vHPiDSFb2Y7kaY3c/XRfYmO8i5FS+wDaZKGDRlaJeBbVg/55AgHlTti64pHfCb90L3UM9G7nCYin1oPyqdvYEpybJtJ74Un6PBI2dTGEefxaoGx4iH896jPAObi+Gl0tMETyjiYueG0U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=L43ANbmv; arc=none smtp.client-ip=217.70.183.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 4FCBC44101;
+	Mon, 10 Mar 2025 15:57:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1741622227;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=3UOS4rb9TEoPzQPGBF8Xn/wQ30Soac4t1IPb0qzm228=;
+	b=L43ANbmvvQwvhWw3boUduOlW+eefJjjM9kIjhGotW8FL/JGRXCe0W2j0VwagP0Qiy6wEHu
+	lslBC7x/zA6PUBi3P2/TJnDCHayZuXDtf6Zj/qe1+Sa95bMHxwCm3dsw4Zo9axcqJ75KHh
+	7wDkF6ocz5kH15mMOE39AqbKgofyHjhWI3hBj5aLgM2oXph8ZErjlVy52S0sfpR+E6zJJN
+	Vurxcl6bn2rg4zyxotC63wG/+S4VProYJLvf5Mc/yuHfNS6QeMevOmPvTa4M3hP1wSVcrx
+	I2x5bQSqnPXuYQEA40G4VqRzxzrSOEHfzWICyab/2PVTnpqr4sggV7cQE8pNlg==
+From: Antonin Godard <antonin.godard@bootlin.com>
+Subject: [PATCH v3 0/3] Add Variscite i.MX6UL SoM and Concerto board
+ support
+Date: Mon, 10 Mar 2025 16:56:06 +0100
+Message-Id: <20250310-varsom6ul-concerto-dts-v3-0-551e60713523@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <57b64adb-c7b6-445c-b01b-7b05bd7c919b@suse.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAJYLz2cC/3XPTQ6CMBAF4KuQrq1phx+pK+9hXJQySBOg2pZGQ
+ 7i7BTXRBcs3yXzzZiIOrUZHjslELAbttBliSHcJUa0crkh1HTMBBjnjwGiQ1pm+GDuqzKDQekN
+ r76hkZYUgC+CiInH5ZrHRjxU+X2JutfPGPtc7gS/TL8m3yMApo1ilmZCqYVIVp8oY3+lhr0xPF
+ jTAL3TYhCBCWS0VCMgLUYp/aH7XtXgf4/v+03meX2fk91YcAQAA
+X-Change-ID: 20250120-varsom6ul-concerto-dts-a08be2a6219b
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>, 
+ Sascha Hauer <s.hauer@pengutronix.de>, 
+ Pengutronix Kernel Team <kernel@pengutronix.de>, 
+ Fabio Estevam <festevam@gmail.com>
+Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
+ Antonin Godard <antonin.godard@bootlin.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2120;
+ i=antonin.godard@bootlin.com; h=from:subject:message-id;
+ bh=eGDElqtBJShl5L20wjZ0yk8EVx68/Le8s+EeXvF9c5o=;
+ b=owEBbQKS/ZANAwAIAdGAQUApo6g2AcsmYgBnzwvRwyVq2f0qoWhvOjc1A99tiXYZEUks2qrwq
+ UIgtZi/TWSJAjMEAAEIAB0WIQSGSHJRiN1AG7mg0//RgEFAKaOoNgUCZ88L0QAKCRDRgEFAKaOo
+ NvO9EAC78pAkCEQGTHt7pAqhWCUoSbyohKS0s/A2q2JtpefbZvcIlbmd13wzgdKUAkiOIq6Xexx
+ zR2OuH0U/Gc1hui+p3nDdqzfQNJcksmmBKZ7Q7BBMB3yhRGN5Ujw/R4NyOGu2WXRx/wgm+1QSKu
+ ML8Rbf/wnow3DDcpGjzw4WWfzMGUUCLfhQvPpWQ0LJ2X8zQjdO7KdhDtSwO6dU3KA6UA790ljLb
+ uYGZXU7uoPBoTke1snkeeuJd5iaI1bzSm5r99kdFLl9QTSfnBF4/6Rxx2SeOm40OOwO556AueVP
+ Owovf5YyNRhM81U+6N4Ink1WYwxbFg/njI5sFVoeCkLYlXu54PYC6O9GlXx72SWYcy8DMMP/XYW
+ QOQqrd+xyBo/B1VQkKZ5FzTjzMrincF/oDDyiwWdqM6aWJKoEM3UUM/EzOYqaI3ph9tfssJEDRf
+ OLYzsnmdJ1Xn4WFh1m0CTAk8G+z0uY9UUzccXI9gIInNHSM4BQmhUc1A/MKtpAfi2welVbwof4n
+ qCA856tQttTDMe6pNgK0uFIwt86z2tqHX9o1nrfB3XKOh0Js+Jq68n9QSR7vKARvq7qgORcnbzy
+ Bdip8jNZRWHtrQNvUn3jOvSaGd4S3AgMz51OxcUVjJqPOchPdGlKYV8Dd22KJ7Q8KYTLmGYxHBK
+ Sxp+IonOaHqpvUA==
+X-Developer-Key: i=antonin.godard@bootlin.com; a=openpgp;
+ fpr=8648725188DD401BB9A0D3FFD180414029A3A836
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdduudeljeejucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhufffkfggtgfgvfevofesthejredtredtjeenucfhrhhomheptehnthhonhhinhcuifhouggrrhguuceorghnthhonhhinhdrghhouggrrhgusegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpedtudeuhfelveehueevudefgedvtdfffeevleefuedtjeeuteelgeelvefftdejteenucffohhmrghinhepkhgvrhhnvghlrdhorhhgnecukfhppedvrgdtudemtggsudegmeehheeimeejrgdttdemjegthegtmeeirgguvgemjeelgeekmeegtdehleenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpedvrgdtudemtggsudegmeehheeimeejrgdttdemjegthegtmeeirgguvgemjeelgeekmeegtdehledphhgvlhhopegluddvjedrtddruddrudgnpdhmrghilhhfrhhomheprghnthhonhhinhdrghhouggrrhgusegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopedufedprhgtphhtthhopehimhigsehlihhsthhsrdhlihhnuhigrdguvghvpdhrtghpthhtoheplhhinhhugidqrghrmhdqkhgvrhhnvghlsehlihhsthhsrdhinhhfrhgruggvrggurdhorhhgpdhrtghpthhto
+ hepfhgvshhtvghvrghmsehgmhgrihhlrdgtohhmpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheprghnthhonhhinhdrghhouggrrhgusegsohhothhlihhnrdgtohhmpdhrtghpthhtohepshdrhhgruhgvrhesphgvnhhguhhtrhhonhhigidruggvpdhrtghpthhtoheptghonhhorhdoughtsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehkrhiikhdoughtsehkvghrnhgvlhdrohhrgh
+X-GND-Sasl: antonin.godard@bootlin.com
 
-On Mon, Mar 10, 2025 at 04:52:37PM +0100, Juergen Gross wrote:
-> /sys/kvm/ might be a good fit when using KVM?
+Add support for the i.MX6UL Variscite SoM (VAR-SOM-6UL) and the
+Variscite Concerto Carrier Board.
 
-What are we going to do when Xen runs coco guests? Or there's no such danger
-in the near future?
+I tested this with a VAR-SOM-6UL_G2_700C_512R_8N_IT_REV1.3A (one variant
+of this SoM), meaning I couldn't test all of the possible options of the
+SoM - so this device tree includes partial support for it.
 
-:-P
+These are based on the 5.15 Variscite kernel fork but adapted for
+mainline.
 
+Signed-off-by: Antonin Godard <antonin.godard@bootlin.com>
+---
+Changes in v3:
+- Reviews from Shawn:
+  - Fix alphabetical order of nodes and pinctrl entries.
+  - Fix rmii-ref-clk label (remove "-grp" added by mistake).
+  - Fix order of properties for eth nodes.
+  - Convert deprecated fec properties to eth properties.
+- Link to v2: https://lore.kernel.org/r/20250127-varsom6ul-concerto-dts-v2-0-4dac29256989@bootlin.com
+
+Changes in v2:
+- Reviews from Krzysztof:
+  - Use imperative mood in commit descriptions.
+  - Remove backlight node as I am unable to test it.
+  - Rename gpled2 node to led-0, and set function, color and label for
+    it.
+  - Remove unnecessary comment "DS1337 RTC module".
+- Rename binding "variscite,mx6concerto" to "variscite,mx6ulconcerto"
+  since this is for the VAR-SOM-6UL mounted on the Concerto.
+- Remove pinctrl_ft5x06_ts_gpio iomuxc node, unused.
+- Link to v1: https://lore.kernel.org/r/20250121-varsom6ul-concerto-dts-v1-0-eb349acf0ac6@bootlin.com
+
+---
+Antonin Godard (3):
+      dt-bindings: arm: fsl: Add VAR-SOM-MX6UL SoM and Concerto board
+      ARM: dts: imx6ul: Add Variscite VAR-SOM-MX6UL SoM support
+      ARM: dts: imx6ul: Add Variscite Concerto board support
+
+ Documentation/devicetree/bindings/arm/fsl.yaml     |   6 +
+ arch/arm/boot/dts/nxp/imx/Makefile                 |   1 +
+ .../boot/dts/nxp/imx/imx6ul-var-som-concerto.dts   | 320 +++++++++++++++++++++
+ arch/arm/boot/dts/nxp/imx/imx6ul-var-som.dtsi      | 233 +++++++++++++++
+ 4 files changed, 560 insertions(+)
+---
+base-commit: 66683f3b2661643f694607283ee8f01b7a934c83
+change-id: 20250120-varsom6ul-concerto-dts-a08be2a6219b
+
+Best regards,
 -- 
-Regards/Gruss,
-    Boris.
+Antonin Godard <antonin.godard@bootlin.com>
 
-https://people.kernel.org/tglx/notes-about-netiquette
 
