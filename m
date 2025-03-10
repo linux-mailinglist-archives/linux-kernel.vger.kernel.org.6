@@ -1,115 +1,177 @@
-Return-Path: <linux-kernel+bounces-554299-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-554300-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3EFCBA595E2
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 14:16:08 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 72713A595E6
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 14:16:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 41844189028B
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 13:16:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9983916EA06
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 13:16:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACB9B22A1CB;
-	Mon, 10 Mar 2025 13:15:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="lKRdcmFw"
-Received: from mail-wm1-f73.google.com (mail-wm1-f73.google.com [209.85.128.73])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7EA9229B30;
+	Mon, 10 Mar 2025 13:16:16 +0000 (UTC)
+Received: from mail-ua1-f44.google.com (mail-ua1-f44.google.com [209.85.222.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EE2D227E96
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 13:15:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23F53374EA;
+	Mon, 10 Mar 2025 13:16:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741612540; cv=none; b=TANbnWv+67adjbQbyiYreLOyUry090WN8E5qEhT25XJ35UawEWsmeiREpKGCIQHed5tSc7DIbifXBvu0Bt7Cvxs0qz3oo3S0YxJRa/DSzQ2kWHrLW4w4+UUNOWbzrgZga2xIai57nUoiHlotigikCw4Dy+gJ0e4kpSKSMsPqpcI=
+	t=1741612576; cv=none; b=gZz1+R7SyBcQlYC1J2+ErDXO2HOP/rg6BYgTX/9YldEyJ1GQPci6S6LOMeXmrKD8KbaccvXzFNQl40vqVIKErGapaRMMgcYuecmyOX3e3kvJK0x8DNNO0q56xyuf89NRytYbFRxctAmGMYDkcguTfIj9HUArog/vdxxFLZFnNhs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741612540; c=relaxed/simple;
-	bh=vK5tFz6cAoc3BRInBg6lxuhPY7r7H7slA5Y0fpKWcN0=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=lb9FYc9q67lbcLW6p/Fz07h1Dud6VXnv6pBCgPBvz0yZ3Bm43mmoZoUj4lqAmHxp61LVJWTJJCRnTGQFX5Vzl2V3mcVRYQlJ4sAcyNyt3p0fbhmzKnfDH5PrRMdfkGlWqFjg1nCRc8j0alCjjrQWiGqFaNtT5JS3U51JRLim0Ek=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=lKRdcmFw; arc=none smtp.client-ip=209.85.128.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
-Received: by mail-wm1-f73.google.com with SMTP id 5b1f17b1804b1-43cf172ffe1so10469505e9.3
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 06:15:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1741612537; x=1742217337; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=+EEsvDIwxD+0/5fzD3wD3Tbua+FVDD1lHgd/aZ/hTzU=;
-        b=lKRdcmFwicKo1lg+eRNQffLJ/glBtgE6erIPVd+x7cy4rEs8ycwgAuTb0xFV3D47OO
-         MEG0IjQux0H91VdDAKZMaAfDT+PJ4DsQRv0vbFJT8ynUrbizvNjmiElro/zLtdd591IS
-         Mxwus5HxkHRg2869UX9cafjR7XDklGlsJaFdTWbPphK0dgBTIy7rvdPgN3VAHXdT5bCZ
-         U5mHM6lX1NDoGwJCfM+TAq8nWjBnklBwh9bCdutLKG6HA7dpNIaQIb25DSncb+N37WdM
-         jHKGq+dlfljt9mD+de2OF+pwImjNamrKbqq34smRYCx32HeZsERVlw1u+W0m7arrGvvq
-         p/Rw==
+	s=arc-20240116; t=1741612576; c=relaxed/simple;
+	bh=+pe8nMgc4fByYrl/J+ifCMz86M7Dbvi7gJXrq56sYKw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ohoWH1wvDHKIrlSdrwgbg4osXR1N9hiKkYBV+mSTcySi+VZVYj4VOVI2JfjKQGyaZCSM0EZJNg9Oa2Cra0/7pI1P1xBug6HHHP4A0GwWzItW4cEYKNF5zO7AYxVZ9i0L8YhiSE1GY88Ij80C4EMUBX2yi78Zg1Y271aNPELMNRI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ua1-f44.google.com with SMTP id a1e0cc1a2514c-86b68e51af4so1571739241.1;
+        Mon, 10 Mar 2025 06:16:13 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741612537; x=1742217337;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=+EEsvDIwxD+0/5fzD3wD3Tbua+FVDD1lHgd/aZ/hTzU=;
-        b=jiAfAwS9xjtuisHfTxG7TYPryS2Dh+XWpVQhzTXLOGLCxyGSOwLbm9XS8tMxa1leRK
-         uW1lXu7Rhqr5uuctsWNyi8e9JqGOTnMazpZc6j7JHXB1sJgsRyQw1bWC4DyVzrm3FTil
-         1oJmTUukVmEBpOeHIZDy23uF8eXhmk8HuUyfS1Jv9DQxrAJNuGhoO9jAe3qB7rwdmxaJ
-         WcjAr4FAvq22QjLLNAEJS1xCHpsA6dhUYAV146RgvgLBlcgaKwarOa5GF+ASBi+Zvrx7
-         mxmaT7oN9tQRiD5hmCCB0UbA4mq/tGcs3+sqUmEGcTmbkoXeohodEGl1MZ8kZl0TOZea
-         0Ppw==
-X-Forwarded-Encrypted: i=1; AJvYcCWqlz4cqAoxRXQrEplMYH/AO2De4L//0w2A91tJogIeWIY/3CMn3dMcjScI0IwH8PNEk62ctsat1iYSz78=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyLWr3n9RKLK3JXN6U3SMxcnJB96GIEil5aoKsDwiLlFoE50OGW
-	NOqkaTA9IgOhbdGKP1R/avnRpapB9ufvpL8hPAuSwKAfPXaAM42GF7GBUyVZpnOviBB32HNscQ8
-	iHRBjpGDaGw5b/Q==
-X-Google-Smtp-Source: AGHT+IFAKBqCVDoWZNPtAoyGlnefO3AJox8H3Fg09QiDkuEe6afbmhhVGIrGRzga25ARaMG6blRd6xBWUg2R+xw=
-X-Received: from wmbhc5.prod.google.com ([2002:a05:600c:8705:b0:43c:fab0:ce54])
- (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:600c:4fc6:b0:43c:fb95:c752 with SMTP id 5b1f17b1804b1-43cfb95cc79mr20397035e9.3.1741612536744;
- Mon, 10 Mar 2025 06:15:36 -0700 (PDT)
-Date: Mon, 10 Mar 2025 13:15:34 +0000
-In-Reply-To: <20250309-faux-inline-v1-1-c1b692862433@ethancedwards.com>
+        d=1e100.net; s=20230601; t=1741612572; x=1742217372;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=3bwMEAH7Tb2p80rG5YQFDISiH+2UdxhzZVsTz2rTT24=;
+        b=t7j3P1PB0LMPauR2TSwADqFHF9kh9wqf0O/5vcm8YwCCZVhPYYIZB0Jtyg3sIJdf2p
+         9e+R7ZSz+LiTDryi37ZJUQ5QyCNUMMA5+PCv4pWcbb1TH73i2CbyZPfddKLUWekJ9t5V
+         v5cwmaCPuynNkXFJnYFS9lva0/tj5XvxRn5NEUFvsETGugrNEjs/P30E9sE5s41ZU43p
+         AO1LGmXuSiMYLQZ07WpSG9v2Qxdkf8CLs9uJPVkNdZKNsjzDzqwUF5+MwkzXny5CJqXb
+         UN1403kQAFCTp5HYe/KyT4o5wlRwx2K9z65CUm0xgc/y9lRrFJxVZcty5y6VxRIppSnn
+         C9Kg==
+X-Forwarded-Encrypted: i=1; AJvYcCULVEHMV3HQRdKtqoTXhnGRgMra/mieCmSS15UgAR9muZae4NDcSq3+PS0/Czjiy2GeGvPVdCFQVsPkSw==@vger.kernel.org, AJvYcCW3iqEwe7AonyEAwR1kdMfa2UwTRXPaViYdnPiB4q3DuB5LgQoXKHROl0fo9/QyqMJOCFrnWipqvVfx@vger.kernel.org, AJvYcCWBjew7Qg5f6ogFrgSqhc5wmOG549CZnvGJD4o6dycVGDqylq90b80CwZiw4SLcHyewyt1LXa4V0vrS9eiyXMBp5SU=@vger.kernel.org, AJvYcCXKKES9M/K57Cy43q03UUatKTJvB5cA1Llar/NBtdQDjqJnfhVqujtFRVLUpO4jrQ9kdGhWmhuNa1G58Hcf@vger.kernel.org
+X-Gm-Message-State: AOJu0YxHrhOCrPM9KepIGIUuIkslSKiof/Kd2YUn4ENNfxikrg/GU0jF
+	uNcaAxVaJCcSPL96Oz6IWnhqFEHkZ/fS17UL8QlMLg+5D2tDbC7td2bYcge10sA=
+X-Gm-Gg: ASbGnct+F+ohhZFG9dMs666/wzZII150jggJ/0ugx73GzoTm8UAfAtmRZ00h8MuDNnO
+	rbmI1Sa6M3sy5fsJNg393FzohleJRI7g4bIWTNEtZHZ+OTte5DRS4UTpd2W0qrQQapZ7NMBFDzz
+	0aLpmMQQY4AiuhqqLXehqZHUXxEwVJLTOXraL7TmbprlkH1dbGMNZRJOFleDHCpqMaydx74uMVz
+	wDSSzwKCWf3gV+3uss4T7xklP1zj5JMd2+CCtAfE+v14Kziv0/J0fwmv7w3orrJP9Ps+F6OGODH
+	qban99AsFUmO8a1swglXzju6DgNMZ1ZEmZBSVeMA3wbmDy8HaYmUQRr8uqH/i6fsArZC2pWrAOR
+	GvizaZuc=
+X-Google-Smtp-Source: AGHT+IGWrgaTcuRoRn5yEgZmzyybev0b5x8Pgfkri+MWcuiq9g+56xaQ0aMAe/Ds6Y7so3QX7LZ2mA==
+X-Received: by 2002:a05:6102:a54:b0:4c1:b001:b53 with SMTP id ada2fe7eead31-4c30a65e00bmr7130200137.18.1741612572572;
+        Mon, 10 Mar 2025 06:16:12 -0700 (PDT)
+Received: from mail-ua1-f51.google.com (mail-ua1-f51.google.com. [209.85.222.51])
+        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-4c2fbca4f0dsm1953416137.21.2025.03.10.06.16.12
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 10 Mar 2025 06:16:12 -0700 (PDT)
+Received: by mail-ua1-f51.google.com with SMTP id a1e0cc1a2514c-86718c2c3b9so1617846241.2;
+        Mon, 10 Mar 2025 06:16:12 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCU7bS4SNYBFIDCLQzyaCt9+rVecXwAtEP3CFAQXCYj672PkPZSKFT4Ak0TcmEDrRMHHM+QtamChMj1wxpxS@vger.kernel.org, AJvYcCUyfVV02FlPf1N7Cu31Jvh4mXvAWJY7Egi4nDxOpicFaJzB92g1tFhuxal6T7wQjsdyXH62kBoFa5dF8aGZbcly920=@vger.kernel.org, AJvYcCWMAklpG8RKLlce+oKS/RE/hZ5nVZzsj6pwdA4cYb8V0VbKmYjdEHr3bh+hP+p4AKgRB5iGKA0fysiD@vger.kernel.org, AJvYcCXYULFZRpvku56HBjE350JYXjrdIBn5v9H5n3SmTh6OVjuf9GAR5hxyLo+sJX52hBBiQPAzHlcgeCCmPg==@vger.kernel.org
+X-Received: by 2002:a05:6102:3583:b0:4c3:6c4:e174 with SMTP id
+ ada2fe7eead31-4c30a65d92emr7228931137.16.1741612572135; Mon, 10 Mar 2025
+ 06:16:12 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250309-faux-inline-v1-1-c1b692862433@ethancedwards.com>
-Message-ID: <Z87l9qENkwuea03Z@google.com>
-Subject: Re: [PATCH] rust/kernel/faux: mark Registration methods inline
-From: Alice Ryhl <aliceryhl@google.com>
-To: Ethan Carter Edwards <ethan@ethancedwards.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
-	Danilo Krummrich <dakr@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	"=?utf-8?B?QmrDtnJu?= Roy Baron" <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>, 
-	Andreas Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>, 
-	Nathan Chancellor <nathan@kernel.org>, Nick Desaulniers <nick.desaulniers+lkml@gmail.com>, 
-	Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>, 
-	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	llvm@lists.linux.dev
-Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+References: <20250109-dt-type-warnings-v1-0-0150e32e716c@kernel.org>
+ <20250109-dt-type-warnings-v1-2-0150e32e716c@kernel.org> <CAMuHMdU=QR-JLgEHKWpsr6SbaZRc-Hz9r91JfpP8c3n2G-OjqA@mail.gmail.com>
+ <CAL_JsqJNgxLgvB502Bk=5aMeP2rY6KVL_FykeSyN1tsDRXi9cA@mail.gmail.com> <CAMuHMdWZsQ9UbwVub=36P_2DCPEN0aORz9FxCbivKkOyeWkuww@mail.gmail.com>
+In-Reply-To: <CAMuHMdWZsQ9UbwVub=36P_2DCPEN0aORz9FxCbivKkOyeWkuww@mail.gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 10 Mar 2025 14:15:58 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdUHsTYjamDkyoe_CwJhXbf7LpAPk+Dazd4wChEmfcuYPQ@mail.gmail.com>
+X-Gm-Features: AQ5f1JraxfzSSZiwFZoSk4-gLUnOHP6AW4upV-5J6BIK6IbQAuD0VMWwpRICbuw
+Message-ID: <CAMuHMdUHsTYjamDkyoe_CwJhXbf7LpAPk+Dazd4wChEmfcuYPQ@mail.gmail.com>
+Subject: Re: [PATCH 2/2] of: Warn when of_property_read_bool() is used on
+ non-boolean properties
+To: Rob Herring <robh@kernel.org>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>, 
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Daniel Scally <djrscally@gmail.com>, 
+	Heikki Krogerus <heikki.krogerus@linux.intel.com>, 
+	Sakari Ailus <sakari.ailus@linux.intel.com>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Danilo Krummrich <dakr@kernel.org>, 
+	Saravana Kannan <saravanak@google.com>, linux-acpi@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
+	Linux-Renesas <linux-renesas-soc@vger.kernel.org>, 
+	Linux ARM <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Sun, Mar 09, 2025 at 10:14:36PM -0400, Ethan Carter Edwards wrote:
-> When building the kernel on Arch Linux using on x86_64 with tools:
-> $ rustc --version
-> rustc 1.84.0 (9fc6b4312 2025-01-07)
-> $ cargo --version
-> cargo 1.84.0 (66221abde 2024-11-19)
-> $ clang --version
-> clang version 19.1.7
-> Target: x86_64-pc-linux-gnu
-> 
-> The following symbols are generated:
-> $ nm vmlinux | rg ' _R' | rustfilt | rg faux
-> ffffffff81959ae0 T <kernel::faux::Registration>::new
-> ffffffff81959b40 T <kernel::faux::Registration as core::ops::drop::Drop>::drop
-> 
-> However, these Rust symbols are wrappers around bindings in the C faux
-> code. Inlining these functions removes the middle-man wrapper function
-> After applying this patch, the above function signatures disappear.
-> 
-> Link: https://github.com/Rust-for-Linux/linux/issues/1145
-> Signed-off-by: Ethan Carter Edwards <ethan@ethancedwards.com>
+On Wed, 15 Jan 2025 at 12:20, Geert Uytterhoeven <geert@linux-m68k.org> wro=
+te:
+> On Tue, Jan 14, 2025 at 8:19=E2=80=AFPM Rob Herring <robh@kernel.org> wro=
+te:
+> > On Tue, Jan 14, 2025 at 12:35=E2=80=AFPM Geert Uytterhoeven
+> > <geert@linux-m68k.org> wrote:
+> > > On Thu, Jan 9, 2025 at 8:42=E2=80=AFPM Rob Herring (Arm) <robh@kernel=
+.org> wrote:
+> > > > The use of of_property_read_bool() for non-boolean properties is
+> > > > deprecated. The primary use of it was to test property presence, bu=
+t
+> > > > that has been replaced in favor of of_property_present(). With thos=
+e
+> > > > uses now fixed, add a warning to discourage new ones.
+> > > >
+> > > > Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
+> > >
+> > > Thanks for your patch, which is now commit c141ecc3cecd7647 ("of:
+> > > Warn when of_property_read_bool() is used on non-boolean properties")
+> > > in dt-rh/for-next.
+> > >
+> > > I have bisected a failure in secondary CPU bring-up on R-Car H1 (quad
+> > > Cortex-A9 MPCore) to this commit:
+> > >
+> > >      Detected Renesas R-Car Gen1 r8a7779 ES1.0
+> > >      smp: Bringing up secondary CPUs ...
+> > >     -CPU1: thread -1, cpu 1, socket 0, mpidr 80000001
+> > >     -CPU1: Spectre v2: using BPIALL workaround
+> > >     -CPU2: thread -1, cpu 2, socket 0, mpidr 80000002
+> > >     -CPU2: Spectre v2: using BPIALL workaround
+> > >     -CPU3: thread -1, cpu 3, socket 0, mpidr 80000003
+> > >     -CPU3: Spectre v2: using BPIALL workaround
+> > >     -smp: Brought up 1 node, 4 CPUs
+> > >     -SMP: Total of 4 processors activated (2000.00 BogoMIPS).
+> > >     +CPU1: failed to come online
+> > >     +CPU2: failed to come online
+> > >     +CPU3: failed to come online
+> > >     +smp: Brought up 1 node, 1 CPU
+> > >     +SMP: Total of 1 processors activated (500.00 BogoMIPS).
+> > >      CPU: All CPU(s) started in SVC mode.
+> > >
+> > > Reverting this commit on top of my work tree fixes the issue, too.
+> > > However, I do not see how this commit could impact CPU bring-up?
+> >
+> > Strange. Perhaps the of_property_read_bool was inlined into some
+> > special section before?
+>
+> I re-added the old inline of_property_read_bool(), but with a different
+> name.  CPU bringup starts working again if I replace at least one call
+> to of_property_read_bool() in arch/arm/mm/cache-l2x0.c:aurora_of_parse()
+> by a call to the inline variant, or even if I just add
+>
+>     pr_info("xf_property_read_bool(np, \"wt-override\") =3D %d\n",
+> xf_property_read_bool(np, "wt-override"));
+>
+> to that function. Note that that function is not called at all on my plat=
+form.
+>
+> This small change causes quite some reordering in arch/arm/mm/cache-l2x0.=
+s,
+> so it looks like a layout issue. More analysis will follow...
 
-LGTM to me.
+The assembler SMP bring-up code for Renesas SoCs lacked an alignment
+directive.  I have posted a fix:
+https://lore.kernel.org/r/CAMuHMdU=3DQR-JLgEHKWpsr6SbaZRc-Hz9r91JfpP8c3n2G-=
+OjqA@mail.gmail.com
 
-Reviewed-by: Alice Ryhl <aliceryhl@google.com>
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
 
