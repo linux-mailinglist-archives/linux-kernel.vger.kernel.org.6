@@ -1,138 +1,133 @@
-Return-Path: <linux-kernel+bounces-554990-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-554992-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F2210A5A437
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 20:59:14 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id F39F4A5A43F
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 21:00:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A17F03AA3C8
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 19:59:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AD9F5188E0B9
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 20:00:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C21C81DE2D8;
-	Mon, 10 Mar 2025 19:59:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E87EB1CAA6E;
+	Mon, 10 Mar 2025 20:00:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="3SbeLVv1";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ERBjMpka"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=ariel.dalessandro@collabora.com header.b="eJbETDYH"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C04C71DE2C7;
-	Mon, 10 Mar 2025 19:59:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741636749; cv=none; b=pBDPJgXIlnGUyXPnVHkP7KTnL0E1xrNKDpwGqcMYZ9Yityw0rfAE6U4Etxv0ztmsuyvnLy4yv+DgZQyPlIzIah3STYX4nArqlxrEmXGkrtB+xUndRv71mp+5CdBQiaXcD3kZL/h439YaGvXS3GargFXyJBn1EtoLckw+yhh7d7I=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741636749; c=relaxed/simple;
-	bh=H5ycHYupR28l1HqDSyLBg9rTOcsIGNw4x4qnabynmmM=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=VSekre8FiCnh/eHev1zXSnMCsQXSnbI0lsNLP+vgzJWPQ4+t+MhaTo8eDGYlPT8IWJkBr08f+eXpAGO7UjQU1ObDPZyXQR3ne+EB/Jrr9gHCts5XcvUSkUSlYSSab5rQoOGOQuBMtfyIaqgoHov1wLmbFpHeYytQPCSFzYkZ4pU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=3SbeLVv1; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ERBjMpka; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Mon, 10 Mar 2025 19:59:04 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1741636746;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=uLGE1KdgCPQhUtvXDXBlsuV2cfjDAG5GjUb0ed3g0a8=;
-	b=3SbeLVv11xKGSdx6ouLcfcYMFTE+OctQlV7xqzUDglkuieS0pqg5NF2rYsKEuAqdTO72qG
-	V3IZ4PZnosx0r8nhkWcFotynMRV7nBUFzLBX4/Oc/Rx4jqqC4qtfFHIf9PofmIr8jyVir5
-	9Oe+J+mQc9Yv/pEZyHACxcFfbB3O9m+xg6JqQvhtq9JMEzvI/1rO3qv4q89y0HFhihr9FL
-	9qVJmaYl4yABsqCxpTL0wjvWwzaQcZS51KInydJkVHvzeAavFTUvkrEV5PRnz7JaZStR7w
-	7bXSzOGVHLw7sBY0W50KXScY2cYmdMfIZjJs+qzXtZV7CPVoswUdwIsRV8WFoA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1741636746;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=uLGE1KdgCPQhUtvXDXBlsuV2cfjDAG5GjUb0ed3g0a8=;
-	b=ERBjMpkaI3HlSlM+1HMdfFEb9hY6loJPHSakz/UY8ZxxpgvGR5gubuimWUWDbfwySs8Axq
-	SdvQATqtC4tamODw==
-From: "tip-bot2 for Thorsten Blum" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: perf/core] perf/core: Remove optional 'size' arguments from
- strscpy() calls
-Cc: Thorsten Blum <thorsten.blum@linux.dev>, Ingo Molnar <mingo@kernel.org>,
- x86@kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20250310192336.442994-1-thorsten.blum@linux.dev>
-References: <20250310192336.442994-1-thorsten.blum@linux.dev>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 904CE1CAA70
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 20:00:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741636818; cv=pass; b=eiXyr3WGITnc24R4OmOBNVQj96rsAoIHvJ2fpV0FKOJeIVEgx93YUvIHYCnTThAk40v+/3hhZKVBJtbQWPoZgRRZojsdESAM39E9c/DRqYjaqxD3AHzOu/co/WPqypAUhb0DdgDw8E6ZUS5YXsz5QnNz6IB2j0z6FJ8KP4nuu84=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741636818; c=relaxed/simple;
+	bh=GXUNsT7f5ftD/GSXHH2Vh5tGICEzsnhgaee0Q7HojP4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=kaIh6p61nHy6Akj/eLSUYS92APcuL0QLEHi8QIt29r07lPO6wPFMUW+RVagZhYG1QEefeI/NjWOE0nKI4HW7SY7No2qFTlFnRGGWa+ORD2YhjER+OuvG1JUDMLGXOgsWVbm/RqYkz4k1fiJ+5b/TLCkurpVpWTlZL/7OPkRfPv8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=ariel.dalessandro@collabora.com header.b=eJbETDYH; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1741636789; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=mTWhI5ljOxaH+MZDEieAyDNSUiszcmKsQaV0GCeb1LuLbcokr8+lKYjtkfVgPmYvC9ngOt4G1EmnqXbVbrg2Na5nF651Ang7Rmgxxd3BMuF3oHd4j2s/IocV22Te1XjfvaSCDcTZm2ozP3fCZarMe9KAg+OgwU0M8xCPdhyUa7A=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1741636789; h=Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=XnPLtUq7gfXI+7/0APvhFGaW+4ilm1CeUoTlvhHmsDI=; 
+	b=CowNFAKRa1rulQAjGp406e5k3Ji8XogVwTmLpPw4E0cGkKvj7/9GlVP1Sm/AE/zmHVMMPjl0nQmW/icflW7iQZD8UtgR8qDwfByHjjZ8wFCxsBbYALIUTWTvs9ZAhW4CypE1baiIS8m95pXqHr5z+4qfrA5KpKTaB0A5RTTjahU=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=ariel.dalessandro@collabora.com;
+	dmarc=pass header.from=<ariel.dalessandro@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1741636789;
+	s=zohomail; d=collabora.com; i=ariel.dalessandro@collabora.com;
+	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-ID:MIME-Version:Content-Transfer-Encoding:Message-Id:Reply-To;
+	bh=XnPLtUq7gfXI+7/0APvhFGaW+4ilm1CeUoTlvhHmsDI=;
+	b=eJbETDYHzZaq0ZHObtlo93olKYwZ24KkPAakpeCc9NHqep4SkdkWi6ouJRfo9sHC
+	WgN/SnIxyLCx0XXgHW2+ZiWwZRAIaVe8wEhu6YqMMDddyfxB/TBgqtaP9bpCE93vrsu
+	OHRLcz40aLLG0DMuq4NTPBcOtBNIVCb50wwFGXvE=
+Received: by mx.zohomail.com with SMTPS id 1741636786814304.76226844373525;
+	Mon, 10 Mar 2025 12:59:46 -0700 (PDT)
+From: Ariel D'Alessandro <ariel.dalessandro@collabora.com>
+To: dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org
+Cc: boris.brezillon@collabora.com,
+	robh@kernel.org,
+	steven.price@arm.com,
+	maarten.lankhorst@linux.intel.com,
+	mripard@kernel.org,
+	tzimmermann@suse.de,
+	airlied@gmail.com,
+	simona@ffwll.ch,
+	kernel@collabora.com,
+	linux-mediatek@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org,
+	sjoerd@collabora.com,
+	Ariel D'Alessandro <ariel.dalessandro@collabora.com>
+Subject: [PATCH v1 0/6] drm/panfrost: Add support for AARCH64_4K page table format
+Date: Mon, 10 Mar 2025 16:59:15 -0300
+Message-ID: <20250310195921.157511-1-ariel.dalessandro@collabora.com>
+X-Mailer: git-send-email 2.47.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <174163674500.14745.11511940835737633546.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-ZohoMailClient: External
 
-The following commit has been merged into the perf/core branch of tip:
+Hi all,
 
-Commit-ID:     fd3f5d385a52531589c8a7a26d9e108aa1d3f52e
-Gitweb:        https://git.kernel.org/tip/fd3f5d385a52531589c8a7a26d9e108aa1d3f52e
-Author:        Thorsten Blum <thorsten.blum@linux.dev>
-AuthorDate:    Mon, 10 Mar 2025 20:23:35 +01:00
-Committer:     Ingo Molnar <mingo@kernel.org>
-CommitterDate: Mon, 10 Mar 2025 20:50:30 +01:00
+Following the previous RFC [0], this is the first iteration on Panfrost
+support for AARCH64_4K page table format.
 
-perf/core: Remove optional 'size' arguments from strscpy() calls
+Currently, Panfrost only supports MMU configuration in LEGACY mode, as
+named by Bifrost. This is a (modified) version of LPAE "Large Physical
+Address Extension", which in Linux we've called ARM_MALI_LPAE.
 
-The 'size' parameter is optional and strscpy() automatically determines
-the length of the destination buffer using sizeof() if the argument is
-omitted. This makes the explicit sizeof() calls unnecessary.
+This commit adds support for conditionally enabling AARCH64_4K page
+table format in Panfrost, based on the newly added GPU_CONFIG_AARCH64_4K
+flag. This way, we can progressively move away from the legacy format
+once enough testing has been done on each target.
 
-Furthermore, KSYM_NAME_LEN is equal to sizeof(name) and can also be
-removed. Remove them to shorten and simplify the code.
+The patchset only enables the new format on Mediatek MT8188, which has
+been tested on a Mediatek Genio 700 EVK (MT8390) board, with an
+integrated Mali-G57 MC3 GPU. No regressions were reported in Mesa CI [1]
+for the rest of the currently supported platforms.
 
-Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Link: https://lore.kernel.org/r/20250310192336.442994-1-thorsten.blum@linux.dev
----
- kernel/events/core.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+[0] https://lore.kernel.org/all/20250226183043.140773-1-ariel.dalessandro@collabora.com/
+[1] https://gitlab.freedesktop.org/mesa/mesa/
 
-diff --git a/kernel/events/core.c b/kernel/events/core.c
-index f159dba..e7d0b05 100644
---- a/kernel/events/core.c
-+++ b/kernel/events/core.c
-@@ -8665,7 +8665,7 @@ static void perf_event_comm_event(struct perf_comm_event *comm_event)
- 	unsigned int size;
- 
- 	memset(comm, 0, sizeof(comm));
--	strscpy(comm, comm_event->task->comm, sizeof(comm));
-+	strscpy(comm, comm_event->task->comm);
- 	size = ALIGN(strlen(comm)+1, sizeof(u64));
- 
- 	comm_event->comm = comm;
-@@ -9109,7 +9109,7 @@ static void perf_event_mmap_event(struct perf_mmap_event *mmap_event)
- 	}
- 
- cpy_name:
--	strscpy(tmp, name, sizeof(tmp));
-+	strscpy(tmp, name);
- 	name = tmp;
- got_name:
- 	/*
-@@ -9533,7 +9533,7 @@ void perf_event_ksymbol(u16 ksym_type, u64 addr, u32 len, bool unregister,
- 	    ksym_type == PERF_RECORD_KSYMBOL_TYPE_UNKNOWN)
- 		goto err;
- 
--	strscpy(name, sym, KSYM_NAME_LEN);
-+	strscpy(name, sym);
- 	name_len = strlen(name) + 1;
- 	while (!IS_ALIGNED(name_len, sizeof(u64)))
- 		name[name_len++] = '\0';
+Thanks!
+
+Changes in v1:
+* Added "Set IOMMU_CACHE flag" patch.
+* Replaced `panfrost_mmu->enable()` function pointer by `cfg` struct
+prepared during init time.
+* Made mali_lpae/aarch64_4k name more clear.
+* Added GPU_CONFIG_AARCH64_4K flag to enable AARCH64_4K page table
+  format.
+* Enabled AARCH64_4K mode only on mediatek-mt8188.
+
+Ariel D'Alessandro (6):
+  drm/panfrost: Set IOMMU_CACHE flag
+  drm/panfrost: Use GPU_MMU_FEATURES_VA_BITS/PA_BITS macros
+  drm/panfrost: Unify panfrost_mmu_enable/disable common code
+  drm/panfrost: Add support for AARCH64_4K page table format
+  drm/panfrost: Enable AARCH64_4K page table format on mediatek_mt8188
+  drm/panfrost: Set HW_FEATURE_AARCH64_MMU feature flag on Bifrost
+    models
+
+ drivers/gpu/drm/panfrost/panfrost_device.h   |  16 ++
+ drivers/gpu/drm/panfrost/panfrost_drv.c      |   1 +
+ drivers/gpu/drm/panfrost/panfrost_features.h |   3 +
+ drivers/gpu/drm/panfrost/panfrost_mmu.c      | 159 ++++++++++++++++---
+ drivers/gpu/drm/panfrost/panfrost_regs.h     |  36 +++++
+ 5 files changed, 189 insertions(+), 26 deletions(-)
+
+-- 
+2.47.2
+
 
