@@ -1,337 +1,171 @@
-Return-Path: <linux-kernel+bounces-555021-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-555022-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8FE61A5A492
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 21:15:26 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3DEF4A5A494
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 21:15:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4F4E77A67AD
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 20:14:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EB3E71891506
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 20:16:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D9911DDC07;
-	Mon, 10 Mar 2025 20:15:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77A761D54F4;
+	Mon, 10 Mar 2025 20:15:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="aJjd7WuS"
-Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="c4OCBkj0"
+Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 024141CB332
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 20:14:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C4FF137E;
+	Mon, 10 Mar 2025 20:15:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741637700; cv=none; b=fHM82kWi7cpSbEBkzOdn+eDNPttQLBKPIo6Jla+YqZCufdhoiKnNhCx3MywfLd45lc6yrBFf+jEmZFz9elEVQBeQJ9heVydqleWrxt2C1N6c9la/GfSBSuP1WfjgwCiZUQrN1VdhkskOm1tZb7UjafdW2J8pLMCQdOtw3Fl2byU=
+	t=1741637750; cv=none; b=LNRR0p/fI4aQPexwPdWKr75ef5psQiNbOtbFwoy29ObkdLtiBRgRJhKzbbVl9dqWHXQlHefQse77q1l/hhrk3IcjCNMkPYjZhG43WbI1orQ08thRZxVAuCPjYp7TYWoq/Epo6IYkgoeNTVCX4ry3rJysGscedjvtnJD4bJ3yga4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741637700; c=relaxed/simple;
-	bh=ry/+85ZmYTRdlqLAhzTZeWNOPlc1un8Ml0iI/c/OYgU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PVNAfF/vCPKjUSeUFK/nYug39YHxucRWFAa5hY6da6VZpx7YzMchaWwocvsazLBwJ4GZv4ix8bubSlVzD4fmj4Y/MEfo/7L42pSCZ6Nnp62Nk7bbFO73QMiKykAhsemPGG7j+V7+uQ5HR++OytlAL+h94kL919BNvkMASAo77uk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=aJjd7WuS; arc=none smtp.client-ip=209.85.167.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-543e4bbcd86so5566762e87.1
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 13:14:57 -0700 (PDT)
+	s=arc-20240116; t=1741637750; c=relaxed/simple;
+	bh=hANOivVIYR7EShD/fOlaDcQiemx66hUbCeB5UoCLsXI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=pYr3OHQJN1SywYa62usOXO5ByHIiQRD40EuVP9dTraa3d8sKFhm6m8faNSWYIex72mQxrgVeOBXeIrWCQmit1KgZDh4qXiSzlf9cPADBG3ruv7oIh/aQYclpOi1Yj52ZKjqmJTrJ+kcmuUJz4fAcPqKDvdyebN9VQbiwfLJZYk8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=c4OCBkj0; arc=none smtp.client-ip=209.85.167.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-5499e3ec54dso2016164e87.0;
+        Mon, 10 Mar 2025 13:15:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1741637696; x=1742242496; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=h9ZJhe15SI2R1lxy0woL42QmbLTLLNcrjryXpvdsrm0=;
-        b=aJjd7WuSKSuvvjMagZG7wD6TkRcZfBllXG6zESDz55BC6wOp9jk7UFL15txkl6vJ2O
-         d3VCDn819hSt1kHdOuqpYgmfaGVHgYc9bKiWU1u7yyVlKhx6bzr8qotS7g1NZANZ37q5
-         KzYV/WI6b+x3U1KAD8SFYlqhmGbtZ7QjWnD/lsZfDPsNvLJfhhJ0Udtfo/5+ozV+Wfnf
-         AuN2mfF00bMs3T/dl+hTXUmpCQUqJPoINLW+VePLlA3rjAv7IAlGDq6GXVNAj2ig+xbw
-         bQ0uhPcsnvIXcbVd8RLTGSLBafZi2JjlCohS3TVWptmWjPeshfxh06I2PeGMAnwXK5wM
-         qSvw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741637696; x=1742242496;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1741637747; x=1742242547; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=h9ZJhe15SI2R1lxy0woL42QmbLTLLNcrjryXpvdsrm0=;
-        b=H+EpLaUuy1CflDdGWL+m2HLFF4JLnX4WZTm3sq8PrLDXyQvuJmqfeETkpq9mk19lHU
-         qcbnq0TlsQDC3AeDr3qkZ1QUbzN+i38Ywc9PlI4xO7CDfJa6/ibLqrLc/t+ghTAkSf6u
-         33SJ9xthZ/09oXyqemf85T1vdK93qs8m3zPYZYK+mF4pNyBuz6lmqNQ+eSONgM6fGwjb
-         cMFvWjoy3K4EKFBocxAc2Ab9aG9E/4DlCUOTj5ytWPNvTKj7I77YF5PFlabNWP1q7s0W
-         QvciYHZvy/fdnpCNUL5Ayiq8QMt8CFJpXeoNFew3JnusU3/M+ozPcWFQ8VumXnTxZIG7
-         AyVQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWZLpRNJ8Atca3Ks+3NmIPKVo3vcRGRgkWW3zqepnEwJy8cT+zmxr02uw/1Q0qNvJ1V91kZ6BPwNQNwnXQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzgxNThulNwWm/5WP4AUTJXZCDOoI+fwtCSJdvxRol9wdHR+yJb
-	uhwiFSSAdo9qCTHl1kiwXqQzf5xF/bBbxrlsXDmMzUW11Ve/A06L6Sr5HHpb/H8=
-X-Gm-Gg: ASbGnct4eAV/i5FYawgqBEBGpfdt19ZH1Vx9GldoZ+ne//ec1n1bjvQImcpeKKKfWjH
-	bmzlBsOnL57LbmM+h1R7JvrZVMeB+ZeXbjOS1FdptZ0EL2Xk7CUYhS/x1jYSiFLgAf8TWZtqDb2
-	vXQq623cZsBpsPKSPgfIe0YVqnwmuNoZ7qMs5llqAWUoP7BsroKwWdU3VhKnp/Ks5enkkjBOW/j
-	U8r7txnc0SzTcWVRoofBveKfz1KRujBa3ROvJPt9tFVOyk6U/skNF+r0GHPEbBwoJJyB64DuytZ
-	T+NmA8V4ba0xskyHyXjuNDJimJyHZ8t0ldoLFBvNEIw0dfmAoUKJz8BHTRuonU94vSdBDzfJQXY
-	/WwPK20WH2mtNg8TCa/GJy8rg
-X-Google-Smtp-Source: AGHT+IGctet0tbvnmmVPz/oI5Fqb6I+mucDKMgJv9axzwjfvPetRICONErkndHiBh4Y5t/R08GW8iA==
-X-Received: by 2002:a05:6512:3ba5:b0:549:4e78:9ed7 with SMTP id 2adb3069b0e04-549910d0e7bmr5230788e87.49.1741637695928;
-        Mon, 10 Mar 2025 13:14:55 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5498b1c29adsm1554207e87.215.2025.03.10.13.14.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 10 Mar 2025 13:14:55 -0700 (PDT)
-Date: Mon, 10 Mar 2025 22:14:52 +0200
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Maxime Ripard <mripard@kernel.org>
-Cc: Dmitry Baryshkov <lumag@kernel.org>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Thomas Zimmermann <tzimmermann@suse.de>, 
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Rob Clark <robdclark@gmail.com>, 
-	Abhinav Kumar <quic_abhinavk@quicinc.com>, Sean Paul <sean@poorly.run>, 
-	Marijn Suijten <marijn.suijten@somainline.org>, Dave Stevenson <dave.stevenson@raspberrypi.com>, 
-	=?utf-8?B?TWHDrXJh?= Canal <mcanal@igalia.com>, Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>, 
-	Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
-	Robert Foss <rfoss@kernel.org>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
-	Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
-	freedreno@lists.freedesktop.org
-Subject: Re: [PATCH 1/4] drm/display: hdmi: provide central data authority
- for ACR params
-Message-ID: <bensvtxc67i566qqcjketdlffyrwxcnydwarqyjau6b7ibcq4b@d6d4sbm3rubf>
-References: <20250309-drm-hdmi-acr-v1-0-bb9c242f4d4b@linaro.org>
- <20250309-drm-hdmi-acr-v1-1-bb9c242f4d4b@linaro.org>
- <20250310-funny-malamute-of-promotion-bb759e@houat>
+        bh=hANOivVIYR7EShD/fOlaDcQiemx66hUbCeB5UoCLsXI=;
+        b=c4OCBkj0iBkI9hRwsCNuvaPQzvu+0nfvPKgtYR0OLAXozhEkfZaFhkF4GhGYxLSsU2
+         cFirnBVVSX+xnbWmHY9ysKlQMECoBp8sfPi1zN+bgf9RCrbKvQ/Oip6nxSTpee7y2m69
+         KstiDaf3djHNxXFQZ0Jm4taMHnNszGEGK8QrITJS3kWYUTpbZZjYBbSjfdAbrP4+D7pj
+         /5gojobxOXF0uVoFZmSQtUf5Rgw3RPGIbyTYacZyKMxGxUXQtgmhOueACFzhcwbvTNxl
+         Oj4zuoumqKk7Y4Pucq21SHKooW9m1UULm+ZE/i6b8pz2WxxnyWouDxyXK6F+WEmPBXD3
+         Lbdw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741637747; x=1742242547;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=hANOivVIYR7EShD/fOlaDcQiemx66hUbCeB5UoCLsXI=;
+        b=Tv6O1udAYy7RBROeETao6eSlwUyyiYNL6ciFijqvmZ+ZaOHC4I0B8LZEPi7r70Gxbl
+         DZUGEHjQiZSHvj+5+zEWJU6+gDQYT4a0vzDZnAIsWQE8e1amwbBzCtTmTNBFcdwDGfXd
+         xIjcltEIPSlOIp8XRhXnQpEbYT98ogZqUu9DpUYZSxpoaIFCtimKujiGnNahahOSH+rh
+         GF0d4OGdR7mGg6pZPZDa+nrG09EgaR4W2kYgx1DWokztuDIN7bMGUexylsMCTZhculQQ
+         3YVck2UfjV4o3MrCXt3mDvfXLnRrAqswdNFstEM51N0fIkSIyU4VnECIbfueDZBpyF9X
+         U0fA==
+X-Forwarded-Encrypted: i=1; AJvYcCVM2QuLAsISte0f1EMYBXs84cdI0oD7kmnYWWWDCSGCIOn1fdJ2fOIY5fgYtdl9Lo4k4cdEHtO/zs/sJU0=@vger.kernel.org, AJvYcCWJInOVvqUoI75u5bMDRowGszQU+XUW5EYnl+GFY4bqBIW/WnGxZ3nTiWuJEK9D5Q/x0q02tbCr@vger.kernel.org
+X-Gm-Message-State: AOJu0YyJvXt6qDKnHUY1VVLK8YeNuAn6RRh/1BJKn4tVYsgVGCol/yvv
+	7vcUvjwgv7Zz698sss1Mxha0eBFKn0+qQk4klvafICGJdpWvwURJXue4inZNo1zxmB/t+BjYR+D
+	mHvj5a1ivljEFHwXqzlEIVVA6mhg7NcNO1A0=
+X-Gm-Gg: ASbGncs8S7f+OofGn1JfBFMFRqrqMiVovQiD/jHkm51XnPk9o+TzuN+AD6ODxAnL6Kr
+	EUB4lSBb75ARQPYqKACmOtXq+pbPubFJMPAjkkV2L1O1w8NU8H1rON+Pr44dHHDhLYIWuy1MrSz
+	Zxh/+nXOB+hsxOy7/9ysTGNCaRZjJxbLzt23ImEs9cS1ShH7ZUdghXeRNhywg=
+X-Google-Smtp-Source: AGHT+IGwbzDVrXV70eVmsdOraqUbyJCccW/7i4feXqbhKMbNHq3VJ3UtgTJDZtW8NLFupCXRRUQ0/OJpixF6VaKoHRw=
+X-Received: by 2002:a05:6512:281b:b0:545:eef:83f1 with SMTP id
+ 2adb3069b0e04-54990e5e126mr5308092e87.17.1741637746856; Mon, 10 Mar 2025
+ 13:15:46 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250310-funny-malamute-of-promotion-bb759e@houat>
+References: <20250310-b4-qcom-smmu-v1-1-733a1398ff85@gmail.com>
+ <6f5f2047-b315-440b-b57d-2ed0dd7395f6@arm.com> <CALHNRZ87t7eXohTcpFnejFAPDsyE_1g0aPsASuQ7y5c_zxnLUw@mail.gmail.com>
+ <c99db1aa-8b3e-4a8d-8cee-b9574686cb7f@arm.com>
+In-Reply-To: <c99db1aa-8b3e-4a8d-8cee-b9574686cb7f@arm.com>
+From: Aaron Kling <webgeek1234@gmail.com>
+Date: Mon, 10 Mar 2025 15:15:33 -0500
+X-Gm-Features: AQ5f1JoVCp031Gb_geASbG5I-LIXlAD9YBo601M-R75x92j2OnP9rX5cIKHcrko
+Message-ID: <CALHNRZ884fF4kpM_=N4d1vR27-9BOeaS7_cN_JhKN0S6MYQVQw@mail.gmail.com>
+Subject: Re: [PATCH] iommu/arm: Allow disabling Qualcomm support in arm_smmu_v3
+To: Robin Murphy <robin.murphy@arm.com>
+Cc: Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
+	iommu@lists.linux.dev, linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Mar 10, 2025 at 03:46:33PM +0100, Maxime Ripard wrote:
-> On Sun, Mar 09, 2025 at 10:13:56AM +0200, Dmitry Baryshkov wrote:
-> > From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> > 
-> > HDMI standard defines recommended N and CTS values for Audio Clock
-> > Regeneration. Currently each driver implements those, frequently in
-> > somewhat unique way. Provide a generic helper for getting those values
-> > to be used by the HDMI drivers.
-> > 
-> > The helper is added to drm_hdmi_helper.c rather than drm_hdmi_audio.c
-> > since HDMI drivers can be using this helper function even without
-> > switching to DRM HDMI Audio helpers.
-> > 
-> > Note: currently this only handles the values per HDMI 1.4b Section 7.2
-> > and HDMI 2.0 Section 9.2.1. Later the table can be expanded to
-> > accommodate for Deep Color TMDS char rates per HDMI 1.4 Appendix D
-> > and/or HDMI 2.0 / 2.1 Appendix C).
-> > 
-> > Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> > ---
-> >  drivers/gpu/drm/display/drm_hdmi_helper.c | 164 ++++++++++++++++++++++++++++++
-> >  include/drm/display/drm_hdmi_helper.h     |   6 ++
-> >  2 files changed, 170 insertions(+)
-> > 
-> > diff --git a/drivers/gpu/drm/display/drm_hdmi_helper.c b/drivers/gpu/drm/display/drm_hdmi_helper.c
-> > index 74dd4d01dd9bb2c9e69ec1c60b0056bd69417e8a..89d25571bfd21c56c6835821d2272a12c816a76e 100644
-> > --- a/drivers/gpu/drm/display/drm_hdmi_helper.c
-> > +++ b/drivers/gpu/drm/display/drm_hdmi_helper.c
-> > @@ -256,3 +256,167 @@ drm_hdmi_compute_mode_clock(const struct drm_display_mode *mode,
-> >  	return DIV_ROUND_CLOSEST_ULL(clock * bpc, 8);
-> >  }
-> >  EXPORT_SYMBOL(drm_hdmi_compute_mode_clock);
-> > +
-> > +struct drm_hdmi_acr_n_cts_entry {
-> > +	unsigned int n;
-> > +	unsigned int cts;
-> > +};
-> > +
-> > +struct drm_hdmi_acr_data {
-> > +	unsigned long tmds_clock_khz;
-> > +	struct drm_hdmi_acr_n_cts_entry n_cts_32k,
-> > +					n_cts_44k1,
-> > +					n_cts_48k;
-> > +};
-> > +
-> > +static const struct drm_hdmi_acr_data hdmi_acr_n_cts[] = {
-> > +	{
-> > +		/* "Other" entry */
-> > +		.n_cts_32k =  { .n = 4096, },
-> > +		.n_cts_44k1 = { .n = 6272, },
-> > +		.n_cts_48k =  { .n = 6144, },
-> > +	}, {
-> > +		.tmds_clock_khz = 25175,
-> > +		.n_cts_32k =  { .n = 4576,  .cts = 28125, },
-> > +		.n_cts_44k1 = { .n = 7007,  .cts = 31250, },
-> > +		.n_cts_48k =  { .n = 6864,  .cts = 28125, },
-> > +	}, {
-> > +		.tmds_clock_khz = 25200,
-> > +		.n_cts_32k =  { .n = 4096,  .cts = 25200, },
-> > +		.n_cts_44k1 = { .n = 6272,  .cts = 28000, },
-> > +		.n_cts_48k =  { .n = 6144,  .cts = 25200, },
-> > +	}, {
-> > +		.tmds_clock_khz = 27000,
-> > +		.n_cts_32k =  { .n = 4096,  .cts = 27000, },
-> > +		.n_cts_44k1 = { .n = 6272,  .cts = 30000, },
-> > +		.n_cts_48k =  { .n = 6144,  .cts = 27000, },
-> > +	}, {
-> > +		.tmds_clock_khz = 27027,
-> > +		.n_cts_32k =  { .n = 4096,  .cts = 27027, },
-> > +		.n_cts_44k1 = { .n = 6272,  .cts = 30030, },
-> > +		.n_cts_48k =  { .n = 6144,  .cts = 27027, },
-> > +	}, {
-> > +		.tmds_clock_khz = 54000,
-> > +		.n_cts_32k =  { .n = 4096,  .cts = 54000, },
-> > +		.n_cts_44k1 = { .n = 6272,  .cts = 60000, },
-> > +		.n_cts_48k =  { .n = 6144,  .cts = 54000, },
-> > +	}, {
-> > +		.tmds_clock_khz = 54054,
-> > +		.n_cts_32k =  { .n = 4096,  .cts = 54054, },
-> > +		.n_cts_44k1 = { .n = 6272,  .cts = 60060, },
-> > +		.n_cts_48k =  { .n = 6144,  .cts = 54054, },
-> > +	}, {
-> > +		.tmds_clock_khz = 74176,
-> > +		.n_cts_32k =  { .n = 11648, .cts = 210937, }, /* and 210938 */
-> > +		.n_cts_44k1 = { .n = 17836, .cts = 234375, },
-> > +		.n_cts_48k =  { .n = 11648, .cts = 140625, },
-> > +	}, {
-> > +		.tmds_clock_khz = 74250,
-> > +		.n_cts_32k =  { .n = 4096,  .cts = 74250, },
-> > +		.n_cts_44k1 = { .n = 6272,  .cts = 82500, },
-> > +		.n_cts_48k =  { .n = 6144,  .cts = 74250, },
-> > +	}, {
-> > +		.tmds_clock_khz = 148352,
-> > +		.n_cts_32k =  { .n = 11648, .cts = 421875, },
-> > +		.n_cts_44k1 = { .n = 8918,  .cts = 234375, },
-> > +		.n_cts_48k =  { .n = 5824,  .cts = 140625, },
-> > +	}, {
-> > +		.tmds_clock_khz = 148500,
-> > +		.n_cts_32k =  { .n = 4096,  .cts = 148500, },
-> > +		.n_cts_44k1 = { .n = 6272,  .cts = 165000, },
-> > +		.n_cts_48k =  { .n = 6144,  .cts = 148500, },
-> > +	}, {
-> > +		.tmds_clock_khz = 296703,
-> > +		.n_cts_32k =  { .n = 5824,  .cts = 421875, },
-> > +		.n_cts_44k1 = { .n = 4459,  .cts = 234375, },
-> > +		.n_cts_48k =  { .n = 5824,  .cts = 281250, },
-> > +	}, {
-> > +		.tmds_clock_khz = 297000,
-> > +		.n_cts_32k =  { .n = 3072,  .cts = 222750, },
-> > +		.n_cts_44k1 = { .n = 4704,  .cts = 247500, },
-> > +		.n_cts_48k =  { .n = 5120,  .cts = 247500, },
-> > +	}, {
-> > +		.tmds_clock_khz = 593407,
-> > +		.n_cts_32k =  { .n = 5824,  .cts = 843750, },
-> > +		.n_cts_44k1 = { .n = 8918,  .cts = 937500, },
-> > +		.n_cts_48k =  { .n = 5824,  .cts = 562500, },
-> > +	}, {
-> > +		.tmds_clock_khz = 594000,
-> > +		.n_cts_32k =  { .n = 3072,  .cts = 445500, },
-> > +		.n_cts_44k1 = { .n = 9408,  .cts = 990000, },
-> > +		.n_cts_48k =  { .n = 6144,  .cts = 594000, },
-> > +	},
-> > +};
-> > +
-> > +static int drm_hdmi_acr_find_tmds_entry(unsigned long tmds_clock_khz)
-> > +{
-> > +	int i;
-> > +
-> > +	/* skip the "other" entry */
-> > +	for (i = 1; i < ARRAY_SIZE(hdmi_acr_n_cts); i++) {
-> > +		if (hdmi_acr_n_cts[i].tmds_clock_khz == tmds_clock_khz)
-> > +			return i;
-> > +	}
-> > +
-> > +	return 0;
-> > +}
-> > +
-> > +/**
-> > + * drm_hdmi_acr_get_n_cts() - get N and CTS values for Audio Clock Regeneration
-> > + *
-> > + * @tmds_char_rate: TMDS clock (char rate) as used by the HDMI connector
-> > + * @sample_rate: audio sample rate
-> > + * @out_n: a pointer to write the N value
-> > + * @out_cts: a pointer to write the CTS value
-> > + *
-> > + * Get the N and CTS values (either by calculating them or by returning data
-> > + * from the tables. This follows the HDMI 1.4b Section 7.2 "Audio Sample Clock
-> > + * Capture and Regeneration".
-> > + */
-> 
-> I think we need to make it clear that it's for L-PCM only (I think?),
-> either through a format parameter or through the documentation.
+On Mon, Mar 10, 2025 at 2:52=E2=80=AFPM Robin Murphy <robin.murphy@arm.com>=
+ wrote:
+>
+> On 2025-03-10 4:45 pm, Aaron Kling wrote:
+> > On Mon, Mar 10, 2025 at 7:42=E2=80=AFAM Robin Murphy <robin.murphy@arm.=
+com> wrote:
+> >>
+> >> On 2025-03-10 6:11 am, Aaron Kling via B4 Relay wrote:
+> >>> From: Aaron Kling <webgeek1234@gmail.com>
+> >>>
+> >>> If ARCH_QCOM is enabled when building arm_smmu_v3,
+> >>
+> >> This has nothing to do with SMMUv3, though?
+> >>
+> >>> a dependency on
+> >>> qcom-scm is added, which currently cannot be disabled. Add a prompt t=
+o
+> >>> ARM_SMMU_QCOM to allow disabling this dependency.
+> >>
+> >> Why is that an issue - what problem arises from having the SCM driver
+> >> enabled? AFAICS it's also selected by plenty of other drivers includin=
+g
+> >> pretty fundamental ones like pinctrl. If it is somehow important to
+> >> exclude the SCM driver, then I can't really imagine what the use-case
+> >> would be for building a kernel which won't work on most Qualcomm
+> >> platforms but not simply disabling ARCH_QCOM...
+> >>
+> >
+> > I am working with the android kernel. The more recent setup enables a
+> > minimal setup of configs in a core kernel that works across all
+> > supported arch's, then requires further support to all be modules. I
+> > specifically am working with tegra devices. But as ARCH_QCOM is
+> > enabled in the core defconfig, when I build smmuv3 as a module, I end
+> > up with a dependency on qcom-scm which gets built as an additional
+> > module. And it would be preferable to not require qcom modules to boot
+> > a tegra device.
+>
+> That just proves my point though - if you disable ARM_SMMU_QCOM in that
+> context then you've got a kernel which won't work properly on Qualcomm
+> platforms, so you may as well have just disabled ARCH_QCOM anyway. In
+> fact the latter is objectively better since it then would not break the
+> fundamental premise of "a core kernel that works across all supported
+> arch's" :/
 
-Ack
+I'm not sure this is entirely true. Google's GKI mandates a fixed core
+kernel Image. This has the minimal configs that can't be built as
+modules. Then each device build is supposed to build independent sets
+of modules via defconfig snippets that support the rest of the
+hardware. Then what gets booted on a device is a prebuilt core kernel
+image provided by Google, plus the modules built by the vendor. In
+this setup, qcom-scm and ARM_SMMU_QCOM are modules and not part of the
+core kernel. For a qcom target, arm_smmu_v3 would be built with
+ARM_SMMU_QCOM. But then any non-qcom target that needs arm_smmu_v3
+currently builds and deps qcom-scm. But there's no technical reason
+they need that dep.
+>
+> Maybe if you can find a viable way to separate out all the arm-smmu-qcom
+> stuff into its own sub-module which only loads when needed, or possibly
+> make SCM a soft-dep (given that we already have to cope with it being
+> loaded but not initialised yet) then that might be a reasonable change
+> to make; as it stands, I don't think this patch is. And it's definitely
+> not a stable "fix" either way.
 
-> 
-> > +void
-> > +drm_hdmi_acr_get_n_cts(unsigned long long tmds_char_rate,
-> > +		       unsigned int sample_rate,
-> > +		       unsigned int *out_n,
-> > +		       unsigned int *out_cts)
-> 
-> And we should probably take the connector (or EDID) to make sure the
-> monitor can support the format and sample rates.
+The cc stable could be dropped. But I'm working with android forks of
+6.6 and 6.12 currently, so I was hoping to get this pushed back to
+stable, which would eventually filter its way over there.
 
-Interesting perspective, I'll give it a thought. I was really just
-trying to get rid of the duplication.
+>
+> But frankly, weird modules happen. Why the heck is parport_pc currently
+> loaded on my AArch64 workstation!? I can't even begin to imagine, but
+> I'll live...
 
-I think that 'supported' parts should be implemented in the hdmi-codec
-instead, parsing the ELD and updating hw constraints. WDYT?
+This is fair. But I've got to try at least to make the module
+spaghetti make sense. If no one tries, it just gets worse.
+>
+> Thanks,
+> Robin.
 
-> 
-> > +{
-> > +	/* be a bit more tolerant, especially for the 1.001 entries */
-> > +	unsigned long tmds_clock_khz = DIV_ROUND_CLOSEST_ULL(tmds_char_rate, 1000);
-> > +	const struct drm_hdmi_acr_n_cts_entry *entry;
-> > +	unsigned int n, cts, mult;
-> > +	int tmds_idx;
-> > +
-> > +	tmds_idx = drm_hdmi_acr_find_tmds_entry(tmds_clock_khz);
-> > +
-> > +	/*
-> > +	 * Don't change the order, 192 kHz is divisible by 48k and 32k, but it
-> > +	 * should use 48k entry.
-> > +	 */
-> > +	if (sample_rate % 48000 == 0) {
-> > +		entry = &hdmi_acr_n_cts[tmds_idx].n_cts_48k;
-> > +		mult = sample_rate / 48000;
-> > +	} else if (sample_rate % 44100 == 0) {
-> > +		entry = &hdmi_acr_n_cts[tmds_idx].n_cts_44k1;
-> > +		mult = sample_rate / 44100;
-> > +	} else if (sample_rate % 32000 == 0) {
-> > +		entry = &hdmi_acr_n_cts[tmds_idx].n_cts_32k;
-> > +		mult = sample_rate / 32000;
-> > +	} else {
-> > +		entry = NULL;
-> > +	}
-> > +
-> > +	if (entry) {
-> > +		n = entry->n * mult;
-> > +		cts = entry->cts;
-> > +	} else {
-> > +		/* Recommended optimal value, HDMI 1.4b, Section 7.2.1 */
-> > +		n = 128 * sample_rate / 1000;
-> > +		cts = 0;
-> > +	}
-> > +
-> > +	if (!cts)
-> > +		cts = DIV_ROUND_CLOSEST_ULL(tmds_char_rate * n,
-> > +					    128 * sample_rate);
-> > +
-> > +	*out_n = n;
-> > +	*out_cts = cts;
-> > +}
-> 
-> EXPORT_SYMBOL?
-
-Yes, I forgot it.
-
-> 
-> Also, I'd really like to have some unit tests for this. Not for all the
-> combinations, obviously, but testing that, say, 44.1kHz with a 148.5 MHz
-> char rate works as expected, and then all the failure conditions
-> depending on the monitor capabilities.
-
-Ack for the tests. For the monitor capabilities, let's finish the
-discussion above first.
-
-
-
--- 
-With best wishes
-Dmitry
+Sincerely,
+Aaron
 
