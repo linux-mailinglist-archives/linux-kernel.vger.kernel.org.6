@@ -1,268 +1,202 @@
-Return-Path: <linux-kernel+bounces-554248-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-554249-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 94854A5953A
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 13:54:24 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 52279A5953E
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 13:54:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1A4107A6543
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 12:53:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0072B16D23C
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 12:54:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A3BB229B27;
-	Mon, 10 Mar 2025 12:54:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F32A22A4CD;
+	Mon, 10 Mar 2025 12:54:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mHj/jkXt"
-Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="MwZP10U3"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 552B313CFB6;
-	Mon, 10 Mar 2025 12:54:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B17B922A4C3
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 12:54:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741611244; cv=none; b=Cl9CGpWValorp0uT0IKkzW5O7ae6+oe5pBpuD+iAlJCc2GwYds71ZKr4osCWh0ONCqq/i5pHmTRv/6BQvD6sTiswwjhOh4rj4HGEpc7QWn17XUUkLCFHtCLi6XuyvjsAbQ84qyD1XCSPlaVYpQSMhZB94QXAQBng4aGwzl7CpqE=
+	t=1741611251; cv=none; b=W4J7TJLr/2JyLlBQcsLBmhntoc26LLjgtX2lOWgwGq4cMQ/+jLJGGq45VED6xTOCmwDgbZbUwGdR936LS3GtVdH1Z5UCC2By0nP4KU3nj2usx5KKJo2Z5ta2nkhkWZ5WCBhPi0uTrF+0YNz6u+5d/P16AxQeqzALwGygVCwhiac=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741611244; c=relaxed/simple;
-	bh=mKOW0y7H+d8JdihJ/mXGS3CisQcR/M7PjYl0QDlLLdI=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=AO3ZTjEo7wdGQJS0iA3dnwAAEsd9W+Ck1PsuenbNekgSSv3aoA7quaGwOqI3mi1gjkcpyf6HaL1/3nqn44Gj+yqwiJ/hjYHmxUgOecApIo/HHAbnChEux+RJGEnmD8hdo/xppXkqHRDf5iDB+4oM8p5HxX87Gf/EYXeh6BM+CQI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mHj/jkXt; arc=none smtp.client-ip=209.85.167.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-5499c8fa0f3so1714758e87.2;
-        Mon, 10 Mar 2025 05:54:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741611240; x=1742216040; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=URGQNwjZdhyHI49nCxv8neX1u2OWYbpIKZ53BGm8OOk=;
-        b=mHj/jkXtYaHMWlgpJi52YNbMlDpZr+4eB8Dzc5p3PuUzuv5oEzdQKTX8xQffcmvxlL
-         2+mpj0jMWtenB2+GHvPDC5aZvNiJDxTOizvK4H92o7cHcUSpEogcJfQzb7LCN1u5OPl4
-         zkwr4EjkAa7lrjhdWPadebKyXhWhLBGRRrqI8Rj7Csa1gXRaOUD6PhKc6SY+yj4DnMuQ
-         m+0Z5uz5Ydk1xxEdi6XpG49IygE3+GNZFswV4z5UVhPwDXeKqPCvxMW5U/RJD6UPZdvQ
-         5hVI65W3zed9UJ9R9tE3YaB4PxmJFUq2U3tyggk1T7gIXwk1+WsTdJLsaCSzNoucWyAO
-         +/Ow==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741611240; x=1742216040;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=URGQNwjZdhyHI49nCxv8neX1u2OWYbpIKZ53BGm8OOk=;
-        b=mEAz8vHwB/D6C4YVrQS9uZwKQjpx28Cpdr+oV3RtzAgS0410zi1/t8IOVK2nbO4l/1
-         W2yhrcqnxW5bTY6HkSuf4NdqfQivsujTnpg48m/a43obufLpAgmIlV0wqx4UrKIJreHh
-         qq3lYmkEMp7hcfyqfwibfAGTTyLNpLXvxtlqK3h+WA0/xXoh8QuAWBdT4kHhUHCgDbzZ
-         MxgJZDUFo24bT2LkfDDXUZTspkpH7jjeepuF9rr6WfmhlAv8rGkMfZRaC01ccfFWSCfD
-         Dbsl3MmhrYchyv1b/tbqk3bmGUOOBGdKxRoKgEdJRFJiwqCHNzTUHvRIwFvn2bzVWaXt
-         J5ug==
-X-Forwarded-Encrypted: i=1; AJvYcCV2IJjYbNouNgNCwEowIL5pDxvFQ4X4hQ8s+QqQOSGyVKaGXZ4QEoL7JOz6wlNKLs6XWpX32GaMNx0HIw==@vger.kernel.org, AJvYcCVXuNy2apPbeZkeKwZzfDyMF+8YTOJUchnTQ4jGuxRuV3NMV1fjAcHhi/tzRDEaoE7XTZXUaWW7J3UNQyw=@vger.kernel.org, AJvYcCVlDGx/SglJwPqTveY82X7ngvy4i+eMsWLU/OjB4zgIhrGAxPxhtFOtrmBAXXRockhAbbHB9FsaS9/r@vger.kernel.org, AJvYcCWjaWK7foFSyQjkGvypl5ad8v4wd3fcEQs/s1H67rTcigyjCl4sRdbqth9yE1PsKWa8w3Q6I0HDejdRTJd55sSa5P8=@vger.kernel.org, AJvYcCWuHY7K0k1TKNypc8BhEPBK+LIZ4l0hQzy08dcc2NQICHRPa2h5WIY6qD0Htrp3uSJUUTb6VSaHaPRB@vger.kernel.org, AJvYcCXRmy4PkjcUqrCUZzq+RIMpGqep9+qKnAVuhEBJCz+ZlhI3BonluETNY4v5AYVnukb+XmVSbg1i@vger.kernel.org, AJvYcCXze+T9XCzsbi676opRx133elnyeVxXhQT3QOUXIaADgQcpzJh3YTnp9q4dVrv71nB1QkmLekbXRmF5J6R9@vger.kernel.org
-X-Gm-Message-State: AOJu0YzzCBbj3u8MpfgT1zwLnUd8vBycGr1BzVUoQ1bHB+/cYJtAQcfi
-	14jA0WZjmCdUqkrM7ymjpH3sNefvOBr8UYDiSVhYjsYDom5dWc6O
-X-Gm-Gg: ASbGnct8/ZKDhLQpiAG4rzL9s8k1zjx/EKcNzRgt/Juz+dxcM4+z4TYc2NaMXo9AWe8
-	yMKLYwSExIBX5quZSLkC7TvspahbfgPgZsWjX72doQAvFEHORkx2fgfMXImVxsntM+8BF8MSymD
-	DLw9ZdBYeXeNCWFEIZJUj+wQznfpglBYl5vbTxYnzLJAOeIfNjKoe4GYK4K1GpZwm+qjhmX+G7J
-	1n4oVG8MoNUXVbAi/MrAhljZ5wZwLqHALZdVpibExmK/47z/l795IRZS20RixLz2UsnjFxh7pxy
-	2taM+bBw77ZEqMkjhwCj/dFS6/rlc7HafDR4nu7vE/GnWLHduH4=
-X-Google-Smtp-Source: AGHT+IFA0RtQIyW+e03BOnWNOQUvnrcxE5yBsLBwjPqTi5ZfcZSG1+DhL9uQlcM6UFbaXZyVT+qAtg==
-X-Received: by 2002:a05:6512:2342:b0:549:8b97:75f2 with SMTP id 2adb3069b0e04-54990e2bdd0mr3668356e87.1.1741611240055;
-        Mon, 10 Mar 2025 05:54:00 -0700 (PDT)
-Received: from mva-rohm ([2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5498b1bc4basm1458604e87.164.2025.03.10.05.53.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 10 Mar 2025 05:53:57 -0700 (PDT)
-Date: Mon, 10 Mar 2025 14:53:50 +0200
-From: Matti Vaittinen <mazziesaccount@gmail.com>
-To: Matti Vaittinen <mazziesaccount@gmail.com>,
-	Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-Cc: Javier Carrasco <javier.carrasco.cruz@gmail.com>,
-	linux-arm-kernel@lists.infradead.org,
-	Samuel Holland <samuel@sholland.org>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>, netdev@vger.kernel.org,
-	Rob Herring <robh@kernel.org>,
-	Matti Vaittinen <mazziesaccount@gmail.com>,
-	Herve Codina <herve.codina@bootlin.com>,
-	Thomas Bonnefille <thomas.bonnefille@bootlin.com>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Nuno Sa <nuno.sa@analog.com>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	linux-media@vger.kernel.org, Jonathan Cameron <jic23@kernel.org>,
-	Claudiu Manoil <claudiu.manoil@nxp.com>, devicetree@vger.kernel.org,
-	Marcelo Schmitt <marcelo.schmitt@analog.com>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Lars-Peter Clausen <lars@metafoo.de>, linux-acpi@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org, linux-iio@vger.kernel.org,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	linux-kernel@vger.kernel.org, linux-sunxi@lists.linux.dev,
-	Eric Dumazet <edumazet@google.com>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Danilo Krummrich <dakr@kernel.org>,
-	Olivier Moysan <olivier.moysan@foss.st.com>,
-	Trevor Gamblin <tgamblin@baylibre.com>,
-	Ramona Alexandra Nechita <ramona.nechita@analog.com>,
-	Paul Elder <paul.elder@ideasonboard.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Matteo Martelli <matteomartelli3@gmail.com>,
-	Guillaume Stols <gstols@baylibre.com>,
-	Alisa-Dariana Roman <alisadariana@gmail.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Dumitru Ceclan <mitrutzceclan@gmail.com>,
-	Paolo Abeni <pabeni@redhat.com>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	David Lechner <dlechner@baylibre.com>, Chen-Yu Tsai <wens@csie.org>,
-	Daniel Scally <djrscally@gmail.com>
-Subject: [PATCH v6 00/10] Support ROHM BD79124 ADC
-Message-ID: <cover.1741610847.git.mazziesaccount@gmail.com>
+	s=arc-20240116; t=1741611251; c=relaxed/simple;
+	bh=xsKwuaT+kl/9LxkTzq9+F+i2EjGR0W72fihNUXW6VbA=;
+	h=From:To:cc:Subject:MIME-Version:Content-Type:Date:Message-ID; b=DUxJNCWt5C9+KsihIFfeiX8K6LVUicr+G+/YmcHQWrg5CAnDwo++HIxSK3FN2Gxs+9knlqXBPwIn5RAs1Ig4Xjn6bBoxMobcK/zqohQYIwQx2ejvVNBhEHuaA7yBiQ5nUgtecix9Oqb6BZElS2QSRYO8P+e0C6ZHDrv8UQR32Rc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=MwZP10U3; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1741611248;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=QOWCKaCbmlFC0Efy5SeEAE0DBijaDRqz9slfsvo05nc=;
+	b=MwZP10U3UgghJctYjGLoMYdrTUou0H1ti/iLdBvdU0DvSseHCcNuCCrWSP9oQxIM3nFate
+	cWGkGIhNTw9UcA1g0GKa68rmVeb9MgObL6pu6BDsmpKAiLbmwF3CM2KUARAK1UwEySNjxG
+	D2CRaW+7mVkh7ui1mmOux5YBpHa4scY=
+Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-155-jIPLHhpaPTWVNadJ5e4jKQ-1; Mon,
+ 10 Mar 2025 08:54:03 -0400
+X-MC-Unique: jIPLHhpaPTWVNadJ5e4jKQ-1
+X-Mimecast-MFC-AGG-ID: jIPLHhpaPTWVNadJ5e4jKQ_1741611241
+Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 4531B1955D6C;
+	Mon, 10 Mar 2025 12:54:01 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.42.28.61])
+	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id DC13B1828A8C;
+	Mon, 10 Mar 2025 12:53:57 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+	Kingdom.
+	Registered in England and Wales under Company Registration No. 3798903
+From: David Howells <dhowells@redhat.com>
+To: netdev@vger.kernel.org
+cc: dhowells@redhat.com, Herbert Xu <herbert@gondor.apana.org.au>,
+    Marc Dionne <marc.dionne@auristor.com>,
+    Jakub Kicinski <kuba@kernel.org>,
+    "David S. Miller" <davem@davemloft.net>,
+    Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
+    Simon Horman <horms@kernel.org>,
+    Chuck Lever <chuck.lever@oracle.com>, linux-crypto@vger.kernel.org,
+    linux-afs@lists.infradead.org, linux-fsdevel@vger.kernel.org,
+    linux-kernel@vger.kernel.org
+Subject: [GIT PULL net-next] crypto: Add Kerberos crypto lib
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="muBpqT72KPU1YOIU"
-Content-Disposition: inline
-
-
---muBpqT72KPU1YOIU
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <953586.1741611236.1@warthog.procyon.org.uk>
 Content-Transfer-Encoding: quoted-printable
+Date: Mon, 10 Mar 2025 12:53:56 +0000
+Message-ID: <953587.1741611236@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
 
-Support ROHM BD79124 ADC.
+Hi,
 
-This series adds also couple of IIO ADC helper functions for parsing the
-channel information from the device tree. There are also new helpers
-included for iterating and counting firmware child nodes with a specific
-name.
+Could you pull this into the net-next tree please (it has been pulled into
+the crypto tree[1])?  This provides the Kerberos-5 crypto parts needed by
+the AF_RXRPC RxGK (GSSAPI) security class.  In the future, it could also b=
+e
+used by NFS and SunRPC as much of the code is abstracted from there.  This
+is a prerequisite for the rxrpc patches[2].
 
-Series does also convert couple of drivers to use these helpers. The
-rzg2l_adc and the sun20i-gpadc are converted to use the new ADC helper.
+It does a couple of things:
 
-The gianfar driver under net and the thp7312 under media/i2c are added as
-first users of the newly added "named child node" -helpers.
+ (1) Provide an AEAD crypto driver, krb5enc, that mirrors the authenc
+     driver, but that hashes the plaintext, not the ciphertext.  This was
+     made a separate module rather than just being a part of the authenc
+     driver because it has to do all of the constituent operations in the
+     opposite order - which impacts the async op handling.
 
-There has been some discussion about how useful these ADC helpers are,
-and whether they should support also differential and single ended channel
-configurations. This version does not include support for those - with the
-benefit of reduced complexity and easier to use API.
+     Testmgr data is provided for AES+SHA2 and Camellia combinations of
+     authenc and krb5enc used by the krb5 library.  AES+SHA1 is not
+     provided as the RFCs don't contain usable test vectors.
 
-NOTE: Patches 4,5,9 and 10 are untested as I lack of relevant HW.
-They have been compile tested only.
+ (2) Provide a Kerberos 5 crypto library.  This is an extract from the
+     sunrpc driver as that code can be shared between sunrpc/nfs and
+     rxrpc/afs.  This provides encryption, decryption, get MIC and verify
+     MIC routines that use and wrap the crypto functions, along with some
+     functions to provide layout management.
 
-The ROHM BD79124 ADC itself is quite usual stuff. 12-bit, 8-channel ADC
-with threshold monitoring.
+     This supports AES+SHA1, AES+SHA2 and Camellia encryption types.
 
-Except that:
- - each ADC input pin can be configured as a general purpose output.
- - manually starting an ADC conversion and reading the result would
-   require the I2C _master_ to do clock stretching(!) for the duration
-   of the conversion... Let's just say this is not well supported.
- - IC supports 'autonomous measurement mode' and storing latest results
-   to the result registers. This mode is used by the driver due to the
-   "peculiar" I2C when doing manual reads.
+     Self-testing is provided that goes further than is possible with
+     testmgr, doing subkey derivation as well.
 
-Furthermore, the ADC uses this continuous autonomous measuring,
-and the IC keeps producing new 'out of window' IRQs if measurements are
-out of window - the driver disables the event for 1 seconds when sending
-it to user. This prevents generating storm of events
+David
 
-Revision history:
-v5 =3D> v6:
- - Drop applied patch
- - Add *_for_each_named_child_* iterators
- - Add a patch converting the thp7312 driver to use the new helper
- - Styling and minor things pointed by reviewers
-
-v4 =3D> v5: Fixes as per various review comments. Most notably:
- - Drop the patch making the TI's ADC driver to respect device tree.
- - Add (RFC) patch converting gianfar driver to use new name child-node
-   counting API as suggested by Andy.
- - Add fwnode_get_child_node_count_named() as suggested by Rob.
- - rebase to v6.14-rc5
- More accurate changelog in individual patches.
-
-v3 =3D> v4:
- - Drop the ADC helper support for differential channels
- - Drop the ADC helper for getting only channel IDs by fwnode.
- - "Promote" the function counting the number of child nodes with a
-   specific name to the property.h (As suggested by Jonathan).
- - Add ADC helpers to a namespace.
- - Rebase on v6.14-rc3
- - More minor changes described in individual patches.
-
-v2 =3D> v3:
- - Restrict BD79124 channel numbers as suggested by Conor and add
-   Conor's Reviewed-by tag.
- - Support differential and single-ended inputs
- - Convert couple of existing drivers to use the added ADC helpers
- - Minor fixes based on reviews
-Link to v2:
-https://lore.kernel.org/all/cover.1738761899.git.mazziesaccount@gmail.com/
-
-RFC v1 =3D> v2:
- - Drop MFD and pinmux.
- - Automatically re-enable events after 1 second.
- - Export fwnode parsing helpers for finding the ADC channels.
+Link: https://lore.kernel.org/linux-crypto/3709378.1740991489@warthog.proc=
+yon.org.uk/ [1]
+Link: https://web.git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-f=
+s.git/log/?h=3Drxrpc-next [2]
 
 ---
+The following changes since commit 1e15510b71c99c6e49134d756df91069f7d1814=
+1:
 
-Matti Vaittinen (10):
-  dt-bindings: ROHM BD79124 ADC/GPO
-  property: Add functions to iterate named child
-  iio: adc: add helpers for parsing ADC nodes
-  iio: adc: rzg2l_adc: Use adc-helpers
-  iio: adc: sun20i-gpadc: Use adc-helpers
-  iio: adc: Support ROHM BD79124 ADC
-  MAINTAINERS: Add IIO ADC helpers
-  MAINTAINERS: Add ROHM BD79124 ADC/GPO
-  net: gianfar: Use device_get_child_node_count_named()
-  media: thp7312: Use helper for iterating named child nodes
+  Merge tag 'net-6.14-rc5' of git://git.kernel.org/pub/scm/linux/kernel/gi=
+t/netdev/net (2025-02-27 09:32:42 -0800)
 
- .../bindings/iio/adc/rohm,bd79124.yaml        |  114 ++
- MAINTAINERS                                   |   12 +
- drivers/base/property.c                       |   54 +
- drivers/iio/adc/Kconfig                       |   17 +
- drivers/iio/adc/Makefile                      |    3 +
- drivers/iio/adc/industrialio-adc.c            |   79 ++
- drivers/iio/adc/rohm-bd79124.c                | 1106 +++++++++++++++++
- drivers/iio/adc/rzg2l_adc.c                   |   38 +-
- drivers/iio/adc/sun20i-gpadc-iio.c            |   38 +-
- drivers/media/i2c/thp7312.c                   |    8 +-
- drivers/net/ethernet/freescale/gianfar.c      |   17 +-
- include/linux/iio/adc-helpers.h               |   27 +
- include/linux/property.h                      |   20 +
- 13 files changed, 1471 insertions(+), 62 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/iio/adc/rohm,bd79124.=
-yaml
- create mode 100644 drivers/iio/adc/industrialio-adc.c
- create mode 100644 drivers/iio/adc/rohm-bd79124.c
- create mode 100644 include/linux/iio/adc-helpers.h
+are available in the Git repository at:
 
+  git://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git tags=
+/crypto-krb5-20250228
 
-base-commit: 7eb172143d5508b4da468ed59ee857c6e5e01da6
---=20
-2.48.1
+for you to fetch changes up to 0dd8f8533a833eeb8e51034072a59930bcbec725:
 
+  crypto/krb5: Implement crypto self-testing (2025-02-28 09:42:42 +0000)
 
---muBpqT72KPU1YOIU
-Content-Type: application/pgp-signature; name="signature.asc"
+----------------------------------------------------------------
+crypto: Add Kerberos crypto lib
 
------BEGIN PGP SIGNATURE-----
+----------------------------------------------------------------
+David Howells (17):
+      crypto/krb5: Add API Documentation
+      crypto/krb5: Add some constants out of sunrpc headers
+      crypto: Add 'krb5enc' hash and cipher AEAD algorithm
+      crypto/krb5: Test manager data
+      crypto/krb5: Implement Kerberos crypto core
+      crypto/krb5: Add an API to query the layout of the crypto section
+      crypto/krb5: Add an API to alloc and prepare a crypto object
+      crypto/krb5: Add an API to perform requests
+      crypto/krb5: Provide infrastructure and key derivation
+      crypto/krb5: Implement the Kerberos5 rfc3961 key derivation
+      crypto/krb5: Provide RFC3961 setkey packaging functions
+      crypto/krb5: Implement the Kerberos5 rfc3961 encrypt and decrypt fun=
+ctions
+      crypto/krb5: Implement the Kerberos5 rfc3961 get_mic and verify_mic
+      crypto/krb5: Implement the AES enctypes from rfc3962
+      crypto/krb5: Implement the AES enctypes from rfc8009
+      crypto/krb5: Implement the Camellia enctypes from rfc6803
+      crypto/krb5: Implement crypto self-testing
 
-iQEzBAEBCAAdFiEEIx+f8wZb28fLKEhTeFA3/03aocUFAmfO4NsACgkQeFA3/03a
-ocUrtAf6AkAaWL1Jnt8D97sqQ8s0urKuXJ/Emcn098LL3HXfpGZ3oOnkjn8mfJAa
-Ic6x2BRQXOvDu/hzU3JAm3mPKKFi0Ksp/pFf28GP9hKetp3mmL6juBUdRJeNzNPN
-BqAVFgh+GGv8UT38XCSI/7+bh1i50mU+t12fCDl7m+vXEYA237ulDTN1wWN+Jhd+
-HpAjCsUj7hqY2HRHGecTzWMFGXdjZFGJJzxgqnuo+D1e000IkpHx9/9jejmHPkUK
-ADeKqj0nQCp2LV/Kx8r393w9/MmpSBOD93cjCjHeN6OizuKvesExCkZUJA9BvvaE
-giS8zbsz3QJNWA1MoPkbsNQ26lL2+Q==
-=+1Jo
------END PGP SIGNATURE-----
+ Documentation/crypto/index.rst   |   1 +
+ Documentation/crypto/krb5.rst    | 262 +++++++++++++
+ crypto/Kconfig                   |  13 +
+ crypto/Makefile                  |   3 +
+ crypto/krb5/Kconfig              |  26 ++
+ crypto/krb5/Makefile             |  18 +
+ crypto/krb5/internal.h           | 247 ++++++++++++
+ crypto/krb5/krb5_api.c           | 452 ++++++++++++++++++++++
+ crypto/krb5/krb5_kdf.c           | 145 +++++++
+ crypto/krb5/rfc3961_simplified.c | 797 ++++++++++++++++++++++++++++++++++=
++++++
+ crypto/krb5/rfc3962_aes.c        | 115 ++++++
+ crypto/krb5/rfc6803_camellia.c   | 237 ++++++++++++
+ crypto/krb5/rfc8009_aes2.c       | 362 ++++++++++++++++++
+ crypto/krb5/selftest.c           | 544 ++++++++++++++++++++++++++
+ crypto/krb5/selftest_data.c      | 291 ++++++++++++++
+ crypto/krb5enc.c                 | 504 +++++++++++++++++++++++++
+ crypto/testmgr.c                 |  16 +
+ crypto/testmgr.h                 | 351 +++++++++++++++++
+ include/crypto/authenc.h         |   2 +
+ include/crypto/krb5.h            | 160 ++++++++
+ 20 files changed, 4546 insertions(+)
+ create mode 100644 Documentation/crypto/krb5.rst
+ create mode 100644 crypto/krb5/Kconfig
+ create mode 100644 crypto/krb5/Makefile
+ create mode 100644 crypto/krb5/internal.h
+ create mode 100644 crypto/krb5/krb5_api.c
+ create mode 100644 crypto/krb5/krb5_kdf.c
+ create mode 100644 crypto/krb5/rfc3961_simplified.c
+ create mode 100644 crypto/krb5/rfc3962_aes.c
+ create mode 100644 crypto/krb5/rfc6803_camellia.c
+ create mode 100644 crypto/krb5/rfc8009_aes2.c
+ create mode 100644 crypto/krb5/selftest.c
+ create mode 100644 crypto/krb5/selftest_data.c
+ create mode 100644 crypto/krb5enc.c
+ create mode 100644 include/crypto/krb5.h
 
---muBpqT72KPU1YOIU--
 
