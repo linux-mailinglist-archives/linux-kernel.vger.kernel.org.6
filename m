@@ -1,235 +1,143 @@
-Return-Path: <linux-kernel+bounces-554523-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-554526-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 94B4EA59941
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 16:12:09 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 32D12A59946
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 16:12:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A54C516E4D2
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 15:12:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EDF903A5CD4
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 15:12:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05C9822D4F6;
-	Mon, 10 Mar 2025 15:11:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87CE422CBE5;
+	Mon, 10 Mar 2025 15:12:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=janestreet.com header.i=@janestreet.com header.b="hr1Ohe45"
-Received: from mxout5.mail.janestreet.com (mxout5.mail.janestreet.com [64.215.233.18])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="CKQn2HDb"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B68BE22D4DD
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 15:11:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=64.215.233.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81A4022CBCC
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 15:12:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741619493; cv=none; b=MHrWPvHVk0uPi0Ae8BiMtC4pBLAnd7nVbMW/RJP/M4rQevZKjZX2IOrl7obz455f08FzMIdVXGqf/jaPCHiZE1tMZIO8b5uLrJGynpISlG+zeV69eghf3BeMLIi0iMZ0VMKCNW+jAfx6mnDcavv4v6xZBaMyMakgMsAKXEYa9dc=
+	t=1741619539; cv=none; b=TiQhX3TxakjlYbc6quyURsuC1ttjtlfSDxIhNG8qx27k7WzAwlFV/qaVBV7qC0P3Lc2qDNkBxg3xn2CUXf2yuNtekA+wep2XbIfQ6xsh8pNitfHVT974lfYwARsO3Is0HTlKht8G7D+LAPmioLmq3pnEnIDiaaw3iTLHQ9Mn76s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741619493; c=relaxed/simple;
-	bh=n4CB51vKHwyuFqNcXzUAX7PS596NEfnq5KAc1iqpvMI=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=lXLGwEK/xBVINArScxvilEyBspxC6Xr+lEntAQ25s0Fjx9SHQERYX9nFMgux+hq6lCJwQtvZuPKPs2UiOBu8UKyPDda9QUKX0AIqfsqUvS7Nf02kkXnoG1P5/ugsosY+2BN+JHKHHyPB9O+n5usz6N4IP/j/IzKZWmgQMmo5Wvw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=janestreet.com; spf=pass smtp.mailfrom=janestreet.com; dkim=pass (2048-bit key) header.d=janestreet.com header.i=@janestreet.com header.b=hr1Ohe45; arc=none smtp.client-ip=64.215.233.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=janestreet.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=janestreet.com
-Date: Mon, 10 Mar 2025 11:11:30 -0400
-From: Nikhil Jha <njha@janestreet.com>
-To: njha@janestreet.com
-Cc: Trond Myklebust <trondmy@kernel.org>, Anna Schumaker <anna@kernel.org>,
- 	Chuck Lever <chuck.lever@oracle.com>,
- 	Jeff Layton <jlayton@kernel.org>, Neil Brown <neilb@suse.de>,
- 	Olga Kornievskaia <okorniev@redhat.com>,
- 	Dai Ngo <Dai.Ngo@oracle.com>, Tom Talpey <tom@talpey.com>,
- 	linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 1/2] sunrpc: implement rfc2203 rpcsec_gss seqnum cache
-Message-ID: <20250310A151130a3b13064.njha@janestreet.com>
+	s=arc-20240116; t=1741619539; c=relaxed/simple;
+	bh=DME2SwO8b7ZBt/TsHuhQzAmd4YlVhkofri53ykVfsg4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nTU2j/G7gjG9U1xYmRZpshQto5laTU1+1zFk2x1QqR7AKBlhxWVzeKBTAML3S2ByT0k8kLkUI1rH9tXboOWnJSTtNkdhAowlXcfh6cNemETn9ZVz7kcPwlndvpF0NrZMbBVMOlqreUFc+x8ds9Yg4evPwBPtghAUxbYfef5tHPk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=CKQn2HDb; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 302C040E0217;
+	Mon, 10 Mar 2025 15:12:15 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id t-wtFpHsHOr2; Mon, 10 Mar 2025 15:12:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1741619529; bh=pQSxmlkxlccvpDW5jsYkjlJjniEAJj00sl/3YTg+wtg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=CKQn2HDbVULJpJ/bwJD+YjA/oPMiEkR1+iXwpM7VS8Nkzy5QgrZF3NP9gjeemAxqE
+	 W4XoCnaEoWFB0LQnOL6rwuga09vgHYVAIncCAY8F+SGIos/q47mubYJtq5doP/4YSO
+	 nN0MKKFvK4FgLkXdU9fwXkJ4HIPu+6KuSV9Tbo/DSnLZ62+fA2Ul5GSPTW/sxcgGo4
+	 kllPISXtdOVNqoRx6x7p8uXtS21xL17olIWvPr0t1GAZBmKoe2MZyxmbfTPyv2yMsU
+	 PGSRR3NldO1Lx0+rsNbaxcSZ7HRhgWvjt5akfCgkFdnqwBVEFwUrMZ4P9fKRz6/Hgj
+	 QdeBlOcxT9p0TEscLe/Xw5CsyiieSO8gE1sxXJC2J34ISehTVdSOKbGFzczSIkg/PK
+	 gJD74Jwll+2UkPp7xnAY3QyamC4ioJkEuBe35X8QIBb3HoxOBEg/BG3d1LTJHGV0H1
+	 RYGL97LyKxugM4/pMD2rxxoEPBRlRrUor2KNk8yhrsY8cIAaaLgsf4bwuxpBeEP57o
+	 jagiDa+yHv3kBux1weYl3Xxz7VySDQ++O7Qrqb2ZnVfJmvhURw1WEzBb1q/2M+odm1
+	 HXKV8Un5a7ZMlFebbs9n8Ncdorc8YdMEMRxxN3rvRjKILivTHpXBWcWJDaRnMfuTFr
+	 k+pQrrlXfPo7dJSMJZnqCrEg=
+Received: from zn.tnic (pd95303ce.dip0.t-ipconnect.de [217.83.3.206])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 2537240E0202;
+	Mon, 10 Mar 2025 15:11:55 +0000 (UTC)
+Date: Mon, 10 Mar 2025 16:11:54 +0100
+From: Borislav Petkov <bp@alien8.de>
+To: Alexey Gladkov <legion@kernel.org>
+Cc: Juergen Gross <jgross@suse.com>, Joerg Roedel <joro@8bytes.org>,
+	"Alexey Gladkov (Intel)" <alexey.gladkov@intel.com>,
+	"Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+	Dave Hansen <dave.hansen@intel.com>, Joerg Roedel <jroedel@suse.de>,
+	Ingo Molnar <mingo@kernel.org>, x86@kernel.org, hpa@zytor.com,
+	Tom Lendacky <thomas.lendacky@amd.com>,
+	Nikunj A Dadhania <nikunj@amd.com>, linux-kernel@vger.kernel.org,
+	Larry.Dewey@amd.com
+Subject: Re: [PATCH] x86/sev: Make SEV_STATUS available via SYSFS
+Message-ID: <20250310151154.GOZ88BOinZVkbYEx0w@fat_crate.local>
+References: <2koe2zg26fndx6d6jcmbg6dzybbgldgrjufupj74nvmav2dmqg@w6bknhosl64h>
+ <Z8le_TWUJNebrfs7@8bytes.org>
+ <Z8l66FFgPu5hWtuI@agladkov-desk>
+ <Z86-3n1-MArVLM9Z@8bytes.org>
+ <Z87L0bRi8tcAIsDw@example.org>
+ <e9d58d64-ab0f-49e8-ac87-c02bda6bc837@suse.com>
+ <Z87ce37GjCqpOLCW@8bytes.org>
+ <b2e585a7-edd5-4b13-b904-3d0913177aee@suse.com>
+ <20250310133833.GHZ87rWfuV6WgQTsoh@fat_crate.local>
+ <Z878IRbbzIbUDQvj@example.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=janestreet.com;
-  s=waixah; t=1741619490;
-  bh=2vCrVBe73/FtaNWIvYfhPUf51t1swy31fQkJF8XPZRY=;
-  h=Date:From:To:Cc:Subject;
-  b=hr1Ohe45MWmS7HLUttEcGZLbmjJv5Qcpjc4xKYM/3t8OCQIYXWjx/EAO66ICe253U
-  vSU6VxXT9S2TPJDxyzAVY6eJVbL09pQLeEAsEbechtZO3LiIuWEyGMToFILwqL/H41
-  fj/Xv3Vo7SdYwCCgMlPeIBRlKDDlkSHORYFgWBIJ9HmgWEeyiydOhuiUX7no7HK6SI
-  mL4bPhzui6fdoNXmhrhYwyRF102XmNoDfInr0RC0p9lxQXhcfSz/GZ6lSjOfeBhHZL
-  mxVj7osgjsLfOMMZk7rM7yqde2FqCzOHWbsWcyH3A929AfYxMS5jA9STik3mid5wp8
-  Z+hQUQTqsnTGQ==
+In-Reply-To: <Z878IRbbzIbUDQvj@example.org>
 
-This implements a sequence number cache of the last three (right now
-hardcoded) sent sequence numbers for a given XID, as suggested by the
-RFC.
+On Mon, Mar 10, 2025 at 03:50:09PM +0100, Alexey Gladkov wrote:
+> Am I understand correctly that you and Joerg are proposing
+> 
+> /sys/guest/tdx/...
+> /sys/guest/sev/...
+> 
+> ?
+> 
+> Which path to use for the host side ?
+> 
+> For guest: /sys/coco/guest/{tdx,sev}/...
+> For host:  /sys/coco/host/{tdx,sev}/...
+> 
+> Maybe it would be better to add the "coco" subdirectory or something like
+> that ?
 
-From RFC2203 5.3.3.1:
+Hmm, so we can do
 
-"Note that the sequence number algorithm requires that the client
-increment the sequence number even if it is retrying a request with
-the same RPC transaction identifier.  It is not infrequent for
-clients to get into a situation where they send two or more attempts
-and a slow server sends the reply for the first attempt. With
-RPCSEC_GSS, each request and reply will have a unique sequence
-number. If the client wishes to improve turn around time on the RPC
-call, it can cache the RPCSEC_GSS sequence number of each request it
-sends. Then when it receives a response with a matching RPC
-transaction identifier, it can compute the checksum of each sequence
-number in the cache to try to match the checksum in the reply's
-verifier."
+/sys/guest
 
-Signed-off-by: Nikhil Jha <njha@janestreet.com>
----
- include/linux/sunrpc/xprt.h    | 31 +++++++++++++++++++++++++++++-
- net/sunrpc/auth_gss/auth_gss.c | 35 +++++++++++++++++++++++-----------
- net/sunrpc/xprt.c              |  1 +
- 3 files changed, 55 insertions(+), 12 deletions(-)
+and extend
 
-diff --git a/include/linux/sunrpc/xprt.h b/include/linux/sunrpc/xprt.h
-index 81b952649d35..023cebacea37 100644
---- a/include/linux/sunrpc/xprt.h
-+++ b/include/linux/sunrpc/xprt.h
-@@ -30,6 +30,8 @@
- #define RPC_MAXCWND(xprt)	((xprt)->max_reqs << RPC_CWNDSHIFT)
- #define RPCXPRT_CONGESTED(xprt) ((xprt)->cong >= (xprt)->cwnd)
- 
-+#define RPC_GSS_SEQNO_ARRAY_SIZE 3U
-+
- enum rpc_display_format_t {
- 	RPC_DISPLAY_ADDR = 0,
- 	RPC_DISPLAY_PORT,
-@@ -66,7 +68,9 @@ struct rpc_rqst {
- 	struct rpc_cred *	rq_cred;	/* Bound cred */
- 	__be32			rq_xid;		/* request XID */
- 	int			rq_cong;	/* has incremented xprt->cong */
--	u32			rq_seqno;	/* gss seq no. used on req. */
-+	u32			rq_seqno;	/* latest gss seq no. used on req. */
-+	u32			rq_seqnos[RPC_GSS_SEQNO_ARRAY_SIZE];	/* past req seqnos */
-+	unsigned int		rq_seqno_count;	/* number of entries in the array */
- 	int			rq_enc_pages_num;
- 	struct page		**rq_enc_pages;	/* scratch pages for use by
- 						   gss privacy code */
-@@ -119,6 +123,31 @@ struct rpc_rqst {
- #define rq_svec			rq_snd_buf.head
- #define rq_slen			rq_snd_buf.len
- 
-+static inline void xdr_init_gss_seqnos(struct rpc_rqst *req)
-+{
-+	req->rq_seqno = 0;
-+	req->rq_seqno_count = 0;
-+}
-+
-+static inline int xdr_add_gss_seqno(struct rpc_rqst *req, u32 seqno)
-+{
-+	if (likely(req->rq_seqno_count < RPC_GSS_SEQNO_ARRAY_SIZE)) {
-+		req->rq_seqnos[req->rq_seqno_count++] = req->rq_seqno;
-+	} else {
-+		/* Shift array to make room for the most recent one */
-+		memmove(&req->rq_seqnos[0], &req->rq_seqnos[1],
-+			(RPC_GSS_SEQNO_ARRAY_SIZE - 1) * sizeof(req->rq_seqnos[0]));
-+		req->rq_seqnos[RPC_GSS_SEQNO_ARRAY_SIZE - 1] = req->rq_seqno;
-+	}
-+	req->rq_seqno = seqno;
-+	return 0;
-+}
-+
-+static inline bool xdr_gss_seqnos_empty(struct rpc_rqst *req)
-+{
-+	return req->rq_seqno == 0 && req->rq_seqno_count == 0;
-+}
-+
- /* RPC transport layer security policies */
- enum xprtsec_policies {
- 	RPC_XPRTSEC_NONE = 0,
-diff --git a/net/sunrpc/auth_gss/auth_gss.c b/net/sunrpc/auth_gss/auth_gss.c
-index 369310909fc9..c79300965391 100644
---- a/net/sunrpc/auth_gss/auth_gss.c
-+++ b/net/sunrpc/auth_gss/auth_gss.c
-@@ -1545,6 +1545,7 @@ static int gss_marshal(struct rpc_task *task, struct xdr_stream *xdr)
- 	struct kvec	iov;
- 	struct xdr_buf	verf_buf;
- 	int status;
-+	u32 seqno;
- 
- 	/* Credential */
- 
-@@ -1556,7 +1557,8 @@ static int gss_marshal(struct rpc_task *task, struct xdr_stream *xdr)
- 	cred_len = p++;
- 
- 	spin_lock(&ctx->gc_seq_lock);
--	req->rq_seqno = (ctx->gc_seq < MAXSEQ) ? ctx->gc_seq++ : MAXSEQ;
-+	seqno = (ctx->gc_seq < MAXSEQ) ? ctx->gc_seq++ : MAXSEQ;
-+	xdr_add_gss_seqno(req, seqno);
- 	spin_unlock(&ctx->gc_seq_lock);
- 	if (req->rq_seqno == MAXSEQ)
- 		goto expired;
-@@ -1678,17 +1680,31 @@ gss_refresh_null(struct rpc_task *task)
- 	return 0;
- }
- 
-+static u32
-+gss_validate_seqno_mic(struct gss_cl_ctx *ctx, u32 seqno, __be32 *seq, __be32 *p, u32 len)
-+{
-+	struct kvec iov;
-+	struct xdr_buf verf_buf;
-+	struct xdr_netobj mic;
-+
-+	*seq = cpu_to_be32(seqno);
-+	iov.iov_base = seq;
-+	iov.iov_len = 4;
-+	xdr_buf_from_iov(&iov, &verf_buf);
-+	mic.data = (u8 *)p;
-+	mic.len = len;
-+	return gss_verify_mic(ctx->gc_gss_ctx, &verf_buf, &mic);
-+}
-+
- static int
- gss_validate(struct rpc_task *task, struct xdr_stream *xdr)
- {
- 	struct rpc_cred *cred = task->tk_rqstp->rq_cred;
- 	struct gss_cl_ctx *ctx = gss_cred_get_ctx(cred);
- 	__be32		*p, *seq = NULL;
--	struct kvec	iov;
--	struct xdr_buf	verf_buf;
--	struct xdr_netobj mic;
- 	u32		len, maj_stat;
- 	int		status;
-+	int		i = 1; /* don't recheck the first item */
- 
- 	p = xdr_inline_decode(xdr, 2 * sizeof(*p));
- 	if (!p)
-@@ -1705,13 +1721,10 @@ gss_validate(struct rpc_task *task, struct xdr_stream *xdr)
- 	seq = kmalloc(4, GFP_KERNEL);
- 	if (!seq)
- 		goto validate_failed;
--	*seq = cpu_to_be32(task->tk_rqstp->rq_seqno);
--	iov.iov_base = seq;
--	iov.iov_len = 4;
--	xdr_buf_from_iov(&iov, &verf_buf);
--	mic.data = (u8 *)p;
--	mic.len = len;
--	maj_stat = gss_verify_mic(ctx->gc_gss_ctx, &verf_buf, &mic);
-+	maj_stat = gss_validate_seqno_mic(ctx, task->tk_rqstp->rq_seqno, seq, p, len);
-+	/* RFC 2203 5.3.3.1 - compute the checksum of each sequence number in the cache */
-+	while (unlikely(maj_stat == GSS_S_BAD_SIG && i < task->tk_rqstp->rq_seqno_count))
-+		maj_stat = gss_validate_seqno_mic(ctx, task->tk_rqstp->rq_seqnos[i], seq, p, len);
- 	if (maj_stat == GSS_S_CONTEXT_EXPIRED)
- 		clear_bit(RPCAUTH_CRED_UPTODATE, &cred->cr_flags);
- 	if (maj_stat)
-diff --git a/net/sunrpc/xprt.c b/net/sunrpc/xprt.c
-index 09f245cda526..7da7d0b0a018 100644
---- a/net/sunrpc/xprt.c
-+++ b/net/sunrpc/xprt.c
-@@ -1898,6 +1898,7 @@ xprt_request_init(struct rpc_task *task)
- 	req->rq_snd_buf.bvec = NULL;
- 	req->rq_rcv_buf.bvec = NULL;
- 	req->rq_release_snd_buf = NULL;
-+	xdr_init_gss_seqnos(req);
- 	xprt_init_majortimeo(task, req, task->tk_client->cl_timeout);
- 
- 	trace_xprt_reserve(req);
+/sys/hypervisor
+
+Or we can do what you're suggesting.
+
+If we do /sys/coco/host, then we'll have two different places to read HV info.
+
+Or we can stick *everything* coco needs in
+
+/sys/coco/{sev,tdx}
+
+but then it is coco-specific and if other guest types want to put stuff in
+sysfs, it'll get ugly.
+
+So I guess having
+
+/sys/guest
+and
+/sys/hypervisor
+
+kinda keeps it all clean, hierarchy-wise...
+
+Right?
+
 -- 
-2.39.3
+Regards/Gruss,
+    Boris.
 
+https://people.kernel.org/tglx/notes-about-netiquette
 
