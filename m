@@ -1,194 +1,260 @@
-Return-Path: <linux-kernel+bounces-553950-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-553955-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C0CBA5910D
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 11:24:33 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9DBC4A59117
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 11:25:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 98F531888E8F
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 10:24:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 29F25188F53C
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 10:25:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75E38226870;
-	Mon, 10 Mar 2025 10:23:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90A23226CE0;
+	Mon, 10 Mar 2025 10:25:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="PGePVzJG"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (1024-bit key) header.d=iki.fi header.i=@iki.fi header.b="sZ7xHOF7"
+Received: from meesny.iki.fi (meesny.iki.fi [195.140.195.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B733D226529
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 10:23:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741602233; cv=none; b=q7GlLjNRYcGANnbKydvuyx9Q73BQmsAl4/uC3tCfU5Q9tMPA98QA7hvGNX7t4tpuqKxYfKeY35OlEO13+/BbmnF0Fj3a1dXIV16KExx53vkvn078LpzaZ/v6T7PDbitTrhXR6gbkAZWZYsfStINIFwubvVKbg/3py8ybWiROxew=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741602233; c=relaxed/simple;
-	bh=KfKRHQ8QFUYVsqgaPCXNdrqSt2cCVkpxSjrd0RLuCLw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Wlkt2sa1gMyBJ9aZ2y94xlMxQ9qDGvSG+gJ7xDczuR9uxzvrZ5Zko/l71Shx8SKlBin2VOuw8AWP1bprqLqT3qEUOpRL2hyvRLXQu+T6fm6o4/vJj2AZielJdA3JIbQSitvyIzz3SoXg9mtrtrXWa1L6bKeaeQbFF/XQZxjOwBQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=PGePVzJG; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1741602230;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A61BD225797;
+	Mon, 10 Mar 2025 10:25:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=195.140.195.201
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741602320; cv=pass; b=QMy4ERn02ZI2wghSj9OB7+FvcyJIb1eQ+xQtpxt54Ldd3wZ5+lY9R4LC7o8aumGXd/EjAl1ibXXzqZIP7Fwaqyb0lcSTghm2EL7NYswF2USzwORDlejl5cy2cpF2/cUYQCZfg7Dz0OeCg7Pc2CegF+RLW6iB8vyPL5DOcFFA6/c=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741602320; c=relaxed/simple;
+	bh=hzvCCp7hE1VHF1M93UATEhcDu5LaeDH+ubaeNpDVLbM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qJwXVFxSFi7uxckWTxIdFyRrWXBbmex4GU4fbsB2pVZPNgRgANqDxUrtTjCCEGOYswltQTuT9fDd4KxXY79cHC2LkgcrQh41bciIH+//yDFB9X01Fgzd+blLXeOJGhXzz9i8ghxkf3JOftt0sMwA4UVLojhcRK3ZSR9puq76LdY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iki.fi; spf=pass smtp.mailfrom=iki.fi; dkim=pass (1024-bit key) header.d=iki.fi header.i=@iki.fi header.b=sZ7xHOF7; arc=pass smtp.client-ip=195.140.195.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iki.fi
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iki.fi
+Received: from hillosipuli.retiisi.eu (2a00-1190-d1dd-0-c641-1eff-feae-163c.v6.cust.suomicom.net [IPv6:2a00:1190:d1dd:0:c641:1eff:feae:163c])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: sailus)
+	by meesny.iki.fi (Postfix) with ESMTPSA id 4ZBCh125fyzyT0;
+	Mon, 10 Mar 2025 12:25:05 +0200 (EET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=iki.fi; s=meesny;
+	t=1741602308;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=/12pVfGrHfAC9KyGDgoRmy2bzHmGQuVzoa458sMOedg=;
-	b=PGePVzJGA9AFXWShebGXObQLbomqOe73qMYQlo7e21WiszY5nnn/kOTFVQx4NUYmZjiE7f
-	725LZV4IseSIMGgmWQSYep3zgZav6i9gEF2xUkUI6mKsWh8nuDGTOtOBK3E+ys000pM2cp
-	oUZl8z4nUc+qME9N0nxU3dD/JMpo1Xw=
-Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
- [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-93-DI6YVjloMkqt61PY_4mfIw-1; Mon, 10 Mar 2025 06:23:49 -0400
-X-MC-Unique: DI6YVjloMkqt61PY_4mfIw-1
-X-Mimecast-MFC-AGG-ID: DI6YVjloMkqt61PY_4mfIw_1741602228
-Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-3914bc0cc4aso332260f8f.3
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 03:23:49 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741602228; x=1742207028;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=/12pVfGrHfAC9KyGDgoRmy2bzHmGQuVzoa458sMOedg=;
-        b=a03rvkui0b0mCd3r+TsG5DV2JXudbqLcK9LDFDsnQSUErj+cAIosIeUVtGJXPNuQ6G
-         WqhKj1k9YfA/2xKkxc2JaAUyZKQ+WCSRXSIEHS+96JZvwUtg+EyQUu2jq7GK6vW352Z8
-         gB6XRi86lGiq9MKZ4oZniatiAotBbaIKXZcTKQcrXDRMhxtH3/3E2Dphcqif2Lwj7UMI
-         aklXc94rDsGnmn0sz2upHdbgmMUXTJ4vdchQl1o2MuFWhgQ9WPcxT2Z7X7Rmc+klJZxi
-         Zk2AOdhK581VfOUqWoCjaBnD62LUdCOYn/kfw5cEXeX5oq8jfubQxxVR5dc0OwAuBaH1
-         SZCw==
-X-Forwarded-Encrypted: i=1; AJvYcCXcsbszL4JsKyb0X3yhZ4C6uIgVs6454yqWKQ3Kix4gVESEsN/sbCJnI+stYdtq0FrPckHHdamiQ8sJknQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzWbSvGjPyAyvRYqL4XXSnYYl8hLu7tkGYMJHxw4/j+VjBNvfPL
-	rmxPVbuTHbBH9Q86y202rAvQcqPHuyfTW/Iw3ZpD4sJMh/CX1UnIxdOr+JN2AG+OASn1TKOjPEt
-	Iu0GF6iU0PZ+ZVtHHUO//B8zYL3XpBqF713eJuozuZXkOxfB0E+IpPp1mafggqw==
-X-Gm-Gg: ASbGncs5FMfHK5QdYhYxx45WeIPmD7Qof+R5RTUM9WnRJHR3U4KeEn1rDwbqfjPQ8Gt
-	pN/UsQfCQgOz6/a5Gxd7lc15MGm9Rond/muEJKSnbh4Hv/dekQr4mpiAJuD/T+G0LT0a7UD95a/
-	KU1g+UIEiw6pM9sxdYP1Xd67VAzCmgMf40VnuX72O329NO6jppt4HcHT98Hn4gtwfILXbvCgpSY
-	EQy+lpYPDKOBHNfP31y7/rDIcQV2FlOic/V5YMMK4EBgrcH5Kki+QzB4KA+k+5J9BwrmMNdIGEm
-	s/VyII5lEwzoxfko1KGm2EUl8Vlirx8WOSwNDfMTIrk+FYBxameNxGo=
-X-Received: by 2002:adf:e007:0:b0:390:f4f9:8396 with SMTP id ffacd0b85a97d-39132d7ff8bmr4952018f8f.28.1741602227909;
-        Mon, 10 Mar 2025 03:23:47 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGTlUKdfWg/n6nLhAEk75JdM460Sx5llLCeap2DgVS7ohzTSeVMGhEWCd6FidoOs3NkTtglMA==
-X-Received: by 2002:adf:e007:0:b0:390:f4f9:8396 with SMTP id ffacd0b85a97d-39132d7ff8bmr4951998f8f.28.1741602227497;
-        Mon, 10 Mar 2025 03:23:47 -0700 (PDT)
-Received: from ?IPV6:2a01:e0a:c:37e0:ced3:55bd:f454:e722? ([2a01:e0a:c:37e0:ced3:55bd:f454:e722])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3912bfdff72sm14634492f8f.36.2025.03.10.03.23.46
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 10 Mar 2025 03:23:46 -0700 (PDT)
-Message-ID: <de5b9722-905c-49e6-87dc-3fcdeb07fb09@redhat.com>
-Date: Mon, 10 Mar 2025 11:23:45 +0100
+	bh=Rqphmd21bOkdXsuSWrt33WicDw56krWCddUo2Bhz1zE=;
+	b=sZ7xHOF7Oan5NNSDXvxp1e0VKFUe4VYxlrtSJEDrnoq9d81lIHeModlB6azC8Hr2rtyxnz
+	nOlMLlBDiL7ZSAOwYESC1KRHx7nwvrAClLR5z1Bo3BUeZ229b2zedzgUo4fal2HPwY29gE
+	ZNv6z1uQXUDDsO49u/4yZckTm535Lxw=
+ARC-Seal: i=1; s=meesny; d=iki.fi; t=1741602308; a=rsa-sha256; cv=none;
+	b=ysSrW01wgE/Uwql8eegaOY1vWm5yuAyMz9ZLw/vbaO2/LlKplPRUhLfwZ9QYHhHd09XuUT
+	8R6JetviriF8NqnA2NtJLKvbdoLBqIioSjRU5XPc9vKdQaZBrEhXFDEq2T3g7AKSk78SZG
+	DfrlnjrLXJvHlnI+OgeQREZGZoT32KA=
+ARC-Authentication-Results: i=1;
+	ORIGINATING;
+	auth=pass smtp.auth=sailus smtp.mailfrom=sakari.ailus@iki.fi
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=iki.fi;
+	s=meesny; t=1741602308;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Rqphmd21bOkdXsuSWrt33WicDw56krWCddUo2Bhz1zE=;
+	b=eWSILLlusI23VAAXDpL3Zq70o/OfyX74lU3Y9ikUD4m4iK4gJvdGH79yMXLYKYiw1l9KFq
+	mefPQuHMrXFREKljV2q28I3vVW79G60GPJHYSit2hGpR/G5QMki0e+oIKsHig/2O+HzmmW
+	e7rtGlwQd5O0a5qevF4uP5tSYfF4Nkk=
+Received: from valkosipuli.retiisi.eu (valkosipuli.localdomain [192.168.4.2])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by hillosipuli.retiisi.eu (Postfix) with ESMTPS id 942A6634C93;
+	Mon, 10 Mar 2025 12:25:04 +0200 (EET)
+Date: Mon, 10 Mar 2025 10:25:04 +0000
+From: Sakari Ailus <sakari.ailus@iki.fi>
+To: Mathis Foerst <mathis.foerst@mt.com>
+Cc: Dan Carpenter <dan.carpenter@linaro.org>, linux-kernel@vger.kernel.org,
+	Steve Longerbeam <slongerbeam@gmail.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>, linux-media@vger.kernel.org,
+	linux-staging@lists.linux.dev, imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org, manuel.traut@mt.com,
+	mathis.foerst@zuehlke.com
+Subject: Re: [PATCH v1 1/1] media: imx: csi: Parse link configuration from
+ fw_node
+Message-ID: <Z86-AFnPQ2wXKidi@valkosipuli.retiisi.eu>
+References: <20250305113802.897087-1-mathis.foerst@mt.com>
+ <20250305113802.897087-2-mathis.foerst@mt.com>
+ <Z8nOTrjEW_OYBGlq@valkosipuli.retiisi.eu>
+ <84aa2d87-d7f1-46c9-b28d-6f0e9a78788d@stanley.mountain>
+ <Z8oQCuqKVH225lPw@valkosipuli.retiisi.eu>
+ <Z8r21Z2HthBwGDSq@mt.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH drm-next 1/2] vmalloc: Add atomic_vmap
-To: Ryosuke Yasuoka <ryasuoka@redhat.com>
-Cc: Matthew Wilcox <willy@infradead.org>, maarten.lankhorst@linux.intel.com,
- mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch,
- kraxel@redhat.com, gurchetansingh@chromium.org, olvaffe@gmail.com,
- akpm@linux-foundation.org, urezki@gmail.com, hch@infradead.org,
- dmitry.osipenko@collabora.com, dri-devel@lists.freedesktop.org,
- linux-kernel@vger.kernel.org, virtualization@lists.linux.dev,
- linux-mm@kvack.org
-References: <20250305152555.318159-1-ryasuoka@redhat.com>
- <20250305152555.318159-2-ryasuoka@redhat.com>
- <Z8kp9Z9VgTpQmV9d@casper.infradead.org>
- <3bfd4238-6954-41a3-a5a3-8515a3ac9dce@redhat.com>
- <Z8nEqDQhjU-Ly8Js@phenom.ffwll.local>
- <51c11147-4927-4ebc-9737-fd1eebe4e0bd@redhat.com>
- <CAHpthZqn7ZZW1ekFQe7nN0+xfsNvMQMKhjMNcB3EyQ18yfQhiA@mail.gmail.com>
-Content-Language: en-US, fr
-From: Jocelyn Falempe <jfalempe@redhat.com>
-In-Reply-To: <CAHpthZqn7ZZW1ekFQe7nN0+xfsNvMQMKhjMNcB3EyQ18yfQhiA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z8r21Z2HthBwGDSq@mt.com>
 
-On 09/03/2025 09:07, Ryosuke Yasuoka wrote:
-> On Fri, Mar 7, 2025 at 4:55 PM Jocelyn Falempe <jfalempe@redhat.com> wrote:
->>
->> On 06/03/2025 16:52, Simona Vetter wrote:
->>> On Thu, Mar 06, 2025 at 02:24:51PM +0100, Jocelyn Falempe wrote:
->>>> On 06/03/2025 05:52, Matthew Wilcox wrote:
->>>>> On Thu, Mar 06, 2025 at 12:25:53AM +0900, Ryosuke Yasuoka wrote:
->>>>>> Some drivers can use vmap in drm_panic, however, vmap is sleepable and
->>>>>> takes locks. Since drm_panic will vmap in panic handler, atomic_vmap
->>>>>> requests pages with GFP_ATOMIC and maps KVA without locks and sleep.
->>>>>
->>>>> In addition to the implicit GFP_KERNEL allocations Vlad mentioned, how
->>>>> is this supposed to work?
->>>>>
->>>>>> +  vn = addr_to_node(va->va_start);
->>>>>> +
->>>>>> +  insert_vmap_area(va, &vn->busy.root, &vn->busy.head);
->>>>>
->>>>> If someone else is holding the vn->busy.lock because they're modifying the
->>>>> busy tree, you'll corrupt the tree.  You can't just say "I can't take a
->>>>> lock here, so I won't bother".  You need to figure out how to do something
->>>>> safe without taking the lock.  For example, you could preallocate the
->>>>> page tables and reserve a vmap area when the driver loads that would
->>>>> then be usable for the panic situation.  I don't know that we have APIs
->>>>> to let you do that today, but it's something that could be added.
->>>>>
->>>> Regarding the lock, it should be possible to use the trylock() variant, and
->>>> fail if the lock is already taken. (In the panic handler, only 1 CPU remain
->>>> active, so it's unlikely the lock would be released anyway).
->>>>
->>>> If we need to pre-allocate the page table and reserve the vmap area, maybe
->>>> it would be easier to just always vmap() the primary framebuffer, so it can
->>>> be used in the panic handler?
->>>
->>> Yeah I really don't like the idea of creating some really brittle one-off
->>> core mm code just so we don't have to vmap a buffer unconditionally. I
->>> think even better would be if drm_panic can cope with non-linear buffers,
->>> it's entirely fine if the drawing function absolutely crawls and sets each
->>> individual byte ...
->>
->> It already supports some non-linear buffer, like Nvidia block-linear:
->> https://elixir.bootlin.com/linux/v6.13.5/source/drivers/gpu/drm/nouveau/dispnv50/wndw.c#L606
->>
->> And I've also sent some patches to support Intel's 4-tile and Y-tile format:
->> https://patchwork.freedesktop.org/patch/637200/?series=141936&rev=5
->> https://patchwork.freedesktop.org/patch/637202/?series=141936&rev=5
->>
->> Hopefully Color Compression can be disabled on intel's GPU, otherwise
->> that would be a bit harder to implement than tiling.
->>
->>>
->>> The only thing you're allowed to do in panic is try_lock on a raw spinlock
->>> (plus some really scare lockless tricks), imposing that on core mm sounds
->>> like a non-starter to me.
->>>
->>> Cheers, Sima
->>
+Hi Mathis,
+
+On Fri, Mar 07, 2025 at 02:38:29PM +0100, Mathis Foerst wrote:
+> Hi Sakari, Hi Dan,
 > 
-> Thank you all for your comments.
-> I understand adding atomic_vmap is not possible as vmalloc is not compatible
-> with GFP_ATOMIC. I'll re-implement this by pre-allocating the page table and
-> reserve the vmap area while the kernel is alive. It'll might be
-> allocated in driver
-> codes so maybe I don't need to add any features in core mm code.
+> thanks a lot for your feedback.
+> 
+> On Thu, Mar 06, 2025 at 09:13:46PM +0000, Sakari Ailus wrote:
+> > Hi Dan,
+> > 
+> > On Thu, Mar 06, 2025 at 10:07:20PM +0300, Dan Carpenter wrote:
+> > > On Thu, Mar 06, 2025 at 04:33:18PM +0000, Sakari Ailus wrote:
+> > > > Hi Mathis,
+> > > > 
+> > > > Thanks for the patch.
+> > > > 
+> > > > On Wed, Mar 05, 2025 at 12:38:02PM +0100, Mathis Foerst wrote:
+> > > > > The imx-media-csi driver requires upstream camera drivers to implement
+> > > > > the subdev-pad-op "get_mbus_config" [0]. Camera drivers that don't
+> > > > > implement this function are not usable on the i.MX6.
+> > > > > 
+> > > > > The docs for get_mbus_config [1] say:
+> > > > > @get_mbus_config: get the media bus configuration of a remote sub-device.
+> > > > >             The media bus configuration is usually retrieved from the
+> > > > >             firmware interface at sub-device probe time, immediately
+> > > > >             applied to the hardware and eventually adjusted by the
+> > > > >             driver.
+> > > > > 
+> > > > > Currently, the imx-media-csi driver is not incorporating the information
+> > > > > from the firmware interface and therefore relies on the implementation of
+> > > > > get_mbus_config by the camera driver.
+> > > > > 
+> > > > > To be compatible with camera drivers not implementing get_mbus_config
+> > > > > (which is the usual case), use the bus information from the fw interface:
+> > > > > 
+> > > > > The camera does not necessarily has a direct media bus link to the CSI as
+> > > > > the video-mux and/or the MIPI CSI-2 receiver of the i.MX6 might be in
+> > > > > between them on the media pipeline.
+> > > > > The CSI driver already implements the functionality to find the connected
+> > > > > camera sub-device to call get_mbus_config on it.
+> > > > > 
+> > > > > At this point the driver is modified as follows:
+> > > > > In the case that get_mbus_config is not implemented by the upstream
+> > > > > camera, try to get its endpoint configuration from the firmware interface
+> > > > > usign v4l2_fwnode_endpoint_parse.
+> > > > > For the supported mbus_types (V4L2_MBUS_PARALLEL, V4L2_MBUS_BT656 and
+> > > > > V4L2_MBUS_CSI2_DPHY), extract the mbus_config from the endpoint
+> > > > > configuration.
+> > > > > For all other mbus_types, return an error.
+> > > > > 
+> > > > > Note that parsing the mbus_config from the fw interface is not done during
+> > > > > probing because the camera that's connected to the CSI can change based on
+> > > > > the selected input of the video-mux at runtime.
+> > > > > 
+> > > > > [0] drivers/staging/media/imx/imx-media-csi.c - line 211..216
+> > > > > [1] include/media/v4l2-subdev.h - line 814
+> > > > > 
+> > > > > Signed-off-by: Mathis Foerst <mathis.foerst@mt.com>
+> > > > > ---
+> > > > >  drivers/staging/media/imx/imx-media-csi.c | 36 ++++++++++++++++++++---
+> > > > >  1 file changed, 32 insertions(+), 4 deletions(-)
+> > > > > 
+> > > > > diff --git a/drivers/staging/media/imx/imx-media-csi.c b/drivers/staging/media/imx/imx-media-csi.c
+> > > > > index 3edbc57be2ca..394a9321a10b 100644
+> > > > > --- a/drivers/staging/media/imx/imx-media-csi.c
+> > > > > +++ b/drivers/staging/media/imx/imx-media-csi.c
+> > > > > @@ -169,6 +169,8 @@ static int csi_get_upstream_mbus_config(struct csi_priv *priv,
+> > > > >  {
+> > > > >  	struct v4l2_subdev *sd, *remote_sd;
+> > > > >  	struct media_pad *remote_pad;
+> > > > > +	struct fwnode_handle *ep_node;
+> > > > > +	struct v4l2_fwnode_endpoint ep = { .bus_type = 0 };
+> > > > 
+> > > > Are there any defaults in DT bindings (other than 0's)? Also initialising a
+> > > > field to zero this way is redundant, just use {}.
+> > > > 
+> > > 
+> > > I was going to respond in much the same way.  This is equivalen to:
+> > > 
+> > > struct v4l2_fwnode_endpoint ep = { .bus_type = V4L2_MBUS_UNKNOWN };
+> > 
+> > Thinking about this in a context of parsing the endpoint, in fact the
+> > bus_type should be specified. Presumably the hardware is D-PHY, so the
+> > correct value would be V4L2_MBUS_CSI2_DPHY. This way
+> > v4l2_fwnode_endpoint_parse() doesn't need to guess.
+> 
+> I think we must use "bus_type = V4L2_MBUS_UNKNOWN" here:
+> 
+> The i.MX6 has two types of camera interfaces: Parallel and MIPI CSI-2.
+> They are connected either directly or via a video-mux to the CSIs
+> (See IMX6DQRM.pdf - Figure 9-3 for the connection diagram)
+> 
+> Pre-defining V4L2_MBUS_CSI2_DPHY here would let
+> v4l2_fwnode_endpoint_parse() fail if the camera uses the parallel bus.
+> 
+> We could distinguish between MIPI CSI-2 and Parallel input by checking
+> the grp_id of the upstream device like it's already done in
+> csi_get_upstream_mbus_config().
+> But for the Parallel case we still can't know if we should set bus_type
+> to V4L2_MBUS_PARALLEL or to V4L2_MBUS_BT656 - the i.MX6 supports both
+> formats on the parallel interface.
+> 
+> That's why I would argue that v4l2_fwnode_endpoint_parse() must figure
+> out the bus_type from the fw node.
 
-Maybe another way to do that, would be to atomically kmap only one page 
-at a time. And when drawing the panic screen, make sure that for each 
-pixel the right page is mapped.
-Would kmap_local_page() fit for this purpose?
+Right, nowadays you can indeed do this -- it wasn't a long ago when you
+couldn't. I presume the bindings do specify the bus-type property is
+mandatory? Where are the bindings btw.?
 
-Best regards,
+> 
+> > 
+> > > 
+> > > > >  	int ret;
+> > > > >  
+> > > > >  	if (!priv->src_sd)
+> > > > > @@ -210,11 +212,37 @@ static int csi_get_upstream_mbus_config(struct csi_priv *priv,
+> > > > >  
+> > > > >  	ret = v4l2_subdev_call(remote_sd, pad, get_mbus_config,
+> > > > >  			       remote_pad->index, mbus_cfg);
+> > > > > -	if (ret == -ENOIOCTLCMD)
+> > > > > -		v4l2_err(&priv->sd,
+> > > > > -			 "entity %s does not implement get_mbus_config()\n",
+> > > > > -			 remote_pad->entity->name);
+> > > > > +	if (ret == -ENOIOCTLCMD) {
+> > > > 
+> > > > 	if (!ret)
+> > > > 		return 0;
+> > > > 
+> > > > And you can unindent the rest.
+> > > 
+> > > I was going to say this too but then I thought actually this needs to
+> > > be:
+> > > 
+> > > 	if (ret != -ENOIOCTLCMD)
+> > > 		return ret;
+> > > 
+> > > Which is weird.  Better to break all the new code into a separate
+> > > helper function.
+> > > 
+> > > 	if (ret == -ENOIOCTLCMD)
+> > > 		ret = parse_fw_link_config_stuff();
+> > > 
+> > > 	return ret;
+> 
+> Good point. I factored out a helper function as suggested.
+> 
+> > 
+> > Indeed. get_mbus_config() presumably wouldn't return an error but
+> > correctness is usually a good idea.
+> > 
 
 -- 
+Regards,
 
-Jocelyn
-
-
-> 
-> Best regards,
-> Ryosuke
-> 
-
+Sakari Ailus
 
