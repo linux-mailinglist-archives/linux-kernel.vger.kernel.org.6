@@ -1,173 +1,213 @@
-Return-Path: <linux-kernel+bounces-554279-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-554312-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A6EC3A595A4
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 14:11:09 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E51D5A59616
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 14:21:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 280F3188A31B
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 13:11:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 653CF1890906
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 13:21:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E56A229B00;
-	Mon, 10 Mar 2025 13:11:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A7BC229B1F;
+	Mon, 10 Mar 2025 13:20:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="FYzK+YX/";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="7jixCHNs"
-Received: from fhigh-b6-smtp.messagingengine.com (fhigh-b6-smtp.messagingengine.com [202.12.124.157])
+	dkim=pass (2048-bit key) header.d=imgtec.com header.i=@imgtec.com header.b="Hs6KCTK7"
+Received: from mx08-00376f01.pphosted.com (mx08-00376f01.pphosted.com [91.207.212.86])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB67A178395
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 13:10:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.157
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F6F1229B01;
+	Mon, 10 Mar 2025 13:20:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.86
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741612261; cv=none; b=C/8H2YImRjNoNWOilO7YtPxmbaIhJNNDul2ZPDujLsq68/8WTQxNAwvdAkTo7V6tlLyxS2sAZ8r1r69fkcmvW/GKC9pGkL2GvX7pAOlKe8GodK8QJiiws3EH+RQWdOE7PCKO7ET/GfgWD8wpkBMU28NxemkC+PMvr/+nj0ueahE=
+	t=1741612844; cv=none; b=AF7jdxjKATJkfSuPHk94jcyhkOPlmZ5h+OA1Kb2GFynEdbdCD0pmLcyfbysP7Svrh/q16rS/h8W/ncVw9rnylEwdYSaKnoGYSVMLLIbp6dLM0T05x6TAZH+tAD2daAO+2Uit5qzuqgr4jguD2XrQy39haVjxpWL8DADc1ZJ8BSA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741612261; c=relaxed/simple;
-	bh=/YBgUHgorEByh1qRn8grRlvMisGp1g3JEl01KzlpUz0=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=HZUEsNBYeasPExuM73sJs6S8JfiZwAtvooyrU0Yavd61izJPZdkmhV74rpNETmU0gnxmoaY73TKZ+Ju+k81Bm1yxKPUbtH4t0MJ3USyi6NXID+AivMhB7vVvHkAa9ZqhB4l6NvcU4W84AWdSq9+cbhAvrtvQISL7GZn+ZNbM+N0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=FYzK+YX/; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=7jixCHNs; arc=none smtp.client-ip=202.12.124.157
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from phl-compute-07.internal (phl-compute-07.phl.internal [10.202.2.47])
-	by mailfhigh.stl.internal (Postfix) with ESMTP id 67DEE2540201;
-	Mon, 10 Mar 2025 09:10:58 -0400 (EDT)
-Received: from phl-imap-11 ([10.202.2.101])
-  by phl-compute-07.internal (MEProxy); Mon, 10 Mar 2025 09:10:58 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm3; t=1741612258;
-	 x=1741698658; bh=OQntpLoo3ph3muLoF4Ou7wx76i2vcnUwLXFqRX2k83k=; b=
-	FYzK+YX/uP5dIuMqJ0YhLDWSZnV5Ba5Z3Vi/O27+agWlrwyHY6qjecekLwlpEkD5
-	iE8MnK2xUfNihxQF3kJMChtvmtA9dnVB8t09kxnq7ZPJKgiLW5S94azNadZYK0iu
-	plmu4oCDa18vZZVAasQ8bFiP9YNmc0cHXiFyDNiydvWJ7NebY2hpLRpmqYeAWA50
-	KZVt9t662FCtm2wp75InaMlbFhUFxU4D37v3vIBpn8OFgHhX9o1tE7MXFwMFJgdB
-	IYHIuI7Zcowj1lR2uX46QoexT6tR5KFUIBv2tmwhGOA5TgUUC0vXzqWq0Bgn/Oi5
-	VOpgNPHnyWrbSn3qFC2VQw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1741612258; x=
-	1741698658; bh=OQntpLoo3ph3muLoF4Ou7wx76i2vcnUwLXFqRX2k83k=; b=7
-	jixCHNsndMpFkg/bxWotZ9jihuZgVPSMy9RSh8tBTI2hxtrsdw51A7ENUKwdvk1Y
-	c0zg8575ey0P0ERTBiBOEFV1dTsdB9TV8K33O1oYR9YZSFkxlkEoLDRTdjPPQAnE
-	e7IErZM4bHX2MPMPzMDffvtbYRn090pcYGtJaUktTtMqQAJgVD4sGdCGMYpYfFkA
-	WpmWsNWMcYHV4sEp7mjuhAwRCAberEvdXqe1UDb9yhrlynUt4vHURcuuABd2VDQ4
-	IbidcZgiQgA9A8fVkeoQ4ugZTYj0jZv4pAXY4XcGimd1CX5jWNWweHjn7i/LHDvU
-	QwVzRiguN+czE6YomNf7Q==
-X-ME-Sender: <xms:4eTOZyZdYXnbrpO3hUKJpiuEzpSIExEowRfgS91FOXjOTEsXsAo3Fg>
-    <xme:4eTOZ1bpIkP-tKHQqmgYYpQbpC8GOdIXs6u_o0dKtNlZjYDdQK6pm3DVJpS7kzZ4Y
-    T6LLEdqgJ0CxEEoCOY>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdduudelgeefucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
-    pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
-    gvnhhtshculddquddttddmnecujfgurhepofggfffhvfevkfgjfhfutgfgsehtjeertder
-    tddtnecuhfhrohhmpedftehrnhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnug
-    gsrdguvgeqnecuggftrfgrthhtvghrnhephfdthfdvtdefhedukeetgefggffhjeeggeet
-    fefggfevudegudevledvkefhvdeinecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrg
-    hmpehmrghilhhfrhhomheprghrnhgusegrrhhnuggsrdguvgdpnhgspghrtghpthhtohep
-    udegpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopegsphesrghlihgvnhekrdguvg
-    dprhgtphhtthhopehthhhomhgrshdrlhgvnhgurggtkhihsegrmhgurdgtohhmpdhrtghp
-    thhtoheprhhitghkrdhprdgvughgvggtohhmsggvsehinhhtvghlrdgtohhmpdhrtghpth
-    htoheprghrnhgusehkvghrnhgvlhdrohhrghdprhgtphhtthhopehmihhnghhosehkvghr
-    nhgvlhdrohhrghdprhgtphhtthhopeigkeeisehkvghrnhgvlhdrohhrghdprhgtphhtth
-    hopehtghhlgieslhhinhhuthhrohhnihigrdguvgdprhgtphhtthhopegurghvvgdrhhgr
-    nhhsvghnsehlihhnuhigrdhinhhtvghlrdgtohhmpdhrtghpthhtohepkhhirhhilhhlrd
-    hshhhuthgvmhhovheslhhinhhugidrihhnthgvlhdrtghomh
-X-ME-Proxy: <xmx:4eTOZ8_1KJo9jpuy3vJKXKF2sAN2Jhn3OSPmZUOD5jm3AvFFwr7aPA>
-    <xmx:4eTOZ0oPANJHtNWC4p4lzlZHBTPD2j8WqnwkXRYgDjvCS4gqHJJd9w>
-    <xmx:4eTOZ9rCPvhGjiNefgfXysx0Kfcdkvzgtxvf--9RTGNwqgtN-_vNPg>
-    <xmx:4eTOZyRvp0Of_I2Yl0_PKa7siRf14jYWhm59Uba1F048eEWe3WVEqg>
-    <xmx:4uTOZ-4HqUswNRoNQWpeWe2wK97LG9Lgf2G0hi5V-VD25wfBSTlUfMWy>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id AA1AB2220073; Mon, 10 Mar 2025 09:10:57 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1741612844; c=relaxed/simple;
+	bh=SqV1IJTAkSWRFFjRTnZftoakZj1+AKPrc1tTCrwNB9Q=;
+	h=From:Subject:Date:Message-ID:MIME-Version:Content-Type:To:CC; b=MX6vtdzmbK/+5P+ZFBQjcLQxs/5pb3OIagWo8EV20JNOo3Ebjqulf0j2NoVexzdrtLUY1Q0mnKDT/yvvBft62NZqUgsAb2vsB6JKaIIXFBE3wrsQa9JWnR7HIkKV6h8pYVn2FGrzMxjY8sPmT1TGatUTZt5tMu4gAyLs4Piuhzw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=imgtec.com; spf=pass smtp.mailfrom=imgtec.com; dkim=pass (2048-bit key) header.d=imgtec.com header.i=@imgtec.com header.b=Hs6KCTK7; arc=none smtp.client-ip=91.207.212.86
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=imgtec.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=imgtec.com
+Received: from pps.filterd (m0168888.ppops.net [127.0.0.1])
+	by mx08-00376f01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52A7nW1g015329;
+	Mon, 10 Mar 2025 13:10:44 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=imgtec.com; h=cc
+	:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=dk201812; bh=eVEunwoeTDsdAhdaNChHP7S
+	AFdZNASrhuCkvqq03in8=; b=Hs6KCTK7egH4HQMh2QoiIoV/Tp9cm4d32sOcSO0
+	dfUO3LfKW0+3FLsaM2lZTtbMYPHCBABFPAzo2/OVWq7STXjgoY8Vu+xpK+2Yc+2s
+	iKFazfIBSnApcaPpDwbnnBSzHz5Raip4TZ1HwXWdCDhyMjOCyeyZP62AXPBAC0/p
+	f+7yi7GaZZlXaeFUUHDhwfawESXqjOne6SSSz020OU7YkWktYOm3KnBttCztCkfZ
+	7RWsRQbGtU8K4gY1I/f0iZ0gejHJLm7EpbmJesKaIftNurqcpS08gMBjdM57nI3z
+	EvR3yOG+eHz2+PU8abgyVtZZJ7hK4Ry/nB5MPnWRuejUj6A==
+Received: from hhmail05.hh.imgtec.org (83-244-153-141.cust-83.exponential-e.net [83.244.153.141])
+	by mx08-00376f01.pphosted.com (PPS) with ESMTPS id 458d1wha4n-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
+	Mon, 10 Mar 2025 13:10:44 +0000 (GMT)
+Received: from Matts-MacBook-Pro.local (172.25.0.133) by
+ HHMAIL05.hh.imgtec.org (10.100.10.120) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.44; Mon, 10 Mar 2025 13:10:42 +0000
+From: Matt Coster <matt.coster@imgtec.com>
+Subject: [PATCH v3 00/18] Imagination BXS-4-64 MC1 GPU support
+Date: Mon, 10 Mar 2025 13:10:24 +0000
+Message-ID: <20250310-sets-bxs-4-64-patch-v1-v3-0-143b3dbef02f@imgtec.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Mon, 10 Mar 2025 14:10:23 +0100
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Borislav Petkov" <bp@alien8.de>
-Cc: "Ingo Molnar" <mingo@kernel.org>, "Arnd Bergmann" <arnd@kernel.org>,
- "Thomas Gleixner" <tglx@linutronix.de>, "Ingo Molnar" <mingo@redhat.com>,
- "Dave Hansen" <dave.hansen@linux.intel.com>, x86@kernel.org,
- "Kuppuswamy Sathyanarayanan" <sathyanarayanan.kuppuswamy@linux.intel.com>,
- "Rick Edgecombe" <rick.p.edgecombe@intel.com>,
- "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
- "Tom Lendacky" <thomas.lendacky@amd.com>, "H. Peter Anvin" <hpa@zytor.com>,
- "Jason A . Donenfeld" <Jason@zx2c4.com>, linux-kernel@vger.kernel.org
-Message-Id: <7012583a-90be-4156-a151-2fc56fa18d51@app.fastmail.com>
-In-Reply-To: <20250305225057.GBZ8jVUXJmIJBZwdgT@fat_crate.local>
-References: <20250304143340.928503-1-arnd@kernel.org>
- <Z8grEnsAcMrm9sCc@gmail.com>
- <20250305221700.GPZ8jNXPCFR1w1NyEQ@fat_crate.local>
- <20250305222052.GAZ8jORCVmKQhEkrw6@fat_crate.local>
- <a6145d2a-e1a9-41b4-8017-5bbf37ec2d65@app.fastmail.com>
- <20250305225057.GBZ8jVUXJmIJBZwdgT@fat_crate.local>
-Subject: Re: [PATCH] x86: coco: mark cc_mask as __maybe_unused
-Content-Type: text/plain
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAMDkzmcC/3XNvQ6DIBDA8VdpmHsNIBjt1PdoOuhxKIMfAUJsj
+ O9etEs7mNzyv+R+t7JA3lFg98vKPCUX3DTmKK4Xhn0zdgTO5GaSSyW4FBAoBmiXAApKBXMTsYc
+ kQCk0tkbUWluWj2dP1i0H/Hzl7l2Ik38ff5LYt19ScH1G5uGgyBScqlJXtXy4oYuEN5wGtptJ/
+ jiiOnVkdgprlDa1bTnaP2fbtg/kxSKOBQEAAA==
+X-Change-ID: 20241021-sets-bxs-4-64-patch-v1-44cdf9cc555f
+To: Frank Binns <frank.binns@imgtec.com>,
+        Matt Coster
+	<matt.coster@imgtec.com>,
+        David Airlie <airlied@gmail.com>, Simona Vetter
+	<simona@ffwll.ch>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Thomas Zimmermann <tzimmermann@suse.de>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>, Nishanth Menon <nm@ti.com>,
+        "Vignesh
+ Raghavendra" <vigneshr@ti.com>,
+        Tero Kristo <kristo@kernel.org>
+CC: <dri-devel@lists.freedesktop.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        Randolph Sapp <rs@ti.com>, Darren Etheridge <detheridge@ti.com>,
+        "Alessio
+ Belle" <alessio.belle@imgtec.com>,
+        Alexandru Dadu
+	<alexandru.dadu@imgtec.com>,
+        Sarah Walker <sarah.walker@imgtec.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=5405;
+ i=matt.coster@imgtec.com; h=from:subject:message-id;
+ bh=SqV1IJTAkSWRFFjRTnZftoakZj1+AKPrc1tTCrwNB9Q=;
+ b=owGbwMvMwCFWuUfy8817WRsYT6slMaSfe3J+c/ib4pLjWpM1v5S8+KA46dF1vuPRb9PXzueac
+ HnGVUbFtI5SFgYxDgZZMUWWHSssV6j9UdOSuPGrGGYOKxPIEAYuTgGYCJMfw/+w+88+XNNyeV0W
+ f+WV7dsdt5nOBcocnW1iZ1ss6jcr/uAjRob1H/JSw+5JWrsnPLmcab1Cwr9izflQFRNNF5PiRr7
+ /X5kB
+X-Developer-Key: i=matt.coster@imgtec.com; a=openpgp;
+ fpr=05A40CFCE7269D61D97100A1747F0A9036F90DFA
+X-EXCLAIMER-MD-CONFIG: 15a78312-3e47-46eb-9010-2e54d84a9631
+X-Proofpoint-ORIG-GUID: VrFyge1iEh50KcVMlLEaUiCo0fw9WM9Z
+X-Proofpoint-GUID: VrFyge1iEh50KcVMlLEaUiCo0fw9WM9Z
+X-Authority-Analysis: v=2.4 cv=U8+SDfru c=1 sm=1 tr=0 ts=67cee4d4 cx=c_pps a=AKOq//PuzOIrVTIF9yBwbA==:117 a=AKOq//PuzOIrVTIF9yBwbA==:17 a=ETbM1kImDFEA:10 a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=e5mUnYsNAAAA:8 a=VwQbUJbxAAAA:8 a=r_1tXGB3AAAA:8
+ a=RIdblNn2LqOEELPeUbIA:9 a=QEXdDO2ut3YA:10 a=Vxmtnl_E_bksehYqCbjh:22 a=t8nPyN_e6usw4ciXM-Pk:22
 
-On Wed, Mar 5, 2025, at 23:50, Borislav Petkov wrote:
-> On Wed, Mar 05, 2025 at 11:45:11PM +0100, Arnd Bergmann wrote:
->> There is a twist here: clang by default warns about unused const
->> variables in .c files but not in headers, while gcc doesn't
->
-> What is the point of this warning, do you know?
->
-> Someone defines a const, forgets to use it and? Oh big deal. This should be
-> a -Wunused anyway, no?
->
-> I must be missing something here...
+This GPU is found in the TI AM68 family of SoCs, with initial support
+added to the k3-j721s2 devicetree and tested on a TI SK-AM68 board.
 
-We turned on -Wunused a while ago for default builds after all the
--Wunused-variable warnings got addressed, but instead turned off
--Wunused-const-variable and -Wunused-but-set-variable
-unless W=1 is set while there are still existing warnings.
+A suitable firmware binary can currently be found in the IMG
+linux-firmware repository[1] as powervr/rogue_36.53.104.796_v1.fw.
 
-In my opinion, there is little difference between unused const and
-non-const variables, the reason that gcc treats them differently
-seems to be from common c++ coding style advocating for them to be
-used in place of macros. This is the case here, but most of the
-warnings it actually shows are for mistakes where some variable
-is in the wrong #ifdef block or the only user got removed.
+No new UAPI will be necessary for this platform as it is sufficiently
+similar to the already supported AXE-1-16M.
 
->> In this case, the only user is a macro:
->> #define _PAGE_CC               (_AT(pteval_t, cc_mask))
->> 
->> so maybe '#define cc_mask 0' would be appropriate.
->
-> Sounds a lot better to me.
+UMD support is close to being complete. We're now able to pass >90% of
+Vulkan conformance on our Mesa development branch. The compiler has been
+undergoing a significant rework needed to accomodate the BXS-4-64, as
+well as to make it more flexible to support additional Rogue GPUs going
+forward. The first part of this rework landed in Mesa in [2], and more
+MRs will follow in the coming weeks.
 
-Too bad that did not work. This version is also a bit ugly:
+There are several dt-bindings changes at the beginning of this series.
+We expect the result to be versatile enough to handle all Imagination
+Rogue GPUs while being a strong foundation to build bindings for the
+newer Volcanic architecture (for which we're currently developing
+support).
 
-diff --git a/arch/x86/include/asm/pgtable_types.h b/arch/x86/include/asm/pgtable_types.h
-index c90e9c51edb7..f31c1a31742d 100644
---- a/arch/x86/include/asm/pgtable_types.h
-+++ b/arch/x86/include/asm/pgtable_types.h
-@@ -179,7 +179,11 @@ enum page_cache_mode {
- };
- #endif
- 
-+#ifdef CONFIG_ARCH_HAS_CC_PLATFORM
- #define _PAGE_CC               (_AT(pteval_t, cc_mask))
-+#else
-+#define _PAGE_CC               (_AT(pteval_t, 0))
-+#endif
- #define _PAGE_ENC              (_AT(pteval_t, sme_me_mask))
- 
- #define _PAGE_CACHE_MASK       (_PAGE_PWT | _PAGE_PCD | _PAGE_PAT)
+The DTS changes at the end of the series are marked [DO NOT MERGE]. Once
+the series is reviewed, we will request these be taken through the
+relevant tree.
 
-so I'll just follow Ingo's earlier suggestion for the v2 patch.
+[1]: https://gitlab.freedesktop.org/imagination/linux-firmware/-/tree/powervr
+[3]: https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/32258
 
-       Arnd
+---
+Changes in v3:
+- Reorder some patches to ensure the proper sequencing
+- Update status of UMD support (cover)
+- Don't use more specific compatible strings when not required (P1)
+- Avoid ABI break by limiting new required properties to new compatible
+  strings (P2)
+- Move power domain changes to the patch in which they're used (P2/P5)
+- Update register definitions (P3) [Thanks, Alessio!]
+- Don't use more specific compatible strings when not required (P4)
+- Enhanced commit messages (P4)
+- Remove unnecessary example (P5)
+- Add proper fixes for threaded IRQs (P6) [Thanks, Alessio!]
+- Include fix for a separate IRQ issue (P7) [Thanks, Alessio!]
+- Don't enable firmware debug module (was P13 in v2, also in P14)
+- Change from a workaround to a regular codepath (P15)
+- Drop platform overrides framework (was P18 in v2, also in P16)
+- Mark DTS changes [DO NOT MERGE] (P17/P18)
+- Link to v2: https://lore.kernel.org/r/20241118-sets-bxs-4-64-patch-v1-v2-0-3fd45d9fb0cf@imgtec.com
+
+Changes in v2:
+- Clarified justification for compatible strings (P1)
+- Simplified clocks constraints (P2)
+- Simplified power-domains constraints (P3/P4)
+- Use normal reg syntax for 64-bit values (P8/P21)
+- Link to v1: https://lore.kernel.org/r/20241105-sets-bxs-4-64-patch-v1-v1-0-4ed30e865892@imgtec.com
+
+---
+Alessio Belle (3):
+      drm/imagination: Update register defs for newer GPUs
+      drm/imagination: Mask GPU IRQs in threaded handler
+      drm/imagination: Handle Rogue safety event IRQs
+
+Matt Coster (14):
+      dt-bindings: gpu: img: Future-proofing enhancements
+      dt-bindings: gpu: img: Add BXS-4-64 devicetree bindings
+      drm/imagination: Use new generic compatible string
+      drm/imagination: Add power domain control
+      drm/imagination: Remove firmware enable_reg
+      drm/imagination: Rename event_mask -> status_mask
+      drm/imagination: Make has_fixed_data_addr a value
+      drm/imagination: Use a lookup table for fw defs
+      drm/imagination: Use callbacks for fw irq handling
+      drm/imagination: Move ELF fw utils to common file
+      drm/imagination: Use cached memory with dma_coherent
+      drm/imagination: Add support for TI AM68 GPU
+      [DO NOT MERGE] arm64: dts: ti: k3-am62: New GPU binding details
+      [DO NOT MERGE] arm64: dts: ti: k3-j721s2: Add GPU node
+
+Sarah Walker (1):
+      drm/imagination: Add RISC-V firmware processor support
+
+ .../devicetree/bindings/gpu/img,powervr-rogue.yaml |  77 +++++++++-
+ arch/arm64/boot/dts/ti/k3-am62-main.dtsi           |   3 +-
+ arch/arm64/boot/dts/ti/k3-j721s2-main.dtsi         |  12 ++
+ drivers/gpu/drm/imagination/Makefile               |   2 +
+ drivers/gpu/drm/imagination/pvr_device.c           | 124 ++++++++++++++--
+ drivers/gpu/drm/imagination/pvr_device.h           |  31 +++-
+ drivers/gpu/drm/imagination/pvr_drv.c              |  16 ++
+ drivers/gpu/drm/imagination/pvr_fw.c               |  28 +++-
+ drivers/gpu/drm/imagination/pvr_fw.h               |  85 +++++------
+ drivers/gpu/drm/imagination/pvr_fw_meta.c          |  23 +--
+ drivers/gpu/drm/imagination/pvr_fw_mips.c          |  82 ++---------
+ drivers/gpu/drm/imagination/pvr_fw_riscv.c         | 163 +++++++++++++++++++++
+ drivers/gpu/drm/imagination/pvr_fw_startstop.c     |  17 +++
+ drivers/gpu/drm/imagination/pvr_fw_util.c          |  67 +++++++++
+ drivers/gpu/drm/imagination/pvr_gem.c              |  10 +-
+ drivers/gpu/drm/imagination/pvr_gem.h              |   6 +-
+ drivers/gpu/drm/imagination/pvr_mmu.c              |   8 +-
+ drivers/gpu/drm/imagination/pvr_power.c            | 114 ++++++++++++++
+ drivers/gpu/drm/imagination/pvr_power.h            |   3 +
+ drivers/gpu/drm/imagination/pvr_rogue_cr_defs.h    | 153 ++++++++++++++++---
+ drivers/gpu/drm/imagination/pvr_rogue_riscv.h      |  41 ++++++
+ 21 files changed, 886 insertions(+), 179 deletions(-)
+---
+base-commit: 10232dac98d3803ec4fcc0cd8a4d1bd2a09b3e18
+change-id: 20241021-sets-bxs-4-64-patch-v1-44cdf9cc555f
+
 
