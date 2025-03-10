@@ -1,133 +1,190 @@
-Return-Path: <linux-kernel+bounces-555146-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-555147-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 97596A5A610
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 22:19:11 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF85DA5A617
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 22:21:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C8470164BDF
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 21:19:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1C1CC1631F5
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 21:21:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FB411DED5E;
-	Mon, 10 Mar 2025 21:19:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BAD051E0E05;
+	Mon, 10 Mar 2025 21:21:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BlmndVsg"
-Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com [209.85.208.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="C1hTxUvP";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="iyQRqWqS"
+Received: from flow-b3-smtp.messagingengine.com (flow-b3-smtp.messagingengine.com [202.12.124.138])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 531DF1BDAA0
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 21:19:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B40FD1DD525;
+	Mon, 10 Mar 2025 21:21:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.138
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741641546; cv=none; b=gZU2+SOE6AeTijENrXULqoSmhPuTvgRjwhu/NDUGXSPoeeYIXWvjBd5K9FdWH5NppH6vhO4Hn4WRsj4T9Z4Rw5GtSjFPebUnnKO2SdbXnclbflWVrGLCvxAPx/FitNfjryiVms9cnTfZDBY8GFUYZ6hBG8v5dHr9X1qGPDZ7Els=
+	t=1741641670; cv=none; b=Ca8pQYcM3Rcy9U27Gs19Xz7c2Vgff/ACtWj3QI/RUsBDyTRquUNSTtXVsFh+MKeWl/iJHTOe5qTDQjLXuSeAnDcGgtROOre3WS8pehgO2/ZEvt4iBaspsvJ17RRRqO2PfBSRtTseRmdh5+Fl0VLYo8K28RKO5C9NcvEe4ZcwwDI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741641546; c=relaxed/simple;
-	bh=7j+Md8lZZu8OrwInvF8RF9XDJvEX3psljnYdgEnaQCA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=YuNUDd3xIkmTCTQnKHRBWkv95TiEDL4WqPRkwe/0+xBKCvZvR43PeRxiueC1Q5fqRCe65sNTWW/39M6OEUPCJL9ZjmAiHTcjvtEpCP6czKk5e0zLNt25qd7UM5KWGTNzAInBmaEjiXqPVAC5XxHCgEj/WDQMVPlondTrVbWy0to=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BlmndVsg; arc=none smtp.client-ip=209.85.208.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-30bf2513a2dso48344241fa.0
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 14:19:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741641542; x=1742246342; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=7j+Md8lZZu8OrwInvF8RF9XDJvEX3psljnYdgEnaQCA=;
-        b=BlmndVsggzoWLKBIon3mCDZC8l5Y+5J4QILXCVYzJ1oUGeMzo/7/RBEp6shTymb18q
-         qB1F/IPmHI402J9f9t1prXoksaUeEBLc9iYZzhnoOpPSJyhYcdWTTkfNOL7zwWvzjrAR
-         ga3jRPO/1buUtDdNEg9r71VjZM1rtBS8kdQwWPfNSq5Qrfg4P36uuNl0SkNaMCj4xHA4
-         gKvv2t3t1MoBi4jxcIKcqpvWsX/AW0ySgMWB1AHSmhY5BivB7ulWZILYxKDZN89c2mmv
-         8FwJb4ypbapRJphDO4BWQjqvVNzVdcbrANstTGMisVB5NV9QfwoVOl44FDascjU5J5Gn
-         47cw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741641542; x=1742246342;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=7j+Md8lZZu8OrwInvF8RF9XDJvEX3psljnYdgEnaQCA=;
-        b=tpz1qhCfKbr6bnEEN9xUyauFSLsGbR2ccudF+sPg5QAzvmNIMHRKmgdqkYe8Fn1uer
-         43iI+NAMxBwj5zu6awGbdqs69K+hhWt3RnDDKRvNpchAm+huuj9UfwmwVGo8NtVbcI8H
-         yLChl24qDHJSNCVGVmzDxLiF3IPQDQ0SxIuQF760TljME+sfXILnCYJQnvIYSC9U/GG0
-         r9S7pSV8wkHukNlIizuQqq3qwmLnTqzCzz4I5TVn+G0sWCULvebcwu/LcvI7Dl4yScME
-         8dzlqmPyfTVAoSvqmg2/+EaQRHqr4/QNh7mTN+rcUB1zmYaGkUlBC5nibepIx5DVWvq8
-         InwQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWmLg2wzTdqhC5ihmmWzj4xyIieyKKk0o2wGQNtyFyo2xmRWEXHZn+u7Xu5Q5X7RFUYyQymKj+g6YD7hDg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx5bt9J8tRyjQWzXnLkMmWD67pMEXG7Rpifh0s2EYMsI6PI4Eyy
-	HVIl/t8cIyOB/QomjYrPTYCKDqNmPi/iEpmqkM3DWN3cQInCFNVToQBPbHhFBbzuWYmWhVMC2Vw
-	cJJwr2qCaoOxysvZwMtx/aZxOjkQ=
-X-Gm-Gg: ASbGncuiKyPP8EsXNiDsa8D3e0ATCAsJ02FD0G2++OJMrC9VzQL0DVkWCNqyTvWuWOb
-	QKNP7YZl4FJfBiDqqgBUALQA/a1JZpp9iJW7srOubBOiQoopQaiDurBv86zivXdrOYckuy6VuEx
-	J68X5Lgvwljm/seC6cXrDkDMINB5EcxNuYBvs8
-X-Google-Smtp-Source: AGHT+IF066+pVK8sFgPpi7vkJmc58CtIsAxIYndt38gvuPnXL08M9GeWV4DvlU3yGjsyivVG+CAkkJObRYIh56dfbEw=
-X-Received: by 2002:a2e:a9a4:0:b0:30b:bfca:bbe3 with SMTP id
- 38308e7fff4ca-30c2063a8e6mr4753561fa.6.1741641542074; Mon, 10 Mar 2025
- 14:19:02 -0700 (PDT)
+	s=arc-20240116; t=1741641670; c=relaxed/simple;
+	bh=b+pL5tPz/STvzduyR8tAJGIpWCTLY7xMzNfVgLy+oho=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=CXaIAdATkW+xCnbdn6sfgOJg+EBk6pZuCGK0Zm3oaVPKcejZs5FnfP4ySvDQghtfeef7yOhwG+ei9VDX5eyS8PNfRRV8U0jH2dD45m5pw2LBeNZkEaKOvVV/+ZR4qUqbFbnWk8PYRLp+FHLjdlwlPPLW22DRJdj1N/7JhUVQG/k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=C1hTxUvP; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=iyQRqWqS; arc=none smtp.client-ip=202.12.124.138
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from phl-compute-07.internal (phl-compute-07.phl.internal [10.202.2.47])
+	by mailflow.stl.internal (Postfix) with ESMTP id 939871D41B86;
+	Mon, 10 Mar 2025 17:21:06 -0400 (EDT)
+Received: from phl-imap-11 ([10.202.2.101])
+  by phl-compute-07.internal (MEProxy); Mon, 10 Mar 2025 17:21:07 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm3; t=1741641666;
+	 x=1741648866; bh=E4HKlxVjhIt2MzhfvIo5qMqiVK9k8HOzhVxjjAVbOk0=; b=
+	C1hTxUvPA3Fb5iBKVyaB9S0GfSvuHye+iANMUYbqz2WEwKh+PjF2Ig9bEJQVXL8W
+	kdPPlIgBhaXBR9cfmZ0PE2Am21WLFpDOSC8cX4CRdGVkwDQwLrkIeM5p0hpYbe13
+	dTxmdFfOvUlpJHQMFzsNCj740xYgX3HO88YG9+874W9W3ONJKWU3JnOvcNKUU/4u
+	knNl6Vi+hohsFjz5X2QG4iDQUTaDl2o6gl+/SgTvwh+IxFXmzMQL8wdboNLh14A/
+	aarOTRDHRANpQ7jaacfHOdK2NKw4xhhoPCgcdkDHdrFJ9fRJG33i70Yr/2EzUjdG
+	KxdDzQVgaqrYOM7VHlF73A==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1741641666; x=
+	1741648866; bh=E4HKlxVjhIt2MzhfvIo5qMqiVK9k8HOzhVxjjAVbOk0=; b=i
+	yQRqWqSGI6Kt3YUKxrmI/FlE9b26ffQwpxP94u4VFt4R8vOueVcX3AoCZMSsXlsf
+	XL00t5hz0HKoZQiWWgBfXmCi3KczhguDU8kRNtshw4wzTjqLWf4R4c8bJijn8DFl
+	5yAnjsGkIz+NVAjzqe0v8OCUxD15L05INUOiZ6x/J4ac0ZBqVNbvzgRHbmj5t9Ba
+	3j6HgC/97L/dQ3YDHejXKY/xvQz/hLUQihBs2DCB1G8au5Q5PvHhOBLiHxE0gHPx
+	sXxfmR9U/Us8LYPKZcy0PiBDAB8ri/wnT4GnQ5IYNOMthafCCbqTTLAJKEw4GxLS
+	2eWJA70Uin2M61IfU8uCQ==
+X-ME-Sender: <xms:wVfPZ2JStQfl-VXaWTJ_QuMzQ3ObrIeeleBzBmQxfF4Du39ikrBCLg>
+    <xme:wVfPZ-I7hmahTLPWORKx4-GCw39p0HhoYbrARohYV_QOvY1Fl0dBQ8OowZ2_vQTBT
+    5KFklbFDw_9R3vrcUA>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdduvddtgeduucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
+    pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
+    gvnhhtshculddquddttddmnecujfgurhepofggfffhvfevkfgjfhfutgfgsehtjeertder
+    tddtnecuhfhrohhmpedftehrnhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnug
+    gsrdguvgeqnecuggftrfgrthhtvghrnhephfdthfdvtdefhedukeetgefggffhjeeggeet
+    fefggfevudegudevledvkefhvdeinecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrg
+    hmpehmrghilhhfrhhomheprghrnhgusegrrhhnuggsrdguvgdpnhgspghrtghpthhtohep
+    geefpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopegsphesrghlihgvnhekrdguvg
+    dprhgtphhtthhopegtrghtrghlihhnrdhmrghrihhnrghssegrrhhmrdgtohhmpdhrtghp
+    thhtohepjhhovgihrdhgohhulhihsegrrhhmrdgtohhmpdhrtghpthhtohepmhgrrhhkrd
+    hruhhtlhgrnhgusegrrhhmrdgtohhmpdhrtghpthhtohepshhuuggvvghprdhhohhllhgr
+    segrrhhmrdgtohhmpdhrtghpthhtohepshhuiihukhhirdhpohhulhhoshgvsegrrhhmrd
+    gtohhmpdhrtghpthhtohepsghhvghlghgrrghssehgohhoghhlvgdrtghomhdprhgtphht
+    thhopeihuhiivghnghhhuhhisehhuhgrfigvihdrtghomhdprhgtphhtthhopegtohhnoh
+    hrodgutheskhgvrhhnvghlrdhorhhg
+X-ME-Proxy: <xmx:wVfPZ2vjrGidv7HfBCACY-yGDYl3EfwXvQhqp8jKyTCtNAEsgJj2fQ>
+    <xmx:wVfPZ7ZidpufvcbZMZOogXc8KetgC1YVnS_aBECkUMRpwdLI0iDxwg>
+    <xmx:wVfPZ9ZPI552vps1YoMhGOloTLMV3PrxFhTqMlOyR0s_NrkTI0YDFg>
+    <xmx:wVfPZ3De8byh2Bv17Og3Rg_scmCx5lM1v133qfZGoZiEq96RKyOTzg>
+    <xmx:wlfPZ-pxMLQep5aMAHOoE69Tz3LFoYiwRsd_W-SJ689j4Q6-j_dfe3KI>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id 2BEF92220072; Mon, 10 Mar 2025 17:21:05 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250310200817.33581-1-ubizjak@gmail.com> <20250310201227.GXZ89Hq5LVWKHjHBeO@fat_crate.local>
- <CAFULd4ZCc08kJU+3ZVdyWhO4s5fu0Y-RDPS-Y-_sPB1R0KrnoA@mail.gmail.com>
- <20250310204454.GYZ89PRl3dBR-9oBIY@fat_crate.local> <CAFULd4YwQ3dcRwugyr9-GUWbVh2cREu6qNQctKG2S5JpoEfQcg@mail.gmail.com>
- <20250310210753.GZZ89UqRTKo2OE4UOl@fat_crate.local>
-In-Reply-To: <20250310210753.GZZ89UqRTKo2OE4UOl@fat_crate.local>
-From: Uros Bizjak <ubizjak@gmail.com>
-Date: Mon, 10 Mar 2025 22:18:50 +0100
-X-Gm-Features: AQ5f1JqjWn9ktk2Fu16C7bxy6rghfETqKY5C98EBDzR_FvN-FsTc6fryjoLIo1E
-Message-ID: <CAFULd4Y=LMs0wWLwEg_WLoDeffo0T6cXhyBuWJVuSk4o_cNQOA@mail.gmail.com>
-Subject: Re: [PATCH] x86/hweight: Fix and improve __arch_hweight{32,64}() assembly
-To: Borislav Petkov <bp@alien8.de>
-Cc: x86@kernel.org, linux-kernel@vger.kernel.org, 
-	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@kernel.org>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, "H. Peter Anvin" <hpa@zytor.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Date: Mon, 10 Mar 2025 22:20:41 +0100
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Michael Kelley" <mhklinux@outlook.com>,
+ "Roman Kisel" <romank@linux.microsoft.com>,
+ "bhelgaas@google.com" <bhelgaas@google.com>,
+ "Borislav Petkov" <bp@alien8.de>,
+ "Catalin Marinas" <catalin.marinas@arm.com>,
+ "Conor Dooley" <conor+dt@kernel.org>,
+ "Dave Hansen" <dave.hansen@linux.intel.com>,
+ "Dexuan Cui" <decui@microsoft.com>,
+ "Haiyang Zhang" <haiyangz@microsoft.com>,
+ "H. Peter Anvin" <hpa@zytor.com>, "Joey Gouly" <joey.gouly@arm.com>,
+ "krzk+dt@kernel.org" <krzk+dt@kernel.org>,
+ =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>,
+ "K. Y. Srinivasan" <kys@microsoft.com>, "Len Brown" <lenb@kernel.org>,
+ "Lorenzo Pieralisi" <lpieralisi@kernel.org>,
+ "Manivannan Sadhasivam" <manivannan.sadhasivam@linaro.org>,
+ "Mark Rutland" <mark.rutland@arm.com>, "Marc Zyngier" <maz@kernel.org>,
+ "Ingo Molnar" <mingo@redhat.com>,
+ "Oliver Upton" <oliver.upton@linux.dev>,
+ "Rafael J . Wysocki" <rafael@kernel.org>,
+ "Rob Herring" <robh@kernel.org>,
+ "ssengar@linux.microsoft.com" <ssengar@linux.microsoft.com>,
+ "Sudeep Holla" <sudeep.holla@arm.com>,
+ "Suzuki K Poulose" <suzuki.poulose@arm.com>,
+ "Thomas Gleixner" <tglx@linutronix.de>, "Wei Liu" <wei.liu@kernel.org>,
+ "Will Deacon" <will@kernel.org>, "Zenghui Yu" <yuzenghui@huawei.com>,
+ "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+ "kvmarm@lists.linux.dev" <kvmarm@lists.linux.dev>,
+ "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>,
+ Linux-Arch <linux-arch@vger.kernel.org>,
+ "linux-arm-kernel@lists.infradead.org"
+ <linux-arm-kernel@lists.infradead.org>,
+ "linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+ "x86@kernel.org" <x86@kernel.org>
+Cc: "apais@microsoft.com" <apais@microsoft.com>,
+ "benhill@microsoft.com" <benhill@microsoft.com>,
+ "bperkins@microsoft.com" <bperkins@microsoft.com>,
+ "sunilmut@microsoft.com" <sunilmut@microsoft.com>
+Message-Id: <119cfb59-d68b-4718-b7cb-90cba67827e8@app.fastmail.com>
+In-Reply-To: 
+ <BN7PR02MB41488C06B7E42830C700318DD4D62@BN7PR02MB4148.namprd02.prod.outlook.com>
+References: <20250307220304.247725-1-romank@linux.microsoft.com>
+ <20250307220304.247725-4-romank@linux.microsoft.com>
+ <e0f81049-688e-4f53-a002-5d246281bf8d@app.fastmail.com>
+ <BN7PR02MB41488C06B7E42830C700318DD4D62@BN7PR02MB4148.namprd02.prod.outlook.com>
+Subject: Re: [PATCH hyperv-next v5 03/11] Drivers: hv: Enable VTL mode for arm64
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-On Mon, Mar 10, 2025 at 10:08=E2=80=AFPM Borislav Petkov <bp@alien8.de> wro=
-te:
+On Mon, Mar 10, 2025, at 22:01, Michael Kelley wrote:
+> From: Arnd Bergmann <arnd@arndb.de> Sent: Saturday, March 8, 2025 1:05 PM
+>> >  config HYPERV_VTL_MODE
+>> >  	bool "Enable Linux to boot in VTL context"
+>> > -	depends on X86_64 && HYPERV
+>> > +	depends on (X86_64 || ARM64)
+>> >  	depends on SMP
+>> > +	select OF_EARLY_FLATTREE
+>> > +	select OF
+>> >  	default n
+>> >  	help
+>> 
+>> Having the dependency below the top-level Kconfig entry feels a little
+>> counterintuitive. You could flip that back as it was before by doing
+>> 
+>>       select HYPERV_VTL_MODE if !ACPI
+>>       depends on ACPI || SMP
+>> 
+>> in the HYPERV option, leaving the dependency on HYPERV in
+>> HYPERV_VTL_MODE.
 >
-> On Mon, Mar 10, 2025 at 09:54:25PM +0100, Uros Bizjak wrote:
-> > Ok, so let it be your way and let's just sweep the issue under the carp=
-et.
+> I would argue that we don't ever want to implicitly select
+> HYPERV_VTL_MODE because of some other config setting or
+> lack thereof.  VTL mode is enough of a special case that it should
+> only be explicitly selected. If someone omits ACPI, then HYPERV
+> should not be selectable unless HYPERV_VTL_MODE is explicitly
+> selected.
 >
-> Can you please read my mails more carefilly? Where did I say we should sw=
-eep
-> the issue under the carpet?
+> The last line of the comment for HYPERV_VTL_MODE says
+> "A kernel built with this option must run at VTL2, and will not run
+> as a normal guest."  In other words, don't choose this unless you
+> 100% know that VTL2 is what you want.
 
-The "stop with this silliness" part? But let's put this at rest.
+It sounds like the latter is the real problem: enabling a feature
+should never prevent something else from working. Can you describe
+what VTL context is and why it requires an exception to a rather
+fundamental rule here? If you build a kernel that runs on every
+single piece of arm64 hardware and every hypervisor, why can't
+you add HYPERV_VTL_MODE to that as an option?
 
-> The commit message should be *perfectly* clear what it is fixing. This
->
-> "a) Use ASM_CALL_CONSTRAINT to prevent inline asm that includes call
-> instruction from being scheduled before the frame pointer gets set
-> up by the containing function, causing objtool to print a "call
-> without frame pointer save/setup" warning."
->
-> says that objool is printing a warning. When I ask, it is not really prin=
-ting
-> a warning but it can potentially do so because the compiler is allowed to
-> schedule things wrongly.
->
-> Do you notice the difference?
-
-So, rewording this part to:
-
-a) Use ASM_CALL_CONSTRAINT to prevent inline asm that includes call
-instruction from being scheduled by the compiler before the frame
-pointer gets set
-up by the containing function. This unconstrained scheduling might
-cause objtool to print a "call without frame pointer save/setup"
-warning.
-
-would be ok?
-
-Thanks,
-Uros.
+      Arnd
 
