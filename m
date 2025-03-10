@@ -1,149 +1,118 @@
-Return-Path: <linux-kernel+bounces-555198-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-555199-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E8835A5A6C5
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 23:12:11 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 028A4A5A6C7
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 23:12:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 33E5C16705E
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 22:12:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A5287188FFE1
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 22:12:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 636881E5B84;
-	Mon, 10 Mar 2025 22:12:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67FA01E5B84;
+	Mon, 10 Mar 2025 22:12:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxonhyperv.com header.i=@linuxonhyperv.com header.b="JQSHsWDP"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65E751DE2CE;
-	Mon, 10 Mar 2025 22:12:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vE5GF1l9"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC2D81D8DF6;
+	Mon, 10 Mar 2025 22:12:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741644726; cv=none; b=tfYRjTwjB4m7/DLf5CA4MQwYiVP6fLFmYs969A4XK8cZ0Fy6/Eq0yqmduM4TdKUUVScJFNrE+FjozRHrtq9QAyiHZiJQSQdF8TNogUPcsHJTg9NEzhCmZK7Gf/DVWbJpEYFcCNvucQi1/RfqAqljiHBKvEAQJA8s+mJkJ2U9EnE=
+	t=1741644742; cv=none; b=E508iT331Nj/7RAQGz9ejFBe7f58JyVZdcybYWrlVjl906dJGuBPstAw9Z6AtGcwpsWVnzJQT7lBDiwHGo02PAmibaSY0v3mI455oauKJ1FoxIry6MwJlL7GwuR5qxoHAcc2SkAYD9/gCLdXp/uPKdz1SVyjDrN+kz2JPTT7Ra4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741644726; c=relaxed/simple;
-	bh=SKvO+7zXnoNHvTpiQVfIZVEjAhuH9e4b+IWhxYM/mIk=;
-	h=From:To:Cc:Subject:Date:Message-Id; b=PFqdxIpHsG4DTOIG2ZPNmvomCvUlT66zpUbW/nuCFRW67mgSJCHZ+khRXp0CUrDjZSKACCC/9haXof3YPFKLdL+/gi1IMq6Z7Of+5dql3yDVUiA/mw7BwXmrwGR1m4R49mN3IpsCv/NzT+uiil5ZqgVVciFvjRl56wE5Po6FSNc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxonhyperv.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linuxonhyperv.com header.i=@linuxonhyperv.com header.b=JQSHsWDP; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxonhyperv.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: by linux.microsoft.com (Postfix, from userid 1202)
-	id DC698205492D; Mon, 10 Mar 2025 15:12:03 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com DC698205492D
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linuxonhyperv.com;
-	s=default; t=1741644723;
-	bh=asMeEivWZCVDFdinhQ6RmSqwY26km8pyKKRGxicSGAs=;
-	h=From:To:Cc:Subject:Date:From;
-	b=JQSHsWDPQZ3LknXNpKFxiTiesnGE5sEDYuWFUe30YokttyuaFCfr9XpsTGvO9YImN
-	 zHXWlrReDZg64w03bcr/HWMLJwwbg+laoTCmzL5q9sidIhvqFaGgetk+L/ymx00tCn
-	 1AZ1tOli1vwNjHjdp5iescLaOSXp5au9x/SiW4VY=
-From: longli@linuxonhyperv.com
-To: "K. Y. Srinivasan" <kys@microsoft.com>,
-	Haiyang Zhang <haiyangz@microsoft.com>,
-	Wei Liu <wei.liu@kernel.org>,
-	Dexuan Cui <decui@microsoft.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	linux-hyperv@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Long Li <longli@microsoft.com>
-Subject: [Patch v3] uio_hv_generic: Set event for all channels on the device
-Date: Mon, 10 Mar 2025 15:12:01 -0700
-Message-Id: <1741644721-20389-1-git-send-email-longli@linuxonhyperv.com>
-X-Mailer: git-send-email 1.8.3.1
+	s=arc-20240116; t=1741644742; c=relaxed/simple;
+	bh=Sp1vvz4f13qsIj4sbuySADw8IHG7tvnIEy6zhtY+6us=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=I4iRXk/eZs3GStxhtgm/DSMXqVH91D/GSYnQIR5SJdWKDKPpXR9Iw6+HhTg0Wcun5Oefmbu9zsDi4FETj4B8VeeTLBU3DekPeZ8lcclZft03CYjE8bOMcj6JA0ipuSw0PsO0C8+IaOXh37EBqtfY7nPfvkw8EKI4cUGw0akVi7k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vE5GF1l9; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 823C7C4CEE5;
+	Mon, 10 Mar 2025 22:12:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741644742;
+	bh=Sp1vvz4f13qsIj4sbuySADw8IHG7tvnIEy6zhtY+6us=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=vE5GF1l91CPOP9NlgoQOxAdbnQU4p0K1zd0S8dl0kasLe5/3KnaQqwxmxGS+N3GTB
+	 bDOrJih1teHesNXBNw/3wx7arwadfp83M7gJZAqdaLBWVbxJpIaZQEPTIggEW4KD2c
+	 +52GEv2ummtq6zGj1yPKrSzm6BmPfMTYxty+YK1td872uuFcjVfxqTYRJr7uwb8I7n
+	 h+uXQGi6KGo6VCNUkCJCt3G5VTn/coL+6RYcmIxRJG7MoUYAOYVI4stpk4NISt+gX4
+	 hDXWyR05YMdWg4P0rWS5f0NAgZNCFb2XnrEmgXDOsqX9l9HCHbN/GmFOnr4kUkR26O
+	 wa1iCp7/uF/jw==
+Date: Mon, 10 Mar 2025 15:12:20 -0700
+From: Namhyung Kim <namhyung@kernel.org>
+To: Ian Rogers <irogers@google.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Kan Liang <kan.liang@linux.intel.com>,
+	Yicong Yang <yangyicong@hisilicon.com>,
+	James Clark <james.clark@linaro.org>,
+	"Dr. David Alan Gilbert" <linux@treblig.org>,
+	Levi Yun <yeoreum.yun@arm.com>, Ze Gao <zegao2021@gmail.com>,
+	Weilin Wang <weilin.wang@intel.com>, Xu Yang <xu.yang_2@nxp.com>,
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Howard Chu <howardchu95@gmail.com>
+Subject: Re: [PATCH v2 06/11] perf python: Add optional cpus and threads
+ arguments to parse_events
+Message-ID: <Z89jxAMEpYea9Qom@google.com>
+References: <20250228222308.626803-1-irogers@google.com>
+ <20250228222308.626803-7-irogers@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250228222308.626803-7-irogers@google.com>
 
-From: Long Li <longli@microsoft.com>
+On Fri, Feb 28, 2025 at 02:23:03PM -0800, Ian Rogers wrote:
+> Used for the evlist initialization.
+> 
+> Reviewed-by: Howard Chu <howardchu95@gmail.com>
+> Signed-off-by: Ian Rogers <irogers@google.com>
+> ---
+>  tools/perf/util/python.c | 10 ++++++++--
+>  1 file changed, 8 insertions(+), 2 deletions(-)
+> 
+> diff --git a/tools/perf/util/python.c b/tools/perf/util/python.c
+> index b600b6379b4e..4a3015e7dc83 100644
+> --- a/tools/perf/util/python.c
+> +++ b/tools/perf/util/python.c
+> @@ -1339,12 +1339,18 @@ static PyObject *pyrf__parse_events(PyObject *self, PyObject *args)
+>  	struct evlist evlist = {};
+>  	struct parse_events_error err;
+>  	PyObject *result;
+> +	PyObject *pcpus = NULL, *pthreads = NULL;
+> +	struct perf_cpu_map *cpus;
+> +	struct perf_thread_map *threads;
+>  
+> -	if (!PyArg_ParseTuple(args, "s", &input))
+> +	if (!PyArg_ParseTuple(args, "s|OO", &input, &pcpus, &pthreads))
+>  		return NULL;
+>  
+> +	threads = pthreads ? ((struct pyrf_thread_map *)pthreads)->threads : NULL;
+> +	cpus = pcpus ? ((struct pyrf_cpu_map *)pcpus)->cpus : NULL;
 
-Hyper-V may offer a non latency sensitive device with subchannels without
-monitor bit enabled. The decision is entirely on the Hyper-V host not
-configurable within guest.
+I wonder if it needs any type checks before accessing them.
 
-When a device has subchannels, also signal events for the subchannel
-if its monitor bit is disabled.
+Thanks,
+Namhyung
 
-This patch also removes the memory barrier when monitor bit is enabled
-as it is not necessary. The memory barrier is only needed between
-setting up interrupt mask and calling vmbus_set_event() when monitor
-bit is disabled.
-
-Signed-off-by: Long Li <longli@microsoft.com>
----
-Change log
-v2: Use vmbus_set_event() to avoid additional check on monitored bit
-    Lock vmbus_connection.channel_mutex when going through subchannels
-v3: Add details in commit messsage on the memory barrier.
-
- drivers/uio/uio_hv_generic.c | 32 ++++++++++++++++++++++++++------
- 1 file changed, 26 insertions(+), 6 deletions(-)
-
-diff --git a/drivers/uio/uio_hv_generic.c b/drivers/uio/uio_hv_generic.c
-index 3976360d0096..45be2f8baade 100644
---- a/drivers/uio/uio_hv_generic.c
-+++ b/drivers/uio/uio_hv_generic.c
-@@ -65,6 +65,16 @@ struct hv_uio_private_data {
- 	char	send_name[32];
- };
- 
-+static void set_event(struct vmbus_channel *channel, s32 irq_state)
-+{
-+	channel->inbound.ring_buffer->interrupt_mask = !irq_state;
-+	if (!channel->offermsg.monitor_allocated && irq_state) {
-+		/* MB is needed for host to see the interrupt mask first */
-+		virt_mb();
-+		vmbus_set_event(channel);
-+	}
-+}
-+
- /*
-  * This is the irqcontrol callback to be registered to uio_info.
-  * It can be used to disable/enable interrupt from user space processes.
-@@ -79,12 +89,15 @@ hv_uio_irqcontrol(struct uio_info *info, s32 irq_state)
- {
- 	struct hv_uio_private_data *pdata = info->priv;
- 	struct hv_device *dev = pdata->device;
-+	struct vmbus_channel *primary, *sc;
- 
--	dev->channel->inbound.ring_buffer->interrupt_mask = !irq_state;
--	virt_mb();
-+	primary = dev->channel;
-+	set_event(primary, irq_state);
- 
--	if (!dev->channel->offermsg.monitor_allocated && irq_state)
--		vmbus_setevent(dev->channel);
-+	mutex_lock(&vmbus_connection.channel_mutex);
-+	list_for_each_entry(sc, &primary->sc_list, sc_list)
-+		set_event(sc, irq_state);
-+	mutex_unlock(&vmbus_connection.channel_mutex);
- 
- 	return 0;
- }
-@@ -95,12 +108,19 @@ hv_uio_irqcontrol(struct uio_info *info, s32 irq_state)
- static void hv_uio_channel_cb(void *context)
- {
- 	struct vmbus_channel *chan = context;
--	struct hv_device *hv_dev = chan->device_obj;
--	struct hv_uio_private_data *pdata = hv_get_drvdata(hv_dev);
-+	struct hv_device *hv_dev;
-+	struct hv_uio_private_data *pdata;
- 
- 	chan->inbound.ring_buffer->interrupt_mask = 1;
- 	virt_mb();
- 
-+	/*
-+	 * The callback may come from a subchannel, in which case look
-+	 * for the hv device in the primary channel
-+	 */
-+	hv_dev = chan->primary_channel ?
-+		 chan->primary_channel->device_obj : chan->device_obj;
-+	pdata = hv_get_drvdata(hv_dev);
- 	uio_event_notify(&pdata->info);
- }
- 
--- 
-2.34.1
-
+> +
+>  	parse_events_error__init(&err);
+> -	evlist__init(&evlist, NULL, NULL);
+> +	evlist__init(&evlist, cpus, threads);
+>  	if (parse_events(&evlist, input, &err)) {
+>  		parse_events_error__print(&err, input);
+>  		PyErr_SetFromErrno(PyExc_OSError);
+> -- 
+> 2.48.1.711.g2feabab25a-goog
+> 
 
