@@ -1,80 +1,79 @@
-Return-Path: <linux-kernel+bounces-554214-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-554215-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB943A594C8
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 13:41:34 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D36AA594CC
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 13:41:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 49FBF188A698
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 12:41:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9E04916CF13
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 12:41:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E17E722A7EB;
-	Mon, 10 Mar 2025 12:40:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFDDE22AE76;
+	Mon, 10 Mar 2025 12:40:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="QE/lHIZv"
-Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="a6+V7RS2"
+Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2C2E229B1F
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 12:40:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35C8222A4DA
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 12:40:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741610435; cv=none; b=OcQnq5Fx5zLW/EqHJR5+L1EnJGbt0Hzj2SKCEK3TaygC2gRSwI/S02+67qdKsaKlISaYVXHApwb/UrhIGXPo2KEJTI18m1r2stQ6Z/B/G+1kM8z1NuWSun8mvxSXfYb3JeddjLLr1zuEKN3nFYmN+9OiWxG5Y4mUFaOX7peWQ1s=
+	t=1741610437; cv=none; b=aUngWjUzkJv/uSjO3FtMQ8GDjGwF745ytYJYWfm9vNJAjeD6gR+2mPnQ9VQTo+q8aR+uPKNZFJs87Trcj8DANJLfGS9CNv58Lly3UqIqKJR/X0ta6Kmx4NtUuHh2IeUXO3b2GbH8xJU5kixobl6wEGHGiy9PySkM9AP+iwO8yPQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741610435; c=relaxed/simple;
-	bh=5SP7c9LZmhzTB3Sd70fuAWrzLoIu061KLAW3J8lMM80=;
+	s=arc-20240116; t=1741610437; c=relaxed/simple;
+	bh=M+L3sOe3OAAzrK/5BquNt3kcr6Ll6ljNK/MgillJMU4=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=cK4COZaJ2Ruuw7cUxa/oZACGoYfyCPbdTbdxyiza7T5/BhmSWzYQpwA5ixt9aINVMpVMCGu5ozIt2pKvWUXbiLHnmTym2bMXN7HuLvSHmuNU2JWkUvfLtNBQv1JvibLbg96cdrWW2/YMjXraO6d+ZRm9jEhhdEFarpk73nfdMpg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=QE/lHIZv; arc=none smtp.client-ip=209.85.221.54
+	 In-Reply-To:To:Cc; b=MZXhN4FMZXlXXrseCbmUKru5B2+NooMhQrASzTr+7SGZR419OPIddz0hgrFnUI7BQHqDJ0BqyuSgskYllfugIJeLTYKPX7tPTgcFaLxcu8w4NDEDjcElQdGwdHpNYaWn1XGsL/U7+27TNYYdvZxMkROdUmCSncmhbPdYMUcNhGo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=a6+V7RS2; arc=none smtp.client-ip=209.85.221.48
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-390e3b3d3f4so1920927f8f.2
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 05:40:33 -0700 (PDT)
+Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-390effd3e85so3667501f8f.0
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 05:40:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1741610432; x=1742215232; darn=vger.kernel.org;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1741610433; x=1742215233; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=J9vKM2NqG0d/mIXKZKZnbzuk8clRyDtuK0UmfTRLKjo=;
-        b=QE/lHIZv5pC02Jv2yNc/P7+PiE6IPizxU/u1rCDkp04Pypg3M6oqwD3guGuY3A0Hz1
-         l4qgfgTsfI+N5qcXHJO3sE9Pyd8R+Owh/7aVfy5WcjF+7lhXyRhbjuOkF6PBSrN9JEH8
-         7MJQyd5u9BWnkNc4Z7vKGzQvXVEO5BqMS2HjNmfNFQazxHNeqefRE4JbnTv9pMVQJacN
-         W2OQvcd3PAT8RIu2BES7jB7DOQA2z5C1q2847mEKdIoj/O6amI4agOmcX4HKIIsAsFOy
-         dUShzHYGqTgCS6UH7bWkAM9CsMEVpGRBL0AzEuRN8vtkQFADdLWK8xdRZQ/iiLdJJnAk
-         rRxg==
+        bh=Id3vfYo4VZD5XkzVJtKrhfXekLSBu1hf0uoNw4mF3Eo=;
+        b=a6+V7RS2ckUnYyiDdymX3ygwZw4inZEoui+ogR1mRyWdP/p3kx2LzlcA8C6rguemkE
+         SrAInpeExQoVAq0bqM6efOcobSFIGSoCweqdVE2I9Zp5Oh40WSe742T0k72ZN8Zf0PcO
+         z3mn5VcpvuYKSWXDrGfmff1sYSjLyKT/d5vfE3xZxjxRRfW9QnXK8pL6hBk64jOHWytm
+         4lsvOtqNSZBenTX2Tp4Fg+chEXR50DPt2VPgWx/FzW2JPO6izG0T+YL3CiBqJ2e17E8Q
+         G1Ark+66ExNkmmpw5AKJxMx2NhzZOAvQsBGML2k2fWZ6rOsqunKjF/rZbAxef+tx4gyU
+         gygA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741610432; x=1742215232;
+        d=1e100.net; s=20230601; t=1741610433; x=1742215233;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=J9vKM2NqG0d/mIXKZKZnbzuk8clRyDtuK0UmfTRLKjo=;
-        b=A1/b4I4Z3+JEw7lcDorSVUJdi0ahKSlS3G0rJfULd7pQ4iJKevRo4KJEtaX4cze7DP
-         RC4PuteB7XufwBD4SU6iGkVbl+KZ49D4ruw+yo8jlHa7/3bSKActtThRuGh+JFu1OiDV
-         9Y/miZAW+VRnjrEc2b1ETRYqlCqZBq/ZvfVDwy56frd1bmSoqPijaAJxh90EtajMEcAw
-         il/EbQ8YHwDwG09jhuLtKzUTZ+Jmg30lQNwQ01xCYBOOYYv6hv94Fp5+sdYOnVOnsQ3L
-         yqsUkoGqR3Sbov/u/f0qJ6GlGkDnQoL9zF5Qu5f/Z7pgzCTQAJl6AzarX+WBdI39BHss
-         P0uA==
-X-Forwarded-Encrypted: i=1; AJvYcCWmyPEmoXuvMFHyMzaT291bGFa+NHKvyUlI2baxpj9HKISG65DRLCNuQLmHlH4doNegYY5zcZM2X9Hs9yo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwwsmKh/Zrd/vWTTz4EX1zkaQTeJ1wDwCwvpWkZYZwOdVXkNZWK
-	yyMgR9GyiC/1Cy4LhwYTLX3cuOgOW+cOnHWDG4a/ma4i3S/acbgnPDtiepAiOa0=
-X-Gm-Gg: ASbGnctOWQOAbA9l2ZCu11Fv5FFfXTIycN3FfDNU8vKSfFBQWvf9q8YoRfP1znOJvOe
-	KFUknY0eLVALlVNNLZgT4ljbPWTrkVZZeiLyprSm4dEosr98NVsyh0Y8Vqrxb/9+EAu6wuffdSL
-	Q+T58OC6D8vBo9zcb6su+xTCudsUK15TK16OxTIojrmmXIK2+AuspLjWeYArUQ+CZWGJ5SNydx6
-	p4NczEHbF010Xj32139tANW/TH1Sg+ERDL7hxtYdP3ijjMWt1EfSVFIGC4txyIyevypYN8AnwMX
-	z/nxNjkeIbkCRUDTi+G2lpSZfF3qVHwn6RhpIQ==
-X-Google-Smtp-Source: AGHT+IHirIBi268WVNrXJb8nSLfBOn2zE3qJRsiRuXXJzWwl/IWx5gRbkFVSetYSD+YqWYxCwV2UmQ==
-X-Received: by 2002:a05:6000:1a8e:b0:38d:d701:419c with SMTP id ffacd0b85a97d-39132dc5717mr7516476f8f.41.1741610432227;
-        Mon, 10 Mar 2025 05:40:32 -0700 (PDT)
+        bh=Id3vfYo4VZD5XkzVJtKrhfXekLSBu1hf0uoNw4mF3Eo=;
+        b=m6HGl1j3r9Fgobu015BzLABaPnSJRNRa/Z1pAovyAdK4JMe22CRX/3q4Vvk6VXgpjl
+         Kzol96ur/OlOknxjTvwY9ZNYx4MTpR0Q7VMU98zJN8gsClC3CWrJi1gEPcfKG3RGykkY
+         tYg0XUiXMemMeRuGduxXwdHkUmyU3Jk44gZ3CzoJ5I+4caRgqAh7bGu8BTej11HudmkL
+         DK8eCPbhnJaFtKDyMbUJ4IrPcOw2JAfT1yK2/KfDGjb2uD/Uv48WXzN7tzIFVsnE0dsu
+         vngtUosLk9XTbQShxyPmQtVs+BeyhirFJXvq3SCbdcNVGunWcvIUZ/9L6J0pO/kdQpFU
+         JOFA==
+X-Forwarded-Encrypted: i=1; AJvYcCXqugmMyEAE6+kDqzMMCjV3ZAKGI0Sinr6fMRv8JTnfvv3m8yj8T0p4soO1F3zeaKQlToUTbCDcbQ5ermI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx3lBKF2F5dIn8XcaKAhO33WravwH1PxRCXwItlYrJKCd8AXWZN
+	ABYpEfEyzTMnHU4eEvpckemxkTnjr26s5NwxkWi5bW4OYFEhiNq9WxgrolhDRaE=
+X-Gm-Gg: ASbGncvaO8VCKs9Hsc6Kl0BoXqyXHoDQxpDWwTbHujb+C30Nt7jDNRbVSrwjCa7JA+b
+	x7WHRGUUMlDbF7tdOcuQORo5X7ZiHc/Ru+kLGgw/CTt6+p6DLS4rDYeWDZL6VoV07NUZoRfmowa
+	0vH/TIi8G8TN0hyRY7iwyIlOBatA+gsh5zKl4HKDlspysq9OCVImwbvY9H6/bQqZOaxWewVVgGl
+	B6cDFGAlWe/zjw0GblFeJnCkavbmKkNmuG0/QC+lrBTHP12f+WSIfF6KycA5YIovXnhwHZFLYu+
+	fl3ciYeL3GzoaCxEvv5L0WyWHmJtndNewlGsow==
+X-Google-Smtp-Source: AGHT+IECcUEAyJk+oPoRKjamWfM+6cuRlv65sUT1emZeg5dAbLhRfMSv7hXYlymPRYvGi9qDzp5WJA==
+X-Received: by 2002:a05:6000:402a:b0:390:ed05:aa26 with SMTP id ffacd0b85a97d-39132d30c22mr7780118f8f.5.1741610433374;
+        Mon, 10 Mar 2025 05:40:33 -0700 (PDT)
 Received: from [127.0.1.1] ([2a01:cb1d:dc:7e00:2711:39c0:fb51:b639])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3912bfdfdc5sm14535865f8f.25.2025.03.10.05.40.31
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3912bfdfdc5sm14535865f8f.25.2025.03.10.05.40.32
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 10 Mar 2025 05:40:31 -0700 (PDT)
+        Mon, 10 Mar 2025 05:40:32 -0700 (PDT)
 From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Mon, 10 Mar 2025 13:40:20 +0100
-Subject: [PATCH 06/15] gpio: bt8xx: allow to build the module with
- COMPILE_TEST=y
+Date: Mon, 10 Mar 2025 13:40:21 +0100
+Subject: [PATCH 07/15] gpio: bt8xx: use lock guards
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -83,7 +82,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250310-gpiochip-set-conversion-v1-6-03798bb833eb@linaro.org>
+Message-Id: <20250310-gpiochip-set-conversion-v1-7-03798bb833eb@linaro.org>
 References: <20250310-gpiochip-set-conversion-v1-0-03798bb833eb@linaro.org>
 In-Reply-To: <20250310-gpiochip-set-conversion-v1-0-03798bb833eb@linaro.org>
 To: Ray Jui <rjui@broadcom.com>, 
@@ -103,44 +102,175 @@ Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
  linux-renesas-soc@vger.kernel.org, chrome-platform@lists.linux.dev, 
  Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 X-Mailer: b4 0.14.1
-X-Developer-Signature: v=1; a=openpgp-sha256; l=603;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=4382;
  i=bartosz.golaszewski@linaro.org; h=from:subject:message-id;
- bh=HM+nOzctEfj4SKGt3f/npQjS/nebRuckql5RBo2YHvk=;
- b=owEBbQKS/ZANAwAKARGnLqAUcddyAcsmYgBnzt22XKhxDpceKw9s3GwK38TDwn1P/4/8jyV/1
- op/G4g/1GWJAjMEAAEKAB0WIQQWnetsC8PEYBPSx58Rpy6gFHHXcgUCZ87dtgAKCRARpy6gFHHX
- cgZoD/9Tv1NzmtUetdANt9hTuIv6Cuv0EuAUV1poJeKpLIc2bKENgK14DVlrT5ussU/ndHG5GOh
- FjQrpxS/OFNLpEbOn8II6OeQLjjIcdX6OAFV3vxsNEgEizc+7sqoqUsnToI8ig05A+c0850d2pr
- jFkGEp8bq7y6rsbCZYsPRZZXEUlcmH/uOszR7Lh7TLwgmSnCmMWsTADAdTOuWMVvw9zWHIlySEk
- DInHW1Sy8l92Jss/0SdEaUFqnhYV7rxDShXcfaiNZKdvZ9SnJl+48SrK7xdrwoiHywzhoQ8WJQh
- DnwGuiAmm1RrF4OoS84mGWmL8ymZ2NEBzI+pMT3UhXvkpXV+o4bv0KFbERTa0gPPq6PI7LXKWPG
- pY8ctqXA9X3aDz2fVzPvlZTMZYneUxWvU/VmQlk8davmlvlGGCVAa9SQwYZ5wGilpCfhGJnU6Bj
- CMvAhA0RJh/G/3sBac0nPeuTHE+Ae586tmxAkHMsl9xaf2JwaIt0RrdRcgbJ6MwTG2nJ6g+vsPF
- YBEbgmtXE9znBAWuxTMBCjqmXGV+HXNF4naj/rwsfP+fOaBOr8yXh6KJYE+hNPeq97S63W9ESah
- lNdDWck29TE3hEQHquHLkhvQKeuNZoW03QSYk8dmjeF5HJShhcVaI3JH2C7kri41gqOOh2Wsfzq
- mA9QTEFZVb7hXlA==
+ bh=EhqOin58PEfzgx3eJ5unejxbV9F/HjaBEBaMhpRjuiU=;
+ b=owEBbQKS/ZANAwAKARGnLqAUcddyAcsmYgBnzt228iyNyevo/zmL5UjBckrYdT+ePey2+NAqp
+ f+oE7+vEmCJAjMEAAEKAB0WIQQWnetsC8PEYBPSx58Rpy6gFHHXcgUCZ87dtgAKCRARpy6gFHHX
+ cg4gD/wNsLQBjjyB4YIEs1F1nmfjbZaGOKUNQEQ1mGrVWV+Ys6F2xeaYF0e6BZo64oEe/hRcDAV
+ slCccpz4sLSCc7hbjcevCbwK/jTj8sN9aIcgsIMVIVdy5pc98CFwM96Gf6naCZC/62eUr96Gf+p
+ 2+DRtSDHs7J5I9fKr6O9aKlk4O9dtVnsv89+uEwwM46yXuqjGrKkN8aRGZKlYmMCVriwHN2uZZc
+ KhdgcZ5AEQ4fd01RiZwIGeCg3SJs14FqOg46YBWvM7Ba+kcb+83fRcy+TU2nuZ5YK2VlPnhMdQw
+ vQipTEKxs8O12n0MXdPkKbiqr3HeTXBKjb3da7SMqPfPrSQ/zV0s6Z7rut0A+rX5ycNhvwQJQ7A
+ 3WI8cUAFmocYhX0W1T5cN7ssegIzI45Q0QUa16fwxNz92rUvUvEWLIPIhwB3uNmkQblpiIVwGHg
+ hSYChG3o1nmtw0YJXc8SM5Njj+2aRx41YGBxy8AmpUO4Lvaisfc/+kWLxhCl36AHy8Q+6KqYNS8
+ Vki2t3QAVYFTInIusfdY6zjNNaKVewT98C8xLbU87/eA9GMDVixFyEdXmchmJtC0xKk5cjSR3YL
+ mkSF9Y8fy2nJqj8oO+TvBHduRPZlo07/Fh0ewKthqSiRqpTHpeuJD4JmDIjypddrAk4hjBNB/F4
+ qJANL60tTxvMY0Q==
 X-Developer-Key: i=bartosz.golaszewski@linaro.org; a=openpgp;
  fpr=169DEB6C0BC3C46013D2C79F11A72EA01471D772
 
 From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
+Reduce the code complexity by using automatic lock guards with the
+spinlock.
+
 Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 ---
- drivers/gpio/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/gpio/gpio-bt8xx.c | 43 ++++++++++++++-----------------------------
+ 1 file changed, 14 insertions(+), 29 deletions(-)
 
-diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
-index 3e9b174fee84..f2c39bbff83a 100644
---- a/drivers/gpio/Kconfig
-+++ b/drivers/gpio/Kconfig
-@@ -1671,7 +1671,7 @@ config GPIO_AMD8111
+diff --git a/drivers/gpio/gpio-bt8xx.c b/drivers/gpio/gpio-bt8xx.c
+index 7920cf256798..173da7bbfc98 100644
+--- a/drivers/gpio/gpio-bt8xx.c
++++ b/drivers/gpio/gpio-bt8xx.c
+@@ -31,6 +31,7 @@
  
- config GPIO_BT8XX
- 	tristate "BT8XX GPIO abuser"
--	depends on VIDEO_BT848=n
-+	depends on VIDEO_BT848=n || COMPILE_TEST
- 	help
- 	  The BT8xx frame grabber chip has 24 GPIO pins that can be abused
- 	  as a cheap PCI GPIO card.
+ */
+ 
++#include <linux/cleanup.h>
+ #include <linux/module.h>
+ #include <linux/pci.h>
+ #include <linux/spinlock.h>
+@@ -69,10 +70,9 @@ MODULE_PARM_DESC(gpiobase, "The GPIO number base. -1 means dynamic, which is the
+ static int bt8xxgpio_gpio_direction_input(struct gpio_chip *gpio, unsigned nr)
+ {
+ 	struct bt8xxgpio *bg = gpiochip_get_data(gpio);
+-	unsigned long flags;
+ 	u32 outen, data;
+ 
+-	spin_lock_irqsave(&bg->lock, flags);
++	guard(spinlock_irqsave)(&bg->lock);
+ 
+ 	data = bgread(BT848_GPIO_DATA);
+ 	data &= ~(1 << nr);
+@@ -82,20 +82,17 @@ static int bt8xxgpio_gpio_direction_input(struct gpio_chip *gpio, unsigned nr)
+ 	outen &= ~(1 << nr);
+ 	bgwrite(outen, BT848_GPIO_OUT_EN);
+ 
+-	spin_unlock_irqrestore(&bg->lock, flags);
+-
+ 	return 0;
+ }
+ 
+ static int bt8xxgpio_gpio_get(struct gpio_chip *gpio, unsigned nr)
+ {
+ 	struct bt8xxgpio *bg = gpiochip_get_data(gpio);
+-	unsigned long flags;
+ 	u32 val;
+ 
+-	spin_lock_irqsave(&bg->lock, flags);
++	guard(spinlock_irqsave)(&bg->lock);
++
+ 	val = bgread(BT848_GPIO_DATA);
+-	spin_unlock_irqrestore(&bg->lock, flags);
+ 
+ 	return !!(val & (1 << nr));
+ }
+@@ -104,10 +101,9 @@ static int bt8xxgpio_gpio_direction_output(struct gpio_chip *gpio,
+ 					unsigned nr, int val)
+ {
+ 	struct bt8xxgpio *bg = gpiochip_get_data(gpio);
+-	unsigned long flags;
+ 	u32 outen, data;
+ 
+-	spin_lock_irqsave(&bg->lock, flags);
++	guard(spinlock_irqsave)(&bg->lock);
+ 
+ 	outen = bgread(BT848_GPIO_OUT_EN);
+ 	outen |= (1 << nr);
+@@ -120,8 +116,6 @@ static int bt8xxgpio_gpio_direction_output(struct gpio_chip *gpio,
+ 		data &= ~(1 << nr);
+ 	bgwrite(data, BT848_GPIO_DATA);
+ 
+-	spin_unlock_irqrestore(&bg->lock, flags);
+-
+ 	return 0;
+ }
+ 
+@@ -129,10 +123,9 @@ static void bt8xxgpio_gpio_set(struct gpio_chip *gpio,
+ 			    unsigned nr, int val)
+ {
+ 	struct bt8xxgpio *bg = gpiochip_get_data(gpio);
+-	unsigned long flags;
+ 	u32 data;
+ 
+-	spin_lock_irqsave(&bg->lock, flags);
++	guard(spinlock_irqsave)(&bg->lock);
+ 
+ 	data = bgread(BT848_GPIO_DATA);
+ 	if (val)
+@@ -140,8 +133,6 @@ static void bt8xxgpio_gpio_set(struct gpio_chip *gpio,
+ 	else
+ 		data &= ~(1 << nr);
+ 	bgwrite(data, BT848_GPIO_DATA);
+-
+-	spin_unlock_irqrestore(&bg->lock, flags);
+ }
+ 
+ static void bt8xxgpio_gpio_setup(struct bt8xxgpio *bg)
+@@ -236,18 +227,15 @@ static void bt8xxgpio_remove(struct pci_dev *pdev)
+ static int bt8xxgpio_suspend(struct pci_dev *pdev, pm_message_t state)
+ {
+ 	struct bt8xxgpio *bg = pci_get_drvdata(pdev);
+-	unsigned long flags;
+ 
+-	spin_lock_irqsave(&bg->lock, flags);
++	scoped_guard(spinlock_irqsave, &bg->lock) {
++		bg->saved_outen = bgread(BT848_GPIO_OUT_EN);
++		bg->saved_data = bgread(BT848_GPIO_DATA);
+ 
+-	bg->saved_outen = bgread(BT848_GPIO_OUT_EN);
+-	bg->saved_data = bgread(BT848_GPIO_DATA);
+-
+-	bgwrite(0, BT848_INT_MASK);
+-	bgwrite(~0x0, BT848_INT_STAT);
+-	bgwrite(0x0, BT848_GPIO_OUT_EN);
+-
+-	spin_unlock_irqrestore(&bg->lock, flags);
++		bgwrite(0, BT848_INT_MASK);
++		bgwrite(~0x0, BT848_INT_STAT);
++		bgwrite(0x0, BT848_GPIO_OUT_EN);
++	}
+ 
+ 	pci_save_state(pdev);
+ 	pci_disable_device(pdev);
+@@ -259,7 +247,6 @@ static int bt8xxgpio_suspend(struct pci_dev *pdev, pm_message_t state)
+ static int bt8xxgpio_resume(struct pci_dev *pdev)
+ {
+ 	struct bt8xxgpio *bg = pci_get_drvdata(pdev);
+-	unsigned long flags;
+ 	int err;
+ 
+ 	pci_set_power_state(pdev, PCI_D0);
+@@ -268,7 +255,7 @@ static int bt8xxgpio_resume(struct pci_dev *pdev)
+ 		return err;
+ 	pci_restore_state(pdev);
+ 
+-	spin_lock_irqsave(&bg->lock, flags);
++	guard(spinlock_irqsave)(&bg->lock);
+ 
+ 	bgwrite(0, BT848_INT_MASK);
+ 	bgwrite(0, BT848_GPIO_DMA_CTL);
+@@ -277,8 +264,6 @@ static int bt8xxgpio_resume(struct pci_dev *pdev)
+ 	bgwrite(bg->saved_data & bg->saved_outen,
+ 		BT848_GPIO_DATA);
+ 
+-	spin_unlock_irqrestore(&bg->lock, flags);
+-
+ 	return 0;
+ }
+ #else
 
 -- 
 2.45.2
