@@ -1,88 +1,144 @@
-Return-Path: <linux-kernel+bounces-554956-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-554958-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45017A5A3CB
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 20:28:17 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 136CDA5A3D4
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 20:31:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D908C1892044
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 19:28:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 524D116917B
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 19:31:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6782F236428;
-	Mon, 10 Mar 2025 19:28:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58955233D86;
+	Mon, 10 Mar 2025 19:31:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="g3laBx+O"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YEsJI4SW"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28CD6235C04;
-	Mon, 10 Mar 2025 19:28:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD0BF22318;
+	Mon, 10 Mar 2025 19:30:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741634892; cv=none; b=qZc5TRWLA/41DXdpUrWe5qVcfRhgB7LHCGkIQRYHKvJor3DGAkdGF8Ppqj2+jtNKSKaLs8jojg4eJ17yuIpY1rbDSpISHwAUs179J4WgRfrHY8sKoQjnTIRLsVnwNEA6vKvAWXQAR0t1AH7CH1Xihwx5ZIBDFSyNz/2js0j0j+Y=
+	t=1741635059; cv=none; b=olJkwd0KWB4027kRRvJxpvPE20uiBfUSr8fwTQm5PZauZ+570fsKw8YRkwQ8Z2fT+8eModY9PdAntyjGwJva6VN/1uOUMrCdPom8xjOKAJIjKIkOY+VXFrRT/Pha6iVLgaqAp2FErZAhOTgdHPQcAhARaDfkZytpcMc8ylqfHls=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741634892; c=relaxed/simple;
-	bh=qiEz4wXFKhuDCoZ/JWv3WXxSepSmO09MsuLs9ZdNhZw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CV3Nrn8Ffp6ShOm88THbrdoDp+ui/zRlQ/za23i7TT9YyXRTdN68XED90Seg0njONXVv/xa0b35VqGxDW+dvuz1a6UGyLN91CNNcxJ+kA7/Bd/fum/NxyRSpYMknZ6cItvwn5KDusXUtRnfBsFWnIsbslm1N3KLMPKXlKwv+WZs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=g3laBx+O; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=vPfN21NRmpQesCJZ8FUWTpIRNYjQP0B32oYDjnXqSnw=; b=g3laBx+O1d+D+vj+9BZHWkp2DN
-	lknyUmGlGhbtW0PjoZ2zLU8cEKltFX4QWUnzAxfc5HQtB/bHH1u10ojqI/a+paXbEpv7XStyxe1YV
-	ReZ9Upq8M9AzZH78VVPKE3Q7wIvnhg2W/SuI4RbzYhkDhFhIQ6fZgo8xUhAtJaxM7WdtzsARUlUGV
-	XCUvO3F/Vy3xaLSnS/RmRVWTXdul6StxsycrRoHb8U3G8opLlSz+WVZC2IvJ44uV6Hosj++oiiTFs
-	7agTPPThBupqJBZzHEG+uZ+m+plIO7FIEM+Jw8Ky9Z3xkSXc/lOiK01Cy3NmZEpcDESmdqDLdmbN4
-	IjOpx82g==;
-Received: from willy by casper.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1trinF-00000009G1a-2WUe;
-	Mon, 10 Mar 2025 19:28:05 +0000
-Date: Mon, 10 Mar 2025 19:28:05 +0000
-From: Matthew Wilcox <willy@infradead.org>
-To: kth <kangtaeho2456@gmail.com>
-Cc: corbet@lwn.net, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] fs: Fix typo from smpfs to smbfs in filesystem
- documentation
-Message-ID: <Z889RfnudqMc5r_e@casper.infradead.org>
-References: <20250310184129.328482-1-kangtaeho2456@gmail.com>
+	s=arc-20240116; t=1741635059; c=relaxed/simple;
+	bh=v4yFecT2Oniyy1NPYOTfbARYRqI9e57Xhic4hOu+GeQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=MJe3mDAazMICuepeUVPBmPwYKf6x3gf+JZ25GgLQ+Ku5p6WMBRUS654qCTZa0GG24v6Oo7gJfLCLdmcShiD0vrQq6dxYIs11NBGrnHtnbjtzzU2aIXdWXjsWzG5NA7xMkuMkhMzs/qPLgqfr99dBu96idckguRaZGwxUX7cp8Sc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YEsJI4SW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1EAFEC4CEE5;
+	Mon, 10 Mar 2025 19:30:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741635059;
+	bh=v4yFecT2Oniyy1NPYOTfbARYRqI9e57Xhic4hOu+GeQ=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=YEsJI4SW1f/4rNuYiyHSu6/QnSExJ4x+d6iQjI9VDYrZoNADxke2mnXUwP9afkihL
+	 hTuuH7V0VvVUg5uJFbcLaV3P7z7RXNhKKuijQf+ljuhhIZy4j+4VTXINMoR1mxU6mu
+	 9oYCm4t8FMpXLRBV22kEbpTDdhoxwjLbeq0rMzzReSuaVBXcAgYjIAZq3BHxisBfVj
+	 GLFn9UmZ/rHmt/8ArwgEiV5JpYwhB5ksIkuxE1S5ZZfX7MMhJRKQW4RKzxHjSn4O1U
+	 ToiRFxu1+MR8QXk+J8FtqIwrbQ6ID67F5bBBCPBS5GARlRPIQNUENI/DTESUA/ZxXY
+	 2OvQqUx3x58Hw==
+Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-5e6167d0536so4706336a12.1;
+        Mon, 10 Mar 2025 12:30:59 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCULAye0Az3DzysmNejb7GZX5aAaOB/uGQfiRwbgX1cMQQmgvv/T82ASvgQAEegoDraoqQq2pf5TS2CQx3Gt@vger.kernel.org, AJvYcCVoELF7pH09+41qHmwKC/aWTvIMxEc3Qtc5qcXCEWY3dxgsq1/FcD+brrhO3jJqjewjlj2IB1d/t2Dz@vger.kernel.org, AJvYcCWxf2NDBB1ZpdpMb/2K5Y7+jIaPlV/N/NfxyhA84R7E9gmGmoUxN0DYZsQ8Ig+Kc0OJ++5OkpvLVx6nh7GB@vger.kernel.org
+X-Gm-Message-State: AOJu0YwH2F3DhDl1tEj+kPkwypbh8JAo/0Qd/NM3dmfc05oVnP6w8KnU
+	Pn1MwTRVOXlj339ZPVfVrSgOnPpgWzhcY6wqUoMFMISGl/AhxIhnDohzsag0CL33H91u4NKVbJ6
+	ktWMbpYNtqGqNaRU2p8gTiXHZwg==
+X-Google-Smtp-Source: AGHT+IGxBKdAQOOWVnO3ZEjAzX0VnUi4wg5gUyfxa5EYDnUv2ipBTTlxmPR9u72RbqgdJn4WQkU1sK0SjNez+497cro=
+X-Received: by 2002:a17:906:7308:b0:ac2:6582:1564 with SMTP id
+ a640c23a62f3a-ac2b9e1d1d1mr100096466b.27.1741635057630; Mon, 10 Mar 2025
+ 12:30:57 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250310184129.328482-1-kangtaeho2456@gmail.com>
+References: <20250307093309.44950-1-krzysztof.kozlowski@linaro.org>
+ <5417098.31r3eYUQgx@workhorse> <20250310124956.GA3875809-robh@kernel.org>
+In-Reply-To: <20250310124956.GA3875809-robh@kernel.org>
+From: Rob Herring <robh@kernel.org>
+Date: Mon, 10 Mar 2025 14:30:45 -0500
+X-Gmail-Original-Message-ID: <CAL_JsqJShHSMzMwiYA79OppJYKKR8qN=1soXPV_hCZiXGyVkSg@mail.gmail.com>
+X-Gm-Features: AQ5f1JosXmbTct3QI9ZnK1eBDcQPU7QRj7_3mqIgKtvsQToiQl1meMSpHXHswhc
+Message-ID: <CAL_JsqJShHSMzMwiYA79OppJYKKR8qN=1soXPV_hCZiXGyVkSg@mail.gmail.com>
+Subject: Re: [PATCH v2] dt-bindings: rng: rockchip,rk3588-rng: Drop
+ unnecessary status from example
+To: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
+Cc: Daniel Golle <daniel@makrotopia.org>, Aurelien Jarno <aurelien@aurel32.net>, 
+	Olivia Mackall <olivia@selenic.com>, Herbert Xu <herbert@gondor.apana.org.au>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Heiko Stuebner <heiko@sntech.de>, linux-crypto@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, 
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Mar 11, 2025 at 02:41:29AM +0800, kth wrote:
-> The documentation incorrectly referred to 'smbfs' as 'smpfs'. This change corrects that typo to ensure the documentation is accurate and not misleading.
-> 
-> Signed-off-by: Kang Taeho <kangtaeho2456@gmail.com>
-> ---
->  Documentation/admin-guide/highuid.rst | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/Documentation/admin-guide/highuid.rst b/Documentation/admin-guide/highuid.rst
-> index 6ee70465c0ea..9239067563a1 100644
-> --- a/Documentation/admin-guide/highuid.rst
-> +++ b/Documentation/admin-guide/highuid.rst
-> @@ -64,7 +64,7 @@ What's left to be done for 32-bit UIDs on all Linux architectures:
->  
->    Other filesystems have not been checked yet.
->  
-> -- The ncpfs and smpfs filesystems cannot presently use 32-bit UIDs in
-> +- The ncpfs and smbfs filesystems cannot presently use 32-bit UIDs in
+On Mon, Mar 10, 2025 at 7:49=E2=80=AFAM Rob Herring <robh@kernel.org> wrote=
+:
+>
+> On Fri, Mar 07, 2025 at 03:05:50PM +0100, Nicolas Frattaroli wrote:
+> > On Friday, 7 March 2025 10:33:09 Central European Standard Time Krzyszt=
+of
+> > Kozlowski wrote:
+> > > Device nodes are enabled by default, so no need for 'status =3D "okay=
+"' in
+> > > the DTS example.
+> > >
+> > > Reviewed-by: Heiko Stuebner <heiko@sntech.de>
+> > > Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> > >
+> > > ---
+> > >
+> > > Changes in v2:
+> > > 1. Drop unnecessary full stop in subject prefix after ':'.
+> > > 2. Add Rb tag.
+> > > ---
+> > >  Documentation/devicetree/bindings/rng/rockchip,rk3588-rng.yaml | 1 -
+> > >  1 file changed, 1 deletion(-)
+> > >
+> > > diff --git a/Documentation/devicetree/bindings/rng/rockchip,rk3588-rn=
+g.yaml
+> > > b/Documentation/devicetree/bindings/rng/rockchip,rk3588-rng.yaml inde=
+x
+> > > 757967212f55..ca71b400bcae 100644
+> > > --- a/Documentation/devicetree/bindings/rng/rockchip,rk3588-rng.yaml
+> > > +++ b/Documentation/devicetree/bindings/rng/rockchip,rk3588-rng.yaml
+> > > @@ -53,7 +53,6 @@ examples:
+> > >          interrupts =3D <GIC_SPI 400 IRQ_TYPE_LEVEL_HIGH 0>;
+> > >          clocks =3D <&scmi_clk SCMI_HCLK_SECURE_NS>;
+> > >          resets =3D <&scmi_reset SCMI_SRST_H_TRNG_NS>;
+> > > -        status =3D "okay";
+> > >        };
+> > >      };
+> >
+> > Hi,
+> >
+> > is there the possibility we could make dtschema as invoked by `make
+> > dt_binding_check W=3D1` (or W=3D2) add a warning for examples that have=
+ disabled
+> > or explicitly listed status properties when not needed? Or is this some=
+thing
+> > better handled in, say, checkpatch.pl?
+> >
+> > The question arises because dumb mistakes by me like this should ideall=
+y be
+> > caught before they waste precious maintainer time.
+> >
+> > If it's best handled in dtschema, I can look into working on that so yo=
+u guys
+> > don't have to do even more work due to me.
+>
+> Trust me, I'm always looking for things to check automatically. :)
+>
+> I have something like that which adds a schema for examples only. I
+> think there were some corner cases. I'll take a fresh look at it.
 
-ncpfs doesn't exist any more; it was removed many years ago.  And the
-smbfs that is referred to here was replaced by cifs many years ago.
+I got my check working again. i2c/i2c-demux-pinctrl.yaml is the
+problematic one. Not sure what to do there.
 
-I have a feeling the entire highuid document should be deleted.  It
-describes a transition that happened 25 years ago.
+Rob
 
