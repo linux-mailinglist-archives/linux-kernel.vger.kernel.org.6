@@ -1,236 +1,147 @@
-Return-Path: <linux-kernel+bounces-553742-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-553743-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 39B2FA58E57
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 09:40:17 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B805A58E5A
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 09:40:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 69FBE162BDF
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 08:40:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C68E31886848
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 08:40:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EE0122370A;
-	Mon, 10 Mar 2025 08:40:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75DFF223710;
+	Mon, 10 Mar 2025 08:40:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=emfend.at header.i=@emfend.at header.b="nRQIVFB/"
-Received: from lx20.hoststar.hosting (lx20.hoststar.hosting [168.119.41.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VB++FgA7"
+Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 200B3F9CB;
-	Mon, 10 Mar 2025 08:40:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=168.119.41.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4017CF9CB;
+	Mon, 10 Mar 2025 08:40:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741596010; cv=none; b=OlfSn0lqpEqbVpqC6BfTgw6K00fZ7XNRL9wAd1UASfotQ4ffxXNj8I1sjf+WKK7+8fp5utVqDBTVymrNf4ZorEnEyaBUN8hWa/WDrT2q2I60wnuZvUTHHk2qb79eeMZTmIzhGDF+u9CG0/SE3yREMNXVpJ2h5SYSlgoOMsR2OCs=
+	t=1741596044; cv=none; b=Ix81n2IRn9NdWW8+L/CDCYaUj87Za21/nZkUFo+91NJ5JDfALSnYzBql82DUq817snPS+l1E0+B86zLHNThBSrTPMEwkEv3s/gSnMrv4PernXmfZdOLr1B6nWBgDQ+qkFqYwsiccYxjFnxQxeZN+UqkFYGHcSfZ19m+4O5iqFpQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741596010; c=relaxed/simple;
-	bh=3wxr9r1c2sMNiyyDmj1lzAXoDx6frVlS+T/98Uyt41o=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Ly0lDEy/nf4oo6SCFskJq+5ilasuM0yuPaHmvSwvUuluo5dUbCTbdx5MpTrHWBsHtbdBCSbTgAlqw2VjINp5qNI72YiuuOGvx8n9hERFQd+fEIhci9jjPwl7VDayftMvXmUcM2bAd9vgMgh0KNS59Wt3YippgSJE/sOuc+m5YPk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=emfend.at; spf=pass smtp.mailfrom=emfend.at; dkim=pass (1024-bit key) header.d=emfend.at header.i=@emfend.at header.b=nRQIVFB/; arc=none smtp.client-ip=168.119.41.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=emfend.at
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=emfend.at
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=emfend.at;
-	 s=mail; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References
-	:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=XcSmxEDuu6+MebmvTMCyIi9Zy3QJJu+tJfjO1pOs2iU=; b=nRQIVFB/GiTBJ3B/be2kEmeT3d
-	1DDe+IIcUPv7swizTIyOT2LJoP8LOTf891mGY6nmcjOuVZg0jJDjO3XNB2yOUHCAuoQNYIwCESQmG
-	vajsCWiS15pdw04wa4EXrVwZ5/doKJDxj6yzCXd817cQ8sKeWOHCV/o2Ilh3z2ubDpws=;
-Received: from 194-208-208-245.tele.net ([194.208.208.245]:62899 helo=[192.168.0.218])
-	by lx20.hoststar.hosting with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305_SHA256
-	(Exim 4.93)
-	(envelope-from <matthias.fend@emfend.at>)
-	id 1trYg8-0025rq-Gx; Mon, 10 Mar 2025 09:40:05 +0100
-Message-ID: <d30e5994-9e7a-4f0c-96e6-14fe6f132f5f@emfend.at>
-Date: Mon, 10 Mar 2025 09:40:02 +0100
+	s=arc-20240116; t=1741596044; c=relaxed/simple;
+	bh=Ens4mW/VOnDxf+/m0m0sz7eh4cSEe/GjTqbYLbm48l0=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=PhK8fNY3esap+c+ASL/1ArxTNALqf0eXMDcV6kYUzhALXgaETebfRsnJY2xXPAfJuzbwR8vIkP0mkGd/ifOkrtM981uwRS8n1qRihVDtZe4oDmFra1hSFpBGZDHe6OxzL1zL3yVjK/GnJ+u6w/SyrmZaT9ibS3Ob9IaOVH6K2h4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VB++FgA7; arc=none smtp.client-ip=209.85.208.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-5e6167d0536so3488385a12.1;
+        Mon, 10 Mar 2025 01:40:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741596041; x=1742200841; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=uKRxHFwd/2vW4jmL6ANEf5eoCq9mv6fT9Ju/M9j0wwM=;
+        b=VB++FgA7KGDhbSqk+FXpVOCPONz2zfScacKmO2NajMV1RbhdW1R/gX/0dmHn6FXxYA
+         v2qafwCSK9Adw+wAiJfOeyk8JPfV37xngPrIBEIpl6RCQcx69GBnL01jM5gf9sVsaKls
+         tnSaDckPLnFFMcN7Nu1t0nMBiF2qnCUJDD6J8Jyowoxc4FOmHhD+YFQlJNSv7UI+3LTi
+         qLTMf0BMNq+LN2LAhthCq0/SkFJT8pmn6rVQESWxSyscYcwuX+eg83kmce/0zBxSx8DH
+         5rEbJpmDZSrDYKR7MYe8L9z7kVkWqsN909vfaKKZRBMO+xutLwAYIP1o8tPCL+qIZmxk
+         4Mcw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741596041; x=1742200841;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=uKRxHFwd/2vW4jmL6ANEf5eoCq9mv6fT9Ju/M9j0wwM=;
+        b=ho2iT4KaSr60hsfMRlKCkgiFbTQrSqBBALe2k0xYV9jeSUqn0NwiMX0dCIRaG/Tsou
+         p3F0bqmEQuz4ZoPbaHpJKct93A8MPHeO+JzZXbzF6yw6cLiOYf/OhdsLlVnqNh8ZNNlG
+         ycd5vEP/iW1aQc2/IZ5OM17YE5HcvNf7dG2N8VnlwMv7clMTQ8mbgCjzLBu9HTTiZzcM
+         Lom86W1wqvlqVUYPzxMv+mrfQAPwO2PqNhOlC0pkrFyEbpiIaQTAEvzbF9U0/wncGRWn
+         4jHZZrFRH3LDiSs/0WT27EhVXjtCGLmSLc36oSUXmsUI+YqLnHN5ZtiAEpnHwlKsHLgA
+         tPNg==
+X-Forwarded-Encrypted: i=1; AJvYcCWP1w9FQOt4boaIDrIYTTUBEIJZmyiZhrKQrjAMz1/0E0X7jJXF+N3lMMwhID50P6CLsaNTaibXZ7t5ww0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzJVf1FJlusqVJQXLsmansAt545fxpxMltVetA1LncnwxOUQHlT
+	movufSXoATaS8GDZmHM+1VjW6DCjc53LwNpnc12WFftGHf7QZ4zN3a7whA==
+X-Gm-Gg: ASbGncvt2P7n7mp5AWkDp1WvrXi7NrPJR2I6zrhTlunVUNk1NNJWzu1DrsuXonbQipy
+	IRCASb68i5Tm3U2C1ykktingO8w5KQUjt4uiX4ufHJ5TwFPVjl2Be9RfdA0EQpUn+7Eetcrmg7K
+	r2t4xh9aa+jLQbN+ZCLnKvT31BsiYtW5vlmJQj5WWT0l53d3Hr5HJZIgzGHfRyB746FaKwtlXdj
+	usocfSvbYm8Z44fi5BuK7+eTllNfwGoqXDsTqju7pqQPlL3vejbxkFr9Irlz/paw5RlnWyhxbEm
+	hmqPf5+0FLHwlNiPoKCd/NG10hDN26QDM/f9YKEPAMFmJbNrjJ0rZwqs1tliJkBKVEm+/48e
+X-Google-Smtp-Source: AGHT+IFhw9TBYLkR/DFN/0ojmMM3DShRsh6XKMKPnlE4NPHejTsc3h+RLUH4BZOKSBp6+0MdTdQRrw==
+X-Received: by 2002:a17:907:938a:b0:ac2:92df:fab3 with SMTP id a640c23a62f3a-ac292e003e5mr325618066b.16.1741596041358;
+        Mon, 10 Mar 2025 01:40:41 -0700 (PDT)
+Received: from foxbook (adts246.neoplus.adsl.tpnet.pl. [79.185.230.246])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac2394825adsm743622666b.56.2025.03.10.01.40.40
+        (version=TLS1_2 cipher=AES128-SHA bits=128/128);
+        Mon, 10 Mar 2025 01:40:40 -0700 (PDT)
+Date: Mon, 10 Mar 2025 09:40:37 +0100
+From: Michal Pecio <michal.pecio@gmail.com>
+To: Mathias Nyman <mathias.nyman@intel.com>, Greg Kroah-Hartman
+ <gregkh@linuxfoundation.org>
+Cc: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 4/6] usb: xhci: Don't change the status of stalled TDs on
+ failed Stop EP
+Message-ID: <20250310094037.52625e24@foxbook>
+In-Reply-To: <20250310093605.2b3d0425@foxbook>
+References: <20250310093605.2b3d0425@foxbook>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] dt-bindings: leds: add Texas Instruments TPS6131x
- flash LED driver
-To: Krzysztof Kozlowski <krzk@kernel.org>, Pavel Machek <pavel@ucw.cz>,
- Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
-Cc: linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, bsp-development.geo@leica-geosystems.com
-References: <20250228-leds-tps6131x-v1-0-d1071d90f9ea@emfend.at>
- <20250228-leds-tps6131x-v1-1-d1071d90f9ea@emfend.at>
- <d5e73894-0e30-499f-a723-2ada72d3b864@kernel.org>
-Content-Language: de-DE
-From: Matthias Fend <matthias.fend@emfend.at>
-In-Reply-To: <d5e73894-0e30-499f-a723-2ada72d3b864@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Spam-Score: 
-X-Spam-Bar: 
-X-Spam-Report: 
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Hi Krzysztof,
+When the device stalls an endpoint, current TD is assigned -EPIPE
+status and Reset Endpoint is queued. If a Stop Endpoint is pending
+at the time, it will run before Reset Endpoint and fail due to the
+stall. Its handler will change TD's status to -EPROTO before Reset
+Endpoint handler runs and initiates giveback.
 
-thanks for your review.
+Check if the stall has already been handled and don't try to do it
+again. Since xhci_handle_halted_endpoint() performs this check too,
+not overwriting td->status is the only difference.
 
-Am 10.03.2025 um 08:49 schrieb Krzysztof Kozlowski:
-> On 28/02/2025 11:31, Matthias Fend wrote:
->> +
->> +properties:
->> +  compatible:
->> +    enum:
->> +      - ti,tps61310
->> +      - ti,tps61311
->> +
->> +  reg:
->> +    maxItems: 1
->> +
->> +  '#address-cells':
->> +    const: 1
->> +
->> +  '#size-cells':
->> +    const: 0
-> 
-> Why do you need these two?
+I haven't seen this case yet, but I have seen a related one where
+the xHC has already executed Reset Endpoint, EP Context state is
+now Stopped and EP_HALTED is set. If the xHC took a bit longer to
+execute Reset Endpoint, said case would become this one.
 
-As a template, I also used recently added bindings 
-(silergy,sy7802.yaml). These entries come from there, but as I 
-understand it, they are supposed to be removed, right?
+Signed-off-by: Michal Pecio <michal.pecio@gmail.com>
+---
+ drivers/usb/host/xhci-ring.c | 12 +++++++++++-
+ 1 file changed, 11 insertions(+), 1 deletion(-)
 
-> 
->> +
->> +  reset-gpios:
->> +    maxItems: 1
->> +    description: GPIO connected to NRESET pin
->> +
->> +  ti,valley-current-limit:
->> +    type: boolean
->> +    description:
->> +      Reduce the valley peak current limit from 1750mA to 1250mA (TPS61310) or
->> +      from 2480mA to 1800mA (TPS61311).
->> +
->> +  led:
-> 
-> Why do you have only one led node? Description says three: LED1-3,
-> unless these are just sinks which always have to be connected to the
-> same LED?
-
-That is basically correct. If you just want to switch the 3 LEDs on or 
-off, you could map that accordingly.
-In detail, however, the 3 channels are not really independent of each 
-other. All channels share, for example, the flash controller, the safety 
-timers and the operating mode. In addition, two channels share the 
-configuration registers. It is therefore not possible to use one channel 
-as a flash and another as a normal LED.
-For use as an LED flash controller (what the chip actually is), it 
-therefore only makes sense if one or more channels are combined.
-
-> 
->> +    type: object
->> +    $ref: common.yaml#
->> +    unevaluatedProperties: false
->> +
->> +    properties:
->> +      led-sources:
->> +        allOf:
-> 
-> Drop allOf
-> 
->> +          - minItems: 1
->> +            maxItems: 3
->> +            items:
->> +              enum: [1, 2, 3]
->> +
->> +      led-max-microamp:
->> +        anyOf:
-> 
-> oneOf
-> 
->> +          - minimum: 25000
->> +            maximum: 350000
->> +            multipleOf: 50000
->> +          - minimum: 25000
->> +            maximum: 525000
-> 
-> Why two different values?
-
-The channels can in principle be configured in 25mA steps.
-If only the two channels that share the configuration register are used, 
-the step size doubles to 50mA. The maximum current values ​​for such a 
-configuration are also different.
-There are of course several other combinations of channels that would 
-result in different maximum values, but since the step size is an 
-important value for the API, I wanted to describe these two cases 
-explicitly.
-
-Best regards
-  ~Matthias
-
-> 
->> +            multipleOf: 25000
->> +
->> +      flash-max-microamp:
->> +        anyOf:
-> 
-> oneOf
-> 
->> +          - minimum: 25000
->> +            maximum: 800000
->> +            multipleOf: 50000
->> +          - minimum: 25000
-> 
-> Same question
-> 
->> +            maximum: 1500000
->> +            multipleOf: 25000
->> +
->> +      flash-max-timeout-us:
->> +        enum: [ 5300, 10700, 16000, 21300, 26600, 32000, 37300, 68200, 71500,
->> +                102200, 136300, 170400, 204500, 340800, 579300, 852000 ]
->> +
->> +    required:
->> +      - led-sources
->> +      - led-max-microamp
->> +      - flash-max-microamp
->> +      - flash-max-timeout-us
->> +
->> +required:
->> +  - compatible
->> +  - reg
->> +  - '#address-cells'
->> +  - '#size-cells'
-> 
-> Why?
-> 
->> +  - led
->> +
->> +additionalProperties: false
->> +
->> +examples:
->> +  - |
->> +    #include <dt-bindings/leds/common.h>
->> +    #include <dt-bindings/gpio/gpio.h>
->> +
->> +    i2c {
->> +      #address-cells = <1>;
->> +      #size-cells = <0>;
->> +
->> +      led-controller@33 {
->> +        compatible = "ti,tps61310";
->> +        reg = <0x33>;
->> +        #address-cells = <1>;
->> +        #size-cells = <0>;
->> +
->> +        reset-gpios = <&gpio1 0 GPIO_ACTIVE_LOW>;
->> +
->> +        tps61310_flash: led {
-> 
-> Drop unused label
-> 
-> Best regards,
-> Krzysztof
-
+diff --git a/drivers/usb/host/xhci-ring.c b/drivers/usb/host/xhci-ring.c
+index 9e4940220252..28ebc0fc5bc2 100644
+--- a/drivers/usb/host/xhci-ring.c
++++ b/drivers/usb/host/xhci-ring.c
+@@ -1215,7 +1215,14 @@ static void xhci_handle_cmd_stop_ep(struct xhci_hcd *xhci, int slot_id,
+ 	 */
+ 		switch (GET_EP_CTX_STATE(ep_ctx)) {
+ 		case EP_STATE_HALTED:
+-			xhci_dbg(xhci, "Stop ep completion raced with stall, reset ep\n");
++			xhci_dbg(xhci, "Stop ep completion raced with stall\n");
++			/*
++			 * If the halt happened before Stop Endpoint failed, its transfer event
++			 * should have already been handled and Reset Endpoint should be pending.
++			 */
++			if (ep->ep_state & EP_HALTED)
++				goto reset_done;
++
+ 			if (ep->ep_state & EP_HAS_STREAMS) {
+ 				reset_type = EP_SOFT_RESET;
+ 			} else {
+@@ -1226,8 +1233,11 @@ static void xhci_handle_cmd_stop_ep(struct xhci_hcd *xhci, int slot_id,
+ 			}
+ 			/* reset ep, reset handler cleans up cancelled tds */
+ 			err = xhci_handle_halted_endpoint(xhci, ep, td, reset_type);
++			xhci_dbg(xhci, "Stop ep completion resetting ep, status %d\n", err);
+ 			if (err)
+ 				break;
++reset_done:
++			/* Reset EP handler will clean up cancelled TDs */
+ 			ep->ep_state &= ~EP_STOP_CMD_PENDING;
+ 			return;
+ 		case EP_STATE_STOPPED:
+-- 
+2.48.1
 
