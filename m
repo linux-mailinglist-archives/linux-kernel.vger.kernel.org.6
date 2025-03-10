@@ -1,115 +1,113 @@
-Return-Path: <linux-kernel+bounces-554357-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-554359-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id EE64CA596BA
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 14:51:31 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D632A596BF
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 14:52:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 389C41684F0
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 13:51:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 50C883A48F0
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 13:51:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECA4922AE45;
-	Mon, 10 Mar 2025 13:51:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B91222AE6D;
+	Mon, 10 Mar 2025 13:52:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QTEHYWIT"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="XM7YoThf"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52EFA21E0AE;
-	Mon, 10 Mar 2025 13:51:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCDF022A4D1;
+	Mon, 10 Mar 2025 13:52:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741614685; cv=none; b=r9yrE/VI86R3hiCOkY/R2+zUW73vrtpFGEfj+XiKBIQKJUpL8toprrlcnFK3KKG9vpLiFz//zKETj/7wETfPo5odh4M5i6jIDAS53JSl8h65WwUuYuBtnmgiSC3lAX2HbRycc9H0zLRCgm4zvMtnguQGE5l5mU+gq97NVYJv/Cc=
+	t=1741614725; cv=none; b=a7OcjekyQWZ2mY6EwuIEeSyFAahorQoLC2X3pK7QaltuvWXBVxpjLd+PGFwpkdoAj31qT3c1q42ecutal3+ImR/UyVtk/bSAS22FZYqdbpw6Tl/0trtqgHQELDqxySfCILO9vwCS11gkbGa7CU79ZI77xvLqECvEUMDP13Dot0E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741614685; c=relaxed/simple;
-	bh=PIYugoZwhEs2hJs1UPNoqX04pDcVa6iAsRDXNI4cWSU=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=OzTyDZCGPRwYI601m8BH4VusDlDpCAGzU+1g/u5JboO1P+of71ECFkX8LhuBr2L0b7Hwamv+BvG8f5n2C4k1TUKnG6ZwQXBmAIswgizTdd82515CTM9w57/0Cva+FxlDXXzBBm3j1qCgYPd8+BoqymssJ3A55DLrEYf872bvwFI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QTEHYWIT; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D1B8CC4CEF0;
-	Mon, 10 Mar 2025 13:51:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741614684;
-	bh=PIYugoZwhEs2hJs1UPNoqX04pDcVa6iAsRDXNI4cWSU=;
-	h=From:To:Cc:Subject:Date:From;
-	b=QTEHYWITads7vGifSYT6DMpFSt2a9gANjZXVYp20puC4EBx2529IEKHCPB3ECdIyo
-	 FwrTbY8bT2EUIQwWMtdDAeahbavOHipZ6xun6QzRweTCaJbFZUDchQ71X/upS5z9Ng
-	 Z3YzgaConUz+7VWjW32hM1TBcbNr9Xn4ISK5juqu1mKkA1qh+RbZ55XBSDA+cCepvh
-	 8OMnwm2RXfUm7K8HEIwlewMmTnHRwD01ki2QLI61GBpgSRpICEyXkd2QnnR4E0sh8U
-	 VQrAf18v35aM7JaE7mYriVaRg5jDLM5AM6twKQxI2sRXz0RLzbjJi/d4k1CuBKOb9Z
-	 9uwj562pNFh/A==
-From: Arnd Bergmann <arnd@kernel.org>
-To: Davidlohr Bueso <dave@stgolabs.net>,
-	Jonathan Cameron <jonathan.cameron@huawei.com>,
-	Dave Jiang <dave.jiang@intel.com>,
-	Alison Schofield <alison.schofield@intel.com>,
-	Vishal Verma <vishal.l.verma@intel.com>,
-	Ira Weiny <ira.weiny@intel.com>,
-	Dan Williams <dan.j.williams@intel.com>,
-	Li Ming <ming.li@zohomail.com>,
-	Jason Gunthorpe <jgg@ziepe.ca>
-Cc: Arnd Bergmann <arnd@arndb.de>,
-	Robert Richter <rrichter@amd.com>,
-	"Mike Rapoport (Microsoft)" <rppt@kernel.org>,
-	Masahiro Yamada <masahiroy@kernel.org>,
-	linux-cxl@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] cxl: fix FWCTL dependency
-Date: Mon, 10 Mar 2025 14:51:15 +0100
-Message-Id: <20250310135119.4168933-1-arnd@kernel.org>
-X-Mailer: git-send-email 2.39.5
+	s=arc-20240116; t=1741614725; c=relaxed/simple;
+	bh=1TJ53lJRDTMxywhBHJv4vf86bvPwz8wl/ZKsNYS3z7k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qIi78SUmG66Gj3jdsGwtv3iZHe+uThX8AidFEOacyVx7wMQ+bRFdx9t+WGGWA6KuYB91JXTWPmoY2jY3r1E78nMOy4C8jFHi+dsnEodvN+biYsaUjbpuOxxD12g1MS5tNvJskMRlQ22IDHqf56FDt60o7Q9qnhrqNFX64nJNb60=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=XM7YoThf; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 8825940E0219;
+	Mon, 10 Mar 2025 13:52:01 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id JIZtN1r01_MQ; Mon, 10 Mar 2025 13:51:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1741614717; bh=PJPXCJ4ZG3jPjneSuXnZz7yG6y2P2lIKAdq82tpdR6s=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=XM7YoThfORbKlY2PATOa4swN8Bj5Llw+HngLxblCZL7MDiXzNEHo5Gargue+3cjRP
+	 u36WP8heRdLecPrBFVtoacQRwwCDK38c0JumZDMMc0xXHDA/K5lrNtjt6gIaQpc6ri
+	 zCC46/S7Yuc0p1VIcJJWkrVATUq8CYkdaHrXBcRikJ5VJ1Tbcxlr2P4PrH45tXPtsI
+	 BGLOuz0//iC5OLKyz4nd9wFSzOS3f8ycAs2WpZYVBYj9CWua7viXf2XHM/yJlThQ+Y
+	 yYmosbLc3zcDid+EZpKBbKCE/xl5J81vx7AgAkzlIugQihNUNI4CVKkqoU45PqHUYw
+	 nXIvXVOxIvLEqwBUjLTcR6xV1q8nfrORBfI/Xu5s/M2T8N1rKnqOPwY+AMwGkIdp91
+	 XKNWTdysxRpM1JVMdgaNK2MhGBEWmia/7yw6tU8jpHQUsCzEz9krfBdM52bWP8Yk0H
+	 6hLWHzoY0kC4k9IZnA7GrsGJCOyzTTvY/0N3UyOTAqzolD27qD19nQf2iUiLrX6jDh
+	 Nsk0RVeCeyqRYDMC1gq9UM1meDsL/MW1lisnmdj2ATdolhEtLGpF6t4d0WPjoYTA3P
+	 NsKsDfY8WqSC9nM9esQ13Dlv3OIRvBUeM42aStNB6BFTw1YUgmYxgFs4QK5eNcCGXO
+	 qkN8EgTxrQO7LsM7vmICcwEQ=
+Received: from zn.tnic (pd95303ce.dip0.t-ipconnect.de [217.83.3.206])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 97EF440E0214;
+	Mon, 10 Mar 2025 13:51:39 +0000 (UTC)
+Date: Mon, 10 Mar 2025 14:51:33 +0100
+From: Borislav Petkov <bp@alien8.de>
+To: Tom Lendacky <thomas.lendacky@amd.com>
+Cc: Stefano Garzarella <sgarzare@redhat.com>,
+	Jarkko Sakkinen <jarkko@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Claudio Carvalho <cclaudio@linux.ibm.com>,
+	Peter Huewe <peterhuewe@gmx.de>, x86@kernel.org,
+	Dov Murik <dovmurik@linux.ibm.com>, linux-coco@lists.linux.dev,
+	Dionna Glaze <dionnaglaze@google.com>,
+	James Bottomley <James.Bottomley@hansenpartnership.com>,
+	Ingo Molnar <mingo@redhat.com>, Joerg Roedel <jroedel@suse.de>,
+	Jason Gunthorpe <jgg@ziepe.ca>, linux-integrity@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	"H. Peter Anvin" <hpa@zytor.com>
+Subject: Re: [RFC PATCH v2 2/6] x86/sev: add SVSM vTPM probe/send_command
+ functions
+Message-ID: <20250310135133.GIZ87uZZNhNSkmxvg1@fat_crate.local>
+References: <20250228170720.144739-1-sgarzare@redhat.com>
+ <20250228170720.144739-3-sgarzare@redhat.com>
+ <20250310113006.GFZ87NPu-LgFVVtsEG@fat_crate.local>
+ <mjftygohmhgs6daqvgkh2jbfuqjquchcaovcjtnzyhilnt5ww5@l3fr7phqh2ps>
+ <3dd645f2-476a-d0d5-c8c1-c87307f2d756@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <3dd645f2-476a-d0d5-c8c1-c87307f2d756@amd.com>
 
-From: Arnd Bergmann <arnd@arndb.de>
+On Mon, Mar 10, 2025 at 08:27:37AM -0500, Tom Lendacky wrote:
+> I don't think anything needs to be checked or printed.
 
-The 'FWCTL' subsystem is selected by CXL_FEATURES, which is a 'bool' symbol
-with a dependency on CXL_PCI, but referenced by the cxl_core.ko.
-When cxl_core is built-in, but the cxl_pci.ko driver is a loadable mdoule,
-this results in a link failure:
+Yes.
 
-ld.lld-21: error: undefined symbol: _fwctl_alloc_device
->>> referenced by features.c:695 (/home/arnd/arm-soc/drivers/cxl/core/features.c:695)
-ld.lld-21: error: undefined symbol: fwctl_register
->>> referenced by features.c:699 (/home/arnd/arm-soc/drivers/cxl/core/features.c:699)
-ld.lld-21: error: undefined symbol: fwctl_unregister
->>> referenced by features.c:676 (/home/arnd/arm-soc/drivers/cxl/core/features.c:676)
+> If you want to do anything, just issue a pr_info() with the features value
+> (and maybe the platform_cmds value, too). Issuing a pr_warn() here would be
+> like issuing a pr_warn() for a new CPUID value that the current kernel
+> doesn't know about.
 
-Move the 'select' into the symbol that controls the core module instead.
+I still don't get the need to print anything. Why?
 
-Fixes: a53a6004e7a5 ("cxl: Add FWCTL support to CXL")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
- drivers/cxl/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/cxl/Kconfig b/drivers/cxl/Kconfig
-index ed49e7e7e5bc..cf1ba673b8c2 100644
---- a/drivers/cxl/Kconfig
-+++ b/drivers/cxl/Kconfig
-@@ -7,6 +7,7 @@ menuconfig CXL_BUS
- 	select PCI_DOE
- 	select FIRMWARE_TABLE
- 	select NUMA_KEEP_MEMINFO if NUMA_MEMBLKS
-+	select FWCTL if CXL_FEATURES
- 	help
- 	  CXL is a bus that is electrically compatible with PCI Express, but
- 	  layers three protocols on that signalling (CXL.io, CXL.cache, and
-@@ -105,7 +106,6 @@ config CXL_MEM
- config CXL_FEATURES
- 	bool "CXL: Features"
- 	depends on CXL_PCI
--	select FWCTL
- 	help
- 	  Enable support for CXL Features. A CXL device that includes a mailbox
- 	  supports commands that allows listing, getting, and setting of
 -- 
-2.39.5
+Regards/Gruss,
+    Boris.
 
+https://people.kernel.org/tglx/notes-about-netiquette
 
