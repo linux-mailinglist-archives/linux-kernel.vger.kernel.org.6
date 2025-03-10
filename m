@@ -1,136 +1,112 @@
-Return-Path: <linux-kernel+bounces-554637-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-554635-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C4FAA59ACB
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 17:17:04 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D554DA59ABB
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 17:15:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 26EA23A80C6
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 16:16:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8013F1890C28
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 16:15:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F5B522F155;
-	Mon, 10 Mar 2025 16:16:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6B6A22FDE6;
+	Mon, 10 Mar 2025 16:15:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="oItISY0F"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tZtVwSzT"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2305F22F17A
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 16:16:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 345F61BCA1B;
+	Mon, 10 Mar 2025 16:15:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741623418; cv=none; b=eSbbQNjf1yte0eL+vIUO0pvi/6oBCuebeyhXOMJDPjHGPGdw3uZpFTkROp2TgMlpoFLGDJTA9zTRY1eDQDLAwI93bog8t21/a2e88nbRhNg/hRKcjkbTvjwVe3aKQ7ESrTmAmqEKpxkwu1i3cqsf0Y6xM1IhsQ+p+MzDlyhVj4o=
+	t=1741623309; cv=none; b=lmd9SAXfRKo4MT3VCx1suHsUjfjAD4OCYCArPkU+Vj9canB/oz8qRLbIhJcudInJXxcbspLWI9eyqHeND6Bh8cmkW1D4NcfmorxeVSP/+APfAxQjYxjyXSOKw2pC23gbr47yAiDy8ypqJ40HDRnXhqyLuSwtqggVa4SJeC3a6SU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741623418; c=relaxed/simple;
-	bh=emb9auBSHxF4tlyXoWTp5NptCPzqIIHlSVkgFyPWSts=;
+	s=arc-20240116; t=1741623309; c=relaxed/simple;
+	bh=GfKQEI3/w/jPPIgwJ2M+qaN1oQ83UFtd+Kj8kr4X1wc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eJC6ctGdRtoqs2lGzG6MzdbdVa/m8XECyyLEGzaQ65buksRMqXBZ1b5lWO3yxI3xXG3f04MN+uTp0g4pJgRMFnBszH7leX3jYgd2qSjOYtXUHNaZ1/N9FchS5kRIKaUemc4Ij3+qQi/y8Yz9qX1Dfw0ehmLzZ5NJGqW7OYjHWr8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=oItISY0F; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=ERs6yabp7PifLMJ8plQdpvIMPOx6OSaUkIpbf+aPDzY=; b=oItISY0FIccmGQGGcaASKtVlIM
-	BafAVkQduuWkDl3em2sjHuQ6oyOIlLzKejJYJXGRMjT0x95GEflo3kgv+A62bR7QIR2wXQ9QD3Y6P
-	C/XpeaJ17N2NLXxesRzQSStIRornfx/paGQQxaYu40kTmUMm7W4luTTPpyxjlGsMCFF+UKYb8XBmI
-	1TJG5PRssBwS/y4aX3/7UIbxx0DUSBgfvlcMPRxj5n7ny1AkWre2TIa4oDcT10bSXVpAESbcBq0yU
-	AY1/N0z7S9oO8eCec5wvgxsgHmz+fokrLh1lX998Acl3DESFuKKDmdpaA13u/cknjLiZc46LQgigu
-	twNWptyw==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1trfmA-00000007Qsx-3T0l;
-	Mon, 10 Mar 2025 16:16:01 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id EA065300599; Mon, 10 Mar 2025 17:14:45 +0100 (CET)
-Date: Mon, 10 Mar 2025 17:14:45 +0100
-From: Peter Zijlstra <peterz@infradead.org>
-To: Ravi Bangoria <ravi.bangoria@amd.com>
-Cc: mingo@kernel.org, lucas.demarchi@intel.com,
-	linux-kernel@vger.kernel.org, acme@kernel.org, namhyung@kernel.org,
-	mark.rutland@arm.com, alexander.shishkin@linux.intel.com,
-	jolsa@kernel.org, irogers@google.com, adrian.hunter@intel.com,
-	kan.liang@linux.intel.com
-Subject: Re: [PATCH v3 7/7] perf: Make perf_pmu_unregister() useable
-Message-ID: <20250310161445.GI19344@noisy.programming.kicks-ass.net>
-References: <20250307193305.486326750@infradead.org>
- <20250307193723.525402029@infradead.org>
- <0f36ca48-09ab-4fca-8a8d-7ed3b2abc056@amd.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=q8HBcylXxilJApjMzg+mdQsRRb7b/qHZJRzZ5JICjsbsFWjtpkYQ6WBUnFeu+JtMMuJlyygIxafmMV1eJF91eJGIDmNaDHEghSQeCLkhUmM9iIc+nNsLcVrGTSeFsh6kzyTiZNXuwnlcsAtmhajzHUUYkYE0z+/GGfEID8eDPc4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tZtVwSzT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 16AADC4CEE5;
+	Mon, 10 Mar 2025 16:15:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741623308;
+	bh=GfKQEI3/w/jPPIgwJ2M+qaN1oQ83UFtd+Kj8kr4X1wc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=tZtVwSzTRBzyJCQJsgC/9YF3adZtv1HOhVsNHISyy+2qM3dqTvytdY5OEnYOnf5jN
+	 jhBVs1x1D5sdE1QGLM2BCl3h8wYf8az/tSrUdM9MNja+1tICm4lhwXVIMo9mhOon6o
+	 Vc7D4JvNnc3Zh3+Yi70hmimYOw4wXfHoPWWpaNeXaAbpB/8tHCuc+sUa3tYelrvH82
+	 ieA1G7LtJkk/MjAvBmb0BjWHuG0bvMYofLWBqk/z0Erp/ALAJRIo+hf9TSmoXlIw+R
+	 OmvUeMdCo918OHYOIEdpdODmHvwzK44oUR+pT0rYfoE4bbDi4IIpUC6X+l0NTAHvSY
+	 cLDTmSgqbpRoQ==
+Date: Mon, 10 Mar 2025 17:15:05 +0100
+From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
+To: Frank Li <Frank.Li@nxp.com>
+Cc: Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
+	Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, 
+	"open list:PWM SUBSYSTEM" <linux-pwm@vger.kernel.org>, 
+	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, 
+	"open list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" <imx@lists.linux.dev>, 
+	"moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>, open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] dt-bindings: pwm: imx: Add i.MX93, i.MX94 and i.MX95
+ support
+Message-ID: <jwge3lqlx7t6j4gmag4ghu6vtzatg54i3x3tl75k5upvedakdy@entc6jjcqh47>
+References: <20250306170845.240555-1-Frank.Li@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="lm2fsqm2yujhiixb"
 Content-Disposition: inline
-In-Reply-To: <0f36ca48-09ab-4fca-8a8d-7ed3b2abc056@amd.com>
+In-Reply-To: <20250306170845.240555-1-Frank.Li@nxp.com>
 
-On Mon, Mar 10, 2025 at 09:05:45PM +0530, Ravi Bangoria wrote:
-> > @@ -207,6 +207,7 @@ static void perf_ctx_unlock(struct perf_
-> >  }
-> >  
-> >  #define TASK_TOMBSTONE ((void *)-1L)
-> > +#define EVENT_TOMBSTONE ((void *)-1L)
-> >  
-> >  static bool is_kernel_event(struct perf_event *event)
-> >  {
-> > @@ -2348,6 +2349,11 @@ static void perf_child_detach(struct per
-> >  
-> >  	sync_child_event(event);
-> >  	list_del_init(&event->child_list);
-> > +	/*
-> > +	 * Cannot set to NULL, as that would confuse the situation vs
-> > +	 * not being a child event. See for example unaccount_event().
-> > +	 */
-> > +	event->parent = EVENT_TOMBSTONE;
-> 
-> This will cause issues where we do `event = event->parent`. No? For ex:
-> 
->   perf_pmu_unregister()
->     ...
->       perf_event_exit_event()
->         perf_event_wakeup()
->           ring_buffer_wakeup()
->             if (event->parent)
->               event = event->parent;
 
-It will. However, if we do not do this, we have a potential
-use-after-free, and people seem to take a dim view of those too :-)
+--lm2fsqm2yujhiixb
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH] dt-bindings: pwm: imx: Add i.MX93, i.MX94 and i.MX95
+ support
+MIME-Version: 1.0
 
-I had convinced myself all paths that were doing this 'event =
-event->parent' were unreachable by the time we set the TOMBSTONE, but
-clearly I missed one.
+Hello Frank,
 
-I suppose we can do something like so, not really pretty though.
+On Thu, Mar 06, 2025 at 12:08:45PM -0500, Frank Li wrote:
+> Add compatible string "fsl,imx93-pwm", "fsl,imx94-pwm" and "fsl,imx95-pwm=
+",
+> which is backward compatible with i.MX7ULP. Set it to fall back to
+> "fsl,imx7ulp-pwm".
+>=20
+> Signed-off-by: Frank Li <Frank.Li@nxp.com>
 
---- a/kernel/events/core.c
-+++ b/kernel/events/core.c
-@@ -13722,9 +13722,12 @@ perf_event_exit_event(struct perf_event
- {
- 	struct perf_event *parent_event = event->parent;
- 	unsigned long detach_flags = DETACH_EXIT;
-+	bool parent_dead = false;
- 
--	if (parent_event == EVENT_TOMBSTONE)
-+	if (parent_event == EVENT_TOMBSTONE) {
- 		parent_event = NULL;
-+		parent_dead = true;
-+	}
- 
- 	if (parent_event) {
- 		/*
-@@ -13748,6 +13751,9 @@ perf_event_exit_event(struct perf_event
- 
- 	perf_remove_from_context(event, detach_flags);
- 
-+	if (parent_dead)
-+		return;
-+
- 	/*
- 	 * Child events can be freed.
- 	 */
+Applied to
+https://git.kernel.org/pub/scm/linux/kernel/git/ukleinek/linux.git pwm/for-=
+next
+with Conor's ack.
+
+Thanks
+Uwe
+
+--lm2fsqm2yujhiixb
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmfPEAEACgkQj4D7WH0S
+/k5/Qgf9EmSnszwO5HAMyp/zt++qVoJo500Z8MtKSb4CtHeppS12p6xcfklZDMBN
++mgSdfHdaV6D0CvILircndu4GLxRLWuEk08FgqYoSsqeUoNLoIDaWtDFakdWPTX6
+thzWQhg4TSGbDVXDzuHSMw4Eg8SeXmIm8ffQ46mfcuGtSUpB2P30WKq9WwOg1Wa7
+VO4BLXv0JvpPFSBH2TBt12qmedffPELK7Hd11LPmbsHSARUGmYsemF2ejtWrG05O
+hWs5WsPq08UmeKb/LDyDagFpFo+a41Ih62G4PRn3Vooqx+zEGSKo7/YcNCOhmqSp
+vEGzTENSpDyBnW1egQuY7k7GIPsdTA==
+=xC4L
+-----END PGP SIGNATURE-----
+
+--lm2fsqm2yujhiixb--
 
