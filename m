@@ -1,77 +1,168 @@
-Return-Path: <linux-kernel+bounces-553431-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-553432-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D7D0AA58974
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 01:05:25 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2CC10A58981
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 01:09:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A53073A9D1A
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 00:05:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 16350169760
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 00:09:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB315E552;
-	Mon, 10 Mar 2025 00:05:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02CDD5234;
+	Mon, 10 Mar 2025 00:09:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MnKtARKr"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="owXf03Nz"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3748EA930;
-	Mon, 10 Mar 2025 00:05:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DF0481E;
+	Mon, 10 Mar 2025 00:09:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741565119; cv=none; b=pDj19H94wWqD9CvWK8WVNfUW/Jc9Ip93F3zQKH6WSentlzkC/JTh99Ybbfxyd+ZEX2LxSSr4wdoBH6Pav0xSmAR+3bE17RAhltjfFpUlha24nsE/lk+gIcGbaIAdST3JCdLZEYPchyiOsjQQFkefnULuKaKDXozCQhtRMnSRnhg=
+	t=1741565361; cv=none; b=JK0YzriVkFvddyfMG3zzceZxQ0kFnOgMOCiJfMuW4tjbFwF1YD7bN8dEdmxGlq61yamqZ/PuBOS0LEbTON5lOeaA4nAfrAITAje3XUN53Le5USSTrSkwbx0WgTRZ6AxSiUUA4vYLhlfwZZAgJkCj0lx6hs3TKMeKGlNpUyE2P0g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741565119; c=relaxed/simple;
-	bh=xuO7LLZy9N08tyT0+EadcfCjEqszFaYWu8n9gcFiR3g=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=c0H0rel9qK5lWUI/8RaQqEL19GJlh7u4ExVRglHvHByXM506M8UMXXzlEhNnU3XCADSuD3btMfkQ+2HhdBO8QO526nlXuftI4CKknIjMlTMZR/6IQuzi5/5z/Br66RkB6MUVW0E84yTdfsjoFa/l3nA2eLA5N/PVV5GDNuHCcOQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MnKtARKr; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 63C01C4CEE3;
-	Mon, 10 Mar 2025 00:05:18 +0000 (UTC)
+	s=arc-20240116; t=1741565361; c=relaxed/simple;
+	bh=xhdh8DfzjzkkyMzCsHq/3sp7L1dCisrxi/w6JvA65VM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nsw7jewiZxo5GiV7s8yiB5xKov6eOPElUtArAqttniZ1A8aoile2/5H8KNnoy4TBtB+svyoao0Mg55srFTHVJPluM2qKJfZgcTS1S9V1ins0MYpJ8q8HQtH/oqmV3IQwl0ZJ07yc2BeK8mFoij4PXLb0pfsvKM05cw7Ng8OYa84=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=owXf03Nz; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9D6BDC4CEED;
+	Mon, 10 Mar 2025 00:09:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741565119;
-	bh=xuO7LLZy9N08tyT0+EadcfCjEqszFaYWu8n9gcFiR3g=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=MnKtARKrq1DyOV7QYWRNDJ9pxQS0dtChm/wmPLJAo8niLNwdJqSkN1hU+AEwlXWRi
-	 z1QgZBTcrcQoAesE+dsNQjQyo5G/mt4oTWb1q9bpuw2Kh3Jels2NKsHbwFJ21qopF+
-	 SxWa+FyXffINJywaJua8a9J8nu2FJwFEnOEREBVvIkaoUmW/loaiRI/E0YTMCprUz3
-	 JBxq1uimfRf7Iywl3YygR4sOmvpfelpcE0oEEuQ0pwfGIQKM7Ma6EQTZqM1WJzvADP
-	 v7lo+Q5lmMoH1sHC/7zeUDJWm+WDqFgi1/+WKy/oZ85xukYSjT84mRJ0ghrIeYZ/3i
-	 vNjBKHultwREQ==
-Message-ID: <0185695f-d9f7-4e0f-ba12-e3606534a807@kernel.org>
-Date: Mon, 10 Mar 2025 09:05:17 +0900
+	s=k20201202; t=1741565360;
+	bh=xhdh8DfzjzkkyMzCsHq/3sp7L1dCisrxi/w6JvA65VM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=owXf03NzPRZYWvMX/ceVRzsVgnyp8t/wzqg4ZFNlPLtcyuhdBRRUcF7PBKAnp0RbF
+	 9U/xNMsyOgVBQ4YAks0VasLcRdX0kB94ZqbQTQyw+wNQbYgUxbizDnSQ54SxNGpYp8
+	 jixZe/4tBIyomISBimbNNVTz3nyOHY9fDpgLYvEz+g3Fl6lnR/lqFj8ifKnFDdUqNT
+	 MoYTXdX6/QPdO4F9ryrKGdl+EDNiNPobAvOQkw8cBt3AX7ClOCDiHHs/W5fEzoHAhH
+	 Z1UjD3/WetPQhAU8ZgQOSqk61+c0mUQM2wMhd3SF6hA0TREBSvkBU96PZm8Jv08aTf
+	 NpEe1/E4XOngQ==
+Received: by venus (Postfix, from userid 1000)
+	id 55276180B94; Mon, 10 Mar 2025 01:09:17 +0100 (CET)
+Date: Mon, 10 Mar 2025 01:09:17 +0100
+From: Sebastian Reichel <sre@kernel.org>
+To: Abel Vesa <abel.vesa@linaro.org>
+Cc: Bjorn Andersson <andersson@kernel.org>, 
+	Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Johan Hovold <johan@kernel.org>, Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
+	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [RFC 1/2] arm64: dts: qcom: x1e78100-t14s: Add LCD variant with
+ backlight support
+Message-ID: <qh6bb2h6ntyy6cvcigvnfp6gurxcvryg44ybd3kf3y73wxl5ua@hk4wydp4tn45>
+References: <20250306090503.724390-1-abel.vesa@linaro.org>
+ <20250306090503.724390-2-abel.vesa@linaro.org>
+ <lolqokpczxdscvgj6xdfyxblmle3csgzje3fgo4itzspgmeriy@7zzx7hg2zfks>
+ <Z81dODU91zDPo/H5@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] scsi: isci: static most module parameters
-To: linux@treblig.org, James.Bottomley@HansenPartnership.com,
- martin.petersen@oracle.com
-Cc: linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250309145044.38586-1-linux@treblig.org>
-From: Damien Le Moal <dlemoal@kernel.org>
-Content-Language: en-US
-Organization: Western Digital Research
-In-Reply-To: <20250309145044.38586-1-linux@treblig.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="j6wfhyh62rj4x5ws"
+Content-Disposition: inline
+In-Reply-To: <Z81dODU91zDPo/H5@linaro.org>
 
-On 3/9/25 23:50, linux@treblig.org wrote:
-> From: "Dr. David Alan Gilbert" <linux@treblig.org>
-> 
-> Most of the module parameters are only used locally in the same
-> C file; so static them.
-> 
-> Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
 
-Reviewed-by: Damien Le Moal <dlemoal@kernel.org>
+--j6wfhyh62rj4x5ws
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [RFC 1/2] arm64: dts: qcom: x1e78100-t14s: Add LCD variant with
+ backlight support
+MIME-Version: 1.0
 
--- 
-Damien Le Moal
-Western Digital Research
+Hi,
+
+On Sun, Mar 09, 2025 at 11:19:52AM +0200, Abel Vesa wrote:
+> On 25-03-08 01:01:31, Sebastian Reichel wrote:
+> > Hi,
+> >=20
+> > On Thu, Mar 06, 2025 at 11:05:02AM +0200, Abel Vesa wrote:
+> > > Due to the fact that Lenovo Thinkpad T14s Gen6 is available with both
+> > > OLED and LCD, the backlight control differs HW-wise. For the LCD vari=
+ant,
+> > > the panel's backlight is controlled via one of the PWMs provided by t=
+he
+> > > PMK8550 PMIC. For the OLED variant, the backlight is internal to the
+> > > panel and therefore it is not described in devicetree.
+> > >=20
+> > > For this reason, create a generic dtsi for the T14s by renaming the
+> > > existing dts. While at it, add a node name to panel and drop the enab=
+le
+> > > gpio and pinctrl properties from the panel node. Then add the LCD var=
+iant
+> > > dts file with the old name and describe all backlight related nodes.
+> > >=20
+> > > So the existing dts will now be used for LCD variant while for OLED n=
+ew
+> > > dts will be added.
+> > >=20
+> > > Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
+> > > ---
+> > > [...]
+> > > +	backlight: backlight {
+> > > +		compatible =3D "pwm-backlight";
+> > > +		pwms =3D <&pmk8550_pwm 0 5000000>;
+> >=20
+> > I've tried this patch series together with the fix series [0], but
+> > without the duty cycle calculation change [1]. Instead I changed the
+> > period from 5000000 to 4266667. With that everything works as
+> > expected for me.
+> >=20
+> > [0] https://lore.kernel.org/all/20250305-leds-qcom-lpg-fix-max-pwm-on-h=
+i-res-v4-0-bfe124a53a9f@linaro.org/
+> > [1] https://lore.kernel.org/all/20250303-leds-qcom-lpg-compute-pwm-valu=
+e-using-period-v1-1-833e729e3da2@linaro.org/
+>=20
+> Yes, I forgot to squash in the correct period.
+>=20
+> The period should actually be 4266537. This is because the max PWM value
+> is actually BIT(resolution) - 1.
+
+For the version with 4266537:
+
+Tested-by: Sebastian Reichel <sre@kernel.org>
+
+-- Sebastian
+
+>=20
+> Will update in next version.
+>=20
+> The [1] patch was basically NACKed by Uwe. It is not needed if we set
+> the period to 4266537 in DT.
+>=20
+> >=20
+> > Greetings,
+> >=20
+> > -- Sebastian
+>=20
+>=20
+
+--j6wfhyh62rj4x5ws
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAmfOLakACgkQ2O7X88g7
++pomfA//c6tWamks7e9QRfaDSQenMPScMxhqbQZjY+ppsNnrMMNNHx/CITtewZEW
+2eg5Ne6KXOTGxBUT64GA/aOQwRZztfaxwpjZ0g14SWB3Ev1WMrEFHthmpXXm15/j
+37pN7HZ0aD9fDHj1SDQziW4I1MyA3dIKWRVvJLd2gRybo2zcjW3HGkHYoVIoxJ3l
+IA+cyLgPdG5tPS2tlQQ/lIkyPtU2YIaLFqsCMtecm3BBDMHJVoV6oBhsilR+sNRu
+98XbyPRuEQ+Bt5/migLolPY8DyxMNHJalgKdYeba1LaY95GV77KebfqzuZx0bWPR
+eh15BKn9OdVjMoIAG7rCVTx0J9ZEeVCbMwaPYjEsrmZozx1p5SlrLQ8uHaoo8Opm
+wSu4eh2FlYx2i2mHynTS1PPH/x+K4u/tl59BVUTcFpGqjt9F7EvEJ0qbayYh1kWO
+u2BgY/BNVaXAbmxOapEfhPwYaOkOtO98WQImN2EkAbMEzZxQrJCcWyGIDPQWTXdq
+EzfT4yxM5usnFX35NBOabFsmWBcTu3htk4JPaql4ixJNjkpU2/nJomuZj7tIWnaD
+IznIjXdJPFNLMJ2w1aXCLj1ONXnBdq3pGfR8rYw1d4FxUDOnMTMEpSHNZfbIAMHd
+sp7m8ewzuPKd3+ClJADvhiKRA8vd8H4hT0UP8vEFGpnzApvKp8E=
+=L13G
+-----END PGP SIGNATURE-----
+
+--j6wfhyh62rj4x5ws--
 
