@@ -1,150 +1,134 @@
-Return-Path: <linux-kernel+bounces-554069-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-554041-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 72686A59295
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 12:20:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 173B4A59236
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 12:06:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2AEFB3AAF75
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 11:19:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 903D13AA359
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 11:06:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E991621E0AF;
-	Mon, 10 Mar 2025 11:19:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31DCB227EAB;
+	Mon, 10 Mar 2025 10:57:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="MCZEVnWe"
-Received: from mail-m155104.qiye.163.com (mail-m155104.qiye.163.com [101.71.155.104])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=pm.me header.i=@pm.me header.b="OkhwnAdV"
+Received: from mail-40131.protonmail.ch (mail-40131.protonmail.ch [185.70.40.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35EDA21E0B7
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 11:19:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=101.71.155.104
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4576B227BAA
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 10:57:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.40.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741605564; cv=none; b=hUl5gusBltujja7rloxS2zxEzeaz3zHXkP5kETS2jOH5vC0HNfoKJ/WDAlwjFoHMJnbYLlW3rZibf5N2w5SEfF25NokcEh3VoqC4IO326qjHc0fAs8nDpG5p7rytvvjDOizROiET1ASxOeXgG3SRf8YQd7gfmucbl7AMp+bBOX4=
+	t=1741604246; cv=none; b=ZmngBhrEFagXIsn1/cWhrgJBOldH2aQd27rXCx9K4nv5FNGCVwMte8vmoNCeueHUfVynodhaUnxan7jmZBVVxUacR6kr1GIgHmULK8YmX2kgB4ZNPlXCcZsxaUHQMhUNDaaiQnusKRZi8b5pgP39auo92qHRoKeMtTTfqJwqKwc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741605564; c=relaxed/simple;
-	bh=MXYZosYNWXPyoge+Rlv4+JeeONSw/MWHUsMxx2PXRTM=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=nLdC4zWROA3iulHvjgRgDt23Mx/Rc1/dGE8FWjeKtxh4Qs8XgJYTCPwiMnC1yN+vlp77S8g/vMzBa3xD6SyIMu0TNYzS7gmytkClm3EadgQhwX305rTIB6LEHmGYsYsOyMfElwc0VwfTMa5g+nTsqz6TcLwDIRmkl35/oJp6vUE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=MCZEVnWe; arc=none smtp.client-ip=101.71.155.104
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
-Received: from zyb-HP-ProDesk-680-G2-MT.. (unknown [58.22.7.114])
-	by smtp.qiye.163.com (Hmail) with ESMTP id dc1882b2;
-	Mon, 10 Mar 2025 18:42:26 +0800 (GMT+08:00)
-From: Damon Ding <damon.ding@rock-chips.com>
-To: heiko@sntech.de
-Cc: andy.yan@rock-chips.com,
-	hjc@rock-chips.com,
-	maarten.lankhorst@linux.intel.com,
-	mripard@kernel.org,
-	tzimmermann@suse.de,
-	airlied@gmail.com,
-	simona@ffwll.ch,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	andrzej.hajda@intel.com,
-	neil.armstrong@linaro.org,
-	rfoss@kernel.org,
-	Laurent.pinchart@ideasonboard.com,
-	jonas@kwiboo.se,
-	jernej.skrabec@gmail.com,
-	dmitry.baryshkov@linaro.org,
-	dianders@chromium.org,
-	sebastian.reichel@collabora.com,
-	cristian.ciocaltea@collabora.com,
-	boris.brezillon@collabora.com,
-	l.stach@pengutronix.de,
-	dri-devel@lists.freedesktop.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Damon Ding <damon.ding@rock-chips.com>
-Subject: [PATCH v8 12/13] arm64: dts: rockchip: Add eDP0 node for RK3588
-Date: Mon, 10 Mar 2025 18:41:13 +0800
-Message-Id: <20250310104114.2608063-13-damon.ding@rock-chips.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250310104114.2608063-1-damon.ding@rock-chips.com>
-References: <20250310104114.2608063-1-damon.ding@rock-chips.com>
+	s=arc-20240116; t=1741604246; c=relaxed/simple;
+	bh=61A/V3lwSclZiCJInLxEmepbN95X1sJN7svSDJK7DL8=;
+	h=Date:To:From:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=FRC/7vokLkAsxrs498cCOA6A5WrFmvp1pB00qeLxhEuldkdMFnqbGWwxIW6dKGiPRwjfsC5A8jYf1Il0suFDvjeO6hdUnfdwPedJ3ljPgjNqaI5KbTibD6AGSAfUaxomJkg8LYUIy5zNLVbUku1IPJWhNrqRezX6haJvsO44kWo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pm.me; spf=pass smtp.mailfrom=pm.me; dkim=pass (2048-bit key) header.d=pm.me header.i=@pm.me header.b=OkhwnAdV; arc=none smtp.client-ip=185.70.40.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pm.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pm.me
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pm.me;
+	s=protonmail3; t=1741604241; x=1741863441;
+	bh=hLncp8wa6eofNjWes0vCOaYEUoMimwk7wJagoEBWPLQ=;
+	h=Date:To:From:Cc:Subject:Message-ID:Feedback-ID:From:To:Cc:Date:
+	 Subject:Reply-To:Feedback-ID:Message-ID:BIMI-Selector:
+	 List-Unsubscribe:List-Unsubscribe-Post;
+	b=OkhwnAdVH6mxIe70vbXH9uMKzaakcvCGlkmAMw0oF7uC2onBQvfXlnuSTeekZZB1Z
+	 0Iriaz7UublqKawcfI9Pwra9Y0Z+NK9glPT9URoXAoHGhZUFVKOoCWJph76DHARziG
+	 3Q2AsrC3YFiX2UybB6div6lQSAO+LbeGNeU+ta63C54lW085778t4Sn1RruR4KNDtJ
+	 nkNcSrTHTVHF8ox+TqrrMA5tYQjiG2lSWs1M2+ZTBff1Gt4rtIMFvmi4hemsk0yaZe
+	 UnqS3VZt/fgtejUXVTbq8KQv0Pn5i3I1WLLF0XNfWXorI+jDn+jlrgT+tbzqgcDiBt
+	 O9YwJCHfVr4kw==
+Date: Mon, 10 Mar 2025 10:57:15 +0000
+To: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, Asahi Lina <lina@asahilina.net>
+From: Oliver Mangold <oliver.mangold@pm.me>
+Cc: rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, Oliver Mangold <oliver.mangold@pm.me>
+Subject: [PATCH v7 0/4] New trait OwnableRefCounted for ARef<->Owned conversion.
+Message-ID: <20250310-unique-ref-v7-0-4caddb78aa05@pm.me>
+Feedback-ID: 31808448:user:proton
+X-Pm-Message-ID: c678b95834604c22f58371b93567e473988925a5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZQx4YSVZPS0pCQ08dQkhJTxlWFRQJFh
-	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSEpOTE
-	5VSktLVUpCS0tZBg++
-X-HM-Tid: 0a957fa617b703a3kunmdc1882b2
-X-HM-MType: 1
-X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6NxA6Pxw6MTJRKiM1FTgzPREh
-	Mk4aCQxVSlVKTE9KTUtISE9DSE1MVTMWGhIXVR8aFhQVVR8SFRw7CRQYEFYYExILCFUYFBZFWVdZ
-	EgtZQVlOQ1VJSVVMVUpKT1lXWQgBWUFKT0xONwY+
-DKIM-Signature:a=rsa-sha256;
-	b=MCZEVnWekdOZ+BrvUkhP7HxFa5gB5GZ4E1apDoLHUutC8e7KVwcLGHiKhOuiNIte6zQOIJtYR5dzn248Ugkp29aMkh+5taF7UgQSjM/UsORwFvDcE5JCTsxM1YOGRMMDQa+YqldoxpwWa5Mf13tdODTpRxMkbOogvJVoPvM8lf4=; s=default; c=relaxed/relaxed; d=rock-chips.com; v=1;
-	bh=0FGcNJWIvGFWgnAJXPV53XsegYYbwW5nYaQTOeqtjiw=;
-	h=date:mime-version:subject:message-id:from;
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-Add support for the eDP0 output on RK3588 SoC.
+This allows to convert between ARef<T> and Owned<T> by
+implementing the new trait OwnedRefCounted.
 
-Signed-off-by: Damon Ding <damon.ding@rock-chips.com>
+This way we will have a shared/unique reference counting scheme
+for types with built-in refcounts in analogy to Arc/UniqueArc.
 
+Signed-off-by: Oliver Mangold <oliver.mangold@pm.me>
 ---
+Changes in v7:
+- Squash patch to make Owned::from_raw/into_raw public into parent
+- Added Signed-off-by to other people's commits
+- Link to v6: https://lore.kernel.org/r/20250310-unique-ref-v6-0-1ff5355861=
+7e@pm.me
 
-Changes in v3:
-- Remove currently unsupported property '#sound-dai-cells'
+Changes in v6:
+- Changed comments/formatting as suggested by Miguel Ojeda
+- Included and used new config flag RUSTC_HAS_DO_NOT_RECOMMEND,
+  thus no changes to types.rs will be needed when the attribute
+  becomes available.
+- Fixed commit message for Owned patch.
+- Link to v5: https://lore.kernel.org/r/20250307-unique-ref-v5-0-bffeb63327=
+7e@pm.me
+
+Changes in v5:
+- Rebase the whole thing on top of the Ownable/Owned traits by Asahi Lina.
+- Rename AlwaysRefCounted to RefCounted and make AlwaysRefCounted a
+  marker trait instead to allow to obtain an ARef<T> from an &T,
+  which (as Alice pointed out) is unsound when combined with UniqueRef/Owne=
+d.
+- Change the Trait design and naming to implement this feature,
+  UniqueRef/UniqueRefCounted is dropped in favor of Ownable/Owned and
+  OwnableRefCounted is used to provide the functions to convert
+  between Owned and ARef.
+- Link to v4: https://lore.kernel.org/r/20250305-unique-ref-v4-1-a8fdef7b1c=
+2c@pm.me
 
 Changes in v4:
-- Remove currently unsupported clock 'spdif'
----
- arch/arm64/boot/dts/rockchip/rk3588-base.dtsi | 28 +++++++++++++++++++
- 1 file changed, 28 insertions(+)
+- Just a minor change in naming by request from Andreas Hindborg,
+  try_shared_to_unique() -> try_from_shared(),
+  unique_to_shared() -> into_shared(),
+  which is more in line with standard Rust naming conventions.
+- Link to v3: https://lore.kernel.org/r/Z8Wuud2UQX6Yukyr@mango
 
-diff --git a/arch/arm64/boot/dts/rockchip/rk3588-base.dtsi b/arch/arm64/boot/dts/rockchip/rk3588-base.dtsi
-index 2403a3950128..7e089422c947 100644
---- a/arch/arm64/boot/dts/rockchip/rk3588-base.dtsi
-+++ b/arch/arm64/boot/dts/rockchip/rk3588-base.dtsi
-@@ -1410,6 +1410,34 @@ hdmi0_out: port@1 {
- 		};
- 	};
- 
-+	edp0: edp@fdec0000 {
-+		compatible = "rockchip,rk3588-edp";
-+		reg = <0x0 0xfdec0000 0x0 0x1000>;
-+		clocks = <&cru CLK_EDP0_24M>, <&cru PCLK_EDP0>;
-+		clock-names = "dp", "pclk";
-+		interrupts = <GIC_SPI 163 IRQ_TYPE_LEVEL_HIGH 0>;
-+		phys = <&hdptxphy0>;
-+		phy-names = "dp";
-+		power-domains = <&power RK3588_PD_VO1>;
-+		resets = <&cru SRST_EDP0_24M>, <&cru SRST_P_EDP0>;
-+		reset-names = "dp", "apb";
-+		rockchip,grf = <&vo1_grf>;
-+		status = "disabled";
-+
-+		ports {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+
-+			edp0_in: port@0 {
-+				reg = <0>;
-+			};
-+
-+			edp0_out: port@1 {
-+				reg = <1>;
-+			};
-+		};
-+	};
-+
- 	qos_gpu_m0: qos@fdf35000 {
- 		compatible = "rockchip,rk3588-qos", "syscon";
- 		reg = <0x0 0xfdf35000 0x0 0x20>;
--- 
-2.34.1
+---
+Asahi Lina (1):
+      rust: types: Add Ownable/Owned types
+
+Miguel Ojeda (1):
+      rust: kbuild: provide `RUSTC_HAS_DO_NOT_RECOMMEND` symbol
+
+Oliver Mangold (2):
+      rust: rename AlwaysRefCounted to RefCounted
+      rust: adding OwnableRefCounted and SimpleOwnableRefCounted
+
+ init/Kconfig                    |   3 +
+ rust/kernel/block/mq/request.rs |  10 +-
+ rust/kernel/cred.rs             |   8 +-
+ rust/kernel/device.rs           |   8 +-
+ rust/kernel/fs/file.rs          |  10 +-
+ rust/kernel/pid_namespace.rs    |   8 +-
+ rust/kernel/task.rs             |   6 +-
+ rust/kernel/types.rs            | 429 ++++++++++++++++++++++++++++++++++++=
+++--
+ 8 files changed, 451 insertions(+), 31 deletions(-)
+---
+base-commit: 4b2ee22fe32ea9b255926effbb6f26450607c391
+change-id: 20250305-unique-ref-29fcd675f9e9
+
+Best regards,
+--=20
+Oliver Mangold <oliver.mangold@pm.me>
+
 
 
