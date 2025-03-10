@@ -1,137 +1,113 @@
-Return-Path: <linux-kernel+bounces-554183-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-554184-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 502F4A5941D
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 13:22:19 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A45FA5941E
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 13:22:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0FC3B3A8348
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 12:22:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8E5A4167E35
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 12:22:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D23D22423F;
-	Mon, 10 Mar 2025 12:22:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C22A3226CE0;
+	Mon, 10 Mar 2025 12:22:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="mNOzLOAN"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=earth.li header.i=@earth.li header.b="l8Sa+wt4"
+Received: from the.earth.li (the.earth.li [93.93.131.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0602A846C;
-	Mon, 10 Mar 2025 12:22:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56D8E158D94;
+	Mon, 10 Mar 2025 12:22:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.93.131.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741609333; cv=none; b=rWkHOrI+GlzITWOwa02bOeGyaWCJjlLGa1SV/6WKxl83okEF6TIt69LgjfZWc3bftC3Atu0VU0fH7cttFmiE6dkoDyZfDazX94Q7dkf3ROSdd5RKjXp1ppZXFrEmbpsku11VMAuTw/WJjhBybBL4jGM74pFkpzuYfp6rS80L9Jw=
+	t=1741609335; cv=none; b=AqZxKW5hsfync/Yq62PKhXslnoJgcAqAyOf5EcTJUwviOQMxgldssMDygE9/Bu9leqDatAb23yQpvMJ1a4Ii8jbhv9yEG/p0T/NHdPHqeusT8DvtzF7c2DYe+I58Zg9YbaG6icfoyTed/f1GRreWmKi0VssHuJYUWFvcJK8l2tU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741609333; c=relaxed/simple;
-	bh=kucwRgK0Q6QDXi6eMR5O/ZtqTcMKZMkw+9Ax5UdHVVg=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=D72wZD6PRbmVVP5JF7BPJ7I044ei4rDwfCHrEua86Z4dEhG8tj1CKsfQwtfQyl84muheVdMljU3K0cUFYbVCjRkFF0CkkbYLKVMBMJjSYqBo5gwQ2LnGNHCFKyXx+QODIql5iAleongMV1Zp+i67jclXGXox9CfPf00fOYjTX+o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=mNOzLOAN; arc=none smtp.client-ip=192.198.163.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1741609332; x=1773145332;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=kucwRgK0Q6QDXi6eMR5O/ZtqTcMKZMkw+9Ax5UdHVVg=;
-  b=mNOzLOANC5mjZLjI1+SbQHYPOElXJuNFi2W+VYz/a/3UA1pLJYX/Z1xM
-   EDGKG14c9MW71SInMMytsF1ydxaQOxsDOhRtKqovs93FU0ZKGNRLKGEwj
-   1M06xyZEsZCe5hVmcdFJwm8RP9DzDWqA64hkpl1Fel8pYVPDQU4Z0yI7a
-   E4tiximN9uSAgJdrrkrghctggLfOU40ZPKE46og8ex1YL4ua2xR6l23mu
-   ZnpqDYUHJtWHMVfvvVrbK4Gg4VJjuVM0CiaIPUbjEewcBuBuzVFbvGHOx
-   LJm45CNPR3b8Ou1AYwcIV75teZcw7yExb0dW0pC+Q4PvmWqEneHN1VbEH
-   w==;
-X-CSE-ConnectionGUID: aNL6KkBYTVmVkFYcKNlnTw==
-X-CSE-MsgGUID: pUveWg8BSgG/0BQ7yzauGg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11368"; a="42737000"
-X-IronPort-AV: E=Sophos;i="6.14,236,1736841600"; 
-   d="scan'208";a="42737000"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Mar 2025 05:22:10 -0700
-X-CSE-ConnectionGUID: XD4ayhunSSm8YCF9yfjRMQ==
-X-CSE-MsgGUID: 7C1oBs/jQEeoen4G/0yEyw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,236,1736841600"; 
-   d="scan'208";a="157182871"
-Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.244.59])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Mar 2025 05:22:04 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-To: Peter Zijlstra <peterz@infradead.org>,
-	platform-driver-x86@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Rajneesh Bhardwaj <irenic.rajneesh@gmail.com>,
-	David E Box <david.e.box@intel.com>,
-	Hans de Goede <hdegoede@redhat.com>,
-	Christian Brauner <brauner@kernel.org>,
-	Al Viro <viro@zeniv.linux.org.uk>,
-	Ingo Molnar <mingo@kernel.org>,
-	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
-	David Lechner <dlechner@baylibre.com>,
-	Uros Bizjak <ubizjak@gmail.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	=?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
-	kernel test robot <lkp@intel.com>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Dan Williams <dan.j.williams@intel.com>
-Subject: [PATCH v2 1/1] cleanup: Fix sparse complaining about passing iomem ptr to no_free_ptr()
-Date: Mon, 10 Mar 2025 14:21:58 +0200
-Message-Id: <20250310122158.20966-1-ilpo.jarvinen@linux.intel.com>
-X-Mailer: git-send-email 2.39.5
+	s=arc-20240116; t=1741609335; c=relaxed/simple;
+	bh=1SZ5xOL/5pcHtlEBTYpzG26p4xb7Unyj++Kx995nIZU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=K9L2XP6CHtwzWr9/jcQS8sA/05slf0L7VhM7gl8VBcEJsCAw4iGxOar4E46IjjUGg+zI5frXpYph66bocjvXm2A3mPEgjc+wwC8o/sQ3obSoO5ylO16C7Iuo4ha67mZ1AvXo5UvV7s+2qpSMzTq/oHqFPgQGmQ0g8hfOQgmfv9o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=earth.li; spf=pass smtp.mailfrom=earth.li; dkim=pass (2048-bit key) header.d=earth.li header.i=@earth.li header.b=l8Sa+wt4; arc=none smtp.client-ip=93.93.131.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=earth.li
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=earth.li
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=earth.li;
+	s=the; h=In-Reply-To:Content-Transfer-Encoding:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=A5+NM3ovOfZLZdp1C2veCkBZJ2FQu8Fe/Fr8GA13dzw=; b=l8Sa+wt4m2k9KAQSeOCg3yVoD7
+	aNVQmWbm2dolaZytiLbVu2RIQZ383zLayw2FO0GFaK2Dvyi/bbJoQmMXBenNF9IyNgebijFwiaASu
+	TZtFHURdYDKE7EFS9C7x8LPfABhQhLo8DEBCB1ecx3H0Pfw7e4KiKpGGBly2QCtep3buFkLgywd87
+	BPoRPkREMZ+aN3wQKv1ljxdp7juRIedShkC4z96JzJ2nYsMBmixHR0VKPmYjIM5Rcp9GR5vtJrSRQ
+	8h9wUsj7FMMQqHuBeAyZpamlJpxzF8NFBzyAaDXxO2Il8WyGGymjfZNFWmDVWQ2XUfMmgM8pwSq6c
+	IFhvfbuQ==;
+Received: from noodles by the.earth.li with local (Exim 4.96)
+	(envelope-from <noodles@earth.li>)
+	id 1trc92-00GV4S-18;
+	Mon, 10 Mar 2025 12:22:08 +0000
+Date: Mon, 10 Mar 2025 12:22:08 +0000
+From: Jonathan McDowell <noodles@earth.li>
+To: Jarkko Sakkinen <jarkko@kernel.org>, Peter Huewe <peterhuewe@gmx.de>,
+	Jason Gunthorpe <jgg@ziepe.ca>,
+	Lino Sanfilippo <l.sanfilippo@kunbus.com>,
+	Michal =?iso-8859-1?Q?Such=E1nek?= <msuchanek@suse.de>
+Cc: linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v2] tpm, tpm_tis: Fix timeout handling when waiting for TPM
+ status
+Message-ID: <Z87ZcPZvoUXZ7M_f@earth.li>
+References: <Z8gdKxsw2unC5UID@earth.li>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=iso-8859-1; format=flowed
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <Z8gdKxsw2unC5UID@earth.li>
 
-Calling no_free_ptr() for an __iomem pointer results in sparse
-complaining about the types:
-  warning: incorrect type in argument 1 (different address spaces)
-     expected void const volatile *val
-     got void [noderef] __iomem *__val
-(The example from drivers/platform/x86/intel/pmc/core_ssram.c:283).
+The change to only use interrupts to handle supported status changes
+introduced an issue when it is necessary to poll for the status. Rather
+than checking for the status after sleeping the code now sleeps after
+the check. This means a correct, but slower, status change on the part
+of the TPM can be missed, resulting in a spurious timeout error,
+especially on a more loaded system. Switch back to sleeping *then*
+checking. An up front check of the status has been done at the start of
+the function, so this does not cause an additional delay when the status
+is already what we're looking for.
 
-The problem is caused by the signature of __must_check_fn() added in
-the commit 85be6d842447 ("cleanup: Make no_free_ptr() __must_check") to
-enforce return value is always used.
-
-Use __force to allow both iomem and non-iomem pointers to be given for
-no_free_ptr().
-
-Reported-by: kernel test robot <lkp@intel.com>
-Closes: https://lore.kernel.org/oe-kbuild-all/202403050547.qnZtuNlN-lkp@intel.com/
-Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Reviewed-by: Dan Williams <dan.j.williams@intel.com>
-Signed-off-by: Ilpo JÃ¤rvinen <ilpo.jarvinen@linux.intel.com>
+Cc: stable@vger.kernel.org # v6.4+
+Fixes: e87fcf0dc2b4 ("tpm, tpm_tis: Only handle supported interrupts")
+Signed-off-by: Jonathan McDowell <noodles@meta.com>
+Reviewed-by: Michal Suchánek <msuchanek@suse.de>
+Reviewed-by: Lino Sanfilippo <l.sanfilippo@kunbus.com>
 ---
+v2: Reword commit message
+     Don't needlessly wrap line
 
-I've no strong preferences through which tree this patch is routed.
+  drivers/char/tpm/tpm_tis_core.c | 3 +--
+  1 file changed, 1 insertion(+), 2 deletions(-)
 
-v2:
-- Rebased & updated line number to match the current code.
-
- include/linux/cleanup.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/include/linux/cleanup.h b/include/linux/cleanup.h
-index ec00e3f7af2b..ee2614adb785 100644
---- a/include/linux/cleanup.h
-+++ b/include/linux/cleanup.h
-@@ -212,7 +212,7 @@ const volatile void * __must_check_fn(const volatile void *val)
- { return val; }
- 
- #define no_free_ptr(p) \
--	((typeof(p)) __must_check_fn(__get_and_null(p, NULL)))
-+	((typeof(p)) __must_check_fn((__force const volatile void *)__get_and_null(p, NULL)))
- 
- #define return_ptr(p)	return no_free_ptr(p)
- 
-
-base-commit: 80e54e84911a923c40d7bee33a34c1b4be148d7a
+diff --git a/drivers/char/tpm/tpm_tis_core.c b/drivers/char/tpm/tpm_tis_core.c
+index fdef214b9f6b..c969a1793184 100644
+--- a/drivers/char/tpm/tpm_tis_core.c
++++ b/drivers/char/tpm/tpm_tis_core.c
+@@ -114,11 +114,10 @@ static int wait_for_tpm_stat(struct tpm_chip *chip, u8 mask,
+  		return 0;
+  	/* process status changes without irq support */
+  	do {
++		usleep_range(priv->timeout_min, priv->timeout_max);
+  		status = chip->ops->status(chip);
+  		if ((status & mask) == mask)
+  			return 0;
+-		usleep_range(priv->timeout_min,
+-			     priv->timeout_max);
+  	} while (time_before(jiffies, stop));
+  	return -ETIME;
+  }
 -- 
-2.39.5
+2.48.1
 
 
