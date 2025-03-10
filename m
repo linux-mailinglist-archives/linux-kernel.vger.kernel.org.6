@@ -1,149 +1,193 @@
-Return-Path: <linux-kernel+bounces-555153-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-555160-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB75FA5A62A
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 22:28:26 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 22CA2A5A63D
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 22:30:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 385983A713B
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 21:28:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 682C01895397
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 21:30:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D77E41C1AD4;
-	Mon, 10 Mar 2025 21:28:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03D3B1E32C6;
+	Mon, 10 Mar 2025 21:29:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qgsCgKBg"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TirXhkdp"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 388171E2845;
-	Mon, 10 Mar 2025 21:28:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51C9F1CB9F0;
+	Mon, 10 Mar 2025 21:29:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741642085; cv=none; b=lgeY0U6T9fKP/rPxogULZ+iCPg4xqH3rqlK2gUb4Z33nVR64f5lruBG+7B4l+sBC8UbnNrXBUcsmL+8rF5vMMwC+ZBwAFdFCzGnVh/Gac8lJHskhgp5yNUQRssHpo7Ndv1I+s25x3k7hgDBlRNpdnFeyTAuYAvTnD6d0sMKCazk=
+	t=1741642160; cv=none; b=ClFHzAALH1chtXFcVbJClRTIjQP36wTxninmAlJe+fYPfNmbUlGUYA6gHt6pz53VC1m2foVnBs+axXBu/4V7mk7HkCvv505Ii2KK6qUrEDsBq4RZ7AvOclnvh+MVRrb4a27hK3bK/VpwFl7DaSBnm/JqrvH19gkGy0pgdGv0OcU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741642085; c=relaxed/simple;
-	bh=fimXjcsEmAf6FQYUCIrEKVZ2zpu/p5pUUtEOH6JJjn8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=M7vFmEbmuygoEzGiFLWeobfeRskDj6/noGWX8lp9nGZGYlWRjcAeEGa8rFVw7fJ6laiKRJHGqxMn2dXQi75fmu57AP/rbXbB6CUq7vGkETrI1jfshWAGwqEBqQP+fHWJdnIlNnMNrM4Ve4L93so4JJ7O/NLN5P+h9Jj/Mu32XVI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qgsCgKBg; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0627AC4CEED;
-	Mon, 10 Mar 2025 21:28:03 +0000 (UTC)
+	s=arc-20240116; t=1741642160; c=relaxed/simple;
+	bh=OoeUDymeISbaQ0PaNahEAnVeRknU+25o4QGwfMko6ug=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=hYipoFbUzhjXIJzbzEVNluYCIuVxelCM8gPEeqiQtaezgZ0qZLr9Q1kfSAxiMIKjOqfTS8XZCS/V/HIw0CbWHXkYYJ1yTVeNlSDlR4wJg2YlmP1KpCWPvX0J/TO/S4xSdB9D1nmKex+MTExgpgiBbjlx19pjVlekIwer9emITrw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TirXhkdp; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B8F7AC4CEE5;
+	Mon, 10 Mar 2025 21:29:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741642084;
-	bh=fimXjcsEmAf6FQYUCIrEKVZ2zpu/p5pUUtEOH6JJjn8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=qgsCgKBg9Y5chyvUXsP5kQ78lxQyKMCQ19xtNX41mj5orgtQj+i59bUWKPMwfixuK
-	 4isu6tvtf8AXXuv7UB8mpD1hwCeqsERQO4Ce9T77A5D2WDHoMbXVQVcjQdC0K8NLxC
-	 HyPTkrYdtABeZ9HBZmfGL+qbXNrtRWYIEr6RLlgyHKyDW0reZblyLyhiU4CG9TTNV1
-	 21UL0zptZnLHGsjFsiM84KyaXSuySddNj9lLHOBr6iPD0CCbz8nt7Vtfyv8Zf3Xh+c
-	 8rsh1bQj9eyPwXqyE55mAcgyyLvAt8i+LnApfJ+veZzQvaoim3SAnOaBrJ8mx1MOI4
-	 6W7/TewS0V3dA==
-Date: Mon, 10 Mar 2025 18:28:01 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Ian Rogers <irogers@google.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Kan Liang <kan.liang@linux.intel.com>,
-	Yicong Yang <yangyicong@hisilicon.com>,
-	James Clark <james.clark@linaro.org>,
-	"Dr. David Alan Gilbert" <linux@treblig.org>,
-	Levi Yun <yeoreum.yun@arm.com>, Ze Gao <zegao2021@gmail.com>,
-	Weilin Wang <weilin.wang@intel.com>, Xu Yang <xu.yang_2@nxp.com>,
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Howard Chu <howardchu95@gmail.com>
-Subject: Re: [PATCH v2 11/11] perf python tracepoint: Switch to using
- parse_events
-Message-ID: <Z89ZYVgL_bT3ampz@x1>
-References: <20250228222308.626803-1-irogers@google.com>
- <20250228222308.626803-12-irogers@google.com>
- <Z89We45bGpeJvO9C@x1>
- <Z89WvaIVyF7klGp6@x1>
- <CAP-5=fXzva636zCZR2isdfrjT6mM3o42C+oGWNkGieqGVajfHA@mail.gmail.com>
+	s=k20201202; t=1741642159;
+	bh=OoeUDymeISbaQ0PaNahEAnVeRknU+25o4QGwfMko6ug=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=TirXhkdpxads6GYAJqkreCa36p6CdNrG+YmakqXFgUMIuDMiq3woNRA66HxaM76Al
+	 YVJq27q2eV5KAehd8WFiqvSaxR+Fs8bthaSXcn5tzE1lC5iDZBsAC4nQajdOyiLPi+
+	 NlyrH1/zDmNpUvIniZLkonfkeCKMWTDW2BeeyzqYGAbYi7bcDbsptdlPgC1jtogwog
+	 C4MrvA+KBfCqD9bo9AnXW8vYwN/2YJh+C8JgnXpXibzEISpCTuq4sID2wjAxKfuR6I
+	 KLN1q1GFh2gtDrdZGviG24Qbpat/OQh2kzLurYvJk+xPYvS3HMWFEa/n6DBgT9SBRj
+	 mfG7Le196I4ZA==
+Received: by mail-oa1-f44.google.com with SMTP id 586e51a60fabf-2c12b7af278so2803046fac.0;
+        Mon, 10 Mar 2025 14:29:19 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVuzpo6lKSlBhRHdevTk/nyToLb/+5BM5DODkJ46EROKq+0YFBRTEp3TRGEZqZg+2Pa3Jl6vtFntg4=@vger.kernel.org, AJvYcCXRSk4Z6flUKukqy4kpvu3jdoZQEZ3IAK9hbzMwWsAQ5mZoyAjUMf2WpOkj5EbGBiRURSqukpSIsj/LqVI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxZP2ICeirKNbWQmCfCYBwENzDrN/G50+niDFFVarokVw2Gv2E/
+	gQ4go7l9b9tPATeprYYwfmEGOZ9QM13/eF4e8cIB84qj7UGmUM4OoN2nBMhO+y6cDVFeKiML19p
+	X+6iG6dKnSW8hAqT9Nx2BPRayqf8=
+X-Google-Smtp-Source: AGHT+IFcs1F3WeWS/rw/rH8zZRmJCxnvb5NTIKWhxHbpZf3MggTanH3PRtzPyFZHmXDyAM20lNRz7MiCww56hnLw9vk=
+X-Received: by 2002:a05:6870:b521:b0:2b8:92f0:ba5d with SMTP id
+ 586e51a60fabf-2c2e959794bmr658930fac.8.1741642159022; Mon, 10 Mar 2025
+ 14:29:19 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAP-5=fXzva636zCZR2isdfrjT6mM3o42C+oGWNkGieqGVajfHA@mail.gmail.com>
+References: <13709135.uLZWGnKmhe@rjwysocki.net> <CAGETcx-ow3T_R_Lj1s3sjp6nQz6Wv7T3dQdP3HJHd+E8nkh6rw@mail.gmail.com>
+ <CAJZ5v0g3qOvESqvqiCnwVz2BYGHzrG8=nRQ8j36Qd_LC0io_Tw@mail.gmail.com>
+ <CAGETcx82sLvG19eUN1ATrL5RzEKJjOeWP+kdYJdQX9O=ck7q2Q@mail.gmail.com>
+ <CAJZ5v0guoA-xp-yyr7Fb7ikmE9rjt8xwDPcxU52sd0UP_u=2jA@mail.gmail.com> <CAGETcx9WZWiUd+YCQfoZEGGbewv2nrx2TiQJs55KEWbOUg9TCg@mail.gmail.com>
+In-Reply-To: <CAGETcx9WZWiUd+YCQfoZEGGbewv2nrx2TiQJs55KEWbOUg9TCg@mail.gmail.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Mon, 10 Mar 2025 22:29:07 +0100
+X-Gmail-Original-Message-ID: <CAJZ5v0haTW3L4Baez9Q1LWrRahijWgr0sd85kYOtr6ajZ3Vkgw@mail.gmail.com>
+X-Gm-Features: AQ5f1JrHMx3CwpnVlHY_ucu_zEOmB_7ca_XctKtlXga0bL7icVffHW0BVQmzMlE
+Message-ID: <CAJZ5v0haTW3L4Baez9Q1LWrRahijWgr0sd85kYOtr6ajZ3Vkgw@mail.gmail.com>
+Subject: Re: [PATCH v1 0/5] PM: sleep: Improvements of async suspend and
+ resume of devices
+To: Saravana Kannan <saravanak@google.com>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, 
+	Linux PM <linux-pm@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
+	Alan Stern <stern@rowland.harvard.edu>, Ulf Hansson <ulf.hansson@linaro.org>, 
+	Johan Hovold <johan@kernel.org>, Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Mar 10, 2025 at 02:17:59PM -0700, Ian Rogers wrote:
-> On Mon, Mar 10, 2025 at 2:16 PM Arnaldo Carvalho de Melo
-> <acme@kernel.org> wrote:
+On Mon, Mar 10, 2025 at 9:31=E2=80=AFPM Saravana Kannan <saravanak@google.c=
+om> wrote:
+>
+> On Mon, Mar 10, 2025 at 9:01=E2=80=AFAM Rafael J. Wysocki <rafael@kernel.=
+org> wrote:
 > >
-> > On Mon, Mar 10, 2025 at 06:15:42PM -0300, Arnaldo Carvalho de Melo wrote:
-> > > On Fri, Feb 28, 2025 at 02:23:08PM -0800, Ian Rogers wrote:
-> > > > Rather than manually configuring an evsel, switch to using
-> > > > parse_events for greater commonality with the rest of the perf code.
+> > On Sun, Mar 9, 2025 at 11:38=E2=80=AFPM Saravana Kannan <saravanak@goog=
+le.com> wrote:
+> > >
+> > > On Thu, Feb 27, 2025 at 8:23=E2=80=AFAM Rafael J. Wysocki <rafael@ker=
+nel.org> wrote:
 > > > >
-> > > > Reviewed-by: Howard Chu <howardchu95@gmail.com>
-> > > > Signed-off-by: Ian Rogers <irogers@google.com>
+> > > > On Thu, Feb 27, 2025 at 4:45=E2=80=AFPM Saravana Kannan <saravanak@=
+google.com> wrote:
+> > > > >
+> > > > > On Tue, Feb 25, 2025 at 8:46=E2=80=AFAM Rafael J. Wysocki <rjw@rj=
+wysocki.net> wrote:
+> > > > > >
+> > > > > > Hi Everyone,
+> > > > > >
+> > > > > > Initially, this was an attempt to address the problems describe=
+d by
+> > > > > > Saravana related to spawning async work for any async device up=
+front
+> > > > > > in the resume path:
+> > > > > >
+> > > > > > https://lore.kernel.org/linux-pm/20241114220921.2529905-1-sarav=
+anak@google.com/
+> > > > > >
+> > > > > > but then I realized that it could be extended to the suspend pa=
+th and
+> > > > > > used for speeding it up, which it really does.
+> > > > >
+> > > > > Btw, maybe I didn't  word it correctly, but my patch series was m=
+eant
+> > > > > to speed up the non-async case too.
+> > > >
+> > > > If "the non-async case" means the case with "async" suspend/resume
+> > > > disabled entirely, I don't think that the ordering in which devices
+> > > > are processed can be changed just because there are no known
+> > > > dependencies.
+> > > >
+> > > > > I was going to get around sending a v2 of my series, but was caug=
+ht up
+> > > > > with some other work. But I'm okay if you want to finish up my ef=
+fort
+> > > > > -- less work for me and I can focus on the other aspects of suspe=
+nd :)
+> > > > >
+> > > > > Maybe add a Suggested-by: to the patches?
+> > > >
+> > > > Yeah, I can do that.
+> > > >
+> > > > > I definitely want to review the series, but very busy this week w=
+ith
+> > > > > some other work. I'll get to this next week for sure.
+> > > >
+> > > > That should be fine.
 > > >
-> > > Now will all in place I'm trying to test it and I am getting some
-> > > strange results:
+> > > Hi Rafael,
 > > >
-> > > root@number:/home/acme/git/perf-tools-next# tools/perf/python/tracepoint.py
-> > > <SNIP lots of seemingly ok lines>
-> > > time 78318710956557 prev_comm=sudo prev_pid=3133818 prev_prio=120 prev_state=0x1 ==> next_comm=swapper/14 next_pid=0 next_prio=120
-> > > time 78318720082300 prev_comm=swapper/16 prev_pid=0 prev_prio=120 prev_state=0x0 ==> next_comm=kworker/u112:8 next_pid=1752774 next_prio=120
-> > > time 78318706232435 prev_comm=kworker/u112:17 prev_pid=1551246 prev_prio=120 prev_state=0x80 ==> next_comm=swapper/21 next_pid=0 next_prio=120
-> > > time 78318708202121 prev_comm=sudo prev_pid=3133818 prev_prio=120 prev_state=0x2 ==> next_comm=swapper/25 next_pid=0 next_prio=120
-> > > time 78318748346989 prev_comm=swapper/26 prev_pid=0 prev_prio=120 prev_state=0x0 ==> next_comm=gnome-terminal- next_pid=3551 next_prio=120
-> > > Traceback (most recent call last):
-> > >   File "/home/acme/git/perf-tools-next/tools/perf/python/tracepoint.py", line 47, in <module>
-> > >     main()
-> > >   File "/home/acme/git/perf-tools-next/tools/perf/python/tracepoint.py", line 42, in main
-> > >     event.next_comm,
-> > >     ^^^^^^^^^^^^^^^
-> > > AttributeError: 'perf.sample_event' object has no attribute 'next_comm'
-> > > root@number:/home/acme/git/perf-tools-next#
-> > >
-> > > But it shouldn't get there as there is this check:
-> > >
-> > >             if not isinstance(event, perf.sample_event):
-> > >                 continue
-> > >
-> > >
-> > > :-\
-> > >
-> > > Trying to debug that...
+> > > I looked at the full series and it has at least one bug and a few gap=
+s
+> > > that I address in mine.
 > >
-> > And it doesn't seem related to your series, I checked and v6.13 has the
-> > same problem, I nuked the build dir, etc.
-> 
-> Right. I'd seen the same issue.
+> > What bug?
+> >
+> > You need to tell me specifically because I'm not aware of any bugs in
+> > this series and unless you tell me what it is and I agree that it is a
+> > bug, I have no reason to believe that there are any.
+> >
+> > As for the gaps, there are obvious differences between this patch
+> > series and your work and it would be kind of nice to explain why they
+> > matter in practice, in your view.
+>
+> Sure, I'll do this.
 
-time 79411977132102 prev_comm=sudo prev_pid=3133818 prev_prio=120 prev_state=0x2 ==> next_comm=swapper/12 next_pid=0 next_prio=120
-{ type: sample }
-time 79411977200343 prev_comm=kworker/u112:17 prev_pid=1551246 prev_prio=120 prev_state=0x80 ==> next_comm=swapper/16 next_pid=0 next_prio=120
-{ type: sample }
-time 79411964535268 prev_comm=kworker/u112:14 prev_pid=810939 prev_prio=120 prev_state=0x80 ==> next_comm=swapper/17 next_pid=0 next_prio=120
-{ type: sample }
-time 79411964746511 prev_comm=swapper/18 prev_pid=0 prev_prio=120 prev_state=0x0 ==> next_comm=kworker/u112:12 next_pid=2109251 next_prio=120
-{ type: sample }
-Traceback (most recent call last):
-  File "/home/acme/git/perf-tools-next/tools/perf/python/tracepoint.py", line 48, in <module>
-    main()
-  File "/home/acme/git/perf-tools-next/tools/perf/python/tracepoint.py", line 43, in main
-    event.next_comm,
-    ^^^^^^^^^^^^^^^
-AttributeError: 'perf.sample_event' object has no attribute 'next_comm'
-root@number:/home/acme/git/perf-tools-next#
+OK
 
-And it says it is a sample... 
+> But it just felt like an inefficient way to get to close to where my seri=
+es is.
 
+I'm not sure where it is TBH.
 
-Well, ran out of time, will try later or early tomorrow, will also try
-to review the syscalltbl series and Howard's off cpu profiling.
+> Instead of you just saying you don't like
+> about my series and giving me some feedback on how to fix it.
 
-- Arnaldo
+You got feedback on it:
+
+https://lore.kernel.org/linux-pm/CAJZ5v0grG7eSJ7_c73i9-bXaFhm5rfE2WmxtR6yLB=
+-MGkd7sVg@mail.gmail.com/
+
+And no response.
+
+Also here:
+
+https://lore.kernel.org/linux-pm/CAJZ5v0g9A1pZ5FjPAjdLY5ybNmefnBVVMJM7h3czW=
+38p1fTfqQ@mail.gmail.com/
+
+And there was a bunch of feedback from other people (and 0-day) on the
+last patch.
+
+> > > And those are what make my patches have a
+> > > higher diff. Can we just continue with my series instead?
+> >
+> > Of course you are free to send a new version of it, but it is unlikely
+> > to be a sufficient replacement for constructive feedback.
+>
+> Ok, I'll point out the issues I see in this series and hopefully you
+> can point out the issues in my series and we can move forward with
+> mine if you agree with the additional issues my series is working
+> through.
+
+Sure, but please address the feedback so far and send a new version.
 
