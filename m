@@ -1,147 +1,118 @@
-Return-Path: <linux-kernel+bounces-554941-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-554942-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 95A65A5A3A3
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 20:09:28 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CEC04A5A3A4
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 20:10:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D347A1720DE
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 19:09:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7BCD5188F67D
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 19:10:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DB10235374;
-	Mon, 10 Mar 2025 19:09:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCD5122D7AF;
+	Mon, 10 Mar 2025 19:10:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="qkoSKoS+";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="6acQyUCo"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="QmA8KErU"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09036199FBA;
-	Mon, 10 Mar 2025 19:09:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC7C8189B80
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 19:10:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741633762; cv=none; b=UFWOPhnQqCulyiHvnXr9VWomZS+6eGzx8qh7IA0LGYw5tFPWrWDhz+rioqxJRrTbj4WCPkIAy0YKUOhbMpI4fIgcXnAmoSMp9G4XtCTJVDRSRrmNoIqmX1MGiMYsuBkdJlkzO1/VIUamHF4xfSd4A7WJqQywgUT2gdbIY/8VVbI=
+	t=1741633803; cv=none; b=qkKFWXWfVdkHorX0Tf4Zt7Z0mGr5FeGtXdO06pfGQYq/tWY08XSTihfu2HmXoAV9RT3oiPnPXVuz97eG9rHxc9Rz+b8vQYpj1yx1PJwIIWdbiiZtZsjRC4N8dXN04Dbj0IsE8FirUSteCNaPz3bP3OlO41gNhRyIPNTXAPWlq8U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741633762; c=relaxed/simple;
-	bh=iblLPzG3t9kSuK+o/qes9+wshJPa0LXM6J9Pg+F88oY=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=Ppda3m6NqZ0MGFSv2D8Y/pMs+Gd7SgHCG/o4sFuPU8+LOI18roVSNgX1oc/WBH3z82/S587avTl5K3erigA0RwoTTu3hjOn+Rn3UEzNgB+GGGSID7+ZU74GiWZ1hvIAT4pqRekhJuFaY0h9YMHnN9WmrKCzVnmNhL/QW7/Sd+co=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=qkoSKoS+; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=6acQyUCo; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Mon, 10 Mar 2025 19:09:12 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1741633758;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=eJ/re8by5UcGcB7IbKVRbQ0y9nHtzvymF6WfUZ7lqAo=;
-	b=qkoSKoS+9s69FYskOJlTF+4vZgTUBTd2hmKNmMdcagj9R8xdZ4Za7LbkkaC6vuJBsv9yYU
-	lYzS8Sw5sYMGDG/4AIc3LIHr2wY5OoRBxUoDEsCLye15NOLCnncTXhfYNUayY2cBsZe2Q4
-	cP+BANAxEWaCFtUu9doVTK9WdTLgmaS3esAMbS/gyn1iUa38cz8moz7MarewkIl1aloybt
-	LIYekMIz4JVmCwlFDxdB3RNV+NMZyED60HChgu6bynWP58JwZF/pWLL4YVPhfhBgrovv63
-	mHT76mnKnRHj5qM2hl0JtaTaM0ZYp7nA84ATK+hvRABFntDivfZHHhhh+JKaAA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1741633758;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=eJ/re8by5UcGcB7IbKVRbQ0y9nHtzvymF6WfUZ7lqAo=;
-	b=6acQyUCoD/N51LJaOXeTr5B6zliQhqkPL4tyu3bz0r2i2KKiFb+A/koruVJPJM+Ip/ELXD
-	7QEeU/ps7/Bwp3Bg==
-From: tip-bot2 for Ilpo =?utf-8?q?J=C3=A4rvinen?= <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: core/urgent] <linux/cleanup.h>: Allow the passing of both iomem
- and non-iomem pointers to no_free_ptr()
-Cc: kernel test robot <lkp@intel.com>, ilpo.jarvinen@linux.intel.com,
- Ingo Molnar <mingo@kernel.org>,
- Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
- Dan Williams <dan.j.williams@intel.com>, "H. Peter Anvin" <hpa@zytor.com>,
- Linus Torvalds <torvalds@linux-foundation.org>, x86@kernel.org,
- linux-kernel@vger.kernel.org
-In-Reply-To: <20250310122158.20966-1-ilpo.jarvinen@linux.intel.com>
-References: <20250310122158.20966-1-ilpo.jarvinen@linux.intel.com>
+	s=arc-20240116; t=1741633803; c=relaxed/simple;
+	bh=ZDkOzTn4lQFqn/QoRZQS9+zhRq8N4dkYWc6slJj4MFc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=suWD12/3m0SqWh6vZEnVzTurOujr0+WIr42kYi9rpXVXYskn8LcwOz/B/L3ttbne7luGhUe+dtewIhQ1/KT14uRAevDsqYIxkEOkU6K/ED+NRJotJ/JY6LOX3TrY2oNfAjwnOcO6VzXqV4F1e05/pdy5llasl8fqs0zzF2+OpaE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=QmA8KErU; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id A140340E0218;
+	Mon, 10 Mar 2025 19:09:52 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id dRU0QODA3P-H; Mon, 10 Mar 2025 19:09:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1741633787; bh=dbQcGvEKcrnLR81w8hAcq9VOn5tgU/LJz+HG0sgbIOg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=QmA8KErUZU8ZBQuCx9qlLdyJ8ykKD9gkC0V5okjeLWtXpPfePiJpm/vGDhMr4oFsr
+	 yku5ly7D5qSGTYe+5ndahan3m2BvBEOn0vmAJeIFuPCBrzDncVNYXS6HrYVQvYnYlf
+	 T81KAMHbDp0M5DSjoxeB4wroUmzX3wY/BiI2Z4kZqhkby/jGY5z6/JUmmtCmk+KsNZ
+	 pGYUhcUCFTRN00IktBlVR/d4tg60YguZURHz3ZrBrQKtFp49WWObm87VnPEGo3U2kc
+	 sQZfYszGBwiAHUP2bF8A8e7gZWOs3QAyxGiBmWOfrhxS+e6RhGVBJilkBoqm9mXjdf
+	 JQjWBflpwL/3R0IL2rl3cCEOsuiUhD0q1ChCA4IzUY5fp6XtcAInKt2l/F+eDrSKhk
+	 3JXiIif6MybyYZlfp0NFISkh/nzgO2P2MQO7/q4kxW1vQvq6VzVIITePw888Ody8fp
+	 fO/vt8tgdBHb7vCgn1FJlaIGf77oLQnR4vUG2D9RR8azU1AnwKxOpdqG01XXc3hWU2
+	 q7v7EQ53UF9p08vlYBj8F40eZ9mOheg5ASoXL/FszF1WO0BDYMTJkUD9h50tAmp8Ku
+	 EHzL/gGrOaZ8FsdJRoJtrY7xlDKD5pN92yZL1/UShALfHUq6uJOpk/PC8ExGMEiRvf
+	 DFxT6xJpu2PrdOgTjd+lF0fE=
+Received: from zn.tnic (pd95303ce.dip0.t-ipconnect.de [217.83.3.206])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id C781D40E0216;
+	Mon, 10 Mar 2025 19:09:20 +0000 (UTC)
+Date: Mon, 10 Mar 2025 20:09:15 +0100
+From: Borislav Petkov <bp@alien8.de>
+To: James Morse <james.morse@arm.com>
+Cc: x86@kernel.org, linux-kernel@vger.kernel.org,
+	Reinette Chatre <reinette.chatre@intel.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, H Peter Anvin <hpa@zytor.com>,
+	Babu Moger <Babu.Moger@amd.com>,
+	shameerali.kolothum.thodi@huawei.com,
+	D Scott Phillips OS <scott@os.amperecomputing.com>,
+	carl@os.amperecomputing.com, lcherian@marvell.com,
+	bobo.shaobowang@huawei.com, tan.shaopeng@fujitsu.com,
+	baolin.wang@linux.alibaba.com, Jamie Iles <quic_jiles@quicinc.com>,
+	Xin Hao <xhao@linux.alibaba.com>, peternewman@google.com,
+	dfustini@baylibre.com, amitsinght@marvell.com,
+	David Hildenbrand <david@redhat.com>,
+	Rex Nie <rex.nie@jaguarmicro.com>,
+	Dave Martin <dave.martin@arm.com>, Koba Ko <kobak@nvidia.com>,
+	Shanker Donthineni <sdonthineni@nvidia.com>, fenghuay@nvidia.com
+Subject: Re: [PATCH v7 00/49] x86/resctrl: Move the resctrl filesystem code
+ to /fs/resctrl
+Message-ID: <20250310190915.GAZ8842wfIn043W56k@fat_crate.local>
+References: <20250228195913.24895-1-james.morse@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <174163375319.14745.16922341165556020478.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250228195913.24895-1-james.morse@arm.com>
 
-The following commit has been merged into the core/urgent branch of tip:
+On Fri, Feb 28, 2025 at 07:58:24PM +0000, James Morse wrote:
+> Changes since v6?:
+>  * All the excitement is in patch 37, turns out there are two rmdir() paths
+>    that don't join up.
+> The last eight patches are new:
+>  * The python script has been replaced with the patch that it generates, see
+>    the bare branch below if you want to regenerate it.
+>  * There have been comments on the followup to the generated patch, those are
+>    included here - I suggest they be squashed into the generated patch.
+>  * This version includes some checkpatch linting from Dave.
 
-Commit-ID:     366fef794bd2b7c2e9df933f6828dd9739bfba84
-Gitweb:        https://git.kernel.org/tip/366fef794bd2b7c2e9df933f6828dd9739b=
-fba84
-Author:        Ilpo J=C3=A4rvinen <ilpo.jarvinen@linux.intel.com>
-AuthorDate:    Mon, 10 Mar 2025 14:21:58 +02:00
-Committer:     Ingo Molnar <mingo@kernel.org>
-CommitterDate: Mon, 10 Mar 2025 20:02:14 +01:00
+So, Reinette says that 1-30 should be ready to go. Care to send them ASAP with
+all the review feedback addressed so that I can try to queue them, we all test
+the branch this week and thus I can empty a considerable amount out of your
+bucket of patches...
 
-<linux/cleanup.h>: Allow the passing of both iomem and non-iomem pointers to =
-no_free_ptr()
+Thx.
 
-Calling no_free_ptr() for an __iomem pointer results in Sparse
-complaining about the types:
+-- 
+Regards/Gruss,
+    Boris.
 
-  warning: incorrect type in argument 1 (different address spaces)
-     expected void const volatile *val
-     got void [noderef] __iomem *__val
-
-[ The example is from drivers/platform/x86/intel/pmc/core_ssram.c:283 ]
-
-The problem is caused by the signature of __must_check_fn() added in:
-
-  85be6d842447 ("cleanup: Make no_free_ptr() __must_check")
-
-... to enforce that the return value is always used.
-
-Use __force to allow both iomem and non-iomem pointers to be given for
-no_free_ptr().
-
-Reported-by: kernel test robot <lkp@intel.com>
-Signed-off-by: Ilpo J=C3=A4rvinen <ilpo.jarvinen@linux.intel.com>
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Reviewed-by: Dan Williams <dan.j.williams@intel.com>
-Cc: "H. Peter Anvin" <hpa@zytor.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Link: https://lore.kernel.org/r/20250310122158.20966-1-ilpo.jarvinen@linux.in=
-tel.com
-Closes: https://lore.kernel.org/oe-kbuild-all/202403050547.qnZtuNlN-lkp@intel=
-.com/
----
- include/linux/cleanup.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/include/linux/cleanup.h b/include/linux/cleanup.h
-index ec00e3f..ee2614a 100644
---- a/include/linux/cleanup.h
-+++ b/include/linux/cleanup.h
-@@ -212,7 +212,7 @@ const volatile void * __must_check_fn(const volatile void=
- *val)
- { return val; }
-=20
- #define no_free_ptr(p) \
--	((typeof(p)) __must_check_fn(__get_and_null(p, NULL)))
-+	((typeof(p)) __must_check_fn((__force const volatile void *)__get_and_null(=
-p, NULL)))
-=20
- #define return_ptr(p)	return no_free_ptr(p)
-=20
+https://people.kernel.org/tglx/notes-about-netiquette
 
