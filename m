@@ -1,78 +1,58 @@
-Return-Path: <linux-kernel+bounces-553648-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-553646-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 961D8A58CE9
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 08:29:13 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E356BA58CE3
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 08:27:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5C1443A859E
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 07:29:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2D2B5165B10
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 07:27:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59F921DE3A8;
-	Mon, 10 Mar 2025 07:29:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99D571D63FC;
+	Mon, 10 Mar 2025 07:26:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="XF9FEq7M"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Zs65k6cP"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47F101DE2B7;
-	Mon, 10 Mar 2025 07:29:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0924B17BA5
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 07:26:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741591746; cv=none; b=ATrUD/jkNWPB8oL2Opy1hy7D8JFPDkVcNJpnW2+ZR3K6LEV3FxOPinjtYspYlF5pdf2WoBUMc9QPKcYKg9ngkm4nIZ0ZNuIP/gcTy0ChZO+s62tPBWgU5dT+uHqhwAbdwLp79vDHCPeI8NvbWaKDTfTG+L859o3acIo/tT1GgGI=
+	t=1741591616; cv=none; b=fI9Je/TC9Y1j8YFgUBrmfly+ueK8nhL+HPTj1kWSckrFsDoDwVGXBtY3+3j11L6IagFLVpFz4q0qFSunHlVzA98CPdFcMgjn+x3dXzKMOKR3+I3XJg9gy1JT4p/z0orW4V5YyChvomzjhMkqgHuXnWaC40/q+Hq+Qbm1omJs/ZQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741591746; c=relaxed/simple;
-	bh=ssEg4vPopMVhOA1s0W0lhcWOtIh6Cxqt2KYRDMOOri4=;
+	s=arc-20240116; t=1741591616; c=relaxed/simple;
+	bh=7wBfnmZleX7Y85tYsTskYok1c1ngfWy+JcWmAk0PEZQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ye7JuJdn5VjgKEyKobba0fKYXjota/dHOdkpLqTnq48Oo2eNgzIJJQBTaQcvhQ25woQfCvwMDJWhBaNBeq7M+nKIfqACXlZ/+K3yCNyCEROe6Lt3wewfzviTUaPt1SVdyee+3EK8W6vIrM+8CGrMbZhOjbmo6biuf88Tfy3j4/g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=XF9FEq7M; arc=none smtp.client-ip=198.175.65.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1741591745; x=1773127745;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=ssEg4vPopMVhOA1s0W0lhcWOtIh6Cxqt2KYRDMOOri4=;
-  b=XF9FEq7M64Iu+dE27g8dTv0vy3y1h7pAQvdPquJ5Riht4bWi8+/YTmJa
-   CJoHEnlwRgFuI1oTemZqJu7BPQfCs0sgJ8IVOjwTKP35+7V71+yuP3KdW
-   pzcSdJwi9EpDNPBfh+6OIe2RFeLaHccCl3BsY/jFQreKTYtc4p4/aadlN
-   CAE8+qQSWnCEidm+MMSVEQAJEyWhgdz8QUWGD2203udkQVwVBlQIyF6P8
-   hGl/jsomNwqVCTe6O+jvQrg00S3BaRIPq/kBAm6jiYrA8OHN/ii7Td9lN
-   uCVuaXFwSOeFl03BoJVDPfa7SDErOUhWPElGXP0WSqR32eKfsihAJFDhC
-   Q==;
-X-CSE-ConnectionGUID: xGlSFC5BRJS0SwqrHp9pHg==
-X-CSE-MsgGUID: g8gDkPZQRUq5LxVmBGosgA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11368"; a="65017617"
-X-IronPort-AV: E=Sophos;i="6.14,235,1736841600"; 
-   d="scan'208";a="65017617"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Mar 2025 00:29:04 -0700
-X-CSE-ConnectionGUID: iTIwBm7ARi+jwHUHMJcJjw==
-X-CSE-MsgGUID: dq70DRYETUWoDTmHCnfvGg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,235,1736841600"; 
-   d="scan'208";a="119847504"
-Received: from lkp-server02.sh.intel.com (HELO a4747d147074) ([10.239.97.151])
-  by orviesa010.jf.intel.com with ESMTP; 10 Mar 2025 00:29:01 -0700
-Received: from kbuild by a4747d147074 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1trXZ9-0003wI-0V;
-	Mon, 10 Mar 2025 07:28:50 +0000
-Date: Mon, 10 Mar 2025 15:26:49 +0800
-From: kernel test robot <lkp@intel.com>
-To: Kevin Chen <kevin_chen@aspeedtech.com>, lee@kernel.org, robh@kernel.org,
-	krzk+dt@kernel.org, conor+dt@kernel.org, joel@jms.id.au,
-	andrew@codeconstruct.com.au, derek.kiernan@amd.com,
-	dragan.cvetic@amd.com, arnd@arndb.de, gregkh@linuxfoundation.org,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org
-Cc: oe-kbuild-all@lists.linux.dev, Kevin Chen <kevin_chen@aspeedtech.com>
-Subject: Re: [PATCH v2 3/3] soc: aspeed: lpc-pcc: Add PCC controller support
-Message-ID: <202503101519.AIZNCLz1-lkp@intel.com>
-References: <20250304104434.481429-4-kevin_chen@aspeedtech.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=UtpxFaPGncszTNe8WGl9T5Eh5f2+AdcVxIQG4Gdt/QLhZaAsOW85DSkwhcfD2XGdrxSFAeJXhYIiNW4kuIGDefM3V+yYceB5JmPNFFuFYgYU6fWSofhk3lblu8YA9w8/R6/tu1YaqI7yMxrpX8ZLfBuoF8mQkSPwNtvxgU7WO94=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Zs65k6cP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CCFD5C4CEE5;
+	Mon, 10 Mar 2025 07:26:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741591614;
+	bh=7wBfnmZleX7Y85tYsTskYok1c1ngfWy+JcWmAk0PEZQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Zs65k6cPyITwlw4q7+nFyQLTJ+9cSdxFo2+sEvOpPBWysAq7W331LPGSq6AKxj85j
+	 CbHaN6iZOmqT0H/aRFAWEqIvVQo4f91FP3pXcP7WYdCGQZl9N8YSivakG5dY1DXB4C
+	 NEC+XQ/m2cGiHjBv/ZSq/8d18XrWFbYhSp5aWeltzsLb7qFU4KeSd9VSZwWzcG9a4K
+	 9DlUpDQzhoOV+QliJQwjhLQjMbZ1eZol3ztJl6gPd5YDTXhk1Juznlw3vJBcKe9Uvj
+	 eO4a84IOxLQ+/B3fGsukNS/m2G68aM7JjXEi+0jPDwwMqAfukaEL2eaNi4KJU5j9L4
+	 9qftv9+ALTn5w==
+Date: Mon, 10 Mar 2025 12:56:50 +0530
+From: Vinod Koul <vkoul@kernel.org>
+To: Andy Yan <andyshrk@163.com>
+Cc: heiko@sntech.de, kishon@kernel.org, sebastian.reichel@collabora.com,
+	yubing.zhang@rock-chips.com, dmitry.baryshkov@linaro.org,
+	frank.wang@rock-chips.com, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, linux-phy@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	Andy Yan <andy.yan@rock-chips.com>
+Subject: Re: [PATCH] phy: rockchip: usbdp: Check these parameters only when
+ the corresponding set flags are set
+Message-ID: <Z86UOmPg/UDSBajZ@vaman>
+References: <20250306065952.485809-1-andyshrk@163.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,62 +61,139 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250304104434.481429-4-kevin_chen@aspeedtech.com>
+In-Reply-To: <20250306065952.485809-1-andyshrk@163.com>
 
-Hi Kevin,
+On 06-03-25, 14:59, Andy Yan wrote:
+> From: Andy Yan <andy.yan@rock-chips.com>
+> 
+> According documentation of phy_configure_opts_dp, at the configure
+> stage, we should only verify/configure the link_rate when set_rate
+> flag is set, the same applies to lanes and voltage.
+> 
+> So we do it as the documentation says, also record the link rate
+> and lanes in phy internal for set_voltate stage.
 
-kernel test robot noticed the following build errors:
+Whenever you say also, that is a sign that it should be another patch!
 
-[auto build test ERROR on char-misc/char-misc-testing]
-[also build test ERROR on char-misc/char-misc-next char-misc/char-misc-linus robh/for-next linus/master v6.14-rc6 next-20250307]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+> 
+> Signed-off-by: Andy Yan <andy.yan@rock-chips.com>
+> ---
+> 
+>  drivers/phy/rockchip/phy-rockchip-usbdp.c | 63 +++++++++++------------
+>  1 file changed, 31 insertions(+), 32 deletions(-)
+> 
+> diff --git a/drivers/phy/rockchip/phy-rockchip-usbdp.c b/drivers/phy/rockchip/phy-rockchip-usbdp.c
+> index c04cf64f8a35..d1bbdf382aa2 100644
+> --- a/drivers/phy/rockchip/phy-rockchip-usbdp.c
+> +++ b/drivers/phy/rockchip/phy-rockchip-usbdp.c
+> @@ -187,6 +187,8 @@ struct rk_udphy {
+>  	u32 dp_aux_din_sel;
+>  	bool dp_sink_hpd_sel;
+>  	bool dp_sink_hpd_cfg;
+> +	unsigned int link_rate;
+> +	unsigned int lanes;
+>  	u8 bw;
+>  	int id;
+>  
+> @@ -1102,42 +1104,39 @@ static int rk_udphy_dp_phy_power_off(struct phy *phy)
+>  	return 0;
+>  }
+>  
+> -static int rk_udphy_dp_phy_verify_link_rate(unsigned int link_rate)
+> -{
+> -	switch (link_rate) {
+> -	case 1620:
+> -	case 2700:
+> -	case 5400:
+> -	case 8100:
+> -		break;
+> -
+> -	default:
+> -		return -EINVAL;
+> -	}
+> -
+> -	return 0;
+> -}
+> -
+>  static int rk_udphy_dp_phy_verify_config(struct rk_udphy *udphy,
+>  					 struct phy_configure_opts_dp *dp)
+>  {
+> -	int i, ret;
+> +	int i;
+>  
+> -	/* If changing link rate was required, verify it's supported. */
+> -	ret = rk_udphy_dp_phy_verify_link_rate(dp->link_rate);
+> -	if (ret)
+> -		return ret;
+> +	/* Verify link rate. */
+> +	if (dp->set_rate) {
+> +		switch (dp->link_rate) {
+> +		case 1620:
+> +		case 2700:
+> +		case 5400:
+> +		case 8100:
+> +			udphy->link_rate = dp->link_rate;
+> +			break;
+> +
+> +		default:
+> +			return -EINVAL;
+> +		}
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Kevin-Chen/ARM-dts-aspeed-g6-Add-AST2600-LPC-PCC-support/20250304-194530
-base:   char-misc/char-misc-testing
-patch link:    https://lore.kernel.org/r/20250304104434.481429-4-kevin_chen%40aspeedtech.com
-patch subject: [PATCH v2 3/3] soc: aspeed: lpc-pcc: Add PCC controller support
-config: s390-randconfig-r112-20250310 (https://download.01.org/0day-ci/archive/20250310/202503101519.AIZNCLz1-lkp@intel.com/config)
-compiler: s390-linux-gcc (GCC) 14.2.0
-reproduce: (https://download.01.org/0day-ci/archive/20250310/202503101519.AIZNCLz1-lkp@intel.com/reproduce)
+why drop helper? Why not set the rate on success?
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202503101519.AIZNCLz1-lkp@intel.com/
+> +	}
+>  
+>  	/* Verify lane count. */
+> -	switch (dp->lanes) {
+> -	case 1:
+> -	case 2:
+> -	case 4:
+> -		/* valid lane count. */
+> -		break;
+> +	if (dp->set_lanes) {
+> +		switch (dp->lanes) {
+> +		case 1:
+> +		case 2:
+> +		case 4:
+> +			/* valid lane count. */
+> +			udphy->lanes = dp->lanes;
+> +			break;
+>  
+> -	default:
+> -		return -EINVAL;
+> +		default:
+> +			return -EINVAL;
+> +		}
 
-All errors (new ones prefixed by >>):
+another change where helper would have made this look better
 
-   In file included from include/linux/io.h:14,
-                    from include/linux/of_address.h:7,
-                    from drivers/mfd/syscon.c:18:
-   drivers/mfd/syscon.c: In function 'of_syscon_register':
->> arch/s390/include/asm/io.h:31:17: error: implicit declaration of function 'iounmap' [-Wimplicit-function-declaration]
-      31 | #define iounmap iounmap
-         |                 ^~~~~~~
-   drivers/mfd/syscon.c:157:9: note: in expansion of macro 'iounmap'
-     157 |         iounmap(base);
-         |         ^~~~~~~
-
-Kconfig warnings: (for reference only)
-   WARNING: unmet direct dependencies detected for MFD_SYSCON
-   Depends on [n]: HAS_IOMEM [=n]
-   Selected by [y]:
-   - ASPEED_LPC_PCC [=y]
-
-
-vim +/iounmap +31 arch/s390/include/asm/io.h
-
-cd24834130ac65 Jan Glauber 2012-11-29  26  
-b43b3fff042d08 Baoquan He  2023-07-06  27  /*
-b43b3fff042d08 Baoquan He  2023-07-06  28   * I/O memory mapping functions.
-b43b3fff042d08 Baoquan He  2023-07-06  29   */
-b43b3fff042d08 Baoquan He  2023-07-06  30  #define ioremap_prot ioremap_prot
-b43b3fff042d08 Baoquan He  2023-07-06 @31  #define iounmap iounmap
-b43b3fff042d08 Baoquan He  2023-07-06  32  
+>  	}
+>  
+>  	/*
+> @@ -1146,7 +1145,7 @@ static int rk_udphy_dp_phy_verify_config(struct rk_udphy *udphy,
+>  	 */
+>  	if (dp->set_voltages) {
+>  		/* Lane count verified previously. */
+> -		for (i = 0; i < dp->lanes; i++) {
+> +		for (i = 0; i < udphy->lanes; i++) {
+>  			if (dp->voltage[i] > 3 || dp->pre[i] > 3)
+>  				return -EINVAL;
+>  
+> @@ -1243,9 +1242,9 @@ static int rk_udphy_dp_phy_configure(struct phy *phy,
+>  	}
+>  
+>  	if (dp->set_voltages) {
+> -		for (i = 0; i < dp->lanes; i++) {
+> +		for (i = 0; i < udphy->lanes; i++) {
+>  			lane = udphy->dp_lane_sel[i];
+> -			switch (dp->link_rate) {
+> +			switch (udphy->link_rate) {
+>  			case 1620:
+>  			case 2700:
+>  				regmap_update_bits(udphy->pma_regmap,
+> -- 
+> 2.34.1
 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+~Vinod
 
