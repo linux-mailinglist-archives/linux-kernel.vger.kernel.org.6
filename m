@@ -1,114 +1,109 @@
-Return-Path: <linux-kernel+bounces-553715-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-553717-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6ABAEA58E0C
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 09:23:43 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C6F3A58E10
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 09:24:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F3804188E0C2
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 08:23:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B1F163AC5BC
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 08:23:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE4D8223337;
-	Mon, 10 Mar 2025 08:23:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD9F3223333;
+	Mon, 10 Mar 2025 08:23:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="M8T+aQzp"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=fooishbar.org header.i=@fooishbar.org header.b="ZXtYA+4A"
+Received: from mail-qt1-f179.google.com (mail-qt1-f179.google.com [209.85.160.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3ED40213E93;
-	Mon, 10 Mar 2025 08:23:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A79C14A09E
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 08:23:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741595012; cv=none; b=NWQU7b1neTzUlsmeNqeNbx9z8JUjvJJsGJFi6a6QtzReSay/RrQJOE6z384E19M22ECyQ8aKEoH8NyV0fM79fWfN35dQAqQ3Rr6DnfXEtdpAOSlyJx1T7/n1C0EDe1w3OM8OVO+M9Ntm/Hw5q5BfZ6IP6wWu7JpXw1KEhPs8vjw=
+	t=1741595027; cv=none; b=pv5FgNKflQ8pY0Ces14pZ1gbO83W0+kxQ0ULFNyAW7aHGM+aV7JvKiG+k/Ra5Vr22G6Re17h0TItefS3xY4GA1kGRG9dwYjCdTW7bsu6UGTf7FhuxqACASKf3Ky8JPUaT5YxZhlBLjTJ36mlyvZV9lMpIG5e/SHds9OVM5kumWQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741595012; c=relaxed/simple;
-	bh=6YS12As8AjAjGZ/NYR1OL7LWdlVVM8Ywxsw7OqaqjCw=;
-	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=LCgu1APZKAhsja1owIHH1mF/XJd3pg9+mkAnLJuukjfUzyG10fKH+3kCe7JsVhmrrrQFf+DKM3o+MM5hrlVWE70570AC8mjdWeCMp+12g767PrSPwdagFaP2nGl6Ui+YsVIvsBFb7SuUtWmTPrUW6+jI1QhbZW76H9Hxnfz4ezc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=M8T+aQzp; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 82443C4CEE5;
-	Mon, 10 Mar 2025 08:23:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741595010;
-	bh=6YS12As8AjAjGZ/NYR1OL7LWdlVVM8Ywxsw7OqaqjCw=;
-	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
-	b=M8T+aQzptkie1CRGdVDOBLsQKkwmiHQ7cqdLudZskVnXs6UfjBFtoBV/3o1LOXlRF
-	 3deQyAH8FPL+0DH3RnJfWbMiIkfUVyMrQTgx7+wAa4WTHpyoCUeI5cicmUq5UVYRTE
-	 HgJfqDe6B66Ar4pdnRt+Ix7Qcyj0YSvbBz2H1D6TbNSGoIZOpqD6TR551rv1YrkV0D
-	 nggLc84OktxwOKoB3s7p1xrm16gyu/nEumhk/920jINDpOmeI+ffKfrbQgc8kNVGKs
-	 llIqyVT8NzH/o4EgXxhdTqGeKZmkXxv61lmAWRcnNH6biWz2XJ4jL1QPZnanxCPROM
-	 v4zXQ7WhhoNgA==
-Date: Mon, 10 Mar 2025 03:23:29 -0500
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	s=arc-20240116; t=1741595027; c=relaxed/simple;
+	bh=Ivx/6EEyCTtnvCErNeMLytYw3JO2KfbbSfvqVn7RN1A=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=XVKOZPSMcNiXZjgibUb5W7KmpuxyNAg3m5oLEttqKAZjqGJKfOatUApyNAg95bfBBxAEQlJTczob/IkGXQBBiSndRvOWxXTng2dWZVVLfEJZMsu2x8YB0SsF/xwaMo3hTnhS9qPm/bNGjJVoUKXcc92cRcdX6GdHG7bn9kWqF+I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fooishbar.org; spf=pass smtp.mailfrom=fooishbar.org; dkim=pass (2048-bit key) header.d=fooishbar.org header.i=@fooishbar.org header.b=ZXtYA+4A; arc=none smtp.client-ip=209.85.160.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fooishbar.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fooishbar.org
+Received: by mail-qt1-f179.google.com with SMTP id d75a77b69052e-474faf23fbeso49671461cf.2
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 01:23:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fooishbar.org; s=google; t=1741595023; x=1742199823; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=Ivx/6EEyCTtnvCErNeMLytYw3JO2KfbbSfvqVn7RN1A=;
+        b=ZXtYA+4AITxBSkj1mqYzXxt7za0Mug9GjtCVLUc0Sp+hITuCASF7dyFnbXS85vUwXm
+         BmIPN0FIsb7WVPJhQiis91Dh77+pcFvi9eV9KpApIjTEhlImpJlKgwIbb0Lk/+uAW2fM
+         NjKr0DWynLnvl/PF9p+Hju/dXOPeC3QyxqkRHCy6f9ib1yn5Zzgs4zbPvEh5QnqYBV49
+         FmCCOm7Uty+hmbzawvG4TrJP8OFvr3mdGXF//c8wjGRRUIJcK6A1YafnhrF+2ScNuuiC
+         u7vPgNi6IaOriRqf2IHXp7zS88Kd4HbOu5KDmzU1A1oVttRXC7fxr4bTzx7kxrDVLm5T
+         AM7w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741595023; x=1742199823;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Ivx/6EEyCTtnvCErNeMLytYw3JO2KfbbSfvqVn7RN1A=;
+        b=Pikk0ef25MfXSmJWwdPh6Op9WFr5/LKBG3yePrgI9W93gVd2SZXIMcAyO/QZy/AZut
+         4kf+65CLjKDLR7wDsaWC8kHJet2OPit/weVzwwfV7WvuhF8K9KsWAAnSn5u1/4pe1/LW
+         gJWptoPd1kKETMcgV/+J6OKXiEOEG9oT7OIOK6Uh2ih9pYd/lVR2aTHmr0PVekHuF1pJ
+         t4v5mRQsKwdsfs9WmXhaj5li+c6uSL0sY4SS+hyzDTQuxwdBA+/K5WgiS4uJ7BY2BvZB
+         0Ass+8bL2Rid+qZFiRXs7qDkHTTqQJMBad9SI0VWFGvzUYVgVZMQD3meB7nIinvSyWkx
+         a23A==
+X-Forwarded-Encrypted: i=1; AJvYcCX3Cb8VJxgS6i6vrwux1zU6zdSZfZGAdzoJB1J8GfBCnm2C2cqAB6mNuUPPw5qyZrw7e10JuRDE8QEkyww=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzktg/0noT1Ufgx5MxLnykP4mgMKqJsmNVsrmAhaKV8jx86nB/g
+	ON2aW1aZ+PlydjnmSxUZ10RF6EastyvTSdmbcLWgmVgADwr1aa9wwHOLCoWu+T79Ob2pQZVUeji
+	Vs9YaBRsaI2bUq/dc++6ifTYvPzSzsfE3kWld/A==
+X-Gm-Gg: ASbGnctkN6lfjZ65MPmfRxZflLmfdHgnwFQCM75kBjo8k1oTSjkUrHpRM2wyTDQg45h
+	xzIHJN13mMpMfrhU7RZVuR6Rq9Ju5g5pD4ujeVuVdGEG8HRmGpRLEbnvRWGGhU8B7WNaDKtRLXl
+	6QJGQKqM7F8QPL2tCMg9YW9Av+sUQ=
+X-Google-Smtp-Source: AGHT+IHX/ie+SCwilG9VkCigXT7dVOX7s13SM5HyamqcMyXKzLgr5BlSUTLW598RuV9I7TxHm+K7rOgy8bC/hIiXpus=
+X-Received: by 2002:a05:6214:da9:b0:6d4:238e:35b0 with SMTP id
+ 6a1803df08f44-6e90060411amr182729926d6.17.1741595022743; Mon, 10 Mar 2025
+ 01:23:42 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: linux-kernel@vger.kernel.org, abel.vesa@linaro.org, 
- linux-pci@vger.kernel.org, linux-phy@lists.infradead.org, kw@linux.com, 
- johan+linaro@kernel.org, neil.armstrong@linaro.org, lpieralisi@kernel.org, 
- conor+dt@kernel.org, vkoul@kernel.org, devicetree@vger.kernel.org, 
- linux-arm-msm@vger.kernel.org, kishon@kernel.org, andersson@kernel.org, 
- dmitry.baryshkov@linaro.org, konradybcio@kernel.org, 
- quic_krichai@quicinc.com, krzk+dt@kernel.org, bhelgaas@google.com, 
- manivannan.sadhasivam@linaro.org, quic_qianyu@quicinc.com
-To: Ziyue Zhang <quic_ziyuzhan@quicinc.com>
-In-Reply-To: <20250310065613.151598-2-quic_ziyuzhan@quicinc.com>
-References: <20250310065613.151598-1-quic_ziyuzhan@quicinc.com>
- <20250310065613.151598-2-quic_ziyuzhan@quicinc.com>
-Message-Id: <174159500913.3380799.14221924313975247180.robh@kernel.org>
-Subject: Re: [PATCH v3 1/4] dt-bindings: PCI: qcom: Document the QCS615
- PCIe Controller
+References: <20250217053719.442644-1-vignesh.raman@collabora.com>
+In-Reply-To: <20250217053719.442644-1-vignesh.raman@collabora.com>
+From: Daniel Stone <daniel@fooishbar.org>
+Date: Mon, 10 Mar 2025 08:23:31 +0000
+X-Gm-Features: AQ5f1JppnRfUR_zOw553KNwUL6uzyjdZezy5exd4nob7qrMJgxJe74M-TX4Aplg
+Message-ID: <CAPj87rNUMDMUtrfV=8c_+T5VQ0FykjpR5JW5dgO4grYXpabSdQ@mail.gmail.com>
+Subject: Re: [PATCH v3 0/3] drm/ci: enable lockdep detection
+To: Vignesh Raman <vignesh.raman@collabora.com>
+Cc: dri-devel@lists.freedesktop.org, daniels@collabora.com, 
+	helen.fornazier@gmail.com, airlied@gmail.com, simona.vetter@ffwll.ch, 
+	robdclark@gmail.com, guilherme.gallo@collabora.com, 
+	sergi.blanch.torne@collabora.com, valentine.burley@collabora.com, 
+	jani.nikula@linux.intel.com, dmitry.baryshkov@linaro.org, mripard@kernel.org, 
+	boqun.feng@gmail.com, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
+Hi Vignesh,
 
-On Mon, 10 Mar 2025 14:56:10 +0800, Ziyue Zhang wrote:
-> From: Krishna chaitanya chundru <quic_krichai@quicinc.com>
-> 
-> Add dedicated schema for the PCIe controllers found on QCS615.
-> Due to qcs615's clock-names do not match any of the existing
-> dt-bindings, a new compatible for qcs615 is needed.
-> 
-> Signed-off-by: Krishna chaitanya chundru <quic_krichai@quicinc.com>
-> Signed-off-by: Ziyue Zhang <quic_ziyuzhan@quicinc.com>
-> ---
->  .../bindings/pci/qcom,qcs615-pcie.yaml        | 160 ++++++++++++++++++
->  1 file changed, 160 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/pci/qcom,qcs615-pcie.yaml
-> 
+On Mon, 17 Feb 2025 at 05:37, Vignesh Raman <vignesh.raman@collabora.com> wrote:
+> This patch series enables lockdep detection in drm-ci. Any lockdep
+> failures will be shown as warnings in the pipeline. This series
+> also enables CONFIG_DEBUG_WW_MUTEX_SLOWPATH for mutex slowpath
+> debugging and refactors software-driver stage jobs.
+>
+> Test run with this series,
+> https://gitlab.freedesktop.org/vigneshraman/linux/-/pipelines/1366054
 
-My bot found errors running 'make dt_binding_check' on your patch:
+Series is:
+Reviewed-by: Daniel Stone <daniels@collabora.com>
 
-yamllint warnings/errors:
+Please merge at will.
 
-dtschema/dtc warnings/errors:
-Error: Documentation/devicetree/bindings/pci/qcom,qcs615-pcie.example.dts:58.35-36 syntax error
-FATAL ERROR: Unable to parse input tree
-make[2]: *** [scripts/Makefile.dtbs:131: Documentation/devicetree/bindings/pci/qcom,qcs615-pcie.example.dtb] Error 1
-make[2]: *** Waiting for unfinished jobs....
-make[1]: *** [/builds/robherring/dt-review-ci/linux/Makefile:1511: dt_binding_check] Error 2
-make: *** [Makefile:251: __sub-make] Error 2
-
-doc reference errors (make refcheckdocs):
-
-See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20250310065613.151598-2-quic_ziyuzhan@quicinc.com
-
-The base for the series is generally the latest rc1. A different dependency
-should be noted in *this* patch.
-
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit after running the above command yourself. Note
-that DT_SCHEMA_FILES can be set to your schema file to speed up checking
-your schema. However, it must be unset to test all examples with your schema.
-
+Cheers,
+Daniel
 
