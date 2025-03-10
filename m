@@ -1,135 +1,117 @@
-Return-Path: <linux-kernel+bounces-554176-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-554178-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 50890A59408
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 13:17:17 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 94B30A59410
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 13:18:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5F3BE1889132
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 12:16:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3D24218824CA
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 12:18:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7544E225774;
-	Mon, 10 Mar 2025 12:15:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8BDF226D1A;
+	Mon, 10 Mar 2025 12:18:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="N0IMrrYI"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="ChXJnTat"
+Received: from mout.web.de (mout.web.de [212.227.15.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C893A1C5D5B;
-	Mon, 10 Mar 2025 12:15:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2713846C;
+	Mon, 10 Mar 2025 12:18:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741608957; cv=none; b=FVkpSN8B5mkOfxiRqH0D6K9LPkMtUAooyfa/zApEDtTHG4R+WH1n1NKo3j11Trmn78PjzmSd2UpkdKuce0sgrbmoowTF1CKsiDuRKlb10LNJjlcI4A88ndFYurP3k1jBFRGdzWythtovMy45S0ktjKs2eessyBqyx+U7vbi8JbU=
+	t=1741609107; cv=none; b=i7rrE/aC893Mv2hEkI1RBwGNXslNiYoPSSRBLmsTSwVOWZg1HB5uQgbSgbn3dkrBQ9+zh5CKyI4+Sw6EIfbQYVfFPy52VEegU4VAprzSjXRqS+kPYvtcfxYOvp5y06K/3JsLiDbS/Md16yuLrXSZoo/JlRp5UBZJinX7fYNs+1M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741608957; c=relaxed/simple;
-	bh=KUnX5nhORWvOtCZHvFP20W21X3MBVPy20HvX7ysw3k8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iPNgYALcsIdHbR8HDi5K0pqbcTFqlZYhpqKC7UMR1DYRedCsiZxIGayVtMaexlIV2TQFuKytCMzzXf+yB70gYff9oMZjYcGggMb8dGCsIvtT208pnnAkSiC78EwIVHZbabl+lUrMurzwZUPNtLaLGQZU9Wwm5fZcNIKjqcQH7ms=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=N0IMrrYI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CC7FEC4CEE5;
-	Mon, 10 Mar 2025 12:15:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741608957;
-	bh=KUnX5nhORWvOtCZHvFP20W21X3MBVPy20HvX7ysw3k8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=N0IMrrYIBu39uSjEkhRFYAdxzoyG002lgHph+TW+mMDW+6bhWEFRi/J0WyRYZTSgz
-	 Bx56A/0mLXPy9N9br/OvR+ZZs6YhXlCTfAdKprucWWiYTSbdR21iPhbsbfyvDx10p1
-	 J3Bwy2MhegMZke26K2MTuzJQxIEDMYvcu9oFhwkBocv7tuHzppQIfB0W8TyifDz1QB
-	 BrYP2Ckz59F1p/bWPXXPbSGY4X38nrUPNXZ+knrmHLsWwxlgrc2YZl3QWEt2LoHvGW
-	 yqC8c1KeMIz645bN1JtPwRVqyvH3op9kz0hUdLGcHpT25lWukDs6hjzF8n3CvYbbwA
-	 0pmpStiii7PUg==
-Date: Mon, 10 Mar 2025 13:15:54 +0100
-From: Maxime Ripard <mripard@kernel.org>
-To: Andrew Morton <akpm@linux-foundation.org>, 
-	Marek Szyprowski <m.szyprowski@samsung.com>, Robin Murphy <robin.murphy@arm.com>, 
-	Sumit Semwal <sumit.semwal@linaro.org>, Christian =?utf-8?B?S8O2bmln?= <christian.koenig@amd.com>, 
-	Benjamin Gaignard <benjamin.gaignard@collabora.com>, Brian Starkey <Brian.Starkey@arm.com>, 
-	John Stultz <jstultz@google.com>, "T.J. Mercier" <tjmercier@google.com>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Thomas Zimmermann <tzimmermann@suse.de>, 
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Tomasz Figa <tfiga@chromium.org>, Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: Hans Verkuil <hverkuil@xs4all.nl>, 
-	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
-	iommu@lists.linux.dev, linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org, 
-	linaro-mm-sig@lists.linaro.org
-Subject: Re: [PATCH RFC 00/12] dma: Enable dmem cgroup tracking
-Message-ID: <20250310-aromatic-gaur-of-growth-bd4071@houat>
-References: <20250310-dmem-cgroups-v1-0-2984c1bc9312@kernel.org>
+	s=arc-20240116; t=1741609107; c=relaxed/simple;
+	bh=7r2vPsDnpJH9TKpn2vKV8tqiwgp4F2qwtIfTAscYPSM=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=U5MnIJqNHeeK79FAq3obcWJT6v6Ati2B7ZcOD5bxxYH0EgQQb0N8Pm8uyFRGT/9tBTbXFZS6QI6AQ/Gt9Lv1cVXpG7+8xj1/coGN3rnMLXXv0Whmp+Fr/4qdFc2uW1nXvov3aMKcvb2QcA8BQyIf9BzsiXpNbjBRigVgxobfSnQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=ChXJnTat; arc=none smtp.client-ip=212.227.15.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1741609077; x=1742213877; i=markus.elfring@web.de;
+	bh=2tw3alwm60ny/fP6jFcsFJLqPkGHkgwJRPku5I/wZ4A=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=ChXJnTat4TVo2ThVOTmQaalnnS23CPXY0QcqtXHYCOe1wTxbD+4rZPEigkubEKEu
+	 t1PQ6lo24RKwEXGtgr0F2fLhH8M3TFwNptGuz1J6Uekv3FDlvJhwfyBddXCdetF7n
+	 KMNFkV3V5S8EY+7Rj9S96jbA1CBfVCcMQTNNP80y8XjN01+uiFV/9F15jYFUyOPmU
+	 Ryg55oczzSIZzvfD5NfSatc7DCzphnZ+0w7Ba4f7S4OnomYZphhR9VBYodw0z3VPA
+	 YtXvWrcJSu6T/zRj6RwDDkjQm53MO3zuf6q+ucNsd9m6KUyJxWDwszLkbeJIrHy2o
+	 J1F3KWNSmXhWyIXt4A==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.29] ([94.31.70.82]) by smtp.web.de (mrweb005
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1MjgXH-1tOdFG3JhD-00okj6; Mon, 10
+ Mar 2025 13:17:57 +0100
+Message-ID: <6f01f71b-284b-4841-bda9-a3934cb4efc8@web.de>
+Date: Mon, 10 Mar 2025 13:17:56 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="ppavg5bsjgk4kjoi"
-Content-Disposition: inline
-In-Reply-To: <20250310-dmem-cgroups-v1-0-2984c1bc9312@kernel.org>
-
-
---ppavg5bsjgk4kjoi
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+To: Qasim Ijaz <qasdev00@gmail.com>, dri-devel@lists.freedesktop.org,
+ freedreno@lists.freedesktop.org, linux-arm-msm@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>,
+ Abhinav Kumar <quic_abhinavk@quicinc.com>, David Airlie <airlied@gmail.com>,
+ Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+ Jessica Zhang <quic_jesszhan@quicinc.com>,
+ Marijn Suijten <marijn.suijten@somainline.org>,
+ Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
+ Simona Vetter <simona@ffwll.ch>
+References: <20250309095525.7738-1-qasdev00@gmail.com>
+Subject: Re: [PATCH v2] drm/msm/dpu: reorder pointer operations after sanity
+ checks to avoid NULL deref
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20250309095525.7738-1-qasdev00@gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH RFC 00/12] dma: Enable dmem cgroup tracking
-MIME-Version: 1.0
+X-Provags-ID: V03:K1:lX4SIjOmammwLZH318S5lMgZQ2ZBxYPFrDIDt1pXOyV/U0uVq7E
+ Z7zc04UG9WpoVUqiIP0mIXCzL/uLaCh8CoO9UGUUqkycLxpyqJ4qrBHI6dx1tFMs85B7KrP
+ ttX8Mf3ItqtAVsxRB2C8ZV1eTemquESG2A5IGjkVe8UhJ5i06XkzMMvMpnbWPvZpTytTUfB
+ y+lOk9lMq/HAJjlXtxjSg==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:3LAlbRlWX8c=;aoZA2x/JnIUoXzfHy169i3CcSh4
+ juaLuFj1kn4e/q6Pp+rwTzXzlsFblSZX2PRALGX2V8kmHKUMMu1kMszDvxF+/sK5JdKN0Hk7B
+ Ov+ze3gM4c/08LaxNSSbZHdOAUrAER9lmqSyqN5cHHRUJGhVcoLcgTjHBX/fbSyWhDjimMCUc
+ 4U2G8Dn7lujcMvRpwwr6GgI+k79Wclr/6swVcDb29n6eEeDYD7X/1ouVs4SOUe9Q/TvM9PdC+
+ W0Ekg1rNXwH0ED+X3KKz2z3iJqbS0Yrpv/yXP6FNFPuNHTEYctSgaY7n/vosIYwEC/jZNfbYW
+ c6EvzlUjYWyUmQDRIeNFzrmgSIyvzSnIsuKSxsMXfgoZ6EYdYpAxohJZBXkhs8lC+ql9nYiTn
+ 0ZhT2jt2eUj1ZqxJAiwAF+TpIyZ7R5kYaj1mdVGkguc0sqVgjbnqsWV/tbgBFO1T8aZHnDlZc
+ HgKr+tWrBKp2mt9F2nb2hHk0O5CsKwBXj4w0hthVA+Rx3lvZXdE5lCliQb87NfNqgNZxN8/o9
+ d/VbxKsdZOUFQXniZM/24vajblAYg71TtP8kh/WDHh302rdVF0hi+DmVXotpFBcznolvVjHvA
+ XOrbpmbULwbDLnh+PvNhQf2leBUgvG2aVeif/nHMMLBxh78pj/72SSTG6VCpivxV+cfZ1o1m8
+ 0S/qeO52eI1nHga2FAlDQvtPqp2HAMreOZvxxfxBw/iYBVgZIlA39GjJRYB6DCTtAS9D5MbTm
+ T/7AgNkRHkO0jJ2fJ/p880LF0NS6RyUPGYIWEpec3QkBuB1bwPmD0QnaxWi6OBxRJ4Q01PBYL
+ 3ctoCjJhjvqrq8HhXGw9pt0W8q9x1xR+vaQ5WBYKJKqr8pc/1FgxxoMzcG9D+gV/HJ9QJ7IJL
+ NLoYlcIU1YqsYu54Ne0eQcZAF/2JIdPAJa+XG2KLNZjErnwGeIIt2rM2JxeYdg3N3naI5/bC4
+ r+Hgu518Gm1Z9A1tx5eNEukaDQWzTFJaidvE6MWDim7CPewLscvrXtRYe+h1euQfUGmM3U634
+ iGdBWO2VxQMT0EdbKrg7XbjF2Bk8v8CBf2YYlsETkOHPXHrUWgb0XHdJK2himgkJV+gGUoAOF
+ CkMCCDFPKaTVxEHf51laNOhAw9FtcZf4Vg8R3Ex9jYqjlFY1GTw11ZJ7kAiU2sQ+wYv7KW0GQ
+ 3Q1bMq9Y21dFQT8JHTllbZiqWxVavYtvPKSHBSZDmVLXjr8mONg7/jKzqIEBDl+WNueJ5Wzmf
+ Nc57GujbE6AtnAw2fS19QT3OZTZXFZadsnhYj9xGuBRKou97sMZ3TMSbwJN/99zSYYsntdbEw
+ U6VXdYEECvF5/6QcmSKzJFmQHp49Wulrb8GEn1aoR1202E+ETXmUtM2NKvp2d/plnq1ZtYN/9
+ 0FzQD7hvu6hNqkJR9sQrX5js1UKZRHTQxM+0zsspTttV69Rc/SDz6x/IEqR9QQxl3pVhMzz0L
+ PaWLaVrjZJEeNRlZ8q/856xiIaxM=
 
-On Mon, Mar 10, 2025 at 01:06:06PM +0100, Maxime Ripard wrote:
-> Here's preliminary work to enable dmem tracking for heavy users of DMA
-> allocations on behalf of userspace: v4l2, DRM, and dma-buf heaps.
->=20
-> It's not really meant for inclusion at the moment, because I really
-> don't like it that much, and would like to discuss solutions on how to
-> make it nicer.
->=20
-> In particular, the dma dmem region accessors don't feel that great to
-> me. It duplicates the logic to select the proper accessor in
-> dma_alloc_attrs(), and it looks fragile and potentially buggy to me.
->=20
-> One solution I tried is to do the accounting in dma_alloc_attrs()
-> directly, depending on a flag being set, similar to what __GFP_ACCOUNT
-> is doing.
->=20
-> It didn't work because dmem initialises a state pointer when charging an
-> allocation to a region, and expects that state pointer to be passed back
-> when uncharging. Since dma_alloc_attrs() returns a void pointer to the
-> allocated buffer, we need to put that state into a higher-level
-> structure, such as drm_gem_object, or dma_buf.
->=20
-> Since we can't share the region selection logic, we need to get the
-> region through some other mean. Another thing I consider was to return
-> the region as part of the allocated buffer (through struct page or
-> folio), but those are lost across the calls and dma_alloc_attrs() will
-> only get a void pointer. So that's not doable without some heavy
-> rework, if it's a good idea at all.
+=E2=80=A6
+> Fix this by reordering the dereference after the sanity checks.
 
-One thing I forgot to mention is that it makes it harder than it could
-for subsystems that can allocate from multiple allocators (like... all
-the ones included in this series at least).
+Can another wording approach (like the following) be more appropriate?
 
-I only added proper tracking in the backends using dma_alloc_attrs(),
-but they also support vmalloc. In what region vmalloc allocations should
-be tracked (if any) is an open-question to me. Similarly, some use
-dma_alloc_noncontiguous().
+  Thus move the assignment of the variable =E2=80=9Cdpu_enc=E2=80=9D behin=
+d =E2=80=A6
 
-Also, I've set the size of the "default" DMA allocation region to
-U64_MAX, but that's obviously wrong and will break any relative metric.
-I'm not sure what would be the correct size though.
 
-Maxime
+Would an other summary phrase become nicer?
 
---ppavg5bsjgk4kjoi
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCZ87X+QAKCRDj7w1vZxhR
-xV0SAP9D+a9I6bgS5IRYuQrHA6k0Ra5d7uq+uPWbr3aJfwKx2QD/fe7P1A9AYvBB
-2tIKFUcziC1uvL3qqtVJMp4dvAZf0w8=
-=6LbE
------END PGP SIGNATURE-----
-
---ppavg5bsjgk4kjoi--
+Regards,
+Markus
 
