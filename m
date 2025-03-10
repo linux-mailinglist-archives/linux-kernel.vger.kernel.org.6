@@ -1,47 +1,85 @@
-Return-Path: <linux-kernel+bounces-553673-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-553674-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 600A6A58D44
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 08:49:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 341CBA58D45
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 08:50:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6B71F188BAD0
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 07:49:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A56E0188CFC6
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 07:50:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10AAA221F2D;
-	Mon, 10 Mar 2025 07:49:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05BC0221F3C;
+	Mon, 10 Mar 2025 07:50:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Zm5UYNqH"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Oz+0SvF8"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 463AD221F17;
-	Mon, 10 Mar 2025 07:49:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF4401E25F8
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 07:49:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741592969; cv=none; b=N6WT7eitS2k7oM/hPe9i+PTpflY4+9bqibpy9p6Bq0kRBgTr0QIlt6jnWQZtKpFEdcM0fOr9yf19cBbqWOBG2iB8VKYglhjjFkda+OZp60r26L3fw8i0lVJp9IaILb4I6UDK10PbU5phK2LJ4fgBWm97+xNMs+1Gp/2usys/pQo=
+	t=1741592999; cv=none; b=rjccKNhwCXWViNqExF04mjrmE5Kt0WXAdqn6QYs1WowaqaOD2MASGTnUBfAPt5pUA7qj49WQo2MJOf77ZkNLX86QliXRwk4FVRhgaLlNcr+oY8K+6KGc5kVvKqI/H8nIUfNnMdI6rfOqz8IXpl6DxDAXvMSTlESKg7CDH2gbTYI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741592969; c=relaxed/simple;
-	bh=A5WdeWt4vfwbKkxKlT44d9TzT5Zdl1cx2ZqK/UJ7sCw=;
+	s=arc-20240116; t=1741592999; c=relaxed/simple;
+	bh=2taqIQQXceogYRxl+WbwaFPfpyiONZBcxtV+IJvWGc8=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=gdJH1R1b4Xwi+wbLhN/RbKOxrg0gfx9xRQe4HEr7JUv+KdoCBgdO7fE6mogQzX/tYHivz6jAsOFYB9ywy14HGQhpiXmUgg5aJ1ZTxddGIKEP1C3B/J6BPOtINV+LLD0iOcdN7qXbcRZoSLF/7/wIQlLEPuarEYisENvlrs+VyfE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Zm5UYNqH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 02579C4CEE5;
-	Mon, 10 Mar 2025 07:49:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741592968;
-	bh=A5WdeWt4vfwbKkxKlT44d9TzT5Zdl1cx2ZqK/UJ7sCw=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Zm5UYNqHaM9F7P5O1ks79pR5k6fXZR0b0iMb4ZlPvLNXzwlgjhErQyZpkB161/CFt
-	 RSQbLysxE797uup+GgelsyDEknr8mrWYdnuwlRaAVDY5hfUJxDpy1fkwQOzZ1UJbcG
-	 HidrMve56i6V4jx/8ju0hB8GNlkFPMWlclFaqWtVaXRq+2kPBmNuJKBW49N2xIM9bg
-	 8gHmHH8514LeE85B9QMIg/zcLECDrcB/9RqGZyCfz+hkXErnFO12SSNo3Ij9SUU5aU
-	 qjwM3fRfsgjfwmS/8KPgmUIsXB9uucXn8V0kZo0a48f86W6iwNsCG1TRvr5Ch2Qw3V
-	 y9rWCKRnpzABw==
-Message-ID: <d5e73894-0e30-499f-a723-2ada72d3b864@kernel.org>
-Date: Mon, 10 Mar 2025 08:49:22 +0100
+	 In-Reply-To:Content-Type; b=ZD5DhtFIyMW0PlDp89Tbtn7EufwOBVZBH0VmswgTm5haTmeAgazr9P/lVSscgTWXCvgIlUIlJ/grkKAUKWqnp3ZaqDfBDGz/NvdFlwPkB1XIJHC5n7XWW2EdgMifajJaTd17R5UI0275y5E1mB+3trMqHqkaIM12HXH5YPlvWqg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Oz+0SvF8; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1741592996;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=u5kIvy1af+TbHcL/hyxVpb8RVtEt62vD4Y3oqmjYEDE=;
+	b=Oz+0SvF8Zduz9Qld7rX+A8zfwGhUBqHrglcYglyP3rS3xwPS0i0akW/qHDrqdBJk/Xp0o0
+	BFxF+y1P5QpuedaO3z2pQtHLFDYgy2l/2XLsly8QmEtLc0KXjvxht6HgSHYrr2qA0RUGlc
+	aJLgKgCPcIwVLEIsze7rFJ/CGFRp1BQ=
+Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
+ [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-190-Jsq9jWDiO-adsX0M7fDAGA-1; Mon, 10 Mar 2025 03:49:55 -0400
+X-MC-Unique: Jsq9jWDiO-adsX0M7fDAGA-1
+X-Mimecast-MFC-AGG-ID: Jsq9jWDiO-adsX0M7fDAGA_1741592994
+Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-43cf5196c25so3408925e9.0
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 00:49:55 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741592994; x=1742197794;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=u5kIvy1af+TbHcL/hyxVpb8RVtEt62vD4Y3oqmjYEDE=;
+        b=c7rgblSlsevteIe5tkwAZ3Ixta4T8Vvx76KN86l8+HZLbILBoFD3b8KnnK0HRoO678
+         W8wjoxR9GAEBEtkUzwJUBYiViRY+1kI0meHhTFDyCFvSdjU2G1dLZLpvQ+kmeqiF7fSw
+         Fqg343kwrJQO32ocvKx2cXEa/YwgtXBRtFCO/dwjOpBpkouviKeoDPRxvuI2nj0HnXjx
+         kpnJxcLcd0fymg6sFit/Bm+RAl7knn+norXbYVqrtUCDp+pIPrOYt8BcDsijl6MkHbf6
+         d20mky0JmLYGmWdXRMKemFWvC2aP54TjI+Y2g/q0EFvOx3zQxWQJQsrX34onajRcN5g+
+         TgNA==
+X-Forwarded-Encrypted: i=1; AJvYcCXbXRAeeKvNIxW9PrKJXPmdDuDeyowpLfPQ2CR4sojbsEoRiTeefIWxPUgpCun/sobiiE/bSgTCvZRNKNU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzrbMCfYdRwCkdmh2n6RK8YVEoCX4RCGjSRZ6OLn5ICRVLDWi0L
+	Ol79enB+95ivhNu1Bi6d1j8BADh/TQS/gzqr+3+/fBmCDRB2eLwRFe+lcvDr1YrcPxagzuwezQ/
+	91srk8RRae19Acni4xM/pld5myuI68gS3glI31K4Am0spTIHe9lkxuC9KBIosOQ==
+X-Gm-Gg: ASbGncu3UVi8PYoyXZOV2E1ZR4rg0f3vO97ez21fD448o/+EMMbFHtR3dS6ZzE/96A/
+	jZJFgVP10oIPnMEQnqNOlazqGG3GcCIOvNuAKUguowq4+/HbqskhQy+U7x0/4O5jEW333fU4hfQ
+	GW+KwRdgu0miI+JokvFJv5AFCca4u5vmjgJtv/8UeYYMviApERQzyjn+JdR1IbXgpxM1aEk5fxx
+	xqSbbuZgGpFb8U3S/WrO0+HT6oZLQBNm/AjFtANWQHLClRgYZWWxSD3sQoVp8vygbEtgryHx+lk
+	YGWaHMAJqEfoNqaC5DLQCl7m+G2ijChbZllilqfrGzGMhGIO34wJScU=
+X-Received: by 2002:a5d:6d09:0:b0:391:34:4fa9 with SMTP id ffacd0b85a97d-39132b56eccmr8992838f8f.0.1741592994105;
+        Mon, 10 Mar 2025 00:49:54 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHFGDJo2dCkSOhn/W3s56Mf4MrQ0JYSQmeOFCRJ3rj6SEOpkuthbr1LKEQhE5Wn257lq7BmQQ==
+X-Received: by 2002:a5d:6d09:0:b0:391:34:4fa9 with SMTP id ffacd0b85a97d-39132b56eccmr8992816f8f.0.1741592993752;
+        Mon, 10 Mar 2025 00:49:53 -0700 (PDT)
+Received: from ?IPV6:2a01:e0a:c:37e0:ced3:55bd:f454:e722? ([2a01:e0a:c:37e0:ced3:55bd:f454:e722])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3912c01cd31sm14138878f8f.52.2025.03.10.00.49.52
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 10 Mar 2025 00:49:52 -0700 (PDT)
+Message-ID: <7fa51125-3015-446a-93b1-57b07a7ee8f5@redhat.com>
+Date: Mon, 10 Mar 2025 08:49:51 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,188 +87,82 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] dt-bindings: leds: add Texas Instruments TPS6131x
- flash LED driver
-To: Matthias Fend <matthias.fend@emfend.at>, Pavel Machek <pavel@ucw.cz>,
- Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
-Cc: linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, bsp-development.geo@leica-geosystems.com
-References: <20250228-leds-tps6131x-v1-0-d1071d90f9ea@emfend.at>
- <20250228-leds-tps6131x-v1-1-d1071d90f9ea@emfend.at>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20250228-leds-tps6131x-v1-1-d1071d90f9ea@emfend.at>
-Content-Type: text/plain; charset=UTF-8
+Subject: Re: [PATCH 1/2] drm/panic: use `div_ceil` to clean Clippy warning
+To: Miguel Ojeda <ojeda@kernel.org>, =?UTF-8?Q?Thomas_B=C3=B6hler?=
+ <witcher@wiredspace.de>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Alex Gaynor <alex.gaynor@gmail.com>
+Cc: dri-devel@lists.freedesktop.org, Boqun Feng <boqun.feng@gmail.com>,
+ Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?=
+ <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>,
+ Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>,
+ Trevor Gross <tmgross@umich.edu>, rust-for-linux@vger.kernel.org,
+ linux-kernel@vger.kernel.org, patches@lists.linux.dev
+References: <20250301231602.917580-1-ojeda@kernel.org>
+Content-Language: en-US, fr
+From: Jocelyn Falempe <jfalempe@redhat.com>
+In-Reply-To: <20250301231602.917580-1-ojeda@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 28/02/2025 11:31, Matthias Fend wrote:
-> +
-> +properties:
-> +  compatible:
-> +    enum:
-> +      - ti,tps61310
-> +      - ti,tps61311
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  '#address-cells':
-> +    const: 1
-> +
-> +  '#size-cells':
-> +    const: 0
+On 02/03/2025 00:16, Miguel Ojeda wrote:
+> Starting with the upcoming Rust 1.86.0 (to be released 2025-04-03),
+> Clippy warns:
+> 
+>      error: manually reimplementing `div_ceil`
+>         --> drivers/gpu/drm/drm_panic_qr.rs:548:26
+>          |
+>      548 |         let pad_offset = (offset + 7) / 8;
+>          |                          ^^^^^^^^^^^^^^^^ help: consider using `.div_ceil()`: `offset.div_ceil(8)`
+>          |
+>          = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#manual_div_ceil
+> 
+> And similarly for `stride`. Thus apply the suggestion to both.
+> 
+> The behavior (and thus codegen) is not exactly equivalent [1][2], since
+> `div_ceil()` returns the right value for the values that currently
+> would overflow.
 
-Why do you need these two?
+I pushed both patches to drm-misc-fixes, with the "Cc" tag added.
 
-> +
-> +  reset-gpios:
-> +    maxItems: 1
-> +    description: GPIO connected to NRESET pin
-> +
-> +  ti,valley-current-limit:
-> +    type: boolean
-> +    description:
-> +      Reduce the valley peak current limit from 1750mA to 1250mA (TPS61310) or
-> +      from 2480mA to 1800mA (TPS61311).
-> +
-> +  led:
+Thanks a lot for your contributions.
 
-Why do you have only one led node? Description says three: LED1-3,
-unless these are just sinks which always have to be connected to the
-same LED?
+-- 
 
-> +    type: object
-> +    $ref: common.yaml#
-> +    unevaluatedProperties: false
-> +
-> +    properties:
-> +      led-sources:
-> +        allOf:
+Jocelyn
+> 
+> Link: https://github.com/rust-lang/rust-clippy/issues/14333 [1]
+> Link: https://godbolt.org/z/dPq6nGnv3 [2]
+> Signed-off-by: Miguel Ojeda <ojeda@kernel.org>
+> ---
+>   drivers/gpu/drm/drm_panic_qr.rs | 4 ++--
+>   1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/drm_panic_qr.rs b/drivers/gpu/drm/drm_panic_qr.rs
+> index bcf248f69252..8bb5e52d75cc 100644
+> --- a/drivers/gpu/drm/drm_panic_qr.rs
+> +++ b/drivers/gpu/drm/drm_panic_qr.rs
+> @@ -545,7 +545,7 @@ fn add_segments(&mut self, segments: &[&Segment<'_>]) {
+>           }
+>           self.push(&mut offset, (MODE_STOP, 4));
+>   
+> -        let pad_offset = (offset + 7) / 8;
+> +        let pad_offset = offset.div_ceil(8);
+>           for i in pad_offset..self.version.max_data() {
+>               self.data[i] = PADDING[(i & 1) ^ (pad_offset & 1)];
+>           }
+> @@ -659,7 +659,7 @@ struct QrImage<'a> {
+>   impl QrImage<'_> {
+>       fn new<'a, 'b>(em: &'b EncodedMsg<'b>, qrdata: &'a mut [u8]) -> QrImage<'a> {
+>           let width = em.version.width();
+> -        let stride = (width + 7) / 8;
+> +        let stride = width.div_ceil(8);
+>           let data = qrdata;
+>   
+>           let mut qr_image = QrImage {
+> 
+> base-commit: d082ecbc71e9e0bf49883ee4afd435a77a5101b6
 
-Drop allOf
-
-> +          - minItems: 1
-> +            maxItems: 3
-> +            items:
-> +              enum: [1, 2, 3]
-> +
-> +      led-max-microamp:
-> +        anyOf:
-
-oneOf
-
-> +          - minimum: 25000
-> +            maximum: 350000
-> +            multipleOf: 50000
-> +          - minimum: 25000
-> +            maximum: 525000
-
-Why two different values?
-
-> +            multipleOf: 25000
-> +
-> +      flash-max-microamp:
-> +        anyOf:
-
-oneOf
-
-> +          - minimum: 25000
-> +            maximum: 800000
-> +            multipleOf: 50000
-> +          - minimum: 25000
-
-Same question
-
-> +            maximum: 1500000
-> +            multipleOf: 25000
-> +
-> +      flash-max-timeout-us:
-> +        enum: [ 5300, 10700, 16000, 21300, 26600, 32000, 37300, 68200, 71500,
-> +                102200, 136300, 170400, 204500, 340800, 579300, 852000 ]
-> +
-> +    required:
-> +      - led-sources
-> +      - led-max-microamp
-> +      - flash-max-microamp
-> +      - flash-max-timeout-us
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - '#address-cells'
-> +  - '#size-cells'
-
-Why?
-
-> +  - led
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/leds/common.h>
-> +    #include <dt-bindings/gpio/gpio.h>
-> +
-> +    i2c {
-> +      #address-cells = <1>;
-> +      #size-cells = <0>;
-> +
-> +      led-controller@33 {
-> +        compatible = "ti,tps61310";
-> +        reg = <0x33>;
-> +        #address-cells = <1>;
-> +        #size-cells = <0>;
-> +
-> +        reset-gpios = <&gpio1 0 GPIO_ACTIVE_LOW>;
-> +
-> +        tps61310_flash: led {
-
-Drop unused label
-
-Best regards,
-Krzysztof
 
