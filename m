@@ -1,342 +1,141 @@
-Return-Path: <linux-kernel+bounces-554460-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-554461-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC96AA597FD
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 15:44:37 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 614DFA59800
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 15:44:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5CB53188762F
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 14:44:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C196C3A4CB8
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 14:44:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC392229B01;
-	Mon, 10 Mar 2025 14:44:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F4A422D4C9;
+	Mon, 10 Mar 2025 14:44:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="kzYOvGRi"
-Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dv545fOY"
+Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF89717C91;
-	Mon, 10 Mar 2025 14:44:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D893522CBED;
+	Mon, 10 Mar 2025 14:44:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741617871; cv=none; b=CLwM4JlGit/v+q6xytBqxHULdmZqEaeP/NZQ6dAoff40eQmvhdzE2FGOOxS/DVFFX3TaRNa6WE9qxfbgUxsoukmFcU47zHRcy/PKuwHIGQa7ouwra9ThtbbZDOUYTUjOQP+0IuArgGBimc7WHtcknWLPmU4tv8fqQ0Ol5s6e40c=
+	t=1741617876; cv=none; b=brD1uCb+CDT4hKcHDQmBDccw831HFssBC2/G7s0BcieQ0tf+Yyuf2tIq7vH/oHWKBQpDj4NCePKrK6SFsXjsKT0gT6e2sMkuiP58AqeZMb0FnnONHmBn//JHR8hiqfNdjBpf7Aj7QWW6uzSQe/u03QGyUH4q/jUM+Mcl59LABBI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741617871; c=relaxed/simple;
-	bh=AWGdILAJCqyYw70Fz71s/VUq9OD4bGclRpIIaKy0rbQ=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
-	 MIME-Version:Content-Type; b=r4CV5rtiXv+7XNa/sR7qJxGquO7Vk/kK5z1OElSF3x9nD8ozSFk2sMeN0Vgoe3aYDh+YQkOUBTPZWgHL/Exl+97E7DyYQ18K88OqsMIZa/TTNcAvJyWiaDBg8U/nU3bG+op4OvyN+waX5OOqpLZwt4Q/Z70EnkJGdgDOSTIPB3g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=kzYOvGRi; arc=none smtp.client-ip=198.137.202.136
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
-Received: from [127.0.0.1] ([76.133.66.138])
-	(authenticated bits=0)
-	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 52AEhlDh1651296
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
-	Mon, 10 Mar 2025 07:43:48 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 52AEhlDh1651296
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-	s=2025021701; t=1741617828;
-	bh=0uA3V382m3l0tHHlvz8LxRrQ3w3WQneW8pBx2P3/oJg=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
-	b=kzYOvGRiCDaEPMPYdEHfeipKCgighAk/B3PAIB9hpENPKr7rgteR1v5u+irHsnvIL
-	 9tnH4gj/2uIbdQnzB8Xb5ebyCMc3sWELNFDXUc+w/J+BHrOTIjQJsfC8h2eh4LWBSy
-	 kh3lZkEAQoWwJEBrccurPtMVCWksmUoICYaWpcIPC3jkdWpiLsEpbgzs1yh1tYAsn0
-	 OgyukXcbKCpCluz9kZPjPqgF263C3i1WIikiHBsAnuDAp0H+fsuK2TIAi3ruou8ndg
-	 WtWAbcHMf/8nNkoQ6dfYu6zpTVH/ACcNVGj3GfahDytC3otbahgrfT8DWpwKTmYxmB
-	 njIla0YG321QA==
-Date: Mon, 10 Mar 2025 07:43:44 -0700
-From: "H. Peter Anvin" <hpa@zytor.com>
-To: linux-kernel@vger.kernel.org,
-        "tip-bot2 for H. Peter Anvin (Intel)" <tip-bot2@linutronix.de>,
-        linux-tip-commits@vger.kernel.org
-CC: "Xin Li (Intel)" <xin@zytor.com>, "Borislav Petkov (AMD)" <bp@alien8.de>,
-        Ingo Molnar <mingo@kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>, x86@kernel.org
-Subject: =?US-ASCII?Q?Re=3A_=5Btip=3A_x86/cpu=5D_x86/cpufeatures=3A_A?=
- =?US-ASCII?Q?dd_=7BREQUIRED=2CDISABLED=7D_feature_configs?=
-User-Agent: K-9 Mail for Android
-In-Reply-To: <174159470920.14745.5729743445717865267.tip-bot2@tip-bot2>
-References: <20250228082338.73859-3-xin@zytor.com> <174159470920.14745.5729743445717865267.tip-bot2@tip-bot2>
-Message-ID: <A0C784F1-EF4F-4CCC-98AE-954197CD7554@zytor.com>
+	s=arc-20240116; t=1741617876; c=relaxed/simple;
+	bh=QRALNFtdN+eVm7tbZOOG157YtH485xLMQcdhF3aH1K0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=n0e3iPRyRqPjR8iZmVPXZCpb53bLoBC6XKxCj0uksmXBgpTPBKcTUAkIf0pH/sEFJdp53NmtfVd87R4vaJTMCtJa7243C/vB2QxC1+zDNCki6K2srknKBq5vcJuxP2ru4iOEkQiQOW+N61KJ9Fmk00w5rK89JWpXumI1wYV8Zrc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dv545fOY; arc=none smtp.client-ip=209.85.208.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-30795988ebeso46200411fa.3;
+        Mon, 10 Mar 2025 07:44:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741617873; x=1742222673; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=fErUntllWsLjAOuJrcnV9q/2Ltwr2+uinPcLby2r5I8=;
+        b=dv545fOYr7ySHfc7iGwSY43TgFdGfoGs31Pu+feAE2q0mwWMD9/4nt7uJID3d7Dz8t
+         MEnI1a2/eYJSp1UJeMeK8vZuDihSCXpZ3Egb5JoM/jMJLMZEsZHb5cXdd8b0zFXbrXGH
+         6UwZUlDlbQpBMJAoFIXgmLL7qGvTrOxKg7YZVPJiLqlRK5UbZCbBlZy/SAda4/ug2KC7
+         Ka0e2wgJZDIvWMRyKzJFNXCzFeHL2fPbOfrylApgznQ+RppuKtJTu4gAvbyaj5rat4fE
+         M65+v/qeKLjlO3zMqD72/ywJNQKa5deZIhBoGgwrhwv6IGc4sV3vUL5d7jwy0z0qotrq
+         leLA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741617873; x=1742222673;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=fErUntllWsLjAOuJrcnV9q/2Ltwr2+uinPcLby2r5I8=;
+        b=CQ0dKq8ECA72StGU20urMiFhFoi73DYQ+LHrXcBzUkyL6hcq/Q244d8yOdcAxF2Irk
+         YUW6g3B49VKO7wugfh1IQdCf6bO1Ap3yHGpZ1f4pBxKnl+ArWgOpf/z+Nz32YIM5fDd4
+         p/OU+aekR4ORxVrp/fuE1qqmIVTvcOjOIps0ZtVxIxJWmkGAJJqZNsXFJ9x7177NobwE
+         ow3XJsI/V7LNhngAFPxYbbDWDCMK+n0lEjPlQdMg9aS+R9Yeiehl9pbaurhym9ZF4Jso
+         hsIDAWilGRb6DTrVaAnQxSU+sVaDRxrLe+lR9NDyGoaZpKDD4Aeyrh/J5932UeJNLayS
+         vmdw==
+X-Forwarded-Encrypted: i=1; AJvYcCUtG37CkWMN2Zt4MTQ9Mq7BTfC2E1XWLpSvac8nuL1D3wJT0FtJYEkjo+vlTwHlJs9VXISBJhrfeuHcqZy0uKUVVQ8=@vger.kernel.org, AJvYcCV+E2evBpzBDos48Ol/TotBe1JA46sV3op1AsdMBw4/vU4Ln8HZiupUUpjwia0Hl8sN5ThWxwP3Z/o4azjS@vger.kernel.org, AJvYcCWrzU4SejRnK0kS/F6pKYF8ggoq/SY6t+HTYq9RIBRPbYDdZE87eEs7L8zrmj+4C3HZYVG0ctRSOvDy@vger.kernel.org
+X-Gm-Message-State: AOJu0YwXPTSiNj1+bnBpmS4fMecj/12NeI6zWN6TETiauRL15p8eF1yJ
+	65Di0jxxRbliasmI5RwGOveyD1dU3zOomrOxQP8qKesbbfx44T8l
+X-Gm-Gg: ASbGnctwdXZGpUEFp9LdPVpY8RwUS3igFrcxNlJlY4DIP2y+tZTHJjd8e+a8vL7PPgi
+	wrsz7VDlDHZxg4oPXx10T1Xlzud6IX+aC2dGA9xqCD/RJ/ZWctnUjlaMBLmsXXHGtt7R7nGiHZJ
+	tgXG095Mk8HjJnk5GK9cqlGPDSNFQFR/guasX5vrg3bYX54yFHj3m9u/67mIYvYF6l1ZLhioKZV
+	pNISq8YrljpDXwO1z1Wi5+DrAWLrYtDN4pkL8GBTm54fdaGtZzUeNo27GwJ9zQUwbnTdkbunlSM
+	hk/b5x2z7RNQnw2Hsnbtrr+mtC9VpN5uPURUK326Op7lZwnaiCBF72DWEgQLJL8kWo5WShxAZRk
+	jmZUGyEp1yKJDF5UWauKGc9bqPQ==
+X-Google-Smtp-Source: AGHT+IH4FjRMCiAVJcOW54+yHBkZfOm6jFItnfmr9qhQZcQ7xY0zUfHMZWO62R1wiuF+voU7frBmdQ==
+X-Received: by 2002:a2e:be11:0:b0:30c:d32:aba8 with SMTP id 38308e7fff4ca-30c0d32af78mr15711901fa.30.1741617872593;
+        Mon, 10 Mar 2025 07:44:32 -0700 (PDT)
+Received: from ?IPV6:2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703? ([2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-30be99e81cbsm16554601fa.93.2025.03.10.07.44.31
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 10 Mar 2025 07:44:32 -0700 (PDT)
+Message-ID: <82383b62-0537-4d73-9495-8b880ef9dbb2@gmail.com>
+Date: Mon, 10 Mar 2025 16:44:30 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 04/15] gpio: bd71828: use new line value setter callbacks
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Ray Jui <rjui@broadcom.com>,
+ Broadcom internal kernel review list
+ <bcm-kernel-feedback-list@broadcom.com>,
+ Linus Walleij <linus.walleij@linaro.org>,
+ Florian Fainelli <florian.fainelli@broadcom.com>,
+ Scott Branden <sbranden@broadcom.com>,
+ Marek Vasut <marek.vasut+renesas@gmail.com>, Michael Buesch <m@bues.ch>,
+ Thomas Richard <thomas.richard@bootlin.com>,
+ Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>,
+ Benson Leung <bleung@chromium.org>, Guenter Roeck <groeck@chromium.org>,
+ Andy Shevchenko <andy@kernel.org>,
+ Support Opensource <support.opensource@diasemi.com>,
+ linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-renesas-soc@vger.kernel.org, chrome-platform@lists.linux.dev,
+ Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+References: <20250310-gpiochip-set-conversion-v1-0-03798bb833eb@linaro.org>
+ <20250310-gpiochip-set-conversion-v1-4-03798bb833eb@linaro.org>
+ <475375c9-9d72-4583-a21e-37b17c6b8c46@gmail.com>
+ <CAMRc=MfofTMnfCYenUTstWUeGN5RYzJTrg2nGSzCe8tdBMksmw@mail.gmail.com>
+Content-Language: en-US, en-AU, en-GB, en-BW
+From: Matti Vaittinen <mazziesaccount@gmail.com>
+In-Reply-To: <CAMRc=MfofTMnfCYenUTstWUeGN5RYzJTrg2nGSzCe8tdBMksmw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On March 10, 2025 1:18:29 AM PDT, "tip-bot2 for H=2E Peter Anvin (Intel)" <=
-tip-bot2@linutronix=2Ede> wrote:
->The following commit has been merged into the x86/cpu branch of tip:
->
->Commit-ID:     dc6e8bfc0c9e27cbfed27c7ed50c71205a7c9551
->Gitweb:        https://git=2Ekernel=2Eorg/tip/dc6e8bfc0c9e27cbfed27c7ed50=
-c71205a7c9551
->Author:        H=2E Peter Anvin (Intel) <hpa@zytor=2Ecom>
->AuthorDate:    Fri, 28 Feb 2025 00:23:35 -08:00
->Committer:     Ingo Molnar <mingo@kernel=2Eorg>
->CommitterDate: Mon, 10 Mar 2025 09:02:30 +01:00
->
->x86/cpufeatures: Add {REQUIRED,DISABLED} feature configs
->
->Required and disabled feature masks completely rely on build configs,
->i=2Ee=2E, once a build config is fixed, so are the feature masks=2E
->
->To prepare for auto-generating the <asm/cpufeaturemasks=2Eh> header
->with required and disabled feature masks based on a build config,
->add feature Kconfig items:
->
->  - X86_REQUIRED_FEATURE_x
->  - X86_DISABLED_FEATURE_x
->
->each of which may be set to "y" if and only if its preconditions from
->current build config are met=2E
->
->Signed-off-by: H=2E Peter Anvin (Intel) <hpa@zytor=2Ecom>
->Signed-off-by: Xin Li (Intel) <xin@zytor=2Ecom>
->Signed-off-by: Borislav Petkov (AMD) <bp@alien8=2Ede>
->Signed-off-by: Ingo Molnar <mingo@kernel=2Eorg>
->Cc: Linus Torvalds <torvalds@linux-foundation=2Eorg>
->Link: https://lore=2Ekernel=2Eorg/r/20250228082338=2E73859-3-xin@zytor=2E=
-com
->---
-> arch/x86/Kconfig             |   2 +-
-> arch/x86/Kconfig=2Ecpufeatures | 201 ++++++++++++++++++++++++++++++++++-
-> 2 files changed, 203 insertions(+)
-> create mode 100644 arch/x86/Kconfig=2Ecpufeatures
->
->diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
->index 017035f=2E=2E7caf2fd 100644
->--- a/arch/x86/Kconfig
->+++ b/arch/x86/Kconfig
->@@ -3128,4 +3128,6 @@ config HAVE_ATOMIC_IOMAP
->=20
-> source "arch/x86/kvm/Kconfig"
->=20
->+source "arch/x86/Kconfig=2Ecpufeatures"
->+
-> source "arch/x86/Kconfig=2Eassembler"
->diff --git a/arch/x86/Kconfig=2Ecpufeatures b/arch/x86/Kconfig=2Ecpufeatu=
-res
->new file mode 100644
->index 0000000=2E=2Ee12d5b7
->--- /dev/null
->+++ b/arch/x86/Kconfig=2Ecpufeatures
->@@ -0,0 +1,201 @@
->+# SPDX-License-Identifier: GPL-2=2E0
->+#
->+# x86 feature bits (see arch/x86/include/asm/cpufeatures=2Eh) that are
->+# either REQUIRED to be enabled, or DISABLED (always ignored) for this
->+# particular compile-time configuration=2E  The tests for these features
->+# are turned into compile-time constants via the generated
->+# <asm/cpufeaturemasks=2Eh>=2E
->+#
->+# The naming of these variables *must* match asm/cpufeatures=2Eh, e=2Eg=
-=2E,
->+#     X86_FEATURE_ALWAYS <=3D=3D> X86_REQUIRED_FEATURE_ALWAYS
->+#     X86_FEATURE_FRED   <=3D=3D> X86_DISABLED_FEATURE_FRED
->+#
->+# And these REQUIRED and DISABLED config options are manipulated in an
->+# AWK script as the following example:
->+#
->+#                          +----------------------+
->+#                          |    X86_FRED =3D y ?    |
->+#                          +----------------------+
->+#                              /             \
->+#                           Y /               \ N
->+#  +-------------------------------------+   +--------------------------=
------+
->+#  | X86_DISABLED_FEATURE_FRED undefined |   | X86_DISABLED_FEATURE_FRED=
- =3D y |
->+#  +-------------------------------------+   +--------------------------=
------+
->+#                                                        |
->+#                                                        |
->+#     +-------------------------------------------+      |
->+#     | X86_FEATURE_FRED: feature word 12, bit 17 | ---->|
->+#     +-------------------------------------------+      |
->+#                                                        |
->+#                                                        |
->+#                                     +-------------------------------+
->+#                                     | set bit 17 of DISABLED_MASK12 |
->+#                                     +-------------------------------+
->+#
->+
->+config X86_REQUIRED_FEATURE_ALWAYS
->+	def_bool y
->+
->+config X86_REQUIRED_FEATURE_NOPL
->+	def_bool y
->+	depends on X86_64 || X86_P6_NOP
->+
->+config X86_REQUIRED_FEATURE_CX8
->+	def_bool y
->+	depends on X86_CX8
->+
->+# this should be set for all -march=3D=2E=2E options where the compiler
->+# generates cmov=2E
->+config X86_REQUIRED_FEATURE_CMOV
->+	def_bool y
->+	depends on X86_CMOV
->+
->+# this should be set for all -march=3D options where the compiler
->+# generates movbe=2E
->+config X86_REQUIRED_FEATURE_MOVBE
->+	def_bool y
->+	depends on MATOM
->+
->+config X86_REQUIRED_FEATURE_CPUID
->+	def_bool y
->+	depends on X86_64
->+
->+config X86_REQUIRED_FEATURE_UP
->+	def_bool y
->+	depends on !SMP
->+
->+config X86_REQUIRED_FEATURE_FPU
->+	def_bool y
->+	depends on !MATH_EMULATION
->+
->+config X86_REQUIRED_FEATURE_PAE
->+	def_bool y
->+	depends on X86_64 || X86_PAE
->+
->+config X86_REQUIRED_FEATURE_PSE
->+	def_bool y
->+	depends on X86_64 && !PARAVIRT_XXL
->+
->+config X86_REQUIRED_FEATURE_PGE
->+	def_bool y
->+	depends on X86_64 && !PARAVIRT_XXL
->+
->+config X86_REQUIRED_FEATURE_MSR
->+	def_bool y
->+	depends on X86_64
->+
->+config X86_REQUIRED_FEATURE_FXSR
->+	def_bool y
->+	depends on X86_64
->+
->+config X86_REQUIRED_FEATURE_XMM
->+	def_bool y
->+	depends on X86_64
->+
->+config X86_REQUIRED_FEATURE_XMM2
->+	def_bool y
->+	depends on X86_64
->+
->+config X86_REQUIRED_FEATURE_LM
->+	def_bool y
->+	depends on X86_64
->+
->+config X86_DISABLED_FEATURE_UMIP
->+	def_bool y
->+	depends on !X86_UMIP
->+
->+config X86_DISABLED_FEATURE_VME
->+	def_bool y
->+	depends on X86_64
->+
->+config X86_DISABLED_FEATURE_K6_MTRR
->+	def_bool y
->+	depends on X86_64
->+
->+config X86_DISABLED_FEATURE_CYRIX_ARR
->+	def_bool y
->+	depends on X86_64
->+
->+config X86_DISABLED_FEATURE_CENTAUR_MCR
->+	def_bool y
->+	depends on X86_64
->+
->+config X86_DISABLED_FEATURE_PCID
->+	def_bool y
->+	depends on !X86_64
->+
->+config X86_DISABLED_FEATURE_PKU
->+	def_bool y
->+	depends on !X86_INTEL_MEMORY_PROTECTION_KEYS
->+
->+config X86_DISABLED_FEATURE_OSPKE
->+	def_bool y
->+	depends on !X86_INTEL_MEMORY_PROTECTION_KEYS
->+
->+config X86_DISABLED_FEATURE_LA57
->+	def_bool y
->+	depends on !X86_5LEVEL
->+
->+config X86_DISABLED_FEATURE_PTI
->+	def_bool y
->+	depends on !MITIGATION_PAGE_TABLE_ISOLATION
->+
->+config X86_DISABLED_FEATURE_RETPOLINE
->+	def_bool y
->+	depends on !MITIGATION_RETPOLINE
->+
->+config X86_DISABLED_FEATURE_RETPOLINE_LFENCE
->+	def_bool y
->+	depends on !MITIGATION_RETPOLINE
->+
->+config X86_DISABLED_FEATURE_RETHUNK
->+	def_bool y
->+	depends on !MITIGATION_RETHUNK
->+
->+config X86_DISABLED_FEATURE_UNRET
->+	def_bool y
->+	depends on !MITIGATION_UNRET_ENTRY
->+
->+config X86_DISABLED_FEATURE_CALL_DEPTH
->+	def_bool y
->+	depends on !MITIGATION_CALL_DEPTH_TRACKING
->+
->+config X86_DISABLED_FEATURE_LAM
->+	def_bool y
->+	depends on !ADDRESS_MASKING
->+
->+config X86_DISABLED_FEATURE_ENQCMD
->+	def_bool y
->+	depends on !INTEL_IOMMU_SVM
->+
->+config X86_DISABLED_FEATURE_SGX
->+	def_bool y
->+	depends on !X86_SGX
->+
->+config X86_DISABLED_FEATURE_XENPV
->+	def_bool y
->+	depends on !XEN_PV
->+
->+config X86_DISABLED_FEATURE_TDX_GUEST
->+	def_bool y
->+	depends on !INTEL_TDX_GUEST
->+
->+config X86_DISABLED_FEATURE_USER_SHSTK
->+	def_bool y
->+	depends on !X86_USER_SHADOW_STACK
->+
->+config X86_DISABLED_FEATURE_IBT
->+	def_bool y
->+	depends on !X86_KERNEL_IBT
->+
->+config X86_DISABLED_FEATURE_FRED
->+	def_bool y
->+	depends on !X86_FRED
->+
->+config X86_DISABLED_FEATURE_SEV_SNP
->+	def_bool y
->+	depends on !KVM_AMD_SEV
->+
->+config X86_DISABLED_FEATURE_INVLPGB
->+	def_bool y
->+	depends on !BROADCAST_TLB_FLUSH
+On 10/03/2025 15:22, Bartosz Golaszewski wrote:
+> On Mon, Mar 10, 2025 at 2:20 PM Matti Vaittinen
+> <mazziesaccount@gmail.com> wrote:
+>>
+>>> @@ -28,12 +27,10 @@ static void bd71828_gpio_set(struct gpio_chip *chip, unsigned int offset,
+>>>         * we are dealing with - then we are done
+>>>         */
+>>>        if (offset == HALL_GPIO_OFFSET)
+>>> -             return;
+>>> +             return 0;
+>>
+>> Should this be -EINVAL (or, can this check be just dropped?) Value of an
+>> input pin is tried to be set.
+>>
+> 
+> I don't want to break existing users but I did notice that and figured
+> that we should rather check this in core GPIO code not each individual
+> driver.
 
-I think it is worth noting that the list here was intentionally unchanged =
-from the previous definitions, but that several of these could and probably=
- should be overhauled=2E=20
+Makes sense :) Thanks!
 
-For example, CPUID is actually required by any i586+ configuration=2E
+In that case,
+
+Reviewed-by: Matti Vaittinen <mazziesaccount@gmail.com>
+
+> 
+> I put that on my TODO list.
+> 
+> Bart
+
 
