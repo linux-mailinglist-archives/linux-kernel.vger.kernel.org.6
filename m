@@ -1,176 +1,120 @@
-Return-Path: <linux-kernel+bounces-554008-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-554009-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7DF3A591CA
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 11:51:21 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 30088A591CE
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 11:51:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 534823A998A
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 10:50:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 88F7F3ADBC5
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 10:50:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 522B222C331;
-	Mon, 10 Mar 2025 10:48:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93859229B13;
+	Mon, 10 Mar 2025 10:48:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="j9W1OZnb"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="KOoo+PAd"
+Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05337228C9C;
-	Mon, 10 Mar 2025 10:47:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 559CB228CAD
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 10:48:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741603679; cv=none; b=NPgAVDtswl/6LCm3ErC5rdf66+dTuagu7PYvQNQKu5MB7qR3ev+HUCNaLDoZm9EguX5oKMNzKcnowunY+l1IYGba2vrQSBvHsLNemdjYORj55kYiM7Vce4JKJGwVPj+QRDzbkTtY1WwpcI6Sk7nyNLDU4sUydW+6Okg7VJIwMpM=
+	t=1741603688; cv=none; b=sw4mwdVXBTSMDcQo9rwL0/n6SfWhpF26KRIWt9IVtuKDb+vABbpvwP7C6T2FYO0WsPrwdYFB/bSX9bfkg1VoczALq3KJgdspSnS6jv3/MAdGXom/kxSxwem2sIls6ksHO6A0j90LpUoLeyqn+GjUbjRQOxcXB+GaXZ2H5qN3YnA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741603679; c=relaxed/simple;
-	bh=ksn8IQPKpJzP0SAfN/0TA4qOZ0TZecOeK/E6ed415e0=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ZcvI6GgPPbSbvtHrFOTg0khciQ2ZPYHPRuC74/GPWkBdbqzu+b/kjgTgiyuXvGPMErTMzxq8eGDhkvY3DgMVo1zJyckGBj7gwQopQySlktg3ySOZUUVW7idImX6hGyVf9VUWAbvhtXJ/1lXxDVjhbrkooTRFapXD7O+EtKwffCw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=j9W1OZnb; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52A9LfuR006483;
-	Mon, 10 Mar 2025 10:47:55 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=gb/rZDUC2eGqGowkMWPm+s
-	ZwIMzFCl2wQLIKc8hQF6k=; b=j9W1OZnb0LQTeUk9QiTFmKRk0Y5D7ieE/IiPi8
-	A27HwiefqpsbRAwdVMfeYhY7w51L1VFsOwFqfoXTLR1ZD/cGktKnfJfmIzQGPjS5
-	DvGlFLK0pcCT4Nfhtrisg1ktWvKUzopAMcftDlcPcgXhBD42P8JFTxbBTVLJdBM3
-	StJSsDo1owhw3kddytGcsy+Y/AJ2Kc+TGltIPoXtier3T8TLtFWekpGP9C76rkmH
-	zrjnqGefrOgHSPhx4iCDscfWoyhk8pB8YHoO03El7UZCU8lqs2hT30W7VTtEb0yp
-	baEnDeK6AQOxYAlnoGtgYd4hRDD+zc0V/kdJL8Baqg4lG3cQ==
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 458ewpmhte-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 10 Mar 2025 10:47:55 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 52AAlspp010108
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 10 Mar 2025 10:47:54 GMT
-Received: from hu-mnagar-hyd.qualcomm.com (10.80.80.8) by
- nalasex01b.na.qualcomm.com (10.47.209.197) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Mon, 10 Mar 2025 03:47:51 -0700
-From: Manish Nagar <quic_mnagar@quicinc.com>
-To: Krzysztof Kozlowski <krzk+dt@kernel.org>, Rob Herring <robh@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>
-CC: <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-arm-msm@vger.kernel.org>,
-        Krishna Kurapati
-	<krishna.kurapati@oss.qualcomm.com>
-Subject: [PATCH] arm64: dts: qcom: qcs8300-ride: Enable second USB controller on QCS8300 Ride
-Date: Mon, 10 Mar 2025 16:17:43 +0530
-Message-ID: <20250310104743.976265-1-quic_mnagar@quicinc.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1741603688; c=relaxed/simple;
+	bh=ezePfKdiVomBp6Nu0vENgcyh212zJvF8/6B93fEyRqo=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=UukCt8KoNVXRnkZLg4aSo3N+hNeUBOsTf+erO9OsFeghPjterSgZHc4oajQiMGH/lUKfHDiYKVabl2oIWpuvyXUTxctgUGJtwzcPqi1O1FJzLqSlQuN0BCLl61hw0tTfGf2i80IMlvoHTmL2zj0fW9GES/lZf0lMZdGzEanyga0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=KOoo+PAd; arc=none smtp.client-ip=209.85.221.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-3913d129c1aso1041017f8f.0
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 03:48:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1741603685; x=1742208485; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=E0yircpCo/QVU3P+N7sKYScgPv6naVVovFtBRlbgD6Q=;
+        b=KOoo+PAdvWYa2/1thUQHnSVgyLB9AJq2/pBagS62WEQkqE7IVuCiv4oq+dkl22iDX9
+         Dqd99AM0bMNsRTor0H0T8NRVN2GcUQuyrCLn/hSYA0xonlbIfcMd2ImWaerXjycmVa/u
+         nlm+jRvOdmwq9/CUL3Fa7IqV6gF1Bf50eDLVciP71+y3Sl2IMXD6ad24eOJ2g4gENxtW
+         KPyk5BQ+UUNKj+hhKy4OAva20BdiDQvvZ9UZGLXa4WJIElgEyGcZY6lQdshSCTNAYNKY
+         lyuhsFEXg0y7nfJv1cTgqMbZa+I93Taz/oKXuchZ4aM9w3+OlDIQlqRnRDmEiN+OJfSX
+         kAqA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741603685; x=1742208485;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=E0yircpCo/QVU3P+N7sKYScgPv6naVVovFtBRlbgD6Q=;
+        b=JOHvV+kS94iVoboO15i0ftq9nBaTMhu24RvionugZm4z0/PNbT2137bcjNsYirvdkp
+         R3ASALcymSKqa2OxyesvAK+Q3AE4ADCG1JMPR5YXMwPSPlPH2HtuR2nN0PDmic0OeEZa
+         eA1dZSi6wT7SkYjnZAGNl/FohYbftDNngp6zupZBz9VGQvJ5c022tIrTbP/tExjZuy3F
+         pIx3LSz3cMegGbQobp70DYV5wQu+IYJCk4PT2PdEFQgLBPXctFlwb+hI+RZsodmtt487
+         Etjuf1aU62hYMi+u/kbJ5kh51Q1GA96+xqZDXF5rQz5pu5twxZGLuR3u2n9uiCe0nDzO
+         lGbw==
+X-Forwarded-Encrypted: i=1; AJvYcCXDoTCAX+O57z8Z27RJj8asPoB39oPQYlQdE1PVZJ/FUZ302vqucxaf6bz6HfFgNG/n5p2SMmM/8Scm2UY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxcZjyHI/GzuhFtX/6gyA7AjxW/GYQIKLArpEZrZL4lM33sItm/
+	24I05fYAfJZFBFE2HgYrnH5/3Ok8V+y883eLDcRloq1GqreSIYYdVrnEORQrzdM=
+X-Gm-Gg: ASbGncuuoK40Dozkfp4ZDg0HvYuT2QmQGfjMk9zo3EQzANweXicykYLYC9FgIdaENS5
+	InmbGU6bsZU2tMq96MLzfGuBKkq/lcddUxXCDkB6LviqMaXVJg0mpZ/YPorWOWGDrXDLui4u7qQ
+	rbGb8pSU2jf4HXPqwkJtRthf4WdBs6GaZMA2teHNqSNZMNMk3aL4ibiHEBBGfJ9sQs0oh2eZ7dO
+	RfJvGavbfS4bbghKdDTwpeCk5xD0O3Qumf1MNYRIM+x44zWKu4Lmx+Vgm2Rk8oDswuQ9km0WX/E
+	fNKjOzIs9cAAO6Ny/y7Br9T9Z0HCbAQjjw5xkNguJAqA4j3DAfN0ocj5iJ4D
+X-Google-Smtp-Source: AGHT+IFlBbMsdDkibGs+3E90ni36pDU1DtBtQx2GYLaxL8v3OUzQ9CG7PxwMtpFknCcyL00KBQQ92Q==
+X-Received: by 2002:a5d:47cb:0:b0:390:df83:1f22 with SMTP id ffacd0b85a97d-3913af390a9mr5568803f8f.25.1741603684736;
+        Mon, 10 Mar 2025 03:48:04 -0700 (PDT)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3912c0e2bb7sm14676793f8f.63.2025.03.10.03.48.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 10 Mar 2025 03:48:04 -0700 (PDT)
+Date: Mon, 10 Mar 2025 13:48:00 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Matthew Brost <matthew.brost@intel.com>
+Cc: Lucas De Marchi <lucas.demarchi@intel.com>,
+	Thomas =?iso-8859-1?Q?Hellstr=F6m?= <thomas.hellstrom@linux.intel.com>,
+	Rodrigo Vivi <rodrigo.vivi@intel.com>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Himal Prasad Ghimiray <himal.prasad.ghimiray@intel.com>,
+	intel-xe@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: [PATCH next] drm/xe: Fix uninitialized variable in xe_vm_bind_ioctl()
+Message-ID: <4a74b296-8b51-4dab-a2f1-69919da1ca62@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: asiVt0grXUnT1VyPq3sZm_1EZq5iVg3D
-X-Proofpoint-ORIG-GUID: asiVt0grXUnT1VyPq3sZm_1EZq5iVg3D
-X-Authority-Analysis: v=2.4 cv=C5sTyRP+ c=1 sm=1 tr=0 ts=67cec35b cx=c_pps a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17 a=GEpy-HfZoHoA:10 a=Vs1iUdzkB0EA:10 a=EUspDBNiAAAA:8 a=COk6AnOGAAAA:8 a=0nCIlMqfeCQfA5XZMt8A:9
- a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-10_04,2025-03-07_03,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 phishscore=0
- adultscore=0 clxscore=1011 bulkscore=0 lowpriorityscore=0 malwarescore=0
- impostorscore=0 suspectscore=0 spamscore=0 priorityscore=1501
- mlxlogscore=939 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2502100000
- definitions=main-2503100086
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Mailer: git-send-email haha only kidding
 
-Enable secondary USB controller on QCS8300 Ride platform. Since it is a
-Type-A port, the dr_mode has been set to "host". The VBUS to connected
-peripherals is provided by TPS2559QWDRCTQ1 regulator connected to the
-port. The regulator has an enable pin controlled by PMM8650. Model it as
-fixed regulator and keep it Always-On at boot, since the regulator is
-GPIO controlled regulator.
+The error handling assumes that vm_bind_ioctl_check_args() will
+initialize "bind_ops" but there are a couple early returns where that's
+not true.  Initialize "bind_ops" to NULL from the start.
 
-Co-developed-by: Krishna Kurapati <krishna.kurapati@oss.qualcomm.com>
-Signed-off-by: Krishna Kurapati <krishna.kurapati@oss.qualcomm.com>
-Signed-off-by: Manish Nagar <quic_mnagar@quicinc.com>
+Fixes: b43e864af0d4 ("drm/xe/uapi: Add DRM_XE_VM_BIND_FLAG_CPU_ADDR_MIRROR")
+Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 ---
- arch/arm64/boot/dts/qcom/qcs8300-ride.dts | 35 +++++++++++++++++++++++
- 1 file changed, 35 insertions(+)
+ drivers/gpu/drm/xe/xe_vm.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm64/boot/dts/qcom/qcs8300-ride.dts b/arch/arm64/boot/dts/qcom/qcs8300-ride.dts
-index 916d4e6da922..7947e48f6a95 100644
---- a/arch/arm64/boot/dts/qcom/qcs8300-ride.dts
-+++ b/arch/arm64/boot/dts/qcom/qcs8300-ride.dts
-@@ -22,6 +22,16 @@ aliases {
- 	chosen {
- 		stdout-path = "serial0:115200n8";
- 	};
-+
-+	regulator-usb2-vbus {
-+		compatible = "regulator-fixed";
-+		regulator-name = "USB2_VBUS";
-+		gpio = <&pmm8650au_1_gpios 7 GPIO_ACTIVE_HIGH>;
-+		pinctrl-0 = <&usb2_en>;
-+		pinctrl-names = "default";
-+		enable-active-high;
-+		regulator-always-on;
-+	};
- };
- 
- &apps_rsc {
-@@ -286,6 +296,15 @@ queue3 {
- 	};
- };
- 
-+&pmm8650au_1_gpios {
-+	usb2_en: usb2-en-state {
-+		pins = "gpio7";
-+		function = "normal";
-+		output-enable;
-+		power-source = <0>;
-+	};
-+};
-+
- &qupv3_id_0 {
- 	status = "okay";
- };
-@@ -355,6 +374,14 @@ &usb_1_hsphy {
- 	status = "okay";
- };
- 
-+&usb_2_hsphy {
-+	vdda-pll-supply = <&vreg_l7a>;
-+	vdda18-supply = <&vreg_l7c>;
-+	vdda33-supply = <&vreg_l9a>;
-+
-+	status = "okay";
-+};
-+
- &usb_qmpphy {
- 	vdda-phy-supply = <&vreg_l7a>;
- 	vdda-pll-supply = <&vreg_l5a>;
-@@ -369,3 +396,11 @@ &usb_1 {
- &usb_1_dwc3 {
- 	dr_mode = "peripheral";
- };
-+
-+&usb_2 {
-+	status = "okay";
-+};
-+
-+&usb_2_dwc3 {
-+	dr_mode = "host";
-+};
+diff --git a/drivers/gpu/drm/xe/xe_vm.c b/drivers/gpu/drm/xe/xe_vm.c
+index 22a26aff3a6e..d85759b958d0 100644
+--- a/drivers/gpu/drm/xe/xe_vm.c
++++ b/drivers/gpu/drm/xe/xe_vm.c
+@@ -3287,7 +3287,7 @@ int xe_vm_bind_ioctl(struct drm_device *dev, void *data, struct drm_file *file)
+ 	struct xe_exec_queue *q = NULL;
+ 	u32 num_syncs, num_ufence = 0;
+ 	struct xe_sync_entry *syncs = NULL;
+-	struct drm_xe_vm_bind_op *bind_ops;
++	struct drm_xe_vm_bind_op *bind_ops = NULL;
+ 	struct xe_vma_ops vops;
+ 	struct dma_fence *fence;
+ 	int err;
 -- 
-2.25.1
+2.47.2
 
 
