@@ -1,75 +1,76 @@
-Return-Path: <linux-kernel+bounces-554170-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-554169-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A6E97A593F1
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 13:14:36 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C75E9A593EC
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 13:13:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0B67C16778D
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 12:13:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8F34816EA7D
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 12:13:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21823225A2C;
-	Mon, 10 Mar 2025 12:11:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D19422AE6D;
+	Mon, 10 Mar 2025 12:11:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="hHneuGjy"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA42A221732;
-	Mon, 10 Mar 2025 12:11:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="Uc2kSMaJ"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B3DC22A7E0;
+	Mon, 10 Mar 2025 12:11:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741608707; cv=none; b=GRG5qp1GGwEPUAJOrixWaNDSSxTn3C0kTNdBQmi2E2t2s6mIvEX8w7qLz0dwo6Bk4s0uYA+/zystakAbNvaCdDsH+Fsb7wqqwWfaz5msNMifHHYnH9gyhq1A9HdwQfO5Bz1MkG5X2WNuDoJ0Xm4QLsDLqdI62puRhBT7NidfPkE=
+	t=1741608697; cv=none; b=FBMkM1xrxk1cEX3oGM67Hm0i6leNRaPbmm3rymIoNqKYEjJ31Zgpug1FlXqqqFJG2sBlZvEe7SOdPx7lFMHDoq4fHFbZCgFwDRE/oQVIdw3owBoaqW5YcIy+6VdrSOWBDht0EZ0nTNf3ZnGF205HFype8DZLDcU9XthaPy0SaGI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741608707; c=relaxed/simple;
-	bh=jgbdzMRYXyWDracGEm3Dg8/0oJWyKDx7+oiJUHfsqSk=;
+	s=arc-20240116; t=1741608697; c=relaxed/simple;
+	bh=B/Zi8tRRc/t7099IxweCQ9wmr8LBRpEjxc54n0VCEzQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pkHRG8+xDXk8ltrbNjKkqj4vzOLoWy+RlXUUytf6Yx4tvo2kIBNYHgrIlDhm4TbhB3uxKwoimJUGDmECNYCDocUXObNXcJX1xCr94QvKBJdo7WmvpYm08408dJA+dTabYTmOCvaH2Q452UKoCgkKlFZ0La8rjJwockD+N6X+Kb4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=hHneuGjy; arc=none smtp.client-ip=192.198.163.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1741608706; x=1773144706;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=jgbdzMRYXyWDracGEm3Dg8/0oJWyKDx7+oiJUHfsqSk=;
-  b=hHneuGjyC9sHEblU5q8y9IH4AMEXCRp/Ac1Wp/kK93wxHbjFZof27TK0
-   QbnPcUccqVlZB+F+uYrm8aBqAo3yAQntlirgYXaioI2vE8eCteYfxKQfH
-   UXKTfvqgvgry8tyvyxirM8Dac5EJ5jSHlT1nZ+tqfIU7LxHy8mRk//EqU
-   M+eBzcroB90In7bzLKr5NqoVMaT0w7jOfGmCCUQ6XecukW0/1IFX6ZURO
-   grOVKUVPS896zHBuCAUT3s3NfRyk63ubL/VwNXPiykX/AnkOl3sO3/pfM
-   lRDHbqpkLZUsQnERqD4rEFr81KJBZtC7bUu/XhDRRPkdnyo+tAjKGgfAA
-   A==;
-X-CSE-ConnectionGUID: 2aqtG6o0TIuh0CDgwO4QYw==
-X-CSE-MsgGUID: M/xh8bJDT8u4MjjBZMVbWg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11368"; a="41848867"
-X-IronPort-AV: E=Sophos;i="6.14,236,1736841600"; 
-   d="scan'208";a="41848867"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Mar 2025 05:11:44 -0700
-X-CSE-ConnectionGUID: fIgBBpRsT8SSIihjEDwwkA==
-X-CSE-MsgGUID: dHMjuNwGRia9ODpBfFGY5g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,236,1736841600"; 
-   d="scan'208";a="124982563"
-Received: from dhhellew-desk2.ger.corp.intel.com (HELO mdjait-mobl) ([10.245.245.245])
-  by orviesa004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Mar 2025 05:11:41 -0700
-Date: Mon, 10 Mar 2025 13:11:33 +0100
-From: Mehdi Djait <mehdi.djait@linux.intel.com>
-To: Sakari Ailus <sakari.ailus@linux.intel.com>
-Cc: laurent.pinchart@ideasonboard.com, tomi.valkeinen@ideasonboard.com, 
-	jacopo.mondi@ideasonboard.com, hverkuil@xs4all.nl, kieran.bingham@ideasonboard.com, 
-	naush@raspberrypi.com, mchehab@kernel.org, hdegoede@redhat.com, 
-	dave.stevenson@raspberrypi.com, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH v1] media: v4l2-common: Add a helper for obtaining
- the clock producer
-Message-ID: <hg2es6fl4yty3zo6gvf6xabw6kzztaz6awqslvxvumn5hhhsq5@d6xz7khblt7u>
-References: <20250227092643.113939-1-mehdi.djait@linux.intel.com>
- <Z8rd3ipjkbaE4zfc@kekkonen.localdomain>
- <Z8rfDVow6hDeuZRS@kekkonen.localdomain>
+	 Content-Type:Content-Disposition:In-Reply-To; b=EHt6UeBru2JrCUHnZyT3FNnyt3RobX7MyTLgCnGeqvuzb47VIq6YmqDNJ4S/rFfw2f7Gyg2SENTXCHJDrMGoZ8zxMeIg6BLutB6arQkbYEunhlk45VB3YABLh8+Cppg0PO5Vwe3LZLpVQjGMlGhK5ogtIf5JGBRCvgAKf3bKIeg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=Uc2kSMaJ; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: by linux.microsoft.com (Postfix, from userid 1134)
+	id BAD8B2111421; Mon, 10 Mar 2025 05:11:34 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com BAD8B2111421
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1741608694;
+	bh=wGlVDMVI7jB0uTeQswp0J7PSuFA8+H1jZy79IJtAwJA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Uc2kSMaJZ2d9mRqMGI9uVePTC1T6zyoq47PuXm1KAkLHEGlSFLadmxyf4t7EhXYgc
+	 qJPXVqjZQYPIo2xrAnGCsPXWyKYE9mxrGdN9iUPi4kEpIJvw3IuVpiQ2eLOYX89j/w
+	 NaqXKPle32JCMKpmqeqjhSGIpPlBxgMUGEnOafQU=
+Date: Mon, 10 Mar 2025 05:11:34 -0700
+From: Shradha Gupta <shradhagupta@linux.microsoft.com>
+To: Haiyang Zhang <haiyangz@microsoft.com>
+Cc: Jakub Kicinski <kuba@kernel.org>,
+	"linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
+	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+	Dexuan Cui <decui@microsoft.com>,
+	"stephen@networkplumber.org" <stephen@networkplumber.org>,
+	KY Srinivasan <kys@microsoft.com>,
+	Paul Rosswurm <paulros@microsoft.com>,
+	"olaf@aepfle.de" <olaf@aepfle.de>,
+	"vkuznets@redhat.com" <vkuznets@redhat.com>,
+	"davem@davemloft.net" <davem@davemloft.net>,
+	"wei.liu@kernel.org" <wei.liu@kernel.org>,
+	"edumazet@google.com" <edumazet@google.com>,
+	"pabeni@redhat.com" <pabeni@redhat.com>,
+	"leon@kernel.org" <leon@kernel.org>, Long Li <longli@microsoft.com>,
+	"ssengar@linux.microsoft.com" <ssengar@linux.microsoft.com>,
+	"linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
+	"daniel@iogearbox.net" <daniel@iogearbox.net>,
+	"john.fastabend@gmail.com" <john.fastabend@gmail.com>,
+	"bpf@vger.kernel.org" <bpf@vger.kernel.org>,
+	"ast@kernel.org" <ast@kernel.org>,
+	"hawk@kernel.org" <hawk@kernel.org>,
+	"tglx@linutronix.de" <tglx@linutronix.de>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"stable@vger.kernel.org" <stable@vger.kernel.org>
+Subject: Re: [EXTERNAL] Re: [PATCH net] net: mana: Support holes in device
+ list reply msg
+Message-ID: <20250310121134.GA12177@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
+References: <1741211181-6990-1-git-send-email-haiyangz@microsoft.com>
+ <20250307195029.1dc74f8e@kernel.org>
+ <MN0PR21MB3437F80F3AD98C82870A9173CAD72@MN0PR21MB3437.namprd21.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -78,25 +79,57 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <Z8rfDVow6hDeuZRS@kekkonen.localdomain>
+In-Reply-To: <MN0PR21MB3437F80F3AD98C82870A9173CAD72@MN0PR21MB3437.namprd21.prod.outlook.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 
-Hi Sakari,
-
-On Fri, Mar 07, 2025 at 11:57:01AM +0000, Sakari Ailus wrote:
-> On Fri, Mar 07, 2025 at 11:51:58AM +0000, Sakari Ailus wrote:
-> > > +	int ret;
+On Sun, Mar 09, 2025 at 10:01:33PM +0000, Haiyang Zhang wrote:
+> 
+> 
+> > -----Original Message-----
+> > From: Jakub Kicinski <kuba@kernel.org>
+> > Sent: Friday, March 7, 2025 10:50 PM
+> > To: Haiyang Zhang <haiyangz@microsoft.com>
+> > Cc: linux-hyperv@vger.kernel.org; netdev@vger.kernel.org; Dexuan Cui
+> > <decui@microsoft.com>; stephen@networkplumber.org; KY Srinivasan
+> > <kys@microsoft.com>; Paul Rosswurm <paulros@microsoft.com>;
+> > olaf@aepfle.de; vkuznets@redhat.com; davem@davemloft.net;
+> > wei.liu@kernel.org; edumazet@google.com; pabeni@redhat.com;
+> > leon@kernel.org; Long Li <longli@microsoft.com>;
+> > ssengar@linux.microsoft.com; linux-rdma@vger.kernel.org;
+> > daniel@iogearbox.net; john.fastabend@gmail.com; bpf@vger.kernel.org;
+> > ast@kernel.org; hawk@kernel.org; tglx@linutronix.de;
+> > shradhagupta@linux.microsoft.com; linux-kernel@vger.kernel.org;
+> > stable@vger.kernel.org
+> > Subject: [EXTERNAL] Re: [PATCH net] net: mana: Support holes in device
+> > list reply msg
+> > 
+> > On Wed,  5 Mar 2025 13:46:21 -0800 Haiyang Zhang wrote:
+> > > -	for (i = 0; i < max_num_devs; i++) {
+> > > +	for (i = 0; i < GDMA_DEV_LIST_SIZE &&
+> > > +		found_dev < resp.num_of_devs; i++) {
+> > 
+> > unfortunate mis-indent here, it blend with the code.
+> > checkpatch is right that it should be aligned with opening bracket
+> Will fix it.
+> 
+> > 
+> > >  		dev = resp.devs[i];
+> > >  		dev_type = dev.type;
+> > >
+> > > +		/* Skip empty devices */
+> > > +		if (dev.as_uint32 == 0)
+> > > +			continue;
 > > > +
-> > > +	clk = devm_clk_get_optional(dev, id);
-> > > +	if (clk || IS_ERR(clk))
+> > > +		found_dev++;
+> > > +		dev_info(gc->dev, "Got devidx:%u, type:%u, instance:%u\n", i,
+> > > +			 dev.type, dev.instance);
+> > 
+> > Are you sure you want to print this info message for each device,
+> > each time it's probed? Seems pretty noisy. We generally recommend
+> > printing about _unusual_ things.
+> Ok. I can remove it.
+How about a dev_dbg instead?
 > 
-> I forgot this bit earlier. The IS_ERR() check is redundant.
-> 
-
-Wouldn't you say that this helps with readability even if it is
-redundant ? This will warn the users of this helper that the call
-may fail and return early ?
-
---
-Kind Regards
-Mehdi Djait
+> Thanks,
+> - Haiyang
 
