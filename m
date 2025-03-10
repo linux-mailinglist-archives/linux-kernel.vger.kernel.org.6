@@ -1,228 +1,546 @@
-Return-Path: <linux-kernel+bounces-554758-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-554819-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D039A59C02
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 18:07:47 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 92B2AA59F56
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 18:39:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 36FA57A25EE
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 17:06:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5BFF71652C9
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 17:39:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F7E7230BF5;
-	Mon, 10 Mar 2025 17:05:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B4DF231CB0;
+	Mon, 10 Mar 2025 17:38:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="eCUo2SkJ"
-Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2087.outbound.protection.outlook.com [40.107.237.87])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="z+TaLsXw"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B61D9230988;
-	Mon, 10 Mar 2025 17:05:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.237.87
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741626322; cv=fail; b=oeURRSqQgez0Z70mqwKejrbdxt2oUDnUhrvAASzBglkY5pqbmq4TQgK2Z0GSw2csiGkj4VMlL5FAY+rrb9Ti1dMMrSCURcIV56qOopOB8SQaVuK4ZRQln//JvdtXzj2ohwBHr2RaA9cKeZ5MNjZ5U35YIofB9t+s6b0o3Y5epWA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741626322; c=relaxed/simple;
-	bh=24D5TMOD53OqqpRgWKa1n1MvVZnS+rAIdrqNR0tmCb4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=jdv6MASTrFEzHWO07Kfj9Letn6ZL9TBOgViCF5vZb1wgPvzo+VPXmZ3sK3nOlZdA0cBuiibP0iET4hcXvCTX44tTi12d1BlzR3r4fW2MWT8aV2tNeV2wqQS+IzlStPEudE0sOKxqYGOVCeOu9kQKa9UO8UNBF9VMZo+Qqmp0Vlw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=eCUo2SkJ; arc=fail smtp.client-ip=40.107.237.87
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=sZwwn6RaXT85DuRkelUv4OllEn9Wfz8G9fmt4HQ5rwXkbq35kp2/8zAMZ8ih0tth2Yl/RKjL5mXNgwra1jrYIE4OhawJsMMiuITxy68xn6fJVlG4SL93nESwygOkxgO/5iuXMIk4bqmJ5mrFmgZM470K0EJAvO2NklThPCWNjU5BHJKKk4lae+tDBk2KqF/7CScuhTXRKrfd7hCH1UjWEqDB0FeAncRG4voCZx11OGfl2QW65KqMDMrf4GvxSc9rHdmILHOVvxRbt4PUIUooMskC+SvNVkFWxqVxw6Hwn8PUo7jgK0DZECPqJfqiZFEsM2vII6bHHORiGDE9mUUMug==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=WxC5jn6tK7pn8z921gyqoPShTD1xPnDDtJYBoHYQfuY=;
- b=QhZWaQXtP69uucj1KuKlu3SGdOHt96+xpvcYzbQFpf7RwwAn7ZN09rAuptj1cMxKPfwmCkviDeWZjT7ONlZVmVprJnBOqLbpsmj0eBWMsB9vSErRSUUpfuLyYmSwNDrhAsIUk5oi+K7ruzYMtaps8O1Xkl213NftiT3mLuNgIPUuu0vGuMThoGyIJQsCjdVO7vNQf21Y+W4yJL7SGZ5FHrfLFOPa2vrg7GTBh3nzKrZjRKnETIqghieUiX2NDzuO11cYmJ3CB3wof6poqN5jcHTYVEXyQze+Vfe2x38DsCiXQyt0Evw45ibbFCYtmfe1tthaC078XxG7eitVHwogdw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=WxC5jn6tK7pn8z921gyqoPShTD1xPnDDtJYBoHYQfuY=;
- b=eCUo2SkJx6yUi1TgXh3+y4KIfDJXMEraZ+OjNB9W1dob5xClWyvh8DN5uV7/z3dzLwvm4i6jUw93NTJegoz+60kz7Yb5lbrw3e2fbH6CXq2TBXqwi8oRJTclJEUAw7Qz86xVpbjnVi1cwv6lmiRPoEiKRSxYQDLN2+u3SHAU61z0DWMucp+XcB2AhmPKIaqYXgyw7CfO4Vveh18tvzr3lZVoCaeZqjNdnkk7Wmt/Ovw0/EMvRqEO2mJeV2cLcpMGp76bRcupYoM1vd1HAr5+mGfdnVYKuIsV39dzWEKwDdhZK8SfwY93d0KSEX8s94AxEkN3PZsuMNGYQxbRUXSOEg==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from DS7PR12MB9473.namprd12.prod.outlook.com (2603:10b6:8:252::5) by
- DM3PR12MB9389.namprd12.prod.outlook.com (2603:10b6:0:46::9) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8511.27; Mon, 10 Mar 2025 17:05:16 +0000
-Received: from DS7PR12MB9473.namprd12.prod.outlook.com
- ([fe80::5189:ecec:d84a:133a]) by DS7PR12MB9473.namprd12.prod.outlook.com
- ([fe80::5189:ecec:d84a:133a%5]) with mapi id 15.20.8511.026; Mon, 10 Mar 2025
- 17:05:16 +0000
-From: Zi Yan <ziy@nvidia.com>
-To: Matthew Wilcox <willy@infradead.org>
-Cc: linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
- Hugh Dickins <hughd@google.com>, Ryan Roberts <ryan.roberts@arm.com>,
- "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
- David Hildenbrand <david@redhat.com>, Yang Shi <yang@os.amperecomputing.com>,
- Miaohe Lin <linmiaohe@huawei.com>, Kefeng Wang <wangkefeng.wang@huawei.com>,
- Yu Zhao <yuzhao@google.com>, John Hubbard <jhubbard@nvidia.com>,
- Baolin Wang <baolin.wang@linux.alibaba.com>, linux-kselftest@vger.kernel.org,
- linux-kernel@vger.kernel.org, Kairui Song <kasong@tencent.com>
-Subject: Re: [PATCH v10 2/8] mm/huge_memory: add two new (not yet used)
- functions for folio_split()
-Date: Mon, 10 Mar 2025 13:05:12 -0400
-X-Mailer: MailMate (2.0r6233)
-Message-ID: <534ACFEE-3FD9-47B2-B3A9-45F898BC9CCF@nvidia.com>
-In-Reply-To: <Z88ar5YS99HsIRYo@casper.infradead.org>
-References: <20250307174001.242794-1-ziy@nvidia.com>
- <20250307174001.242794-3-ziy@nvidia.com>
- <Z88ToirSWa_meevw@casper.infradead.org>
- <A10312E5-F4CE-4CBA-B7CB-D435DFEA496F@nvidia.com>
- <D94BB56F-4BA0-4376-B5C4-7E38D2D92624@nvidia.com>
- <Z88ar5YS99HsIRYo@casper.infradead.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-ClientProxiedBy: BN0PR04CA0117.namprd04.prod.outlook.com
- (2603:10b6:408:ec::32) To DS7PR12MB9473.namprd12.prod.outlook.com
- (2603:10b6:8:252::5)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E062718DB24;
+	Mon, 10 Mar 2025 17:38:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741628338; cv=none; b=Qk5uEuMdYyIOTdRsr1XVUU/xsAJkThatSfjks5lOvt+7lI6Va3JXInXknYpTsOnoUOz2DxjwYadCXie74JQQ1vDbmeeaXyLCQpzPtGzKInPyRPSd0sxQJvFtGZ2TqbFSFYfXPOxmzcMk5JaCIFAOMik8Qhp6iSDp6s2VALRHk2Y=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741628338; c=relaxed/simple;
+	bh=y6NK62yWrqMndq3tYyX1Mdt1SG/A59dj5bKfh1vN7d4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=a1EBotypyxlnn9a8e3AUWPg6lZBhhGaO3XkbXK9vTuhH162k8Es1WewN9egW56uPgKwTXYea5f8Kd2xRUtcX0vul6sjQHFbtGFlnN5g29BPebyX075l8gawtksy9PqTdgUoTa/SX2eLmH6+6Vh+01rqdJ8Pv1u0twmlnQ7+0Soc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=z+TaLsXw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3A3E4C4CEE5;
+	Mon, 10 Mar 2025 17:38:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1741628337;
+	bh=y6NK62yWrqMndq3tYyX1Mdt1SG/A59dj5bKfh1vN7d4=;
+	h=From:To:Cc:Subject:Date:From;
+	b=z+TaLsXwBLI6LDAjRBGNXfS171mQF3JfBIVWYvOSQwRbvdYHbwdLl6DikPrI3Gvdz
+	 6FFOFlhtB7T8odWfr40Oi3u8ICVQ+xjyXr1WDsO1PHmBwcn+1lftwWshD5HLTXbey1
+	 HYCwNE9OyYTF1T5Nqf45gt3uIA9wh5l22fvZeZuI=
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: stable@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	patches@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	torvalds@linux-foundation.org,
+	akpm@linux-foundation.org,
+	linux@roeck-us.net,
+	shuah@kernel.org,
+	patches@kernelci.org,
+	lkft-triage@lists.linaro.org,
+	pavel@denx.de,
+	jonathanh@nvidia.com,
+	f.fainelli@gmail.com,
+	sudipm.mukherjee@gmail.com,
+	srw@sladewatkins.net,
+	rwarsow@gmx.de,
+	conor@kernel.org,
+	hargar@microsoft.com,
+	broonie@kernel.org
+Subject: [PATCH 6.1 000/109] 6.1.131-rc1 review
+Date: Mon, 10 Mar 2025 18:05:44 +0100
+Message-ID: <20250310170427.529761261@linuxfoundation.org>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS7PR12MB9473:EE_|DM3PR12MB9389:EE_
-X-MS-Office365-Filtering-Correlation-Id: ac199a2c-16f1-403d-f9f8-08dd5ff5baa6
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014|7416014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?REFQUFlBR09zamdJUHhrVUFaRzQzUWJoVTA2Y2djNllMSUpDTVpvVUo0bjZX?=
- =?utf-8?B?azd5UGl1WnNOZU5pYVVvVXFSbGtzeUNUdmgyRU9QWmRwODh1azV5eXpzSXlY?=
- =?utf-8?B?aEVmcU5saEx0aC8rYmpodTdRV0FjTmZXUlhUMUc2cVhyUlVHaEcweitwazNr?=
- =?utf-8?B?UWpnc05CcGhpb2tPMzZaajRRQ0NYWlF0dXFITjhrbVA5cnVEWGVMc2ExTHd2?=
- =?utf-8?B?WmxucEt0V1BGK3E2alV3RW9GeGdzMG5TY2tkN2hjOFh0OGhmNzhSSlFhRVBm?=
- =?utf-8?B?SktENHR5eFd2V0pVdUgrdnJ5Z2hLTWY1V2hLVDJJZW92U2ZmYnFDczZNS0ls?=
- =?utf-8?B?S0lhbDhYZ3NBdGNpd05NNUVwRVFvQkRHZFZBYWdwL1RiRm1JWUFHdHF5L25E?=
- =?utf-8?B?cWFpbzA0WVRlcFowSnhUR2c2WVFOd1d3R2pBZWlQbjhUTG8wMyt2QkRuNk03?=
- =?utf-8?B?WjZpL3FZSFp2SDQ1MmhJZUtVL1ZkRjdIYzJPWHB1TmlSY0dPd1BaL3YwU3Zy?=
- =?utf-8?B?STZ6THJqaXVvT3dSTWZxNWg0ak9EOVE2b241RWtDNkhSWGxib1hYem1aRWtq?=
- =?utf-8?B?Tk9odEVmWjdLaXpRdkVUOElENXMrUFZoN0pSSm9pL3JFL1ZzYzUwbjNGS1U5?=
- =?utf-8?B?QS9yaXpEWnprQzRvakpBaXVCdVZENk9MODhubGxGam1tTzJHNWw2VEtNRVU0?=
- =?utf-8?B?MWRUWG1sTU94Z0c0VS8xNUdnOUR3TFllMVBoTUducUNhK0ppWDl2dGFreFFR?=
- =?utf-8?B?RTlQUTVWd0lJcVZQT2VLQ1ZVa1lzY2tXVGROdWZzNHFEMGpBTUcvdDI3RWM0?=
- =?utf-8?B?cURVQjJZSDI3N3pvN0tTTzBOdzd4ek14UXd3My93UExEL2UyOVpVTnFTb1Zs?=
- =?utf-8?B?R0xweVpxRVZjcUZpVTBEczNhYUtESFN4Q0ZWbTdtQkhUVjVrNHlvYjNuaUlx?=
- =?utf-8?B?TTJhUkdRTXpTRDNJZlFLN0VBNVp5ampmU1YwRnZaRVIxYTE2bC9lNm9YSHhZ?=
- =?utf-8?B?LzFLMU1SVHovTUNLa0JZOFhLSnppdDNUOGsydVAyc0VvM3BtcHg4Tzl4ak00?=
- =?utf-8?B?M3o0YmFpc2ZPNDJ2OTMzbGt2b2RlWUVNRVdaSGlxeTBkeC9WNU1FWVVJUXBm?=
- =?utf-8?B?TW1YR29Fam03ZFVRcy9sc3lFNDYvS21XUVBwWXJmZWMza3RieW9rWWZMclZM?=
- =?utf-8?B?V0xaaFJ4aWdWZGFZQjZwK1kyYVZWeVhqa3RvWXNLM2JHeklOVUZFZDFCeXE2?=
- =?utf-8?B?Zk5YNENpbmVud2Q5dGt2Zis5Q2ZlcXlmcUxGamF6dzJ2NjdYUmc5dXNDR1Er?=
- =?utf-8?B?eVRHY1kvanZGeStWendwN2JCUGVrZjQ1enJiYTZBUm03WHo3V2h4YUFucFNQ?=
- =?utf-8?B?bkY1eUdFV3ZyWGNUV3UvbjExMWdRSjhPS3FuOGhyelBkYkR1VDU2azNDSytG?=
- =?utf-8?B?MGs2alI3TytLWDAwWDl3amRGSk90MUVaOHUzRHZxaDArZjhSQUd2bGNrSitj?=
- =?utf-8?B?M085TnZyUS9WOWthMHdwYnFiVHQrWnNzbUU4OHY3YmJhTytLOXBDMkx1M045?=
- =?utf-8?B?aVc3QUkrdThCaDFuMzdGaTBubVpvR2dUT3R0S0o5dFJpUnU3V0cySzBIRTlh?=
- =?utf-8?B?cmxBNkFBcjk1U2ZsNEVTcUxkVmROcDhnTEprRlZPM2l1RFdEUVp6WGVNWGRV?=
- =?utf-8?B?QjdSc0xiMGVieGp0K2FCVUZNKzRNOEJpSWp1Q0k0S0FVV2lvVGh2NjNzdWNy?=
- =?utf-8?B?aW5abDdBenNOVjhSZGhWdFJ0WFpxQ0VKL21JRHRCWDBwSW56U2JaYXRmaU1r?=
- =?utf-8?B?R01TQnI0UVY3SHZmY0JPMldNMW8wb1c2Ky9qOVhlVUtCblJmbU5rdTlNSVpL?=
- =?utf-8?Q?yYRY6JZQyTKdt?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR12MB9473.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7416014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?ekRNdW9iY2JjYkRaWnVPb0FmSXJuN2N2RDFhYUtkazc2dSttclMvNGtVeldq?=
- =?utf-8?B?TC9kZERNMWl4RTR0blAxUGJ1ZEs5VlFsN2pzRTczWWQ3UWM5aHZVN0ZDRU9o?=
- =?utf-8?B?TFNZdDI2d2ZQQU02RFhyL2lXeFFWOUMveFFWc3ROZytRc0RyUjlVaXp0cTBj?=
- =?utf-8?B?SmJoNlJ6R25LVWFCSEJjeXZKRzU3VzBnTkxKNWFhZ3l6bG96WEVYelVUTlZV?=
- =?utf-8?B?NFJZMXlGd3JsNHBKSkFsZ2Yyb3Y2c3ZReUlJNm9jZHdtSE5aVVI1cEUzdnRL?=
- =?utf-8?B?SnFrMi9ha1NpaTlJeTNkVTZOVFFmbzVaRG51R1B4MTRUQnZoek5BN090STRS?=
- =?utf-8?B?WTJ0Yi9BNk5STFg2VG1UNjJ5SFhzdndpRlZZbkFZMXYwVjZaOTNtSytza2Zs?=
- =?utf-8?B?SlhWTFRUb0xqTlN2K2dYdUZ6Y1VpU3QrOTdhb1pqYXJGUVZQbDZJaE1WNzM0?=
- =?utf-8?B?a3FHRjJKenNuRzcrSDZGUjk3NUVJREtTODNXSlF3Z1hrRzd0QTNPNjViYTlZ?=
- =?utf-8?B?RW1JZ1k0ZnFrNHptMDZxMkQzZGw2L2hDTlVKTEw2VUdnNVhmMDF1N2J6cjZL?=
- =?utf-8?B?MGVqYTFuYm0vbndTQnZDejJZWUZtYVhvOVVxNkxMUDFIaG9ISHcrTXBWR1dt?=
- =?utf-8?B?WXhkOWVFcGlMV0RNL1gyM3dXT2ZXd1A1dmRnbXlsNXl3L0RiUWJ2aHZ5d3kr?=
- =?utf-8?B?eEtELzJhelJsK0srbitqWHFkNEVpazJqQWJDYTNwb252ejVuTDhiVElwQ0cy?=
- =?utf-8?B?L0VoWVdHSVRIR01HTS8vSTZEM0dnTWdsQnUwZ2pYbVpCd0N4SDJPOXpRbldH?=
- =?utf-8?B?Vy9Udk9pZ3c3MlNaQ3R6eG9FNG4zR2NaQ3Rid1phSlVqcGJpcG5UNjMzbzFx?=
- =?utf-8?B?R2h2bWpybkdmV1RlNHlhZC9XM25VSzRwbEZVa0xBMkFjOFpBS0xkRjU1YSti?=
- =?utf-8?B?VDAySjJBa0EvZEhkQVQ5ZG81VjJwRUE1RGZleFl1ZmJUcmpmQmZLdzM0RGlh?=
- =?utf-8?B?MjZnVnBhQTJwaElhY3E1eWFWMlp5RldHektkRjNTQmJsMitBeXk0aTdybHlV?=
- =?utf-8?B?TDhhd0N0UndUNUQrMjh4SGY1UG54eDJ1UHJMZFgvendTTFgrMkRCZzk0ZnlT?=
- =?utf-8?B?SExmUkVBMHIrc1NiSzd3YlZQY3Awa1hqb2o0MFI2UEFwSndWR1A5ZXNpeHdZ?=
- =?utf-8?B?TUFueUxVSTFxb3lUZUgzbm5Xd1Qwd3Y4NVA5MC9UZFd1bDlkSXV5NThZY0hP?=
- =?utf-8?B?TWZwWGRJNUluWVJpR1RyYS9jYmVFOGxLNEZOM2owdjE1K3k5MVFDUDFsa3g5?=
- =?utf-8?B?MFVwdkJGKytGdWM4aWNnSUpvYkZFa2wzRUloSzFUMHorNWhhZGFMMXIwalFV?=
- =?utf-8?B?MDh0YUZxQktid2x5U1RDelZRekYrM21BL2w1TmpHVjZROUJZR1FwUWJhWjlG?=
- =?utf-8?B?UDdSN1lhbGZ2emxSQldGZ3N4eVl3OC9CbTNmRnRza3JvUVRSQlJ5RmMxdFpr?=
- =?utf-8?B?c0VUTUcyUDFGTlRXTStHaFFVQTRPMmc5WUJpK2Nyd2hmMmZ2ejcwaCtsVUJx?=
- =?utf-8?B?QlMxZ3pEaDdzaFdTaGs5RVlSdWxuNXVjVEl0ZzVmcC9tYmcwV0FzTUFKVmR2?=
- =?utf-8?B?UzI4Wm01VzUwdFNrRC9MY0RVNWowMkZ5dlZYVjhYSjExRTJjVU1PRnV4ZHhH?=
- =?utf-8?B?M0twQ2hLOFM5RmdmbW9GcW1iejVsRGhaMVNwdVNTWVAxclpSbk1GVEdiUVlJ?=
- =?utf-8?B?SzFtclVXb21UYzhDb05SdjdPaEc4SmxDSTB1SFVvYkhWblV2YnNheFh1dWpP?=
- =?utf-8?B?K1JIMlFzQVphUHdleWozMTNmL1A0ZHpHdHg3ZDdKZ0lyVGNvblQ1WEl5b3Bm?=
- =?utf-8?B?Sm5jWEZtSzF2WGZMTGRDU1pvUlROQjB0WnNzNDRRQUVyY212QlBDL0VYVDR1?=
- =?utf-8?B?NHdCMDYwWWQvdmQyVmdsZTNXUjM5UE9PdFByOTdVMDY5bUliTVdOTEczWjNS?=
- =?utf-8?B?a0t1VTdFS1o3RlJNcDIwQUxCSXBsV0xCckptdTMzQWZVS2g2OEszVi9Pcm9E?=
- =?utf-8?B?dlBXMmJOam9CM3ZEVlUweEw3NmYyZ09VdHBEcDJNcjlURFg0MzEra0NXTHlz?=
- =?utf-8?Q?K8T1RC1UxXuH6T1niqbz8Yzzl?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: ac199a2c-16f1-403d-f9f8-08dd5ff5baa6
-X-MS-Exchange-CrossTenant-AuthSource: DS7PR12MB9473.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Mar 2025 17:05:16.0726
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 86Yq78Mgs3511OzqZLskeI21iao3QiawvKuST5dMzmqju74Jd5wvZU2s3gJvhaN0
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM3PR12MB9389
+User-Agent: quilt/0.68
+X-stable: review
+X-Patchwork-Hint: ignore
+X-KernelTest-Patch: http://kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.1.131-rc1.gz
+X-KernelTest-Tree: git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
+X-KernelTest-Branch: linux-6.1.y
+X-KernelTest-Patches: git://git.kernel.org/pub/scm/linux/kernel/git/stable/stable-queue.git
+X-KernelTest-Version: 6.1.131-rc1
+X-KernelTest-Deadline: 2025-03-12T17:04+00:00
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On 10 Mar 2025, at 13:00, Matthew Wilcox wrote:
+This is the start of the stable review cycle for the 6.1.131 release.
+There are 109 patches in this series, all will be posted as a response
+to this one.  If anyone has any issues with these being applied, please
+let me know.
 
-> On Mon, Mar 10, 2025 at 12:42:06PM -0400, Zi Yan wrote:
->>> Because of the =E2=80=9CCareful=E2=80=9D comment. But new_folio->* shou=
-ld be fine,
->>> since it is the same as new_head. So I probably can replace all
->>> new_head with new_folio except those VM_BUG_ON_PAGE checks?
->
-> Why not also the VM_BUG_ON_PAGE check?  I mean:
->
->> @@ -3364,8 +3364,8 @@ static void __split_folio_to_order(struct folio *f=
-olio, int old_order,
->>  		/* ->mapping in first and second tail page is replaced by other uses =
-*/
->>  		VM_BUG_ON_PAGE(new_nr_pages > 2 && new_head->mapping !=3D TAIL_MAPPIN=
-G,
->>  			       new_head);
->
-> 		VM_BUG_ON_PAGE(new_nr_pages > 2 && new_folio->mapping !=3D TAIL_MAPPING=
-, new_head);
+Responses should be made by Wed, 12 Mar 2025 17:04:00 +0000.
+Anything received after that time might be too late.
 
-We are checking new_folio but dump new_head, so it can cause some confusion=
-.
-But it might not be that bad.
->
-> (or we could just ditch the assert entirely; it's not all that useful)
+The whole patch series can be found in one patch at:
+	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.1.131-rc1.gz
+or in the git tree and branch at:
+	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.1.y
+and the diffstat can be found below.
 
-I am open to that.
+thanks,
 
->
->> -		new_head->mapping =3D head->mapping;
->> -		new_head->index =3D head->index + index;
->> +		new_folio->mapping =3D head->mapping;
->> +		new_folio->index =3D head->index + index;
->
-> 	new_folio->mapping =3D folio->mapping
-> 	new_folio->index =3D folio->index +index;
->
-> (um, and that index + index looks weird; better name might be just 'i')
+greg k-h
 
-OK. Let me make the changes you suggested and fold it to Hugh=E2=80=99s fix=
- patch,
-before Andrew picks that up.
+-------------
+Pseudo-Shortlog of commits:
 
-Best Regards,
-Yan, Zi
+Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+    Linux 6.1.131-rc1
+
+Thomas Weißschuh <thomas.weissschuh@linutronix.de>
+    kbuild: userprogs: use correct lld when linking through clang
+
+Michal Luczaj <mhal@rbox.co>
+    vsock: Orphan socket after transport release
+
+Michal Luczaj <mhal@rbox.co>
+    vsock: Keep the binding until socket destruction
+
+Michal Luczaj <mhal@rbox.co>
+    bpf, vsock: Invoke proto::close on close()
+
+Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
+    fs/ntfs3: Add rough attr alloc_size check
+
+Irui Wang <irui.wang@mediatek.com>
+    media: mediatek: vcodec: Handle invalid decoder vsi
+
+Tuo Li <islituo@gmail.com>
+    scsi: lpfc: Fix a possible data race in lpfc_unregister_fcf_rescan()
+
+Ryusuke Konishi <konishi.ryusuke@gmail.com>
+    nilfs2: handle errors that nilfs_prepare_chunk() may return
+
+Ryusuke Konishi <konishi.ryusuke@gmail.com>
+    nilfs2: eliminate staggered calls to kunmap in nilfs_rename
+
+Ryusuke Konishi <konishi.ryusuke@gmail.com>
+    nilfs2: move page release outside of nilfs_delete_entry and nilfs_set_link
+
+Ralf Schlatterbeck <rsc@runtux.com>
+    spi-mxs: Fix chipselect glitch
+
+Xi Ruoyao <xry111@xry111.site>
+    x86/mm: Don't disable PCID when INVLPG has been fixed by microcode
+
+Jiri Olsa <jolsa@kernel.org>
+    uprobes: Fix race in uprobe_free_utask
+
+Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+    Revert "KVM: PPC: e500: Mark "struct page" dirty in kvmppc_e500_shadow_map()"
+
+Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+    Revert "KVM: PPC: e500: Mark "struct page" pfn accessed before dropping mmu_lock"
+
+Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+    Revert "KVM: PPC: e500: Use __kvm_faultin_pfn() to handle page faults"
+
+Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+    Revert "KVM: e500: always restore irqs"
+
+Arnd Bergmann <arnd@arndb.de>
+    ALSA: hda: realtek: fix incorrect IS_REACHABLE() usage
+
+Nayab Sayed <nayabbasha.sayed@microchip.com>
+    iio: adc: at91-sama5d2_adc: fix sama7g5 realbits value
+
+Angelo Dureghello <adureghello@baylibre.com>
+    iio: dac: ad3552r: clear reset status flag
+
+Sam Winchenbach <swinchenbach@arka.org>
+    iio: filter: admv8818: Force initialization of SDO
+
+Haoyu Li <lihaoyu499@gmail.com>
+    drivers: virt: acrn: hsm: Use kzalloc to avoid info leak in pmcmd_ioctl
+
+Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+    eeprom: digsy_mtc: Make GPIO lookup table match the device
+
+Manivannan Sadhasivam <mani@kernel.org>
+    bus: mhi: host: pci_generic: Use pci_try_reset_function() to avoid deadlock
+
+Visweswara Tanuku <quic_vtanuku@quicinc.com>
+    slimbus: messaging: Free transaction ID in delayed interrupt scenario
+
+Luca Ceresoli <luca.ceresoli@bootlin.com>
+    drivers: core: fix device leak in __fw_devlink_relax_cycles()
+
+Alexander Shishkin <alexander.shishkin@linux.intel.com>
+    intel_th: pci: Add Panther Lake-P/U support
+
+Alexander Shishkin <alexander.shishkin@linux.intel.com>
+    intel_th: pci: Add Panther Lake-H support
+
+Pawel Chmielewski <pawel.chmielewski@intel.com>
+    intel_th: pci: Add Arrow Lake support
+
+Alexander Usyskin <alexander.usyskin@intel.com>
+    mei: me: add panther lake P DID
+
+Sean Christopherson <seanjc@google.com>
+    KVM: SVM: Drop DEBUGCTL[5:2] from guest's effective value
+
+Michal Pecio <michal.pecio@gmail.com>
+    usb: xhci: Enable the TRB overfetch quirk on VIA VL805
+
+Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+    xhci: pci: Fix indentation in the PCI device ID definitions
+
+Prashanth K <prashanth.k@oss.qualcomm.com>
+    usb: gadget: Check bmAttributes only if configuration is valid
+
+Marek Szyprowski <m.szyprowski@samsung.com>
+    usb: gadget: Fix setting self-powered state on suspend
+
+Prashanth K <prashanth.k@oss.qualcomm.com>
+    usb: gadget: Set self-powered based on MaxPower and bmAttributes
+
+AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+    usb: typec: tcpci_rt1711h: Unmask alert interrupts to fix functionality
+
+Fedor Pchelkin <boddah8794@gmail.com>
+    usb: typec: ucsi: increase timeout for PPM reset operations
+
+Badhri Jagan Sridharan <badhri@google.com>
+    usb: dwc3: gadget: Prevent irq storm when TH re-executes
+
+Thinh Nguyen <Thinh.Nguyen@synopsys.com>
+    usb: dwc3: Set SUSPENDENABLE soon after phy init
+
+Nikita Zhandarovich <n.zhandarovich@fintech.ru>
+    usb: atm: cxacru: fix a flaw in existing endpoint checks
+
+Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+    usb: renesas_usbhs: Flush the notify_hotplug_work
+
+Miao Li <limiao@kylinos.cn>
+    usb: quirks: Add DELAY_INIT and NO_LPM for Prolific Mass Storage Card Reader
+
+Pawel Laszczak <pawell@cadence.com>
+    usb: hub: lack of clearing xHC resources
+
+Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+    usb: renesas_usbhs: Use devm_usb_get_phy()
+
+Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+    usb: renesas_usbhs: Call clk_put()
+
+Christian Heusel <christian@heusel.eu>
+    Revert "drivers/card_reader/rtsx_usb: Restore interrupt based detection"
+
+Fabrizio Castro <fabrizio.castro.jz@renesas.com>
+    gpio: rcar: Fix missing of_node_put() call
+
+Justin Iurman <justin.iurman@uliege.be>
+    net: ipv6: fix missing dst ref drop in ila lwtunnel
+
+Justin Iurman <justin.iurman@uliege.be>
+    net: ipv6: fix dst ref loop in ila lwtunnel
+
+Zecheng Li <zecheng@google.com>
+    sched/fair: Fix potential memory corruption in child_cfs_rq_on_list
+
+Uday Shankar <ushankar@purestorage.com>
+    ublk: set_params: properly check if parameters can be applied
+
+Jason Xing <kerneljasonxing@gmail.com>
+    net-timestamp: support TCP GSO case for a few missing flags
+
+Namjae Jeon <linkinjeon@kernel.org>
+    exfat: fix soft lockup in exfat_clear_bitmap
+
+Jarkko Sakkinen <jarkko@kernel.org>
+    x86/sgx: Fix size overflows in sgx_encl_create()
+
+Oscar Maes <oscmaes92@gmail.com>
+    vlan: enforce underlying device type
+
+Jiayuan Chen <jiayuan.chen@linux.dev>
+    ppp: Fix KMSAN uninit-value warning with bpf
+
+Peiyang Wang <wangpeiyang1@huawei.com>
+    net: hns3: make sure ptp clock is unregister and freed if hclge_ptp_get_cycle returns an error
+
+Nikolay Aleksandrov <razor@blackwall.org>
+    be2net: fix sleeping while atomic bugs in be_ndo_bridge_getlink
+
+Philipp Stanner <phasta@kernel.org>
+    drm/sched: Fix preprocessor guard
+
+Xinghuo Chen <xinghuo.chen@foxmail.com>
+    hwmon: fix a NULL vs IS_ERR_OR_NULL() check in xgene_hwmon_probe()
+
+Eric Dumazet <edumazet@google.com>
+    llc: do not use skb_get() before dev_queue_xmit()
+
+Murad Masimov <m.masimov@mt-integration.ru>
+    ALSA: usx2y: validate nrpacks module parameter on probe
+
+Erik Schumacher <erik.schumacher@iris-sensing.com>
+    hwmon: (ad7314) Validate leading zero bits and return error
+
+Maud Spierings <maudspierings@gocontroll.com>
+    hwmon: (ntc_thermistor) Fix the ncpXXxh103 sensor table
+
+Titus Rwantare <titusr@google.com>
+    hwmon: (pmbus) Initialise page count in pmbus_identify()
+
+Vitaliy Shevtsov <v.shevtsov@mt-integration.ru>
+    caif_virtio: fix wrong pointer check in cfv_probe()
+
+Antoine Tenart <atenart@kernel.org>
+    net: gso: fix ownership in __udp_gso_segment
+
+Meir Elisha <meir.elisha@volumez.com>
+    nvmet-tcp: Fix a possible sporadic response drops in weakly ordered arch
+
+Salah Triki <salah.triki@gmail.com>
+    bluetooth: btusb: Initialize .owner field of force_poll_sync_fops
+
+Zhang Lixu <lixu.zhang@intel.com>
+    HID: intel-ish-hid: Fix use-after-free issue in ishtp_hid_remove()
+
+Yu-Chun Lin <eleanor15x@gmail.com>
+    HID: google: fix unused variable warning under !CONFIG_ACPI
+
+Johannes Berg <johannes.berg@intel.com>
+    wifi: iwlwifi: limit printed string from FW file
+
+Ryan Roberts <ryan.roberts@arm.com>
+    mm: don't skip arch_sync_kernel_mappings() in error paths
+
+Hao Zhang <zhanghao1@kylinos.cn>
+    mm/page_alloc: fix uninitialized variable
+
+Olivier Gayot <olivier.gayot@canonical.com>
+    block: fix conversion of GPT partition name to 7-bit
+
+Heiko Carstens <hca@linux.ibm.com>
+    s390/traps: Fix test_monitor_call() inline assembly
+
+Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+    dma: kmsan: export kmsan_handle_dma() for modules
+
+Haoxiang Li <haoxiang_li2024@163.com>
+    rapidio: fix an API misues when rio_add_net() fails
+
+Haoxiang Li <haoxiang_li2024@163.com>
+    rapidio: add check for rio_add_net() in rio_scan_alloc_net()
+
+Vitaliy Shevtsov <v.shevtsov@mt-integration.ru>
+    wifi: nl80211: reject cooked mode if it is set along with other flags
+
+Nikita Zhandarovich <n.zhandarovich@fintech.ru>
+    wifi: cfg80211: regulatory: improve invalid hints checking
+
+Haoxiang Li <haoxiang_li2024@163.com>
+    Bluetooth: Add check for mgmt_alloc_skb() in mgmt_device_connected()
+
+Haoxiang Li <haoxiang_li2024@163.com>
+    Bluetooth: Add check for mgmt_alloc_skb() in mgmt_remote_name()
+
+Krister Johansen <kjlx@templeofstupid.com>
+    mptcp: fix 'scheduling while atomic' in mptcp_pm_nl_append_new_local_addr
+
+Ahmed S. Darwish <darwi@linutronix.de>
+    x86/cpu: Properly parse CPUID leaf 0x2 TLB descriptor 0x63
+
+Ahmed S. Darwish <darwi@linutronix.de>
+    x86/cpu: Validate CPUID leaf 0x2 EDX output
+
+Ahmed S. Darwish <darwi@linutronix.de>
+    x86/cacheinfo: Validate CPUID leaf 0x2 EDX output
+
+Mingcong Bai <jeffbai@aosc.io>
+    platform/x86: thinkpad_acpi: Add battery quirk for ThinkPad X131e
+
+Richard Thier <u9vata@gmail.com>
+    drm/radeon: Fix rs400_gpu_init for ATI mobility radeon Xpress 200M
+
+Ma Ke <make24@iscas.ac.cn>
+    drm/amd/display: Fix null check for pipe_ctx->plane_state in resource_build_scaling_params
+
+Kailang Yang <kailang@realtek.com>
+    ALSA: hda/realtek: update ALC222 depop optimize
+
+Kailang Yang <kailang@realtek.com>
+    ALSA: hda/realtek - add supported Mic Mute LED for Lenovo platform
+
+Hoku Ishibe <me@hokuishi.be>
+    ALSA: hda: intel: Add Dell ALC3271 to power_save denylist
+
+Koichiro Den <koichiro.den@canonical.com>
+    gpio: aggregator: protect driver attr handlers against module unload
+
+Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+    gpio: rcar: Use raw_spinlock to protect register access
+
+Namjae Jeon <linkinjeon@kernel.org>
+    ksmbd: fix bug on trap in smb2_lock
+
+Namjae Jeon <linkinjeon@kernel.org>
+    ksmbd: fix use-after-free in smb2_lock
+
+Namjae Jeon <linkinjeon@kernel.org>
+    ksmbd: fix type confusion via race condition when using ipc_msg_send_request
+
+Daniil Dulov <d.dulov@aladdin.ru>
+    HID: appleir: Fix potential NULL dereference at raw event handle
+
+Tiezhu Yang <yangtiezhu@loongson.cn>
+    LoongArch: Convert unreachable() to BUG()
+
+Rob Herring (Arm) <robh@kernel.org>
+    Revert "of: reserved-memory: Fix using wrong number of cells to get property 'alignment'"
+
+Andrew Cooper <andrew.cooper3@citrix.com>
+    x86/amd_nb: Use rdmsr_safe() in amd_get_mmconfig_range()
+
+Waiman Long <longman@redhat.com>
+    x86/speculation: Add __update_spec_ctrl() helper
+
+Peter Zijlstra <peterz@infradead.org>
+    cpuidle, intel_idle: Fix CPUIDLE_FLAG_IBRS
+
+Alex Deucher <alexander.deucher@amd.com>
+    drm/amdgpu: disable BAR resize on Dell G5 SE
+
+Ma Jun <Jun.Ma2@amd.com>
+    drm/amdgpu: Check extended configuration space register when system uses large bar
+
+Nick Child <nnac123@linux.ibm.com>
+    ibmvnic: Inspect header requirements before using scrq direct
+
+Nick Child <nnac123@linux.ibm.com>
+    ibmvnic: Perform tx CSO during send scrq direct
+
+
+-------------
+
+Diffstat:
+
+ Makefile                                           |   9 +-
+ arch/loongarch/kernel/machine_kexec.c              |   4 +-
+ arch/powerpc/kvm/e500_mmu_host.c                   |  21 ++-
+ arch/s390/kernel/traps.c                           |   6 +-
+ arch/x86/include/asm/spec-ctrl.h                   |  11 ++
+ arch/x86/kernel/amd_nb.c                           |   9 +-
+ arch/x86/kernel/cpu/bugs.c                         |   2 +-
+ arch/x86/kernel/cpu/cacheinfo.c                    |   2 +-
+ arch/x86/kernel/cpu/intel.c                        |  52 ++++--
+ arch/x86/kernel/cpu/sgx/ioctl.c                    |   7 +
+ arch/x86/kvm/svm/svm.c                             |  12 ++
+ arch/x86/kvm/svm/svm.h                             |   2 +-
+ arch/x86/mm/init.c                                 |  23 ++-
+ block/partitions/efi.c                             |   2 +-
+ drivers/base/core.c                                |   1 +
+ drivers/block/ublk_drv.c                           |   7 +-
+ drivers/bluetooth/btusb.c                          |   1 +
+ drivers/bus/mhi/host/pci_generic.c                 |   5 +-
+ drivers/gpio/gpio-aggregator.c                     |  20 ++-
+ drivers/gpio/gpio-rcar.c                           |  31 ++--
+ drivers/gpu/drm/amd/amdgpu/amdgpu_device.c         |  11 ++
+ drivers/gpu/drm/amd/display/dc/core/dc_resource.c  |   3 +-
+ drivers/gpu/drm/radeon/r300.c                      |   3 +-
+ drivers/gpu/drm/radeon/radeon_asic.h               |   1 +
+ drivers/gpu/drm/radeon/rs400.c                     |  18 +-
+ drivers/gpu/drm/scheduler/gpu_scheduler_trace.h    |   4 +-
+ drivers/hid/hid-appleir.c                          |   2 +-
+ drivers/hid/hid-google-hammer.c                    |   2 +
+ drivers/hid/intel-ish-hid/ishtp-hid.c              |   4 +-
+ drivers/hwmon/ad7314.c                             |  10 ++
+ drivers/hwmon/ntc_thermistor.c                     |  66 +++----
+ drivers/hwmon/pmbus/pmbus.c                        |   2 +
+ drivers/hwmon/xgene-hwmon.c                        |   2 +-
+ drivers/hwtracing/intel_th/pci.c                   |  15 ++
+ drivers/idle/intel_idle.c                          |   4 +-
+ drivers/iio/adc/at91-sama5d2_adc.c                 |  68 ++++---
+ drivers/iio/dac/ad3552r.c                          |   6 +
+ drivers/iio/filter/admv8818.c                      |  14 +-
+ .../media/platform/mediatek/vcodec/vdec_vpu_if.c   |   6 +
+ drivers/misc/cardreader/rtsx_usb.c                 |  15 --
+ drivers/misc/eeprom/digsy_mtc_eeprom.c             |   2 +-
+ drivers/misc/mei/hw-me-regs.h                      |   2 +
+ drivers/misc/mei/pci-me.c                          |   2 +
+ drivers/net/caif/caif_virtio.c                     |   2 +-
+ drivers/net/ethernet/emulex/benet/be.h             |   2 +-
+ drivers/net/ethernet/emulex/benet/be_cmds.c        | 197 ++++++++++-----------
+ drivers/net/ethernet/emulex/benet/be_main.c        |   2 +-
+ .../net/ethernet/hisilicon/hns3/hns3pf/hclge_ptp.c |   2 +-
+ drivers/net/ethernet/ibm/ibmvnic.c                 |  21 ++-
+ drivers/net/ppp/ppp_generic.c                      |  28 ++-
+ drivers/net/wireless/intel/iwlwifi/iwl-drv.c       |   2 +-
+ drivers/nvme/target/tcp.c                          |  15 +-
+ drivers/of/of_reserved_mem.c                       |   4 +-
+ drivers/platform/x86/thinkpad_acpi.c               |   1 +
+ drivers/rapidio/devices/rio_mport_cdev.c           |   3 +-
+ drivers/rapidio/rio-scan.c                         |   5 +-
+ drivers/scsi/lpfc/lpfc_hbadisc.c                   |   2 +
+ drivers/slimbus/messaging.c                        |   5 +-
+ drivers/spi/spi-mxs.c                              |   3 +-
+ drivers/usb/atm/cxacru.c                           |  13 +-
+ drivers/usb/core/hub.c                             |  33 ++++
+ drivers/usb/core/quirks.c                          |   4 +
+ drivers/usb/dwc3/core.c                            |  85 +++++----
+ drivers/usb/dwc3/core.h                            |   2 +-
+ drivers/usb/dwc3/drd.c                             |   4 +-
+ drivers/usb/dwc3/gadget.c                          |  10 +-
+ drivers/usb/gadget/composite.c                     |  17 +-
+ drivers/usb/host/xhci-mem.c                        |   3 +-
+ drivers/usb/host/xhci-pci.c                        |  18 +-
+ drivers/usb/host/xhci.h                            |   2 +-
+ drivers/usb/renesas_usbhs/common.c                 |   6 +-
+ drivers/usb/renesas_usbhs/mod_gadget.c             |   2 +-
+ drivers/usb/typec/tcpm/tcpci_rt1711h.c             |  11 ++
+ drivers/usb/typec/ucsi/ucsi.c                      |   2 +-
+ drivers/virt/acrn/hsm.c                            |   6 +-
+ fs/exfat/balloc.c                                  |  10 +-
+ fs/exfat/exfat_fs.h                                |   2 +-
+ fs/exfat/fatent.c                                  |  11 +-
+ fs/nilfs2/dir.c                                    |  24 ++-
+ fs/nilfs2/namei.c                                  |  37 ++--
+ fs/nilfs2/nilfs.h                                  |  10 +-
+ fs/ntfs3/record.c                                  |   3 +
+ fs/smb/server/smb2pdu.c                            |   8 +-
+ fs/smb/server/transport_ipc.c                      |   1 +
+ kernel/events/uprobes.c                            |   2 +-
+ kernel/sched/fair.c                                |   6 +-
+ mm/kmsan/hooks.c                                   |   1 +
+ mm/memory.c                                        |   6 +-
+ mm/page_alloc.c                                    |   1 +
+ mm/vmalloc.c                                       |   4 +-
+ net/8021q/vlan.c                                   |   3 +-
+ net/bluetooth/mgmt.c                               |   5 +
+ net/ipv4/tcp_offload.c                             |  11 +-
+ net/ipv4/udp_offload.c                             |   8 +-
+ net/ipv6/ila/ila_lwt.c                             |   4 +-
+ net/llc/llc_s_ac.c                                 |  49 ++---
+ net/mptcp/pm_netlink.c                             |  18 +-
+ net/vmw_vsock/af_vsock.c                           |  77 +++++---
+ net/wireless/nl80211.c                             |   5 +
+ net/wireless/reg.c                                 |   3 +-
+ sound/pci/hda/Kconfig                              |   1 +
+ sound/pci/hda/hda_intel.c                          |   2 +
+ sound/pci/hda/patch_realtek.c                      |  99 ++++++++++-
+ sound/usb/usx2y/usbusx2y.c                         |  11 ++
+ sound/usb/usx2y/usbusx2y.h                         |  26 +++
+ sound/usb/usx2y/usbusx2yaudio.c                    |  27 ---
+ 106 files changed, 969 insertions(+), 507 deletions(-)
+
+
 
