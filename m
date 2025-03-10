@@ -1,113 +1,134 @@
-Return-Path: <linux-kernel+bounces-554055-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-554056-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C09C2A59238
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 12:07:30 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7FEE9A5923E
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 12:08:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B9CBC3A5D00
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 11:07:15 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E60BD7A2FCE
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 11:07:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97234226D1A;
-	Mon, 10 Mar 2025 11:07:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED1A7226D0A;
+	Mon, 10 Mar 2025 11:08:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="O/TaV/xJ"
-Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="DMPkMqbs";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="pPTfCRE3"
+Received: from fout-a2-smtp.messagingengine.com (fout-a2-smtp.messagingengine.com [103.168.172.145])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E980226CF3
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 11:07:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7AB1226193;
+	Mon, 10 Mar 2025 11:08:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.145
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741604842; cv=none; b=PEgCPXYneJ5cpEhAGSYXQOMzVG4WHbtD6AAb4KoedeBjDLr8y2Qma8mXqRbdk2VjlLTb5yoZtbTnht0NmrFRfhiekMExkuCRjQhJVnXZF7+5XqteaDae/8ROC+5rKJb3rZD9nZmnrVq9XlpSzNLEMS0O2ei6YlrDw5tlR4IE1mU=
+	t=1741604901; cv=none; b=CYOJL2dIzcMU5cWCWLTdEz723oiOvg8Hawh3WpkS5w3S/pZ1y3BjcWyLjIsB8AHoliKIr+e3QhVQEmVmq6qPRXGu6nKnnKj2Tr5HsKT4oPxQ47t8q82oHPZshWzuoOjoyZ93WL5hGpRteQbQ6jGZeXLIkg8SmKPgzk6Gi3V8x80=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741604842; c=relaxed/simple;
-	bh=E3SkaDiyXKVedK5kf/LG+F6Dw3khT24RClCdqmT6xxg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=opjjZYoPYEzhdUV8sIIVB8VwOAfFWcN2qvAuNFZ4rVS1cEjfUOsiRJQurZbRY7Qcl1yI4NcdxTl9ieNijU3mNRrnQlLCMT4r+21bhpj4ixZiQnV/w87pQcm+cU29JV710L37USKebDh/oIAgEMMP4/1dkMs4epvNHqiSkumxByA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=O/TaV/xJ; arc=none smtp.client-ip=209.85.221.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-3913d129c1aso1057155f8f.0
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 04:07:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1741604838; x=1742209638; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=JBcgqyPlbosjp2zy3+ac6vsF4qpWptDr9INnNUVK6yk=;
-        b=O/TaV/xJ5qCwzereSakC8r4boyJoWxcCHOqZ+eK5aWyGoksPS2T936FrSQXgg6DAl6
-         8StyBZEN7r7VfqcgRXSR+zmPNIq5UvurImiM6nT3YcheZq0NN1RcS4Rdz6nhzKXjci9z
-         NJ5zCIqTlIDMbvRHBdVDmjfzzk9V1+MEHSCQ8HKRcsgXkzlq3hqogaHlJCqcmVshk3VW
-         F5zGaqpTUI5nBZ/Oqnx6azJXuq+fdK8l5crZv8l42ldrDuekIz4ly02+q+S4YrB85d3I
-         VZ2qUuwSzUcPguvuLSzKjprr1qpHojW3tRFqgQgbUigCYlDKOuJ2/UmvKIPCXIQNYP40
-         hFyw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741604838; x=1742209638;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=JBcgqyPlbosjp2zy3+ac6vsF4qpWptDr9INnNUVK6yk=;
-        b=L4Cx8fp9lGS0FXWU3VNVSA/9FXWTLLiXzsYqcYoJcJAmT5pk3hz5HMf2NvvrdW0NK1
-         UIRQSxrduXbOBVsLf9YYQat7pbaqNmvbnV5pDwAQLocnPHB/OIJiIkYJBPGMTgGqzhUK
-         3a5pZHQohcwBwPEiLw0AiH3MMwg4bebSVq3aRImX8R+Mxsu+4uT8/3Vt2DFmh+h83bCJ
-         xTGgp5TPCc/ThFI94HTCvv6xPZnsk3Km9hc7u+k56ljtnHtcJP6IQpGh6wWEMETrZEwo
-         b/SEg7m+sYqccMeyfT+nlmh9xfLgH16R7XxRPZphwYKdbA1zeJtPu/CpLt4FUMDCnyOS
-         7B3Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVzoNfkGJp/ndj7Q1twEIDa2P1T5NaxViheulhrexNW186LYEDmamGcphyTZrqbM7QvxKR+XTb4BIgBgWA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxHOj9hX2dbSKAlxj3Vit3YmxclYFhgDTYIOjl0If/55rIfaDXb
-	6prM0kwqzvQ1b/uk0Y3aCLaZjboOz2zM/2LsO4DRNrStVHzl84hz/QKgYyMGDGA=
-X-Gm-Gg: ASbGnctOAEmg3JT6NEuuPKVLSvBiMTstB6V+CNzvUptiDLweYTnv5qC4TwcK1m7I/dS
-	JOf5CmlvOI80ZFYRBdpiHnIZzJoTsATGLQjlElgyKZzq1LvqXxVkrU/0hTeIP4MJDl+2Dn1unJP
-	+v3tPB4oJ5jhM9Zql412qvJ3ymbmoaoqkBJTaJP5qZuIIxOQW1lY0CXYoBoBSlkDoPjsVS309Tk
-	a1v0HROcUENtqBMZAwHrS++dUTkwO73nGOphznDxfTGoBpPzwYid6UheChwKLVwCWRDTWSV9+0n
-	zN0CAKp9vd2FY8pQvO2zlIJgR3sinIeVQZJXNcanaApfjHBh
-X-Google-Smtp-Source: AGHT+IH9/rdUnizpqSBA8HQZRuo5gzzbf5lJb9mjbnEeKpVc0nSuueyiE3WfSrFLVop5GR7AmRPlJw==
-X-Received: by 2002:a05:6000:184b:b0:38f:23c4:208c with SMTP id ffacd0b85a97d-3913af2e472mr5183779f8f.18.1741604838405;
-        Mon, 10 Mar 2025 04:07:18 -0700 (PDT)
-Received: from [10.100.51.161] ([193.86.92.181])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43cfa7e4f36sm24039495e9.40.2025.03.10.04.07.17
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 10 Mar 2025 04:07:17 -0700 (PDT)
-Message-ID: <975dff84-234d-4fad-b15d-0427672785d1@suse.com>
-Date: Mon, 10 Mar 2025 12:07:16 +0100
+	s=arc-20240116; t=1741604901; c=relaxed/simple;
+	bh=xvMJrDw0y71650wJWd+40aIoJasnNgfqXdrkvrX/7YI=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=crG54bwYq5X9bhhDxyIVfcu5ZAhTFnHaRyGWbaoIhkayquQOq2R6ITj9+43Pb7MmJXSN4SXXjt4VJkF4dOc1IO3SaQiqvIdaV4v86D915fNCKYxCbjN4uNca95XOHYUFVDUy0toN8PMB7ctP99aDfYQK2em1ao3hazn4qVePj9g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=DMPkMqbs; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=pPTfCRE3; arc=none smtp.client-ip=103.168.172.145
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from phl-compute-07.internal (phl-compute-07.phl.internal [10.202.2.47])
+	by mailfout.phl.internal (Postfix) with ESMTP id 92DDE1382D3C;
+	Mon, 10 Mar 2025 07:08:18 -0400 (EDT)
+Received: from phl-imap-11 ([10.202.2.101])
+  by phl-compute-07.internal (MEProxy); Mon, 10 Mar 2025 07:08:18 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm3; t=1741604898;
+	 x=1741691298; bh=Apaj21dkzM+VkTh8UH1lJMExSSBSc8XmpLRBgZkT51Q=; b=
+	DMPkMqbsjW0B1h0G9cj6+fhuyrAzzqf2jrqYh4rB1LzL/d0tlGcFTCyUkd9hW9Am
+	sDvCmliWMLldoChh6L8IxCUFK9vDUe6yMNM4wNZAqK+8lynWPCoodS23wbJg+PEI
+	eQ3NmVm0P3XYYgPQJE/H7Rs23p36QW4SeKgQO2tNV5MT0WtcWe2lYYnIvB90NLOZ
+	JuzPEg2xTx/z9CyCr/qkYygTUgmMfxXc+T9M4JiV6iJDqKYAdtoGmNXHpJyOAg05
+	z9Po/ENcHzf8GHgOikR/08YY1RLuAXVedn9lJLfE4BDW2hp1b+NUozBiyyDu6Xvo
+	BkWla6AosU5ZoX1mU0khFA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1741604898; x=
+	1741691298; bh=Apaj21dkzM+VkTh8UH1lJMExSSBSc8XmpLRBgZkT51Q=; b=p
+	PTfCRE3bEkYbtm0XRKb8+lrEsWRiIauESbGTQHjHdP67nCDiKU0dJc1oG5PY0JGS
+	JklFEMIVarCww6V4VeWZA3eTwp6+Jxny0Fs3V107JOmPd8ZEsXZQAu3kmUHJTW7v
+	iN6D7A7JUhxAV82VX1n6h2LrcNDNGnOxHYD6oBnKdIM5prPLnWFu6yjW3BlPZpAw
+	LqJpmidNuV8Jtdr8T8MYxXi43by/vpgJXCcKS4XqoCTeWxiofYp9Wl1VaWEW7fmO
+	QbrhYotIfkUd3H3J2CJ6DG9lQZdpkPqd1F4trHNNif5IIc3LSNxDGg80C4SI9paI
+	6zbHAK0jBde+X07RpglTg==
+X-ME-Sender: <xms:IsjOZ5tVzhMUuwVnID3T_CAstLrvmaGTvGmERfH1kjSMq-rAhg2prw>
+    <xme:IsjOZyfRnWz7_Cvd1w9Pg1etW_fh3IqJ-Yxe4c7yb5DeUtr2yWQyk8imfOF_pLZB2
+    8x-rCBM-JrKpYyiyAU>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdduudelvddtucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
+    pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
+    gvnhhtshculddquddttddmnecujfgurhepofggfffhvfevkfgjfhfutgfgsehtjeertder
+    tddtnecuhfhrohhmpedftehrnhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnug
+    gsrdguvgeqnecuggftrfgrthhtvghrnhephfdthfdvtdefhedukeetgefggffhjeeggeet
+    fefggfevudegudevledvkefhvdeinecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrg
+    hmpehmrghilhhfrhhomheprghrnhgusegrrhhnuggsrdguvgdpnhgspghrtghpthhtohep
+    kedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtoheprghgohhruggvvghvsehlihhnuh
+    igrdhisghmrdgtohhmpdhrtghpthhtohepsghorhhnthhrrggvghgvrheslhhinhhugidr
+    ihgsmhdrtghomhdprhgtphhtthhopehgohhrsehlihhnuhigrdhisghmrdgtohhmpdhrtg
+    hpthhtohephhgtrgeslhhinhhugidrihgsmhdrtghomhdprhgtphhtthhopehsvhgvnhhs
+    sehlihhnuhigrdhisghmrdgtohhmpdhrtghpthhtohepthhhuhhthhesrhgvughhrghtrd
+    gtohhmpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghl
+    rdhorhhgpdhrtghpthhtoheplhhinhhugidqshefledtsehvghgvrhdrkhgvrhhnvghlrd
+    horhhg
+X-ME-Proxy: <xmx:IsjOZ8xvb6KmSinwNEfF4ON13Q0qptj6TIfxANrm_UINxyZ1nH3P4Q>
+    <xmx:IsjOZwNO14SI5s0L4ce3JPytGFpBYcBXVFAvjkIC4m7eO0OGhzSlqg>
+    <xmx:IsjOZ5-tysCkiKEv-A3i38k2IR9vpwn64afzDp5fb_FMv8c0jFCeOw>
+    <xmx:IsjOZwVjw59dFx7xojC52puO7VetCqNEH3qNQy8fAJX8IGtphDoTSw>
+    <xmx:IsjOZyPzySfhaIaE8ZSmnJAMCgv-QXHvprkvWXfHLb9brf56KjDyx1aa>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id 351EF2220072; Mon, 10 Mar 2025 07:08:18 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] module: Replace deprecated strncpy() with strscpy()
-To: Thorsten Blum <thorsten.blum@linux.dev>
-Cc: Luis Chamberlain <mcgrof@kernel.org>,
- Sami Tolvanen <samitolvanen@google.com>, Daniel Gomez
- <da.gomez@samsung.com>, linux-hardening@vger.kernel.org,
- linux-modules@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250307113546.112237-2-thorsten.blum@linux.dev>
-Content-Language: en-US
-From: Petr Pavlu <petr.pavlu@suse.com>
-In-Reply-To: <20250307113546.112237-2-thorsten.blum@linux.dev>
-Content-Type: text/plain; charset=UTF-8
+Date: Mon, 10 Mar 2025 12:07:40 +0100
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Heiko Carstens" <hca@linux.ibm.com>, "Thomas Huth" <thuth@redhat.com>
+Cc: "Vasily Gorbik" <gor@linux.ibm.com>,
+ "Alexander Gordeev" <agordeev@linux.ibm.com>, linux-s390@vger.kernel.org,
+ "Christian Borntraeger" <borntraeger@linux.ibm.com>,
+ "Sven Schnelle" <svens@linux.ibm.com>, linux-kernel@vger.kernel.org
+Message-Id: <ab1ab15a-89e1-4c26-b7a2-6147a10a2fca@app.fastmail.com>
+In-Reply-To: <20250310104910.27210B18-hca@linux.ibm.com>
+References: <20250310102657.54557-1-thuth@redhat.com>
+ <20250310104910.27210B18-hca@linux.ibm.com>
+Subject: Re: [PATCH] s390/uapi: Replace __ASSEMBLY__ with __ASSEMBLER__ in uapi headers
+Content-Type: text/plain
 Content-Transfer-Encoding: 7bit
 
-On 3/7/25 12:35, Thorsten Blum wrote:
-> strncpy() is deprecated for NUL-terminated destination buffers; use
-> strscpy() instead. The destination buffer ownername is only used with
-> "%s" format strings and must therefore be NUL-terminated, but not NUL-
-> padded.
-> 
-> No functional changes intended.
-> 
-> Link: https://github.com/KSPP/linux/issues/90
-> Cc: linux-hardening@vger.kernel.org
-> Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
+On Mon, Mar 10, 2025, at 11:49, Heiko Carstens wrote:
+> On Mon, Mar 10, 2025 at 11:26:57AM +0100, Thomas Huth wrote:
+>
+> Did this cause any sorts of problems? I can see this pattern all over
+> the place, so why is this now a problem?
+>
+> Also, wouldn't it be better to fix this with an sed statement in
+> scripts/headers_install.sh instead? Otherwise this is going to be a
+> never ending story since those things will be re-introduced all the
+> time.
 
-Looks good to me. I've queued it on modules-next.
+It should certainly be done in a consistent way across all
+architectures and architecture-independent headers. I see that
+all uapi headers use __ASSEMBLY__ consistently, while a few non-uapi
+headers use __ASSEMBLER__.
 
--- 
-Thanks,
-Petr
+glibc obviously defines __ASSEMBLY__ whenever it includes one
+of the kernel headers that need this from a .S file. Unless
+there is a known problem with the current code, leaving this
+unchanged is probably the least risky way.
+
+   Arnd
 
