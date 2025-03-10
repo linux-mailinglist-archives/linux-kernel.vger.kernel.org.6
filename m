@@ -1,266 +1,123 @@
-Return-Path: <linux-kernel+bounces-554228-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-554229-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08F55A594F6
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 13:45:01 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9E193A59502
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 13:46:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F007C16DE7B
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 12:44:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C980A3B163D
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 12:44:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECEA8228CB5;
-	Mon, 10 Mar 2025 12:44:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="YegjSBP9"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9989B22A1E9;
+	Mon, 10 Mar 2025 12:44:25 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5474B22172D;
-	Mon, 10 Mar 2025 12:44:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F18CC2253E6;
+	Mon, 10 Mar 2025 12:44:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741610660; cv=none; b=CKyI8GwLl0ICJ4eVa63QiMpNV8UfcSkoUXxuoy37Tzcd9KX2tyaq3Ab+DL0RRMGaKIuhN4O85n9ZNxV+GPNscrCEhbdhdmiEem/DoeteEUGnEV4VG8Pjkax0hjV2bWQE/21lV4BxAP2sC1L6KF2PO1C4mw/pqvIqQm5ngYSADxE=
+	t=1741610665; cv=none; b=dBDjrdQTyO1t1+ZWQ5W3A4U7NoY082ZzNEeoF1BevlMBUzGcKsRG159qX20x2PKx+taZQYv4OKhs9NDIz9vhQ0nJJp4Oved0cVeP6/iPaUFyfqEnB+ETNmTVqqW96a7hWkv/LXAhM8T/9GZ/zPJB8eV/PJbK59iJfbsYBEbFSMk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741610660; c=relaxed/simple;
-	bh=zP/SBsawh9IJ4rFGXkTfKbMGgKVbMiboFwfKn+yD3Ak=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rphhGlh/rI2IhhBKiUBKra+FaEu7DphY6O7w7IHTKie2BaLah6X4BIz8mRa4zZd5BjFF8QVFGNdbhqhVoaFvGRDZF6lhGIqKo7o4T6VeKnqV1Fyhb60AdsJnMJ+MH/wArTQMOmEFhr8+zQiz0Q3Vd8JN1Z2j5fG2JW4jd/Vf+e4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=YegjSBP9; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=ScP3/QN7pJ6oT8ufJYhHtcaoJqNafq5u9wpkG818K9k=; b=YegjSBP9TEr78VdbHgWlSAeRaX
-	2gBu+99MlytfKi3louhCon8+cTDF61pRxIgRK6+LhliqHqUs9BdatSy/kKPDvK4aG1VR3aDdqDqgc
-	3/iL19v2sDDZ9WCn/ljHALcRCD+NjNTKKE17n8KNzHzm50eT0NZP7LtwD0YhYmh71TPm4XWu5oe5j
-	q+oDD50mb0gKdjuaxmBtq2pd4Jc3uUfEpgA8k5cwjMNVgtPYP7c6yNVznsPDtKw31m9JUnKd1gFhM
-	6OfjdKpggLqeZlrvHPrNv1bDEFI/Cl8pQtG+x3LtxE5ajjQvwFyBfwteD0nMzTGPR3gX40IMW23OB
-	gYhL6yYA==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1trcUG-00000001rMT-15Xu;
-	Mon, 10 Mar 2025 12:44:04 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 41D40300599; Mon, 10 Mar 2025 13:44:03 +0100 (CET)
-Date: Mon, 10 Mar 2025 13:44:03 +0100
-From: Peter Zijlstra <peterz@infradead.org>
-To: mark.barnett@arm.com
-Cc: mingo@redhat.com, acme@kernel.org, namhyung@kernel.org,
-	irogers@google.com, ben.gainey@arm.com, deepak.surti@arm.com,
-	ak@linux.intel.com, will@kernel.org, james.clark@arm.com,
-	mark.rutland@arm.com, alexander.shishkin@linux.intel.com,
-	jolsa@kernel.org, adrian.hunter@intel.com,
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v3 2/5] perf: Allow periodic events to alternate between
- two sample periods
-Message-ID: <20250310124403.GQ5880@noisy.programming.kicks-ass.net>
-References: <20250307202247.648633-1-mark.barnett@arm.com>
- <20250307202247.648633-3-mark.barnett@arm.com>
+	s=arc-20240116; t=1741610665; c=relaxed/simple;
+	bh=uH+sZDT/+u9Xsuiowtq09BO7Ga7yEOnPdwZTgyvS4HQ=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=aAN/+i6ZEb5aNpx0LIPepTE1bvKNRIbyidltl/yrtIYCnHg6ceuz+Wht7P8nVFxxwgyUNeywwQgZtgHFVKd1xPsk1/njYBLrTYorxe6CCE4yNYPQzVpVQWuNotl8HsOEt/VVkPctbr+uP7a8Uqc3l2y13C4H9gQExA79jxscI9M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.31])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4ZBGj534jzz67Ldy;
+	Mon, 10 Mar 2025 20:41:13 +0800 (CST)
+Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
+	by mail.maildlp.com (Postfix) with ESMTPS id AC6691405E3;
+	Mon, 10 Mar 2025 20:44:18 +0800 (CST)
+Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
+ (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Mon, 10 Mar
+ 2025 13:44:17 +0100
+Date: Mon, 10 Mar 2025 12:44:15 +0000
+From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+To: Shiju Jose <shiju.jose@huawei.com>, "dferguson@amperecomputing.com"
+	<dferguson@amperecomputing.com>
+CC: "linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>,
+	"linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>, "bp@alien8.de"
+	<bp@alien8.de>, "tony.luck@intel.com" <tony.luck@intel.com>,
+	"rafael@kernel.org" <rafael@kernel.org>, "lenb@kernel.org" <lenb@kernel.org>,
+	"mchehab@kernel.org" <mchehab@kernel.org>, "leo.duran@amd.com"
+	<leo.duran@amd.com>, "Yazen.Ghannam@amd.com" <Yazen.Ghannam@amd.com>,
+	"linux-cxl@vger.kernel.org" <linux-cxl@vger.kernel.org>,
+	"dan.j.williams@intel.com" <dan.j.williams@intel.com>, "dave@stgolabs.net"
+	<dave@stgolabs.net>, "dave.jiang@intel.com" <dave.jiang@intel.com>,
+	"alison.schofield@intel.com" <alison.schofield@intel.com>,
+	"vishal.l.verma@intel.com" <vishal.l.verma@intel.com>, "ira.weiny@intel.com"
+	<ira.weiny@intel.com>, "david@redhat.com" <david@redhat.com>,
+	"Vilas.Sridharan@amd.com" <Vilas.Sridharan@amd.com>, "linux-mm@kvack.org"
+	<linux-mm@kvack.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "rientjes@google.com" <rientjes@google.com>,
+	"jiaqiyan@google.com" <jiaqiyan@google.com>, "Jon.Grimm@amd.com"
+	<Jon.Grimm@amd.com>, "dave.hansen@linux.intel.com"
+	<dave.hansen@linux.intel.com>, "naoya.horiguchi@nec.com"
+	<naoya.horiguchi@nec.com>, "james.morse@arm.com" <james.morse@arm.com>,
+	"jthoughton@google.com" <jthoughton@google.com>, "somasundaram.a@hpe.com"
+	<somasundaram.a@hpe.com>, "erdemaktas@google.com" <erdemaktas@google.com>,
+	"pgonda@google.com" <pgonda@google.com>, "duenwen@google.com"
+	<duenwen@google.com>, "gthelen@google.com" <gthelen@google.com>,
+	"wschwartz@amperecomputing.com" <wschwartz@amperecomputing.com>,
+	"wbs@os.amperecomputing.com" <wbs@os.amperecomputing.com>,
+	"nifan.cxl@gmail.com" <nifan.cxl@gmail.com>, tanxiaofei
+	<tanxiaofei@huawei.com>, "Zengtao (B)" <prime.zeng@hisilicon.com>, Roberto
+ Sassu <roberto.sassu@huawei.com>, "kangkang.shen@futurewei.com"
+	<kangkang.shen@futurewei.com>, wanghuiqiang <wanghuiqiang@huawei.com>,
+	Linuxarm <linuxarm@huawei.com>
+Subject: Re: [PATCH v2 2/3] ACPI:RAS2: Add ACPI RAS2 driver
+Message-ID: <20250310124415.0000710a@huawei.com>
+In-Reply-To: <a0b319b4f42c4286a120fbb88a88adeb@huawei.com>
+References: <20250305180225.1226-1-shiju.jose@huawei.com>
+	<20250305180225.1226-3-shiju.jose@huawei.com>
+	<20250306171925.00002721@huawei.com>
+	<a0b319b4f42c4286a120fbb88a88adeb@huawei.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250307202247.648633-3-mark.barnett@arm.com>
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml100012.china.huawei.com (7.191.174.184) To
+ frapeml500008.china.huawei.com (7.182.85.71)
 
-On Fri, Mar 07, 2025 at 08:22:44PM +0000, mark.barnett@arm.com wrote:
-> From: Ben Gainey <ben.gainey@arm.com>
+> >> +#define RAS2_PCC_CMD_COMPLETE	BIT(0)
+> >> +#define RAS2_PCC_CMD_ERROR	BIT(2)
+> >> +  
+> >I think these bits are from table 14.11 and
+> >generic to all PCC status registers? Should these
+> >have more generic names rather than ras2 specific ones?  
+> Yes.
+> Instead will use PCC_STATUS_CMD_ COMPLETE and  PCC_STATUS_ ERROR
+> from include/acpi/pcc.h. 
 > 
-> This change modifies perf_event_attr to add a second, alternative
-> sample period field, and modifies the core perf overflow handling
-> such that when specified an event will alternate between two sample
-> periods.
-> 
-> Currently, perf does not provide a  mechanism for decoupling the period
-> over which counters are counted from the period between samples. This is
-> problematic for building a tool to measure per-function metrics derived
-> from a sampled counter group. Ideally such a tool wants a very small
-> sample window in order to correctly attribute the metrics to a given
-> function, but prefers a larger sample period that provides representative
-> coverage without excessive probe effect, triggering throttling, or
-> generating excessive amounts of data.
-> 
-> By alternating between a long and short sample_period and subsequently
-> discarding the long samples, tools may decouple the period between
-> samples that the tool cares about from the window of time over which
-> interesting counts are collected.
-> 
-> It is expected that typically tools would use this feature with the
-> cycles or instructions events as an approximation for time, but no
-> restrictions are applied to which events this can be applied to.
+> >  
+> >> +/* RAS2 specific PCC commands */
+> >> +#define RAS2_PCC_CMD_EXEC 0x01  
+> >Are we mixing commands and field definitions both
+> >with prefix RAS2_PCC_CMD_ ?  That is somewhat
+> >confusing.  
+> Will add Table 5.82: .. here in the comment and 
+> Is rename to PCC_CMD_ EXEC_RAS2  better?
 
-So you do add the constraint that 'alt_sample_period < sample_period'
-but there is no natural reason for this to be so.
+That seems OK to me.
 
-Additionally, this way the total period ends up being 'sample_period +
-alt_sample_period'.
 
-Would not a more natural way to express things be:
+For things you agree with feel free to just crop out that bit
+of the email so it is easier to spot the remaining questions.
 
-	p1 = sample_period - alt_sample_period;
-	p2 = alt_sample_period;
+Thanks,
 
-This way you retain the total period to be 'sample_period' and naturally
-get the constraint: 'alt_sample_period < sample_period'.
+Jonathan
 
-That is; I'm somewhat confused by the state of things; it doesn't seem
-consistent.
-
-(Also note that this alternative form might actually work in combination
-with attr.freq set -- although that has a number of 'fun' details I'm
-sure).
-
-> Signed-off-by: Ben Gainey <ben.gainey@arm.com>
-> Signed-off-by: Mark Barnett <mark.barnett@arm.com>
-> ---
->  include/linux/perf_event.h      |  5 +++++
->  include/uapi/linux/perf_event.h |  3 +++
->  kernel/events/core.c            | 39 ++++++++++++++++++++++++++++++++-
->  3 files changed, 46 insertions(+), 1 deletion(-)
-> 
-> diff --git a/include/linux/perf_event.h b/include/linux/perf_event.h
-> index 8333f132f4a9..99ba72c8fb6d 100644
-> --- a/include/linux/perf_event.h
-> +++ b/include/linux/perf_event.h
-> @@ -276,6 +276,11 @@ struct hw_perf_event {
->  	 */
->  	u64				freq_time_stamp;
->  	u64				freq_count_stamp;
-> +
-> +	/*
-> +	 * Indicates that the alternative sample period is used
-> +	 */
-> +	bool				using_alt_sample_period;
-
-There's a 4 byte hole in this structure if you look; also please use a
-flag, sizeof(_Bool) is ABI dependent.
-
->  #endif
->  };
->  
-> diff --git a/include/uapi/linux/perf_event.h b/include/uapi/linux/perf_event.h
-> index 0524d541d4e3..499a8673df8e 100644
-> --- a/include/uapi/linux/perf_event.h
-> +++ b/include/uapi/linux/perf_event.h
-> @@ -379,6 +379,7 @@ enum perf_event_read_format {
->  #define PERF_ATTR_SIZE_VER6	120	/* add: aux_sample_size */
->  #define PERF_ATTR_SIZE_VER7	128	/* add: sig_data */
->  #define PERF_ATTR_SIZE_VER8	136	/* add: config3 */
-> +#define PERF_ATTR_SIZE_VER9	144	/* add: alt_sample_period */
->  
->  /*
->   * Hardware event_id to monitor via a performance monitoring event:
-> @@ -531,6 +532,8 @@ struct perf_event_attr {
->  	__u64	sig_data;
->  
->  	__u64	config3; /* extension of config2 */
-> +
-> +	__u64	alt_sample_period;
->  };
->  
->  /*
-> diff --git a/kernel/events/core.c b/kernel/events/core.c
-> index bcb09e011e9e..7ec8ec6ba7ef 100644
-> --- a/kernel/events/core.c
-> +++ b/kernel/events/core.c
-> @@ -4178,6 +4178,8 @@ static void perf_adjust_period(struct perf_event *event, u64 nsec, u64 count, bo
->  	s64 period, sample_period;
->  	s64 delta;
->  
-> +	WARN_ON_ONCE(hwc->using_alt_sample_period);
-
-Groan; so that bit keeps flipping in and off, and statistically we'll
-warn, but urgh.
-
->  	period = perf_calculate_period(event, nsec, count);
->  
->  	delta = (s64)(period - hwc->sample_period);
-> @@ -9894,6 +9896,7 @@ static int __perf_event_overflow(struct perf_event *event,
->  				 int throttle, struct perf_sample_data *data,
->  				 struct pt_regs *regs)
->  {
-> +	struct hw_perf_event *hwc = &event->hw;
->  	int events = atomic_read(&event->event_limit);
->  	int ret = 0;
->  
-> @@ -9913,6 +9916,18 @@ static int __perf_event_overflow(struct perf_event *event,
->  	    !bpf_overflow_handler(event, data, regs))
->  		goto out;
->  
-> +	/*
-> +	 * Swap the sample period to the alternative period
-> +	 */
-> +	if (event->attr.alt_sample_period) {
-> +		bool using_alt = hwc->using_alt_sample_period;
-> +		u64 sample_period = (using_alt ? event->attr.sample_period
-> +					       : event->attr.alt_sample_period);
-> +
-> +		hwc->sample_period = sample_period;
-> +		hwc->using_alt_sample_period = !using_alt;
-> +	}
-> +
->  	/*
->  	 * XXX event_limit might not quite work as expected on inherited
->  	 * events
-> @@ -12335,9 +12350,19 @@ perf_event_alloc(struct perf_event_attr *attr, int cpu,
->  	if (attr->freq && attr->sample_freq)
->  		hwc->sample_period = 1;
->  	hwc->last_period = hwc->sample_period;
-> -
->  	local64_set(&hwc->period_left, hwc->sample_period);
->  
-> +	/*
-> +	 * alt_sample_period cannot be used with freq
-> +	 */
-> +	if (attr->freq && attr->alt_sample_period)
-> +		goto err_ns;
-
-How can this happen? This case has already been filtered in
-perf_event_open() below, no?
-
-Also, this doesn't apply to tip/perf/core, someone went and changed
-things...
-
-> +
-> +	if (attr->alt_sample_period) {
-> +		hwc->sample_period = attr->alt_sample_period;
-> +		hwc->using_alt_sample_period = true;
-> +	}
-> +
->  	/*
->  	 * We do not support PERF_SAMPLE_READ on inherited events unless
->  	 * PERF_SAMPLE_TID is also selected, which allows inherited events to
-> @@ -12807,9 +12832,21 @@ SYSCALL_DEFINE5(perf_event_open,
->  	if (attr.freq) {
->  		if (attr.sample_freq > sysctl_perf_event_sample_rate)
->  			return -EINVAL;
-> +		if (attr.alt_sample_period)
-> +			return -EINVAL;
->  	} else {
->  		if (attr.sample_period & (1ULL << 63))
->  			return -EINVAL;
-> +		if (attr.alt_sample_period) {
-> +			if (!attr.sample_period)
-> +				return -EINVAL;
-> +			if (attr.alt_sample_period & (1ULL << 63))
-> +				return -EINVAL;
-> +			if (attr.alt_sample_period > attr.sample_period)
-> +				return -EINVAL;
-> +			if (attr.alt_sample_period == attr.sample_period)
-> +				attr.alt_sample_period = 0;
-> +		}
->  	}
->  
->  	/* Only privileged users can get physical addresses */
-> -- 
-> 2.43.0
-> 
 
