@@ -1,87 +1,110 @@
-Return-Path: <linux-kernel+bounces-554638-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-554639-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E392FA59ACC
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 17:17:16 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 147FDA59ACE
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 17:18:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2D35216E103
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 16:17:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 518FA16E13D
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 16:18:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A11B122FDFF;
-	Mon, 10 Mar 2025 16:17:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5FC822FADE;
+	Mon, 10 Mar 2025 16:18:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="AY+q+Fix"
-Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lybZ1lzJ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99E8B22F17A
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 16:17:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30DB41E519;
+	Mon, 10 Mar 2025 16:18:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741623432; cv=none; b=Oiw9kIHrQmGMcoMvt8b8Poi1fLY8SZwRk6dzf+N5I3f5a9qOV5CJcZ0ZMGW+qD2MbuwJBlxh4TQt5EKqUuEdVjtsaHHxLFm7Vv0TSONrYaYOSEa73dEcMztkRCz5T6aoNyRuJb75SLc3yqMJ3YEPFvJtvBL2yrq5LoQaQiavPyU=
+	t=1741623482; cv=none; b=JpsMbMPEvdocZPDbBAnU1McXqse/TuDMd9VuX6ue1YzrrdyGcgQo3/lSrgh2LtEJCpJmVr2TKSI3yImlRNoPKdGdcYglDlvT+zsF38SAGvAHVAmk6C7iwSQVHQ7L9TveaD/6Cf0ZespEtD/+CAP2T+oOX7Cf1MwpvJLLJUnr3Gs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741623432; c=relaxed/simple;
-	bh=E5gkLF4efJbEakqe2LCyGh3dRXBQKFkQyAgDGFFrD/E=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=Dlvs0u/iArDsGaE5DL2VgUFc/m100ipC3GdcA7eUHF/INeHdK0/G4f9QUF4hLoJDJOTVJ5zFnoEUB9ObyoxYw3rEoR1jzmLg325sMcSWSiJWaH2+a4Yfe3PobzYH98FdCziUSN95f/2OjMdwUIxJEUTTlnNpyUQCFfELlDSbIW4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=AY+q+Fix; arc=none smtp.client-ip=209.85.214.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-2217a4bfcc7so69634945ad.3
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 09:17:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1741623430; x=1742228230; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:reply-to:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=E5gkLF4efJbEakqe2LCyGh3dRXBQKFkQyAgDGFFrD/E=;
-        b=AY+q+Fixb/TovXaeoNGX4yu2G3DhjbwDs2qV2dHdvU0GZ6/81XD9YQQfkwbTzdV+Hq
-         uDe+zEKR5jjRxka1ut4ObLgqPo8gFKj1eKJQPIJNKU7TBhhnYjGXt3zM0zpe1tfP7aWZ
-         ppNTtLynMqw0DiIoEZJ1gsUjQVPFvKLTPKt4B4qWkI4H8oxAwTSu9XdFUz7MeQ+EqSNP
-         EcOqGiuFaWZ09PatCYsPRvQ1s7iUE1EnZ2aQ8gePwMeN5fGtz86foUQ/2twMJcU3kNLi
-         aQFRzTOKIeaFmpUEgRwQkORItGCGYZFlmQpwm1F69SaPBHgrjBw5nrGKjxqe9dR4pRNE
-         ejwA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741623430; x=1742228230;
-        h=cc:to:from:subject:message-id:mime-version:date:reply-to
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=E5gkLF4efJbEakqe2LCyGh3dRXBQKFkQyAgDGFFrD/E=;
-        b=Fq3MMjJW01RC9B92HhSaIRYFQtuB4HZsSH/ZeUooQHZFpdEGLSCoqs48mmtGa9rg8i
-         W392QDfp1zQdbgh11ohxfBH70qV9XGKFjuzV6M1u7SdudWo9zlUgVT68YyqbBiYuVgjH
-         JN6ngS1CjfqPdtCl7O+LNhcsJRceftFgV+gTD5pVWT2GzNmXtbZASVhfACT82Lmb5+z+
-         TSRMMLffp8bHRcp4LkTjfIs1ZLrz2vmpeZuOjQnl0/JjuyW5aJew4DwW5lqipobHttsD
-         4jIE8pLvexUOcXDokDew+9fk2roqua7N5RNm9LXBgWB0QKTw+P6G7AjNuGq6ESoy2flb
-         QZjQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWnCpKoL0IizRsK7FrvOkItEZXquXl87eRNqnue+2t908Dwfl4Qa4GIKvT2L8nbYDKShCPpOFrPua9XM+g=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwW2WvUpAXq+TY7qOUwNixcf+0euNjR2km8pyi6B/umzup1HWrm
-	ZGFWaxILFUdH9xXXiup4RDKvic1+OIy2yLgQawtE+IthXNpMtTquYx0puhmU98zEe+uL3Kr6G2k
-	F2A==
-X-Google-Smtp-Source: AGHT+IEvtopbnUmeWsy/nIhJXSJwmRVRXafyvQtfaSeezEXN0bryU3yMD0urwCDwgpBZydAdDQCaU98xn/I=
-X-Received: from pfbde10.prod.google.com ([2002:a05:6a00:468a:b0:736:48e7:45b2])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a21:3994:b0:1f3:32c1:cc5d
- with SMTP id adf61e73a8af0-1f58cb3fe00mr534312637.21.1741623429907; Mon, 10
- Mar 2025 09:17:09 -0700 (PDT)
-Reply-To: Sean Christopherson <seanjc@google.com>
-Date: Mon, 10 Mar 2025 09:16:55 -0700
+	s=arc-20240116; t=1741623482; c=relaxed/simple;
+	bh=vq8ygBaZQ4+MXV/G1y5C9vDL0QOR/iHg4KIzBe0wSdM=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=AdHvP8SrvsBv8+1pFptlkFAo764ubh7vt6kg6UsN/UEMSjPSHOq5cFANZnnDzmUTzMiwYYAAMvohIwLxlL29hT10zdPPU+VsBeiMC+SUFjvN6rn7ZO46nt6ELaZWOBPPf9VfCoimPoc37gHQAqOmozuXwWOzq/N2ZfRQN20G//8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lybZ1lzJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 797DEC4CEE5;
+	Mon, 10 Mar 2025 16:18:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741623481;
+	bh=vq8ygBaZQ4+MXV/G1y5C9vDL0QOR/iHg4KIzBe0wSdM=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=lybZ1lzJ1UWUQ+Fc95kJ/jhbkAY6gbiJIDrAM4I0jGXoM8p83jI91Exwra0bZ6grM
+	 Nfs0HAtcT57d5YMr3cERPy9ACb+1LIbuey7cyNhcPhPhetI51NKDV5qvcHZ5+gf3QF
+	 RA+b0BY7jmSvGG5aRNcL2xFLqLv1mRg0K1pyP/+Ow9k+ImO17zjhJrwEgMgS0E5/Xa
+	 Vkt3fXSfyhdDNXeLPAFJ3AVT+/9ILHcugkQmn08oDXbovUmuGQcbkB+mIC5o+wK6Wx
+	 lAlthK2NmkIxRChEd4v+gAMRPWq0oiUvqAAdmQw2KgwxYWc0oXkeMvFR6brxdWIxfA
+	 EeJZNwczHvr3Q==
+From: SeongJae Park <sj@kernel.org>
+To: Arnd Bergmann <arnd@kernel.org>
+Cc: SeongJae Park <sj@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Hyeongtak Ji <hyeongtak.ji@sk.com>,
+	Honggyu Kim <honggyu.kim@sk.com>,
+	Usama Arif <usamaarif642@gmail.com>,
+	damon@lists.linux.dev,
+	linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] mm/damon/sysfs-schemes: avoid Wformat-security warning
+Date: Mon, 10 Mar 2025 09:17:58 -0700
+Message-Id: <20250310161758.606151-1-sj@kernel.org>
+X-Mailer: git-send-email 2.39.5
+In-Reply-To: <20250310135142.4176976-1-arnd@kernel.org>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.49.0.rc0.332.g42c0ae87b1-goog
-Message-ID: <20250310161655.1072731-1-seanjc@google.com>
-Subject: [ANNOUNCE] PUCK Agenda - 2025.03.12 - CANCELED
-From: Sean Christopherson <seanjc@google.com>
-To: Sean Christopherson <seanjc@google.com>
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Paolo Bonzini <pbonzini@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-In protest of Daylight Savings Time, a.k.a. the worst idea ever, PUCK is
-canceled this week.
+On Mon, 10 Mar 2025 14:51:37 +0100 Arnd Bergmann <arnd@kernel.org> wrote:
 
-Paolo and other folks in Europe, would you prefer to cancel PUCK for the rest
-of March (until Europe joins the US in DST), or deal with the off-by-one error?
+> From: Arnd Bergmann <arnd@arndb.de>
+> 
+> This warning is for potentially user-defined format strings:
+> 
+> mm/damon/sysfs-schemes.c:1664:4: error: format string is not a string literal (potentially insecure) [-Werror,-Wformat-security]
+>  1664 |                         name);
+> 
+> Change this to use "%s" as the format and the name as the argument.
+
+Thank you for this patch!
+
+> 
+> Fixes: 92bc039dd72e ("mm/damon/sysfs-schemes: let damon_sysfs_scheme_set_filters() be used for different named directories")
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+
+Reviewed-by: SeongJae Park <sj@kernel.org>
+
+
+Thanks,
+SJ
+
+> ---
+>  mm/damon/sysfs-schemes.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/mm/damon/sysfs-schemes.c b/mm/damon/sysfs-schemes.c
+> index 50e6907515e6..23ac98dd6451 100644
+> --- a/mm/damon/sysfs-schemes.c
+> +++ b/mm/damon/sysfs-schemes.c
+> @@ -1661,7 +1661,7 @@ static int damon_sysfs_scheme_set_filters(struct damon_sysfs_scheme *scheme,
+>  		return -ENOMEM;
+>  	err = kobject_init_and_add(&filters->kobj,
+>  			&damon_sysfs_scheme_filters_ktype, &scheme->kobj,
+> -			name);
+> +			"%s", name);
+>  	if (err)
+>  		kobject_put(&filters->kobj);
+>  	else
+> -- 
+> 2.39.5
 
