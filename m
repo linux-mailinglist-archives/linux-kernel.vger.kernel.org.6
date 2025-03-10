@@ -1,190 +1,112 @@
-Return-Path: <linux-kernel+bounces-554161-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-554148-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E6606A593AE
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 13:10:29 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A6F1AA59380
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 13:07:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C18C93AA558
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 12:09:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2A90A16DB10
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 12:07:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B573622DF8E;
-	Mon, 10 Mar 2025 12:06:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4141227B9A;
+	Mon, 10 Mar 2025 12:06:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oEVjNg3f"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="A1kIOsDv"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09264227B95;
-	Mon, 10 Mar 2025 12:06:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07653227EAE
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 12:06:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741608412; cv=none; b=fTIOnp6DOHiQo+mMMzlNVUYLrxCRx7fercIJy+5Z70k/+V+Gf6bcHJO5zA8wYiFZL0AxLj6eZgvPaEzPBgTYnrICGXWayeB32Oj/uwcrgEGC52IqiwZAV/9GSMHfo/LUVrh4D6+UMlMamQkbR1WPgSCs2nta260MHJVGlOv6ens=
+	t=1741608387; cv=none; b=MgGQOGjkbPfiach/JmMwDYg07+mmPnT0M8Kq9cn6qTVhveKTqOo878SDAx41nTSHM5/V9yX5IpOkuSW2ksgbPyJpt3xgTuegTVkUbFBgu6F3Ng5AVVdt80NbFlGUVgDD0/TMGcvb2HYAO+dkKNCZCwMuySMTrzHj1PsU0CBZY9g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741608412; c=relaxed/simple;
-	bh=7pH3VC/kTZvZyXEwWyZXDmfZRfenpkkRjJncy/YaV3A=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=n9d8nk4L0ZwB9ZoQ4EkP4A7ZnpL0gBGQNfpdK4ErnG8kQKgcmr8xETsX+dmgT9nYxwWUGut8OU9Itbpg2tuKRsulxgBXeXOTH4H517xLFKZlLGLG1NHjPqql0cVtn8Frpkw1iFE1DXhAtyg7AXU10CrpCu3D8m7+HtYCj694KcE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oEVjNg3f; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0B990C4CEE5;
-	Mon, 10 Mar 2025 12:06:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741608411;
-	bh=7pH3VC/kTZvZyXEwWyZXDmfZRfenpkkRjJncy/YaV3A=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=oEVjNg3fibaFagVdlIbk1zBQgRtK4seXDgW44TGzwkQ40PmG4N59lYT+i2hjQ5l03
-	 NA6f1fLNP8lcsn9t2x7thW/+0wFqWl1lNQwn5emhsN+Qm5+zGTO8TqmVCBlLiZNaiF
-	 OgPH/VIaPn14p9iOs4NrV5TAKskCUJoMdusz5wcDhMolyNdyGa1OnKb1njCHwNN+Wn
-	 BtXSC8CYNyCjeNV/fE609L74FQslohr/mle3ggF1fH8TF2nA4YnRFcGyCVPmS4+Plf
-	 xK+5UbDA3sytdfkGm4HmEcfHeLQdRJwFr4I+93ghEJCXwvZi1+K+ouJwqyEt/fcySB
-	 tFZezpIY8/SOg==
-From: Maxime Ripard <mripard@kernel.org>
-Date: Mon, 10 Mar 2025 13:06:18 +0100
-Subject: [PATCH RFC 12/12] media: videobuf2: Track buffer allocations
- through the dmem cgroup
+	s=arc-20240116; t=1741608387; c=relaxed/simple;
+	bh=fLAJAiqYd+Sl4aTlzjXT7WtMKBaFjK51w6THZu36tD4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bS+FnjOiGJwsNFOqu6cejltUp2IBJUI8zER+89UoB+4rtJ9g2V5n/KC4NvkqICkBxw9Cguw1mZJZexKNyxGytVa/r+5U+ncWYUEHFue3gPBCQjFWCH6siaeIXFawvjuHgUwDp8dqOLl72kYmK5w1xQIOP0XVfrOuR7qgvnezeeo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=A1kIOsDv; arc=none smtp.client-ip=192.198.163.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1741608386; x=1773144386;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=fLAJAiqYd+Sl4aTlzjXT7WtMKBaFjK51w6THZu36tD4=;
+  b=A1kIOsDvW3zdSt/12iMBWVnsws0qVfYuiXO/sNrWBK5AhdwQ+PhmWtzp
+   EHofZ94/dAoQ3xtr4YdUwU3VB7XbwNj7tvUJagPbtQtyOR3Y5K3k6NTZ3
+   cXzrX7tUdmq2wFtMAr/UpfOVdcpCZHO/sYkLrAc0//QresmNXVu5OQxhN
+   LAXCeyIvMTrB4yXN5bEiI8OvqiUXt2JM/c0qlMJOqMBoY4X7oGNfGY/CO
+   K4hHUC+r/g3dDgo0B11ITgH5exvcN79Wgs9Zz+5KOflcbHUqZrvdhJifb
+   wzJeYvo6jKjBhTg0FXAUvbNkzKohGC7XPj1thPzo0mLkVQsntAdanFVQo
+   A==;
+X-CSE-ConnectionGUID: xQ/5OuGkQlqOH6a/qV04iw==
+X-CSE-MsgGUID: KRpyqFW/Q36Y9cyH8+S2Bw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11368"; a="60150533"
+X-IronPort-AV: E=Sophos;i="6.14,236,1736841600"; 
+   d="scan'208";a="60150533"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Mar 2025 05:06:25 -0700
+X-CSE-ConnectionGUID: EBoIinS3T/2ESNvpSDaWog==
+X-CSE-MsgGUID: AY3cGCFuTmKo8D50e1j/+w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,236,1736841600"; 
+   d="scan'208";a="124582470"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by fmviesa005.fm.intel.com with ESMTP; 10 Mar 2025 05:06:23 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1000)
+	id E7AC0156; Mon, 10 Mar 2025 14:06:20 +0200 (EET)
+Date: Mon, 10 Mar 2025 14:06:20 +0200
+From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+To: Vlastimil Babka <vbabka@suse.cz>
+Cc: Andrew Morton <akpm@linux-foundation.org>, 
+	Mike Rapoport <rppt@kernel.org>, David Hildenbrand <david@redhat.com>, 
+	Mel Gorman <mgorman@techsingularity.net>, Tom Lendacky <thomas.lendacky@amd.com>, 
+	"Kalra, Ashish" <ashish.kalra@amd.com>, Rick Edgecombe <rick.p.edgecombe@intel.com>, linux-mm@kvack.org, 
+	linux-coco@lists.linux.dev, linux-kernel@vger.kernel.org, 
+	Farrah Chen <farrah.chen@intel.com>
+Subject: Re: [PATCH] mm/page_alloc: Fix memory accept before watermarks gets
+ initialized
+Message-ID: <asxbkez3pwoc2p4jb5ftwbvapzvoj3kma2tunprrnp4ptihebb@dxhvj3uicw6c>
+References: <20250310082855.2587122-1-kirill.shutemov@linux.intel.com>
+ <03b53f18-8c16-4716-8ed4-1902d7247354@suse.cz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250310-dmem-cgroups-v1-12-2984c1bc9312@kernel.org>
-References: <20250310-dmem-cgroups-v1-0-2984c1bc9312@kernel.org>
-In-Reply-To: <20250310-dmem-cgroups-v1-0-2984c1bc9312@kernel.org>
-To: Andrew Morton <akpm@linux-foundation.org>, 
- Marek Szyprowski <m.szyprowski@samsung.com>, 
- Robin Murphy <robin.murphy@arm.com>, Sumit Semwal <sumit.semwal@linaro.org>, 
- =?utf-8?q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
- Benjamin Gaignard <benjamin.gaignard@collabora.com>, 
- Brian Starkey <Brian.Starkey@arm.com>, John Stultz <jstultz@google.com>, 
- "T.J. Mercier" <tjmercier@google.com>, 
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
- Simona Vetter <simona@ffwll.ch>, Tomasz Figa <tfiga@chromium.org>, 
- Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: Hans Verkuil <hverkuil@xs4all.nl>, 
- Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, 
- linux-mm@kvack.org, linux-kernel@vger.kernel.org, iommu@lists.linux.dev, 
- linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org, 
- linaro-mm-sig@lists.linaro.org, Maxime Ripard <mripard@kernel.org>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3070; i=mripard@kernel.org;
- h=from:subject:message-id; bh=7pH3VC/kTZvZyXEwWyZXDmfZRfenpkkRjJncy/YaV3A=;
- b=owGbwMvMwCX2+D1vfrpE4FHG02pJDOnnrm6/ZsdQ+MWVYVbt25WiJm9cVq1kbvIv1+nqNj8Uw
- cQw8Zh/RykLgxgXg6yYIkuMsPmSuFOzXney8c2DmcPKBDKEgYtTACaiH8jI8G9RwTMV4c9c83xf
- z/EMmLjgxVIR86M37d8sdLg43++uTQbDf9/VGd8tpSbXPHmhXr3q3hpj4wk3k392pC04ujVyhVh
- VDjsA
-X-Developer-Key: i=mripard@kernel.org; a=openpgp;
- fpr=BE5675C37E818C8B5764241C254BCFC56BF6CE8D
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <03b53f18-8c16-4716-8ed4-1902d7247354@suse.cz>
 
-The dmem cgroup allows to track any DMA memory allocation made by the
-userspace. Let's charge our allocations in videobuf2 to enable proper
-memory tracking.
+On Mon, Mar 10, 2025 at 12:37:25PM +0100, Vlastimil Babka wrote:
+> On 3/10/25 09:28, Kirill A. Shutemov wrote:
+> > Watermarks are initialized during the postcore initcall. Until then, all
+> > watermarks are set to zero. This causes cond_accept_memory() to
+> > incorrectly skip memory acceptance because a watermark of 0 is always
+> > met.
+> 
+> What are the user-visible consequences of that?
 
-Signed-off-by: Maxime Ripard <mripard@kernel.org>
----
- drivers/media/common/videobuf2/videobuf2-dma-contig.c | 19 +++++++++++++++++++
- 1 file changed, 19 insertions(+)
+Premature OOM on boot.
 
-diff --git a/drivers/media/common/videobuf2/videobuf2-dma-contig.c b/drivers/media/common/videobuf2/videobuf2-dma-contig.c
-index a13ec569c82f6da2d977222b94af32e74c6c6c82..48384e18030812f4f89f1c225c38def2ac6aa3ca 100644
---- a/drivers/media/common/videobuf2/videobuf2-dma-contig.c
-+++ b/drivers/media/common/videobuf2/videobuf2-dma-contig.c
-@@ -8,10 +8,11 @@
-  * This program is free software; you can redistribute it and/or modify
-  * it under the terms of the GNU General Public License as published by
-  * the Free Software Foundation.
-  */
- 
-+#include <linux/cgroup_dmem.h>
- #include <linux/dma-buf.h>
- #include <linux/module.h>
- #include <linux/refcount.h>
- #include <linux/scatterlist.h>
- #include <linux/sched.h>
-@@ -40,10 +41,14 @@ struct vb2_dc_buf {
- 	struct sg_table			*sgt_base;
- 
- 	/* DMABUF related */
- 	struct dma_buf_attachment	*db_attach;
- 
-+#ifdef CONFIG_CGROUP_DMEM
-+	struct dmem_cgroup_pool_state	*cgroup_pool_state;
-+#endif
-+
- 	struct vb2_buffer		*vb;
- 	bool				non_coherent_mem;
- };
- 
- /*********************************************/
-@@ -169,10 +174,14 @@ static void vb2_dc_put(void *buf_priv)
- 	struct vb2_dc_buf *buf = buf_priv;
- 
- 	if (!refcount_dec_and_test(&buf->refcount))
- 		return;
- 
-+#ifdef CONFIG_CGROUP_DMEM
-+	dmem_cgroup_uncharge(buf->cgroup_pool_state, buf->size);
-+#endif
-+
- 	if (buf->non_coherent_mem) {
- 		if (buf->vaddr)
- 			dma_vunmap_noncontiguous(buf->dev, buf->vaddr);
- 		dma_free_noncontiguous(buf->dev, buf->size,
- 				       buf->dma_sgt, buf->dma_dir);
-@@ -230,10 +239,11 @@ static int vb2_dc_alloc_non_coherent(struct vb2_dc_buf *buf)
- 
- static void *vb2_dc_alloc(struct vb2_buffer *vb,
- 			  struct device *dev,
- 			  unsigned long size)
- {
-+	struct dmem_cgroup_pool_state *pool;
- 	struct vb2_dc_buf *buf;
- 	int ret;
- 
- 	if (WARN_ON(!dev))
- 		return ERR_PTR(-EINVAL);
-@@ -249,25 +259,34 @@ static void *vb2_dc_alloc(struct vb2_buffer *vb,
- 
- 	buf->size = size;
- 	/* Prevent the device from being released while the buffer is used */
- 	buf->dev = get_device(dev);
- 
-+	ret = dmem_cgroup_try_charge(dma_get_dmem_cgroup_region(dev), size, &pool, NULL);
-+	if (ret)
-+		return ret;
-+
- 	if (buf->non_coherent_mem)
- 		ret = vb2_dc_alloc_non_coherent(buf);
- 	else
- 		ret = vb2_dc_alloc_coherent(buf);
- 
- 	if (ret) {
- 		dev_err(dev, "dma alloc of size %lu failed\n", size);
-+		dmem_cgroup_uncharge(pool, size);
- 		kfree(buf);
- 		return ERR_PTR(-ENOMEM);
- 	}
- 
- 	buf->handler.refcount = &buf->refcount;
- 	buf->handler.put = vb2_dc_put;
- 	buf->handler.arg = buf;
- 
-+#ifdef CONFIG_CGROUP_DMEM
-+	buf->cgroup_pool_state = pool;
-+#endif
-+
- 	refcount_set(&buf->refcount, 1);
- 
- 	return buf;
- }
- 
+It can be triggered with certain combinations of number of vCPUs and
+memory size.
+
+> > To ensure progress, accept one MAX_ORDER page if the watermark is zero.
+> > 
+> > Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+> > Reported-and-tested-by: Farrah Chen <farrah.chen@intel.com>
+> 
+> Fixes:, Cc: stable etc?
+
+Fixes: dcdfdd40fa82 ("mm: Add support for unaccepted memory")
+Cc: stable@@vger.kernel.org # v6.5+
 
 -- 
-2.48.1
-
+  Kiryl Shutsemau / Kirill A. Shutemov
 
