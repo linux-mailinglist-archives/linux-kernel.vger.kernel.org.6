@@ -1,179 +1,138 @@
-Return-Path: <linux-kernel+bounces-553706-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-553707-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2EF79A58DCD
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 09:17:01 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 33C89A58DDC
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 09:17:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B02267A4A9D
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 08:15:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B305B3A9172
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 08:17:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4656422332B;
-	Mon, 10 Mar 2025 08:16:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55914216E01;
+	Mon, 10 Mar 2025 08:17:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=daynix-com.20230601.gappssmtp.com header.i=@daynix-com.20230601.gappssmtp.com header.b="NBn0+jdL"
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ehVJkKGp"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0629213E93
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 08:16:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44C0E2153D6;
+	Mon, 10 Mar 2025 08:17:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741594608; cv=none; b=m0zWQV/M6PM+YIxGLg+dKQoe98xtHcfaicpXlfiXF9lIZu42YmVPkPIFywiSJvHime2pfdr9vWDZOxYIe7uiAwsfHsEcG3akWxmarWQZUvLA9Y3QYd1ArJN/N+sx4jDHCpwZRozwtaJtuoxBZKzsAbyoF/Pt63G6cdVNAcmEDkU=
+	t=1741594646; cv=none; b=Gu4AgXLpqS676aStFJi1+CtB/xVAMYJ6uG8mYajUKDQePLxCeU+Fn18SZrET/Y/PENVTPiNRjwX6fM09Y8VMJHj8GiGfm8OJPlLuaT1ESsJaZ+fBiHpOYIxkNSRWllnJEVND1MMYgpMA6wiD/QuOcazS49lvbmLbzilx8lS4ZFA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741594608; c=relaxed/simple;
-	bh=bYJgB5J1rWOwdnYTlKo6V+nCLjOSgt8m+waOje7Vwoo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=n/4/y9zRaXN/VR3UJSqoMbhct6odraL7ZC8OQTjiwgNRUxh1PN5xtTpFjPz9fgIDRsQLP5wxj+DmiglduSguYSgVGEWJkIbTlGzrApFLRHqVLx94Y4OJfc7tJva7p5CBM+CE0Wfqmm+qPLG50E1tr09qB+Qoe+g9pIx8LjLQL5Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=daynix.com; spf=pass smtp.mailfrom=daynix.com; dkim=pass (2048-bit key) header.d=daynix-com.20230601.gappssmtp.com header.i=@daynix-com.20230601.gappssmtp.com header.b=NBn0+jdL; arc=none smtp.client-ip=209.85.214.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=daynix.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=daynix.com
-Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-22409077c06so49991095ad.1
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 01:16:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=daynix-com.20230601.gappssmtp.com; s=20230601; t=1741594606; x=1742199406; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=ZmMfWN/YjTztlUTbhbD2bh8ol9HLPI3qHdmgf2q4Pyk=;
-        b=NBn0+jdL7TtqMlPl4/KtYMrMunRagWlS6tO3+ay0X4H+WhhkJwuU7ueUX5D1NIZkas
-         f4mKJHieBq5ypC7rZFa17DbwcsoAZmVGWhBL/rOXx9A23dx2C7BlUkJAh52Hs3XqSLTn
-         P/NdUhRLn1WqIq649kD06QH/sKTYmp6f5xsgAYLb0hbTseeN8/lwpnQz/sTvn6ovc4K/
-         v3HT23f/dOxrK0E5TojvrnqXTL7CF2iQBKuWSD+ipN5FjjJGO/VVyV/Razy7Q9Q4ZORc
-         EZj3GrVfAZOt9kAAjcCD9SBJOObn+r+LQ8H92CSYYwOeefZeTaIAEvC/61vA2CfDGZDM
-         EkLg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741594606; x=1742199406;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZmMfWN/YjTztlUTbhbD2bh8ol9HLPI3qHdmgf2q4Pyk=;
-        b=I4LmCO+6s9u9AIJg9hDHDwTQqFpSWMi/arsBTSykBQNHce3NMuyZg2fPp1u+WvSkaY
-         xTDRpT5zNF+vfoLD/A3uAha/Od6Hl/5prETtG86SdLQnhNk5+smp6V5AEaZOUA1Iwl/x
-         tEyfwZbOGy7AJdWU+Qb02+tcC/m+/2JyHiu36KI20WkoBo6+jCmoj56BZXjM7FNmKkii
-         9Y9aJyyodpO8lEUmbWdoMsT0BbaO39A9E0JPFtb+/a1Z0u+RYogqksVXFEsNzkC/5XeB
-         J9EBVFAaFfDesH4PnkmyXD8cpaQujySIn45CUwQKq1QqW9ltC3w6S2jwpHOGg6taCS6/
-         KDbg==
-X-Forwarded-Encrypted: i=1; AJvYcCW7etRySpONPtoDY9mxqZejj2OYHvGw2f+R7j/DkG8PzrjqFY9No2HkpfibvkpgSaXmgy4UeMH2j6spMNs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzzwomnU1cON0cffmZLRwpajE5NdLPLVQSdt8jdIYLO19Wu9wOg
-	uASItAFJtsQ4Ffbyab4Dos1GgE3lxuXKzsAAj5tg9B719VTdfKdp9tvVWcULiFY=
-X-Gm-Gg: ASbGncs3b6i7fZI7lxqvuEWSO42WRAeZ2U2wztknk4n6lxyOTuysVjctkSezevso/nP
-	ihEdVMYILI+7dHXQE/4jXwYpwbfIRgZrFZhwRWDSwFI00AdG+VJNNGyu88/OzvuyJvJrCY3QXFq
-	mOPtOcKDb5XaEncdnk3oNmmykCj8p5Vr+UkFnMW8TmRhGryZV0s/VZMt5RRffgaWvbC4NapXiQi
-	1cwoInJ5k91W8xTkCDRpuFBfxgR8JQZjjqqvuz8jqI3PkoNADJVtKtOXCC63czatvl/+rVxeg65
-	9FspGyLQqHnm9J17epH8SnwGqBJ/Bsh5lVacLuUBA9V5HzgL1UMC4g7jVQ==
-X-Google-Smtp-Source: AGHT+IF0rPYRbicP0/CqimCD18L/ZR4wVPSR4hAOvttkF0NCrjknQOFhZJD3NGgEaMlKRFPN5jMntA==
-X-Received: by 2002:a05:6a00:4f90:b0:736:3d6c:aa64 with SMTP id d2e1a72fcca58-736aab13b03mr19832278b3a.21.1741594606209;
-        Mon, 10 Mar 2025 01:16:46 -0700 (PDT)
-Received: from [157.82.205.237] ([157.82.205.237])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-736e085c030sm819390b3a.14.2025.03.10.01.16.41
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 10 Mar 2025 01:16:45 -0700 (PDT)
-Message-ID: <5cfedd24-de7c-484b-afa7-ddb4828fb9e8@daynix.com>
-Date: Mon, 10 Mar 2025 17:16:41 +0900
+	s=arc-20240116; t=1741594646; c=relaxed/simple;
+	bh=uawa4JN2MXUgGhBTnOMJGYIztDfknKCASvvEPmNYWpo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=AgwF5BkjyAY0CyxBIsPpbOdOVfyi26PV3fItBNIA1mgwpCzO6CushBh/rhS62C0EhZPa6bs8uFu/44OAR9nNKri4kFs9Fab7mJtzHlNMUMVOiiPrriZqM8B5LNL0zBbh5T9KBYcnzSKopjilpZQBeMlwktzUwvw7jC6x2Ib5rd4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ehVJkKGp; arc=none smtp.client-ip=192.198.163.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1741594645; x=1773130645;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=uawa4JN2MXUgGhBTnOMJGYIztDfknKCASvvEPmNYWpo=;
+  b=ehVJkKGp+nrH91F8VEJtdhK2ltkRwRwcBv4Rk53FQt1OX/WwsVIpC2Er
+   XOD7DUVLDpAd0Ci1gBsYw3tBwnj6nI47itYXwTcsC3MlCty1TMh6f7fPy
+   SghkYy7F+RVYh8+2lvFpLVOb/xAboDcO7G9OjYWBcAoo4lkQr/dAtZb7X
+   PhOvCvgtAIHjWsMediet+nW7BpVO0WxjRRWAqmoKL0b6zgqY6BmGKF0aA
+   JfVPS235CGCArvLw3xHoJHDE5r41ctyTgJHl9vO2cfGEVnMlnIQ7g3Zpj
+   cvCTfZYJlIdJhH5BctkyvkdfgI4uxG5jsx0Vg4A5XRgrI31kra1DcJTc9
+   g==;
+X-CSE-ConnectionGUID: O2ujGIseSNGQOIEnzG6rKg==
+X-CSE-MsgGUID: VC7GRyNJTOScWs7TP59C/Q==
+X-IronPort-AV: E=McAfee;i="6700,10204,11368"; a="42451119"
+X-IronPort-AV: E=Sophos;i="6.14,235,1736841600"; 
+   d="scan'208";a="42451119"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Mar 2025 01:17:24 -0700
+X-CSE-ConnectionGUID: qKaGnuGGTxG/yni8i6DnRg==
+X-CSE-MsgGUID: qMrffTLPRlytlCS9ZfCoQw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,235,1736841600"; 
+   d="scan'208";a="124916130"
+Received: from smile.fi.intel.com ([10.237.72.58])
+  by orviesa004.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Mar 2025 01:17:19 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1trYK2-00000001BlI-3H1A;
+	Mon, 10 Mar 2025 10:17:14 +0200
+Date: Mon, 10 Mar 2025 10:17:14 +0200
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Luca Ceresoli <luca.ceresoli@bootlin.com>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Petr Mladek <pmladek@suse.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+	Sergey Senozhatsky <senozhatsky@chromium.org>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Liu Ying <victor.liu@nxp.com>, linux-clk@vger.kernel.org,
+	linux-pm@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-doc@vger.kernel.org
+Subject: Re: [PATCH 2/2] vsprintf: remove redundant and unused %pCn format
+ specifier
+Message-ID: <Z86gCjzuC5UFZBIL@smile.fi.intel.com>
+References: <20250307-vsprintf-pcn-v1-0-df0b2ccf610f@bootlin.com>
+ <20250307-vsprintf-pcn-v1-2-df0b2ccf610f@bootlin.com>
+ <Z8sqJhbqEBla_Ch7@smile.fi.intel.com>
+ <20250308003425.7b89bfb6@booty>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v9 3/6] tun: Introduce virtio-net hash feature
-To: Jason Wang <jasowang@redhat.com>
-Cc: Jonathan Corbet <corbet@lwn.net>,
- Willem de Bruijn <willemdebruijn.kernel@gmail.com>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- "Michael S. Tsirkin" <mst@redhat.com>, Xuan Zhuo
- <xuanzhuo@linux.alibaba.com>, Shuah Khan <shuah@kernel.org>,
- linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
- netdev@vger.kernel.org, kvm@vger.kernel.org,
- virtualization@lists.linux-foundation.org, linux-kselftest@vger.kernel.org,
- Yuri Benditovich <yuri.benditovich@daynix.com>,
- Andrew Melnychenko <andrew@daynix.com>,
- Stephen Hemminger <stephen@networkplumber.org>, gur.stavi@huawei.com,
- Lei Yang <leiyang@redhat.com>, Simon Horman <horms@kernel.org>
-References: <20250307-rss-v9-0-df76624025eb@daynix.com>
- <20250307-rss-v9-3-df76624025eb@daynix.com>
- <CACGkMEsNHba=PY5UQoH1zdGQRiHC8FugMG1nkXqOj1TBdOQrww@mail.gmail.com>
- <CACGkMEtCEwSB7XvCg7_8ebkcM8o2s8JB2Err2f153L-_i2KtxA@mail.gmail.com>
-Content-Language: en-US
-From: Akihiko Odaki <akihiko.odaki@daynix.com>
-In-Reply-To: <CACGkMEtCEwSB7XvCg7_8ebkcM8o2s8JB2Err2f153L-_i2KtxA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250308003425.7b89bfb6@booty>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On 2025/03/10 13:01, Jason Wang wrote:
-> On Mon, Mar 10, 2025 at 11:55 AM Jason Wang <jasowang@redhat.com> wrote:
->>
->> On Fri, Mar 7, 2025 at 7:01 PM Akihiko Odaki <akihiko.odaki@daynix.com> wrote:
->>>
->>> Hash reporting
->>> ==============
->>>
->>> Allow the guest to reuse the hash value to make receive steering
->>> consistent between the host and guest, and to save hash computation.
->>>
->>> RSS
->>> ===
->>>
->>> RSS is a receive steering algorithm that can be negotiated to use with
->>> virtio_net. Conventionally the hash calculation was done by the VMM.
->>> However, computing the hash after the queue was chosen defeats the
->>> purpose of RSS.
->>>
->>> Another approach is to use eBPF steering program. This approach has
->>> another downside: it cannot report the calculated hash due to the
->>> restrictive nature of eBPF steering program.
->>>
->>> Introduce the code to perform RSS to the kernel in order to overcome
->>> thse challenges. An alternative solution is to extend the eBPF steering
->>> program so that it will be able to report to the userspace, but I didn't
->>> opt for it because extending the current mechanism of eBPF steering
->>> program as is because it relies on legacy context rewriting, and
->>> introducing kfunc-based eBPF will result in non-UAPI dependency while
->>> the other relevant virtualization APIs such as KVM and vhost_net are
->>> UAPIs.
->>>
->>> Signed-off-by: Akihiko Odaki <akihiko.odaki@daynix.com>
->>> Tested-by: Lei Yang <leiyang@redhat.com>
->>> ---
->>>   Documentation/networking/tuntap.rst |   7 ++
->>>   drivers/net/Kconfig                 |   1 +
->>>   drivers/net/tap.c                   |  68 ++++++++++++++-
->>>   drivers/net/tun.c                   |  98 +++++++++++++++++-----
->>>   drivers/net/tun_vnet.h              | 159 ++++++++++++++++++++++++++++++++++--
->>>   include/linux/if_tap.h              |   2 +
->>>   include/linux/skbuff.h              |   3 +
->>>   include/uapi/linux/if_tun.h         |  75 +++++++++++++++++
->>>   net/core/skbuff.c                   |   4 +
->>>   9 files changed, 386 insertions(+), 31 deletions(-)
+On Sat, Mar 08, 2025 at 12:34:25AM +0100, Luca Ceresoli wrote:
+> On Fri, 7 Mar 2025 19:17:26 +0200
+> Andy Shevchenko <andriy.shevchenko@linux.intel.com> wrote:
+> > On Fri, Mar 07, 2025 at 12:19:08PM +0100, Luca Ceresoli wrote:
+> > > %pC and %pCn print the same string, and commit 900cca294425 ("lib/vsprintf:
+> > > add %pC{,n,r} format specifiers for clocks") introducing them does not
+> > > clarify any intended difference. It can be assumed %pC is a default for
+> > > %pCn as some other specifiers do, but not all are consistent with this
+> > > policy. Moreover there is now no other suffix other than 'n', which makes a
+> > > default not really useful.
+> > > 
+> > > All users in the kernel were using %pC except for one which has been
+> > > converted. So now remove %pCn and all the unnecessary extra code and
+> > > documentation.  
+> > 
+> > You seem forgot to update translation(s) of the documentation.
 > 
-> [...]
-> 
->>> + *
->>> + * The %TUN_VNET_HASH_REPORT flag set with this ioctl will be effective only
->>> + * after calling the %TUNSETVNETHDRSZ ioctl with a number greater than or equal
->>> + * to the size of &struct virtio_net_hdr_v1_hash.
->>
->> So you had a dependency check already for vnet hdr len. I'd still
->> suggest to split this into rss and hash as they are separated
->> features. Then we can use separate data structure for them instead of
->> a container struct.
->>
-> 
-> Besides this, I think we still need to add new bits to TUNGETIFF to
-> let userspace know about the new ability.
+> I'm afraid I don't speak Chinese. :-)
 
-The userspace can peform TUNGETVNETHASHCAP and see if it results in EINVAL.
+At bare minimum we can drop the same line in the list.
+Also in such a case we may ask a Chinese speaking person to review / correct /
+suggest the changes. I would not leave a leftover as it will be forgotten so
+easily and documentation becomes not in sync.
 
-Regards,
-Akihiko Odaki
+> For this specific change I think I could come up with an approximation
+> of it, but the both the docs and git log suggest this is not expected.
 
-> 
-> Thanks
-> 
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
 
 
