@@ -1,125 +1,119 @@
-Return-Path: <linux-kernel+bounces-554511-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-554517-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9705EA598FF
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 16:04:02 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C3A92A59929
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 16:09:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2D0B07A2885
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 15:03:00 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 70A307A53F8
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 15:08:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8940222A7FA;
-	Mon, 10 Mar 2025 15:03:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BCE922DFFC;
+	Mon, 10 Mar 2025 15:08:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="B819Ue5c"
-Received: from mail-pj1-f49.google.com (mail-pj1-f49.google.com [209.85.216.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="h3W2Ur+J"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93E32189B80;
-	Mon, 10 Mar 2025 15:03:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FBF922D4FB;
+	Mon, 10 Mar 2025 15:08:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741619031; cv=none; b=ImvPeEa1p5STlcCUm8L3oemYahuiIp/HdMn508esyVDEalCLPbCssVcafrQYnt86raW0OeKV8pF/J1StKxzgEz3Kiy5pXn19POosBBx/IzPgG+XMYHhI7fotmSiUmDbNvz2m5IyOUunq8oxp0KbFctHBMGUD1E5G9ZA0IYha8Pw=
+	t=1741619326; cv=none; b=r06iQgYbYZ93f5wK1924sWckOTMpiKi9l7NsfeLAmE4gJFOEOQLqM57w8UFfXNSH7YjtNIQlHmewXTCfj8k16Gj6IlF2tCbgvhO+QxvBYo1xb2F2Issbyor6bDiQ5MiqEPfXGCTNE3Tt9Ns9akMih+t4eKy4jhEjuUkpMUzO214=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741619031; c=relaxed/simple;
-	bh=4kBNkTbR5FLLbTabbHHu6HAsSSZd056FRwt9Fndw7O8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=kg6q+2OlCJFYOZ8uYFxWWKwvUw5N8/PfObkPqOQNKVxiug24B3ZFjxretMasdphOqGkioTLT9yb9HG9tyEWePossn+yDhtgOvBgZvToOKVawcTjvniSudwCwlfszFFYH4vuHKr8W2b10RoqM8WBQeOJ1QOKZiRT4fESV2py8WLs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=B819Ue5c; arc=none smtp.client-ip=209.85.216.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f49.google.com with SMTP id 98e67ed59e1d1-2f9b8ef4261so1175794a91.1;
-        Mon, 10 Mar 2025 08:03:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741619030; x=1742223830; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=XCZ7+q9PYpMdvI9LsnDStpXywHOjjRsLA5+sW6O9TXk=;
-        b=B819Ue5cEe87zZcaJv+aim1P9CcxUlyNtoDZ+i8FZTb/p79Mq5qPzDxZzfhhaHcE/J
-         XyXisRHNlqlf1QaGthVaEljASdaYtdzMzBoV1MQpyqxeIKngXbpwXmiV7kptjNMZ6quq
-         L9FMieKxlhqEDtQgmd47Kteas6dKJA0oAwBLFBvmUIOKMU0/ScYznnI4/aTlZnP0uGwm
-         GNyzGG8HqJtPQEGk2A2gy+z+8fJRNLi33zASiqWaQb1N3hi4/ujBPX4b7eGyfwsMpZVg
-         Ta9XCn+GR/LEXJcHmGBP3Q1lpsDBiz9D/CwIM080PXMM11g5za/E3AO4xz/ZSNCQAls9
-         q0vQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741619030; x=1742223830;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=XCZ7+q9PYpMdvI9LsnDStpXywHOjjRsLA5+sW6O9TXk=;
-        b=MyY4IgH86J9rjRnaKd8WhD9TU/MH5iUOc59U5doqBtzwLpBUQGyzrQ8+L1C9XetJ2h
-         YJ37eU6qFfZd+NFNIqnagcOhXPKRnDsxzlb9JEyhxmK9AfBQIdsZHJaX1PB7GRSXHseq
-         j6DBrO0oyWpRqnOw1fgMT1dlqOTBdRbWn2WtG3yvI0FuCX96GmNXQ6PPmQ4O2/xrqMtd
-         hm9a/ijWgn6f3ZrAG1XyA8oPkLe538R6SEK3QQah8w8NdsC368GWB02Ua+w41S8DbktO
-         m1AsuiMaALSmFx4YdcfVo/RAfyaOE+Fv/XFNhHhgxynR6pjdXazQTT+Tp2j3IGIGhbdo
-         hSRg==
-X-Forwarded-Encrypted: i=1; AJvYcCUcSUlnyTfqFLu5IrfSGfWFVL2NsLAVziBR0Zednf7ODkamiVmGsr2esBsAkixwP5SY1zJ4OTFDchSvbx0b@vger.kernel.org, AJvYcCXyj+Qpy6dEhssXlDfRtj+sqMl0k67aYlE9slucJAABrMTw2UWg4yfpj5BoNjbClrU/e/yknWIWVjKd8Fu4ySk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxau1j/C9VtR6M2o3e8a+zcf1HcgTrxn5E6YbkyYMZ5K0E/GfqN
-	8Fn38BnZ8wnsssRmQT2QJYJDg3sutcfQuqdGfORhGO2FvbZhEciAro/RCXaa4dSUOGNcLjyn8i6
-	TM9WAWPgoFKBwNm49CpFVvnuarGs=
-X-Gm-Gg: ASbGncuZ5b2oqX3bIPiHS+ApQ5LWDNCk6RODiSe7oJ/cYDnjVeV9KqZpL7rh25LvKIm
-	hPIERDsahuSK+V7D5SywZ87fMm8gluRPzjZBXJNBtDUH5w0VtwH6BEcXdkjg/3lsH+QthfRqtM1
-	PpH8knxpSN5EfGtNyohf34raWglg==
-X-Google-Smtp-Source: AGHT+IFMUfkkxyv4DFg5N8sru2ilACJrDgnRxjOU1nRv0P7Z1KHYBcYqmTsNdwlU/vhI/3zGhCpvcSCgAR6M0BtdUvY=
-X-Received: by 2002:a17:90b:4a4f:b0:2fe:b2ea:30f0 with SMTP id
- 98e67ed59e1d1-300a575a10cmr5731794a91.4.1741619029744; Mon, 10 Mar 2025
- 08:03:49 -0700 (PDT)
+	s=arc-20240116; t=1741619326; c=relaxed/simple;
+	bh=EpMFSHa1gvbKfDyXibbN9/h7VuT+tFTW2UFp/+p7z6s=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=hD+vFArzAdD5Y+Wgw+lqtEUH+yMl8v8bgExAUQiJ/jJUKLDhYADuXnZoBDEoQBrwrTTNzsuuvp2VixZDGAYU7c53x3XZEqPP3wzGdESKZDqrW+FExzmd/GopuqPW1HPWppver+yenQQXEr/LqVHe0H16A+OSFR5Fe6GYmhN000U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=h3W2Ur+J; arc=none smtp.client-ip=198.175.65.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1741619325; x=1773155325;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=EpMFSHa1gvbKfDyXibbN9/h7VuT+tFTW2UFp/+p7z6s=;
+  b=h3W2Ur+J64iIHh9G4I6TUIcxwuNjtEV9I60Z2T5gwvja9ysTuri9aavw
+   gM9M1UkvA2K1dgRyplK/VP32l4ECCa7Kug6vPrsLJemShiOZcbcyf0oYz
+   tp4SmZZ7vE9T8xVoWow69STPeGCfVw1b2wxjHm3sK3ZSn59dk3mmlNaLm
+   edtbsbiKy1NH/oPS6S0aw1LP3x+UdehyLaHucBCjx1uOs63lt/eM4P02R
+   guoC46FjHM3fZBrpaZeawXkn4jOLbTm0Gw1AQa0rDTe1jJUViP4wCVZRF
+   y/Dbe2zdB9BSsMw5unhLiDhb08cFRtv4cBWa4F71ZFJZDDeOXV58jqYKt
+   w==;
+X-CSE-ConnectionGUID: idpDIE95SOyU8Y4daln6OA==
+X-CSE-MsgGUID: tgDlIRl1SDOSf3w8tn96dA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11369"; a="42470922"
+X-IronPort-AV: E=Sophos;i="6.14,236,1736841600"; 
+   d="scan'208";a="42470922"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Mar 2025 08:08:43 -0700
+X-CSE-ConnectionGUID: 1oHC2dQkSyq+7W0yUn0Wpg==
+X-CSE-MsgGUID: VcPVJum6TIyfxFftSp7Wig==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,236,1736841600"; 
+   d="scan'208";a="124619902"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by fmviesa005.fm.intel.com with ESMTP; 10 Mar 2025 08:08:37 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+	id BC5FF156; Mon, 10 Mar 2025 17:08:36 +0200 (EET)
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"Rob Herring (Arm)" <robh@kernel.org>,
+	Markus Elfring <elfring@users.sourceforge.net>,
+	Jakob Riepler <jakob+lkml@paranoidlabs.org>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	linux-acpi@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-leds@vger.kernel.org,
+	linux-usb@vger.kernel.org
+Cc: Daniel Scally <djrscally@gmail.com>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Danilo Krummrich <dakr@kernel.org>,
+	Lee Jones <lee@kernel.org>,
+	Pavel Machek <pavel@kernel.org>,
+	Matti Vaittinen <mazziesaccount@gmail.com>,
+	Jonathan Cameron <jic23@kernel.org>
+Subject: [PATCH v1 0/4] leds: Introduce and use fwnode_get_child_node_count()
+Date: Mon, 10 Mar 2025 16:54:50 +0200
+Message-ID: <20250310150835.3139322-1-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.47.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <2503b45f-751e-4b50-96fd-8dad33821c40@stanley.mountain>
-In-Reply-To: <2503b45f-751e-4b50-96fd-8dad33821c40@stanley.mountain>
-From: Alex Deucher <alexdeucher@gmail.com>
-Date: Mon, 10 Mar 2025 11:03:38 -0400
-X-Gm-Features: AQ5f1JpmwP1VV7tLkk-a9qxkXnTTzKMtdLoBQrX-kuLocNBhJ8LElGmugPOqQio
-Message-ID: <CADnq5_NJnn0QxmsKMXnimRLDAkN7LD4u7sJOZq7OzSL54yrjUQ@mail.gmail.com>
-Subject: Re: [PATCH] drm/amdgpu: Use tabs for indenting in amdgpu_sdma_reset_engine()
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: "Jesse.zhang@amd.com" <Jesse.zhang@amd.com>, Alex Deucher <alexander.deucher@amd.com>, 
-	=?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Hawking Zhang <Hawking.Zhang@amd.com>, Tim Huang <tim.huang@amd.com>, 
-	Mario Limonciello <mario.limonciello@amd.com>, Likun Gao <Likun.Gao@amd.com>, Le Ma <le.ma@amd.com>, 
-	Yang Wang <kevinyang.wang@amd.com>, amd-gfx@lists.freedesktop.org, 
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
-	kernel-janitors@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-Thanks for the patch, but someone already fixed this.  Thanks!
+This series was inspired during review of "Support ROHM BD79124 ADC" [1].
+The three conversion patches are the examples of the new API in use.
 
-Alex
+Since the first two examples of LEDS, in case of posotove response it may
+be routed via that tree and immutable branch/tag shared with others, e.g.,
+IIO which Matti's series is targeting and might be dependent on. The USB
+patch can be applied later separately, up to the respective maintainers.
 
-On Mon, Mar 10, 2025 at 6:47=E2=80=AFAM Dan Carpenter <dan.carpenter@linaro=
-.org> wrote:
->
-> This line has a seven space indent instead of a tab.
->
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> ---
->  drivers/gpu/drm/amd/amdgpu/amdgpu_sdma.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_sdma.c b/drivers/gpu/drm/a=
-md/amdgpu/amdgpu_sdma.c
-> index 39669f8788a7..3a4cef896018 100644
-> --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_sdma.c
-> +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_sdma.c
-> @@ -621,5 +621,5 @@ int amdgpu_sdma_reset_engine(struct amdgpu_device *ad=
-ev, uint32_t instance_id, b
->         if (suspend_user_queues)
->                 amdgpu_amdkfd_resume(adev, false);
->
-> -       return ret;
-> +       return ret;
->  }
-> --
-> 2.47.2
->
+Link: https://lore.kernel.org/r/cover.1741610847.git.mazziesaccount@gmail.com> [1]
+
+Andy Shevchenko (4):
+  device property: Split fwnode_get_child_node_count()
+  leds: pwm-multicolor: Use fwnode_get_child_node_count()
+  leds: ncp5623: Use fwnode_get_child_node_count()
+  usb: typec: tcpm: Use fwnode_get_child_node_count()
+
+ drivers/base/property.c                | 12 ++++++------
+ drivers/leds/rgb/leds-ncp5623.c        |  5 ++---
+ drivers/leds/rgb/leds-pwm-multicolor.c |  7 +++----
+ drivers/usb/typec/tcpm/tcpm.c          |  6 ++----
+ include/linux/property.h               |  7 ++++++-
+ 5 files changed, 19 insertions(+), 18 deletions(-)
+
+-- 
+2.47.2
+
 
