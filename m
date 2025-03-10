@@ -1,338 +1,144 @@
-Return-Path: <linux-kernel+bounces-553711-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-553712-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C4A5A58DE7
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 09:18:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 34B58A58DF5
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 09:21:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 859CA168BA7
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 08:18:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 64D8816A8C4
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 08:21:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C308223709;
-	Mon, 10 Mar 2025 08:18:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2BD72236F7;
+	Mon, 10 Mar 2025 08:20:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="LEpke+m/";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="5eRXVHr+"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="cyaTK674"
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A55F714A09E;
-	Mon, 10 Mar 2025 08:18:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3DA9223337
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 08:20:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741594713; cv=none; b=MsCBd+zdaXGJism/EU868yAap+PEpXGHpTh3QtD8xPlQdKGGWvNvUG+0a6n5K1sr1FX46aMAOsGB804ixyFNYNCri6t5jv43c+TcQj7s8KmTD/nCS1bSZCzzp3ODbMvm0bxQDsbr2dy/3fBK23oFx0s1bBPqx3X8IMg9L7wKkx0=
+	t=1741594857; cv=none; b=SgM2h4TBNARBZvi1PDpQ8TVZZoAa9ifAw8mDZ7hQSiU6dTQleKYwVYEFugdnAJQsZk0LI/fRP61hk9rp83t7oIK+4zU15KKAiRE9sk/g/j2q5J+xKIjvFo98iENWbXLBpNNQ7CjUUQ+bX7miPYwxWlaYHAH04O93sJP89mXT8jw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741594713; c=relaxed/simple;
-	bh=aqjKPkxnl3mUjYGACbK0WCHP6RRJg/XN62HfGvR+4gE=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=H3O1cyhmStkcs0pxK6Sjd+t6JmnnX1tQfa2vI2N0G05wngoue1mrevPPJyUmicoDR2LXkuTrQnANsseFm1UCgYe/66OZj19wKqjLOf0K49M9XEj44J52w5tgbh3THCY6yOmQPqN4bmfYfw+sCczz64LEMR7RZ1CqyC3Pl0L9ZCA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=LEpke+m/; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=5eRXVHr+; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Mon, 10 Mar 2025 08:18:29 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1741594709;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=hqbw3YOdX+6y9GO3ZV1bSzxYdIE0M82aouk4U3q1iYQ=;
-	b=LEpke+m/nRtFa5wQpv5h29D8QU0nhR9dKA7Hoch9+zLZ31k2t8qSI3zzyG9KvWUZLFYYLF
-	ibnGJ0O/2TgscmxDeRaoI6A9ktjlUEbGtXiNu1PQDRDIvQLtqxERtFEd43L+UE8nRgnP8f
-	xfaqivSIxb4vF9epbPOzL4p6gLOS0HTDFZY6K7IPK5pd+pyE7TMsI8pIDxMWhOD8BfmPll
-	W5UufmYPAdQsSgIzto+i1mxneIASic5pXANvLvQXHX7gUYCKwxx1OZnUeVEXJJiciLeeGz
-	K5xVU1BhD4XoZ3dBUnlUtvwI3ND2d/F0MHgTTXw1wDDPWUcb5+IGdWSL5pC2fw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1741594709;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=hqbw3YOdX+6y9GO3ZV1bSzxYdIE0M82aouk4U3q1iYQ=;
-	b=5eRXVHr+IDcKC6caCPpWA+SUIMUvoekKYKahCJThpwJcpKJHlpWhwbCVlRj6Irbmb09SYx
-	7k0YueA5vcWDnhDw==
-From: "tip-bot2 for H. Peter Anvin (Intel)" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject:
- [tip: x86/cpu] x86/cpufeatures: Add {REQUIRED,DISABLED} feature configs
-Cc: "H. Peter Anvin (Intel)" <hpa@zytor.com>, "Xin Li (Intel)" <xin@zytor.com>,
- "Borislav Petkov (AMD)" <bp@alien8.de>, Ingo Molnar <mingo@kernel.org>,
- Linus Torvalds <torvalds@linux-foundation.org>, x86@kernel.org,
- linux-kernel@vger.kernel.org
-In-Reply-To: <20250228082338.73859-3-xin@zytor.com>
-References: <20250228082338.73859-3-xin@zytor.com>
+	s=arc-20240116; t=1741594857; c=relaxed/simple;
+	bh=a3XRq5SZMIxfZ+2Mgp5d2cHVY8T95QU6b1B4CIW7pak=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=K8tpapKSkdiBG+a3X1XyUp/tCXS5IhWTUR2Qi9RVHpPZkuSlo4yR20YhbQCzdg2cLBM5ewNe4js/L5IIIZCsKHK1qYI7Kb9IspVZhwk175Y5QgQpMDM5OiqSA8TszZi02awNU6xcXzbLzl930xPHpF8AqzRRHEhxL/+k67Vj2qk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=cyaTK674; arc=none smtp.client-ip=209.85.128.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-43bc63876f1so33377105e9.3
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 01:20:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1741594853; x=1742199653; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
+         :to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=/IRa+YB+4QLff7q5apAvMehk6zSiN1B98VZ8cSYC1R0=;
+        b=cyaTK6740rbt95+uQsX5kzvSWPBI4uXp5z/vXsXqHXMs73rJSBuPA5DgvyA40T43IW
+         7RS1D16MMYdk1NFt747ltEZwmyfGQ73SESIwQ0QfjbaiLF4lh5abAAYnNJeiqNiVFMzM
+         Ncv7MEIdpD14lX12p/6/msmtYfw1YnSfrXvgydgxu6tm4ojjG5qFySXpTvGUiuJFHz5M
+         xL/HSMAC3yEIPfExh2eXv7evcd1LrBys36ArdiPD1GHWEdUVtStDyh2WtTBUacvvgg8h
+         DazycAcTQKU0Hn/7kxmGSr2JGP3SZ0DXzF3pT8m53MgHWiUVnM05x7yalcPCOUNNv7eh
+         IGlQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741594853; x=1742199653;
+        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
+         :to:from:date:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=/IRa+YB+4QLff7q5apAvMehk6zSiN1B98VZ8cSYC1R0=;
+        b=SrE8mGQjoIh8D+NjO6wB7zkX02zdT5OX+6zSdbk5wRjErWLh94ZXpVzDqy77/0Ditk
+         /kY7KGRiPaBNw0ZnDrPUEi7vUG8v+WN15aHXXOma8MStZ5Stng/O1QQ9ZujutMN6M/qA
+         oxAJlRt2/qUvfMW14RYg8CqWOdyG9j8XqvJ8Ej0eIuzBCxuH7NxBpg6yQun2vGTmGenc
+         toYJd5ZfGm3P/3XXU4bkLH5kCTZNN5t98lOdWmBZ3WdxQPtkS+EF4JsZ6bwWSykOhAO+
+         e2+0jLeBuND4Qa24Pza7urorP/V/ym9n+fuINX2tBNqdX4fwjRkNk59NuQ2/5vPQbBjB
+         ceHg==
+X-Forwarded-Encrypted: i=1; AJvYcCU7HH0yt6qj9FZ8vTaBPbjy+TIiIncn1B41Y6wa68Sb/8aw+WEB9v0VJiMkt0F9eAMoHY6WZMHVa6MzwzM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxBSqIEZ86+Fg6gcRumtox/KCIUu7EROBFDUd4BoRRKSvNAUZdA
+	JchBGyhkqd7L6kiFogegvgEZbTVh0uJzPcguxWVXgqCEKJyY0XrvF/F6l5Cc/iE=
+X-Gm-Gg: ASbGnctjFHr0CnrYxefs4GN+c0OpuONzrsahSLmeYSU45IEZSJ4O9qM274wCLygqEFp
+	5fpGJs+pao46WMT1XJ+MV6ckSH9ZwlrB/zM/8nMQms2Mc9Yg3/cgNreesbCN8aHT3BBieyq1KO+
+	aeD6VYBcVmVxlEQIOQZwvyn9/U+0NASbWNk86P1LpJQ/nEB/KpWyeE9w1XkoFKI8/MOoNfPminB
+	xUZsChHNd/ca/OjoX9cVKDFFV/PX/jE9mzw52NAQ2g2r4sXBGzcpq5dGJFtBHiDrno1O0UODMd6
+	AevHkfohA3ivyB0sGxZNBzyYiO2N7X1rUrjStKN9G0ewEaXigw==
+X-Google-Smtp-Source: AGHT+IEGATgu5VbdS6kbtg3c6tfuRZz15xP7b2oCeJs8qye1D0o8hlDPBidbACz+FOSKn4FK+JvF+A==
+X-Received: by 2002:a5d:47a2:0:b0:391:12a5:3c95 with SMTP id ffacd0b85a97d-39132d6b98dmr7210587f8f.22.1741594852971;
+        Mon, 10 Mar 2025 01:20:52 -0700 (PDT)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3912bfba87csm14444368f8f.17.2025.03.10.01.20.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 10 Mar 2025 01:20:52 -0700 (PDT)
+Date: Mon, 10 Mar 2025 11:20:48 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: oe-kbuild@lists.linux.dev, Casey Schaufler <casey@schaufler-ca.com>,
+	paul@paul-moore.com, eparis@redhat.com,
+	linux-security-module@vger.kernel.org, audit@vger.kernel.org
+Cc: lkp@intel.com, oe-kbuild-all@lists.linux.dev, jmorris@namei.org,
+	serge@hallyn.com, keescook@chromium.org,
+	john.johansen@canonical.com, penguin-kernel@i-love.sakura.ne.jp,
+	stephen.smalley.work@gmail.com, linux-kernel@vger.kernel.org,
+	selinux@vger.kernel.org
+Subject: Re: [PATCH v2 6/6] Audit: Add record for multiple object contexts
+Message-ID: <f57dc6f4-cc46-4a58-9525-1dfda105ea59@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <174159470920.14745.5729743445717865267.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250307183701.16970-7-casey@schaufler-ca.com>
 
-The following commit has been merged into the x86/cpu branch of tip:
+Hi Casey,
 
-Commit-ID:     dc6e8bfc0c9e27cbfed27c7ed50c71205a7c9551
-Gitweb:        https://git.kernel.org/tip/dc6e8bfc0c9e27cbfed27c7ed50c71205a7c9551
-Author:        H. Peter Anvin (Intel) <hpa@zytor.com>
-AuthorDate:    Fri, 28 Feb 2025 00:23:35 -08:00
-Committer:     Ingo Molnar <mingo@kernel.org>
-CommitterDate: Mon, 10 Mar 2025 09:02:30 +01:00
+kernel test robot noticed the following build warnings:
 
-x86/cpufeatures: Add {REQUIRED,DISABLED} feature configs
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-Required and disabled feature masks completely rely on build configs,
-i.e., once a build config is fixed, so are the feature masks.
+url:    https://github.com/intel-lab-lkp/linux/commits/Casey-Schaufler/Audit-Create-audit_stamp-structure/20250308-024950
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/selinux.git next
+patch link:    https://lore.kernel.org/r/20250307183701.16970-7-casey%40schaufler-ca.com
+patch subject: [PATCH v2 6/6] Audit: Add record for multiple object contexts
+config: powerpc64-randconfig-r073-20250309 (https://download.01.org/0day-ci/archive/20250310/202503100802.Dqju4qc5-lkp@intel.com/config)
+compiler: powerpc64-linux-gcc (GCC) 14.2.0
 
-To prepare for auto-generating the <asm/cpufeaturemasks.h> header
-with required and disabled feature masks based on a build config,
-add feature Kconfig items:
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
+| Closes: https://lore.kernel.org/r/202503100802.Dqju4qc5-lkp@intel.com/
 
-  - X86_REQUIRED_FEATURE_x
-  - X86_DISABLED_FEATURE_x
+smatch warnings:
+kernel/auditsc.c:1753 audit_log_exit() warn: if statement not indented
 
-each of which may be set to "y" if and only if its preconditions from
-current build config are met.
+vim +1753 kernel/auditsc.c
 
-Signed-off-by: H. Peter Anvin (Intel) <hpa@zytor.com>
-Signed-off-by: Xin Li (Intel) <xin@zytor.com>
-Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Link: https://lore.kernel.org/r/20250228082338.73859-3-xin@zytor.com
----
- arch/x86/Kconfig             |   2 +-
- arch/x86/Kconfig.cpufeatures | 201 ++++++++++++++++++++++++++++++++++-
- 2 files changed, 203 insertions(+)
- create mode 100644 arch/x86/Kconfig.cpufeatures
+e54dc2431d740a Amy Griffis        2007-03-29  1749  	for (aux = context->aux_pids; aux; aux = aux->next) {
+e54dc2431d740a Amy Griffis        2007-03-29  1750  		struct audit_aux_data_pids *axs = (void *)aux;
+e54dc2431d740a Amy Griffis        2007-03-29  1751  
+e54dc2431d740a Amy Griffis        2007-03-29  1752  		for (i = 0; i < axs->pid_count; i++)
+e54dc2431d740a Amy Griffis        2007-03-29 @1753  			if (audit_log_pid_context(context, axs->target_pid[i],
+c2a7780efe37d0 Eric Paris         2008-01-07  1754  						  axs->target_auid[i],
+c2a7780efe37d0 Eric Paris         2008-01-07  1755  						  axs->target_uid[i],
+4746ec5b01ed07 Eric Paris         2008-01-08  1756  						  axs->target_sessionid[i],
+13d826e564e2cc Casey Schaufler    2024-10-09  1757  						  &axs->target_ref[i],
+c2a7780efe37d0 Eric Paris         2008-01-07  1758  						  axs->target_comm[i]))
+e54dc2431d740a Amy Griffis        2007-03-29  1759  			call_panic = 1;
 
-diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
-index 017035f..7caf2fd 100644
---- a/arch/x86/Kconfig
-+++ b/arch/x86/Kconfig
-@@ -3128,4 +3128,6 @@ config HAVE_ATOMIC_IOMAP
- 
- source "arch/x86/kvm/Kconfig"
- 
-+source "arch/x86/Kconfig.cpufeatures"
-+
- source "arch/x86/Kconfig.assembler"
-diff --git a/arch/x86/Kconfig.cpufeatures b/arch/x86/Kconfig.cpufeatures
-new file mode 100644
-index 0000000..e12d5b7
---- /dev/null
-+++ b/arch/x86/Kconfig.cpufeatures
-@@ -0,0 +1,201 @@
-+# SPDX-License-Identifier: GPL-2.0
-+#
-+# x86 feature bits (see arch/x86/include/asm/cpufeatures.h) that are
-+# either REQUIRED to be enabled, or DISABLED (always ignored) for this
-+# particular compile-time configuration.  The tests for these features
-+# are turned into compile-time constants via the generated
-+# <asm/cpufeaturemasks.h>.
-+#
-+# The naming of these variables *must* match asm/cpufeatures.h, e.g.,
-+#     X86_FEATURE_ALWAYS <==> X86_REQUIRED_FEATURE_ALWAYS
-+#     X86_FEATURE_FRED   <==> X86_DISABLED_FEATURE_FRED
-+#
-+# And these REQUIRED and DISABLED config options are manipulated in an
-+# AWK script as the following example:
-+#
-+#                          +----------------------+
-+#                          |    X86_FRED = y ?    |
-+#                          +----------------------+
-+#                              /             \
-+#                           Y /               \ N
-+#  +-------------------------------------+   +-------------------------------+
-+#  | X86_DISABLED_FEATURE_FRED undefined |   | X86_DISABLED_FEATURE_FRED = y |
-+#  +-------------------------------------+   +-------------------------------+
-+#                                                        |
-+#                                                        |
-+#     +-------------------------------------------+      |
-+#     | X86_FEATURE_FRED: feature word 12, bit 17 | ---->|
-+#     +-------------------------------------------+      |
-+#                                                        |
-+#                                                        |
-+#                                     +-------------------------------+
-+#                                     | set bit 17 of DISABLED_MASK12 |
-+#                                     +-------------------------------+
-+#
-+
-+config X86_REQUIRED_FEATURE_ALWAYS
-+	def_bool y
-+
-+config X86_REQUIRED_FEATURE_NOPL
-+	def_bool y
-+	depends on X86_64 || X86_P6_NOP
-+
-+config X86_REQUIRED_FEATURE_CX8
-+	def_bool y
-+	depends on X86_CX8
-+
-+# this should be set for all -march=.. options where the compiler
-+# generates cmov.
-+config X86_REQUIRED_FEATURE_CMOV
-+	def_bool y
-+	depends on X86_CMOV
-+
-+# this should be set for all -march= options where the compiler
-+# generates movbe.
-+config X86_REQUIRED_FEATURE_MOVBE
-+	def_bool y
-+	depends on MATOM
-+
-+config X86_REQUIRED_FEATURE_CPUID
-+	def_bool y
-+	depends on X86_64
-+
-+config X86_REQUIRED_FEATURE_UP
-+	def_bool y
-+	depends on !SMP
-+
-+config X86_REQUIRED_FEATURE_FPU
-+	def_bool y
-+	depends on !MATH_EMULATION
-+
-+config X86_REQUIRED_FEATURE_PAE
-+	def_bool y
-+	depends on X86_64 || X86_PAE
-+
-+config X86_REQUIRED_FEATURE_PSE
-+	def_bool y
-+	depends on X86_64 && !PARAVIRT_XXL
-+
-+config X86_REQUIRED_FEATURE_PGE
-+	def_bool y
-+	depends on X86_64 && !PARAVIRT_XXL
-+
-+config X86_REQUIRED_FEATURE_MSR
-+	def_bool y
-+	depends on X86_64
-+
-+config X86_REQUIRED_FEATURE_FXSR
-+	def_bool y
-+	depends on X86_64
-+
-+config X86_REQUIRED_FEATURE_XMM
-+	def_bool y
-+	depends on X86_64
-+
-+config X86_REQUIRED_FEATURE_XMM2
-+	def_bool y
-+	depends on X86_64
-+
-+config X86_REQUIRED_FEATURE_LM
-+	def_bool y
-+	depends on X86_64
-+
-+config X86_DISABLED_FEATURE_UMIP
-+	def_bool y
-+	depends on !X86_UMIP
-+
-+config X86_DISABLED_FEATURE_VME
-+	def_bool y
-+	depends on X86_64
-+
-+config X86_DISABLED_FEATURE_K6_MTRR
-+	def_bool y
-+	depends on X86_64
-+
-+config X86_DISABLED_FEATURE_CYRIX_ARR
-+	def_bool y
-+	depends on X86_64
-+
-+config X86_DISABLED_FEATURE_CENTAUR_MCR
-+	def_bool y
-+	depends on X86_64
-+
-+config X86_DISABLED_FEATURE_PCID
-+	def_bool y
-+	depends on !X86_64
-+
-+config X86_DISABLED_FEATURE_PKU
-+	def_bool y
-+	depends on !X86_INTEL_MEMORY_PROTECTION_KEYS
-+
-+config X86_DISABLED_FEATURE_OSPKE
-+	def_bool y
-+	depends on !X86_INTEL_MEMORY_PROTECTION_KEYS
-+
-+config X86_DISABLED_FEATURE_LA57
-+	def_bool y
-+	depends on !X86_5LEVEL
-+
-+config X86_DISABLED_FEATURE_PTI
-+	def_bool y
-+	depends on !MITIGATION_PAGE_TABLE_ISOLATION
-+
-+config X86_DISABLED_FEATURE_RETPOLINE
-+	def_bool y
-+	depends on !MITIGATION_RETPOLINE
-+
-+config X86_DISABLED_FEATURE_RETPOLINE_LFENCE
-+	def_bool y
-+	depends on !MITIGATION_RETPOLINE
-+
-+config X86_DISABLED_FEATURE_RETHUNK
-+	def_bool y
-+	depends on !MITIGATION_RETHUNK
-+
-+config X86_DISABLED_FEATURE_UNRET
-+	def_bool y
-+	depends on !MITIGATION_UNRET_ENTRY
-+
-+config X86_DISABLED_FEATURE_CALL_DEPTH
-+	def_bool y
-+	depends on !MITIGATION_CALL_DEPTH_TRACKING
-+
-+config X86_DISABLED_FEATURE_LAM
-+	def_bool y
-+	depends on !ADDRESS_MASKING
-+
-+config X86_DISABLED_FEATURE_ENQCMD
-+	def_bool y
-+	depends on !INTEL_IOMMU_SVM
-+
-+config X86_DISABLED_FEATURE_SGX
-+	def_bool y
-+	depends on !X86_SGX
-+
-+config X86_DISABLED_FEATURE_XENPV
-+	def_bool y
-+	depends on !XEN_PV
-+
-+config X86_DISABLED_FEATURE_TDX_GUEST
-+	def_bool y
-+	depends on !INTEL_TDX_GUEST
-+
-+config X86_DISABLED_FEATURE_USER_SHSTK
-+	def_bool y
-+	depends on !X86_USER_SHADOW_STACK
-+
-+config X86_DISABLED_FEATURE_IBT
-+	def_bool y
-+	depends on !X86_KERNEL_IBT
-+
-+config X86_DISABLED_FEATURE_FRED
-+	def_bool y
-+	depends on !X86_FRED
-+
-+config X86_DISABLED_FEATURE_SEV_SNP
-+	def_bool y
-+	depends on !KVM_AMD_SEV
-+
-+config X86_DISABLED_FEATURE_INVLPGB
-+	def_bool y
-+	depends on !BROADCAST_TLB_FLUSH
+This should be indented another tab.
+
+a5cb013da773a6 Al Viro            2007-03-20  1760  	}
+a5cb013da773a6 Al Viro            2007-03-20  1761  
+e54dc2431d740a Amy Griffis        2007-03-29  1762  	if (context->target_pid &&
+e54dc2431d740a Amy Griffis        2007-03-29  1763  	    audit_log_pid_context(context, context->target_pid,
+c2a7780efe37d0 Eric Paris         2008-01-07  1764  				  context->target_auid, context->target_uid,
+4746ec5b01ed07 Eric Paris         2008-01-08  1765  				  context->target_sessionid,
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
+
 
