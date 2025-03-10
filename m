@@ -1,75 +1,77 @@
-Return-Path: <linux-kernel+bounces-553661-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-553662-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 500BCA58D1E
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 08:41:28 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 46CB7A58D1F
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 08:41:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7FACC169859
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 07:41:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B8C2A188C50A
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 07:41:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26E9B221F02;
-	Mon, 10 Mar 2025 07:41:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56EDB221DAD;
+	Mon, 10 Mar 2025 07:41:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="bORrUA4e"
-Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="MAYhvrcT"
+Received: from mail-pj1-f43.google.com (mail-pj1-f43.google.com [209.85.216.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68C59221541
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 07:41:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB11B1D432D
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 07:41:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741592482; cv=none; b=CvHIRomudGjErLpCcoAoT3VpX7jWdIA6e+WrNvFBQHgseUe2tszSg2ezNfgCKrjzKtvuZh8s+INziM/UjqC+Ae/ZFva5b0pHC6tSffrjti9Pt4Vcv3djRu5sVE6po73QxxGGymC12MUBXjEaUE5jFsCBhbn6IXNmFgDpaeqlu9E=
+	t=1741592489; cv=none; b=BaJndY0XvHcTLy2C83W7LmJvZSGrbNzBSZL9wj1aql7dvooyUQzHBUbMJ1+6CH5OVQfXHBotSsX32mr1vbNaymVDchqwdwSUzJHJNywjxu5qHANS2KOi6USzb4y3ZViPu3QDKHOgAX9ht71UEVaZPQiV5GPHYlaOX/q9JlhzjUk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741592482; c=relaxed/simple;
-	bh=6vlkNLt2wNyzgoZ31HBZaGaKN/AYI9na+E8aX3yPJjA=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Ty9BnE1Yx7Folqqba475nw/yYsiJGTtmXW6vh3FLJ4k4xtq3oHGSqvNZmmhMXhx6q2K7MY1krEFNUenFhIVuhBhzhv1+YLBDsSfrFa8eM+HeI/2sZj6TXI3iWDMtp5cDN27rVkmX8kV+0eMskQFu+EMbj5VLBEjSaCs2L3Iza7M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=bORrUA4e; arc=none smtp.client-ip=209.85.214.174
+	s=arc-20240116; t=1741592489; c=relaxed/simple;
+	bh=vGX1zZeyBUsAgrkJbutMKfYx2NdUHuzc2vegG+Gno5w=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=E8pcWuwWIqUCd52yA8tJESwfs9FnJxJxO+OW2h/zKTD0ab8oVn7NS3JdHzhLqyF2u7KtWr/eEaySsa4NulYcmGwxccQk00gcszmpS8hS7ZPwPSBXq/LvHp2TlFAcEDFQYk4mDSnaee4pXBo0HqFYtmIpuZFWmhG/SL/wC8aASqU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=MAYhvrcT; arc=none smtp.client-ip=209.85.216.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-224104a9230so6729335ad.1
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 00:41:20 -0700 (PDT)
+Received: by mail-pj1-f43.google.com with SMTP id 98e67ed59e1d1-2f9b8ef4261so1060569a91.1
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 00:41:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1741592480; x=1742197280; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=33/QyKRQnnhIEj3uXq/x7qASVRIRp5tCMAk2Yb5EEBY=;
-        b=bORrUA4eu9u/hYFST3n0+cIXuyByDRUoZfGgMH9s5WxTBUYJrDkFf1MzAGJa+E/+t2
-         I7gk13npNFYyKa1Jv0fus/tsko4Pkfp9rCWiYugRTzd4/iQepvzBq1TtBqtNYlV4uV68
-         JpcwnpDFo/2+CRRgJXfyLg9+gf9O7AQGm0k8A/WwzECP7n6Wi4KJZ7UqBfZJpKrtEz1x
-         RSBzikGAqSvteVKpLblI09h/a3cck5Ahx/Vgj5T7uto2EmsmV2jv9vPufVNgNWO1EaDv
-         gMTFVyRSBnqFI8k3poyOVs8ADlyhCbQupiMJ32dehIGZsq44wpYctR98YvMKuKsLqbAW
-         fGhA==
+        d=bytedance.com; s=google; t=1741592487; x=1742197287; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Dh8E4zDhLTARv9NUB68GSwh8EhGffaLB5aJyMHyTj1k=;
+        b=MAYhvrcTs+q7o+we5PWLg0wF3Ro5dzmBIo8tYvoFK2T5T0dlXx+zkiBOIWxUcLGmEE
+         Pn7yZhPEGkbs9BCpGom+3kiBt2QQRisAOYwjq1ftKxdrtT5N6kxTerlHUJ8PSu3vSQBN
+         kqsOr1IGlbFvkNb+nlSDC891mQ/NSST8deE5tw7gAcv2QlKilFLGmysIWQ1dpP7ZjWeA
+         MrsXziZf063ovMztR/zwSgGrYVy06i/wrZewj4+zQSVhgc+GITYvhT/gvXI/yCgx3KUg
+         4/izpNcPKeQGbTK7LJXa1JcbjwGeQ81wTbnTfjslxqZfTPEe1qzPSfqk8JfhpV84O+tK
+         1aCg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741592480; x=1742197280;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=33/QyKRQnnhIEj3uXq/x7qASVRIRp5tCMAk2Yb5EEBY=;
-        b=HCPdUhv+GtzUmxE9Hurany2cViyoPvewKPmpEELPWl96pwLWwBq6auar0l8ISgQVr8
-         JA0cayqusm3hR4uJD4LPTRSaX6Zet37fJu5+uGHro7cTMwLhNsQT2BHEDxiQm5A/FB3t
-         zWZI1uRbzZq3zAlyQFv9y/wr9aHvTx4r+p7OlICaCDx+3esrTArJ98b03IuV6bbzYQof
-         aJf6G0JZzxLcrP9zRt0YZ7CJp7GnxLE+9mBWVR8dr6dctBOlcL3IpFsZZZd5Qg1mK46J
-         GN4K6xUty6bEixZulf1fRhHZMuNjD10WAv5Pm+hrmEiX1aZCe2XxiFqwbUteHsCNV67v
-         mjPA==
-X-Forwarded-Encrypted: i=1; AJvYcCXL3VG9VICzE7DDd+B+L4rpORQxugUNMg/P1BL8h16pJwWurAvCX6jN56Fu0OjSINuVXU8ImdoSVeeWkRI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxAiFneaLhszfU6hauXblcS+OP05j1XCLE1oagooQKexYTAjQCD
-	BtQdblSmyFca9H3Fy4AmrZqRYq5u2bzMcoC8cm4GYUQKIU79j4wgfF30AkapBZo=
-X-Gm-Gg: ASbGncs8ytqitGKEKFo70+HZ+h9hRgBFI2O3YqmMkT+O79vkN4Mw8SC3cnACaY6bD8L
-	tk8VOkwnkNXTFHNdUrhY3fqbnEVucs7rgBEJK7ROO8GqYRT5h++n8o1z95NdCS1WYA8kLgnbhxS
-	rFLEEDpWtIHaCkS/u2oKqXSUDUn9TpwsrI5bUIBat74q862WdIKEJjiWF8WoTOxSLjwPAHBWaxU
-	bJdzKawaThW18r9vqGz602o6Z0rBflk3LWE7CsLKBygDlBOrBt7U8LS7KvIyEBRvS2984DQeI+Z
-	IhH25XBYXite8NWpfYVwmO98DMerj4Q3iFe8Ec/4Q13BfScg4inphjlZ5DvBAIs1VRPyaAOot7m
-	YrEAZAtZ0XRK7nPUGpgvfyuM=
-X-Google-Smtp-Source: AGHT+IEXDvUU9C+runxcNDE1EjSSzaOhCy8SB4ThcUMkGrLj0GyJujy0MMt6MRMMAoseTC1QUt4+JA==
-X-Received: by 2002:a17:903:40ce:b0:221:7854:7618 with SMTP id d9443c01a7336-22541efb708mr44497305ad.8.1741592479537;
-        Mon, 10 Mar 2025 00:41:19 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1741592487; x=1742197287;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Dh8E4zDhLTARv9NUB68GSwh8EhGffaLB5aJyMHyTj1k=;
+        b=xO+qgeiQRscNs10ct8FbjgJF20Mq/RS8UDw1WhxqJxiE+ZEl+i6GvuGrq4pZTbIAYD
+         8MFmo7iwfR4t+1JSqBX2CNsKYXv77P70mm6zCyuBaBbke07pulRgNCciFFEtyLq+Dwob
+         RGaZURQyVI/5UT/kCJ8B/UEkqo0mjp9ybptoijGh9S9wnsrUsgP8AuqCMrKXserihnlx
+         gQ8IWYq6/ieun+EnWGL6aQ42xVFJPcuP/1/SwRaTg8P26IySXeHlohxuNpMAjw+Un7Nx
+         qK8cZW32QXszurhZINJUgnk2OOuyuAdvKW7TrpNxROYxBggfmDTPf3CYv/iymJRaPypN
+         ft7A==
+X-Forwarded-Encrypted: i=1; AJvYcCXWEJcAzFiq54YJlIMT5aoRfRMfwITS2qnnH6OCUAduC0thZHxU7/11z3s34kOrz84oewqtfA9J3niuMVY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxdJG4YL96dsdMsWvyiFB3aI6NwzE7Bpmq/7hrnPuf5BeTykZlO
+	gbt70Z8R0uFrhJr+k6I9JbCgETkuKKK2eUyv1ZJMLeRfoepXBbFRI8hbOAnLwgc=
+X-Gm-Gg: ASbGncsjlj1ru+Uz5thNYRlJgy61dnJjVBa9rjQsisUR0Tad93fpe2pmM6OCpASRD2a
+	e5RI1rGfdzf3H1/2LVKZTpksuM+YlmOCKDZ+1cMVTbuiswJpuPcRoeJMNu+1WGg+ELoClVe6spm
+	hKphhb0p6qibkIFrY5KAwEDcDKvCICjVEtI6WTwq5xZcPymu5iHL3Dx3Y+V0oV9sl3OisG8ya+a
+	jEI3iz5yHHAo5CqyX3TL5i1zUmfvUwAjVNH00HpAm8UfC62pCLDqOWkGG7t1fNqMaYXKGDb+okv
+	ZuApWDin/DZe3srNGWs6+J+sMujLhdzlpgagQUysyGBgosxXryTaFv4CyA4Wn6+fRH41DIs2JVy
+	VyrlbdhqJ10m4LQejBxbxzaI=
+X-Google-Smtp-Source: AGHT+IESvE/mFrsTRU+L5++44F7Z7QlW0OQ1Idyr1KvoR8N3dhzhzi2+Za3PQspS0oHZAD4JWBagXg==
+X-Received: by 2002:a17:90b:1a90:b0:2ff:682b:b754 with SMTP id 98e67ed59e1d1-300a2b70cb9mr4748321a91.2.1741592486638;
+        Mon, 10 Mar 2025 00:41:26 -0700 (PDT)
 Received: from C02DV8HUMD6R.bytedance.net ([139.177.225.226])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22410a7f8b6sm70965225ad.136.2025.03.10.00.41.14
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22410a7f8b6sm70965225ad.136.2025.03.10.00.41.21
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 10 Mar 2025 00:41:18 -0700 (PDT)
+        Mon, 10 Mar 2025 00:41:26 -0700 (PDT)
 From: Abel Wu <wuyun.abel@bytedance.com>
 To: K Prateek Nayak <kprateek.nayak@amd.com>,
 	Ingo Molnar <mingo@redhat.com>,
@@ -85,10 +87,12 @@ To: K Prateek Nayak <kprateek.nayak@amd.com>,
 	Tianchen Ding <dtcccc@linux.alibaba.com>
 Cc: Abel Wu <wuyun.abel@bytedance.com>,
 	linux-kernel@vger.kernel.org (open list:SCHEDULER)
-Subject: [RFC PATCH 0/2] Prioritize idle cpus over SCHED_IDLE ones
-Date: Mon, 10 Mar 2025 15:40:40 +0800
-Message-Id: <20250310074044.3656-1-wuyun.abel@bytedance.com>
+Subject: [RFC PATCH 1/2] Revert "sched/fair: Make sched-idle CPU selection consistent throughout"
+Date: Mon, 10 Mar 2025 15:40:41 +0800
+Message-Id: <20250310074044.3656-2-wuyun.abel@bytedance.com>
 X-Mailer: git-send-email 2.37.3
+In-Reply-To: <20250310074044.3656-1-wuyun.abel@bytedance.com>
+References: <20250310074044.3656-1-wuyun.abel@bytedance.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -97,117 +101,171 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Since commit
+This reverts commit 17346452b25b98acfb395d2a82ec2e4ad0cb7a01.
 
-  17346452b25b ("sched/fair: Make sched-idle CPU selection consistent")
+The above commit tried to unify selection policy between idle cpus
+and SCHED_IDLE ones in fast- and slow-path of select_task_rq_fair()
+by treating them equally (although the SCHED_IDLE cpus are turned
+to be given more preference in slowpath). The test results seemed
+solid, but the setup didn't take cgroup hierarchy into account,
+which actually made some of our important services get affected.
 
-the SCHED_IDLE cpus are given equal or more preference over idle ones in
-fast- and slow-path of select_task_rq_fair(). This works well in flattened
-cgroup hierarchy, e.g. all tasks running inside root cgroup, but may not
-ideal in a deeper hierarchy where SCHED_IDLE doesn't mean anything between
-entities whose parents are different. Hence a SCHED_IDLE cpu does NOT
-necessarily implies any of the following:
+The cgroup hierarchy in our production environment looks like below,
+which might be common in modern containerized setup:
 
- - It is a less loaded cpu (since the parent of its topmost idle
-   ancestor could be a 'giant' entity with large cpu.weight).
+			  root
+			/	\
+		kubepods	system.slice
+		/	\\		\
+	guaranteed	besteffort	containerd
 
- - It can be expected to be preempted by a newly woken task soon
-   enough (which actually depends on their ancestors who have
-   common parent).
+	(where 'X=A' means A is SCHED_IDLE cgroup)
 
-As a less loaded cpu probably has better ability to serve the newly
-woken task, which also applies to the SCHED_IDLE cpus that less loaded
-SCHED_IDLE cpu might be easier and faster preempted, let's not special
-case SCHED_IDLE cpus at least in slowpath when selecting.
+The cpu is treated as SCHED_IDLE if only besteffort is running, which
+is given at least equal preference as the idle cpus when deciding where
+to run a newly woken task. But the SCHED_IDLE cpus do not necessarily
+mean they can be preempted soon enough to start serving the wakee, and
+containerd and other services under system.slice are the case that have
+to wait in runqueue since they can not preempt kubepods, while idle cpus
+are possible out there untouched.
 
-  [ Plan to try the same in SIS, that is selecting a less loaded cpu
-    and get rid of ambiguous sched_idle_cpu(). Comments and suggests
-    are really appreciated. ]
+So prioritize idle cpus over SCHED_IDLE ones to avoid undesired delay
+like orchestration operations as much as possible.
 
-Some benchmarks are tested in a Intel(R) Xeon(R) CPU E5-2650 v4 machine
-based on tip/master ec3106906cbf, and are tested in following two setup:
+Signed-off-by: Abel Wu <wuyun.abel@bytedance.com>
+---
+ kernel/sched/fair.c | 49 +++++++++++++++++++++++++++------------------
+ 1 file changed, 30 insertions(+), 19 deletions(-)
 
-		(t1)			(t2)
-		root			root
-		/  \\			/  \
-	benchmark   noise	benchmark   X
-					     \\
-					     noise
-
-where noise comes from a SCHED_IDLE cgroup. I didn't see an obvious diff
-in hackbench or tbench, but not schbench.
-
-				vanilla-t1	       patched-t1
-Lat 50.0th-qrtle-1         8.00 (   0.00%)        8.00 (   0.00%)
-Lat 90.0th-qrtle-1        13.00 (   0.00%)       13.00 (   0.00%)
-Lat 99.0th-qrtle-1        19.00 (   0.00%)       18.00 (   5.26%)
-Lat 99.9th-qrtle-1        22.00 (   0.00%)       22.00 (   0.00%)
-Lat 20.0th-qrtle-1       257.00 (   0.00%)      259.00 (  -0.78%)
-Lat 50.0th-qrtle-2         8.00 (   0.00%)        9.00 ( -12.50%)
-Lat 90.0th-qrtle-2        13.00 (   0.00%)       13.00 (   0.00%)
-Lat 99.0th-qrtle-2        19.00 (   0.00%)       19.00 (   0.00%)
-Lat 99.9th-qrtle-2        23.00 (   0.00%)       24.00 (  -4.35%)
-Lat 20.0th-qrtle-2       484.00 (   0.00%)      434.00 (  10.33%)
-Lat 50.0th-qrtle-4         9.00 (   0.00%)        9.00 (   0.00%)
-Lat 90.0th-qrtle-4        14.00 (   0.00%)       14.00 (   0.00%)
-Lat 99.0th-qrtle-4        19.00 (   0.00%)       19.00 (   0.00%)
-Lat 99.9th-qrtle-4        25.00 (   0.00%)       24.00 (   4.00%)
-Lat 20.0th-qrtle-4       877.00 (   0.00%)      857.00 (   2.28%)
-Lat 50.0th-qrtle-8         9.00 (   0.00%)        9.00 (   0.00%)
-Lat 90.0th-qrtle-8        14.00 (   0.00%)       15.00 (  -7.14%)
-Lat 99.0th-qrtle-8        20.00 (   0.00%)       21.00 (  -5.00%)
-Lat 99.9th-qrtle-8        26.00 (   0.00%)       26.00 (   0.00%)
-Lat 20.0th-qrtle-8      1698.00 (   0.00%)     1598.00 (   5.89%)
-Lat 50.0th-qrtle-16       10.00 (   0.00%)       10.00 (   0.00%)
-Lat 90.0th-qrtle-16       15.00 (   0.00%)       15.00 (   0.00%)
-Lat 99.0th-qrtle-16       20.00 (   0.00%)       20.00 (   0.00%)
-Lat 99.9th-qrtle-16       28.00 (   0.00%)       27.00 (   3.57%)
-Lat 20.0th-qrtle-16     2900.00 (   0.00%)     2860.00 (   1.38%)
-Lat 50.0th-qrtle-23        9.00 (   0.00%)        9.00 (   0.00%)
-Lat 90.0th-qrtle-23       15.00 (   0.00%)       15.00 (   0.00%)
-Lat 99.0th-qrtle-23       49.00 (   0.00%)       28.00 (  42.86%)
-Lat 99.9th-qrtle-23     1602.00 (   0.00%)     1458.00 (   8.99%)
-Lat 20.0th-qrtle-23     3796.00 (   0.00%)     3804.00 (  -0.21%)
-
-				vanilla-t2	       patched-t2
-Lat 50.0th-qrtle-1        10.00 (   0.00%)        9.00 (  10.00%)
-Lat 90.0th-qrtle-1       271.00 (   0.00%)      272.00 (  -0.37%)
-Lat 99.0th-qrtle-1      1013.00 (   0.00%)      793.00 (  21.72%)
-Lat 99.9th-qrtle-1      1998.00 (   0.00%)     1642.00 (  17.82%)
-Lat 20.0th-qrtle-1       262.00 (   0.00%)      262.00 (   0.00%)
-Lat 50.0th-qrtle-2        10.00 (   0.00%)        9.00 (  10.00%)
-Lat 90.0th-qrtle-2       531.00 (   0.00%)      510.00 (   3.95%)
-Lat 99.0th-qrtle-2      1034.00 (   0.00%)      933.00 (   9.77%)
-Lat 99.9th-qrtle-2      1846.00 (   0.00%)     1614.00 (  12.57%)
-Lat 20.0th-qrtle-2       517.00 (   0.00%)      517.00 (   0.00%)
-Lat 50.0th-qrtle-4        10.00 (   0.00%)       10.00 (   0.00%)
-Lat 90.0th-qrtle-4       523.00 (   0.00%)      494.00 (   5.54%)
-Lat 99.0th-qrtle-4       973.00 (   0.00%)      901.00 (   7.40%)
-Lat 99.9th-qrtle-4      1618.00 (   0.00%)     1606.00 (   0.74%)
-Lat 20.0th-qrtle-4      1015.00 (   0.00%)     1001.00 (   1.38%)
-Lat 50.0th-qrtle-8        11.00 (   0.00%)       10.00 (   9.09%)
-Lat 90.0th-qrtle-8       527.00 (   0.00%)      454.00 (  13.85%)
-Lat 99.0th-qrtle-8       931.00 (   0.00%)      901.00 (   3.22%)
-Lat 99.9th-qrtle-8      1598.00 (   0.00%)     1582.00 (   1.00%)
-Lat 20.0th-qrtle-8      1738.00 (   0.00%)     1666.00 (   4.14%)
-Lat 50.0th-qrtle-16        9.00 (   0.00%)        9.00 (   0.00%)
-Lat 90.0th-qrtle-16      410.00 (   0.00%)      243.00 (  40.73%)
-Lat 99.0th-qrtle-16      979.00 (   0.00%)      891.00 (   8.99%)
-Lat 99.9th-qrtle-16     1486.00 (   0.00%)     1470.00 (   1.08%)
-Lat 20.0th-qrtle-16     2708.00 (   0.00%)     2708.00 (   0.00%)
-Lat 50.0th-qrtle-23        8.00 (   0.00%)        9.00 ( -12.50%)
-Lat 90.0th-qrtle-23      454.00 (   0.00%)      303.00 (  33.26%)
-Lat 99.0th-qrtle-23     3228.00 (   0.00%)     2564.00 (  20.57%)
-Lat 99.9th-qrtle-23     5496.00 (   0.00%)     5304.00 (   3.49%)
-Lat 20.0th-qrtle-23     3132.00 (   0.00%)     3156.00 (  -0.77%)
-
-Abel Wu (2):
-  Revert "sched/fair: Make sched-idle CPU selection consistent throughout"
-  sched/fair: Do not specialcase SCHED_IDLE cpus in select slowpath
-
- kernel/sched/fair.c | 40 ++++++++++++++++++++++++----------------
- 1 file changed, 24 insertions(+), 16 deletions(-)
-
+diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+index ae0350088ac1..379764bd2795 100644
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -7446,7 +7446,7 @@ sched_balance_find_dst_group_cpu(struct sched_group *group, struct task_struct *
+ 	unsigned int min_exit_latency = UINT_MAX;
+ 	u64 latest_idle_timestamp = 0;
+ 	int least_loaded_cpu = this_cpu;
+-	int shallowest_idle_cpu = -1;
++	int shallowest_idle_cpu = -1, si_cpu = -1;
+ 	int i;
+ 
+ 	/* Check if we have any choice: */
+@@ -7460,9 +7460,6 @@ sched_balance_find_dst_group_cpu(struct sched_group *group, struct task_struct *
+ 		if (!sched_core_cookie_match(rq, p))
+ 			continue;
+ 
+-		if (sched_idle_cpu(i))
+-			return i;
+-
+ 		if (available_idle_cpu(i)) {
+ 			struct cpuidle_state *idle = idle_get_state(rq);
+ 			if (idle && idle->exit_latency < min_exit_latency) {
+@@ -7484,7 +7481,12 @@ sched_balance_find_dst_group_cpu(struct sched_group *group, struct task_struct *
+ 				latest_idle_timestamp = rq->idle_stamp;
+ 				shallowest_idle_cpu = i;
+ 			}
+-		} else if (shallowest_idle_cpu == -1) {
++		} else if (shallowest_idle_cpu == -1 && si_cpu == -1) {
++			if (sched_idle_cpu(i)) {
++				si_cpu = i;
++				continue;
++			}
++
+ 			load = cpu_load(cpu_rq(i));
+ 			if (load < min_load) {
+ 				min_load = load;
+@@ -7493,7 +7495,11 @@ sched_balance_find_dst_group_cpu(struct sched_group *group, struct task_struct *
+ 		}
+ 	}
+ 
+-	return shallowest_idle_cpu != -1 ? shallowest_idle_cpu : least_loaded_cpu;
++	if (shallowest_idle_cpu != -1)
++		return shallowest_idle_cpu;
++	if (si_cpu != -1)
++		return si_cpu;
++	return least_loaded_cpu;
+ }
+ 
+ static inline int sched_balance_find_dst_cpu(struct sched_domain *sd, struct task_struct *p,
+@@ -7549,11 +7555,14 @@ static inline int sched_balance_find_dst_cpu(struct sched_domain *sd, struct tas
+ 	return new_cpu;
+ }
+ 
+-static inline int __select_idle_cpu(int cpu, struct task_struct *p)
++static inline int __select_idle_cpu(int cpu, struct task_struct *p, int *si_cpu)
+ {
+-	if ((available_idle_cpu(cpu) || sched_idle_cpu(cpu)) &&
+-	    sched_cpu_cookie_match(cpu_rq(cpu), p))
++	if (!sched_cpu_cookie_match(cpu_rq(cpu), p))
++		return -1;
++	if (available_idle_cpu(cpu))
+ 		return cpu;
++	if (*si_cpu == -1 && sched_idle_cpu(cpu))
++		*si_cpu = cpu;
+ 
+ 	return -1;
+ }
+@@ -7649,7 +7658,7 @@ static int select_idle_core(struct task_struct *p, int core, struct cpumask *cpu
+  */
+ static int select_idle_smt(struct task_struct *p, struct sched_domain *sd, int target)
+ {
+-	int cpu;
++	int cpu, si_cpu = -1;
+ 
+ 	for_each_cpu_and(cpu, cpu_smt_mask(target), p->cpus_ptr) {
+ 		if (cpu == target)
+@@ -7660,11 +7669,13 @@ static int select_idle_smt(struct task_struct *p, struct sched_domain *sd, int t
+ 		 */
+ 		if (!cpumask_test_cpu(cpu, sched_domain_span(sd)))
+ 			continue;
+-		if (available_idle_cpu(cpu) || sched_idle_cpu(cpu))
++		if (available_idle_cpu(cpu))
+ 			return cpu;
++		if (si_cpu == -1 && sched_idle_cpu(cpu))
++			si_cpu = cpu;
+ 	}
+ 
+-	return -1;
++	return si_cpu;
+ }
+ 
+ #else /* CONFIG_SCHED_SMT */
+@@ -7680,7 +7691,7 @@ static inline bool test_idle_cores(int cpu)
+ 
+ static inline int select_idle_core(struct task_struct *p, int core, struct cpumask *cpus, int *idle_cpu)
+ {
+-	return __select_idle_cpu(core, p);
++	return __select_idle_cpu(core, p, idle_cpu);
+ }
+ 
+ static inline int select_idle_smt(struct task_struct *p, struct sched_domain *sd, int target)
+@@ -7728,10 +7739,10 @@ static int select_idle_cpu(struct task_struct *p, struct sched_domain *sd, bool
+ 						return i;
+ 				} else {
+ 					if (--nr <= 0)
+-						return -1;
+-					idle_cpu = __select_idle_cpu(cpu, p);
+-					if ((unsigned int)idle_cpu < nr_cpumask_bits)
+ 						return idle_cpu;
++					i = __select_idle_cpu(cpu, p, &idle_cpu);
++					if ((unsigned int)i < nr_cpumask_bits)
++						return i;
+ 				}
+ 			}
+ 			cpumask_andnot(cpus, cpus, sched_group_span(sg));
+@@ -7746,9 +7757,9 @@ static int select_idle_cpu(struct task_struct *p, struct sched_domain *sd, bool
+ 
+ 		} else {
+ 			if (--nr <= 0)
+-				return -1;
+-			idle_cpu = __select_idle_cpu(cpu, p);
+-			if ((unsigned int)idle_cpu < nr_cpumask_bits)
++				return idle_cpu;
++			i = __select_idle_cpu(cpu, p, &idle_cpu);
++			if ((unsigned int)i < nr_cpumask_bits)
+ 				break;
+ 		}
+ 	}
 -- 
 2.37.3
 
