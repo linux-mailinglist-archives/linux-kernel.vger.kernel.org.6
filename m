@@ -1,112 +1,124 @@
-Return-Path: <linux-kernel+bounces-553596-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-553597-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E3F6EA58C28
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 07:40:50 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C9F5A58C2A
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 07:42:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 89576188CA90
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 06:40:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6AE513A63CD
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 06:42:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 703A81CCEF0;
-	Mon, 10 Mar 2025 06:40:43 +0000 (UTC)
-Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0BEA1CCB40;
+	Mon, 10 Mar 2025 06:42:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TXrQYb07"
+Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBD411B87F0;
-	Mon, 10 Mar 2025 06:40:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C26935234;
+	Mon, 10 Mar 2025 06:42:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741588843; cv=none; b=RIloyZiT+9/xreODNnSQSuw+OKsjTHFijh/wMGwyKEV6yplj34LPZ0wHRTKmTI1B299oW9frjg9Zrw12KFthnU1auo8nGGe8LHqlXSVfaDvH8+Ck4yb9bKvjENeUduMXSZiLurO4O+oFjrhQvVdtAf1hL24G6Kcddi1sNNzKgy8=
+	t=1741588941; cv=none; b=OHDXTv8wCeZ5HftX2d/WHD39v2jnzSE83ztO0jHRGG/e6VTQzXETtq9dwgVUyTE3Vz1omg8FzkWZZZ9rKXIKDyceb1sA/51dr0ffQngZ1/9KT5mw+SNAXk618sOlXZJJd8vAB5xK5MUsJm+gzPBu2lyJWoc7RMTYw3APCdXpl5c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741588843; c=relaxed/simple;
-	bh=CUmqUmoeYlmVdTS9pZtB70jnngGbrZtKj9eGtdxEDsM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=IZ+1R5xfghXB2+UCwNhOWF90njdayrkp6eQ58SzBCAPC1ylMFT8JyzCvNAh319YVN27QDuj7enOY3e2170Chy9nCfSJTKRWXRIq575FiM8Jn9xJ7AuZ6bBWlY7GqlX+S35snXvmCWsIqRUxyzchqj30bvOuerSOFBKbZP5ngSGg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.17])
-	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4ZB6c1755bz2SSkG;
-	Mon, 10 Mar 2025 14:36:17 +0800 (CST)
-Received: from kwepemo200002.china.huawei.com (unknown [7.202.195.209])
-	by mail.maildlp.com (Postfix) with ESMTPS id C31841A0188;
-	Mon, 10 Mar 2025 14:40:36 +0800 (CST)
-Received: from [10.174.179.13] (10.174.179.13) by
- kwepemo200002.china.huawei.com (7.202.195.209) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Mon, 10 Mar 2025 14:40:35 +0800
-Message-ID: <bb6eb768-2e3b-0419-6a7d-9ed9165a2024@huawei.com>
-Date: Mon, 10 Mar 2025 14:40:35 +0800
+	s=arc-20240116; t=1741588941; c=relaxed/simple;
+	bh=BhEp2otBEAZgsY5AnuTfKAh8evygs7P0yNQfOxDfU+Y=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=CuNZPRTxwIM3QKS7ewi14FeaDkocgK1hKiHAk933aA/jS1qG7ioKjquY1ZOtQJ97aesP+xSLVEpJWn1exvu9uAzKyu+nZEYemLvn3jXe5E25HE7dcFHJcToMJwC1gS6sl6gHujt/VKzHteMlagyPrx7BZkhfi6nPW85wf3x9qVY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TXrQYb07; arc=none smtp.client-ip=209.85.208.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-5e5b6f3025dso5297912a12.1;
+        Sun, 09 Mar 2025 23:42:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741588938; x=1742193738; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=p8lA4cpPVQxdRgBTTfOuCwlEFtyztx6NlgWBRBCJqT8=;
+        b=TXrQYb075ldzwdiZ+x/kYbfhc7vc6+pwJdImWeYmgWGBhW52SrCbSt3Ytapvz1Xgtv
+         iR1yKqN1KQCchFQsWgTqeCjRe7lZmSwKMnVFqcml1v8NrXTYT4ILg2z4yEsnY3iUKgUu
+         aI9D355/XEdUmQt7NAWqnoj99JdP8FDvxcHsMiicK48Gxp9k22fZloIY3DyEp7TDtniE
+         aGBwBSHxGgkU4sfae9KjxNoQOHB3onEE3V0axa/jRX9638oSGvuIUduxDJpdxl3K7gSN
+         Xka2xq5mxlQaAThxfpkgLWFh8zp3c00XBm0SKTe0res4pFNUbXQm4PVVHHYLYc5OSnoe
+         zutA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741588938; x=1742193738;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=p8lA4cpPVQxdRgBTTfOuCwlEFtyztx6NlgWBRBCJqT8=;
+        b=agXkQvIRl6/3ToOJrVKI31vhI/beV+bXoj48n6u6F6WoNwZwXGXp4FHpv45DjrTYXk
+         ldLrU5vREVmbZxLt9f4Up9aWnHiWF+pIDYHRiJnSZKVSBPzeyzK9Vvb3ER4dtnk5OCRu
+         vZLvJQm2mNG/JgLfQRVNt8vseDHS4DdvLnnEf+Y+G9LtCyoWbAN9fKNwbT+G3HZfLvnV
+         ctfXnSCkuSQ3ioOgI6wjauXawkRNyjwFyUOWiItYYB8xcWRuD3NAvbgGl6haF+McX0XG
+         cWpZeFGpe+H1bmj23VzoxOUKkprq68uRSrk0LJV/wPVkrozIzQCtCdczCxHXytKnXe7B
+         aqew==
+X-Forwarded-Encrypted: i=1; AJvYcCUbBv8Et0TRYExv2RIa5fIhX99PnNUlGa77xVQRl4fjKqFLqupgfr6SHb4CxkUkOR9RW5zdUVPrq2ktEZE=@vger.kernel.org, AJvYcCXZ+JJmYjCPcBWcQSWyTHpDKjpCodsyAblO/J8OLrQwAzS8VmVxGEjCD83pOkuLMOI97W5V8D1b@vger.kernel.org
+X-Gm-Message-State: AOJu0YxMf/pVM+UCNWFHAIcflsN+m33vpIIaBP3MmoDKO3uSPOh+HBku
+	viQPLlV0Gh1Hbq3AXsgAMGdl77PCgbkn6D4TBm+9KbJHVsUqL/sNAfN8bcoQ7DkTREg+Mu3Drjp
+	lc3dCPqg/Y1fBj0VEEOhFPJuMd1KlRg==
+X-Gm-Gg: ASbGncutbO8Ng8nflg+95jChL+Z70jVnOv3C9EhmgFelzG05W+lkht1adp0uc/V1VMv
+	GYowb/787gybjlFF5/b/R6k43GQJavPs15c0vv8mM3L3hYPodTd715pi1dFH3p9uvOJ8OV0i2KQ
+	ebdxzA0nCuSo6+lB1wrNbee63I+DG6MpbkUxyY4Sr4tCN1cO4oZdnGuZZHdYddvuVcFy6V
+X-Google-Smtp-Source: AGHT+IFZg/tJDNBkL1fJAvQiGPS+hyqYdlF0rG31bobPwJRS9V+EWuFhJM4WT5ASl/muzEcD+1aHLyv/fiUdZDOG8qo=
+X-Received: by 2002:a05:6402:1d4d:b0:5e0:348a:e33b with SMTP id
+ 4fb4d7f45d1cf-5e5e22bf175mr12513948a12.12.1741588937834; Sun, 09 Mar 2025
+ 23:42:17 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.15.1
-Subject: Re: Using userfaultfd with KVM's async page fault handling causes
- processes to hung waiting for mmap_lock to be released
-To: Peter Xu <peterx@redhat.com>, jimsiak <jimsiak@cslab.ece.ntua.gr>
-CC: <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<viro@zeniv.linux.org.uk>, <linux-mm@kvack.org>, <wangkefeng.wang@huawei.com>
-References: <79375b71-db2e-3e66-346b-254c90d915e2@cslab.ece.ntua.gr>
- <20250307072133.3522652-1-tujinjiang@huawei.com>
- <46ac83f7-d3e0-b667-7352-d853938c9fc9@huawei.com>
- <dee238e365f3727ab16d6685e186c53c@cslab.ece.ntua.gr>
- <Z8t2Np8fOM9jWmuu@x1.local>
-From: Jinjiang Tu <tujinjiang@huawei.com>
-In-Reply-To: <Z8t2Np8fOM9jWmuu@x1.local>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
- kwepemo200002.china.huawei.com (7.202.195.209)
+References: <20250304104030.69395-1-jkarrenpalo@gmail.com> <20250304104030.69395-2-jkarrenpalo@gmail.com>
+ <20250306175219.54874d3d@kernel.org> <CAGp9GRaAHRW=a2yT42e+_TACic+keVeNkeuUVRY=n67dhjt3jA@mail.gmail.com>
+In-Reply-To: <CAGp9GRaAHRW=a2yT42e+_TACic+keVeNkeuUVRY=n67dhjt3jA@mail.gmail.com>
+From: Jaakko Karrenpalo <jkarrenpalo@gmail.com>
+Date: Mon, 10 Mar 2025 08:42:06 +0200
+X-Gm-Features: AQ5f1JpNNtYpTcQobJ8O0C3zEVe6fWGxPcNuKIW8KmEwWhtp7DLuTqRyGwNMjcQ
+Message-ID: <CAGp9GRaBiaFjRDWHi2J2_O9Om789M_CTr9Cko7oBh5YpJzg_HQ@mail.gmail.com>
+Subject: Re: [PATCH net-next v4 2/2] net: hsr: Add KUnit test for PRP
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, Lukasz Majewski <lukma@denx.de>, 
+	MD Danish Anwar <danishanwar@ti.com>, linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
+	Jaakko Karrenpalo <jaakko.karrenpalo@fi.abb.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-
-在 2025/3/8 6:41, Peter Xu 写道:
-> On Fri, Mar 07, 2025 at 03:11:09PM +0200, jimsiak wrote:
->> Hi,
+On Fri, Mar 7, 2025 at 3:04=E2=80=AFPM Not Teknology <jkarrenpalo@gmail.com=
+> wrote:
+>
+>
+>
+> On Fri, Mar 7, 2025, 03:52 Jakub Kicinski <kuba@kernel.org> wrote:
 >>
->>  From my side, I managed to avoid the freezing of processes with the
->> following change in function userfaultfd_release() in file fs/userfaultfd.c
->> (https://elixir.bootlin.com/linux/v5.13/source/fs/userfaultfd.c#L842):
+>> On Tue,  4 Mar 2025 12:40:30 +0200 Jaakko Karrenpalo wrote:
+>> > Add unit tests for the PRP duplicate detection
 >>
->> I moved the following command from line 851:
->> WRITE_ONCE(ctx->released, true);
->> (https://elixir.bootlin.com/linux/v5.13/source/fs/userfaultfd.c#L851)
+>> The patch appears unable to survive an allmodconfig build:
+>> ERROR: modpost: "prp_register_frame_out" [net/hsr/prp_dup_discard_test.k=
+o] undefined!
 >>
->> to line 905, that is exactly before the functions returns 0.
->>
->> That simple workaround worked for my use case but I am far from sure that is
->> a correct/sufficient fix for the problem at hand.
-> Updating the field after userfaultfd_ctx_put() might mean UAF, afaict.
+>> Guessing that it ends up built in and the function is in a module?
+>> Maybe a depends on ?
+>> --
+>> pw-bot: cr
 >
-> Maybe it's possible to remove ctx->released but only rely on the mmap write
-> lock.  However that'll need some closer look and more thoughts.
 >
-> To me, the more straightforward way to fix it is to use the patch I
-> mentioned in the other email:
+> I used the wrong CONFIG_ define with IS_MODULE(). It should be the one wi=
+thout _MODULE at the end. Not that familiar with those.
 >
-> https://lore.kernel.org/all/ZLmT3BfcmltfFvbq@x1n/
+> I must have messed up something when running the build locally, because I=
+ did manage to compile somehow.
 >
-> Or does it mean it didn't work at all?
+> /Jaakko
 
-This patch works for me. mlock() syscall calls GUP with FOLL_UNLOCKABLE and
-allows to release mmap lock and retry.
+And sorry about the previous mail not being plain text, gmail decided
+to send it in html-mode
 
-But other GUP call without FOLL_UNLOCKABLE will return VM_FAULT_SIGBUS,
-is it a regression for the below commit？
-
-commit 656710a60e3693911bee3a355d2f2bbae3faba33
-Author: Andrea Arcangeli <aarcange@redhat.com>
-Date:   Fri Sep 8 16:12:42 2017 -0700
-
-     userfaultfd: non-cooperative: closing the uffd without triggering SIGBUS
-
->
-> Thanks,
->
+/Jaakko
 
