@@ -1,349 +1,299 @@
-Return-Path: <linux-kernel+bounces-553521-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-553522-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 39ABBA58AE5
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 04:48:37 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 96175A58AE8
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 04:50:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 003303AA9C4
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 03:48:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EF1E1188C3F6
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 03:50:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A9683EA83;
-	Mon, 10 Mar 2025 03:48:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A60801B87E9;
+	Mon, 10 Mar 2025 03:50:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b="vm3OIMCA"
-Received: from omta38.uswest2.a.cloudfilter.net (omta38.uswest2.a.cloudfilter.net [35.89.44.37])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Cp/znHzB"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48BCBA935
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 03:48:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=35.89.44.37
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741578510; cv=none; b=GGT3dwnzDGJB/VXu4r9LsvRnYHpAWAWiiu2fC0s4if72RPgY99wMR8hCdBjK5d0w/rJ1dJoNGt0jcG4XpM8rNE+CCM3LiWPIvmuuGhYXh7EUmReHjUmuVSknOJ/JR/b+68KUnaiEABpFGmXj/DhIzUWBlqQxLX8ODiPtc1aLFks=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741578510; c=relaxed/simple;
-	bh=jCqQx+2wyzEeRATfrax0w3j/o77xh9jXJXw2czcRkCc=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=awGlCdqYfDwW5B8Epu+oYpCMzHqD1YA9s5iMWGxtZQfbxw6Mhrz+UDAe6bT5CezX5dSqcBSj3/RKWUKnUFlfOmc6TDxayIxP1iboRwE+xweeRQMxeAdkV+NucAG5GH8UXqUCBs46mNyBS3PNqNA3SczPK+RZ+3mEqtSuE7ZEkgY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com; spf=pass smtp.mailfrom=embeddedor.com; dkim=pass (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b=vm3OIMCA; arc=none smtp.client-ip=35.89.44.37
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=embeddedor.com
-Received: from eig-obgw-6003a.ext.cloudfilter.net ([10.0.30.151])
-	by cmsmtp with ESMTPS
-	id rJaStyFJeAfjwrU7ptC4PJ; Mon, 10 Mar 2025 03:48:21 +0000
-Received: from gator4166.hostgator.com ([108.167.133.22])
-	by cmsmtp with ESMTPS
-	id rU7nt0xlTNMSlrU7ntLNiT; Mon, 10 Mar 2025 03:48:19 +0000
-X-Authority-Analysis: v=2.4 cv=K9DpHDWI c=1 sm=1 tr=0 ts=67ce6103
- a=1YbLdUo/zbTtOZ3uB5T3HA==:117 a=6Vi/Wpy7sgpXGMLew8oZcg==:17
- a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=7T7KSl7uo7wA:10 a=VwQbUJbxAAAA:8
- a=c4eUQaDwDrymSewtKsoA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
- a=Xt_RvD8W3m28Mn_h3AK8:22
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=embeddedor.com; s=default; h=Content-Transfer-Encoding:Content-Type:
-	In-Reply-To:References:Cc:To:From:Subject:MIME-Version:Date:Message-ID:Sender
-	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=iehuRxON5e/9TArHPokZB3vq6KHR3st/cD7mbCSzkC0=; b=vm3OIMCA7qTjMjhVRxeYdYYcKt
-	FWyieTjRCz8Bf+C+vvfuOsQcfw1sDWZsO4ix0yrcS/oKqeV/U73NuylMuPXRsUYFXJLxsyM3SY7l1
-	xD9wCJmxZ1vI9D2PZNc1nFurhcPE7cWbT1o/M2uNOPVnVi09p7oG9Df83mXlsPUcGxoTXOLiLSjmT
-	AuOkoIt52o9nI0Xg7mY2dY+8m2F4Vfl12tTUgYYS2b5IH5QS1Hx+X6RDBKM10kDF94U5eZnwVZWdf
-	6qhQdHmRrMZqnDh2p+qQjdzVXzeplLamDrkJxvf+x35h4Uh4dgRMLT/GNgPn7tSLpQXaxHFmiNYSG
-	WH0WwYGA==;
-Received: from [45.124.203.140] (port=53866 helo=[192.168.0.155])
-	by gator4166.hostgator.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-	(Exim 4.98.1)
-	(envelope-from <gustavo@embeddedor.com>)
-	id 1trU7m-00000001ToW-3LMA;
-	Sun, 09 Mar 2025 22:48:19 -0500
-Message-ID: <75551003-17c7-450a-89b0-818b6a01051c@embeddedor.com>
-Date: Mon, 10 Mar 2025 14:17:50 +1030
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A59B228F5;
+	Mon, 10 Mar 2025 03:50:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.15
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741578606; cv=fail; b=CaOy4N/hfakknmVDMRNicb3HdwIROpCABffechRQ1bZME1khquncw3Qr18WdCH8Ly5+BVsro21XO7w8766GtNHh7moH0cbt4EO8mmMwvWS6IUmm4xq2YG7/mAUoqu6e35kkgUV7Dy15C6z8ZqNxGLqJy4z0Pmg6p22asRjdrVLw=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741578606; c=relaxed/simple;
+	bh=BtGAuhpBojkW476shtZyRUtjMpLJp4KZ5XKDXczICVg=;
+	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=jfyUzy6APo1ClwzFo0dlDN6A0xQ7KS1jWb7GCV7BD/LBZmjLVYQ8GIRhayP7dh/ffOU3/okNsTXukfhvwbLfROk3dP8KS3sgV4GkwU8s7rKvrkOgCdWdOa/V3iMRnosKpFvueOAUupeFysWSupo8TMF6EugLyfiWPmEi0Dt4CIg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Cp/znHzB; arc=fail smtp.client-ip=198.175.65.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1741578605; x=1773114605;
+  h=date:from:to:cc:subject:message-id:references:
+   content-transfer-encoding:in-reply-to:mime-version;
+  bh=BtGAuhpBojkW476shtZyRUtjMpLJp4KZ5XKDXczICVg=;
+  b=Cp/znHzBuA7woU0YEHCydoqBck2wA5bX1GboqFrTXHv2RCHSO0gU48CF
+   AreOSkYa1CGNHi/g1ufqlMUtmD/t0FVsKLdvaAx7PY2l8qN+5BhxYC5uk
+   ja5bEUwvFWslPUVSoyOz+CCD+vZ3Uz3qphPZx1gPRa/RplZcV3CfsdEGU
+   Q6XsliSysRyAOhzhIPFrpNUvRg97IRPF7260GcjAKuX9fNzath9bcB/9a
+   w7U/nOqLESxKh7hiEatRGWNIVcL6kFpDtqmWX9ZTehOdiVNAyTiAnGrZQ
+   Ir9St6jY6Udgtn2rlloYLSrspsE7NtLJ4l7s62VJL4eVE3AzcDj30xffH
+   A==;
+X-CSE-ConnectionGUID: G2FIgVumQVKJl+ck1BhbSA==
+X-CSE-MsgGUID: IDn5XceaRpWDW9+2/B/OAA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11368"; a="46205688"
+X-IronPort-AV: E=Sophos;i="6.14,235,1736841600"; 
+   d="scan'208";a="46205688"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Mar 2025 20:50:04 -0700
+X-CSE-ConnectionGUID: w40Tc434Tva1swPK3BcHJg==
+X-CSE-MsgGUID: E+4Y2OUyRZS58/f+OBqX/A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,235,1736841600"; 
+   d="scan'208";a="120354857"
+Received: from orsmsx901.amr.corp.intel.com ([10.22.229.23])
+  by fmviesa010.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Mar 2025 20:50:04 -0700
+Received: from ORSMSX901.amr.corp.intel.com (10.22.229.23) by
+ ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.14; Sun, 9 Mar 2025 20:50:03 -0700
+Received: from orsedg603.ED.cps.intel.com (10.7.248.4) by
+ ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.14 via Frontend Transport; Sun, 9 Mar 2025 20:50:03 -0700
+Received: from NAM02-DM3-obe.outbound.protection.outlook.com (104.47.56.47) by
+ edgegateway.intel.com (134.134.137.100) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.44; Sun, 9 Mar 2025 20:50:01 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=oDmKVONzsnPDvxGHpKBBJ+AERmKKtnpIh6umreHqopspfh5Vt3nGoVf6lGJVltJ0vfKuXQFbUbLI4a/9M6qUDCufRG4iFdpK0oXvUyBGhhqJWcYVHMbRKkh/3zGGtlaulumlmXSzVDF91N4p3KbLFp7xTS+bGAiXfJ8Ew7NZ2Msz3Yuar0XR4JkhR0gffnk8r9oS/3yxdKIoN/zhQo91rMWhx7OVCnHHv2TfFrb1YO9CyY2as1q+X9dFZFuHHhdti73iUlRoxr3kQAdOqhWVNbPwfIA6aMnUzLXLZ+CyK8QiNTULCLrB2EKH+Ez+vJVyTGruO2o/gqZo+ioWNuWAJg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=/cmS+Pi5A9i8Hs6qCZyAko7oCkja6jdLyvhRYTRwzDs=;
+ b=LQb//mrFOH2M9sX4abI6BUA/hrPEfx+bGieTks+nse33GQfQZGPF3LyndZLs/L12OFNkg16SXrYxGkpnNUtzRM6qUqQTmioiN6HxqzJOBw9E20ikIOnLOVR04ihvFmHDDBCEiS2t8GOuuH/0rYRv7k8RrgaYMxnXBvSAsCfQAwZ6a8mN4Yg4ePvPplpDyKnXh6ylR1lQISLA74D0jSg63qTCxXYsKQvbhxazgkUPiCPH+30h777vGAX3MWuzt6uOKLxdt1HVbEuAEuu/iXRJmS3snBDJ8IOJUCBWge8bQdt8EpbGk/iD4sSLkZdy5oOJ5fl7CqhPx1goLzCfPghAzg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from CH3PR11MB8660.namprd11.prod.outlook.com (2603:10b6:610:1ce::13)
+ by SA1PR11MB8811.namprd11.prod.outlook.com (2603:10b6:806:467::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8511.26; Mon, 10 Mar
+ 2025 03:49:30 +0000
+Received: from CH3PR11MB8660.namprd11.prod.outlook.com
+ ([fe80::cfad:add4:daad:fb9b]) by CH3PR11MB8660.namprd11.prod.outlook.com
+ ([fe80::cfad:add4:daad:fb9b%5]) with mapi id 15.20.8511.025; Mon, 10 Mar 2025
+ 03:49:30 +0000
+Date: Mon, 10 Mar 2025 11:49:19 +0800
+From: Chao Gao <chao.gao@intel.com>
+To: "Chang S. Bae" <chang.seok.bae@intel.com>
+CC: <tglx@linutronix.de>, <dave.hansen@intel.com>, <x86@kernel.org>,
+	<seanjc@google.com>, <pbonzini@redhat.com>, <linux-kernel@vger.kernel.org>,
+	<kvm@vger.kernel.org>, <peterz@infradead.org>, <rick.p.edgecombe@intel.com>,
+	<weijiang.yang@intel.com>, <john.allen@amd.com>, <bp@alien8.de>
+Subject: Re: [PATCH v3 09/10] x86/fpu/xstate: Introduce
+ XFEATURE_MASK_KERNEL_DYNAMIC xfeature set
+Message-ID: <Z85hPxSAYAAmv16p@intel.com>
+References: <20250307164123.1613414-1-chao.gao@intel.com>
+ <20250307164123.1613414-10-chao.gao@intel.com>
+ <e15d1074-d5ec-431d-86e5-a58bc6297df8@intel.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <e15d1074-d5ec-431d-86e5-a58bc6297df8@intel.com>
+X-ClientProxiedBy: SG2PR02CA0127.apcprd02.prod.outlook.com
+ (2603:1096:4:188::7) To CH3PR11MB8660.namprd11.prod.outlook.com
+ (2603:10b6:610:1ce::13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH][next] wifi: iwlwifi: dvm: Avoid
- -Wflex-array-member-not-at-end warnings
-From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To: "Gustavo A. R. Silva" <gustavoars@kernel.org>,
- Miri Korenblit <miriam.rachel.korenblit@intel.com>,
- Kalle Valo <kvalo@kernel.org>
-Cc: linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-hardening@vger.kernel.org
-References: <Zr5QR03+wyw571zd@elsanto>
- <b0f25000-396c-4a83-abc1-1a07b3065c10@embeddedor.com>
-Content-Language: en-US
-In-Reply-To: <b0f25000-396c-4a83-abc1-1a07b3065c10@embeddedor.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 45.124.203.140
-X-Source-L: No
-X-Exim-ID: 1trU7m-00000001ToW-3LMA
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: ([192.168.0.155]) [45.124.203.140]:53866
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 2
-X-Org: HG=hgshared;ORG=hostgator;
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
-X-CMAE-Envelope: MS4xfCryvy1IYDtKmwQ+2yck493Wx3uT/UGsKUSMwgaeenW2jMHSIp+g60OdsJlWwwVMjh4jPX2xtqRp8amsGUD9WPp65t/aFE/g1wOyaY1Tc56dnA5CJbsU
- wpTN+grIkFdnsrGYuWfh0EIWMDHF92uXi9Muatk+8GDjVPt79lDJw1rSlR0MRcUrAZZevnHOtO2IuDgrHpYDACzM98LkfA+xqTaLXwiZkEmCyVXIPYGyRGYd
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH3PR11MB8660:EE_|SA1PR11MB8811:EE_
+X-MS-Office365-Filtering-Correlation-Id: 074321d9-4f2c-4971-91af-08dd5f868ff9
+X-LD-Processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|1800799024;
+X-Microsoft-Antispam-Message-Info: =?utf-8?B?ck82R3V2aUlKWFRXNnp4MStKQUNzMFJlY1ByWnF5Y0ZvOGMzMC8zaUFTYTM5?=
+ =?utf-8?B?U3dWeXpFZHNDcUJVN2tNbHlKYk9tVk9GOE5lYXhVYlpHdGRFVG5EbTM0TVJz?=
+ =?utf-8?B?ZWlGd0ZmNEJJLzcyRkZCVnlZRytVOWhEYnpIVUFyNGZlcW5HV1licVhSLzVa?=
+ =?utf-8?B?Z25kNFlkSDVwVnRuSm4yVmZWbXNWeCtKWitESUtDM2N4OXBNOGNvZ2F5N2xp?=
+ =?utf-8?B?NVBHQS9KS2NQSll3WlgyZlczTnhGRHo4UjVZeEdXWWdPa3krL0M2WEZwSE9H?=
+ =?utf-8?B?U0FvejhCdnlZendEbXNXc1JqMEptT25ZeGgzN053OFh2N3l4Z0hLSExwQU1Q?=
+ =?utf-8?B?c3o5N1NVNnVybnJjQjU5ZTcwM05KK1JveXpLbU9Bbk5PUXJlZ1VKU3ZpTTk0?=
+ =?utf-8?B?bDYyU3c5ZGRhelJHNzlNVWhDd2Z4Y0RWTk5IejVoVVBCZFlGVWI2Uis4Zmtr?=
+ =?utf-8?B?Q2lyNHhCTUp4d0ZJVlp5R3BkZCtNUFVnNkc3MnNoK2hUYjN5VEc2eGl3K1E0?=
+ =?utf-8?B?SzZhRmNQM0RaSU00TVg3WENaRENHWW1FY0NHL0V5VmNpd1pmRzYwY1djS04z?=
+ =?utf-8?B?Nys3TjA4Y0JXNjZGSWdvM2N5cWNDV0RGRHVNNkhkaDNYcElHZk5GdW94NzZ5?=
+ =?utf-8?B?MVNiemVvWk1tdkpEZTdJaytLOHFZOE1zc1oxUGZhSXAxRzBzNG9Db21pb1Fn?=
+ =?utf-8?B?Y2hPUTVvdzlpTGhRVGZWM2Y5c3BRUVRjN2ZJOS9XakpKWSsyWGRySTd0YkdP?=
+ =?utf-8?B?ekV1UkxYcisxRFdRc1FvV0NXMU1sU2RxQ2lHaHpKRkxwcmRuUFYrMkVwbmhn?=
+ =?utf-8?B?aGJRZXlROG5hZ1ovMW5jWFlsTEZ5WkhOSTRPN1pxL05tbUg0a3NuQlRoRndW?=
+ =?utf-8?B?UXd3eTJVbzFJV3g1OUk3MUtRODRpNlVFeE40ZnY1ZGlpeDhrSU91bjFDRHlD?=
+ =?utf-8?B?R3ZvYnFRbkVEcHAwWmkyb29TY21wWlBNQ2NmdFBoOG9tS0Zxc2NZREtoSnpU?=
+ =?utf-8?B?OFZNc1VxRkJTeUpIRTZadnY2MkoyME5XWDdlVmRCa0U4a1dMa3h3dm5WZzR5?=
+ =?utf-8?B?amJzQWU3Ulp2bFJ6c3dXN2x4RUZ1ZkhTNGh4T3VELzVCYzBDMGlGVzhxMW51?=
+ =?utf-8?B?YU5hSUxVWkRtNWRFSTJhSW9BTVBpdjFQN2tTRE8ybDR4S3FwcW10YmhDT3Qr?=
+ =?utf-8?B?Y2w5Z2Fna003SmJzZWU5a2FkTHpYZGJjZFMyVjhHNjFrMWJOS2NXbjFid3ZR?=
+ =?utf-8?B?NG1hN0Frdmo3TGZpcjJEY2Jma25rY3JPcVVId20xRXR3a096c2ZFY3U4dEsv?=
+ =?utf-8?B?dUQvWnhhNzZ0bG5peFk3cHIxWUpqZmdsdVVDK0hOeXNYSmtXVENacHdXWFpL?=
+ =?utf-8?B?THlzd2dJM2lXYUpqZXJmd3RpMGFCTmo5bFlEYzNjaDZaS2Q3S0hSQnY1Wk81?=
+ =?utf-8?B?NEtLdkxqL2JWSEIyRDd0TmVhZkRYdTVWUUhrWU5XMGhRTWkyUjhwTzdsQUhp?=
+ =?utf-8?B?WERTby9KbTI1eTFCMW9xSmF3Y0ZpdHBTYkZtVEVmVkdMbkVPUTVMOUtSOXd3?=
+ =?utf-8?B?dVFsODJwSHlSNzFyUEJsbjVUVnQ0OWo0NWFQb05FQW5LczBjNjFnbGZHNW5R?=
+ =?utf-8?B?UGRYQ3psUDhWMUZqVXQ3c1plMXZGS1BSKzBFZ0JHYnNrOUhtUVpNa0hDUW44?=
+ =?utf-8?B?V0J6MEV6MkVZOHVxUnlOd3NBd1RGQUtpeWZ2T1hnTm1WUm9OMGUxc0FPZ2p0?=
+ =?utf-8?B?Q2lQZTdrbnU2UUljNnZXenJwbmtVZjc5dTdDNzJMOE9CdXdXWXVuZnZDU21Q?=
+ =?utf-8?B?VTQ4M09KcmpHeXdlL0llUT09?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH3PR11MB8660.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?WkZXVy80Mm9xRnArZE5ObFZDWHZISkdiRUVlTHV0YUk2NWI1eUVvNTRzTFg0?=
+ =?utf-8?B?aFdOZFhtRVJ6T29iWVZLeWZjeGRFVmZvMjhTbTZNVjIyaUpDSnBzZUdBLzZD?=
+ =?utf-8?B?MUlLNThBWldKRm1pUFVnUi9wUlE3eGNLcGFhM0pTT0ViZ0VCaytlZ3Npd0RW?=
+ =?utf-8?B?UmhsVDljWXJCdXZOMy80K2dUTnhNYTlBaVVBTFczZk50RFlFK2J6RFVCSzRS?=
+ =?utf-8?B?YUhLZkhMV3UzM2ZvUUdEVzVQWjRQdk0vaGdiRVFiTlhxTE5rYTZMM2hoVW5y?=
+ =?utf-8?B?UVBQbDJCVDNRMzVhS0IyczBhcTZCZzZXa3dxTkNnbmZmbndIb3EvTW9aRlgy?=
+ =?utf-8?B?cWJUcW01aU1uUDI1c1RidE5NUHZNN3doZDRmNEZpZEw0ME9BTzJBbUMvUjVG?=
+ =?utf-8?B?RFh6V0pjNWprbHhpQTc2dGxHRE1lVk54Y3c0UHJBV0dNcFJjZkFzcnJmcGk3?=
+ =?utf-8?B?RmJPbFMyKytBSnRsQitnRUlqQTFoOW9USHF5RFNBSFRkU0d5YlphUzhoRzRr?=
+ =?utf-8?B?U0o5WHQyNWtUVzFZK0I2Z0ZVYmxtQVl0QnVoRGt3NEdZaDNtY0l4cEZYUVBK?=
+ =?utf-8?B?eEhYMVFtbnBQd2N1M2RhdDMrTEQ2eC9QaUdtaExVdytqQVBkQ2JmQW5hOVRy?=
+ =?utf-8?B?TjAxODdscUNDdUZqOXdhVlNLdnVkS1dMNnAzQ2drajlXRDZHUnlIY3o5M0Jn?=
+ =?utf-8?B?NE0vYk1BejNPV1J1KzlBc0hXYXZ0eXhybG5QaEkveUI3ZmgyMjJvbDNQTlgr?=
+ =?utf-8?B?MXJ0czhkL2hndlFqU3M2bVJvb0t6Lys1TWMrdHlpUWhCZm9EeTdZRm9oUEQy?=
+ =?utf-8?B?SVQ4OGZ0dTNZcHNPVDJhWnV3dDdxWkdhejAvV2ZqTGJXOFdmQWRXclNrTmdC?=
+ =?utf-8?B?RDU5eEt6Q3Z6OHpwSlBRMTNyM3ZOYzU5ZnU4bStZQ3o4TTJGV201eTV5NFN0?=
+ =?utf-8?B?Y0JzSDVoYU1YNHJZWlFDa1NUQzlWaW5xajRtTkRxSUdHSThhZ2Jia3N1a2Rv?=
+ =?utf-8?B?SWY1QXkvNUZyNDVURm1mdjRtU01IcEhEQzlLK3AyQ1FXRXJNSW1wN3JoaXpT?=
+ =?utf-8?B?SzJiaHNRUDNtSzNHa0pkbWVhMGMvdWJCZmpFNEE2aWQ4dnVaUTg2Ui8rL1RW?=
+ =?utf-8?B?eTQyWVZVVlM1dDVHNndhM3QrTmlsMUs1L0xTbzZKT3dobG82WE81Mm1IZmV0?=
+ =?utf-8?B?R1hZakoyWVN2bDRVdTFjSHVWa01oVWR4czUxK1Zrd1cwa1YyeldPVG9TZWEv?=
+ =?utf-8?B?OExXN1ZZOUtJRXRpMERRVHJUbEtyNW5MU21VUytxalNwMGp1Y1piTlByUDVV?=
+ =?utf-8?B?QmN4OE1NekVTZ3pNQmNCbVoxRzYyUngyMFFYQTRVWHd6QW8wSm1LNDU5Tyt4?=
+ =?utf-8?B?WVV1cWNlSENpTjVaWkplc1o3VS94aHJjSnRjY0U3QUs4NElmSm1lRExrbGVx?=
+ =?utf-8?B?THZ2aFAxMDk2aVlTSHZBSHdEb2dvdTgyQ2VKeTZCNzh0NXp5dlFjQytqNUNV?=
+ =?utf-8?B?R0phbDBYN1Fkc2JjNXV4ZHc2eGlzMTR6VUFCM3NicmdiR29PSGFCQk1Uc0tY?=
+ =?utf-8?B?WnVFQnJ4TmV0aWRxZVBTaXNjY1YvMnBQVW9qZFJKUWw4dmNiZGRyRG01b2FQ?=
+ =?utf-8?B?VkYzRDFLUGh4QlVsRWN2WlA0WUsxZzIwZGpxaTI2UmhVSHJWQm9BQWpIbzNE?=
+ =?utf-8?B?QXBWY0pHT3owV1lCTTA5N0lJQlE2VERYT2oxQjZFdjQ1eGxoeGd3c1pHYXRt?=
+ =?utf-8?B?eWNJZGJXYWEvVHVHbDBNTzdxU2FBeTNLR3pXb2toYUptK2cza0pBdEJGR2NR?=
+ =?utf-8?B?MEYyQjFUemJydENSblpDTTR5Nzk1c3pzUVlZUmI1SU55WCs1Si9iVnNLZlVZ?=
+ =?utf-8?B?NTl0ODZvTUpGSmxwZzE3SVZXendWaFUvL1NMOWR5ZUdQZzQzZVJQMHFUY3VS?=
+ =?utf-8?B?K0tvZmMxNmNjZVUwTXRtbnlqai9zbVFLT2NhbDBTQkt0dTRTNEhVRTZGc2g2?=
+ =?utf-8?B?VzFHR1JDZGRvTzd6b3E1dFdQbStha0t1R282a0c3RGtXTkh3Mjh5VmJrWFhh?=
+ =?utf-8?B?N01ENjc1T3dXSUN4WGxhUk1CNTF6ZUU4YmtWOVZuUWI3UHljc3dCeVRacjdL?=
+ =?utf-8?Q?pRYLKrx40ZuOFIxd0icFhX9ZR?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 074321d9-4f2c-4971-91af-08dd5f868ff9
+X-MS-Exchange-CrossTenant-AuthSource: CH3PR11MB8660.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Mar 2025 03:49:30.3843
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: ZkbyDyYfTala8KtXNYJc1QqL4NvC7GOt9kb46sSvPCOkpiLzgDYf6I3/pDxJ5EDWGiA8VifNLY9iCK171mCx1w==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR11MB8811
+X-OriginatorOrg: intel.com
 
-Hi all,
+>When introducing user dynamic features, AMX required a large state, so buffer
+>reallocation for expansion was deferred until it was actually used. This
+>introduction was associated with introducing a permission mechanism, which
+>was expected to be requested by userspace.
+>
+>For VCPU tasks, the userspace component (QEMU) requests permission [1], and
+>buffer expansion then follows based on the exposed CPUID determination [2].
+>
+>Now, regarding the new kernel dynamic features, I’m unsure whether this
+>changelog or anything else sufficiently describes its semantics distintively.
+>It appears that both permission grant and buffer allocation for the kernel
+>dynamic feature occur at VCPU allocation time. However, this model differs
+>from the deferred buffer expansion model for user dynamic features.
+>
+>If the kernel dynamic feature model were to follow the same deferred
+>reallocation approach as user dynamic features, buffer reallocation would be
+>expected. In that case, I'd also question whether fpu_guest_cfg is truly
+>necessary.
+>
+>VCPU allocation could still rely on fpu_kernel_cfg, and fpu->guest_perm could
+>be extrapolated from fpu->perm or fpu_kernel_cfg. Then, reallocation could
+>proceed as usual based on the permission, extending
+>fpu_enable_guest_xfd_features(), possibly renaming it to
+>fpu_enable_dynamic_features().
+>
+>That said, this is a relatively small state.
 
-I wonder who can take this patch, please. :)
+Yes, there's no need to make the guest FPU dynamically sized for the CET
+supervisor state, as it is only 24 bytes.
 
-It was submitted around the same time as this other one:
+XFEATURE_MASK_KERNEL_DYNAMIC is a misnomer. It is misleading readers into
+thinking it involves permission requests and dynamic sizing, similar to
+XFEATURE_MASK_USER_DYNAMIC
 
-https://web.git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=a7e8997ae18c42d30bc7181421b5715e319c0f71
+>Even if the intent was to
+>introduce a new semantic model distinct from user dynamic features, it should
+>be clearly documented to avoid confusion.
 
-And for some reason it wasn't taken back then.
+The goal isn't to add a new semantic model for dynamic features.
 
-If you have any comments, please let me know.
+>
+>On the other hand, if the goal is rather to establish a new approach for
+>handling a previously nonexistent set of guest-exclusive features, then the
 
-Thanks!
---
-Gustavo
+Yes. This is the goal of this patch.
 
-On 05/10/24 05:09, Gustavo A. R. Silva wrote:
-> Hi all,
-> 
-> Friendly ping: who can take this, please? 🙂
-> 
-> Thanks
-> -Gustavo
-> 
-> On 15/08/24 13:00, Gustavo A. R. Silva wrote:
->> -Wflex-array-member-not-at-end was introduced in GCC-14, and we are
->> getting ready to enable it, globally.
->>
->> So, in order to avoid ending up with a flexible-array member in the
->> middle of multiple other structs, we use the `__struct_group()`
->> helper to create a new tagged `struct iwl_tx_cmd_hdr`. This structure
->> groups together all the members of the flexible `struct iwl_tx_cmd`
->> except the flexible array.
->>
->> As a result, the array is effectively separated from the rest of the
->> members without modifying the memory layout of the flexible structure.
->> We then change the type of the middle struct members currently causing
->> trouble from `struct iwl_tx_cmd` to `struct iwl_tx_cmd_hdr`.
->>
->> We also want to ensure that when new members need to be added to the
->> flexible structure, they are always included within the newly created
->> tagged struct. For this, we use `static_assert()`. This ensures that the
->> memory layout for both the flexible structure and the new tagged struct
->> is the same after any changes.
->>
->> This approach avoids having to implement `struct iwl_tx_cmd_hdr`
->> as a completely separate structure, thus preventing having to maintain
->> two independent but basically identical structures, closing the door
->> to potential bugs in the future.
->>
->> So, with these changes, fix the following warnings:
->>
->> drivers/net/wireless/intel/iwlwifi/dvm/commands.h:2315:27: warning: structure containing a flexible array member is not at the end of another structure [- 
->> Wflex-array-member-not-at-end]
->> drivers/net/wireless/intel/iwlwifi/dvm/commands.h:2426:27: warning: structure containing a flexible array member is not at the end of another structure [- 
->> Wflex-array-member-not-at-end]
->>
->> Signed-off-by: Gustavo A. R. Silva <gustavoars@kernel.org>
->> ---
->>   .../net/wireless/intel/iwlwifi/dvm/commands.h | 154 +++++++++---------
->>   1 file changed, 78 insertions(+), 76 deletions(-)
->>
->> diff --git a/drivers/net/wireless/intel/iwlwifi/dvm/commands.h b/drivers/net/wireless/intel/iwlwifi/dvm/commands.h
->> index 3f49c0bccb28..96ea6c8dfc89 100644
->> --- a/drivers/net/wireless/intel/iwlwifi/dvm/commands.h
->> +++ b/drivers/net/wireless/intel/iwlwifi/dvm/commands.h
->> @@ -1180,85 +1180,87 @@ struct iwl_dram_scratch {
->>   } __packed;
->>   struct iwl_tx_cmd {
->> -    /*
->> -     * MPDU byte count:
->> -     * MAC header (24/26/30/32 bytes) + 2 bytes pad if 26/30 header size,
->> -     * + 8 byte IV for CCM or TKIP (not used for WEP)
->> -     * + Data payload
->> -     * + 8-byte MIC (not used for CCM/WEP)
->> -     * NOTE:  Does not include Tx command bytes, post-MAC pad bytes,
->> -     *        MIC (CCM) 8 bytes, ICV (WEP/TKIP/CKIP) 4 bytes, CRC 4 bytes.i
->> -     * Range: 14-2342 bytes.
->> -     */
->> -    __le16 len;
->> -
->> -    /*
->> -     * MPDU or MSDU byte count for next frame.
->> -     * Used for fragmentation and bursting, but not 11n aggregation.
->> -     * Same as "len", but for next frame.  Set to 0 if not applicable.
->> -     */
->> -    __le16 next_frame_len;
->> -
->> -    __le32 tx_flags;    /* TX_CMD_FLG_* */
->> -
->> -    /* uCode may modify this field of the Tx command (in host DRAM!).
->> -     * Driver must also set dram_lsb_ptr and dram_msb_ptr in this cmd. */
->> -    struct iwl_dram_scratch scratch;
->> -
->> -    /* Rate for *all* Tx attempts, if TX_CMD_FLG_STA_RATE_MSK is cleared. */
->> -    __le32 rate_n_flags;    /* RATE_MCS_* */
->> -
->> -    /* Index of destination station in uCode's station table */
->> -    u8 sta_id;
->> -
->> -    /* Type of security encryption:  CCM or TKIP */
->> -    u8 sec_ctl;        /* TX_CMD_SEC_* */
->> -
->> -    /*
->> -     * Index into rate table (see REPLY_TX_LINK_QUALITY_CMD) for initial
->> -     * Tx attempt, if TX_CMD_FLG_STA_RATE_MSK is set.  Normally "0" for
->> -     * data frames, this field may be used to selectively reduce initial
->> -     * rate (via non-0 value) for special frames (e.g. management), while
->> -     * still supporting rate scaling for all frames.
->> -     */
->> -    u8 initial_rate_index;
->> -    u8 reserved;
->> -    u8 key[16];
->> -    __le16 next_frame_flags;
->> -    __le16 reserved2;
->> -    union {
->> -        __le32 life_time;
->> -        __le32 attempt;
->> -    } stop_time;
->> -
->> -    /* Host DRAM physical address pointer to "scratch" in this command.
->> -     * Must be dword aligned.  "0" in dram_lsb_ptr disables usage. */
->> -    __le32 dram_lsb_ptr;
->> -    u8 dram_msb_ptr;
->> -
->> -    u8 rts_retry_limit;    /*byte 50 */
->> -    u8 data_retry_limit;    /*byte 51 */
->> -    u8 tid_tspec;
->> -    union {
->> -        __le16 pm_frame_timeout;
->> -        __le16 attempt_duration;
->> -    } timeout;
->> -
->> -    /*
->> -     * Duration of EDCA burst Tx Opportunity, in 32-usec units.
->> -     * Set this if txop time is not specified by HCCA protocol (e.g. by AP).
->> -     */
->> -    __le16 driver_txop;
->> -
->> +    /* New members MUST be added within the __struct_group() macro below. */
->> +    __struct_group(iwl_tx_cmd_hdr, __hdr, __packed,
->> +        /*
->> +         * MPDU byte count:
->> +         * MAC header (24/26/30/32 bytes) + 2 bytes pad if 26/30 header size,
->> +         * + 8 byte IV for CCM or TKIP (not used for WEP)
->> +         * + Data payload
->> +         * + 8-byte MIC (not used for CCM/WEP)
->> +         * NOTE:  Does not include Tx command bytes, post-MAC pad bytes,
->> +         *        MIC (CCM) 8 bytes, ICV (WEP/TKIP/CKIP) 4 bytes, CRC 4 bytes.i
->> +         * Range: 14-2342 bytes.
->> +         */
->> +        __le16 len;
->> +
->> +        /*
->> +         * MPDU or MSDU byte count for next frame.
->> +         * Used for fragmentation and bursting, but not 11n aggregation.
->> +         * Same as "len", but for next frame.  Set to 0 if not applicable.
->> +         */
->> +        __le16 next_frame_len;
->> +
->> +        __le32 tx_flags;    /* TX_CMD_FLG_* */
->> +
->> +        /* uCode may modify this field of the Tx command (in host DRAM!).
->> +         * Driver must also set dram_lsb_ptr and dram_msb_ptr in this cmd. */
->> +        struct iwl_dram_scratch scratch;
->> +
->> +        /* Rate for *all* Tx attempts, if TX_CMD_FLG_STA_RATE_MSK is cleared. */
->> +        __le32 rate_n_flags;    /* RATE_MCS_* */
->> +
->> +        /* Index of destination station in uCode's station table */
->> +        u8 sta_id;
->> +
->> +        /* Type of security encryption:  CCM or TKIP */
->> +        u8 sec_ctl;        /* TX_CMD_SEC_* */
->> +
->> +        /*
->> +         * Index into rate table (see REPLY_TX_LINK_QUALITY_CMD) for initial
->> +         * Tx attempt, if TX_CMD_FLG_STA_RATE_MSK is set.  Normally "0" for
->> +         * data frames, this field may be used to selectively reduce initial
->> +         * rate (via non-0 value) for special frames (e.g. management), while
->> +         * still supporting rate scaling for all frames.
->> +         */
->> +        u8 initial_rate_index;
->> +        u8 reserved;
->> +        u8 key[16];
->> +        __le16 next_frame_flags;
->> +        __le16 reserved2;
->> +        union {
->> +            __le32 life_time;
->> +            __le32 attempt;
->> +        } stop_time;
->> +
->> +        /* Host DRAM physical address pointer to "scratch" in this command.
->> +         * Must be dword aligned.  "0" in dram_lsb_ptr disables usage. */
->> +        __le32 dram_lsb_ptr;
->> +        u8 dram_msb_ptr;
->> +
->> +        u8 rts_retry_limit;    /*byte 50 */
->> +        u8 data_retry_limit;    /*byte 51 */
->> +        u8 tid_tspec;
->> +        union {
->> +            __le16 pm_frame_timeout;
->> +            __le16 attempt_duration;
->> +        } timeout;
->> +
->> +        /*
->> +         * Duration of EDCA burst Tx Opportunity, in 32-usec units.
->> +         * Set this if txop time is not specified by HCCA protocol (e.g. by AP).
->> +         */
->> +        __le16 driver_txop;
->> +
->> +    );
->>       /*
->>        * MAC header goes here, followed by 2 bytes padding if MAC header
->>        * length is 26 or 30 bytes, followed by payload data
->>        */
->> -    union {
->> -        DECLARE_FLEX_ARRAY(u8, payload);
->> -        DECLARE_FLEX_ARRAY(struct ieee80211_hdr, hdr);
->> -    };
->> +    struct ieee80211_hdr hdr[];
->>   } __packed;
->> +static_assert(offsetof(struct iwl_tx_cmd, hdr) == sizeof(struct iwl_tx_cmd_hdr),
->> +          "struct member likely outside of __struct_group()");
->>   /*
->>    * TX command response is sent after *agn* transmission attempts.
->> @@ -2312,7 +2314,7 @@ struct iwl_scan_cmd {
->>       /* For active scans (set to all-0s for passive scans).
->>        * Does not include payload.  Must specify Tx rate; no rate scaling. */
->> -    struct iwl_tx_cmd tx_cmd;
->> +    struct iwl_tx_cmd_hdr tx_cmd;
->>       /* For directed active scans (set to all-0s otherwise) */
->>       struct iwl_ssid_ie direct_scan[PROBE_OPTION_MAX];
->> @@ -2423,7 +2425,7 @@ struct iwlagn_beacon_notif {
->>    */
->>   struct iwl_tx_beacon_cmd {
->> -    struct iwl_tx_cmd tx;
->> +    struct iwl_tx_cmd_hdr tx;
->>       __le16 tim_idx;
->>       u8 tim_size;
->>       u8 reserved1;
-> 
+>current approach remains somewhat convoluted without clear descriptions.
+>Perhaps, I'm missing something.
 
+Do you mean this patch is "somewhat convoluted"? or the whole series?
+
+I am assuming you meant this series as this patch itself is quite small.
+
+Here is how this series is organized:
+
+Patches 1–4 : Cleanups and preparatory fixes.
+Patches 5–7 : Introduce fpu_guest_cfg to formalize guest FPU configuration.
+Patch 8 (Primary Goal): Add CET supervisor state support.
+Patches 9–10 : make CET supserviosr state a guest-only feature to save XSAVE buffer
+	       space for non-guest FPUs (placed at the end for easier review/drop).
+
+I believe the "somewhat convoluted" impression comes from the introduction of
+fpu_guest_cfg. But as I alluded to in patch 5's changelog, fpu_guest_cfg
+actually simplifies the architecture rather than adding complexity, with
+minimal overhead, i.e., a single global config. It was suggested by Sean [1].
+In my view, it offers three benefits:
+
+ - Readability: Removes ambiguity in fpu_alloc_guest_fpstate() by initializing
+		the guest FPU with its own config.
+
+ - Extensibility: Supports clean addition of guest-only features (e.g., CET
+		  supervisor state) or potentially kernel-only features (e.g.,
+		  PASID, which is not used by guest FPUs)
+
+ - Robustness: Prevent issues like those addressed by patches 3/4.
+
+
+It is possible to make some features guest-only without fpu_guest_cfg, but
+doing so would make fpu_alloc_guest_fpstate() a bit difficult to understand.
+See [2].
+
+[1]: https://lore.kernel.org/kvm/ZTf5wPKXuHBQk0AN@google.com/
+[2]: https://lore.kernel.org/kvm/20230914063325.85503-8-weijiang.yang@intel.com/
+
+>
+>Thanks,
+>Chang
+>
+>[1] https://github.com/qemu/qemu/blob/master/target/i386/kvm/kvm.c#L6395
+>[2] https://web.git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/arch/x86/kvm/cpuid.c#n195
+
+Thanks for these references.
 
