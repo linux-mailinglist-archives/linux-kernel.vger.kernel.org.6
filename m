@@ -1,107 +1,102 @@
-Return-Path: <linux-kernel+bounces-554745-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-554734-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A1202A59BE8
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 18:03:10 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 90194A59BBA
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 17:55:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DF2A316C87B
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 17:03:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 46FE91889C08
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 16:55:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CB1F230BC1;
-	Mon, 10 Mar 2025 17:03:01 +0000 (UTC)
-Received: from mail.cs.ucr.edu (mail.cs.ucr.edu [169.235.30.83])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FFCA22FF2B;
+	Mon, 10 Mar 2025 16:54:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gaXbUIoi"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A28CD19004A;
-	Mon, 10 Mar 2025 17:02:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=169.235.30.83
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DDEE1BD9C6;
+	Mon, 10 Mar 2025 16:54:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741626181; cv=none; b=IqYU1sP3ha+3/JN1RtNssXqvTv7QhL8Uz46WnarppGnA4uETUyhWMQF/hkgl6QawVo2g9bqU9JhxQ0Z7epJREvsDPWH4lfS6vchl8Yp1ZJqVxE2a/ZpJBGKopEfllGuo9uCNBNF2ujeY/sH9l7D/Jvh9HSQ3EAemSQx6JBesqD0=
+	t=1741625678; cv=none; b=sTKd5UNbPAvPKfwV8PAVaYqkrrsWenD3Rt9hAUbCU+RiolxTry4iyNOxOsXzHJAJj3qUr43RWGYy4/sItowgS5Gy4btqn3KTS9nkQen1twMbC7GzB0ISCiMiI/uqCDBkDGiixZxxq0bmEW1i7I5aV6TWDZsNSklTef+sOGqoBi0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741626181; c=relaxed/simple;
-	bh=hdUusOO1njK/6Sqr856+h049ZnrUaK5BHfpdHIEg3LM=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=Mvzh5c2+GLw4SyU8W/46T6hgyPVOEIyWy5Lz3HwXsPOSPbKZm0T5eqnf9bk7ETCrpxrg34sXPKRaJmo3IzMpA/1Q8hxsC+mF2bDAxyw1QBJvr13kv8iJpl3h2OZ1Q3IPge5JNNgJoSDAZN/+mVy4Bjrem0ru7wLdrbgMPDYGBp8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tinylab.org; spf=none smtp.mailfrom=mail.cs.ucr.edu; arc=none smtp.client-ip=169.235.30.83
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tinylab.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=mail.cs.ucr.edu
-Received: by mail.cs.ucr.edu (Postfix, from userid 1000)
-	id BAB902C800243; Mon, 10 Mar 2025 09:55:58 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.cs.ucr.edu BAB902C800243
-X-Spam-Report: No
-X-Spam-Level: No
-Received: from kq.cs.ucr.edu (kq.cs.ucr.edu [169.235.27.223])
-	by mail.cs.ucr.edu (Postfix) with ESMTP id 9C2D92C8002FC;
-	Mon, 10 Mar 2025 09:55:57 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.cs.ucr.edu 9C2D92C8002FC
-Received: by kq.cs.ucr.edu (Postfix, from userid 101072)
-	id 84D6427E46DC; Mon, 10 Mar 2025 09:54:46 -0700 (PDT)
-From: Yuan Tan <tanyuan@tinylab.org>
-To: axboe@kernel.dk,
-	syzbot+f2aaf773187f5cae54f3@syzkaller.appspotmail.com
-Cc: linux-block@vger.kernel.org,
-	akpm@linux-foundation.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org,
-	syzkaller-bugs@googlegroups.com,
-	willy@infradead.org,
-	falcon@tinylab.org,
-	tanyuan@tinylab.org
-Subject: [PATCH] block: add lock for safe nrpages access in invalidate_bdev()
-Date: Mon, 10 Mar 2025 09:54:00 -0700
-Message-Id: <20250310165400.3166618-1-tanyuan@tinylab.org>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <67ceb38a.050a0220.e1a89.04b1.GAE@google.com>
-References: <67ceb38a.050a0220.e1a89.04b1.GAE@google.com>
+	s=arc-20240116; t=1741625678; c=relaxed/simple;
+	bh=p/WTFwQVZWqzvwsT0pYojOfEwtLBKPo356bGqhDxAII=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MlhIMdLQg5kOZ5tqshgejq6kgGNQbjHPRbt/DIS5LMBoJim9uSSMNURKJNNt+JIWp8/1X7RMRc7OMU605gL5bVckb4rsgxsJx6Qrrr1TVfC2zMKeIgcHZce1xjimW2rD6lwqkK0D8ddRFP0sMtcIz39gSvOt54zKKvRRW/gwSGk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gaXbUIoi; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D54C3C4CEEB;
+	Mon, 10 Mar 2025 16:54:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741625678;
+	bh=p/WTFwQVZWqzvwsT0pYojOfEwtLBKPo356bGqhDxAII=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=gaXbUIoiQBiyUyqGF58080L7cQWbflH5i2Y05U8RHv6DMnN2QgkWiATjkgwOBdH/x
+	 0FS0cUqrYep3QcXXmqw8w3s11A79/GxSGC1AgM5pldYV3zIfLEh9bILlUAi4TAS1Bz
+	 HXMj/CM8hkYAGgp6iDGOegNByZ9OUoqT1ZWVXSnzrSzQBBfogv0n0BWkSONDhZDGrU
+	 XuMDF25IWDyNRXaTjhVcUlIEAfNkUUaeopoWe+hCtSkg2KN1NuPrCawn45dr20MgHz
+	 7WA2Jm7v8T40byL5ZV3HNO1n7bWUcVec7Z0YCZlVGgvKH9i6GTduUDL5Ry/WGSe8+g
+	 5ACz+RMmm5hKw==
+Date: Mon, 10 Mar 2025 16:54:36 +0000
+From: Wei Liu <wei.liu@kernel.org>
+To: mhklinux@outlook.com
+Cc: haiyangz@microsoft.com, wei.liu@kernel.org, decui@microsoft.com,
+	kys@microsoft.com, jakeo@microsoft.com,
+	linux-kernel@vger.kernel.org, linux-hyperv@vger.kernel.org
+Subject: Re: [PATCH v2 1/1] Drivers: hv: vmbus: Don't release fb_mmio
+ resource in vmbus_free_mmio()
+Message-ID: <Z88ZTO88g9I6Nuqy@liuwe-devbox-ubuntu-v2.lamzopl0uupeniq2etz1fddiyg.xx.internal.cloudapp.net>
+References: <20250310035208.275764-1-mhklinux@outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250310035208.275764-1-mhklinux@outlook.com>
 
-Syzbot reported a data-race in __filemap_add_folio / invalidate_bdev[1]
-due to concurrent access to mapping->nrpages.
-Adds a lock around the access to nrpages.
+On Sun, Mar 09, 2025 at 08:52:08PM -0700, mhkelley58@gmail.com wrote:
+> From: Michael Kelley <mhklinux@outlook.com>
+> 
+> The VMBus driver manages the MMIO space it owns via the hyperv_mmio
+> resource tree. Because the synthetic video framebuffer portion of the
+> MMIO space is initially setup by the Hyper-V host for each guest, the
+> VMBus driver does an early reserve of that portion of MMIO space in the
+> hyperv_mmio resource tree. It saves a pointer to that resource in
+> fb_mmio. When a VMBus driver requests MMIO space and passes "true"
+> for the "fb_overlap_ok" argument, the reserved framebuffer space is
+> used if possible. In that case it's not necessary to do another request
+> against the "shadow" hyperv_mmio resource tree because that resource
+> was already requested in the early reserve steps.
+> 
+> However, the vmbus_free_mmio() function currently does no special
+> handling for the fb_mmio resource. When a framebuffer device is
+> removed, or the driver is unbound, the current code for
+> vmbus_free_mmio() releases the reserved resource, leaving fb_mmio
+> pointing to memory that has been freed. If the same or another
+> driver is subsequently bound to the device, vmbus_allocate_mmio()
+> checks against fb_mmio, and potentially gets garbage. Furthermore
+> a second unbind operation produces this "nonexistent resource" error
+> because of the unbalanced behavior between vmbus_allocate_mmio() and
+> vmbus_free_mmio():
+> 
+> [   55.499643] resource: Trying to free nonexistent
+> 			resource <0x00000000f0000000-0x00000000f07fffff>
+> 
+> Fix this by adding logic to vmbus_free_mmio() to recognize when
+> MMIO space in the fb_mmio reserved area would be released, and don't
+> release it. This filtering ensures the fb_mmio resource always exists,
+> and makes vmbus_free_mmio() more parallel with vmbus_allocate_mmio().
+> 
+> Fixes: be000f93e5d7 ("drivers:hv: Track allocations of children of hv_vmbus in private resource tree")
+> Signed-off-by: Michael Kelley <mhklinux@outlook.com>
+> Tested-by: Saurabh Sengar <ssengar@linux.microsoft.com>
+> Reviewed-by: Saurabh Sengar <ssengar@linux.microsoft.com>
 
-[1] https://syzkaller.appspot.com/bug?extid=f2aaf773187f5cae54f3
-
-Signed-off-by: Yuan Tan <tanyuan@tinylab.org>
-Reported-by: syzbot+f2aaf773187f5cae54f3@syzkaller.appspotmail.com
----
- block/bdev.c | 9 ++++++++-
- 1 file changed, 8 insertions(+), 1 deletion(-)
-
-I had already completed and tested this patch before Matthew sent the
-email. I'm not sure if this solution is correct. If it's not, please
-ignore the patch :)
-
-diff --git a/block/bdev.c b/block/bdev.c
-index 9d73a8fbf7f9..934043d09068 100644
---- a/block/bdev.c
-+++ b/block/bdev.c
-@@ -96,7 +96,14 @@ void invalidate_bdev(struct block_device *bdev)
- {
- 	struct address_space *mapping = bdev->bd_mapping;
- 
--	if (mapping->nrpages) {
-+	XA_STATE(xas, &mapping->i_pages, 0);  /* we don't care about the index */
-+	unsigned long nrpages;
-+
-+	xas_lock_irq(&xas);
-+	nrpages = mapping->nrpages;
-+	xas_unlock_irq(&xas);
-+
-+	if (nrpages) {
- 		invalidate_bh_lrus();
- 		lru_add_drain_all();	/* make sure all lru add caches are flushed */
- 		invalidate_mapping_pages(mapping, 0, -1);
--- 
-2.25.1
-
+Applied to hyperv-fixes. Thanks.
 
