@@ -1,137 +1,123 @@
-Return-Path: <linux-kernel+bounces-554379-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-554378-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id F373CA59707
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 55961A59706
 	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 15:05:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E8F36188BCA1
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 14:05:44 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 135967A5CC2
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 14:04:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 499A122B8B8;
-	Mon, 10 Mar 2025 14:05:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 203FA22B594;
+	Mon, 10 Mar 2025 14:05:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="e0+lZ4th"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (2048-bit key) header.d=mt-integration.ru header.i=@mt-integration.ru header.b="rRVWAj1p"
+Received: from ksmg01.maxima.ru (ksmg01.maxima.ru [81.200.124.38])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EC6522A807;
-	Mon, 10 Mar 2025 14:05:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F50522A7FD;
+	Mon, 10 Mar 2025 14:05:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=81.200.124.38
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741615520; cv=none; b=Ygnm+T9hNtrn/jdXaTnA0sSDoxu2EtlfbNLKe4RI6MAhnS8I112AKuORIW4la79g4lXaLkz01HE7nkHT+WtP2wZZ0uDThvSntCx97Mfc1+jyByOsAu0fM5o47jzLpeEW0mQu43CULVSoATwZJ+zRTQMlRYUuT+ZMptRcZhKlcFM=
+	t=1741615519; cv=none; b=YId4cFCma2wabJ2ckR0pv3AhEl/DZUilDGFgAiEx3KDkR3/s8gy6OGjJ/KIG43LdQwr0I9ndSvJ9P+6wp04JT8FMKiw4TrJY/1lE+eQFX4pbqSgN00bxm5NisOXPsVVIfQzLnTbZLaPmnpr3InXyqF/ADqQaZuikCbq7RekjrDs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741615520; c=relaxed/simple;
-	bh=zdcuwioXMQ0g7o9vXchk2/gMjZ08nKjhdVg9BSLNS7Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tdYk/QNCSQxNhMm5IpOEr2X7VbDXJdW8IfJ/EjFEtWvvAH2x9Kkqe34Byoxm5jGMrN6zP/O9OsAGtRKyZO/qH+AVGkJ/IG0qWrbDfYLqxo62idu8DjICHhM2DDU8ThFZKjlvXTY8vV2Fe9maPkyz7CD6WdIcM/V40nl6aZqitn4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=e0+lZ4th; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 945E440E0218;
-	Mon, 10 Mar 2025 14:05:16 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id Io1pzLc1U_zq; Mon, 10 Mar 2025 14:05:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1741615513; bh=ktORUinjRMSPW3AxMyH0MdsBYKixkPvsbxrQTasAWjE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=e0+lZ4thH2Hc61D3H7yBcEJmgN+0UR6s3v1GYWGFqQlMeKbWSGl42hbaIljhEDYBX
-	 KmFPX5FgFuphu1KKv535yzqCOgLmeIDMXy4b0AjyLS1RiNbX8sWT0K74X/DzKSXNQc
-	 rRV+kUdW+dXmSmMy3Ckmwot/Zx1KyOP8T8/D6GpELxp9qLE0Wre4yBhxnr30KwfP2k
-	 fwVMHfRJHNc0uDnQk6IJs+TzY0u5T1z26kq03PQw8yAndLzBrYMfLRIQ9n50BPxvVH
-	 fvTFSOIibUMwxxve6ol5a8YmT/6ndM+oJ/v5ThrlsXZ9kMrfcCGuaj4i+XmnHeOCov
-	 OnxNYbmpRFG1M/+6O4JZkdfcB7nlhPOJHyAnzbDdD3oMBZxsiqm6rXCIFMet7KZpXC
-	 vbLd4//FDR7NZeXMEz4bBLyVjidsMeO1kM+OTK0ZUvk7hKMK/OJRYKuq7u+lT1q1Es
-	 4bGSCVGQGFsJ5IVTQkEAUjfMwsmpgwGULGhDRbfCaen6gwwUXpC/N1n7oufWQv51tt
-	 aa6k7cxoKxggJ8FsmhhUNITYk8vs0Ji9tvSjQhZh3buE+f8TwpQGYTws/7U5S+Fpg4
-	 fKWMkzcrNkz6LSs1Qy10BDaQ+nqR1Srmqld4bKWwJnPyL8ODVyCXElkdpk3fnOUbjf
-	 WQaDwEaMIL8B2jzPJLgMf6s4=
-Received: from zn.tnic (pd95303ce.dip0.t-ipconnect.de [217.83.3.206])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id B94DE40E0216;
-	Mon, 10 Mar 2025 14:04:54 +0000 (UTC)
-Date: Mon, 10 Mar 2025 15:04:53 +0100
-From: Borislav Petkov <bp@alien8.de>
-To: Stefano Garzarella <sgarzare@redhat.com>
-Cc: Tom Lendacky <thomas.lendacky@amd.com>,
-	Jarkko Sakkinen <jarkko@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Claudio Carvalho <cclaudio@linux.ibm.com>,
-	Peter Huewe <peterhuewe@gmx.de>, x86@kernel.org,
-	Dov Murik <dovmurik@linux.ibm.com>, linux-coco@lists.linux.dev,
-	Dionna Glaze <dionnaglaze@google.com>,
-	James Bottomley <James.Bottomley@hansenpartnership.com>,
-	Ingo Molnar <mingo@redhat.com>, Joerg Roedel <jroedel@suse.de>,
-	Jason Gunthorpe <jgg@ziepe.ca>, linux-integrity@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	"H. Peter Anvin" <hpa@zytor.com>
-Subject: Re: [RFC PATCH v2 2/6] x86/sev: add SVSM vTPM probe/send_command
- functions
-Message-ID: <20250310140453.GLZ87xheyuki61V5Mo@fat_crate.local>
-References: <20250228170720.144739-1-sgarzare@redhat.com>
- <20250228170720.144739-3-sgarzare@redhat.com>
- <20250310113006.GFZ87NPu-LgFVVtsEG@fat_crate.local>
- <mjftygohmhgs6daqvgkh2jbfuqjquchcaovcjtnzyhilnt5ww5@l3fr7phqh2ps>
- <3dd645f2-476a-d0d5-c8c1-c87307f2d756@amd.com>
- <20250310135133.GIZ87uZZNhNSkmxvg1@fat_crate.local>
- <6yzzspawrp6lg3m242bcdl5egpdvt6je2kc3cuznnnze7iypc7@4uaonepi7myq>
+	s=arc-20240116; t=1741615519; c=relaxed/simple;
+	bh=whtOw1E43xFawjustlXCPBOoe7oWD2o0R5JAIJpkqio=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=s+OPRDALon8dC47a9HiQgTGWQIgVSPqybDy0vFoGmxT0uDImR726LlFCv3YjxOuUFii0cOU0I0ddBfzLVKBopDik5Fhn0rTXKwkBIfjWkakOzYxNC2JTwBNnVJTdMyqhSLLmHxFLuSF6i0ux0iIdq2EL+EF9dM4flj0ULb8XTYk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mt-integration.ru; spf=pass smtp.mailfrom=mt-integration.ru; dkim=pass (2048-bit key) header.d=mt-integration.ru header.i=@mt-integration.ru header.b=rRVWAj1p; arc=none smtp.client-ip=81.200.124.38
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mt-integration.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mt-integration.ru
+Received: from ksmg01.maxima.ru (localhost [127.0.0.1])
+	by ksmg01.maxima.ru (Postfix) with ESMTP id 78827C000F;
+	Mon, 10 Mar 2025 17:05:13 +0300 (MSK)
+DKIM-Filter: OpenDKIM Filter v2.11.0 ksmg01.maxima.ru 78827C000F
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mt-integration.ru;
+	s=sl; t=1741615513; bh=o7zdU8UMQ+WdZBl+qEXuspEhObBUPmPtiONVmKcSePo=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type:From;
+	b=rRVWAj1pAOGJm7g6UNt7TNoe6U5ybY2vyab9gGGa/l+HDVlsg4AG/H9OQyQqv+fov
+	 xNcUZji2io/ygj9pY7n446MohPLqbyras8NbU8jfBkgx/AYo9zHwguC+VasNM3wJAR
+	 G/gxiO4LSpD4iGfFs9RxMt3+JhvXFjy8P0vmzAZsHvoFBoyusSupKsGND+Q6f+lxHp
+	 J42nxt2FTIj2LvQdGxCcTPAadacKcb1wj1zljc45NRpOyQa0B3te9pBAK8Nwmirt0u
+	 Q1/r8TR9KihmM62WzFP9jSuGbkVX589E6HLiRXQWi6vSyhIOwIMcLiVrU2MXd/zuOn
+	 dCIRqGjnqF1Ng==
+Received: from ksmg01.maxima.ru (autodiscover.maxima.ru [81.200.124.61])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(Client CN "*.maxima.ru", Issuer "GlobalSign GCC R3 DV TLS CA 2020" (verified OK))
+	by ksmg01.maxima.ru (Postfix) with ESMTPS;
+	Mon, 10 Mar 2025 17:05:13 +0300 (MSK)
+Received: from db126-1-abramov-14-d-mosos.mti-lab.com (172.25.20.118) by
+ mmail-p-exch01.mt.ru (81.200.124.61) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.4; Mon, 10 Mar 2025 17:05:11 +0300
+From: Ivan Abramov <i.abramov@mt-integration.ru>
+To: Steve French <sfrench@samba.org>
+CC: Ivan Abramov <i.abramov@mt-integration.ru>, Paulo Alcantara
+	<pc@manguebit.com>, Ronnie Sahlberg <ronniesahlberg@gmail.com>, Shyam Prasad
+ N <sprasad@microsoft.com>, Tom Talpey <tom@talpey.com>, Bharath SM
+	<bharathsm@microsoft.com>, <linux-cifs@vger.kernel.org>,
+	<samba-technical@lists.samba.org>, <linux-kernel@vger.kernel.org>,
+	<lvc-project@linuxtesting.org>
+Subject: [PATCH] smb: client: Remove redundant check in smb2_is_path_accessible()
+Date: Mon, 10 Mar 2025 17:04:58 +0300
+Message-ID: <20250310140458.249202-1-i.abramov@mt-integration.ru>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <6yzzspawrp6lg3m242bcdl5egpdvt6je2kc3cuznnnze7iypc7@4uaonepi7myq>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: mmail-p-exch02.mt.ru (81.200.124.62) To
+ mmail-p-exch01.mt.ru (81.200.124.61)
+X-KSMG-AntiPhishing: NotDetected
+X-KSMG-AntiSpam-Auth: dmarc=none header.from=mt-integration.ru;spf=none smtp.mailfrom=mt-integration.ru;dkim=none
+X-KSMG-AntiSpam-Envelope-From: i.abramov@mt-integration.ru
+X-KSMG-AntiSpam-Info: LuaCore: 51 0.3.51 68896fb0083a027476849bf400a331a2d5d94398, {rep_avail}, {Tracking_from_domain_doesnt_match_to}, 81.200.124.61:7.1.2;mt-integration.ru:7.1.1;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;127.0.0.199:7.1.2;ksmg01.maxima.ru:7.1.1, FromAlignment: s, ApMailHostAddress: 81.200.124.61
+X-KSMG-AntiSpam-Interceptor-Info: scan successful
+X-KSMG-AntiSpam-Lua-Profiles: 191623 [Mar 10 2025]
+X-KSMG-AntiSpam-Method: none
+X-KSMG-AntiSpam-Rate: 0
+X-KSMG-AntiSpam-Status: not_detected
+X-KSMG-AntiSpam-Version: 6.1.1.11
+X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.1.1.8310, bases: 2025/03/10 05:18:00 #27694722
+X-KSMG-AntiVirus-Status: NotDetected, skipped
+X-KSMG-LinksScanning: NotDetected
+X-KSMG-Message-Action: skipped
+X-KSMG-Rule-ID: 7
 
-On Mon, Mar 10, 2025 at 02:59:44PM +0100, Stefano Garzarella wrote:
-> On Mon, Mar 10, 2025 at 02:51:33PM +0100, Borislav Petkov wrote:
-> > On Mon, Mar 10, 2025 at 08:27:37AM -0500, Tom Lendacky wrote:
-> > > I don't think anything needs to be checked or printed.
-> > 
-> > Yes.
-> 
-> Ack, I removed the check and the print.
-> 
-> @Boris I also removed `ret` to continue the slimming, so the end
-> result should be this:
-> 
-> bool snp_svsm_vtpm_probe(void)
-> {
-> 	struct svsm_call call = {};
-> 
-> 	/* The vTPM device is available only if a SVSM is present */
-> 	if (!snp_vmpl)
-> 		return false;
-> 
-> 	call.caa = svsm_get_caa();
-> 	call.rax = SVSM_VTPM_CALL(SVSM_VTPM_QUERY);
-> 
-> 	if (svsm_perform_call_protocol(&call))
-> 		return false;
-> 
-> 	/* Check platform commands contains TPM_SEND_COMMAND - platform command 8 */
-> 	return (call.rcx_out & BIT_ULL(8)) == BIT_ULL(8);
-> }
-> 
-> Quite nice, thanks for the review!
+There is an unnecessary NULL check of cifs_sb in smb2_is_path_accessible(),
+since cifs_sb is dereferenced multiple times prior to it.
 
-Thanks, looks clean to me. :)
+It seems that there is no need to introduce any NULL checks of cifs_sb, 
+since arguments of smb2_is_path_accessible() are assumed to be non-NULL.
 
+Therefore, this redundant check can be removed.
+
+Found by Linux Verification Center (linuxtesting.org) with SVACE.
+
+Signed-off-by: Ivan Abramov <i.abramov@mt-integration.ru>
+---
+ fs/smb/client/smb2ops.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/fs/smb/client/smb2ops.c b/fs/smb/client/smb2ops.c
+index 4dd11eafb69d..6958825431af 100644
+--- a/fs/smb/client/smb2ops.c
++++ b/fs/smb/client/smb2ops.c
+@@ -969,7 +969,7 @@ smb2_is_path_accessible(const unsigned int xid, struct cifs_tcon *tcon,
+ 			if (islink)
+ 				rc = -EREMOTE;
+ 		}
+-		if (rc == -EREMOTE && IS_ENABLED(CONFIG_CIFS_DFS_UPCALL) && cifs_sb &&
++		if (rc == -EREMOTE && IS_ENABLED(CONFIG_CIFS_DFS_UPCALL) &&
+ 		    (cifs_sb->mnt_cifs_flags & CIFS_MOUNT_NO_DFS))
+ 			rc = -EOPNOTSUPP;
+ 		goto out;
 -- 
-Regards/Gruss,
-    Boris.
+2.39.5
 
-https://people.kernel.org/tglx/notes-about-netiquette
 
