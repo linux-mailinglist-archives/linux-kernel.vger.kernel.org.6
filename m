@@ -1,144 +1,113 @@
-Return-Path: <linux-kernel+bounces-554958-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-554959-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 136CDA5A3D4
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 20:31:07 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A87E2A5A3DE
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 20:35:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 524D116917B
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 19:31:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 564B8189214B
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 19:35:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58955233D86;
-	Mon, 10 Mar 2025 19:31:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D72242356D7;
+	Mon, 10 Mar 2025 19:35:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YEsJI4SW"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cKskT/AX"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD0BF22318;
-	Mon, 10 Mar 2025 19:30:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3716E1CAA60;
+	Mon, 10 Mar 2025 19:35:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741635059; cv=none; b=olJkwd0KWB4027kRRvJxpvPE20uiBfUSr8fwTQm5PZauZ+570fsKw8YRkwQ8Z2fT+8eModY9PdAntyjGwJva6VN/1uOUMrCdPom8xjOKAJIjKIkOY+VXFrRT/Pha6iVLgaqAp2FErZAhOTgdHPQcAhARaDfkZytpcMc8ylqfHls=
+	t=1741635339; cv=none; b=ehvIDCafMqsBeEpnitS1iqCLiKAZgs0epvXoX11mShjJac0wujR9/1NFW8Flv2wKXJf0QXbXmcTBVLmWa5GQJsWD3v/JcDkIQmrXju3rESa5+viyQPfz9EzV/NJO4Cbmik7nFD5G81FVk62LyQOQ38tUcv3nu1Hq3EC2mmEhAYs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741635059; c=relaxed/simple;
-	bh=v4yFecT2Oniyy1NPYOTfbARYRqI9e57Xhic4hOu+GeQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=MJe3mDAazMICuepeUVPBmPwYKf6x3gf+JZ25GgLQ+Ku5p6WMBRUS654qCTZa0GG24v6Oo7gJfLCLdmcShiD0vrQq6dxYIs11NBGrnHtnbjtzzU2aIXdWXjsWzG5NA7xMkuMkhMzs/qPLgqfr99dBu96idckguRaZGwxUX7cp8Sc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YEsJI4SW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1EAFEC4CEE5;
-	Mon, 10 Mar 2025 19:30:59 +0000 (UTC)
+	s=arc-20240116; t=1741635339; c=relaxed/simple;
+	bh=mqvIm7CQVKu0FB11g1YGAcy3O/ZG5gcTFuHUtGtOHXA=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=E94h+YeuhG4orq7VbGc4vT1qOwiHlsiwHRk1/EDyB3TIWXZhgKMhDnoK5WGdLvlB/mKpaC52CyvgK9Hv+JfHXvyauyLb3VteJ4wiNXkJnGGsWNG21qh8TtVaBENPvLikOapvTlFCOWALp00A2Ax3QI3RIx2HY6ahDHyLlMF0/yQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cKskT/AX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3F14CC4CEE5;
+	Mon, 10 Mar 2025 19:35:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741635059;
-	bh=v4yFecT2Oniyy1NPYOTfbARYRqI9e57Xhic4hOu+GeQ=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=YEsJI4SW1f/4rNuYiyHSu6/QnSExJ4x+d6iQjI9VDYrZoNADxke2mnXUwP9afkihL
-	 hTuuH7V0VvVUg5uJFbcLaV3P7z7RXNhKKuijQf+ljuhhIZy4j+4VTXINMoR1mxU6mu
-	 9oYCm4t8FMpXLRBV22kEbpTDdhoxwjLbeq0rMzzReSuaVBXcAgYjIAZq3BHxisBfVj
-	 GLFn9UmZ/rHmt/8ArwgEiV5JpYwhB5ksIkuxE1S5ZZfX7MMhJRKQW4RKzxHjSn4O1U
-	 ToiRFxu1+MR8QXk+J8FtqIwrbQ6ID67F5bBBCPBS5GARlRPIQNUENI/DTESUA/ZxXY
-	 2OvQqUx3x58Hw==
-Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-5e6167d0536so4706336a12.1;
-        Mon, 10 Mar 2025 12:30:59 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCULAye0Az3DzysmNejb7GZX5aAaOB/uGQfiRwbgX1cMQQmgvv/T82ASvgQAEegoDraoqQq2pf5TS2CQx3Gt@vger.kernel.org, AJvYcCVoELF7pH09+41qHmwKC/aWTvIMxEc3Qtc5qcXCEWY3dxgsq1/FcD+brrhO3jJqjewjlj2IB1d/t2Dz@vger.kernel.org, AJvYcCWxf2NDBB1ZpdpMb/2K5Y7+jIaPlV/N/NfxyhA84R7E9gmGmoUxN0DYZsQ8Ig+Kc0OJ++5OkpvLVx6nh7GB@vger.kernel.org
-X-Gm-Message-State: AOJu0YwH2F3DhDl1tEj+kPkwypbh8JAo/0Qd/NM3dmfc05oVnP6w8KnU
-	Pn1MwTRVOXlj339ZPVfVrSgOnPpgWzhcY6wqUoMFMISGl/AhxIhnDohzsag0CL33H91u4NKVbJ6
-	ktWMbpYNtqGqNaRU2p8gTiXHZwg==
-X-Google-Smtp-Source: AGHT+IGxBKdAQOOWVnO3ZEjAzX0VnUi4wg5gUyfxa5EYDnUv2ipBTTlxmPR9u72RbqgdJn4WQkU1sK0SjNez+497cro=
-X-Received: by 2002:a17:906:7308:b0:ac2:6582:1564 with SMTP id
- a640c23a62f3a-ac2b9e1d1d1mr100096466b.27.1741635057630; Mon, 10 Mar 2025
- 12:30:57 -0700 (PDT)
+	s=k20201202; t=1741635338;
+	bh=mqvIm7CQVKu0FB11g1YGAcy3O/ZG5gcTFuHUtGtOHXA=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=cKskT/AX2L6B8zrQve0N9GOi524W0eT7Eh3oPQs7POL4LZp4yyppUCR7PDCMma7zP
+	 dw3yobp4X0gZ7uo32XDZfCTfjyLwN75xK7uctKZOgr9IaELke4rA/wE3W6bYqV8twm
+	 LgpOLV1OpZ5QP04ZhSWpd4pz7VSSHo6qfW1oyYRuakJzHOuqOj5Gun/HSyRFzvtF9n
+	 dhtdWCjXFP39EkQ+j4vO4ynXjOaqK6cxHYg+0Eddyam/2POJHyJ/rSyFhMn4CxJ/uD
+	 R4CAW3af5r7Dx/XcT00wMZpA94AxUOzMm/EU5UDDocanIo5OzqRY8tIBBBW6eVRGSh
+	 gwtt3hNtpsMaw==
+Date: Mon, 10 Mar 2025 19:35:28 +0000
+From: Jonathan Cameron <jic23@kernel.org>
+To: Jorge Marques <gastmaier@gmail.com>
+Cc: Conor Dooley <conor@kernel.org>, Jorge Marques
+ <jorge.marques@analog.com>, Lars-Peter Clausen <lars@metafoo.de>, Michael
+ Hennerich <Michael.Hennerich@analog.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Jonathan Corbet <corbet@lwn.net>, David Lechner
+ <dlechner@baylibre.com>, linux-iio@vger.kernel.org,
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-doc@vger.kernel.org
+Subject: Re: [PATCH 2/4] dt-bindings: iio: adc: Add adi,ad4052
+Message-ID: <20250310193528.35d35c2e@jic23-huawei>
+In-Reply-To: <sf7hqjyzal2jmbrf72xxj4cewrkq6bsjwlkbinqv2zan57cq3s@hwhfwmabtk5q>
+References: <20250306-iio-driver-ad4052-v1-0-2badad30116c@analog.com>
+	<20250306-iio-driver-ad4052-v1-2-2badad30116c@analog.com>
+	<20250306-promotion-tarmac-bc5172f38f31@spud>
+	<sf7hqjyzal2jmbrf72xxj4cewrkq6bsjwlkbinqv2zan57cq3s@hwhfwmabtk5q>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.48; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250307093309.44950-1-krzysztof.kozlowski@linaro.org>
- <5417098.31r3eYUQgx@workhorse> <20250310124956.GA3875809-robh@kernel.org>
-In-Reply-To: <20250310124956.GA3875809-robh@kernel.org>
-From: Rob Herring <robh@kernel.org>
-Date: Mon, 10 Mar 2025 14:30:45 -0500
-X-Gmail-Original-Message-ID: <CAL_JsqJShHSMzMwiYA79OppJYKKR8qN=1soXPV_hCZiXGyVkSg@mail.gmail.com>
-X-Gm-Features: AQ5f1JosXmbTct3QI9ZnK1eBDcQPU7QRj7_3mqIgKtvsQToiQl1meMSpHXHswhc
-Message-ID: <CAL_JsqJShHSMzMwiYA79OppJYKKR8qN=1soXPV_hCZiXGyVkSg@mail.gmail.com>
-Subject: Re: [PATCH v2] dt-bindings: rng: rockchip,rk3588-rng: Drop
- unnecessary status from example
-To: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
-Cc: Daniel Golle <daniel@makrotopia.org>, Aurelien Jarno <aurelien@aurel32.net>, 
-	Olivia Mackall <olivia@selenic.com>, Herbert Xu <herbert@gondor.apana.org.au>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Heiko Stuebner <heiko@sntech.de>, linux-crypto@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, 
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Mon, Mar 10, 2025 at 7:49=E2=80=AFAM Rob Herring <robh@kernel.org> wrote=
-:
->
-> On Fri, Mar 07, 2025 at 03:05:50PM +0100, Nicolas Frattaroli wrote:
-> > On Friday, 7 March 2025 10:33:09 Central European Standard Time Krzyszt=
-of
-> > Kozlowski wrote:
-> > > Device nodes are enabled by default, so no need for 'status =3D "okay=
-"' in
-> > > the DTS example.
-> > >
-> > > Reviewed-by: Heiko Stuebner <heiko@sntech.de>
-> > > Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> > >
-> > > ---
-> > >
-> > > Changes in v2:
-> > > 1. Drop unnecessary full stop in subject prefix after ':'.
-> > > 2. Add Rb tag.
-> > > ---
-> > >  Documentation/devicetree/bindings/rng/rockchip,rk3588-rng.yaml | 1 -
-> > >  1 file changed, 1 deletion(-)
-> > >
-> > > diff --git a/Documentation/devicetree/bindings/rng/rockchip,rk3588-rn=
-g.yaml
-> > > b/Documentation/devicetree/bindings/rng/rockchip,rk3588-rng.yaml inde=
-x
-> > > 757967212f55..ca71b400bcae 100644
-> > > --- a/Documentation/devicetree/bindings/rng/rockchip,rk3588-rng.yaml
-> > > +++ b/Documentation/devicetree/bindings/rng/rockchip,rk3588-rng.yaml
-> > > @@ -53,7 +53,6 @@ examples:
-> > >          interrupts =3D <GIC_SPI 400 IRQ_TYPE_LEVEL_HIGH 0>;
-> > >          clocks =3D <&scmi_clk SCMI_HCLK_SECURE_NS>;
-> > >          resets =3D <&scmi_reset SCMI_SRST_H_TRNG_NS>;
-> > > -        status =3D "okay";
-> > >        };
-> > >      };
-> >
-> > Hi,
-> >
-> > is there the possibility we could make dtschema as invoked by `make
-> > dt_binding_check W=3D1` (or W=3D2) add a warning for examples that have=
- disabled
-> > or explicitly listed status properties when not needed? Or is this some=
-thing
-> > better handled in, say, checkpatch.pl?
-> >
-> > The question arises because dumb mistakes by me like this should ideall=
-y be
-> > caught before they waste precious maintainer time.
-> >
-> > If it's best handled in dtschema, I can look into working on that so yo=
-u guys
-> > don't have to do even more work due to me.
->
-> Trust me, I'm always looking for things to check automatically. :)
->
-> I have something like that which adds a schema for examples only. I
-> think there were some corner cases. I'll take a fresh look at it.
+On Sun, 9 Mar 2025 20:43:55 +0100
+Jorge Marques <gastmaier@gmail.com> wrote:
 
-I got my check working again. i2c/i2c-demux-pinctrl.yaml is the
-problematic one. Not sure what to do there.
+> > > +  compatible:
+> > > +    enum:
+> > > +      - adi,ad4050
+> > > +      - adi,ad4052
+> > > +      - adi,ad4056
+> > > +      - adi,ad4058  
+> > 
+> > Can you mention in your commit message what differs between these
+> > devices that makes picking one as the "base"/fallback compatible
+> > unsuitable please?  
+> Sure, to be added:
+> 
+>  Each variant of the family differs in speed and resolution, resulting
+>  in different scan types and spi word sizes, that are matched by the
+>  compatible with the chip_info.
+>  The device contains two required interrupts (gp0, gp1) and one optional
+>  gpio (cnv).
 
-Rob
+Explain why the interrupts are required.  That is unusual.
+
+Note the driver can be stricter than the binding, so it may make sense
+to require them in the driver, but leave it flexible in the binding.
+If someone has a board without them wired, then they can look at adding
+polling or timing logic to avoid the need for the interrupt lines or
+at reducing functionality of the driver.
+
+> 
+> > > +
+> > > +  vdd-supply: true
+> > > +  vdd_1_8-supply: true  
+> > 
+> > You're allowed to use . in property names, and the _s should be -s.
+> > That said, vdd and vdd 1.8? Shouldn't both have the voltage in them in
+> > that case?  
+> I overlooked the supplies, the correct are vdd, vio as mandatory,
+> and vref is optional.
+> 
+> Jorge
+
 
