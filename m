@@ -1,225 +1,308 @@
-Return-Path: <linux-kernel+bounces-554366-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-554364-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 841FBA596DC
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 14:59:57 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BEBCDA596D6
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 14:58:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 45F573AA0DD
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 13:59:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0270F169D24
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 13:58:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A00F22A807;
-	Mon, 10 Mar 2025 13:59:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F1F922B595;
+	Mon, 10 Mar 2025 13:58:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="P4bGru9o"
-Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="AHY/c072"
+Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1BBB1AA7BA
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 13:59:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 635BB22A818
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 13:58:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741615191; cv=none; b=PXC6FXGjxdvW9WjeHbJJRWAydSHsOix8JDylcpDvXk2RgWLqqPU4Q0hziJWDWtOPrfxcPzVbG/5A8Ku0E4XC/KPipesTLpAjJ7WlmZ1/Gldv0D30inpzsADnub6tn5bATjWEi7Rl4refuIU1wrjdJODoUou4VK6YR+GkJAryIkM=
+	t=1741615115; cv=none; b=DZhTBXK5cl8uckmCZoe0PSPx0DyjnzZSGJJ++D3f/rr3OgBhyQYxFWaK9kSW0/OdNQZQi0ZuopuXnKoltgv9HvoQU8tseJ1GL7MyMUa3l0l0RaieSoWk48SKFB3TBkD5LM4frpEB7JMdfkrjzvCW5Q+5CVGKY+3qBy52GBH0zRs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741615191; c=relaxed/simple;
-	bh=Yh6n9bq/amLuXLGzyyexficZQzX1dJOyGY6+IEDDQsA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=hkqAerLjp/LA04WoLa6EQYLsfhdTvKI+3aDSw8Kkv+H5sW2g9WpzSpBbRNFE4K1S2um69h2ZJj7wUKrQrThy0tPZBGE4x/XKyVshrTA1iFr58ahdra7tZkjJeSMlQpjzNDim43Z9lmmO7Umc+bVexhoWq0Pfe6UE4a4LE8mTAKY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=P4bGru9o; arc=none smtp.client-ip=209.85.208.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-5e6ff035e9aso1740445a12.0
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 06:59:49 -0700 (PDT)
+	s=arc-20240116; t=1741615115; c=relaxed/simple;
+	bh=i9GxyKAVB18HnH+g2lVwQvXz5I//zOKa3JmIOEbrK94=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QZbdlbybXxUS2U+RZT2WjPk9+j9w5WTaIloSxJ5yaPXDLN5ePS+qwUXP6qgUXRxwGM1dE8uU2ogjvtzrlWpmsZC8tZhE1Nj/Ys7IDHx2RaRU9Ukr+OfFMolp+D/UiyD+VPOorID/i376XN0nYNgZqTCVaosKQs8bFOQps6/h7XI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=AHY/c072; arc=none smtp.client-ip=209.85.221.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-390cf7458f5so4140440f8f.2
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 06:58:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1741615188; x=1742219988; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=jl+g7SjppZuPPqGMNpi69kOreR0Ej6ApvhdQOqINvfs=;
-        b=P4bGru9od4kyAKTNMVICMn2JIvPZjprHcZdNaR804zjAndHgFqbtw50JEfe1DLNKHw
-         xakueD3P/c5TfnDfgkdDoHcpDgpECfLMG/cPQ39Pvrrl5Q8lhbUMKOFYHR8H2zBZIGIz
-         1eh2Gry3N6FG1t49ix9KxjhyzHuMfL0/UzLCMqsXXrklT8bOlxmcF6X+PeBK9lGJ7+XL
-         On/sizXMClFS4RZ6cdzstddEPQHvwrgo3WzHqJnhPcqczvfUma6du/laZRN6vUJP6DmT
-         eg29MppqfgTxt0ZZM6ITHnTiFYTmDTp8Bj5rYOPHGcLH7mm1gXRilCE6tk/qNYA+NWvb
-         JqwQ==
+        d=suse.com; s=google; t=1741615112; x=1742219912; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:date:from:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=x6bOGmoklXRtJQxdeWHpYOOfYuKnU0zJof9I6zGwu64=;
+        b=AHY/c072S/rTv5X4B7RzTjFt+WNE6wTGVRHpxbTVLrZCFV122NhUaa1ZGl1h+d3FzJ
+         ravRkaFQp+F0YVLAa+VXB/q5BfrZFE81RLywDtCjHLejTadqpGDN6wajA7Wukj98+rlc
+         Q5f+7l+2x1a++74psGcqjOhZS2FyRYlzK7X/tgDlXL0a3yN8SPzuax81c7QvgeLKezR2
+         NI2tl2hDaLsU/nY0Yoj05y9ueF6fYS30hk+a3vbTxFzXTG1oHUM+rD454QEnSdD+iDt8
+         88yfbRVK7lMVEtvq4wqc32w19TNg3yPHi56qroS2EATt25fKgrgLqjkeJIJlBe67d92r
+         +m3w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741615188; x=1742219988;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=jl+g7SjppZuPPqGMNpi69kOreR0Ej6ApvhdQOqINvfs=;
-        b=EZPpSyzbfMwZbresvCKz5xQXWKz7x2KzSIPnLh1MJx516dhDAur6hYY4kvMPKW2Gkm
-         gFZx01YpgyJaWbMydprVqoKN/BpyGQ5RYgMNzQoN72VPwfrh14nWNZSOehS/+/mRBen4
-         RRAgyrhDaV1sQq83gZ+ETl0u8zETSmSt34LZ3U9GZ56HeQg1vLGbMFBSYk9wpAiv2Ytz
-         nl4gLh0r9e69o4OX64rIHv6Xbq6JfuHDSm9M6uSjRri1lbcv/sMKkQQlrHMjLRm4LAhu
-         QhdervjtghDt0DEiDbokiveLdzhTTx+wIL2qbsy7MM4/HMUppUpfa+4FBKrv6QIMst3p
-         syqA==
-X-Forwarded-Encrypted: i=1; AJvYcCVhJSPld7ikTnRfIdA15klKcbMHyuYs3ilqZ2XtpLbGrbqNfWhWSjpPQuDEiGkDKNjAO5IbXRwPwJLQRNg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw2W3y1UhvuCrPj551ngCyZzDhDInZDKwz0ajKmioLD6kQMSXsW
-	yVkwRkA6DUHkMJn1kUGzlZYSX5/AwnXEyuhcWIEqE8R55jchMPWeECnEk581guQHy1XM49+4Khh
-	XfbeWqVXISmabv3k/Ixp1O+Fdgnas1IdhoqhlEZf7CjI8OrljdYE=
-X-Gm-Gg: ASbGncs38nPhxc2ZlAgSCueBdIzbRfO+ya9dTMCqpQp922o9I2GLU7RAMo7iaDdBoUj
-	sSCS4je+bCvLX7pCBbBk6shqVFHgBenh9ZaxoGUxl2CeQTlXS9uqWtMUQY2Re/mCB1Zdp2fm4aZ
-	IzK0YVRmrFSW4JmU8w+kU4U0iU0APJaqoy1TN2u4AruKtQpkDQ8q0IpY0=
-X-Google-Smtp-Source: AGHT+IEtJqb7qfe2DsiNgJhvPScBvm1kIZ1noKr+pKDu1mABwPOfnwjYQ06UJTE6wA0frCo76hdhEImgTegcbjsvblA=
-X-Received: by 2002:a17:907:9455:b0:abf:425d:5d3 with SMTP id
- a640c23a62f3a-ac252f4b12dmr1655355266b.40.1741615187926; Mon, 10 Mar 2025
- 06:59:47 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1741615112; x=1742219912;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:date:from
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=x6bOGmoklXRtJQxdeWHpYOOfYuKnU0zJof9I6zGwu64=;
+        b=vZYiwYPz4OfvXyD80GHgQCIHfR6xsucf4j+qfakzUBzDwTvB5buk5N7+IWnoh6ndgr
+         l7dK6mWPR7qRX4M6tdDVFZfez/npTe4G6RbaAFFkl45dF6Z7YpdxXTwvplst3bURnpQ/
+         jx0KyZxIBpcqm2DgoeBKOyPNLc5JLvZzoWoyE3GdaFQBXaSKgyS3wnxaqeMjsu3MlN4o
+         //l6q1x82bN2cnZdrQ53vR0ylktBc6Cg3LiJLw3cnYnxoCqlY87iaqgQECry4+v9LW49
+         OQQT5bxs9C96PLIB8sEG1N86so0qZx4awbWhXBmTYi5PzIZbmDyYOQ7+4DKKF2sds+0/
+         LsPg==
+X-Forwarded-Encrypted: i=1; AJvYcCUMZ3XNPkG0XnFkC6Odc1IbcUeYvNaT1w1ZR4MD7jDv5U3n3L8OL815X0Mlo5+aziSC55y5SGc5ecC+jxk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzkGlKt7GdAt5777AKQcaMy/+HSzlTxkWszjlyDT9m+s18vWutx
+	OxYyAEheNhTkX7WAZtDkly7f1lBzaOz43KKn5DHrzaRMNVQT74VfsPnOBdLVxxg=
+X-Gm-Gg: ASbGncuKUt0YLwqnynJ7USdzgTLkUrmEEituV8TbtVOiR2//AxHt5NQcPFyABFE01GO
+	M29rmevcUTundIK1IofyHoUw+PVdgRKaZqrP3+6NmG6h2hpSd88P86p2I/IS+Gqh7Wf5WfWxQ8g
+	rjJFVJjkn5o+weTBWj7z5RFfWqaaDxdDjoHJyOXMNjSOBctT6rsu10BsJcKZwBCk+DX19uHM7N2
+	+fLYDNrvcaATkMxWxhVv2iEGBOulSsdE3WiUX5N3kIvLUydyaHWJ5ml7AHFj99ebpohH1HwqjCx
+	4h2WnNcjFlEsJxhkGwg7S7W4pqzlgdmieqV7S+zFgEeZ0Wk6xYtJglkdoEneqImj7YgcppHenrx
+	uqCQ6A0ZKyDT00vHe2YT0utE=
+X-Google-Smtp-Source: AGHT+IGyhk5+VAMcITm5rrq0aJ90sKdh4cQmUoqGgN6Meob+XW4ZpicfvmV1X3pFEScV3weEws3UqA==
+X-Received: by 2002:a05:6000:1fa4:b0:38f:577f:2f6d with SMTP id ffacd0b85a97d-39132d093demr10173742f8f.2.1741615111629;
+        Mon, 10 Mar 2025 06:58:31 -0700 (PDT)
+Received: from localhost (host-87-14-236-98.retail.telecomitalia.it. [87.14.236.98])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac299a025c7sm236754666b.51.2025.03.10.06.58.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 10 Mar 2025 06:58:31 -0700 (PDT)
+From: Andrea della Porta <andrea.porta@suse.com>
+X-Google-Original-From: Andrea della Porta <aporta@suse.de>
+Date: Mon, 10 Mar 2025 14:59:41 +0100
+To: Phil Elwell <phil@raspberrypi.com>
+Cc: Herve Codina <herve.codina@bootlin.com>,
+	Andrea della Porta <andrea.porta@suse.com>, andrew@lunn.ch,
+	Arnd Bergmann <arnd@arndb.de>,
+	"maintainer:BROADCOM BCM7XXX ARM ARCHITECTURE" <bcm-kernel-feedback-list@broadcom.com>,
+	bhelgaas@google.com, brgl@bgdev.pl,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Conor Dooley <conor+dt@kernel.org>, derek.kiernan@amd.com,
+	devicetree@vger.kernel.org, dragan.cvetic@amd.com,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, krzk+dt@kernel.org,
+	kw@linux.com, Linus Walleij <linus.walleij@linaro.org>,
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+	linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
+	LKML <linux-kernel@vger.kernel.org>,
+	"open list:PCI NATIVE HOST BRIDGE AND ENDPOINT DRIVERS" <linux-pci@vger.kernel.org>,
+	"moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE" <linux-rpi-kernel@lists.infradead.org>,
+	lpieralisi@kernel.org, luca.ceresoli@bootlin.com,
+	manivannan.sadhasivam@linaro.org, masahiroy@kernel.org,
+	Michael Turquette <mturquette@baylibre.com>,
+	Rob Herring <robh@kernel.org>, saravanak@google.com,
+	Stephen Boyd <sboyd@kernel.org>, thomas.petazzoni@bootlin.com,
+	Stefan Wahren <wahrenst@gmx.net>, Will Deacon <will@kernel.org>,
+	Dave Stevenson <dave.stevenson@raspberrypi.com>
+Subject: Re: [PATCH v6 00/10] Add support for RaspberryPi RP1 PCI device
+ using a DT overlay
+Message-ID: <Z87wTfChRC5Ruwc0@apocalypse>
+References: <CAMEGJJ3=W8_R0xBvm8r+Q7iExZx8xPBHEWWGAT9ngpGWDSKCaQ@mail.gmail.com>
+ <20250213171435.1c2ce376@bootlin.com>
+ <CAMEGJJ1++aeE7WWLVVesbujME+r2WicEkK+CQgigRRp2grYf=A@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250306162635.2614376-1-dietmar.eggemann@arm.com>
-In-Reply-To: <20250306162635.2614376-1-dietmar.eggemann@arm.com>
-From: Vincent Guittot <vincent.guittot@linaro.org>
-Date: Mon, 10 Mar 2025 14:59:36 +0100
-X-Gm-Features: AQ5f1JqXfUiTPrsgOLbGCRIyNlvJx35yv-k1-8QkWqgOfehpJs9nYQjirGu9CPA
-Message-ID: <CAKfTPtCfd_=gm7rsT_qBL8pw5uybEvYH4N2tvxpKndxxi4L7oA@mail.gmail.com>
-Subject: Re: [PATCH] /sched/core: Fix Unixbench spawn test regression
-To: Dietmar Eggemann <dietmar.eggemann@arm.com>
-Cc: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>, 
-	Juri Lelli <juri.lelli@redhat.com>, Steven Rostedt <rostedt@goodmis.org>, 
-	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>, 
-	Valentin Schneider <vschneid@redhat.com>, Hagar Hemdan <hagarhem@amazon.com>, linux-kernel@vger.kernel.org, 
-	wuchi.zero@gmail.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAMEGJJ1++aeE7WWLVVesbujME+r2WicEkK+CQgigRRp2grYf=A@mail.gmail.com>
 
-On Thu, 6 Mar 2025 at 17:26, Dietmar Eggemann <dietmar.eggemann@arm.com> wrote:
->
-> Hagar reported a 30% drop in UnixBench spawn test with commit
-> eff6c8ce8d4d ("sched/core: Reduce cost of sched_move_task when config
-> autogroup") on a m6g.xlarge AWS EC2 instance with 4 vCPUs and 16 GiB RAM
-> (aarch64) (single level MC sched domain) [1].
->
-> There is an early bail from sched_move_task() if p->sched_task_group is
-> equal to p's 'cpu cgroup' (sched_get_task_group()). E.g. both are
-> pointing to taskgroup '/user.slice/user-1000.slice/session-1.scope'
-> (Ubuntu '22.04.5 LTS').
+Hi,
 
-Isn't this same use case that has been used by commit eff6c8ce8d4d to
-show the benefit of adding the test if ((group ==
-tsk->sched_task_group) ?
-Adding Wuchi who added the condition
+On 16:27 Thu 13 Feb     , Phil Elwell wrote:
+> Hi Hervé,
+> 
+> On Thu, 13 Feb 2025 at 16:14, Herve Codina <herve.codina@bootlin.com> wrote:
+> >
+> > Hi Phil,
+> >
+> > On Thu, 13 Feb 2025 15:18:45 +0000
+> > Phil Elwell <phil@raspberrypi.com> wrote:
+> >
+> > > Hi Andrea,
+> > >
+> > > The problem with this approach (loading an overlay from the RP1 PCIe
+> > > driver), and it's one that I have raised with you offline, is that
+> > > (unless anyone can prove otherwise) it becomes impossible to create a
+> > > Pi 5 DTS file which makes use of the RP1's resources. How do you
+> > > declare something as simple as a button wired to an RP1 GPIO, or fan
+> > > connected to a PWM output?
+> >
+> > The driver could be improved in a second step.
+> > For instance, it could load the dtbo from user-space using request_firmare()
+> > instead of loading the embedded dtbo.
+> >
+> > >
+> > > If this is the preferred route to upstream adoption, I would prefer it
+> > > if rp1.dtso could be split in two - an rp1.dtsi similar to what we
+> > > have downstream, and an rp1.dtso that #includes it. In this way we can
+> > > keep the patching and duplication to a minimum.
+> >
+> > Indeed, having a rp1.dtsi avoid duplication but how the rp1.dtso in
+> > the the kernel sources could include user customization (button, fan, ...)
+> > without being modified ?
+> > At least we have to '#include <my_rp1_customizations.dtsi>'.
+> >
+> > Requesting the dtbo from user-space allows to let the user to create
+> > its own dtso without the need to modify the one in kernel sources.
+> >
+> > Does it make sense ?
+> 
+> I think I understand what you are saying, but at this point the RP1
+> overlay would no longer be an RP1 overlay - it would be an
+> RP1-and-everything-connected-to-it overlay, which is inherently
+> board-specific. Which user-space process do you think would be
+> responsible for loading this alternative overlay, choosing carefully
+> based on the platform it is running on? Doesn't that place quite a
+> burden on all the OS maintainers who up to now have just needed a
+> kernel and a bunch of dtb files?
+> 
+> If it is considered essential that the upstream Pi 5 dts file does not
+> include RP1 and its children, then Raspberry Pi are going to have to
+> walk a different path until we've seen how that can work. By splitting
+> rp1.dtso as I suggested, and perhaps providing an alternative helper
+> function that only applies the built-in overlay if the device node
+> doesn't already exist, we get to stay as close to upstream as
+> possible.
+> 
+> Phil
 
->
-> So in:
->
->   do_exit()
->
->     sched_autogroup_exit_task()
->
->       sched_move_task()
->
->         if sched_get_task_group(p) == p->sched_task_group
->           return
->
->         /* p is enqueued */
->         dequeue_task()              \
->         sched_change_group()        |
->           task_change_group_fair()  |
->             detach_task_cfs_rq()    |                              (1)
->             set_task_rq()           |
->             attach_task_cfs_rq()    |
->         enqueue_task()              /
->
-> (1) isn't called for p anymore.
->
-> Turns out that the regression is related to sgs->group_util in
-> group_is_overloaded() and group_has_capacity(). If (1) isn't called for
-> all the 'spawn' tasks then sgs->group_util is ~900 and
-> sgs->group_capacity = 1024 (single CPU sched domain) and this leads to
-> group_is_overloaded() returning true (2) and group_has_capacity() false
-> (3) much more often compared to the case when (1) is called.
->
-> I.e. there are much more cases of 'group_is_overloaded' and
-> 'group_fully_busy' in WF_FORK wakeup sched_balance_find_dst_cpu() which
-> then returns much more often a CPU != smp_processor_id() (5).
->
-> This isn't good for these extremely short running tasks (FORK + EXIT)
-> and also involves calling sched_balance_find_dst_group_cpu() unnecessary
-> (single CPU sched domain).
->
-> Instead if (1) is called for 'p->flags & PF_EXITING' then the path
-> (4),(6) is taken much more often.
->
->   select_task_rq_fair(..., wake_flags = WF_FORK)
->
->     cpu = smp_processor_id()
->
->     new_cpu = sched_balance_find_dst_cpu(..., cpu, ...)
->
->       group = sched_balance_find_dst_group(..., cpu)
->
->         do {
->
->           update_sg_wakeup_stats()
->
->             sgs->group_type = group_classify()
->
->               if group_is_overloaded()                             (2)
->                 return group_overloaded
->
->               if !group_has_capacity()                             (3)
->                 return group_fully_busy
->
->               return group_has_spare                               (4)
->
->         } while group
->
->         if local_sgs.group_type > idlest_sgs.group_type
->           return idlest                                            (5)
->
->         case group_has_spare:
->
->           if local_sgs.idle_cpus >= idlest_sgs.idle_cpus
->             return NULL                                            (6)
->
-> Unixbench Tests './Run -c 4 spawn' on:
->
-> (a) VM AWS instance (m7gd.16xlarge) with v6.13 ('maxcpus=4 nr_cpus=4')
->     and Ubuntu 22.04.5 LTS (aarch64).
->
->     Shell & test run in '/user.slice/user-1000.slice/session-1.scope'.
->
->     w/o patch   w/ patch
->     21005       27120
->
-> (b) i7-13700K with tip/sched/core ('nosmt maxcpus=8 nr_cpus=8') and
->     Ubuntu 22.04.5 LTS (x86_64).
->
->     Shell & test run in '/A'.
->
->     w/o patch   w/ patch
->     67675       88806
->
-> CONFIG_SCHED_AUTOGROUP=y & /sys/proc/kernel/sched_autogroup_enabled equal
-> 0 or 1.
->
-> [1] https://lkml.kernel.org/r/20250205151026.13061-1-hagarhem@amazon.com
->
-> Reported-by: Hagar Hemdan <hagarhem@amazon.com>
-> Signed-off-by: Dietmar Eggemann <dietmar.eggemann@arm.com>
-> ---
->  kernel/sched/core.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-> index b00f884701a6..ca0e3c2eb94a 100644
-> --- a/kernel/sched/core.c
-> +++ b/kernel/sched/core.c
-> @@ -9064,7 +9064,7 @@ void sched_move_task(struct task_struct *tsk)
->          * group changes.
->          */
->         group = sched_get_task_group(tsk);
-> -       if (group == tsk->sched_task_group)
-> +       if ((group == tsk->sched_task_group) && !(tsk->flags & PF_EXITING))
->                 return;
->
->         update_rq_clock(rq);
-> --
-> 2.34.1
->
+So, the problem is twofold: the first is due to the fact that downstream
+expects the dtb to be fully declared at fw load time (I'll call that
+*monolithic* dtb from now on), the second is about how to represent dependencies
+between board dtb and rp1 overlay which arises only when using overlays instead
+of a monolithic dtb.
+
+The former issue must be solved first in order for the latter to even exists
+(if we don't use overlay, the dependencies are fully exposed in the dtb since
+the beginning), so I'll concentrate on the former for now.
+
+There are 3 possible scenarios to be reconciled:
+
+
+1 - MONOLITHIC DTB
+
+This is the downstream case, where it's advisable to have only one dtb blob
+containing everything (rp1 included) loaded by the fw. In this case the
+resulting devicetree would looks like:
+
+  axi {
+    pcie@120000 {
+      rp1_nexus {
+        pci-ep-bus@1 {
+             ...
+        }
+      }
+    }
+  }
+
+
+2 - RP1 LOADED FROM OVERLAY BY THE FW
+
+In this case the rp1 dt node is loaded from overlay directly by the fw and the 
+resulting devicetree is exactly equal to the monolithic dtb scenario.
+In order for that overlay to be loaded by fw, just add 'dtoverlay=rp1' in
+'config.txt'.
+
+
+3 - RP1 LOADED FROM OVERLAY AT RUNTIME
+
+Here it's the rp1 driver that loads the overlay at runtime, which is the case
+that this patchset originally proposed. The devicetree ends up like this:
+
+  axi {
+    pcie@120000 {
+      pci@0,0 {
+        dev@0,0 {
+          pci-ep-bus@1 {
+               ...
+          }
+        }
+      }
+    }
+  }
+
+and this is exepcially useful to cope with the case in which there's no DT
+natively used, e.g. on ACPI systems.
+
+
+In order for all those 3 mentioned scenatios to work, I propose the following
+inclusion scheme for for the dts files (the arrow points to the includer):
+                   
+ 
+ rp1-pci.dtso         rp1.dtso
+     ^                    ^
+     |                    |
+rp1-common.dtsi ----> rp1-nexus.dtsi ----> bcm2712-rpi-5-b-MONOLITHIC.dts
+   
+   
+where those dts are defined as follows (omitting the internal properties for
+clarity sake):
+
+
+- rp1-common.dtsi ------- // definition of core rp1 and its peripherals, common
+			  // for all cases
+
+	pci_ep_bus: pci-ep-bus@1 
+	{
+		rp1_clocks { };
+
+		rp1_gpio { };
+
+		rp1_eth { };
+	};
+
+- rp1-pci.dtso ---------- // ovl linked in the rp1 driver code to be loaded at
+			  // runtime from rp1 driver. Only for case 3
+
+	/plugin/;
+	fragment@0 {
+                target-path="";
+                __overlay__ {
+			#include "rp1-common.dtsi"
+		};
+	}
+
+- rp1-nexus.dtsi ------- // adapter to decouple rp1 ranges for non runtime-loaded
+		         // overlay case (i.e. only for case 1 and 2)
+
+	rp1_nexus {
+		ranges = ...
+		
+		 #include "rp1-common.dtsi"
+	};
+
+- rp1.dtso ------------ // overlay to be loaded by fw (case 2)
+
+	/plugin/;
+	&pcie2 {
+		#include "rp1-nexus.dtsi"
+	};
+
+- bcm2712-rpi-5-b-MONOLITHIC.dts --- // monolithic dtb to avoid any overlay use
+				     // (case 1)
+
+	/ {
+		... all rpi5 board dts ...
+		&pcie2 {
+        		#include "rp1-nexus.dtsi"
+		};
+	};
+
+
+with only minimal changes to the rp1 driver code, I can confirm that all those
+scenarios can coexits and are working fine. Before processding with a new patchset
+I'd like to have some thoughts about that, do you think this is a viable approach?
+
+Many thanks,
+Andrea
 
