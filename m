@@ -1,202 +1,146 @@
-Return-Path: <linux-kernel+bounces-554400-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-554401-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id AFDAEA59743
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 15:15:38 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 88F3CA5974A
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 15:16:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 11E193AB10F
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 14:15:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7DD433A7D59
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 14:15:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DEFB22B8C5;
-	Mon, 10 Mar 2025 14:15:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C70F022D4C5;
+	Mon, 10 Mar 2025 14:15:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Pvqy9ro0"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="y2S9Tz16"
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BF7215ECD7
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 14:15:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3215E22CBDC
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 14:15:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741616115; cv=none; b=bFC1g5GtwgzJkrJdRmwcDjuMSRRNrNRAKE2Wdcif3RRcwTefJbrxckn46laDaUoMsEgyMquArylx9fhwp0q/RYQKAzIElWbh2qw9Q57TdXnNLgd/2GewMA0SD6KQxSJZceuevzmhI/jyWbADzP7pfUs0K2jxxjpfjqoz8yn4Q5E=
+	t=1741616121; cv=none; b=bCfZW3kgItqabQN2Ahh9HKtLGiPGR9P0qX20JGLH+hFNWnZQWycFSWKDcEObMpTVq7dR23UCSAmTiZwAkpAYSspuX9ZnAn4HrUFqSkvCpIFRoxRYSfoQLQXtJhPMAK4RJzk647ukQxXBa5TZfFaWbMKVqNbH0r2KH0TPbom8FW8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741616115; c=relaxed/simple;
-	bh=jEa1MxsrpS1cHMT2RYO8VBbSWB07INDb5JSIrlBAMRw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=QdzdDQpK2ZwlljIyTcwiV1VYEbis7Hh81Lqyh4RlM+7F61eFbvUr6cuPUWOryHU5gPheFri737ZvDbZrjP+1YHJOO5W820xj2kFLM1MTwVqZLpcTWdoPLb5ALVg/9sPYiSp0/+lyTPqOGQXVbydYE2kjpjDCWEb5ttmhtXj+41M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Pvqy9ro0; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1741616113;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=eMdCg2efbd0Qh20QNdOF7eXxFbnyvCBURzGryJnLYK4=;
-	b=Pvqy9ro0SVzG5zXxSi6sYMDWApwuW42+xZeDpeFOpDFX2DJ4Q5bIu8e0HHLCaXt2SS3+jH
-	Rqs7KZmqJLTQkbU0f4yIRYGJKPCnP5XOstwKil7q4fRKQpbOZl9nIllqBEijR6eBKGDkDM
-	l1z28aRIvkdyRo293Vqq4BqZDHmmcm0=
-Received: from mail-yb1-f199.google.com (mail-yb1-f199.google.com
- [209.85.219.199]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-564-t7yZed_dNgST8969cEr_jg-1; Mon, 10 Mar 2025 10:15:11 -0400
-X-MC-Unique: t7yZed_dNgST8969cEr_jg-1
-X-Mimecast-MFC-AGG-ID: t7yZed_dNgST8969cEr_jg_1741616111
-Received: by mail-yb1-f199.google.com with SMTP id 3f1490d57ef6-e6372ccd355so3520460276.1
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 07:15:11 -0700 (PDT)
+	s=arc-20240116; t=1741616121; c=relaxed/simple;
+	bh=0cnSqb4EHHZH1jZBocUugKDbkHDTwqCmWiPGEzjYk3I=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=pNWDtzayiiAH/pal/JU9HeUSBw8M+nhoVj3EKraJ/WqHXYNmJObmgVn2W8bCDctWpIaZcI1xofRt9A+akCmu1MkaDMSyrvNUNhOpSkTNK3w+cfJSjgzHyiNLjM2tTpYolUkCw/vRg2uK2zao4doH5yAwxp8tvWE1Liy7C3hiv04=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=y2S9Tz16; arc=none smtp.client-ip=209.85.128.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-4394036c0efso24480375e9.2
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 07:15:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1741616116; x=1742220916; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=oiOvI1jdSHYxDi7DOGuskPixkiPIYyxQOmAzG/sEzYk=;
+        b=y2S9Tz16E7Ok9SWlYeU+1GkjzYLpSj4xLpoL4ZJkTlJokLP8NpQvuaD0mN7u0nOWR9
+         7veEt7+suL8RjFXm7lJLZmxzcPBD9sQx2pI0ScJmhdq8UXy27ZXLNA/4mRVdBIUODcs+
+         op3TViYfzVRDVAob0pKjUnJdAT4RMg4n7tVpgh5mi7TPzy7mUlqWcuh2vSwBaxmm24G0
+         BpbcPc62HeIo9pY7nVr4N3ruuqKHAqBqcFYcZrBoifZmLgFwGztK2kbb11hh1cmRFjE/
+         MoDk8+ffCTA6dZXlnmMblUYaT8XHfJ/Tq8z6LlzAGCb5lGGoALUBONJGpfcDUCiHKwN1
+         2LLA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741616111; x=1742220911;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=eMdCg2efbd0Qh20QNdOF7eXxFbnyvCBURzGryJnLYK4=;
-        b=Nb6+eNw73xb04qUgLRxASNBKfIkMLT/3t1QBn094Z3YuDnIwvUOgRG8p7dm3P/YShU
-         B6e+SUn9KFu0MbeDEJKkoPSNcIGg9gV+7FDuTgYgjTXrHMlFTAS9mNvylv78S33G9yQC
-         79WpcaYAgI/K1JZ2t5oFyRwO9lOgeIo5Zy94DOM7tU5Ids3y3YmWZdl3AdRyO7E1brae
-         M1H3CLRMEejOW/1l6IVww1IUwYiGAhKDITSkylh5dbim0DMT4f5VK390RwC18TDl6Uz+
-         +6+u7eFiU68nLWnvocuGyr5Atgzp6JMaFG6T8vnSEzP2prXOookkbv54QRgIu6muSLZE
-         7Lmg==
-X-Forwarded-Encrypted: i=1; AJvYcCX3gCsNYdBFbUQ8cPaVvTk9z1veMgBleL0rdUsRBS/CtIKEAI/IPpJoVUHL6Kocf9ZldSqacPIWe46ldV4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy2zh8bjN+EvAZDcSY6tHp2w2BnvhwPLQuiTLB0r+akx/AZ9+Hf
-	MHWkpuxVzGsT0hVYFz098KZ0i3Xy+ybWNz/2SfSr9LeIvqz7TLNVJPAJlRe3D/gDvcxEnXx0bUu
-	U6QcVQrOf1srEyMyM3FErAH357eh48J6m2eHMtmtV5CJjFlUXvTF6JfzWEmXLlqiu3TsAL2OsbO
-	WW5NxRjVlvHFiNRRWjKoNEKVrssKqLcgEnn1oT
-X-Gm-Gg: ASbGncsdea+uerrGFLAmySL+3ijJzCl5eyFNzj+1m12q9KXNRG58iYW2TEiOixzWfa6
-	ZvDDa8BePTGpc5rMuP8Hx5fsRCQrKxFS6/WYvduVYoZnRcij7YLsRJZmx11X3ZJuSsi15XSE=
-X-Received: by 2002:a05:6902:2805:b0:e60:9d12:c1e5 with SMTP id 3f1490d57ef6-e635c1d8d02mr14992222276.36.1741616111100;
-        Mon, 10 Mar 2025 07:15:11 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGUqWrvAukg1iFDpO6ExBXHje3cw437GoWuPupbevVNTptRCcjP/uO3Bp+OM9ocpYHlDfKvsiQX6/BEdrkJbTU=
-X-Received: by 2002:a05:6902:2805:b0:e60:9d12:c1e5 with SMTP id
- 3f1490d57ef6-e635c1d8d02mr14992171276.36.1741616110694; Mon, 10 Mar 2025
- 07:15:10 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1741616116; x=1742220916;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=oiOvI1jdSHYxDi7DOGuskPixkiPIYyxQOmAzG/sEzYk=;
+        b=JpicN73AKzT1nik5lUnxBopug7wdeuB7mmh2B7etBY1usLkL+4N41fqKF8ltC86GO9
+         RH44v4a6NGG7O9yj2a5NJH88/mslS8Zh1MxTmRzvR6vcae0ttlDsqlgDgwan+hCo3LOl
+         HUE4LWCsA7f1f/Fc8AF/Ix9PtvVabCUMv1Tt5fqOSyQ86gq3Xk9P7uuXo/tjjVUS2xLb
+         xHDz5yPRw+hv5sNuM8TDBE6C5KJ+WRRvGAv/gOz8COayNz2V6Lr40iFjV3f5x0gZI5/y
+         zd23iFjMckxyFhDa85NDC5lhTd/n57m3WhNPkjI5DDE7D6zDTW1TdwbzGTiTqNgmKAhL
+         gIAw==
+X-Forwarded-Encrypted: i=1; AJvYcCWbZAgoBGxQg5ziOr5DZyTRYrhIi204FbLxn3kFpXCp/E9OnQTYCQ/aF1cD74JK4ih+X0zEL5dQzLO7w0o=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzxdc3CWmhyJLbVFzx/GIFA2H25goeo5n3AoYORTLUnawhNdwHj
+	vGh4oytR9giKHAix4DFLVZyoMnMibeVFodXmDWjA/tdlEYku3KCvqvVLSkdbSmw=
+X-Gm-Gg: ASbGnctelNVIqCWLmbHyGOoelynJ2i6bNhPzd7qSNHXOWqQ5zXfh8YdWIsrq/DVdPlZ
+	zVLjGk2osZOBTkU+XEu/jeKshBzfSv+Er7xLA3L/HfhhiHasqx2KSmmay+FyrzRudJMkQgfcCxQ
+	NuS0Qgt3JL+4wAx2Sftp/dpPgXSptcts64AdX1FB1+eAQQMkv+ZvTi7f3qik23lg9Jpzmz1zUow
+	WxgPW1TdHQIhz9ZpcdbKT6U7LgLvgNDTCyIPNV1hCiURWh/3J6CIZmoFztEkj1MCB3yOFtjSuca
+	9uews6RIEOcYuchA23oB/sBP3qcbVa/kYSV48fdyTdobThQ4kkyDug==
+X-Google-Smtp-Source: AGHT+IHa45QnkYD1vqqthYS3xXFkFKfr9pmWfxHxp8awb40Um6CRd646Vsb+NIScIuubTXcOwu6+Lg==
+X-Received: by 2002:a05:6000:1a86:b0:38d:e48b:1787 with SMTP id ffacd0b85a97d-39132d1d1efmr8985888f8f.14.1741616116199;
+        Mon, 10 Mar 2025 07:15:16 -0700 (PDT)
+Received: from hackbox.lan ([62.231.96.41])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43bdd8da097sm149824545e9.17.2025.03.10.07.15.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 10 Mar 2025 07:15:15 -0700 (PDT)
+From: Abel Vesa <abel.vesa@linaro.org>
+To: Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>
+Cc: Johan Hovold <johan@kernel.org>,
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+	linux-arm-msm@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Sebastian Reichel <sre@kernel.org>
+Subject: [PATCH v2 0/3] arm64: dts: qcom: x1e78100-t14s: Rework devicetree for LCD and OLED SKUs
+Date: Mon, 10 Mar 2025 16:15:01 +0200
+Message-Id: <20250310141504.3008517-1-abel.vesa@linaro.org>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20200116172428.311437-1-sgarzare@redhat.com> <20200427142518.uwssa6dtasrp3bfc@steredhat>
- <224cdc10-1532-7ddc-f113-676d43d8f322@redhat.com> <20200428160052.o3ihui4262xogyg4@steredhat>
- <Z8edJjqAqAaV3Vkt@devvm6277.cco0.facebook.com> <20250305022248-mutt-send-email-mst@kernel.org>
- <v5c32aounjit7gxtwl4yxo2q2q6yikpb5yv3huxrxgfprxs2gk@b6r3jljvm6mt> <CACGkMEvms=i5z9gVRpnrXXpBnt3KGwM4bfRc46EztzDi4pqOsw@mail.gmail.com>
-In-Reply-To: <CACGkMEvms=i5z9gVRpnrXXpBnt3KGwM4bfRc46EztzDi4pqOsw@mail.gmail.com>
-From: Stefano Garzarella <sgarzare@redhat.com>
-Date: Mon, 10 Mar 2025 15:14:59 +0100
-X-Gm-Features: AQ5f1JosWWXY88zUmFjBrkclv9qmpGDLsUUZ5bj0pBV0c8sMAT4CMg2t-YayKWI
-Message-ID: <CAGxU2F7SWG0m0KwODbKsbQipz6WzrRSuE1cUe6mYxZskqkbneQ@mail.gmail.com>
-Subject: Re: [PATCH net-next 0/3] vsock: support network namespace
-To: Jason Wang <jasowang@redhat.com>
-Cc: "Michael S. Tsirkin" <mst@redhat.com>, Bobby Eshleman <bobbyeshleman@gmail.com>, 
-	Jakub Kicinski <kuba@kernel.org>, davem@davemloft.net, 
-	Stefan Hajnoczi <stefanha@redhat.com>, linux-kernel@vger.kernel.org, kvm@vger.kernel.org, 
-	virtualization@lists.linux-foundation.org, linux-hyperv@vger.kernel.org, 
-	Dexuan Cui <decui@microsoft.com>, netdev@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Thu, 6 Mar 2025 at 01:17, Jason Wang <jasowang@redhat.com> wrote:
->
-> On Wed, Mar 5, 2025 at 5:30=E2=80=AFPM Stefano Garzarella <sgarzare@redha=
-t.com> wrote:
-> >
-> > On Wed, Mar 05, 2025 at 02:27:12AM -0500, Michael S. Tsirkin wrote:
-> > >On Tue, Mar 04, 2025 at 04:39:02PM -0800, Bobby Eshleman wrote:
-> > >> I think it might be a lot of complexity to bring into the picture fr=
-om
-> > >> netdev, and I'm not sure there is a big win since the vsock device c=
-ould
-> > >> also have a vsock->net itself? I think the complexity will come from=
- the
-> > >> address translation, which I don't think netdev buys us because ther=
-e
-> > >> would still be all of the work work to support vsock in netfilter?
-> > >
-> > >Ugh.
-> > >
-> > >Guys, let's remember what vsock is.
-> > >
-> > >It's a replacement for the serial device with an interface
-> > >that's easier for userspace to consume, as you get
-> > >the demultiplexing by the port number.
->
-> Interesting, but at least VSOCKETS said:
->
-> """
-> config VSOCKETS
->         tristate "Virtual Socket protocol"
->         help
->          Virtual Socket Protocol is a socket protocol similar to TCP/IP
->           allowing communication between Virtual Machines and hypervisor
->           or host.
->
->           You should also select one or more hypervisor-specific transpor=
-ts
->           below.
->
->           To compile this driver as a module, choose M here: the module
->           will be called vsock. If unsure, say N.
-> """
->
-> This sounds exactly like networking stuff and spec also said something si=
-milar
->
-> """
-> The virtio socket device is a zero-configuration socket communications
-> device. It facilitates data transfer between the guest and device
-> without using the Ethernet or IP protocols.
-> """
->
-> > >
-> > >The whole point of vsock is that people do not want
-> > >any firewalling, filtering, or management on it.
->
-> We won't get this, these are for ethernet and TCP/IP mostly.
->
-> > >
-> > >It needs to work with no configuration even if networking is
-> > >misconfigured or blocked.
->
-> I don't see any blockers that prevent us from zero configuration, or I
-> miss something?
->
-> >
-> > I agree with Michael here.
-> >
-> > It's been 5 years and my memory is bad, but using netdev seemed like a
-> > mess, especially because in vsock we don't have anything related to
-> > IP/Ethernet/ARP, etc.
->
-> We don't need to bother with that, kernel support protocols other than TC=
-P/IP.
+The Lenovo Thinkpad T14s Gen6 comes in different SKUs when it comes to
+panels. The only difference that is important is whether it is an OLED
+or an LCD. The way that backlight is handled in devicetree between OLED
+and LCD forces the need of two separate DTBs.
 
-Do we have an example of any other non-Ethernet device that uses
-netdev? Just to see what we should do.
+So create a common T14s dtsi that describes everything except the
+backlight handling, by renaming the existent dts to dtsi. Then make the
+legacy dts the LCD version, while adding a prepended oled dts. Both
+include the generic T14s dtsi.
 
-I'm not completely against the idea, but from what I remember when I
-looked at it five years ago, it wasn't that easy and straightforward
-to use.
+For the OLED version, I do not have HW to test it on, so OLED specific
+bits will come at a later stage. Still, add the OLED dts in order to set
+the stage for it.
 
->
-> >
-> > I see vsock more as AF_UNIX than netdev.
->
-> But you have a device in guest that differs from the AF_UNIX.
+Had to format it using "git format-patch" since b4 doesn't currently
+support -B when formatting the patch, and the renaming of the dts into
+dtsi (plus the panel properties being dropped) would've not been visible
+enough for reviewers.
 
-Yes, but the device is simply for carrying messages.
-Another thing that makes me think of AF_UNIX is the hybrid-vsock
-developed by Firecracker [1] that we also reused in vhost-user-vsock
-[2], where the mapping between AF_VSOCK and AF_UNIX is really
-implemented.
+Changes in v2:
+ - rebased on next-20250307
+ - Dropped the RFC, as it seems to be agreed upon already
+ - Added dt-bindings patch to document the new oled and lcd compatibles
+ - Added panel variant compatible strings to each dts and included the
+   the panel type into model string as well
+ - Changed backlight PWM period to 4266537 to match exact period the
+   PMIC can do.
+ - Link to v1 (RFC):
+   https://lore.kernel.org/r/20250306090503.724390-1-abel.vesa@linaro.org/
 
-Thanks,
-Stefano
+Abel Vesa (3):
+  dt-bindings: arm: qcom: Document Lenovo ThinkPad T14s Gen 6 LCD and
+    OLED
+  arm64: dts: qcom: x1e78100-t14s: Add LCD variant with backlight
+    support
+  arm64: dts: qcom: x1e78100-t14s: Add OLED variant
 
-[1] https://github.com/firecracker-microvm/firecracker/blob/main/docs/vsock=
-.md#firecracker-virtio-vsock-design
-[2] https://github.com/rust-vmm/vhost-device/tree/main/vhost-device-vsock
+ .../devicetree/bindings/arm/qcom.yaml         |    4 +-
+ arch/arm64/boot/dts/qcom/Makefile             |    1 +
+ .../x1e78100-lenovo-thinkpad-t14s-oled.dts    |   12 +
+ .../qcom/x1e78100-lenovo-thinkpad-t14s.dts    | 1194 +----------------
+ ...dts => x1e78100-lenovo-thinkpad-t14s.dtsi} |    6 +-
+ 5 files changed, 77 insertions(+), 1140 deletions(-)
+ create mode 100644 arch/arm64/boot/dts/qcom/x1e78100-lenovo-thinkpad-t14s-oled.dts
+ rewrite arch/arm64/boot/dts/qcom/x1e78100-lenovo-thinkpad-t14s.dts (98%)
+ copy arch/arm64/boot/dts/qcom/{x1e78100-lenovo-thinkpad-t14s.dts => x1e78100-lenovo-thinkpad-t14s.dtsi} (99%)
+
+-- 
+2.34.1
 
 
