@@ -1,155 +1,197 @@
-Return-Path: <linux-kernel+bounces-554173-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-554174-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2576CA59403
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 13:16:31 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1479BA593F9
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 13:15:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5162C1889A4B
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 12:14:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 791AB16EFF2
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 12:14:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C827C1E49F;
-	Mon, 10 Mar 2025 12:13:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58C2721D59F;
+	Mon, 10 Mar 2025 12:14:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ioKTIbWe"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="EnKdBX0n"
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F9EB21D59F
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 12:13:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 132BC29A2
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 12:14:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741608813; cv=none; b=JjfvPCl+G4xlBLCGLOoo2edari/LWl0VjNnAe/cy/yY77WU4PDM/x/a50R/xYiuKK/c3Iq1slh+RqhPo+TK95yQ8hO3FjepiVcFOPOhVQr1GqI1aDaradhSB01upn8Ivfs6oA58LmUfb/7oo/hbto088DnIvoY5IOQd+ymeWuM4=
+	t=1741608857; cv=none; b=RgEzEzbiS9nX2gh36TsUMnamYoa21qtpKsH0dRqpK5wqk03joFYlIHA9YBi7+hfn0Duq9HyO9jSf9dujVdL/ibbYHKqFQ6SmBVrykKdVpss1uyu2YkznOeuSWC8jasXdpyaTcG61DjvjFxIScK1VobtmXD5ar41kNC5TxXLvzYY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741608813; c=relaxed/simple;
-	bh=XUQ74N8CFAQMmZBMklSCKl3+y2dbF8sPEjzdYlp1I3U=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hxtdKTti+SxwZkgfoGK95+VC+bxowACwhr4Zqtpw3oYmolqVM4+IN7tSua7X16xaHxjJhv02m9WU9Z1F9ZTddkaf9QArbQ4rlUfWceczhpC2rNictX8H2qN5JfzOo/zVrk3ZpmK0htxnRWRq5IIFfb+0dVMs9Srhk2L6JVvlWZI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ioKTIbWe; arc=none smtp.client-ip=170.10.133.124
+	s=arc-20240116; t=1741608857; c=relaxed/simple;
+	bh=nPGOcSA5g/f+JDgzg1rOF9U0pDLMs2VjAObvG6jFU1A=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=N7EqxOnMLRIkgJqmSMrXw0+hPXE3kAFlemQpBvpI19aQQoa3B8yLp6zpbZFKEk75QsAiXMvU3LOn0URUD7QjJYF/3F0DSpzCug4SLX3sWQDojDaNaSI5ukc+BgSZDe65IHnk5Y3avFGrI899v1VVY4RFRl8LZI8pQrNQj65haQc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=EnKdBX0n; arc=none smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1741608810;
+	s=mimecast20190719; t=1741608855;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=sGViJXCclzx/2EWYRBSu51fQCiFZyNMwoJLCZOnspZQ=;
-	b=ioKTIbWeDV7ILNC7taHRoE56/mfJC8YtNPK/U1pe3xcPwhCaPe1lnXiDrFdbGl1XzXIeuF
-	Aw/6hTTZgJpqJIeLsCkRherZGvEZYz46++UdXG8/Pudw4eDsF/l/3schczuUXGsbU+ieEb
-	zrgHEvx4c9FnaZmeRcRn4kwMGpLzgGs=
-Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
- [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=eryV+FUMI6b8m/5Vlnl0pDjjdupScr4/owQrghOZCsc=;
+	b=EnKdBX0nRhe+HN/Kg0dx3PxxzMN5TFlDZnjrLx+AHImwQa4eCmxDzOwVmb+fkrOe9GVoP5
+	lXloAyhO8Ob9pDSm43C2NTVTJ/EGbAQMwprHAYCekhyNVAQHZH+4VgFF4mru24gHVCriRE
+	7NI0Zel0rIaWK14E1Dhf+RrPV6NBa98=
+Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
+ [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-104-Uvqx-u2TM0edmDTF7z8WIA-1; Mon, 10 Mar 2025 08:13:29 -0400
-X-MC-Unique: Uvqx-u2TM0edmDTF7z8WIA-1
-X-Mimecast-MFC-AGG-ID: Uvqx-u2TM0edmDTF7z8WIA_1741608808
-Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-3914608e90eso768139f8f.2
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 05:13:28 -0700 (PDT)
+ us-mta-630-mpjx6prqODan1wma-FoqBQ-1; Mon, 10 Mar 2025 08:14:13 -0400
+X-MC-Unique: mpjx6prqODan1wma-FoqBQ-1
+X-Mimecast-MFC-AGG-ID: mpjx6prqODan1wma-FoqBQ_1741608853
+Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-3914bc0cc4aso402356f8f.3
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 05:14:13 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741608808; x=1742213608;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=sGViJXCclzx/2EWYRBSu51fQCiFZyNMwoJLCZOnspZQ=;
-        b=K1cWfIXu9tIvRfAwompopS3EIZrPvpodFncC9tfhEcXeyOOuBzrTGxuKs/jg9Z5JDD
-         nwQAzl3W0KPXqvqYAQpIUdxorAntXZpPXG/XYl8MKYmVjXGomXQJAPV2qa2N630cxjPe
-         4TksqxijUjic4W10RTluwe/bxAKtLcJTwhIsAzh3b3j1j9kIK1FayIWli1xeKN6s+PQO
-         QpIKR5Q/dbJsoZkDdQsg4PH8oBbll21ZeAwWfnYKsZMhvFP+0r4AsduOmDwKiXpTmvvj
-         ZZJsAa6e74sbCLFksIEj2VDigVcofh6EcMWsohu7jmlVBm0bKjfHlXL3LFaVZvwxPpfn
-         JqTQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXo1VmWUSTfvWmY3Gck/sq3J5pFpXR2QLbrnWHJZBv1rB9hqRyKbk3KPz6IDXkTdNgU6RIu+Av+RkRAJb8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyzhIjdU3iHWx/hFI0XCksG/8VCFROi0xLZQej8KdJJuP9Pg8eo
-	FhxrOZRJelxl13DrvckFjyTIrVTZpyKm9RD7jD13trdIQ6cBokJN8SpYWck+07S6iHDA8u6BhdT
-	yUizYb+FZYpJDVVKiGS23CsGbnHj8Md298IqQWVQjReMaXTGrqAJrO3S6ZsJphw==
-X-Gm-Gg: ASbGncsTywMUEX53z1jatXioNeiAax/3e3vOp411SJtIKjxAh8VbyyjkceCnaku1+le
-	+TskcaMP3/cf0jdJGFrmHBiZ+B6NzbI90VFXzSkwq+TvgYJui0jxxjD3b2hO+tmjNYpI5Bc8mn5
-	bsll1efb7jqz0Ltkc+iTYG9/wsxCoGjVi5KOps6iAkHcmhUbt2WZ5MEaTqk3g3NnhBMe89I0VFI
-	DmMjloQjRjv3IQ/Aa/AyAKQrog30VRogf27xMvaYzQe/RSfPRz81L3fphPZyJFGyXosWmmy0hxV
-	xTMl0eLsIDvM72phgMzxSHWKF04k0yDIK+WrHzR6alN4ON/XMxDBV253wl2rWQ2n
-X-Received: by 2002:a5d:6d0c:0:b0:390:de33:b0ef with SMTP id ffacd0b85a97d-39132d7084emr11040352f8f.30.1741608807833;
-        Mon, 10 Mar 2025 05:13:27 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFrpAzNy6sSH4YOG1+5l942/ORd7aa1SNvDl7U7GiW1x9GoWjA6Xlf8uANpk8LgTiYslFPSmg==
-X-Received: by 2002:a5d:6d0c:0:b0:390:de33:b0ef with SMTP id ffacd0b85a97d-39132d7084emr11040296f8f.30.1741608807285;
-        Mon, 10 Mar 2025 05:13:27 -0700 (PDT)
-Received: from sgarzare-redhat (host-79-46-200-29.retail.telecomitalia.it. [79.46.200.29])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3912c103035sm14450166f8f.88.2025.03.10.05.13.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 10 Mar 2025 05:13:26 -0700 (PDT)
-Date: Mon, 10 Mar 2025 13:13:22 +0100
-From: Stefano Garzarella <sgarzare@redhat.com>
-To: Borislav Petkov <bp@alien8.de>
-Cc: Jarkko Sakkinen <jarkko@kernel.org>, 
-	Thomas Gleixner <tglx@linutronix.de>, Claudio Carvalho <cclaudio@linux.ibm.com>, 
-	Peter Huewe <peterhuewe@gmx.de>, x86@kernel.org, Dov Murik <dovmurik@linux.ibm.com>, 
-	linux-coco@lists.linux.dev, Dionna Glaze <dionnaglaze@google.com>, 
-	James Bottomley <James.Bottomley@hansenpartnership.com>, Ingo Molnar <mingo@redhat.com>, Joerg Roedel <jroedel@suse.de>, 
-	Jason Gunthorpe <jgg@ziepe.ca>, linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Dave Hansen <dave.hansen@linux.intel.com>, Tom Lendacky <thomas.lendacky@amd.com>, 
-	"H. Peter Anvin" <hpa@zytor.com>
-Subject: Re: [RFC PATCH v2 1/6] x86/sev: add SVSM call macros for the vTPM
- protocol
-Message-ID: <5zulxqr6l4xivnbdgal6nyz5c6x2mtqbkvhfx565tu6gmxxrgq@wpklze3745wn>
-References: <20250228170720.144739-1-sgarzare@redhat.com>
- <20250228170720.144739-2-sgarzare@redhat.com>
- <20250310110834.GEZ87IMgB_I86-3u3l@fat_crate.local>
+        d=1e100.net; s=20230601; t=1741608853; x=1742213653;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=eryV+FUMI6b8m/5Vlnl0pDjjdupScr4/owQrghOZCsc=;
+        b=qJhGWLTKGEyc0qV4w7/xdVZlUb4q8LtqPilR3lb8ds+UGSZwcfp1aqhJ85gdBq1A0/
+         DBitj7v3xldeN/4/ZZAMTshoLKr7BLXw+wonJ7hvtij3fiI8co0qrBFSoDvR/qtzvlGf
+         gKh/dMUZgJPYn4wIR7jP4y8TumZnANfsR8ATyYWkQXjxwph+suB8/LadyIzwbChbkFXm
+         g7oGQ1U8VMUrAtU2+O8mWaawK9QiYrI2QAZBWHK5Yn9I4A8VqNGja2H7G+YPzowuMiqS
+         CgXUl216FQayLoMIZ8S7udcblyJy8mxxlTaREaavajN42PZyfPMzuB2xQKY8ATyo8w/x
+         rJEg==
+X-Forwarded-Encrypted: i=1; AJvYcCX2QR/DZvNTAf769FGULncAVdDZkafQb2Ica8URLfn6wSnngNxeJcYpvnxvR8AN8J2oCdwF/Pyc9r3OtI4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxGvBlmGF9wIIC5afiDA9KOuPNak0NrtS1157TPtxP2+KyxSuqy
+	+PztLlprxKHzEJPujW743i/VIlF9q9M7FSdM+UYQ8NiEtM5KhMHV5dB/OCAbk2ZbAnR4fn8vuKr
+	cd34vztNwJfRUO/IcjYm2grpJISTuDEfpyj/a6O7LPoHIviouPcBwWcYcY7hOKA==
+X-Gm-Gg: ASbGncuHvmSi2tWYEwm1giAaFtN40NEXJwWMDaHllYYIzXPzY729J3gGCBEu+nAmkUQ
+	C8y5l+TLtK2g68z8xQNMTNBCQaVCRPuw2mGU2gJBlFjfBndmVnVswN8co7OzocMELpr6MbT9jmB
+	1TMOZv2vBu9kH6Hw7wPA+LVQPUjlBXHq9jDfYBEVX0LDu9ZkxU+4x1f8ZWsv4mCTsxpj253Yvk1
+	UYa4Z5wdGnynsigw925ksGfZ+ao0jGWQW8bKxiQlUOIr//9rpooj8yzJ/qmJ42xGc11lS+bdZLY
+	VIesDyavJY3lb7Ed6vyhpqYrgAhFOi1DwHvrVBKTAzR3SB4=
+X-Received: by 2002:a5d:64ae:0:b0:391:3cf6:95fd with SMTP id ffacd0b85a97d-3913cf6996amr5557443f8f.30.1741608852697;
+        Mon, 10 Mar 2025 05:14:12 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFzaQkC6x6aMdKZuim/zrdQO7lM6MLsCgjcq/5tL+T/E948p79/UPbtXj6c+NA6eVwCb7S11g==
+X-Received: by 2002:a5d:64ae:0:b0:391:3cf6:95fd with SMTP id ffacd0b85a97d-3913cf6996amr5557413f8f.30.1741608852334;
+        Mon, 10 Mar 2025 05:14:12 -0700 (PDT)
+Received: from [192.168.0.7] (ip-109-42-51-231.web.vodafone.de. [109.42.51.231])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3912bfba888sm14926378f8f.16.2025.03.10.05.14.09
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 10 Mar 2025 05:14:10 -0700 (PDT)
+Message-ID: <7eed4668-9352-45d6-8116-235c8be43bfa@redhat.com>
+Date: Mon, 10 Mar 2025 13:14:08 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <20250310110834.GEZ87IMgB_I86-3u3l@fat_crate.local>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] s390/uapi: Replace __ASSEMBLY__ with __ASSEMBLER__ in
+ uapi headers
+To: Arnd Bergmann <arnd@arndb.de>, Heiko Carstens <hca@linux.ibm.com>
+Cc: Vasily Gorbik <gor@linux.ibm.com>,
+ Alexander Gordeev <agordeev@linux.ibm.com>, linux-s390@vger.kernel.org,
+ Christian Borntraeger <borntraeger@linux.ibm.com>,
+ Sven Schnelle <svens@linux.ibm.com>, linux-kernel@vger.kernel.org
+References: <20250310102657.54557-1-thuth@redhat.com>
+ <20250310104910.27210B18-hca@linux.ibm.com>
+ <ab1ab15a-89e1-4c26-b7a2-6147a10a2fca@app.fastmail.com>
+From: Thomas Huth <thuth@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=thuth@redhat.com; keydata=
+ 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
+In-Reply-To: <ab1ab15a-89e1-4c26-b7a2-6147a10a2fca@app.fastmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon, Mar 10, 2025 at 12:08:34PM +0100, Borislav Petkov wrote:
->On Fri, Feb 28, 2025 at 06:07:15PM +0100, Stefano Garzarella wrote:
->> Add macros for SVSM_VTPM_QUERY and SVSM_VTPM_CMD calls as defined
->> in the "Secure VM Service Module for SEV-SNP Guests"
->> Publication # 58019 Revision: 1.00
+On 10/03/2025 12.07, Arnd Bergmann wrote:
+> On Mon, Mar 10, 2025, at 11:49, Heiko Carstens wrote:
+>> On Mon, Mar 10, 2025 at 11:26:57AM +0100, Thomas Huth wrote:
 >>
->> Link: https://www.amd.com/content/dam/amd/en/documents/epyc-technical-docs/specifications/58019.pdf
->
->Those URLs are unstable - simply naming the document properly in the commit
->message so that a search engine can find it is enough.
-
-Ack, I'll do it all over the place in this series (commit descriptions, 
-code comment blocks, etc.).
-
->
->> Signed-off-by: Stefano Garzarella <sgarzare@redhat.com>
->> ---
->>  arch/x86/include/asm/sev.h | 4 ++++
->>  1 file changed, 4 insertions(+)
+>> Did this cause any sorts of problems? I can see this pattern all over
+>> the place, so why is this now a problem?
 >>
->> diff --git a/arch/x86/include/asm/sev.h b/arch/x86/include/asm/sev.h
->> index 1581246491b5..f6ebf4492606 100644
->> --- a/arch/x86/include/asm/sev.h
->> +++ b/arch/x86/include/asm/sev.h
->> @@ -384,6 +384,10 @@ struct svsm_call {
->>  #define SVSM_ATTEST_SERVICES		0
->>  #define SVSM_ATTEST_SINGLE_SERVICE	1
->>
->> +#define SVSM_VTPM_CALL(x)		((2ULL << 32) | (x))
->> +#define SVSM_VTPM_QUERY			0
->> +#define SVSM_VTPM_CMD			1
->> +
->>  #ifdef CONFIG_AMD_MEM_ENCRYPT
->>
->>  extern u8 snp_vmpl;
->> --
->
->Merge this patch with the patch where those are used - no need for a separate
->patch.
+>> Also, wouldn't it be better to fix this with an sed statement in
+>> scripts/headers_install.sh instead? Otherwise this is going to be a
+>> never ending story since those things will be re-introduced all the
+>> time.
+> 
+> It should certainly be done in a consistent way across all
+> architectures and architecture-independent headers. I see that
+> all uapi headers use __ASSEMBLY__ consistently, while a few non-uapi
+> headers use __ASSEMBLER__.
+> 
+> glibc obviously defines __ASSEMBLY__ whenever it includes one
+> of the kernel headers that need this from a .S file. Unless
+> there is a known problem with the current code, leaving this
+> unchanged is probably the least risky way.
 
-Yeah, it is left over from v1 when I had added this patch over James' 
-patches, but now I agree that it no longer makes sense since I have 
-reworked almost every patch in this series. I'm going to incorporate 
-them!
+Well, this seems to be constant source of confusion. It got my attention by 
+Sean's recent patch for kvm-unit-tests here:
 
-Thanks,
-Stefano
+  https://lore.kernel.org/kvm/20250222014526.2302653-1-seanjc@google.com/
+
+Quoting: "This is essentially a "rage" patch after spending
+way, way too much time trying to understand why I couldn't include some
+__ASSEMBLY__ protected headers in x86 assembly files."
+
+But also if you search the net for this, there are lots of other spots where 
+people get it wrong, e.g.:
+
+  https://stackoverflow.com/questions/28924355/gcc-assembler-preprocessor-not-compatible-with-standard-headers
+  https://forums.raspberrypi.com/viewtopic.php?p=1652944#p1653834
+  https://github.com/riscv-software-src/opensbi/issues/199
+
+So I thought it would be a good idea to standardize on the #define that is 
+set by the compiler already. IMHO it would be great to get it replaced in 
+the whole kernel, but that's a little bit bold for one patch. So the obvious 
+first step towards that direction is to replace it in the uapi header files 
+first, where it hopefully will help to reduce the confusion in userspace. 
+So unless you really don't like this idea at all, I could continue with the 
+uapi headers for the other architectures, too?
+
+  Thomas
 
 
