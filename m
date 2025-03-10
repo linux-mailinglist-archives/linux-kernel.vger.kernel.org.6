@@ -1,124 +1,106 @@
-Return-Path: <linux-kernel+bounces-554785-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-554786-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DDA48A59D88
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 18:21:53 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9DCD6A59DA7
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 18:23:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2F80816F813
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 17:21:52 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2AA317A2B79
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 17:22:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CEB9230D2B;
-	Mon, 10 Mar 2025 17:21:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDED6230BF5;
+	Mon, 10 Mar 2025 17:23:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="s1un/QC/"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ssTS0NxK"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B9D722154C;
-	Mon, 10 Mar 2025 17:21:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B3FD1B3927;
+	Mon, 10 Mar 2025 17:23:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741627304; cv=none; b=tQMUqJ5e6J6DtiC0O1a8nqnryCh+BCmeHPBcPIt/5pI+mXmSZO2/jkFs1Y1YBv/Ca7iOJq4f7MFx8o9E74XRQtlSxFhAomCa5u8/8HAh/qJ4Qvh9DrbFXy2nP2ltzw4r6c7ztkTiLIL+osH2To+6YSgb32KDmP2Ahh9I7JVauHk=
+	t=1741627386; cv=none; b=SaKD20zxSjnWubvCtE3K0K+DUnC/1JE2dup41hMnrqHdwOAPzfM5YYxvCIRNlnPn+N8TizxTiZRISvWGW0j062XsaCvu++zHT7WAc8B9bHW3JIsiaCT+t7526J4o1XFBpZd5qgP0pRVjfvDjDjfD3w6MtZikoXEAQ7oBpof9r6g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741627304; c=relaxed/simple;
-	bh=d24mA4bIr/mbuprlRhmoK24eMxUVfGcLpBqc+ZF7X20=;
+	s=arc-20240116; t=1741627386; c=relaxed/simple;
+	bh=jlzWbQi6FSX4pGVuiIfsnBv+KXTDLyfqFbdvUJu/6wA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=heMPprt3Io2e+zPJccHhqqvHHKL+VHF9rMxvSeSzwVETTxmse8RLa62wqGDL+Syn5ggO+M+caN1nHa+CL6dlmtUexlvKSivyGTkYpOUBbiaiw76116W01uQVVtOb1+0PniBYja17+REo1MxRm2hlXXiubHExXIv7TTUkQYDR4nw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=s1un/QC/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2B594C4CEEC;
-	Mon, 10 Mar 2025 17:21:44 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=JQExZ5lXUELg2xKwrxBImLVu21urib8SrrO44tgFexOFJz7LRQ5hJnEQ9O4els++5+SgnbxaHoxHE0mC7gEvX3jmmQy5SIa2l3yyoyPcuHAvpMsOm4UpolRiZRCT67fcw7+8yXJDsNCFvvp3KBOeKtM4lMIuldyZyQzVuuWHvLg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ssTS0NxK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E22F2C4CEEC;
+	Mon, 10 Mar 2025 17:23:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741627304;
-	bh=d24mA4bIr/mbuprlRhmoK24eMxUVfGcLpBqc+ZF7X20=;
+	s=k20201202; t=1741627386;
+	bh=jlzWbQi6FSX4pGVuiIfsnBv+KXTDLyfqFbdvUJu/6wA=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=s1un/QC/FPndigQhN+r3/3vRVawm+YGV0ejyRIsLADtKMAQfs5s/MzkaraNqogswQ
-	 qZzTiA4FwhhMaHnjJZUJz0+JS6Mqp92BTnzVDT/pki2HHnlQdPxOud0K14tmagLQKe
-	 NeZVkraSRXRKOCmyEG14s44hjRFlFaNA5/Q9gMIoxNmK60mK0ZPKHBvxzSGoNCIS5x
-	 PvnsHcyITHyUpkP7GytMTQ1LLIt3t4U+oZ3Oz4aWQg5OdS/8Vse07IejfmF0kwdOGZ
-	 deJS6fdp8aQ6U1U71GLDNpWFjFDYywMtMN9OXBesj3/Vq+dgk31P8kSngNQFz1wQwe
-	 xRu0Kyctj/vMw==
-Date: Mon, 10 Mar 2025 10:21:43 -0700
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: John Garry <john.g.garry@oracle.com>
-Cc: Dave Chinner <david@fromorbit.com>, brauner@kernel.org, cem@kernel.org,
-	linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, ojaswin@linux.ibm.com,
-	ritesh.list@gmail.com, martin.petersen@oracle.com, tytso@mit.edu,
-	linux-ext4@vger.kernel.org
-Subject: Re: [PATCH v4 05/12] iomap: Support SW-based atomic writes
-Message-ID: <20250310172143.GT2803749@frogsfrogsfrogs>
-References: <20250303171120.2837067-1-john.g.garry@oracle.com>
- <20250303171120.2837067-6-john.g.garry@oracle.com>
- <Z84NTP5tyHEVLNbA@dread.disaster.area>
- <4da6ae74-e431-4bc7-82f8-a621bb8905c1@oracle.com>
+	b=ssTS0NxKGh6DuuYColWaTucMp0yRzZVsJCU4D50CjkLlg0ByMw+YfL5+v1lDYEw1B
+	 fHPNE0z1rlQOgj3/dGO0N38d2GIYnO02i8vIzJ2Z0LFQ4dJ+mqakOXZQ8XvS5ZQmeC
+	 sX6cnLkN5Ta9DnaJmRa/8m4H3MqXiek/rp9QYuuNpD+SrIfnFAgge+ALxwjXF0pL91
+	 e6QidE5cndhV4wilVLZ+4Da08gPO2DL0TKg1P+oycokt/brtvErI9lEiEmdHUlBe1R
+	 i6ZlE+0wU3bMYpPQCERWje26bLn7+gMu3f8pG+NJZxk87qCOM4NCkdlHTfS4He/od2
+	 wUgRDZC3zlFXg==
+Date: Mon, 10 Mar 2025 17:23:02 +0000
+From: Mark Brown <broonie@kernel.org>
+To: Christian Eggers <ceggers@arri.de>
+Cc: Liam Girdwood <lgirdwood@gmail.com>,
+	Douglas Anderson <dianders@chromium.org>,
+	linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH 2/2] regulator: assert that dummy regulator has been
+ probed before using it
+Message-ID: <3d195bf7-de99-4fe9-87b0-291e156f083c@sirena.org.uk>
+References: <20250310163302.15276-1-ceggers@arri.de>
+ <20250310163302.15276-2-ceggers@arri.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="xdmiKqSCkyIynQfL"
+Content-Disposition: inline
+In-Reply-To: <20250310163302.15276-2-ceggers@arri.de>
+X-Cookie: Dieters live life in the fasting lane.
+
+
+--xdmiKqSCkyIynQfL
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <4da6ae74-e431-4bc7-82f8-a621bb8905c1@oracle.com>
 
-On Mon, Mar 10, 2025 at 10:44:47AM +0000, John Garry wrote:
-> On 09/03/2025 21:51, Dave Chinner wrote:
-> > Mon, Mar 03, 2025 at 05:11:13PM +0000, John Garry wrote:
-> > > Currently atomic write support requires dedicated HW support. This imposes
-> > > a restriction on the filesystem that disk blocks need to be aligned and
-> > > contiguously mapped to FS blocks to issue atomic writes.
-> > > 
-> > > XFS has no method to guarantee FS block alignment for regular,
-> > > non-RT files. As such, atomic writes are currently limited to 1x FS block
-> > > there.
-> > > 
-> > > To deal with the scenario that we are issuing an atomic write over
-> > > misaligned or discontiguous data blocks - and raise the atomic write size
-> > > limit - support a SW-based software emulated atomic write mode. For XFS,
-> > > this SW-based atomic writes would use CoW support to issue emulated untorn
-> > > writes.
-> > > 
-> > > It is the responsibility of the FS to detect discontiguous atomic writes
-> > > and switch to IOMAP_DIO_ATOMIC_SW mode and retry the write. Indeed,
-> > > SW-based atomic writes could be used always when the mounted bdev does
-> > > not support HW offload, but this strategy is not initially expected to be
-> > > used.
-> > So now seeing how these are are to be used, these aren't "hardware"
-> > and "software" atomic IOs. They are block layer vs filesystem atomic
-> > IOs.
-> > 
-> > We can do atomic IOs in software in the block layer drivers (think
-> > loop or dm-thinp) rather than off-loading to storage hardware.
-> > 
-> > Hence I think these really need to be named after the layer that
-> > will provide the atomic IO guarantees, because "hw" and "sw" as they
-> > are currently used are not correct. e.g something like
-> > IOMAP_FS_ATOMIC and IOMAP_BDEV_ATOMIC which indicates which layer
-> > should be providing the atomic IO constraints and guarantees.
-> 
-> I'd prefer IOMAP_REQ_ATOMIC instead (of IOMAP_BDEV_ATOMIC), as we are using
-> REQ_ATOMIC for those BIOs only. Anything which the block layer and below
-> does with REQ_ATOMIC is its business, as long as it guarantees atomic
-> submission. But I am not overly keen on that name, as it clashes with block
-> layer names (naturally).
+On Mon, Mar 10, 2025 at 05:33:02PM +0100, Christian Eggers wrote:
+> Due to asynchronous driver probing there is a chance that the dummy
+> regulator hasn't already been probed when first accessing it.
 
-I don't like encoding "REQ_ATOMIC" in iomap flags.  If we're changing
-the names, they ought to reflect who's making the guarantees:
+>  		if (have_full_constraints()) {
+>  			r = dummy_regulator_rdev;
+> +			BUG_ON(!r);
+>  			get_device(&r->dev);
+>  		} else {
+>  			dev_err(dev, "Failed to resolve %s-supply for %s\n",
+> @@ -2086,6 +2087,7 @@ static int regulator_resolve_supply(struct regulator_dev *rdev)
+>  			goto out;
+>  		}
+>  		r = dummy_regulator_rdev;
+> +		BUG_ON(!r);
 
-IOMAP_DIO_BDEV_ATOMIC vs. IOMAP_DIO_FS_ATOMIC.
+This doesn't actually help anything - I'd expect this to trigger probe
+deferral.
 
-Not sure why the flags lost the "_DIO" part.
+--xdmiKqSCkyIynQfL
+Content-Type: application/pgp-signature; name="signature.asc"
 
---D
+-----BEGIN PGP SIGNATURE-----
 
-> And IOMAP_FS_ATOMIC seems a bit vague, but I can't think of anything else.
-> 
-> Darrick, any opinion on this?
-> 
-> Cheers,
-> John
-> 
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmfPH/UACgkQJNaLcl1U
+h9BENwf+Pnz6DsxLngVcoZ/7H2J0VK8TSBaKvObZBWu2F1oJrk3GhqO3u+2lhxHF
+mbzQSgJLRAm2y4BSd8mbQ8Hnlxz5bQbZJ6pGuOprzgT22Pc57SC0jxRnNBaGhMcf
+3tApPPS4FbbV0ZtLa/jVJhRaRAwqwzUlpDtu7Rgp+v8ji8WyrX2NOIq9ZU0/D8Ge
+oQq0sBEyMQzw3LYFB1qW3a4XLhWMfBOw8xVcb3NyTPZmNKM7VbtV0cqOvnczanJJ
+4r313TnbeRgEEyBhWOrq4xgMkKYYKnQWmDLpSbFURRgQj+DQ8HV+mdmkir85z/Se
+2XUWUzjizWHlhlNsJlNXzv85ouxerw==
+=nw3j
+-----END PGP SIGNATURE-----
+
+--xdmiKqSCkyIynQfL--
 
