@@ -1,144 +1,155 @@
-Return-Path: <linux-kernel+bounces-554356-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-554355-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E64C8A596B7
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 14:51:05 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E15FA596B0
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 14:50:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4790F3A7750
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 13:50:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 35D1F1886FCD
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 13:50:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B83A122A801;
-	Mon, 10 Mar 2025 13:50:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32DE722A804;
+	Mon, 10 Mar 2025 13:50:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="dOMvzgZF";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="eeJyEJHO"
-Received: from fout-b6-smtp.messagingengine.com (fout-b6-smtp.messagingengine.com [202.12.124.149])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="O0K07uMG"
+Received: from mail-qt1-f175.google.com (mail-qt1-f175.google.com [209.85.160.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21CE922A80A
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 13:50:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.149
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B6B622A1CD
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 13:50:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741614643; cv=none; b=Cs7AuoRktt4bKpkdIyxz9gh0g/M42Dmjs+2clgxIVsDZgkiw0awM3WNfVNzrbW/TeuZBWPd7HfAV2IPj6p0ISnEG+iZRTuD1aBIDzMGVJ5PSyUcDJ7x2tjjXAHdKTZ3U5b+awvFIAOZPdXsMnGpTJubrimokh399RhECSyEiqlU=
+	t=1741614633; cv=none; b=DmxEa+6jalRHYfOmZNxC1OC9aVMkzPpA/stqVp/p+7zjwfyPg4qoBgTvWkiCAjMjRutLe2Ga7cebfRldrD2nMHJNPGCbovVg17OPwyZYlvKr6WzHvZJkTnyjE1xT47/3fXeIlAjtwjmDyKDDMNm/MhGnDi1c8eA42ofGdG/Cdv8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741614643; c=relaxed/simple;
-	bh=FwJycksQseJX+8a3pgRHZbK9HHMlVPRLJtM8Oc9ly+Q=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=sLIlGg1kpsPJ28X+8C4cbGm6Uq947wTPNp5TmEVjL0DExHKDEKIV9E6oGbPNYrFm3FBldataeQpjYk2d+e269Phwjr0xo3q1jP95ISW3EQAdGceQzU9RjvSsjexgS8gJXCFEEb79aiIgayjYvBpFFiITaSIlmJQRqs1ixtp0hCk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=dOMvzgZF; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=eeJyEJHO; arc=none smtp.client-ip=202.12.124.149
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from phl-compute-07.internal (phl-compute-07.phl.internal [10.202.2.47])
-	by mailfout.stl.internal (Postfix) with ESMTP id B6F11114013D;
-	Mon, 10 Mar 2025 09:50:40 -0400 (EDT)
-Received: from phl-imap-11 ([10.202.2.101])
-  by phl-compute-07.internal (MEProxy); Mon, 10 Mar 2025 09:50:41 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm3; t=1741614640;
-	 x=1741701040; bh=0I24wLbTzE/cY+sNJVvgN6FHUo0XplR4URQVYRRbEpg=; b=
-	dOMvzgZFMQpadxR6WxipJPzwAD0PgjMSrUN9BToGwAWslN763L0Sh+fOMWk9IR8y
-	uSoiDzEcoosW/KyRl7RuaO9bMsbdL5+LyYop8E1+7kWBJnbBhuWP5YSVQ3KmfzNy
-	tM7DjbfNviLafviGjEekYbEo/hXJFRw7EbVamy/jCkPRYbEiAwtcSCby+TLGoCiQ
-	hdtqdujLT9RLRRPUOrZcB+criV4810a4WR05Wx4GQ9hRuoZgn2kczAa0BXuIdMpD
-	3VSgHBkDhd+h8pvZ4qoWvL2lKl77L9iStX8YKtLrltCBK8pE11wRWQvog+oqg1uZ
-	+6r5jYM95VRFX/UxEdGWFQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1741614640; x=
-	1741701040; bh=0I24wLbTzE/cY+sNJVvgN6FHUo0XplR4URQVYRRbEpg=; b=e
-	eJyEJHOuoj5FWpqspktBn+kTPQTTCh9OJY8VGW96Jjj04DkkuIVIBa2LZpc6h5XG
-	dBGImwUC42zXTL3km6a+1IJvCtyFRPemo48KXvnWzU32C7rhDwO5tQ7ZAqvFHBho
-	CkNq/kh4PfkorgqBE1d/uj/L4l5x7fib8q5U9z7QUx1hqcfXDPmQatuowV3shT/N
-	8PuqOo2QetcTQ1uke7ckhIZTw9yGQk9dXe4a1wJe4IHcqfSnNWks7hn7PoX1xKSw
-	rNJh8gfWbzJcy6zWudLdWiQCPOv2K511qY+9IP4c8/N3nWJwwlUTEuG9x14Rffl6
-	qzxyFQZCT/ZvtHze/So2A==
-X-ME-Sender: <xms:MO7OZwWRIygZL0i-yLfwRAHriWuRq95L1dHphFLZ4x5Iix2sCGaRDQ>
-    <xme:MO7OZ0lZAVoY98MzHnZCzW1WuLnJQuZ9XsM13lx_trNc03W7FcWmAtzImrKFqGm0T
-    XigdbtibNByGtU63ts>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdduudelheduucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
-    pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
-    gvnhhtshculddquddttddmnecujfgurhepofggfffhvfevkfgjfhfutgfgsehtjeertder
-    tddtnecuhfhrohhmpedftehrnhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnug
-    gsrdguvgeqnecuggftrfgrthhtvghrnhephfdthfdvtdefhedukeetgefggffhjeeggeet
-    fefggfevudegudevledvkefhvdeinecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrg
-    hmpehmrghilhhfrhhomheprghrnhgusegrrhhnuggsrdguvgdpnhgspghrtghpthhtohep
-    udegpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopegsphesrghlihgvnhekrdguvg
-    dprhgtphhtthhopehthhhomhgrshdrlhgvnhgurggtkhihsegrmhgurdgtohhmpdhrtghp
-    thhtoheprhhitghkrdhprdgvughgvggtohhmsggvsehinhhtvghlrdgtohhmpdhrtghpth
-    htoheprghrnhgusehkvghrnhgvlhdrohhrghdprhgtphhtthhopehmihhnghhosehkvghr
-    nhgvlhdrohhrghdprhgtphhtthhopeigkeeisehkvghrnhgvlhdrohhrghdprhgtphhtth
-    hopehtghhlgieslhhinhhuthhrohhnihigrdguvgdprhgtphhtthhopegurghvvgdrhhgr
-    nhhsvghnsehlihhnuhigrdhinhhtvghlrdgtohhmpdhrtghpthhtohepkhhirhhilhhlrd
-    hshhhuthgvmhhovheslhhinhhugidrihhnthgvlhdrtghomh
-X-ME-Proxy: <xmx:MO7OZ0bydh2ImUlmhodi38l5FXEGOEzYNURMQ2uzA8hpW_MjiAGsng>
-    <xmx:MO7OZ_V3u7rXHRkz09xDAU5k9f-feYf3C1aL3hI6WDH-WevrFBq1bw>
-    <xmx:MO7OZ6n1tzd8WrrvpbNYJEB5taTs1BPDrl5KleGvYrC5v2SUaRM5MA>
-    <xmx:MO7OZ0cLvIbWStaIoPalLsze-OSl-0EW5CChYWncuHjkqiEO2fcrIw>
-    <xmx:MO7OZwk9vTXWtXB8rnSkQVEh162EMVUibuYoRF0b1FuqZnfSz5bnsIUW>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id 2DE552220073; Mon, 10 Mar 2025 09:50:40 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1741614633; c=relaxed/simple;
+	bh=GfwYy9gjsNDmrgTne/V843ovOtp0n9twXRRWpfSZTco=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=i9S2KwiYjcfAxDsKfmvtSXO3S0DhEpuyL4RtjAWq0dKfgLdXQaSeASbVya2b2PJ8PJX7LGo11EYqKhfqG7kPKqNQLCU90lsvG6zw5JhVLD2h7xHD54ItQTqbyKrhoGl96XepYg+bRJZncsb0k5IBCacA3WAOqqoNLffJbFAntp0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=O0K07uMG; arc=none smtp.client-ip=209.85.160.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f175.google.com with SMTP id d75a77b69052e-46c8474d8f6so33462971cf.3
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 06:50:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1741614631; x=1742219431; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=/gCaYCDs8Pg1kazKM+cvSCawahLTAgaONKg1fx0h8QI=;
+        b=O0K07uMGZqi8mffCDUapyTD2t5MNTPUZPYvyRj8LHJlH5pvRMDNvoNx7GHYzQNxgcO
+         N+Oql3M5p+uZpPtc3JuQOqZzngk7Z574j4+eXcM5pioqJvKnU3Rj5gSVBljDlHhdoUf9
+         FmMBOv3/cnPR7ryDAY4vYaeWoljZtXVdn2kPGh4250mkBZ+OQTiSCY9GkhTB0HOK5WRF
+         0/kLYaday8+y/Q46rS5l03GsSny+LLqsqrOvvwlW2xjtYY2dAUdkk2y/J2iSNtuFCpOF
+         xPwVCVlF8SAcqbj3B2BhbiX6cBQ6yrin669xJDCQY2gyLzFJD+vM1+Znrnt4/BbpUSTB
+         WeIQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741614631; x=1742219431;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=/gCaYCDs8Pg1kazKM+cvSCawahLTAgaONKg1fx0h8QI=;
+        b=pXNpSWJ1RWUey3iZKXwzdJ4g0ntvhyMUo6XD2V5mPg7XgbVwHVuNzUsMVaI2G3l4Tz
+         HardomhFZcRyiFpF/YTsumstgRcKYihZY05+zVzhfclExlmnusELhOS2eSZSyjgw6YDk
+         g6Nz2q/C5/sqgzfNXGG/1uHfY6xWHYSvUkux/DyPd4Zt3Z46pkK8xFuJanb+Vzl/soWy
+         wXZlCcmy8OsCJay4Sqph4DE65kpgWUsSneGCUg6/F+SB7VhmT2qzAy3HzRK2VaplJQPP
+         WNUmrjvZ+cWm82n0Uz1kseL8L5iqR9lUayPBH0jOFOd7NLAo5tpgK7V9hbCaFCPrBAvY
+         ogbw==
+X-Forwarded-Encrypted: i=1; AJvYcCXr1NGvNvmDIyyCu5AUbPoOlLSC4tJosrgBRoA8V8QSeuCDgcWepQrTS/Gojjkc7wRjZW1MdBQx1IBGNmU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwCkvtAEmENkDW68apskMz1qqy4P9mhRkQYUCaFudq2oTZuvDuI
+	UsVC1Fi1F5ROKYmdo2oF3h4KYyadkTzBEbOgjmuhC28GjrpzJQ1YZohlPzbV8bMZEp7WSAUPiBd
+	2tR95sg0baHUEqRZlGJlaBjYxYYnARUOZMzp4
+X-Gm-Gg: ASbGncs8KJJcYjvWtbvDhNqsj/R0DfwtiDb3iSDbjwxA4TNomoiBgMipYNUUp1HLLCq
+	28v2CEiTp3jqOKctfYuPh0dOCES7IwPgrgIVNo3Ko/ag7v6oGHFD84EuY7QZTLw7occ4l2QHvxR
+	ApD+os7anvlI/r9pZLBfZSDkOeQOBzBo2j2L/9
+X-Google-Smtp-Source: AGHT+IFsdQMEPT30ed2pS0BN7tbO7W3VKJdZvIwL3jZvuKUeU7dzMuWa0MC//ByEudsxjQK6b0Xp4CTZvHVVJ6AyXHI=
+X-Received: by 2002:ac8:5793:0:b0:472:744:e273 with SMTP id
+ d75a77b69052e-47611854d1cmr141155951cf.42.1741614630594; Mon, 10 Mar 2025
+ 06:50:30 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Mon, 10 Mar 2025 14:50:18 +0100
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Ingo Molnar" <mingo@kernel.org>, "Arnd Bergmann" <arnd@kernel.org>
-Cc: "Thomas Gleixner" <tglx@linutronix.de>, "Ingo Molnar" <mingo@redhat.com>,
- "Borislav Petkov" <bp@alien8.de>,
- "Dave Hansen" <dave.hansen@linux.intel.com>, x86@kernel.org,
- "Kuppuswamy Sathyanarayanan" <sathyanarayanan.kuppuswamy@linux.intel.com>,
- "Rick Edgecombe" <rick.p.edgecombe@intel.com>,
- "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
- "Tom Lendacky" <thomas.lendacky@amd.com>, "H. Peter Anvin" <hpa@zytor.com>,
- "Jason A . Donenfeld" <Jason@zx2c4.com>, linux-kernel@vger.kernel.org
-Message-Id: <f034fd64-41e9-45fd-a58f-41dae347307c@app.fastmail.com>
-In-Reply-To: <Z8grEnsAcMrm9sCc@gmail.com>
-References: <20250304143340.928503-1-arnd@kernel.org>
- <Z8grEnsAcMrm9sCc@gmail.com>
-Subject: Re: [PATCH] x86: coco: mark cc_mask as __maybe_unused
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+References: <20250310112121.73654-1-nbd@nbd.name>
+In-Reply-To: <20250310112121.73654-1-nbd@nbd.name>
+From: Eric Dumazet <edumazet@google.com>
+Date: Mon, 10 Mar 2025 14:50:19 +0100
+X-Gm-Features: AQ5f1JoNjMz9SHsATO0f1HJDcw0fpi9KS-ZrtFDNFcIMDzgUlSPLXMKF9X993po
+Message-ID: <CANn89i+tX02HsfcGx1g5fdg9N4Cx=FNDk886KNPqsiem7rPcJA@mail.gmail.com>
+Subject: Re: [PATCH net v2] net: ipv6: fix TCP GSO segmentation with NAT
+To: Felix Fietkau <nbd@nbd.name>
+Cc: netdev@vger.kernel.org, Neal Cardwell <ncardwell@google.com>, 
+	Kuniyuki Iwashima <kuniyu@amazon.com>, "David S. Miller" <davem@davemloft.net>, 
+	David Ahern <dsahern@kernel.org>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+	Simon Horman <horms@kernel.org>, Willem de Bruijn <willemb@google.com>, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Mar 5, 2025, at 11:44, Ingo Molnar wrote:
-> * Arnd Bergmann <arnd@kernel.org> wrote:
+On Mon, Mar 10, 2025 at 12:21=E2=80=AFPM Felix Fietkau <nbd@nbd.name> wrote=
+:
 >
->> @@ -25,7 +25,7 @@ u64 cc_mkdec(u64 val);
->>  void cc_random_init(void);
->>  #else
->>  #define cc_vendor (CC_VENDOR_NONE)
->> -static const u64 cc_mask = 0;
->> +static const __maybe_unused u64 cc_mask = 0;
+> When updating the source/destination address, the TCP/UDP checksum needs =
+to
+> be updated as well.
 >
-> So I detest __maybe_unused with a vengeance: the 'maybe' unnecessarily 
-> inserts uncertainty & probability language into the text, while there's 
-> nothing uncertain about this interface or the code. Why cannot the 
-> compiler figure it out?
-
-Right, I'm also trying to remove a lot of the __maybe_unused
-annotations in places like power management and device_id tables
-where we now have better solutions in place.
-
-> Anyway, I'd suggest we change direct usage of cc_mask to a 
-> get_cc_mask() inline function instead, this will resolve the warning, 
-> plus it avoids some messy looking variable shadowing in tdx.c AFAICS:
+> Fixes: bee88cd5bd83 ("net: add support for segmenting TCP fraglist GSO pa=
+ckets")
+> Signed-off-by: Felix Fietkau <nbd@nbd.name>
+> ---
+> v2: move code to make it similar to __tcpv4_gso_segment_list_csum
 >
->   arch/x86/coco/tdx/tdx.c:static void tdx_setup(u64 *cc_mask)
+>  net/ipv6/tcpv6_offload.c | 18 ++++++++++++++----
+>  1 file changed, 14 insertions(+), 4 deletions(-)
+>
+> diff --git a/net/ipv6/tcpv6_offload.c b/net/ipv6/tcpv6_offload.c
+> index a45bf17cb2a1..34dd0cee3ba6 100644
+> --- a/net/ipv6/tcpv6_offload.c
+> +++ b/net/ipv6/tcpv6_offload.c
+> @@ -94,10 +94,20 @@ INDIRECT_CALLABLE_SCOPE int tcp6_gro_complete(struct =
+sk_buff *skb, int thoff)
+>  }
+>
+>  static void __tcpv6_gso_segment_csum(struct sk_buff *seg,
+> +                                    struct in6_addr *oldip,
+> +                                    const struct in6_addr *newip,
+>                                      __be16 *oldport, __be16 newport)
+>  {
+>         struct tcphdr *th;
+>
+> +       if (!ipv6_addr_equal(oldip, newip)) {
+> +               inet_proto_csum_replace16(&th->check, seg,
 
-I've sent a v2 now.
+th is not initialized yet.
 
-      Arnd
+> +                                         oldip->s6_addr32,
+> +                                         newip->s6_addr32,
+> +                                         true);
+> +               *oldip =3D *newip;
+> +       }
+> +
+>         if (*oldport =3D=3D newport)
+>                 return;
+>
+> @@ -129,10 +139,10 @@ static struct sk_buff *__tcpv6_gso_segment_list_csu=
+m(struct sk_buff *segs)
+>                 th2 =3D tcp_hdr(seg);
+>                 iph2 =3D ipv6_hdr(seg);
+>
+> -               iph2->saddr =3D iph->saddr;
+> -               iph2->daddr =3D iph->daddr;
+> -               __tcpv6_gso_segment_csum(seg, &th2->source, th->source);
+> -               __tcpv6_gso_segment_csum(seg, &th2->dest, th->dest);
+> +               __tcpv6_gso_segment_csum(seg, &iph2->saddr, &iph->saddr,
+> +                                        &th2->source, th->source);
+> +               __tcpv6_gso_segment_csum(seg, &iph2->daddr, &iph->daddr,
+> +                                        &th2->dest, th->dest);
+>         }
+>
+>         return segs;
+> --
+> 2.47.1
+>
 
