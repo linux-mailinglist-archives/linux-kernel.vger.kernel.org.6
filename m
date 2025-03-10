@@ -1,172 +1,123 @@
-Return-Path: <linux-kernel+bounces-554193-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-554196-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id ADFF5A5946B
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 13:28:48 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A8B33A59476
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 13:29:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E82D43ABC6A
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 12:27:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D7F4B16CE62
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 12:28:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71F792288C0;
-	Mon, 10 Mar 2025 12:26:58 +0000 (UTC)
-Received: from invmail4.hynix.com (exvmail4.hynix.com [166.125.252.92])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F58C22423E;
-	Mon, 10 Mar 2025 12:26:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.125.252.92
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F1FA22A4DC;
+	Mon, 10 Mar 2025 12:27:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iqqc9I92"
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AE1C227567
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 12:27:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741609618; cv=none; b=f/mXhcAKpdNz4LwCoB6/BGIvxY4J8zEP+6O7OG0Mbf7yuub1HkgHiuKB3kiz2S1qmmPbpn+J22zG+SVIkWwdJBAs5sLGR2ghMCNQj7SyhbU/rz34jc7RgGKPxl5pD1oc8KMemklbdYwDGan/AkbU4gk/qov2y2rFEsxMTQB++Pg=
+	t=1741609670; cv=none; b=Y7UMbXyS65jV1JBIwmBJm18bb+n+VjDH/Ts15rhaM1O71H8YifpFHfAa2iubTfSY9fJuVzpnfg20jrAPZOBSl63Ibh9YS58O2CeI05+S9yJE+qvpv4SN4j1M+9CncBLC6SzIlASENsda0xAyW0dNCxmGACMj/avGf9kfroe9ffE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741609618; c=relaxed/simple;
-	bh=EXAFn8QnTluKjBOG8QHCZx5SfK4hGrmt9U3EDlFi1p8=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=sziT+59na9IisEN2WRfLJVuhi3KZdbimKHf8vfFINTpJ84irOB4cCQZ8v1JB+p8pHWaAq268CHnRo/F1KhEy30LNVumbtoTYeI2qx+11XaMsWMUmnPNMg/T5hTsoMYWZi+q5oI64g/yjq5k2j/J4hfSKWaLb9TY6DAsY4Ac5viE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com; spf=pass smtp.mailfrom=sk.com; arc=none smtp.client-ip=166.125.252.92
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sk.com
-X-AuditID: a67dfc5b-3e1ff7000001d7ae-93-67ceda89a610
-Message-ID: <9caca3a8-280a-45bd-a081-cf4a28f05f21@sk.com>
-Date: Mon, 10 Mar 2025 21:26:48 +0900
+	s=arc-20240116; t=1741609670; c=relaxed/simple;
+	bh=/GglX1v0AV4sIr5Y7bGG0tbMg9+k7e9ag9LwxmbYDCw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=EqBZlscGt87SSt0pydWMI8+bAIs8tM7WXeHLo0sGQx10TxQ0DWGrt3qf1tSprlirciAvEFmXsulDfSGp8TjfHkhcnjI9FmKUqKgHdxP/6SycPZYzH59lwlukpclbAYxwqOdCr01ETbiQlCbsG0ADc1oyyhvg32dI8LX3NUt+ajE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iqqc9I92; arc=none smtp.client-ip=209.85.128.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-43cfb6e9031so7324055e9.0
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 05:27:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741609667; x=1742214467; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=P0gVa+47vgpIskiaBk5o99cR3lWwJb6rgWAQDG1BpiA=;
+        b=iqqc9I926u8Hl6JHPvn2nvWWSvHqW7JZLznRcooBQQFDwYIHNzRfaYWXuQvEMc0TkI
+         QawQzActWKEx5X72pB2trrjDetet1jxfxmDeTmLxACsLJQyNVgcqOybaHyrjf8lMd96d
+         DjRhY46gIp9ewcxv8aUEyjf5IKZyEQxFaE2FLcWNxyg9/l5QDuWd9SQTBX3ahVoxWwAj
+         qP09q+L9AfCgp8i0lgCrFcm2Jt1PCMMrw7+NrVZkNCoR2ZBGw0vN0F6fXRgBixRbAnBc
+         QZzPeDEWG6wLMc+ODiGxGWY9shuadu5GuBmF3/E0xqiRTiRDGmc560lGIUnUkRTn1Jw3
+         kXwg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741609667; x=1742214467;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=P0gVa+47vgpIskiaBk5o99cR3lWwJb6rgWAQDG1BpiA=;
+        b=VlmnbZfk9HKz6a48cksqeWL7yBMJ6/kPH4v3Iog60fUJ63l8pGWE6ljfVvlNHLg5us
+         4KyqXN4W6SRzKOTTKVX9s0RMKOmSz0ctYU1Mj0sdiZdLcjbNtQ3nmnPahLzfvQmS/8x3
+         tJU37+OeugUdCPGaeihA3sH4PDe5oAB/YjeCzQeoLetF4dtNYshRpH8lEPwMZIW888AF
+         bVEBSkGK2W3qsYusRgeJSjMge222NHH4r7tHNDDb27botJOBOkwBoM2bAMfVmt3q3g1M
+         naMMgeu1+4f/vcreRu8tjfWrzNr4fQK0CxqCMmyYjIJ2+oUEc8ZYY5/BNi2PrnoYVaTu
+         Y+kw==
+X-Forwarded-Encrypted: i=1; AJvYcCW8Zqmwqr2F1886AWFpuwPbQ7yaqbhWWdF2gW3dAvq+RIBYMxiSAnO8GbwCM3YYJLM/EeBhs4f52c4hOQM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyFIzcOP3yU5mkfK6CgWYrY/h9jon7SP26zvpw0RmdvooIvZFld
+	KjlbypufPYIrsuZZ1PT5OirS0FSKUnXNazurpMYHmxCSZFKj2f2QlSUYnL0A
+X-Gm-Gg: ASbGncsIl0BFPPzNhdL3QPX5dqfPJHcRsIj5UQvOpZkgu8zwGFTmiQMdHu/w0w6q60j
+	P7hCGgzA+KKZvCg6t+3Y6KcgaMm805p64Y8WTByqG1Gvkl+bvKVWjQiS4b7RyxNKQ9nJ1BMr7zq
+	k6UN1mYuttLrXhlHdj1dp5bRi0PrJA+vloGrk2aFtuu5AUkYMn3rnv9xnSHNxODuicK7sOK5RZ9
+	6DwaDnCHscQghC81U83fjQQr5hZT9uEtXi9ZLKqdcZl7NZSp7U42zo3PTK5bj8XVLhpTyXUMOMt
+	VdBkm93qcDG0HsHT8Zelw1W06OjVTkaDFekjQQ6uc8NfOnI78Vhu0qUuDEQ3+uBNE4K3EeMeLkZ
+	Wc+kYU7U72o2PfQuwCvcglQsuvjE=
+X-Google-Smtp-Source: AGHT+IHnfkFyUH7zwhO3UJXB4ON9kY20gf9Xj9a8RVVLTh0OxFR3WRoI6eW5/kVQ7doqUEWryYXkVw==
+X-Received: by 2002:a05:600c:4e91:b0:43b:d116:6483 with SMTP id 5b1f17b1804b1-43c6021f13cmr85331995e9.27.1741609667099;
+        Mon, 10 Mar 2025 05:27:47 -0700 (PDT)
+Received: from eichest-laptop.toradex.int (85-195-230-40.fiber7.init7.net. [85.195.230.40])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43bd6530f26sm171963245e9.4.2025.03.10.05.27.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 10 Mar 2025 05:27:46 -0700 (PDT)
+From: Stefan Eichenberger <eichest@gmail.com>
+To: vkoul@kernel.org,
+	kishon@kernel.org,
+	shawnguo@kernel.org,
+	s.hauer@pengutronix.de,
+	kernel@pengutronix.de,
+	festevam@gmail.com,
+	p.zabel@pengutronix.de,
+	hongxing.zhu@nxp.com,
+	tharvey@gateworks.com,
+	Frank.Li@nxp.com,
+	francesco.dolcini@toradex.com
+Cc: linux-phy@lists.infradead.org,
+	imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v3 0/2] phy: freescale: imx8m-pcie: fix and cleanup phy
+Date: Mon, 10 Mar 2025 13:27:02 +0100
+Message-ID: <20250310122745.34947-1-eichest@gmail.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Honggyu Kim <honggyu.kim@sk.com>
-Subject: Re: [PATCH 2/2 v6] mm/mempolicy: Don't create weight sysfs for
- memoryless nodes
-To: Gregory Price <gourry@gourry.net>
-Cc: kernel_team@skhynix.com, Joshua Hahn <joshua.hahnjy@gmail.com>,
- harry.yoo@oracle.com, ying.huang@linux.alibaba.com,
- gregkh@linuxfoundation.org, rakie.kim@sk.com, akpm@linux-foundation.org,
- rafael@kernel.org, lenb@kernel.org, dan.j.williams@intel.com,
- Jonathan.Cameron@huawei.com, dave.jiang@intel.com, horen.chuang@linux.dev,
- hannes@cmpxchg.org, linux-kernel@vger.kernel.org,
- linux-acpi@vger.kernel.org, linux-mm@kvack.org, kernel-team@meta.com,
- yunjeong.mun@sk.com
-References: <20250226213518.767670-1-joshua.hahnjy@gmail.com>
- <20250226213518.767670-2-joshua.hahnjy@gmail.com>
- <b8ac8654-92bd-4c08-a3fc-e28a7be5e0e6@sk.com>
- <Z8cqe3BCdobsV4-2@gourry-fedora-PF4VCD3F>
- <f64819e2-8dc6-4907-b8bf-faec66eecd0e@sk.com>
- <Z8ncOp2H54WE4C5s@gourry-fedora-PF4VCD3F>
- <9c0d8aa8-cac7-4679-aece-af88e8129345@sk.com>
- <Z8syE7l5H35pk9T5@gourry-fedora-PF4VCD3F>
-Content-Language: ko
-In-Reply-To: <Z8syE7l5H35pk9T5@gourry-fedora-PF4VCD3F>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrDIsWRmVeSWpSXmKPExsXC9ZZnoW7nrXPpBpOmKVjMWb+GzWL61AuM
-	FiduNrJZ/Lx7nN2iefF6NovVm3wt7i97xmJxu/8cq8WqhdfYLI5vncduse8iUMPOh2/ZLJbv
-	62e0uLxrDpvFvTX/WS3mfpnKbLF6TYaDoMfhN++ZPXbOusvu0d12md2j5chbVo/Fe14yeWxa
-	1cnmsenTJHaPEzN+s3jsfGjpsbBhKrPH/rlr2D3OXazw+Pj0FovH501yAXxRXDYpqTmZZalF
-	+nYJXBlbnh9mLpguUjF95lGWBsZ1/F2MnBwSAiYSN+bvZoexN05qZwaxeQUsJfa++8oCYrMI
-	qEq8m9XABhEXlDg58wlYXFRAXuL+rRlgvWwCahJXXk5iArGFBaIkdr76C2RzcIgA9bZdce9i
-	5OJgFnjMLPHpThcziCMk0MoscXnPBLAGZgERidmdbWCLOQXMJC7NWMUGETeT6NraxQhhy0ts
-	fzsHrFlC4Bq7xOoXZxkhrpaUOLjiBssERsFZSA6chWTuLCSzZiGZtYCRZRWjUGZeWW5iZo6J
-	XkZlXmaFXnJ+7iZGYBwvq/0TvYPx04XgQ4wCHIxKPLwP5p1NF2JNLCuuzD3EKMHBrCTCe/DK
-	uXQh3pTEyqrUovz4otKc1OJDjNIcLErivEbfylOEBNITS1KzU1MLUotgskwcnFINjKv+BC6v
-	CNapLvqqYJC/ysU8a6HV9okfgn8uePPztF3R7MIdHAdEhX3aaz+Z6DBP7n48qyTGL6Q199Gu
-	HFHrzdHBE3LuhvTamh7VW7bh+NK3f/pnhDYZncuYVeC8xCeEV0PdYZ3l/hSFtKtlGzqlklOk
-	dp6Q17lx4u6k5zciBaetPaa220eJXYmlOCPRUIu5qDgRAFOaNt3fAgAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrIIsWRmVeSWpSXmKPExsXCNUNLT7fz1rl0gzet3BZz1q9hs5g+9QKj
-	xYmbjWwWP+8eZ7doXryezWL1Jl+L+8uesVjc7j/HarFq4TU2i+Nb57Fb7LsI1HB47klWi50P
-	37JZLN/Xz2hxedccNot7a/6zWsz9MpXZ4tC156wWq9dkWPzetoLNQcTj8Jv3zB47Z91l9+hu
-	u8zu0XLkLavH4j0vmTw2repk89j0aRK7x4kZv1k8dj609FjYMJXZY//cNewe5y5WeHx8eovF
-	49ttD4/FLz4weXzeJBcgEMVlk5Kak1mWWqRvl8CVseX5YeaC6SIV02ceZWlgXMffxcjJISFg
-	IrFxUjsziM0rYCmx991XFhCbRUBV4t2sBjaIuKDEyZlPwOKiAvIS92/NYAex2QTUJK68nMQE
-	YgsLREnsfPUXyObgEAHqbbvi3sXIxcEs8JhZ4tOdLmYQR0iglVni8p4JYA3MAiISszvbwBZz
-	CphJXJqxig0ibibRtbWLEcKWl9j+dg7zBEa+WUjumIWkfRaSlllIWhYwsqxiFMnMK8tNzMwx
-	1SvOzqjMy6zQS87P3cQIjNhltX8m7mD8ctn9EKMAB6MSD++DeWfThVgTy4orcw8xSnAwK4nw
-	HrxyLl2INyWxsiq1KD++qDQntfgQozQHi5I4r1d4aoKQQHpiSWp2ampBahFMlomDU6qBkZNn
-	W67wvRK35YkfWJiL+mdxn9i5+OEqB76CbTunX5J7XXm3Z//6ae4t05t26fee5FiRvPCJjOau
-	KDbj7595y3YyOn+3Yn/jdMMw8NmN691ah7f+e/Rg05u4j+H23VNPWH8Tr/IsOhC8a8p5Sy4G
-	RRnJDrb9X62sIidIB/Y+/WLJa3ni5pO2Z0osxRmJhlrMRcWJANJP0sPUAgAA
-X-CFilter-Loop: Reflected
+Content-Transfer-Encoding: 8bit
 
-Hi Gregory,
+The imx8m-pcie PHY PLL fails to lock under certain conditions when
+returning from suspend. This is resolved by asserting the PHY reset when
+powering off the PHY during suspend. This ensures that the PHY is
+properly reset when powering on again in resume.
 
-On 3/8/2025 2:51 AM, Gregory Price wrote:
-> On Fri, Mar 07, 2025 at 08:46:46PM +0900, Honggyu Kim wrote:
->> You can see more info below.
->>
->>    $ cd /sys/devices/system/node
->>
->>    $ ls -d node*
->>    node0  node1  node2  node3
->>
->>    $ cat possible
->>    0-11
-> 
-> We're split across two threads now, but i'll add this context
-> 
-> I'm basically asking whether there should be 12 nodes possible. It seems
-> like there should only be 4 nodes possible - 2 for sockets, 2 for host
-> bridges.
+Changes in v3:
+- Update commit message of cleanup patch (Frank)
+- Add Reviewd-by and Acked-by (Frank and Richard)
 
-Ack. If the N_POSSIBLE itself becomes 4, then I agree this problem can simply be 
-resolved.
+Changes in v2:
+- Remove unnecessary check if perst is not null (Philipp)
 
-> 
-> Unless I'm misunderstanding, it should be the case that a given physical
-> address can only be hosted by 1 numa node (proximity domain).
+Stefan Eichenberger (2):
+  phy: freescale: imx8m-pcie: cleanup reset logic
+  phy: freescale: imx8m-pcie: assert phy reset and perst in power off
 
-Yeah, the proximity domain detects the node correctly as follows in dmesg.
+ drivers/phy/freescale/phy-fsl-imx8m-pcie.c | 23 +++++++++++++---------
+ 1 file changed, 14 insertions(+), 9 deletions(-)
 
-  [  0.009915] ACPI: SRAT: Node 0 PXM 0 [mem 0x00000000-0x7fffffff]
-  [  0.009917] ACPI: SRAT: Node 0 PXM 0 [mem 0x100000000-0x207fffffff]
-  [  0.009919] ACPI: SRAT: Node 1 PXM 1 [mem 0x60f80000000-0x64f7fffffff]
-  [  0.009924] ACPI: SRAT: Node 2 PXM 6 [mem 0x2080000000-0x807fffffff] hotplug
-  [  0.009925] ACPI: SRAT: Node 3 PXM 7 [mem 0x64f80000000-0x6cf7fffffff] hotplug
-
-It is printed even before CXL detection.
-
-> 
-> So it *should* be the case that you either have 4 nodes possible or 10
-> nodes possible, not 12.  But I could be missing a piece of context.
-> 
->> Which command do we need for this info specifically?  My output doesn't
->> provide some useful info for that.
->>
->>    $ acpidump -b
->>    $ iasl -d *
->>    $ cat cedt.dsl
->>        ...
->>    **** Unknown ACPI table signature [CEDT]
->>
-> 
-> You probably have an old version of acpidump here, you might need to get
-> a newer version that knows about the CEDT.
-
-I just used the newest acpica and was able to dump CEDT properly.  But its
-output is also very long so it'd be helpful if you could tell us which specific
-info you need.
-
-> 
-> You'll also want to get all the Memory Affinity entries from srat.dsl
-> 
->> Not sure about it.  This must be fixed ASAP because current kernel is
->> broken on this issue and the fix should go into hotfix tree first.
->>
-> 
-> I agree something is broken, I'm not convinced what is broken.
-
-Yeah, we should fix the broken status hopefully before v6.14 release.
-
-Thanks,
-Honggyu
-
-> 
->> If you can think this is just a bandaid, but leaving it bleeding as is
->> not the right approach.
->>
-> 
-> This affects userland, we shouldn't thrash on this. Lets get it right.
-> 
-> ~Gregory
+-- 
+2.45.2
 
 
