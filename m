@@ -1,115 +1,202 @@
-Return-Path: <linux-kernel+bounces-554804-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-554806-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 977C7A59E84
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 18:31:45 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EC701A59E9C
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 18:32:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 794FB3AAA19
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 17:30:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D9ACD3AB72B
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 17:31:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2882A2327A3;
-	Mon, 10 Mar 2025 17:30:28 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C5C717A31A
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 17:30:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6AFF233723;
+	Mon, 10 Mar 2025 17:31:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Y9oswiZQ"
+Received: from mail-qt1-f179.google.com (mail-qt1-f179.google.com [209.85.160.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49C3C233156;
+	Mon, 10 Mar 2025 17:31:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741627827; cv=none; b=sFgKhKRh5e+kx/lQcq9MxOWNpjliTl6FjPPubn9uE1gSa9Vk/I8dDaB/UkcA0vycOLgvQdRyyMYHwIt0pa8SirVFVC9r3jf5+Q2MWDJEeVx/RP2aAybQuC29jf8WCpcbVbQOKRBfOF/RjBGS2r3SRWfYTccgx2wy5sz+kPu/16Y=
+	t=1741627864; cv=none; b=E0JMPF6xNbpL5lCvW24gxbaYlb7zrGIaNOk4AUaI02Zs5Fw6HxRcXrvbsoG2imEwZmeH63JcNWFGsYbDooPmBuTO1MKNV+nYAu/lSQltnbaYGpQva+PnPJWwsNZmT80mx07/o+seeeVwSY8TzYsIR39BzBZmG0xXT3ulHrwBiNc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741627827; c=relaxed/simple;
-	bh=LL09H4g/wxiqkOrlLebTGRw72BFofPQHBxWzxamYGKs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZjaeHy8utx4JAbzx7rl3p4OOnuR37bjMIJrixLBBoB4FklODgw8E6ETOkM6+fq3ckVz0YoprdO9CbP2LiJV67ctuYabsqIUMo8Ocgfo6Q7HT5SoB2ttDUkNcy4jI+iv/L52P8FSQt8ECDVlWw/t6tx6hF4dsLt4pObJbkyXCBYw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1AA9D1424;
-	Mon, 10 Mar 2025 10:30:36 -0700 (PDT)
-Received: from J2N7QTR9R3.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 7651F3F5A1;
-	Mon, 10 Mar 2025 10:30:23 -0700 (PDT)
-Date: Mon, 10 Mar 2025 17:30:21 +0000
-From: Mark Rutland <mark.rutland@arm.com>
-To: Ard Biesheuvel <ardb@kernel.org>
-Cc: Ryan Roberts <ryan.roberts@arm.com>,
-	Anshuman Khandual <anshuman.khandual@arm.com>,
-	linux-arm-kernel@lists.infradead.org,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH V2] arm64/mm: Create level specific section mappings in
- map_range()
-Message-ID: <Z88hrbNFM_7hIx_Z@J2N7QTR9R3.cambridge.arm.com>
-References: <20250310062812.216031-1-anshuman.khandual@arm.com>
- <Z87FFqV03Pd0-NXl@J2N7QTR9R3.cambridge.arm.com>
- <b1fb982a-4936-4c18-aaad-3e8e8f61bccc@arm.com>
- <Z876UI5-xGRHl4td@J2N7QTR9R3.cambridge.arm.com>
- <CAMj1kXEZ86C8bouLt+xNkNr+L9AvCSQ2SZeJpLMtyvGo-8h6gw@mail.gmail.com>
+	s=arc-20240116; t=1741627864; c=relaxed/simple;
+	bh=hBQ6Jb0lIvYkY5YwdG9Lzpk3SfgbN4yRgpRLE9J874U=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=KoiUHm6Iumx/ExFNaNtxgZie+1FEpN+NboYefz9P2IPLz3mBU+VC2uBA07HsZkic31VW4BKbdOQtStCoC6Vj4g2rRzA/mopk6cUa3NY9MoZ4kM4jqm3PrylDw295lBKGtlYeLB1rlr+tortUNU6Wb5ny7V/Lc2y03DE//3ddMLI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Y9oswiZQ; arc=none smtp.client-ip=209.85.160.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f179.google.com with SMTP id d75a77b69052e-47690a4ec97so9086411cf.2;
+        Mon, 10 Mar 2025 10:31:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741627861; x=1742232661; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=b78KlAfyXKoBfZcmMN7ECuBnSEo3W7UZ1w2TCHUTUXU=;
+        b=Y9oswiZQFiifab+rw/nqZpMroR7IKnfmyZmz/DaIrvToFK5/Xn7EWIg886s3IPHIOB
+         nIRUT1m2aogSB2VBCHRtd1lCf4zCaYz3aSlFADrG/nfw0bnHMgg4nvQb7eVgYrdbZ9BZ
+         FUt4t32hKqKY2UlqvdGEBwglheiFkRUiHYoka/9PkK06H5HMJ85iI63PwA8Kf4wZsLd1
+         3ewClJLCqFFp+x3ZqKE+myHtdhFgfH1Lfny8luqrL5iGpW8kEIuA7bgpJZJ49xZ25VWp
+         kgigFfAvlh6Z7tKZ8QGWFIFnuUm9Kj8VCWnTzI4RwWSzgWiCWUC/cjlsTFeA2eKBG7ep
+         lUYg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741627861; x=1742232661;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=b78KlAfyXKoBfZcmMN7ECuBnSEo3W7UZ1w2TCHUTUXU=;
+        b=MgMbM0Z/uBLOCHDZ5+mbZYeu9ckRfdrTOwEB70G2i3e2gjnEZRVBK+SeqcNBDzS+so
+         n/ws2SQIdurWkk7VnKUz/wKp9ZuGggtShySAl3RpZlcPodyrkm+800tNINvqaTBneXj7
+         bhq8q1TMmBcMhkDg96ZZQJfG5mNISlvjdkjqovlfKRoJVAObY6qWE11MKfRjxfA5thPt
+         ox/Lutebrj98tRJVl2tFFPG0Dj5LjeBVdNhb52uM3FAl9StG/Zq6s9wA0raOZz1NHuFS
+         5brRni953CQPZ+Ka4nV1uBJW9EQIx5daSpwdkHlRjni9qZOW7IbhO1LqgzSvwdM/bx+T
+         Hm1Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUL91F9EVCSKK3MRBYtCo/KOllJ+6ZHjzBYj/P+k4nfG9rhBU8ProsUR+yRVjm+ao+59uwdvpc/RxLspap/@vger.kernel.org, AJvYcCWg7bYNI9A2+Ji8RgefWrSiOrZ+MQFDxBemnCNiWUxAXx5p+2IH+PcudRJvV3PaDNz34sqjLydfcgwR9A==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyAxSbEYQDxuPZu8weszUzRl8zyJ0EJQ8+VmJDwxcCb3oUMZ9sK
+	DJ/EdUtFkk0XHnydQ2o518Dxyy8MA4+7VthJ/HGXlJlhTj6wW33MIQjmWApZHGFPTxz8Na6CazN
+	BW7VRnM57dESkUJD4IMVP+rKRV3U=
+X-Gm-Gg: ASbGnctEeDwPcZ2cu6HXZ5eP9gHqPbLkOGp63uWEo7WTJS4UlId5gMe1VDyb28G1jP6
+	A6nOjM6r+3adTduxzyy3DdBar4mMwYffwUKhrAEU/n7WMoCzcwVG/q5CMUX7KR6QbcaBpQnZb4t
+	D5C4vkuSsD4b6sD/XFdKSpYS1she98d45eGD5EO9yyEvawYJskCX2Wt9Re1A==
+X-Google-Smtp-Source: AGHT+IH1LLSAI/+s4Zi9zEGfRKSLEY80Xhq1yNJSxRKUtitCQBu1/cEDGmenPOC3lpC07sG6xvj89oLC5RUraLQQ57A=
+X-Received: by 2002:ad4:5945:0:b0:6e8:feae:929c with SMTP id
+ 6a1803df08f44-6ea2dd25b7dmr6779506d6.21.1741627861048; Mon, 10 Mar 2025
+ 10:31:01 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAMj1kXEZ86C8bouLt+xNkNr+L9AvCSQ2SZeJpLMtyvGo-8h6gw@mail.gmail.com>
+References: <20250307120141.1566673-1-qun-wei.lin@mediatek.com>
+ <CAKEwX=NfKrisQL-DBcNxBwK2ErK-u=MSzHNpETcuWWNBh9s9Bg@mail.gmail.com>
+ <CAGsJ_4ysL1xV=902oNM3vBfianF6F_iqDgyck6DGzFrZCtOprw@mail.gmail.com>
+ <52896654fa07a685707b11cfcc141b038a13b649.camel@mediatek.com> <CAKEwX=PNHik8O6swwRPsuDovtCNLxXRQUsiXZSSq8ZbzFvJV0w@mail.gmail.com>
+In-Reply-To: <CAKEwX=PNHik8O6swwRPsuDovtCNLxXRQUsiXZSSq8ZbzFvJV0w@mail.gmail.com>
+From: Nhat Pham <nphamcs@gmail.com>
+Date: Mon, 10 Mar 2025 10:30:48 -0700
+X-Gm-Features: AQ5f1JpRFqqTBM7MTZvYEz_bClOJNrcAPr9qIUA-7zONYB5oqdusO9tVlggAxPY
+Message-ID: <CAKEwX=Onwhy7FkB97tw4JonN3POj=dDp3ixsfS14=_3x3=KvuA@mail.gmail.com>
+Subject: Re: [PATCH 0/2] Improve Zram by separating compression context from kswapd
+To: =?UTF-8?B?UXVuLXdlaSBMaW4gKOael+e+pOW0tCk=?= <Qun-wei.Lin@mediatek.com>
+Cc: "21cnbao@gmail.com" <21cnbao@gmail.com>, =?UTF-8?B?QW5kcmV3IFlhbmcgKOaliuaZuuW8tyk=?= <Andrew.Yang@mediatek.com>, 
+	=?UTF-8?B?Q2FzcGVyIExpICjmnY7kuK3mpq4p?= <casper.li@mediatek.com>, 
+	"chrisl@kernel.org" <chrisl@kernel.org>, =?UTF-8?B?SmFtZXMgSHN1ICjlvpDmhbbolrAp?= <James.Hsu@mediatek.com>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+	"akpm@linux-foundation.org" <akpm@linux-foundation.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
+	"linux-mediatek@lists.infradead.org" <linux-mediatek@lists.infradead.org>, 
+	"ira.weiny@intel.com" <ira.weiny@intel.com>, "linux-mm@kvack.org" <linux-mm@kvack.org>, 
+	"dave.jiang@intel.com" <dave.jiang@intel.com>, 
+	"schatzberg.dan@gmail.com" <schatzberg.dan@gmail.com>, 
+	=?UTF-8?B?Q2hpbndlbiBDaGFuZyAo5by16Yym5paHKQ==?= <chinwen.chang@mediatek.com>, 
+	"viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>, "ryan.roberts@arm.com" <ryan.roberts@arm.com>, 
+	"minchan@kernel.org" <minchan@kernel.org>, "axboe@kernel.dk" <axboe@kernel.dk>, 
+	"linux-block@vger.kernel.org" <linux-block@vger.kernel.org>, "kasong@tencent.com" <kasong@tencent.com>, 
+	"nvdimm@lists.linux.dev" <nvdimm@lists.linux.dev>, 
+	"vishal.l.verma@intel.com" <vishal.l.verma@intel.com>, 
+	"matthias.bgg@gmail.com" <matthias.bgg@gmail.com>, 
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, 
+	"senozhatsky@chromium.org" <senozhatsky@chromium.org>, 
+	"dan.j.williams@intel.com" <dan.j.williams@intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Mar 10, 2025 at 03:53:33PM +0100, Ard Biesheuvel wrote:
-> On Mon, 10 Mar 2025 at 15:42, Mark Rutland <mark.rutland@arm.com> wrote:
+On Mon, Mar 10, 2025 at 9:58=E2=80=AFAM Nhat Pham <nphamcs@gmail.com> wrote=
+:
+>
+> On Mon, Mar 10, 2025 at 6:22=E2=80=AFAM Qun-wei Lin (=E6=9E=97=E7=BE=A4=
+=E5=B4=B4)
+> <Qun-wei.Lin@mediatek.com> wrote:
 > >
-> > On Mon, Mar 10, 2025 at 01:48:53PM +0000, Ryan Roberts wrote:
-> > > On 10/03/2025 10:55, Mark Rutland wrote:
-> > IIUC the problem is that for a sufficiently large (and aligned) extent
-> > of physical memory, we might try to create a block mapping larger than
-> > the HW supports?
-> 
-> Yes. However, this code is only called to map the kernel, the DTB and
-> the ID map code and data pages, and so it seems unlikely that we'll
-> hit this bug in practice.
-> 
-> Nonetheless, it is a shortcoming that we should address to avoid
-> future surprises.
-> 
-> > With that in mind, my earlier comment about LPA2 and blocks at level-0
-> > is particularly relevant...
-> 
-> Indeed - at the higher levels, there is quite some variation between
-> page sizes, LPA2 vs !LPA2 etc in which level is the highest at which
-> block mappings are supported.
-> 
-> But given the context where this code is used, I'd prefer to simply
-> map everything down to level 2 or higher (for 64-bit descriptors)
-> rather than add elaborate rules for all these combinations that are
-> never exercised in practice. The net result should be identical.
+> >
+> > Thank you for your explanation. Compared to the original single kswapd,
+> > we expect t1 to have a slight increase in re-scan time. However, since
+> > our kcompressd can focus on compression tasks and we can have multiple
+> > kcompressd instances (kcompressd0, kcompressd1, ...) running in
+> > parallel, we anticipate that the number of times a folio needs be re-
+> > scanned will not be too many.
+> >
+> > In our experiments, we fixed the CPU and DRAM at a certain frequency.
+> > We created a high memory pressure enviroment using a memory eater and
+> > recorded the increase in pgsteal_anon per second, which was around 300,
+> > 000. Then we applied our patch and measured again, that pgsteal_anon/s
+> > increased to over 800,000.
+> >
+> > > >
+> > > > >
+> > > > > Problem:
+> > > > >  In the current system, the kswapd thread is responsible for both
+> > > > >  scanning the LRU pages and compressing pages into the ZRAM. This
+> > > > >  combined responsibility can lead to significant performance
+> > > > > bottlenecks,
+> > > >
+> > > > What bottleneck are we talking about? Is one stage slower than the
+> > > > other?
+> > > >
+> > > > >  especially under high memory pressure. The kswapd thread becomes
+> > > > > a
+> > > > >  single point of contention, causing delays in memory reclaiming
+> > > > > and
+> > > > >  overall system performance degradation.
+> > > > >
+> > > > > Target:
+> > > > >  The target of this invention is to improve the efficiency of
+> > > > > memory
+> > > > >  reclaiming. By separating the tasks of page scanning and page
+> > > > >  compression into distinct processes or threads, the system can
+> > > > > handle
+> > > > >  memory pressure more effectively.
+> > > >
+> > > > I'm not a zram maintainer, so I'm definitely not trying to stop
+> > > > this
+> > > > patch. But whatever problem zram is facing will likely occur with
+> > > > zswap too, so I'd like to learn more :)
+> > >
+> > > Right, this is likely something that could be addressed more
+> > > generally
+> > > for zswap and zram.
+> > >
+> >
+> > Yes, we also hope to extend this to other swap devices, but currently,
+> > we have only modified zram. We are not very familiar with zswap and
+> > would like to ask if anyone has any suggestions for modifications?
+> >
+>
+> My understanding is right now schedule_bio_write is the work
+> submission API right? We can make it generic, having it accept a
+> callback and a generic untyped pointer which can be casted into a
+> backend-specific context struct. For zram it would contain struct zram
+> and the bio. For zswap, depending on at which point do you want to
+> begin offloading the work - it could simply be just the folio itself
+> if we offload early, or a more complicated scheme.
 
-That sounds much better to me!
+To expand a bit - zswap_store() is where all the logic lives. It's
+fairly straightforward: checking zswap cgroup limits, acquire the
+zswap pool (a combination of compression algorithm and backend memory
+allocator, which is just zsmalloc now), perform compression, then ask
+for a slot from zsmalloc and store it there.
 
-> > Though TBH, maybe it makes more sense to split this up into separate
-> > levels (as with the code in arch/arm64/mm/mmu.c) and handle each level
-> > explicitly with a separate function. That way each level's check can be
-> > handled within that level's function, and we can use the right types,
-> > etc. It feels like that might be better for D128 in future?
-> 
-> I have a slight inclination towards having a separate routine for
-> D128, but I can easily be persuaded otherwise.
+You can probably just offload the whole thing here, or perform some
+steps of the sequence before offloading the rest :) One slight
+complication is don't forget to fallback to disk swapping - unlike
+zram, zswap is originally designed as a "cache" for underlying swap
+files on disk, which we can fallback to if the compression attempt
+fails. Everything should be fairly straightforward though :)
 
-FWIW, I don't have strong feelings either way w.r.t. sharing the code
-with D128. If it's cleaner for that to be separate, sure, but I'd have
-to see the code.
-
-My concern here was the the current recursive nature of the PI
-map_range() function makes it hard to have level-specific behaviour, and
-means that it's structurally different to most other code in the kernel,
-e.g. the alloc_init_pXX() functions in arch/arm64/mm/mmu.c, where we
-have separate functions for each of the levels that handle the
-level-specific details.
-
-I think that structure of separate functions per level is clearer, even
-if it's a bit more code.
-
-Mark.
+>
+>
+>
+> > > Thanks
+> > > Barry
+> >
+> > Best Regards,
+> > Qun-wei
+> >
+> >
 
