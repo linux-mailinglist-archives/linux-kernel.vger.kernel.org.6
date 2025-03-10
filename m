@@ -1,54 +1,69 @@
-Return-Path: <linux-kernel+bounces-554130-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-554132-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DCF95A59354
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 13:02:26 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F2376A59352
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 13:02:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9A9C81892012
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 12:01:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B1C263AB3A1
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 12:02:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F340E227E96;
-	Mon, 10 Mar 2025 11:59:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D3C9229B2E;
+	Mon, 10 Mar 2025 11:59:41 +0000 (UTC)
 Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05AD7227E93;
-	Mon, 10 Mar 2025 11:59:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77CC3229B17;
+	Mon, 10 Mar 2025 11:59:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741607959; cv=none; b=nFcfDcDWVXKiAH2CYRXR5ViqeZq2QmH3F9twlmAnNG5SnXeZSp7O9s13dalz7B/z5DKUr9vfZ0fzQMsREM1N2elTRRVi8oqMhgZPqSMkzSqeQKGZR7sUSPfgu4WlaLY+LBENga8WoLaKuU/ltHdzISBm0yC6OmWePhpyQOJeqrA=
+	t=1741607981; cv=none; b=mjDFw74DxkUguXWI/pW0Z/VTzHwOGHihW1Fg8EHi0ZExgR1wBgc6I2pQcL/Yq4cXjbgjmgE3A87ur7gTzC5zpRxxV5wARCCOVXQAkl7TW5ilpv3OoURkDDYuEAZi9rLsONuhJdMvWUOo5eOBRRrfzWSdh9NIyDyRLr9IZuQ6doQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741607959; c=relaxed/simple;
-	bh=KC5pKqOzGgVNKOXPAtwWabEu17rmUsNvJIq9RJpZ1uk=;
+	s=arc-20240116; t=1741607981; c=relaxed/simple;
+	bh=JdTtNW4KV9x3208UN40VO7s75L7zCHPjuhDtsTLEx4Q=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JVrUjhveVBGc1DqlldSd13QipVUU6Z84sURAYPWysRthncsOuVGKU5EyMvKjiyUDofSwoDyXLertySy6NBI8KaXibdcsR1ohPov//W2Mn3xmQ37n0Lok34vNBZm2b+6EPlZVXQDQnMlsB4zqvWflaerwUtQ70pXcRvw5VYH1gwM=
+	 Content-Type:Content-Disposition:In-Reply-To; b=ekknl8N/WZiOo+i32/7AltwtW13qtZswqg4/YDGgM4pV2HdNHN+DjYk/aa7OOjbosRfD9xTlMmoXaT9IkpDFSpx5uTj2ocSM0zja/a/HvSBcZKkaKObMFithq+MaMOmxbI+5Pvxe8oR8x8hvIgJP4AEjwgKSxcW4V8GYgLElJbA=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C61151516;
-	Mon, 10 Mar 2025 04:59:27 -0700 (PDT)
-Received: from localhost (e132581.arm.com [10.1.196.87])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E145A3F5A1;
-	Mon, 10 Mar 2025 04:59:15 -0700 (PDT)
-Date: Mon, 10 Mar 2025 11:59:11 +0000
-From: Leo Yan <leo.yan@arm.com>
-To: Suzuki K Poulose <suzuki.poulose@arm.com>
-Cc: Mike Leach <mike.leach@linaro.org>,
-	James Clark <james.clark@linaro.org>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Arnaldo Carvalho de Melo <acme@redhat.com>,
-	Namhyung Kim <namhyung@kernel.org>, coresight@lists.linaro.org,
-	linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/8] coresight: etm4x: Extract the trace unit
- controlling
-Message-ID: <20250310115911.GE9682@e132581.arm.com>
-References: <20250310104919.58816-1-leo.yan@arm.com>
- <20250310104919.58816-2-leo.yan@arm.com>
- <bb390d95-7f2b-4327-a809-9e4cdbd1a1bc@arm.com>
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 481C71516;
+	Mon, 10 Mar 2025 04:59:50 -0700 (PDT)
+Received: from bogus (e133711.arm.com [10.1.196.55])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D9B693F5A1;
+	Mon, 10 Mar 2025 04:59:35 -0700 (PDT)
+Date: Mon, 10 Mar 2025 11:59:33 +0000
+From: Sudeep Holla <sudeep.holla@arm.com>
+To: Peng Fan <peng.fan@nxp.com>
+Cc: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>,
+	Cristian Marussi <cristian.marussi@arm.com>,
+	Sudeep Holla <sudeep.holla@arm.com>,
+	Saravana Kannan <saravanak@google.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Aisheng Dong <aisheng.dong@nxp.com>,
+	Fabio Estevam <festevam@gmail.com>, Shawn Guo <shawnguo@kernel.org>,
+	Jacky Bai <ping.bai@nxp.com>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	"arm-scmi@vger.kernel.org" <arm-scmi@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+	"imx@lists.linux.dev" <imx@lists.linux.dev>
+Subject: Re: [PATCH 1/4] firmware: arm_scmi: bus: Bypass setting fwnode for
+ scmi cpufreq
+Message-ID: <Z87UJdhiTWhssnbl@bogus>
+References: <Z6x8cNyDt8rJ73_B@bogus>
+ <CAGETcx87Stfkru9gJrc1sf=PtFGLY7=jrfFaCzK5Z4hq+2TCzg@mail.gmail.com>
+ <Z65U2SMwSiOFYC0v@pluto>
+ <20250218010949.GB22580@nxa18884-linux>
+ <Z7Rf9GPdO2atP89Z@bogus>
+ <20250218133619.GA22647@nxa18884-linux>
+ <Z7Wvyn1QJQMVigf9@bogus>
+ <Z7Z-ZnztmvUxWoQJ@NXL53680.wbi.nxp.com>
+ <Z86w3ZRS6T2MvV3X@bogus>
+ <DB9PR04MB84614FBF96E7BC0D125D97F688D62@DB9PR04MB8461.eurprd04.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -57,38 +72,56 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <bb390d95-7f2b-4327-a809-9e4cdbd1a1bc@arm.com>
+In-Reply-To: <DB9PR04MB84614FBF96E7BC0D125D97F688D62@DB9PR04MB8461.eurprd04.prod.outlook.com>
 
-Hi Suzuki,
-
-On Mon, Mar 10, 2025 at 10:57:25AM +0000, Suzuki Kuruppassery Poulose wrote:
-> Hi Leo
-> 
-> On 10/03/2025 10:49, Leo Yan wrote:
-> > The trace unit is controlled in the ETM hardware enabling and disabling.
-> > The sequential changes for support AUX pause and resume will reuse the
-> > same operations.
+On Mon, Mar 10, 2025 at 10:45:44AM +0000, Peng Fan wrote:
+> > Subject: Re: [PATCH 1/4] firmware: arm_scmi: bus: Bypass setting
+> > fwnode for scmi cpufreq
 > > 
-> > Extract the operations in the etm4_{enable|disable}_trace_unit()
-> > functions.  A minor improvement in etm4_enable_trace_unit() is for
-> > returning the timeout error to callers.
+> > On Thu, Feb 20, 2025 at 08:59:18AM +0800, Peng Fan wrote:
+> > >
+> > > Sorry, if I misunderstood.
+> > >
+> > > I will give a look on this and propose a RFC.
+> > >
+> > > DT maintainers may ask for a patchset including binding change and
+> > > driver changes to get a whole view on the compatible stuff.
+> > >
+> > > BTW, Cristian, Saravana if you have any objections/ideas or would
+> > take
+> > > on this effort, please let me know.
+> > >
 > > 
-> > Signed-off-by: Leo Yan <leo.yan@arm.com>
-> 
-> fyi, this area of code has changes significantly and will cause
-> conflicts, due to the introduction of synchronization after
-> each access to the TRCSTATR. Please rebase your next version on
-> the coresight next branch to avoid the conflict.
+> > Can you point me to the DTS with which you are seeing this issue ?
+> > I am trying to reproduce the issue but so far not successful. I did move
+> > to power-domains for CPUFreq on Juno. IIUC all we need is both
+> > cpufreq and performance genpd drivers in the kernel and then GPU
+> > using perf genpd fails with probe deferral right ? I need pointers to
+> > reproduce the issue so that I can check if what I have cooked up as a
+> > solution really works.
+>
+> This is in downstream tree:
+> https://github.com/nxp-imx/linux-imx/blob/lf-6.6.y/arch/arm64/boot/dts/freescale/imx95.dtsi#L2971
+> https://github.com/nxp-imx/linux-imx/blob/lf-6.6.y/arch/arm64/boot/dts/freescale/imx95.dtsi#L3043
+> https://github.com/nxp-imx/linux-imx/blob/lf-6.6.y/arch/arm64/boot/dts/freescale/imx95.dtsi#L80
+>
+> we are using "power-domains" property for cpu perf and gpu/vpu perf.
+>
+> If cpufreq.off=1 is set in bootargs, the vpu/gpu driver will defer probe.
+>
 
-Sure.  Will rebase on CoreSight next branch [1].
+OK, does the probe of these drivers get called or they don't as the driver
+core doesn't allow that ? I just have a dummy driver for mali on Juno
+which just does dev_pm_domain_attach_list() in the probe and it seem to
+succeed even when cpufreq.off=1 is passed. I see scmi-cpufreq failing
+with -ENODEV as expected.
 
-Thanks for reminding.
+I need to follow the code and check if I can somehow reproduce. Also are
+you sure this is not with anything in the downstream code ? Also have you
+tried this with v6.14-rc* ? Are you sure all the fw_devlink code is backported
+in the tree you pointed me which is v6.6-stable ?
 
-Leo
-
-[1] https://web.git.kernel.org/pub/scm/linux/kernel/git/coresight/linux.git/log/?//h=next
-
-> The changes as such look good to me.
-> 
-> Suzuki
+--
+Regards,
+Sudeep
 
