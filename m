@@ -1,93 +1,132 @@
-Return-Path: <linux-kernel+bounces-555006-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-555007-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1AC38A5A46C
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 21:10:14 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 06AA6A5A46E
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 21:10:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 836FF3ACA0D
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 20:10:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B37853AD4D9
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 20:10:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7418F1DE3BA;
-	Mon, 10 Mar 2025 20:10:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15FBC1DE3AE;
+	Mon, 10 Mar 2025 20:10:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SPgpkCfn"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HP+Xdh33"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB96E15B971;
-	Mon, 10 Mar 2025 20:10:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 725FA2AE66;
+	Mon, 10 Mar 2025 20:10:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741637404; cv=none; b=Wnk6BWmUCKGIeqWcmetzQaVK2YTOsZZmiiZbdfIhEA4flc/s0m8eJq8YRVfl4T682eRLs3ZRzLmVnJyJZskcpXjg6bvHOpmBPteXg9sFkgjN3yfp49N8ZRspChQbv3SJKZljcIJ1u30oj5kUZLlcW9sCXXqAgj3HfuZaWSv93mE=
+	t=1741637450; cv=none; b=E4O/ES3Cy/CqB/YH92BhT2DttXjbQyYMKBQBKS64SWBiFOyT15zaxiTpjFDW7yNZA3WF24Dj/pBoVWKUltuHpsjGDzUwVL3/c2m+0ZuDBsngad7eAmajRZ9g16rwVGrU1jFA/TlVbQ+Uvo1rKYiYoepxBEylsm4x11ZihnygNTs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741637404; c=relaxed/simple;
-	bh=t215O0kbLEGKYUsjR9k966TRCLjdrURsEKhgKH7lyoA=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=oBVZWujRtbcACzGnEWPcN0B3jfv6dC4rpReD9ze7egOHE/Rqh1qrPwiGJK1sF4oE4kzkdESuSHXgBh8pPmuPo4QVUVEZcbk583SAJMemItBmA3vDo+lmRwdCpY77J5l1KHDxabE5it2msPnISBLWqcwIvFOGYFT0704SWs8vIcU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SPgpkCfn; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2ED40C4CEE5;
-	Mon, 10 Mar 2025 20:10:04 +0000 (UTC)
+	s=arc-20240116; t=1741637450; c=relaxed/simple;
+	bh=YCidwkOf/4nqRNk0rsw+7UAt6a1E1LiTz9KuaxwUN7Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=iMWHKGWGo7a97WFGMlwZzk+hTnLitPqjaUR27Mmh6XGgaY5CPPE4B9PDEJ9D/UUpsfcyNwP3nBR91QSlfZ47yy+bRof143qmx/uX2ffKKlYnC2+1+OMPLjquofX8ghM5hy93fzeIuKEZ5UR1hBs49vaTqVc/xAnGNGAZMPOB8ww=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HP+Xdh33; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DCF16C4CEE5;
+	Mon, 10 Mar 2025 20:10:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741637404;
-	bh=t215O0kbLEGKYUsjR9k966TRCLjdrURsEKhgKH7lyoA=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=SPgpkCfn8J3oi+5dC+rDPpD4U8BHdIJRFLVjpGj/M9ruPa7Bgj0u/X8qxd6Q2ZfjB
-	 A36N2z3jkQLK3Qrii5jUmJ12NNWncuO2pkqaecUIIyfdacOiebnU+JIBLkHG/9Y0vK
-	 Tlg5WmklBtbOdAIbqyVd8yaunYVd6k6FxW1xTDMFglxWMbWeFt4IL/pxzwKcCfjcZf
-	 U1pxCq8qIjycQ+7ZFuclbdub/si8476rltDqDtSvS+wo2P40cFNMW1HQkCRziryU2p
-	 IfXwqh8HNTnJ59SXrRlZfY+yL7GwJx5FbbM59zGDd5fk4LTnRp/Cqee64PFyLMbW4/
-	 72/arJ0hGvCjQ==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 70D42380DBDB;
-	Mon, 10 Mar 2025 20:10:39 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=k20201202; t=1741637449;
+	bh=YCidwkOf/4nqRNk0rsw+7UAt6a1E1LiTz9KuaxwUN7Y=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=HP+Xdh33WuAuziPpOWZuXXDZDqN1q5WOkUdMRJPyRQxodxPStAVUB9brjIkKR1PNg
+	 pYQG9X1caVZtPXQ47LwPPopNUyM7M16rFXwd+Aw3t1JzP2Q6r9OUUuZPFgn5wSbGKA
+	 60sY18c0rkn7OIHp0hIseeNOrXIA/AAZheBF95nEFF3UB8zOLLSCrSSXqeSxcChRXt
+	 XC1HiB/bwV32m/C9fZaj4Y0Ae8cgpcXN0Z6VumocZ1XQDBiwlvHZ6hM5qxxLF4ZQpb
+	 RGEloHiBzFE1cJ86JWBW3c050yC0wXR5BaaNsnbpo3mpIQlutygjHglGjUbItmuIgb
+	 Wxr7YezeRDTew==
+Date: Mon, 10 Mar 2025 20:10:42 +0000
+From: Jonathan Cameron <jic23@kernel.org>
+To: Lothar Rubusch <l.rubusch@gmail.com>
+Cc: lars@metafoo.de, Michael.Hennerich@analog.com,
+ cosmin.tanislav@analog.com, linux-iio@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Marcelo Schmitt <marcelo.schmitt1@gmail.com>
+Subject: Re: [PATCH v2 1/1] iio: accel: adxl367: fix setting odr for
+ activity time update
+Message-ID: <20250310201042.0e8f06d7@jic23-huawei>
+In-Reply-To: <20250309193515.2974-1-l.rubusch@gmail.com>
+References: <20250309193515.2974-1-l.rubusch@gmail.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.48; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net v3] net/mlx5: handle errors in mlx5_chains_create_table()
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <174163743837.3677954.1083328858519439655.git-patchwork-notify@kernel.org>
-Date: Mon, 10 Mar 2025 20:10:38 +0000
-References: <20250307021820.2646-1-vulab@iscas.ac.cn>
-In-Reply-To: <20250307021820.2646-1-vulab@iscas.ac.cn>
-To: Wentao Liang <vulab@iscas.ac.cn>
-Cc: saeedm@nvidia.com, leon@kernel.org, tariqt@nvidia.com,
- andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
- kuba@kernel.org, pabeni@redhat.com, netdev@vger.kernel.org,
- linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Hello:
+On Sun,  9 Mar 2025 19:35:15 +0000
+Lothar Rubusch <l.rubusch@gmail.com> wrote:
 
-This patch was applied to netdev/net.git (main)
-by Jakub Kicinski <kuba@kernel.org>:
-
-On Fri,  7 Mar 2025 10:18:20 +0800 you wrote:
-> In mlx5_chains_create_table(), the return value of mlx5_get_fdb_sub_ns()
-> and mlx5_get_flow_namespace() must be checked to prevent NULL pointer
-> dereferences. If either function fails, the function should log error
-> message with mlx5_core_warn() and return error pointer.
+> Fix setting the odr value to update activity time based on frequency
+> derrived by recent odr, and not by obsolete odr value.
 > 
-> Fixes: 39ac237ce009 ("net/mlx5: E-Switch, Refactor chains and priorities")
-> Signed-off-by: Wentao Liang <vulab@iscas.ac.cn>
+> The [small] bug: When _adxl367_set_odr() is called with a new odr value,
+> it first writes the new odr value to the hardware register
+> ADXL367_REG_FILTER_CTL.
+> Second, it calls _adxl367_set_act_time_ms(), which calls
+> adxl367_time_ms_to_samples(). Here st->odr still holds the old odr value.
+> This st->odr member is used to derrive a frequency value, which is
+> applied to update ADXL367_REG_TIME_ACT. Hence, the idea is to update
+> activity time, based on possibilities and power consumption by the
+> current ODR rate.
+> Finally, when the function calls return, again in _adxl367_set_odr() the
+> new ODR is assigned to st->odr.
 > 
-> [...]
+> The fix: When setting a new ODR value is set to ADXL367_REG_FILTER_CTL,
+> also ADXL367_REG_TIME_ACT should probably be updated with a frequency
+> based on the recent ODR value and not the old one. Changing the location
+> of the assignment to st->odr fixes this.
+> 
+> Fixes: cbab791c5e2a5 ("iio: accel: add ADXL367 driver")
+> Signed-off-by: Lothar Rubusch <l.rubusch@gmail.com>
+> Reviewed-by: Marcelo Schmitt <marcelo.schmitt1@gmail.com>
+> ---
+Change log missing, but I assume it's just the Fixes tag.
+If so, I would have been fine with that just being in a reply
+to the v1. Anyhow, new patch is fine too so applied to the
+fixes-togreg branch of iio.git.  I may well queue this up for
+the merge window rather than send another pull request this cycle.
 
-Here is the summary with links:
-  - [net,v3] net/mlx5: handle errors in mlx5_chains_create_table()
-    https://git.kernel.org/netdev/net/c/eab0396353be
+Thanks
 
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+Jonathan
 
+
+>  drivers/iio/accel/adxl367.c | 10 +++-------
+>  1 file changed, 3 insertions(+), 7 deletions(-)
+> 
+> diff --git a/drivers/iio/accel/adxl367.c b/drivers/iio/accel/adxl367.c
+> index add4053e7a02..0c04b2bb7efb 100644
+> --- a/drivers/iio/accel/adxl367.c
+> +++ b/drivers/iio/accel/adxl367.c
+> @@ -601,18 +601,14 @@ static int _adxl367_set_odr(struct adxl367_state *st, enum adxl367_odr odr)
+>  	if (ret)
+>  		return ret;
+>  
+> +	st->odr = odr;
+> +
+>  	/* Activity timers depend on ODR */
+>  	ret = _adxl367_set_act_time_ms(st, st->act_time_ms);
+>  	if (ret)
+>  		return ret;
+>  
+> -	ret = _adxl367_set_inact_time_ms(st, st->inact_time_ms);
+> -	if (ret)
+> -		return ret;
+> -
+> -	st->odr = odr;
+> -
+> -	return 0;
+> +	return _adxl367_set_inact_time_ms(st, st->inact_time_ms);
+>  }
+>  
+>  static int adxl367_set_odr(struct iio_dev *indio_dev, enum adxl367_odr odr)
 
 
