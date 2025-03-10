@@ -1,100 +1,128 @@
-Return-Path: <linux-kernel+bounces-553933-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-553912-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C778A590D6
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 11:14:52 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 634E0A59084
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 10:59:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9D94C188EF4A
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 10:14:59 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0E8F07A4B27
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 09:58:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E008022577E;
-	Mon, 10 Mar 2025 10:14:45 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B22E22423B
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 10:14:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF2672253FC;
+	Mon, 10 Mar 2025 09:59:14 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87849224240;
+	Mon, 10 Mar 2025 09:59:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741601685; cv=none; b=sUD7sKaacvW/cREvYN4GQXxxwJu2anSKJz8NGFhR8UDu8KeyMzF6heYhMJ1YQajoMl9cL8HujAQGb3VVlqVAUHzt/hZn1AQ9KoNJ5lF4lI8XUGddYRG7Gv5ibqzHimMKvK7OWzs5c7oPv233RJQ+Qf1hSYNKSoKkxVomi9Ssmxc=
+	t=1741600754; cv=none; b=Tz/H38gVU49oNbHpCyo/g4ILvU2czCipowOqzDnGaf7laGzi1qO062D/lMNRGdFixYVrquJfBmIZz56IUBvpRHpo37TXwIsDLVa/mj7uvaHQWWB+AKg+xA2Az2T3ZovRV4+gLzVgRdg1uH/E404cPN2Y0relTlSiDEBe4JchRPQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741601685; c=relaxed/simple;
-	bh=Bx4OgRcikifGeX9R341VeL8/KfWFyP9iy5dZEgZ67KQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GB80gq1poFj9AzSjd61zipTzN/qGf4zSxHTK96wZYjROU8Op+myusm7oSh/8ozvCApwFd5/2XmSWec3hyIkIZr/uzH0l8JAJLI8RfQe+EhcX5vGFvlfhbK5icUumfBizDdmDHOrIf5ZTUMKXTvlC96KhrJ86msTiR4kOucAxriQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <ore@pengutronix.de>)
-	id 1trZuC-0007Im-3x; Mon, 10 Mar 2025 10:58:40 +0100
-Received: from pty.whiteo.stw.pengutronix.de ([2a0a:edc0:2:b01:1d::c5])
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <ore@pengutronix.de>)
-	id 1trZuB-004yXP-00;
-	Mon, 10 Mar 2025 10:58:39 +0100
-Received: from ore by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
-	(envelope-from <ore@pengutronix.de>)
-	id 1trZuA-005qxW-2s;
-	Mon, 10 Mar 2025 10:58:38 +0100
-Date: Mon, 10 Mar 2025 10:58:38 +0100
-From: Oleksij Rempel <o.rempel@pengutronix.de>
-To: Thangaraj.S@microchip.com
-Cc: andrew+netdev@lunn.ch, rmk+kernel@armlinux.org.uk, davem@davemloft.net,
-	Rengarajan.S@microchip.com, Woojung.Huh@microchip.com,
-	pabeni@redhat.com, edumazet@google.com, kuba@kernel.org,
-	phil@raspberrypi.org, kernel@pengutronix.de,
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-	UNGLinuxDriver@microchip.com
-Subject: Re: [PATCH net-next v2 1/7] net: usb: lan78xx: Convert to PHYlink
- for improved PHY and MAC management
-Message-ID: <Z863zsYNM8hkfB19@pengutronix.de>
-References: <20250307182432.1976273-1-o.rempel@pengutronix.de>
- <20250307182432.1976273-2-o.rempel@pengutronix.de>
- <1bb51aad80be4bb5e0413089e1b1bf747db4e123.camel@microchip.com>
+	s=arc-20240116; t=1741600754; c=relaxed/simple;
+	bh=XH1y/JjcV/CKMZwziHUqjxzKZzlcynVjW+vD9avrsjk=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=YhcHenhovLArCOPz6abR+XavLLAp/u5iHwhequn3u9JiDNUFivo1mZr/A1ZF3toHeDLSR2hb6IHlGan5azhIq75SDdesNXsjrgmWZe9Gh/adm2NvPcWgZBjVo4oD6/DMd20HC3kOQm9sEo5Ic4gNHIDsdpquphUx20LQO79jVAU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4AD8515A1;
+	Mon, 10 Mar 2025 02:59:23 -0700 (PDT)
+Received: from a077893.arm.com (unknown [10.163.42.69])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 59DE33F673;
+	Mon, 10 Mar 2025 02:59:04 -0700 (PDT)
+From: Anshuman Khandual <anshuman.khandual@arm.com>
+To: linux-mm@kvack.org
+Cc: Anshuman Khandual <anshuman.khandual@arm.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Madhavan Srinivasan <maddy@linux.ibm.com>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
+	Heiko Carstens <hca@linux.ibm.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linuxppc-dev@lists.ozlabs.org,
+	linux-riscv@lists.infradead.org,
+	linux-s390@vger.kernel.org
+Subject: [RFC 0/2] mm/ptdump: Drop assumption that pxd_val() is u64
+Date: Mon, 10 Mar 2025 15:29:00 +0530
+Message-Id: <20250310095902.390664-1-anshuman.khandual@arm.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <1bb51aad80be4bb5e0413089e1b1bf747db4e123.camel@microchip.com>
-X-Sent-From: Pengutronix Hildesheim
-X-URL: http://www.pengutronix.de/
-X-Accept-Language: de,en
-X-Accept-Content-Type: text/plain
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ore@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
 
-Hi Thangaraj,
+Last argument passed down in note_page() is u64 assuming pxd_val() returned
+value (all page table levels) is 64 bit - which might not be the case going
+ahead when D128 page tables is enabled on arm64 platform. Besides pxd_val()
+is very platform specific and its type should not be assumed in generic MM.
 
-On Mon, Mar 10, 2025 at 09:29:45AM +0000, Thangaraj.S@microchip.com wrote:
-> > -       mii_adv_to_linkmode_adv_t(fc, mii_adv);
-> > -       linkmode_or(phydev->advertising, fc, phydev->advertising);
-> > +       phy_suspend(phydev);
-> > 
-> 
-> Why phy_suspend called in the init? Is there any specific reason?
+This series splits note_page() into individual page table level specific
+callbacks which accepts corresponding pxd_t page table entry as an argument
+instead and later all subscribing platforms could derive pxd_val() from the
+entries as required and proceed as before.
 
-In my tests with EVB-LAN7801-EDS, the attached PHY stayed UP in initial
-state. phy_suspend() solved this issue. But I need to retest it with all
-latest changes.
+Page table entry's value, mask and protection are represented with pteval_t
+not u64 that has been assumed while dumping the page table entries on arm64
+platform. Replace such u64 instances with pteval_t instead as expected.
 
-Best Regards,
-Oleksij
+This series has been lightly tested on arm64 platform but it does build on
+other relevant platforms (v6.14-rc5).
+
+Some questions:
+
+- Is there a better method to address this problem than splitting current
+  note_page() into multiple call backs as proposed here ?
+
+- This replaces note_page(st, 0, -1, 0) with note_page_pte(st, 0, pte_zero)
+  Is that problematic ? Does level = -1 has got a special meaning ? Should
+  level = -1 case be handled differently possibly via a separate callback ?
+
+Cc: Catalin Marinas <catalin.marinas@arm.com>
+Cc: Will Deacon <will@kernel.org>
+Cc: Madhavan Srinivasan <maddy@linux.ibm.com>
+Cc: Nicholas Piggin <npiggin@gmail.com>
+Cc: Paul Walmsley <paul.walmsley@sifive.com>
+Cc: Palmer Dabbelt <palmer@dabbelt.com>
+Cc: Gerald Schaefer <gerald.schaefer@linux.ibm.com>
+Cc: Heiko Carstens <hca@linux.ibm.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: linux-kernel@vger.kernel.org
+Cc: linuxppc-dev@lists.ozlabs.org
+Cc: linux-riscv@lists.infradead.org
+Cc: linux-s390@vger.kernel.org
+Cc: linux-mm@kvack.org
+
+Anshuman Khandual (2):
+  mm/ptdump: Split note_page() into level specific callbacks
+  arm64/ptdump: Replace u64 with pteval_t
+
+ arch/arm64/include/asm/ptdump.h | 22 ++++++++++++-----
+ arch/arm64/mm/ptdump.c          | 41 ++++++++++++++++++++++++++++---
+ arch/powerpc/mm/ptdump/ptdump.c | 37 ++++++++++++++++++++++++++--
+ arch/riscv/mm/ptdump.c          | 37 ++++++++++++++++++++++++++--
+ arch/s390/mm/dump_pagetables.c  | 37 ++++++++++++++++++++++++++--
+ arch/x86/mm/dump_pagetables.c   | 31 +++++++++++++++++++++++-
+ include/linux/ptdump.h          |  7 ++++--
+ mm/ptdump.c                     | 43 +++++++++++++++++++++++++--------
+ 8 files changed, 226 insertions(+), 29 deletions(-)
+
 -- 
-Pengutronix e.K.                           |                             |
-Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
-31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+2.25.1
+
 
