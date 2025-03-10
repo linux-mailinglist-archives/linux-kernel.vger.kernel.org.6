@@ -1,68 +1,63 @@
-Return-Path: <linux-kernel+bounces-554714-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-554715-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A2964A59B81
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 17:50:56 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id ABDADA59B78
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 17:50:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 392DC7A5DAA
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 16:48:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EA90B168370
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 16:50:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 435212459F7;
-	Mon, 10 Mar 2025 16:41:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1998923236F;
+	Mon, 10 Mar 2025 16:42:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CyxqHbUG"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gut4zvA9"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72BB02459C3;
-	Mon, 10 Mar 2025 16:41:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39A40231A22;
+	Mon, 10 Mar 2025 16:42:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741624884; cv=none; b=Uq88rh7NliFi3c3/dwsPKkj3N0r0mHHK2oAW5Se9mPUihcsUz94LsUrfHO7gcQQpvNCrYq9+MUdKEGWFQnkL86p0HUXXHL4EkKG06BEfnUMo1YTq3AmOBgG57pShE0f4jW3OQgFQwD+ySlmZwu4fLNhvLyOMHgrGaNIy9qjfuPg=
+	t=1741624920; cv=none; b=n2XqwbP1i6OH/iFGcaRff0v7Ca+AghmspeyJXSnxsoHbR1P97dRK4vv7XeWA31+oTw2rdZbOK2uOoGl89D2oQHK5BwSqcF4M35vbtgG9pOpYsPnF6ISGy8K/o3p/CG8D2oN757TKTW4QD09i7rVUpxIE0ChJW6Y0nfvRDFEUJMQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741624884; c=relaxed/simple;
-	bh=5Zuw8hUznANvPIatpdN56MqZ7+mKjrGRf7vCtpf94D0=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=WDC2SkrHx2Ed/ZJdZbSPpszf48SdqnV5L7nAyqcS2LSyczP7Ciwy1oUZp8lZ/QN8lFqhlrFt637tkFm6OQX/HJCqo4PYiFN+ozD726NQbMzE5Oc65OWSAob2Jbb2zhNVWLRapXR5bAXf7CXBCc/rH4+HeFH0xFnxXNcELzUMNpY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CyxqHbUG; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A3255C4CEF0;
-	Mon, 10 Mar 2025 16:41:23 +0000 (UTC)
+	s=arc-20240116; t=1741624920; c=relaxed/simple;
+	bh=AonGS/l9pN/Ns1XP5OZmwRVEfJkZ3sbj6I9acRs39sE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=q50/nSn2zxdZLkVu1CoWEy35xpfB1OCNPu3CWJKYR82h6LDy+01CweaAIOdP3O2uOxiwBkadXNAftggazfxsbP+7hXJOPKS0yKDJLmJIxfH6HqSdDaEtMdQ3HcXSDDbxZYTXP+7tNWrC3SW0yiX099EUAnYK4xpHAM+bzRSZOBw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gut4zvA9; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A759CC4CEE5;
+	Mon, 10 Mar 2025 16:41:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741624883;
-	bh=5Zuw8hUznANvPIatpdN56MqZ7+mKjrGRf7vCtpf94D0=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=CyxqHbUGsjYvKn3FVeZW/HuHfKPBRCxzzMTwqiKjtFiHxte4Vl4VInowvl3wTArrR
-	 KjsnWZEtuvQbglKKZvNcoKFaIHuNgmgJYhS9Ph1M5IqCLQekQz2MvMokEkOMw7yI4x
-	 U3M8RkVwlPfEyTLSdIXuzi2aAGNoryqqYAsha8k6NC8RCKm1qsVPonTRNPoDaqVEwl
-	 cHU+8bafTy3sVee3mmZ8P6TDGY0xHFkich12lMdI5zeUF1LZuwel7kFhCcCOMv0fyy
-	 keIiZ83UKBImR3PyAuTistfB30rkUl1VlgBzBr/GvKYEr1maJBd8mYEFv91an5Bu4Q
-	 ABY+QXm8lP0kA==
-Date: Mon, 10 Mar 2025 11:41:22 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Roman Kisel <romank@linux.microsoft.com>
-Cc: arnd@arndb.de, bhelgaas@google.com, bp@alien8.de,
-	catalin.marinas@arm.com, conor+dt@kernel.org,
-	dave.hansen@linux.intel.com, decui@microsoft.com,
-	haiyangz@microsoft.com, hpa@zytor.com, joey.gouly@arm.com,
-	krzk+dt@kernel.org, kw@linux.com, kys@microsoft.com,
-	lenb@kernel.org, lpieralisi@kernel.org,
-	manivannan.sadhasivam@linaro.org, mark.rutland@arm.com,
-	maz@kernel.org, mingo@redhat.com, oliver.upton@linux.dev,
-	rafael@kernel.org, robh@kernel.org, ssengar@linux.microsoft.com,
-	sudeep.holla@arm.com, suzuki.poulose@arm.com, tglx@linutronix.de,
-	wei.liu@kernel.org, will@kernel.org, yuzenghui@huawei.com,
-	devicetree@vger.kernel.org, kvmarm@lists.linux.dev,
-	linux-acpi@vger.kernel.org, linux-arch@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-hyperv@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
-	x86@kernel.org, apais@microsoft.com, benhill@microsoft.com,
-	bperkins@microsoft.com, sunilmut@microsoft.com
-Subject: Re: [PATCH hyperv-next v5 11/11] PCI: hv: Get vPCI MSI IRQ domain
- from DeviceTree
-Message-ID: <20250310164122.GA551965@bhelgaas>
+	s=k20201202; t=1741624920;
+	bh=AonGS/l9pN/Ns1XP5OZmwRVEfJkZ3sbj6I9acRs39sE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=gut4zvA9kSCVVqb5oEIk8UB9IOhmL4oBHTFbGoJztp6Zqvb/DrD/Va8bPfj94dGwC
+	 ikHc7Eh8+LX8looTrA7reyhmYHHbJdEuhPR1H9QoyG28tfYDeyKy37medElaSpwPRu
+	 YJCkVJ/egYaHHU6+XQVehmImsNMchRh2RdUs8lJcKWr+EOrPc+udO/qXtYSaCARlHn
+	 14RAfMCjToz2fgO4f4I0b9o6xZ10Lyr0J2QSIpM6FM5o47pY2d0lkPV0qCEZsyycZP
+	 zJnC8XZ945L10nmbU+DpkCVRj1lPJzcj8oD0OPq8TiiuluI4Ddco+B4GQjzmZSd1Fp
+	 OXhceAqh5whUQ==
+Date: Mon, 10 Mar 2025 09:41:58 -0700
+From: Eric Biggers <ebiggers@kernel.org>
+To: Bjorn Andersson <andersson@kernel.org>
+Cc: Bartosz Golaszewski <brgl@bgdev.pl>, linux-fscrypt@vger.kernel.org,
+	linux-scsi@vger.kernel.org, linux-block@vger.kernel.org,
+	linux-mmc@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Gaurav Kashyap <quic_gaurkash@quicinc.com>,
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+	Jens Axboe <axboe@kernel.dk>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Subject: Re: [PATCH v12 0/4] Driver and fscrypt support for HW-wrapped inline
+ encryption keys
+Message-ID: <20250310164158.GA1701@sol.localdomain>
+References: <20250210202336.349924-1-ebiggers@kernel.org>
+ <CAMRc=Md0fsB7Yfx9Au1pXi+7Y_5DQf2z430c9R+tyS9e60-y5w@mail.gmail.com>
+ <20250302222336.GD2079@quark.localdomain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -71,83 +66,27 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250307220304.247725-12-romank@linux.microsoft.com>
+In-Reply-To: <20250302222336.GD2079@quark.localdomain>
 
-On Fri, Mar 07, 2025 at 02:03:03PM -0800, Roman Kisel wrote:
-> The hyperv-pci driver uses ACPI for MSI IRQ domain configuration on
-> arm64. It won't be able to do that in the VTL mode where only DeviceTree
-> can be used.
+On Sun, Mar 02, 2025 at 02:23:36PM -0800, Eric Biggers wrote:
+> > > TBD whether these will land in 6.15 too, or wait until 6.16 when the
+> > > block patches that patches 2-4 depend on will have landed.
+> > >
+> > 
+> > Could Jens provide an immutable branch with these patches? I don't
+> > think there's a reason to delay it for another 3 months TBH.
 > 
-> Update the hyperv-pci driver to get vPCI MSI IRQ domain in the DeviceTree
-> case, too.
+> They don't seem to be on an immutable branch, so I'll just wait until the next
+> cycle, rather than trying to do something weird where I rebase the fscrypt tree
+> onto the block tree and also include driver patches.  TBH, I've already been
+> waiting 5 years to land this, so an extra 9 weeks is not a big deal :-)
 > 
-> Signed-off-by: Roman Kisel <romank@linux.microsoft.com>
+> The first patch "soc: qcom: ice: make qcom_ice_program_key() take struct
+> blk_crypto_key" does not depend on the block ones though, and it could land in
+> 6.15.  Bjorn, would you like to take that patch through your tree to get it out
+> of the way?
 
-A couple minor comments below, but I don't have any objection to this,
-so if it's OK with the pci-hyperv.c folks, it's OK with me.
+Bjorn, could you apply patch 1 to your tree?  Thanks!
 
-> +#ifdef CONFIG_OF
-> +
-> +static struct irq_domain *hv_pci_of_irq_domain_parent(void)
-> +{
-> +	struct device_node *parent;
-> +	struct irq_domain *domain;
-> +
-> +	parent = of_irq_find_parent(hv_get_vmbus_root_device()->of_node);
-> +	domain = NULL;
-> +	if (parent) {
-> +		domain = irq_find_host(parent);
-> +		of_node_put(parent);
-> +	}
-> +
-> +	return domain;
-
-I think this would be a little simpler as:
-
-  parent = of_irq_find_parent(hv_get_vmbus_root_device()->of_node);
-  if (!parent)
-    return NULL;
-
-  domain = irq_find_host(parent);
-  of_node_put(parent);
-  return domain;
-
-> +}
-> +
-> +#endif
-> +
-> +#ifdef CONFIG_ACPI
-> +
-> +static struct irq_domain *hv_pci_acpi_irq_domain_parent(void)
-> +{
-> +	struct irq_domain *domain;
-> +	acpi_gsi_domain_disp_fn gsi_domain_disp_fn;
-> +
-> +	if (acpi_irq_model != ACPI_IRQ_MODEL_GIC)
-> +		return NULL;
-> +	gsi_domain_disp_fn = acpi_get_gsi_dispatcher();
-> +	if (!gsi_domain_disp_fn)
-> +		return NULL;
-> +	domain = irq_find_matching_fwnode(gsi_domain_disp_fn(0),
-> +				     DOMAIN_BUS_ANY);
-> +
-> +	if (!domain)
-> +		return NULL;
-> +
-> +	return domain;
-
-  if (!domain)
-    return NULL;
-
-  return domain;
-
-is the same as:
-
-  return domain;
-
-or even just:
-
-  return irq_find_matching_fwnode(gsi_domain_disp_fn(0), DOMAIN_BUS_ANY);
-
-> +}
+- Eric
 
