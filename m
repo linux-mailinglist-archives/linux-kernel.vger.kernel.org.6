@@ -1,253 +1,260 @@
-Return-Path: <linux-kernel+bounces-554722-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-554723-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 35E1CA59B8E
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 17:52:11 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B08F1A59BA2
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 17:53:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9096A3A4719
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 16:51:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8DC1F7A9604
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 16:51:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E61A236449;
-	Mon, 10 Mar 2025 16:46:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0441C230BC3;
+	Mon, 10 Mar 2025 16:47:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="AI4JO5DI"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
+	dkim=pass (1024-bit key) header.d=axis.com header.i=@axis.com header.b="EOgTBbIq"
+Received: from EUR05-VI1-obe.outbound.protection.outlook.com (mail-vi1eur05on2053.outbound.protection.outlook.com [40.107.21.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5BBD236447;
-	Mon, 10 Mar 2025 16:46:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741625191; cv=none; b=ZJtOS39TOnhR/pWE6STRTx1SCT3RI1pAZWmj0F9VKACarxHF88SK0LDIHFtIqYiyms22fiXkyQQjLCpoIC1afoDLUx7ZcWgL2YbGhjii1qFn4Htt4KnalxvqastpstMGwTVw5r3wKClQPuNRuphQ7xDizcpQoMtdj2JiAlto00M=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741625191; c=relaxed/simple;
-	bh=cz3uWPrm1wmLuYD60kksYE9PVAxln5zZPGeWh9tRU1w=;
-	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=B5NfnI/DJpMNWSXaM7mm2X1yD1YfSKUITi3fpgDR50hJHDCOBkJdN8f5f74Gt5E5sJ1igNZ68Yv4GmT0jV5YvJpN6EnUCLr51SFmnhjzbJkfSx1B3u0M7Gy6jN1+GUMgOsxfGX6NVUQ3CtQgKu62h5SQv6BlusNNHKc9rxCJ48Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=AI4JO5DI; arc=none smtp.client-ip=198.175.65.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1741625190; x=1773161190;
-  h=from:date:to:cc:subject:in-reply-to:message-id:
-   references:mime-version:content-id;
-  bh=cz3uWPrm1wmLuYD60kksYE9PVAxln5zZPGeWh9tRU1w=;
-  b=AI4JO5DI4exMPGcBMo/BNqaIup/As9ldelRwSP6KEZeIoedfna7RHr+y
-   t7G0j4e859SSninXeevudL6jgxqbz7aamFnCpyIaXXdJTK04akIz94oAA
-   5m9uE5fOsQRnHvLeCdCgdtewjFhFpHZZ8WzLX57Y4eK/TcQmsFCVFwUwb
-   JLwb9/WKv472W0lSOFP2gmUEbZGQpgdDGzj5nCDTWI++/boqoz8nm8N+q
-   tnfZ4h7VxGczh7b2KUb5/j4PsMaGbFJgBrRJEJ05qwBNHRzC5XCThf9xB
-   Jt6uSomifYHZqQeOB1BR+mZN4swq5IrSzNwpffYLSxRPRAL6qMebYrdMT
-   Q==;
-X-CSE-ConnectionGUID: c5+fxlGnT3+ix9X8E6p04A==
-X-CSE-MsgGUID: AtAdX1QOR8a4+xQX9h7W8A==
-X-IronPort-AV: E=McAfee;i="6700,10204,11369"; a="42539667"
-X-IronPort-AV: E=Sophos;i="6.14,236,1736841600"; 
-   d="scan'208";a="42539667"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Mar 2025 09:46:29 -0700
-X-CSE-ConnectionGUID: Gs02udYMTlawYTPW+hFG4Q==
-X-CSE-MsgGUID: ijK+4ak5ROSsuxaULMezMA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,236,1736841600"; 
-   d="scan'208";a="120566188"
-Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.244.59])
-  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Mar 2025 09:46:27 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Date: Mon, 10 Mar 2025 18:46:23 +0200 (EET)
-To: Kurt Borja <kuurtb@gmail.com>, Masahiro Yamada <masahiroy@kernel.org>, 
-    linux-kbuild@vger.kernel.org
-cc: Hans de Goede <hdegoede@redhat.com>, platform-driver-x86@vger.kernel.org, 
-    LKML <linux-kernel@vger.kernel.org>, kernel test robot <lkp@intel.com>
-Subject: Re: [PATCH] platform/x86: dell: Fix ALIENWARE_WMI dependencies
-In-Reply-To: <D8COAMZV0RBJ.1C66Q3AVETTD8@gmail.com>
-Message-ID: <078669ca-1995-3403-2f86-6c4554623125@linux.intel.com>
-References: <20250309-dell-kconfig-fix-v1-1-38a2308d0ac6@gmail.com> <8d219429-b13f-2610-960e-58851d53696f@linux.intel.com> <D8COAMZV0RBJ.1C66Q3AVETTD8@gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31DA7236A8B;
+	Mon, 10 Mar 2025 16:47:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.21.53
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741625232; cv=fail; b=YaDlAe8uRcuqTFzAJtLVmZTcOMhm03clnbhN81+p5b0wh3oaz/rYJMz/5d5ZhchWNZ2JdtDFGKK5T85v6fxA/j0vI019q3jqZfy85X9UNFS0+pGzE2PXGxciOgM/1aM0R96Adqqaw1l5cGwddG3vcM4cdNOiTHqaersK+vaoKHA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741625232; c=relaxed/simple;
+	bh=mwiZFmL6V4JRPc5pqnLiZeK9PuWY90iXOdGLS9ygAsA=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=A3uD/H2gTBWDbUTbf75MsoAkVoc/vlHVcgp75dvLJZ91fyYSUxPXHMVKv9baRw1IhiY8n30D8Zz1i3vk/ku38OR+5HCBdtGGTjNSSoHYYtk0ikRIfPlYdzQUpQ8Y4Zd7Hygd//orYzEB26dqao5d+ZExDECbE/5RyS997aJpvIo=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=axis.com; spf=pass smtp.mailfrom=axis.com; dkim=pass (1024-bit key) header.d=axis.com header.i=@axis.com header.b=EOgTBbIq; arc=fail smtp.client-ip=40.107.21.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=axis.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=axis.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=v7g0goVgnscLaAHIzH99YHpi5dnx9umb70BLJBr8KqNAEREU/xWvwS42yECYnnl0ru5lXbK37BO+wsCyHu1bW+ljZmxQ3iy2cF3bm9aoQyjBI8QgcPJzMEMGPij9qrsRMmzIm5h+w+FpcnFZY5034oz8xBGJVOt3ad++i/k897LH/isqlQfZOg7pFzFX7jfX1h0vpwlJAm/1k/l/ltnLUHkfnoi+qmYXCkaf7JXbbPpeqhars8PWeil4umklGIn3zsxW7z/K6pBEQHsiDNf6/7QRaW5efR7gyPFIzINChflZftCMREp7aygYXjIaG2uZijLJO2pXetzq8kdqmzyFfg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=X9vwysSSt95/k6ws1LPhRFVcz6Wihxz7ng+f8pIUX+8=;
+ b=ubOuYLHkGEPr0MJ5JZGeGW3614ir7AcVfLrDxWbY7+udYAaPSw9P9gCmoZPoNqydZHKAb7RExYsvvVThKHwJArYQzWx1arLJ1qkcA/iZIoNUq3cHM9Yh3yisj8NTXJLSbzs5uLk3u8Fzd7/BlIgZCIQ4wtt5HNzoNyuM3E19nvlfaen/WQe8AdW4byOGq0mSQ8qIBDbGcYSNgUi7l0/nWVuE7uKWSVeCkl9D7eoU+L/gdwK+Brgb2USUhg0domCxKWYRJEqzn6AuVkVh1NsgeGJR0+gI4IA9Xhq/fnV+iMalNiv6rr6AJaA4A/40sy9LPVvtg2F5X4LxrXiE4TAA7Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 195.60.68.100) smtp.rcpttodomain=google.com smtp.mailfrom=axis.com;
+ dmarc=pass (p=none sp=none pct=100) action=none header.from=axis.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=axis.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=X9vwysSSt95/k6ws1LPhRFVcz6Wihxz7ng+f8pIUX+8=;
+ b=EOgTBbIq2D8ptnQ8IIQo69axYShlhSzclW/iPaqOrBaTgJko3CmGzGz9n9+0BFq0/tT47YYrsW6ORddq/LQrQhkprAh2n7bQPhahvUyRPjgyu8JMXXs/dJvtiyKCkSftalOutA/vwj6KB7YgV+2HlsW7wyYrrnj9LU2K6RONWHE=
+Received: from DB7PR02CA0028.eurprd02.prod.outlook.com (2603:10a6:10:52::41)
+ by GV1PR02MB8564.eurprd02.prod.outlook.com (2603:10a6:150:94::8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8511.26; Mon, 10 Mar
+ 2025 16:47:05 +0000
+Received: from DB3PEPF00008859.eurprd02.prod.outlook.com
+ (2603:10a6:10:52:cafe::6d) by DB7PR02CA0028.outlook.office365.com
+ (2603:10a6:10:52::41) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8511.26 via Frontend Transport; Mon,
+ 10 Mar 2025 16:47:05 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 195.60.68.100)
+ smtp.mailfrom=axis.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=axis.com;
+Received-SPF: Pass (protection.outlook.com: domain of axis.com designates
+ 195.60.68.100 as permitted sender) receiver=protection.outlook.com;
+ client-ip=195.60.68.100; helo=mail.axis.com; pr=C
+Received: from mail.axis.com (195.60.68.100) by
+ DB3PEPF00008859.mail.protection.outlook.com (10.167.242.4) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.8534.20 via Frontend Transport; Mon, 10 Mar 2025 16:47:05 +0000
+Received: from SE-MAIL21W.axis.com (10.20.40.16) by se-mail02w.axis.com
+ (10.20.40.8) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.44; Mon, 10 Mar
+ 2025 17:47:04 +0100
+Received: from se-mail02w.axis.com (10.20.40.8) by SE-MAIL21W.axis.com
+ (10.20.40.16) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.44; Mon, 10 Mar
+ 2025 17:47:04 +0100
+Received: from se-intmail02x.se.axis.com (10.4.0.28) by se-mail02w.axis.com
+ (10.20.40.8) with Microsoft SMTP Server id 15.1.2507.44 via Frontend
+ Transport; Mon, 10 Mar 2025 17:47:04 +0100
+Received: from pc36611-1939.se.axis.com (pc36611-1939.se.axis.com [10.88.125.175])
+	by se-intmail02x.se.axis.com (Postfix) with ESMTP id 02FA1E2;
+	Mon, 10 Mar 2025 17:47:04 +0100 (CET)
+Received: by pc36611-1939.se.axis.com (Postfix, from userid 363)
+	id F221C627E3; Mon, 10 Mar 2025 17:47:03 +0100 (CET)
+Date: Mon, 10 Mar 2025 17:47:03 +0100
+From: Jesper Nilsson <jesper.nilsson@axis.com>
+To: Frank Li <Frank.Li@nxp.com>
+CC: Jesper Nilsson <jesper.nilsson@axis.com>, Lars Persson
+	<lars.persson@axis.com>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
+	<krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Lorenzo Pieralisi
+	<lpieralisi@kernel.org>, Krzysztof =?utf-8?Q?Wilczy=C5=84ski?=
+	<kw@linux.com>, Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	Bjorn Helgaas <bhelgaas@google.com>, <linux-arm-kernel@axis.com>,
+	<devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-pci@vger.kernel.org>
+Subject: Re: [PATCH RFC NOT TESTED 0/2] PCI: artpec6: Try to clean up
+ artpec6_pcie_cpu_addr_fixup()
+Message-ID: <Z88Xh75G6Wabwl2O@axis.com>
+References: <20250304-axis-v1-0-ed475ab3a3ed@nxp.com>
+ <Z8huvkENIBxyPKJv@axis.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; BOUNDARY="8323328-719778145-1741622711=:931"
-Content-ID: <883eccab-95ef-a39c-760c-668fa29b92d1@linux.intel.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <Z8huvkENIBxyPKJv@axis.com>
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DB3PEPF00008859:EE_|GV1PR02MB8564:EE_
+X-MS-Office365-Filtering-Correlation-Id: 9a687633-1729-40d5-3b23-08dd5ff3308d
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|36860700013|7416014|376014|82310400026;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?88iys/u2b21HstBPDp4JUu9Pn2EsoiMuecsOrAthwCm3dBHelVor4AGgD/lU?=
+ =?us-ascii?Q?/hYf9Qaw2DscBmstgaUa7c1IrWbl61K2KGZiSRp79RYsxGIEDz/0bWpG0+d9?=
+ =?us-ascii?Q?wpRRo2XU47SeS6uDBg1mzMDPrmpgXc4BlH0RA9jrnYGXbAEvm82Zt+Ar1QXQ?=
+ =?us-ascii?Q?57yzwJzH2Z3HtBymPqeZJGdCh9Bd9XrXFshnfKSgFc3Ql5N/SsXiHvMaSi24?=
+ =?us-ascii?Q?h78B/F22XjzHjJYpja9y5VKTo32bR8UNDUtMatY7nkBzrx3WXXap0HJWwdyF?=
+ =?us-ascii?Q?wvEMdKMOc4WUJtW7GutOTx9Pg1T+Hxu2wuY3PscPLcGBV+O9c7GysWx4A/ow?=
+ =?us-ascii?Q?XVQhMf2CNwh12aqSX3OYtRkaQE5Yc47TPBC9iOfxP6MrZcmkSOfMw6QvBZ2a?=
+ =?us-ascii?Q?QNJQ/ofyd8TbmJrjeTlierMzQ3OYeOHbnljA8Cb9OnjmEtlZGADmCO8LNFeW?=
+ =?us-ascii?Q?Irm4zWGk50T3l87ajHLLDr8v18Q5wcWERvH5+a9hccVUM3WgXJqUa03V3HuA?=
+ =?us-ascii?Q?MUcW+syOBUlPgwdoPUsu7O4SIFhYQOBEy60oebTsx3vrk3WkOiJ+nhyIGIpJ?=
+ =?us-ascii?Q?7RFKxsTvmBoI4FC6i1PNqYJiwqcD9nfq59Hj8PxVTjhho4uep0im0LZAS6qn?=
+ =?us-ascii?Q?MhFwzwcgCdclevwgIOvobyvhaSMlaXIBvdGza+Jhj/nZxCyeHTaFoERfqXta?=
+ =?us-ascii?Q?c3ZJkNgV9juXsP/zHoVY48JpLl3bbF+0Wk2QTKj8quWvUOSnUEyuOdaMpb6E?=
+ =?us-ascii?Q?EUQeirtAmDF/xmYbdNTvTU2SgvM5IifvIaenG5yMkdRuI//Ud2OqYeMrysMF?=
+ =?us-ascii?Q?uWA7K2GCd2TmZ1l+S3rg+ShmOrlM3APIi50MPbV/uZ5RebxVx4Nvo2qhWOFH?=
+ =?us-ascii?Q?YTxdyY+Tu4UQC8+BaT8ByNPOn7gEKNV/nPvmpCU96kDpo7uCHTBApMqa8fOH?=
+ =?us-ascii?Q?T98Wccz7MIKhCWIVd14X5YDPlIo1OIl3UrOpX5tBI8ftxEy0+fb/1DgS9mO3?=
+ =?us-ascii?Q?A+d0AO8clM58TcNwsWDuHA/Wl8K/hlRb0+Ll1isFmOkSPuSalDXmLS3m0Pm/?=
+ =?us-ascii?Q?bc5Tdufz8SdQ9hMPUgxdGmat65ZKvsIEcvIx2K53oJi/YUu15IeVt3dWKUL0?=
+ =?us-ascii?Q?5LZCis9AbWbpyPbwoAE7kxHAnaPIBJhmO6LoLoYadrqYThpCPfShQT4QgvFo?=
+ =?us-ascii?Q?HBY7QtaArTNHUtUUBIZH/brjUJA81Hs6xQwlxWGppXcuwle+3Q0HJ6LwxwT9?=
+ =?us-ascii?Q?2x2XuMKDLnzsoRtGt5o9o2yG2BPubEJkzYclB7VUj5Meo0SnoD/ge75NLpDv?=
+ =?us-ascii?Q?MG7O4IFhAgk39HyIqOK1FrmUt8mh006nJAJlmgIrtFsBUsAJLFF56GV37QD6?=
+ =?us-ascii?Q?70yLRsrYN8rpQrh2CF7bEBUudngeGYMj7x62igWIzdybrFHFekQmS7obyDHe?=
+ =?us-ascii?Q?d5z9mmA+WtlRj66BLQONXHyJYOaTi2vDZzZM/tpEJSempe/+X2rBOhe11RNp?=
+ =?us-ascii?Q?+lGvN9b0kourM+g=3D?=
+X-Forefront-Antispam-Report:
+	CIP:195.60.68.100;CTRY:SE;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.axis.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(36860700013)(7416014)(376014)(82310400026);DIR:OUT;SFP:1101;
+X-OriginatorOrg: axis.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Mar 2025 16:47:05.2107
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 9a687633-1729-40d5-3b23-08dd5ff3308d
+X-MS-Exchange-CrossTenant-Id: 78703d3c-b907-432f-b066-88f7af9ca3af
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=78703d3c-b907-432f-b066-88f7af9ca3af;Ip=[195.60.68.100];Helo=[mail.axis.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	DB3PEPF00008859.eurprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: GV1PR02MB8564
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+Hi again Frank!
 
---8323328-719778145-1741622711=:931
-Content-Type: text/plain; CHARSET=ISO-8859-15
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Content-ID: <21ff1675-6148-9a62-8efb-1caf842f1a0c@linux.intel.com>
+I've now tested this patch-set together with your v9 on-top of the
+next-branch of the pci tree, and seems to be working good on my
+ARTPEC-6 set as RC:
 
-Hi Kbuild/config people,
+# lspci
+00:00.0 PCI bridge: Renesas Technology Corp. Device 0024
+01:00.0 PCI bridge: Pericom Semiconductor PI7C9X2G304 EL/SL PCIe2 3-Port/4-Lane Packet Switch (rev 05)
+02:01.0 PCI bridge: Pericom Semiconductor PI7C9X2G304 EL/SL PCIe2 3-Port/4-Lane Packet Switch (rev 05)
+02:02.0 PCI bridge: Pericom Semiconductor PI7C9X2G304 EL/SL PCIe2 3-Port/4-Lane Packet Switch (rev 05)
+03:00.0 Non-Volatile memory controller: Phison Electronics Corporation E18 PCIe4 NVMe Controller (rev 01)
 
-Could you please take a look at this select problem.
+However, when running as EP, I found that the DT setup for pcie_ep
+wasn't correct:
 
-I attempted to solve this kconfig select logic problem a few years back=20
-but IIRC, my solution leaked memory or had some other problem I could not=
-=20
-find solution to (and now the code has changed enough I couldn't even get=
-=20
-my buggy solution easily forward-ported so I just dropped the solution and=
-=20
-left just the test case into the patch).
+diff --git a/arch/arm/boot/dts/axis/artpec6.dtsi b/arch/arm/boot/dts/axis/artpec6.dtsi
+index 399e87f72865..6d52f60d402d 100644
+--- a/arch/arm/boot/dts/axis/artpec6.dtsi
++++ b/arch/arm/boot/dts/axis/artpec6.dtsi
+@@ -195,8 +195,8 @@ pcie: pcie@f8050000 {
+ 
+                pcie_ep: pcie_ep@f8050000 {
+                        compatible = "axis,artpec6-pcie-ep", "snps,dw-pcie";
+-                       reg = <0xf8050000 0x2000
+-                              0xf8051000 0x2000
++                       reg = <0xf8050000 0x1000
++                              0xf8051000 0x1000
+                               0xf8040000 0x1000
+                               0x00000000 0x20000000>;
+                        reg-names = "dbi", "dbi2", "phy", "addr_space";
 
-As the Kconfig problem back then got resolved through other means, I never=
-=20
-mentioned this back then but seems the same problem likely happens here
-in some other form (bool selecting tristate that ends up getting only =3Dm)=
-=2E
+Even with this fix, I get a panic in dw_pcie_read_dbi() in EP-setup,
+both with and without:
 
-On Mon, 10 Mar 2025, Kurt Borja wrote:
-> On Mon Mar 10, 2025 at 9:29 AM -05, Ilpo J=E4rvinen wrote:
-> > On Sun, 9 Mar 2025, Kurt Borja wrote:
-> >
-> >> If ACPI_PLATFORM_PROFILE is selected by ALIENWARE_WMI_WMAX, the former
-> >> is forced to be at least =3Dm, because the latter is a bool.
-> >>=20
-> >> This allows the following config:
-> >>=20
-> >> =09CONFIG_ALIENWARE_WMI=3Dy
-> >> =09CONFIG_ACPI_PLATFORM_PROFILE=3Dm
-> >
-> > Hi,
-> >
-> > selecting from =3Dy should not result in =3Dm for the other symbol. Thi=
-s is=20
-> > a bug in Kconfig infrastructure.
-> >
-> > I ran across this a few years back and even had a test case to prove th=
-e=20
-> > select bug but back then the original problem eventually was solved in =
-a=20
-> > different way which no longer hit the problem. I never could figure out
-> > how to fix the kconfig logic though without breaking something and it=
-=20
-> > ended up into low priority bin and never got solved.
-> >
-> > Sadly, it seems I've lost the test case patch that exhibits the bug=20
-> > somewhere... I'll try to look for it from my archived files.
->=20
-> That's funny.
->=20
-> I thought this was a Kconfig quirk, that resulted from the following
-> hierarchy:
->=20
-> Type=09=090=091=092
-> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D =3D=3D=3D=3D=3D=3D=3D =3D=
-=3D=3D=3D=3D=3D=3D =3D=3D=3D=3D=3D=3D=3D
-> Bool=09=09n=09y
+"PCI: artpec6: Use use_parent_dt_ranges and clean up artpec6_pcie_cpu_addr_fixup()"
 
-I think y should be 2 in both cases so select should cause the selected=20
-symbol to becomes =3Dy but there's a logic problem deep in select logic in=
-=20
-the kconfig code.
+so it looks like the ARTPEC-6 EP functionality wasn't completely tested
+with this config.
 
-I've attached the multi-select based reproducer test case. make=20
-testconfig runs kconfig selftests and results in CONFIG_A3=3Dm despite=20
-CONFIG_C3=3Dy selecting it.
+The ARTPEC-7 variant does work as EP with our local config, I'll try
+to see what I can do to correct ARTPEC-6 using the setup for ARTPEC-7,
+and test your patchset on the ARTPEC-7.
 
-Please do not apply the test case before the problem is fixed.
+Best regards,
 
-> Tristate=09n=09m=09y
->=20
-> So a <bool> selecting the <tristate> would force it to be at least =3Dm.
->=20
-> The same thing happens with depend, where a dependecy would be fulfilled
-> for a <bool> if a <tristate> was at least =3Dm. That's why in the kernel
-> robot report the linking error was also due to the HWMON dependency.
->=20
-> Anyway, this patch could serve as a workaround if you feel it's
-> necessary. I'm going to put the HWMON dependecy in the ALIENWARE_WMI
-> symbol for my other series.
->=20
->=20
+/Jesper
 
---=20
- i.
---8323328-719778145-1741622711=:931
-Content-Type: text/x-diff; name=select_bug.patch
-Content-Transfer-Encoding: BASE64
-Content-ID: <09a16eda-c26d-f137-ce39-d230c7cd4d77@linux.intel.com>
-Content-Description: 
-Content-Disposition: attachment; filename=select_bug.patch
 
-RnJvbTogSWxwbyBKw6RydmluZW4gPGlscG8uamFydmluZW5AbGludXguaW50
-ZWwuY29tPg0KU3ViamVjdDogW1BBVENIXSBrY29uZmlnOiBUZXN0IHRoYXQg
-dGhlIGxhcmdlc3Qgb2Ygc2VsZWN0cyBpcyB0YWtlbg0KDQpETyBOT1QgQVBQ
-TFkgV0lUSE9VVCBGSVhJTkcgS0NPTkZJRyBDT0RFIEZJUlNUISEhDQoNCldp
-dGggZHVhbCBzZWxlY3QsIHRoZSBsYXJnZXN0IHNlbGVjdGlvbiBzaG91bGQg
-YmUgdGFrZW4uIFRlc3Qgd2l0aA0KaW5kZXBlZGVudCBzZWxlY3RvcnMgYW5k
-IG9uZXMgd2hpY2ggZGVwZW5kcyBvbiBlYWNoIG90aGVyLg0KDQpTaWduZWQt
-b2ZmLWJ5OiBJbHBvIErDpHJ2aW5lbiA8aWxwby5qYXJ2aW5lbkBsaW51eC5p
-bnRlbC5jb20+DQoNCi0tLQ0KIHNjcmlwdHMva2NvbmZpZy90ZXN0cy9kdWFs
-X3NlbGVjdC9LY29uZmlnICAgICAgICAgfCA0MCArKysrKysrKysrKysrKysr
-KysrKysrKw0KIHNjcmlwdHMva2NvbmZpZy90ZXN0cy9kdWFsX3NlbGVjdC9f
-X2luaXRfXy5weSAgICAgfCAgOCArKysrKw0KIHNjcmlwdHMva2NvbmZpZy90
-ZXN0cy9kdWFsX3NlbGVjdC9kZWZjb25maWcgICAgICAgfCAgNyArKysrDQog
-c2NyaXB0cy9rY29uZmlnL3Rlc3RzL2R1YWxfc2VsZWN0L2V4cGVjdGVkX2Nv
-bmZpZyB8IDEwICsrKysrKw0KIDQgZmlsZXMgY2hhbmdlZCwgNjUgaW5zZXJ0
-aW9ucygrKQ0KIGNyZWF0ZSBtb2RlIDEwMDY0NCBzY3JpcHRzL2tjb25maWcv
-dGVzdHMvZHVhbF9zZWxlY3QvS2NvbmZpZw0KIGNyZWF0ZSBtb2RlIDEwMDY0
-NCBzY3JpcHRzL2tjb25maWcvdGVzdHMvZHVhbF9zZWxlY3QvX19pbml0X18u
-cHkNCiBjcmVhdGUgbW9kZSAxMDA2NDQgc2NyaXB0cy9rY29uZmlnL3Rlc3Rz
-L2R1YWxfc2VsZWN0L2RlZmNvbmZpZw0KIGNyZWF0ZSBtb2RlIDEwMDY0NCBz
-Y3JpcHRzL2tjb25maWcvdGVzdHMvZHVhbF9zZWxlY3QvZXhwZWN0ZWRfY29u
-ZmlnDQoNCmRpZmYgLS1naXQgYS9zY3JpcHRzL2tjb25maWcvdGVzdHMvZHVh
-bF9zZWxlY3QvS2NvbmZpZyBiL3NjcmlwdHMva2NvbmZpZy90ZXN0cy9kdWFs
-X3NlbGVjdC9LY29uZmlnDQpuZXcgZmlsZSBtb2RlIDEwMDY0NA0KaW5kZXgg
-MDAwMDAwMDAwMDAwLi43NzZkZGM0ZThiZjkNCi0tLSAvZGV2L251bGwNCisr
-KyBiL3NjcmlwdHMva2NvbmZpZy90ZXN0cy9kdWFsX3NlbGVjdC9LY29uZmln
-DQpAQCAtMCwwICsxLDQwIEBADQorIyBTUERYLUxpY2Vuc2UtSWRlbnRpZmll
-cjogR1BMLTIuMA0KKw0KK2NvbmZpZyBNT0RVTEVTDQorCWJvb2wgIkVuYWJs
-ZSBsb2FkYWJsZSBtb2R1bGUgc3VwcG9ydCINCisJbW9kdWxlcw0KKwlkZWZh
-dWx0IHkNCisNCitjb25maWcgQTENCisJdHJpc3RhdGUgIkExIg0KKyMgaW5k
-ZXBlZGVuZGVudCB0cmlzdGF0ZSBzZWxlY3RzIHRyaXN0YXRlDQorY29uZmln
-IEIxDQorCXRyaXN0YXRlICJCMSINCisJc2VsZWN0IEExDQorIyBib29sIHNl
-bGVjdHMgbGliDQorY29uZmlnIEMxDQorCWJvb2wgIkMxIg0KKwlzZWxlY3Qg
-QTENCisNCitjb25maWcgQTINCisJdHJpc3RhdGUgIkEyIg0KK2NvbmZpZyBC
-Mg0KKwl0cmlzdGF0ZSAiQjIiDQorCXNlbGVjdCBBMg0KKyMgdHJpc3RhdGUg
-ZGVwZW5kcyBvbiB0cmlzdGF0ZSBhbmQgc2VsZWN0cyB0cmlzdGF0ZQ0KK2Nv
-bmZpZyBDMg0KKwl0cmlzdGF0ZSAiQzIiDQorCWRlcGVuZHMgb24gQjINCisJ
-c2VsZWN0IEEyDQorDQorDQorY29uZmlnIEEzDQorCXRyaXN0YXRlICJBMyIN
-Citjb25maWcgQjMNCisJdHJpc3RhdGUgIkIzIg0KKwlzZWxlY3QgQTMNCisj
-IGJvb2wgZGVwZW5kcyBvbiB0cmlzdGF0ZSBhbmQgc2VsZWN0cyB0cmlzdGF0
-ZQ0KK2NvbmZpZyBDMw0KKwlib29sICJDMyINCisJZGVwZW5kcyBvbiBCMw0K
-KwlzZWxlY3QgQTMNCmRpZmYgLS1naXQgYS9zY3JpcHRzL2tjb25maWcvdGVz
-dHMvZHVhbF9zZWxlY3QvX19pbml0X18ucHkgYi9zY3JpcHRzL2tjb25maWcv
-dGVzdHMvZHVhbF9zZWxlY3QvX19pbml0X18ucHkNCm5ldyBmaWxlIG1vZGUg
-MTAwNjQ0DQppbmRleCAwMDAwMDAwMDAwMDAuLjYxM2Q4MDEwMTRlOA0KLS0t
-IC9kZXYvbnVsbA0KKysrIGIvc2NyaXB0cy9rY29uZmlnL3Rlc3RzL2R1YWxf
-c2VsZWN0L19faW5pdF9fLnB5DQpAQCAtMCwwICsxLDggQEANCisjIFNQRFgt
-TGljZW5zZS1JZGVudGlmaWVyOiBHUEwtMi4wDQorIiIiDQorVGVzdCBkdWFs
-IHNlbGVjdCBzaG91bGQgc2VsZWN0IHRoZSBsYXJnZXN0IHNlbGVjdGlvbi4N
-CisiIiINCisNCitkZWYgdGVzdChjb25mKToNCisgICAgYXNzZXJ0IGNvbmYu
-ZGVmY29uZmlnKCdkZWZjb25maWcnKSA9PSAwDQorICAgIGFzc2VydCBjb25m
-LmNvbmZpZ19jb250YWlucygnZXhwZWN0ZWRfY29uZmlnJykNCmRpZmYgLS1n
-aXQgYS9zY3JpcHRzL2tjb25maWcvdGVzdHMvZHVhbF9zZWxlY3QvZGVmY29u
-ZmlnIGIvc2NyaXB0cy9rY29uZmlnL3Rlc3RzL2R1YWxfc2VsZWN0L2RlZmNv
-bmZpZw0KbmV3IGZpbGUgbW9kZSAxMDA2NDQNCmluZGV4IDAwMDAwMDAwMDAw
-MC4uZmEwNDc1ZmE3NGFiDQotLS0gL2Rldi9udWxsDQorKysgYi9zY3JpcHRz
-L2tjb25maWcvdGVzdHMvZHVhbF9zZWxlY3QvZGVmY29uZmlnDQpAQCAtMCww
-ICsxLDcgQEANCitDT05GSUdfTU9EVUxFUz15DQorQ09ORklHX0IxPW0NCitD
-T05GSUdfQzE9eQ0KK0NPTkZJR19CMj15DQorQ09ORklHX0MyPW0NCitDT05G
-SUdfQjM9bQ0KK0NPTkZJR19DMz15DQpkaWZmIC0tZ2l0IGEvc2NyaXB0cy9r
-Y29uZmlnL3Rlc3RzL2R1YWxfc2VsZWN0L2V4cGVjdGVkX2NvbmZpZyBiL3Nj
-cmlwdHMva2NvbmZpZy90ZXN0cy9kdWFsX3NlbGVjdC9leHBlY3RlZF9jb25m
-aWcNCm5ldyBmaWxlIG1vZGUgMTAwNjQ0DQppbmRleCAwMDAwMDAwMDAwMDAu
-LjFjMDYzNTZkOGIxYw0KLS0tIC9kZXYvbnVsbA0KKysrIGIvc2NyaXB0cy9r
-Y29uZmlnL3Rlc3RzL2R1YWxfc2VsZWN0L2V4cGVjdGVkX2NvbmZpZw0KQEAg
-LTAsMCArMSwxMCBAQA0KK0NPTkZJR19NT0RVTEVTPXkNCitDT05GSUdfQTE9
-eQ0KK0NPTkZJR19CMT1tDQorQ09ORklHX0MxPXkNCitDT05GSUdfQTI9eQ0K
-K0NPTkZJR19CMj15DQorQ09ORklHX0MyPW0NCitDT05GSUdfQTM9eQ0KK0NP
-TkZJR19CMz1tDQorQ09ORklHX0MzPXkNCg0KLS0gDQp0ZzogKDgwZTU0ZTg0
-OTExYS4uKSBrY29uZmlnL2R1YWwtc2VsZWN0LWNhc2UgKGRlcGVuZHMgb246
-IG1hc3RlcikNCg==
+On Wed, Mar 05, 2025 at 04:33:18PM +0100, Jesper Nilsson wrote:
+> Hi Frank,
+> 
+> I'm the current maintainer of this driver. As Niklas Cassel wrote in
+> another email, artpec-7 was supposed to be upstreamed, as it is in most
+> parts identical to the artpec-6, but reality got in the way. I don't
+> think there is very much left to support it at the same level as artpec-6,
+> but give me some time to see if the best thing is to drop the artpec-7
+> support as Niklas suggested.
+> 
+> Unfortunately, I'm travelling right now and don't have access to any
+> of my boards. I'll perform some testing next week when I'm back and
+> help to clean this up.
+> 
+> Best regards,
+> 
+> /Jesper
+> 
+> 
+> On Tue, Mar 04, 2025 at 12:49:34PM -0500, Frank Li wrote:
+> > This patches basic on
+> > https://lore.kernel.org/imx/20250128-pci_fixup_addr-v9-0-3c4bb506f665@nxp.com/
+> > 
+> > I have not hardware to test and there are not axis,artpec7-pcie in kernel
+> > tree.
+> > 
+> > Look for driver owner, who help test this and start move forward to remove
+> > cpu_addr_fixup() work.
+> > 
+> > Signed-off-by: Frank Li <Frank.Li@nxp.com>
+> > ---
+> > Frank Li (2):
+> >       ARM: dts: artpec6: Move PCIe nodes under bus@c0000000
+> >       PCI: artpec6: Use use_parent_dt_ranges and clean up artpec6_pcie_cpu_addr_fixup()
+> > 
+> >  arch/arm/boot/dts/axis/artpec6.dtsi       | 92 +++++++++++++++++--------------
+> >  drivers/pci/controller/dwc/pcie-artpec6.c | 20 +------
+> >  2 files changed, 52 insertions(+), 60 deletions(-)
+> > ---
+> > base-commit: 1552be4855dacca5ea39b15b1ef0b96c91dbea0d
+> > change-id: 20250304-axis-6d12970976b4
+> > 
+> > Best regards,
+> > ---
+> > Frank Li <Frank.Li@nxp.com>
+> 
+> /^JN - Jesper Nilsson
+> -- 
+>                Jesper Nilsson -- jesper.nilsson@axis.com
 
---8323328-719778145-1741622711=:931--
+/^JN - Jesper Nilsson
+-- 
+               Jesper Nilsson -- jesper.nilsson@axis.com
 
