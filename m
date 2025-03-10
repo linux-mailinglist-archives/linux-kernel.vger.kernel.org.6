@@ -1,134 +1,241 @@
-Return-Path: <linux-kernel+bounces-554346-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-554348-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3B474A59685
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 14:42:01 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 74830A5968F
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 14:42:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C0DBE7A26FA
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 13:40:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E5D4B3A5FB8
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 13:42:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED26822A4FC;
-	Mon, 10 Mar 2025 13:41:53 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C50D62288F7;
-	Mon, 10 Mar 2025 13:41:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 924D022ACDC;
+	Mon, 10 Mar 2025 13:42:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JhfdQ7Az"
+Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20F1F22154C;
+	Mon, 10 Mar 2025 13:42:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741614113; cv=none; b=bgF0uPqd0mrtzxQ7/je5COd4GpDDNSVgy5dIfVjDkzctlPg0S1S/n1r4yi90OKuUPLmH1Chn6z1gsySS4REkWfMTl18Zpmbgq8CGhrUflDenU6XVRGt8Ii1A1weujhpd/P+SfRSScoP4ggyQU922ShAykkzGTTR69Fdhd9tk0Lg=
+	t=1741614157; cv=none; b=AoZSfJ8V7fuK3+PSUkKjTcV/a2RYt89F8b09046VINDlI1l9iw59TrZhOXuPfRNlMp345Eqmi4EVRdpW3Qb5rb/bAkvNM7l7tCpmI4aFqI0J+9dY8wCli/CVr4RbxXDkgQ11gFB8iqVAYW7IB1XAiKaoYhQLdXRHMMytIKCnTv4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741614113; c=relaxed/simple;
-	bh=nAmgfZNQu7S8jr939gr7ER0zYUBcT7czwN5spys2Q5U=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=B/VvDFSvN/wVi/VJuQOY48c3SylA3F3Or3u2kw18OZbvDEkw+3XLeJgNe1r3AYovyKh6Hhie9xqlRoqjTqDgujlFtgQnh5wQYyF5zO9Nn8RHkGapwiD6a3WwTGwZ/xguG7Rvx3EWM4/ybdIi6AnQMdIJ0EUJJawFi9FPxH5hwKY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A4D4F26BC;
-	Mon, 10 Mar 2025 06:42:01 -0700 (PDT)
-Received: from bogus (e133711.arm.com [10.1.196.55])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 462AC3F673;
-	Mon, 10 Mar 2025 06:41:47 -0700 (PDT)
-Date: Mon, 10 Mar 2025 13:41:44 +0000
-From: Sudeep Holla <sudeep.holla@arm.com>
-To: Peng Fan <peng.fan@nxp.com>
-Cc: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>,
-	Sudeep Holla <sudeep.holla@arm.com>,
-	Cristian Marussi <cristian.marussi@arm.com>,
-	Saravana Kannan <saravanak@google.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Aisheng Dong <aisheng.dong@nxp.com>,
-	Fabio Estevam <festevam@gmail.com>, Shawn Guo <shawnguo@kernel.org>,
-	Jacky Bai <ping.bai@nxp.com>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	"arm-scmi@vger.kernel.org" <arm-scmi@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
-	"imx@lists.linux.dev" <imx@lists.linux.dev>
-Subject: Re: [PATCH 1/4] firmware: arm_scmi: bus: Bypass setting fwnode for
- scmi cpufreq
-Message-ID: <Z87sGF_jHKau_FMe@bogus>
-References: <CAGETcx87Stfkru9gJrc1sf=PtFGLY7=jrfFaCzK5Z4hq+2TCzg@mail.gmail.com>
- <Z65U2SMwSiOFYC0v@pluto>
- <20250218010949.GB22580@nxa18884-linux>
- <Z7Rf9GPdO2atP89Z@bogus>
- <20250218133619.GA22647@nxa18884-linux>
- <Z7Wvyn1QJQMVigf9@bogus>
- <Z7Z-ZnztmvUxWoQJ@NXL53680.wbi.nxp.com>
- <Z86w3ZRS6T2MvV3X@bogus>
- <DB9PR04MB84614FBF96E7BC0D125D97F688D62@DB9PR04MB8461.eurprd04.prod.outlook.com>
- <Z87UJdhiTWhssnbl@bogus>
+	s=arc-20240116; t=1741614157; c=relaxed/simple;
+	bh=9JX3XY9vPoVhLHV2mTUB+zf5fX4dLzA4Gt+vcTFbIqg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=csFH83GvxwqUMaWCg+qIwgcvS9r2Hk+K/QIITdEn5WgYT4AFwbyCDsmeXtX4hSgtcbs3DkS8KNFELwERm2EwuzHrMFsajWqBUr3RzNjqaVWpvdp2jdrRVV1Jfrdz2j5VTx5YWVLOEDk7nwCc7YBzFzkYn8dsam1Z5wc86tlPlg0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JhfdQ7Az; arc=none smtp.client-ip=209.85.218.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-abec8b750ebso727397666b.0;
+        Mon, 10 Mar 2025 06:42:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741614154; x=1742218954; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=pvsHojGzktqIc1mRDfrH3Tw28TialK1JD2DdtffnVRo=;
+        b=JhfdQ7AzbZJ0MtsJbT4up8viu0z+JH1aiWNVBJcweTvNI+ogYiAuCcqt6goKbez7F6
+         F7FMyBRQow79TBG+NK15EZ7MKmVb3Ng97/w4O6hBVbjVpKtY0I7SN9Djcfm/l61em9ie
+         0LvajXM6YlZA9ENsWb6BnC5HtLojKcgGv63pQOpQqQTrVMoMnFUOKL8+Cvsl8sMm8Bx0
+         ovtESV+73oKG9u8iuBHylDKDw9xJBaVufZdCFvpEAsqFy+KVlNlwJxmrEH2WWoLzWsAP
+         cnLfGtqw7ZynTj8zIdNh+zbGlYC6C+No7mnJIL/tOgYb9wzkrb0TltXzHWeAJOCKsDND
+         RCJw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741614154; x=1742218954;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=pvsHojGzktqIc1mRDfrH3Tw28TialK1JD2DdtffnVRo=;
+        b=mev0wNSypXTp84lmHEIp+qQJgRZ5LQ800GpqaURQrS8pKX4igtgc2BGL+1Z15uqU5q
+         r9mUTuhQ+tIeOsc8LrYp215Fp49X5QLhsR5khuyR6N8dpZZcx9m/KD9sefVT3sTecy+t
+         6LegaRkgstTKNrglBFKhN/QuhATlV2O66vT3hHbLBmsf/S7JdpQZNhjKFNXGZH58DdSI
+         UCKGLlrU8tsbx5c1LuEdqYZWcwHT1lnepjuQYmvolZLKFTQ01tmAwjffCYyDMg9RmbD4
+         dsOzz7wcRIuZNH8GIrZFZclrrhsqUsxh3z5BWMakdcbD/w/k3uk3czu4Zklm7NvN3qSW
+         hyDA==
+X-Forwarded-Encrypted: i=1; AJvYcCVoi6shhiGGCsgLupw5tqaOJnpD3hOtLXWY8XidVwtJKus421+iiEFQcjQksVwT6Tax1d9blSGyvKa02w==@vger.kernel.org, AJvYcCVzJlYQe43agoKBQmgVTZDpSEr/XCIm+i8d1hEXKQaCHUet9cZxevuEy6kFiqXY62StDs46wtbjv6s929FK@vger.kernel.org, AJvYcCWvM/n17LWMkU5L2ClL3uoIRA9SW3PqvknG7QFVDeULJByfx+T9ePoAcxvyI6478ytPKEJH5OlJDEnHJJtH@vger.kernel.org, AJvYcCX5jtLVRi1SBi7Az+PCY5Ic46mLP7NKq3dwn+ycsZOj3Z8OCvHRxt/yrZQlFH6en7WjYZqpd1iTpEad@vger.kernel.org, AJvYcCXCRTNcNdDMFAQugM6WlDw5Yxer7yyrlbEdvMQH/VajhtJwugT8xhBOhvHjiCKrW32yvywXrq+8seCsdg==@vger.kernel.org, AJvYcCXwh/XrEinI0+1qOwwBWHhTgYimJDERaEMyHJHr5uCN3OBgaBRGmVtPFgQSOpQIV5uOfBx3BxvvmM6q@vger.kernel.org
+X-Gm-Message-State: AOJu0YzstnZFR36YbiizdnDv4ogSwH0UjEOOL1RFR+ijx7kRA7XStzVA
+	7ntfpZHyavAp1Ay+Ndwn10OSlZft5DZph1IZljKaDEpIF+4WxQ1oSLQUe7Dsh/bC5VZmxQKwOdb
+	E2X0xqUR34iNDHGZl6QbQ7O6KSZg=
+X-Gm-Gg: ASbGncua38schHhDAOSuPoGmNok+HtXs3Kn2EW1t9PJ/FwATEUJCCTjaxi9IQX6tV0x
+	8Wg+FwHZeM96zs7yPIagpM/mVfqqhv8PxRmnDE3nM7d27WrgGj07ciVAx9tL/YNN/qgkdVHhorI
+	2PZAtUpSywKuxU3XhtfafReQsOhyJefIzeimEErSJQJK+6
+X-Google-Smtp-Source: AGHT+IFUfaQlQuaPqqkcPWFR+Uc30OuqKeGBgv4UhgRVglMXjxzsUDhKEonas+ed+S1TKw+FHpP1oVa0jMVOpi7ix8c=
+X-Received: by 2002:a17:907:9691:b0:aa6:b63a:4521 with SMTP id
+ a640c23a62f3a-ac252a886dbmr1424178866b.15.1741614154071; Mon, 10 Mar 2025
+ 06:42:34 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z87UJdhiTWhssnbl@bogus>
+References: <20250307220304.247725-1-romank@linux.microsoft.com> <20250307220304.247725-10-romank@linux.microsoft.com>
+In-Reply-To: <20250307220304.247725-10-romank@linux.microsoft.com>
+From: Tianyu Lan <ltykernel@gmail.com>
+Date: Mon, 10 Mar 2025 21:41:57 +0800
+X-Gm-Features: AQ5f1JrFNYOkTeGrjIoQMzNLPYhLnbwrDYGfCpL3y-Ny919xFrzmZmgmS7VWREs
+Message-ID: <CAMvTesCFZ6sxQp7qqSDjD9idRjVHxh96Sp4betomgFH-OFLZ3Q@mail.gmail.com>
+Subject: Re: [PATCH hyperv-next v5 09/11] Drivers: hv: vmbus: Introduce hv_get_vmbus_root_device()
+To: Roman Kisel <romank@linux.microsoft.com>
+Cc: arnd@arndb.de, bhelgaas@google.com, bp@alien8.de, catalin.marinas@arm.com, 
+	conor+dt@kernel.org, dave.hansen@linux.intel.com, decui@microsoft.com, 
+	haiyangz@microsoft.com, hpa@zytor.com, joey.gouly@arm.com, krzk+dt@kernel.org, 
+	kw@linux.com, kys@microsoft.com, lenb@kernel.org, lpieralisi@kernel.org, 
+	manivannan.sadhasivam@linaro.org, mark.rutland@arm.com, maz@kernel.org, 
+	mingo@redhat.com, oliver.upton@linux.dev, rafael@kernel.org, robh@kernel.org, 
+	ssengar@linux.microsoft.com, sudeep.holla@arm.com, suzuki.poulose@arm.com, 
+	tglx@linutronix.de, wei.liu@kernel.org, will@kernel.org, yuzenghui@huawei.com, 
+	devicetree@vger.kernel.org, kvmarm@lists.linux.dev, 
+	linux-acpi@vger.kernel.org, linux-arch@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-hyperv@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, x86@kernel.org, 
+	apais@microsoft.com, benhill@microsoft.com, bperkins@microsoft.com, 
+	sunilmut@microsoft.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Mar 10, 2025 at 11:59:33AM +0000, Sudeep Holla wrote:
-> On Mon, Mar 10, 2025 at 10:45:44AM +0000, Peng Fan wrote:
-> > > Subject: Re: [PATCH 1/4] firmware: arm_scmi: bus: Bypass setting
-> > > fwnode for scmi cpufreq
-> > > 
-> > > On Thu, Feb 20, 2025 at 08:59:18AM +0800, Peng Fan wrote:
-> > > >
-> > > > Sorry, if I misunderstood.
-> > > >
-> > > > I will give a look on this and propose a RFC.
-> > > >
-> > > > DT maintainers may ask for a patchset including binding change and
-> > > > driver changes to get a whole view on the compatible stuff.
-> > > >
-> > > > BTW, Cristian, Saravana if you have any objections/ideas or would
-> > > take
-> > > > on this effort, please let me know.
-> > > >
-> > > 
-> > > Can you point me to the DTS with which you are seeing this issue ?
-> > > I am trying to reproduce the issue but so far not successful. I did move
-> > > to power-domains for CPUFreq on Juno. IIUC all we need is both
-> > > cpufreq and performance genpd drivers in the kernel and then GPU
-> > > using perf genpd fails with probe deferral right ? I need pointers to
-> > > reproduce the issue so that I can check if what I have cooked up as a
-> > > solution really works.
-> >
-> > This is in downstream tree:
-> > https://github.com/nxp-imx/linux-imx/blob/lf-6.6.y/arch/arm64/boot/dts/freescale/imx95.dtsi#L2971
-> > https://github.com/nxp-imx/linux-imx/blob/lf-6.6.y/arch/arm64/boot/dts/freescale/imx95.dtsi#L3043
-> > https://github.com/nxp-imx/linux-imx/blob/lf-6.6.y/arch/arm64/boot/dts/freescale/imx95.dtsi#L80
-> >
-> > we are using "power-domains" property for cpu perf and gpu/vpu perf.
-> >
-> > If cpufreq.off=1 is set in bootargs, the vpu/gpu driver will defer probe.
-> >
-> 
-> OK, does the probe of these drivers get called or they don't as the driver
-> core doesn't allow that ? I just have a dummy driver for mali on Juno
-> which just does dev_pm_domain_attach_list() in the probe and it seem to
-> succeed even when cpufreq.off=1 is passed. I see scmi-cpufreq failing
-> with -ENODEV as expected.
-> 
-> I need to follow the code and check if I can somehow reproduce. Also are
-> you sure this is not with anything in the downstream code ? Also have you
-> tried this with v6.14-rc* ? Are you sure all the fw_devlink code is backported
-> in the tree you pointed me which is v6.6-stable ?
-> 
+On Sat, Mar 8, 2025 at 6:05=E2=80=AFAM Roman Kisel <romank@linux.microsoft.=
+com> wrote:
+>
+> The ARM64 PCI code for hyperv needs to know the VMBus root
+> device, and it is private.
+>
+> Provide a function that returns it. Rename it from "hv_dev"
+> as "hv_dev" as a symbol is very overloaded. No functional
+> changes.
+>
+> Signed-off-by: Roman Kisel <romank@linux.microsoft.com>
 
-I even tried the above branch, but no luck. The above is neither latest
-stable version nor pure stable. It has few extra patches backported
-though IIUC. Anyways any pointers to enable me to reproduce the issue
-would be much appreciated.
+Why change all device's parent to vmbus_root_device?
 
--- 
-Regards,
-Sudeep
+The ARM64 platform uses the device tree to enumerate vmbus
+devices..  Can we find the root device via device tree? vmbus
+code on the x86 use ACPI and it seems to work via ACPI.
+
+
+> ---
+>  drivers/hv/vmbus_drv.c | 23 +++++++++++++++--------
+>  include/linux/hyperv.h |  2 ++
+>  2 files changed, 17 insertions(+), 8 deletions(-)
+>
+> diff --git a/drivers/hv/vmbus_drv.c b/drivers/hv/vmbus_drv.c
+> index c8474b48dcd2..7bfafe702963 100644
+> --- a/drivers/hv/vmbus_drv.c
+> +++ b/drivers/hv/vmbus_drv.c
+> @@ -45,7 +45,8 @@ struct vmbus_dynid {
+>         struct hv_vmbus_device_id id;
+>  };
+>
+> -static struct device  *hv_dev;
+> +/* VMBus Root Device */
+> +static struct device  *vmbus_root_device;
+>
+>  static int hyperv_cpuhp_online;
+>
+> @@ -80,9 +81,15 @@ static struct resource *fb_mmio;
+>  static struct resource *hyperv_mmio;
+>  static DEFINE_MUTEX(hyperv_mmio_lock);
+>
+> +struct device *hv_get_vmbus_root_device(void)
+> +{
+> +       return vmbus_root_device;
+> +}
+> +EXPORT_SYMBOL_GPL(hv_get_vmbus_root_device);
+> +
+>  static int vmbus_exists(void)
+>  {
+> -       if (hv_dev =3D=3D NULL)
+> +       if (vmbus_root_device =3D=3D NULL)
+>                 return -ENODEV;
+>
+>         return 0;
+> @@ -861,7 +868,7 @@ static int vmbus_dma_configure(struct device *child_d=
+evice)
+>          * On x86/x64 coherence is assumed and these calls have no effect=
+.
+>          */
+>         hv_setup_dma_ops(child_device,
+> -               device_get_dma_attr(hv_dev) =3D=3D DEV_DMA_COHERENT);
+> +               device_get_dma_attr(vmbus_root_device) =3D=3D DEV_DMA_COH=
+ERENT);
+>         return 0;
+>  }
+>
+> @@ -1930,7 +1937,7 @@ int vmbus_device_register(struct hv_device *child_d=
+evice_obj)
+>                      &child_device_obj->channel->offermsg.offer.if_instan=
+ce);
+>
+>         child_device_obj->device.bus =3D &hv_bus;
+> -       child_device_obj->device.parent =3D hv_dev;
+> +       child_device_obj->device.parent =3D vmbus_root_device;
+>         child_device_obj->device.release =3D vmbus_device_release;
+>
+>         child_device_obj->device.dma_parms =3D &child_device_obj->dma_par=
+ms;
+> @@ -2292,7 +2299,7 @@ static int vmbus_acpi_add(struct platform_device *p=
+dev)
+>         struct acpi_device *ancestor;
+>         struct acpi_device *device =3D ACPI_COMPANION(&pdev->dev);
+>
+> -       hv_dev =3D &device->dev;
+> +       vmbus_root_device =3D &device->dev;
+>
+>         /*
+>          * Older versions of Hyper-V for ARM64 fail to include the _CCA
+> @@ -2383,7 +2390,7 @@ static int vmbus_device_add(struct platform_device =
+*pdev)
+>         struct device_node *np =3D pdev->dev.of_node;
+>         int ret;
+>
+> -       hv_dev =3D &pdev->dev;
+> +       vmbus_root_device =3D &pdev->dev;
+>
+>         ret =3D of_range_parser_init(&parser, np);
+>         if (ret)
+> @@ -2702,7 +2709,7 @@ static int __init hv_acpi_init(void)
+>         if (ret)
+>                 return ret;
+>
+> -       if (!hv_dev) {
+> +       if (!vmbus_root_device) {
+>                 ret =3D -ENODEV;
+>                 goto cleanup;
+>         }
+> @@ -2733,7 +2740,7 @@ static int __init hv_acpi_init(void)
+>
+>  cleanup:
+>         platform_driver_unregister(&vmbus_platform_driver);
+> -       hv_dev =3D NULL;
+> +       vmbus_root_device =3D NULL;
+>         return ret;
+>  }
+>
+> diff --git a/include/linux/hyperv.h b/include/linux/hyperv.h
+> index 7f4f8d8bdf43..1f0851fde041 100644
+> --- a/include/linux/hyperv.h
+> +++ b/include/linux/hyperv.h
+> @@ -1333,6 +1333,8 @@ static inline void *hv_get_drvdata(struct hv_device=
+ *dev)
+>         return dev_get_drvdata(&dev->device);
+>  }
+>
+> +struct device *hv_get_vmbus_root_device(void);
+> +
+>  struct hv_ring_buffer_debug_info {
+>         u32 current_interrupt_mask;
+>         u32 current_read_index;
+> --
+> 2.43.0
+>
+>
+
+
+--=20
+Thanks
+Tianyu Lan
 
