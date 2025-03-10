@@ -1,191 +1,87 @@
-Return-Path: <linux-kernel+bounces-554636-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-554638-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id BAD22A59AC2
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 17:15:34 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E392FA59ACC
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 17:17:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9841F7A416B
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 16:14:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2D35216E103
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 16:17:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01C0522FDF9;
-	Mon, 10 Mar 2025 16:15:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A11B122FDFF;
+	Mon, 10 Mar 2025 16:17:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="g3kuO3S+"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="AY+q+Fix"
+Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CEFA1BCA1B;
-	Mon, 10 Mar 2025 16:15:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99E8B22F17A
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 16:17:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741623320; cv=none; b=LqU5e0l2vmVeEy82H2rCEc+/+D9+C/tdGAalq0O/bmYdyyQ9BFKi5VOHvd1SRmYyHsyr3sgTV2hSxzIaMZAYMOmpVCpHvbWI9RmNLTISz7s+3TQR4whzHFn9u56RyBeLMOBACmzr6qB20xJbCZVFPDBQrSWme0D5l/seoftx9Zk=
+	t=1741623432; cv=none; b=Oiw9kIHrQmGMcoMvt8b8Poi1fLY8SZwRk6dzf+N5I3f5a9qOV5CJcZ0ZMGW+qD2MbuwJBlxh4TQt5EKqUuEdVjtsaHHxLFm7Vv0TSONrYaYOSEa73dEcMztkRCz5T6aoNyRuJb75SLc3yqMJ3YEPFvJtvBL2yrq5LoQaQiavPyU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741623320; c=relaxed/simple;
-	bh=RCE73KHSUJ50jx3NFplvsYyJfYQ1fa2jm0Y9GrKAnwM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tK/QPsDucSoPRhhR6d6cq6US7YyUIClPeS51NPW2GD4RrfgbPJbw6e0X3mo9/GVSAELmovLcN3oeU1FrvQKjQ+kJqh/mrPDVqAem1Ij5ZiK40cWjnIsqUkVb/glYGx7f7NdyG/RkiFgFuerjmRZNgzwwlAPhUMlnCD9ehW0yYdo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=g3kuO3S+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8D516C4CEE5;
-	Mon, 10 Mar 2025 16:15:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741623318;
-	bh=RCE73KHSUJ50jx3NFplvsYyJfYQ1fa2jm0Y9GrKAnwM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=g3kuO3S+Nx7mCzhWvx/E/uIZ2vURLJ4P2hDaJ/deXkTW5gSBPZ/iLJVR2JXwWHjUB
-	 +QryoEs3PGgZ3VFmGnP3YWKk+omEPpJalBHrodC6z5anZmuMoXxlTc+ndYdHSSa0Ow
-	 0905svS6DLYRFVfGYi2VTtnGFESX5SAVoXdRjKWyj//gNXF64A5J6arWZ78ImhY5ZF
-	 Z+RuABasjNYhtf9eI7lt+nKeTWLg2jtryY+RblgQtZmgE3JMw2cXb8hGqfbNSX1yNo
-	 9t326LigmhFb7EiFJePa+VlsNLKXHRXxuogam0HqQws4j4NmCLSnM/w1XJYOlbWsWQ
-	 TuaRFNZZuP75g==
-Date: Mon, 10 Mar 2025 16:15:12 +0000
-From: Conor Dooley <conor@kernel.org>
-To: John Madieu <john.madieu.xa@bp.renesas.com>
-Cc: "robh@kernel.org" <robh@kernel.org>,
-	"geert+renesas@glider.be" <geert+renesas@glider.be>,
-	"magnus.damm@gmail.com" <magnus.damm@gmail.com>,
-	"mturquette@baylibre.com" <mturquette@baylibre.com>,
-	"sboyd@kernel.org" <sboyd@kernel.org>,
-	"rafael@kernel.org" <rafael@kernel.org>,
-	"daniel.lezcano@linaro.org" <daniel.lezcano@linaro.org>,
-	"rui.zhang@intel.com" <rui.zhang@intel.com>,
-	"lukasz.luba@arm.com" <lukasz.luba@arm.com>,
-	"krzk+dt@kernel.org" <krzk+dt@kernel.org>,
-	"conor+dt@kernel.org" <conor+dt@kernel.org>,
-	"p.zabel@pengutronix.de" <p.zabel@pengutronix.de>,
-	"catalin.marinas@arm.com" <catalin.marinas@arm.com>,
-	"will@kernel.org" <will@kernel.org>,
-	"john.madieu@gmail.com" <john.madieu@gmail.com>,
-	"linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	Biju Das <biju.das.jz@bp.renesas.com>
-Subject: Re: [PATCH v2 3/7] dt-bindings: thermal: r9a09g047-tsu: Document the
- TSU unit
-Message-ID: <20250310-blurry-scam-bee8233878bc@spud>
-References: <20250227122453.30480-1-john.madieu.xa@bp.renesas.com>
- <20250227122453.30480-4-john.madieu.xa@bp.renesas.com>
- <20250228-shampoo-uprising-44ae0d3bd68b@spud>
- <OSBPR01MB2775DFC184F78E9FB50F28FFFFD52@OSBPR01MB2775.jpnprd01.prod.outlook.com>
- <20250307-everyone-ragweed-e05a10a9646b@spud>
- <OSBPR01MB277531D7C872C9EB0B287069FFD52@OSBPR01MB2775.jpnprd01.prod.outlook.com>
- <20250307-barbell-pretzel-368d6a4d1336@spud>
- <OSBPR01MB2775D121B55A0C543F251BAEFFD72@OSBPR01MB2775.jpnprd01.prod.outlook.com>
+	s=arc-20240116; t=1741623432; c=relaxed/simple;
+	bh=E5gkLF4efJbEakqe2LCyGh3dRXBQKFkQyAgDGFFrD/E=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=Dlvs0u/iArDsGaE5DL2VgUFc/m100ipC3GdcA7eUHF/INeHdK0/G4f9QUF4hLoJDJOTVJ5zFnoEUB9ObyoxYw3rEoR1jzmLg325sMcSWSiJWaH2+a4Yfe3PobzYH98FdCziUSN95f/2OjMdwUIxJEUTTlnNpyUQCFfELlDSbIW4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=AY+q+Fix; arc=none smtp.client-ip=209.85.214.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-2217a4bfcc7so69634945ad.3
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 09:17:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1741623430; x=1742228230; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:reply-to:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=E5gkLF4efJbEakqe2LCyGh3dRXBQKFkQyAgDGFFrD/E=;
+        b=AY+q+Fixb/TovXaeoNGX4yu2G3DhjbwDs2qV2dHdvU0GZ6/81XD9YQQfkwbTzdV+Hq
+         uDe+zEKR5jjRxka1ut4ObLgqPo8gFKj1eKJQPIJNKU7TBhhnYjGXt3zM0zpe1tfP7aWZ
+         ppNTtLynMqw0DiIoEZJ1gsUjQVPFvKLTPKt4B4qWkI4H8oxAwTSu9XdFUz7MeQ+EqSNP
+         EcOqGiuFaWZ09PatCYsPRvQ1s7iUE1EnZ2aQ8gePwMeN5fGtz86foUQ/2twMJcU3kNLi
+         aQFRzTOKIeaFmpUEgRwQkORItGCGYZFlmQpwm1F69SaPBHgrjBw5nrGKjxqe9dR4pRNE
+         ejwA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741623430; x=1742228230;
+        h=cc:to:from:subject:message-id:mime-version:date:reply-to
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=E5gkLF4efJbEakqe2LCyGh3dRXBQKFkQyAgDGFFrD/E=;
+        b=Fq3MMjJW01RC9B92HhSaIRYFQtuB4HZsSH/ZeUooQHZFpdEGLSCoqs48mmtGa9rg8i
+         W392QDfp1zQdbgh11ohxfBH70qV9XGKFjuzV6M1u7SdudWo9zlUgVT68YyqbBiYuVgjH
+         JN6ngS1CjfqPdtCl7O+LNhcsJRceftFgV+gTD5pVWT2GzNmXtbZASVhfACT82Lmb5+z+
+         TSRMMLffp8bHRcp4LkTjfIs1ZLrz2vmpeZuOjQnl0/JjuyW5aJew4DwW5lqipobHttsD
+         4jIE8pLvexUOcXDokDew+9fk2roqua7N5RNm9LXBgWB0QKTw+P6G7AjNuGq6ESoy2flb
+         QZjQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWnCpKoL0IizRsK7FrvOkItEZXquXl87eRNqnue+2t908Dwfl4Qa4GIKvT2L8nbYDKShCPpOFrPua9XM+g=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwW2WvUpAXq+TY7qOUwNixcf+0euNjR2km8pyi6B/umzup1HWrm
+	ZGFWaxILFUdH9xXXiup4RDKvic1+OIy2yLgQawtE+IthXNpMtTquYx0puhmU98zEe+uL3Kr6G2k
+	F2A==
+X-Google-Smtp-Source: AGHT+IEvtopbnUmeWsy/nIhJXSJwmRVRXafyvQtfaSeezEXN0bryU3yMD0urwCDwgpBZydAdDQCaU98xn/I=
+X-Received: from pfbde10.prod.google.com ([2002:a05:6a00:468a:b0:736:48e7:45b2])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a21:3994:b0:1f3:32c1:cc5d
+ with SMTP id adf61e73a8af0-1f58cb3fe00mr534312637.21.1741623429907; Mon, 10
+ Mar 2025 09:17:09 -0700 (PDT)
+Reply-To: Sean Christopherson <seanjc@google.com>
+Date: Mon, 10 Mar 2025 09:16:55 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="Y4DhUv2VFm8QJbH+"
-Content-Disposition: inline
-In-Reply-To: <OSBPR01MB2775D121B55A0C543F251BAEFFD72@OSBPR01MB2775.jpnprd01.prod.outlook.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.49.0.rc0.332.g42c0ae87b1-goog
+Message-ID: <20250310161655.1072731-1-seanjc@google.com>
+Subject: [ANNOUNCE] PUCK Agenda - 2025.03.12 - CANCELED
+From: Sean Christopherson <seanjc@google.com>
+To: Sean Christopherson <seanjc@google.com>
+Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Paolo Bonzini <pbonzini@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 
+In protest of Daylight Savings Time, a.k.a. the worst idea ever, PUCK is
+canceled this week.
 
---Y4DhUv2VFm8QJbH+
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Sun, Mar 09, 2025 at 10:39:27AM +0000, John Madieu wrote:
-> Hi Conor,
->=20
-> > -----Original Message-----
-> > From: Conor Dooley <conor@kernel.org>
-> > Sent: Friday, March 7, 2025 5:04 PM
-> > To: John Madieu <john.madieu.xa@bp.renesas.com>
-> > Subject: Re: [PATCH v2 3/7] dt-bindings: thermal: r9a09g047-tsu: Docume=
-nt
-> > the TSU unit
-> >=20
-> > On Fri, Mar 07, 2025 at 03:55:27PM +0000, John Madieu wrote:
-> > > Hi Conor,
-> > >
-> > > > > > > Signed-off-by: John Madieu <john.madieu.xa@bp.renesas.com>
-> > > > > > > ---
-> > > > > > > v1 -> v2:
-> > > > > > >  * Fix reg property specifier to get rid of yamlint warnings
-> > > > > > >  * Fix IRQ name to reflect TSU expectations
-> > > > > > >
-> > > > > > > +    enum: [0, 1]
-> > > > > > > +    description: |
-> > > > > > > +      TSU operating mode:
-> > > > > > > +      0: Mode 0 - Conversion started by software
-> > > > > > > +      1: Mode 1 - Conversion started by ELC trigger
-> > > > > >
-> > > > > > Can you make this "software" and "elc" or something please,
-> > > > > > unless people will genuinely find "0" and 1" to be more
-> > informative.
-> > > > > > And why doesn't the property have a default?
-> > > > >
-> > > > > Sorry for miss-specifying.
-> > > > > ELC is an external event trigger. May be should I specify it like
-> > that ?
-> > > >
-> > > > If "elc trigger" is meaningful to people using hte device (IOW, it
-> > > > matches datasheet wording) then that's fine I think.
-> > >
-> > > "elc trigger" matches datasheet wording.
-> > >
-> > > >
-> > > > > To make sure I got your point, do you mean specifying a default
-> > > > > value in bindings ?
-> > > >
-> > > > The property doesn't actually need to be required, it could easily
-> > > > have a default (say software) and only be set in the case of using
-> > > > the elc trigger - which brings you to Rob's comment that it can just
-> > > > be a boolean, setting the property if elc and leaving it out of
-> > software.
-> > >
-> > > Got the point now. I can make it default to software trigger, and add
-> > > optional Boolean property to ELC trigger. Let's say "renesas,elc-
-> > trigger;"
-> >=20
-> > Yah, that works.
-> >=20
-> > >
-> > > >
-> > > > Rob's other comment was
-> > > >
-> > > > | Who/what decides the mode? If a user is going to want to change
-> > > > | this, then it should be a runtime control, not a DT property.
-> > >
-> > > Changes are not possible at runtime. Some customers may want software,
-> > > while other may want the external trigger, and this is immutable
-> > > configuration.
-> >=20
-> > What makes it immutable? Set by some wiring on the board? I couldn't fi=
-nd
-> > the user in your driver patches to better understand how you were using
-> > it.
->=20
-> I haven't prototyped ELC trigger yet. Since the hardware manual
-> describes about ELC trigger, I have documented it in bindings. If you
-> think, it is not needed at this stage, then I can drop it now and
-> revisit later.
-
-Ideally a binding is complete, even if the driver isn't. To me
-"immutable" would mean something like "the trigger type is determined by
-hardware or firmware configuration", but if it is determined by register
-writes (e.g. wired up for elc trigger, but you can opt for software
-trigger in the driver) then it should be a userspace control.
-
---Y4DhUv2VFm8QJbH+
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZ88QEAAKCRB4tDGHoIJi
-0vhMAQCm2Y7JfoFQzgyGUf9s0PImQnGR4b2zFgNyA8NdDDoM3QD/eDs9SL5uwZcg
-mBlbEbmXWmVrRzklDQPVrwR33fZJwQg=
-=zZHw
------END PGP SIGNATURE-----
-
---Y4DhUv2VFm8QJbH+--
+Paolo and other folks in Europe, would you prefer to cancel PUCK for the rest
+of March (until Europe joins the US in DST), or deal with the off-by-one error?
 
