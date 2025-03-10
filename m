@@ -1,213 +1,189 @@
-Return-Path: <linux-kernel+bounces-553892-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-553890-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A4F52A5904A
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 10:51:43 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5BD1EA59042
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 10:50:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D637A16BE1C
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 09:51:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E6B1A3ABC05
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 09:50:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 786B92253FD;
-	Mon, 10 Mar 2025 09:51:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DD2922578E;
+	Mon, 10 Mar 2025 09:50:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cl6366UW"
-Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="U/8Kl8jR"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01CC42248A8;
-	Mon, 10 Mar 2025 09:51:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4259225774;
+	Mon, 10 Mar 2025 09:50:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741600297; cv=none; b=M9vdWwZmQMFqH/bTHt8Drt5a6BCblPw1aHFBn+D4hIFi57LY7qT+manxqima57Yx/Vji4RFAEurGOqO1mJDDJt8lkKWnBRpBlSAXf5HwtkWRtR+YwBkl7uJ90RdLfK1X3FG14cwcDHa6HnJxS5kQwLaFzdIa+Nd3Zqwal1zXXis=
+	t=1741600230; cv=none; b=erNNgQ2mE8ChDspdn3tM7sBiZ2OuPpcKAsw9QY4HwtSdgbnitq3u70nB4HI/0tcOVJ5k114adRDImOR/kzXj1JknVzeAgE2MVUpV+jig0Su/Z7cjN4eclRT/+NrqERwQLEoP88nHt1aI9uEMnhnvzM/gbUVfRtu0Zfzv6D7vF5I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741600297; c=relaxed/simple;
-	bh=KcsuoE5oc+tflOf5s+fkW50lshhYKgljE2mWx5LItuc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=K0GJWuNPwPJCSGSehNG6xdTVv5gvQhEj2hT2tzVV8qUhotAs3+OInThAumJbcx/jNfL0kjufD7UyO9afag94fywHvvm/dA3Q14utPkJ5yNw7rhekFnxjMSfejq8Ipxy9hMEFl2cFb1wCECRk5nOE3IJqLz8zZeSMy4XALkdT+Ww=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cl6366UW; arc=none smtp.client-ip=209.85.218.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-abf4b376f2fso750590066b.3;
-        Mon, 10 Mar 2025 02:51:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741600294; x=1742205094; darn=vger.kernel.org;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=7fIk/wLn8siLSomZZskx1hmM4iyC641S3xGJlKKijlM=;
-        b=cl6366UWtMCfZLO1rHOgXS7DihlEtSbIlvmgXfCK/TTp7e879cYQ/fMO/1QfrgSahQ
-         EWRX+ckMiP0lJZzdkapUiT4ulNP8UHaxnQ5fpQKw4p0dkcaHqlxve8yOGHrhXnAxgf2X
-         plq9tKh0a8sR8WhFjPPTfhs7sV+ZC+5omeQlk+aM5aTd7/C4KhFSe4We9nXsoR4gyj1Y
-         QXYf4d/fwQay6q3VSOfnAhk85AI0vCcKcsDJkSdbzmOqO2vr8SlTJ2zb3hRoStLCd4cU
-         RoilNsv3clVOJawPXcuBOYMzULuU1zQfo6KB2rCaHu17EsRhG6RIQKMsfBrWSFBWcrm/
-         EYGA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741600294; x=1742205094;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :reply-to:message-id:subject:cc:to:from:date:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=7fIk/wLn8siLSomZZskx1hmM4iyC641S3xGJlKKijlM=;
-        b=WHzrqGR68pC9JKfMB1Br947PJ8U7N3TJvHdo/64IBl66BOidfMkD5o2LNQux9lm5uZ
-         lIYefm0/D7O8mh73ZW3A6aXCzvN9jOZXhMkUOOq8Oup5h5d4N5xS6qmSM20GRtGcbnvg
-         Ho6b7usCFvEMLeWRe8FUAMyDyxr/G/hHf8vX4IIZCe6jGIoYyiu/57fuAFi2nlQSvSYh
-         pguQ7L6uzEkxIxgdT8RprzdVLIuw7DTHVNxdnSunw7EaLQonJHkTx9TjBW1D5KP0+0kH
-         tbWEyOD7lZ7ReziVo/DWhzbbZLLHG2/BRzxD7hOs9djwEVWc3hwVKFXR/al4ucZ8h8cS
-         334Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVxWrCMX7+imHK5yid25aSgePBgXXPtSdQt29iBlmuW0T7q/AXcRsfh1i5g2OFpjQu/r+TY5PWm23Mp@vger.kernel.org, AJvYcCW0kflvjg8MEvnJiJEuT92INi6dNxy9P1cJIB/8Fx128iKY7NHDJTqqoe1wLKUDyWaulY1UvFMVq6bU@vger.kernel.org, AJvYcCWpW7fb7rj3k9qiS4qGEgB9CA0fLeEquy+3/Xu/dqQTshKPmDehAo+4nXqeptEkDJbP3C0tSgPL4HJqG4DD@vger.kernel.org
-X-Gm-Message-State: AOJu0YydbIZWWHU52nCwLlyaUqvLWudGAFzr8CLVRl6yJubXNkXOO6rt
-	uFyV472ASbwuEkFD+LssO7NiHGFee67ndzXNJ0BzpRJFJ3WwQpcC
-X-Gm-Gg: ASbGncs/6jZrbXnAJJGaVbN6Roji4ySRxUrFhHF5/L7XSuvU2RIoW6poqSLoq33KTho
-	gmGlLxTPdiQIuL9VsgJ69U7YtdnXL7siMxLhjzOXCtuNIUgXzy4nDFT3IWRD/HSTZ5mnw7QLwLe
-	qh+W5xZ0ciIwoancG123tmNTIFGAOPJzEDd205gVdX6AVle/m+SAI2fqj2Zf++N3FE2+h2e5vku
-	npsP3DHA2uSklL6TS8lq+LMNEwaLyBWfHOUzqUUpWO1u4k9G1lA6fKnERyHQReMXWMHuNKygann
-	MOfCZege2v9SeiNFKOUGfiifIZIYSA50+mkDfJthLrPSHoWbREaxqQE=
-X-Google-Smtp-Source: AGHT+IEnsaBC89bibOD1BqC+ZZ1kovv3JGu+umNRENY/jx8wzQl9KTymklI/3Rp6DH54iA+FTxPRUw==
-X-Received: by 2002:a17:907:3f2a:b0:abf:5fa3:cf96 with SMTP id a640c23a62f3a-ac252a879d7mr1234111666b.14.1741600293920;
-        Mon, 10 Mar 2025 02:51:33 -0700 (PDT)
-Received: from localhost ([185.92.221.13])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac255589a30sm594247266b.107.2025.03.10.02.51.25
-        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 10 Mar 2025 02:51:25 -0700 (PDT)
-Date: Mon, 10 Mar 2025 09:51:24 +0000
-From: Wei Yang <richard.weiyang@gmail.com>
-To: Wei Yang <richard.weiyang@gmail.com>
-Cc: Mike Rapoport <rppt@kernel.org>, linux-kernel@vger.kernel.org,
-	Alexander Graf <graf@amazon.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Andy Lutomirski <luto@kernel.org>,
-	Anthony Yznaga <anthony.yznaga@oracle.com>,
-	Arnd Bergmann <arnd@arndb.de>, Ashish Kalra <ashish.kalra@amd.com>,
-	Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-	Borislav Petkov <bp@alien8.de>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	David Woodhouse <dwmw2@infradead.org>,
-	Eric Biederman <ebiederm@xmission.com>,
-	Ingo Molnar <mingo@redhat.com>, James Gowans <jgowans@amazon.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Paolo Bonzini <pbonzini@redhat.com>,
-	Pasha Tatashin <pasha.tatashin@soleen.com>,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Pratyush Yadav <ptyadav@amazon.de>,
-	Rob Herring <robh+dt@kernel.org>, Rob Herring <robh@kernel.org>,
-	Saravana Kannan <saravanak@google.com>,
-	Stanislav Kinsburskii <skinsburskii@linux.microsoft.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Tom Lendacky <thomas.lendacky@amd.com>,
-	Usama Arif <usama.arif@bytedance.com>,
-	Will Deacon <will@kernel.org>, devicetree@vger.kernel.org,
-	kexec@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
-	linux-doc@vger.kernel.org, linux-mm@kvack.org, x86@kernel.org
-Subject: Re: [PATCH v4 02/14] memblock: add MEMBLOCK_RSRV_KERN flag
-Message-ID: <20250310095124.pa7dwgqhxglqrfes@master>
-Reply-To: Wei Yang <richard.weiyang@gmail.com>
-References: <20250206132754.2596694-1-rppt@kernel.org>
- <20250206132754.2596694-3-rppt@kernel.org>
- <20250218155004.n53fcuj2lrl5rxll@master>
- <Z7WHL_Xqgoln9oLg@kernel.org>
- <20250223002229.xuk6xlp23zr72hkc@master>
+	s=arc-20240116; t=1741600230; c=relaxed/simple;
+	bh=Ic5/BUg0zh3v22Lvr4sbgdYXGDaROThhXoV+hio8QiE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=YuGbni7Se6k1q09YiG/OO7WSHElWsrLJxFlUkiEnufw51VOAxEHN0+x7gA74KOGq3xPiMHRiiJI/8tHzRNuadEJv53mihHpamAh0WBA7h3Aao80m2ODGX45HHBilRmgrmtEmpMqd0ERhinKKdygeCVUpvEeh4qm7SAnvff50IFw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=U/8Kl8jR; arc=none smtp.client-ip=192.198.163.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1741600229; x=1773136229;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=Ic5/BUg0zh3v22Lvr4sbgdYXGDaROThhXoV+hio8QiE=;
+  b=U/8Kl8jRlKIicVm5y9GHfN6UMWHp0aq5jcnbJ6qs5I36xj7vP5fLbcHN
+   IRQdsXPkvo3pC9waBal1ObC8d9tyCBybqj+C4rNbtl4OXzszG/tEvaSPw
+   aUW+ywPf4WTbRWQyNjL7Y5CFJCDUzZaYlaUsqOpW4q/bjDkVguVxE+Xna
+   hiGEsC774JNSx6hj5Y2arqJOpCEZiOZquPJz/4M8OfzJmWisOYN9LguYA
+   LLuH3rmvZYxtIBUJsLcF4+BaCvlQoJQYrF8DXARzZQBqan/JUDXkgbXcy
+   OI0C1AUhxIQOxInm7BJvMrKOJ+TejlsBzA2nT5sFRVCLHOMtifO+OstqH
+   w==;
+X-CSE-ConnectionGUID: /UJFzOQjQdWz5fatHTNm2A==
+X-CSE-MsgGUID: vineWTDWSHyw8jfB8ZJXeA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11368"; a="46498783"
+X-IronPort-AV: E=Sophos;i="6.14,235,1736841600"; 
+   d="scan'208";a="46498783"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Mar 2025 02:50:28 -0700
+X-CSE-ConnectionGUID: lQSeG3ktS+mf3OQx7EXdKA==
+X-CSE-MsgGUID: SAmL73QMQuq761dMl7aLZA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,235,1736841600"; 
+   d="scan'208";a="120150306"
+Received: from unknown (HELO [10.237.72.199]) ([10.237.72.199])
+  by fmviesa008.fm.intel.com with ESMTP; 10 Mar 2025 02:50:26 -0700
+Message-ID: <dabb1140-b26e-4f90-8e65-85e16d99aa49@linux.intel.com>
+Date: Mon, 10 Mar 2025 11:51:30 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250223002229.xuk6xlp23zr72hkc@master>
-User-Agent: NeoMutt/20170113 (1.7.2)
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/6] usb: xhci: Deduplicate some endpoint state flag lists
+To: Michal Pecio <michal.pecio@gmail.com>,
+ Mathias Nyman <mathias.nyman@intel.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250310093605.2b3d0425@foxbook>
+ <20250310093748.201e87cd@foxbook>
+Content-Language: en-US
+From: Mathias Nyman <mathias.nyman@linux.intel.com>
+In-Reply-To: <20250310093748.201e87cd@foxbook>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Sun, Feb 23, 2025 at 12:22:29AM +0000, Wei Yang wrote:
->On Wed, Feb 19, 2025 at 09:24:31AM +0200, Mike Rapoport wrote:
->>Hi,
->>
->>On Tue, Feb 18, 2025 at 03:50:04PM +0000, Wei Yang wrote:
->>> On Thu, Feb 06, 2025 at 03:27:42PM +0200, Mike Rapoport wrote:
->>> >From: "Mike Rapoport (Microsoft)" <rppt@kernel.org>
->>> >
->>> >to denote areas that were reserved for kernel use either directly with
->>> >memblock_reserve_kern() or via memblock allocations.
->>> >
->>> >Signed-off-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
->>> >---
->>> > include/linux/memblock.h | 16 +++++++++++++++-
->>> > mm/memblock.c            | 32 ++++++++++++++++++++++++--------
->>> > 2 files changed, 39 insertions(+), 9 deletions(-)
->>> >
->>> >diff --git a/include/linux/memblock.h b/include/linux/memblock.h
->>> >index e79eb6ac516f..65e274550f5d 100644
->>> >--- a/include/linux/memblock.h
->>> >+++ b/include/linux/memblock.h
->>> >@@ -50,6 +50,7 @@ enum memblock_flags {
->>> > 	MEMBLOCK_NOMAP		= 0x4,	/* don't add to kernel direct mapping */
->>> > 	MEMBLOCK_DRIVER_MANAGED = 0x8,	/* always detected via a driver */
->>> > 	MEMBLOCK_RSRV_NOINIT	= 0x10,	/* don't initialize struct pages */
->>> >+	MEMBLOCK_RSRV_KERN	= 0x20,	/* memory reserved for kernel use */
->>> 
->>> Above memblock_flags, there are comments on explaining those flags.
->>> 
->>> Seems we miss it for MEMBLOCK_RSRV_KERN.
->>
->>Right, thanks!
->> 
->>> > 
->>> > #ifdef CONFIG_HAVE_MEMBLOCK_PHYS_MAP
->>> >@@ -1459,14 +1460,14 @@ phys_addr_t __init memblock_alloc_range_nid(phys_addr_t size,
->>> > again:
->>> > 	found = memblock_find_in_range_node(size, align, start, end, nid,
->>> > 					    flags);
->>> >-	if (found && !memblock_reserve(found, size))
->>> >+	if (found && !__memblock_reserve(found, size, nid, MEMBLOCK_RSRV_KERN))
->>> 
->>> Maybe we could use memblock_reserve_kern() directly. If my understanding is
->>> correct, the reserved region's nid is not used.
->>
->>We use nid of reserved regions in reserve_bootmem_region() (commit
->>61167ad5fecd ("mm: pass nid to reserve_bootmem_region()")) but KHO needs to
->>know the distribution of reserved memory among the nodes before
->>memmap_init_reserved_pages().
->> 
->
->I took another look into this commit. There maybe a very corner case in which
->will leave a reserved region with no nid set.
->
->memmap_init_reserved_pages()
->    for_each_mem_region() {
->        ...
->	memblock_set_node(start, end, &memblock.reserved, nid);
->    }
->
->We leverage the iteration here to set nid to all regions in memblock.reserved.
->But memblock_set_node() may call memblock_double_array() to expand the array,
->which may get a range before current start. So we would miss to set the
->correct nid to the new reserved region.
->
->I have tried to create a case in memblock test. This would happen when there
->are 126 memblock.reserved regions. And the last region is across the last two
->node.
->
->One way to fix this is compare type->max in memblock_set_node(). Then check
->this return value in memmap_init_reserved_pages(). If we found the size
->changes, repeat the iteration.
->
->But this is a very trivial one, not sure it worth fix.
->
+On 10.3.2025 10.37, Michal Pecio wrote:
+> xhci_ring_endpoint_doorbell() needs a list of flags which prohibit
+> running the endpoint.
+> 
+> xhci_urb_dequeue() needs the same list, split in two parts, to know
+> whether the endpoint is running and how to cancel TDs.
+> 
+> Define the two partial lists in xhci.h and use them in both functions.
+> 
+> Add a comment about the AMD Stop Endpoint bug, see commit 28a2369f7d72
+> ("usb: xhci: Issue stop EP command only when the EP state is running")
+> 
+> Signed-off-by: Michal Pecio <michal.pecio@gmail.com>
+> --->   drivers/usb/host/xhci-ring.c | 10 ++--------
+>   drivers/usb/host/xhci.c      | 16 +++++++++++-----
+>   drivers/usb/host/xhci.h      | 16 +++++++++++++++-
+>   3 files changed, 28 insertions(+), 14 deletions(-)
+> 
+> diff --git a/drivers/usb/host/xhci-ring.c b/drivers/usb/host/xhci-ring.c
+> index 0f8acbb9cd21..8aab077d6183 100644
+> --- a/drivers/usb/host/xhci-ring.c
+> +++ b/drivers/usb/host/xhci-ring.c
+> @@ -555,14 +555,8 @@ void xhci_ring_ep_doorbell(struct xhci_hcd *xhci,
+>   	struct xhci_virt_ep *ep = &xhci->devs[slot_id]->eps[ep_index];
+>   	unsigned int ep_state = ep->ep_state;
+>   
+> -	/* Don't ring the doorbell for this endpoint if there are pending
+> -	 * cancellations because we don't want to interrupt processing.
+> -	 * We don't want to restart any stream rings if there's a set dequeue
+> -	 * pointer command pending because the device can choose to start any
+> -	 * stream once the endpoint is on the HW schedule.
+> -	 */
+> -	if (ep_state & (EP_STOP_CMD_PENDING | SET_DEQ_PENDING | EP_HALTED |
+> -			EP_CLEARING_TT | EP_STALLED))
+> +	/* Don't start yet if certain endpoint operations are ongoing */
+> +	if (ep_state & (EP_CANCEL_PENDING | EP_MISC_OPS_PENDING))
+>   		return;
+>   >   	trace_xhci_ring_ep_doorbell(slot_id, DB_VALUE(ep_index, stream_id));
+> diff --git a/drivers/usb/host/xhci.c b/drivers/usb/host/xhci.c
+> index 7492090fad5f..c33134a3003a 100644
+> --- a/drivers/usb/host/xhci.c
+> +++ b/drivers/usb/host/xhci.c
+> @@ -1762,16 +1762,22 @@ static int xhci_urb_dequeue(struct usb_hcd *hcd, struct urb *urb, int status)
+>   		}
+>   	}
+>   
+> -	/* These completion handlers will sort out cancelled TDs for us */
+> -	if (ep->ep_state & (EP_STOP_CMD_PENDING | EP_HALTED | SET_DEQ_PENDING)) {
+> +	/*
+> +	 * We have a few strategies to give back the cancelled TDs. If the endpoint is running,
+> +	 * no other choice - it must be stopped. But if it's not, we avoid queuing Stop Endpoint
+> +	 * because this triggers a bug in "AMD SNPS 3.1 xHC" and because our completion handler
+> +	 * is complex enough already without having to worry about such things.
+> +	 */
+> +
+> +	/* If cancellation is already running, giveback of all cancelled TDs is guaranteed */
+> +	if (ep->ep_state & EP_CANCEL_PENDING) {
+>   		xhci_dbg(xhci, "Not queuing Stop Endpoint on slot %d ep %d in state 0x%x\n",
+>   				urb->dev->slot_id, ep_index, ep->ep_state);
+>   		goto done;
+>   	}
+>   
+> -	/* In this case no commands are pending but the endpoint is stopped */
+> -	if (ep->ep_state & (EP_CLEARING_TT | EP_STALLED)) {
+> -		/* and cancelled TDs can be given back right away */
+> +	/* Cancel immediately if no commands are pending but the endpoint is held stopped */
+> +	if (ep->ep_state & EP_MISC_OPS_PENDING) {
+>   		xhci_dbg(xhci, "Invalidating TDs instantly on slot %d ep %d in state 0x%x\n",
+>   				urb->dev->slot_id, ep_index, ep->ep_state);
+>   		xhci_process_cancelled_tds(ep);
+> diff --git a/drivers/usb/host/xhci.h b/drivers/usb/host/xhci.h
+> index 46bbdc97cc4b..87d87ed08b8b 100644
+> --- a/drivers/usb/host/xhci.h
+> +++ b/drivers/usb/host/xhci.h
+> @@ -718,9 +718,23 @@ struct xhci_virt_ep {
+>    * xhci_ring_ep_doorbell() inspects the flags to decide if the endpoint can be restarted. Another
+>    * user is xhci_urb_dequeue(), which must not attempt to stop a Stopped endpoint, due to HW bugs.
+>    * An endpoint with pending URBs and no flags preventing restart must be Running for this to work.
+> - * Call xhci_ring_doorbell_for_active_rings() or similar after clearing any such flag.
+> + * Call xhci_ring_doorbell_for_active_rings() or similar after clearing flags on the lists below.
+>    */
+>   
+> +/*
+> + * TD cancellation is in progress. New TDs can be marked as cancelled without further action and
+> + * indeed no such action is possible until these commands complete. Their handlers must check for
+> + * more cancelled TDs and continue until all are given back. The endpoint must not be restarted.
+> + */
+> +#define EP_CANCEL_PENDING (SET_DEQ_PENDING | EP_HALTED | EP_STOP_CMD_PENDING)
+> +
+> +/*
+> + * Some other operations are pending which preclude restarting the endpoint. If the endpoint isn't
+> + * transitioning to the Stopped state, it has already reached this state and stays in it.
+> + */
+> +#define EP_MISC_OPS_PENDING (EP_CLEARING_TT | EP_STALLED)
+> +
 
-Hi, Mike
+Not sure this helps readability
 
-I have done a user space test which shows we may have a chance to leave a
-region with non-nid set.
+It defines even more macros to abstract away something that is not complex enough.
 
-Not sure you are ok with my approach of fixing.
+It also gives false impression that EP_HALTED would somehow be more part of cancelling a
+TD than EP_STALLED, when both of those are about returning a TD with an error due to
+transfer issues detected by host, not class driver cancelling URBs
 
--- 
-Wei Yang
-Help you, Help me
+Thanks
+Mathias
+
 
