@@ -1,110 +1,98 @@
-Return-Path: <linux-kernel+bounces-553889-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-553891-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C0778A5903F
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 10:50:36 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5723CA59046
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 10:51:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6EB233A4832
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 09:50:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9A3853A33F3
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 09:50:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A1172253FD;
-	Mon, 10 Mar 2025 09:50:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA8DD225771;
+	Mon, 10 Mar 2025 09:50:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="SDJLymip"
-Received: from mout.web.de (mout.web.de [212.227.15.4])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="vlrbDqiV"
+Received: from mail-wr1-f74.google.com (mail-wr1-f74.google.com [209.85.221.74])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9640617A2E7;
-	Mon, 10 Mar 2025 09:50:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 852E0222589
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 09:50:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741600226; cv=none; b=tFoUcVSpl+XULX1ZeU3KC/rxSwY00ho8J9++F83nKecCsibb7WJyYCOvQXDaZs9AtQ6/XCcczKjtczLd6XAscPBdS9ZOrg38q8THU2znzftajagrwf7eSIhANoBd+/XKBe01SWPsDXbo7ieLJcc1DrTfj8t8vyAUeOG2Fo8CIUY=
+	t=1741600246; cv=none; b=UwPAVSfYZTh0/C+0+kZMG4OdTjk56pNHxlNDmtBe1/tCOqjhaDSPAxzkqgL1y+IscyzTuM+QGLXFK3KNxl4JIJNES99Tx8oXlN87FsSl2X/pl+xpx/vJwu3QTUgC7a1EzFZJB4M/2f7btsoXc8Ya2DOdTL7IoAPOCNg7txVgAGc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741600226; c=relaxed/simple;
-	bh=nwEizwjVfRNkakaeNjz30N3SBQfWGNsbW9XNO8YhWRQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=gytZvTRpZHXUSs7xQkF7LpELuQUbY0i5iBr6Z02roHs6aG0zFSXEomx7uzSzFCHZ0sGkdGMs1a2mkXDcmxf/QeWQNFltjTWXic8rpzB7LQsv1DIVhhMyrQ60HA2A+nYDD3ebqDJDhTDF+gXfSnxNgwjACKS4HYuLDTRgvkCqjTo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=SDJLymip; arc=none smtp.client-ip=212.227.15.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1741600208; x=1742205008; i=markus.elfring@web.de;
-	bh=nwEizwjVfRNkakaeNjz30N3SBQfWGNsbW9XNO8YhWRQ=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=SDJLymipvxq3ZixoqFKRO0tLFmYWTJG72yXByPoZCjNa3Hl2NeIZtAW+F10jG0Cz
-	 5rcrpzd8MkCQBm2V5gIuZZCmRoS1yQpEAK5j+ne0EiTLAqaPdacXlPnykob+AN+wa
-	 cIbUeFC5d6uoCyKpYkhdKG2FgainyBhEwtDk3Ywh14ZKkAsCRCW6TekQZkhmWid4j
-	 DqaYDLdBgfiJb6p9O5MnB+wLRAZMCXOt0XgxYzO4zBV2nbHtplfsc0S0fH30N/zXs
-	 837RGEttUChvC8SXnRoyVlcovhgmErfcfOlcFHztfp6yeYTfqXfCU20jLi/IpzDnh
-	 1qbgoY2LdflaBzYaBA==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.29] ([94.31.70.82]) by smtp.web.de (mrweb005
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1MqIFD-1tV78O3k0J-00i8e6; Mon, 10
- Mar 2025 10:50:07 +0100
-Message-ID: <c29fb786-bfcb-4860-b781-606e5a093aaa@web.de>
-Date: Mon, 10 Mar 2025 10:50:06 +0100
+	s=arc-20240116; t=1741600246; c=relaxed/simple;
+	bh=TOgB3PbgApKpM9HteeeXMis/Iog1yG/ceAJzbz4WSC4=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=spj33whs6W3cA+zqTNPwGOPBf9zc4H7JAZwld5t9eKvZm2hbPYiSbqLEHl6215W0ig+Fx3PvAs9Y1ZAumrxCaTAaoJMZPJUvaKnGI7DeHHHioQLJF+9r5VYyMDzfnt/9/fT4dZv7m7VWj4vLaaSnegFWZy3MfeSxgtFXLKF9Big=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=vlrbDqiV; arc=none smtp.client-ip=209.85.221.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
+Received: by mail-wr1-f74.google.com with SMTP id ffacd0b85a97d-391345e3aa3so1634673f8f.0
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 02:50:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1741600243; x=1742205043; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=B/nswyrml7wVD0q8mwmURLpx4kqpdNOs0AJ+kP0PTJw=;
+        b=vlrbDqiVYW3MmqExT26JT1/9PZ7o+RPBKODTYkC3x3b/9vM9X2d2MWRq2KGZs2aAT/
+         Y+RKk4ymLAzJUc9XwU0Bw3P9uT0OMrUeFr+IFMoo9Aish5Ww8hRSi3AASo+6cYnOcAal
+         mX1VWM2Os0Q4tx0OuIVRdC7A6vQVrdmJ6oCq2BFFnJywMOSzRMdC+nZ8E3jNs9sXEcmd
+         FCaqoD1WDbVwA24Cd/8YouSXkzO8WH8ceEFaBLMjlV/KNjwF5c9mruSplM4lGCbSYzir
+         QRkRSHZ0NfN2xnbCIrHeCSqzk2rYlSW1lE9kd9h2YFoivD5egapZaabpJm7gLPnMiCXL
+         ERgg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741600243; x=1742205043;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=B/nswyrml7wVD0q8mwmURLpx4kqpdNOs0AJ+kP0PTJw=;
+        b=hElt+Cze15WryJfVQGS+whf0HUK9OwgaF+9rtomJBrZ+m5G+QNYhtsz96Q5iopNBuo
+         vCWbIe29ytqggjIgrJHimjvycJXNIVC0awBJHIef8umTsRknQTay1cao2j64M/0mFvmM
+         GiWSXsoLQK23VJeIakwIEeavhzqDnX7e1Xt1X3YYWKQaIjKq35N5cWgxXodqhPt6NF6a
+         O4gL7s5CSPMIwomo8D2U0E6I7oTu8K6EXLAg3si2EgRUEpRwzs3kQu89HkKH+3ZEOKsO
+         K5qOo0eZ7AvJPTNqLiLOYTPxv1t0Qb2TJTUr3NtYUGNywKZryQ0Fgp/4yRS+210HWckD
+         8Fxg==
+X-Forwarded-Encrypted: i=1; AJvYcCWsJb3U0tnyc0S2gCTPPfox4F7nh8iW1T/Xqo+vpPdcHCD5jNoj6KZ7ZZx/jrMkU2i9/rnrXJgi9q0O69g=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxQhoA6vkLhAnSiLezbkSmFrQCr4hmbs/tCj+iCGj0yenkkfkLy
+	4SpKBwWrokefWEXWYki14YQZ7t1vf+xO8vInDH3Y7C4ErobC7CbjTt4ElGcKaexZCLTuy/rnrCM
+	eU2L6Do/0y9ynKQ==
+X-Google-Smtp-Source: AGHT+IEvw9gbRnYCa4DZNWLBplx0pkmchJgqVCESliNTCd+NA5Dn2Rk7SdB8yqxlQJfnZPEWxsK6Dn9tPfTSqLU=
+X-Received: from wrbby18.prod.google.com ([2002:a05:6000:992:b0:391:3790:eb02])
+ (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a5d:5888:0:b0:391:4835:d888 with SMTP id ffacd0b85a97d-3914835d9a6mr2535901f8f.42.1741600242967;
+ Mon, 10 Mar 2025 02:50:42 -0700 (PDT)
+Date: Mon, 10 Mar 2025 09:50:41 +0000
+In-Reply-To: <20250310-unique-ref-v6-2-1ff53558617e@pm.me>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [v3 1/9] dmaengine: idxd: fix memory leak in error handling path
- of idxd_setup_wqs()
-To: Shuai Xue <xueshuai@linux.alibaba.com>, dmaengine@vger.kernel.org,
- Dave Jiang <dave.jiang@intel.com>, Fenghua Yu <fenghuay@nvidia.com>,
- Vinicius Costa Gomes <vinicius.gomes@intel.com>,
- Vinod Koul <vkoul@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>
-References: <20250309062058.58910-1-xueshuai@linux.alibaba.com>
- <20250309062058.58910-2-xueshuai@linux.alibaba.com>
- <8545206d-4a7d-4e0f-812b-dadf923b5b5c@web.de>
- <bb29d6d8-6887-4eed-ba24-7392de9c2c29@linux.alibaba.com>
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <bb29d6d8-6887-4eed-ba24-7392de9c2c29@linux.alibaba.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Provags-ID: V03:K1:YHhj8wRJcq7Ik2n7tdrbTrCOakGfW4l7pM033cH/lpnIcTmL/6P
- 6DWX/BGjIp/KiXqiPY9kEDpVjR9MnDaGdJ1zUj1waIe9Sr8rbt580/ATgeuQyKYNuTWY013
- b5UgaSjD9sme2nANaws6iFR8mZx0zRWvuYaxFY9rWNFQusrGUFx7rUx9tsN9EXXdzPJBV7I
- gJ8gBa3k1PoDGNmnuuAMg==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:W6NfeSMmN+w=;qxZlsgPyzKSrFV/wthu3AQOwx1l
- VCMLpYzv5nT0zjZpmClTkO1ISvvgpGVtiUZNqo7U1Dz85X+6Jp5p6qkGiCyImlsNQr4kQ1l7t
- q6iorn3b6Fr0gHR4ErFkMu/o2TspKBgcfbUAYnuWeotS57XtmxPV5nJnOQ0lYrFNZYNZpDdCn
- EGm3uNyfmPJJa9U4SBX5xDvehkITSJmJr/lBdZOYlJqBZkfhYSX352vRM1+FnTMZ3Cn7pw2fl
- yF0oBrXE/S8qOFcQttqkWuFpN1UIkxGFSBlA/lw9pFkNUwnKJczydTbw02VAe8dkw2AybK7H8
- v9+yk5ddwl7V3SxbfaW+aBOY4emSpwssGYazVcQeT4TpWjlsltSV2bPisOssKYZjKNh5hg+uX
- Ok9cfc8/16NarI32tTD4I/Aly3PgMo/9Na7++B9NQ82B5tnIkM22mf2V61K0wTo0FjCCgBWJ/
- TeiN0mGhHTzpR5lw/oE06xJ+zS4e9aa/3kut4Xq9z5uWIBmcdP7XvdnYt4cg9j2obnhUXT32J
- lxuJNJlEYeeN9NBuT9jyuFcJXuPQVvzqGxp9TLTOYcwC8QZ5ePjE2g816IPkVvEgCZ5ZNmMpM
- fs2CknL+/Ktgg+alztg6TEvA4/wrs93Dj+OPfPJCjWGk6HCgRVHsF8QhXdnrYh+qFvwsbAvmm
- ZFzpJ/0fc5d24IHT3Ms+fxE+L7IYRG1FGKjBfqwcvpGPeBe49A3Li4HCIj77vAsl8QZ5FkT4C
- 6PeN9gKIKHhlP7ffz1GEMs1skWwAdh51hnKFRzaHNjg4JHL1OpqhzO7lVTor+2Fkmr0xxV4xO
- WadwI4TPA5j9bOOU6yFcILo59n8Foy+kntpe8csy9+lkXqmY6mugGmC4OLriBPXwrakc+zdgm
- Owmcg5r8+/Ek3t4nwl4nu7MY0ublE0w810naQ1ltUuW22aikmXpOafY0ytnZ3dWj1Ga3GS9FO
- 14fVjXx74GLSuNGqqCh8kXBUDENHGn9adbvBhURosZK5YeM3tRRVHlbUyWhzHlCeTkb0eNHah
- piIJpfHUJRcz5l6bOSmYYEUHdwkDe9v1mk/TzEEL4bw8ku07hhuXhXAntvIhR6T55SaEjf5Zr
- nxz2XqwIAat81Ay/w/t+hbcYdzNfZkhpXHSkejBR8M8XOD76G4xYE++jFbaC8Tgx4KCC1j3tO
- +8sEf5sQS72PLF7n759xAGM2xWTYlHduvm67kmGETgTuOI6HuNF/sJY0PVqxc49M/zwL1h4WC
- pU6F8IfzvbWdMyneKZWuC1R6B0bbAMo0IC+4z5aE8DBKbH2PBeD5kkvszw9upPLFsvejpVVtt
- yc4l66w4UfjsmEi1RMwME6ZJlYGk6K6e6+Pg4eFLINDfoSKhOBWxN45ANyHtYdKIAus/ZLMJ5
- H84It9eJYw3nY0FrnNPUPn0fwySMvSUHgbZ2GGhXH6OfIPlbCQZJ5I5WytownRiHJR0usXUkl
- 9+H4thQ==
+Mime-Version: 1.0
+References: <20250310-unique-ref-v6-0-1ff53558617e@pm.me> <20250310-unique-ref-v6-2-1ff53558617e@pm.me>
+Message-ID: <Z8618XEgG1yNvppk@google.com>
+Subject: Re: [PATCH v6 2/5] rust: make Owned::into_raw() and Owned::from_raw() public
+From: Alice Ryhl <aliceryhl@google.com>
+To: Oliver Mangold <oliver.mangold@pm.me>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	"=?utf-8?B?QmrDtnJu?= Roy Baron" <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>, 
+	Andreas Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>, 
+	Asahi Lina <lina@asahilina.net>, rust-for-linux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
 
-> I prefer to set error code before jumping to error handling label
-> so that we can extend/change the error code in any future path.
-I prefer to avoid duplicate source code another bit.
+On Mon, Mar 10, 2025 at 08:49:50AM +0000, Oliver Mangold wrote:
+> It might be necessary to be used from some drivers containing C code like,
+> e.g. binder. It basically is needed for every implementation of an Ownable
+> outside of the kernel crate. Also the examples for OwnableRefCounted need
+> it.
+> 
+> Signed-off-by: Oliver Mangold <oliver.mangold@pm.me>
 
-Regards,
-Markus
+I would probably just fold this into the previous patch.
+
+Alice
 
