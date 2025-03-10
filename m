@@ -1,158 +1,123 @@
-Return-Path: <linux-kernel+bounces-554965-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-554966-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2EC22A5A3EE
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 20:41:26 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E2621A5A3F5
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 20:43:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5F6861743FA
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 19:41:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2D19F17463B
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 19:43:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EEFC235BE1;
-	Mon, 10 Mar 2025 19:41:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4ED2D235C17;
+	Mon, 10 Mar 2025 19:43:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Wso8amC0"
-Received: from mail-oi1-f182.google.com (mail-oi1-f182.google.com [209.85.167.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ethancedwards.com header.i=@ethancedwards.com header.b="s34v09VR"
+Received: from mout-p-101.mailbox.org (mout-p-101.mailbox.org [80.241.56.151])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49FE8231A3F;
-	Mon, 10 Mar 2025 19:41:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 887AD23314B;
+	Mon, 10 Mar 2025 19:43:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741635676; cv=none; b=IRbCI0/kiUEUiU2NojojQaWbFyy4rrp61BNUfxX0ihg33ttpjUK81p9dAJjTLX8MJHz9LA67Qr//PesT79jqnUkq35rgFyEJK55gze4A+lZNMg93dF7VkipzwEJyU0sKkriTz/D7KADTPkNlsHZX2u7DBenEDMLk2RW3jGzUlg4=
+	t=1741635826; cv=none; b=JIke/rxwkuekrSy8E43FW/6labcEZwW1WusonaPEuJTwDc47W3KwUh7TUaC/gXjZ0zAStjbYs2vyp3QA/RYs6ER3/w2i+qHrglnjQcC4ybi+Kw4yOBc69HjGXTelZXik3d3oZ9sRo/WIc0l0DBWi1FQDX6LgZ7Cx6gHbyoE70Bs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741635676; c=relaxed/simple;
-	bh=NEcHjbJGw+ZPFq/Bi8SNJJDZksugWukJSYtK78q8neM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=i6Wt40mquXYxEfqbpYDGgIrRuV9LavE2nKYfkR6JxZbKvBUtwXK33IP0duyaybcXBOrv7dZkVvCu/nSDW2bhvAUJv5AsgMbVSqLeEShncsrm0EaIwEXKNdAN+Oy4A44xFHXJRx1XIe1DC/Lbc9QY2niZrOzWAY89CXHw8AzEsnI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Wso8amC0; arc=none smtp.client-ip=209.85.167.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oi1-f182.google.com with SMTP id 5614622812f47-3f9832f798aso514634b6e.2;
-        Mon, 10 Mar 2025 12:41:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741635674; x=1742240474; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=PsaPJpYGR/JV85NCFhUCfNi1WQgYzaKdf9ISLWZYqHo=;
-        b=Wso8amC0BrWhKaxgz6y8wwyfujxD9AhvzrS8HKOcZjplenmkvuB4UV/JDIaI+ap+/+
-         /klEbwwqBwJgjWnG4pt3P3sec4Nr3lpCrVU1ccIRhzHhBmeJjbZBlfJHsF7K51LTIPTA
-         hVT3OK/AO1Qz90lPhiutobEda/ayZ48W6OVCS33KswF5w4f1srRAAjLZXstaEGRVrrKJ
-         HUCgIkNv74w6PShSaWaGUuDzb2JKjJv4LfGsc6pa6+c/fxkYk6qhpQEyCjKWkE6S5DQh
-         dMYj7YuNlywMIbL7zbCUlfLWBkhdLectJoMyjQqHVSidYQSbTayPH5PebQXKLQOalFam
-         nMiw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741635674; x=1742240474;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=PsaPJpYGR/JV85NCFhUCfNi1WQgYzaKdf9ISLWZYqHo=;
-        b=IqnnvWFLNwSrKsfdXNEVG8cc0VrImnqx4vBNPxW4UTok7Gace1xiYVo72SYBE6iqjh
-         XmeSwviCa1cSUfRP7YzXWEzhHiqK92X5pd2KiA96HU99Itqpj/bidncOppiZ8eRWR/Kg
-         LEawH4UP31LhwEzZabYibhPmN73feb3LvAumKYCv1fATVuoUuc/20aNkV/Bf/4+PEjIU
-         XWtL7qYUJz365cZjZ4jUi6Ta+VG8FzCjxMyuFLQGBYotEifL31VmB8BUSlOYa0Nr1LwR
-         NcJ1IuA905Q0cCawkl6Pyn9zK2vetBva+B12txeWCIOOEqiFVT9z1tqKzX62zCFkHkma
-         f65Q==
-X-Forwarded-Encrypted: i=1; AJvYcCX+vDuNdwg24U/fyYwehxruyu4xHWEa4ibKaKJ83gMYcGYn4RhL5zdLojTX4lYvR3JKtcMTHJF7sDpSZjY=@vger.kernel.org, AJvYcCXLJPVF1PboA+Cyr15rK1rqjwfD8bSUqunirSjwsF8XhH40NTakUsWe/yopIoPf4hWNhi2DUwb5@vger.kernel.org
-X-Gm-Message-State: AOJu0YxU2jG8oRVC2jPHztrgs71ioIz5kQqLM/aSnhCBMsyyvu4/jO1X
-	WPP8mC+eP36g2SReAIyBZklSZmL3FI8AumjS8EpETLu+SsaIc03EML+Vfg==
-X-Gm-Gg: ASbGncuC3yQYdGFQp3nWmh6MkuIx6T2OhyDyDyj2uWtn9Nrzo4HYrrs2fw2RNE+ubQW
-	3FcVrnh+z9i1MBduM/O++8XQtFcs0dMZwE5H/Dyi40EAhi9XTaZkd3szUm1NDlCz5vHHcJx3RDZ
-	8i5TbK08NbxKJrD5No8t5BJ0I1LYZT4kbezJ2j+RkT7cb09FM0e4Rx4RWQtGD7At5Ka02DaVrR2
-	Aga75Cv/INi4dabxzQS4+SvC+lCGdy0n2KAwSA/nV8ftTbE0iUFR9EVzwnx4iSu1J53bq6g1pMM
-	MUe/ao3EHXX916y7F7xGBrCFYR5TuNtV92xkwCq+Bf+ceXTlGCwH2COZlKAejuN7MSOJnxJIjot
-	i/zEDIMc=
-X-Google-Smtp-Source: AGHT+IGZEmJj6Toe371GIRrbUKxALY678CuHDkqIFxqypPz92gvPBm5SYnQhonk1j4GqVLO9u8whRg==
-X-Received: by 2002:a05:6808:1d21:b0:3fa:2223:1d2c with SMTP id 5614622812f47-3fa2c78e8dbmr364670b6e.37.1741635674207;
-        Mon, 10 Mar 2025 12:41:14 -0700 (PDT)
-Received: from [10.67.48.245] ([192.19.223.252])
-        by smtp.gmail.com with ESMTPSA id 006d021491bc7-601a5508d33sm974670eaf.28.2025.03.10.12.41.11
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 10 Mar 2025 12:41:13 -0700 (PDT)
-Message-ID: <de292a2e-0b21-43bb-b0b9-e95a199070ca@gmail.com>
-Date: Mon, 10 Mar 2025 12:41:10 -0700
+	s=arc-20240116; t=1741635826; c=relaxed/simple;
+	bh=EBeSqGsWh99jM7FdCeMPDFr6tUW4TS/q4W5vwqPndiU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=SIPA83HCES3LSzc/DVxtudIuaxG1PqGA9lGdAQTZjJyklabMmGbMX8Jw8wRoBHIyBvHuDxewMgpTkPZ8EtqJxD1p8d9gsytCv7AVCYIB69jaVqbZ6MoRMdQaMQFjEVM0FjHuGm3a0SoGi2/Jm7ugz+JcEz3kbPRBq/DMcR9JNi8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ethancedwards.com; spf=pass smtp.mailfrom=ethancedwards.com; dkim=pass (2048-bit key) header.d=ethancedwards.com header.i=@ethancedwards.com header.b=s34v09VR; arc=none smtp.client-ip=80.241.56.151
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ethancedwards.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ethancedwards.com
+Received: from smtp202.mailbox.org (smtp202.mailbox.org [10.196.197.202])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-101.mailbox.org (Postfix) with ESMTPS id 4ZBS4X1mdqz9t8y;
+	Mon, 10 Mar 2025 20:43:40 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ethancedwards.com;
+	s=MBO0001; t=1741635820;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=UdPzsDpFzcns41Z4zrZFjOaxo/jUnhJPhdoDRImnHR4=;
+	b=s34v09VRiXKWoFrGgB+V5h+P8ouHIQYzPEBA+c/z+hSfFpSlRxFIPtGATNd0i20dRVVJ1e
+	ED7z4XeniVEE8KJ/bLYfTx0/KhV1jnBuP1wn9MG75MuFveDoF5ymHxV0pSH2YmyYd5xJoO
+	8dt3MMq1G3lqUqicaoiVDG91VYUn+XriQugepbpHfcC4QpePzJRi9SHaOPinE+I3bvKkX2
+	4D1J/9nzU4yOrvCx8LaFBYYefMT864MAADjYRwbugublUaK06Oc92oWCME4p/DkmCXJSTs
+	Df6KWUtlaOpL0FaVh/MsJd8Ejk8igc6hruP2BhnIXoUFt26dR86f0QvO1LiqVg==
+Date: Mon, 10 Mar 2025 15:43:34 -0400
+From: Ethan Carter Edwards <ethan@ethancedwards.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, 
+	Danilo Krummrich <dakr@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, 
+	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?utf-8?B?QmrDtnJu?= Roy Baron <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>, 
+	Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, 
+	Trevor Gross <tmgross@umich.edu>, Nathan Chancellor <nathan@kernel.org>, 
+	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>, Bill Wendling <morbo@google.com>, 
+	Justin Stitt <justinstitt@google.com>, rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	llvm@lists.linux.dev
+Subject: Re: [PATCH] rust/kernel/faux: mark Registration methods inline
+Message-ID: <whxgrdl7iuqrwei5orxyaohs7k52sy4ytc5jib64bi2wy5zsqu@m2vzkawsk5tt>
+References: <20250309-faux-inline-v1-1-c1b692862433@ethancedwards.com>
+ <2025031053-tribute-crudely-0e1d@gregkh>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 6.6 000/145] 6.6.83-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
- torvalds@linux-foundation.org, akpm@linux-foundation.org,
- linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
- lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
- sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
- conor@kernel.org, hargar@microsoft.com, broonie@kernel.org
-References: <20250310170434.733307314@linuxfoundation.org>
-Content-Language: en-US
-From: Florian Fainelli <f.fainelli@gmail.com>
-Autocrypt: addr=f.fainelli@gmail.com; keydata=
- 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
- WlfRzlpjIPmdjgoicA==
-In-Reply-To: <20250310170434.733307314@linuxfoundation.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2025031053-tribute-crudely-0e1d@gregkh>
 
-On 3/10/25 10:04, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 6.6.83 release.
-> There are 145 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+On 25/03/10 07:19PM, Greg Kroah-Hartman wrote:
+> On Sun, Mar 09, 2025 at 10:14:36PM -0400, Ethan Carter Edwards wrote:
+> > When building the kernel on Arch Linux using on x86_64 with tools:
+> > $ rustc --version
+> > rustc 1.84.0 (9fc6b4312 2025-01-07)
+> > $ cargo --version
+> > cargo 1.84.0 (66221abde 2024-11-19)
+> > $ clang --version
+> > clang version 19.1.7
+> > Target: x86_64-pc-linux-gnu
+> > 
+> > The following symbols are generated:
+> > $ nm vmlinux | rg ' _R' | rustfilt | rg faux
+> > ffffffff81959ae0 T <kernel::faux::Registration>::new
+> > ffffffff81959b40 T <kernel::faux::Registration as core::ops::drop::Drop>::drop
+> > 
+> > However, these Rust symbols are wrappers around bindings in the C faux
+> > code. Inlining these functions removes the middle-man wrapper function
+> > After applying this patch, the above function signatures disappear.
+> > 
+> > Link: https://github.com/Rust-for-Linux/linux/issues/1145
+> > Signed-off-by: Ethan Carter Edwards <ethan@ethancedwards.com>
+> > ---
+> >  rust/kernel/faux.rs | 2 ++
+> >  1 file changed, 2 insertions(+)
 > 
-> Responses should be made by Wed, 12 Mar 2025 17:04:00 +0000.
-> Anything received after that time might be too late.
+> This does not apply to my tree.  Can you regenerate it against either
+> the driver-core.git driver-core-next branch, or the linux-next tree and
+> resend it?
+
+Will do. My apologies, I based this patch off linux-next. I thought it
+was customary to use the -next tree for whatever subsystem one is
+developing against. I'll do it off of linux-next and send a v2.
+
 > 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.6.83-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.6.y
-> and the diffstat can be found below.
+> What release/branch did you make this against?
+
+Tree: https://github.com/rust-for-linux/linux
+Branch: rust-next
+
 > 
 > thanks,
 > 
 > greg k-h
 
-On ARCH_BRCMSTB using 32-bit and 64-bit ARM kernels, build tested on 
-BMIPS_GENERIC:
-
-Tested-by: Florian Fainelli <florian.fainelli@broadcom.com>
--- 
-Florian
+Thanks,
+Ethan
 
