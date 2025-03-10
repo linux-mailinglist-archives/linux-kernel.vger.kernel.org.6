@@ -1,103 +1,217 @@
-Return-Path: <linux-kernel+bounces-553539-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-553529-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA6FBA58B25
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 05:10:57 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3BEA4A58B0C
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 05:04:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B98A03AD1B0
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 04:10:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7EEFF188C4D5
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 04:04:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 984931D6DA1;
-	Mon, 10 Mar 2025 04:09:34 +0000 (UTC)
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9C6F1BE86E;
+	Mon, 10 Mar 2025 04:03:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="DfTTKFVa"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 929D01D5AC6
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 04:09:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B087535971
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 04:03:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741579774; cv=none; b=Zf2p0jNAfHU/D4oNAgOWMMGwmtliav47fKVAOb5Ex0GBZAQM++caPVSE7Y8Y1bDuVRiIjL5Cc4viPcqczbSwzwus2zq96ItkXg9HUbaYJwBcSUDpBLlHXmR5rRl+jOPIBFnc5LVguXroePReveBcxNZ7nGEPAS8T4XbQlTmYme4=
+	t=1741579433; cv=none; b=juqCYVi65eslrl6i8QRmwO0Kv+mrTUgGdbPKofG3N4WWv4OBGr76XCwexEdLuH1M5IpHgnqD/U00BEZY0IRs1tVFXvO4Bof02cnk29GfFl7RaCCbWtXNYSrNwlTMnNeR2hEFNpWSM31XPSWh08PlrPRR7hhWKp2tf/KmXyLlSyU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741579774; c=relaxed/simple;
-	bh=eXgLevCk0iTBXDR9hA4loH4bt855GNz9dbg1lW8IbFE=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=jaaVo0Ih7cw2OY8iUJITcSmuElATFaX8l18IVWPF402AoWqkqG0KIGVv7NVV75QuIPx8m1qMdu3YQfmeiuWb2NTwOIdT9Lk3NOh4KJFmoly0QbOiXe7W94JmHbo6SPB93xCpxZgFnpLJPPJ1Td/ztyV//DNHL7dSGIows/BwmVg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.194])
-	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4ZB3LW0w6hzyRrt;
-	Mon, 10 Mar 2025 12:09:23 +0800 (CST)
-Received: from kwepemd500013.china.huawei.com (unknown [7.221.188.12])
-	by mail.maildlp.com (Postfix) with ESMTPS id C5E59140118;
-	Mon, 10 Mar 2025 12:09:24 +0800 (CST)
-Received: from localhost.huawei.com (10.169.71.169) by
- kwepemd500013.china.huawei.com (7.221.188.12) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1258.34; Mon, 10 Mar 2025 12:09:23 +0800
-From: Yongbang Shi <shiyongbang@huawei.com>
-To: <xinliang.liu@linaro.org>, <tiantao6@hisilicon.com>,
-	<maarten.lankhorst@linux.intel.com>, <mripard@kernel.org>,
-	<tzimmermann@suse.de>, <airlied@gmail.com>, <daniel@ffwll.ch>,
-	<kong.kongxinwei@hisilicon.com>
-CC: <liangjian010@huawei.com>, <chenjianmin@huawei.com>,
-	<lidongming5@huawei.com>, <shiyongbang@huawei.com>, <libaihan@huawei.com>,
-	<shenjian15@huawei.com>, <shaojijie@huawei.com>,
-	<dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH v6 drm-dp 9/9] drm/hisilicon/hibmc: Add vga connector detect functions
-Date: Mon, 10 Mar 2025 12:01:38 +0800
-Message-ID: <20250310040138.2025715-10-shiyongbang@huawei.com>
-X-Mailer: git-send-email 2.33.0
-In-Reply-To: <20250310040138.2025715-1-shiyongbang@huawei.com>
-References: <20250310040138.2025715-1-shiyongbang@huawei.com>
+	s=arc-20240116; t=1741579433; c=relaxed/simple;
+	bh=aHOy1ecN9jlAaMS2M7dcU9gCxoht3SCiGLgSPyDZ63k=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=oxlHdmWGOrWW30FQFpixljgCfx4it8yYqX3/53wdWWthCqEZdeRaLcXrHCHKA3JDFcxlLgngQHBaJ187nAkLUKPj8Cp8TqwnXLKV45xtoolN2c8lh8pFZ0IAn7KHz/8YyYULQKnq73jx00i/Csw6KNITcse7QehGl2SpIkWVvjk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=DfTTKFVa; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1741579430;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=KgUpYDCvfAICXWh2Ym5jayuE/HfSSdl1/NY4QdmfsrM=;
+	b=DfTTKFVaMfNTYVEolhXdbmgRd0nuBNKM2JGmJ1imuxeflvIeF1VeEjL2heSYuZWo5Ym4k+
+	ifOknskryfB6hA34Q4fo2tsy2yWfIOb34GcG72bwUwaCzg1dnhs1NV56C87OtA2dKX96DT
+	KoAGp1ddatvrElDmTrM+M7sz3+TNIig=
+Received: from mail-ua1-f72.google.com (mail-ua1-f72.google.com
+ [209.85.222.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-483-mDXrACgqPp2YFsvp7oIFdA-1; Mon, 10 Mar 2025 00:03:48 -0400
+X-MC-Unique: mDXrACgqPp2YFsvp7oIFdA-1
+X-Mimecast-MFC-AGG-ID: mDXrACgqPp2YFsvp7oIFdA_1741579428
+Received: by mail-ua1-f72.google.com with SMTP id a1e0cc1a2514c-86d3515b03eso4978711241.1
+        for <linux-kernel@vger.kernel.org>; Sun, 09 Mar 2025 21:03:48 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741579428; x=1742184228;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=KgUpYDCvfAICXWh2Ym5jayuE/HfSSdl1/NY4QdmfsrM=;
+        b=aqj/D4Bh6xZCgE2JcOkLLGsVCilnoBVRydnsCTiw606g/RRdcPiseUH9xUAbjmadhq
+         u1AaED4q2z7eGQ5J1p7Pgn0/WQZKUsLyU1lT2YU1+L/t0s9iNq98g04ZNJ3paF9H6Ar2
+         plNpvYmCfxQEdQdyIta2qZvyhZvbWhWDf4ntDiXa1vXVg5F/2bM2Td0/qFCRhybe5vpm
+         EpFZpG6f6/K+JVeOztFz2SXJ3kWEBltbCDGaoubkzuEtY87lPeM4TXq06dkGm2Aqk/rI
+         jCCi4mjCLKpbsHaiJJrPWobUtzIzd57HRGGxAIzKQIuC7QsVXtR+fo9+BjsFKCa/x4su
+         0/nA==
+X-Forwarded-Encrypted: i=1; AJvYcCWbitYGXwO68+EasXWEulDUlRmWu5CkiC1mUCrErwE9n577+Ai70MbhSvLsO630y+zLipOz3/8q4OAVLsA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwgB2miNSNKaIE1Afh2ldpWH2Ke9NDKAM+jZ1vfFkUK7lFL2Xnh
+	amH2+oz+ha1lpf01H3d+G9+DCLK/4vibPgbR9IBUHIyzQM2/cVMd7vN3aBZwNdAixTPAaoynnZN
+	GlgEydjhs7Vwgjky/eZ2ZfqQS4Yd526XV3pPEp57nPrMTJzXFcWhEIkV3jyw8pm3A+JsBIfJ04m
+	1uCWUBkkARQnKFq1f3P2AifVdrDzBXaVHJw3jt
+X-Gm-Gg: ASbGnctOfnIApAjbbWVJ/546AdxFr/Dgkxcekb55Y0iyJ3u8qm7NiACwHzktEc7+4l2
+	XqKVbcnLxT1ExbRdF0mDhvrm/bcH3D41mdug8UdiGeIwIxit+3beQsShIsGN2oeXId/9NOxievQ
+	==
+X-Received: by 2002:a05:6102:1625:b0:4bb:c24b:b658 with SMTP id ada2fe7eead31-4c30a6ce291mr6889416137.18.1741579428332;
+        Sun, 09 Mar 2025 21:03:48 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEWEExs57zlYjvHiKjt0sJdXJFbwo2Zs0LPOPlolmp1grxhBOdO/jBTdI674OxaLt6FioYXJto0Ve0T2qHTIms=
+X-Received: by 2002:a05:6102:1625:b0:4bb:c24b:b658 with SMTP id
+ ada2fe7eead31-4c30a6ce291mr6889393137.18.1741579427853; Sun, 09 Mar 2025
+ 21:03:47 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
- kwepemd500013.china.huawei.com (7.221.188.12)
+References: <20250307-rss-v9-0-df76624025eb@daynix.com> <20250307-rss-v9-5-df76624025eb@daynix.com>
+In-Reply-To: <20250307-rss-v9-5-df76624025eb@daynix.com>
+From: Jason Wang <jasowang@redhat.com>
+Date: Mon, 10 Mar 2025 12:03:35 +0800
+X-Gm-Features: AQ5f1JpUIYkO2z7JqKfhDMFz04EDw9VRlQFOeI99RHje5MrLTIGs-yAN3N8PypE
+Message-ID: <CACGkMEuTwd4+DP1Cb+ZgJtxTiJj4N_NMPHiKusd8a4Tn3+B_3A@mail.gmail.com>
+Subject: Re: [PATCH net-next v9 5/6] selftest: tun: Add tests for virtio-net hashing
+To: Akihiko Odaki <akihiko.odaki@daynix.com>
+Cc: Jonathan Corbet <corbet@lwn.net>, Willem de Bruijn <willemdebruijn.kernel@gmail.com>, 
+	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+	"Michael S. Tsirkin" <mst@redhat.com>, Xuan Zhuo <xuanzhuo@linux.alibaba.com>, 
+	Shuah Khan <shuah@kernel.org>, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	netdev@vger.kernel.org, kvm@vger.kernel.org, 
+	virtualization@lists.linux-foundation.org, linux-kselftest@vger.kernel.org, 
+	Yuri Benditovich <yuri.benditovich@daynix.com>, Andrew Melnychenko <andrew@daynix.com>, 
+	Stephen Hemminger <stephen@networkplumber.org>, gur.stavi@huawei.com, 
+	Lei Yang <leiyang@redhat.com>, Simon Horman <horms@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Baihan Li <libaihan@huawei.com>
+On Fri, Mar 7, 2025 at 7:02=E2=80=AFPM Akihiko Odaki <akihiko.odaki@daynix.=
+com> wrote:
+>
+> The added tests confirm tun can perform RSS and hash reporting, and
+> reject invalid configurations for them.
 
-Because the connected VGA connector would make driver can't get the
-userspace call, adding detect_ctx in vga connector to make HPD active
-userspace.
+Let's be more verbose here. E.g what's the network topology used here.
 
-Signed-off-by: Baihan Li <libaihan@huawei.com>
-Signed-off-by: Yongbang Shi <shiyongbang@huawei.com>
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
----
- drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_vdac.c | 3 +++
- 1 file changed, 3 insertions(+)
+>
+> Signed-off-by: Akihiko Odaki <akihiko.odaki@daynix.com>
+> Tested-by: Lei Yang <leiyang@redhat.com>
+> ---
+>  tools/testing/selftests/net/Makefile |   2 +-
+>  tools/testing/selftests/net/tun.c    | 584 +++++++++++++++++++++++++++++=
++++++-
+>  2 files changed, 576 insertions(+), 10 deletions(-)
+>
+> diff --git a/tools/testing/selftests/net/Makefile b/tools/testing/selftes=
+ts/net/Makefile
+> index 73ee88d6b043004be23b444de667a1d99a6045de..9772f691a9a011d99212df324=
+63cdb930cf0a1a0 100644
+> --- a/tools/testing/selftests/net/Makefile
+> +++ b/tools/testing/selftests/net/Makefile
+> @@ -123,6 +123,6 @@ $(OUTPUT)/reuseport_bpf_numa: LDLIBS +=3D -lnuma
+>  $(OUTPUT)/tcp_mmap: LDLIBS +=3D -lpthread -lcrypto
+>  $(OUTPUT)/tcp_inq: LDLIBS +=3D -lpthread
+>  $(OUTPUT)/bind_bhash: LDLIBS +=3D -lpthread
+> -$(OUTPUT)/io_uring_zerocopy_tx: CFLAGS +=3D -I../../../include/
+> +$(OUTPUT)/io_uring_zerocopy_tx $(OUTPUT)/tun: CFLAGS +=3D -I../../../inc=
+lude/
+>
+>  include bpf.mk
+> diff --git a/tools/testing/selftests/net/tun.c b/tools/testing/selftests/=
+net/tun.c
+> index 463dd98f2b80b1bdcb398cee43c834e7dc5cf784..acadeea7194eaea9416a605b4=
+7f99f7a5f1f80cd 100644
+> --- a/tools/testing/selftests/net/tun.c
+> +++ b/tools/testing/selftests/net/tun.c
+> @@ -2,21 +2,38 @@
+>
+>  #define _GNU_SOURCE
+>
+> +#include <endian.h>
+>  #include <errno.h>
+>  #include <fcntl.h>
+> +#include <sched.h>
 
-diff --git a/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_vdac.c b/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_vdac.c
-index 05e19ea4c9f9..e8a527ede854 100644
---- a/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_vdac.c
-+++ b/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_vdac.c
-@@ -60,6 +60,7 @@ static void hibmc_connector_destroy(struct drm_connector *connector)
- static const struct drm_connector_helper_funcs
- 	hibmc_connector_helper_funcs = {
- 	.get_modes = hibmc_connector_get_modes,
-+	.detect_ctx = drm_connector_helper_detect_from_ddc,
- };
- 
- static const struct drm_connector_funcs hibmc_connector_funcs = {
-@@ -127,5 +128,7 @@ int hibmc_vdac_init(struct hibmc_drm_private *priv)
- 
- 	drm_connector_attach_encoder(connector, encoder);
- 
-+	connector->polled = DRM_CONNECTOR_POLL_CONNECT | DRM_CONNECTOR_POLL_DISCONNECT;
-+
- 	return 0;
- }
--- 
-2.33.0
+Is this needed?
+
+> +#include <stddef.h>
+>  #include <stdio.h>
+>  #include <stdlib.h>
+>  #include <string.h>
+>  #include <unistd.h>
+> -#include <linux/if.h>
+> +#include <net/if.h>
+> +#include <netinet/ip.h>
+> +#include <sys/ioctl.h>
+> +#include <sys/socket.h>
+> +#include <linux/compiler.h>
+> +#include <linux/icmp.h>
+> +#include <linux/if_arp.h>
+>  #include <linux/if_tun.h>
+> +#include <linux/ipv6.h>
+>  #include <linux/netlink.h>
+>  #include <linux/rtnetlink.h>
+> -#include <sys/ioctl.h>
+> -#include <sys/socket.h>
+> +#include <linux/sockios.h>
+> +#include <linux/tcp.h>
+> +#include <linux/udp.h>
+> +#include <linux/virtio_net.h>
+>
+>  #include "../kselftest_harness.h"
+>
+> +#define TUN_HWADDR_SOURCE { 0x02, 0x00, 0x00, 0x00, 0x00, 0x00 }
+> +#define TUN_HWADDR_DEST { 0x02, 0x00, 0x00, 0x00, 0x00, 0x01 }
+> +#define TUN_IPADDR_SOURCE htonl((172 << 24) | (17 << 16) | 0)
+> +#define TUN_IPADDR_DEST htonl((172 << 24) | (17 << 16) | 1)
+> +
+>  static int tun_attach(int fd, char *dev)
+>  {
+>         struct ifreq ifr;
+> @@ -39,7 +56,7 @@ static int tun_detach(int fd, char *dev)
+>         return ioctl(fd, TUNSETQUEUE, (void *) &ifr);
+>  }
+>
+> -static int tun_alloc(char *dev)
+> +static int tun_alloc(char *dev, short flags)
+>  {
+>         struct ifreq ifr;
+>         int fd, err;
+> @@ -52,7 +69,8 @@ static int tun_alloc(char *dev)
+>
+>         memset(&ifr, 0, sizeof(ifr));
+>         strcpy(ifr.ifr_name, dev);
+> -       ifr.ifr_flags =3D IFF_TAP | IFF_NAPI | IFF_MULTI_QUEUE;
+> +       ifr.ifr_flags =3D flags | IFF_TAP | IFF_NAPI | IFF_NO_PI |
+> +                       IFF_MULTI_QUEUE;
+>
+>         err =3D ioctl(fd, TUNSETIFF, (void *) &ifr);
+>         if (err < 0) {
+> @@ -64,6 +82,40 @@ static int tun_alloc(char *dev)
+>         return fd;
+>  }
+>
+> +static bool tun_add_to_bridge(int local_fd, const char *name)
+> +{
+
+I wonder if a packet socket is more convenient here.
+
+Thanks
 
 
