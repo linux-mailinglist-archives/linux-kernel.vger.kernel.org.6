@@ -1,103 +1,202 @@
-Return-Path: <linux-kernel+bounces-553724-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-553727-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 33010A58E20
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 09:28:21 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 67708A58E26
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 09:29:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C45AC7A38D4
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 08:27:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 978FE166336
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 08:29:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA050223328;
-	Mon, 10 Mar 2025 08:28:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="BUMnr39+"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 985271D54FA
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 08:28:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C185223707;
+	Mon, 10 Mar 2025 08:29:08 +0000 (UTC)
+Received: from invmail4.hynix.com (exvmail4.skhynix.com [166.125.252.92])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7318C221F35;
+	Mon, 10 Mar 2025 08:29:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.125.252.92
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741595293; cv=none; b=g3uLlspCJeIR4Ss2aWXqwJyuJI7kJYVn9iLozyoWmgyOOh4hvLiyBK/YKRIKZJC5WMCSy9BLa6zify06MOH4wt3M+HbLr+HDeipbcthizgAcJCuoiqvPEm52jcq/qZsWwGtZ6NvxyZmnYFIk9pMtkvjMOYC7774jbKD3pkx1eSU=
+	t=1741595347; cv=none; b=afoJBJeEV8r6ihmesu3YSe4ZKLpblq9cx1yoFoxXuNEwHXqtvUCJ1r5smwCMRJQfKDpU3QIJK5cisFNdJh5HklnpgmdHVja4zFBF8uCNK+shiRQh3HcDTEktX1s9KTR5UaeHYpYn5b8c3H13zL6t4ny8punEqyc35Isiw3FCv/8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741595293; c=relaxed/simple;
-	bh=AO/IjuFIbXugfgtSEWyDOCjGNphrdVZXK8ISdYBpFqc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rGXAxad5zgL4NvZNVkuXsmwQwsQ/TG7OXN0BA6Haz9pe0k0nTnRvrQrOwGeWPfNvw3ULWN1AtsWktD/3dPpfcNzWQ7ID5OzImRoOBbgxRsJ80iYc/qntxQY6k4zLVBjl5XUe/GNc9FgkPz7crpgPsQ2yDdrhtWC/3hcvLBLatXY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=BUMnr39+; arc=none smtp.client-ip=198.175.65.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1741595292; x=1773131292;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=AO/IjuFIbXugfgtSEWyDOCjGNphrdVZXK8ISdYBpFqc=;
-  b=BUMnr39+ltaXkDaIn4ZUk2Ne7p2V6M9StKcORDP7K6gjmjmb4nGGPZ63
-   32iJPGgR13IaXUmaV27rVLAjk2Z4848k64gmitwNSXPI7tCPibJzB6r0Y
-   UCISXeuq9g6n97T2vXaLF7CmYLA6s9nnR0gfsb44YN/PLEdrIbKDGI40c
-   laaTU4wNvCJmpjq3EFyQsthY/1BcoOvl67wBuA4ihN7Ja21UqJtev7MwJ
-   cXb2c8Y7HNFvZdUNdUVs1YVMKHQfTq7s46hLYtg1UP/Ahhc+Czjtrsyx2
-   3NHyDmit1Z//7Xa1RaQpM6Rh6WkbWHEYVdSxovD6CRzeRsNa4mR0kLkZi
-   g==;
-X-CSE-ConnectionGUID: LYuc9u0TRLe5wLzIpx9w/A==
-X-CSE-MsgGUID: wmmgbPGYSQ+VRWibphDFTA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11368"; a="42291239"
-X-IronPort-AV: E=Sophos;i="6.14,235,1736841600"; 
-   d="scan'208";a="42291239"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Mar 2025 01:28:11 -0700
-X-CSE-ConnectionGUID: 4kuUd61yS2CINZ/e/5e7XQ==
-X-CSE-MsgGUID: YUSGAhigT4Kk2gnD69Zc1w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,235,1736841600"; 
-   d="scan'208";a="120637705"
-Received: from smile.fi.intel.com ([10.237.72.58])
-  by fmviesa009.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Mar 2025 01:28:08 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1trYUX-00000001BuD-1Pz5;
-	Mon, 10 Mar 2025 10:28:05 +0200
-Date: Mon, 10 Mar 2025 10:28:05 +0200
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: David Laight <david.laight.linux@gmail.com>
-Cc: linux-kernel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Christophe Leroy <christophe.leroy@c-s.fr>,
-	Rasmus Villemoes <linux@rasmusvillemoes.dk>, nnac123@linux.ibm.com,
-	horms@kernel.org
-Subject: Re: [PATCH next 1/8] test_hexdump: Change rowsize and groupsize to
- size_t
-Message-ID: <Z86ilQqOn-fgVsiL@smile.fi.intel.com>
-References: <20250308093452.3742-1-david.laight.linux@gmail.com>
- <20250308093452.3742-2-david.laight.linux@gmail.com>
+	s=arc-20240116; t=1741595347; c=relaxed/simple;
+	bh=6M1UyAd8d/M18H5uFCfbe/Orf+WJZ8oMBL9WVomey2c=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=I8Ceo/MziswsZzSHe7uV/oALactZHqS2SM99LZ/etWC/n4qWPPsJj52qD97YLGU84W40Gl1tFzTDe7EhXRHftKiSODJMATFzEtIUUt7vA2PSS81yXd768RcwCiF2fmykiTzfmdALurEFI9ioERR1opuhPl0kVNviKUqwmKhydSA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com; spf=pass smtp.mailfrom=sk.com; arc=none smtp.client-ip=166.125.252.92
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sk.com
+X-AuditID: a67dfc5b-3c9ff7000001d7ae-62-67cea2ca9924
+From: Rakie Kim <rakie.kim@sk.com>
+To: Joshua Hahn <joshua.hahnjy@gmail.com>
+Cc: gourry@gourry.net,
+	akpm@linux-foundation.org,
+	linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	linux-cxl@vger.kernel.org,
+	dan.j.williams@intel.com,
+	ying.huang@linux.alibaba.com,
+	kernel_team@skhynix.com,
+	honggyu.kim@sk.com,
+	yunjeong.mun@sk.com,
+	Rakie Kim <rakie.kim@sk.com>
+Subject: Re: [PATCH 2/4] mm/mempolicy: Enable sysfs support for memory hotplug in weighted interleave
+Date: Mon, 10 Mar 2025 17:28:38 +0900
+Message-ID: <20250310082854.606-1-rakie.kim@sk.com>
+X-Mailer: git-send-email 2.48.1.windows.1
+In-Reply-To: <20250307182015.489780-1-joshua.hahnjy@gmail.com>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250308093452.3742-2-david.laight.linux@gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrNLMWRmVeSWpSXmKPExsXC9ZZnoe6pRefSDT7/0bOYs34Nm8X0qRcY
+	LX7ePc5ucXzrPHaL87NOsVhc3jWHzeLemv+sFqvXZDhweOycdZfdo7vtMrvH4j0vmTw2fZrE
+	7nFixm8Wj50PLT0+b5ILYI/isklJzcksSy3St0vgymh5V1twWKmi/cdOtgbGNukuRg4OCQET
+	id3nvboYOcHM9i0L2UHCbAJKEsf2xoCERQQ0JU60TmLuYuTiYBZYySTRtuA0M0hCWCBV4ti6
+	6ewgNouAqsTkQ1PYQGxeAWOJ5acesEHM1JRouHSPCcTmFLCT2PVjCVivkACPxKsN+xkh6gUl
+	Ts58wgJiMwvISzRvnQ22TELgDJvEz5N/WSAGSUocXHGDZQIj/ywkPbOQ9CxgZFrFKJSZV5ab
+	mJljopdRmZdZoZecn7uJERjEy2r/RO9g/HQh+BCjAAejEg/vg3ln04VYE8uKK3MPMUpwMCuJ
+	8KptP5UuxJuSWFmVWpQfX1Sak1p8iFGag0VJnNfoW3mKkEB6YklqdmpqQWoRTJaJg1OqgVGt
+	89h8YcepLb3/L+xIncVy6aPOsuOVX49d2enuu2aBd8upay8X7fUorGu7d2raRjVRpbLqeaG6
+	GzwmLC/qbq64uu0D81n152JZs7Rf/Vqr2vI+bf3iX4H5hXoZB+TqHz8VPvFHb9rU4PORKd4z
+	Ow7oNl53zjDfUbvMjSVs95arW27H30rlztNVYinOSDTUYi4qTgQA8vUg2l4CAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrGLMWRmVeSWpSXmKPExsXCNUNNS/fUonPpBr/OKlrMWb+GzWL61AuM
+	Fj/vHme3+PzsNbPF8a3z2C0Ozz3JanF+1ikWi8u75rBZ3Fvzn9Xi0LXnrBar12RY/N62gs2B
+	x2PnrLvsHt1tl9k9Fu95yeSx6dMkdo8TM36zeOx8aOnx7baHx+IXH5g8Pm+SC+CM4rJJSc3J
+	LEst0rdL4MpoeVdbcFipov3HTrYGxjbpLkZODgkBE4n2LQvZuxg5ONgElCSO7Y0BCYsIaEqc
+	aJ3E3MXIxcEssJJJom3BaWaQhLBAqsSxddPZQWwWAVWJyYemsIHYvALGEstPPWCDmKkp0XDp
+	HhOIzSlgJ7HrxxKwXiEBHolXG/YzQtQLSpyc+YQFxGYWkJdo3jqbeQIjzywkqVlIUgsYmVYx
+	imTmleUmZuaY6hVnZ1TmZVboJefnbmIEhu6y2j8TdzB+uex+iFGAg1GJh/fBvLPpQqyJZcWV
+	uYcYJTiYlUR41bafShfiTUmsrEotyo8vKs1JLT7EKM3BoiTO6xWemiAkkJ5YkpqdmlqQWgST
+	ZeLglGpgrHE4eSR5/YXCL+ohm9/aLLl/vHWWclD7ksW3eav/Vd53Mu44cWLiBdnlC79kMj89
+	zHey6U3d/o09+Su3vDm4n9/0weLAnFdTos8oeXXFJ+3NivRNXpvgWLrgaZBL3XKzEzaHrE6d
+	y6r+XP3m4Kq6xsX69YIJ39pma/HN7/48q5tn2kRvrkLvfCWW4oxEQy3mouJEAKmylgZZAgAA
+X-CFilter-Loop: Reflected
 
-On Sat, Mar 08, 2025 at 09:34:45AM +0000, David Laight wrote:
-> Both refer to positive values, size_t matches the other parameters.
+On Fri,  7 Mar 2025 10:19:59 -0800 Joshua Hahn <joshua.hahnjy@gmail.com> wrote:
 
-But why? The original code is written to mimic the parameters of
-the hexdump_to_buffer().
+Hi Joshua
+Thank you for your response regarding this patch.
 
-You probably want to say that this matches it after your other patch being
-applied (which is not yet the case).
+> On Fri,  7 Mar 2025 15:35:31 +0900 Rakie Kim <rakie.kim@sk.com> wrote:
+> 
+> Hi Rakie, thank you for your work on this patch! I think it makes a lot of
+> sense, given the discussion between Gregory & Honggyu in the weighted
+> interleave auto-tuning patch.
+> 
+> I have a few small nits and questions that I wanted to raise, but none that
+> should change the behavior at all : -)
+> 
+> > Previously, sysfs entries for weighted interleave were only created during
+> > initialization, preventing dynamically added memory nodes from being recognized.
+> > 
+> > This patch enables sysfs registration for nodes added via memory hotplug,
+> > allowing weighted interleave settings to be updated as the system memory
+> > configuration changes.
+> > 
+> > Signed-off-by: Rakie Kim <rakie.kim@sk.com>
+> > ---
+> >  mm/mempolicy.c | 51 +++++++++++++++++++++++++++++++-------------------
+> >  1 file changed, 32 insertions(+), 19 deletions(-)
+> > 
+> > diff --git a/mm/mempolicy.c b/mm/mempolicy.c
+> > index 385607179ebd..fc10a9a4be86 100644
+> > --- a/mm/mempolicy.c
+> > +++ b/mm/mempolicy.c
+> > @@ -3389,6 +3389,13 @@ struct iw_node_attr {
+> >  	int nid;
+> >  };
+> >  
+> > +struct iw_node_group {
+> > +	struct kobject *wi_kobj;
+> > +	struct iw_node_attr **nattrs;
+> > +};
+> > +
+> > +static struct iw_node_group *ngrp;
+> > +
+> >  static ssize_t node_show(struct kobject *kobj, struct kobj_attribute *attr,
+> >  			 char *buf)
+> >  {
+> > @@ -3431,8 +3438,6 @@ static ssize_t node_store(struct kobject *kobj, struct kobj_attribute *attr,
+> >  	return count;
+> >  }
+> >  
+> > -static struct iw_node_attr **node_attrs;
+> > -
+> >  static void sysfs_wi_node_release(struct iw_node_attr *node_attr,
+> >  				  struct kobject *parent)
+> >  {
+> > @@ -3448,7 +3453,7 @@ static void sysfs_wi_release(struct kobject *wi_kobj)
+> >  	int i;
+> >  
+> >  	for (i = 0; i < nr_node_ids; i++)
+> > -		sysfs_wi_node_release(node_attrs[i], wi_kobj);
+> > +		sysfs_wi_node_release(ngrp->nattrs[i], wi_kobj);
+> 
+> Nit: I think it is slightly awkward to have a global struct ngrp, and then have
+> its members passed individually like this. Of course there's nothing that
+> we can do for sysfs_wi_release's argument, but I think we can make the
+> arguments for sysfs_wi_node_release a bit cleaner. An idea would just be to
+> pass an integer (nid) instead of the nattrs[i] pointer. We also don't need
+> to pass wi_kobj, since it is accessible from within sysfs_wi_node_release.
+> 
+> Once we make both these changes, patch 3 becomes a little bit cleaner (IMHO),
+> where we acquire the lock for the ngrp struct, then access its contents,
+> and we don't have to pass two pointers as arguments when they are already
+> accessible via the global struct anyways.
+> 
 
--- 
-With Best Regards,
-Andy Shevchenko
+I completely agree with your observations about the use of
+ngrp and wi_kobj.
+When I was working on this patch, I aimed to minimize changes to the
+existing code. This approach led to the creation of similar code being
+used differently, as you pointed out. I'll make the necessary adjustments
+and update the patch to version 2.
 
 
+> >  	kobject_put(wi_kobj);
+> >  }
+> >  
+> > @@ -3486,12 +3491,10 @@ static int add_weight_node(int nid, struct kobject *wi_kobj)
+> >  		return -ENOMEM;
+> >  	}
+> >  
+> > -	node_attrs[nid] = node_attr;
+> > +	ngrp->nattrs[nid] = node_attr;
+> >  	return 0;
+> >  }
+> >  
+> > -struct kobject *wi_kobj;
+> > -
+> >  static int wi_node_notifier(struct notifier_block *nb,
+> >  			       unsigned long action, void *data)
+> >  {
+> > @@ -3504,10 +3507,10 @@ static int wi_node_notifier(struct notifier_block *nb,
+> >  
+> >  	switch(action) {
+> >  	case MEM_ONLINE:
+> > -		err = add_weight_node(nid, wi_kobj);
+> > +		err = add_weight_node(nid, ngrp->wi_kobj);
+> 
+> Same idea here, we probably don't need to pass wi_kobj into add_weight_node.
+> With that said, I can also see the argument for passing the struct itself,
+> since it saves a line of variable declaration & definition.
+> 
+> [...snip...]
+> 
+> Please let me know what you think! I hope you have a great day, thank you
+> again for this patch!
+> Joshua
+
+I will also update this issue in version 2.
+
+> 
+> Sent using hkml (https://github.com/sjp38/hackermail)
+> 
+
+Rakie
 
