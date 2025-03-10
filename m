@@ -1,62 +1,62 @@
-Return-Path: <linux-kernel+bounces-554732-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-554745-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 82157A59BB5
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 17:54:41 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A1202A59BE8
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 18:03:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3D039169B12
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 16:54:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DF2A316C87B
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 17:03:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1DF52343AB;
-	Mon, 10 Mar 2025 16:53:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DIVdvhd6"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CB1F230BC1;
+	Mon, 10 Mar 2025 17:03:01 +0000 (UTC)
+Received: from mail.cs.ucr.edu (mail.cs.ucr.edu [169.235.30.83])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15EB7230D3D;
-	Mon, 10 Mar 2025 16:53:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A28CD19004A;
+	Mon, 10 Mar 2025 17:02:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=169.235.30.83
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741625603; cv=none; b=kC7p842ak9eGfvYHHPmlka1dtTmdw7AqF3ooTbg/Oj4T2NPgTsHYu5bp82z57J7rQsX56i4FldzVnDe7YDtMDOa6zOrv/+ncoRcL5QNrv4ahfY2SxI1Z9qv52r1xac8aYEPUjeZCZjduwg1GnbBZS2wmyHDcj5nekqALXNnkBck=
+	t=1741626181; cv=none; b=IqYU1sP3ha+3/JN1RtNssXqvTv7QhL8Uz46WnarppGnA4uETUyhWMQF/hkgl6QawVo2g9bqU9JhxQ0Z7epJREvsDPWH4lfS6vchl8Yp1ZJqVxE2a/ZpJBGKopEfllGuo9uCNBNF2ujeY/sH9l7D/Jvh9HSQ3EAemSQx6JBesqD0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741625603; c=relaxed/simple;
-	bh=HBDhINxnPgvOAIWPpnpaFKFbX8KU13d1faK9QcRfp1M=;
+	s=arc-20240116; t=1741626181; c=relaxed/simple;
+	bh=hdUusOO1njK/6Sqr856+h049ZnrUaK5BHfpdHIEg3LM=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=KofvllsGm2j3EW2lTciHVVxtDr2/MjypCiawlgxq+v3h5oypEvhG3uLZv2j05765kbvz9G08a3YfI5KfwULHvBBGxQytx26DbT5dqhn2qLIsw7blQZ4zhYK8Lv/YvouRmD225uI4j+lhoq3Bzy1a4/A77y2OriWkx4ZJETo6tHE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DIVdvhd6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 73539C4CEE5;
-	Mon, 10 Mar 2025 16:53:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741625602;
-	bh=HBDhINxnPgvOAIWPpnpaFKFbX8KU13d1faK9QcRfp1M=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=DIVdvhd678HNL0faoELOfUPwicMwcwH+Arwd45toviruHfiau6Zg7APdPI7ZuA0RO
-	 69VlLuS8TqzutYj4w7dpuNsI2FXMZjWJbDHYEzQbC2136tOx1nInRQERf0ahGauFD4
-	 bjbtdEHDouBxw+hTPIidf1Ukb+mmoWZ+GyiS8q8GmIdP4FS5g98cHOYeb2fZH7jMgl
-	 EX+KdhWDv7XaCC1ZVdjwdjW/PdARLR1zQpCYGmjkIw3hFqCpU5ZZBoAxc7E2lHgcog
-	 3RJN3LswI3IuXGEPZgHkCDrhYyRyRDqcPwXZwgclfx9RN9GdPGhJuc3APwoyhO5SbL
-	 TcAFDWlANyc4g==
-From: SeongJae Park <sj@kernel.org>
-To: SeongJae Park <sj@kernel.org>
-Cc: Arnd Bergmann <arnd@kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Hyeongtak Ji <hyeongtak.ji@sk.com>,
-	Honggyu Kim <honggyu.kim@sk.com>,
-	Usama Arif <usamaarif642@gmail.com>,
-	damon@lists.linux.dev,
+	 MIME-Version; b=Mvzh5c2+GLw4SyU8W/46T6hgyPVOEIyWy5Lz3HwXsPOSPbKZm0T5eqnf9bk7ETCrpxrg34sXPKRaJmo3IzMpA/1Q8hxsC+mF2bDAxyw1QBJvr13kv8iJpl3h2OZ1Q3IPge5JNNgJoSDAZN/+mVy4Bjrem0ru7wLdrbgMPDYGBp8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tinylab.org; spf=none smtp.mailfrom=mail.cs.ucr.edu; arc=none smtp.client-ip=169.235.30.83
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tinylab.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=mail.cs.ucr.edu
+Received: by mail.cs.ucr.edu (Postfix, from userid 1000)
+	id BAB902C800243; Mon, 10 Mar 2025 09:55:58 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.cs.ucr.edu BAB902C800243
+X-Spam-Report: No
+X-Spam-Level: No
+Received: from kq.cs.ucr.edu (kq.cs.ucr.edu [169.235.27.223])
+	by mail.cs.ucr.edu (Postfix) with ESMTP id 9C2D92C8002FC;
+	Mon, 10 Mar 2025 09:55:57 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.cs.ucr.edu 9C2D92C8002FC
+Received: by kq.cs.ucr.edu (Postfix, from userid 101072)
+	id 84D6427E46DC; Mon, 10 Mar 2025 09:54:46 -0700 (PDT)
+From: Yuan Tan <tanyuan@tinylab.org>
+To: axboe@kernel.dk,
+	syzbot+f2aaf773187f5cae54f3@syzkaller.appspotmail.com
+Cc: linux-block@vger.kernel.org,
+	akpm@linux-foundation.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
 	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] mm/damon/sysfs-schemes: avoid Wformat-security warning
-Date: Mon, 10 Mar 2025 09:53:20 -0700
-Message-Id: <20250310165320.652617-1-sj@kernel.org>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250310161758.606151-1-sj@kernel.org>
-References: 
+	syzkaller-bugs@googlegroups.com,
+	willy@infradead.org,
+	falcon@tinylab.org,
+	tanyuan@tinylab.org
+Subject: [PATCH] block: add lock for safe nrpages access in invalidate_bdev()
+Date: Mon, 10 Mar 2025 09:54:00 -0700
+Message-Id: <20250310165400.3166618-1-tanyuan@tinylab.org>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <67ceb38a.050a0220.e1a89.04b1.GAE@google.com>
+References: <67ceb38a.050a0220.e1a89.04b1.GAE@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -65,29 +65,43 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-On Mon, 10 Mar 2025 09:17:58 -0700 SeongJae Park <sj@kernel.org> wrote:
+Syzbot reported a data-race in __filemap_add_folio / invalidate_bdev[1]
+due to concurrent access to mapping->nrpages.
+Adds a lock around the access to nrpages.
 
-> On Mon, 10 Mar 2025 14:51:37 +0100 Arnd Bergmann <arnd@kernel.org> wrote:
-> 
-> > From: Arnd Bergmann <arnd@arndb.de>
-> > 
-> > This warning is for potentially user-defined format strings:
-> > 
-> > mm/damon/sysfs-schemes.c:1664:4: error: format string is not a string literal (potentially insecure) [-Werror,-Wformat-security]
-> >  1664 |                         name);
-> > 
-> > Change this to use "%s" as the format and the name as the argument.
-> 
-> Thank you for this patch!
+[1] https://syzkaller.appspot.com/bug?extid=f2aaf773187f5cae54f3
 
-I also found there is another similar issue and sent another patch[1] for that.
-Thank you again for sharing the issue.
+Signed-off-by: Yuan Tan <tanyuan@tinylab.org>
+Reported-by: syzbot+f2aaf773187f5cae54f3@syzkaller.appspotmail.com
+---
+ block/bdev.c | 9 ++++++++-
+ 1 file changed, 8 insertions(+), 1 deletion(-)
 
-[1] https://lore.kernel.org/20250310165009.652491-1-sj@kernel.org
+I had already completed and tested this patch before Matthew sent the
+email. I'm not sure if this solution is correct. If it's not, please
+ignore the patch :)
 
+diff --git a/block/bdev.c b/block/bdev.c
+index 9d73a8fbf7f9..934043d09068 100644
+--- a/block/bdev.c
++++ b/block/bdev.c
+@@ -96,7 +96,14 @@ void invalidate_bdev(struct block_device *bdev)
+ {
+ 	struct address_space *mapping = bdev->bd_mapping;
+ 
+-	if (mapping->nrpages) {
++	XA_STATE(xas, &mapping->i_pages, 0);  /* we don't care about the index */
++	unsigned long nrpages;
++
++	xas_lock_irq(&xas);
++	nrpages = mapping->nrpages;
++	xas_unlock_irq(&xas);
++
++	if (nrpages) {
+ 		invalidate_bh_lrus();
+ 		lru_add_drain_all();	/* make sure all lru add caches are flushed */
+ 		invalidate_mapping_pages(mapping, 0, -1);
+-- 
+2.25.1
 
-Thanks,
-SJ
-
-[...]
 
