@@ -1,149 +1,111 @@
-Return-Path: <linux-kernel+bounces-554582-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-554585-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E726A59A2A
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 16:39:00 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B1ECDA59A2F
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 16:40:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9E5511887FD3
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 15:38:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 69A593A880C
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 15:40:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81B9D22E3F0;
-	Mon, 10 Mar 2025 15:38:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32FD622DFE5;
+	Mon, 10 Mar 2025 15:40:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ogurQhMQ";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="lO0UrGtg"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="HUzdea+k"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5305E2206BE;
-	Mon, 10 Mar 2025 15:38:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5C2C22DFB0
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 15:39:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741621110; cv=none; b=Qvz2AgUM5uHikFqh8Hj4w7/FAM8OX1PRuSv8kvUwGuGlDCMuGK3qwXwKuPaaFDspKv6U0GTRjNJSpoN7sWM9g/hB/Ln2fv0A3rewmW4wy40jMK4OS3KQRV6Ndl8PJFuhQTwN4I1aKIMg5Q474fYIrOAXGK9hxJKcpjqAidPTkpE=
+	t=1741621199; cv=none; b=uEYNmPmvzeCz6ioqso2HYn25toiDKYpyvGHStA11jS8OxoTDdGZsCSBT9fVnXqlwO9rv5hiWlynlS7N8UfNOWDvgxEP413nrXxYP4ps8xyJ4LydxMVqd6A1z2YASvH3YUzuR5zcml+WaQO7MzdFPU14grZlp5f8788NgYnv7szE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741621110; c=relaxed/simple;
-	bh=Nu0N+dD6APuQdLDWm6wIHVPj7WkCuoQLnQ5wWO5nfTM=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=B0OP8rVnGxgLTz0PAl/UHs6Kv7wD/yaHDdw7PC8zbsNJ9mFYO8o18S8pYvjrMFesheRJCIB0KdfT2mDz/sSE7YXe9JIelMH/5YiPQqAs3ke/Kb8LPPqDVaKpJIMY3wGVXeJynb9OInlgyyuWW1LIyH3Z5Xyd92vGz+lLYLcXO+c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ogurQhMQ; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=lO0UrGtg; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1741621107;
+	s=arc-20240116; t=1741621199; c=relaxed/simple;
+	bh=UgKyEekB99QTYNP4fJFy3O5FfG+351jcDbaPpf+tBa0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=bMRFRjzscJxCiHVgppv2/OPLf0J6967fuO2dyiHI798b63zeAY4+dPrYbPXk/ow2KwX9OikrDhHflQdlIpjfNuneterdmpqBIpMdJYHYMMAjyfbVDjjCeVRf5LXVLJr2LZgB0b3+GTySvxdNYlZok5Ara9I3l279Son9hUwqlX8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=HUzdea+k; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1741621196;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=K14g7P5Sc0PtDGYG0K97zMcD1wLmc9SWms5AZ+7zf6U=;
-	b=ogurQhMQelGRkCIAZJ4P6n1THgbSalyU4S35z+WCTF4GYkCYuWeG9rs9xK1P4mXavCpDFa
-	VW9mPenIxwXWRlRofe8qSx1Y0rJuNziCufpEe8WQKocoii89Z7lg3hLWfPX2BIzP59lmxl
-	kcZer8d/acvYycW3BcBYCKwvZanzCVeeYq5QVDzU5m6xiHcefzSOFRqDUvKcOl2CfyZTOC
-	m+s+iLLh7V3n4lzP3RQW6uq3sqLj/g91wsX6BhznLyYR+8C5wf6H9TyUDUqHHs+otaA6+w
-	DUNl4e+52esp+3xVjECU4H5jmtsjjE19ZDRQQ8JNjuPeGKiVjMFj4Q/vaBTFpA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1741621107;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=K14g7P5Sc0PtDGYG0K97zMcD1wLmc9SWms5AZ+7zf6U=;
-	b=lO0UrGtguucyRqXXsvhFDCbU594/VCO662mMwOebhwaT29nXqgsBBpk49QdHSZTXI6p+Ci
-	8sfOZnwHR0STmkBA==
-Date: Mon, 10 Mar 2025 16:38:24 +0100
-Subject: [PATCH v2 2/2] usb: dwc3: Don't use %pK through printk
+	bh=UgKyEekB99QTYNP4fJFy3O5FfG+351jcDbaPpf+tBa0=;
+	b=HUzdea+k2XvkE9S/Kpypm/eOYCJ3+o/33S7Sk3wcdOVXSeweApipfNCI2m/OlB1l5rq7FD
+	0bVjBdB2WibxxgF8TMQQxuu0JQahx/5PD38qAmAO0TVbGNUyztUXH17YgNl8klUh9Uo0Li
+	DuN9nn0h+lO5uew3aoji/z0yNvkIvgs=
+Received: from mail-lf1-f69.google.com (mail-lf1-f69.google.com
+ [209.85.167.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-76-AbeWwQj2N1-ut-WOrM7fEQ-1; Mon, 10 Mar 2025 11:39:55 -0400
+X-MC-Unique: AbeWwQj2N1-ut-WOrM7fEQ-1
+X-Mimecast-MFC-AGG-ID: AbeWwQj2N1-ut-WOrM7fEQ_1741621194
+Received: by mail-lf1-f69.google.com with SMTP id 2adb3069b0e04-5495a1c0be4so2503049e87.2
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 08:39:54 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741621193; x=1742225993;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=UgKyEekB99QTYNP4fJFy3O5FfG+351jcDbaPpf+tBa0=;
+        b=lF9Qw5lfELdzfVdkx1Ptk0IKl1RWFgCTJTfrwHk422btMWvq0g+KTqoXDNhjLTgwCE
+         mxF+YD+IXnNuLpgyhBpLPZRprg/8+e9w3CBHF8doB69GCTqX01QLLDJBSuCMcJy9f86a
+         kYogWoHO43FzWYLrpAK1J8vkk3Kmsz1z9mmEUWTJ1ZQNW3BA4SghTPgftwzvDHtL8SIA
+         Hu13ym6MqCVxqFkxdcMeLPqMyWIVZZGtTX4gJZVWsOLp+VPiv9aW4q6M25MJVqt8cORX
+         BSdnFehR+9G7dvZ0zMitIkEHxacduyoaGGgtsqwtyk4TLWeDUV6BUoQ4KwxuyExwcqQS
+         Xs/Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUro0YcwsLW3NFTB6IBebTMD3Cwk7/qYdlR86/kOzb1OGT/dM49lHHqMQCxNJOHwKLYFi6Drm0aSSVJggk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx2Oj7Oq1+jBKPI2JNramZsOOPoqrybA/DTPqm46nxbLh/VZHT5
+	wplKqS5mON2hGCOwdpT2ddVumoiqLFuhWmWqY3MZIzgjv3oxcgOSM0tJqOwmr/KVsRrE4iNjkyS
+	Z/o6qYBvNSvtXjm5zn5apuCMWh611C0qav9MQxvKPAxIeq7dgeZ7VUVs6keMNFYkmjRumQXPM8w
+	oHkJm8xWJb/3Mi9gFnFiEevyIrPG3xJ7fVaXVk
+X-Gm-Gg: ASbGncvfoJRRDXH+4grGiZSSj/1f+2tEiqsjyxnXA4f95QT/lqLjhISsDCxdHEzz5HB
+	TD941KYlMKNguBUgiFW4MDz4aJdx/YYppZIeNUi7sjyo42vYAjmFrcyTJjnQCySqKzgn76xWD
+X-Received: by 2002:a05:6512:1242:b0:549:905c:c3b9 with SMTP id 2adb3069b0e04-54990e27382mr4079654e87.9.1741621192633;
+        Mon, 10 Mar 2025 08:39:52 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IE8r6MosJU6bCJ7fTaIje1/2x6BKstRJc7xapTbeccshOaGXSyueQIe9iWTKagYPOWCFUMq4FUPddHh5u9bO0s=
+X-Received: by 2002:a05:6512:1242:b0:549:905c:c3b9 with SMTP id
+ 2adb3069b0e04-54990e27382mr4079607e87.9.1741621190775; Mon, 10 Mar 2025
+ 08:39:50 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20250310-restricted-pointers-usb-v2-2-a7598e2d47d1@linutronix.de>
-References: <20250310-restricted-pointers-usb-v2-0-a7598e2d47d1@linutronix.de>
-In-Reply-To: <20250310-restricted-pointers-usb-v2-0-a7598e2d47d1@linutronix.de>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- Patrice Chotard <patrice.chotard@foss.st.com>, 
- Thinh Nguyen <Thinh.Nguyen@synopsys.com>
-Cc: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, 
- =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1741621105; l=2586;
- i=thomas.weissschuh@linutronix.de; s=20240209; h=from:subject:message-id;
- bh=Nu0N+dD6APuQdLDWm6wIHVPj7WkCuoQLnQ5wWO5nfTM=;
- b=tlLMau6RpGLelX0xHjgc05oEUAK1+WfYuqDerDGMsQPeFxlMW2j6X66HABJ8+rbIsoPILb4Im
- /iIEGCY7TfJCBMLMNmThhuP9ukor1R55YOrlhka4s+6tBm0+GQ+Madc
-X-Developer-Key: i=thomas.weissschuh@linutronix.de; a=ed25519;
- pk=pfvxvpFUDJV2h2nY0FidLUml22uGLSjByFbM6aqQQws=
+References: <20250309172215.21777-2-vdronov@redhat.com> <c21c89d29f006945b6be7624599809b36574530e.camel@intel.com>
+ <Z86l9WiiP_4bFC8q@gmail.com> <d91942f7782fe1e1f1491de86d60bb14b2d5e781.camel@intel.com>
+In-Reply-To: <d91942f7782fe1e1f1491de86d60bb14b2d5e781.camel@intel.com>
+From: Vladis Dronov <vdronov@redhat.com>
+Date: Mon, 10 Mar 2025 16:39:39 +0100
+X-Gm-Features: AQ5f1JppX7aB_ARebLW62l8EsNs6FyfTqyQsbqGxChoyav7O61KfV8THxwKV9Zo
+Message-ID: <CAMusb+RJh-xvuFkNJoeVY_28W5_GR0pn+=gw3hLzi4rhdAKaXg@mail.gmail.com>
+Subject: Re: [PATCH -v3] x86/sgx: Warn explicitly if X86_FEATURE_SGX_LC is not enabled
+To: "Huang, Kai" <kai.huang@intel.com>, "mingo@redhat.com" <mingo@redhat.com>, 
+	"jarkko@kernel.org" <jarkko@kernel.org>
+Cc: "mingo@kernel.org" <mingo@kernel.org>, 
+	"linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>, 
+	"dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>, "hpa@zytor.com" <hpa@zytor.com>, 
+	"tglx@linutronix.de" <tglx@linutronix.de>, "bp@alien8.de" <bp@alien8.de>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "x86@kernel.org" <x86@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
-This is a revert of
-commit 04fb365c453e ("usb: dwc3: replace %p with %pK")
+Hi, Jarkko, Kai,
 
-When the formatting was changed from %p to %pK that was a security
-improvement, as %p would leak raw pointer values to the kernel log.
-Since commit ad67b74d2469 ("printk: hash addresses printed with %p")
-the regular %p has been improved to avoid this issue.
-On the other hand, restricted pointers ("%pK") were never meant to be used
-through printk(). They can unintentionally still leak raw pointers or
-acquire sleeping looks in atomic contexts.
+Thanks a ton for your suggestions and edits!
 
-Switch back to regular %p again.
+Hi, Ingo,
 
-Link: https://lore.kernel.org/lkml/20250113171731-dc10e3c1-da64-4af0-b767-7c7070468023@linutronix.de/
-Acked-by: Thinh Nguyen <Thinh.Nguyen@synopsys.com>
-Signed-off-by: Thomas Weißschuh <thomas.weissschuh@linutronix.de>
----
- drivers/usb/dwc3/dwc3-st.c | 2 +-
- drivers/usb/dwc3/gadget.c  | 6 +++---
- 2 files changed, 4 insertions(+), 4 deletions(-)
+Thank you many tons for your help and attention to this small
+patch and a TIP submission! I wasn't expecting such an...
+immediate response to my small suggestion, honestly.
 
-diff --git a/drivers/usb/dwc3/dwc3-st.c b/drivers/usb/dwc3/dwc3-st.c
-index ef7c43008946e15b72d88aba4941dc52bf0788d7..5d513decaacd22de15825dc061c2747cf09fef07 100644
---- a/drivers/usb/dwc3/dwc3-st.c
-+++ b/drivers/usb/dwc3/dwc3-st.c
-@@ -225,7 +225,7 @@ static int st_dwc3_probe(struct platform_device *pdev)
- 
- 	dwc3_data->syscfg_reg_off = res->start;
- 
--	dev_vdbg(dev, "glue-logic addr 0x%pK, syscfg-reg offset 0x%x\n",
-+	dev_vdbg(dev, "glue-logic addr 0x%p, syscfg-reg offset 0x%x\n",
- 		 dwc3_data->glue_base, dwc3_data->syscfg_reg_off);
- 
- 	struct device_node *child __free(device_node) = of_get_compatible_child(node,
-diff --git a/drivers/usb/dwc3/gadget.c b/drivers/usb/dwc3/gadget.c
-index 89a4dc8ebf948244a719f21cbbcce565cc1d8610..9a1ec31b6ab46077d3635d1bff3fa5b362bdd9ba 100644
---- a/drivers/usb/dwc3/gadget.c
-+++ b/drivers/usb/dwc3/gadget.c
-@@ -1971,12 +1971,12 @@ static int __dwc3_gadget_ep_queue(struct dwc3_ep *dep, struct dwc3_request *req)
- 		return -ESHUTDOWN;
- 	}
- 
--	if (WARN(req->dep != dep, "request %pK belongs to '%s'\n",
-+	if (WARN(req->dep != dep, "request %p belongs to '%s'\n",
- 				&req->request, req->dep->name))
- 		return -EINVAL;
- 
- 	if (WARN(req->status < DWC3_REQUEST_STATUS_COMPLETED,
--				"%s: request %pK already in flight\n",
-+				"%s: request %p already in flight\n",
- 				dep->name, &req->request))
- 		return -EINVAL;
- 
-@@ -2165,7 +2165,7 @@ static int dwc3_gadget_ep_dequeue(struct usb_ep *ep,
- 		}
- 	}
- 
--	dev_err(dwc->dev, "request %pK was not queued to %s\n",
-+	dev_err(dwc->dev, "request %p was not queued to %s\n",
- 		request, ep->name);
- 	ret = -EINVAL;
- out:
-
--- 
-2.48.1
+Best regards,
+Vladis
 
 
