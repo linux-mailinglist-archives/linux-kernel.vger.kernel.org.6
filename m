@@ -1,142 +1,100 @@
-Return-Path: <linux-kernel+bounces-555170-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-555172-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B2812A5A65D
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 22:44:35 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 39529A5A663
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 22:46:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0E1D67A4BFC
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 21:43:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E6C7118905EB
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 21:46:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A70D1E47A5;
-	Mon, 10 Mar 2025 21:44:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E986B1E5B84;
+	Mon, 10 Mar 2025 21:46:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="RC7gRiAC"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="k5NbGdcn"
+Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CAEE1581F9;
-	Mon, 10 Mar 2025 21:44:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF99C1E573F;
+	Mon, 10 Mar 2025 21:46:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741643065; cv=none; b=psc317zFOCbOZEo9zhvw7EPnQnMxnceYMILrMon0CErY8usSNuLUYq3qPjXCcV5RoEpEkzJ5JftnxEMAkWpy36EiW2rMUG4q7oOOgIirpwp8hlA4I0o8O9WIvDZbZ/DNs3DCMl9jz7v4GotkjJq2UGdshf96LxG4uhTQeZqGDrI=
+	t=1741643177; cv=none; b=DLFfAa2qbNlF+4lxR8V5cHrcO1QlQFPrJcXQIueZ6+4IBKam0NQIdnZGSvpMTgCJ720D1XHtVuMwIY5TtJCFiV0ekYhSjXt2hZXQbTyYAimknvwYOs0WN8f0k3enueTW75+iolh/tRJQ46bE9vu65Xkh5byzbijnu0FTeiUO3Ow=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741643065; c=relaxed/simple;
-	bh=G7Fme57u2IzU0aCRudFHsqV8wPt8fHJGI84qD4gstHk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=J+nu4W+kEnyg0QmvQ82rRbMPFN76i5LarDMyFF0Hkq9tE7EFdqtrAlX+gidJpGctGUtK2usoKF+RTFPkpc/OFjG0XOS7C4tu2N4foGSliLWUlbGx2haUmN51wNWcDROFC3PYL3O/lddoEML4JglydtDe+n1+xrDDIKY6Z+oA2wI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=RC7gRiAC; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id A959A40E0217;
-	Mon, 10 Mar 2025 21:44:20 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id V8iI1EDRSufR; Mon, 10 Mar 2025 21:44:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1741643056; bh=YrWW6plKqCIN0T1rbvfgL9glpKdkbBP+e8JtMnvli14=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=RC7gRiACbr5X2bOvgLgQHCbYrfco5yY5J4Zyzf1tmLdAua6uP6NdKhnSP7EdroM6p
-	 68eXZ/A6rncjQlT88g/IM0ocOOOKQBoKd5kjHYHc78pwZbfE8oR7eE2S+bxh5a3jUt
-	 i3fhlUaVxs58JY3i++65Kq08aO/RkftEWfBmXxxcDiGU9YWC4Svhucg0zjDYSzPOTC
-	 4/Lx1h8l2qYxz7fLoVLsMIE8Ueo3JfpVBH8wN2JYpnLLRqKRs6v2VW44oVhvo3NsYr
-	 pPDiG+53Jc1qReJr5hLePbxKU+YSr5M5Cm3GltXwes8zI+XEuiuMpVH4FBlCxKJ5Nm
-	 XkFUJh17/yacZzUVcHpNlp0IOpR+06B3pxDBOu3lbSmsJIvg+L0/aTcfrQjHUGYmGQ
-	 4JkBd7Lt5DDHvK7lgYZ+L5AJ+OghMqDi8Xmn+SlksSy6lfHjiAhhIVc+MgCSMjZZG4
-	 cDQ7vl3vgyTqpCzakt+/6tqG9SKHKSD3ZlCv24bnXCjj1tgXrHp13A3Wb2L3ECCrYg
-	 QgKVISQPzNvvdu795eWiGTXfdlD+gNxS/gz7t33zi+2vHbzWzIJQUyALpJXc0nne2v
-	 6PgcaM9RegqMtqeYGqs9SUITZXoDbdcxh7J3LXSIBwg82/V9Ie3K8BjdTezhDZ1lvC
-	 KuyiROtXrBe0rCJNiNxGuXd0=
-Received: from zn.tnic (pd95303ce.dip0.t-ipconnect.de [217.83.3.206])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 31B8C40E015D;
-	Mon, 10 Mar 2025 21:44:03 +0000 (UTC)
-Date: Mon, 10 Mar 2025 22:44:02 +0100
-From: Borislav Petkov <bp@alien8.de>
-To: Ard Biesheuvel <ardb@kernel.org>
-Cc: Brian Gerst <brgerst@gmail.com>, Oleg Nesterov <oleg@redhat.com>,
-	linux-kernel@vger.kernel.org, x86@kernel.org,
-	Ingo Molnar <mingo@kernel.org>, "H . Peter Anvin" <hpa@zytor.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Uros Bizjak <ubizjak@gmail.com>, stable@vger.kernel.org,
-	Fangrui Song <i@maskray.me>, Nathan Chancellor <nathan@kernel.org>,
-	Andy Lutomirski <luto@kernel.org>
-Subject: Re: [PATCH] x86/stackprotector: fix build failure with
- CONFIG_STACKPROTECTOR=n
-Message-ID: <20250310214402.GBZ89dIo_NLF4zOSKh@fat_crate.local>
-References: <20241105155801.1779119-1-brgerst@gmail.com>
- <20241105155801.1779119-2-brgerst@gmail.com>
- <20241206123207.GA2091@redhat.com>
- <CAMj1kXGKCJfBVqgsqjX1bA_SY=503Z-tJV893y5JAwoVs0BUfw@mail.gmail.com>
- <20241206142152.GB31748@redhat.com>
- <CAMj1kXGo5yv56VvNMvYBohxgyoyDtZhr4d4kjRdGTDQchHW0Gw@mail.gmail.com>
- <CAMzpN2iUi_q_CfDa53H8MEV_zkb8NRtXtQPvOwDrEks58=3uAg@mail.gmail.com>
- <CAMj1kXF8PZq4660mzNYcT=QmWywB1gOOfZGzZhi1sQxQacUX=g@mail.gmail.com>
+	s=arc-20240116; t=1741643177; c=relaxed/simple;
+	bh=PypOLmbY/Kmt4w5khYXlz7jfuc6fDNP0JmNKzdEvUHc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=QGIiQNS57k6hKBiDbIGg7wyxZbkuUT0kySMGPeXwqfeAOu8zA7IFVXJnSR/KJG1iXqGYQ+EUgWY07Tz10kQ4nxSh8pcAIw82dnavYU3cZZz6PC8BuzzzaVFnW0LuqO0Bbc9zOBCs7l7+DLtuW7lTxri94PlNaVXpXh0XX7r5qPs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=k5NbGdcn; arc=none smtp.client-ip=209.85.208.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-30795988ebeso50995411fa.3;
+        Mon, 10 Mar 2025 14:46:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741643174; x=1742247974; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=PypOLmbY/Kmt4w5khYXlz7jfuc6fDNP0JmNKzdEvUHc=;
+        b=k5NbGdcnCbvkbs4zNc/1pip1PmpxWcXYdfcYveobVexyT2Nb8Z58iBxJKTu0Tpcxmo
+         hJ9iUz8Akccp9bCI+9Gq4tb//Hv5KmV5b0F6ZUxRKCSSEuqFZ3NARvD2BuC0fFaPUiB4
+         Gc7M4/uwzDQNmOmXilAhM+R5rSZdiVuneijbFrRwbtfpz+Cw9B+/kWCg3GtcJ40DXrFK
+         zI2WHy0TGyxAU+G6DooJ7+mCdgczOTDsnQC+Hb8EHTXmoeI4ltJddi9AfohOw34j2ITM
+         wkZnxRyWyeHa7gzQpOE1nwBzEdMmC97BtG/dvDLrgoOh8c4sfB7RXPRpmtq82gGhtVF/
+         kaOQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741643174; x=1742247974;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=PypOLmbY/Kmt4w5khYXlz7jfuc6fDNP0JmNKzdEvUHc=;
+        b=PtnlTKKytpR3yvwNPZ1zRcZC1OViJtXgPDw8gfji8vmoi8/EScJjRcz/mNTrq61AWi
+         l0ID8zkHTu8tMbFDVf9WEL8uHlc3nDpVI0yO/DyzMXB5YXeTgI8GDP5bZgrGxCoBQr0i
+         HI7siZ4V1Cw80a0gM2HQEvkR0hyE6cjYQutr3qk29QUZTHXmvnrUikpYMTGyP8Y3xytI
+         Gaw1WgMjbMrKtpj3Vj5oY2kk9xQYX5MWFjjLwmaNmAHKohJzkLt81Lpi2RxmnxbF2BZi
+         fH3LGXZbckjFMPozZ16bVB1tMgU5hTm7XV3YSLUswm1p5KEdp9+Dl4jCbKo0EXOu4DtY
+         yWTg==
+X-Forwarded-Encrypted: i=1; AJvYcCUNLPC7go7qrWbe9FlhoZDdBb45N+BYQdYIWhcFEVfPTr9qfmh4pwibbxEEpK6pfReEbGN3ayYypOS2wRCANcQ=@vger.kernel.org, AJvYcCV9FrZf7dJZe1qbBK9OWQmpY2TzlzKNHwDbfrG1Ntg/4ixpGdYQ3Ny/iwy9dMvKUt44nzLsHI/FBlLwckQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyyk6XCU0k6tEEBxbllyI9Q5HMVZwCDodjOAA9RTqxcnPVEn2RX
+	GavHlzLJJ1gb4W8Gw5sZoHOIqk5qqh300vBGgWKgXozMT0c9r/KYSlffVDRWhPwscv77WqrNJGp
+	Jd5ZUsxhsGOai93pvr9PCoD4cTgA=
+X-Gm-Gg: ASbGncvXN9LQ9IgH/88CDyFCdGDFfJM7vPrPEpunDRaHQcm5r78Q3ZM/+yZXQy+gafI
+	XuOoRY2R5uk5x0As3PxEjXKQc9labfuG01FXr4lVxTWJqX1HvtMg18duyBF9Os4zcattAaJE9WZ
+	iAlgUdTyxUpDIEdy0PHEGb1OI=
+X-Google-Smtp-Source: AGHT+IGi6M0JVamYcsk9BY8Nm+Uy6NFRrDroERT6SAoVfnpAJRamyLT/EajOTfza+mYlX9RlNGQJLXE/bpEjgTh9824=
+X-Received: by 2002:a05:651c:1a0b:b0:309:2ed:7331 with SMTP id
+ 38308e7fff4ca-30bf453cdb5mr63855891fa.18.1741643173750; Mon, 10 Mar 2025
+ 14:46:13 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CAMj1kXF8PZq4660mzNYcT=QmWywB1gOOfZGzZhi1sQxQacUX=g@mail.gmail.com>
+References: <6-mv8ahCblqal1f_T1RcVPPPb6QEedsAXlhmcyCNC-lnvAj1USOInn0YNogItuEdy_KthnPdFDElN1F6A9ncwA==@protonmail.internalid>
+ <20250210-rust-analyzer-macros-core-dep-v3-1-45eb4836f218@gmail.com>
+ <874j055csy.fsf@kernel.org> <CAJ-ks9mofNbtGqoYBummkfxZ+zrmEHg5P6viVwwgs9-BuNGbZg@mail.gmail.com>
+ <CANiq72=_LW8dBbFbQz=tuuck07OhpPdPGuiEtq-SQ1=g-PyNFw@mail.gmail.com> <CAJ-ks9mLBNwm2869kczSpnvRqi_LPH9x1ayzsmwELpuDdDndDA@mail.gmail.com>
+In-Reply-To: <CAJ-ks9mLBNwm2869kczSpnvRqi_LPH9x1ayzsmwELpuDdDndDA@mail.gmail.com>
+From: Tamir Duberstein <tamird@gmail.com>
+Date: Mon, 10 Mar 2025 17:45:36 -0400
+X-Gm-Features: AQ5f1JoVNOtEWaZtMvuq9crDueDZsXzMOw8iGd5n2hggGCRmdQQDtcWS-YbSdB4
+Message-ID: <CAJ-ks9k1orFKE_PBNSMj5FCb0m5r0v6nJWaTBar7uH82AXnvHw@mail.gmail.com>
+Subject: Re: [PATCH v3] scripts: generate_rust_analyzer.py: add missing macros deps
+To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Cc: Andreas Hindborg <a.hindborg@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, 
+	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
+	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Alice Ryhl <aliceryhl@google.com>, 
+	Trevor Gross <tmgross@umich.edu>, Boris-Chengbiao Zhou <bobo1239@web.de>, Fiona Behrens <me@kloenk.dev>, 
+	Kees Cook <kees@kernel.org>, rust-for-linux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Chayim Refael Friedman <chayimfr@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 
-Just to report this, bisection tomorrow unless someone figures it out in the
-meantime...
+Hi Miguel, gentle ping on this. Please let me know what, if anything,
+is required to move this forward.
 
-This is 64-bit, allmodconfig, clang:
-
-clang --version
-Ubuntu clang version 15.0.7
-Target: x86_64-pc-linux-gnu
-Thread model: posix
-InstalledDir: /usr/bin
-
-This guy:
-
-Ubuntu clang version 18.1.3 (1ubuntu1)
-Target: x86_64-pc-linux-gnu
-Thread model: posix
-InstalledDir: /usr/bin
-
-on the other box builds fine.
-
-tip/master:
-
-commit bc6bc2e1d7fa7e950c5ffb1ddf19bbaf15ad8863 (HEAD, refs/remotes/tip/master)
-Merge: f00b8d0b903a 72dafb567760
-Author: Ingo Molnar <mingo@kernel.org>
-Date:   Mon Mar 10 21:57:15 2025 +0100
-
-    Merge branch into tip/master: 'x86/sev'
-    
-     # New commits in x86/sev:
-        72dafb567760 ("x86/sev: Add missing RIP_REL_REF() invocations during sme_enable()")
-    
-    Signed-off-by: Ingo Molnar <mingo@kernel.org>
-
-
-vmlinux.o: warning: objtool: set_ftrace_ops_ro+0x30: relocation to !ENDBR: .text+0x180475
-Absolute reference to symbol '__ref_stack_chk_guard' not permitted in .head.text
-make[3]: *** [arch/x86/Makefile.postlink:28: vmlinux] Error 1
-make[2]: *** [scripts/Makefile.vmlinux:77: vmlinux] Error 2
-make[2]: *** Deleting file 'vmlinux'
-make[1]: *** [/home/amd/kernel/linux/Makefile:1234: vmlinux] Error 2
-make[1]: *** Waiting for unfinished jobs....
-make: *** [Makefile:251: __sub-make] Error 2
-
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+Cheers.
+Tamir
 
