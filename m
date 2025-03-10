@@ -1,157 +1,99 @@
-Return-Path: <linux-kernel+bounces-553744-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-553745-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 55B59A58E5D
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 09:41:09 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B8C4EA58E63
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 09:41:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0025116603C
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 08:41:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BDA5B1886D7C
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 08:41:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 563C1224220;
-	Mon, 10 Mar 2025 08:40:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D91DE224227;
+	Mon, 10 Mar 2025 08:41:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="CEsT3FM0";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="FJTg7RCm";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="CEsT3FM0";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="FJTg7RCm"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SDGmw8H/"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3733D22422D
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 08:40:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A759E545;
+	Mon, 10 Mar 2025 08:41:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741596047; cv=none; b=T1k36zwkECE+WE0cBmEZY180XTeDvlhWAyvdL07Ptjl55L3YbuxQL+NSXg6F+ak0GdL16G+7cMF6uv+juxaiLM9qzdWLjiATMVjsyk3BT89cIu95rrmzD88+DH0XvL28cXFf+4+1hYmp2t5MLwqkfco9db1pcggTvjyyGQyKdkU=
+	t=1741596062; cv=none; b=VTVsrhBOFOw5icA1jmC6BXGTbc22o6ZC6570tpAaKeB+iWCtij2Es/0ysLBsgQVUz5laICPNrBuD/1L/neBpKMJWofwU4L8AQ5/S31Et2Sseg+SXB9mlZpqlTrm9SXHuSNH5FuNBFffwhQR5yLuly8q5GSESUOuH2gsJbBJ7YC0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741596047; c=relaxed/simple;
-	bh=7/4dvJM4xNGOtXUfjg/A92n29Hnc7theTI/+weQ2Ytc=;
+	s=arc-20240116; t=1741596062; c=relaxed/simple;
+	bh=wtR3UpPoMz+wCe+/hOCNij3NuEYuHFbuLlXSxRojof8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tqLIvKYcf/UreOAyAvQonPpoukGKvYRifVtdHdtL57ch7jKOaCtVdmelSeKHReYHUd63s9afmST6qLxPOM8cwtYRw6LrmtBZ8o6fLr/JH62Q0ZcHdg0E588fMd4V3ZkLYWWm/LEsXSHMDA9FG1Lih09n4MQHMfiwjwv3FF/V6ZI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=CEsT3FM0; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=FJTg7RCm; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=CEsT3FM0; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=FJTg7RCm; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from kitsune.suse.cz (unknown [10.100.12.127])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 32B02210F3;
-	Mon, 10 Mar 2025 08:40:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1741596044; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=mTErlNHYltRpOX8C1wmUnBsAoRxLsP2r7CcqnO1N75E=;
-	b=CEsT3FM0Za7//x1kKU0c5sW3deok+Be9FaWxLRqFBtEugUe3w/b9dMr1Yby6lvy0tjr+q9
-	iGnJKEVdfalcF0uxLP/QpxDShGD+MTW1VArmWtZCp66XfhcCiPMo0jwplCIhfZabXCFxHR
-	EskGy2I2Cnpb0g4vE+bQc5OqaNVSLPM=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1741596044;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=mTErlNHYltRpOX8C1wmUnBsAoRxLsP2r7CcqnO1N75E=;
-	b=FJTg7RCm0Sd0oTuAHmR4U53BvFU59JBvHUi9N/EmilDwODzDuIZIZeV18DenRzbB9WVf5n
-	6emD59HI9/9rRyAg==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1741596044; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=mTErlNHYltRpOX8C1wmUnBsAoRxLsP2r7CcqnO1N75E=;
-	b=CEsT3FM0Za7//x1kKU0c5sW3deok+Be9FaWxLRqFBtEugUe3w/b9dMr1Yby6lvy0tjr+q9
-	iGnJKEVdfalcF0uxLP/QpxDShGD+MTW1VArmWtZCp66XfhcCiPMo0jwplCIhfZabXCFxHR
-	EskGy2I2Cnpb0g4vE+bQc5OqaNVSLPM=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1741596044;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=mTErlNHYltRpOX8C1wmUnBsAoRxLsP2r7CcqnO1N75E=;
-	b=FJTg7RCm0Sd0oTuAHmR4U53BvFU59JBvHUi9N/EmilDwODzDuIZIZeV18DenRzbB9WVf5n
-	6emD59HI9/9rRyAg==
-Date: Mon, 10 Mar 2025 09:40:43 +0100
-From: Michal =?iso-8859-1?Q?Such=E1nek?= <msuchanek@suse.de>
-To: linuxppc-dev@lists.ozlabs.org
-Cc: Madhavan Srinivasan <maddy@linux.ibm.com>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Nicholas Piggin <npiggin@gmail.com>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Naveen N Rao <naveen@kernel.org>,
-	Masahiro Yamada <masahiroy@kernel.org>,
-	Nicolas Schier <nicolas@fjasle.eu>,
-	Bjorn Helgaas <bhelgaas@google.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] powerpc/boot: Fix build with gcc 15
-Message-ID: <Z86liwlwP5WvrEkw@kitsune.suse.cz>
-References: <20250307092055.21986-1-msuchanek@suse.de>
+	 Content-Type:Content-Disposition:In-Reply-To; b=WUNjwOsWK1Ma7NTeCZHGZfTp2NI4wLsOKcPp40RAt6QL6YjHCWuFa1zt2dWiE6U2K574tPNoII6AM3AobZOq0W06pfa+sDquKc8NPnA3MZr2PDQv+hvEE8+6NeEXTaGvBFpWgrEjCYSan9+DD9m5nkcqqAhZABe4FJP3sqKDRTM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SDGmw8H/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C68EAC4CEE5;
+	Mon, 10 Mar 2025 08:41:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741596061;
+	bh=wtR3UpPoMz+wCe+/hOCNij3NuEYuHFbuLlXSxRojof8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=SDGmw8H/0tdvzIu9ylKV+WU+tIIZdDiS5RJEwyZD5VdIcDKJVBhCz+QsETlvT5SWN
+	 z2J76go0xVsuWaXnf9ZTIGgaXxHkTRdVTP2TZT+evktcIfeu+oMfxZJBaOtjT3Penl
+	 xrzWDJ6ncKadlJYVM38Ve1aVGo+4oaW/w0EX/sZ6yrHwAU1iTU9GHYCzaYFvlG2MeR
+	 xtTcUv36qHIdq10TVvpcP8FOMGAjcvJSP2fE1GhgFcSTTim/OehHu6gOUdR17QrImQ
+	 WENwykAGLHFVrpS0FjQJv8OJGr7JRMjJ+tGpQpE2Pb1YsQO1+RvoCPDOW3AAWLcBYa
+	 MnWZLRfXQ2aIg==
+Date: Mon, 10 Mar 2025 09:40:57 +0100
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Artur Weber <aweber.kernel@gmail.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Florian Fainelli <florian.fainelli@broadcom.com>, 
+	Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>, 
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Alex Elder <elder@kernel.org>, Stanislav Jakubek <stano.jakubek@gmail.com>, 
+	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
+	~postmarketos/upstreaming@lists.sr.ht
+Subject: Re: [PATCH v3 1/9] clk: bcm: kona: Move CLOCK_COUNT defines into the
+ driver
+Message-ID: <20250310-proficient-free-antelope-abb6b7@krzk-bin>
+References: <20250308-kona-bus-clock-v3-0-d6fb5bfc3b67@gmail.com>
+ <20250308-kona-bus-clock-v3-1-d6fb5bfc3b67@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250307092055.21986-1-msuchanek@suse.de>
-X-Spam-Score: -4.30
-X-Spamd-Result: default: False [-4.30 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	RCPT_COUNT_SEVEN(0.00)[10];
-	MISSING_XM_UA(0.00)[];
-	RCVD_COUNT_ZERO(0.00)[0];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[linux.ibm.com,ellerman.id.au,gmail.com,csgroup.eu,kernel.org,fjasle.eu,google.com,vger.kernel.org];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:email]
-X-Spam-Flag: NO
-X-Spam-Level: 
+In-Reply-To: <20250308-kona-bus-clock-v3-1-d6fb5bfc3b67@gmail.com>
 
-On Fri, Mar 07, 2025 at 10:20:52AM +0100, Michal Suchanek wrote:
-> Similar to x86 the ppc boot code does not build with GCC 15.
+On Sat, Mar 08, 2025 at 08:50:39AM +0100, Artur Weber wrote:
+> CLOCK_COUNT defines for each CCU are stored in the DT binding header.
+> This is not correct - they are not used by device trees, only internally
+> by the driver.
 > 
-> Copy the fix from
-> commit ee2ab467bddf ("x86/boot: Use '-std=gnu11' to fix build with GCC 15")
+> Move the CLOCK_COUNT defines directly into the driver in preparation
+> for dropping them from the DT binding include.
 > 
-> Signed-off-by: Michal Suchanek <msuchanek@suse.de>
+> Signed-off-by: Artur Weber <aweber.kernel@gmail.com>
 > ---
->  arch/powerpc/boot/Makefile | 1 +
->  1 file changed, 1 insertion(+)
+>  drivers/clk/bcm/clk-bcm21664.c |  8 ++++++++
+>  drivers/clk/bcm/clk-bcm281xx.c | 10 ++++++++++
+>  2 files changed, 18 insertions(+)
 > 
-> diff --git a/arch/powerpc/boot/Makefile b/arch/powerpc/boot/Makefile
-> index 1ff6ad4f6cd2..e6b35699c049 100644
-> --- a/arch/powerpc/boot/Makefile
-> +++ b/arch/powerpc/boot/Makefile
-> @@ -33,6 +33,7 @@ else
->  endif
+> diff --git a/drivers/clk/bcm/clk-bcm21664.c b/drivers/clk/bcm/clk-bcm21664.c
+> index 520c3aeb4ea9c4a431512c0909f9545c1761d17a..fa6e1649d6f5f459b63026109caea9e2f72e22dd 100644
+> --- a/drivers/clk/bcm/clk-bcm21664.c
+> +++ b/drivers/clk/bcm/clk-bcm21664.c
+> @@ -17,6 +17,8 @@ static struct peri_clk_data frac_1m_data = {
+>  	.clocks		= CLOCKS("ref_crystal"),
+>  };
 >  
->  ifdef CONFIG_PPC64_BOOT_WRAPPER
-> +BOOTTARGETFLAGS	+= -std=gnu11
+> +#define BCM21664_ROOT_CCU_CLOCK_COUNT	(BCM21664_ROOT_CCU_FRAC_1M + 1)
 
-I suppose this should be above the ifdef, not below. I build only 64S
-but I expect any other platforms that build boot code will be equally
-affected.
+I hit that wall too, no worries. It might surprise you but 0+1 != 1 :),
+so you redefine a define. You need to test this patch bisectability.
 
-Thanks
+Best regards,
+Krzysztof
 
-Michal
-
->  BOOTTARGETFLAGS	+= -m64
->  BOOTTARGETFLAGS	+= -mabi=elfv2
->  ifdef CONFIG_PPC64_ELF_ABI_V2
-> -- 
-> 2.47.1
-> 
 
