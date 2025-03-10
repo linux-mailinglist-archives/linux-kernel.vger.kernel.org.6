@@ -1,257 +1,154 @@
-Return-Path: <linux-kernel+bounces-554677-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-554673-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 535D5A59B48
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 17:41:39 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 72A9DA59B3F
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 17:40:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 862683A6E87
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 16:41:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 889E918871E6
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 16:40:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AAFA0230996;
-	Mon, 10 Mar 2025 16:40:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCD62230D2B;
+	Mon, 10 Mar 2025 16:40:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="rAJfGgvw"
-Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2084.outbound.protection.outlook.com [40.107.93.84])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="cZAJdWPe"
+Received: from relay8-d.mail.gandi.net (relay8-d.mail.gandi.net [217.70.183.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A5A622F17C
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 16:40:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.84
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741624839; cv=fail; b=gKPmOP2WPYcrbsWJxEpRfWNuTUKDuurDw4/ZR1M3M81ak67X18xxAAU+gUaqFvXqcKzgsfEZ5zsXLijaRM9hw1uw3Rd1+uNNeJVMTLV6WihIF7sXTGcBK74aFbhR7F/B1tfjne05HGjMZDWS90J8ErduGYgKIyQr5S5bz07N8xk=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741624839; c=relaxed/simple;
-	bh=LdY2Wrh8pA3HInJObcW0Z8BXruB8v3H4H6WBRzvjHjo=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=FqJyFr+PfLW9kuOXBrbzTa7GM4qVQIBZ/5bzZT8V9V1IHXZmJKrarml8GLa2SV1f3z2PqXu2WqWj0IM5uKMHyeJIJrrF8kTvzYYQCsiNQVTrzvVc+myvN8jptto1roB4KrmObv3+kJfB3MOH3yi1J0HLeApSphBkD59nVtGQh+A=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=rAJfGgvw; arc=fail smtp.client-ip=40.107.93.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Xi2YiNHkH6JU2trxzv0+Tl3lQJdkWRsUexlu9HG8v/DvJCbgI9NnNq/gGOHu4MFZWe9hgZJzI92r1eyDGEtgMk2+RUPCLvJru0i1ifxOkrHWlf9Z1W7R+yf1Q1yJ4Ob2u1gRdUGxrVSPEkxMTx6tZIbfBhZJnXCKtwpFUGFDxcMfXRH1fy3BpQjhyXCN1IVctKTD0SapTFXvoBYKrYnUKmmh5QRTY/Q+ght/SdCePh8ttJyDxcBh2UXs70hLlGrUJthxKTnj+SLV0URWjdmYtNFawngriY8MbHzpGS9M2xsDFUXKGdpkVySY0xg6wPkEpFgrykJaVOJS2Dm92C15jA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Vy1e7AbaI0l0iyO3jFfUGq3avsKRwSRnj9oCBE44DL0=;
- b=WdRdrU4hOrcW9pux500TBRPY0WpfaAqbN6np0PPC6jOl3OHPy4LJpR9LODb+r4gRughcVepkRmYjpvmqS8LxG9QEbrKa8j6LIeDDqOe5T18DrJh2KcLc24nLgDS7XJlwinOv5Mb26llEP0NeTEmtGm7hjzZH0716a258jqf2t+J2PexIDjW32YDaqNuMG/izdh4AomfI9Neu8UKlLgsOZJR9YyXPhWjEvlZO7K/6RDQmLzaj5Ff76Arcgfd/WHUqj8fC7AzgICY1IgGqX+Rq2B4Z052JCFCZIcKlSGHeW0kqJoLh6KQdU1LcJmglJ27ZcU/ZorY8NfGqZ4HCYE7ZcA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=linutronix.de smtp.mailfrom=amd.com;
- dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
- header.from=amd.com; dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Vy1e7AbaI0l0iyO3jFfUGq3avsKRwSRnj9oCBE44DL0=;
- b=rAJfGgvwl0lFYMt3rzb8q8D0yFuiMTqfqAnWMWlGKrP7gACYCbRuyfzipOhhBCsPmOkh5ZKX1VInOK73VCZrzt1AetbYFf0t0OVTSJ94fv+HEl31p198/tJpBOSttBt0MUradBUZPmYLfAIEMhaqkeyEBG+4/CFf2G0EqNIMjuY=
-Received: from BL1PR13CA0071.namprd13.prod.outlook.com (2603:10b6:208:2b8::16)
- by SJ5PPF1C7838BF6.namprd12.prod.outlook.com (2603:10b6:a0f:fc02::98d) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8511.26; Mon, 10 Mar
- 2025 16:40:34 +0000
-Received: from BL6PEPF00022573.namprd02.prod.outlook.com
- (2603:10b6:208:2b8:cafe::78) by BL1PR13CA0071.outlook.office365.com
- (2603:10b6:208:2b8::16) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8534.18 via Frontend Transport; Mon,
- 10 Mar 2025 16:40:33 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- BL6PEPF00022573.mail.protection.outlook.com (10.167.249.41) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.8534.20 via Frontend Transport; Mon, 10 Mar 2025 16:40:33 +0000
-Received: from tiny.amd.com (10.180.168.240) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 10 Mar
- 2025 11:40:32 -0500
-From: David Kaplan <david.kaplan@amd.com>
-To: Thomas Gleixner <tglx@linutronix.de>, Borislav Petkov <bp@alien8.de>,
-	Peter Zijlstra <peterz@infradead.org>, Josh Poimboeuf <jpoimboe@kernel.org>,
-	Pawan Gupta <pawan.kumar.gupta@linux.intel.com>, Ingo Molnar
-	<mingo@redhat.com>, Dave Hansen <dave.hansen@linux.intel.com>,
-	<x86@kernel.org>, "H . Peter Anvin" <hpa@zytor.com>
-CC: <linux-kernel@vger.kernel.org>, Brendan Jackman <jackmanb@google.com>,
-	Derek Manwaring <derekmn@amazon.com>
-Subject: [PATCH v4 00/36] Attack vector controls
-Date: Mon, 10 Mar 2025 11:39:47 -0500
-Message-ID: <20250310164023.779191-1-david.kaplan@amd.com>
-X-Mailer: git-send-email 2.34.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00301230BDA;
+	Mon, 10 Mar 2025 16:40:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741624810; cv=none; b=U1RyNNMx1K0NFvQgvN2wleB8XcHdbFNpYxZ+6vtJzspJ13u4vaRZ+V0vETXc5zpHq/lnTe/ouTMyGihUfxCPL3kEMfK2iMldHD0Bm7wvz5HpotaFmGetEaEQo6kpmxCb340aUovlAKlffrY2DmqpkTBuzI1+cGKgmDu5KzbquLU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741624810; c=relaxed/simple;
+	bh=XPW/PNHU2C/8e9ggxKB1To3j4bIZAqkuOL8WACIX//o=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=d7vJNx9e3ULyx7u4n6g8iMA5C19Xa3f5MTwBdk4Bl2SPSiwTUgUGjST3st8aqZYeWK4AjahB4K/Re0qYf2OP3iSjXwSQts6f/E0uokjCWPRslKFwOLCByLFZEMUpUMqm7BTDjDesPPPSQeKSq7mpkwgEWwxKNr4V5cymg8EQ0iY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=cZAJdWPe; arc=none smtp.client-ip=217.70.183.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 9462B44420;
+	Mon, 10 Mar 2025 16:40:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1741624806;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=g0FHvk7naxccnXtThg65SMBGYmS/oNOjelthUAROF7I=;
+	b=cZAJdWPeX2l6AmnRUrcI6g36eTjGObKFBUGlz+W2ZGYkamFITqLe5V6R19BKXwlt6JpWJz
+	y2GNpuI4qwbGQiuHZLSRebaj5L0gwBYZcoh2xqYJNbcxpAeKDKpooqsr2hOgQdryx22jr9
+	b6soNUnbxVc2kDUkFz3qAAxNlkul5kSXNiLIMb4i0ojz2vzkQ2CesoX5fE/znTJV6zijFx
+	cVeEj5fRonO4GyD1Ak5gtCYrKKctkDK7s5+74mVn0ceOLlBQmIR+TeIRPcQRHblG8KBhgu
+	pXi1s35+U3ev9P25WDy2geiEW+GpVkdCSbZsPuwnVE1sYPrQSSxOJoTT8OVliw==
+From: Antonin Godard <antonin.godard@bootlin.com>
+Subject: [PATCH v4 0/3] Add Variscite i.MX6UL SoM and Concerto board
+ support
+Date: Mon, 10 Mar 2025 17:39:47 +0100
+Message-Id: <20250310-varsom6ul-concerto-dts-v4-0-6034fda6ec64@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SATLEXMB04.amd.com (10.181.40.145) To SATLEXMB04.amd.com
- (10.181.40.145)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BL6PEPF00022573:EE_|SJ5PPF1C7838BF6:EE_
-X-MS-Office365-Filtering-Correlation-Id: ea503b2e-26a3-4aaa-a2da-08dd5ff24724
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|36860700013|376014|82310400026|7416014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?vT4csCFqPqqrRH5tn5fRdRKRAdCnDNjiucm44zXZSD1YbgRz8g/b5uSOELj8?=
- =?us-ascii?Q?hCv3ShL+M9iUZX/ECtPRLJkbO4J1IfbL8Aw9Nk2s4GDzF7l6/W4F8RETs/tl?=
- =?us-ascii?Q?ceK81macLQQWcKCgB+wCw/Slkr8I8uoSokSfxhg4lExlOCASIRoQArP2liln?=
- =?us-ascii?Q?rq3wKbuQQUUN5LyRttTSyL29cEPb8bXlVpL6NRj2KWfz1+3pKj13aHTk6OHy?=
- =?us-ascii?Q?k7GIecGocgkqEjjeL5SC92Qvfsje6EKAh8wpEPSY0uVnnMPdXJ5CGau10/ZZ?=
- =?us-ascii?Q?rN9P/Zyii+JJyfIso4ofsbPPDexbLTNqY5kjdaTOzUyFkSprfSGkERpdfJpm?=
- =?us-ascii?Q?2eAni+CJCwgYv+9VatiASSftaUTcCBRZrygehdEeGcJYmJCspD5mPT63ae13?=
- =?us-ascii?Q?d00mopvahuJcUeA12t5DhSE+IWj+TGJ0FqtPcL+zZeBo1H7USGiTN9dAM1uI?=
- =?us-ascii?Q?X6YWkDsuDVU2Xpa8GAFf/VLayQrO+6awP3Q3vyHGwZu4CacjvT/tjoejOlvj?=
- =?us-ascii?Q?lgxo5Lb229b7O0bvsUMjmmICx77qFT5sCBG7WNCiTDNnOkL7TKvLn+iIZKQ6?=
- =?us-ascii?Q?LjEygkJQoW2q4qbaxdVEP1abMEl59vadQlMstgQppTmu3kPaj52EVlltubfH?=
- =?us-ascii?Q?gJyBQ5P5JQYBkSJIABMVHahk88A5j61BrnYqHhoW4+6nvOFH71pIgt8hA3On?=
- =?us-ascii?Q?efJnlhGadBtnOwM8MmeQd070gTlja96zir0Z4fAnaNcLEdHuwbVsb0PBKx1h?=
- =?us-ascii?Q?htW3oVAfUxJBtmGBBvN5K+3CpvxCMVLb0eJmn8k3b6iUDiw4qynlF2UiLt6a?=
- =?us-ascii?Q?fiYE1v289t5rA8GWndKUIc0fwjxwhCXfOpPDXw5e4wLPyjd2PmkmdqtBIHUd?=
- =?us-ascii?Q?SEjC4qlAroosR143SQQFSeaSMLR0u03Jy8RnxwUEEDzrpjtHA0GoiVx6dYz/?=
- =?us-ascii?Q?8Hn7hEq3/aNiBEOcX7OvbAjkW3+ONLnjuyS+Z2bOxR92i8TBhpb8G2xuxHG7?=
- =?us-ascii?Q?Bp4c4q+WDEl93iZ/3Ath1N3sSYMSsqu3dw1Cvmwb2zm8ZpoV2UFAThX82W3u?=
- =?us-ascii?Q?yVPlWgyFMTNw1GwzSwZzpIsgQjZUlW8iC1EqPnAI8DSfqs1WPUqQU0tzCCyO?=
- =?us-ascii?Q?wL/T+rXgejs1F29Mr4NUXH3rcHowwqWigN6seRRVpPb7dTykGpFVSjXpXkFQ?=
- =?us-ascii?Q?NguT/KH/QGyigDJhE4h7bN9zRAShfeFdRtF5P4sgMJdFOU78ZspdgB/RvNjW?=
- =?us-ascii?Q?7E+qohSPW9HbaCYRCgdjXVTsv0KcpTRqiaxHIz9uDSKxHbOo+5LXXXOXi3BI?=
- =?us-ascii?Q?FeXv7kpBZztjabZm4fURs3bd9fB44zsMwZNK8YQYqNXCZHIUp6YL3W98/jYQ?=
- =?us-ascii?Q?b9D4KslPXgu4PC780k1uQgL/jtW1bhYaXdxF8tGc7ml4j46ebdLE+AbQ6WZk?=
- =?us-ascii?Q?LCB6Wj1vBPj5U/KywNUOwZMZwZrA0ATUeXBOkzKWdI+3l17plJvrwaOxshSR?=
- =?us-ascii?Q?3dW/ZXzyY+G6B8Y=3D?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(36860700013)(376014)(82310400026)(7416014);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Mar 2025 16:40:33.6473
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: ea503b2e-26a3-4aaa-a2da-08dd5ff24724
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	BL6PEPF00022573.namprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ5PPF1C7838BF6
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIANMVz2cC/3XQQQ7CIBAF0KsY1mJgKCiuvIdxQemoJFoUkGhM7
+ y6tGjWmyz/JvMmfO4kYHEaynNxJwOyi820J1XRC7N60O6SuKZkAA8k4MJpNiP6oLgdqfWsxJE+
+ bFKlhixrBKOC6JmX5FHDrrgO83pS8dzH5cBvuZN5P3yQfIzOnjGItKm3slhmrVrX36eDamfVH0
+ qMZvqH5KAQFqhpjQYNUeqH/IfGBBB8tmUWBpOSo2JwLCeIX6p69A54v5Y/pVb7rHp3J0CllAQA
+ A
+X-Change-ID: 20250120-varsom6ul-concerto-dts-a08be2a6219b
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>, 
+ Sascha Hauer <s.hauer@pengutronix.de>, 
+ Pengutronix Kernel Team <kernel@pengutronix.de>, 
+ Fabio Estevam <festevam@gmail.com>
+Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
+ Antonin Godard <antonin.godard@bootlin.com>, 
+ Conor Dooley <conor.dooley@microchip.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2339;
+ i=antonin.godard@bootlin.com; h=from:subject:message-id;
+ bh=XPW/PNHU2C/8e9ggxKB1To3j4bIZAqkuOL8WACIX//o=;
+ b=owEBbQKS/ZANAwAIAdGAQUApo6g2AcsmYgBnzxXlA4CwvIV3hDMNMGAj0KX5KcGsHpcacPtqQ
+ cVQ4ig44iKJAjMEAAEIAB0WIQSGSHJRiN1AG7mg0//RgEFAKaOoNgUCZ88V5QAKCRDRgEFAKaOo
+ Nk05D/wN7QtblCSzXP24wqWsH+praenTTdVTidGDLesjDjGPOC11EKF1hUp6HpdZCgIl8p+QEm0
+ 29EPDiD8b31hRZs+fL9eDN0LdhOtbtD5Oj1OqaHq50unamFep+0VuHenwnUcm9cHyYdB7uAbyZz
+ XuDCeM1itX303K/hmPh6gQ1fJdfTJkYNsuyd9dbPiQwEqL7jiFFwbmgRClIXY5YUAybnsf89V09
+ cGjH5b2UMk2OkGsDG4sSoShJ4i7XHRe2OwSG2Ti6uyGx7iB5RyC64F1Zr96oIf6ZxH7Fh73N6/p
+ M+FQ8+ePUD7sr2sJWFBQuBURjRwn6yyZwduOMiIerbd2R1Uf15ZQ6fPfttHeaMxZodTCbVK1yFo
+ 18XYMZYP1H1nL6uibTVaKbGoYN1zPVbpy9QH1BjGF9g/vWvGmR/PfBXb/AF97kgtJEpuT3lCGHV
+ 55JO+kOqsrMyKx6SeXP/Hypx1bZQjpXwD4zMhkZvk7yNpSbZe10dg7UARm0TslPOIJ5B0yapC8A
+ HOvTEYjKXTRjWI/CrUobOmoGWGUANxKmrD/kT/V963ZTBDxB5rTlB4T/+9Xt3wi8NEaD8mCRGik
+ XP+JmQlU18Xob0mSUvTv7ifOIYYMD++f3rxQ9HyndqGi8yOS3V5tltX9HcQqOx0BSZtVN2Ba9WO
+ B72aPWUTGX5YkNg==
+X-Developer-Key: i=antonin.godard@bootlin.com; a=openpgp;
+ fpr=8648725188DD401BB9A0D3FFD180414029A3A836
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdduudelkeeiucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhufffkfggtgfgvfevofesthejredtredtjeenucfhrhhomheptehnthhonhhinhcuifhouggrrhguuceorghnthhonhhinhdrghhouggrrhgusegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpedtudeuhfelveehueevudefgedvtdfffeevleefuedtjeeuteelgeelvefftdejteenucffohhmrghinhepkhgvrhhnvghlrdhorhhgnecukfhppedvrgdtudemtggsudegmeehheeimeejrgdttdemjegthegtmeeirgguvgemjeelgeekmeegtdehleenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpedvrgdtudemtggsudegmeehheeimeejrgdttdemjegthegtmeeirgguvgemjeelgeekmeegtdehledphhgvlhhopegluddvjedrtddruddrudgnpdhmrghilhhfrhhomheprghnthhonhhinhdrghhouggrrhgusegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopedugedprhgtphhtthhopegtohhnohhrodgutheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepkhhriihkodgutheskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheprhhosghhsehkvghrnhgvlhdrohhrghdpr
+ hgtphhtthhopehfvghsthgvvhgrmhesghhmrghilhdrtghomhdprhgtphhtthhopehimhigsehlihhsthhsrdhlihhnuhigrdguvghvpdhrtghpthhtohepshhhrgifnhhguhhosehkvghrnhgvlhdrohhrghdprhgtphhtthhopegrnhhtohhnihhnrdhgohgurghrugessghoohhtlhhinhdrtghomhdprhgtphhtthhopegtohhnohhrrdguohholhgvhiesmhhitghrohgthhhiphdrtghomh
+X-GND-Sasl: antonin.godard@bootlin.com
 
-This series restructures arch/x86/kernel/cpu/bugs.c and proposes new
-command line options to make it easier to control which CPU mitigations
-are applied.  These options select relevant mitigations based on chosen
-attack vectors, which are hopefully easier for users to understand.
+Add support for the i.MX6UL Variscite SoM (VAR-SOM-6UL) and the
+Variscite Concerto Carrier Board.
 
-There are two parts to this patch series:
+I tested this with a VAR-SOM-6UL_G2_700C_512R_8N_IT_REV1.3A (one variant
+of this SoM), meaning I couldn't test all of the possible options of the
+SoM - so this device tree includes partial support for it.
 
-The first 16 patches restructure the existing mitigation selection logic
-to use a uniform set of functions.  First, the "select" function is
-called for each mitigation to select an appropriate mitigation.  Unless
-a mitigation is explicitly selected or disabled with a command line
-option, the default mitigation is AUTO and the "select" function will
-then choose the best mitigation.  After the "select" function is called
-for each mitigation, some mitigations define an "update" function which
-can be used to update the selection, based on the choices made by other
-mitigations.  Finally, the "apply" function is called which enables the
-chosen mitigation.
+These are based on the 5.15 Variscite kernel fork but adapted for
+mainline.
 
-This structure simplifies the mitigation control logic, especially when
-there are dependencies between multiple vulnerabilities.  It also
-prepares the code for the second set of patches.
-
-The rest of the patches define new "attack vector" options
-to make it easier to select appropriate mitigations based on the usage
-of the system.  While many users may not be intimately familiar with the
-details of these CPU vulnerabilities, they are likely better able to
-understand the intended usage of their system.  As a result, unneeded
-mitigations may be disabled, allowing users to recoup more performance.
-New documentation is included with recommendations on what to consider
-when choosing which attack vectors to enable/disable.
-
-In this series, attack vector options are chosen using the mitigations=
-command line.  Attack vectors may be individually disabled such as
-'mitigations=auto;no_user_kernel,no_user_user'.  The 'mitigations=off'
-option is equivalent to disabling all attack vectors.  'mitigations=off'
-therefore disables all mitigations, unless bug-specific command line
-options are used to re-enable some.
-
-Note that this patch series does not change any of the existing
-mitigation defaults.
-
+Signed-off-by: Antonin Godard <antonin.godard@bootlin.com>
+---
 Changes in v4:
-   - New command line interface for attack vector selection
-   - Rework of smt mitigations into on/auto/off
-   - Print mitigated attack vectors in dmesg and sysfs
-   - Various bug fixes and clean up
+- Add missing trailer on first patch ("Acked-by: Conor Dooley
+  <conor.dooley@microchip.com>").
+- Link to v3: https://lore.kernel.org/r/20250310-varsom6ul-concerto-dts-v3-0-551e60713523@bootlin.com
 
 Changes in v3:
-   - Moved command line options to be x86-only
-   - Fix bugs related to ucode detection for taa/mmio/rfds
-   - Various clean up
+- Reviews from Shawn:
+  - Fix alphabetical order of nodes and pinctrl entries.
+  - Fix rmii-ref-clk label (remove "-grp" added by mistake).
+  - Fix order of properties for eth nodes.
+  - Convert deprecated fec properties to eth properties.
+- Link to v2: https://lore.kernel.org/r/20250127-varsom6ul-concerto-dts-v2-0-4dac29256989@bootlin.com
 
 Changes in v2:
-   - Removed new enum, just use X86_BUG* to identify vulnerabilities
-   - Mitigate gds if cross-thread protection is selected as pointed out
-     by Andrew Cooper
-   - Simplifications around verw-based mitigation handling
-   - Various bug fixes
+- Reviews from Krzysztof:
+  - Use imperative mood in commit descriptions.
+  - Remove backlight node as I am unable to test it.
+  - Rename gpled2 node to led-0, and set function, color and label for
+    it.
+  - Remove unnecessary comment "DS1337 RTC module".
+- Rename binding "variscite,mx6concerto" to "variscite,mx6ulconcerto"
+  since this is for the VAR-SOM-6UL mounted on the Concerto.
+- Remove pinctrl_ft5x06_ts_gpio iomuxc node, unused.
+- Link to v1: https://lore.kernel.org/r/20250121-varsom6ul-concerto-dts-v1-0-eb349acf0ac6@bootlin.com
 
-David Kaplan (36):
-  x86/bugs: Restructure mds mitigation
-  x86/bugs: Restructure taa mitigation
-  x86/bugs: Restructure mmio mitigation
-  x86/bugs: Restructure rfds mitigation
-  x86/bugs: Remove md_clear_*_mitigation()
-  x86/bugs: Restructure srbds mitigation
-  x86/bugs: Restructure gds mitigation
-  x86/bugs: Restructure spectre_v1 mitigation
-  x86/bugs: Only allow retbleed=stuff on Intel
-  x86/bugs: Restructure retbleed mitigation
-  x86/bugs: Restructure spectre_v2_user mitigation
-  x86/bugs: Restructure bhi mitigation
-  x86/bugs: Restructure spectre_v2 mitigation
-  x86/bugs: Restructure ssb mitigation
-  x86/bugs: Restructure l1tf mitigation
-  x86/bugs: Restructure srso mitigation
-  Documentation/x86: Document the new attack vector controls
-  cpu: Define attack vectors
-  x86/Kconfig: Arch attack vector support
-  x86/bugs: Determine relevant vulnerabilities based on attack vector
-    controls.
-  x86/bugs: Add attack vector controls for mds
-  x86/bugs: Add attack vector controls for taa
-  x86/bugs: Add attack vector controls for mmio
-  x86/bugs: Add attack vector controls for rfds
-  x86/bugs: Add attack vector controls for srbds
-  x86/bugs: Add attack vector controls for gds
-  x86/bugs: Add attack vector controls for spectre_v1
-  x86/bugs: Add attack vector controls for retbleed
-  x86/bugs: Add attack vector controls for spectre_v2_user
-  x86/bugs: Add attack vector controls for bhi
-  x86/bugs: Add attack vector controls for spectre_v2
-  x86/bugs: Add attack vector controls for l1tf
-  x86/bugs: Add attack vector controls for srso
-  x86/pti: Add attack vector controls for pti
-  x86/bugs: Print enabled attack vectors
-  cpu: Show attack vectors in sysfs
+---
+Antonin Godard (3):
+      dt-bindings: arm: fsl: Add VAR-SOM-MX6UL SoM and Concerto board
+      ARM: dts: imx6ul: Add Variscite VAR-SOM-MX6UL SoM support
+      ARM: dts: imx6ul: Add Variscite Concerto board support
 
- .../hw-vuln/attack_vector_controls.rst        |  236 +++
- Documentation/admin-guide/hw-vuln/index.rst   |    1 +
- arch/Kconfig                                  |    3 +
- arch/x86/Kconfig                              |    1 +
- arch/x86/include/asm/processor.h              |    1 +
- arch/x86/kernel/cpu/bugs.c                    | 1302 ++++++++++-------
- arch/x86/kvm/vmx/vmx.c                        |    2 +
- arch/x86/mm/pti.c                             |    4 +-
- drivers/base/cpu.c                            |   67 +
- include/linux/cpu.h                           |   20 +
- kernel/cpu.c                                  |  129 +-
- 11 files changed, 1248 insertions(+), 518 deletions(-)
- create mode 100644 Documentation/admin-guide/hw-vuln/attack_vector_controls.rst
+ Documentation/devicetree/bindings/arm/fsl.yaml     |   6 +
+ arch/arm/boot/dts/nxp/imx/Makefile                 |   1 +
+ .../boot/dts/nxp/imx/imx6ul-var-som-concerto.dts   | 320 +++++++++++++++++++++
+ arch/arm/boot/dts/nxp/imx/imx6ul-var-som.dtsi      | 233 +++++++++++++++
+ 4 files changed, 560 insertions(+)
+---
+base-commit: 66683f3b2661643f694607283ee8f01b7a934c83
+change-id: 20250120-varsom6ul-concerto-dts-a08be2a6219b
 
+Best regards,
 -- 
-2.34.1
+Antonin Godard <antonin.godard@bootlin.com>
 
 
