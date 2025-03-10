@@ -1,140 +1,86 @@
-Return-Path: <linux-kernel+bounces-555278-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-555280-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D8379A5AFCB
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 00:53:29 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 061A6A5B04F
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 00:58:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E32C816D8B6
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 23:53:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 185A418801FD
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 23:58:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D71D32222B4;
-	Mon, 10 Mar 2025 23:53:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B387C2222C9;
+	Mon, 10 Mar 2025 23:58:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WEDValuS"
-Received: from mail-ua1-f47.google.com (mail-ua1-f47.google.com [209.85.222.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="ZXxaa+B0"
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7885208990
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 23:53:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 016CE1CAA8D;
+	Mon, 10 Mar 2025 23:58:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741650804; cv=none; b=qjD4X+C8m+K7hWCcpq+hg5HFMS3kCDG+hYTmqesmCG7KetU+0B5YJ5GTKZNULcKsrjXwIoESdYeO5+BjcmfOlTR+hXG5zRWJYfUcnf5TCZITF+HLz55b/cmTg6KvO44h30yv4rhSb8Z+6q+EdD2TKZxKAs39PiqMhQhoqHzHmHk=
+	t=1741651116; cv=none; b=n4Mz7Q7JcdyzxcI5QsI0qkQn7/wtyOAl06rX9Y1auRCyMs2to5/hoTyboKPfHoXPC+1KP2oO2xkZZQ2BCtBxYcEfrY4XbDJCLp3eBhfy8o6soyOibSgDRE43FW3I9JF0Q6TyZGme4pVLPv1kvDcyi0Vcg3Q6EE+0PtrtJ5NCFhk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741650804; c=relaxed/simple;
-	bh=dhcwMF6X3nvf8UEcOSza5hPDNM+MPbmi5Xd5VNsSj48=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=r78OyY8gpD4HuIneI93bPHKvUTMFyMQDHfu5PSK6DrzFsnyKCzhRcvgQ426Rj122n0UVaZhfc+j8ZciUGWSRwZlcQoT7BneTIeXo/Huc29mOZiIDzTF06d9zBKCscPirzrdNLyYSQBmAVKz0j6ypoLXdg7Jsactq3OKc1CaS4KE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WEDValuS; arc=none smtp.client-ip=209.85.222.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ua1-f47.google.com with SMTP id a1e0cc1a2514c-86718c2c3b9so1920018241.2
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 16:53:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741650801; x=1742255601; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=v6Y4VzNyWkDTtPrsl1+g95pruVuPhFMc80PbfeZX/VI=;
-        b=WEDValuShqFv/7C6aYKsWRZi4axm16amlg49+cfJ7+HuDi9J7gMr22esE1fxjUiaTe
-         MGQg9mo7rbM2t8CXrJqCcq7WjB0iNKeGIZnxsM22Mcyrbe8dF4og4XyzflVg3fENAdaA
-         8UjYZm6RfrtvIPUhyyigJveM5bQ+nmZkthT0xegYkTJDM7xf0CAy0TsW/s+eYqvlIjiR
-         eVSC7gscK3Z1LOnWX9L/g7zlpMrL36KVTWy/4QvvuDznMlYwXXlcGkX+P+gbj25hGZuz
-         9ss2G+lw4ePhywjklJVb2N/Xd1INCyxWnPTgywUhF8BO4toyRkOeRByatrJzszOGmrc/
-         GcKA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741650801; x=1742255601;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=v6Y4VzNyWkDTtPrsl1+g95pruVuPhFMc80PbfeZX/VI=;
-        b=KigZuXKUBBLo7L/a0u4tp7TZPHHI5ncQAQnpXSz5WpokRc6XGo7pgpS6rGMoG+JfAO
-         pFXzr6+g3mVjUiofqvjKeoPcbzsMVXS5r6M2Ei+/fCvnJD3oDq93BpEEmOlxK+Zz78Q1
-         sWTm006hIAyCWfVSuzbOu9JfwTqif2bqThXJre0Lc0l1XMjG+LcnkyycggoLZ7JVPVq4
-         0F5HImJvz9I+uaaYJtK9BukcKFosPGl+4eYtDWwNq3JNMRyiZEm8Z2d69Cv0+EsujUN4
-         AaHBuc+eJYJzXcFd82RMgwdKlFJtv0U6PNoI3hjNG11jcmb5hpp89xQFAEAQj2iPKrFz
-         /w8w==
-X-Forwarded-Encrypted: i=1; AJvYcCXTr02X1kbzZBsvC0u1sYTC2VWzKoH2WMyGF9mxP7DLM0mtKGKuMVhIwmb0jS2APgprw+cD503wwTh6O8I=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxKVWfLCk/adsoLkkjiEN9nbylxhjHHmEkB3Zb9XdwAu/2bq9M/
-	8eOX3isn42ggpoOFior2QkYKR6ZcS8Drpwo5bBO514y0ywnv72qDdpUNndRe1qRXmVjy7Lqxkms
-	zTHtYe03Gyw3/LcgokTG+Z8xvRbI=
-X-Gm-Gg: ASbGnctHIfaO8Tr0H0b4FBC8KbnfM2fBjn8bRlnX2ZqtGpw3Mcwdho3SjHx70ZevWFY
-	k2LDbHUkQiL+CImG3RncX+5EUqpYLVorP+sK3fG7drB7I40YSSD04/w0lFYXzwC2hQ3n2GICGR5
-	nf+tS5hHzJv5HQh9FX4/nUSqb9xg==
-X-Google-Smtp-Source: AGHT+IF4/yDyo6TLJ9hJS+a+RRSwK6hyoUZWcyCi2BYSbwy6U8YXx/VUkWN63EOCaO1Ec5zMc5o7TD4Yd3O7SgJHOKs=
-X-Received: by 2002:a05:6102:54a8:b0:4bb:d062:43e with SMTP id
- ada2fe7eead31-4c34d036959mr1754332137.0.1741650801597; Mon, 10 Mar 2025
- 16:53:21 -0700 (PDT)
+	s=arc-20240116; t=1741651116; c=relaxed/simple;
+	bh=HRL9dvhLGHgZ+t15fYgJdlkg9n7P/vSyCsVNBTwdSM8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bAVv2NsR3jyVnje4oR7i+VCjG+nZHZSuBdEsDrjz4HMbXL8DUmDCb8Srj7hOlkegfbTTvBEbTim9SDwgYv/Xr9WPHzcGExYFP2oPb9e8+uPt6GyGcy6zaMAHEDiwDIuZfEWEMyCpXnkSquvrHHxFrjKxFVeHoGfOrRTUWWHtJn0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=ZXxaa+B0; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=O6tK3nGR9KVemkXaRkWRrwdgE+3x50H2PRIQcPyhrvo=; b=ZXxaa+B0/9a66QMHGuH2l4nkZ2
+	M4zkg/q7zAYTmX6PBs1NOhDVV6YH91BM48dIe4VSD6vLIQ4BMiDJgbTRms6c0OvFw1QlTWUIKJLbM
+	xiY4VaLuqMKlllfgRQZDb15WXl8F5xxQ/K9ZboE+Bi+xUJwLS34oO5zB/iyMEq28JuxyJRQ4WpxI2
+	kF5PL6n8epgUirusUxs8k7l8ZFihWvRomDR6yZ/jS2nPXjkyhLBda2N6/NFc7tUx/cYkt2o4H6pEw
+	XGSotvNcz1AuuKVjtdNYGafNGjTxHRxEtzrPBJAX5b5T83GSMBdrOcuOVP6FoFnQqBUe5qUKhllfm
+	Xto2AsOA==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.1 #2 (Red Hat Linux))
+	id 1trn0x-00000002rRM-0zDw;
+	Mon, 10 Mar 2025 23:58:31 +0000
+Date: Mon, 10 Mar 2025 23:58:31 +0000
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: Ard Biesheuvel <ardb@kernel.org>
+Cc: James Bottomley <James.Bottomley@hansenpartnership.com>,
+	syzbot <syzbot+019072ad24ab1d948228@syzkaller.appspotmail.com>,
+	jk@ozlabs.org, linux-efi@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [efi?] [fs?] possible deadlock in efivarfs_actor
+Message-ID: <20250310235831.GL2023217@ZenIV>
+References: <67cd0276.050a0220.14db68.006c.GAE@google.com>
+ <8cf7d7efdc069772d69f913b02e5f67feadce18e.camel@HansenPartnership.com>
+ <CAMj1kXH0Myy3bV-hFNWnoUk6ZAa6MAd1zFTM-X6dXiJPx==w0A@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250220052027.58847-1-byungchul@sk.com> <20250220103223.2360-1-hdanton@sina.com>
- <20250220114920.2383-1-hdanton@sina.com> <67cf7499597e9_1198729450@dwillia2-xfh.jf.intel.com.notmuch>
-In-Reply-To: <67cf7499597e9_1198729450@dwillia2-xfh.jf.intel.com.notmuch>
-From: Barry Song <21cnbao@gmail.com>
-Date: Tue, 11 Mar 2025 12:53:10 +1300
-X-Gm-Features: AQ5f1JruGsm2bNY0LaoMU3hxP5sDYybmDIHSNsXhSSzNsruSbr_1xg3IZi4k6gM
-Message-ID: <CAGsJ_4xK4ZydT5qqW9jnZ=Sw0ERP61RyHQ5wt1N8QeHJEK=s6g@mail.gmail.com>
-Subject: Re: [RFC PATCH v12 00/26] LUF(Lazy Unmap Flush) reducing tlb numbers
- over 90%
-To: Dan Williams <dan.j.williams@intel.com>
-Cc: Hillf Danton <hdanton@sina.com>, Byungchul Park <byungchul@sk.com>, linux-kernel@vger.kernel.org, 
-	linux-mm@kvack.org, kernel_team@skhynix.com, conduct@kernel.org, 
-	Nhat Pham <nphamcs@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMj1kXH0Myy3bV-hFNWnoUk6ZAa6MAd1zFTM-X6dXiJPx==w0A@mail.gmail.com>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-On Tue, Mar 11, 2025 at 12:24=E2=80=AFPM Dan Williams <dan.j.williams@intel=
-.com> wrote:
->
-> Hillf Danton wrote:
-> > On Thu, 20 Feb 2025 20:09:35 +0900 Byungchul Park wrote:
-> > > On Thu, Feb 20, 2025 at 06:32:22PM +0800, Hillf Danton wrote:
-> > > > On Thu, 20 Feb 2025 14:20:01 +0900 Byungchul Park <byungchul@sk.com=
->
-> [..]
->
-> Hillf,
->
-> The Code of Conduct Committee received reports about your conduct in
-> this email discussion.
->
-> Link to email where the violation took place:
->
-> https://lore.kernel.org/lkml/20250220114920.2383-1-hdanton@sina.com/
->
-> Our community works on trust and respect and has agreed to abide by the
-> Code of Conduct:
->
-> Reference: https://docs.kernel.org/process/code-of-conduct.html
->
-> The Code of Conduct Committee has determined that your written abuse
-> of another community member required action on your part to repair the
-> damage to the individual and the community. You took insufficient action
-> to restore the community's faith in having otherwise productive technical
-> discussions without the fear of personal attacks.
->
-> Following the Code of Conduct Interpretation process the TAB has
-> approved the following recommendation:
->
-> -- Restrict Hillf Danton's participation in the kernel development
->    process for 3 months.
->
->        - Scope: Ban Hillf Danton from Linux kernel mailing lists for a
->          period of 3 months.
+On Mon, Mar 10, 2025 at 07:21:53PM +0100, Ard Biesheuvel wrote:
 
-Please ban this guy for another 3 months, as I have another case here[1].
-This kind of random and insane personal attack is unacceptable.
+> The repro log also has
+> 
+> program crashed: BUG: unable to handle kernel paging request in
+> efivarfs_pm_notify
+> 
+> preceding the other log output regarding the locks, so the deadlock
+> might be a symptom of another problem.
 
-[1] https://lore.kernel.org/all/20250309010541.3152-1-hdanton@sina.com/#t
+This:
+        struct path path = { .mnt = NULL, .dentry = sfi->sb->s_root, };
 
->
-
-Thanks
-Barry
+_What_ .mnt = NULL?  That's already a bug.  There is no such thing
+as mountless open file; how would the kernel know not to shut the
+damn thing down right under you?
 
