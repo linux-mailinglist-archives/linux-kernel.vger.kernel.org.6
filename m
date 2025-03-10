@@ -1,85 +1,82 @@
-Return-Path: <linux-kernel+bounces-554028-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-554029-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 59D91A591F7
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 11:55:10 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 464A0A591F9
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 11:55:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 777C616CC5B
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 10:54:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2BE1816D028
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 10:55:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5590227BA7;
-	Mon, 10 Mar 2025 10:52:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13DFB229B2C;
+	Mon, 10 Mar 2025 10:52:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="yJhUanvB"
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="QhNEV+Ds"
+Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 183AA21A44D
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 10:52:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C50B4229B11
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 10:52:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741603923; cv=none; b=mlABxq19bQ9MUdPNkqu7qwYZabxyxZ0rvLh1pTyWmHLqkQzsoAXKnzHc56Oc7ikGCkILlUlNL3qN/P42ivBoHeMPUb/ovpgLfNYpXz62ze4AyRU0zbqHb90le9VvCfQ7LV5uZrPK+FL8dQOAkCZhzq3gbedKtUaDE4uXqdWCW0A=
+	t=1741603934; cv=none; b=BybAQ7i67fEzKzQ1t2FAynFT6Al0iWCausaTzot1fNcJjxnpJ9gw9xfifUlTGgtAKFJgOcuPU/YDvTOS4jAgXMKvEtqQItGhbziY/v+Ng2iWvTq0nMGXjraLdEcE9/zxHOoloypoar5PvvRCyxtv/GFH+A3J5rp8N/jToxsF/+Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741603923; c=relaxed/simple;
-	bh=8pFmW2yF7XeBHwGWpBOIVO3bVuCA2uTCoDSKVDixUQ4=;
+	s=arc-20240116; t=1741603934; c=relaxed/simple;
+	bh=vVKnwODUdAiwe/gid9w0DRJv5TpgZa3pSP8IVebCvGA=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=EALnCc6Qo1oLc0fPxElLt+TeXZOzvEoma32OzPVK3yNLmGkjlxoUt5x6I6CqxE3pOpVBeWoROkj1tQPqr9bPtGNYq5Kf9yiQYpoe1cmegCA+SSjwrRf3xFT4ktMgO4kEYSjUKpA5vsuHcnYt9XJuEbmEe3FaNPLemYXyDuG4DAk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=yJhUanvB; arc=none smtp.client-ip=209.85.128.50
+	 Content-Disposition; b=fqtSyXzL0cp0nlOAfD5ooDmOSxXRe+tXiWj7PFE9BqORrIfidaj+JIS/ID8tcoijiKUMbpNSoLyIwDSoDWtxnUvbVzybZqpkyu6kfmlj77wF7L+yypmHZLSpC6BYoEoA5n7Hnf3nZMRv+bcpVdjyTJyMSQwAXCoYsgQ/WLiCVbw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=QhNEV+Ds; arc=none smtp.client-ip=209.85.221.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-43cf848528aso6524155e9.2
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 03:52:01 -0700 (PDT)
+Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-390cf7458f5so3850207f8f.2
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 03:52:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1741603920; x=1742208720; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1741603931; x=1742208731; darn=vger.kernel.org;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=oRaYsvVFrqrTjWbVoLzSGid2k7c2/yuWbrvy6P2VIxo=;
-        b=yJhUanvBwPoRt/h2J7vQjHB4pn0Y8MkOwza7TUr08zWjsZSGX51/pXwgo4wxqVp+iw
-         0YrjbJeVENhg3FuMpVSFBENnWeq4/eKkL2EKY6V6FQZtzGyxciZISKizq267RQzuCBUZ
-         6J0Q949WXQxDxhayMaCxWgH+5JbIvdLFvratTq3H7ZtaA6qGnjy8Uejr5nUypboH6ryk
-         Y9MqoASeMZiavmeX53rBJ6FfJP185C+fw/x9qqPINjsy79IIzd1AdmqhzaXDseIjXHe0
-         bTto9+tziiSCw0IlGvt1mLkxyATSRBCK0CzpDDTOZp7DPEdqF4qCCyt0g3GWA9oqeD1p
-         L5HA==
+        bh=T60o6gi3usu2ntppRywUa3E8NpwOZr/s4pv7rr3CEFs=;
+        b=QhNEV+DsQHmMFF/3V3N/rzgReacxeQcne8aEUk2tC7Vas5wbteFmTJWVIIfrPdSN5f
+         TWcvtXZaHO8jm9WeefqnmRybkZOkTs2gRfhfMJpoIXDB0bQiO8kGnbJMXGSK2RNQKe9D
+         XnG6PtuUl5c8a87o0PF7REyKQY1LBHCm+B0DmDED6kwpu7pNBgHO9CU540QBGHa/Ga9R
+         N5i5f9pyZZrvJT/WOH0dOp48s2L2Ermc5yM8SXVzikbQrJKg/MZLvKSKq+stou4J5kDO
+         LXz46UB8l/egDb2ug+8B3ylcNRNkLqdrkkzXDCsI7XugvvYXUwWx4mmQtpr7tgXUJvfU
+         qUYg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741603920; x=1742208720;
+        d=1e100.net; s=20230601; t=1741603931; x=1742208731;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=oRaYsvVFrqrTjWbVoLzSGid2k7c2/yuWbrvy6P2VIxo=;
-        b=nnLl47sBoe9bcLptYLthFGJ4uhilZJqQTjQsyEaKbd4ZSLm3IfVtcresIzcBMsaYiE
-         6W+rgBBoZectL0taF8GamTBxkexj+4rWs8r/xwwxeAjQ5rPXHKaH+/MEANQR04RWmtdZ
-         IIgW+30nOLjSek1zbZENkKW4aNXbmJJsiiY1mAzFSrXVPViuhktrJpPNhZzgjH6Np5j2
-         2/9U5Ynp3whdNGs4rollDCjNwIUU7wB9czaedf8t+jLoegO0+JPQU87ipocquG8VVq0a
-         NiF6Pu1jtTxE1jfd+HPl0XFupERvXQ7ZtzDTyRqVkI1H9UIDLHFN+Y8FeUEt+AcvbUYt
-         jnbA==
-X-Forwarded-Encrypted: i=1; AJvYcCWuPsIk1UBasMlvmd0tUq7gwCo1yTtxcmnHi/AzZ1gL4WESJBLQQjqGVyUuPpdBRov8t4PghJqUklRHKaw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwwdT6BQ2Xe7NpMYwe7oG1MiRliBbgwXXp2vHHL13+u84+PbZ7Z
-	huh9AQ+Y+TXhURiHcLQGHrb0BsLxoQZqDOZnKzXFlHY3y5J/yQuaEk67OGomxDU=
-X-Gm-Gg: ASbGnctkGu28V/2CWZL6WcY5OdtK7MCRMQ2mBYkT6J7+kI40rbLIZA6mQG1KbMb94vc
-	8gVaTd4lnQbcuUxdYNP2dUevqphpWxECIVL8xT6w5vCWwjmOLpuuc9saZSQvK5/pHUVAJ1sAqmJ
-	a2XxVxiBPGwEBbJZEfE8RISUgVnJlgleCNoG2DwgJOcz1f3xL71GmNmtXcJd7uYAtONJ7qaMl3O
-	5ItILEDrmly0/FsLt39lx6OeS0H7TGHhqKL7WSPjnFuiQgnqhFRJQk8XXo46Uk5PK/pbdoUbzji
-	kqq+E+VpZCLFFACGn73vPu37xsIf+YRI/dYVLrnnYokPVkZKdw==
-X-Google-Smtp-Source: AGHT+IGMN8eK8zmMhyTnMEO8hcxY2G1+yaEB1GlPZwSy0jRn7v/TP69/lWg+VAd4stSNCOgX1BzcIQ==
-X-Received: by 2002:a05:600c:1d08:b0:43c:f184:2e16 with SMTP id 5b1f17b1804b1-43cf184310dmr30775335e9.5.1741603920329;
-        Mon, 10 Mar 2025 03:52:00 -0700 (PDT)
+        bh=T60o6gi3usu2ntppRywUa3E8NpwOZr/s4pv7rr3CEFs=;
+        b=lNjfXY2L851pm2Ob8UoHC01cOfifVXdkTd79eePzsowTwvwWsBIhzTXUeJD0W25Rwo
+         v/QsYVm9XUnsHyK7+8atWt/f8y8hseDqMU2ocfu2Z9uDl/U2Cm6LLLEKh7gZoUR4TgvV
+         8pwR3BDvY2F/2iY25JT28mKkNkpnDOc+WncU5Ph9LwdRFVvIiNS62YlP7e/oTvyk9rXu
+         4DTEXgowYDsHrfNnuqZCAd1O4HdlUyam5Bkm2ejRC46aSwdvWHUsueSvmioKvyaFGBg6
+         bsiwEVJa1tfbaG/zuSVg32mvHyTh6vVj4yalaqr7i3TU3kPLPPphH/oyOCVnW1jD2NA2
+         Sn0w==
+X-Forwarded-Encrypted: i=1; AJvYcCVHEFZhVPsapVONpan/r7oJEmHE7UN9SRGedSrJbAJgte86urBgXtdY54dBQjse665GdD2e7y36s63v6DY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyIrFGCRUZsYu852Y+ntw+vxEJDEFcng4hgCIRwYRpanvppGtyJ
+	XAsBHc7MEzTsaS6iSnYatBzE1MiHBE3vQ+gdrb9ZYIeVrWmf60c3zt4j2k5qRlY=
+X-Gm-Gg: ASbGncuL5Wo/dDmQ7zeo+WJBTQ68niIvzuf2K8TYl03SuQmkeNf/GQOkm70udiqYE/A
+	FHTQIf2ifQejCVjFhVJwD9+PMySjMFxKuW1mM7g7VLviSWce76B9GdUYNNm5Hw5CIB7EGUPi6n6
+	bMA+CceKJV0FmGIakaaaO8wLG4UvV3pq2kbMRPACSUbqwNXuTKGWz5E0c8bHrTDIJJC4nnaVVys
+	TjVziyr6ND2CyxBpLi1KaOqJybVN2TXaMqhZ103qsWMAby+q7ji3XhY33H5sOO/ph7iLtxBlxYw
+	9eKXEHtiGhDq1FHsMsvnt1wl5PFXAnpUuY7RhQP8BJcdPmnsCw==
+X-Google-Smtp-Source: AGHT+IG9NsSyCGpPSYGknbpw3bJVRYQjo38717W7yKTXqETR+ruZNlHceeFZwXiH5qt7jRD0fRgUGg==
+X-Received: by 2002:adf:cb01:0:b0:38f:3245:21fc with SMTP id ffacd0b85a97d-39132db1fdamr8297936f8f.50.1741603931088;
+        Mon, 10 Mar 2025 03:52:11 -0700 (PDT)
 Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-43ceed32e64sm59063525e9.5.2025.03.10.03.51.58
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3912c0e2bacsm14468396f8f.78.2025.03.10.03.52.10
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 10 Mar 2025 03:51:59 -0700 (PDT)
-Date: Mon, 10 Mar 2025 13:51:56 +0300
+        Mon, 10 Mar 2025 03:52:10 -0700 (PDT)
+Date: Mon, 10 Mar 2025 13:52:05 +0300
 From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Shyam Sundar S K <Shyam-sundar.S-k@amd.com>
-Cc: Hans de Goede <hdegoede@redhat.com>,
-	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
-	Patil Rajesh Reddy <Patil.Reddy@amd.com>,
-	Mario Limonciello <mario.limonciello@amd.com>,
-	platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: [PATCH] platform/x86/amd/pmf: fix cleanup in amd_pmf_init_smart_pc()
-Message-ID: <43ad5358-f5b2-4cfc-85b4-e7ab8c7cf329@stanley.mountain>
+To: Pratap Nirujogi <pratap.nirujogi@amd.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: [PATCH next] pinctrl: amd: isp411: Fix IS_ERR() vs NULL check in
+ probe()
+Message-ID: <617f4c77-7837-4e24-9f4d-620ecfedf924@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -90,115 +87,30 @@ Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 X-Mailer: git-send-email haha only kidding
 
-There are a couple problems in this code:
+The platform_get_resource() returns NULL on error.  It doesn't
+return error pointers.  Fix the error checking to match.
 
-First, if amd_pmf_tee_init() fails then the function returns directly
-instead of cleaning up.  We cannot simply do a "goto error;" because
-that would lead to a double free.  I have re-written this code to
-use an unwind ladder to free the allocations.
-
-Second, if amd_pmf_start_policy_engine() fails on every iteration though
-the loop then the code calls amd_pmf_tee_deinit() twice which is also a
-double free.  Call amd_pmf_tee_deinit() inside the loop for each failed
-iteration.  Also on that path the error codes are not necessarily
-negative kernel error codes.  Set the error code to -EINVAL.
-
-Fixes: 376a8c2a1443 ("platform/x86/amd/pmf: Update PMF Driver for Compatibility with new PMF-TA")
+Fixes: e97435ab09f3 ("pinctrl: amd: isp411: Add amdisp GPIO pinctrl")
 Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 ---
- drivers/platform/x86/amd/pmf/tee-if.c | 36 +++++++++++++++++++--------
- 1 file changed, 25 insertions(+), 11 deletions(-)
+ drivers/pinctrl/pinctrl-amdisp.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/platform/x86/amd/pmf/tee-if.c b/drivers/platform/x86/amd/pmf/tee-if.c
-index ceaff1ebb7b9..a1e43873a07b 100644
---- a/drivers/platform/x86/amd/pmf/tee-if.c
-+++ b/drivers/platform/x86/amd/pmf/tee-if.c
-@@ -510,18 +510,18 @@ int amd_pmf_init_smart_pc(struct amd_pmf_dev *dev)
+diff --git a/drivers/pinctrl/pinctrl-amdisp.c b/drivers/pinctrl/pinctrl-amdisp.c
+index ce21ed84b929..9256ed67bb20 100644
+--- a/drivers/pinctrl/pinctrl-amdisp.c
++++ b/drivers/pinctrl/pinctrl-amdisp.c
+@@ -183,8 +183,8 @@ static int amdisp_pinctrl_probe(struct platform_device *pdev)
+ 	pdev->dev.init_name = DRV_NAME;
  
- 	ret = amd_pmf_set_dram_addr(dev, true);
- 	if (ret)
--		goto error;
-+		goto err_cancel_work;
+ 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	if (IS_ERR(res))
+-		return PTR_ERR(res);
++	if (!res)
++		return -EINVAL;
  
- 	dev->policy_base = devm_ioremap_resource(dev->dev, dev->res);
- 	if (IS_ERR(dev->policy_base)) {
- 		ret = PTR_ERR(dev->policy_base);
--		goto error;
-+		goto err_free_dram_buf;
- 	}
- 
- 	dev->policy_buf = kzalloc(dev->policy_sz, GFP_KERNEL);
- 	if (!dev->policy_buf) {
- 		ret = -ENOMEM;
--		goto error;
-+		goto err_free_dram_buf;
- 	}
- 
- 	memcpy_fromio(dev->policy_buf, dev->policy_base, dev->policy_sz);
-@@ -531,13 +531,13 @@ int amd_pmf_init_smart_pc(struct amd_pmf_dev *dev)
- 	dev->prev_data = kzalloc(sizeof(*dev->prev_data), GFP_KERNEL);
- 	if (!dev->prev_data) {
- 		ret = -ENOMEM;
--		goto error;
-+		goto err_free_policy;
- 	}
- 
- 	for (i = 0; i < ARRAY_SIZE(amd_pmf_ta_uuid); i++) {
- 		ret = amd_pmf_tee_init(dev, &amd_pmf_ta_uuid[i]);
- 		if (ret)
--			return ret;
-+			goto err_free_prev_data;
- 
- 		ret = amd_pmf_start_policy_engine(dev);
- 		switch (ret) {
-@@ -550,27 +550,41 @@ int amd_pmf_init_smart_pc(struct amd_pmf_dev *dev)
- 			status = false;
- 			break;
- 		default:
--			goto error;
-+			ret = -EINVAL;
-+			amd_pmf_tee_deinit(dev);
-+			goto err_free_prev_data;
- 		}
- 
- 		if (status)
- 			break;
- 	}
- 
--	if (!status && !pb_side_load)
--		goto error;
-+	if (!status && !pb_side_load) {
-+		ret = -EINVAL;
-+		goto err_free_prev_data;
-+	}
- 
- 	if (pb_side_load)
- 		amd_pmf_open_pb(dev, dev->dbgfs_dir);
- 
- 	ret = amd_pmf_register_input_device(dev);
- 	if (ret)
--		goto error;
-+		goto err_pmf_remove_pb;
- 
- 	return 0;
- 
--error:
--	amd_pmf_deinit_smart_pc(dev);
-+err_pmf_remove_pb:
-+	if (pb_side_load && dev->esbin)
-+		amd_pmf_remove_pb(dev);
-+	amd_pmf_tee_deinit(dev);
-+err_free_prev_data:
-+	kfree(dev->prev_data);
-+err_free_policy:
-+	kfree(dev->policy_buf);
-+err_free_dram_buf:
-+	kfree(dev->buf);
-+err_cancel_work:
-+	cancel_delayed_work_sync(&dev->pb_work);
- 
- 	return ret;
- }
+ 	pctrl->gpiobase = devm_ioremap_resource(&pdev->dev, res);
+ 	if (IS_ERR(pctrl->gpiobase))
 -- 
 2.47.2
 
