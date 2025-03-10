@@ -1,46 +1,46 @@
-Return-Path: <linux-kernel+bounces-554443-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-554445-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E538A597CC
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 15:37:43 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CBFE4A597D1
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 15:38:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4AF30188FF91
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 14:37:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2C7F516DA87
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 14:37:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C341C22D7A9;
-	Mon, 10 Mar 2025 14:36:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B624422F16C;
+	Mon, 10 Mar 2025 14:36:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CNv16CWj"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AFQ+7R+a"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BF2922CBD7;
-	Mon, 10 Mar 2025 14:36:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E037122DF8C;
+	Mon, 10 Mar 2025 14:36:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741617380; cv=none; b=OTK2LLHT65DT59zM42rVNvVVJ8wv3KaC9E0KlF37HJMmvSJa9eD4lVvVX+XTLRLjytuTUJNQqfQbGOh/AjL78FtUYt8yu5XQrWp/SjoGQylwVdLRz+M7HDw6iG7XJIAtRbAQtxeBaoA0xXLy0IBQgYcPzKa4a5f+l15w4Xe5Px8=
+	t=1741617382; cv=none; b=qGyNBWGrC9sFjTxJ1jvGrgQfh6X25g9EZ7Jr9buFKOEbkhn9hJDC5J2+I0dDXINOms7LXVoPxHXel9fwlpvrrSAHi/ekUo9XXmCoSdZfjAF+w/cT4gItU6RjI+gedP4rtS8zpXx1h6mkKoGFvNUt7CDkna0FZqGqBBprNXRHvl4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741617380; c=relaxed/simple;
-	bh=LS/oECQPwubMgLMkVFtys9DEM3QQeczYhmGXwL4fRrE=;
+	s=arc-20240116; t=1741617382; c=relaxed/simple;
+	bh=7EEMVaFexgLc6pVJL7mrzAPNCcixahyfiK4unhrdXiw=;
 	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=nELykdjx5sbU7ro1V+69kUQXpld2CmtpLAoo0lkS5iSmP4n+ryp4fOVvIITn3TWTJlXggDDQPLh0fyqd0LS8V0KBf3ascXtJ3wnRGJRMUa9vuErXFLr9sUSfLVCeVeXeBaDrV6kVPuAZgef/Xgl0yAT95GrbI0cZEC0GMO4SV+c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CNv16CWj; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A4DECC4CEEB;
-	Mon, 10 Mar 2025 14:36:19 +0000 (UTC)
+	 Message-Id:Subject; b=sCM9Dxhgv/CDxKys2ClwPxbFP8rDT6EpqgBd9W2eQWCcgfhxkQG0RkWan4h7vy+BcFgG0bmCPTENEQz9bI0ASjWROWFkupA015SZLDRy/DppJbOG31waVjXCjd1Y5WN3Qr9DpL+53UhaVnCDnHI3s5uWFHS8ChaZN/lVnglChVI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AFQ+7R+a; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2BD09C4CEED;
+	Mon, 10 Mar 2025 14:36:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741617379;
-	bh=LS/oECQPwubMgLMkVFtys9DEM3QQeczYhmGXwL4fRrE=;
+	s=k20201202; t=1741617381;
+	bh=7EEMVaFexgLc6pVJL7mrzAPNCcixahyfiK4unhrdXiw=;
 	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
-	b=CNv16CWjYPGamtWTIeIz5KuO8FCd0OGCizIVaiQ5ic1qRnIsPLyujwnMhyHzLnmdy
-	 vqDPl2ZrxM3OF1iFpnx3QgU7/pzT9F+9l8Z0/P85oQEuzIByFQ4EnJ7eGcDpxaElR+
-	 SreqIzwA0tNECDxpPm1t+9BgJ90CdSXxAzm0tpS0ePpbGR6vHfnTYZppN/ul5TInTk
-	 jV0wfDUWFttIuQIINo34+042ANM1ECqDiiQG5YvSTunndRJXunudwdYEb5C2kRmaGU
-	 vAbY5DnE74OGVs1bNGghbesRaasTsoSVwGXlWF0sLdxdmC8MkITL2h19Ol8iIT/AY1
-	 aswtnk5cN0T3Q==
-Date: Mon, 10 Mar 2025 09:36:18 -0500
+	b=AFQ+7R+aRontN6fPv0/HgRdTHM+2jCP8gLb3fFNBIIqBjJgaSNZTzlJCpJtDit3DX
+	 /k7CpIG8MNvyoClOmWfI+0zuclf7yQvycIW8C7dCSVE75gQbDGVXqUYFk6G6pnF3Fv
+	 5ttun5Y6xWEc0030EoS7Cryb86LEPT61w+DREAfr0zc8NtCYArA7opqJPX3zZejakD
+	 y7lymlPh1tiGqaRt2rlgq3lbTbJZNgSCfbFvAoBdqj23xJ8aEtQ2yAWxmfYgybRN/j
+	 aY+SDuFXh1C5SKGHOmd56vXuuGxCtD+0MwvNpdeO3bVdearATPNJLwGPKz0vpjUM1a
+	 ZnNR0JNtov2pw==
+Date: Mon, 10 Mar 2025 09:36:20 -0500
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
@@ -50,37 +50,108 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: Conor Dooley <conor+dt@kernel.org>, 
- Konrad Dybcio <konradybcio@kernel.org>, 
- "Guilherme G. Piccoli" <gpiccoli@igalia.com>, linux-arm-msm@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Kees Cook <kees@kernel.org>, devicetree@vger.kernel.org, 
- Bjorn Andersson <andersson@kernel.org>, linux-hardening@vger.kernel.org, 
- Tony Luck <tony.luck@intel.com>
-To: Gabriel Gonzales <semfault@disroot.org>
-In-Reply-To: <20250308013019.10321-1-semfault@disroot.org>
-References: <20250304043742.9252-1-semfault@disroot.org>
- <20250308013019.10321-1-semfault@disroot.org>
-Message-Id: <174161712464.4185281.4494690781692098732.robh@kernel.org>
-Subject: Re: [PATCH v2 0/2] Add Xiaomi Redmi Note 8 support
+Cc: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+ Arnd Bergmann <arnd@arndb.de>, Stephen Boyd <sboyd@kernel.org>, 
+ Ben Hutchings <ben@decadent.org.uk>, Conor Dooley <conor+dt@kernel.org>, 
+ Guo Ren <guoren@kernel.org>, Felix Fietkau <nbd@nbd.name>, 
+ upstream@airoha.com, Kishon Vijay Abraham I <kishon@kernel.org>, 
+ Matthias Brugger <matthias.bgg@gmail.com>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Lorenzo Bianconi <lorenzo@kernel.org>, Lee Jones <lee@kernel.org>, 
+ devicetree@vger.kernel.org, Vinod Koul <vkoul@kernel.org>, 
+ Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org, 
+ Nikita Shubin <nikita.shubin@maquefel.me>, 
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+ linux-phy@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ Daniel Danzberger <dd@embedd.com>, Yangyu Chen <cyy@cyyself.name>, 
+ linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, 
+ linux-usb@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>
+To: Christian Marangi <ansuelsmth@gmail.com>
+In-Reply-To: <20250309132959.19045-1-ansuelsmth@gmail.com>
+References: <20250309132959.19045-1-ansuelsmth@gmail.com>
+Message-Id: <174161712595.4185316.12073621496624773779.robh@kernel.org>
+Subject: Re: [PATCH 00/13] airoha: en7581: clk cleanup + USB support
 
 
-On Sat, 08 Mar 2025 09:30:10 +0800, Gabriel Gonzales wrote:
-> This patchset introduces support for the Redmi Note 8 (codenamed ginkgo). This series is a follow-up to v1 (message-id in in-reply-to header) which was sent without a cover letter.
+On Sun, 09 Mar 2025 14:29:31 +0100, Christian Marangi wrote:
+> This series implement all the changes required to correctly handle
+> USB support for the Airoha EN7581 SoC.
 > 
-> Changes in v2:
-> - Add missing cover letter
-> - Fix up commit message for schema
+> The first few patch are cleanup for the clock driver and the
+> introduction of the SCU SSR SoC driver.
 > 
-> Gabriel Gonzales (2):
->   dt-bindings: arm: qcom: Add Xiaomi Redmi Note 8
->   arm64: dts: qcom: sm6125: Initial support for xiaomi-ginkgo
+> The SoC always support USB 2.0 but for USB 3.0 it needs additional
+> configuration for the Serdes port. Such port can be either configured
+> for USB usage or for PCIe lines or HSGMII and these are configured
+> in the SCU space.
 > 
->  .../devicetree/bindings/arm/qcom.yaml         |   1 +
->  arch/arm64/boot/dts/qcom/Makefile             |   1 +
->  .../boot/dts/qcom/sm6125-xiaomi-ginkgo.dts    | 294 ++++++++++++++++++
->  3 files changed, 296 insertions(+)
->  create mode 100644 arch/arm64/boot/dts/qcom/sm6125-xiaomi-ginkgo.dts
+> To correctly handle this, the SCU is changed to a simple-mfd
+> implemenetation and the clock controller updated to follow this new
+> node structure. Both implementation are supported to handle old
+> binding.
+> 
+> The xHCI USB is based on the Mediatek implementation but the PHY
+> handling although conceptually similar, is indded different compared
+> to Mediatek due to SSR checks and different port power up.
+> 
+> The SSR driver expose an API to poll the current status of the Serdes
+> port and the USB PHY driver validates it. Refer to the specific commit
+> for additional info.
+> 
+> Consider that there is currently an inconsistency as AN7581 and
+> EN7581 refer to the same thing. This is due to the fact that
+> the SoC born under EcoNet but then was acquired by Airoha.
+> 
+> Christian Marangi (13):
+>   clk: en7523: convert driver to regmap API
+>   clk: en7523: generalize register clocks function
+>   dt-bindings: soc: airoha: add SCU SSR Serdes port binding
+>   dt-bindings: soc: airoha: add Documentation for Airoha AN7581 SCU SSR
+>   dt-bindings: mfd: add Documentation for Airoha EN7581 SCU
+>   dt-bindings: clock: airoha: make reg optional for Airoha EN7581
+>   clk: en7523: support getting regmap from parent node for EN7581
+>   soc: airoha: add support for configuring SCU SSR Serdes port
+>   dt-bindings: phy: Add documentation for Airoha AN7581 USB PHY
+>   phy: airoha: Add support for Airoha AN7581 USB PHY
+>   usb: host: add ARCH_AIROHA in XHCI MTK dependency
+>   arm64: dts: airoha: en7581: convert SCU clock node to MFD
+>     implementation
+>   arm64: dts: airoha: en7581: add USB and SCU SSR nodes
+> 
+>  .../bindings/clock/airoha,en7523-scu.yaml     |  13 +-
+>  .../mfd/airoha,en7581-scu-sysctl.yaml         |  68 +++
+>  .../bindings/phy/airoha,an7581-usb-phy.yaml   | 106 ++++
+>  .../soc/airoha/airoha,an7581-scu-ssr.yaml     | 106 ++++
+>  MAINTAINERS                                   |  15 +
+>  arch/arm64/boot/dts/airoha/en7581.dtsi        |  74 ++-
+>  drivers/clk/clk-en7523.c                      | 258 ++++----
+>  drivers/phy/Kconfig                           |   1 +
+>  drivers/phy/Makefile                          |   3 +-
+>  drivers/phy/airoha/Kconfig                    |  13 +
+>  drivers/phy/airoha/Makefile                   |   3 +
+>  drivers/phy/airoha/phy-airoha-usb.c           | 554 ++++++++++++++++++
+>  drivers/soc/Kconfig                           |   1 +
+>  drivers/soc/Makefile                          |   1 +
+>  drivers/soc/airoha/Kconfig                    |  18 +
+>  drivers/soc/airoha/Makefile                   |   3 +
+>  drivers/soc/airoha/airoha-scu-ssr.c           | 195 ++++++
+>  drivers/usb/host/Kconfig                      |   2 +-
+>  include/dt-bindings/soc/airoha,scu-ssr.h      |  24 +
+>  include/linux/soc/airoha/airoha-scu-ssr.h     |  17 +
+>  include/linux/soc/soc/airoha-scu-ssr.h        |  17 +
+>  21 files changed, 1355 insertions(+), 137 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/mfd/airoha,en7581-scu-sysctl.yaml
+>  create mode 100644 Documentation/devicetree/bindings/phy/airoha,an7581-usb-phy.yaml
+>  create mode 100644 Documentation/devicetree/bindings/soc/airoha/airoha,an7581-scu-ssr.yaml
+>  create mode 100644 drivers/phy/airoha/Kconfig
+>  create mode 100644 drivers/phy/airoha/Makefile
+>  create mode 100644 drivers/phy/airoha/phy-airoha-usb.c
+>  create mode 100644 drivers/soc/airoha/Kconfig
+>  create mode 100644 drivers/soc/airoha/Makefile
+>  create mode 100644 drivers/soc/airoha/airoha-scu-ssr.c
+>  create mode 100644 include/dt-bindings/soc/airoha,scu-ssr.h
+>  create mode 100644 include/linux/soc/airoha/airoha-scu-ssr.h
+>  create mode 100644 include/linux/soc/soc/airoha-scu-ssr.h
 > 
 > --
 > 2.48.1
@@ -103,16 +174,16 @@ make sure dt-schema is up to date:
   pip3 install dtschema --upgrade
 
 
-New warnings running 'make CHECK_DTBS=y for arch/arm64/boot/dts/qcom/' for 20250308013019.10321-1-semfault@disroot.org:
+New warnings running 'make CHECK_DTBS=y for arch/arm64/boot/dts/airoha/' for 20250309132959.19045-1-ansuelsmth@gmail.com:
 
-arch/arm64/boot/dts/qcom/sm6125-xiaomi-ginkgo.dtb: geniqup@4ac0000: #address-cells: 2 was expected
-	from schema $id: http://devicetree.org/schemas/soc/qcom/qcom,geni-se.yaml#
-arch/arm64/boot/dts/qcom/sm6125-xiaomi-ginkgo.dtb: geniqup@4ac0000: #size-cells: 2 was expected
-	from schema $id: http://devicetree.org/schemas/soc/qcom/qcom,geni-se.yaml#
-arch/arm64/boot/dts/qcom/sm6125-xiaomi-ginkgo.dtb: geniqup@4cc0000: #address-cells: 2 was expected
-	from schema $id: http://devicetree.org/schemas/soc/qcom/qcom,geni-se.yaml#
-arch/arm64/boot/dts/qcom/sm6125-xiaomi-ginkgo.dtb: geniqup@4cc0000: #size-cells: 2 was expected
-	from schema $id: http://devicetree.org/schemas/soc/qcom/qcom,geni-se.yaml#
+arch/arm64/boot/dts/airoha/en7581-evb.dtb: usb@1fab0000: compatible:0: 'mediatek,mtk-xhci' is not one of ['mediatek,mt2701-xhci', 'mediatek,mt2712-xhci', 'mediatek,mt7622-xhci', 'mediatek,mt7623-xhci', 'mediatek,mt7629-xhci', 'mediatek,mt7986-xhci', 'mediatek,mt7988-xhci', 'mediatek,mt8173-xhci', 'mediatek,mt8183-xhci', 'mediatek,mt8186-xhci', 'mediatek,mt8188-xhci', 'mediatek,mt8192-xhci', 'mediatek,mt8195-xhci', 'mediatek,mt8365-xhci']
+	from schema $id: http://devicetree.org/schemas/usb/mediatek,mtk-xhci.yaml#
+arch/arm64/boot/dts/airoha/en7581-evb.dtb: usb@1fab0000: compatible: ['mediatek,mtk-xhci'] is too short
+	from schema $id: http://devicetree.org/schemas/usb/mediatek,mtk-xhci.yaml#
+arch/arm64/boot/dts/airoha/en7581-evb.dtb: usb@1fad0000: compatible:0: 'mediatek,mtk-xhci' is not one of ['mediatek,mt2701-xhci', 'mediatek,mt2712-xhci', 'mediatek,mt7622-xhci', 'mediatek,mt7623-xhci', 'mediatek,mt7629-xhci', 'mediatek,mt7986-xhci', 'mediatek,mt7988-xhci', 'mediatek,mt8173-xhci', 'mediatek,mt8183-xhci', 'mediatek,mt8186-xhci', 'mediatek,mt8188-xhci', 'mediatek,mt8192-xhci', 'mediatek,mt8195-xhci', 'mediatek,mt8365-xhci']
+	from schema $id: http://devicetree.org/schemas/usb/mediatek,mtk-xhci.yaml#
+arch/arm64/boot/dts/airoha/en7581-evb.dtb: usb@1fad0000: compatible: ['mediatek,mtk-xhci'] is too short
+	from schema $id: http://devicetree.org/schemas/usb/mediatek,mtk-xhci.yaml#
 
 
 
