@@ -1,50 +1,55 @@
-Return-Path: <linux-kernel+bounces-553573-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-553574-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3F12AA58BD7
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 07:13:05 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 22E87A58BD8
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 07:14:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E065B7A42AB
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 06:12:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C85DA1889B51
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 06:14:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9651A1C9EAA;
-	Mon, 10 Mar 2025 06:12:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 350601C8618;
+	Mon, 10 Mar 2025 06:14:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gTBMEWx3"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="px5WJJYg"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E825134CF5;
-	Mon, 10 Mar 2025 06:12:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9264042A80;
+	Mon, 10 Mar 2025 06:14:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741587176; cv=none; b=SEpWImlioOlG/JHCOXwRnfF/Yztaa5hGw1Hfcb7JYdXfvRCkk1+l0tk+clWCfYMM7PyAPb0oApsYhVXsHxnkiFNEUB0Ub4BTJGtMnQiND1lyUjFYWOn6vQeClUCO238VrKsKinfGIYBXEDThciswBcaJhKertpWBHGrPgU9TEow=
+	t=1741587253; cv=none; b=RrBbmAoAQXngq7xt58vL16Km4osaJhTtuFPk5ResQXBGrp5+WBNKGqtJp9jiYLppNAHOkXdoVKqpANVoBcvwU64HcY67vuFynuQKioiYEsTap5j526QkSATUOdjnLrw5QvCyiFvDLRwFdEY0C6712Br91SU270Z1ghR1/UJWL/Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741587176; c=relaxed/simple;
-	bh=IwqHQDBwSuTVidoWpcAHGXgI2bJZGWVRqXPAmGK7cIo=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=RsA8Zd/ljoDPcgLZ/FrL7QfXbFni2lCmR8AocaU2tSa9oLXKHP7IyH78W3IqxrXGhmLSfQX5sSE98XizwUpQ1pl6+UszWy8vZGOr1o8z9dF2KCOb3ilHpedlFpX5JpL12J4D12F/TG+dy3d0junIP6ovIZuGjgd4qudPZvq4avY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gTBMEWx3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id A5F55C4CEE5;
-	Mon, 10 Mar 2025 06:12:55 +0000 (UTC)
+	s=arc-20240116; t=1741587253; c=relaxed/simple;
+	bh=XD0x4Ii/IotKmi77mKPJjxcvFwakp1wA/tNz4JU9oys=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ICdQxZPzdLewyc0dlqUZUnjO6Jg5uVisPYMh7D5A7baPnIxZ//4p8cvLDlYeKENjS4zDn52wm1ZiNck9ooLz7+lyJY9DixiDsZCtp19vt0GHaPlgMKWRO459MA3prkRVJavtTVy8oMvQAB/R7yWUeAJPa+YmFkVYcEmOtu3KH8s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=px5WJJYg; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4312FC4CEE5;
+	Mon, 10 Mar 2025 06:14:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741587175;
-	bh=IwqHQDBwSuTVidoWpcAHGXgI2bJZGWVRqXPAmGK7cIo=;
-	h=From:Date:Subject:To:Cc:Reply-To:From;
-	b=gTBMEWx36xc2YFJBnkNLat0KBIILM1y6h0CQvnJ+9k8YdNiSuZVI7Oiw/sCq954y/
-	 EViDe1VT51nmMmHXWUgpgxfGQWVhUlu+i1hQQWHKPSPAM46SMPFGKHUzYGlpbq7DWc
-	 lmhJroREzgjtOOBe9MyZiqnknNaleSHEsPrZv+tV45Z81Q8E/MiB0UgHNozfGCtxek
-	 qoBzEl/Ns8YOxTxeagFD2C4FlQT4EwYVJRKH8SV6LyxcKVYgGMAMIDQeftz0yvc5rU
-	 2l/j7OJUsOJ7MQUrk80dIBGSExB1d44aacj4J7qm/yyTYCpKt0BXnv05wjZ5fwUVje
-	 5XpmRtkg94KBg==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 91A46C282DE;
-	Mon, 10 Mar 2025 06:12:55 +0000 (UTC)
-From: Aaron Kling via B4 Relay <devnull+webgeek1234.gmail.com@kernel.org>
-Date: Mon, 10 Mar 2025 01:11:58 -0500
-Subject: [PATCH] iommu/arm: Allow disabling Qualcomm support in arm_smmu_v3
+	s=k20201202; t=1741587253;
+	bh=XD0x4Ii/IotKmi77mKPJjxcvFwakp1wA/tNz4JU9oys=;
+	h=From:To:Cc:Subject:Date:From;
+	b=px5WJJYgnFHOgkfaV0OBQsfSwma3DpJxYSlTfpJjU2dvnsYRWFE+96g9Ht3kGPgbo
+	 jyQ6QXujQwwwie9aIf7FfGaFQ7DSIWKGeE0eMuDlgJn0x6+xkC8xWA4g45gsDTtSYM
+	 5MmxSYyhN228kBvAd8gwX4Ckaj1XOX+218qi2ETQp/1+izUCkvqEuvx9nzN6ewtpg4
+	 HAJlmjyjUeJTg+pAr41ercjC/mj0HyVhggrL3pu3DtquiDsb73CcLvMb8BxjO0cBXs
+	 pZ4dS0E0W/iiZ/u/WpkntxMDsz9o+qNGkuIBdcA8OwK4CU1UAVXYgaZ2sLAkJw2Woa
+	 bNa5CRmCFYXqQ==
+From: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: Masami Hiramatsu <mhiramat@kernel.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	linux-kernel@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org
+Subject: [PATCH v2] tracing: tprobe-events: Fix to clean up tprobe correctly when module unload
+Date: Mon, 10 Mar 2025 15:14:09 +0900
+Message-ID:  <174158724946.189309.15826571379395619524.stgit@mhiramat.tok.corp.google.com>
+X-Mailer: git-send-email 2.49.0.rc0.332.g42c0ae87b1-goog
+User-Agent: StGit/0.19
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -52,62 +57,61 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250310-b4-qcom-smmu-v1-1-733a1398ff85@gmail.com>
-X-B4-Tracking: v=1; b=H4sIAK2CzmcC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
- vPSU3UzU4B8JSMDI1MDY0MD3SQT3cLk/Fzd4tzcUt0Uk+TkxDQzs0TD5FQloJaCotS0zAqwcdG
- xtbUAKo+Rtl4AAAA=
-X-Change-ID: 20250310-b4-qcom-smmu-d4ccaf66a1ce
-To: Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>, 
- Robin Murphy <robin.murphy@arm.com>, Arnd Bergmann <arnd@arndb.de>
-Cc: iommu@lists.linux.dev, linux-kernel@vger.kernel.org, 
- stable@vger.kernel.org, Aaron Kling <webgeek1234@gmail.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1741587175; l=992;
- i=webgeek1234@gmail.com; s=20250217; h=from:subject:message-id;
- bh=8mZdDIMzM15RJAJ2ViAymKW4I/RyQ463WLVTHNvdOss=;
- b=VxZlCVYBtjNtBkmmPUW9Cq2dx3v6oxhk7wRY+57QD7wraDxUu2bicinn3sWO5zq0hNa5Bto0T
- /dYzcsQuL2KB5bhHQ8pQL52WvdFKE00bBofObUCQcIpLBHOGJxLGeDO
-X-Developer-Key: i=webgeek1234@gmail.com; a=ed25519;
- pk=TQwd6q26txw7bkK7B8qtI/kcAohZc7bHHGSD7domdrU=
-X-Endpoint-Received: by B4 Relay for webgeek1234@gmail.com/20250217 with
- auth_id=342
-X-Original-From: Aaron Kling <webgeek1234@gmail.com>
-Reply-To: webgeek1234@gmail.com
+Content-Transfer-Encoding: 8bit
 
-From: Aaron Kling <webgeek1234@gmail.com>
+From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
-If ARCH_QCOM is enabled when building arm_smmu_v3, a dependency on
-qcom-scm is added, which currently cannot be disabled. Add a prompt to
-ARM_SMMU_QCOM to allow disabling this dependency.
+When unloading module, the tprobe events are not correctly cleaned
+up. Thus it becomes `fprobe-event` and never be enabled again even
+if loading the same module again.
 
-Fixes: 0f0f80d9d5db ("iommu/arm: fix ARM_SMMU_QCOM compilation")
-Cc: stable@vger.kernel.org
-Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
+For example;
+
+ # cd /sys/kernel/tracing
+ # modprobe trace_events_sample
+ # echo 't:my_tprobe foo_bar' >> dynamic_events
+ # cat dynamic_events
+t:tracepoints/my_tprobe foo_bar
+ # rmmod trace_events_sample
+ # cat dynamic_events
+f:tracepoints/my_tprobe foo_bar
+
+As you can see, the second time my_tprobe starts with 'f' instead
+of 't'.
+
+This unregisters the fprobe and tracepoint callback when module is
+unloaded but marks the fprobe-event is tprobe-event.
+
+Fixes: 57a7e6de9e30 ("tracing/fprobe: Support raw tracepoints on future loaded modules")
+Signed-off-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
 ---
- drivers/iommu/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/iommu/Kconfig b/drivers/iommu/Kconfig
-index ec1b5e32b9725bc1104d10e5d7a32af7b211b50a..cca0825551959e3f37cc2ea41aeae526fdb73312 100644
---- a/drivers/iommu/Kconfig
-+++ b/drivers/iommu/Kconfig
-@@ -381,6 +381,7 @@ config ARM_SMMU_MMU_500_CPRE_ERRATA
- 
- config ARM_SMMU_QCOM
- 	def_tristate y
-+	prompt "Qualcomm SMMUv3 Support"
- 	depends on ARM_SMMU && ARCH_QCOM
- 	select QCOM_SCM
- 	help
-
+ Changes in v2:
+   - Do not use unregister_trace_fprobe() but directly unregister
+     fprobe and tracepoint in the callback.
 ---
-base-commit: 1110ce6a1e34fe1fdc1bfe4ad52405f327d5083b
-change-id: 20250310-b4-qcom-smmu-d4ccaf66a1ce
+ kernel/trace/trace_fprobe.c |    9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
 
-Best regards,
--- 
-Aaron Kling <webgeek1234@gmail.com>
-
+diff --git a/kernel/trace/trace_fprobe.c b/kernel/trace/trace_fprobe.c
+index e27305d31fc5..88a80953ae5e 100644
+--- a/kernel/trace/trace_fprobe.c
++++ b/kernel/trace/trace_fprobe.c
+@@ -1008,10 +1008,13 @@ static int __tracepoint_probe_module_cb(struct notifier_block *self,
+ 					reenable_trace_fprobe(tf);
+ 			}
+ 		} else if (val == MODULE_STATE_GOING && tp_mod->mod == tf->mod) {
+-			tracepoint_probe_unregister(tf->tpoint,
++			unregister_fprobe(&tf->fp);
++			if (trace_fprobe_is_tracepoint(tf)) {
++				tracepoint_probe_unregister(tf->tpoint,
+ 					tf->tpoint->probestub, NULL);
+-			tf->tpoint = NULL;
+-			tf->mod = NULL;
++				tf->tpoint = TRACEPOINT_STUB;
++				tf->mod = NULL;
++			}
+ 		}
+ 	}
+ 	mutex_unlock(&event_mutex);
 
 
