@@ -1,240 +1,96 @@
-Return-Path: <linux-kernel+bounces-553751-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-553752-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 80E29A58E70
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 09:42:56 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F2D0A58E72
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 09:43:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2ED523AA486
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 08:42:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A0A6C169E1E
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 08:43:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 528D722371F;
-	Mon, 10 Mar 2025 08:42:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 488AF224221;
+	Mon, 10 Mar 2025 08:43:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nSZi0KGd"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nE4Tg2nm"
+Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97701223706;
-	Mon, 10 Mar 2025 08:42:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36FFB2222DF;
+	Mon, 10 Mar 2025 08:43:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741596156; cv=none; b=YB2ELOJr1ESfVSx/0vBAvtlGuiWLM1zL8GdbfVM3Q6gnrKq0LUHz43qb8QVDfrx8E5HADn2Hv03CmVeJi6sUpujGErmo7JeTJov3zIMLntdygIhWCepnghj8kNsyh3bvp5Vzpq5IIzQtVmh4GjZTI1vYBWqz7sfxOvGsLO+onQo=
+	t=1741596212; cv=none; b=qB9fPUZjktE7xtkEbhXhdpY/Xih2nYlk+33tVv8RMcD24QbLt0GBMlGS/0OZ1oJoAlLn/sZwRQM+dhaJcuvO2VgDJfY/BmvEWG5I/ubMz5sgCTjS21mnWoDazg48ym//fLCUuOavZGB2C8DXutzECLN8UvSYGLdUDGVbwWYLD1E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741596156; c=relaxed/simple;
-	bh=ZGGntPjsCyYb/Jm7tB8b/sjMmcPSAq01Cv44HcpGxEg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=o8CMq80U+3ydPliA4L1ONiO/FsvMFNeNjSOk2uFYXq3qIJwQhLSi3K5VPJOB5wEmNZmry8Ar4IltPjl6plqYhKH6rg5obtkb9vfTXSCZd13p729anPwTU6LvT7E+h0/00urxEBNr8U5ozS9zm37YHfb5Hh4zfJms336Aq9Vfkuk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nSZi0KGd; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5CE7FC4CEE5;
-	Mon, 10 Mar 2025 08:42:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741596155;
-	bh=ZGGntPjsCyYb/Jm7tB8b/sjMmcPSAq01Cv44HcpGxEg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=nSZi0KGdMx59+kT/EtfX5i3FYs6DEkLL/1Wxb3sOWbrE/qxah/c7o5lLgpHf46Lov
-	 /bQ0QNTjMbJkNtvkYbhtp+vWP0loZZIobFowh85fx24O7UEGDBAuz+P2QBHO/yb9Zz
-	 rrumMy23wzIaiPLMcDYOBmGsPoq9G5dao/4YVjGDgaC99UOlLSM8gIV6Qa2fCUB+Sc
-	 OMfeNqZeuStXBcPc+f1wilAkOzaU9zcP8S2b4vPij/BA8XlqdBtPUxD4oijGJY2r93
-	 sXQzEB+908ptkKBrK9jQgjuKWwgP81OBe64rN3HqrMFqxTjZM+m99b3B3CMEkX55Yq
-	 4SyPkYULV+0JA==
-Date: Mon, 10 Mar 2025 09:42:29 +0100
-From: Ingo Molnar <mingo@kernel.org>
-To: "Huang, Kai" <kai.huang@intel.com>
-Cc: "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
-	"vdronov@redhat.com" <vdronov@redhat.com>,
-	"jarkko@kernel.org" <jarkko@kernel.org>,
-	"dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
-	"tglx@linutronix.de" <tglx@linutronix.de>,
-	"hpa@zytor.com" <hpa@zytor.com>,
-	"mingo@redhat.com" <mingo@redhat.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"bp@alien8.de" <bp@alien8.de>, "x86@kernel.org" <x86@kernel.org>
-Subject: [PATCH -v3] x86/sgx: Warn explicitly if X86_FEATURE_SGX_LC is not
- enabled
-Message-ID: <Z86l9WiiP_4bFC8q@gmail.com>
-References: <20250309172215.21777-2-vdronov@redhat.com>
- <c21c89d29f006945b6be7624599809b36574530e.camel@intel.com>
+	s=arc-20240116; t=1741596212; c=relaxed/simple;
+	bh=/BivDYoevo1hDOR0bLJpieM2WQ/xqr60RO17moNB6Rw=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=i+3iYIALtCyiFf9LgteGA7NtZnuD+kB4gKITpoKPo08pgUZPwm3bJf0e1PToPge6MyxT4J2sdAFzZc8do14L7Xu6KyLtZr10/iODyznTr+G2ZlETKq69m2Thfj+pODnSDHYvSRBYGbv6X79r1rXSQyaM6w3gXywL1py8Rqj2Cso=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nE4Tg2nm; arc=none smtp.client-ip=209.85.218.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-abf615d5f31so772966166b.2;
+        Mon, 10 Mar 2025 01:43:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741596209; x=1742201009; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=/BivDYoevo1hDOR0bLJpieM2WQ/xqr60RO17moNB6Rw=;
+        b=nE4Tg2nmKu/7tOimKNkgWDkmXPCPYHfTTZX4vdSj6za8Xvo3fkrKlNsvn2ik2LSypE
+         gLwDKIX/e51KajgsJ+YFEHas0baAeRJzzzZLZStoOyXJ6xvvXrWXSo1GF1aXxu+LvjNV
+         pbXDZ9YiGIP0I2sSENeA2Av3gniwVgqhsJ9QbcR+VT3g9iUhOqASPO2W4JwgFR++agua
+         GGX/svZwUhc49nYvkQq459oFA2o9USioxHsHycXs4UoLHDVsID4vFUY5HHxp2efG9rnz
+         vnYEGEZsx7okYPulXw6wBRofRZqASgFa2jG9ppTeDC0NP2zSiUjH5A7rkSYrn1GUNq5v
+         CYiw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741596209; x=1742201009;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=/BivDYoevo1hDOR0bLJpieM2WQ/xqr60RO17moNB6Rw=;
+        b=M2oRhxs6bpsQJry9ZFIN8SuBnvO5dZmSHgSP4e5ksjw8ecjBao6l5RTyeSD2InSpgt
+         DcOhEdsRBbr4EjCB8p7wx0fDcJRizM5/VpospVoSriLO1hcMV1xQxx+tnqg33RLgsw5V
+         6wg6M36+XtgHhsTZmK034JfGYHXkkc1YxjbwkdNBkDwPkt6b31JnToI6G0f1PYUDsHsS
+         2XCncfA6und3pyFiaS2R9Rgrtf5WKBe7pJ0Hh8porJm9diOZIdVorgcSXsqIeUaeu+Ib
+         AtSxQTIB+cZIqMV7JU7/nw3xUZxFZHjgBXQ6Vm5UlmAlyv66o44ubh/JwV7dnKzsu2oI
+         CnIg==
+X-Forwarded-Encrypted: i=1; AJvYcCXSv/O6k79Ad7mHA2GW+OPx0koaKsQun60wh988arn+qX/SlKlIUTfeaUOWTAMB2VsEuGp8hYpxv0hWiO4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwZ7QeunldycuZwa+UsoUAsg2wN2AHeHl1unpctnDY88KURfXxd
+	XqfH0K+E90Al0uSp8yj155FrCOnjN3npF+0Ym8nMsEg/jPkEc+edQmsqQA==
+X-Gm-Gg: ASbGnct+9/hwElmYtfzed+oqmAiQLIgO3LX7KONuO0kYwUZIrD9TYeqQ6lDBXBBEekf
+	BzoEDpC9txfyX9w/oEiQ5DySHOAUXutFDU0iD2HBv4+R8TDFjXHNCnPwc87ApwW++ldS1HV5n2x
+	pbll4Nnwsb17qjSSQNxGrGvAU0X6NsC60GHF+F4MthXNCmSvbDalzOOJHtFfoYwBjhcc60nkanr
+	fDsTxKE1Pn/Kkb2/dMOMTSt4Vfpdjkq2zKzLxsqg1iG/9WnpIsZxQtwyfW1cnUnuwORdqRlKMr/
+	VfQSin3sdFTJaz2GIZo1PV8L/0pDahZEVwP0/FfnJwb3wmxpY9Qra2JTKGrI8xutr2/P/CMJ
+X-Google-Smtp-Source: AGHT+IH7/bI2aACIoTPWFeR5j493MEl8gNyQRhWay+OkFeYwTl3pkOAIv8Hm1z6Hea04Xx/HY6ZJ9A==
+X-Received: by 2002:a17:906:c03:b0:ac2:b73:db4b with SMTP id a640c23a62f3a-ac2525ba768mr1338855266b.4.1741596209206;
+        Mon, 10 Mar 2025 01:43:29 -0700 (PDT)
+Received: from foxbook (adts246.neoplus.adsl.tpnet.pl. [79.185.230.246])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac251a5492asm597964866b.28.2025.03.10.01.43.28
+        (version=TLS1_2 cipher=AES128-SHA bits=128/128);
+        Mon, 10 Mar 2025 01:43:28 -0700 (PDT)
+Date: Mon, 10 Mar 2025 09:43:26 +0100
+From: Michal Pecio <michal.pecio@gmail.com>
+To: Mathias Nyman <mathias.nyman@intel.com>, Greg Kroah-Hartman
+ <gregkh@linuxfoundation.org>
+Cc: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: usb: xhci: Don't change the status of stalled TDs on failed
+ Stop EP
+Message-ID: <20250310094326.0b97a7ae@foxbook>
+In-Reply-To: <20250310093934.7d688648@foxbook>
+References: <20250310093605.2b3d0425@foxbook>
+	<20250310093934.7d688648@foxbook>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <c21c89d29f006945b6be7624599809b36574530e.camel@intel.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-
-* Huang, Kai <kai.huang@intel.com> wrote:
-
-> On Sun, 2025-03-09 at 18:22 +0100, Vladis Dronov wrote:
-> > A kernel requires X86_FEATURE_SGX_LC to be able to create SGX enclaves.
-> 
-> The kernel requires ...
-> 
-> > There is quite a number of hardware which has X86_FEATURE_SGX but not
-> > X86_FEATURE_SGX_LC. A kernel running on such a hardware does not create
-> > /dev/sgx_enclave file silently. Explicitly warn if X86_FEATURE_SGX_LC
-> > is not enabled to properly nofity a user about this condition.
-> 			     ^
-> 			     notify
-> 
-> And I don't think "notify" is correct because the reality is the 
-> kernel only prints some error message so that the user can check and 
-> see when it wants.
-> 
-> How about:
-> 
-> Explicitly print error message if X86_FEATURE_SGX_LC is not present 
-> so that the users can be aware of this condition which results in SGX 
-> driver being disabled.
-> 
-> > 
-> > The X86_FEATURE_SGX_LC is a CPU feature that enables LE hash MSRs to be
-> > writable when running native enclaves, i.e. using a custom root key rather
-> > than the Intel proprietary key for enclave signing.
-> 
-> Using "root key" can be controversial.  Let's just say "key" instead.
-> 
-> And the X86_FEATURE_SGX_LC feature itself doesn't automatically enable LE MSRs
-> to be writable.  We still need to opt-in in the 'feature control' MSR.
-
-Why would it be controversial?
-
-> How about:
-> 
-> The X86_FEATURE_SGX_LC, a.k.a. SGX Launch Control, is a CPU feature 
-> that enables LE (Launch Enclave) hash MSRs to be writable (with 
-> additional opt-in required in the 'feature control' MSR) when running 
-> enclaves, i.e., using a custom key rather than the Intel proprietary 
-> key for enclave signing.
-
-
-> > Signed-off-by: Vladis Dronov <vdronov@redhat.com>
-> 
-> I think this message will be useful for someone who knows SGX in 
-> general but doesn't know that Linux SGX driver requires the LE MSRs 
-> to be writable, thus requires the CPU supports SGX_LC feature bit.
-> 
-> With the above addressed, feel free to add:
-> 
-> Acked-by: Kai Huang <kai.huang@intel.com>
-
-Thanks, I've edited the changelog to be a bit clearer.
-
-I also added an error message when the driver fails to register, and 
-made all 3 failure error messages consistent and refer back to the 
-/dev/sgx_enclave device node name.
-
-I also included part of this commit message note:
-
-> > an out-of-commit-message note:
-> > 
-> > I've hit this issue myself and have spent some time researching where is
-> > my /dev/sgx_enclave file on an SGX-enabled hardware, so this is a bit
-> > personal.
-> > 
-> > Links related:
-> > https://github.com/intel/linux-sgx/issues/837
-> > https://patchwork.kernel.org/project/platform-driver-x86/patch/20180827185507.17087-3-jarkko.sakkinen@linux.intel.com/
-
-Because this experience reflects arguably poor usability: people see 
-'SGX' in their /proc/cpuinfo file, think that their hardware is 'SGX 
-enabled' and are wondering why the hell the /dev/sgx_enclave device 
-node is not created, right?
-
-I also Cc:-ed more SGX people.
-
-See the full -v3 patch below.
-
-Is the device node misnamed, should it be /dev/sgx_lc_enclave? Should 
-we hide the SGX feature bit from cpuinfo when SGX_LC is not present, so 
-that people don't go on a wild goose chase?
-
-Thanks,
-
-	Ingo
-
-======================================>
-From: Vladis Dronov <vdronov@redhat.com>
-Date: Sun, 9 Mar 2025 18:22:16 +0100
-Subject: [PATCH] x86/sgx: Warn explicitly if X86_FEATURE_SGX_LC is not enabled
-
-The kernel requires X86_FEATURE_SGX_LC to be able to create SGX enclaves,
-not just X86_FEATURE_SGX.
-
-There is quite a number of hardware which has X86_FEATURE_SGX but not
-X86_FEATURE_SGX_LC. A kernel running on such hardware does not create
-the /dev/sgx_enclave file and does so silently.
-
-Explicitly warn if X86_FEATURE_SGX_LC is not enabled to properly notify
-users that the kernel disabled the SGX driver.
-
-The X86_FEATURE_SGX_LC, a.k.a. SGX Launch Control, is a CPU feature
-that enables LE (Launch Enclave) hash MSRs to be writable (with
-additional opt-in required in the 'feature control' MSR) when running
-enclaves, i.e. using a custom root key rather than the Intel proprietary
-key for enclave signing.
-
-I've hit this issue myself and have spent some time researching where
-my /dev/sgx_enclave file went on SGX-enabled hardware.
-
-Related links:
-
-  https://github.com/intel/linux-sgx/issues/837
-  https://patchwork.kernel.org/project/platform-driver-x86/patch/20180827185507.17087-3-jarkko.sakkinen@linux.intel.com/
-
-[ mingo: Made the error message a bit more verbose, and added other cases
-         where the kernel fails to create the /dev/sgx_enclave device node. ]
-
-Signed-off-by: Vladis Dronov <vdronov@redhat.com>
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Acked-by: Kai Huang <kai.huang@intel.com>
-Cc: Jarkko Sakkinen <jarkko@kernel.org>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Sean Christopherson <sean.j.christopherson@intel.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Link: https://lore.kernel.org/r/20250309172215.21777-2-vdronov@redhat.com
----
- arch/x86/kernel/cpu/sgx/driver.c | 10 +++++++---
- 1 file changed, 7 insertions(+), 3 deletions(-)
-
-diff --git a/arch/x86/kernel/cpu/sgx/driver.c b/arch/x86/kernel/cpu/sgx/driver.c
-index 22b65a5f5ec6..40c3347ac65d 100644
---- a/arch/x86/kernel/cpu/sgx/driver.c
-+++ b/arch/x86/kernel/cpu/sgx/driver.c
-@@ -150,13 +150,15 @@ int __init sgx_drv_init(void)
- 	u64 xfrm_mask;
- 	int ret;
- 
--	if (!cpu_feature_enabled(X86_FEATURE_SGX_LC))
-+	if (!cpu_feature_enabled(X86_FEATURE_SGX_LC)) {
-+		pr_err("SGX disabled: SGX launch control CPU feature is not available, /dev/sgx_enclave disabled.\n");
- 		return -ENODEV;
-+	}
- 
- 	cpuid_count(SGX_CPUID, 0, &eax, &ebx, &ecx, &edx);
- 
- 	if (!(eax & 1))  {
--		pr_err("SGX disabled: SGX1 instruction support not available.\n");
-+		pr_err("SGX disabled: SGX1 instruction support not available, /dev/sgx_enclave disabled.\n");
- 		return -ENODEV;
- 	}
- 
-@@ -173,8 +175,10 @@ int __init sgx_drv_init(void)
- 	}
- 
- 	ret = misc_register(&sgx_dev_enclave);
--	if (ret)
-+	if (ret) {
-+		pr_err("SGX disabled: Unable to register the /dev/sgx_enclave driver (%d).\n", ret);
- 		return ret;
-+	}
- 
- 	return 0;
- }
+Sorry for this one, missing [PATCH] tag in the subject.
+I resent it corectly.
 
