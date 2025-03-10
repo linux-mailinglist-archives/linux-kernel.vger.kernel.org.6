@@ -1,193 +1,148 @@
-Return-Path: <linux-kernel+bounces-555160-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-555161-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 22CA2A5A63D
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 22:30:45 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 235B3A5A641
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 22:31:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 682C01895397
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 21:30:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 244D9168646
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 21:31:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03D3B1E32C6;
-	Mon, 10 Mar 2025 21:29:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D10CB1E1A3F;
+	Mon, 10 Mar 2025 21:30:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TirXhkdp"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Bj7X+4xV"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51C9F1CB9F0;
-	Mon, 10 Mar 2025 21:29:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A63A1DFFD;
+	Mon, 10 Mar 2025 21:30:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741642160; cv=none; b=ClFHzAALH1chtXFcVbJClRTIjQP36wTxninmAlJe+fYPfNmbUlGUYA6gHt6pz53VC1m2foVnBs+axXBu/4V7mk7HkCvv505Ii2KK6qUrEDsBq4RZ7AvOclnvh+MVRrb4a27hK3bK/VpwFl7DaSBnm/JqrvH19gkGy0pgdGv0OcU=
+	t=1741642258; cv=none; b=Xunc6sWu6/dnN/UTFVuILCLKQ5FfCiHtOSioALGZYJfwDsGqDsXldUYEDTdJHqhPng12p6FVNzpxEhq+5h7urNT0jxHC4AvBBWyYuIli7P1U6D8ViGntECJMjOmLkmT0CneSr8aj4hF9jzFwb/as5aYw9vJt0T7ZExcSSCnbiZk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741642160; c=relaxed/simple;
-	bh=OoeUDymeISbaQ0PaNahEAnVeRknU+25o4QGwfMko6ug=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=hYipoFbUzhjXIJzbzEVNluYCIuVxelCM8gPEeqiQtaezgZ0qZLr9Q1kfSAxiMIKjOqfTS8XZCS/V/HIw0CbWHXkYYJ1yTVeNlSDlR4wJg2YlmP1KpCWPvX0J/TO/S4xSdB9D1nmKex+MTExgpgiBbjlx19pjVlekIwer9emITrw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TirXhkdp; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B8F7AC4CEE5;
-	Mon, 10 Mar 2025 21:29:19 +0000 (UTC)
+	s=arc-20240116; t=1741642258; c=relaxed/simple;
+	bh=57tbpPBX1YgkIQFCnnh1iR1yyY6DIOZPwgcUTQre1F0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XwNTNlXg/augVyisk/2uwARQiIbBoEaULy4oz8hPMaRVsmTba8SOfIz9KsXItZ13R4d6zK1BKtNSmRdnl80esljnpyiNN1p0qNk9uWZYYTuiBKKlZgde9rtJRpsil37yvH619kj6tv/zORl5k+TUcNx/sGTJdrvdIWuhAq6Tw34=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Bj7X+4xV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 65959C4CEE5;
+	Mon, 10 Mar 2025 21:30:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741642159;
-	bh=OoeUDymeISbaQ0PaNahEAnVeRknU+25o4QGwfMko6ug=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=TirXhkdpxads6GYAJqkreCa36p6CdNrG+YmakqXFgUMIuDMiq3woNRA66HxaM76Al
-	 YVJq27q2eV5KAehd8WFiqvSaxR+Fs8bthaSXcn5tzE1lC5iDZBsAC4nQajdOyiLPi+
-	 NlyrH1/zDmNpUvIniZLkonfkeCKMWTDW2BeeyzqYGAbYi7bcDbsptdlPgC1jtogwog
-	 C4MrvA+KBfCqD9bo9AnXW8vYwN/2YJh+C8JgnXpXibzEISpCTuq4sID2wjAxKfuR6I
-	 KLN1q1GFh2gtDrdZGviG24Qbpat/OQh2kzLurYvJk+xPYvS3HMWFEa/n6DBgT9SBRj
-	 mfG7Le196I4ZA==
-Received: by mail-oa1-f44.google.com with SMTP id 586e51a60fabf-2c12b7af278so2803046fac.0;
-        Mon, 10 Mar 2025 14:29:19 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVuzpo6lKSlBhRHdevTk/nyToLb/+5BM5DODkJ46EROKq+0YFBRTEp3TRGEZqZg+2Pa3Jl6vtFntg4=@vger.kernel.org, AJvYcCXRSk4Z6flUKukqy4kpvu3jdoZQEZ3IAK9hbzMwWsAQ5mZoyAjUMf2WpOkj5EbGBiRURSqukpSIsj/LqVI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxZP2ICeirKNbWQmCfCYBwENzDrN/G50+niDFFVarokVw2Gv2E/
-	gQ4go7l9b9tPATeprYYwfmEGOZ9QM13/eF4e8cIB84qj7UGmUM4OoN2nBMhO+y6cDVFeKiML19p
-	X+6iG6dKnSW8hAqT9Nx2BPRayqf8=
-X-Google-Smtp-Source: AGHT+IFcs1F3WeWS/rw/rH8zZRmJCxnvb5NTIKWhxHbpZf3MggTanH3PRtzPyFZHmXDyAM20lNRz7MiCww56hnLw9vk=
-X-Received: by 2002:a05:6870:b521:b0:2b8:92f0:ba5d with SMTP id
- 586e51a60fabf-2c2e959794bmr658930fac.8.1741642159022; Mon, 10 Mar 2025
- 14:29:19 -0700 (PDT)
+	s=k20201202; t=1741642257;
+	bh=57tbpPBX1YgkIQFCnnh1iR1yyY6DIOZPwgcUTQre1F0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Bj7X+4xVe5p+0NSZYbpGvyqTx74qiQ6H///mVSWebVsdZ2TtWQ1FILXJiXHoCgJkd
+	 2y55OaZZAv9znpc8kLqG7M8S/936GED8cIiBdRvnnmIXiixJjaX9SiMRWVP4uB6uUZ
+	 MI9An+OdlsbWjOxp/xpH+TGxUcbxHDjyfJbCYwRIW6/0PNvCi7PsgEyn5+JvT1hdtK
+	 m2FQGxFu3GqsCsCHC1EH2fKYxV8xIIEF4OSvC86mCh2tDVp9jlpPYpo0dudqefoxvC
+	 aEnsAAE5hecdxpd6iypKDRn2E/6EpDdb4nh6QdrcYpDpYBL+4gOT4Lm7O23swGdFUG
+	 IEvrrtp/Q61WQ==
+Date: Mon, 10 Mar 2025 16:30:56 -0500
+From: Rob Herring <robh@kernel.org>
+To: Prabhakar <prabhakar.csengg@gmail.com>
+Cc: Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	"Russell King (Oracle)" <rmk+kernel@armlinux.org.uk>,
+	Giuseppe Cavallaro <peppe.cavallaro@st.com>,
+	Jose Abreu <joabreu@synopsys.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	netdev@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+	Biju Das <biju.das.jz@bp.renesas.com>,
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: Re: [PATCH net-next v2 1/3] dt-bindings: net: dwmac: Increase
+ 'maxItems' for 'interrupts' and 'interrupt-names'
+Message-ID: <20250310213056.GA904881-robh@kernel.org>
+References: <20250308200921.1089980-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20250308200921.1089980-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <13709135.uLZWGnKmhe@rjwysocki.net> <CAGETcx-ow3T_R_Lj1s3sjp6nQz6Wv7T3dQdP3HJHd+E8nkh6rw@mail.gmail.com>
- <CAJZ5v0g3qOvESqvqiCnwVz2BYGHzrG8=nRQ8j36Qd_LC0io_Tw@mail.gmail.com>
- <CAGETcx82sLvG19eUN1ATrL5RzEKJjOeWP+kdYJdQX9O=ck7q2Q@mail.gmail.com>
- <CAJZ5v0guoA-xp-yyr7Fb7ikmE9rjt8xwDPcxU52sd0UP_u=2jA@mail.gmail.com> <CAGETcx9WZWiUd+YCQfoZEGGbewv2nrx2TiQJs55KEWbOUg9TCg@mail.gmail.com>
-In-Reply-To: <CAGETcx9WZWiUd+YCQfoZEGGbewv2nrx2TiQJs55KEWbOUg9TCg@mail.gmail.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Mon, 10 Mar 2025 22:29:07 +0100
-X-Gmail-Original-Message-ID: <CAJZ5v0haTW3L4Baez9Q1LWrRahijWgr0sd85kYOtr6ajZ3Vkgw@mail.gmail.com>
-X-Gm-Features: AQ5f1JrHMx3CwpnVlHY_ucu_zEOmB_7ca_XctKtlXga0bL7icVffHW0BVQmzMlE
-Message-ID: <CAJZ5v0haTW3L4Baez9Q1LWrRahijWgr0sd85kYOtr6ajZ3Vkgw@mail.gmail.com>
-Subject: Re: [PATCH v1 0/5] PM: sleep: Improvements of async suspend and
- resume of devices
-To: Saravana Kannan <saravanak@google.com>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, 
-	Linux PM <linux-pm@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
-	Alan Stern <stern@rowland.harvard.edu>, Ulf Hansson <ulf.hansson@linaro.org>, 
-	Johan Hovold <johan@kernel.org>, Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250308200921.1089980-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-On Mon, Mar 10, 2025 at 9:31=E2=80=AFPM Saravana Kannan <saravanak@google.c=
-om> wrote:
->
-> On Mon, Mar 10, 2025 at 9:01=E2=80=AFAM Rafael J. Wysocki <rafael@kernel.=
-org> wrote:
-> >
-> > On Sun, Mar 9, 2025 at 11:38=E2=80=AFPM Saravana Kannan <saravanak@goog=
-le.com> wrote:
-> > >
-> > > On Thu, Feb 27, 2025 at 8:23=E2=80=AFAM Rafael J. Wysocki <rafael@ker=
-nel.org> wrote:
-> > > >
-> > > > On Thu, Feb 27, 2025 at 4:45=E2=80=AFPM Saravana Kannan <saravanak@=
-google.com> wrote:
-> > > > >
-> > > > > On Tue, Feb 25, 2025 at 8:46=E2=80=AFAM Rafael J. Wysocki <rjw@rj=
-wysocki.net> wrote:
-> > > > > >
-> > > > > > Hi Everyone,
-> > > > > >
-> > > > > > Initially, this was an attempt to address the problems describe=
-d by
-> > > > > > Saravana related to spawning async work for any async device up=
-front
-> > > > > > in the resume path:
-> > > > > >
-> > > > > > https://lore.kernel.org/linux-pm/20241114220921.2529905-1-sarav=
-anak@google.com/
-> > > > > >
-> > > > > > but then I realized that it could be extended to the suspend pa=
-th and
-> > > > > > used for speeding it up, which it really does.
-> > > > >
-> > > > > Btw, maybe I didn't  word it correctly, but my patch series was m=
-eant
-> > > > > to speed up the non-async case too.
-> > > >
-> > > > If "the non-async case" means the case with "async" suspend/resume
-> > > > disabled entirely, I don't think that the ordering in which devices
-> > > > are processed can be changed just because there are no known
-> > > > dependencies.
-> > > >
-> > > > > I was going to get around sending a v2 of my series, but was caug=
-ht up
-> > > > > with some other work. But I'm okay if you want to finish up my ef=
-fort
-> > > > > -- less work for me and I can focus on the other aspects of suspe=
-nd :)
-> > > > >
-> > > > > Maybe add a Suggested-by: to the patches?
-> > > >
-> > > > Yeah, I can do that.
-> > > >
-> > > > > I definitely want to review the series, but very busy this week w=
-ith
-> > > > > some other work. I'll get to this next week for sure.
-> > > >
-> > > > That should be fine.
-> > >
-> > > Hi Rafael,
-> > >
-> > > I looked at the full series and it has at least one bug and a few gap=
-s
-> > > that I address in mine.
-> >
-> > What bug?
-> >
-> > You need to tell me specifically because I'm not aware of any bugs in
-> > this series and unless you tell me what it is and I agree that it is a
-> > bug, I have no reason to believe that there are any.
-> >
-> > As for the gaps, there are obvious differences between this patch
-> > series and your work and it would be kind of nice to explain why they
-> > matter in practice, in your view.
->
-> Sure, I'll do this.
+On Sat, Mar 08, 2025 at 08:09:19PM +0000, Prabhakar wrote:
+> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> 
+> Increase the `maxItems` value for the `interrupts` and `interrupt-names`
+> properties to accommodate the Renesas RZ/V2H(P) SoC, which features the
+> `snps,dwmac-5.20` IP with 11 interrupts.
+> 
+> Also add `additionalItems: true` to allow specifying extra interrupts
+> beyond the predefined ones. Update the `interrupt-names` property to
+> allow specifying extra `interrupt-names`.
+> 
+> Also refactor the optional `interrupt-names` property by consolidating
+> repeated enums into a single enum list.
+> 
+> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> ---
+> Note, for this change I will be sending a sperate patch for vendor
+> bindings to add constraints.
+> 
+> v1->v2
+> - No change
+> ---
+>  Documentation/devicetree/bindings/net/snps,dwmac.yaml | 6 ++++--
+>  1 file changed, 4 insertions(+), 2 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/net/snps,dwmac.yaml b/Documentation/devicetree/bindings/net/snps,dwmac.yaml
+> index 3f0aa46d798e..fad0d611a75c 100644
+> --- a/Documentation/devicetree/bindings/net/snps,dwmac.yaml
+> +++ b/Documentation/devicetree/bindings/net/snps,dwmac.yaml
+> @@ -114,6 +114,8 @@ properties:
+>  
+>    interrupts:
+>      minItems: 1
+> +    maxItems: 11
+> +    additionalItems: true
+>      items:
+>        - description: Combined signal for various interrupt events
+>        - description: The interrupt to manage the remote wake-up packet detection
+> @@ -122,11 +124,11 @@ properties:
+>  
+>    interrupt-names:
+>      minItems: 1
+> +    maxItems: 11
+> +    additionalItems: true
+>      items:
+>        - const: macirq
+>        - enum: [eth_wake_irq, eth_lpi, sfty]
+> -      - enum: [eth_wake_irq, eth_lpi, sfty]
+> -      - enum: [eth_wake_irq, eth_lpi, sfty]
 
-OK
+I think this should be structured similar to the DWC PCIe binding where 
+we define all possible names, but not the order:
 
-> But it just felt like an inefficient way to get to close to where my seri=
-es is.
+minItems: 1
+maxItems: 11
+items:
+  oneOf:
+    - const: macirq
+      description: ...
+    - const: eth_wake_irq
+      description: ...
+    - pattern: '^rx-queue-[0-3]$'
+      description: ...
+    - pattern: '^tx-queue-[0-3]$'
+      description: ...
 
-I'm not sure where it is TBH.
+And so on. Move the descriptions from 'interrupts' and drop 'items' and 
+'additionalItems' from it.
 
-> Instead of you just saying you don't like
-> about my series and giving me some feedback on how to fix it.
-
-You got feedback on it:
-
-https://lore.kernel.org/linux-pm/CAJZ5v0grG7eSJ7_c73i9-bXaFhm5rfE2WmxtR6yLB=
--MGkd7sVg@mail.gmail.com/
-
-And no response.
-
-Also here:
-
-https://lore.kernel.org/linux-pm/CAJZ5v0g9A1pZ5FjPAjdLY5ybNmefnBVVMJM7h3czW=
-38p1fTfqQ@mail.gmail.com/
-
-And there was a bunch of feedback from other people (and 0-day) on the
-last patch.
-
-> > > And those are what make my patches have a
-> > > higher diff. Can we just continue with my series instead?
-> >
-> > Of course you are free to send a new version of it, but it is unlikely
-> > to be a sufficient replacement for constructive feedback.
->
-> Ok, I'll point out the issues I see in this series and hopefully you
-> can point out the issues in my series and we can move forward with
-> mine if you agree with the additional issues my series is working
-> through.
-
-Sure, but please address the feedback so far and send a new version.
+Rob
 
