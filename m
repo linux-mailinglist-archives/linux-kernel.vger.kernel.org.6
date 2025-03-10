@@ -1,141 +1,143 @@
-Return-Path: <linux-kernel+bounces-553487-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-553489-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 564EFA58A5D
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 03:17:16 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BA085A58A62
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 03:19:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E5A42188CFD3
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 02:17:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D897A18898F9
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 02:19:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BD5C192B82;
-	Mon, 10 Mar 2025 02:17:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56256198E8C;
+	Mon, 10 Mar 2025 02:19:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="WM++iCzZ"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="FBz5KbE4"
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C010154F8C
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 02:17:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B58214885B
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 02:19:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741573029; cv=none; b=q7S5NxdH1zJvyiC0CSbvqS6LwPloW+Bc465kh5f9KPZhproaruvgOwmhc3FTXlrJUoSLRSxOz6+p1PIoDccuOmXwqQhiyqR0n17cN43iSX7Yj1gvoHLurPmOXPZBSKDcxWSige+uc3hWJjBOc530C0w7xkXB8VUu6jApK0sbpuc=
+	t=1741573179; cv=none; b=rGdhqEqROrEb+XAVle6wxQ8eyFrFlDIN/SssRB5Scsrzp+JnBneVIFBvY+ZaLAPKIYoqLwLo9KOZDbpI6s44g6nXmoamXmmK+QC8zsWIi1od/BKoCgc3bFNJWkElhq255JTn6x+C+gnvTtLcE40kQjzXsTBomIPWckWVVXhaQEU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741573029; c=relaxed/simple;
-	bh=M0I9e+37iGKDtZoDzeO5pmsFG0Bsth0P4d1lDUCl/nM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AndFPvwKj0Py9U2RRoua4+mE7F0rygXhPzuzmjHx60h02J74eR5bKlu83srowy1BMFg5Fcl7s9hdj/92cHbTcF0jeNdNq4utcDlvWVDgEX8RJe6ay6Ly9WMG06qybabnTmtC3+PSbCfVNrPnOU8k/Rez7xfXzQ2rtxlumqrlIzw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=WM++iCzZ; arc=none smtp.client-ip=170.10.129.124
+	s=arc-20240116; t=1741573179; c=relaxed/simple;
+	bh=AtJz09iFJfguCxcJpJrTrHp/B802QUOltbOGPdkAKoc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=LfF3hqB11p195O9xDVWl6zg8A/asUhOwQV0IfP01uPIRgarK1q68UH0CkuRanWFd0LI7Pg3bHFuRY4z9W/UPglsUirkuqkhcO0GSv0TYIJonqPdWLSyZNJdqfpOTvIZ6AAyyquKEVsv7vBWp2jLl34gzvYfv7ppaG7ys1Q9J9G4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=FBz5KbE4; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1741573025;
+	s=mimecast20190719; t=1741573177;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=uSDm5RqDvPpOOOzQzCbG2887sb5kw+SbviHpW34eBvQ=;
-	b=WM++iCzZ+0kGGu1KK1eU4j9bjsx0G6Y8bLUo0egVEpl4Rf+LGozEhdyAgwSdniyvDm7upH
-	tEEkcx1qL4VxXqOlv3944mNxKd8C4fWAwIGXF2hbTpNR5OUlWIGwBtm9uZRVc6iyRbZJzP
-	BcswCLP4Lv9R5FjIPPIBOm8ulQmUKHg=
-Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-93-axi359iXM9W26bB6PfSCBQ-1; Sun,
- 09 Mar 2025 22:17:02 -0400
-X-MC-Unique: axi359iXM9W26bB6PfSCBQ-1
-X-Mimecast-MFC-AGG-ID: axi359iXM9W26bB6PfSCBQ_1741573020
-Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 31CB2180025A;
-	Mon, 10 Mar 2025 02:17:00 +0000 (UTC)
-Received: from fedora (unknown [10.72.120.21])
-	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 66E9218009BC;
-	Mon, 10 Mar 2025 02:16:51 +0000 (UTC)
-Date: Mon, 10 Mar 2025 10:16:46 +0800
-From: Ming Lei <ming.lei@redhat.com>
-To: Yu Kuai <yukuai1@huaweicloud.com>
-Cc: Tejun Heo <tj@kernel.org>, axboe@kernel.dk, josef@toxicpanda.com,
-	linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-	cgroups@vger.kernel.org, yi.zhang@huawei.com, yangerkun@huawei.com,
-	"yukuai (C)" <yukuai3@huawei.com>
-Subject: Re: [PATCH] blk-throttle: support io merge over iops_limit
-Message-ID: <Z85LjhvkCzlqBVZy@fedora>
-References: <20250307090152.4095551-1-yukuai1@huaweicloud.com>
- <Z8sZyElaHQQwKqpB@slm.duckdns.org>
- <5fc124c9-e202-99ca-418d-0f52d027640f@huaweicloud.com>
+	bh=txux+cFqmLt2vXZPROSLCC6ehPEuq9MQWbslAZa6/aU=;
+	b=FBz5KbE4NOV1zW9gn0zp6rDC3Z8AuPuTqzpjuSQZx/1mahOIHo5W3hfymRMjvyPLO53AMW
+	+6eeVzfCm4lxiYpyHJuDIFCcrL1jWvYnBQjaf/jPe+LARCp3WjSWLpRP3OmqyTJAtRHFCv
+	umAdHfs3NhegB9Uu2p9YLbBT7tqn9dQ=
+Received: from mail-pj1-f71.google.com (mail-pj1-f71.google.com
+ [209.85.216.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-557-VFuaTEqRP8y6BiwdfE-jwA-1; Sun, 09 Mar 2025 22:19:35 -0400
+X-MC-Unique: VFuaTEqRP8y6BiwdfE-jwA-1
+X-Mimecast-MFC-AGG-ID: VFuaTEqRP8y6BiwdfE-jwA_1741573174
+Received: by mail-pj1-f71.google.com with SMTP id 98e67ed59e1d1-2ff4b130bb2so6226556a91.0
+        for <linux-kernel@vger.kernel.org>; Sun, 09 Mar 2025 19:19:34 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741573174; x=1742177974;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=txux+cFqmLt2vXZPROSLCC6ehPEuq9MQWbslAZa6/aU=;
+        b=RwPifcbSmTqKI0X5eKp7/aQr4r14FD7y7NA0QBLRCITDVc7R6HYGCge4uAK9cLmuE3
+         CNSiRwGNxx40fBSH1RPTpjM7XxbX47j6lMEnmlkZpNK+V5Y3/9zedozySKAVN3qmYVua
+         U9Fe15TplCDZAd7HXo+iQ3iQS9lqwXHiA7uv7ixJN6/bC0OEXWOF1FZa08uDL8B8L21M
+         FMv2GwPoN29ySc6Xwzl56U/atqXPbzDH+2kZz0KlC4fLvXQ8SaN8irGEmZOMdz1rZY3N
+         upXwoNbaP0e93hkuUtWU1C45O1djgxQD268J8/ufPgsstjJA0RMMpAuY+X6cSx9hOqBS
+         byUw==
+X-Forwarded-Encrypted: i=1; AJvYcCWK2lLdEOR5D91To0FGaXTzJvn/7bzZoNG4/xCDD96veWqu7bcEbN59mpnif8w1qVXKorYFfwif3xHJRfc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzA87e8Riz1t1HwSwDLMdW+5Tm67VNhiPdbyo+e7krZpwHnVTVQ
+	NISPqMhXM8pW7o6D47iEoYI6dAqosvampdPqh3LHY/xNY/gJX8Qncpah8tWLpDfW1JwsqRguDw2
+	OtvQDaeK4vdoZkzmWY8kw0pMjtbs0QNrEzlSQo4F0haoAicV0mxKjE6MXQfNrkrm+Q6d1GM0QIH
+	QQL3HQ65IOwF3eIMePuA8OSKBUbrvX0sz8OMqr
+X-Gm-Gg: ASbGncuC3hIyY3/McR8GjgaRxb/mn6DXkjnyEMtLPmo0iw0FCJPcVkcgqCD983bSyII
+	p6/YFZiev9tbyz3pJjgkzzsAW6AfZdzVhQcM9gDJsmb0g/D+p72z++sS37BwFY6KVHNCDIvh1SQ
+	==
+X-Received: by 2002:a17:90b:4ad2:b0:2fa:137f:5c5c with SMTP id 98e67ed59e1d1-2ff7ce59712mr17785012a91.1.1741573174024;
+        Sun, 09 Mar 2025 19:19:34 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFfi1kUcnjN/MGKScrpXZXxg0LHhjJwKWatCBlfrt9ASrGU0RhKt2zcjhKxKIGQsohJlSyTaOwlLcFFR/095Oc=
+X-Received: by 2002:a17:90b:4ad2:b0:2fa:137f:5c5c with SMTP id
+ 98e67ed59e1d1-2ff7ce59712mr17784996a91.1.1741573173619; Sun, 09 Mar 2025
+ 19:19:33 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <5fc124c9-e202-99ca-418d-0f52d027640f@huaweicloud.com>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
+References: <20250307011215.266806-1-jdamato@fastly.com> <20250307011215.266806-4-jdamato@fastly.com>
+In-Reply-To: <20250307011215.266806-4-jdamato@fastly.com>
+From: Jason Wang <jasowang@redhat.com>
+Date: Mon, 10 Mar 2025 10:19:22 +0800
+X-Gm-Features: AQ5f1Jqyyv20MK_Tuve32OgEwQce7uxyuKX5GI5kUQGIUUAGsE7tTG42f1QJ5Ec
+Message-ID: <CACGkMEuwTaH9fTXC00633RsiKd9BMZSAaPG17i-+MPagGwn0dQ@mail.gmail.com>
+Subject: Re: [PATCH net-next v6 3/4] virtio-net: Map NAPIs to queues
+To: Joe Damato <jdamato@fastly.com>
+Cc: netdev@vger.kernel.org, mkarsten@uwaterloo.ca, 
+	gerhard@engleder-embedded.com, xuanzhuo@linux.alibaba.com, kuba@kernel.org, 
+	mst@redhat.com, leiyang@redhat.com, =?UTF-8?Q?Eugenio_P=C3=A9rez?= <eperezma@redhat.com>, 
+	Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>, 
+	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, 
+	"open list:VIRTIO CORE AND NET DRIVERS" <virtualization@lists.linux.dev>, open list <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Mar 10, 2025 at 09:58:57AM +0800, Yu Kuai wrote:
-> Hi,
-> 
-> 在 2025/03/08 0:07, Tejun Heo 写道:
-> > Hello,
-> > 
-> > On Fri, Mar 07, 2025 at 05:01:52PM +0800, Yu Kuai wrote:
-> > > From: Yu Kuai <yukuai3@huawei.com>
-> > > 
-> > > Commit 9f5ede3c01f9 ("block: throttle split bio in case of iops limit")
-> > > support to account split IO for iops limit, because block layer provides
-> > > io accounting against split bio.
-> > > 
-> > > However, io merge is still not handled, while block layer doesn't
-> > > account merged io for iops. Fix this problem by decreasing io_disp
-> > > if bio is merged, and following IO can use the extra budget. If io merge
-> > > concurrent with iops throttling, it's not handled if one more or one
-> > > less bio is dispatched, this is fine because as long as new slice is not
-> > > started, blk-throttle already preserve one extra slice for deviation,
-> > > and it's not worth it to handle the case that iops_limit rate is less than
-> > > one per slice.
-> > > 
-> > > A regression test will be added for this case [1], before this patch,
-> > > the test will fail:
-> > > 
-> > > +++ /root/blktests-mainline/results/nodev/throtl/007.out.bad
-> > > @@ -1,4 +1,4 @@
-> > >   Running throtl/007
-> > >   1
-> > > -1
-> > > +11
-> > >   Test complete
-> > > 
-> > > [1] https://lore.kernel.org/all/20250307080318.3860858-2-yukuai1@huaweicloud.com/
-> > 
-> > For blk-throtl, iops limit has meant the number of bios issued. I'm not
-> 
-> Yes, but it's a litter hard to explain to users the differece between IO
-> split and IO merge, they just think IO split is the numer of IOs issued
-> to disk, and IO merge is the number of IOs issued from user.
+On Fri, Mar 7, 2025 at 9:12=E2=80=AFAM Joe Damato <jdamato@fastly.com> wrot=
+e:
+>
+> Use netif_queue_set_napi to map NAPIs to queue IDs so that the mapping
+> can be accessed by user apps. Note that the netif_queue_set_napi
+> currently requires RTNL, so care must be taken to ensure RTNL is held on
+> paths where this API might be reached.
+>
+> The paths in the driver where this API can be reached appear to be:
+>
+>   - ndo_open, ndo_close, which hold RTNL so no driver change is needed.
+>   - rx_pause, rx_resume, tx_pause, tx_resume are reached either via
+>     an ethtool ioctl or via XSK - neither path requires a driver change.
+>   - power management paths (which call open and close), which have been
+>     updated to hold/release RTNL.
+>
+> $ ethtool -i ens4 | grep driver
+> driver: virtio_net
+>
+> $ sudo ethtool -L ens4 combined 4
+>
+> $ ./tools/net/ynl/pyynl/cli.py \
+>        --spec Documentation/netlink/specs/netdev.yaml \
+>        --dump queue-get --json=3D'{"ifindex": 2}'
+> [{'id': 0, 'ifindex': 2, 'napi-id': 8289, 'type': 'rx'},
+>  {'id': 1, 'ifindex': 2, 'napi-id': 8290, 'type': 'rx'},
+>  {'id': 2, 'ifindex': 2, 'napi-id': 8291, 'type': 'rx'},
+>  {'id': 3, 'ifindex': 2, 'napi-id': 8292, 'type': 'rx'},
+>  {'id': 0, 'ifindex': 2, 'type': 'tx'},
+>  {'id': 1, 'ifindex': 2, 'type': 'tx'},
+>  {'id': 2, 'ifindex': 2, 'type': 'tx'},
+>  {'id': 3, 'ifindex': 2, 'type': 'tx'}]
+>
+> Note that virtio_net has TX-only NAPIs which do not have NAPI IDs, so
+> the lack of 'napi-id' in the above output is expected.
+>
+> Signed-off-by: Joe Damato <jdamato@fastly.com>
+> ---
 
-Here it is really one trouble.
+Acked-by: Jason Wang <jasowang@redhat.com>
 
-a) Sometimes people think IOs wrt. IOPS means that the read/write IO
-submitted from application, one typical example is `fio`.
-
-b) Sometimes people think it is the data observed from `iostat`.
-
-In a), io merge/split isn't taken into account, but b) does cover io
-merge and split.
-
-So question is that what is the correct way for user to observe IOPS
-wrt. iops throttle?
-
-
-Thanks,
-Ming
+Thanks
 
 
