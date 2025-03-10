@@ -1,131 +1,333 @@
-Return-Path: <linux-kernel+bounces-554046-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-554047-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C0DC5A5921C
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 11:58:59 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BCB6AA59226
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 12:00:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9D47D1889A2A
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 10:58:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2C7463AA5B3
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 10:58:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1EF0226CFF;
-	Mon, 10 Mar 2025 10:57:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8F7722A811;
+	Mon, 10 Mar 2025 10:57:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=pm.me header.i=@pm.me header.b="FNcId/jF"
-Received: from mail-4316.protonmail.ch (mail-4316.protonmail.ch [185.70.43.16])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jlHxb33F"
+Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B9C122A1FA;
-	Mon, 10 Mar 2025 10:57:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2747E22A4F2;
+	Mon, 10 Mar 2025 10:57:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741604267; cv=none; b=i6UVJ4ohVnfFxSo6mEW5JqsxTFs+BG1oqeBgKhnV9iwg1og+9Lj5KFt638JY1Laa2XODIdinEynWI7PDQ/uJXlHhk3MnA3OUXJJg5/GeaKyv5d6qBQL1qQphoPXvRhwQY3tPfdL170QJruplOPYu58r5dOJzSupuWH4R82tJw+4=
+	t=1741604270; cv=none; b=cx2JRddgYeo96RmXKvKxA3C+oprUmm/3iUrS/vxi72vqthp405GScbxreY6pH+2SeirKmp5sWAY0TGTjCM+ba/AWcnZ7lQ1LnWiYbVVr0cFaAj3b7YKop8PKu0XHh/psDiVf49z6BVx6y5lt5YQYY0slJmWso5DY1gwmkaD8yMo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741604267; c=relaxed/simple;
-	bh=hbckj2439RyzHlFItCxWkuEvCZCBQ7rX8qiXsoHvjB8=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=mQ6e+gVtiBWhUdNrv9QHYbfxdo2uUe+0KUyQlOy03j05KKWbRrBM0J9nXiVcZBO8fnbwiqdeV08SqdIo+4or2r8SYQ1CQvuyOxLs9Sm4hp9I21vETNeqNPGOPxIxumuYtkEz1L7lQwyGJjymp+dxfFQ87whRDuhcy33Ea1I+Gk0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pm.me; spf=pass smtp.mailfrom=pm.me; dkim=pass (2048-bit key) header.d=pm.me header.i=@pm.me header.b=FNcId/jF; arc=none smtp.client-ip=185.70.43.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pm.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pm.me
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pm.me;
-	s=protonmail3; t=1741604263; x=1741863463;
-	bh=0s2berSwzI7yaE7YSCf7lWpcnxi2O3hV8xLc04jUCBw=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector:List-Unsubscribe:List-Unsubscribe-Post;
-	b=FNcId/jFlcKPRYIPH3klfo5z5MwfAy3+7+OyjAVn7C+MpQeFs2XbugbRfDwbXyFff
-	 N79cQuuEh4MBbQlvwNQnVaOLmfFpWDzvP5taEc8YRF17ENHICKdV2rc77CoEWp8G2G
-	 OB3dPQ4cYKsHmtOntAM2cVPYwQuFUrPqWD5Q0BpTRUnJEtGAH6kVL/xuJ9XRXipc4O
-	 HSQ+VIbLKxcBldsM3oBySrJ5x+hjii2fDuq6GMHIpClUA/GGa84IxUGzHuAdauLTX5
-	 h1bOC+kzhaQdcvWP5Ve5D1oXzjR2Ce9u8ftEQybllQDYLPVGB5e5YvZWS8oiQsshx/
-	 d44JDnVcoiVKw==
-Date: Mon, 10 Mar 2025 10:57:37 +0000
-To: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, Asahi Lina <lina@asahilina.net>
-From: Oliver Mangold <oliver.mangold@pm.me>
-Cc: rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, Oliver Mangold <oliver.mangold@pm.me>
-Subject: [PATCH v7 3/4] rust: kbuild: provide `RUSTC_HAS_DO_NOT_RECOMMEND` symbol
-Message-ID: <20250310-unique-ref-v7-3-4caddb78aa05@pm.me>
-In-Reply-To: <20250310-unique-ref-v7-0-4caddb78aa05@pm.me>
-References: <20250310-unique-ref-v7-0-4caddb78aa05@pm.me>
-Feedback-ID: 31808448:user:proton
-X-Pm-Message-ID: e46e7fee6879f5b402bcca0d5fc305bc0cfc3c83
+	s=arc-20240116; t=1741604270; c=relaxed/simple;
+	bh=uJw9kg+WhrQUC7QeXnlkc/WQDIPvPu+MedSuKX9lsr8=;
+	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Lp8Bk7aJb0875OV4ZyQECwJdK3bs6YLmaiPbWSMenbPpvtVZVkIhxCVrdS6UkS7xv02u99L5jB0vcL6TGKNXkBF+8aJnbxNf3UjUPMVPGFVF2zcTHwHth3CntNTsjEu0ezKYq3MFYKggQJq5TXt5NKeFBB5mGipHT0L56Polwt0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jlHxb33F; arc=none smtp.client-ip=209.85.208.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-5e677f59438so1883723a12.2;
+        Mon, 10 Mar 2025 03:57:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741604266; x=1742209066; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:subject:cc
+         :to:from:date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=xOafrjis4rlmeWlptFsFh4bdDZx32GpWyV/5UBeU/58=;
+        b=jlHxb33FBbeXqj69/Y6HC1kBy3cJPLikdjGq7C/Nv5uVXEnHXawr6dujFDynFkH3fo
+         uzl3X6ZjhAhxjWrw79CUTNqMVkQtHK7z0oDZfgxCznJVDYPMM1vz7qXLUF9uVoBuHCvS
+         bmit1bGA7hSmPmkI1hj2qIE9RJ3salxRFIHKglaqj6toyz9g7PyYVT3f6BvKwkqxlliW
+         BMP1g7V74g5PTAUXQ2AaF6bryPqtT4VSCBcY/3/CDbzgarHSGVu/olllU7L2BMby4AGR
+         b4ZoWeT6bBOd3TATD5/HB6AHcVfVv72QXSh0FVvzMWWB9ww6rpXCSgR+gfaIDHyHhudO
+         lqFw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741604266; x=1742209066;
+        h=in-reply-to:content-disposition:mime-version:references:subject:cc
+         :to:from:date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=xOafrjis4rlmeWlptFsFh4bdDZx32GpWyV/5UBeU/58=;
+        b=YE9Ty67KnaPDYQRk4URBS2pgyJlqW+XXj4i4SvtJbpa/MxzAJP/E2OCS+zEGJc83RD
+         JzqROlOnLsi4ZpsteZDy3+z2pNTbmV+Ge/fWgbOBTKN8B8uRUVaVqkb/1MxBsA4GcZMx
+         f8vuyyuIfFlenXPUIRB4eL48y2QZKwyH530/BUhKxSV54yRNKSZNTD6UeJ7kCePx5X7a
+         0q3LcvjegLtycp/05Rii7892ujFfe3f2yO9h8vWlSmOEQs5Gax9d5o17ceyCeHINNgPT
+         4fjMzDzVXdvJH0W98gu0cvhE2rmG+NyUPnA3lftBQ+wmgRfwdS6Dk3Qbl+vqSABdvFe1
+         OeVA==
+X-Forwarded-Encrypted: i=1; AJvYcCWDUMa+n5t6E6B+bkOzVYcS9f7LhA88QVD6AC92DBgO7jpLuMjPFTiwr7WLvNbQEdCJDWGxSsFS@vger.kernel.org, AJvYcCX8S6i7ggDarWaCHNx59T9qSV7s7vsgni0K6WmM8GlB6H3Cwznyx2X+VQO9kquAg6xuwLyLeIJsl95JhsJ7@vger.kernel.org, AJvYcCXsyzP+TVbcZ8IKP32ZxqFEGSXuLYCK+05FVHOBUPMQhqrmnwcXIhRdt3ZRiMtrZZA8bpjUCitTylKo@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxqdr0qa/AEwm8fYfjzDEoNAvWrhiLiSRmE2m49Zpq4kuvxEVqs
+	LD5crBQNkhkKtIfCTeAos6pLBuhrlqlAw9VR99KeK+FLBC5/OCNq
+X-Gm-Gg: ASbGncvrHoOCIQZr8OBOnP0RjUnQcFkSKbxZf0AP8FYA3yNSUGGumbrf6IeT9H7Ur48
+	xKP6790UCsS0+xbJoWUkxfbXTngZQ52zdLhVBQm/+kWr4JD69ho+tKO1s7JTqiFDXz1bYQJkEwf
+	Vr9SzQJh7pQ0bS5rSfrXobioasvh6u9hZc6opEnrYvYuwcufFKApg+4txppebRYY2XDtyw6tmHi
+	NlykuphJtCo6o8JYGQHbO038Q4Au+DFcjbApQkwwdcMgjEzG9BfGsQ18A7tKi1iZGYqunYcxHfL
+	uZXegbu9vfeM7m7mYJXG80wH40779Gz9eFZeMX9hNQ==
+X-Google-Smtp-Source: AGHT+IGLrFwyyNplAxUO1/Ogn4TU95VnBR/ptGo3XUAJNa2IReXJQVvMshhinBV/v52EUsoHkt8Upg==
+X-Received: by 2002:a17:907:94cb:b0:abf:40a2:40c8 with SMTP id a640c23a62f3a-ac252ae1b6emr1330310766b.28.1741604266018;
+        Mon, 10 Mar 2025 03:57:46 -0700 (PDT)
+Received: from Ansuel-XPS. ([85.119.46.8])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac2856445b1sm321901566b.60.2025.03.10.03.57.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 10 Mar 2025 03:57:45 -0700 (PDT)
+Message-ID: <67cec5a9.170a0220.93f86.9dcf@mx.google.com>
+X-Google-Original-Message-ID: <Z87FpUEtUUQYB6s-@Ansuel-XPS.>
+Date: Mon, 10 Mar 2025 11:57:41 +0100
+From: Christian Marangi <ansuelsmth@gmail.com>
+To: "Russell King (Oracle)" <linux@armlinux.org.uk>
+Cc: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Vladimir Oltean <olteanv@gmail.com>,
+	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Maxime Chevallier <maxime.chevallier@bootlin.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org, netdev@vger.kernel.org,
+	upstream@airoha.com
+Subject: Re: [net-next PATCH v12 12/13] net: dsa: Add Airoha AN8855 5-Port
+ Gigabit DSA Switch driver
+References: <20250309172717.9067-1-ansuelsmth@gmail.com>
+ <20250309172717.9067-13-ansuelsmth@gmail.com>
+ <Z83WgMeg_IxgbxhO@shell.armlinux.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z83WgMeg_IxgbxhO@shell.armlinux.org.uk>
 
-From: Miguel Ojeda <ojeda@kernel.org>
+On Sun, Mar 09, 2025 at 05:57:20PM +0000, Russell King (Oracle) wrote:
+> On Sun, Mar 09, 2025 at 06:26:57PM +0100, Christian Marangi wrote:
+> > +static int an8855_port_enable(struct dsa_switch *ds, int port,
+> > +			      struct phy_device *phy)
+> > +{
+> > +	struct an8855_priv *priv = ds->priv;
+> > +
+> > +	return regmap_set_bits(priv->regmap, AN8855_PMCR_P(port),
+> > +			       AN8855_PMCR_TX_EN | AN8855_PMCR_RX_EN);
+> 
+> Shouldn't you wait for phylink to call your mac_link_up() method?
+>
 
-Rust 1.85.0 (current stable version) stabilized [1]
-`#[diagnostic::do_not_recommend]` [2].
+Did something change recently for this? I checked the pattern for other
+driver and port enable normally just enable TX/RX traffic for the port.
 
-In order to use it across all supported Rust versions, introduce a new
-Kconfig symbol for it.
+Any hint for this?
 
-This allows to perform conditional compilation based on it, e.g. on the
-use site to enable the attribute:
+> > +}
+> > +
+> > +static void an8855_port_disable(struct dsa_switch *ds, int port)
+> > +{
+> > +	struct an8855_priv *priv = ds->priv;
+> > +	int ret;
+> > +
+> > +	ret = regmap_clear_bits(priv->regmap, AN8855_PMCR_P(port),
+> > +				AN8855_PMCR_TX_EN | AN8855_PMCR_RX_EN);
+> > +	if (ret)
+> > +		dev_err(priv->ds->dev, "failed to disable port: %d\n", ret);
+> 
+> Doesn't the link get set down before this is called? IOW, doesn't
+> phylink call your mac_link_down() method first?
+> 
+> ...
+> 
+> > +static void an8855_phylink_mac_link_up(struct phylink_config *config,
+> > +				       struct phy_device *phydev, unsigned int mode,
+> > +				       phy_interface_t interface, int speed,
+> > +				       int duplex, bool tx_pause, bool rx_pause)
+> > +{
+> > +	struct dsa_port *dp = dsa_phylink_to_port(config);
+> > +	struct an8855_priv *priv = dp->ds->priv;
+> > +	int port = dp->index;
+> > +	u32 reg;
+> > +
+> > +	reg = regmap_read(priv->regmap, AN8855_PMCR_P(port), &reg);
+> > +	if (phylink_autoneg_inband(mode)) {
+> > +		reg &= ~AN8855_PMCR_FORCE_MODE;
+> > +	} else {
+> > +		reg |= AN8855_PMCR_FORCE_MODE | AN8855_PMCR_FORCE_LNK;
+> > +
+> > +		reg &= ~AN8855_PMCR_FORCE_SPEED;
+> > +		switch (speed) {
+> > +		case SPEED_10:
+> > +			reg |= AN8855_PMCR_FORCE_SPEED_10;
+> > +			break;
+> > +		case SPEED_100:
+> > +			reg |= AN8855_PMCR_FORCE_SPEED_100;
+> > +			break;
+> > +		case SPEED_1000:
+> > +			reg |= AN8855_PMCR_FORCE_SPEED_1000;
+> > +			break;
+> > +		case SPEED_2500:
+> > +			reg |= AN8855_PMCR_FORCE_SPEED_2500;
+> > +			break;
+> > +		case SPEED_5000:
+> > +			dev_err(priv->ds->dev, "Missing support for 5G speed. Aborting...\n");
+> > +			return;
+> > +		}
+> > +
+> > +		reg &= ~AN8855_PMCR_FORCE_FDX;
+> > +		if (duplex == DUPLEX_FULL)
+> > +			reg |= AN8855_PMCR_FORCE_FDX;
+> > +
+> > +		reg &= ~AN8855_PMCR_RX_FC_EN;
+> > +		if (rx_pause || dsa_port_is_cpu(dp))
+> > +			reg |= AN8855_PMCR_RX_FC_EN;
+> > +
+> > +		reg &= ~AN8855_PMCR_TX_FC_EN;
+> > +		if (rx_pause || dsa_port_is_cpu(dp))
+> > +			reg |= AN8855_PMCR_TX_FC_EN;
+> > +
+> > +		/* Disable any EEE options */
+> > +		reg &= ~(AN8855_PMCR_FORCE_EEE5G | AN8855_PMCR_FORCE_EEE2P5G |
+> > +			 AN8855_PMCR_FORCE_EEE1G | AN8855_PMCR_FORCE_EEE100);
+> 
+> Why? Maybe consider implementing the phylink tx_lpi functions for EEE
+> support.
+> 
 
-    #[cfg_attr(RUSTC_HAS_DO_NOT_RECOMMEND, diagnostic::do_not_recommend)]
-    impl A for i32 {}
+Will do, I disabled this as the EEE rework was being approved.
 
-An alternative would have been to `allow` the following warning:
+> > +	}
+> > +
+> > +	reg |= AN8855_PMCR_TX_EN | AN8855_PMCR_RX_EN;
+> > +
+> > +	regmap_write(priv->regmap, AN8855_PMCR_P(port), reg);
+> > +}
+> > +
+> > +static unsigned int an8855_pcs_inband_caps(struct phylink_pcs *pcs,
+> > +					   phy_interface_t interface)
+> > +{
+> > +	/* SGMII can be configured to use inband with AN result */
+> > +	if (interface == PHY_INTERFACE_MODE_SGMII)
+> > +		return LINK_INBAND_DISABLE | LINK_INBAND_ENABLE;
+> > +
+> > +	/* inband is not supported in 2500-baseX and must be disabled */
+> > +	return  LINK_INBAND_DISABLE;
+> 
+> Spurious double space.
+> 
 
-    #![allow(unknown_or_malformed_diagnostic_attributes)]
+Will drop.
 
-However, that would lose the checking for typos across all versions,
-which we do not want to lose.
+> > +}
+> > +
+> > +static void an8855_pcs_get_state(struct phylink_pcs *pcs, unsigned int neg_mode,
+> > +				 struct phylink_link_state *state)
+> > +{
+> > +	struct an8855_priv *priv = container_of(pcs, struct an8855_priv, pcs);
+> > +	u32 val;
+> > +	int ret;
+> > +
+> > +	ret = regmap_read(priv->regmap, AN8855_PMSR_P(AN8855_CPU_PORT), &val);
+> > +	if (ret < 0) {
+> > +		state->link = false;
+> > +		return;
+> > +	}
+> > +
+> > +	state->link = !!(val & AN8855_PMSR_LNK);
+> > +	state->an_complete = state->link;
+> > +	state->duplex = (val & AN8855_PMSR_DPX) ? DUPLEX_FULL :
+> > +						  DUPLEX_HALF;
+> > +
+> > +	switch (val & AN8855_PMSR_SPEED) {
+> > +	case AN8855_PMSR_SPEED_10:
+> > +		state->speed = SPEED_10;
+> > +		break;
+> > +	case AN8855_PMSR_SPEED_100:
+> > +		state->speed = SPEED_100;
+> > +		break;
+> > +	case AN8855_PMSR_SPEED_1000:
+> > +		state->speed = SPEED_1000;
+> > +		break;
+> > +	case AN8855_PMSR_SPEED_2500:
+> > +		state->speed = SPEED_2500;
+> > +		break;
+> > +	case AN8855_PMSR_SPEED_5000:
+> > +		dev_err(priv->ds->dev, "Missing support for 5G speed. Setting Unknown.\n");
+> > +		fallthrough;
+> 
+> Which is wrong now, we have SPEED_5000.
+> 
 
-One can also use the Kconfig symbol to allow the warning in older
-compilers instead, to avoid repeating the `cfg_attr` line above in all
-use sites:
+Maybe the comments weren't so clear. The Switch doesn't support the
+speed... Even if it does have bits, the switch doesn't support it. And
+the 2500 speed is really only for the CPU port. The user port are only
+gigabit.
 
-    #![cfg_attr(
-        not(RUSTC_HAS_DO_NOT_RECOMMEND),
-        expect(unknown_or_malformed_diagnostic_attributes)
-    )]
+> > +	default:
+> > +		state->speed = SPEED_UNKNOWN;
+> > +		break;
+> > +	}
+> > +
+> > +	if (val & AN8855_PMSR_RX_FC)
+> > +		state->pause |= MLO_PAUSE_RX;
+> > +	if (val & AN8855_PMSR_TX_FC)
+> > +		state->pause |= MLO_PAUSE_TX;
+> > +}
+> > +
+> > +static int an8855_pcs_config(struct phylink_pcs *pcs, unsigned int neg_mode,
+> > +			     phy_interface_t interface,
+> > +			     const unsigned long *advertising,
+> > +			     bool permit_pause_to_mac)
+> > +{
+> > +	struct an8855_priv *priv = container_of(pcs, struct an8855_priv, pcs);
+> > +	u32 val;
+> > +	int ret;
+> > +
+> > +	/*                   !!! WELCOME TO HELL !!!                   */
+> > +
+> [... hell ...]
 
-That still loses the checking for typos in older versions, but we still
-keep it in newer ones, thus we should still catch mistakes eventually.
+Will drop :( It was an easter egg for the 300 lines to configure PCS.
 
-In this case we can promote it to `expect` as shown above, so that we do
-not forget to remove these lines if we stop using the attribute somewhere.
+> > +	ret = regmap_write(priv->regmap, AN8855_MSG_RX_LIK_STS_2,
+> > +			   AN8855_RG_RXFC_AN_BYPASS_P3 |
+> > +			   AN8855_RG_RXFC_AN_BYPASS_P2 |
+> > +			   AN8855_RG_RXFC_AN_BYPASS_P1 |
+> > +			   AN8855_RG_TXFC_AN_BYPASS_P3 |
+> > +			   AN8855_RG_TXFC_AN_BYPASS_P2 |
+> > +			   AN8855_RG_TXFC_AN_BYPASS_P1 |
+> > +			   AN8855_RG_DPX_AN_BYPASS_P3 |
+> > +			   AN8855_RG_DPX_AN_BYPASS_P2 |
+> > +			   AN8855_RG_DPX_AN_BYPASS_P1 |
+> > +			   AN8855_RG_DPX_AN_BYPASS_P0);
+> > +	if (ret)
+> > +		return ret;
+> > +
+> > +	return 0;
+> 
+> Is this disruptive to the link if the link is up, and this is called
+> (e.g. to change the advertisement rather than switch interface mode).
+> If so, please do something about that - e.g. only doing the bulk of
+> the configuration if the interface mode has changed.
 
-Link: https://github.com/rust-lang/rust/pull/132056 [1]
-Link: https://doc.rust-lang.org/reference/attributes/diagnostics.html#the-d=
-iagnosticdo_not_recommend-attribute [2]
-Link: https://lore.kernel.org/rust-for-linux/CANiq72mYfhuRWkjomb1vOMMPOaxvd=
-S6qjfVLAwxUw6ecdqyh2A@mail.gmail.com/
-Signed-off-by: Miguel Ojeda <ojeda@kernel.org>
-Signed-off-by: Oliver Mangold <oliver.mangold@pm.me>
----
- init/Kconfig | 3 +++
- 1 file changed, 3 insertions(+)
+Airoha confirmed this is not disruptive, applying these config doesn't
+terminate or disrupt the link.
 
-diff --git a/init/Kconfig b/init/Kconfig
-index 12b0847603b20fe1d8c70c4c57dabc924efe697b..ed1abb1beec0767f3696dbb6ac9=
-844ba7e0610c9 100644
---- a/init/Kconfig
-+++ b/init/Kconfig
-@@ -147,6 +147,9 @@ config CC_HAS_COUNTED_BY
- config RUSTC_HAS_COERCE_POINTEE
- =09def_bool RUSTC_VERSION >=3D 108400
-=20
-+config RUSTC_HAS_DO_NOT_RECOMMEND
-+=09def_bool RUSTC_VERSION >=3D 108500
-+
- config PAHOLE_VERSION
- =09int
- =09default $(shell,$(srctree)/scripts/pahole-version.sh $(PAHOLE))
+> 
+> I guess, however, that as you're only using SGMII with in-band, it
+> probably doesn't make much difference, but having similar behaviour
+> in the various drivers helps with ongoing maintenance.
 
---=20
-2.48.1
+Do we have some driver that implement the logic of skipping the bulk of
+configuration if the mode doesn't change?
 
+Maybe we can introduce some kind of additional OP like .init to apply
+the very initial configuration that are not related to the mode.
+Or something like .setup?
 
+-- 
+	Ansuel
 
