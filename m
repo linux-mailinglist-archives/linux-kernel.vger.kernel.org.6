@@ -1,82 +1,234 @@
-Return-Path: <linux-kernel+bounces-554039-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-554044-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F4FFA59218
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 11:58:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id B6AD4A5921F
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 11:59:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C11913A34B6
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 10:57:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E41563A3465
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 10:58:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F36222A4F1;
-	Mon, 10 Mar 2025 10:55:59 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D53D28EA;
-	Mon, 10 Mar 2025 10:55:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E73271DA614;
+	Mon, 10 Mar 2025 10:57:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=pm.me header.i=@pm.me header.b="knASrLgj"
+Received: from mail-10629.protonmail.ch (mail-10629.protonmail.ch [79.135.106.29])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A90622A1CB
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 10:57:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.135.106.29
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741604158; cv=none; b=cAQsWT1b1NFDDL7AP/eyOUCxiuXQO/dceptDlDV3zAvCWOhKZBknHdc9kVtekokGco1hBNDqjNGLRMsljHHRwK61s7gwBC09O0ZygULK1g6f5AxzOwNoRCtxXOxLdRdIE7FaDyv1nYzisWfS+gckCukEqAWfbkomMpSiEY0z1YI=
+	t=1741604257; cv=none; b=Eb6XOekuUEI3GsEdeU4vSlc4bkx34wgkn6I997hCH421R7HyYZIcSdIf7xku7NK38Y7LJLceVzWqB3U2OFr9VsPQgSYfHBxhUenMUO8SNLTO/1lEciEMd0AsTr+GFUggp/wXmRo33XgMWUg2m/gSlZ95My4CziaETxAARJPCUY8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741604158; c=relaxed/simple;
-	bh=U6QojVvDNCz2sg10+fQRWNK7SCsQmMVV3uzE13H8jHo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lRHZ8Fcdp5MQ5M9PtJ4d9ItF6wJ7zbbK97oZDQ85YK1iVHsLlUZHN3d3FlqoLhnwEziTBNs+0xITQ9oz+nhK69Wsl+9RXt6qdK8XX2s/6eRsUG5noAzxiLyq/HzXbqFVk7F65Nj0j+WwCx8tKUZB1j9J/myotB/0cskFEW72Gmk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6B3D9152B;
-	Mon, 10 Mar 2025 03:56:08 -0700 (PDT)
-Received: from localhost (e132581.arm.com [10.1.196.87])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 81E653F5A1;
-	Mon, 10 Mar 2025 03:55:56 -0700 (PDT)
-Date: Mon, 10 Mar 2025 10:55:51 +0000
-From: Leo Yan <leo.yan@arm.com>
-To: Mark Barnett <mark.barnett@arm.com>
-Cc: peterz@infradead.org, mingo@redhat.com, acme@kernel.org,
-	namhyung@kernel.org, irogers@google.com, ben.gainey@arm.com,
-	deepak.surti@arm.com, ak@linux.intel.com, will@kernel.org,
-	james.clark@arm.com, mark.rutland@arm.com,
-	alexander.shishkin@linux.intel.com, jolsa@kernel.org,
-	adrian.hunter@intel.com, linux-perf-users@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v2 1/5] perf: Allow periodic events to alternate between
- two sample periods
-Message-ID: <20250310105551.GB9682@e132581.arm.com>
-References: <20250106120156.227273-1-mark.barnett@arm.com>
- <20250106120156.227273-2-mark.barnett@arm.com>
- <20250121130154.GA416913@e132581.arm.com>
- <c62a9f8a-312d-4f9e-9022-265e53564101@arm.com>
+	s=arc-20240116; t=1741604257; c=relaxed/simple;
+	bh=G4g8+U+HLV4Gx1vaKDqvgQtTExOBv2TMnZblyvutss0=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Gyk27tVfPTgudkjhqENX8/N+5zYPdwVyeSlJvIfoD4IpbRcKjR8+EBM8+ljwnt0lpnJ7XZ/dKU1nYMLXL+RIK4rzK/l+ymDwNcnDcB/agrzxWWqq/z6jxlcctUao4oAmVJd7r9gO0Tsp8Wvx8Hs7mzVQpC135TZ7EBKUeh21uW0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pm.me; spf=pass smtp.mailfrom=pm.me; dkim=pass (2048-bit key) header.d=pm.me header.i=@pm.me header.b=knASrLgj; arc=none smtp.client-ip=79.135.106.29
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pm.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pm.me
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pm.me;
+	s=protonmail3; t=1741604251; x=1741863451;
+	bh=lqhztZytrydlxEcGl7cfjWRcRjfcWBDgUsWbhxkDSEI=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector:List-Unsubscribe:List-Unsubscribe-Post;
+	b=knASrLgj1v8ROp3wXvA26lKrUi+NziM5cDZGRFksM8MQg1BhHL3PblArEbIYWxc/X
+	 +06FMgKiDFiW2v93uy/H6ciJ10JruwFguhpSd/8P0g/AD9hr1ROXmEzw8Nkyr33Udn
+	 NGyg5+4l7mmiJE6vqgEeiMGo12xIpoQIhrBN9eGNRxkOqsa6ulU5pytq7Sk4+BwSJ6
+	 7FnVPwFHb25esTjh89l5rlZtoEPdLliATwGN9ytFyTXmWC2tcpRwcrAgdjT5gavKap
+	 1gh+tM8d1t4sNTQkgwENyi87iA0O+WzCHoSb3b92eqLi20GKLxZMCvNTIrvca+kOoP
+	 Z8SRQcMBnKfew==
+Date: Mon, 10 Mar 2025 10:57:24 +0000
+To: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, Asahi Lina <lina@asahilina.net>
+From: Oliver Mangold <oliver.mangold@pm.me>
+Cc: rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, Oliver Mangold <oliver.mangold@pm.me>
+Subject: [PATCH v7 1/4] rust: types: Add Ownable/Owned types
+Message-ID: <20250310-unique-ref-v7-1-4caddb78aa05@pm.me>
+In-Reply-To: <20250310-unique-ref-v7-0-4caddb78aa05@pm.me>
+References: <20250310-unique-ref-v7-0-4caddb78aa05@pm.me>
+Feedback-ID: 31808448:user:proton
+X-Pm-Message-ID: dc6aa8198b4e735e3bc33238a886717b525866ae
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <c62a9f8a-312d-4f9e-9022-265e53564101@arm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Mar 07, 2025 at 08:28:13PM +0000, Mark Barnett wrote:
-> On 1/21/25 13:01, Leo Yan wrote:
-> > >   	local64_set(&hwc->period_left, hwc->sample_period);
-> > > +	if (attr->alt_sample_period) {
-> > > +		hwc->sample_period = attr->alt_sample_period;
-> > > +		hwc->using_alt_sample_period = true;
-> > > +	}
-> > 
-> > My understanding it sets a short sample window for the first period.
-> > Would it initialize the `hwc->period_left` with the updated sample
-> > period?
-> > 
-> 
-> It sets the long period first: hwc->period_left is used to program the PMU
-> when setting up the event, and hwc->sample_period is queued up as the next
-> period to switch to.
+From: Asahi Lina <lina@asahilina.net>
 
-Makes sense to me.  Thanks for explanation.
+By analogy to AlwaysRefCounted and ARef, an Ownable type is a (typically
+C FFI) type that *may* be owned by Rust, but need not be. Unlike
+AlwaysRefCounted, this mechanism expects the reference to be unique
+within Rust, and does not allow cloning.
 
-Leo
+Conceptually, this is similar to a KBox<T>, except that it delegates
+resource management to the T instead of using a generic allocator.
+
+Link: https://lore.kernel.org/all/20250202-rust-page-v1-1-e3170d7fe55e@asah=
+ilina.net/
+Signed-off-by: Asahi Lina <lina@asahilina.net>
+Co-developed-by: Oliver Mangold <oliver.mangold@pm.me>
+Signed-off-by: Oliver Mangold <oliver.mangold@pm.me>
+---
+ rust/kernel/types.rs | 109 +++++++++++++++++++++++++++++++++++++++++++++++=
+++++
+ 1 file changed, 109 insertions(+)
+
+diff --git a/rust/kernel/types.rs b/rust/kernel/types.rs
+index 55ddd50e8aaa075ac33d5f1088a7f72df05f74f4..e0ce3646a4d3b70c069322a9b0f=
+25c00265a2af8 100644
+--- a/rust/kernel/types.rs
++++ b/rust/kernel/types.rs
+@@ -551,6 +551,115 @@ fn drop(&mut self) {
+     }
+ }
+=20
++/// Types that may be owned by Rust code or borrowed, but have a lifetime =
+managed by C code.
++///
++/// It allows such types to define their own custom destructor function to=
+ be called when
++/// a Rust-owned reference is dropped.
++///
++/// This is usually implemented by wrappers to existing structures on the =
+C side of the code.
++///
++/// # Safety
++///
++/// Implementers must ensure that any objects borrowed directly as `&T` st=
+ay alive for the duration
++/// of the lifetime, and that any objects owned by Rust as `Owned<T>`) sta=
+y alive while that owned
++/// reference exists, until the [`Ownable::release()`] trait method is cal=
+led.
++pub unsafe trait Ownable {
++    /// Releases the object (frees it or returns it to foreign ownership).
++    ///
++    /// # Safety
++    ///
++    /// Callers must ensure that the object is no longer referenced after =
+this call.
++    unsafe fn release(this: NonNull<Self>);
++}
++
++/// A subtrait of Ownable that asserts that an `Owned<T>` Rust reference i=
+s not only unique
++/// within Rust and keeps the `T` alive, but also guarantees that the C co=
+de follows the
++/// usual mutable reference requirements. That is, the kernel will never m=
+utate the
++/// `T` (excluding internal mutability that follows the usual rules) while=
+ Rust owns it.
++///
++/// When this type is implemented for an [`Ownable`] type, it allows `Owne=
+d<T>` to be
++/// dereferenced into a &mut T.
++///
++/// # Safety
++///
++/// Implementers must ensure that the kernel never mutates the underlying =
+type while
++/// Rust owns it.
++pub unsafe trait OwnableMut: Ownable {}
++
++/// An owned reference to an ownable kernel object.
++///
++/// The object is automatically freed or released when an instance of [`Ow=
+ned`] is
++/// dropped.
++///
++/// # Invariants
++///
++/// The pointer stored in `ptr` is non-null and valid for the lifetime of =
+the [`Owned`] instance.
++pub struct Owned<T: Ownable> {
++    ptr: NonNull<T>,
++    _p: PhantomData<T>,
++}
++
++// SAFETY: It is safe to send `Owned<T>` to another thread when the underl=
+ying `T` is `Send` because
++// it effectively means sending a unique `&mut T` pointer (which is safe b=
+ecause `T` is `Send`).
++unsafe impl<T: Ownable + Send> Send for Owned<T> {}
++
++// SAFETY: It is safe to send `&Owned<T>` to another thread when the under=
+lying `T` is `Sync`
++// because it effectively means sharing `&T` (which is safe because `T` is=
+ `Sync`).
++unsafe impl<T: Ownable + Sync> Sync for Owned<T> {}
++
++impl<T: Ownable> Owned<T> {
++    /// Creates a new instance of [`Owned`].
++    ///
++    /// It takes over ownership of the underlying object.
++    ///
++    /// # Safety
++    ///
++    /// Callers must ensure that the underlying object is acquired and can=
+ be considered owned by
++    /// Rust.
++    pub unsafe fn from_raw(ptr: NonNull<T>) -> Self {
++        // INVARIANT: The safety requirements guarantee that the new insta=
+nce now owns the
++        // reference.
++        Self {
++            ptr,
++            _p: PhantomData,
++        }
++    }
++
++    /// Consumes the `Owned`, returning a raw pointer.
++    ///
++    /// This function does not actually relinquish ownership of the object=
+.
++    /// After calling this function, the caller is responsible for ownersh=
+ip previously managed
++    /// by the `Owned`.
++    pub fn into_raw(me: Self) -> NonNull<T> {
++        ManuallyDrop::new(me).ptr
++    }
++}
++
++impl<T: Ownable> Deref for Owned<T> {
++    type Target =3D T;
++
++    fn deref(&self) -> &Self::Target {
++        // SAFETY: The type invariants guarantee that the object is valid.
++        unsafe { self.ptr.as_ref() }
++    }
++}
++
++impl<T: Ownable + OwnableMut> DerefMut for Owned<T> {
++    fn deref_mut(&mut self) -> &mut Self::Target {
++        // SAFETY: The type invariants guarantee that the object is valid,
++        // and that we can safely return a mutable reference to it.
++        unsafe { self.ptr.as_mut() }
++    }
++}
++
++impl<T: Ownable> Drop for Owned<T> {
++    fn drop(&mut self) {
++        // SAFETY: The type invariants guarantee that the `Owned` owns the=
+ object we're about to
++        // release.
++        unsafe { T::release(self.ptr) };
++    }
++}
++
+ /// A sum type that always holds either a value of type `L` or `R`.
+ ///
+ /// # Examples
+
+--=20
+2.48.1
+
+
 
