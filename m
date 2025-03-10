@@ -1,137 +1,227 @@
-Return-Path: <linux-kernel+bounces-554267-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-554268-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A327CA59583
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 14:01:55 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 81B5BA59588
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 14:02:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8F4473B2A92
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 13:01:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B2BAE16E0F0
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 13:02:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5A3422576C;
-	Mon, 10 Mar 2025 13:01:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 979991ADC97;
+	Mon, 10 Mar 2025 13:02:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="BkTT+UTi"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AebViPUq"
+Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 728A470808;
-	Mon, 10 Mar 2025 13:01:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3009C2206A3;
+	Mon, 10 Mar 2025 13:02:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741611704; cv=none; b=Zb4NBPxLqwxreuyhm855uwhLN/8stpZaK1SwtEAOxsCyOXdij7vKShA7c+P/7LhlRuh/K9w7YAn5Dlre0ReqQauY8oc9KjWuqglnyEhnci8uFSKsu8lGMm9Y+sa92BsiPVEpDKuq2TEbHWoEBFLog3sWsFo3Kh200jzPDcY5k14=
+	t=1741611745; cv=none; b=qEmpm290tZizm7DIz9yqJQeyDgUlqnx4GK/AKR96hkzW5krY1Iu5S6yu32W0Uhp+mwPHSCqG0gpdmiM5RtlhQUc1PbaNVe0NmSvjUULWLZrVLXoWvaN1xXKZHD88GzcDWMcouJzdpnW7ea4wxGoWTm25q9BBpJZ7S1drNig7TcM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741611704; c=relaxed/simple;
-	bh=cx5jg6nX41FB/+wMNez+RBf6N+I2hCOHCQWIPO57sdM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Hm1t4buBNiQCcZ3a9AcAomqyPcxbzTFj+L838pS1HPqltSyAgRp7uZX4Wt+ITOqZjp9okbLjsyFNUsN8Y+lqga8MbMVxg2mgIlDGugGMpsUQjAZa+k4SNoDduQRwd2vIndXFkD+Dw0nQ/IKDYMw5e7RT4sv/RTMRNPPn8tF8Lxw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=BkTT+UTi; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=P0Q5nncTlu8w0yyFGKHNI1d6KN3TELLcBWcGd04Z8eM=; b=BkTT+UTi0LpF5BtfBQLZeicRoV
-	kGofT2EB8HhWThCg//q5VoeE8QUBonw3zlqq7k9FUcuPh77vaORPsAnmtwW/no/L3+19tXy8UCXYw
-	TJdNFEYJUvzAtLNN5EiqNaHYIpTc33t61GUTm9NCCnslNYTlgm/xqNcpcLDQOieGhTIsFziIm6Sv4
-	vRwTw9kQ7Y9t7ESfM9B+FLd9lC4DgQJ7PU1gdXNV3yvy0cI3SZFHErQjz6/+oCx2sBSUHUL8dt0bj
-	rLKbX4958ZCVsYHnoKXly0Uaq/BMR454R/8HKlYrIzX1DxTDwd4EzWnhD5Wmdndz6SuXg2CMaqcWB
-	f//LyNRg==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1trclC-00000004i1J-2OzM;
-	Mon, 10 Mar 2025 13:01:35 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 23CE03006C0; Mon, 10 Mar 2025 14:01:34 +0100 (CET)
-Date: Mon, 10 Mar 2025 14:01:34 +0100
-From: Peter Zijlstra <peterz@infradead.org>
-To: Chris Murphy <lists@colorremedies.com>
-Cc: Waiman Long <longman@redhat.com>,
-	=?utf-8?B?0JzQuNGF0LDQuNC7INCT0LDQstGA0LjQu9C+0LI=?= <mikhail.v.gavrilov@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>, David Sterba <dsterba@suse.cz>,
-	Btrfs BTRFS <linux-btrfs@vger.kernel.org>,
-	linux-kernel <linux-kernel@vger.kernel.org>,
-	Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>,
-	Joel Fernandes <joel@joelfernandes.org>
-Subject: Re: BUG: MAX_LOCKDEP_CHAIN_HLOCKS too low!
-Message-ID: <20250310130134.GS31462@noisy.programming.kicks-ass.net>
-References: <CABXGCsN+BcaGO0+0bJszDPvA=5JF_bOPfXC=OLzMzsXY2M8hyQ@mail.gmail.com>
- <20220726164250.GE13489@twin.jikos.cz>
- <CABXGCsN1rzCoYiB-vN5grzsMdvgm1qv2jnWn0enXq5R-wke8Eg@mail.gmail.com>
- <20230125171517.GV11562@twin.jikos.cz>
- <CABXGCsOD7jVGYkFFG-nM9BgNq_7c16yU08EBfaUc6+iNsX338g@mail.gmail.com>
- <Y9K6m5USnON/19GT@boqun-archlinux>
- <CABXGCsMD6nAPpF34c6oMK47kHUQqADQPUCWrxyY7WFiKi1qPNg@mail.gmail.com>
- <a8992f62-06e6-b183-3ab5-8118343efb3f@redhat.com>
- <7e48c1ec-c653-484e-88fb-69f3deb40b1d@app.fastmail.com>
- <20250310090811.GQ16878@noisy.programming.kicks-ass.net>
+	s=arc-20240116; t=1741611745; c=relaxed/simple;
+	bh=9/MF3XwBaT1mcfL5fB1uFCtt3JgTm87/jrTxjrGckLY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=KKqlZCAduLMaCsK/kFlVjVJMpGG7OzUBgKRSu8MnNVjLdOBCY6Z0kV88ecaG+4Ev15N4DbaeuXixerBjDfuNygy775fncokonC3S981RKK+jnsH6Oxyblawyki/1yWRPBE5b70aHU4bdZf/vpcQxFlRI3khIroQLLESObWM5mMQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AebViPUq; arc=none smtp.client-ip=209.85.221.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-3914bc3e01aso452450f8f.2;
+        Mon, 10 Mar 2025 06:02:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741611742; x=1742216542; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=LJsBCZAbkaqGsMqWjDYIUsmWMaDSGMkISy1d3AfV0dM=;
+        b=AebViPUqs5QZp+3p60eYU2Rsy8oBE8LeXgioAAQgZVo2cQ/pexTGIjjBTjbmHJqyQm
+         3uBHKJyhgD9km+2iD2eJ97LhJ7TLjE6jgATXV86SVot+/knqJSZP3/a6YmfyjXAwKqes
+         w4oHaoOBJTBGzIYwPfgjychlci3NkgOkXLTyUxWc+6DCRva/dkd/u0GrUDTDprYKqo7K
+         XfQP3vN053atwvtViADAf2YZ/p/H2LGUoGK/++G6kvcqF8aVePK+xu29oOaXXrN85U+E
+         +/xIVt3xZK3cGwMJRg9iN3rlLHCNQauhlY+Is5iq40YyUFhjSdEO5JOLXzINHQLNQP/s
+         7auw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741611742; x=1742216542;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=LJsBCZAbkaqGsMqWjDYIUsmWMaDSGMkISy1d3AfV0dM=;
+        b=abB+dfwnaFR3A5d4PjXK9GG27dgJk7yNijp91Oo/ecNcWKu6b0yir/SXCYynQR2LuO
+         0+KPUGVyjg4LfappZbjzRXg0s79djJJ1QTl+09jnA4lBk979GSga/3FJgxkPZUQon6el
+         /k80mDh4HlGYI8G8nGqUT7nOjl6a19nyPRYimvl6ba/flu073/GwLYdQ5Ko8PpD03JH3
+         IeEcDrtGnWCXk5iaaxQG9OS8a6uyBpEpN4cuBjeEKX5K+/dOYhGqDeved13Sir6XX/za
+         aJiJh0H2WSar+uBstwXoFMGvh1TdmBPPi0ZNSZNnxMsZE7deqzaiLmj9+KXHKPvyNbME
+         oxqw==
+X-Forwarded-Encrypted: i=1; AJvYcCVER1ZUdYrTlNjidZyUiJ8UCT0Z/KRz4AUMSyEA/R4IH84d4QcgAOI+pTGI9NbmO7KcXqTqTtU0VOSrirlk@vger.kernel.org, AJvYcCVemK4prfmhU0Eag0lim0NS/LQI8pEEoSJ4wSsUIVXxy9ffPSsWgbBQRcTqTyZR4wzcAoTvOP2FgOnS@vger.kernel.org, AJvYcCW33WL0G1G9aLDDQkceKx2c7EjEe6R8W5+BO+TErLo3C536hncHXeKsHFxLznwZ8hSc6yNCbFsJJfY20g==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwrYeli+guZlaB0mGXmpyyNcrPvNiKXlo8Fc5V7EgkrbAjI3maV
+	i7xRgfZZxEKyS8GI7RSDRVplMHsUWRmO/+1OjkIAGQSde46FtxsCannDOvu+4jiP3uRmDAJzByi
+	OeEfOa2aAwUH6eJvy2DNnPcfsNR4=
+X-Gm-Gg: ASbGnctcrn+m6tcBSaUk2WrR3UFJrFwiefR3ctIGNrDUerCuAmjUrA+NzURwtVseEih
+	1lJxaNr9rpUzQ+epihZgimy0ZOMSI6wa2+sbuwSDIuUpnFEOMDOFm2CS5K9wOMbd8yEyBsj26w5
+	tyoEANkGVQPgiyDmZF+DQOJcyPnTB6uqPjBPu03cnkj61j
+X-Google-Smtp-Source: AGHT+IGaxbWiEzsbhn8u7OT4l7aLcqESH5XxF4YWsiFb1XdbKvnztHuQze3R8m7aqPgVjjpK0+JYaE4xvj1QZAkWR9c=
+X-Received: by 2002:a05:6000:1f8f:b0:391:304f:34e7 with SMTP id
+ ffacd0b85a97d-39132d985f6mr9687116f8f.44.1741611742101; Mon, 10 Mar 2025
+ 06:02:22 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250310090811.GQ16878@noisy.programming.kicks-ass.net>
+References: <1740611284-27506-1-git-send-email-nunodasneves@linux.microsoft.com>
+ <1740611284-27506-8-git-send-email-nunodasneves@linux.microsoft.com>
+In-Reply-To: <1740611284-27506-8-git-send-email-nunodasneves@linux.microsoft.com>
+From: Tianyu Lan <ltykernel@gmail.com>
+Date: Mon, 10 Mar 2025 21:01:45 +0800
+X-Gm-Features: AQ5f1Jq0GptIRLQ74YOF7jUY6vVGVBckkuZztDE6uDxvc_UbKBeBzzaPI8HiFPA
+Message-ID: <CAMvTesAW-9Mo0oY6UUh2anp6DQCSsVCUhBiV2-bKp2VD_N0DYw@mail.gmail.com>
+Subject: Re: [PATCH v5 07/10] Drivers: hv: Introduce per-cpu event ring tail
+To: Nuno Das Neves <nunodasneves@linux.microsoft.com>
+Cc: linux-hyperv@vger.kernel.org, x86@kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	linux-arch@vger.kernel.org, linux-acpi@vger.kernel.org, kys@microsoft.com, 
+	haiyangz@microsoft.com, wei.liu@kernel.org, mhklinux@outlook.com, 
+	decui@microsoft.com, catalin.marinas@arm.com, will@kernel.org, 
+	tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, 
+	dave.hansen@linux.intel.com, hpa@zytor.com, daniel.lezcano@linaro.org, 
+	joro@8bytes.org, robin.murphy@arm.com, arnd@arndb.de, 
+	jinankjain@linux.microsoft.com, muminulrussell@gmail.com, 
+	skinsburskii@linux.microsoft.com, mrathor@linux.microsoft.com, 
+	ssengar@linux.microsoft.com, apais@linux.microsoft.com, 
+	Tianyu.Lan@microsoft.com, stanislav.kinsburskiy@gmail.com, 
+	gregkh@linuxfoundation.org, vkuznets@redhat.com, prapal@linux.microsoft.com, 
+	muislam@microsoft.com, anrayabh@linux.microsoft.com, rafael@kernel.org, 
+	lenb@kernel.org, corbet@lwn.net
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Mar 10, 2025 at 10:08:11AM +0100, Peter Zijlstra wrote:
-> On Thu, Jan 26, 2023 at 10:37:56PM -0500, Chris Murphy wrote:
-> > 
-> > 
-> > On Thu, Jan 26, 2023, at 7:20 PM, Waiman Long wrote:
-> > > On 1/26/23 17:42, Mikhail Gavrilov wrote:
-> > >>> I'm not sure whether these options are better than just increasing the
-> > >>> number, maybe to unblock your ASAP, you can try make it 30 and make sure
-> > >>> you have large enough memory to test.
-> > >> About just to increase the LOCKDEP_CHAINS_BITS by 1. Where should this
-> > >> be done? In vanilla kernel on kernel.org? In a specific distribution?
-> > >> or the user must rebuild the kernel himself? Maybe increase
-> > >> LOCKDEP_CHAINS_BITS by 1 is most reliable solution, but it difficult
-> > >> to distribute to end users because the meaning of using packaged
-> > >> distributions is lost (user should change LOCKDEP_CHAINS_BITS in
-> > >> config and rebuild the kernel by yourself).
-> > >
-> > > Note that lockdep is typically only enabled in a debug kernel shipped by 
-> > > a distro because of the high performance overhead. The non-debug kernel 
-> > > doesn't have lockdep enabled. When LOCKDEP_CHAINS_BITS isn't big enough 
-> > > when testing on the debug kernel, you can file a ticket to the distro 
-> > > asking for an increase in CONFIG_LOCKDEP_CHAIN_BITS. Or you can build 
-> > > your own debug kernel with a bigger CONFIG_LOCKDEP_CHAIN_BITS.
-> > 
-> > Fedora bumped CONFIG_LOCKDEP_CHAINS_BITS=17 to 18 just 6 months ago for debug kernels.
-> > https://gitlab.com/cki-project/kernel-ark/-/merge_requests/1921
-> > 
-> > If 19 the recommended value I don't mind sending an MR for it. But if
-> > the idea is we're going to be back here talking about bumping it to 20
-> > in six months, I'd like to avoid that.
-> 
-> Please all, also look at the lockdep_chains output for these kernels
-> that need bumping this number and check if there's a particularly
-> 'silly' annotation.
-> 
-> Notably, things like giving each CPU their own lock class for a double
-> lock yields O(n^2) chains, while using a single class with 1 subclass
-> for the double nesting results in O(1) chains.
-> 
-> We've had some needlessly expensive annotations like this in the past,
-> and now with dyhamic classes this is even easier.
-> 
-> So before bumping the number, check if there's something btrfs related
-> that can be done better/different wrt annotations to reduce the number
-> of lock chains.
+On Thu, Feb 27, 2025 at 7:09=E2=80=AFAM Nuno Das Neves
+<nunodasneves@linux.microsoft.com> wrote:
+>
+> Add a pointer hv_synic_eventring_tail to track the tail pointer for the
+> SynIC event ring buffer for each SINT.
+>
+> This will be used by the mshv driver, but must be tracked independently
+> since the driver module could be removed and re-inserted.
+>
+> Signed-off-by: Nuno Das Neves <nunodasneves@linux.microsoft.com>
+> Reviewed-by: Wei Liu <wei.liu@kernel.org>
 
-So s_umount_key is having 40 instances; and I realize we have these per
-filesystem lock types for a reason, but 40, how does my measly test box
-end up with _40_ filesystems.
+It's better to expose a function to check the tail instead of exposing
+hv_synic_eventring_tail directly.
 
-Now, even though cross-filesystem locking isn't common (rebind/overlay
-etc?) this does mean most of the file system lock chains are times 40.
+BTW, how does mshv driver use hv_synic_eventring_tail? Which patch
+uses it in this series?
 
-I also have 80 instances of kn->active, and 31 x->wait.
+Thanks.
 
 
+> ---
+>  drivers/hv/hv_common.c | 34 ++++++++++++++++++++++++++++++++--
+>  1 file changed, 32 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/hv/hv_common.c b/drivers/hv/hv_common.c
+> index 252fd66ad4db..2763cb6d3678 100644
+> --- a/drivers/hv/hv_common.c
+> +++ b/drivers/hv/hv_common.c
+> @@ -68,6 +68,16 @@ static void hv_kmsg_dump_unregister(void);
+>
+>  static struct ctl_table_header *hv_ctl_table_hdr;
+>
+> +/*
+> + * Per-cpu array holding the tail pointer for the SynIC event ring buffe=
+r
+> + * for each SINT.
+> + *
+> + * We cannot maintain this in mshv driver because the tail pointer shoul=
+d
+> + * persist even if the mshv driver is unloaded.
+> + */
+> +u8 __percpu **hv_synic_eventring_tail;
+> +EXPORT_SYMBOL_GPL(hv_synic_eventring_tail);
+> +
+>  /*
+>   * Hyper-V specific initialization and shutdown code that is
+>   * common across all architectures.  Called from architecture
+> @@ -90,6 +100,9 @@ void __init hv_common_free(void)
+>
+>         free_percpu(hyperv_pcpu_input_arg);
+>         hyperv_pcpu_input_arg =3D NULL;
+> +
+> +       free_percpu(hv_synic_eventring_tail);
+> +       hv_synic_eventring_tail =3D NULL;
+>  }
+>
+>  /*
+> @@ -372,6 +385,11 @@ int __init hv_common_init(void)
+>                 BUG_ON(!hyperv_pcpu_output_arg);
+>         }
+>
+> +       if (hv_root_partition()) {
+> +               hv_synic_eventring_tail =3D alloc_percpu(u8 *);
+> +               BUG_ON(hv_synic_eventring_tail =3D=3D NULL);
+> +       }
+> +
+>         hv_vp_index =3D kmalloc_array(nr_cpu_ids, sizeof(*hv_vp_index),
+>                                     GFP_KERNEL);
+>         if (!hv_vp_index) {
+> @@ -460,6 +478,7 @@ void __init ms_hyperv_late_init(void)
+>  int hv_common_cpu_init(unsigned int cpu)
+>  {
+>         void **inputarg, **outputarg;
+> +       u8 **synic_eventring_tail;
+>         u64 msr_vp_index;
+>         gfp_t flags;
+>         const int pgcount =3D hv_output_page_exists() ? 2 : 1;
+> @@ -472,8 +491,8 @@ int hv_common_cpu_init(unsigned int cpu)
+>         inputarg =3D (void **)this_cpu_ptr(hyperv_pcpu_input_arg);
+>
+>         /*
+> -        * hyperv_pcpu_input_arg and hyperv_pcpu_output_arg memory is alr=
+eady
+> -        * allocated if this CPU was previously online and then taken off=
+line
+> +        * The per-cpu memory is already allocated if this CPU was previo=
+usly
+> +        * online and then taken offline
+>          */
+>         if (!*inputarg) {
+>                 mem =3D kmalloc(pgcount * HV_HYP_PAGE_SIZE, flags);
+> @@ -485,6 +504,17 @@ int hv_common_cpu_init(unsigned int cpu)
+>                         *outputarg =3D (char *)mem + HV_HYP_PAGE_SIZE;
+>                 }
+>
+> +               if (hv_root_partition()) {
+> +                       synic_eventring_tail =3D (u8 **)this_cpu_ptr(hv_s=
+ynic_eventring_tail);
+> +                       *synic_eventring_tail =3D kcalloc(HV_SYNIC_SINT_C=
+OUNT,
+> +                                                       sizeof(u8), flags=
+);
+> +
+> +                       if (unlikely(!*synic_eventring_tail)) {
+> +                               kfree(mem);
+> +                               return -ENOMEM;
+> +                       }
+> +               }
+> +
+>                 if (!ms_hyperv.paravisor_present &&
+>                     (hv_isolation_type_snp() || hv_isolation_type_tdx()))=
+ {
+>                         ret =3D set_memory_decrypted((unsigned long)mem, =
+pgcount);
+> --
+> 2.34.1
+>
+>
+
+
+--=20
+Thanks
+Tianyu Lan
 
