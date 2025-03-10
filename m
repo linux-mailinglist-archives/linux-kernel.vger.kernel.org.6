@@ -1,189 +1,111 @@
-Return-Path: <linux-kernel+bounces-553714-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-553716-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 862BDA58E06
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 09:22:53 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C1E4A58E0F
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 09:24:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 03DE1188E06C
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 08:23:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 30895188A1E6
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 08:24:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12A581D5CC1;
-	Mon, 10 Mar 2025 08:22:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mihalicyn.com header.i=@mihalicyn.com header.b="BVEfJ9pn"
-Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0073314A09E
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 08:22:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD8EC223710;
+	Mon, 10 Mar 2025 08:23:38 +0000 (UTC)
+Received: from invmail4.hynix.com (exvmail4.skhynix.com [166.125.252.92])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5546F14A09E;
+	Mon, 10 Mar 2025 08:23:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.125.252.92
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741594963; cv=none; b=elhsCXR2v5Ic9A+j6M8z6tlNHHHDpSl5hCmkVLraUqsjuSusegC6jn6hG7LCAL8RnW3zNHYn85pS25bgSC7EbWhW7NYfOiS/Jrafd+9kU779p5zLlX3oR5WN0saxJqbO7GqCZq+GSWV9bBqCVga/2h7p1euLuaTCN6kFvAYYiGo=
+	t=1741595018; cv=none; b=GH9nLrPE5W1yQbTlFU8NfOHLnA+Qpv8Ui7LLPr6GbmIikBKHCzXTM3SrXbOnjv3xRT9OgPD+d1ShVE0+sGMkb+IK6mYa15ODs16le0rrlRUlg7mzI+lmisMuqIWo81zGtvM51PH9uUzUOCEjMnqyBcFnV+6j/A9Kr40rpdaOUZ4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741594963; c=relaxed/simple;
-	bh=bMQzVsplbiB2Zmo3SaMqut9ld73bjRVV8sqc1inTYf8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=E1UFMrvS47Wb6BU8ZUTlk7uZgppV7MAf/c/NSLXduPb2GsCVMDByuxX2/OtrSS61sQ3APxVFs5fuDU7fMw9sb12NjrWULiYTCQZ9iX2jhXlDQiAMl3Z6TL8IpKAJMVi/Y8BLy+QfTGTGTrl0l+ymxGHNuJcWw4a6Z/YUzRVI4vM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mihalicyn.com; spf=pass smtp.mailfrom=mihalicyn.com; dkim=pass (1024-bit key) header.d=mihalicyn.com header.i=@mihalicyn.com header.b=BVEfJ9pn; arc=none smtp.client-ip=209.85.208.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mihalicyn.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mihalicyn.com
-Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-30bae572157so39249931fa.3
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 01:22:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=mihalicyn.com; s=mihalicyn; t=1741594958; x=1742199758; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=zjzKD/Jg47p1iuSSXliIqZXhMH3ZDbn6H5maH+gH5a8=;
-        b=BVEfJ9pnw/Bf9/2Ue8ZXnzk3bB85OjFi2cMm/cpj2W5NQYXbuoRsC/yxL2ifR2oDQo
-         BRj9SXhkGYNHKjz0Z6k/EkfimKBMq8TjCGjOUiHQpCWW+hjXsl9p6zt+JVDmo2NIc1Y+
-         lTcD6HVnxN89HPD6dqaOPtrEMCekau2u33TJU=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741594958; x=1742199758;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=zjzKD/Jg47p1iuSSXliIqZXhMH3ZDbn6H5maH+gH5a8=;
-        b=SYW/C+jJeKPNCPAiRgwaETDVaLX5OwyiGqPcdcEAG4nipjbDhRlWgI2Wj9+c1ARyox
-         B3vKkiFTdPdlVEr0MaDpOPZf4gQ4B0in/3BZZwAbPLX6VrCDSD+6qmIqzj10TllzVxir
-         QR0kCBf/i5UZcDMqRe+LPSbSQ3rQuPQb6nvDi2j2GOOar+KvGd4PkhLIovT2UVIsCpM1
-         8zDes+aPYfX1eAr5QlQ5xcI+zjuT6O3nhEYnnDFzIqHLZL/711oJ+EhDmhL51kcXx/QR
-         fjG1q5WjRidES2UZWO2wHMH5g0teUHypTtJr0DeBgfeZaMfo9/PwIdk3e7NWnLGiODqm
-         Ri4A==
-X-Forwarded-Encrypted: i=1; AJvYcCUBfNxj3+XtTQfPnQ0y8kM+map3q6Lf81sYLWkoDSCunfdancOgx9sPll/+moTB4+Y/cZOIKPtyIrOaYC8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyn9VfGW1TJUBCVvU3pBN38hWTpbabUvULMC/T6R3ygYHpkub4Z
-	w59CjUn5+iIw5u3TaWjeN/9mgq0lnYxV71ZjEu/QQXJJznhOayH9uq8gvBSZSnkVHvsvO9qKUIp
-	7lDjl9RItO8YwYPiITr5ySjOzzzBp6tXlrfy7Zw==
-X-Gm-Gg: ASbGncszjsnUOkgemxhYYRRtS2rXHahxhU4IRoumCmV3QbzGwnh8kWzl047xB7Cm1Zk
-	quLTiVu7aM3FaypiaDqwGU87u5UxxNMYzQnnLi2Vm9bmaDECVjWu01MIP7Dw8OVNb9Va+mpjAbQ
-	gV2VeZj9SY1EQr2dBf+pOOPSxtPK4=
-X-Google-Smtp-Source: AGHT+IGvR0f400RVkNv4K+q673+Y3d11UPh/QYHIhrUH/d5oB1WAnS7YR7PKXV6jGKEUVj0KLZINifpAjbJ74/D1xlI=
-X-Received: by 2002:a05:6512:ba6:b0:549:8ed4:fb64 with SMTP id
- 2adb3069b0e04-54990e6725bmr4679189e87.24.1741594957741; Mon, 10 Mar 2025
- 01:22:37 -0700 (PDT)
+	s=arc-20240116; t=1741595018; c=relaxed/simple;
+	bh=AjPlA6/0Vt2/ykNJB2kiR4TJT7iqwwM1ouKE+3LBPIc=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=IRKh3AJ82NqIWc+1dsM9wug1WMh5D/Ij5pizVg7b1Cto+61pKvA4KgW0FtvaTBIhQJWEJllCxoZHFbcYFvGv4SNPb9762Qtgz5CEetP4mextk29A0HPg6U+63KHk/+Hj+JKJODs25oop6PjWomVMQA9dft+fNPyzgOFBJ8ELSeU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com; spf=pass smtp.mailfrom=sk.com; arc=none smtp.client-ip=166.125.252.92
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sk.com
+X-AuditID: a67dfc5b-3c9ff7000001d7ae-45-67cea17bf4e7
+From: Rakie Kim <rakie.kim@sk.com>
+To: Gregory Price <gourry@gourry.net>
+Cc: akpm@linux-foundation.org,
+	linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	linux-cxl@vger.kernel.org,
+	joshua.hahnjy@gmail.com,
+	dan.j.williams@intel.com,
+	ying.huang@linux.alibaba.com,
+	kernel_team@skhynix.com,
+	honggyu.kim@sk.com,
+	yunjeong.mun@sk.com,
+	Rakie Kim <rakie.kim@sk.com>
+Subject: Re: [PATCH 4/4] mm/mempolicy: Fix memory leaks in mempolicy_sysfs_init()
+Date: Mon, 10 Mar 2025 17:23:03 +0900
+Message-ID: <20250310082313.584-1-rakie.kim@sk.com>
+X-Mailer: git-send-email 2.48.1.windows.1
+In-Reply-To: <Z8sPjdXmFGO9-y7D@gourry-fedora-PF4VCD3F>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250309121526.86670-1-aleksandr.mikhalitsyn@canonical.com> <CAL+tcoDhPe3G_iheA0M_9dO-Tij-dYROfneiGS3SUr8w7bhH8A@mail.gmail.com>
-In-Reply-To: <CAL+tcoDhPe3G_iheA0M_9dO-Tij-dYROfneiGS3SUr8w7bhH8A@mail.gmail.com>
-From: Alexander Mikhalitsyn <alexander@mihalicyn.com>
-Date: Mon, 10 Mar 2025 09:22:26 +0100
-X-Gm-Features: AQ5f1Jr3P324GRSgffqmmY0SETWU8n4FmjryAneVg13f4XigYVSLvHw77lEmslo
-Message-ID: <CAJqdLrp+d=d2rZ776_zvw_Kz8FT317skkE+SufyUk_9secE_9w@mail.gmail.com>
-Subject: Re: [PATCH net-next] tools headers: Sync uapi/asm-generic/socket.h
- with the kernel sources
-To: Jason Xing <kerneljasonxing@gmail.com>
-Cc: Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>, edumazet@google.com, 
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
-	Jakub Kicinski <kuba@kernel.org>, Vadim Fedorenko <vadim.fedorenko@linux.dev>, 
-	Willem de Bruijn <willemb@google.com>, Anna Emese Nyiri <annaemesenyiri@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrFLMWRmVeSWpSXmKPExsXC9ZZnkW71wnPpBlNPGljMWb+GzWL61AuM
+	Fj/vHme3OL51HrvF+VmnWCwu75rDZnFvzX9Wi9VrMhw4PHbOusvu0d12md1j8Z6XTB6bPk1i
+	9zgx4zeLx86Hlh6fN8kFsEdx2aSk5mSWpRbp2yVwZfx4+ZO1oImj4tfDsAbGbWxdjJwcEgIm
+	Ems/HmCBsX82PQeKc3CwCShJHNsbA2KKCKhKtF1x72Lk4mAWWM8k8XrTLLBWYYFAiVszvjKC
+	2CxANWs2HAKL8woYS5xYu4wJYqSmRMOle2A2p4CZxMyTk8BWCQnwSLzasJ8Rol5Q4uTMJ2Bx
+	ZgF5ieats5kheo+wSbxrUYSwJSUOrrjBMoGRfxaSlllIWhYwMq1iFMrMK8tNzMwx0cuozMus
+	0EvOz93ECAzhZbV/oncwfroQfIhRgINRiYf3wbyz6UKsiWXFlbmHGCU4mJVEeNW2n0oX4k1J
+	rKxKLcqPLyrNSS0+xCjNwaIkzmv0rTxFSCA9sSQ1OzW1ILUIJsvEwSnVwFgf/OOKy4vsWyYp
+	WdsXtqt/LZ67kHvtZd8FLGnStcvsyqrj3U5uy5DaO//V0o4LpdF7bPbt211erRoiYX+9O6lv
+	RtRWW9as0gKG8EITyfqNmr8UNnj0xa6TuKz85ckJ+3M/r03mWLN4ZUZ/5cp913ZuTbsvxjpD
+	pOvm323q7D3Xy+V6OM37W5RYijMSDbWYi4oTAQq63LVdAgAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrKLMWRmVeSWpSXmKPExsXCNUNNS7d64bl0g8971SzmrF/DZjF96gVG
+	i593j7NbfH72mtni+NZ57BaH555ktTg/6xSLxeVdc9gs7q35z2px6NpzVovVazIsfm9bwebA
+	47Fz1l12j+62y+wei/e8ZPLY9GkSu8eJGb9ZPHY+tPT4dtvDY/GLD0wenzfJBXBGcdmkpOZk
+	lqUW6dslcGX8ePmTtaCJo+LXw7AGxm1sXYycHBICJhI/m54D2RwcbAJKEsf2xoCYIgKqEm1X
+	3LsYuTiYBdYzSbzeNAusXFggUOLWjK+MIDYLUM2aDYfA4rwCxhIn1i5jghipKdFw6R6YzSlg
+	JjHz5CQWEFtIgEfi1Yb9jBD1ghInZz4BizMLyEs0b53NPIGRZxaS1CwkqQWMTKsYRTLzynIT
+	M3NM9YqzMyrzMiv0kvNzNzECA3dZ7Z+JOxi/XHY/xCjAwajEw/tg3tl0IdbEsuLK3EOMEhzM
+	SiK8attPpQvxpiRWVqUW5ccXleakFh9ilOZgURLn9QpPTRASSE8sSc1OTS1ILYLJMnFwSjUw
+	VtfU1B424nN71FzTcenQ3Y1n2YWKjJpnZZ+2dq9hvLVrdtsrnvLansv/rr1UO3Kl7Xuqx5mL
+	d3PtHTe2dKy9ZX3twqZn/TUu61J1TunGiB9ZKN/ULBHk0MB0+e+G7d+endz2wuf1Pvej32dV
+	K2q3bE33LjULCpCZdUYg49v/uUFPjmzJSJ8uqMRSnJFoqMVcVJwIAPNFUWVYAgAA
+X-CFilter-Loop: Reflected
 
-Am Mo., 10. M=C3=A4rz 2025 um 06:33 Uhr schrieb Jason Xing
-<kerneljasonxing@gmail.com>:
->
-> On Sun, Mar 9, 2025 at 1:15=E2=80=AFPM Alexander Mikhalitsyn
-> <aleksandr.mikhalitsyn@canonical.com> wrote:
+On Fri, 7 Mar 2025 10:23:57 -0500 Gregory Price <gourry@gourry.net> wrote:
+
+Hi Gregory
+
+ On Fri, Mar 07, 2025 at 03:35:33PM +0900, Rakie Kim wrote:
+> > Improper cleanup of sysfs attributes caused kobject and memory leaks when
+> > initialization failed or nodes were removed.
 > >
-> > This also fixes a wrong definitions for SCM_TS_OPT_ID & SO_RCVPRIORITY.
-> >
-> > Accidentally found while working on another patchset.
-> >
-> > Cc: linux-kernel@vger.kernel.org
-> > Cc: netdev@vger.kernel.org
-> > Cc: Eric Dumazet <edumazet@google.com>
-> > Cc: Jakub Kicinski <kuba@kernel.org>
-> > Cc: Vadim Fedorenko <vadim.fedorenko@linux.dev>
-> > Cc: Willem de Bruijn <willemb@google.com>
-> > Cc: Jason Xing <kerneljasonxing@gmail.com>
-> > Cc: Anna Emese Nyiri <annaemesenyiri@gmail.com>
-> > Fixes: a89568e9be75 ("selftests: txtimestamp: add SCM_TS_OPT_ID test")
-> > Fixes: e45469e594b2 ("sock: Introduce SO_RCVPRIORITY socket option")
-> > Signed-off-by: Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.c=
-om>
->
+> 
+> Is this fixing something in your patch set or fixing something in the
+> current upstream code?  If in the current patch set, roll this into the
+> patch that causes it.
+> 
+> If this is fixing something upstream, I recommend submitting this
+> separately to stable and rebasing on top of it.
 
-Hi Jason,
+Thank you for your response regarding this patch.
+This patch isn't a modification of my hotplug-related patch but rather
+a fix addressing issues in the existing implementation of the commit
+listed below.
+I will proceed to update it as a separate patch based on the mentioned
+commit.
 
-Thanks for looking into this!
+mm/mempolicy: implement the sysfs-based weighted_interleave interface
+(dce41f5ae2539d1c20ae8de4e039630aec3c3f3c)
 
-> I'm not sure if it's a bug. As you may notice, in
-> arch/parisc/include/uapi/asm/socket.h, it has its own management of
-> definitions.
->
-> I'm worried that since this file is uapi, is it allowed to adjust the
-> number like this patch does if it's not a bug.
-
-My understanding is that this file (tools/include/uapi/asm-generic/socket.h=
-) is
-a mirror copy of the actual UAPI file (uapi/asm-generic/socket.h),
-and definitions need to be in sync with it.
-
-But I absolutely agree that we need someone who knows that for sure
-and can confirm.
-Breaking anything, especially UAPI-related stuff is my nightmare.
+Rakie
 
 >
-> Otherwise, the change looks good to me.
-
-Kind regards,
-Alex
-
->
-> Thanks,
-> Jason
->
-> > ---
-> >  tools/include/uapi/asm-generic/socket.h | 21 +++++++++++++++++++--
-> >  1 file changed, 19 insertions(+), 2 deletions(-)
-> >
-> > diff --git a/tools/include/uapi/asm-generic/socket.h b/tools/include/ua=
-pi/asm-generic/socket.h
-> > index ffff554a5230..aa5016ff3d91 100644
-> > --- a/tools/include/uapi/asm-generic/socket.h
-> > +++ b/tools/include/uapi/asm-generic/socket.h
-> > @@ -119,14 +119,31 @@
-> >
-> >  #define SO_DETACH_REUSEPORT_BPF 68
-> >
-> > +#define SO_PREFER_BUSY_POLL    69
-> > +#define SO_BUSY_POLL_BUDGET    70
-> > +
-> > +#define SO_NETNS_COOKIE                71
-> > +
-> > +#define SO_BUF_LOCK            72
-> > +
-> > +#define SO_RESERVE_MEM         73
-> > +
-> > +#define SO_TXREHASH            74
-> > +
-> >  #define SO_RCVMARK             75
-> >
-> >  #define SO_PASSPIDFD           76
-> >  #define SO_PEERPIDFD           77
-> >
-> > -#define SCM_TS_OPT_ID          78
-> > +#define SO_DEVMEM_LINEAR       78
-> > +#define SCM_DEVMEM_LINEAR      SO_DEVMEM_LINEAR
-> > +#define SO_DEVMEM_DMABUF       79
-> > +#define SCM_DEVMEM_DMABUF      SO_DEVMEM_DMABUF
-> > +#define SO_DEVMEM_DONTNEED     80
-> > +
-> > +#define SCM_TS_OPT_ID          81
-> >
-> > -#define SO_RCVPRIORITY         79
-> > +#define SO_RCVPRIORITY         82
-> >
-> >  #if !defined(__KERNEL__)
-> >
-> > --
-> > 2.43.0
-> >
+> 
+> ~Gregory
 
