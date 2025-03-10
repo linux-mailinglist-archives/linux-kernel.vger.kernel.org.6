@@ -1,202 +1,184 @@
-Return-Path: <linux-kernel+bounces-554630-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-554631-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C3A5AA59AAA
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 17:08:36 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0F944A59AAB
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 17:09:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4867218913D4
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 16:08:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BA4053A9570
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 16:09:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 345D522E41D;
-	Mon, 10 Mar 2025 16:08:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AAFD822F16F;
+	Mon, 10 Mar 2025 16:09:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aUqSZF2q"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=posteo.net header.i=@posteo.net header.b="oSf6XTIW"
+Received: from mout01.posteo.de (mout01.posteo.de [185.67.36.65])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8509021E0BF;
-	Mon, 10 Mar 2025 16:08:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93FC322A7FA
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 16:09:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.67.36.65
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741622909; cv=none; b=a2JPlYKeMHa04MQODR3Ye76WnlmnqlocvWfZLlo2Xx70a+fkUd8Geby3Oko8nR+aFN4/MZzjKbM3nGwVvx5QyQjDaTSLCQoxE4/Q3ewh+VUow+JoXKvjIxVpQKu4qFn3uEvJ07/S44VE8gqc6tUSQUTL295A7CFT31xV4DK0Fs8=
+	t=1741622959; cv=none; b=HLPa6pWrlevEVhYfYe3VJUeEVIE4L99Cx9LIvakZ6SKvCDVHmJw4ZN+2hLFS18Eajpbsx0Lb6NElPvPHz2O8f2LCBdkji/V94Icx0jWa9g1WTN12lfEsC+zet/wFJEILWVML8eW8MKdJXOAMorTwhr8iZjPM4Tha8PMp1BOQZdo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741622909; c=relaxed/simple;
-	bh=oM+2QBv/osZc1Qu+Ovbzjhd1SaqoUCdnlpJ4kblzwJk=;
+	s=arc-20240116; t=1741622959; c=relaxed/simple;
+	bh=D4Vb33RNqJrJxqz1esDLVLlIZGIk1xCNfU2hCUsdZEA=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=oegAOjIxd/QMmS4tzdM92wUNTfOzQJLr1fpyroerd8Qhec0gg/2OooPosyIL3EtK7L3FSm5kiPdSt8v4gzP13mDWhzNKMQ8CX9C/kHAxEO9fo6kupJz6dE8UD7M+Iv/R/i9jzqTtnp4M4h/wUXsRH9JsJs5vN4CRuHmCSedHGrw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aUqSZF2q; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 038EDC4CEE5;
-	Mon, 10 Mar 2025 16:08:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741622909;
-	bh=oM+2QBv/osZc1Qu+Ovbzjhd1SaqoUCdnlpJ4kblzwJk=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=aUqSZF2qUxl/E2FvXVyVCYnyS5+E44suSL/KlyOFEVylO0oH6zpkYfOOhYgPbx+g8
-	 I0jkecRJErsGGLi354YBzZH/OAK0YDz0ELoAwGDC+EOJPUbrvoLwQuzVzYsdssX6f6
-	 qbWI/ou0wFT/SrWfwZqfaZLunnQybIEcz87WRWRkurh85p/EEwb0gFd/hPzvRHwDmm
-	 THJmI7f8BOKJq/nsvo8PgzsB2ak46pVuLlS/c8jB9majbm+bGzh9gXVq7v0jIWnPga
-	 k0wv8i9WuZKhv5xK/CW3BSaMC6Yn5ZQa9xrjOXLI6vQVqbg/pd0K6OCwRnM/ClSSuw
-	 bKbJD/QT1D65Q==
-Message-ID: <6af3a9fe-0c0b-497d-b143-77edc12f0c1e@kernel.org>
-Date: Mon, 10 Mar 2025 17:08:24 +0100
+	 In-Reply-To:Content-Type; b=UsVLlFte+mMlaiQcRQSYVwqHPPlxPZShHIB35seU/uDufZXyvY6uRzCWrGfJH4bZf+IWQH9CfnNuQ+bEsAMRdEQwUAHvL+8WNp+lPzE02sr8/jNN51ubtmzijQSjbGXAyzlm791MBZapOm3XkezMN7eYIAwGa8/4fcP44zymGmo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=posteo.net; spf=pass smtp.mailfrom=posteo.net; dkim=pass (2048-bit key) header.d=posteo.net header.i=@posteo.net header.b=oSf6XTIW; arc=none smtp.client-ip=185.67.36.65
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=posteo.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=posteo.net
+Received: from submission (posteo.de [185.67.36.169]) 
+	by mout01.posteo.de (Postfix) with ESMTPS id BD6EA240028
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 17:09:13 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=posteo.net; s=2017;
+	t=1741622953; bh=D4Vb33RNqJrJxqz1esDLVLlIZGIk1xCNfU2hCUsdZEA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:Content-Type:
+	 Content-Transfer-Encoding:From;
+	b=oSf6XTIWaf3kcYQPaXMyBvlku3naljwgcKCOjL5MTN4HmVbS5lbHjF/GKS48lQQr2
+	 PQ2IfKNhDK4jgdtVSg87waMP0yJY0TTtZHsWObWvgzub2koRmXtfOX1Q2RuSD6ZNAH
+	 slqAAmiBvgwIo6CR+7O1ysgyY1099U8LOFLJMI7LdOag7lwq2OLFB4bp2wJc870EXd
+	 b9o4x83uoPOxzfslQWoCea50q4BhyjDaqV+rvV+/C2cjVyHFs7YBXnoI6Xsw7dO0yr
+	 G+Hx4Q28I39qEATaSViavXZGuO5smlGIH/q73/1+uA473TOBdA5mUzYq+w9UCNacv2
+	 pChMtSUKN5xOQ==
+Received: from customer (localhost [127.0.0.1])
+	by submission (posteo.de) with ESMTPSA id 4ZBMK161dtz6tvZ;
+	Mon, 10 Mar 2025 17:09:09 +0100 (CET)
+Message-ID: <87725b0d-42e9-4273-a51f-90c82aad2254@posteo.net>
+Date: Mon, 10 Mar 2025 16:09:09 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 4/4] ARM: dts: stm32: add initial support for
- stm32mp157-ultra-fly-sbc board
-To: =?UTF-8?B?R29yYW4gUmHEkWVub3ZpxIc=?= <goran.radni@gmail.com>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>,
- =?UTF-8?B?R29yYW4gUmHEkWVub3ZpxIc=?= <gradenovic@ultratronik.de>,
- =?UTF-8?B?QsO2cmdlIFN0csO8bXBmZWw=?= <bstruempfel@ultratronik.de>,
- Maxime Coquelin <mcoquelin.stm32@gmail.com>,
- Alexandre Torgue <alexandre.torgue@foss.st.com>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-stm32@st-md-mailman.stormreply.com,
- linux-arm-kernel@lists.infradead.org
-References: <20250310154804.326943-1-goran.radni@gmail.com>
- <20250310154804.326943-5-goran.radni@gmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH] rust: task: mark Task methods inline
+To: Alice Ryhl <aliceryhl@google.com>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
+ Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+ =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
+ Benno Lossin <benno.lossin@proton.me>,
+ Andreas Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>,
+ Nathan Chancellor <nathan@kernel.org>,
+ Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
+ Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>,
+ rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
+ llvm@lists.linux.dev
+References: <20250310-inline-c-wrappers-v1-1-d726415e6332@posteo.net>
+ <CAH5fLgi1YOP9gbXEmYfBtjWeMaqsYpNrrC1fd2rGABCKWYVcbg@mail.gmail.com>
 Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
- cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
- JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
- gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
- J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
- NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
- BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
- vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
- Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
- TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
- S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
- FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJgPO8PBQkUX63hAAoJEBuTQ307
- QWKbBn8P+QFxwl7pDsAKR1InemMAmuykCHl+XgC0LDqrsWhAH5TYeTVXGSyDsuZjHvj+FRP+
- gZaEIYSw2Yf0e91U9HXo3RYhEwSmxUQ4Fjhc9qAwGKVPQf6YuQ5yy6pzI8brcKmHHOGrB3tP
- /MODPt81M1zpograAC2WTDzkICfHKj8LpXp45PylD99J9q0Y+gb04CG5/wXs+1hJy/dz0tYy
- iua4nCuSRbxnSHKBS5vvjosWWjWQXsRKd+zzXp6kfRHHpzJkhRwF6ArXi4XnQ+REnoTfM5Fk
- VmVmSQ3yFKKePEzoIriT1b2sXO0g5QXOAvFqB65LZjXG9jGJoVG6ZJrUV1MVK8vamKoVbUEe
- 0NlLl/tX96HLowHHoKhxEsbFzGzKiFLh7hyboTpy2whdonkDxpnv/H8wE9M3VW/fPgnL2nPe
- xaBLqyHxy9hA9JrZvxg3IQ61x7rtBWBUQPmEaK0azW+l3ysiNpBhISkZrsW3ZUdknWu87nh6
- eTB7mR7xBcVxnomxWwJI4B0wuMwCPdgbV6YDUKCuSgRMUEiVry10xd9KLypR9Vfyn1AhROrq
- AubRPVeJBf9zR5UW1trJNfwVt3XmbHX50HCcHdEdCKiT9O+FiEcahIaWh9lihvO0ci0TtVGZ
- MCEtaCE80Q3Ma9RdHYB3uVF930jwquplFLNF+IBCn5JRzsFNBFVDXDQBEADNkrQYSREUL4D3
- Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
- MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
- OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
- GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
- 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
- YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
- 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
- BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
- JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
- 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
- YpsFAmA872oFCRRflLYACgkQG5NDfTtBYpvScw/9GrqBrVLuJoJ52qBBKUBDo4E+5fU1bjt0
- Gv0nh/hNJuecuRY6aemU6HOPNc2t8QHMSvwbSF+Vp9ZkOvrM36yUOufctoqON+wXrliEY0J4
- ksR89ZILRRAold9Mh0YDqEJc1HmuxYLJ7lnbLYH1oui8bLbMBM8S2Uo9RKqV2GROLi44enVt
- vdrDvo+CxKj2K+d4cleCNiz5qbTxPUW/cgkwG0lJc4I4sso7l4XMDKn95c7JtNsuzqKvhEVS
- oic5by3fbUnuI0cemeizF4QdtX2uQxrP7RwHFBd+YUia7zCcz0//rv6FZmAxWZGy5arNl6Vm
- lQqNo7/Poh8WWfRS+xegBxc6hBXahpyUKphAKYkah+m+I0QToCfnGKnPqyYIMDEHCS/RfqA5
- t8F+O56+oyLBAeWX7XcmyM6TGeVfb+OZVMJnZzK0s2VYAuI0Rl87FBFYgULdgqKV7R7WHzwD
- uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
- 7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
- 5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20250310154804.326943-5-goran.radni@gmail.com>
-Content-Type: text/plain; charset=UTF-8
+From: Panagiotis Foliadis <pfoliadis@posteo.net>
+In-Reply-To: <CAH5fLgi1YOP9gbXEmYfBtjWeMaqsYpNrrC1fd2rGABCKWYVcbg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-On 10/03/2025 16:48, Goran Rađenović wrote:
-> +&gpioj {
-> +	gpio-line-names =
-> +	"", "", "", "", "", "", "", "",
-> +	"", "", "", "", "", "", "", "";
-> +};
-> +
-> +&gpiok {
-> +	gpio-line-names =
-> +	"", "", "", "", "", "", "", "",
-> +	"", "", "", "", "", "", "", "";
-> +};
-> +
-> +&gpioz {
-> +	gpio-line-names =
-> +	"", "", "", "#SPI_CS2", "", "", "", "",
-> +	"", "", "", "", "", "", "", "";
-> +};
-> +
-> +&gpu {
-> +	status = "okay";
-> +};
-> +
-> +&i2c1 {
-> +	pinctrl-names = "default", "sleep";
-> +	pinctrl-0 = <&i2c1_ux_pins_a>;
-> +	pinctrl-1 = <&i2c1_ux_pins_sleep_a>;
-> +	i2c-scl-rising-time-ns = <100>;
-> +	i2c-scl-falling-time-ns = <7>;
-> +	status = "okay";
-> +	/delete-property/dmas;
-> +	/delete-property/dma-names;
-> +
-> +	rtc@32 {
-> +		compatible = "epson,rx8900";
-> +		reg = <0x32>;
-> +		epson,vdet-disable;
-> +		trickle-diode-disable;
-> +	};
-> +};
-> +
-> +&i2c4 {
-> +	pinctrl-names = "default", "sleep";
-> +	pinctrl-0 = <&i2c4_ux_pins_a>;
-> +	pinctrl-1 = <&i2c4_ux_pins_sleep_a>;
-> +	i2c-scl-rising-time-ns = <185>;
-> +	i2c-scl-falling-time-ns = <20>;
-> +	status = "okay";
-> +	/delete-property/dmas;
-> +	/delete-property/dma-names;
-> +
-> +	pmic: stpmic@33 {
-
-Node names should be generic. See also an explanation and list of
-examples (not exhaustive) in DT specification:
-https://devicetree-specification.readthedocs.io/en/latest/chapter2-devicetree-basics.html#generic-names-recommendation
-
-pmic?
-
-> +		compatible = "st,stpmic1";
-> +		reg = <0x33>;
-> +		interrupts-extended = <&exti 0 IRQ_TYPE_EDGE_FALLING>;
-> +		interrupt-controller;
-> +		#interrupt-cells = <2>;
-> +		status = "okay";
-
-Does not look disabled
 
 
-...
+On 10/3/25 12:23, Alice Ryhl wrote:
+> On Mon, Mar 10, 2025 at 10:40 AM Panagiotis Foliadis
+> <pfoliadis@posteo.net> wrote:
+>> When you build the kernel using the llvm-18.1.3-rust-1.85.0-x86_64
+>> toolchain provided by kernel.org, the following symbols are generated:
+>>
+>> $ nm vmlinux | grep ' _R'.*Task | rustfilt
+>> ffffffff817b2d30 T <kernel::task::Task>::get_pid_ns
+>> ffffffff817b2d50 T <kernel::task::Task>::tgid_nr_ns
+>> ffffffff817b2c90 T <kernel::task::Task>::current_pid_ns
+>> ffffffff817b2d00 T <kernel::task::Task>::signal_pending
+>> ffffffff817b2cc0 T <kernel::task::Task>::uid
+>> ffffffff817b2ce0 T <kernel::task::Task>::euid
+>> ffffffff817b2c70 T <kernel::task::Task>::current
+>> ffffffff817b2d70 T <kernel::task::Task>::wake_up
+>> ffffffff817b2db0 T <kernel::task::Task as kernel::types::AlwaysRefCounted>::dec_ref
+>> ffffffff817b2d90 T <kernel::task::Task as kernel::types::AlwaysRefCounted>::inc_ref
+>>
+>> Most of these Rust symbols are trivial wrappers around the C functions
+>> signal_pending, uid, euid, wake_up, dec_ref and inc_ref.It doesn't
+>> make sense to go through a trivial wrapper for these functions, so
+>> mark them inline.
+> There's no C function called dec_ref or inc_ref? Please use the C
+> function names instead of the Rust ones.
+>
+>> After applying this patch, the above command will produce this output:
+>>
+>> ffff8000805aa004 T <kernel::task::Task>::get_pid_ns
+>> ffff8000805aa01c T <kernel::task::Task>::tgid_nr_ns
+>> ffff8000805a9fe8 T <kernel::task::Task>::current_pid_ns
+>> ffff8000805a9fd0 T <kernel::task::Task>::current
+> I think it'd be nice with an explanation of why you did not mark these
+> #[inline].
 
+Since the issue focuses on the functions that are trivial wrappers around
+c and `do nothing that call a C function` I thought i would leave this out
+since there is some other functionality (albeit sometimes minimal) other
+that being just a c-wrapper.
 
-> +	dac_ux_ch2_pins_a: dac_ux-ch2-0 {
+>
+>> Signed-off-by: Panagiotis Foliadis <pfoliadis@posteo.net>
+>> Link: https://github.com/Rust-for-Linux/linux/issues/1145
+> The SoB usually goes at the bottom of the tags.
+>
+>>   rust/kernel/task.rs | 6 ++++++
+>>   1 file changed, 6 insertions(+)
+>>
+>> diff --git a/rust/kernel/task.rs b/rust/kernel/task.rs
+>> index 07bc22a7645c0c7d792a0a163dd55b8ff0fe5f92..996d7c96e48689a5752817f9ca196c021865291d 100644
+>> --- a/rust/kernel/task.rs
+>> +++ b/rust/kernel/task.rs
+>> @@ -273,18 +273,21 @@ pub fn pid(&self) -> Pid {
+>>       }
+>>
+>>       /// Returns the UID of the given task.
+>> +    #[inline]
+>>       pub fn uid(&self) -> Kuid {
+>>           // SAFETY: It's always safe to call `task_uid` on a valid task.
+>>           Kuid::from_raw(unsafe { bindings::task_uid(self.as_ptr()) })
+>>       }
+>>
+>>       /// Returns the effective UID of the given task.
+>> +    #[inline]
+>>       pub fn euid(&self) -> Kuid {
+>>           // SAFETY: It's always safe to call `task_euid` on a valid task.
+>>           Kuid::from_raw(unsafe { bindings::task_euid(self.as_ptr()) })
+>>       }
+>>
+>>       /// Determines whether the given task has pending signals.
+>> +    #[inline]
+>>       pub fn signal_pending(&self) -> bool {
+>>           // SAFETY: It's always safe to call `signal_pending` on a valid task.
+>>           unsafe { bindings::signal_pending(self.as_ptr()) != 0 }
+>> @@ -319,6 +322,7 @@ pub fn tgid_nr_ns(&self, pidns: Option<&PidNamespace>) -> Pid {
+>>       }
+>>
+>>       /// Wakes up the task.
+>> +    #[inline]
+>>       pub fn wake_up(&self) {
+>>           // SAFETY: It's always safe to call `signal_pending` on a valid task, even if the task
+>>           // running.
+>> @@ -328,11 +332,13 @@ pub fn wake_up(&self) {
+>>
+>>   // SAFETY: The type invariants guarantee that `Task` is always refcounted.
+>>   unsafe impl crate::types::AlwaysRefCounted for Task {
+>> +    #[inline]
+>>       fn inc_ref(&self) {
+>>           // SAFETY: The existence of a shared reference means that the refcount is nonzero.
+>>           unsafe { bindings::get_task_struct(self.as_ptr()) };
+>>       }
+>>
+>> +    #[inline]
+>>       unsafe fn dec_ref(obj: ptr::NonNull<Self>) {
+>>           // SAFETY: The safety requirements guarantee that the refcount is nonzero.
+>>           unsafe { bindings::put_task_struct(obj.cast().as_ptr()) }
+>>
+>> ---
+>> base-commit: 7f0e9ee5e44887272627d0fcde0b19a675daf597
+>> change-id: 20250308-inline-c-wrappers-da83ec1c2a77
+>>
+>> Best regards,
+>> --
+>> Panagiotis Foliadis <pfoliadis@posteo.net>
+>>
 
-No underscores in node names.
-
-> +		pins {
-> +			pinmux = <STM32_PINMUX('A', 5, ANALOG)>;
-> +		};
-> +	};
-> +
-
-
-
-
-Best regards,
-Krzysztof
 
