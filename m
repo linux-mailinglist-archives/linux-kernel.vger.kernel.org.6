@@ -1,163 +1,194 @@
-Return-Path: <linux-kernel+bounces-554392-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-554394-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C9D9A59727
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 15:11:54 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 03EEEA5972F
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 15:13:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9C6493AAFC2
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 14:11:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0E4F216B344
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 14:13:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A93622CBD3;
-	Mon, 10 Mar 2025 14:11:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.com header.i=aros@gmx.com header.b="aZWvHeq3"
-Received: from mout.gmx.net (mout.gmx.net [212.227.15.18])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E127A22B595;
+	Mon, 10 Mar 2025 14:12:58 +0000 (UTC)
+Received: from mx3.molgen.mpg.de (mx3.molgen.mpg.de [141.14.17.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0697022B5B6;
-	Mon, 10 Mar 2025 14:11:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0821322A80A;
+	Mon, 10 Mar 2025 14:12:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=141.14.17.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741615879; cv=none; b=Rq6AZ75YM1/mCHFlyNFiRlcviE8jFregM/ftEEF3OeS2N9Gu8RTiA7RBVnrqDuiroemINyjlcq23b/Oh4vftb/8gDYMgEfnF9opA8vAsVuxG8JyaEcxhzJ/Iqj280Gkm+tU3CkA7viySfApn8gyJeC/U5UR6Dg9b1S0OKcwy/TU=
+	t=1741615978; cv=none; b=JD1MaAttoJbycO+LZBdeOog/tbXsleUyYAVTXEcmhPrbccMHc0TOJgEtN1s1HwezzvqReF0IKah8SVo6JxDRhEgxjjjYRtMkregB0zqku/IF/jtwC3zfNThcR9Ywvpd7RHivOsXHJLQYw2kAdTtmkIHtsbBldWTS2K1G4GfHgEs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741615879; c=relaxed/simple;
-	bh=GWunTdHAI7b0cohpCHo+7m0nUPxTlaoYdDjazPPRZc8=;
-	h=Message-ID:Date:MIME-Version:Subject:Cc:References:From:
-	 In-Reply-To:Content-Type; b=TDL3tY5m4BK/o4itNW52eZN2pevvIt5x0ZB45gWZWMzYxGeLZ47oyWPRgBYCe8Vam0CRggbsSM567D9hsT4aiNOcrku5XeY+XdZH1qHtMIljDJaXkV/Go9qZ9GkhGncvre8bgBWePmW/hMspDK/UnHGSXkENqiSBOyeECyDYU6I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.com; spf=pass smtp.mailfrom=gmx.com; dkim=pass (2048-bit key) header.d=gmx.com header.i=aros@gmx.com header.b=aZWvHeq3; arc=none smtp.client-ip=212.227.15.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.com;
-	s=s31663417; t=1741615874; x=1742220674; i=aros@gmx.com;
-	bh=VKzQu2+sth8gbYkjl0G2p/5CqDPJ7n6O34m+uH/HSRw=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=aZWvHeq3ppdZq74zDIhM9YPk6rFiId31DRl9gmH1pJ6E38fo/fAWrWXrJcE/cT5S
-	 VQYhNH275Slm1NqgNaHdO1qKdcS5SeFadk3ciOCvxJj0MIwltsnRa+A76lwiWTv7v
-	 pmfB/TbkiUE3WN3qkI6Lnk1zFoc742z5rh3uhmuL5FxlbZ9yA2/1Wr36//+VbLboc
-	 dVGQ6EFyESuOYHVT/CyBL0Ke3nKKxTjKnDfFPSfMVN5lZDLJEvsrPI0qhAUWJhc4K
-	 drKFKeg6H8VDY5huqJMpEYoItHoU7bMa56uAl+uzw18953xlw7Gfa4sCimgeTwJW6
-	 o6cFVT3TSRBuaDYBxQ==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from [10.10.12.239] ([156.200.109.2]) by mail.gmx.net (mrgmx005
- [212.227.17.184]) with ESMTPSA (Nemesis) id 1N95e9-1tCPhu3Odz-013PxH; Mon, 10
- Mar 2025 15:11:13 +0100
-Message-ID: <69d8b100-f65d-470f-a957-2819795e82a4@gmx.com>
-Date: Mon, 10 Mar 2025 14:11:13 +0000
+	s=arc-20240116; t=1741615978; c=relaxed/simple;
+	bh=GxBwBLFH48jh32FDkdDhoDf5IRc91N9B3eYtyK7KSIA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Q++FYyGFj4DHeo8yJEykvbZfLYSBR0PZtgi6M5Ea8QS34y9Aw/LWSGSq3/4DJ79//Dn8cyt1NvyVIQw4qXBJL7II6D1zqk3vY8prAHMlh/22wmlVG8eHylAQgrG6k/GaY39vQdraEBfXTQORtyC12gfprOOjx+RsjC26SSrVg/I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de; spf=pass smtp.mailfrom=molgen.mpg.de; arc=none smtp.client-ip=141.14.17.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=molgen.mpg.de
+Received: from [192.168.0.2] (ip5f5af04a.dynamic.kabel-deutschland.de [95.90.240.74])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: pmenzel)
+	by mx.molgen.mpg.de (Postfix) with ESMTPSA id C778F61E647BD;
+	Mon, 10 Mar 2025 15:12:18 +0100 (CET)
+Message-ID: <bc28fec8-6ab3-4633-86ea-fd1b35ca91c8@molgen.mpg.de>
+Date: Mon, 10 Mar 2025 15:12:18 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: A syscall for changing birth time
-Cc: linux-ext4@vger.kernel.org,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <bda3fa3f-dd12-40de-841a-e4c216ab533f@gmx.com>
- <20250310135828.GB8837@mit.edu>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] tpm, tpm_tis: Workaround failed command reception on
+ Infineon devices
+To: Jonathan McDowell <noodles@earth.li>
+Cc: Jarkko Sakkinen <jarkko@kernel.org>, Peter Huewe <peterhuewe@gmx.de>,
+ Jason Gunthorpe <jgg@ziepe.ca>,
+ James Bottomley <James.Bottomley@hansenpartnership.com>,
+ Stefan Berger <stefanb@linux.ibm.com>, linux-integrity@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <Z8lkSKOqBgt78pU2@earth.li> <Z8ogT_gERUYstPbK@kernel.org>
+ <Z8sgfMmsfn894yLj@earth.li> <Z8sixTuKG5sxO-D1@kernel.org>
+ <Z87Y69l5_GbzlLfp@earth.li>
 Content-Language: en-US
-From: "Artem S. Tashkinov" <aros@gmx.com>
-In-Reply-To: <20250310135828.GB8837@mit.edu>
+From: Paul Menzel <pmenzel@molgen.mpg.de>
+In-Reply-To: <Z87Y69l5_GbzlLfp@earth.li>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:Zv5WKVRM0eY4aXjcRUZoARHKfJF3YrMaEWFFgB0PZeZvoQtI07p
- Lp6hbmVHQo3plHZzvJXZwa83LK0/foFcPKFh907NKxJdthGh53Eho6r0hbUeD8bdztDOaKM
- DtjrxjcbidZrtFNtSQc62HD2vmn15IO+/PQn1GQkGVtubLQ3z+mWQIFOvs0lErFfyZFomij
- 11Z9z4gQy9itboTMYIZKw==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:OaiH/nlXpyc=;XR4tuCzr6F8CnpozhOwIWHuj7U9
- 8V6WuLuy/F30UcwCv53wDOzU2lrUD8jvfVWpcCikdFqFlf2m0pY0/AoE10+IoDu9/22v8X6PW
- 2HbatOIHezL71Y4qtuiBtd6sme1h6hvWzcFpY0aBA1gc2MyDTjwtPbeLQhg4fkKsB3/3G+Aol
- yOZ0EjHNSEfNbwppAoiJtGTWjLB82UPyZOIEva/SzaZQ8sMP1OOX/E+V+88G7q+0qieSmMMTv
- il7ucoXVDnryMsC+1+XypvvqLuKRfl4K31fswWP5BZaaOhOSjRGOtAUE8Mo9MbYAuPQWLOiSZ
- CyBRWYF3mHdXPZYz4MjJ7FLIL3T7Kb71M2ClQHgUX9dioLENzpExVIA0thC2hN0A7ILFIAg/Q
- 8W+wJLlLHIR8Io5jzxR+MonKKtVrIef/FDgExjT0r5UwBf/QncR9ZJCGtDXVa5UiCud55U7jG
- 80KTclLdkrFDOH7YjSfmTb5Cx2Hv/lvhMOBOwI+w1fuyY6aXGTmkxDYLljw8sUxXW4/5abD4V
- D88NNf34CIXaYZPtsAWE+q93uhhuooAekD20DjeGNb2Kz2AUoxjpv+gWl41jF2XdngA6L1CQ5
- k1raBHSNKdrxvH3bxmbOf7YFNDfAZuEv/5KBAJ37VCTHZvuOrEhgFIl1pM/yxrdyard7Cas5T
- 7ZPfL6Y84l58eILzjfr+FIXXAdzHeibkbJReD8LyOQw60tYdZwkrXyM0Y+MkwdgfjtSzJnezB
- a6sNOjmxTwkEjnEk6ck4iULHr9phFxKgJf4Ydbnr+cYQjQxpzp2Lv0CiaTnsmrAhItCTaWSPZ
- u4CNOSw1V05mLOIY0hD8zv+YXSdnVYjSZCuaJ14LbBYGXfLUx6dwPVqBen8/Dh0eRSeOkA6Lw
- 9l/oiybVFw10JHDFh1ESmK4BvK95cuHbND+5WVzMqztaFVlugM1v8047jqmjwsYWHZ/Nl9qaY
- 3RZ6l2qpOjez3UB8XUwRLB0tGGL8kxVwvntBv0HS0D9dKNeu7Bu70BbakXJ3/uFG//wyLmPxa
- xBLI2Hs7JC2h3IZAE/wvKqB67j3NeTQhl3pMQwvx4U1weQaHrrPs1r6Dl9oe/75WcW1Ue7TXC
- 8Nn+VOYVU0ibSEFItijk+aBu6mpO1Tv/PecD2j0AjOa62B3xoHGno5+OB3vl+Atif8GBxtlGr
- kCvzzRifDLA+pdM7/thicDCDJSHyhcQ0AYbdnde7+bTBkNNJ0FfOKO/2K0SUYhIaQ8BozB9D8
- FRCiMViuLrOYEY+Sy12LZHkp7PDOy06vRmetIsZyrEE0P5gz8jXnoqKrgQxYKE6ANq4wRvPeD
- tRFfPepLK1O3olsf1uEPhUt/fW+JyIqtpD14Vj7akZmJoiUbFn121z3ryVKiXA/tCnqq6j5de
- CM/Ra8PO+4SrQDLlX5yhs14vV1P2G/zL7ypKvPGD+uAJ6psAqKyr0OQnhy
+Content-Transfer-Encoding: 8bit
+
+Dear Jonathan,
 
 
+Some nits, should you resend. Feel free to ignore. The verb *work 
+around* is spelled with a space.
 
-On 3/10/25 1:58 PM, Theodore Ts'o wrote:
-> On Mon, Mar 10, 2025 at 07:26:00AM +0000, Artem S. Tashkinov wrote:
->>
->> Why is it that the Linux kernel supports reading btime, but there's no
->> syscall to change it? At least for ext4 there's the debugfs utility, bu=
-t
->> for other filesystems there's just nothing. And even debugfs is not a
->> solution, since it requires root privileges and an unmounted/mounted RO
->> filesystem.
->
-> POSIX and Single Unix Specification also doesn't provide a way to
-> allow userspace to set ctime (inode change time).  That's because the
-> definition of "change time" is defined to include the time to change
-> anything about the inode metadata --- including the inode timestamps.
->
-> Simply, the definition of "birth time" is about the time that the
-> inode was "birthed", and that's not something that you can change.
-> The problem is that DOS has a concept of "creation time", which seems
-> to mean "the time that the abstract concept of the file was created".
-> So if a file was created somewhere in a build farm in Redmond,
-> Washington, that's the time that the file should have, according to
-> Microsoft.  So Windows allows the "creation time" to be set to any
-> arbitrary file, since installers need to be able to set the "abstract
-> creation time".
->
-> You can debate whether "birth time" (which can't be set) or a
-> "abstract creation time" (which can set to any arbitrary value), is
-> "better" but that's why Linux doesn't support a way to set the "birth
-> time".
->
-> Whether you think we should bow to what Microsoft dictates probably
-> depends on how much you believe Windows is a legacy operating system
-> or not.  :-)  Personally, it's not something I really care about, and
-> if someone really wants to add a Windows-compatible "Creation Time",
-> my suggestion would be to define an extended attribute where this
-> could be stored.
->
-> We *could* allocate space in the on-disk inode to store this
-> timestamp, but since I would estimate 99.9% of deployed Linux systems
-> don't care about Windows compatibility, it's not a good use of
-> resources.  We could also add a mount option which changes the
-> semantics of birth time, but that adds extra complexity, and again, I
-> would estimate that 99.9% of Linux systems (where I include all of the
-> Linux deployments in Cloud VM's) don't care about Windows
-> compatibility in this way.
->
-> Cheers,
->
-> 						- Ted
+Am 10.03.25 um 13:19 schrieb Jonathan McDowell:
+> From: Jonathan McDowell <noodles@meta.com>
+> 
+> Some Infineon devices have a issue where the status register will get
+> stuck with a quick REQUEST_USE / COMMAND_READY sequence. This is not
+> simply a matter of requiring a longer timeout; the work around is to
 
-Hello,
+The noun without. ;-)
 
-I'm not going to argue with your reasoning but being able to set btime
-could be beneficial for backup and restore purposes/utilities.
+> retry the command submission. Add appropriate logic to do this in the
+> send path.
 
-Secondly, I really like having separate modification and creation times
-for all my files.
+Does the workaround have downsides?
 
-Finally, as for POSIX not offering this feature - doesn't Linux already
-have a lot of syscalls that are not found in POSIX?
+> This is fixed in later firmware revisions, but those are not always
+> available, and cannot generally be easily updated from outside a
+> firmware environment.
 
-So, it's not just about Windows compatibility. It's just very useful.
+Please mention the affected revisions. Is there an errata for tis.
 
-Regards,
-Artem
+> Testing has been performed with a simple repeated loop of doing a
+> TPM2_CC_GET_CAPABILITY for TPM_CAP_PROP_MANUFACTURER using the Go code
+> at:
+> 
+>   https://the.earth.li/~noodles/tpm-stuff/timeout-reproducer-simple.go
+
+Awesome. Thank you for sharing.
+
+> It can take several hours to reproduce, and several million operations.
+> 
+> Signed-off-by: Jonathan McDowell <noodles@meta.com>
+> ---
+> v2: Rename flag to TPM_TIS_STATUS_VALID_RETRY
+> 
+>   drivers/char/tpm/tpm_tis_core.c | 17 ++++++++++++++---
+>   drivers/char/tpm/tpm_tis_core.h |  1 +
+>   include/linux/tpm.h             |  1 +
+>   3 files changed, 16 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/char/tpm/tpm_tis_core.c b/drivers/char/tpm/ 
+> tpm_tis_core.c
+> index c969a1793184..4ab69c3e103c 100644
+> --- a/drivers/char/tpm/tpm_tis_core.c
+> +++ b/drivers/char/tpm/tpm_tis_core.c
+> @@ -463,7 +463,10 @@ static int tpm_tis_send_data(struct tpm_chip *chip, 
+> const u8 *buf, size_t len)
+> 
+>           if (wait_for_tpm_stat(chip, TPM_STS_VALID, chip->timeout_c,
+>                       &priv->int_queue, false) < 0) {
+> -            rc = -ETIME;
+> +            if (test_bit(TPM_TIS_STATUS_VALID_RETRY, &priv->flags))
+> +                rc = -EAGAIN;
+> +            else
+> +                rc = -ETIME;
+
+I’d use a ternary operator as the same variable is assigned to.
+
+>               goto out_err;
+>           }
+>           status = tpm_tis_status(chip);
+> @@ -480,7 +483,10 @@ static int tpm_tis_send_data(struct tpm_chip *chip, 
+> const u8 *buf, size_t len)
+> 
+>       if (wait_for_tpm_stat(chip, TPM_STS_VALID, chip->timeout_c,
+>                   &priv->int_queue, false) < 0) {
+> -        rc = -ETIME;
+> +        if (test_bit(TPM_TIS_STATUS_VALID_RETRY, &priv->flags))
+> +            rc = -EAGAIN;
+> +        else
+> +            rc = -ETIME;
+>           goto out_err;
+>       }
+>       status = tpm_tis_status(chip);
+> @@ -545,9 +551,11 @@ static int tpm_tis_send_main(struct tpm_chip *chip, 
+> const u8 *buf, size_t len)
+>           if (rc >= 0)
+>               /* Data transfer done successfully */
+>               break;
+> -        else if (rc != -EIO)
+> +        else if (rc != EAGAIN && rc != -EIO)
+>               /* Data transfer failed, not recoverable */
+>               return rc;
+> +
+> +        usleep_range(priv->timeout_min, priv->timeout_max);
+>       }
+> 
+>       /* go and do it */
+> @@ -1143,6 +1151,9 @@ int tpm_tis_core_init(struct device *dev, struct 
+> tpm_tis_data *priv, int irq,
+>           priv->timeout_max = TIS_TIMEOUT_MAX_ATML;
+>       }
+> 
+> +    if (priv->manufacturer_id == TPM_VID_IFX)
+> +        set_bit(TPM_TIS_STATUS_VALID_RETRY, &priv->flags);
+> +
+>       if (is_bsw()) {
+>           priv->ilb_base_addr = ioremap(INTEL_LEGACY_BLK_BASE_ADDR,
+>                       ILB_REMAP_SIZE);
+> diff --git a/drivers/char/tpm/tpm_tis_core.h b/drivers/char/tpm/ 
+> tpm_tis_core.h
+> index 690ad8e9b731..970d02c337c7 100644
+> --- a/drivers/char/tpm/tpm_tis_core.h
+> +++ b/drivers/char/tpm/tpm_tis_core.h
+> @@ -89,6 +89,7 @@ enum tpm_tis_flags {
+>       TPM_TIS_INVALID_STATUS        = 1,
+>       TPM_TIS_DEFAULT_CANCELLATION    = 2,
+>       TPM_TIS_IRQ_TESTED        = 3,
+> +    TPM_TIS_STATUS_VALID_RETRY    = 4,
+>   };
+> 
+>   struct tpm_tis_data {
+> diff --git a/include/linux/tpm.h b/include/linux/tpm.h
+> index 20a40ade8030..6c3125300c00 100644
+> --- a/include/linux/tpm.h
+> +++ b/include/linux/tpm.h
+> @@ -335,6 +335,7 @@ enum tpm2_cc_attrs {
+>   #define TPM_VID_WINBOND  0x1050
+>   #define TPM_VID_STM      0x104A
+>   #define TPM_VID_ATML     0x1114
+> +#define TPM_VID_IFX      0x15D1
+> 
+>   enum tpm_chip_flags {
+>       TPM_CHIP_FLAG_BOOTSTRAPPED        = BIT(0),
+
 
