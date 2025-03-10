@@ -1,112 +1,82 @@
-Return-Path: <linux-kernel+bounces-554565-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-554566-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8DACDA599FC
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 16:29:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id D840AA599FD
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 16:29:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9409716976A
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 15:29:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AF3FA1699D6
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 15:29:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50EF022DFE8;
-	Mon, 10 Mar 2025 15:28:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="PVcNxY1g"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27D541A7264;
-	Mon, 10 Mar 2025 15:28:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FE7522A4E3;
+	Mon, 10 Mar 2025 15:29:21 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43AF222A4C3
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 15:29:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741620529; cv=none; b=KZ7qosVhelu2gZDlmupK5EofDfMWBJjQDs+O+KT6z1FJci/ZmcBdsinA0BVO/Ry4qJMlH+8RylqUGysZIdvI+Zo876BRFrsArwgwXl8tzue7aRljf4QfpXg5yRuegsrPRGbeNwmeGXAkmyDQ5Nam2pGh6KolSYFgqrJrGzsE/zI=
+	t=1741620561; cv=none; b=r4QOm7bVQx7h4j85lJ3643Z9cn02tdT/l9erUjyb2hWAt+K6XgBSi2h9Tpbe81nnYDlF4kFOZrqkSL+ZQzACDcbq625gwJkM+YeE0SKz0oLL5GqX85vp3yEVWhLaGk7LgLNt8VXZbAVgRfWFZG0e/jNKDe25HCLwuHk3fVimNI4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741620529; c=relaxed/simple;
-	bh=mcn+vY+S1woGC0GGbfsPy3tYqvbju7ryrvfDi1hup5s=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IIMrn91fHPHUOiDxarpKytOZYoflUCIHC/o1UJkGm/bfnn9UypLy45ALYRdnakGTeInZFDg/Fz+2E4MDCv3gO357//+bOK46xsMQdx+E3BHPm2kn+6nqSQCWDkAlGPYznvAnxY96Tn1BTToUbZy6u5baWomlq7bKvVjGYlIPBEI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=PVcNxY1g; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=LFuFlzgoC5ukemUl0eQEeCKPuI6gKDdM8KBiSpcB9xc=; b=PVcNxY1guezp38LWF2ftYx46zh
-	181jogpyXvCV9SSUrAPj/osD+voUmWRbp2zm6AeYiiKay6FgNfYmpKuauHVDCW6WjekFqReRquzm1
-	PXmVsr717nWi+/mnwiKZlEEPvk+giC4gwbO5IndT89MR4H+AWHNuPMPsRHv2FBgJVbdC/PtBSG73X
-	7xqfhrIZatuk/WFJMuQdok3HpPuEZXYDrP49NSsYbf1ppb1dyUFuARUdFjhn7Oco4mnpUUP6r1hqj
-	qBzNNIt63C/zJ87dDmJM2ZeS2r2KnA10Hk6S8R2OWN77XmpBJY0Zq3k7VK2oHyb6A+Xek0GpayjpP
-	ycbYH5mQ==;
-Received: from willy by casper.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1trf3Z-00000006Dsj-3Xn1;
-	Mon, 10 Mar 2025 15:28:45 +0000
-Date: Mon, 10 Mar 2025 15:28:41 +0000
-From: Matthew Wilcox <willy@infradead.org>
-To: syzbot <syzbot+f2aaf773187f5cae54f3@syzkaller.appspotmail.com>
-Cc: linux-block@vger.kernel.org, akpm@linux-foundation.org,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org, syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [mm?] [fs?] KCSAN: data-race in __filemap_add_folio /
- invalidate_bdev (8)
-Message-ID: <Z88FKeXyaQCeXapp@casper.infradead.org>
-References: <67ceb38a.050a0220.e1a89.04b1.GAE@google.com>
+	s=arc-20240116; t=1741620561; c=relaxed/simple;
+	bh=9jsHEIUilFU+hAzGMJpulbNlAJCkWu5A0q07RLupo0I=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=H9jIpN5qhZb79q9/9gWrJOuYcXc510GzGWl+mSEqvW+MpAd9EuX6cBxS2Nst08kkW8jsHR+QxljfGodri2SbwHRgOOoIboiAwq6VrdQ1JOrKmVD7m8icE7l38zLAE0HT4RyR3PjuNeKCpDY17Nr5i647ET+DHHbqRDpOlSSCMLU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id EE07D1692;
+	Mon, 10 Mar 2025 08:29:29 -0700 (PDT)
+Received: from [192.168.178.6] (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id DCFAF3F5A1;
+	Mon, 10 Mar 2025 08:29:16 -0700 (PDT)
+Message-ID: <8ddd7bb2-3a18-48b5-85c6-23263134308a@arm.com>
+Date: Mon, 10 Mar 2025 16:29:10 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <67ceb38a.050a0220.e1a89.04b1.GAE@google.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] /sched/core: Fix Unixbench spawn test regression
+To: Vincent Guittot <vincent.guittot@linaro.org>
+Cc: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
+ Juri Lelli <juri.lelli@redhat.com>, Steven Rostedt <rostedt@goodmis.org>,
+ Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+ Valentin Schneider <vschneid@redhat.com>, Hagar Hemdan
+ <hagarhem@amazon.com>, linux-kernel@vger.kernel.org, wuchi.zero@gmail.com
+References: <20250306162635.2614376-1-dietmar.eggemann@arm.com>
+ <CAKfTPtCfd_=gm7rsT_qBL8pw5uybEvYH4N2tvxpKndxxi4L7oA@mail.gmail.com>
+From: Dietmar Eggemann <dietmar.eggemann@arm.com>
+Content-Language: en-US
+In-Reply-To: <CAKfTPtCfd_=gm7rsT_qBL8pw5uybEvYH4N2tvxpKndxxi4L7oA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Mon, Mar 10, 2025 at 02:40:26AM -0700, syzbot wrote:
-> Reported-by: syzbot+f2aaf773187f5cae54f3@syzkaller.appspotmail.com
+On 10/03/2025 14:59, Vincent Guittot wrote:
+> On Thu, 6 Mar 2025 at 17:26, Dietmar Eggemann <dietmar.eggemann@arm.com> wrote:
+>>
+>> Hagar reported a 30% drop in UnixBench spawn test with commit
+>> eff6c8ce8d4d ("sched/core: Reduce cost of sched_move_task when config
+>> autogroup") on a m6g.xlarge AWS EC2 instance with 4 vCPUs and 16 GiB RAM
+>> (aarch64) (single level MC sched domain) [1].
+>>
+>> There is an early bail from sched_move_task() if p->sched_task_group is
+>> equal to p's 'cpu cgroup' (sched_get_task_group()). E.g. both are
+>> pointing to taskgroup '/user.slice/user-1000.slice/session-1.scope'
+>> (Ubuntu '22.04.5 LTS').
 > 
-> EXT4-fs (loop0): unmounting filesystem 00000000-0000-0000-0000-000000000000.
-> ==================================================================
-> BUG: KCSAN: data-race in __filemap_add_folio / invalidate_bdev
-> 
-> read-write to 0xffff888100630570 of 8 bytes by task 3291 on cpu 0:
->  __filemap_add_folio+0x430/0x6f0 mm/filemap.c:929
+> Isn't this same use case that has been used by commit eff6c8ce8d4d to
+> show the benefit of adding the test if ((group ==
+> tsk->sched_task_group) ?
+> Adding Wuchi who added the condition
 
-This is a write to mapping->nrpages with the i_pages lock held, as it
-should be.
+IMHO, UnixBench spawn reports a performance number according to how many
+tasks could be spawned whereas, IIUC, commit eff6c8ce8d4d was reporting
+the time spend in sched_move_task().
 
->  filemap_add_folio+0x9c/0x1b0 mm/filemap.c:981
->  page_cache_ra_unbounded+0x1c1/0x350 mm/readahead.c:276
->  do_page_cache_ra mm/readahead.c:328 [inline]
->  force_page_cache_ra mm/readahead.c:357 [inline]
->  page_cache_sync_ra+0x252/0x680 mm/readahead.c:585
->  filemap_get_pages+0x2ca/0x11a0 mm/filemap.c:2580
->  filemap_read+0x230/0x8c0 mm/filemap.c:2691
->  blkdev_read_iter+0x228/0x2d0 block/fops.c:796
->  new_sync_read fs/read_write.c:484 [inline]
->  vfs_read+0x5cc/0x6f0 fs/read_write.c:565
->  ksys_read+0xe8/0x1b0 fs/read_write.c:708
-> 
-> read to 0xffff888100630570 of 8 bytes by task 3306 on cpu 1:
->  invalidate_bdev+0x25/0x70 block/bdev.c:99
-
-This is a read of mapping->nrpages with no lock held.  So we could
-silence this warning by making this a READ_ONCE or data_race().
-
-The problem is that I'm not sure this is the right answer.  Obviously
-here we only care about zero-vs-non-zero, but what if we race with
-0 being incremented to 1?  Should there be some locking higher up
-that prevents this?  Or is this "yes, root can do this and screw
-themselves"?
-
->  ext4_put_super+0x571/0x810 fs/ext4/super.c:1356
->  generic_shutdown_super+0xe5/0x220 fs/super.c:642
->  kill_block_super+0x2a/0x70 fs/super.c:1710
->  ext4_kill_sb+0x44/0x80 fs/ext4/super.c:7368
->  deactivate_locked_super+0x7d/0x1c0 fs/super.c:473
->  deactivate_super+0x9f/0xb0 fs/super.c:506
->  cleanup_mnt+0x268/0x2e0 fs/namespace.c:1413
->  __cleanup_mnt+0x19/0x20 fs/namespace.c:1420
->  task_work_run+0x13a/0x1a0 kernel/task_work.c:227
+[...]
 
