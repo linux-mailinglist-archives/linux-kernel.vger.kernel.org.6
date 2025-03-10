@@ -1,93 +1,70 @@
-Return-Path: <linux-kernel+bounces-554053-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-554117-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2777FA59232
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 12:04:28 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id AB327A59331
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 12:57:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9A6611883914
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 11:04:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 461743A81FB
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 11:57:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B9A1226D1E;
-	Mon, 10 Mar 2025 11:04:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CD74224258;
+	Mon, 10 Mar 2025 11:57:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="bj2neNPP"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="Ne1sjB72"
+Received: from mail-m15574.qiye.163.com (mail-m15574.qiye.163.com [101.71.155.74])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F934226D07
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 11:04:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30E02224B08
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 11:57:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=101.71.155.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741604660; cv=none; b=b2YSNChltwFhW0XtZ1vil6gv3UYZ2IpoANpheTH5DNb2urrH0PhOLEktZyW8wqFMZudN+jJYnSo9eZDcBBkNcsA6sCpbrw+W4n3Pr/U4EJzgtHEF5VuFV0rr+clgLpl50b2X73w0FILJzL/DtLHatUjvhHaR5V6+V20OCO7FevQ=
+	t=1741607852; cv=none; b=Li+JNYB18ewcIDfPVKQugCwbC9997b5HRGUpZCShOnlyuOvWD6XfFkff3XI+XPw4ynoO95t5g9EAPDozP6ki1yKN4ggn2Aj/H5zvvwzT57oT38AtnQ/fCdnB+7Wwj90+c3pGOnbNOD7GKS9Wl8vcB/rL3qiqLVKkI2xxEhHFgQM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741604660; c=relaxed/simple;
-	bh=SLKi5/pU6VmqZloQSrc3BsEC95BvrfInlTEKZdNyDPI=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=JXSQVQ5tabtEkbKwwY6PoUjQLnnjAC5proQ+r8Id7XOE4oR6W6HAL9Py3rbLUnGmqSpg5bRyT4Y8SmwX1k+mF9GF7bo3C8VjZRH+XDyLpIqlPrhiPQS9pOpKhkZxkG8IEQ2u/is8v3ji47ONUVHN3A2Rc8sJHkzrGrJvgHlLinY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=bj2neNPP; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52A9tWkL008001
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 11:04:17 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:date:from:message-id:mime-version
-	:subject:to; s=qcppdkim1; bh=7+h0SgCQWbpp2hc08NzZtuUqyuQ4lXLc5tQ
-	LmGtbA50=; b=bj2neNPPyGpRSdjTyspYKoXqr14OqsTXVLwiR9JUgqJTZzyZpXX
-	d6rdXBVYipzcHPvJkkfveDmRHAt+jCfMBfr/+expJ8k8JEBMb6quwaPVvS3bM05Q
-	U9ax+hAhd89Kx2tEmJXMSzepqa7qBD1990jPd63aBdEPBeE5TvU1j50VUcv47qPs
-	6K0d+9i4AVpvR1oegcOwVb/dMV7HUfORL+FkmNZ0YIFi0OiUe0PZAeTzTw9qZycz
-	ox3rzhe0kIdVE88URT+z/PjGkEYuPcnPBkv0Vg5XUd11WHmUhJ9nuRTq9h8v4PkT
-	U+4p74QN3SeXafsdULRBxxAGj5tWvhZ8NqQ==
-Received: from mail-pl1-f199.google.com (mail-pl1-f199.google.com [209.85.214.199])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 458eyt4h7c-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 11:04:16 +0000 (GMT)
-Received: by mail-pl1-f199.google.com with SMTP id d9443c01a7336-2242ade807fso87035205ad.2
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 04:04:16 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741604655; x=1742209455;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=7+h0SgCQWbpp2hc08NzZtuUqyuQ4lXLc5tQLmGtbA50=;
-        b=FPBfesLRbBxYm59n98cKTxq3oTyuYhDkVhWMkkB+WMBz9N+yubl50qOQOjpArpk4ym
-         FQPWmbi32irEAIrH8N9x9+A0qNcDD7bel20qH2HyYlKUI1sa5mhg16tsw3YKFNjLnfxk
-         yl6JgeZtaFUmvCLE1W6Isf3Qoh/tiCUTJ14HfLYnHWf/VKEYDEFmUatPsD+JjKKQwwYp
-         1wrRvIbBdKnBWO82ANmpysbBTIEgywZfX4wpUnvtarWQTUTOC+bsl4qrOXHMXO/d8YWw
-         hJK1loGBau6FUiDza11d7EO9PNU8xJ7iFSfTwjic4+4qHfDMFztG5ysLdgGLC748N8nP
-         oCew==
-X-Forwarded-Encrypted: i=1; AJvYcCUxH+LrrZF51FDqYqap2JJ5LtYK0j9b9Lp+FChS5PEpe1m08hWhmVrhbL8yR5PleUCVXnwZvu0LF2j1obY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxIcikBoN8YzsbU3ylDzWF3oVhHv6QZKT4fb4FZhn2BZjKRW3bK
-	a6jtamsEXgZ31X3BNeQl4gQRB5+5bTqEHPF8q9qARYIfV3jYsbhEzoIapAbNXB1dVOeniVAkVcc
-	GM4uXZ8om9iQhws5RFoQLHm9/D3FfoRkDm9Fd2dRBbuviNkIVFOo6zi+3N6oWESg=
-X-Gm-Gg: ASbGnct5wdErCBJEMXB5Hofvgvq96Wccq4jNW6LL4CRCSZvzIiVHnLnxQjmINM97iA1
-	6VnXwEmWguw6Lod8CmufTYUkfIwzN3wjWcpDehVT7H9IDcfx/7GU4S+MwzxWuEspVqG23X14Vwy
-	sxoaFDAcXy98Q74XfC1y8TEsG7ngNV7hpC87abIjdrzJfsIzlerugWSeHPAQktmF2bvUvV8h4XY
-	thZKVH1gAl1AY86YXjjh3zwBHXn/2sgEDUeJT1WUf39X3CU7oDvZgupERIEsIu2fLnxxEHJcPQi
-	AUd1JXOd+COTeOC6i3CA7O8yAM5zGgECAJGuq9BCqztjFcFTlWfjmQ==
-X-Received: by 2002:a17:903:22c8:b0:220:f449:7419 with SMTP id d9443c01a7336-22428880305mr190238575ad.7.1741604655631;
-        Mon, 10 Mar 2025 04:04:15 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGPpOyafTgqJOPNvJdDELRWWpYaOQqOg/hYct9/Qs6ay7Y38goWmm0TeDagcKLKgA3lGaIYZQ==
-X-Received: by 2002:a17:903:22c8:b0:220:f449:7419 with SMTP id d9443c01a7336-22428880305mr190238105ad.7.1741604655245;
-        Mon, 10 Mar 2025 04:04:15 -0700 (PDT)
-Received: from hu-kriskura-hyd.qualcomm.com ([202.46.22.19])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22410a7f8c2sm74902025ad.116.2025.03.10.04.04.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 10 Mar 2025 04:04:14 -0700 (PDT)
-From: Krishna Kurapati <krishna.kurapati@oss.qualcomm.com>
-To: Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-        Johan Hovold <johan+linaro@kernel.org>
-Cc: linux-phy@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org,
-        Krishna Kurapati <krishna.kurapati@oss.qualcomm.com>
-Subject: [PATCH v4] phy: qcom: qmp-usbc: Add qmp configuration for QCS615
-Date: Mon, 10 Mar 2025 16:33:59 +0530
-Message-Id: <20250310110359.210990-1-krishna.kurapati@oss.qualcomm.com>
+	s=arc-20240116; t=1741607852; c=relaxed/simple;
+	bh=jczZ1AEYAhbVGyei9EzIzmMEh7ZV0hMULPaA9ffgmAc=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=V/BgCuH5MUKBpLdep9jRFBxjUJKnjWHenvCUfJm1uO0W1I+wfKiv7FlTbGz4beBMuosPQMisdjbzzgrd2NmznV5bq5d0HteYTY8UTulS3wM8+ZAfa5LYIru9hMEPkUaX6kSwJzuaAY+l+caGvM4yuc70ojJo4uS3yNVOvFehB+4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=Ne1sjB72; arc=none smtp.client-ip=101.71.155.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
+Received: from zyb-HP-ProDesk-680-G2-MT.. (unknown [58.22.7.114])
+	by smtp.qiye.163.com (Hmail) with ESMTP id dc1881fc;
+	Mon, 10 Mar 2025 18:41:46 +0800 (GMT+08:00)
+From: Damon Ding <damon.ding@rock-chips.com>
+To: heiko@sntech.de
+Cc: andy.yan@rock-chips.com,
+	hjc@rock-chips.com,
+	maarten.lankhorst@linux.intel.com,
+	mripard@kernel.org,
+	tzimmermann@suse.de,
+	airlied@gmail.com,
+	simona@ffwll.ch,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	andrzej.hajda@intel.com,
+	neil.armstrong@linaro.org,
+	rfoss@kernel.org,
+	Laurent.pinchart@ideasonboard.com,
+	jonas@kwiboo.se,
+	jernej.skrabec@gmail.com,
+	dmitry.baryshkov@linaro.org,
+	dianders@chromium.org,
+	sebastian.reichel@collabora.com,
+	cristian.ciocaltea@collabora.com,
+	boris.brezillon@collabora.com,
+	l.stach@pengutronix.de,
+	dri-devel@lists.freedesktop.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Damon Ding <damon.ding@rock-chips.com>
+Subject: [PATCH v8 00/13] Add eDP support for RK3588
+Date: Mon, 10 Mar 2025 18:41:01 +0800
+Message-Id: <20250310104114.2608063-1-damon.ding@rock-chips.com>
 X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -96,51 +73,66 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Proofpoint-ORIG-GUID: am3rX5PjVs2l-MfD3QYvUpOfBxoAYfiy
-X-Authority-Analysis: v=2.4 cv=CupFcm4D c=1 sm=1 tr=0 ts=67cec730 cx=c_pps a=JL+w9abYAAE89/QcEU+0QA==:117 a=fChuTYTh2wq5r3m49p7fHw==:17 a=Vs1iUdzkB0EA:10 a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8 a=KKAkSRfTAAAA:8 a=GV-Fn4z6lk5qDZWrX1MA:9 a=324X-CrmTo6CU4MGRt3R:22
- a=cvBusfyB2V15izCimMoJ:22
-X-Proofpoint-GUID: am3rX5PjVs2l-MfD3QYvUpOfBxoAYfiy
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-10_04,2025-03-07_03,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 clxscore=1011
- suspectscore=0 phishscore=0 adultscore=0 impostorscore=0 malwarescore=0
- bulkscore=0 spamscore=0 mlxlogscore=999 lowpriorityscore=0
- priorityscore=1501 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2502100000
- definitions=main-2503100087
+X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
+	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZGkhLQlYfQ0hLGUpDH01JSENWFRQJFh
+	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSEtLTE
+	5VSktLVUtZBg++
+X-HM-Tid: 0a957fa57bc003a3kunmdc1881fc
+X-HM-MType: 1
+X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6OU06HRw6GjICCCMfSjoYPT4e
+	NzhPFDJVSlVKTE9KTUtISEtDTEtLVTMWGhIXVR8aFhQVVR8SFRw7CRQYEFYYExILCFUYFBZFWVdZ
+	EgtZQVlOQ1VJSVVMVUpKT1lXWQgBWUFJSU5JNwY+
+DKIM-Signature:a=rsa-sha256;
+	b=Ne1sjB72m8GlZHHq8D0kOPJ82+bx3HtiAzX0u7DXfYBwIzSyLB/KggtBK3YnavILVsalpf7wTM9KpH5lrVbwsuaJrhExWhUYOstp1YQI84ftUKLh5Resssmpk2cnHJd+enAMs2I5yGT+qXEjBOeSbT0CQ3onhcGjOX3NhhbSUtQ=; s=default; c=relaxed/relaxed; d=rock-chips.com; v=1;
+	bh=lLXPPK6HZnhjRu30hi0LrwQfdstf2dQNmG/Lde/uOWM=;
+	h=date:mime-version:subject:message-id:from;
 
-Provide PHY configuration for the USB QMP PHY for QCS615 Platform.
+Picked from:
+https://patchwork.kernel.org/project/linux-rockchip/list/?series=936932
 
-Signed-off-by: Krishna Kurapati <krishna.kurapati@oss.qualcomm.com>
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
----
-Link to v3:
-https://lore.kernel.org/all/20241224084621.4139021-4-krishna.kurapati@oss.qualcomm.com/
- 
-Changes in v4:
-First two patches in v3 are merged. Rebasing this patch on top
-of phy/next. No changes in code and v3 applies cleanly so keeping
-RB from Dmitry unchanged. Also changing mail ID from quicinc to OSS
-mail ID.
+These patchs have been tested with a 1536x2048p60 eDP panel on
+RK3588S EVB1 board, and HDMI 1080P/4K display also has been verified
+on RK3588 EVB1 board. Furthermore, the eDP display has been rechecked
+on RK3399 sapphire excavator board.
 
- drivers/phy/qualcomm/phy-qcom-qmp-usbc.c | 3 +++
- 1 file changed, 3 insertions(+)
+Patch 1~3   are preparations for the RK3588 eDP support on both Analogix
+            side.
+Patch 4~8   are to support to get panel from the DP AUX bus.
+Patch 9~11  are the RK3588 Analogix DP driver support.
+Patch 12    is the addition of RK3588 eDP0 node.
+Patch 13    is to enable the eDP0 display on RK3588S EVB1 board.
 
-diff --git a/drivers/phy/qualcomm/phy-qcom-qmp-usbc.c b/drivers/phy/qualcomm/phy-qcom-qmp-usbc.c
-index cf12a6f12134..5e7fcb26744a 100644
---- a/drivers/phy/qualcomm/phy-qcom-qmp-usbc.c
-+++ b/drivers/phy/qualcomm/phy-qcom-qmp-usbc.c
-@@ -1124,6 +1124,9 @@ static const struct of_device_id qmp_usbc_of_match_table[] = {
- 	}, {
- 		.compatible = "qcom,qcm2290-qmp-usb3-phy",
- 		.data = &qcm2290_usb3phy_cfg,
-+	}, {
-+		.compatible = "qcom,qcs615-qmp-usb3-phy",
-+		.data = &qcm2290_usb3phy_cfg,
- 	}, {
- 		.compatible = "qcom,sdm660-qmp-usb3-phy",
- 		.data = &sdm660_usb3phy_cfg,
+Damon Ding (13):
+  drm/bridge: analogix_dp: Add irq flag IRQF_NO_AUTOEN instead of
+    calling disable_irq()
+  drm/bridge: analogix_dp: Remove CONFIG_PM related check in
+    analogix_dp_bind()/analogix_dp_unbind()
+  drm/bridge: analogix_dp: Add support for phy configuration.
+  dt-bindings: display: rockchip: analogix-dp: Add support to get panel
+    from the DP AUX bus
+  drm/bridge: analogix_dp: Support to get &analogix_dp_device.plat_data
+    and &analogix_dp_device.aux
+  drm/bridge: analogix_dp: Add support to get panel from the DP AUX bus
+  drm/bridge: analogix_dp: Add support for
+    &drm_dp_aux.wait_hpd_asserted()
+  drm/rockchip: analogix_dp: Add support to get panel from the DP AUX
+    bus
+  dt-bindings: display: rockchip: analogix-dp: Add support for RK3588
+  drm/bridge: analogix_dp: Add support for RK3588
+  drm/rockchip: analogix_dp: Add support for RK3588
+  arm64: dts: rockchip: Add eDP0 node for RK3588
+  arm64: dts: rockchip: Enable eDP0 display on RK3588S EVB1 board
+
+ .../rockchip/rockchip,analogix-dp.yaml        |  25 ++++-
+ arch/arm64/boot/dts/rockchip/rk3588-base.dtsi |  28 +++++
+ .../boot/dts/rockchip/rk3588s-evb1-v10.dts    |  55 ++++++++++
+ .../drm/bridge/analogix/analogix_dp_core.c    |  85 +++++++++------
+ .../gpu/drm/bridge/analogix/analogix_dp_reg.c |  52 +++++++++
+ drivers/gpu/drm/rockchip/Kconfig              |   1 +
+ .../gpu/drm/rockchip/analogix_dp-rockchip.c   | 103 ++++++++++++++++--
+ include/drm/bridge/analogix_dp.h              |   7 +-
+ 8 files changed, 310 insertions(+), 46 deletions(-)
+
 -- 
 2.34.1
 
