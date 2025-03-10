@@ -1,118 +1,107 @@
-Return-Path: <linux-kernel+bounces-554816-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-554817-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 07DE0A59F0F
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 18:36:39 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E7F7FA59F38
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 18:38:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 374CD170057
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 17:36:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9F974189053B
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 17:38:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0ACF234972;
-	Mon, 10 Mar 2025 17:36:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="eN2UJ3y3"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0E4B233155;
-	Mon, 10 Mar 2025 17:36:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA9D0232376;
+	Mon, 10 Mar 2025 17:37:55 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 736301DE89C;
+	Mon, 10 Mar 2025 17:37:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741628184; cv=none; b=WuISTSx9u3Yg0xLIjBbLUerGf41Yvul0Qf48OpNQQjBxR5R+a5SNqi7Lrj9rbnnW+25n/4pv6ON3SXWJA37YC4cf+NRBV6GgwqMdOEgyJZW+1PYfRsYzAT8H7B3tn+5M1S3YmVyZLHEia+Am3Ehw37D7PXn22bouTsSyfDmc1Us=
+	t=1741628275; cv=none; b=FL7eztX3ETWKgc+NNm7DWwhVdzbR22B/owME1Jlk4TYYXt8p56UpUG//kYHxoJCF6zsMP9OZ0WWm6ArGgm9kCnoxIP5kJIdpIOUKBSD8yr+T0QBnui95aFtK0cWqljhGZA/0ZEd5pLnuj0PcNJH6K5+M2zAEsFWVa1ZjBGgMGEw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741628184; c=relaxed/simple;
-	bh=vkV3yV+zbwQIpGXrfh8VQUyHDFkE7/JX95cxpROdv/Y=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=j0QzllmMqARFsTYRlfNXCmXK+hS6XOKyHUfIoFiQAwfpy+QWgmBnvwqzWFHFGMQFH9rMdcImZKn0tujZ7gxh+WwJZzf+QHdWHkNkzK8MVNZgTLWnmnBLL5YvN3eyvAS/p+q2sWsh+Jsp3JDZB4cfuOicxPLuWa4ViYnGP9d4l7E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=eN2UJ3y3; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: from [10.137.184.60] (unknown [131.107.160.188])
-	by linux.microsoft.com (Postfix) with ESMTPSA id 1DFE72038F33;
-	Mon, 10 Mar 2025 10:36:22 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 1DFE72038F33
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1741628182;
-	bh=iZEKwdOofjp6NDR+2hlCzSLPGInK74STCfZGhKf2O+k=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=eN2UJ3y3nG1bAmMoF3LcnG5o5qMeihqJMUFoq8f8VQkTQKjrwMphlZxBpakvB6lYA
-	 cSNptejg8D34S3125VES0nI3+8se2yDSJeQJmJrUFy33o/Z7zwGERJrRVw8E/zoDSv
-	 1g3S3ylZGCNVS7jCVQd173bGvBEvgxrxkXMhTQwI=
-Message-ID: <b3d1609e-4f64-4a88-b453-cb79936cb469@linux.microsoft.com>
-Date: Mon, 10 Mar 2025 10:36:21 -0700
+	s=arc-20240116; t=1741628275; c=relaxed/simple;
+	bh=RGwv37QAnQo/a2wz5AMKCuLUSQ01Tyu2yE4BPDzoJK8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LabITKIJTb7k3K7elEzWFGuLMl7kuY7ZuD6s9xWJU35Ny6o5rIr8E0MvswCdleqxqHQjU0GQTKjHPENOMPsTsIbZzwuqlU7aRSSouSrJlqGFE4Cjgl3CerW1LTPXSSyIcc95AbIPK0tjgeUPiM8ATZoXzjNo5apS2lmDUQ90MtE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 02D57C4CEE5;
+	Mon, 10 Mar 2025 17:37:52 +0000 (UTC)
+Date: Mon, 10 Mar 2025 17:37:50 +0000
+From: Catalin Marinas <catalin.marinas@arm.com>
+To: Kees Cook <kees@kernel.org>
+Cc: Peter Collingbourne <pcc@google.com>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Andy Shevchenko <andy@kernel.org>,
+	Andrey Konovalov <andreyknvl@gmail.com>,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-hardening@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, stable@vger.kernel.org
+Subject: Re: [PATCH] string: Disable read_word_at_a_time() optimizations if
+ kernel MTE is enabled
+Message-ID: <Z88jbhobIz2yWBbJ@arm.com>
+References: <20250308023314.3981455-1-pcc@google.com>
+ <202503071927.1A795821A@keescook>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH hyperv-next v5 08/11] Drivers: hv: vmbus: Get the IRQ
- number from DeviceTree
-To: Arnd Bergmann <arnd@arndb.de>, bhelgaas@google.com,
- Borislav Petkov <bp@alien8.de>, Catalin Marinas <catalin.marinas@arm.com>,
- Conor Dooley <conor+dt@kernel.org>, Dave Hansen
- <dave.hansen@linux.intel.com>, Dexuan Cui <decui@microsoft.com>,
- Haiyang Zhang <haiyangz@microsoft.com>, "H. Peter Anvin" <hpa@zytor.com>,
- Joey Gouly <joey.gouly@arm.com>, krzk+dt@kernel.org,
- =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>,
- "K. Y. Srinivasan" <kys@microsoft.com>, Len Brown <lenb@kernel.org>,
- Lorenzo Pieralisi <lpieralisi@kernel.org>,
- Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
- Mark Rutland <mark.rutland@arm.com>, Marc Zyngier <maz@kernel.org>,
- Ingo Molnar <mingo@redhat.com>, Oliver Upton <oliver.upton@linux.dev>,
- "Rafael J . Wysocki" <rafael@kernel.org>, Rob Herring <robh@kernel.org>,
- ssengar@linux.microsoft.com, Sudeep Holla <sudeep.holla@arm.com>,
- Suzuki K Poulose <suzuki.poulose@arm.com>,
- Thomas Gleixner <tglx@linutronix.de>, Wei Liu <wei.liu@kernel.org>,
- Will Deacon <will@kernel.org>, Zenghui Yu <yuzenghui@huawei.com>,
- devicetree@vger.kernel.org, kvmarm@lists.linux.dev,
- linux-acpi@vger.kernel.org, Linux-Arch <linux-arch@vger.kernel.org>,
- linux-arm-kernel@lists.infradead.org, linux-hyperv@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, x86@kernel.org
-Cc: apais@microsoft.com, benhill@microsoft.com, bperkins@microsoft.com,
- sunilmut@microsoft.com
-References: <20250307220304.247725-1-romank@linux.microsoft.com>
- <20250307220304.247725-9-romank@linux.microsoft.com>
- <29bb5b7a-b31f-4b32-92c6-e2588a0f965a@app.fastmail.com>
-Content-Language: en-US
-From: Roman Kisel <romank@linux.microsoft.com>
-In-Reply-To: <29bb5b7a-b31f-4b32-92c6-e2588a0f965a@app.fastmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <202503071927.1A795821A@keescook>
 
+On Fri, Mar 07, 2025 at 07:36:31PM -0800, Kees Cook wrote:
+> On Fri, Mar 07, 2025 at 06:33:13PM -0800, Peter Collingbourne wrote:
+> > The optimized strscpy() and dentry_string_cmp() routines will read 8
+> > unaligned bytes at a time via the function read_word_at_a_time(), but
+> > this is incompatible with MTE which will fault on a partially invalid
+> > read. The attributes on read_word_at_a_time() that disable KASAN are
+> > invisible to the CPU so they have no effect on MTE. Let's fix the
+> > bug for now by disabling the optimizations if the kernel is built
+> > with HW tag-based KASAN and consider improvements for followup changes.
+> 
+> Why is faulting on a partially invalid read a problem? It's still
+> invalid, so ... it should fault, yes? What am I missing?
 
+read_word_at_a_time() is used to read 8 bytes, potentially unaligned and
+beyond the end of string. The has_zero() function is then used to check
+where the string ends. For this uses, I think we can go with
+load_unaligned_zeropad() which handles a potential fault and pads the
+rest with zeroes.
 
-On 3/8/2025 1:11 PM, Arnd Bergmann wrote:
-> On Fri, Mar 7, 2025, at 23:03, Roman Kisel wrote:
->>
->> +static int __maybe_unused vmbus_set_irq(struct platform_device *pdev)
+> > Signed-off-by: Peter Collingbourne <pcc@google.com>
+> > Link: https://linux-review.googlesource.com/id/If4b22e43b5a4ca49726b4bf98ada827fdf755548
+> > Fixes: 94ab5b61ee16 ("kasan, arm64: enable CONFIG_KASAN_HW_TAGS")
+> > Cc: stable@vger.kernel.org
+> > ---
+> >  fs/dcache.c  | 2 +-
+> >  lib/string.c | 3 ++-
+> >  2 files changed, 3 insertions(+), 2 deletions(-)
 > 
-> Instead of the __maybe_unused annotation here
+> Why are DCACHE_WORD_ACCESS and HAVE_EFFICIENT_UNALIGNED_ACCESS separate
+> things? I can see at least one place where it's directly tied:
 > 
->>
->> +#ifndef HYPERVISOR_CALLBACK_VECTOR
->> +	ret = vmbus_set_irq(pdev);
->> +	if (ret)
->> +		return ret;
->> +#endif
->> +
-> 
-> you can use
-> 
->         if (!__is_defined(HYPERVISOR_CALLBACK_VECTOR))
->                    ret = vmbus_set_irq(pdev);
-> 
-> and make it a little more readable.
-> 
+> arch/arm/Kconfig:58:    select DCACHE_WORD_ACCESS if HAVE_EFFICIENT_UNALIGNED_ACCESS
 
-Thanks you very much, will update! Very neat :)
+DCACHE_WORD_ACCESS requires load_unaligned_zeropad() which handles the
+faults. For some reason, read_word_at_a_time() doesn't expect to fault
+and it is only used with HAVE_EFFICIENT_UNALIGNED_ACCESS. I guess arm32
+only enabled load_unaligned_zeropad() on hardware that supports
+efficient unaligned accesses (v6 onwards), hence the dependency.
 
->      Arnd
+> Would it make sense to sort this out so that KASAN_HW_TAGS can be taken
+> into account at the Kconfig level instead?
+
+I don't think we should play with config options but rather sort out the
+fault path (load_unaligned_zeropad) or disable MTE temporarily. I'd go
+with the former as long as read_word_at_a_time() is only used for
+strings in conjunction with has_zero(). I haven't checked.
 
 -- 
-Thank you,
-Roman
-
+Catalin
 
