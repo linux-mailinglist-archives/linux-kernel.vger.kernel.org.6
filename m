@@ -1,221 +1,206 @@
-Return-Path: <linux-kernel+bounces-555173-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-555174-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F40FA5A669
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 22:47:12 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A5311A5A66A
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 22:48:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A0EA4171F5B
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 21:47:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D624D1725ED
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 21:48:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA1DA1E47D9;
-	Mon, 10 Mar 2025 21:47:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC7DE1DE4E9;
+	Mon, 10 Mar 2025 21:48:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="PLevEC7A"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A0ED4437C;
-	Mon, 10 Mar 2025 21:47:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741643223; cv=none; b=g+uD3gwFGTmnM0L5blIJVi4CV7iMN7VCMHStmtZdbho9kVjDyNwRscjJzUbw9uCiVxIgDHDY8riMxa1bwlLEo3YtXMOKD361mJ3817zApsIMcl0I7YzkAw8nPYr6TlE3z+08r0Z5pEeCnvWhZLBs3sauLGq7tt1ck1lFcINdCcM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741643223; c=relaxed/simple;
-	bh=dA9v5nwjHnH2LSju91UgbojSTyOeExYFFM/iFQ3lW6U=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=rCZL9DLsNzJgqDDqNk57A/A7MTkkRwZsG7Wa6pnhwHq5+BEi0+r1wAfJp5/O0Y8MdcjEZ0WhCMTWjoBUuEDj5QHv95A9Z7XumwBAjqWM4Gjgq+3yJpfg8jKlQ2xWFNP/mGaxA9M6EK4eD8hOoCWBKEFLHAeYuegcQWVVV+7hMUU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=PLevEC7A; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: from [10.0.0.114] (c-67-182-156-199.hsd1.wa.comcast.net [67.182.156.199])
-	by linux.microsoft.com (Postfix) with ESMTPSA id 1AE9D205492E;
-	Mon, 10 Mar 2025 14:47:00 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 1AE9D205492E
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1741643220;
-	bh=35SjqWqIW52cDDYKL7wXrX16ndmpcJ/RLK/QVZatMbA=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=PLevEC7AXcMPAd0pY7CAOea160MnPpKdr7WEv6MrZnGBCpYlCuBzpuETS4KkkO8Au
-	 6Zo8yUuLL7tvFiZAF75VRwZafL0dNuQnj85+7jrnaez8s17wb79rOwVkQjeGVgCUP8
-	 uxdylMSk9Px+9pgIVZ/eniOqvEy2BT6hlmgmmr7w=
-Message-ID: <71a95f7d-d38b-4f4f-b384-9ad4095bd272@linux.microsoft.com>
-Date: Mon, 10 Mar 2025 14:46:45 -0700
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="NFS7hYIn"
+Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2059.outbound.protection.outlook.com [40.107.243.59])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 698C21D514E
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 21:48:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.243.59
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741643301; cv=fail; b=apIcw6745xdozLrtKVAIkyhN68nq7OgP5HcavZ6JM52NuPuVez4ppKrHAr+sYd49js7AasTmH8GaSydVGykJt3CgKbxBusNLl0B/YDq7MZQZl44Y0XinoCvWjV2vEua3TIWnJbhBOeBQVF3qXCGauM9nyflFjQ3OgF4IP7n0VL0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741643301; c=relaxed/simple;
+	bh=XcPVdRdAPMzNAMbxqe3v2SBwYoiA0JF4X17VUEF2ZO0=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=i84UXVcYcv416VvwsdtsSU8rlpmbXP5VcvxrbWUgKH4oXszI2j6/gS5sUWvo2dzFhWXO1gyeRyq4F2TcMy5XHwxx/iKUaboCT7OEYulr4bgMIS5oKm5OEyJWqTnC0O7pq9rQpk9FNm6YUNdNaBnI7ItSiaUtElc+vnZ+JGDyXgw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=NFS7hYIn; arc=fail smtp.client-ip=40.107.243.59
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=pzdsrdrSh1P+vlMsRv7ItZbKWWV+FXYiN126+omjbpmP9Tovkd9htYlBQidNXhH00tUDg7aEMiInZCwbniuJOF0gpY1BkRuH2VBQcVv58l0Z67/9/agCQqIwwRN7qNt6pFo5C/83r6qY7UG7ruCEy0KSErLl/vQkPN9G8Vro1lAUz3QuJQHUMWBagp1vO7Rv7RZIxggcwnJUT88rrE1iKwkEb62AMuox3gO+MWlxi8B4rz7KYJaRJsjLfElikPYYuHwMT4G0rbiht27uW/d332bUkOYbMThU1ja9zQzq7Jld25wHRnp0XvqaCKgbM2uL5EqUThpzJG6A2x2iaVGFpg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=SDlzMDlE45W0J7RxlgMMyDhRdAXkvE9KO9r3Rhpg46Y=;
+ b=HdE+UTuNFU7l/ZeL3lABijSrpGQMlkc3aNN+rr3Bl+yL63IRzgnDW+SNF5SCsAvkuLrLd8m/fJcLfemqoDKjKMoV8N6t/YTnFriTm4l1FlV5ol+tZA/XBzYNv3FLHeUbkqx5HHKxuJ052lIVLefEhuISWpTzb1qSOfd1YhKXQF6n4dUNcsLWE+Sz7BqwgL07N23lxXnRym6wOD70jEVNaav95SplCIJXSqEgbIRNHqjYvHohtTTmceEAJq1tUBJAS3r6bB5Zf4jDswyc35rIKb50iDK6CNlexdJu+L7N6NeY701ntIJfy+ursXqeKQvGVsUS+GZCmtawnHj4Pi79UQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=SDlzMDlE45W0J7RxlgMMyDhRdAXkvE9KO9r3Rhpg46Y=;
+ b=NFS7hYInzbLHwFHsaFsG0yIurSYDi3i1To7KyOGyYQGUISRDVigct3D0bwxVoqnFy8HlG3PIcyhncnZS0Mb9zBVk5/kmjkpd8UxhK3jM7kA/W8h4ZoGREWZ1LLkkiThVCxmnAskMh52kNkNTE0Dr+b3NeCvbcG1uSOjUtqgfYSy2kwOILTY2uUA19WEnQRQ6Mythx9BwPgsmBLkwcTiKOzbujvmQ18MWJTJ2jxLgJEGzeancHDa5olygS4RAClytHrgs63opIfVF/NvnDrHi0xzi3uKMgb4HjSPGlkaxdA4iK3Ew5sSP/WPX2Dxr8dcLKIZ0TClDTohbnmr/kTsdlQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from SA1PR12MB7272.namprd12.prod.outlook.com (2603:10b6:806:2b6::7)
+ by LV2PR12MB5823.namprd12.prod.outlook.com (2603:10b6:408:178::9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8511.27; Mon, 10 Mar
+ 2025 21:48:16 +0000
+Received: from SA1PR12MB7272.namprd12.prod.outlook.com
+ ([fe80::a970:b87e:819a:1868]) by SA1PR12MB7272.namprd12.prod.outlook.com
+ ([fe80::a970:b87e:819a:1868%7]) with mapi id 15.20.8511.026; Mon, 10 Mar 2025
+ 21:48:16 +0000
+Message-ID: <951f9d13-72e4-41c3-9ace-8639e2a9485d@nvidia.com>
+Date: Tue, 11 Mar 2025 08:48:11 +1100
+User-Agent: Mozilla Thunderbird
+Subject: Re: commit 7ffb791423c7 breaks steam game
+To: Bert Karwatzki <spasswolf@web.de>
+Cc: Ingo Molnar <mingo@kernel.org>, Kees Cook <kees@kernel.org>,
+ Bjorn Helgaas <bhelgaas@google.com>,
+ Linus Torvalds <torvalds@linux-foundation.org>,
+ Peter Zijlstra <peterz@infradead.org>, Andy Lutomirski <luto@kernel.org>,
+ linux-kernel@vger.kernel.org
+References: <20250310112206.4168-1-spasswolf@web.de>
+Content-Language: en-US
+From: Balbir Singh <balbirs@nvidia.com>
+In-Reply-To: <20250310112206.4168-1-spasswolf@web.de>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: BYAPR08CA0070.namprd08.prod.outlook.com
+ (2603:10b6:a03:117::47) To SA1PR12MB7272.namprd12.prod.outlook.com
+ (2603:10b6:806:2b6::7)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 08/10] x86: hyperv: Add mshv_handler irq handler and
- setup function
-To: Michael Kelley <mhklinux@outlook.com>,
- Stanislav Kinsburskii <skinsburskii@linux.microsoft.com>
-Cc: "linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
- "x86@kernel.org" <x86@kernel.org>,
- "linux-arm-kernel@lists.infradead.org"
- <linux-arm-kernel@lists.infradead.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>,
- "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>,
- "kys@microsoft.com" <kys@microsoft.com>,
- "haiyangz@microsoft.com" <haiyangz@microsoft.com>,
- "wei.liu@kernel.org" <wei.liu@kernel.org>,
- "decui@microsoft.com" <decui@microsoft.com>,
- "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
- "will@kernel.org" <will@kernel.org>, "tglx@linutronix.de"
- <tglx@linutronix.de>, "mingo@redhat.com" <mingo@redhat.com>,
- "bp@alien8.de" <bp@alien8.de>,
- "dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
- "hpa@zytor.com" <hpa@zytor.com>,
- "daniel.lezcano@linaro.org" <daniel.lezcano@linaro.org>,
- "joro@8bytes.org" <joro@8bytes.org>,
- "robin.murphy@arm.com" <robin.murphy@arm.com>, "arnd@arndb.de"
- <arnd@arndb.de>,
- "jinankjain@linux.microsoft.com" <jinankjain@linux.microsoft.com>,
- "muminulrussell@gmail.com" <muminulrussell@gmail.com>,
- "mrathor@linux.microsoft.com" <mrathor@linux.microsoft.com>,
- "ssengar@linux.microsoft.com" <ssengar@linux.microsoft.com>,
- "apais@linux.microsoft.com" <apais@linux.microsoft.com>,
- "Tianyu.Lan@microsoft.com" <Tianyu.Lan@microsoft.com>,
- "stanislav.kinsburskiy@gmail.com" <stanislav.kinsburskiy@gmail.com>,
- "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
- "vkuznets@redhat.com" <vkuznets@redhat.com>,
- "prapal@linux.microsoft.com" <prapal@linux.microsoft.com>,
- "muislam@microsoft.com" <muislam@microsoft.com>,
- "anrayabh@linux.microsoft.com" <anrayabh@linux.microsoft.com>,
- "rafael@kernel.org" <rafael@kernel.org>, "lenb@kernel.org"
- <lenb@kernel.org>, "corbet@lwn.net" <corbet@lwn.net>
-References: <1740611284-27506-1-git-send-email-nunodasneves@linux.microsoft.com>
- <1740611284-27506-9-git-send-email-nunodasneves@linux.microsoft.com>
- <Z7-nDUe41XHyZ8RJ@skinsburskii.>
- <7de9b06d-9a32-48b5-beda-2e19b36ae9c9@linux.microsoft.com>
- <SN6PR02MB41573673D5F786E6C47FC08ED4D52@SN6PR02MB4157.namprd02.prod.outlook.com>
-Content-Language: en-US
-From: Nuno Das Neves <nunodasneves@linux.microsoft.com>
-In-Reply-To: <SN6PR02MB41573673D5F786E6C47FC08ED4D52@SN6PR02MB4157.namprd02.prod.outlook.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SA1PR12MB7272:EE_|LV2PR12MB5823:EE_
+X-MS-Office365-Filtering-Correlation-Id: fc046a61-fce8-403b-264b-08dd601d4373
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?WEQreUpjbHE0SzF0YVJCRzVOWEV6a2tCZjdGM2tzVlAwQTJMT2Mzb3JkN0Z3?=
+ =?utf-8?B?RXJrKzBMV25ERDFOdi9PT0V5ejZ0R1NMWXBKaXR0NjJWZkJ5UmZHdWc1WlAv?=
+ =?utf-8?B?NW0xNXAzSmZjeUF6UE1FcFg5OEV5NCsrMmdEaEhDRmtIeG5vY3JKL1RSQ0Nu?=
+ =?utf-8?B?dUYvVjd2bDNPOTBkYVh1N3dTTStBQ0QwUEY0MzNRTlErazJ5b0NteWdQTk9M?=
+ =?utf-8?B?YjdTNDVEMEtIR3VoMXRpVVVaTExaV0FlTEpYRjg0SDZxSnR5bXYvNHVBZDlN?=
+ =?utf-8?B?cEZNczlOVUxnalFkL2NEK0luS3h1ZmJpV1VoM3BqUVJQSmd1MWU3VFlhSnlj?=
+ =?utf-8?B?M09NUUNjbzRxYVFkRjBJWU9LUExlZ00zUVkweGhmKzhnZHc2a1FvM29ubmxB?=
+ =?utf-8?B?QjFLMHlNdFlBQ1J1Y3FNRTdQY0tWKzYzZWd5K1B5U0lBTk9mQ2djenJzSjBm?=
+ =?utf-8?B?TUNrbzNkWnhOcEdLS2VZTGhkdU5kRHFsUzNKSlJmcWlOajA3andCSEN2RUFP?=
+ =?utf-8?B?bjk0cGxabVl6Rll3akx6SlhzN0RuY25nbVdrT0NqMmFHQlpmSnlKRHl0cjBY?=
+ =?utf-8?B?MWtJdzRRc3h3Nnl6YVF0SFZONE03aGNMcm1pOEJ3L3hXdTIyeTdJb3V0Tlkr?=
+ =?utf-8?B?UEhOMEJiUzN3N21tNy9sQ0ZjK0FrbmVpT0RVQ3NZTXgzOXVjQkwveWNjQXlu?=
+ =?utf-8?B?Ri92ZnFObjBoUTFvdXM1L00zekgyZ1RqVjRTZ2xNSkpIeFNOK0Vwdkw4b201?=
+ =?utf-8?B?c2d0Q0YxdWJoTU11Z3VFS1ova0xzWUx6Nm5ESWRVY0k4bmxPYVBHUWx5Q3Ix?=
+ =?utf-8?B?MHFmVFZQSW5QUEt3bVRPR0Y2cHBUenBxRmdjMFVQaStSb0pXK3cyaTBHdjlV?=
+ =?utf-8?B?S2hHUG1QbnIwY2xQanQ1emY0RjJML01zaytRNEluTHFHcVFwMlJCcVlBeWhn?=
+ =?utf-8?B?RkQ1c0MrVjQ5TjlkNVBlYmdTY3BPdUxVTmRIdWpiVWh3YkNlZXpBRmtHVDRu?=
+ =?utf-8?B?bDNJY1A5eXVWLzNnRmxYcVZWSHRzbUp0bmRtMi9yWEV0OUNQd2JEVFgxMC8v?=
+ =?utf-8?B?RGVzNk84dUZNSWlGdm9SbkRpSStJdUErcTM5WVF0bk9HOWFxcDdnclFqaWVP?=
+ =?utf-8?B?TURVZkF6THI4eWY1NFM0MmtJQldIMmpURUpJM2NOK1pzU1ZyVG51ZUtUVXBk?=
+ =?utf-8?B?aW9CK01pSGQxVG5hK3NOblQ4cm5GOU5JaWtnWjhXME9xQnFRVjJqRXQ3aTRY?=
+ =?utf-8?B?amRZSHdXRUUxSGVWbkFwYlFCbUhYK3RNTVErZkdvR2dIN2NxTGVFUHlYTUxO?=
+ =?utf-8?B?b2NZVVNORG0wQS95a0doMUhraXgyQWdxSlY1VjNnbm5XalgrOUpFcW5PV2VO?=
+ =?utf-8?B?czg3WGlQQ3UzZlZWOWgrNTQvSHN2RmJpRG9aa0ZjcE1xMkFUWGJNdHJVRXhL?=
+ =?utf-8?B?ejBydzF1amg5Z2JEUUtJTFJTMVV4aWtzOS84Nis2OUZmSDNQV2w3RVN5QUhC?=
+ =?utf-8?B?RW5wTXVlNk5LYUdsejJwZjFmNFZGZjViUUdXcEFlOXNDdlkzUzNObEtoZm9M?=
+ =?utf-8?B?WGNMekNlVFNiRENRc09pYkM5ZVBUbExLdlVidGcwNTdGc09neWt6Y2hFeFBj?=
+ =?utf-8?B?WmFOUENzeUZCMDFqRWlvVWlCa3dqSUxtV3hTSEd2bjVFQUV4TUJia1pGc01x?=
+ =?utf-8?B?U0UyZENBZDRUNDAxRUJsYnM4Zk5TZ2xsUzAvTlJhMWN0bmlUMS9KUStRa3ZQ?=
+ =?utf-8?B?TVNvcllNZGYxOE1wa21aRmRFckpFMmIrdjNlbWMrTmZBT1Fyb1p6eDM5NzNB?=
+ =?utf-8?B?VXg1VmtPaXFzY1dVSkdqaXBhNkc0aFpCZWFkRDlvVHZ2dytvWU5DaC82T3lm?=
+ =?utf-8?Q?6UzxLXTDK/MvP?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SA1PR12MB7272.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?Y3dtTE9HenpBaCtaWFFTSVQ2QlJOMTFHbEp2Q3NXRnNvWjA1R2hhNEQ1eTAy?=
+ =?utf-8?B?WW5vS2c5d3NUZnYvVll6TFk4WG5xZDd0czdLVXVFeGdZVFRDSis3MVZNZTVM?=
+ =?utf-8?B?WmZqeVZQY3VHUkVBZVNhUzlvZXBJcXc0KzVjTGVBOFJlQ1I0eWFydTJmZ0Vy?=
+ =?utf-8?B?SWRXUGRwUW5EV2xacHhxMkV2UEZnRjE0MHowYVAyV0ZYL2hNU0c4UjRINkJs?=
+ =?utf-8?B?WXFpaEFtTlN0SzhxbWcvVEdhZndUbktIMEZMVFdYL0ZXcGY2SXlQM3Y5T0JD?=
+ =?utf-8?B?a0JhY0lYRmlWWEdINVZUWEdIQldBdWtQekkrSVVFQzNlMFpqbmpvakVWYnYz?=
+ =?utf-8?B?dG14bU5TRW1KcEFWRHoyalFtSG0rNnNCbzB6cXh0RUEvTE9vcHFoWGJzMk45?=
+ =?utf-8?B?aUlnZjNBbEEycUhkM3RZZTZNM2dMV3NMT3VaZ3RodHNMcU5uL3hOMzVDY1Iz?=
+ =?utf-8?B?eEk3cXF2dmdsRGZ0b2w4ZHErQno1cE1jVFVSeXNUVVpVUVpiMUF3TDNXTVhp?=
+ =?utf-8?B?bG0xZCsySHMvOWNDbnRsZVNURXIrTExxQ3oxRUIwZDExc3Jldko2VG1hbGxR?=
+ =?utf-8?B?MkxQemtkMUV5cURwUTJHeE5QdzAzTXprNzVsZjlEaEdQOCt1Q0NEVGRzYVVt?=
+ =?utf-8?B?UEhTanhuOStzcU44RTFDcGt3UFV4VmhrclRXYzVZNUpvK3lMbTl4UXZoaWR4?=
+ =?utf-8?B?NW4rdEtTWFZzZXlYSC9rTnFaMXhkajV2d0FwcDI2cHMvODZXSkhVc040K1Q0?=
+ =?utf-8?B?WExvY0R4ZTBiU3g2M2JYdG9OWTM5YzVkU1RwUjB3eGZXZHV2TVkxayt0UFpD?=
+ =?utf-8?B?UFJtcjN6ZER0VXovL2tRR2tHRVMvUCtFWWhNNjNPTDQyZ1VFYTMrRVlzZ25Y?=
+ =?utf-8?B?dzNqOW9YM25sVjh0bFZ5eFhLSWpxWUNhUE1kS2dtb292TWMyT0lrT0gzNko5?=
+ =?utf-8?B?VXAyZ0k0V3VqVE0xV3lmZ2lkc2V4NHA1aFFMK21RVU8ySDZua0JhQk50WGJP?=
+ =?utf-8?B?aW5WMy9lOVcxaElTYUhYRnFUaGl6N1Q4NHptcDlYcmc4V1l0R0tERncwSFZN?=
+ =?utf-8?B?OEFoNDA2bit6ejB3ODJpVWNpUVhYV0NGMnJyUi8wa2lnckZqdHNjSU52VWJu?=
+ =?utf-8?B?K21BcmE2SjBKUG5wQUcrWGVsYXAyRllRVm55NE5Ld2JDSmNKNDNpTmJvTy9v?=
+ =?utf-8?B?V3V0SXNOZFZxSy9yNkl3NVhsejZWcGxVOE4za2lVTnB4bmt6TlBrTTlMRnVz?=
+ =?utf-8?B?RG5Ydmd2RnI5TlVqTUpFODJNY3J5cXhLRXUrTC9tV0NHODc0OXpJQ1hDakNQ?=
+ =?utf-8?B?b1JyWlZ2NUxUVW1sMTA5UkVHVlpMQXQ1SGtpNGJaM3RvcjJyZmdYa2VRSUc1?=
+ =?utf-8?B?Z3RUQjhpTEtMcWRxbVdVVGNIaHVSWDZWTVQ5MWV1dURBOXVhR1dVTDl1ckhL?=
+ =?utf-8?B?TWJFaTBOZ3cySTBOWWFiekR4bWVHNGd0RDNPTjJVZXNWVkxOeHR3MGUySGVO?=
+ =?utf-8?B?YWZUS2I3ZVE3bmFLTVlPUTJRUStEVFdYSXdVWWRIVlMzTVMzUmtzTlNXc1VC?=
+ =?utf-8?B?MndhV3ppWGFGZXpIWEJqQnJvb1dDYmhJanFQRzJCdzlrbGFmSGVJNHJ3cVpl?=
+ =?utf-8?B?dDB6OEF4UFVqT1JNcFN3a3NyZ3RER1FpWVpscWx0RmJ1WjZpSFZvWVdlYlZp?=
+ =?utf-8?B?SldrTmkxRWhXRVVVc3FVWlJkVjFCUC9tOUFMQjJlVUozYlYxWnJ6cVNEUHdn?=
+ =?utf-8?B?cVE5cmlzSy9wTWpUNTBJeDJkYmVSWmU5OStsSElGbGtKSXM4RTBzUmRBOGJj?=
+ =?utf-8?B?MnFiWjM5aWU5ZVBQaVdkT3FlYndCMENWSkxOelF0bzh4dW9aV3MwOVppdHZa?=
+ =?utf-8?B?VlhEVGlqQlduOW9pVW01UFloSzlDL1JnMGwwVlJOcUgyZzk3UkZjazVFYUJq?=
+ =?utf-8?B?ZkhiVnlNVU1POExJaE1mbE53L2hRREUzODRJZ2dTZm13Rk9HVzgxem5GR0ZW?=
+ =?utf-8?B?eDBKcDQ5SDg2R2JYRkFjY2NQV3VMdVpSWUxsZURwU1RVZWdScFdpOS9RQjg3?=
+ =?utf-8?B?TTFzQ1JubGhZdURoOTJHL3Z2UkZZd2FWRWZzVDc0bHVLWkVKL1pBcW9YVlEx?=
+ =?utf-8?Q?t8X+uLggw7LhYH4tSKYfB6A7N?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: fc046a61-fce8-403b-264b-08dd601d4373
+X-MS-Exchange-CrossTenant-AuthSource: SA1PR12MB7272.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Mar 2025 21:48:15.9941
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: RmIIpCwpjfMFpn2tNnW36M6cALIrJgmjpzwYat74bzq3rAzp3sVKOJHq/kt/C2+UT2pDmajAJsb5guNXxXV7jg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV2PR12MB5823
 
-On 3/7/2025 9:38 AM, Michael Kelley wrote:
-> From: Nuno Das Neves <nunodasneves@linux.microsoft.com> Sent: Friday, February 28, 2025 4:38 PM
->>
->> On 2/26/2025 3:43 PM, Stanislav Kinsburskii wrote:
->>> On Wed, Feb 26, 2025 at 03:08:02PM -0800, Nuno Das Neves wrote:
->>>> This will handle SYNIC interrupts such as intercepts, doorbells, and
->>>> scheduling messages intended for the mshv driver.
->>>>
->>>> Signed-off-by: Nuno Das Neves <nunodasneves@linux.microsoft.com>
->>>> Reviewed-by: Wei Liu <wei.liu@kernel.org>
->>>> Reviewed-by: Tianyu Lan <tiala@microsoft.com>
->>>> ---
->>>>  arch/x86/kernel/cpu/mshyperv.c | 9 +++++++++
->>>>  drivers/hv/hv_common.c         | 5 +++++
->>>>  include/asm-generic/mshyperv.h | 1 +
->>>>  3 files changed, 15 insertions(+)
->>>>
->>>> diff --git a/arch/x86/kernel/cpu/mshyperv.c b/arch/x86/kernel/cpu/mshyperv.c
->>>> index 0116d0e96ef9..616e9a5d77b4 100644
->>>> --- a/arch/x86/kernel/cpu/mshyperv.c
->>>> +++ b/arch/x86/kernel/cpu/mshyperv.c
->>>> @@ -107,6 +107,7 @@ void hv_set_msr(unsigned int reg, u64 value)
->>>>  }
->>>>  EXPORT_SYMBOL_GPL(hv_set_msr);
->>>>
->>>> +static void (*mshv_handler)(void);
->>>>  static void (*vmbus_handler)(void);
->>>>  static void (*hv_stimer0_handler)(void);
->>>>  static void (*hv_kexec_handler)(void);
->>>> @@ -117,6 +118,9 @@ DEFINE_IDTENTRY_SYSVEC(sysvec_hyperv_callback)
->>>>  	struct pt_regs *old_regs = set_irq_regs(regs);
->>>>
->>>>  	inc_irq_stat(irq_hv_callback_count);
->>>> +	if (mshv_handler)
->>>> +		mshv_handler();
->>>
->>> Can mshv_handler be defined as a weak symbol doing nothing instead
->>> of defining it a null pointer?
->>> This should allow to simplify this code and get rid of
->>> hv_setup_mshv_handler, which looks redundant.
->>>
->> Interesting, I tested this and it does seems to work! It seems like
->> a good change, thanks.
+On 3/10/25 22:22, Bert Karwatzki wrote:
+> Using linux next-20250307 to play the game stellaris via steam I noticed that
+> loading the game gets sluggish with the progress bar getting stuck at 100%.
+> In this situation mouse and keyboard inputs don't work properly anymore.
+> Switching to a VT and killing stellaris somewhat fixes the situation though in
+> one instance the touchpad did not work after that. I bisected this between
+> v6.14-rc5 and next-20250307 and got this as the first bad commit:
 > 
-> Just be a bit careful. When CONFIG_HYPERV=n, mshyperv.c still gets
-> built even through none of the other Hyper-V related files do.  There
-> are #ifdef CONFIG_HYPERV in mshyperv.c to eliminate references to
-> Hyper-V files that wouldn't be built. I'd suggest doing a test build with
-> that configuration to make sure it's all clean.
+> 7ffb791423c7c518269a9aad35039ef824a40adb is the first bad commit
+> commit 7ffb791423c7c518269a9aad35039ef824a40adb (HEAD)
+> Author: Balbir Singh <balbirs@nvidia.com>
+> Date:   Fri Feb 7 10:42:34 2025 +1100
 > 
-Thanks Michael - I don't think it would be an issue since the __weak version
-would be defined in mshyperv.c itself, replacing the function pointer.
-
-However, I went and tested this __weak version again with CONFIG_MSHV_ROOT=m
-and it does not actually work. Everything seems ok at first (it compiles,
-can insert the module), but upon starting a guest, the interrupts don't get
-delivered to the root (or rather, they don't get handled by mshv_hander()).
-
-This seems to match with what the ld docs say - There's an option
-LD_DYNAMIC_LINK to allow __weak symbols to be overridden by the dynamic
-linker, but this is not enabled in the kernel.
-
-So I will stick with the current implementation.
-
-Nuno
-
-> Michael
+>     x86/kaslr: Reduce KASLR entropy on most x86 systems
 > 
->>
->>> Reviewed-by: Stanislav Kinsburskii <skinsburskii@linux.microsoft.com>
->>>
->>>> +
->>>>  	if (vmbus_handler)
->>>>  		vmbus_handler();
->>>>
->>>> @@ -126,6 +130,11 @@ DEFINE_IDTENTRY_SYSVEC(sysvec_hyperv_callback)
->>>>  	set_irq_regs(old_regs);
->>>>  }
->>>>
->>>> +void hv_setup_mshv_handler(void (*handler)(void))
->>>> +{
->>>> +	mshv_handler = handler;
->>>> +}
->>>> +
->>>>  void hv_setup_vmbus_handler(void (*handler)(void))
->>>>  {
->>>>  	vmbus_handler = handler;
->>>> diff --git a/drivers/hv/hv_common.c b/drivers/hv/hv_common.c
->>>> index 2763cb6d3678..f5a07fd9a03b 100644
->>>> --- a/drivers/hv/hv_common.c
->>>> +++ b/drivers/hv/hv_common.c
->>>> @@ -677,6 +677,11 @@ void __weak hv_remove_vmbus_handler(void)
->>>>  }
->>>>  EXPORT_SYMBOL_GPL(hv_remove_vmbus_handler);
->>>>
->>>> +void __weak hv_setup_mshv_handler(void (*handler)(void))
->>>> +{
->>>> +}
->>>> +EXPORT_SYMBOL_GPL(hv_setup_mshv_handler);
->>>> +
->>>>  void __weak hv_setup_kexec_handler(void (*handler)(void))
->>>>  {
->>>>  }
->>>> diff --git a/include/asm-generic/mshyperv.h b/include/asm-generic/mshyperv.h
->>>> index 1f46d19a16aa..a05f12e63ccd 100644
->>>> --- a/include/asm-generic/mshyperv.h
->>>> +++ b/include/asm-generic/mshyperv.h
->>>> @@ -208,6 +208,7 @@ void hv_setup_kexec_handler(void (*handler)(void));
->>>>  void hv_remove_kexec_handler(void);
->>>>  void hv_setup_crash_handler(void (*handler)(struct pt_regs *regs));
->>>>  void hv_remove_crash_handler(void);
->>>> +void hv_setup_mshv_handler(void (*handler)(void));
->>>>
->>>>  extern int vmbus_interrupt;
->>>>  extern int vmbus_irq;
->>>> --
->>>> 2.34.1
->>>>
+> Reverting commit 7ffb791423c7 in next-20250307 fixes the issue for me.
 > 
 
+Thanks for the report! Could you also share the dmesg? Do you have any proprietary
+modules loaded? Could you also share the output of /proc/iomem (captured as sudo)?
+The lspci output is useful, lspci -vvv (captured with sudo) would help see where
+the BAR regions are, specifically before and after the patch. Could you also share
+the kernel config?
+
+I assume your config has CONFIG_PCI_P2PDMA enabled. Did the system ever work with
+nokaslr for you?
+
+I am a little surprised that reducing the entropy causes these issues and having
+a larger direct map causes these issues.
+
+Balbir Singh
 
