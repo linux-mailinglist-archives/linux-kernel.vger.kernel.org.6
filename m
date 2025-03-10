@@ -1,156 +1,152 @@
-Return-Path: <linux-kernel+bounces-553669-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-553670-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 59B32A58D37
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 08:46:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 37BECA58D3C
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 08:46:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 97A4916A713
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 07:46:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7613616A802
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 07:46:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6D75221F3C;
-	Mon, 10 Mar 2025 07:46:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7066221F00;
+	Mon, 10 Mar 2025 07:46:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="mL2jBZ37"
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="K8Dd6CWJ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EDA51D5AAD
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 07:45:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20E2635965;
+	Mon, 10 Mar 2025 07:46:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741592762; cv=none; b=iqMKOJnUKIbb969FhcJWlnS9vCVrMyb4vYP/DmTTrwyNGGXyeqGHal3YcnUKVmFphRBCJbSus5JeNYyDhykLgwSTKKScuPme1aP0M2vF2oUh4RtQDMoTTtiDrBDELGU4a+OdQIoplLs36F+4Zx9m0s0bkJbnTKOKlsIWgJ3VEGY=
+	t=1741592807; cv=none; b=sSOx+BmdUX6LKwz9WSZi5/phxIZZo7mrrK9m57njSl68Wa107frgY2NCEQYl1B7AqLxB93GFDmQOzJWSrI27MAsJsspV6lEuYyo68MsBBs0x57OJqU5xjTrrlwo2sPSYtr2DZLPucDTuCByVC0R8LF9io2wnCV8BXH5c6/49q18=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741592762; c=relaxed/simple;
-	bh=uq+RBhP/h+FMIgzluEf1PCwXpWJaNJhq0COCDp/8quw=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=aiJZIdszg5Xw63qgbdadS/YvFa7R86Onpn57t/m1oak/HvHLoetKcwlXWfouD6kHV40y9t0+ZPQ2Ng1YsaalmvIVo+ua8wCDzpKleRWytkrEOMyB/coMbx59+N9jx22zv4C18wcuur3VuzykHbOkDsvPku8VbFbt0JruFzNDwg4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=mL2jBZ37; arc=none smtp.client-ip=209.85.128.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-43cfba466b2so3057085e9.3
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 00:45:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1741592758; x=1742197558; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=C3lkkkSZ9lA1P1K2ofoRJBLyFssjT+8CRdim7VJKkTI=;
-        b=mL2jBZ37oD5j/AF2V1poC5kgShmm5YJx3Jk9qB/QJIe6MxRD9MzNzyea8s1WEkF5Ed
-         nEqK9//wwUHsXtzB24I5mHUq6VEtIA+1/YulMlH99xE7jfuZqTxubFr627dwfPZ14lcq
-         ZyCYvY8srm7X+uD4L+/Y3ZkYCRS2g4yJB3PGN9oZjCF3phoX9PbJuiLTLekB74OApGW/
-         CbGPcJZOMS4OHJCoK2aGDxQWJJdg4ljnebRfzWFGOc0eGd8RLIJoFz+GuHzHGCgoE+48
-         16aBO6ShtWg4V5l1vj4dubCmKh6FJZIxJmev8aY3sJnFKxBPNrnZD0vjag4LnmbzAbPf
-         VHww==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741592758; x=1742197558;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=C3lkkkSZ9lA1P1K2ofoRJBLyFssjT+8CRdim7VJKkTI=;
-        b=wevtPlQlf7+G1FJ3i3K3ALW/zjmiZ1DXET99yX0aB4I2zWuJdGVsKWPGlVDaH/Wf7D
-         ZLA/3TiMT+yeSY3sSnB3EEv8ezeC9YtHG1RFxP42YOXzx4uSxNcC8N1b0T48Q7gbna55
-         rOZI3zxbMX6uJPVmYE3ruINVc4ozYos+9gX0zXzTl4mYjKhW9SqGRlyaslmdN5esmyGh
-         NxFIDDHvzBj/6g9neED6ZkKefOLiG/vdT+2jtjjYIVE522wh6URxKq5eaGu7AuLbpsnL
-         rg6brde3hwVBhAyHxuKkXy3l2gZt4NlXj+Xx/PflDHSUNR6z5k6OxTxNONCM67Sq88ds
-         Y8Uw==
-X-Forwarded-Encrypted: i=1; AJvYcCVLr3ZiNkqdv4NbcX01qlj4p5YorfmNcO2rBI5ZUxbs/28HYtVrGNoU4dMGrb/4ZxXogtidazTL7GvI8LE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YySgQFbckzWzWSPn3vWdnUyOD5vRC9U5R0weVUC5yMIA0K6AObJ
-	sqpkC8JWQnX16PwfY72YimsbHFb13q2YCyEleMMjU7G2vWWdI3dO8Xs2fEW3auI=
-X-Gm-Gg: ASbGncs9fK7bf7gTdZRTVLpyKU4sVnQ34GmAOrvMN5k9D5K4xr8WnmeLFnKr07T0wJp
-	inxTzFnPmfwgFD3TEcTsdLRBzk6QSnzObgK3K2DItiwEgcfeqkK3zk7tS9gnI7MdSR/9tL673u6
-	UAemtEQTQ4Gxjp9TmlK6sQPtHQ1ZPkFOZ4nMQCpxoRptuGB/2cpdaTBVJt4KlnPDJ8eGGp01S1j
-	NJpIIz2MjkYJ8mpl3lHCaAfLUWI4wSC26EZ5Z02lUCNS0hlCTSCHBsqpudsN1W1pworQPXDLCnl
-	dCCA8aGGzxd0Is59X+3z4M5Wo066LGuGq0/2SnpXLQxRxZNHBQ==
-X-Google-Smtp-Source: AGHT+IH9Yu6cknGNfARy5AEaDBTYbcDuPmtRPvAATa0mAJpjpaU3fuTzU/G9tc7si//DtoCJEsSoqw==
-X-Received: by 2002:a05:600c:1d1c:b0:43c:efed:732d with SMTP id 5b1f17b1804b1-43cefed7916mr30709585e9.16.1741592758516;
-        Mon, 10 Mar 2025 00:45:58 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-43cf7c8249bsm27791115e9.7.2025.03.10.00.45.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 10 Mar 2025 00:45:57 -0700 (PDT)
-Date: Mon, 10 Mar 2025 10:45:53 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Cc: Simon Horman <horms@verge.net.au>, Julian Anastasov <ja@ssi.bg>,
-	Pablo Neira Ayuso <pablo@netfilter.org>,
-	Jozsef Kadlecsik <kadlec@netfilter.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	netdev@vger.kernel.org, lvs-devel@vger.kernel.org,
-	netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH v2 net] ipvs: prevent integer overflow in do_ip_vs_get_ctl()
-Message-ID: <1304e396-7249-4fb3-8337-0c2f88472693@stanley.mountain>
+	s=arc-20240116; t=1741592807; c=relaxed/simple;
+	bh=ub7S9UjkWephhWy9OiK6pIkZGzkEwPNxQKygjXfKnKI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=i6K2H6/mHXt8w8i32bdwuSi9L7O6hto5L5JYWiKDXIU1H1MjLMLVUDg4QM/etf2PnwX0W8jccY8dekCJuudotlHdpWsD6rNCH0D4429zjYpVxNhfybwnhInhHdydToUO6Hrf5u347FjYzUyN8WxKAlU69tO06kM4072oyf9sD88=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=K8Dd6CWJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C1B50C4CEE5;
+	Mon, 10 Mar 2025 07:46:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741592805;
+	bh=ub7S9UjkWephhWy9OiK6pIkZGzkEwPNxQKygjXfKnKI=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=K8Dd6CWJH/Ai8pGC/rSX1+JSS0dW4CX2Aq3IZL4KwwlykRhg2bmVprwX4oqQ1I5/r
+	 MjZfmeshMFYZ/ru+Ix0hlwo+VsgSufR3bB3S//PqkKvrAdIzi0elBx27UV/d+3L2/L
+	 eIVL8xPiRqj1HEzFMS+EUajMBp7dTWiu0BqetOzhKlt7L3IFU+W4isp80IDNBpGGK2
+	 l3FIOpBJHlTYsHxLsGtZKZQTjqdC3DyjmuQrLghKmEBtHzn94J3wBK/NDtzXLGhmpD
+	 s06AefAxW4/bmLWf3ugfteMhaIFfaaBKqZpJT/LGBPCjqlOEsX1cHxFqD1ERahPr4a
+	 CBZtbmHJ7N1qg==
+Message-ID: <554823f8-be69-452d-908d-a7c7a80bcd9e@kernel.org>
+Date: Mon, 10 Mar 2025 08:46:39 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/2] leds: tps6131x: add support for Texas Instruments
+ TPS6131X flash LED driver
+To: Matthias Fend <matthias.fend@emfend.at>, Pavel Machek <pavel@ucw.cz>,
+ Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
+Cc: linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, bsp-development.geo@leica-geosystems.com
+References: <20250228-leds-tps6131x-v1-0-d1071d90f9ea@emfend.at>
+ <20250228-leds-tps6131x-v1-2-d1071d90f9ea@emfend.at>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20250228-leds-tps6131x-v1-2-d1071d90f9ea@emfend.at>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-The get->num_services variable is an unsigned int which is controlled by
-the user.  The struct_size() function ensures that the size calculation
-does not overflow an unsigned long, however, we are saving the result to
-an int so the calculation can overflow.
+On 28/02/2025 11:31, Matthias Fend wrote:
+> +	tps6131x->reset_gpio = devm_gpiod_get_optional(&client->dev, "reset", GPIOD_OUT_HIGH);
+> +	ret = tps6131x_reset_chip(tps6131x);
+> +	if (ret)
+> +		return dev_err_probe(&client->dev, ret, "Failed to reset LED controller\n");
+> +
+> +	ret = tps6131x_init_chip(tps6131x);
+> +	if (ret)
+> +		return dev_err_probe(&client->dev, ret, "Failed to initialize LED controller\n");
+> +
+> +	ret = tps6131x_led_class_setup(tps6131x);
+> +	if (ret)
+> +		return dev_err_probe(&client->dev, ret, "Failed to setup led class\n");
+> +
+> +	ret = tps6131x_v4l2_setup(tps6131x);
+> +	if (ret)
+> +		return dev_err_probe(&client->dev, ret, "Failed to setup v4l2 flash\n");
+> +
+> +	return 0;
+> +}
+> +
+> +static void tps6131x_remove(struct i2c_client *client)
+> +{
+> +	struct tps6131x *tps6131x = i2c_get_clientdata(client);
+> +
+> +	v4l2_flash_release(tps6131x->v4l2_flash);
+> +
+> +	cancel_delayed_work_sync(&tps6131x->torch_refresh_work);
+> +}
+> +
+> +static const struct of_device_id of_tps6131x_leds_match[] = {
+> +	{ .compatible = "ti,tps61310" },
+> +	{ .compatible = "ti,tps61311" },
 
-Both "len" and "get->num_services" come from the user.  This check is
-just a sanity check to help the user and ensure they are using the API
-correctly.  An integer overflow here is not a big deal.  This has no
-security impact.
 
-Save the result from struct_size() type size_t to fix this integer
-overflow bug.
+No differences? So devices are fully compatible? Then it should be
+expressed in the binding with fallback. Or the binding description or
+commit msg should explain why they are not compatible.
 
-Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
-Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
----
-v2: fix %lu vs %zu in the printk().  It breaks the build on 32bit
-    systems.
-    Remove the CC stable.
 
- net/netfilter/ipvs/ip_vs_ctl.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
-
-diff --git a/net/netfilter/ipvs/ip_vs_ctl.c b/net/netfilter/ipvs/ip_vs_ctl.c
-index 7d13110ce188..0633276d96bf 100644
---- a/net/netfilter/ipvs/ip_vs_ctl.c
-+++ b/net/netfilter/ipvs/ip_vs_ctl.c
-@@ -3091,12 +3091,12 @@ do_ip_vs_get_ctl(struct sock *sk, int cmd, void __user *user, int *len)
- 	case IP_VS_SO_GET_SERVICES:
- 	{
- 		struct ip_vs_get_services *get;
--		int size;
-+		size_t size;
- 
- 		get = (struct ip_vs_get_services *)arg;
- 		size = struct_size(get, entrytable, get->num_services);
- 		if (*len != size) {
--			pr_err("length: %u != %u\n", *len, size);
-+			pr_err("length: %u != %zu\n", *len, size);
- 			ret = -EINVAL;
- 			goto out;
- 		}
-@@ -3132,12 +3132,12 @@ do_ip_vs_get_ctl(struct sock *sk, int cmd, void __user *user, int *len)
- 	case IP_VS_SO_GET_DESTS:
- 	{
- 		struct ip_vs_get_dests *get;
--		int size;
-+		size_t size;
- 
- 		get = (struct ip_vs_get_dests *)arg;
- 		size = struct_size(get, entrytable, get->num_dests);
- 		if (*len != size) {
--			pr_err("length: %u != %u\n", *len, size);
-+			pr_err("length: %u != %zu\n", *len, size);
- 			ret = -EINVAL;
- 			goto out;
- 		}
--- 
-2.47.2
-
+Best regards,
+Krzysztof
 
