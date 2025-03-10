@@ -1,99 +1,111 @@
-Return-Path: <linux-kernel+bounces-553821-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-553831-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48AADA58F3B
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 10:16:01 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C1DAA58F69
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 10:24:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EF8B2188692A
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 09:16:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 26F3E3AC4BD
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 09:24:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23FAC2248AA;
-	Mon, 10 Mar 2025 09:15:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B703F224B14;
+	Mon, 10 Mar 2025 09:24:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="1hc1VQ9+"
-Received: from mail-wm1-f74.google.com (mail-wm1-f74.google.com [209.85.128.74])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=toke.dk header.i=@toke.dk header.b="h/5KiRQO"
+Received: from mail.toke.dk (mail.toke.dk [45.145.95.4])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0450D1361
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 09:15:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BAC72248A6;
+	Mon, 10 Mar 2025 09:24:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.145.95.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741598153; cv=none; b=hDjSfa3keL3j5UG0FPeS64ZLA2GY1YIwPqC/b7jRajSJknxJknUVkDM6aIjUGoGdQLa3DMkiz0Hb7icnF5JSWuJW52SyNpVAJKGi8mvGvFroPXpgVSdF2i8hmfHUZXZRk7OMngYjc23ArgYXRo45LjtTI6wepayPFjMVOvE1QCI=
+	t=1741598652; cv=none; b=pqsoGZzjptVbKOAA7ekcTgsyexjQ8UFcVZHaWTw4W0KnuDcf2aCmDjSX2U/dKUeW7OjLtJoSYWdrloxeIvk2/6161vgmhUkoRiHOMYyVB6JfJnjK4Z3WhgFKLBlme4XfaF7ZDpK0BtvpRmcu24GRgGVKi5HpXt8A1Q3yGVuhaxQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741598153; c=relaxed/simple;
-	bh=KjSoU6/mBbGahQ04HV4jjvNKb9ObDoSCk+0lV+80R4w=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=fRwN7MsA+V9dWenR/U+wHPGk6KkBEuht5Z89jDtWGeSMJR44U/PGplnM2cq42l6Oqstv1C0gn8nD3Pq1x9KQc8PwqWWzqQ+eVAxI4AVp7cf66w+awKIzdzb9ZXHzLTHF8uE3GWbRlTL8gZsFLujdVisSECLJOmCkGhNYifh6hL4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=1hc1VQ9+; arc=none smtp.client-ip=209.85.128.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
-Received: by mail-wm1-f74.google.com with SMTP id 5b1f17b1804b1-43cf64f1dc5so3626215e9.2
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 02:15:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1741598150; x=1742202950; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=jC9dwmLMGrJONvWdmLchB8OrIEYq2jjVi0+jpdkBizI=;
-        b=1hc1VQ9+HImo9HXOoLOaEZ4Z2hS7xQpfWafecn9cL21vx40Ck9OzJp9L5FOQIrNG7+
-         Shn3OySkR1iHegJt9I79hQOs5Tdli+sbiV1+kGUHsI4shJMBld0GIzWo94AGW0GpJ6AL
-         LRVwpcp3WPjNUSK9lg5jjZ7VI2hOsaKpxVqViVQedrR3fBnIrpkMANaITQdWmgx4E+LX
-         MRvJENo1oOjVngr+W8afvO9mIZXAsCPXpaAo2VSAubvaSD4M9FwhaP9HEfOf94zh09Jl
-         32ivivoo2QhiK2MaJqDYLp9YPVyQ5UfQVYTatoEFi3ztVBKS7TfmAFcvSK9qT2KYnGEc
-         P6EA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741598150; x=1742202950;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=jC9dwmLMGrJONvWdmLchB8OrIEYq2jjVi0+jpdkBizI=;
-        b=Xn+aKdFLkSsOiHEoLBf9ur/JUyUbea3b0C2+ba/1T9O13sK/WI5cJpbm61/P5jJPUB
-         eFdcFjz/y3HxiEofdimlpi0FEEgdD6ZFyIu9/wiNzG1glCnsrJFooBf6XRL3JU6RkuNF
-         Fb+lZCI3PgtZzAT6cb6GCQwLsZZSZB7rarAzLw0Y4NurARx6Z6HlYIvPY2zFhE/Fn/Lc
-         n4OnRXWMD9YlnSnDcuWHFtNCLapPvx9JPkqADF8dme/cbfGMPLaNMtRXOhQ10zOuteer
-         QF+sNnAzKYLy1GaqA0mzd8H6+dbLpvIwwc8TuN7s+DUvKs9vooBoCoaqTFt2m5PD6Jva
-         xyyw==
-X-Forwarded-Encrypted: i=1; AJvYcCXOLkWFn40xhmYH3kB0LaHvO9tDDZoCLBFjV6D2nYaRC/tmSqCIa7V64st5++Q7oC1bmjYHetgVC9tMwbg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxs+fnFVnePxzS2zdajpdP4PQE2XZ/fvB4IHXKGDvob5RAJJsz9
-	m/74GqWBCmpiG9n7NFHOTT0jwWxUJn1aPlwZ36hBe+hOwImIAnw/i8fiu/JmkxYiFhqcLBpmloI
-	htbj7mU10Rfsdgg==
-X-Google-Smtp-Source: AGHT+IFld+YMbPi6vF1aQtVy8e1i98OzUQUBy9QMXqfEE1Pf4Daw9v+O6rr7flwQQrudHMtNoS+bOOx/1S6RKQs=
-X-Received: from wmqa4.prod.google.com ([2002:a05:600c:3484:b0:43c:fc61:959c])
- (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:600c:4fc1:b0:43b:cd0d:9466 with SMTP id 5b1f17b1804b1-43c601d9251mr66339335e9.9.1741598150298;
- Mon, 10 Mar 2025 02:15:50 -0700 (PDT)
-Date: Mon, 10 Mar 2025 09:15:47 +0000
-In-Reply-To: <20250308-comment-fix-v1-1-4bba709fd36d@posteo.net>
+	s=arc-20240116; t=1741598652; c=relaxed/simple;
+	bh=tGbHNBv9xSwc1TPHZ6xLc61UvhZA63bQ+RMjSx9gQa8=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=NNi8BgBGpVT274gyDq+w4lnd650yZR0UyoGvceRHU+30UojOj1tbYsNRHxQ4zkrW8482w3Kz+2PyQ46EpAW/xcnbxnXUi+p487ie3GU5ZVFhotNxtK3k1J80WTZbKUqEc10ZrtTeI7lv+i1m7JUf4whGJCUKBbCNGUrosP1Jjnw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=toke.dk; spf=pass smtp.mailfrom=toke.dk; dkim=pass (2048-bit key) header.d=toke.dk header.i=@toke.dk header.b=h/5KiRQO; arc=none smtp.client-ip=45.145.95.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=toke.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=toke.dk
+From: Toke =?utf-8?Q?H=C3=B8iland-J=C3=B8rgensen?= <toke@toke.dk>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=toke.dk; s=20161023;
+	t=1741598152; bh=tGbHNBv9xSwc1TPHZ6xLc61UvhZA63bQ+RMjSx9gQa8=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=h/5KiRQOst0lHeHhL37ekuXCMNA8dTF/aj4+0oNb67H4TUWmSpJe8Or79t3yqK1h3
+	 OYJzTl7RrvdtS4OYy2M/XcuVPPS0m//liVjJKJxgsJ9HvLyAuId6enCRqNFtEEQpLS
+	 4tNCMPJ0VOZVafGWDxpSd50xauLIw6m0igbheMk4o/onW8hlCh/eyjXbzDfvd8ZThw
+	 Z7LpMn7wVfGpWDM7HiNgh0sxw7KQv2Ap0QUXIgV3kGEJTnGxHjKLcpvf8LDC7sMZOO
+	 wRJip8+uN/rtPNAQD/y5AY89h/TWkW2neV5Dxv4mR32k7ffT+NxSbE6wfgojPEV1HG
+	 UiKh7fjhGanwQ==
+To: Mina Almasry <almasrymina@google.com>, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Cc: Jesper Dangaard Brouer <hawk@kernel.org>, Andrew Morton
+ <akpm@linux-foundation.org>, Ilias Apalodimas
+ <ilias.apalodimas@linaro.org>, Jakub Kicinski <kuba@kernel.org>, Mina
+ Almasry <almasrymina@google.com>
+Subject: Re: [PATCH RFC net-next v1] page_pool: import Jesper's page_pool
+ benchmark
+In-Reply-To: <20250309084118.3080950-1-almasrymina@google.com>
+References: <20250309084118.3080950-1-almasrymina@google.com>
+Date: Mon, 10 Mar 2025 10:15:48 +0100
+X-Clacks-Overhead: GNU Terry Pratchett
+Message-ID: <87a59txn3v.fsf@toke.dk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250308-comment-fix-v1-1-4bba709fd36d@posteo.net>
-Message-ID: <Z86tw6ugdwfJCTnu@google.com>
-Subject: Re: [PATCH] rust: task: fix `SAFETY` comment for Task::wake_up
-From: Alice Ryhl <aliceryhl@google.com>
-To: Panagiotis Foliadis <pfoliadis@posteo.net>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	"=?utf-8?B?QmrDtnJu?= Roy Baron" <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>, 
-	Andreas Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>, 
-	Christian Brauner <brauner@kernel.org>, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On Sat, Mar 08, 2025 at 04:49:05PM +0000, Panagiotis Foliadis wrote:
-> The `SAFETY` comment inside the `wake_up` function references
-> erroneously the `signal_pending` function instead of the
-> `wake_up_process` which is actually called. Fix the comment
-> to reference the correct function.
-> 
-> Fixes: fe95f58320e6 ("rust: task: adjust safety comments in Task methods")
-> Signed-off-by: Panagiotis Foliadis <pfoliadis@posteo.net>
+Mina Almasry <almasrymina@google.com> writes:
 
-Thanks.
+> From: Jesper Dangaard Brouer <hawk@kernel.org>
+>
+> We frequently consult with Jesper's out-of-tree page_pool benchmark to
+> evaluate page_pool changes.
+>
+> Consider importing the benchmark into the upstream linux kernel tree so
+> that (a) we're all running the same version, (b) pave the way for shared
+> improvements, and (c) maybe one day integrate it with nipa, if possible.
+>
+> I imported the bench_page_pool_simple from commit 35b1716d0c30 ("Add
+> page_bench06_walk_all"), from this repository:
+> https://github.com/netoptimizer/prototype-kernel.git
+>
+> I imported the benchmark, largely as-is. I only fixed build or
+> checkpatch issues.
+>
+> Cc: Jesper Dangaard Brouer <hawk@kernel.org>
+> Cc: Ilias Apalodimas <ilias.apalodimas@linaro.org>
+> Cc: Jakub Kicinski <kuba@kernel.org>
+> Cc: Toke H=C3=B8iland-J=C3=B8rgensen <toke@toke.dk>
+> Cc: netdev@vger.kernel.org
+> Signed-off-by: Mina Almasry <almasrymina@google.com>
+>
+> ---
+>
+> RFC discussion points:
+> - Desirable to import it?
 
-Reviewed-by: Alice Ryhl <aliceryhl@google.com>
+I think so, yeah.
+
+> - Can the benchmark be imported as-is for an initial version? Or needs
+>   lots of modifications?
+
+One thing that I was discussing with Jesper the other day is that the
+current version allocates the page_pool itself in softirq context, which
+leads to some "may sleep" warning. I think we should fix that before
+upstreaming.
+
+> - Code location. I retained the location in Jesper's tree, but a path
+>   like net/core/bench/ may make more sense.
+
+No strong opinion on this...
+
+-Toke
 
