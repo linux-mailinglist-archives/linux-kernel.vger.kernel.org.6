@@ -1,164 +1,137 @@
-Return-Path: <linux-kernel+bounces-554266-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-554267-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BB99BA5957D
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 14:01:22 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A327CA59583
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 14:01:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AE39B16627E
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 13:01:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8F4473B2A92
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 13:01:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A117370808;
-	Mon, 10 Mar 2025 13:01:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5A3422576C;
+	Mon, 10 Mar 2025 13:01:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="thVZ7y/t"
-Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="BkTT+UTi"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BBED1AA1F4
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 13:01:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 728A470808;
+	Mon, 10 Mar 2025 13:01:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741611676; cv=none; b=ilx97HuuK8IPdj4L1hJqg9W5SksPJtbMV+p8lb+gbmARtflQ6MsN2eAF4KFq9ihlv7h0MTt+LNjupIxHEC1OZj+NV88+4tTvChOUymKsGmitMk1TARwIzrbhRdQotkQ2n5Noi8c5LWDK6xUsY8m6TZU9EzrjAPr9l5bgXVcoRFQ=
+	t=1741611704; cv=none; b=Zb4NBPxLqwxreuyhm855uwhLN/8stpZaK1SwtEAOxsCyOXdij7vKShA7c+P/7LhlRuh/K9w7YAn5Dlre0ReqQauY8oc9KjWuqglnyEhnci8uFSKsu8lGMm9Y+sa92BsiPVEpDKuq2TEbHWoEBFLog3sWsFo3Kh200jzPDcY5k14=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741611676; c=relaxed/simple;
-	bh=3lN5+BfPNzt/PRcWXR7VK1qyPNf8ZL6R30Usr1SN7bw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ZzffN+hitxt3OHWax6wMX9mrKBr1T5jk6PG4o14ZX30ExuvAvDZkmOyWHT02vFo/w4FxWXiKcKYaSEqyZlC8fNeQ6bjr6bu4psNBj1cW4WhmaRxzvjoPhbzh0t0p35IXmv2JS3Ib0SpXECGNs+8WWl9KtI2J1STagNbIsLkYBqQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=thVZ7y/t; arc=none smtp.client-ip=209.85.221.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-38f54938d1bso188357f8f.2
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 06:01:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1741611672; x=1742216472; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=HlsuE7t53NZzZ0wDGhZZr2oEBno/EImMG482gZFTymg=;
-        b=thVZ7y/tS4d0Q1tU0NOIOL1bH3fXf4cZTnE41HPZtgEheyG4xTh12CVcoSqVx2OzpB
-         krtNAu3p5fUdfDMh04GA/rOc9/bHm8tPFW+6gZfFEdK3RkxbJpNYZjbOc1QBhOeN6xfq
-         bEgQkOICBttHY1w2lbqBt1SiPQHRISiphETlmlgoowWctY8aOtIY30gPV15c2x+hp4Se
-         T3GZPeYQx/WDWgMu1XMaj3oeLDdRZp3wleQOEcRW6Juyghp88jpN5tbcrnOcqnJJXOv6
-         XcfCkyfbk8IUkGpIKXIRHbjfUT3ZkO7K2V8OqQHO+okFiuWH+vkKDpCOZuqWIK9LEHzz
-         bzCA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741611672; x=1742216472;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=HlsuE7t53NZzZ0wDGhZZr2oEBno/EImMG482gZFTymg=;
-        b=ha8e4Fs4mgLL078plQp88tQPtTD9VZpcrIgA55sNETXaBkY2Tk4IS0xWTltBEmoD/s
-         H+kGjrIxdYvUgvGpdxFWv7cpMksV6xB3iuOOsznf9s9l+GUsHqZPpSQL74rm47/Cfoep
-         bH8X+6MNeM+GMlndTEaXcgthZo0sn/99ShdjxpzYsWag0D6XwcY0DwBb4g43s95Jfqzt
-         /Qu+J8Bt9rUsIsgoWxwv3ddPTCUFXUi0lBYXWZvuNDJheWgxdxRQi6jhOldC6L8fuCKs
-         sZo7jo8W6ke5DJo5RXw29vIuGm0G7DZ950MeODVQENRFVUqqtTSSoZKLGsAALhSFblrl
-         SbcA==
-X-Forwarded-Encrypted: i=1; AJvYcCWhFZN0z9pge0ZreeBT9XHb0KV2olPAYRu9zMp4KYXZosCnduyXn8gHqXa1HulzBpvOLtnOwbUobLeD0XI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzRP4TWzS/YayofwpPuv+izpQ9vkWEcc8v9VLESf/39/6vY4Hyo
-	e/s9A7Yjw48k2CSF+0ldoxrZ+Uy3iTOjT46bj5QWDgE+3cZ+FTpuoGVF2pFOhzHWm5j0YZHPwiJ
-	jETM=
-X-Gm-Gg: ASbGncsIYmHbydhGKi4Dt0Oknt7Ko1Rep677Rn22lP0wcW7ZIyOqGkdzFVd1WMcGUx0
-	40MuZK1I7eigpzNPXOan8WpOYpvHu1YqNKZYJiXvnSWW0l73wjeOJmjJTow/C3qSRNVJPunlWVp
-	Se/jhkjEu0FnClIyA6/SLIQd3PY4mVOtTmvAGcQ77OzER5sDaNobc/xCYNxDZDgR3itOwJaDn6L
-	xhynLEWHSL8akduIYaiWM/E3APPFeZfqdltTxZHOPBgxodzBp03qVlMr4jx5Gj8921XUOv16jDz
-	aNslSdiJWEslE4WWanB09d0argAZ2mjwVSpVtlBK5ysrm7HkAb4/4J8VZ/Re8MPi
-X-Google-Smtp-Source: AGHT+IGThF/oE6er57BVGHZ3xBExtCTka7vK/Zsnc3bChjxloDZ87FlC6wAo7pcYka4DjJ5O1GSEag==
-X-Received: by 2002:a05:6000:4021:b0:38a:8784:9137 with SMTP id ffacd0b85a97d-3913bba2527mr2202801f8f.9.1741611672414;
-        Mon, 10 Mar 2025 06:01:12 -0700 (PDT)
-Received: from [192.168.1.20] ([178.197.206.225])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3912bfdfe61sm15104114f8f.38.2025.03.10.06.01.10
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 10 Mar 2025 06:01:11 -0700 (PDT)
-Message-ID: <2e04370d-2950-4703-9056-916c4a6c06c8@linaro.org>
-Date: Mon, 10 Mar 2025 14:01:09 +0100
+	s=arc-20240116; t=1741611704; c=relaxed/simple;
+	bh=cx5jg6nX41FB/+wMNez+RBf6N+I2hCOHCQWIPO57sdM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Hm1t4buBNiQCcZ3a9AcAomqyPcxbzTFj+L838pS1HPqltSyAgRp7uZX4Wt+ITOqZjp9okbLjsyFNUsN8Y+lqga8MbMVxg2mgIlDGugGMpsUQjAZa+k4SNoDduQRwd2vIndXFkD+Dw0nQ/IKDYMw5e7RT4sv/RTMRNPPn8tF8Lxw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=BkTT+UTi; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=P0Q5nncTlu8w0yyFGKHNI1d6KN3TELLcBWcGd04Z8eM=; b=BkTT+UTi0LpF5BtfBQLZeicRoV
+	kGofT2EB8HhWThCg//q5VoeE8QUBonw3zlqq7k9FUcuPh77vaORPsAnmtwW/no/L3+19tXy8UCXYw
+	TJdNFEYJUvzAtLNN5EiqNaHYIpTc33t61GUTm9NCCnslNYTlgm/xqNcpcLDQOieGhTIsFziIm6Sv4
+	vRwTw9kQ7Y9t7ESfM9B+FLd9lC4DgQJ7PU1gdXNV3yvy0cI3SZFHErQjz6/+oCx2sBSUHUL8dt0bj
+	rLKbX4958ZCVsYHnoKXly0Uaq/BMR454R/8HKlYrIzX1DxTDwd4EzWnhD5Wmdndz6SuXg2CMaqcWB
+	f//LyNRg==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1trclC-00000004i1J-2OzM;
+	Mon, 10 Mar 2025 13:01:35 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 23CE03006C0; Mon, 10 Mar 2025 14:01:34 +0100 (CET)
+Date: Mon, 10 Mar 2025 14:01:34 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: Chris Murphy <lists@colorremedies.com>
+Cc: Waiman Long <longman@redhat.com>,
+	=?utf-8?B?0JzQuNGF0LDQuNC7INCT0LDQstGA0LjQu9C+0LI=?= <mikhail.v.gavrilov@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>, David Sterba <dsterba@suse.cz>,
+	Btrfs BTRFS <linux-btrfs@vger.kernel.org>,
+	linux-kernel <linux-kernel@vger.kernel.org>,
+	Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>,
+	Joel Fernandes <joel@joelfernandes.org>
+Subject: Re: BUG: MAX_LOCKDEP_CHAIN_HLOCKS too low!
+Message-ID: <20250310130134.GS31462@noisy.programming.kicks-ass.net>
+References: <CABXGCsN+BcaGO0+0bJszDPvA=5JF_bOPfXC=OLzMzsXY2M8hyQ@mail.gmail.com>
+ <20220726164250.GE13489@twin.jikos.cz>
+ <CABXGCsN1rzCoYiB-vN5grzsMdvgm1qv2jnWn0enXq5R-wke8Eg@mail.gmail.com>
+ <20230125171517.GV11562@twin.jikos.cz>
+ <CABXGCsOD7jVGYkFFG-nM9BgNq_7c16yU08EBfaUc6+iNsX338g@mail.gmail.com>
+ <Y9K6m5USnON/19GT@boqun-archlinux>
+ <CABXGCsMD6nAPpF34c6oMK47kHUQqADQPUCWrxyY7WFiKi1qPNg@mail.gmail.com>
+ <a8992f62-06e6-b183-3ab5-8118343efb3f@redhat.com>
+ <7e48c1ec-c653-484e-88fb-69f3deb40b1d@app.fastmail.com>
+ <20250310090811.GQ16878@noisy.programming.kicks-ass.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] dt-bindings: PCI: fsl,layerscape-pcie-ep: Drop
- deprecated windows
-To: Rob Herring <robh@kernel.org>
-Cc: Bjorn Helgaas <bhelgaas@google.com>,
- Lorenzo Pieralisi <lpieralisi@kernel.org>,
- =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>,
- Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Frank Li <Frank.Li@nxp.com>,
- linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250307081327.35153-1-krzysztof.kozlowski@linaro.org>
- <20250310125304.GA3881079-robh@kernel.org>
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Content-Language: en-US
-Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
- 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
- D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <20250310125304.GA3881079-robh@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250310090811.GQ16878@noisy.programming.kicks-ass.net>
 
-On 10/03/2025 13:53, Rob Herring wrote:
-> On Fri, Mar 07, 2025 at 09:13:26AM +0100, Krzysztof Kozlowski wrote:
->> The example DTS uses 'num-ib-windows' and 'num-ob-windows' properties
->> but these are not defined in the binding.  Binding also does not
->> reference snps,dw-pcie-common.yaml, probably because it is quite
->> different even though the device is based on Synopsys controller.
->>
->> The properties are actually deprecated, so simply drop them from the
->> example.
+On Mon, Mar 10, 2025 at 10:08:11AM +0100, Peter Zijlstra wrote:
+> On Thu, Jan 26, 2023 at 10:37:56PM -0500, Chris Murphy wrote:
+> > 
+> > 
+> > On Thu, Jan 26, 2023, at 7:20 PM, Waiman Long wrote:
+> > > On 1/26/23 17:42, Mikhail Gavrilov wrote:
+> > >>> I'm not sure whether these options are better than just increasing the
+> > >>> number, maybe to unblock your ASAP, you can try make it 30 and make sure
+> > >>> you have large enough memory to test.
+> > >> About just to increase the LOCKDEP_CHAINS_BITS by 1. Where should this
+> > >> be done? In vanilla kernel on kernel.org? In a specific distribution?
+> > >> or the user must rebuild the kernel himself? Maybe increase
+> > >> LOCKDEP_CHAINS_BITS by 1 is most reliable solution, but it difficult
+> > >> to distribute to end users because the meaning of using packaged
+> > >> distributions is lost (user should change LOCKDEP_CHAINS_BITS in
+> > >> config and rebuild the kernel by yourself).
+> > >
+> > > Note that lockdep is typically only enabled in a debug kernel shipped by 
+> > > a distro because of the high performance overhead. The non-debug kernel 
+> > > doesn't have lockdep enabled. When LOCKDEP_CHAINS_BITS isn't big enough 
+> > > when testing on the debug kernel, you can file a ticket to the distro 
+> > > asking for an increase in CONFIG_LOCKDEP_CHAIN_BITS. Or you can build 
+> > > your own debug kernel with a bigger CONFIG_LOCKDEP_CHAIN_BITS.
+> > 
+> > Fedora bumped CONFIG_LOCKDEP_CHAINS_BITS=17 to 18 just 6 months ago for debug kernels.
+> > https://gitlab.com/cki-project/kernel-ark/-/merge_requests/1921
+> > 
+> > If 19 the recommended value I don't mind sending an MR for it. But if
+> > the idea is we're going to be back here talking about bumping it to 20
+> > in six months, I'd like to avoid that.
 > 
-> How are we not getting warnings for them? That would be the bigger 
-> issue. "status" shouldn't matter.
-If I drop the status, then I see warnings, so the status seems to matter.
+> Please all, also look at the lockdep_chains output for these kernels
+> that need bumping this number and check if there's a particularly
+> 'silly' annotation.
+> 
+> Notably, things like giving each CPU their own lock class for a double
+> lock yields O(n^2) chains, while using a single class with 1 subclass
+> for the double nesting results in O(1) chains.
+> 
+> We've had some needlessly expensive annotations like this in the past,
+> and now with dyhamic classes this is even easier.
+> 
+> So before bumping the number, check if there's something btrfs related
+> that can be done better/different wrt annotations to reduce the number
+> of lock chains.
 
-Best regards,
-Krzysztof
+So s_umount_key is having 40 instances; and I realize we have these per
+filesystem lock types for a reason, but 40, how does my measly test box
+end up with _40_ filesystems.
+
+Now, even though cross-filesystem locking isn't common (rebind/overlay
+etc?) this does mean most of the file system lock chains are times 40.
+
+I also have 80 instances of kn->active, and 31 x->wait.
+
+
 
