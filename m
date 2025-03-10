@@ -1,265 +1,513 @@
-Return-Path: <linux-kernel+bounces-554812-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-554813-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1CEE7A59EB2
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 18:33:37 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8AB5CA59ECA
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 18:34:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 96348188FE38
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 17:33:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 546C916E052
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 17:34:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72A222327A3;
-	Mon, 10 Mar 2025 17:33:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 565FC233155;
+	Mon, 10 Mar 2025 17:34:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="HwGWmr5i"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iPkUL71Q"
+Received: from mail-yw1-f174.google.com (mail-yw1-f174.google.com [209.85.128.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F36D922E407;
-	Mon, 10 Mar 2025 17:33:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.19
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741628009; cv=fail; b=bgVTZeXrsPZ613a7D2hHJIXZljrEpu5ycaMGxVdktHlErbs97oBlEjHnQkmthii2CvU0or8BxTV9V1ZiFb3Sq69P0hkx4FxmLUBxW+JZVvCFfoS/JahMBCD62IUtwUeKmbHzqF+isLOe3MsaRE6AmIBmUU7BORnxPUUd4WifM7w=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741628009; c=relaxed/simple;
-	bh=TgRcgO2mXGsBRaWD6PLAHXeguyyPv0S/7qCWlD4ssOU=;
-	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=oHlbzq0jEsGpYUe2+/ylJGL2HWfQ974yHoWfXZAKDrNisTXhlqixE1kgK/hRYSlLW7eYiE7FDlhstxTit1vWlpoLjTSfT1KjrQFGtzAvsL0kaEJGKosr2Z7FlX+uK9fYRITCRCJxAWFTubgjNQax5bq2h28ZEEKA1El2fT82SXI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=HwGWmr5i; arc=fail smtp.client-ip=192.198.163.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1741628008; x=1773164008;
-  h=message-id:date:subject:to:cc:references:from:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=TgRcgO2mXGsBRaWD6PLAHXeguyyPv0S/7qCWlD4ssOU=;
-  b=HwGWmr5icmSE+b7FHDBSSI6n4CY93HBzVARW5p3u6HYIRHoxpj8UI80v
-   VY5U0dn8NvTw25wLBP3CHQBpgX6wzcz0HjPXZ7r0rTIHEzeGX6sfAX2EO
-   WhHm4O9+9IwO6WhFjV7gVcmIbXvQ6mnSt1xZVVV9P8EiqMjG+7IDt1MV/
-   hThPtoth3ADh6eAug2fu44Yx7rQUdezCQ+4hmFBMWQacxGb+JvUFZRXfY
-   hM2DNLAdBMD1jl+8M9kr50ug4lAxLcKPjhatxReov+bPOBXgc8Yxll4tY
-   1c7EgfW9mYyMwq3aUJu7HFQsrzzXpztg2F2oPeZU61S67ce599eCfmRkF
-   w==;
-X-CSE-ConnectionGUID: vY3NU78tTE66MWf6kC5jig==
-X-CSE-MsgGUID: CzzMhWtcSqy5kJd0FmWkEA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11369"; a="41803701"
-X-IronPort-AV: E=Sophos;i="6.14,236,1736841600"; 
-   d="scan'208";a="41803701"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Mar 2025 10:33:27 -0700
-X-CSE-ConnectionGUID: 3yi9tdo8RrKM+bKyHh6Hcw==
-X-CSE-MsgGUID: xEYFsWCJTFOc4UyFkjJY8w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,236,1736841600"; 
-   d="scan'208";a="119890014"
-Received: from orsmsx601.amr.corp.intel.com ([10.22.229.14])
-  by fmviesa006.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 10 Mar 2025 10:33:28 -0700
-Received: from ORSMSX901.amr.corp.intel.com (10.22.229.23) by
- ORSMSX601.amr.corp.intel.com (10.22.229.14) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.44; Mon, 10 Mar 2025 10:33:26 -0700
-Received: from ORSEDG602.ED.cps.intel.com (10.7.248.7) by
- ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.14 via Frontend Transport; Mon, 10 Mar 2025 10:33:26 -0700
-Received: from NAM12-BN8-obe.outbound.protection.outlook.com (104.47.55.170)
- by edgegateway.intel.com (134.134.137.103) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.44; Mon, 10 Mar 2025 10:33:26 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=jatQtl+ZXJATJCG7sflG6zI2jg74VSe6Fof+bLp8upZ3BxQ5swJVAz0zVwC2FfeuSMXUn0DLEpi+XXDzHASQiX4Zn+I/cS11w/PMj02IE0lWhZ3ZEX4PoOCTlE7ZzQUWrNff2enqHEVOkpAE7jipTRoVX+ZO5iOHoVxWybCNh3lLj8GXi654A5CjnmWKEc53QdJ9dR1j29gp4Iq6K0tHYV9SIdxmxXaenuPrGQU+aiJDb3gWEOpntV+MSIIS8i9VsLhGEJfoT1cBplObePdFmNZUJPDjhS+kOVToKZWBfyN94noxz4mGrPayM0MyCyM/XKaJYaYXuuFEUu4Ilw2pbw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=ktjz3SnAR8bJd7sDCn7cTblPX7O3mODLORaFves++BM=;
- b=f1fAi4EJaW7/vrqRV7DNrwmlMrhDvo1t7KzLAHs6hnDMsSXSUptEZKMeVoIUTvhuaZRWSR5uExsh1H7pj3FQJf0xvXAHkGrN2/Ql2dmx3dgpjJOlRjRbKAy217J9VnRcgPsM4beYG5IC5yMuPe6f/NGNDPi3oup+2QHh1i8lrcRbPldX0Pws32sjhnHMywp3W3eF7GWoTaabN0Oi0JNDvPCI8VNbRsI2qNG4RnXnD1RjaWIMKGBLib+kgW58bIo8ynbxpgZHjdA4WfGUppDuQ5+BFe7OlF0tTSpLg+nhhssP42OLnZ/4biqe2tpIwQzbgmgDvRL+d+FHunC5Xa/IhA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from IA1PR11MB7917.namprd11.prod.outlook.com (2603:10b6:208:3fe::19)
- by PH7PR11MB8012.namprd11.prod.outlook.com (2603:10b6:510:24b::7) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8511.26; Mon, 10 Mar
- 2025 17:33:24 +0000
-Received: from IA1PR11MB7917.namprd11.prod.outlook.com
- ([fe80::c689:71de:da2e:2d3]) by IA1PR11MB7917.namprd11.prod.outlook.com
- ([fe80::c689:71de:da2e:2d3%4]) with mapi id 15.20.8511.025; Mon, 10 Mar 2025
- 17:33:24 +0000
-Message-ID: <b624a831-0c91-4e89-8183-a9a1ea569e6c@intel.com>
-Date: Mon, 10 Mar 2025 10:33:20 -0700
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 04/10] x86/fpu/xstate: Correct guest fpstate size
- calculation
-To: Chao Gao <chao.gao@intel.com>
-CC: <tglx@linutronix.de>, <dave.hansen@intel.com>, <x86@kernel.org>,
-	<seanjc@google.com>, <pbonzini@redhat.com>, <linux-kernel@vger.kernel.org>,
-	<kvm@vger.kernel.org>, <peterz@infradead.org>, <rick.p.edgecombe@intel.com>,
-	<weijiang.yang@intel.com>, <john.allen@amd.com>, <bp@alien8.de>
-References: <20250307164123.1613414-1-chao.gao@intel.com>
- <20250307164123.1613414-5-chao.gao@intel.com>
- <b34c842a-142f-4ef7-97d4-2144f50f74cf@intel.com> <Z8uwIVACkXBlMWPt@intel.com>
- <481b6a20-2ccb-4eae-801b-ff95c7ccd09c@intel.com> <Z85BdZC/tlMRxhwr@intel.com>
- <24b5d917-9dd0-4d5b-bca8-d9683756baff@intel.com> <Z86PgkOXRfNFkoBX@intel.com>
-Content-Language: en-US
-From: "Chang S. Bae" <chang.seok.bae@intel.com>
-In-Reply-To: <Z86PgkOXRfNFkoBX@intel.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: SJ0PR13CA0056.namprd13.prod.outlook.com
- (2603:10b6:a03:2c2::31) To IA1PR11MB7917.namprd11.prod.outlook.com
- (2603:10b6:208:3fe::19)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4590C22D7A6;
+	Mon, 10 Mar 2025 17:34:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.174
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741628066; cv=none; b=AuCe1EM45cPEcRjHEQ2YQ942y2pUR6yvvE+VqgqTpLqFGdnzv8ooKe61i75IffOvOkuvmT19/2FR7mnzziuMpf2pp3Y+Q9w0CmffyaJc71FikLC8NWoGoDyWtBdn5Y+Uz+k78Fy+nSZgCv75sO54CrnRyVru+ONq7nnDMbtau+8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741628066; c=relaxed/simple;
+	bh=MVx+fCo85u4wgalBIFZ21CCzFjRouZcgwppJvfQn7/Y=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=rjyaWKAI6g8xBsHnIaaLkFlDWD+g+10KA5UJ/OuufU5t+MxcPkrtOqlDtwu5+RKuzR81+mszIXbQTqBFXQ/I9LcLgsfKPQIrtIE5iRggn241So3a15AJLdvINGa52DvqeW/GgMXNVB0KU3ScO9LzmFf7rgAnkT0bCTlnGJK67wE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iPkUL71Q; arc=none smtp.client-ip=209.85.128.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f174.google.com with SMTP id 00721157ae682-6fef1d35589so11930667b3.0;
+        Mon, 10 Mar 2025 10:34:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741628063; x=1742232863; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=6OqdZvwViuemiAWalUFPpXAEeEJqmTa93Po2Bd4FDRE=;
+        b=iPkUL71Q731yfIfaUwEf1P9mf3onHzpzSo9N0RzO9jSsLV3UsZMz2ren8pjkqp1tnE
+         xe0W1ReA79HpfDQy+202RTrDi2aG5o7KK8I84ZVkh8kclTtbS1niJswsd+3GZQmzciOD
+         cdhylEaVOCToztQgGHukrQ1z5qQ7Ov614MsJmAIdVmyGBWG7wbQEuy4Vyezi8qbVhy32
+         Q6SFYyqsjeAOVcxb0iCwgUAEYqlA22hyXyZEJuP5uDNi1QE45Y/sdPkh+6MDv+a6zOa7
+         utxEpD1WBVHLdWyENS32UJPGvrqbUxyf77pXtqcQ5Ng4tqh11fL9DU9EatB5Az/4qrsW
+         Ntdg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741628063; x=1742232863;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=6OqdZvwViuemiAWalUFPpXAEeEJqmTa93Po2Bd4FDRE=;
+        b=tNFB/0tLp3COfmoLRIIaOlpOpmN0honwVn98Oum1TZl5ZfZxiu5rvDoc8PVV7qCfjr
+         ejaluDMpD4K9IdLbsTsMnKJzJkWgdZBnkK4iEx97rc5+yL0l7hg2WumuOoZB4FKn6eyX
+         HA4Ypnapoe0sUwkm5hrCcKjhkPUD98k+aQsDLkbCmXcT86DUoSBckO79rfSA0+jU1jLs
+         qZc1oKs/NHSiVxjt+4SjksqRLGBkAn3mY/6Oir4npgMcA9vUrNM8iBlkyGRl5vi+jAIq
+         CX6+HI7FhJN+hWo9hRP8P8vmoznuyhMH5Rf4Rbyla05FJ70TYpifaHrNbNvH0Lddu9Ia
+         G6pw==
+X-Forwarded-Encrypted: i=1; AJvYcCUx2Gsb77c7y80KZfC7oSO2QEKm2UUGAiTLkxOlYKbMsUqU9PhIvIQ0sFtBOnHlFKmDCZc+yaeP4KATEhhe@vger.kernel.org, AJvYcCVfgxIGoU0HNYZNN5JTr/l5TE4NFv1jNojEVAeAqNcsgyuEumCCs+pr/syzo1mXtOFQdA6H7BDzumpC@vger.kernel.org
+X-Gm-Message-State: AOJu0YxBgq1V9KRJHzMEvLIiuk5ETP+dAhTkCaIQQu0dqm/x/UP7YAJf
+	z+vGVEO6cGyvLKdeGq0j3Bf/a0fLRueYBDYQe6puXtQNU3TVsWJ/DORsLw==
+X-Gm-Gg: ASbGncuP/E2/Yu2CXH48+mqFFVAcEfO2YO9RUDmnfmQ+MNj7qc5zzj/guFd5mdJ2YOw
+	gHJeUFD+AE0hN4jk2QtCTipXJGiYltz0ygKf0RK19AP75XEQIn2wsFd0ZAcunJT19YW5FP0cV44
+	ifrUNmalWCYL8hSCzrX8cbccaiwqWMOciJ5zg5f2D2YAm0wet8tYV4zn9p0wrCUvh8TIvjbrn8X
+	lA91i93YSoWbvELhTydyJG6NV74JcVbuyDWaddhanwDY5kVK1Nv39unqRWWzJathMsQWf8xlB8X
+	0J52XWpnKUr+rgNT2wHJDElClLssEfMpH2jHgCE3zcE=
+X-Google-Smtp-Source: AGHT+IFFP80rhMMdb4dQpy8xACZsyTMqZugcmMkdrMh8ivN/mf7QiBrFhw+eHS5oi/KRsnSfOfwc+g==
+X-Received: by 2002:a05:690c:670f:b0:6fd:32ab:ed28 with SMTP id 00721157ae682-6febf2d84b1mr217949967b3.15.1741628062939;
+        Mon, 10 Mar 2025 10:34:22 -0700 (PDT)
+Received: from localhost ([2a03:2880:25ff:8::])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-6feb2c2e885sm22133987b3.70.2025.03.10.10.34.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 10 Mar 2025 10:34:22 -0700 (PDT)
+From: Joshua Hahn <joshua.hahnjy@gmail.com>
+To: "Huang, Ying" <ying.huang@linux.alibaba.com>,
+	akpm@linux-foundation.org
+Cc: gourry@gourry.net,
+	harry.yoo@oracle.com,
+	honggyu.kim@sk.com,
+	yunjeong.mun@sk.com,
+	gregkh@linuxfoundation.org,
+	rakie.kim@sk.com,
+	rafael@kernel.org,
+	lenb@kernel.org,
+	dan.j.williams@intel.com,
+	Jonathan.Cameron@huawei.com,
+	dave.jiang@intel.com,
+	horen.chuang@linux.dev,
+	hannes@cmpxchg.org,
+	osalvador@suse.de,
+	linux-kernel@vger.kernel.org,
+	linux-acpi@vger.kernel.org,
+	linux-mm@kvack.org,
+	kernel-team@meta.com
+Subject: Re: [PATCH v7] mm/mempolicy: Weighted Interleave Auto-tuning
+Date: Mon, 10 Mar 2025 10:33:37 -0700
+Message-ID: <20250310173420.539849-1-joshua.hahnjy@gmail.com>
+X-Mailer: git-send-email 2.43.5
+In-Reply-To: <874j0162vt.fsf@DESKTOP-5N7EMDA>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: IA1PR11MB7917:EE_|PH7PR11MB8012:EE_
-X-MS-Office365-Filtering-Correlation-Id: 8d26fd95-48e0-40d4-7b04-08dd5ff9a89f
-X-LD-Processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014;
-X-Microsoft-Antispam-Message-Info: =?utf-8?B?OTFPZE1tb1ZoSnZ0Q0pGbmtOTGZKbXpVWHhxVUlXNnhPNUI4THhlcVVpSkc0?=
- =?utf-8?B?Z21tREZpVUROUzk5NlZIV2NueXNqY2V2SzJkTEJjUHRYSTBTc09STUlpMFdI?=
- =?utf-8?B?cHRKcFo3NHd3ZkFMRHVCVHdHbmZFS09SdjRBTVplU2JYWUl1SFYwU1ExM0FJ?=
- =?utf-8?B?ZmVVWE4wNHR2WnhSSkRoUDZUbnhtVTF0OTczS1l6WTZONnZmbEs3TWJrQmE4?=
- =?utf-8?B?QkJLQVRDTkQ0cHdsZXB3VHArYWxnZ2pUWWd4OHFDSWpxaStaZFFaVVRpUk1H?=
- =?utf-8?B?QWFzZU10YXpDOVcyR1gzNjNYVjNLdlZCbW5nK3NlOVRMYTcwTWxmS3Q4cFpr?=
- =?utf-8?B?MzZVd29mMTJIcHF0VmhiejFyOHVyZzQwdWhYS21ORjdyU0xKcGRRNWxjL2Zm?=
- =?utf-8?B?REsxWkFydEZVT3V5cWoxbnQzRjJ4UndUcThzSi9ZSVF3cmFENWRvenBBeHg2?=
- =?utf-8?B?YlpaMjJNUmtITDRUNzVnbkQ0ZzJoQXhlWjFHSUVEaFovVXJjYnB5ZTYzK2FT?=
- =?utf-8?B?WUdXbDVQcEVsdmlpNUw2YnRPYUFkcG0vb1VxTnFibGZXelBUaW5RV3RWMFU0?=
- =?utf-8?B?VDJ3N3FGbHlmK05pTkg5TVI3SzBaRkZabXI2NVhIK0N0UlExWkRUbFZ5M1dO?=
- =?utf-8?B?TWlWbE4wbmhramxMUlhpb2tXbWVZaW5UOUxBZ3V1S0w5cXVUTTNhUG1VTmJW?=
- =?utf-8?B?N2ltaGExbEtlbG9Od0NRakZIUzU2aHA3dEkybXJlUnluNTNSWXkvdGxZTHBm?=
- =?utf-8?B?bTZ0Y3hYaWVtVStqam1VdjlFWllsY0x4bG5ZbU5QN2Y1ckZtbzZ5Z3BZWWx4?=
- =?utf-8?B?MXZBZmRwOC9HdVhwcnZOMzBVYm5CSFRkZzVpQnEyQVpYS3orcE1jQW13c3FL?=
- =?utf-8?B?NlJHZEszOHpJWnh0MTR1WU1mU1BBd1JUVmlBRkNnWFhydW9nVG1aaVFSL2sz?=
- =?utf-8?B?RSt4alVPWjZTQVFyWXczSlR5WlNUd1Zzbk8vVmEyUGZBVjhHajZmK1cyS2Nx?=
- =?utf-8?B?VHEwZzZrdVhySVpEekp4TmswK0FmQ2Q3Y0k1OXQ0YUNkNGtmRmlnSmYyUkhS?=
- =?utf-8?B?WHFUeHkzNWNzL09VRDZhWjBjMzAxVmFwZ213ZzdVMi8vTUEvc3JxdlJyMVZr?=
- =?utf-8?B?VWlNRzdmV1NIOGw3djdLTVgvMUZCUEJZUG9BL0pLT05qVUxVTkxteitqemUy?=
- =?utf-8?B?UWlxWHl4RWhVYzNJdlRxL2J0WmtBcGladzFVUjNLa21FLzRib29nWTVsRFZo?=
- =?utf-8?B?ejRmZythY2FRQnpEdVhHS1VaRGdlRFhuN0tHazdaY1VGSlRvU2luQjNuOTdo?=
- =?utf-8?B?VDl5MXZOeEI1RGxZWWhVWGJ1N0hpVW1wbDEvZWhTN1BRTXZ0UVlGeDMwTTFl?=
- =?utf-8?B?VkhxRGtqWjVRMVgvVWlLdVNSQUR4L0NHRDhmclRubklQNzJuTjJBdFJuU0Iw?=
- =?utf-8?B?bmhBNEg3V1VJZU00KzhRODFxNkRCQ2dqTGQ0T0JhdjFYdWpqbEx2NEZhUkVj?=
- =?utf-8?B?OFZYdGxlYVhPNy9FdmZxZ1Eyb1NldnlPd21CdTJidDVjWjlLZnBzZFZseXVq?=
- =?utf-8?B?TjNENEh3NVNOYkZMZGlYZi9CUjJqcXpEVStYS1ViT3FaL2NYdzNyRlAxUjBy?=
- =?utf-8?B?VnlqNVRpajZWT1RBUVh2OHcvTG01ZUFQNnV4WVc4citFSEhHUWo2aEMwV1g0?=
- =?utf-8?B?SVZnYUZlVWVDTVVYNG5EU2psREtpVGI0MDRLV0o3MzVJREdPSVpDYS9CT2JF?=
- =?utf-8?B?UDFUUVBsQldmU2VMS3pyZnBOaWJ6Y2NzQXhtNmJ4Ukc4L2p1eDZQV1pkVWRr?=
- =?utf-8?B?dnJSbnR0ZUZyazM2VVYxeXdzNzh1NlFMM1Awd0hLVS9tQTJrWHU1TklpWU9N?=
- =?utf-8?Q?XBr7sK5EqTPHg?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:IA1PR11MB7917.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?RERNR1IvVkhOVEZMTmpqcGxpanVvejJCQzRwQkVzRGRLOC9RYldOWHNXSTNu?=
- =?utf-8?B?M21HQ1ZPSVo5VkJBMk83TkRsSVRHRlJNbmRmd1dhZnNPZVp4Mm11eFI4ZW9Z?=
- =?utf-8?B?dmpvamNidWtkT1gxemhEYXZZLzdUQXRsV0sxUE5oenVMNGRJRm44eXhFMncy?=
- =?utf-8?B?SUcxNkVhaXR4NVgxQ05XRlJnOTZNU3JueUt0Q1hmbDBjY1NqeUdQeU15UGRp?=
- =?utf-8?B?RHIvTWhCMUNSQi9uT0t2WE0yRks3RVZVWk5raVViRS8zV2U2clNidzl1a3pz?=
- =?utf-8?B?ajMxSUgyQjlGVTdTYSt5ZXZFY2FJWnhtcERhbHNCQ0pBaEpBOC9HVktYK0t5?=
- =?utf-8?B?a1RQQ3lsN1d1MmZTalY2UDdCeS96a202YzRkSEV1TFJvOEpMQ2hMS0hsa0tY?=
- =?utf-8?B?VVFnUmQ5eDlPQ0ZsNER4TVNYbHZ6RURXVW1TelY5K2NoTGNrcTd2MWxTR1Vu?=
- =?utf-8?B?R3NRM2JpNHA0V25HVzZ1cm5OV1I0b0hFSmVZT01MRFBzUzBFNE95c244ZnNu?=
- =?utf-8?B?eko2NnZ5MStDRlBvT1U5L0JldDEwamV0dXNZV3VRMFFhQk5WbDhKZmdkTFBF?=
- =?utf-8?B?YlFCTnQ1REFPbVlraklNR2hmUk9GY1NabFNvMTNwRkFMeVFqVnpQeDdjeDVB?=
- =?utf-8?B?TzhPZDNwWitmdmVVR1pkbkcvN2xqV0N4dE5GKzc1UFd5TFdYVXFWTHhMejdJ?=
- =?utf-8?B?OTNYWVRDY0FpUjkxRldkM2JWQ2p5cWRCbVJMRVhFU2RLWHlHTlBXK2NVL3JQ?=
- =?utf-8?B?KzBGNGFmWjZuendIQ05vTk4wQUlwNnEzaHo3Y3VpbFFoTGUwY3Z6U0lBVEcy?=
- =?utf-8?B?RHdVazRKNmpCUEFPaHVVVml4L1F3MmZIZkRJUlB6bTBwVHJSeWpOU1N6cG41?=
- =?utf-8?B?RC9ORnlFQ0dvbnptRWtpcHY5YUJJZkRuYXJ1U3d1cXhjamNnVC9tNWZUa2x5?=
- =?utf-8?B?N2JEZ2pSM011STBCdDJhRXFDSWFSSC81Z3JjMytKb2dyOE84STYvb1dUZ2xY?=
- =?utf-8?B?T00zNUxtWFZaOHc5bm9NUVdnbWtObVduWlFUK21FS1FqTnA0clY0MFlCWDQx?=
- =?utf-8?B?amlIbks2NWYvSGRBTWhUQTZNaEttMHM1cDZlbGhTbUQxQmRmc0VoZ3ZNSEwr?=
- =?utf-8?B?N01pb2lWamFBR1NLVjBQTS90V1ZrQ2ppajl3YStnYThTc2xFcEs3aWp3aHNV?=
- =?utf-8?B?cy9wdWdZVS9uNW5Bc0hsenBRY2V3b1pNYmJOeU1PeEo0WStWN2tzMFZIZXFX?=
- =?utf-8?B?VTNUWDZRVVVNMU1qWlg4a1NmZlFnTTFnNjFJckVkUDV5dU52RkUyZFdTNHRr?=
- =?utf-8?B?bHdYbEdYT0hzaW1oNU1TNE1vNktRVXV6dThBaEd3MTVqRzBGWVl5NkxNWUI1?=
- =?utf-8?B?czlmRkFuNFNlTXB4Y3NoMW5ZK2Yrdk9LTzU1THRZejYxNElublJrS3BZTUNQ?=
- =?utf-8?B?TGtvVFpJNVM0WkFtN2ZkRzY5dVl5b2Z0V3J3eElSenFnTnoxRUcwWjZMakJ2?=
- =?utf-8?B?eFdlMnpna2VOVWJSMlpzYWpUckRPSy9vS3BPRG1LNWNuWVA3QTF6ZEJOWXQv?=
- =?utf-8?B?ZkhJTHIyYW9tbDFwa0QzczRxYkFZUUxlb1RPbW82T1hEcTdpdmUxZmhNejIr?=
- =?utf-8?B?eEZRSVRybVNZMldiVjhWVWllMTVjS21mcXV4QnJsSVdBWW9DT2tlbGhiQVNW?=
- =?utf-8?B?MjFlandsNG81ZFpJVEcraXJsMEhMRHhDMVpQNHM5QzhSaGxwR3R3K1F6S3JW?=
- =?utf-8?B?TmFJWlZ3aDJjbDk3NGtuWFNpRlgvekZpK1JPVVM0WG84M2lNTlA2TmdCQll2?=
- =?utf-8?B?MXFnRE5LQ3preGRXRm41eityeThsZEVJOHUvcVUrL3UvdFBMckIwczBSMEFs?=
- =?utf-8?B?azZUZHVIUkkyQ0UvZytidmtnNHJFdk9KNjVsS2MwRU5KbDRHMVIwUDZlT2lL?=
- =?utf-8?B?TUZZRXE0a0FNOEdaelkrd0dZS0c5a3dRYUdVMXF6elYreC8xM3hMWGhMTTdU?=
- =?utf-8?B?QnFBRDBaR1RKaWNSMFhXc0hvNjlON28zUC9xUjJOdFYzY1NHT3U4anN5MEhK?=
- =?utf-8?B?NDMvRU8vTlFGOXVTQjZ6ZnJxTlNxRVg2WGRoQUo3UUR2SzNSMDhaTG51K2xJ?=
- =?utf-8?B?KzE5b0ZBaFFyMVRQdEYzZGxFRytuOUpjV3RSV0wvNTJVRUlERWVub044TTRX?=
- =?utf-8?B?elE9PQ==?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8d26fd95-48e0-40d4-7b04-08dd5ff9a89f
-X-MS-Exchange-CrossTenant-AuthSource: IA1PR11MB7917.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Mar 2025 17:33:24.0912
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: bhA1fUzRmMYckNCS9fEQRBBSuZjxAftRSZVKmvcAe0v7tnizM5j40jZllkHnaKBO8A6jOW+OJIOS9zCzGdAxMIsdh9FhFXoCy+fFkwMFxA0=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR11MB8012
-X-OriginatorOrg: intel.com
+Content-Transfer-Encoding: 8bit
 
-On 3/10/2025 12:06 AM, Chao Gao wrote:
+On Mon, 10 Mar 2025 10:22:30 +0800 "Huang, Ying" <ying.huang@linux.alibaba.com> wrote:
+
+Hello Andrew,
+
+I'm sincerely sorry, but I think I think that there are some RCU race
+conditions that I overlooked in this patch. Would it be ok with you to
+pull the patch out of mm-unstable once more, and for me to send a v8? I think
+it would also be safe to wait for Ying's signature on this patch as well,
+since he has been reviewing this patch since the first iteration.
+Thank you for your help as always! 
+
+> Hi, Joshua,
 > 
-> Should patch 2 be posted separately?
+> Thanks for your new version.
+> 
+> Joshua Hahn <joshua.hahnjy@gmail.com> writes:
+> 
+> > On machines with multiple memory nodes, interleaving page allocations
+> > across nodes allows for better utilization of each node's bandwidth.
+> > Previous work by Gregory Price [1] introduced weighted interleave, which
+> > allowed for pages to be allocated across nodes according to user-set ratios.
+> >
+> > Ideally, these weights should be proportional to their bandwidth, so
+> > that under bandwidth pressure, each node uses its maximal efficient
+> > bandwidth and prevents latency from increasing exponentially.
+> >
+> > Previously, weighted interleave's default weights were just 1s -- which
+> > would be equivalent to the (unweighted) interleave mempolicy, which goes
+> > through the nodes in a round-robin fashion, ignoring bandwidth information.
+> >
+> > This patch has two main goals:
+> > First, it makes weighted interleave easier to use for users who wish to
+> > relieve bandwidth pressure when using nodes with varying bandwidth (CXL).
+> > By providing a set of "real" default weights that just work out of the
+> > box, users who might not have the capability (or wish to) perform
+> > experimentation to find the most optimal weights for their system can
+> > still take advantage of bandwidth-informed weighted interleave.
+> >
+> > Second, it allows for weighted interleave to dynamically adjust to
+> > hotplugged memory with new bandwidth information. Instead of manually
+> > updating node weights every time new bandwidth information is reported
+> > or taken off, weighted interleave adjusts and provides a new set of
+> > default weights for weighted interleave to use when there is a change
+> > in bandwidth information.
+> >
+> > To meet these goals, this patch introduces an auto-configuration mode
+> > for the interleave weights that provides a reasonable set of default
+> > weights, calculated using bandwidth data reported by the system. In auto
+> > mode, weights are dynamically adjusted based on whatever the current
+> > bandwidth information reports (and responds to hotplug events).
+> >
+> > This patch still supports users manually writing weights into the nodeN
+> > sysfs interface by entering into manual mode. When a user enters manual
+> > mode, the system stops dynamically updating any of the node weights,
+> > even during hotplug events that shift the optimal weight distribution.
+> >
+> > A new sysfs interface "auto" is introduced, which allows users to switch
+> > between the auto (writing 1 or Y) and manual (writing 0 or N) modes. The
+> > system also automatically enters manual mode when a nodeN interface is
+> > manually written to.
+> >
+> > There is one functional change that this patch makes to the existing
+> > weighted_interleave ABI: previously, writing 0 directly to a nodeN
+> > interface was said to reset the weight to the system default. Before
+> > this patch, the default for all weights were 1, which meant that writing
+> > 0 and 1 were functionally equivalent.
+> 
+> Forget to describe the new functionality?
 
-gfpu->perm has been somewhat overlooked, as __xstate_request_perm() does 
-not update this field. However, I see that as a separate issue. The 
-options are either to fix it so that it remains in sync with 
-fpu->guest_perm consistently or to remove it entirely, as you proposed, 
-if it has no actual use.
+Hi Ying, thank you for reviewing my patch again!
+Thank you for letting me know. When I re-wrote the patch letter from v5-->v6,
+I was reworking this portion, and tried to make it shorter and shorter... and
+I think I missed being explicit about what the new behavior is. 
 
-There hasn’t been any relevant change that would justify a quick 
-follow-up like the other case. So, I'd assume it as part of this series.
+[...snip...]
 
-But yes, I think gfpu->perm is also going to be 
-fpu_kernel_cfg.default_features at the moment.
+> > diff --git a/Documentation/ABI/testing/sysfs-kernel-mm-mempolicy-weighted-interleave b/Documentation/ABI/testing/sysfs-kernel-mm-mempolicy-weighted-interleave
+> > index 0b7972de04e9..862b19943a85 100644
+> > --- a/Documentation/ABI/testing/sysfs-kernel-mm-mempolicy-weighted-interleave
+> > +++ b/Documentation/ABI/testing/sysfs-kernel-mm-mempolicy-weighted-interleave
+> > @@ -20,6 +20,34 @@ Description:	Weight configuration interface for nodeN
+> >  		Minimum weight: 1
+> >  		Maximum weight: 255
+> >  
+> > -		Writing an empty string or `0` will reset the weight to the
+> > -		system default. The system default may be set by the kernel
+> > -		or drivers at boot or during hotplug events.
+> > +		Writing invalid values (i.e. any values not in [1,255],
+> > +		empty string, ...) will return -EINVAL.
+> > +
+> > +		Changing the weight to a valid value will automatically
+> > +		update the system to manual mode as well.
+> > +
+> > +What:		/sys/kernel/mm/mempolicy/weighted_interleave/auto
+> > +Date:		February 2025
+> > +Contact:	Linux memory management mailing list <linux-mm@kvack.org>
+> > +Description:	Auto-weighting configuration interface
+> > +
+> > +		Configuration mode for weighted interleave. A 'Y' indicates
+> > +		that the system is in auto mode, and a 'N' indicates that
+> > +		the system is in manual mode.
+> 
+> str_true_false() is used to show the attribute, so the "true/false" will
+> be displayed?
 
-> Regarding the changelog, I am uncertain what's quite different in the context.
-> It seems both you and I are talking about the inconsistency between
-> gfpu->xfeatures and fpstate->xfeatures. Did I miss something obvious?
+Yep, makes sense to me!
 
-I saw a distinction between inconsistencies within a function and 
-inconsistencies across functions.
+> > +
+> > +		In auto mode, all node weights are re-calculated and overwritten
+> > +		(visible via the nodeN interfaces) whenever new bandwidth data
+> > +		is made available during either boot or hotplug events.
+> > +
+> > +		In manual mode, node weights can only be updated by the user.
+> > +		Note that nodes that are onlined with previously set weights
+> > +		will inherit those weights. If they were not previously set or
+> 
+> s/inherit/reuse/?
+> 
+> However my English is poor, so keep it if you think that is better.
 
-Stepping back a bit, the approach for defining the VCPU xfeature set was 
-originally intended to include only user features, but it now appears 
-somewhat inconsistent:
+Hmm, I think reuse is indeed the better word to use here. Inherit kind of makes
+it seeem like there is some parent-child hierarchy, which is definitely
+not the case here. 
 
-(a) In fpu_alloc_guest_fpstate(), fpu_user_cfg is used.
-(b) However, __fpstate_reset() references fpu_kernel_cfg to set storage
-     attributes.
-(c) Additionally, fpu->guest_perm takes fpu_kernel_cfg, which affects
-     fpstate_realloc().
+> > +		are onlined with missing bandwidth data, the weights will use
+> > +		a default weight of 1.
+> > +
+> > +		Writing Y or 1 to the interface will enable auto mode, while
+> 
+> kstrtobool() is used to parser user input, so maybe something like
+> below?
+> 
+> Writing any true value string (e.g., Y or 1) will enable auto mode.
 
-To maintain a consistent VCPU xfeature set, (b) and (c) should be corrected.
+Noted, I will take this change as well.
 
-Alternatively, the VCPU xfeature set could be reconsidered to align with 
-how other tasks handle it. This might offer better maintainability 
-across functions. In that case, another option would be simply updating 
-fpu_alloc_guest_fpstate().
+> > +		writing N or 0 will enable manual mode. All other strings will
+> > +		be ignored, and -EINVAL will be returned.
+> > +
+> > +		Writing a new weight to a node directly via the nodeN interface
+> > +		will also automatically update the system to manual mode.
+> 
+> s/update/switch/?
+> 
+> Again, keep your words if think that it's better.
 
-The recent tip-tree change seems somewhat incomplete — perhaps in 
-hindsight. If following up on this, the changelog should specifically 
-address inconsistencies within a function. I saw this as a way to 
-solidify an upcoming change, where addressing it sooner rather than 
-later would be beneficial.
+And here as well. Thank you for the suggestions!
 
-In patch 3, you've pointed out the inconsistency between (a) and (b), 
-which is a valid point. However, the fix is only partial and does not 
-fully address the issue either. Moreover, the patch does not reference 
-the recent tip-tree change as it didn't have any context at that time.
+[...snip...]
 
-Thanks,
-Chang
+> > diff --git a/include/linux/mempolicy.h b/include/linux/mempolicy.h
+> > index ce9885e0178a..78f1299bdd42 100644
+> > --- a/include/linux/mempolicy.h
+> > +++ b/include/linux/mempolicy.h
+> > @@ -11,6 +11,7 @@
+> >  #include <linux/slab.h>
+> >  #include <linux/rbtree.h>
+> >  #include <linux/spinlock.h>
+> > +#include <linux/node.h>
+> >  #include <linux/nodemask.h>
+> >  #include <linux/pagemap.h>
+> >  #include <uapi/linux/mempolicy.h>
+> > @@ -56,6 +57,11 @@ struct mempolicy {
+> >  	} w;
+> >  };
+> >  
+> > +struct weighted_interleave_state {
+> > +	bool mode_auto;
+> 
+> Just "auto" looks more natural for me.  However, I have no strong
+> opinion on thist.
+
+Yep, my concern was that just leaving "auto" might be a bit vague, but
+there is always the doucmentation for folks to reference if they are confused.
+
+> > +	u8 iw_table[]; /* A null iw_table is interpreted as an array of 1s. */
+> 
+> What is "null" array?
+
+You are right, there is no concept of a null array in a dynamically sized
+struct
+
+> IIUC, iw_state is prevous iw_table now, so we may replace this with,
+> 
+> A null wi_state is interpreted as mode is "auto" and the weight of any
+> node is "1".
+
+Yup, this makes sense. The only 2 cases with a "null" iw_table is if
+wi_state itself is null, or if the length is 0 (in which case the table
+isn't null, it will just point to the next address in memory). I'll take your
+new description here. Thank you for the suggestion!
+> >  /*
+> > - * iw_table is the sysfs-set interleave weight table, a value of 0 denotes
+> > - * system-default value should be used. A NULL iw_table also denotes that
+> > - * system-default values should be used. Until the system-default table
+> > - * is implemented, the system-default is always 1.
+> > - *
+> > - * iw_table is RCU protected
+> > + * weightiness balances the tradeoff between small weights (cycles through nodes
+> > + * faster, more fair/even distribution) and large weights (smaller errors
+> > + * between actual bandwidth ratios and weight ratios). 32 is a number that has
+> > + * been found to perform at a reasonable compromise between the two goals.
+> >   */
+> > -static u8 __rcu *iw_table;
+> > -static DEFINE_MUTEX(iw_table_lock);
+> > +static const int weightiness = 32;
+> > +
+> > +/* wi_state is RCU protected */
+> 
+> "__rcu" below can replace the above comments?
+
+Yes, I will remove the comments above.
+
+> > +static struct weighted_interleave_state __rcu *wi_state;
+> > +static unsigned int *node_bw_table;
+> > +
+> > +/*
+> > + * wi_state_lock protects both wi_state and node_bw_table.
+> > + * node_bw_table is only used by writers to update wi_state.
+> > + */
+> > +static DEFINE_MUTEX(wi_state_lock);
+> >  
+> >  static u8 get_il_weight(int node)
+> >  {
+> > -	u8 *table;
+> > -	u8 weight;
+> > +	u8 weight = 1;
+> >  
+> >  	rcu_read_lock();
+> > -	table = rcu_dereference(iw_table);
+> > -	/* if no iw_table, use system default */
+> > -	weight = table ? table[node] : 1;
+> > -	/* if value in iw_table is 0, use system default */
+> > -	weight = weight ? weight : 1;
+> > +	if (rcu_access_pointer(wi_state))
+> > +		weight = rcu_dereference(wi_state)->iw_table[node];
+> 
+> IIUC, wi_state may be changed between rcu_access_pointer() and
+> rcu_dereference().  If so, it's better to use rcu_dereference()
+> directly.
+
+Yes, you are correct. To be completely transparent, I had misunderstood
+the rcu_dereference_pointer function and had assumed NULL pointers should
+not be passed to it. I now understand that we should actually do the null check
+afterwards. There are a few other places where this is used -- I'll go and
+fix all of them.
+
+[...snip...]
+
+> > +int mempolicy_set_node_perf(unsigned int node, struct access_coordinate *coords)
+> > +{
+> > +	struct weighted_interleave_state *new_wi_state, *old_wi_state = NULL;
+> > +	unsigned int *old_bw, *new_bw;
+> > +	unsigned int bw_val;
+> > +	int i;
+> > +
+> > +	bw_val = min(coords->read_bandwidth, coords->write_bandwidth);
+> > +	new_bw = kcalloc(nr_node_ids, sizeof(unsigned int), GFP_KERNEL);
+> > +	if (!new_bw)
+> > +		return -ENOMEM;
+> > +
+> > +	new_wi_state = kzalloc(struct_size(new_wi_state, iw_table, nr_node_ids),
+> > +			       GFP_KERNEL);
+> 
+> NIT: because we will always initialize new_wi_state->iw_table[] below,
+> we can just use kmalloc() and initailze new_wi_state->mode_auto?
+
+Yes, this makes sense to me.
+
+> > +	if (!new_wi_state) {
+> > +		kfree(new_bw);
+> > +		return -ENOMEM;
+> > +	}
+> > +	for (i = 0; i < nr_node_ids; i++)
+> > +		new_wi_state->iw_table[i] = 1;
+> > +
+> > +	/*
+> > +	 * Update bandwidth info, even in manual mode. That way, when switching
+> > +	 * to auto mode in the future, iw_table can be overwritten using
+> > +	 * accurate bw data.
+> > +	 */
+> > +	mutex_lock(&wi_state_lock);
+> > +
+> > +	old_bw = node_bw_table;
+> > +	if (old_bw)
+> > +		memcpy(new_bw, old_bw, nr_node_ids * sizeof(unsigned int));
+> 
+> I prefer
+> 
+> 		memcpy(new_bw, old_bw, nr_node_ids * sizeof(*old_bw));
+> 
+> a little.  But it's not a big deal.
+
+We can do this. old_bw should not be null here, anyways!
+
+> > +	new_bw[node] = bw_val;
+> > +	node_bw_table = new_bw;
+> > +
+> > +	/* wi_state not initialized yet; assume auto == true */
+> > +	if (!rcu_access_pointer(wi_state))
+> > +		goto reduce;
+> > +
+> > +	old_wi_state = rcu_dereference_protected(wi_state,
+> > +					lockdep_is_held(&wi_state_lock));
+> > +	if (old_wi_state->mode_auto)
+> 
+> Because we can use "!old_wi_state || !old_wi_state->mode_auto" here, I
+> don't think rcu_access_pointer() above gives us something.
+
+Sounds good as well.
+
+> > +		goto reduce;
+> > +
+> > +	mutex_unlock(&wi_state_lock);
+> > +	kfree(new_wi_state);
+> > +	kfree(old_bw);
+> > +	return 0;
+> > +
+> > +reduce:
+> > +	new_wi_state->mode_auto = true;
+> > +	reduce_interleave_weights(new_bw, new_wi_state->iw_table);
+> > +	rcu_assign_pointer(wi_state, new_wi_state);
+> > +
+> > +	mutex_unlock(&wi_state_lock);
+> > +	if (old_wi_state) {
+> > +		synchronize_rcu();
+> > +		kfree(old_wi_state);
+> > +	}
+> > +	kfree(old_bw);
+> > +
+> > +	return 0;
+> > +}
+> > +
+> >  /**
+> >   * numa_nearest_node - Find nearest node by state
+> >   * @node: Node id to start the search
+> > @@ -1988,34 +2093,33 @@ static unsigned int weighted_interleave_nid(struct mempolicy *pol, pgoff_t ilx)
+> >  	u8 *table;
+> >  	unsigned int weight_total = 0;
+> >  	u8 weight;
+> > -	int nid;
+> > +	int nid = 0;
+> >  
+> >  	nr_nodes = read_once_policy_nodemask(pol, &nodemask);
+> >  	if (!nr_nodes)
+> >  		return numa_node_id();
+> >  
+> >  	rcu_read_lock();
+> > -	table = rcu_dereference(iw_table);
+> > +	if (!rcu_access_pointer(wi_state))
+> > +		goto out;
+> 
+> If wi_state == NULL, why should we always return 0?  IIUC, wi_state ==
+> NULL means the weight of any node is 1.
+
+That is true, we can still find out what the correct value should be
+based on just assuming all weights to be 1 -- I will make this change.
+
+> > +
+> > +	table = rcu_dereference(wi_state)->iw_table;
+> >  	/* calculate the total weight */
+> > -	for_each_node_mask(nid, nodemask) {
+> > -		/* detect system default usage */
+> > -		weight = table ? table[nid] : 1;
+> > -		weight = weight ? weight : 1;
+> > -		weight_total += weight;
+> > -	}
+> > +	for_each_node_mask(nid, nodemask)
+> > +		weight_total += table ? table[nid] : 1;
+> 
+> When will table be NULL here?
+
+It couldn't before. But given your feedback above, we can just set
+table to be null if iw_table does not exist, and the code should behave
+as intended.
+
+[...snip...]
+
+> > +update_wi_state:
+> > +	rcu_assign_pointer(wi_state, new_wi_state);
+> > +	mutex_unlock(&wi_state_lock);
+> > +	if (old_wi_state) {
+> > +		synchronize_rcu();
+> > +		kfree(old_wi_state);
+> > +	}
+> > +	return count;
+> > +}
+> > +
+> > +static struct kobj_attribute wi_attr =
+> 
+> NIT: "wi_attr" appears too general for me.  Maybe something like
+> "wi_auto_attr"?
+
+Will do!
+> ---
+> Best Regards,
+> Huang, Ying
+
+Thank you for all of your feedback, Ying! I will send out a v8 soon with
+all of your proposed changes. Have a great day!
+Joshua
+
+Sent using hkml (https://github.com/sjp38/hackermail)
+
 
