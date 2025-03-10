@@ -1,201 +1,156 @@
-Return-Path: <linux-kernel+bounces-553480-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-553481-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 239C3A58A33
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 03:04:06 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id ADD46A58A35
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 03:07:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7EAE07A4BF7
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 02:03:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 72BB73A7A65
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 02:07:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34CE818E764;
-	Mon, 10 Mar 2025 02:03:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A535156861;
+	Mon, 10 Mar 2025 02:07:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="bVOnBdhh"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
+	dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b="vt/KUrgO"
+Received: from gate2.alliedtelesis.co.nz (gate2.alliedtelesis.co.nz [202.36.163.20])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97DF0AD2F;
-	Mon, 10 Mar 2025 02:03:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31C0BAD2F
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 02:07:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.36.163.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741572233; cv=none; b=qtFGsOGn4qyGdM4NNjJHnej6KN4awnRtQbUe6oqzGWfzdhF/6+nLeKCycXzRC72OzHhfHnSlDrwVyv4YChTVaeCMbBdR2eY2rcVQw+NNeHka4LLEy57hRX8V1hxNl5McVOKypHMpPCBRiqOqW4GZaWb8qXL2i4OwA1jrMeKC/fk=
+	t=1741572451; cv=none; b=Kg4UL6lCqSIQ8Bc0pHtYh/rz1SlBX2ke0p/MouScNzm5aZV8AWO9xSOCkvlDqN+raLbjanEFAfA+t6au0Ztar4+4PGj4Q6whwi2bDnuPYZPP5XMADa7ioNSLJN25JAyFMJVNoum3lT1Yeg+rTgln7FbIw9UsRT3NLwYX3+tKL8M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741572233; c=relaxed/simple;
-	bh=6CykNk9cUToWOqSzi+0FSLKdtYh2ymFzaVs96PibQ6M=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lOrpxHsAHhgW9/mspaITc4Zz13J/hglJd5jZBUz0OSMlAkGF/vUqhSu2cJO/sUaIWiTq5XQDweOVySFEd/LXNnBoKUYxJYwJ4P74girMsiMGV3q6YxDRvyOmGbe+0K1c6gQKYV3yhXJ9rHjcugk5kHHRR9VEnsjIU92g6MXuuu0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=bVOnBdhh; arc=none smtp.client-ip=192.198.163.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1741572232; x=1773108232;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=6CykNk9cUToWOqSzi+0FSLKdtYh2ymFzaVs96PibQ6M=;
-  b=bVOnBdhhHR3fLgAUAoxH2rDH8/4BS8UwCRvnhjaX5qMo1hL86QRktfKS
-   FxIcl603aNrBvLmRPcB3xccrcRYkNp0QjHluYkM8KBQcPR3sCSGEPlEA0
-   ZhGIKncuuDPoNIRRviehtnAp6iPqedMz3ZxgDu64raUJ0Of7+il+VG7oG
-   Kwwhd530B/TVPhQ8bYiQvIpfU95+VWdafQfM+ytqHUgbx739FnF/hrL6x
-   LZV1OiEC5kcaOxLtarOwY7RRj0C9Tkpy066L5hVuZTCyvw6fqsrULRgJP
-   wW+iVXRSdLjTtIkaMt1WLG9xD7eK/bAn47VsFYiBtnqllucUyErHYVly0
-   w==;
-X-CSE-ConnectionGUID: RUD2yqGSRHKE/8glGRdbGw==
-X-CSE-MsgGUID: ERt7U/cWT/ur0vlls/gYEw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11368"; a="53193565"
-X-IronPort-AV: E=Sophos;i="6.14,235,1736841600"; 
-   d="scan'208";a="53193565"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Mar 2025 19:03:50 -0700
-X-CSE-ConnectionGUID: BjxoIDHuSPq56c0P2KxA4Q==
-X-CSE-MsgGUID: que1fRfzQBqTdfIlhlvZOQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,235,1736841600"; 
-   d="scan'208";a="124456649"
-Received: from lkp-server02.sh.intel.com (HELO a4747d147074) ([10.239.97.151])
-  by fmviesa005.fm.intel.com with ESMTP; 09 Mar 2025 19:03:17 -0700
-Received: from kbuild by a4747d147074 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1trSU6-0003hE-2M;
-	Mon, 10 Mar 2025 02:03:14 +0000
-Date: Mon, 10 Mar 2025 10:02:18 +0800
-From: kernel test robot <lkp@intel.com>
-To: Jan Dakinevich <jan.dakinevich@salutedevices.com>,
-	Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org,
-	Jaroslav Kysela <perex@perex.cz>,
-	Jerome Brunet <jbrunet@baylibre.com>,
-	Kevin Hilman <khilman@baylibre.com>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	linux-amlogic@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-sound@vger.kernel.org, Mark Brown <broonie@kernel.org>,
-	Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Rob Herring <robh@kernel.org>, Takashi Iwai <tiwai@suse.com>
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev
-Subject: Re: [PATCH v2 2/4] ASoC: meson: g12a-toacodec: drop the definition
- of bits
-Message-ID: <202503100909.xnqNYW9u-lkp@intel.com>
-References: <20250309181600.1322701-3-jan.dakinevich@salutedevices.com>
+	s=arc-20240116; t=1741572451; c=relaxed/simple;
+	bh=aD8GUTzbVNOwzccQaH9/7WMvc7yAu3LstpwAie3ywuo=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=tY2i+YZWq1wnmvGjMz+oiQovGPgo/Catb7m1IvHLeDCrRp+CIDe/5sPmaJDWS47eymAYXkSyq5SJTHAqEZniqXjw2OHRBtIKxKN5W3e+KepCnHgprW0oHSG4CzW9HrmjIGte0xfEJg6cmfBM0LsBmKMrpNYQNMU+nXEPTJCHUGI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz; spf=pass smtp.mailfrom=alliedtelesis.co.nz; dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b=vt/KUrgO; arc=none smtp.client-ip=202.36.163.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alliedtelesis.co.nz
+Received: from svr-chch-seg1.atlnz.lc (mmarshal3.atlnz.lc [10.32.18.43])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by gate2.alliedtelesis.co.nz (Postfix) with ESMTPS id 902152C0503;
+	Mon, 10 Mar 2025 15:07:26 +1300 (NZDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alliedtelesis.co.nz;
+	s=mail181024; t=1741572446;
+	bh=aD8GUTzbVNOwzccQaH9/7WMvc7yAu3LstpwAie3ywuo=;
+	h=From:To:CC:Subject:Date:References:In-Reply-To:From;
+	b=vt/KUrgOQjdiCMiSUrM1JiMBe6Dxd8fi5bRP128Jgc//MoJ6XTEHmh+bUv5ymuhqx
+	 myzcsF9OkrQAr7vwe/50hjvBHy4h1IPYhmmhXe1i3aHLRZAaikKmNWRCp1QOQk5hcn
+	 iZK3QhEqvaNDDsQ2A8+Qcym8Z7QaWbfqsgqQw2ucExHCEiP9myjoTLO3NCzgL9kTd8
+	 h1nw8uOsc5NQYgiMUjzeU1Kd06/psSwDrCAu4TGt9GQG9fKb31e4WytJrqQe5T68Hq
+	 LGhEwHfckrrGzjOFo4puvRlmzneVFbFtow9uNJxBWU405gGo+NmYeoJXWxVNfLk78e
+	 f5vUwe8gOHYhw==
+Received: from svr-chch-ex2.atlnz.lc (Not Verified[2001:df5:b000:bc8::76]) by svr-chch-seg1.atlnz.lc with Trustwave SEG (v8,2,6,11305)
+	id <B67ce495e0001>; Mon, 10 Mar 2025 15:07:26 +1300
+Received: from svr-chch-ex2.atlnz.lc (2001:df5:b000:bc8:f753:6de:11c0:a008) by
+ svr-chch-ex2.atlnz.lc (2001:df5:b000:bc8:f753:6de:11c0:a008) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.14; Mon, 10 Mar 2025 15:07:26 +1300
+Received: from svr-chch-ex2.atlnz.lc ([fe80::a9eb:c9b7:8b52:9567]) by
+ svr-chch-ex2.atlnz.lc ([fe80::a9eb:c9b7:8b52:9567%15]) with mapi id
+ 15.02.1544.014; Mon, 10 Mar 2025 15:07:26 +1300
+From: Chris Packham <Chris.Packham@alliedtelesis.co.nz>
+To: Daniel Golle <daniel@makrotopia.org>
+CC: "andrew@lunn.ch" <andrew@lunn.ch>, "hkallweit1@gmail.com"
+	<hkallweit1@gmail.com>, "linux@armlinux.org.uk" <linux@armlinux.org.uk>,
+	"davem@davemloft.net" <davem@davemloft.net>, "edumazet@google.com"
+	<edumazet@google.com>, "kuba@kernel.org" <kuba@kernel.org>,
+	"pabeni@redhat.com" <pabeni@redhat.com>, "sander@svanheule.net"
+	<sander@svanheule.net>, "markus.stockhausen@gmx.de"
+	<markus.stockhausen@gmx.de>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "netdev@vger.kernel.org"
+	<netdev@vger.kernel.org>
+Subject: Re: [PATCH net-next v9] net: mdio: Add RTL9300 MDIO driver
+Thread-Topic: [PATCH net-next v9] net: mdio: Add RTL9300 MDIO driver
+Thread-Index: AQHbkUqaaEyrxv0UqkuL40qCyNEej7Nqu8+AgAAKA4A=
+Date: Mon, 10 Mar 2025 02:07:26 +0000
+Message-ID: <b506b6e9-d5c3-4927-ab2d-e3a241513082@alliedtelesis.co.nz>
+References: <20250309232536.19141-1-chris.packham@alliedtelesis.co.nz>
+ <Z85A9_Li_4n9vcEG@pidgin.makrotopia.org>
+In-Reply-To: <Z85A9_Li_4n9vcEG@pidgin.makrotopia.org>
+Accept-Language: en-NZ, en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <AA3AA2C24FB57441B8315644EB9A92FA@alliedtelesis.co.nz>
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250309181600.1322701-3-jan.dakinevich@salutedevices.com>
+X-SEG-SpamProfiler-Analysis: v=2.4 cv=ccpxrWDM c=1 sm=1 tr=0 ts=67ce495e a=Xf/6aR1Nyvzi7BryhOrcLQ==:117 a=xqWC_Br6kY4A:10 a=75chYTbOgJ0A:10 a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=jdP34snFAAAA:8 a=JlFAmtSrY9ouPlbKkEYA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10 a=jlphF6vWLdwq7oh3TaWq:22
+X-SEG-SpamProfiler-Score: 0
 
-Hi Jan,
-
-kernel test robot noticed the following build warnings:
-
-[auto build test WARNING on broonie-sound/for-next]
-[also build test WARNING on linus/master v6.14-rc5 next-20250307]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Jan-Dakinevich/ASoC-meson-codec-glue-add-support-for-capture-stream/20250310-022013
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
-patch link:    https://lore.kernel.org/r/20250309181600.1322701-3-jan.dakinevich%40salutedevices.com
-patch subject: [PATCH v2 2/4] ASoC: meson: g12a-toacodec: drop the definition of bits
-config: i386-buildonly-randconfig-005-20250310 (https://download.01.org/0day-ci/archive/20250310/202503100909.xnqNYW9u-lkp@intel.com/config)
-compiler: clang version 19.1.7 (https://github.com/llvm/llvm-project cd708029e0b2869e80abe31ddb175f7c35361f90)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250310/202503100909.xnqNYW9u-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202503100909.xnqNYW9u-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
->> sound/soc/meson/g12a-toacodec.c:83:11: warning: result of comparison of constant 18446744073709551615 with expression of type 'typeof (_Generic((mclk_sel), char: (unsigned char)0, unsigned char: (unsigned char)0, signed char: (unsigned char)0, unsigned short: (unsigned short)0, short: (unsigned short)0, unsigned int: (unsigned int)0, int: (unsigned int)0, unsigned long: (unsigned long)0, long: (unsigned long)0, unsigned long long: (unsigned long long)0, long long: (unsigned long long)0, default: (mclk_sel)))' (aka 'unsigned int') is always false [-Wtautological-constant-out-of-range-compare]
-      83 |                                       FIELD_PREP(mclk_sel, mux));
-         |                                       ^~~~~~~~~~~~~~~~~~~~~~~~~
-   include/linux/bitfield.h:115:3: note: expanded from macro 'FIELD_PREP'
-     115 |                 __BF_FIELD_CHECK(_mask, 0ULL, _val, "FIELD_PREP: ");    \
-         |                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   include/linux/bitfield.h:72:53: note: expanded from macro '__BF_FIELD_CHECK'
-      72 |                 BUILD_BUG_ON_MSG(__bf_cast_unsigned(_mask, _mask) >     \
-         |                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~
-      73 |                                  __bf_cast_unsigned(_reg, ~0ull),       \
-         |                                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-      74 |                                  _pfx "type of reg too small for mask"); \
-         |                                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   include/linux/build_bug.h:39:58: note: expanded from macro 'BUILD_BUG_ON_MSG'
-      39 | #define BUILD_BUG_ON_MSG(cond, msg) compiletime_assert(!(cond), msg)
-         |                                     ~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~
-   include/linux/compiler_types.h:542:22: note: expanded from macro 'compiletime_assert'
-     542 |         _compiletime_assert(condition, msg, __compiletime_assert_, __COUNTER__)
-         |         ~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   include/linux/compiler_types.h:530:23: note: expanded from macro '_compiletime_assert'
-     530 |         __compiletime_assert(condition, msg, prefix, suffix)
-         |         ~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   include/linux/compiler_types.h:522:9: note: expanded from macro '__compiletime_assert'
-     522 |                 if (!(condition))                                       \
-         |                       ^~~~~~~~~
-   1 warning generated.
-
-
-vim +83 sound/soc/meson/g12a-toacodec.c
-
-    42	
-    43	static int g12a_toacodec_mux_put_enum(struct snd_kcontrol *kcontrol,
-    44					      struct snd_ctl_elem_value *ucontrol)
-    45	{
-    46		struct snd_soc_component *component =
-    47			snd_soc_dapm_kcontrol_component(kcontrol);
-    48		struct g12a_toacodec *priv = snd_soc_component_get_drvdata(component);
-    49		struct snd_soc_dapm_context *dapm =
-    50			snd_soc_dapm_kcontrol_dapm(kcontrol);
-    51		struct soc_enum *e = (struct soc_enum *)kcontrol->private_value;
-    52		unsigned int mclk_sel = GENMASK(2, 0);
-    53		unsigned int mux, reg;
-    54	
-    55		if (ucontrol->value.enumerated.item[0] >= e->items)
-    56			return -EINVAL;
-    57	
-    58		mux = snd_soc_enum_item_to_val(e, ucontrol->value.enumerated.item[0]);
-    59		regmap_field_read(priv->field_dat_sel, &reg);
-    60	
-    61		if (mux == reg)
-    62			return 0;
-    63	
-    64		/* Force disconnect of the mux while updating */
-    65		snd_soc_dapm_mux_update_power(dapm, kcontrol, 0, NULL, NULL);
-    66	
-    67		regmap_field_write(priv->field_dat_sel, mux);
-    68		regmap_field_write(priv->field_lrclk_sel, mux);
-    69		regmap_field_write(priv->field_bclk_sel, mux);
-    70	
-    71		/*
-    72		 * FIXME:
-    73		 * On this soc, the glue gets the MCLK directly from the clock
-    74		 * controller instead of going the through the TDM interface.
-    75		 *
-    76		 * Here we assume interface A uses clock A, etc ... While it is
-    77		 * true for now, it could be different. Instead the glue should
-    78		 * find out the clock used by the interface and select the same
-    79		 * source. For that, we will need regmap backed clock mux which
-    80		 * is a work in progress
-    81		 */
-    82		snd_soc_component_update_bits(component, e->reg, mclk_sel,
-  > 83					      FIELD_PREP(mclk_sel, mux));
-    84	
-    85		snd_soc_dapm_mux_update_power(dapm, kcontrol, mux, e, NULL);
-    86	
-    87		return 1;
-    88	}
-    89	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+SGkgRGFuaWVsLA0KDQpPbiAxMC8wMy8yMDI1IDE0OjMxLCBEYW5pZWwgR29sbGUgd3JvdGU6DQo+
+IEhpIENocmlzLA0KPg0KPiBPbiBNb24sIE1hciAxMCwgMjAyNSBhdCAxMjoyNTozNlBNICsxMzAw
+LCBDaHJpcyBQYWNraGFtIHdyb3RlOg0KPj4gQWRkIGEgZHJpdmVyIGZvciB0aGUgTURJTyBjb250
+cm9sbGVyIG9uIHRoZSBSVEw5MzAwIGZhbWlseSBvZiBFdGhlcm5ldA0KPj4gc3dpdGNoZXMgd2l0
+aCBpbnRlZ3JhdGVkIFNvQy4gVGhlcmUgYXJlIDQgcGh5c2ljYWwgU01JIGludGVyZmFjZXMgb24g
+dGhlDQo+PiBSVEw5MzAwIGhvd2V2ZXIgYWNjZXNzIGlzIGRvbmUgdXNpbmcgdGhlIHN3aXRjaCBw
+b3J0cy4gVGhlIGRyaXZlciB0YWtlcw0KPj4gdGhlIE1ESU8gYnVzIGhpZXJhcmNoeSBmcm9tIHRo
+ZSBEVFMgYW5kIHVzZXMgdGhpcyB0byBjb25maWd1cmUgdGhlDQo+PiBzd2l0Y2ggcG9ydHMgc28g
+dGhleSBhcmUgYXNzb2NpYXRlZCB3aXRoIHRoZSBjb3JyZWN0IFBIWS4gVGhpcyBtYXBwaW5nDQo+
+PiBpcyBhbHNvIHVzZWQgd2hlbiBkZWFsaW5nIHdpdGggc29mdHdhcmUgcmVxdWVzdHMgZnJvbSBw
+aHlsaWIuDQo+Pg0KPj4gU2lnbmVkLW9mZi1ieTogQ2hyaXMgUGFja2hhbSA8Y2hyaXMucGFja2hh
+bUBhbGxpZWR0ZWxlc2lzLmNvLm56Pg0KPj4gLS0tDQo+PiAuLi4NCj4+ICtzdGF0aWMgaW50IHJ0
+bDkzMDBfbWRpb19yZWFkX2MyMihzdHJ1Y3QgbWlpX2J1cyAqYnVzLCBpbnQgcGh5X2lkLCBpbnQg
+cmVnbnVtKQ0KPj4gK3sNCj4+ICsJc3RydWN0IHJ0bDkzMDBfbWRpb19jaGFuICpjaGFuID0gYnVz
+LT5wcml2Ow0KPj4gKwlzdHJ1Y3QgcnRsOTMwMF9tZGlvX3ByaXYgKnByaXY7DQo+PiArCXN0cnVj
+dCByZWdtYXAgKnJlZ21hcDsNCj4+ICsJaW50IHBvcnQ7DQo+PiArCXUzMiB2YWw7DQo+PiArCWlu
+dCBlcnI7DQo+PiArDQo+PiArCXByaXYgPSBjaGFuLT5wcml2Ow0KPj4gKwlyZWdtYXAgPSBwcml2
+LT5yZWdtYXA7DQo+PiArDQo+PiArCXBvcnQgPSBydGw5MzAwX21kaW9fcGh5X3RvX3BvcnQoYnVz
+LCBwaHlfaWQpOw0KPj4gKwlpZiAocG9ydCA8IDApDQo+PiArCQlyZXR1cm4gcG9ydDsNCj4+ICsN
+Cj4+ICsJbXV0ZXhfbG9jaygmcHJpdi0+bG9jayk7DQo+PiArCWVyciA9IHJ0bDkzMDBfbWRpb193
+YWl0X3JlYWR5KHByaXYpOw0KPj4gKwlpZiAoZXJyKQ0KPj4gKwkJZ290byBvdXRfZXJyOw0KPj4g
+Kw0KPj4gKwllcnIgPSByZWdtYXBfd3JpdGUocmVnbWFwLCBTTUlfQUNDRVNTX1BIWV9DVFJMXzIs
+IEZJRUxEX1BSRVAoUEhZX0NUUkxfSU5EQVRBLCBwb3J0KSk7DQo+PiArCWlmIChlcnIpDQo+PiAr
+CQlnb3RvIG91dF9lcnI7DQo+PiArDQo+PiArCXZhbCA9IEZJRUxEX1BSRVAoUEhZX0NUUkxfUkVH
+X0FERFIsIHJlZ251bSkgfA0KPj4gKwkgICAgICBGSUVMRF9QUkVQKFBIWV9DVFJMX1BBUktfUEFH
+RSwgMHgxZikgfA0KPj4gKwkgICAgICBGSUVMRF9QUkVQKFBIWV9DVFJMX01BSU5fUEFHRSwgMHhm
+ZmYpIHwNCj4+ICsJICAgICAgUEhZX0NUUkxfUkVBRCB8IFBIWV9DVFJMX1RZUEVfQzIyIHwgUEhZ
+X0NUUkxfQ01EOw0KPiBVc2luZyAicmF3IiBhY2Nlc3MgdG8gdGhlIFBIWSBhbmQgdGhlcmVieSBi
+eXBhc3NpbmcgdGhlIE1ESU8NCj4gY29udHJvbGxlcidzIHN1cHBvcnQgZm9yIGhhcmR3YXJlLWFz
+c2lzdGVkIHBhZ2UgYWNjZXNzIGlzIHByb2JsZW1hdGljLg0KPiBUaGUgTURJTyBjb250cm9sbGVy
+IGFsc28gcG9sbHMgYWxsIFBIWXMgc3RhdHVzIGluIGhhcmR3YXJlIGFuZCBoZW5jZQ0KPiBiZSBh
+d2FyZSBvZiB0aGUgY3VycmVudGx5IHNlbGVjdGVkIHBhZ2UuIFVzaW5nIHJhdyBhY2Nlc3MgdG8g
+c3dpdGNoDQo+IHRoZSBwYWdlIG9mIGEgUEhZICJiZWhpbmQgdGhlIGJhY2siIG9mIHRoZSBoYXJk
+d2FyZSBwb2xsaW5nIG1lY2hhbmlzbQ0KPiByZXN1bHRzIGluIGluIG9jY2Fzc2lvbmFsIGhhdm9j
+IG9uIGxpbmsgc3RhdHVzIGNoYW5nZXMgaW4gY2FzZSBMaW51eCcNCj4gcmVhZGluZyB0aGUgcGh5
+IHN0YXR1cyBvdmVybGFwcyB3aXRoIHRoZSBoYXJkd2FyZSBwb2xsaW5nLg0KPiBUaGlzIGlzIGVz
+cC4gd2hlbiB1c2luZyBSZWFsVGVrJ3MgMi41R0JpdC9zIFBIWXMgd2hpY2ggcmVxdWlyZSB1c2lu
+Zw0KPiBwYWdlZCBhY2Nlc3MgaW4gdGhlaXIgcmVhZF9zdGF0dXMoKSBmdW5jdGlvbi4NCj4NCj4g
+TWFya3VzIFN0b2NraGF1c2VuIChhbHJlYWR5IGluIENjKSBoYXMgaW1wbGVtZW50ZWQgYSBuaWNl
+IHNvbHV0aW9uIHRvDQo+IHRoaXMgcHJvYmxlbSwgaW5jbHVkaW5nIGRvY3VtZW50YXRpb24sIHNl
+ZQ0KPiBodHRwczovL2dpdC5vcGVud3J0Lm9yZy8/cD1vcGVud3J0L29wZW53cnQuZ2l0O2E9Ymxv
+YjtmPXRhcmdldC9saW51eC9yZWFsdGVrL2ZpbGVzLTYuNi9kcml2ZXJzL25ldC9ldGhlcm5ldC9y
+dGw4Mzh4X2V0aC5jO2g9NGI3OTA5MDY5NmUzNDFlZDFlNDMyYTdlYzVjMGY3ZjkyNzc2ZjBlMTto
+Yj1IRUFEI2wxNjMxDQoNCkkgcmVhZCB0aGF0IGNvZGUvY29tbWVudCBhIGZldyB0aW1lcyBhbmQg
+SSBtdXN0IGFkbWl0IEkgc3RpbGwgZG9uJ3QgDQpxdWl0ZSBnZXQgaXQuIFBhcnQgb2YgdGhlIHBy
+b2JsZW0gbWlnaHQgYmUgdGhhdCBteSBoYXJkd2FyZSBwbGF0Zm9ybSBpcyANCnVzaW5nIEM0NSBQ
+SFlzIGFuZCB0aGF0J3Mgd2hhdCBJJ3ZlIGJlZW4gdGVzdGluZyB3aXRoLiBUaGUgQzIyIHN1cHBv
+cnQgDQppcyBiYXNlZCBvbiBteSByZWFkaW5nIG9mIHRoZSBkYXRhc2hlZXQgYW5kIHNvbWUgb2Yg
+d2hhdCBJIGNhbiBnbGVhbiANCmZyb20gb3BlbndydCAoYWx0aG91Z2ggSSBjb21wbGV0ZWx5IG1p
+c3NlZCB0aGF0IGNvbW1lbnQgd2hlbiBJIHJlYWQgDQp0aHJvdWdoIHRoZSBkcml2ZXIgdGhlIGZp
+cnN0IHRpbWUpLg0KDQo+IEluY2x1ZGluZyBhIHNpbWlsYXIgbWVjaGFuaXNtIGluIHRoaXMgZHJp
+dmVyIGZvciBDMjIgcmVhZCBhbmQgd3JpdGUNCj4gb3BlcmF0aW9ucyB3b3VsZCBiZSBteSBhZHZp
+c2UsIHNvIGhhcmR3YXJlLWFzc2lzdGVkIGFjY2VzcyB0byB0aGUgUEhZDQo+IHBhZ2VzIGlzIGFs
+d2F5cyB1c2VkLCBhbmQgaGVuY2UgdGhlIGhhcmR3YXJlIHBvbGxpbmcgbWVjaGFuaXNtIGlzIGF3
+YXJlDQo+IG9mIHRoZSBjdXJyZW50bHkgc2VsZWN0ZWQgcGFnZS4NCg0KU28gZmFyIHVwc3RyZWFt
+IExpbnV4IGRvZXNuJ3QgaGF2ZSBnZW5lcmljIHBhZ2VkIFBIWSByZWdpc3RlciBmdW5jdGlvbnMu
+IA0KSXQgc291bmRzIGxpa2UgdGhhdCdkIGJlIGEgcHJlcmVxdWlzaXRlIGZvciB0aGlzLg0KDQo+
+IE90aGVyIHRoYW4gdGhhdCB0aGUgZHJpdmVyIGxvb2tzIHJlYWxseSBnb29kIG5vdywgYW5kIHdp
+bGwgYWxsb3cgdXNpbmcNCj4gZXhpc3RpbmcgUmVhbFRlayBQSFkgZHJpdmVycyBpbmRlcGVuZGVu
+dGx5IG9mIHdoZXRoZXIgdGhleSBhcmUgdXNlZCB3aXRoDQo+IFJlYWxUZWsncyBzd2l0Y2ggU29D
+cyBvciB3aXRoIG5vbi1SZWFsVGVrIHN5c3RlbXMgLS0gdGhpcyBoYXMgYWx3YXlzDQo+IGJlZW4g
+YSBiaWcgaXNzdWUgd2l0aCBPcGVuV3J0J3MgY3VycmVudCBpbXBsZW1lbnRhdGlvbiBhbmQgSSBs
+b29rDQo+IGZvcndhcmQgdG8gdXNlIHRoaXMgZHJpdmVyIGluc3RlYWQgYXNhcCA7KQ0K
 
