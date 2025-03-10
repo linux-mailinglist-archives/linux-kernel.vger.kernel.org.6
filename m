@@ -1,157 +1,114 @@
-Return-Path: <linux-kernel+bounces-554948-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-554949-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9142AA5A3B7
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 20:22:00 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 43BCEA5A3B8
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 20:24:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1822F188EEB2
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 19:22:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E87DD3AD9CD
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 19:23:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C917E23537B;
-	Mon, 10 Mar 2025 19:21:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 675A723535F;
+	Mon, 10 Mar 2025 19:24:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="yPwNAbMS";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="uSehyVr+"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="eQpaMRWJ"
+Received: from out-181.mta0.migadu.com (out-181.mta0.migadu.com [91.218.175.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5616D22DF82;
-	Mon, 10 Mar 2025 19:21:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A8E521422E
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 19:24:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741634514; cv=none; b=qlYs42BxSrUpd/VtnB/E7VKbwGFCTyPw6YzBJ5QlhyOFiNoAwIJcoiIjE1wUAPkTkkZm8LAc/xItk4a7U/qFAVPqWPzt8zEf5UZnqFRxrSV8Hmx2AXdZixYdU83wFKM6AYSB4qNbcXEpFgAsFozHYRBfsDSmx6NZ9ZfH3SIX/zU=
+	t=1741634642; cv=none; b=VX8sG4zRbigb3LTDt9IlfGcLW15gQ4FFb5E16WUNjGE73bxpoRrmpnhu3nmPVji+fk9vOBAjwahPCxAYntKXWc1sQk0+91W9QKZq3OVB3WmEDpNHnZNZvO4y+HBVYBAyvgvfANO6I9hd670+bPYkW4/zGwppe4rB4Sdqlm37FG8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741634514; c=relaxed/simple;
-	bh=ANIq6j3myR9Obz/q9e0HvXfdB1ZmzrMo8ohwHCnQNT8=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=sYsFt8Gdwv0q4XDcaZPNSaxRxdi+Hvt/v9DBtI5kkrk/pHf7zMm2cKP3eKtbMTPhPH9W/I5QsUFWqFWeSB61+ovibfVVEQYzfm4f+tbQMWSGdAZgkFsziZgWg5cSdxMWky6vZzTywtYP+TKbD92qSQZjp2D6qfOQ079QPEzfK84=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=yPwNAbMS; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=uSehyVr+; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Mon, 10 Mar 2025 19:21:49 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1741634510;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=599QZNlMfFAZa1S3BX5XfssZn2IuGwDxBQ9UA695eMI=;
-	b=yPwNAbMSwDNcxOTLpMOYjqob8Uf1hCW4PqeH27mzjjg8I5lujFSAa3n27i2IcHPfWnQ8ip
-	gsMIXgVWUQTIARP9dUozNQffHLz2pK+4q7eu+0DaWNokyt2CrXY+eV71g1fksnZwUE2oqa
-	c7PblyvYXtPrHy1ZzlsOtjKtXY+OD8zAo0P4eWR1D3DRjbB0g8ay+uupQ6n/zxxY1HUX7q
-	lvKRslQoap7HqQXoJy3nW6FIoUj1nH5Uy7Ha/I5bgkVYJ5nArodFqKvhR0RSYdpIYtCzaM
-	1UCa6GxSr94KzGbpF/w4hj2ccdmCl06Phl8GkZfMvuuQ7oMrO51tGur5bYnISg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1741634510;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=599QZNlMfFAZa1S3BX5XfssZn2IuGwDxBQ9UA695eMI=;
-	b=uSehyVr+OiADb+oXGiiLzE3pt+wpqNgLmGBBZo3VxzlRUbfeEa7z8Zqw8KUjyy17IW+/WR
-	Nbl0Qm+k8auPLqDw==
-From: "tip-bot2 for Arnd Bergmann" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: x86/cleanups] x86/coco: Replace 'static const cc_mask' with the
- newly introduced cc_get_mask() function
-Cc: Arnd Bergmann <arnd@arndb.de>, Ingo Molnar <mingo@kernel.org>,
- Linus Torvalds <torvalds@linux-foundation.org>, x86@kernel.org,
- linux-kernel@vger.kernel.org
-In-Reply-To: <20250310131114.2635497-1-arnd@kernel.org>
-References: <20250310131114.2635497-1-arnd@kernel.org>
+	s=arc-20240116; t=1741634642; c=relaxed/simple;
+	bh=IBF/Hw53mk/kxLoojQzHTGPDpYoSnM0LJgRfCo+CXxw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=LI7L7pKmBofdiXej+568Qk1MsIi/gssBazaYQhGihWgL22haocDZwsgbmcH0g1c48BhucpaUtuuv87P2Z8X6aqMgPAx6hwaqDBFOuDx70aYTb3KEaMctF+jLAxV77J36i3dBTvngRdhjINuqCblydfZJi0qLPoDdcVSm4ZRVsis=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=eQpaMRWJ; arc=none smtp.client-ip=91.218.175.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1741634628;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=rXMAaVXrQ0MJdauHGwB3sTIki68VqN7FkX+wHWA/QGE=;
+	b=eQpaMRWJdqK5ySjcyDP+SLpV1lXS11PaIH3FnlTh4oxD0DVUY75Lun3XLlM/taAhwReIDB
+	JRVotSfoCiV0MZRnLcMnOQFd0hOoLxxlTMYQV0kA7vhfn9qfiyuSnCO5M86kAtdt4EFKqn
+	CWoZYANnYOy8nEZQICYkEwBjzTOSy0M=
+From: Thorsten Blum <thorsten.blum@linux.dev>
+To: Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	"Liang, Kan" <kan.liang@linux.intel.com>
+Cc: Thorsten Blum <thorsten.blum@linux.dev>,
+	linux-perf-users@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] perf/core: Remove size arguments when calling strscpy()
+Date: Mon, 10 Mar 2025 20:23:35 +0100
+Message-ID: <20250310192336.442994-1-thorsten.blum@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <174163450903.14745.16641563607434815843.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-The following commit has been merged into the x86/cleanups branch of tip:
+The size parameter is optional and strscpy() automatically determines
+the length of the destination buffer using sizeof() if the argument is
+omitted. This makes the explicit sizeof() calls unnecessary.
 
-Commit-ID:     ec73859d76db768da97ee799a91eb9c7d28974fe
-Gitweb:        https://git.kernel.org/tip/ec73859d76db768da97ee799a91eb9c7d28974fe
-Author:        Arnd Bergmann <arnd@arndb.de>
-AuthorDate:    Mon, 10 Mar 2025 14:10:59 +01:00
-Committer:     Ingo Molnar <mingo@kernel.org>
-CommitterDate: Mon, 10 Mar 2025 20:06:47 +01:00
+Furthermore, KSYM_NAME_LEN is equal to sizeof(name) and can also be
+removed. Remove them to shorten and simplify the code.
 
-x86/coco: Replace 'static const cc_mask' with the newly introduced cc_get_mask() function
-
-When extra warnings are enabled, the cc_mask definition in <asm/coco.h>
-causes a build failure with GCC:
-
-  arch/x86/include/asm/coco.h:28:18: error: 'cc_mask' defined but not used [-Werror=unused-const-variable=]
-     28 | static const u64 cc_mask = 0;
-
-Add a cc_get_mask() function mirroring cc_set_mask() for the one
-user of the variable outside of the CoCo implementation.
-
-Fixes: a0a8d15a798b ("x86/tdx: Preserve shared bit on mprotect()")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Link: https://lore.kernel.org/r/20250310131114.2635497-1-arnd@kernel.org
-
---
-v2: use an inline helper instead of a __maybe_unused annotaiton.
+Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
 ---
- arch/x86/include/asm/coco.h          | 10 +++++++++-
- arch/x86/include/asm/pgtable_types.h |  2 +-
- 2 files changed, 10 insertions(+), 2 deletions(-)
+ kernel/events/core.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/arch/x86/include/asm/coco.h b/arch/x86/include/asm/coco.h
-index aa6c8f8..e722545 100644
---- a/arch/x86/include/asm/coco.h
-+++ b/arch/x86/include/asm/coco.h
-@@ -15,6 +15,11 @@ enum cc_vendor {
- extern enum cc_vendor cc_vendor;
- extern u64 cc_mask;
+diff --git a/kernel/events/core.c b/kernel/events/core.c
+index 823aa0824916..e4b071fc7d74 100644
+--- a/kernel/events/core.c
++++ b/kernel/events/core.c
+@@ -8589,7 +8589,7 @@ static void perf_event_comm_event(struct perf_comm_event *comm_event)
+ 	unsigned int size;
  
-+static inline u64 cc_get_mask(void)
-+{
-+	return cc_mask;
-+}
-+
- static inline void cc_set_mask(u64 mask)
- {
- 	RIP_REL_REF(cc_mask) = mask;
-@@ -25,7 +30,10 @@ u64 cc_mkdec(u64 val);
- void cc_random_init(void);
- #else
- #define cc_vendor (CC_VENDOR_NONE)
--static const u64 cc_mask = 0;
-+static inline u64 cc_get_mask(void)
-+{
-+	return 0;
-+}
+ 	memset(comm, 0, sizeof(comm));
+-	strscpy(comm, comm_event->task->comm, sizeof(comm));
++	strscpy(comm, comm_event->task->comm);
+ 	size = ALIGN(strlen(comm)+1, sizeof(u64));
  
- static inline u64 cc_mkenc(u64 val)
- {
-diff --git a/arch/x86/include/asm/pgtable_types.h b/arch/x86/include/asm/pgtable_types.h
-index 4b80453..9c4d9fa 100644
---- a/arch/x86/include/asm/pgtable_types.h
-+++ b/arch/x86/include/asm/pgtable_types.h
-@@ -177,7 +177,7 @@ enum page_cache_mode {
- };
- #endif
+ 	comm_event->comm = comm;
+@@ -9033,7 +9033,7 @@ static void perf_event_mmap_event(struct perf_mmap_event *mmap_event)
+ 	}
  
--#define _PAGE_CC		(_AT(pteval_t, cc_mask))
-+#define _PAGE_CC		(_AT(pteval_t, cc_get_mask()))
- #define _PAGE_ENC		(_AT(pteval_t, sme_me_mask))
+ cpy_name:
+-	strscpy(tmp, name, sizeof(tmp));
++	strscpy(tmp, name);
+ 	name = tmp;
+ got_name:
+ 	/*
+@@ -9457,7 +9457,7 @@ void perf_event_ksymbol(u16 ksym_type, u64 addr, u32 len, bool unregister,
+ 	    ksym_type == PERF_RECORD_KSYMBOL_TYPE_UNKNOWN)
+ 		goto err;
  
- #define _PAGE_CACHE_MASK	(_PAGE_PWT | _PAGE_PCD | _PAGE_PAT)
+-	strscpy(name, sym, KSYM_NAME_LEN);
++	strscpy(name, sym);
+ 	name_len = strlen(name) + 1;
+ 	while (!IS_ALIGNED(name_len, sizeof(u64)))
+ 		name[name_len++] = '\0';
+-- 
+2.48.1
+
 
