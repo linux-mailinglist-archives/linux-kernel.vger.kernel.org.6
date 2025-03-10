@@ -1,84 +1,84 @@
-Return-Path: <linux-kernel+bounces-555088-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-555094-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 23161A5A550
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 21:52:08 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E5E43A5A555
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 21:52:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3BC59173A37
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 20:52:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6E88918925A2
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 20:53:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 313681E0DDC;
-	Mon, 10 Mar 2025 20:51:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AAD31E47AE;
+	Mon, 10 Mar 2025 20:51:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="NRjcTaTr";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="DXLdL6+0"
-Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="JPG8LQpy";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="uh92e+t3"
+Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFCE31DEFD4
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 20:51:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABDC81DF26A
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 20:51:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741639908; cv=fail; b=VXYP6Qy2fPnbxT5RJQPL1JN4/VlAghvovnkPeKJVUvjimSz4q/qRv/Z4UWverQoK2kfhbcX+24c+uTNE3gJsrhBxt8F58xCxIX0B5qAHzT8/eioac85lwtzQhzs3iXS+bPIO9GyWZ2vQYSUuW4seybuYA+Lsq1aj/cfba78uYwc=
+	t=1741639918; cv=fail; b=ni498u62Qez+si/5k0EpId9eoQ8oTRAeNuVPYNymLGzjMOC3wFDBOEVa4eLJNRTnwhBxLA9S8XIeHqM029el2bnTJnp83SHK9Whr0aplKyZw0Sh+td6e/XQWrzzbzIDlAXtD4vbv3IUhlKkMki348DU8aNudPGGAUL8Ni2Xtc2s=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741639908; c=relaxed/simple;
-	bh=PzFGo8XJjJHigsl/vC7GTVKr0AS5wwEI8wamyqD07R8=;
+	s=arc-20240116; t=1741639918; c=relaxed/simple;
+	bh=k++NP4RpuHULGmCMer4GdABYCWAmOKrpdPJUJz1vSLs=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=fzclyLKU3iiIHZRkI7f6ZKa5gj7qxgI4p+xYFCxpVudiQOD27N1VT9BJ/YUKyiOpyy7jQJh8Cuk86WWUeLCU/yhRpDxhAS38DbqNM2HgxUxIkIBMoa68rhuQunvWsmPrLZbkZXfHV1Bh1KtLrZJe+NhLbnF0kMkgxFOEPDuAdeQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=NRjcTaTr; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=DXLdL6+0; arc=fail smtp.client-ip=205.220.177.32
+	 Content-Type:MIME-Version; b=I0rb+oo4DtjR8vVeDvhAiXDYd2pRart15tycGo4hGpk8z+VAZv4TylZK791v98+ovQThhKEA+lTsRHryhXpR7nNKvYJMkc3GxGfiDBMF3sxp7evs0S3TR/lwu48GkpReKUIbAR6xi0mt00T0qSN6QMbgdifzTbmCPea1TZNbTZU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=JPG8LQpy; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=uh92e+t3; arc=fail smtp.client-ip=205.220.165.32
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246632.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52AJtwlY002661;
-	Mon, 10 Mar 2025 20:51:35 GMT
+Received: from pps.filterd (m0333521.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52AJtlPc023523;
+	Mon, 10 Mar 2025 20:51:38 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
 	:content-transfer-encoding:content-type:date:from:in-reply-to
 	:message-id:mime-version:references:subject:to; s=
-	corp-2023-11-20; bh=3IEXdrd+htUza/gi+AInBAhDpe7VVvHgfAnuFGhv4vc=; b=
-	NRjcTaTrCLMhvl9M8xNs3cpC94b5sHvqbWQL/yp45xnba6Tsh5FgETDFMTyUXEsm
-	0CDT5ViW8jpauD0v+ISzYaoqKfzDIyS248UBejGlOYTCOJsFFdtu3p4TXlr09nOk
-	dQk+rAl46y3rtTJe6zgq5pUo7b1FCWg6ubnJnaIvWiPYMRs6DSHEniiLXq+l9Qx+
-	RWY1L9uTsSDbHKNroiEJW2uxJV4dWOsBOJ1gHO90zmg6dq1bc5tQjWgda8YSHG7P
-	aU5gbqLFRsJ7dSKspDb+dQ9BBN6I4qq+fR9B1T9JyPrNcc4L5CopCQAaVYNyJzq7
-	ZuCg29P9UASb8VSb0TPgdQ==
-Received: from iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta01.appoci.oracle.com [130.35.100.223])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 458dgt3gff-1
+	corp-2023-11-20; bh=kYvPH1xqsucyarxMcUO2+UA36cQxvVaeGgCKwzhQaf0=; b=
+	JPG8LQpyulAtBEODvzZ9K8fb4TMlpMOZE6jOV3A6h9YK1e5PYZd1eyUoyBWlxFWq
+	grd6QqvPoj6ltdzKff+9uOP1miRKf0gJZG9T29EAFM017vsbQsLJYSOfBcLge7ZJ
+	lSqc2zebe3XuHEgHLy0oSNQrYIjbTvRNDF5eJLlouucPaBUzMbQ4fiCI2KDevuhS
+	LBdT3MqHWUeFOcfLm00r5pGjUaKCwn5nHnDr/8M+q+athXH69A8THyszVNnM5pYM
+	zLTPsn6e9d7xsAeu27dCiN3bGWjv8U42eUk2sePWNVdtmczFX2CE6MwkfXCR/Fkn
+	ExM2NCVeFi04Kf6BwmbHpQ==
+Received: from phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta01.appoci.oracle.com [138.1.114.2])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 458ctb3m7a-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 10 Mar 2025 20:51:35 +0000 (GMT)
-Received: from pps.filterd (iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 52AJupWj021906;
-	Mon, 10 Mar 2025 20:51:34 GMT
-Received: from nam11-co1-obe.outbound.protection.outlook.com (mail-co1nam11lp2174.outbound.protection.outlook.com [104.47.56.174])
-	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 458wmnm5gu-1
+	Mon, 10 Mar 2025 20:51:37 +0000 (GMT)
+Received: from pps.filterd (phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 52AJmvP4030644;
+	Mon, 10 Mar 2025 20:51:36 GMT
+Received: from nam11-dm6-obe.outbound.protection.outlook.com (mail-dm6nam11lp2169.outbound.protection.outlook.com [104.47.57.169])
+	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 458gcmgcuc-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 10 Mar 2025 20:51:34 +0000
+	Mon, 10 Mar 2025 20:51:36 +0000
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=LjbBmK8h/sPUftQg2RG5L/OgZXleEnEfO1ITW4P5a9EJKiX2TqGf80Aaw4+UbpqNPsFwUFF0iVogZKkG932MG54YA592ufIYpyiLSkcYVDZCf9gyw/Yck054vlnmO5VLRIiPvwZAZonLXzQq2XZXWuVp3rpsd15BtcaWoQpByFsQ643sXhbZIHUFT0zDLBojJA54eXkjdSqT+erIs25LQZwKH7I6o9vAJCiqK2GqRiHef0wHmYWJf0pIUJqzUeTnmTyiuvkEOxPuANj/om9MZUWuGm53S4kwBzi1ya8lhr3gKaTlu9lDGBS1KavLv2nA+VWNL2gf8XJ/MsxpXrGcQA==
+ b=inID2LYUTqQwsaTgjdGveTDKVfpkCkH0kzkI28kD3Pzqu8Mvhm+sHJ0Hbao8NmmBLvXkVCSXRTh41Q1btOJTHPAfJdW9SNEfRAagKW7tEZglcFtu9SKNaWBBf3dlTJQ4lhw3xNNnidJqzbBa0xrltQbu06gGmiuhoFNwzYptzDzP3EaCBz8zqM2U/gIw3OmtAZCgslXgEDLVL7WOgQdq/34HwlYIXC1FsKHMp3t+vZsMNUvZpsRt4vaBTkO00wFQjw2jI7nhA+0BLFHrKFcxQwHnU+tnOgxWjgPbVkpwy1t/w51jVOHSep4v6r3vq3bW01EiJjsF1zbWYfSlJrWLYA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=3IEXdrd+htUza/gi+AInBAhDpe7VVvHgfAnuFGhv4vc=;
- b=gcqTElkCW1+SQXqvDJzRdQbGJj0mQZdEVJD6BpcHTAsTtA5okUT6qvyRjACKLMmDLLG4H/a8y0DJeXw/BSCUk8cLhPEmCdURWuqPMYH+f2CS+FuDsJzcLmMEFCzcg798U4isFC0gRfvI2xIGqwLRWhObJvIgw3v0r1Ou/qKHctYObcNWv9CuSikgGnNXotT6ldcfm2pXz+GviQDLvSYPo7I5bxR7l9tZCjqEyhL/oxYOQ9ZAbhrh9ro+KBrAsaOGdb2dPGGNT/HY7yQJQLzRNjwvZI5x/xmk/XEzIE3+l9eOUbIyknkXSSDuRc0ABrDHbjybWV+KXLszbJ/nfeyHqw==
+ bh=kYvPH1xqsucyarxMcUO2+UA36cQxvVaeGgCKwzhQaf0=;
+ b=koM6tBriC3P/GwCGFvh8cV2b0uH4msrZa5OkWltwANNpzzYNsgGUFVwjxAwCspm/cDbZ6FJPGwtC7sTVzVu7R27g2s3HHBNT9WdM8nITuetg0dsyGVutehmAJluh4ZlcDgh2zrp6Yjjta2w5JQ9MVLdIOKiu/I9//JcTN0tYUw4etFM4dp1dBJTuDppOeNTot5euXOnhkmS1UK48Yjxt1umEryvLhTvPHcppAGWNlOfDFn6IediaLftnEalZslvVEUc3+Oj89x9+KUjvcHCyDspkCH3o2aT62id6aBabUHz7U/0voW6ICdJ2uycNn/RT+f69Mpa+nLiv/p+jysyWNg==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
  dkim=pass header.d=oracle.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=3IEXdrd+htUza/gi+AInBAhDpe7VVvHgfAnuFGhv4vc=;
- b=DXLdL6+09+nyRFAu1rHTyW614sg47hXkM6u+wwFH6lDVq05nFLYJn5pMyZoLyyCLfnkFsOUJGLY3DebnXi/LBgdYZJi/++Iu/CzF5I06vBT11Z9M39isFTFv+sQnS8hZsQPQnieSdahttE9qJOa/1RV5JiJeaUab3NpNGduC9WQ=
+ bh=kYvPH1xqsucyarxMcUO2+UA36cQxvVaeGgCKwzhQaf0=;
+ b=uh92e+t3g+mzJaQ64QRT5O5uNafRtNt7UK/sww6OepTWm7kwFmgoaTecURo3QMtydDXBRebqBiKYuSxT44Blt5QTCv0sBIxN6U8aU0fJGTxGas81fHr7fFw0uuE+tOMQJgwAOCDT5rR6jsEzYM+GLiWunHEpDv+ylMSzPT/BegM=
 Received: from MN2PR10MB4112.namprd10.prod.outlook.com (2603:10b6:208:11e::33)
  by DS7PR10MB7250.namprd10.prod.outlook.com (2603:10b6:8:e0::16) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8511.27; Mon, 10 Mar
- 2025 20:51:32 +0000
+ 2025 20:51:34 +0000
 Received: from MN2PR10MB4112.namprd10.prod.outlook.com
  ([fe80::3256:3c8c:73a9:5b9c]) by MN2PR10MB4112.namprd10.prod.outlook.com
  ([fe80::3256:3c8c:73a9:5b9c%7]) with mapi id 15.20.8489.025; Mon, 10 Mar 2025
- 20:51:31 +0000
+ 20:51:34 +0000
 From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
 To: Andrew Morton <akpm@linux-foundation.org>
 Cc: "Liam R . Howlett" <Liam.Howlett@oracle.com>,
@@ -86,16 +86,16 @@ Cc: "Liam R . Howlett" <Liam.Howlett@oracle.com>,
         linux-mm@kvack.org, linux-kernel@vger.kernel.org,
         Harry Yoo <harry.yoo@oracle.com>, Yosry Ahmed <yosry.ahmed@linux.dev>,
         Oliver Sang <oliver.sang@intel.com>
-Subject: [PATCH v3 4/7] mm/mremap: initial refactor of move_vma()
-Date: Mon, 10 Mar 2025 20:50:37 +0000
-Message-ID: <ab611d6efae11bddab2db2b8bb3925b1d1954c7d.1741639347.git.lorenzo.stoakes@oracle.com>
+Subject: [PATCH v3 5/7] mm/mremap: complete refactor of move_vma()
+Date: Mon, 10 Mar 2025 20:50:38 +0000
+Message-ID: <e7eaa307e444ba2b04d94fd985c907c8e896f893.1741639347.git.lorenzo.stoakes@oracle.com>
 X-Mailer: git-send-email 2.48.1
 In-Reply-To: <cover.1741639347.git.lorenzo.stoakes@oracle.com>
 References: <cover.1741639347.git.lorenzo.stoakes@oracle.com>
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-ClientProxiedBy: LO4P123CA0463.GBRP123.PROD.OUTLOOK.COM
- (2603:10a6:600:1aa::18) To MN2PR10MB4112.namprd10.prod.outlook.com
+X-ClientProxiedBy: LO2P265CA0432.GBRP265.PROD.OUTLOOK.COM
+ (2603:10a6:600:a0::36) To MN2PR10MB4112.namprd10.prod.outlook.com
  (2603:10b6:208:11e::33)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -105,434 +105,483 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
 X-MS-TrafficTypeDiagnostic: MN2PR10MB4112:EE_|DS7PR10MB7250:EE_
-X-MS-Office365-Filtering-Correlation-Id: 9e883ffb-cf55-44b7-e703-08dd60155669
+X-MS-Office365-Filtering-Correlation-Id: 0593843c-9e42-4989-cc7f-08dd6015579e
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016;
 X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?MZXNOxVWsS0LOZQV96o0P8JQLCOdz5cVJNLFt02CwE+c7qTNOcODmvIfz7ir?=
- =?us-ascii?Q?iE+22Q7Gv4GHpk72SZPWaH4UuR9ERWlMDgW3uwOAyhbyx5Nua4WeWX0Eh8vN?=
- =?us-ascii?Q?OijMgGGFJaC1vtt+6oOImwS5G9EmqiZpG2NF9OLsZpkvP360ieptOsp7T+/S?=
- =?us-ascii?Q?jAzYx1rzL70Bsf5QaNWyI/ZctbcRNt545zlW29EUz4tWn8erBdHTgdmPknI5?=
- =?us-ascii?Q?c1JHG2QLpkNQeWfnXtawoCZf2MPwKi51GpOdIx8ofS4GEsY2MG1nWu9IgZ+V?=
- =?us-ascii?Q?2SfgDsa936TS3+7n0XqjSEZ0+7RUMz+NpLzFhKlp0M7gwfWFJcYc+SeBLaKn?=
- =?us-ascii?Q?CUB+CzDaiU1+QjoprlLF1cb5rb6pRaCg2p/t5KmXQCZISeZYiR8qJAdivG6n?=
- =?us-ascii?Q?JKOMF+Q0Xkla2jJ8ilTEDkxY3OZ/FrcJuwINrIXjtKbMLHBv1Ner8XB7VU4I?=
- =?us-ascii?Q?9AixHBifc0h+4aOVRBARmQk4PXL5JGHz0aKTVOc5yitVT1up0fFRjEzgrBYM?=
- =?us-ascii?Q?jgxnakUc0MfURNGojIEg/f98IWE1liHY7OiIp28b4lvsu2bs4fPeBbaOQsXP?=
- =?us-ascii?Q?IT1Uj1kLQzszj2M4emVNu/Pqul7i4Bw8j/9c5+ZSwRUkFdsiJX28qQrwMvBh?=
- =?us-ascii?Q?0Hw6fFKDUe1+pgf09M4eCissU8CHUYNwHpDyDQn9ymslEx4yKmkwKrMiRd3j?=
- =?us-ascii?Q?5aBCcu7UClXPTbSb8ChlkLpxwBQvEmevcka58qRdSVaOPjf0/jYltSDbnN74?=
- =?us-ascii?Q?9tbRVqSjxcFmPK5l2ulStso64gP9it6Cn8ELYxym2Cis36QtshHH8LyHoLeO?=
- =?us-ascii?Q?2zN+Akb2j73HwIPzIKmbfZYqddQH2cDDJYG8m1O4GaokpUcM5qf4Mf2/YwjG?=
- =?us-ascii?Q?1gIybLj1PByitPqQg5TYTPJDlsPDZUeFixCD4EUR4USBcZv2DK0UFAs6pJLP?=
- =?us-ascii?Q?Dmi5FMQIiolJfxGxC9FOh5B/zrDAy5Kb0oJpgVjuB6cElMMWT9LYiMwmUkxr?=
- =?us-ascii?Q?evfZFJ6hL4lgstomj/qzx62iZBKmnKzq/3kuAd/VuHJJSFMlY8Hh0Cas7+jW?=
- =?us-ascii?Q?WWYjgfEJRR7KCrZHl3fjrA7L9EWlLlnVvoCpF/zmcE3vXLvf79NtRybhNNEo?=
- =?us-ascii?Q?IH9HPlK0xVH0095zAgEayVMV4mpLfaR3HNnnP2kS/XnQ0BJ923YSeUxAOYkI?=
- =?us-ascii?Q?VXZRCc2RusxMjV83XQN40pbXjbCx7ZodErpGYO878MhbsfnpnsUHTpPS1UKE?=
- =?us-ascii?Q?U7QzWkw278faahInCzsKHvE1on2JgT83KdfIWid8fJ6FmmZrPlfArwhdoun9?=
- =?us-ascii?Q?C37Hat4IFAQmK8UkiDa+rTCw1kswLtr/W30rM23nPgp2ZlEEwN7I/XUMQobq?=
- =?us-ascii?Q?JPhG/GMN5p71Swgg0KKFaRttSN9D?=
+	=?us-ascii?Q?Gj8tvzM+yfpZkKJ4opUv20PcfEmlYowfr03KhNk+Xu4LeAEfqwaouQNANQBc?=
+ =?us-ascii?Q?UM8ukSmjjw1IM4s6TYweOEnndmgL5DSVBlHzWm03OkkvY9UnE7nRdYGuHQ8e?=
+ =?us-ascii?Q?YuN/PlKgZMFulnhV9UlNHKLWzQr2ytzYOGENyyAQBplmiMG5jIHmgKQc3t5J?=
+ =?us-ascii?Q?OfFqrlfKhVMskRHVtlirP5mx9MUeJy/Wh9fl/zipZmRwtLWf56EhvgSChasA?=
+ =?us-ascii?Q?lXrn0pqiQoLiS8gezK/7N5CoTWr0r4bK+RFqDTmid+bMviq2XNr6OG4yrWub?=
+ =?us-ascii?Q?MFabVSMmc+/S1mcqIj23t27/qAj7L1GHBFZY5x9/H3R9usSRZ739ew1gfSGi?=
+ =?us-ascii?Q?NeFeJSQXAQVIqmGTCzYtKAx+0YtfcUHgd2+r065YYY+60qHQcPkJGBuF4YTC?=
+ =?us-ascii?Q?N/c3giwk7CxZ03u/SyRNPhd1csJhTSJCAxsYDSkcREnglY868dyg4pvXWD17?=
+ =?us-ascii?Q?c717UgjUQVWZnmkkRSOYqhkgW2JnSsaHUpRQT6WMBsbiBgc6LQnzfcbT+cpl?=
+ =?us-ascii?Q?rGTuumGAhAWmLE6e7+TApdGGdM5vw9vsGAd0O/b0ks3jNR5pzgMKemSIins1?=
+ =?us-ascii?Q?W8dwzam3dxqhOn7IE52URUsknT0NX/EF5n6syYvGzVbWzC7idCHLbLmbLMl3?=
+ =?us-ascii?Q?Kso/HAj9H3pJtSPEM3xgFSuu9Dv7rO69WIWbcFKlC2qRATizIqbgkIsz9ITo?=
+ =?us-ascii?Q?jt2Nq1gieCPiUYmpZC39mXU9cJvFOqluxcE8i6GahoirsenxUO81IEp9oFr3?=
+ =?us-ascii?Q?P6IsEkPYF78FBnydGmeTfxSwu2FCE4lCTzRrrdXKwR1xY0DwIR50Cx69qIeh?=
+ =?us-ascii?Q?TVGpZ5gl6t+rSeVn51uEHjgxbY1++ACbWZhBJg8JPOSRnyFmGEqNVHgZVjQb?=
+ =?us-ascii?Q?xPTpykIdF7lmvSsr4+AZGM52W3sTB+F5hjO/p4kl40s0mh9/iSYrUX5Wet1U?=
+ =?us-ascii?Q?Igfgm41a1fLsLo9xhafIwlj1f5ByQG/5EW17xEKX8fHrnIjSLqbIBpjnmsF6?=
+ =?us-ascii?Q?tMvHvj5YB+ntASefh89VC/s0qoDclmYrfQbI4Xrji1ycQYkYwfPuL56nkLmG?=
+ =?us-ascii?Q?wZmv7qFgFto5iqVpfNh4rTpDZKL4NabF8ppXXLvs2gNDfxVaDR6kQs7hMaIr?=
+ =?us-ascii?Q?ETbWV4neOZrz6gdmq2UIdbflT0P87ousYPKjpwOnTBam/xfeKDcKuEtr2M/o?=
+ =?us-ascii?Q?nL6ervArFmx+OdPQYBYjIy44UGXCauzr0Mc/L8fJDpDm7kJo+ZcxAG+ksBkz?=
+ =?us-ascii?Q?G418QMIvDUrQ1nmp1W7Xsci/srFtMPK8cbkpikGtTcxSg/vksCxzd43WxdAZ?=
+ =?us-ascii?Q?q7QamJnu5Gby7gMoYcssfaBmJ7u2+TTm4+B56yJMH9c0t+WFWqiftXnV10x1?=
+ =?us-ascii?Q?z+0gG+4fcQt4EPmhJN85k+6BEyGk?=
 X-Forefront-Antispam-Report:
 	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN2PR10MB4112.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?K1zZTVQuNlMDd5mlri2VsvkwRXbnfsFgRy8ROm6nC1+IlAlhpVWv7Lx7XpS2?=
- =?us-ascii?Q?joNYQqshZ63ogLKMPNAwpnoCGIC/eGOYMVPJAcx5t3qikPUgu3e84iRFUUi0?=
- =?us-ascii?Q?Mid5+ZtK/I7402TvUh5uyaNNZ63vjEAei3zzbpuy0Q5XUbG2IGzXTByo7zk1?=
- =?us-ascii?Q?e1NnbbwLvkCFoJbas6xxLfZ8uGZDltdXW1fSumeyLrhIYb3qCiQIueSVam6o?=
- =?us-ascii?Q?555QauA2ugxq4+3AE2Ba8+i2fnjLV/1XBJfnyVIZZSidWDV/QoIcPuTykJB6?=
- =?us-ascii?Q?Eor27p88VRERJtZ5V2x4Owqgcm7Y61SuA1HsDHCZb0HqX0Lf+5xmh9eLhtAd?=
- =?us-ascii?Q?GXC/j/VaoZfJN4pZxcIzAc9xesnesKnK3X7a9liy/rfcG45FqREKtrLTmWQO?=
- =?us-ascii?Q?CphAtJXKEQLG1AScB28dInP0E7FH96NYPoEaRaVmfaKrdDUnn3RjQ0o9JlvN?=
- =?us-ascii?Q?ureV43NxWC7pum+bMk8SRd/G62dWCSlhw8oMytE3hpCzUFL26yFIYDUJSc8V?=
- =?us-ascii?Q?QCmynZ3jX+7BR4CcnE2s18MKE2vvdPxekTqNqe7TGlEvdw+qpMt9vtFMQs92?=
- =?us-ascii?Q?u27ETbBpA6veAWItFysWexPCfrNCqBheY2NloPVs9tCpzMT2DPontGrha+dX?=
- =?us-ascii?Q?MN3axxgfVbH6fxHUQa9wLbzLxYLDMVE3aZ6MwxFMlNm2vSjUxlxnjyjiEDI2?=
- =?us-ascii?Q?ws3257VuXkM12g5NTVxJN74d/D1rdtg3iThwKWiwR4s6fWEzTTpP8VwJk3rY?=
- =?us-ascii?Q?DOEOpF5wypPCOAFG6MoVeykGJCKxQbFozcwXaa7HbSsNx/pCV3Xn6Dogkjlk?=
- =?us-ascii?Q?7PPMIJoQ8MwNHkIdNhHN1XFFEd9q4pkhhQswnMwtWodeSTgtQiTq00YyCcDt?=
- =?us-ascii?Q?Ka5AJJy36yoWcPbnnbVNPc2+rdwz5sSE4SGxuBrgFbbgljbbffTZMWKZz7yP?=
- =?us-ascii?Q?mHdCGSJbBgfKibhNiQoiLfKB3orRPs55ioDvFdg7/n+CvhD38S2JWJAQ3ol/?=
- =?us-ascii?Q?qG/Mk55nKJsuhfCjuCzkW36XuHYWIITRAsUmm+3AdhpPK0uZIWa4SSSF5tbW?=
- =?us-ascii?Q?poYtdHODONlplBiCHcXAbEan7ydMZv5rXxJxwDV4j3ZbtvkEENDLQslM/Rdv?=
- =?us-ascii?Q?6mcA8BfenEYoghrBcbnPgMoatd7+lEcFJP7k5f2DlMK5gXZb7IpycNs1cZTW?=
- =?us-ascii?Q?XtfNA4fJc7LzbrwFo+7UH8lHw3Uu1YL/PGHTTb15e1m1CkjOnTALBA6+X/HM?=
- =?us-ascii?Q?jiQZaaPYaztyH/mrVoFS+JFtxiphKetmhK4lKUe3/C06VwhH7YdQHkwI6zhH?=
- =?us-ascii?Q?gmd1k//IVJ/tGV6PnRi9Es2+5G0XGZc2ILf3BnGWjXGi5KP9oyRME4Zk3aJK?=
- =?us-ascii?Q?gamUuzOpjJyBbiSzADdSMe+C8zCVnHh8dn1rwjkiWQDqoVo/UqjN9iYFN/fe?=
- =?us-ascii?Q?bA7NS0AK0ULpDfF6Gzl6mFh6vehhll4HRbuH6E381EuBU+SiRfZ0ng9Wo1HU?=
- =?us-ascii?Q?dsLcubD/32gIuBcsreSqRZk9vuWNoLDpeG8eXekbp71Gu4RksC5wf8TRAOsf?=
- =?us-ascii?Q?giF/RjIP7w/ho4l+L4Qe85Ibh6qOIz8LYOGEi4KHLtFV6NSSyZ66amsdUmSH?=
- =?us-ascii?Q?Sg=3D=3D?=
+	=?us-ascii?Q?/E4BmOzNOxcT6/GokfDL13Stu2fuDI5bKqdH3/JRYNzrH2yTYB5hArNFxtzE?=
+ =?us-ascii?Q?XBANNHuBkpD9KhazkcIUKeg8WpLV0OVq+dwcP3LHuJhzwRUe0Zp9eo6sScxk?=
+ =?us-ascii?Q?os3xafbUvBTE6vO3QWuAv3IlmTuz8ipOf3TCfx2kQY3OktKVhsXkPTkAU8KR?=
+ =?us-ascii?Q?DFelKsgs40V6H9GsXkPk1V4RFfM9RsM8skll9tFaqXo1ClfqsXN5FA8wN95k?=
+ =?us-ascii?Q?tGJ2wH5/vcJ48iF5L6MLgQECU2AOoQRfe2umld5bJ9I5rnvyPIOf9TP4Ja/J?=
+ =?us-ascii?Q?CaiS9Dhyy63163JfXfI3Neo26xTE0CCve1YHwMnGYpQ+6ASgXfuvP7lRZesu?=
+ =?us-ascii?Q?qBOwWQow4rOxMT5qGmoBXRNomagZYcEKGRn0Tc2Hx51rzv9cwWpXSnfnyHlw?=
+ =?us-ascii?Q?lw86UdW2BBnwOdurFP4jL4T2/VXIzk5LTmzUxIueiY0Q07H6dwuUDV1UHwcR?=
+ =?us-ascii?Q?/40oVmV01gLmqC0iYWGv1cyHP3xDZ1ZYweummRmw5DsCCHH5y3cAX2NNNrLf?=
+ =?us-ascii?Q?qolD4xmrEQTijvEKjyH1suLWyKOXu64nOdnwDEWlIEqtOVl+hJMHHtv7Nh/z?=
+ =?us-ascii?Q?Z/abbCME4hqmG2N8QvC4Wl1jnp+CT4k00scH+qNG5d2xUQVA6Cq5o+dXew/K?=
+ =?us-ascii?Q?exA2G+62JGINjm/d5IkFtBreXFrifGTWkKY4L+sJl+jZEFJWSt4/GtbKMWd+?=
+ =?us-ascii?Q?skllAZZP+p3BPrzQoeUfycvhbcNfbR9R6JhlCrVEi35DcuBZ1ycBb+tADgoq?=
+ =?us-ascii?Q?/nZfLyYeyuRksJxJ9pS/xR5vXIF3aB9OP6vtHcH09cKBKclpl2GGeVn75dKQ?=
+ =?us-ascii?Q?DPnmPL8n2mEWhAxt4HwejlFPHEYmmzuAkSdsKRmwjaMo92gxtjmX0Ign0eUm?=
+ =?us-ascii?Q?j6CTH4bohS4KdvwRm7D2KrOW5KOKgIL+tW+NeQshTYUSuUdcOHKH7ATnM6u8?=
+ =?us-ascii?Q?wngRZXwPGnQZz17Hzk9uraVBj7p21d93Boo6Y8hvLXeDLZQPPSM+9RajpD56?=
+ =?us-ascii?Q?nTcYdo+TKVMAle4tL0bMdzn1hl8bE/BZd8i62i6X/WozQaXbMVcbYZXf7ph5?=
+ =?us-ascii?Q?+BSsdXg2MntS7C61/oXKxpkjirjvQwEaQsSHtXgOcSYFuxlU7QYhE6GAIqaO?=
+ =?us-ascii?Q?DXuk6gz3QtyEgWTJX1chQxrkAXz7BUd/XaY99rlcTUDZNOCqADg2XBpsTsdx?=
+ =?us-ascii?Q?iDWT3GkfTwCqMJ4H85gBloOx6LI1mRyCRui4diNIyljAe1/ch/9C6/ZwKHP7?=
+ =?us-ascii?Q?ZWoE78dbbTNGAFCV9uaucPCyP6pDW6Rzi1XWxRpPjrlWxvALZYRz5bX7RWiL?=
+ =?us-ascii?Q?eihV0Cr3i/+WfmJlIHKUYfU0hMvz18qUgLMeFiDqR/nSUS/CWMwDD3fOy+Pi?=
+ =?us-ascii?Q?D+OdRAcgjEJACG1X8HE6q+WwO9w2aPKcXqswRYyDicAT2DNYK7p2YMonjwco?=
+ =?us-ascii?Q?ZAmsuY++gXTll8zMov96Pp7P8hwDtr+gfIeIlCzaxcjnbKcoHBUYqJL54U3E?=
+ =?us-ascii?Q?BD9xLG0LgUjydZdwLn1jK39KKyU0p2GcmUXwCdfM9IlvJEYY08EuSAp/JEgF?=
+ =?us-ascii?Q?simgDjrL449PA1OpEJvCpetYG5HEL6qCxHjpy0GzZUfZq8BwyffUGi4C79sO?=
+ =?us-ascii?Q?xA=3D=3D?=
 X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	mbvSt9Xd29FalN4RkvoVf9jbzN5wZ8N5iQSx6r6XW9q8Q5pAeUJj9hJDHV39mo7THO6s/sdvL5skMjAJsfudLOVjbOFU43RFf+pukUD019glX4yAC9ckBlVhoTBDqqDTjfOA5mwznibXvcAsPDzFXAMOzDkdvDk+uF8e+6xQaa5cPY7Ekk4lN5k0ctvwHHBNu+DRVJjbrmpJB0m9p2MuENu1CkQUdDsNJ7rHcxliKyaFzOrM+HMu8G1OtXKFtRzgkz+uZs5bzYNHpEligoIebTcklAvC0COXQP4TavKW7IzferkQeMpKEoN/Y4XLAnPgcaMDy43MxsXTwQKGA55jNN5W7gHZIdQGWpNaCYA/jHJiT6FxG0dkOLWykXtU6mx9K1fkrEWB76EJ6XQThOfWqEdoUud+syn1kpkSIe2oUFNueN12WdY151netoz97aRwEFM92yrA/mW5CwYupPRjVBPyW0f/N2SXtOxzbCLYauweFB+c39/qJ6Ai9NI/OJI4kQM/L2sGvIyZJYX0R/0PGJrPOsfpYGiOL4sgqfa2zP9bL56S0eCz8N7+blw942lw/oN0EFMOdey86tpumsvpMi6t4LgDpZ2fkvNVsly5OXs=
+	63qCSfllHxN9mfT2rgnNqccA2QuCeqxw6I6OdZ4C0x15f0O+ab5ewsuEcx87g1OIP2DRxvNKLYTt8Qxx23zJ6KYr3VjbICr1VeoAfCTti6ommFQzdIgRWorqJX8H/++VdvI6Zrieb1lxeMpt1CQQFhvZYi5/cveZ0TMPI07g8x//ab2x1DqP3yvnofmihpPaBmAQR/WZ49SUs9FV5knZaY1jemPfNQBHbTxGkctpTRt2wMK47ds1DH+x+5AribllFn0NXbGedw7hCVzEEvueQiytrL6fSten/gzuQAAWSx+NQJ2+nwBmOfIAj2IUs55UWZqOr1Sf3jLRM/uxseUe38n96Rg1HVMjz47/xouK/ItjKDpAL5+bUH11XplkHT0T+2hSt6e4l74OCrB+SzOV4GV3AY4W9ySF7cwOyQXFmKZ0R3d4khlA31bj/SaJy7RdjJMJMWamyfXIrjX9833az8Lcq8qkYi+YJDjgnm8+707lym4+jsd78toOTiQx/5q6GUUHH7ABl/kGVc6j6XeQaJpYuqgKWkZEuwFno6et3+ajBvyox4uRrrItgL2wQ6D7Dat5Ad4irbDp8I52UNQ/Cs8R+Gc8U9hokSiGZ4EWgI8=
 X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 9e883ffb-cf55-44b7-e703-08dd60155669
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0593843c-9e42-4989-cc7f-08dd6015579e
 X-MS-Exchange-CrossTenant-AuthSource: MN2PR10MB4112.namprd10.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Mar 2025 20:51:31.9076
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Mar 2025 20:51:33.9355
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: dmXiPmuh6adUxMRH02U1UHvZv6Y48TANT/wfjj3InLKE3ydNt0Z0FJY8sm6z0OEKUuLHUFd1i/5uQTKxJElz7yhbNI7GqT5SPt5q4BMCelM=
+X-MS-Exchange-CrossTenant-UserPrincipalName: 60/YD7pzpUdPk8ECfdJ7pueLkojXU2uiFC64QVfPUOeWQGQbxB1s98o5v6bKADI+LoPm+BhUHaMK4KtThb5mGAI803ATRoEpoXyX1GULByI=
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR10MB7250
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
  definitions=2025-03-10_08,2025-03-07_03,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxscore=0 spamscore=0 adultscore=0
- malwarescore=0 phishscore=0 mlxlogscore=999 bulkscore=0 suspectscore=0
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0 spamscore=0 phishscore=0
+ adultscore=0 mlxscore=0 mlxlogscore=999 malwarescore=0 suspectscore=0
  classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2502100000
  definitions=main-2503100159
-X-Proofpoint-GUID: IHmFU78Knw3zo7l0vE2w-Dmc8cjUIbGO
-X-Proofpoint-ORIG-GUID: IHmFU78Knw3zo7l0vE2w-Dmc8cjUIbGO
+X-Proofpoint-GUID: hzCifiA9qfLwkauq-OUaxv_zvqcjJCAw
+X-Proofpoint-ORIG-GUID: hzCifiA9qfLwkauq-OUaxv_zvqcjJCAw
 
-Update move_vma() to use the threaded VRM object, de-duplicate code and
-separate into smaller functions to aid readability and debug-ability.
+We invoke ksm_madvise() with an intentionally dummy flags field, so no
+need to pass around.
 
-This in turn allows further simplification of expand_vma() as we can
-simply thread VRM through the function.
+Additionally, the code tries to be 'clever' with account_start,
+account_end, using these to both check that vma->vm_start != 0 and that we
+ought to account the newly split portion of VMA post-move, either before
+or after it.
 
-We also take the opportunity to abstract the account charging page count
-into the VRM in order that we can correctly thread this through the
-operation.
+We need to do this because we intentionally removed VM_ACCOUNT on the VMA
+prior to unmapping, so we don't erroneously unaccount memory (we have
+already calculated the correct amount to account and accounted it, any
+subsequent subtraction will be incorrect).
 
-We additionally do the same for tracking mm statistics - exec_vm,
-stack_vm, data_vm, and locked_vm.
+This patch significantly expands the comment (from 2002!) about
+'concealing' the flag to make it abundantly clear what's going on, as well
+as adding and expanding a number of other comments also.
 
-As part of this change, we slightly modify when locked pages statistics
-are counted for in mm_struct statistics.  However this should cause no
-issues, as there is no chance of underflow, nor will any rlimit failures
-occur as a result.
+We can remove account_start, account_end by instead tracking when we
+account (i.e.  vma->vm_flags has the VM_ACCOUNT flag set, and this is not
+an MREMAP_DONTUNMAP operation), and figuring out when to reinstate the
+VM_ACCOUNT flag on prior/subsequent VMAs separately.
 
-This is an intermediate step before a further refactoring of move_vma() in
-order to aid review.
+We additionally break the function into logical pieces and attack the very
+confusing error handling logic (where, for instance, new_addr is set to
+err).
+
+After this change the code is considerably more readable and easy to
+manipulate.
 
 Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Reviewed-by: Liam R. Howlett <Liam.Howlett@Oracle.com>
 Reviewed-by: Vlastimil Babka <vbabka@suse.cz>
 ---
- mm/mremap.c | 186 ++++++++++++++++++++++++++++++++++------------------
- 1 file changed, 122 insertions(+), 64 deletions(-)
+ mm/mremap.c | 293 ++++++++++++++++++++++++++++++++++++----------------
+ 1 file changed, 204 insertions(+), 89 deletions(-)
 
 diff --git a/mm/mremap.c b/mm/mremap.c
-index af022e3b89e2..6305cb9a86f6 100644
+index 6305cb9a86f6..7dc058d5d5e2 100644
 --- a/mm/mremap.c
 +++ b/mm/mremap.c
-@@ -68,6 +68,7 @@ struct vma_remap_struct {
- 	bool mlocked;			/* Was the VMA mlock()'d? */
- 	enum mremap_type remap_type;	/* expand, shrink, etc. */
- 	bool mmap_locked;		/* Is mm currently write-locked? */
-+	unsigned long charged;		/* If VM_ACCOUNT, # pages to account. */
- };
+@@ -884,13 +884,13 @@ static void vrm_stat_account(struct vma_remap_struct *vrm,
+  * Perform checks before attempting to write a VMA prior to it being
+  * moved.
+  */
+-static unsigned long prep_move_vma(struct vma_remap_struct *vrm,
+-				   unsigned long *vm_flags_ptr)
++static unsigned long prep_move_vma(struct vma_remap_struct *vrm)
+ {
+ 	unsigned long err = 0;
+ 	struct vm_area_struct *vma = vrm->vma;
+ 	unsigned long old_addr = vrm->addr;
+ 	unsigned long old_len = vrm->old_len;
++	unsigned long dummy = vma->vm_flags;
  
- static pud_t *get_old_pud(struct mm_struct *mm, unsigned long addr)
-@@ -816,35 +817,88 @@ static unsigned long vrm_set_new_addr(struct vma_remap_struct *vrm)
+ 	/*
+ 	 * We'd prefer to avoid failure later on in do_munmap:
+@@ -916,56 +916,151 @@ static unsigned long prep_move_vma(struct vma_remap_struct *vrm,
+ 	 * so KSM can come around to merge on vma and new_vma afterwards.
+ 	 */
+ 	err = ksm_madvise(vma, old_addr, old_addr + old_len,
+-			  MADV_UNMERGEABLE, vm_flags_ptr);
++			  MADV_UNMERGEABLE, &dummy);
+ 	if (err)
+ 		return err;
+ 
  	return 0;
  }
  
--static unsigned long move_vma(struct vm_area_struct *vma,
--		unsigned long old_addr, unsigned long old_len,
--		unsigned long new_len, unsigned long new_addr,
--		bool *mlocked, unsigned long flags,
--		struct vm_userfaultfd_ctx *uf, struct list_head *uf_unmap)
+-static unsigned long move_vma(struct vma_remap_struct *vrm)
 +/*
-+ * Keep track of pages which have been added to the memory mapping. If the VMA
-+ * is accounted, also check to see if there is sufficient memory.
++ * Unmap source VMA for VMA move, turning it from a copy to a move, being
++ * careful to ensure we do not underflow memory account while doing so if an
++ * accountable move.
 + *
-+ * Returns true on success, false if insufficient memory to charge.
++ * This is best effort, if we fail to unmap then we simply try to correct
++ * accounting and exit.
 + */
-+static bool vrm_charge(struct vma_remap_struct *vrm)
++static void unmap_source_vma(struct vma_remap_struct *vrm)
  {
--	long to_account = new_len - old_len;
--	struct mm_struct *mm = vma->vm_mm;
+ 	struct mm_struct *mm = current->mm;
++	unsigned long addr = vrm->addr;
++	unsigned long len = vrm->old_len;
+ 	struct vm_area_struct *vma = vrm->vma;
 -	struct vm_area_struct *new_vma;
 -	unsigned long vm_flags = vma->vm_flags;
+-	unsigned long old_addr = vrm->addr, new_addr = vrm->new_addr;
+-	unsigned long old_len = vrm->old_len, new_len = vrm->new_len;
 -	unsigned long new_pgoff;
 -	unsigned long moved_len;
--	bool account_start = false;
--	bool account_end = false;
+-	unsigned long account_start = false;
+-	unsigned long account_end = false;
 -	unsigned long hiwater_vm;
--	int err = 0;
++	VMA_ITERATOR(vmi, mm, addr);
+ 	int err;
 -	bool need_rmap_locks;
 -	struct vma_iterator vmi;
-+	unsigned long charged;
-+
-+	if (!(vrm->vma->vm_flags & VM_ACCOUNT))
-+		return true;
-+
++	unsigned long vm_start;
++	unsigned long vm_end;
 +	/*
-+	 * If we don't unmap the old mapping, then we account the entirety of
-+	 * the length of the new one. Otherwise it's just the delta in size.
++	 * It might seem odd that we check for MREMAP_DONTUNMAP here, given this
++	 * function implies that we unmap the original VMA, which seems
++	 * contradictory.
++	 *
++	 * However, this occurs when this operation was attempted and an error
++	 * arose, in which case we _do_ wish to unmap the _new_ VMA, which means
++	 * we actually _do_ want it be unaccounted.
 +	 */
-+	if (vrm->flags & MREMAP_DONTUNMAP)
-+		charged = vrm->new_len >> PAGE_SHIFT;
-+	else
-+		charged = vrm->delta >> PAGE_SHIFT;
-+
-+
-+	/* This accounts 'charged' pages of memory. */
-+	if (security_vm_enough_memory_mm(current->mm, charged))
-+		return false;
-+
-+	vrm->charged = charged;
-+	return true;
-+}
-+
-+/*
-+ * an error has occurred so we will not be using vrm->charged memory. Unaccount
-+ * this memory if the VMA is accounted.
-+ */
-+static void vrm_uncharge(struct vma_remap_struct *vrm)
-+{
-+	if (!(vrm->vma->vm_flags & VM_ACCOUNT))
++	bool accountable_move = (vma->vm_flags & VM_ACCOUNT) &&
++		!(vrm->flags & MREMAP_DONTUNMAP);
+ 
+-	err = prep_move_vma(vrm, &vm_flags);
+-	if (err)
+-		return err;
++	/*
++	 * So we perform a trick here to prevent incorrect accounting. Any merge
++	 * or new VMA allocation performed in copy_vma() does not adjust
++	 * accounting, it is expected that callers handle this.
++	 *
++	 * And indeed we already have, accounting appropriately in the case of
++	 * both in vrm_charge().
++	 *
++	 * However, when we unmap the existing VMA (to effect the move), this
++	 * code will, if the VMA has VM_ACCOUNT set, attempt to unaccount
++	 * removed pages.
++	 *
++	 * To avoid this we temporarily clear this flag, reinstating on any
++	 * portions of the original VMA that remain.
++	 */
++	if (accountable_move) {
++		vm_flags_clear(vma, VM_ACCOUNT);
++		/* We are about to split vma, so store the start/end. */
++		vm_start = vma->vm_start;
++		vm_end = vma->vm_end;
++	}
+ 
+-	/* If accounted, charge the number of bytes the operation will use. */
+-	if (!vrm_charge(vrm))
+-		return -ENOMEM;
++	err = do_vmi_munmap(&vmi, mm, addr, len, vrm->uf_unmap, /* unlock= */false);
++	vrm->vma = NULL; /* Invalidated. */
++	if (err) {
++		/* OOM: unable to split vma, just get accounts right */
++		vm_acct_memory(len >> PAGE_SHIFT);
 +		return;
++	}
+ 
+-	vma_start_write(vma);
+-	new_pgoff = vma->vm_pgoff + ((old_addr - vma->vm_start) >> PAGE_SHIFT);
+-	new_vma = copy_vma(&vrm->vma, new_addr, new_len, new_pgoff,
++	/*
++	 * If we mremap() from a VMA like this:
++	 *
++	 *    addr  end
++	 *     |     |
++	 *     v     v
++	 * |-------------|
++	 * |             |
++	 * |-------------|
++	 *
++	 * Having cleared VM_ACCOUNT from the whole VMA, after we unmap above
++	 * we'll end up with:
++	 *
++	 *    addr  end
++	 *     |     |
++	 *     v     v
++	 * |---|     |---|
++	 * | A |     | B |
++	 * |---|     |---|
++	 *
++	 * The VMI is still pointing at addr, so vma_prev() will give us A, and
++	 * a subsequent or lone vma_next() will give as B.
++	 *
++	 * do_vmi_munmap() will have restored the VMI back to addr.
++	 */
++	if (accountable_move) {
++		unsigned long end = addr + len;
 +
-+	vm_unacct_memory(vrm->charged);
-+	vrm->charged = 0;
-+}
++		if (vm_start < addr) {
++			struct vm_area_struct *prev = vma_prev(&vmi);
 +
-+/*
-+ * Update mm exec_vm, stack_vm, data_vm, and locked_vm fields as needed to
-+ * account for 'bytes' memory used, and if locked, indicate this in the VRM so
-+ * we can handle this correctly later.
-+ */
-+static void vrm_stat_account(struct vma_remap_struct *vrm,
-+			     unsigned long bytes)
-+{
-+	unsigned long pages = bytes >> PAGE_SHIFT;
-+	struct mm_struct *mm = current->mm;
-+	struct vm_area_struct *vma = vrm->vma;
++			vm_flags_set(prev, VM_ACCOUNT); /* Acquires VMA lock. */
++		}
 +
-+	vm_stat_account(mm, vma->vm_flags, pages);
-+	if (vma->vm_flags & VM_LOCKED) {
-+		mm->locked_vm += pages;
-+		vrm->mlocked = true;
++		if (vm_end > end) {
++			struct vm_area_struct *next = vma_next(&vmi);
++
++			vm_flags_set(next, VM_ACCOUNT); /* Acquires VMA lock. */
++		}
 +	}
 +}
 +
 +/*
-+ * Perform checks before attempting to write a VMA prior to it being
-+ * moved.
++ * Copy vrm->vma over to vrm->new_addr possibly adjusting size as part of the
++ * process. Additionally handle an error occurring on moving of page tables,
++ * where we reset vrm state to cause unmapping of the new VMA.
++ *
++ * Outputs the newly installed VMA to new_vma_ptr. Returns 0 on success or an
++ * error code.
 + */
-+static unsigned long prep_move_vma(struct vma_remap_struct *vrm,
-+				   unsigned long *vm_flags_ptr)
++static int copy_vma_and_data(struct vma_remap_struct *vrm,
++			     struct vm_area_struct **new_vma_ptr)
 +{
-+	unsigned long err = 0;
-+	struct vm_area_struct *vma = vrm->vma;
-+	unsigned long old_addr = vrm->addr;
-+	unsigned long old_len = vrm->old_len;
- 
- 	/*
- 	 * We'd prefer to avoid failure later on in do_munmap:
- 	 * which may split one vma into three before unmapping.
- 	 */
--	if (mm->map_count >= sysctl_max_map_count - 3)
-+	if (current->mm->map_count >= sysctl_max_map_count - 3)
++	unsigned long internal_offset = vrm->addr - vrm->vma->vm_start;
++	unsigned long internal_pgoff = internal_offset >> PAGE_SHIFT;
++	unsigned long new_pgoff = vrm->vma->vm_pgoff + internal_pgoff;
++	unsigned long moved_len;
++	bool need_rmap_locks;
++	struct vm_area_struct *vma;
++	struct vm_area_struct *new_vma;
++	int err = 0;
++
++	new_vma = copy_vma(&vrm->vma, vrm->new_addr, vrm->new_len, new_pgoff,
+ 			   &need_rmap_locks);
+-	/* This may have been updated. */
+-	vma = vrm->vma;
+ 	if (!new_vma) {
+ 		vrm_uncharge(vrm);
++		*new_vma_ptr = NULL;
  		return -ENOMEM;
+ 	}
++	vma = vrm->vma;
  
--	if (unlikely(flags & MREMAP_DONTUNMAP))
--		to_account = new_len;
--
- 	if (vma->vm_ops && vma->vm_ops->may_split) {
- 		if (vma->vm_start != old_addr)
- 			err = vma->vm_ops->may_split(vma, old_addr);
-@@ -862,22 +916,46 @@ static unsigned long move_vma(struct vm_area_struct *vma,
- 	 * so KSM can come around to merge on vma and new_vma afterwards.
- 	 */
- 	err = ksm_madvise(vma, old_addr, old_addr + old_len,
--						MADV_UNMERGEABLE, &vm_flags);
-+			  MADV_UNMERGEABLE, vm_flags_ptr);
- 	if (err)
- 		return err;
- 
--	if (vm_flags & VM_ACCOUNT) {
--		if (security_vm_enough_memory_mm(mm, to_account >> PAGE_SHIFT))
--			return -ENOMEM;
+-	moved_len = move_page_tables(vma, old_addr, new_vma, new_addr, old_len,
+-				     need_rmap_locks, false);
+-	if (moved_len < old_len) {
++	moved_len = move_page_tables(vma, vrm->addr, new_vma,
++				     vrm->new_addr, vrm->old_len,
++				     need_rmap_locks, /* for_stack= */false);
++	if (moved_len < vrm->old_len)
+ 		err = -ENOMEM;
+-	} else if (vma->vm_ops && vma->vm_ops->mremap) {
++	else if (vma->vm_ops && vma->vm_ops->mremap)
+ 		err = vma->vm_ops->mremap(new_vma);
 -	}
-+	return 0;
+ 
+ 	if (unlikely(err)) {
+ 		/*
+@@ -973,28 +1068,84 @@ static unsigned long move_vma(struct vma_remap_struct *vrm)
+ 		 * which will succeed since page tables still there,
+ 		 * and then proceed to unmap new area instead of old.
+ 		 */
+-		move_page_tables(new_vma, new_addr, vma, old_addr, moved_len,
+-				 true, false);
+-		vma = new_vma;
+-		old_len = new_len;
+-		old_addr = new_addr;
+-		new_addr = err;
++		move_page_tables(new_vma, vrm->new_addr, vma, vrm->addr,
++				 moved_len, /* need_rmap_locks = */true,
++				 /* for_stack= */false);
++		vrm->vma = new_vma;
++		vrm->old_len = vrm->new_len;
++		vrm->addr = vrm->new_addr;
+ 	} else {
+ 		mremap_userfaultfd_prep(new_vma, vrm->uf);
+ 	}
+ 
+-	if (is_vm_hugetlb_page(vma)) {
++	if (is_vm_hugetlb_page(vma))
+ 		clear_vma_resv_huge_pages(vma);
+-	}
+ 
+-	/* Conceal VM_ACCOUNT so old reservation is not undone */
+-	if (vm_flags & VM_ACCOUNT && !(vrm->flags & MREMAP_DONTUNMAP)) {
+-		vm_flags_clear(vma, VM_ACCOUNT);
+-		if (vma->vm_start < old_addr)
+-			account_start = true;
+-		if (vma->vm_end > old_addr + old_len)
+-			account_end = true;
+-	}
++	/* Tell pfnmap has moved from this vma */
++	if (unlikely(vma->vm_flags & VM_PFNMAP))
++		untrack_pfn_clear(vma);
++
++	*new_vma_ptr = new_vma;
++	return err;
++}
++
++/*
++ * Perform final tasks for MADV_DONTUNMAP operation, clearing mlock() and
++ * account flags on remaining VMA by convention (it cannot be mlock()'d any
++ * longer, as pages in range are no longer mapped), and removing anon_vma_chain
++ * links from it (if the entire VMA was copied over).
++ */
++static void dontunmap_complete(struct vma_remap_struct *vrm,
++			       struct vm_area_struct *new_vma)
++{
++	unsigned long start = vrm->addr;
++	unsigned long end = vrm->addr + vrm->old_len;
++	unsigned long old_start = vrm->vma->vm_start;
++	unsigned long old_end = vrm->vma->vm_end;
++
++	/*
++	 * We always clear VM_LOCKED[ONFAULT] | VM_ACCOUNT on the old
++	 * vma.
++	 */
++	vm_flags_clear(vrm->vma, VM_LOCKED_MASK | VM_ACCOUNT);
++
++	/*
++	 * anon_vma links of the old vma is no longer needed after its page
++	 * table has been moved.
++	 */
++	if (new_vma != vrm->vma && start == old_start && end == old_end)
++		unlink_anon_vmas(vrm->vma);
++
++	/* Because we won't unmap we don't need to touch locked_vm. */
 +}
 +
 +static unsigned long move_vma(struct vma_remap_struct *vrm)
 +{
 +	struct mm_struct *mm = current->mm;
-+	struct vm_area_struct *vma = vrm->vma;
 +	struct vm_area_struct *new_vma;
-+	unsigned long vm_flags = vma->vm_flags;
-+	unsigned long old_addr = vrm->addr, new_addr = vrm->new_addr;
-+	unsigned long old_len = vrm->old_len, new_len = vrm->new_len;
-+	unsigned long new_pgoff;
-+	unsigned long moved_len;
-+	unsigned long account_start = false;
-+	unsigned long account_end = false;
 +	unsigned long hiwater_vm;
 +	int err;
-+	bool need_rmap_locks;
-+	struct vma_iterator vmi;
 +
-+	err = prep_move_vma(vrm, &vm_flags);
++	err = prep_move_vma(vrm);
 +	if (err)
 +		return err;
 +
 +	/* If accounted, charge the number of bytes the operation will use. */
 +	if (!vrm_charge(vrm))
 +		return -ENOMEM;
- 
- 	vma_start_write(vma);
- 	new_pgoff = vma->vm_pgoff + ((old_addr - vma->vm_start) >> PAGE_SHIFT);
--	new_vma = copy_vma(&vma, new_addr, new_len, new_pgoff,
-+	new_vma = copy_vma(&vrm->vma, new_addr, new_len, new_pgoff,
- 			   &need_rmap_locks);
-+	/* This may have been updated. */
-+	vma = vrm->vma;
- 	if (!new_vma) {
--		if (vm_flags & VM_ACCOUNT)
--			vm_unacct_memory(to_account >> PAGE_SHIFT);
-+		vrm_uncharge(vrm);
- 		return -ENOMEM;
- 	}
- 
-@@ -902,7 +980,7 @@ static unsigned long move_vma(struct vm_area_struct *vma,
- 		old_addr = new_addr;
- 		new_addr = err;
- 	} else {
--		mremap_userfaultfd_prep(new_vma, uf);
-+		mremap_userfaultfd_prep(new_vma, vrm->uf);
- 	}
- 
- 	if (is_vm_hugetlb_page(vma)) {
-@@ -910,7 +988,7 @@ static unsigned long move_vma(struct vm_area_struct *vma,
- 	}
- 
- 	/* Conceal VM_ACCOUNT so old reservation is not undone */
--	if (vm_flags & VM_ACCOUNT && !(flags & MREMAP_DONTUNMAP)) {
-+	if (vm_flags & VM_ACCOUNT && !(vrm->flags & MREMAP_DONTUNMAP)) {
- 		vm_flags_clear(vma, VM_ACCOUNT);
- 		if (vma->vm_start < old_addr)
- 			account_start = true;
-@@ -928,13 +1006,12 @@ static unsigned long move_vma(struct vm_area_struct *vma,
- 	 * If this were a serious issue, we'd add a flag to do_munmap().
- 	 */
- 	hiwater_vm = mm->hiwater_vm;
--	vm_stat_account(mm, vma->vm_flags, new_len >> PAGE_SHIFT);
- 
- 	/* Tell pfnmap has moved from this vma */
- 	if (unlikely(vma->vm_flags & VM_PFNMAP))
- 		untrack_pfn_clear(vma);
- 
--	if (unlikely(!err && (flags & MREMAP_DONTUNMAP))) {
-+	if (unlikely(!err && (vrm->flags & MREMAP_DONTUNMAP))) {
- 		/* We always clear VM_LOCKED[ONFAULT] on the old vma */
- 		vm_flags_clear(vma, VM_LOCKED_MASK);
- 
-@@ -947,22 +1024,20 @@ static unsigned long move_vma(struct vm_area_struct *vma,
- 			unlink_anon_vmas(vma);
- 
- 		/* Because we won't unmap we don't need to touch locked_vm */
-+		vrm_stat_account(vrm, new_len);
- 		return new_addr;
- 	}
- 
-+	vrm_stat_account(vrm, new_len);
 +
- 	vma_iter_init(&vmi, mm, old_addr);
--	if (do_vmi_munmap(&vmi, mm, old_addr, old_len, uf_unmap, false) < 0) {
-+	if (do_vmi_munmap(&vmi, mm, old_addr, old_len, vrm->uf_unmap, false) < 0) {
- 		/* OOM: unable to split vma, just get accounts right */
--		if (vm_flags & VM_ACCOUNT && !(flags & MREMAP_DONTUNMAP))
-+		if (vm_flags & VM_ACCOUNT && !(vrm->flags & MREMAP_DONTUNMAP))
- 			vm_acct_memory(old_len >> PAGE_SHIFT);
- 		account_start = account_end = false;
- 	}
- 
--	if (vm_flags & VM_LOCKED) {
--		mm->locked_vm += new_len >> PAGE_SHIFT;
--		*mlocked = true;
--	}
--
- 	mm->hiwater_vm = hiwater_vm;
- 
- 	/* Restore VM_ACCOUNT if one or two pieces of vma left */
-@@ -1141,9 +1216,7 @@ static unsigned long mremap_to(struct vma_remap_struct *vrm)
- 	if (err)
- 		return err;
- 
--	return move_vma(vrm->vma, vrm->addr, vrm->old_len, vrm->new_len,
--			vrm->new_addr, &vrm->mlocked, vrm->flags,
--			vrm->uf, vrm->uf_unmap);
-+	return move_vma(vrm);
- }
- 
- static int vma_expandable(struct vm_area_struct *vma, unsigned long delta)
-@@ -1248,17 +1321,11 @@ static unsigned long check_mremap_params(struct vma_remap_struct *vrm)
- static unsigned long expand_vma_in_place(struct vma_remap_struct *vrm)
- {
- 	struct mm_struct *mm = current->mm;
--	long pages = vrm->delta >> PAGE_SHIFT;
- 	struct vm_area_struct *vma = vrm->vma;
- 	VMA_ITERATOR(vmi, mm, vma->vm_end);
--	long charged = 0;
--
--	if (vma->vm_flags & VM_ACCOUNT) {
--		if (security_vm_enough_memory_mm(mm, pages))
--			return -ENOMEM;
- 
--		charged = pages;
--	}
-+	if (!vrm_charge(vrm))
-+		return -ENOMEM;
++	/* We don't want racing faults. */
++	vma_start_write(vrm->vma);
++
++	/* Perform copy step. */
++	err = copy_vma_and_data(vrm, &new_vma);
++	/*
++	 * If we established the copied-to VMA, we attempt to recover from the
++	 * error by setting the destination VMA to the source VMA and unmapping
++	 * it below.
++	 */
++	if (err && !new_vma)
++		return err;
  
  	/*
- 	 * Function vma_merge_extend() is called on the
-@@ -1271,15 +1338,11 @@ static unsigned long expand_vma_in_place(struct vma_remap_struct *vrm)
+ 	 * If we failed to move page tables we still do total_vm increment
+@@ -1007,51 +1158,15 @@ static unsigned long move_vma(struct vma_remap_struct *vrm)
  	 */
- 	vma = vrm->vma = vma_merge_extend(&vmi, vma, vrm->delta);
- 	if (!vma) {
--		vm_unacct_memory(charged);
-+		vrm_uncharge(vrm);
- 		return -ENOMEM;
- 	}
+ 	hiwater_vm = mm->hiwater_vm;
  
--	vm_stat_account(mm, vma->vm_flags, pages);
--	if (vma->vm_flags & VM_LOCKED) {
--		mm->locked_vm += pages;
--		vrm->mlocked = true;
+-	/* Tell pfnmap has moved from this vma */
+-	if (unlikely(vma->vm_flags & VM_PFNMAP))
+-		untrack_pfn_clear(vma);
+-
+-	if (unlikely(!err && (vrm->flags & MREMAP_DONTUNMAP))) {
+-		/* We always clear VM_LOCKED[ONFAULT] on the old vma */
+-		vm_flags_clear(vma, VM_LOCKED_MASK);
+-
+-		/*
+-		 * anon_vma links of the old vma is no longer needed after its page
+-		 * table has been moved.
+-		 */
+-		if (new_vma != vma && vma->vm_start == old_addr &&
+-			vma->vm_end == (old_addr + old_len))
+-			unlink_anon_vmas(vma);
+-
+-		/* Because we won't unmap we don't need to touch locked_vm */
+-		vrm_stat_account(vrm, new_len);
+-		return new_addr;
 -	}
-+	vrm_stat_account(vrm, vrm->delta);
+-
+-	vrm_stat_account(vrm, new_len);
+-
+-	vma_iter_init(&vmi, mm, old_addr);
+-	if (do_vmi_munmap(&vmi, mm, old_addr, old_len, vrm->uf_unmap, false) < 0) {
+-		/* OOM: unable to split vma, just get accounts right */
+-		if (vm_flags & VM_ACCOUNT && !(vrm->flags & MREMAP_DONTUNMAP))
+-			vm_acct_memory(old_len >> PAGE_SHIFT);
+-		account_start = account_end = false;
+-	}
++	vrm_stat_account(vrm, vrm->new_len);
++	if (unlikely(!err && (vrm->flags & MREMAP_DONTUNMAP)))
++		dontunmap_complete(vrm, new_vma);
++	else
++		unmap_source_vma(vrm);
  
- 	return 0;
- }
-@@ -1319,11 +1382,7 @@ static bool align_hugetlb(struct vma_remap_struct *vrm)
- static unsigned long expand_vma(struct vma_remap_struct *vrm)
- {
- 	unsigned long err;
--	struct vm_area_struct *vma = vrm->vma;
- 	unsigned long addr = vrm->addr;
--	unsigned long old_len = vrm->old_len;
--	unsigned long new_len = vrm->new_len;
--	unsigned long flags = vrm->flags;
+ 	mm->hiwater_vm = hiwater_vm;
  
- 	err = resize_is_valid(vrm);
- 	if (err)
-@@ -1356,7 +1415,7 @@ static unsigned long expand_vma(struct vma_remap_struct *vrm)
- 	 */
- 
- 	/* We're not allowed to move the VMA, so error out. */
--	if (!(flags & MREMAP_MAYMOVE))
-+	if (!(vrm->flags & MREMAP_MAYMOVE))
- 		return -ENOMEM;
- 
- 	/* Find a new location to move the VMA to. */
-@@ -1364,8 +1423,7 @@ static unsigned long expand_vma(struct vma_remap_struct *vrm)
- 	if (err)
- 		return err;
- 
--	return move_vma(vma, addr, old_len, new_len, vrm->new_addr,
--			&vrm->mlocked, flags, vrm->uf, vrm->uf_unmap);
-+	return move_vma(vrm);
+-	/* Restore VM_ACCOUNT if one or two pieces of vma left */
+-	if (account_start) {
+-		vma = vma_prev(&vmi);
+-		vm_flags_set(vma, VM_ACCOUNT);
+-	}
+-
+-	if (account_end) {
+-		vma = vma_next(&vmi);
+-		vm_flags_set(vma, VM_ACCOUNT);
+-	}
+-
+-	return new_addr;
++	return err ? (unsigned long)err : vrm->new_addr;
  }
  
  /*
