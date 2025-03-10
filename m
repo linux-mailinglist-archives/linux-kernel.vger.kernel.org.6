@@ -1,104 +1,181 @@
-Return-Path: <linux-kernel+bounces-553645-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-553649-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EAEE9A58CE2
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 08:26:22 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CF3D8A58CED
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 08:29:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 07CE6188CDEC
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 07:26:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8EF2A3A8179
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 07:29:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10CD71D8DE4;
-	Mon, 10 Mar 2025 07:26:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7621E1DEFD9;
+	Mon, 10 Mar 2025 07:29:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.com header.i=aros@gmx.com header.b="UND7lBlx"
-Received: from mout.gmx.net (mout.gmx.net [212.227.17.22])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="HadvyXvv"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95C351D5AA0;
-	Mon, 10 Mar 2025 07:26:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.22
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EDBD1DE899;
+	Mon, 10 Mar 2025 07:29:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741591567; cv=none; b=jL7zQwYiDyZ9SYs/QPlDRTuVAwgTWo723oP7abRWjb6omAVIQPUSSZAvLNhfZ+1Q4SZIt3l/dtjMWs4TeoFMOH5GblQlCDRRHccoD6LyGHwz10CE9C1/RcKNx93RNPQ1vR/LZX/GQOPZYrZx6nvg+0+mrnxyYXnY/Rz3ojYBzYw=
+	t=1741591757; cv=none; b=iBHGGE0tydyzSl1vd/kZlET8zVq5qegN6owI8kk6sIGDzFd1HfAJmIlWgwtxz3tZR1scXkfXcHotK9D6V6rVDbiEiwArCFBhca7DMAhPbfi/heNV8JQuB7o2e44aK+MRmR1D+hrMhpFp+f2uiBji5h8HlQTeJ2zCLelR8AYx938=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741591567; c=relaxed/simple;
-	bh=kQOLy3c+kJxUC9iEU5qpaeaptXfIDafn604QRTV5Iz8=;
-	h=Message-ID:Date:MIME-Version:To:From:Subject:Content-Type; b=XmnKslZd4yyCIRc8GYkp6F4YL69kmTURV8/qcyuH2DNNnJI+AmFDdpOrQdmXEyNdvNPA18CyAXReK5q4D0X4aOhYv/dc/TkgikQGIUw5rBRdjYLT2c7ZIqrSIAKsYsh7dMj/TkItxc2bo9BcDCeFWnvy+4q24DrW+Xhy8prW6t0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.com; spf=pass smtp.mailfrom=gmx.com; dkim=pass (2048-bit key) header.d=gmx.com header.i=aros@gmx.com header.b=UND7lBlx; arc=none smtp.client-ip=212.227.17.22
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.com;
-	s=s31663417; t=1741591561; x=1742196361; i=aros@gmx.com;
-	bh=kQOLy3c+kJxUC9iEU5qpaeaptXfIDafn604QRTV5Iz8=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:From:Subject:
-	 Content-Type:Content-Transfer-Encoding:cc:
-	 content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=UND7lBlxvWFdQq6PPIRQQ/NAeb9XJBobhnmqS2u1C1dJPDuOKcsHlPV/Vbp6VeMt
-	 QXTmXHjYHo//9Ukl2fMQGwPGjIMN7+YRXoQoChf7HrLmJwsC8o6FkS1V32IyxDmPo
-	 j22eG8NXMay4SCTWQiMkshccyPRrMM1S8bhQeueKTGf9FzQZ0DWI8AIWGBHOlw1vW
-	 zh6Q0OjhKjYTXtWfiqGGkQpD9lVxQq5caTGyVU6Vzfw11RHtyfPhZ51CI/5IzykoW
-	 k5AEndazlZdJYXDU6uhhSns1MfgNg7AlobTpFQPocxg4ZL0Sz2o44e4zRHNM+Pudn
-	 DVq8oFZrbuYJd81qUw==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from [10.10.12.239] ([156.200.109.2]) by mail.gmx.net (mrgmx105
- [212.227.17.174]) with ESMTPSA (Nemesis) id 1MTABT-1tfHCo1pdv-00QM5B; Mon, 10
- Mar 2025 08:26:01 +0100
-Message-ID: <bda3fa3f-dd12-40de-841a-e4c216ab533f@gmx.com>
-Date: Mon, 10 Mar 2025 07:26:00 +0000
+	s=arc-20240116; t=1741591757; c=relaxed/simple;
+	bh=Qak3hDPimj5StjXL2unXWZ3LseUEHQB49RxyNvafENM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VGpV7Sab2Z78RauVW0Kx8uIQ3OJidXFABVUOLLg6p8hBMfTzaHuqDQTuzIPWVliVQQfZH+L8LM1SVGvZzjWZtkZo5vj+eDsB3Z1ucSct/EFRtgBmlZ85pZTUKiCJ72TPBEPlAtriC1N8916et5rRzGobhIEBuBWu7bAg3BX6YHE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=HadvyXvv; arc=none smtp.client-ip=192.198.163.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1741591755; x=1773127755;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=Qak3hDPimj5StjXL2unXWZ3LseUEHQB49RxyNvafENM=;
+  b=HadvyXvvzoE0kE8JZcP18RnX40MQ6mHSsBUe8hpJdwzuq0YTovPJa7e5
+   NuuyJX1iCQemm9wDxy/JdrbgLDLyZVPhFmsck9caNhNdT82+Db0ByPhVE
+   iJ+VbtM9VVPSMr/vqlLlZRlrVUKNQ/AvXdQmbI85XbIFbtrNDQRsBauFS
+   69xIQdLYGSeN+YJhQ5Hapo33tekH1UKp7dGpxarzvPbp1YpegpTG7W0gP
+   jx2bI1K+Pd+oSCvfEFmS2LRTsUEt9BfmOWVzk+PTXQYd1k6zWPZ9xG1RJ
+   p3StqCNrxbqxd536hjoxghcJTxEjGzcZoRajAF/W2mA7xIdKey8RyG99X
+   g==;
+X-CSE-ConnectionGUID: AnpRggNnRaKzY/YQmgNdWg==
+X-CSE-MsgGUID: PgsmNOmEStOKOvk6YzCyig==
+X-IronPort-AV: E=McAfee;i="6700,10204,11368"; a="42708309"
+X-IronPort-AV: E=Sophos;i="6.14,235,1736841600"; 
+   d="scan'208";a="42708309"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Mar 2025 00:29:14 -0700
+X-CSE-ConnectionGUID: 5XQOV+CbTGWX4IlFp3+DGQ==
+X-CSE-MsgGUID: odNCYfjnQouvfxfLHhZOqw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,235,1736841600"; 
+   d="scan'208";a="157120741"
+Received: from lkp-server02.sh.intel.com (HELO a4747d147074) ([10.239.97.151])
+  by orviesa001.jf.intel.com with ESMTP; 10 Mar 2025 00:29:11 -0700
+Received: from kbuild by a4747d147074 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1trXZK-0003wM-0q;
+	Mon, 10 Mar 2025 07:29:01 +0000
+Date: Mon, 10 Mar 2025 15:26:35 +0800
+From: kernel test robot <lkp@intel.com>
+To: Casey Schaufler <casey@schaufler-ca.com>, paul@paul-moore.com,
+	eparis@redhat.com, linux-security-module@vger.kernel.org,
+	audit@vger.kernel.org
+Cc: oe-kbuild-all@lists.linux.dev, jmorris@namei.org, serge@hallyn.com,
+	keescook@chromium.org, john.johansen@canonical.com,
+	penguin-kernel@i-love.sakura.ne.jp, stephen.smalley.work@gmail.com,
+	linux-kernel@vger.kernel.org, selinux@vger.kernel.org
+Subject: Re: [PATCH v2 6/6] Audit: Add record for multiple object contexts
+Message-ID: <202503101524.XYSVbXHw-lkp@intel.com>
+References: <20250307183701.16970-7-casey@schaufler-ca.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Language: en-US
-To: linux-ext4@vger.kernel.org,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-From: "Artem S. Tashkinov" <aros@gmx.com>
-Subject: A syscall for changing birth time
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:8gFaD7N23b8Pf6p8d79ynv+PB2t8EstQuP9/VyRhPk6hQ/LjJ5O
- NpGOT9+N9dsYR9EUGZVwjmD8wVH3muhU0R/aqSg4/ert6Y4LOS9LM7iTrVXTJoAiwJCPcNx
- NxXKOltRpZhGoYE32yznlmppd/hLSvw3eUmpch1FEeL1kpYzf5ykr3XPPheCuw+LtGQo+SJ
- qveNyAHvh86TG9f3Mn5BQ==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:sg9bfIL8f+U=;qXR6csuNLyav8KCo3Xs5A3cB97G
- oYTa8hTst/OcnhdZg6Y8KT8aGEd6fyOUhdNgD63YBetgbi+TpswyIDGqRKokXsD4uL19ZFg2n
- V6L1H2HSa4SIritAXDHXgwRIIZJLcRhhcmKx73MOYXetQIrwUk7GnsDXcatc3sjgNlXdkc2RL
- 95Sa8k9RRBQ2yDKviAihhK7vw8jKLYj7EvpXhCSWrzpuuLZ3RT+CWUFj+kq3GigOyz1YSDAkS
- oEE0W1aNJkLcohzyzgHyEfHuJLdHOHgpEZ6j2MG54OOu94DVtBEdYUVArnrSNnGL4nRUSKXVB
- Ff02NuR4Jk36XrXDsVWEE4bB+8Ssx4Vy7O2lralfOR+p5DUIZyTIG16iIHCAr1oEQSjuPn37l
- +QuDyb3YI2vxB8a2BCBQuI3/HLd4pRKSgY/J4xlEUPNoa8PuwUdkhF+LaWp35nZ2QSB8plIWv
- u+ZzsRN3HCb2vFcNQ9KB3/lFvd52p5Ea4Sz4Nd4BOXxu024B8aCw6ZzuQL/iTIgFlvBj01qWc
- XbApMFSRxfkZeN4dk4aG1dEbFUKw4g2BDmv7meVtRHjJVwwtIk1jO6hQcn6TKaW9lnOoBbkAz
- bjNVSBDCfdB9gWF9SSoRzgXO7iBXXbZIX1zKJ167ELsj4wYZufpZNKIHGoH1WbchbUlOq4xy8
- FpFlVYey3Qrl++fO7Ug5UdahqLPeBPQmStafctNLZ+iL8sak2VU5Sln2y6nXru1Q/2EG0sA1f
- ReeWkM+Cao/OAhK1N7mixVfzV2uDNZ6EfdfBWQ1tmESzojaTHYbrkwlya0s4qYiNs1Jc3dhBg
- GqfSvIm3yYztE6w91vjiRkukUT/Csf+CbHGo8D7YgS7jHnG0XN16qxk5nNDUwwyilciO1MUfN
- B36/r45UIqjg9ATCvGul3M4NFSRjxqlJ68HvAMC+kAhqMrNeXkzhubGSsSxXowqbOfhIq1lon
- ezSFzDuxTbWYSIBJffeZdyOJIFWpV6GMJKU9cMISUTgIbkc2n1ljrzfg2OY5co3fRegQMox5h
- Dz2bGbxZFbyaPFkYAFPhm5M2PITFg0MxCUgDRfKV15at62BSt9K83ASKgPRuaFZezTgdgixCf
- lWVpg5s9E1cP37dFnVQWhzu2Svp+k422BXmLH9vV1gwkZVdrW5wwj55VkC2uuttXFRRX5b1t3
- Xmxmq+Ux20iNpLKMy2Pf2MxVPz43gCY8/4ChdY/e5/jOedeh/WgPifQzPu77pC4cfZMolnUWB
- Fd7VK5YuARs3gpLd7LqE+JKFTUs4o6Pvh5Hz70gQEqqspinMdHuayHlPSbiBy5jsmGJeFV794
- VhZqn3FYPlPpz9ZaCgbpfG+RROvLTVAQTn2iHmiJxcmm/hZ/Z4h6vBXsTKDuA0aevvqO3DRln
- +/7hG/x010uDONPbcG82xoLRxlhuY9VkcZizueYTsJHv8bfoZt5VO82OaN
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250307183701.16970-7-casey@schaufler-ca.com>
 
-Hello,
+Hi Casey,
 
-Why is it that the Linux kernel supports reading btime, but there's no
-syscall to change it? At least for ext4 there's the debugfs utility, but
-for other filesystems there's just nothing. And even debugfs is not a
-solution, since it requires root privileges and an unmounted/mounted RO
-filesystem.
+kernel test robot noticed the following build errors:
 
-Having it allows for better compatibility with Windows and BSD operating
-systems and could improve backup/restore.
+[auto build test ERROR on pcmoore-selinux/next]
+[also build test ERROR on linus/master v6.14-rc6 next-20250307]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-Best regards,
-Artem
+url:    https://github.com/intel-lab-lkp/linux/commits/Casey-Schaufler/Audit-Create-audit_stamp-structure/20250308-024950
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/selinux.git next
+patch link:    https://lore.kernel.org/r/20250307183701.16970-7-casey%40schaufler-ca.com
+patch subject: [PATCH v2 6/6] Audit: Add record for multiple object contexts
+config: s390-randconfig-r073-20250310 (https://download.01.org/0day-ci/archive/20250310/202503101524.XYSVbXHw-lkp@intel.com/config)
+compiler: clang version 18.1.8 (https://github.com/llvm/llvm-project 3b5b5c1ec4a3095ab096dd780e84d7ab81f3d7ff)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250310/202503101524.XYSVbXHw-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202503101524.XYSVbXHw-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+   s390x-linux-ld: kernel/audit.o: in function `audit_log_object_context':
+>> kernel/audit.c:2312:(.text+0x2da6): undefined reference to `lsm_objctx_cnt'
+>> s390x-linux-ld: kernel/audit.c:2329:(.text+0x30d2): undefined reference to `lsm_active_cnt'
+   s390x-linux-ld: kernel/audit.c:(.text+0x3108): undefined reference to `lsm_active_cnt'
+>> s390x-linux-ld: kernel/audit.c:2330:(.text+0x313e): undefined reference to `lsm_idlist'
+>> s390x-linux-ld: kernel/audit.c:2312:(.text+0x32f2): undefined reference to `lsm_objctx_cnt'
+   s390x-linux-ld: kernel/audit.c:2312:(.text+0x330a): undefined reference to `lsm_objctx_cnt'
+   s390x-linux-ld: kernel/audit.c:2329:(.text+0x33a4): undefined reference to `lsm_active_cnt'
+   s390x-linux-ld: kernel/audit.c:2329:(.text+0x33bc): undefined reference to `lsm_active_cnt'
+
+
+vim +2312 kernel/audit.c
+
+  2303	
+  2304	int audit_log_object_context(struct audit_buffer *ab, struct lsm_prop *prop)
+  2305	{
+  2306		int i;
+  2307		int rc;
+  2308		int error = 0;
+  2309		char *space = "";
+  2310		struct lsm_context context;
+  2311	
+> 2312		if (lsm_objctx_cnt < 2) {
+  2313			error = security_lsmprop_to_secctx(prop, &context,
+  2314							   LSM_ID_UNDEF);
+  2315			if (error < 0) {
+  2316				if (error != -EINVAL)
+  2317					goto error_path;
+  2318				return error;
+  2319			}
+  2320			audit_log_format(ab, " obj=%s", context.context);
+  2321			security_release_secctx(&context);
+  2322			return 0;
+  2323		}
+  2324		audit_log_format(ab, " obj=?");
+  2325		error = audit_buffer_aux_new(ab, AUDIT_MAC_OBJ_CONTEXTS);
+  2326		if (error)
+  2327			goto error_path;
+  2328	
+> 2329		for (i = 0; i < lsm_active_cnt; i++) {
+> 2330			if (!lsm_idlist[i]->objctx)
+  2331				continue;
+  2332			rc = security_lsmprop_to_secctx(prop, &context,
+  2333							lsm_idlist[i]->id);
+  2334			if (rc < 0) {
+  2335				audit_log_format(ab, "%sobj_%s=?", space,
+  2336						 lsm_idlist[i]->name);
+  2337				if (rc != -EINVAL)
+  2338					audit_panic("error in audit_log_object_context");
+  2339				error = rc;
+  2340			} else {
+  2341				audit_log_format(ab, "%sobj_%s=%s", space,
+  2342						 lsm_idlist[i]->name, context.context);
+  2343				security_release_secctx(&context);
+  2344			}
+  2345			space = " ";
+  2346		}
+  2347	
+  2348		audit_buffer_aux_end(ab);
+  2349		return error;
+  2350	
+  2351	error_path:
+  2352		audit_panic("error in audit_log_object_context");
+  2353		return error;
+  2354	}
+  2355	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
