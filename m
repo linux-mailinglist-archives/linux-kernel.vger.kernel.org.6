@@ -1,64 +1,47 @@
-Return-Path: <linux-kernel+bounces-553672-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-553673-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8BA34A58D41
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 08:49:30 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 600A6A58D44
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 08:49:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2B9457A41B9
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 07:48:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6B71F188BAD0
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 07:49:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15E18221F3C;
-	Mon, 10 Mar 2025 07:49:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10AAA221F2D;
+	Mon, 10 Mar 2025 07:49:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ORGCS5kC"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Zm5UYNqH"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA6F72046BF;
-	Mon, 10 Mar 2025 07:49:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 463AD221F17;
+	Mon, 10 Mar 2025 07:49:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741592958; cv=none; b=o5zuJNXQ+QC4vDrxZCXv6jWo+xAP08PuWYoaATndfkLvxC2Hnm/Pqfc6E58oRQFfAg6udeup1I+CL8ChOO63Bg8G8ckz+pfJjzHMQw7k4NsQty/fVXyUg0LKLhNWuOdLla+rkf0usgETzydQkk6jy4p8vxR7PiLWeV6+X4PE9qo=
+	t=1741592969; cv=none; b=N6WT7eitS2k7oM/hPe9i+PTpflY4+9bqibpy9p6Bq0kRBgTr0QIlt6jnWQZtKpFEdcM0fOr9yf19cBbqWOBG2iB8VKYglhjjFkda+OZp60r26L3fw8i0lVJp9IaILb4I6UDK10PbU5phK2LJ4fgBWm97+xNMs+1Gp/2usys/pQo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741592958; c=relaxed/simple;
-	bh=N5vzuCqcFyx4s8ct6bBbLFzZ/cGlLfNv8yq43DhYwqY=;
+	s=arc-20240116; t=1741592969; c=relaxed/simple;
+	bh=A5WdeWt4vfwbKkxKlT44d9TzT5Zdl1cx2ZqK/UJ7sCw=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=DBoG/klIYvm2K4e4L/9j9x/x8YplwrZHb4WDQl17WA/Ic3g+8URUHXA0AF7X+LzlElQELuhGbwKxlSrS1knK+/3cAyEMfnY0kFxcTxlxhcON54J4i/WlNMIfs+O37s2kfVCTmXlZXE4yxMAYsmACK1WnUKLDVvztG0G8uMzth4M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ORGCS5kC; arc=none smtp.client-ip=192.198.163.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1741592957; x=1773128957;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=N5vzuCqcFyx4s8ct6bBbLFzZ/cGlLfNv8yq43DhYwqY=;
-  b=ORGCS5kCt7/d1NnittRksrrSDitGimf6RQtPDHXjEQPQATlb+zVAFj1C
-   HAV0yHXmZriT/hWmnhkdZ8zrPnXcitoM5jSitcv7Tl79Xk1TjK3Zvz22B
-   sJ/UeEa1rmsMUNmDE9SqL0ga3dNyFexObDzgp85m7DG6HlZz5eDELkCwJ
-   PuBtXlaNlpPNxKy0v92O5EPO63cp0u+B+p7uhKpXHgDd4OofST3ipwm70
-   HLk5QxshPrBgsC63fpb0jgpyAzmcyofhkIy/jxey7ZNLlK3+L2F6DECs8
-   ZhU/X2PFcuJ8bcl4539x0aibY91Fa0lS0d4qoB6PP7tfcS7RAus6S2mjp
-   w==;
-X-CSE-ConnectionGUID: Z4JckrfXSlmVPGUcg3SNMA==
-X-CSE-MsgGUID: 8/x8UJPUSlaYx+sqtDoA1Q==
-X-IronPort-AV: E=McAfee;i="6700,10204,11368"; a="67935590"
-X-IronPort-AV: E=Sophos;i="6.14,235,1736841600"; 
-   d="scan'208";a="67935590"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Mar 2025 00:49:16 -0700
-X-CSE-ConnectionGUID: 6nFhWA4IRh++edvRyVpZOg==
-X-CSE-MsgGUID: aWDNEfwgQN+tKR30BSI3BA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,235,1736841600"; 
-   d="scan'208";a="119870467"
-Received: from aslawinx-mobl.ger.corp.intel.com (HELO [10.94.8.107]) ([10.94.8.107])
-  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Mar 2025 00:49:11 -0700
-Message-ID: <2a333cd4-6ec3-4d80-9d80-ba2add234da8@linux.intel.com>
-Date: Mon, 10 Mar 2025 08:49:07 +0100
+	 In-Reply-To:Content-Type; b=gdJH1R1b4Xwi+wbLhN/RbKOxrg0gfx9xRQe4HEr7JUv+KdoCBgdO7fE6mogQzX/tYHivz6jAsOFYB9ywy14HGQhpiXmUgg5aJ1ZTxddGIKEP1C3B/J6BPOtINV+LLD0iOcdN7qXbcRZoSLF/7/wIQlLEPuarEYisENvlrs+VyfE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Zm5UYNqH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 02579C4CEE5;
+	Mon, 10 Mar 2025 07:49:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741592968;
+	bh=A5WdeWt4vfwbKkxKlT44d9TzT5Zdl1cx2ZqK/UJ7sCw=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=Zm5UYNqHaM9F7P5O1ks79pR5k6fXZR0b0iMb4ZlPvLNXzwlgjhErQyZpkB161/CFt
+	 RSQbLysxE797uup+GgelsyDEknr8mrWYdnuwlRaAVDY5hfUJxDpy1fkwQOzZ1UJbcG
+	 HidrMve56i6V4jx/8ju0hB8GNlkFPMWlclFaqWtVaXRq+2kPBmNuJKBW49N2xIM9bg
+	 8gHmHH8514LeE85B9QMIg/zcLECDrcB/9RqGZyCfz+hkXErnFO12SSNo3Ij9SUU5aU
+	 qjwM3fRfsgjfwmS/8KPgmUIsXB9uucXn8V0kZo0a48f86W6iwNsCG1TRvr5Ch2Qw3V
+	 y9rWCKRnpzABw==
+Message-ID: <d5e73894-0e30-499f-a723-2ada72d3b864@kernel.org>
+Date: Mon, 10 Mar 2025 08:49:22 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,72 +49,188 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] ASoC: codecs: wm0010: Fix error handling path in
- wm0010_spi_probe()
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
- Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
- Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
- Dimitris Papastamos <dp@opensource.wolfsonmicro.com>,
- Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
- Mark Brown <broonie@opensource.wolfsonmicro.com>,
- patches@opensource.cirrus.com, linux-sound@vger.kernel.org
-References: <ee39ba19b8c4c157ce04e06096a8f54016831959.1741549792.git.christophe.jaillet@wanadoo.fr>
+Subject: Re: [PATCH 1/2] dt-bindings: leds: add Texas Instruments TPS6131x
+ flash LED driver
+To: Matthias Fend <matthias.fend@emfend.at>, Pavel Machek <pavel@ucw.cz>,
+ Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
+Cc: linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, bsp-development.geo@leica-geosystems.com
+References: <20250228-leds-tps6131x-v1-0-d1071d90f9ea@emfend.at>
+ <20250228-leds-tps6131x-v1-1-d1071d90f9ea@emfend.at>
+From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
-From: =?UTF-8?Q?Amadeusz_S=C5=82awi=C5=84ski?=
- <amadeuszx.slawinski@linux.intel.com>
-In-Reply-To: <ee39ba19b8c4c157ce04e06096a8f54016831959.1741549792.git.christophe.jaillet@wanadoo.fr>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20250228-leds-tps6131x-v1-1-d1071d90f9ea@emfend.at>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 3/9/2025 8:50 PM, Christophe JAILLET wrote:
-> Free some resources in the error handling path of the probe, as already
-> done in the remove function.
-> 
-> Fixes: e3523e01869d ("ASoC: wm0010: Add initial wm0010 DSP driver")
-> Fixes: fd8b96574456 ("ASoC: wm0010: Clear IRQ as wake source and include missing header")
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
-> Compile tested-only
-> ---
->   sound/soc/codecs/wm0010.c | 13 +++++++++++--
->   1 file changed, 11 insertions(+), 2 deletions(-)
-> 
-> diff --git a/sound/soc/codecs/wm0010.c b/sound/soc/codecs/wm0010.c
-> index edd2cb185c42..28b43fe4dc32 100644
-> --- a/sound/soc/codecs/wm0010.c
-> +++ b/sound/soc/codecs/wm0010.c
-> @@ -920,7 +920,7 @@ static int wm0010_spi_probe(struct spi_device *spi)
->   	if (ret) {
->   		dev_err(wm0010->dev, "Failed to set IRQ %d as wake source: %d\n",
->   			irq, ret);
-> -		return ret;
-> +		goto free_riq;
-
-typo? riq -> irq
-
->   	}
->   
->   	if (spi->max_speed_hz)
-> @@ -932,9 +932,18 @@ static int wm0010_spi_probe(struct spi_device *spi)
->   				     &soc_component_dev_wm0010, wm0010_dai,
->   				     ARRAY_SIZE(wm0010_dai));
->   	if (ret < 0)
-> -		return ret;
-> +		goto disable_irq_wake;
->   
->   	return 0;
+On 28/02/2025 11:31, Matthias Fend wrote:
 > +
-> +disable_irq_wake:
-> +	irq_set_irq_wake(wm0010->irq, 0);
+> +properties:
+> +  compatible:
+> +    enum:
+> +      - ti,tps61310
+> +      - ti,tps61311
 > +
-> +free_riq:
-> +	if (wm0010->irq)
-> +		free_irq(wm0010->irq, wm0010);
+> +  reg:
+> +    maxItems: 1
 > +
-> +	return ret;
->   }
->   
->   static void wm0010_spi_remove(struct spi_device *spi)
+> +  '#address-cells':
+> +    const: 1
+> +
+> +  '#size-cells':
+> +    const: 0
 
+Why do you need these two?
+
+> +
+> +  reset-gpios:
+> +    maxItems: 1
+> +    description: GPIO connected to NRESET pin
+> +
+> +  ti,valley-current-limit:
+> +    type: boolean
+> +    description:
+> +      Reduce the valley peak current limit from 1750mA to 1250mA (TPS61310) or
+> +      from 2480mA to 1800mA (TPS61311).
+> +
+> +  led:
+
+Why do you have only one led node? Description says three: LED1-3,
+unless these are just sinks which always have to be connected to the
+same LED?
+
+> +    type: object
+> +    $ref: common.yaml#
+> +    unevaluatedProperties: false
+> +
+> +    properties:
+> +      led-sources:
+> +        allOf:
+
+Drop allOf
+
+> +          - minItems: 1
+> +            maxItems: 3
+> +            items:
+> +              enum: [1, 2, 3]
+> +
+> +      led-max-microamp:
+> +        anyOf:
+
+oneOf
+
+> +          - minimum: 25000
+> +            maximum: 350000
+> +            multipleOf: 50000
+> +          - minimum: 25000
+> +            maximum: 525000
+
+Why two different values?
+
+> +            multipleOf: 25000
+> +
+> +      flash-max-microamp:
+> +        anyOf:
+
+oneOf
+
+> +          - minimum: 25000
+> +            maximum: 800000
+> +            multipleOf: 50000
+> +          - minimum: 25000
+
+Same question
+
+> +            maximum: 1500000
+> +            multipleOf: 25000
+> +
+> +      flash-max-timeout-us:
+> +        enum: [ 5300, 10700, 16000, 21300, 26600, 32000, 37300, 68200, 71500,
+> +                102200, 136300, 170400, 204500, 340800, 579300, 852000 ]
+> +
+> +    required:
+> +      - led-sources
+> +      - led-max-microamp
+> +      - flash-max-microamp
+> +      - flash-max-timeout-us
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - '#address-cells'
+> +  - '#size-cells'
+
+Why?
+
+> +  - led
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/leds/common.h>
+> +    #include <dt-bindings/gpio/gpio.h>
+> +
+> +    i2c {
+> +      #address-cells = <1>;
+> +      #size-cells = <0>;
+> +
+> +      led-controller@33 {
+> +        compatible = "ti,tps61310";
+> +        reg = <0x33>;
+> +        #address-cells = <1>;
+> +        #size-cells = <0>;
+> +
+> +        reset-gpios = <&gpio1 0 GPIO_ACTIVE_LOW>;
+> +
+> +        tps61310_flash: led {
+
+Drop unused label
+
+Best regards,
+Krzysztof
 
