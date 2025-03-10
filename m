@@ -1,147 +1,165 @@
-Return-Path: <linux-kernel+bounces-554775-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-554776-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B96E4A59CBB
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 18:14:59 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B841A59CCF
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 18:15:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3DDAF1883AFE
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 17:15:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EC0DD16EE6A
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 17:15:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45A65232376;
-	Mon, 10 Mar 2025 17:14:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9547917CA12;
+	Mon, 10 Mar 2025 17:15:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="dgA0oPCj"
-Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 777B1231A2D
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 17:14:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="izQvo7Lt"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 910CC22FACA;
+	Mon, 10 Mar 2025 17:15:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741626876; cv=none; b=k0QO9gOYnOo6TfBRaYu+/p+uj4cqJrMYqsxzwdP9qH/+kQqjAe6pxmyUtohbnGWx8KhNxSSrBHxiHOIpxP4ncz91xlTb6ERnu7lwW0k+uPOohBx3SJISbzmEnmDHZMGhqC4XjIREgyZ+F3b0QSE8eJ1Vc46nyB90jBE0kkG7iSI=
+	t=1741626915; cv=none; b=Z1NFjbDJKobfe8QCTeIa7UvUFOVJaGcVdlCX2H5/4nQHovwW9A6sVGhKYJ4gCTNRBnap05v/24zcS3EFX1SmWl41/67AoA/swHTHNtsVF66KEAqnA9PG+f6tAgDj4qcyi8o6Fnj0wI7SBG/taAi76KApjGPvOkeAN+z+IVbgwT0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741626876; c=relaxed/simple;
-	bh=dq1XvillSPGnZAnwO8Jk6HlomInoRUGnAxVEhvsL/5M=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SAP6CE7nOG5ZDdh9Fl06a1IAsHyTYrygnIxgthufPv/PSuvgz9k/3GRwey4zzL33MQFXKWENxy+kOHtjuNloEZt+LLBHqYWI+gKDKs5d0ga2Ici0DOka4He9gPLRJPvvKgVMAPH6PwtxEXBV/nwIWy5lmok/bxnly4hJAKe2w44=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=dgA0oPCj; arc=none smtp.client-ip=209.85.221.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-39140bd6317so1358679f8f.1
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 10:14:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1741626873; x=1742231673; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=heWFhlz+SWz1xH5kFIwmWzIb+nauW24lGHRaxh0Rld0=;
-        b=dgA0oPCjX2IEdYB9UjJli/tufzml5YNIqR1FFkwh6Knn9+Q8gjFM2Yi1U+n7zAOSo7
-         X2bbhm4lwiT9VeMPHtuzkVMq6EYb86MdoGN7udZvHtl9gIM4C58Uae3Te913L7mduFV3
-         gcNQCeMU+J6ahrcpNZiFmh5cJKBmAkxwb7+XZPJ4Gs8jGGawN51ui2mOzoGdGOnKevnS
-         DHPmjOBlN3OjeczFT8PSpQr0kULwuAJg6eg6PXA6D+eB1rC3t9tX3HGioiQTaMlaWCpw
-         sfbQE/3RYXBH8hBpbquZyHidbqBQsibEuGt8JivRKHxUn4XtQ7DXp+liKQX8ZETGr8D0
-         IUcQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741626873; x=1742231673;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=heWFhlz+SWz1xH5kFIwmWzIb+nauW24lGHRaxh0Rld0=;
-        b=HQKcsfJq6NRybgDSEFb3pzAHuM1UZRM5mDrUIZY1UvhSdN1nKXilr0EVmDFw2A9obQ
-         YV61QbR4bWLQxXpYz0zmR03UxpGsHqTsChopksk4YK1HycrgxLMbORjhxP93uqL/k0n1
-         bP6H8SQ7FAB4fiAF9UMW5YJWFRtG3fQGJJfvS+SVHzYywx7Cx2YDUGRGXrgAfcz45TUg
-         XXZiHP0kgjUd6/fhJkjptDhX4nX57sle8cb05ruoAcNgjLfJ2fyIu1aYTDxKGnWCcCe4
-         kT0kS9RnkXX+6YXOzoGk6NLbg40kHwIzG7wVfU9S9ooGxUjtWFBN5IAJ1fslE1VtHMtA
-         e5mQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWJAX07n2ioXiuXtDGo2zhr3qLlksaN0koMoB2wJ8eNp5LbkpXL9eVvy+2D9qoIdFLX+czZ9T54ZfhhCFs=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw5B6yuNl8ZuDeFMzG4GlnlPtsrb805DHxcGIFyejMiYW/imDZ7
-	+DfDuN8n50HiKU6e+XexZSIHEORp3tpEQatkqLeCkgDtATVxq07LXxjMJWdqfyzHdIu6S7hTZlO
-	eG3A=
-X-Gm-Gg: ASbGncuAxW/+XLsAnpjXUR4jecualRH1krdEAMSQjTVl20rUiNkUXTbfkB2dm+Eymxp
-	jsKNSDjsmDgae0kGyPNQJNLi78H7+uM6RigN3iMGQ86nLEbfs8xQJ5xgQIUE2b6bKpw4r/A1lAr
-	hKOJOG8QnW1LEija4gKC7Hm1bxYKyvSxOmYmxKOWtvDtHAReT6orCnrE17FGt+S3CdGHJD+yeUb
-	iW6co/lrGGQhxd37BVeVStEO+5VkRJo9Y0k3BD2UxlqqMpVolBaMcdSsZ9IbSIDdH+q0xCHH1mG
-	V2Fi2Rz8XBNjmZ793vR3zxawON6v7+cpl/NMQVS2Ngmb6fI=
-X-Google-Smtp-Source: AGHT+IHIfA6s47W3ZhsLWndjNxIG07Q9wUrct0SV7ZxC4AQ588su9NeqgtnaMCydV2H48+KZCdjFSQ==
-X-Received: by 2002:a05:6000:178d:b0:390:e9ea:59a with SMTP id ffacd0b85a97d-39132d77a7emr8940633f8f.5.1741626872767;
-        Mon, 10 Mar 2025 10:14:32 -0700 (PDT)
-Received: from blackdock.suse.cz ([193.86.92.181])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3912bfbab43sm15840796f8f.15.2025.03.10.10.14.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 10 Mar 2025 10:14:32 -0700 (PDT)
-Date: Mon, 10 Mar 2025 18:14:30 +0100
-From: Michal =?utf-8?Q?Koutn=C3=BD?= <mkoutny@suse.com>
-To: "Shashank.Mahadasyam@sony.com" <Shashank.Mahadasyam@sony.com>
-Cc: Tejun Heo <tj@kernel.org>, Johannes Weiner <hannes@cmpxchg.org>, 
-	Jonathan Corbet <corbet@lwn.net>, Waiman Long <longman@redhat.com>, 
-	"cgroups@vger.kernel.org" <cgroups@vger.kernel.org>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "Shinya.Takumi@sony.com" <Shinya.Takumi@sony.com>
-Subject: Re: [PATCH 2/2] cgroup, docs: Document interaction of RT processes
- with cpu controller
-Message-ID: <2vvwedzioiopvjhah4jxlc6a5gq4uayyj2s5gtjs455yojkhnn@rkxanxmh3hmu>
-References: <20250305-rt-and-cpu-controller-doc-v1-0-7b6a6f5ff43d@sony.com>
- <20250305-rt-and-cpu-controller-doc-v1-2-7b6a6f5ff43d@sony.com>
- <thhej7ngafu6ivtpcjs2czjidd5xqwihvrgqskvcrd3w65fnp4@inmu3wuofcpr>
- <OSZPR01MB67118A17B171687DB2F6FBC993CA2@OSZPR01MB6711.jpnprd01.prod.outlook.com>
+	s=arc-20240116; t=1741626915; c=relaxed/simple;
+	bh=bWqJ4FD0rh4Jv7wGJ1mKbUp1hDMD5nvjAYgteY/Eo4U=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=J/7QbO8GnHje7q1Y7SlMMFPHc2fvlb0VnuoC2Zrq4kp/eM+/a2jaCAGLYL+mPiOLpUIHuLBgXdRuh0fh1/YXDd7wGQeQpPkOVu4ARSZOr7t3m2cMVlE9InNsX6IUpVBECv3i+8xN9X3J/PRcqqdEorGgefqukTd3QyojLrF/iyw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=izQvo7Lt; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: from [10.137.184.60] (unknown [131.107.160.188])
+	by linux.microsoft.com (Postfix) with ESMTPSA id BFF802038F32;
+	Mon, 10 Mar 2025 10:15:12 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com BFF802038F32
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1741626913;
+	bh=eME4gRmjVE3w6nzuhE7xqtEmYJ+fLHcjVchsKhgalL8=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=izQvo7LtPEn8QdsyQJfUA53eTxUOuoeOz82pbmQ0wQaG1gObJiMFAQaBdi4A4iWNR
+	 uP46JGVDaO3cRF/G9lVcXt9kOcQnz5el35Sjj0jweE8RV1fyt3eecjS3tkMovWnNwm
+	 xH3wS8Mi9wqAyRiK3OyMT3uXWKNOYhhn5jgty0K8=
+Message-ID: <319aac20-229e-4a81-b2c5-e870453634bb@linux.microsoft.com>
+Date: Mon, 10 Mar 2025 10:15:12 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="axv77jbvbeq5oriz"
-Content-Disposition: inline
-In-Reply-To: <OSZPR01MB67118A17B171687DB2F6FBC993CA2@OSZPR01MB6711.jpnprd01.prod.outlook.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH hyperv-next v5 11/11] PCI: hv: Get vPCI MSI IRQ domain
+ from DeviceTree
+To: Bjorn Helgaas <helgaas@kernel.org>
+Cc: arnd@arndb.de, bhelgaas@google.com, bp@alien8.de,
+ catalin.marinas@arm.com, conor+dt@kernel.org, dave.hansen@linux.intel.com,
+ decui@microsoft.com, haiyangz@microsoft.com, hpa@zytor.com,
+ joey.gouly@arm.com, krzk+dt@kernel.org, kw@linux.com, kys@microsoft.com,
+ lenb@kernel.org, lpieralisi@kernel.org, manivannan.sadhasivam@linaro.org,
+ mark.rutland@arm.com, maz@kernel.org, mingo@redhat.com,
+ oliver.upton@linux.dev, rafael@kernel.org, robh@kernel.org,
+ ssengar@linux.microsoft.com, sudeep.holla@arm.com, suzuki.poulose@arm.com,
+ tglx@linutronix.de, wei.liu@kernel.org, will@kernel.org,
+ yuzenghui@huawei.com, devicetree@vger.kernel.org, kvmarm@lists.linux.dev,
+ linux-acpi@vger.kernel.org, linux-arch@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-hyperv@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, x86@kernel.org,
+ apais@microsoft.com, benhill@microsoft.com, bperkins@microsoft.com,
+ sunilmut@microsoft.com
+References: <20250310164122.GA551965@bhelgaas>
+Content-Language: en-US
+From: Roman Kisel <romank@linux.microsoft.com>
+In-Reply-To: <20250310164122.GA551965@bhelgaas>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
 
---axv77jbvbeq5oriz
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Subject: Re: [PATCH 2/2] cgroup, docs: Document interaction of RT processes
- with cpu controller
-MIME-Version: 1.0
 
-On Thu, Mar 06, 2025 at 11:02:22AM +0000, "Shashank.Mahadasyam@sony.com" <Shashank.Mahadasyam@sony.com> wrote:
-> Do you think it should be rephrased to make it clearer?
+On 3/10/2025 9:41 AM, Bjorn Helgaas wrote:
+> On Fri, Mar 07, 2025 at 02:03:03PM -0800, Roman Kisel wrote:
+>> The hyperv-pci driver uses ACPI for MSI IRQ domain configuration on
+>> arm64. It won't be able to do that in the VTL mode where only DeviceTree
+>> can be used.
+>>
+>> Update the hyperv-pci driver to get vPCI MSI IRQ domain in the DeviceTree
+>> case, too.
+>>
+>> Signed-off-by: Roman Kisel <romank@linux.microsoft.com>
+> 
+> A couple minor comments below, but I don't have any objection to this,
+> so if it's OK with the pci-hyperv.c folks, it's OK with me.
+> 
 
-Aha, I understand now why it confused you (with the paragraph about
-realtime tasks right above interface files).
+Bjorn, thanks a lot for your help and guidance! I'll be most happy to
+incorporate your suggestions into the next version of the series :)
 
-I'd consider such a minimal correction:
+>> +#ifdef CONFIG_OF
+>> +
+>> +static struct irq_domain *hv_pci_of_irq_domain_parent(void)
+>> +{
+>> +	struct device_node *parent;
+>> +	struct irq_domain *domain;
+>> +
+>> +	parent = of_irq_find_parent(hv_get_vmbus_root_device()->of_node);
+>> +	domain = NULL;
+>> +	if (parent) {
+>> +		domain = irq_find_host(parent);
+>> +		of_node_put(parent);
+>> +	}
+>> +
+>> +	return domain;
+> 
+> I think this would be a little simpler as:
+> 
+>    parent = of_irq_find_parent(hv_get_vmbus_root_device()->of_node);
+>    if (!parent)
+>      return NULL;
+> 
+>    domain = irq_find_host(parent);
+>    of_node_put(parent);
+>    return domain;
+> 
+>> +}
+>> +
+>> +#endif
+>> +
+>> +#ifdef CONFIG_ACPI
+>> +
+>> +static struct irq_domain *hv_pci_acpi_irq_domain_parent(void)
+>> +{
+>> +	struct irq_domain *domain;
+>> +	acpi_gsi_domain_disp_fn gsi_domain_disp_fn;
+>> +
+>> +	if (acpi_irq_model != ACPI_IRQ_MODEL_GIC)
+>> +		return NULL;
+>> +	gsi_domain_disp_fn = acpi_get_gsi_dispatcher();
+>> +	if (!gsi_domain_disp_fn)
+>> +		return NULL;
+>> +	domain = irq_find_matching_fwnode(gsi_domain_disp_fn(0),
+>> +				     DOMAIN_BUS_ANY);
+>> +
+>> +	if (!domain)
+>> +		return NULL;
+>> +
+>> +	return domain;
+> 
+>    if (!domain)
+>      return NULL;
+> 
+>    return domain;
+> 
+> is the same as:
+> 
+>    return domain;
+> 
+> or even just:
+> 
+>    return irq_find_matching_fwnode(gsi_domain_disp_fn(0), DOMAIN_BUS_ANY);
+> 
+>> +}
 
---- a/Documentation/admin-guide/cgroup-v2.rst
-+++ b/Documentation/admin-guide/cgroup-v2.rst
-@@ -1076,7 +1076,7 @@ cpufreq governor about the minimum desired frequency which should always be
- provided by a CPU, as well as the maximum desired frequency, which should not
- be exceeded by a CPU.
+-- 
+Thank you,
+Roman
 
--WARNING: cgroup2 doesn't yet support control of realtime processes. For
-+WARNING: cgroup2 doesn't yet support (bandwidth) control of realtime processes. For
- a kernel built with the CONFIG_RT_GROUP_SCHED option enabled for group
- scheduling of realtime processes, the cpu controller can only be enabled
- when all RT processes are in the root cgroup.  This limitation does
-
-
-Of course wordier rewrite is possible but I find the text as you
-originally proposed unclear due to several uses of "only" that imply
-restrictions that aren't in place in reality.
-
-Thanks,
-Michal
-
---axv77jbvbeq5oriz
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQTd6mfF2PbEZnpdoAkt3Wney77BSQUCZ88d9AAKCRAt3Wney77B
-SZInAP9Rd3zY18EcqWow8FjgpvFFozQcWGVRKThYkSVY8rgSLwD9GbCUzDgg1aDb
-cFJMyU4xEzEHa2BFoC6eDq1KMLSZqAA=
-=CF/q
------END PGP SIGNATURE-----
-
---axv77jbvbeq5oriz--
 
