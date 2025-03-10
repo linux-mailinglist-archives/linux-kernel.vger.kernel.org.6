@@ -1,213 +1,119 @@
-Return-Path: <linux-kernel+bounces-554240-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-554243-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 58B26A59515
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 13:50:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id EB786A5951F
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 13:51:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CBDAC3B0CBA
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 12:50:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 28BA13B202B
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 12:51:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52931229B23;
-	Mon, 10 Mar 2025 12:50:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F04C228CB0;
+	Mon, 10 Mar 2025 12:51:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="kE4XX5pJ";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="qfSFEpj/";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="kE4XX5pJ";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="qfSFEpj/"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MhLDU9d6"
+Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00F39227E99
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 12:50:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53793227B9E;
+	Mon, 10 Mar 2025 12:50:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741611011; cv=none; b=UQlyDNMP91p4DyR/WfYgAc0wISTNcOF6QyLs/EmjAYWHI459aRTsGkQ+6/WbkcIBkceTjM5xUNWpA4msmeUu58TcV7uS6GbfAz0QCRfwm3YyXepqLK1v0ssQOHlc09MGgFFKMJzmQflraJU/jqWF0LPKkFAj0HaW+bfNo//rTE8=
+	t=1741611060; cv=none; b=XkUU+Lg6IbCXbt0tyoOQowcjgQ4IlaOwP9236oOs0aqmPKlJXjR5/ZWwFvY1FNgFa5X5maPlGF3wWhlm1ImG4IMEvh9V9aRldFimM83s5ACZb3MMeSbHaLzSMez/X1ihHbhypYwLRwndj2LgfW7T7cDLoFyt3G8dxP0f/RengyE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741611011; c=relaxed/simple;
-	bh=uv2LeiwmSYk9JHNO8vrIiEMLTWXzeIqUg/+DKvcaji8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gfAMYZWb3PULytP/WVqh79EZK6jRWdDN/Pw7eaKkXEZ5wjtTMe6GguEqxgkH+y9PYVQ9HCSGkErZI7jQBx64M9C81axXE7lytxEin6KV4E2xX/J8inBswQ5qNuKv61WjQB1JafkW9YwhG262cO0+LRGcu+mIFNtYs4EGgxiQbmQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=kE4XX5pJ; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=qfSFEpj/; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=kE4XX5pJ; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=qfSFEpj/; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 2303E1F393;
-	Mon, 10 Mar 2025 12:50:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1741611008; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=gsAsdkpgjRb4gj83QOMLe2Bt8iVlfyUjr31sGYQjwPw=;
-	b=kE4XX5pJxoi1Xy54sdt7BBUMgpxxVMW+cYG+Z4eFyo90QWzbLeMWZi0w4/h0zXrNY5pIcb
-	w3XbJhmzlI1VZBKDj/Q8bZNgAs7LE3dgWlYyY/pWGtrt6E3/PwuQOy6KW8fjG1WpX1v9YQ
-	Ury2Z5cyhtVOLDja5bxAC5Lx1bJj0uI=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1741611008;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=gsAsdkpgjRb4gj83QOMLe2Bt8iVlfyUjr31sGYQjwPw=;
-	b=qfSFEpj/S/OaLmKthv92R3t35Vq4v6md62glGFwVEcYaFrfSJzgbxyMYxNQCMW0v8I/7pO
-	vI37S0idBzo5F7Bg==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1741611008; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=gsAsdkpgjRb4gj83QOMLe2Bt8iVlfyUjr31sGYQjwPw=;
-	b=kE4XX5pJxoi1Xy54sdt7BBUMgpxxVMW+cYG+Z4eFyo90QWzbLeMWZi0w4/h0zXrNY5pIcb
-	w3XbJhmzlI1VZBKDj/Q8bZNgAs7LE3dgWlYyY/pWGtrt6E3/PwuQOy6KW8fjG1WpX1v9YQ
-	Ury2Z5cyhtVOLDja5bxAC5Lx1bJj0uI=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1741611008;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=gsAsdkpgjRb4gj83QOMLe2Bt8iVlfyUjr31sGYQjwPw=;
-	b=qfSFEpj/S/OaLmKthv92R3t35Vq4v6md62glGFwVEcYaFrfSJzgbxyMYxNQCMW0v8I/7pO
-	vI37S0idBzo5F7Bg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 1886D139E7;
-	Mon, 10 Mar 2025 12:50:08 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id gtT2BQDgzmeHFwAAD6G6ig
-	(envelope-from <jack@suse.cz>); Mon, 10 Mar 2025 12:50:08 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id CB332A0912; Mon, 10 Mar 2025 13:50:03 +0100 (CET)
-Date: Mon, 10 Mar 2025 13:50:03 +0100
-From: Jan Kara <jack@suse.cz>
-To: Richard Guy Briggs <rgb@redhat.com>
-Cc: Jan Kara <jack@suse.cz>, 
-	Linux-Audit Mailing List <linux-audit@lists.linux-audit.osci.io>, LKML <linux-kernel@vger.kernel.org>, 
-	linux-fsdevel@vger.kernel.org, Linux Kernel Audit Mailing List <audit@vger.kernel.org>, 
-	Paul Moore <paul@paul-moore.com>, Eric Paris <eparis@parisplace.org>, 
-	Steve Grubb <sgrubb@redhat.com>, Amir Goldstein <amir73il@gmail.com>
-Subject: Re: [PATCH v1 1/2] audit: record fanotify event regardless of
- presence of rules
-Message-ID: <qra7odz5uj2yf3vogzmbsbgzfumfxu3xjkm7wvhghnwqxcow4i@jp6yd57qjutb>
-References: <cover.1741210251.git.rgb@redhat.com>
- <3c2679cb9df8a110e1e21b7f387b77ddfaacc289.1741210251.git.rgb@redhat.com>
- <aksoenimnsvk4jhxw663spln3pow5x6dys4lbtlfxqtwzwtvs4@yk5ef2tq26l2>
- <Z8pH97tbwt7OGj2o@madcap2.tricolour.ca>
- <jhvf3n4fnzsnj7opxooqblmpnuhvqhcg366y47p5u44dg4tm3i@snmc3msdcoiv>
- <Z8tGyiUzX6p+2vpp@madcap2.tricolour.ca>
+	s=arc-20240116; t=1741611060; c=relaxed/simple;
+	bh=m7RpVIHY+r0sfU2i8cmIAET2MityHo7vaehhJ6cZD5Q=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=bKLHYyTCKZ+fwEZh1WdzesGLNEcU8ArWThpSA9x5NW52Hw5lWsI/A/iM0C3hRx4GY4sl34oia1z6ZgjwH6vY6cHl+IwJjpXMNRGax6nHwVpxK2Qbe/R4hpdAFV7KEVDI0U88I8UpJ7d4NIKI4g7PihsEH0avFdhcQkGbG8GVuWM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MhLDU9d6; arc=none smtp.client-ip=209.85.218.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-ac2902f7c2aso209033466b.1;
+        Mon, 10 Mar 2025 05:50:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741611056; x=1742215856; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=m7RpVIHY+r0sfU2i8cmIAET2MityHo7vaehhJ6cZD5Q=;
+        b=MhLDU9d6JMxTIliQCHLpM10w6CGvtoeDzsGFSZHJzwOcySGufaePLvVFVVeYr3zEap
+         nTKVhklOSxVFf3lHBoPHGs/cM2INkWarqU7LYaRe89DaN9g1TzHbeN0c6rjHngSHPm2X
+         qiMDxNPWhFaqnWQfqiwYBYYPHmFv5OTu7WdEZoQmJ6HRgaDY4KvT8rv0VME+vvArJkWR
+         dfwmUjd16QgXQUq93RSJsA9L1ZQy5tvPuZIdCI0opn/M0KQRgzIC0EEclIo8r+SmpMOI
+         2ln4aYYGj2an42EquunFpJuzGzB/aycwpYvXr0q4PT9ThE9Fhr0/rowCBUbfZRczvGFK
+         I6aw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741611056; x=1742215856;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=m7RpVIHY+r0sfU2i8cmIAET2MityHo7vaehhJ6cZD5Q=;
+        b=NI9J7f4hTwX74G7RUj/XpRmBCN+phaapa4N6AjFHoIkHYETyVaZXQK8lOSoU1cJi7u
+         Hw09cX5N6VMQWQ+pKkYMt99VinLOatcnYMIp6DTevYpRxzAzoiDuE4Sj4tVZvniCA56V
+         /xHtfi7LnZeiRDuDN6Uf86Bbx5jpcZhMk3DU6XmQqTM3EYbetR7eEgQ1xpUAOBbB7G+Z
+         MIpi4LR2rL6Om3anIjMr5yd6PJg+fltcq0URXK0Pmh6mAzad0NKOKr9xpkbxLCXy4ORk
+         jmb7j/xxc6ARe4vhgDSs045EvXoLVCs5xoI2iIlpiHVQ+ZMej7kDGCqTeFbZQXUlzlUh
+         4MdQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVngT/eGuXSkVBFvfIaxcE3PjwMqHOWPGWdfrnrgZhSmz0l4CYifEMTXqHVaQO5vffwQmiXmz+qY0iipQ==@vger.kernel.org, AJvYcCX30wDtwmzgb1asSgy0Ap/6GJn5qZeUrvxjcQrrSACJtxLGFOG6hSAWR0fNj2cCa78l4/9MzS5KUdbT@vger.kernel.org, AJvYcCXT9b0adJGTOVUeB5h5kUY9q5n3a2bXrqMHxgdRt6/Ad8zLe22SMep755/Ukmx9TfYNaPHMHbh0Cs6CAxTb@vger.kernel.org
+X-Gm-Message-State: AOJu0YzbFZr3gurbwQqmBGJ8GdztkbgvcRa2mdwJqhRB9yWzGVGhBS8z
+	YJiBx8GXtl8tenzaQplCU5FiFHQY/8xxDiFCNofVJN7u/PbQkm/R9CYOrWH8UN9bU2C589oq5DH
+	3n+uMiwd8nCKTfJZdeBL6hfX8QAU=
+X-Gm-Gg: ASbGncsjof+fWUVpqBxkB2q+BsG2tXYo3A5tRDR0dOYjHzopWC3gc3mYHSGJ00Q5Ayy
+	89gFD09rSuHMCjL2yKhD643thCmP3ldXq977z/ievpDxc5eEY4ejncYTCDKeK+rW+8tQrBKwfnc
+	tkA/J0WDvaMFkPxjNHM4GVqnVlNVWf10JKqwCGbJpDzls2
+X-Google-Smtp-Source: AGHT+IEEhoCLJZRXY4Rijvv9tI0tLl/IUwNp5Orm1PRrbMcRZugzWXJ7hXwK/krnr0EUihHMQKx/Fjue7P0l/J3Yjb0=
+X-Received: by 2002:a17:906:99c2:b0:abf:4708:863e with SMTP id
+ a640c23a62f3a-ac252fb9b4emr1577886666b.39.1741611056422; Mon, 10 Mar 2025
+ 05:50:56 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z8tGyiUzX6p+2vpp@madcap2.tricolour.ca>
-X-Spam-Level: 
-X-Spamd-Result: default: False [-3.80 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[10];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_COUNT_THREE(0.00)[3];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[suse.cz,lists.linux-audit.osci.io,vger.kernel.org,paul-moore.com,parisplace.org,redhat.com,gmail.com];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_TLS_LAST(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.com:email]
-X-Spam-Score: -3.80
-X-Spam-Flag: NO
+References: <1740611284-27506-1-git-send-email-nunodasneves@linux.microsoft.com>
+ <1740611284-27506-6-git-send-email-nunodasneves@linux.microsoft.com>
+In-Reply-To: <1740611284-27506-6-git-send-email-nunodasneves@linux.microsoft.com>
+From: Tianyu Lan <ltykernel@gmail.com>
+Date: Mon, 10 Mar 2025 20:50:20 +0800
+X-Gm-Features: AQ5f1JrW4lh036PUCGXkQlwffXrplxrlmEnJajhWhVG9u6jh4khODFbp1KsY5xA
+Message-ID: <CAMvTesAh9hK3r81TqbSwB58c1zuXpMzhk=7=gt2cR1QvpJC35Q@mail.gmail.com>
+Subject: Re: [PATCH v5 05/10] acpi: numa: Export node_to_pxm()
+To: Nuno Das Neves <nunodasneves@linux.microsoft.com>
+Cc: linux-hyperv@vger.kernel.org, x86@kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	linux-arch@vger.kernel.org, linux-acpi@vger.kernel.org, kys@microsoft.com, 
+	haiyangz@microsoft.com, wei.liu@kernel.org, mhklinux@outlook.com, 
+	decui@microsoft.com, catalin.marinas@arm.com, will@kernel.org, 
+	tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, 
+	dave.hansen@linux.intel.com, hpa@zytor.com, daniel.lezcano@linaro.org, 
+	joro@8bytes.org, robin.murphy@arm.com, arnd@arndb.de, 
+	jinankjain@linux.microsoft.com, muminulrussell@gmail.com, 
+	skinsburskii@linux.microsoft.com, mrathor@linux.microsoft.com, 
+	ssengar@linux.microsoft.com, apais@linux.microsoft.com, 
+	Tianyu.Lan@microsoft.com, stanislav.kinsburskiy@gmail.com, 
+	gregkh@linuxfoundation.org, vkuznets@redhat.com, prapal@linux.microsoft.com, 
+	muislam@microsoft.com, anrayabh@linux.microsoft.com, rafael@kernel.org, 
+	lenb@kernel.org, corbet@lwn.net
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri 07-03-25 14:19:38, Richard Guy Briggs wrote:
-> On 2025-03-07 15:52, Jan Kara wrote:
-> > On Thu 06-03-25 20:12:23, Richard Guy Briggs wrote:
-> > > On 2025-03-06 16:06, Jan Kara wrote:
-> > > > On Wed 05-03-25 16:33:19, Richard Guy Briggs wrote:
-> > > > > When no audit rules are in place, fanotify event results are
-> > > > > unconditionally dropped due to an explicit check for the existence of
-> > > > > any audit rules.  Given this is a report from another security
-> > > > > sub-system, allow it to be recorded regardless of the existence of any
-> > > > > audit rules.
-> > > > > 
-> > > > > To test, install and run the fapolicyd daemon with default config.  Then
-> > > > > as an unprivileged user, create and run a very simple binary that should
-> > > > > be denied.  Then check for an event with
-> > > > > 	ausearch -m FANOTIFY -ts recent
-> > > > > 
-> > > > > Link: https://issues.redhat.com/browse/RHEL-1367
-> > > > > Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
-> > > > 
-> > > > I don't know enough about security modules to tell whether this is what
-> > > > admins want or not so that's up to you but:
-> > > > 
-> > > > > -static inline void audit_fanotify(u32 response, struct fanotify_response_info_audit_rule *friar)
-> > > > > -{
-> > > > > -	if (!audit_dummy_context())
-> > > > > -		__audit_fanotify(response, friar);
-> > > > > -}
-> > > > > -
-> > > > 
-> > > > I think this is going to break compilation with !CONFIG_AUDITSYSCALL &&
-> > > > CONFIG_FANOTIFY?
-> > > 
-> > > Why would that break it?  The part of the patch you (prematurely)
-> > > deleted takes care of that.
-> > 
-> > So I'm failing to see how it takes care of that when with
-> > !CONFIG_AUDITSYSCALL kernel/auditsc.c does not get compiled into the kernel.
-> > So what does provide the implementation of audit_fanotify() in that case?
-> > I think you need to provide empty audit_fanotify() inline wrapper for that
-> > case...
-> 
-> I'm sorry, I responded too quickly without thinking about your question,
-> my mistake.  It isn't the prototype that was changed in the
-> CONFIG_SYSCALL case that is relevant in that case.
-> 
-> There was already in existance in the !CONFIG_AUDITSYSCALL case the
-> inline wrapper to do that job:
-> 
-> 	static inline void audit_fanotify(u32 response, struct fanotify_response_info_audit_rule *friar)
-> 	{ }
-> 
-> Did I understand correctly this time and does this answer your question?
+On Thu, Feb 27, 2025 at 7:10=E2=80=AFAM Nuno Das Neves
+<nunodasneves@linux.microsoft.com> wrote:
+>
+> node_to_pxm() is used by hv_numa_node_to_pxm_info().
+> That helper will be used by Hyper-V root partition module code
+> when CONFIG_MSHV_ROOT=3Dm.
+>
+> Signed-off-by: Nuno Das Neves <nunodasneves@linux.microsoft.com>
+> ---
 
-Yes, thanks for explanation and sorry for not noticing the second
-audit_fanotify() implementation. Somehow I've hasted to a conclusion (based
-on customs of parts of kernel I maintain ;)) that you rely on
-audit_dummy_context() being constant 0 for !CONFIG_AUDITSYSCALL and thus
-__audit_fanotify() call getting compiled out (which would not be the case
-after your changes).
+Reviewed-by: Tianyu Lan <tiala@microsoft.com>
 
-Anyway, for the patch feel free to add:
 
-Acked-by: Jan Kara <jack@suse.cz>
-
-> But you do cause me to notice the case that these notifications will be
-> dropped when CONFIG_AUDIT && !CONFIG_AUDITSYSCALL.
-
-Glad my blindness helped something ;)
-
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+--=20
+Thanks
+Tianyu Lan
 
