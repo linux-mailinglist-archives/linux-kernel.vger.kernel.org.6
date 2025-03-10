@@ -1,130 +1,109 @@
-Return-Path: <linux-kernel+bounces-555252-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-555236-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 921EDA5A96A
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 23:51:58 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D8EFDA5A85A
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 23:38:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 19313189360F
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 22:52:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2D9F93AF231
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 22:37:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 009621F4C98;
-	Mon, 10 Mar 2025 22:51:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3756D1E8350;
+	Mon, 10 Mar 2025 22:38:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=apitzsch.eu header.i=@apitzsch.eu header.b="K/TA5oJF"
-Received: from www637.your-server.de (www637.your-server.de [168.119.26.117])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="gYlz+Nw7"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C1084A02;
-	Mon, 10 Mar 2025 22:51:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=168.119.26.117
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A90781DE8AB;
+	Mon, 10 Mar 2025 22:37:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741647109; cv=none; b=tT5uT24pLx+Y1bOnfkaxNWaUYPY+6i41A57luy2fHe9iJ2YRYJg4rt9aavxYjkkIgDRIHnzPPUxf/rtmH2lvgSK1GTcjNycp0P/7MGQCB4vvRAaKUI32nVcZ+jQ1gEOEAXLNZxArKAy0OA70EOGeWAC1YOkvPYCorsVqiNRuoYo=
+	t=1741646281; cv=none; b=TdU+Y5qfPipHYI+fvn1qYuX7sLKEnmkihDwrw/26KKqA2xSd1ZyEz/ISv2ZSWivCUEFBIq71tG9okIkQNrbXHjxRoNnV80CBt3Z1n5nnooZ6HRi6dbUZ4qP+P4KJS7TFSrg8OnJuhgtQx2GAvUUSAfXjM3dARYXNrtRmXT2b5go=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741647109; c=relaxed/simple;
-	bh=hMUTidMfkkDJMzZA6MYxS0DzBePJgGcet1BbONPR2OI=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=o9l59nq9/conXFGLtnUFuZetcQ3GQIRUpBVvOuCkTmvHPCOZ+fxiCd/J/U2/Glde9v0qEEkEYVSFx+Zi3SbV30WqT4AxN+OLcZFmvjZ/xWte2Lk7t7/rkLGTqoNM+6JI3Iot86RKBDH1i33aHXRYuiPCEYOqCzw+VOFRZGk0eus=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=apitzsch.eu; spf=pass smtp.mailfrom=apitzsch.eu; dkim=pass (2048-bit key) header.d=apitzsch.eu header.i=@apitzsch.eu header.b=K/TA5oJF; arc=none smtp.client-ip=168.119.26.117
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=apitzsch.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=apitzsch.eu
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=apitzsch.eu
-	; s=default2410; h=MIME-Version:Content-Transfer-Encoding:Content-Type:
-	References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID;
-	bh=hMUTidMfkkDJMzZA6MYxS0DzBePJgGcet1BbONPR2OI=; b=K/TA5oJFfr0Brllu+E5D+RUXMB
-	UmpxColfXAhqdCRfAPUxJrJnwitibsp7O+bFD13xMcq5h4U03jzzDmy0wDFmNRrTOyS2GLisucKYS
-	paolxe9J95AneFtXo08p1nXR4xAn4ujhzhn3dnvpuoTrp2Mj4HoxaW9jkIK1HTlnGhfUEtY9lQeME
-	1oyDAbnW94LTYOoXyxicBbEfZtHA8X+oxMjg6wLNr6TiKemXdMACgkWHREKvhWOfcr/KnqkGK/dbZ
-	W4dNjuwmYDwzrz1qilTFcyFX9LnT3LWBkXi1Szh3CDIwxeFSqQ0uMAbtYtJsYGg8fq+oKjumhnu5e
-	VwN9ufTQ==;
-Received: from sslproxy07.your-server.de ([78.47.199.104])
-	by www637.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-	(Exim 4.96.2)
-	(envelope-from <git@apitzsch.eu>)
-	id 1trliP-0001C6-0J;
-	Mon, 10 Mar 2025 23:35:17 +0100
-Received: from [77.64.147.108] (helo=framework.lan)
-	by sslproxy07.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <git@apitzsch.eu>)
-	id 1trliO-0007ck-2N;
-	Mon, 10 Mar 2025 23:35:16 +0100
-Message-ID: <4c62bb9d5575e9075b39500917e09687d37cf7ca.camel@apitzsch.eu>
-Subject: Re: [PATCH RESEND 0/4] media: i2c: imx214: Add support for 23.88MHz
- clock
-From: =?ISO-8859-1?Q?Andr=E9?= Apitzsch <git@apitzsch.eu>
-To: Sakari Ailus <sakari.ailus@linux.intel.com>
-Cc: Ricardo Ribalda <ribalda@kernel.org>, Mauro Carvalho Chehab
-	 <mchehab@kernel.org>, ~postmarketos/upstreaming@lists.sr.ht, 
-	phone-devel@vger.kernel.org, linux-media@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Date: Mon, 10 Mar 2025 23:35:15 +0100
-In-Reply-To: <Z87I2xh0HY-YD_tZ@kekkonen.localdomain>
-References: <20250308-imx214_clk_freq-v1-0-467a4c083c35@apitzsch.eu>
-	 <Z87I2xh0HY-YD_tZ@kekkonen.localdomain>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.54.3 
+	s=arc-20240116; t=1741646281; c=relaxed/simple;
+	bh=7nKWMwAMXlJpflNICfgG68sJl9Dq4MEjyrVaHsRylSU=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=QKfpXvMU9BM6zdd9F/XEFa7caACs22pioP9qsd1Uu9FY8nNB0d53Va+qujQPhozv4Qj7S/SYjr/Od8Q/5RxRm9ULVdFuxiRmP1tjf4l3h2oYz3lgVP5sNJpEj15kHBoh4zq0+1FDDijDgDiQEiJBDf7/ofprniRHYzFklP4i518=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=gYlz+Nw7; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1741646273;
+	bh=5onEa9Mn+rqYPsiv6VHKuogGPZglJyzZJxHxOZ20DSk=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=gYlz+Nw7yL/HA7hlVeXFxu745O0y7YuIiQbbj57DZEbSM4RaBzd1baHstilnMWRWW
+	 mx4YpRWfH/i5YxwOB5rDkNqBZjsnCZBqT/+9kzT1qSAPf5tIc9SnLsUH7vJ2KDcS4r
+	 2aTa7RpLnI+c+J8uezVlCpt5rmN7QhgtGwphizZcWKVZFwlHsktDd914Bdb3487VYb
+	 T8X/6bBDOL2hTDcpW+wzDX2o49fnKBwI/HsrwMuiUgdwk7NtlWosccuvBApfypd5jK
+	 ANGb+eUJQvSqBcgO6CdE2Udw/CAwF6t1EYzs5p+6Q7mQEpHt1V+YfC39bfHceOlLfR
+	 nAWakUz9HVwTQ==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4ZBWxY4lPKz4x3J;
+	Tue, 11 Mar 2025 09:37:53 +1100 (AEDT)
+Date: Tue, 11 Mar 2025 09:37:52 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Boqun Feng <boqun.feng@gmail.com>
+Cc: "Paul E. McKenney" <paulmck@kernel.org>, Frederic Weisbecker
+ <frederic@kernel.org>, Neeraj Upadhyay <neeraj.upadhyay@kernel.org>,
+ Uladzislau Rezki <urezki@gmail.com>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>, Joel Fernandes <joelagnelf@nvidia.com>
+Subject: Re: linux-next: Signed-off-by missing for commit in the rcu tree
+Message-ID: <20250311093752.703b3069@canb.auug.org.au>
+In-Reply-To: <Z89g6ZXRHQUq8WyV@boqun-archlinux>
+References: <20250311081301.6a22ab25@canb.auug.org.au>
+	<Z89g6ZXRHQUq8WyV@boqun-archlinux>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Authenticated-Sender: andre@apitzsch.eu
-X-Virus-Scanned: Clear (ClamAV 1.0.7/27573/Mon Mar 10 09:38:09 2025)
+Content-Type: multipart/signed; boundary="Sig_/5Re1HHhgbBRwCjPav+56OgP";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-Hi Sakari,
+--Sig_/5Re1HHhgbBRwCjPav+56OgP
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Am Montag, dem 10.03.2025 um 11:11 +0000 schrieb Sakari Ailus:
-> Hi Andr=C3=A9,
->=20
-> On Sat, Mar 08, 2025 at 10:47:54PM +0100, Andr=C3=A9 Apitzsch via B4 Rela=
-y
-> wrote:
-> > The imx214 driver currently supports only a 24MHz external clock.
-> > But
-> > there are devices, like Qualcomm-MSM8916-based phones, which cannot
-> > provide this frequency. To make the sensor usable by those devices,
-> > add
-> > support for 23.88MHz clock.
-> >=20
-> > Signed-off-by: Andr=C3=A9 Apitzsch <git@apitzsch.eu>
-> > ---
-> > Andr=C3=A9 Apitzsch (4):
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 media: i2c: imx214: Calculate link bit r=
-ate from clock
-> > frequency
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 media: i2c: imx214: Prepare for variable=
- clock frequency
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 media: i2c: imx214: Read clock frequency=
- from device tree
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 media: i2c: imx214: Add support for 23.8=
-8MHz clock
-> >=20
-> > =C2=A0drivers/media/i2c/imx214.c | 188
-> > +++++++++++++++++++++++++++++++++++----------
-> > =C2=A01 file changed, 146 insertions(+), 42 deletions(-)
->=20
-> Thanks for the patches.
->=20
-> Do you think the driver could use the CCS PLL calculator? The PLL
-> appears to be compliant. The AR0234 driver will do the same. (The
-> sensor might just work with the CCS driver, too, but that's another
-> discussion.)
->=20
-Using the CCS PLL calculator seems quite complicated compared to
-switching to the CCS driver. That's why I looked at the later first.
-But for it to work, quirks already need to be applied in
-ccs_power_on(), to disable writing to COMPRESSION_MODE, and in
-ccs_identify_module(), to change the MODULE_MANUFACTURER_ID register.
+Hi Boqun,
 
-I'll check if CCS PLL calculator could be used.
+On Mon, 10 Mar 2025 15:00:09 -0700 Boqun Feng <boqun.feng@gmail.com> wrote:
+>
+> Thanks for spotting this. These two are likely for the next next merge
+> windows (i.e. for 6.16), and presumably they will be handled by Joel
+> (Cced), so I deliberately avoid putting my SoB there.
 
-Best regards,
-Andr=C3=A9
+The next merge window (starting in a couple of weeks) will be for
+v6.15, so if the commits are intended for v6.16, then they should not
+be in linux-next (yet).  If they are intended for v6.15, then they need
+to have SoBs.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/5Re1HHhgbBRwCjPav+56OgP
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmfPacAACgkQAVBC80lX
+0Gz4XAf8Dl83Mydkiw/it9DamD1VVvuaDGdAiKuO6NS0BDdgqNXKXC4WwT6oWNEC
+W2FelvdWoGtzbHaUACSS6h3Mt5tRrYeEAfz/IzY/zxcBjtkrfDhoqDCw7rKUV8NE
+5VPoq7oQah4O/Mcy6Nwn94niuprhb/iZg0dgVYrltdojoC9AcptLcMk5e407A6jI
+EF6VvPLu4XRP9IRS3ha9oxqUwP31dfNWRPUfNtRQnlrk/HS2PnOW1pPJ9nrL1IyJ
+kWcxNGi+SHmLm/eReeKUNldEOZQRYhC9oF4+UOYwuQhP7rrJTUsQ0jyCi4Oe1eGV
+uW5kIpHZeerr+hkU4yGSppa2yH1Vkw==
+=1zMF
+-----END PGP SIGNATURE-----
+
+--Sig_/5Re1HHhgbBRwCjPav+56OgP--
 
