@@ -1,267 +1,147 @@
-Return-Path: <linux-kernel+bounces-554052-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-554053-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 92803A59230
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 12:04:03 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2777FA59232
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 12:04:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 440B03A7241
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 11:03:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9A6611883914
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 11:04:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C326B226D07;
-	Mon, 10 Mar 2025 11:03:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B9A1226D1E;
+	Mon, 10 Mar 2025 11:04:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BlR+AvCu"
-Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="bj2neNPP"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C80B17A2E7
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 11:03:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F934226D07
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 11:04:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741604638; cv=none; b=aGExcQigMmum0Xh9a74C/k3MhPYQSZ0D27HFb2rUwyATDwNJREb5gZrTrNMevUYTnctdja/CDh22/rL0FlrHPbMzAu9Aqs6pyjgSckEPXPMo0cGOmD58qWI1afgGpabjdwYIP+CKuWzdCxhWutKMXzkfw7QkbapSP7E4y/mQ5t4=
+	t=1741604660; cv=none; b=b2YSNChltwFhW0XtZ1vil6gv3UYZ2IpoANpheTH5DNb2urrH0PhOLEktZyW8wqFMZudN+jJYnSo9eZDcBBkNcsA6sCpbrw+W4n3Pr/U4EJzgtHEF5VuFV0rr+clgLpl50b2X73w0FILJzL/DtLHatUjvhHaR5V6+V20OCO7FevQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741604638; c=relaxed/simple;
-	bh=twRHMbIp6OZQj2m+uuxfbqk1Kfu7YwN+abkej4hPLH0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=uZsb9RSEP2NbnW8TyFHaFC8bZ4UTf19hgITwH4rOqdBeTdg8xEQDVlHRy/ke/+app3p582x3D3GOaHh11tH5KRrTOiIw9MlTBXT9Ssrb186gr4EX42VCHZ6V974K6OX5L9Re325mJCGB6ClhPp42C90O9vE7TNaQdjakmgDJdws=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BlR+AvCu; arc=none smtp.client-ip=209.85.208.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-5e66407963fso2299690a12.2
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 04:03:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741604634; x=1742209434; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=/7BUcFsRj/y6rxeqK+E6cVPSLMvQ8YkhpTA5EiP+/fM=;
-        b=BlR+AvCuczA8iIq9rzlY3CMJwsX5QRcIkdE5bjZgx3N2oloyQ60NDE1CcQvs1fGAeC
-         g99BgcEMC9oD0zufapBKfgSucEz0EVgYL+7HsdmlhUytxx8LvIYLtaSnCadRONyKiTa9
-         NH57Ie+ssqdipNHLnjeRP2ydlJFNwVnEU4Mzoh2ZsNGQeHBYPfX40oBjyK7SEBApqzTj
-         dfqHTBCda5oHOWX/B91HkbTj2RSB3gk/Zt9RcRCF+P3PnNjUZBvIcJjApRJzjqeOlU2H
-         Jg5qT6aKoZikhaiYf9FAO0QnZkFoTc6uomY7PQ+LmzrFpTy4bXDWe8guDF6vzJGCRJfF
-         T3CA==
+	s=arc-20240116; t=1741604660; c=relaxed/simple;
+	bh=SLKi5/pU6VmqZloQSrc3BsEC95BvrfInlTEKZdNyDPI=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=JXSQVQ5tabtEkbKwwY6PoUjQLnnjAC5proQ+r8Id7XOE4oR6W6HAL9Py3rbLUnGmqSpg5bRyT4Y8SmwX1k+mF9GF7bo3C8VjZRH+XDyLpIqlPrhiPQS9pOpKhkZxkG8IEQ2u/is8v3ji47ONUVHN3A2Rc8sJHkzrGrJvgHlLinY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=bj2neNPP; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52A9tWkL008001
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 11:04:17 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=qcppdkim1; bh=7+h0SgCQWbpp2hc08NzZtuUqyuQ4lXLc5tQ
+	LmGtbA50=; b=bj2neNPPyGpRSdjTyspYKoXqr14OqsTXVLwiR9JUgqJTZzyZpXX
+	d6rdXBVYipzcHPvJkkfveDmRHAt+jCfMBfr/+expJ8k8JEBMb6quwaPVvS3bM05Q
+	U9ax+hAhd89Kx2tEmJXMSzepqa7qBD1990jPd63aBdEPBeE5TvU1j50VUcv47qPs
+	6K0d+9i4AVpvR1oegcOwVb/dMV7HUfORL+FkmNZ0YIFi0OiUe0PZAeTzTw9qZycz
+	ox3rzhe0kIdVE88URT+z/PjGkEYuPcnPBkv0Vg5XUd11WHmUhJ9nuRTq9h8v4PkT
+	U+4p74QN3SeXafsdULRBxxAGj5tWvhZ8NqQ==
+Received: from mail-pl1-f199.google.com (mail-pl1-f199.google.com [209.85.214.199])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 458eyt4h7c-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 11:04:16 +0000 (GMT)
+Received: by mail-pl1-f199.google.com with SMTP id d9443c01a7336-2242ade807fso87035205ad.2
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 04:04:16 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741604634; x=1742209434;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=/7BUcFsRj/y6rxeqK+E6cVPSLMvQ8YkhpTA5EiP+/fM=;
-        b=q+QmuBqfJaYGzMphErCX7t2m93f6NkWKyszcNQmrGqfCTG1u0y8Xz8FKqtKPE9A1+E
-         Sad4m75SpmIB9QrtitznFk/U24uNVb4hrVNdO3WR9PCSAa+WT9nGrZiAdQpUDzUgWAC2
-         avZj3uGCGsvqjKOPHoLC/WJ/jOv4KQXPURPLOJxItNqs4/tCj4S6lMwinNtiyE5tKm3J
-         dmuue9x++0VQU+F8n0qXZPyQ48ehkvbq2kPeafdcwdy6/Fg3v9tONNtooAtTNX+R+I4g
-         ofEFehxv+U8fWJazKyhIUIK4Ohge3/6nEdRZnQ9v9G9A0OGGVpDRSUx1OaLL5zKjIg1d
-         PqGQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVrK26fkC3IGM+S8yEy8zT+hzT+ARoHLCTowkV3ge82dmF2pOOzSz34cu3lDlnFjwDhk3SX+juqJ2jbDTs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzXrPnE13kTsA0pZQv3riHn5irxP1iJn7qE+j0j8umR1kwbVStH
-	4fdU2gkRrply4esl0F4wZbNlhftPaN3WHZCdGqcdCxnxm2zgCvWWARop3IQ7ChqMPpEwiUpY6cw
-	cYTX4zMIE+Ji0jo7LjRFAgd4pxmY=
-X-Gm-Gg: ASbGncvyTby8taEMemqy218nQi9tkc1TCT6mboXaslCStYs8ea+tvUZHYuU/2CbampP
-	dh8dv7Roaj+83YsDaT125Ej05IrceUirHeGv1wA+iPzp+XoNIgoyZczI8fOL4TET0+XdJBlELuz
-	xtE1iecyC2mj86AAQCRdOFKqTwVjok0zvOPcDB5A==
-X-Google-Smtp-Source: AGHT+IHnacd1EO2fA0BCrhBmew4ClDZnEqgIHehs6/WfxW5IdNYnTw1DnACPp9MwTxNVzP0KDkmlkyEhavYW2JuUBjc=
-X-Received: by 2002:a17:907:1b16:b0:abf:742e:1fca with SMTP id
- a640c23a62f3a-ac252a9e1e0mr1443040266b.18.1741604633932; Mon, 10 Mar 2025
- 04:03:53 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1741604655; x=1742209455;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=7+h0SgCQWbpp2hc08NzZtuUqyuQ4lXLc5tQLmGtbA50=;
+        b=FPBfesLRbBxYm59n98cKTxq3oTyuYhDkVhWMkkB+WMBz9N+yubl50qOQOjpArpk4ym
+         FQPWmbi32irEAIrH8N9x9+A0qNcDD7bel20qH2HyYlKUI1sa5mhg16tsw3YKFNjLnfxk
+         yl6JgeZtaFUmvCLE1W6Isf3Qoh/tiCUTJ14HfLYnHWf/VKEYDEFmUatPsD+JjKKQwwYp
+         1wrRvIbBdKnBWO82ANmpysbBTIEgywZfX4wpUnvtarWQTUTOC+bsl4qrOXHMXO/d8YWw
+         hJK1loGBau6FUiDza11d7EO9PNU8xJ7iFSfTwjic4+4qHfDMFztG5ysLdgGLC748N8nP
+         oCew==
+X-Forwarded-Encrypted: i=1; AJvYcCUxH+LrrZF51FDqYqap2JJ5LtYK0j9b9Lp+FChS5PEpe1m08hWhmVrhbL8yR5PleUCVXnwZvu0LF2j1obY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxIcikBoN8YzsbU3ylDzWF3oVhHv6QZKT4fb4FZhn2BZjKRW3bK
+	a6jtamsEXgZ31X3BNeQl4gQRB5+5bTqEHPF8q9qARYIfV3jYsbhEzoIapAbNXB1dVOeniVAkVcc
+	GM4uXZ8om9iQhws5RFoQLHm9/D3FfoRkDm9Fd2dRBbuviNkIVFOo6zi+3N6oWESg=
+X-Gm-Gg: ASbGnct5wdErCBJEMXB5Hofvgvq96Wccq4jNW6LL4CRCSZvzIiVHnLnxQjmINM97iA1
+	6VnXwEmWguw6Lod8CmufTYUkfIwzN3wjWcpDehVT7H9IDcfx/7GU4S+MwzxWuEspVqG23X14Vwy
+	sxoaFDAcXy98Q74XfC1y8TEsG7ngNV7hpC87abIjdrzJfsIzlerugWSeHPAQktmF2bvUvV8h4XY
+	thZKVH1gAl1AY86YXjjh3zwBHXn/2sgEDUeJT1WUf39X3CU7oDvZgupERIEsIu2fLnxxEHJcPQi
+	AUd1JXOd+COTeOC6i3CA7O8yAM5zGgECAJGuq9BCqztjFcFTlWfjmQ==
+X-Received: by 2002:a17:903:22c8:b0:220:f449:7419 with SMTP id d9443c01a7336-22428880305mr190238575ad.7.1741604655631;
+        Mon, 10 Mar 2025 04:04:15 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGPpOyafTgqJOPNvJdDELRWWpYaOQqOg/hYct9/Qs6ay7Y38goWmm0TeDagcKLKgA3lGaIYZQ==
+X-Received: by 2002:a17:903:22c8:b0:220:f449:7419 with SMTP id d9443c01a7336-22428880305mr190238105ad.7.1741604655245;
+        Mon, 10 Mar 2025 04:04:15 -0700 (PDT)
+Received: from hu-kriskura-hyd.qualcomm.com ([202.46.22.19])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22410a7f8c2sm74902025ad.116.2025.03.10.04.04.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 10 Mar 2025 04:04:14 -0700 (PDT)
+From: Krishna Kurapati <krishna.kurapati@oss.qualcomm.com>
+To: Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+        Johan Hovold <johan+linaro@kernel.org>
+Cc: linux-phy@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org,
+        Krishna Kurapati <krishna.kurapati@oss.qualcomm.com>
+Subject: [PATCH v4] phy: qcom: qmp-usbc: Add qmp configuration for QCS615
+Date: Mon, 10 Mar 2025 16:33:59 +0530
+Message-Id: <20250310110359.210990-1-krishna.kurapati@oss.qualcomm.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <84441660bef0a5e67fd09dc3787178d0276dad31.1740664400.git.hongyan.xia2@arm.com>
- <4394f2a7-b4e8-419a-a299-f1afa560c944@arm.com> <CAB8ipk_627GF+TV5u=6DK_3aRUHW8qGYwmN+KXMq_Cg-+Say1Q@mail.gmail.com>
- <bf5a70bf-3d13-4b3b-a3ef-804998b21fe9@arm.com> <CAB8ipk-SUFDATb=euJQFebxQ513SRwTEpSbBSD6K=batQKELHg@mail.gmail.com>
- <80c2c9f4-eb84-4a43-9c48-8f776615b45a@arm.com>
-In-Reply-To: <80c2c9f4-eb84-4a43-9c48-8f776615b45a@arm.com>
-From: Xuewen Yan <xuewen.yan94@gmail.com>
-Date: Mon, 10 Mar 2025 19:03:41 +0800
-X-Gm-Features: AQ5f1JrY3qEjfDyzCNw4GX0UhOiRNBWcFqVLNtj4zvjRxSSPp0noSZZz8DkT4M0
-Message-ID: <CAB8ipk8pEvOtCm-d0o1rsekwxPWUHk9iBGtt9TLTWW-iWTQKiA@mail.gmail.com>
-Subject: Re: [PATCH] sched/uclamp: Let each sched_class handle uclamp
-To: Dietmar Eggemann <dietmar.eggemann@arm.com>
-Cc: Hongyan Xia <hongyan.xia2@arm.com>, Ingo Molnar <mingo@redhat.com>, 
-	Peter Zijlstra <peterz@infradead.org>, Juri Lelli <juri.lelli@redhat.com>, 
-	Vincent Guittot <vincent.guittot@linaro.org>, Steven Rostedt <rostedt@goodmis.org>, 
-	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>, 
-	Valentin Schneider <vschneid@redhat.com>, Tejun Heo <tj@kernel.org>, David Vernet <void@manifault.com>, 
-	Andrea Righi <arighi@nvidia.com>, Changwoo Min <changwoo@igalia.com>, linux-kernel@vger.kernel.org, 
-	Xuewen Yan <xuewen.yan@unisoc.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-ORIG-GUID: am3rX5PjVs2l-MfD3QYvUpOfBxoAYfiy
+X-Authority-Analysis: v=2.4 cv=CupFcm4D c=1 sm=1 tr=0 ts=67cec730 cx=c_pps a=JL+w9abYAAE89/QcEU+0QA==:117 a=fChuTYTh2wq5r3m49p7fHw==:17 a=Vs1iUdzkB0EA:10 a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8 a=KKAkSRfTAAAA:8 a=GV-Fn4z6lk5qDZWrX1MA:9 a=324X-CrmTo6CU4MGRt3R:22
+ a=cvBusfyB2V15izCimMoJ:22
+X-Proofpoint-GUID: am3rX5PjVs2l-MfD3QYvUpOfBxoAYfiy
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-10_04,2025-03-07_03,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 clxscore=1011
+ suspectscore=0 phishscore=0 adultscore=0 impostorscore=0 malwarescore=0
+ bulkscore=0 spamscore=0 mlxlogscore=999 lowpriorityscore=0
+ priorityscore=1501 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2502100000
+ definitions=main-2503100087
 
-Hi Dietmar,
+Provide PHY configuration for the USB QMP PHY for QCS615 Platform.
 
-On Mon, Mar 10, 2025 at 6:53=E2=80=AFPM Dietmar Eggemann
-<dietmar.eggemann@arm.com> wrote:
->
-> On 10/03/2025 03:41, Xuewen Yan wrote:
-> > On Sat, Mar 8, 2025 at 2:32=E2=80=AFAM Dietmar Eggemann
-> > <dietmar.eggemann@arm.com> wrote:
-> >>
-> >> On 06/03/2025 13:01, Xuewen Yan wrote:
-> >>> On Thu, Mar 6, 2025 at 2:24=E2=80=AFAM Dietmar Eggemann
-> >>> <dietmar.eggemann@arm.com> wrote:
-> >>>>
-> >>>> On 27/02/2025 14:54, Hongyan Xia wrote:
-> >>>>
-> >>>> [...]
-> >>>>
-> >>>>> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-> >>>>> index 857808da23d8..7e5a653811ad 100644
-> >>>>> --- a/kernel/sched/fair.c
-> >>>>> +++ b/kernel/sched/fair.c
-> >>>>> @@ -6941,8 +6941,10 @@ enqueue_task_fair(struct rq *rq, struct task=
-_struct *p, int flags)
-> >>>>>        * Let's add the task's estimated utilization to the cfs_rq's
-> >>>>>        * estimated utilization, before we update schedutil.
-> >>>>>        */
-> >>>>> -     if (!(p->se.sched_delayed && (task_on_rq_migrating(p) || (fla=
-gs & ENQUEUE_RESTORE))))
-> >>>>> +     if (!(p->se.sched_delayed && (task_on_rq_migrating(p) || (fla=
-gs & ENQUEUE_RESTORE)))) {
-> >>>>> +             uclamp_rq_inc(rq, p);
-> >>>>>               util_est_enqueue(&rq->cfs, p);
-> >>>>> +     }
-> >>>>
-> >>>> So you want to have p uclamp-enqueued so that its uclamp_min value
-> >>>> counts for the cpufreq_update_util()/cfs_rq_util_change() calls late=
-r in
-> >>>> enqueue_task_fair?
-> >>>>
-> >>>>   if (p->in_iowait)
-> >>>>     cpufreq_update_util(rq, SCHED_CPUFREQ_IOWAIT);
-> >>>>
-> >>>>   enqueue_entity() -> update_load_avg() -> cfs_rq_util_change() ->
-> >>>>   cpufreq_update_util()
-> >>>>
-> >>>> But if you do this before requeue_delayed_entity() (1) you will not
-> >>>> uclamp-enqueue p which got his ->sched_delayed just cleared in (1)?
-> >>>>
-> >>>
-> >>> Could we change to the following:
-> >>>
-> >>> when enqueue:
-> >>>
-> >>> -     if (!(p->se.sched_delayed && (task_on_rq_migrating(p) || (flags
-> >>> & ENQUEUE_RESTORE))))
-> >>> +     if (!(p->se.sched_delayed && !(flags & ENQUEUE_DELAYED)))
-> >>
-> >> Why you want to check ENQUEUE_DELAYED as well here? Isn't
-> >> !p->se.sched_delayed implying !ENQUEUE_DELAYED).
-> >
-> > Indeed, the (!(p->se.sched_delayed && !(flags & ENQUEUE_DELAYED))) is e=
-qual to
-> > the  (!(p->se.sched_delayed && (task_on_rq_migrating(p) || (flags &
-> > ENQUEUE_RESTORE)))).
-> > I just think it might be easier to read using the ENQUEUE_DELAYED flag.
-> > Because we only allow enq the uclamp and util_est when wake up the dela=
-yed-task.
->
-> OK, I see.
->
-> So that means we would not have to move the uclamp handling into the sche=
-d
-> classes necessarily, we could use flags in enqueue_task() as well:
->
-> -->8--
->
-> Subject: [PATCH] Align uclamp and util_est and call before freq update
->
-> Signed-off-by: Dietmar Eggemann <dietmar.eggemann@arm.com>
-> ---
->  kernel/sched/core.c | 14 ++++++++------
->  kernel/sched/fair.c |  4 ++--
->  2 files changed, 10 insertions(+), 8 deletions(-)
->
-> diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-> index b60916d77482..f833108a3b2d 100644
-> --- a/kernel/sched/core.c
-> +++ b/kernel/sched/core.c
-> @@ -1747,7 +1747,8 @@ static inline void uclamp_rq_dec_id(struct rq *rq, =
-struct task_struct *p,
->         }
->  }
->
-> -static inline void uclamp_rq_inc(struct rq *rq, struct task_struct *p)
-> +static inline void uclamp_rq_inc(struct rq *rq, struct task_struct *p,
-> +                                int flags)
->  {
->         enum uclamp_id clamp_id;
->
-> @@ -1763,7 +1764,7 @@ static inline void uclamp_rq_inc(struct rq *rq, str=
-uct task_struct *p)
->         if (unlikely(!p->sched_class->uclamp_enabled))
->                 return;
->
-> -       if (p->se.sched_delayed)
-> +       if (p->se.sched_delayed && !(flags & ENQUEUE_DELAYED))
->                 return;
->
->         for_each_clamp_id(clamp_id)
-> @@ -2067,12 +2068,13 @@ void enqueue_task(struct rq *rq, struct task_stru=
-ct *p, int flags)
->         if (!(flags & ENQUEUE_NOCLOCK))
->                 update_rq_clock(rq);
->
-> -       p->sched_class->enqueue_task(rq, p, flags);
->         /*
-> -        * Must be after ->enqueue_task() because ENQUEUE_DELAYED can cle=
-ar
-> -        * ->sched_delayed.
-> +        * Can be before ->enqueue_task() because uclamp considers the
-> +        * ENQUEUE_DELAYED task before its ->sched_delayed gets cleared
-> +        * in ->enqueue_task().
->          */
-> -       uclamp_rq_inc(rq, p);
-> +       uclamp_rq_inc(rq, p, flags);
-> +       p->sched_class->enqueue_task(rq, p, flags);
->
->         psi_enqueue(p, flags);
->
+Signed-off-by: Krishna Kurapati <krishna.kurapati@oss.qualcomm.com>
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+---
+Link to v3:
+https://lore.kernel.org/all/20241224084621.4139021-4-krishna.kurapati@oss.qualcomm.com/
+ 
+Changes in v4:
+First two patches in v3 are merged. Rebasing this patch on top
+of phy/next. No changes in code and v3 applies cleanly so keeping
+RB from Dmitry unchanged. Also changing mail ID from quicinc to OSS
+mail ID.
 
-I submitted a patch similar to yours before:
+ drivers/phy/qualcomm/phy-qcom-qmp-usbc.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-https://lore.kernel.org/all/CAB8ipk_AvaOWp9QhmnFDdbFSWcKLhCH151=3Dno6kRO2z+=
-pSJfyQ@mail.gmail.com/
+diff --git a/drivers/phy/qualcomm/phy-qcom-qmp-usbc.c b/drivers/phy/qualcomm/phy-qcom-qmp-usbc.c
+index cf12a6f12134..5e7fcb26744a 100644
+--- a/drivers/phy/qualcomm/phy-qcom-qmp-usbc.c
++++ b/drivers/phy/qualcomm/phy-qcom-qmp-usbc.c
+@@ -1124,6 +1124,9 @@ static const struct of_device_id qmp_usbc_of_match_table[] = {
+ 	}, {
+ 		.compatible = "qcom,qcm2290-qmp-usb3-phy",
+ 		.data = &qcm2290_usb3phy_cfg,
++	}, {
++		.compatible = "qcom,qcs615-qmp-usb3-phy",
++		.data = &qcm2290_usb3phy_cfg,
+ 	}, {
+ 		.compatible = "qcom,sdm660-qmp-usb3-phy",
+ 		.data = &sdm660_usb3phy_cfg,
+-- 
+2.34.1
 
-And Hongyan fears that as more complexity goes into each sched_class
-like delayed dequeue,
-so it's better to just let the sched_class handle how uclamp is
-enqueued and dequeued within itself rather than leaking into core.c.
-
-
-> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-> index 061a29e88ee2..e26d1dfea601 100644
-> --- a/kernel/sched/fair.c
-> +++ b/kernel/sched/fair.c
-> @@ -6951,7 +6951,7 @@ enqueue_task_fair(struct rq *rq, struct task_struct=
- *p, int flags)
->          * Let's add the task's estimated utilization to the cfs_rq's
->          * estimated utilization, before we update schedutil.
->          */
-> -       if (!(p->se.sched_delayed && (task_on_rq_migrating(p) || (flags &=
- ENQUEUE_RESTORE))))
-> +       if (!p->se.sched_delayed || (flags & ENQUEUE_DELAYED))
->                 util_est_enqueue(&rq->cfs, p);
->
->         if (flags & ENQUEUE_DELAYED) {
-> @@ -7193,7 +7193,7 @@ static int dequeue_entities(struct rq *rq, struct s=
-ched_entity *se, int flags)
->   */
->  static bool dequeue_task_fair(struct rq *rq, struct task_struct *p, int =
-flags)
->  {
-> -       if (!(p->se.sched_delayed && (task_on_rq_migrating(p) || (flags &=
- DEQUEUE_SAVE))))
-> +       if (!p->se.sched_delayed)
->                 util_est_dequeue(&rq->cfs, p);
->
->         util_est_update(&rq->cfs, p, flags & DEQUEUE_SLEEP);
-> --
-> 2.34.1
 
