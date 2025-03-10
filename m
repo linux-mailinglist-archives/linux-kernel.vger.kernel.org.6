@@ -1,136 +1,114 @@
-Return-Path: <linux-kernel+bounces-553726-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-553728-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A037A58E27
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 09:29:23 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4CA04A58E2B
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 09:29:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0C8CE7A5647
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 08:28:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 32A60188E809
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 08:29:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 439B1223706;
-	Mon, 10 Mar 2025 08:29:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BA3D2236EE;
+	Mon, 10 Mar 2025 08:29:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="nyNlS6rC"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 338C11D54FA
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 08:29:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
+	dkim=pass (2048-bit key) header.d=8bytes.org header.i=@8bytes.org header.b="pLvQJdim"
+Received: from mail.8bytes.org (mail.8bytes.org [85.214.250.239])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 562FF22330F;
+	Mon, 10 Mar 2025 08:29:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.214.250.239
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741595347; cv=none; b=iF3267ZB0UkCLD/zOEnOqeNJ7gf89GC53gfIzEh1nCunKdu7d/+6o6HrEcQ6hK9t9HQVlnmNTn0KBXgC2fTpUqWWeAr/gg38tznQBiARvrer/8Z8B4Btm7lRkvZcUFwdxrcHnsa/R13BouGSP3ngjgfs4TFxpN4mYIsRs1K23xE=
+	t=1741595357; cv=none; b=sZTcqN5QlKXqU4y8qIpw3ON9Zy9vMXF51GmnC7zNOo+UWysjYX35C+uyo1gOgkg04X2ANFknapRlI9xGQ/6PaMr/AvTuo/sTNBnmmMarz0dLyqFMvVgydstv/VUv0SZcj2PTN+TDKme0tPbAl5c/YBDV70bXPGBrP3CBLsHaE/M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741595347; c=relaxed/simple;
-	bh=bdmthZTfeFQ5jVmiLX6ZsJvK3Q9ebBnX6m48VBCKrFE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=NWALp39TxZlblPzd9cdqvP1Tr4XLqddmt/U39fUz47QyvrGEk+UYiZuehOrGF4fiT5FT6juyb7CUWyX9iBrTf7jEEx4fHO9Xop4yA0pPlD5uM51tZWujh2lZ7Q3R4cSImfCtcbECpn4ThM7WN+QjeOQJFjGAerLICBEedR4GkXo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.helo=mgamail.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=nyNlS6rC; arc=none smtp.client-ip=192.198.163.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.helo=mgamail.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1741595345; x=1773131345;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=bdmthZTfeFQ5jVmiLX6ZsJvK3Q9ebBnX6m48VBCKrFE=;
-  b=nyNlS6rCVzkdQHkyFk18dHrpAvNgRdhhZ6hwZ5h56IrfjL+ekgiC9usj
-   pdjZjMiK5oxaPtrWr0uti2Nqu1l/ZbkvY0YXB8zlSAX0Upqyep62Qag69
-   JdPCtyUXmyvdrhZdcJj0QDryc0qNA/23JVVUbc7VI4RQNfGZYVnjBXqr1
-   6ag/ylxtmcM/ANFBplAUcLQ6IruM+xvrgFlS/ZFNafCPc1ny9EakDLGre
-   PMaew8VCt4sExc1rc0IaHMmJhYOLTjgHCP+ZNszTjVJUOkYDhzRDSMMfi
-   3EG0IGjJOXj5a24D05Uy9XXzO/D8Dvr1Qr1weLUm3YTk73ytW3IihYRED
-   Q==;
-X-CSE-ConnectionGUID: kqXvjG7FSUmQ8UHBdejiXg==
-X-CSE-MsgGUID: IpjFcpfFSTeBjJoFQ09Djg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11368"; a="46489283"
-X-IronPort-AV: E=Sophos;i="6.14,235,1736841600"; 
-   d="scan'208";a="46489283"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Mar 2025 01:29:04 -0700
-X-CSE-ConnectionGUID: SfFdmbs1Q92ASSjkAL0xCg==
-X-CSE-MsgGUID: Y8iTlEFQQdORZ01VPc53Bg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,235,1736841600"; 
-   d="scan'208";a="120820004"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by orviesa008.jf.intel.com with ESMTP; 10 Mar 2025 01:29:02 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1000)
-	id 04CFE23F; Mon, 10 Mar 2025 10:28:59 +0200 (EET)
-From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Mike Rapoport <rppt@kernel.org>,
-	David Hildenbrand <david@redhat.com>,
-	Vlastimil Babka <vbabka@suse.cz>,
-	Mel Gorman <mgorman@techsingularity.net>,
-	Tom Lendacky <thomas.lendacky@amd.com>,
-	"Kalra, Ashish" <ashish.kalra@amd.com>,
-	Rick Edgecombe  <rick.p.edgecombe@intel.com>,
-	linux-mm@kvack.org,
-	linux-coco@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	"Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-	Farrah Chen <farrah.chen@intel.com>
-Subject: [PATCH] mm/page_alloc: Fix memory accept before watermarks gets initialized
-Date: Mon, 10 Mar 2025 10:28:55 +0200
-Message-ID: <20250310082855.2587122-1-kirill.shutemov@linux.intel.com>
-X-Mailer: git-send-email 2.47.2
+	s=arc-20240116; t=1741595357; c=relaxed/simple;
+	bh=frX4G4i69BdoHfaR05B7WfBtiGFjU59BqKAKCBlX6vc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QZ0oklARkZ+OlLgPGFXjzBHs44wcQzH/4ONOsKD3xsj/x1JkPff8hdTHWQmSCNs3gG7gahKIk/HwAv4SWwQzG12T/F7JOvJOOyRbMmoTToJrE2IO+omg0t0dS5h9ToHjhs4KBv3Zj/zIi9cw+RH6A6SbCs0gHriWAID/KRyxZco=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=8bytes.org; spf=pass smtp.mailfrom=8bytes.org; dkim=pass (2048-bit key) header.d=8bytes.org header.i=@8bytes.org header.b=pLvQJdim; arc=none smtp.client-ip=85.214.250.239
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=8bytes.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=8bytes.org
+Received: from 8bytes.org (p4ffe03ae.dip0.t-ipconnect.de [79.254.3.174])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mail.8bytes.org (Postfix) with ESMTPSA id 1364A45229;
+	Mon, 10 Mar 2025 09:29:14 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=8bytes.org;
+	s=default; t=1741595354;
+	bh=frX4G4i69BdoHfaR05B7WfBtiGFjU59BqKAKCBlX6vc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=pLvQJdim6IyNh9OflrLb5oh+e8PpvuLCM7gou4Gbs0/mv/l0Y/CTYc5KJYczw60zh
+	 tyB81d0pFn7H4QWWzddDp47l9aIy2fBqzokWlz0g3XJfyBzaHLj7Cw/XF+dOnvcUgx
+	 ltV0QEF5YEldt6xlVgABrLyQ8mNC66Vlbe9G+8u9THehDW1Rde0MdBuqOWbjX1VyNw
+	 rqWATAisQ6IvQiG29+Xa3szaWqDZjlEB62Nqd/BeNV2EBXhGcEyXVkAdSJvBAaYkOy
+	 u8HEDFkVKAkbbvlEbGh0YDF5gu1Oor0qHpQjrXpS2vPEDIswU1Ee60j+y7dGCO00PP
+	 lG20mHqj4VUaA==
+Date: Mon, 10 Mar 2025 09:29:12 +0100
+From: Joerg Roedel <joro@8bytes.org>
+To: Robin Murphy <robin.murphy@arm.com>
+Cc: Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Hanjun Guo <guohanjun@huawei.com>,
+	Sudeep Holla <sudeep.holla@arm.com>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Len Brown <lenb@kernel.org>, Russell King <linux@armlinux.org.uk>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Danilo Krummrich <dakr@kernel.org>,
+	Stuart Yoder <stuyoder@gmail.com>,
+	Laurentiu Tudor <laurentiu.tudor@nxp.com>,
+	Nipun Gupta <nipun.gupta@amd.com>,
+	Nikhil Agarwal <nikhil.agarwal@amd.com>,
+	Will Deacon <will@kernel.org>, Rob Herring <robh@kernel.org>,
+	Saravana Kannan <saravanak@google.com>,
+	Bjorn Helgaas <bhelgaas@google.com>, linux-acpi@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	iommu@lists.linux.dev, devicetree@vger.kernel.org,
+	linux-pci@vger.kernel.org,
+	Charan Teja Kalla <quic_charante@quicinc.com>
+Subject: Re: [PATCH v2 0/4] iommu: Fix the longstanding probe issues
+Message-ID: <Z86i2BHhmAINErv_@8bytes.org>
+References: <cover.1740753261.git.robin.murphy@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <cover.1740753261.git.robin.murphy@arm.com>
 
-Watermarks are initialized during the postcore initcall. Until then, all
-watermarks are set to zero. This causes cond_accept_memory() to
-incorrectly skip memory acceptance because a watermark of 0 is always
-met.
+On Fri, Feb 28, 2025 at 03:46:29PM +0000, Robin Murphy wrote:
+> This spin irons out a couple of issues which v1 had. Firstly there
+> should now be no change in behaviour for the weird of_dma_configure()
+> calls, other than possibly getting the warning if they deserve it.
+> Secondly I think there was still a possibility for probe to run via
+> the replay path while its "real" probe was waiting to reacquire the
+> lock; this is now solved by making dev->iommu a reliable indicator of
+> the probe lifecycle, with a couple more prep patches.
+> 
+> Thanks,
+> Robin.
+> 
+> 
+> Robin Murphy (4):
+>   iommu: Handle race with default domain setup
+>   iommu: Resolve ops in iommu_init_device()
+>   iommu: Keep dev->iommu state consistent
+>   iommu: Get DT/ACPI parsing into the proper probe path
+> 
+>  drivers/acpi/arm64/dma.c        |  5 +++
+>  drivers/acpi/scan.c             |  7 -----
+>  drivers/amba/bus.c              |  3 +-
+>  drivers/base/platform.c         |  3 +-
+>  drivers/bus/fsl-mc/fsl-mc-bus.c |  3 +-
+>  drivers/cdx/cdx.c               |  3 +-
+>  drivers/iommu/iommu-priv.h      |  2 ++
+>  drivers/iommu/iommu.c           | 55 ++++++++++++++++++++++++---------
+>  drivers/iommu/of_iommu.c        | 13 ++++++--
+>  drivers/of/device.c             |  7 ++++-
+>  drivers/pci/pci-driver.c        |  3 +-
+>  11 files changed, 74 insertions(+), 30 deletions(-)
 
-To ensure progress, accept one MAX_ORDER page if the watermark is zero.
-
-Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-Reported-and-tested-by: Farrah Chen <farrah.chen@intel.com>
----
- mm/page_alloc.c | 14 ++++++++++++--
- 1 file changed, 12 insertions(+), 2 deletions(-)
-
-diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-index 579789600a3c..4fe93029bcb6 100644
---- a/mm/page_alloc.c
-+++ b/mm/page_alloc.c
-@@ -7004,7 +7004,7 @@ static inline bool has_unaccepted_memory(void)
- 
- static bool cond_accept_memory(struct zone *zone, unsigned int order)
- {
--	long to_accept;
-+	long to_accept, wmark;
- 	bool ret = false;
- 
- 	if (!has_unaccepted_memory())
-@@ -7013,8 +7013,18 @@ static bool cond_accept_memory(struct zone *zone, unsigned int order)
- 	if (list_empty(&zone->unaccepted_pages))
- 		return false;
- 
-+	wmark = promo_wmark_pages(zone);
-+
-+	/*
-+	 * Watermarks have not been initialized yet.
-+	 *
-+	 * Accepting one MAX_ORDER page to ensure progress.
-+	 */
-+	if (!wmark)
-+		return try_to_accept_memory_one(zone);
-+
- 	/* How much to accept to get to promo watermark? */
--	to_accept = promo_wmark_pages(zone) -
-+	to_accept = wmark -
- 		    (zone_page_state(zone, NR_FREE_PAGES) -
- 		    __zone_watermark_unusable_free(zone, order, 0) -
- 		    zone_page_state(zone, NR_UNACCEPTED));
--- 
-2.47.2
-
+Applied, thanks Robin.
 
