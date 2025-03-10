@@ -1,151 +1,172 @@
-Return-Path: <linux-kernel+bounces-554332-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-554333-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4EFB6A59649
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 14:29:00 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E9EEA5964C
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 14:29:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AFCBC3AFC62
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 13:28:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C5D7D1888271
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 13:29:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0862C22A4E3;
-	Mon, 10 Mar 2025 13:28:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=8devices.com header.i=@8devices.com header.b="LitRbtOU"
-Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28DEA1581F9
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 13:28:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA65622A1D5;
+	Mon, 10 Mar 2025 13:29:32 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF6ED846D;
+	Mon, 10 Mar 2025 13:29:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741613331; cv=none; b=XxRRRPKwj8vAOt60X7huGhcranH8iCRnG09t5inY3JR4HdNTqzjMaxHqU9mammgr2TlDKRkfIYksBCO//V4710gB0xvAeuwq+oRN69MxIkvsGq0k7mf2KebrfETb7KRI9dwIqPyB8UG1svuPc/7m72ZrG9vfUKO+YKXHEDPTSYg=
+	t=1741613372; cv=none; b=VYtPRYj9bWYGoQdno55xaTJA9frcSkNOFfIjuPH1C24InQ9BwCz4s7yPBDo8FhUyKD/RO+6Q5osg2KJbe4pRiJ5ETqNCpuodHWD68PhGHU4MGwOimmrJKRxnDKusscjwpvGCpxOfxLc3c+rCSjzqIwKmoQct3RSX/8RtwYF/XA4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741613331; c=relaxed/simple;
-	bh=yRMCaDQnvsF6vQ/w9rLRB/etZre1sSzpWUDTNGX0zAk=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=VvVAxfG5mMDBESWpEn2JG5262Y3R+r02CMJT4VSLeJvFOHS0vaJCFoN/Ti91+d6X/jmknEwfd1wzu+Ns1QoSdP7Ydy9WdTOY0nlxvQk8tJGXGAhf4Cxe/jj2RUyi0DfVzFpIDktUUGmR31CLG159VqCRoOsRtl5sV5yWm/rHgH8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=8devices.com; spf=pass smtp.mailfrom=8devices.com; dkim=pass (2048-bit key) header.d=8devices.com header.i=@8devices.com header.b=LitRbtOU; arc=none smtp.client-ip=209.85.167.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=8devices.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=8devices.com
-Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-5499c5d9691so1866540e87.2
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 06:28:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=8devices.com; s=8devices; t=1741613326; x=1742218126; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=6+w3029kfHch5SeD/z0zur2K64cd98za9hhmN/ji0MY=;
-        b=LitRbtOUxDhUPycKFo/pzuJu9Y11QmpYSvOmkgM9TcNEOsBvLk8z0EJ7+xy24ijRGJ
-         Xz16V9Z1kJGkXBK90klI6s3RjVBQf+dxf37t2kdQWdrgOE2VhXjnnV5zP7odCkMmOViw
-         2UmKSvagsxc6KojE2OYyd+vR3hmL+4fCtegorXMaRrf0Brje8XJmViAUgbc+IAtfL0Ao
-         pnig300fAb4WbnmIJIRiOUKoTESjbJRkUehGJkhe1ztiPE1F86AVMXw5IrDBR/WtMin1
-         9nYYDqfSGvI7fOvfStfZ9hS0ShIhBNd5naccyQ7c0xSTvXJ51vUvNvdZuufm9OKsbQ99
-         nh4g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741613326; x=1742218126;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=6+w3029kfHch5SeD/z0zur2K64cd98za9hhmN/ji0MY=;
-        b=THclcF8jxEzef2xAnD0O0pMK17XPIpqwLf16c618ZdzSKDXO59kvjB7J0OyDVFQY1C
-         ATCF+Te/tkqm7uRfmqNeSt9uXz00DQNp/BXwY9Auw8pQ0ropl0fNfDMxBhPqJICIuQMG
-         X2kcN1YfvNGnkB2f8YUy/1BF+DoQJWJ6/tJej591almSEyuT+Ppg+UTcAnz9lPmmd7zs
-         V//Tw3+hiMQyu/J/WFlXx3E8kX7dvK30o1eSTev8cnQw+xsKfl8tiHzwoN3N2PpT83Au
-         galYl5QxTrx82ZTlMBtkCjveGVD12YyCqj5MMYGeXyoV8Fd5C+KrdL92f73NREQiFRqY
-         SiOw==
-X-Forwarded-Encrypted: i=1; AJvYcCUBoTDG5Coohte0U4c7UjZggXbaSlh2QtoOc3TQKk+smFCkzqdz8bSI/D69o4R0lSflCj7MrpiIwB/qRsE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YysZL+8uV78hBrNhFllseJbdCDY4lcpmY3zlnSGegUnBfDltTRn
-	OyVVFxHSITnBqEHU3nGxIsBjlCcxsny+1wwIJ2hkDhx6zVHnraKOqWRkEr5X618=
-X-Gm-Gg: ASbGncswbw9S5RH4mUcXuQba3TXE50gI5pBc488vzy0WZBhXRkbx1tX1nwO8OyES58z
-	4B884DpxSB7+ixDYCBUpdfIDgGwuoN22krg/GMHoPELMffzT5yUpbfbW5bXoaBijMW/3D57/uvM
-	p/C2QDQd2zMGoKk1R9poI7vpaWYc2HvXGNffdtSNd5HtoSSKSGnJ930v5cFJgY0dRjdJc1UIlBS
-	XbvPOuQKjuqm5yUI8zmIl81LaKzinyTN5dAihz3HUr9zpcEHPdqNxdfjY1uCmqjXJXrUj6QD8Ob
-	TEDa/IRbNY7CAj13A8AiG0E52UNOwYxhvq67gvdivjWRx1JQjVSWPw==
-X-Google-Smtp-Source: AGHT+IGIixTut4yqDWp69RPz6EjMMq4lD94Ez1yhsRnow6NgvTk6WmKPLFavYgOJC+xGczTQmaocLw==
-X-Received: by 2002:a05:6512:1112:b0:549:5850:f275 with SMTP id 2adb3069b0e04-54990ec8e60mr4354451e87.50.1741613326121;
-        Mon, 10 Mar 2025 06:28:46 -0700 (PDT)
-Received: from [127.0.1.1] ([78.62.132.154])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5498b1bcaecsm1460408e87.200.2025.03.10.06.28.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 10 Mar 2025 06:28:45 -0700 (PDT)
-From: Mantas Pucka <mantas@8devices.com>
-Date: Mon, 10 Mar 2025 15:28:18 +0200
-Subject: [PATCH ath-next] wifi: ath12k: limit WMI_SCAN_CHAN_LIST_CMDID
- argument size
+	s=arc-20240116; t=1741613372; c=relaxed/simple;
+	bh=wZ+bjnc45ikRcTR7Zx2xMwTbXDKPzC9yDpMnfE9AKes=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=DaNcTR4pcwoZw68ACJDRWh1F6RhQXF2b6Rg2VzjUg+vqXsBh73iouAaA13gUbMnPy/hgMVfmgGEpCy9HjLEj02Bw9UArDtseplpLonml0i3gbaLil01MZsLOlC7px4kFZkOqnnNTkMHsWtiPvdTeGPo3/xmtmI46ciepI7AjJQE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6AE72153B;
+	Mon, 10 Mar 2025 06:29:40 -0700 (PDT)
+Received: from [10.1.197.1] (ewhatever.cambridge.arm.com [10.1.197.1])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id ABA2B3F673;
+	Mon, 10 Mar 2025 06:29:27 -0700 (PDT)
+Message-ID: <d8b1cf1f-1996-4d9c-9f1a-fad556f91577@arm.com>
+Date: Mon, 10 Mar 2025 13:29:26 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 5/8] coresight: etm: Add an attribute for updating
+ buffer
+To: Leo Yan <leo.yan@arm.com>, Mike Leach <mike.leach@linaro.org>,
+ James Clark <james.clark@linaro.org>, Jonathan Corbet <corbet@lwn.net>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Arnaldo Carvalho de Melo <acme@redhat.com>,
+ Namhyung Kim <namhyung@kernel.org>, coresight@lists.linaro.org,
+ linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250310104919.58816-1-leo.yan@arm.com>
+ <20250310104919.58816-6-leo.yan@arm.com>
+Content-Language: en-US
+From: Suzuki K Poulose <suzuki.poulose@arm.com>
+In-Reply-To: <20250310104919.58816-6-leo.yan@arm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250310-limit-wmi-chanlist-v1-1-8f0fb45459a7@8devices.com>
-X-B4-Tracking: v=1; b=H4sIAPHozmcC/x2MSwqEMBAFryK9tiGJ+MGriIuMtvpAM0MSHEG8u
- 9FNQVG8d1IQDwnUZid52RHwdUl0ntGwWDcLY0xORplSFVrxig2R/xv46StCZF0Pn2Y0ibaiNPx
- 5mXC8px3ZuLCTI1J/XTfUqQSebgAAAA==
-X-Change-ID: 20250310-limit-wmi-chanlist-17cb8d27cba6
-To: ath12k@lists.infradead.org
-Cc: Johannes Berg <johannes@sipsolutions.net>, 
- Jeff Johnson <jjohnson@kernel.org>, linux-wireless@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Mantas Pucka <mantas@8devices.com>
-X-Mailer: b4 0.14.2
 
-When using BDF with both 5GHz and 6GHz bands enabled on QCN9274, interface
-fails to start. It happens because FW fails to process
-WMI_SCAN_CHAN_LIST_CMDID with argument size >2048, resulting in a command
-timeout. The current code allows splitting channel list across multiple WMI
-commands but uses WMI max_msg_len (4096) as chunk size, which is still too
-large.
+Hi Leo
 
-Fix this by limiting the number of channels sent at once, using the value
-specified in WMI interface description [1].
+On 10/03/2025 10:49, Leo Yan wrote:
+> Add an attribute for updating buffer when the AUX trace is paused.  And
+> populate the value to the 'update_buf_on_pause' flag during the AUX
+> setting up.
 
-[1] https://git.codelinaro.org/clo/qsdk/platform/vendor/qcom-opensource/wlan/fw-api/-/blob/NHSS.QSDK.13.0.0.6/fw/wmi_unified.h#L6459
+Do we need this attribute in the uAPI ? Could we do this by default for
+sinks without interrupt ? This definitely improves the quality of trace
+collected for such sinks and the driver can transparently do this.
 
-Tested-on: QCN9274 hw2.0 PCI WLAN.WBE.1.4.1-00199-QCAHKSWPL_SILICONZ-1
+Cheers
+Suzuki
 
-Signed-off-by: Mantas Pucka <mantas@8devices.com>
----
- drivers/net/wireless/ath/ath12k/wmi.c | 3 +++
- drivers/net/wireless/ath/ath12k/wmi.h | 2 ++
- 2 files changed, 5 insertions(+)
-
-diff --git a/drivers/net/wireless/ath/ath12k/wmi.c b/drivers/net/wireless/ath/ath12k/wmi.c
-index 6d1ea5f3a791b09044191ce86f4897b7f06f35eb..88ac800d44401a139de75e90568c8d68f3ed4f3f 100644
---- a/drivers/net/wireless/ath/ath12k/wmi.c
-+++ b/drivers/net/wireless/ath/ath12k/wmi.c
-@@ -2780,6 +2780,9 @@ int ath12k_wmi_send_scan_chan_list_cmd(struct ath12k *ar,
- 		max_chan_limit = (wmi->wmi_ab->max_msg_len[ar->pdev_idx] - len) /
- 			sizeof(*chan_info);
- 
-+		if (max_chan_limit > WMI_MAX_NUM_CHAN_PER_WMI_CMD)
-+			max_chan_limit = WMI_MAX_NUM_CHAN_PER_WMI_CMD;
-+
- 		num_send_chans = min(arg->nallchans, max_chan_limit);
- 
- 		arg->nallchans -= num_send_chans;
-diff --git a/drivers/net/wireless/ath/ath12k/wmi.h b/drivers/net/wireless/ath/ath12k/wmi.h
-index 1ba33e30ddd279e21a57a1db6150e1d08f4a2890..2831f7e3033c7f4a9886577f542c5026f1bada28 100644
---- a/drivers/net/wireless/ath/ath12k/wmi.h
-+++ b/drivers/net/wireless/ath/ath12k/wmi.h
-@@ -3909,6 +3909,8 @@ struct wmi_stop_scan_cmd {
- 	__le32 pdev_id;
- } __packed;
- 
-+#define WMI_MAX_NUM_CHAN_PER_WMI_CMD	58
-+
- struct ath12k_wmi_scan_chan_list_arg {
- 	u32 pdev_id;
- 	u16 nallchans;
-
----
-base-commit: 42aa76e608ca845c98e79f9e23af0bdb07b2eb1d
-change-id: 20250310-limit-wmi-chanlist-17cb8d27cba6
-
-Best regards,
--- 
-Mantas Pucka <mantas@8devices.com>
+> 
+> If the AUX pause operation is attached to a PMU counter, when the
+> counter is overflow and if the PMU interrupt in an NMI, then AUX pause
+> operation will be triggered in the NMI context.  On the other hand, the
+> per CPU sink has its own interrupt handling.  Thus, there will be a race
+> condition between the updating buffer in NMI and sink's interrupt
+> handler.
+> 
+> To avoid the race condition, this commit disallows updating buffer on
+> AUX pause for the per CPU sink.  Currently, this is only applied for
+> TRBE.
+> 
+> Signed-off-by: Leo Yan <leo.yan@arm.com>
+> ---
+>   .../hwtracing/coresight/coresight-etm-perf.c  | 20 +++++++++++++++++++
+>   .../hwtracing/coresight/coresight-etm-perf.h  |  2 ++
+>   include/linux/coresight-pmu.h                 |  1 +
+>   3 files changed, 23 insertions(+)
+> 
+> diff --git a/drivers/hwtracing/coresight/coresight-etm-perf.c b/drivers/hwtracing/coresight/coresight-etm-perf.c
+> index 29d52386ffbb..d759663a1f7d 100644
+> --- a/drivers/hwtracing/coresight/coresight-etm-perf.c
+> +++ b/drivers/hwtracing/coresight/coresight-etm-perf.c
+> @@ -62,6 +62,8 @@ PMU_FORMAT_ATTR(contextid1,	"config:" __stringify(ETM_OPT_CTXTID));
+>   PMU_FORMAT_ATTR(contextid2,	"config:" __stringify(ETM_OPT_CTXTID2));
+>   PMU_FORMAT_ATTR(timestamp,	"config:" __stringify(ETM_OPT_TS));
+>   PMU_FORMAT_ATTR(retstack,	"config:" __stringify(ETM_OPT_RETSTK));
+> +PMU_FORMAT_ATTR(update_buf_on_pause,
+> +		"config:" __stringify(ETM_OPT_UPDATE_BUF_ON_PAUSE));
+>   /* preset - if sink ID is used as a configuration selector */
+>   PMU_FORMAT_ATTR(preset,		"config:0-3");
+>   /* Sink ID - same for all ETMs */
+> @@ -103,6 +105,7 @@ static struct attribute *etm_config_formats_attr[] = {
+>   	&format_attr_configid.attr,
+>   	&format_attr_branch_broadcast.attr,
+>   	&format_attr_cc_threshold.attr,
+> +	&format_attr_update_buf_on_pause.attr,
+>   	NULL,
+>   };
+>   
+> @@ -434,6 +437,23 @@ static void *etm_setup_aux(struct perf_event *event, void **pages,
+>   	if (!sink)
+>   		goto err;
+>   
+> +	/* Populate the flag for updating buffer on AUX pause */
+> +	event_data->update_buf_on_pause =
+> +		!!(event->attr.config & BIT(ETM_OPT_UPDATE_BUF_ON_PAUSE));
+> +
+> +	if (event_data->update_buf_on_pause) {
+> +		/*
+> +		 * The per CPU sink has own interrupt handling, it might have
+> +		 * race condition with updating buffer on AUX trace pause if
+> +		 * it is invoked from NMI.  To avoid the race condition,
+> +		 * disallows updating buffer for the per CPU sink case.
+> +		 */
+> +		if (coresight_is_percpu_sink(sink)) {
+> +			dev_err(&sink->dev, "update_buf_on_pause is not permitted.\n");
+> +			goto err;
+> +		}
+> +	}
+> +
+>   	/* If we don't have any CPUs ready for tracing, abort */
+>   	cpu = cpumask_first(mask);
+>   	if (cpu >= nr_cpu_ids)
+> diff --git a/drivers/hwtracing/coresight/coresight-etm-perf.h b/drivers/hwtracing/coresight/coresight-etm-perf.h
+> index 744531158d6b..52b9385f8c11 100644
+> --- a/drivers/hwtracing/coresight/coresight-etm-perf.h
+> +++ b/drivers/hwtracing/coresight/coresight-etm-perf.h
+> @@ -51,6 +51,7 @@ struct etm_filters {
+>    * @aux_hwid_done:	Whether a CPU has emitted the TraceID packet or not.
+>    * @snk_config:		The sink configuration.
+>    * @cfg_hash:		The hash id of any coresight config selected.
+> + * @update_buf_on_pause: The flag to indicate updating buffer on AUX pause.
+>    * @path:		An array of path, each slot for one CPU.
+>    */
+>   struct etm_event_data {
+> @@ -59,6 +60,7 @@ struct etm_event_data {
+>   	cpumask_t aux_hwid_done;
+>   	void *snk_config;
+>   	u32 cfg_hash;
+> +	bool update_buf_on_pause;
+>   	struct list_head * __percpu *path;
+>   };
+>   
+> diff --git a/include/linux/coresight-pmu.h b/include/linux/coresight-pmu.h
+> index 89b0ac0014b0..04147e30c2f2 100644
+> --- a/include/linux/coresight-pmu.h
+> +++ b/include/linux/coresight-pmu.h
+> @@ -35,6 +35,7 @@
+>   #define ETM_OPT_CTXTID2		15
+>   #define ETM_OPT_TS		28
+>   #define ETM_OPT_RETSTK		29
+> +#define ETM_OPT_UPDATE_BUF_ON_PAUSE	30
+>   
+>   /* ETMv4 CONFIGR programming bits for the ETM OPTs */
+>   #define ETM4_CFG_BIT_BB         3
 
 
