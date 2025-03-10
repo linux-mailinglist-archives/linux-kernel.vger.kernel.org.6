@@ -1,238 +1,146 @@
-Return-Path: <linux-kernel+bounces-554295-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-554296-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7525EA595D9
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 14:15:14 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B9B6EA595DA
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 14:15:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2FAD33A5808
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 13:15:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 529C7167832
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 13:15:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4167222A80A;
-	Mon, 10 Mar 2025 13:12:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 311CC22AE49;
+	Mon, 10 Mar 2025 13:13:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="KR9OyoaV"
-Received: from NAM02-SN1-obe.outbound.protection.outlook.com (mail-sn1nam02on2084.outbound.protection.outlook.com [40.107.96.84])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NyoS4A8R"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE8BC227BB9
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 13:12:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.96.84
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741612376; cv=fail; b=tUWTPtyQO87smBROyqi6rdQ46ZjEGWrPW5E+dWHqgH71QM1OqNE9JE3cShRbbyc+wwhm4RTejOY67qCKBv6EwVfZUSZSdl1jswwhruEPdEzUHi58WeeZRxM/5uwz+VY3mhK7xijsPHKqvp3Y6QxFGphE3rFvwFqNtekHkPnn8v4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741612376; c=relaxed/simple;
-	bh=OCcFT+bEGzJWv+LuE6HMZwKQBG//njDmLFSsUCjm8aw=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=I77v8pOldlRe0jS3StYjaKszudJjt0PB7xXN1bgAQ3T7ZpYhVGufOqja17SOxL0oWg17/aQH9nm0nTdOi2eA424+wh3M+rsqstKa65jQnRr2XORZD6SMliN65PWEJ5m2NrWqNEyep8Sf95ui5Q+Pos7XcWju4WJMaRaSkD7qmcE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=KR9OyoaV; arc=fail smtp.client-ip=40.107.96.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=lOgRaiJJMvyxlALbCjYodcGMNTWIgzc6928U7Xby4YFiLAcp5d3s4HbEqmWqf7AbD4Z6rc5m9Noz8puu8dMRsDFSdyeaWWH7qxNydkmNa2056vBd942Kluaiov6Ua6RgxohQm6PPQ5MsoVV2q7R8FfhAU0Qr5ypcMxyzoTzgOkuveD7vP1zH4GRNWwrhBOg0QMtBAspRnLvI35ntzrUcFEykDFJClpteTLvunq8fkQ4c4hyitZ/AeReVxh79YuzYCvIB1cZqhhcHLFR66j+CIBA4MSfjoyo2oAxMJKDd9AjepVkmqz1JDBShLXSPEKYX4xB/vNuWZxvHfy+GSNR3AA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=R7SYltPz2oE7O6rWGDApjEkNWSQoqCGdgxxGwZYWP0w=;
- b=lOvWIGtcfAYZh4+VoWDE5M7ZIRZpwIRvaF0uosrgI3v/BAiZkwfSim/Al+drQtuS1dmX33U/IIDP3+tTbceZlRiRCpQ6YmNDX3dhZ/UstFzDpQ98PEgABQ7SuVg8RUh0Zffai1xizg3zIFce5s5hxe3iXusH8jgdl9MMWdjBGR+CwThOcmOPjWXa9N5kLPWa+ayxJrYUxrzdhhT/b997jERV69upQe0jBS/aitaqAu51iSbgmpjtvky2GJrs8D2DTaFfgr+FgSebNE+mOOf8pfcfeSZTUTZR9yGcp5VGmkrJwZoZl6FuRZkO09H9OO/c4songwLQbG7FTxFObHoaIw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=R7SYltPz2oE7O6rWGDApjEkNWSQoqCGdgxxGwZYWP0w=;
- b=KR9OyoaVsjRbGuy2NYLY/RS5PUhSMXJvgfFsvjs9lJKVNY5VEh1254zGxpcLRZrhJIwT+yVi4UqYTwbHWv0vwegnfVlZji9veutGv2KQTt5VKgyzwKSVSOKMra9Z60UblZO3aL4+cxOTVzt40kU42JCh0EKxvmxsT3naEimRHMU=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from BL1PR12MB5062.namprd12.prod.outlook.com (2603:10b6:208:313::6)
- by PH7PR12MB6882.namprd12.prod.outlook.com (2603:10b6:510:1b8::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8511.26; Mon, 10 Mar
- 2025 13:12:49 +0000
-Received: from BL1PR12MB5062.namprd12.prod.outlook.com
- ([fe80::fe03:ef1f:3fee:9d4a]) by BL1PR12MB5062.namprd12.prod.outlook.com
- ([fe80::fe03:ef1f:3fee:9d4a%5]) with mapi id 15.20.8511.026; Mon, 10 Mar 2025
- 13:12:49 +0000
-Message-ID: <c2f26b4f-e42c-f152-c33d-4c0dd8d68da6@amd.com>
-Date: Mon, 10 Mar 2025 08:12:46 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.15.1
-Subject: Re: [PATCH] sev-snp: parse MP tables for VMware hypervisor
-To: Borislav Petkov <bp@alien8.de>, Ajay Kaher <ajay.kaher@broadcom.com>
-Cc: kevinloughlin@google.com, bcm-kernel-feedback-list@broadcom.com,
- tglx@linutronix.de, mingo@redhat.com, dave.hansen@linux.intel.com,
- x86@kernel.org, hpa@zytor.com, virtualization@lists.linux.dev,
- linux-kernel@vger.kernel.org, ye.li@broadcom.com, bo.gan@broadcom.com,
- vamsi-krishna.brahmajosyula@broadcom.com, alexey.makhalov@broadcom.com,
- vasavi.sirnapalli@broadcom.com, florian.fainelli@broadcom.com
-References: <20241219114400.858980-1-ajay.kaher@broadcom.com>
- <20250310102607.GDZ86-P3VFA-x2iy4l@fat_crate.local>
-Content-Language: en-US
-From: Tom Lendacky <thomas.lendacky@amd.com>
-In-Reply-To: <20250310102607.GDZ86-P3VFA-x2iy4l@fat_crate.local>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: CH0PR03CA0446.namprd03.prod.outlook.com
- (2603:10b6:610:10e::35) To BL1PR12MB5062.namprd12.prod.outlook.com
- (2603:10b6:208:313::6)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 851C3227BB9;
+	Mon, 10 Mar 2025 13:13:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741612404; cv=none; b=PpdhNJW4LYMTHsb5sooxElyzBrc2kPDeKJ7Bu1CJr8mtEXP28zyhv6kHE6Ie/AvVVW+/pw52kzgFRyeum0Jr4qhZvRqCPnkH2yvxuv5TLLXmHXCoZ2rlAWaf8ZxOhwZKuZMINyEs5MgOB7MF4U2oczAUk7h3JnpzIpyl/f/faes=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741612404; c=relaxed/simple;
+	bh=gj+NFBePdsuXWlftWTserZdsRfx1lIS1prLpNJrt8IY=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=LyiRge5NgcLUYnExDlmfvJRi/mlur7uF/+U0mFdHy29nBlK2+DO/yekNUbwORRJiJb2Dc3OWxuLsoQ0cqhrcjcbvhGibuXqLALHvDPOevmYSKWEQ21N35WU3tBA6BTmp468Lsjb6AGh1MZZ6Sj87VX7+zCbrlUd3Cyud23v5oAc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NyoS4A8R; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E86E9C4CEE5;
+	Mon, 10 Mar 2025 13:13:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741612404;
+	bh=gj+NFBePdsuXWlftWTserZdsRfx1lIS1prLpNJrt8IY=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=NyoS4A8Rcpq2q6yVbC1dPJiHOuwrTgh4XfLMpr7XuM+J+Nuxjj74AAER0deKQ5R+2
+	 3laMdtWBRoeDU4dT0C6Vxd0JFIUx4p534wxw6LBOaRv7XWesNlyiwuSDV5PlRIL838
+	 HJjUj8G9x0n0fplonOaWRXzR34maagXZIBS98HcHXdOqP2qOQmtSgrvfheQ1RYz5vw
+	 Ar6sdxhunSYgv/3Mt6A4zso+Lh4tsbODYaimk5d9nb4rwG1VK9AOI63ciJ/NX9RWl2
+	 sO6QqpP5tirRLYvYLfuBTw5BEm8R0svRdU/x7cT6SPWuzC85Mz1ZHc2Rz4laDNWX/j
+	 TlnQWuyTzhDsg==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1trcwb-00CBlH-Rv;
+	Mon, 10 Mar 2025 13:13:21 +0000
+Date: Mon, 10 Mar 2025 13:13:21 +0000
+Message-ID: <86zfhtni4u.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Oliver Upton <oliver.upton@linux.dev>
+Cc: kvmarm@lists.linux.dev,
+	Joey Gouly <joey.gouly@arm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Zenghui Yu <yuzenghui@huawei.com>,
+	Mingwei Zhang <mizhang@google.com>,
+	Colton Lewis <coltonlewis@google.com>,
+	Raghavendra Rao Ananta <rananta@google.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Janne Grunau <j@jannau.net>
+Subject: Re: [PATCH v3 00/14] KVM: arm64: FEAT_PMUv3 on Apple hardware
+In-Reply-To: <20250305202641.428114-1-oliver.upton@linux.dev>
+References: <20250305202641.428114-1-oliver.upton@linux.dev>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BL1PR12MB5062:EE_|PH7PR12MB6882:EE_
-X-MS-Office365-Filtering-Correlation-Id: de90922e-918d-4227-abc3-08dd5fd541ab
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014|7416014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?NnUwNHpNMXYzN2tuSjNoQis5R040akdMc1ByeTlLcFdyOXE4MFlDNm1kMXpo?=
- =?utf-8?B?N2xJcDk4UXBKSTJobHVJYUVQb1NxMjVFa09CTHZBYVM3dndkRGlUZGVWakIv?=
- =?utf-8?B?eXY0TGV0aWQ0bzlKcVBmM0h0UDdCekpCQUNuQytMTjBJaUNrMlBJM2xNVGl1?=
- =?utf-8?B?bmVTUzluNVUvbXQ0TGVxT3lZZnJod1AxNzFibVFPeEF3ZCswbXEyZlJDdXhZ?=
- =?utf-8?B?TE51eW5vQ2Q2QVV4RDRCU3VYYUF4MEwvY25jRWpvTWE2NnZaNjBJMWp2WlFy?=
- =?utf-8?B?ZFZsdGQ0RzNXclVLMldzSm9jUUlzc1drbDVzelJwRENwa2U4M1NlVmtjRURC?=
- =?utf-8?B?ZFdSSDNMMXBZNk1LZ3NwN25jaHI3dXl4WVh2SjFlTmExWXJCL3hndzQyYUFG?=
- =?utf-8?B?YTg2NWNuMXVUTDV2dWlMNnhZSFVCdFpicXJtdkEydkZvbXlPV1NSM1JIbW00?=
- =?utf-8?B?RXpUS1F5b1d3enBsZTk3WjBUTmljdHRxNy80anNTN1pRQko2cGZOZitvU0VO?=
- =?utf-8?B?Vis4MkI3dnZkbXN6dFovb205ejlMVVNkQWg4Z3hWSWptTFJ4dlVFTlAxRTF4?=
- =?utf-8?B?cUZwalloaHlpaFBhalMzd2lLcHJZR2xmcndFdkxKYXEwZ3FtUzhEWTJ0YjNw?=
- =?utf-8?B?RzZva29OeTBDUkt3K25uaFFjSlZrSE1BbmhGYlhjaGkvVTdkRFlEL2l5V0R5?=
- =?utf-8?B?OG1yL2ZUTjAyNTVFTUVFcGw0TFd5OWFrSmVOLy9NWjB6SUp5blF0ekhVYkNZ?=
- =?utf-8?B?dkN3NFlnbmNJWERCVkxMVXBoN05MY0RjdXJxRDl3aHN4dU9lOGhVVUFVSHdO?=
- =?utf-8?B?ZUpOcHZHNUpTSGtabEY2bEQ3WVQ2RVpPb3lBWGRUZWRyUkNrdmh2MWNpNG92?=
- =?utf-8?B?TmNKUzJ3UEFyanI3MlVEOGU0R0dFVzVmWHIrb3kreGZwdzdlRno3WjVGZGRC?=
- =?utf-8?B?aHIxbTFjVTJaRjkwRzJFdERHOFlwMkVaZWIwNEN5eUJBdHY5cUM4ZmJXVTNq?=
- =?utf-8?B?bDN5RnU1S1pEemh3TmJkYzJxcDVMLys2dytBVVBkM293VlR1UjMzQWcwNnlB?=
- =?utf-8?B?SzFucnhIMHZHaU4xQzVYYkRMMFYxTm0vNnIwRzdpME1PWGVqTVhTdHZPUEdB?=
- =?utf-8?B?NVkxWFh0bStsUCtQNXdHMFdoNXRpbDZiT0Z1WCszNGRaOHNZajJsTWNnWTB2?=
- =?utf-8?B?R3RlZi9kcVZVcXByMnpwZlZITE9LOU5va2dNRE1vY1pQb2tSdHlNb0w5Qmwv?=
- =?utf-8?B?R0UxK0o2QXVYRGVVdWRvZnoyR2VGdU1wTFplU2dNbS9seW5nQ2lDVGVjSTJk?=
- =?utf-8?B?eXhGM3B3SWxrdDcxcWN4enQxbnZOZkhydFFldmNTaXM4SGlTaEJHUHFMbnAr?=
- =?utf-8?B?bEk5aHJ0QllGU01KbFM1SndMOEVlRFpNLzFRd1kyYUlBQ1JxZlBydWZXOWRs?=
- =?utf-8?B?bll3a29aa1pRL3pFcnZQYWpEeHFBZ3JqL1JPSlZic2VYL0FrR1RTZHZvWUo1?=
- =?utf-8?B?S09aS3pMVlZ0aFZ6UGx6enlvbG1RdDMzSk5rQU9HWjY2Qm1qWmNON0hiUnpx?=
- =?utf-8?B?WUQyKytWQ0tTZHRaRXZHNlpySnA0ZHowRFlnbXJwS0JqNHNERkx6YzJBbDgr?=
- =?utf-8?B?M3BlNkNQUGVJY0Rlcm1zODJGNmswS2NCcG9NNUFVbWRwMmRpQjkrK3AvMC8v?=
- =?utf-8?B?NW4zRDNBZjh2ZzJFbGJ3cUduSGxidFF2c2hlNlI2Si9pcTlkY1QvWWNFcktU?=
- =?utf-8?B?T0dsV21aYkYxQWtad3M5MjljQnV5SEE4WE95SWRDa01pOHJ3K2FydjZqQnJ1?=
- =?utf-8?B?QmhJMTBHVlhOMEk1aWJKRS9VUEtFSDNNRm5Td3daK3dsL2VkcXZKSnFLQURx?=
- =?utf-8?Q?i0fP1HcDlLUOj?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BL1PR12MB5062.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7416014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?QzVpTkhuSCtLYS83K0xVQ1dHSmdzUTkrdUJqV0t6bVVPbXhpcTA2dGFPQTFD?=
- =?utf-8?B?akZROWdqQmdvS0VSZFArNW9NY2V6NDc4TDVGSkt0ZHU2eWtGVzFTeHU3VEta?=
- =?utf-8?B?UUdVUzRIMkNNSzcvZkFVY0cvS0pRb0VWMkNTZlhsaXUwM3g5ZzRSSzRZYllm?=
- =?utf-8?B?RGhha3VqUHhKQzJjbVVLR3o5WnRISTFUekp3ejBlREJPazJMVHExbllyQmND?=
- =?utf-8?B?OVJ3cTZ4VnIvREFEWmlPZWNDVi9acHhzdk1XbHFMSEZNdlBuclZLVlN0QThn?=
- =?utf-8?B?a2xNRFEvQUJuaWQxMWJIYjdaRTgvRGxtOWxTbExidURIRU5oNEROdHhTTzNm?=
- =?utf-8?B?Zi9EZHhEcDVzVUc1VkMvWFg1Vnh1UUg3VDd4MVhybVR3Um16ZU5OZG82aktG?=
- =?utf-8?B?WjAzamhmZnBMWGJXMUQxSzcvTjk2OHQ3azFhbGVDU2twbE8vYzFHNTdxNFBY?=
- =?utf-8?B?T1F3SStKVGJWc3ZQNGZXdDF2RjlTUXRLZUlEek5YWEszRDU1am1IaW54ajlr?=
- =?utf-8?B?ZXlWdXZldTJzWm9zaWZleE1iN1M0L1NERTk3d1dDS1VJOEptRGpJZmd3OHNY?=
- =?utf-8?B?M29ad2QycnhxTHB3RG1GYUNrakVoSzRQb3U3aWJjbDU0TVB3R2pjeUM1SGE2?=
- =?utf-8?B?N0IwTEpyYXBjdXlzemhxSm04WG10ZVNBMnZTZjRSVTU3eUZta3VpOEJYNHlL?=
- =?utf-8?B?K0dXQ2hVK0Y2MVJKOGFnNGtsTVorY3BGMVpwNElQbHlleElCWlVqZE5LeHRh?=
- =?utf-8?B?c2hOa2xPUnRhVXBQaGN0TFZhVDRpT3VxSkpvTXU3TzhYeC9JZDRwUmFuTXFB?=
- =?utf-8?B?OTVoKzBRbGNmRzkrempBSE9CSEhObTdtNVRWZEd3b2tMRDkwMTRRdE1IRnJR?=
- =?utf-8?B?TjU1TVRtWjNiNXpYdCtIWTJ5cDdwZ0xIanRoSkZVbk9Bd21TNTFOOGI5SVIw?=
- =?utf-8?B?UC95cnlQSHY4WXk1WVpzMU9NOE1yZ0V3cU9sWWc4Q3p4aFZjaUFuT0EwUk5x?=
- =?utf-8?B?NDh3NmF6SjJWaFg4R2cwSVc5cE9XVjRoSmViWmlOOFliSk5tdVIrTzdBcjkv?=
- =?utf-8?B?K3piOUtQQVNqWW1Rb01pNjgzM0k0OVR4eHZMYmhjMFRJME9DRDc0ZmQwRVVo?=
- =?utf-8?B?Y01lQ0QrN05IV1QxUTcrNFE3UkJtZk9VK0xIczFXQk1mdWp6LzBnejBOVnNJ?=
- =?utf-8?B?ZktzU0RPV05manBwTjRwaHdWRS9BdkVuZDB6djRNNG1CSG5VaUVMOExlQWhM?=
- =?utf-8?B?MzBUeWQvVmxjbHBNeHJrM1pMQ0pULzE5bDUvRkg3NU1oWjFxa21FYkhnVkRo?=
- =?utf-8?B?ZWl3YzFzVVlHclJYdmIwOU5FM0V2WUtBbVJxNUlhSnUzemE4OUNkMGV4L05X?=
- =?utf-8?B?M3FkNUlQTE8xZFZQRk43a0wyQm9kV3E5WDZhVDhTSnBmWWNWaERyMTdYVnFE?=
- =?utf-8?B?L0FoMHpOdUh4TXNGYU5XMnh6WkdoK21oUmlxU1lhWjJlL0tTSG1DTTZnR2cv?=
- =?utf-8?B?U2c4N253bVpwWHhmM3dHTzV1WjBWc05UVml6YkMwbnJaMC9VUk8zLzZlL3dH?=
- =?utf-8?B?VlhGQjVQRC9Ub0xJZVdGeEZGQmFiemtJUmpwWnVuNm1IV242RUpmOCtjYWh3?=
- =?utf-8?B?ek1IZ1dYSlIyWTNNRVNOUnFXWVFxOTFSWkxOdGhRLytvbjJJbWlZblJNQlc4?=
- =?utf-8?B?THNZQitibENEazRibzdrWnJ4ODl5R0FTN3R2UnZiRmdvWUlqRzVETFlrRTRF?=
- =?utf-8?B?VTRkeXB2cW1kUHY5MW5Wb0hoSXY3VitkL3RManZQY1BzMXNscmtZeTA3a1Vi?=
- =?utf-8?B?b3YwOWZ5TGFjdjUzU1B3aldBUVdyZzN1UFYxR2JZWUdGeVNxQ2p1dU82aVR5?=
- =?utf-8?B?SHI5ZGErZW16QmlDMEw5Z200VWFxRi83MnlzZHQxYmdCMk9Fckx2OW8yaGU2?=
- =?utf-8?B?MC9YTHQ3MkdxOXNIRGtVNEU0dDFLSXVKVGxXNGVJTlVDYWdDYXZ3SHVKZWt3?=
- =?utf-8?B?b0FkZDFPODdHK3VPNFNXcFlaZ3hzT1RUQ2VWVHdUeG53K1RRcDlpdGhQNHdN?=
- =?utf-8?B?L2dmVjdkWis0ZEtNS29aUHZWekY2SGRXdmw4OERuRWtlS3hGN2xPaFJzUkIw?=
- =?utf-8?Q?UDyfGNimEoDU+7dmrXm+iv3Mt?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: de90922e-918d-4227-abc3-08dd5fd541ab
-X-MS-Exchange-CrossTenant-AuthSource: BL1PR12MB5062.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Mar 2025 13:12:49.3474
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 4nI9rc3Hypm1HcxbjIjTNFZhstQPcdZhuMUD3S4mdcGZ8vIWsanFEP2ehdq/M6cTpqMROxHWo94q2R0TsBgE0w==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB6882
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: oliver.upton@linux.dev, kvmarm@lists.linux.dev, joey.gouly@arm.com, suzuki.poulose@arm.com, yuzenghui@huawei.com, mizhang@google.com, coltonlewis@google.com, rananta@google.com, catalin.marinas@arm.com, will@kernel.org, mark.rutland@arm.com, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, j@jannau.net
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-On 3/10/25 05:26, Borislav Petkov wrote:
-> On Thu, Dec 19, 2024 at 11:44:00AM +0000, Ajay Kaher wrote:
->> For VMware hypervisor, SEV-SNP enabled VM's could boot without UEFI.
->> In this case, mpparse_find_mptable() has to be called to parse MP
->> tables which contains boot information.
->>
->> Fixes: 0f4a1e80989a ("x86/sev: Skip ROM range scans and validation for SEV-SNP guests")
->> Signed-off-by: Ajay Kaher <ajay.kaher@broadcom.com>
->> Signed-off-by: Ye Li <ye.li@broadcom.com>
->> Tested-by: Ye Li <ye.li@broadcom.com>
+On Wed, 05 Mar 2025 20:26:27 +0000,
+Oliver Upton <oliver.upton@linux.dev> wrote:
 > 
-> That SOB chain is wrong. Ye's SOB means, he's sending the patch but that
-> doesn't look like it.
+> Hopefully close to the last spin, this time addressing Marc's comments
+> on v2.
 > 
->> ---
->>  arch/x86/kernel/cpu/vmware.c | 7 +++++++
->>  1 file changed, 7 insertions(+)
->>
->> diff --git a/arch/x86/kernel/cpu/vmware.c b/arch/x86/kernel/cpu/vmware.c
->> index 00189cd..3e2594d 100644
->> --- a/arch/x86/kernel/cpu/vmware.c
->> +++ b/arch/x86/kernel/cpu/vmware.c
->> @@ -26,6 +26,7 @@
->>  #include <linux/export.h>
->>  #include <linux/clocksource.h>
->>  #include <linux/cpu.h>
->> +#include <linux/efi.h>
->>  #include <linux/reboot.h>
->>  #include <linux/static_call.h>
->>  #include <asm/div64.h>
->> @@ -35,6 +36,8 @@
->>  #include <asm/apic.h>
->>  #include <asm/vmware.h>
->>  #include <asm/svm.h>
->> +#include <asm/mem_encrypt.h>
->> +#include <asm/efi.h>
->>  
->>  #undef pr_fmt
->>  #define pr_fmt(fmt)	"vmware: " fmt
->> @@ -429,6 +432,10 @@ static void __init vmware_platform_setup(void)
->>  		pr_warn("Failed to get TSC freq from the hypervisor\n");
->>  	}
->>  
->> +	if (sev_status & MSR_AMD64_SEV_SNP_ENABLED &&
+> Full details found in the v1 cover letter.
 > 
-> cpu_feature_enabled(X86_FEATURE_SEV_SNP)
+> v1: https://lore.kernel.org/kvmarm/20241217212048.3709204-1-oliver.upton@linux.dev/
+> v2: https://lore.kernel.org/kvmarm/20250203183111.191519-1-oliver.upton@linux.dev/
+> 
+> v2 -> v3:
+>  - Reorder and restructure patches to include map_pmuv3_event()
+>    definition w/ KVM usage.
+>  - Disallow events that lack a valid PMUv3 -> HW mapping
+>  - Various minor fixes/typos
+> 
+> Oliver Upton (14):
+>   drivers/perf: apple_m1: Refactor event select/filter configuration
+>   drivers/perf: apple_m1: Support host/guest event filtering
+>   KVM: arm64: Compute PMCEID from arm_pmu's event bitmaps
+>   KVM: arm64: Always support SW_INCR PMU event
+>   KVM: arm64: Use a cpucap to determine if system supports FEAT_PMUv3
+>   KVM: arm64: Drop kvm_arm_pmu_available static key
+>   KVM: arm64: Use guard() to cleanup usage of arm_pmus_lock
+>   KVM: arm64: Move PMUVer filtering into KVM code
+>   KVM: arm64: Compute synthetic sysreg ESR for Apple PMUv3 traps
+>   KVM: arm64: Advertise PMUv3 if IMPDEF traps are present
+>   KVM: arm64: Remap PMUv3 events onto hardware
+>   drivers/perf: apple_m1: Provide helper for mapping PMUv3 events
+>   KVM: arm64: Provide 1 event counter on IMPDEF hardware
+>   arm64: Enable IMP DEF PMUv3 traps on Apple M*
+> 
+>  arch/arm64/include/asm/apple_m1_pmu.h   |   1 +
+>  arch/arm64/include/asm/cpucaps.h        |   2 +
+>  arch/arm64/include/asm/cpufeature.h     |  28 +----
+>  arch/arm64/kernel/cpu_errata.c          |  44 ++++++++
+>  arch/arm64/kernel/cpufeature.c          |  28 +++++
+>  arch/arm64/kernel/image-vars.h          |   5 -
+>  arch/arm64/kvm/arm.c                    |   4 +-
+>  arch/arm64/kvm/hyp/include/hyp/switch.h |   4 +-
+>  arch/arm64/kvm/hyp/vhe/switch.c         |  22 ++++
+>  arch/arm64/kvm/pmu-emul.c               | 138 +++++++++++++++++-------
+>  arch/arm64/kvm/pmu.c                    |  10 +-
+>  arch/arm64/tools/cpucaps                |   2 +
+>  drivers/perf/apple_m1_cpu_pmu.c         | 101 +++++++++++++----
+>  include/kvm/arm_pmu.h                   |  12 +--
+>  include/linux/perf/arm_pmu.h            |   4 +
+>  15 files changed, 301 insertions(+), 104 deletions(-)
+> 
+> 
+> base-commit: 0ad2507d5d93f39619fc42372c347d6006b64319
 
-I think this should really be cc_platform_has(CC_ATTR_GUEST_SEV_SNP).
+I'm quite happy with the way this looks now (well, apart from patch
+#9, but that's not something you can fix...).
 
-Thanks,
-Tom
+Reviewed-by: Marc Zyngier <maz@kernel.org>
 
-> 
->> +	    !efi_enabled(EFI_BOOT))
->> +		x86_init.mpparse.find_mptable = mpparse_find_mptable;
->> +
->>  	vmware_paravirt_ops_setup();
->>  
->>  #ifdef CONFIG_X86_IO_APIC
->> -- 
-> 
+	M.
+
+-- 
+Without deviation from the norm, progress is not possible.
 
