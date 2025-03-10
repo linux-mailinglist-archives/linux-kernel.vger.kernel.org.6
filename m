@@ -1,152 +1,136 @@
-Return-Path: <linux-kernel+bounces-554291-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-554290-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 69AB3A595CE
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 14:13:43 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 19B5EA595CC
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 14:13:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 378661678EF
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 13:13:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B626F188E848
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 13:13:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F54722D781;
-	Mon, 10 Mar 2025 13:11:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABB2822D4E1;
+	Mon, 10 Mar 2025 13:11:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=imgtec.com header.i=@imgtec.com header.b="M+EdyFu9"
-Received: from mx07-00376f01.pphosted.com (mx07-00376f01.pphosted.com [185.132.180.163])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dPZ1YSnU"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1BDF22C321;
-	Mon, 10 Mar 2025 13:11:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.180.163
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A13E22CBF5
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 13:11:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741612293; cv=none; b=ma3rhVpd9jz7auaABNX9rH4MMpriH9XeL1I+tvqFbG+acnB/BsoUpw09z1aHgqQuXiEDxVgYUZuPhociEFwuSJcvFh/ZZ3H+r5dIyNnk0Q4fkdIZiHlLL/HnBUvGLfXlVbI9WG+iGV77etW7qrHG6LygQbMGBuG4HsyXDywXZms=
+	t=1741612293; cv=none; b=lCNpsawEPE3extke+cGP/93bShwn5FN2Do7X9Uac48ZnQkGh9H4772B+PXa5afXXF3Y0rwOsSK/wzECQbwUEF2utzjP7z22/yKk0PYgbrk8GwvT3cvOK8HT+/5y9XrRxldQPdTxL6zx+eYLic1HS2rBjnOOwyhO0r/pR6d4NYq4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1741612293; c=relaxed/simple;
-	bh=OIZt4+jjToOipp31+L0+GUZ9xT4I19g9KFCIywONxSE=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:References:
-	 In-Reply-To:To:CC; b=IinNfGyHnIoFNbjgDSKtdL5Btkr7kdE6QaWWsb+kdzLqRyDZPlqUIFNdOe08tH98C9YvIE79xcYldOtuXH/6dU+19WE9aMU3j+IR9YeYIbB+Qzt/nQ6nfXgKILDKcji/oYXyjFcQAzGrJUHq9Vw2tJOUNQFbHilHZqkTrJbkUgc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=imgtec.com; spf=pass smtp.mailfrom=imgtec.com; dkim=pass (2048-bit key) header.d=imgtec.com header.i=@imgtec.com header.b=M+EdyFu9; arc=none smtp.client-ip=185.132.180.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=imgtec.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=imgtec.com
-Received: from pps.filterd (m0168889.ppops.net [127.0.0.1])
-	by mx07-00376f01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52A55uUI006364;
-	Mon, 10 Mar 2025 13:10:58 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=imgtec.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=dk201812; bh=c
-	C2ajFFW3/YI8HRtjIWTgL7LFrZuLtOfxpJrLZoBtts=; b=M+EdyFu9NLmbmmoyX
-	IIOdM8FMODesaou3UuCzlsOKK9MvPaf53EAk0hWIYQYNQtapsYNnwmYiVOF0uyp5
-	DECkevZpk6GUfSGgCbgljrZ3qUc8KjFfP9ZyX0s2DyXKKpr6bmtBlgi0Yj663TO8
-	2KzEf/+5cQ/bAzd/SndaykGaap+R1fgTktukuUaKSxAK7RGee/dljhI9qeeJhye4
-	9iKvCfw7B938jd7YAwmNoRgIFiMzkx6mVQC4lwIwZUGTk1ZbNZ82b4aVnKFhZkdz
-	Lm1rSLmg6Ug6m53a9ocrAOTAGDOUS7YLws+FAHjLMq3jmfF20626LGJ7MaQgiVNP
-	29k7Q==
-Received: from hhmail05.hh.imgtec.org (83-244-153-141.cust-83.exponential-e.net [83.244.153.141])
-	by mx07-00376f01.pphosted.com (PPS) with ESMTPS id 458ev09es1-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
-	Mon, 10 Mar 2025 13:10:58 +0000 (GMT)
-Received: from Matts-MacBook-Pro.local (172.25.0.133) by
- HHMAIL05.hh.imgtec.org (10.100.10.120) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.44; Mon, 10 Mar 2025 13:10:56 +0000
-From: Matt Coster <matt.coster@imgtec.com>
-Date: Mon, 10 Mar 2025 13:10:42 +0000
-Subject: [PATCH DO NOT MERGE v3 18/18] arm64: dts: ti: k3-j721s2: Add GPU
- node
+	bh=1sPXlOrJgc2EhQcV6hft1tTfyoeXcFPRPvUKeNq3yfc=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=heam2Moy7az7O+9cL9jIjujSbybkLkvy7kTl9qF90fS8ov8l0o4gK/r1y7motjFKg0F5j+5EqITREIohdsRduzN2p/zCGEYk919eYyp8gamoiGn5IWreolv0n/D9q3UogMaeJJ5To1Q5WkZOWsGex0VxmXSAJhr781j1yZwpYKs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dPZ1YSnU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4D68FC4CEE5;
+	Mon, 10 Mar 2025 13:11:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741612292;
+	bh=1sPXlOrJgc2EhQcV6hft1tTfyoeXcFPRPvUKeNq3yfc=;
+	h=From:To:Cc:Subject:Date:From;
+	b=dPZ1YSnU9FAWDhgF5MpWC2QUKcwHi8O/O44pcdb6Y4xZMroJUgsrfUYBNqZrmR6pX
+	 PBLqx1N2G3o6b8OnKK75BK4mwy+TUwr0a/gqmah5J8OPlav60yad9do9sXSMoB0PGD
+	 xsI408VzkRITOmrxSIPGJPk6KXE4tVsL0I5L1V8KMHC0Nb+xLpFLRdA8qE3ycd+GJ/
+	 je8x7THwni+aqlXIyVCQKHqWJ0M3SeOsDzo9uVdSPVjX+Ui4fd8wMflQx/ciMCCQla
+	 38aUdhYQqvTkx+p4hckgf09D9TJ02ZpM6rIN5eKbBepSGuRPWk43g/eMDQaYWomk9X
+	 sswaWhlWhbsiA==
+From: Arnd Bergmann <arnd@kernel.org>
+To: Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	x86@kernel.org,
+	Tom Lendacky <thomas.lendacky@amd.com>,
+	"Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+	Rick Edgecombe <rick.p.edgecombe@intel.com>,
+	Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
+Cc: Arnd Bergmann <arnd@arndb.de>,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Elena Reshetova <elena.reshetova@intel.com>,
+	"Jason A. Donenfeld" <Jason@zx2c4.com>,
+	Yue Haibing <yuehaibing@huawei.com>,
+	Juergen Gross <jgross@suse.com>,
+	David Woodhouse <dwmw@amazon.co.uk>,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] [v2] x86: coco: replace static const cc_mask with a function
+Date: Mon, 10 Mar 2025 14:10:59 +0100
+Message-Id: <20250310131114.2635497-1-arnd@kernel.org>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20250310-sets-bxs-4-64-patch-v1-v3-18-143b3dbef02f@imgtec.com>
-References: <20250310-sets-bxs-4-64-patch-v1-v3-0-143b3dbef02f@imgtec.com>
-In-Reply-To: <20250310-sets-bxs-4-64-patch-v1-v3-0-143b3dbef02f@imgtec.com>
-To: Frank Binns <frank.binns@imgtec.com>,
-        Matt Coster
-	<matt.coster@imgtec.com>,
-        David Airlie <airlied@gmail.com>, Simona Vetter
-	<simona@ffwll.ch>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>, Nishanth Menon <nm@ti.com>,
-        "Vignesh
- Raghavendra" <vigneshr@ti.com>,
-        Tero Kristo <kristo@kernel.org>
-CC: <dri-devel@lists.freedesktop.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        Randolph Sapp <rs@ti.com>, Darren Etheridge <detheridge@ti.com>,
-        "Alessio
- Belle" <alessio.belle@imgtec.com>,
-        Alexandru Dadu <alexandru.dadu@imgtec.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1805;
- i=matt.coster@imgtec.com; h=from:subject:message-id;
- bh=OIZt4+jjToOipp31+L0+GUZ9xT4I19g9KFCIywONxSE=;
- b=owGbwMvMwCFWuUfy8817WRsYT6slMaSfe3LpDL+Ie9uNFZdYbvCpfy/q4s3k3+zWuKjnd/j3N
- yXfZ/y41lHKwiDGwSArpsiyY4XlCrU/aloSN34Vw8xhZQIZwsDFKQAT2WzCyHBgP1eL956Wre8e
- OJ4oYTv64A6b4wR5Z7PISFaJKTWtjxkYGaZGXdq9P0nvTNPetFt25T9tUhPk/JuuFseIZs6zZpq
- 3nQEA
-X-Developer-Key: i=matt.coster@imgtec.com; a=openpgp;
- fpr=05A40CFCE7269D61D97100A1747F0A9036F90DFA
-X-EXCLAIMER-MD-CONFIG: 15a78312-3e47-46eb-9010-2e54d84a9631
-X-Authority-Analysis: v=2.4 cv=CeII5Krl c=1 sm=1 tr=0 ts=67cee4e2 cx=c_pps a=AKOq//PuzOIrVTIF9yBwbA==:117 a=AKOq//PuzOIrVTIF9yBwbA==:17 a=ETbM1kImDFEA:10 a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=sozttTNsAAAA:8 a=VwQbUJbxAAAA:8 a=r_1tXGB3AAAA:8
- a=rLJv8WYccUdZFC7c5UsA:9 a=QEXdDO2ut3YA:10 a=S-JV1fTmrHgA:10 a=j2-svP0xy3wA:10 a=t8nPyN_e6usw4ciXM-Pk:22
-X-Proofpoint-GUID: ge343qt0aTLIAE1RI1G7DJoeTBiyJ9M6
-X-Proofpoint-ORIG-GUID: ge343qt0aTLIAE1RI1G7DJoeTBiyJ9M6
+Content-Transfer-Encoding: 8bit
 
-The J721S2 binding is based on the TI downstream binding in 54b0f2a00d92
-("arm64: dts: ti: k3-j721s2-main: add gpu node") from [1] but with updated
-compatible strings.
+From: Arnd Bergmann <arnd@arndb.de>
 
-The clock[2] and power[3] indices were verified from docs, but the
-source of the interrupt index remains elusive.
+When extra warnings are enabled, the cc_mask definition in asm/coco.h
+causes a build failure with gcc:
 
-[1]: https://git.ti.com/cgit/ti-linux-kernel/ti-linux-kernel
-[2]: https://downloads.ti.com/tisci/esd/latest/5_soc_doc/j721s2/clocks.html
-[3]: https://downloads.ti.com/tisci/esd/latest/5_soc_doc/j721s2/devices.html
+arch/x86/include/asm/coco.h:28:18: error: 'cc_mask' defined but not used [-Werror=unused-const-variable=]
+   28 | static const u64 cc_mask = 0;
 
-Signed-off-by: Matt Coster <matt.coster@imgtec.com>
+Add a cc_get_mask() function mirroring cc_set_mask() for the one
+user of the variable outside of the coco implementation.
+
+Fixes: a0a8d15a798b ("x86/tdx: Preserve shared bit on mprotect()")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+--
+v2: use an inline helper instead of a __maybe_unused annotaiton.
 ---
-Changes in v3:
-- None
-- Link to v2: https://lore.kernel.org/r/20241118-sets-bxs-4-64-patch-v1-v2-21-3fd45d9fb0cf@imgtec.com
-Changes in v2:
-- Use normal reg syntax for 64-bit values
-- Link to v1: https://lore.kernel.org/r/20241105-sets-bxs-4-64-patch-v1-v1-21-4ed30e865892@imgtec.com
----
- arch/arm64/boot/dts/ti/k3-j721s2-main.dtsi | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+ arch/x86/include/asm/coco.h          | 10 +++++++++-
+ arch/x86/include/asm/pgtable_types.h |  2 +-
+ 2 files changed, 10 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/ti/k3-j721s2-main.dtsi b/arch/arm64/boot/dts/ti/k3-j721s2-main.dtsi
-index 92bf48fdbeba45ecca8c854db5f72fd3666239c5..a79ac41b2c1f51b7193e6133864428bd35a5e835 100644
---- a/arch/arm64/boot/dts/ti/k3-j721s2-main.dtsi
-+++ b/arch/arm64/boot/dts/ti/k3-j721s2-main.dtsi
-@@ -2048,4 +2048,16 @@ watchdog8: watchdog@23f0000 {
- 		/* reserved for MAIN_R5F1_1 */
- 		status = "reserved";
- 	};
+diff --git a/arch/x86/include/asm/coco.h b/arch/x86/include/asm/coco.h
+index aa6c8f8ca958..e7225452963f 100644
+--- a/arch/x86/include/asm/coco.h
++++ b/arch/x86/include/asm/coco.h
+@@ -15,6 +15,11 @@ enum cc_vendor {
+ extern enum cc_vendor cc_vendor;
+ extern u64 cc_mask;
+ 
++static inline u64 cc_get_mask(void)
++{
++	return cc_mask;
++}
 +
-+	gpu: gpu@4e20000000 {
-+		compatible = "ti,j721s2-gpu", "img,img-bxs-4-64", "img,img-rogue";
-+		reg = <0x4e 0x20000000 0x00 0x80000>;
-+		clocks = <&k3_clks 130 1>;
-+		clock-names = "core";
-+		interrupts = <GIC_SPI 24 IRQ_TYPE_LEVEL_HIGH>;
-+		power-domains = <&k3_pds 130 TI_SCI_PD_EXCLUSIVE>,
-+				<&k3_pds 373 TI_SCI_PD_EXCLUSIVE>;
-+		power-domain-names = "a", "b";
-+		dma-coherent;
-+	};
+ static inline void cc_set_mask(u64 mask)
+ {
+ 	RIP_REL_REF(cc_mask) = mask;
+@@ -25,7 +30,10 @@ u64 cc_mkdec(u64 val);
+ void cc_random_init(void);
+ #else
+ #define cc_vendor (CC_VENDOR_NONE)
+-static const u64 cc_mask = 0;
++static inline u64 cc_get_mask(void)
++{
++	return 0;
++}
+ 
+ static inline u64 cc_mkenc(u64 val)
+ {
+diff --git a/arch/x86/include/asm/pgtable_types.h b/arch/x86/include/asm/pgtable_types.h
+index c90e9c51edb7..74d461cc8e20 100644
+--- a/arch/x86/include/asm/pgtable_types.h
++++ b/arch/x86/include/asm/pgtable_types.h
+@@ -179,7 +179,7 @@ enum page_cache_mode {
  };
-
+ #endif
+ 
+-#define _PAGE_CC		(_AT(pteval_t, cc_mask))
++#define _PAGE_CC		(_AT(pteval_t, cc_get_mask()))
+ #define _PAGE_ENC		(_AT(pteval_t, sme_me_mask))
+ 
+ #define _PAGE_CACHE_MASK	(_PAGE_PWT | _PAGE_PCD | _PAGE_PAT)
 -- 
-2.48.1
+2.39.5
 
 
