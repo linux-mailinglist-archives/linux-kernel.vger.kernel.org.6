@@ -1,187 +1,336 @@
-Return-Path: <linux-kernel+bounces-554842-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-554843-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7D28BA5A1A8
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 19:07:23 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 98998A5A1AC
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 19:08:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ADCF417404F
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 18:07:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1DCCF1893271
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 18:08:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACFA12309B0;
-	Mon, 10 Mar 2025 18:07:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="lkfc7WqT"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CFB7226D17;
-	Mon, 10 Mar 2025 18:07:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EC9A231A3B;
+	Mon, 10 Mar 2025 18:08:32 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B317C22AE7C;
+	Mon, 10 Mar 2025 18:08:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741630031; cv=none; b=iP0mHF20f0PBmh4Cpqe8jsilntUMXpKI9VZE4g7+K/zrTZSdPLlnTdDADgwIbhAt565N6iYGYP+vaTfIEoDr7P8fBv/BZ+E/y9KKG1fsFiDIpwX6L56Ia4E76XfkALEfiJkDYQl+NnO1MWQiAy2TRnnuhCX60nfrYAI8/JB1koQ=
+	t=1741630111; cv=none; b=HsdXboKdrrJX+d7LtoRd4smQDbXOB5BdoWJnRZsdXV5N/ddQPyRJ9CVGICveVKRDzahThE2ZeHcA45hcgA9013pAZGqTmdKIcwfSGA2kKE6HUrAQET7LieAbq8gxG6sajEvj4jY0b1pJLXIbZz6uVXlYE/6Zj7rPgeoN18uMbpY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741630031; c=relaxed/simple;
-	bh=CA9EMsdy0ESHhNUh8YAZSmW8LOgcKOF7hv3RuqiayFY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=VlvvO4KvSwuNI7wmFqDPJu5PoTsb1MlA7Ieqip+74ReoRp72wv4/xmqbCeQExzUtW5reFkNr9wEVWE3bPSJ5pW5GTqWZbdCTCIoUcrE2P/52IOghPZYfV0FhBGbeiDLx5nqRcqCaNwqYh9l409dNH7X+9oiDed+HAVwNLGopZiA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=lkfc7WqT; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: from [10.137.184.60] (unknown [131.107.160.188])
-	by linux.microsoft.com (Postfix) with ESMTPSA id AEB1B2038F50;
-	Mon, 10 Mar 2025 11:07:08 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com AEB1B2038F50
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1741630029;
-	bh=E13Z4tIU2QebiQ+fHYjb3GAytcpWMD9ZkrlSMteHVzY=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=lkfc7WqTTy9o/NtCmsNne2YvNu14qrm7uDsjvvXkQk5sfBSt0aW2JUGCLGbi53VQm
-	 x7EtA7dAZvpUOAdKpa+WyJR+DDJq7wyFqIlErDY/ZzM4lWwuea+zOldXaRC8xhF7xm
-	 s2kAl+3x2CXQIATrHNeR52YStsliYwkkKncXNNUo=
-Message-ID: <ba6b906d-04a2-423d-a527-9ef7ab1dccf2@linux.microsoft.com>
-Date: Mon, 10 Mar 2025 11:07:08 -0700
+	s=arc-20240116; t=1741630111; c=relaxed/simple;
+	bh=3QoDKJ2jdA4Jo7YpO2FWqrnftt8JeDxs6ksYF0O93QA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=kHjZLVmiGAO/Pdm42SmmUb5ngxFuEnAHtgjd0p0ClLDbfItiNKa9YhEEJYLTIWChVSFnqOWbd7L0+A9t1uam1hgG10T972pg6qPr3S9T5hfXjZ6qQuHPAkt8BB10TxzIEfQfR5GxWIucsm4F0HfyYWm19tPRLQLlr7DOm9aYKRo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 5D60F1516;
+	Mon, 10 Mar 2025 11:08:40 -0700 (PDT)
+Received: from pluto.guest.local (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 07A5B3F673;
+	Mon, 10 Mar 2025 11:08:27 -0700 (PDT)
+From: Cristian Marussi <cristian.marussi@arm.com>
+To: linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	arm-scmi@vger.kernel.org
+Cc: sudeep.holla@arm.com,
+	Cristian Marussi <cristian.marussi@arm.com>
+Subject: [PATCH] firmware: arm_scmi: Add polling support to raw mode
+Date: Mon, 10 Mar 2025 18:08:11 +0000
+Message-ID: <20250310180811.1463539-1-cristian.marussi@arm.com>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH hyperv-next v5 07/11] dt-bindings: microsoft,vmbus: Add
- interrupts and DMA coherence
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: arnd@arndb.de, bhelgaas@google.com, bp@alien8.de,
- catalin.marinas@arm.com, conor+dt@kernel.org, dave.hansen@linux.intel.com,
- decui@microsoft.com, haiyangz@microsoft.com, hpa@zytor.com,
- joey.gouly@arm.com, krzk+dt@kernel.org, kw@linux.com, kys@microsoft.com,
- lenb@kernel.org, lpieralisi@kernel.org, manivannan.sadhasivam@linaro.org,
- mark.rutland@arm.com, maz@kernel.org, mingo@redhat.com,
- oliver.upton@linux.dev, rafael@kernel.org, robh@kernel.org,
- ssengar@linux.microsoft.com, sudeep.holla@arm.com, suzuki.poulose@arm.com,
- tglx@linutronix.de, wei.liu@kernel.org, will@kernel.org,
- yuzenghui@huawei.com, devicetree@vger.kernel.org, kvmarm@lists.linux.dev,
- linux-acpi@vger.kernel.org, linux-arch@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-hyperv@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, x86@kernel.org,
- apais@microsoft.com, benhill@microsoft.com, bperkins@microsoft.com,
- sunilmut@microsoft.com
-References: <20250307220304.247725-1-romank@linux.microsoft.com>
- <20250307220304.247725-8-romank@linux.microsoft.com>
- <20250310-demonic-ferret-of-judgment-5dbdbf@krzk-bin>
- <c7f9d861-f617-4064-8c98-2ace06e9c25e@linux.microsoft.com>
- <09d4966a-5804-40a4-9c5f-356a954a7704@kernel.org>
-Content-Language: en-US
-From: Roman Kisel <romank@linux.microsoft.com>
-In-Reply-To: <09d4966a-5804-40a4-9c5f-356a954a7704@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
+Provide a couple of additional debugfs entries to enable polling-mode on
+the waiting path of injected messages: message_poll will cause the system
+to poll while waiting for the reply, while message_poll_async will send an
+asynchronous message, as usual, and will use polling mode for the immediate
+synchronous part of the async command.
 
+Signed-off-by: Cristian Marussi <cristian.marussi@arm.com>
+---
+Not sure if it is not better to unify all these common read/write entrypoint
+into one single function that decide what to do based on the a strcmp of its
+own filepath....seems still cleaner using these stupid wrappers to
+diffrentiate between message_poll/message_poll_async etc etc
+---
+ Documentation/ABI/testing/debugfs-scmi-raw | 91 ++++++++++++++++++++++
+ drivers/firmware/arm_scmi/driver.c         |  3 +-
+ drivers/firmware/arm_scmi/raw_mode.c       | 72 +++++++++++++++--
+ 3 files changed, 160 insertions(+), 6 deletions(-)
 
-On 3/10/2025 10:40 AM, Krzysztof Kozlowski wrote:
-> On 10/03/2025 18:05, Roman Kisel wrote:
->>
->>
->> On 3/10/2025 2:28 AM, Krzysztof Kozlowski wrote:
->>> On Fri, Mar 07, 2025 at 02:02:59PM -0800, Roman Kisel wrote:
->>>> To boot on ARM64, VMBus requires configuring interrupts. Missing
->>>> DMA coherence property is sub-optimal as the VMBus transations are
->>>> cache-coherent.
->>>>
->>>> Add interrupts to be able to boot on ARM64. Add DMA coherence to
->>>> avoid doing extra work on maintaining caches on ARM64.
->>>
->>> How do you add it?
->>>
->>
->> I added properties to the node. Should I fix the description, or I am
->> misunderstanding the question?
-> 
-> I saw interrupts in the schema, but I did not see dma-coherence. I also
-> did not see any DTS patches here, so I don't understand what node you
-> are referring to.
-> 
-
-I will refer to talks, example-bindings, writing-schema you've suggested
-to waste your time less. It appears there is some fundamental flaw in my
-understanding of how these YAML files work so much so that I cannot even
-write a commit description that can be understood, for the 5th time in
-the row, sorry about that.
-
->>
->>>>
->>>> Signed-off-by: Roman Kisel <romank@linux.microsoft.com>
->>>> ---
->>>>    .../devicetree/bindings/bus/microsoft,vmbus.yaml          | 8 +++++++-
->>>>    1 file changed, 7 insertions(+), 1 deletion(-)
->>>>
->>>> diff --git a/Documentation/devicetree/bindings/bus/microsoft,vmbus.yaml b/Documentation/devicetree/bindings/bus/microsoft,vmbus.yaml
->>>> index a8d40c766dcd..3ab7d0116626 100644
->>>> --- a/Documentation/devicetree/bindings/bus/microsoft,vmbus.yaml
->>>> +++ b/Documentation/devicetree/bindings/bus/microsoft,vmbus.yaml
->>>> @@ -28,13 +28,16 @@ properties:
->>>>    required:
->>>>      - compatible
->>>>      - ranges
->>>> +  - interrupts
->>>>      - '#address-cells'
->>>>      - '#size-cells'
->>>>    
->>>> -additionalProperties: false
->>>> +additionalProperties: true
->>>
->>> This is neither explained in commit msg nor correct.
->>>
->>
->> Not explained, as there is no good explanation as described below.
->>
->>> Drop the change. You cannot have device bindings ending with 'true'
->>> here - see talks, example-bindings, writing-schema and whatever resource
->>> is there.
->>>
->>
->> Thanks, I'll put more effort into bringing this into a better form!
->> If you have time, could you comment on the below?
->>
->> The Documentation says
->>
->>     * additionalProperties: true
->>       Rare case, used for schemas implementing common set of properties.
->> Such schemas are supposed to be referenced by other schemas, which then
->> use 'unevaluatedProperties: false'.  Typically bus or common-part schemas.
->>
->> This is a bus so I added that line to the YAML, and I saw it in many
-> 
-> If this is a bus, then where is schema using it for
-> bus-attached-devices? You cannot have bus without devices.
-> 
-> You *must* fulfill that part:
-> "Such schemas are supposed to be referenced by other schemas, which then"
-> 
-> instead of calling it bus...
-> 
-
-It is modeled as a bus in the kernel:
-https://www.kernel.org/doc/html/latest/virt/hyperv/vmbus.html
-
-> Please upstream bindings for the bus devices and extend the example here
-> with these devices.
-
-The set of synthetic devices that reside on the bus isn't fixed, and
-they don't require description neither in ACPI nor in DT as
-the devices negotiate their MMIO regions through the hyperv driver.
-
-Perhaps, it is not as much bus as expected by the YAML files.
-
-> 
-> Or this is not bus (calling something vmpony does not make it a pony).
-> 
- > > Best regards,
-> Krzysztof
-
+diff --git a/Documentation/ABI/testing/debugfs-scmi-raw b/Documentation/ABI/testing/debugfs-scmi-raw
+index 97678cc9535c..5847b96b3896 100644
+--- a/Documentation/ABI/testing/debugfs-scmi-raw
++++ b/Documentation/ABI/testing/debugfs-scmi-raw
+@@ -31,6 +31,42 @@ Description:	SCMI Raw asynchronous message injection/snooping facility; write
+ 		(receiving an EOF at each message boundary).
+ Users:		Debugging, any userspace test suite
+ 
++What:		/sys/kernel/debug/scmi/<n>/raw/message_poll
++Date:		June 2025
++KernelVersion:	6.16
++Contact:	cristian.marussi@arm.com
++Description:	SCMI Raw message injection/snooping facility using polling mode;
++		write a complete SCMI command message (header included) in
++		little-endian binary format to have it sent to the configured
++		backend SCMI server for instance <n>, using polling mode on
++		the reception path. (if transport is polling capable)
++		Any subsequently received response can be read from this same
++		entry if it arrived within the configured timeout.
++		Each write to the entry causes one command request to be built
++		and sent while the replies are read back one message at time
++		(receiving an EOF at each message boundary).
++Users:		Debugging, any userspace test suite
++
++What:		/sys/kernel/debug/scmi/<n>/raw/message_poll_async
++Date:		June 2025
++KernelVersion:	6.16
++Contact:	cristian.marussi@arm.com
++Description:	SCMI Raw asynchronous message injection/snooping facility using
++		polling-mode; write a complete SCMI asynchronous command message
++		(header included) in little-endian binary format to have it sent
++		to the configured backend SCMI server for instance <n>, using
++		polling-mode on the reception path of the immediate part of the
++		asynchronous command. (if transport is polling capable)
++		Any subsequently received response can be read from this same
++		entry if it arrived within the configured timeout.
++		Any additional delayed response received afterwards can be read
++		from this same entry too if it arrived within the configured
++		timeout.
++		Each write to the entry causes one command request to be built
++		and sent while the replies are read back one message at time
++		(receiving an EOF at each message boundary).
++Users:		Debugging, any userspace test suite
++
+ What:		/sys/kernel/debug/scmi/<n>/raw/errors
+ Date:		March 2023
+ KernelVersion:	6.3
+@@ -115,3 +151,58 @@ Description:	SCMI Raw asynchronous message injection/snooping facility; write
+ 		exist only if the transport is configured to have more than
+ 		one default channel.
+ Users:		Debugging, any userspace test suite
++
++
++What:		/sys/kernel/debug/scmi/<n>/raw/channels/<m>/message_poll
++Date:		June 2025
++KernelVersion:	6.16
++Contact:	cristian.marussi@arm.com
++Description:	SCMI Raw message injection/snooping facility using polling mode;
++		write a complete SCMI command message (header included) in
++		little-endian binary format to have it sent to the configured
++		backend SCMI server for instance <n> through the <m> transport
++		channel, using polling mode on the reception path.
++		(if transport is polling capable)
++		Any subsequently received response can be read from this same
++		entry if it arrived on channel <m> within the configured
++		timeout.
++		Each write to the entry causes one command request to be built
++		and sent while the replies are read back one message at time
++		(receiving an EOF at each message boundary).
++		Channel identifier <m> matches the SCMI protocol number which
++		has been associated with this transport channel in the DT
++		description, with base protocol number 0x10 being the default
++		channel for this instance.
++		Note that these per-channel entries rooted at <..>/channels
++		exist only if the transport is configured to have more than
++		one default channel.
++Users:		Debugging, any userspace test suite
++
++What:		/sys/kernel/debug/scmi/<n>/raw/channels/<m>/message_poll_async
++Date:		June 2025
++KernelVersion:	6.16
++Contact:	cristian.marussi@arm.com
++Description:	SCMI Raw asynchronous message injection/snooping facility using
++		polling-mode; write a complete SCMI asynchronous command message
++		(header included) in little-endian binary format to have it sent
++		to the configured backend SCMI server for instance <n> through
++		the <m> transport channel, using polling mode on the reception
++		path of the immediate part of the asynchronous command.
++		(if transport is polling capable)
++		Any subsequently received response can be read from this same
++		entry if it arrived on channel <m> within the configured
++		timeout.
++		Any additional delayed response received afterwards can be read
++		from this same entry too if it arrived within the configured
++		timeout.
++		Each write to the entry causes one command request to be built
++		and sent while the replies are read back one message at time
++		(receiving an EOF at each message boundary).
++		Channel identifier <m> matches the SCMI protocol number which
++		has been associated with this transport channel in the DT
++		description, with base protocol number 0x10 being the default
++		channel for this instance.
++		Note that these per-channel entries rooted at <..>/channels
++		exist only if the transport is configured to have more than
++		one default channel.
++Users:		Debugging, any userspace test suite
+diff --git a/drivers/firmware/arm_scmi/driver.c b/drivers/firmware/arm_scmi/driver.c
+index e6cf83950875..bf2dc200604e 100644
+--- a/drivers/firmware/arm_scmi/driver.c
++++ b/drivers/firmware/arm_scmi/driver.c
+@@ -1190,7 +1190,8 @@ static void scmi_handle_response(struct scmi_chan_info *cinfo,
+ 		 * RX path since it will be already queued at the end of the TX
+ 		 * poll loop.
+ 		 */
+-		if (!xfer->hdr.poll_completion)
++		if (!xfer->hdr.poll_completion ||
++		    xfer->hdr.type == MSG_TYPE_DELAYED_RESP)
+ 			scmi_raw_message_report(info->raw, xfer,
+ 						SCMI_RAW_REPLY_QUEUE,
+ 						cinfo->id);
+diff --git a/drivers/firmware/arm_scmi/raw_mode.c b/drivers/firmware/arm_scmi/raw_mode.c
+index 7cc0d616b8de..3d543b1d8947 100644
+--- a/drivers/firmware/arm_scmi/raw_mode.c
++++ b/drivers/firmware/arm_scmi/raw_mode.c
+@@ -671,11 +671,13 @@ static int scmi_do_xfer_raw_start(struct scmi_raw_mode_info *raw,
+  * @len: Length of the message in @buf.
+  * @chan_id: The channel ID to use.
+  * @async: A flag stating if an asynchronous command is required.
++ * @poll: A flag stating if a polling transmission is required.
+  *
+  * Return: 0 on Success
+  */
+ static int scmi_raw_message_send(struct scmi_raw_mode_info *raw,
+-				 void *buf, size_t len, u8 chan_id, bool async)
++				 void *buf, size_t len, u8 chan_id,
++				 bool async, bool poll)
+ {
+ 	int ret;
+ 	struct scmi_xfer *xfer;
+@@ -684,6 +686,16 @@ static int scmi_raw_message_send(struct scmi_raw_mode_info *raw,
+ 	if (ret)
+ 		return ret;
+ 
++	if (poll) {
++		if (is_transport_polling_capable(raw->desc)) {
++			xfer->hdr.poll_completion = true;
++		} else {
++			dev_err(raw->handle->dev,
++				"Failed to send RAW message - Polling NOT supported\n");
++			return -EINVAL;
++		}
++	}
++
+ 	ret = scmi_do_xfer_raw_start(raw, xfer, chan_id, async);
+ 	if (ret)
+ 		scmi_xfer_raw_put(raw->handle, xfer);
+@@ -801,7 +813,7 @@ static ssize_t scmi_dbg_raw_mode_common_read(struct file *filp,
+ static ssize_t scmi_dbg_raw_mode_common_write(struct file *filp,
+ 					      const char __user *buf,
+ 					      size_t count, loff_t *ppos,
+-					      bool async)
++					      bool async, bool poll)
+ {
+ 	int ret;
+ 	struct scmi_dbg_raw_data *rd = filp->private_data;
+@@ -831,7 +843,7 @@ static ssize_t scmi_dbg_raw_mode_common_write(struct file *filp,
+ 	}
+ 
+ 	ret = scmi_raw_message_send(rd->raw, rd->tx.buf, rd->tx_size,
+-				    rd->chan_id, async);
++				    rd->chan_id, async, poll);
+ 
+ 	/* Reset ppos for next message ... */
+ 	rd->tx_size = 0;
+@@ -875,7 +887,8 @@ static ssize_t scmi_dbg_raw_mode_message_write(struct file *filp,
+ 					       const char __user *buf,
+ 					       size_t count, loff_t *ppos)
+ {
+-	return scmi_dbg_raw_mode_common_write(filp, buf, count, ppos, false);
++	return scmi_dbg_raw_mode_common_write(filp, buf, count, ppos,
++					      false, false);
+ }
+ 
+ static __poll_t scmi_dbg_raw_mode_message_poll(struct file *filp,
+@@ -964,7 +977,8 @@ static ssize_t scmi_dbg_raw_mode_message_async_write(struct file *filp,
+ 						     const char __user *buf,
+ 						     size_t count, loff_t *ppos)
+ {
+-	return scmi_dbg_raw_mode_common_write(filp, buf, count, ppos, true);
++	return scmi_dbg_raw_mode_common_write(filp, buf, count, ppos,
++					      true, false);
+ }
+ 
+ static const struct file_operations scmi_dbg_raw_mode_message_async_fops = {
+@@ -976,6 +990,40 @@ static const struct file_operations scmi_dbg_raw_mode_message_async_fops = {
+ 	.owner = THIS_MODULE,
+ };
+ 
++static ssize_t scmi_dbg_raw_mode_message_poll_write(struct file *filp,
++						    const char __user *buf,
++						    size_t count, loff_t *ppos)
++{
++	return scmi_dbg_raw_mode_common_write(filp, buf, count, ppos,
++					      false, true);
++}
++
++static const struct file_operations scmi_dbg_raw_mode_message_poll_fops = {
++	.open = scmi_dbg_raw_mode_open,
++	.release = scmi_dbg_raw_mode_release,
++	.read = scmi_dbg_raw_mode_message_read,
++	.write = scmi_dbg_raw_mode_message_poll_write,
++	.poll = scmi_dbg_raw_mode_message_poll,
++	.owner = THIS_MODULE,
++};
++
++static ssize_t scmi_dbg_raw_mode_message_poll_async_write(struct file *filp,
++							  const char __user *buf,
++							  size_t count, loff_t *ppos)
++{
++	return scmi_dbg_raw_mode_common_write(filp, buf, count, ppos,
++					      true, true);
++}
++
++static const struct file_operations scmi_dbg_raw_mode_message_poll_async_fops = {
++	.open = scmi_dbg_raw_mode_open,
++	.release = scmi_dbg_raw_mode_release,
++	.read = scmi_dbg_raw_mode_message_read,
++	.write = scmi_dbg_raw_mode_message_poll_async_write,
++	.poll = scmi_dbg_raw_mode_message_poll,
++	.owner = THIS_MODULE,
++};
++
+ static ssize_t scmi_test_dbg_raw_mode_notif_read(struct file *filp,
+ 						 char __user *buf,
+ 						 size_t count, loff_t *ppos)
+@@ -1199,6 +1247,12 @@ void *scmi_raw_mode_init(const struct scmi_handle *handle,
+ 	debugfs_create_file("message_async", 0600, raw->dentry, raw,
+ 			    &scmi_dbg_raw_mode_message_async_fops);
+ 
++	debugfs_create_file("message_poll", 0600, raw->dentry, raw,
++			    &scmi_dbg_raw_mode_message_poll_fops);
++
++	debugfs_create_file("message_poll_async", 0600, raw->dentry, raw,
++			    &scmi_dbg_raw_mode_message_poll_async_fops);
++
+ 	debugfs_create_file("notification", 0400, raw->dentry, raw,
+ 			    &scmi_dbg_raw_mode_notification_fops);
+ 
+@@ -1230,6 +1284,14 @@ void *scmi_raw_mode_init(const struct scmi_handle *handle,
+ 			debugfs_create_file_aux_num("message_async", 0600, chd,
+ 					    raw, channels[i],
+ 					    &scmi_dbg_raw_mode_message_async_fops);
++
++			debugfs_create_file_aux_num("message_poll", 0600, chd,
++						    raw, channels[i],
++						    &scmi_dbg_raw_mode_message_poll_fops);
++
++			debugfs_create_file_aux_num("message_poll_async", 0600,
++						    chd, raw, channels[i],
++						    &scmi_dbg_raw_mode_message_poll_async_fops);
+ 		}
+ 	}
+ 
 -- 
-Thank you,
-Roman
+2.47.0
 
 
