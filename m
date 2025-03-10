@@ -1,166 +1,101 @@
-Return-Path: <linux-kernel+bounces-554746-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-554779-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45121A59BEA
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 18:04:22 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 32F7FA59D07
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 18:17:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 816E81612CF
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 17:04:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8F8AA3A8EAC
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 17:16:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 442E622D7AD;
-	Mon, 10 Mar 2025 17:04:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 804FB23236E;
+	Mon, 10 Mar 2025 17:15:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="UI0l+O5e"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=deltatee.com header.i=@deltatee.com header.b="dWjxD4eQ"
+Received: from ale.deltatee.com (ale.deltatee.com [204.191.154.188])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AB2E227E96
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 17:04:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3397A22FDE2;
+	Mon, 10 Mar 2025 17:15:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=204.191.154.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741626253; cv=none; b=bZpm/LOLPZYKAfsSH3zbGv485jnmjgGh+eF/QHIzR9aP3lIgQ2VzEIBnQlMD0v95CmUmfw3nfC2ZtELdKzdOJyxVXZ/4KSMRA96JWnre5HZURSi5G63ftB3fMuHSvx7LcpwDnMFRwYSgVqtNb3JXppnyjduka1kcvlOJMEu4FxU=
+	t=1741626947; cv=none; b=ahlYWE0OMXNumNDrFUomXt48Pj+rTe1CSP+CcgexgQBwruwG3osisqQcEqrOZhD7KCZSWtWiWwl6A5moqx54MN5p2jchqM25w/OTa/cDVzjFYE5OXqCyspbTdS1r2UBH8hIeEgEZnG9iBvCdF7ODrJ/7KuVE65oISxWf73aMOIs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741626253; c=relaxed/simple;
-	bh=2iHTQcPXH1FLrxQMiNT55fa/PnOIlAodbQMDjn30aQc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rL1Rg/HaZH+vh08YSOnOyG5OiB1IYD/dK79rM0+PyE97DOabJJ6me2ciHxDmvsqdJdtfeT0Zo3wQEA/0zsKUwg5H2clPtWguNdDDwA4P7sH1Q+AL295AIkAH4EKF6OaMJyls5zQ2pMdmIBZI5klWhhFPnVzFP7of9NB5xwV0eRA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=UI0l+O5e; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1741626251;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=d7S8yd6R0h6QkbjSSTjEPq0BtEAD/xvKVvoWKNDxzjI=;
-	b=UI0l+O5ehc38NNBR0puKp4TKnmZ2om4xOQML+H3FVI7EzZBYLEjoZ+thsTynl3BVP7y+91
-	yaKy4KG1zNNWBrG/tGRntFncsYXLz/3PePkPbc/RYvSz73MQrDBYJgzy33gvEsW5a/9Ki/
-	qaLwTRKz3LF9issEZKhTsA5nOYhxSt0=
-Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-550-qcA6nO9WNJ6cidPgFWXLFQ-1; Mon,
- 10 Mar 2025 13:04:08 -0400
-X-MC-Unique: qcA6nO9WNJ6cidPgFWXLFQ-1
-X-Mimecast-MFC-AGG-ID: qcA6nO9WNJ6cidPgFWXLFQ_1741626245
-Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 3444E1800349;
-	Mon, 10 Mar 2025 17:04:03 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.224.34])
-	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 310AD1956094;
-	Mon, 10 Mar 2025 17:03:53 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-	oleg@redhat.com; Mon, 10 Mar 2025 18:03:32 +0100 (CET)
-Date: Mon, 10 Mar 2025 18:03:21 +0100
-From: Oleg Nesterov <oleg@redhat.com>
-To: David Hildenbrand <david@redhat.com>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-trace-kernel@vger.kernel.org,
-	linux-perf-users@vger.kernel.org,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Matthew Wilcox <willy@infradead.org>,
-	Russell King <linux@armlinux.org.uk>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	"Liang, Kan" <kan.liang@linux.intel.com>,
-	Tong Tiangen <tongtiangen@huawei.com>
-Subject: Re: [PATCH -next v1 3/3] kernel/events/uprobes:
- uprobe_write_opcode() rewrite
-Message-ID: <20250310170320.GC26382@redhat.com>
-References: <20250304154846.1937958-1-david@redhat.com>
- <20250304154846.1937958-4-david@redhat.com>
+	s=arc-20240116; t=1741626947; c=relaxed/simple;
+	bh=0OCVYF/UAGmF/bg0cdYT6l4Xx+OUMgdepEGS07Yb3NA=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:From:In-Reply-To:
+	 Content-Type:Subject; b=jpO7aMtdWfu/6BLVxkgn7VvF+G9bgu7eekPNGCc9z6+ncZax242S2jsLV/TACINnH1lpEwmk+//DBA85yqxzRHYM5VSTaZi0nYiWhrJE/Mg/thXyKmGro/CbcM3jsY+i/uXrzAuv68v/sA37vM3Z7u4usSxML73S4gLgUKjWX7o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=deltatee.com; spf=pass smtp.mailfrom=deltatee.com; dkim=pass (2048-bit key) header.d=deltatee.com header.i=@deltatee.com header.b=dWjxD4eQ; arc=none smtp.client-ip=204.191.154.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=deltatee.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=deltatee.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=deltatee.com; s=20200525; h=Subject:In-Reply-To:From:References:Cc:To:
+	MIME-Version:Date:Message-ID:content-disposition;
+	bh=/rk8STxE+umsrTdOZizpHycgtQykDpsqh9BmTH896vM=; b=dWjxD4eQWjlXrG8ZX77eNYor4l
+	JjJhbLJwZThFv/nCP5TmvkSmlYzVDAMxIN2FLDzwrrpaUWalU1HjUsb1cbj0odt8hX32qHjSHmrot
+	THhXfivyU2MifCS1j4ExAwzbL/IwqyIxvcJX8TAlWQ7oeELyngz4wzmIkBD6DaDosI2CpMY6rH3Uw
+	piKRWJTyLaVWqR9nQ+Zd8Bwme2g+birN0r+XRFLvPzS+PMNSuM34ijj7JO+GStMbe9r6aHfQ0l23a
+	l9mHTMzqUCOuOmMxB0Z+vsNwj5n8zNCqILspF7q2BSzNvDmsrGT3e4T02NOzF0NwLWaFmelCgDPJQ
+	drHrl30Q==;
+Received: from guinness.priv.deltatee.com ([172.16.1.162])
+	by ale.deltatee.com with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+	(Exim 4.96)
+	(envelope-from <logang@deltatee.com>)
+	id 1trg5B-00G6mD-0b;
+	Mon, 10 Mar 2025 10:34:25 -0600
+Message-ID: <b419ea3f-50b8-481e-abc6-6eac7ce43021@deltatee.com>
+Date: Mon, 10 Mar 2025 10:34:12 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250304154846.1937958-4-david@redhat.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
+User-Agent: Mozilla Thunderbird
+To: Thomas Gleixner <tglx@linutronix.de>, LKML <linux-kernel@vger.kernel.org>
+Cc: Marc Zyngier <maz@kernel.org>, Jon Mason <jdmason@kudzu.us>,
+ Dave Jiang <dave.jiang@intel.com>, Allen Hubbe <allenbh@gmail.com>,
+ ntb@lists.linux.dev, Nishanth Menon <nm@ti.com>,
+ Tero Kristo <kristo@kernel.org>, Santosh Shilimkar <ssantosh@kernel.org>,
+ Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
+ Haiyang Zhang <haiyangz@microsoft.com>, Wei Liu <wei.liu@kernel.org>,
+ linux-hyperv@vger.kernel.org, Wei Huang <wei.huang2@amd.com>,
+ Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+ "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
+ "Martin K. Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org
+References: <20250309083453.900516105@linutronix.de>
+ <20250309084110.394142327@linutronix.de>
+Content-Language: en-CA
+From: Logan Gunthorpe <logang@deltatee.com>
+In-Reply-To: <20250309084110.394142327@linutronix.de>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 172.16.1.162
+X-SA-Exim-Rcpt-To: tglx@linutronix.de, linux-kernel@vger.kernel.org, maz@kernel.org, jdmason@kudzu.us, dave.jiang@intel.com, allenbh@gmail.com, ntb@lists.linux.dev, nm@ti.com, kristo@kernel.org, ssantosh@kernel.org, bhelgaas@google.com, linux-pci@vger.kernel.org, haiyangz@microsoft.com, wei.liu@kernel.org, linux-hyperv@vger.kernel.org, wei.huang2@amd.com, manivannan.sadhasivam@linaro.org, James.Bottomley@HansenPartnership.com, martin.petersen@oracle.com, linux-scsi@vger.kernel.org
+X-SA-Exim-Mail-From: logang@deltatee.com
+X-Spam-Level: 
+Subject: Re: [patch 04/10] NTB/msi: Switch MSI descriptor locking to lock
+ guard()
+X-SA-Exim-Version: 4.2.1 (built Wed, 06 Jul 2022 17:57:39 +0000)
+X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
 
-On 03/04, David Hildenbrand wrote:
->
-> uprobe_write_opcode() does some pretty low-level things that really, it
-> shouldn't be doing:
 
-Agreed. Thanks again for doing this.
 
-David, as I said, I can't review. I don't understand this mm/folio magic
-with or without your changes.
+On 2025-03-09 01:41, Thomas Gleixner wrote:
+> Convert the code to use the new guard(msi_descs_lock).
+> 
+> No functional change intended.
+> 
+> Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+> Cc: Jon Mason <jdmason@kudzu.us>
+> Cc: Dave Jiang <dave.jiang@intel.com>
+> Cc: Allen Hubbe <allenbh@gmail.com>
+> Cc: ntb@lists.linux.dev
 
-However. With your changes the code looks "better" and more understandable
-to me. So I'd vote for your patches even if I can't ack them.
+Looks really nice to me, thanks.
 
-But I'd like to ask some stupid (no, really) questions.
-__uprobe_write_opcode() does:
-
-	/* We're done if we don't find an anonymous folio when unregistering. */
-	if (!folio_test_anon(folio))
-		return is_register ? -EFAULT : 0;
-
-Yes, but we do not expect !folio_test_anon() if register == true, right?
-See also below.
-
-	/* Verify that the page content is still as expected. */
-	if (verify_opcode(fw->page, opcode_vaddr, &opcode) <= 0) {
-		set_pte_at(vma->vm_mm, vaddr, fw->ptep, fw->pte);
-		return -EAGAIN;
-	}
-
-The caller, uprobe_write_opcode(), has already called verify_opcode(),
-why do we need to re-check?
-
-But whatever reason we have. Can we change uprobe_write_opcode() to
-"delay" put_page() and instead of
-
-	/* Walk the page tables again, to perform the actual update. */
-	folio = folio_walk_start(&fw, vma, vaddr, 0);
-	if (folio) {
-		ret = __uprobe_write_opcode(vma, &fw, folio, opcode_vaddr,
-					    opcode);
-		folio_walk_end(&fw, vma);
-	} else {
-		ret = -EAGAIN;
-	}
-
-do something like
-
-	/* Walk the page tables again, to perform the actual update. */
-	ret = -EAGAIN;
-	folio = folio_walk_start(&fw, vma, vaddr, 0);
-	if (folio) {
-		if (fw.page == page) {
-			WARN_ON(is_register && !folio_test_anon(folio));
-			ret = __uprobe_write_opcode(vma, &fw, folio, opcode_vaddr,
-					            opcode);
-		}
-		folio_walk_end(&fw, vma);
-	}
-
-?
-
-Once again, I am not trying to review. I am trying to understand the
-basics of your code.
-
-Thanks,
-
-Oleg.
+Reviewed-by: Logan Gunthorpe <logang@deltatee.com>
 
 
