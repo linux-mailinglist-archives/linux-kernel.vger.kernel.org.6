@@ -1,81 +1,94 @@
-Return-Path: <linux-kernel+bounces-553703-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-553704-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA742A58DC4
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 09:14:46 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 16F31A58DC6
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 09:15:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6B5727A4755
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 08:13:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 87877188DB86
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 08:15:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B82DA223323;
-	Mon, 10 Mar 2025 08:14:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52317223322;
+	Mon, 10 Mar 2025 08:14:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="gnMyOg5F"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="UiY8OyqV"
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A495B223321
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 08:14:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F3C4223321
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 08:14:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741594479; cv=none; b=X8N9gwwr83KzqYvW858Gy+WcznXoxvrI4L4nnJH+8zJ/xxPIvOhuSK7eQCHkklbcQAj+Gik8vo+ytLwGYuvBVmuAjfR4MgVAy4+J08n8VxvzYUxwK3OmO4hgb+vwlg+auvC6YZdMdXQifSKUGqZGit4Xz4qarbJD+HROLYqvVIA=
+	t=1741594496; cv=none; b=B91aDaWjE2Vd0qOUUtu9jPTyJe0bbT4FTg4/4LMoPva4BHP2sdyXVuIx/egaX2kN2l9JIl++qUb/AD1P3emhJmONLmRXsXuzX01NwQBUtWgzvUct8RfGUHD7NaBoJfA+EvGvm5HoXjRJ0OIeBENsEGNwr64F7tFVPn/hzJftfW4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741594479; c=relaxed/simple;
-	bh=1GLcW142vfbtiwd4XjUCx0graaVe8sjtJUcrPfiJzQQ=;
+	s=arc-20240116; t=1741594496; c=relaxed/simple;
+	bh=ieOnLpKZdMXwTRsppKzD3lKC3vFircXxUr3yv6CciMo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mLduD1n7wfzHBWvAiFm6On/WOM8hocRKJou7+bN6H+0LjbJm+Kh4JRQeVvekL/35RyFpMldOT1kj4DAABNJYIzhIeF87WvwkQQTjb7yBJneJCQ+kw2+wSbV8IX8gG2nLqJuy+IFsFIEIZX9/GP1Su35cS8P1acGyua+f/F8RZVU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=gnMyOg5F; arc=none smtp.client-ip=198.175.65.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1741594478; x=1773130478;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=1GLcW142vfbtiwd4XjUCx0graaVe8sjtJUcrPfiJzQQ=;
-  b=gnMyOg5FvePLOf8JPuSRxkRRqrZxfNol6eCSPvPPxZLvpENGR2I9/Unx
-   O8rEzlXD5/0ep1u4bmiDfazfEUTpvn3AOG18YgiyCn7S+p4vMV3FdbVO2
-   7mjTW5vEbIECBquucfT7fRZl+0AD1ujccff4mQj/3vg2LbUNMeULSg2G2
-   2ZiBkCM2PECivK2olRBaLw//Sej34Jrs8q8lVIoMmersMn3N4Z8EeSeBh
-   kbSbahOkhHejje9Y5zW1YS40v/1QhG7sYoe+nHNEAJN6mDD/iyauhskxG
-   OYXYGP1zRkZ7KelAoTIV1GD7o5aKar7R15eQ/1dkHJ8It2Brw15+vpaw5
-   Q==;
-X-CSE-ConnectionGUID: 8ecSq5J4RsyWFVMrk1Mlxw==
-X-CSE-MsgGUID: NWwZSVtlQcee3/HJ30fbPw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11368"; a="42289398"
-X-IronPort-AV: E=Sophos;i="6.14,235,1736841600"; 
-   d="scan'208";a="42289398"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Mar 2025 01:14:37 -0700
-X-CSE-ConnectionGUID: b4bn/W5GTRKD1MclTUdGwA==
-X-CSE-MsgGUID: HE4AsaDqTXGfHQPboKzAdA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,235,1736841600"; 
-   d="scan'208";a="143132816"
-Received: from smile.fi.intel.com ([10.237.72.58])
-  by fmviesa002.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Mar 2025 01:14:36 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1trYHR-00000001Bit-1Gi8;
-	Mon, 10 Mar 2025 10:14:33 +0200
-Date: Mon, 10 Mar 2025 10:14:33 +0200
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: linux-kernel@vger.kernel.org, Willy Tarreau <willy@haproxy.com>,
-	Ksenija Stanojevic <ksenija.stanojevic@gmail.com>
-Subject: Re: [PATCH v1 6/7] auxdisplay: hd44780: Call charlcd_alloc() from
- hd44780_common_alloc()
-Message-ID: <Z86faZJpfYyJ1jYq@smile.fi.intel.com>
-References: <20250224173010.219024-1-andriy.shevchenko@linux.intel.com>
- <20250224173010.219024-7-andriy.shevchenko@linux.intel.com>
- <CAMuHMdXP1=7YJzYp=_WJsqx2mtBYcwAjpOGK2_9SH+r4w6v2Ug@mail.gmail.com>
- <Z8soDV0U2LG2KX9J@smile.fi.intel.com>
- <CAMuHMdV1+ftjpEcg4xYjBLH1BRJHkZcYB5W+p8WUWWLXT3DnUQ@mail.gmail.com>
- <Z8tCbjJk24ryV0DJ@smile.fi.intel.com>
- <CAMuHMdU3KKSFhN8hD_ZoyNfBUV4ZWa5=zxUPfmpivjmVhW8__Q@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=eMHjs5eH096WtkIdRCdBqbyOAjSRxzzdLag/tZGS2f9nossNY2vKlzLzbd4nDPmwkA6xNvuhIf2+sAN+slVooVUpiLL7oCgD5W4Ls4vw8uGz7Dr6xKQkdq0g9nwJkPVOV5ifXMH7/rsVc7KjZIP8ZA3OzkyT8NiKd9fVUUr0KAQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=UiY8OyqV; arc=none smtp.client-ip=209.85.128.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-43bc4b16135so22269715e9.1
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 01:14:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1741594493; x=1742199293; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=8KkC1l654ivSQJHfpAMIQ+ZSAHbGtBz6q5j4dS4aJJk=;
+        b=UiY8OyqVgacSrWHw1GPNIkDbhjH4eOWnwdUVt6yw0y7kv144F1WiiedWDrSbzhGmAn
+         JBhASm/L9e03ZSWcXTZCqiUX24LKaWJWTOImPF7/HtQLjNJTnKaeG3cLI1QduFW/xbQ/
+         iwQNW5pwFXo/PdRKdi8cOsdJTlT5jSG1GywVOCxfvmoOANQaBzn8rKVUKneVdE4mtl2S
+         RpQmgFQwKdWf27Wepeing+arITkyq0hpBDTCuPCl4PsanZQc72eeqf1xJMUJuJ6Dn4a9
+         73GiAEDLMX/ULaWEKKKyhz44BevDkUd5yDg1AN6vxaTzlNyu40ljJPwG4rTCnO6y4BGu
+         /pVQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741594493; x=1742199293;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=8KkC1l654ivSQJHfpAMIQ+ZSAHbGtBz6q5j4dS4aJJk=;
+        b=kdT+05b6gcQBuf5Vin3ojhXL55hnPJxPP6jxPaUjrw3g/jpN2yeX/FiDw+3XIPguJX
+         VN7i4PpT+G+pth8HHAK7LHnPAk6nLqrsXMzPZ5qyFOA2X8hR0zJcr1hZhypBbnicUTbm
+         fKFJKPJRJ44Dgeru/1nvVgEy8wuOhP9CJuy8JocxYJUYpODrnHSCMHGwgebmOfXbU+EC
+         CcexDv9H5liJw0xAjkThHR8fGKWcUdckQYXBaZwtKyzltLhYgsDXXzmlkp9BB3YTSQ59
+         gcyRcDBJ2ZrCwLjV04AHIwdsx4YkRywbCD1VYVLLUAiq5ZsLSbCflASJMBg4IrtVuuUo
+         lhkA==
+X-Forwarded-Encrypted: i=1; AJvYcCX0HE8yY/LPOtjDlwI3cAlpodh6f0ZCgUqvIWX7Qd+FOd/MRwwuxThHktlvkz5oQ7k0T12FmA8B6uQADms=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyCAcgGIFEPbEWsE69LwrCoyDF22p5NzAnNZRgi8bRuIJJ5NOue
+	4EYvOZC4MNBDrbplgDkZx8hrq/OZobltadn3Cs0oVj0pYZflRlzM96Diy3LxlkA=
+X-Gm-Gg: ASbGncsRZfgnZtQBvnJjofuCLz8G7+gohbf0Uoxew3wqyz7G8iY87KTE9zzkWo+5qB5
+	pLX0WvZgxHSZG54OMPdFmu5tAsh/ZNZRSxOEmA+0l0mjR++Y6r2wQHgImxXH5iWdbaUJpjfzNhJ
+	k8UzO0UK9o/ymkPzWlahsPf57JjdLyIx8VTyMLWr2Gg/JaF5v/BaAvV/wqvKgI3E01Tz9I9TrX5
+	mWfugxk15JKEwp/EYBpGYlRRdVWg27GaJ8rpUa9A2BoKev9skfzeocrnZE+kJh8X4U2eAcar3IR
+	/gfabzbSilMFJ4uLXcWEmDbRqQ6aDmJWxua7xQsI8eeZNrywkA==
+X-Google-Smtp-Source: AGHT+IGAuAAY07Q8AHFN3C6TD8HtaPVPa6Tfe7wsUJ+gFJZ+qrYDD1atk9hsCbpXzVbCKHdNzeFEDw==
+X-Received: by 2002:a05:600c:3b1f:b0:43c:f6c6:578c with SMTP id 5b1f17b1804b1-43cf6c6588bmr17772455e9.15.1741594492829;
+        Mon, 10 Mar 2025 01:14:52 -0700 (PDT)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-43bd91338cesm156803745e9.7.2025.03.10.01.14.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 10 Mar 2025 01:14:52 -0700 (PDT)
+Date: Mon, 10 Mar 2025 11:14:48 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Aditya Garg <gargaditya08@live.com>
+Cc: "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+	"bhelgaas@google.com" <bhelgaas@google.com>,
+	"joro@8bytes.org" <joro@8bytes.org>,
+	"will@kernel.org" <will@kernel.org>,
+	"robin.murphy@arm.com" <robin.murphy@arm.com>,
+	"andriy.shevchenko@linux.intel.com" <andriy.shevchenko@linux.intel.com>,
+	"linux-staging@lists.linux.dev" <linux-staging@lists.linux.dev>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	"linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+	"iommu@lists.linux.dev" <iommu@lists.linux.dev>,
+	Aun-Ali Zaidi <admin@kodeit.net>, "paul@mrarm.io" <paul@mrarm.io>,
+	Orlando Chamberlain <orlandoch.dev@gmail.com>
+Subject: Re: [PATCH RFC] staging: Add driver to communicate with the T2
+ Security Chip
+Message-ID: <f483ac12-c731-4dc8-9de5-059e07ff2c85@stanley.mountain>
+References: <1A12CB39-B4FD-4859-9CD7-115314D97C75@live.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -84,58 +97,199 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAMuHMdU3KKSFhN8hD_ZoyNfBUV4ZWa5=zxUPfmpivjmVhW8__Q@mail.gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+In-Reply-To: <1A12CB39-B4FD-4859-9CD7-115314D97C75@live.com>
 
-On Fri, Mar 07, 2025 at 08:06:37PM +0100, Geert Uytterhoeven wrote:
-> On Fri, 7 Mar 2025 at 20:01, Andy Shevchenko
-> <andriy.shevchenko@linux.intel.com> wrote:
-> > On Fri, Mar 07, 2025 at 07:19:57PM +0100, Geert Uytterhoeven wrote:
-> > > On Fri, 7 Mar 2025 at 18:08, Andy Shevchenko
-> > > <andriy.shevchenko@linux.intel.com> wrote:
-> > > > On Fri, Mar 07, 2025 at 10:14:48AM +0100, Geert Uytterhoeven wrote:
-> > > > > On Mon, 24 Feb 2025 at 18:30, Andy Shevchenko
-> > > > > <andriy.shevchenko@linux.intel.com> wrote:
+On Sun, Mar 09, 2025 at 08:40:31AM +0000, Aditya Garg wrote:
+> diff --git a/drivers/staging/apple-bce/apple_bce.c b/drivers/staging/apple-bce/apple_bce.c
+> new file mode 100644
+> index 000000000..c66e0c8d5
+> --- /dev/null
+> +++ b/drivers/staging/apple-bce/apple_bce.c
+> @@ -0,0 +1,448 @@
+> +// SPDX-License-Identifier: GPL-2.0+
+> +
+> +#include "apple_bce.h"
+> +#include <linux/module.h>
+> +#include <linux/crc32.h>
+> +#include "audio/audio.h"
+> +#include <linux/version.h>
+> +
+> +static dev_t bce_chrdev;
+> +static struct class *bce_class;
+> +
+> +struct apple_bce_device *global_bce;
+> +
+> +static int bce_create_command_queues(struct apple_bce_device *bce);
+> +static void bce_free_command_queues(struct apple_bce_device *bce);
+> +static irqreturn_t bce_handle_mb_irq(int irq, void *dev);
+> +static irqreturn_t bce_handle_dma_irq(int irq, void *dev);
+> +static int bce_fw_version_handshake(struct apple_bce_device *bce);
+> +static int bce_register_command_queue(struct apple_bce_device *bce, struct bce_queue_memcfg *cfg, int is_sq);
+> +
+> +static int apple_bce_probe(struct pci_dev *dev, const struct pci_device_id *id)
+> +{
+> +	struct apple_bce_device *bce = NULL;
+> +	int status = 0;
+> +	int nvec;
+> +
+> +	pr_info("apple-bce: capturing our device\n");
+> +
+> +	if (pci_enable_device(dev))
+> +		return -ENODEV;
 
-...
+	ret = pci_enable_device(dev);
+	if (ret)
+		return ret;
 
-> > > > > While I like the general idea, there are two things in the API I do
-> > > > > not like:
-> > > > >   1. The function is called "hd44780_common_alloc()", but returns
-> > > > >      a pointer to a different struct type than the name suggests,
-> > > > >   2. The real "struct hd44780_common" must be obtained by the caller
-> > > > >      from charlcd.drvdata, which is of type "void *", i.e. unsafe.
-> > > > >
-> > > > > What about changing it to e.g.?
-> > > > >
-> > > > >     struct hd44780_common *hd44780_common_alloc(struct charlcd **lcd)
-> > > > >
-> > > > > so you can return pointers to both structs?
-> > > >
-> > > > I don't like this prototype as it seems and feels confusing. Also note,
-> > > > the APIs are using struct charlcd while being in the hd44780 namespace.
-> > > > perhaps better to rename the function to hd44780_common_and_lcd_alloc()?
-> > >
-> > > That is one option.
-> > >
-> > > Another option would be to add a "charlcd *lcd" member to
-> > > struct hd44780_common.
-> > >
-> > > That would allow to fix the other odd part in the API:
-> > >
-> > >     -void hd44780_common_free(struct charlcd *lcd)
-> > >     +void hd44780_common_free(struct hd4480_common *hd)
-> >
-> > This I like better. In a separate patch I think?
-> 
-> Fine for me...
+> +	if (pci_request_regions(dev, "apple-bce")) {
 
-Thanks, I will check what can I do, but currently it's not
-a high priority to me.
+Same everywhere.  Propagate the error code.
 
--- 
-With Best Regards,
-Andy Shevchenko
+> +		status = -ENODEV;
+> +		goto fail;
 
+Instead of "goto fail;" it's better to use a full unwind ladder
+with better label names.
+https://staticthinking.wordpress.com/2022/04/28/free-the-last-thing-style/
+
+> +	}
+> +	pci_set_master(dev);
+> +	nvec = pci_alloc_irq_vectors(dev, 1, 8, PCI_IRQ_MSI);
+> +	if (nvec < 5) {
+> +		status = -EINVAL;
+> +		goto fail;
+> +	}
+> +
+> +	bce = kzalloc(sizeof(struct apple_bce_device), GFP_KERNEL);
+
+	bce = kzalloc(sizeof(*bce), GFP_KERNEL);
+
+> +	if (!bce) {
+> +		status = -ENOMEM;
+> +		goto fail;
+> +	}
+> +
+> +	bce->pci = dev;
+> +	pci_set_drvdata(dev, bce);
+> +
+> +	bce->devt = bce_chrdev;
+> +	bce->dev = device_create(bce_class, &dev->dev, bce->devt, NULL, "apple-bce");
+> +	if (IS_ERR_OR_NULL(bce->dev)) {
+> +		status = PTR_ERR(bce_class);
+
+
+device_create() can't return NULL.
+https://staticthinking.wordpress.com/2022/08/01/mixing-error-pointers-and-null/
+
+> +		goto fail;
+> +	}
+> +
+> +	bce->reg_mem_mb = pci_iomap(dev, 4, 0);
+> +	bce->reg_mem_dma = pci_iomap(dev, 2, 0);
+> +
+> +	if (IS_ERR_OR_NULL(bce->reg_mem_mb) || IS_ERR_OR_NULL(bce->reg_mem_dma)) {
+> +		dev_warn(&dev->dev, "apple-bce: Failed to pci_iomap required regions\n");
+> +		goto fail;
+> +	}
+> +
+> +	bce_mailbox_init(&bce->mbox, bce->reg_mem_mb);
+> +	bce_timestamp_init(&bce->timestamp, bce->reg_mem_mb);
+> +
+> +	spin_lock_init(&bce->queues_lock);
+> +	ida_init(&bce->queue_ida);
+> +
+> +	if ((status = pci_request_irq(dev, 0, bce_handle_mb_irq, NULL, dev, "bce_mbox")))
+
+I think checkpatch will complain about this.  Do it as.
+
+	status = pci_request_irq(dev, 0, bce_handle_mb_irq, NULL, dev, "bce_mbox");
+	if (status)
+
+> +		goto fail;
+> +	if ((status = pci_request_irq(dev, 4, NULL, bce_handle_dma_irq, dev, "bce_dma")))
+> +		goto fail_interrupt_0;
+> +
+> +	if ((status = dma_set_mask_and_coherent(&dev->dev, DMA_BIT_MASK(37)))) {
+> +		dev_warn(&dev->dev, "dma: Setting mask failed\n");
+> +		goto fail_interrupt;
+> +	}
+> +
+> +	/* Gets the function 0's interface. This is needed because Apple only accepts DMA on our function if function 0
+> +	   is a bus master, so we need to work around this. */
+> +	bce->pci0 = pci_get_slot(dev->bus, PCI_DEVFN(PCI_SLOT(dev->devfn), 0));
+> +#ifndef WITHOUT_NVME_PATCH
+
+Delete dead code?
+
+> +	if ((status = pci_enable_device_mem(bce->pci0))) {
+> +		dev_warn(&dev->dev, "apple-bce: failed to enable function 0\n");
+> +		goto fail_dev0;
+> +	}
+> +#endif
+> +	pci_set_master(bce->pci0);
+> +
+> +	bce_timestamp_start(&bce->timestamp, true);
+> +
+> +	if ((status = bce_fw_version_handshake(bce)))
+> +		goto fail_ts;
+> +	pr_info("apple-bce: handshake done\n");
+> +
+> +	if ((status = bce_create_command_queues(bce))) {
+> +		pr_info("apple-bce: Creating command queues failed\n");
+> +		goto fail_ts;
+> +	}
+> +
+> +	global_bce = bce;
+
+Do this right before the "return 0;"?
+
+> +
+> +	bce_vhci_create(bce, &bce->vhci);
+
+Check for errors.
+
+> +
+> +	return 0;
+> +
+> +fail_ts:
+> +	bce_timestamp_stop(&bce->timestamp);
+> +#ifndef WITHOUT_NVME_PATCH
+> +	pci_disable_device(bce->pci0);
+> +fail_dev0:
+> +#endif
+> +	pci_dev_put(bce->pci0);
+> +fail_interrupt:
+> +	pci_free_irq(dev, 4, dev);
+> +fail_interrupt_0:
+> +	pci_free_irq(dev, 0, dev);
+> +fail:
+> +	if (bce && bce->dev) {
+> +		device_destroy(bce_class, bce->devt);
+> +
+> +		if (!IS_ERR_OR_NULL(bce->reg_mem_mb))
+> +			pci_iounmap(dev, bce->reg_mem_mb);
+> +		if (!IS_ERR_OR_NULL(bce->reg_mem_dma))
+> +			pci_iounmap(dev, bce->reg_mem_dma);
+> +
+> +		kfree(bce);
+> +	}
+> +
+> +	pci_free_irq_vectors(dev);
+> +	pci_release_regions(dev);
+> +	pci_disable_device(dev);
+> +
+> +	if (!status)
+> +		status = -EINVAL;
+
+This is like saying "if the code is buggy then fix it" but it's better to
+just not introduce bugs.  Which sounds difficult and unreliable, but it's
+even more difficult and unreliable to predict which bugs people will add
+and fix them correctly.
+
+> +	return status;
+> +}
+
+regards,
+dan carpenter
 
 
