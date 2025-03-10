@@ -1,179 +1,232 @@
-Return-Path: <linux-kernel+bounces-553931-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-553932-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 78605A590D3
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 11:14:20 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 672DFA590D5
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 11:14:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 345873AB24A
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 10:14:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8C5C5188EEF1
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 10:14:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 340DD22540A;
-	Mon, 10 Mar 2025 10:14:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 891C0226188;
+	Mon, 10 Mar 2025 10:14:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="KSgaQ4cf"
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EEj596gf"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9A5A288A5
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 10:14:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C15AB225A3B;
+	Mon, 10 Mar 2025 10:14:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741601653; cv=none; b=IzMBOj6HVp/eodHvYl5pmXnrpuqJDFXzcpDcGWd1qe9OsOGNt4WEWRZDjTWAvOT0alwEqRzfhgICXrsTOXLCOwMgsGZh5T4RoXpUMykXqRGwsabqyJsk9QbF7Kxcb2R4IXrYy3AMvEXMPaCzUFZ9LGBFbw1BR6kzPYcR6LH6ggc=
+	t=1741601656; cv=none; b=NA824xekdqC66eo9fABR8Ed3ayKC59upLwccLOAlIW3P06DDdu6tvcwzcrA+2ek5vGEm5MVUXt+jvL07OEQnHOyJnmbxpTzTZos5fuFcpDOtgNJARQ3oDjqmMKUjP/3yDJaiweglZUBDASEYH+RTi5fdvvJVIWl4mjmaQFrzx/g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741601653; c=relaxed/simple;
-	bh=qrhY1Bxhk9wF+bTuRi9kE+Jcd+57pGlbPZGR1j8y7ZI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=DhsL8bJ1Zp0Otwb6lqdLXAxZO65llaLtqSafAFaEkzt0QmkN7IobGWrhycZ56YhsG3/oMfx0kWGjWUA0e6It+opSA30OJOlRIrBJL5mtldP4ReI4rj4E+xItCQOPbpHykQmanBKoANSOFppXYz5Yqk4arXhiOvnfTdjcoNBop5Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=KSgaQ4cf; arc=none smtp.client-ip=209.85.128.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-43bc4b16135so22999235e9.1
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 03:14:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1741601649; x=1742206449; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Mb4ZEjkPxTZLwNM/RV2EyY1xOkJQUnNNIIHGYtjQ6vA=;
-        b=KSgaQ4cfqu560dgTpKRH7f18NRb/hxqlOVwHREc3haj7tXsq1WWisb4HEXLr2bpc8z
-         7n1tGNp1fCiJI3aSMs4BLu3gaOk/CKYBybhSPGDATBCEnZ9kAUoavGK7QzXp31OvRpOD
-         b7cmzoqWGdIqTaco8km5iNxg13yxr2Jd9VCYF4r6kwaT5HlbIO7G/h8KtY77CdojDvWh
-         cW0XPTrHFH9+TiMbv4eRztkjeSnAUAfzFpN4TK/6XUvMC6NfSnlr1Bfl98QzCkQ9Z/A1
-         NkQxoV7HXWhqdSeIe55Oyp+mbrmjbWdXVWDSkQn9u7c52TTctZZm+gfyeUL8cNdK86Rq
-         z5bA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741601649; x=1742206449;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Mb4ZEjkPxTZLwNM/RV2EyY1xOkJQUnNNIIHGYtjQ6vA=;
-        b=XokdYUCLDgkGbVZZN6M2XpbAFRRvwJ3Ul820mWsKHl09CnHGDge4RlHMuoT2FQssEp
-         FHPAeZgSV4YNDeDuACLzBnrODXULkHC4Ub2+WKbOPBzlx7hEh5Uoi9yXQevvuySDk3So
-         jqmaF3it2n1e9UDyKj9M9poAVCUQGkszFaDVLqGHqWHsCYvmv4DyOPx3CRy0DM4XRbSn
-         8+qsBPcGKPsEa3/e0oI4nonV7A2oogOWRFKHGARJu7bkVoYgWYv/YPBlRcCZGfqf/xsG
-         ZnPyI93rs3vBAHyV90I1He2hAI7RB3KjZHoyH3JHkbpVXFgtNRtIubqxJ+f+j+OcQ1iW
-         Y8ZA==
-X-Forwarded-Encrypted: i=1; AJvYcCX5CXzGKxHKlHr8Ri+T0J0YFllbPT6vnqTh6zteb4F0iH61Mvhxw+yX/UGpeCFQyZ4LtMHajKBaoo+WziA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzqBgtf/xaSNAFE6PtaNXV8Zb9P7ojIpzl93Dsx7pWbumzvlinj
-	OZcq0e/W3dpZMCCSky8YhcrIis3eaLh6O0I65WciZ69GGfFhk9xChvLxxNrJeiY=
-X-Gm-Gg: ASbGncv/ggCYvtmYHrdjMfULSdgjE23HqbYtvvjEyiRlRzm6DhVAezvJKYf79qw26+7
-	MNLmA/pSp24q5+jGazoBKh+AzOrh/EvCkQu5dOWjebmYH5j7bNCB1xRY7EF2OuqLHfiETSlPbe7
-	2DJom7qE5wIQtMwWLK2KFdUah0hepB2xZYerTgQBXYvuG14Xn+T+ArpoTby4mnROWOhHbbnRjoN
-	YK6DEuly0ltdjW+zg+ZwO8l2OBopI0DX1r6uu5oQiqgjnu+PeTgsS1f9kcQ27VfeOal5dv/o1vt
-	aET4gb4uZcQv7GW5q/IBpC/cw+tENNzvaqsfUCUg3VA2QM/LUtM3kw==
-X-Google-Smtp-Source: AGHT+IE1Ord0Tl8BurkaPnDuV4r4Te8iOeVLYyzC08bi05bzSeYXOW3onsNn3uUNCaQEE8mKnUg7hw==
-X-Received: by 2002:a05:600c:45d1:b0:43b:d0fe:b8ac with SMTP id 5b1f17b1804b1-43c686f96a0mr83815175e9.30.1741601648928;
-        Mon, 10 Mar 2025 03:14:08 -0700 (PDT)
-Received: from [192.168.0.62] ([79.115.63.206])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43cfa7e4f36sm22681595e9.40.2025.03.10.03.14.07
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 10 Mar 2025 03:14:08 -0700 (PDT)
-Message-ID: <f1111d1b-a111-4171-9467-450d90a14c0a@linaro.org>
-Date: Mon, 10 Mar 2025 12:14:06 +0200
+	s=arc-20240116; t=1741601656; c=relaxed/simple;
+	bh=jqHouoL7QIIxHNjU/qxXvVvxBuUIK/Is63SGCToqjVA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VzecQ8kX61+sws74lBUptyhC4KzQ4m4qIBNQMpbSC1ZTk8ZdpM/4GNuxjoaDnUX9LpoEg0wWA1u7mijv1ak8TajVnpGIcxOG8ynJBSyHltff74DVsL2wMh2gqS9+QzfBUEAP7KvwaJKwp8seV1R7lPjEMSUfr7nrE0rm7PPDmh8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EEj596gf; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7CCFBC4CEEC;
+	Mon, 10 Mar 2025 10:14:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741601655;
+	bh=jqHouoL7QIIxHNjU/qxXvVvxBuUIK/Is63SGCToqjVA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=EEj596gfUsNaICz4Pgu+ukAVnXesoRI4xXXA+hcwpqJPgW34mV79HSo/EB0GnwgD9
+	 Rn3yL7GdNz8s01n3Q09XMgjml7M2JKxQ1b89bVcDLoSVDKyTOXepfeb+UyT88IG5FD
+	 cPiIX2fezE5hlSiR2Dyuwa77UewHkNuyX6ry/NRDnFjKmG67QGE2ujoSQ3fyJBij6N
+	 UAcXeX2o35fKTO1LEfo+BZR7Y7qtHjafwp+eShz93ijjQDn8aD5AHceAYQ4SfL1HsK
+	 /AL6kZaA2voywq/oFiwu5pWcUa4MxkxWXiEr2UhLyK22E9MtIvNhfCakHAWTZBDv6P
+	 1uP+ikpC8zlFQ==
+Date: Mon, 10 Mar 2025 12:14:10 +0200
+From: Leon Romanovsky <leon@kernel.org>
+To: Wang Liang <wangliang74@huawei.com>
+Cc: jgg@ziepe.ca, cmeiohas@nvidia.com, michaelgur@nvidia.com,
+	huangjunxian6@hisilicon.com, liyuyu6@huawei.com,
+	markzhang@nvidia.com, linux@treblig.org, jbi.octave@gmail.com,
+	dsahern@kernel.org, yuehaibing@huawei.com,
+	zhangchangzhong@huawei.com, linux-rdma@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net] infiniband: fix use-after-free when rename device
+ name
+Message-ID: <20250310101410.GB7027@unreal>
+References: <20250310064516.3633612-1-wangliang74@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 01/21] mtd: spinand: Use more specific naming for the
- reset op
-To: Miquel Raynal <miquel.raynal@bootlin.com>
-Cc: Richard Weinberger <richard@nod.at>, Vignesh Raghavendra
- <vigneshr@ti.com>, Santhosh Kumar K <s-k6@ti.com>,
- Pratyush Yadav <pratyush@kernel.org>, Michael Walle <michael@walle.cc>,
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
- Steam Lin <stlin2@winbond.com>, linux-mtd@lists.infradead.org,
- linux-kernel@vger.kernel.org
-References: <20250307-winbond-6-14-rc1-octal-v1-0-45c1e074ad74@bootlin.com>
- <20250307-winbond-6-14-rc1-octal-v1-1-45c1e074ad74@bootlin.com>
- <9004166e-5535-4024-8114-9fdb217407bb@linaro.org>
- <87v7skrgjl.fsf@bootlin.com>
-From: Tudor Ambarus <tudor.ambarus@linaro.org>
-Content-Language: en-US
-In-Reply-To: <87v7skrgjl.fsf@bootlin.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20250310064516.3633612-1-wangliang74@huawei.com>
 
+On Mon, Mar 10, 2025 at 02:45:16PM +0800, Wang Liang wrote:
+> Syzbot reported a slab-use-after-free with the following call trace:
+>=20
+> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> BUG: KASAN: slab-use-after-free in nla_put+0xd3/0x150 lib/nlattr.c:1099
+> Read of size 5 at addr ffff888140ea1c60 by task syz.0.988/10025
+>=20
+> CPU: 0 UID: 0 PID: 10025 Comm: syz.0.988 Not tainted 6.14.0-rc4-syzkaller=
+-00859-gf77f12010f67 #0
+> Hardware name: Google Compute Engine, BIOS Google 02/12/2025
+> Call Trace:
+>  <TASK>
+>  __dump_stack lib/dump_stack.c:94 [inline]
+>  dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
+>  print_address_description mm/kasan/report.c:408 [inline]
+>  print_report+0x16e/0x5b0 mm/kasan/report.c:521
+>  kasan_report+0x143/0x180 mm/kasan/report.c:634
+>  kasan_check_range+0x282/0x290 mm/kasan/generic.c:189
+>  __asan_memcpy+0x29/0x70 mm/kasan/shadow.c:105
+>  nla_put+0xd3/0x150 lib/nlattr.c:1099
+>  nla_put_string include/net/netlink.h:1621 [inline]
+>  fill_nldev_handle+0x16e/0x200 drivers/infiniband/core/nldev.c:265
+>  rdma_nl_notify_event+0x561/0xef0 drivers/infiniband/core/nldev.c:2857
+>  ib_device_notify_register+0x22/0x230 drivers/infiniband/core/device.c:13=
+44
+>  ib_register_device+0x1292/0x1460 drivers/infiniband/core/device.c:1460
+>  rxe_register_device+0x233/0x350 drivers/infiniband/sw/rxe/rxe_verbs.c:15=
+40
+>  rxe_net_add+0x74/0xf0 drivers/infiniband/sw/rxe/rxe_net.c:550
+>  rxe_newlink+0xde/0x1a0 drivers/infiniband/sw/rxe/rxe.c:212
+>  nldev_newlink+0x5ea/0x680 drivers/infiniband/core/nldev.c:1795
+>  rdma_nl_rcv_skb drivers/infiniband/core/netlink.c:239 [inline]
+>  rdma_nl_rcv+0x6dd/0x9e0 drivers/infiniband/core/netlink.c:259
+>  netlink_unicast_kernel net/netlink/af_netlink.c:1313 [inline]
+>  netlink_unicast+0x7f6/0x990 net/netlink/af_netlink.c:1339
+>  netlink_sendmsg+0x8de/0xcb0 net/netlink/af_netlink.c:1883
+>  sock_sendmsg_nosec net/socket.c:709 [inline]
+>  __sock_sendmsg+0x221/0x270 net/socket.c:724
+>  ____sys_sendmsg+0x53a/0x860 net/socket.c:2564
+>  ___sys_sendmsg net/socket.c:2618 [inline]
+>  __sys_sendmsg+0x269/0x350 net/socket.c:2650
+>  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+>  do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+>  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> RIP: 0033:0x7f42d1b8d169
+> Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 ...
+> RSP: 002b:00007f42d2960038 EFLAGS: 00000246 ORIG_RAX: 000000000000002e
+> RAX: ffffffffffffffda RBX: 00007f42d1da6320 RCX: 00007f42d1b8d169
+> RDX: 0000000000000000 RSI: 00004000000002c0 RDI: 000000000000000c
+> RBP: 00007f42d1c0e2a0 R08: 0000000000000000 R09: 0000000000000000
+> R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+> R13: 0000000000000000 R14: 00007f42d1da6320 R15: 00007ffe399344a8
+>  </TASK>
+>=20
+> Allocated by task 10025:
+>  kasan_save_stack mm/kasan/common.c:47 [inline]
+>  kasan_save_track+0x3f/0x80 mm/kasan/common.c:68
+>  poison_kmalloc_redzone mm/kasan/common.c:377 [inline]
+>  __kasan_kmalloc+0x98/0xb0 mm/kasan/common.c:394
+>  kasan_kmalloc include/linux/kasan.h:260 [inline]
+>  __do_kmalloc_node mm/slub.c:4294 [inline]
+>  __kmalloc_node_track_caller_noprof+0x28b/0x4c0 mm/slub.c:4313
+>  __kmemdup_nul mm/util.c:61 [inline]
+>  kstrdup+0x42/0x100 mm/util.c:81
+>  kobject_set_name_vargs+0x61/0x120 lib/kobject.c:274
+>  dev_set_name+0xd5/0x120 drivers/base/core.c:3468
+>  assign_name drivers/infiniband/core/device.c:1202 [inline]
+>  ib_register_device+0x178/0x1460 drivers/infiniband/core/device.c:1384
+>  rxe_register_device+0x233/0x350 drivers/infiniband/sw/rxe/rxe_verbs.c:15=
+40
+>  rxe_net_add+0x74/0xf0 drivers/infiniband/sw/rxe/rxe_net.c:550
+>  rxe_newlink+0xde/0x1a0 drivers/infiniband/sw/rxe/rxe.c:212
+>  nldev_newlink+0x5ea/0x680 drivers/infiniband/core/nldev.c:1795
+>  rdma_nl_rcv_skb drivers/infiniband/core/netlink.c:239 [inline]
+>  rdma_nl_rcv+0x6dd/0x9e0 drivers/infiniband/core/netlink.c:259
+>  netlink_unicast_kernel net/netlink/af_netlink.c:1313 [inline]
+>  netlink_unicast+0x7f6/0x990 net/netlink/af_netlink.c:1339
+>  netlink_sendmsg+0x8de/0xcb0 net/netlink/af_netlink.c:1883
+>  sock_sendmsg_nosec net/socket.c:709 [inline]
+>  __sock_sendmsg+0x221/0x270 net/socket.c:724
+>  ____sys_sendmsg+0x53a/0x860 net/socket.c:2564
+>  ___sys_sendmsg net/socket.c:2618 [inline]
+>  __sys_sendmsg+0x269/0x350 net/socket.c:2650
+>  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+>  do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+>  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+>=20
+> Freed by task 10035:
+>  kasan_save_stack mm/kasan/common.c:47 [inline]
+>  kasan_save_track+0x3f/0x80 mm/kasan/common.c:68
+>  kasan_save_free_info+0x40/0x50 mm/kasan/generic.c:576
+>  poison_slab_object mm/kasan/common.c:247 [inline]
+>  __kasan_slab_free+0x59/0x70 mm/kasan/common.c:264
+>  kasan_slab_free include/linux/kasan.h:233 [inline]
+>  slab_free_hook mm/slub.c:2353 [inline]
+>  slab_free mm/slub.c:4609 [inline]
+>  kfree+0x196/0x430 mm/slub.c:4757
+>  kobject_rename+0x38f/0x410 lib/kobject.c:524
+>  device_rename+0x16a/0x200 drivers/base/core.c:4525
+>  ib_device_rename+0x270/0x710 drivers/infiniband/core/device.c:402
+>  nldev_set_doit+0x30e/0x4c0 drivers/infiniband/core/nldev.c:1146
+>  rdma_nl_rcv_skb drivers/infiniband/core/netlink.c:239 [inline]
+>  rdma_nl_rcv+0x6dd/0x9e0 drivers/infiniband/core/netlink.c:259
+>  netlink_unicast_kernel net/netlink/af_netlink.c:1313 [inline]
+>  netlink_unicast+0x7f6/0x990 net/netlink/af_netlink.c:1339
+>  netlink_sendmsg+0x8de/0xcb0 net/netlink/af_netlink.c:1883
+>  sock_sendmsg_nosec net/socket.c:709 [inline]
+>  __sock_sendmsg+0x221/0x270 net/socket.c:724
+>  ____sys_sendmsg+0x53a/0x860 net/socket.c:2564
+>  ___sys_sendmsg net/socket.c:2618 [inline]
+>  __sys_sendmsg+0x269/0x350 net/socket.c:2650
+>  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+>  do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+>  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+>=20
+> This is because if rename device happens, the old name is freed in
+> ib_device_rename() with lock, but fill_nldev_handle() may visit the dev
+> name locklessly triggered by rxe_newlink().
+>=20
+> Fix this by add lock around rdma_nl_notify_event() in
+> ib_device_notify_register().
+>=20
+> Reported-by: syzbot+f60349ba1f9f08df349f@syzkaller.appspotmail.com
+> Closes: https://syzkaller.appspot.com/bug?extid=3D25bc6f0ed2b88b9eb9b8
+> Fixes: 9cbed5aab5ae ("RDMA/nldev: Add support for RDMA monitoring")
+> Signed-off-by: Wang Liang <wangliang74@huawei.com>
+> ---
+>  drivers/infiniband/core/device.c | 2 ++
+>  1 file changed, 2 insertions(+)
+>=20
+> diff --git a/drivers/infiniband/core/device.c b/drivers/infiniband/core/d=
+evice.c
+> index 0ded91f056f3..4536621ada0d 100644
+> --- a/drivers/infiniband/core/device.c
+> +++ b/drivers/infiniband/core/device.c
+> @@ -1341,7 +1341,9 @@ static void ib_device_notify_register(struct ib_dev=
+ice *device)
+>  	u32 port;
+>  	int ret;
+> =20
+> +	down_write(&devices_rwsem);
 
+The analysis looks correct to me, however this should be down_read(&devices=
+_rwsem)
+together with comment about possible race with RDMA netlink, which can chan=
+ge
+internals of struct ib_device.
 
-On 07.03.2025 17:45, Miquel Raynal wrote:
-> Hi Tudor,
+I wonder if this read semaphore should be hold for whole
+ib_device_notify_register() function and not only for RDMA_REGISTER_EVENT e=
+vent.
 
-Hi!
+Thanks
 
-> 
->>> -#define SPINAND_RESET_OP						\
->>> +#define SPINAND_RESET_1S_0_0_OP						\
->> Hi, Miquel,
->>
->> Have you seen any reset op with address or data? If not, I'm not really
->> sure whether we shall change the name for these basic operations.
->>
->> Changing them to 1S-0-0 may also indicate that there are resets with
->> address or data fields, which I find confusing.
->>
->> I think the change is good for reads and writes. I'll check further in
->> the series and let you know.
-> 
-> I want to rename this macro for two reasons:
-> - We might see in the near future the addition of 8D-0-0 ops (I plan on
->   working on it).
-> - I would like some kind of harmony among these macros.
-> 
-> Now, whether is should be named like I proposed or just
-> SPINAND_RESET_OP_1S, I have no strong preference and I can change that
-> in an upcoming version.
-> 
-> Which one would you prefer?
-
-I don't know. Which one is backed up by a standard?
-
-JESD216F defines
-"(An-Bn-Cn): Command mode nomenclature used to indicate the number of
-active pins used for the instruction (A), address (B), and data (C), and
-the data rate used for each. Data rates(n) can be single (S) and dual (D)."
-
-Also, "(x-y-z) nomenclature is equivalent to(AS-BS-CS) unless otherwise
-noted."
-
-What's an "active pin"?
-
-Then if I look at JESD251-1.01 and JESD251C, (An-Bn-Cn) is referred to
-as "protocol mode". Write Enable, which is just an instruction command
-with no address or data, is seen as a required command in both 4D-4D-4D
-and 8D-8D-8D protocol modes, and it's defined as a "1.A" transaction
-format command. And the transaction format is:
-'''
-The following transaction formats are used in Profile 1.0 mode 8D-8D-8D:
-Format 1.A: Command and Command Extension
-Format 1.B: Command, Command Extension, 4-byte Address, ‘n’ Latency
-Cycles, and Read Data
-Format 1.C: Command, Command Extension, and 4-byte Address
-Format 1.D: Command, Command Extension, 4-byte Address, and Write Data
-'''
-
-So according to these standards maybe we shall refer to it as:
-WREN-8D-8D-8D-1A? This seems less intuitive than 8D-0-0, but I think it
-all depends on what's an "active pin". I think it describes the protocol
-mode, and not what's actually sent on the line. As we saw, WREN is
-considered an 8D-8D-8D command, and not an 8D-0-0 command.
-
-For dual mode, which is not covered by xSPI, I guess we can use the
-single spi transaction formats 0.{A,B,C,...}.
-
-How do you feel about a OP-An-Bn-Cn-transaction-format,
-	where A, B, C is {1, 2, 4, 8}
-	n is {S, D}
-	transaction format is {0,1,2,3}{A,B,C,...}
-
-Care must be taken care of at the transaction format, as I see there are
-a few, depending on the xSPI profile and protocol mode.
-
-Cheers,
-ta
+>  	ret =3D rdma_nl_notify_event(device, 0, RDMA_REGISTER_EVENT);
+> +	up_write(&devices_rwsem);
+>  	if (ret)
+>  		return;
+> =20
+> --=20
+> 2.34.1
+>=20
+>=20
 
