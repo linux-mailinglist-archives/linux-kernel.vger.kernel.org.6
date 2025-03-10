@@ -1,46 +1,46 @@
-Return-Path: <linux-kernel+bounces-554454-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-554455-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 68A54A597EB
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 15:40:31 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A1EFA597EC
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 15:40:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 66723166420
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 14:40:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 127101649FA
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 14:40:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5C0122CBD9;
-	Mon, 10 Mar 2025 14:40:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80A4222D4D2;
+	Mon, 10 Mar 2025 14:40:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nY82kkBA"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="d9bpzmW/"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6EB922A4D3;
-	Mon, 10 Mar 2025 14:40:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDE6822B8A9;
+	Mon, 10 Mar 2025 14:40:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741617609; cv=none; b=tZBuDU9bo/hlFiyhqFRBMe+NVXuygFJjQwmHluXvaNK3iwVLh7vFmi5m0er50mXqBAvP0BHpb278+HWysKwdJ7QPskd8hRHQyuHlz8ypUJnMclENiCUweVmK8gi5LqBQuDX2+dtjPj6CnL2STCbcHFx0TttYjC4oogVH5Go99VY=
+	t=1741617611; cv=none; b=Cv872afyiVBrcOxrbrbC1l7nTOowo+tm4PtbgI4RmznajdP5yFu8LxwgDeC8b1J3FQ1xZAIuQk+jyQO+kOdzUPeRCEXpDqvjd+3yqZ0ZLuE/hxChVkkFnmhYh3+ETlx0N1N+BIivDViloofkrlZUHY4hSjbUC2XHRMNQJQO6eC8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741617609; c=relaxed/simple;
+	s=arc-20240116; t=1741617611; c=relaxed/simple;
 	bh=Sm0Mo6AtmCgx4dV4CHSjPIsBg9QJ8dBbfeea4VPSE+s=;
 	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=A9nSMKySbRta35GVuU77RC/QO2MfWk/tIKgA1lvbKiEcec1+ZS/IlTp9nUHLTyD24qFleI7PHfiFFk4xhfP2sGmKH7EU8dpgWRZKPD570pAltLEH7048q3n69nEurrq6IYsG0MaZ1DYr9u8Uutz512fI6rDNjxq5Ov70z/wWSFU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nY82kkBA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1DA84C4CEE5;
-	Mon, 10 Mar 2025 14:40:08 +0000 (UTC)
+	 Message-Id:Subject; b=o6TbR0lqI3udYATTNuNqlQvs45Kv/4EMMThvxDcK4y2MDH2zwe1sIWHR0gUAKwSqtQKtEI53my8mPEFR7ym51OhC9/cFuV7Byj87fQtWmV71xdfx3kT6ayW2V727q/wAedQVpcW30dgxLliqUlg5azFVMGIQS+Pp1K1Ym0p7oMo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=d9bpzmW/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 09C7DC4CEE5;
+	Mon, 10 Mar 2025 14:40:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741617608;
+	s=k20201202; t=1741617610;
 	bh=Sm0Mo6AtmCgx4dV4CHSjPIsBg9QJ8dBbfeea4VPSE+s=;
 	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
-	b=nY82kkBAX19588GNnTU7OT7x5ke3WU5Y58THp6MOE2HWDR98BSfPZyK5MM/ffZHhe
-	 qOtovvBTkAmHIWE5ngOIg3uzcuaHnV3ruojLJA/ygMIw95+6DOEAHQ5Q8FYCybOOif
-	 ZHUTq0s50uoq/kRC9KeZs9RZAx+vozFkqCSMh07GmZSynZnSda5+0ehtcb7Tllt4wW
-	 +5ymbfgjjhj8xMtAV3Feqlr2LvndGegOIE65s/i9h5B8Y12i+8Z6ID1naPyQ/SD0lb
-	 haGqT9BPpf5umg08ykl+kZjCj5FrhFZrYF7gKwe3ZdzgYsVfRnuFP8ay+XcL025aRn
-	 +BZZ+tNf/o2Jg==
-Date: Mon, 10 Mar 2025 09:40:06 -0500
+	b=d9bpzmW/aPaZ+H5uUS5RjBMzDsfhN+MNx+PnBk/xBtrNiUq1A/dWbMlDv+OYEZMZq
+	 d88khiKQ/4iUo8sCHUfak483oLOKKTkgxswTlLRLt5+liEH8K0NFiT6AkR1JmPMmk2
+	 viqzIOOG+fg3Q8q58+o24wfxj/aUwqs+WsJQDDhLlAfMyjVOJhAtmVgkD4pDbtyO49
+	 KdPiITje6UoMPOGJgKCkaswP1JcPlGuxa1jtqgvd5FqMsIIP94lx24FFWCLs0gPOWl
+	 0ctUT+08DqTIV+6Qd6HdeViDmeggycsLNosvDDVEC2YzlhAqqNmPDkrDnkcY1BMQik
+	 AtzBi7lQADNSA==
+Date: Mon, 10 Mar 2025 09:40:08 -0500
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
@@ -50,22 +50,21 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: linux-arm-kernel@lists.infradead.org, 
- Conor Dooley <conor+dt@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Nishanth Menon <nm@ti.com>, 
- Randolph Sapp <rs@ti.com>, Tero Kristo <kristo@kernel.org>, 
- Maxime Ripard <mripard@kernel.org>, linux-kernel@vger.kernel.org, 
- Frank Binns <frank.binns@imgtec.com>, devicetree@vger.kernel.org, 
- Thomas Zimmermann <tzimmermann@suse.de>, dri-devel@lists.freedesktop.org, 
- Simona Vetter <simona@ffwll.ch>, Alexandru Dadu <alexandru.dadu@imgtec.com>, 
+Cc: Thomas Zimmermann <tzimmermann@suse.de>, devicetree@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, Conor Dooley <conor+dt@kernel.org>, 
+ linux-kernel@vger.kernel.org, Alessio Belle <alessio.belle@imgtec.com>, 
+ David Airlie <airlied@gmail.com>, Nishanth Menon <nm@ti.com>, 
+ dri-devel@lists.freedesktop.org, Frank Binns <frank.binns@imgtec.com>, 
  Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- David Airlie <airlied@gmail.com>, Alessio Belle <alessio.belle@imgtec.com>, 
- Vignesh Raghavendra <vigneshr@ti.com>, Darren Etheridge <detheridge@ti.com>
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Tero Kristo <kristo@kernel.org>, 
+ Darren Etheridge <detheridge@ti.com>, Simona Vetter <simona@ffwll.ch>, 
+ Alexandru Dadu <alexandru.dadu@imgtec.com>, Randolph Sapp <rs@ti.com>, 
+ Maxime Ripard <mripard@kernel.org>, Vignesh Raghavendra <vigneshr@ti.com>
 To: Matt Coster <matt.coster@imgtec.com>
 In-Reply-To: <20250310-sets-bxs-4-64-patch-v1-v3-2-143b3dbef02f@imgtec.com>
 References: <20250310-sets-bxs-4-64-patch-v1-v3-0-143b3dbef02f@imgtec.com>
  <20250310-sets-bxs-4-64-patch-v1-v3-2-143b3dbef02f@imgtec.com>
-Message-Id: <174161760551.1089.16761714043131512755.robh@kernel.org>
+Message-Id: <174161760641.1135.692000381478156014.robh@kernel.org>
 Subject: Re: [PATCH v3 02/18] dt-bindings: gpu: img: Add BXS-4-64
  devicetree bindings
 
