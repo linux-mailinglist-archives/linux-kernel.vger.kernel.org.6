@@ -1,81 +1,79 @@
-Return-Path: <linux-kernel+bounces-554425-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-554426-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A4CDA5978C
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 15:27:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3062DA59792
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 15:28:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 10C4C188E59C
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 14:27:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 811CA1882BF6
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 14:28:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0605322B8D9;
-	Mon, 10 Mar 2025 14:27:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5B0F22C336;
+	Mon, 10 Mar 2025 14:28:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="FtunF4RA"
-Received: from YT5PR01CU002.outbound.protection.outlook.com (mail-canadacentralazon11021117.outbound.protection.outlook.com [40.107.192.117])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="fIvwBI1n"
+Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2052.outbound.protection.outlook.com [40.107.243.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14926229B1F
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 14:27:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.192.117
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CEAF185935
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 14:28:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.243.52
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741616824; cv=fail; b=EftUuD3eqN/xQ94TVsNJjIyoYThG4lcaRD2va/XQV6VMIwd4+t0lJ/UVNXP49mzqqRrk2eu9s4HsuSZYF2wX5661z41XB6qCx30zd63LkX2XTZJzB1RH8WnYvBmWX+5hMX1T4fNiK2kGfYvWIaGT8hlfAyDLWAvZErUBA2OcpP4=
+	t=1741616919; cv=fail; b=QyPZeALpVTYxJQbQPVlgu9RsBdlqzhoONtqtBC/5pED5TB+qEV9r0+NG3YqMr8g2Rw+MVaF34+tCZwqoB3rgCwsTnn9v38jytFKISshLuFSHho6RZ3ucBSGlGV4y7BP/UePSEvmnbeWHqfUUGRLzsUf9cMyx5qjXOLs94T44+54=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741616824; c=relaxed/simple;
-	bh=JeBDCjtMIPoL0WCeb/4whmsg1h8b2z0Ju68mNoQjXf0=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=G0KFGr3A1AviAmDxaNXtVrmwAyGbTDrGJVUhLeWAvGkJ/kzuh1E3CwUaTVlsgZSSUURDsMk+40mmC207SrvbkHrY5Eu5NIu/Ip9VGqBzc7991xw5A6PZn3dpbEesUmJ8r4xPOUASBUZ0OvQrb8BX0X/29/CFNx5KpIE+ZcCvLA0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com; spf=pass smtp.mailfrom=efficios.com; dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b=FtunF4RA; arc=fail smtp.client-ip=40.107.192.117
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=efficios.com
+	s=arc-20240116; t=1741616919; c=relaxed/simple;
+	bh=hJI2tCDL1k9aULbTGZWF0G3/8b/GnCevxnFjAHMez5Q=;
+	h=Message-ID:Date:Subject:To:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=P89VzSrIY0ymfQtzc3xjh2/KsYCVJsrh7yL018Q+FXXwBPqJ+KcDaZ21LwrNyv/aMRaSXwv7xTgwCzJHp6CzNm7LhNpxadiRRpYojS4bfpy5vmUBXBD8gAI0d1nNuNb8ylSEM/z/ttuuGhiSm1jADCsAKkNBW7V0ksqhNZA3R8Q=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=fIvwBI1n; arc=fail smtp.client-ip=40.107.243.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=G4IWfmiSoA4Mk3i98jAC0PcAVTUwA7/Ss5D5RixBqnwg2ollHeH7+YikINujn2NMuDe0Vfw+EB7wTvoDTIzj9zDkyzu7YTf2He9DQVBVhDF0TRXeAy3oPZvlNZUgAxqy09HxzO/3YbNCNFhT8J+ppGoKxCXJRX5+c0oNgIGAKAUbwvw/K5ssNArg2BP0OI6ZJOqnQU8SmYmb6kPeP6gNbECLwUPZk4XQ1YwCavaQdb3pN4axkFrVCElcQvP6xikw0HotiIKJ7Vg+N3v3DqsJdardoFal6uQmhU8urQtU5jegdwXG5T9Ut9HuswYuFE2xmrfxaPuy3OQYgsZo4HFMTg==
+ b=cJYlWNWXYS8kxEdfGLl7ZjaeFgWVwNoLsBn78OmZdQv5cA1i3dmoXwTmth9yY/LuXhAAfd9OTOgQUS9dSVXQO5Hah0MXpMkP0+hHhuuYDtyJfP9uuyMbPKx1YsfbV4Q8lg1hhhjMrMhVCwf+/Zi9kM+j7QmnGzgyNYmsRmyhNhu7M4gFSecqA/lTNNPe+2nfjP3ocFlC7ktUzCaIatB/O5Ivev3Bt5KGUO5lWYlbc7mo2UVGZR4TqNvBWMfwKz5HzpttIL+9QmWHXXXDId9Vf8zBVwBTmqWHyrNwF1Yi4E3wzuGErIxBonZ4yvMGvXqkzS5zJEGGWm0L24HdAwhk4Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=aTHXI+N6Tw45A8hbfMBusd3vHpb9Kta2rU1CoL0rRZU=;
- b=LCYqyYSSMdjPmlAR0VCzg0U77hxlvMaT8xJz4lr/93zCSyv24VbddZbw/4271KibTfFbcXWFERS7G/h8XumZ4VSHHuQgf4ir0zthodndMirR+8iW478uk1Bmh0B44XoF4vgZVaZZTbryh6aTxAPwqIijoITcpjC0FG19OiRmOWTDdImHPcfjeXITIk8spOQl/8fbgEE8lnc7tkqgvY+4jy0R9731hzS1k/ssrPZ/lBhsFM/kKT3F34GqPKKcI23pAwtDnI7xE2xGYAPu+NZAt7BzNYUHZ+RIihUVVTckHqZDeCh5jkXsiRSW/TsiW2G2hQG1B48scxqfb5mdKUUNSg==
+ bh=N20GD4ehjM2UYxz0d0LcFfSB7mFicW8biR1nrJ97svY=;
+ b=KqTAYVPL/XC9cZzTZ6SK8S0AUG4dUzIwBb4pQo9/+GYz0dE4ybnZeIYuF3PBx3wvNhr7H3AJ1f33uAHmodInOV0m6hUnelHerHM/x4YPsCtTN/GMEUdUS10X6SnoXE9c2QprFbQc38DO8gxsiRKjw+6n2IHet/5C/WyqGIfmk9yzqifQSl4+sNbcqP9KMk0jkUsa6gkqBTSQl5j9wtUX6T/SZAxCLrn4KSgZH/yvZhNEHAmlUeSsopIlrWSQkToIO7AtxXRPUQ68KHAS+0Vj0Ypi7P0x1axeuPnVSvfCEA4WYFZhnZgVERr+jLxZxs76ynyG3B76FEUktu+j9NbG8w==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=efficios.com; dmarc=pass action=none header.from=efficios.com;
- dkim=pass header.d=efficios.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=efficios.com;
- s=selector1;
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=aTHXI+N6Tw45A8hbfMBusd3vHpb9Kta2rU1CoL0rRZU=;
- b=FtunF4RA8+PhIKYpJIe1md7oAJTM7hRc2cNWh7o71dk6VHR9enhTVYDXHQ11ZP55teW8RPWPQXsW88PIGRWIjYoHuIBXnsiuGPdbOj9hY7B+BxxjPbUAFRaDI3snNux0Xi3qGvOf9GJKIh/dXZ8cfKjyCcBtQCdHCwZ0+IEmZn/YOVUh9v+4sQ77yxwuO99dg7qCcMLdCbcsm6ZwjPaMaWODecHyNJKFTEQxKhziZX0s36HwSz+/vliA/dRKo6taBIElPvrcxFtjPl6cW792vGXtOL9bCYdi0srqHDSv/n3pmrSoRZoh9gzFUQRhbU2rZYVjx9qFKscQVXAwhS/FVg==
+ bh=N20GD4ehjM2UYxz0d0LcFfSB7mFicW8biR1nrJ97svY=;
+ b=fIvwBI1nZKZmV5sJUqs8P1VieamlOtPbAvOXCt+KJYF1VOf8o0sdpJRqz5SwVzAQaGcCYJu4DJeFg+Dp//uJycFVhFMvkMWrCCrJQIEqQd9qXVECfFiTKaoU+u4aEcbadVZFcccfbAnYCAqjVjYZPEtzfM7JrhPTJ2S0IFmqQPk=
 Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=efficios.com;
-Received: from YT3PR01MB9171.CANPRD01.PROD.OUTLOOK.COM (2603:10b6:b01:a0::18)
- by QB1PPF7F5753167.CANPRD01.PROD.OUTLOOK.COM (2603:10b6:c08::253) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8511.27; Mon, 10 Mar
- 2025 14:26:58 +0000
-Received: from YT3PR01MB9171.CANPRD01.PROD.OUTLOOK.COM
- ([fe80::5393:fe91:357f:3ccf]) by YT3PR01MB9171.CANPRD01.PROD.OUTLOOK.COM
- ([fe80::5393:fe91:357f:3ccf%6]) with mapi id 15.20.8511.026; Mon, 10 Mar 2025
- 14:26:58 +0000
-Message-ID: <2dfdd471-813e-4188-9f48-dff99a0d2450@efficios.com>
-Date: Mon, 10 Mar 2025 10:26:57 -0400
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from PH7PR12MB5685.namprd12.prod.outlook.com (2603:10b6:510:13c::22)
+ by DM4PR12MB5963.namprd12.prod.outlook.com (2603:10b6:8:6a::8) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8511.27; Mon, 10 Mar 2025 14:28:34 +0000
+Received: from PH7PR12MB5685.namprd12.prod.outlook.com
+ ([fe80::46fb:96f2:7667:7ca5]) by PH7PR12MB5685.namprd12.prod.outlook.com
+ ([fe80::46fb:96f2:7667:7ca5%5]) with mapi id 15.20.8511.025; Mon, 10 Mar 2025
+ 14:28:34 +0000
+Message-ID: <d2c71045-fa86-44ba-9356-514d20bdf369@amd.com>
+Date: Mon, 10 Mar 2025 15:28:27 +0100
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 3/4] rseq: Make rseq work with protection keys
-To: Dmitry Vyukov <dvyukov@google.com>, peterz@infradead.org,
- boqun.feng@gmail.com, tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
- dave.hansen@linux.intel.com, hpa@zytor.com, aruna.ramakrishna@oracle.com,
- elver@google.com
-Cc: "Paul E. McKenney" <paulmck@kernel.org>, x86@kernel.org,
+Subject: Re: [PATCH] drm/sched: revert "drm_sched_job_cleanup(): correct false
+ doc"
+To: Tvrtko Ursulin <tvrtko.ursulin@igalia.com>, phasta@kernel.org,
+ =?UTF-8?Q?Christian_K=C3=B6nig?= <ckoenig.leichtzumerken@gmail.com>,
+ matthew.brost@intel.com, dakr@kernel.org, dri-devel@lists.freedesktop.org,
  linux-kernel@vger.kernel.org
-References: <cover.1740664852.git.dvyukov@google.com>
- <e534910c51271eebf4055a92f3b1c5ac998988bc.1740664852.git.dvyukov@google.com>
-From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+References: <20250310074414.2129157-1-christian.koenig@amd.com>
+ <564be70f7d64c04c1ad77499522d99c64ea4d4d3.camel@mailbox.org>
+ <6b9b27a7-2ccd-4f16-aa36-05877b5e8f7c@igalia.com>
 Content-Language: en-US
-In-Reply-To: <e534910c51271eebf4055a92f3b1c5ac998988bc.1740664852.git.dvyukov@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: YQBPR0101CA0300.CANPRD01.PROD.OUTLOOK.COM
- (2603:10b6:c01:6d::29) To YT3PR01MB9171.CANPRD01.PROD.OUTLOOK.COM
- (2603:10b6:b01:a0::18)
+From: =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>
+In-Reply-To: <6b9b27a7-2ccd-4f16-aa36-05877b5e8f7c@igalia.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: FR4P281CA0432.DEUP281.PROD.OUTLOOK.COM
+ (2603:10a6:d10:d1::18) To PH7PR12MB5685.namprd12.prod.outlook.com
+ (2603:10b6:510:13c::22)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -83,204 +81,213 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: YT3PR01MB9171:EE_|QB1PPF7F5753167:EE_
-X-MS-Office365-Filtering-Correlation-Id: c37a56fb-740b-44af-09e3-08dd5fdf9dac
+X-MS-TrafficTypeDiagnostic: PH7PR12MB5685:EE_|DM4PR12MB5963:EE_
+X-MS-Office365-Filtering-Correlation-Id: 34ce9e5c-f93d-4056-f7f9-08dd5fdfd6e7
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|1800799024|376014|7416014|7053199007|921020;
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016;
 X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?c2FxYTg4OGtUbldkOU4vU1RmV09IeEVFNm9qdU1EVzI0azJXMVhzczNwc3BX?=
- =?utf-8?B?eWNUVUVqWDdHdldKZEVDNWlKd0xsZnQ4Ylgyb0VJM0lXS0JqM016Z0cvbkt6?=
- =?utf-8?B?N3VWbVV3eUFxeXBORmhES1dtcDNMZ3o4YURidll3S1cxMG53S1RldDA5YTI3?=
- =?utf-8?B?cndBb1FKUzFhKzJtTXhjQlBEdWM2QUV6SGw0K0JrYUNSWGVjdUdUOWo5SmZw?=
- =?utf-8?B?cE5SZk0xa3IvbXFDMnV1ZkRRZE1ldWlUeG9JQjFDVkZ6NEZFd3VmbDVZOXZ5?=
- =?utf-8?B?L243cXRuOHhLRWkyVWhlSEdBdE5iTDNSM1Zld3NacDVQcXljTVZoa2cvbWNM?=
- =?utf-8?B?MWlTRlBlUVBkQXoydDh2K3VpTFIrNW4yZGtnY2QraE1iOWY4VDlHYml4U2JQ?=
- =?utf-8?B?N3RDNW5NMFhmNi9HMU5RVzRBUXNMWlVnc1NNNnBSZVRqeXFMTWplVDJmSjhu?=
- =?utf-8?B?WEZWN1lkL0VYbGNFNEpTMmxtQXpuSWIwWnREbmlYNVZwdmtISXRMUHpMcnFM?=
- =?utf-8?B?VGRRbTlGaDJiZjJVVUVISFA5S05wK3M5Mk1WUXl1WGU2TXNOWkFpUEIrTHRB?=
- =?utf-8?B?cGVaNVhmNHFkNzdTeTJEc04zZHRwQ1BRM0NzWTc2b1doRjBjbklYYWpCSFAy?=
- =?utf-8?B?dW43dEJ0QnNQMCswaG9ybU1KMHV0VG1RdEl4QStBWFdtY2wxZ25hSit2M3pa?=
- =?utf-8?B?SlZhM1JMUkFtNytyd3I2ekZjZ21ERVFNb1dYei9wYW9iNW43S1lEZGdUNUFl?=
- =?utf-8?B?b3NNUXlZTUJ1SHNVWUUrOFR6MGJkSVdTdC9LMUxRdHg0RDlENGY5RDFFbGhM?=
- =?utf-8?B?QWVKcllNWVJ0UVVsTmdsZGxKQXdOamJ3TWtNOEFWSjBCTnNTN3cwRDVhZ2kr?=
- =?utf-8?B?SmErNS9kajRoTXdWRm1xS3UzY2NnZHhKUVkrY2tiZkJMRnhlL0hxK09Jajcz?=
- =?utf-8?B?eUhzMURWT2JjTThudFcwM3AyamwyS3VpRGR5amZxMWJMdkhESENFZnl1VWxa?=
- =?utf-8?B?a2N1QWNHcFhMWWlpVXpvTTNxYzEzKzJJdnNDSE9xL0lOZkZVdHduclNVTVFL?=
- =?utf-8?B?YU43Mk5wZWNTcTlYSWd3WG1hMUJZb3hzaFJpTXFRWTVHZmxVUksyelNSTGda?=
- =?utf-8?B?VTVuYUpGUXgyNVdKN01OcnJQY1orc3BEeTNMbHFXU2JsdUNNWVhYOUdtRHJr?=
- =?utf-8?B?a1lPLzZ6YTdSc1dITWtHTkg5ZE9xY0FjbDJjcC9EY3RtOGRmbDM1NmNSV00v?=
- =?utf-8?B?V3lORWNna3RtQzFDWVZ1cnBwcjRCRGl5U0lYUW5hMDJoR094ZFU2YklhTkJw?=
- =?utf-8?B?VWNHVVFqYnBSWm16eUY4M1lwekdHbmJQM1Raek9Yd1ZwMkRHVUNIelRvUlZv?=
- =?utf-8?B?V1hzdTR2QjNLWnNVQzFKc2pPSUhJK004MDJNaUxpUzFYSUQ5ZlBJblpPdmNS?=
- =?utf-8?B?VVhKbjhacUpCZjFQdGRqS3JIeko1Y1R5Y280Y1BDWXRydjJCdWFWWkxwcWRT?=
- =?utf-8?B?dTVFWlhDL2N1TTNRNFZrQ0hscGE3VzY0ckFId0JsWHNrMFh1UDZvaTV5ajhn?=
- =?utf-8?B?N0tFVkkzT0dHRUswV0xOYWtOdytWa21TdzZJTG9hNllJck5FeGVraTB2OGE0?=
- =?utf-8?B?VW1OWTdTcW85ams0Tks3a3BWSkpKdDlWeEtYVStnTXZQMXJFRXdRZ0kyRUpr?=
- =?utf-8?B?OHlEY3FNZEtPY1A4S1dXY05yZTB3NVZmVmY5MGVOamczM3Y3NkpJZjRwekk0?=
- =?utf-8?B?THZabHppY3BkZy8rVGV2b1prSFovay9ob011SVRzQ1ZFREMyaE12NldxTDBa?=
- =?utf-8?Q?WCe1Reo/zsJ+AvhAtkx0gI6A6LVoVgmyQSQss=3D?=
+	=?utf-8?B?T1BjQmFpQnQzSHN2M0IvSUd6NlBjRWlaOFJaMXhMSHdOTi9yUy9Xd0Rhakhn?=
+ =?utf-8?B?b0xMU1V5NmF6ZkY1Y1N4SVo0ZjFGQmVTbzZKSFFhb3ZCRXRRcEtCN1J1UzVU?=
+ =?utf-8?B?OVdVQjV4K3ZJclE4dmVVS25xL3dUQUdiRTQwc3NGN3J6cjFmMGtpaTMwaXlw?=
+ =?utf-8?B?Rk1ud203M04wQWNTVDhFQWg0ckppamRiKzJ2QTU1WlhGcXJhQmRPQWVYUGJm?=
+ =?utf-8?B?cmxHWER6RTVJZlFNbXdmM0hLdzNCTDFzNzJrSjdqYWptakFiSXNGLzJpZkVR?=
+ =?utf-8?B?bXZ6TDFtMFFZVk1VZUFkZ0UyVVhNd1NibUNIRFdjT3VaK0svOEdRTStCSWRv?=
+ =?utf-8?B?dXArTUltZnR2VjZSMU82eGViS2wyUzlJNTFsM2xGU1JWMDczbGhlc3d2Y3Rm?=
+ =?utf-8?B?OFQwazBSU3J3T0ZYRWplS0szcHRFaFRObHAzbEk4QzJaR0hWNjFrZUxRVURR?=
+ =?utf-8?B?Wk9DRC9pNUZ6d0h0bEkwckoyTTdZM0lqSzFhczRoVTdBdEloOTlsQ2FUYUY3?=
+ =?utf-8?B?bEhBajFlanE1UWVlZmN3TnduNnh2N3drc05iSUFoQU8zcXAxZVNJb0p4VldQ?=
+ =?utf-8?B?T1kxZXRCSVlQcUdhK1k2dVk1SldzY2Z5TEY2YTVkeTBOaTdVakFSR2NaWXVx?=
+ =?utf-8?B?b3ZnejIwcmZIamd6SWV6ckZORXp6b0JYOWpOWnJldjNWcTRZZitlejhUVTZs?=
+ =?utf-8?B?L0tkb1pZbWJhNEVOaG80dHUxV3dYY1pSTVNxa1hrQU1EeTdzaUFyd0Rmdmlh?=
+ =?utf-8?B?aFJPN2FiMjZYZmI1eUROMGttbkFGQTJRbUlpWkw1bTkxc05wNHpNYTlKVTE1?=
+ =?utf-8?B?ZlQ5ZEM4T3Ayd1hSUzlTZ0dJV0JzUDQ0WFR3c2RYaDIwVnE1SzAvNHh6bjRW?=
+ =?utf-8?B?UXREOEUvVmJEcmVEaXBMSldlSHVTZEdJMW9ERVFqem9BRGRiWnpjTzl4d1dL?=
+ =?utf-8?B?Vi91WW1jdmJRbzZXaXFZSk5NMnVYUDVoVnZ5UUUzV000ZXJSZzRtOEtoL3Fm?=
+ =?utf-8?B?b3ZUdEx0eGo5VDBEc2RieGYxVFVtc1NVcTVqL25HMVFIczJVMEV4NzloM0lN?=
+ =?utf-8?B?NDZwdTk5SllpbVprQWNXKzFzcDZVQzFWdFd1dFViS2F1Z1FJcGtDSml0Mkwy?=
+ =?utf-8?B?eCtjN2RGVS80UENCNzhXSHZOUW1PWXdSMkRQZzVyUzJnVFYxaDZFZ0ZsKzR2?=
+ =?utf-8?B?V051WU1mRGJrNDgvY0xQMXpJRHEya0szSldWRFJZazh2aGVaaFN0alJiYWFT?=
+ =?utf-8?B?UEExWDFWUUc2UlFTUW9SS0w2YmFObWRvZWx3akpYRklwMnhrQU1EdWZNU0Zu?=
+ =?utf-8?B?RDFXZHFaWGQ4NWJoOXBLVnJIb0lKMnlFTVVxaFBqVGVEekd4bkRUd0p3Szh6?=
+ =?utf-8?B?TGpMVVdRZExaczBhYkVQQkhwMHNJRGtGSFVLcEVwdkxOVW9vQUFtd0NWQk50?=
+ =?utf-8?B?MGJCRmVsb0JDVGN3YURTUXRHbHF0Y2ExRUhGbXdHQldsRGFjb3hiY0VSMkVU?=
+ =?utf-8?B?eFg2UFNTUDJibGQrQ2g0dFE2Y2x4WU4zcFUreTZKSjVsVkl4amNHcWpsNFNZ?=
+ =?utf-8?B?b2hjK2NLZWNzbzBKNXJ4SW1yRnNIRDNyeXVIY1o1dTgvN0pKQU0zQW1qalFP?=
+ =?utf-8?B?MUJSUHJmSTIyT2FUK09melYxU0taaFRWSVhzcWpCeDUyRFRJL2svOUl3cXNK?=
+ =?utf-8?B?VGI3QXBiUmpXekErelV3MXAybWNtV3JoWDE0QnN2NmhhVllqWUgyTmdLMVRO?=
+ =?utf-8?B?SUhWRm94WGswUnB3VUR3Vi80ZVkxcU8ybGlMeThOZ1FGZmR4cElhRlRhMjll?=
+ =?utf-8?B?VFdvNng3SURZU3NBM3BGOFlzcUZCQ2tINHRYWTJFL00zSncveE5Mcit3WURQ?=
+ =?utf-8?Q?+t1KnV4DHH4HB?=
 X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:YT3PR01MB9171.CANPRD01.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7416014)(7053199007)(921020);DIR:OUT;SFP:1102;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH7PR12MB5685.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?WkpnUE1iWVhrNXNYZXEyb3JHemIxbkRQMkprUGlmVTdrSmxjMG43cTUvZnFn?=
- =?utf-8?B?YWFwcWtRUCtINGt6cG1zT0J0Q0lyYkVWMU8xR1ZkSjdRZERoRzhFM3NnQjF6?=
- =?utf-8?B?VTZodTN6R1hTbVRXQ0ZncXNWTXdLUTczTmcveDAyamRNUmduUlpoeU1TT3hO?=
- =?utf-8?B?WFpUK1BGeFpBbWMzcDdPbW1rb2ZDRllFeGJUNHVrUTZNSFZRMFM5czFVT05q?=
- =?utf-8?B?M0wzSUQ2aUlCcWZFZFZQam9IVWRlS1ZPUnQ2cFZRaGpmMXUySWJjSEpPTDIr?=
- =?utf-8?B?Y1JHUXRjK3kvQVpLSGRkNXFFYVBHcUJRSUxpSGVJNkVkME1UaEM0TXJpcVNn?=
- =?utf-8?B?NlpGNlRlcUJVemdud3Y1bktXQU8xTFVzWlVobWdjVUJaYmpONVhheUtBUXh5?=
- =?utf-8?B?aDFtVVd5aHZkUkkxZEtjSlNrZlBpWC9laXBueEZkbHFNQU91d1B1TkdJREJ3?=
- =?utf-8?B?ZXR4VlRQN0Vzc3VJM21QbXJZZHY5QjlraitxMzM1NDJFZ0FJK01adFJCTXBW?=
- =?utf-8?B?LzBBMi8xVG1PQWpSZVNLc0xVQ2xpKy9DdUZlNDkybStSSlBhaFUzcks3Ukdi?=
- =?utf-8?B?engvTEpVZXBsemlONXY3b1JsTDBVNWtXVkpDSVQyc0xHbERSalA1VnpKTHpS?=
- =?utf-8?B?TjBMaEZRV2RzNHhqcVpwYTg3Vm5vODY5cC9wb1lEK3E1a2tYVXIrTk96bVYx?=
- =?utf-8?B?QnJES1VaQjBzdzI3RjFXVExsYjB6TVdPMStxZDc3ZWhqTUY0b0lrRzRkbnIv?=
- =?utf-8?B?STRxSzdjV0MzcVd3WWJYdk5IZHNxLy9GTkFUTnJjcWhJT2xRTTJldmdZRURE?=
- =?utf-8?B?NU9TWityVGllaTZwWWY4SEgwSUxrcWJxT1dhUGtlcVdqcXVMaWx1MWxYcUlU?=
- =?utf-8?B?L3M5bmExNjZDU0ZiemZBZlVhTjUxRVlWbEY0cDZhVmhxdG9hUnNqUS8xMStu?=
- =?utf-8?B?VHdzYTh4UHZyMXU4MXhYbTVIS1NYRmx6R2xackdnYmMxYk5DVEI2Y2RKeWll?=
- =?utf-8?B?S1pFSTVYdnBBUlhkaDdOdVFSenBlSGpsWnB4WVNORHlNVzI3cVVRVFNybWRt?=
- =?utf-8?B?cTJ0RldjUEJIY0xQeDNXbk5uNGw0R2g5NnNoV0F5c3RXZkwzY1ZPVmtyWStp?=
- =?utf-8?B?RS91Yy9Mbk9qM1pPaCt6cktSN2d2STVwbm43aVlmMlFnMWdpTkkvZUZaUzlM?=
- =?utf-8?B?RTRmSSt4ZjgvL01LMFpGM2g2TTNkSXdCMHJ1UUp0THNtQ3ZDb1YwRW0vbWxN?=
- =?utf-8?B?UkRnenJDelJPbkY0dUFtNnlQQXkrRUIvcENFUlhjdnFrN1VHbzBVdzB4NU9a?=
- =?utf-8?B?bURpblhVYkQvNzB5R1hPMjFyaE9OdXh0Z1FjRTdnYVlGVFB5YnU2KzNKaVdn?=
- =?utf-8?B?NHZGRFRBYS94RktMNm1YZDNtdW9tK0R0MHZxdG1pS0kwSWNYL09rUUJQSmZ4?=
- =?utf-8?B?akxBUHNvTTZmdmc3ZjZqMURqNnNuSGZwQ2JHU3VrUGJ5aEdBRlRBVlRZRzJZ?=
- =?utf-8?B?RHloNzJtcU14ZldndWsrb25ET2kwNFIxeFVINCtsSnVPTWlhVjJhRmxNZjZy?=
- =?utf-8?B?UURRWmZXT2xLNGhIWHhweTBOZnRCQlFPK0R5VlVBdm43SmJuTnFoU3UybkQ2?=
- =?utf-8?B?VDBtZ05RcnJlR0c4V1VLWXJYTXNCMUxQVmZOamI1am0zVDY0Y1hTTzNRMWJq?=
- =?utf-8?B?WmF6elBWUS9HaGpHTm9tUS9UeXJKQkRnRWlOVjdoVHYrbXp2RHRRZ1BKdjg4?=
- =?utf-8?B?bmUzQm9vdllFK1FvMlhjb1RBRmFzUmp0d3FaZHFIMmtjemRtSytBb3VFSjJW?=
- =?utf-8?B?anpFYStaWGJNWUNRT3FxNkRGNm0zdCtiNVN5eVl4V2ZKbmFJbklsZThua05k?=
- =?utf-8?B?dXB3Z3NXSWxLRzZ0d3lNeGhtQzJCNklwRlhFZWNDWVgzdG1nQ3RvSGJFTkZR?=
- =?utf-8?B?azZzL1ZJeWZvc056QUxldUxrM3BFbERzOURMY0UyOCtzUGRPWkV6WitVSjh1?=
- =?utf-8?B?S0R2cDFLMENGc3VOcTRraW1Ia2NXdkUwNTR1QXRLTW0wclZ2c25IbXJTRVNl?=
- =?utf-8?B?cWZqYUdDUWxBSlBJZzQwcm9Ock92TWtnK01kaGw0ZEwzYW5HWHhraE4xYStk?=
- =?utf-8?B?TG1EcTk3OVlCdHBlRTB2dGd0RXFsbndiaUt3TUtyZXNVUjIram5PV0NDVm14?=
- =?utf-8?Q?65rF0kQ4jGv0eyt86RjbGjQ=3D?=
-X-OriginatorOrg: efficios.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: c37a56fb-740b-44af-09e3-08dd5fdf9dac
-X-MS-Exchange-CrossTenant-AuthSource: YT3PR01MB9171.CANPRD01.PROD.OUTLOOK.COM
+	=?utf-8?B?Vnl4NHcvT2dsWkJWY1hvWDdNQVZFSlBjdTljblNQUFczYnFCaWxROUwxVU9i?=
+ =?utf-8?B?cEhzeUw5M3BwQ0NMd2lQZkRsajFYN3U1Rk5GSW1FekRCVXhyNkFIQjlzTkdl?=
+ =?utf-8?B?QmhkaWNLbTlOa0ZKdURKWTFUbmt2MnBESzk3OURUalNkUFB5dnV3ZVRqTmdC?=
+ =?utf-8?B?eEJPWGpGZlJiQ25QZkdNNEhibUo3RStCeHR1aFNIRU9Sbnp6UmlvamxGVFlo?=
+ =?utf-8?B?RGpFakorbjc5dEkvZTNRTTl2WUljQWNYOGZZMUpxaS9jNm1Ba2wwY1cxZnJp?=
+ =?utf-8?B?dWpreHJiQ2lJZk95eFo3MmRzMUhpc0M0YXdNR21xaGllN2xoVWVvNjBDb1FR?=
+ =?utf-8?B?Ly9VeEtRaXNzSndxT2V1a1ZtdkNRL2kxYWd2ZmJNMFVnS1JSVzZoU0lsZ3F4?=
+ =?utf-8?B?MGJrc3paWTcxSE1nT3BERm55cXl6aWJYOFRNcXY1U2NUbUl1UGpJNmh6OERs?=
+ =?utf-8?B?ZFdOTk8yNE1ibUF0QXZhN3dYbTVGdXYwUzZ0TVI0dlJBUDR4M28zUnJ4bEhy?=
+ =?utf-8?B?ejJuODMvYUJVOTN4RFdzSmdRSCt6RkxUTm45UXF0dHV2Y1I2SktxL2R0am93?=
+ =?utf-8?B?WmR1MGlaK2RLbGJnNEVXbDZtam1TN1F4eUxSWHJLZEc0ZnkxZ0wyeEF5dFB0?=
+ =?utf-8?B?VVV2RXhvak92RHBNRVdyZDBBS2c2eWQ2NUNuYWYxR1JPVnJHQTFSNEgzQ29R?=
+ =?utf-8?B?KzdMd2dVMEdER0tCRWJ3ZFR3czlmY0lkQUZJbFhWT1Q4YWJaVmowV2J4S2Iy?=
+ =?utf-8?B?elVieG4rL05zWUlUMHFsTjRzenpTQklJZDFSZnBnUzhudFNweGU1NmlGak9C?=
+ =?utf-8?B?SUtsQXJsVkY3VVBNMTJ1TUY4SnlOU0RETEFJaE03OE1XSC9JZmFucUMrVWZR?=
+ =?utf-8?B?SXFBdzlFTDE5bnRqS3NwQ281bldVNHYwek1INk5iZEttcCtWTVdkZlJMWFhx?=
+ =?utf-8?B?b25qOE1EYSsyTytNdm1MQlJod3VSVjA3VkhBNWxvUDh6cVNlTUZ6aGVlNmZ5?=
+ =?utf-8?B?MWg0b09OdmlTVEpVUnhtVUt3NC9ZQlFzK3V6akYzTDVVS2pQKzEvTGErTDBN?=
+ =?utf-8?B?eE1YVXJ0VWxjVktyR3EyTjJQcUJmNkNLOG5UYVVURk1vYmczWElLUloxQnZn?=
+ =?utf-8?B?Umd0T05WQ1doNzdkdE5wRTZWVWI3ekV2bzhDZWxKUXZtc3U1THp1OFdBTW5D?=
+ =?utf-8?B?bi9YQnQzYmYwY3ZiY0xGTG45RlZDVHVpeUJGRUZ2OEdTSDNEa0lrbDc3NmdI?=
+ =?utf-8?B?QVdPNzdNWmQxeTVrWDlINDNnd2JvN3VBM3htdzJxeEhkaStNZWFpTzExa0dh?=
+ =?utf-8?B?dzlZa3RLOFltSHQ2NmI2ZEp0eGo1d1RkbXY4T0hPU0xSRXR4K2REbktjWXAr?=
+ =?utf-8?B?Zk8zMVdWc0xWZEczdjM2T0V6YmhuUzNyVm5helU4NHhGb0NldXlKN1U3TFJQ?=
+ =?utf-8?B?OTVOMkRnQzY1MjRUMkJzQzNXNGVCZjhMT3pLcnNFV1p2djh3ZGZKTHpHQ0kx?=
+ =?utf-8?B?QU1nMTREaTk0MS9UNllFUFROQzI3c2wzS2xqb25jbkZ1emxCdExzYXd6QW1s?=
+ =?utf-8?B?eVFVdHhOakZ0QSswYjUyL1JGbHh2OENpSUN6RENRR2U3cnh3bGp5d1hjdVFV?=
+ =?utf-8?B?bE5mUy9YV3J2eitlRk1LRGNseTBCb1daQXdtTG51U1pKelhOeTRwVWZ0cU5i?=
+ =?utf-8?B?V3lQQkc0MGsyMlRRdVdTYnc2UlpsT29sOXRDRWd0TFZydFl1NXJ4SFFPeE1P?=
+ =?utf-8?B?dElyUVBPU3BnRTF1Q1kzVWk3TzVUNUJOaTU3WWhnV0xwYUUrSzgxbzB5Tm5I?=
+ =?utf-8?B?RnUxOUNLd1JFLy81RTBsQUdKZHJaZnVRTlVNQjJFU3dKcUlmSDZPT3JCbWNo?=
+ =?utf-8?B?dTRWRklNNXVFc2VVUmxDZkhGNXRnMjY4NmdFbHhTWFdxV0xRL2gzZDRnZkJq?=
+ =?utf-8?B?MHB3dlFkUklEMjdpb0daRjBQWGFZYjRVMFh0Y24vNTg2bk80Tm1QTGtZYlJl?=
+ =?utf-8?B?NDE4QVB6c1Rvd0hvWTBLYVVYKzZ0dGJCY3J5MzQyUGlkckd1bU95M21oMHhJ?=
+ =?utf-8?B?NGpscjM1RFppTkNXT1Q2RldKam5pNXc3akJPT25wNlp3bmxjZzJHZCtLYUpt?=
+ =?utf-8?Q?yWOWOFqzyCSkqi4Bw9aT4vhug?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 34ce9e5c-f93d-4056-f7f9-08dd5fdfd6e7
+X-MS-Exchange-CrossTenant-AuthSource: PH7PR12MB5685.namprd12.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Mar 2025 14:26:58.5857
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Mar 2025 14:28:34.5705
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4f278736-4ab6-415c-957e-1f55336bd31e
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: sRsEb8V26X8WQJbSQILIXRTuXejvZjOL7sVRBH3gOMoS2c54b0/E5SgizlQPot6fHZEpdaoSoBRC9k2F3RIiI9PcNqhIorZ8tjDAzWSNLPs=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: QB1PPF7F5753167
+X-MS-Exchange-CrossTenant-UserPrincipalName: wtIzMFfHvxu0LNJI+lDt4StCFKrJZoohNXm3wtv533rkM7NTSyXxqxAz4CRds322
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR12MB5963
 
-On 2025-02-27 09:03, Dmitry Vyukov wrote:
-> If an application registers rseq, and ever switches to another pkey
-> protection (such that the rseq becomes inaccessible), then any
-> context switch will cause failure in __rseq_handle_notify_resume()
-> attempting to read/write struct rseq and/or rseq_cs. Since context
-> switches are asynchronous and are outside of the application control
-> (not part of the restricted code scope), temporarily switch to
-> pkey value that allows access to the 0 (default) PKEY.
-> 
-> Signed-off-by: Dmitry Vyukov <dvyukov@google.com>
-> Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Am 10.03.25 um 13:27 schrieb Tvrtko Ursulin:
+>
+> On 10/03/2025 12:11, Philipp Stanner wrote:
+>> On Mon, 2025-03-10 at 08:44 +0100, Christian König wrote:
+>>> This reverts commit 44d2f310f008613c1dbe5e234c2cf2be90cbbfab.
+>>
+>> OK, your arguments with fence ordering are strong. Please update the
+>> commit message according to our discussion:
+>
+> Could that argument please be explained in more concrete terms?
+>
+> Are we talking here about skipping one seqno has potential to cause a problem, or there is more to it?
+>
+> Because if it is just skipping I don't immediately see that breaks the monotonic/unique seqno ordering.
+>
+> Only if we are worried about some code somewhere making assumptions  "if N got completed, that means N-1 got completed too". That generally isn't anything new and can happen with GPU resets, albeit in the latter case the fence error is I think always set.
 
-Reviewed-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Exactly that is highly problematic.
 
-> Cc: Peter Zijlstra <peterz@infradead.org>
-> Cc: "Paul E. McKenney" <paulmck@kernel.org>
-> Cc: Boqun Feng <boqun.feng@gmail.com>
-> Cc: Thomas Gleixner <tglx@linutronix.de>
-> Cc: Ingo Molnar <mingo@redhat.com>
-> Cc: Borislav Petkov <bp@alien8.de>
-> Cc: Dave Hansen <dave.hansen@linux.intel.com>
-> Cc: "H. Peter Anvin" <hpa@zytor.com>
-> Cc: Aruna Ramakrishna <aruna.ramakrishna@oracle.com>
-> Cc: x86@kernel.org
-> Cc: linux-kernel@vger.kernel.org
-> Fixes: d7822b1e24f2 ("rseq: Introduce restartable sequences system call")
-> 
-> ---
-> Changes in v6:
->   - Added a comment to struct rseq with MPK rules
-> 
-> Changes in v4:
->   - Added Fixes tag
-> 
-> Changes in v3:
->   - simplify control flow to always enable access to 0 pkey
-> 
-> Changes in v2:
->   - fixed typos and reworded the comment
-> ---
->   include/uapi/linux/rseq.h |  4 ++++
->   kernel/rseq.c             | 11 +++++++++++
->   2 files changed, 15 insertions(+)
-> 
-> diff --git a/include/uapi/linux/rseq.h b/include/uapi/linux/rseq.h
-> index c233aae5eac90..019fd248cf749 100644
-> --- a/include/uapi/linux/rseq.h
-> +++ b/include/uapi/linux/rseq.h
-> @@ -58,6 +58,10 @@ struct rseq_cs {
->    * contained within a single cache-line.
->    *
->    * A single struct rseq per thread is allowed.
-> + *
-> + * If struct rseq or struct rseq_cs is used with Memory Protection Keys,
-> + * then the assigned pkey should either be accessible whenever these structs
-> + * are registered/installed, or they should be protected with pkey 0.
->    */
->   struct rseq {
->   	/*
-> diff --git a/kernel/rseq.c b/kernel/rseq.c
-> index 2cb16091ec0ae..9d9c976d3b78c 100644
-> --- a/kernel/rseq.c
-> +++ b/kernel/rseq.c
-> @@ -10,6 +10,7 @@
->   
->   #include <linux/sched.h>
->   #include <linux/uaccess.h>
-> +#include <linux/pkeys.h>
->   #include <linux/syscalls.h>
->   #include <linux/rseq.h>
->   #include <linux/types.h>
-> @@ -402,11 +403,19 @@ static int rseq_ip_fixup(struct pt_regs *regs)
->   void __rseq_handle_notify_resume(struct ksignal *ksig, struct pt_regs *regs)
->   {
->   	struct task_struct *t = current;
-> +	pkey_reg_t saved_pkey;
->   	int ret, sig;
->   
->   	if (unlikely(t->flags & PF_EXITING))
->   		return;
->   
-> +	/*
-> +	 * Enable access to the default (0) pkey in case the thread has
-> +	 * currently disabled access to it and struct rseq/rseq_cs has
-> +	 * 0 pkey assigned (the only supported value for now).
-> +	 */
-> +	saved_pkey = enable_zero_pkey_val();
-> +
->   	/*
->   	 * regs is NULL if and only if the caller is in a syscall path.  Skip
->   	 * fixup and leave rseq_cs as is so that rseq_sycall() will detect and
-> @@ -419,9 +428,11 @@ void __rseq_handle_notify_resume(struct ksignal *ksig, struct pt_regs *regs)
->   	}
->   	if (unlikely(rseq_update_cpu_node_id(t)))
->   		goto error;
-> +	write_pkey_val(saved_pkey);
->   	return;
->   
->   error:
-> +	write_pkey_val(saved_pkey);
->   	sig = ksig ? ksig->sig : 0;
->   	force_sigsegv(sig);
->   }
+In a case of a reset and all pending work canceled it doesn't matter if fences are signaled A,B,C or C,B,A.
 
+But when you can make fence C signal while A is still running it can be that we start to cleanup the VM and free memory etc.. while the shaders from A are still able to access resources.
 
--- 
-Mathieu Desnoyers
-EfficiOS Inc.
-https://www.efficios.com
+That's a security hole you can push an elephant through. Virtual memory on GPUs mitigates that on modern hardware quite a bit, but we still have a bunch of use cases which rely on getting this right.
+
+Regards,
+Christian.
+
+>
+> Regards,
+>
+> Tvrtko
+>
+>>> Sorry for the delayed response, I only stumbled over this now while
+>>> going
+>>> over old mails and then re-thinking my reviewed by for this change.
+>>
+>> Your RB hadn't even been applied (I merged before you gave it), so you
+>> can remove this first paragraph from the commit message
+>>
+>>>
+>>> The function drm_sched_job_arm() is indeed the point of no return.
+>>> The
+>>> background is that it is nearly impossible for the driver to
+>>> correctly
+>>> retract the fence and signal it in the order enforced by the
+>>> dma_fence
+>>> framework.
+>>>
+>>> The code in drm_sched_job_cleanup() is for the purpose to cleanup
+>>> after
+>>> the job was armed through drm_sched_job_arm() *and* processed by the
+>>> scheduler.
+>>>
+>>> The correct approach for error handling in this situation is to set
+>>> the
+>>> error on the fences and then push to the entity anyway. We can
+>>> certainly
+>>> improve the documentation, but removing the warning is clearly not a
+>>> good
+>>> idea.
+>>
+>> This last paragraph, as per our discussion, seems invalid. We shouldn't
+>> have that in the commit log, so that it won't give later hackers
+>> browsing it wrong ideas and we end up with someone actually mengling
+>> with those fences.
+>>
+>> Thx
+>> P.
+>>
+>>>
+>>> Signed-off-by: Christian König <christian.koenig@amd.com>
+>>> ---
+>>>   drivers/gpu/drm/scheduler/sched_main.c | 12 +++++-------
+>>>   1 file changed, 5 insertions(+), 7 deletions(-)
+>>>
+>>> diff --git a/drivers/gpu/drm/scheduler/sched_main.c
+>>> b/drivers/gpu/drm/scheduler/sched_main.c
+>>> index 53e6aec37b46..4d4219fbe49d 100644
+>>> --- a/drivers/gpu/drm/scheduler/sched_main.c
+>>> +++ b/drivers/gpu/drm/scheduler/sched_main.c
+>>> @@ -1015,13 +1015,11 @@ EXPORT_SYMBOL(drm_sched_job_has_dependency);
+>>>    * Cleans up the resources allocated with drm_sched_job_init().
+>>>    *
+>>>    * Drivers should call this from their error unwind code if @job is
+>>> aborted
+>>> - * before it was submitted to an entity with
+>>> drm_sched_entity_push_job().
+>>> + * before drm_sched_job_arm() is called.
+>>>    *
+>>> - * Since calling drm_sched_job_arm() causes the job's fences to be
+>>> initialized,
+>>> - * it is up to the driver to ensure that fences that were exposed to
+>>> external
+>>> - * parties get signaled. drm_sched_job_cleanup() does not ensure
+>>> this.
+>>> - *
+>>> - * This function must also be called in &struct
+>>> drm_sched_backend_ops.free_job
+>>> + * After that point of no return @job is committed to be executed by
+>>> the
+>>> + * scheduler, and this function should be called from the
+>>> + * &drm_sched_backend_ops.free_job callback.
+>>>    */
+>>>   void drm_sched_job_cleanup(struct drm_sched_job *job)
+>>>   {
+>>> @@ -1032,7 +1030,7 @@ void drm_sched_job_cleanup(struct drm_sched_job
+>>> *job)
+>>>           /* drm_sched_job_arm() has been called */
+>>>           dma_fence_put(&job->s_fence->finished);
+>>>       } else {
+>>> -        /* aborted job before arming */
+>>> +        /* aborted job before committing to run it */
+>>>           drm_sched_fence_free(job->s_fence);
+>>>       }
+>>>   
+>>
+>
+
 
