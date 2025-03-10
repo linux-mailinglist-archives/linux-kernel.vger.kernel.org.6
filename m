@@ -1,58 +1,111 @@
-Return-Path: <linux-kernel+bounces-554373-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-554374-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 02BCDA596F1
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 15:02:22 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 10FA8A596FE
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 15:03:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 98D173A2E83
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 14:02:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AD5D4188B477
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 14:03:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BD69229B0D;
-	Mon, 10 Mar 2025 14:02:13 +0000 (UTC)
-Received: from verein.lst.de (verein.lst.de [213.95.11.211])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEEB922A4E3;
+	Mon, 10 Mar 2025 14:03:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="JmVLubMK"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3D051D79BE;
-	Mon, 10 Mar 2025 14:02:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B918311CBA;
+	Mon, 10 Mar 2025 14:03:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741615332; cv=none; b=d5KwbDM2+NH5+b7V6t/7krNnvBw5iqODl6jHpW5ME0rgYrLEmlxJKBtK0ks2Rkgznp0lla113I3nR7lKiVj24ka90RGWviwdUGbh5+EGhl3PxEFS4wEBaLvanTH6lFF7IukJNyyv6Nq576JXlwMM25K0z52QosAEZ8wKYhY4pKU=
+	t=1741615393; cv=none; b=sG/bZ2LRFoGuVms+jn+BRXn4LkqhaZVWbkJqgDGIdqcMjyY0GXTfXQQFqJZQg5KiujQeeCLYjwue1VGkPn/H4GTmzy1/k1xI1IF8G3BKEJ+M/URcX4GmS5BkhiIXPDEsApUFGSEvVkFOTu7t1vagMwxFKbD7SK0hB1wDgygL+0o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741615332; c=relaxed/simple;
-	bh=M7NmYC/Iylm9myghHwqILim55SAUt9QrM+UZYk0eJlw=;
+	s=arc-20240116; t=1741615393; c=relaxed/simple;
+	bh=DNZg6T1u+Wqljc4IdZQ4tHwKPvEeIeH3U3yFZc4zZRU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ag6vxYudyv6dXYhxAj84etsjrw1bYOj7N7zpnCkWxOA0ladZfD/zLXMVDbHB5RAzdc8VHagaf+2USlDPpvttk9UZf5N3HHD6yqxVdUNab70Jv/YHyJULLfIklIR3KjVjAYhz5wv9kKBp6nRnBx3y8z1xvqdSaiRFp4DaKEISrkc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
-Received: by verein.lst.de (Postfix, from userid 2407)
-	id AB3C167373; Mon, 10 Mar 2025 15:02:06 +0100 (CET)
-Date: Mon, 10 Mar 2025 15:02:06 +0100
-From: hch <hch@lst.de>
-To: Hans Holmberg <Hans.Holmberg@wdc.com>
-Cc: Carlos Maiolino <cem@kernel.org>,
-	"Darrick J . Wong" <djwong@kernel.org>, hch <hch@lst.de>,
-	"linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] xfs: trigger zone GC when out of available rt blocks
-Message-ID: <20250310140206.GA9904@lst.de>
-References: <20250310133848.9856-1-hans.holmberg@wdc.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=RDdYtjPSP/3+cir3Rc/68/btQEcaBWTcqX78I3qQkrkHgg/0vt8ENaqH3Vs07ePCrmb0kIpau7S3W06ZVt0MoYjAn4iojB/HjX0NKyKUU56y9rToQTdO5nYZ46MfHu3bllJNwUC5Vm6E7QeFz1UekIHoKAG6B2lSpCW3hrDGiOE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=JmVLubMK; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id F2A8140E0218;
+	Mon, 10 Mar 2025 14:03:09 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id ruCR6lNDdq6g; Mon, 10 Mar 2025 14:03:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1741615386; bh=3DqIsfSi2NV60drpZnrnHzcDMlqChpv9u782Mlba+Y4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=JmVLubMKCgXiadBDfvPOuP6Pd9Oe3fYUFT3fNh8YcG+YzP0hyzJLuFonL7u+oMThs
+	 SUOF/EdSw04nLX+2pn5vs19PTcRqGq+rEt63V9CjD2Rv9wdhCqb7JW7It3/05Hc808
+	 ZLpX/rvw9QxNYftcU6/xKOOvTpy3EvOMyPQ5Z9hY/XXylAj+ZgW/a06yynuT+GBe9D
+	 nYEM3ky/GR/UxNWI+swBiGsYhxI8yxpTjJdxie2Vt26N0qx/5X7dhLbPjazogduqHt
+	 xmKlFboztJaGehwflEHv1uMZVivHDKEWrK9d+Lv2UfbkOFcc5gigdOVt/3UsxZu1rn
+	 AumsBzzQRqZncW7pBbsvUQe/pZ47j26yu8vfnG1VCbnOnWCvezuRz5n+fMNYANjvX8
+	 fBZaM+gfjULDvGV/jKo9lDFu9w2wZOV3zTzq/LrScskqwJ6kykr0UtIonKq4o5kQYj
+	 2F8uDst0l7DrGRU3JWhz6lsOmqA0IKWvd45Gi0m2YW02ZbQV26XRH6uPxVcMhG1yHa
+	 FEF/wrZw5MT0nx+k17AKNocdgtTfd8VOD938hbZ9uaA06pndEFKVbsYhXodWtnc58j
+	 oKJ2siueyqgkv7eFtasBD15wsr/Z9SUopgsxo8qhi+RXv+/kJehgLYnbwHBC2GgcZ+
+	 OnhjKGcWEe5sRKC9VvkXX4Cc=
+Received: from zn.tnic (pd95303ce.dip0.t-ipconnect.de [217.83.3.206])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id C9BC240E0217;
+	Mon, 10 Mar 2025 14:02:47 +0000 (UTC)
+Date: Mon, 10 Mar 2025 15:02:46 +0100
+From: Borislav Petkov <bp@alien8.de>
+To: Tom Lendacky <thomas.lendacky@amd.com>
+Cc: Stefano Garzarella <sgarzare@redhat.com>,
+	Jarkko Sakkinen <jarkko@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Claudio Carvalho <cclaudio@linux.ibm.com>,
+	Peter Huewe <peterhuewe@gmx.de>, x86@kernel.org,
+	Dov Murik <dovmurik@linux.ibm.com>, linux-coco@lists.linux.dev,
+	Dionna Glaze <dionnaglaze@google.com>,
+	James Bottomley <James.Bottomley@hansenpartnership.com>,
+	Ingo Molnar <mingo@redhat.com>, Joerg Roedel <jroedel@suse.de>,
+	Jason Gunthorpe <jgg@ziepe.ca>, linux-integrity@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	"H. Peter Anvin" <hpa@zytor.com>
+Subject: Re: [RFC PATCH v2 2/6] x86/sev: add SVSM vTPM probe/send_command
+ functions
+Message-ID: <20250310140246.GKZ87xBg3gUkOwPOZX@fat_crate.local>
+References: <20250228170720.144739-1-sgarzare@redhat.com>
+ <20250228170720.144739-3-sgarzare@redhat.com>
+ <20250310113006.GFZ87NPu-LgFVVtsEG@fat_crate.local>
+ <mjftygohmhgs6daqvgkh2jbfuqjquchcaovcjtnzyhilnt5ww5@l3fr7phqh2ps>
+ <3dd645f2-476a-d0d5-c8c1-c87307f2d756@amd.com>
+ <20250310135133.GIZ87uZZNhNSkmxvg1@fat_crate.local>
+ <9c1246c8-6965-b8b6-eab1-df0761a2853a@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250310133848.9856-1-hans.holmberg@wdc.com>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+In-Reply-To: <9c1246c8-6965-b8b6-eab1-df0761a2853a@amd.com>
 
-Looks good:
+On Mon, Mar 10, 2025 at 08:56:53AM -0500, Tom Lendacky wrote:
+> It isn't needed. It's similar to "device" information/capabilities.
+> Maybe pr_debug() then? But I'm also fine with not printing anything.
 
-Reviewed-by: Christoph Hellwig <hch@lst.de>
+Yap, nothing it is then.
 
+If the need arises, then we can debate :)
+
+-- 
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
 
