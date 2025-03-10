@@ -1,190 +1,120 @@
-Return-Path: <linux-kernel+bounces-553880-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-553881-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 77C50A59017
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 10:46:31 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B803A59018
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 10:46:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AE17C1887097
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 09:46:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 52C093AE4BB
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 09:46:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B9EF226CE0;
-	Mon, 10 Mar 2025 09:44:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 944D0225A48;
+	Mon, 10 Mar 2025 09:44:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ng1yhFrL"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="c+I/UHGs"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BF18225A48;
-	Mon, 10 Mar 2025 09:44:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEB06226CF4;
+	Mon, 10 Mar 2025 09:44:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741599867; cv=none; b=qLG6OTTcQLuAb7OA1/hvzU5ZPqp9Spb3w3oTM7hG4YMo16UKf5eQrKHD/uQkyzn4aOYzLA8l0m60J8sbLYq86S0OJu0dYg93jifJITlaKW+3D//lSEFZfZDb54a3jzVeJthgi8A1t8Y/iQX4eljgXYo7nKpcdRCgQiCqxnKQgxE=
+	t=1741599877; cv=none; b=f1Va5LgHscWRlBXP3XiFGYQSjuOss9zb8W7A+eGoBLSiE6TDaqfIXlZy4XpFsa8cre+0IvIgai7eDGX9Z/RfGn7nWAi4xE1d6va+TtztOIFA0P3e5aymyjZ6X+D8PVeKT3FppAlwTj58WIMl66GCinKA3XQUm42kCak+FcjdtN4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741599867; c=relaxed/simple;
-	bh=bW6fcLN+wmFlWQcC1rUSzsTxORCMjUYUnkpkmtftfM8=;
+	s=arc-20240116; t=1741599877; c=relaxed/simple;
+	bh=mW+HGFl9pijv6Y13n7rhWie0eRqRBZv5zMhBMfe1XjY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iSP5pkaIFV9f5sGE35uRJrKvcheJPTANS0XBOUevvBpbuEpA/Rz3XlKttWuveVJGyXBXMFEfM+nS9giqhe4NEc91J10RukGTmEucXSq3y+RVYnImisTIUneWvbvbQNJwgQYdRpUBk7QbJ9VMrmMOM2io5VfP8GgM8s/49Tp17lU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ng1yhFrL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 72DD7C4CEE5;
-	Mon, 10 Mar 2025 09:44:26 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=K+lXeUD5VELwGJdnNoh7jKQqb2yWgHFveudElscEsKeEBp4BldJ8NV2oVTezQ5MWjbddSD5T5PLqdPJvPZpsmJmO6jAqqLwpqrXlcHQF6zIRnSDu+inPHo3Wk9AIc9dSUe3pTyXJ+6FctmgrOLn7z6LKHcxfFBkrHQv78aIvUAM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=c+I/UHGs; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EC8C8C4CEE5;
+	Mon, 10 Mar 2025 09:44:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741599867;
-	bh=bW6fcLN+wmFlWQcC1rUSzsTxORCMjUYUnkpkmtftfM8=;
+	s=k20201202; t=1741599876;
+	bh=mW+HGFl9pijv6Y13n7rhWie0eRqRBZv5zMhBMfe1XjY=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Ng1yhFrLzNv1KXqIoXM4i61bYSCURRakkB8PUpYHGZnQi5zI8rEScWOSnUTle3DQ3
-	 AHfFjAZasso2IJwH0dbbKC8HnUf68QDtEGZTlol5HUbFXFWipdrN5H6jUGjTzs/FX+
-	 J50mioRB8fAX+PI4nwCToiDKkCtXI1kyA/GMu622Z+TkfBu9zz1r2AmKVKUyMge+XM
-	 ZChdbP8u7aFTlHt6XPAWbcSFzxDIlzT+JiqQgGe40mr1TZJKD5v9IHfTOdw8nLVB0s
-	 GkYn7WilkT2QPwOBDTHorK2qFOzPzGA2ElA0pq16o7mZI8fgolxVMCv3ITwIw1w4Wk
-	 yJ/767ui+MHpw==
-Date: Mon, 10 Mar 2025 10:44:24 +0100
-From: Maxime Ripard <mripard@kernel.org>
-To: Liu Ying <victor.liu@nxp.com>
-Cc: Rob Herring <robh@kernel.org>, 
-	Alexander Stein <alexander.stein@ew.tq-group.com>, dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, andrzej.hajda@intel.com, 
-	neil.armstrong@linaro.org, rfoss@kernel.org, Laurent.pinchart@ideasonboard.com, 
-	jonas@kwiboo.se, jernej.skrabec@gmail.com, maarten.lankhorst@linux.intel.com, 
-	tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch
-Subject: Re: [PATCH 3/5] dt-bindings: display: simple-bridge: Document DPI
- color encoder
-Message-ID: <20250310-hopeful-helpful-quoll-e0dee8@houat>
-References: <20250304101530.969920-1-victor.liu@nxp.com>
- <20250304101530.969920-4-victor.liu@nxp.com>
- <20250304152320.GA2630063-robh@kernel.org>
- <1891036.atdPhlSkOF@steina-w>
- <20250305163805.GA2071011-robh@kernel.org>
- <7d98163d-10c8-457d-92e7-6a1d6e379beb@nxp.com>
- <20250306-kangaroo-of-pastoral-typhoon-8aefb2@houat>
- <0e82c4d6-8b93-4dd0-ae34-155e537ab344@nxp.com>
+	b=c+I/UHGsN77ZHd0V4gwNp9OaevgOF2J0vdzxi/Z1MpATLZbmJUyEL+ndLn/KMz8ZL
+	 1w2doVUP7/EqP4w37C1rFpSaa82M4+tbd1I9JuE8eOstLCU6iJ4nNy41rrykRfmeBp
+	 GWS8MjXB2nqOUaCAAMJse/sHVCmaIweXkxAUMwwHhsNUdsg1fG7IRjwZ4Eo5AVzxUi
+	 L8LVVcEOVKUACmOEoLQaIY/QrQaNcCYUICLbobc/2FE0Or8C/5S2JzTO2F0ngoK5y1
+	 CrtI/VsWHs58iJ3oQs2Zu3Ruqn/tGwRQ92i3bVfTqxX/NVeEctvYiq3WC04sMImbW7
+	 NHo/UyQFesqDg==
+Date: Mon, 10 Mar 2025 11:44:32 +0200
+From: Jarkko Sakkinen <jarkko@kernel.org>
+To: Vladis Dronov <vdronov@redhat.com>
+Cc: linux-sgx@vger.kernel.org, Dave Hansen <dave.hansen@linux.intel.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] x86/sgx: Warn explicitly if X86_FEATURE_SGX_LC is not
+ enabled
+Message-ID: <Z860gFRrwI8Cxycq@kernel.org>
+References: <20250309165805.8996-2-vdronov@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="swpyuuee57g33z2r"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <0e82c4d6-8b93-4dd0-ae34-155e537ab344@nxp.com>
+In-Reply-To: <20250309165805.8996-2-vdronov@redhat.com>
 
+On Sun, Mar 09, 2025 at 05:58:06PM +0100, Vladis Dronov wrote:
+> A kernel requires X86_FEATURE_SGX_LC to be able to create SGX enclaves.
+> There is quite a number of hardware which has X86_FEATURE_SGX but not
+> X86_FEATURE_SGX_LC. A kernel running on such a hardware does not create
+> /dev/sgx* devices silently. Explicitly warn if X86_FEATURE_SGX_LC is not
+> enabled to properly nofity a user about this condition.
+                      ~~~~~~
+		      notify
 
---swpyuuee57g33z2r
-Content-Type: text/plain; protected-headers=v1; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH 3/5] dt-bindings: display: simple-bridge: Document DPI
- color encoder
-MIME-Version: 1.0
+> 
+> The X86_FEATURE_SGX_LC is a CPU feature that enables LE hash MSRs to be
+> writable when running native enclaves, i.e. using a custom root key rather
+> than the Intel proprietary key for enclave signing.
+> 
+> Signed-off-by: Vladis Dronov <vdronov@redhat.com>
+> ---
+> 
+> an out-of-commit-message note:
+> 
+> I've hit this issue myself and have spent some time researching where are
+> my /dev/sgx* devices on an SGX-enabled hardware, so this is a bit personal.
+> 
+> Links related:
+> https://github.com/intel/linux-sgx/issues/837
+> https://patchwork.kernel.org/project/platform-driver-x86/patch/20180827185507.17087-3-jarkko.sakkinen@linux.intel.com/
+> 
+>  arch/x86/kernel/cpu/sgx/driver.c | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
+> 
+> diff --git a/arch/x86/kernel/cpu/sgx/driver.c b/arch/x86/kernel/cpu/sgx/driver.c
+> index 22b65a5f5ec6..df4fbfaa6616 100644
+> --- a/arch/x86/kernel/cpu/sgx/driver.c
+> +++ b/arch/x86/kernel/cpu/sgx/driver.c
+> @@ -150,8 +150,10 @@ int __init sgx_drv_init(void)
+>  	u64 xfrm_mask;
+>  	int ret;
+>  
+> -	if (!cpu_feature_enabled(X86_FEATURE_SGX_LC))
+> +	if (!cpu_feature_enabled(X86_FEATURE_SGX_LC)) {
+> +		pr_err("SGX disabled: SGX launch control is not available.\n");
 
-On Fri, Mar 07, 2025 at 11:10:00AM +0800, Liu Ying wrote:
-> On 03/06/2025, Maxime Ripard wrote:
-> > On Thu, Mar 06, 2025 at 03:02:41PM +0800, Liu Ying wrote:
-> >> On 03/06/2025, Rob Herring wrote:
-> >>> On Wed, Mar 05, 2025 at 10:35:26AM +0100, Alexander Stein wrote:
-> >>>> Hi,
-> >>>>
-> >>>> Am Dienstag, 4. M=E4rz 2025, 16:23:20 CET schrieb Rob Herring:
-> >>>>> On Tue, Mar 04, 2025 at 06:15:28PM +0800, Liu Ying wrote:
-> >>>>>> A DPI color encoder, as a simple display bridge, converts input DP=
-I color
-> >>>>>> coding to output DPI color coding, like Adafruit Kippah DPI hat[1]=
- which
-> >>>>>> converts input 18-bit pixel data to 24-bit pixel data(with 2 low p=
-adding
-> >>>>>> bits in every color component though). Document the DPI color enco=
-der.
-> >>>>>
-> >>>>> Why do we need a node for this? Isn't this just wired how it is wir=
-ed=20
-> >>>>> and there's nothing for s/w to see or do? I suppose if you are tryi=
-ng to=20
-> >>>>> resolve the mode with 24-bit on one end and 18-bit on the other end=
-, you=20
-> >>>>> need to allow that and not require an exact match. You still might =
-need=20
-> >>>>> to figure out which pins the 18-bit data comes out on, but you have=
- that=20
-> >>>>> problem with an 18-bit panel too. IOW, how is this any different if=
- you=20
-> >>>>> have an 18-bit panel versus 24-bit panel?
-> >>>>
-> >>>> Especially panel-simple.c has a fixed configuration for each display=
-, such as:
-> >>>>> .bus_format =3D MEDIA_BUS_FMT_RGB666_1X18
-> >>>>
-> >>>> How would you allow or even know it should be addressed as
-> >>>> MEDIA_BUS_FMT_RGB888_1X24 instead? I see different ways:
-> >>>> 1. Create a new display setting/compatible
-> >>>> 2. Add an overwrite property to the displays
-> >>>> 3. Use a (transparent) bridge (this series)
-> >>>>
-> >>>> Number 1 is IMHO out of question.=20
-> >>>
-> >>> Agreed.
-> >>>
-> >>>> I personally don't like number 2 as this
-> >>>> feels like adding quirks to displays, which they don't have.
-> >>>
-> >>> This is what I would do except apply it to the controller side. We kn=
-ow=20
-> >>> the panel side already. This is a board variation, so a property make=
-s=20
-> >>> sense. I don't think you need any more than knowing what's on each en=
-d.=20
-> >>
-> >> With option 2, no matter putting a property in source side or sink sid=
-e,
-> >> impacted display drivers and DT bindings need to be changed, once a bo=
-ard
-> >> manipulates the DPI color coding.  This adds burdens and introduces new
-> >> versions of those DT bindings.  Is this what we want?
-> >=20
-> > There's an option 4: make it a property of the OF graph endpoints. In
-> > essence, it's similar to properties that are already there like
-> > lane-mapping, and it wouldn't affect the panel drivers, or create an
-> > intermediate bridge.
->=20
-> I don't see lane-mapping anywhere. Do you mean data-mapping instead?
-> data-mapping is not defined in dtschema. Only lvds-codec.yaml defines
-> data-mapping in endpoint.
+I think this should not be error, as the system is not failing.
 
-I meant as a general concept. The properties are data-lanes and
-clock-lanes in
-Documentation/devicetree/bindings/media/video-interfaces.yaml
+Since it is informative, it should be info-level message.
 
-> With option 4, I guess you meant display sink drivers, i.e., panel and
-> bridge drivers, wouldn't be affected. Then, display source drivers, i.e.,
-> display controller and bridge drivers, would be affected. This adds
-> burdens for driver developers/maintainers(though almost no effort from
-> DT's PoV), doesn't it?
+>  		return -ENODEV;
+> +	}
+>  
+>  	cpuid_count(SGX_CPUID, 0, &eax, &ebx, &ecx, &edx);
+>  
+> -- 
+> 2.48.1
+> 
 
-Not necessarily, panels have a phandle to the parent endpoint too so
-they can do that walk and configure their format if it's any easier.
-
-> Moreover, why it has to be the display sink drivers which are not affecte=
-d?
-> DT writers might choose to set the format at the sink endpoint, e.g., set=
-ting
-> RGB666 at the sink endpoint of a RGB888 DPI panel or bridge.
-
-Why wouldn't you run the panel at the highest bpc possible?
-
-Maxime
-
---swpyuuee57g33z2r
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCZ860dwAKCRDj7w1vZxhR
-xfIvAQCfpg7xTuK6h3dnIje1go/hDo9eR5Ul9+nTMUMqopojgAEA7AZ0UdH61pOY
-N6RyLXAAU+VWWkZ17jWwRC9ikLsWUAk=
-=Pd5P
------END PGP SIGNATURE-----
-
---swpyuuee57g33z2r--
+BR, Jarkko
 
