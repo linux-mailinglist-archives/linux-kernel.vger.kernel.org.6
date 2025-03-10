@@ -1,148 +1,163 @@
-Return-Path: <linux-kernel+bounces-553488-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-553484-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CAE1AA58A5F
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 03:18:18 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 313B9A58A43
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 03:13:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7492B188CDFB
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 02:18:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 34F2518825D0
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 02:13:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D223F189906;
-	Mon, 10 Mar 2025 02:18:13 +0000 (UTC)
-Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FE9A19007D;
+	Mon, 10 Mar 2025 02:13:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HR3HVoEJ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58E8CA935
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 02:18:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 411C42C9A;
+	Mon, 10 Mar 2025 02:13:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741573093; cv=none; b=WOimuBTwjf2XnYOE5FfVF36yUVgPThPMQ0cJyBeAFFWLKdnZRAnSbDV3Zi4LVADjPOxj4yfQOp/7J71fZyYCXiiT0na3Emgjx5g6swMRS258hXl2zOYrb9r/IHKl2UPK3G5OORqseNyOJ+ODO2og4/yYWs55/16Ggnjcv697PcE=
+	t=1741572818; cv=none; b=lNTj7JZTICaKdQjl+zWjnPdZ9xfxq2m3YA/m79ITK/fUzZuyzomTL7FvHKCrCf+R2LHfz1fRE/XEOyfeadG/24rOtYVoJCnmEA4imy5ntNnfttx+f8lihPmKbTI2jtIINjnRX+ca24QUbyEs/AAZrDRWLXJbILtGoDTDhVz0Hug=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741573093; c=relaxed/simple;
-	bh=mbtf9veYrCrRfgqvsdsnXp9xr2jROJgHfnuNE3rNgVA=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=nRnsAl+/hjbspAgmmnKGsdYPlNVEc4+4vzkUaWsQDg5QmI6vga4X4lAS4+RsPR5vPgO73P4A1oesDB4nEhDaQnhCkZQo+ZsgthRiD5zCOWCQTtZsElmvhsLnhR+IC43MQ6x3yohUXCy+t+Pofb/cLkhY0zEp6dJ7pwa+YLv1NC4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
-X-UUID: 2bc4590efd5511efa216b1d71e6e1362-20250310
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.45,REQID:714a792e-d65d-45f2-acdb-0f73a9af7f3f,IP:0,U
-	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
-	release,TS:0
-X-CID-META: VersionHash:6493067,CLOUDID:b1d969583b6a59686ae824acd623b8e7,BulkI
-	D:nil,BulkQuantity:0,Recheck:0,SF:81|82|83|102,TC:nil,Content:0|50,EDM:-3,
-	IP:nil,URL:1,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:
-	0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 0,NGT
-X-CID-BAS: 0,NGT,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_ULS
-X-UUID: 2bc4590efd5511efa216b1d71e6e1362-20250310
-Received: from node2.com.cn [(10.44.16.197)] by mailgw.kylinos.cn
-	(envelope-from <luyun@kylinos.cn>)
-	(Generic MTA)
-	with ESMTP id 857193283; Mon, 10 Mar 2025 10:12:52 +0800
-Received: from node2.com.cn (localhost [127.0.0.1])
-	by node2.com.cn (NSMail) with SMTP id CBA4FB80758A;
-	Mon, 10 Mar 2025 10:12:51 +0800 (CST)
-X-ns-mid: postfix-67CE4AA3-712602477
-Received: from localhost.localdomain (unknown [10.42.43.204])
-	by node2.com.cn (NSMail) with ESMTPA id CD518B80758A;
-	Mon, 10 Mar 2025 02:12:50 +0000 (UTC)
-From: Yun Lu <luyun@kylinos.cn>
-To: syzbot+882589c97d51a9de68eb@syzkaller.appspotmail.com
-Cc: Liam.Howlett@oracle.com,
-	akpm@linux-foundation.org,
-	linux-kernel@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [mm?] INFO: rcu detected stall in mas_preallocate (2)
-Date: Mon, 10 Mar 2025 10:12:49 +0800
-Message-Id: <20250310021249.2624454-1-luyun@kylinos.cn>
-X-Mailer: git-send-email 2.27.0
-In-Reply-To: <6756b479.050a0220.a30f1.0196.GAE@google.com>
-References: <6756b479.050a0220.a30f1.0196.GAE@google.com>
+	s=arc-20240116; t=1741572818; c=relaxed/simple;
+	bh=z9mLsHw9Q3v422/Yt1W+ofnnkznofgPzm/tT/dzXn38=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=LEsZghhSgnhWFmkV/b0uYgKtKJsNnZtnp8MEspnQ9DyXfXhW96yNcL8hjedqcIIV1AhxbBZWZfLrpAsiLZ+gbkiCpnTGkOnO/IyRn6LnXI9cIEAWlJUBjZYYE0cBJINcMzXClmST/I+oUHHnoyG6s3S4Wbe/wrDYTtRPawmu9Lg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HR3HVoEJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BEBEEC4CEE5;
+	Mon, 10 Mar 2025 02:13:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741572817;
+	bh=z9mLsHw9Q3v422/Yt1W+ofnnkznofgPzm/tT/dzXn38=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=HR3HVoEJs8Dj3SJUQJl/9yOkY3qzYNH49NJSed8dRp+v8BKG7DmZN4jkt97KyJc0b
+	 r5kJKlTVYyJPJBrKUJXCa+eJt0MrjnGYClR9q2KAzOQgc9Ixw+TUTAD8tHdCTm8INh
+	 TjfexCnSzVOWUHewX3eeZTMyY6U4YkR6yRaJPRelwGTDeWt4gQxZNbDP7QntiPZnyS
+	 EjZodPom+DIfeozpq4+YApfldJjutgQTSIgU9BY94Qm/1L2c6oI3wJoJC0p6IqKa2t
+	 xhqNc1/CG/p1coU/y2Ckk+KrUR5B9n1JH+6a7KFXAp2X2fTaGrHg44mpj2TaUh2CrL
+	 1ZnerZ2TWwT0w==
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-43cf58eea0fso2684815e9.0;
+        Sun, 09 Mar 2025 19:13:37 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVROONEp0hMlSe3i0NE40E5HLbzZg3OHtIqqq27HSUz95XyBdZpt6LO3qRXfO0IPP4/GRIo1eg5smfq@vger.kernel.org, AJvYcCVcxjFJL3LNutwf9F8+zGmzpmw9KiRjrbBSUAMOSdc8CvBKJif7eV5SvTUmDWnn+j97FpiF4fNULFc5tg==@vger.kernel.org, AJvYcCXsIZJG1H3IqLFXsCKYDrOrBpFmKLirDWMLOIL7Rw2u3IeJ3bhIiSeGIr40jmMzCj7pBvuNl3npSrGGNugR@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw/acw+ec21L5hkB3VVdQ+Nte2Vv9ilcdlYCltL4S1kUHZhHO5V
+	3A0JOvmH7gBuR66M+zRn2ns3j91KEK4G4yvpuaaMDYoRvtB6LE2pG4z+r47sNQvXW6j+kgXr2zD
+	Wtjyjnf5VVxEQi3grdUnWOBErG3U=
+X-Google-Smtp-Source: AGHT+IFKsAup9e8Gc1v8ulkbmHr98edm6s87EvlcdJ5Cvko4at1GaCbqwTsdJwbMKXfm/BQUgl53lstuyy4HISvzJV0=
+X-Received: by 2002:a05:600c:1d1a:b0:43c:e6d1:efe7 with SMTP id
+ 5b1f17b1804b1-43ce6d1f1e6mr28755625e9.26.1741572816273; Sun, 09 Mar 2025
+ 19:13:36 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <20250224112042.60282-1-xry111@xry111.site> <91797ac4bbe27d7d60b89053050e429bcd630db3.camel@xry111.site>
+In-Reply-To: <91797ac4bbe27d7d60b89053050e429bcd630db3.camel@xry111.site>
+From: Guo Ren <guoren@kernel.org>
+Date: Mon, 10 Mar 2025 10:13:24 +0800
+X-Gmail-Original-Message-ID: <CAJF2gTRXyMX+9C_aEDbxAsxWDD2rbnDWO775YDZ3EmrQ=QinfQ@mail.gmail.com>
+X-Gm-Features: AQ5f1JpxPLjcz__aP8mbaWjnVB43tgqVJ36D7ViX6jxsCAtJ6NThRTlt4NTpaRI
+Message-ID: <CAJF2gTRXyMX+9C_aEDbxAsxWDD2rbnDWO775YDZ3EmrQ=QinfQ@mail.gmail.com>
+Subject: Re: Ping: [PATCH 0/3] Drop explicit --hash-style= setting for new
+To: Xi Ruoyao <xry111@xry111.site>
+Cc: Huacai Chen <chenhuacai@kernel.org>, WANG Xuerui <kernel@xen0n.name>, 
+	Palmer Dabbelt <palmer@dabbelt.com>, Fangrui Song <i@maskray.me>, Tiezhu Yang <yangtiezhu@loongson.cn>, 
+	linux-csky@vger.kernel.org, loongarch@lists.linux.dev, 
+	linux-riscv@lists.infradead.org, linux-arch@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-#syz test https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.=
-git  master
+On Wed, Mar 5, 2025 at 9:27=E2=80=AFPM Xi Ruoyao <xry111@xry111.site> wrote=
+:
+>
+> Ping.
+>
+> On Mon, 2025-02-24 at 19:20 +0800, Xi Ruoyao wrote:
+> > For riscv, csky, and LoongArch, GNU hash had already become the de-
+> > facto
+> > standard when they borned, so there's no Glibc/Musl releases for them
+> > without GNU hash support, and the traditional SysV hash is just
+> > wasting
+> > space for them.
+> >
+> > Remove those settings and follow the distro toolchain default, which
+> > is
+> > likely --hash-style=3Dgnu.  In the past it could break vDSO self tests,
+> > but now the issue has been addressed by commit
+> > e0746bde6f82 ("selftests/vDSO: support DT_GNU_HASH").
+> >
+> > Xi Ruoyao (3):
+> >   riscv: vDSO: Remove --hash-style=3Dboth
+The patch's comment is incorrect; when I removed --hash-style=3Dboth,
+the output still contained the HASH, and no space was saved.
 
-Signed-off-by: Yun Lu <luyun@kylinos.cn>
----
+--hash-style=3Dboth and after the patch are the same:
+Section Headers:
+  [Nr] Name              Type             Address           Offset
+       Size              EntSize          Flags  Link  Info  Align
+  [ 0]                   NULL             0000000000000000  00000000
+       0000000000000000  0000000000000000           0     0     0
+  [ 1] .hash             HASH             0000000000000120  00000120
+       000000000000003c  0000000000000004   A       3     0     8
+  [ 2] .gnu.hash         GNU_HASH         0000000000000160  00000160
+       0000000000000044  0000000000000000   A       3     0     8
 
-diff --git a/net/sched/sch_taprio.c b/net/sched/sch_taprio.c
-index a68e17891b0b..7d3769e0ac0b 100644
---- a/net/sched/sch_taprio.c
-+++ b/net/sched/sch_taprio.c
-@@ -104,6 +104,7 @@ struct taprio_sched {
- 	u32 max_sdu[TC_MAX_QUEUE]; /* save info from the user */
- 	u32 fp[TC_QOPT_MAX_QUEUE]; /* only for dump and offloading */
- 	u32 txtime_delay;
-+	ktime_t offset;
- };
-=20
- struct __tc_taprio_qopt_offload {
-@@ -170,6 +171,19 @@ static ktime_t sched_base_time(const struct sched_ga=
-te_list *sched)
- 	return ns_to_ktime(sched->base_time);
- }
-=20
-+static ktime_t taprio_get_offset(const struct taprio_sched *q)
-+{
-+	enum tk_offsets tk_offset =3D READ_ONCE(q->tk_offset);
-+	ktime_t time =3D ktime_get();
-+
-+	switch (tk_offset) {
-+	case TK_OFFS_MAX:
-+		return 0;
-+	default:
-+		return ktime_sub_ns(ktime_mono_to_any(time, tk_offset), time);
-+	}
-+}
-+
- static ktime_t taprio_mono_to_any(const struct taprio_sched *q, ktime_t =
-mono)
- {
- 	/* This pairs with WRITE_ONCE() in taprio_parse_clockid() */
-@@ -918,6 +932,7 @@ static enum hrtimer_restart advance_sched(struct hrti=
-mer *timer)
- 	int num_tc =3D netdev_get_num_tc(dev);
- 	struct sched_entry *entry, *next;
- 	struct Qdisc *sch =3D q->root;
-+	ktime_t now_offset =3D taprio_get_offset(q);
- 	ktime_t end_time;
- 	int tc;
-=20
-@@ -957,6 +972,14 @@ static enum hrtimer_restart advance_sched(struct hrt=
-imer *timer)
- 	end_time =3D ktime_add_ns(entry->end_time, next->interval);
- 	end_time =3D min_t(ktime_t, end_time, oper->cycle_end_time);
-=20
-+	if (q->offset !=3D now_offset) {
-+		ktime_t diff =3D ktime_sub_ns(now_offset, q->offset);
-+
-+		end_time =3D ktime_add_ns(end_time, diff);
-+		oper->cycle_end_time =3D ktime_add_ns(oper->cycle_end_time, diff);
-+		q->offset =3D now_offset;
-+	}
-+
- 	for (tc =3D 0; tc < num_tc; tc++) {
- 		if (next->gate_duration[tc] =3D=3D oper->cycle_time)
- 			next->gate_close_time[tc] =3D KTIME_MAX;
-@@ -1207,6 +1230,7 @@ static int taprio_get_start_time(struct Qdisc *sch,
-=20
- 	base =3D sched_base_time(sched);
- 	now =3D taprio_get_time(q);
-+	q->offset =3D taprio_get_offset(q);
-=20
- 	if (ktime_after(base, now)) {
- 		*start =3D base;
+But, --hash-style=3Dgnu could save space:
+Section Headers:
+  [Nr] Name              Type             Address           Offset
+       Size              EntSize          Flags  Link  Info  Align
+  [ 0]                   NULL             0000000000000000  00000000
+       0000000000000000  0000000000000000           0     0     0
+  [ 1] .gnu.hash         GNU_HASH         0000000000000120  00000120
+       0000000000000044  0000000000000000   A       2     0     8
+
+
+Here is my GCC VERSION:
+Using built-in specs.
+COLLECT_GCC=3D/rvhome/ren.guo/source/toolchain/rv64lp64/bin/riscv64-unknown=
+-linux-gnu-gcc
+COLLECT_LTO_WRAPPER=3D/rvhome/ren.guo/source/toolchain/rv64lp64/bin/../libe=
+xec/gcc/riscv64-unknown-linux-gnu/13.2.0/lto-wrapper
+Target: riscv64-unknown-linux-gnu
+Configured with:
+/home/runner/work/riscv-gnu-toolchain/riscv-gnu-toolchain/gcc/configure
+--target=3Driscv64-unknown-linux-gnu --prefix=3D/opt/riscv
+--with-sysroot=3D/opt/riscv/sysroot --with-pkgversion=3D
+--with-system-zlib --enable-shared --enable-tls
+--enable-languages=3Dc,c++,fortran --disable-libmudflap --disable-libssp
+--disable-libquadmath --disable-libsanitizer --disable-nls
+--disable-bootstrap --src=3D.././gcc --disable-default-pie
+--disable-multilib --with-abi=3Dlp64d --with-arch=3Drv64gc
+--with-tune=3Drocket --with-isa-spec=3D20191213 'CFLAGS_FOR_TARGET=3D-O2
+-mcmodel=3Dmedlow' 'CXXFLAGS_FOR_TARGET=3D-O2    -mcmodel=3Dmedlow'
+Thread model: posix
+Supported LTO compression algorithms: zlib
+gcc version 13.2.0 ()
+
+So, do you mean "--hash-style=3Dgnu"?
+
+> >   csky: vDSO: Remove --hash-style=3Dboth
+> >   LoongArch: vDSO: Remove --hash-style=3Dsysv
+> >
+> >  arch/csky/kernel/vdso/Makefile  | 2 +-
+> >  arch/loongarch/vdso/Makefile    | 2 +-
+> >  arch/riscv/kernel/vdso/Makefile | 2 +-
+> >  3 files changed, 3 insertions(+), 3 deletions(-)
+> >
+>
+> --
+> Xi Ruoyao <xry111@xry111.site>
+> School of Aerospace Science and Technology, Xidian University
+
+
+
+--=20
+Best Regards
+ Guo Ren
 
