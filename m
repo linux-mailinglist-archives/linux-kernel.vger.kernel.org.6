@@ -1,143 +1,176 @@
-Return-Path: <linux-kernel+bounces-554064-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-554066-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BAE96A5927A
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 12:15:29 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7AF91A59289
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 12:19:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 364F41888F3D
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 11:15:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3723C3AA9E9
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 11:18:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FBDC227EB1;
-	Mon, 10 Mar 2025 11:14:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5592F21E0AA;
+	Mon, 10 Mar 2025 11:19:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="S3lN4gNa"
-Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="pg3G48wU"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96089227E82;
-	Mon, 10 Mar 2025 11:14:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 082D121D3F7;
+	Mon, 10 Mar 2025 11:18:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741605292; cv=none; b=L18KjAMxUOQnPcH10MYbC3YBbk/SRnu6OwZTP02O5RALINlMllbyROKyxI5wpxvxQZQ+p3XltSpTx8FNb/D5UcNtAVgDs+G0f/FM/6ynhXTserlgqJgMrHQkSIRK+uttH2mJQRE5zLVYGSB3rTS7p9l4rxij55o6bNVLY2krYh8=
+	t=1741605541; cv=none; b=NyvlmPnCsvFRZol0rDz1NsIz0oqMucOP/uJFMkctTy4J5zna8/YSqyXkjASgtpl9I89cZDWHRY9OFDEzdnuEX9JhCXtm8WfXPEOWj5P95jV/z/VaIb6Nfvaj54qRTrFDRVegb+SRd8NulsvYMjPiuuW1llOyvJ+oOZ9iy8OA2hU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741605292; c=relaxed/simple;
-	bh=J54wRrQQVJSLJARGl+xEZiKGzz8RGZc2ZSKwijSxwcg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FqjewJt1/1EGFEjiEbuwUcnlq9/r/TPvkHGR9CtSYR7s8kUC+w2im9qV7534bIPGLaVSEMj8rz80Gjpv/TqQHFrCqqGXA9odGW/HKVyNbD1j+HxEpr4rkJpSeNquxoc9XFeaKyQzCReZS8ydOR2hxUaGU8y09T/xhihc9E/MoAc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=S3lN4gNa; arc=none smtp.client-ip=209.85.214.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-22409077c06so2115185ad.1;
-        Mon, 10 Mar 2025 04:14:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741605290; x=1742210090; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=cGMLPsPxAByIoDsl/7WiYU+MM6XdL4aeR3jkWi/CCYg=;
-        b=S3lN4gNalQmkfnLJMkxlkwtD01Ist2WlUpkn7gmgKg1BN3ghGvRMVome+Np8cSmD7l
-         t3eZmApiVVaPQX0pokhJNH/hqufM6RKwUj7uDXWNdFvoBSonlubxJ8E/pqDUQlGgK9IR
-         xJMI+A5wZcxyz3Yn4hSF23CPbyWxR5N9FRcWPzK05szgRDX43iRv+94kTYli/vN9HR+C
-         aGiPslWdGr9shvYD2ONXrGU43su518gzu7MZo0vT2+9AFHyDL/gABmtU4+EZ4ILzdPAl
-         bPhiMlw8zokkDlWcn3N6WTXo0bO0w81SDwnRr36vimOni7ChQtBO4Y80B6wrVhXuVPi8
-         iWRA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741605290; x=1742210090;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=cGMLPsPxAByIoDsl/7WiYU+MM6XdL4aeR3jkWi/CCYg=;
-        b=KEJMpBU4r5VqSW7yb1FPFVfhu9hXzrEDsbDVCvY40LE6f9DySi3yKeYK6IsjC2lHFy
-         Aa8UNIk63+8aViYTaNwCqAne2sP4uYpbg0sF5LlseZ4iVm6O76kUbKgRxUD/1/Tc4v/n
-         rVaVLo83tOj0UK/PM7IE03KbuSFQH2UwPAM7eeI9P9a0usMjPgoG8ASIsDNa7bRdfpr8
-         8swurMLNxTkYMFBxGXGEyM62f3Oihl0l82dChzjphs7tvYdTdHZxCuQJCDE2gRbY2PJI
-         eIF7dCxpnABlEV7YvE8qFuxQD7qfPGvg8tOfvE33y6GV1sf/wt9xdgowkIJvW5KUeTWJ
-         ECGw==
-X-Forwarded-Encrypted: i=1; AJvYcCUhu5VlfQePCs7B81K66cvOlMYyI/YeKdVtZKoWJOefxnURlQUrJNorFvUqdIyokFyGQcr53S5JWF7PRwhi/7A=@vger.kernel.org, AJvYcCVioElw411BeHEAbB2KQKXr+cKjXtnm4DFBwrmdk11BSPbS+bRmsavd/Bti5OzMO7uTXj/+g0veNqowAwU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyUz+NyK7BMlWRmVxEkpaLQ8PutOrZAKhSiRE8LXuzhSQxBDeuz
-	C9ZGiiBPJeHixuot4pCfXAE9IU4CxDfWGgfr3vFzK7Tc7YbXssYb
-X-Gm-Gg: ASbGncta5VQTIb8AKohsmOMhYMOJQZmRU/7f6JC4JKnJ7WFa8jIKHCQZNLmr8Rzgtq7
-	K6mxVWshE2u2mdrDQVk0eES7b/FtBcGtxNeYGe2I+NiXXJfyUu8znroKDCr14lqw7RFIAY+sha+
-	mZ9WPu5dyhUmtyLJMgwiKxLnnEZZ5WHRSucfqs4pkiOB6ms2OuXzPbywZMlHFytIveLqRzCSUoJ
-	1yiELE0lz3TLXpe1H93U9y6i2CgnFnCB4QuuYiq6nG5iwrf34sYyMWeBzZO+AJLHtB3xIFTX4HK
-	qx1i9AStC5iLG8LcgUhf5GWRXD2s/tfYALQsQXBifeoxGGihM41sdnPs8a9VogZo3cQLOviJ
-X-Google-Smtp-Source: AGHT+IEKcMqT8qMmkXop6BbmEzOjN9wFaJDBkqRHfpR/m+dq6KKezCtMdPfy5IDlm/YNjV+o9m6GgQ==
-X-Received: by 2002:a05:6a00:3c87:b0:732:a24:7354 with SMTP id d2e1a72fcca58-736aa9e74b6mr16966200b3a.4.1741605289737;
-        Mon, 10 Mar 2025 04:14:49 -0700 (PDT)
-Received: from vaxr-BM6660-BM6360 ([2001:288:7001:2703:ab5a:ffac:d2bd:d230])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-736a93be530sm6555245b3a.86.2025.03.10.04.14.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 10 Mar 2025 04:14:49 -0700 (PDT)
-Date: Mon, 10 Mar 2025 19:14:44 +0800
-From: I Hsin Cheng <richard120310@gmail.com>
-To: Alice Ryhl <aliceryhl@google.com>
-Cc: ojeda@kernel.org, alex.gaynor@gmail.com, boqun.feng@gmail.com,
-	gary@garyguo.net, bjorn3_gh@protonmail.com, benno.lossin@proton.me,
-	a.hindborg@kernel.org, tmgross@umich.edu,
-	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
-	skhan@linuxfoundation.org, linux-kernel-mentees@lists.linux.dev,
-	jserv@ccns.ncku.edu.tw
-Subject: Re: [RFC PATCH 1/2] rust: list: Implement normal initializer for
- ListLinks
-Message-ID: <Z87JpNJU5gxN0YgS@vaxr-BM6660-BM6360>
-References: <20250310073040.423383-1-richard120310@gmail.com>
- <20250310073040.423383-2-richard120310@gmail.com>
- <Z860iWGtaEFMD2hj@google.com>
+	s=arc-20240116; t=1741605541; c=relaxed/simple;
+	bh=iSfx5FlK+U5xTphC1c3YObxLSk45/xDHZO7IwewM798=;
+	h=From:Subject:Date:Message-ID:MIME-Version:Content-Type:To:CC; b=JFlvl8HglX4sPalrKjJMy/UimSBfdy9BFtZsCb0g5UTu5X3eQVvbuDiBKMNiaSBuUJEPjBt6shR8Ho8jrZFQ4XnwdGOVVhPIFV4+ETudAr4lMTKnSfUyuE1RmgIlgEv7XOyd06WWW4OFrfTJ7YDKx2FrHSipEDXy/6nDbHgScms=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=pg3G48wU; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52A9ZJvA012316;
+	Mon, 10 Mar 2025 11:18:48 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=62xgEb8g3bZDbv4vofxcE/
+	5/8alepEYXWb456WTmHus=; b=pg3G48wUz1MzHaM8m2eKAn37fEB4By18jnDgoi
+	XSKo7Efi0TR5m7XDVopDH59Mp0mr7WlQgtHyMZL4BDQOz8VMrWoAlLoXlFg6U2ny
+	sXHyQg5s8meQaqvkUOAWZ58bxSd1CwJnv005KlrL61EECIx9xICygUNalf8P34Le
+	MzOvu3epr9qz/7n19ty9dTcICRZTN8z2URh1yuD7H5L55pK9bXZrDHTrbj9+LN/7
+	DQmTjCBk8z795vFdgXt/X+UDTHI6NpomSlm0SfH62SEc7xJafC4TpzUo3tReRmJj
+	eIC4H7MI+2NeGO96RJbE+OB7nQKBLuH+oRtKxUiUVwbqJhEQ==
+Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 458eyucm7k-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 10 Mar 2025 11:18:48 +0000 (GMT)
+Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
+	by NASANPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 52ABIlhm007230
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 10 Mar 2025 11:18:47 GMT
+Received: from hu-pbrahma-hyd.qualcomm.com (10.80.80.8) by
+ nasanex01c.na.qualcomm.com (10.45.79.139) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Mon, 10 Mar 2025 04:18:42 -0700
+From: Pratyush Brahma <quic_pbrahma@quicinc.com>
+Subject: [PATCH v6 0/2] Add support for GPU SMMU on QCS8300
+Date: Mon, 10 Mar 2025 16:48:33 +0530
+Message-ID: <20250310-b4-branch-gfx-smmu-v6-0-15c60b8abd99@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z860iWGtaEFMD2hj@google.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAInKzmcC/23Oyw6CMBAF0F8hXTumbx8r/8O4aGsLswC0lQZD+
+ HcLbjQhmc2d5J6ZiSQf0SdyriYSfcaEfVeC3lXENaarPeC9ZMIpV5QJBlaCjaZzDdRhhNS2A1g
+ quGYnLaiWpBQf0QccV/R6K7nB9Orje72R5bL9cpyKLS5LoOCNOZTRPMjj5Tmgw87tXd+SBczqB
+ 2GbP2VVkBCodVYb4RT7R+Z5/gBESXLz+wAAAA==
+X-Change-ID: 20250131-b4-branch-gfx-smmu-b03261963064
+To: Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
+        "Joerg
+ Roedel" <joro@8bytes.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski
+	<krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Bjorn Andersson
+	<andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>
+CC: <linux-arm-kernel@lists.infradead.org>, <iommu@lists.linux.dev>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-msm@vger.kernel.org>,
+        Pratyush Brahma <quic_pbrahma@quicinc.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1741605522; l=2280;
+ i=quic_pbrahma@quicinc.com; s=20250113; h=from:subject:message-id;
+ bh=iSfx5FlK+U5xTphC1c3YObxLSk45/xDHZO7IwewM798=;
+ b=idMcCUSfxFH0h5+bs1DcgTiMLicPb6SLMYO56UQy6PWNk6p8NalQUjT7Oinqzy76AE4DDJ82C
+ 2rZIgCTquNnDeR2tbBYsbPV7eRNWYWjhXr7DPG+C8Dpb5P6xmVMC21y
+X-Developer-Key: i=quic_pbrahma@quicinc.com; a=ed25519;
+ pk=YvfZKC4rRO1Fot+wlXZqsoQWnAtLqrpMyEzslw3Ji+M=
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01c.na.qualcomm.com (10.45.79.139)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Authority-Analysis: v=2.4 cv=cbIormDM c=1 sm=1 tr=0 ts=67ceca98 cx=c_pps a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17 a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=VwQbUJbxAAAA:8 a=COk6AnOGAAAA:8 a=7CQSdrXTAAAA:8
+ a=tA7aZXjiAAAA:8 a=JfrnYn6hAAAA:8 a=ZYyXoZZ4nwus4yg4O3YA:9 a=QEXdDO2ut3YA:10 a=TjNXssC_j7lpFel5tvFf:22 a=a-qgeE7W1pNrGK8U0ZQC:22 a=kIIFJ0VLUOy1gFZzwZHL:22 a=1CNFftbPRP8L7MoqJWF3:22
+X-Proofpoint-ORIG-GUID: G5CPuGBsa8FAYbQw2ifzQWn3n6xSGEC6
+X-Proofpoint-GUID: G5CPuGBsa8FAYbQw2ifzQWn3n6xSGEC6
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-10_04,2025-03-07_03,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0 mlxscore=0
+ impostorscore=0 bulkscore=0 suspectscore=0 priorityscore=1501 phishscore=0
+ malwarescore=0 adultscore=0 clxscore=1015 spamscore=0 mlxlogscore=999
+ classifier=spam authscore=0 authtc=n/a authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2502100000
+ definitions=main-2503100090
 
-On Mon, Mar 10, 2025 at 09:44:41AM +0000, Alice Ryhl wrote:
-> On Mon, Mar 10, 2025 at 03:30:39PM +0800, I Hsin Cheng wrote:
-> > Currently ListLinks only supports to create an initializer through
-> > "new()", which will need further initialization because the return type
-> > of "new()" is "impl Pininit<Self>". Not even "ListLinksSlefPtr" use the
-> > method to create a new instance of "ListLinks".
-> > 
-> > Implement a normal method to create a new instance of type "ListLinks".
-> > This may be redundant as long as there exist a convenient and proper way
-> > to deal with "ListLinks::new()".
-> > 
-> > For now it's introduce for the simplicity of examples in the following
-> > patches.
-> > 
-> > Signed-off-by: I Hsin Cheng <richard120310@gmail.com>
-> 
-> This change is not good. The ListLinks type has an invariant about when
-> the pointers are null. The existing constructor argues that the
-> invariant is satisfied because pin-init initializers can't be used in an
-> existing Arc. Why is that satisfied here?
-> 
-> Alice
+Enable GPU SMMU function on QCS8300 platform. GPU SMMU is required
+for address translation in GPU device.
 
-Hi Alice,
+Signed-off-by: Pratyush Brahma <quic_pbrahma@quicinc.com>
+---
+Changes since v5:
+- Corrected the clock order to be compatible with existing bindings
+- Link to v5: https://lore.kernel.org/r/20250211-b4-branch-gfx-smmu-v5-0-ff0bcb6a3c51@quicinc.com
 
-Thanks for your kindly review. Indeed , I was trying to find a way to
-cope with "ListLinks::new()", wondering if there's any macros like
-"ListLinks::try_pin_init!()" to help us deal with "impl PinInit", so I
-try to send a RFC patch for it.
+Changes since v4:
+- Corrected the clocks list to be inline with clock-names
+- Removed stray whitespaces
+- Added r-by tag from Krzysztof on the bindings patch
+- Link to v4: https://lore.kernel.org/r/20250203-b4-branch-gfx-smmu-v4-0-eaa7aa762f48@quicinc.com
 
-Sorry I overlooked "commit 52ae96f"[1], it demonstrate a good way to
-handle the basic structure for "List", I'll fix the patch and send a v2
-as soon as possible.
+Changes since v3:
+- Modified the order of clock voting and properties as suggested by Konrad
+- Removed dependency on clocks in commit text as change is merged in
+  linux-next before current base commit
 
-Still I would love to ask why don't we provide "ListLinks::pin_init" or
-"ListLinks::try_pin_init" to support for the pin-init initializer
-returned by "ListLink::new()" ? Maybe there're special reasons behind
-the pin-init initializer here ? I would love to learn if that's
-possible.
+Link to v3:
+https://lore.kernel.org/all/20241227105818.28516-1-quic_pbrahma@quicinc.com/
 
-I tried "Kbox::pint_init" but it
-wouldn't give variable of type "ListLinks".
+Changes since v2:
+Corrected typo in cover letter to include QCS8300
+Link to
+v2:https://lore.kernel.org/all/20241227104651.4531-1-quic_pbrahma@quicinc.com/
+
+Changes since v1:
+Updated bindings for gpu smmu for qcs8300 as per Dmitry's comment
+Link to v1:
+https://lore.kernel.org/all/20241224100521.7616-1-quic_pbrahma@quicinc.com/
+
+To: Will Deacon <will@kernel.org>
+To: Robin Murphy <robin.murphy@arm.com>
+To: Joerg Roedel <joro@8bytes.org>
+To: Rob Herring <robh@kernel.org>
+To: Krzysztof Kozlowski <krzk+dt@kernel.org>
+To: Conor Dooley <conor+dt@kernel.org>
+To: Bjorn Andersson <andersson@kernel.org>
+To: Konrad Dybcio <konradybcio@kernel.org>
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: iommu@lists.linux.dev
+Cc: devicetree@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Cc: linux-arm-msm@vger.kernel.org
+
+---
+Pratyush Brahma (2):
+      dt-bindings: arm-smmu: Document QCS8300 GPU SMMU
+      arm64: dts: qcom: qcs8300: Add device node for  gfx_smmu
+
+ .../devicetree/bindings/iommu/arm,smmu.yaml        |  3 +-
+ arch/arm64/boot/dts/qcom/qcs8300.dtsi              | 39 ++++++++++++++++++++++
+ 2 files changed, 41 insertions(+), 1 deletion(-)
+---
+base-commit: a13f6e0f405ed0d3bcfd37c692c7d7fa3c052154
+change-id: 20250131-b4-branch-gfx-smmu-b03261963064
 
 Best regards,
-I Hsin Cheng
+-- 
+Pratyush Brahma <quic_pbrahma@quicinc.com>
+
 
