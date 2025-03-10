@@ -1,147 +1,156 @@
-Return-Path: <linux-kernel+bounces-554660-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-554661-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 371EEA59B10
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 17:32:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id B8CCFA59B11
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 17:32:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8D3F47A65C1
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 16:31:03 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 500957A6902
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 16:31:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B50132309AD;
-	Mon, 10 Mar 2025 16:31:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="dN650yOg"
-Received: from mail-qt1-f181.google.com (mail-qt1-f181.google.com [209.85.160.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BFD022FF24
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 16:31:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37FDC230BE6;
+	Mon, 10 Mar 2025 16:31:44 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 149BD230BCE
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 16:31:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741624299; cv=none; b=aFo1CzX13IqmHm8PkPL+Ugq7tEjHLtlhgZON3q0jYYT50EHwpgQCLq7W1SerEivpLS3lFvzh3yYswk2qNki1TxnJhMUk/A53s5BuGwDA0TZv+QbjN5vK9Ddf7HkPHi8GA08jzjXZeI+fkYdBmhRGNxO6lLpnYh95XuOAm0yB5TE=
+	t=1741624303; cv=none; b=KOM3A+/VSOXWrzJVBfHivRYTpE8Fms28r0/h1Kip4IK3wF4kHv6FITEHi4SfdyUpI4q/LYMhgsJIZ3M+Isdb3u3h5yTDMLbwDlOC5jBPTpEBO1nC896UqyafVl5X6qbsYDuPoOZwEbC5Z2RAA0deFVhvHNDvpepctPnb6u2q/2w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741624299; c=relaxed/simple;
-	bh=EOzJGti6xtE/KS0s/r8JB1JyrUcLNSuZkkzVMvKg/uA=;
-	h=Date:Message-ID:MIME-Version:Content-Type:From:To:Subject:
-	 References:In-Reply-To; b=nvNdYMPct5caA/HMKql5Wqyv6GxoxIH7RMTNuf9tgvyYexBnym0wIlEbUOMUTDb3SYUC94gPJ+E+JgiSshldrcSTyd0X1AGIapBP8Xyzw81/BnAo3iKzcuiGIHlj6kWnia5m1C3WQT9Q57FWgXyN9ugQqZhHmlxwwjfUH8YQtmM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=dN650yOg; arc=none smtp.client-ip=209.85.160.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
-Received: by mail-qt1-f181.google.com with SMTP id d75a77b69052e-46fcbb96ba9so58910131cf.0
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 09:31:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1741624295; x=1742229095; darn=vger.kernel.org;
-        h=in-reply-to:references:subject:to:from:content-transfer-encoding
-         :mime-version:message-id:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=K+rvxu2VtO7t9hS1BcwolfWYrJhJIsb4fGcBMA3gsjI=;
-        b=dN650yOgLkW1MLoBZYEBHGx5/s6s5eakefzMlmnu962JPwhfd6GjTKiL3ftoSz9OKQ
-         8NiGNIiFWFybSC6g5vwBTg/SY9oAOs67Kcg1/p9J61/h7jI5O2i9H+6YcMABjhvC9LHn
-         /vuSKDlasEt0EZQ/FDL6PF10s3BppbQLDQ8i71ITG14j96Xq0sUXhh/TIiwewO0diVOc
-         15m8Q81PTy52dr+kyV02zc4SBnCMtAGVhqv2K6WrbQW2s9/Gyfhap2RBtM9bGgdvUttC
-         LqLFINudK8XhgLltE1LAJPLIEWnZQ4IK/AlNxn7X5vQ6HOiotplzZK4Kkhif6iB01KHH
-         TDFw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741624295; x=1742229095;
-        h=in-reply-to:references:subject:to:from:content-transfer-encoding
-         :mime-version:message-id:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=K+rvxu2VtO7t9hS1BcwolfWYrJhJIsb4fGcBMA3gsjI=;
-        b=EOpofc+XDDKSM6ULCOIQsJ4QRJAGcd3cU9Veon4EJULqBLHTai4f+nndOfH4NNsAGh
-         JdHH1N9zmlfeAq65KK53Pa7J5vis408Nk9J3e6M0TP7GzT1mNvKlNFKCIQw3s4Ixh5xE
-         1FNE0le31urPffAmy9Lrs1GWL/D27T4eLqKB7p4m6ld2w9RUTj4lN9upxSzcTAT8s+3k
-         1nmHm1eZ0OTjYxy+NMj9TnSPxp+KGPnAL4dwm9BN+JaQcCgWwbDJOxJ5F0bDkIXb52le
-         6wAi24jh1fo9YnE5gj/DqeMrxfve6uUk6RI3vq2HU27RVajETNqbKrlZN8026naGyOLZ
-         2nWA==
-X-Forwarded-Encrypted: i=1; AJvYcCWteGJbhUAAIUEMQM0N1m/XhWNE1UdqgoIalMnpcJyrloCXzaDM1xVYmhUuxCiAq/rnSv7SqnbJUGcKSf8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwFhzrKLSMhV94qoZ4EIaI2sT4pn4ybzRTksuihhCB7OfYe06hL
-	FzP/AQYiBTtKsitPULd4sNd5+nPevS5sFuv53D5F9CeJppirOPptBUNqSecLyQ==
-X-Gm-Gg: ASbGnctWDTt0mmOnGObvXagzxAF1AgI0XMXdW4zmFrtOZy7ePfvTUwuFjVxOr45D6GK
-	cJiN9a+UYMpZFx5UHal5LcLmUuvnxBnThXtTMsZHJnfExoVWksFas2zvAcjrsgNplTd9h8gRR7O
-	gmA5iVUA6otqCYnrh+rxRrRF2dTBzkOfEcvbiFYkvF4qbV0aJAh1wOnCQhox8nqNuOeNs2lUrc8
-	pdrnvjPKCbabwWuOXDgADwIraPR66PH0rEXeWXfkQr+eJVdSj+oYAjOBb1QLexQSalcHX2X3p4y
-	IWTg/yCnjId6RhlsmHF4MA0OnGg5gRv84uUFQOn3xrWrPjFgO+jCR5Wy/p49Ae0g2byREmUceCh
-	PKolKx5eyC64Ji5GtHM7KMDpK
-X-Google-Smtp-Source: AGHT+IHlZT3bIAT3WS2IFI/YedPMfsOmKAgmF62kbG0sEZfn6Fzjq1oKL8J7czbvA3wYWZrIG85mUw==
-X-Received: by 2002:a05:622a:ca:b0:475:486:2fa7 with SMTP id d75a77b69052e-476109bc959mr190733101cf.26.1741624295266;
-        Mon, 10 Mar 2025 09:31:35 -0700 (PDT)
-Received: from localhost (pool-71-126-255-178.bstnma.fios.verizon.net. [71.126.255.178])
-        by smtp.gmail.com with UTF8SMTPSA id d75a77b69052e-4768cf1ec2dsm15915861cf.31.2025.03.10.09.31.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 10 Mar 2025 09:31:34 -0700 (PDT)
-Date: Mon, 10 Mar 2025 12:31:34 -0400
-Message-ID: <2101885775982b2b6310298ae96a3278@paul-moore.com>
+	s=arc-20240116; t=1741624303; c=relaxed/simple;
+	bh=wPxmxtZ0L1CpbfM5XV6kkpSzMXwHwYpSGhpvzwxys2A=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=QDK/yE4VriOy6NGXLD3789L3M1yisHiGdcsnzU45t+oq3MB5nKf8AQ3nSdQa6oFWlmDpSgpSGczQKSZ49n2aeSrcWTxfVEyjTZCs6TLoWrBH3tw+/QskG4yIra6CYPlwJzwtp2CRLt83Vksxf14WMefGvEFjNqyi44f2vBucpV8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C1D031692;
+	Mon, 10 Mar 2025 09:31:52 -0700 (PDT)
+Received: from [10.57.83.165] (unknown [10.57.83.165])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 34D4A3F5A1;
+	Mon, 10 Mar 2025 09:31:40 -0700 (PDT)
+Message-ID: <661898ee-c1f9-4f51-a73d-b70fe2eccd84@arm.com>
+Date: Mon, 10 Mar 2025 16:31:38 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 
-Content-Type: text/plain; charset=UTF-8 
-Content-Transfer-Encoding: 8bit 
-X-Mailer: pstg-pwork:20250310_1216/pstg-lib:20250310_1216/pstg-pwork:20250310_1216
-From: Paul Moore <paul@paul-moore.com>
-To: Blaise Boscaccy <bboscaccy@linux.microsoft.com>, James Morris <jmorris@namei.org>, 
-	"Serge E. Hallyn" <serge@hallyn.com>, Alexei Starovoitov <ast@kernel.org>, 
-	Daniel Borkmann <daniel@iogearbox.net>, John Fastabend <john.fastabend@gmail.com>, 
-	Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>, 
-	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
-	Yonghong Song <yonghong.song@linux.dev>, KP Singh <kpsingh@kernel.org>, 
-	Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Stephen Smalley <stephen.smalley.work@gmail.com>, Ondrej Mosnacek <omosnace@redhat.com>, 
-	Mykola Lysenko <mykolal@fb.com>, Shuah Khan <shuah@kernel.org>, 
-	Kumar Kartikeya Dwivedi <memxor@gmail.com>, Matt Bobrowski <mattbobrowski@google.com>, 
-	Xu Kuohai <xukuohai@huawei.com>, linux-kernel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, bpf@vger.kernel.org, 
-	selinux@vger.kernel.org, linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH v6 1/2] security: Propagate caller information in bpf hooks
-References: <20250308013314.719150-2-bboscaccy@linux.microsoft.com>
-In-Reply-To: <20250308013314.719150-2-bboscaccy@linux.microsoft.com>
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1] mm: use ptep_get() instead of directly dereferencing
+ pte_t*
+Content-Language: en-GB
+To: Qi Zheng <zhengqi.arch@bytedance.com>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ Anshuman Khandual <anshuman.khandual@arm.com>
+Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org
+References: <20250310140418.1737409-1-ryan.roberts@arm.com>
+ <f0d9986d-b3f0-42db-8fb6-d6087dd77f7d@bytedance.com>
+From: Ryan Roberts <ryan.roberts@arm.com>
+In-Reply-To: <f0d9986d-b3f0-42db-8fb6-d6087dd77f7d@bytedance.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Mar  7, 2025 Blaise Boscaccy <bboscaccy@linux.microsoft.com> wrote:
+On 10/03/2025 15:51, Qi Zheng wrote:
+> Hi Ryan,
 > 
-> Certain bpf syscall subcommands are available for usage from both
-> userspace and the kernel. LSM modules or eBPF gatekeeper programs may
-> need to take a different course of action depending on whether or not
-> a BPF syscall originated from the kernel or userspace.
+> On 3/10/25 10:04 PM, Ryan Roberts wrote:
+>> It is best practice for all pte accesses to go via the arch helpers, to
+>> ensure non-torn values and to allow the arch to intervene where needed
+>> (contpte for arm64 for example). While in this case it was probably safe
+>> to directly dereference, let's tidy it up for consistency.
+>>
+>> Signed-off-by: Ryan Roberts <ryan.roberts@arm.com>
+>> ---
+>>   mm/migrate.c | 2 +-
+>>   1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> Additionally, some of the bpf_attr struct fields contain pointers to
-> arbitrary memory. Currently the functionality to determine whether or
-> not a pointer refers to kernel memory or userspace memory is exposed
-> to the bpf verifier, but that information is missing from various LSM
-> hooks.
+> This looks good to me. So
 > 
-> Here we augment the LSM hooks to provide this data, by simply passing
-> a boolean flag indicating whether or not the call originated in the
-> kernel, in any hook that contains a bpf_attr struct that corresponds
-> to a subcommand that may be called from the kernel.
-> 
-> Signed-off-by: Blaise Boscaccy <bboscaccy@linux.microsoft.com>
-> Acked-by: Song Liu <song@kernel.org>
-> Acked-by: Paul Moore <paul@paul-moore.com>
-> ---
->  include/linux/lsm_hook_defs.h                     |  6 +++---
->  include/linux/security.h                          | 12 ++++++------
->  kernel/bpf/syscall.c                              | 10 +++++-----
->  security/security.c                               | 15 +++++++++------
->  security/selinux/hooks.c                          |  6 +++---
->  tools/testing/selftests/bpf/progs/rcu_read_lock.c |  3 ++-
->  .../selftests/bpf/progs/test_cgroup1_hierarchy.c  |  4 ++--
->  .../selftests/bpf/progs/test_kfunc_dynptr_param.c |  6 +++---
->  .../testing/selftests/bpf/progs/test_lookup_key.c |  2 +-
->  .../selftests/bpf/progs/test_ptr_untrusted.c      |  2 +-
->  .../selftests/bpf/progs/test_task_under_cgroup.c  |  2 +-
->  .../selftests/bpf/progs/test_verify_pkcs7_sig.c   |  2 +-
->  12 files changed, 37 insertions(+), 33 deletions(-)
+> Reviewed-by: Qi Zheng <zhengqi.arch@bytedance.com>
 
-This still looks good to me (ACK already present), are the BPF folks
-still on track to merge this into their tree?  It would be good to get
-this into linux-next sooner rather than later if we want to send this
-up to Linus during the next merge window.
+Thanks!
 
---
-paul-moore.com
+> 
+> BTW, there are many other places in the kernel that directly
+> dereference pmd_t* and pud_t*, etc.
+
+It's all a little bit murky. For now, from arm64's perspective at least, there
+is only a hard requirement for ptes to be accessed through the arch helper. This
+is because arm64's contpte layer may apply a transform when reading the pte.
+
+In general there are also potential issues with tearing, if you don't at least
+read with READ_ONCE(). But often to consumer of the value is tolerant to tearing
+(e.g. pmd_none(), etc). Also, in practice on arm64 the compiler will emit
+instructions that ensure single-copy-atomicity for direct dereferences, so it
+all works out.
+
+That said, Anshuman (cc'ed) has been looking at supporting FEAT_D128 (128 bit
+page table descriptors) on arm64. The compiler does not emit single-copy-atomic
+loads for direct dereferences of 128 bit data, so he has been working on
+converting the other levels to use the accessors for that reason.
+
+But that has some potentially problematic interactions with level folding that
+need to be solved. Some arches rely on the compiler optimizing away the direct
+dereferences when folded. But it can't do that for a READ_ONCE().
+
+I believe Anshuman is aiming to post a series to do this at some point in the
+future.
+
+Thanks,
+Ryan
+
+> 
+> For example:
+> 
+> root@debian:~# grep "*vmf->pmd" . -rwn
+> ./mm/memory.c:5113:    if (pmd_none(*vmf->pmd) && !vmf->prealloc_pte) {
+> ./mm/memory.c:5207:    if (unlikely(!pmd_none(*vmf->pmd)))
+> ./mm/memory.c:5339:    if (pmd_none(*vmf->pmd)) {
+> ./mm/memory.c:5490:    if (pmd_none(*vmf->pmd)) {
+> ./mm/memory.c:5996:    if (unlikely(pmd_none(*vmf->pmd))) {
+> ./mm/filemap.c:3612:    if (pmd_trans_huge(*vmf->pmd)) {
+> ./mm/filemap.c:3618:    if (pmd_none(*vmf->pmd) &&
+> folio_test_pmd_mappable(folio)) {
+> ./mm/filemap.c:3628:    if (pmd_none(*vmf->pmd) && vmf->prealloc_pte)
+> ./mm/huge_memory.c:1237:    if (unlikely(!pmd_none(*vmf->pmd))) {
+> ./mm/huge_memory.c:1352:        if (pmd_none(*vmf->pmd)) {
+> ./mm/huge_memory.c:1496:    if (pmd_none(*vmf->pmd)) {
+> ./mm/huge_memory.c:1882:    if (unlikely(!pmd_same(*vmf->pmd, vmf->orig_pmd)))
+> ./mm/huge_memory.c:1947:    if (unlikely(!pmd_same(*vmf->pmd, orig_pmd))) {
+> ./mm/huge_memory.c:1965:        if (unlikely(!pmd_same(*vmf->pmd, orig_pmd))) {
+> ./fs/dax.c:1935:    if (pmd_trans_huge(*vmf->pmd) || pmd_devmap(*vmf->pmd)) {
+> ./fs/dax.c:2058:    if (!pmd_none(*vmf->pmd) && !pmd_trans_huge(*vmf->pmd) &&
+> ./fs/dax.c:2059:            !pmd_devmap(*vmf->pmd)) {
+> 
+> Would it be best to clean them up as well?
+> 
+> Thanks,
+> Qi
+> 
+>>
+>> diff --git a/mm/migrate.c b/mm/migrate.c
+>> index 22e270f727ed..33a22c2d6b20 100644
+>> --- a/mm/migrate.c
+>> +++ b/mm/migrate.c
+>> @@ -202,7 +202,7 @@ static bool try_to_map_unused_to_zeropage(struct
+>> page_vma_mapped_walk *pvmw,
+>>           return false;
+>>       VM_BUG_ON_PAGE(!PageAnon(page), page);
+>>       VM_BUG_ON_PAGE(!PageLocked(page), page);
+>> -    VM_BUG_ON_PAGE(pte_present(*pvmw->pte), page);
+>> +    VM_BUG_ON_PAGE(pte_present(ptep_get(pvmw->pte)), page);
+>>
+>>       if (folio_test_mlocked(folio) || (pvmw->vma->vm_flags & VM_LOCKED) ||
+>>           mm_forbids_zeropage(pvmw->vma->vm_mm))
+>> -- 
+>> 2.43.0
+>>
+> 
+
 
