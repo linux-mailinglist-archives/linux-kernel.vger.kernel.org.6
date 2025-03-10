@@ -1,135 +1,166 @@
-Return-Path: <linux-kernel+bounces-554169-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-554171-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C75E9A593EC
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 13:13:53 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1AEAFA593FD
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 13:15:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8F34816EA7D
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 12:13:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5CF7A1893229
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 12:13:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D19422AE6D;
-	Mon, 10 Mar 2025 12:11:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7322C221711;
+	Mon, 10 Mar 2025 12:11:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="Uc2kSMaJ"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B3DC22A7E0;
-	Mon, 10 Mar 2025 12:11:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="sRsn1XEo"
+Received: from mout-p-101.mailbox.org (mout-p-101.mailbox.org [80.241.56.151])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96C1C226883
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 12:11:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741608697; cv=none; b=FBMkM1xrxk1cEX3oGM67Hm0i6leNRaPbmm3rymIoNqKYEjJ31Zgpug1FlXqqqFJG2sBlZvEe7SOdPx7lFMHDoq4fHFbZCgFwDRE/oQVIdw3owBoaqW5YcIy+6VdrSOWBDht0EZ0nTNf3ZnGF205HFype8DZLDcU9XthaPy0SaGI=
+	t=1741608717; cv=none; b=P6Z/2Wa6iNSj+kjha/81QfjYZthxbSG+F3qI22ZQnzcvAIGYYOo8R+qodRG+QPdS/lXH2mDqdVKzlmvW7ekxzJf/8Za+dxaSWq5edichZbgu1h+ztPVAQxHy04gR09mJWiuyAfnNTgqiOvQP17xEz8KFH1M/I6unHTrV53hz5+Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741608697; c=relaxed/simple;
-	bh=B/Zi8tRRc/t7099IxweCQ9wmr8LBRpEjxc54n0VCEzQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EHt6UeBru2JrCUHnZyT3FNnyt3RobX7MyTLgCnGeqvuzb47VIq6YmqDNJ4S/rFfw2f7Gyg2SENTXCHJDrMGoZ8zxMeIg6BLutB6arQkbYEunhlk45VB3YABLh8+Cppg0PO5Vwe3LZLpVQjGMlGhK5ogtIf5JGBRCvgAKf3bKIeg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=Uc2kSMaJ; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: by linux.microsoft.com (Postfix, from userid 1134)
-	id BAD8B2111421; Mon, 10 Mar 2025 05:11:34 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com BAD8B2111421
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1741608694;
-	bh=wGlVDMVI7jB0uTeQswp0J7PSuFA8+H1jZy79IJtAwJA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Uc2kSMaJZ2d9mRqMGI9uVePTC1T6zyoq47PuXm1KAkLHEGlSFLadmxyf4t7EhXYgc
-	 qJPXVqjZQYPIo2xrAnGCsPXWyKYE9mxrGdN9iUPi4kEpIJvw3IuVpiQ2eLOYX89j/w
-	 NaqXKPle32JCMKpmqeqjhSGIpPlBxgMUGEnOafQU=
-Date: Mon, 10 Mar 2025 05:11:34 -0700
-From: Shradha Gupta <shradhagupta@linux.microsoft.com>
-To: Haiyang Zhang <haiyangz@microsoft.com>
-Cc: Jakub Kicinski <kuba@kernel.org>,
-	"linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
-	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-	Dexuan Cui <decui@microsoft.com>,
-	"stephen@networkplumber.org" <stephen@networkplumber.org>,
-	KY Srinivasan <kys@microsoft.com>,
-	Paul Rosswurm <paulros@microsoft.com>,
-	"olaf@aepfle.de" <olaf@aepfle.de>,
-	"vkuznets@redhat.com" <vkuznets@redhat.com>,
-	"davem@davemloft.net" <davem@davemloft.net>,
-	"wei.liu@kernel.org" <wei.liu@kernel.org>,
-	"edumazet@google.com" <edumazet@google.com>,
-	"pabeni@redhat.com" <pabeni@redhat.com>,
-	"leon@kernel.org" <leon@kernel.org>, Long Li <longli@microsoft.com>,
-	"ssengar@linux.microsoft.com" <ssengar@linux.microsoft.com>,
-	"linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
-	"daniel@iogearbox.net" <daniel@iogearbox.net>,
-	"john.fastabend@gmail.com" <john.fastabend@gmail.com>,
-	"bpf@vger.kernel.org" <bpf@vger.kernel.org>,
-	"ast@kernel.org" <ast@kernel.org>,
-	"hawk@kernel.org" <hawk@kernel.org>,
-	"tglx@linutronix.de" <tglx@linutronix.de>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"stable@vger.kernel.org" <stable@vger.kernel.org>
-Subject: Re: [EXTERNAL] Re: [PATCH net] net: mana: Support holes in device
- list reply msg
-Message-ID: <20250310121134.GA12177@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
-References: <1741211181-6990-1-git-send-email-haiyangz@microsoft.com>
- <20250307195029.1dc74f8e@kernel.org>
- <MN0PR21MB3437F80F3AD98C82870A9173CAD72@MN0PR21MB3437.namprd21.prod.outlook.com>
+	s=arc-20240116; t=1741608717; c=relaxed/simple;
+	bh=lRyHXz+LuENfiDMmXLMZdZ86UvemQwdeC11FX1GNOvI=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=TYoK/vWGMkWlIJkgbq3I+4z34/NDextrvEwfJTGu0Y25tRlAxczYT5Y5KuokPQI/ZUYvIRLY0PNAMXmkWKfy4olfMG5dO+dil2cOX7BngorV1+TuC0nyyJTH8po6oBVGvuVatmBHM+NessRZVIuvBCwnLKHPgcOuvCi/TfdFi98=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=sRsn1XEo; arc=none smtp.client-ip=80.241.56.151
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
+Received: from smtp1.mailbox.org (smtp1.mailbox.org [IPv6:2001:67c:2050:b231:465::1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-101.mailbox.org (Postfix) with ESMTPS id 4ZBG362TqBz9t2Y;
+	Mon, 10 Mar 2025 13:11:46 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
+	t=1741608706; h=from:from:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=0KQeJP11TRsGnnF9TEWR0bRSiGYKMMWItDUAR+7anCI=;
+	b=sRsn1XEoXCcyYaP7paUfvZOOVPklB8u+QbTvZOsREmB8E/dsUaKSgPucRPf9fYCAT1hR0J
+	rtzdV8frPEwiRXvf2POHaB3F3uNHEkVmpajY1tyF06itefQZCcVRbK4QA2NlUdwmHCtnzN
+	Re9tkzM745VUEMnTgEn5iZCglwLCF4S5M1ypzTekXVB2iiox0AnTNATuQuhfEy5uz6updC
+	2AR3Uvob8LFkwPV9zSfmZB0JOwpmr52krmSXMFBpsBrYYBXk1xH++JWa4lTRoAEeUfAXav
+	W222yx8MJmIG2kGS5B5d01IytzH82gP2Av3ZtBzO8tKNjmnGqNo6KwQUns+AcQ==
+Message-ID: <564be70f7d64c04c1ad77499522d99c64ea4d4d3.camel@mailbox.org>
+Subject: Re: [PATCH] drm/sched: revert "drm_sched_job_cleanup(): correct
+ false doc"
+From: Philipp Stanner <phasta@mailbox.org>
+Reply-To: phasta@kernel.org
+To: Christian =?ISO-8859-1?Q?K=F6nig?= <ckoenig.leichtzumerken@gmail.com>, 
+	matthew.brost@intel.com, dakr@kernel.org, phasta@kernel.org, 
+	tvrtko.ursulin@igalia.com, dri-devel@lists.freedesktop.org, 
+	linux-kernel@vger.kernel.org
+Cc: Christian =?ISO-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>
+Date: Mon, 10 Mar 2025 13:11:42 +0100
+In-Reply-To: <20250310074414.2129157-1-christian.koenig@amd.com>
+References: <20250310074414.2129157-1-christian.koenig@amd.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <MN0PR21MB3437F80F3AD98C82870A9173CAD72@MN0PR21MB3437.namprd21.prod.outlook.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+X-MBO-RS-ID: 740eeb2eb4d9f368cbb
+X-MBO-RS-META: ti7n3cbhidtzec16mz4bdwaqw3ficnr7
 
-On Sun, Mar 09, 2025 at 10:01:33PM +0000, Haiyang Zhang wrote:
-> 
-> 
-> > -----Original Message-----
-> > From: Jakub Kicinski <kuba@kernel.org>
-> > Sent: Friday, March 7, 2025 10:50 PM
-> > To: Haiyang Zhang <haiyangz@microsoft.com>
-> > Cc: linux-hyperv@vger.kernel.org; netdev@vger.kernel.org; Dexuan Cui
-> > <decui@microsoft.com>; stephen@networkplumber.org; KY Srinivasan
-> > <kys@microsoft.com>; Paul Rosswurm <paulros@microsoft.com>;
-> > olaf@aepfle.de; vkuznets@redhat.com; davem@davemloft.net;
-> > wei.liu@kernel.org; edumazet@google.com; pabeni@redhat.com;
-> > leon@kernel.org; Long Li <longli@microsoft.com>;
-> > ssengar@linux.microsoft.com; linux-rdma@vger.kernel.org;
-> > daniel@iogearbox.net; john.fastabend@gmail.com; bpf@vger.kernel.org;
-> > ast@kernel.org; hawk@kernel.org; tglx@linutronix.de;
-> > shradhagupta@linux.microsoft.com; linux-kernel@vger.kernel.org;
-> > stable@vger.kernel.org
-> > Subject: [EXTERNAL] Re: [PATCH net] net: mana: Support holes in device
-> > list reply msg
-> > 
-> > On Wed,  5 Mar 2025 13:46:21 -0800 Haiyang Zhang wrote:
-> > > -	for (i = 0; i < max_num_devs; i++) {
-> > > +	for (i = 0; i < GDMA_DEV_LIST_SIZE &&
-> > > +		found_dev < resp.num_of_devs; i++) {
-> > 
-> > unfortunate mis-indent here, it blend with the code.
-> > checkpatch is right that it should be aligned with opening bracket
-> Will fix it.
-> 
-> > 
-> > >  		dev = resp.devs[i];
-> > >  		dev_type = dev.type;
-> > >
-> > > +		/* Skip empty devices */
-> > > +		if (dev.as_uint32 == 0)
-> > > +			continue;
-> > > +
-> > > +		found_dev++;
-> > > +		dev_info(gc->dev, "Got devidx:%u, type:%u, instance:%u\n", i,
-> > > +			 dev.type, dev.instance);
-> > 
-> > Are you sure you want to print this info message for each device,
-> > each time it's probed? Seems pretty noisy. We generally recommend
-> > printing about _unusual_ things.
-> Ok. I can remove it.
-How about a dev_dbg instead?
-> 
-> Thanks,
-> - Haiyang
+On Mon, 2025-03-10 at 08:44 +0100, Christian K=C3=B6nig wrote:
+> This reverts commit 44d2f310f008613c1dbe5e234c2cf2be90cbbfab.
+
+OK, your arguments with fence ordering are strong. Please update the
+commit message according to our discussion:
+
+>=20
+> Sorry for the delayed response, I only stumbled over this now while
+> going
+> over old mails and then re-thinking my reviewed by for this change.
+
+Your RB hadn't even been applied (I merged before you gave it), so you
+can remove this first paragraph from the commit message
+
+>=20
+> The function drm_sched_job_arm() is indeed the point of no return.
+> The
+> background is that it is nearly impossible for the driver to
+> correctly
+> retract the fence and signal it in the order enforced by the
+> dma_fence
+> framework.
+>=20
+> The code in drm_sched_job_cleanup() is for the purpose to cleanup
+> after
+> the job was armed through drm_sched_job_arm() *and* processed by the
+> scheduler.
+>=20
+> The correct approach for error handling in this situation is to set
+> the
+> error on the fences and then push to the entity anyway. We can
+> certainly
+> improve the documentation, but removing the warning is clearly not a
+> good
+> idea.
+
+This last paragraph, as per our discussion, seems invalid. We shouldn't
+have that in the commit log, so that it won't give later hackers
+browsing it wrong ideas and we end up with someone actually mengling
+with those fences.
+
+Thx
+P.
+
+>=20
+> Signed-off-by: Christian K=C3=B6nig <christian.koenig@amd.com>
+> ---
+> =C2=A0drivers/gpu/drm/scheduler/sched_main.c | 12 +++++-------
+> =C2=A01 file changed, 5 insertions(+), 7 deletions(-)
+>=20
+> diff --git a/drivers/gpu/drm/scheduler/sched_main.c
+> b/drivers/gpu/drm/scheduler/sched_main.c
+> index 53e6aec37b46..4d4219fbe49d 100644
+> --- a/drivers/gpu/drm/scheduler/sched_main.c
+> +++ b/drivers/gpu/drm/scheduler/sched_main.c
+> @@ -1015,13 +1015,11 @@ EXPORT_SYMBOL(drm_sched_job_has_dependency);
+> =C2=A0 * Cleans up the resources allocated with drm_sched_job_init().
+> =C2=A0 *
+> =C2=A0 * Drivers should call this from their error unwind code if @job is
+> aborted
+> - * before it was submitted to an entity with
+> drm_sched_entity_push_job().
+> + * before drm_sched_job_arm() is called.
+> =C2=A0 *
+> - * Since calling drm_sched_job_arm() causes the job's fences to be
+> initialized,
+> - * it is up to the driver to ensure that fences that were exposed to
+> external
+> - * parties get signaled. drm_sched_job_cleanup() does not ensure
+> this.
+> - *
+> - * This function must also be called in &struct
+> drm_sched_backend_ops.free_job
+> + * After that point of no return @job is committed to be executed by
+> the
+> + * scheduler, and this function should be called from the
+> + * &drm_sched_backend_ops.free_job callback.
+> =C2=A0 */
+> =C2=A0void drm_sched_job_cleanup(struct drm_sched_job *job)
+> =C2=A0{
+> @@ -1032,7 +1030,7 @@ void drm_sched_job_cleanup(struct drm_sched_job
+> *job)
+> =C2=A0		/* drm_sched_job_arm() has been called */
+> =C2=A0		dma_fence_put(&job->s_fence->finished);
+> =C2=A0	} else {
+> -		/* aborted job before arming */
+> +		/* aborted job before committing to run it */
+> =C2=A0		drm_sched_fence_free(job->s_fence);
+> =C2=A0	}
+> =C2=A0
+
 
