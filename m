@@ -1,231 +1,98 @@
-Return-Path: <linux-kernel+bounces-555010-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-555012-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 24EA1A5A476
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 21:12:29 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id AF460A5A478
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 21:13:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 56C1A16FC34
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 20:12:28 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DAA717A55BB
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 20:11:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 522131DE4C2;
-	Mon, 10 Mar 2025 20:12:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E12C1DE3BA;
+	Mon, 10 Mar 2025 20:12:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Vyt92PPe"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="b0r/kc0g"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 032AA1DE2A6
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 20:12:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8181B1DE3AE
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 20:12:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741637541; cv=none; b=OwSy3wclKKv7GZMEuuyE9B6hJtvzrgecCPZrvtpVMcGOb6yPZM5q/n3t2XuYaLFxFR5SJJPVjX2Y/OmqTS37e/1hDMDmIPe66y2/focIFjq8oP4DaDrSsrW7WAlAAi1++prE+s7thUPUCOsnZwbPtUMx71OgGrU3o0/rELp02sk=
+	t=1741637572; cv=none; b=K3Fg7nLB9+PA85DwbB+9k4qe93WvMfr0YWjWjZJoMtGvjFqu/S7lp/djt8Fu0SfUOIRen9fPdE0WnWOsh0EYTjY/OSQbkbC7CzQVtR68eTchhRfsAztYJZeSofJLmbOyVtNt828J/pWZc0SQKYRQCsMOYGurXDaBwlF3CB1mrr0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741637541; c=relaxed/simple;
-	bh=aT31OkYa28ZGJUgufGsDa18gtUSc47VEdx7Wy+FoF9g=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=mjeUl55cWOQtiQNs4w2u1QxRlSTBouQOAu49mpo+/tttVokEDzzlfv4SL2ySkndc/DWC+acHvzOrIKcKBKw5g12hmN+Vqo6fkQlw8xtZCD0Kq+Xjm/Ayx10UoCMUGPPUHcP2Z523cWHa+A/lGHhzNVmLRYpb5E5JJizgdNCfZ1A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Vyt92PPe; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1741637538;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=NUMBZ32KdQqPLcAUPyQXRUOYVm+5mOZjgmd0uYlCLNg=;
-	b=Vyt92PPekvgh6NbeHUF0p4GOsF2gl9KwRLr4RCMrL755U4BnDtZXulhZFiOpPTz7CcKjBI
-	T0mtAeTsKEX8CDEEi559HLvOFQJcSI/noe/P7tHOE7qKz3AzHdoAfnoZAMDpdrmbhiCT8o
-	s/gKYTq9lkVd2+y0srWMDmCNlRKSENQ=
-Received: from mail-ej1-f70.google.com (mail-ej1-f70.google.com
- [209.85.218.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-255-6rNtHqtkMY6AvtWoHCaOYQ-1; Mon, 10 Mar 2025 16:12:17 -0400
-X-MC-Unique: 6rNtHqtkMY6AvtWoHCaOYQ-1
-X-Mimecast-MFC-AGG-ID: 6rNtHqtkMY6AvtWoHCaOYQ_1741637536
-Received: by mail-ej1-f70.google.com with SMTP id a640c23a62f3a-ac286ad635bso206961766b.3
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 13:12:17 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741637535; x=1742242335;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=NUMBZ32KdQqPLcAUPyQXRUOYVm+5mOZjgmd0uYlCLNg=;
-        b=iIe4Prm7rafH3dzFeFK+BjNDUhysOUguRsZpsewABozPloTVjV+rpWft02UE9ItLHx
-         IHpQmcbXcsxNBiMRwF8o/rsGPLZCZqLXVMvv3oY9qaZn/wGUmtx2V88cUiyf23Vqg0Vh
-         VBycHO+RwnM/Da/col1HI3anaoiKQNkakgCKk9r5bGoekZ7s6m3geUlnZemZ+zLGkfdO
-         SG+wDupWKvqHixDpX5j8v/v1lIVqv4e/lWhge+VwnR9RcFq7ihjFkz60IZOgGcwAzCBl
-         zUOdlAAQb0JQwZ9jaTYjfOEo/GCRhMMMOopJM1FJktgy+fUFKm6rmzIRlO8Gz6rRb13N
-         wxig==
-X-Forwarded-Encrypted: i=1; AJvYcCUQaCDycY1vJVU3wuzhvTnk+BYkemFNCmYua/nR9PWQFP7cKh8SzGvt3+BXtFmicYg4ru29OUs/xwuSbi4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx4l8E2dCRjDv2Ce9kp7zp+H/bX7zAK81GfNbeT6W2kP408vJXa
-	Nea4eBgbT4H8jdPUvHyqVpHcaf2q53rwJLKQViKhI4JTuiyjxCkvrk7igo0SpsZSSvJ3DkEywcL
-	m3dTLF0+cqw8v9PQ9QrC9f+YWFZArf72r0Cnur564DfoqXsL1P39b//K5QmUhlA==
-X-Gm-Gg: ASbGncuIJmFOMNtoOy3Dz9obnvRX1hpM+55TKsAJBxbiGDKbZyxRyDyU6C6PgEGCqyW
-	j9DJqoJJLqCVbd7jfxFKm5SpPJrWLA+hLYLQNefdm/qkwerdAWVraWQSlOefhm2FK18wT+qf6Xo
-	me/JOKVxi17Y10Um3IFMNTZOniepA0WxKyxQf5SsqAE1UmLYlMEUObkQAywi08NTk36J7NPhaFK
-	LoPtEA6xNhIlPT4LmPPMXWfIGw3+9B4ymJEkItwMCEdnHMYa6uyJeOj8rNpPeBQFYiT8qsVcxLc
-	mN+aqVNp3noC74iGG89t7P89vvgJKux5zHgLANLNbgVoPaWhJPBGuACa/w3eMfkesDz2612n5RT
-	ezadY0q1UUVL8gVgo9t03JKCWq5Liwp2HRo6JphnrcDSWh/IgXHU1kBoKZWnOIvibkw==
-X-Received: by 2002:a17:906:6a29:b0:abf:40ac:4395 with SMTP id a640c23a62f3a-ac252bb26b7mr1959103366b.31.1741637535510;
-        Mon, 10 Mar 2025 13:12:15 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGj3e3Mpx+zqBeN7/u1TmdQVFF3PHupm3Ka2E7nCKCXHNoHeAEGzCJB1T6ZzVuiOMh2f7bfEQ==
-X-Received: by 2002:a17:906:6a29:b0:abf:40ac:4395 with SMTP id a640c23a62f3a-ac252bb26b7mr1959099966b.31.1741637535022;
-        Mon, 10 Mar 2025 13:12:15 -0700 (PDT)
-Received: from ?IPV6:2001:1c00:c32:7800:5bfa:a036:83f0:f9ec? (2001-1c00-0c32-7800-5bfa-a036-83f0-f9ec.cable.dynamic.v6.ziggo.nl. [2001:1c00:c32:7800:5bfa:a036:83f0:f9ec])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac25af3cea9sm630700966b.111.2025.03.10.13.12.13
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 10 Mar 2025 13:12:14 -0700 (PDT)
-Message-ID: <383d5740-7740-4051-b39a-b8c74b035ec2@redhat.com>
-Date: Mon, 10 Mar 2025 21:12:13 +0100
+	s=arc-20240116; t=1741637572; c=relaxed/simple;
+	bh=182EpiWo/kl4L2mKJCem+bFN7+CZHjnUfcRnHmqS7Zc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=iTFFVK0sg2ilkpdAaw7UTP+UVfsRkjitJ1Rrq0KHxZnOBv7l4B5v8n4ejZeHXkXEV5PW8untBKo1JZrYpWwWlS7fPeTKFYr+AdueA6R7pY++VlyAw17phOp6ldvkHTUKjBcqyw/OswNDgg9Vvp0GmVrWL3s16liM/QjuvyopjIY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=b0r/kc0g; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 3356A40E01AD;
+	Mon, 10 Mar 2025 20:12:48 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id g50mHX8ulJWN; Mon, 10 Mar 2025 20:12:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1741637564; bh=R20WGuVqN6hFXKq0tFVjy0bRwbA0Sdp/yEVYgIpqPNw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=b0r/kc0gyBA8IzzBXXJb7FA8z6jmxSPhO+PQPV6/WwKahoBhq70OuXYVX85jvJ5hr
+	 /CbowhcfDlUPD9JMdhb99/nslzUzSuSogKxkxRDjK54ldn61MZs6R26KWXXRVo8ykD
+	 rQNIOyuAB7Jf24VrI6X+woa/DpZBy8VTIj85gdAfxFNu1KDSQOp6MVp5SMQ9sAesld
+	 hk6R/oGbY/wwhQ2Va0ilmyk81uBBpf5pYRYJuH1oZskYYqBLI91Xn8PwzK+QdchrZ8
+	 h6ksbvRBzTIVNlgMv5a/ZKBC+w0mKMwou6eZHoGqDFZ0VqsdJ6s75JgbRYKJ7+Izkg
+	 zpZ8hUdPGD+hWE1GjeR7WMgH+jSkEvBgN6m79ihPzJaSvkuat7j6RMTpWkCCxXGYA+
+	 1ltADS65WFFT8q393DH4BuQchOkh1T+YRuFIw0K5V7ke585gtorxsr33HX/Dqz1Hzg
+	 Z8/vLKld6z20XEn2L3v9hVclmWyZuirrpVN+jz7w8vd49tB6Msi6HiEmLPLjnDB/G8
+	 l2f1/wpjWvLBssFk/LYqoCBDnQzWvhWoDIl2S0G1iReS48gnhKRBKsk+AvJF9ZfPPg
+	 6pMDBwc5XWHYMfncpr/Q5tPbrOJUaRHR1PjEi+Zvxtrz3Z+2hh16B+knLG3nTxIzVB
+	 SOtc5dni6pBO1hfSlVUoSd+I=
+Received: from zn.tnic (pd95303ce.dip0.t-ipconnect.de [217.83.3.206])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 3342840E0176;
+	Mon, 10 Mar 2025 20:12:37 +0000 (UTC)
+Date: Mon, 10 Mar 2025 21:12:27 +0100
+From: Borislav Petkov <bp@alien8.de>
+To: Uros Bizjak <ubizjak@gmail.com>
+Cc: x86@kernel.org, linux-kernel@vger.kernel.org,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@kernel.org>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	"H. Peter Anvin" <hpa@zytor.com>
+Subject: Re: [PATCH] x86/hweight: Fix and improve __arch_hweight{32,64}()
+ assembly
+Message-ID: <20250310201227.GXZ89Hq5LVWKHjHBeO@fat_crate.local>
+References: <20250310200817.33581-1-ubizjak@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: Regression from 7627a0edef54 ("ata: ahci: Drop low power policy
- board type") on reboot (but not cold boot)
-To: Niklas Cassel <cassel@kernel.org>
-Cc: Eric <eric.4.debian@grabatoulnz.fr>,
- Salvatore Bonaccorso <carnil@debian.org>,
- Mario Limonciello <mario.limonciello@amd.com>,
- Christoph Hellwig <hch@infradead.org>,
- Mika Westerberg <mika.westerberg@linux.intel.com>,
- Damien Le Moal <dlemoal@kernel.org>, Jian-Hong Pan <jhp@endlessos.org>,
- regressions@lists.linux.dev, linux-kernel@vger.kernel.org,
- stable@vger.kernel.org, linux-ide@vger.kernel.org,
- Dieter Mummenschanz <dmummenschanz@web.de>
-References: <Z8SBZMBjvVXA7OAK@eldamar.lan> <Z8SyVnXZ4IPZtgGN@ryzen>
- <8763ed79-991a-4a19-abb6-599c47a35514@grabatoulnz.fr>
- <Z8VLZERz0FpvpchM@x1-carbon>
- <8b1cbfd4-6877-48ef-b17d-fc10402efbf7@grabatoulnz.fr>
- <Z8l61Kxss0bdvAQt@ryzen> <Z8l7paeRL9szo0C0@ryzen>
- <689f8224-f118-47f0-8ae0-a7377c6ff386@grabatoulnz.fr>
- <Z8rCF39n5GjTwfjP@ryzen> <9c4a635a-ce9f-4ed9-9605-002947490c61@redhat.com>
- <Z88rtGH39C-S8phk@ryzen>
-Content-Language: en-US, nl
-From: Hans de Goede <hdegoede@redhat.com>
-In-Reply-To: <Z88rtGH39C-S8phk@ryzen>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250310200817.33581-1-ubizjak@gmail.com>
 
-Hi Niklas,
+On Mon, Mar 10, 2025 at 09:08:04PM +0100, Uros Bizjak wrote:
+> a) Use ASM_CALL_CONSTRAINT to prevent inline asm that includes call
+> instruction from being scheduled before the frame pointer gets set
+> up by the containing function, causing objtool to print a "call
+> without frame pointer save/setup" warning.
 
-On 10-Mar-25 7:13 PM, Niklas Cassel wrote:
-> Hello Hans,
-> 
-> On Mon, Mar 10, 2025 at 10:34:13AM +0100, Hans de Goede wrote:
->>
->> I think that the port-mask register is only read-only from an OS pov,
->> the BIOS/UEFI/firmware can likely set it to e.g. exclude ports which are
->> not enabled on the motherboard (e.g. an M2 slot which can do both pci-e + 
->> ata and is used in pci-e mode, so the sata port on that slot should be
->> ignored).
->>
->> What we seem to be hitting here is a bug where the UEFI can not detect
->> the SATA SSD after reboot if it ALPM was used by the OS before reboot and
->> the UEFI's SATA driver responds to the not detecting by clearing the bit
->> in the port-mask register.
->>
->> The UEFI not detecting the disk after reboot when ALPM was in use also
->> matches with not being able to boot from the disk after reboot.
-> 
-> If we look at dmesg:
-> ahci 0000:00:11.0: AHCI vers 0001.0200, 32 command slots, 6 Gbps, SATA mode
-> ahci 0000:00:11.0: 3/3 ports implemented (port mask 0x38)
-> ahci 0000:00:11.0: flags: 64bit ncq sntf ilck pm led clo pmp pio slum part 
-> 
-> We can see that the controller supports slumber, partial,
-> and aggressive link power management ("pm").
-> 
-> 
-> A COMRESET is supposed to take the device out of partial or slumber.
-> 
-> Now, we do not know if the BIOS code sends a COMRESET, but it definitely
-> should.
-> 
-> Anyway, it is stated in AHCI 1.3.1 "10.1 Software Initialization of HBA",
-> 
-> "To aid system software during runtime, the BIOS shall ensure that the
-> following registers are initialized to values that are reflective of the
-> capabilities supported by the platform."
-> 
-> "-PI (ports implemented)"
-> 
-> 
->>
->> I think what would be worth a try would be to disable ALPM on reboot
->> from a driver shutdown hook. IIRC the ALPM level can be changed at runtime
->> from a sysfs file, so we should be able to do the same at shutdown ?
->>
->> Its been a while since I last touched the AHCI code, so I hope someone else
->> can write a proof of concept patch with the shutdown handler disabling ALPM
->> on reboot ?
-> 
-> I mean, that would be a quirk, and if such a quirk is created, it should
-> only be applied for buggy BIOS versions.
-> 
-> (Since BIOS is supposed to initialize the PI register properly.)
-> 
-> If
-> ahci.mobile_lpm_policy=1
-> or
-> ahci.mobile_lpm_policy=2
-> works around your buggy BIOS, then I suggest you keep that
-> until your BIOS vendor manages to release a new BIOS version.
+The other two are ok but this is new. How do you trigger this? I've never seen
+it in my randconfig builds...
 
-I agree with you that this is a BIOS bug of the motherboard in question
-and/or a bad interaction between the ATI SATA controller and Samsung SSD
-870* models. Note that given the age of the motherboard there are likely
-not going to be any BIOS updates fixing this though.
+-- 
+Regards/Gruss,
+    Boris.
 
-Certainly ahci.mobile_lpm_policy=x can be used to workaround this, but
-going by my experience from being involved in resolving:
-https://bugzilla.kernel.org/show_bug.cgi?id=201693
-which took a long time to resolve and has many comments (1).
-
-I'm afraid that we are going to see more users hit this. This seems
-to be another case of samsung sata SSDs and ATI SATA chipsets not
-liking each other but this time the problem is triggered by LPM rather
-then by NCQ and we likely did not hit this the last time we were
-seeing a lot of users reporting issues on this combo because so far
-LPM has defaulted to off in these cases.
-
-Note that in commit 7a8526a5cd51 which fixes the bug linked above,
-we already disable all NCQ use for "Samsung SSD 870*" models when
-used together with SATA controllers with a PCI vendor-id of ATI
-because of various severe issues when it is enabled.
-
-I strongly believe that to avoid further regressions from commit
-7627a0edef54 ("ata: ahci: Drop low power policy board type") on
-ATI SATA controller + Samsung SSD combinations we should probably
-extend the special handling of ATI SATA chipsets to also disable LPM.
-
-IOW add a new ATA_QUIRK_NO_LPM_ON_ATI flag which mirrors how
-the current ATA_QUIRK_NO_NCQ_ON_ATI works but then for LPM
-and set that for "Samsung SSD 870*".
-
-I can prepare a patch for this if that sounds like an acceptable
-solution to you.
-
-Regards,
-
-Hans
-
-
-1) I don't know if you know, but I'm the author of the initial addition
-of the "low power policy board type" list, because back then we
-needed ALPM to reach high PC-states (e.g. PC10) on Broadwell and newer
-Intel SoCs, while at the same time there were reports that ALPM was
-causing. I also added quite a few of the initial NOLPM __ata_dev_quirks[]
-entries.
-
-
-
-
+https://people.kernel.org/tglx/notes-about-netiquette
 
