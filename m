@@ -1,216 +1,174 @@
-Return-Path: <linux-kernel+bounces-553526-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-553527-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7D2ECA58AFF
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 05:00:26 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CB743A58B03
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 05:01:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ACA9F169DA7
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 04:00:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6272C3AA79E
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 04:01:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E24CC1BCA0E;
-	Mon, 10 Mar 2025 04:00:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 017E61BD9C9;
+	Mon, 10 Mar 2025 04:01:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="u76rC6KT"
-Received: from out199-13.us.a.mail.aliyun.com (out199-13.us.a.mail.aliyun.com [47.90.199.13])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="TqFPCmp6"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3184D199FBA;
-	Mon, 10 Mar 2025 04:00:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=47.90.199.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1DD51A23A0
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 04:01:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741579218; cv=none; b=BJ4li8xqogvj1hk9pTOSlTNPrajY1FzjdtfDkIUyzEavaB7EFRCjGSW+GSjpJtXhwh95PL9cdhnIwbYXu7Qu3HJ6T1HWHwp6ALRwVGpO7jDph0dhsixz2sFM+QN5rUuJNty8Xb1Ip/2Xe9FqzZXxUxS3pNwZ7Vf9R90bQy9YSGQ=
+	t=1741579277; cv=none; b=tSMo57Vi0kJrS0Dkxtim1jrN7NStVByYPafgP3bvL89d/Dyj+GNGW4Rv2yuUqaGluXUDqsp4bhczHAzs7Agq54D2YRhgB/2Ws32jcNvN543HpsAePx4Oa5d+8rR8cBeJuU5aL0zVr7jiOghpSuhiOiYIA8hQ3WfCDOhN/OxH3eU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741579218; c=relaxed/simple;
-	bh=CROjvy/MKdJ5/RFwYmWjeYXRcyQwv00nYgwEaSCxdpg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=MADYnCE1ZegzOuQ3nU3odqBVOGvTuWGRltL5Cf1GpeRDagMnUGCWNbB/coX2MZPOz29FV0sj4s5VLkRby2z9kH0r1eWK2UQgil5pM0bybVzbvWwuF0H7oGnvsapQ8xmxEVaAvXLythurWukTyudTXEkv6VjHAsPewSGPQh2O5b4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=u76rC6KT; arc=none smtp.client-ip=47.90.199.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1741579199; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=uqEuDYBQyu1rVnaZ3FTs3Lz5M58Kfacepcx3ohjxnR0=;
-	b=u76rC6KTa1rpdODYJkH43Wh2UFTvlbMYJneWhhFH8ZfK97tZuVxB+S3xPDU1CO2jS7OZ0fDN/Hwbs/NFmGfJNU2K+KZLZkZPBDAlmhI4Tnpqa0K4lt+7wPyZXxTX4zv3wtCww8KzP2aT/ZnVaMu1biNVgN8nL1nRAxP3S86TYgo=
-Received: from 30.246.161.128(mailfrom:xueshuai@linux.alibaba.com fp:SMTPD_---0WQym12P_1741579196 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Mon, 10 Mar 2025 11:59:57 +0800
-Message-ID: <deb6f0c4-77b8-431e-9b81-555a8344c750@linux.alibaba.com>
-Date: Mon, 10 Mar 2025 11:59:55 +0800
+	s=arc-20240116; t=1741579277; c=relaxed/simple;
+	bh=y2jgmxgCkCS0866p0uhw4Z/wKL7ZAlvCJDAr0KB4Wp8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=qXOHDthuChqT2L9tbVLgC6/3KcLEkReqa4v59UquG6EiEnYbkNS6jZfLPxMkWdwbbRYGRvPAw+Yw6GhH4j02HwdMF0VtQitlNV7eWOFQ1KPK4DqrOpyRbBJ9UAIx0cgB6xWywpCaY9ErknOrx/WOt/cWQSldQ8Gii+hZR6CoRf8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=TqFPCmp6; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1741579274;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=baDSD60KKAXA2YV4cwTHazyMng6zqZ9j6/BH6ENwQIo=;
+	b=TqFPCmp6FldnTqNHM9ffUXFPQbuMHMY+8uF5yS4iUpfs1qGhIFxWR2DWxPevrGMRgjWfuy
+	fW9doVJlPPFzhPvMq/3s14KwPYPw4x//GlcMa6sIPw8rQvlT0B8r2I5IdMQZ5i+i5yN4uO
+	gDt5RGpKIqfwCQId4tnYJfed5FyuRrc=
+Received: from mail-pj1-f72.google.com (mail-pj1-f72.google.com
+ [209.85.216.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-37-UnOc_ogPPTiT0tWf0e6BLw-1; Mon, 10 Mar 2025 00:01:13 -0400
+X-MC-Unique: UnOc_ogPPTiT0tWf0e6BLw-1
+X-Mimecast-MFC-AGG-ID: UnOc_ogPPTiT0tWf0e6BLw_1741579272
+Received: by mail-pj1-f72.google.com with SMTP id 98e67ed59e1d1-2ff605a7a43so11421253a91.3
+        for <linux-kernel@vger.kernel.org>; Sun, 09 Mar 2025 21:01:12 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741579271; x=1742184071;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=baDSD60KKAXA2YV4cwTHazyMng6zqZ9j6/BH6ENwQIo=;
+        b=WvU4flOt2UBbebzLZE++AXZ8UtC9+/9ORUzXvMhWwZZdk825OB/t+DIKkTZniHUJ1M
+         RqiahYewwI5reGvLkbfOVdKvep8p5zrcipQWAjOfZGiGEpAgpgJxcgirQWva11RfIXQM
+         FDPQ8g6BwsGfa6IZkuOgNCpMNkxYaRW7TLz5CSouCn/hAAQM7E5k+RV6DpuyTcH8zHSP
+         BmMPaAX9ShmTlMmbUiggnNZKtzNiufkr5I4UAersB050ehT0bALHuDNhLrn8mCbannid
+         EllmFaqK+dacMnvFx2V2NhJFh7T5qKKGNsw1Vn1j/FXC1PNzC8agC8fLlpPvk7xX1g8z
+         rWnw==
+X-Forwarded-Encrypted: i=1; AJvYcCUsN0qA7P5Rvz1mZ7tlYCi9F/64J9ynrow2dRfpCjG09q9OddIn3V4GKmYvfmcsp61g3Djc1V7TO9t/C2o=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyGj3yN20wQlH9FaQ7ZY8AMIJoEuIkfyGplKbhjYrsh1om6A2E+
+	5PsejzeG2U4qbjMl8kv0QXSogmsOvFv34m//Lr2W/aAyUNDEv2Z3CmAM4pfQugo6cZgNRhmqxsZ
+	Llz704g4JghTWUV2zvm3TKN80wUqXz/a3zie2bf753KotG3DdeFLt1e38/e0sgOHM18Pu2+IR/u
+	oQWG/m9+GMODKKdp62FkRi/QNkwRNLv1gHNTpR
+X-Gm-Gg: ASbGncsoQLae+OQwBaZupY7ULkh9G1jKklle46zw2GOgb9HNvLxqhEgRJ2tYM3N9uQ1
+	lRv3USrS9i52LvTg2qWM2eCosO5SkNNdoiwzyKKO36HEV7YPWuUWh7QP1QZrs5DX+0gjPhicDtg
+	==
+X-Received: by 2002:a17:90b:1b0b:b0:2fc:c262:ef4b with SMTP id 98e67ed59e1d1-2ff7cea9a99mr22401426a91.18.1741579271541;
+        Sun, 09 Mar 2025 21:01:11 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IF9DOsUxA9Z0UU+zFKp4XwB12kvLD6PT8eYjbCh1DLy1GK1oX1uE/LbhxDyNJ0rRDiXuxTT1vCPASJg6+fMr/4=
+X-Received: by 2002:a17:90b:1b0b:b0:2fc:c262:ef4b with SMTP id
+ 98e67ed59e1d1-2ff7cea9a99mr22401364a91.18.1741579271097; Sun, 09 Mar 2025
+ 21:01:11 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5] PCI: hotplug: Add a generic RAS tracepoint for hotplug
- event
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: lukas@wunner.de, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-edac@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
- helgaas@kernel.org, bhelgaas@google.com, tony.luck@intel.com, bp@alien8.de,
- mhiramat@kernel.org, mathieu.desnoyers@efficios.com, oleg@redhat.com,
- naveen@kernel.org, davem@davemloft.net, anil.s.keshavamurthy@intel.com,
- mark.rutland@arm.com, peterz@infradead.org, tianruidong@linux.alibaba.com
-References: <20250109025543.56830-1-xueshuai@linux.alibaba.com>
- <20250113155503.71467082@gandalf.local.home>
-From: Shuai Xue <xueshuai@linux.alibaba.com>
-In-Reply-To: <20250113155503.71467082@gandalf.local.home>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20250307-rss-v9-0-df76624025eb@daynix.com> <20250307-rss-v9-3-df76624025eb@daynix.com>
+ <CACGkMEsNHba=PY5UQoH1zdGQRiHC8FugMG1nkXqOj1TBdOQrww@mail.gmail.com>
+In-Reply-To: <CACGkMEsNHba=PY5UQoH1zdGQRiHC8FugMG1nkXqOj1TBdOQrww@mail.gmail.com>
+From: Jason Wang <jasowang@redhat.com>
+Date: Mon, 10 Mar 2025 12:01:00 +0800
+X-Gm-Features: AQ5f1JpaV-Y2lOTdTlLng-Bakedv0t_hz074LEAN3YdWqqKw7pRKMp2RrCa8b3E
+Message-ID: <CACGkMEtCEwSB7XvCg7_8ebkcM8o2s8JB2Err2f153L-_i2KtxA@mail.gmail.com>
+Subject: Re: [PATCH net-next v9 3/6] tun: Introduce virtio-net hash feature
+To: Akihiko Odaki <akihiko.odaki@daynix.com>
+Cc: Jonathan Corbet <corbet@lwn.net>, Willem de Bruijn <willemdebruijn.kernel@gmail.com>, 
+	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+	"Michael S. Tsirkin" <mst@redhat.com>, Xuan Zhuo <xuanzhuo@linux.alibaba.com>, 
+	Shuah Khan <shuah@kernel.org>, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	netdev@vger.kernel.org, kvm@vger.kernel.org, 
+	virtualization@lists.linux-foundation.org, linux-kselftest@vger.kernel.org, 
+	Yuri Benditovich <yuri.benditovich@daynix.com>, Andrew Melnychenko <andrew@daynix.com>, 
+	Stephen Hemminger <stephen@networkplumber.org>, gur.stavi@huawei.com, 
+	Lei Yang <leiyang@redhat.com>, Simon Horman <horms@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Mon, Mar 10, 2025 at 11:55=E2=80=AFAM Jason Wang <jasowang@redhat.com> w=
+rote:
+>
+> On Fri, Mar 7, 2025 at 7:01=E2=80=AFPM Akihiko Odaki <akihiko.odaki@dayni=
+x.com> wrote:
+> >
+> > Hash reporting
+> > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> >
+> > Allow the guest to reuse the hash value to make receive steering
+> > consistent between the host and guest, and to save hash computation.
+> >
+> > RSS
+> > =3D=3D=3D
+> >
+> > RSS is a receive steering algorithm that can be negotiated to use with
+> > virtio_net. Conventionally the hash calculation was done by the VMM.
+> > However, computing the hash after the queue was chosen defeats the
+> > purpose of RSS.
+> >
+> > Another approach is to use eBPF steering program. This approach has
+> > another downside: it cannot report the calculated hash due to the
+> > restrictive nature of eBPF steering program.
+> >
+> > Introduce the code to perform RSS to the kernel in order to overcome
+> > thse challenges. An alternative solution is to extend the eBPF steering
+> > program so that it will be able to report to the userspace, but I didn'=
+t
+> > opt for it because extending the current mechanism of eBPF steering
+> > program as is because it relies on legacy context rewriting, and
+> > introducing kfunc-based eBPF will result in non-UAPI dependency while
+> > the other relevant virtualization APIs such as KVM and vhost_net are
+> > UAPIs.
+> >
+> > Signed-off-by: Akihiko Odaki <akihiko.odaki@daynix.com>
+> > Tested-by: Lei Yang <leiyang@redhat.com>
+> > ---
+> >  Documentation/networking/tuntap.rst |   7 ++
+> >  drivers/net/Kconfig                 |   1 +
+> >  drivers/net/tap.c                   |  68 ++++++++++++++-
+> >  drivers/net/tun.c                   |  98 +++++++++++++++++-----
+> >  drivers/net/tun_vnet.h              | 159 ++++++++++++++++++++++++++++=
+++++++--
+> >  include/linux/if_tap.h              |   2 +
+> >  include/linux/skbuff.h              |   3 +
+> >  include/uapi/linux/if_tun.h         |  75 +++++++++++++++++
+> >  net/core/skbuff.c                   |   4 +
+> >  9 files changed, 386 insertions(+), 31 deletions(-)
 
+[...]
 
-在 2025/1/14 04:55, Steven Rostedt 写道:
-> On Thu,  9 Jan 2025 10:55:43 +0800
-> Shuai Xue <xueshuai@linux.alibaba.com> wrote:
-> 
->> diff --git a/drivers/pci/hotplug/trace.h b/drivers/pci/hotplug/trace.h
->> new file mode 100644
->> index 000000000000..5b60cd7bcffb
->> --- /dev/null
->> +++ b/drivers/pci/hotplug/trace.h
->> @@ -0,0 +1,68 @@
->> +/* SPDX-License-Identifier: GPL-2.0 */
->> +#if !defined(_TRACE_HW_EVENT_PCI_HP_H) || defined(TRACE_HEADER_MULTI_READ)
->> +#define _TRACE_HW_EVENT_PCI_HP_H
->> +
->> +#include <linux/tracepoint.h>
->> +
->> +#undef TRACE_SYSTEM
->> +#define TRACE_SYSTEM pci
->> +
->> +#define PCI_HOTPLUG_EVENT					\
->> +	EM(PCI_HOTPLUG_LINK_UP,			"Link Up")	\
->> +	EM(PCI_HOTPLUG_LINK_DOWN,		"Link Down")	\
->> +	EM(PCI_HOTPLUG_CARD_PRESENT,		"Card present")	\
->> +	EMe(PCI_HOTPLUG_CARD_NOT_PRESENT,	"Card not present")
-> 
-> Since you are creating these enums in this patch, you can also do a
-> shortcut here too. Instead of doing the define here, move it to
-> include/uapi/linux/pci.h:
-> 
->> +
->> +/* Enums require being exported to userspace, for user tool parsing */
->> +#undef EM
->> +#undef EMe
->> +#define EM(a, b)	TRACE_DEFINE_ENUM(a);
->> +#define EMe(a, b)	TRACE_DEFINE_ENUM(a);
->> +
->> +PCI_HOTPLUG_EVENT
->> +
->> +/*
->> + * Now redefine the EM() and EMe() macros to map the enums to the strings
->> + * that will be printed in the output.
->> + */
->> +#undef EM
->> +#undef EMe
->> +#define EM(a, b)	{a, b},
->> +#define EMe(a, b)	{a, b}
->> +
->> +TRACE_EVENT(pci_hp_event,
->> +
->> +	TP_PROTO(const char *port_name,
->> +		 const char *slot,
->> +		 const int event),
->> +
->> +	TP_ARGS(port_name, slot, event),
->> +
->> +	TP_STRUCT__entry(
->> +		__string(	port_name,	port_name	)
->> +		__string(	slot,		slot		)
->> +		__field(	int,		event	)
->> +	),
->> +
->> +	TP_fast_assign(
->> +		__assign_str(port_name);
->> +		__assign_str(slot);
->> +		__entry->event = event;
->> +	),
->> +
->> +	TP_printk("%s slot:%s, event:%s\n",
->> +		__get_str(port_name),
->> +		__get_str(slot),
->> +		__print_symbolic(__entry->event, PCI_HOTPLUG_EVENT)
->> +	)
->> +);
->> +
->> +#endif /* _TRACE_HW_EVENT_PCI_HP_H */
->> +
->> +#undef TRACE_INCLUDE_PATH
->> +#define TRACE_INCLUDE_PATH  ../../drivers/pci/hotplug
->> +#undef TRACE_INCLUDE_FILE
->> +#define TRACE_INCLUDE_FILE trace
->> +
->> +/* This part must be outside protection */
->> +#include <trace/define_trace.h>
->> diff --git a/include/uapi/linux/pci.h b/include/uapi/linux/pci.h
->> index a769eefc5139..4f150028965d 100644
->> --- a/include/uapi/linux/pci.h
->> +++ b/include/uapi/linux/pci.h
->> @@ -39,4 +39,11 @@
->>   #define PCIIOC_MMAP_IS_MEM	(PCIIOC_BASE | 0x02)	/* Set mmap state to MEM space. */
->>   #define PCIIOC_WRITE_COMBINE	(PCIIOC_BASE | 0x03)	/* Enable/disable write-combining. */
->>   
->> +enum pci_hotplug_event {
->> +	PCI_HOTPLUG_LINK_UP,
->> +	PCI_HOTPLUG_LINK_DOWN,
->> +	PCI_HOTPLUG_CARD_PRESENT,
->> +	PCI_HOTPLUG_CARD_NOT_PRESENT,
->> +};
-> 
-> Instead of defining the enum as you did above, if you have the define of
-> the enums here, you could do:
-> 
-> #define PCI_HOTPLUG_EVENT					\
-> 	EM(PCI_HOTPLUG_LINK_UP,			"Link Up")	\
-> 	EM(PCI_HOTPLUG_LINK_DOWN,		"Link Down")	\
-> 	EM(PCI_HOTPLUG_CARD_PRESENT,		"Card present")	\
-> 	EMe(PCI_HOTPLUG_CARD_NOT_PRESENT,	"Card not present")
-> 
-> #undef EM
-> #undef EMe
-> #define EM(a, b)	a,
-> #define EMe(a, b)	a,
-> 
-> enum pci_hotplug_event {
-> 	PCI_HOTPLUG_EVENT
-> };
-> 
-> Then you only have one place to worry about adding new enums ;-)
+> > + *
+> > + * The %TUN_VNET_HASH_REPORT flag set with this ioctl will be effectiv=
+e only
+> > + * after calling the %TUNSETVNETHDRSZ ioctl with a number greater than=
+ or equal
+> > + * to the size of &struct virtio_net_hdr_v1_hash.
+>
+> So you had a dependency check already for vnet hdr len. I'd still
+> suggest to split this into rss and hash as they are separated
+> features. Then we can use separate data structure for them instead of
+> a container struct.
+>
 
-Hi, Steve,
+Besides this, I think we still need to add new bits to TUNGETIFF to
+let userspace know about the new ability.
 
-If I move PCI_HOTPLUG_EVENT into one place, `include/upai/linux/pci.h`,
-I need to include:
+Thanks
 
-     #include <linux/tracepoint.h>
-
-Then, kernel build fails with CONFIG_UAPI_HEADER_TEST=y:
-
-$ make -j128
-   DESCEND objtool
-   CALL    scripts/checksyscalls.sh
-   INSTALL libsubcmd_headers
-   HDRTEST usr/include/linux/pci.h
-In file included from <command-line>:32:
-./usr/include/linux/pci.h:22:10: fatal error: linux/tracepoint.h: No such file or directory
-    22 | #include <linux/tracepoint.h>
-       |          ^~~~~~~~~~~~~~~~~~~~
-compilation terminated.
-make[4]: *** [usr/include/Makefile:85: usr/include/linux/pci.hdrtest] Error 1
-make[3]: *** [scripts/Makefile.build:465: usr/include] Error 2
-make[2]: *** [scripts/Makefile.build:465: usr] Error 2
-make[2]: *** Waiting for unfinished jobs....
-make[1]: *** [/media/nvme/shawn.xs/kernels/linux/Makefile:1994: .] Error 2
-make: *** [Makefile:251: __sub-make] Error 2
-
-Do you have any objections that I reverted to this version v5?
-
-Thanks.
-Shuai
 
