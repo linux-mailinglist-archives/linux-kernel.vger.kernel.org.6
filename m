@@ -1,106 +1,115 @@
-Return-Path: <linux-kernel+bounces-554061-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-554062-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A40D3A5925C
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 12:11:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 65381A59260
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 12:11:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E29DF16BAD6
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 11:11:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A43BC16BB38
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 11:11:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01ECA227E8F;
-	Mon, 10 Mar 2025 11:11:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA5872288C6;
+	Mon, 10 Mar 2025 11:11:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QsQNhNyq"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="KQ0f2W+o"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5454128EA;
-	Mon, 10 Mar 2025 11:11:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA5FB227581;
+	Mon, 10 Mar 2025 11:11:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741605085; cv=none; b=YaG5a+u2AnsBmunalGkVV2n6Et9HippdtIcCdKX7sx/9iwQWb1GO0LLTUkChVogI7o7g42wUJolILG4ifeLzbc81JaIEhv2VosJRz2iULjz3aYMs/+F5UOXGjR6Kc7dClajhRaGcfz0EB+KZPm8MMxF44LQCpbM3EENtblb0fkw=
+	t=1741605090; cv=none; b=Gtq4YhrPWeyCnIUtGxICKjIV7BAHObZogo8LkWv8d5StnPJBbBrZ5atj0ieLUokEL19CG6xsoQm/zGnoduHBGBbbe97TO7+AnDkm6kE6cJkHPTAxoRMCbgtABPBWsSvR0KJl1SgaCriTq6EFXXXvv3ZNrJnq5iDkBPw8NU4qbRg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741605085; c=relaxed/simple;
-	bh=PcALL6rKv2YNRdk+iN9+OwtZnMRQ9F2gIOkzlA2Ao6Q=;
+	s=arc-20240116; t=1741605090; c=relaxed/simple;
+	bh=UxOUffZNESsbT7Z8GSqYcfxxCZg7cmpwRMjI71zfCXU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IutcKiZ8QBeRjdR2WjSHZCSYYvWRDLnmdt+6r19H3rUFoSY7dJWz5ei45GfVAMPruXJY/9HckhMJz8jacJrh9iE4zASU6pyGCm6ZXyXZLW/UiqAa+kzMR38oESIXOWo2oAqYSwat7UIVjtTAtDdZXL+IZDd2uvzVlz1g5EIJZPo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QsQNhNyq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 31CF7C4CEED;
-	Mon, 10 Mar 2025 11:11:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741605084;
-	bh=PcALL6rKv2YNRdk+iN9+OwtZnMRQ9F2gIOkzlA2Ao6Q=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=QsQNhNyqz3u967OZhTw2W4L2OHEPx0a+JxTIxyp26cigk9kcup0dXLqRf4KPS2Z0x
-	 R5nhRW793XtaSYoPQwTeJPehoPmBeEmrvNu/AUYOKIMWYUoYrH9Sp+ABXwkaM5UFif
-	 WcpRC01GLwDFlrZ4p2KeMcRECUmu4WoHV5Kuq9Vyfe7078QLe29oJ0VfyuRh/Ma4us
-	 kLCnbwdbpUTsQsw9B+OHFpE6phnZMvzJ+h+26Q9/lD4gzlhB4Nta30Afc7yivuVEAH
-	 Ct4Az3AkOXX4YXxpAmxii4IUG6QAeZwoGHzbCsQdHMh/w+04tWYJ/AY7k42wOBDtuG
-	 gil99/171VexQ==
-Date: Mon, 10 Mar 2025 12:11:18 +0100
-From: Carlos Maiolino <cem@kernel.org>
-To: John Garry <john.g.garry@oracle.com>
-Cc: brauner@kernel.org, djwong@kernel.org, linux-xfs@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, ojaswin@linux.ibm.com, 
-	ritesh.list@gmail.com, martin.petersen@oracle.com, tytso@mit.edu, 
-	linux-ext4@vger.kernel.org
-Subject: Re: [PATCH v4 11/12] xfs: Update atomic write max size
-Message-ID: <egqflg5pygs4454uz2yjmoachsfwpl3jqlhfy3hp6feptnylcl@74aeqdedvira>
-References: <20250303171120.2837067-1-john.g.garry@oracle.com>
- <2LEUjvzJ3RO3jyirsnti2pPKtOuVZZt-wKhzIi2mfCPwOESoN_SuN9GjHA4Iu_C4LRZQxiZ6dF__eT6u-p8CdQ==@protonmail.internalid>
- <20250303171120.2837067-12-john.g.garry@oracle.com>
- <bed7wptkueyxnjvaq4isizybxsagh7vb7nx7efcyamvtzbot5p@oqrij3ahq3vl>
- <QIPhZNej-x0SeCVuzuqhmRIPUPKvV7w_4DB3ehJ2dYmLS1kwYGIJi1F3F34dhPTCy6oBq_3O-4Kjxxt4cIiP9Q==@protonmail.internalid>
- <c2fdb9bb-e360-4ece-930d-bab4354f1abf@oracle.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=DTgNNY1U10lLLKKdCqJIQEejzSQbRvKw/TPdoEnFCEjgZhOv/0O0r/+N6sdTnwa723lSJ5jiQfTPKHERs/CUY7xyCNeftN8j4LiOWIwqDurIO6vUMMsov9zMHCGS8u11vjrd7ypuvgWYJCCUgFVf1R+8Hsi4EkKqUc1jiPY3rJ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=KQ0f2W+o; arc=none smtp.client-ip=198.175.65.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1741605089; x=1773141089;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=UxOUffZNESsbT7Z8GSqYcfxxCZg7cmpwRMjI71zfCXU=;
+  b=KQ0f2W+oybCtodNpu8GCcIfn/wRVmgtldIHQnRmjrHAE98ufhCZxZzsf
+   Yx88d/FtsOV9kRI8nGbren/4ZxiaqED6UVVghaMywdmuwi4KS/ZuTuRu7
+   bLdftLGPqEef36DUqIAqyQCizBzSFF6tfSEXEfQSoWFf1FLa0m5nTR640
+   +6QsylhDBiEfvvJxkGjirytYsyJy72lNy+dMvV5/Fp1emnUKfC1nY0uLh
+   IdGoDxerNFGSNx9P8l9330RgDYuaZcpgW4dQwOPtF5Z8vbz1PKkAGuPhr
+   wD/L2hBCWXZi9cT5omPBTDjVH0rmIENnZFtaN8ZGX4XmY9shwdKYDrYax
+   A==;
+X-CSE-ConnectionGUID: cfJMhILOTze/KIu9RTA/5g==
+X-CSE-MsgGUID: goA/J/jWR1KLeUnKX4daCw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11368"; a="42787617"
+X-IronPort-AV: E=Sophos;i="6.14,235,1736841600"; 
+   d="scan'208";a="42787617"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Mar 2025 04:11:28 -0700
+X-CSE-ConnectionGUID: qJDWkpdYR4WjODFSm7tG8A==
+X-CSE-MsgGUID: lkCayGBqTPmjAy8j5OjF3Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,235,1736841600"; 
+   d="scan'208";a="120668568"
+Received: from turnipsi.fi.intel.com (HELO kekkonen.fi.intel.com) ([10.237.72.44])
+  by fmviesa009-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Mar 2025 04:11:26 -0700
+Received: from kekkonen.localdomain (localhost [127.0.0.1])
+	by kekkonen.fi.intel.com (Postfix) with ESMTP id A323A11F7F0;
+	Mon, 10 Mar 2025 13:11:23 +0200 (EET)
+Date: Mon, 10 Mar 2025 11:11:23 +0000
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+From: Sakari Ailus <sakari.ailus@linux.intel.com>
+To: git@apitzsch.eu
+Cc: Ricardo Ribalda <ribalda@kernel.org>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org,
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH RESEND 0/4] media: i2c: imx214: Add support for 23.88MHz
+ clock
+Message-ID: <Z87I2xh0HY-YD_tZ@kekkonen.localdomain>
+References: <20250308-imx214_clk_freq-v1-0-467a4c083c35@apitzsch.eu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <c2fdb9bb-e360-4ece-930d-bab4354f1abf@oracle.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250308-imx214_clk_freq-v1-0-467a4c083c35@apitzsch.eu>
 
-On Mon, Mar 10, 2025 at 10:54:23AM +0000, John Garry wrote:
-> On 10/03/2025 10:06, Carlos Maiolino wrote:
-> >> diff --git a/fs/xfs/xfs_mount.h b/fs/xfs/xfs_mount.h
-> >> index fbed172d6770..bc96b8214173 100644
-> >> --- a/fs/xfs/xfs_mount.h
-> >> +++ b/fs/xfs/xfs_mount.h
-> >> @@ -198,6 +198,7 @@ typedef struct xfs_mount {
-> >>   	bool			m_fail_unmount;
-> >>   	bool			m_finobt_nores; /* no per-AG finobt resv. */
-> >>   	bool			m_update_sb;	/* sb needs update in mount */
-> >> +	xfs_extlen_t		awu_max;	/* data device max atomic write */
-> > Could you please rename this to something else? All fields within xfs_mount
-> > follows the same pattern m_<name>. Perhaps m_awu_max?
-> 
-> Fine, but I think I then need to deal with spilling multiple lines to
-> accommodate a proper comment.
-> 
-> >
-> > I was going to send a patch replacing it once I had this merged, but giving
-> > Dave's new comments, and the conflicts with zoned devices, you'll need to send a
-> > V5, so, please include this change if nobody else has any objections on keeping
-> > the xfs_mount naming convention.
-> 
-> What branch do you want me to send this against?
+Hi André,
 
-I just pushed everything to for-next, so you can just rebase it against for-next
-
-Notice this includes the iomap patches you sent in this series which Christian
-picked up. So if you need to re-work something on the iomap patches, you'll
-probably need to take this into account.
-
-Cheers.
-Carlos
-
+On Sat, Mar 08, 2025 at 10:47:54PM +0100, André Apitzsch via B4 Relay wrote:
+> The imx214 driver currently supports only a 24MHz external clock. But
+> there are devices, like Qualcomm-MSM8916-based phones, which cannot
+> provide this frequency. To make the sensor usable by those devices, add
+> support for 23.88MHz clock.
 > 
-> Thanks,
-> John
+> Signed-off-by: André Apitzsch <git@apitzsch.eu>
+> ---
+> André Apitzsch (4):
+>       media: i2c: imx214: Calculate link bit rate from clock frequency
+>       media: i2c: imx214: Prepare for variable clock frequency
+>       media: i2c: imx214: Read clock frequency from device tree
+>       media: i2c: imx214: Add support for 23.88MHz clock
 > 
+>  drivers/media/i2c/imx214.c | 188 +++++++++++++++++++++++++++++++++++----------
+>  1 file changed, 146 insertions(+), 42 deletions(-)
+
+Thanks for the patches.
+
+Do you think the driver could use the CCS PLL calculator? The PLL appears
+to be compliant. The AR0234 driver will do the same. (The sensor might just
+work with the CCS driver, too, but that's another discussion.)
+
+-- 
+Kind regards,
+
+Sakari Ailus
 
