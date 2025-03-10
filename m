@@ -1,116 +1,139 @@
-Return-Path: <linux-kernel+bounces-553550-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-553551-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EB843A58B51
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 05:58:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D860A58B6A
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 06:00:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3365D168F74
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 04:58:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7B797169149
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 05:00:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3ABD01C32FF;
-	Mon, 10 Mar 2025 04:58:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E83C1BE251;
+	Mon, 10 Mar 2025 05:00:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="CohLkN3d"
-Received: from smtpbgsg1.qq.com (smtpbgsg1.qq.com [54.254.200.92])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="motiyE2o"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E34C181E;
-	Mon, 10 Mar 2025 04:57:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.254.200.92
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F75A23A0
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 05:00:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741582680; cv=none; b=d1akjnxwz6k9aZc+jrumCtPhCos3cGu/8q+jtApPXRAFIcL7qHRJHc50P1BlOA4cx8ep6wx1+OqB5xTShddMc4fhhTKcxoqkb/SQ/aNS5kD83BU+P0QJ5ECZaPvkuFTRE1li14Qfipv70dm9wz+UnLVDjTTDYuqjBLTHNv0KmiU=
+	t=1741582835; cv=none; b=H6ICY8ADqfDJUWYH6RPHExm/SX9feTA+IVh34GMzFujDYT5xC1H8RCBODjiuMSSPR5FTRRrLpdBVVDZzp6AWcVZyqn5niuzUoRno4QprttOt3DDCwz+uSXIj1/rO9ZAj4ZbIsWMy79yY7Q2K3SXiqdsgTjZiN8+XrFj624jguho=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741582680; c=relaxed/simple;
-	bh=UXTg8HxhyDLnMUVUUzXdia6CGqTXBbweOT0vrR3/CQM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=h+RuxgFB93IoWVoUFE1WPjaA5DNJpPpNFlid9y90LAp+K1RsXhzojFJP7RSvdP0LJWAPKE/I4WFr6uFV/ZX5iLwa16dDj2iEJheraLsmWSk+YNfb2zBz9ExKaRidoUZCD4azfzJsJNu/wXyJdHxkEYl6Ofd1KdU8ZFXAPJSHeec=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=CohLkN3d; arc=none smtp.client-ip=54.254.200.92
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
-	s=onoh2408; t=1741582612;
-	bh=1Ejw7dnHXGbcgwStfAw/3eaY/dgh+jPF9zfi0J6jwa8=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=CohLkN3d3I9fXk7WPJD62ofuUZDLzfGlHnjH7/DNaRO7XrKjwKXjAcPHDXbj2i3II
-	 ZqANN22qs3nMOxhJvHSHfCg3r0GH05hqhB4YWEZ9LBjci9NvfJM44ytRR42IVVc/Ey
-	 U+eTe+SQar5jFFA1nX1sERPjs2SUXwXUxPajcFWM=
-X-QQ-mid: bizesmtpip3t1741582601tyaexxw
-X-QQ-Originating-IP: S+iHdvzEOaySNSWMHE4rAW5Kl94eu9GLfHJ4prLBux8=
-Received: from localhost.localdomain ( [localhost])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Mon, 10 Mar 2025 12:56:39 +0800 (CST)
-X-QQ-SSF: 0002000000000000000000000000000
-X-QQ-GoodBg: 1
-X-BIZMAIL-ID: 7054169263967918300
-From: WangYuli <wangyuli@uniontech.com>
-To: lee@kernel.org,
-	danielt@kernel.org,
-	jingoohan1@gmail.com,
-	deller@gmx.de
-Cc: dri-devel@lists.freedesktop.org,
-	linux-fbdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	zhanjun@uniontech.com,
-	niecheng1@uniontech.com,
-	guanwentao@uniontech.com,
-	chenlinxuan@uniontech.com,
-	WangYuli <wangyuli@uniontech.com>
-Subject: [PATCH] backlight: tdo24m: Eliminate redundant whitespace
-Date: Mon, 10 Mar 2025 12:56:36 +0800
-Message-ID: <8FC39A4DC2529591+20250310045636.14329-1-wangyuli@uniontech.com>
-X-Mailer: git-send-email 2.47.2
+	s=arc-20240116; t=1741582835; c=relaxed/simple;
+	bh=FbKQgE+nEkhykKhL5CGeuwVAxEG82UnFKn4gh6uIss4=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=bd6xYdsj5IFpM2SvxY4X9T8A93o3L1sbeYqudKSOR4n8T7+X/mId0VRf0/19R22j9cGJJX6OOITpXoWQoupWvvthXid29uStb0FzN3xfFtfh0rW+5nNjN0Etx9aUQT09Ndo6w5ywQhO5rwEJ5Jj0FzY1OQ1XJiSQ2SNZ1XthvvA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=motiyE2o; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 529KepAJ020348;
+	Mon, 10 Mar 2025 05:00:12 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=pp1; bh=tYzngVIj/pzWvrZmaIiWWQg1pW8CUV
+	O4dUVHdoOjGiw=; b=motiyE2oP4r4QHOHr0Z+h027QCFKmnrxDQ+gTa3hLAQYAw
+	bGhxNX+KF+RNgk+4EOPBsgdU9SEY+pszeA+uAQM+WDlWXAAvnJoVp/N5v4dyM/tY
+	qk8viwnABkx/RKu2iv5NvdfK7yfo1Kd47KjK5xTQAV/OdiE8ALphSFC8lHSkzi/Q
+	B1O3oyBjT6e9bZfKwX3lp1iUGh6YFHSbTs6bbR3dpyQEZCGfPHMPld46UwzU4rGn
+	JyAyGqz4uUaYpztyxus/jdWziJZcHKFHe7BGchEjrhh/v+/oDYldeye8DGqt1qeF
+	eHJNUmJE5xpHiFhGsKQAW0p1vWnZUov8Tw5x3T0w==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 459j6yh6sh-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 10 Mar 2025 05:00:12 +0000 (GMT)
+Received: from m0353725.ppops.net (m0353725.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 52A50Bns014700;
+	Mon, 10 Mar 2025 05:00:11 GMT
+Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 459j6yh6s9-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 10 Mar 2025 05:00:11 +0000 (GMT)
+Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 52A2HfqL027530;
+	Mon, 10 Mar 2025 05:00:11 GMT
+Received: from smtprelay04.fra02v.mail.ibm.com ([9.218.2.228])
+	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 4591qkctj9-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 10 Mar 2025 05:00:11 +0000
+Received: from smtpav01.fra02v.mail.ibm.com (smtpav01.fra02v.mail.ibm.com [10.20.54.100])
+	by smtprelay04.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 52A507U234865910
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 10 Mar 2025 05:00:07 GMT
+Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id E705E20043;
+	Mon, 10 Mar 2025 05:00:06 +0000 (GMT)
+Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id E2FC22004E;
+	Mon, 10 Mar 2025 05:00:03 +0000 (GMT)
+Received: from vaibhav?linux.ibm.com (unknown [9.124.218.228])
+	by smtpav01.fra02v.mail.ibm.com (Postfix) with SMTP;
+	Mon, 10 Mar 2025 05:00:03 +0000 (GMT)
+Received: by vaibhav@linux.ibm.com (sSMTP sendmail emulation); Mon, 10 Mar 2025 10:30:02 +0530
+From: Vaibhav Jain <vaibhav@linux.ibm.com>
+To: Gautam Menghani <gautam@linux.ibm.com>, maddy@linux.ibm.com,
+        mpe@ellerman.id.au, npiggin@gmail.com, christophe.leroy@csgroup.eu,
+        naveen@kernel.org
+Cc: Gautam Menghani <gautam@linux.ibm.com>, linuxppc-dev@lists.ozlabs.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] powerpc/pseries/msi: Avoid reading PCI device registers
+ in reduced power states
+In-Reply-To: <20250305090237.294633-1-gautam@linux.ibm.com>
+References: <20250305090237.294633-1-gautam@linux.ibm.com>
+Date: Mon, 10 Mar 2025 10:30:02 +0530
+Message-ID: <87tt81tr8t.fsf@vajain21.in.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-QQ-SENDSIZE: 520
-Feedback-ID: bizesmtpip:uniontech.com:qybglogicsvrgz:qybglogicsvrgz8a-1
-X-QQ-XMAILINFO: MsxCBMBvQQ1NtRdpMOwG3VxtA96L7hcYpK5OYkx2NK9U6euiViTVgh3z
-	R28mKwLnY4VkvlJDnSmJZTqRXrUTm+pG9HikFvG7ED8S2Y9m1gaFgYJe8uTmXQBWOE2tDag
-	J70/96jrAFHLe0iOkQa4Uzuc4jksy1om9KMv0eZCYlNfqua+iDfTxgCYJ4mYcJrLtEqNWD0
-	TzbSM9XgoqFDI5y6ahzDF5uNTGnZ8LmrLfEyrHLYv0jklCLiNqMsOOHVzqpDBuBrIruGtYM
-	EKUtJPDpUMAXVlU5YOPcEeYkxG9VgMjh6K8l7N98woxrcj97N6vWh0vrR0MXwpRFSu74PeR
-	lFKeCchDwJ7Vk+BaznWFuYDxV9xdSt6VpB5cRnSt2V173gUMfoIUtHhVHzkbA3kwC24P8sB
-	Bc5Z9Tg3k8A2OnfZ/Lc1DLRqNl+bbAgVIjpS5pe4ZWQjiWw1Ce/ZuUIeXUp3RVjQRPFGc0e
-	nVLscg0IZ5WG2LA8ZMIRwVJYZuYctaWmwHesXzydkHzlypLZuQYRCxz9v7PAhxzDquUYD4A
-	BaqHC5FcmZZJ939mWWxCQGpUdm7daib11ByC8Uk8DVhSC0rF1Ied3xg5bUbEGT2tdmgIpXX
-	Z+d0Y/pa6OYV9TYIslSOGub3MrGSPvY7rFcUNsbJfp+5io7CGDl06SceonanpJhidULISwf
-	7BdVoNyefsTgSAUTrw+wJM0rfYBPQgpGVU0MPFb+WW+YehD3KAicSFWZeOoMnLwmu7m9KN/
-	HERvSVolEMsRI+6zDyZwJLQrzZNmS6u880dVl8Tkl5958hILnwY6Gumis2ItWebkp60GK9X
-	ZASkCkFwM7/gbTh5n1RinPbJshNDd4NfVOmVPoNPhhu2Xq6KEbpzlvH3Jz56LzGONOgaqOd
-	lS+G2Bjj1YgxuEOBCeYs3hUT20Pl2UKKMIGbE3HpJSVEHqOmkrTTe9SFDuQ4iltfiXdrw4O
-	bVo20UzLLt6k18XDWFwQytbIVozfRKNZr5ImOlcWSZUlMRGsUXKqtdTHizedwNkuuusBPlE
-	m0WyfFXfjdcMdIGSPj
-X-QQ-XMRINFO: Mp0Kj//9VHAxr69bL5MkOOs=
-X-QQ-RECHKSPAM: 0
+Content-Type: text/plain
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: FQIXXM5-dJMkqGfkkabZWwAJ7PBnfEWC
+X-Proofpoint-ORIG-GUID: DkN087udYypB2ASs1EV_FiKFSW_-CNnk
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-10_01,2025-03-07_03,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
+ malwarescore=0 mlxscore=0 priorityscore=1501 suspectscore=0 adultscore=0
+ spamscore=0 phishscore=0 bulkscore=0 clxscore=1015 mlxlogscore=922
+ lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2502100000 definitions=main-2503100036
 
-The description for CONFIG_LCD_TDO24M has redundant whitespace.
-Trim it to keep the code tidy.
+Gautam Menghani <gautam@linux.ibm.com> writes:
 
-Signed-off-by: WangYuli <wangyuli@uniontech.com>
----
- drivers/video/backlight/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> When a system is being suspended to RAM, the PCI devices are also
+> suspended and the PPC code ends up calling pseries_msi_compose_msg() and
+> this triggers the BUG_ON() in __pci_read_msi_msg() because the device at
+> this point is in reduced power state. In reduced power state, the memory
+> mapped registers of the PCI device are not accessible.
+>
+> To replicate the bug:
+> 1. Make sure deep sleep is selected
+> 	# cat /sys/power/mem_sleep
+> 	s2idle [deep]
+>
+> 2. Make sure console is not suspended (so that dmesg logs are visible)
+> 	echo N > /sys/module/printk/parameters/console_suspend
+>
+> 3. Suspend the system
+> 	echo mem > /sys/power/state
+>
+> To fix this behaviour, read the cached msi message of the device when the
+> device is not in PCI_D0 power state instead of touching the hardware.
+>
+> Fixes: a5f3d2c17b07 ("powerpc/pseries/pci: Add MSI domains")
+> Cc: stable@vger.kernel.org # v5.15+
+> Signed-off-by: Gautam Menghani <gautam@linux.ibm.com>
+LGTM. Hence
+Reviewed-by: Vaibhav Jain <vaibhav@linux.ibm.com>
 
-diff --git a/drivers/video/backlight/Kconfig b/drivers/video/backlight/Kconfig
-index 3614a5d29c71..f2d7c4fe3ba5 100644
---- a/drivers/video/backlight/Kconfig
-+++ b/drivers/video/backlight/Kconfig
-@@ -70,7 +70,7 @@ config LCD_ILI9320
- 	  then say y to include a power driver for it.
- 
- config LCD_TDO24M
--	tristate "Toppoly TDO24M  and TDO35S LCD Panels support"
-+	tristate "Toppoly TDO24M and TDO35S LCD Panels support"
- 	depends on SPI_MASTER
- 	help
- 	  If you have a Toppoly TDO24M/TDO35S series LCD panel, say y here to
 -- 
-2.47.2
-
+Cheers
+~ Vaibhav
 
