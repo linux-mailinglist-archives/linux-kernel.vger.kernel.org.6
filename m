@@ -1,65 +1,65 @@
-Return-Path: <linux-kernel+bounces-554073-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-554074-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3FC9BA592A5
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 12:21:51 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2DF74A592A6
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 12:22:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6692416C0AB
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 11:21:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BBB5D3A64D1
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 11:22:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA80B21E0A2;
-	Mon, 10 Mar 2025 11:21:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D9AA21D5B2;
+	Mon, 10 Mar 2025 11:22:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=nbd.name header.i=@nbd.name header.b="bVSCJuES"
-Received: from nbd.name (nbd.name [46.4.11.11])
+	dkim=pass (2048-bit key) header.d=web.de header.i=spasswolf@web.de header.b="Kh9aIpwL"
+Received: from mout.web.de (mout.web.de [212.227.15.3])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28B17192580;
-	Mon, 10 Mar 2025 11:21:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.4.11.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B66E42A80
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 11:22:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741605700; cv=none; b=FWcnZ9Y76KdoAN2IMzAUEtYlSgLNTZYzB47/dkw1qD77FYkO875i7TaSJbDdq64yYZInNYuZCorw3P16f1cAoMTYaBpgcXU4nLGEthZ8eZLe4d34IAFKIQac9qi6wkJM5Qh5zxt5jnkTrZQV1PU7L1Dnr2kyujHwOj1hQ1YUcOw=
+	t=1741605751; cv=none; b=DtCm5TW1MYy1ZxHfKjSBS3Eu0mAsSm7j/q0qO7Ns5AxO249Cz/H/Kind2MKjv0Sh9Yj6QKpl8qSQ+ZSPPBnJIM/GkuHYtSM7JvIjKvtpEoUuWlWG9pL5mLzme2w7FF289J+onZ454a0qAEFAepWOZCvBcfMGbTNZmWbc5cM1IBc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741605700; c=relaxed/simple;
-	bh=bE8tMZAyDMevNCLzxK3lkI0jlkL810w8iRNQz71VWKY=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=EYOUSmgug0F5WsXqvkvTRhdeq1taTx/OVGzJY+ihGxHcxl4QRphPwI434ovIon7tkyQ4IByv1gvccTrlHh+fSU2hZKM8iWYIhSKTkcLZHzeEhDTeQOFt7R9gOVfZZJLkzG6CI6ar0CTa/rwzDpQPjNDZDOyvuKsZ5RmvUwFx+GI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nbd.name; spf=none smtp.mailfrom=nbd.name; dkim=pass (1024-bit key) header.d=nbd.name header.i=@nbd.name header.b=bVSCJuES; arc=none smtp.client-ip=46.4.11.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nbd.name
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=nbd.name
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=nbd.name;
-	s=20160729; h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:
-	Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:Content-Description:
-	Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
-	In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=M4FrvF1IcMf9Ag+QFJ2jji+690UfAG0H/9opoj+3sck=; b=bVSCJuES+Sp+HD36dCCRDCPheC
-	YF5G/7s0EqI5MgfKT+CNJ24oL9c85/CB5KB314yk3jvKZjViqKfXp0SgTHgEnyAHwgYYA2nrk0jt8
-	50t2zOH3ZImngl7zl29W8egsWlpCJrIwRFaFNo4+jPT9w2zLa72jUqScRRuNNXKN+frk=;
-Received: from p5b206ef1.dip0.t-ipconnect.de ([91.32.110.241] helo=Maecks.lan)
-	by ds12 with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305_SHA256
-	(Exim 4.96)
-	(envelope-from <nbd@nbd.name>)
-	id 1trbCD-00FdkE-2c;
-	Mon, 10 Mar 2025 12:21:21 +0100
-From: Felix Fietkau <nbd@nbd.name>
-To: netdev@vger.kernel.org,
-	Eric Dumazet <edumazet@google.com>,
-	Neal Cardwell <ncardwell@google.com>,
-	Kuniyuki Iwashima <kuniyu@amazon.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	David Ahern <dsahern@kernel.org>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Simon Horman <horms@kernel.org>,
-	Willem de Bruijn <willemb@google.com>
-Cc: linux-kernel@vger.kernel.org
-Subject: [PATCH net v2] net: ipv6: fix TCP GSO segmentation with NAT
-Date: Mon, 10 Mar 2025 12:21:20 +0100
-Message-ID: <20250310112121.73654-1-nbd@nbd.name>
-X-Mailer: git-send-email 2.47.1
+	s=arc-20240116; t=1741605751; c=relaxed/simple;
+	bh=1D1D5wyVUAQ2OmzWtlxTmOPRxMs+FnWyaZKv9VdFC4M=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=efUh9yKksKU0uM8bmXGrT7euQl7QWSkaaCP3xIIvCcyZZT/wD9jRTjUeIFA3VQzqJvj2+3vjp+5HghNJ2rAlPa3FdiuE6jTTh6iKwVQnH2MY2HLCvZ6lSWQ+k0rEpAdJEZEm8Eg6W4h31CWRN9x6rbIOyhKAW7f2Vrexd6mp8mE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=spasswolf@web.de header.b=Kh9aIpwL; arc=none smtp.client-ip=212.227.15.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1741605733; x=1742210533; i=spasswolf@web.de;
+	bh=j37ypas+N8FkxTzRTEJoTVNpTJQUrTecvIrvPx59+Do=;
+	h=X-UI-Sender-Class:From:To:Cc:Subject:Date:Message-ID:
+	 MIME-Version:Content-Transfer-Encoding:cc:
+	 content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=Kh9aIpwLje/BX3+kqGGcoONSaR7hIRMxoB8fRduIq6SllNo1mhxELIHP+dCRSQ1D
+	 eqtfTn8CWW8MLRgy3taBpC8zxqeM2h7o6leNugGLOV0Qmk/wePnOnH+MIDD/n6hR3
+	 GYEKTvlRTj+pNQts1cZqnumZNa/7Lp37zu8xq9fmIk2fKBygGXt73FwreLPVh2iwX
+	 7F7TmUHHQIqUrtK6WBg2Nx8TPiyXI3JxU7CVHjaVWHO21/cvJqN2nC2/ojicOOVK9
+	 TkQ4QS5nOAE8+mDBcgMMXvgcjN0xIBOwxMlBPBLOVVSVyHsBJUp8l5qRLMdQFvtqj
+	 8L4lcf3LuX+bvMB2vA==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from localhost.localdomain ([95.223.134.88]) by smtp.web.de
+ (mrweb006 [213.165.67.108]) with ESMTPSA (Nemesis) id
+ 1MLzin-1taCma0y9Z-00UQ5Q; Mon, 10 Mar 2025 12:22:13 +0100
+From: Bert Karwatzki <spasswolf@web.de>
+To: Balbir Singh <balbirs@nvidia.com>
+Cc: Bert Karwatzki <spasswolf@web.de>,
+	Ingo Molnar <mingo@kernel.org>,
+	Kees Cook <kees@kernel.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Andy Lutomirski <luto@kernel.org>,
+	linux-kernel@vger.kernel.org
+Subject: commit 7ffb791423c7 breaks steam game
+Date: Mon, 10 Mar 2025 12:22:04 +0100
+Message-ID: <20250310112206.4168-1-spasswolf@web.de>
+X-Mailer: git-send-email 2.47.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -67,59 +67,89 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-Provags-ID: V03:K1:vehwg9gJojuWPO1SveeN/8l49i5hQLSVYog1Qpj/6fE9jXH8rPe
+ 3NyScvgVAnvIpqQ/5FtElR18N6rHKPGLpvnTLhQg7cNBZJDdt7GdIpKY+uqK0hiDA4FlYS6
+ zLvUN/wOLCYAYCetp5OqeBQ09sncrwP8rRXzp8CpuJhyUwbuJ6+iLqwznfAnuPvF4yV/xYi
+ O836KgS13szEt/ujXa5/w==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:kTiLBe98hUE=;RG+FAN0WhJmYsuEW3XID1qt5Z+x
+ l2E1AVfxrvMP48deVmmXAGRDsuJXOvOCBIJFfr/yV8LKO4XiGynnSM1kPMsY3dJbT8BLy32rl
+ G4O5mEuWZ7VGOew/niF/YncEk+qRDdOlJwSlb+kalopWdxfK1lw+FKRxpZ0ISj/eZPICDXknw
+ TW8KEwHFU7o22bYwqLSgYv0YQ1XRS6/SM5BfjxMh8FuxGdkMhGLMSCfCwrCj70NSDmrOuHhA1
+ YJ44MUlEir1a3nj4Dq2AVLogBvEAXTbfc5sthYX4F6fLD9erjdoacgp7INtaFe2yKBPQ8wrcL
+ JOyhY7ZZkO99yVx3mgEHEWglXE3GpE5AnWdVFiLDmIVTHCN8fqNJZL8gLGt/n0MGbUg3gOnvG
+ j7by60Ytkcon/+k6dEc5lsR84CbuDee7quF0hBqchWu+AKqWhgt3JOGU3vK1GQARhwU8iQvxB
+ UGjSZIDr3/BN54Hk2QkDp5uHaq0W//07sb+/LYDYyW39XnyJcmHjQk27Nmln8eWVCPkbpeYtO
+ mMkBO/6yyf+qI0l42mNqQo5vTZdLEAMGVHwNyJp1CV30bKSPc6+EGhxxtIr/Mic9RyrEALPII
+ B0ANCmA2KzUSN7pADKxBHU/bZ6HLVk+fTMxXtLyoV8XN6pvKzerarxKRfRsRKPYlNaqOx6j5I
+ GPZZIDWCqghMSGGakVloWgzn4Ga41bBmI3MD29x6g93cDMBQ2vXlZ25Kl/f6Y/Zr4Dlg0y61F
+ j8+y9gZSf1QVtayKJCuj5HDrElDx+hyy8u15h0tnZRxT/Vvd380Arx253CeUHTkVfVBVbLMjG
+ +sZvim3uVH3PI0FHOSKBsAzj0j++7CFNC6rt93955G9MFph+HKYDzySKm8stpNRC7Xvx3L3pO
+ SGwUBYQ0bAPq4O63m19zbVfPCsBEhY/hZm9pu/VeQCC2mq7r4BaAHZD/CsNNXuwo+ZvLJZuBl
+ 8YaaEpsbQ+kZKhP6OzIvwccnsfhnReOwL7NbzkpKvUIE+J6BZ959Jh1yZEVtDH8JiwOCc0eGR
+ enNXkEYGRSeF+XOkeyGmPXSvn1/fPOKEvdQk7G8EcOzEqBPuZoiVujB+WJ0r1LMXJOujHKyl3
+ 81tXHm2TeUhNj0dRHqXQ050yweX2g+H3kTQEZE8reXD8xUQ2mWnchwy1oT9x9bf1YWQtoIEkI
+ x7KiWvYYbXeMt2TBDG2pY0TM+wvw2pXlhyZRulb1c8kcIauWTVnbw1OJ9m2zzmY1SN0UBJvLk
+ ownQtmMv6ZKkQrrjSWNjhHOooCtd/+h1QTOWr1NHoqTrIbiUV5AKpzJGc7NDY1nQGFdkorVeg
+ ebMUftkqwNrogLyysIbpRRm/aDToFqEsctbhgguq/QgrJRCG2ToJCHqadaPXzXg5ZraX/OXur
+ 3jFNpEKOsaW6Cqj0ytzv1vRbAZhLR05UKiqD2OpzqdMk61I7qUaD1UuUjj
 
-When updating the source/destination address, the TCP/UDP checksum needs to
-be updated as well.
+Using linux next-20250307 to play the game stellaris via steam I noticed that
+loading the game gets sluggish with the progress bar getting stuck at 100%.
+In this situation mouse and keyboard inputs don't work properly anymore.
+Switching to a VT and killing stellaris somewhat fixes the situation though in
+one instance the touchpad did not work after that. I bisected this between
+v6.14-rc5 and next-20250307 and got this as the first bad commit:
 
-Fixes: bee88cd5bd83 ("net: add support for segmenting TCP fraglist GSO packets")
-Signed-off-by: Felix Fietkau <nbd@nbd.name>
----
-v2: move code to make it similar to __tcpv4_gso_segment_list_csum
+7ffb791423c7c518269a9aad35039ef824a40adb is the first bad commit
+commit 7ffb791423c7c518269a9aad35039ef824a40adb (HEAD)
+Author: Balbir Singh <balbirs@nvidia.com>
+Date:   Fri Feb 7 10:42:34 2025 +1100
 
- net/ipv6/tcpv6_offload.c | 18 ++++++++++++++----
- 1 file changed, 14 insertions(+), 4 deletions(-)
+    x86/kaslr: Reduce KASLR entropy on most x86 systems
 
-diff --git a/net/ipv6/tcpv6_offload.c b/net/ipv6/tcpv6_offload.c
-index a45bf17cb2a1..34dd0cee3ba6 100644
---- a/net/ipv6/tcpv6_offload.c
-+++ b/net/ipv6/tcpv6_offload.c
-@@ -94,10 +94,20 @@ INDIRECT_CALLABLE_SCOPE int tcp6_gro_complete(struct sk_buff *skb, int thoff)
- }
- 
- static void __tcpv6_gso_segment_csum(struct sk_buff *seg,
-+				     struct in6_addr *oldip,
-+				     const struct in6_addr *newip,
- 				     __be16 *oldport, __be16 newport)
- {
- 	struct tcphdr *th;
- 
-+	if (!ipv6_addr_equal(oldip, newip)) {
-+		inet_proto_csum_replace16(&th->check, seg,
-+					  oldip->s6_addr32,
-+					  newip->s6_addr32,
-+					  true);
-+		*oldip = *newip;
-+	}
-+
- 	if (*oldport == newport)
- 		return;
- 
-@@ -129,10 +139,10 @@ static struct sk_buff *__tcpv6_gso_segment_list_csum(struct sk_buff *segs)
- 		th2 = tcp_hdr(seg);
- 		iph2 = ipv6_hdr(seg);
- 
--		iph2->saddr = iph->saddr;
--		iph2->daddr = iph->daddr;
--		__tcpv6_gso_segment_csum(seg, &th2->source, th->source);
--		__tcpv6_gso_segment_csum(seg, &th2->dest, th->dest);
-+		__tcpv6_gso_segment_csum(seg, &iph2->saddr, &iph->saddr,
-+					 &th2->source, th->source);
-+		__tcpv6_gso_segment_csum(seg, &iph2->daddr, &iph->daddr,
-+					 &th2->dest, th->dest);
- 	}
- 
- 	return segs;
--- 
-2.47.1
+Reverting commit 7ffb791423c7 in next-20250307 fixes the issue for me.
 
+The OS is debian sid (last updated 20250309) and this is the hardware
+is an MSI Alpha 15 Laptop:
+$ lspci
+00:00.0 Host bridge: Advanced Micro Devices, Inc. [AMD] Renoir/Cezanne Root Complex
+00:00.2 IOMMU: Advanced Micro Devices, Inc. [AMD] Renoir/Cezanne IOMMU
+00:01.0 Host bridge: Advanced Micro Devices, Inc. [AMD] Renoir PCIe Dummy Host Bridge
+00:01.1 PCI bridge: Advanced Micro Devices, Inc. [AMD] Renoir PCIe GPP Bridge
+00:02.0 Host bridge: Advanced Micro Devices, Inc. [AMD] Renoir PCIe Dummy Host Bridge
+00:02.1 PCI bridge: Advanced Micro Devices, Inc. [AMD] Renoir/Cezanne PCIe GPP Bridge
+00:02.2 PCI bridge: Advanced Micro Devices, Inc. [AMD] Renoir/Cezanne PCIe GPP Bridge
+00:02.3 PCI bridge: Advanced Micro Devices, Inc. [AMD] Renoir/Cezanne PCIe GPP Bridge
+00:02.4 PCI bridge: Advanced Micro Devices, Inc. [AMD] Renoir/Cezanne PCIe GPP Bridge
+00:08.0 Host bridge: Advanced Micro Devices, Inc. [AMD] Renoir PCIe Dummy Host Bridge
+00:08.1 PCI bridge: Advanced Micro Devices, Inc. [AMD] Renoir Internal PCIe GPP Bridge to Bus
+00:14.0 SMBus: Advanced Micro Devices, Inc. [AMD] FCH SMBus Controller (rev 51)
+00:14.3 ISA bridge: Advanced Micro Devices, Inc. [AMD] FCH LPC Bridge (rev 51)
+00:18.0 Host bridge: Advanced Micro Devices, Inc. [AMD] Cezanne Data Fabric; Function 0
+00:18.1 Host bridge: Advanced Micro Devices, Inc. [AMD] Cezanne Data Fabric; Function 1
+00:18.2 Host bridge: Advanced Micro Devices, Inc. [AMD] Cezanne Data Fabric; Function 2
+00:18.3 Host bridge: Advanced Micro Devices, Inc. [AMD] Cezanne Data Fabric; Function 3
+00:18.4 Host bridge: Advanced Micro Devices, Inc. [AMD] Cezanne Data Fabric; Function 4
+00:18.5 Host bridge: Advanced Micro Devices, Inc. [AMD] Cezanne Data Fabric; Function 5
+00:18.6 Host bridge: Advanced Micro Devices, Inc. [AMD] Cezanne Data Fabric; Function 6
+00:18.7 Host bridge: Advanced Micro Devices, Inc. [AMD] Cezanne Data Fabric; Function 7
+01:00.0 PCI bridge: Advanced Micro Devices, Inc. [AMD/ATI] Navi 10 XL Upstream Port of PCI Express Switch (rev c3)
+02:00.0 PCI bridge: Advanced Micro Devices, Inc. [AMD/ATI] Navi 10 XL Downstream Port of PCI Express Switch
+03:00.0 Display controller: Advanced Micro Devices, Inc. [AMD/ATI] Navi 23 [Radeon RX 6600/6600 XT/6600M] (rev c3)
+03:00.1 Audio device: Advanced Micro Devices, Inc. [AMD/ATI] Navi 21/23 HDMI/DP Audio Controller
+04:00.0 Network controller: MEDIATEK Corp. MT7921K (RZ608) Wi-Fi 6E 80MHz
+05:00.0 Ethernet controller: Realtek Semiconductor Co., Ltd. RTL8111/8168/8211/8411 PCI Express Gigabit Ethernet Controller (rev 15)
+06:00.0 Non-Volatile memory controller: Kingston Technology Company, Inc. KC3000/FURY Renegade NVMe SSD [E18] (rev 01)
+07:00.0 Non-Volatile memory controller: Micron/Crucial Technology P1 NVMe PCIe SSD[Frampton] (rev 03)
+08:00.0 VGA compatible controller: Advanced Micro Devices, Inc. [AMD/ATI] Cezanne [Radeon Vega Series / Radeon Vega Mobile Series] (rev c5)
+08:00.1 Audio device: Advanced Micro Devices, Inc. [AMD/ATI] Renoir Radeon High Definition Audio Controller
+08:00.2 Encryption controller: Advanced Micro Devices, Inc. [AMD] Family 17h (Models 10h-1fh) Platform Security Processor
+08:00.3 USB controller: Advanced Micro Devices, Inc. [AMD] Renoir/Cezanne USB 3.1
+08:00.4 USB controller: Advanced Micro Devices, Inc. [AMD] Renoir/Cezanne USB 3.1
+08:00.5 Multimedia controller: Advanced Micro Devices, Inc. [AMD] ACP/ACP3X/ACP6x Audio Coprocessor (rev 01)
+08:00.6 Audio device: Advanced Micro Devices, Inc. [AMD] Family 17h/19h/1ah HD Audio Controller
+08:00.7 Signal processing controller: Advanced Micro Devices, Inc. [AMD] Sensor Fusion Hub
+
+Bert Karwatzki
 
