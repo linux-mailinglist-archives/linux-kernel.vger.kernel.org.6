@@ -1,145 +1,131 @@
-Return-Path: <linux-kernel+bounces-554274-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-554276-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D2EEBA59596
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 14:07:22 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 14250A5959B
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 14:09:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4EC617A1DC4
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 13:06:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C717C3A6631
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 13:08:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8DED229B00;
-	Mon, 10 Mar 2025 13:07:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B0A8229B0D;
+	Mon, 10 Mar 2025 13:08:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Vbu5Vu0U"
-Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=rbox.co header.i=@rbox.co header.b="A8BFc6kb"
+Received: from mailtransmit04.runbox.com (mailtransmit04.runbox.com [185.226.149.37])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F03C17C91;
-	Mon, 10 Mar 2025 13:07:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAA53178395;
+	Mon, 10 Mar 2025 13:08:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.226.149.37
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741612029; cv=none; b=JC+PRuUpFWT2ASrH0p7ynD64vdJrW06kofrFveoZ5GEzpJUPwcOlD5Y33AlQmNN0BqMIV19jfNC5B8cX7WjR/H5xlmkLSaasxoak6YjcsxyI0opiya1veS3o1AfL6PWrP+lFXD3bRwgiACFaan1RcvDiZF/3P1tcf+9M7/k/KtI=
+	t=1741612125; cv=none; b=Gq6Ny6K/dwcNunEqnLiKIfng7ICPIYrAJ67qUZTczSnLrx2imaj3PxHidj2qpQZ6qs+5euadKPUOZLNSf6c11cLDpfW/K3LQsIDPflqro0oFMp5Wc+u8+tsk3mCzKPOdsTciYKtVxhDHYgfiNxRr5zKahG4lggumEq046+Bh6p0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741612029; c=relaxed/simple;
-	bh=wXKpm0R8aaBJWgfXeH1+KgpzBqh49aGVJSotFIFZQBI=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=BG29iCkQjt5AmCnHM8BztLKXsVQ35t3XIaUEaMHzR/BIYzK/78g+q0NeVtPTMIyGfpKWjgdfNMbS2PiwRoqgmQIjXCAnxbhMCuzpib8OSnyYQSPDKWWVaBdPIZX10iS7XWhKy4OPA1PzLIXNbNH3GVscXABGQ34foRddpM+Sa+c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Vbu5Vu0U; arc=none smtp.client-ip=209.85.214.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-224191d92e4so68281045ad.3;
-        Mon, 10 Mar 2025 06:07:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741612025; x=1742216825; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=tWu7aiMIZT17b5x/ebZrxHZih6B9riko7vt98zmMSDo=;
-        b=Vbu5Vu0U1PhPA34DhkJjyHSiy5PiwgnxeUw9ovznZyu4v0hM3KplDMqIPRZJwAnKNU
-         4DYP97I+zHIDpmliZbBpsueLhkuuExjwJFzFg9VZdjXFn0pP8yj9KmaVRZ/sXpe1BYUS
-         dGRTsvI11l1K6GPmSnhQFthjRl6RWbBEv3qPwElyRNpAIRPIDI1RONS5uH5Fhj/e3zG9
-         qsUSonifSGwKMPWzjekDA8MOVJ62j6Yh54DEn7DW1loEeZ2Jb1HLoH2U61Q6qF3Mi5ih
-         DelQLxhGmemus4VowqhILDNPM7sNyE90zvO4jT8KK8xGCLLkg2lQIfJQBk27xwcicknz
-         MyCA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741612025; x=1742216825;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=tWu7aiMIZT17b5x/ebZrxHZih6B9riko7vt98zmMSDo=;
-        b=hD8t+DL6V6rESXYonfIUfRtc2OoaeY/TlhMiUPX6vUC9E6hy1HHnDPaZBr3sw/9nBL
-         zpR+8sIyVX0y8L+jr0QNzq+UcNgH3HXnnbj0VKj7r2KAyobwT1Ug/cbiFRaquGQbQ8/I
-         QMAPIA1hMeTyZxtQ06B4g0y4i9xA1Y68hb4HQBlMFXA7WZJG4NzpgKVjLYtlb6PdGYuf
-         SZFf7QQlCsBuTEhaccN4TVAeKn+shj/GrTlD0aEMEHeStP5NYAg9YSKCPnzYNVJjFbCp
-         MAiV9FNV0a2UtbX8QdQAxpR7MChZ3RZ2gyE6Edp5p1zuxF8JY8tKxX0NS2CYaVT7gr4O
-         Wf6Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUgSGaQiKCSeeF6nDtfjmXtSj3CYFJUCd1KeU5rXFaE2edDRwA8/1DknyFKgXvdzE2N2ccrHe5chKFEIqw21Gw=@vger.kernel.org, AJvYcCXTaVwADXr66g6tNi2SKhfVb60QMYJVf+/SEFNn0zoNaq9E632BefuBOkEGdJQfsyT7C2z2KWuNASKPEJo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywg2wDIkp7LIhuzH9zFiwAP8LHouDa26jrzNr/qTisUtP60A4o2
-	lzOv4BZxXZRasIQJVfBbOawKwnvHxiZF2ktMD/BKarH/6O1D4HMz
-X-Gm-Gg: ASbGnctqCgJSo7tsxyqQoXUmH7aViM2qleGFR3JJVG49ynWGjgrak2oqpsn0IoawGIB
-	RVZNNVn3WlwlHpMyWou0UcWI9xJwIxVkL+OIPmbPgDK66e49x+wMVUGl6si749u0QFIjKhfSYQL
-	BUMDcyuJ6grkTXTkiCwhk6phNSv8JnQt9vOeKjRFrhhMmdYAwO6WYnZZjODM4nsXU6BQCQRec+c
-	YiXNimzrWokhVE2swF2ABt+H7HdmlXqDQO4y01YIBhbLJYJxLsMwNHTK83Bg2/mSMqTZCu9uWOF
-	Iq2bdkRuFMZkWbaDh0OFXb5HBYgQH8Sc8/9hS3oRuj5izE9fzikO
-X-Google-Smtp-Source: AGHT+IHhkHyOZNNCXbFMmLFwpXflDQNZuEKw/PQNSNv6nLwD0+sOO+cVRdre6nitAncCb47/EZZwVA==
-X-Received: by 2002:a05:6a00:2351:b0:736:4fe0:2661 with SMTP id d2e1a72fcca58-736aaa079e4mr18667534b3a.11.1741612024866;
-        Mon, 10 Mar 2025 06:07:04 -0700 (PDT)
-Received: from linuxsimoes.. ([187.120.156.44])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-736b8f55b9bsm5461256b3a.146.2025.03.10.06.06.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 10 Mar 2025 06:07:04 -0700 (PDT)
-From: Guilherme Giacomo Simoes <trintaeoitogc@gmail.com>
-To: joe@perches.com
-Cc: a.hindborg@kernel.org,
-	alex.gaynor@gmail.com,
-	aliceryhl@google.com,
-	apw@canonical.com,
-	arnd@arndb.de,
-	aswinunni01@gmail.com,
-	axboe@kernel.dk,
-	benno.lossin@proton.me,
-	bhelgaas@google.com,
-	bjorn3_gh@protonmail.com,
-	boqun.feng@gmail.com,
-	charmitro@posteo.net,
-	dakr@kernel.org,
-	dwaipayanray1@gmail.com,
-	ethan.twardy@gmail.com,
-	fujita.tomonori@gmail.com,
-	gary@garyguo.net,
-	gregkh@linuxfoundation.org,
-	linux-kernel@vger.kernel.org,
-	lukas.bulwahn@gmail.com,
-	ojeda@kernel.org,
-	pbonzini@redhat.com,
-	rust-for-linux@vger.kernel.org,
-	tmgross@umich.edu,
-	trintaeoitogc@gmail.com,
-	walmeida@microsoft.com
-Subject: Re: [PATCH V9 2/2] checkpatch: check format of Vec<String> in modules
-Date: Mon, 10 Mar 2025 10:06:50 -0300
-Message-Id: <20250310130650.855103-1-trintaeoitogc@gmail.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <8f8c79c5f1c5508defdd4a4c020c2c8e60b95afb.camel@perches.com>
-References: <8f8c79c5f1c5508defdd4a4c020c2c8e60b95afb.camel@perches.com>
+	s=arc-20240116; t=1741612125; c=relaxed/simple;
+	bh=rdAP5tZXO/e6X0g9/aj7v6Q8fYYTM/HQGTEow6hWTxU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=VoLzK/8EJqrMOisRfZeYIlsAmotcvhAQQ2NhGnx3dUVEQFcVbumNuklJDgxr8NygfFGbzrx6YvjypMtf/yiQ6HM85pDrhvbYlYp9zzItG/Ajk1BlsDHTuVkUY3ysrMZwsoPUUeKORsYpTbgTWRp6K0Og3xVq29Lp1iYWnfRZSAo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rbox.co; spf=pass smtp.mailfrom=rbox.co; dkim=pass (2048-bit key) header.d=rbox.co header.i=@rbox.co header.b=A8BFc6kb; arc=none smtp.client-ip=185.226.149.37
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rbox.co
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rbox.co
+Received: from mailtransmit02.runbox ([10.9.9.162] helo=aibo.runbox.com)
+	by mailtransmit04.runbox.com with esmtps  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+	(Exim 4.93)
+	(envelope-from <mhal@rbox.co>)
+	id 1trcrp-00ByIO-7S; Mon, 10 Mar 2025 14:08:25 +0100
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=rbox.co;
+	s=selector1; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
+	References:Cc:To:Subject:MIME-Version:Date:Message-ID;
+	bh=YMtG22Pqun0Tp+q9j4j91l8TFa4W5ET+k4wRnt7+fP0=; b=A8BFc6kbFm87pNoML1HwqDmRTf
+	UJA/GzevYwKdN5F5BZrgi//pgOyudJoiTj1cK1jqvTlnhZursG3xtzsBooyMMx4vLOx+Py6kxhz8u
+	hIEVjCM4oc8/5KNIerC9JWvKACQGvBa3WFWLxq6inZH8tyNEnNemy3BsVbvmoAWRn+/snlLvSHaXk
+	ddO8bi7iUrcF5CFLUzM58GA01OsGXH138lYeRHo1EjItfLMyknx62msIBc85WDunVEuay4pTlM87c
+	oHaOor4nkaHnadScKgfH3p4cxyNGqYOaGlUCpKQVr2CTHSgJL4J7b442qLYS5+VhMNWyP9iroaqxJ
+	2zf7qkeA==;
+Received: from [10.9.9.74] (helo=submission03.runbox)
+	by mailtransmit02.runbox with esmtp (Exim 4.86_2)
+	(envelope-from <mhal@rbox.co>)
+	id 1trcrc-0006oZ-M9; Mon, 10 Mar 2025 14:08:13 +0100
+Received: by submission03.runbox with esmtpsa  [Authenticated ID (604044)]  (TLS1.2:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
+	(Exim 4.93)
+	id 1trcrZ-007B3j-Vc; Mon, 10 Mar 2025 14:08:10 +0100
+Message-ID: <d2d3eff9-23df-4098-87cc-d0ad5fde6e1e@rbox.co>
+Date: Mon, 10 Mar 2025 14:08:07 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH bpf-next v2 1/3] bpf, sockmap: avoid using sk_socket after
+ free
+To: Jiayuan Chen <jiayuan.chen@linux.dev>, xiyou.wangcong@gmail.com,
+ john.fastabend@gmail.com, jakub@cloudflare.com, martin.lau@linux.dev
+Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+ pabeni@redhat.com, horms@kernel.org, andrii@kernel.org, eddyz87@gmail.com,
+ mykolal@fb.com, ast@kernel.org, daniel@iogearbox.net, song@kernel.org,
+ yonghong.song@linux.dev, kpsingh@kernel.org, sdf@fomichev.me,
+ haoluo@google.com, jolsa@kernel.org, shuah@kernel.org, sgarzare@redhat.com,
+ netdev@vger.kernel.org, bpf@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-kselftest@vger.kernel.org, mrpre@163.com, cong.wang@bytedance.com,
+ syzbot+dd90a702f518e0eac072@syzkaller.appspotmail.com
+References: <20250228055106.58071-1-jiayuan.chen@linux.dev>
+ <20250228055106.58071-2-jiayuan.chen@linux.dev>
+ <baeca627-e6f1-4d0a-aea5-fa31689edc4d@rbox.co>
+ <78ee737400721758fa67b4f285e8ba61dc6b893b@linux.dev>
+Content-Language: pl-PL, en-GB
+From: Michal Luczaj <mhal@rbox.co>
+In-Reply-To: <78ee737400721758fa67b4f285e8ba61dc6b893b@linux.dev>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Joe Perches <joe@perches.com> wrote:
-> What happens if the patch contains more than one module?
-Sincerely I do not was test this. I don't was think about when the patch
-contains more than one module, is a critical problem that went unnoticed by me.
-Thanks for noticing this.
-I will make some tests for this and make some changes if neccessary.
+On 3/10/25 12:36, Jiayuan Chen wrote:
+> March 7, 2025 at 5:45 PM, "Michal Luczaj" <mhal@rbox.co> wrote:
+> ...
+>> BTW, lockdep (CONFIG_LOCKDEP=y) complains about calling AF_UNIX's
+>> read_skb() under RCU read lock.
+>>
+> My environment also has LOCKDEP enabled, but I didn't see similar
+> warnings.
+> Moreover, RCU assertions are typically written as:
+> 
+> WARN_ON_ONCE(!rcu_read_lock_held())
+> 
+> And when LOCKDEP is not enabled, rcu_read_lock_held() defaults to
+> returning 1. So, it's unlikely to trigger a warning due to an RCU lock
+> being held.
+> 
+> Could you provide more of the call stack?
 
-> spaces contains both spaces and tabs.
-> Why not test the strings rather than the length?
-> Otherwise tab-space is the same length as space-tab.
-You is right, we can test the string rather than length. 
+Sure, bpf-next with this series applied, test_progs -t sockmap_basic:
 
-> Why is herevet_space_add more useful than herevet?
-The $herevet_space_add store the $herevet for the added line. Otherwise, if the
-change is like:
-authors: [
-+	 author_1
-	author_2
-	author_3
-]
-The $expected_spaces and $spaces will be filled in the "author_2" line. And the
-content of $herevet will be "	author_2" rather than "+	 author_1".
+=============================
+[ BUG: Invalid wait context ]
+6.14.0-rc3+ #111 Tainted: G           OE
+-----------------------------
+test_progs/37755 is trying to lock:
+ffff88810d9bc3c0 (&u->iolock){+.+.}-{4:4}, at: unix_stream_read_skb+0x30/0x120
+other info that might help us debug this:
+context-{5:5}
+1 lock held by test_progs/37755:
+ #0: ffffffff833700e0 (rcu_read_lock){....}-{1:3}, at: sk_psock_verdict_data_ready+0x3e/0x2a0
+stack backtrace:
+CPU: 13 UID: 0 PID: 37755 Comm: test_progs Tainted: G           OE      6.14.0-rc3+ #111
+Tainted: [O]=OOT_MODULE, [E]=UNSIGNED_MODULE
+Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS Arch Linux 1.16.3-1-1 04/01/2014
+Call Trace:
+ dump_stack_lvl+0x68/0x90
+ lock_acquire+0xcf/0x2e0
+ __mutex_lock+0x9c/0xcc0
+ unix_stream_read_skb+0x30/0x120
+ sk_psock_verdict_data_ready+0x8d/0x2a0
+ unix_stream_sendmsg+0x232/0x640
+ __sys_sendto+0x1cd/0x1e0
+ __x64_sys_sendto+0x20/0x30
+ do_syscall_64+0x93/0x180
+ entry_SYSCALL_64_after_hwframe+0x76/0x7e
 
-How the rust-side patch already is merged in rust-next, I only will send a
-patch for this checkpatch.
-I will make this changes that you suggested for me, and send a new patch.
-
-Thanks,
-Guilherme
 
