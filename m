@@ -1,228 +1,122 @@
-Return-Path: <linux-kernel+bounces-554977-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-554978-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A628CA5A414
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 20:51:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1BA59A5A417
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 20:51:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D65D9174C0B
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 19:51:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5286D174C02
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 19:51:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79BA51DE2C6;
-	Mon, 10 Mar 2025 19:51:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB5021DDA36;
+	Mon, 10 Mar 2025 19:51:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="MZGKRjZX";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="5TNYKqJ3"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=ethancedwards.com header.i=@ethancedwards.com header.b="tcPcy/DZ"
+Received: from mout-p-101.mailbox.org (mout-p-101.mailbox.org [80.241.56.151])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C4261DB14C;
-	Mon, 10 Mar 2025 19:50:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 458BB1D90C8;
+	Mon, 10 Mar 2025 19:51:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741636259; cv=none; b=lPO7RbQ1xICMVkf2YWMo0hs+Uedfn31GucUut43Lkk+o7ebnZIpL6kX0si1M6q84bvy0mmTdCgnz7iQYZdtt321Nq8vmzhH8tkMfiV1v7vClgfiNqQmSHZVNdPdBXCXHreVPtldI82SDTxMj/BspZ1UBzvKv9ZqXMTRX6WA0GQM=
+	t=1741636310; cv=none; b=eY5tf4AjEaFvhvLBJM1HnbcluMwzrQKFg2qgq8AQihzSJpFeKBBN27RIzUdCROZ6SCfBd0xHROId/Z+viyjWsIFgoGYei8lFmPdsHfym7r+PXG0b4f+kdY7tdD9xbd43KtYlRcZ1GtSgFEWx8ZkSoJ3N0tsgt9aphA9sjLTnYBU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741636259; c=relaxed/simple;
-	bh=y8iMlwWUDWn5/kRljPHUvopfQZgT8td4zKcmzhRMZVQ=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=szHIrpYucvAwcjL7SwSJyEj3u8o3isxaF72nviBB0WRmSyQirLqbPw22nFlfUPRWTxM+sQS5rvCjEVT+ZMEOfV3uxwI831+dfKgC6q+oQwdXff0rcsq5XL0TzHTt2spso4THNH5hCf/SLXDTyv0jtE3xMc0M3/oJigRah8u/PQ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=MZGKRjZX; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=5TNYKqJ3; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Mon, 10 Mar 2025 19:50:54 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1741636256;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=QdBDkcerP3Cc7AZ/m/nDh2e/pAvikEkEMJY4xPU0at0=;
-	b=MZGKRjZXaxc8MNE4If11TIfVwd5f2KZ9x2XT2qzzRf/71UidbAroscrwcBj1S5mGHL3wTm
-	JsXYjcphRM4f6q7nuUbWqdeDY7XGLP4giME+q8Y29mUVQ289FSF6+lVbUx4rS4H03A1ywt
-	vbzhcfu8Sfrlu2j2AJx3+OnkPhbBQKVriGXSgpDthF4DNRk8etye7IX9dzcXYktS2anrR5
-	x8/7Jo4XftB2PdLi+pIRKKz33cb/hvgGPt8vwtDx8rNBtOiC2iL0nd83V1n64uxVo/v441
-	MPbN+7G8mUDSm/Yd06r7USSOSSH1/QteiQ2OYGRe9Zv0XE7GY2zBhYkdHWSDpw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1741636256;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=QdBDkcerP3Cc7AZ/m/nDh2e/pAvikEkEMJY4xPU0at0=;
-	b=5TNYKqJ3YeemOMYGOLOLuLXDEhkAVoqGylLcgzqJPUV8PYH1eGDm48y7N/y5XCPnEVMQ8Y
-	fufZZFrzsTHxxyAA==
-From: "tip-bot2 for Kirill A. Shutemov" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: x86/mm] x86/acpi: Replace manual page table initialization with
- kernel_ident_mapping_init()
-Cc: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
- Ingo Molnar <mingo@kernel.org>, Kai Huang <kai.huang@intel.com>,
- Tom Lendacky <thomas.lendacky@amd.com>,
- "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
- Andy Lutomirski <luto@kernel.org>,
- Linus Torvalds <torvalds@linux-foundation.org>, x86@kernel.org,
- linux-kernel@vger.kernel.org
-In-Reply-To: <20241016111458.846228-3-kirill.shutemov@linux.intel.com>
-References: <20241016111458.846228-3-kirill.shutemov@linux.intel.com>
+	s=arc-20240116; t=1741636310; c=relaxed/simple;
+	bh=aD+sDt1ciaV119MjNuVJLFWgQduPhmrVJV35QOG6p+8=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=KqdihBYJI3RGO3126LT6pSLamMOnLW8Zb9T989k5Bm5vTr7Nyfa2t5Sbhw6CqyEFenml7+5IsSeHtZ2aVDLluJEruY07Y/4ft3XF5/pdBeS63VMbL8FYQqyPOMVARjvy+d+6HpzM0DzYzHOOY/NoHigrrAeYJrWJhM8FFgj58EQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ethancedwards.com; spf=pass smtp.mailfrom=ethancedwards.com; dkim=pass (2048-bit key) header.d=ethancedwards.com header.i=@ethancedwards.com header.b=tcPcy/DZ; arc=none smtp.client-ip=80.241.56.151
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ethancedwards.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ethancedwards.com
+Received: from smtp102.mailbox.org (smtp102.mailbox.org [10.196.197.102])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-101.mailbox.org (Postfix) with ESMTPS id 4ZBSFq21YDz9t1w;
+	Mon, 10 Mar 2025 20:51:43 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ethancedwards.com;
+	s=MBO0001; t=1741636303;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type;
+	bh=gv+550w/d+lXAHcItL5V3U21dqpQZG15UW/W7rQZH1s=;
+	b=tcPcy/DZPBAG5uqdt6nK+gR3DIMtN0wjp5BACaXLTXS8RDlIb3KTfMz9+dKwMvTpEaHdEx
+	34unUgAfVqVk50lMP5FsUnoFAHKpp3hLXPYM0nBPIrVfPZ8qq+5NXG4JiwIKoHqKMgWzfz
+	1wwUOiCbou30K6ZbIUUYFkmhKJjHcEZdxEjjl9tOG0QDaGfC4219raAWkAotkUyp6p8VM0
+	IS1+FCS+Db11WZbsPOiYACRJPTiBS99Cj+BeWWmH9WzuJ1U3DTZvDUeX76afBc4CCIGmaW
+	YWN29mr4xC/p15H9+d5CTiq8ZgBj+CIWupkOnUSrhFw5l5nk8kzvDn/WnfWGpg==
+Date: Mon, 10 Mar 2025 15:51:38 -0400
+From: Ethan Carter Edwards <ethan@ethancedwards.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	"Rafael J. Wysocki" <rafael@kernel.org>, Danilo Krummrich <dakr@kernel.org>, 
+	Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?utf-8?B?PT91dGYtOD9xP0JqPUMzPUI2cm5fUm95X0Jhcm9uPz0=?= <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>, 
+	Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, 
+	Trevor Gross <tmgross@umich.edu>, Nathan Chancellor <nathan@kernel.org>, 
+	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>, Bill Wendling <morbo@google.com>, 
+	Justin Stitt <justinstitt@google.com>
+Cc: rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	llvm@lists.linux.dev, ethan@ethancedwards.com
+Subject: [PATCH v2] rust/kernel/faux: mark Registration methods inline
+Message-ID: <jesg4yu7m6fvzmgg5tlsktrrjm36l4qsranto5mdmnucx4pvf3@nhvt4juw5es3>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <174163625401.14745.16176946707588696336.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-The following commit has been merged into the x86/mm branch of tip:
+When building the kernel on Arch Linux using on x86_64 with tools:
+$ rustc --version
+rustc 1.84.0 (9fc6b4312 2025-01-07)
+$ cargo --version
+cargo 1.84.0 (66221abde 2024-11-19)
+$ clang --version
+clang version 19.1.7
+Target: x86_64-pc-linux-gnu
 
-Commit-ID:     376daf20eda4898a49a4746f225153efb4c094e7
-Gitweb:        https://git.kernel.org/tip/376daf20eda4898a49a4746f225153efb4c094e7
-Author:        Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-AuthorDate:    Wed, 16 Oct 2024 14:14:56 +03:00
-Committer:     Ingo Molnar <mingo@kernel.org>
-CommitterDate: Mon, 10 Mar 2025 20:31:28 +01:00
+The following symbols are generated:
+$ nm vmlinux | rg ' _R' | rustfilt | rg faux
+ffffffff81959ae0 T <kernel::faux::Registration>::new
+ffffffff81959b40 T <kernel::faux::Registration as core::ops::drop::Drop>::drop
 
-x86/acpi: Replace manual page table initialization with kernel_ident_mapping_init()
+However, these Rust symbols are wrappers around bindings in the C faux
+code. Inlining these functions removes the middle-man wrapper function
+After applying this patch, the above function signatures disappear.
 
-The init_transition_pgtable() functions maps the page with
-asm_acpi_mp_play_dead() into an identity mapping.
-
-Replace open-coded manual page table initialization with
-kernel_ident_mapping_init() to avoid code duplication.
-
-Use x86_mapping_info::offset to get the page mapped at the
-correct location.
-
-Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Reviewed-by: Kai Huang <kai.huang@intel.com>
-Reviewed-by: Tom Lendacky <thomas.lendacky@amd.com>
-Acked-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Link: https://lore.kernel.org/r/20241016111458.846228-3-kirill.shutemov@linux.intel.com
+Link: https://github.com/Rust-for-Linux/linux/issues/1145
+Signed-off-by: Ethan Carter Edwards <ethan@ethancedwards.com>
 ---
- arch/x86/kernel/acpi/madt_wakeup.c | 73 +++++------------------------
- 1 file changed, 15 insertions(+), 58 deletions(-)
+v2: rebase on linux-next-20250307
+---
+ rust/kernel/faux.rs | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/arch/x86/kernel/acpi/madt_wakeup.c b/arch/x86/kernel/acpi/madt_wakeup.c
-index d5ef621..f36f284 100644
---- a/arch/x86/kernel/acpi/madt_wakeup.c
-+++ b/arch/x86/kernel/acpi/madt_wakeup.c
-@@ -70,58 +70,6 @@ static void __init free_pgt_page(void *pgt, void *dummy)
- 	return memblock_free(pgt, PAGE_SIZE);
+diff --git a/rust/kernel/faux.rs b/rust/kernel/faux.rs
+index 3277f35c3f79..8a50fcd4c9bb 100644
+--- a/rust/kernel/faux.rs
++++ b/rust/kernel/faux.rs
+@@ -23,6 +23,7 @@
+ 
+ impl Registration {
+     /// Create and register a new faux device with the given name.
++    #[inline]
+     pub fn new(name: &CStr, parent: Option<&device::Device>) -> Result<Self> {
+         // SAFETY:
+         // - `name` is copied by this function into its own storage
+@@ -58,6 +59,7 @@ fn as_ref(&self) -> &device::Device {
  }
  
--/*
-- * Make sure asm_acpi_mp_play_dead() is present in the identity mapping at
-- * the same place as in the kernel page tables. asm_acpi_mp_play_dead() switches
-- * to the identity mapping and the function has be present at the same spot in
-- * the virtual address space before and after switching page tables.
-- */
--static int __init init_transition_pgtable(pgd_t *pgd)
--{
--	pgprot_t prot = PAGE_KERNEL_EXEC_NOENC;
--	unsigned long vaddr, paddr;
--	p4d_t *p4d;
--	pud_t *pud;
--	pmd_t *pmd;
--	pte_t *pte;
--
--	vaddr = (unsigned long)asm_acpi_mp_play_dead;
--	pgd += pgd_index(vaddr);
--	if (!pgd_present(*pgd)) {
--		p4d = (p4d_t *)alloc_pgt_page(NULL);
--		if (!p4d)
--			return -ENOMEM;
--		set_pgd(pgd, __pgd(__pa(p4d) | _KERNPG_TABLE));
--	}
--	p4d = p4d_offset(pgd, vaddr);
--	if (!p4d_present(*p4d)) {
--		pud = (pud_t *)alloc_pgt_page(NULL);
--		if (!pud)
--			return -ENOMEM;
--		set_p4d(p4d, __p4d(__pa(pud) | _KERNPG_TABLE));
--	}
--	pud = pud_offset(p4d, vaddr);
--	if (!pud_present(*pud)) {
--		pmd = (pmd_t *)alloc_pgt_page(NULL);
--		if (!pmd)
--			return -ENOMEM;
--		set_pud(pud, __pud(__pa(pmd) | _KERNPG_TABLE));
--	}
--	pmd = pmd_offset(pud, vaddr);
--	if (!pmd_present(*pmd)) {
--		pte = (pte_t *)alloc_pgt_page(NULL);
--		if (!pte)
--			return -ENOMEM;
--		set_pmd(pmd, __pmd(__pa(pte) | _KERNPG_TABLE));
--	}
--	pte = pte_offset_kernel(pmd, vaddr);
--
--	paddr = __pa(vaddr);
--	set_pte(pte, pfn_pte(paddr >> PAGE_SHIFT, prot));
--
--	return 0;
--}
--
- static int __init acpi_mp_setup_reset(u64 reset_vector)
- {
- 	struct x86_mapping_info info = {
-@@ -130,6 +78,7 @@ static int __init acpi_mp_setup_reset(u64 reset_vector)
- 		.page_flag      = __PAGE_KERNEL_LARGE_EXEC,
- 		.kernpg_flag    = _KERNPG_TABLE_NOENC,
- 	};
-+	unsigned long mstart, mend;
- 	pgd_t *pgd;
- 
- 	pgd = alloc_pgt_page(NULL);
-@@ -137,8 +86,6 @@ static int __init acpi_mp_setup_reset(u64 reset_vector)
- 		return -ENOMEM;
- 
- 	for (int i = 0; i < nr_pfn_mapped; i++) {
--		unsigned long mstart, mend;
--
- 		mstart = pfn_mapped[i].start << PAGE_SHIFT;
- 		mend   = pfn_mapped[i].end << PAGE_SHIFT;
- 		if (kernel_ident_mapping_init(&info, pgd, mstart, mend)) {
-@@ -147,14 +94,24 @@ static int __init acpi_mp_setup_reset(u64 reset_vector)
- 		}
- 	}
- 
--	if (kernel_ident_mapping_init(&info, pgd,
--				      PAGE_ALIGN_DOWN(reset_vector),
--				      PAGE_ALIGN(reset_vector + 1))) {
-+	mstart = PAGE_ALIGN_DOWN(reset_vector);
-+	mend = mstart + PAGE_SIZE;
-+	if (kernel_ident_mapping_init(&info, pgd, mstart, mend)) {
- 		kernel_ident_mapping_free(&info, pgd);
- 		return -ENOMEM;
- 	}
- 
--	if (init_transition_pgtable(pgd)) {
-+	/*
-+	 * Make sure asm_acpi_mp_play_dead() is present in the identity mapping
-+	 * at the same place as in the kernel page tables.
-+	 * asm_acpi_mp_play_dead() switches to the identity mapping and the
-+	 * function must be present at the same spot in the virtual address space
-+	 * before and after switching page tables.
-+	 */
-+	info.offset = __START_KERNEL_map - phys_base;
-+	mstart = PAGE_ALIGN_DOWN(__pa(asm_acpi_mp_play_dead));
-+	mend = mstart + PAGE_SIZE;
-+	if (kernel_ident_mapping_init(&info, pgd, mstart, mend)) {
- 		kernel_ident_mapping_free(&info, pgd);
- 		return -ENOMEM;
- 	}
+ impl Drop for Registration {
++    #[inline]
+     fn drop(&mut self) {
+         // SAFETY: `self.0` is a valid registered faux_device via our type invariants.
+         unsafe { bindings::faux_device_destroy(self.as_raw()) }
+-- 
+2.48.1
+
 
