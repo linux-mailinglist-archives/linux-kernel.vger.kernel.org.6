@@ -1,60 +1,60 @@
-Return-Path: <linux-kernel+bounces-554877-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-554878-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA5E5A5A2F1
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 19:32:55 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DB0ABA5A2F9
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 19:33:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 16D3118947FC
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 18:33:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AE68F3B048C
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 18:32:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 597D8230D0F;
-	Mon, 10 Mar 2025 18:32:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D07A2356D7;
+	Mon, 10 Mar 2025 18:32:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="pyxqQYoU"
-Received: from NAM02-SN1-obe.outbound.protection.outlook.com (mail-sn1nam02on2087.outbound.protection.outlook.com [40.107.96.87])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="BfZjungu"
+Received: from NAM02-BN1-obe.outbound.protection.outlook.com (mail-bn1nam02on2071.outbound.protection.outlook.com [40.107.212.71])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F9D822FAF8;
-	Mon, 10 Mar 2025 18:32:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.96.87
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA665235371;
+	Mon, 10 Mar 2025 18:32:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.212.71
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741631555; cv=fail; b=fyJLiWuLKWlZwKQXk+UDWEx8m/ok8BRBi2l25PzHkbPt9GqKAdpAiGYWI7GLa8tW4tv9pB53SP2T+F1xVWgYRWekwaHKzGRPSA9UoMwrVpJGs82NJ2vcjlUHoMWZe3uflDcrp3hobZ1qFpI4cOM9F/eC1wvKo0Jm3XZVTHiaDx0=
+	t=1741631565; cv=fail; b=Ls9Hpap48nOnghF3Y7Pk+XYRbYvpf0hNXcF9ferfDr1zF+3lLOrCzfqHcBdRYI4srGQojiJGoOpUsx7Yf5z3/Sf5bmau/D/CjA0WOFCG0ou3wq5AO/X7A0nMeQQaALQq3b5oAHS3Pi5j2wydYi6vSG9nAIkNp73A0K4NK2aAeG8=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741631555; c=relaxed/simple;
-	bh=juMuTeyP+hnMq6gUtkv7WKjIJQMmeChABADlHmT/LlI=;
+	s=arc-20240116; t=1741631565; c=relaxed/simple;
+	bh=XxCjuslXCc2ql5URWPDPs8p1GxntprR7ltKe2NTRYO0=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=MmKODi/MJaJwc+Paq37TkFUucCWdE+Ajear5N5RVP4+DOEH92BnXbONBy6ZJskbI9NCv94UJlknVhwfBKKDmBNJsFYhG0g0wsqgNVeq+v3I29Oj3STFcGc+XXRyfCXA+iK8cLHhvZi+2xNvvLy6gzpV5RjIweljMre9UgbhDyHA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=pyxqQYoU; arc=fail smtp.client-ip=40.107.96.87
+	 MIME-Version:Content-Type; b=gxkrooqthJNqxS2ayFBbU4dIsDoH7ND7lSdAMk1j0iRlgDjEmoJk2jDxrAyDDDwCBnF0NqRx/mo0FWhgAiu+svQeTDNCzcBS6+wd/24iPwJP8EmUKlQZAI7yr+KVi+a9qZPYAUuDSdA/DxTgx48ModIxJQ7xEx6kcEadh99esvQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=BfZjungu; arc=fail smtp.client-ip=40.107.212.71
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=m2yq5PRWBydIXZaq2dQ1MCWHIlUnvAo7ccbyryoPjiVfpmnYPJDdnKNqJIUvSGICJvbdg8JUzojAQgaDLBiXp894AgRikoe7XRnZapkYUGTELmXteF9waVI4QV1klSoOLWwBkpQW9iK0xaJjCsHXsjBxZNX6U/b6imzz82bVKZWJOKZ6mw6j2aOE7JuQpQqmCDY/qSv8XaGh3MsqLUQdWYKssi+MXD7XK4yt2iVLZ1jXfshaP+7WaxXzTvVag7RLBdQxhX2lj9wEggkGKJPi/QAxam2m6LM9SwQpbOi1mS4NEREgHOKLMYcLGtK84OPaDgig3WC899Uo629+mNhG9Q==
+ b=EYBM3JlBu/TPuj44VKUdq91WMmHhFawnHLWLKZwW7natvvVh95Ap93vBmieazv8X4Ica1rwAZ5eAY8R0pJg5p7J5IpzRyy6fgYCqkX5rAF9YRpbM1fMA/wnYQt8WBz5+V65rotlqyTYCRtqneLbm3eOjwTwCVZ3x6havFSJn+MhMOGTbL2VStAfRgQCX6hsupBwIbRFY7FcNlsfCrA9UDSqfMVlSPMFZFXdpV/2k0Hl3VAalD1nIS61KSDTK1KubjEU89rUdzMn4vv3BN/cRf7DrI8fseIda+Pa2ZacKklbekdDq8Ta2++W1TUFsXbz8nT3n2kxPrIUxTbEexRMbHQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=MLkGmyTthe7acqzGPoN6+L6k2PMNXc3IrEnNVUa1EYc=;
- b=GPQis40JI1+GTVypL/+trGas1r2HUNAF2Z5KRDiZHN3i0pHs6i3WVqyWKlM5L7nlBFGfhGclUMmNMEhqqZkBVCIe8HUTZhkCdomr8MIzxX2dESpuftvdTdfkW/YH8mzgJ7Gl5on0VBVLsYuB3/hqG5sQS79YzGHHdDrN1L3KRvh9vtC1xRZJmyWZvdbs2670OdXdvkNOOroj/XHyRB6ZSVntFXnjXn/iVRnmokMGpi2EUvUhjSww5t9EIv56BgV3XEoUbz9fvYRgUlPWvCvhPt7dEaA2xkMb5a4PMT8p0B8QzS10x34bfHyb60ApvfShvKMStWTjDT0W6i8MH7xW3w==
+ bh=zfPRNCdFcMMSkANBdPgi+1qdzN1XA4svbD3D/V0GteM=;
+ b=XdChk8pm5UbV6f0JaUFjYIHo4eSJUq2lxdTp2ZiCPl4ON9ovbJRS0beseayhs9FMugum6Cz2YsMVKTaqSeCrX5C5cE1voGyjAjVa6Sq8tBTdlv1NQ4IyOcWo0dNmchTiTIoeQR+tGbjm0xDuGJjDMdSfWNkTe39AX70QZ5dQ97zZ6R1DGxZLNV9+t+o+lX8OIeCCAAvD3xQZqt/Ap+lRodM3+ludJALWiOyI5yShXjWyEeo7KCqd6ZbqipCW6ZWyQMVNp7O8M9+lL+kl3uKrzeo7ub0zgbOMgmVoBOsHd0e9IzzLsxr89fcrgc42yaG8AyRbtMvtCiXzie8s8UGDmg==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
  165.204.84.17) smtp.rcpttodomain=kernel.org smtp.mailfrom=amd.com; dmarc=pass
  (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
  dkim=none (message not signed); arc=none (0)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=MLkGmyTthe7acqzGPoN6+L6k2PMNXc3IrEnNVUa1EYc=;
- b=pyxqQYoUJtnCdWYDDop/MI+W19STmC9Gt/QAitTw4wnv+fcQiP9nEOd42jBCICNHf8jVH32L1MKwwH6z5NBtLQINluOBKe70mFDNSKKyxpS3uwBtvCt9f2IkrzCGlY375QX3lL8MRkQ7Bdd2OQ9w3XDs7CVy07lUmx7/dmrL66M=
-Received: from BN9PR03CA0204.namprd03.prod.outlook.com (2603:10b6:408:f9::29)
- by MN2PR12MB4208.namprd12.prod.outlook.com (2603:10b6:208:1d0::18) with
+ bh=zfPRNCdFcMMSkANBdPgi+1qdzN1XA4svbD3D/V0GteM=;
+ b=BfZjunguFIVOUfd5ycwp6oePoUcpPznF4paz9WUpraGnPsbQfqpQGLyGv8wm/bRNQqYhTTx7TIQyuZqM7xZCuBaJzx763UZEl7xUuZVEZal4YMy1jCQkvNZCcH8O6WESNdlfXrkCNM+21tBFSkxpwuEvDY/UnWKDF51PVN4ByAc=
+Received: from MN0P220CA0023.NAMP220.PROD.OUTLOOK.COM (2603:10b6:208:52e::27)
+ by PH7PR12MB5594.namprd12.prod.outlook.com (2603:10b6:510:134::13) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8511.27; Mon, 10 Mar
- 2025 18:32:29 +0000
-Received: from BL02EPF00021F6F.namprd02.prod.outlook.com
- (2603:10b6:408:f9:cafe::af) by BN9PR03CA0204.outlook.office365.com
- (2603:10b6:408:f9::29) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8511.26; Mon, 10 Mar
+ 2025 18:32:39 +0000
+Received: from BL02EPF00021F6B.namprd02.prod.outlook.com
+ (2603:10b6:208:52e:cafe::2a) by MN0P220CA0023.outlook.office365.com
+ (2603:10b6:208:52e::27) with Microsoft SMTP Server (version=TLS1_3,
  cipher=TLS_AES_256_GCM_SHA384) id 15.20.8511.26 via Frontend Transport; Mon,
- 10 Mar 2025 18:32:28 +0000
+ 10 Mar 2025 18:32:39 +0000
 X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
  smtp.mailfrom=amd.com; dkim=none (message not signed)
  header.d=none;dmarc=pass action=none header.from=amd.com;
@@ -62,29 +62,36 @@ Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
  165.204.84.17 as permitted sender) receiver=protection.outlook.com;
  client-ip=165.204.84.17; helo=SATLEXMB03.amd.com; pr=C
 Received: from SATLEXMB03.amd.com (165.204.84.17) by
- BL02EPF00021F6F.mail.protection.outlook.com (10.167.249.11) with Microsoft
+ BL02EPF00021F6B.mail.protection.outlook.com (10.167.249.7) with Microsoft
  SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.8534.20 via Frontend Transport; Mon, 10 Mar 2025 18:32:28 +0000
-Received: from SATLEXMB03.amd.com (10.181.40.144) by SATLEXMB03.amd.com
+ 15.20.8534.20 via Frontend Transport; Mon, 10 Mar 2025 18:32:39 +0000
+Received: from SATLEXMB06.amd.com (10.181.40.147) by SATLEXMB03.amd.com
  (10.181.40.144) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 10 Mar
- 2025 13:32:27 -0500
+ 2025 13:32:39 -0500
+Received: from SATLEXMB03.amd.com (10.181.40.144) by SATLEXMB06.amd.com
+ (10.181.40.147) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 10 Mar
+ 2025 13:32:38 -0500
 Received: from prasad-lnx-mach.amd.com (10.180.168.240) by SATLEXMB03.amd.com
  (10.181.40.144) with Microsoft SMTP Server id 15.1.2507.39 via Frontend
- Transport; Mon, 10 Mar 2025 13:32:24 -0500
+ Transport; Mon, 10 Mar 2025 13:32:34 -0500
 From: Venkata Prasad Potturu <venkataprasad.potturu@amd.com>
 To: <broonie@kernel.org>, <alsa-devel@alsa-project.org>
 CC: <Mario.Limonciello@amd.com>, <Vijendar.Mukunda@amd.com>,
 	<Basavaraj.Hiregoudar@amd.com>, <Sunil-kumar.Dommati@amd.com>,
 	<ssabakar@amd.com>, Venkata Prasad Potturu <venkataprasad.potturu@amd.com>,
 	Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>, Greg KH <gregkh@linuxfoundation.org>, "Peter
- Zijlstra" <peterz@infradead.org>, Jeff Johnson <quic_jjohnson@quicinc.com>,
-	"open list:SOUND - SOC LAYER / DYNAMIC AUDIO POWER MANAGEM..."
-	<linux-sound@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
-Subject: [PATCH v2 04/14] ASoC: amd: acp: Refactor acp platform device creation
-Date: Tue, 11 Mar 2025 00:01:51 +0530
-Message-ID: <20250310183201.11979-5-venkataprasad.potturu@amd.com>
+	Takashi Iwai <tiwai@suse.com>, Greg KH <gregkh@linuxfoundation.org>, "Jeff
+ Johnson" <quic_jjohnson@quicinc.com>, Peter Zijlstra <peterz@infradead.org>,
+	Murad Masimov <m.masimov@maxima.ru>, Muhammad Usama Anjum
+	<usama.anjum@collabora.com>, =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?=
+	<u.kleine-koenig@baylibre.com>, "open list:SOUND - SOC LAYER / DYNAMIC AUDIO
+ POWER MANAGEM..." <linux-sound@vger.kernel.org>, open list
+	<linux-kernel@vger.kernel.org>
+Subject: [PATCH v2 05/14] ASoC: amd: acp: Refactor acp machine select
+Date: Tue, 11 Mar 2025 00:01:52 +0530
+Message-ID: <20250310183201.11979-6-venkataprasad.potturu@amd.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20250310183201.11979-1-venkataprasad.potturu@amd.com>
 References: <20250310183201.11979-1-venkataprasad.potturu@amd.com>
@@ -96,274 +103,488 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-Received-SPF: None (SATLEXMB03.amd.com: venkataprasad.potturu@amd.com does not
- designate permitted sender hosts)
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BL02EPF00021F6F:EE_|MN2PR12MB4208:EE_
-X-MS-Office365-Filtering-Correlation-Id: 6ac424d6-63bd-45c6-817a-08dd6001e976
+X-MS-TrafficTypeDiagnostic: BL02EPF00021F6B:EE_|PH7PR12MB5594:EE_
+X-MS-Office365-Filtering-Correlation-Id: 3ad3a66e-f4ec-41ab-f5f4-08dd6001f01a
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|82310400026|7416014|376014|36860700013|1800799024;
+	BCL:0;ARA:13230040|82310400026|376014|7416014|36860700013|1800799024;
 X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?dvcjkL5916BBN0AqX70xo1N5sBehkjYJRXaq9ycMfZJo53Mo/fiqA5h1Aghv?=
- =?us-ascii?Q?Ooo1rFTBlqZbCF4dUpsxiIkZlbLtkAoPcTd+XlTI1PKWNrCU2w0tOq1HLHrd?=
- =?us-ascii?Q?kA9RcZPQ1h4xyEPMOFAp64Pk2Foudcgpa1pj8lZE5XNqUEWOWZ3g2XIaNWq8?=
- =?us-ascii?Q?6NeyddaK0u2aRTLfYvNe56kFYVaheW3dn92bhkdNBCHU0mw8YdsxHu8uJOAy?=
- =?us-ascii?Q?CEq9vWoKmtnbTLCErwkrmCmo7t5pdNoBakIzdw5LIXI6VPfMymEuHAjUEZg6?=
- =?us-ascii?Q?4qCwtq05eaYu9eZZJgfSD+4i/3aXrGmlTGaMB1HvsQfEV/krmgutqrGeBdEe?=
- =?us-ascii?Q?GhN3mHXeGrhKmC09akuhLRIBx4zBCp3eepYjoUK2Ov1mHOT1AFz4Hp45KVQ8?=
- =?us-ascii?Q?2uUxiRTdnQ70TWTe6LMTV4d4tbJkGrgy60z3w70rTv5i5LST4LSJ69bW6B81?=
- =?us-ascii?Q?hcFFOQbEu61HH2hNsdRd8ZX27oFFu6hfkiPsEdyfN02RTxMJgFyAljTzDMPa?=
- =?us-ascii?Q?OIinAsqgKEK0EqD+/Vou4qOUPHtrz5/zIvV2Jx5NZdNdg9CxB43iylTREuhX?=
- =?us-ascii?Q?QBNbcDFl3ZwryyHDIPjqnFe53fXdIRfjQZb0sVdOnQSz6sK3N2ubVGoc2C6G?=
- =?us-ascii?Q?qztsWiDlKpSyOwy7nNqJfO3qPl+x/zBnw+9VKw7UjRDguIwkg9acVpW/Kv4v?=
- =?us-ascii?Q?yC/ufjQwhUBpXmt/zdQQSm0AjCrA/uBQ491Hp1MU+4UChJUBMKv/KIT4Zwuo?=
- =?us-ascii?Q?V32GmmOxhcMa6TVgKkpHyTuU8Au+FsFK1erJaq51hz21ppYAgTpGa31oObWJ?=
- =?us-ascii?Q?HjANOAgrDGZrJQbcZ5ToawvVqP2H486xNJBxeOB1pq0c8BUIvfK9es95Lfkj?=
- =?us-ascii?Q?IaFrHH650eySdwbPKfGQzAxnLYH3L7b/q7MjietAc0tnyRgUu5NF+b84+Cti?=
- =?us-ascii?Q?4xLNqq6AmHrrjEeubvyl5trZ2UmpDGMFfPacH+bm/mfQ+DAUQtXFfOqoGzNG?=
- =?us-ascii?Q?Mjkule4UmfEDqrpaleg6mSP5F/j0lVJSbW9gS1NjwK0+qPCP6r8lrQMAYc+8?=
- =?us-ascii?Q?Rh+31IF20LOe7ZPL5q3SKDG1XIF4k5BVLx1sGbojCKsHcl+8CBlQ7GDlx6DH?=
- =?us-ascii?Q?CZrS0F4jPFBMA8ghLV/ACVVj9rnRJNKK4D3KN9hPlbg+SfU9nKo62GPu5PGX?=
- =?us-ascii?Q?6YNveShrb5OrHsHyb7YiEg6vWqXs0oSXU1DSoor6+tY7wx5XxPziFxaqGXcQ?=
- =?us-ascii?Q?TtCNoxUDg7funE+7NZjC2LCN3wiLahkZtzDEACtfY9x+nkff2kJAPpm1Nxph?=
- =?us-ascii?Q?AjA7JRE+bHYwEdPDykcejaSeCkGCTmK9KgBaBxUPopawCnd12HxwgcLq2Ml7?=
- =?us-ascii?Q?FGGgWXgvk57+JL/q+dng77wsgCzngZl1s8sP3/WDXXJBVFEs5mfoLOJeZygV?=
- =?us-ascii?Q?s48IskqPsZ1jHYPLhVfqU8kxVj5O8gHq7geoKeZ3YbxPHLvmCDEJtDnWhrru?=
- =?us-ascii?Q?P/tR2hwcFMoWqYY=3D?=
+	=?us-ascii?Q?sQXNvODXneXonXRAZdVIO7yjItc1pRMytgvE2JNR4lztgLtLZHfUrhh4trw4?=
+ =?us-ascii?Q?NjJKfqawshY8hBtiSaC27ryu5d7ldHCTkCnXiq23BjzdBfn3HsCcyRqwAS/s?=
+ =?us-ascii?Q?eHegH8yPQcxultaBX8Qv2CytUo9KNHzenk7bLxgWsk/u7cg1KsvNcGvAf03K?=
+ =?us-ascii?Q?X3ihR3PHMThAjnLPPbdFV6Nh+C33J9ofU9fIaqcHzN/zwVSTkX6Cz+h6nEjY?=
+ =?us-ascii?Q?o4sGA7mdn0iyrRbVRiJ4ypQ5fhjr0GkdaLBlZT64B1Q4zz2zzNemHNnDpdyV?=
+ =?us-ascii?Q?5XTLrfBxE9JfK0tLJQaTfy+J42uxf/P5k0hFcBT1LGQDgSX4YzfLbNfwsHZv?=
+ =?us-ascii?Q?3k57eVGaUACXIrul0Ql3TvsifYUKrymFT15xWJqupL59rxAy/30bhHtszkSn?=
+ =?us-ascii?Q?VxCxJyAGonaZVvEtuy25/vgGITD9/Jffrvpfve18noyOkrUpiJxypCWyfQ62?=
+ =?us-ascii?Q?gA9KwcHcasQ0lXbQzeKGBdSlc/KDJlR7s40+Xp1QaKNqBdIIGD4ptHEbeiu8?=
+ =?us-ascii?Q?DQgzvTO8GuCs57MdD0dHJh9/ayjvQL/8xwserTh/AWzIf6tlKbjOS8aoXssO?=
+ =?us-ascii?Q?gOwxxlcy1qm2++tXQ9mIEa3eOnZjVCaZOz/o9QhS8BYMkcnNpFNtiPsiJxNv?=
+ =?us-ascii?Q?lD3K5XktVwmsJml6QwUD7pkIrhElpUNc5TgtTkCL6DYhCVboBN36ZFm8m7qe?=
+ =?us-ascii?Q?E7MbJNrXKueooTHRTiT+QSruTFDRerx1suPlFTVUTQJe2ps/QOjWPzySuoss?=
+ =?us-ascii?Q?gVYf1/395Dsf3TcyOTpcO7bV3DbmyMCKRALwrxBOrqKqmnW/DrmSSTqPSGaY?=
+ =?us-ascii?Q?OvMMLzG68JGBZQGm0+KF212GE5BFqRLwyqj6Fr/saA/+stCg/zdWEwL2xabO?=
+ =?us-ascii?Q?LWkKe7jP3R0BcK8r6iB9Kajwe5jbxUN3sZsOO9NLh5EEw6PLY2mryBSsbtUv?=
+ =?us-ascii?Q?SRmZEyUB9QjPQrtFYAi5EgiNpqW93zAOo+z/iRKGzg02V6Z5P36EOhJdH2Op?=
+ =?us-ascii?Q?RksPTi4H/WW6CxHyguBOrO0Eg9iQ/4Qe9WeMFjlxiTxryYW1rjd5D5TSj942?=
+ =?us-ascii?Q?GZ1D7S+MC4DIMTNSN/4gPvAAaiRvyuvNHL7jqvN0CRdIUczj+CpsMZVQcBPA?=
+ =?us-ascii?Q?CIs+fIhyY5sYTjGo8g29maSrIEqZbUmZerjroOwG2mDG5Ty6EJNKMuCmkz8w?=
+ =?us-ascii?Q?iV7/WqIubwknM4YWZV9+EktLzRKACBsd/OuiwqMrSf4AmpfkRd8iBVpAudeZ?=
+ =?us-ascii?Q?J6zYhXa8WupC/QfyRsUaa81D2nZjwVcYUseagTeuluwQhDrDF7/dJScD/9dz?=
+ =?us-ascii?Q?bLU98vjKY8HyXnXKEOAx4ePnH6OZI3NKY48lQDsqE/z6HLBvYMLDPEdfIxqB?=
+ =?us-ascii?Q?kNb759OrRdleGlKVV8L0wjiwVPAqHGTMnrKh3s9iOAUfNT8WWQ6LMyI3956U?=
+ =?us-ascii?Q?lGOxHEqMJn5cGIwqarR7uoHJ3aS9kB3O9lPlfgVHtMMSIER3upsCKASf3hQ2?=
+ =?us-ascii?Q?ZIO4fdC3G1O8IyE=3D?=
 X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB03.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(7416014)(376014)(36860700013)(1800799024);DIR:OUT;SFP:1101;
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB03.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(376014)(7416014)(36860700013)(1800799024);DIR:OUT;SFP:1101;
 X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Mar 2025 18:32:28.4257
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Mar 2025 18:32:39.5542
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 6ac424d6-63bd-45c6-817a-08dd6001e976
+X-MS-Exchange-CrossTenant-Network-Message-Id: 3ad3a66e-f4ec-41ab-f5f4-08dd6001f01a
 X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB03.amd.com]
 X-MS-Exchange-CrossTenant-AuthSource:
-	BL02EPF00021F6F.namprd02.prod.outlook.com
+	BL02EPF00021F6B.namprd02.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR12MB4208
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB5594
 
-Refactor acp platform device creation logic and remove unused
-acp resource (acp_res) structure.
+Refactor and move acp machine select function from acp platform
+driver to acp pci driver and assign platform specific acpi machines
+to chip->machines.
 
 Signed-off-by: Venkata Prasad Potturu <venkataprasad.potturu@amd.com>
 ---
- sound/soc/amd/acp/acp-pci.c | 119 ++++++++++++++++++------------------
- sound/soc/amd/acp/amd.h     |   4 ++
- 2 files changed, 62 insertions(+), 61 deletions(-)
+ sound/soc/amd/acp/acp-legacy-common.c | 28 +++++++++
+ sound/soc/amd/acp/acp-pci.c           |  7 +++
+ sound/soc/amd/acp/acp-platform.c      | 28 ---------
+ sound/soc/amd/acp/acp-rembrandt.c     | 32 -----------
+ sound/soc/amd/acp/acp-renoir.c        | 42 --------------
+ sound/soc/amd/acp/acp63.c             | 10 ----
+ sound/soc/amd/acp/acp70.c             | 10 ----
+ sound/soc/amd/acp/amd.h               | 81 ++++++++++++++++++++++++++-
+ 8 files changed, 114 insertions(+), 124 deletions(-)
 
+diff --git a/sound/soc/amd/acp/acp-legacy-common.c b/sound/soc/amd/acp/acp-legacy-common.c
+index f87a2da8c641..886615798b93 100644
+--- a/sound/soc/amd/acp/acp-legacy-common.c
++++ b/sound/soc/amd/acp/acp-legacy-common.c
+@@ -16,6 +16,8 @@
+ #include <linux/pci.h>
+ #include <linux/export.h>
+ 
++#include "../mach-config.h"
++
+ #define ACP_RENOIR_PDM_ADDR	0x02
+ #define ACP_REMBRANDT_PDM_ADDR	0x03
+ #define ACP63_PDM_ADDR		0x02
+@@ -350,6 +352,32 @@ int acp_deinit(struct acp_chip_info *chip)
+ 	return 0;
+ }
+ EXPORT_SYMBOL_NS_GPL(acp_deinit, "SND_SOC_ACP_COMMON");
++int acp_machine_select(struct acp_chip_info *chip)
++{
++	struct snd_soc_acpi_mach *mach;
++	int size, platform;
++
++	if (chip->flag == FLAG_AMD_LEGACY_ONLY_DMIC) {
++		platform = chip->acp_rev;
++		chip->mach_dev = platform_device_register_data(chip->dev, "acp-pdm-mach",
++							       PLATFORM_DEVID_NONE, &platform,
++							       sizeof(platform));
++	} else {
++		size = sizeof(*chip->machines);
++		mach = snd_soc_acpi_find_machine(chip->machines);
++		if (!mach) {
++			dev_err(chip->dev, "warning: No matching ASoC machine driver found\n");
++			return -EINVAL;
++		}
++		mach->mach_params.subsystem_rev = chip->acp_rev;
++		chip->mach_dev = platform_device_register_data(chip->dev, mach->drv_name,
++							       PLATFORM_DEVID_NONE, mach, size);
++	}
++	if (IS_ERR(chip->mach_dev))
++		dev_warn(chip->dev, "Unable to register Machine device\n");
++	return 0;
++}
++EXPORT_SYMBOL_NS_GPL(acp_machine_select, "SND_SOC_ACP_COMMON");
+ 
+ static void check_acp3x_config(struct acp_chip_info *chip)
+ {
 diff --git a/sound/soc/amd/acp/acp-pci.c b/sound/soc/amd/acp/acp-pci.c
-index 549e95415ab2..0ffef70ab979 100644
+index 0ffef70ab979..99297a388ed7 100644
 --- a/sound/soc/amd/acp/acp-pci.c
 +++ b/sound/soc/amd/acp/acp-pci.c
-@@ -26,27 +26,56 @@
- #define ACP3x_REG_START	0x1240000
- #define ACP3x_REG_END	0x125C000
- 
--static struct platform_device *pdev;
--
--static const struct resource acp_res[] = {
--	{
--		.start = 0,
--		.end = ACP3x_REG_END - ACP3x_REG_START,
--		.name = "acp_mem",
--		.flags = IORESOURCE_MEM,
--	},
--	{
--		.start = 0,
--		.end = 0,
--		.name = "acp_dai_irq",
--		.flags = IORESOURCE_IRQ,
--	},
--};
-+static void acp_fill_platform_dev_info(struct platform_device_info *pdevinfo,
-+				       struct device *parent,
-+				       struct fwnode_handle *fw_node,
-+				       char *name, unsigned int id,
-+				       const struct resource *res,
-+				       unsigned int num_res,
-+				       const void *data,
-+				       size_t size_data)
-+{
-+	pdevinfo->name = name;
-+	pdevinfo->id = id;
-+	pdevinfo->parent = parent;
-+	pdevinfo->num_res = num_res;
-+	pdevinfo->res = res;
-+	pdevinfo->data = data;
-+	pdevinfo->size_data = size_data;
-+	pdevinfo->fwnode = fw_node;
-+}
- 
--static int create_acp_platform_devs(struct pci_dev *pci, struct acp_chip_info *chip)
-+static int create_acp_platform_devs(struct pci_dev *pci, struct acp_chip_info *chip, u32 addr)
- {
-+	struct platform_device_info pdevinfo;
-+	struct device *parent;
- 	int ret;
- 
-+	parent = &pci->dev;
-+
-+	if (chip->is_i2s_config || chip->is_pdm_dev) {
-+		chip->res = devm_kzalloc(&pci->dev, sizeof(struct resource), GFP_KERNEL);
-+		if (!chip->res) {
-+			ret = -ENOMEM;
-+			goto err;
-+		}
-+		chip->res->flags = IORESOURCE_MEM;
-+		chip->res->start = addr;
-+		chip->res->end = addr + (ACP3x_REG_END - ACP3x_REG_START);
-+		memset(&pdevinfo, 0, sizeof(pdevinfo));
-+	}
-+
-+	memset(&pdevinfo, 0, sizeof(pdevinfo));
-+	acp_fill_platform_dev_info(&pdevinfo, parent, NULL, chip->name,
-+				   0, chip->res, 1, chip, sizeof(*chip));
-+
-+	chip->acp_plat_dev = platform_device_register_full(&pdevinfo);
-+	if (IS_ERR(chip->acp_plat_dev)) {
-+		dev_err(&pci->dev,
-+			"cannot register %s device\n", pdevinfo.name);
-+		ret = PTR_ERR(chip->acp_plat_dev);
-+		goto err;
-+	}
- 	if (chip->is_pdm_dev && chip->is_pdm_config) {
- 		chip->dmic_codec_dev = platform_device_register_data(&pci->dev,
- 								     "dmic-codec",
-@@ -55,22 +84,21 @@ static int create_acp_platform_devs(struct pci_dev *pci, struct acp_chip_info *c
- 		if (IS_ERR(chip->dmic_codec_dev)) {
- 			dev_err(&pci->dev, "failed to create DMIC device\n");
- 			ret = PTR_ERR(chip->dmic_codec_dev);
--			goto err;
-+			goto unregister_acp_plat_dev;
- 		}
- 	}
- 	return 0;
-+unregister_acp_plat_dev:
-+	platform_device_unregister(chip->acp_plat_dev);
- err:
- 	return ret;
- }
- 
- static int acp_pci_probe(struct pci_dev *pci, const struct pci_device_id *pci_id)
- {
--	struct platform_device_info pdevinfo;
- 	struct device *dev = &pci->dev;
--	const struct resource *res_acp;
- 	struct acp_chip_info *chip;
--	struct resource *res;
--	unsigned int flag, addr, num_res, i;
-+	unsigned int flag, addr;
- 	int ret;
- 
- 	flag = snd_amd_acp_find_config(pci);
-@@ -94,8 +122,6 @@ static int acp_pci_probe(struct pci_dev *pci, const struct pci_device_id *pci_id
- 
- 	pci_set_master(pci);
- 
--	res_acp = acp_res;
--	num_res = ARRAY_SIZE(acp_res);
- 	chip->acp_rev = pci->revision;
- 	switch (pci->revision) {
+@@ -127,19 +127,23 @@ static int acp_pci_probe(struct pci_dev *pci, const struct pci_device_id *pci_id
  	case 0x01:
-@@ -129,6 +155,8 @@ static int acp_pci_probe(struct pci_dev *pci, const struct pci_device_id *pci_id
- 		goto release_regions;
- 	}
+ 		chip->name = "acp_asoc_renoir";
+ 		chip->acp_hw_ops_init = acp31_hw_ops_init;
++		chip->machines = snd_soc_acpi_amd_acp_machines;
+ 		break;
+ 	case 0x6f:
+ 		chip->name = "acp_asoc_rembrandt";
+ 		chip->acp_hw_ops_init = acp6x_hw_ops_init;
++		chip->machines = snd_soc_acpi_amd_rmb_acp_machines;
+ 		break;
+ 	case 0x63:
+ 		chip->name = "acp_asoc_acp63";
+ 		chip->acp_hw_ops_init = acp63_hw_ops_init;
++		chip->machines = snd_soc_acpi_amd_acp63_acp_machines;
+ 		break;
+ 	case 0x70:
+ 	case 0x71:
+ 		chip->name = "acp_asoc_acp70";
+ 		chip->acp_hw_ops_init = acp70_hw_ops_init;
++		chip->machines = snd_soc_acpi_amd_acp70_acp_machines;
+ 		break;
+ 	default:
+ 		dev_err(dev, "Unsupported device revision:0x%x\n", pci->revision);
+@@ -175,6 +179,7 @@ static int acp_pci_probe(struct pci_dev *pci, const struct pci_device_id *pci_id
+ 	chip->chip_pdev = chip->acp_plat_dev;
+ 	chip->dev = &chip->acp_plat_dev->dev;
  
-+	chip->addr = addr;
-+
- 	chip->acp_hw_ops_init(chip);
- 	ret = acp_hw_init(chip);
- 	if (ret)
-@@ -138,48 +166,16 @@ static int acp_pci_probe(struct pci_dev *pci, const struct pci_device_id *pci_id
- 	if (!chip->is_pdm_dev && !chip->is_i2s_config)
- 		goto skip_pdev_creation;
- 
--	ret = create_acp_platform_devs(pci, chip);
-+	ret = create_acp_platform_devs(pci, chip, addr);
- 	if (ret < 0) {
- 		dev_err(&pci->dev, "ACP platform devices creation failed\n");
- 		goto de_init;
- 	}
- 
--	res = devm_kcalloc(&pci->dev, num_res, sizeof(struct resource), GFP_KERNEL);
--	if (!res) {
--		ret = -ENOMEM;
--		goto de_init;
--	}
--
--	for (i = 0; i < num_res; i++, res_acp++) {
--		res[i].name = res_acp->name;
--		res[i].flags = res_acp->flags;
--		res[i].start = addr + res_acp->start;
--		res[i].end = addr + res_acp->end;
--		if (res_acp->flags == IORESOURCE_IRQ) {
--			res[i].start = pci->irq;
--			res[i].end = res[i].start;
--		}
--	}
--
--	memset(&pdevinfo, 0, sizeof(pdevinfo));
--
--	pdevinfo.name = chip->name;
--	pdevinfo.id = 0;
--	pdevinfo.parent = &pci->dev;
--	pdevinfo.num_res = num_res;
--	pdevinfo.res = &res[0];
--	pdevinfo.data = chip;
--	pdevinfo.size_data = sizeof(*chip);
--
--	pdev = platform_device_register_full(&pdevinfo);
--	if (IS_ERR(pdev)) {
--		dev_err(&pci->dev, "cannot register %s device\n", pdevinfo.name);
--		ret = PTR_ERR(pdev);
--		goto de_init;
--	}
-+	chip->chip_pdev = chip->acp_plat_dev;
-+	chip->dev = &chip->acp_plat_dev->dev;
- 
++	acp_machine_select(chip);
  skip_pdev_creation:
--	chip->chip_pdev = pdev;
  	dev_set_drvdata(&pci->dev, chip);
  	pm_runtime_set_autosuspend_delay(&pci->dev, 2000);
- 	pm_runtime_use_autosuspend(&pci->dev);
-@@ -244,8 +240,9 @@ static void acp_pci_remove(struct pci_dev *pci)
- 	pm_runtime_get_noresume(&pci->dev);
- 	if (chip->dmic_codec_dev)
+@@ -242,6 +247,8 @@ static void acp_pci_remove(struct pci_dev *pci)
  		platform_device_unregister(chip->dmic_codec_dev);
--	if (pdev)
--		platform_device_unregister(pdev);
-+	if (chip->acp_plat_dev)
-+		platform_device_unregister(chip->acp_plat_dev);
-+
+ 	if (chip->acp_plat_dev)
+ 		platform_device_unregister(chip->acp_plat_dev);
++	if (chip->mach_dev)
++		platform_device_unregister(chip->mach_dev);
+ 
  	ret = acp_hw_deinit(chip);
  	if (ret)
- 		dev_err(&pci->dev, "ACP de-init failed\n");
+diff --git a/sound/soc/amd/acp/acp-platform.c b/sound/soc/amd/acp/acp-platform.c
+index aa330aeeb301..7d6abff28b23 100644
+--- a/sound/soc/amd/acp/acp-platform.c
++++ b/sound/soc/amd/acp/acp-platform.c
+@@ -21,7 +21,6 @@
+ #include <linux/dma-mapping.h>
+ 
+ #include "amd.h"
+-#include "../mach-config.h"
+ #include "acp-mach.h"
+ 
+ #define DRV_NAME "acp_i2s_dma"
+@@ -108,33 +107,6 @@ static const struct snd_pcm_hardware acp6x_pcm_hardware_capture = {
+ 	.periods_max = CAPTURE_MAX_NUM_PERIODS,
+ };
+ 
+-int acp_machine_select(struct acp_dev_data *adata)
+-{
+-	struct snd_soc_acpi_mach *mach;
+-	int size, platform;
+-
+-	if (adata->flag == FLAG_AMD_LEGACY_ONLY_DMIC) {
+-		platform = adata->acp_rev;
+-		adata->mach_dev = platform_device_register_data(adata->dev, "acp-pdm-mach",
+-								PLATFORM_DEVID_NONE, &platform,
+-								sizeof(platform));
+-	} else {
+-		size = sizeof(*adata->machines);
+-		mach = snd_soc_acpi_find_machine(adata->machines);
+-		if (!mach) {
+-			dev_err(adata->dev, "warning: No matching ASoC machine driver found\n");
+-			return -EINVAL;
+-		}
+-		mach->mach_params.subsystem_rev = adata->acp_rev;
+-		adata->mach_dev = platform_device_register_data(adata->dev, mach->drv_name,
+-								PLATFORM_DEVID_NONE, mach, size);
+-	}
+-	if (IS_ERR(adata->mach_dev))
+-		dev_warn(adata->dev, "Unable to register Machine device\n");
+-	return 0;
+-}
+-EXPORT_SYMBOL_NS_GPL(acp_machine_select, "SND_SOC_ACP_COMMON");
+-
+ static irqreturn_t i2s_irq_handler(int irq, void *data)
+ {
+ 	struct acp_dev_data *adata = data;
+diff --git a/sound/soc/amd/acp/acp-rembrandt.c b/sound/soc/amd/acp/acp-rembrandt.c
+index e727754a8231..eb09878c0d5c 100644
+--- a/sound/soc/amd/acp/acp-rembrandt.c
++++ b/sound/soc/amd/acp/acp-rembrandt.c
+@@ -44,36 +44,6 @@ static struct acp_resource rsrc = {
+ 	.sram_pte_offset = 0x03802800,
+ };
+ 
+-static struct snd_soc_acpi_codecs amp_rt1019 = {
+-	.num_codecs = 1,
+-	.codecs = {"10EC1019"}
+-};
+-
+-static struct snd_soc_acpi_codecs amp_max = {
+-	.num_codecs = 1,
+-	.codecs = {"MX98360A"}
+-};
+-
+-static struct snd_soc_acpi_mach snd_soc_acpi_amd_rmb_acp_machines[] = {
+-	{
+-		.id = "10508825",
+-		.drv_name = "rmb-nau8825-max",
+-		.machine_quirk = snd_soc_acpi_codec_list,
+-		.quirk_data = &amp_max,
+-	},
+-	{
+-		.id = "AMDI0007",
+-		.drv_name = "rembrandt-acp",
+-	},
+-	{
+-		.id = "RTL5682",
+-		.drv_name = "rmb-rt5682s-rt1019",
+-		.machine_quirk = snd_soc_acpi_codec_list,
+-		.quirk_data = &amp_rt1019,
+-	},
+-	{},
+-};
+-
+ static struct snd_soc_dai_driver acp_rmb_dai[] = {
+ {
+ 	.name = "acp-i2s-sp",
+@@ -230,8 +200,6 @@ static int rembrandt_audio_probe(struct platform_device *pdev)
+ 	adata->acp_rev = chip->acp_rev;
+ 	adata->flag = chip->flag;
+ 	adata->is_i2s_config = chip->is_i2s_config;
+-	adata->machines = snd_soc_acpi_amd_rmb_acp_machines;
+-	acp_machine_select(adata);
+ 
+ 	dev_set_drvdata(dev, adata);
+ 
+diff --git a/sound/soc/amd/acp/acp-renoir.c b/sound/soc/amd/acp/acp-renoir.c
+index ca2b74283d8f..2b47c6bfc9e7 100644
+--- a/sound/soc/amd/acp/acp-renoir.c
++++ b/sound/soc/amd/acp/acp-renoir.c
+@@ -36,45 +36,6 @@ static struct acp_resource rsrc = {
+ 	.sram_pte_offset = 0x02052800,
+ };
+ 
+-static struct snd_soc_acpi_codecs amp_rt1019 = {
+-	.num_codecs = 1,
+-	.codecs = {"10EC1019"}
+-};
+-
+-static struct snd_soc_acpi_codecs amp_max = {
+-	.num_codecs = 1,
+-	.codecs = {"MX98360A"}
+-};
+-
+-static struct snd_soc_acpi_mach snd_soc_acpi_amd_acp_machines[] = {
+-	{
+-		.id = "10EC5682",
+-		.drv_name = "acp3xalc56821019",
+-		.machine_quirk = snd_soc_acpi_codec_list,
+-		.quirk_data = &amp_rt1019,
+-	},
+-	{
+-		.id = "RTL5682",
+-		.drv_name = "acp3xalc5682sm98360",
+-		.machine_quirk = snd_soc_acpi_codec_list,
+-		.quirk_data = &amp_max,
+-	},
+-	{
+-		.id = "RTL5682",
+-		.drv_name = "acp3xalc5682s1019",
+-		.machine_quirk = snd_soc_acpi_codec_list,
+-		.quirk_data = &amp_rt1019,
+-	},
+-	{
+-		.id = "AMDI1019",
+-		.drv_name = "renoir-acp",
+-	},
+-	{
+-		.id = "ESSX8336",
+-		.drv_name = "acp3x-es83xx",
+-	},
+-	{},
+-};
+ 
+ static struct snd_soc_dai_driver acp_renoir_dai[] = {
+ {
+@@ -188,9 +149,6 @@ static int renoir_audio_probe(struct platform_device *pdev)
+ 	adata->acp_rev = chip->acp_rev;
+ 	adata->flag = chip->flag;
+ 
+-	adata->machines = snd_soc_acpi_amd_acp_machines;
+-	acp_machine_select(adata);
+-
+ 	dev_set_drvdata(dev, adata);
+ 	acp_enable_interrupts(adata);
+ 	acp_platform_register(dev);
+diff --git a/sound/soc/amd/acp/acp63.c b/sound/soc/amd/acp/acp63.c
+index 4187a8968de7..76a26b82e3ad 100644
+--- a/sound/soc/amd/acp/acp63.c
++++ b/sound/soc/amd/acp/acp63.c
+@@ -62,14 +62,6 @@ static struct acp_resource rsrc = {
+ 	.sram_pte_offset = 0x03802800,
+ };
+ 
+-static struct snd_soc_acpi_mach snd_soc_acpi_amd_acp63_acp_machines[] = {
+-	{
+-		.id = "AMDI0052",
+-		.drv_name = "acp63-acp",
+-	},
+-	{},
+-};
+-
+ static struct snd_soc_dai_driver acp63_dai[] = {
+ {
+ 	.name = "acp-i2s-sp",
+@@ -259,8 +251,6 @@ static int acp63_audio_probe(struct platform_device *pdev)
+ 	adata->acp_rev = chip->acp_rev;
+ 	adata->flag = chip->flag;
+ 	adata->is_i2s_config = chip->is_i2s_config;
+-	adata->machines = snd_soc_acpi_amd_acp63_acp_machines;
+-	acp_machine_select(adata);
+ 	dev_set_drvdata(dev, adata);
+ 
+ 	if (chip->is_i2s_config && rsrc.soc_mclk) {
+diff --git a/sound/soc/amd/acp/acp70.c b/sound/soc/amd/acp/acp70.c
+index 7f4ec3bfaeab..3e603c5f736a 100644
+--- a/sound/soc/amd/acp/acp70.c
++++ b/sound/soc/amd/acp/acp70.c
+@@ -40,14 +40,6 @@ static struct acp_resource rsrc = {
+ 	.sram_pte_offset = 0x03800000,
+ };
+ 
+-static struct snd_soc_acpi_mach snd_soc_acpi_amd_acp70_acp_machines[] = {
+-	{
+-		.id = "AMDI0029",
+-		.drv_name = "acp70-acp",
+-	},
+-	{},
+-};
+-
+ static struct snd_soc_dai_driver acp70_dai[] = {
+ {
+ 	.name = "acp-i2s-sp",
+@@ -187,10 +179,8 @@ static int acp_acp70_audio_probe(struct platform_device *pdev)
+ 	adata->dai_driver = acp70_dai;
+ 	adata->num_dai = ARRAY_SIZE(acp70_dai);
+ 	adata->rsrc = &rsrc;
+-	adata->machines = snd_soc_acpi_amd_acp70_acp_machines;
+ 	adata->acp_rev = chip->acp_rev;
+ 	adata->flag = chip->flag;
+-	acp_machine_select(adata);
+ 
+ 	dev_set_drvdata(dev, adata);
+ 
 diff --git a/sound/soc/amd/acp/amd.h b/sound/soc/amd/acp/amd.h
-index 9511995da591..be1aa405a14a 100644
+index be1aa405a14a..b7a1b4aa8fef 100644
 --- a/sound/soc/amd/acp/amd.h
 +++ b/sound/soc/amd/acp/amd.h
-@@ -140,12 +140,16 @@
- 
- struct acp_chip_info {
- 	char *name;		/* Platform name */
-+	struct resource *res;
-+	struct device *dev;
- 	unsigned int acp_rev;	/* ACP Revision id */
- 	void __iomem *base;	/* ACP memory PCI base */
- 	struct snd_acp_hw_ops *acp_hw_ops;
- 	int (*acp_hw_ops_init)(struct acp_chip_info *chip);
+@@ -149,6 +149,8 @@ struct acp_chip_info {
  	struct platform_device *chip_pdev;
  	struct platform_device *dmic_codec_dev;
-+	struct platform_device *acp_plat_dev;
-+	u32 addr;
+ 	struct platform_device *acp_plat_dev;
++	struct platform_device *mach_dev;
++	struct snd_soc_acpi_mach *machines;
+ 	u32 addr;
  	unsigned int flag;	/* Distinguish b/w Legacy or Only PDM */
  	bool is_pdm_dev;	/* flag set to true when ACP PDM controller exists */
- 	bool is_pdm_config;	/* flag set to true when PDM configuration is selected from BIOS */
+@@ -195,7 +197,6 @@ struct acp_dev_data {
+ 	struct list_head stream_list;
+ 	spinlock_t acp_lock;
+ 
+-	struct snd_soc_acpi_mach *machines;
+ 	struct platform_device *mach_dev;
+ 
+ 	u32 bclk_div;
+@@ -245,13 +246,89 @@ enum acp_config {
+ 	ACP_CONFIG_20,
+ };
+ 
++struct snd_soc_acpi_codecs amp_rt1019 = {
++	.num_codecs = 1,
++	.codecs = {"10EC1019"}
++};
++
++struct snd_soc_acpi_codecs amp_max = {
++	.num_codecs = 1,
++	.codecs = {"MX98360A"}
++};
++
++struct snd_soc_acpi_mach snd_soc_acpi_amd_acp_machines[] = {
++	{
++		.id = "10EC5682",
++		.drv_name = "acp3xalc56821019",
++		.machine_quirk = snd_soc_acpi_codec_list,
++		.quirk_data = &amp_rt1019,
++	},
++	{
++		.id = "RTL5682",
++		.drv_name = "acp3xalc5682sm98360",
++		.machine_quirk = snd_soc_acpi_codec_list,
++		.quirk_data = &amp_max,
++	},
++	{
++		.id = "RTL5682",
++		.drv_name = "acp3xalc5682s1019",
++		.machine_quirk = snd_soc_acpi_codec_list,
++		.quirk_data = &amp_rt1019,
++	},
++	{
++		.id = "AMDI1019",
++		.drv_name = "renoir-acp",
++	},
++	{
++		.id = "ESSX8336",
++		.drv_name = "acp3x-es83xx",
++	},
++	{},
++};
++
++struct snd_soc_acpi_mach snd_soc_acpi_amd_rmb_acp_machines[] = {
++	{
++		.id = "10508825",
++		.drv_name = "rmb-nau8825-max",
++		.machine_quirk = snd_soc_acpi_codec_list,
++		.quirk_data = &amp_max,
++	},
++	{
++		.id = "AMDI0007",
++		.drv_name = "rembrandt-acp",
++	},
++	{
++		.id = "RTL5682",
++		.drv_name = "rmb-rt5682s-rt1019",
++		.machine_quirk = snd_soc_acpi_codec_list,
++		.quirk_data = &amp_rt1019,
++	},
++	{},
++};
++
++struct snd_soc_acpi_mach snd_soc_acpi_amd_acp63_acp_machines[] = {
++	{
++		.id = "AMDI0052",
++		.drv_name = "acp63-acp",
++	},
++	{},
++};
++
++struct snd_soc_acpi_mach snd_soc_acpi_amd_acp70_acp_machines[] = {
++	{
++		.id = "AMDI0029",
++		.drv_name = "acp70-acp",
++	},
++	{},
++};
++
+ extern const struct snd_soc_dai_ops asoc_acp_cpu_dai_ops;
+ extern const struct snd_soc_dai_ops acp_dmic_dai_ops;
+ 
+ int acp_platform_register(struct device *dev);
+ int acp_platform_unregister(struct device *dev);
+ 
+-int acp_machine_select(struct acp_dev_data *adata);
++int acp_machine_select(struct acp_chip_info *chip);
+ 
+ int acp_init(struct acp_chip_info *chip);
+ int acp_deinit(struct acp_chip_info *chip);
 -- 
 2.39.2
 
