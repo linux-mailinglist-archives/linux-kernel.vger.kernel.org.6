@@ -1,217 +1,149 @@
-Return-Path: <linux-kernel+bounces-553548-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-553549-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 99E0FA58B4A
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 05:54:54 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CB75EA58B4E
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 05:56:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 15BB7188AEF3
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 04:55:02 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 54BEF7A40E4
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 04:55:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB3A21C3BEB;
-	Mon, 10 Mar 2025 04:54:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CDEB1C1F1F;
+	Mon, 10 Mar 2025 04:55:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="YxsUKWEC"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="bFhw0FPZ"
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3628B29A0
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 04:54:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5BBC81E
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 04:55:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741582484; cv=none; b=bOZMtca2IsJCtg7zVGLo7OUUoRytkR93USoBcD9J5eRR9XdEHPdR+Sc/naIxaVhe3zahXl6ADKMY8oRRi6oB7dHtUL4cZr8BuNyvs3AoIsfPoHy+gGwPc+q1lyQU0r2EbfYoobEntJ6miCtzd8VnTxFbkZz4U7GlqFQiU5DsW4s=
+	t=1741582555; cv=none; b=fxjh9TboCCDf9d2VcaaXyoR3Aqv3LGHjw2Vx8QZG5mCGKoeaX6nfo81rGB7AF3cGBoiFT6wMYmXaaa9we6vjSTPGx6zyzdSLzqIy6xOni4nmknjgBRU0xlAArWVj3F63xaDXeccX+nr7xqpZHJFOPr2KmTf7vn6UqsgQQ/O9iU0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741582484; c=relaxed/simple;
-	bh=Ej3GMGlHpVfzanKsBYzCcPizoBxxPLk+vmAC5dehH98=;
+	s=arc-20240116; t=1741582555; c=relaxed/simple;
+	bh=s8/EMeFEWEYah/ToEcdcQneRc/EsdPCJPwOwk2JfRWA=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=dI6B7ZpZiJQrjjGOs7lPGfYWp0HbfKh2TFSsDXgDkohxRU/CMvJrccjjh9usfdIAemNPMQV9vbzaKAzd1nOHJa3Zflv13l7BNVgKt3a/Cc5CId2dDlpwstYHhp8AvlO6wuErEZT5U0X53Bu2+rIjDH5TThwrxJ6FKa/355LDI+8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=YxsUKWEC; arc=none smtp.client-ip=170.10.133.124
+	 To:Cc:Content-Type; b=o95SIKUmcz3QcGE0bNBH58d5M2v65p/hdfE7gfMhMjQ+HxrTT/dF40yndc3WQPJVko8las5FupmWrZAwLRRpOxuIAmZrrqI4N3IZZWayAD4vSLkmpIVfCXTO3ej4tT90d4mjCzdaNCdZ0E7owFeKGkITzBWUwgB2YUvgn2NgfPg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=bFhw0FPZ; arc=none smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1741582481;
+	s=mimecast20190719; t=1741582552;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=EbceALFOAXDwlrKk6BKJ6uMiVvCY64LvSE/YeKmsmrM=;
-	b=YxsUKWECTRhfU2usd9ltQifPHNpEJsS3pXRXWP5ezzKBSeTOA1YTPgQ6pxhVzp1LXlSs5n
-	ZbFN7lEPl6HC+9+rHVY1LxE3iaYhJiXxmUaAdaEuqYutbglBSqb6KGOfVDNuzkS8FoxHAY
-	lhfUWkqbOaRi/PX7q+H6PakRQinnUzQ=
-Received: from mail-pj1-f71.google.com (mail-pj1-f71.google.com
- [209.85.216.71]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=AGNHJW4HHjvj/4hx7d09Bc4jJVzUfVQWIWoaRlJrRIo=;
+	b=bFhw0FPZJRp7895r2XsCpumUtAKHqIsw5eKwD2xj0we2J5GQkpm7aDk1bykLTZVBfs+ePf
+	z1t72wabJW32fqOkcvarGdURiLLqTd+BOtGO5EQoz9wp6o1D1iX4qkcRj73MwH7p64Fk9C
+	bteNc5p2WXi/Tn38E8eG6v4Lz981aOo=
+Received: from mail-pj1-f69.google.com (mail-pj1-f69.google.com
+ [209.85.216.69]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-584-PGah6oQxMWyvi-Lre9z07Q-1; Mon, 10 Mar 2025 00:54:39 -0400
-X-MC-Unique: PGah6oQxMWyvi-Lre9z07Q-1
-X-Mimecast-MFC-AGG-ID: PGah6oQxMWyvi-Lre9z07Q_1741582479
-Received: by mail-pj1-f71.google.com with SMTP id 98e67ed59e1d1-2ff798e8c93so5411553a91.2
-        for <linux-kernel@vger.kernel.org>; Sun, 09 Mar 2025 21:54:39 -0700 (PDT)
+ us-mta-660-YObJ1RtGN2akhTQEZUO8qQ-1; Mon, 10 Mar 2025 00:55:51 -0400
+X-MC-Unique: YObJ1RtGN2akhTQEZUO8qQ-1
+X-Mimecast-MFC-AGG-ID: YObJ1RtGN2akhTQEZUO8qQ_1741582550
+Received: by mail-pj1-f69.google.com with SMTP id 98e67ed59e1d1-2f816a85facso6794003a91.3
+        for <linux-kernel@vger.kernel.org>; Sun, 09 Mar 2025 21:55:51 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741582479; x=1742187279;
+        d=1e100.net; s=20230601; t=1741582550; x=1742187350;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=EbceALFOAXDwlrKk6BKJ6uMiVvCY64LvSE/YeKmsmrM=;
-        b=rO6jXYmMf47IThkaE9y0An7NPxVfBnOXDrVy3GCIa9fNKUwwv8yCkNp88CFqGJbltk
-         znwVFKS7D4rNnIh5u1iXse8mwvGZxhodiLURDY9WsOEwzoGGQOVdDxieUBq+W9j1itjg
-         JnPmqdldQXCzqP0diq4CRd//cQGWwBCSHIxkja09SI1gDXT4G/qML0qYPLXIxO2U5LVK
-         XwOjSTWUbkRIoFV+vA4nk4Mo81lUucX3iFbCmGW88Nb+tZRo+PK3syKn+hJJgnJg12A2
-         XZ46Tvi9OsT3CeugIgeg3QiWli+4/nzdG8+0Vk4RuiUf6boi62KiaP+9EOB9EcaW/84p
-         LZPw==
-X-Forwarded-Encrypted: i=1; AJvYcCW88gkWi2ytJUSjSsvNSCeDQX38RztwWuQzHANRgqIfDMfLA0SPFijKTL2wbe7JxhCcm+kcoUDDAg1vHpQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyA4M3Meu0OCj2E/n2t4guN4s3+N+jxw/vnFBDtArrd5RiUIcE2
-	9l0Vs/XJWhzwq/1IWXkTsOxojjVco6x8NcWf0VEN+uv0KEGSCXLOAOxlHsdzaVRD4J1cBY8+gZM
-	sG4xzV+ki3rBMKO+lpnhsoFnpEatPMYVabF7a0FPDzVSj9TtnMr5ml6f1hN7rlFAlRz2XvWTGPU
-	s6BR02jF2etH9yBhxy7EAflEdUprJu82ItHakj
-X-Gm-Gg: ASbGncutDN5kGwJHC9Bxi8mJkL7P7j/hT7G4ffVLLXB9JC9cL6KO29ACvBVg0d8oV3C
-	hH8Q1+xmkzdu8mBl8jhztq//gyqNtVTj/7C40663YTzyOEaguNZbYk71njcgYIiMxAeVJDnYeLQ
+        bh=AGNHJW4HHjvj/4hx7d09Bc4jJVzUfVQWIWoaRlJrRIo=;
+        b=gnOmUMdpkXc50wbLY+XSIWHi0TShNno7ANLp+p32KhHQaR/q1zXVaDdoJjGrk8z/47
+         lBE5deMxlSbOZOwL5afP9XOuqCzd3ca4KpPwM0xUhUWKs1zW559xN5/iliOauOUUrGkQ
+         CUgz85Udbqy0m+le707Q177ht9o8iwOwlBGL79kwjKMQQItK32sx4I3OjfDhUJbbKNUM
+         ZOoSTaGikazYtEXKH76QGtws2XI//jTmW4tfXj7LmLGfxSezvRSKCN6Ysi4Ca4k61Id6
+         Q8BBOQLsPYyLS13G70ig82mPLtCvgNY3F4+MAqgk35PgK4K1qV32ZIf92Izvt07oq++t
+         1v9w==
+X-Forwarded-Encrypted: i=1; AJvYcCVjDUJ0IgYkdSnxCvdTpAjV7wYHdQVOZ0bshbogMHy3VopBsqpZW/tNz0F4RH3S9D5o58KQ9cW0RzELO1s=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzGfyquG4pCwFT+cw4hO4z0ZK+3Avuyb4/+4AMYTDVierEcDGz7
+	o6tFOyDfKqjvVLdn3zCeK8L9ABpF7hTh6N7e31c/v0DFIuo7X0K8WgO3j2Hh2KbXIuDhHU+E85u
+	ExSEUNq1ky++7CNaqVS2GX0c7WMQyzhkzEBd5VFH5ZD3W9xi0YHowZkY5w4P8jd3cQMYiIgNskI
+	m/t0yXFnFiqLVgv2p4zy3zvgg2DRkBLm/m4+kz
+X-Gm-Gg: ASbGnct9y7EPybM8gTq1KKsFJFfV+58NJkXcFhB+wlMJVBnzHafFzdUM+1i0a0ZDhFM
+	cOINuAWS6nVHjPvX1dfp/sFO5jj0oODfDCgWSnmWWHLQGDoArC4CafFVSLz2tq4LORckYWBoI0A
 	==
-X-Received: by 2002:a17:90b:17c3:b0:2ff:784b:ffe with SMTP id 98e67ed59e1d1-2ff7ce8361fmr20103671a91.11.1741582478659;
-        Sun, 09 Mar 2025 21:54:38 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEOy4wkubfdY4rmjE4nVYH3EzfIy63HlIimFfPmtjEVryCYR1AfKHQgA7u4tps+tBzTrdofki7L500MLPtq6VE=
-X-Received: by 2002:a17:90b:17c3:b0:2ff:784b:ffe with SMTP id
- 98e67ed59e1d1-2ff7ce8361fmr20103635a91.11.1741582478041; Sun, 09 Mar 2025
- 21:54:38 -0700 (PDT)
+X-Received: by 2002:a17:90b:1dca:b0:2fc:a3b7:108e with SMTP id 98e67ed59e1d1-2ff7ce63264mr18532338a91.4.1741582550418;
+        Sun, 09 Mar 2025 21:55:50 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IE9Xo0gpzEFD/TRddMKMUNDMbauhJ46adEgdxNBxtmb8EtkPrUSIh1rFd5iEsD5Yp2BE7jzIDOi/82H1hGyNkU=
+X-Received: by 2002:a17:90b:1dca:b0:2fc:a3b7:108e with SMTP id
+ 98e67ed59e1d1-2ff7ce63264mr18532310a91.4.1741582550025; Sun, 09 Mar 2025
+ 21:55:50 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250302143259.1221569-1-lulu@redhat.com> <20250302143259.1221569-9-lulu@redhat.com>
- <CACGkMEv7WdOds0D+QtfMSW86TNMAbjcdKvO1x623sLANkE5jig@mail.gmail.com> <20250303122619-mutt-send-email-mst@kernel.org>
-In-Reply-To: <20250303122619-mutt-send-email-mst@kernel.org>
+References: <a18fc6cf356bc338c69b3cc44d7be8bd35c6d7d0.1741028854.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <a18fc6cf356bc338c69b3cc44d7be8bd35c6d7d0.1741028854.git.christophe.jaillet@wanadoo.fr>
 From: Jason Wang <jasowang@redhat.com>
-Date: Mon, 10 Mar 2025 12:54:26 +0800
-X-Gm-Features: AQ5f1Jp343rEJyx66YRk5WfInd8kOaRENHB4oOZ_ZHycTTo0oYdMS29y7Ll8IMo
-Message-ID: <CACGkMEtheNa905789WT20=p84HN9-B6=K7XA8dpB6=jJV0kh-g@mail.gmail.com>
-Subject: Re: [PATCH v7 8/8] vhost: Add a KConfig knob to enable IOCTL VHOST_FORK_FROM_OWNER
-To: "Michael S. Tsirkin" <mst@redhat.com>
-Cc: Cindy Lu <lulu@redhat.com>, michael.christie@oracle.com, sgarzare@redhat.com, 
-	linux-kernel@vger.kernel.org, virtualization@lists.linux-foundation.org, 
-	netdev@vger.kernel.org
+Date: Mon, 10 Mar 2025 12:55:38 +0800
+X-Gm-Features: AQ5f1JpXzBv8TIF6oxVj41FiZlnmi8yR2xYeZ4UVuxEvdCcbm3NW-Nyvl6onBwo
+Message-ID: <CACGkMEtRFtzb-hbt6N8YJo8nfOOvaPcaw4dLkfs5CWN+ypkLeg@mail.gmail.com>
+Subject: Re: [PATCH] crypto: virtio - Erase some sensitive memory when it is freed
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: "Michael S. Tsirkin" <mst@redhat.com>, Xuan Zhuo <xuanzhuo@linux.alibaba.com>, 
+	=?UTF-8?Q?Eugenio_P=C3=A9rez?= <eperezma@redhat.com>, 
+	Gonglei <arei.gonglei@huawei.com>, Herbert Xu <herbert@gondor.apana.org.au>, 
+	"David S. Miller" <davem@davemloft.net>, linux-kernel@vger.kernel.org, 
+	kernel-janitors@vger.kernel.org, virtualization@lists.linux.dev, 
+	linux-crypto@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Mar 4, 2025 at 1:33=E2=80=AFAM Michael S. Tsirkin <mst@redhat.com> =
-wrote:
+On Tue, Mar 4, 2025 at 3:08=E2=80=AFAM Christophe JAILLET
+<christophe.jaillet@wanadoo.fr> wrote:
 >
-> On Mon, Mar 03, 2025 at 01:52:06PM +0800, Jason Wang wrote:
-> > On Sun, Mar 2, 2025 at 10:34=E2=80=AFPM Cindy Lu <lulu@redhat.com> wrot=
-e:
-> > >
-> > > Introduce a new config knob `CONFIG_VHOST_ENABLE_FORK_OWNER_IOCTL`,
-> > > to control the availability of the `VHOST_FORK_FROM_OWNER` ioctl.
-> > > When CONFIG_VHOST_ENABLE_FORK_OWNER_IOCTL is set to n, the ioctl
-> > > is disabled, and any attempt to use it will result in failure.
-> > >
-> > > Signed-off-by: Cindy Lu <lulu@redhat.com>
-> > > ---
-> > >  drivers/vhost/Kconfig | 15 +++++++++++++++
-> > >  drivers/vhost/vhost.c | 11 +++++++++++
-> > >  2 files changed, 26 insertions(+)
-> > >
-> > > diff --git a/drivers/vhost/Kconfig b/drivers/vhost/Kconfig
-> > > index b455d9ab6f3d..e5b9dcbf31b6 100644
-> > > --- a/drivers/vhost/Kconfig
-> > > +++ b/drivers/vhost/Kconfig
-> > > @@ -95,3 +95,18 @@ config VHOST_CROSS_ENDIAN_LEGACY
-> > >           If unsure, say "N".
-> > >
-> > >  endif
-> > > +
-> > > +config VHOST_ENABLE_FORK_OWNER_IOCTL
-> > > +       bool "Enable IOCTL VHOST_FORK_FROM_OWNER"
-> > > +       default n
-> > > +       help
-> > > +         This option enables the IOCTL VHOST_FORK_FROM_OWNER, which =
-allows
-> > > +         userspace applications to modify the thread mode for vhost =
-devices.
-> > > +
-> > > +          By default, `CONFIG_VHOST_ENABLE_FORK_OWNER_IOCTL` is set =
-to `n`,
-> > > +          meaning the ioctl is disabled and any operation using this=
- ioctl
-> > > +          will fail.
-> > > +          When the configuration is enabled (y), the ioctl becomes
-> > > +          available, allowing users to set the mode if needed.
-> > > +
-> > > +         If unsure, say "N".
-> > > diff --git a/drivers/vhost/vhost.c b/drivers/vhost/vhost.c
-> > > index fb0c7fb43f78..09e5e44dc516 100644
-> > > --- a/drivers/vhost/vhost.c
-> > > +++ b/drivers/vhost/vhost.c
-> > > @@ -2294,6 +2294,8 @@ long vhost_dev_ioctl(struct vhost_dev *d, unsig=
-ned int ioctl, void __user *argp)
-> > >                 r =3D vhost_dev_set_owner(d);
-> > >                 goto done;
-> > >         }
-> > > +
-> > > +#ifdef CONFIG_VHOST_ENABLE_FORK_OWNER_IOCTL
-> > >         if (ioctl =3D=3D VHOST_FORK_FROM_OWNER) {
-> > >                 u8 inherit_owner;
-> > >                 /*inherit_owner can only be modified before owner is =
-set*/
-> > > @@ -2313,6 +2315,15 @@ long vhost_dev_ioctl(struct vhost_dev *d, unsi=
-gned int ioctl, void __user *argp)
-> > >                 r =3D 0;
-> > >                 goto done;
-> > >         }
-> > > +
-> > > +#else
-> > > +       if (ioctl =3D=3D VHOST_FORK_FROM_OWNER) {
-> > > +               /* When CONFIG_VHOST_ENABLE_FORK_OWNER_IOCTL is 'n', =
-return error */
-> > > +               r =3D -ENOTTY;
-> > > +               goto done;
-> > > +       }
+> virtcrypto_clear_request() does the same as the code here, but uses
+> kfree_sensitive() for one of the free operation.
 >
-> why do we need this? won't it fail as any other unsupported ioctl?
+> So, better safe than sorry, use virtcrypto_clear_request() directly to
+> save a few lines of code and cleanly free the memory.
 >
-> > > +#endif
-> > > +
-> > >         /* You must be the owner to do anything else */
-> > >         r =3D vhost_dev_check_owner(d);
-> > >         if (r)
-> > > --
-> > > 2.45.0
-> >
-> > Do we need to change the default value of the inhert_owner? For example=
-:
-> >
-> > #ifdef CONFIG_VHOST_ENABLE_FORK_OWNER_IOCTL
-> > inherit_owner =3D false;
-> > #else
-> > inherit_onwer =3D true;
-> > #endif
-> >
-> > ?
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> ---
+> I've no idea if this is needed or not, but it looks not consistent to me.
 >
-> I feel it is best to keep the default consistent.
+> If safe as-is, maybe the kfree_sensitive() in virtcrypto_clear_request()
+> should be removed instead.
+> ---
+>  drivers/crypto/virtio/virtio_crypto_core.c | 6 ++----
+>  1 file changed, 2 insertions(+), 4 deletions(-)
+>
+> diff --git a/drivers/crypto/virtio/virtio_crypto_core.c b/drivers/crypto/=
+virtio/virtio_crypto_core.c
+> index d0278eb568b9..0d522049f595 100644
+> --- a/drivers/crypto/virtio/virtio_crypto_core.c
+> +++ b/drivers/crypto/virtio/virtio_crypto_core.c
+> @@ -480,10 +480,8 @@ static void virtcrypto_free_unused_reqs(struct virti=
+o_crypto *vcrypto)
+>
+>         for (i =3D 0; i < vcrypto->max_data_queues; i++) {
+>                 vq =3D vcrypto->data_vq[i].vq;
+> -               while ((vc_req =3D virtqueue_detach_unused_buf(vq)) !=3D =
+NULL) {
+> -                       kfree(vc_req->req_data);
+> -                       kfree(vc_req->sgs);
+> -               }
+> +               while ((vc_req =3D virtqueue_detach_unused_buf(vq)) !=3D =
+NULL)
+> +                       virtcrypto_clear_request(vc_req);
+>                 cond_resched();
+>         }
+>  }
+> --
+> 2.48.1
+>
+>
 
-Just want to make sure we are on the same page.
-
-For "default", did you mean inherit_owner =3D false which is consistent
-with behaviour without the vhost task?
-
-Or inherit_onwer =3D true, then the new ioctl to make it false is
-useless. And if legacy applications want kthread behaviour it needs to
-be patched which seems self-contradictory.
-
-> All the kconfig should do, is block the ioctl.
->
+Acked-by: Jason Wang <jasowang@redhat.com>
 
 Thanks
-
->
-> > Other patches look good to me.
-> >
-> > Thanks
-> >
-> > >
->
 
 
