@@ -1,162 +1,167 @@
-Return-Path: <linux-kernel+bounces-553862-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-553863-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id AAB0FA58FE6
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 10:40:57 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 73CE6A58FEA
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 10:41:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 63DE23A588E
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 09:40:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A675B188E842
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 09:41:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD438225A20;
-	Mon, 10 Mar 2025 09:40:29 +0000 (UTC)
-Received: from mail-io1-f78.google.com (mail-io1-f78.google.com [209.85.166.78])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22200225419;
+	Mon, 10 Mar 2025 09:41:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="XWw04myE"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C82122578D
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 09:40:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7C1B2253FF
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 09:41:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741599629; cv=none; b=CYSL4Oos/VCz4c5HvSqC5ewq7Knnw6lXgfZ3yJoTj8Kw4GXozvrU/Ew5XwDYWfSaeNw0pz3hPwkyt141JIw85u8IjkWT4WjICMXFSQkt76jBHOGTWkbk2el6Oh9S346ieIiHuCzs7Kt9WzRcgW0L8ZHs+nBP1aCW3zWwJGIL5MA=
+	t=1741599667; cv=none; b=PuGYdjZIosmspJD7+TDVp+VHzjPb2qJoxIQw34CDnO691urCXHzTCV5t1In+uzWvqV9NZbTsswPRhSfm1LtTopfKP2PMQTMhRbQhEym25Sh/3npciojohOXqYygQadOVIJPiAu22oX6oiiCPhZXhvD0CmN/liePKGty+knHDu7E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741599629; c=relaxed/simple;
-	bh=lo+mgRRNQjvpOTF3c3mfILdt7OCcuqmpFl0MOtPCrC8=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=HqploRXRHdLr7VjwL+lHxmjY/Le+h0M3l2l9OReVzDZ9IBqgFBGdzK+7e0gDB+Ny9FrdufYpKtGmhgMzENDY9SvPk2zBo8NC6gTDRDGmFw30PVUM2VfWx8330ma7Phaqs5dliBq+H7v5kYLcvo8w374z8SwCOXrYoJL2M/kJuKg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f78.google.com with SMTP id ca18e2360f4ac-85b3b781313so351111439f.1
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 02:40:27 -0700 (PDT)
+	s=arc-20240116; t=1741599667; c=relaxed/simple;
+	bh=D0qnJuVKmT1hoAQ/CBLa54Ot/pfZ5sOIHU5WXg+WzfI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZVbyLR/rdFDdMIfeYNId636XAPKibeVQLOx5qsYqGb9QGKQTgw38jv1vr9IoHV9LdIwD6UnzRtZZkRGY7ZlFi7cYbyGO8OBDwr3vAZwTCpEazu8flJWietv5pVvQwPoTtPz5W31Ow82n83CZ/sky0CRiEyDH+D2BPX74OP4hcpQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=XWw04myE; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1741599664;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=JmC4eg+RZE37SxbmWLTbwWm2ZOdazyFKRLy1uOVpLe0=;
+	b=XWw04myE6XrFvRc18xPftt9rcsHyscX4JMtK/3VFh+GrzDK+5zykwsGvg6/wMFNPs2QdE0
+	b3Fq4NCV912seTCrKCf2tIL553ViN5i8EZOBw41eR7VYZQ5YL+wGJpPL7VMq6I+K4G/Q/5
+	0YJnZjRe5rUgnQvKAig8y0Qmld4p0DE=
+Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
+ [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-564-2qQyJSP0MvmRYNwqRHZsNA-1; Mon, 10 Mar 2025 05:41:03 -0400
+X-MC-Unique: 2qQyJSP0MvmRYNwqRHZsNA-1
+X-Mimecast-MFC-AGG-ID: 2qQyJSP0MvmRYNwqRHZsNA_1741599662
+Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-3912fe32a30so1404977f8f.1
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 02:41:03 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741599627; x=1742204427;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=NE/k1yN/gLjrNlDfMWfhJPadtzMdT1WCO7NFniN3tmA=;
-        b=Cg7McH6IQymv1AqeKTXtrpmmJpfATPhTwTabCgv0Eoh6prJdrc6NhrVt0mhaad06QP
-         1zf2+phmBcRzYpi9U9I8krw16Wm7hWGhvOOy1gdHLfOSvbv0ISsrJGvF3EZPW/bhjFVZ
-         3z+V63FHXJwsJ+wfv5OmMXJd41jKHkDFTmZCa4bFN6T2L07K8KBGCn+uUax78yPc7kMa
-         jF4Qp2HFsr92CvHSBfkoda9Tpi1eVEMqU/SILmRpKl4pcgF+R/Xeu/HGTDL2voOugzBp
-         dg55s1+nSG3NAijBeQWMptKtxavNvmV6YgcItINm9qOA0wyGMfGPs2VzJKgIdi2WykQt
-         OYFQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWxa1SgfobAxh1GxqeqMD5J6nfebz3SL00p3Upe2t4shTFz7srMCNQ5KBKoi2K89R8h+GkWtXe4al4m6XQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywq30+DEGcaWp4F/aqC4RKpyvi6q0gHcGVWzU/Lkdn6e9F7de1k
-	wup8aqWlZlzknWSKZNUs1XFGmHlOmPmelv7hr2NB1WTViRVXfhO6Wr+2G3bGCkUCrhTL7W80iOl
-	zXV5Sf0AbkKk71Wh4OMrAjLWc8BC1IVc6p+ICCmQE4udoE00+Re+y8jc=
-X-Google-Smtp-Source: AGHT+IFwfuahL2FdpG6q4fYGDj1OphYaUWZoo8mff8eTs9/Lt2LG1X3x7humY8uWcVcDb4A33QAji53ZHNKx8r4N2MQYNRASfR40
+        d=1e100.net; s=20230601; t=1741599660; x=1742204460;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=JmC4eg+RZE37SxbmWLTbwWm2ZOdazyFKRLy1uOVpLe0=;
+        b=l+JErkgCJN+LX8H37TX53Lfpa/YBx2vnVoWL6TkVPVp+BH6Unj8wo+HouK0WfXvoOm
+         6GCFwb8o2eFaf9toPtbsn4lewxPMl7fYQqYl5zn0CPc6IC8EitWjzxiCYMg1jtcxroM6
+         +CH6JyVFYPO33UaWeitsH+3CveJSzyyCBJgJ7R1+vx4r0mBJkeJnaQZQaVL8xFXPl8/z
+         D8q6ntE88IJhZwvY5pB58+NC6DrTqkxUT3PE8gAdCd2EIv+PKB7dumacjxuVHiDvCF3U
+         QCgUnQyqfRutg78RMJ2bcverZQDtwLzvH1OXPgwO680rqYHytyY+FZYGKkG3z0s4N8ZL
+         N48A==
+X-Gm-Message-State: AOJu0YznDeLhanE7SlwKGBcaytbT/XdHBXaDdARDV7Q83NBwRfjvYQh8
+	8Dn8HgLhY6Kc1KiQlW3c0Enj60JD7suvUSZIQzlZvlvPBT3mor8/Wb8A84a4zI94Xa8vpGOgaa0
+	RhBcKVwRm6fIjIMlp8aV22u0MKYp4BSiBaSnlkMJJJUrGh30P1jTbyYZkjKk0YZXAIvM0HHgzMT
+	hVGCJlzGkgNwvrWqcG0kMceFUXlVoRFyFztOjN9lqam6eICSrNN6Y=
+X-Gm-Gg: ASbGncsei7tDh8JGlmEZgwNquo922fMOiBBqvppKOg3+nowvDMDiwGa8PjMXvDUq367
+	RO0zdqflL6o8D+NNEzs8MkVeNTIrP8lZ3FgCh4OHlTtodjiB9j7vufF3lZ0Rn4pvBiDffcTpMpe
+	/lz1pdCGSoXgEph5iVWBB4hAuY8UPJD9EUWjT4Ggu3tk0NVAOxOcDUEuUn3iMTRi6yC97TeSQ46
+	4aLPU+ef4j/8rPotEsEslyxVacBxwBuN1OmkDPyrP+DvPKZdBNYgrm3rDbazuvPrOQqS2HMf4Fu
+	lAWdzZQAvL/spplI04BTNUDDZYAz2rvcfq+7tqIureU=
+X-Received: by 2002:a05:6000:402a:b0:391:6fd:bb65 with SMTP id ffacd0b85a97d-39132d67e24mr8087694f8f.9.1741599659846;
+        Mon, 10 Mar 2025 02:40:59 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IF3sT3VxqRqGbVJqED2DrKV+dHBvPin9Rx9+sU0PGy8vpk5mvBzNmpBa8T06MTqckjUtnwpBg==
+X-Received: by 2002:a05:6000:402a:b0:391:6fd:bb65 with SMTP id ffacd0b85a97d-39132d67e24mr8087654f8f.9.1741599659379;
+        Mon, 10 Mar 2025 02:40:59 -0700 (PDT)
+Received: from jlelli-thinkpadt14gen4.remote.csb ([151.29.49.7])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3912bfb7934sm14529582f8f.12.2025.03.10.02.40.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 10 Mar 2025 02:40:58 -0700 (PDT)
+Date: Mon, 10 Mar 2025 10:40:55 +0100
+From: Juri Lelli <juri.lelli@redhat.com>
+To: linux-kernel@vger.kernel.org, cgroups@vger.kernel.org
+Cc: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+	Valentin Schneider <vschneid@redhat.com>,
+	Waiman Long <longman@redhat.com>, Tejun Heo <tj@kernel.org>,
+	Johannes Weiner <hannes@cmpxchg.org>,
+	Michal =?iso-8859-1?Q?Koutn=FD?= <mkoutny@suse.com>,
+	Qais Yousef <qyousef@layalina.io>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	Swapnil Sapkal <swapnil.sapkal@amd.com>,
+	Shrikanth Hegde <sshegde@linux.ibm.com>,
+	Phil Auld <pauld@redhat.com>, luca.abeni@santannapisa.it,
+	tommaso.cucinotta@santannapisa.it,
+	Jon Hunter <jonathanh@nvidia.com>
+Subject: [PATCH v3 8/8] include/{topology,cpuset}: Move
+ dl_rebuild_rd_accounting to cpuset.h
+Message-ID: <Z86zp5ej0shjk-rT@jlelli-thinkpadt14gen4.remote.csb>
+References: <20250310091935.22923-1-juri.lelli@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:198e:b0:3d4:36da:19a1 with SMTP id
- e9e14a558f8ab-3d44193ed4fmr179769775ab.21.1741599626800; Mon, 10 Mar 2025
- 02:40:26 -0700 (PDT)
-Date: Mon, 10 Mar 2025 02:40:26 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67ceb38a.050a0220.e1a89.04b1.GAE@google.com>
-Subject: [syzbot] [mm?] [fs?] KCSAN: data-race in __filemap_add_folio /
- invalidate_bdev (8)
-From: syzbot <syzbot+f2aaf773187f5cae54f3@syzkaller.appspotmail.com>
-To: akpm@linux-foundation.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
-	syzkaller-bugs@googlegroups.com, willy@infradead.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250310091935.22923-1-juri.lelli@redhat.com>
 
-Hello,
+dl_rebuild_rd_accounting() is defined in cpuset.c, so it makes more
+sense to move related declarations to cpuset.h.
 
-syzbot found the following issue on:
+Implement the move.
 
-HEAD commit:    80e54e84911a Linux 6.14-rc6
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=1664a7a8580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=958433697845b9a6
-dashboard link: https://syzkaller.appspot.com/bug?extid=f2aaf773187f5cae54f3
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-
-Unfortunately, I don't have any reproducer for this issue yet.
-
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/e94728c052e3/disk-80e54e84.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/742f05e27746/vmlinux-80e54e84.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/90d418e775f7/bzImage-80e54e84.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+f2aaf773187f5cae54f3@syzkaller.appspotmail.com
-
-EXT4-fs (loop0): unmounting filesystem 00000000-0000-0000-0000-000000000000.
-==================================================================
-BUG: KCSAN: data-race in __filemap_add_folio / invalidate_bdev
-
-read-write to 0xffff888100630570 of 8 bytes by task 3291 on cpu 0:
- __filemap_add_folio+0x430/0x6f0 mm/filemap.c:929
- filemap_add_folio+0x9c/0x1b0 mm/filemap.c:981
- page_cache_ra_unbounded+0x1c1/0x350 mm/readahead.c:276
- do_page_cache_ra mm/readahead.c:328 [inline]
- force_page_cache_ra mm/readahead.c:357 [inline]
- page_cache_sync_ra+0x252/0x680 mm/readahead.c:585
- filemap_get_pages+0x2ca/0x11a0 mm/filemap.c:2580
- filemap_read+0x230/0x8c0 mm/filemap.c:2691
- blkdev_read_iter+0x228/0x2d0 block/fops.c:796
- new_sync_read fs/read_write.c:484 [inline]
- vfs_read+0x5cc/0x6f0 fs/read_write.c:565
- ksys_read+0xe8/0x1b0 fs/read_write.c:708
- __do_sys_read fs/read_write.c:717 [inline]
- __se_sys_read fs/read_write.c:715 [inline]
- __x64_sys_read+0x42/0x50 fs/read_write.c:715
- x64_sys_call+0x2874/0x2dc0 arch/x86/include/generated/asm/syscalls_64.h:1
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xc9/0x1c0 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-read to 0xffff888100630570 of 8 bytes by task 3306 on cpu 1:
- invalidate_bdev+0x25/0x70 block/bdev.c:99
- ext4_put_super+0x571/0x810 fs/ext4/super.c:1356
- generic_shutdown_super+0xe5/0x220 fs/super.c:642
- kill_block_super+0x2a/0x70 fs/super.c:1710
- ext4_kill_sb+0x44/0x80 fs/ext4/super.c:7368
- deactivate_locked_super+0x7d/0x1c0 fs/super.c:473
- deactivate_super+0x9f/0xb0 fs/super.c:506
- cleanup_mnt+0x268/0x2e0 fs/namespace.c:1413
- __cleanup_mnt+0x19/0x20 fs/namespace.c:1420
- task_work_run+0x13a/0x1a0 kernel/task_work.c:227
- resume_user_mode_work include/linux/resume_user_mode.h:50 [inline]
- exit_to_user_mode_loop kernel/entry/common.c:114 [inline]
- exit_to_user_mode_prepare include/linux/entry-common.h:329 [inline]
- __syscall_exit_to_user_mode_work kernel/entry/common.c:207 [inline]
- syscall_exit_to_user_mode+0xa8/0x120 kernel/entry/common.c:218
- do_syscall_64+0xd6/0x1c0 arch/x86/entry/common.c:89
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-value changed: 0x000000000000000d -> 0x000000000000000e
-
-Reported by Kernel Concurrency Sanitizer on:
-CPU: 1 UID: 0 PID: 3306 Comm: syz-executor Not tainted 6.14.0-rc6-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 02/12/2025
-==================================================================
-
-
+Suggested-by: Waiman Long <llong@redhat.com>
+Reviewed-by: Waiman Long <llong@redhat.com>
+Tested-by: Waiman Long <longman@redhat.com>
+Tested-by: Jon Hunter <jonathanh@nvidia.com>
+Signed-off-by: Juri Lelli <juri.lelli@redhat.com>
 ---
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+ include/linux/cpuset.h         | 5 +++++
+ include/linux/sched/topology.h | 2 --
+ 2 files changed, 5 insertions(+), 2 deletions(-)
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+diff --git a/include/linux/cpuset.h b/include/linux/cpuset.h
+index 835e7b793f6a..c414daa7d503 100644
+--- a/include/linux/cpuset.h
++++ b/include/linux/cpuset.h
+@@ -125,6 +125,7 @@ static inline int cpuset_do_page_mem_spread(void)
+ 
+ extern bool current_cpuset_is_being_rebound(void);
+ 
++extern void dl_rebuild_rd_accounting(void);
+ extern void rebuild_sched_domains(void);
+ 
+ extern void cpuset_print_current_mems_allowed(void);
+@@ -259,6 +260,10 @@ static inline bool current_cpuset_is_being_rebound(void)
+ 	return false;
+ }
+ 
++static inline void dl_rebuild_rd_accounting(void)
++{
++}
++
+ static inline void rebuild_sched_domains(void)
+ {
+ 	partition_sched_domains(1, NULL, NULL);
+diff --git a/include/linux/sched/topology.h b/include/linux/sched/topology.h
+index 96e69bfc3c8a..51f7b8169515 100644
+--- a/include/linux/sched/topology.h
++++ b/include/linux/sched/topology.h
+@@ -166,8 +166,6 @@ static inline struct cpumask *sched_domain_span(struct sched_domain *sd)
+ 	return to_cpumask(sd->span);
+ }
+ 
+-extern void dl_rebuild_rd_accounting(void);
+-
+ extern void partition_sched_domains(int ndoms_new, cpumask_var_t doms_new[],
+ 				    struct sched_domain_attr *dattr_new);
+ 
+-- 
+2.48.1
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
 
