@@ -1,151 +1,136 @@
-Return-Path: <linux-kernel+bounces-554562-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-554563-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70BE0A599F5
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 16:28:00 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D571A599F6
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 16:28:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 170A91887341
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 15:28:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AC5043A85A2
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 15:27:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A64ED22A4C3;
-	Mon, 10 Mar 2025 15:27:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00E8221E0AF;
+	Mon, 10 Mar 2025 15:28:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mEgXoxV5"
-Received: from mail-pj1-f49.google.com (mail-pj1-f49.google.com [209.85.216.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="TtB4G1jz"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC06933991;
-	Mon, 10 Mar 2025 15:27:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CBF21A7264
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 15:28:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741620474; cv=none; b=AEGN4oXTux9f8AEqljuTKRvQPHQfj03pGo9xs2ExMAbUegm+nbGFqrw+Ruq0BSptWQD1VXFkqUZSgRWkfa2QqFRdpZBX1lBw3DNuI3w+ZU7rkGWiRAfXDs/qgKF+GahlexIaxGN8HY137i1ii6Z1wt9qjeWEH4ionYTMn3YVZKE=
+	t=1741620487; cv=none; b=rxI4wNEgFsU/CfBOTcNUjCduAfRwxrSJpk4hgjMrAXhIliqMgl6W2uvbyPwhO1WiU9VcREI74/wsou9VIu+One+uvBRWy1P3u2G15YTicFZAeMzSIqwyyGNgjTO/WGCj7WHPh3DAis/CGFfq+yp/33m9A7XhNmV+FQqXe4hTEOU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741620474; c=relaxed/simple;
-	bh=GHeCIejBa/8qy5r/VRqpKCRr3L5Bhtrr8ga8SUaRi/M=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=L6M4Sb5D+Wn5F9urmr5AkRceux5sRBB2Mq+hXYbsVk9Emsm4qfHwciSl3Pj2XvcPb9K/NgcGfEg8ozDg3QeDSPEBQKgsv+reW0Ild9CmEIyEOrq2XcQyD/UtbT0qk2ICFhN/+OnVMH1ZPZ2jBEtikm4RhBnZHNnD0jKT/XfnPoY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mEgXoxV5; arc=none smtp.client-ip=209.85.216.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f49.google.com with SMTP id 98e67ed59e1d1-2ff64550991so6689662a91.0;
-        Mon, 10 Mar 2025 08:27:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741620472; x=1742225272; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=90Pr0MLUGkbPrWS0RToq7eybxFstggF7+0XfcgNBeIA=;
-        b=mEgXoxV5v4EsmjKqW4VihjRyDax5RmNlucp27kMP9aF1c8O9v6HlizMDZ2YaEHcHsN
-         1QcSFCDglb//gU0ovvxGV0lZyqr5hpErifRI1Q98WXrW9Bt1A78tQQPjz5wKBPgEumUa
-         xZvXVcDEpCA1sRSrz8MmDsqzT37tixq5AS0APP/lPlxtaoi4718gdK1B+JxQBb47wGjV
-         Fjk81fWzjqf9DJ+OM9u5672jK8/G2I8xBbIY6nvs4oVr+fN7BgZKOwWwJHprhKUdflZ8
-         xizs1vylQJi8UsQTCY5xk/aknSFRxwZqfSW4NWT8PmDW1hAGpiPuSS402CJYxTYKRDvn
-         uCfA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741620472; x=1742225272;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=90Pr0MLUGkbPrWS0RToq7eybxFstggF7+0XfcgNBeIA=;
-        b=h9oFchfraYPMem/1S/PdeUAUS8Lp6RIdgburOVylW7k7b+KHL1ADUoM9YRLLpwjnbX
-         Ster/MoGGxhEN1y0BctZN49P0/bASu97ToUhvDqHB3sbzGzc0BgykHvcq7vku9JPvDDq
-         Uw2N/YNuJs4rpMsy+D8qBesZ6WmbmTltwLNcqKGUgGRQvcVvyNVH83OD/AnN2oa0mjeZ
-         JLbCkMimderwpwevQaS18cCB05IdvryGjB3xMGo9HY6/eiHXHItN0o1KC67sCYKW+wjL
-         Ml3nZ4i6EZajFTrgvLaW/5IxXVeoZLOQqwrtPwyYCMwbNd1JAzfUxs+Ro3M597DxdCWs
-         4Bzg==
-X-Forwarded-Encrypted: i=1; AJvYcCUQ+C0mJj0a1uWwat1g68iisuq7w9whrOUsFQRnXjI7oPil6HTf02W1OM/niLJmyxi4RcDwMmF1RrC+9f2r@vger.kernel.org, AJvYcCWcjI/zlcbej6U0mg40xr0KxOGe/GQZeejFCJiIuUo5Fb0xPvE2twZu0RVgI2JAHqqZuwRHxgBUapY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwwD+NXuwFr06bO90nB4HdAbTVjLee+xfaX5UeCMk+8rwmqHJY+
-	X5/tvtXMRHWjSKbK5MF/HHRzbiuknHGkfD/bMWqH2gw0OswPCVbs52pGCw==
-X-Gm-Gg: ASbGncvbHnkPC3lIsUUR48I9+UdBUmgpriQQYLuScp0JlLZQLRpvdl1LnmOBQbJ4Xz3
-	n55T3NU1aFWYXjUsVtJYcY9/GC0blw1VLhgPbUxLqiZozL6Hm65vfk/yOahf282dDJ1olX3RO6w
-	AE6vXZTXF4kGaUrTDM7Mj0Y1pqlFhnhPNzsV9N3bhqODm8KxDU7of9XwQWPdqHr7+yLjH2kbXW+
-	hVtVjQItslz+boLszcJfQLrutpr9rkzZtr1Oaf1jNyaNdOwvplaP9Eda+1JiqyUrU3isErGYuJD
-	ekgiZghsJ6lKTj4xaw1ucMsZZDHrg/QwAo7bYilu1bDBpHzz1XifrCEVlTJ6UB+KIDHeFS5SxMw
-	s0RgzB3gGUqNEUK0=
-X-Google-Smtp-Source: AGHT+IGA+KcU9d7S2wvRUSFjhmZkHNFVwGagUytgdzcLZ0PnDuYqInqLC+nzd6ZlLMmQ1zmAe19W8A==
-X-Received: by 2002:a17:90b:2d82:b0:2ee:c2b5:97a0 with SMTP id 98e67ed59e1d1-2ff7cf0a651mr22485225a91.25.1741620470515;
-        Mon, 10 Mar 2025 08:27:50 -0700 (PDT)
-Received: from [10.0.2.15] (KD106167137155.ppp-bb.dion.ne.jp. [106.167.137.155])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2ff4d457cd0sm10018080a91.0.2025.03.10.08.27.48
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 10 Mar 2025 08:27:50 -0700 (PDT)
-Message-ID: <bcce7d39-f142-4838-ba23-4fa2dda69fd0@gmail.com>
-Date: Tue, 11 Mar 2025 00:27:47 +0900
+	s=arc-20240116; t=1741620487; c=relaxed/simple;
+	bh=QB4BXhrgmhwE2pe9luH4R39VAllPIRK5zcmkbr2bZJw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fNao33mmAzhTUA/lxMqw1hd5Wz9AB5YyC1gJS7I9mRFerKxqbN5LvMxv5DjbnyOexCUdwQOkTditSa9cVUgkIuEwtJWVyDb7VByfcyHhI6J6nHs+bDgStHgCbdOss3KEvXrt5XCtuqSNkjjb+liqDWHCV1E/3/bWBt4GKUN0Afw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=TtB4G1jz; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=aG8VHbqLq93E8+fKSsUWDSUELF8JmypIY7KCRy7+XBo=; b=TtB4G1jzecZGRg6ijMw1uNHC+f
+	sQK3tBIGfPhYVusQfuNVjZRLf8nA521OY/pNLiENigcx2rMEuegvf7wwnMt2lnHHvnvY4/whBYtP3
+	5rbrbMw56frq/NthxnuMEVzbS6ae//CNL8JaAOJvdzmLvjBHnTIwO3uCSoBe6e+83BSPxiL+p/XFY
+	dxmAdloyMzwA2poKUkz0LBUw8pbcNU0rT6D29mGMM8PTZ3oW/HcKm9fLLSgSm0AT4dskoEdIXzRL/
+	th4en0Al2hjJNRZeZf3oAETbGcJbUPxU4TGIB3xPURrUlsDSm5Iuu+Uq/K3wdm4t3GyR9U3I2ywkM
+	2Lth8iKA==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1trf2s-00000001t6c-1L9J;
+	Mon, 10 Mar 2025 15:27:58 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 79DEB300599; Mon, 10 Mar 2025 16:27:56 +0100 (CET)
+Date: Mon, 10 Mar 2025 16:27:56 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: Ravi Bangoria <ravi.bangoria@amd.com>
+Cc: mingo@kernel.org, lucas.demarchi@intel.com,
+	linux-kernel@vger.kernel.org, acme@kernel.org, namhyung@kernel.org,
+	mark.rutland@arm.com, alexander.shishkin@linux.intel.com,
+	jolsa@kernel.org, irogers@google.com, adrian.hunter@intel.com,
+	kan.liang@linux.intel.com
+Subject: Re: [PATCH v3 6/7] perf: Rename perf_event_exit_task(.child)
+Message-ID: <20250310152756.GC19344@noisy.programming.kicks-ass.net>
+References: <20250307193305.486326750@infradead.org>
+ <20250307193723.417881572@infradead.org>
+ <d8be26ad-763b-4ab0-9f57-cfafad792194@amd.com>
+ <20250310144717.GS5880@noisy.programming.kicks-ass.net>
+ <bbd7986d-70b4-47e4-a2e4-ed99a1b89239@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V2 1/2] cpumask: Fix kernel-doc formatting errors in
- cpumask.h
-To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-Cc: Rasmus Villemoes <linux@rasmusvillemoes.dk>,
- Yury Norov <yury.norov@gmail.com>,
- Vincent Guittot <vincent.guittot@linaro.org>, linux-doc@vger.kernel.org,
- Jonathan Corbet <corbet@lwn.net>, linux-kernel@vger.kernel.org,
- Viresh Kumar <viresh.kumar@linaro.org>, Akira Yokosawa <akiyks@gmail.com>
-References: <cover.1741332579.git.viresh.kumar@linaro.org>
- <f4ad81150eaa00b43c161f0d1f811f8ecfe21889.1741332579.git.viresh.kumar@linaro.org>
- <20250310155301.6db5033c@foz.lan>
-Content-Language: en-US
-From: Akira Yokosawa <akiyks@gmail.com>
-In-Reply-To: <20250310155301.6db5033c@foz.lan>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <bbd7986d-70b4-47e4-a2e4-ed99a1b89239@amd.com>
 
-Hi,
+On Mon, Mar 10, 2025 at 08:50:55PM +0530, Ravi Bangoria wrote:
+> On 10-Mar-25 8:17 PM, Peter Zijlstra wrote:
+> > On Mon, Mar 10, 2025 at 04:38:36PM +0530, Ravi Bangoria wrote:
+> >> Hi Peter,
+> >>
+> >> On 08-Mar-25 1:03 AM, Peter Zijlstra wrote:
+> >>> The task passed to perf_event_exit_task() is not a child, it is
+> >>> current. Fix this confusing naming, since much of the rest of the code
+> >>> also relies on it being current.
+> >>>
+> >>> Specifically, both exec() and exit() callers use it with current as
+> >>> the argument.
+> >>
+> >> ...
+> >>
+> >>> -static void perf_event_exit_task_context(struct task_struct *child, bool exit)
+> >>> +static void perf_event_exit_task_context(struct task_struct *task, bool exit)
+> >>>  {
+> >>> -	struct perf_event_context *child_ctx, *clone_ctx = NULL;
+> >>> +	struct perf_event_context *ctx, *clone_ctx = NULL;
+> >>>  	struct perf_event *child_event, *next;
+> >>>  
+> >>> -	WARN_ON_ONCE(child != current);
+> >>> +	WARN_ON_ONCE(task != current);
+> >>
+> >> exec() codepath (i.e. copy_process()) passes child pointer, not 'current'.
+> > 
+> > I am confused, this not a new warning.
+> 
+> Right, However the WARN was present only in perf_event_exit_task_context()
+> before merging it with perf_event_free_task() (patch #5). And
+> perf_event_free_task() is getting called for child task.
 
-Mauro Carvalho Chehab wrote:
-> Em Fri,  7 Mar 2025 13:04:51 +0530
-[...]
->>  /**
->> - * cpumask_first_and - return the first cpu from *srcp1 & *srcp2
->> + * cpumask_first_and - return the first cpu from *@srcp1 & *@srcp2
-> 
-> I don't think this would produce the right output. See my other comment.
-> 
-> See, if I add this there:
-> 
-> 	 * cpumask_first_and - return the first cpu from ``*srcp1`` & @srcp2 & *@srp3
-> 
-> The kernel-doc output is:
-> 
-> 	.. c:function:: unsigned int cpumask_first_and (const struct cpumask *srcp1, const struct cpumask *srcp2)
-> 
-> 	   return the first cpu from ``*srcp1`` & **srcp2** & ***srp3**
-> 
-> e.g.:
-> 
-> - srcp1: will not be bold, but it will use a monospaced font and will have 
-> 	 an asterisk;
-> 
-> - srcp2: will be bold, without asterisk;
-> 
-> - srcp3: violates ReST spec: different versions may show it different
->          and warnings may be issued.
+Argh, yes.
 
-This third pattern is available since commit 69fc23efc7e5 ("kernel-doc:
-Add unary operator * to $type_param_ref") and I haven't heard of any
-regression report.
+> > Also, copy_process() is clone(), exec() is another code path.
+> 
+> My bad. I meant clone() code path:
+> 
+>   copy_process()
+>     p = dup_task_struct(current);
+>     perf_event_init_task(p);
+>       perf_event_free_task(p);
+>         perf_event_exit_task_context(p);
+>           WARN_ON_ONCE(task != current);
+> 
+> Another one:
+> 
+>   copy_process()
+>     p = dup_task_struct(current);
+>     ...
+>     bad_fork_cleanup_perf:
+>       perf_event_free_task(p);
+>         perf_event_exit_task_context(p);
+>           WARN_ON_ONCE(task != current);
+> 
+> Or am I missing something?
 
-Sphinx parses ***srp3** in the following way:
+No, the perf_event_free_task() callchain has a problem.
 
-  - It sees the first ** and start strong emphasis.
-  - It continues that mode until it sees next **.
-
-In the end, Sphinx will produce strongly emphasized "*srp3".
-
-It would be much better to convert *@srp3 into "\*\ **srp3", which will
-result in normal "*" followed by emphasized "srp3", but I didn't go that
-far at that time.  This looked sufficient to me as a band-aid workaround.
-
-Or you are aware of any Sphinx version who doesn't work in this way?
-
-        Thanks, Akira
-
+I'll remove that WARN_ON_ONCE() since perf_event_exit_task() has the
+same check. I'll do that in the merge patch, not this rename patch.
 
