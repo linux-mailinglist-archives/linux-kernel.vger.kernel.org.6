@@ -1,177 +1,100 @@
-Return-Path: <linux-kernel+bounces-554512-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-554513-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 44739A59912
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 16:06:16 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F042AA59915
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 16:06:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EBC6E3A19B9
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 15:06:03 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8120E7A0FF8
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 15:05:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EECA522CBD3;
-	Mon, 10 Mar 2025 15:06:10 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A86B61E49F;
-	Mon, 10 Mar 2025 15:06:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAE7822A4F9;
+	Mon, 10 Mar 2025 15:06:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="fa/Oj2Hr"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3444819D8A9;
+	Mon, 10 Mar 2025 15:06:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741619170; cv=none; b=maAK1i9pQwnjlRmuS6F0aBzaf8aw+h5eCT8iVYOjJiRlKKACUFpaB+SjaBDI7gVSyOfHfl+psQpAybZpBc06syBF4TXOi2YDm17Ba1klrOha6yRf9IIuKkfgfinVIDKuCl8/Q5R/7fB6H87qvXXDBFlVTH3dD8C0GiyrnALaOFc=
+	t=1741619202; cv=none; b=FPzRs03+VFLA40OE/E0tPbrCeYDKn9XNXAkxxWjQK5Uim1IvICdvCsQUo/N4lpvLLCUoUzUP64YhAkrRGVpfZjdmaXRtbPUi7lr4UG2SjEqPIm8RJm4S4wvm1qsxv1WXuBBSNM1MwpKHlvN+jWpLsK7544gsrW7/BzMtzXnWapU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741619170; c=relaxed/simple;
-	bh=WnCQv/xgSpGCbHwz6yDpf1vARBG8hTZ3pYokNi2kzqE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=gBjsnVfVf5PoxPvHqBGfAV/7QbfaivS2Grtpbv19zpc8/DrnTt9Ua7p164OCpjKhKxvaJTZCP51I7Ygoinux5t8GanO2cveqoDSiyQMCRf4DR6g8dFUrGEFA5rDJj8zhReUzf/9XIyeaMRaU7KuP/dDcu7Uc9ueK/VySkBu3ShU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4E10516F2;
-	Mon, 10 Mar 2025 08:06:18 -0700 (PDT)
-Received: from [10.57.39.174] (unknown [10.57.39.174])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id F15A23F5A1;
-	Mon, 10 Mar 2025 08:06:02 -0700 (PDT)
-Message-ID: <8bb8dfcb-bc44-48f2-acdb-58e6d259d25b@arm.com>
-Date: Mon, 10 Mar 2025 15:06:00 +0000
+	s=arc-20240116; t=1741619202; c=relaxed/simple;
+	bh=rZ8uUQkiWZrYIzNjKkld6JK7paqRRusVgUK9k1nfBDU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jk0xr6La0MM4VygzP0doL9EbgCF+eolClxxe6ThIwGGo5cAP1iodibA1eNEc0DFFkFnp/psDyOhAM8hrY/BDWWtdtvECu8oAI8XPZFKOmEnG62qhMCLQtuuZ8M7n5IyDlmzrfRwQW72ZnnfVYKLRxnle83vnaA6UnM+XWE2t9xA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=fa/Oj2Hr; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 05D1240E0219;
+	Mon, 10 Mar 2025 15:06:38 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id Y6eH-qkseM9Y; Mon, 10 Mar 2025 15:06:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1741619194; bh=1QMtNoYRBeomE6w99RXluzph7oHOBKtvkXdRfdtXfII=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=fa/Oj2HrcNJy7ALPM8YayOMpM8IW8gxi0Ud2tS7+8fCFfu4z0j798pfjgIyPUmtWK
+	 eazQzIdGZhIOmm71TmPh6eG1ytmtOQUrS1lwLv76tvZSXq+JR0TISPEvQtzRiiz9/H
+	 lkt0y+Ou8Pmj4HzRuBd+peBGk/viav70jNYI8x95mWyXB5r2fl3EhvaENg2qADiU5M
+	 YO7YtsWwZQk/5U3jYV1W0LkNHxGVE8Q7FiOMaIyIg4INppvaBvJ2Uq9YC9Je+1eQCd
+	 78qT28fUnOL6DWtaFwA5M+pShDBvkd8z1g/G/qtKDuokYp4318a2qjNoZdXXPFXF7b
+	 wkI93a529ZAPr/42kCr1FHxjfBBoV36JN5ZqosGLHoWsTYDH2mGqItsX7vFsMjKRel
+	 dD6YcwIOgFYKpszDTUJlKNNZbcnjgOcwwTIQqMgtpnRegVzYMwuNQ3V6LcuglidNRE
+	 9QYL692r1VtDSVvuhVmdXhEb7vwHGGhrP3QI55urYYde0AFB14iQ4hgwCcRJ//I4zq
+	 aax1bTHLED8zfGmmL6Q50QRzb8MbMMpipYUGTcdmo1j6tG8Bdh+OxiyD/x5h/wFnWV
+	 DZP8nZfVU/EfIl9WkcUNGdsT7Pdw6JqTedKICSvF9gzxeQAiz8LGunYiwsxkaRZO8M
+	 CwjDLX8bjl5ub5Ta9HpFOMvw=
+Received: from zn.tnic (pd95303ce.dip0.t-ipconnect.de [217.83.3.206])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 0CF5A40E015D;
+	Mon, 10 Mar 2025 15:06:25 +0000 (UTC)
+Date: Mon, 10 Mar 2025 16:06:19 +0100
+From: Borislav Petkov <bp@alien8.de>
+To: "H. Peter Anvin" <hpa@zytor.com>
+Cc: linux-kernel@vger.kernel.org,
+	"tip-bot2 for H. Peter Anvin (Intel)" <tip-bot2@linutronix.de>,
+	linux-tip-commits@vger.kernel.org, "Xin Li (Intel)" <xin@zytor.com>,
+	Ingo Molnar <mingo@kernel.org>,
+	Linus Torvalds <torvalds@linux-foundation.org>, x86@kernel.org
+Subject: Re: [tip: x86/cpu] x86/cpufeatures: Add {REQUIRED,DISABLED} feature
+ configs
+Message-ID: <20250310150619.GNZ87_66FZYtQ3_4OT@fat_crate.local>
+References: <20250228082338.73859-3-xin@zytor.com>
+ <174159470920.14745.5729743445717865267.tip-bot2@tip-bot2>
+ <A0C784F1-EF4F-4CCC-98AE-954197CD7554@zytor.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC 11/12] drm/gem: Add cgroup memory accounting
-To: Maxime Ripard <mripard@kernel.org>,
- Andrew Morton <akpm@linux-foundation.org>,
- Marek Szyprowski <m.szyprowski@samsung.com>,
- Sumit Semwal <sumit.semwal@linaro.org>,
- =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
- Benjamin Gaignard <benjamin.gaignard@collabora.com>,
- Brian Starkey <Brian.Starkey@arm.com>, John Stultz <jstultz@google.com>,
- "T.J. Mercier" <tjmercier@google.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>, Tomasz Figa <tfiga@chromium.org>,
- Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: Hans Verkuil <hverkuil@xs4all.nl>,
- Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
- linux-mm@kvack.org, linux-kernel@vger.kernel.org, iommu@lists.linux.dev,
- linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
- linaro-mm-sig@lists.linaro.org
-References: <20250310-dmem-cgroups-v1-0-2984c1bc9312@kernel.org>
- <20250310-dmem-cgroups-v1-11-2984c1bc9312@kernel.org>
-From: Robin Murphy <robin.murphy@arm.com>
-Content-Language: en-GB
-In-Reply-To: <20250310-dmem-cgroups-v1-11-2984c1bc9312@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <A0C784F1-EF4F-4CCC-98AE-954197CD7554@zytor.com>
 
-On 2025-03-10 12:06 pm, Maxime Ripard wrote:
-> In order to support any device using the GEM support, let's charge any
-> GEM DMA allocation into the dmem cgroup.
-> 
-> Signed-off-by: Maxime Ripard <mripard@kernel.org>
-> ---
->   drivers/gpu/drm/drm_gem.c            | 5 +++++
->   drivers/gpu/drm/drm_gem_dma_helper.c | 6 ++++++
->   include/drm/drm_device.h             | 1 +
->   include/drm/drm_gem.h                | 2 ++
->   4 files changed, 14 insertions(+)
-> 
-> diff --git a/drivers/gpu/drm/drm_gem.c b/drivers/gpu/drm/drm_gem.c
-> index ee811764c3df4b4e9c377a66afd4967512ba2001..e04733cb49353cf3ff9672d883b106a083f80d86 100644
-> --- a/drivers/gpu/drm/drm_gem.c
-> +++ b/drivers/gpu/drm/drm_gem.c
-> @@ -108,10 +108,11 @@ drm_gem_init(struct drm_device *dev)
->   	dev->vma_offset_manager = vma_offset_manager;
->   	drm_vma_offset_manager_init(vma_offset_manager,
->   				    DRM_FILE_PAGE_OFFSET_START,
->   				    DRM_FILE_PAGE_OFFSET_SIZE);
->   
-> +
->   	return drmm_add_action(dev, drm_gem_init_release, NULL);
->   }
->   
->   /**
->    * drm_gem_object_init_with_mnt - initialize an allocated shmem-backed GEM
-> @@ -973,10 +974,14 @@ drm_gem_release(struct drm_device *dev, struct drm_file *file_private)
->    * drm_gem_object_init().
->    */
->   void
->   drm_gem_object_release(struct drm_gem_object *obj)
->   {
-> +
-> +	if (obj->cgroup_pool_state)
-> +		dmem_cgroup_uncharge(obj->cgroup_pool_state, obj->size);
-> +
->   	if (obj->filp)
->   		fput(obj->filp);
->   
->   	drm_gem_private_object_fini(obj);
->   
-> diff --git a/drivers/gpu/drm/drm_gem_dma_helper.c b/drivers/gpu/drm/drm_gem_dma_helper.c
-> index 16988d316a6dc702310fa44c15c92dc67b82802b..6236feb67ddd6338f0f597a0606377e0352ca6ed 100644
-> --- a/drivers/gpu/drm/drm_gem_dma_helper.c
-> +++ b/drivers/gpu/drm/drm_gem_dma_helper.c
-> @@ -104,10 +104,16 @@ __drm_gem_dma_create(struct drm_device *drm, size_t size, bool private)
->   	if (ret) {
->   		drm_gem_object_release(gem_obj);
->   		goto error;
->   	}
->   
-> +	ret = dmem_cgroup_try_charge(dma_get_dmem_cgroup_region(drm->dev),
-> +				     size,
-> +				     &dma_obj->base.cgroup_pool_state, NULL);
-> +	if (ret)
-> +		goto error;
+On Mon, Mar 10, 2025 at 07:43:44AM -0700, H. Peter Anvin wrote:
+> I think it is worth noting that the list here was intentionally unchanged
+> from the previous definitions, but that several of these could and probably
+> should be overhauled. 
 
-Doesn't that miss cleaning up gem_obj? However, surely you want the 
-accounting before the allocation anyway, like in the other cases. 
-Otherwise userspace is still able to allocate massive amounts of memory 
-and incur some of the associated side-effects of that, it just doesn't 
-get to keep said memory for very long :)
+Sure, send patches.
 
-Thanks,
-Robin.
+:-P
 
-> +
->   	return dma_obj;
->   
->   error:
->   	kfree(dma_obj);
->   	return ERR_PTR(ret);
-> diff --git a/include/drm/drm_device.h b/include/drm/drm_device.h
-> index c91f87b5242d7a499917eb4aeb6ca8350f856eb3..58987f39ba8718eb768f6261fb0a1fbf16b38549 100644
-> --- a/include/drm/drm_device.h
-> +++ b/include/drm/drm_device.h
-> @@ -1,8 +1,9 @@
->   #ifndef _DRM_DEVICE_H_
->   #define _DRM_DEVICE_H_
->   
-> +#include <linux/cgroup_dmem.h>
->   #include <linux/list.h>
->   #include <linux/kref.h>
->   #include <linux/mutex.h>
->   #include <linux/idr.h>
->   
-> diff --git a/include/drm/drm_gem.h b/include/drm/drm_gem.h
-> index fdae947682cd0b7b06db5e35e120f049a0f30179..95fe8ed48a26204020bb47d6074689829c410465 100644
-> --- a/include/drm/drm_gem.h
-> +++ b/include/drm/drm_gem.h
-> @@ -430,10 +430,12 @@ struct drm_gem_object {
->   	 * @lru:
->   	 *
->   	 * The current LRU list that the GEM object is on.
->   	 */
->   	struct drm_gem_lru *lru;
-> +
-> +	struct dmem_cgroup_pool_state *cgroup_pool_state;
->   };
->   
->   /**
->    * DRM_GEM_FOPS - Default drm GEM file operations
->    *
-> 
+-- 
+Regards/Gruss,
+    Boris.
 
+https://people.kernel.org/tglx/notes-about-netiquette
 
