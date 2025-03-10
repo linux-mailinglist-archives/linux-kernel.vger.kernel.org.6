@@ -1,128 +1,170 @@
-Return-Path: <linux-kernel+bounces-553566-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-553567-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 962D3A58BB0
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 06:28:58 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C294BA58BB2
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 06:33:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D259D16A185
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 05:28:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6D0953ABF22
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 05:33:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A4B01C5F18;
-	Mon, 10 Mar 2025 05:28:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55F7A1C5D79;
+	Mon, 10 Mar 2025 05:33:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rIDX2/E4"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eYEMCrO2"
+Received: from mail-il1-f175.google.com (mail-il1-f175.google.com [209.85.166.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A9CD2F28;
-	Mon, 10 Mar 2025 05:28:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4605F18FDAB;
+	Mon, 10 Mar 2025 05:33:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741584530; cv=none; b=tq0AocbHdfc0WPqXytpLpfP4PZZLzfGffSuHRluJcCmSKuBfrJ91H/KXW3wVhn8a/WCqiseW1VRBMfgw2NdcjioitV0SaIUDaIPP51yBD1sJDkxiDqlBMc/fADygsQdp+caFpAakcHDPczQ0cEKU+T5UE3FAxA+21bTGITD6//0=
+	t=1741584798; cv=none; b=nCTkzppcoyqd6B6skRgv5FZi8FvNvVKwpjhKiQPOo65KWEzSXAesmhZgUiuul8gyp0LFrOGoCqBNoRskbZRw+ASl1tchLqiuU9v32QgQ7NsSucnjv2296YI27TyhVXKgus0XtSx5gPgKbA6mMK4pwUgFNHrdwjS9u3TavZaXKYM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741584530; c=relaxed/simple;
-	bh=xZ+9XNOyt3FXchZM+SS0uxDvW1K/kZComkL9YrJmHt0=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=Maj5UlnxzaWj4stapCroCeuNZbil8fJOXGqT3jxCqF3zNEkMWomlNY1e7Xqzt8yXk6Bu4H+6BvdaW23TgN/PhM6vxchL8rpjFiRwjViOfdRzx9Z2Ofs+a1RklWsryWTvMl8Mwuigk8QWGV7zQUZ8RTe154lcLSYkZ5bSNB99YoU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rIDX2/E4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id D5884C4CEE5;
-	Mon, 10 Mar 2025 05:28:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741584529;
-	bh=xZ+9XNOyt3FXchZM+SS0uxDvW1K/kZComkL9YrJmHt0=;
-	h=From:Date:Subject:To:Cc:Reply-To:From;
-	b=rIDX2/E4lBsqXjsNuAig5eNGi7BrcvYB10j9RmMexEjuoC36aFp4MPj7rJv9/5/QL
-	 v6xYqDwvhlyE4OMaZWi7Nt+4iqMGLIiOdF5FzoVCVYk8BhYQbUeNsEBjv4o40dHNRf
-	 QWMVf4F2U08l/OwZ/SNwW3ZgqMoajp0T4AnghkWkaS9HDdGXtZ8gtjV5LTnXnZQaNS
-	 kh/GdSoLnbvXgm85wOcEjzqAf/DwgQTIaz03otY+4Vw840fSRvd8g2ejqWsyPJowM+
-	 PwRQEvKYgxL02xQ/rSbRKTdg2+mWXUZv1LcqV3/vmlQS1q2kwQee5oQhY5VahbPmnk
-	 gQbsbIWXJ4vGw==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BE6A0C282DE;
-	Mon, 10 Mar 2025 05:28:49 +0000 (UTC)
-From: Aaron Kling via B4 Relay <devnull+webgeek1234.gmail.com@kernel.org>
-Date: Mon, 10 Mar 2025 00:28:48 -0500
-Subject: [PATCH v2] cpufreq: tegra186: Share policy per cluster
+	s=arc-20240116; t=1741584798; c=relaxed/simple;
+	bh=5EKnPa+Gv0TJNMpmdI3U2XN1GU78PygLTBll5PGGiwk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=IqVVRllt+x6EAX8gwSEz69gAgBhF+HknLZFshg7X6ic3JGylZQWEe1rolCcY4XXKrtHLXUNLgqASEIxfaQQdaRJ66MNhgeZv1pohe3ob0bKWuXnEbSUuQ7ugBQARVzbmycTD+7KtDwylsWOclxi2lEI+RDypLDn7ZYkMZ/i0rHA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eYEMCrO2; arc=none smtp.client-ip=209.85.166.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-il1-f175.google.com with SMTP id e9e14a558f8ab-3cf8e017abcso13195575ab.1;
+        Sun, 09 Mar 2025 22:33:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741584796; x=1742189596; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=FsZKVlTDMWzNmkdJJwpbPAsZ+Q8KwbX4bNw/XQxeEfI=;
+        b=eYEMCrO2X9Xpdcd2K/sxz172C6dAGzVhAARpI98bXAFRY5bQLpBDTobt1kT2vIPXVy
+         2RJl57i5D/WQbPevyZ5gH1DVnrQZxPm9MqG+b2tjgnBoI2tUYpwmPQugTdeprAcLvtm7
+         SawbO8mpkyyLe41/QTZX6koRuN/cZ5b2i7h4vjuI9jX3zMLTPWzM7f68UHVW3qeqdwx4
+         jqHQ9C0YA9nR5DCsDq56qAais+bUNbgq76X15fIMERA3HH4zG7btfaDcKOn4z6WtZ1ed
+         cV8RRJxAuBRvYcFBluoLjWMozNvJnLXbx44MmUFhzAJkltY/0vbQqE59o7EBzNlw6LXt
+         x5lQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741584796; x=1742189596;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=FsZKVlTDMWzNmkdJJwpbPAsZ+Q8KwbX4bNw/XQxeEfI=;
+        b=qrNfFrftHwKw0RR9yFJKP828O4KRilwj+/UQsscv9SNHH9m0vCCuK2nagDxKUjHKEf
+         0hoy/I+/PrrPBmu99NPqenfwYGrL2ZUMpAxsuMXYAFP10ZrEeMGQBja8nLRtJLREqyS2
+         N5OxYw03alAqfiBEwurcz7OmxnU2BBybKiVrRFWXD5Uch0fE/mqqcqGMzA1RQgeWVS58
+         w+F/HmCA8lGCXav2C/NMNZQdFPp/KlS2Ypo2mVNgSapsRdp0lfn2JNzgHO68yXnP2v6h
+         VahQEjj8nVz4vzVxqxjYTeedYpkGMSWgLJ/bNBR8mtTdk13FiwVQIvo4KsyuDS5Lngh3
+         CEkw==
+X-Forwarded-Encrypted: i=1; AJvYcCWt4HrvWJkCYNy4CB4YhEjJmL7XtiCAaywRET02a7PCphg9EzGd7GBDM65gm/bN7CZnjfpwmCDF@vger.kernel.org, AJvYcCXSi33HbXVZSjyokI+0/ePS8qXvBAXqR/han/ump4g37AO7ey9qqmg2GgCeHp/XCHlX9q6CGIPBOdC12Ts=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzXuouNYy3qco9De+g/Y/EXDeSefFXKmW/cOyw5b+8CIbp+VkXm
+	mfhe8jGk27YSxU22GUqrTBAlqwgvloGd96wMYZOF5QbRrxmirA7NlJ3WfsPrKQBcbt/fPrygbuM
+	mS87v2fCPfPgRbfzNP8IUpckLoQU=
+X-Gm-Gg: ASbGncscWYQKzPC+aMO6hTUxYKjibbzN10jlzKHrdsBMONo6Uc1ZsIYgy8wfuSzsnto
+	sEVAN3kCIGclpjZUfemI8zBtJ2Xz80QJGHFd0f6YodkSOHPqszq73fj0pZWCikB/EjjQvjK52j1
+	/wGY1eW4gD2nWc7TwnnLx/AJYE
+X-Google-Smtp-Source: AGHT+IGBGSMPs2GTHwSND0prawtDiEkRhRYzDk1J9LiPH4k9q5iJ7z5+KR4h5r3PptDgdAb4dqjmg3WjD8T17POF/pU=
+X-Received: by 2002:a05:6e02:3a06:b0:3d3:ff09:432c with SMTP id
+ e9e14a558f8ab-3d441947300mr137825135ab.4.1741584796241; Sun, 09 Mar 2025
+ 22:33:16 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250310-cpufreq-t186-share-policy-v2-1-d0b743cd051f@gmail.com>
-X-B4-Tracking: v=1; b=H4sIAI94zmcC/0XMTQ7CIBBA4as0rJ2GGQTRlfcwLhCnLbEtFepfm
- t5d4sblt3hvEZlT4CwO1SISP0MOcSygTSV858aWIVyLBUnSUqEEPz2axHeY0RrInUsMU+yD/4C
- jndFkldWKROmnxE14/96nc3GT4gBzl9j9j4QGjbTS1GqP2hhAePGlZb4hqe2xHVzoax8Hsa5fr
- JkUUqsAAAA=
-X-Change-ID: 20250310-cpufreq-t186-share-policy-a27652838532
-To: "Rafael J. Wysocki" <rafael@kernel.org>, 
- Viresh Kumar <viresh.kumar@linaro.org>, 
- Thierry Reding <thierry.reding@gmail.com>, 
- Jonathan Hunter <jonathanh@nvidia.com>
-Cc: linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Aaron Kling <luceoscutum@gmail.com>, 
- Sumit Gupta <sumitg@nvidia.com>, Thierry Reding <treding@nvidia.com>, 
- Aaron Kling <webgeek1234@gmail.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1741584529; l=1424;
- i=webgeek1234@gmail.com; s=20250217; h=from:subject:message-id;
- bh=/U0Kh7Cb90mT2b4NourHWsyj9SF5IW5h30D3gxH4nRw=;
- b=PCFAeC5Bm9uq1dNxo+stUss63q42Esm2EXmtWsfRFbcc7mCaEnG69ijd77iec6/SSgX0SLsY2
- 7c7GqheMqsXCAi4IEEqCtMGlQOdU0Y8jYktpuRf1ba8fqUhWhflzU0x
-X-Developer-Key: i=webgeek1234@gmail.com; a=ed25519;
- pk=TQwd6q26txw7bkK7B8qtI/kcAohZc7bHHGSD7domdrU=
-X-Endpoint-Received: by B4 Relay for webgeek1234@gmail.com/20250217 with
- auth_id=342
-X-Original-From: Aaron Kling <webgeek1234@gmail.com>
-Reply-To: webgeek1234@gmail.com
+References: <20250309121526.86670-1-aleksandr.mikhalitsyn@canonical.com>
+In-Reply-To: <20250309121526.86670-1-aleksandr.mikhalitsyn@canonical.com>
+From: Jason Xing <kerneljasonxing@gmail.com>
+Date: Mon, 10 Mar 2025 06:32:39 +0100
+X-Gm-Features: AQ5f1Jpx0SVCDs32H-oMiMAiaBWqfvJfV_H7pcz2o0HavBzGZk4aBE4z9L8bg2w
+Message-ID: <CAL+tcoDhPe3G_iheA0M_9dO-Tij-dYROfneiGS3SUr8w7bhH8A@mail.gmail.com>
+Subject: Re: [PATCH net-next] tools headers: Sync uapi/asm-generic/socket.h
+ with the kernel sources
+To: Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
+Cc: edumazet@google.com, linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
+	Jakub Kicinski <kuba@kernel.org>, Vadim Fedorenko <vadim.fedorenko@linux.dev>, 
+	Willem de Bruijn <willemb@google.com>, Anna Emese Nyiri <annaemesenyiri@gmail.com>, 
+	Alexander Mikhalitsyn <alexander@mihalicyn.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Aaron Kling <luceoscutum@gmail.com>
+On Sun, Mar 9, 2025 at 1:15=E2=80=AFPM Alexander Mikhalitsyn
+<aleksandr.mikhalitsyn@canonical.com> wrote:
+>
+> This also fixes a wrong definitions for SCM_TS_OPT_ID & SO_RCVPRIORITY.
+>
+> Accidentally found while working on another patchset.
+>
+> Cc: linux-kernel@vger.kernel.org
+> Cc: netdev@vger.kernel.org
+> Cc: Eric Dumazet <edumazet@google.com>
+> Cc: Jakub Kicinski <kuba@kernel.org>
+> Cc: Vadim Fedorenko <vadim.fedorenko@linux.dev>
+> Cc: Willem de Bruijn <willemb@google.com>
+> Cc: Jason Xing <kerneljasonxing@gmail.com>
+> Cc: Anna Emese Nyiri <annaemesenyiri@gmail.com>
+> Fixes: a89568e9be75 ("selftests: txtimestamp: add SCM_TS_OPT_ID test")
+> Fixes: e45469e594b2 ("sock: Introduce SO_RCVPRIORITY socket option")
+> Signed-off-by: Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com=
+>
 
-This functionally brings tegra186 in line with tegra210 and tegra194,
-sharing a cpufreq policy between all cores in a cluster.
+I'm not sure if it's a bug. As you may notice, in
+arch/parisc/include/uapi/asm/socket.h, it has its own management of
+definitions.
 
-Reviewed-by: Sumit Gupta <sumitg@nvidia.com>
-Acked-by: Thierry Reding <treding@nvidia.com>
-Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
----
- drivers/cpufreq/tegra186-cpufreq.c | 7 +++++++
- 1 file changed, 7 insertions(+)
+I'm worried that since this file is uapi, is it allowed to adjust the
+number like this patch does if it's not a bug.
 
-diff --git a/drivers/cpufreq/tegra186-cpufreq.c b/drivers/cpufreq/tegra186-cpufreq.c
-index c7761eb99f3ccc3e85389cb1e79d338c47584ae3..92aa50f0166601e7b077a4127eba0cb60181dee3 100644
---- a/drivers/cpufreq/tegra186-cpufreq.c
-+++ b/drivers/cpufreq/tegra186-cpufreq.c
-@@ -73,11 +73,18 @@ static int tegra186_cpufreq_init(struct cpufreq_policy *policy)
- {
- 	struct tegra186_cpufreq_data *data = cpufreq_get_driver_data();
- 	unsigned int cluster = data->cpus[policy->cpu].bpmp_cluster_id;
-+	u32 cpu;
- 
- 	policy->freq_table = data->clusters[cluster].table;
- 	policy->cpuinfo.transition_latency = 300 * 1000;
- 	policy->driver_data = NULL;
- 
-+	/* set same policy for all cpus in a cluster */
-+	for (cpu = 0; cpu < ARRAY_SIZE(tegra186_cpus); cpu++) {
-+		if (data->cpus[cpu].bpmp_cluster_id == cluster)
-+			cpumask_set_cpu(cpu, policy->cpus);
-+	}
-+
- 	return 0;
- }
- 
+Otherwise, the change looks good to me.
 
----
-base-commit: 1110ce6a1e34fe1fdc1bfe4ad52405f327d5083b
-change-id: 20250310-cpufreq-t186-share-policy-a27652838532
+Thanks,
+Jason
 
-Best regards,
--- 
-Aaron Kling <webgeek1234@gmail.com>
-
-
+> ---
+>  tools/include/uapi/asm-generic/socket.h | 21 +++++++++++++++++++--
+>  1 file changed, 19 insertions(+), 2 deletions(-)
+>
+> diff --git a/tools/include/uapi/asm-generic/socket.h b/tools/include/uapi=
+/asm-generic/socket.h
+> index ffff554a5230..aa5016ff3d91 100644
+> --- a/tools/include/uapi/asm-generic/socket.h
+> +++ b/tools/include/uapi/asm-generic/socket.h
+> @@ -119,14 +119,31 @@
+>
+>  #define SO_DETACH_REUSEPORT_BPF 68
+>
+> +#define SO_PREFER_BUSY_POLL    69
+> +#define SO_BUSY_POLL_BUDGET    70
+> +
+> +#define SO_NETNS_COOKIE                71
+> +
+> +#define SO_BUF_LOCK            72
+> +
+> +#define SO_RESERVE_MEM         73
+> +
+> +#define SO_TXREHASH            74
+> +
+>  #define SO_RCVMARK             75
+>
+>  #define SO_PASSPIDFD           76
+>  #define SO_PEERPIDFD           77
+>
+> -#define SCM_TS_OPT_ID          78
+> +#define SO_DEVMEM_LINEAR       78
+> +#define SCM_DEVMEM_LINEAR      SO_DEVMEM_LINEAR
+> +#define SO_DEVMEM_DMABUF       79
+> +#define SCM_DEVMEM_DMABUF      SO_DEVMEM_DMABUF
+> +#define SO_DEVMEM_DONTNEED     80
+> +
+> +#define SCM_TS_OPT_ID          81
+>
+> -#define SO_RCVPRIORITY         79
+> +#define SO_RCVPRIORITY         82
+>
+>  #if !defined(__KERNEL__)
+>
+> --
+> 2.43.0
+>
 
