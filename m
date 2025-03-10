@@ -1,183 +1,161 @@
-Return-Path: <linux-kernel+bounces-554733-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-554731-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CBBECA59BB7
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 17:54:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 79F8CA59BB4
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 17:54:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EF1A5188A68F
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 16:54:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F2E2C1888166
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 16:54:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4652F234969;
-	Mon, 10 Mar 2025 16:53:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85F6622FF31;
+	Mon, 10 Mar 2025 16:53:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Xgq+b2QE"
-Received: from mail-pj1-f43.google.com (mail-pj1-f43.google.com [209.85.216.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="T90BZrzK"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F66E231A2B;
-	Mon, 10 Mar 2025 16:53:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6CAA216392;
+	Mon, 10 Mar 2025 16:53:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741625605; cv=none; b=X8DP/XGlKW23kpQikU7CohZ6LfDVN1M0I3GBba/QsaNlcY8V0IS6gwMxYt++9LLlRCqp7UYto1xk1JePcfik4XdSh773Mn6lQ2hvvLCZDiubZh7TlyUqp/EXqckHu1Hy1bOhPfckdlH7or3F37MbrsqprSOxnaB6s1Wk8hy1Uts=
+	t=1741625596; cv=none; b=BdTkF07lo/P+nEycTrsjOAKL088DTE8BdsbtxRRTTBFF+NFhSc7vA/CShJq5mXDq6Kb2D7rwXIDSa6D85KgaDBz/hBWD11blfUgkTztg99dqjffiPB/45Dgo4+R+MFeTIHRTO7Z8UHXuQcSA1JUrINYcOVvXPHxzyD3dl8tOoKQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741625605; c=relaxed/simple;
-	bh=AyfR641cdKCZy6W0n6TlmM4KyPqA41GREqbdpaC3pjg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=R2bVtH9TC7097ptvdh2QHxqcVOZAwMz6iv26istW+vFpq4dVU2pus7ieMdVmcuv9dVXTePdPuiG+TA/QBQdWQmv+IR6/TwYfPM8utQbnYNh5W+0V5kVYrQJUVGuP70VQulXMKA1qL5BEFpnCV06gG6Em9D7dfBSCFnSKZbDQPpM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Xgq+b2QE; arc=none smtp.client-ip=209.85.216.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f43.google.com with SMTP id 98e67ed59e1d1-2ff7cf59a8fso972627a91.3;
-        Mon, 10 Mar 2025 09:53:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741625603; x=1742230403; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=MGWCx+SP2CEwzo/yDt6/toEmCVnke5ZqmE53jF+Pnaw=;
-        b=Xgq+b2QEz7XsPyKSWLgfS/XebKnyR5OqAm1O3i/VIPlscetSBaWoV5PPXtk5m+NX95
-         KOptRjHaWx+Vz8RYjvy8q2xGRs6tOMgQE5+SGuxDN4vsvIFUI4+UYu1p3zbDRGLDdHdV
-         9pxt6UzDTVgR+QF2Oea+UZdYFR/zk5hU4xQVeE/H0kk5LutjuntGFKEZNcWOAbcPLnHw
-         HggvO022Wr0hED0LxjbQl5sDtfKuVF1hWjGqZ/pofmmXEFeCmT5nIKNwlKUj0pc7FtAn
-         7z+w5ZXMjbKout8ilJ6RlRTnoUIaSPNCOmkvf+hBCTMW/9DLchC/05JqqNKGFjUu4b81
-         vtrg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741625603; x=1742230403;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=MGWCx+SP2CEwzo/yDt6/toEmCVnke5ZqmE53jF+Pnaw=;
-        b=YyPHCCHaXQK/BU7L03cG3MnON9nO5mEpHVFuHG0BziU6jnYP234f4/fP2bL80qkx5g
-         7aK3kcMNFrEn96BkbH2ymK8K784/Cug4mIG50ImrB3iOsGBjaIBctjE5n8JXIIcSf80G
-         G3uxwWAFVIRZRg0ku6TDpLjneJt6DKdSdpM2iRTgg/h9VoYENXNS04ZFSq8ahoccK2tf
-         FCgk7UuHNqMuFztcCRo6jpLO9V8ATCygmGPEU9fCrDM1egyzWsHaU7nFEthASfRpY316
-         TNR63+Hs5d7fV0suDydAkRpqFKH8lZ1VhZUyfTLZ1qRp51L3Sxg9KOP0x56CGX41Ui+o
-         t+MA==
-X-Forwarded-Encrypted: i=1; AJvYcCWhURlpKF8zw4y+GWPn/52g6oFaw0Rh/mS+bOfQtBFnXpA+tFzp2gEDJql1P+aPugY0VJjt2Dg+zGoRPka/lUk=@vger.kernel.org, AJvYcCXpDZtqC84arwmiqxvHZT+y788w8VWjEv1ywDkMoju+C7RKVFxd75Rm4djzEn7xI8RT9H+ipXUPVBvWPQA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwPPqrbX2yw6kcrSyDmvEz7KyuthjL4fQ9LH0xtfl3x6e/xE+/a
-	yGUDIuQgmdANx42RdzXjhPvZ2O1IgVEwcB+iolFRwJ0MB5v1dHZZ1tc/lgwbj6kHuWTJ/PGE4nC
-	ZExnPWFsVqoj2oLw4FASqhfjdHbQ=
-X-Gm-Gg: ASbGncuFzZIx8vB/7rRZ32As5nf9VI7hDu/RoFv+3i7btxP1Wo6i5AesbtjZ3fHR1gg
-	ln4hOx7mFGLqniV4bjB/T+GVyyFAOLFEE/XfOaHVvOn8fmgqe4vy5cPgYRqsOCZ2VKQhyBQNGrd
-	MOLOyN36wGVplkTfXNSuKllT+daw==
-X-Google-Smtp-Source: AGHT+IEYPLWSokqycAlJYDknETMKQnZPApe3+mtQKMISpbNvpmAarVnfXC69vQZ7iPcoM2dsavEQ/18114ggROUq/0s=
-X-Received: by 2002:a17:90b:224d:b0:2ff:4e90:3c47 with SMTP id
- 98e67ed59e1d1-300ff897fd9mr235938a91.4.1741625603212; Mon, 10 Mar 2025
- 09:53:23 -0700 (PDT)
+	s=arc-20240116; t=1741625596; c=relaxed/simple;
+	bh=1BgaCQUGjQAOFM2D533osL0JWW3ihZoxHt/01NLC7o4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Pj21qTRPn/AUC2LgaWTeenPX7AF5KQScM0fRw3WXKfGIowYpq/LrITMuidieP1+/rvJ+VZZ1CTg10FXhut6sKAadwYS+6uvypAlXB7qFNQAlKdv5Zr3V0bT/8xurU5BpotCC+G4zHVMIQPkwXxL+OS4uJOe3VnTNeHqtOrpgoDw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=T90BZrzK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6D301C4CEE5;
+	Mon, 10 Mar 2025 16:53:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741625595;
+	bh=1BgaCQUGjQAOFM2D533osL0JWW3ihZoxHt/01NLC7o4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=T90BZrzKkMaFjQSN1Wg9F/kJ/P0/1qgdM5YfI/PPzUXluWCl/0lAsIuPt4k3EisEJ
+	 6g5WBqtRXrh0DztHQE16HokVpCRvdv3gXBFYJEc1ns+kyMsYAoTvsHv+1DZtP/RdZK
+	 iuXuFB+zwH89BPHlDjijaLla71syZ8n+Dhhg9qViTmcScJY3zpkZgooDXLykJTZvck
+	 IB/uTUXesE9e/kJZQ8MyRb42iANVgt2fbt2+PwNNAnqiFW7G13vJiylJEqlqXH8H1J
+	 HULez/bKqe48z/oNYxTLZbiVWDg8EQAQ9JvQOhkAgn3WUw6tdm8nLLlLRV8IMJvME5
+	 6IA/VEFHVgVhw==
+Date: Mon, 10 Mar 2025 16:53:13 +0000
+From: Wei Liu <wei.liu@kernel.org>
+To: Roman Kisel <romank@linux.microsoft.com>
+Cc: Wei Liu <wei.liu@kernel.org>, arnd@arndb.de, bhelgaas@google.com,
+	bp@alien8.de, catalin.marinas@arm.com, conor+dt@kernel.org,
+	dave.hansen@linux.intel.com, decui@microsoft.com,
+	haiyangz@microsoft.com, hpa@zytor.com, joey.gouly@arm.com,
+	krzk+dt@kernel.org, kw@linux.com, kys@microsoft.com,
+	lenb@kernel.org, lpieralisi@kernel.org,
+	manivannan.sadhasivam@linaro.org, mark.rutland@arm.com,
+	maz@kernel.org, mingo@redhat.com, oliver.upton@linux.dev,
+	rafael@kernel.org, robh@kernel.org, ssengar@linux.microsoft.com,
+	sudeep.holla@arm.com, suzuki.poulose@arm.com, tglx@linutronix.de,
+	will@kernel.org, yuzenghui@huawei.com, devicetree@vger.kernel.org,
+	kvmarm@lists.linux.dev, linux-acpi@vger.kernel.org,
+	linux-arch@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-hyperv@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-pci@vger.kernel.org, x86@kernel.org, apais@microsoft.com,
+	benhill@microsoft.com, bperkins@microsoft.com,
+	sunilmut@microsoft.com
+Subject: Re: [PATCH hyperv-next v5 06/11] arm64, x86: hyperv: Report the VTL
+ the system boots in
+Message-ID: <Z88Y-R7BnXa4Xi3I@liuwe-devbox-ubuntu-v2.lamzopl0uupeniq2etz1fddiyg.xx.internal.cloudapp.net>
+References: <20250307220304.247725-1-romank@linux.microsoft.com>
+ <20250307220304.247725-7-romank@linux.microsoft.com>
+ <Z84yyAqkqJ2ZyAd-@liuwe-devbox-ubuntu-v2.lamzopl0uupeniq2etz1fddiyg.xx.internal.cloudapp.net>
+ <2342dda1-2976-4506-ab68-640739a1bd5b@linux.microsoft.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250310161947.1767855-2-bqe@google.com>
-In-Reply-To: <20250310161947.1767855-2-bqe@google.com>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Mon, 10 Mar 2025 17:53:10 +0100
-X-Gm-Features: AQ5f1JqSAgmpt3Iw0rHmDnmkw3gQAiO5-r-omP0lH1MAV1e7rN4oiPAdku5NFKY
-Message-ID: <CANiq72=uBYDBn2CS9OW-+S0=rCZEJFdrcBAk8yBQdNB+0Yjq=A@mail.gmail.com>
-Subject: Re: [PATCH v3] rust: add bindings and API for bitmap.h and bitops.h.
-To: Burak Emir <bqe@google.com>
-Cc: Yury Norov <yury.norov@gmail.com>, Rasmus Villemoes <linux@rasmusvillemoes.dk>, 
-	Viresh Kumar <viresh.kumar@linaro.org>, Miguel Ojeda <ojeda@kernel.org>, 
-	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
-	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2342dda1-2976-4506-ab68-640739a1bd5b@linux.microsoft.com>
 
-Hi Burak,
+On Mon, Mar 10, 2025 at 09:42:15AM -0700, Roman Kisel wrote:
+> 
+> 
+> On 3/9/2025 5:31 PM, Wei Liu wrote:
+> > On Fri, Mar 07, 2025 at 02:02:58PM -0800, Roman Kisel wrote:
+> > > The hyperv guest code might run in various Virtual Trust Levels.
+> > > 
+> > > Report the level when the kernel boots in the non-default (0)
+> > > one.
+> > > 
+> > > Signed-off-by: Roman Kisel <romank@linux.microsoft.com>
+> > > ---
+> > >   arch/arm64/hyperv/mshyperv.c | 2 ++
+> > >   arch/x86/hyperv/hv_vtl.c     | 2 +-
+> > >   2 files changed, 3 insertions(+), 1 deletion(-)
+> > > 
+> > > diff --git a/arch/arm64/hyperv/mshyperv.c b/arch/arm64/hyperv/mshyperv.c
+> > > index a7db03f5413d..3bc16dbee758 100644
+> > > --- a/arch/arm64/hyperv/mshyperv.c
+> > > +++ b/arch/arm64/hyperv/mshyperv.c
+> > > @@ -108,6 +108,8 @@ static int __init hyperv_init(void)
+> > >   	if (ms_hyperv.priv_high & HV_ACCESS_PARTITION_ID)
+> > >   		hv_get_partition_id();
+> > >   	ms_hyperv.vtl = get_vtl();
+> > > +	if (ms_hyperv.vtl > 0) /* non default VTL */
+> > 
+> > "non-default".
+> > 
+> 
+> Thanks, will fix that!
+> 
+> > > +		pr_info("Linux runs in Hyper-V Virtual Trust Level %d\n", ms_hyperv.vtl);
+> > >   	ms_hyperv_late_init();
+> > > diff --git a/arch/x86/hyperv/hv_vtl.c b/arch/x86/hyperv/hv_vtl.c
+> > > index 4e1b1e3b5658..c21bee7e8ff3 100644
+> > > --- a/arch/x86/hyperv/hv_vtl.c
+> > > +++ b/arch/x86/hyperv/hv_vtl.c
+> > > @@ -24,7 +24,7 @@ static bool __init hv_vtl_msi_ext_dest_id(void)
+> > >   void __init hv_vtl_init_platform(void)
+> > >   {
+> > > -	pr_info("Linux runs in Hyper-V Virtual Trust Level\n");
+> > > +	pr_info("Linux runs in Hyper-V Virtual Trust Level %d\n", ms_hyperv.vtl);
+> > 
+> > Where isn't there a check for ms_hyperv.vtl > 0 here?
+> > 
+> 
+> On x86, there is
+> 
+> #ifdef CONFIG_HYPERV_VTL_MODE
+> void __init hv_vtl_init_platform(void);
+> int __init hv_vtl_early_init(void);
+> #else
+> static inline void __init hv_vtl_init_platform(void) {}
+> static inline int __init hv_vtl_early_init(void) { return 0; }
+> #endif
+> 
+> > Please be consistent across different architectures.
+> > 
+> 
+> In the earlier versions of the patch series, I had that piece
+> from the above mirrored in the arm64, and there was advice on
+> removing the function as it contained just one statement.
+> I'll revisit the approach, thanks for your help!
 
-Some quick notes...
+As long as the output is consistent across different architectures, I'm
+good.
 
-On Mon, Mar 10, 2025 at 5:20=E2=80=AFPM Burak Emir <bqe@google.com> wrote:
->
-> +void rust_helper_bitmap_copy_and_extend(unsigned long *dst, const unsign=
-ed long *src, unsigned int count, unsigned int size)
-> +{
-> +       bitmap_copy_and_extend(dst, src, count, size);
-> +}
+Wei.
 
-Please use the same parameter names as the real one, i.e. `to` and `from`.
-
-> +/// Wraps underlying C bitmap structure.
-
-I am not sure I would say it "structure" here, i.e. it seems like it
-actually wraps a C `struct bitmap`.
-
-In general, we also try to mention the "wraps ..." (if it actually did
-so) in a second paragraph, rather than doing so in the title.
-
-> +/// # Invariants
-> +///
-> +/// * `ptr` is obtained from a successful call to `bitmap_zalloc` and
-
-Also, you may remove the bullet list -- we currently do not enforce
-that it is always a bullet list (though we may in the future).
-
-> +    /// Pointer to an array of unsigned long.
-
-`unsigned long`
-
-> +    ptr: NonNull<usize>,
-> +    /// How many bits this bitmap stores. Must be < 2^32.
-
-Should the "Must be" be part of the invariants above?
-
-> +        // SAFETY: `self.ptr` was returned by bitmap_zalloc.
-
-"the C `bitmap_zalloc`"
-
-> +impl Bitmap {
-> +    /// Constructs a new [`Bitmap`].
-> +    ///
-> +    /// Fails with AllocError if `nbits` is greater than or equal to 2^3=
-2,
-
-Intra-doc links where possible: [`AllocError`].
-
-> +    /// # Example
-
-We use plurals even if there is a single example (like for the invariants).
-
-> +    /// ```
-> +    /// # use kernel::bitmap::Bitmap;
-> +    ///
-> +    /// fn new_bitmap() -> Bitmap {
-> +    ///   Bitmap::new(128, GFP_KERNEL).unwrap()
-> +    /// }
-> +    /// ```
-
-Is there a reason why this example cannot be run? i.e. to not have it
-wrapped in a function.
-
-Also, please use the `?` operator if possible -- we try to write
-examples as "real code", so we try to avoid `unwrap()` etc.
-
-> +            Ok(Bitmap { ptr, nbits })
-
-When we have invariants, we use an `// INVARIANT: ...` comment (please
-grep for similar cases to see how it is usually done).
-
-> +    /// Returns how many bits this bitmap holds.
-
-We should have examples (which double as tests) for these.
-
-One alternative, that may be simpler to showcase how the type works,
-is to write a longer example in the documentation of the type itself.
-
-> +        // SAFETY: nbits =3D=3D 0 is supported and access is within boun=
-ds.
-
-Markdown wherever possible, e.g. `nbits =3D=3D 0` (also other instance).
-
-Thanks!
-
-Cheers,
-Miguel
+> 
+> > >   	x86_platform.realmode_reserve = x86_init_noop;
+> > >   	x86_platform.realmode_init = x86_init_noop;
+> > > -- 
+> > > 2.43.0
+> > > 
+> > > 
+> 
+> -- 
+> Thank you,
+> Roman
+> 
 
