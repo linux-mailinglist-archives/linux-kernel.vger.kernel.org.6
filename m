@@ -1,139 +1,153 @@
-Return-Path: <linux-kernel+bounces-553551-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-553552-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D860A58B6A
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 06:00:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id E6DADA58B7C
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 06:02:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7B797169149
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 05:00:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2291F169165
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 05:02:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E83C1BE251;
-	Mon, 10 Mar 2025 05:00:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CF1A1C173C;
+	Mon, 10 Mar 2025 05:02:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="motiyE2o"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iolHTBYT"
+Received: from mail-pj1-f49.google.com (mail-pj1-f49.google.com [209.85.216.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F75A23A0
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 05:00:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5327681E;
+	Mon, 10 Mar 2025 05:02:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741582835; cv=none; b=H6ICY8ADqfDJUWYH6RPHExm/SX9feTA+IVh34GMzFujDYT5xC1H8RCBODjiuMSSPR5FTRRrLpdBVVDZzp6AWcVZyqn5niuzUoRno4QprttOt3DDCwz+uSXIj1/rO9ZAj4ZbIsWMy79yY7Q2K3SXiqdsgTjZiN8+XrFj624jguho=
+	t=1741582963; cv=none; b=knq+smIm/kT4VXi4mHNICRmA1icGFLMrD8sltkRbcEF5ohaEsvFOuTz8ZMpwjenNm14NMOIX7UPvIjLhFyJ+yukS4z9edG1GDFKu/6Z+FjDkzDUfdDGyDQe7/RfLUXbkUWCtqrtXPCWSug2OulnRtI1K8YU7bg4ov/6p1+8pO8E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741582835; c=relaxed/simple;
-	bh=FbKQgE+nEkhykKhL5CGeuwVAxEG82UnFKn4gh6uIss4=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=bd6xYdsj5IFpM2SvxY4X9T8A93o3L1sbeYqudKSOR4n8T7+X/mId0VRf0/19R22j9cGJJX6OOITpXoWQoupWvvthXid29uStb0FzN3xfFtfh0rW+5nNjN0Etx9aUQT09Ndo6w5ywQhO5rwEJ5Jj0FzY1OQ1XJiSQ2SNZ1XthvvA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=motiyE2o; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 529KepAJ020348;
-	Mon, 10 Mar 2025 05:00:12 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=pp1; bh=tYzngVIj/pzWvrZmaIiWWQg1pW8CUV
-	O4dUVHdoOjGiw=; b=motiyE2oP4r4QHOHr0Z+h027QCFKmnrxDQ+gTa3hLAQYAw
-	bGhxNX+KF+RNgk+4EOPBsgdU9SEY+pszeA+uAQM+WDlWXAAvnJoVp/N5v4dyM/tY
-	qk8viwnABkx/RKu2iv5NvdfK7yfo1Kd47KjK5xTQAV/OdiE8ALphSFC8lHSkzi/Q
-	B1O3oyBjT6e9bZfKwX3lp1iUGh6YFHSbTs6bbR3dpyQEZCGfPHMPld46UwzU4rGn
-	JyAyGqz4uUaYpztyxus/jdWziJZcHKFHe7BGchEjrhh/v+/oDYldeye8DGqt1qeF
-	eHJNUmJE5xpHiFhGsKQAW0p1vWnZUov8Tw5x3T0w==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 459j6yh6sh-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 10 Mar 2025 05:00:12 +0000 (GMT)
-Received: from m0353725.ppops.net (m0353725.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 52A50Bns014700;
-	Mon, 10 Mar 2025 05:00:11 GMT
-Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 459j6yh6s9-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 10 Mar 2025 05:00:11 +0000 (GMT)
-Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 52A2HfqL027530;
-	Mon, 10 Mar 2025 05:00:11 GMT
-Received: from smtprelay04.fra02v.mail.ibm.com ([9.218.2.228])
-	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 4591qkctj9-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 10 Mar 2025 05:00:11 +0000
-Received: from smtpav01.fra02v.mail.ibm.com (smtpav01.fra02v.mail.ibm.com [10.20.54.100])
-	by smtprelay04.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 52A507U234865910
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 10 Mar 2025 05:00:07 GMT
-Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id E705E20043;
-	Mon, 10 Mar 2025 05:00:06 +0000 (GMT)
-Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id E2FC22004E;
-	Mon, 10 Mar 2025 05:00:03 +0000 (GMT)
-Received: from vaibhav?linux.ibm.com (unknown [9.124.218.228])
-	by smtpav01.fra02v.mail.ibm.com (Postfix) with SMTP;
-	Mon, 10 Mar 2025 05:00:03 +0000 (GMT)
-Received: by vaibhav@linux.ibm.com (sSMTP sendmail emulation); Mon, 10 Mar 2025 10:30:02 +0530
-From: Vaibhav Jain <vaibhav@linux.ibm.com>
-To: Gautam Menghani <gautam@linux.ibm.com>, maddy@linux.ibm.com,
-        mpe@ellerman.id.au, npiggin@gmail.com, christophe.leroy@csgroup.eu,
-        naveen@kernel.org
-Cc: Gautam Menghani <gautam@linux.ibm.com>, linuxppc-dev@lists.ozlabs.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] powerpc/pseries/msi: Avoid reading PCI device registers
- in reduced power states
-In-Reply-To: <20250305090237.294633-1-gautam@linux.ibm.com>
-References: <20250305090237.294633-1-gautam@linux.ibm.com>
-Date: Mon, 10 Mar 2025 10:30:02 +0530
-Message-ID: <87tt81tr8t.fsf@vajain21.in.ibm.com>
+	s=arc-20240116; t=1741582963; c=relaxed/simple;
+	bh=SU43BrQ5Geh02OjUAMMlIrjn5xFx5LeabQZf4mR1WtM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PHXk3L2RIxjtgy7rDk/9IXOYfiSOKmSlp5Bw6oEtgQMIV6zqCLh++ISYFwV+kBdihAJUieeF+AAsLmafoSKajxYuEI8BGl64f0by1eXMvYQoyESo50i/KmewjwLNbEkxjSEkaAHFdJYrI93s695YnB8rEdPQj73Ge2HBWDgKhYE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iolHTBYT; arc=none smtp.client-ip=209.85.216.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f49.google.com with SMTP id 98e67ed59e1d1-2fee05829edso7606130a91.3;
+        Sun, 09 Mar 2025 22:02:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741582961; x=1742187761; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=SZzDAzsMMiTbeu8KMghmpk7edVoPDWNRfqPRmyFyQAM=;
+        b=iolHTBYTSnYhvdXiX5xKNvUODniz/xUJ2neN4ysvGUyJTBDqUr6QP5jlq8yJkysDhU
+         jUXcEp6qoHMCYkYLzRv5ellhvc8w+msPuRu4n/ByJlZ7cnN+mJVG31aV5uYn0K2iIITL
+         tu0n4KiR1uoiKxiLVFgGsKc1HNr+Kktap9eZyWz8ERBTzbQi3KuYNf1BduR6Bx5bsFbJ
+         ecg6eIXqjIpW0hWOgcCVbd930TZgeqgrPdcgwOF20cBT1uR0NAf4vHWT2ZGa864uA0MP
+         wn+8YMXYH8bROeffqSOsYhnUevQz5hJ71Jl2nA7G78ByoIQvdhAc0Syd1aUO0A2orjOa
+         zP6Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741582961; x=1742187761;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=SZzDAzsMMiTbeu8KMghmpk7edVoPDWNRfqPRmyFyQAM=;
+        b=PwWw/FVtX6bZxRrYWr8GpFYt4/9ZTeg1Rn176WPFpvzF0txQsLeWTp8pwGe43CeUq8
+         mjbpGbjXfCpKDqpYbJrYPF0CcNK3Nyo2CxXTW4Whdw5CQWv1ZmsMrAoiE0bs8k9wAhnv
+         MmjjkgRaNihYyPb4/j48pY5pjVW4rEgCdO/onhlzJm1cxbFFaI4HSIcDZS1DgYW30frO
+         IZB1WidVxwC36XPG4Ex9Pz5YdlOVoWuDPozFY0aWy+5oWGGqOfJXTe/jqYWFMOznw6Om
+         N1knXzMXb8PmdW9BaBilXouVmW5tgJBxMtvZ27KqjWSElWctxZb2Wp50lxxX301Ixecq
+         mk/w==
+X-Forwarded-Encrypted: i=1; AJvYcCV711fCGxX9lEgZDP8j43o9LkmmCUXpH3LoDHSoOH/Z4Z+CepP1ep4jffns2lYcB41c3FB+iqk9HkA5kvA=@vger.kernel.org, AJvYcCW8yobucUrHVXCjEBizFU5rguly5wRnoFcigS8QrkZ9Ish09oFKcIVJhMel7Nq3XisoBAGcN+DJ@vger.kernel.org
+X-Gm-Message-State: AOJu0YzVjnQJU12NXUcSC/808YSNmqJYkXZJbGKMt137+X9bTP9YD7Q3
+	uIFJpkYFi6oFu7+UHRolKCWqMKsf78jb2ahdApw4vlW/UQGlwUI=
+X-Gm-Gg: ASbGncsSOEwk9hMLqPciRbUpXuMIEFTTKBqEFlcG+MTzckhlirUtIe3BClQoQPuvzsz
+	yP+pXKyvXuTB49g513tb/+zlKfWOLhO8TFP2Mr5NtXdziT63x0QRDgmzejHAs4GT/1IckLDvrra
+	bNUvplheNUmZupi1G7fOqUUKmipAE4490VMTSvYz0dYnJuDckb+ybna5BQW5P47OwwLv23U+AT3
+	YlfcRn74CqI7E7sOHjMdOBgWU3H2YA6L+TObngIZMDIDCdqgvm5rxpF6Mfbcok6I+pqeiZiFfKa
+	8W9NtNtvJ/yop8pjBCs5pzx2G+bdWFCacBY+xKr8P4Tn
+X-Google-Smtp-Source: AGHT+IG7tzpgs+8t0alOed45KdjVCkt913Wo/UFpJ4Lgl1WT6Inz0OsMgjU+eYKcsC+eo2PA82hv3Q==
+X-Received: by 2002:a17:90b:3804:b0:2ee:edae:75e with SMTP id 98e67ed59e1d1-2ff7ce77a3fmr20079153a91.13.1741582961390;
+        Sun, 09 Mar 2025 22:02:41 -0700 (PDT)
+Received: from localhost ([2601:646:9e00:f56e:2844:3d8f:bf3e:12cc])
+        by smtp.gmail.com with UTF8SMTPSA id 98e67ed59e1d1-2ff4e825306sm8880663a91.43.2025.03.09.22.02.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 09 Mar 2025 22:02:40 -0700 (PDT)
+Date: Sun, 9 Mar 2025 22:02:40 -0700
+From: Stanislav Fomichev <stfomichev@gmail.com>
+To: Mina Almasry <almasrymina@google.com>
+Cc: Jakub Kicinski <kuba@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>,
+	netdev@vger.kernel.org, davem@davemloft.net, edumazet@google.com,
+	pabeni@redhat.com, linux-kernel@vger.kernel.org, horms@kernel.org,
+	donald.hunter@gmail.com, michael.chan@broadcom.com,
+	pavan.chebbi@broadcom.com, andrew+netdev@lunn.ch,
+	jdamato@fastly.com, xuanzhuo@linux.alibaba.com,
+	asml.silence@gmail.com, dw@davidwei.uk
+Subject: Re: [PATCH net-next v1 3/4] net: add granular lock for the netdev
+ netlink socket
+Message-ID: <Z85ycDdGXZvJ-CN-@mini-arch>
+References: <20250307155725.219009-1-sdf@fomichev.me>
+ <20250307155725.219009-4-sdf@fomichev.me>
+ <20250307153456.7c698a1a@kernel.org>
+ <Z8uEiRW91GdYI7sL@mini-arch>
+ <CAHS8izPO2wSReuRz=k1PuXy8RAJuo5pujVMGceQVG7AvwMSVdw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: FQIXXM5-dJMkqGfkkabZWwAJ7PBnfEWC
-X-Proofpoint-ORIG-GUID: DkN087udYypB2ASs1EV_FiKFSW_-CNnk
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-10_01,2025-03-07_03,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
- malwarescore=0 mlxscore=0 priorityscore=1501 suspectscore=0 adultscore=0
- spamscore=0 phishscore=0 bulkscore=0 clxscore=1015 mlxlogscore=922
- lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2502100000 definitions=main-2503100036
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAHS8izPO2wSReuRz=k1PuXy8RAJuo5pujVMGceQVG7AvwMSVdw@mail.gmail.com>
 
-Gautam Menghani <gautam@linux.ibm.com> writes:
+On 03/09, Mina Almasry wrote:
+> On Fri, Mar 7, 2025 at 3:43 PM Stanislav Fomichev <stfomichev@gmail.com> wrote:
+> >
+> > On 03/07, Jakub Kicinski wrote:
+> > > On Fri,  7 Mar 2025 07:57:24 -0800 Stanislav Fomichev wrote:
+> > > > diff --git a/net/core/netdev-genl.c b/net/core/netdev-genl.c
+> > > > index a219be90c739..8acdeeae24e7 100644
+> > > > --- a/net/core/netdev-genl.c
+> > > > +++ b/net/core/netdev-genl.c
+> > > > @@ -859,6 +859,7 @@ int netdev_nl_bind_rx_doit(struct sk_buff *skb, struct genl_info *info)
+> > > >             goto err_genlmsg_free;
+> > > >     }
+> > > >
+> > > > +   mutex_lock(&priv->lock);
+> > > >     rtnl_lock();
+> > > >
+> > > >     netdev = __dev_get_by_index(genl_info_net(info), ifindex);
+> > > > @@ -925,6 +926,7 @@ int netdev_nl_bind_rx_doit(struct sk_buff *skb, struct genl_info *info)
+> > > >     net_devmem_unbind_dmabuf(binding);
+> > > >  err_unlock:
+> > > >     rtnl_unlock();
+> > > > +   mutex_unlock(&priv->lock);
+> > > >  err_genlmsg_free:
+> > > >     nlmsg_free(rsp);
+> > > >     return err;
+> > >
+> > > I think you're missing an unlock before successful return here no?
+> >
+> > Yes, thanks! :-( I have tested some of this code with Mina's latest TX + my
+> > loopback mode, but it doesn't have any RX tests.. Will try to hack
+> > something together to run RX bind before I repost.
+> 
+> Is the existing RX test not working for you?
+> 
+> Also running `./ncdevmem` manually on a driver you have that supports
+> devmem will test the binding patch.
 
-> When a system is being suspended to RAM, the PCI devices are also
-> suspended and the PPC code ends up calling pseries_msi_compose_msg() and
-> this triggers the BUG_ON() in __pci_read_msi_msg() because the device at
-> this point is in reduced power state. In reduced power state, the memory
-> mapped registers of the PCI device are not accessible.
->
-> To replicate the bug:
-> 1. Make sure deep sleep is selected
-> 	# cat /sys/power/mem_sleep
-> 	s2idle [deep]
->
-> 2. Make sure console is not suspended (so that dmesg logs are visible)
-> 	echo N > /sys/module/printk/parameters/console_suspend
->
-> 3. Suspend the system
-> 	echo mem > /sys/power/state
->
-> To fix this behaviour, read the cached msi message of the device when the
-> device is not in PCI_D0 power state instead of touching the hardware.
->
-> Fixes: a5f3d2c17b07 ("powerpc/pseries/pci: Add MSI domains")
-> Cc: stable@vger.kernel.org # v5.15+
-> Signed-off-by: Gautam Menghani <gautam@linux.ibm.com>
-LGTM. Hence
-Reviewed-by: Vaibhav Jain <vaibhav@linux.ibm.com>
+It's a bit of a pita to run everything right now since drivers are
+not in the tree :-(
+ 
+> I wonder if we can change list_head to xarray, which manages its own
+> locking, instead of list_head plus manual locking. Just an idea, I
+> don't have a strong preference here. It may be annoying that xarray do
+> lookups by an index, so we have to store the index somewhere. But if
+> all we do here is add to the xarray and later loop over it to unbind
+> elements, we don't need to store the indexes anywhere.
 
--- 
-Cheers
-~ Vaibhav
+Yeah, having to keep the index around might be a bit awkward. And
+since this is not a particularly performance sensitive place, let's
+keep it as is for now?
 
