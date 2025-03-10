@@ -1,45 +1,45 @@
-Return-Path: <linux-kernel+bounces-554789-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-554790-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B5BD7A59DB2
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 18:23:57 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D33CA59DB8
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 18:24:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7DB7316EE32
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 17:23:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9C15E16C82E
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 17:23:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1027F233145;
-	Mon, 10 Mar 2025 17:23:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 797AE23099F;
+	Mon, 10 Mar 2025 17:23:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QLodKnMG"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cfK2CND5"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69051232363
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 17:23:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6F53231CB0
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 17:23:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741627406; cv=none; b=kM2JzJAU6WLi7qozuoWE0xztSedKP9KcyV2DBHOr6/gBgSMpZjygV/C1BtdqVCmoTvi8dhZxxR96NdP1AsXzSzhpz/X8EpM750K9gvkDjP7qGeFTICPiRRceineMEMy+wuVxswFmpSKzdnQ8Ic1twmoWVjywTc4KkBHIJEZIrVA=
+	t=1741627407; cv=none; b=rPhKIRDEogVoZlXfWXODCzYm2yN+zdUGDJT0NSvRjYAy4MStWjwDeglPRZumbd702ody9z+kCuMl1KGhUPkKqP6adJSeBdGKOkjrPacwX/EmYhJHb5MtCQzUEqaUFOoXZX3rFaUgynUMwmQIJjPYrZldpuoo/sJmFGwVaNwx5Y4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741627406; c=relaxed/simple;
-	bh=M9/wAyNFr4MzyO45yCxu/y9IRXgOWJVU4DhwCYnIYO8=;
+	s=arc-20240116; t=1741627407; c=relaxed/simple;
+	bh=wUeeTxoF6/W5BNmB2wyQPZvoKyORH7hO5pM78LtrSAM=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=jkknpryWo0jP4p0S29Xo+bbCYjC+cQhYXmps/gbRFodIE8JxoeWGLmyAtIO4a9EwEuIOJMFzzZjEonWJldYpJ7WdRSKOg3jZHla/0c3jy2sdFTfH+q6JdUgcXLdXXykBot4uRwZoA/S157ZkcF9wphIpsRJ0elCYJIAO5076D+k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QLodKnMG; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 15460C4CEE5;
-	Mon, 10 Mar 2025 17:23:26 +0000 (UTC)
+	 MIME-Version; b=C6suPgmxVUUJpGa+mfbkKlMIeyNbbWpwS9G7IGIqLDBPjMXZMCUG0ct7c/CByqfhA9el9aKjVdsQ6yRchj12CGu0+ddw7jwkutlCSKJetpXUTWAoFg7vYx2hiE3HM9mY8Du+D8rsBZK1atPmh2cq7wzi7lEpRomSx+Ek5DrWFZI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cfK2CND5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3427AC4CEEC;
+	Mon, 10 Mar 2025 17:23:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741627406;
-	bh=M9/wAyNFr4MzyO45yCxu/y9IRXgOWJVU4DhwCYnIYO8=;
+	s=k20201202; t=1741627407;
+	bh=wUeeTxoF6/W5BNmB2wyQPZvoKyORH7hO5pM78LtrSAM=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=QLodKnMGunZymOsXhiHwJL3CZN56ph7GyHUBQSnqvbfDZM4FdddyE6UwjyywHRHS1
-	 cQupnW2BYiokTpHo7gTlm1+TlGjayuwf2a+xu80NDLVwzT7QoRMat5a/pBCcLPviUG
-	 I2u/9J8exOAV+qOehvNS3kdd/WwNK1e2uTbFksC+1ZA2Dd+i1z2axiZf4RF4O72SYs
-	 rRuDT2HOdcp+kQiTqlDhnnFIhMVXzyLGCSCcIu6/KGDv+TdsZi4dur6hETHZOeiWVw
-	 q0K7MtgfIqjtRTafPny8uDtlEfc/dSMYN9Pd++aK1UcAwdsXxrPKtRSMlm5C0KuB18
-	 Lwmc/eOHDhANA==
+	b=cfK2CND5xWYz9nn8nUacYGS/fBI3F77IP5i/AnejOywNLUUScO7lFdcvtIqseomMj
+	 EeJnrxKN9JefLc0Rx5KoOLV0nimE3wn8gMM9f93f+CvKNBenCp2BXokS8fjdiwdmf3
+	 R0qA0M9s5Fe9S+kBRKu5nS7Pzh4vE4wTRWzZe8RA28TE9ujg9vagLeypltyUywXpui
+	 DWQjz+kPfXe/Ghjo7OpB2glKV/S/A72l3FZVrrNFJR0QOlQKQAjp7Tz2V6EgPm4ql9
+	 yASG4MgVpytpi5cvrfDIYPvKpJ55rstceXLqloJMGS4JTTgxOFrEeZzirMoDK+wrpc
+	 pvGTGCY2URD0g==
 From: SeongJae Park <sj@kernel.org>
 To: Andrew Morton <akpm@linux-foundation.org>
 Cc: SeongJae Park <sj@kernel.org>,
@@ -51,9 +51,9 @@ Cc: SeongJae Park <sj@kernel.org>,
 	kernel-team@meta.com,
 	linux-kernel@vger.kernel.org,
 	linux-mm@kvack.org
-Subject: [PATCH 2/9] mm/madvise: split out populate behavior check logic
-Date: Mon, 10 Mar 2025 10:23:11 -0700
-Message-Id: <20250310172318.653630-3-sj@kernel.org>
+Subject: [PATCH 3/9] mm/madvise: deduplicate madvise_do_behavior() skip case handlings
+Date: Mon, 10 Mar 2025 10:23:12 -0700
+Message-Id: <20250310172318.653630-4-sj@kernel.org>
 X-Mailer: git-send-email 2.39.5
 In-Reply-To: <20250310172318.653630-1-sj@kernel.org>
 References: <20250310172318.653630-1-sj@kernel.org>
@@ -65,62 +65,101 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-madvise_do_behavior() has a long open-coded 'behavior' check for
-MADV_POPULATE_{READ,WRITE}.  It adds multiple layers[1] and make the
-code arguably take longer time to read.  Like is_memory_failure(), split
-out the check to a separate function.  This is not technically removing
-the additional layer but discourage further extending the switch-case.
-Also it makes madvise_do_behavior() code shorter and therefore easier to
-read.
-
-[1] https://lore.kernel.org/bd6d0bf1-c79e-46bd-a810-9791efb9ad73@lucifer.local
+The logic for checking if a given madvise() request for a single memory
+range can skip real work, namely madvise_do_behavior(), is duplicated in
+do_madvise() and vector_madvise().  Split out the logic to a function
+and resue it.
 
 Signed-off-by: SeongJae Park <sj@kernel.org>
 ---
- mm/madvise.c | 20 +++++++++++++-------
- 1 file changed, 13 insertions(+), 7 deletions(-)
+ mm/madvise.c | 53 +++++++++++++++++++++++++++++-----------------------
+ 1 file changed, 30 insertions(+), 23 deletions(-)
 
 diff --git a/mm/madvise.c b/mm/madvise.c
-index c3ab1f283b18..611db868ae38 100644
+index 611db868ae38..764ec1f2475b 100644
 --- a/mm/madvise.c
 +++ b/mm/madvise.c
-@@ -1640,6 +1640,17 @@ static bool is_valid_madvise(unsigned long start, size_t len_in, int behavior)
+@@ -1640,6 +1640,27 @@ static bool is_valid_madvise(unsigned long start, size_t len_in, int behavior)
  	return true;
  }
  
-+static bool is_madvise_populate(int behavior)
++/*
++ * madvise_should_skip() - Return if an madivse request can skip real works.
++ * @start:	Start address of madvise-requested address range.
++ * @len_in:	Length of madvise-requested address range.
++ * @behavior:	Requested madvise behavor.
++ * @err:	Pointer to store an error code from the check.
++ */
++static bool madvise_should_skip(unsigned long start, size_t len_in,
++		int behavior, int *err)
 +{
-+	switch (behavior) {
-+	case MADV_POPULATE_READ:
-+	case MADV_POPULATE_WRITE:
++	if (!is_valid_madvise(start, len_in, behavior)) {
++		*err = -EINVAL;
 +		return true;
-+	default:
-+		return false;
 +	}
++	if (start + PAGE_ALIGN(len_in) == start) {
++		*err = 0;
++		return true;
++	}
++	return false;
 +}
 +
- static int madvise_do_behavior(struct mm_struct *mm,
- 		unsigned long start, size_t len_in, size_t len, int behavior)
+ static bool is_madvise_populate(int behavior)
  {
-@@ -1653,16 +1664,11 @@ static int madvise_do_behavior(struct mm_struct *mm,
- 	end = start + len;
+ 	switch (behavior) {
+@@ -1747,23 +1768,15 @@ static int madvise_do_behavior(struct mm_struct *mm,
+  */
+ int do_madvise(struct mm_struct *mm, unsigned long start, size_t len_in, int behavior)
+ {
+-	unsigned long end;
+ 	int error;
+-	size_t len;
+-
+-	if (!is_valid_madvise(start, len_in, behavior))
+-		return -EINVAL;
+-
+-	len = PAGE_ALIGN(len_in);
+-	end = start + len;
+-
+-	if (end == start)
+-		return 0;
  
- 	blk_start_plug(&plug);
--	switch (behavior) {
--	case MADV_POPULATE_READ:
--	case MADV_POPULATE_WRITE:
-+	if (is_madvise_populate(behavior))
- 		error = madvise_populate(mm, start, end, behavior);
--		break;
--	default:
-+	else
- 		error = madvise_walk_vmas(mm, start, end, behavior,
- 					  madvise_vma_behavior);
--		break;
--	}
- 	blk_finish_plug(&plug);
++	if (madvise_should_skip(start, len_in, behavior, &error))
++		return error;
+ 	error = madvise_lock(mm, behavior);
+ 	if (error)
+ 		return error;
+-	error = madvise_do_behavior(mm, start, len_in, len, behavior);
++	error = madvise_do_behavior(mm, start, len_in, PAGE_ALIGN(len_in),
++			behavior);
+ 	madvise_unlock(mm, behavior);
+ 
  	return error;
- }
+@@ -1790,19 +1803,13 @@ static ssize_t vector_madvise(struct mm_struct *mm, struct iov_iter *iter,
+ 	while (iov_iter_count(iter)) {
+ 		unsigned long start = (unsigned long)iter_iov_addr(iter);
+ 		size_t len_in = iter_iov_len(iter);
+-		size_t len;
+-
+-		if (!is_valid_madvise(start, len_in, behavior)) {
+-			ret = -EINVAL;
+-			break;
+-		}
++		int error;
+ 
+-		len = PAGE_ALIGN(len_in);
+-		if (start + len == start)
+-			ret = 0;
++		if (madvise_should_skip(start, len_in, behavior, &error))
++			ret = error;
+ 		else
+-			ret = madvise_do_behavior(mm, start, len_in, len,
+-					behavior);
++			ret = madvise_do_behavior(mm, start, len_in,
++					PAGE_ALIGN(len_in), behavior);
+ 		/*
+ 		 * An madvise operation is attempting to restart the syscall,
+ 		 * but we cannot proceed as it would not be correct to repeat
 -- 
 2.39.5
 
