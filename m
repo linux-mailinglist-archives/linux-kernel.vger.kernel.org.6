@@ -1,110 +1,135 @@
-Return-Path: <linux-kernel+bounces-554057-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-554059-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 56B88A59242
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 12:08:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F727A59247
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 12:09:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 668D73ADA13
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 11:08:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4B00B3A6770
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 11:08:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49E1D227BB5;
-	Mon, 10 Mar 2025 11:08:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFBA5226CF3;
+	Mon, 10 Mar 2025 11:09:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="YUntud5z"
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="j9RSy0HF"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC548226193
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 11:08:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAF81226D18;
+	Mon, 10 Mar 2025 11:09:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741604915; cv=none; b=b5EnSpnwodid7WkDdnKAUgyb88hNQXgxc0WBuuiEIbb0t+SU/7UlmNVzka6rqU3gf5VA1F0o0D9Kk9WKnfr5ccYhVcckXqSYB7YQkx5kONsrAx7XqxL+8HDRACaLI7ni2gzqBr+9IxDrdadgLLXiRoWK2cF85xxjVyKyLztFJF4=
+	t=1741604942; cv=none; b=mr3SiU9Mf0dKFt8bIrYMw7wA/NqU4eonC/v/7AWbfbbED9GLWxdsKzwYfUvgsJeHU1v15PtmzXxojv24Yblyd5tF0rj7+HGizsHxHDOuLmuTmvTHHb7OK3tWldlMkGDHa8KGs5ssgDNABekwlDuZpzrnEl3qBgvGe2Y3DXTG8Mc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741604915; c=relaxed/simple;
-	bh=2Fpr2s87toqjJkcGUKAHl60+P0Bejz42/H8P/L324/A=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=DCze4xcMq0bp0FdaHvY9A+QVB2vXyf/nVMiXuaK5VOjsE0aTqvupE/ZNiliowpBGcSkvTXABK1kbJ9mwZgYADZcAPwwCU8Fqe+dZLM9VdW0l04Dkr7zDHWR8DuloG6eRgyinzRolos1detstUP0kINsLAuAuZtVM/1Pt3/KPtxs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=YUntud5z; arc=none smtp.client-ip=209.85.128.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-43ce70f9afbso16012475e9.0
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 04:08:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1741604911; x=1742209711; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=qj6OoGMan3+aUrpTlqHKjbVxQYo1LN6nRL8tRMEyjJo=;
-        b=YUntud5zAu+Rp6uE/+1ueFvBdFDG+9gJ2rGB6yXRPOjeSBpWLgFB6fpjQsM+Hf3WNi
-         eFQGn6lEMd1a6tl0J1DuzmNGnIfC8j5EjC7wv15iAVJMPkEZdeHx1Znx9LvSxeQrQzYG
-         F1UTylS/TQEFuK/p+Avl/RuuvY0+ex1YtHLRpROHh41N3yNN9srrXADUWn93U3/0eEBr
-         FHBzLhVx/zNomN7zRdPYQBnlcUGt0aSL3kAD+3ZIBZCXjLIzo/7ywjCIx+SdAFyTvd8W
-         yIvjt9vMS8WrJcQtEOyjyXsh0E0elp9gAsB8Yl6tCboNCfAi+dTDviCK+BP7a0208UyN
-         ypmQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741604911; x=1742209711;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=qj6OoGMan3+aUrpTlqHKjbVxQYo1LN6nRL8tRMEyjJo=;
-        b=Gvdmf644a3HWMlufaQvlb1/If4fUuG/6LGupAlxZOIC+/ysmrfKS8g3tp9cjlUWoRZ
-         AnB/ss/SEtMjW0G4jsCR4P1QIspHZ1Tr6BqoGPjos3TnpWH0vN++PXQ+xvxWYYiK3GvT
-         /NGSXxMiScIJ/2LjcPzyL9BaXS3I5NNV6hOyfX70f7IIz/Ac3Ahe2Hmxse7SWbUSvZbk
-         wOBr4QkrYbs7h++XcVRQzp6x09PUdBT3McVsZwLkUMrGufkLsJr/980byFE6xSiWYNbe
-         Klx+092Uci3MRavhlNrFb9dr8ouk7kmIZZi92vE4Qnqy5wzlXRw7JPH1Ffi7M8KxFRSD
-         cB9Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUNek7+oYvMyhQQ1nXdiYJoL1qtWuUbrnwpwuRt4SAqrzJNbL73ZQw85f9vHaaejaxlEYyInSVQF8k7I18=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxMVmpoLJIUq9F4KT1UbC7Pi8Hn7hywE0eLbQ9XhU+t5cdt6z7m
-	Xr7v2PwyeKiuM+66pCSdoVAbOcsgPVJhyKeN+ISc25dh/AwTo1TWoibIEABwolo=
-X-Gm-Gg: ASbGncuLCTLqPfjqzBdqs7CRQFsdtuSrLow8bB22SFJi2hk0N0kPZNgspuKvrUXDtOB
-	prCsavfe9SerrnsDQMSm6KbOQCaFMQO5QuNiF0UiaInDy4J02ZohJX7WsDIGtBVeqr1g7pGZGbC
-	5UbgOMiUKiD+eYn71xKhBC9NHtRC/8ng2CoY9ginNjLX2WP4KVS2ILKDgdq1RLzr9OckHUzlqDi
-	fJuAbv5Mrh60DiwOIvCKydt6WB9RdiooHa2eI2VzwEwk7Q5RwXf8gRZdsrkwVqmDLN1cXzvoHBt
-	OnDngfMTWsnNQJVSLlMsYmwF9nrul7Mhm/4maHUXNs2rGHob
-X-Google-Smtp-Source: AGHT+IFUTAvlUQocnZuhWGDfsKJ3140vKmzfp6gwINFwcRcFXRbdY+k2lSsw1FVLxDt2VmJcsMNhJQ==
-X-Received: by 2002:a05:600c:35d3:b0:43c:f1cd:3d78 with SMTP id 5b1f17b1804b1-43cf1cd3ecbmr26249125e9.12.1741604910988;
-        Mon, 10 Mar 2025 04:08:30 -0700 (PDT)
-Received: from [10.100.51.161] ([193.86.92.181])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43bdd8b0425sm141811095e9.3.2025.03.10.04.08.30
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 10 Mar 2025 04:08:30 -0700 (PDT)
-Message-ID: <5d21bf87-37c6-406f-8705-82968ba0e8df@suse.com>
-Date: Mon, 10 Mar 2025 12:08:29 +0100
+	s=arc-20240116; t=1741604942; c=relaxed/simple;
+	bh=zyuUROdM8RYQHtdyR8GD86eCrfq6ILVcngJvYInm2Xw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=un7AYdJc5uzj1ticRbQw7kaKLliaAHNnPspFwwMPEjwEhzjCorIhnons93XfHInCwA1AvtKjGXPSCB/5gDaXMicJkRlt438uySSKwqeIQ8uLla0uotSPDmJ3ElVl+Coq1QTSpGEDeAc9vBjGKoc7Vya2M8/gDuKfqPfScJOoBWU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=j9RSy0HF; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 3F0F740E0176;
+	Mon, 10 Mar 2025 11:08:58 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id bKnyDEiQksym; Mon, 10 Mar 2025 11:08:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1741604933; bh=YQAaINXv5w2Ci1rsU+w5Dx9VoI6ACjlMHpZFyp5XQpU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=j9RSy0HFlqKlxAbOMr3YapFNwd0xktOUTfuUieUpH6MtW5IEpR6cR9MQsuVUA10MQ
+	 BMkqTeprw9v+v8LpmvCbumr88U/SVTkkmsu2E5lHMU1CdRpsuUkXlILRbB2OxZIeuV
+	 xh26yU0kKBjyI/L7h6KnpKFwzlol/RnsVKBN+RoRu32An/FUAwISUKOHfK91g3RsaR
+	 nBeQ5LExjVwiyy7jsFwRRtehMnd65feMUitCSTix1X44V8AdXbYQqTt76GFDVVQj7A
+	 XvlDAfm//Ue4dd7L8syXz0vrdEr84Ags/4ZpbvJYol1aoi6ZdcFA+rUfhlc/5C3JlL
+	 b4AtwQiEOyYtpSQX/UUcwrdXqmO+7Cc3qkyorC/LiXr5ejYGnjynNeXHotd+V6G4mb
+	 WXwZZxG1DGyfgmwN5Pa9Vca0pFQPEAJdacKCByyzddVzKozzf4+7DscdfUUL+ER9Ew
+	 Quy8cd/rfSCsIjC41fSekVL3+7rKUkv87p8yQJ2FVgQNqkCGfXyzFZfx5UXjtVaGb4
+	 LVtLYIJZ+5Js1Bf62nhwBSA4HPWDnKzVEhlFKSpHvpQXc1ViSeZf7koIP4JXmPnKal
+	 weDhmzqF76Elfy/8XQC3C7254kuGX/6izP2uOk5inKJQ/UC1FDeNXzgnE8lpsr0xk9
+	 VrlRgAi2vTCUMebcF4Q5Cb/k=
+Received: from zn.tnic (pd95303ce.dip0.t-ipconnect.de [217.83.3.206])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 4CFC640E015D;
+	Mon, 10 Mar 2025 11:08:35 +0000 (UTC)
+Date: Mon, 10 Mar 2025 12:08:34 +0100
+From: Borislav Petkov <bp@alien8.de>
+To: Stefano Garzarella <sgarzare@redhat.com>
+Cc: Jarkko Sakkinen <jarkko@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Claudio Carvalho <cclaudio@linux.ibm.com>,
+	Peter Huewe <peterhuewe@gmx.de>, x86@kernel.org,
+	Dov Murik <dovmurik@linux.ibm.com>, linux-coco@lists.linux.dev,
+	Dionna Glaze <dionnaglaze@google.com>,
+	James Bottomley <James.Bottomley@hansenpartnership.com>,
+	Ingo Molnar <mingo@redhat.com>, Joerg Roedel <jroedel@suse.de>,
+	Jason Gunthorpe <jgg@ziepe.ca>, linux-integrity@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	Tom Lendacky <thomas.lendacky@amd.com>,
+	"H. Peter Anvin" <hpa@zytor.com>
+Subject: Re: [RFC PATCH v2 1/6] x86/sev: add SVSM call macros for the vTPM
+ protocol
+Message-ID: <20250310110834.GEZ87IMgB_I86-3u3l@fat_crate.local>
+References: <20250228170720.144739-1-sgarzare@redhat.com>
+ <20250228170720.144739-2-sgarzare@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] module: Remove unnecessary size argument when calling
- strscpy()
-To: Thorsten Blum <thorsten.blum@linux.dev>
-Cc: Luis Chamberlain <mcgrof@kernel.org>,
- Sami Tolvanen <samitolvanen@google.com>, Daniel Gomez
- <da.gomez@samsung.com>, linux-modules@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250308194631.191670-2-thorsten.blum@linux.dev>
-Content-Language: en-US
-From: Petr Pavlu <petr.pavlu@suse.com>
-In-Reply-To: <20250308194631.191670-2-thorsten.blum@linux.dev>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250228170720.144739-2-sgarzare@redhat.com>
 
-On 3/8/25 20:46, Thorsten Blum wrote:
-> The size parameter is optional and strscpy() automatically determines
-> the length of the destination buffer using sizeof() if the argument is
-> omitted. This makes the explicit sizeof() unnecessary. Remove it to
-> shorten and simplify the code.
+On Fri, Feb 28, 2025 at 06:07:15PM +0100, Stefano Garzarella wrote:
+> Add macros for SVSM_VTPM_QUERY and SVSM_VTPM_CMD calls as defined
+> in the "Secure VM Service Module for SEV-SNP Guests"
+> Publication # 58019 Revision: 1.00
 > 
-> Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
+> Link: https://www.amd.com/content/dam/amd/en/documents/epyc-technical-docs/specifications/58019.pdf
 
-Looks good to me. I've queued it on modules-next.
+Those URLs are unstable - simply naming the document properly in the commit
+message so that a search engine can find it is enough.
+
+> Signed-off-by: Stefano Garzarella <sgarzare@redhat.com>
+> ---
+>  arch/x86/include/asm/sev.h | 4 ++++
+>  1 file changed, 4 insertions(+)
+> 
+> diff --git a/arch/x86/include/asm/sev.h b/arch/x86/include/asm/sev.h
+> index 1581246491b5..f6ebf4492606 100644
+> --- a/arch/x86/include/asm/sev.h
+> +++ b/arch/x86/include/asm/sev.h
+> @@ -384,6 +384,10 @@ struct svsm_call {
+>  #define SVSM_ATTEST_SERVICES		0
+>  #define SVSM_ATTEST_SINGLE_SERVICE	1
+>  
+> +#define SVSM_VTPM_CALL(x)		((2ULL << 32) | (x))
+> +#define SVSM_VTPM_QUERY			0
+> +#define SVSM_VTPM_CMD			1
+> +
+>  #ifdef CONFIG_AMD_MEM_ENCRYPT
+>  
+>  extern u8 snp_vmpl;
+> -- 
+
+Merge this patch with the patch where those are used - no need for a separate
+patch.
+
+Thx.
 
 -- 
-Thanks,
-Petr
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
 
