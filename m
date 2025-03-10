@@ -1,145 +1,136 @@
-Return-Path: <linux-kernel+bounces-555037-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-555039-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 07F4BA5A4BE
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 21:20:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id D9BB0A5A4C7
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 21:20:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 468501676CB
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 20:20:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2501A171D2B
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 20:20:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09CAF1DF248;
-	Mon, 10 Mar 2025 20:18:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 434DB1DEFD7;
+	Mon, 10 Mar 2025 20:18:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="z7fDzV+G"
-Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="IJ94421b"
+Received: from mail-yw1-f180.google.com (mail-yw1-f180.google.com [209.85.128.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EBBB1DF265
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 20:18:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEF0D1DE885
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 20:18:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741637892; cv=none; b=b7dl6/bcMODZxrpRyl6IwaRR2pMyoG6yp+65hRDEi69Upi5afYI/v+n3ws3S2XyIlxzL1F7Fc4B7T2A5hTKc0h4UABG+2nXiodNHL1dSMqHhaMDaRBHvDFWppG3ZasTP5g8X60ZZoGaLO859w8U9z4l/2Y1I6QK4kpx+/XEYTy0=
+	t=1741637925; cv=none; b=uu/ZC7OJ4tEn56gtO8nRQFGCXnqerhvlMB6HStUQZYc8ZNQgg2AfCJ6NMJ+FOj3hgY5CLMzQqO4N3G0LlFMvYndlwi+uVvWJJNuLecodt7yOVhgYRd4psYN4pqMS7uVZd7kUshraHH58/vkoQC8iO9k9aXzgFsfeRvZROcJq77g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741637892; c=relaxed/simple;
-	bh=EL25rNL51TXTvxkbPCKINtP+7+2cd264OtWDnAl9qwA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EZ7GRxEx/JIhD/igK9dp43hZQUejuzMrqUis2eG03wGiVFKs6kKKirTUN1xuEj4J2fokAAdNAyxAuQgGHOUf/PtkEwyG2xfgIHPfkBJlD4Ir5dhvMclvO9aaH4Uv7IbhQHWNTrwPU36PMOVFgylKLEIXBY7nJWj0ph72iqB0zv8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=z7fDzV+G; arc=none smtp.client-ip=209.85.208.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-30bfed67e08so27022871fa.2
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 13:18:10 -0700 (PDT)
+	s=arc-20240116; t=1741637925; c=relaxed/simple;
+	bh=dNBOcmXv4yLqTFrO3VIX+EpkBqdtncVM6nDPAi2ht5g=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=HgeuhknhByKRcIoiys5grbUYnbtKYG6s3IbsiFT8CoHUVCRt/pnfVUKi+Sv7+eacZQnNWPe9pOvhBJm9GBr9Hec5jvuNmXZcfI9qv6vRQ2xl4yNWdNwSuemkkacSlYvsOhzHpe9YJ/GOasjgYYDZB1/4Q8lakMgPPLDngf24rDM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=IJ94421b; arc=none smtp.client-ip=209.85.128.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+Received: by mail-yw1-f180.google.com with SMTP id 00721157ae682-6fd9d9ae47cso44220257b3.3
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 13:18:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1741637888; x=1742242688; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Na0+//dCirkAQ9ySuY1KKDPsWyMmAsRZj0GKZr2mXwM=;
-        b=z7fDzV+GgUCsalA5GHaGQUloUUrUk3VZ7Xodudvt6c9C7iZrZZpd0p2HFZxO2IAtq3
-         KkqcQ93M7irvtEC2L7GQHFXSWrz0d9IiDAYhs2TpR/DZps5F4y3RRnCnjvSBsWwZm7qx
-         lfLCMDWV1gq5j/yCAELSIAwi04ZCuhxyn5gScZuy0Lrd5MXcOlHVQ63yV3d8hvpPqQQu
-         FOhUJKoaNKNSujpyKe1BPgJnwVsG7x7HBFsofYv4CO9EFLGxc6ndLgdK+oTAoBLeDemW
-         gK5bVzsjXBL7kelIyENWfc4vF7Vrz9DM9rQXalpa7oGcqFmprfuvf8IJ/6ed/JkuUTk/
-         B28A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741637888; x=1742242688;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=paul-moore.com; s=google; t=1741637923; x=1742242723; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Na0+//dCirkAQ9ySuY1KKDPsWyMmAsRZj0GKZr2mXwM=;
-        b=mcWlbAUvkXgmTS6DFy3D125TVRqt5C+MGa4ysfLqQNdGzkIQOtM2YTAB4hZLHSDv3v
-         5gvL4WId6b4Tpa2iaFFHMARIF3WytoGhAnqoYmh9551WgOhujHY+954C8A7crNhIWaX9
-         Nzll2Msn6Z9yqhoXHY8jsE/oD5QftgBCb4N4RWPga0dEJmUH0nYH9FUUo2zv3uQFaH7D
-         r4lLDzKWOW+n7f7Om0HFC+NcGn8lD3j75d3iW8SnJqVp1JhakL5ibHknVGUM0RuM3BAT
-         mDRQaJ4Pk2pEHTcmjO86Sfk6RyaTsT1n3KCHT2tRYWYiTVcUC+BwVLvXbrIpV0tvF09r
-         sC+Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXlntSSfbZiRCzuYMzg3EZ4be7DkrianlFR+8AR8f2B3MVxnrzOEm+tRQMh4bsANBFHvqCTsn83mF2QAU0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy8CxmP/U7xxl0KbQ5zHMQZ/i39whfDHyDm69zRdECvk47/gbau
-	CHqLzhWzapT4HLyFuSCMicZQb2hLUdrfoZH2H+XDF1Xj8eM2HzNesK27IHfm9ew=
-X-Gm-Gg: ASbGncvbb6OsOfiWVfBDlZrmjET1jFjdu/o5KhkCnyUsXsi0Nitu5ypyPZ25epzIVcA
-	VgvFCRcCLlaEQCVNSjpEzA3bqGbsc9Wa20KybL74fJoqPI9UAFl3jUgfUu+2Bp3E+7YoDF0ysau
-	PkPQ8vXJChAIxNRg7w6gl63k2rB/qfaB4nE3FN+4RdzXK+kcb6OzH4THhNPg4Vtk65qbqZnROnQ
-	vQaK/3Buq2MhW6Q+k/vuHlQVJ26k1yPa1qC5HIKiMQMRTMyLBFG36/wDKAosgY6ykQgIGFcR/YH
-	RoqUkCDN1/B4n5seW15NCtiOmvhXQ/75+tXvcw02HNUt9PB+9ZQeKbJdjrEFp0OoX2oOnOmeKxa
-	jR8kGiqJCdexXx/AzhHwtlho+
-X-Google-Smtp-Source: AGHT+IHcA7kOtf3sam4WAbu1ps2qyynLobUE0HG0axG5MF7JuYSDH5Zq3T6DIc7mWO7eWXCbFWGVLA==
-X-Received: by 2002:a05:651c:3c3:b0:30b:c569:4665 with SMTP id 38308e7fff4ca-30bf46468dcmr39513851fa.29.1741637888405;
-        Mon, 10 Mar 2025 13:18:08 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-30bef40f9cdsm16595941fa.48.2025.03.10.13.18.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 10 Mar 2025 13:18:07 -0700 (PDT)
-Date: Mon, 10 Mar 2025 22:18:04 +0200
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Maxime Ripard <mripard@kernel.org>
-Cc: Dmitry Baryshkov <lumag@kernel.org>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Thomas Zimmermann <tzimmermann@suse.de>, 
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Rob Clark <robdclark@gmail.com>, 
-	Abhinav Kumar <quic_abhinavk@quicinc.com>, Sean Paul <sean@poorly.run>, 
-	Marijn Suijten <marijn.suijten@somainline.org>, Dave Stevenson <dave.stevenson@raspberrypi.com>, 
-	=?utf-8?B?TWHDrXJh?= Canal <mcanal@igalia.com>, Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>, 
-	Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
-	Robert Foss <rfoss@kernel.org>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
-	Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
-	freedreno@lists.freedesktop.org
-Subject: Re: [PATCH 3/4] drm/vc4: use new helper to get ACR values
-Message-ID: <esgb42dyhpjixm62tfk2nfzdiygnfn4bcwq4zn7rhydmt4np2q@7v77p7kveb4e>
-References: <20250309-drm-hdmi-acr-v1-0-bb9c242f4d4b@linaro.org>
- <20250309-drm-hdmi-acr-v1-3-bb9c242f4d4b@linaro.org>
- <20250310-invisible-married-firefly-945c84@houat>
+        bh=n7j7VrDGfjSW+piSXBuBjf4TItNrtuBqNTazSyrjysg=;
+        b=IJ94421bVHaW+fc2FdvnYD4cS8eH2da8ojEYPp6l40re5akQHO/7Mpgp4d0sQI6Qs8
+         F0xn0RBx5kjlD9lgKtuBPUtmeYI9nklZ9oqhpduxDsGG6Nbz5MT1FO6d+OCBcE3Qmx6I
+         8It6QDmO+YOYr+xRk6ifIG8z2+wdKbBCG9Xm5kfVOhhR6ixG8FCbubeinEdsRwt/g6Ui
+         2M7GnjAy8Q2gHc/knaEg5PXdJuTk6QozcBOvI8gbuRgo5o6wi43fxZpR4yj4Ikh0Umhu
+         koylMx6ekNUx6D8MEzCqRI5TZyhMkFjufaBix3ujUf7LX92c7w58FNJjX4Kt+BdZe0th
+         VPvg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741637923; x=1742242723;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=n7j7VrDGfjSW+piSXBuBjf4TItNrtuBqNTazSyrjysg=;
+        b=VyjJgov8sJeUHcYA1jWCyjPHrgPJLFG24FvoOH4yRdcRrkEhLpOT+tyCf7FQVaVAW6
+         o43Hb0JjprVSTJif5rQ9ybcXPZDC+kc4NIswdVfX6gDpRZNP8eBK5epQ3owYAbo7areT
+         kA/JprIt6GtxfxZaEiWW9SMeO0I4QqRzI70jGMxH1NS3Bl2SqGytMZNA3cxV8EZ1QlIC
+         bUhZ4bVoGLTmO5fF2zi3V6AEixd2laCJwUc980v21t8jkpYct8zZ4k0C67N06LVlxHzF
+         w3Ppqw18lxPTp220ASp8vbf0qJl/r4r3jXpsDslyfomZ7ocRML5cq/nCkA6iVffPZmzV
+         GUxg==
+X-Forwarded-Encrypted: i=1; AJvYcCUtf35NyeQBbPpQOU3sJ+5TpQcczJGz0c6vvVND5kjKLd6iugCfewSmPOWfo4UZLe6IT348xYj4XjysaHg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxQIoGGFUaEuY4Y52Ik6V1mvZbI6qcphs+dHrmW3Pf36MMdeUha
+	te/dPu9zodawvC6SoJ9Cikd0/r2MMCKkFCleJSXca57gsLMWkl2CC29MJdtyspNBMVBvQmH7U+g
+	g+4sajnm1B+0yBQSLYqKR6WHvyoWWibYoxMrX
+X-Gm-Gg: ASbGncsQhUQdjMyauhuKtFtKFiK0EYXc5dfMyQu5CSazzvKh6gstFCjlCJplwLDeRdS
+	4IGfsmMJwI88G7torPu5FfSaWePYkSIdZLMfTFWvb43+HmVNkF1YijFkOiXiTviKqInf6QWcYM0
+	/MriAGqS7FBYVNw29nZl+tc/s5SA==
+X-Google-Smtp-Source: AGHT+IG9WDx8ZAkHJVZqGMzMAmI3gsi1s9h5U2lJHR3eqS/CG9KHmGF1qjpk9M1cSxiZapUdewq9ADQphs2Rtbpa/58=
+X-Received: by 2002:a05:690c:28b:b0:6fd:346f:97ba with SMTP id
+ 00721157ae682-6ff091c6271mr23109947b3.11.1741637922902; Mon, 10 Mar 2025
+ 13:18:42 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250310-invisible-married-firefly-945c84@houat>
+References: <67cb894d.050a0220.d8275.0232.GAE@google.com> <tencent_0BEE86CD3878D26D402DDD6F949484E96E0A@qq.com>
+ <CAEjxPJ6qFSSBUmK_F-rDhvhh0xw3y1QMP6bVr0iQ+V0FZ3niDQ@mail.gmail.com>
+In-Reply-To: <CAEjxPJ6qFSSBUmK_F-rDhvhh0xw3y1QMP6bVr0iQ+V0FZ3niDQ@mail.gmail.com>
+From: Paul Moore <paul@paul-moore.com>
+Date: Mon, 10 Mar 2025 16:18:31 -0400
+X-Gm-Features: AQ5f1Jozk9bjIdyK5_Z3F8NS9II3-cE3r81pwcpWVImE2ku4Egdr1-NKjbklYaA
+Message-ID: <CAHC9VhT-VA74h90ScjwO11g7b0pmCjzhVYWKHmkKqD2LLio98g@mail.gmail.com>
+Subject: Re: [PATCH] selinux: read and write sid under lock
+To: Edward Adam Davis <eadavis@qq.com>, Stephen Smalley <stephen.smalley.work@gmail.com>
+Cc: syzbot+00c633585760c05507c3@syzkaller.appspotmail.com, 
+	linux-kernel@vger.kernel.org, omosnace@redhat.com, selinux@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Mar 10, 2025 at 03:51:53PM +0100, Maxime Ripard wrote:
-> On Sun, Mar 09, 2025 at 10:13:58AM +0200, Dmitry Baryshkov wrote:
-> > From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> > 
-> > Use drm_hdmi_acr_get_n_cts() helper instead of calculating N and CTS
-> > values in the VC4 driver.
-> > 
-> > Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+On Mon, Mar 10, 2025 at 3:53=E2=80=AFPM Stephen Smalley
+<stephen.smalley.work@gmail.com> wrote:
+> On Sat, Mar 8, 2025 at 11:55=E2=80=AFPM Edward Adam Davis <eadavis@qq.com=
+> wrote:
+> >
+> > syzbot reported a data-race in selinux_socket_post_create /
+> > selinux_socket_sock_rcv_skb. [1]
+> >
+> > When creating the socket path and receiving the network data packet pat=
+h,
+> > effective data access protection is not performed when reading and writ=
+ing
+> > the sid, resulting in a race condition.
+> >
+> > Add a lock to synchronize the two.
+
+...
+
+> > Reported-by: syzbot+00c633585760c05507c3@syzkaller.appspotmail.com
+> > Closes: https://syzkaller.appspot.com/bug?extid=3D00c633585760c05507c3
+> > Signed-off-by: Edward Adam Davis <eadavis@qq.com>
 > > ---
-> >  drivers/gpu/drm/vc4/vc4_hdmi.c | 10 +++-------
-> >  drivers/gpu/drm/vc4/vc4_hdmi.h |  7 +++++++
-> >  2 files changed, 10 insertions(+), 7 deletions(-)
-> > 
+> >  security/selinux/hooks.c | 7 ++++++-
+> >  1 file changed, 6 insertions(+), 1 deletion(-)
+> >
+> > diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
+> > index 7b867dfec88b..ea5d0273f9d5 100644
+> > --- a/security/selinux/hooks.c
+> > +++ b/security/selinux/hooks.c
+> > @@ -4677,8 +4677,10 @@ static int selinux_socket_post_create(struct soc=
+ket *sock, int family,
+> >
+> >         if (sock->sk) {
+> >                 sksec =3D selinux_sock(sock->sk);
+> > +               spin_lock(&sksec->lock);
+>
+> You didn't include the diff that adds this lock field to
+> sk_security_struct, but aside from that, I would suggest something
+> lighter-weight like READ_ONCE/WRITE_ONCE if possible.
 
-> > diff --git a/drivers/gpu/drm/vc4/vc4_hdmi.h b/drivers/gpu/drm/vc4/vc4_hdmi.h
-> > index e3d989ca302b72533c374dfa3fd0d5bd7fe64a82..0a775dbfe99d45521f3d0a2016555aefa81d7934 100644
-> > --- a/drivers/gpu/drm/vc4/vc4_hdmi.h
-> > +++ b/drivers/gpu/drm/vc4/vc4_hdmi.h
-> > @@ -211,6 +211,13 @@ struct vc4_hdmi {
-> >  	 * KMS hooks. Protected by @mutex.
-> >  	 */
-> >  	enum hdmi_colorspace output_format;
-> > +
-> > +	/**
-> > +	 * @tmds_char_rate: Copy of
-> > +	 * @drm_connector_state.hdmi.tmds_char_rate for use outside of
-> > +	 * KMS hooks. Protected by @mutex.
-> > +	 */
-> > +	unsigned long long tmds_char_rate;
-> >  };
-> 
-> This should be in drm_connector_hdmi if it's useful
+Yes, please don't add a spinlock to something that is potentially
+going to be hit on every packet entering the system.
 
-That would mean bringing the state to a non-state structure on the
-framework level. Is it fine from your POV? Is it also fine to use
-drm_connector.mutex for protecting this? Or should we be using something
-like drm_connector_hdmi.infoframes.mutex (maybe after moving it from
-.infoframes to the top level)?
-
--- 
-With best wishes
-Dmitry
+--=20
+paul-moore.com
 
