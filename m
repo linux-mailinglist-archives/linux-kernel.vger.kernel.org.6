@@ -1,148 +1,175 @@
-Return-Path: <linux-kernel+bounces-555273-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-555274-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8DF9AA5AE3A
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 00:37:59 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 89927A5AE85
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 00:40:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0EA921894DEF
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 23:38:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BA9F0174539
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 23:40:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75EE1221F11;
-	Mon, 10 Mar 2025 23:37:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A8AC221F03;
+	Mon, 10 Mar 2025 23:40:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="dDYofdhW"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="qVS+DokJ"
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E69222173F
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 23:37:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D56B222172C
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 23:40:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741649870; cv=none; b=p5rU6uLaHw6Hda0VvmqvzkK8M+y7OZ6vCFmmx7VAjHBwZuFewFzsObu19WiEryW1Jfxm5ZublwbaFk8eGTcu8M4lWWaZu0gvtpcYfo4H0GF3RGdPY6ie4eV6e9/Ieyl0ZoeBHWn+xoPo2BxsRtyWaWF9Xwz3LXKdYf+Doaet5yM=
+	t=1741650050; cv=none; b=jMx8PywhUHqK2Yl0LlYN+lV3VBWbpHbtwMYhNQyflHyX7HVglbD13f/cZyiTMfF7/9giERyvQaKHFPtOBwc8q3C6Oql4bj5t52/4XOOAihtFx433Db5O9OH9l1hu8R+V+KGjX9MTLiR3zrosPkk37KdHDbP+oiuTpDSdWWzAr7w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741649870; c=relaxed/simple;
-	bh=+J/gIo4jHxazEkQlxKxKqAY1qd9upi8y4fJP2X2CZWU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ZurWp9SRLBjW43YwyReerQ/UX+/FBEBBXGOUlbO8S6fU/HiZbxplkyCl95pZ9DC1Lc8dGiPKYScoA4v0GalTObqaVWTjkz+2kphCOBh0YwSY3dykiz8nwmYg/HAfgnvTIvLlhCjP1wVBFxK07vK8Nuuf1wtZcUUYIrb7d+4wx6U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=dDYofdhW; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52AJxPHw001680
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 23:37:48 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	B8TFjGbBf7rY2t4VlMRWb4Z8bam2nqJEippM+OCcgS8=; b=dDYofdhWdXPuo8Gk
-	X8eUaoBELPf5r2lDlX2BT9sMdcIDGSW5uKgszDKROEAaiRN32B5gNT5r4XoSNwu0
-	CiAXxrBVUk+OwA+0x0mvqy22He+HP+pilje1+focREWPQCX7HoSvVhal/Cq0SGno
-	BkPzQKpnwUFPox+PD9jiuJKqfklESge/hfrewZ499QFGDPMzbcBjNbxtCJpkTzSG
-	xau+/sWaYf6NZqx0OWLR+5co1SNQQQs2Lo32gAlrpfs3D0ipl6DW7+A8ZoHMEhLY
-	JWBMx0XndFszNzskJuP18uir5cSqTEIwgNvr/onXRlcuwy+inZX13S5PzPA29RLY
-	rWu26w==
-Received: from mail-qk1-f197.google.com (mail-qk1-f197.google.com [209.85.222.197])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 458ewk6e3d-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 23:37:48 +0000 (GMT)
-Received: by mail-qk1-f197.google.com with SMTP id af79cd13be357-7be6f20f0a4so136967385a.0
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 16:37:47 -0700 (PDT)
+	s=arc-20240116; t=1741650050; c=relaxed/simple;
+	bh=x40/ETGWHUSDRpQLwYAWfFBMNQ7ZHfZ0GBicDTi7eWc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=hQDpcfHBpumd88nEHaIUMGXHlUpTVU6YAjJjNfrP2h3nUV8mp7Pjddb2iXbSzZO3E2/LwWqlv6gfjyeMxGXycgjM/GCzd5YZ1LTspDYX2c5ykPo9B2pva82rGLIhaedwMG/KQTzOoC+SLu4+rk+tZUi/ZNfPtWFtPGeSx+ryUMo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=qVS+DokJ; arc=none smtp.client-ip=209.85.214.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-2240aad70f2so41635ad.0
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 16:40:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1741650048; x=1742254848; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=l3CJk04DNfcWCA8ao7G6n3tZ6Syq2WgT8HbIaJ/f+4g=;
+        b=qVS+DokJDgw3j2+hn+/XSBFwjRCgFoj8tPMHaBbgb4yYAIoHhmjXheXjb3ME3F5BEB
+         IaFk29mHYjjHIW3HJjHoCTE8EQ7qunmO83ZRioAzQW9BAVDpJHgXXiTNMIfLIMieS0ax
+         uWtVf7F5xyCai9Rgk+l6w+nx5Zo9sUqFjSdb2v7jxmTpSRdUJf6zYSSOVEMnSS2mECc8
+         +8NiLARwMnb8vxgq0iDaCZcznvrymmLJGHB+DR7hMDxKXHz7nmELxLoMZcrTq+x7YfPr
+         EQXZZpGAyZ50qF6rCzcZ7WtulvHatHHWHW+H0Fg8nZBZR5jB7Exfykz8i/Yj3VBHJ3wb
+         MlZQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741649867; x=1742254667;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=B8TFjGbBf7rY2t4VlMRWb4Z8bam2nqJEippM+OCcgS8=;
-        b=oU0fx6sMYcoe3kbqPOoHnLHff6TthjqqLWwC9UaXpkv6ja9RkO9rQqO1+AHySr6ls9
-         42TSvvEvZQ7WM37Cgw10pflb6y6AJy286S7erN3YJWB251AbsmG8y9SD8P9Dw3KpR1yR
-         qJrEJQi0Zrv44EnmW75+S0Nsw+9LQJAV/T3/OyZB9VTEdUTnEJET/e3T6X66B2ZreqzX
-         4FMShQCXs1sRh+oE5M25no+rMkjuspXZEY+msCw32bBexde53tnSBvx2mXu+xvu3ABkK
-         fLEUmk7mvxatUydV8aJ9FJ/EMZ8B0owOC3YczI0iXvIVh4FhJYyyJCCteHkp6RLvfy4l
-         NM2A==
-X-Forwarded-Encrypted: i=1; AJvYcCX79htWjez0Q5EyFfMtJSqtqv7JlW8xT6pclVLS3GRx6BAERChj5kYvIFXiEMLbg5EOVStSLWUqsgX7OyQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxwi94brbrT1bud5dmUTvJlkRvpervPARRgRzo/rCKerx5T8cwE
-	uOv2yOoy4oRa1zo1Yg0NyJ+TpLVdg9XEDJYP5hTDQsiNs4hxwLf3NceHdS3R2H71wx++eDF9GH5
-	erP2Yb4wP1P6i0/iQWCpL9AL9UztE4gW338QEECHmk8aDgSL6+BaxE9KnsasvIzE=
-X-Gm-Gg: ASbGncv7SCqecnu31Bflezoawcs0teIEneLtLHRS0szvo6tWMZ+vdfxxwknPzG5D0vy
-	j5vJoS+oNbXzdLh13q/FmCNf+MDCbJsEE9N02Jlo4HCgVs/90Kd4/DWg3k+xyDN8r0cd5zsIwne
-	WK85BnyslhqgnNtgjOqYjfLuQuhNaewIeVvWEK0enDa0aN9b8+BnqMDIybip70OXB//xqt6nTLT
-	kUXEIv5yngzYYSp4Yd+4RnbxziE8ZQYGbgKEiz4FOHCbWgfUe1r7mx+kdTLN4QGdL74JZWAo1rM
-	Y212vKExhGRlGsmSrVsfgxFECP2acY0Tc5fZZR+eQppsFO9xiNx+1n25Q/yKv07axVvuAQ==
-X-Received: by 2002:a05:620a:2603:b0:7c3:bae4:2339 with SMTP id af79cd13be357-7c53e1d8eacmr535686885a.11.1741649867234;
-        Mon, 10 Mar 2025 16:37:47 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IE4Mp5wCFYiwFx0JJwA59DroSlD0bMK7BsJYztTlXkZgV5YDKGVGzmedYfg/iXl/C3zcTEbzg==
-X-Received: by 2002:a05:620a:2603:b0:7c3:bae4:2339 with SMTP id af79cd13be357-7c53e1d8eacmr535685185a.11.1741649866890;
-        Mon, 10 Mar 2025 16:37:46 -0700 (PDT)
-Received: from [192.168.65.90] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5e5c766a194sm7397206a12.59.2025.03.10.16.37.45
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 10 Mar 2025 16:37:45 -0700 (PDT)
-Message-ID: <455b685e-0ccc-4c57-a60f-39ff9cd280ca@oss.qualcomm.com>
-Date: Tue, 11 Mar 2025 00:37:44 +0100
+        d=1e100.net; s=20230601; t=1741650048; x=1742254848;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=l3CJk04DNfcWCA8ao7G6n3tZ6Syq2WgT8HbIaJ/f+4g=;
+        b=pZLmmK/moYgvlwjT8hlJggb35+r0nQzUZsf9Ib1QRampdNkw5Lp9xsDe75WhhtTZia
+         fFGB03BH1zmdFZkaf3Zn7KMgmUwmlQ7nxnrXiIJ0zKUAmX2F2762BaYrcgEX5FIVcRwv
+         TDr3cKYv9G1sstUmzxNuqXqPsEVbuo2KwEkpZOm8UD7mkwqi6QKuhPE/enfn/WhuAWzZ
+         x7dxd+XJrIZjyZoKjh/kc3rMqKFJPMKWKd5TpuSJCMorr0OjLkNWvYFgubnG4mEx4D6+
+         S4vT9+dHz7zW2lrsl3uuQd3P6NFVNqW9+puz7YhaA/v5sqZ/2lEN6tzqeXP1v2s/ohHd
+         hXzg==
+X-Forwarded-Encrypted: i=1; AJvYcCVNiJsIorqg2B9vk5iZhjKIHvxz1iES2RnHJ7G9yniJywuRKceAoecMVrgBFnCn9nbJrPpnwkiHkTaMHi0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw6Q+eafORHoFyhKxB/kdQ2Cq+ZUV7bBFr4ABxh/aUALlzdtftz
+	In7qIP352TZMljuFt35uszWiYQ5+zU3ons47rRv2uMCs+e+bj3XC253TfMZcFC9W7/AUHK7hTtS
+	/TCAUxKO1jqOCSG2HP0Cew4AdG2WaNsSC4HUn
+X-Gm-Gg: ASbGncsbCc/6z820ZeryFbWFLcjmfv1g+5C8pKAi5sANEs8t7ZSvSKUHk7zkmAzW4B7
+	HEebERtiTvs3eueNMoI7j5ghSqe7yi+EZ+ilE1+LKa9WW3jlLDOJEr373JCEiSvB2CknB+8suwC
+	+wBxFQN+q+zit7RfGiXtkRU8AzBCI=
+X-Google-Smtp-Source: AGHT+IG8ZbJq9d3fOC2d1WzTRzoCvLclS0qrQU2tOiogJ4Ztx6P+CKCMeJ9Eq2d7KIOBSgUw60hfwsy3X1Gl0bCqIqI=
+X-Received: by 2002:a17:902:dacc:b0:220:c905:68a2 with SMTP id
+ d9443c01a7336-2254779cef4mr5526915ad.5.1741650047858; Mon, 10 Mar 2025
+ 16:40:47 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/2] arm64: dts: qcom: sm6125: Initial support for
- xiaomi-ginkgo
-To: Gabriel Gonzales <semfault@disroot.org>, konrad.dybcio@oss.qualcomm.com
-Cc: andersson@kernel.org, conor+dt@kernel.org, devicetree@vger.kernel.org,
-        gpiccoli@igalia.com, kees@kernel.org, konradybcio@kernel.org,
-        krzk+dt@kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-hardening@vger.kernel.org, linux-kernel@vger.kernel.org,
-        robh@kernel.org, tony.luck@intel.com
-References: <0bcdb8f9-9a3b-4d6b-bf7e-55a22ffc5df9@oss.qualcomm.com>
- <69f26012-e71b-438f-ac58-e0a3faaf4d43@disroot.org>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <69f26012-e71b-438f-ac58-e0a3faaf4d43@disroot.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Authority-Analysis: v=2.4 cv=Tr8chCXh c=1 sm=1 tr=0 ts=67cf77cc cx=c_pps a=50t2pK5VMbmlHzFWWp8p/g==:117 a=FpWmc02/iXfjRdCD7H54yg==:17 a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=FfWvQauag8hAH5SirX8A:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
- a=IoWCM6iH3mJn3m4BftBB:22
-X-Proofpoint-GUID: YzW_iqoPgNPud2FU21PskDBA3Y2dBOgB
-X-Proofpoint-ORIG-GUID: YzW_iqoPgNPud2FU21PskDBA3Y2dBOgB
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-10_08,2025-03-07_03,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0
- priorityscore=1501 mlxlogscore=973 spamscore=0 lowpriorityscore=0
- mlxscore=0 clxscore=1015 phishscore=0 malwarescore=0 impostorscore=0
- bulkscore=0 adultscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2502100000
- definitions=main-2503100179
+References: <20250228222308.626803-1-irogers@google.com> <20250228222308.626803-12-irogers@google.com>
+ <Z89k6lWxRSBfCGvM@google.com>
+In-Reply-To: <Z89k6lWxRSBfCGvM@google.com>
+From: Ian Rogers <irogers@google.com>
+Date: Mon, 10 Mar 2025 16:40:36 -0700
+X-Gm-Features: AQ5f1Jqm0hhpEhKAQajzWvx41-veMYX8cdpwcxztn5nYV3jmEU6IdvOQfPYBejM
+Message-ID: <CAP-5=fUV5yt4c-PrvTFqW6ehuudwkqdO7QuQpvbUBDm6aT6+dQ@mail.gmail.com>
+Subject: Re: [PATCH v2 11/11] perf python tracepoint: Switch to using parse_events
+To: Namhyung Kim <namhyung@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Adrian Hunter <adrian.hunter@intel.com>, Kan Liang <kan.liang@linux.intel.com>, 
+	Yicong Yang <yangyicong@hisilicon.com>, James Clark <james.clark@linaro.org>, 
+	"Dr. David Alan Gilbert" <linux@treblig.org>, Levi Yun <yeoreum.yun@arm.com>, Ze Gao <zegao2021@gmail.com>, 
+	Weilin Wang <weilin.wang@intel.com>, Xu Yang <xu.yang_2@nxp.com>, 
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Howard Chu <howardchu95@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 3/11/25 12:28 AM, Gabriel Gonzales wrote:
-> On 3/8/25 23:11, Konrad Dybcio wrote:
-> 
->> > +&hsusb_phy1 {
->> > +    vdd-supply = <&vreg_l7a>;
->> > +    vdda-pll-supply = <&vreg_l10a>;
->> > +    vdda-phy-dpdm-supply = <&vreg_l15a>;
->>> +    status = "okay";
->> Please add a before 'status', file-wide
-> 
-> 'a-status'?
+On Mon, Mar 10, 2025 at 3:17=E2=80=AFPM Namhyung Kim <namhyung@kernel.org> =
+wrote:
+>
+> On Fri, Feb 28, 2025 at 02:23:08PM -0800, Ian Rogers wrote:
+> > Rather than manually configuring an evsel, switch to using
+> > parse_events for greater commonality with the rest of the perf code.
+> >
+> > Reviewed-by: Howard Chu <howardchu95@gmail.com>
+> > Signed-off-by: Ian Rogers <irogers@google.com>
+> > ---
+> >  tools/perf/python/tracepoint.py | 23 +++++++++++------------
+> >  1 file changed, 11 insertions(+), 12 deletions(-)
+> >
+> > diff --git a/tools/perf/python/tracepoint.py b/tools/perf/python/tracep=
+oint.py
+> > index bba68a6d4515..38b2b6d11f64 100755
+> > --- a/tools/perf/python/tracepoint.py
+> > +++ b/tools/perf/python/tracepoint.py
+> > @@ -5,24 +5,23 @@
+> >
+> >  import perf
+> >
+> > -class tracepoint(perf.evsel):
+> > -    def __init__(self, sys, name):
+> > -        config =3D perf.tracepoint(sys, name)
+> > -        perf.evsel.__init__(self,
+> > -                            type   =3D perf.TYPE_TRACEPOINT,
+> > -                            config =3D config,
+> > -                            freq =3D 0, sample_period =3D 1, wakeup_ev=
+ents =3D 1,
+> > -                            sample_type =3D perf.SAMPLE_PERIOD | perf.=
+SAMPLE_TID | perf.SAMPLE_CPU | perf.SAMPLE_RAW | perf.SAMPLE_TIME)
+> > -
+> >  def main():
+> > -    tp      =3D tracepoint("sched", "sched_switch")
+> >      cpus    =3D perf.cpu_map()
+> >      threads =3D perf.thread_map(-1)
+> > +    evlist =3D perf.parse_events("sched:sched_switch", cpus, threads)
+> > +    # Disable tracking of mmaps and similar that are unnecessary.
+> > +    for ev in evlist:
+> > +        ev.tracking =3D False
+> > +    # Configure evsels with default record options.
+> > +    evlist.config()
+>
+> I think the default option uses frequency of 4000 but tracepoints want
+> to use period of 1.  Also I'm not sure if it sets the proper sample type
+> bits namely PERF_SAMPLE_RAW.
 
-A newline.. the brain didn't synchronize with the hands
+I used trace to ensure they matched. Fwiw, the sample_period for a
+tracepoint is set to 1 in evsel__newtp_idx:
+https://web.git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.gi=
+t/tree/tools/perf/util/evsel.c?h=3Dperf-tools-next#n621
+and the evsel__config won't overwrite an already set sample_period:
+https://web.git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.gi=
+t/tree/tools/perf/util/evsel.c?h=3Dperf-tools-next#n1341
 
-> 
-> [...]
-> 
->> > +&tlmm {
->> > +    gpio-reserved-ranges = <22 2>, <28 6>;
-> 
->> Would you happen to know what's on the other end of these?
-> 
-> Unfortunately, no.
+Thanks, Ian
 
-Usually it's some secure i2c connection and pins for the SPI host
-that the fingerprint reader sits on
-
-Konrad
+> Thanks,
+> Namhyung
+>
+>
+> > +    # Simplify the sample_type and read_format of evsels
+> > +    for ev in evlist:
+> > +        ev.sample_type =3D ev.sample_type & ~perf.SAMPLE_IP
+> > +        ev.read_format =3D 0
+> >
+> > -    evlist =3D perf.evlist(cpus, threads)
+> > -    evlist.add(tp)
+> >      evlist.open()
+> >      evlist.mmap()
+> > +    evlist.enable();
+> >
+> >      while True:
+> >          evlist.poll(timeout =3D -1)
+> > --
+> > 2.48.1.711.g2feabab25a-goog
+> >
 
