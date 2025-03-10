@@ -1,205 +1,140 @@
-Return-Path: <linux-kernel+bounces-554545-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-554547-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A8715A599A0
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 16:18:01 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2CC67A599A4
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 16:18:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2D073188B43F
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 15:18:09 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CA56C7A45CD
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 15:17:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49FF5233D65;
-	Mon, 10 Mar 2025 15:15:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E749714A098;
+	Mon, 10 Mar 2025 15:16:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="F3f9iuDZ"
-Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b="tfWc913k"
+Received: from out203-205-221-245.mail.qq.com (out203-205-221-245.mail.qq.com [203.205.221.245])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F09A923371F
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 15:15:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 802D522B597;
+	Mon, 10 Mar 2025 15:16:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.245
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741619714; cv=none; b=LpDAJ2QVSPsScjvzKBzpA40gKFZKUM8mnY2emGO9y1CNvo+66jUDwYi8lYZsTjiq/fViMSwZPkLvpmVXGmrNI9qYMfJatcKYcrNdi1C1a5C5smuqpGRFypetdYhWQZCqmzEMO+ORGreKpYDEu05D4Vdw5RcvCaHdhrOHit5o9ew=
+	t=1741619782; cv=none; b=nRUR7TYcHgKD11hVRxmm+JEiB2twUEI4bQV+E0OT+8E/jnRnwyrgBQ2CpPbnJ46jjD93vkOoXlFQbBlsPubEyTPqb8C5hahi36HslEJvMuQ3TlMNF+AfGODnfPXPyGIfCeB0aE5YAfkkJAnOZrqDcoU2IIyM9w7FbwqzTRijp8c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741619714; c=relaxed/simple;
-	bh=3H55FORtmwscKRH5SzHI+X59iFLs94AL05N994sGaPc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=t0aobcB4CV9Umaxj0wS7lCYhOgJqDJH8ysgvGwmWZ9LdY0uHi+xOmpICrLWMBqgcEia5uKmY/wyLf2UcKz3Pp+5SpZrGhAVG+bbpTIxWTx/8wIHX31gzQc0NlqFx15IT823szfYIRHqe8Zx5k6ZYXfm+61llwmet1vLookh3ZkQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=F3f9iuDZ; arc=none smtp.client-ip=209.85.214.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
-Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-223959039f4so86625295ad.3
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 08:15:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1741619712; x=1742224512; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=OfJ3/5A+8eTTKYRN2eD83evjq8eHQRgBJnaNQ4fOKIc=;
-        b=F3f9iuDZ1gOqc3bM+g71TDUDFrV5Wy9sxXs9cJY0K2EbYAMPyrkJC+UiSz8LIDVbFv
-         J0/B1JUSX7Z2WkFNIf6ZKynschBkvbKEGje0HL2xDZ3MQvqiU5+h2zyg0w7RqLZxqBfp
-         ja+pS5WGrVwDHiCrYtGtPYfHtkDbX0Dv2CUl8QBv15kaVhWCH1e3zj2mFBfTD+uEMYhy
-         dR8961lSy7MeQiKgauCfV+z/0sBVx+wwv4ZBOOcXmqTw8eopHTryxz862AUA3sH2m6iU
-         QXBTSLXOkHkQKKTXvUkGeICoE0bqxqLe32VTrW3opBh4e5DN7+NkFup8vKoep06R2adb
-         9i+A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741619712; x=1742224512;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=OfJ3/5A+8eTTKYRN2eD83evjq8eHQRgBJnaNQ4fOKIc=;
-        b=Hkc5esRbsaVwWcA42tNoxIyp7jyJMKo4rndcNuqLEj3JhedDAau7x3hVK5Z1J2wMKs
-         IAneM6dwWaiEI2xI+YvICB4DPDYEGT2XiPvlAVGudCv48ClJ1wAsZ09v1lu6AFUtD2QX
-         G237C/8GpHnST/a/bxt0TiOz5Ft7DgXjBqFeJO9jcx2MO0YX7pOY5L+4nhvbGSgD4oqV
-         8pvlAKdAsWu9XuhkoXeRu6f8BqtlmfQ4wu5BkD7wN+ghjtPoyuf4d1yeVXiEystnxWfy
-         N4YEoW9tnV19RnVjaxzBP/KHroQUB7WIfKAeDqOo3ttDIddx361ZRZbNlpfOnQPuue1v
-         VUww==
-X-Forwarded-Encrypted: i=1; AJvYcCXYipnJQJBIWOPleyC1vnr+2dpAzSQTu5X10ups/Y1x+fFf6++tc6XBSKkgi7PJc/NzLq9LQMeE/Cyk7QQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzjP/EYmepEiWPIpcmQeh2Xtfcm5Y2nlggvuGOYchqAD49ItUCB
-	eKuuU1Hna/Q9qVhgGtagoHn2hVJ0LZ8mFE5W5ps+S+//tVkQZnZXLPldwI910qQ=
-X-Gm-Gg: ASbGncu/i9YfIiP2Yp14F+KPwqoUMXDBrrsDOOjZMHF61ppwK75MU85AKsw5GBc1BW9
-	Hd8fnhRCT5u2+6VKh2WSmjYZ0iCmHFRhWzaWICWIOb0/KJgAAeG2iBG4AP8m/jakQ7s806wrlM5
-	wOzaUGtISAGmfVj5Y0mqs+ooZ3IDf7EO6/1YU772aKYpyvS7rg6e00cKikz7eYs4Mi5H9ii6RSR
-	jzDSrN9CT+oRgpe/yhQyGemKvL4HLqP4SCbl+HDeNFTPl4Fa69PG228Xn1RhtnNzERxChMCukvQ
-	1a6ZbHWOhZlRT9JevCn5HyFOPZYrxkImccFuvzWLetgQbg==
-X-Google-Smtp-Source: AGHT+IFwcAES82fPdZN2juakD/f3DtxEXqN8fLDByuuUWFv0PrmjGf+tQ1Z8z/EN2hDCjCyy0IsnJg==
-X-Received: by 2002:a17:903:2b0f:b0:21f:8453:7484 with SMTP id d9443c01a7336-22428a9d15dmr204592905ad.30.1741619710747;
-        Mon, 10 Mar 2025 08:15:10 -0700 (PDT)
-Received: from carbon-x1.. ([2a01:e0a:e17:9700:16d2:7456:6634:9626])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-224109e99dfsm79230515ad.91.2025.03.10.08.15.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 10 Mar 2025 08:15:10 -0700 (PDT)
-From: =?UTF-8?q?Cl=C3=A9ment=20L=C3=A9ger?= <cleger@rivosinc.com>
-To: Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Anup Patel <anup@brainfault.org>,
-	Atish Patra <atishp@atishpatra.org>,
-	Shuah Khan <shuah@kernel.org>,
-	Jonathan Corbet <corbet@lwn.net>,
-	linux-riscv@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-doc@vger.kernel.org,
-	kvm@vger.kernel.org,
-	kvm-riscv@lists.infradead.org,
-	linux-kselftest@vger.kernel.org
-Cc: =?UTF-8?q?Cl=C3=A9ment=20L=C3=A9ger?= <cleger@rivosinc.com>,
-	Samuel Holland <samuel.holland@sifive.com>,
-	Deepak Gupta <debug@rivosinc.com>
-Subject: [PATCH v3 17/17] RISC-V: KVM: add support for SBI_FWFT_MISALIGNED_DELEG
-Date: Mon, 10 Mar 2025 16:12:24 +0100
-Message-ID: <20250310151229.2365992-18-cleger@rivosinc.com>
-X-Mailer: git-send-email 2.47.2
-In-Reply-To: <20250310151229.2365992-1-cleger@rivosinc.com>
-References: <20250310151229.2365992-1-cleger@rivosinc.com>
+	s=arc-20240116; t=1741619782; c=relaxed/simple;
+	bh=i29N+u43fRtD6lnjrMAJHY4VE43Yw+EgbKOaqHTP6x4=;
+	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=iDs22YPtpissQKRxGIvZRwh1PdFekePFp5AfoVcKBf0xWYJ3CV8q6VISjKpX7ahEdyD4Wm1lgZNuA3xS+fPp/zOphzHrxx20L1YzY8v0N0ITRnQ93RXnmidXS7haazoI/HfugYuhVq6hFpk2XMDiHBir111wIhYTNydGCrTgD20=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com; spf=pass smtp.mailfrom=foxmail.com; dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b=tfWc913k; arc=none smtp.client-ip=203.205.221.245
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foxmail.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foxmail.com;
+	s=s201512; t=1741619466;
+	bh=JVydiL4Vz0YDQP+EpA5Rcz0Mj+8qQUNDN9KpCmqJyDE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=tfWc913ku91iXJJozwhfpdl73cCxFoWsB2Z+GWM34ZEqJ1Ln+aG7fbbbNzJaNzIYR
+	 Edkk+aSL2oQunO7f11MZJyc6lP3bduw7hNhinYw8QSGfo0qNU/v0azAzUFV4GsgP+2
+	 EIyK2lXnMmooDmjwmZsLO4OCfAx7KzTYHbEqve0Y=
+Received: from chenyu5-mobl2 ([125.69.38.41])
+	by newxmesmtplogicsvrszb16-1.qq.com (NewEsmtp) with SMTP
+	id 2C114417; Mon, 10 Mar 2025 23:11:01 +0800
+X-QQ-mid: xmsmtpt1741619461tc0wkaf75
+Message-ID: <tencent_F6079264D94CE4B445A5EE6C3DAAE162670A@qq.com>
+X-QQ-XMAILINFO: NY3HYYTs4gYSCkstl2Z/dxjKIClzdbHnjpDbGNcHLK0GM09CJ4Z0H8DECAbmuj
+	 D/WWpq0UTlL8AWQFJWd1VcPhrB5oVMgjFFfCjnokjftQAMbzZhDoP+lDLMXmueoKVTmSlI5p7FWC
+	 U3Pi09l8Qh59ZzJ4p5WMyvY/aOm3rX83ZM+vC2uqGfxlTPUw8AST1nX6Gl9zeam+QVHT59OIwUj8
+	 0SUszbJvwUFSIhgWwARryf2IuqtGZguVi/buYrKoR5L0VovrCz8m0fHqg4aVzhjsvcqFFKPuhAG3
+	 gquK/gti2Kv+lv2T9sgXPmhKlQOy6YHLjwXQTzr32mu68RuDBfYfz8HvUXUlu/qKO4bkxv2M4LYa
+	 XXahRKg5Ar7pnFm6xTm2jtuIMZfWdZIT4RQkQRiCxgtcsgu3rfeKzTMk9FarSr9fXk8xKAUf9Ynm
+	 rztyvO68yQmkWO8nMUcXJ7Y/BBaSIiyjF1vWVCkBDC+hZDNsJS78BLoOx/OqKz4ZfU7ADWf9d5Am
+	 cHGl1YVGDSf/nCx1JfA2jocdFZ7D/UFME7IbChIoVidkImLkKstpovjI9Ton5MJbAOMVkGLkk1GG
+	 VxhzOwPccWezdjO4WNmykLdnWsljE1oaY1LF0bMGOtygKphARu4z8a7Cc6B6uQ+8tlkV5kK6xBRp
+	 byM1x1fz9QzlvCFraBw95EZX8ng9q30p75lR2xaVmPMXZA/DSl4qFxJ/QW/VEGvXncI2/THScPPI
+	 UwfY+Q/obj4g8QkqgsU4IAy1Jd2Zr7pDy44eqykFlALna58ALi2X7HrmVnUUUnpWuIMWJLs4f6RY
+	 OjJyUycyB5OIMBAyn6Y9Ncg3AlK9BbuYAJHDljzdL0dAqzITPji+u7H2s/5/P+MT+uab4R1xZWy+
+	 uMf7c6nNjnWujdzHVC4TifkyKUBoxVXsO/9Vd5wEYSCq2L52EyNbrW8HCF5jUXWgr6TqnBI/7SbM
+	 vuCAegoErmwvtX6hpfsQ==
+X-QQ-XMRINFO: MPJ6Tf5t3I/ycC2BItcBVIA=
+Date: Mon, 10 Mar 2025 23:12:31 +0800
+From: Chen Yu <yu.chen.surf@foxmail.com>
+To: Kaiyang Zhao <kaiyang2@cs.cmu.edu>
+Cc: Chen Yu <yu.c.chen@intel.com>, Ingo Molnar <mingo@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Rik van Riel <riel@redhat.com>, Mel Gorman <mgorman@suse.de>,
+	Johannes Weiner <hannes@cmpxchg.org>,
+	Michal Hocko <mhocko@kernel.org>,
+	Roman Gushchin <roman.gushchin@linux.dev>,
+	Shakeel Butt <shakeel.butt@linux.dev>,
+	Muchun Song <muchun.song@linux.dev>,
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	"Huang, Ying" <ying.huang@linux.alibaba.com>,
+	Tim Chen <tim.c.chen@intel.com>, Aubrey Li <aubrey.li@intel.com>,
+	David Rientjes <rientjes@google.com>,
+	Raghavendra K T <raghavendra.kt@amd.com>, cgroups@vger.kernel.org,
+	linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH 0/3] sched/numa: Introduce per cgroup numa balance
+ control
+X-OQ-MSGID: <Z88BX/TLEEzo5Oxg@chenyu5-mobl2>
+References: <cover.1740483690.git.yu.c.chen@intel.com>
+ <Z8hh1urLnpmMxHqW@localhost.localhost>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z8hh1urLnpmMxHqW@localhost.localhost>
 
-SBI_FWFT_MISALIGNED_DELEG needs hedeleg to be modified to delegate
-misaligned load/store exceptions. Save and restore it during CPU
-load/put.
+Hi Kaiyang,
 
-Signed-off-by: Clément Léger <cleger@rivosinc.com>
-Reviewed-by: Deepak Gupta <debug@rivosinc.com>
----
- arch/riscv/kvm/vcpu.c          |  3 +++
- arch/riscv/kvm/vcpu_sbi_fwft.c | 39 ++++++++++++++++++++++++++++++++++
- 2 files changed, 42 insertions(+)
+On 2025-03-05 at 14:38:14 +0000, Kaiyang Zhao wrote:
+> On Tue, Feb 25, 2025 at 09:59:33PM +0800, Chen Yu wrote:
+> > This per-cgroup NUMA balancing control was once proposed in
+> > 2019 by Yun Wang[1]. Then, in 2024, Kaiyang Zhao mentioned
+> > that he was working with Meta on per-cgroup NUMA control[2]
+> > during a discussion with David Rientjes.
+> > 
+> > I could not find further discussion regarding per-cgroup NUMA
+> > balancing from that point on. This set of RFC patches is a
+> > rough and compile-passed version, and may have unhandled cases
+> > (for example, THP). It has not been thoroughly tested and is
+> > intended to initiate or resume the discussion on the topic of
+> > per-cgroup NUMA load balancing.
+> 
+> Hello Chen,
+> 
+> It's nice to see people interested in this. I posted a set of RFC patches
+> later[1] that focuses on the fairness issue in memory tiering. It mostly
+> concerns the demotion side of things, and the promotion / NUMA balancing
+> side of things was left out of the patch set.
+>
 
-diff --git a/arch/riscv/kvm/vcpu.c b/arch/riscv/kvm/vcpu.c
-index 542747e2c7f5..d98e379945c3 100644
---- a/arch/riscv/kvm/vcpu.c
-+++ b/arch/riscv/kvm/vcpu.c
-@@ -646,6 +646,7 @@ void kvm_arch_vcpu_put(struct kvm_vcpu *vcpu)
- {
- 	void *nsh;
- 	struct kvm_vcpu_csr *csr = &vcpu->arch.guest_csr;
-+	struct kvm_vcpu_config *cfg = &vcpu->arch.cfg;
+I see, thanks for the information.
  
- 	vcpu->cpu = -1;
+> I don't work for Meta now, but my understanding is that they'll attempt
+> to push through a solution for per-cgroup control of memory tiering that
+> is in the same vein as my RFC patches, and it may include controls for
+> per-group NUMA balancing in the context of tiered memory.
+>
+
+OK, it would be nice to see that patch set. We can continue the disscussion
+on this basic per-cgroup Numa balancing control, the tiered memory promotion
+could be on top of that IMO.
+
+thanks,
+Chenyu
  
-@@ -671,6 +672,7 @@ void kvm_arch_vcpu_put(struct kvm_vcpu *vcpu)
- 		csr->vstval = nacl_csr_read(nsh, CSR_VSTVAL);
- 		csr->hvip = nacl_csr_read(nsh, CSR_HVIP);
- 		csr->vsatp = nacl_csr_read(nsh, CSR_VSATP);
-+		cfg->hedeleg = nacl_csr_read(nsh, CSR_HEDELEG);
- 	} else {
- 		csr->vsstatus = csr_read(CSR_VSSTATUS);
- 		csr->vsie = csr_read(CSR_VSIE);
-@@ -681,6 +683,7 @@ void kvm_arch_vcpu_put(struct kvm_vcpu *vcpu)
- 		csr->vstval = csr_read(CSR_VSTVAL);
- 		csr->hvip = csr_read(CSR_HVIP);
- 		csr->vsatp = csr_read(CSR_VSATP);
-+		cfg->hedeleg = csr_read(CSR_HEDELEG);
- 	}
- }
- 
-diff --git a/arch/riscv/kvm/vcpu_sbi_fwft.c b/arch/riscv/kvm/vcpu_sbi_fwft.c
-index cce1e41d5490..756fda1cf2e7 100644
---- a/arch/riscv/kvm/vcpu_sbi_fwft.c
-+++ b/arch/riscv/kvm/vcpu_sbi_fwft.c
-@@ -14,6 +14,8 @@
- #include <asm/kvm_vcpu_sbi.h>
- #include <asm/kvm_vcpu_sbi_fwft.h>
- 
-+#define MIS_DELEG (BIT_ULL(EXC_LOAD_MISALIGNED) | BIT_ULL(EXC_STORE_MISALIGNED))
-+
- struct kvm_sbi_fwft_feature {
- 	/**
- 	 * @id: Feature ID
-@@ -64,7 +66,44 @@ static bool kvm_fwft_is_defined_feature(enum sbi_fwft_feature_t feature)
- 	return false;
- }
- 
-+static bool kvm_sbi_fwft_misaligned_delegation_supported(struct kvm_vcpu *vcpu)
-+{
-+	if (!misaligned_traps_can_delegate())
-+		return false;
-+
-+	return true;
-+}
-+
-+static int kvm_sbi_fwft_set_misaligned_delegation(struct kvm_vcpu *vcpu,
-+					struct kvm_sbi_fwft_config *conf,
-+					unsigned long value)
-+{
-+	if (value == 1)
-+		csr_set(CSR_HEDELEG, MIS_DELEG);
-+	else if (value == 0)
-+		csr_clear(CSR_HEDELEG, MIS_DELEG);
-+	else
-+		return SBI_ERR_INVALID_PARAM;
-+
-+	return SBI_SUCCESS;
-+}
-+
-+static int kvm_sbi_fwft_get_misaligned_delegation(struct kvm_vcpu *vcpu,
-+					struct kvm_sbi_fwft_config *conf,
-+					unsigned long *value)
-+{
-+	*value = (csr_read(CSR_HEDELEG) & MIS_DELEG) != 0;
-+
-+	return SBI_SUCCESS;
-+}
-+
- static const struct kvm_sbi_fwft_feature features[] = {
-+	{
-+		.id = SBI_FWFT_MISALIGNED_EXC_DELEG,
-+		.supported = kvm_sbi_fwft_misaligned_delegation_supported,
-+		.set = kvm_sbi_fwft_set_misaligned_delegation,
-+		.get = kvm_sbi_fwft_get_misaligned_delegation,
-+	},
- };
- 
- static struct kvm_sbi_fwft_config *
--- 
-2.47.2
+> Best,
+> Kaiyang
+> 
+> [1] https://lore.kernel.org/linux-mm/20240920221202.1734227-1-kaiyang2@cs.cmu.edu/
 
 
