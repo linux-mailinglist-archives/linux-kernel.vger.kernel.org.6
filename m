@@ -1,131 +1,148 @@
-Return-Path: <linux-kernel+bounces-554519-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-554508-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D0D42A59930
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 16:09:44 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 153A4A59908
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 16:04:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5BCE27A4D52
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 15:08:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9C7C0188804F
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 15:02:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0573122F160;
-	Mon, 10 Mar 2025 15:08:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D053D22DFA4;
+	Mon, 10 Mar 2025 14:58:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="iGs9iCzJ"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="j0zYmuTP"
+Received: from mail-vk1-f180.google.com (mail-vk1-f180.google.com [209.85.221.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B76DF22D79D;
-	Mon, 10 Mar 2025 15:08:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1F8622A4EF;
+	Mon, 10 Mar 2025 14:58:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741619327; cv=none; b=XtW41eraxXffdQvsniZ4b3/dKy0yqQYtiQh9mOJC/X9Du9Olupyh6b6mR2ypqwiRfYl4+iTTXYumId8mnayWj6ZtfyglgVLdzl8yotkSFXI9+t9Ddve0j65Uk10JTyGMRH96cJIj/szI1oa9JCXQRqNvvTcuyl3XjS393v7+XRE=
+	t=1741618683; cv=none; b=bH5dmlWzJ6c7pnDQeaZvTkc8DLXYaU8A6sk+ai47fjeBym0bHueGn71UuwDT7vdzP051kS6rEkwmy3639Ibdp9+EocIUYw+XlcnZQ1SQYhxw2rBSKwXEPL4u5gcnIFWELNewbmZ7zT5bLxdc1SXgy+QLXDWZqCnGuxnhXECPBWs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741619327; c=relaxed/simple;
-	bh=kZtafXHrGb7mXS4bvxISt7O8W/fzSi4801NL/wtYIkE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=FICje0UnLZ4//Sf9PHBPxJDlm7Xmw82Uhlwg0GvTOsSBVFXeSlZX/4EMjqXX2pF9ZHYvAixuH04O/iJvu9VZm0R8lryMw2p5C1e3IqEK17NO67ilfiwxxqQX6GDUCB6ezLuaUgoAIR3bhMdiVCz4867zLxF7TSszwzJBcpQtQdY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=iGs9iCzJ; arc=none smtp.client-ip=198.175.65.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1741619326; x=1773155326;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=kZtafXHrGb7mXS4bvxISt7O8W/fzSi4801NL/wtYIkE=;
-  b=iGs9iCzJdcTix69aICGUraExy3DK9OAFgEAqEFSqsHKY3Hcniu+0Rmm6
-   3x28uW2H84S7O0uYybf1YsdGxP/3UZOvHTj+8ritiKQ/QhhWtxgjHtlZs
-   d1KF6KyT3ZT9Sc0jWggtU0g+p52azvM3j1ef7EtY4vbODKV/xeONBZ3Wx
-   UhkIb00Bx2w9w6F+3RNJ42LstKwMUnbufHBIpHKcXlgBpWwcXBSwEi1sn
-   q/zhU8GEhNUz+bs2qqw1q+XArYoymgLlWlxGayCrqx+oXn76paDOEKx4Q
-   nH8lUoi/9TR6cVVa1MYJKkEeeGZNzRYm15Uf4em5llKaMs7x998vPYPjy
-   w==;
-X-CSE-ConnectionGUID: fNKlSjufSSegG6GtCF7SCg==
-X-CSE-MsgGUID: kDV/KoxNQW6P6NjxhpG2nA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11369"; a="42334998"
-X-IronPort-AV: E=Sophos;i="6.14,236,1736841600"; 
-   d="scan'208";a="42334998"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Mar 2025 08:08:43 -0700
-X-CSE-ConnectionGUID: 21gImyG7TTufNq2sz9kIzw==
-X-CSE-MsgGUID: +bgqcGd4R9uID+UOQbR6ww==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,236,1736841600"; 
-   d="scan'208";a="119731645"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by orviesa009.jf.intel.com with ESMTP; 10 Mar 2025 08:08:38 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-	id 05290560; Mon, 10 Mar 2025 17:08:36 +0200 (EET)
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"Rob Herring (Arm)" <robh@kernel.org>,
-	Markus Elfring <elfring@users.sourceforge.net>,
-	Jakob Riepler <jakob+lkml@paranoidlabs.org>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-	linux-acpi@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-leds@vger.kernel.org,
-	linux-usb@vger.kernel.org
-Cc: Daniel Scally <djrscally@gmail.com>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Danilo Krummrich <dakr@kernel.org>,
-	Lee Jones <lee@kernel.org>,
-	Pavel Machek <pavel@kernel.org>,
-	Matti Vaittinen <mazziesaccount@gmail.com>,
-	Jonathan Cameron <jic23@kernel.org>
-Subject: [PATCH v1 4/4] usb: typec: tcpm: Use fwnode_get_child_node_count()
-Date: Mon, 10 Mar 2025 16:54:54 +0200
-Message-ID: <20250310150835.3139322-5-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.47.2
-In-Reply-To: <20250310150835.3139322-1-andriy.shevchenko@linux.intel.com>
-References: <20250310150835.3139322-1-andriy.shevchenko@linux.intel.com>
+	s=arc-20240116; t=1741618683; c=relaxed/simple;
+	bh=nKeMJqcXOybsOCtgidoWKKriWWEU+V6EOHzym+y4Rww=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=DI5NRNNiSyI5apSHMrY/SRGypHvlx01noBVhKU6HFxvX8Tyd03jqeXaE1tEInuYQKAhCCdIBW/G73IzHiSmWO/ycT06Ddzvjst1JPQsr5WhfSqVwzKFtu0IwvhBQN9NXAYbEOmTZNEx51xLOikoPSjT6io4P/cXNV7wel1qsBaY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=j0zYmuTP; arc=none smtp.client-ip=209.85.221.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f180.google.com with SMTP id 71dfb90a1353d-523eb86b31aso1118864e0c.0;
+        Mon, 10 Mar 2025 07:58:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741618680; x=1742223480; darn=vger.kernel.org;
+        h=in-reply-to:references:to:from:subject:cc:message-id:date
+         :content-transfer-encoding:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=xrdG1fpL5CikYynfNpId4ukhi3X0kK30B2xjj7IytkY=;
+        b=j0zYmuTPA7YB/7EwdNN8EXYtfOGUCAhBvk6VPeI5+43BmyZKhiO53U96xS34hQwPcP
+         KqkDJ5PifJSUvAIn3TGlsG5wljKwhXRXTe+Oj16FKqaY1OG3q0jkBKGxRxTV5COY9soq
+         FhwkQSousFprxy7uMyTqG0RY7Con0PCac/r8cLy3zXcDl/zhG5paSaFgf6Dn6zlIsaPv
+         bPjrju4M+fp3UCvzawkF4HdJN34sc/JGxcPttugw8r6a9Au2xtHqmy+75sZPFl+EixCs
+         1mv+f0UcOlUILtPWZsXHjFPFk9LaLuv71YUP9JsFyRcv+7S/QSyXbJwrKiMzOTvXMShK
+         Xr1g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741618680; x=1742223480;
+        h=in-reply-to:references:to:from:subject:cc:message-id:date
+         :content-transfer-encoding:mime-version:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=xrdG1fpL5CikYynfNpId4ukhi3X0kK30B2xjj7IytkY=;
+        b=CEJwLfTQE7iHJJTTL4gWWZ9YEWt6bgRNgbCDlwnRYKm9xpmwXeTEf+O8eLI6i/iiYK
+         yvKfX0L5cXtpysvW01H8RNXhiF3uf5SxMs7n+ToTLNTtK81ccD1wAwtogkQgzxW4LmQV
+         hE3M/DkKcsu6syGE6D/h71Xrg1CZSiYoLSytEbubB6Aic6Nnem2zhhU101m8N8HyBNkY
+         5XISmhO6xk2upxcXJqfkbhGo0rb1THtkbDMeoIHW7MfC6PigCjmeGg0eKe8nJ1Xr08d6
+         UUNw96S+SroP2YJTVVklxrO7oXmJBgA/H6DdNkElydrW3dzD28T+rbMc44ETIkiBX5JF
+         ARWw==
+X-Forwarded-Encrypted: i=1; AJvYcCVGNu2QH0mpOamgMtSfai4QJPBmRDbtViOa4G6wcDUQEjdlqUe3OXnmDqRI7ZTcfCQU9Bqq/7Ob+Z2iA3dCt4edIZ5Btw==@vger.kernel.org, AJvYcCXNjdh9w4OfZk3xXlwphKZBZhF7ab72Sy9KGUKPMdBn9pQpVmVve+1PQshieldAGmwza9L3Uhl4gA35wyM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy6pGt2LQb3eGmPstQJuZDu93bZnRPG6FKnpfZQ2Wx3g+cLwUjZ
+	A5+xOtM3xtkSFUBx8ywOLy3Q4ZQxLKTyO913St6zOaKCI105odOW36H7YTuq
+X-Gm-Gg: ASbGncv6tVi2TSssQjMZ9d+1xlWVH61Q93/oDnMD+4840Uiai9XbWth0SGJfEbWMS1t
+	GpEkA1hNO7a8agvXyvL4zoDdytzxeMnONbeYhidhkdcY2HHyg2kcWWZ8T04GFU7kzA0G0sMCQCN
+	QQn6OP7/cWTQ7CBfQ3Aqbor4KNSMVPtFGjsW3xPvuMEOq4+ROw2a7iaLfDSDaKb6/2OYlK0uUNq
+	1ELYXpgG1jq32j0+HhKjyO9I79A3iPwlMVBWz1hqUqWakgeOTMEw55lJO1ZhP2s3oC15ySeA+Zx
+	z7YnW1An4e+fg2GvPvhvgmZd3z5yWOQQ4V6d
+X-Google-Smtp-Source: AGHT+IHUDZIuIbHcr33yulbymoIlv7q2VlkrSuz2EsmPrJWcWsAcy1tmH7sM08Qnglzp4x9fp1DZ5g==
+X-Received: by 2002:a05:6122:3191:b0:520:61ee:c815 with SMTP id 71dfb90a1353d-523e4188194mr7105607e0c.10.1741618680357;
+        Mon, 10 Mar 2025 07:58:00 -0700 (PDT)
+Received: from localhost ([2800:bf0:82:3d2:9e61:1a62:1a8c:3e62])
+        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-523d8ac3266sm1490598e0c.15.2025.03.10.07.57.58
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 10 Mar 2025 07:57:59 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Mon, 10 Mar 2025 09:57:57 -0500
+Message-Id: <D8COAMZV0RBJ.1C66Q3AVETTD8@gmail.com>
+Cc: "Hans de Goede" <hdegoede@redhat.com>,
+ <platform-driver-x86@vger.kernel.org>, "LKML"
+ <linux-kernel@vger.kernel.org>, "kernel test robot" <lkp@intel.com>
+Subject: Re: [PATCH] platform/x86: dell: Fix ALIENWARE_WMI dependencies
+From: "Kurt Borja" <kuurtb@gmail.com>
+To: =?utf-8?q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+X-Mailer: aerc 0.20.1-0-g2ecb8770224a
+References: <20250309-dell-kconfig-fix-v1-1-38a2308d0ac6@gmail.com>
+ <8d219429-b13f-2610-960e-58851d53696f@linux.intel.com>
+In-Reply-To: <8d219429-b13f-2610-960e-58851d53696f@linux.intel.com>
 
-Since fwnode_get_child_node_count() was split from its device property
-counterpart, we may utilise it in the driver and drop custom implementation.
+Hi Ilpo,
 
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
- drivers/usb/typec/tcpm/tcpm.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+On Mon Mar 10, 2025 at 9:29 AM -05, Ilpo J=C3=A4rvinen wrote:
+> On Sun, 9 Mar 2025, Kurt Borja wrote:
+>
+>> If ACPI_PLATFORM_PROFILE is selected by ALIENWARE_WMI_WMAX, the former
+>> is forced to be at least =3Dm, because the latter is a bool.
+>>=20
+>> This allows the following config:
+>>=20
+>> 	CONFIG_ALIENWARE_WMI=3Dy
+>> 	CONFIG_ACPI_PLATFORM_PROFILE=3Dm
+>
+> Hi,
+>
+> selecting from =3Dy should not result in =3Dm for the other symbol. This =
+is=20
+> a bug in Kconfig infrastructure.
+>
+> I ran across this a few years back and even had a test case to prove the=
+=20
+> select bug but back then the original problem eventually was solved in a=
+=20
+> different way which no longer hit the problem. I never could figure out
+> how to fix the kconfig logic though without breaking something and it=20
+> ended up into low priority bin and never got solved.
+>
+> Sadly, it seems I've lost the test case patch that exhibits the bug=20
+> somewhere... I'll try to look for it from my archived files.
 
-diff --git a/drivers/usb/typec/tcpm/tcpm.c b/drivers/usb/typec/tcpm/tcpm.c
-index 9c455f073233..8ca2e26752fb 100644
---- a/drivers/usb/typec/tcpm/tcpm.c
-+++ b/drivers/usb/typec/tcpm/tcpm.c
-@@ -7166,7 +7166,7 @@ static void tcpm_fw_get_timings(struct tcpm_port *port, struct fwnode_handle *fw
- 
- static int tcpm_fw_get_caps(struct tcpm_port *port, struct fwnode_handle *fwnode)
- {
--	struct fwnode_handle *capabilities, *child, *caps = NULL;
-+	struct fwnode_handle *capabilities, *caps = NULL;
- 	unsigned int nr_src_pdo, nr_snk_pdo;
- 	const char *opmode_str;
- 	u32 *src_pdo, *snk_pdo;
-@@ -7232,9 +7232,7 @@ static int tcpm_fw_get_caps(struct tcpm_port *port, struct fwnode_handle *fwnode
- 	if (!capabilities) {
- 		port->pd_count = 1;
- 	} else {
--		fwnode_for_each_child_node(capabilities, child)
--			port->pd_count++;
--
-+		port->pd_count = fwnode_get_child_node_count(capabilities);
- 		if (!port->pd_count) {
- 			ret = -ENODATA;
- 			goto put_capabilities;
--- 
-2.47.2
+That's funny.
 
+I thought this was a Kconfig quirk, that resulted from the following
+hierarchy:
+
+Type		0	1	2
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D =3D=3D=3D=3D=3D=3D=3D =3D=3D=
+=3D=3D=3D=3D=3D =3D=3D=3D=3D=3D=3D=3D
+Bool		n	y
+Tristate	n	m	y
+
+So a <bool> selecting the <tristate> would force it to be at least =3Dm.
+
+The same thing happens with depend, where a dependecy would be fulfilled
+for a <bool> if a <tristate> was at least =3Dm. That's why in the kernel
+robot report the linking error was also due to the HWMON dependency.
+
+Anyway, this patch could serve as a workaround if you feel it's
+necessary. I'm going to put the HWMON dependecy in the ALIENWARE_WMI
+symbol for my other series.
+
+--=20
+ ~ Kurt
 
