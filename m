@@ -1,208 +1,266 @@
-Return-Path: <linux-kernel+bounces-554227-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-554228-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 31386A594F5
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 13:44:53 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 08F55A594F6
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 13:45:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id ADF3D1887A15
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 12:44:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F007C16DE7B
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 12:44:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39CDC1C07D9;
-	Mon, 10 Mar 2025 12:44:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECEA8228CB5;
+	Mon, 10 Mar 2025 12:44:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="k27IqJEy"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="YegjSBP9"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E8C822172D;
-	Mon, 10 Mar 2025 12:43:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5474B22172D;
+	Mon, 10 Mar 2025 12:44:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741610640; cv=none; b=b56Gtpq6no/yvXTlp50hgaa9ik0qj7xukjq2PMzeJ88hh2KypyZfJDuQ/xnVv4jKptY8chIWx1SsSb2Zk5nzQTPu6hiUREyoKWVW4d2ZLYmZRyXN+N6fz7kpdi1WS1bh3b4ZPywnXj1XieKtRVYO+dMdKF5M0pETpugqxAVc5i8=
+	t=1741610660; cv=none; b=CKyI8GwLl0ICJ4eVa63QiMpNV8UfcSkoUXxuoy37Tzcd9KX2tyaq3Ab+DL0RRMGaKIuhN4O85n9ZNxV+GPNscrCEhbdhdmiEem/DoeteEUGnEV4VG8Pjkax0hjV2bWQE/21lV4BxAP2sC1L6KF2PO1C4mw/pqvIqQm5ngYSADxE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741610640; c=relaxed/simple;
-	bh=itK42hXJovQ7FgvIGOp3LK5q0cp2Lj+aDQwPYA0OCOE=;
-	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=kO8TiXSINAgBrHr1ZSExEJGWF0rkgWrDbU500iEdAfv8M0AT8xHZNhuV6zeUbs3tFBlsFNxur7Rq8fuejum/ZrnZK8N30nWCDP2N8xhtdYXB60JoVZs+l39xliWP/QTstLqhH0mZ5x8ngRKRUs0VXlYuSD8Jp+1XrP39jaiSuh0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=k27IqJEy; arc=none smtp.client-ip=198.175.65.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1741610639; x=1773146639;
-  h=from:date:to:cc:subject:in-reply-to:message-id:
-   references:mime-version;
-  bh=itK42hXJovQ7FgvIGOp3LK5q0cp2Lj+aDQwPYA0OCOE=;
-  b=k27IqJEy6tv+RuAOTYkNYHhYwHTVXn6k90re4R70ueZvTqMP17giCjRn
-   7zwb9fmwatiS7jd8gWCenJDv51m5nD9uB8a9WL4L070/Vp4BWtUa8/tUw
-   oJQjqJL8Myg6TVYfZWRMCzu1R/S1urlxX+D2kZpJ8BZCQa335xBUD61F9
-   fA6SpFrpF9lW52aSb5LrvzKqSLSnjg2ATRjf9n/IesU8bmEs+M4WRVJrm
-   KYC4b3XsnJwkgXDvVOTjxZw3PKQeYOyIVHihkNat/9c7ULmLC0W5NYdUs
-   tRy/zpLHxJiV+gXgXE/6CGzeBmFAEto9iotAJtxlygHONYqAbOGimszDi
-   A==;
-X-CSE-ConnectionGUID: 1aDPYXqLTy6Bo3EyCnSDhg==
-X-CSE-MsgGUID: Uyu1VEKMQ8G5S0/Z6mtiuw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11369"; a="46389628"
-X-IronPort-AV: E=Sophos;i="6.14,236,1736841600"; 
-   d="scan'208";a="46389628"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Mar 2025 05:43:58 -0700
-X-CSE-ConnectionGUID: kacdkcfmSJCeL3HCWhhDpg==
-X-CSE-MsgGUID: 4C8DnNblQ0y/k9Q3Nm/FPQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,236,1736841600"; 
-   d="scan'208";a="150931819"
-Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.244.59])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Mar 2025 05:43:55 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Date: Mon, 10 Mar 2025 14:43:51 +0200 (EET)
-To: Dan Carpenter <dan.carpenter@linaro.org>
-cc: Shyam Sundar S K <Shyam-sundar.S-k@amd.com>, 
-    Hans de Goede <hdegoede@redhat.com>, 
-    Patil Rajesh Reddy <Patil.Reddy@amd.com>, 
-    Mario Limonciello <mario.limonciello@amd.com>, 
-    platform-driver-x86@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, 
-    kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] platform/x86/amd/pmf: fix cleanup in
- amd_pmf_init_smart_pc()
-In-Reply-To: <43ad5358-f5b2-4cfc-85b4-e7ab8c7cf329@stanley.mountain>
-Message-ID: <32c6c456-94f0-f077-040c-09f67d60953a@linux.intel.com>
-References: <43ad5358-f5b2-4cfc-85b4-e7ab8c7cf329@stanley.mountain>
+	s=arc-20240116; t=1741610660; c=relaxed/simple;
+	bh=zP/SBsawh9IJ4rFGXkTfKbMGgKVbMiboFwfKn+yD3Ak=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rphhGlh/rI2IhhBKiUBKra+FaEu7DphY6O7w7IHTKie2BaLah6X4BIz8mRa4zZd5BjFF8QVFGNdbhqhVoaFvGRDZF6lhGIqKo7o4T6VeKnqV1Fyhb60AdsJnMJ+MH/wArTQMOmEFhr8+zQiz0Q3Vd8JN1Z2j5fG2JW4jd/Vf+e4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=YegjSBP9; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=ScP3/QN7pJ6oT8ufJYhHtcaoJqNafq5u9wpkG818K9k=; b=YegjSBP9TEr78VdbHgWlSAeRaX
+	2gBu+99MlytfKi3louhCon8+cTDF61pRxIgRK6+LhliqHqUs9BdatSy/kKPDvK4aG1VR3aDdqDqgc
+	3/iL19v2sDDZ9WCn/ljHALcRCD+NjNTKKE17n8KNzHzm50eT0NZP7LtwD0YhYmh71TPm4XWu5oe5j
+	q+oDD50mb0gKdjuaxmBtq2pd4Jc3uUfEpgA8k5cwjMNVgtPYP7c6yNVznsPDtKw31m9JUnKd1gFhM
+	6OfjdKpggLqeZlrvHPrNv1bDEFI/Cl8pQtG+x3LtxE5ajjQvwFyBfwteD0nMzTGPR3gX40IMW23OB
+	gYhL6yYA==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1trcUG-00000001rMT-15Xu;
+	Mon, 10 Mar 2025 12:44:04 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 41D40300599; Mon, 10 Mar 2025 13:44:03 +0100 (CET)
+Date: Mon, 10 Mar 2025 13:44:03 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: mark.barnett@arm.com
+Cc: mingo@redhat.com, acme@kernel.org, namhyung@kernel.org,
+	irogers@google.com, ben.gainey@arm.com, deepak.surti@arm.com,
+	ak@linux.intel.com, will@kernel.org, james.clark@arm.com,
+	mark.rutland@arm.com, alexander.shishkin@linux.intel.com,
+	jolsa@kernel.org, adrian.hunter@intel.com,
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v3 2/5] perf: Allow periodic events to alternate between
+ two sample periods
+Message-ID: <20250310124403.GQ5880@noisy.programming.kicks-ass.net>
+References: <20250307202247.648633-1-mark.barnett@arm.com>
+ <20250307202247.648633-3-mark.barnett@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250307202247.648633-3-mark.barnett@arm.com>
 
-On Mon, 10 Mar 2025, Dan Carpenter wrote:
-
-> There are a couple problems in this code:
+On Fri, Mar 07, 2025 at 08:22:44PM +0000, mark.barnett@arm.com wrote:
+> From: Ben Gainey <ben.gainey@arm.com>
 > 
-> First, if amd_pmf_tee_init() fails then the function returns directly
-> instead of cleaning up.  We cannot simply do a "goto error;" because
-> that would lead to a double free.  I have re-written this code to
-> use an unwind ladder to free the allocations.
+> This change modifies perf_event_attr to add a second, alternative
+> sample period field, and modifies the core perf overflow handling
+> such that when specified an event will alternate between two sample
+> periods.
+> 
+> Currently, perf does not provide a  mechanism for decoupling the period
+> over which counters are counted from the period between samples. This is
+> problematic for building a tool to measure per-function metrics derived
+> from a sampled counter group. Ideally such a tool wants a very small
+> sample window in order to correctly attribute the metrics to a given
+> function, but prefers a larger sample period that provides representative
+> coverage without excessive probe effect, triggering throttling, or
+> generating excessive amounts of data.
+> 
+> By alternating between a long and short sample_period and subsequently
+> discarding the long samples, tools may decouple the period between
+> samples that the tool cares about from the window of time over which
+> interesting counts are collected.
+> 
+> It is expected that typically tools would use this feature with the
+> cycles or instructions events as an approximation for time, but no
+> restrictions are applied to which events this can be applied to.
 
-Thanks Dan,
+So you do add the constraint that 'alt_sample_period < sample_period'
+but there is no natural reason for this to be so.
 
-Could you please amend this with the information of what is getting 
-double freed, it took considerable amount of time for me to figure out.
-I assume it's ->fw_shm_pool ?
+Additionally, this way the total period ends up being 'sample_period +
+alt_sample_period'.
 
-> Second, if amd_pmf_start_policy_engine() fails on every iteration though
-> the loop then the code calls amd_pmf_tee_deinit() twice which is also a
-> double free.  Call amd_pmf_tee_deinit() inside the loop for each failed
-> iteration.  Also on that path the error codes are not necessarily
-> negative kernel error codes.  Set the error code to -EINVAL.
+Would not a more natural way to express things be:
 
-Maybe I should start to consistently reject any attempt to use 
-cleanup/deinit helper functions instead of a proper rollback. It 
-seems a pattern that is very prone to errors like this.
+	p1 = sample_period - alt_sample_period;
+	p2 = alt_sample_period;
 
-> Fixes: 376a8c2a1443 ("platform/x86/amd/pmf: Update PMF Driver for Compatibility with new PMF-TA")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+This way you retain the total period to be 'sample_period' and naturally
+get the constraint: 'alt_sample_period < sample_period'.
+
+That is; I'm somewhat confused by the state of things; it doesn't seem
+consistent.
+
+(Also note that this alternative form might actually work in combination
+with attr.freq set -- although that has a number of 'fun' details I'm
+sure).
+
+> Signed-off-by: Ben Gainey <ben.gainey@arm.com>
+> Signed-off-by: Mark Barnett <mark.barnett@arm.com>
 > ---
->  drivers/platform/x86/amd/pmf/tee-if.c | 36 +++++++++++++++++++--------
->  1 file changed, 25 insertions(+), 11 deletions(-)
+>  include/linux/perf_event.h      |  5 +++++
+>  include/uapi/linux/perf_event.h |  3 +++
+>  kernel/events/core.c            | 39 ++++++++++++++++++++++++++++++++-
+>  3 files changed, 46 insertions(+), 1 deletion(-)
 > 
-> diff --git a/drivers/platform/x86/amd/pmf/tee-if.c b/drivers/platform/x86/amd/pmf/tee-if.c
-> index ceaff1ebb7b9..a1e43873a07b 100644
-> --- a/drivers/platform/x86/amd/pmf/tee-if.c
-> +++ b/drivers/platform/x86/amd/pmf/tee-if.c
-> @@ -510,18 +510,18 @@ int amd_pmf_init_smart_pc(struct amd_pmf_dev *dev)
+> diff --git a/include/linux/perf_event.h b/include/linux/perf_event.h
+> index 8333f132f4a9..99ba72c8fb6d 100644
+> --- a/include/linux/perf_event.h
+> +++ b/include/linux/perf_event.h
+> @@ -276,6 +276,11 @@ struct hw_perf_event {
+>  	 */
+>  	u64				freq_time_stamp;
+>  	u64				freq_count_stamp;
+> +
+> +	/*
+> +	 * Indicates that the alternative sample period is used
+> +	 */
+> +	bool				using_alt_sample_period;
+
+There's a 4 byte hole in this structure if you look; also please use a
+flag, sizeof(_Bool) is ABI dependent.
+
+>  #endif
+>  };
 >  
->  	ret = amd_pmf_set_dram_addr(dev, true);
->  	if (ret)
-> -		goto error;
-> +		goto err_cancel_work;
+> diff --git a/include/uapi/linux/perf_event.h b/include/uapi/linux/perf_event.h
+> index 0524d541d4e3..499a8673df8e 100644
+> --- a/include/uapi/linux/perf_event.h
+> +++ b/include/uapi/linux/perf_event.h
+> @@ -379,6 +379,7 @@ enum perf_event_read_format {
+>  #define PERF_ATTR_SIZE_VER6	120	/* add: aux_sample_size */
+>  #define PERF_ATTR_SIZE_VER7	128	/* add: sig_data */
+>  #define PERF_ATTR_SIZE_VER8	136	/* add: config3 */
+> +#define PERF_ATTR_SIZE_VER9	144	/* add: alt_sample_period */
 >  
->  	dev->policy_base = devm_ioremap_resource(dev->dev, dev->res);
->  	if (IS_ERR(dev->policy_base)) {
->  		ret = PTR_ERR(dev->policy_base);
-> -		goto error;
-> +		goto err_free_dram_buf;
->  	}
+>  /*
+>   * Hardware event_id to monitor via a performance monitoring event:
+> @@ -531,6 +532,8 @@ struct perf_event_attr {
+>  	__u64	sig_data;
 >  
->  	dev->policy_buf = kzalloc(dev->policy_sz, GFP_KERNEL);
->  	if (!dev->policy_buf) {
->  		ret = -ENOMEM;
-> -		goto error;
-> +		goto err_free_dram_buf;
->  	}
+>  	__u64	config3; /* extension of config2 */
+> +
+> +	__u64	alt_sample_period;
+>  };
 >  
->  	memcpy_fromio(dev->policy_buf, dev->policy_base, dev->policy_sz);
-> @@ -531,13 +531,13 @@ int amd_pmf_init_smart_pc(struct amd_pmf_dev *dev)
->  	dev->prev_data = kzalloc(sizeof(*dev->prev_data), GFP_KERNEL);
->  	if (!dev->prev_data) {
->  		ret = -ENOMEM;
-> -		goto error;
-> +		goto err_free_policy;
->  	}
+>  /*
+> diff --git a/kernel/events/core.c b/kernel/events/core.c
+> index bcb09e011e9e..7ec8ec6ba7ef 100644
+> --- a/kernel/events/core.c
+> +++ b/kernel/events/core.c
+> @@ -4178,6 +4178,8 @@ static void perf_adjust_period(struct perf_event *event, u64 nsec, u64 count, bo
+>  	s64 period, sample_period;
+>  	s64 delta;
 >  
->  	for (i = 0; i < ARRAY_SIZE(amd_pmf_ta_uuid); i++) {
->  		ret = amd_pmf_tee_init(dev, &amd_pmf_ta_uuid[i]);
->  		if (ret)
-> -			return ret;
-> +			goto err_free_prev_data;
+> +	WARN_ON_ONCE(hwc->using_alt_sample_period);
+
+Groan; so that bit keeps flipping in and off, and statistically we'll
+warn, but urgh.
+
+>  	period = perf_calculate_period(event, nsec, count);
 >  
->  		ret = amd_pmf_start_policy_engine(dev);
->  		switch (ret) {
-> @@ -550,27 +550,41 @@ int amd_pmf_init_smart_pc(struct amd_pmf_dev *dev)
->  			status = false;
->  			break;
->  		default:
-> -			goto error;
-> +			ret = -EINVAL;
-> +			amd_pmf_tee_deinit(dev);
-> +			goto err_free_prev_data;
->  		}
+>  	delta = (s64)(period - hwc->sample_period);
+> @@ -9894,6 +9896,7 @@ static int __perf_event_overflow(struct perf_event *event,
+>  				 int throttle, struct perf_sample_data *data,
+>  				 struct pt_regs *regs)
+>  {
+> +	struct hw_perf_event *hwc = &event->hw;
+>  	int events = atomic_read(&event->event_limit);
+>  	int ret = 0;
 >  
->  		if (status)
->  			break;
->  	}
+> @@ -9913,6 +9916,18 @@ static int __perf_event_overflow(struct perf_event *event,
+>  	    !bpf_overflow_handler(event, data, regs))
+>  		goto out;
 >  
-> -	if (!status && !pb_side_load)
-> -		goto error;
-> +	if (!status && !pb_side_load) {
-> +		ret = -EINVAL;
-> +		goto err_free_prev_data;
+> +	/*
+> +	 * Swap the sample period to the alternative period
+> +	 */
+> +	if (event->attr.alt_sample_period) {
+> +		bool using_alt = hwc->using_alt_sample_period;
+> +		u64 sample_period = (using_alt ? event->attr.sample_period
+> +					       : event->attr.alt_sample_period);
+> +
+> +		hwc->sample_period = sample_period;
+> +		hwc->using_alt_sample_period = !using_alt;
 > +	}
+> +
+>  	/*
+>  	 * XXX event_limit might not quite work as expected on inherited
+>  	 * events
+> @@ -12335,9 +12350,19 @@ perf_event_alloc(struct perf_event_attr *attr, int cpu,
+>  	if (attr->freq && attr->sample_freq)
+>  		hwc->sample_period = 1;
+>  	hwc->last_period = hwc->sample_period;
+> -
+>  	local64_set(&hwc->period_left, hwc->sample_period);
 >  
->  	if (pb_side_load)
->  		amd_pmf_open_pb(dev, dev->dbgfs_dir);
+> +	/*
+> +	 * alt_sample_period cannot be used with freq
+> +	 */
+> +	if (attr->freq && attr->alt_sample_period)
+> +		goto err_ns;
+
+How can this happen? This case has already been filtered in
+perf_event_open() below, no?
+
+Also, this doesn't apply to tip/perf/core, someone went and changed
+things...
+
+> +
+> +	if (attr->alt_sample_period) {
+> +		hwc->sample_period = attr->alt_sample_period;
+> +		hwc->using_alt_sample_period = true;
+> +	}
+> +
+>  	/*
+>  	 * We do not support PERF_SAMPLE_READ on inherited events unless
+>  	 * PERF_SAMPLE_TID is also selected, which allows inherited events to
+> @@ -12807,9 +12832,21 @@ SYSCALL_DEFINE5(perf_event_open,
+>  	if (attr.freq) {
+>  		if (attr.sample_freq > sysctl_perf_event_sample_rate)
+>  			return -EINVAL;
+> +		if (attr.alt_sample_period)
+> +			return -EINVAL;
+>  	} else {
+>  		if (attr.sample_period & (1ULL << 63))
+>  			return -EINVAL;
+> +		if (attr.alt_sample_period) {
+> +			if (!attr.sample_period)
+> +				return -EINVAL;
+> +			if (attr.alt_sample_period & (1ULL << 63))
+> +				return -EINVAL;
+> +			if (attr.alt_sample_period > attr.sample_period)
+> +				return -EINVAL;
+> +			if (attr.alt_sample_period == attr.sample_period)
+> +				attr.alt_sample_period = 0;
+> +		}
+>  	}
 >  
->  	ret = amd_pmf_register_input_device(dev);
->  	if (ret)
-> -		goto error;
-> +		goto err_pmf_remove_pb;
->  
->  	return 0;
->  
-> -error:
-> -	amd_pmf_deinit_smart_pc(dev);
-> +err_pmf_remove_pb:
-> +	if (pb_side_load && dev->esbin)
-> +		amd_pmf_remove_pb(dev);
-> +	amd_pmf_tee_deinit(dev);
-> +err_free_prev_data:
-> +	kfree(dev->prev_data);
-> +err_free_policy:
-> +	kfree(dev->policy_buf);
-> +err_free_dram_buf:
-> +	kfree(dev->buf);
-> +err_cancel_work:
-> +	cancel_delayed_work_sync(&dev->pb_work);
->  
->  	return ret;
->  }
+>  	/* Only privileged users can get physical addresses */
+> -- 
+> 2.43.0
 > 
-
--- 
- i.
-
 
