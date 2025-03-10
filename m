@@ -1,113 +1,95 @@
-Return-Path: <linux-kernel+bounces-554359-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-554358-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D632A596BF
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 14:52:12 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F669A596BC
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 14:51:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 50C883A48F0
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 13:51:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B41B716866F
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 13:51:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B91222AE6D;
-	Mon, 10 Mar 2025 13:52:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69A5E22AE52;
+	Mon, 10 Mar 2025 13:51:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="XM7YoThf"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="n4P6hSR1"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCDF022A4D1;
-	Mon, 10 Mar 2025 13:52:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3D2E22A804;
+	Mon, 10 Mar 2025 13:51:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741614725; cv=none; b=a7OcjekyQWZ2mY6EwuIEeSyFAahorQoLC2X3pK7QaltuvWXBVxpjLd+PGFwpkdoAj31qT3c1q42ecutal3+ImR/UyVtk/bSAS22FZYqdbpw6Tl/0trtqgHQELDqxySfCILO9vwCS11gkbGa7CU79ZI77xvLqECvEUMDP13Dot0E=
+	t=1741614707; cv=none; b=qQXf5dRklX7e/c4R95SFchwhqWCrqsx7PBMpZfl0xfHZhu85hQ8G/tnoygaONcv/p+sgdk30W5DNd/L/Hd7qnXRyMDT31kFpYBohMLQdN+8XmC6IGSYEpjYzpzcEYtPjuxpZ4p5LT/WW5CPJX9vENcIcybbJO4nk/7nzQAJ53So=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741614725; c=relaxed/simple;
-	bh=1TJ53lJRDTMxywhBHJv4vf86bvPwz8wl/ZKsNYS3z7k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qIi78SUmG66Gj3jdsGwtv3iZHe+uThX8AidFEOacyVx7wMQ+bRFdx9t+WGGWA6KuYB91JXTWPmoY2jY3r1E78nMOy4C8jFHi+dsnEodvN+biYsaUjbpuOxxD12g1MS5tNvJskMRlQ22IDHqf56FDt60o7Q9qnhrqNFX64nJNb60=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=XM7YoThf; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 8825940E0219;
-	Mon, 10 Mar 2025 13:52:01 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id JIZtN1r01_MQ; Mon, 10 Mar 2025 13:51:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1741614717; bh=PJPXCJ4ZG3jPjneSuXnZz7yG6y2P2lIKAdq82tpdR6s=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=XM7YoThfORbKlY2PATOa4swN8Bj5Llw+HngLxblCZL7MDiXzNEHo5Gargue+3cjRP
-	 u36WP8heRdLecPrBFVtoacQRwwCDK38c0JumZDMMc0xXHDA/K5lrNtjt6gIaQpc6ri
-	 zCC46/S7Yuc0p1VIcJJWkrVATUq8CYkdaHrXBcRikJ5VJ1Tbcxlr2P4PrH45tXPtsI
-	 BGLOuz0//iC5OLKyz4nd9wFSzOS3f8ycAs2WpZYVBYj9CWua7viXf2XHM/yJlThQ+Y
-	 yYmosbLc3zcDid+EZpKBbKCE/xl5J81vx7AgAkzlIugQihNUNI4CVKkqoU45PqHUYw
-	 nXIvXVOxIvLEqwBUjLTcR6xV1q8nfrORBfI/Xu5s/M2T8N1rKnqOPwY+AMwGkIdp91
-	 XKNWTdysxRpM1JVMdgaNK2MhGBEWmia/7yw6tU8jpHQUsCzEz9krfBdM52bWP8Yk0H
-	 6hLWHzoY0kC4k9IZnA7GrsGJCOyzTTvY/0N3UyOTAqzolD27qD19nQf2iUiLrX6jDh
-	 Nsk0RVeCeyqRYDMC1gq9UM1meDsL/MW1lisnmdj2ATdolhEtLGpF6t4d0WPjoYTA3P
-	 NsKsDfY8WqSC9nM9esQ13Dlv3OIRvBUeM42aStNB6BFTw1YUgmYxgFs4QK5eNcCGXO
-	 qkN8EgTxrQO7LsM7vmICcwEQ=
-Received: from zn.tnic (pd95303ce.dip0.t-ipconnect.de [217.83.3.206])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 97EF440E0214;
-	Mon, 10 Mar 2025 13:51:39 +0000 (UTC)
-Date: Mon, 10 Mar 2025 14:51:33 +0100
-From: Borislav Petkov <bp@alien8.de>
-To: Tom Lendacky <thomas.lendacky@amd.com>
-Cc: Stefano Garzarella <sgarzare@redhat.com>,
-	Jarkko Sakkinen <jarkko@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Claudio Carvalho <cclaudio@linux.ibm.com>,
-	Peter Huewe <peterhuewe@gmx.de>, x86@kernel.org,
-	Dov Murik <dovmurik@linux.ibm.com>, linux-coco@lists.linux.dev,
-	Dionna Glaze <dionnaglaze@google.com>,
-	James Bottomley <James.Bottomley@hansenpartnership.com>,
-	Ingo Molnar <mingo@redhat.com>, Joerg Roedel <jroedel@suse.de>,
-	Jason Gunthorpe <jgg@ziepe.ca>, linux-integrity@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	"H. Peter Anvin" <hpa@zytor.com>
-Subject: Re: [RFC PATCH v2 2/6] x86/sev: add SVSM vTPM probe/send_command
- functions
-Message-ID: <20250310135133.GIZ87uZZNhNSkmxvg1@fat_crate.local>
-References: <20250228170720.144739-1-sgarzare@redhat.com>
- <20250228170720.144739-3-sgarzare@redhat.com>
- <20250310113006.GFZ87NPu-LgFVVtsEG@fat_crate.local>
- <mjftygohmhgs6daqvgkh2jbfuqjquchcaovcjtnzyhilnt5ww5@l3fr7phqh2ps>
- <3dd645f2-476a-d0d5-c8c1-c87307f2d756@amd.com>
+	s=arc-20240116; t=1741614707; c=relaxed/simple;
+	bh=a+lFZ0YwCbTM+uSgXmIyMxhwWDrnxR3g5GHAb9Vg+38=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=hKKIod9W3aMy28AkiGn47VukVECQvtPOr5WKRxbuvXXydWbuO3H2sjhPGGN3qaHhRBfCQ6nOHH9qKh/8R2dzoMxVi/RxMkzlEVhGMgES6T1s+kmm9r4Zk+dnYWFcsK+C+Ux3eD8ZBAHycMqZhor5/0w9g6zkAR8eQkyzSQZkkVM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=n4P6hSR1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 642E4C4CEE5;
+	Mon, 10 Mar 2025 13:51:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741614707;
+	bh=a+lFZ0YwCbTM+uSgXmIyMxhwWDrnxR3g5GHAb9Vg+38=;
+	h=From:To:Cc:Subject:Date:From;
+	b=n4P6hSR1A5/XvBEponlCkImC7nEEJ7usnFTBuvewSUI+xmkLJkU53hL7wgBMm1W1B
+	 5mXea52sCjuhcTqioS093M5fJncP1nxJG75VlUzEtYuXmcbbS2F1EMeIE7u85DZu0R
+	 /PsV1vw5zr5o7D2Vg3DB7dcWopjjWRbuhlx1GiuBBSO177txLR/d0Sfv4iXaCz7N1x
+	 0QqxXlzHKochi7eGvqsfUEUqyeLllastqzxlGfu+WUETaJPtx31RtWHpI4PT50aAwK
+	 kRmGg/b8GPsNhTae9aTbJU84sMC1GBtDlxatdnQ6yC57A58ZI/2yfA1CzGSJiD7BML
+	 8X/lYArwEyymQ==
+From: Arnd Bergmann <arnd@kernel.org>
+To: SeongJae Park <sj@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>
+Cc: Arnd Bergmann <arnd@arndb.de>,
+	Hyeongtak Ji <hyeongtak.ji@sk.com>,
+	Honggyu Kim <honggyu.kim@sk.com>,
+	Usama Arif <usamaarif642@gmail.com>,
+	damon@lists.linux.dev,
+	linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] mm/damon/sysfs-schemes: avoid Wformat-security warning
+Date: Mon, 10 Mar 2025 14:51:37 +0100
+Message-Id: <20250310135142.4176976-1-arnd@kernel.org>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <3dd645f2-476a-d0d5-c8c1-c87307f2d756@amd.com>
+Content-Transfer-Encoding: 8bit
 
-On Mon, Mar 10, 2025 at 08:27:37AM -0500, Tom Lendacky wrote:
-> I don't think anything needs to be checked or printed.
+From: Arnd Bergmann <arnd@arndb.de>
 
-Yes.
+This warning is for potentially user-defined format strings:
 
-> If you want to do anything, just issue a pr_info() with the features value
-> (and maybe the platform_cmds value, too). Issuing a pr_warn() here would be
-> like issuing a pr_warn() for a new CPUID value that the current kernel
-> doesn't know about.
+mm/damon/sysfs-schemes.c:1664:4: error: format string is not a string literal (potentially insecure) [-Werror,-Wformat-security]
+ 1664 |                         name);
 
-I still don't get the need to print anything. Why?
+Change this to use "%s" as the format and the name as the argument.
 
+Fixes: 92bc039dd72e ("mm/damon/sysfs-schemes: let damon_sysfs_scheme_set_filters() be used for different named directories")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+ mm/damon/sysfs-schemes.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/mm/damon/sysfs-schemes.c b/mm/damon/sysfs-schemes.c
+index 50e6907515e6..23ac98dd6451 100644
+--- a/mm/damon/sysfs-schemes.c
++++ b/mm/damon/sysfs-schemes.c
+@@ -1661,7 +1661,7 @@ static int damon_sysfs_scheme_set_filters(struct damon_sysfs_scheme *scheme,
+ 		return -ENOMEM;
+ 	err = kobject_init_and_add(&filters->kobj,
+ 			&damon_sysfs_scheme_filters_ktype, &scheme->kobj,
+-			name);
++			"%s", name);
+ 	if (err)
+ 		kobject_put(&filters->kobj);
+ 	else
 -- 
-Regards/Gruss,
-    Boris.
+2.39.5
 
-https://people.kernel.org/tglx/notes-about-netiquette
 
