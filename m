@@ -1,89 +1,94 @@
-Return-Path: <linux-kernel+bounces-553543-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-553544-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10DD6A58B33
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 05:24:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id B55AAA58B3A
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 05:34:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id ADCDD7A4AFD
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 04:23:30 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 103B07A4C66
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 04:33:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C1C21C1F1F;
-	Mon, 10 Mar 2025 04:24:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88FD41B6CE0;
+	Mon, 10 Mar 2025 04:34:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ij7J4rCo"
-Received: from mail-qk1-f176.google.com (mail-qk1-f176.google.com [209.85.222.176])
+	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="2UFtLig+"
+Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E29735976;
-	Mon, 10 Mar 2025 04:24:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F0F71386C9
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 04:34:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741580661; cv=none; b=PWNvHRDPDYb0xwfrIyjM/6qegoujb2dbOA8Q9vq+dsgskUSGttduojyOIG19ufNiMn9v+TNE53KrfHaV3B/7SMl5BmhHruXiJZV7fNBx4vP9Dd9N+AuLCLVTZNh9EGBGc3Dsp+n8B1z0N0Q/K2f4hHQApHv70gXdowLhz+kPjrk=
+	t=1741581246; cv=none; b=qBj+g7T+UHUI0fz4r8UfdgBs/1J2SqagJOIGzRJlmZjP5o+IDqvDY5OQ4wvHzyOWd5ff8eu/KVlA7qtGblO292bSoK3OT7gr5WBdts7KT2rxc6YsRsALXnpKfy+5PMGu4MsF6ZaIkn7hna/vFs4zve3bioU+xw9yhBV19QZKHws=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741580661; c=relaxed/simple;
-	bh=jpU86pkBhtmDVDFVaA7jCQ8Jvz/mFXJ/l+BRat8AQ4I=;
+	s=arc-20240116; t=1741581246; c=relaxed/simple;
+	bh=TWCm+CRWlgu32Y0M73b1SpXa9LjDCzu9iKJJhuYonhs=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=g4CyyOE2XRSkWKskaOn3VgYLKSrvMhb4MR5swv3BffSYh98zRAIyc+hQdoEf4FesvgMJla/kfCguNTC0rnCUfyD3qhcph7upSY0KhNDiFni43wJJA4iTrlppzobZ50g0ekT4ix4IwjU98yupc0UVBapZseRbXJ0Z7bimwvlCl/I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ij7J4rCo; arc=none smtp.client-ip=209.85.222.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f176.google.com with SMTP id af79cd13be357-7c554d7dc2aso71611785a.3;
-        Sun, 09 Mar 2025 21:24:20 -0700 (PDT)
+	 Content-Type:Content-Disposition:In-Reply-To; b=kZgqvPYAEMbUlojFXECHHfwSBmWXfeijOEafnoIjYa7jeR+IbDV2LI4a/gO6xwNY6fNy46EpcdJdLGCZOv/rAfjScMbH/SDXgTEYpcgCUy221fTQcAhycS71FVJfGYOtjbKMH+V7Vo+P1HjSesgpndCt/MAznwcY4rgc4iJA29w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=2UFtLig+; arc=none smtp.client-ip=209.85.214.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
+Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-224019ad9edso85840565ad.1
+        for <linux-kernel@vger.kernel.org>; Sun, 09 Mar 2025 21:34:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741580659; x=1742185459; darn=vger.kernel.org;
+        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1741581245; x=1742186045; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZLR4GYl4C3Y+wOWYOwtCtosLZeJRF1LxY+mVHw8wlLg=;
-        b=Ij7J4rCocSShFSWCVGSPhGy/QuSrHidBaI+M/UKAm4b1z5zU4t4OYHFGWfVlYJCev4
-         g+GBhj7wJCfntxmYVQKYLh/eDrh78fmzthOj0WBDHYiRtfDeUIuuZ9sXXcxSH1gItKn3
-         AHiq2XjRYizlVq8uAZWAVzqgl378dplnBSK9KmM4tZg5zqa4fg/OwGzRjtPde2xIvG7n
-         DFIkcaazUZKs17wW4hfW1bYGgpFI4GGwNGPaB2yzc/vI5Lmv5xl5c+aahikYyTRd6vl9
-         uvvENVBVbCkpEqr7Cz3rPFBw4iO4zZfNgCTfcRIjxLfh+p7uKYKnSINCaMfZMmQLul+0
-         0HbQ==
+        bh=13ChRW79RLZKXPIzEEQT8n5qa9QFsChJtd4X7Rr3YO0=;
+        b=2UFtLig+dSFHTn+YHlObETlejP901+y/OCOfhbTZhPoYq41cqrXHa958t1d1fMw+5L
+         G4OTY/JoMR0fv0VjL/94DLUqnNbglmyGELsFWqqHutZlj3s6gYtoV9wxhyl5NCoxzqKz
+         t1PRkHtd5H4NYL9naS4RKyTvd0laTp/oPzW0cLqDTSS6NY1WGUkMcrY5ITcUTU3QPSgW
+         NKDim4ulDuSb3JntC7qD6V+4fuL/TFGx34gxZyEUPrGeMh9jSZzLlw3TQBqn8lutXkDb
+         W0yXchjl27LRjtd0DMrgm19OFPzxIZNIoUxLG7xOcCbbo1BV4r1rKkUBNt3y8YNawscY
+         SILg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741580659; x=1742185459;
+        d=1e100.net; s=20230601; t=1741581245; x=1742186045;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=ZLR4GYl4C3Y+wOWYOwtCtosLZeJRF1LxY+mVHw8wlLg=;
-        b=nvpiR2S30+4+EHKh78qNoDPKBxG0j+zOyNMzZg7oou8i6pg0l/Wj7QBvjM/JKU+0KS
-         FrvASHsP9NAsnSGHCa2HXdUw2+KzeDs8GUq3RVnpBgApibAPUoo+J0SRR6jW14mUakIE
-         fIDKatf7EYRgbSA0aVkY6QBvh3kgkh+0ARLvBMbN+RXfdtOoKfmu6NLxNnp0vedNXuD5
-         LzWCbiueVyuJhKb/AoI3w/J7yQuPXfGJtH9gCP/orWX9YO96rVpIgYCvtzN0EYpAM2r9
-         YAL3O4Kn9AeyxjSa4JZj0wVbvv3Xw6AXR02sxHrQRTuPb6L/6baIiHpsRyDxX+o0WGqd
-         Jo1g==
-X-Forwarded-Encrypted: i=1; AJvYcCW5CR9urMXOpkNh9k/LjgN5GVEEr2yux+86ssjC4eCdUD3uc7pB3e9rkfY2P7AEDFchG3xEBmHa@vger.kernel.org, AJvYcCWBdAXuucwt9nhbcnhZV+N+lqFwXJfdTESk+zOh+734g36jB5P4obI/lbruCkcScBQvJbrFJLaTvKtXXGfM@vger.kernel.org, AJvYcCXaMwni7Cg9c0SVqkBf/EmW07q7qRI7f7nFWupytgcajjQgTZ7lOMJzPUt70oXYdpr4ZY4vr+3NdFuN@vger.kernel.org
-X-Gm-Message-State: AOJu0YwMizjWXb/Ow1nARLFZ4SXP3T7YnJz19/OsP2SZPNDoqORPF/R5
-	+vXaBVuSqqNs8/AvcUoU6g6QqEM1a4JRInMh62gc8I9oAVDeEZ4k
-X-Gm-Gg: ASbGnctoa8HzdQ9lYw+XoShkGZfznObMRfvp74Op9j3I8Iui2hxmzHwbP4/Lx8D86Kb
-	6Ytc/WJEdyfT3bOgOJzobuG9vVbUAJ2zbLUv2mOAj8NCpwxrgIUrSaJNMdcWJ9IDGpTqUhjtRm6
-	mA3nLX1xWUyWMB6wW6BjF0blN5QelB4O2TCCDrkiQHP9LB9s4SzftoqG0V2aUcv8K0Ct55/SGIS
-	WV9GWL4JfocmcJjavNmJRgiEjfj5x5YJs0mYYnCAOoTpiwsoPcTa0olSl6reZGL42j5cBcQvYDF
-	MeYhJJJYAz0H48Ow3524
-X-Google-Smtp-Source: AGHT+IFsDYZoGNLIvaPkQwDrN6zTxprNZQsviyohgK7rizxV8r0HlGSZdidW+iOJcbIbr0KSYUqg0w==
-X-Received: by 2002:a05:620a:1b85:b0:7c5:4b24:468d with SMTP id af79cd13be357-7c54b244796mr538035285a.2.1741580659215;
-        Sun, 09 Mar 2025 21:24:19 -0700 (PDT)
-Received: from localhost ([2001:da8:7001:11::cb])
-        by smtp.gmail.com with UTF8SMTPSA id af79cd13be357-7c5550be065sm107353385a.63.2025.03.09.21.24.18
+        bh=13ChRW79RLZKXPIzEEQT8n5qa9QFsChJtd4X7Rr3YO0=;
+        b=a9fjAbnpV+nKFOwTbx4pbgsA60KhxGkIDtb7ihHHaf7YdW5mXiFgJ/f8bi0LQlKPYL
+         b956/HZ5tf7L/cldX9Dk9G4BEnxs+5yXbjmDrO2HNHvDEmgC3XKuxY3nMttSP91ZT9u2
+         NGLExYweiPg3J32Kh6Ct2Qsl06JMbVbAvjC4GHz9pOIdWeWfn8MDcNEWRf544WFWAxb+
+         rjmx6RmkEFDhymGr3qalXIrvX8Tb0gzszunesiAOwD3g4TI+hHVDWNxwcDd531xngJEp
+         0wIBRUwYlMsHl0fidG/A1+1ZdWwvIk/fxxWGByr9Z4cr6K3gh23DBc9ygop9ZsIitt4F
+         3gKQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVHf1YEPZMryHT+U/89WaJvELGq1qJsQKEJkYM59/R/ROISLX3WsiDahh3PT7TRquvy2ZyEuUjgXrAU5ek=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy0MsspN6bafnWbCk8bGAtns16NWDxti+jZfce1l7VRKmriLt99
+	/k2po1m/tgM3RR7QBrQjrTmKBpFhmwPIIlWPv/TEkEkD8kO7DFATRANFvQoXz14=
+X-Gm-Gg: ASbGnctuMJm/Kec01xB0Tb6dbejScZOmYe9Cuq9UyXj7nPxsOvG7kZf9kxHCTfEUa9M
+	44Geb7FsJiAu1zcCMnd2+SxPN6MXCcmY5/exfZVayHjsIxhJsyUZZVg0QA61Oi70hVg9qsxKRNb
+	DIcux2LfXZ6k4ZJ7206GedYOPBGcG24JgFXpfkXc0BLuOTbptidNcNZVaeT58leRTreqbSCBBV+
+	KC6y3v/koHWxcfzPh17MszS8hkNvUZ9jBXY/a+6A19lY2ymBXVBSU/vA4hx8ofLQrbX2eleHNT1
+	Y78Ho/LbVm6wP+larFQJH1ro2Q+4hzak+RbBuqU=
+X-Google-Smtp-Source: AGHT+IG23e6e0NfcQWHHui1UgTUeATKpxeYS9TWIFzolvcIGQw0afq6BAO5/9cuUmkmceElelfdLBg==
+X-Received: by 2002:a17:902:ea0c:b0:21f:b483:2ad5 with SMTP id d9443c01a7336-2242888b35dmr161699375ad.20.1741581244773;
+        Sun, 09 Mar 2025 21:34:04 -0700 (PDT)
+Received: from ghost ([2601:647:6700:64d0:677:c5f4:a978:3253])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22410a7f999sm67389125ad.141.2025.03.09.21.34.02
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 09 Mar 2025 21:24:18 -0700 (PDT)
-Date: Mon, 10 Mar 2025 12:24:12 +0800
-From: Inochi Amaoto <inochiama@gmail.com>
-To: Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Chen Wang <unicorn_wang@outlook.com>, Richard Cochran <richardcochran@gmail.com>, 
-	Inochi Amaoto <inochiama@gmail.com>
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
-	sophgo@lists.linux.dev, linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
-	Yixun Lan <dlan@gentoo.org>, Longbin Li <looong.bin@gmail.com>
-Subject: Re: [PATCH v3 0/2] clk: sophgo: add SG2044 clock controller support
-Message-ID: <q5776ely5iwzv7uqz52fbzqybujnjfmhe7ujdj6kwqdj5wgaqe@pkkyuptjkmln>
-References: <20250226232320.93791-1-inochiama@gmail.com>
- <174157953239.287836.12496608762621997429.b4-ty@gmail.com>
+        Sun, 09 Mar 2025 21:34:03 -0700 (PDT)
+Date: Sun, 9 Mar 2025 21:34:00 -0700
+From: Charlie Jenkins <charlie@rivosinc.com>
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Huacai Chen <chenhuacai@kernel.org>,
+	WANG Xuerui <kernel@xen0n.name>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Andy Lutomirski <luto@kernel.org>,
+	Alexandre Ghiti <alexghiti@rivosinc.com>,
+	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
+	loongarch@lists.linux.dev
+Subject: Re: [PATCH v5 4/4] entry: Inline syscall_exit_to_user_mode()
+Message-ID: <Z85ruFUoBQM60Vd8@ghost>
+References: <20250305-riscv_optimize_entry-v5-0-6507b5dff3ce@rivosinc.com>
+ <20250305-riscv_optimize_entry-v5-4-6507b5dff3ce@rivosinc.com>
+ <87senn3dh1.ffs@tglx>
+ <Z8zb-L8bFMh_YHxO@ghost>
+ <87jz8y3953.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -92,34 +97,24 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <174157953239.287836.12496608762621997429.b4-ty@gmail.com>
+In-Reply-To: <87jz8y3953.ffs@tglx>
 
-On Mon, Mar 10, 2025 at 12:08:32PM +0800, Inochi Amaoto wrote:
-> On Thu, 27 Feb 2025 07:23:17 +0800, Inochi Amaoto wrote:
-> > The clock controller of SG2044 provides multiple clocks for various
-> > IPs on the SoC, including PLL, mux, div and gates. As the PLL and
-> > div have obvious changed and do not fit the framework of SG2042,
-> > a new implement is provided to handle these.
-> > 
-> > Changed from v2:
-> > 1. Applied Chen Wang' tag
-> > 2. patch 2: fix author mail infomation
-> > 
-> > [...]
+On Sun, Mar 09, 2025 at 09:23:20AM +0100, Thomas Gleixner wrote:
+> On Sat, Mar 08 2025 at 16:08, Charlie Jenkins wrote:
+> > On Sat, Mar 08, 2025 at 01:37:30PM +0100, Thomas Gleixner wrote:
+> >> On Wed, Mar 05 2025 at 16:43, Charlie Jenkins wrote:
+> >> > Architectures using the generic entry code can be optimized by having
+> >> > syscall_exit_to_user_mode inlined.
+> >> 
+> >> That's a pretty handwavy claim. What's the actual benefit in numbers?
+> >
+> > I put the numbers in the cover letter! Here is the data I gathered:
 > 
-> Applied to for-next, thanks!
-> 
-> [1/2] dt-bindings: clock: sophgo: add clock controller for SG2044
->       https://github.com/sophgo/linux/commit/0332ae22ce09ce64f5e54fc2a24ed22073dbeb9d
-> [2/2] clk: sophgo: Add clock controller support for SG2044 SoC
->       https://github.com/sophgo/linux/commit/fcee6f2173e7f7fb39f35899faea282fd9b5ea30
-> 
-> Thanks,
-> Inochi
-> 
+> They should be in the change log as the cover letter is not part of what
+> ends up in git.
 
-Please ignore this mail, this point to a wrong url.
+Yes good point. I will add this data here in the next version of the patch.
 
-Regards,
-Inochi
+- Charlie
+
 
