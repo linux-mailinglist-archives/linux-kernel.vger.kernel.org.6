@@ -1,120 +1,121 @@
-Return-Path: <linux-kernel+bounces-553777-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-553798-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B0A16A58EA9
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 09:55:52 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BA19FA58EEE
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 10:05:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 53CB37A295C
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 08:54:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7ACCC3A8B75
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 09:05:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35F46224245;
-	Mon, 10 Mar 2025 08:55:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="qY1eII80"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 558A82248BB;
+	Mon, 10 Mar 2025 09:05:07 +0000 (UTC)
+Received: from air.basealt.ru (air.basealt.ru [193.43.8.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBCB9380;
-	Mon, 10 Mar 2025 08:55:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B0412236F4
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 09:05:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.43.8.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741596944; cv=none; b=COq0PKzoCnwBThABMElXfBbKLttnp9ca6tUmNTb0rCfLmolN0QhhcRsXliZS8WHUXtF+PY14fYQlbHQUfizXyRfoPyignbzmJzVkbMGl5usCrEs6HDzRY6VaKL7XX5Nzlu0ZvmfJsO0hSZuGykQovhNcF+MZZhwofix0LzU2eow=
+	t=1741597507; cv=none; b=gxxfCC+DPFkqbpggZ4VUJYVcMe03C/FLHfjB7SqLrWi4fR7oEhvMH33Af4irz5ifLkFIiDUuOQfloWXkK0qQ7pUgTvXO+LrRisfTzr+PwHlrICOtAoecQ6MIg7IPs0uP6fiMvkdtafIpBYwvBwKTs0xCCqhnVqQ6sQPeTD2eYpQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741596944; c=relaxed/simple;
-	bh=yHvsB5ALBqO6HcLi9r38BJv6YSoU1qYhhIzz3JKUdcA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kpseceWbJu62WYZSeEQgkPgZjtKYYA2Dy8Ukat3JahOHQmrH66L9iGyPiZuipYDnr0kkcMQT0RJZpY1HEvevd2xAC1UxrfVSs3lH+OHYZiddRobn/+i7yqEN0duBDpp/BUSr1dTf6G8RwWHtVNXYrKX6NkgszVSJdCni8y0TpmQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=qY1eII80; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=y6ewIZM2dtnWRQcBfslu1okDKdEcc8mCLFTRLy3nMdY=; b=qY1eII80wtVqZhUqGvphOqBc6p
-	/Jc/c2Qop8wc3+/ZOOpcICg5f9hfwLEigNpRZIuPPgKCdXlJpQDdko+7npdFpw195J3r8FNnY+Ige
-	gKdoDuBlowUr+76i3AxH3r3JCj9+5YznP6kmMGqzr7VBY3MMvByJZytnp3FY9G3MPuwOUj8g/vk+K
-	b6pkv+WIYphhe8aR9OKtrofYhshhS/XzIv7YqeES9uv7RgZoQf2zeLgDao+NBHsSQPzfb2Xtj5RvX
-	xnFXcfSi8zwQy0SC6gyBU2+p25yfevV+tZSJsOrmUvdAD05WOkioZg6rLZfhPcTCYce5tp4GUojBP
-	vn+QbTUQ==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1trYvA-00000002l58-1k5G;
-	Mon, 10 Mar 2025 08:55:39 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id DDB143006C0; Mon, 10 Mar 2025 09:55:35 +0100 (CET)
-Date: Mon, 10 Mar 2025 09:55:35 +0100
-From: Peter Zijlstra <peterz@infradead.org>
-To: linux-kernel@vger.kernel.org, ojeda@kernel.org
-Cc: linux-tip-commits@vger.kernel.org,
-	Scott Constable <scott.d.constable@intel.com>,
-	Ingo Molnar <mingo@kernel.org>, Kees Cook <kees@kernel.org>,
-	x86@kernel.org
-Subject: Re: [tip: x86/core] x86/ibt: Implement FineIBT-BHI mitigation
-Message-ID: <20250310085535.GQ31462@noisy.programming.kicks-ass.net>
-References: <20250224124200.820402212@infradead.org>
- <174057447519.10177.9447726208823079202.tip-bot2@tip-bot2>
- <20250226195308.GA29387@noisy.programming.kicks-ass.net>
+	s=arc-20240116; t=1741597507; c=relaxed/simple;
+	bh=w3BR6QPDy9hnL6s+qjUkpTKXrUYFLvXNgLVLn6KL2M4=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=tIIv4xuLZsYmThp/o7ymGUzuWwBRpMYEhsrV/7EN6MwFz1m0AuRZzFX4SZd1wdJKf2xxn+wCVxEqHkt38yL5GT+4MG1OvHzjXjG0iHBPKINOBgmxsmzrxgft32xAkY5g3a1xzr8eTxipK/sFP3SNh3OAYVCFfDZXAlO9fVha8MM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=altlinux.org; spf=pass smtp.mailfrom=altlinux.org; arc=none smtp.client-ip=193.43.8.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=altlinux.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=altlinux.org
+Received: from altlinux.malta.altlinux.ru (obninsk.basealt.ru [217.15.195.17])
+	(Authenticated sender: kovalevvv)
+	by air.basealt.ru (Postfix) with ESMTPSA id C5D8123374;
+	Mon, 10 Mar 2025 11:56:02 +0300 (MSK)
+From: Vasiliy Kovalev <kovalev@altlinux.org>
+To: Dave Kleikamp <shaggy@kernel.org>,
+	Edward Adam Davis <eadavis@qq.com>,
+	Rand Deeb <rand.sec96@gmail.com>,
+	jfs-discussion@lists.sourceforge.net,
+	linux-kernel@vger.kernel.org
+Cc: lvc-project@linuxtesting.org,
+	kovalev@altlinux.org
+Subject: [PATCH] jfs: validate AG parameters in dbMount() to prevent crashes
+Date: Mon, 10 Mar 2025 11:56:02 +0300
+Message-Id: <20250310085602.953206-1-kovalev@altlinux.org>
+X-Mailer: git-send-email 2.33.8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250226195308.GA29387@noisy.programming.kicks-ass.net>
+Content-Transfer-Encoding: 8bit
 
+Validate db_agheight, db_agwidth, and db_agstart in dbMount to catch
+corrupted metadata early and avoid undefined behavior in dbAllocAG.
+Limits are derived from L2LPERCTL, LPERCTL/MAXAG, and CTLTREESIZE:
 
-Ping -- anything I can do the help?
+- agheight: 0 to L2LPERCTL/2 (0 to 5) ensures shift
+  (L2LPERCTL - 2*agheight) >= 0.
+- agwidth: 1 to min(LPERCTL/MAXAG, 2^(L2LPERCTL - 2*agheight))
+  ensures agperlev >= 1.
+  - Ranges: 1-8 (agheight 0-3), 1-4 (agheight 4), 1 (agheight 5).
+  - LPERCTL/MAXAG = 1024/128 = 8 limits leaves per AG;
+    2^(10 - 2*agheight) prevents division to 0.
+- agstart: 0 to CTLTREESIZE-1 - agwidth*(MAXAG-1) keeps ti within
+  stree (size 1365).
+  - Ranges: 0-1237 (agwidth 1), 0-348 (agwidth 8).
 
-On Wed, Feb 26, 2025 at 08:53:08PM +0100, Peter Zijlstra wrote:
-> On Wed, Feb 26, 2025 at 12:54:35PM -0000, tip-bot2 for Peter Zijlstra wrote:
-> 
-> > diff --git a/Makefile b/Makefile
-> > index 96407c1..f19431f 100644
-> > --- a/Makefile
-> > +++ b/Makefile
-> > @@ -1014,6 +1014,9 @@ CC_FLAGS_CFI	:= -fsanitize=kcfi
-> >  ifdef CONFIG_CFI_ICALL_NORMALIZE_INTEGERS
-> >  	CC_FLAGS_CFI	+= -fsanitize-cfi-icall-experimental-normalize-integers
-> >  endif
-> > +ifdef CONFIG_FINEIBT_BHI
-> > +	CC_FLAGS_CFI	+= -fsanitize-kcfi-arity
-> > +endif
-> >  ifdef CONFIG_RUST
-> >  	# Always pass -Zsanitizer-cfi-normalize-integers as CONFIG_RUST selects
-> >  	# CONFIG_CFI_ICALL_NORMALIZE_INTEGERS.
-> > diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
-> > index c4175f4..5c27726 100644
-> > --- a/arch/x86/Kconfig
-> > +++ b/arch/x86/Kconfig
-> > @@ -2473,6 +2473,10 @@ config CC_HAS_RETURN_THUNK
-> >  config CC_HAS_ENTRY_PADDING
-> >  	def_bool $(cc-option,-fpatchable-function-entry=16,16)
-> >  
-> > +config CC_HAS_KCFI_ARITY
-> > +	def_bool $(cc-option,-fsanitize=kcfi -fsanitize-kcfi-arity)
-> > +	depends on CC_IS_CLANG && !RUST
-> > +
-> 
-> Miguel, can we work on fixing that !RUST dep?
-> 
-> >  config FUNCTION_PADDING_CFI
-> >  	int
-> >  	default 59 if FUNCTION_ALIGNMENT_64B
-> > @@ -2498,6 +2502,10 @@ config FINEIBT
-> >  	depends on X86_KERNEL_IBT && CFI_CLANG && MITIGATION_RETPOLINE
-> >  	select CALL_PADDING
-> >  
-> > +config FINEIBT_BHI
-> > +	def_bool y
-> > +	depends on FINEIBT && CC_HAS_KCFI_ARITY
-> > +
-> >  config HAVE_CALL_THUNKS
-> >  	def_bool y
-> >  	depends on CC_HAS_ENTRY_PADDING && MITIGATION_RETHUNK && OBJTOOL
+UBSAN: shift-out-of-bounds in fs/jfs/jfs_dmap.c:1400:9
+shift exponent -335544310 is negative
+CPU: 0 UID: 0 PID: 5822 Comm: syz-executor130 Not tainted 6.14.0-rc5-syzkaller #0
+Hardware name: Google Compute Engine/Google Compute Engine, BIOS Google 02/12/2025
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:94 [inline]
+ dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
+ ubsan_epilogue lib/ubsan.c:231 [inline]
+ __ubsan_handle_shift_out_of_bounds+0x3c8/0x420 lib/ubsan.c:468
+ dbAllocAG+0x1087/0x10b0 fs/jfs/jfs_dmap.c:1400
+ dbDiscardAG+0x352/0xa20 fs/jfs/jfs_dmap.c:1613
+ jfs_ioc_trim+0x45a/0x6b0 fs/jfs/jfs_discard.c:105
+ jfs_ioctl+0x2cd/0x3e0 fs/jfs/ioctl.c:131
+ vfs_ioctl fs/ioctl.c:51 [inline]
+ __do_sys_ioctl fs/ioctl.c:906 [inline]
+ __se_sys_ioctl+0xf5/0x170 fs/ioctl.c:892
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+Found by Linux Verification Center (linuxtesting.org) with Syzkaller.
+
+Cc: stable@vger.kernel.org
+Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
+Reported-by: syzbot+fe8264911355151c487f@syzkaller.appspotmail.com
+Closes: https://syzkaller.appspot.com/bug?extid=fe8264911355151c487f
+Signed-off-by: Vasiliy Kovalev <kovalev@altlinux.org>
+---
+ fs/jfs/jfs_dmap.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
+
+diff --git a/fs/jfs/jfs_dmap.c b/fs/jfs/jfs_dmap.c
+index 26e89d0c69b61..cfb21f15f5971 100644
+--- a/fs/jfs/jfs_dmap.c
++++ b/fs/jfs/jfs_dmap.c
+@@ -194,7 +194,11 @@ int dbMount(struct inode *ipbmap)
+ 	    !bmp->db_numag || (bmp->db_numag > MAXAG) ||
+ 	    (bmp->db_maxag >= MAXAG) || (bmp->db_maxag < 0) ||
+ 	    (bmp->db_agpref >= MAXAG) || (bmp->db_agpref < 0) ||
+-	    !bmp->db_agwidth ||
++	    bmp->db_agheight < 0 || bmp->db_agheight > (L2LPERCTL >> 1) ||
++	    bmp->db_agwidth < 1 || bmp->db_agwidth > (LPERCTL / MAXAG) ||
++	    bmp->db_agwidth > (1 << (L2LPERCTL - (bmp->db_agheight << 1))) ||
++	    bmp->db_agstart < 0 || bmp->db_agstart >
++	    (CTLTREESIZE - 1 - bmp->db_agwidth * (MAXAG - 1)) ||
+ 	    (bmp->db_agl2size > L2MAXL2SIZE - L2MAXAG) ||
+ 	    (bmp->db_agl2size < 0) ||
+ 	    ((bmp->db_mapsize - 1) >> bmp->db_agl2size) > MAXAG) {
+-- 
+2.42.2
+
 
