@@ -1,141 +1,315 @@
-Return-Path: <linux-kernel+bounces-554082-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-554083-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id DBE65A592BA
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 12:27:20 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 86618A592BF
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 12:29:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B1A987A2E37
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 11:26:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 06DB2188BCE5
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 11:29:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DD2522068D;
-	Mon, 10 Mar 2025 11:27:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFECE220681;
+	Mon, 10 Mar 2025 11:29:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KtkeaGIW"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ljis8C/n";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="mTx3nw30"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9501828EA;
-	Mon, 10 Mar 2025 11:27:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F8152B9A7;
+	Mon, 10 Mar 2025 11:29:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741606028; cv=none; b=XjF4QtIr+iWlF0iZYEFPMKZ0POTKcucGk991N3/9WWzpFIfIlyD39g2D7S9ExY5nO3M304JeR8rszX6VwNwQNsJDirKoQqr7OZwZeW23athXV7zYZLfN01Q/4L6kcYJwfATxNxechK14t4gR/YyA9SAUIy/BiMRBG71K3Uy+QEI=
+	t=1741606182; cv=none; b=EZ1s5mnhaf1ZpGPZJedonu0uf8e6ku8N3S6o7ekqRsZfc6b8+lJYBQNNf9lTHYUaynUDdoOjgcOV0/Us39o5aNwJMcj+Cxl9cNtvzmm10/MuLbgSOLoct6VK7DJFdqQiqCXufSJCJybbNn1EKrazhcZSoomAusx1B6MdcL+DFnQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741606028; c=relaxed/simple;
-	bh=/MIwqVro98Ug0D/cRSeHQdD3SSd19RiNWyeW/pyUMfw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=s7UgSO0Nu55GIF910iNmMUqaVAh8aUxvARtqU0ofAHJ14a033kY9s/WnZEpK/E2SEH41Xu9a6uuPbQPBIlyUYHokTRcqMCNPQDFl2B4np2i/19pd82K5E28rBmXfjqA/Dj+b82uPtQJk5U6NZkkT1m+QEnx3YhwWdKfEfZLBPV4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KtkeaGIW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8E8DBC4CEE5;
-	Mon, 10 Mar 2025 11:27:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741606028;
-	bh=/MIwqVro98Ug0D/cRSeHQdD3SSd19RiNWyeW/pyUMfw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=KtkeaGIWdUq0zj1BatSHwEJMFaxUh+Th0MCcd/ugd4zMackZUMfik5WTje6eojSuV
-	 B1RV+m9yUJiH6ey/OBHpH14oiFpJxFs4wNGtDJjz/25nCXIXIqVpBg5J02/fU74xu5
-	 6gvbY+o+ZHEexqZNZmK+yt+Gk6OgEB1/8SQpJwNbCBozfgHhQjLfM+1cC1eosRZWbB
-	 wk0krFs2Uz6/nmwR73Z/vUxBKKBN7g9m970HlguhGNuVpTNWpfau1a9uO/sdz9zydv
-	 +qSs7xxX5x1TTQ7Qz6epGCebv4GrIpX0AGxF6RgqwmNFapb5y2/oRZTKw0CR3ndF/z
-	 9SD+Uw4UEw9+g==
-Date: Mon, 10 Mar 2025 12:27:00 +0100
-From: Christian Brauner <brauner@kernel.org>
-To: Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
-Cc: kuniyu@amazon.com, linux-kernel@vger.kernel.org, 
-	netdev@vger.kernel.org, cgroups@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, 
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
-	Paolo Abeni <pabeni@redhat.com>, Willem de Bruijn <willemb@google.com>, 
-	Leon Romanovsky <leon@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
-	Lennart Poettering <mzxreary@0pointer.de>, Luca Boccassi <bluca@debian.org>, Tejun Heo <tj@kernel.org>, 
-	Johannes Weiner <hannes@cmpxchg.org>, Michal =?utf-8?Q?Koutn=C3=BD?= <mkoutny@suse.com>, 
-	Shuah Khan <shuah@kernel.org>
-Subject: Re: [PATCH net-next 0/4] Add getsockopt(SO_PEERCGROUPID) and fdinfo
- API to retreive socket's peer cgroup id
-Message-ID: <20250310-hinzog-unzweifelhaft-9105447ec12d@brauner>
-References: <20250309132821.103046-1-aleksandr.mikhalitsyn@canonical.com>
- <20250310-ausdruck-virusinfektion-1b0d467b812c@brauner>
+	s=arc-20240116; t=1741606182; c=relaxed/simple;
+	bh=wRskSNsRDgIrGaBA+Nzg57VLuHdelDBgChxRqJHgvcY=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=iXbaxznUaURikD3AedWgTyiA2qrv0bUaGHFG7qbamwZXq0nh24in9xxlkxQF3RGhGCxmrPSvz/r3Nig3AS20YbBXSry/xJC/j8RMpa4Qked5baItNWunKhDegaW/4UhX4a+mzhwCmpGvj1Yc3jUAL3nFGxW3InYp76tDXZIx+yY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ljis8C/n; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=mTx3nw30; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Mon, 10 Mar 2025 11:29:34 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1741606177;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=dW4U/UWste6RQ2XWfnqv+c+jNSCtrde/vkpxM1zTZfw=;
+	b=ljis8C/newo0h1XGmPrubhfkhyK6E15u0EYFYPexur/j8RqmmD+wso/fWcaMXI8JoTjBsF
+	wA8cn021nlf73dFHpqUtDGoOEck3kySBICZkTq4s5FLOg3JSnYmOQx2r7+8cHYCWVKXSHD
+	0R8dg1eR9znOTB3u+Exx+hjwszJ+MSQgae9MvFVjXave7luAoc5/gyXJ8xybxznX1mPW0d
+	Zu5EjDkzERORo6xTocUoavXWPVCEO/bvszRRMJQ4xn11+zbKsiJ8uuN673hYCdK4PDTPce
+	i20dVQroj+Ts6SkETd1hKp5+gTa7Pj/A6K/G5mHc9IS97JOyJpveqJBihyOKag==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1741606177;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=dW4U/UWste6RQ2XWfnqv+c+jNSCtrde/vkpxM1zTZfw=;
+	b=mTx3nw305GA9n+vOwTl90KXhdqlf02dOzui/BCyeo5CieVY5r9KGfvUy8ifc3BbIAPqUnk
+	5DAu5SrOhTKLaABQ==
+From: "tip-bot2 for Thomas Huth" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: x86/headers] x86/headers: Replace __ASSEMBLY__ with
+ __ASSEMBLER__ in UAPI headers
+Cc: Thomas Huth <thuth@redhat.com>, Ingo Molnar <mingo@kernel.org>,
+ "H. Peter Anvin" <hpa@zytor.com>,
+ Linus Torvalds <torvalds@linux-foundation.org>,
+ Kees Cook <keescook@chromium.org>, Brian Gerst <brgerst@gmail.com>,
+ x86@kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20250310104256.123527-1-thuth@redhat.com>
+References: <20250310104256.123527-1-thuth@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250310-ausdruck-virusinfektion-1b0d467b812c@brauner>
+Message-ID: <174160617464.14745.3081665054786018758.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 
-On Mon, Mar 10, 2025 at 09:52:31AM +0100, Christian Brauner wrote:
-> On Sun, Mar 09, 2025 at 02:28:11PM +0100, Alexander Mikhalitsyn wrote:
-> > 1. Add socket cgroup id and socket's peer cgroup id in socket's fdinfo
-> > 2. Add SO_PEERCGROUPID which allows to retrieve socket's peer cgroup id
-> > 3. Add SO_PEERCGROUPID kselftest
-> > 
-> > Generally speaking, this API allows race-free resolution of socket's peer cgroup id.
-> > Currently, to do that SCM_CREDENTIALS/SCM_PIDFD -> pid -> /proc/<pid>/cgroup sequence
-> > is used which is racy.
-> > 
-> > As we don't add any new state to the socket itself there is no potential locking issues
-> > or performance problems. We use already existing sk->sk_cgrp_data.
-> > 
-> > We already have analogical interfaces to retrieve this
-> > information:
-> > - inet_diag: INET_DIAG_CGROUP_ID
-> > - eBPF: bpf_sk_cgroup_id
-> > 
-> > Having getsockopt() interface makes sense for many applications, because using eBPF is
-> > not always an option, while inet_diag has obvious complexety and performance drawbacks
-> > if we only want to get this specific info for one specific socket.
-> > 
-> > Idea comes from UAPI kernel group:
-> > https://uapi-group.org/kernel-features/
-> > 
-> > Huge thanks to Christian Brauner, Lennart Poettering and Luca Boccassi for proposing
-> > and exchanging ideas about this.
-> 
-> Seems fine to me,
-> Reviewed-by: Christian Brauner <brauner@kernel.org>
+The following commit has been merged into the x86/headers branch of tip:
 
-One wider conceptual comment.
+Commit-ID:     e28eecf2602bdce826833ccb9a6b7a6bacafd98b
+Gitweb:        https://git.kernel.org/tip/e28eecf2602bdce826833ccb9a6b7a6bacafd98b
+Author:        Thomas Huth <thuth@redhat.com>
+AuthorDate:    Mon, 10 Mar 2025 11:42:56 +01:00
+Committer:     Ingo Molnar <mingo@kernel.org>
+CommitterDate: Mon, 10 Mar 2025 12:18:42 +01:00
 
-Starting with v6.15 it is possible to retrieve exit information from
-pidfds even after the task has been reaped. So if someone opens a pidfd
-via pidfd_open() and that task gets reaped by the parent it is possible
-to call PIDFD_INFO_EXIT and you can retrieve the exit status and the
-cgroupid of the task that was reaped. That works even after all task
-linkage has been removed from struct pid.
+x86/headers: Replace __ASSEMBLY__ with __ASSEMBLER__ in UAPI headers
 
-The system call api doesn't allow the creation of pidfds for reaped
-processes. It wouldn't be possible as the pid number will have already
-been released.
+__ASSEMBLY__ is only defined by the Makefile of the kernel, so
+this is not really useful for UAPI headers (unless the userspace
+Makefile defines it, too). Let's switch to __ASSEMBLER__ which
+gets set automatically by the compiler when compiling assembly
+code.
 
-Both SO_PEERPIDFD and SO_PASSPIDFD also don't allow the creation of
-pidfds for already reaped peers or senders.
+Signed-off-by: Thomas Huth <thuth@redhat.com>
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Cc: "H. Peter Anvin" <hpa@zytor.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Kees Cook <keescook@chromium.org>
+Cc: Brian Gerst <brgerst@gmail.com>
+Link: https://lore.kernel.org/r/20250310104256.123527-1-thuth@redhat.com
+---
+ arch/x86/include/uapi/asm/bootparam.h  | 4 ++--
+ arch/x86/include/uapi/asm/e820.h       | 4 ++--
+ arch/x86/include/uapi/asm/ldt.h        | 4 ++--
+ arch/x86/include/uapi/asm/msr.h        | 4 ++--
+ arch/x86/include/uapi/asm/ptrace-abi.h | 6 +++---
+ arch/x86/include/uapi/asm/ptrace.h     | 4 ++--
+ arch/x86/include/uapi/asm/setup_data.h | 4 ++--
+ arch/x86/include/uapi/asm/signal.h     | 8 ++++----
+ 8 files changed, 19 insertions(+), 19 deletions(-)
 
-But that doesn't have to be the case since we always have the struct pid
-available. So it's entirely possible to hand out a pidfd to a reaped
-process if it's guaranteed that exit information is available. If it's
-not then this would be a bug.
-
-The trick is that when a struct pid is stashed it needs to also allocate
-a pidfd inode. That could simply be done by a helper get_pidfs_pid()
-which takes a reference to the struct pid and ensures that space for
-recording exit information is available.
-
-With that done SO_PEERCGROUPID isn't needed per se as it will be
-possible to get the cgroupid and exit status from the pidfd.
-
-From a cursory look that should be possible to do without too much work.
-I'm just pointing this out as an alternative.
-
-There's one restriction that this would be subject to that
-SO_PEERCGROUPID isn't. The SO_PEERCGROUPID is exposed for any process
-whereas PIDFD_GET_INFO ioctls (that includes the PIDFD_INFO_EXIT) option
-is only available for processes within the receivers pid namespace
-hierarchy.
-
-But in any case, enabling pidfds for such reaped processes might still
-be useful since it would mean receivers could get exit information for
-pidfds within their pid namespace hierarchy.
+diff --git a/arch/x86/include/uapi/asm/bootparam.h b/arch/x86/include/uapi/asm/bootparam.h
+index 9b82eeb..dafbf58 100644
+--- a/arch/x86/include/uapi/asm/bootparam.h
++++ b/arch/x86/include/uapi/asm/bootparam.h
+@@ -26,7 +26,7 @@
+ #define XLF_5LEVEL_ENABLED		(1<<6)
+ #define XLF_MEM_ENCRYPTION		(1<<7)
+ 
+-#ifndef __ASSEMBLY__
++#ifndef __ASSEMBLER__
+ 
+ #include <linux/types.h>
+ #include <linux/screen_info.h>
+@@ -210,6 +210,6 @@ enum x86_hardware_subarch {
+ 	X86_NR_SUBARCHS,
+ };
+ 
+-#endif /* __ASSEMBLY__ */
++#endif /* __ASSEMBLER__ */
+ 
+ #endif /* _ASM_X86_BOOTPARAM_H */
+diff --git a/arch/x86/include/uapi/asm/e820.h b/arch/x86/include/uapi/asm/e820.h
+index 2f491ef..55bc668 100644
+--- a/arch/x86/include/uapi/asm/e820.h
++++ b/arch/x86/include/uapi/asm/e820.h
+@@ -54,7 +54,7 @@
+  */
+ #define E820_RESERVED_KERN        128
+ 
+-#ifndef __ASSEMBLY__
++#ifndef __ASSEMBLER__
+ #include <linux/types.h>
+ struct e820entry {
+ 	__u64 addr;	/* start of memory segment */
+@@ -76,7 +76,7 @@ struct e820map {
+ #define BIOS_ROM_BASE		0xffe00000
+ #define BIOS_ROM_END		0xffffffff
+ 
+-#endif /* __ASSEMBLY__ */
++#endif /* __ASSEMBLER__ */
+ 
+ 
+ #endif /* _UAPI_ASM_X86_E820_H */
+diff --git a/arch/x86/include/uapi/asm/ldt.h b/arch/x86/include/uapi/asm/ldt.h
+index d62ac5d..a82c039 100644
+--- a/arch/x86/include/uapi/asm/ldt.h
++++ b/arch/x86/include/uapi/asm/ldt.h
+@@ -12,7 +12,7 @@
+ /* The size of each LDT entry. */
+ #define LDT_ENTRY_SIZE	8
+ 
+-#ifndef __ASSEMBLY__
++#ifndef __ASSEMBLER__
+ /*
+  * Note on 64bit base and limit is ignored and you cannot set DS/ES/CS
+  * not to the default values if you still want to do syscalls. This
+@@ -44,5 +44,5 @@ struct user_desc {
+ #define MODIFY_LDT_CONTENTS_STACK	1
+ #define MODIFY_LDT_CONTENTS_CODE	2
+ 
+-#endif /* !__ASSEMBLY__ */
++#endif /* !__ASSEMBLER__ */
+ #endif /* _ASM_X86_LDT_H */
+diff --git a/arch/x86/include/uapi/asm/msr.h b/arch/x86/include/uapi/asm/msr.h
+index e7516b4..4b8917c 100644
+--- a/arch/x86/include/uapi/asm/msr.h
++++ b/arch/x86/include/uapi/asm/msr.h
+@@ -2,7 +2,7 @@
+ #ifndef _UAPI_ASM_X86_MSR_H
+ #define _UAPI_ASM_X86_MSR_H
+ 
+-#ifndef __ASSEMBLY__
++#ifndef __ASSEMBLER__
+ 
+ #include <linux/types.h>
+ #include <linux/ioctl.h>
+@@ -10,5 +10,5 @@
+ #define X86_IOC_RDMSR_REGS	_IOWR('c', 0xA0, __u32[8])
+ #define X86_IOC_WRMSR_REGS	_IOWR('c', 0xA1, __u32[8])
+ 
+-#endif /* __ASSEMBLY__ */
++#endif /* __ASSEMBLER__ */
+ #endif /* _UAPI_ASM_X86_MSR_H */
+diff --git a/arch/x86/include/uapi/asm/ptrace-abi.h b/arch/x86/include/uapi/asm/ptrace-abi.h
+index 16074b9..5823584 100644
+--- a/arch/x86/include/uapi/asm/ptrace-abi.h
++++ b/arch/x86/include/uapi/asm/ptrace-abi.h
+@@ -25,7 +25,7 @@
+ 
+ #else /* __i386__ */
+ 
+-#if defined(__ASSEMBLY__) || defined(__FRAME_OFFSETS)
++#if defined(__ASSEMBLER__) || defined(__FRAME_OFFSETS)
+ /*
+  * C ABI says these regs are callee-preserved. They aren't saved on kernel entry
+  * unless syscall needs a complete, fully filled "struct pt_regs".
+@@ -57,7 +57,7 @@
+ #define EFLAGS 144
+ #define RSP 152
+ #define SS 160
+-#endif /* __ASSEMBLY__ */
++#endif /* __ASSEMBLER__ */
+ 
+ /* top of stack page */
+ #define FRAME_SIZE 168
+@@ -87,7 +87,7 @@
+ 
+ #define PTRACE_SINGLEBLOCK	33	/* resume execution until next branch */
+ 
+-#ifndef __ASSEMBLY__
++#ifndef __ASSEMBLER__
+ #include <linux/types.h>
+ #endif
+ 
+diff --git a/arch/x86/include/uapi/asm/ptrace.h b/arch/x86/include/uapi/asm/ptrace.h
+index 85165c0..e0b5b4f 100644
+--- a/arch/x86/include/uapi/asm/ptrace.h
++++ b/arch/x86/include/uapi/asm/ptrace.h
+@@ -7,7 +7,7 @@
+ #include <asm/processor-flags.h>
+ 
+ 
+-#ifndef __ASSEMBLY__
++#ifndef __ASSEMBLER__
+ 
+ #ifdef __i386__
+ /* this struct defines the way the registers are stored on the
+@@ -81,6 +81,6 @@ struct pt_regs {
+ 
+ 
+ 
+-#endif /* !__ASSEMBLY__ */
++#endif /* !__ASSEMBLER__ */
+ 
+ #endif /* _UAPI_ASM_X86_PTRACE_H */
+diff --git a/arch/x86/include/uapi/asm/setup_data.h b/arch/x86/include/uapi/asm/setup_data.h
+index b111b0c..50c45ea 100644
+--- a/arch/x86/include/uapi/asm/setup_data.h
++++ b/arch/x86/include/uapi/asm/setup_data.h
+@@ -18,7 +18,7 @@
+ #define SETUP_INDIRECT			(1<<31)
+ #define SETUP_TYPE_MAX			(SETUP_ENUM_MAX | SETUP_INDIRECT)
+ 
+-#ifndef __ASSEMBLY__
++#ifndef __ASSEMBLER__
+ 
+ #include <linux/types.h>
+ 
+@@ -78,6 +78,6 @@ struct ima_setup_data {
+ 	__u64 size;
+ } __attribute__((packed));
+ 
+-#endif /* __ASSEMBLY__ */
++#endif /* __ASSEMBLER__ */
+ 
+ #endif /* _UAPI_ASM_X86_SETUP_DATA_H */
+diff --git a/arch/x86/include/uapi/asm/signal.h b/arch/x86/include/uapi/asm/signal.h
+index f777346..1067efa 100644
+--- a/arch/x86/include/uapi/asm/signal.h
++++ b/arch/x86/include/uapi/asm/signal.h
+@@ -2,7 +2,7 @@
+ #ifndef _UAPI_ASM_X86_SIGNAL_H
+ #define _UAPI_ASM_X86_SIGNAL_H
+ 
+-#ifndef __ASSEMBLY__
++#ifndef __ASSEMBLER__
+ #include <linux/types.h>
+ #include <linux/compiler.h>
+ 
+@@ -16,7 +16,7 @@ struct siginfo;
+ typedef unsigned long sigset_t;
+ 
+ #endif /* __KERNEL__ */
+-#endif /* __ASSEMBLY__ */
++#endif /* __ASSEMBLER__ */
+ 
+ 
+ #define SIGHUP		 1
+@@ -68,7 +68,7 @@ typedef unsigned long sigset_t;
+ 
+ #include <asm-generic/signal-defs.h>
+ 
+-#ifndef __ASSEMBLY__
++#ifndef __ASSEMBLER__
+ 
+ 
+ # ifndef __KERNEL__
+@@ -106,6 +106,6 @@ typedef struct sigaltstack {
+ 	__kernel_size_t ss_size;
+ } stack_t;
+ 
+-#endif /* __ASSEMBLY__ */
++#endif /* __ASSEMBLER__ */
+ 
+ #endif /* _UAPI_ASM_X86_SIGNAL_H */
 
