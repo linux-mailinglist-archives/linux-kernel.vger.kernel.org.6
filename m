@@ -1,109 +1,83 @@
-Return-Path: <linux-kernel+bounces-555019-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-555018-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F07EA5A488
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 21:14:17 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 90B72A5A485
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 21:14:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 822C87A857C
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 20:13:14 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 18A117A884B
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 20:13:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD06D1E0E08;
-	Mon, 10 Mar 2025 20:13:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF0521DE3DF;
+	Mon, 10 Mar 2025 20:13:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uxA8UZ2h"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MUbspcSL"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F5691DF97A;
-	Mon, 10 Mar 2025 20:13:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12A3C1DF26E;
+	Mon, 10 Mar 2025 20:13:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741637599; cv=none; b=f/ihDOjv20W0uNrqaDa3+MRxuy89G8uldw2REFG9OkHrB59Ff0ntOBS8MDtZ7B2PrO5XOSMn1ZWuZYoPZdmSkjxkWmxaSQfUD6gTz+7l+kxn+F/5xyQmI2ZYl8EkXt5jzxsuG4sq1HUkOpAWK3qJ6qnJWjifb4kCWTfXwZhQq44=
+	t=1741637598; cv=none; b=qLFOky6wEVjKQ/cR1IDNhQfJiBmO+33HpabrPSkZ166MoqmaB+nJ7yHouB1Dkx6DIqv9wT87m6RLw+INDW95vPlomAyVb4tViXsZx2+Q9RayLjiIaOEH48i0V1/yk95XOf05klvqlJmoGOGtY4VSaGMf+tifOu+W9WX197OY5Zg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741637599; c=relaxed/simple;
-	bh=gtJuGx2pDYIwW9VlUcPfXfeo5t97Lj14Q+23BqsZas4=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=GWY2G/eidw6a+POOjDrF0/d7nW5aqGQZhqz+e2KqTB31ZjH+d/iZH6A0SXAqMRpgwg4dw4kqCiQdKsyUSeWwEy06SGXu9ynpFmyYrrghCD0Z4pGTItFQ91rjvCEzE6l/CfKP0udnZUgY608PMQYk+eC2mBKdgCC1fYXy8Fayq0g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uxA8UZ2h; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6F098C4CEED;
-	Mon, 10 Mar 2025 20:13:15 +0000 (UTC)
+	s=arc-20240116; t=1741637598; c=relaxed/simple;
+	bh=skL/rmRnGlTYtLxJfB+8Va0I/aLt0qqNr1QIB94k4zA=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=LtIZartR370N9l3OdG1+d1nNAm6V4qau3A9IxDkRY6DPtpCG+Uyk9b0c3EEjeHJK7m3S3SCotA+j5OwiQIXxTyFFbZHFN7lJXCplCJqZO3XAoTLhc6eo+bEsBEE8nlV8eYA9XFack3sLugaTTaymWVTrYBZblB8T0fQwnpHWAUU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MUbspcSL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DB18CC4CEE5;
+	Mon, 10 Mar 2025 20:13:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741637598;
-	bh=gtJuGx2pDYIwW9VlUcPfXfeo5t97Lj14Q+23BqsZas4=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=uxA8UZ2hSzGB/6zTtZMwQ4gjJbUQ6uJKooCmVZcRv2mNqKRQzlkCsolKDUBvW7nIJ
-	 Qd8jzBRAGbA4HXKmwfgaTwh043r42xnDyK1o34D2RBG2b/wWIqoMzayg7jDUn4NqVv
-	 ciqKw04wxxW9DvbxSqBzr1HfuvPIztOOvn6BYCbZ8AiDQpE2NUtyPzWJ2do9X6ZRIt
-	 A5edK1XHbL2hwdrHqRP125c0nhr/eyGRt9a3dznJp+IeOwDMCPST3vzUxN3WNF0toc
-	 NcA2NMpK//GnUr1WmtcjvDGkTeCj0YOOxKKtpXTbUzaw0A1xWjgdNxmTpFys7kRaNR
-	 vmkyxs+h98XJw==
-Date: Mon, 10 Mar 2025 20:13:11 +0000
-From: Jonathan Cameron <jic23@kernel.org>
-To: Angelo Dureghello <adureghello@baylibre.com>
-Cc: Lars-Peter Clausen <lars@metafoo.de>, Michael Hennerich
- <Michael.Hennerich@analog.com>, Nuno =?UTF-8?B?U8Oh?= <nuno.sa@analog.com>,
- David Lechner <dlechner@baylibre.com>, Jonathan Corbet <corbet@lwn.net>,
- linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-doc@vger.kernel.org
-Subject: Re: [PATCH v4 0/2] iio: ad7380: add SPI offload support
-Message-ID: <20250310201311.04b56522@jic23-huawei>
-In-Reply-To: <20250310-wip-bl-spi-offload-ad7380-v4-0-b184b37b7c72@baylibre.com>
-References: <20250310-wip-bl-spi-offload-ad7380-v4-0-b184b37b7c72@baylibre.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.48; x86_64-pc-linux-gnu)
+	s=k20201202; t=1741637597;
+	bh=skL/rmRnGlTYtLxJfB+8Va0I/aLt0qqNr1QIB94k4zA=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=MUbspcSL8izya5Txqem6UzQ0RohAzVbiMswB/9dclgoaizYep+/AhqSoNCyFAKCYw
+	 vr78DxMOZpiu8naV2kZe4Lg0jbxYK8VpfLcPx1M1Rd5T9/TBn7QLRf3B1yUjDQIbNP
+	 tfxti8eua5b8sE2dupaWA030/7dU/ENyCvvplvn7yx+shK6lzaZv4p6JglaYOaa78j
+	 DY6VYGK/Xt2iv8+JL7e2yodE5LaXWZwnVG3rSoH9osij88+Z7v1jQ3H+ycwKZPuZEg
+	 Gl5/rqXEWP1oKdQdPitQpu301Dy+wOuGBRmZlAfyPA2OGnWwcQCqjCo9e8cGC4AHqt
+	 9hdVBJh0YHfeQ==
+From: Vinod Koul <vkoul@kernel.org>
+To: Kishon Vijay Abraham I <kishon@kernel.org>, 
+ Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
+ Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, 
+ Johan Hovold <johan+linaro@kernel.org>, 
+ Krishna Kurapati <krishna.kurapati@oss.qualcomm.com>
+Cc: linux-phy@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ linux-arm-msm@vger.kernel.org
+In-Reply-To: <20250310110359.210990-1-krishna.kurapati@oss.qualcomm.com>
+References: <20250310110359.210990-1-krishna.kurapati@oss.qualcomm.com>
+Subject: Re: [PATCH v4] phy: qcom: qmp-usbc: Add qmp configuration for
+ QCS615
+Message-Id: <174163759448.467704.16738286875495669175.b4-ty@kernel.org>
+Date: Tue, 11 Mar 2025 01:43:14 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14.2
 
-On Mon, 10 Mar 2025 18:39:51 +0100
-Angelo Dureghello <adureghello@baylibre.com> wrote:
 
-> Add SPI offload support for the ad7380 ADC.
+On Mon, 10 Mar 2025 16:33:59 +0530, Krishna Kurapati wrote:
+> Provide PHY configuration for the USB QMP PHY for QCS615 Platform.
 > 
-> Signed-off-by: Angelo Dureghello <adureghello@baylibre.com>
-I've applied this to the togreg branch of iio.git and pushed
-out as testing for 0-day to take a very brief look.
+> 
 
-This might well be the last series to make it this cycle depending
-on how busy the rest of my week ends up.
+Applied, thanks!
 
-Jonathan
+[1/1] phy: qcom: qmp-usbc: Add qmp configuration for QCS615
+      commit: e45cc62c23428eefbae18a9b4d88d10749741bdd
 
-> ---
-> Changes in v2:
-> - fix return value on offload probe,
-> - add documentation patch 2/2.
-> 
-> Changes in v3:
-> - fix tabs erroneously added,
-> - fix documentation syntax error,
-> - add a note for the 4 channels ADC variants.
-> - Link to v2: https://lore.kernel.org/r/20250304-wip-bl-spi-offload-ad7380-v2-0-0fef61f2650a@baylibre.com
-> 
-> Changes in v4:
-> - add offload support to adaq4381-4.
-> - Link to v3: https://lore.kernel.org/r/20250304-wip-bl-spi-offload-ad7380-v3-0-2d830f863bd1@baylibre.com
-> 
-> ---
-> Angelo Dureghello (2):
->       iio: ad7380: add support for SPI offload
->       doc: iio: ad7380: describe offload support
-> 
->  Documentation/iio/ad7380.rst |  18 ++
->  drivers/iio/adc/Kconfig      |   2 +
->  drivers/iio/adc/ad7380.c     | 511 ++++++++++++++++++++++++++++++++++++++++---
->  3 files changed, 495 insertions(+), 36 deletions(-)
-> ---
-> base-commit: 73b788d05b5bd82c40193165583a9dcad2d8410e
-> change-id: 20250220-wip-bl-spi-offload-ad7380-6f1c27cd815d
-> 
-> Best regards,
+Best regards,
+-- 
+~Vinod
+
 
 
