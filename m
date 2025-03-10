@@ -1,90 +1,170 @@
-Return-Path: <linux-kernel+bounces-554377-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-554384-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 18A89A59703
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 15:05:18 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E9506A59713
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 15:08:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F1C62188BC81
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 14:05:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 14DD816A4D7
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 14:08:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C29022ACF1;
-	Mon, 10 Mar 2025 14:05:11 +0000 (UTC)
-Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4E6622A818;
+	Mon, 10 Mar 2025 14:08:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="jY6+5yJF"
+Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C2FD22579E
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 14:05:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D04E11CBA;
+	Mon, 10 Mar 2025 14:08:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741615510; cv=none; b=EGUoK4wfnHsHGO47C2S3zbMEoh/XlDMhS8Vfhx8YjZrjG8dAjdrcvyF9CxGQKkM0xekq5DeGgQ0c+RHMNRE0621Dxwb33A2AvCY2X3yzSjGsousX5RDKZlx2eqs/uXwSvawlIXX3g96wLe0btN/hLyJz3qk/vAT/d9DdGOwGsgU=
+	t=1741615695; cv=none; b=UoFeTQMUC9Jo3ma8XCFriQMmFR1VPbwgSNoILTyMs3sjRwxIv80Uvw8GDoZ2pIJObi3jMWp3lqiRddcxdlwv3HQCEf8SrmqgNiBrXPYybwkMXic250cMsRpNer4PXUpSlCw35QkkJQ2Bp5iqyLRky1Uq7wWhTyPYxNimuBNMP98=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741615510; c=relaxed/simple;
-	bh=gXBrYCoCcrkWmsP7+K4nV7uUoW+IqEsQV3WmXOQ5P2A=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=C/lkdu3bZNpbZozyDLLTOshGF0KzITLqHKNZ80HfIJwHmlDb1qtaauxHVTCyAzuVw3hAb9lCs8EyO8SXir3gtLaHD8J4MTS5yoDpOQRcLbC6nku9+xKJU8iS97Usy1XGtvDMBnN1lEbaM+5ZQdlQCa4aK8Wc1ShiIQP+9L3ebTo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-849d26dd331so456619539f.1
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 07:05:09 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741615508; x=1742220308;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=AaDrDkpXTwrG6aVIZuXOhK/+8GmMdBih6elTHPJ7xwo=;
-        b=PbMihWrbOnug71aSQhI1pspLzV8Do6144kuQwgTmtmCh8dVdUMRTLxWj87oZKiDU/f
-         cOeNOFEEuoHV2eWM2dDEWgJ0IOYFOv9MjaWqHwZK3i0QI+J1KfpactvSMsAsiRIEx7tL
-         46bhm0ZK3cRjqqi58gkJwe0ZW4+wKOhMG8mnABRgyH2CCYgRMhnU09XVhF/1Mj2bP5B1
-         Uag3sh4Gh2QApCiolEaZx2hY2+8+wEpkycThOdaxqzZKtclQMKzWHljVDM2lcXTuDneO
-         2k1VQl15iPorkrVb5mOi30BALasrtZrO+SNb+jzxWyyV1jchlvqfYJEdiUu7L+eXHwk5
-         I7OA==
-X-Forwarded-Encrypted: i=1; AJvYcCWf14M0gRtYzZGwFpzry/M3EIEokpckzV9+h3nhhANhCZAyLyuBpgEdr8B3S5u3DWeV7FAB8+4MqzTKzPs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxdSzdDzpjhDBU0rfyRsxs7wzravfLVEZ13JdFVKWq//AbfKd8b
-	jxDYkuFAIFZUV2PksrAaE29hLjHmWHEcerKYPrGSbXL16otKTAt4FfhMtyjCTUqsgJQ8TSdtsDR
-	SN1ZQkhWzYZ72fiM6YB+19o4+qXa2l0eP88ID6tmxmGWF2YUBJ5iTjfY=
-X-Google-Smtp-Source: AGHT+IFcfu7iZ9iAI/dbmeiES7ZqK7CGYDHtmKqtojBc/d+p7jhFfL9oM0l6REB/F23N9BxkhMQ6AEjSytGRFKCCgcKMcAdb5ta/
+	s=arc-20240116; t=1741615695; c=relaxed/simple;
+	bh=wVQ0GrsA9V/xwQXnJN2Tvuh/J/kguCpINvjpvEksh7Y=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=gCzNjqSXpitwtZyG2VUEHk9UUUZlVIPd8QTknElZiUeeZyMuHx3IcYlQAF1J1tq2seNuh1J2k9D1hCjhrl0qSgNKWg1yV/AzBB7BlBJQNMquhZ1zIYKPeOgbUp+2Z/xc04WZCwlC1YDveC+a14JoVO4HjQNLDxRd3BLg8Bu6giE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=jY6+5yJF; arc=none smtp.client-ip=185.132.182.106
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0288072.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52ABsrVw030002;
+	Mon, 10 Mar 2025 15:07:52 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=selector1; bh=
+	wHZLk8GMBYcp21rNrCan1n6xZhSfhobwhRSqB5Pb/MY=; b=jY6+5yJFskM7sedP
+	xRJKKRvkjPeLpa/SWUjtjEHRHLKj/BIy1KhqyC1v9NxVheYl8L06KRzUeNRBaKlc
+	PStW2gqgICRmIYHskEvQKFU4H780H2DIfO8kkRL6dP2IQAzV325OyOewUUgAI6hX
+	8spLWZxJCAgTmfJL5cc/S0Qo7Zh2Ncxmc88cz1wfFdst/zMYVIcXWLV8M28rbSca
+	x21yuHrHOtiYRvP8fZycl+pDzdcEIOdqJYR7sQ0/fL8S8imyR7TFo8iiSgYuut90
+	o5Fk7twnByLML0apClcnGdkinnqUGGSILZxO40jNhMmuXAu6eWMGtpU7P+QzsGl/
+	JN80ug==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 458ev648m8-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 10 Mar 2025 15:07:51 +0100 (CET)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 2E5BE4004B;
+	Mon, 10 Mar 2025 15:06:37 +0100 (CET)
+Received: from Webmail-eu.st.com (shfdag1node3.st.com [10.75.129.71])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 8419D4F631D;
+	Mon, 10 Mar 2025 15:05:20 +0100 (CET)
+Received: from [10.48.87.120] (10.48.87.120) by SHFDAG1NODE3.st.com
+ (10.75.129.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 10 Mar
+ 2025 15:05:19 +0100
+Message-ID: <6f776853-65e9-4574-85c2-c2a0446addfe@foss.st.com>
+Date: Mon, 10 Mar 2025 15:05:19 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:3a85:b0:3d4:44:958a with SMTP id
- e9e14a558f8ab-3d44ae9eb36mr107656265ab.3.1741615507153; Mon, 10 Mar 2025
- 07:05:07 -0700 (PDT)
-Date: Mon, 10 Mar 2025 07:05:07 -0700
-In-Reply-To: <6735aa91.050a0220.2a2fcc.0062.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67cef193.050a0220.3d01d1.0010.GAE@google.com>
-Subject: Re: [syzbot] [bcachefs?] kernel BUG in __journal_res_get (2)
-From: syzbot <syzbot+53bb24d476ef8368a7f0@syzkaller.appspotmail.com>
-To: kent.overstreet@linux.dev, linux-bcachefs@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 00/10] Expand STM32MP2 family with new SoC and boards
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Maxime Coquelin
+	<mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>,
+        Richard Cochran <richardcochran@gmail.com>,
+        Christophe Roullier
+	<christophe.roullier@foss.st.com>
+CC: <devicetree@vger.kernel.org>, <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        <netdev@vger.kernel.org>, Conor Dooley <conor.dooley@microchip.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+References: <20250225-b4-stm32mp2_new_dts-v2-0-1a628c1580c7@foss.st.com>
+Content-Language: en-US
+From: Amelie Delaunay <amelie.delaunay@foss.st.com>
+In-Reply-To: <20250225-b4-stm32mp2_new_dts-v2-0-1a628c1580c7@foss.st.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SHFCAS1NODE1.st.com (10.75.129.72) To SHFDAG1NODE3.st.com
+ (10.75.129.71)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-10_05,2025-03-07_03,2024-11-22_01
 
-syzbot suspects this issue was fixed by commit:
+On 2/25/25 09:54, Amelie Delaunay wrote:
+> Add STM32MP25 Discovery Kit board [1] STM32MP257F-DK. It is based on a
+> different package of STM32MP257 SoC than STM32MP257F-EV1, and has 4GB of
+> LPDDR4 instead of DDR4.
+> Introduce two new SoC families [2] with Arm Cortex-A35 and Cortex-M33,
+> in development:
+> - STM32MP23x SoCs family, with STM32MP231 (single Arm Cortex-A35),
+> STM32MP233 and STM32MP235 (dual Arm Cortex-A35) [3]. Add STM32MP235F-DK
+> board to demonstrate the differences with STM32MP257F-DK board;
+> - STM32MP21x SoCs family, based on Cortex-A35 single-core, with
+> STM32MP211, STM32MP213 and STM32MP215. Add STM32MP215F-DK board based on
+> STM32MP215 SoC, with 2GB of LPDDR4.
+> 
+> [1] https://www.st.com/en/evaluation-tools/stm32mp257f-dk.html
+> [2] https://www.st.com/en/microcontrollers-microprocessors/stm32-arm-cortex-mpus.html
+> [3] https://www.st.com/en/microcontrollers-microprocessors/stm32mp235.html
+> 
+> Signed-off-by: Amelie Delaunay <amelie.delaunay@foss.st.com>
+> ---
+> Changes in v2:
+> - Address Krzysztof's comments:
+>    - squash arm64 Kconfig updates for STM32MP21 and STM32MP23
+>    - add new compatibles st,stm32mp21-syscfg and st,stm32mp23-syscfg
+>    - comply with DTS coding style
+>    - move interrupt controller node under soc
+>    - remove status property from button nodes
+> - Link to v1: https://lore.kernel.org/r/20250210-b4-stm32mp2_new_dts-v1-0-e8ef1e666c5e@foss.st.com
 
-commit fb8c835b18d48dac953a5d755a8e90b0d8fb9c29
-Author: Kent Overstreet <kent.overstreet@linux.dev>
-Date:   Sat Oct 12 02:50:48 2024 +0000
+Hi,
 
-    bcachefs: bch2_journal_meta() takes ref on c->writes
+Gentle ping, are there any additional comments on this series?
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=1487d074580000
-start commit:   bcde95ce32b6 Merge tag 'devicetree-fixes-for-6.13-1' of gi..
-git tree:       upstream
-kernel config:  https://syzkaller.appspot.com/x/.config?x=1234f097ee657d8b
-dashboard link: https://syzkaller.appspot.com/bug?extid=53bb24d476ef8368a7f0
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=16ff98c4580000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=11ff98c4580000
+Regards,
+Amelie
 
-If the result looks correct, please mark the issue as fixed by replying with:
-
-#syz fix: bcachefs: bch2_journal_meta() takes ref on c->writes
-
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+> 
+> ---
+> Alexandre Torgue (3):
+>        arm64: dts: st: add stm32mp257f-dk board support
+>        arm64: dts: st: introduce stm32mp23 SoCs family
+>        arm64: dts: st: introduce stm32mp21 SoCs family
+> 
+> Amelie Delaunay (7):
+>        dt-bindings: stm32: document stm32mp257f-dk board
+>        arm64: Kconfig: expand STM32 Armv8 SoC with STM32MP21/STM32MP23 SoCs family
+>        dt-bindings: stm32: add STM32MP21 and STM32MP23 compatibles for syscon
+>        dt-bindings: stm32: document stm32mp235f-dk board
+>        arm64: dts: st: add stm32mp235f-dk board support
+>        dt-bindings: stm32: document stm32mp215f-dk board
+>        arm64: dts: st: add stm32mp215f-dk board support
+> 
+>   .../bindings/arm/stm32/st,stm32-syscon.yaml        |    2 +
+>   .../devicetree/bindings/arm/stm32/stm32.yaml       |   13 +
+>   arch/arm64/Kconfig.platforms                       |    4 +
+>   arch/arm64/boot/dts/st/Makefile                    |    6 +-
+>   arch/arm64/boot/dts/st/stm32mp211.dtsi             |  128 +++
+>   arch/arm64/boot/dts/st/stm32mp213.dtsi             |    9 +
+>   arch/arm64/boot/dts/st/stm32mp215.dtsi             |    9 +
+>   arch/arm64/boot/dts/st/stm32mp215f-dk.dts          |   49 +
+>   arch/arm64/boot/dts/st/stm32mp21xc.dtsi            |    8 +
+>   arch/arm64/boot/dts/st/stm32mp21xf.dtsi            |    8 +
+>   arch/arm64/boot/dts/st/stm32mp231.dtsi             | 1214 ++++++++++++++++++++
+>   arch/arm64/boot/dts/st/stm32mp233.dtsi             |   94 ++
+>   arch/arm64/boot/dts/st/stm32mp235.dtsi             |   16 +
+>   arch/arm64/boot/dts/st/stm32mp235f-dk.dts          |  113 ++
+>   arch/arm64/boot/dts/st/stm32mp23xc.dtsi            |    8 +
+>   arch/arm64/boot/dts/st/stm32mp23xf.dtsi            |    8 +
+>   arch/arm64/boot/dts/st/stm32mp257f-dk.dts          |  113 ++
+>   17 files changed, 1801 insertions(+), 1 deletion(-)
+> ---
+> base-commit: 8c6d469f524960a0f97ec74f1d9ac737a39c3f1e
+> change-id: 20250210-b4-stm32mp2_new_dts-8fddd389850a
+> 
+> Best regards,
 
