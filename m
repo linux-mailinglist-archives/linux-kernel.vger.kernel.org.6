@@ -1,191 +1,216 @@
-Return-Path: <linux-kernel+bounces-553810-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-553811-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD13BA58F1B
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 10:11:53 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5AC96A58F1D
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 10:12:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3AE8F188FA7A
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 09:12:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9933116AEC4
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 09:12:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EE2C22489A;
-	Mon, 10 Mar 2025 09:11:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF4DB2248A6;
+	Mon, 10 Mar 2025 09:12:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DZh/ojJg"
-Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=live.com header.i=@live.com header.b="UzPHMvHM"
+Received: from PNYPR01CU001.outbound.protection.outlook.com (mail-centralindiaazolkn19010012.outbound.protection.outlook.com [52.103.68.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7325C1BD9CE;
-	Mon, 10 Mar 2025 09:11:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741597906; cv=none; b=dLnr1JLGMCd0YS+s11jGBKLBUoUUGSE12fOdDABcevHOOTfj6BcfwWcNMr1X0XKZQqE24gzu2JwMjcspXUWaduNfZ3c+JNOTzsW7M2Bep1/t+Up4UYg4yROnAoV1aBARj+iaZokosqEMZtmT/JHVNqbKKMzdBYyAfOhOMgcx7zs=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741597906; c=relaxed/simple;
-	bh=VA7r2H9AqBaT7O6rpvl2k71MrU3oMucjddtf+mBEHhE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=DsMCVK6tMQb5lWbFqiq3PorAkP/lLKZwtiF2wrsqh+MdK/a5B/5CmdPeC5G86Z4z+sQFmVLwkKXtMKdOUpm6+zJydp5ToXJsIHsQdst0Ly7ZF2wYQQHD3Oat8GbjrTFvhn+CC+HcHSmhUUyFS0IPrRBFdVOsmDxfJLckdBSwems=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DZh/ojJg; arc=none smtp.client-ip=209.85.214.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-22398e09e39so68732905ad.3;
-        Mon, 10 Mar 2025 02:11:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741597905; x=1742202705; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=fm6hWuXGFYKKWKnUGyn4XNWX4BFtrfo8ZIfOir4zu/o=;
-        b=DZh/ojJgSSxThheJPWc7e8qZkyyt+zn8b3vpqPwjP+PtQ2J+LVjxpCAjUFfrOu59Xo
-         PE4ZoHVtbGJwwuf8inV0fKfUvJ1Bv6KY5VsX+fkrFt1/CiFD9PeYW6XMIwgQ1u54JYAW
-         kxWDb0F2FEtdjeRNb+ulbDn0irgYKfer4COtZffaLEFiJDay8dBqAdsJEgw4X5YPKyT7
-         y+ID6tyG8obFovwWilyc9tkHsWVgfxnsMEam+fVB7K9ns6PB0gv4Hq716BZupboyqxv2
-         dbjRrJYEMGe/KiuCe/EowAIjVDdxscoNsgZdRaV0ZVguQtgGROx1cQw+v77FJZ5af4Ja
-         OJRA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741597905; x=1742202705;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=fm6hWuXGFYKKWKnUGyn4XNWX4BFtrfo8ZIfOir4zu/o=;
-        b=P2y2liXCb7kRvG14iEDCe788nP8HM91bJS+sA8/Fq5SvJ/fk16oA2WlNzWDhGCanFN
-         ey7lDSyw9OV1+6e02c4KDKPriULwHuzd/AqKRo4aGgY/iIiTcXI6YMriMg8sVfrE/4wM
-         U+EmhDrWUBshFX+jcCn1nnUlms+KcBIdzf7XxSr2RIxWT3q9G4S2p8qvyijjlPNH/Jf9
-         9CUCVQ46uMp08WqjSl+mORCFVoZcrVFUUjJ7V6xPBARIhVM/mGsAaFIzq3EzzDiEtL6V
-         D5En7Wfiz/7v+crmUA+XGfde7pnjNnPfWPy/O4sgZY0sAAGHNYYmLM1oOw5VZ+2MlFLu
-         iIrw==
-X-Forwarded-Encrypted: i=1; AJvYcCU7tiOjXE8g6TLOggcmiVGgPditdgn+gQVsOCrTiww4kYbt3CNKLBiyETSgcfJtIDnCRvmLNDJgqEZPb+n1@vger.kernel.org, AJvYcCX0dL5ZYvTLG5joZI4yES+lrAe0tWBrM1RXWwuPGrJEYupc7zLGn1cc2c+BfQCXcwmQCxRpA7u7+pQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxkkTH1sM2Fq6dOjKGUD1OmNwLj8N853fl51gCw73hfI7l9mCMk
-	aLxA6/QLkbvs39oPwiWx+ziCp79GHLfUeRQkcInytvMBhqDzuR+QGeI34g==
-X-Gm-Gg: ASbGnctWfZYbCmyGSbMBmi6IRiaLOSdMxJGdhZStcQTbYZ0qMpGwt+Hbfr89EM0+uOI
-	Mto/cGKCwkxja7UL33lDeWyxZE4PHUI5DjK7V6TeAgLv7aHZb69uA+06EDPGDHiRYP5cSo5o1ff
-	7eS2iT7T8hJpfY0RG7rTJGsHnumL/hkeRGCja6qkqlqr2/gXzTUFAYRAYkDqjv8YVciyGqE2GJW
-	sZc5ZkF1P1EoUxoCk5GbSKMHJM6p9NNRAVYwquTR8WpY127ItUJ9/vmG7WefZIAMPaYHxWK3tQx
-	+0u1Zlv6YkIE85OoJUrL+9M/w3mgLHwOn/zaxNVcGU70OOfydS82Oia9wfxMqZLoNf7JkH+Qi0N
-	Ytjcdq2M76nHnfzE=
-X-Google-Smtp-Source: AGHT+IH5elbK7dNlWXUrMJbcM2L847LSTGg73MJdno5EXNdGfPoCCpIXJE2aMTIxMN7oF5EfhpiFfA==
-X-Received: by 2002:a17:902:f70d:b0:224:c46:d162 with SMTP id d9443c01a7336-22428a97f00mr191149485ad.20.1741597904636;
-        Mon, 10 Mar 2025 02:11:44 -0700 (PDT)
-Received: from [10.0.2.15] (KD106167137155.ppp-bb.dion.ne.jp. [106.167.137.155])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22410a91971sm72692835ad.165.2025.03.10.02.11.42
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 10 Mar 2025 02:11:44 -0700 (PDT)
-Message-ID: <662656aa-c25b-4f83-8131-eb39a6a42917@gmail.com>
-Date: Mon, 10 Mar 2025 18:11:41 +0900
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18526224220;
+	Mon, 10 Mar 2025 09:12:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.103.68.12
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741597930; cv=fail; b=R6S5xnN1AUGicOTM2VAeXELFuRhEAwKZlw2RGZFrRgH8/ud3je8oaKRYqVPT/iwUCThe9XQsD0qeE1Abf7hYJivvKmjc4CL0BvNnAlP6xHIyFfv1fnCFSLmQhx7si9/B1RN+pPxV+tRy9Snf4ROBMofZMSv89vczqc0jZ04pXWE=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741597930; c=relaxed/simple;
+	bh=0I3uw8tOEl56mBmh9KGnsJ8vLZOZj3vNBqBpPaPh4tA=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=cN3GRMilV2F7po2ub46q4JExUIvd1h2N9MbhrWxFayQI4feR4KBk8hiH2k9xyH7vv897Anmnv4Kshkx3rGaFIT2DW+15ksstOpn2IZ0xhY3SDtUi3NTrECQNP80Ux91r1MMTH6mYnNJLaVdsQFb4Sd94lCoePCaBKLRcSDRLrUw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=live.com; spf=pass smtp.mailfrom=live.com; dkim=pass (2048-bit key) header.d=live.com header.i=@live.com header.b=UzPHMvHM; arc=fail smtp.client-ip=52.103.68.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=live.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=live.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=eeapgYUlvhlY+5sCUv5SOyrEiHQimXCpWzCSm3Gz7i9OG/tPLyQGVF0TkZjzLcg/p6k4S7QrjOqEdkTLClhnvcW5kL3R4VdLJ/6H8uafIagH5uDCe6DehC1zyoTwbB2rGywPevilpyA/ByDApDrm+I+YO788tUh5LJh/fSD6pxkw5R8nVjLwNtTeKV+SKZIFmL2Yjc7vHZwUojf5KGh60s+rBxYBUkeLWoGiaZuJhOz3IV4riGflNqcn1+Eg5+AJKi3Aih0xRkyUynk/MLC0Xf63wT6j6KNp7PZgwY2qZqgC5XFWiN3YfVO/5n1piK1AZrW3O9kh4Z3WhlbOfieEjg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=hwoq7VPxPKTyeCZY8T3zEYkw2WQXtqJ6jwzuubyMmOs=;
+ b=uIn1TdWbFNqlNaeeHbZvIDczUa1emI2nwmd3odFH+gtqDmUN/1gwnq27VnRDtRnrLWK4tfZdLWAZMnae+9SWIGhA4pJm3MlFXl0NMxrL7XpNP5ycvOTUjhkBDmoik2h9ycVoLxC40pNVb88kAHOHQOOYViPmWR3mDYx9y7tVjA70qrPlqom8+O36wIZHxaHQCaMXvQLqthxRtZ0fUJXWp1qKtIClt5r/M8rhicq987xLT0Gw7aioBUhLM3KbbgMl+FNJRoc6CApCMUtf4JCNjqMx64/c0rR1eunT0IXDsL93Kz0EJW+JaQz9GYg2PSThClEtoVZs2pBOcNcwAPI29A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=live.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=hwoq7VPxPKTyeCZY8T3zEYkw2WQXtqJ6jwzuubyMmOs=;
+ b=UzPHMvHMxJ5wZoozUHGYpCuLyzWx15dVKF/R8X8ySUTRCAorUnXQuSiNMi0wS3H0e146VCOK/QqWQoARlwxm7p8JBLUqehYgUA7nEdgIwd6iCJysmG0saQzGyUOAaa2cy+eYsiOrZ6/vzvneWzdnuad5VqnREqSFkPvNA+je6q8guATrVlvH3g/jQm0BY9lLIYMQTHt8S/y6/aH7cEnk3G2Udepc87q63YyihwpcvyxUx4Snf/oPyWLpP4Tox+ClX8wBQn8ob7eVkHbNJJMXD20FE2L+Z9YQagG9jp/Q0nzrENaC9sCBzyuwWY0JpFXHD1tiIujTZS7C64bNz8r3WA==
+Received: from PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM (2603:1096:c01:f7::14)
+ by PN0PR01MB6518.INDPRD01.PROD.OUTLOOK.COM (2603:1096:c01:73::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8511.26; Mon, 10 Mar
+ 2025 09:12:02 +0000
+Received: from PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM
+ ([fe80::324:c085:10c8:4e77]) by PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM
+ ([fe80::324:c085:10c8:4e77%7]) with mapi id 15.20.8511.025; Mon, 10 Mar 2025
+ 09:12:02 +0000
+From: Aditya Garg <gargaditya08@live.com>
+To: Jiri Kosina <jikos@kernel.org>, Jiri Kosina <jkosina@suse.com>, Benjamin
+ Tissoires <benjamin.tissoires@redhat.com>, "bentiss@kernel.org"
+	<bentiss@kernel.org>
+CC: Kerem Karabay <kekrby@gmail.com>, Orlando Chamberlain
+	<orlandoch.dev@gmail.com>, Aun-Ali Zaidi <admin@kodeit.net>, Linux Kernel
+ Mailing List <linux-kernel@vger.kernel.org>, "linux-input@vger.kernel.org"
+	<linux-input@vger.kernel.org>
+Subject: [PATCH RESEND 1/5] HID: multitouch: Get the contact ID from
+ HID_DG_TRANSDUCER_INDEX fields in case of Apple Touch Bar
+Thread-Topic: [PATCH RESEND 1/5] HID: multitouch: Get the contact ID from
+ HID_DG_TRANSDUCER_INDEX fields in case of Apple Touch Bar
+Thread-Index: AQHbkZx8ip74tff+akSsCQ/5elS5lA==
+Date: Mon, 10 Mar 2025 09:12:02 +0000
+Message-ID: <46C388A3-0CA4-4B6F-BF0F-42B200E8D813@live.com>
+References: <ECE4880B-2A87-4147-B83B-2D832639F3B2@live.com>
+In-Reply-To: <ECE4880B-2A87-4147-B83B-2D832639F3B2@live.com>
+Accept-Language: en-IN, en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+x-ms-exchange-messagesentrepresentingtype: 1
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: PN3PR01MB9597:EE_|PN0PR01MB6518:EE_
+x-ms-office365-filtering-correlation-id: 8fd0046c-acbf-44a2-2bf4-08dd5fb39f00
+x-microsoft-antispam:
+ BCL:0;ARA:14566002|15080799006|8060799006|7092599003|19110799003|461199028|8062599003|102099032|440099028|3412199025|41001999003;
+x-microsoft-antispam-message-info:
+ =?us-ascii?Q?pieWKKQHqaEKojFAYY0OQ3BPWnwfuoo532sKL/42Ha25+1PMGVa8Odyw/I9H?=
+ =?us-ascii?Q?wYkegF5XDzUDJ0/PN+K2SqecdwwPOpqIEKjLy0DUVDqNpXa965xtMfst44tA?=
+ =?us-ascii?Q?llNo0lKQZJ3quc5A7cuIovebhJEUY7OBe0fO0Ds6XL2j+IH8aJyrfAULYVQ7?=
+ =?us-ascii?Q?8ybVuLrtqymKOIL9KMnjSLn1/AvzcSmUlZNrkIWTeuLe1HZa10fJZXZJXdV6?=
+ =?us-ascii?Q?znLYM0TcMknkgVFMFp2lmbqp3vtxKePzCUJiJrcIQ1X7ZOfBI+ZkzwVhRHRC?=
+ =?us-ascii?Q?bmrPQjt4m4d5Hm6qXeOtRsojj0VDv1RZoxyFotEYV/exCnig/ETTveyUn6u6?=
+ =?us-ascii?Q?MCezRsJ3XkJR+xZeP/1e9F4SIZ/acYHZC0l6+ES+u6+ELcv+7xFscNvbKwXt?=
+ =?us-ascii?Q?P4EiEQmr/wKzj+X3g/STPVfWKbuycD2ObqZEgEcKkKfO7J/PgEDFO3/MrRGf?=
+ =?us-ascii?Q?qOV+dGmIlwK3HIyY76TtYOg7Y1w68qyamkLkMZzbMoG7Acw19Q17aGdG/NmE?=
+ =?us-ascii?Q?go0oFYgWpfcPQVANsj4aOtxd2J3iCjc152ZpbPZQmJgEG8V/SJGSCC1S651C?=
+ =?us-ascii?Q?Hvl4g2zTZcKHXQfoGFFS3SIik63JRBodx/KlZfuzyHwwSljTLL7jHuKdJbly?=
+ =?us-ascii?Q?gghNCvv/c7KUPKKqbfKfJDLX2xCpMDuwNDIBe86Kr2GEi3cz4dc9lDJFaHYv?=
+ =?us-ascii?Q?lJ4THRfIW4jNN3r7JKz7IaRUACyZIWJsxuoF/SVyqj+ht+ZOh/xx6CAJhF2B?=
+ =?us-ascii?Q?Qpi4Z7HzmSLpupKdqQbwW6wFaoGCNdNLjslhV6VUA1QUv/9ri1yJG9F89Eno?=
+ =?us-ascii?Q?vf69th6xSKRu6dGNCShn4syA44hXZvU2z+1KTKSnv+0lH7RsC/t/b4YTxF59?=
+ =?us-ascii?Q?h/I+0pYQ5XYmfDdaN+vfrs9/pog0hYSBOHUEIg9CzVcXFd5UHqWIgBWx+zkV?=
+ =?us-ascii?Q?hGMr0SEgoVcc+Xu1zBTKp+pB8k05QwOwyATsrakmlUkHOxF6JWL7871TPvU1?=
+ =?us-ascii?Q?j4P8GnBGLmCmnHApxsMu0kscDVWiFFArzGuHlJApigl4v9DIxg742aOB40ca?=
+ =?us-ascii?Q?el+NEn5OsxG1hSssFRUUWIocNUhnwMZF3bcNwwbMTzLDtoK6vyk=3D?=
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?TXdarqefviehR+lfmvjsJ1x+45LyiWcbOKElzdHqqsJsKY2kvh1le3Wq2BJ7?=
+ =?us-ascii?Q?cFAcC4qQoEqgcodgcxAoXFFEWW+YexbOxsnjCMGhR4C0Bp2HC+wec1dHgAMr?=
+ =?us-ascii?Q?BWv7i7V8J0vuhHQVLBZsAznUbiO4XpwyB3+63l+uhYBeWkx3LBkLRuTmcjKa?=
+ =?us-ascii?Q?2AlEGo3XtFaxPXuX8rl+BsS/57Ve51xSIIBlg3hBzGPoYewRLjHapPiPiHKP?=
+ =?us-ascii?Q?2UBPkBwR2+QX9esqsiDbR3n3O+ep/UfPhLQPo2lHrAY2Iyqye0qbrR1ueT5Z?=
+ =?us-ascii?Q?0lApUu0mqO95tcaUfj+wkdqGsNUr5r0//Y3pKwGND6hs5oJCQzE0HDvLaQBa?=
+ =?us-ascii?Q?3+NhL5XXLDTtAXM+u04Nwv8vLOCVMwCfuZp1GaAQtguBg4Ioj4Z8s3WfYh7t?=
+ =?us-ascii?Q?0ZJpzshLP9F3BH1jhmrkkp6FjMJE9knp5zxsXsWQ02GhBZ1Ot4gFujh321Nt?=
+ =?us-ascii?Q?3/Nc2qM+E4rPfDBexw83DS4jQA8PHJrTn2hyUAwkGcKuSJeUNGJRsqDjLExd?=
+ =?us-ascii?Q?LnfQ8hJAjAoFTmsYObdnUbV8M3pEwSgFzCGwKHy+aUCxWMqw7JFfF5rV5UvJ?=
+ =?us-ascii?Q?A+UYpcuXQV4BeNhSNZcajP33Bejdqgcb2GLjWP8wRhfh3qGsuW1LBYBdSFiA?=
+ =?us-ascii?Q?UEFqgA7BU6gro9hOLeamwGKBVl3zPPaqQwob5UGurNl9hmnh24l8Sh1sKt3M?=
+ =?us-ascii?Q?cwB0s5coO3kz+U+m/x5XxRuufseN8koffFPiXCmACCIesHCYA2084F5EnGbf?=
+ =?us-ascii?Q?t1F0ebRPR9aGOG+LjI+zfBJ04BkGLXHwjlgeLUt/UA/dPrLnxqVJC5cj8Gvj?=
+ =?us-ascii?Q?tEz/phXxZJe6kWa0p0SeflgyFTBWYhze8KN9XGpZHj3nCszrKz7xwBkWXVi+?=
+ =?us-ascii?Q?edJ4ly5lcXCR/Mq+8sMlbsZucBXthzslcmWfRYPyW9BaWc6Tc8oBVZh5ztp3?=
+ =?us-ascii?Q?mRylhXdHRCvT5F1E9bZGUDhqJxjxrA7clsFBgmhoOkH45xi/+Ia4Os+rkJ9I?=
+ =?us-ascii?Q?eOMPs7GEqplelk7hIG9OC+J4aras2azzw0My1oVjWBzjD9cUIgeV3y1LN1aY?=
+ =?us-ascii?Q?NxraZtaMNpyLOtQvhjhFnLmZLddb0S19y/Xi67VFbNWGLZP+5M6cXB3awX/J?=
+ =?us-ascii?Q?L32fIEd9dfzYR2ovQZYNqt8X1Roe5Vuk4x9Ivjc6uAUKgrsEGP8iruNWzOxf?=
+ =?us-ascii?Q?1xQ4adxoLQwYIhVsalF0j+TIOStslU9YkZyhmatTyLZy8/DKxIAmd+DjYHaN?=
+ =?us-ascii?Q?SvFQ6txogvll1G4oCSTC?=
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <312F9B6A206F964580C5A3F065344BDB@INDPRD01.PROD.OUTLOOK.COM>
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V2 1/2] cpumask: Fix kernel-doc formatting errors in
- cpumask.h
-To: Viresh Kumar <viresh.kumar@linaro.org>, Jonathan Corbet <corbet@lwn.net>,
- Yury Norov <yury.norov@gmail.com>
-Cc: Rasmus Villemoes <linux@rasmusvillemoes.dk>,
- Vincent Guittot <vincent.guittot@linaro.org>, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org, Akira Yokosawa <akiyks@gmail.com>
-References: <cover.1741332579.git.viresh.kumar@linaro.org>
- <f4ad81150eaa00b43c161f0d1f811f8ecfe21889.1741332579.git.viresh.kumar@linaro.org>
- <Z8snakYmzhaavkKN@thinkpad> <20250310061540.zpfyisvchyua2cuv@vireshk-i7>
-Content-Language: en-US
-From: Akira Yokosawa <akiyks@gmail.com>
-In-Reply-To: <20250310061540.zpfyisvchyua2cuv@vireshk-i7>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-OriginatorOrg: sct-15-20-7719-20-msonline-outlook-ae5c4.templateTenant
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8fd0046c-acbf-44a2-2bf4-08dd5fb39f00
+X-MS-Exchange-CrossTenant-originalarrivaltime: 10 Mar 2025 09:12:02.7829
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PN0PR01MB6518
 
-Hi,
+From: Kerem Karabay <kekrby@gmail.com>
 
-Viresh Kumar wrote:
-> On 07-03-25, 12:05, Yury Norov wrote:
->> On Fri, Mar 07, 2025 at 01:04:51PM +0530, Viresh Kumar wrote:
->>>  /**
->>> - * cpumask_next_and - get the next cpu in *src1p & *src2p
->>> + * cpumask_next_and - get the next cpu in *@src1p & *@src2p
->>>   * @n: the cpu prior to the place to search (i.e. return will be > @n)
->>>   * @src1p: the first cpumask pointer
->>>   * @src2p: the second cpumask pointer
->>
->> So the question: if some word in this particular comment block is
->> prefixed with @ symbol, can we teach kernel-doc to consider every
->> occurrence of this word as a variable?
+In Apple Touch Bar, the contact ID is contained in fields with the
+HID_DG_TRANSDUCER_INDEX usage rather than HID_DG_CONTACTID, thus differing
+from the HID spec. Add a quirk for the same.
 
-That is not impossible, I would say.
+Signed-off-by: Kerem Karabay <kekrby@gmail.com>
+Co-developed-by: Aditya Garg <gargaditya08@live.com>
+Signed-off-by: Aditya Garg <gargaditya08@live.com>
+---
+ drivers/hid/hid-multitouch.c | 16 +++++++++++++++-
+ 1 file changed, 15 insertions(+), 1 deletion(-)
 
->>
->> Why I'm asking: before the "*src1p & *src2p" was a line of C code.
->> And because we are all C programmers here, it's really simple to ident
->> it and decode. After it looks like something weird, and I think many
->> of us will just mentally skip it.
->>
->> I like kernel-docs and everything, but again, kernel sources should
->> stay readable, and particularly comments should stay human-readable.
-> 
-> Jonathan / Akira, can you please answer this one ?
-
-I was not around when transition to Sphinx was made in 2016, and I don't
-know much of kernel-doc (or its predecessor doc-book) comment format.
-
-So below is my wild guesses.
-
-Current Documentation/doc-guide/kernel-doc.rst has no mention of "*" WRT
-where it is allowed or disallowed, which results in occasional complaints
-from Sphinx on unmatched start/end of emphasis.
-
-However, the use of "*" is indicated for itemized list, which directly
-employs reST format.
-
-It doesn't say anything about literal/code blocks, either.
-
-So I have to say that current kernel-doc has quite a few of undefined
-things on reST output.
-
-kernel-doc in python3 might help untangle the mess.
-
-This all need some consensus on kenrel-doc behavior to be reached, and
-update/enhance of kernel-doc (script).
-
-So my suggestion would be to hold these changes for the time being.
-
-> 
->>> @@ -334,7 +334,8 @@ unsigned int __pure cpumask_next_wrap(int n, const struct cpumask *mask, int sta
->>>   * @mask1: the first cpumask pointer
->>>   * @mask2: the second cpumask pointer
->>>   *
->>> - * This saves a temporary CPU mask in many places.  It is equivalent to:
->>> + * This saves a temporary CPU mask in many places.  It is equivalent to::
->>> + *
->>
->> I'm OK with extra line, but this double-colon. What for and what does
->> it mean?
-> 
-> Without this we get: "ERROR: Unexpected indentation", for the last
-> line of the code block that contains: "        ...".
-> 
-> The double-colon creates a code-block for the below code and gets rid
-> of the warning.
->>
->>>  /**
->>> - * cpumask_weight - Count of bits in *srcp
->>> + * cpumask_weight - Count of bits in *@srcp
->>>   * @srcp: the cpumask to count bits (< nr_cpu_ids) in.
->>
->> Here nr_cpu_ids is also a variable. Why you don't prefix it with @?
-> 
-> I was only looking to fix the build warnings / errors for now, and did
-> not look into detail for such issues. Yes, it should be marked with @.
-> I will try to go through all the comments now and fix such issues.
->
-
-Provided the brokenness of kernel-doc spec & script, I think you can
-wait until it is properly fixed/enhanced.
-
-The problem is: Is there somebody who would be interested enough to do
-such an improvement?
-
-        Thanks, Akira
+diff --git a/drivers/hid/hid-multitouch.c b/drivers/hid/hid-multitouch.c
+index e50887a6d..6e7f34a47 100644
+--- a/drivers/hid/hid-multitouch.c
++++ b/drivers/hid/hid-multitouch.c
+@@ -73,6 +73,7 @@ MODULE_LICENSE("GPL");
+ #define MT_QUIRK_FORCE_MULTI_INPUT	BIT(20)
+ #define MT_QUIRK_DISABLE_WAKEUP		BIT(21)
+ #define MT_QUIRK_ORIENTATION_INVERT	BIT(22)
++#define MT_QUIRK_APPLE_TOUCHBAR		BIT(23)
+=20
+ #define MT_INPUTMODE_TOUCHSCREEN	0x02
+ #define MT_INPUTMODE_TOUCHPAD		0x03
+@@ -625,6 +626,7 @@ static struct mt_application *mt_find_application(struc=
+t mt_device *td,
+ static struct mt_report_data *mt_allocate_report_data(struct mt_device *td=
+,
+ 						      struct hid_report *report)
+ {
++	struct mt_class *cls =3D &td->mtclass;
+ 	struct mt_report_data *rdata;
+ 	struct hid_field *field;
+ 	int r, n;
+@@ -649,7 +651,11 @@ static struct mt_report_data *mt_allocate_report_data(=
+struct mt_device *td,
+=20
+ 		if (field->logical =3D=3D HID_DG_FINGER || td->hdev->group !=3D HID_GROU=
+P_MULTITOUCH_WIN_8) {
+ 			for (n =3D 0; n < field->report_count; n++) {
+-				if (field->usage[n].hid =3D=3D HID_DG_CONTACTID) {
++				unsigned int hid =3D field->usage[n].hid;
++
++				if (hid =3D=3D HID_DG_CONTACTID ||
++				   (cls->quirks & MT_QUIRK_APPLE_TOUCHBAR &&
++				   hid =3D=3D HID_DG_TRANSDUCER_INDEX)) {
+ 					rdata->is_mt_collection =3D true;
+ 					break;
+ 				}
+@@ -827,6 +833,14 @@ static int mt_touch_input_mapping(struct hid_device *h=
+dev, struct hid_input *hi,
+ 						     EV_KEY, BTN_TOUCH);
+ 			MT_STORE_FIELD(tip_state);
+ 			return 1;
++		case HID_DG_TRANSDUCER_INDEX:
++			/*
++			 * Contact ID in case of Apple Touch Bars is contained
++			 * in fields with HID_DG_TRANSDUCER_INDEX usage.
++			 */
++			if (!(cls->quirks & MT_QUIRK_APPLE_TOUCHBAR))
++				return 0;
++			fallthrough;
+ 		case HID_DG_CONTACTID:
+ 			MT_STORE_FIELD(contactid);
+ 			app->touches_by_report++;
+--=20
+2.43.0
 
 
