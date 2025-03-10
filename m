@@ -1,97 +1,154 @@
-Return-Path: <linux-kernel+bounces-555201-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-555203-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 35D42A5A6CD
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 23:16:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2101EA5A6E6
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 23:18:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 74C891739A9
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 22:16:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 60C5A173D1E
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 22:18:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9799E1E3DDE;
-	Mon, 10 Mar 2025 22:16:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24B9B1E7C18;
+	Mon, 10 Mar 2025 22:17:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VQi5Npox"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0673F382
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 22:16:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="NV4OumkG"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32DAE36B;
+	Mon, 10 Mar 2025 22:17:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741644968; cv=none; b=Pz1ifeePBcMlP7thEyza+as4qAWPzKGlUjSjqxJ4pIY2gM8FJ3DSm6axMSVcWIF23aLFK/mbQRYGVUn9iarMGNyoJsz5DFg81/aHpoqP9wOFuPyGqqKDNelg+7EsF+OwZJJlf3W479HWni3owbvLdSSzEecUaiwhuf5oeMW87+4=
+	t=1741645077; cv=none; b=PjOJByNgEXZenXvODXlIzvtzwfCaHGIdf8tqJmBVhJ/E81mcBkeBEn6cWpsmZx5Q77P/kcOpXol6cp1JtKZiBwzUY408AC4PW38mVZnGQCb7XZhhFDPDZfzD9FnKz7FPtJnEbZ4rlNALg8guowEMv9hZ8gSHKvd/x9kzZRko4YA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741644968; c=relaxed/simple;
-	bh=2lznBsKOnCQhwBSX9JGDubxasXvqODxFZfIiQ63hg7k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BWv17CWrRH/TbpZhhCofBYNUUa/5zp4pNiHAaaAcudeXxOAVUhIGA1XgLQt+bnY3kb9qN7c1znsN1O8yfQfJk07e2KP6TPjZP0yyEj/VSrLE2ljh5MvmXd2z4HiXymWxGbWPx4VaZ9WO5GT4IxC6/Gl6MXJ0CKXLK3I2I6HEcWY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VQi5Npox; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EC0ACC4CEE5;
-	Mon, 10 Mar 2025 22:16:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741644967;
-	bh=2lznBsKOnCQhwBSX9JGDubxasXvqODxFZfIiQ63hg7k=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=VQi5NpoxEp6tPlVC9XHg7z+BNOpnF1S47+ZvBurBXrpBxdR27zSGU2Mqz7N0MZi5W
-	 PyYfBTebUFimR3ORgJAXSVssrOy2r3b6+mVd92A115VxJdKFKTFKIDv/tXwqU9ufXY
-	 ri5DUtapaqEPI33kNqONgNNHXibGDkOqPjeRlVloF0b4/f+ocOHlny5ergUS1WzhoA
-	 0ag5h+jyHmnJ6G+MOgYKTONgG1/YsmrQ5Hq0tQQ3Axs7DhVdWgfwVBV6edlIRWNLIo
-	 hAIXZXjUrtgNTyLP1+gxR4lorQOSnjmhGjr6rUytZz9BgOzgGrnSvRRoDEh6uS7Pm2
-	 Js3U2fhqgFLPQ==
-Date: Mon, 10 Mar 2025 23:16:04 +0100
-From: Frederic Weisbecker <frederic@kernel.org>
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: LKML <linux-kernel@vger.kernel.org>,
-	Anna-Maria Behnsen <anna-maria@linutronix.de>,
-	Benjamin Segall <bsegall@google.com>,
-	Eric Dumazet <edumazet@google.com>,
-	Andrey Vagin <avagin@openvz.org>,
-	Pavel Tikhomirov <ptikhomirov@virtuozzo.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Cyrill Gorcunov <gorcunov@gmail.com>
-Subject: Re: [patch V3 10/18] posix-timers: Make lock_timer() use guard()
-Message-ID: <Z89kpLzck5w7gVxi@pavilion.home>
-References: <20250308155501.391430556@linutronix.de>
- <20250308155624.087465658@linutronix.de>
- <Z87Tj5BryQd9Rya8@pavilion.home>
- <87o6y823fx.ffs@tglx>
+	s=arc-20240116; t=1741645077; c=relaxed/simple;
+	bh=1gJ8Px/hXdYSeOk/2qSjeq5whelRrLVeV0FCdhmv5dI=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version; b=s8QFb62g2Je7CmUnbROAD7LcPjlu6q9k4z0dD7FI84Ux0/5G0WndPFRt07QE4cdT7m1y6w4fxHOzswkrI4Nuy8LeDNkorl8O6uHXjLDF0V0R0cMkTjreoHb8xJxhkecU+wg3v3TXitcmf6gGuxYCiBNmQH49K1ihx1629Yi8LwM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=NV4OumkG; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: from narnia.corp.microsoft.com (unknown [167.220.2.28])
+	by linux.microsoft.com (Postfix) with ESMTPSA id E638F205492E;
+	Mon, 10 Mar 2025 15:17:46 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com E638F205492E
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1741645075;
+	bh=S/hVMZ/Tm5pXhLhAqS9Ia0x+kWvutUUZYfnhEAxVL54=;
+	h=From:To:Subject:Date:From;
+	b=NV4OumkGGIKHmOv4uU63g9E6HukS9pYi5qYcIRCL554+GWmkSS2gA40WRj1GGphNh
+	 UyYTAkuW3vAukLpALywFGBDNicIYDKk8XPhDJtbg+CLVFD5PDLR4P6g8x5PtAOcBod
+	 91r+sbc8pgOVmlUyLd9YtnzbvurGHmSTp5YzXYEo=
+From: Blaise Boscaccy <bboscaccy@linux.microsoft.com>
+To: Paul Moore <paul@paul-moore.com>,
+	James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	John Fastabend <john.fastabend@gmail.com>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Martin KaFai Lau <martin.lau@linux.dev>,
+	Eduard Zingerman <eddyz87@gmail.com>,
+	Song Liu <song@kernel.org>,
+	Yonghong Song <yonghong.song@linux.dev>,
+	KP Singh <kpsingh@kernel.org>,
+	Stanislav Fomichev <sdf@fomichev.me>,
+	Hao Luo <haoluo@google.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Stephen Smalley <stephen.smalley.work@gmail.com>,
+	Ondrej Mosnacek <omosnace@redhat.com>,
+	Mykola Lysenko <mykolal@fb.com>,
+	Shuah Khan <shuah@kernel.org>,
+	Blaise Boscaccy <bboscaccy@linux.microsoft.com>,
+	Kumar Kartikeya Dwivedi <memxor@gmail.com>,
+	Matt Bobrowski <mattbobrowski@google.com>,
+	Xu Kuohai <xukuohai@huawei.com>,
+	linux-kernel@vger.kernel.org,
+	linux-security-module@vger.kernel.org,
+	bpf@vger.kernel.org,
+	selinux@vger.kernel.org,
+	linux-kselftest@vger.kernel.org
+Subject: [PATCH v7 bpf-next 0/2] security: Propagate caller information in bpf hooks
+Date: Mon, 10 Mar 2025 15:17:10 -0700
+Message-ID: <20250310221737.821889-1-bboscaccy@linux.microsoft.com>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <87o6y823fx.ffs@tglx>
 
-Le Mon, Mar 10, 2025 at 06:36:18PM +0100, Thomas Gleixner a écrit :
-> On Mon, Mar 10 2025 at 12:57, Frederic Weisbecker wrote:
-> > Le Sat, Mar 08, 2025 at 05:48:34PM +0100, Thomas Gleixner a écrit :
-> >> --- a/kernel/time/posix-timers.c
-> >> +++ b/kernel/time/posix-timers.c
-> >> @@ -63,9 +63,18 @@ static struct k_itimer *__lock_timer(tim
-> >>  
-> >>  static inline void unlock_timer(struct k_itimer *timr)
-> >>  {
-> >> -	spin_unlock_irq(&timr->it_lock);
-> >> +	if (likely((timr)))
-> >> +		spin_unlock_irq(&timr->it_lock);
-> >>  }
-> >>  
-> >> +#define scoped_timer_get_or_fail(_id)					\
-> >> +	scoped_cond_guard(lock_timer, return -EINVAL, _id)
-> >
-> > I'm not really fond of the fact this hides a return.
-> 
-> I could drop the macro and let the call sites all do:
-> 
-> 	scoped_cond_guard(lock_timer, return -EINVAL, $d)
-> 
-> But I'm not sure it's much better :)
+Hello,
 
-Nah let's just keep it as is, until we ever find a better idea :-)
+While trying to implement an eBPF gatekeeper program, we ran into an
+issue whereas the LSM hooks are missing some relevant data.
+
+Certain subcommands passed to the bpf() syscall can be invoked from
+either the kernel or userspace. Additionally, some fields in the
+bpf_attr struct contain pointers, and depending on where the
+subcommand was invoked, they could point to either user or kernel
+memory. One example of this is the bpf_prog_load subcommand and its
+fd_array. This data is made available and used by the verifier but not
+made available to the LSM subsystem. This patchset simply exposes that
+information to applicable LSM hooks.
+
+Change list:
+- v6 -> v7
+  - use gettid/pid in lieu of getpid/tgid in test condition
+- v5 -> v6
+  - fix regression caused by is_kernel renaming
+  - simplify test logic
+- v4 -> v5
+  - merge v4 selftest breakout patch back into a single patch
+  - change "is_kernel" to "kernel"
+  - add selftest using new kernel flag
+- v3 -> v4
+  - split out selftest changes into a separate patch
+- v2 -> v3
+  - reorder params so that the new boolean flag is the last param
+  - fixup function signatures in bpf selftests
+- v1 -> v2
+  - Pass a boolean flag in lieu of bpfptr_t
+
+Revisions:
+- v6
+  https://lore.kernel.org/bpf/20250308013314.719150-1-bboscaccy@linux.microsoft.com/
+- v5
+  https://lore.kernel.org/bpf/20250307213651.3065714-1-bboscaccy@linux.microsoft.com/
+- v4
+  https://lore.kernel.org/bpf/20250304203123.3935371-1-bboscaccy@linux.microsoft.com/
+- v3
+  https://lore.kernel.org/bpf/20250303222416.3909228-1-bboscaccy@linux.microsoft.com/
+- v2
+  https://lore.kernel.org/bpf/20250228165322.3121535-1-bboscaccy@linux.microsoft.com/
+- v1
+  https://lore.kernel.org/bpf/20250226003055.1654837-1-bboscaccy@linux.microsoft.com/
+
+
+Blaise Boscaccy (2):
+  security: Propagate caller information in bpf hooks
+  selftests/bpf: Add a kernel flag test for LSM bpf hook
+
+ include/linux/lsm_hook_defs.h                 |  6 +--
+ include/linux/security.h                      | 12 +++---
+ kernel/bpf/syscall.c                          | 10 ++---
+ security/security.c                           | 15 ++++---
+ security/selinux/hooks.c                      |  6 +--
+ .../selftests/bpf/prog_tests/kernel_flag.c    | 43 +++++++++++++++++++
+ .../selftests/bpf/progs/rcu_read_lock.c       |  3 +-
+ .../bpf/progs/test_cgroup1_hierarchy.c        |  4 +-
+ .../selftests/bpf/progs/test_kernel_flag.c    | 28 ++++++++++++
+ .../bpf/progs/test_kfunc_dynptr_param.c       |  6 +--
+ .../selftests/bpf/progs/test_lookup_key.c     |  2 +-
+ .../selftests/bpf/progs/test_ptr_untrusted.c  |  2 +-
+ .../bpf/progs/test_task_under_cgroup.c        |  2 +-
+ .../bpf/progs/test_verify_pkcs7_sig.c         |  2 +-
+ 14 files changed, 108 insertions(+), 33 deletions(-)
+ create mode 100644 tools/testing/selftests/bpf/prog_tests/kernel_flag.c
+ create mode 100644 tools/testing/selftests/bpf/progs/test_kernel_flag.c
+
+-- 
+2.48.1
+
 
