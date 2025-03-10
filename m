@@ -1,361 +1,216 @@
-Return-Path: <linux-kernel+bounces-553525-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-553526-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 53F9FA58AF6
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 04:56:24 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D2ECA58AFF
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 05:00:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EE4D23AA47A
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 03:56:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ACA9F169DA7
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 04:00:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EC631C3F36;
-	Mon, 10 Mar 2025 03:55:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E24CC1BCA0E;
+	Mon, 10 Mar 2025 04:00:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="DWLIm0SG"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="u76rC6KT"
+Received: from out199-13.us.a.mail.aliyun.com (out199-13.us.a.mail.aliyun.com [47.90.199.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C82091C1AD4
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 03:55:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3184D199FBA;
+	Mon, 10 Mar 2025 04:00:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=47.90.199.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741578958; cv=none; b=ra3Ka0t6j6Wx9/M+BewTSsxEZdG6LDD7Weaf8v4Ek0LrcJxQC/W0r2HwDjDtY299+6KZZAUiYGrtqZTl35dQRsW/hMXEhTfXQ0qLXIxL85fpzfvTjHgjBIm1/GbuJuwvkDHf6zPJBvDEqCy/A88rrnDoqwXTOfV6zfmc0hXtP6k=
+	t=1741579218; cv=none; b=BJ4li8xqogvj1hk9pTOSlTNPrajY1FzjdtfDkIUyzEavaB7EFRCjGSW+GSjpJtXhwh95PL9cdhnIwbYXu7Qu3HJ6T1HWHwp6ALRwVGpO7jDph0dhsixz2sFM+QN5rUuJNty8Xb1Ip/2Xe9FqzZXxUxS3pNwZ7Vf9R90bQy9YSGQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741578958; c=relaxed/simple;
-	bh=cAsEA5rVLtlF4YFTrYNPFuKy+KtQ1kpU4FosslrO3sc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=dMx2q6DCaEAz2ptQwxc07Ev2tZSmQgixKsrMzEP9lTfVlw3K92f92295WKtxijs+lxyajTU29Sl7SXxjs0oouFn8/BMTrh4NpESOkl2OxI2YcEHSq4790EnwKco5DL8nIlrttLJlmhzoiAWs3F5TWxm5hl2IQm3VEADvS8LZko0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=DWLIm0SG; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1741578955;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=KLfDOaZ+6H2fVtzm/R21I7CXsAT52XVMOY62cWTJKC4=;
-	b=DWLIm0SGWKeAyk2XN2D4wtmhcs72FooXf8sLHJ2ntGMft+9PthlwlE6d7kglX2GKyC91y3
-	VoMRDD7n+pPGy1iXJfn+9Ky29DXq0sbD0WJ8mW4LJNsjdpdaqofgwCdKcXES8TS1xXtayt
-	9/F7StnZvLBpNXEkyvvtyl/iZv4vdCY=
-Received: from mail-pj1-f70.google.com (mail-pj1-f70.google.com
- [209.85.216.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-524-qcKcrb64MCKOf4zJsMQm9A-1; Sun, 09 Mar 2025 23:55:54 -0400
-X-MC-Unique: qcKcrb64MCKOf4zJsMQm9A-1
-X-Mimecast-MFC-AGG-ID: qcKcrb64MCKOf4zJsMQm9A_1741578953
-Received: by mail-pj1-f70.google.com with SMTP id 98e67ed59e1d1-2ff6943febeso6054550a91.0
-        for <linux-kernel@vger.kernel.org>; Sun, 09 Mar 2025 20:55:54 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741578953; x=1742183753;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=KLfDOaZ+6H2fVtzm/R21I7CXsAT52XVMOY62cWTJKC4=;
-        b=aViVOJ5tXvpPfOFWpAoLxcH1kzKgSvfitvR3YQKOKen80mHXhyhACI84z0cgmqvuFL
-         lISr73IQzJr54xRwQWnjHjiU3EPCKtte/O0A+nBcsyiobHEGCexgcVDPslZ8nd3yDAsC
-         jTBvRI4aBKFfQplv4HuCaPEUUOXkOcVmmlgMU1C7FpXl1Z3MWwdHfPSZumNhpamNwoub
-         RJ5WlQ2+7ndVLC4QXSFQo4OFT4qOSlu/yaK13f6zLX8BlJ7egm34ngKX+dz5oiLg/phH
-         XCBIsbAKdkZ8X9ap7csDUgdxYt/Df4//uSQt5e+rG0GwYNK3dpaCVncsGrvUb2sbirnI
-         lh1g==
-X-Forwarded-Encrypted: i=1; AJvYcCWc4/QrplVgpVW7hAcmnTQR/lgr7kvtJVEXZzH+m1hkbMKc+IY1VbuwGlTi3WlL84o8w/6z9wWmJX0rZKw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yws9+5EPk2Xi2TI/gJO3ZYaCS2/WPeiamDyK2VgskAGRlN2cNub
-	W/4cGGYxZT79MjTNXH2dBwmc0WI056FE9eRRX8sla2eWr4ALEEOceDTBo2oeWDpUjTCA568tCmW
-	YTQ2ZNKQrDX4aaRJCrIASNXxabN6JHFkyvJNojZqIn2D9vwL+tieWvrGwa+1MfqILwBbJZ60qTY
-	HW2h25pVELAi4ymstFbuitg3OLXUa1PIu8joim
-X-Gm-Gg: ASbGncs1phV2hKLvmAL0NVa9/Jqp3YBckJdaM3egiDNuF3Uz7xHtiLEXHwa/2+Ipe99
-	v6JFYjZqSWQ7QFEvjGcwUZDzzPw1hafBZBEyNoKItPKZgVsZkjoqET7PO6BMtrLWHUKM33mI+Xw
-	==
-X-Received: by 2002:a17:90b:3b4a:b0:2fa:603e:905c with SMTP id 98e67ed59e1d1-2ffbc147913mr13099033a91.2.1741578953022;
-        Sun, 09 Mar 2025 20:55:53 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IE/k2MZl+1eTauKKRQaBczo7+lYkLKBKYojv/oPSwVVjxmhcvsBCepaGgDHH6nnmcXNP7M3odraNkugC8ff+SY=
-X-Received: by 2002:a17:90b:3b4a:b0:2fa:603e:905c with SMTP id
- 98e67ed59e1d1-2ffbc147913mr13098993a91.2.1741578952536; Sun, 09 Mar 2025
- 20:55:52 -0700 (PDT)
+	s=arc-20240116; t=1741579218; c=relaxed/simple;
+	bh=CROjvy/MKdJ5/RFwYmWjeYXRcyQwv00nYgwEaSCxdpg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=MADYnCE1ZegzOuQ3nU3odqBVOGvTuWGRltL5Cf1GpeRDagMnUGCWNbB/coX2MZPOz29FV0sj4s5VLkRby2z9kH0r1eWK2UQgil5pM0bybVzbvWwuF0H7oGnvsapQ8xmxEVaAvXLythurWukTyudTXEkv6VjHAsPewSGPQh2O5b4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=u76rC6KT; arc=none smtp.client-ip=47.90.199.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1741579199; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=uqEuDYBQyu1rVnaZ3FTs3Lz5M58Kfacepcx3ohjxnR0=;
+	b=u76rC6KTa1rpdODYJkH43Wh2UFTvlbMYJneWhhFH8ZfK97tZuVxB+S3xPDU1CO2jS7OZ0fDN/Hwbs/NFmGfJNU2K+KZLZkZPBDAlmhI4Tnpqa0K4lt+7wPyZXxTX4zv3wtCww8KzP2aT/ZnVaMu1biNVgN8nL1nRAxP3S86TYgo=
+Received: from 30.246.161.128(mailfrom:xueshuai@linux.alibaba.com fp:SMTPD_---0WQym12P_1741579196 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Mon, 10 Mar 2025 11:59:57 +0800
+Message-ID: <deb6f0c4-77b8-431e-9b81-555a8344c750@linux.alibaba.com>
+Date: Mon, 10 Mar 2025 11:59:55 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250307-rss-v9-0-df76624025eb@daynix.com> <20250307-rss-v9-1-df76624025eb@daynix.com>
-In-Reply-To: <20250307-rss-v9-1-df76624025eb@daynix.com>
-From: Jason Wang <jasowang@redhat.com>
-Date: Mon, 10 Mar 2025 11:55:41 +0800
-X-Gm-Features: AQ5f1Jo7izCEaK4h7KNaa2PmkyiGKSX1VLT--PvuZ9E5ca0j_EFeVEqGooF6Dh4
-Message-ID: <CACGkMEvxkwe9OJRZPb7zz-sRfVpeuoYSz4c2kh9_jjtGbkb_qA@mail.gmail.com>
-Subject: Re: [PATCH net-next v9 1/6] virtio_net: Add functions for hashing
-To: Akihiko Odaki <akihiko.odaki@daynix.com>
-Cc: Jonathan Corbet <corbet@lwn.net>, Willem de Bruijn <willemdebruijn.kernel@gmail.com>, 
-	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
-	"Michael S. Tsirkin" <mst@redhat.com>, Xuan Zhuo <xuanzhuo@linux.alibaba.com>, 
-	Shuah Khan <shuah@kernel.org>, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	netdev@vger.kernel.org, kvm@vger.kernel.org, 
-	virtualization@lists.linux-foundation.org, linux-kselftest@vger.kernel.org, 
-	Yuri Benditovich <yuri.benditovich@daynix.com>, Andrew Melnychenko <andrew@daynix.com>, 
-	Stephen Hemminger <stephen@networkplumber.org>, gur.stavi@huawei.com, 
-	Lei Yang <leiyang@redhat.com>, Simon Horman <horms@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-On Fri, Mar 7, 2025 at 7:01=E2=80=AFPM Akihiko Odaki <akihiko.odaki@daynix.=
-com> wrote:
->
-> They are useful to implement VIRTIO_NET_F_RSS and
-> VIRTIO_NET_F_HASH_REPORT.
->
-> Signed-off-by: Akihiko Odaki <akihiko.odaki@daynix.com>
-> Tested-by: Lei Yang <leiyang@redhat.com>
-> ---
->  include/linux/virtio_net.h | 188 +++++++++++++++++++++++++++++++++++++++=
-++++++
->  1 file changed, 188 insertions(+)
->
-> diff --git a/include/linux/virtio_net.h b/include/linux/virtio_net.h
-> index 02a9f4dc594d02372a6c1850cd600eff9d000d8d..426f33b4b82440d61b2af9fdc=
-4c0b0d4c571b2c5 100644
-> --- a/include/linux/virtio_net.h
-> +++ b/include/linux/virtio_net.h
-> @@ -9,6 +9,194 @@
->  #include <uapi/linux/tcp.h>
->  #include <uapi/linux/virtio_net.h>
->
-> +struct virtio_net_hash {
-> +       u32 value;
-> +       u16 report;
-> +};
-> +
-> +struct virtio_net_toeplitz_state {
-> +       u32 hash;
-> +       const u32 *key;
-> +};
-> +
-> +#define VIRTIO_NET_SUPPORTED_HASH_TYPES (VIRTIO_NET_RSS_HASH_TYPE_IPv4 |=
- \
-> +                                        VIRTIO_NET_RSS_HASH_TYPE_TCPv4 |=
- \
-> +                                        VIRTIO_NET_RSS_HASH_TYPE_UDPv4 |=
- \
-> +                                        VIRTIO_NET_RSS_HASH_TYPE_IPv6 | =
-\
-> +                                        VIRTIO_NET_RSS_HASH_TYPE_TCPv6 |=
- \
-> +                                        VIRTIO_NET_RSS_HASH_TYPE_UDPv6)
-
-Let's explain why
-
-#define VIRTIO_NET_HASH_REPORT_IPv6_EX         7
-#define VIRTIO_NET_HASH_REPORT_TCPv6_EX        8
-#define VIRTIO_NET_HASH_REPORT_UDPv6_EX        9
-
-are missed here.
-
-And explain how we could maintain migration compatibility
-
-1) Does those three work for userspace datapath in Qemu? If yes,
-migration will be broken.
-2) once we support those three in the future. For example, is the qemu
-expected to probe this via TUNGETVNETHASHCAP in the destination and
-fail the migration?
-
-Thanks
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5] PCI: hotplug: Add a generic RAS tracepoint for hotplug
+ event
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: lukas@wunner.de, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-edac@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+ helgaas@kernel.org, bhelgaas@google.com, tony.luck@intel.com, bp@alien8.de,
+ mhiramat@kernel.org, mathieu.desnoyers@efficios.com, oleg@redhat.com,
+ naveen@kernel.org, davem@davemloft.net, anil.s.keshavamurthy@intel.com,
+ mark.rutland@arm.com, peterz@infradead.org, tianruidong@linux.alibaba.com
+References: <20250109025543.56830-1-xueshuai@linux.alibaba.com>
+ <20250113155503.71467082@gandalf.local.home>
+From: Shuai Xue <xueshuai@linux.alibaba.com>
+In-Reply-To: <20250113155503.71467082@gandalf.local.home>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
 
 
-> +
-> +#define VIRTIO_NET_RSS_MAX_KEY_SIZE 40
-> +
-> +static inline void virtio_net_toeplitz_convert_key(u32 *input, size_t le=
-n)
-> +{
-> +       while (len >=3D sizeof(*input)) {
-> +               *input =3D be32_to_cpu((__force __be32)*input);
-> +               input++;
-> +               len -=3D sizeof(*input);
-> +       }
-> +}
-> +
-> +static inline void virtio_net_toeplitz_calc(struct virtio_net_toeplitz_s=
-tate *state,
-> +                                           const __be32 *input, size_t l=
-en)
-> +{
-> +       while (len >=3D sizeof(*input)) {
-> +               for (u32 map =3D be32_to_cpu(*input); map; map &=3D (map =
-- 1)) {
-> +                       u32 i =3D ffs(map);
-> +
-> +                       state->hash ^=3D state->key[0] << (32 - i) |
-> +                                      (u32)((u64)state->key[1] >> i);
-> +               }
-> +
-> +               state->key++;
-> +               input++;
-> +               len -=3D sizeof(*input);
-> +       }
-> +}
-> +
-> +static inline u8 virtio_net_hash_key_length(u32 types)
-> +{
-> +       size_t len =3D 0;
-> +
-> +       if (types & VIRTIO_NET_HASH_REPORT_IPv4)
-> +               len =3D max(len,
-> +                         sizeof(struct flow_dissector_key_ipv4_addrs));
-> +
-> +       if (types &
-> +           (VIRTIO_NET_HASH_REPORT_TCPv4 | VIRTIO_NET_HASH_REPORT_UDPv4)=
-)
-> +               len =3D max(len,
-> +                         sizeof(struct flow_dissector_key_ipv4_addrs) +
-> +                         sizeof(struct flow_dissector_key_ports));
-> +
-> +       if (types & VIRTIO_NET_HASH_REPORT_IPv6)
-> +               len =3D max(len,
-> +                         sizeof(struct flow_dissector_key_ipv6_addrs));
-> +
-> +       if (types &
-> +           (VIRTIO_NET_HASH_REPORT_TCPv6 | VIRTIO_NET_HASH_REPORT_UDPv6)=
-)
-> +               len =3D max(len,
-> +                         sizeof(struct flow_dissector_key_ipv6_addrs) +
-> +                         sizeof(struct flow_dissector_key_ports));
-> +
-> +       return len + sizeof(u32);
-> +}
-> +
-> +static inline u32 virtio_net_hash_report(u32 types,
-> +                                        const struct flow_keys_basic *ke=
-ys)
-> +{
-> +       switch (keys->basic.n_proto) {
-> +       case cpu_to_be16(ETH_P_IP):
-> +               if (!(keys->control.flags & FLOW_DIS_IS_FRAGMENT)) {
-> +                       if (keys->basic.ip_proto =3D=3D IPPROTO_TCP &&
-> +                           (types & VIRTIO_NET_RSS_HASH_TYPE_TCPv4))
-> +                               return VIRTIO_NET_HASH_REPORT_TCPv4;
-> +
-> +                       if (keys->basic.ip_proto =3D=3D IPPROTO_UDP &&
-> +                           (types & VIRTIO_NET_RSS_HASH_TYPE_UDPv4))
-> +                               return VIRTIO_NET_HASH_REPORT_UDPv4;
-> +               }
-> +
-> +               if (types & VIRTIO_NET_RSS_HASH_TYPE_IPv4)
-> +                       return VIRTIO_NET_HASH_REPORT_IPv4;
-> +
-> +               return VIRTIO_NET_HASH_REPORT_NONE;
-> +
-> +       case cpu_to_be16(ETH_P_IPV6):
-> +               if (!(keys->control.flags & FLOW_DIS_IS_FRAGMENT)) {
-> +                       if (keys->basic.ip_proto =3D=3D IPPROTO_TCP &&
-> +                           (types & VIRTIO_NET_RSS_HASH_TYPE_TCPv6))
-> +                               return VIRTIO_NET_HASH_REPORT_TCPv6;
-> +
-> +                       if (keys->basic.ip_proto =3D=3D IPPROTO_UDP &&
-> +                           (types & VIRTIO_NET_RSS_HASH_TYPE_UDPv6))
-> +                               return VIRTIO_NET_HASH_REPORT_UDPv6;
-> +               }
-> +
-> +               if (types & VIRTIO_NET_RSS_HASH_TYPE_IPv6)
-> +                       return VIRTIO_NET_HASH_REPORT_IPv6;
-> +
-> +               return VIRTIO_NET_HASH_REPORT_NONE;
-> +
-> +       default:
-> +               return VIRTIO_NET_HASH_REPORT_NONE;
-> +       }
-> +}
-> +
-> +static inline void virtio_net_hash_rss(const struct sk_buff *skb,
-> +                                      u32 types, const u32 *key,
-> +                                      struct virtio_net_hash *hash)
-> +{
-> +       struct virtio_net_toeplitz_state toeplitz_state =3D { .key =3D ke=
-y };
-> +       struct flow_keys flow;
-> +       struct flow_keys_basic flow_basic;
-> +       u16 report;
-> +
-> +       if (!skb_flow_dissect_flow_keys(skb, &flow, 0)) {
-> +               hash->report =3D VIRTIO_NET_HASH_REPORT_NONE;
-> +               return;
-> +       }
-> +
-> +       flow_basic =3D (struct flow_keys_basic) {
-> +               .control =3D flow.control,
-> +               .basic =3D flow.basic
-> +       };
-> +
-> +       report =3D virtio_net_hash_report(types, &flow_basic);
-> +
-> +       switch (report) {
-> +       case VIRTIO_NET_HASH_REPORT_IPv4:
-> +               virtio_net_toeplitz_calc(&toeplitz_state,
-> +                                        (__be32 *)&flow.addrs.v4addrs,
-> +                                        sizeof(flow.addrs.v4addrs));
-> +               break;
-> +
-> +       case VIRTIO_NET_HASH_REPORT_TCPv4:
-> +               virtio_net_toeplitz_calc(&toeplitz_state,
-> +                                        (__be32 *)&flow.addrs.v4addrs,
-> +                                        sizeof(flow.addrs.v4addrs));
-> +               virtio_net_toeplitz_calc(&toeplitz_state, &flow.ports.por=
-ts,
-> +                                        sizeof(flow.ports.ports));
-> +               break;
-> +
-> +       case VIRTIO_NET_HASH_REPORT_UDPv4:
-> +               virtio_net_toeplitz_calc(&toeplitz_state,
-> +                                        (__be32 *)&flow.addrs.v4addrs,
-> +                                        sizeof(flow.addrs.v4addrs));
-> +               virtio_net_toeplitz_calc(&toeplitz_state, &flow.ports.por=
-ts,
-> +                                        sizeof(flow.ports.ports));
-> +               break;
-> +
-> +       case VIRTIO_NET_HASH_REPORT_IPv6:
-> +               virtio_net_toeplitz_calc(&toeplitz_state,
-> +                                        (__be32 *)&flow.addrs.v6addrs,
-> +                                        sizeof(flow.addrs.v6addrs));
-> +               break;
-> +
-> +       case VIRTIO_NET_HASH_REPORT_TCPv6:
-> +               virtio_net_toeplitz_calc(&toeplitz_state,
-> +                                        (__be32 *)&flow.addrs.v6addrs,
-> +                                        sizeof(flow.addrs.v6addrs));
-> +               virtio_net_toeplitz_calc(&toeplitz_state, &flow.ports.por=
-ts,
-> +                                        sizeof(flow.ports.ports));
-> +               break;
-> +
-> +       case VIRTIO_NET_HASH_REPORT_UDPv6:
-> +               virtio_net_toeplitz_calc(&toeplitz_state,
-> +                                        (__be32 *)&flow.addrs.v6addrs,
-> +                                        sizeof(flow.addrs.v6addrs));
-> +               virtio_net_toeplitz_calc(&toeplitz_state, &flow.ports.por=
-ts,
-> +                                        sizeof(flow.ports.ports));
-> +               break;
-> +
-> +       default:
-> +               hash->report =3D VIRTIO_NET_HASH_REPORT_NONE;
-> +               return;
-> +       }
-> +
-> +       hash->value =3D toeplitz_state.hash;
-> +       hash->report =3D report;
-> +}
-> +
->  static inline bool virtio_net_hdr_match_proto(__be16 protocol, __u8 gso_=
-type)
->  {
->         switch (gso_type & ~VIRTIO_NET_HDR_GSO_ECN) {
->
-> --
-> 2.48.1
->
+在 2025/1/14 04:55, Steven Rostedt 写道:
+> On Thu,  9 Jan 2025 10:55:43 +0800
+> Shuai Xue <xueshuai@linux.alibaba.com> wrote:
+> 
+>> diff --git a/drivers/pci/hotplug/trace.h b/drivers/pci/hotplug/trace.h
+>> new file mode 100644
+>> index 000000000000..5b60cd7bcffb
+>> --- /dev/null
+>> +++ b/drivers/pci/hotplug/trace.h
+>> @@ -0,0 +1,68 @@
+>> +/* SPDX-License-Identifier: GPL-2.0 */
+>> +#if !defined(_TRACE_HW_EVENT_PCI_HP_H) || defined(TRACE_HEADER_MULTI_READ)
+>> +#define _TRACE_HW_EVENT_PCI_HP_H
+>> +
+>> +#include <linux/tracepoint.h>
+>> +
+>> +#undef TRACE_SYSTEM
+>> +#define TRACE_SYSTEM pci
+>> +
+>> +#define PCI_HOTPLUG_EVENT					\
+>> +	EM(PCI_HOTPLUG_LINK_UP,			"Link Up")	\
+>> +	EM(PCI_HOTPLUG_LINK_DOWN,		"Link Down")	\
+>> +	EM(PCI_HOTPLUG_CARD_PRESENT,		"Card present")	\
+>> +	EMe(PCI_HOTPLUG_CARD_NOT_PRESENT,	"Card not present")
+> 
+> Since you are creating these enums in this patch, you can also do a
+> shortcut here too. Instead of doing the define here, move it to
+> include/uapi/linux/pci.h:
+> 
+>> +
+>> +/* Enums require being exported to userspace, for user tool parsing */
+>> +#undef EM
+>> +#undef EMe
+>> +#define EM(a, b)	TRACE_DEFINE_ENUM(a);
+>> +#define EMe(a, b)	TRACE_DEFINE_ENUM(a);
+>> +
+>> +PCI_HOTPLUG_EVENT
+>> +
+>> +/*
+>> + * Now redefine the EM() and EMe() macros to map the enums to the strings
+>> + * that will be printed in the output.
+>> + */
+>> +#undef EM
+>> +#undef EMe
+>> +#define EM(a, b)	{a, b},
+>> +#define EMe(a, b)	{a, b}
+>> +
+>> +TRACE_EVENT(pci_hp_event,
+>> +
+>> +	TP_PROTO(const char *port_name,
+>> +		 const char *slot,
+>> +		 const int event),
+>> +
+>> +	TP_ARGS(port_name, slot, event),
+>> +
+>> +	TP_STRUCT__entry(
+>> +		__string(	port_name,	port_name	)
+>> +		__string(	slot,		slot		)
+>> +		__field(	int,		event	)
+>> +	),
+>> +
+>> +	TP_fast_assign(
+>> +		__assign_str(port_name);
+>> +		__assign_str(slot);
+>> +		__entry->event = event;
+>> +	),
+>> +
+>> +	TP_printk("%s slot:%s, event:%s\n",
+>> +		__get_str(port_name),
+>> +		__get_str(slot),
+>> +		__print_symbolic(__entry->event, PCI_HOTPLUG_EVENT)
+>> +	)
+>> +);
+>> +
+>> +#endif /* _TRACE_HW_EVENT_PCI_HP_H */
+>> +
+>> +#undef TRACE_INCLUDE_PATH
+>> +#define TRACE_INCLUDE_PATH  ../../drivers/pci/hotplug
+>> +#undef TRACE_INCLUDE_FILE
+>> +#define TRACE_INCLUDE_FILE trace
+>> +
+>> +/* This part must be outside protection */
+>> +#include <trace/define_trace.h>
+>> diff --git a/include/uapi/linux/pci.h b/include/uapi/linux/pci.h
+>> index a769eefc5139..4f150028965d 100644
+>> --- a/include/uapi/linux/pci.h
+>> +++ b/include/uapi/linux/pci.h
+>> @@ -39,4 +39,11 @@
+>>   #define PCIIOC_MMAP_IS_MEM	(PCIIOC_BASE | 0x02)	/* Set mmap state to MEM space. */
+>>   #define PCIIOC_WRITE_COMBINE	(PCIIOC_BASE | 0x03)	/* Enable/disable write-combining. */
+>>   
+>> +enum pci_hotplug_event {
+>> +	PCI_HOTPLUG_LINK_UP,
+>> +	PCI_HOTPLUG_LINK_DOWN,
+>> +	PCI_HOTPLUG_CARD_PRESENT,
+>> +	PCI_HOTPLUG_CARD_NOT_PRESENT,
+>> +};
+> 
+> Instead of defining the enum as you did above, if you have the define of
+> the enums here, you could do:
+> 
+> #define PCI_HOTPLUG_EVENT					\
+> 	EM(PCI_HOTPLUG_LINK_UP,			"Link Up")	\
+> 	EM(PCI_HOTPLUG_LINK_DOWN,		"Link Down")	\
+> 	EM(PCI_HOTPLUG_CARD_PRESENT,		"Card present")	\
+> 	EMe(PCI_HOTPLUG_CARD_NOT_PRESENT,	"Card not present")
+> 
+> #undef EM
+> #undef EMe
+> #define EM(a, b)	a,
+> #define EMe(a, b)	a,
+> 
+> enum pci_hotplug_event {
+> 	PCI_HOTPLUG_EVENT
+> };
+> 
+> Then you only have one place to worry about adding new enums ;-)
 
+Hi, Steve,
+
+If I move PCI_HOTPLUG_EVENT into one place, `include/upai/linux/pci.h`,
+I need to include:
+
+     #include <linux/tracepoint.h>
+
+Then, kernel build fails with CONFIG_UAPI_HEADER_TEST=y:
+
+$ make -j128
+   DESCEND objtool
+   CALL    scripts/checksyscalls.sh
+   INSTALL libsubcmd_headers
+   HDRTEST usr/include/linux/pci.h
+In file included from <command-line>:32:
+./usr/include/linux/pci.h:22:10: fatal error: linux/tracepoint.h: No such file or directory
+    22 | #include <linux/tracepoint.h>
+       |          ^~~~~~~~~~~~~~~~~~~~
+compilation terminated.
+make[4]: *** [usr/include/Makefile:85: usr/include/linux/pci.hdrtest] Error 1
+make[3]: *** [scripts/Makefile.build:465: usr/include] Error 2
+make[2]: *** [scripts/Makefile.build:465: usr] Error 2
+make[2]: *** Waiting for unfinished jobs....
+make[1]: *** [/media/nvme/shawn.xs/kernels/linux/Makefile:1994: .] Error 2
+make: *** [Makefile:251: __sub-make] Error 2
+
+Do you have any objections that I reverted to this version v5?
+
+Thanks.
+Shuai
 
