@@ -1,180 +1,107 @@
-Return-Path: <linux-kernel+bounces-554664-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-554667-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id ECFD4A59B17
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 17:34:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id BC446A59B1F
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 17:35:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 774CE3A307B
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 16:33:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 08AB23A5AEE
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 16:35:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96C5422FF5A;
-	Mon, 10 Mar 2025 16:33:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C199B2309A6;
+	Mon, 10 Mar 2025 16:35:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=arri.de header.i=@arri.de header.b="ud2IX6hL"
-Received: from EUR03-DBA-obe.outbound.protection.outlook.com (mail-dbaeur03on2059.outbound.protection.outlook.com [40.107.104.59])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="WlAzFezD"
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5848722FF2D;
-	Mon, 10 Mar 2025 16:33:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.104.59
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741624426; cv=fail; b=kWfI4+NHknybCfKe/jUXiKRJ3iShmK2Ia5XehaVwXPJ2scBwcQxXSZ5B5ac/DOzu6OqdkptX1fksMMJBE2JdyPBxKbRXnqied2NPRLCq11vytdvgr7dgrw2kJ4zoqSbzrUWBQdjCwa8rWfdCT4b8mfRB5SnVnIbglAIGpyyj/7s=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741624426; c=relaxed/simple;
-	bh=NNnpT628qJwas+m9oh5zJAh6GzuD9xG4cGeOu3ch/uI=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=n1p5iNCoy2DJgsNVpBtZ4S2u//YMyZlfL7XD7ulgiLNKaIFzuosMFttxjJy+0SL6sAPa1tWoeNtNo0eCJaibOB5Wqq5pv0qKu+O5jhS5h6SQhW631hNxGW/BhSVcUQWoO8+tUcpPeOFluPL1Qmgwg0w/gie77Qfncmtbx3EOnF0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arri.de; spf=pass smtp.mailfrom=arri.de; dkim=pass (1024-bit key) header.d=arri.de header.i=@arri.de header.b=ud2IX6hL; arc=fail smtp.client-ip=40.107.104.59
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arri.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arri.de
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=q+BaIpT1B0uUfES6xbRYd03yVJvEoe3LMtT6ucedU1MC0WS+TAJA65LMHH642GB4JhlIxx/UoIsr+ZJNzMVkW/bfIwvy10JR162LqhxSPTdiwneCDRzQXZey48eit2Qb+DDnz5UQ6jGY/13us56JZRJys3AqHER84Deh0XP8CqZ3t3PtK+2ORswxWSVg1dncqfVZmIw/GRF4tFFI/hwfKGywAZKKq5sbPOe7QXAm5Z212e6AoEOQx5+zLeZyXeXjWTOUUSNkVcR2XBtBckYr0v7VU1bgpJjoSNapzPoPWw9ezFEpbCCcg1jMPM9s/Or6mtnf4/gYOB02oQI1WYPruw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=N5YuwEvc84YbFpPC1wpb1RMBTuLZ/BC971SzUy4sT+8=;
- b=QR0AtGyvY+TNZtByOZ9BBVuIJXvNrfJxPiJ/hG24DlRM3VELIsM00qtPZWmx/UmYshydrPG/PGlmYhARlUXZpFnAhr5SB50cclcEQEEbocGkkhO0SzWyQ2tpORMHB0F5iF+WcNH5BasJ2SV+/eYT1B8XdvkS2pbrEEp/G6NBtwJhygl+rxLCWs7X/xNe4bwy6jxjmimujoBI3JRLmBuIepIDUV9RijWPjN7vc/K8QnYqaqcZ5ZfBSZe8cTWE/Km4JVtWCrb8KTCykuJLvzJ60qE4CUnmmgxm10zaUacyXcBfwvI0j2EnaBnIf/lohxnXVRzRIJx+NF+vejl2ghRm6Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=fail (sender ip is
- 217.111.95.7) smtp.rcpttodomain=gmail.com smtp.mailfrom=arri.de; dmarc=fail
- (p=none sp=none pct=100) action=none header.from=arri.de; dkim=none (message
- not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arri.de; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=N5YuwEvc84YbFpPC1wpb1RMBTuLZ/BC971SzUy4sT+8=;
- b=ud2IX6hLDiPmL6PCAGql/rtzezPf8nA7B+NaeYhH5rOFM/oiahG309ccMbl3KsedZJvMv1JUrw+V5yIGQKe8ds9/bFs27ulPIjmR6Xf5GFeb1wgVP+5cj8rBcWL6z3trBZccJ9cwmP4MnryPRcbblA5CXN+fwzSlGeOM3R5rGLQ=
-Received: from DB7PR05CA0012.eurprd05.prod.outlook.com (2603:10a6:10:36::25)
- by AS8PR03MB7524.eurprd03.prod.outlook.com (2603:10a6:20b:347::15) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8511.27; Mon, 10 Mar
- 2025 16:33:39 +0000
-Received: from DU6PEPF0000A7DF.eurprd02.prod.outlook.com
- (2603:10a6:10:36:cafe::e6) by DB7PR05CA0012.outlook.office365.com
- (2603:10a6:10:36::25) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8511.26 via Frontend Transport; Mon,
- 10 Mar 2025 16:33:39 +0000
-X-MS-Exchange-Authentication-Results: spf=fail (sender IP is 217.111.95.7)
- smtp.mailfrom=arri.de; dkim=none (message not signed)
- header.d=none;dmarc=fail action=none header.from=arri.de;
-Received-SPF: Fail (protection.outlook.com: domain of arri.de does not
- designate 217.111.95.7 as permitted sender) receiver=protection.outlook.com;
- client-ip=217.111.95.7; helo=mta.arri.de;
-Received: from mta.arri.de (217.111.95.7) by
- DU6PEPF0000A7DF.mail.protection.outlook.com (10.167.8.36) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8534.20 via Frontend Transport; Mon, 10 Mar 2025 16:33:38 +0000
-Received: from N9W6SW14.arri.de (10.30.5.19) by mta.arri.de (10.10.18.5) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1258.38; Mon, 10 Mar
- 2025 17:33:38 +0100
-From: Christian Eggers <ceggers@arri.de>
-To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
-	Douglas Anderson <dianders@chromium.org>
-CC: <linux-kernel@vger.kernel.org>, Christian Eggers <ceggers@arri.de>,
-	<stable@vger.kernel.org>
-Subject: [PATCH 2/2] regulator: assert that dummy regulator has been probed before using it
-Date: Mon, 10 Mar 2025 17:33:02 +0100
-Message-ID: <20250310163302.15276-2-ceggers@arri.de>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250310163302.15276-1-ceggers@arri.de>
-References: <20250310163302.15276-1-ceggers@arri.de>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADBF5185B62;
+	Mon, 10 Mar 2025 16:35:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741624506; cv=none; b=Bo00RsIL/P2ibm6JYUgEKXexw7odfwQqrZRZQqDlWhpiLtIchLlNXs1wUwRNpf8RU943D9bIXtQhOQKAV+zrp3Mg/JjATuQXCCIOTG65iWG9LetfvcqzeDeHprkNPwdRoepEpGnjta0NQe1Ltn9KgzQ43Ljs3pJc1BBuHWYZrJk=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741624506; c=relaxed/simple;
+	bh=ZKvVsJ9Jxs6BNf0ZGQzgXFsZmlABP9EO6Vd96lMv61s=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bwaRAtSKE0eRi8SG+cuXJfSckt01c1dRc6qkP4s6H4gZLFFqkKEtGkzWrHdJz1r7K8IuMG9Aw+ZDPDk8PkwCoZHjbY8VXMneyR9gWiGIyk4gzeyiyJQ/+AP3e4RxSMuZMz9NwiJk/voiy+26AaAY/+goMh8EWhg9I/GTUfQ441k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=WlAzFezD; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=JIY+PmPHLz9u1Q43AC3Utd4UHBNiWYM3sRig9h9ZDIc=; b=WlAzFezD92g8yZE05XlG+QVd9I
+	nDY2cZPRV75FlaCIXRYVuoYV2W8dz61IUOegXJxMGRZgge0sZg9Z2byWtKYHmCMmk+vB7e97XqYAI
+	1FfX8lLDP4Y+COvOjaD+78aYI/QOLKsaa4VbYQBa0PRwgM9pMOOcU2esrFeOOE2SkNmyo+gqYjE2M
+	vz7pOAz3I7822bghlJOtdV7zqxszfaQZT6FWWyCpTAM9rbtpEh0O/RSl7iPr/+Vv/Q+zwChxM+g5j
+	VZT9JY9QNsCUD0xQZajYH+PrVkFiUVaLWWXcZj3pWAODzvPGGLm5ntVBux/wRjuXxlUgvwVG9c9bL
+	ii6q4DHw==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:38804)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <linux@armlinux.org.uk>)
+	id 1trg5R-0002wT-1t;
+	Mon, 10 Mar 2025 16:34:41 +0000
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
+	(envelope-from <linux@shell.armlinux.org.uk>)
+	id 1trg5J-0002ch-0i;
+	Mon, 10 Mar 2025 16:34:33 +0000
+Date: Mon, 10 Mar 2025 16:34:33 +0000
+From: "Russell King (Oracle)" <linux@armlinux.org.uk>
+To: Chris Packham <Chris.Packham@alliedtelesis.co.nz>
+Cc: Daniel Golle <daniel@makrotopia.org>, "andrew@lunn.ch" <andrew@lunn.ch>,
+	"hkallweit1@gmail.com" <hkallweit1@gmail.com>,
+	"davem@davemloft.net" <davem@davemloft.net>,
+	"edumazet@google.com" <edumazet@google.com>,
+	"kuba@kernel.org" <kuba@kernel.org>,
+	"pabeni@redhat.com" <pabeni@redhat.com>,
+	"sander@svanheule.net" <sander@svanheule.net>,
+	"markus.stockhausen@gmx.de" <markus.stockhausen@gmx.de>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"netdev@vger.kernel.org" <netdev@vger.kernel.org>
+Subject: Re: [PATCH net-next v9] net: mdio: Add RTL9300 MDIO driver
+Message-ID: <Z88Uma90VzLul2we@shell.armlinux.org.uk>
+References: <20250309232536.19141-1-chris.packham@alliedtelesis.co.nz>
+ <Z85A9_Li_4n9vcEG@pidgin.makrotopia.org>
+ <b506b6e9-d5c3-4927-ab2d-e3a241513082@alliedtelesis.co.nz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DU6PEPF0000A7DF:EE_|AS8PR03MB7524:EE_
-X-MS-Office365-Filtering-Correlation-Id: 49ab882d-a6d8-4815-9111-08dd5ff14fd9
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|82310400026|376014|30052699003|36860700013|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?E1h+OP5JNAkS14aK8z2+QZzXRQiHhLU6b6NUD9sGBRvrOiRKKOUFHk3fGeZb?=
- =?us-ascii?Q?q9lBALvYC/+N3t5vWJfNiOZVuTItIfXO1xFH6oSAIQWlvPaMvDSy4YpFJOu3?=
- =?us-ascii?Q?4pCFLTDWGgvHH541R1sTdht9mkcrzqy5ebp+C42QKJbPdUKzBWBaPP2flnxz?=
- =?us-ascii?Q?OD5wMZA5OyWvRsa2waqI26a9NjKvcVTSOLLMN1fWISefLc1mFypMtqtO3a1G?=
- =?us-ascii?Q?RNMpha8RBqWIeS5/yzJQ2nrHtZlo59OwhouALJscJ3LzFsI96f3qHtWe3KBO?=
- =?us-ascii?Q?MSdw0m41DAT+1mE2cltTTANbKBg5f1afZyH0KOwm65ZBnMCSnLyM3DsNh6zu?=
- =?us-ascii?Q?hOcUu03Ef77R3QwsggQPgQHajvXc38xOlTZJ5yQwdqRzg4eUhajOJRx3LIO7?=
- =?us-ascii?Q?TjYOUQ1Ou6VADxXolg/b+iaA+N4CpLR1apTmQdkuR6Z+LwgCdxKeF8625VCM?=
- =?us-ascii?Q?KB7hHAGSCTQOLNyeMjZN2zfeuYX5EHVe3okhmf3tmUuEwzBpDUHTEsISKhQA?=
- =?us-ascii?Q?e1qnse/G/sXWcRXuq/YirzWTEtDbbcKOEJMnu8+eQmQ2Gd9nZ/dLFdGSooe2?=
- =?us-ascii?Q?qOMmYx3CATgXiA8bSrRWHknMb0lGQuzBxUjmzuQYv13LITr7iDjaoOOZYsZP?=
- =?us-ascii?Q?wNsJM+QBWGdkZdw5P7uo9hr8xqcZnI00t77ncg4JLylEyAA7owdG05G2bev6?=
- =?us-ascii?Q?WNAnB/pKLLv9eSgSVPA5vC6aEBJIv7yo7lf9YoU/hwMGNxCfAY/W8HyStqMy?=
- =?us-ascii?Q?WprfGMwjfh+mygAE5e3xfKyyU+5P+EXn9F911Jkwc7CGw7fyiIQB5SM3k14Z?=
- =?us-ascii?Q?pNyQkYFujkJ7WSGMd0OdS6hHAeoyrr2/Nw2MLtG/E8rOkVyn4Hfecv7Ds4ni?=
- =?us-ascii?Q?P/fhQ9Ec9mKZpNAH0vUa6R/Ty8W5gR4w6i3uc6rB5vB88F+XWZbpsCXGtgJs?=
- =?us-ascii?Q?QaLcBgNW8rhFeXtj4Jk/S+O660v7qkyntDDFtF4weH3ojtbFpYYdxJvFce/L?=
- =?us-ascii?Q?6ihZtTuO+Qk53O3qCptjRVGxMFPl5+4BU2V5V8DxUo4cQqtLXfjucS96qL86?=
- =?us-ascii?Q?gJRJ3zwLhwzO2ng2OHBmnWAXaeoM63B9WrvcP5Hl+DP6pPmWGhCbnXIG3HQ3?=
- =?us-ascii?Q?MHL5Mq5Fg20/jx+I4Ggp+bLT0wornWOUCwzhuLE+o7c6x4x4zWK0/c0ZK0pX?=
- =?us-ascii?Q?LinaLJ8ZxWRgX9gTM3rDkluderqmXRPswIyo3ZnZdpdc57Tc2XG6eOFM9eVg?=
- =?us-ascii?Q?fc3anILw2vXIK9FDPoqhn9W45w+wlNQN2YBg2coLAoei2+WHPZHKlL6H2IIg?=
- =?us-ascii?Q?uvm+TcNb8SeRemHQHm/hzSPysZNf5v0+HmNIbDn6MPqGFj27zcck6M1GK5tU?=
- =?us-ascii?Q?+4Wz6b8/8+TymaW5aF78eqULTAoPCf15qg4X0s7JInRnVtfHJywUtp0yIxpc?=
- =?us-ascii?Q?61+zueU8i2uezyEZ/TmIITCrCslBb7G4mGaZ42bjtGwNZ0/MCqkLTdWeASN6?=
- =?us-ascii?Q?Roxjy259cOHSe9Q=3D?=
-X-Forefront-Antispam-Report:
-	CIP:217.111.95.7;CTRY:DE;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mta.arri.de;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(376014)(30052699003)(36860700013)(1800799024);DIR:OUT;SFP:1101;
-X-OriginatorOrg: arri.de
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Mar 2025 16:33:38.7269
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 49ab882d-a6d8-4815-9111-08dd5ff14fd9
-X-MS-Exchange-CrossTenant-Id: e6a73a5a-614d-4c51-b3e3-53b660a9433a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=e6a73a5a-614d-4c51-b3e3-53b660a9433a;Ip=[217.111.95.7];Helo=[mta.arri.de]
-X-MS-Exchange-CrossTenant-AuthSource:
-	DU6PEPF0000A7DF.eurprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR03MB7524
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <b506b6e9-d5c3-4927-ab2d-e3a241513082@alliedtelesis.co.nz>
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
-Due to asynchronous driver probing there is a chance that the dummy
-regulator hasn't already been probed when first accessing it.
+On Mon, Mar 10, 2025 at 02:07:26AM +0000, Chris Packham wrote:
+> So far upstream Linux doesn't have generic paged PHY register functions. 
+> It sounds like that'd be a prerequisite for this.
 
-Cc: stable@vger.kernel.org
-Signed-off-by: Christian Eggers <ceggers@arri.de>
----
- drivers/regulator/core.c | 3 +++
- 1 file changed, 3 insertions(+)
+If it doesn't, then what are:
 
-diff --git a/drivers/regulator/core.c b/drivers/regulator/core.c
-index 4ddf0efead68..bb9fe44aea11 100644
---- a/drivers/regulator/core.c
-+++ b/drivers/regulator/core.c
-@@ -2069,6 +2069,7 @@ static int regulator_resolve_supply(struct regulator_dev *rdev)
- 
- 		if (have_full_constraints()) {
- 			r = dummy_regulator_rdev;
-+			BUG_ON(!r);
- 			get_device(&r->dev);
- 		} else {
- 			dev_err(dev, "Failed to resolve %s-supply for %s\n",
-@@ -2086,6 +2087,7 @@ static int regulator_resolve_supply(struct regulator_dev *rdev)
- 			goto out;
- 		}
- 		r = dummy_regulator_rdev;
-+		BUG_ON(!r);
- 		get_device(&r->dev);
- 	}
- 
-@@ -2213,6 +2215,7 @@ struct regulator *_regulator_get_common(struct regulator_dev *rdev, struct devic
- 			 */
- 			dev_warn(dev, "supply %s not found, using dummy regulator\n", id);
- 			rdev = dummy_regulator_rdev;
-+			BUG_ON(!rdev);
- 			get_device(&rdev->dev);
- 			break;
- 
+phy_save_paged()
+phy_select_page()
+phy_restore_page()
+phy_read_paged()
+phy_write_paged()
+phy_modify_paged()
+
+etc?
+
+These are at the _phy_ level because it requires the co-operation of
+the PHY driver to select the page in the PHY (each PHY vendor does
+paging differently.) They aren't a MDIO bus level thing because paging
+doesn't exist at that level.
+
 -- 
-2.43.0
-
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
