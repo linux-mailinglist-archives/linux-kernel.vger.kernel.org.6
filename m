@@ -1,53 +1,46 @@
-Return-Path: <linux-kernel+bounces-555178-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-555179-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 96702A5A67D
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 22:54:08 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BE022A5A683
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 22:54:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D53601735D3
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 21:54:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6A4763ADE00
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 21:54:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09AC71E3790;
-	Mon, 10 Mar 2025 21:54:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4AC41E5B61;
+	Mon, 10 Mar 2025 21:54:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="BNt2026T"
-Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5BC436B
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 21:53:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="McgzG9DD"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF1B31E1A3B;
+	Mon, 10 Mar 2025 21:54:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741643642; cv=none; b=pEzsz0IlT7vy5UcI+OH0RX4rgw0+1la61lSJ8xNhcG3TYAymKHmzmNCkTqWaX+uQr5WIMsC5Gnb5MbHKL5ZjZoEqrNcybf5eFjR5f52lA1gY6jcf/1S/C5rTOEsCrzPWBkZ5ZLml97P4leYZqnQ38R3o2mz0RNAnIZw1H+h4+K8=
+	t=1741643658; cv=none; b=BTlIM4lJcytjoZpP/zMupEw0xx+hXAAclc0r+deDaqS3XBTMgYoFKItTkGZxN3MaX/Z0rFJ1qx37AiIJgV8RWqqN2E+DQsh8ZVrrL1LGeM7B8JBt2FU9nBWvx3EFXE/2vabMpmF6ZiwQDsugI6rR3EU+7sY/D/BPqu3gkctFj5Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741643642; c=relaxed/simple;
-	bh=zEdWlGhf8988WbU+W2aCQUVE/hhuYc8Oh1engXSNdhY=;
+	s=arc-20240116; t=1741643658; c=relaxed/simple;
+	bh=et/pdKFP+xbz0ie0UenwlW3LyYpkTB1+CTlrZCSRz0E=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=L4vJBMSMu7BnjSsrtO4F9Iq925jvHRdqz+0Fin6FylijDd/AN7+ELPuhlc/If6XLyjoMg3YbP8rVXPnf2mNyaL2/2kv68xr98PI46Xi4UN0J8hVtCBWAlz/C/mP/3hjGa2HmjALSC2e9Yp/gjd18sGXveToaHXvl3avzzIbRBhw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=BNt2026T; arc=none smtp.client-ip=178.60.130.6
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
-	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=AJil93IzUDgCjnkwb1ftr6Wb6/uv7Kl9IDbIsPwiTyU=; b=BNt2026TUEPDGLMNJ0ytDE063W
-	jUcm3LkUModbev+EpoXWlRy6WQA6CCzT80zjXe01ImWJMO49AaOoGNdjlH1JxbRGo4fBFzV6enNkP
-	Wvd+wQbK0lllmR4M4D9mnyP1kN9HMVokIQ3w9ItKnfagr+e5ZbDWWmSMIR7S0nF2iF59mmPEroyzT
-	IqKgkwtYgBwGV9l1poACmlYFDh1RaMFLJLe+FLbjgt1ZJ2unZ4kQqF4jqpjspYLzFDyBT84RlTSNT
-	d9QL16BB2w2QWhSVJ9486VCBaQ9p4CHaUmB699JECD2CPV9/ARHHvkDtjYwh6rbDp+LPziVKQexoI
-	iXBcdkxQ==;
-Received: from [191.204.194.148] (helo=[192.168.15.100])
-	by fanzine2.igalia.com with esmtpsa 
-	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
-	id 1trl4F-006fjl-HO; Mon, 10 Mar 2025 22:53:53 +0100
-Message-ID: <73602c9b-74f6-4b4a-82c6-918292b13cf7@igalia.com>
-Date: Mon, 10 Mar 2025 18:53:48 -0300
+	 In-Reply-To:Content-Type; b=Yu6TRuZbzGkduJvmZTBAomjvAMEobyzE2ZyYkNcaeUKBxgW2QUIcVPm5Chza4QiJvDItDukqIDQy/i5YSwbE2crCNaY4E7XI0CaZZQOun7WmsD1oD/k0PVDfMyOj7rgloaYOSdzM2GYUbrsnSxEVlrkflu6eG2T9UVPOHLGbQvA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=McgzG9DD; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: from [10.137.184.60] (unknown [131.107.160.188])
+	by linux.microsoft.com (Postfix) with ESMTPSA id 15DAD205492D;
+	Mon, 10 Mar 2025 14:54:16 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 15DAD205492D
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1741643656;
+	bh=Q/Uol1uipNTEM+J17AFsSpdT73eLsQ4d8Vvzl/nmsl8=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=McgzG9DDr6wUujEwBpMK6suD9qJbrij6gjrcnO6q78gHuFDI4Yr4Tspg3OQhzXnvy
+	 ZBcTeYtfuccZ9RLNcrdoJVs3fmZPUyV/lIGeyh9OJnGPJJ8tlNKBYhrfODMjRGfclv
+	 IMuXMlRQZ/ulJ9+Rs7PP9zZSHIssAH1Tc/M/SXWc=
+Message-ID: <28970d64-40b7-408a-a072-c3449d3de08e@linux.microsoft.com>
+Date: Mon, 10 Mar 2025 14:54:15 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -55,87 +48,73 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] drm/amdgpu: Make use of drm_wedge_app_info
-To: Raag Jadav <raag.jadav@intel.com>
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- kernel-dev@igalia.com, amd-gfx@lists.freedesktop.org,
- intel-xe@lists.freedesktop.org, intel-gfx@lists.freedesktop.org,
- Alex Deucher <alexander.deucher@amd.com>,
- =?UTF-8?B?J0NocmlzdGlhbiBLw7ZuaWcn?= <christian.koenig@amd.com>,
- siqueira@igalia.com, airlied@gmail.com, simona@ffwll.ch,
- rodrigo.vivi@intel.com, jani.nikula@linux.intel.com,
- Xaver Hugl <xaver.hugl@kde.org>
-References: <20250228121353.1442591-1-andrealmeid@igalia.com>
- <20250228121353.1442591-3-andrealmeid@igalia.com>
- <Z8HO-s_otb2u44V7@black.fi.intel.com>
- <38b9cc8b-2a55-4815-a19f-f5bdf0f7687c@igalia.com>
- <Z8KjZfLYjH6ehYwy@black.fi.intel.com>
+Subject: Re: [PATCH hyperv-next v5 01/11] arm64: kvm, smccc: Introduce and use
+ API for detectting hypervisor presence
+To: Michael Kelley <mhklinux@outlook.com>, "arnd@arndb.de" <arnd@arndb.de>,
+ "bhelgaas@google.com" <bhelgaas@google.com>, "bp@alien8.de" <bp@alien8.de>,
+ "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
+ "conor+dt@kernel.org" <conor+dt@kernel.org>,
+ "dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
+ "decui@microsoft.com" <decui@microsoft.com>,
+ "haiyangz@microsoft.com" <haiyangz@microsoft.com>,
+ "hpa@zytor.com" <hpa@zytor.com>, "joey.gouly@arm.com" <joey.gouly@arm.com>,
+ "krzk+dt@kernel.org" <krzk+dt@kernel.org>, "kw@linux.com" <kw@linux.com>,
+ "kys@microsoft.com" <kys@microsoft.com>, "lenb@kernel.org"
+ <lenb@kernel.org>, "lpieralisi@kernel.org" <lpieralisi@kernel.org>,
+ "manivannan.sadhasivam@linaro.org" <manivannan.sadhasivam@linaro.org>,
+ "mark.rutland@arm.com" <mark.rutland@arm.com>,
+ "maz@kernel.org" <maz@kernel.org>, "mingo@redhat.com" <mingo@redhat.com>,
+ "oliver.upton@linux.dev" <oliver.upton@linux.dev>,
+ "rafael@kernel.org" <rafael@kernel.org>, "robh@kernel.org"
+ <robh@kernel.org>, "ssengar@linux.microsoft.com"
+ <ssengar@linux.microsoft.com>, "sudeep.holla@arm.com"
+ <sudeep.holla@arm.com>, "suzuki.poulose@arm.com" <suzuki.poulose@arm.com>,
+ "tglx@linutronix.de" <tglx@linutronix.de>,
+ "wei.liu@kernel.org" <wei.liu@kernel.org>, "will@kernel.org"
+ <will@kernel.org>, "yuzenghui@huawei.com" <yuzenghui@huawei.com>,
+ "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+ "kvmarm@lists.linux.dev" <kvmarm@lists.linux.dev>,
+ "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>,
+ "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>,
+ "linux-arm-kernel@lists.infradead.org"
+ <linux-arm-kernel@lists.infradead.org>,
+ "linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+ "x86@kernel.org" <x86@kernel.org>
+Cc: "apais@microsoft.com" <apais@microsoft.com>,
+ "benhill@microsoft.com" <benhill@microsoft.com>,
+ "bperkins@microsoft.com" <bperkins@microsoft.com>,
+ "sunilmut@microsoft.com" <sunilmut@microsoft.com>
+References: <20250307220304.247725-1-romank@linux.microsoft.com>
+ <20250307220304.247725-2-romank@linux.microsoft.com>
+ <BN7PR02MB4148539DEFFF5ABA42AB44D3D4D62@BN7PR02MB4148.namprd02.prod.outlook.com>
 Content-Language: en-US
-From: =?UTF-8?Q?Andr=C3=A9_Almeida?= <andrealmeid@igalia.com>
-In-Reply-To: <Z8KjZfLYjH6ehYwy@black.fi.intel.com>
+From: Roman Kisel <romank@linux.microsoft.com>
+In-Reply-To: <BN7PR02MB4148539DEFFF5ABA42AB44D3D4D62@BN7PR02MB4148.namprd02.prod.outlook.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-Em 01/03/2025 03:04, Raag Jadav escreveu:
-> On Fri, Feb 28, 2025 at 06:49:43PM -0300, André Almeida wrote:
->> Hi Raag,
+
+
+On 3/10/2025 2:16 PM, Michael Kelley wrote:
+> From: Roman Kisel <romank@linux.microsoft.com> Sent: Friday, March 7, 2025 2:03 PM
 >>
->> On 2/28/25 11:58, Raag Jadav wrote:
->>> On Fri, Feb 28, 2025 at 09:13:53AM -0300, André Almeida wrote:
->>>> To notify userspace about which app (if any) made the device get in a
->>>> wedge state, make use of drm_wedge_app_info parameter, filling it with
->>>> the app PID and name.
->>>>
->>>> Signed-off-by: André Almeida <andrealmeid@igalia.com>
->>>> ---
->>>>    drivers/gpu/drm/amd/amdgpu/amdgpu_device.c | 19 +++++++++++++++++--
->>>>    drivers/gpu/drm/amd/amdgpu/amdgpu_job.c    |  6 +++++-
->>>>    2 files changed, 22 insertions(+), 3 deletions(-)
->>>>
->>>> diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c
->>>> index 00b9b87dafd8..e06adf6f34fd 100644
->>>> --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c
->>>> +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c
->>>> @@ -6123,8 +6123,23 @@ int amdgpu_device_gpu_recover(struct amdgpu_device *adev,
->>>>    	atomic_set(&adev->reset_domain->reset_res, r);
->>>> -	if (!r)
->>>> -		drm_dev_wedged_event(adev_to_drm(adev), DRM_WEDGE_RECOVERY_NONE, NULL);
->>>> +	if (!r) {
->>>> +		struct drm_wedge_app_info aux, *info = NULL;
->>>> +
->>>> +		if (job) {
->>>> +			struct amdgpu_task_info *ti;
->>>> +
->>>> +			ti = amdgpu_vm_get_task_info_pasid(adev, job->pasid);
->>>> +			if (ti) {
->>>> +				aux.pid = ti->pid;
->>>> +				aux.comm = ti->process_name;
->>>> +				info = &aux;
->>>> +				amdgpu_vm_put_task_info(ti);
->>>> +			}
->>>> +		}
->>> Is this guaranteed to be guilty app and not some scheduled worker?
->>
->> This is how amdgpu decides which app is the guilty one earlier in the code
->> as in the print:
->>
->>      ti = amdgpu_vm_get_task_info_pasid(ring->adev, job->pasid);
->>
->>      "Process information: process %s pid %d thread %s pid %d\n"
->>
->> So I think it's consistent with what the driver thinks it's the guilty
->> process.
 > 
-> Sure, but with something like app_info we're kind of hinting to userspace
-> that an application was _indeed_ involved with reset. Is that also guaranteed?
+> In the Subject line,
 > 
-> Is it possible that an application needlessly suffers from a false positive
-> scenario (reset due to other factors)?
+> s/detectting/detecting/
+
+[...]
+
+> s/cenrtal/central/
 > 
 
-I asked Alex Deucher in IRC about that and yes, there's a chance that 
-this is a false positive. However, for the majority of cases this is the 
-right app that caused the hang. This is what amdgpu is doing for GL 
-robustness as well and devcoredump, so it's very consistent with how 
-amdgpu deals with this scenario even if the mechanism is still not perfect.
+My bad, will fix! Thanks for spotting that, I'll be sure to have
+the spellchecker on.
+
+-- 
+Thank you,
+Roman
+
 
