@@ -1,73 +1,94 @@
-Return-Path: <linux-kernel+bounces-553608-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-553609-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 95FC7A58C62
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 07:58:39 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D0BB4A58C66
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 08:00:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 375C77A180F
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 06:57:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7520F1889FBF
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 07:00:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D0941CD210;
-	Mon, 10 Mar 2025 06:58:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="xUiS5MiU"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C8931D416B;
+	Mon, 10 Mar 2025 07:00:43 +0000 (UTC)
+Received: from mail-m49197.qiye.163.com (mail-m49197.qiye.163.com [45.254.49.197])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60E6617BA5;
-	Mon, 10 Mar 2025 06:58:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01DD43208;
+	Mon, 10 Mar 2025 07:00:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.254.49.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741589909; cv=none; b=O0WceYUF9T741NJEE11inGD5r3UP/4J92XFWf4NKu7Zn9K2ZmdgdyX2nwU5jNQFsv1cfmZs8mHaXl2MWT8zx0HiPj8WxeBHgssGAfhb87K8aUEdtuX8mZOs5m9x3AN7j8DC7po+sgyxfofk09shZErf+STmBadiJXSGci4K5Xqg=
+	t=1741590042; cv=none; b=Ve/tU9m4BaopDfCtL9p4e7E4voEZLgVDUOYbTNVMFpVpy0Za9O3f6XGNyIOA72R6hBWp7SPa9s7skyxZujkDfnBmOuupxvXGuF0GIlU/HOUGu6RG9s/ckM70vEOCCdyeRtHcbKnMhLpsmt2mzxlsIQxP3dZ5VZ60QeLabRfO+eo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741589909; c=relaxed/simple;
-	bh=MI/HwqEL2OPCjvc2aGnpiGs/AcvZ6r10iVYJLYV/Og8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gKxCmMGK7x+yddsX6FyEANc6CPRkMmV5TIiZ2vv0j/oMHrBTNs6MLHJQ6gU50XRYPJTEYVMFaBEx95D1IUaI7i8Dg0vrEPGlHqUK3VPkpPTR1AtmRRW7ArdYkH6J9QDsakC9ybsVrFXXDzfcmiRAuBNromClPw1S38FxIv7znHU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=xUiS5MiU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2A406C4CEE5;
-	Mon, 10 Mar 2025 06:58:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1741589908;
-	bh=MI/HwqEL2OPCjvc2aGnpiGs/AcvZ6r10iVYJLYV/Og8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=xUiS5MiUa+D6x0z1UldzohtW1PhLDWG5az/jPLAl7x2xx5HSB4EcvDBqX4oMteBrU
-	 mOSpieFnabDRFCtj5T5ZnYlZzjbfAW4kKQxF/oRUIcX7CTg6xvfa4UmylL7jSKBoPP
-	 y1hJsiP7To4HTVLo2yf51biuTeO/GAIYrO+GTBMs=
-Date: Mon, 10 Mar 2025 07:58:25 +0100
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: "Toshiyuki Sato (Fujitsu)" <fj6611ie@fujitsu.com>
-Cc: Russell King <linux@armlinux.org.uk>, Jiri Slaby <jirislaby@kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH v3] serial: amba-pl011: Implement nbcon console
-Message-ID: <2025031001-outwit-outsider-b34e@gregkh>
-References: <20250204044428.2191983-1-fj6611ie@aa.jp.fujitsu.com>
- <TY4PR01MB13777DB55F2231F7399E42609D7D62@TY4PR01MB13777.jpnprd01.prod.outlook.com>
+	s=arc-20240116; t=1741590042; c=relaxed/simple;
+	bh=kUfuGZPXvPR3kgyVVeeH1LkOAgS3PDj2HJO2Eap3JLc=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=H1Pu3NzhxUauaUBmYfFq81T+f5EnwlMpTzCCWmisvwlD9w4hQ3HFmyYAALy2pqEnNuex1Zxs4V5zv4EEe9otUP8HgYHhFBvYnDgfjtSF/Zn2e2Zwh9Le38q6edIYD3fOO3AUkd62GeyRFv2Eve2yglpFyUaluNJEvycfZQkf3lc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=jmu.edu.cn; spf=pass smtp.mailfrom=jmu.edu.cn; arc=none smtp.client-ip=45.254.49.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=jmu.edu.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jmu.edu.cn
+Received: from localhost.localdomain (unknown [119.122.215.89])
+	by smtp.qiye.163.com (Hmail) with ESMTP id db8a14d9;
+	Mon, 10 Mar 2025 15:00:28 +0800 (GMT+08:00)
+From: Chukun Pan <amadeus@jmu.edu.cn>
+To: ziyao@disroot.org
+Cc: amadeus@jmu.edu.cn,
+	andi.shyti@kernel.org,
+	conor+dt@kernel.org,
+	devicetree@vger.kernel.org,
+	heiko@sntech.de,
+	jonas@kwiboo.se,
+	krzk+dt@kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-i2c@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-rockchip@lists.infradead.org
+Subject: Re: [PATCH 3/3] arm64: dts: rockchip: Add onboard EEPROM for Radxa E20C
+Date: Mon, 10 Mar 2025 15:00:23 +0800
+Message-Id: <20250310070023.52290-1-amadeus@jmu.edu.cn>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20250309070603.35254-4-ziyao@disroot.org>
+References: <20250309070603.35254-4-ziyao@disroot.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <TY4PR01MB13777DB55F2231F7399E42609D7D62@TY4PR01MB13777.jpnprd01.prod.outlook.com>
+Content-Transfer-Encoding: 8bit
+X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
+	tZV1koWUFITzdXWS1ZQUlXWQ8JGhUIEh9ZQVkaGk1MVh5JGBpMHU8fSh5MGVYeHw5VEwETFhoSFy
+	QUDg9ZV1kYEgtZQVlKSkJVSklJVUlKTlVDQllXWRYaDxIVHRRZQVlPS0hVSktISk5MTlVKS0tVSk
+	JLS1kG
+X-HM-Tid: 0a957edae03603a2kunmdb8a14d9
+X-HM-MType: 10
+X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6Pww6CRw4TzJCGCwCEwM5MREr
+	OkswCk5VSlVKTE9KTkJLS0lCSk1CVTMWGhIXVRoWGh8eDgg7ERYOVR4fDlUYFUVZV1kSC1lBWUpK
+	QlVKSUlVSUpOVUNCWVdZCAFZQU9PTDcG
 
-On Mon, Mar 10, 2025 at 02:23:35AM +0000, Toshiyuki Sato (Fujitsu) wrote:
-> Dear Reviewers,
-> 
-> It has been about a month since this patch was merged into tty-next -> linux-next.
-> I would appreciate any comments or feedback on this patch.
+Hi,
 
-What needs to be commented on?  It is accepted and will be merged in the
-next -rc merge cycle.
+> +&i2c1 {
+> +	pinctrl-names = "default";
+> +	pinctrl-0 = <&i2c1m0_xfer>;
+> +	status = "okay";
+> +
+> +	eeprom@50 {
+> +		compatible = "belling,bl24c16a", "atmel,24c16";
+> +		reg = <0x50>;
+> +		pagesize = <16>;
+> +		vcc-supply = <&vcc_3v3>;
+> +	};
+> +};
 
-confused,
+This eeprom stores the device information written by the manufacturer,
+such as mac address and sn. So it should be marked as read-only.
 
-greg k-h
+Thanks,
+Chukun
+
+-- 
+2.25.1
+
 
