@@ -1,103 +1,127 @@
-Return-Path: <linux-kernel+bounces-553688-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-553689-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EFC5DA58D83
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 09:01:51 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id EC209A58D8B
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 09:03:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 34ECE16691A
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 08:01:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3632516B206
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 08:03:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4336222591;
-	Mon, 10 Mar 2025 08:01:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CB56222599;
+	Mon, 10 Mar 2025 08:02:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OtWd4NZP"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KBB+oqcn"
+Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36BE93D3B3;
-	Mon, 10 Mar 2025 08:01:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 167E01D54FA;
+	Mon, 10 Mar 2025 08:02:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741593702; cv=none; b=SJoWXhjpXGvK+mswMxN4YrIZCb8KFqwyoH0tn9Fuq6ZZGUHK3Ha543QZetZ33CS3PwxxqQHc1t4NsuWBL110TTu4BCyVvCheORaSA/NcKxi6qjD5V8Re/KVCnqjHSELe9mOn5pAliCW9F4kxOexaASxWY122+Rgg50FGZKIeh7k=
+	t=1741593773; cv=none; b=Oyoe+5WOtTFggtokZRaqlyUxpWkvWhK9wbKHQTE9dLIpYxTJdtzcz7BrZelPfvOGzp2YeAQVT87MqKeDpJdBM90DwyWP0cAl84qChQAboGg1igPc6XIwrocFUGt6YJgbrWVqq3nDN5oLfT6IA/aIs36fVMSiLaM0xl9oL7Jg4mc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741593702; c=relaxed/simple;
-	bh=SgbV9vkf5gWdeet1ixM7l/2JY/O0uXS4dGet0e+/f8I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YCfz+8BWEk/kkBlTc682t68/Cn8O513Ow+jVRkUpPxQif/B5VRwCmvOWmE/S2xptpS2uzP3/ZUuAHIysmVgDpKugCDGZpSMPY98XZhZim2dJsFFJ+bgC+PBfgwYZFxRLH1jQnN0F9gFSQqFKoGnUElLpngrUAY9Goqms7XJU+94=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OtWd4NZP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 46415C4CEE5;
-	Mon, 10 Mar 2025 08:01:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741593702;
-	bh=SgbV9vkf5gWdeet1ixM7l/2JY/O0uXS4dGet0e+/f8I=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=OtWd4NZPf+ZQCKHgSKtdnYwA9r6lQF/EG0VXxntkjUKRXlqji0VpZ295K8bBUYAc9
-	 HJaHYQE5SI9Xv2mGnM/z6WgOzhMydd7bKUkSBMtXBHc7xji6ZPMDAuLgLd6TQSlsD8
-	 d9Lk6PJCHaSIXC9wKosIeE3v5ejpPqa7gZmm38Dv7+pszKhyus6HIgsIQ3QaB/if8a
-	 c35uXlM60THUXS2738WqQdsnyEr5YYpkvfmQIScGsJRmystjNVnh4bFhX/2p+cbfnO
-	 c4s+vzP4x2Ibc++SrxvoPNZTuDJJsi1ndEFVF6Vw8S3/r4MncBB4yqi9YxhCz3GmmY
-	 CT4AzO2dOi9Jw==
-Date: Mon, 10 Mar 2025 09:01:38 +0100
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Christian Marangi <ansuelsmth@gmail.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Lee Jones <lee@kernel.org>, 
-	Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>, 
-	Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Lorenzo Bianconi <lorenzo@kernel.org>, Daniel Danzberger <dd@embedd.com>, Arnd Bergmann <arnd@arndb.de>, 
-	Linus Walleij <linus.walleij@linaro.org>, Nikita Shubin <nikita.shubin@maquefel.me>, 
-	Guo Ren <guoren@kernel.org>, Yangyu Chen <cyy@cyyself.name>, 
-	Ben Hutchings <ben@decadent.org.uk>, Felix Fietkau <nbd@nbd.name>, linux-clk@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-phy@lists.infradead.org, 
-	linux-mediatek@lists.infradead.org, linux-usb@vger.kernel.org, upstream@airoha.com
-Subject: Re: [PATCH 05/13] dt-bindings: mfd: add Documentation for Airoha
- EN7581 SCU
-Message-ID: <20250310-excellent-quokka-of-abracadabra-15ad69@krzk-bin>
-References: <20250309132959.19045-1-ansuelsmth@gmail.com>
- <20250309132959.19045-6-ansuelsmth@gmail.com>
+	s=arc-20240116; t=1741593773; c=relaxed/simple;
+	bh=V/E/I+ZCa7+dAhhQaM5p0TDv/dIXj3U5GOSv/6EdOi4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=lc1FpqOqOXySiBPRnpY4wrTBk0SuN/wi0Z/5B5q9JXUwxSC1kdfE5mQt2frqV9h4gpopXrXAA34JlV1VhUbFR3HkPePqmCp0D8vtlVoTQ4aOtqz3c7ABRRjtU1Lx1gwgcMBlc4TQeamnp8jv0Dpj/mTge+B7o/ES98Pb3I7cT84=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KBB+oqcn; arc=none smtp.client-ip=209.85.208.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-5e6194e9d2cso3199712a12.2;
+        Mon, 10 Mar 2025 01:02:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741593770; x=1742198570; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=mgVFyqXM4nOWMwuiHWgU0KRdJuxDIajetWrx1QfjiI0=;
+        b=KBB+oqcnsgqi4GBvB+eIu7j144TIGATyqaqIBqFfugem4zpt3FfGj0Yic6KZKUsNBs
+         e9WqhK87TL0DZtvQDhrdysaHUurkusw2KYI6tdhlOOkXeTPAtxARr3UReIKpOVluclkv
+         qQFhVzEYUloO3xOsW4//kA2QAPvWjh6FtuT//6OebrdLpgjBzCjD3x+1evvv9SWbjeVi
+         WPGHjEzCzILkzHpLIks3lMldTldkXopewz3AVtKB8kImIQ9ZKJ5Ihtreji8vdnEihCwj
+         ZMxz+01Bi15JNIPhWqlfgJJTMSHTI8zwSd7ZdiBmzXltsU885vRmC9pQ/yCP9sHjOrO2
+         iTxw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741593770; x=1742198570;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=mgVFyqXM4nOWMwuiHWgU0KRdJuxDIajetWrx1QfjiI0=;
+        b=rTaJt9XZloDG2cvSvlXbKc6MQAFAqyLHIohR6rHyU65jnLqDogeyhV8PibKrADQzHc
+         2TCoQnLMDTVR9e/iLtMwHG/arT5eESJDERqcY/5z5FQYkYEzwaV2ccvZCxvagoS7lsCZ
+         kr3DgaW8HAXX/Uy5TiDr7eo6wfVxOpKnsrmkoURLTSW6CL0OQbFNjZ+6tzBQQcZqJSj/
+         GjBLN218JBvE3kIfiy/3WOcR8OJs4QsfvHBwBqwV02NpTw1/FkbWr/obfxZ9X+RGHt1M
+         XiNPkL5Wy1ZMI5iCSjDujNdsIFpVfBySTxBpPlz89domrJ21CqnvZ20ZVCXyxRTjwq6R
+         3W8A==
+X-Forwarded-Encrypted: i=1; AJvYcCUGpbAvG3IC/HeVSMvv9GTosrUUJBSpsyT4apU+pwfe93YmA3S9dBKZMgxDJxuJ4tlHeNkJsA9sj/cA@vger.kernel.org, AJvYcCW4Wb5AWw+6zdjgrrTzphUNe8qIQ3galnuGhrVNOClgweO8YynQJAWX8cxKc4m95mEEBSxFcH9lZ/YC7xt1@vger.kernel.org
+X-Gm-Message-State: AOJu0YyceTi1mQyAYlF9mZowG1ExX3svbpifr6YcsnnY0n5qkMb9y1Hv
+	OkwIV6dgMdKs00k1rfwHGAGA/T67mC/tqYUmNyiGYfMZnPkAcLsK
+X-Gm-Gg: ASbGncuzJkuaDBiOshb81LDYGteCAcDCrL1tJby11vfzOwiquvIm0KugSOUz25Trf5s
+	u2Acb/Nbg4bGPbD3kZypNVLfHR9cm49ecWtyLT46XeCZPJSxEuMSW6hDEd7uAW/6Wbrx+90OAAX
+	i1dMHtKfIBpZEKdJkUSeVgJE4Xqb0zVyOxaKS/PzgoPjqyeAP0LGkrsNu8rmD68gLkAUG+XfoRw
+	Wd0ytJZbq/De9ypGPiVejvc7N5eJruprj5PaMoykwBvoWF2mjEEteC4Dsr0XdietOlcmoQzubWQ
+	DpAzdM3Ov5PCYbA/eVrWqwTkvjBcrS06uBBp
+X-Google-Smtp-Source: AGHT+IFgWFwRxU0RJY9U9nj/0/pZSW8uQ6G5UdSR38nyNKlYISxmaAmvwrB9mjJlbuK+kOlUPbo1fA==
+X-Received: by 2002:a17:907:97d5:b0:ac1:f5a4:6da5 with SMTP id a640c23a62f3a-ac252ba28efmr1704357966b.37.1741593770037;
+        Mon, 10 Mar 2025 01:02:50 -0700 (PDT)
+Received: from xeon.. ([188.163.112.51])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac28aec7ba1sm263917766b.37.2025.03.10.01.02.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 10 Mar 2025 01:02:49 -0700 (PDT)
+From: Svyatoslav Ryhel <clamor95@gmail.com>
+To: Sebastian Reichel <sre@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Svyatoslav Ryhel <clamor95@gmail.com>
+Cc: linux-pm@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v4 0/2] power: supply: Add support for Maxim MAX8971 charger
+Date: Mon, 10 Mar 2025 10:02:35 +0200
+Message-ID: <20250310080237.7400-1-clamor95@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250309132959.19045-6-ansuelsmth@gmail.com>
+Content-Transfer-Encoding: 8bit
 
-On Sun, Mar 09, 2025 at 02:29:36PM +0100, Christian Marangi wrote:
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/soc/airoha,scu-ssr.h>
-> +
-> +    system-controller@1fb00000 {
-> +        compatible = "airoha,en7581-scu-sysctl", "syscon", "simple-mfd";
-> +        reg = <0x1fb00000 0x970>;
-> +
-> +        clock-controller {
-> +            compatible = "airoha,en7581-scu";
-> +
+The MAX8971 is a compact, high-frequency, high-efficiency
+switch-mode charger for a one-cell lithium-ion (Li+) battery.
 
-No resources here, so this is part of the parent.
+---
+Changes on switching from v3 to v4:
+- swap graph with connector phandle
 
-> +            #clock-cells = <1>;
-> +            #reset-cells = <1>;
-> +        };
-> +
-> +        system-controller {
-> +            compatible = "airoha,an7581-scu-ssr";
+Changes on switching from v2 to v3:
+- fast_charge_timer, top_off_threshold_current and top_off_timer converted to
+  device attributes. Other vendor properties removed.
+- removed max8971_config
+- removed unneded functions and definitions along vendor props removal
+- added __maybe_unused for resume function
 
-No, this was told many times - you do not have resources here, so no
-chhild.
+Changes on switching from v1 to v2:
+- swap phandle with graph for extcon
+- added power-supply ref
+---
 
-Best regards,
-Krzysztof
+Svyatoslav Ryhel (2):
+  dt-bindings: power: supply: Document Maxim MAX8971 charger
+  power: supply: Add support for Maxim MAX8971 charger
+
+ .../bindings/power/supply/maxim,max8971.yaml  |  64 ++
+ drivers/power/supply/Kconfig                  |  14 +
+ drivers/power/supply/Makefile                 |   1 +
+ drivers/power/supply/max8971_charger.c        | 759 ++++++++++++++++++
+ 4 files changed, 838 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/power/supply/maxim,max8971.yaml
+ create mode 100644 drivers/power/supply/max8971_charger.c
+
+-- 
+2.43.0
 
 
