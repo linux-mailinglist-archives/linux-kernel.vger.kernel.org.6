@@ -1,232 +1,109 @@
-Return-Path: <linux-kernel+bounces-553932-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-553934-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 672DFA590D5
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 11:14:35 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 41975A590DC
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 11:16:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8C5C5188EEF1
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 10:14:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D9C473AB35D
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 10:16:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 891C0226188;
-	Mon, 10 Mar 2025 10:14:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EEj596gf"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2432C21D3E3;
+	Mon, 10 Mar 2025 10:16:20 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C15AB225A3B;
-	Mon, 10 Mar 2025 10:14:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A841517543
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 10:16:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741601656; cv=none; b=NA824xekdqC66eo9fABR8Ed3ayKC59upLwccLOAlIW3P06DDdu6tvcwzcrA+2ek5vGEm5MVUXt+jvL07OEQnHOyJnmbxpTzTZos5fuFcpDOtgNJARQ3oDjqmMKUjP/3yDJaiweglZUBDASEYH+RTi5fdvvJVIWl4mjmaQFrzx/g=
+	t=1741601779; cv=none; b=d1uKp4/AqDHYNwNu2DsEP/f1o7nTjRuyh9ZEzEgtf+yla6CNhDOnK2o2+c3RGuEcjPpFnMpsKusP7PktoYJDhYoJu1XYbWXy54ru/m17zYMrHB66vGkyxevuPnNVjHcEWMBpAKpYw0lwOknVLOBhJ7Ir2I3PqUthkRzjYHNqZqI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741601656; c=relaxed/simple;
-	bh=jqHouoL7QIIxHNjU/qxXvVvxBuUIK/Is63SGCToqjVA=;
+	s=arc-20240116; t=1741601779; c=relaxed/simple;
+	bh=AVuAqitwovQZSGVEAsVCuCuAKA9myIFwPMi1B/0NumI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VzecQ8kX61+sws74lBUptyhC4KzQ4m4qIBNQMpbSC1ZTk8ZdpM/4GNuxjoaDnUX9LpoEg0wWA1u7mijv1ak8TajVnpGIcxOG8ynJBSyHltff74DVsL2wMh2gqS9+QzfBUEAP7KvwaJKwp8seV1R7lPjEMSUfr7nrE0rm7PPDmh8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EEj596gf; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7CCFBC4CEEC;
-	Mon, 10 Mar 2025 10:14:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741601655;
-	bh=jqHouoL7QIIxHNjU/qxXvVvxBuUIK/Is63SGCToqjVA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=EEj596gfUsNaICz4Pgu+ukAVnXesoRI4xXXA+hcwpqJPgW34mV79HSo/EB0GnwgD9
-	 Rn3yL7GdNz8s01n3Q09XMgjml7M2JKxQ1b89bVcDLoSVDKyTOXepfeb+UyT88IG5FD
-	 cPiIX2fezE5hlSiR2Dyuwa77UewHkNuyX6ry/NRDnFjKmG67QGE2ujoSQ3fyJBij6N
-	 UAcXeX2o35fKTO1LEfo+BZR7Y7qtHjafwp+eShz93ijjQDn8aD5AHceAYQ4SfL1HsK
-	 /AL6kZaA2voywq/oFiwu5pWcUa4MxkxWXiEr2UhLyK22E9MtIvNhfCakHAWTZBDv6P
-	 1uP+ikpC8zlFQ==
-Date: Mon, 10 Mar 2025 12:14:10 +0200
-From: Leon Romanovsky <leon@kernel.org>
-To: Wang Liang <wangliang74@huawei.com>
-Cc: jgg@ziepe.ca, cmeiohas@nvidia.com, michaelgur@nvidia.com,
-	huangjunxian6@hisilicon.com, liyuyu6@huawei.com,
-	markzhang@nvidia.com, linux@treblig.org, jbi.octave@gmail.com,
-	dsahern@kernel.org, yuehaibing@huawei.com,
-	zhangchangzhong@huawei.com, linux-rdma@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net] infiniband: fix use-after-free when rename device
- name
-Message-ID: <20250310101410.GB7027@unreal>
-References: <20250310064516.3633612-1-wangliang74@huawei.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=ppSaXEFb8lYxfdVBmUoiH9dzjR99Xb5pVwpHNQyQhwSKDEMH0nEl4zXykAvSMWQB4TLuUKdQv3SmhvRedp71VrtYBaPNUhS/SXwG42mVQIz2p45WTALLusArnj9wEi8/qBin9YOEMSvFJNnE43ZbfpxU1hnfF13/6ue1lEnTkXY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <ore@pengutronix.de>)
+	id 1traB9-0001LQ-A4; Mon, 10 Mar 2025 11:16:11 +0100
+Received: from pty.whiteo.stw.pengutronix.de ([2a0a:edc0:2:b01:1d::c5])
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <ore@pengutronix.de>)
+	id 1traB8-004ypp-25;
+	Mon, 10 Mar 2025 11:16:10 +0100
+Received: from ore by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
+	(envelope-from <ore@pengutronix.de>)
+	id 1traB8-005ra3-1d;
+	Mon, 10 Mar 2025 11:16:10 +0100
+Date: Mon, 10 Mar 2025 11:16:10 +0100
+From: Oleksij Rempel <o.rempel@pengutronix.de>
+To: "Russell King (Oracle)" <linux@armlinux.org.uk>
+Cc: Thangaraj.S@microchip.com, andrew+netdev@lunn.ch, davem@davemloft.net,
+	Rengarajan.S@microchip.com, Woojung.Huh@microchip.com,
+	pabeni@redhat.com, edumazet@google.com, kuba@kernel.org,
+	phil@raspberrypi.org, kernel@pengutronix.de,
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+	UNGLinuxDriver@microchip.com
+Subject: Re: [PATCH net-next v2 1/7] net: usb: lan78xx: Convert to PHYlink
+ for improved PHY and MAC management
+Message-ID: <Z8676rcaq6h4X8To@pengutronix.de>
+References: <20250307182432.1976273-1-o.rempel@pengutronix.de>
+ <20250307182432.1976273-2-o.rempel@pengutronix.de>
+ <1bb51aad80be4bb5e0413089e1b1bf747db4e123.camel@microchip.com>
+ <Z863zsYNM8hkfB19@pengutronix.de>
+ <Z8660bKssi3rX_ny@shell.armlinux.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20250310064516.3633612-1-wangliang74@huawei.com>
+In-Reply-To: <Z8660bKssi3rX_ny@shell.armlinux.org.uk>
+X-Sent-From: Pengutronix Hildesheim
+X-URL: http://www.pengutronix.de/
+X-Accept-Language: de,en
+X-Accept-Content-Type: text/plain
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: ore@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-On Mon, Mar 10, 2025 at 02:45:16PM +0800, Wang Liang wrote:
-> Syzbot reported a slab-use-after-free with the following call trace:
->=20
-> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> BUG: KASAN: slab-use-after-free in nla_put+0xd3/0x150 lib/nlattr.c:1099
-> Read of size 5 at addr ffff888140ea1c60 by task syz.0.988/10025
->=20
-> CPU: 0 UID: 0 PID: 10025 Comm: syz.0.988 Not tainted 6.14.0-rc4-syzkaller=
--00859-gf77f12010f67 #0
-> Hardware name: Google Compute Engine, BIOS Google 02/12/2025
-> Call Trace:
->  <TASK>
->  __dump_stack lib/dump_stack.c:94 [inline]
->  dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
->  print_address_description mm/kasan/report.c:408 [inline]
->  print_report+0x16e/0x5b0 mm/kasan/report.c:521
->  kasan_report+0x143/0x180 mm/kasan/report.c:634
->  kasan_check_range+0x282/0x290 mm/kasan/generic.c:189
->  __asan_memcpy+0x29/0x70 mm/kasan/shadow.c:105
->  nla_put+0xd3/0x150 lib/nlattr.c:1099
->  nla_put_string include/net/netlink.h:1621 [inline]
->  fill_nldev_handle+0x16e/0x200 drivers/infiniband/core/nldev.c:265
->  rdma_nl_notify_event+0x561/0xef0 drivers/infiniband/core/nldev.c:2857
->  ib_device_notify_register+0x22/0x230 drivers/infiniband/core/device.c:13=
-44
->  ib_register_device+0x1292/0x1460 drivers/infiniband/core/device.c:1460
->  rxe_register_device+0x233/0x350 drivers/infiniband/sw/rxe/rxe_verbs.c:15=
-40
->  rxe_net_add+0x74/0xf0 drivers/infiniband/sw/rxe/rxe_net.c:550
->  rxe_newlink+0xde/0x1a0 drivers/infiniband/sw/rxe/rxe.c:212
->  nldev_newlink+0x5ea/0x680 drivers/infiniband/core/nldev.c:1795
->  rdma_nl_rcv_skb drivers/infiniband/core/netlink.c:239 [inline]
->  rdma_nl_rcv+0x6dd/0x9e0 drivers/infiniband/core/netlink.c:259
->  netlink_unicast_kernel net/netlink/af_netlink.c:1313 [inline]
->  netlink_unicast+0x7f6/0x990 net/netlink/af_netlink.c:1339
->  netlink_sendmsg+0x8de/0xcb0 net/netlink/af_netlink.c:1883
->  sock_sendmsg_nosec net/socket.c:709 [inline]
->  __sock_sendmsg+0x221/0x270 net/socket.c:724
->  ____sys_sendmsg+0x53a/0x860 net/socket.c:2564
->  ___sys_sendmsg net/socket.c:2618 [inline]
->  __sys_sendmsg+0x269/0x350 net/socket.c:2650
->  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
->  do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
->  entry_SYSCALL_64_after_hwframe+0x77/0x7f
-> RIP: 0033:0x7f42d1b8d169
-> Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 ...
-> RSP: 002b:00007f42d2960038 EFLAGS: 00000246 ORIG_RAX: 000000000000002e
-> RAX: ffffffffffffffda RBX: 00007f42d1da6320 RCX: 00007f42d1b8d169
-> RDX: 0000000000000000 RSI: 00004000000002c0 RDI: 000000000000000c
-> RBP: 00007f42d1c0e2a0 R08: 0000000000000000 R09: 0000000000000000
-> R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-> R13: 0000000000000000 R14: 00007f42d1da6320 R15: 00007ffe399344a8
->  </TASK>
->=20
-> Allocated by task 10025:
->  kasan_save_stack mm/kasan/common.c:47 [inline]
->  kasan_save_track+0x3f/0x80 mm/kasan/common.c:68
->  poison_kmalloc_redzone mm/kasan/common.c:377 [inline]
->  __kasan_kmalloc+0x98/0xb0 mm/kasan/common.c:394
->  kasan_kmalloc include/linux/kasan.h:260 [inline]
->  __do_kmalloc_node mm/slub.c:4294 [inline]
->  __kmalloc_node_track_caller_noprof+0x28b/0x4c0 mm/slub.c:4313
->  __kmemdup_nul mm/util.c:61 [inline]
->  kstrdup+0x42/0x100 mm/util.c:81
->  kobject_set_name_vargs+0x61/0x120 lib/kobject.c:274
->  dev_set_name+0xd5/0x120 drivers/base/core.c:3468
->  assign_name drivers/infiniband/core/device.c:1202 [inline]
->  ib_register_device+0x178/0x1460 drivers/infiniband/core/device.c:1384
->  rxe_register_device+0x233/0x350 drivers/infiniband/sw/rxe/rxe_verbs.c:15=
-40
->  rxe_net_add+0x74/0xf0 drivers/infiniband/sw/rxe/rxe_net.c:550
->  rxe_newlink+0xde/0x1a0 drivers/infiniband/sw/rxe/rxe.c:212
->  nldev_newlink+0x5ea/0x680 drivers/infiniband/core/nldev.c:1795
->  rdma_nl_rcv_skb drivers/infiniband/core/netlink.c:239 [inline]
->  rdma_nl_rcv+0x6dd/0x9e0 drivers/infiniband/core/netlink.c:259
->  netlink_unicast_kernel net/netlink/af_netlink.c:1313 [inline]
->  netlink_unicast+0x7f6/0x990 net/netlink/af_netlink.c:1339
->  netlink_sendmsg+0x8de/0xcb0 net/netlink/af_netlink.c:1883
->  sock_sendmsg_nosec net/socket.c:709 [inline]
->  __sock_sendmsg+0x221/0x270 net/socket.c:724
->  ____sys_sendmsg+0x53a/0x860 net/socket.c:2564
->  ___sys_sendmsg net/socket.c:2618 [inline]
->  __sys_sendmsg+0x269/0x350 net/socket.c:2650
->  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
->  do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
->  entry_SYSCALL_64_after_hwframe+0x77/0x7f
->=20
-> Freed by task 10035:
->  kasan_save_stack mm/kasan/common.c:47 [inline]
->  kasan_save_track+0x3f/0x80 mm/kasan/common.c:68
->  kasan_save_free_info+0x40/0x50 mm/kasan/generic.c:576
->  poison_slab_object mm/kasan/common.c:247 [inline]
->  __kasan_slab_free+0x59/0x70 mm/kasan/common.c:264
->  kasan_slab_free include/linux/kasan.h:233 [inline]
->  slab_free_hook mm/slub.c:2353 [inline]
->  slab_free mm/slub.c:4609 [inline]
->  kfree+0x196/0x430 mm/slub.c:4757
->  kobject_rename+0x38f/0x410 lib/kobject.c:524
->  device_rename+0x16a/0x200 drivers/base/core.c:4525
->  ib_device_rename+0x270/0x710 drivers/infiniband/core/device.c:402
->  nldev_set_doit+0x30e/0x4c0 drivers/infiniband/core/nldev.c:1146
->  rdma_nl_rcv_skb drivers/infiniband/core/netlink.c:239 [inline]
->  rdma_nl_rcv+0x6dd/0x9e0 drivers/infiniband/core/netlink.c:259
->  netlink_unicast_kernel net/netlink/af_netlink.c:1313 [inline]
->  netlink_unicast+0x7f6/0x990 net/netlink/af_netlink.c:1339
->  netlink_sendmsg+0x8de/0xcb0 net/netlink/af_netlink.c:1883
->  sock_sendmsg_nosec net/socket.c:709 [inline]
->  __sock_sendmsg+0x221/0x270 net/socket.c:724
->  ____sys_sendmsg+0x53a/0x860 net/socket.c:2564
->  ___sys_sendmsg net/socket.c:2618 [inline]
->  __sys_sendmsg+0x269/0x350 net/socket.c:2650
->  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
->  do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
->  entry_SYSCALL_64_after_hwframe+0x77/0x7f
->=20
-> This is because if rename device happens, the old name is freed in
-> ib_device_rename() with lock, but fill_nldev_handle() may visit the dev
-> name locklessly triggered by rxe_newlink().
->=20
-> Fix this by add lock around rdma_nl_notify_event() in
-> ib_device_notify_register().
->=20
-> Reported-by: syzbot+f60349ba1f9f08df349f@syzkaller.appspotmail.com
-> Closes: https://syzkaller.appspot.com/bug?extid=3D25bc6f0ed2b88b9eb9b8
-> Fixes: 9cbed5aab5ae ("RDMA/nldev: Add support for RDMA monitoring")
-> Signed-off-by: Wang Liang <wangliang74@huawei.com>
-> ---
->  drivers/infiniband/core/device.c | 2 ++
->  1 file changed, 2 insertions(+)
->=20
-> diff --git a/drivers/infiniband/core/device.c b/drivers/infiniband/core/d=
-evice.c
-> index 0ded91f056f3..4536621ada0d 100644
-> --- a/drivers/infiniband/core/device.c
-> +++ b/drivers/infiniband/core/device.c
-> @@ -1341,7 +1341,9 @@ static void ib_device_notify_register(struct ib_dev=
-ice *device)
->  	u32 port;
->  	int ret;
-> =20
-> +	down_write(&devices_rwsem);
+On Mon, Mar 10, 2025 at 10:11:29AM +0000, Russell King (Oracle) wrote:
+> On Mon, Mar 10, 2025 at 10:58:38AM +0100, Oleksij Rempel wrote:
+> > Hi Thangaraj,
+> > 
+> > On Mon, Mar 10, 2025 at 09:29:45AM +0000, Thangaraj.S@microchip.com wrote:
+> > > > -       mii_adv_to_linkmode_adv_t(fc, mii_adv);
+> > > > -       linkmode_or(phydev->advertising, fc, phydev->advertising);
+> > > > +       phy_suspend(phydev);
+> > > > 
+> > > 
+> > > Why phy_suspend called in the init? Is there any specific reason?
+> > 
+> > In my tests with EVB-LAN7801-EDS, the attached PHY stayed UP in initial
+> > state.
+> 
+> Why is that an issue?
 
-The analysis looks correct to me, however this should be down_read(&devices=
-_rwsem)
-together with comment about possible race with RDMA netlink, which can chan=
-ge
-internals of struct ib_device.
+The local interface was in the administrative DOWN state, but link was up:
+- port LEDs are on
+- link partner sees the link is UP.
 
-I wonder if this read semaphore should be hold for whole
-ib_device_notify_register() function and not only for RDMA_REGISTER_EVENT e=
-vent.
+It is not a big deal, but for me it looks inconsistent.
 
-Thanks
-
->  	ret =3D rdma_nl_notify_event(device, 0, RDMA_REGISTER_EVENT);
-> +	up_write(&devices_rwsem);
->  	if (ret)
->  		return;
-> =20
-> --=20
-> 2.34.1
->=20
->=20
+-- 
+Pengutronix e.K.                           |                             |
+Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
+31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
 
