@@ -1,128 +1,136 @@
-Return-Path: <linux-kernel+bounces-553440-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-553441-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3CEDAA589AB
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 01:31:17 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id AF924A589B0
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 01:33:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 810BF169AB7
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 00:31:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 779273ABB67
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 00:33:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AA5E35962;
-	Mon, 10 Mar 2025 00:31:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E1723987D;
+	Mon, 10 Mar 2025 00:33:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eneyuQA7"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="l54C/qJC"
+Received: from out30-99.freemail.mail.aliyun.com (out30-99.freemail.mail.aliyun.com [115.124.30.99])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7345A632;
-	Mon, 10 Mar 2025 00:31:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65B46632;
+	Mon, 10 Mar 2025 00:33:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.99
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741566666; cv=none; b=EcKsYhqweNz3jBxfLSC2TzGc4rNev7cPBJmWVUqnayKeiOeyBbRFl3o0OtQOgdlHJOjZ11yPcWAMysOX7qtJjXdVB4F7+Uu8bge7+no8C5bJdw0Yw7CfCCZSq6oR4Kz4Z95MO0nA63SZabFrQy7dgIE1NtYkBvPt78sa/nmBJK0=
+	t=1741566802; cv=none; b=gnBZT+TQr3TJ3+cRNC3lSSs6+xXeDdDZDIJfNkr5aO+L1mCTg/L2zcByaD6dDwGT9z8+GUJmep+4KO3PdIncjEwBVYJy2FaMElRutH3nDqkMYb6Epta4qx3Hc6mK6mju+t1M6VB3U39OZ882uygesEAE3n4b8wc1hHPampJV8wI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741566666; c=relaxed/simple;
-	bh=127U7j9Ed6A/U+MTwMIn2yifTZmeLRlUzJiRx4bf5Qg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=p2OeRBwqIShIwGgie66OoX3Ywi7XacK2QVIo0phYbVAM/KKw5L4EQB4rjvshqZKrYqPwlBCF1JnQMrUADlpVCM0Bkeo4jofTBtFt0HDscfbxTUURILzqkS864Q+LCLOsOZ4qmoD9k9klged1Pa3E81e7Wi7aJVkwNWUiViNBO3k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eneyuQA7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3FF5BC4CEE3;
-	Mon, 10 Mar 2025 00:31:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741566665;
-	bh=127U7j9Ed6A/U+MTwMIn2yifTZmeLRlUzJiRx4bf5Qg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=eneyuQA7ykopq6S8UEKfLVTAcoh47yfGIyP+jGj+MeeDBzaNFNhxvkIPnaRvDW4GR
-	 3ElSa1Rcld7O5AzJkk8twIU5lFCgWiBf5vNLPutmhvohsLYdekOvuQxlcATOOmNSOL
-	 oy+78DKZe/m1Q8ZxkYJJvGoPrVwC1BrNfuxgULZNHz65IH/M/37K/rifMBJJpuVcom
-	 N+TobUAr9cPgkoULGmReb1NG5sZjys6iojuvRBPAwPXGsncjJKQ2ONRM5aUK0ykDOe
-	 yCd+V0vOGqXO+XPoZw9/6/ZJu0a+v7uQNA+ckeDwo4Su72E7JnlkAVup+KFU6O2u9D
-	 /UkG5nAGdv14g==
-Date: Mon, 10 Mar 2025 00:31:04 +0000
-From: Wei Liu <wei.liu@kernel.org>
-To: Roman Kisel <romank@linux.microsoft.com>
-Cc: arnd@arndb.de, bhelgaas@google.com, bp@alien8.de,
-	catalin.marinas@arm.com, conor+dt@kernel.org,
-	dave.hansen@linux.intel.com, decui@microsoft.com,
-	haiyangz@microsoft.com, hpa@zytor.com, joey.gouly@arm.com,
-	krzk+dt@kernel.org, kw@linux.com, kys@microsoft.com,
-	lenb@kernel.org, lpieralisi@kernel.org,
-	manivannan.sadhasivam@linaro.org, mark.rutland@arm.com,
-	maz@kernel.org, mingo@redhat.com, oliver.upton@linux.dev,
-	rafael@kernel.org, robh@kernel.org, ssengar@linux.microsoft.com,
-	sudeep.holla@arm.com, suzuki.poulose@arm.com, tglx@linutronix.de,
-	wei.liu@kernel.org, will@kernel.org, yuzenghui@huawei.com,
-	devicetree@vger.kernel.org, kvmarm@lists.linux.dev,
-	linux-acpi@vger.kernel.org, linux-arch@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-hyperv@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
-	x86@kernel.org, apais@microsoft.com, benhill@microsoft.com,
-	bperkins@microsoft.com, sunilmut@microsoft.com
-Subject: Re: [PATCH hyperv-next v5 06/11] arm64, x86: hyperv: Report the VTL
- the system boots in
-Message-ID: <Z84yyAqkqJ2ZyAd-@liuwe-devbox-ubuntu-v2.lamzopl0uupeniq2etz1fddiyg.xx.internal.cloudapp.net>
-References: <20250307220304.247725-1-romank@linux.microsoft.com>
- <20250307220304.247725-7-romank@linux.microsoft.com>
+	s=arc-20240116; t=1741566802; c=relaxed/simple;
+	bh=8gtiSOPBeO2O6YcASdsqnV2fsibaolJ2lK9ihz7fKME=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Om9I2WGSrpMovl+ToOoYrT42qHy3J0kR/WGMK6+B7rwkh7Qczd9sYjoHm5k1p+7pJINFdNoYnvbQHZ7PPwyxCLkGMFcodpfqYjfMfuVowAQQEsBXUOb3nZSpeXgiLgeyxAvQ/KEeSzZFtMH5s9bxCcEJCjKp+Udk3WerX0X8ANw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=l54C/qJC; arc=none smtp.client-ip=115.124.30.99
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1741566795; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=i9xoUJAz+Ulc3f5EECn+evsDiO91i2wyeFM4yQAvw+Q=;
+	b=l54C/qJCqjoLb2HMsxvD9kS4XgpLrA1qEEH3b8Hoon1p1tNMcRpBf2328jSpdnGZvuHHZf1TOjFufL5ER1O43HgSGrfveqL5OCZ6n/64bq/f8ucP7oJ62CgOza7e5bjBZlwwET39G2OvwMnLHi9ub0TEZ01S1QnFi+EKETryenU=
+Received: from 30.134.66.95(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0WQy811n_1741566764 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Mon, 10 Mar 2025 08:33:11 +0800
+Message-ID: <625983f8-7e52-4f6c-97bb-629596341181@linux.alibaba.com>
+Date: Mon, 10 Mar 2025 08:32:42 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250307220304.247725-7-romank@linux.microsoft.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] mm: alloc_pages_bulk: remove assumption of populating
+ only NULL elements
+To: Yunsheng Lin <yunshenglin0825@gmail.com>,
+ Dave Chinner <david@fromorbit.com>, Yunsheng Lin <linyunsheng@huawei.com>
+Cc: Yishai Hadas <yishaih@nvidia.com>, Jason Gunthorpe <jgg@ziepe.ca>,
+ Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>,
+ Kevin Tian <kevin.tian@intel.com>,
+ Alex Williamson <alex.williamson@redhat.com>, Chris Mason <clm@fb.com>,
+ Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>,
+ Gao Xiang <xiang@kernel.org>, Chao Yu <chao@kernel.org>,
+ Yue Hu <zbestahu@gmail.com>, Jeffle Xu <jefflexu@linux.alibaba.com>,
+ Sandeep Dhavale <dhavale@google.com>, Carlos Maiolino <cem@kernel.org>,
+ "Darrick J. Wong" <djwong@kernel.org>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Jesper Dangaard Brouer <hawk@kernel.org>,
+ Ilias Apalodimas <ilias.apalodimas@linaro.org>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Simon Horman <horms@kernel.org>, Trond Myklebust <trondmy@kernel.org>,
+ Anna Schumaker <anna@kernel.org>, Chuck Lever <chuck.lever@oracle.com>,
+ Jeff Layton <jlayton@kernel.org>, Neil Brown <neilb@suse.de>,
+ Olga Kornievskaia <okorniev@redhat.com>, Dai Ngo <Dai.Ngo@oracle.com>,
+ Tom Talpey <tom@talpey.com>, Luiz Capitulino <luizcap@redhat.com>,
+ Mel Gorman <mgorman@techsingularity.net>, kvm@vger.kernel.org,
+ virtualization@lists.linux.dev, linux-kernel@vger.kernel.org,
+ linux-btrfs@vger.kernel.org, linux-erofs@lists.ozlabs.org,
+ linux-xfs@vger.kernel.org, linux-mm@kvack.org, netdev@vger.kernel.org,
+ linux-nfs@vger.kernel.org
+References: <20250228094424.757465-1-linyunsheng@huawei.com>
+ <Z8a3WSOrlY4n5_37@dread.disaster.area>
+ <91fcdfca-3e7b-417c-ab26-7d5e37853431@huawei.com>
+ <Z8vnKRJlP78DHEk6@dread.disaster.area>
+ <cce03970-d66f-4344-b496-50ecf59483a6@gmail.com>
+From: Gao Xiang <hsiangkao@linux.alibaba.com>
+In-Reply-To: <cce03970-d66f-4344-b496-50ecf59483a6@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Fri, Mar 07, 2025 at 02:02:58PM -0800, Roman Kisel wrote:
-> The hyperv guest code might run in various Virtual Trust Levels.
+
+
+On 2025/3/9 21:40, Yunsheng Lin wrote:
+> On 3/8/2025 2:43 PM, Dave Chinner wrote:
 > 
-> Report the level when the kernel boots in the non-default (0)
-> one.
+> ...
 > 
-> Signed-off-by: Roman Kisel <romank@linux.microsoft.com>
-> ---
->  arch/arm64/hyperv/mshyperv.c | 2 ++
->  arch/x86/hyperv/hv_vtl.c     | 2 +-
->  2 files changed, 3 insertions(+), 1 deletion(-)
+>>> I tested XFS using the below cmd and testcase, testing seems
+>>> to be working fine, or am I missing something obvious here
+>>> as I am not realy familiar with fs subsystem yet:
+>>
+>> That's hardly what I'd call a test. It barely touches the filesystem
+>> at all, and it is not exercising memory allocation failure paths at
+>> all.
+>>
+>> Go look up fstests and use that to test the filesystem changes you
+>> are making. You can use that to test btrfs and NFS, too.
 > 
-> diff --git a/arch/arm64/hyperv/mshyperv.c b/arch/arm64/hyperv/mshyperv.c
-> index a7db03f5413d..3bc16dbee758 100644
-> --- a/arch/arm64/hyperv/mshyperv.c
-> +++ b/arch/arm64/hyperv/mshyperv.c
-> @@ -108,6 +108,8 @@ static int __init hyperv_init(void)
->  	if (ms_hyperv.priv_high & HV_ACCESS_PARTITION_ID)
->  		hv_get_partition_id();
->  	ms_hyperv.vtl = get_vtl();
-> +	if (ms_hyperv.vtl > 0) /* non default VTL */
-
-"non-default".
-
-> +		pr_info("Linux runs in Hyper-V Virtual Trust Level %d\n", ms_hyperv.vtl);
->  
->  	ms_hyperv_late_init();
->  
-> diff --git a/arch/x86/hyperv/hv_vtl.c b/arch/x86/hyperv/hv_vtl.c
-> index 4e1b1e3b5658..c21bee7e8ff3 100644
-> --- a/arch/x86/hyperv/hv_vtl.c
-> +++ b/arch/x86/hyperv/hv_vtl.c
-> @@ -24,7 +24,7 @@ static bool __init hv_vtl_msi_ext_dest_id(void)
->  
->  void __init hv_vtl_init_platform(void)
->  {
-> -	pr_info("Linux runs in Hyper-V Virtual Trust Level\n");
-> +	pr_info("Linux runs in Hyper-V Virtual Trust Level %d\n", ms_hyperv.vtl);
-
-Where isn't there a check for ms_hyperv.vtl > 0 here?
-
-Please be consistent across different architectures.
-
->  
->  	x86_platform.realmode_reserve = x86_init_noop;
->  	x86_platform.realmode_init = x86_init_noop;
-> -- 
-> 2.43.0
+> Thanks for the suggestion.
+> I used the below xfstests to do the testing in a VM, the smoke testing
+> seems fine for now, will do a full testing too:
+> https://github.com/tytso/xfstests-bld
 > 
+> Also, it seems the fstests doesn't support erofs yet?
+
+erofs is an read-only filesystem, and almost all xfstests
+cases is unsuitable for erofs since erofs needs to preset
+dataset in advance for runtime testing and only
+read-related interfaces are cared:
+
+You could check erofs-specfic test cases here:
+https://git.kernel.org/pub/scm/linux/kernel/git/xiang/erofs-utils.git/log/?h=experimental-tests
+
+Also the stress test:
+https://git.kernel.org/pub/scm/linux/kernel/git/xiang/erofs-utils.git/commit/?id=6fa861e282408f8df9ab1654b77b563444b17ea1
+
+BTW, I don't like your new interface either, I don't know
+why you must insist on this work now that others are
+already nak this.  Why do you insist on it so much?
+
+Thanks,
+Gao Xiang
+
 > 
+>>
+>> -Dave.
+>>
+
 
