@@ -1,131 +1,119 @@
-Return-Path: <linux-kernel+bounces-555075-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-555077-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7FBC1A5A538
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 21:44:30 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A6149A5A53A
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 21:45:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 627D73AEE6A
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 20:44:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2EE883AE582
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 20:45:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD7211DF991;
-	Mon, 10 Mar 2025 20:43:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C9FC1DED4B;
+	Mon, 10 Mar 2025 20:45:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Qt5RrX+3"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="jgK+HMm2"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02F5D1DF979;
-	Mon, 10 Mar 2025 20:43:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9C551D5150
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 20:45:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741639413; cv=none; b=k6eLUbd14MVW2nhC73TjtwbCpi11c94QFlifxi3Tnhi7X2JylHDKww9oTXCzN3nITHlqKHNe+1rXJ8OAQHQDZOmfIPvBU8p06NZ7ab8zEdH0l8CVs6OJKYXeWP1jgg+Ztin8N+3hTXiMvJoZFzSCKLQ8Es3QbRjqn5TTbvl6N4o=
+	t=1741639518; cv=none; b=Txk7Y2/Q1bEpe9lPPp00hJrqYIpB9O7XXaxuJJaAPyUCZSF8c/46q2L1hfAtc2pGX1/hBlJdsY//h6YT7fNRUC/N/JQpPRqEsJdUef4aF36HU42Gj99vxQhIrTptVl1Ns5yOSkWtISc/37JhKK7U2gYKQcv/QlmOO0rvAkc6Qsw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741639413; c=relaxed/simple;
-	bh=8CPse12cMKqpOcsNkiSbBZYCP75RyjxtQ0+VEneVPcM=;
+	s=arc-20240116; t=1741639518; c=relaxed/simple;
+	bh=OU5J+jfc1jopf4JWDFtsMwKpDim0WBKH9tHIa9XMzpM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=t1qZPbl6hA29IqK97WHyvSdNaDVGz2oTbPtK51sWikGO0qEgKcJjiSqY/9uHSlZBvrPTbkXCur1BiyTDS9rGhotmjmJBAzDEivKWhvN6E1TcqAzlUK0wAQIswlKhEx8ZRfPZe3BZkrdLhbRENdUs2Q9YLIoXhTCPkolWP3DLjUM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Qt5RrX+3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 23DFCC4CEE5;
-	Mon, 10 Mar 2025 20:43:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741639412;
-	bh=8CPse12cMKqpOcsNkiSbBZYCP75RyjxtQ0+VEneVPcM=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=P4GjCovTz7LktUrPfcq0JAWJNuOEE5IxU2jf7x85yVbU8b5bKRrNaikR5/P6VvHOfPwwwglTNNEoWMa8uqfC0mS+9FrlqrzktTfDQy69hhmwC6a/r5zajBMLuaup8Yz1uE68ZiImBXQLpIQQZlmkOgYaLAvkan4Hmse5mGfR410=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=fail (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=jgK+HMm2 reason="signature verification failed"; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id C5ED740E01AD;
+	Mon, 10 Mar 2025 20:45:13 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=fail (4096-bit key)
+	reason="fail (body has been altered)" header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id SHR3Q_uU7qdW; Mon, 10 Mar 2025 20:45:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1741639508; bh=0RjFQIwL9SDXqHJ6TO7Bg4CU5uAaCQ1XEaGuir1TffY=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Qt5RrX+3/6tG2D+eIKmNFgQ7apGzgxqboQaPjxtkRAf4FU2/D/VgbJXJuZpCsNtCq
-	 UCPKEcYS2A9Qi53AaLl37T9K5o/LmUHcbmgpws1RUwxlNVGzC5nwOnHo0t4hymZxCQ
-	 b6ESvWtVBHKZUKthtvcUk3urB7kjF51lNhyFOGTiINNoxVDOattz+hCKtVN4Dk2RI7
-	 px3H58CQvlTYyYYf/Zk4uLK6FVJT2DefcG0j1iDaDTzfgkDOYI9ND89D4WYMDGPnn0
-	 aExajhhHFtD4SF9psau5+KjOEhbUh0iEMVk614E/khr0HJLE267C8Bh8twRbJNNzib
-	 M0BEwIWVPo0Ug==
-Date: Mon, 10 Mar 2025 17:43:29 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Ian Rogers <irogers@google.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Kan Liang <kan.liang@linux.intel.com>,
-	Yicong Yang <yangyicong@hisilicon.com>,
-	James Clark <james.clark@linaro.org>,
-	"Dr. David Alan Gilbert" <linux@treblig.org>,
-	Levi Yun <yeoreum.yun@arm.com>, Ze Gao <zegao2021@gmail.com>,
-	Weilin Wang <weilin.wang@intel.com>, Xu Yang <xu.yang_2@nxp.com>,
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Howard Chu <howardchu95@gmail.com>
-Subject: Re: [PATCH v2 03/11] perf evsel: tp_format accessing improvements
-Message-ID: <Z89O8eaFpltNBtUG@x1>
-References: <20250228222308.626803-1-irogers@google.com>
- <20250228222308.626803-4-irogers@google.com>
+	b=jgK+HMm2n25T8Y5g5PH0Z+CbQBANiJOZ9rrJJqxEswatjsFvEzaJZMCDMRpQgMdgO
+	 450v4XVpPPleorhjr4P/aVaRB+gA0tZVLH7obbP9h4bhvDs5fyUM1YOvTdgfWh7vCg
+	 ePEuxDHRV9QuVrIW9nN8x2mpSVAd6BQrcFhVAKe3oO9UMyi0QDShfceKGqey45RpOL
+	 V4KJVF6KW3x6cM8LJLqhmrW+W2THt86M6N49XH6m/uJafs9Zz49T3h6Qhy1dav33Zk
+	 ej61i8TWxCljGtAlSe8EpbvllSe8AOwWzb+pcTnp67R6MGnQ0PVnzcjDL/gim4i8EC
+	 Ga3N1T+SWk+ptNM+HSdSmIvQRGF4APsnIP9Utr7XyuoJQ2YuI0LzDg6pQAlWhhlQT2
+	 KOTLIPpyExd2f6o2A8SDpPXbipFO5IlSq9MUseLWFh00XQ1SY7GJo5gIvSpJzFn3wd
+	 w4Qf5oHl/3tU93hzMwGILLHILO/vP1D37GA0/z2XzUCEDSpJ6KCIEFu5PPHjfeXOcz
+	 KD7b73J6aGQiGC33fhfDLDfThCug/lBrfGyVR2k4MpMJkhmx9xDG6A/79BLF9DX9OF
+	 QM5kxOkTdLICibVHBQahM9J28P6+PcaaxbfLC7HrPzEB3QQA6rS+7Ew1ksKFsBHASP
+	 RTUoBL9t4OWgzuZrILI8gnJo=
+Received: from zn.tnic (pd95303ce.dip0.t-ipconnect.de [217.83.3.206])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id D3EE540E015D;
+	Mon, 10 Mar 2025 20:45:00 +0000 (UTC)
+Date: Mon, 10 Mar 2025 21:44:54 +0100
+From: Borislav Petkov <bp@alien8.de>
+To: Uros Bizjak <ubizjak@gmail.com>
+Cc: x86@kernel.org, linux-kernel@vger.kernel.org,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@kernel.org>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	"H. Peter Anvin" <hpa@zytor.com>
+Subject: Re: [PATCH] x86/hweight: Fix and improve __arch_hweight{32,64}()
+ assembly
+Message-ID: <20250310204454.GYZ89PRl3dBR-9oBIY@fat_crate.local>
+References: <20250310200817.33581-1-ubizjak@gmail.com>
+ <20250310201227.GXZ89Hq5LVWKHjHBeO@fat_crate.local>
+ <CAFULd4ZCc08kJU+3ZVdyWhO4s5fu0Y-RDPS-Y-_sPB1R0KrnoA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250228222308.626803-4-irogers@google.com>
+In-Reply-To: <CAFULd4ZCc08kJU+3ZVdyWhO4s5fu0Y-RDPS-Y-_sPB1R0KrnoA@mail.gmail.com>
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Feb 28, 2025 at 02:23:00PM -0800, Ian Rogers wrote:
-> Ensure evsel__clone copies the tp_sys and tp_name variables.
-> In evsel__tp_format, if tp_sys isn't set, use the config value to find
-> the tp_format. This succeeds in python code where pyrf__tracepoint has
-> already found the format.
+On Mon, Mar 10, 2025 at 09:35:42PM +0100, Uros Bizjak wrote:
+> On Mon, Mar 10, 2025 at 9:12=E2=80=AFPM Borislav Petkov <bp@alien8.de> =
+wrote:
+> >
+> > On Mon, Mar 10, 2025 at 09:08:04PM +0100, Uros Bizjak wrote:
+> > > a) Use ASM_CALL_CONSTRAINT to prevent inline asm that includes call
+> > > instruction from being scheduled before the frame pointer gets set
+> > > up by the containing function, causing objtool to print a "call
+> > > without frame pointer save/setup" warning.
+> >
+> > The other two are ok but this is new. How do you trigger this? I've n=
+ever seen
+> > it in my randconfig builds...
+>=20
+> It is not triggered now, but without this constraint, nothing prevents
+> the compiler from scheduling the insn in front of frame creation.
 
-Here those two fields were introduced but evsel__clone() wasn't update
-to clone those:
+Can you please stop with this silliness?
 
-Fixes: 6c8310e8380d472c ("perf evsel: Allow evsel__newtp without libtraceevent")
+When we start doing git archeology months, years from now, it should be
+perfectly clear why a commit was done. This one is not. So either the com=
+piler
+is doing the bad scheduling or it isn't. Things can't just work by chance=
+.
 
-Reviewed-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Geez.
 
-- Arnaldo
- 
-> Reviewed-by: Howard Chu <howardchu95@gmail.com>
-> Signed-off-by: Ian Rogers <irogers@google.com>
-> ---
->  tools/perf/util/evsel.c | 16 +++++++++++++++-
->  1 file changed, 15 insertions(+), 1 deletion(-)
-> 
-> diff --git a/tools/perf/util/evsel.c b/tools/perf/util/evsel.c
-> index 4a0ef095db92..1974395492d7 100644
-> --- a/tools/perf/util/evsel.c
-> +++ b/tools/perf/util/evsel.c
-> @@ -521,6 +521,16 @@ struct evsel *evsel__clone(struct evsel *dest, struct evsel *orig)
->  	}
->  	evsel->cgrp = cgroup__get(orig->cgrp);
->  #ifdef HAVE_LIBTRACEEVENT
-> +	if (orig->tp_sys) {
-> +		evsel->tp_sys = strdup(orig->tp_sys);
-> +		if (evsel->tp_sys == NULL)
-> +			goto out_err;
-> +	}
-> +	if (orig->tp_name) {
-> +		evsel->tp_name = strdup(orig->tp_name);
-> +		if (evsel->tp_name == NULL)
-> +			goto out_err;
-> +	}
->  	evsel->tp_format = orig->tp_format;
->  #endif
->  	evsel->handler = orig->handler;
-> @@ -644,7 +654,11 @@ struct tep_event *evsel__tp_format(struct evsel *evsel)
->  	if (evsel->core.attr.type != PERF_TYPE_TRACEPOINT)
->  		return NULL;
->  
-> -	tp_format = trace_event__tp_format(evsel->tp_sys, evsel->tp_name);
-> +	if (!evsel->tp_sys)
-> +		tp_format = trace_event__tp_format_id(evsel->core.attr.config);
-> +	else
-> +		tp_format = trace_event__tp_format(evsel->tp_sys, evsel->tp_name);
-> +
->  	if (IS_ERR(tp_format)) {
->  		int err = -PTR_ERR(evsel->tp_format);
->  
-> -- 
-> 2.48.1.711.g2feabab25a-goog
+--=20
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
 
