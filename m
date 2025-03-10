@@ -1,135 +1,149 @@
-Return-Path: <linux-kernel+bounces-555155-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-555153-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id F2E5EA5A62F
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 22:29:02 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AB75FA5A62A
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 22:28:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B62B5188AF5A
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 21:28:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 385983A713B
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 21:28:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0F211E47DD;
-	Mon, 10 Mar 2025 21:28:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D77E41C1AD4;
+	Mon, 10 Mar 2025 21:28:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="LlnBkGWx"
-Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qgsCgKBg"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 942B01E5201
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 21:28:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 388171E2845;
+	Mon, 10 Mar 2025 21:28:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741642098; cv=none; b=doC6KC9rz9Y4hjEE4SDTM+Rkl9Io1V008sXz342jWyFGhmqDERhz4bEqmd+HKx4sNwlb8HqAjbruFAsjvpApjjYhx9tBu1ls0tM5VuFGoq/yX2IIqs4QXnkq0cFPzV3JovSJzT7B9WfhCl2guucxYunYEL5+KGuo+MO2Qis3cLM=
+	t=1741642085; cv=none; b=lgeY0U6T9fKP/rPxogULZ+iCPg4xqH3rqlK2gUb4Z33nVR64f5lruBG+7B4l+sBC8UbnNrXBUcsmL+8rF5vMMwC+ZBwAFdFCzGnVh/Gac8lJHskhgp5yNUQRssHpo7Ndv1I+s25x3k7hgDBlRNpdnFeyTAuYAvTnD6d0sMKCazk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741642098; c=relaxed/simple;
-	bh=oJcRy0C6A9N83cK7nsZviOirJ21zn63Ib1laqW68HHY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=urSADwguaMuiGgiSmTolgRiGCOxZuWI736GDDR5p99sdw7B08gW0WjyGPVfDygQq8HOl1HbwzFeSM0aFEICdWXL3c4m7y+yX7o9//hA5eN29GaOo3XM98bTzqMe6L3VnN0oXN6NndFPOq2DngWlqKvyxvKV3VMODAAkFXTi3cs0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=LlnBkGWx; arc=none smtp.client-ip=178.60.130.6
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
-	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=FahhrGFnxsHK71HoADExrTx+Kq0ZC+lhv0xf5Xsw7i8=; b=LlnBkGWxMA55UU1xzyyCQp3qZq
-	C3SYJRCJzHL3z+Yb08fwmmb+M1ssvs0PBHBQVloBuRkwWGZ5kC9GyH/NdVLq8/H5Hpy6gufEo+IMD
-	YYZqgEujrFI0inibds5S7vmg/ScQ/fntMsWFIeCTJ0kP4NCBML+nxCRfdffYzVuixZPZV4q+Me+Xg
-	SSsUUJNO363P9AZhV7Dcrb7GQ0pZDIuKCzhdUseQxTqb4cQw/8MfZo41JC+DJChq9XpJl4AuVL9vc
-	6TJ8DDugh1EUORIHJeYIuFs9LD0AQnZmzV4tyNT53KZZmyiIjJTenRvIs1ZdYIV7HSCDJ3IqgvMAS
-	S8NCgsVw==;
-Received: from [191.204.194.148] (helo=[192.168.15.100])
-	by fanzine2.igalia.com with esmtpsa 
-	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
-	id 1trkfG-006fFj-El; Mon, 10 Mar 2025 22:28:04 +0100
-Message-ID: <db27ee44-f480-475b-be7e-710bd30eb7a5@igalia.com>
-Date: Mon, 10 Mar 2025 18:27:53 -0300
+	s=arc-20240116; t=1741642085; c=relaxed/simple;
+	bh=fimXjcsEmAf6FQYUCIrEKVZ2zpu/p5pUUtEOH6JJjn8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=M7vFmEbmuygoEzGiFLWeobfeRskDj6/noGWX8lp9nGZGYlWRjcAeEGa8rFVw7fJ6laiKRJHGqxMn2dXQi75fmu57AP/rbXbB6CUq7vGkETrI1jfshWAGwqEBqQP+fHWJdnIlNnMNrM4Ve4L93so4JJ7O/NLN5P+h9Jj/Mu32XVI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qgsCgKBg; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0627AC4CEED;
+	Mon, 10 Mar 2025 21:28:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741642084;
+	bh=fimXjcsEmAf6FQYUCIrEKVZ2zpu/p5pUUtEOH6JJjn8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=qgsCgKBg9Y5chyvUXsP5kQ78lxQyKMCQ19xtNX41mj5orgtQj+i59bUWKPMwfixuK
+	 4isu6tvtf8AXXuv7UB8mpD1hwCeqsERQO4Ce9T77A5D2WDHoMbXVQVcjQdC0K8NLxC
+	 HyPTkrYdtABeZ9HBZmfGL+qbXNrtRWYIEr6RLlgyHKyDW0reZblyLyhiU4CG9TTNV1
+	 21UL0zptZnLHGsjFsiM84KyaXSuySddNj9lLHOBr6iPD0CCbz8nt7Vtfyv8Zf3Xh+c
+	 8rsh1bQj9eyPwXqyE55mAcgyyLvAt8i+LnApfJ+veZzQvaoim3SAnOaBrJ8mx1MOI4
+	 6W7/TewS0V3dA==
+Date: Mon, 10 Mar 2025 18:28:01 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Ian Rogers <irogers@google.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Kan Liang <kan.liang@linux.intel.com>,
+	Yicong Yang <yangyicong@hisilicon.com>,
+	James Clark <james.clark@linaro.org>,
+	"Dr. David Alan Gilbert" <linux@treblig.org>,
+	Levi Yun <yeoreum.yun@arm.com>, Ze Gao <zegao2021@gmail.com>,
+	Weilin Wang <weilin.wang@intel.com>, Xu Yang <xu.yang_2@nxp.com>,
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Howard Chu <howardchu95@gmail.com>
+Subject: Re: [PATCH v2 11/11] perf python tracepoint: Switch to using
+ parse_events
+Message-ID: <Z89ZYVgL_bT3ampz@x1>
+References: <20250228222308.626803-1-irogers@google.com>
+ <20250228222308.626803-12-irogers@google.com>
+ <Z89We45bGpeJvO9C@x1>
+ <Z89WvaIVyF7klGp6@x1>
+ <CAP-5=fXzva636zCZR2isdfrjT6mM3o42C+oGWNkGieqGVajfHA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] drm: Create an app info option for wedge events
-To: Raag Jadav <raag.jadav@intel.com>
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- kernel-dev@igalia.com, amd-gfx@lists.freedesktop.org,
- intel-xe@lists.freedesktop.org, intel-gfx@lists.freedesktop.org,
- Alex Deucher <alexander.deucher@amd.com>,
- =?UTF-8?B?J0NocmlzdGlhbiBLw7ZuaWcn?= <christian.koenig@amd.com>,
- siqueira@igalia.com, airlied@gmail.com, simona@ffwll.ch,
- rodrigo.vivi@intel.com, jani.nikula@linux.intel.com,
- lucas.demarchi@intel.com, Xaver Hugl <xaver.hugl@kde.org>
-References: <20250228121353.1442591-1-andrealmeid@igalia.com>
- <20250228121353.1442591-2-andrealmeid@igalia.com>
- <Z8HGFRGOYvyCCWWu@black.fi.intel.com>
- <58763d8e-46a1-4753-9401-987fb3dac50b@igalia.com>
- <Z8KgwswQQyGxhsR1@black.fi.intel.com>
-Content-Language: en-US
-From: =?UTF-8?Q?Andr=C3=A9_Almeida?= <andrealmeid@igalia.com>
-In-Reply-To: <Z8KgwswQQyGxhsR1@black.fi.intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAP-5=fXzva636zCZR2isdfrjT6mM3o42C+oGWNkGieqGVajfHA@mail.gmail.com>
 
-Em 01/03/2025 02:53, Raag Jadav escreveu:
-> On Fri, Feb 28, 2025 at 06:54:12PM -0300, André Almeida wrote:
->> Hi Raag,
->>
->> On 2/28/25 11:20, Raag Jadav wrote:
->>> Cc: Lucas
->>>
->>> On Fri, Feb 28, 2025 at 09:13:52AM -0300, André Almeida wrote:
->>>> When a device get wedged, it might be caused by a guilty application.
->>>> For userspace, knowing which app was the cause can be useful for some
->>>> situations, like for implementing a policy, logs or for giving a chance
->>>> for the compositor to let the user know what app caused the problem.
->>>> This is an optional argument, when `PID=-1` there's no information about
->>>> the app caused the problem, or if any app was involved during the hang.
->>>>
->>>> Sometimes just the PID isn't enough giving that the app might be already
->>>> dead by the time userspace will try to check what was this PID's name,
->>>> so to make the life easier also notify what's the app's name in the user
->>>> event.
->>>>
->>>> Signed-off-by: André Almeida <andrealmeid@igalia.com>
-
-[...]
-
->>>>    	len = scnprintf(event_string, sizeof(event_string), "%s", "WEDGED=");
->>>> @@ -562,6 +564,14 @@ int drm_dev_wedged_event(struct drm_device *dev, unsigned long method)
->>>>    	drm_info(dev, "device wedged, %s\n", method == DRM_WEDGE_RECOVERY_NONE ?
->>>>    		 "but recovered through reset" : "needs recovery");
->>>> +	if (info) {
->>>> +		snprintf(pid_string, sizeof(pid_string), "PID=%u", info->pid);
->>>> +		snprintf(comm_string, sizeof(comm_string), "APP=%s", info->comm);
->>>> +	} else {
->>>> +		snprintf(pid_string, sizeof(pid_string), "%s", "PID=-1");
->>>> +		snprintf(comm_string, sizeof(comm_string), "%s", "APP=none");
->>>> +	}
->>> This is not much use for wedge cases that needs recovery, since at that point
->>> the userspace will need to clean house anyway.
->>>
->>> Which leaves us with only 'none' case and perhaps the need for standardization
->>> of "optional telemetry collection".
->>>
->>> Thoughts?
->>
->> I had the feeling that 'none' was already meant to be used for that. Do you
->> think we should move to another naming? Given that we didn't reach the merge
->> window yet we could potentially change that name without much damage.
+On Mon, Mar 10, 2025 at 02:17:59PM -0700, Ian Rogers wrote:
+> On Mon, Mar 10, 2025 at 2:16 PM Arnaldo Carvalho de Melo
+> <acme@kernel.org> wrote:
+> >
+> > On Mon, Mar 10, 2025 at 06:15:42PM -0300, Arnaldo Carvalho de Melo wrote:
+> > > On Fri, Feb 28, 2025 at 02:23:08PM -0800, Ian Rogers wrote:
+> > > > Rather than manually configuring an evsel, switch to using
+> > > > parse_events for greater commonality with the rest of the perf code.
+> > > >
+> > > > Reviewed-by: Howard Chu <howardchu95@gmail.com>
+> > > > Signed-off-by: Ian Rogers <irogers@google.com>
+> > >
+> > > Now will all in place I'm trying to test it and I am getting some
+> > > strange results:
+> > >
+> > > root@number:/home/acme/git/perf-tools-next# tools/perf/python/tracepoint.py
+> > > <SNIP lots of seemingly ok lines>
+> > > time 78318710956557 prev_comm=sudo prev_pid=3133818 prev_prio=120 prev_state=0x1 ==> next_comm=swapper/14 next_pid=0 next_prio=120
+> > > time 78318720082300 prev_comm=swapper/16 prev_pid=0 prev_prio=120 prev_state=0x0 ==> next_comm=kworker/u112:8 next_pid=1752774 next_prio=120
+> > > time 78318706232435 prev_comm=kworker/u112:17 prev_pid=1551246 prev_prio=120 prev_state=0x80 ==> next_comm=swapper/21 next_pid=0 next_prio=120
+> > > time 78318708202121 prev_comm=sudo prev_pid=3133818 prev_prio=120 prev_state=0x2 ==> next_comm=swapper/25 next_pid=0 next_prio=120
+> > > time 78318748346989 prev_comm=swapper/26 prev_pid=0 prev_prio=120 prev_state=0x0 ==> next_comm=gnome-terminal- next_pid=3551 next_prio=120
+> > > Traceback (most recent call last):
+> > >   File "/home/acme/git/perf-tools-next/tools/perf/python/tracepoint.py", line 47, in <module>
+> > >     main()
+> > >   File "/home/acme/git/perf-tools-next/tools/perf/python/tracepoint.py", line 42, in main
+> > >     event.next_comm,
+> > >     ^^^^^^^^^^^^^^^
+> > > AttributeError: 'perf.sample_event' object has no attribute 'next_comm'
+> > > root@number:/home/acme/git/perf-tools-next#
+> > >
+> > > But it shouldn't get there as there is this check:
+> > >
+> > >             if not isinstance(event, perf.sample_event):
+> > >                 continue
+> > >
+> > >
+> > > :-\
+> > >
+> > > Trying to debug that...
+> >
+> > And it doesn't seem related to your series, I checked and v6.13 has the
+> > same problem, I nuked the build dir, etc.
 > 
-> No, I meant thoughts on possible telemetry data that the drivers might
-> think is useful for userspace (along with PID) and can be presented in
-> a vendor agnostic manner (just like wedged event).
+> Right. I'd seen the same issue.
 
-I'm not if I agree that this will only be used for telemetry and for the 
-`none` use case. As stated by Xaver, there's use case to know which app 
-caused the device to get wedged (like switching to software rendering) 
-and to display something for the user after the recovery is done (e.g. 
-"The game <app name> stopped working and Plasma has reset").
+time 79411977132102 prev_comm=sudo prev_pid=3133818 prev_prio=120 prev_state=0x2 ==> next_comm=swapper/12 next_pid=0 next_prio=120
+{ type: sample }
+time 79411977200343 prev_comm=kworker/u112:17 prev_pid=1551246 prev_prio=120 prev_state=0x80 ==> next_comm=swapper/16 next_pid=0 next_prio=120
+{ type: sample }
+time 79411964535268 prev_comm=kworker/u112:14 prev_pid=810939 prev_prio=120 prev_state=0x80 ==> next_comm=swapper/17 next_pid=0 next_prio=120
+{ type: sample }
+time 79411964746511 prev_comm=swapper/18 prev_pid=0 prev_prio=120 prev_state=0x0 ==> next_comm=kworker/u112:12 next_pid=2109251 next_prio=120
+{ type: sample }
+Traceback (most recent call last):
+  File "/home/acme/git/perf-tools-next/tools/perf/python/tracepoint.py", line 48, in <module>
+    main()
+  File "/home/acme/git/perf-tools-next/tools/perf/python/tracepoint.py", line 43, in main
+    event.next_comm,
+    ^^^^^^^^^^^^^^^
+AttributeError: 'perf.sample_event' object has no attribute 'next_comm'
+root@number:/home/acme/git/perf-tools-next#
+
+And it says it is a sample... 
+
+
+Well, ran out of time, will try later or early tomorrow, will also try
+to review the syscalltbl series and Howard's off cpu profiling.
+
+- Arnaldo
 
