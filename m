@@ -1,293 +1,84 @@
-Return-Path: <linux-kernel+bounces-553979-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-553980-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A64BFA59175
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 11:43:16 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 62344A5917A
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 11:44:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 583C03A9D23
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 10:43:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4F8AC188C112
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 10:44:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7C0F226CE4;
-	Mon, 10 Mar 2025 10:43:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E67EF226CF5;
+	Mon, 10 Mar 2025 10:44:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Ey2USqJi"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=pm.me header.i=@pm.me header.b="iaZXe8j8"
+Received: from mail-40131.protonmail.ch (mail-40131.protonmail.ch [185.70.40.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40FF316D9C2
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 10:43:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 939B316D9C2;
+	Mon, 10 Mar 2025 10:44:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.40.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741603391; cv=none; b=CMkos9S38/muWyiuyY/qb7OGvAkAvIq0rvUE/9jtUtiVqpj8B/QYpUAkicF4jwYy9kHfq0YIBqQ/6pTkya2zli4K0ZCGUAczlcj0lr6cqaUeigIiOtQuVR2c7aQVuDDihNTI8XJeW5HZ6B+ztIcbAhK/nOUYsU7DykxpXELImeI=
+	t=1741603456; cv=none; b=WqbW0qNHvpdF+A+4sAx485r7xVlZY3aMAmPWANa7Q1+DPmKDUM6DMTs8q/WNHCfYRw9sKaAnjSN7eLasGm5g/kiGFQ9st/zqEVhU3Lon5fqKFBPl+h1J1IHb8pugMkln457amMhQlaoqFT4mGeTHbqMaV151OGODhj0jnItLuts=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741603391; c=relaxed/simple;
-	bh=hMeWuCvMqMM2XK2LTK3bmeSSJHc1JoA//jmrqXFW2eo=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=EnNyGM5VySNJjVenJUaoF3xlejS1H0b94UP/RjfC5CQ1xepqbQ7uAwN/yV12Tykry2BtEgnV/K5UhCyA3rErxFixp8Om8xGLgONXBv3ci7/1JhsIuwcvSs+CGEQIHEQjLMeAGLbwzkRZVT8kll3EgZvInPFlxdoMSrjkGfoxKw0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Ey2USqJi; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1741603388;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=6mm4Jt51ps/yUdZgt6BsXEfzvmwqH2SSAiWbu167zlU=;
-	b=Ey2USqJiaG+/xeaB45oXddd46qxl/Gc0ICBcZei/hVdLPTVNXadxdUJgeydbtu1oF+OsOY
-	uNxlGPx3OP+W5jZOBS0jCwNNGsvUqZNjlBnn4/1wOLpDmAYCrccW19s3AmNFspXlYMyW22
-	tV4IhJZugqzHSKcX54XcADpNBXBm6yQ=
-Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-370-agH1E7mxMmKRjDE2gu16wA-1; Mon,
- 10 Mar 2025 06:43:03 -0400
-X-MC-Unique: agH1E7mxMmKRjDE2gu16wA-1
-X-Mimecast-MFC-AGG-ID: agH1E7mxMmKRjDE2gu16wA_1741603381
-Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id F0EC3180035C;
-	Mon, 10 Mar 2025 10:43:00 +0000 (UTC)
-Received: from thuth-p1g4.redhat.com (unknown [10.45.226.133])
-	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 7F88219560AD;
-	Mon, 10 Mar 2025 10:42:58 +0000 (UTC)
-From: Thomas Huth <thuth@redhat.com>
-To: Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>
-Cc: x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] x86: Replace __ASSEMBLY__ with __ASSEMBLER__ in uapi headers
-Date: Mon, 10 Mar 2025 11:42:56 +0100
-Message-ID: <20250310104256.123527-1-thuth@redhat.com>
+	s=arc-20240116; t=1741603456; c=relaxed/simple;
+	bh=4qHSKOga5mjVyUfSwBW+q4s1PCN2DyYcvcl/t+VgA4w=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=dna4ur4fKJQDyM27efOeTc9JAqnGSZK/7H4xiGd4D79yA65+Qcbl56o/tBQvnsi6crKUDvwChQHTmzjBWqSWjLBydqUaE9DuLpySbBRtwkjO/V0mKi1Xpup7KmfyV8PWt+dibQFRmVBxC4l1kjDORZXnqvyavGJsnxAxPmrj7P0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pm.me; spf=pass smtp.mailfrom=pm.me; dkim=pass (2048-bit key) header.d=pm.me header.i=@pm.me header.b=iaZXe8j8; arc=none smtp.client-ip=185.70.40.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pm.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pm.me
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pm.me;
+	s=protonmail3; t=1741603452; x=1741862652;
+	bh=4qHSKOga5mjVyUfSwBW+q4s1PCN2DyYcvcl/t+VgA4w=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector:List-Unsubscribe:List-Unsubscribe-Post;
+	b=iaZXe8j8+WeK2iSRmHAS7EXtOdepiIsmYFr2BXCSU4HtH7W3B1gbMV9GoyltufluU
+	 HsMzUIh3x0B5Pt5kJvpKpqiILtOwWHECie5S7EC9UUvMFTc/XZ+s+cX6v475Sl+SJr
+	 GYQmyQDNhlaGWjSLLRpjmBa3x5ixxFxIkhT4i7ScJ3SbWUQ4IRnBSH9rbHFVnvYA8d
+	 uVKzm7rVPYevPw/+0iU/1qVLcppXU11eZAHAA0mHo8UmzOcmTcSE4+yK1x5C5T0pSp
+	 tMzhrxjuWFDDynQXyhUA0akL2gi0g8qj4E0gT8sSEaXe4M2Xu9S258ba/8VaeyRdbl
+	 nMxhT2HdJOx2w==
+Date: Mon, 10 Mar 2025 10:44:06 +0000
+To: Danilo Krummrich <dakr@kernel.org>
+From: Oliver Mangold <oliver.mangold@pm.me>
+Cc: Alice Ryhl <aliceryhl@google.com>, Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>, Asahi Lina <lina@asahilina.net>, rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v6 2/5] rust: make Owned::into_raw() and Owned::from_raw() public
+Message-ID: <Z87CcFyveuvmkQxw@mango>
+In-Reply-To: <d9072bc5-7dc9-400f-8115-970887fafaa0@kernel.org>
+References: <20250310-unique-ref-v6-0-1ff53558617e@pm.me> <20250310-unique-ref-v6-2-1ff53558617e@pm.me> <Z8618XEgG1yNvppk@google.com> <Z864IGPJ-v8Ttt51@mango> <d9072bc5-7dc9-400f-8115-970887fafaa0@kernel.org>
+Feedback-ID: 31808448:user:proton
+X-Pm-Message-ID: 048c9b95574551f30040f4c261ed51d2fdb8aaeb
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-__ASSEMBLY__ is only defined by the Makefile of the kernel, so
-this is not really useful for uapi headers (unless the userspace
-Makefile defines it, too). Let's switch to __ASSEMBLER__ which
-gets set automatically by the compiler when compiling assembly
-code.
+On 250310 1132, Danilo Krummrich wrote:
+> On 3/10/25 11:00 AM, Oliver Mangold wrote:
+> > On 250310 0950, Alice Ryhl wrote:
+> >> I would probably just fold this into the previous patch.
+> >
+> > That is okay with different authors? Just leave that authorship with
+> > Asahi Lina, then, I assume?
+>=20
+> There is a 'Co-developed-by:' tag, please see [1].
+>=20
+> [1]
+> https://docs.kernel.org/process/submitting-patches.html#developer-s-certi=
+ficate-of-origin-1-1
 
-Signed-off-by: Thomas Huth <thuth@redhat.com>
----
- arch/x86/include/uapi/asm/bootparam.h  | 4 ++--
- arch/x86/include/uapi/asm/e820.h       | 4 ++--
- arch/x86/include/uapi/asm/ldt.h        | 4 ++--
- arch/x86/include/uapi/asm/msr.h        | 4 ++--
- arch/x86/include/uapi/asm/ptrace-abi.h | 6 +++---
- arch/x86/include/uapi/asm/ptrace.h     | 4 ++--
- arch/x86/include/uapi/asm/setup_data.h | 4 ++--
- arch/x86/include/uapi/asm/signal.h     | 8 ++++----
- 8 files changed, 19 insertions(+), 19 deletions(-)
+Ah, okay. Thanks.
 
-diff --git a/arch/x86/include/uapi/asm/bootparam.h b/arch/x86/include/uapi/asm/bootparam.h
-index 9b82eebd7add5..dafbf581c515d 100644
---- a/arch/x86/include/uapi/asm/bootparam.h
-+++ b/arch/x86/include/uapi/asm/bootparam.h
-@@ -26,7 +26,7 @@
- #define XLF_5LEVEL_ENABLED		(1<<6)
- #define XLF_MEM_ENCRYPTION		(1<<7)
- 
--#ifndef __ASSEMBLY__
-+#ifndef __ASSEMBLER__
- 
- #include <linux/types.h>
- #include <linux/screen_info.h>
-@@ -210,6 +210,6 @@ enum x86_hardware_subarch {
- 	X86_NR_SUBARCHS,
- };
- 
--#endif /* __ASSEMBLY__ */
-+#endif /* __ASSEMBLER__ */
- 
- #endif /* _ASM_X86_BOOTPARAM_H */
-diff --git a/arch/x86/include/uapi/asm/e820.h b/arch/x86/include/uapi/asm/e820.h
-index 2f491efe3a126..55bc668671560 100644
---- a/arch/x86/include/uapi/asm/e820.h
-+++ b/arch/x86/include/uapi/asm/e820.h
-@@ -54,7 +54,7 @@
-  */
- #define E820_RESERVED_KERN        128
- 
--#ifndef __ASSEMBLY__
-+#ifndef __ASSEMBLER__
- #include <linux/types.h>
- struct e820entry {
- 	__u64 addr;	/* start of memory segment */
-@@ -76,7 +76,7 @@ struct e820map {
- #define BIOS_ROM_BASE		0xffe00000
- #define BIOS_ROM_END		0xffffffff
- 
--#endif /* __ASSEMBLY__ */
-+#endif /* __ASSEMBLER__ */
- 
- 
- #endif /* _UAPI_ASM_X86_E820_H */
-diff --git a/arch/x86/include/uapi/asm/ldt.h b/arch/x86/include/uapi/asm/ldt.h
-index d62ac5db093b4..a82c039d8e6a7 100644
---- a/arch/x86/include/uapi/asm/ldt.h
-+++ b/arch/x86/include/uapi/asm/ldt.h
-@@ -12,7 +12,7 @@
- /* The size of each LDT entry. */
- #define LDT_ENTRY_SIZE	8
- 
--#ifndef __ASSEMBLY__
-+#ifndef __ASSEMBLER__
- /*
-  * Note on 64bit base and limit is ignored and you cannot set DS/ES/CS
-  * not to the default values if you still want to do syscalls. This
-@@ -44,5 +44,5 @@ struct user_desc {
- #define MODIFY_LDT_CONTENTS_STACK	1
- #define MODIFY_LDT_CONTENTS_CODE	2
- 
--#endif /* !__ASSEMBLY__ */
-+#endif /* !__ASSEMBLER__ */
- #endif /* _ASM_X86_LDT_H */
-diff --git a/arch/x86/include/uapi/asm/msr.h b/arch/x86/include/uapi/asm/msr.h
-index e7516b402a00f..4b8917ca28fe7 100644
---- a/arch/x86/include/uapi/asm/msr.h
-+++ b/arch/x86/include/uapi/asm/msr.h
-@@ -2,7 +2,7 @@
- #ifndef _UAPI_ASM_X86_MSR_H
- #define _UAPI_ASM_X86_MSR_H
- 
--#ifndef __ASSEMBLY__
-+#ifndef __ASSEMBLER__
- 
- #include <linux/types.h>
- #include <linux/ioctl.h>
-@@ -10,5 +10,5 @@
- #define X86_IOC_RDMSR_REGS	_IOWR('c', 0xA0, __u32[8])
- #define X86_IOC_WRMSR_REGS	_IOWR('c', 0xA1, __u32[8])
- 
--#endif /* __ASSEMBLY__ */
-+#endif /* __ASSEMBLER__ */
- #endif /* _UAPI_ASM_X86_MSR_H */
-diff --git a/arch/x86/include/uapi/asm/ptrace-abi.h b/arch/x86/include/uapi/asm/ptrace-abi.h
-index 16074b9c93bb5..5823584dea132 100644
---- a/arch/x86/include/uapi/asm/ptrace-abi.h
-+++ b/arch/x86/include/uapi/asm/ptrace-abi.h
-@@ -25,7 +25,7 @@
- 
- #else /* __i386__ */
- 
--#if defined(__ASSEMBLY__) || defined(__FRAME_OFFSETS)
-+#if defined(__ASSEMBLER__) || defined(__FRAME_OFFSETS)
- /*
-  * C ABI says these regs are callee-preserved. They aren't saved on kernel entry
-  * unless syscall needs a complete, fully filled "struct pt_regs".
-@@ -57,7 +57,7 @@
- #define EFLAGS 144
- #define RSP 152
- #define SS 160
--#endif /* __ASSEMBLY__ */
-+#endif /* __ASSEMBLER__ */
- 
- /* top of stack page */
- #define FRAME_SIZE 168
-@@ -87,7 +87,7 @@
- 
- #define PTRACE_SINGLEBLOCK	33	/* resume execution until next branch */
- 
--#ifndef __ASSEMBLY__
-+#ifndef __ASSEMBLER__
- #include <linux/types.h>
- #endif
- 
-diff --git a/arch/x86/include/uapi/asm/ptrace.h b/arch/x86/include/uapi/asm/ptrace.h
-index 85165c0edafc8..e0b5b4f6226b1 100644
---- a/arch/x86/include/uapi/asm/ptrace.h
-+++ b/arch/x86/include/uapi/asm/ptrace.h
-@@ -7,7 +7,7 @@
- #include <asm/processor-flags.h>
- 
- 
--#ifndef __ASSEMBLY__
-+#ifndef __ASSEMBLER__
- 
- #ifdef __i386__
- /* this struct defines the way the registers are stored on the
-@@ -81,6 +81,6 @@ struct pt_regs {
- 
- 
- 
--#endif /* !__ASSEMBLY__ */
-+#endif /* !__ASSEMBLER__ */
- 
- #endif /* _UAPI_ASM_X86_PTRACE_H */
-diff --git a/arch/x86/include/uapi/asm/setup_data.h b/arch/x86/include/uapi/asm/setup_data.h
-index b111b0c185449..50c45ead4e7c9 100644
---- a/arch/x86/include/uapi/asm/setup_data.h
-+++ b/arch/x86/include/uapi/asm/setup_data.h
-@@ -18,7 +18,7 @@
- #define SETUP_INDIRECT			(1<<31)
- #define SETUP_TYPE_MAX			(SETUP_ENUM_MAX | SETUP_INDIRECT)
- 
--#ifndef __ASSEMBLY__
-+#ifndef __ASSEMBLER__
- 
- #include <linux/types.h>
- 
-@@ -78,6 +78,6 @@ struct ima_setup_data {
- 	__u64 size;
- } __attribute__((packed));
- 
--#endif /* __ASSEMBLY__ */
-+#endif /* __ASSEMBLER__ */
- 
- #endif /* _UAPI_ASM_X86_SETUP_DATA_H */
-diff --git a/arch/x86/include/uapi/asm/signal.h b/arch/x86/include/uapi/asm/signal.h
-index f777346450ec3..1067efabf18b5 100644
---- a/arch/x86/include/uapi/asm/signal.h
-+++ b/arch/x86/include/uapi/asm/signal.h
-@@ -2,7 +2,7 @@
- #ifndef _UAPI_ASM_X86_SIGNAL_H
- #define _UAPI_ASM_X86_SIGNAL_H
- 
--#ifndef __ASSEMBLY__
-+#ifndef __ASSEMBLER__
- #include <linux/types.h>
- #include <linux/compiler.h>
- 
-@@ -16,7 +16,7 @@ struct siginfo;
- typedef unsigned long sigset_t;
- 
- #endif /* __KERNEL__ */
--#endif /* __ASSEMBLY__ */
-+#endif /* __ASSEMBLER__ */
- 
- 
- #define SIGHUP		 1
-@@ -68,7 +68,7 @@ typedef unsigned long sigset_t;
- 
- #include <asm-generic/signal-defs.h>
- 
--#ifndef __ASSEMBLY__
-+#ifndef __ASSEMBLER__
- 
- 
- # ifndef __KERNEL__
-@@ -106,6 +106,6 @@ typedef struct sigaltstack {
- 	__kernel_size_t ss_size;
- } stack_t;
- 
--#endif /* __ASSEMBLY__ */
-+#endif /* __ASSEMBLER__ */
- 
- #endif /* _UAPI_ASM_X86_SIGNAL_H */
--- 
-2.48.1
+Best regards,
+
+Oliver
 
 
