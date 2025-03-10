@@ -1,207 +1,215 @@
-Return-Path: <linux-kernel+bounces-554431-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-554432-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D446A5979D
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 15:31:58 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 921B7A597A1
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 15:34:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7894916CED1
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 14:31:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 15FD1188F3A0
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 14:34:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3749619D8A0;
-	Mon, 10 Mar 2025 14:31:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1AFC225798;
+	Mon, 10 Mar 2025 14:34:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="zjZDxRjw"
-Received: from mail-ot1-f45.google.com (mail-ot1-f45.google.com [209.85.210.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="bmKKX+a1"
+Received: from EUR05-AM6-obe.outbound.protection.outlook.com (mail-am6eur05on2084.outbound.protection.outlook.com [40.107.22.84])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A10801AA1C9
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 14:31:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.45
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741617110; cv=none; b=mnZbI0PDQ/bDlCTUzlSmavSZ4y1JTkFV37DAGOZiS8PLkVi4Nzh6Z606RbwOp/0az0d6hwKjQSipyE8J+AyJbEFYKeK6QbFKoF6qPi9dp50Mlgf/KgSWHc5tq1S8TsYPEREjs6r9ltBrjXFqEST3IZaaJpRi2maR7Wu/gUO9IZM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741617110; c=relaxed/simple;
-	bh=Ps//DGpFqXWp3GsLNV4yd8lxmyS5d53siUwV+54hi8g=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=XVuwoNbMJKr9LtH1A6exuzVU7R3xMxOMqXQrVKKAoCyXF/UgI9YRFGchSRvNmlRnEXMWJ3E38/jddF/VF9PClPH0pw+y/wXa0Xpr9M+3bC16OyVr+Qz2+iH2Xeuj1ONxFBF0jS8z0vvmLDbCS/J/nOhHUsGiBtdR6HB9che2dqo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=zjZDxRjw; arc=none smtp.client-ip=209.85.210.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-ot1-f45.google.com with SMTP id 46e09a7af769-7271cc3d73eso2434376a34.1
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 07:31:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1741617107; x=1742221907; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=QnKDL7IGSLQdY1Ps1imHuBBiZbH4iwSQV6FmwECIlQg=;
-        b=zjZDxRjwQKuwZjY/0xjdZUUGpRd3s6FJgyUWIGiXdAV+d9gW/VmDFDdghG5sEG4a8t
-         0WePsyHb+4ZDP0MruABVypM8kWu2hB4E+1mWIaOeDuv+2fTBIqd7UhXZvr1NpU8hGP0Q
-         nCmbC9AU+LButRlxHyVJX9ucMPz61jUM+GEp0UDOiQYAjda/HLL+FYE1uP0fmByXBI/V
-         MT3cD4ZqQiBEhtyqf7Q3PFyZhYPR0AREZ3E60GsqMRcIt59hxBRwBj/92oeVm+FgwmHc
-         9B2Eu6bIGZkQu6Vbq2VdIfL4+6WrWlVlQok0fiermsFzXcmFDpqt+Wot0cXgWSC1Ebbh
-         oDiQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741617107; x=1742221907;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=QnKDL7IGSLQdY1Ps1imHuBBiZbH4iwSQV6FmwECIlQg=;
-        b=JJA9pcdj71FaVnOrMKzOW5PgEShKvoxzTTFqrScVudXLgsfzBmYCxE08QeKAsn/VEB
-         CyvuLgwsmw3CvJLTXJohVXkIXOQlxRgucHAOkOn+Ok4in6rq7/n034xceaSOOlj089jZ
-         RY5/zasG9ZovN9Lu5ONuGVUbxRz+wg9XEGPaCZzF8bzpKuSz3ywOlX1MTTLnvHxEvqj+
-         me09Yde9w+RxhXDoy0vX0dHzywCZ0IX9MVYbxvP5aaDGUHWagMcqV7NnDppDuE1OFmnH
-         Khu0mv7v9nAzwL27iQxTUJ+fkRPBj/jvsTrD9kVFZ2N6R9rn0HhX5sEqp3dH/kOl8ejG
-         kzpg==
-X-Forwarded-Encrypted: i=1; AJvYcCWkPVD6q4MRfI3v/2Pny/r1Y1fok+4+ijEV62az9XH7McBTHnX8aS4y1RLbdWYb9sPw6LC2HnkbHgAl4Jw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzF75hucnLJIhuRndiGaS9CCbgD5ifMRKZlwEqDmRTXn4sn8Zfb
-	pzQuEcDPlHR1MWpEpjFcV8M8/mY8rzeUBJikz5E3EvR8MUPHw+jC+iC4tq4gxm8=
-X-Gm-Gg: ASbGncvcryTQ67/4iZSIUAWXdKF5SAAhORJcHYWEhRaEF3aAStNvCzXod4jDyQSEgOX
-	k7KYPKllJt7n3v56Y/hI9nr6PiYoNOB7G81Mg5Q2QuQ13hRTKYRQIEXZ3W8p5l/hwQqJePBt6tS
-	Maq3fePblu3ABCUZsgPbAtGVHpUoS9eTZEPL1U3O4qfurDTqoKuX3Lsd2tOkKYcRqzFBG84P7Dd
-	ibmg4h88pN8/WKddKbJMXAxxmjUUzm2kgpE2MwwAphMhB1frBqrVgj8KkCY+tK8QtL9uP8UHmRR
-	7oqgUZF05tauNCJzTK4ScaVP+JtyOP3Kt8LzZLEcokDK5+eK8j47XhdcpcLHLE5937KuGPtbSLi
-	vNz56Bw==
-X-Google-Smtp-Source: AGHT+IFc5FQqx7D/Eko7oVMCmMY7qbffM3dUKH8YN9GD9Mq5nGldBPuykkjjjWS+hnzU6NmCsbTHdw==
-X-Received: by 2002:a05:6830:6e05:b0:72b:81a8:dea5 with SMTP id 46e09a7af769-72b81a8e17bmr2820014a34.17.1741617107592;
-        Mon, 10 Mar 2025 07:31:47 -0700 (PDT)
-Received: from [192.168.0.142] (ip98-183-112-25.ok.ok.cox.net. [98.183.112.25])
-        by smtp.gmail.com with ESMTPSA id 46e09a7af769-72b7a3a2385sm1014002a34.57.2025.03.10.07.31.45
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 10 Mar 2025 07:31:47 -0700 (PDT)
-Message-ID: <6ca1eafd-276d-421b-8d35-bd3e363803d1@baylibre.com>
-Date: Mon, 10 Mar 2025 09:31:45 -0500
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60189199223
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 14:34:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.22.84
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741617284; cv=fail; b=WdwmFkVBJCxbepkgjca2cJVPT/0sJXsc1HFlFaCssCPNJlKy46hfEVihPcOsdlkafLax6tPqhQGf23Om5grn09FPW7O6UIxCKsphLeF/BKLMQpQUKp0MUzC7Kk/0ff/EPChGxtNQ7nLdaQrzQMLzGRthpxuY8ErvesJzl3zI09Y=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741617284; c=relaxed/simple;
+	bh=20uC6wqntqiPHRLiVKztJ3mCKKWsLfnxtj8EoCJd3+A=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=P+z29Ka2eTzFLmlOiRLY7i7oYLwtLt6FCaA2N0tcM0tSJH88yv+gMFH453ThkCT2SjljR04UxfaVYl3TVxFyaTzZfspDWEdP28hZ8PGO5ceSiavZWvqQsZw4sc43ws/FX0qSWajZsP/vH+HkrZe+GMsqcS4YM3UJBH/6yNo/Bxc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=bmKKX+a1; arc=fail smtp.client-ip=40.107.22.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=OmwFzXuVF6LLqQIJ4TaGjzB/yA/i5XlQSNJ2/VCwvLgPcfuzk49i68BIzn1taLCAzmkgjFziXUpJ/lDuM+qjo8GgG7k/JLXM+B6S0KkYtcuqW1MG2c2rtz4pZv54vSBXjBfmgG5z+zSw4GAge2RdcJ4vgCc82wyjIBM5OGPXUEz9X7eQQ/8Xz2kP7Rb983qRc6RcMRAoyZDGinKiDJUrxb1oCONYzq3jKI+U9byAaypvWqjAUz0yAjlhyLRK3fIam6aKRJTG+hiYwUu6ZkfXt835ocX4kq5zCQl3w+ZNUpKqKxwXvtv0spBl497YdMu2s0UxSSgfZgS3losCygnQ6A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=EzOq8eQKTEaboOLotWT2hJ37Ea5bhnRgyRxTBH6B2fw=;
+ b=U9+KZ/UyzW8D+FTt0s8PulzOvs4+BMC1z2WC8NT+BlQy/QWvckBzIr/hBMMQkRnWE4vz9emGtAvkNG0qH8RoqtaQRVgR3iD4EASnoczba7gg6E9Z0sg/AFtWQPAQEHg1/PXWW9Lx8hewdSv4RAC9wsUOeZMVkSFWtnV0ONU6YtSQKiVyKM/JKrtjxpyPaEjoNlA72vzo6VE/WJEJUrVzWlL2HV3TvBIje5FM2KkZ9Pwcbx28TAWRi5x6A6lzJXzrUz2WqaSwObBu+jIXObF83/v+vd6uklsorTbLNAkvc9HQL4T5e5oAfU8j5IjAwA4iIZ7y5MQSVjxgvrvojdHIwg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=EzOq8eQKTEaboOLotWT2hJ37Ea5bhnRgyRxTBH6B2fw=;
+ b=bmKKX+a1D5u/FEhnDmoo867F+5d6gq2YXcXi0zm8O6jVt2xrAIQ4YycI4x9y+4T9I81ZkRfSpaf5b0+QMXUQaw2UJ9R3wKCfLM1DvTIM60cYNewQkYTXKBrpEj+HBuissG1I0OnWQBzzlZLl41HyfaMxcJISVQW3JmHfXlh4M/rJT2Po2qA8YwzjjwGlYhJkPHFB4l5OGMTKoelhAFoGH7DZnzwvR3RjbNYi0HByIRtdpzcSfQ7ZfGbN+j2Z+icznI0qP0rs7AUiZQNpK6oOucA37t3d/7Nm45XRPRx/ObZToroAJFT5hjIlIXOuYaREoexzH6qOkUBhtZqLEYAfEw==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
+ by GVXPR04MB9804.eurprd04.prod.outlook.com (2603:10a6:150:114::6) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8511.27; Mon, 10 Mar
+ 2025 14:34:39 +0000
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::9126:a61e:341d:4b06]) by PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::9126:a61e:341d:4b06%3]) with mapi id 15.20.8511.025; Mon, 10 Mar 2025
+ 14:34:39 +0000
+Date: Mon, 10 Mar 2025 10:34:30 -0400
+From: Frank Li <Frank.li@nxp.com>
+To: Stanley Chu <stanley.chuys@gmail.com>
+Cc: miquel.raynal@bootlin.com, alexandre.belloni@bootlin.com,
+	linux-i3c@lists.infradead.org, linux-kernel@vger.kernel.org,
+	tomer.maimon@nuvoton.com, kwliu@nuvoton.com, yschu@nuvoton.com,
+	Dan Carpenter <dan.carpenter@linaro.org>
+Subject: Re: [PATCH v1 1/1] i3c: master: svc: Fix i3c_master_get_free_addr
+ return check
+Message-ID: <Z874dh9lV7P+GpkM@lizhi-Precision-Tower-5810>
+References: <20250310023304.2335792-1-yschu@nuvoton.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250310023304.2335792-1-yschu@nuvoton.com>
+X-ClientProxiedBy: SJ0PR05CA0032.namprd05.prod.outlook.com
+ (2603:10b6:a03:33f::7) To PAXPR04MB9642.eurprd04.prod.outlook.com
+ (2603:10a6:102:240::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/4] docs: iio: new docs for ad4052 driver
-To: Jorge Marques <gastmaier@gmail.com>
-Cc: Jorge Marques <jorge.marques@analog.com>,
- Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>,
- Michael Hennerich <Michael.Hennerich@analog.com>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
- linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org, linux-doc@vger.kernel.org
-References: <20250306-iio-driver-ad4052-v1-0-2badad30116c@analog.com>
- <20250306-iio-driver-ad4052-v1-3-2badad30116c@analog.com>
- <CAMknhBFiZZUtCkTjQ=AVSgwqe=wCkMnqAmaTqvW_X6fm1OKuYA@mail.gmail.com>
- <e3p2r2fet2spkrxv7x76gunlivrp3vng22wktz4fkww5nkckt7@jpgne4uerr3c>
-Content-Language: en-US
-From: David Lechner <dlechner@baylibre.com>
-In-Reply-To: <e3p2r2fet2spkrxv7x76gunlivrp3vng22wktz4fkww5nkckt7@jpgne4uerr3c>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|GVXPR04MB9804:EE_
+X-MS-Office365-Filtering-Correlation-Id: 4b91e8fc-c102-4e7b-4c03-08dd5fe0b04e
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|52116014|376014|366016|1800799024|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?6uwOLB8KLJvQCzxFd1IsTr4qfj2Cb1qMqORkJJqQzlUHS8401TrfyDVKB3vN?=
+ =?us-ascii?Q?SlLRpysIy7y2beKfStv4gZpo/xVLkrsV3AMgHbt8Ht8jYPP/O6a9oeZMd1Ha?=
+ =?us-ascii?Q?S29o+/GYLl43hX8Q5RkugwvtxRdi9MxVrYjzXOI5xRpILYhRkKwGKNlCWLhq?=
+ =?us-ascii?Q?RZvZuxmSOeJ/hFUK/ernjomJkzVDGIazG9JL+1WqMkl+6DeDwmRAGOuo7Xno?=
+ =?us-ascii?Q?rhR6QHgwmZewrr8OdvsT1W6Y46+XVIlPlTkMdKqsbX6aHMBNAmrNkBqRqg9R?=
+ =?us-ascii?Q?7cvbwSlJZeUA3vfGpdw4RfigUNIUEqlC0cMXQdZmc3vDRncU5C0cS0REUobE?=
+ =?us-ascii?Q?HbFkJyFoC0xPDsHGoN7jk7xKqfxJOhgOwNiQokuRkT3i0nQmKnrwFqOycdBX?=
+ =?us-ascii?Q?ZW8ZETC+GxO3N+MFOZKCHNu7efoEz+vvajF+af3qGhW6CU3Efu88llOl0Qf6?=
+ =?us-ascii?Q?HnwqKuIZdAjZCBmCIEHMB6zOYyudd60qoQxv9NJUWtl6FiR1G2oyG7fi2/O9?=
+ =?us-ascii?Q?YaKvXkpmP2Pfw/p2M7voR8zsxIV8L19LmZ/rfEHTFTkBdaa12emu/XigJScW?=
+ =?us-ascii?Q?fCXBSmjaNCupVga842fC1NQ+djgmd7AiW8z6/8BQDKZhyopRllWczB19KgVy?=
+ =?us-ascii?Q?2IHCKze/9xBf+tWkmmQa+RE9KcRhxqBCUrwrtZ4qd4AX6Lfcp7LyIdkarj4z?=
+ =?us-ascii?Q?pC/uYOcVPGqUmnchdtZ6z+Al37J6lkeOvrQA2vVJArHbf+bR4SFOMT+YsC0I?=
+ =?us-ascii?Q?tv0XiKUVoKolnkmqs6MMjjAfMQ3mm1HhNAV+Xiug1YCJFn1sQ7DuiyffEeMJ?=
+ =?us-ascii?Q?sg7mjHnXih8uYR2wlMgAsVZt/in30V//NQkU+x8EMJoqM/fEuAfua1k4NK7M?=
+ =?us-ascii?Q?f4f0Z24tRROPpc0rwZlj6gAN3KHYpwF1y+OS77+FL8X6qsWIXHB1H/NF6qyT?=
+ =?us-ascii?Q?XoC83kxLhORolXWEfxWOh7CBtVNEfGUVzig5bsL8c86CMcfXU2lsOBW3Bnvs?=
+ =?us-ascii?Q?P1gs13LEgvVW3HzcBHhU2OsqWl2xlsj3w/TZp4424NVZQFLU8a0eHeUkVQDz?=
+ =?us-ascii?Q?Zokp4lX6JrQuvQIfmxEf96Ba9lU+yDxjRQKId9y/DffzYWfDF1EXktMkoIVP?=
+ =?us-ascii?Q?v8/bS8+j9oEqBLqZAhOBuYxpizhi5LmDuz0fzA8Wd8U8wCuPsmr5yt5sWV8C?=
+ =?us-ascii?Q?DgpS5bqvZfEV5AdN+wFgiHIpMbHueFBifJJK/z4RoAXH5vK+VRsNGVQkW4qH?=
+ =?us-ascii?Q?MKztF6ts29cwQZDhqRbmoFZKlrRrYPPLmYK+ZJd+Xm63mwzxic6SOyyfR43D?=
+ =?us-ascii?Q?NjT1lkYwLmJoseOzYQyO4vZGLQG4N39n5KAiNH8SdbtlzibPiG5l3VGtH/dY?=
+ =?us-ascii?Q?Dg5Uq7VfpoYt7nUN05F2hxbXK3Kge+4dkFy+CGofk4bWHCOGUYT7bM9izcBH?=
+ =?us-ascii?Q?CmGtjxRlJMDfLvloJq9nohp/0dvZTKF4Lj8puJzY4OEn9QxgjKBWKA=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(52116014)(376014)(366016)(1800799024)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?QQSwwVM4/vyZuE/Tkt/K9gvbTCPf2vTOM/cHBk9zdm+gONP1YMOMZ1xrRUVl?=
+ =?us-ascii?Q?6jQa8lNo1nF56XqA1sI/XX31NjI71EqPkxSTh/aYxSKWkAUJBBqcJvFUHBjo?=
+ =?us-ascii?Q?djRfedNCJ7g2Yo8UgOwuruh4wstkKiBQVF8b+9mR+tjfzBNkQdAY2dmTMIGH?=
+ =?us-ascii?Q?Cvm8K8hdofHEeot5toOrr9pGZH4rNGM50chmSHbfeyftJ6Vw16jAltDoXNiv?=
+ =?us-ascii?Q?1MNV17ROJn/juMsLr1FmDk6WlPfw8kQRmbWXkLjZWuKZK1/V7RUNL3NeAX4p?=
+ =?us-ascii?Q?fJ5NOSx57JMI+dh0FXKuolS5EqJ1gZ66gmRbbcAaBpvXUHywMv9g3yGk3JKJ?=
+ =?us-ascii?Q?uWLIbDHBDCXhhp/m/uXnJzAClr9R7kyjue4/mw8+T8N7xtg9h1EFIuyBQwtB?=
+ =?us-ascii?Q?2wCFR33gu/WjWZgdxtPorR5wViitrTnSMy8c/W2iaZLNef9Oj8zqGhrTLpmr?=
+ =?us-ascii?Q?ZYPkttuAMRuGf5FjE0Dnzl31Y9GPh1p+jLszmvGPfXWRFgag4QL68VQjQi9V?=
+ =?us-ascii?Q?Zun6k2MdIaXka6iKARR/TsOix6KCwb+yrjPs9AouDJ3HVxq2Lrczc1J4YnlP?=
+ =?us-ascii?Q?UpxzxT2P2/BPJcAFn7HFE39oREyETDaQenhLwUjx1k49I3H7vzqnEeNcXv7T?=
+ =?us-ascii?Q?7TJhbMaBiUAq4nGR+FSQne7WboCMzSt7KYCkobBEu/6NNdPfaY7DaZeeGPy0?=
+ =?us-ascii?Q?sXHLGdlB/1qBemFHW8d1cDZApuEo3whzE1GbKjYgWydQ3HNRuCuPk809J0MS?=
+ =?us-ascii?Q?T/CqTFQesLLFpsMGPm/HkJNFCZjlgnifCi5FSmmnqkB1AGq8x+Bx4V2fAJdx?=
+ =?us-ascii?Q?JwbgX8mYfqz5iVSrWFFOQhbO/JuO6lt2I5b0aAUmRwan+TGYQ3gBzpg4w4OA?=
+ =?us-ascii?Q?EFveyneLJLFs+ydWKDbO+cGVz/Xh1mPyUWCTOO5/Ynhv8dWXSzsCthU3G18L?=
+ =?us-ascii?Q?QJE/UQy4Armwv+ZCsMpalVWs5BMAnbWqsR782ei/tIgKz8/u6frEW+UO7Xjp?=
+ =?us-ascii?Q?vhhooY7mE3UeexVu5RN1mhzGB/bJW18DIMm3xQQeTDq7mdII8Dh4iyK4mmQe?=
+ =?us-ascii?Q?IsDnivpLYXNtHsWFdJ1vCblgX7vtnkx4gEy1zmkl8uHCI+9PuWlHhWFVNPsi?=
+ =?us-ascii?Q?sq+L+gRcIIo2fteT3Jvg1FcNPX1FX47K9MdKtmb+QjA+ssIPxvwQfJEk8jjw?=
+ =?us-ascii?Q?ikPo53tqB0GZG/IAHOPoRU9qrp7bHRy6iA+rtfYlEpq8dodhRKrwc8+zPRL/?=
+ =?us-ascii?Q?i8HN8E4QfUhg6sNAL9UQayP/P7hkLVCWQDe0U336eWrxC+9x9XDBxgE6TC2P?=
+ =?us-ascii?Q?r8dEzlRkQI4964ObtH2hjrmem4aIN0A4lwQxOlwdmAo4TBjdT7zfvCw/qMHH?=
+ =?us-ascii?Q?cNv0pRMpdeWvwe+RQW3wCQpabLe+FaaBDz/TlNaynHgkcA/srm2nSkqVGh3+?=
+ =?us-ascii?Q?0FnMhLogu1uPL5GjnxBOYBX4p/SxEBbCfoGDNTz+etMc8dI6CeBMQvqayAJ2?=
+ =?us-ascii?Q?v+jubUoR+kzRob4TGtxb932dPzhaFUQQrJqBPVGug2JFxDnjs0ufbQldEkLM?=
+ =?us-ascii?Q?84MvkyQ72naK5ooV4Pc=3D?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4b91e8fc-c102-4e7b-4c03-08dd5fe0b04e
+X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Mar 2025 14:34:39.5034
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: +tTFYgf2Ukz9FMe0Yp3D11oCgBjdHlvsq1EIHZ5IAGdqtWEd9MOr1bV0Cgek01zpDAwHFvAapOWs1nrkuzRATQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: GVXPR04MB9804
 
-On 3/9/25 3:49 PM, Jorge Marques wrote:
->>> +.. list-table:: Driver attributes
->>> +   :header-rows: 1
->>> +
->>> +   * - Attribute
->>> +     - Description
->>> +   * - ``in_voltage0_raw``
->>> +     - Raw ADC voltage value
->>> +   * - ``in_voltage0_oversampling_ratio``
->>> +     - Enable the device's burst averaging mode to over sample using
->>> +       the internal sample rate.
->>> +   * - ``in_voltage0_oversampling_ratio_available``
->>> +     - List of available oversampling values. Value 0 disable the burst
->>> +       averaging mode.
->>> +   * - ``sample_rate``
->>> +     - Device internal sample rate used in the burst averaging mode.
->>> +   * - ``sample_rate_available``
->>> +     - List of available sample rates.
->>
->> Why not using the standard sampling_frequency[_available] attributes?
-> Because sampling_frequency is the sampling frequency for the pwm trigger
-> during buffer readings.
-> sample_rate is the internal device clock used during monitor and burst
-> averaging modes.
+On Mon, Mar 10, 2025 at 10:33:04AM +0800, Stanley Chu wrote:
+> From: Stanley Chu <yschu@nuvoton.com>
+>
+> The return value of i3c_master_get_free_addr is assigned to a variable
+> with wrong type, so it can't be negative. Use a signed integer for the
+> return value. If the value is negative, break the process and propagate
+> the error code.
+>
+> This commit also fixes the uninitialized symbol 'dyn_addr', reported
+> by Smatch static checker.
+>
+> Fixes: 4008a74e0f9b ("i3c: master: svc: Fix npcm845 FIFO empty issue")
+> Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
+> Closes: https://lore.kernel.org/all/029e5ac0-5444-4a8e-bca4-cec55950d2b9@stanley.mountain/
+> Signed-off-by: Stanley Chu <yschu@nuvoton.com>
+> ---
 
-I haven't done a chips with a monitor mode yet where we aren't reading
-the samples, so hopefully Jonathan will chime in here on the usual way
-to handle that.
+Reviewed-by: Frank Li <Frank.Li@nxp.com>
 
-For the burst averaging mode, I understand the need for a separate attribute
-now. I would suggest to call this the conversion_frequency rather than
-sampling_rate since IIO already defines "sampling" to be the data read
-from the chip to Linux even if it is an averaged value, it still counts
-as one sample.
-
-> 
->>> +
->>> +Threshold events
->>> +================
->>> +
->>> +The ADC supports a monitoring mode to raise threshold events.
->>> +The driver supports a single interrupt for both rising and falling
->>> +readings.
->>> +
->>> +During monitor mode, the device is busy since other transactions
->>> +require to put the device in configuration mode first.
->>
->> This isn't so clear to me. Is this saying that events do not work
->> while doing a buffered read? Do you need to do need to read the
->> in_voltage0_raw input to trigger an event?
->>
-> No, the device monitor mode and trigger mode autonomously samples using the
-> internal clock set with the sample rate property.
-> I rephrased that to:
-> 
->  The feature is enabled/disabled by setting ``thresh_either_en``.
->  During monitor mode, the device continuously operate in autonomous mode until
->  put back in configuration mode, due to this, the device returns busy until the
->  feature is disabled.
-
-This is better, thanks.
-
-> 
-> The reasoning is that during configuration mode no ADC
-> conversion is done, including if the previous mode was autonomous.
-> If instead of return busy the driver hided this and resumed monitor mode
-> after the access, a hidden (to the user) monitoring down-time would and
-> thresholds crossings could be lost, undermining the feature.
-> 
->>> +SPI offload support
->>> +===================
->>> +
->>> +To be able to achieve the maximum sample rate, the driver can be used with the
->>> +`AXI SPI Engine`_ to provide SPI offload support.
->>> +
->>> +.. _AXI SPI Engine: http://analogdevicesinc.github.io/hdl/projects/ad4052_ardz/index.html
->>
->> This diagram show a PWM connected to the CNV pin on the ADC, but I
->> didn't see a pwms property in the DT bindings to describe this.
->>
-> It is not clear to me where the pwm property should be in the DT
-> bindings, since the PWM node now belongs to the offload-capable SPI controller.
-
-If the PWM output is connected to the CNV pin of the ADC, then the PWM
-consumer property belongs in the ADC devicetree node.
-
-If the PWM output is connected directly to the SPI offload trigger input
-then then it should use the trigger-sources bindings in the SPI controller.
-
-From the diagram in the link you gave, it seems clear to me that the
-PWM is connected to the CNV pin on the ADC and GP1 is connected to the
-SPI offload trigger input on the SPI controller.
-
-So the ADC node gets pwms and #trigger-source-cells properties and the
-SPI controller gets a trigger-sources property that is a phandle to the
-ADC node.
-
-> 
->> I didn't have time to read the full datasheet or look at the driver
->> code yet, but can do that next week.
-> Ok, thank you for the review
-> 
-> Jorge
-
+>  drivers/i3c/master/svc-i3c-master.c | 9 +++++----
+>  1 file changed, 5 insertions(+), 4 deletions(-)
+>
+> diff --git a/drivers/i3c/master/svc-i3c-master.c b/drivers/i3c/master/svc-i3c-master.c
+> index f22fb9e75142..1d1f351b9a85 100644
+> --- a/drivers/i3c/master/svc-i3c-master.c
+> +++ b/drivers/i3c/master/svc-i3c-master.c
+> @@ -940,7 +940,7 @@ static int svc_i3c_master_do_daa_locked(struct svc_i3c_master *master,
+>  					u8 *addrs, unsigned int *count)
+>  {
+>  	u64 prov_id[SVC_I3C_MAX_DEVS] = {}, nacking_prov_id = 0;
+> -	unsigned int dev_nb = 0, last_addr = 0, dyn_addr;
+> +	unsigned int dev_nb = 0, last_addr = 0, dyn_addr = 0;
+>  	u32 reg;
+>  	int ret, i;
+>
+> @@ -998,10 +998,11 @@ static int svc_i3c_master_do_daa_locked(struct svc_i3c_master *master,
+>  			 * filling within a few hundred nanoseconds, which is significantly
+>  			 * faster compared to the 64 SCL clock cycles.
+>  			 */
+> -			dyn_addr = i3c_master_get_free_addr(&master->base, last_addr + 1);
+> -			if (dyn_addr < 0)
+> -				return -ENOSPC;
+> +			ret = i3c_master_get_free_addr(&master->base, last_addr + 1);
+> +			if (ret < 0)
+> +				break;
+>
+> +			dyn_addr = ret;
+>  			writel(dyn_addr, master->regs + SVC_I3C_MWDATAB);
+>
+>  			/*
+> --
+> 2.34.1
+>
+>
+> --
+> linux-i3c mailing list
+> linux-i3c@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-i3c
 
