@@ -1,148 +1,133 @@
-Return-Path: <linux-kernel+bounces-554508-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-554510-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 153A4A59908
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 16:04:35 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 88206A5990B
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 16:05:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9C7C0188804F
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 15:02:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9C6021645A4
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 15:03:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D053D22DFA4;
-	Mon, 10 Mar 2025 14:58:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93975189B80;
+	Mon, 10 Mar 2025 15:03:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="j0zYmuTP"
-Received: from mail-vk1-f180.google.com (mail-vk1-f180.google.com [209.85.221.180])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QynXcZ7k"
+Received: from mail-pj1-f50.google.com (mail-pj1-f50.google.com [209.85.216.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1F8622A4EF;
-	Mon, 10 Mar 2025 14:58:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB3D419D8A9;
+	Mon, 10 Mar 2025 15:03:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741618683; cv=none; b=bH5dmlWzJ6c7pnDQeaZvTkc8DLXYaU8A6sk+ai47fjeBym0bHueGn71UuwDT7vdzP051kS6rEkwmy3639Ibdp9+EocIUYw+XlcnZQ1SQYhxw2rBSKwXEPL4u5gcnIFWELNewbmZ7zT5bLxdc1SXgy+QLXDWZqCnGuxnhXECPBWs=
+	t=1741619011; cv=none; b=hs5W9BVIgKRmFpSjh3F/sGnsLH0m1tX13HtEaiPClt2CbhpourudPDXlajsWznL3V/JCYO0vX8GSF5nTwF/KHa2F5G3rUL9vkcgj7GCBX+H2pmx3rLJK2De5cXE2Vs2LQKAbuY4hJhzi5XT6ddNaDDDNsfa8gZgW3+6HAdeOh4w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741618683; c=relaxed/simple;
-	bh=nKeMJqcXOybsOCtgidoWKKriWWEU+V6EOHzym+y4Rww=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=DI5NRNNiSyI5apSHMrY/SRGypHvlx01noBVhKU6HFxvX8Tyd03jqeXaE1tEInuYQKAhCCdIBW/G73IzHiSmWO/ycT06Ddzvjst1JPQsr5WhfSqVwzKFtu0IwvhBQN9NXAYbEOmTZNEx51xLOikoPSjT6io4P/cXNV7wel1qsBaY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=j0zYmuTP; arc=none smtp.client-ip=209.85.221.180
+	s=arc-20240116; t=1741619011; c=relaxed/simple;
+	bh=qHOlMVOSQWZyR+1T7W2LmKujsTHuLbGrbmBhJNI0i1E=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=SrjmX0uM+q0IWVPaQO1mCUt3utLb4kr/hFfGs1zlUqUmuFZBAx0N629zm1wmxURntacwsQ0ueRxnFvnY/E8X/QiOgmFweKYYiaFLN6re4TzU855Ic+67u7rA7YR6bf7rkA64Pm8CExF47cdqDzBCQovH4bcZv0246znyKTu1pIc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QynXcZ7k; arc=none smtp.client-ip=209.85.216.50
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f180.google.com with SMTP id 71dfb90a1353d-523eb86b31aso1118864e0c.0;
-        Mon, 10 Mar 2025 07:58:01 -0700 (PDT)
+Received: by mail-pj1-f50.google.com with SMTP id 98e67ed59e1d1-2fc92215d15so1206538a91.1;
+        Mon, 10 Mar 2025 08:03:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741618680; x=1742223480; darn=vger.kernel.org;
-        h=in-reply-to:references:to:from:subject:cc:message-id:date
-         :content-transfer-encoding:mime-version:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1741619009; x=1742223809; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=xrdG1fpL5CikYynfNpId4ukhi3X0kK30B2xjj7IytkY=;
-        b=j0zYmuTPA7YB/7EwdNN8EXYtfOGUCAhBvk6VPeI5+43BmyZKhiO53U96xS34hQwPcP
-         KqkDJ5PifJSUvAIn3TGlsG5wljKwhXRXTe+Oj16FKqaY1OG3q0jkBKGxRxTV5COY9soq
-         FhwkQSousFprxy7uMyTqG0RY7Con0PCac/r8cLy3zXcDl/zhG5paSaFgf6Dn6zlIsaPv
-         bPjrju4M+fp3UCvzawkF4HdJN34sc/JGxcPttugw8r6a9Au2xtHqmy+75sZPFl+EixCs
-         1mv+f0UcOlUILtPWZsXHjFPFk9LaLuv71YUP9JsFyRcv+7S/QSyXbJwrKiMzOTvXMShK
-         Xr1g==
+        bh=EJOdMi7TuJtokqVht55QzyLtEZiNv+1M/RG0LMYucBg=;
+        b=QynXcZ7kb539KDfLo3uE9WBB+cc85Np8B4DMXW34VB9pEfMrtBw1RiLONATZ1DQXg1
+         GQv31r6IigNIzpOJnYamMl7nGO5vPyibC/jPkvvPFD8eexPObe3aB0o5gg5hyrJtQfIW
+         qxWCvZwST8xFpu15fpoImV39SEgJ7YaM9qYfv29MDG/H09ZTtaosRjg153l1yuZyGF+W
+         l3auF+jXoeDKjcTnYhyTYi2LVSAdvvHpy9Jn1/F8i0qvUGGxTlI4OoYPfBc5wL1k009z
+         zpQV7fVGTQ06XiO1pVvfFqxOgvhGiSL+eMUMKzmo3HEiv32ZKzgYiop41KwliTooA8jM
+         KBXA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741618680; x=1742223480;
-        h=in-reply-to:references:to:from:subject:cc:message-id:date
-         :content-transfer-encoding:mime-version:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=xrdG1fpL5CikYynfNpId4ukhi3X0kK30B2xjj7IytkY=;
-        b=CEJwLfTQE7iHJJTTL4gWWZ9YEWt6bgRNgbCDlwnRYKm9xpmwXeTEf+O8eLI6i/iiYK
-         yvKfX0L5cXtpysvW01H8RNXhiF3uf5SxMs7n+ToTLNTtK81ccD1wAwtogkQgzxW4LmQV
-         hE3M/DkKcsu6syGE6D/h71Xrg1CZSiYoLSytEbubB6Aic6Nnem2zhhU101m8N8HyBNkY
-         5XISmhO6xk2upxcXJqfkbhGo0rb1THtkbDMeoIHW7MfC6PigCjmeGg0eKe8nJ1Xr08d6
-         UUNw96S+SroP2YJTVVklxrO7oXmJBgA/H6DdNkElydrW3dzD28T+rbMc44ETIkiBX5JF
-         ARWw==
-X-Forwarded-Encrypted: i=1; AJvYcCVGNu2QH0mpOamgMtSfai4QJPBmRDbtViOa4G6wcDUQEjdlqUe3OXnmDqRI7ZTcfCQU9Bqq/7Ob+Z2iA3dCt4edIZ5Btw==@vger.kernel.org, AJvYcCXNjdh9w4OfZk3xXlwphKZBZhF7ab72Sy9KGUKPMdBn9pQpVmVve+1PQshieldAGmwza9L3Uhl4gA35wyM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy6pGt2LQb3eGmPstQJuZDu93bZnRPG6FKnpfZQ2Wx3g+cLwUjZ
-	A5+xOtM3xtkSFUBx8ywOLy3Q4ZQxLKTyO913St6zOaKCI105odOW36H7YTuq
-X-Gm-Gg: ASbGncv6tVi2TSssQjMZ9d+1xlWVH61Q93/oDnMD+4840Uiai9XbWth0SGJfEbWMS1t
-	GpEkA1hNO7a8agvXyvL4zoDdytzxeMnONbeYhidhkdcY2HHyg2kcWWZ8T04GFU7kzA0G0sMCQCN
-	QQn6OP7/cWTQ7CBfQ3Aqbor4KNSMVPtFGjsW3xPvuMEOq4+ROw2a7iaLfDSDaKb6/2OYlK0uUNq
-	1ELYXpgG1jq32j0+HhKjyO9I79A3iPwlMVBWz1hqUqWakgeOTMEw55lJO1ZhP2s3oC15ySeA+Zx
-	z7YnW1An4e+fg2GvPvhvgmZd3z5yWOQQ4V6d
-X-Google-Smtp-Source: AGHT+IHUDZIuIbHcr33yulbymoIlv7q2VlkrSuz2EsmPrJWcWsAcy1tmH7sM08Qnglzp4x9fp1DZ5g==
-X-Received: by 2002:a05:6122:3191:b0:520:61ee:c815 with SMTP id 71dfb90a1353d-523e4188194mr7105607e0c.10.1741618680357;
-        Mon, 10 Mar 2025 07:58:00 -0700 (PDT)
-Received: from localhost ([2800:bf0:82:3d2:9e61:1a62:1a8c:3e62])
-        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-523d8ac3266sm1490598e0c.15.2025.03.10.07.57.58
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 10 Mar 2025 07:57:59 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1741619009; x=1742223809;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=EJOdMi7TuJtokqVht55QzyLtEZiNv+1M/RG0LMYucBg=;
+        b=kglxx1W7Cl640tVYAVU89bw2cfuZbYe7734QUV/8meuX+JrfNpDCkUxOH1Mfr0A6+f
+         6lE3j8QsR1Mxn9fbCfiRYdq4ICCTYn6xdUY9kmZPahFNkKU04iSLRP2b7zXYXEoA5qTR
+         fZMIhu6h+cnPmRni/igMqZN+pvWqvj8J6/gq7MW1U1YSBjzsWaWbq5wRn4wVZN2uGOjN
+         9Wb+wGBzNS3ul5vZXsUN+K5VBUMWfJX3b5Y4ZJqyOndcsgJgvhTb0ZJyhgIK9lIgVnQE
+         mudXNkvGxoREdiMx9RQd8Zt9CbBHv2C8jOyfkZeY1U67c63bbSmA+6Zf7m/UDT2zWykJ
+         ERlw==
+X-Forwarded-Encrypted: i=1; AJvYcCWKzKXDuA2JAoPCtTiOMTxmu8xsPYNEI/ZHJqGffUO/ianouCIuQ2Eo49rnmbZzwXV1TusNbCtGrOCmOrHsldY=@vger.kernel.org, AJvYcCX2wAUwFR0m8OFvBUfhs01kooEnePwOk+wx2Gp+lV6hfEaLjMQxECZNXcaujuvzmuhCxEzDSB3uoNMkzf5o@vger.kernel.org
+X-Gm-Message-State: AOJu0YxnF0alckWADGaOZwRtD2N7gI4akldl2F/6Alz4xq66A3G8VYCc
+	J1B1M0TvEcEt1YtFtEUbYUpMBJcZvEbEJUGS9pMIO6nxBtmW13Q/3kmxUMV7+ZHh3yTp8P84yj+
+	bdcBHq7iQo/eoc91uzgj6vGtvrlA=
+X-Gm-Gg: ASbGncvPThB8fqMQkHB5refcaetBpVj+Ia3DjoROkYiqh2MK5AHTaY3C/A1TGy6NYDF
+	FMIZgjtK35swOEnYigalLJD4457tBMxhNHFe4TwcZF3GQcduuP0pATS8CPB9bPTsomOC9uvGyVv
+	+Tm7I4NsgqgNbj+tbMXugvocN/N1EdxgpK7SX2
+X-Google-Smtp-Source: AGHT+IHDWjvbsImoIvEZ8NiG696nfaDNI6yarD9NR7psbuORnZuZ4bAHU5Szn7yUD4MzuaZiF/MYlkPQ025P9W9WkVQ=
+X-Received: by 2002:a17:90b:4c51:b0:2ff:5540:bb48 with SMTP id
+ 98e67ed59e1d1-300ff94c15dmr50225a91.8.1741619008631; Mon, 10 Mar 2025
+ 08:03:28 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
+MIME-Version: 1.0
+References: <ece8324f-0d58-4c83-adca-7187f730c56f@stanley.mountain>
+In-Reply-To: <ece8324f-0d58-4c83-adca-7187f730c56f@stanley.mountain>
+From: Alex Deucher <alexdeucher@gmail.com>
+Date: Mon, 10 Mar 2025 11:03:17 -0400
+X-Gm-Features: AQ5f1Jp6LUX-uLM6Bz9IEwc8fZsKBb7jSG1dspE9kwAMpt4MWUT1TRhw3ipvpKg
+Message-ID: <CADnq5_Mn0Mqr4vbiLCGAgUa-rxa_YfM1=vSCtQsByquwN8oMFA@mail.gmail.com>
+Subject: Re: [PATCH] drm/amdkfd: delete stray tab in kfd_dbg_set_mes_debug_mode()
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Felix Kuehling <Felix.Kuehling@amd.com>, Alex Deucher <alexander.deucher@amd.com>, 
+	=?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, amd-gfx@lists.freedesktop.org, 
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+	kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Mon, 10 Mar 2025 09:57:57 -0500
-Message-Id: <D8COAMZV0RBJ.1C66Q3AVETTD8@gmail.com>
-Cc: "Hans de Goede" <hdegoede@redhat.com>,
- <platform-driver-x86@vger.kernel.org>, "LKML"
- <linux-kernel@vger.kernel.org>, "kernel test robot" <lkp@intel.com>
-Subject: Re: [PATCH] platform/x86: dell: Fix ALIENWARE_WMI dependencies
-From: "Kurt Borja" <kuurtb@gmail.com>
-To: =?utf-8?q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-X-Mailer: aerc 0.20.1-0-g2ecb8770224a
-References: <20250309-dell-kconfig-fix-v1-1-38a2308d0ac6@gmail.com>
- <8d219429-b13f-2610-960e-58851d53696f@linux.intel.com>
-In-Reply-To: <8d219429-b13f-2610-960e-58851d53696f@linux.intel.com>
 
-Hi Ilpo,
+Applied.  thanks!
 
-On Mon Mar 10, 2025 at 9:29 AM -05, Ilpo J=C3=A4rvinen wrote:
-> On Sun, 9 Mar 2025, Kurt Borja wrote:
+On Mon, Mar 10, 2025 at 6:48=E2=80=AFAM Dan Carpenter <dan.carpenter@linaro=
+.org> wrote:
 >
->> If ACPI_PLATFORM_PROFILE is selected by ALIENWARE_WMI_WMAX, the former
->> is forced to be at least =3Dm, because the latter is a bool.
->>=20
->> This allows the following config:
->>=20
->> 	CONFIG_ALIENWARE_WMI=3Dy
->> 	CONFIG_ACPI_PLATFORM_PROFILE=3Dm
+> These lines are indented one tab more than they should be.  Delete
+> the stray tabs.
 >
-> Hi,
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> ---
+>  drivers/gpu/drm/amd/amdkfd/kfd_debug.c | 12 ++++++------
+>  1 file changed, 6 insertions(+), 6 deletions(-)
 >
-> selecting from =3Dy should not result in =3Dm for the other symbol. This =
-is=20
-> a bug in Kconfig infrastructure.
+> diff --git a/drivers/gpu/drm/amd/amdkfd/kfd_debug.c b/drivers/gpu/drm/amd=
+/amdkfd/kfd_debug.c
+> index 12456c61ffa5..ba99e0f258ae 100644
+> --- a/drivers/gpu/drm/amd/amdkfd/kfd_debug.c
+> +++ b/drivers/gpu/drm/amd/amdkfd/kfd_debug.c
+> @@ -357,12 +357,12 @@ int kfd_dbg_set_mes_debug_mode(struct kfd_process_d=
+evice *pdd, bool sq_trap_en)
+>                 return 0;
 >
-> I ran across this a few years back and even had a test case to prove the=
-=20
-> select bug but back then the original problem eventually was solved in a=
-=20
-> different way which no longer hit the problem. I never could figure out
-> how to fix the kconfig logic though without breaking something and it=20
-> ended up into low priority bin and never got solved.
+>         if (!pdd->proc_ctx_cpu_ptr) {
+> -                       r =3D amdgpu_amdkfd_alloc_gtt_mem(adev,
+> -                               AMDGPU_MES_PROC_CTX_SIZE,
+> -                               &pdd->proc_ctx_bo,
+> -                               &pdd->proc_ctx_gpu_addr,
+> -                               &pdd->proc_ctx_cpu_ptr,
+> -                               false);
+> +               r =3D amdgpu_amdkfd_alloc_gtt_mem(adev,
+> +                       AMDGPU_MES_PROC_CTX_SIZE,
+> +                       &pdd->proc_ctx_bo,
+> +                       &pdd->proc_ctx_gpu_addr,
+> +                       &pdd->proc_ctx_cpu_ptr,
+> +                       false);
+>                 if (r) {
+>                         dev_err(adev->dev,
+>                         "failed to allocate process context bo\n");
+> --
+> 2.47.2
 >
-> Sadly, it seems I've lost the test case patch that exhibits the bug=20
-> somewhere... I'll try to look for it from my archived files.
-
-That's funny.
-
-I thought this was a Kconfig quirk, that resulted from the following
-hierarchy:
-
-Type		0	1	2
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D =3D=3D=3D=3D=3D=3D=3D =3D=3D=
-=3D=3D=3D=3D=3D =3D=3D=3D=3D=3D=3D=3D
-Bool		n	y
-Tristate	n	m	y
-
-So a <bool> selecting the <tristate> would force it to be at least =3Dm.
-
-The same thing happens with depend, where a dependecy would be fulfilled
-for a <bool> if a <tristate> was at least =3Dm. That's why in the kernel
-robot report the linking error was also due to the HWMON dependency.
-
-Anyway, this patch could serve as a workaround if you feel it's
-necessary. I'm going to put the HWMON dependecy in the ALIENWARE_WMI
-symbol for my other series.
-
---=20
- ~ Kurt
 
