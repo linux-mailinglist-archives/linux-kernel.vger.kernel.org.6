@@ -1,67 +1,85 @@
-Return-Path: <linux-kernel+bounces-555136-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-555138-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BE653A5A5EB
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 22:16:04 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CF064A5A5F6
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 22:16:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5FC363AEFC7
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 21:15:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1A29B174A17
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 21:16:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C22B1DE3A3;
-	Mon, 10 Mar 2025 21:15:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A218E1E0489;
+	Mon, 10 Mar 2025 21:16:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QZ/khdXe"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KB1ErfGM"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66CDF1D6DBF;
-	Mon, 10 Mar 2025 21:15:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE0231DE4DF;
+	Mon, 10 Mar 2025 21:16:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741641342; cv=none; b=mJYCHlFlkI7eAFVPvOrQlImcaY94auyRPSLtsqoPIIBWdngf+dP4q0dMlGurk81kVXkauCPayczVQeYRTNTHWA/4zHo89us6OAQERfdgfw0ik3T4gIlm31FueCvCzjxkG4Sza4QFCZ0/t9HArRyzp9hctdRVQ6Ac6YDizzWOS0Y=
+	t=1741641396; cv=none; b=Z0nQaOsnZJDV39sZsV4v6mV8cTEVWSZPzn/sMCu6FvHxITSCBWSnBA7G5e+0q4OtoDQ94owSO0y+UcgYLktOjD8Pkx/4tTxQdC7J5oV5PKhJb228M/ZC/u5/WXXI0IPBOU2pcmtaGFeElupALbXq+bwsMexb/uQP33l4AJxG3Yc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741641342; c=relaxed/simple;
-	bh=RCueCySRgRCdwQaMcCPgJhZIgjDNJsgcqfuiOG8fTnQ=;
+	s=arc-20240116; t=1741641396; c=relaxed/simple;
+	bh=xhhTO52C/8fG7MDjEfxhWhAUsEKxrB+SaqXmnB/oZGQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=g/16EZYlzVY+TmTzvI86AMs2XelQ9ivlKyGF8u/Kmy47ENI2PNKM5LMXTvQqh/HpHOaq0m0FzfM2RMxqv3jauqfflLm4X6BKd6XaGWynOEVm6h5yjeGcRm4P9C+183f7m/3WeYvLj6zl9d7sT9bD/ICmm8sunzw/Zbpyw6DXd84=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QZ/khdXe; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A351EC4CEE5;
-	Mon, 10 Mar 2025 21:15:41 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=AXWDAZcFM5EEhC51cTruMZTgxVCiO2ZBhcDOtTHjcXwrD1nWfzcngTTvFcwsRggyGB4arcFztg+ksedfLes5yrVJdzG3B2UoCHTWVc5c99hwQBiz+jASUMlPerP5rULjc5tBFs63sKiErAAKuLuSf9j78301PopTnkvZ3dZtAAs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KB1ErfGM; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 19C95C4CEE5;
+	Mon, 10 Mar 2025 21:16:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741641342;
-	bh=RCueCySRgRCdwQaMcCPgJhZIgjDNJsgcqfuiOG8fTnQ=;
+	s=k20201202; t=1741641395;
+	bh=xhhTO52C/8fG7MDjEfxhWhAUsEKxrB+SaqXmnB/oZGQ=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=QZ/khdXe4pcopTnerXS5SBGICHgIJmgfsx/8ptZbJHjg+5fd0++3/EUFngVvvWaoG
-	 qVNpwJVm8jcSOmN99lgKUFoy03KU38WuF7n1ADdu3plPTSLEkRqubfUf2Xug/VAX45
-	 NEnY52C9SuJUFUNyrwjkcogkUqMebhs1mn/QEoFfLzby0Ab5/zkGV4IJgmx5fi+w8K
-	 MvPcadXPRV5DykkG0IsMvx+xvsdvmmLWHBY3W+yDyLoJx7mMNNxRR/3cOyUl7SQAJ8
-	 fkyqHisQlBr9J4nJ7tR5/oF75P2L/avNAztkc/Pc4X/WlQJg6h8q+4nRsZD+enIxLc
-	 dUdQbmFN8AkIQ==
-Date: Mon, 10 Mar 2025 18:15:39 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Ian Rogers <irogers@google.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Kan Liang <kan.liang@linux.intel.com>,
-	Yicong Yang <yangyicong@hisilicon.com>,
-	James Clark <james.clark@linaro.org>,
-	"Dr. David Alan Gilbert" <linux@treblig.org>,
-	Levi Yun <yeoreum.yun@arm.com>, Ze Gao <zegao2021@gmail.com>,
-	Weilin Wang <weilin.wang@intel.com>, Xu Yang <xu.yang_2@nxp.com>,
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Howard Chu <howardchu95@gmail.com>
-Subject: Re: [PATCH v2 11/11] perf python tracepoint: Switch to using
- parse_events
-Message-ID: <Z89We45bGpeJvO9C@x1>
-References: <20250228222308.626803-1-irogers@google.com>
- <20250228222308.626803-12-irogers@google.com>
+	b=KB1ErfGMXqL3eUvY/h60CuKtdRdDzpKgAEjSXuOVZQgYXaX7PjmtRr+7t+hvS6tGy
+	 ytMrx41oPxfH3/0bph5XHgZy28tQ6Iyar2WI4JMjngSuQq9nge7too/D5Lq3Nezlm0
+	 Ev2cu/gKGiY2ajzu5pUo2A/BRY0gQIWXwKyphw6qT7z7sSreM3Suncat5jtP4rMt+a
+	 8Zhi1XgPM3G/xx5GvP1PkwRGVoj8YRnX972OzIo+R+3PskdAyDEgUJqqcOBrRdx7la
+	 7no62gUzvph6vkxPCn7Ai5G55Ys2afIwQ35/d85v/cKcR4Vdd40oLznc/OHhu45KPE
+	 1Tw6Rt5PmnBPQ==
+Date: Mon, 10 Mar 2025 16:16:33 -0500
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Prabhakar <prabhakar.csengg@gmail.com>
+Cc: linux-rockchip@lists.infradead.org,
+	Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+	Fabio Estevam <festevam@gmail.com>,
+	linux-mediatek@lists.infradead.org,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Eric Dumazet <edumazet@google.com>, linux-kernel@vger.kernel.org,
+	"G. Jaya Kumaran" <vineetha.g.jaya.kumaran@intel.com>,
+	netdev@vger.kernel.org, Shawn Guo <shawnguo@kernel.org>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+	Clark Wang <xiaoning.wang@nxp.com>,
+	Jerome Brunet <jbrunet@baylibre.com>,
+	Linux Team <linux-imx@nxp.com>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Christophe Roullier <christophe.roullier@foss.st.com>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
+	David Wu <david.wu@rock-chips.com>,
+	linux-stm32@st-md-mailman.stormreply.com,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Kevin Hilman <khilman@baylibre.com>,
+	linux-amlogic@lists.infradead.org,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"Russell King (Oracle)" <rmk+kernel@armlinux.org.uk>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Biao Huang <biao.huang@mediatek.com>, devicetree@vger.kernel.org,
+	"David S. Miller" <davem@davemloft.net>, imx@lists.linux.dev
+Subject: Re: [PATCH net-next] dt-bindings: net: Define interrupt constraints
+ for DWMAC vendor bindings
+Message-ID: <174164139310.903652.6069254912704107254.robh@kernel.org>
+References: <20250309003301.1152228-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -70,44 +88,45 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250228222308.626803-12-irogers@google.com>
+In-Reply-To: <20250309003301.1152228-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-On Fri, Feb 28, 2025 at 02:23:08PM -0800, Ian Rogers wrote:
-> Rather than manually configuring an evsel, switch to using
-> parse_events for greater commonality with the rest of the perf code.
+
+On Sun, 09 Mar 2025 00:33:01 +0000, Prabhakar wrote:
+> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 > 
-> Reviewed-by: Howard Chu <howardchu95@gmail.com>
-> Signed-off-by: Ian Rogers <irogers@google.com>
+> The `snps,dwmac.yaml` binding currently sets `maxItems: 3` for the
+> `interrupts` and `interrupt-names` properties, but vendor bindings
+> selecting `snps,dwmac.yaml` do not impose these limits.
+> 
+> Define constraints for `interrupts` and `interrupt-names` properties in
+> various DWMAC vendor bindings to ensure proper validation and consistency.
+> 
+> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> ---
+> Hi All,
+> 
+> Based on recent patch [0] which increases the interrupts to 11
+> and adds `additionalItems: true` its good to have constraints
+> to validate the schema. Ive made the changes based on the DT
+> binding doc and the users. Ive ran dt binding checks to ensure
+> the constraints are valid. Please let me know if you'd like me
+> to split this patch or if any of the constraints are incorrect,
+> as I don't have documentation for all of these platforms.
+> 
+> https://lore.kernel.org/all/20250308200921.1089980-2-prabhakar.mahadev-lad.rj@bp.renesas.com/
+> 
+> Cheers, Prabhakar
+> ---
+>  .../devicetree/bindings/net/amlogic,meson-dwmac.yaml   |  6 ++++++
+>  .../devicetree/bindings/net/intel,dwmac-plat.yaml      |  6 ++++++
+>  .../devicetree/bindings/net/mediatek-dwmac.yaml        |  6 ++++++
+>  .../devicetree/bindings/net/nxp,dwmac-imx.yaml         |  8 ++++++++
+>  .../devicetree/bindings/net/rockchip-dwmac.yaml        | 10 ++++++++++
+>  Documentation/devicetree/bindings/net/stm32-dwmac.yaml | 10 ++++++++++
+>  .../bindings/net/toshiba,visconti-dwmac.yaml           |  6 ++++++
+>  7 files changed, 52 insertions(+)
+> 
 
-Now will all in place I'm trying to test it and I am getting some
-strange results:
-
-root@number:/home/acme/git/perf-tools-next# tools/perf/python/tracepoint.py
-<SNIP lots of seemingly ok lines>
-time 78318710956557 prev_comm=sudo prev_pid=3133818 prev_prio=120 prev_state=0x1 ==> next_comm=swapper/14 next_pid=0 next_prio=120
-time 78318720082300 prev_comm=swapper/16 prev_pid=0 prev_prio=120 prev_state=0x0 ==> next_comm=kworker/u112:8 next_pid=1752774 next_prio=120
-time 78318706232435 prev_comm=kworker/u112:17 prev_pid=1551246 prev_prio=120 prev_state=0x80 ==> next_comm=swapper/21 next_pid=0 next_prio=120
-time 78318708202121 prev_comm=sudo prev_pid=3133818 prev_prio=120 prev_state=0x2 ==> next_comm=swapper/25 next_pid=0 next_prio=120
-time 78318748346989 prev_comm=swapper/26 prev_pid=0 prev_prio=120 prev_state=0x0 ==> next_comm=gnome-terminal- next_pid=3551 next_prio=120
-Traceback (most recent call last):
-  File "/home/acme/git/perf-tools-next/tools/perf/python/tracepoint.py", line 47, in <module>
-    main()
-  File "/home/acme/git/perf-tools-next/tools/perf/python/tracepoint.py", line 42, in main
-    event.next_comm,
-    ^^^^^^^^^^^^^^^
-AttributeError: 'perf.sample_event' object has no attribute 'next_comm'
-root@number:/home/acme/git/perf-tools-next# 
-
-But it shouldn't get there as there is this check:
-
-            if not isinstance(event, perf.sample_event):
-                continue
-
-
-:-\
-
-Trying to debug that...
-
-- Arnaldo
+Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
 
 
