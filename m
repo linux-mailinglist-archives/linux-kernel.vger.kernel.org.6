@@ -1,106 +1,198 @@
-Return-Path: <linux-kernel+bounces-554094-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-554091-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 197DBA592DE
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 12:38:40 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 589C3A592D4
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 12:37:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5B9547A62FD
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 11:37:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CBDB0188DEBE
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 11:37:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F735221700;
-	Mon, 10 Mar 2025 11:38:31 +0000 (UTC)
-Received: from smtp134-25.sina.com.cn (smtp134-25.sina.com.cn [180.149.134.25])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFFA7221702;
+	Mon, 10 Mar 2025 11:37:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="xcNZI6Pk";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="k4MRRiFZ";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="xcNZI6Pk";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="k4MRRiFZ"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4507D221579
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 11:38:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=180.149.134.25
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 233AD21E092
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 11:37:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741606710; cv=none; b=P9Uu+gz9abYUi1wgEO+KJ+E8S5hFDE6cVIIYb2mdaI7LYsQDSpjt1FslxUHrccb1x1/oV2yxHr5LvgQSxsvckC+Y9sJvzqb+q8DVKy7x7ULv+AM+NTB1ehAUyJUdA5Np2YktDXlULhjQQVd1QSacnzdWYD4sjnwyeASyG5T1+u4=
+	t=1741606651; cv=none; b=GZzoRfB63y2IL0N+n7JrNrgHLrraHGPgL28Bu0s7wGRfou0a+h6Za1uhqc9xYyF+sKr5mY9OAt3kcbWRMtkr6ZQ/5f3OhehzsSDMGQtMRLdV+ALoxhtxGVSEPWbU2E765+bOJgXNQJ7ux1ZcD6BUee2cqaRiwdmjgOd6vw4kCAQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741606710; c=relaxed/simple;
-	bh=zJaJ/IUKeSO0/6VNJvyQeUCOz6MLN+/kRupMnl3BPCE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=skTvJEKTScanFuszmp/NIS4BJ67BZtRE/4ybtNNoxw9G5Xf4wXGp70qeq5HAVZvCw8EtA9MeD8eM/XJjHt9r9hD1SM7b9ZEBWPwNng8T2cODy5FtUwMSSsmBs6xl6lvltlYstIfVyg0YY8lL2SepFxxlcO2emHyVQlb4UOJgWSU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; arc=none smtp.client-ip=180.149.134.25
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
-X-SMAIL-HELO: localhost.localdomain
-Received: from unknown (HELO localhost.localdomain)([113.118.68.168])
-	by sina.com (10.185.250.21) with ESMTP
-	id 67CECEFF00002E2D; Mon, 10 Mar 2025 19:37:37 +0800 (CST)
-X-Sender: hdanton@sina.com
-X-Auth-ID: hdanton@sina.com
-Authentication-Results: sina.com;
-	 spf=none smtp.mailfrom=hdanton@sina.com;
-	 dkim=none header.i=none;
-	 dmarc=none action=none header.from=hdanton@sina.com
-X-SMAIL-MID: 8121563408361
-X-SMAIL-UIID: A2E896C978EA4DB58A42A1A2E3B2E503-20250310-193737-1
-From: Hillf Danton <hdanton@sina.com>
-To: Oleg Nesterov <oleg@redhat.com>
-Cc: K Prateek Nayak <kprateek.nayak@amd.com>,
-	Mateusz Guzik <mjguzik@gmail.com>,
-	"Sapkal, Swapnil" <swapnil.sapkal@amd.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] pipe_read: don't wake up the writer if the pipe is still full
-Date: Mon, 10 Mar 2025 19:37:24 +0800
-Message-ID: <20250310113726.3266-1-hdanton@sina.com>
-In-Reply-To: <20250310110914.GA26382@redhat.com>
-References: <20250304050644.2983-1-hdanton@sina.com> <20250304102934.2999-1-hdanton@sina.com> <20250304233501.3019-1-hdanton@sina.com> <20250305045617.3038-1-hdanton@sina.com> <20250305224648.3058-1-hdanton@sina.com> <20250307060827.3083-1-hdanton@sina.com> <20250307104654.3100-1-hdanton@sina.com> <20250307112920.GB5963@redhat.com> <20250307235645.3117-1-hdanton@sina.com> <20250310104910.3232-1-hdanton@sina.com>
+	s=arc-20240116; t=1741606651; c=relaxed/simple;
+	bh=DMs/TAlP3Os2nxZau3ARmh/n4V/08GFKW/xi2WtQBSI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=d4carXBFIYHDbxe2YTNbLdwLoIo1NVCcLe7uq/8UkVG9PCCc9fn2S8ur/Q7gFjUzx6ZKgI5MN/6px29kR+7hdAXzaIkOF33nv/kFL0OyjRjPbahKx5F+w/Vn3PN+hXFqnh3808dmv/IULJnx5NhAhcimypcYMyGb/PyrXtDZ2Ic=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=xcNZI6Pk; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=k4MRRiFZ; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=xcNZI6Pk; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=k4MRRiFZ; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 0CF721F38C;
+	Mon, 10 Mar 2025 11:37:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1741606646; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=PfW0icj+R9uq3V3PyovxRXcxaOTH8rdLWSIUiTmY8c0=;
+	b=xcNZI6Pk6vvaINpdGf5jo7J4jmr2mj+lwY9UyB/3nEOjoMU+AhkU35JnFa0BPVsFfLPcWS
+	+sn0XLx4Z2aqnwEHjvHKx+1NnS9J/qyASd0SjBVh0p6QKZti64sA8uoU6tWP7CtJ9EEMeE
+	J/drOe0g4JU4nLpHWAkaKrIF/HSFrSo=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1741606646;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=PfW0icj+R9uq3V3PyovxRXcxaOTH8rdLWSIUiTmY8c0=;
+	b=k4MRRiFZkZwWAGpJwFbr/uxf8Virpg/n2xQLkPc81RUTZEs9PUGXN0SkqSYDbP2Ci3w0eT
+	0nQvFQZut0mW7HCg==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=xcNZI6Pk;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=k4MRRiFZ
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1741606646; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=PfW0icj+R9uq3V3PyovxRXcxaOTH8rdLWSIUiTmY8c0=;
+	b=xcNZI6Pk6vvaINpdGf5jo7J4jmr2mj+lwY9UyB/3nEOjoMU+AhkU35JnFa0BPVsFfLPcWS
+	+sn0XLx4Z2aqnwEHjvHKx+1NnS9J/qyASd0SjBVh0p6QKZti64sA8uoU6tWP7CtJ9EEMeE
+	J/drOe0g4JU4nLpHWAkaKrIF/HSFrSo=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1741606646;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=PfW0icj+R9uq3V3PyovxRXcxaOTH8rdLWSIUiTmY8c0=;
+	b=k4MRRiFZkZwWAGpJwFbr/uxf8Virpg/n2xQLkPc81RUTZEs9PUGXN0SkqSYDbP2Ci3w0eT
+	0nQvFQZut0mW7HCg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id DFE211399F;
+	Mon, 10 Mar 2025 11:37:25 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id G3j/NfXOzmdLfwAAD6G6ig
+	(envelope-from <vbabka@suse.cz>); Mon, 10 Mar 2025 11:37:25 +0000
+Message-ID: <03b53f18-8c16-4716-8ed4-1902d7247354@suse.cz>
+Date: Mon, 10 Mar 2025 12:37:25 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] mm/page_alloc: Fix memory accept before watermarks gets
+ initialized
+Content-Language: en-US
+To: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+ Andrew Morton <akpm@linux-foundation.org>
+Cc: Mike Rapoport <rppt@kernel.org>, David Hildenbrand <david@redhat.com>,
+ Mel Gorman <mgorman@techsingularity.net>,
+ Tom Lendacky <thomas.lendacky@amd.com>, "Kalra, Ashish"
+ <ashish.kalra@amd.com>, Rick Edgecombe <rick.p.edgecombe@intel.com>,
+ linux-mm@kvack.org, linux-coco@lists.linux.dev,
+ linux-kernel@vger.kernel.org, Farrah Chen <farrah.chen@intel.com>
+References: <20250310082855.2587122-1-kirill.shutemov@linux.intel.com>
+From: Vlastimil Babka <vbabka@suse.cz>
+In-Reply-To: <20250310082855.2587122-1-kirill.shutemov@linux.intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Rspamd-Queue-Id: 0CF721F38C
+X-Spam-Score: -4.51
+X-Rspamd-Action: no action
+X-Spamd-Result: default: False [-4.51 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	MID_RHS_MATCH_FROM(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[12];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[intel.com:email];
+	DKIM_TRACE(0.00)[suse.cz:+]
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-On Mon, 10 Mar 2025 12:09:15 +0100 Oleg Nesterov
-> On 03/10, Hillf Danton wrote:
-> > On Sun, 9 Mar 2025 18:02:55 +0100 Oleg Nesterov
-> > >
-> > > So (again, in this particular case) we could apply the patch below
-> > > on top of Linus's tree.
-> > >
-> > > So, with or without these changes, the writer should be woken up at
-> > > step-03 in your scenario.
-> > >
-> > Fine, before checking my scenario once more, feel free to pinpoint the
-> > line number where writer is woken up, with the change below applied.
-> 
->     381          if (wake_writer)
-> ==> 382                  wake_up_interruptible_sync_poll(&pipe->wr_wait, EPOLLOUT | EPOLLWRNORM);
->     383          if (wake_next_reader)
->     384                  wake_up_interruptible_sync_poll(&pipe->rd_wait, EPOLLIN | EPOLLRDNORM);
->     385          kill_fasync(&pipe->fasync_writers, SIGIO, POLL_OUT);
->     386          if (ret > 0)
->     387                  file_accessed(filp);
->     388          return ret;
-> 
-> line 382, no?
-> 
-Yes, but how is the wait loop at line-370 broken?
+On 3/10/25 09:28, Kirill A. Shutemov wrote:
+> Watermarks are initialized during the postcore initcall. Until then, all
+> watermarks are set to zero. This causes cond_accept_memory() to
+> incorrectly skip memory acceptance because a watermark of 0 is always
+> met.
 
- 360                 }
- 361                 mutex_unlock(&pipe->mutex);
- 362
- 363                 BUG_ON(wake_writer);
- 364                 /*
- 365                  * But because we didn't read anything, at this point we can
- 366                  * just return directly with -ERESTARTSYS if we're interrupted,
- 367                  * since we've done any required wakeups and there's no need
- 368                  * to mark anything accessed. And we've dropped the lock.
- 369                  */
- 370                 if (wait_event_interruptible_exclusive(pipe->rd_wait, pipe_readable(pipe)) < 0)
- 371                         return -ERESTARTSYS;
- 372
- 373                 wake_writer = false;
- 374                 wake_next_reader = true;
- 375                 mutex_lock(&pipe->mutex);
+What are the user-visible consequences of that?
+
+> To ensure progress, accept one MAX_ORDER page if the watermark is zero.
+> 
+> Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+> Reported-and-tested-by: Farrah Chen <farrah.chen@intel.com>
+
+Fixes:, Cc: stable etc?
+
+> ---
+>  mm/page_alloc.c | 14 ++++++++++++--
+>  1 file changed, 12 insertions(+), 2 deletions(-)
+> 
+> diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+> index 579789600a3c..4fe93029bcb6 100644
+> --- a/mm/page_alloc.c
+> +++ b/mm/page_alloc.c
+> @@ -7004,7 +7004,7 @@ static inline bool has_unaccepted_memory(void)
+>  
+>  static bool cond_accept_memory(struct zone *zone, unsigned int order)
+>  {
+> -	long to_accept;
+> +	long to_accept, wmark;
+>  	bool ret = false;
+>  
+>  	if (!has_unaccepted_memory())
+> @@ -7013,8 +7013,18 @@ static bool cond_accept_memory(struct zone *zone, unsigned int order)
+>  	if (list_empty(&zone->unaccepted_pages))
+>  		return false;
+>  
+> +	wmark = promo_wmark_pages(zone);
+> +
+> +	/*
+> +	 * Watermarks have not been initialized yet.
+> +	 *
+> +	 * Accepting one MAX_ORDER page to ensure progress.
+> +	 */
+> +	if (!wmark)
+> +		return try_to_accept_memory_one(zone);
+> +
+>  	/* How much to accept to get to promo watermark? */
+> -	to_accept = promo_wmark_pages(zone) -
+> +	to_accept = wmark -
+>  		    (zone_page_state(zone, NR_FREE_PAGES) -
+>  		    __zone_watermark_unusable_free(zone, order, 0) -
+>  		    zone_page_state(zone, NR_UNACCEPTED));
+
 
