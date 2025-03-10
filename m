@@ -1,135 +1,183 @@
-Return-Path: <linux-kernel+bounces-553747-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-553748-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EDB2BA58E68
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 09:41:48 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E9322A58E6A
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 09:41:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8A3BD188C218
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 08:41:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0C9213AD5C8
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 08:41:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D630A22371B;
-	Mon, 10 Mar 2025 08:41:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7E49223706;
+	Mon, 10 Mar 2025 08:41:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CjbincBd"
-Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="UMrrEjwe"
+Received: from mout-p-102.mailbox.org (mout-p-102.mailbox.org [80.241.56.152])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8980822258E;
-	Mon, 10 Mar 2025 08:41:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60302223707
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 08:41:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.152
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741596096; cv=none; b=sTqBvhFJT1R46JgiKwCTriB1vBv/hX3Zmm0It4Xgv+mUa2WevfMcBTc6EpgKgh17o1rRM8/br3Nf/AXadKrtq386nKtYVOK4pYaDfDM4mC+M8JtAXbTWJP4qLENDuWJCtT/jOnCkGRjRo2zQS7xFbtL2+u6XwbpyLd9P6dYWm9Q=
+	t=1741596107; cv=none; b=imfZiI2w6197q0uC/OOoft0rR1FTZ/8u9Rjm+VybRqMzAEBna6Yb9rURDX4sdx9YLcx7/CxvCY3YXYHpDa5/MOTXEvjGIwDnd8YuaKiqXC7Ul+6cMpFhEjM8Dx+pXoSBYauRfGZxBy2y49JBverbBqXrfKzM+XUMgHYG7cQAYVE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741596096; c=relaxed/simple;
-	bh=sZJpqurhRMS2QPh3cwePIaisIvFQbiS5sBipqSnor+o=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=G2LZoqZwDLeaC7FgrJG3BC2Ca4BGypSnmjCnJU5oZLuZ9bkSntjPHG0kSJwPMD95hDPlHQgEANew0irUEodVQx6XX9To7J4Fnhae00pkeyLb3RpYigjq++56I0JF1+ZWwcRgIgNZ2ytl/eYhkNj13YOeOpHis8Di+hv+sjz6KIU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CjbincBd; arc=none smtp.client-ip=209.85.208.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-5e5bc066283so5994640a12.0;
-        Mon, 10 Mar 2025 01:41:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741596093; x=1742200893; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=QZUNeINjdqSJ79E/oEIhLa9NAr++krOxCOFKaWQ3/OY=;
-        b=CjbincBdIrgVzTdHzhRN5Z4BsDMszNfTeBkRXoNVWDvO38Yk853cDBfROLnZqJFQ/5
-         2DH9kYA/Chx3vN6BHmsgAX681HS92dhskIjpndhiCZcXSs2Y3R3eGCUgsc8ZcclYRIal
-         COtoFAUhMA4FQDPD4U0jDU7eCo5L971Kf2thfNQl/lM8JW9R69x685qTwJDHlFUmr9ba
-         /yDpo3bbaXXmxRrJpCBNq1HvwxtadvEnnglQZfonTXWhm/sNz3LEaDftdIisDphJVgWI
-         Ad1e+qTlaF/aw+Db6Mh6ajNONdEtoj4nHmHO7g+B3T5Ej05nkSlQGNRCxgZwO0s8WALJ
-         FyqA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741596093; x=1742200893;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=QZUNeINjdqSJ79E/oEIhLa9NAr++krOxCOFKaWQ3/OY=;
-        b=jutWKIlKK5OM8xqCbPsV2yOCVJM18YCHU2GdPDdIhorSPtGenczskABKOZ4ShZKXPM
-         cPbrkRvqPMI5xza2imLorM1yHix0TM5qgs87wLVrG8/BuTnq2HERH3wGceo2p1p0MwX2
-         BZPkecgeH4g4O1xnj6JYOhxAzPpFcAbBOH9RwohMZphLvH4lmhlBDwOXska5mHQTE8Ds
-         PgF1cqQinRjyOTBNkS9X5d6AQD4b8t5ZZVb7YRZ35scuoycGwUbYocNgJkoUJfHnOp42
-         zRfCf3SD+xPp69xyZRfACuIPqUkvayE0T/Sw235IQcnJOq4T6kuu6e4Oc/boSuGH0SOx
-         NPiQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVHGBXaJgKRFWYK3l8ycycEQQg+SOOd73Os1qKdD4F2D/9NZw6aJRiCG1sIQrux54ywqE62S8rpKueN/Ho=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyJkQkZS284mmN/qZBQPJr68l2TS30GjolKbCpnxcEkShcnp/As
-	muywpmhwbOts/9x150nDFGQTFp3PmTo1BUs6/IGAJShirlYQ7+q9
-X-Gm-Gg: ASbGncuAorjcOFLd2dDA5rO+1hscoK3n64yuJBFsuRId1qi06g7VUim8PLcXWGTJiDu
-	uMO18k1ehZXn0LvYA/QQ96BGr+6RMXsMekZfDSPcBXmLyGw+PRPfJOHDtQL7pjOGBMM6UqkKaKf
-	q6bumc9NhT377udbXY3YYHlowa5ZesQd29PYGBLx7NfIBapLsb5vKTJgU6wJr6hvsGE61VfhBf1
-	0syInTlCi6+jZ4xu1WHOkgc18l/jd6lCqRN1fXYx1teJvZ4N76j4D1B8LVjmyTEgBDzOkyND7Z9
-	UUZf7b7apVhnIMKNB/rO4fh9PTkqXCA54a2DBood3nlRocCiZmGNSGbP6B5k8g==
-X-Google-Smtp-Source: AGHT+IELDJI+VIDcVn7Yq5RFxY6w/z428UF4fp4K88TLicDPu3CdberaWXBF66KZJcQjbTu2huEF6w==
-X-Received: by 2002:a05:6402:234c:b0:5e4:ce6e:3885 with SMTP id 4fb4d7f45d1cf-5e5e22b22aamr13600345a12.2.1741596092564;
-        Mon, 10 Mar 2025 01:41:32 -0700 (PDT)
-Received: from foxbook (adts246.neoplus.adsl.tpnet.pl. [79.185.230.246])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5e5c7473ea1sm6619073a12.29.2025.03.10.01.41.31
-        (version=TLS1_2 cipher=AES128-SHA bits=128/128);
-        Mon, 10 Mar 2025 01:41:32 -0700 (PDT)
-Date: Mon, 10 Mar 2025 09:41:29 +0100
-From: Michal Pecio <michal.pecio@gmail.com>
-To: Mathias Nyman <mathias.nyman@intel.com>, Greg Kroah-Hartman
- <gregkh@linuxfoundation.org>
-Cc: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 5/6] usb: xhci: Avoid Stop Endpoint retry loop if the
- endpoint seems Running
-Message-ID: <20250310094129.20273c14@foxbook>
-In-Reply-To: <20250310093605.2b3d0425@foxbook>
-References: <20250310093605.2b3d0425@foxbook>
+	s=arc-20240116; t=1741596107; c=relaxed/simple;
+	bh=wmsWoo1T7fXqCrRMW1jcusfF9vXrXAXPPBSmfAt/4tA=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=I287UDFx/HBnW/l3QF7wrCC3XbyGYofho2vivedeuwdsrJ/E5Xj6vjyP7qG4DNGqZiYXVAL04epudLJwRhuilu4zxyhwRgZ3sW5DZYq6VTq71dNv+S4yA54uny5uG/9PK38zb7IqjncOkwnOC7WEPedQ3sBtalUgA8+HXrF0Yd4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=UMrrEjwe; arc=none smtp.client-ip=80.241.56.152
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
+Received: from smtp102.mailbox.org (smtp102.mailbox.org [10.196.197.102])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-102.mailbox.org (Postfix) with ESMTPS id 4ZB9Ng3pGkz9t6M;
+	Mon, 10 Mar 2025 09:41:39 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
+	t=1741596099; h=from:from:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Pj9YyUHtB58au90L2cXLcwO3crRUYeD3IqPgZ3hNa2k=;
+	b=UMrrEjweewmLhOB+wBNZzyJ0r8FomabYHLl6JbsdsT939y3SVt5zv0sjUGdtnGZWBPG2Tm
+	n5ZxrNy2Y6ed+0OX9gM5XCr1pMHZxP1YiOf5NhK75nMgAGdbvI/98X6OGyDupK5ezJ3I7R
+	ZfiPBzvlnIRKGpQMsF+SAG5lpHZSJsadKCgf5G7kuHpXCcrHQTicCMB/KsqwxukhzosXae
+	GnJeR0IxN7AZdrL+oQIzkcJazWmpvdzLal/9MT0A0NX0kWMiACGDY/hwVND0G7Yuf4knc4
+	R3uHD+JfJ7meEsLWHaBblQ5RkCz+BP03XLWthVohjfz2EYFdjv8HeNDO5bT5qw==
+Message-ID: <cb3745c15e5e2c3a2b03e47a56d2e4db555664b5.camel@mailbox.org>
+Subject: Re: [PATCH] drm/sched: revert "drm_sched_job_cleanup(): correct
+ false doc"
+From: Philipp Stanner <phasta@mailbox.org>
+Reply-To: phasta@kernel.org
+To: Christian =?ISO-8859-1?Q?K=F6nig?= <ckoenig.leichtzumerken@gmail.com>, 
+	matthew.brost@intel.com, dakr@kernel.org, phasta@kernel.org, 
+	tvrtko.ursulin@igalia.com, dri-devel@lists.freedesktop.org, 
+	linux-kernel@vger.kernel.org
+Cc: Christian =?ISO-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>
+Date: Mon, 10 Mar 2025 09:41:36 +0100
+In-Reply-To: <20250310074414.2129157-1-christian.koenig@amd.com>
+References: <20250310074414.2129157-1-christian.koenig@amd.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+X-MBO-RS-META: pb36k69c177kywtrmnw4x9z65u6rje4z
+X-MBO-RS-ID: 835e40521a2dc2c37e0
 
-Nothing prevents a broken HC from claiming that an endpoint is Running
-and repeatedly rejecting Stop Endpoint with Context State Error.
+On Mon, 2025-03-10 at 08:44 +0100, Christian K=C3=B6nig wrote:
+> This reverts commit 44d2f310f008613c1dbe5e234c2cf2be90cbbfab.
+>=20
+> Sorry for the delayed response, I only stumbled over this now while
+> going
+> over old mails and then re-thinking my reviewed by for this change.
+>=20
+> The function drm_sched_job_arm() is indeed the point of no return.
 
-Avoid infinite retries and give back cancelled TDs.
+So would you say that the comment in the function's body,
+"drm_sched_job_arm() has been called" actually means / should mean "job
+had been submitted with drm_sched_entity_push_job()"?
 
-No such cases known so far, but HCs have bugs.
+> The
+> background is that it is nearly impossible for the driver to
+> correctly
+> retract the fence and signal it in the order enforced by the
+> dma_fence
+> framework.
+>=20
+> The code in drm_sched_job_cleanup() is for the purpose to cleanup
+> after
+> the job was armed through drm_sched_job_arm() *and* processed by the
+> scheduler.
+>=20
+> The correct approach for error handling in this situation is to set
+> the
+> error on the fences and then push to the entity anyway.
 
-Signed-off-by: Michal Pecio <michal.pecio@gmail.com>
----
- drivers/usb/host/xhci-ring.c | 11 +++++++----
- 1 file changed, 7 insertions(+), 4 deletions(-)
+You expect the driver to set an error on scheduled and finished fence?
+I think this would be very likely to explode. AFAICS the scheduler code
+has no awareness for anyone else having touched those fences.
 
-diff --git a/drivers/usb/host/xhci-ring.c b/drivers/usb/host/xhci-ring.c
-index 28ebc0fc5bc2..241cd82672a6 100644
---- a/drivers/usb/host/xhci-ring.c
-+++ b/drivers/usb/host/xhci-ring.c
-@@ -1259,16 +1259,19 @@ static void xhci_handle_cmd_stop_ep(struct xhci_hcd *xhci, int slot_id,
- 			 * Stopped state, but it will soon change to Running.
- 			 *
- 			 * Assume this bug on unexpected Stop Endpoint failures.
--			 * Keep retrying until the EP starts and stops again, on
--			 * chips where this is known to help. Wait for 100ms.
-+			 * Keep retrying until the EP starts and stops again.
- 			 */
--			if (time_is_before_jiffies(ep->stop_time + msecs_to_jiffies(100)))
--				break;
- 			fallthrough;
- 		case EP_STATE_RUNNING:
- 			/* Race, HW handled stop ep cmd before ep was running */
- 			xhci_dbg(xhci, "Stop ep completion ctx error, ctx_state %d\n",
- 					GET_EP_CTX_STATE(ep_ctx));
-+			/*
-+			 * Don't retry forever if we guessed wrong or a defective HC never starts
-+			 * the EP or says 'Running' but fails the command. We must give back TDs.
-+			 */
-+			if (time_is_before_jiffies(ep->stop_time + msecs_to_jiffies(100)))
-+				break;
- 
- 			command = xhci_alloc_command(xhci, false, GFP_ATOMIC);
- 			if (!command) {
--- 
-2.48.1
+If at all, if this is really a problem, we should tell the driver that
+it must enforce that there will be no failure between
+drm_sched_job_arm() and drm_sched_job_entity_push_job(). That's how
+Nouveau does it.
+
+Let's set our understanding straight before reverting. What
+drm_sched_job_arm() does is:
+
+   1. Pick scheduler, rq and priority for the job
+   2. Atomically increment the job_id_count and assign to job
+   3. Call drm_sched_fence_init() and therefore:
+   4. Set the fence's scheduler
+   5. Set the fences seq nr atomically
+   6. Initialize scheduled and finished fence
+
+What of the above precisely is the problem?
+
+You say the driver cannot "correctly retract the fence and signal it in
+the order enforced by the dma_fence framework". You mean that the
+finished_fences have to be signalled in an order only the scheduler
+knows? I assume you're referring to set dependencies?
+
+P.
+
+> We can certainly
+> improve the documentation, but removing the warning is clearly not a
+> good
+> idea.
+>=20
+> Signed-off-by: Christian K=C3=B6nig <christian.koenig@amd.com>
+> ---
+> =C2=A0drivers/gpu/drm/scheduler/sched_main.c | 12 +++++-------
+> =C2=A01 file changed, 5 insertions(+), 7 deletions(-)
+>=20
+> diff --git a/drivers/gpu/drm/scheduler/sched_main.c
+> b/drivers/gpu/drm/scheduler/sched_main.c
+> index 53e6aec37b46..4d4219fbe49d 100644
+> --- a/drivers/gpu/drm/scheduler/sched_main.c
+> +++ b/drivers/gpu/drm/scheduler/sched_main.c
+> @@ -1015,13 +1015,11 @@ EXPORT_SYMBOL(drm_sched_job_has_dependency);
+> =C2=A0 * Cleans up the resources allocated with drm_sched_job_init().
+> =C2=A0 *
+> =C2=A0 * Drivers should call this from their error unwind code if @job is
+> aborted
+> - * before it was submitted to an entity with
+> drm_sched_entity_push_job().
+> + * before drm_sched_job_arm() is called.
+> =C2=A0 *
+> - * Since calling drm_sched_job_arm() causes the job's fences to be
+> initialized,
+> - * it is up to the driver to ensure that fences that were exposed to
+> external
+> - * parties get signaled. drm_sched_job_cleanup() does not ensure
+> this.
+> - *
+> - * This function must also be called in &struct
+> drm_sched_backend_ops.free_job
+> + * After that point of no return @job is committed to be executed by
+> the
+> + * scheduler, and this function should be called from the
+> + * &drm_sched_backend_ops.free_job callback.
+> =C2=A0 */
+> =C2=A0void drm_sched_job_cleanup(struct drm_sched_job *job)
+> =C2=A0{
+> @@ -1032,7 +1030,7 @@ void drm_sched_job_cleanup(struct drm_sched_job
+> *job)
+> =C2=A0 /* drm_sched_job_arm() has been called */
+> =C2=A0 dma_fence_put(&job->s_fence->finished);
+> =C2=A0 } else {
+> - /* aborted job before arming */
+> + /* aborted job before committing to run it */
+> =C2=A0 drm_sched_fence_free(job->s_fence);
+> =C2=A0 }
+> =C2=A0
+
 
