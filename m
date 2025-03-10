@@ -1,144 +1,208 @@
-Return-Path: <linux-kernel+bounces-554230-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-554227-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 32360A594FB
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 13:45:29 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 31386A594F5
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 13:44:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0CBBE188E31D
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 12:45:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id ADF3D1887A15
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 12:44:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44CB522A4DA;
-	Mon, 10 Mar 2025 12:44:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39CDC1C07D9;
+	Mon, 10 Mar 2025 12:44:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="RXRSZvXc"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="k27IqJEy"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C375D229B2D
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 12:44:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E8C822172D;
+	Mon, 10 Mar 2025 12:43:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741610665; cv=none; b=VR/bHrQMiskkiPU9sEDimVx173PPpQCvVZNgBzvZBfM0uWMHv6Cg36uKBk88JOeRe/QiawoBYgfUPUuZZkuloblab9s2oRxSBs1Z1uTbjLhAlap1hNIF+AXaLo5vlkI5xsXUzQ4jP8qCCAERkuAc00mNI/jqOvJ4iuAGp1dJFXg=
+	t=1741610640; cv=none; b=b56Gtpq6no/yvXTlp50hgaa9ik0qj7xukjq2PMzeJ88hh2KypyZfJDuQ/xnVv4jKptY8chIWx1SsSb2Zk5nzQTPu6hiUREyoKWVW4d2ZLYmZRyXN+N6fz7kpdi1WS1bh3b4ZPywnXj1XieKtRVYO+dMdKF5M0pETpugqxAVc5i8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741610665; c=relaxed/simple;
-	bh=42bpw7QsJxoPFZyWS63GGnQgVa3DFvQUvEX/6GgwASk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GrPonLG9NbLeMXRIl77PMiJb1FwdHvXnTirhWV0Wj99ICA3o0qXMoFhlb3e8b6a5o35aURh8kZegFalvdYA4osstp8T6ltDcYkYPKSvZHIdQkedTJNxb9yYiXy49o8y6+KV0GymH82gjFdN9vxQnBWBiaMXpfyrsJ+KGJKGRW0I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=RXRSZvXc; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1741610662;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=8DXEg1k9/LkI/RFF7cRqUAYGlbFUNVfNuX3I9mixJac=;
-	b=RXRSZvXcXVyrUl4VyaP81OfAZTdluSgjw8A9cQNwioSyBkA7NTGhO3MpYi8kekFWPsQfr8
-	8SZgkpO/g7TFbILMtVlx/FAJOXMO5+nKTCywhLk33LdEu9plP1Ti1Akh/Gq50Eb88Tib4J
-	Rkc/L9JFWwMFOQbAuCnSPT8fASXk/OY=
-Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-223-4Wx9TQohOMe862VXD_Qmdg-1; Mon,
- 10 Mar 2025 08:44:19 -0400
-X-MC-Unique: 4Wx9TQohOMe862VXD_Qmdg-1
-X-Mimecast-MFC-AGG-ID: 4Wx9TQohOMe862VXD_Qmdg_1741610658
-Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 8700A195609F;
-	Mon, 10 Mar 2025 12:44:17 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.224.34])
-	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id A1D811956094;
-	Mon, 10 Mar 2025 12:44:14 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-	oleg@redhat.com; Mon, 10 Mar 2025 13:43:46 +0100 (CET)
-Date: Mon, 10 Mar 2025 13:43:42 +0100
-From: Oleg Nesterov <oleg@redhat.com>
-To: Hillf Danton <hdanton@sina.com>
-Cc: K Prateek Nayak <kprateek.nayak@amd.com>,
-	Mateusz Guzik <mjguzik@gmail.com>,
-	"Sapkal, Swapnil" <swapnil.sapkal@amd.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] pipe_read: don't wake up the writer if the pipe is still
- full
-Message-ID: <20250310124341.GB26382@redhat.com>
-References: <20250304102934.2999-1-hdanton@sina.com>
- <20250304233501.3019-1-hdanton@sina.com>
- <20250305045617.3038-1-hdanton@sina.com>
- <20250305224648.3058-1-hdanton@sina.com>
- <20250307060827.3083-1-hdanton@sina.com>
- <20250307104654.3100-1-hdanton@sina.com>
- <20250307112920.GB5963@redhat.com>
- <20250307235645.3117-1-hdanton@sina.com>
- <20250310104910.3232-1-hdanton@sina.com>
- <20250310113726.3266-1-hdanton@sina.com>
+	s=arc-20240116; t=1741610640; c=relaxed/simple;
+	bh=itK42hXJovQ7FgvIGOp3LK5q0cp2Lj+aDQwPYA0OCOE=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=kO8TiXSINAgBrHr1ZSExEJGWF0rkgWrDbU500iEdAfv8M0AT8xHZNhuV6zeUbs3tFBlsFNxur7Rq8fuejum/ZrnZK8N30nWCDP2N8xhtdYXB60JoVZs+l39xliWP/QTstLqhH0mZ5x8ngRKRUs0VXlYuSD8Jp+1XrP39jaiSuh0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=k27IqJEy; arc=none smtp.client-ip=198.175.65.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1741610639; x=1773146639;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=itK42hXJovQ7FgvIGOp3LK5q0cp2Lj+aDQwPYA0OCOE=;
+  b=k27IqJEy6tv+RuAOTYkNYHhYwHTVXn6k90re4R70ueZvTqMP17giCjRn
+   7zwb9fmwatiS7jd8gWCenJDv51m5nD9uB8a9WL4L070/Vp4BWtUa8/tUw
+   oJQjqJL8Myg6TVYfZWRMCzu1R/S1urlxX+D2kZpJ8BZCQa335xBUD61F9
+   fA6SpFrpF9lW52aSb5LrvzKqSLSnjg2ATRjf9n/IesU8bmEs+M4WRVJrm
+   KYC4b3XsnJwkgXDvVOTjxZw3PKQeYOyIVHihkNat/9c7ULmLC0W5NYdUs
+   tRy/zpLHxJiV+gXgXE/6CGzeBmFAEto9iotAJtxlygHONYqAbOGimszDi
+   A==;
+X-CSE-ConnectionGUID: 1aDPYXqLTy6Bo3EyCnSDhg==
+X-CSE-MsgGUID: Uyu1VEKMQ8G5S0/Z6mtiuw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11369"; a="46389628"
+X-IronPort-AV: E=Sophos;i="6.14,236,1736841600"; 
+   d="scan'208";a="46389628"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Mar 2025 05:43:58 -0700
+X-CSE-ConnectionGUID: kacdkcfmSJCeL3HCWhhDpg==
+X-CSE-MsgGUID: 4C8DnNblQ0y/k9Q3Nm/FPQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,236,1736841600"; 
+   d="scan'208";a="150931819"
+Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.244.59])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Mar 2025 05:43:55 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Mon, 10 Mar 2025 14:43:51 +0200 (EET)
+To: Dan Carpenter <dan.carpenter@linaro.org>
+cc: Shyam Sundar S K <Shyam-sundar.S-k@amd.com>, 
+    Hans de Goede <hdegoede@redhat.com>, 
+    Patil Rajesh Reddy <Patil.Reddy@amd.com>, 
+    Mario Limonciello <mario.limonciello@amd.com>, 
+    platform-driver-x86@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, 
+    kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] platform/x86/amd/pmf: fix cleanup in
+ amd_pmf_init_smart_pc()
+In-Reply-To: <43ad5358-f5b2-4cfc-85b4-e7ab8c7cf329@stanley.mountain>
+Message-ID: <32c6c456-94f0-f077-040c-09f67d60953a@linux.intel.com>
+References: <43ad5358-f5b2-4cfc-85b4-e7ab8c7cf329@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250310113726.3266-1-hdanton@sina.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
+Content-Type: text/plain; charset=US-ASCII
 
-On 03/10, Hillf Danton wrote:
->
-> On Mon, 10 Mar 2025 12:09:15 +0100 Oleg Nesterov
-> > On 03/10, Hillf Danton wrote:
-> > > On Sun, 9 Mar 2025 18:02:55 +0100 Oleg Nesterov
-> > > >
-> > > > So (again, in this particular case) we could apply the patch below
-> > > > on top of Linus's tree.
-> > > >
-> > > > So, with or without these changes, the writer should be woken up at
-> > > > step-03 in your scenario.
-> > > >
-> > > Fine, before checking my scenario once more, feel free to pinpoint the
-> > > line number where writer is woken up, with the change below applied.
-> >
-> >     381          if (wake_writer)
-> > ==> 382                  wake_up_interruptible_sync_poll(&pipe->wr_wait, EPOLLOUT | EPOLLWRNORM);
-> >     383          if (wake_next_reader)
-> >     384                  wake_up_interruptible_sync_poll(&pipe->rd_wait, EPOLLIN | EPOLLRDNORM);
-> >     385          kill_fasync(&pipe->fasync_writers, SIGIO, POLL_OUT);
-> >     386          if (ret > 0)
-> >     387                  file_accessed(filp);
-> >     388          return ret;
-> >
-> > line 382, no?
-> >
-> Yes, but how is the wait loop at line-370 broken?
->
->  360                 }
->  361                 mutex_unlock(&pipe->mutex);
->  362
->  363                 BUG_ON(wake_writer);
->  364                 /*
->  365                  * But because we didn't read anything, at this point we can
->  366                  * just return directly with -ERESTARTSYS if we're interrupted,
->  367                  * since we've done any required wakeups and there's no need
->  368                  * to mark anything accessed. And we've dropped the lock.
->  369                  */
->  370                 if (wait_event_interruptible_exclusive(pipe->rd_wait, pipe_readable(pipe)) < 0)
->  371                         return -ERESTARTSYS;
+On Mon, 10 Mar 2025, Dan Carpenter wrote:
 
-Hmm. I don't understand you, again.
+> There are a couple problems in this code:
+> 
+> First, if amd_pmf_tee_init() fails then the function returns directly
+> instead of cleaning up.  We cannot simply do a "goto error;" because
+> that would lead to a double free.  I have re-written this code to
+> use an unwind ladder to free the allocations.
 
-OK, once some writer writes at least one byte (this will make the
-pipe_empty() condition false) and wakes this reader up.
+Thanks Dan,
 
-If you meant something else, say, if you referred to you previous
-scenario, please clarify your question.
+Could you please amend this with the information of what is getting 
+double freed, it took considerable amount of time for me to figure out.
+I assume it's ->fw_shm_pool ?
 
-Oleg.
+> Second, if amd_pmf_start_policy_engine() fails on every iteration though
+> the loop then the code calls amd_pmf_tee_deinit() twice which is also a
+> double free.  Call amd_pmf_tee_deinit() inside the loop for each failed
+> iteration.  Also on that path the error codes are not necessarily
+> negative kernel error codes.  Set the error code to -EINVAL.
+
+Maybe I should start to consistently reject any attempt to use 
+cleanup/deinit helper functions instead of a proper rollback. It 
+seems a pattern that is very prone to errors like this.
+
+> Fixes: 376a8c2a1443 ("platform/x86/amd/pmf: Update PMF Driver for Compatibility with new PMF-TA")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> ---
+>  drivers/platform/x86/amd/pmf/tee-if.c | 36 +++++++++++++++++++--------
+>  1 file changed, 25 insertions(+), 11 deletions(-)
+> 
+> diff --git a/drivers/platform/x86/amd/pmf/tee-if.c b/drivers/platform/x86/amd/pmf/tee-if.c
+> index ceaff1ebb7b9..a1e43873a07b 100644
+> --- a/drivers/platform/x86/amd/pmf/tee-if.c
+> +++ b/drivers/platform/x86/amd/pmf/tee-if.c
+> @@ -510,18 +510,18 @@ int amd_pmf_init_smart_pc(struct amd_pmf_dev *dev)
+>  
+>  	ret = amd_pmf_set_dram_addr(dev, true);
+>  	if (ret)
+> -		goto error;
+> +		goto err_cancel_work;
+>  
+>  	dev->policy_base = devm_ioremap_resource(dev->dev, dev->res);
+>  	if (IS_ERR(dev->policy_base)) {
+>  		ret = PTR_ERR(dev->policy_base);
+> -		goto error;
+> +		goto err_free_dram_buf;
+>  	}
+>  
+>  	dev->policy_buf = kzalloc(dev->policy_sz, GFP_KERNEL);
+>  	if (!dev->policy_buf) {
+>  		ret = -ENOMEM;
+> -		goto error;
+> +		goto err_free_dram_buf;
+>  	}
+>  
+>  	memcpy_fromio(dev->policy_buf, dev->policy_base, dev->policy_sz);
+> @@ -531,13 +531,13 @@ int amd_pmf_init_smart_pc(struct amd_pmf_dev *dev)
+>  	dev->prev_data = kzalloc(sizeof(*dev->prev_data), GFP_KERNEL);
+>  	if (!dev->prev_data) {
+>  		ret = -ENOMEM;
+> -		goto error;
+> +		goto err_free_policy;
+>  	}
+>  
+>  	for (i = 0; i < ARRAY_SIZE(amd_pmf_ta_uuid); i++) {
+>  		ret = amd_pmf_tee_init(dev, &amd_pmf_ta_uuid[i]);
+>  		if (ret)
+> -			return ret;
+> +			goto err_free_prev_data;
+>  
+>  		ret = amd_pmf_start_policy_engine(dev);
+>  		switch (ret) {
+> @@ -550,27 +550,41 @@ int amd_pmf_init_smart_pc(struct amd_pmf_dev *dev)
+>  			status = false;
+>  			break;
+>  		default:
+> -			goto error;
+> +			ret = -EINVAL;
+> +			amd_pmf_tee_deinit(dev);
+> +			goto err_free_prev_data;
+>  		}
+>  
+>  		if (status)
+>  			break;
+>  	}
+>  
+> -	if (!status && !pb_side_load)
+> -		goto error;
+> +	if (!status && !pb_side_load) {
+> +		ret = -EINVAL;
+> +		goto err_free_prev_data;
+> +	}
+>  
+>  	if (pb_side_load)
+>  		amd_pmf_open_pb(dev, dev->dbgfs_dir);
+>  
+>  	ret = amd_pmf_register_input_device(dev);
+>  	if (ret)
+> -		goto error;
+> +		goto err_pmf_remove_pb;
+>  
+>  	return 0;
+>  
+> -error:
+> -	amd_pmf_deinit_smart_pc(dev);
+> +err_pmf_remove_pb:
+> +	if (pb_side_load && dev->esbin)
+> +		amd_pmf_remove_pb(dev);
+> +	amd_pmf_tee_deinit(dev);
+> +err_free_prev_data:
+> +	kfree(dev->prev_data);
+> +err_free_policy:
+> +	kfree(dev->policy_buf);
+> +err_free_dram_buf:
+> +	kfree(dev->buf);
+> +err_cancel_work:
+> +	cancel_delayed_work_sync(&dev->pb_work);
+>  
+>  	return ret;
+>  }
+> 
+
+-- 
+ i.
 
 
