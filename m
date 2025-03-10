@@ -1,176 +1,142 @@
-Return-Path: <linux-kernel+bounces-553635-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-553637-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D982CA58CBD
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 08:22:45 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 96B12A58CCB
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 08:23:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3B6907A2C76
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 07:21:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D41CB16BFF3
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 07:23:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C18D1D63FA;
-	Mon, 10 Mar 2025 07:22:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5601B1DDA39;
+	Mon, 10 Mar 2025 07:22:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CYcBhYn5"
-Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="H65XTLmq";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="UG9NfcuG"
+Received: from flow-a1-smtp.messagingengine.com (flow-a1-smtp.messagingengine.com [103.168.172.136])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48A721D5AA0;
-	Mon, 10 Mar 2025 07:22:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 220331D5AA0;
+	Mon, 10 Mar 2025 07:22:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.136
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741591354; cv=none; b=a2FgpKIPOPe1RcbILbO3pAmTfl1dn6PTgZH2bRw/N83p97aobos+i0AS2p4Z6VF/zPnWhH6wV6UYywHlztxKP8wuCF6mYAJy/e7aqsyAlWxDr8IiidsT1KMFeMNP/QIe6/eqL/AWjOJ1yptIcEOiVqLXRj3+DL8cDZJx25+BuwM=
+	t=1741591368; cv=none; b=h0I6UDI+fQwq/N4FUoQdb9wwSjQPAD0iEjK8J2F2YkqdUxoHhO/HYGq9MG+4ns9qq0cMupawXdOg+NVEYhtAXgczM0I/+AACjr6RF84UDe/ukLvO4nXFx7nZJ/b8oi5zgPx9XCHPQHBDzquAYcrrJ1xf0ubwvfjTJ2ZJr8Pbdu0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741591354; c=relaxed/simple;
-	bh=Fus2l9Ft0TiV32NmjoxHIrvAKw6rMkGfP+TzHbeS98U=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TLtfiJ6xF0s3UYj+uc+qKbaz/fdKPXL/FUdOOmjmRPf5rthxbCkm7Z7nbAYQl2PwmeKmDJZ7Pq7wHIdq1+YJ210JbnFK3HcWG1SXaEiopeuUb/kiRfJOUx4jMFCavIJlBBhchZRymR++NfX45p3Mk7YUxiTkQf31BvN66Z3X5ps=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CYcBhYn5; arc=none smtp.client-ip=209.85.214.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-22409077c06so49147305ad.1;
-        Mon, 10 Mar 2025 00:22:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741591352; x=1742196152; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=mvigK+8shkj3P6iWLfwRxSR7yK+Ypp9JkAFJDRFT3UI=;
-        b=CYcBhYn5MwwYkaFlc5gZA/avDnJ9LjcaZBW9bR2YY6u1lE/CwyTAok9FIR435IKd7O
-         KS6yMj+RXSSmCourrIJFBKtu7LSRrQICq/ioRAK9KFPWHAMbHg7pgED/6thcZDZ7SYd8
-         ka1G8mKtjkggFA26zZpwwy4eLxOfdxHPiKVVPaYqEsoA9AHD0aTsHyxbkg5ZVmE5S4bl
-         rF59t5D3am02qkS8yzCXgK4NDuHmNTF06RdIxvQ+NAPR5+MO+xF6OpekZyRAq7wHJABt
-         0vLE+qCy5EMwqQCx8GlD+Znyk2m1RK7oZ1Ihn1b+WwMp6Gha24lJBeS4C0jVpDowyXVk
-         F9eg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741591352; x=1742196152;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=mvigK+8shkj3P6iWLfwRxSR7yK+Ypp9JkAFJDRFT3UI=;
-        b=X7ZpzHlJFvEBX56EHTuAc4yrCjYSFeyKr1TG6+RfRWVkDJ9L7zdnZMIHLQZleVqvJW
-         Wsnt/VbwzFp1o+wW5/6C9q8y3KapdPzt133leNU2cMek/R5/CANZCR8t6zS+XNiPVCJc
-         Zrr2ns+uf2DWPO0vF8o4ENOF0IP0hX2HpPAIsL+li2ntbAEPlNMHP73+tcAr6+IwaNdZ
-         2O1RScZ9kG9AtCeObiiFTVWOJ+8OWlfJUYmd/JGopcTed1iz+oBAz8Z5CFp5K/99pVEc
-         EsFcW3g4Ze9TlyXY3Wdh1rLnHv7d5XxAFOrxOHIAQWIsP8czBKERDdC3vMlkV3+bVkHY
-         52EQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUNQhu45uIsqH79w7vSgXyd0fDgcC7AEF1RyMeuDyrYnjoFsH2Q/EdibDUvrhdYRVriGr83l97pm/Ard91ApJ6A@vger.kernel.org, AJvYcCX47GTT47lCG5tvX6gvLU15+3aieTY8YiKWoPN+/GQjMYzKIJMy6ZcXLSrVgM0aBDs0JHY3On3O0LsxVpo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxxvOtJWBZYcvxRpeLIcOnP39t9IeAex576d2BjQ2PJZbrvwWZH
-	CI/gvZUE2pB2TEdm2mCjqbt1/UHrsvSTnvzfWfSGeuOs+Hq/gNYR
-X-Gm-Gg: ASbGncvFIusYqsmuBfsbvq//bhb7ZBa38XBPdGOj7ecilt6thVVtJ0l4bON+BjwoLnB
-	ZCr4EHhfnzC8UmORZiiJu56pCFHwLshHMzy0LJvboDtcfBANEryZrxkaUKKj+bsjTxl+1O73ULs
-	j3sni6X/NQvS8KLW1kGNJGERIxjy7QD6MEetuYDXr330JgL22DdlmNhaSI/97EEOSlLMT94O7q9
-	JsdisTGjNoUJyBYxT2BopMivCbY0vPNi0EHWNt7/8wDQdj7D/vrplvwSA4SaFr26373+4sp124G
-	Y9zr6VVJ5PrsIDGFyoeVjMTWZJ10QMdiqLcntL+/9vxMuYokwA==
-X-Google-Smtp-Source: AGHT+IFX+/4blytBZ9bHO9fEHzdnLXvnpR8ggVlMl9RYZvsylnApMBQTkUkf/7epOY70isQLf/BI7g==
-X-Received: by 2002:a17:902:dac7:b0:223:f7ec:f834 with SMTP id d9443c01a7336-22428a9fedemr217827545ad.31.1741591352447;
-        Mon, 10 Mar 2025 00:22:32 -0700 (PDT)
-Received: from fedora ([43.228.180.230])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22410aa8b83sm70383355ad.241.2025.03.10.00.22.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 10 Mar 2025 00:22:31 -0700 (PDT)
-Date: Mon, 10 Mar 2025 07:22:21 +0000
-From: Hangbin Liu <liuhangbin@gmail.com>
-To: Simon Horman <horms@kernel.org>
-Cc: netdev@vger.kernel.org, Jay Vosburgh <jv@jvosburgh.net>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Nikolay Aleksandrov <razor@blackwall.org>,
-	Shuah Khan <shuah@kernel.org>, Tariq Toukan <tariqt@nvidia.com>,
-	Jianbo Liu <jianbol@nvidia.com>, Jarod Wilson <jarod@redhat.com>,
-	Steffen Klassert <steffen.klassert@secunet.com>,
-	Cosmin Ratiu <cratiu@nvidia.com>, Petr Machata <petrm@nvidia.com>,
-	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCHv5 net 1/3] bonding: fix calling sleeping function in spin
- lock and some race conditions
-Message-ID: <Z86TLTMKNX0NVq2N@fedora>
-References: <20250307031903.223973-1-liuhangbin@gmail.com>
- <20250307031903.223973-2-liuhangbin@gmail.com>
- <20250308085451.GL3666230@kernel.org>
+	s=arc-20240116; t=1741591368; c=relaxed/simple;
+	bh=J3sQCA9DV6phIpiLDA9JI9hyBB3YMuMwciQ5P6V/ybU=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=Efdq+3EKNCFv7SAjcKo2G1B1gnEvsm3BeoTSFJ+eXToMJJsdeBBbimC9FWjJU6cG7A7YvewVXOcweNPJ9vdnKWuuyf7Ci68V4692AHY5NVzEzYNL2Y8ekruRCtZyN3ceJEJew+qeWy7PhsGGGuV+CNyKv6D1CxC7UHvqccXbc+s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=H65XTLmq; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=UG9NfcuG; arc=none smtp.client-ip=103.168.172.136
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from phl-compute-07.internal (phl-compute-07.phl.internal [10.202.2.47])
+	by mailflow.phl.internal (Postfix) with ESMTP id EF1C720144D;
+	Mon, 10 Mar 2025 03:22:44 -0400 (EDT)
+Received: from phl-imap-11 ([10.202.2.101])
+  by phl-compute-07.internal (MEProxy); Mon, 10 Mar 2025 03:22:44 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm3; t=1741591364;
+	 x=1741598564; bh=J3sQCA9DV6phIpiLDA9JI9hyBB3YMuMwciQ5P6V/ybU=; b=
+	H65XTLmqz5qqZeAmNdbjspDs4350aSTpjHT3M0l79hDMl4pnq2pe5PjFjK98dCwv
+	o4LrfOeYYEDjkMaoDLHe88BSZrhiSJdl5IeWm8j1Y5V1cLKRqLWVUJgDtKi3AqWC
+	KfuRma0iaGw+QcjCNImKXIR0+Eey/QuwGWzHp6NTvtwDaKGZZKlGkiEAkuF92KGr
+	pO9m14kWbgKum5NvRFnxzdcu5loSw067bd2SrtA5NEDdn09Jr1WgKpfMC0kXMiyV
+	gySoW7yibIaEIvsQ1wRt/mQUUrE+75ikoTj3/4sr/IHS3726Hqs5z8Gi4oJhQMa6
+	xX3GPhTPoAZ25WWOWHZm4Q==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1741591364; x=
+	1741598564; bh=J3sQCA9DV6phIpiLDA9JI9hyBB3YMuMwciQ5P6V/ybU=; b=U
+	G9NfcuGL1pSUTtjpSHWgR7DtaRlOQQcEfxFpbFhGPWHrFQ72V5NqMHJoDTKyxndw
+	2azGp917nTShs3jYuUCDjUk/j0yF/Dkyz8td3bEeyPjOVkVvX8PVbU3vbTjZCGWl
+	rlRzl3GTL+Hbwm5fcmWrqIw2i4p43osRuubAsklPeSTD4uODiVOmZjMN5CmBP/qD
+	n3i79b7PFhg3h+UucgxAepa2G3BCmKR7ZSWs0RMmvepSamdm06VCk3q272zrAZ0T
+	hErjLISfVFplQVNus9lPhlIgK5TcLYttPnCIjOHExATCmHsyMn7LipJqEEosu6Ee
+	juTt0ySZvua262WfAFfkw==
+X-ME-Sender: <xms:RJPOZ6mBamNSP9M62JjinqZGhLUwhetd7MpHVJQ8c2akNeIW7jFsfQ>
+    <xme:RJPOZx0nmWLSy_Mz_QN0eTDK8IgqkGq_CCsfYR8or1flR3vYZCUEaMlep8G4KNv5v
+    LGmwhLzeoRM_LV54P0>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdduudekjeefucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
+    pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
+    gvnhhtshculddquddttddmnecujfgurhepofggfffhvfevkfgjfhfutgfgsehtjeertder
+    tddtnecuhfhrohhmpedftehrnhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnug
+    gsrdguvgeqnecuggftrfgrthhtvghrnhepfefhheetffduvdfgieeghfejtedvkeetkeej
+    feekkeelffejteevvdeghffhiefhnecuffhomhgrihhnpehkvghrnhgvlhdrohhrghenuc
+    evlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegrrhhnuges
+    rghrnhgusgdruggvpdhnsggprhgtphhtthhopedvuddpmhhouggvpehsmhhtphhouhhtpd
+    hrtghpthhtohepthhssghoghgvnhgusegrlhhphhgrrdhfrhgrnhhkvghnrdguvgdprhgt
+    phhtthhopegsrhhglhessghguggvvhdrphhlpdhrtghpthhtoheprghlvgigrghnughrvg
+    drsggvlhhlohhnihessghoohhtlhhinhdrtghomhdprhgtphhtthhopegumhhithhrhidr
+    thhorhhokhhhohhvsehgmhgrihhlrdgtohhmpdhrtghpthhtohepjhhinhhgohhohhgrnh
+    dusehgmhgrihhlrdgtohhmpdhrtghpthhtoheplhhgihhrugifohhougesghhmrghilhdr
+    tghomhdprhgtphhtthhopeguvghllhgvrhesghhmgidruggvpdhrtghpthhtohepsghroh
+    honhhivgeskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepuggrnhhivghltheskhgvrhhn
+    vghlrdhorhhg
+X-ME-Proxy: <xmx:RJPOZ4oNdsCVwdwBC1kejn_hiUWULMuszBBeFu3P1XFG2SOVcQq4Yg>
+    <xmx:RJPOZ-kriW5mwdM3YFKa1QEM4zUdOrhgF9EjCIQihVWPJAXdavqkqw>
+    <xmx:RJPOZ43M6hITEMrBvmPyYXUHsNOjK4DlkC__GIdg4uCgnY9xPGHwlQ>
+    <xmx:RJPOZ1tioloLuOdFS7WnMtHjOWPdjL7vMzeeieApRc97UPovDDeF5Q>
+    <xmx:RJPOZw4mIeXgUDIjrdONTNNcGYk--e8ZCokZRYbNMKAedh8jYizIJJyJ>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id ED50C2220072; Mon, 10 Mar 2025 03:22:43 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250308085451.GL3666230@kernel.org>
+Date: Mon, 10 Mar 2025 08:22:23 +0100
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: linux <linux@treblig.org>, "Lee Jones" <lee@kernel.org>,
+ "Dmitry Torokhov" <dmitry.torokhov@gmail.com>,
+ "Sebastian Reichel" <sre@kernel.org>, lgirdwood@gmail.com,
+ "Mark Brown" <broonie@kernel.org>,
+ "Alexandre Belloni" <alexandre.belloni@bootlin.com>, danielt@kernel.org,
+ jingoohan1@gmail.com, "Helge Deller" <deller@gmx.de>,
+ "Linus Walleij" <linus.walleij@linaro.org>,
+ "Bartosz Golaszewski" <brgl@bgdev.pl>,
+ "Thomas Bogendoerfer" <tsbogend@alpha.franken.de>
+Cc: linux-mips@vger.kernel.org, linux-input@vger.kernel.org,
+ linux-pm@vger.kernel.org, linux-rtc@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org,
+ "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+ linux-kernel@vger.kernel.org
+Message-Id: <26cd328d-efb6-4fab-969a-320a3968ea29@app.fastmail.com>
+In-Reply-To: <20250309193612.251929-1-linux@treblig.org>
+References: <20250309193612.251929-1-linux@treblig.org>
+Subject: Re: [PATCH 0/9] Remove pcf50633
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-On Sat, Mar 08, 2025 at 08:54:51AM +0000, Simon Horman wrote:
-> On Fri, Mar 07, 2025 at 03:19:01AM +0000, Hangbin Liu wrote:
-> 
-> ...
-> 
-> > @@ -616,9 +615,22 @@ static void bond_ipsec_del_sa_all(struct bonding *bond)
-> >  		return;
-> >  
-> >  	mutex_lock(&bond->ipsec_lock);
-> > -	list_for_each_entry(ipsec, &bond->ipsec_list, list) {
-> > -		if (!ipsec->xs->xso.real_dev)
-> > +	list_for_each_entry_safe(ipsec, tmp_ipsec, &bond->ipsec_list, list) {
-> > +		spin_lock_bh(&ipsec->xs->lock);
-> > +		if (!ipsec->xs->xso.real_dev) {
-> > +			spin_unlock_bh(&ipsec->xs->lock);
-> >  			continue;
-> > +		}
-> > +
-> > +		if (ipsec->xs->km.state == XFRM_STATE_DEAD) {
-> > +			list_del(&ipsec->list);
-> > +			kfree(ipsec);
-> 
-> Hi Hangbin,
-> 
-> Apologies if this was covered elsewhere, but ipsec is kfree'd here...
+On Sun, Mar 9, 2025, at 20:36, linux@treblig.org wrote:
+> From: "Dr. David Alan Gilbert" <linux@treblig.org>
+>
+> The pcf50633 was used as part of the OpenMoko devices but
+> the support for its main chip was recently removed in:
+> commit 61b7f8920b17 ("ARM: s3c: remove all s3c24xx support")
+>
+> See https://lore.kernel.org/all/Z8z236h4B5A6Ki3D@gallifrey/
+>
+> Remove it.
+>
+> I've split this up based on the subcomponents to make the size
+> of each patch sensible.
+>
+> Dave
+>
+> Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
 
-Oh.. I need to get the xs with xs = ipsec->xs, then hold the xs lock.
+Looks all good to me. Whole series
 
-Thanks
-Hangbin
-> 
-> 
-> > +			/* Need to free device here, or the xs->xso.real_dev
-> > +			 * may changed in bond_ipsec_add_sa_all and free
-> > +			 * on old device will never be called.
-> > +			 */
-> > +			goto next;
-> > +		}
-> >  
-> >  		if (!real_dev->xfrmdev_ops ||
-> >  		    !real_dev->xfrmdev_ops->xdo_dev_state_delete ||
-> > @@ -626,11 +638,20 @@ static void bond_ipsec_del_sa_all(struct bonding *bond)
-> >  			slave_warn(bond_dev, real_dev,
-> >  				   "%s: no slave xdo_dev_state_delete\n",
-> >  				   __func__);
-> > -		} else {
-> > -			real_dev->xfrmdev_ops->xdo_dev_state_delete(ipsec->xs);
-> > -			if (real_dev->xfrmdev_ops->xdo_dev_state_free)
-> > -				real_dev->xfrmdev_ops->xdo_dev_state_free(ipsec->xs);
-> > +			spin_unlock_bh(&ipsec->xs->lock);
-> > +			continue;
-> >  		}
-> > +
-> > +		real_dev->xfrmdev_ops->xdo_dev_state_delete(ipsec->xs);
-> > +
-> > +next:
-> > +		/* set real_dev to NULL in case __xfrm_state_delete() is called in parallel */
-> > +		ipsec->xs->xso.real_dev = NULL;
-> 
-> ... and the dereferenced here.
-> 
-> Flagged by Smatch.
-> 
-> > +
-> > +		/* Unlock before freeing device state, it could sleep. */
-> > +		spin_unlock_bh(&ipsec->xs->lock);
-> > +		if (real_dev->xfrmdev_ops->xdo_dev_state_free)
-> > +			real_dev->xfrmdev_ops->xdo_dev_state_free(ipsec->xs);
-> >  	}
-> >  	mutex_unlock(&bond->ipsec_lock);
-> >  }
-> 
-> ...
+Acked-by: Arnd Bergmann <arnd@arndb.de>
 
