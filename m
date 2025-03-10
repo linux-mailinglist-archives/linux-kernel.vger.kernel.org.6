@@ -1,75 +1,125 @@
-Return-Path: <linux-kernel+bounces-555181-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-555182-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 27171A5A687
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 22:58:09 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 89AA9A5A69C
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 23:01:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 61163173889
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 21:58:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 39C223AE375
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 22:01:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B7981E51F6;
-	Mon, 10 Mar 2025 21:58:02 +0000 (UTC)
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C09E1E0DDF;
+	Mon, 10 Mar 2025 22:01:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XZ2+0vFc"
+Received: from mail-qt1-f182.google.com (mail-qt1-f182.google.com [209.85.160.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA49936B;
-	Mon, 10 Mar 2025 21:58:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30E301D63DA;
+	Mon, 10 Mar 2025 22:01:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741643882; cv=none; b=HwlFqxZB5zl4x8HULft9dFYmOiCFBzEjga6iM7juErhrYv/k7el5Zfjrbeyl+4OuKfHQ4m+gOvDUOMEiBjbFZTgp24QxWk+QK0MxZPr7Lm8/zBBcsqZsuIRfnruooKjr/cUZgw/j8ma5XlKGAZQNUqyTOAt9+bl4202gSKscQAE=
+	t=1741644094; cv=none; b=dWlflmYmfKEVhrLg/ZfnIwSFFJeT2c6Xy5Bph4fma2iw6yxql6UYYJcaG4IBNmMtAFNB/gT/wEsccQNip+xqqQ5/UOv+L+aJyBnL74oBXvkEGDUQsDKrcwQr8XedZVbCba5FSvvqWxdt9HBa4L/45RvrU3ZzXZVRDOHMalpittA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741643882; c=relaxed/simple;
-	bh=7MT0cdOUDjuVEspylySZAy3uuOUbr9JOEWUtRBimMaE=;
+	s=arc-20240116; t=1741644094; c=relaxed/simple;
+	bh=pRupb2oNNzqFmYygFyIG8PcgTW0lNPekWKRuoiAiaa8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LNiye9fZOyzL2+xLtrDby+72WJQetGXQDhRkxhAXDxm2FP1iZq2M3qxMQA/dribJohRm2YPVsQwkKwWcBgxXRr9lM4D+EeCoKngwNKiZahHjNhUFL1rGnTaEbVn6axj01mttLslyAiIdUbTfxTeuLrQ5+Q3cGaBwSKFZ6sW2EQQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.214.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com
+	 Content-Type:Content-Disposition:In-Reply-To; b=uWbI8nakoaiVcce6tD8fSPmcdTfa9aQrfSbRIzrM8m4GrRawsvQS8XoQUWw1zpD8fX/itlukOVq3pnGh/TuCvMd36fG0fXxT+SYJWuBaddYOQwmp3TjQR47ppM4rEZLSsO36uYH8N7qGEFaJR0JWnqsiCJ401SgX/+CT/c3oxcQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XZ2+0vFc; arc=none smtp.client-ip=209.85.160.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-223594b3c6dso84976905ad.2;
-        Mon, 10 Mar 2025 14:58:00 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741643880; x=1742248680;
+Received: by mail-qt1-f182.google.com with SMTP id d75a77b69052e-47692b9d059so11960641cf.3;
+        Mon, 10 Mar 2025 15:01:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741644092; x=1742248892; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :subject:cc:to:from:date:feedback-id:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=jZqba3gVX41zqsOhdc28XH+vmCDKWwigOXcxvppEBtM=;
-        b=sgchSa2q9H99I7SuKK4LxRbgQu8xwHwZ3lTBiajys/Wg/yAFA/nkDhp/yt9UdXIWhZ
-         S3Ifz6Sw6KRMS3lVT6bae5poghlMTyHRHiqV7ymMTQDH2Y5UZsHnfSJQldkigvFrBPH8
-         bYoGC5XnkW7+SGfpLLYevCpIDI5nGorDK4XgIOvHk1TWDrkgzj3ldBoGboI7jD4ALHht
-         bSv1bmVfgbGaaNygQL/A3cS+2u66YLt1xx7UhEHlNu4TACYng3wBa+5YPzBdHGT832kf
-         A8prndzLLXumAi2VX3O7u4h+eW1e5PI16tynzjj+MhhGK1prb8yf4JWaVR+7EURlWa7r
-         CdUg==
-X-Forwarded-Encrypted: i=1; AJvYcCVEKkTYqNeYQNbhxdIiL6jbkxbsqEYGWLfOqn0aOvdjbQIz0REDu6WlmAHKEUXnoF7rqpxke+EJNYyP@vger.kernel.org, AJvYcCVKqYUrwQVO/PwLh6T4+1nHO/CzZJLNkuZJ8kIFFsyx9J70mIjWjJQFptVI2Ugg2eiHrFmbHMtQS3Xgbvo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxVQCTFmCbBYgw7DMutRemszgoEPuXSpJxgd1E+UvqE9lYEqGz/
-	feOfdBlrn1QWLKZCqx7McMtEFouMrvklgzks2FJI0kUfNKHyQxqg
-X-Gm-Gg: ASbGncsoh8/j1Kxn0vG3MLg7Gh00HO937tVqPW77NU9K4tZXb65p42CSQRONKOBT6Ra
-	sgzpgr0vuZ2ILD9nqtizOwdoWq0oGe3ildzEYE8AzHvwbs3TBLyy1HFWrnwBd4XRWG9YeqLYxXN
-	EkfGXDo633WYGUkRDLeBZVHnk1bQjseEprPa57yQt+y65pUAde4UmXwEFiy3cXpLJ/HycC6RJZd
-	d5Bq2/dEc0DZ81NjU0ynox8MBxwX0vjuugIXPxLiXIIR75HYm8OiTVQc7xMxoix6EsP5lbFCk1H
-	t3WnXjJ/4NcYh4oZPDFY0KW2eOHYKS2cnrz7n8ZsVslNRS7Kyp0iP9hB7wD0vw4Mm0LLlZKwQjP
-	3cqM=
-X-Google-Smtp-Source: AGHT+IGyxv4vNjjG7KaJ3iyPdfXj74x7uGlGIgwHhUObVU0+SSpA387sqH72IQVZOID5ZMrgBJYuhQ==
-X-Received: by 2002:a17:902:f94d:b0:223:5a6e:b2c with SMTP id d9443c01a7336-2242889a729mr153897815ad.17.1741643880051;
-        Mon, 10 Mar 2025 14:58:00 -0700 (PDT)
-Received: from localhost (fpd11144dd.ap.nuro.jp. [209.17.68.221])
-        by smtp.gmail.com with UTF8SMTPSA id d2e1a72fcca58-736cf005d87sm3571543b3a.49.2025.03.10.14.57.59
+        bh=HdvztV2UNV3iREuCFs0Tdfwyn+fNoCwFXjwdeFVOfSQ=;
+        b=XZ2+0vFc7NvqdZ3b22VFdllKwfmI3lwfAbfW7OIE6EgBV/w2PUgj3lYEYiZrbjVDh2
+         GvjJnInN4F023bGMXyV4ZKAgUwGY3aTpyROWpG2MrwSi6grDywG6M9AlsfmXjeN1hf8y
+         6LAbMLBi3ebMyA7bKUiaqScThPpOfLPIYB9+QKTo56RXeqKroZaTI3B4bBQcWC1RlvnL
+         vJUkHEkWoUZghDXhqtHWN1NleDbZuplIsk6YYFgw8VRZjxxXMX8WOa1qMI6GT2KmPsqc
+         vxwvARzMShIu8A7CxFPuEQFcipUSjmihDzPddHSotStI9srfuvaQ4uhhzzAidwd3MQqB
+         8Tug==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741644092; x=1742248892;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:feedback-id:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=HdvztV2UNV3iREuCFs0Tdfwyn+fNoCwFXjwdeFVOfSQ=;
+        b=IRpdlnEtoxWNkxvXA3ZzB1/2uIdfAghS9JkWYjYqHmAiSKU3fOgFZtBCwffFMc8FaS
+         31+TOb3zrJxC7xX7xIVWM/D7TbeuyPJc8f4m16b5ydJok2JU59it7XloEi1CBPTT+ta3
+         0cuQQisxozr70WcDVwCGL6SWO/WQKSSQEx7mfR5RgPvCchc/NzXmf7xbgClV5TXXqjZo
+         /lnZVmxKAdxD1wyoLkrARHCeRXK+0u2tpFdav6As1tSa6BYeLfqqBYWwiyhbP3858Mpw
+         4e4z1gm8jBwSmsSSHUPyZm3FnrVRwoLyCR7ADo3IoQTiMYO0aJNZG02CRUgcmxQ/Z3dZ
+         Qd/g==
+X-Forwarded-Encrypted: i=1; AJvYcCVFbQGeY/3rkjy0U3Aeo+oZBm+7qXGUPQbh3yjzfbPg8jv02f4+rD3MIYtGTGdygKDfARr8Yedf555gZWo=@vger.kernel.org, AJvYcCXdTfhKqIlUlKKHb1QbYEXOyhPKyQyQ9R6UQ0jz58gEMBdfk3KboYjpzUMt67Ap7G93CeqhScrN562YOw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzFUQcbM9AxvuAOnNiBJ9KRLoZdJoMUkyVzEeNSqCfW7OEM30S+
+	TZKUj2K4Kj0xh03C/095fGQ4Yy+8klS7dhErbp6Sa87jOpUdSGbd
+X-Gm-Gg: ASbGncuWj01PEExYtA3eaFqMR60p/3e/Uq+R2har6IxN244pI90iGXQb5haZ9x3vJV9
+	OoJ7exQdF0Xr16EMpAyKpJc94uRCR+YUbjbrSKPwOGh687//bcyRcYcUso7qm8wZCJGugqFTZ/q
+	bM2GElyfr/UywBzr3reAAocx859i+k1wPxycTPpcV/J5Hb05vgcqwcPu/Gee6ZZ67sxHuef0TIN
+	cUmB3T5NBqwAv5YxS5FJchmMVflTstvYl4yZ2WGwG+HLaPIFQ2VNSXenOunfY9UbTShX0/0jYSV
+	WHqqNwfXNKyLK65kIyMN0dNnqxTyJLN97AThbxD3Le9SXzRmzPNBpE0vXRBtGfSTLANvwCXHwV7
+	qmGtYqOzdFlBUKn5Oq2yY1EN3gMP43omdC0I=
+X-Google-Smtp-Source: AGHT+IGgfkNiTKs8kRaKzx2N3m1Fc8TyKDQeFkvs47dX2/pWYXkac/Rft4eDWhDswO/2IL0+VU0SOQ==
+X-Received: by 2002:a05:6214:c83:b0:6e8:f0f8:67f7 with SMTP id 6a1803df08f44-6e9005f7742mr240510936d6.16.1741644091816;
+        Mon, 10 Mar 2025 15:01:31 -0700 (PDT)
+Received: from fauth-a1-smtp.messagingengine.com (fauth-a1-smtp.messagingengine.com. [103.168.172.200])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6e8f715b604sm62622926d6.77.2025.03.10.15.01.31
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 10 Mar 2025 14:57:59 -0700 (PDT)
-Date: Tue, 11 Mar 2025 06:57:56 +0900
-From: Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>
-To: Richard Zhu <hongxing.zhu@nxp.com>
-Cc: manivannan.sadhasivam@linaro.org, robh@kernel.org,
-	lpieralisi@kernel.org, l.stach@pengutronix.de, shawnguo@kernel.org,
-	bhelgaas@google.com, s.hauer@pengutronix.de, festevam@gmail.com,
-	linux-pci@vger.kernel.org, imx@nxp.com,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	kernel@pengutronix.de
-Subject: Re: [PATCH v1] PCI: imx6: Use devm_clk_bulk_get_all to fetch clocks
-Message-ID: <20250310215756.GC2377483@rocinante>
-References: <20250226025628.1681206-1-hongxing.zhu@nxp.com>
+        Mon, 10 Mar 2025 15:01:31 -0700 (PDT)
+Received: from phl-compute-08.internal (phl-compute-08.phl.internal [10.202.2.48])
+	by mailfauth.phl.internal (Postfix) with ESMTP id E64ED120006A;
+	Mon, 10 Mar 2025 18:01:30 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-08.internal (MEProxy); Mon, 10 Mar 2025 18:01:30 -0400
+X-ME-Sender: <xms:OmHPZ2m0a_6OvXyfpt-LryyWqCFxc2N3PfzWiuqupdxkSeLFi7q6Kg>
+    <xme:OmHPZ91CtL4uFdiRLGsYEBiaobWKFfFnhVUDGrzhsVIKvLp613qVRUiMq7kyhVEGn
+    VpvTAU91ocJCXkCAQ>
+X-ME-Received: <xmr:OmHPZ0pe72fZpPP-RThW2PpFwZ1LcIapqNDg3ivvo7TApvHcIU6YTCXAzBM>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdduvddtgeelucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
+    pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
+    gvnhhtshculddquddttddmnecujfgurhepfffhvfevuffkfhggtggujgesthdtredttddt
+    vdenucfhrhhomhepuehoqhhunhcuhfgvnhhguceosghoqhhunhdrfhgvnhhgsehgmhgrih
+    hlrdgtohhmqeenucggtffrrghtthgvrhhnpeehudfgudffffetuedtvdehueevledvhfel
+    leeivedtgeeuhfegueevieduffeivdenucevlhhushhtvghrufhiiigvpedtnecurfgrrh
+    grmhepmhgrihhlfhhrohhmpegsohhquhhnodhmvghsmhhtphgruhhthhhpvghrshhonhgr
+    lhhithihqdeiledvgeehtdeigedqudejjeekheehhedvqdgsohhquhhnrdhfvghngheppe
+    hgmhgrihhlrdgtohhmsehfihigmhgvrdhnrghmvgdpnhgspghrtghpthhtohepledpmhho
+    uggvpehsmhhtphhouhhtpdhrtghpthhtohepshhfrhestggrnhgsrdgruhhughdrohhrgh
+    drrghupdhrtghpthhtohepphgruhhlmhgtkheskhgvrhhnvghlrdhorhhgpdhrtghpthht
+    ohepfhhrvgguvghrihgtsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehnvggvrhgrjh
+    druhhprgguhhihrgihsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehurhgviihkihes
+    ghhmrghilhdrtghomhdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrd
+    hkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhnvgigthesvhhgvghrrdhk
+    vghrnhgvlhdrohhrghdprhgtphhtthhopehjohgvlhgrghhnvghlfhesnhhvihguihgrrd
+    gtohhmpdhrtghpthhtohepsghoqhhunhesfhhigihmvgdrnhgrmhgv
+X-ME-Proxy: <xmx:OmHPZ6kNvaz28UEYti2nC-R6PoHx_vonAQGoerVIt2bNP3DSac3zPg>
+    <xmx:OmHPZ01r1Mim8dUjXYgWAWxLdFrEP9KQYxcxHQe3pAi7PrT7KwDtKg>
+    <xmx:OmHPZxt6u4xfk0UnRfTd-DaAVu7LfhPq5vLjM_9xKXlRJARC7ozeYw>
+    <xmx:OmHPZwXRCMmz4V33wK3nZjKxK9T-1Co5L6vQpGRfr1FozYsVy7l5kg>
+    <xmx:OmHPZ_1J2JPpJSilgX-3DfLM_pkQ3JfKMIO1ZUxoTtHYrj16y7vX0TQi>
+Feedback-ID: iad51458e:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
+ 10 Mar 2025 18:01:30 -0400 (EDT)
+Date: Mon, 10 Mar 2025 15:00:09 -0700
+From: Boqun Feng <boqun.feng@gmail.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: "Paul E. McKenney" <paulmck@kernel.org>,
+	Frederic Weisbecker <frederic@kernel.org>,
+	Neeraj Upadhyay <neeraj.upadhyay@kernel.org>,
+	Uladzislau Rezki <urezki@gmail.com>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>,
+	Joel Fernandes <joelagnelf@nvidia.com>
+Subject: Re: linux-next: Signed-off-by missing for commit in the rcu tree
+Message-ID: <Z89g6ZXRHQUq8WyV@boqun-archlinux>
+References: <20250311081301.6a22ab25@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -78,14 +128,32 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250226025628.1681206-1-hongxing.zhu@nxp.com>
+In-Reply-To: <20250311081301.6a22ab25@canb.auug.org.au>
 
-Hello,
+On Tue, Mar 11, 2025 at 08:13:01AM +1100, Stephen Rothwell wrote:
+> Hi all,
+> 
+> Commits
+> 
+>   fcb83ae12343 ("Revert "rcu/nocb: Fix rcuog wake-up from offline softirq"")
+>   c37cf754ebf5 ("rcu: Remove swake_up_one_online() bandaid")
+> 
+> are missing a Signed-off-by from their committer.
+> 
 
-> Use devm_clk_bulk_get_all() to simple clock handle codes. No function
-> changes.
+Thanks for spotting this. These two are likely for the next next merge
+windows (i.e. for 6.16), and presumably they will be handled by Joel
+(Cced), so I deliberately avoid putting my SoB there.
 
-Applied to controller/imx6, thank you!
+But I guess it won't hurt to add my SoB for -next purpose. Will fix this
+later.
 
-	Krzysztof
+Regards,
+Boqun
+
+> -- 
+> Cheers,
+> Stephen Rothwell
+
+
 
