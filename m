@@ -1,333 +1,411 @@
-Return-Path: <linux-kernel+bounces-554047-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-554048-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BCB6AA59226
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 12:00:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id C296AA59227
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 12:00:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2C7463AA5B3
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 10:58:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7219F3B2514
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 10:59:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8F7722A811;
-	Mon, 10 Mar 2025 10:57:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D23F02288C6;
+	Mon, 10 Mar 2025 10:58:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jlHxb33F"
-Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=pm.me header.i=@pm.me header.b="sLYnl8SX"
+Received: from mail-4316.protonmail.ch (mail-4316.protonmail.ch [185.70.43.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2747E22A4F2;
-	Mon, 10 Mar 2025 10:57:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01FE8227E93
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 10:57:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741604270; cv=none; b=cx2JRddgYeo96RmXKvKxA3C+oprUmm/3iUrS/vxi72vqthp405GScbxreY6pH+2SeirKmp5sWAY0TGTjCM+ba/AWcnZ7lQ1LnWiYbVVr0cFaAj3b7YKop8PKu0XHh/psDiVf49z6BVx6y5lt5YQYY0slJmWso5DY1gwmkaD8yMo=
+	t=1741604280; cv=none; b=RbHVR7EyQgMW8yXvkRH1//eRlHCsPAv/gIQBaP7gMyf+aYUfzjROlLLUS8XHDiqnxuPN0gLVJh2aYNUEnENmSGNAtP9pU1e2xdnsA//3xnkmZXKNLmaASqLWA1j4wjTpOYB2I00CTCYNTXHDZIdja2snbxVgP9crzezZTQRfq9A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741604270; c=relaxed/simple;
-	bh=uJw9kg+WhrQUC7QeXnlkc/WQDIPvPu+MedSuKX9lsr8=;
-	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Lp8Bk7aJb0875OV4ZyQECwJdK3bs6YLmaiPbWSMenbPpvtVZVkIhxCVrdS6UkS7xv02u99L5jB0vcL6TGKNXkBF+8aJnbxNf3UjUPMVPGFVF2zcTHwHth3CntNTsjEu0ezKYq3MFYKggQJq5TXt5NKeFBB5mGipHT0L56Polwt0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jlHxb33F; arc=none smtp.client-ip=209.85.208.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-5e677f59438so1883723a12.2;
-        Mon, 10 Mar 2025 03:57:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741604266; x=1742209066; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:subject:cc
-         :to:from:date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=xOafrjis4rlmeWlptFsFh4bdDZx32GpWyV/5UBeU/58=;
-        b=jlHxb33FBbeXqj69/Y6HC1kBy3cJPLikdjGq7C/Nv5uVXEnHXawr6dujFDynFkH3fo
-         uzl3X6ZjhAhxjWrw79CUTNqMVkQtHK7z0oDZfgxCznJVDYPMM1vz7qXLUF9uVoBuHCvS
-         bmit1bGA7hSmPmkI1hj2qIE9RJ3salxRFIHKglaqj6toyz9g7PyYVT3f6BvKwkqxlliW
-         BMP1g7V74g5PTAUXQ2AaF6bryPqtT4VSCBcY/3/CDbzgarHSGVu/olllU7L2BMby4AGR
-         b4ZoWeT6bBOd3TATD5/HB6AHcVfVv72QXSh0FVvzMWWB9ww6rpXCSgR+gfaIDHyHhudO
-         lqFw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741604266; x=1742209066;
-        h=in-reply-to:content-disposition:mime-version:references:subject:cc
-         :to:from:date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=xOafrjis4rlmeWlptFsFh4bdDZx32GpWyV/5UBeU/58=;
-        b=YE9Ty67KnaPDYQRk4URBS2pgyJlqW+XXj4i4SvtJbpa/MxzAJP/E2OCS+zEGJc83RD
-         JzqROlOnLsi4ZpsteZDy3+z2pNTbmV+Ge/fWgbOBTKN8B8uRUVaVqkb/1MxBsA4GcZMx
-         f8vuyyuIfFlenXPUIRB4eL48y2QZKwyH530/BUhKxSV54yRNKSZNTD6UeJ7kCePx5X7a
-         0q3LcvjegLtycp/05Rii7892ujFfe3f2yO9h8vWlSmOEQs5Gax9d5o17ceyCeHINNgPT
-         4fjMzDzVXdvJH0W98gu0cvhE2rmG+NyUPnA3lftBQ+wmgRfwdS6Dk3Qbl+vqSABdvFe1
-         OeVA==
-X-Forwarded-Encrypted: i=1; AJvYcCWDUMa+n5t6E6B+bkOzVYcS9f7LhA88QVD6AC92DBgO7jpLuMjPFTiwr7WLvNbQEdCJDWGxSsFS@vger.kernel.org, AJvYcCX8S6i7ggDarWaCHNx59T9qSV7s7vsgni0K6WmM8GlB6H3Cwznyx2X+VQO9kquAg6xuwLyLeIJsl95JhsJ7@vger.kernel.org, AJvYcCXsyzP+TVbcZ8IKP32ZxqFEGSXuLYCK+05FVHOBUPMQhqrmnwcXIhRdt3ZRiMtrZZA8bpjUCitTylKo@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxqdr0qa/AEwm8fYfjzDEoNAvWrhiLiSRmE2m49Zpq4kuvxEVqs
-	LD5crBQNkhkKtIfCTeAos6pLBuhrlqlAw9VR99KeK+FLBC5/OCNq
-X-Gm-Gg: ASbGncvrHoOCIQZr8OBOnP0RjUnQcFkSKbxZf0AP8FYA3yNSUGGumbrf6IeT9H7Ur48
-	xKP6790UCsS0+xbJoWUkxfbXTngZQ52zdLhVBQm/+kWr4JD69ho+tKO1s7JTqiFDXz1bYQJkEwf
-	Vr9SzQJh7pQ0bS5rSfrXobioasvh6u9hZc6opEnrYvYuwcufFKApg+4txppebRYY2XDtyw6tmHi
-	NlykuphJtCo6o8JYGQHbO038Q4Au+DFcjbApQkwwdcMgjEzG9BfGsQ18A7tKi1iZGYqunYcxHfL
-	uZXegbu9vfeM7m7mYJXG80wH40779Gz9eFZeMX9hNQ==
-X-Google-Smtp-Source: AGHT+IGLrFwyyNplAxUO1/Ogn4TU95VnBR/ptGo3XUAJNa2IReXJQVvMshhinBV/v52EUsoHkt8Upg==
-X-Received: by 2002:a17:907:94cb:b0:abf:40a2:40c8 with SMTP id a640c23a62f3a-ac252ae1b6emr1330310766b.28.1741604266018;
-        Mon, 10 Mar 2025 03:57:46 -0700 (PDT)
-Received: from Ansuel-XPS. ([85.119.46.8])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac2856445b1sm321901566b.60.2025.03.10.03.57.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 10 Mar 2025 03:57:45 -0700 (PDT)
-Message-ID: <67cec5a9.170a0220.93f86.9dcf@mx.google.com>
-X-Google-Original-Message-ID: <Z87FpUEtUUQYB6s-@Ansuel-XPS.>
-Date: Mon, 10 Mar 2025 11:57:41 +0100
-From: Christian Marangi <ansuelsmth@gmail.com>
-To: "Russell King (Oracle)" <linux@armlinux.org.uk>
-Cc: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Vladimir Oltean <olteanv@gmail.com>,
-	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Maxime Chevallier <maxime.chevallier@bootlin.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org, netdev@vger.kernel.org,
-	upstream@airoha.com
-Subject: Re: [net-next PATCH v12 12/13] net: dsa: Add Airoha AN8855 5-Port
- Gigabit DSA Switch driver
-References: <20250309172717.9067-1-ansuelsmth@gmail.com>
- <20250309172717.9067-13-ansuelsmth@gmail.com>
- <Z83WgMeg_IxgbxhO@shell.armlinux.org.uk>
+	s=arc-20240116; t=1741604280; c=relaxed/simple;
+	bh=TJugW9qRmuA5oYe1TVo0wUzv7Efg6z9e8snaknO8MGs=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=i/g6r6iOCvLOzfrC2gMrKQ+iljugNJ8onBPhI5dnCy9JEWiFTW400zQdlB19bKdVTB+84AV80C1iA3eeWzuY+p/oCrQ8qoDo4fuB7FdVJ/4c1b1h6OoGVirKPgXNEgVjqrtvAzQ77kKC69Th4UAOp3w4QBILQw4CK/ZPiANxV20=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pm.me; spf=pass smtp.mailfrom=pm.me; dkim=pass (2048-bit key) header.d=pm.me header.i=@pm.me header.b=sLYnl8SX; arc=none smtp.client-ip=185.70.43.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pm.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pm.me
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pm.me;
+	s=protonmail3; t=1741604274; x=1741863474;
+	bh=2lDf8dq/WG7sVxkTl4G1A2xfuBb4q1lzSGrMrbLyXs8=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector:List-Unsubscribe:List-Unsubscribe-Post;
+	b=sLYnl8SXGBMT9Cl3dFLmQR7LGMUmEQa5bR+arMMPCUqXa+HKhWD4BlLmlQ6Sem1CH
+	 5q50wKLl8Yz+Yy6AYIojHMzUjCRQLTIJ45Jbq5r+u53x5JwQfHvbC2HQfnMrlxiwIo
+	 95+5YpzveROj+LGyuo7yffXv4q1mktBFZi/79bdbU6d5Ipzz25DnjEPLpBey54IoEf
+	 HSzu9QW2twy8///rUsFhO1kdpy4NU52XnL3JRjcWpC4Qfo2Rg6uHVIKdakvNrNsskG
+	 giex8A0OmZKlCkMdGT00hrPRGfWyAUVNXGTqWhqBm7ZgyKLZ42NjPsgLhT2fzGirCH
+	 KRbbese+h7bTQ==
+Date: Mon, 10 Mar 2025 10:57:47 +0000
+To: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, Asahi Lina <lina@asahilina.net>
+From: Oliver Mangold <oliver.mangold@pm.me>
+Cc: rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, Oliver Mangold <oliver.mangold@pm.me>
+Subject: [PATCH v7 4/4] rust: adding OwnableRefCounted and SimpleOwnableRefCounted
+Message-ID: <20250310-unique-ref-v7-4-4caddb78aa05@pm.me>
+In-Reply-To: <20250310-unique-ref-v7-0-4caddb78aa05@pm.me>
+References: <20250310-unique-ref-v7-0-4caddb78aa05@pm.me>
+Feedback-ID: 31808448:user:proton
+X-Pm-Message-ID: f81b6abac87746fd99aa4c9bc405baef6d8e08b0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z83WgMeg_IxgbxhO@shell.armlinux.org.uk>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On Sun, Mar 09, 2025 at 05:57:20PM +0000, Russell King (Oracle) wrote:
-> On Sun, Mar 09, 2025 at 06:26:57PM +0100, Christian Marangi wrote:
-> > +static int an8855_port_enable(struct dsa_switch *ds, int port,
-> > +			      struct phy_device *phy)
-> > +{
-> > +	struct an8855_priv *priv = ds->priv;
-> > +
-> > +	return regmap_set_bits(priv->regmap, AN8855_PMCR_P(port),
-> > +			       AN8855_PMCR_TX_EN | AN8855_PMCR_RX_EN);
-> 
-> Shouldn't you wait for phylink to call your mac_link_up() method?
->
+Types implementing one of these traits can safely convert between an
+ARef<T> and an Owned<T>.
 
-Did something change recently for this? I checked the pattern for other
-driver and port enable normally just enable TX/RX traffic for the port.
+Signed-off-by: Oliver Mangold <oliver.mangold@pm.me>
+---
+ rust/kernel/types.rs | 275 +++++++++++++++++++++++++++++++++++++++++++++++=
+++++
+ 1 file changed, 275 insertions(+)
 
-Any hint for this?
+diff --git a/rust/kernel/types.rs b/rust/kernel/types.rs
+index e6f3308f931d90718d405443c3034a216388e0af..3e703701b2bccf1a440f4064b6d=
+d90afb204d937 100644
+--- a/rust/kernel/types.rs
++++ b/rust/kernel/types.rs
+@@ -552,6 +552,12 @@ fn from(b: &T) -> Self {
+     }
+ }
+=20
++impl<T: OwnableRefCounted> From<Owned<T>> for ARef<T> {
++    fn from(b: Owned<T>) -> Self {
++        T::into_shared(b)
++    }
++}
++
+ impl<T: RefCounted> Drop for ARef<T> {
+     fn drop(&mut self) {
+         // SAFETY: The type invariants guarantee that the `ARef` owns the =
+reference
+@@ -669,6 +675,275 @@ fn drop(&mut self) {
+     }
+ }
+=20
++/// A trait for objects that can be wrapped in either one of the reference=
+ types [`Owned`] and
++/// [`ARef`].
++///
++/// # Safety
++///
++/// Implementers must ensure that:
++///
++/// - Both the safety requirements for [`Ownable`] and [`RefCounted`] are =
+fulfilled.
++/// - The uniqueness invariant of [`Owned`] is upheld until dropped.
++/// - [`try_from_shared()`](OwnableRefCounted::into_shared) only returns a=
+n [`Owned`] if exactly
++///   one [`ARef`] exists.
++/// - [`into_shared()`](OwnableRefCounted::into_shared) set the reference =
+count to the value which
++///   the returned [`ARef`] expects for an object with a single reference
++///   in existence. This implies that if [`into_shared()`](OwnableRefCount=
+ed::into_shared) is left
++///   on the default implementation, which just rewraps the underlying obj=
+ect, the reference count
++///   needs not to be modified when converting a [`Owned`] to an [`ARef`].
++///
++/// # Examples
++///
++/// A minimal example implementation of [`OwnableRefCounted`], [`Ownable`]=
+ and its usage with
++/// [`ARef`] and [`Owned`] looks like this:
++///
++/// ```
++/// # #![expect(clippy::disallowed_names)]
++/// use core::cell::Cell;
++/// use core::ptr::NonNull;
++/// use kernel::alloc::{flags, kbox::KBox, AllocError};
++/// use kernel::types::{
++///     ARef, RefCounted, Owned, Ownable, OwnableRefCounted,
++/// };
++///
++/// struct Foo {
++///     refcount: Cell<usize>,
++/// }
++///
++/// impl Foo {
++///     fn new() -> Result<Owned<Self>, AllocError> {
++///         // Use a `KBox` to handle the actual allocation.
++///         let result =3D KBox::new(
++///             Foo {
++///                 refcount: Cell::new(1),
++///             },
++///             flags::GFP_KERNEL,
++///         )?;
++///         let result =3D NonNull::new(KBox::into_raw(result))
++///             .expect("Raw pointer to newly allocation KBox is null, thi=
+s should never happen.");
++///         // SAFETY: We just allocated the `Foo`, thus it is valid.
++///         Ok(unsafe { Owned::from_raw(result) })
++///     }
++/// }
++///
++/// // SAFETY: We increment and decrement each time the respective functio=
+n is called and only free
++/// // the `Foo` when the refcount reaches zero.
++/// unsafe impl RefCounted for Foo {
++///     fn inc_ref(&self) {
++///         self.refcount.replace(self.refcount.get() + 1);
++///     }
++///
++///     unsafe fn dec_ref(this: NonNull<Self>) {
++///         // SAFETY: The underlying object is always valid when the func=
+tion is called.
++///         let refcount =3D unsafe { &this.as_ref().refcount };
++///         let new_refcount =3D refcount.get() - 1;
++///         if new_refcount =3D=3D 0 {
++///             // The `Foo` will be dropped when `KBox` goes out of scope=
+.
++///             // SAFETY: The `Box<Foo>` is still alive as the old refcou=
+nt is 1.
++///             unsafe { KBox::from_raw(this.as_ptr()) };
++///         } else {
++///             refcount.replace(new_refcount);
++///         }
++///     }
++/// }
++///
++/// // SAFETY: We only convert into an `Owned` when the refcount is 1.
++/// unsafe impl OwnableRefCounted for Foo {
++///     fn try_from_shared(this: ARef<Self>) -> Result<Owned<Self>, ARef<S=
+elf>> {
++///         if this.refcount.get() =3D=3D 1 {
++///             // SAFETY: The `Foo` is still alive as the refcount is 1.
++///             Ok(unsafe { Owned::from_raw(ARef::into_raw(this)) })
++///         } else {
++///             Err(this)
++///         }
++///     }
++/// }
++///
++/// // SAFETY: We are not `AlwaysRefCounted`.
++/// unsafe impl Ownable for Foo {
++///     unsafe fn release(this: NonNull<Self>) {
++///         // SAFETY: Using `dec_ref()` from `RefCounted` to release is o=
+kay, as the refcount is
++///         // always 1 for an `Owned<Foo>`.
++///         unsafe{ Foo::dec_ref(this) };
++///     }
++/// }
++///
++/// let foo =3D Foo::new().unwrap();
++/// let mut foo =3D ARef::from(foo);
++/// {
++///     let bar =3D foo.clone();
++///     assert!(Owned::try_from(bar).is_err());
++/// }
++/// assert!(Owned::try_from(foo).is_ok());
++/// ```
++pub unsafe trait OwnableRefCounted: RefCounted + Ownable + Sized {
++    /// Checks if the [`ARef`] is unique and convert it to an [`Owned`] it=
+ that is that case.
++    /// Otherwise it returns again an [`ARef`] to the same underlying obje=
+ct.
++    fn try_from_shared(this: ARef<Self>) -> Result<Owned<Self>, ARef<Self>=
+>;
++    /// Converts the [`Owned`] into an [`ARef`].
++
++    fn into_shared(this: Owned<Self>) -> ARef<Self> {
++        // SAFETY: Safe by the requirements on implementing the trait.
++        unsafe { ARef::from_raw(Owned::into_raw(this)) }
++    }
++}
++
++/// This trait allows to implement all of [`Ownable`], [`RefCounted`] and
++/// [`OwnableRefCounted`] together in a simplified way,
++/// only requiring to provide the methods [`inc_ref()`](SimpleOwnableRefCo=
+unted::inc_ref),
++/// [`dec_ref()`](SimpleOwnableRefCounted::dec_ref),
++/// and [`is_unique()`](SimpleOwnableRefCounted::is_unique).
++///
++/// For non-standard cases where conversion between [`Ownable`] and [`RefC=
+ounted`] needs
++/// or [`Ownable::release()`] and [`RefCounted::dec_ref()`] cannot be the =
+same method,
++/// [`Ownable`], [`RefCounted`] and [`OwnableRefCounted`] should be implem=
+ented manually.
++///
++/// # Safety
++///
++/// Implementers must ensure that:
++///
++/// - Both the safety requirements as for [`Ownable`] and [`RefCounted`] a=
+re fulfilled.
++/// - [`is_unique`](SimpleOwnableRefCounted::is_unique) must only return `=
+true` in case only one
++///   [`ARef`] exists and it is impossible for one to be obtained other th=
+an by cloning an existing
++///   [`ARef`] or converting an [`Owned`] to an [`ARef`].
++/// - It is safe to convert an unique [`ARef`] into an [`Owned`] simply by=
+ re-wrapping the
++///   underlying object without modifying the refcount.
++///
++/// # Examples
++///
++/// A minimal example implementation of [`SimpleOwnableRefCounted`]
++/// and its usage with [`ARef`] and [`Owned`] looks like this:
++///
++/// ```
++/// # #![expect(clippy::disallowed_names)]
++/// use core::cell::Cell;
++/// use core::ptr::NonNull;
++/// use kernel::alloc::{flags, kbox::KBox, AllocError};
++/// use kernel::types::{
++///     ARef, SimpleOwnableRefCounted, Owned,
++/// };
++///
++/// struct Foo {
++///     refcount: Cell<usize>,
++/// }
++///
++/// impl Foo {
++///     fn new() -> Result<Owned<Self>, AllocError> {
++///         // Use a KBox to handle the actual allocation.
++///         let result =3D KBox::new(
++///             Foo {
++///                 refcount: Cell::new(1),
++///             },
++///             flags::GFP_KERNEL,
++///         )?;
++///         let result =3D NonNull::new(KBox::into_raw(result))
++///             .expect("Raw pointer to newly allocation KBox is null, thi=
+s should never happen.");
++///         // SAFETY: We just allocated the `Foo`, thus it is valid.
++///         Ok(unsafe { Owned::from_raw(result) })
++///     }
++/// }
++///
++/// // SAFETY: we ensure that:
++/// // - The `Foo` is only dropped when the refcount is zero.
++/// // - `is_unique()` only returns `true` when the refcount is 1.
++/// unsafe impl SimpleOwnableRefCounted for Foo {
++///     fn inc_ref(&self) {
++///         self.refcount.replace(self.refcount.get() + 1);
++///     }
++///
++///     unsafe fn dec_ref(this: NonNull<Self>) {
++///         // SAFETY: The underlying object is always valid when the func=
+tion is called.
++///         let refcount =3D unsafe { &this.as_ref().refcount };
++///         let new_refcount =3D refcount.get() - 1;
++///         if new_refcount =3D=3D 0 {
++///             // The `Foo` will be dropped when KBox goes out of scope.
++///             // SAFETY: The `Box<Foo>` is still alive as the old refcou=
+nt is 1.
++///             unsafe { KBox::from_raw(this.as_ptr()) };
++///         } else {
++///             refcount.replace(new_refcount);
++///         }
++///     }
++///
++///     fn is_unique(&self) -> bool {
++///         self.refcount.get() =3D=3D 1
++///     }
++/// }
++///
++/// let foo =3D Foo::new().unwrap();
++/// let mut foo =3D ARef::from(foo);
++/// {
++///     let bar =3D foo.clone();
++///     assert!(Owned::try_from(bar).is_err());
++/// }
++/// assert!(Owned::try_from(foo).is_ok());
++/// ```
++pub unsafe trait SimpleOwnableRefCounted {
++    /// Checks if exactly one [`ARef`] to the object exists. In case the o=
+bject is [`Sync`], the
++    /// check needs to be race-free.
++    fn is_unique(&self) -> bool;
++
++    /// Increments the reference count on the object.
++    fn inc_ref(&self);
++
++    /// Decrements the reference count on the object when the [`SimpleOwna=
+bleRefCounted`] is
++    /// dropped.
++    ///
++    /// Frees the object when the count reaches zero.
++    ///
++    /// # Safety
++    ///
++    /// The safety constraints for [`RefCounted::dec_ref`] and [`Ownable::=
+release`] both apply to
++    /// this method, as it will be used to implement both of these traits.
++    unsafe fn dec_ref(obj: NonNull<Self>);
++}
++
++#[cfg_attr(RUSTC_HAS_DO_NOT_RECOMMEND, diagnostic::do_not_recommend)]
++// SAFETY: Safe by the requirements on implementation of [`SimpleOwnableRe=
+fCounted`].
++unsafe impl<T: SimpleOwnableRefCounted> OwnableRefCounted for T {
++    fn try_from_shared(this: ARef<Self>) -> Result<Owned<Self>, ARef<Self>=
+> {
++        if T::is_unique(&*this) {
++            // SAFETY: Safe by the requirements on implementation of [`Sim=
+pleOwnable`].
++            Ok(unsafe { Owned::from_raw(ARef::into_raw(this)) })
++        } else {
++            Err(this)
++        }
++    }
++}
++
++#[cfg_attr(RUSTC_HAS_DO_NOT_RECOMMEND, diagnostic::do_not_recommend)]
++// SAFETY: Safe by the requirements on implementation of [`SimpleOwnableRe=
+fCounted`].
++unsafe impl<T: SimpleOwnableRefCounted> Ownable for T {
++    unsafe fn release(this: NonNull<Self>) {
++        // SAFETY: Safe by the requirements on implementation of
++        // [`SimpleOwnableRefCounted::dec_ref()`].
++        unsafe { SimpleOwnableRefCounted::dec_ref(this) };
++    }
++}
++
++#[cfg_attr(RUSTC_HAS_DO_NOT_RECOMMEND, diagnostic::do_not_recommend)]
++// SAFETY: Safe by the requirements on implementation of [`SimpleOwnableRe=
+fCounted`].
++unsafe impl<T: SimpleOwnableRefCounted> RefCounted for T {
++    fn inc_ref(&self) {
++        SimpleOwnableRefCounted::inc_ref(self);
++    }
++
++    unsafe fn dec_ref(this: NonNull<Self>) {
++        // SAFETY: Safe by the requirements on implementation of
++        // [`SimpleOwnableRefCounted::dec_ref()`].
++        unsafe { SimpleOwnableRefCounted::dec_ref(this) };
++    }
++}
++
++impl<T: OwnableRefCounted> TryFrom<ARef<T>> for Owned<T> {
++    type Error =3D ARef<T>;
++    /// Tries to convert the [`ARef`] to an [`Owned`] by calling
++    /// [`try_from_shared()`](OwnableRefCounted::try_from_shared). In case=
+ the [`ARef`] is not
++    /// unique, it returns again an [`ARef`] to the same underlying object=
+.
++    fn try_from(b: ARef<T>) -> Result<Owned<T>, Self::Error> {
++        T::try_from_shared(b)
++    }
++}
++
+ /// A sum type that always holds either a value of type `L` or `R`.
+ ///
+ /// # Examples
 
-> > +}
-> > +
-> > +static void an8855_port_disable(struct dsa_switch *ds, int port)
-> > +{
-> > +	struct an8855_priv *priv = ds->priv;
-> > +	int ret;
-> > +
-> > +	ret = regmap_clear_bits(priv->regmap, AN8855_PMCR_P(port),
-> > +				AN8855_PMCR_TX_EN | AN8855_PMCR_RX_EN);
-> > +	if (ret)
-> > +		dev_err(priv->ds->dev, "failed to disable port: %d\n", ret);
-> 
-> Doesn't the link get set down before this is called? IOW, doesn't
-> phylink call your mac_link_down() method first?
-> 
-> ...
-> 
-> > +static void an8855_phylink_mac_link_up(struct phylink_config *config,
-> > +				       struct phy_device *phydev, unsigned int mode,
-> > +				       phy_interface_t interface, int speed,
-> > +				       int duplex, bool tx_pause, bool rx_pause)
-> > +{
-> > +	struct dsa_port *dp = dsa_phylink_to_port(config);
-> > +	struct an8855_priv *priv = dp->ds->priv;
-> > +	int port = dp->index;
-> > +	u32 reg;
-> > +
-> > +	reg = regmap_read(priv->regmap, AN8855_PMCR_P(port), &reg);
-> > +	if (phylink_autoneg_inband(mode)) {
-> > +		reg &= ~AN8855_PMCR_FORCE_MODE;
-> > +	} else {
-> > +		reg |= AN8855_PMCR_FORCE_MODE | AN8855_PMCR_FORCE_LNK;
-> > +
-> > +		reg &= ~AN8855_PMCR_FORCE_SPEED;
-> > +		switch (speed) {
-> > +		case SPEED_10:
-> > +			reg |= AN8855_PMCR_FORCE_SPEED_10;
-> > +			break;
-> > +		case SPEED_100:
-> > +			reg |= AN8855_PMCR_FORCE_SPEED_100;
-> > +			break;
-> > +		case SPEED_1000:
-> > +			reg |= AN8855_PMCR_FORCE_SPEED_1000;
-> > +			break;
-> > +		case SPEED_2500:
-> > +			reg |= AN8855_PMCR_FORCE_SPEED_2500;
-> > +			break;
-> > +		case SPEED_5000:
-> > +			dev_err(priv->ds->dev, "Missing support for 5G speed. Aborting...\n");
-> > +			return;
-> > +		}
-> > +
-> > +		reg &= ~AN8855_PMCR_FORCE_FDX;
-> > +		if (duplex == DUPLEX_FULL)
-> > +			reg |= AN8855_PMCR_FORCE_FDX;
-> > +
-> > +		reg &= ~AN8855_PMCR_RX_FC_EN;
-> > +		if (rx_pause || dsa_port_is_cpu(dp))
-> > +			reg |= AN8855_PMCR_RX_FC_EN;
-> > +
-> > +		reg &= ~AN8855_PMCR_TX_FC_EN;
-> > +		if (rx_pause || dsa_port_is_cpu(dp))
-> > +			reg |= AN8855_PMCR_TX_FC_EN;
-> > +
-> > +		/* Disable any EEE options */
-> > +		reg &= ~(AN8855_PMCR_FORCE_EEE5G | AN8855_PMCR_FORCE_EEE2P5G |
-> > +			 AN8855_PMCR_FORCE_EEE1G | AN8855_PMCR_FORCE_EEE100);
-> 
-> Why? Maybe consider implementing the phylink tx_lpi functions for EEE
-> support.
-> 
+--=20
+2.48.1
 
-Will do, I disabled this as the EEE rework was being approved.
 
-> > +	}
-> > +
-> > +	reg |= AN8855_PMCR_TX_EN | AN8855_PMCR_RX_EN;
-> > +
-> > +	regmap_write(priv->regmap, AN8855_PMCR_P(port), reg);
-> > +}
-> > +
-> > +static unsigned int an8855_pcs_inband_caps(struct phylink_pcs *pcs,
-> > +					   phy_interface_t interface)
-> > +{
-> > +	/* SGMII can be configured to use inband with AN result */
-> > +	if (interface == PHY_INTERFACE_MODE_SGMII)
-> > +		return LINK_INBAND_DISABLE | LINK_INBAND_ENABLE;
-> > +
-> > +	/* inband is not supported in 2500-baseX and must be disabled */
-> > +	return  LINK_INBAND_DISABLE;
-> 
-> Spurious double space.
-> 
-
-Will drop.
-
-> > +}
-> > +
-> > +static void an8855_pcs_get_state(struct phylink_pcs *pcs, unsigned int neg_mode,
-> > +				 struct phylink_link_state *state)
-> > +{
-> > +	struct an8855_priv *priv = container_of(pcs, struct an8855_priv, pcs);
-> > +	u32 val;
-> > +	int ret;
-> > +
-> > +	ret = regmap_read(priv->regmap, AN8855_PMSR_P(AN8855_CPU_PORT), &val);
-> > +	if (ret < 0) {
-> > +		state->link = false;
-> > +		return;
-> > +	}
-> > +
-> > +	state->link = !!(val & AN8855_PMSR_LNK);
-> > +	state->an_complete = state->link;
-> > +	state->duplex = (val & AN8855_PMSR_DPX) ? DUPLEX_FULL :
-> > +						  DUPLEX_HALF;
-> > +
-> > +	switch (val & AN8855_PMSR_SPEED) {
-> > +	case AN8855_PMSR_SPEED_10:
-> > +		state->speed = SPEED_10;
-> > +		break;
-> > +	case AN8855_PMSR_SPEED_100:
-> > +		state->speed = SPEED_100;
-> > +		break;
-> > +	case AN8855_PMSR_SPEED_1000:
-> > +		state->speed = SPEED_1000;
-> > +		break;
-> > +	case AN8855_PMSR_SPEED_2500:
-> > +		state->speed = SPEED_2500;
-> > +		break;
-> > +	case AN8855_PMSR_SPEED_5000:
-> > +		dev_err(priv->ds->dev, "Missing support for 5G speed. Setting Unknown.\n");
-> > +		fallthrough;
-> 
-> Which is wrong now, we have SPEED_5000.
-> 
-
-Maybe the comments weren't so clear. The Switch doesn't support the
-speed... Even if it does have bits, the switch doesn't support it. And
-the 2500 speed is really only for the CPU port. The user port are only
-gigabit.
-
-> > +	default:
-> > +		state->speed = SPEED_UNKNOWN;
-> > +		break;
-> > +	}
-> > +
-> > +	if (val & AN8855_PMSR_RX_FC)
-> > +		state->pause |= MLO_PAUSE_RX;
-> > +	if (val & AN8855_PMSR_TX_FC)
-> > +		state->pause |= MLO_PAUSE_TX;
-> > +}
-> > +
-> > +static int an8855_pcs_config(struct phylink_pcs *pcs, unsigned int neg_mode,
-> > +			     phy_interface_t interface,
-> > +			     const unsigned long *advertising,
-> > +			     bool permit_pause_to_mac)
-> > +{
-> > +	struct an8855_priv *priv = container_of(pcs, struct an8855_priv, pcs);
-> > +	u32 val;
-> > +	int ret;
-> > +
-> > +	/*                   !!! WELCOME TO HELL !!!                   */
-> > +
-> [... hell ...]
-
-Will drop :( It was an easter egg for the 300 lines to configure PCS.
-
-> > +	ret = regmap_write(priv->regmap, AN8855_MSG_RX_LIK_STS_2,
-> > +			   AN8855_RG_RXFC_AN_BYPASS_P3 |
-> > +			   AN8855_RG_RXFC_AN_BYPASS_P2 |
-> > +			   AN8855_RG_RXFC_AN_BYPASS_P1 |
-> > +			   AN8855_RG_TXFC_AN_BYPASS_P3 |
-> > +			   AN8855_RG_TXFC_AN_BYPASS_P2 |
-> > +			   AN8855_RG_TXFC_AN_BYPASS_P1 |
-> > +			   AN8855_RG_DPX_AN_BYPASS_P3 |
-> > +			   AN8855_RG_DPX_AN_BYPASS_P2 |
-> > +			   AN8855_RG_DPX_AN_BYPASS_P1 |
-> > +			   AN8855_RG_DPX_AN_BYPASS_P0);
-> > +	if (ret)
-> > +		return ret;
-> > +
-> > +	return 0;
-> 
-> Is this disruptive to the link if the link is up, and this is called
-> (e.g. to change the advertisement rather than switch interface mode).
-> If so, please do something about that - e.g. only doing the bulk of
-> the configuration if the interface mode has changed.
-
-Airoha confirmed this is not disruptive, applying these config doesn't
-terminate or disrupt the link.
-
-> 
-> I guess, however, that as you're only using SGMII with in-band, it
-> probably doesn't make much difference, but having similar behaviour
-> in the various drivers helps with ongoing maintenance.
-
-Do we have some driver that implement the logic of skipping the bulk of
-configuration if the mode doesn't change?
-
-Maybe we can introduce some kind of additional OP like .init to apply
-the very initial configuration that are not related to the mode.
-Or something like .setup?
-
--- 
-	Ansuel
 
