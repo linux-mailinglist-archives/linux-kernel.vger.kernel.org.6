@@ -1,99 +1,219 @@
-Return-Path: <linux-kernel+bounces-554385-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-554386-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1CC1DA59717
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 15:09:12 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 36936A59719
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 15:09:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 22ED1188A4AB
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 14:09:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 614CE16B66D
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 14:09:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54A8722B586;
-	Mon, 10 Mar 2025 14:09:01 +0000 (UTC)
-Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com [209.85.216.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C414C22B8B8;
+	Mon, 10 Mar 2025 14:09:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="EQFIjUpq"
+Received: from relay9-d.mail.gandi.net (relay9-d.mail.gandi.net [217.70.183.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 726141BC3F;
-	Mon, 10 Mar 2025 14:08:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EADD71BC3F;
+	Mon, 10 Mar 2025 14:09:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741615741; cv=none; b=L8BugTsz/FccTSSWgv7dnDRtEg5uvNpTdJfJUeemUVI6jenknCBY6lxB7cjTgKjCMbzcP7mSHklmYgLN4h0Ft0Fqx58DCC7tARzWX0lQAnRO89CWh1Jf5f+moaYDja0dfTUvgGuSoT+czSbTf2dyEMdniNejLH/GN+86390kDXg=
+	t=1741615747; cv=none; b=nWFV79oBPvJQeTEgavwfAC/rXy+h/kUw2vH4YN07ekyQ7UreDvCTss6pQcORweAO14r9u0tVoiQYVWBxRie/Pytt6KHtUIfIO2nFK8t0YOKbdtKGqWv0ERxysojkCNgSFXAtefUu3q2vLby2xC9OGOzyJBu0r8/BAyUYi6GCupw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741615741; c=relaxed/simple;
-	bh=G9UCyT4l2O7OPqWEYczeSa9LdWLjRYlkeGLEDf74u7M=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mc0shlOdz9w+qxiLPfDTxMNatFZD+sfJcelJ+rE/FlPqXGRpxsD3v75WUExy171DxRrRoBe6ESkKxIUaGJqTxryAm6HtIYz8XQHUvso+pA2vYygEvRAvNtl9/59su/hEvyLuj2Cv/5KUgL0rhmq/SnTRKY5rnZJP6OL0wxdmLnE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.216.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-2ff187f027fso7050155a91.1;
-        Mon, 10 Mar 2025 07:08:59 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741615739; x=1742220539;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+5h3SYBfql4omWneWaJdQkRmE/9NSxl9a8mqADi7ZGk=;
-        b=PhPfgQEPOiUfrw6Vv3llUrXq7MvGgsiU5bMW7+KUEMsdT/KdqzE/b79kfqhq81fdYW
-         JfjhD8AWhX/MBtwRGoJ1zTL6FN3SuYVJGPvEL7+zDQW3lgzA1eMUjZHofAxmEkARgMn7
-         oQKHh/Zkq8pBNGqaL+T7MqWBMmUzN8bBbftDeHp0iPPCa8lCkqej2400oIyt2xV3fYsH
-         psTixxlo/CSY9ZiLkMtYstv+rFlctRkIDX9L3VPe/0ZwVOE2mNAILgUhiyGZQqHsuBzs
-         V4eOvwySCV+pn5DbQH9ZEVSneqvR5zCbgKqSw54ZnwBS+iy7K/Ug6zBEBHyXOicMHaCw
-         xtPw==
-X-Forwarded-Encrypted: i=1; AJvYcCUPwyVK3U7kGIXsrd+BDYQfLNxJuexmIQFLbMt+ccOAyVsB85EU3A/kF2aAV9uk7VkL7VZkhdjrT6s=@vger.kernel.org, AJvYcCVRfN3Mvd1OLjH9gtOJEzB9P9BdpClEyx1P9oJxfWOvlM7Ad8r0gy0U/cv2etciOrdet4onZMKJuh926Zc=@vger.kernel.org, AJvYcCXCRHr+ahsw2eH2PIOpFzPP+au/Z4Y2mCOseHW+OIAt9yoFVaEqu2fkrX8vChia7FJ2gOSsynWE3jy7@vger.kernel.org
-X-Gm-Message-State: AOJu0YzULJ0UdxbRRaNsT2J1CxKvVEX6PLWJGrB1AVMkcJNFb1y5O1UJ
-	6lU98vXnDyKI4UaGtcfY18XRZHIqmmemp+mxFJCDhDI+Tyixbkch
-X-Gm-Gg: ASbGncu7hnPckFA6JpaZrxfcuQPOTTo6XVqFf6/fsgyikVvx7XK48FArb74kmv/5sP4
-	e/Gtj+wBSnW4WLz51tOtzNEcHGZF+EtfnBaQ/gzVYOEjghDK8nKyTd0qFgUv5S+gDTWQJKldFZh
-	txBwmXjZ1i/9cUws8e0RZuMH9pVelHj50l++K15e6vJ1FoxcxJ+BmG8vyLWF4Zr1Re0Uar4QgHw
-	RlRfQXnnAvern8zmiFj0OjSAw5i7GdOmIpeuLM+/Rs1pljgPK1GsobF/c1ugcbpKB542qbjyZzo
-	Gui3Tdi6bbf16rJcnx5VQWgoh9ECKo40fiFnJuxOPW9X8hJHDtURenwdL3nd6yg14YtX185yWa/
-	o/MU=
-X-Google-Smtp-Source: AGHT+IGM03p5/Tv4OSxiEnrj/kqKi0xIfZxggxmIHwKPrBc3mn2mA+uLMTqTyaovlOHrDWE4UWWstA==
-X-Received: by 2002:a17:90a:dfc8:b0:2ff:4a8d:74f9 with SMTP id 98e67ed59e1d1-2ffbc16c85dmr14827875a91.10.1741615738498;
-        Mon, 10 Mar 2025 07:08:58 -0700 (PDT)
-Received: from localhost (fpd11144dd.ap.nuro.jp. [209.17.68.221])
-        by smtp.gmail.com with UTF8SMTPSA id 98e67ed59e1d1-2ff6933997csm8012298a91.9.2025.03.10.07.08.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 10 Mar 2025 07:08:58 -0700 (PDT)
-Date: Mon, 10 Mar 2025 23:08:56 +0900
-From: Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>
-To: webgeek1234@gmail.com
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
-	Viresh Kumar <viresh.kumar@linaro.org>,
-	Sumit Gupta <sumitg@nvidia.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
-	Vidya Sagar <vidyas@nvidia.com>, linux-pm@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org
-Subject: Re: [PATCH 0/2] (no cover subject)
-Message-ID: <20250310140856.GB3334010@rocinante>
-References: <20250224-build-tegra234-v1-0-39e4e912f968@gmail.com>
+	s=arc-20240116; t=1741615747; c=relaxed/simple;
+	bh=oRbVaKtnF4PmdP78IKDl4VhfEJ4QclxPJCQxWxPGGZA=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=KjYEmqX0cWR4DEpJtHejdgJWeu9wk/idiIIV5RlOId5EbVXspGHBojiF1Q4smokX6GALwbz605xVqG2wKw5vL2TncLpXo3D9GFNBiQm26RO7ZXDsdr+W2FUkPDFV67baHvIsXnfpUp+MQE37lz8S3ADJPdk2qJ6QO1w6rlGZ1Ck=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=EQFIjUpq; arc=none smtp.client-ip=217.70.183.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id B4FCC442C0;
+	Mon, 10 Mar 2025 14:09:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1741615743;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=kQoA35KV6qH9O+kb5ibj+NzTP3DR8xoqxecJpDELOu8=;
+	b=EQFIjUpqzQoXsi5bWv6Yldt1iIxTAre/8DDmloAsguOEM/KAbhHiUKB5SmIY95uftYh2S0
+	ryXaOM0g1bCy4jj3jWqQSHLCIaQuGhaM9w2/AHTYh4kVCOe59zTlIdykZ38nXDwT2ZoCtV
+	vUbkM+zulOMuOGwKa/FaFARPqRjoXbRtOwCp8ApzllhIAS8SHOzpR4SLxjUzOmlRQYV0N8
+	zzWfQnfG60nLg00bq6/g8izWgwCIC0JtDGTugt2m5aNW972BxgoF5138BNUBdWoMTlS92w
+	pqLfd6Vm3xVDC5ktK8S+LFunS0d67Q9n/d0BB75A4A00bSllDCYjdZMwJqysVQ==
+Date: Mon, 10 Mar 2025 15:08:58 +0100
+From: Kory Maincent <kory.maincent@bootlin.com>
+To: Elad Nachman <enachman@marvell.com>
+Cc: Andrew Lunn <andrew@lunn.ch>, Taras Chornyi <taras.chornyi@plvision.eu>,
+ "davem@davemloft.net" <davem@davemloft.net>, "edumazet@google.com"
+ <edumazet@google.com>, "kuba@kernel.org" <kuba@kernel.org>,
+ "pabeni@redhat.com" <pabeni@redhat.com>, "thomas.petazzoni@bootlin.com"
+ <thomas.petazzoni@bootlin.com>, "miquel.raynal@bootlin.com"
+ <miquel.raynal@bootlin.com>, "przemyslaw.kitszel@intel.com"
+ <przemyslaw.kitszel@intel.com>, "dkirjanov@suse.de" <dkirjanov@suse.de>,
+ "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [EXTERNAL] Re: [PATCH v2 0/5] Fix prestera driver fail to probe
+ twice
+Message-ID: <20250310150858.6bbf4114@kmaincent-XPS-13-7390>
+In-Reply-To: <BN9PR18MB4251B1533E14523AEADBA22FDB342@BN9PR18MB4251.namprd18.prod.outlook.com>
+References: <20240320172008.2989693-1-enachman@marvell.com>
+	<4104387a-d7b5-4029-b822-060ef478c6e3@lunn.ch>
+	<BN9PR18MB42517F8E84C8C18078E45C37DB322@BN9PR18MB4251.namprd18.prod.outlook.com>
+	<89a01616-57c2-4338-b469-695bdc731dee@lunn.ch>
+	<BL1PR18MB42488523A5E05291EA57D0AEDB372@BL1PR18MB4248.namprd18.prod.outlook.com>
+	<6dae31dc-8c4f-4b8d-80e4-120619119326@lunn.ch>
+	<BN9PR18MB4251B1533E14523AEADBA22FDB342@BN9PR18MB4251.namprd18.prod.outlook.com>
+Organization: bootlin
+X-Mailer: Claws Mail 4.0.0 (GTK+ 3.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250224-build-tegra234-v1-0-39e4e912f968@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdduudelheehucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpeffhffvvefukfgjfhhoofggtgfgsehtqhertdertdejnecuhfhrohhmpefmohhrhicuofgrihhntggvnhhtuceokhhorhihrdhmrghinhgtvghnthessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepudetgefgvddvkeelvdfgteetkeefvdeghfeivdeiudefkefgkefhveeiteelleevnecuffhomhgrihhnpehprhhoohhfphhoihhnthdrtghomhdpkhgvrhhnvghlrdhorhhgpdgsohhothhlihhnrdgtohhmnecukfhppeegiedrudekkedrvdefledruddtnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepgeeirddukeekrddvfeelrddutddphhgvlhhopehkmhgrihhntggvnhhtqdgirffuqddufedqjeefledtpdhmrghilhhfrhhomhepkhhorhihrdhmrghinhgtvghnthessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepudegpdhrtghpthhtohepvghnrggthhhmrghnsehmrghrvhgvlhhlrdgtohhmpdhrtghpthhtoheprghnughrvgifsehluhhnnhdrtghhpdhrtghpthhtohepthgrrhgrshdrtghhohhrnhihihesphhlvhhishhiohhnrdgvuhdprhgtphhtthhop
+ egurghvvghmsegurghvvghmlhhofhhtrdhnvghtpdhrtghpthhtohepvgguuhhmrgiivghtsehgohhoghhlvgdrtghomhdprhgtphhtthhopehkuhgsrgeskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepphgrsggvnhhisehrvgguhhgrthdrtghomhdprhgtphhtthhopehthhhomhgrshdrphgvthgriiiiohhnihessghoohhtlhhinhdrtghomh
+X-GND-Sasl: kory.maincent@bootlin.com
 
-Hello,
+Hello,=20
 
-> When Tegra234 support was added to existing Tegra drivers, many of them
-> did not have the matching Kconfig entries updated to allow building for
-> the arch. A few of those have already been fixed. This series fixes a
-> couple more.
+I am just coming back to this series of fixes.
+Indeed the 30s in case of probe defer are hard to accept but if it solves t=
+he
+issue for now shouldn't we merge it? Andrew, Jakub what do you think?
 
-A similar patch has been posted earlier.  Have a look at the conversation there:
+If not, we could at least merge patches 3 to 5 which are unrelated.
 
-  https://lore.kernel.org/linux-pci/20250128044244.2766334-1-vidyas@nvidia.com/
+Reviewed-by: Kory Maincent <kory.maincent@bootlin.com>
 
-Thank you!
+Regards,
 
-	Krzysztof
+
+On Wed, 27 Mar 2024 17:27:41 +0000
+Elad Nachman <enachman@marvell.com> wrote:
+
+> Hi Andrew,
+>=20
+> We have made internal technical review of the issues you have raised (ret=
+urn
+> version API, try to get version API before starting to initialize and load
+> the firmware, clear configuration API) versus the delay saved (almost 30
+> seconds minus several seconds to perform and complete the API calls) - ar=
+ound
+> 20 seconds or so.
+>=20
+> Existing customers we have talked to seem to be able to cope with the
+> existing delay.
+>=20
+> Unfortunately, the amount of coding and testing involved with saving thes=
+e 20
+> seconds or so is beyond our available development manpower at this specif=
+ic
+> point in time.
+>=20
+> Unfortunately, we will have to defer making the development you have
+> requested to a later period in time.
+>=20
+> Elad.
+>=20
+>=20
+> > -----Original Message-----
+> > From: Andrew Lunn <andrew@lunn.ch>
+> > Sent: Sunday, March 24, 2024 5:25 PM
+> > To: Elad Nachman <enachman@marvell.com>
+> > Cc: Taras Chornyi <taras.chornyi@plvision.eu>; davem@davemloft.net;
+> > edumazet@google.com; kuba@kernel.org; pabeni@redhat.com;
+> > kory.maincent@bootlin.com; thomas.petazzoni@bootlin.com;
+> > miquel.raynal@bootlin.com; przemyslaw.kitszel@intel.com;
+> > dkirjanov@suse.de; netdev@vger.kernel.org; linux-kernel@vger.kernel.org
+> > Subject: Re: [EXTERNAL] Re: [PATCH v2 0/5] Fix prestera driver fail to =
+probe
+> > twice
+> >  =20
+>  [...] =20
+> > problem. =20
+>  [...] =20
+> > >
+> > > No, the PoE is the general high level application where he noted the =
+=20
+> > problem. =20
+> > > There is no PoE code nor special PoE resources in the Prestera driver=
+. =20
+> >=20
+> > So here is K=C3=B6ry email:
+> >=20
+> > https://urldefense.proofpoint.com/v2/url?u=3Dhttps-
+> > 3A__lore.kernel.org_netdev_20240208101005.29e8c7f3-40kmaincent-2DXPS-
+> > 2D13-2D7390_T_-
+> > 23mb898bb2a4bf07776d79f1a19b6a8420716ecb4a3&d=3DDwIDAw&c=3DnKjWec2
+> > b6R0mOyPaz7xtfQ&r=3DeTeNTLEK5-
+> > TxXczjOcKPhANIFtlB9pP4lq9qhdlFrwQ&m=3DSD1MhKC11sFmp4Q8l76N_DgGdac
+> > 4aMCTdPsa7Pofb73HEqAGtJ-1p0-
+> > etIyyldC7&s=3DVWat9LPub52H3nUez4itmkpuMipnYD3Ngn-paFC9wd4&e=3D
+> >=20
+> > I don't see why the prestera needs to be involved in PoE itself. It is =
+just
+> > a MAC. PoE happens much lower down in the network stack. Same as Preste=
+ra
+> > uses phylink, it does not need to know about the PHYs or the SFP module=
+s,
+> > phylink manages them, not prestera.
+> >  =20
+> > > The problem was caused because the module exit was lacking the so
+> > > called "switch HW reset" API call which would cause the firmware to
+> > > exit to the firmware loader on the firmware CPU, and move to the state
+> > > in the state machine when it can receive new firmware from the host
+> > > CPU (running the Prestera switchDev driver).
+> > > =20
+>  [...] =20
+>  [...] =20
+>  [...] =20
+> > >
+> > > There is no existing API/ABI for that. =20
+> >=20
+> > Do you at least have the ability to determine if an API call exists or =
+not?
+> > It sounds like your firmware needs extending to support returning the
+> > version. If the API is missing, you know it is 4.1 or older. If it does
+> > exist, it will return 4.2 or higher.
+> >  =20
+>  [...] =20
+> > >
+> > > Exactly.
+> > > =20
+>  [...] =20
+> > >
+> > > Right. And there is also the configuration. There is no telling what
+> > > kind of Configuration the existing firmware is running. Just using the
+> > > existing firmware Will lead to the situation where Linux kernel side
+> > > will report certain configuration (via ip link / ip addr / tc , etc.)=
+ but
+> > > the =20
+> > firmware configuration is completely different.
+> >=20
+> > Well, during probe and -EPRODE_DEFER, linux has no configuration, since=
+ the
+> > driver failed to probe. However, for a rmmod/modprobe, the firmware cou=
+ld
+> > have stale configuration. However pretty much every device i've come ac=
+ross
+> > has the concept of a software reset which clears out the configuration.
+> > Seems to be something else your firmware is missing.
+> >=20
+> > 	Andrew =20
+
+
+
+--=20
+K=C3=B6ry Maincent, Bootlin
+Embedded Linux and kernel engineering
+https://bootlin.com
 
