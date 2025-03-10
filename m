@@ -1,101 +1,138 @@
-Return-Path: <linux-kernel+bounces-554520-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-554521-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 25CE8A5993A
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 16:11:17 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B69A6A5993D
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 16:11:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C467F188A972
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 15:11:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C0F833A9067
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 15:11:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96B6822CBCC;
-	Mon, 10 Mar 2025 15:11:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2701922D4DE;
+	Mon, 10 Mar 2025 15:11:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=janestreet.com header.i=@janestreet.com header.b="M11WnA1F"
-Received: from mxout5.mail.janestreet.com (mxout5.mail.janestreet.com [64.215.233.18])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gjok9gkM"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA44622541D
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 15:11:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=64.215.233.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7643D22B8D2;
+	Mon, 10 Mar 2025 15:11:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741619471; cv=none; b=S8Z4oSuyy6AC4Kg5x8zz39MoXOCVQJ5h5kJSiHVNJfu53rpHHbxievyjrBl0cX793CMu7EAk1pj3jGT22HCKXo3C9zNXb8gzJb1iXC1v2ysDgb2cXhG3xG/uOwZRLcspZBGhWbAiQKoIjJEao446mC8TlbJlbQeXHpWPYHhDsqk=
+	t=1741619471; cv=none; b=hIhvDeC2Gw8p8MyqQk1dvBbdjW5oOh7md8+2ygrcVgHbIG/+xSen6wBfIJ9yR6yCLlPBvS4HPW+Hmxl0iDwBbFF5h+BpnS/ggxB+z7ONsiNlHQMfrlhSmpAeRRd5Wv+n/ueXd6I/96ud//mG/9oq0qN0v0qsTy+mcpMzWPyboA0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1741619471; c=relaxed/simple;
-	bh=sagrptvYS45f2KkZS4wyUyei87EBblAN2ua2KPLJjpY=;
+	bh=atd+PUJZNIOrqCwFpaInjw5P9puj5TcBLXrLKnepJLc=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=Sr+4g2TQ0fQvAg9NuBNLbtpDm5Tk1VDicohEw0CRIds9pOsNBVN32HRgyrqbamsd+gs7GA1wmRzxZzD3j4RW5W8DtKoDk9Lo/ZuPzQ7f/URFC3stKa7CLcDH6nYgUGAo5dUx81s8aNulBilbBwLvF+gE4q8BT/2SPefJqeGgyRM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=janestreet.com; spf=pass smtp.mailfrom=janestreet.com; dkim=pass (2048-bit key) header.d=janestreet.com header.i=@janestreet.com header.b=M11WnA1F; arc=none smtp.client-ip=64.215.233.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=janestreet.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=janestreet.com
-Date: Mon, 10 Mar 2025 11:11:02 -0400
-From: Nikhil Jha <njha@janestreet.com>
-To: njha@janestreet.com
-Cc: Trond Myklebust <trondmy@kernel.org>, Anna Schumaker <anna@kernel.org>,
- 	Chuck Lever <chuck.lever@oracle.com>,
- 	Jeff Layton <jlayton@kernel.org>, Neil Brown <neilb@suse.de>,
- 	Olga Kornievskaia <okorniev@redhat.com>,
- 	Dai Ngo <Dai.Ngo@oracle.com>, Tom Talpey <tom@talpey.com>,
- 	linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 0/2] fix gss seqno handling to be more rfc-compliant
-Message-ID: <20250310A15110284b71e58.njha@janestreet.com>
+	 Content-Disposition:In-Reply-To; b=tGKK4Aqxo6oUDtVf3E5aItBl2cNBS1SsVkQCrUVkylUg9dTwv8h7CjRw58LyLdcnynU+YZCiBPZ7MvnpOgRJ85sjAA5xf9jfPCgtwbWArYJt8toDaUELcXWMAHx0dYTVBd9BbiCH1DTXKjGyHq3y9liQLK7LqYrW8/Sa4tYKHKk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gjok9gkM; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B093DC4CEEF;
+	Mon, 10 Mar 2025 15:11:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741619470;
+	bh=atd+PUJZNIOrqCwFpaInjw5P9puj5TcBLXrLKnepJLc=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=gjok9gkMjFNUJMrB2dSFP20dG5MFn7ciouO2+4x4hxhoxDYl9c5fWmVN3QffQhhPI
+	 E/Vb86Y/PO2Py7XNnZmgS9eCGTSyWtPQ3d8xFM7SqUDAp9uMiN2hjVGECHZ9UeHPLX
+	 Ci7y2irDK/Rx0tcOfOQJytkBCpzi4PtXFjKnMebcC3mjLfkEAJlrUIYRgU0w3lfl4t
+	 s4MROwNpDJY5UJjQ2mOf7p6/tU+LYXxNtE/BUxidtLN/YgsRbgOhPT4bwD7LvPFpZf
+	 GztVz0hEL+LG/uAZtJC2NQoNjgGAeP6kHiqPcjdol6//isZLLS2SVma16WKPUbmTjp
+	 sbMN3nL1VrIIw==
+Date: Mon, 10 Mar 2025 10:11:09 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Richard Zhu <hongxing.zhu@nxp.com>
+Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+	shawnguo@kernel.org, l.stach@pengutronix.de, lpieralisi@kernel.org,
+	kw@linux.com, manivannan.sadhasivam@linaro.org, bhelgaas@google.com,
+	s.hauer@pengutronix.de, festevam@gmail.com,
+	devicetree@vger.kernel.org, linux-pci@vger.kernel.org,
+	imx@lists.linux.dev, kernel@pengutronix.de,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 2/2] PCI: imx6: Use domain number replace the hardcodes
+Message-ID: <20250310151109.GA540579@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=janestreet.com;
-  s=waixah; t=1741619462;
-  bh=8+j4RZQxEvPp50n/z3AP4/HWcFwA5ubLD58W/xz/5cI=;
-  h=Date:From:To:Cc:Subject;
-  b=M11WnA1FgrQPOLsZ2FIwMG5sk/gf2v6X65fqWb+RvQbr33rTSTmP7ZuIzNHUlCMSY
-  tbqeEfHXmms1lM8CbnvQYCoPddYFarOb9qYNUeBdqyju2TpOoEoR7j0BhhGpIdqIUs
-  eB7zHoGMZQ/qd+5c2BBkNv1FUeGwH3MSIeu7H7zHpA3fVorQmz501gGOGcjJLCISou
-  H7Qeb5tB3Bd1fl51nzObEBmR2PStPo4Z0tTjaWIg918Ef810mMMjIveoGGMRfxE7pv
-  LYYrYyUHfQLAGdE0nr5gyEZsvNyq642CNABb5dBgcjNX3l/i+3kw2zOW58GOdsDu0O
-  4T/SnH2jjmVWQ==
+In-Reply-To: <20250226024256.1678103-3-hongxing.zhu@nxp.com>
 
-When the client retransmits an operation (for example, because the
-server is slow to respond), a new GSS sequence number is associated with
-the XID. In the current kernel code the original sequence number is
-discarded. Subsequently, if a response to the original request is
-received there will be a GSS sequence number mismatch. A mismatch will
-trigger another retransmit, possibly repeating the cycle, and after some
-number of failed retries EACCES is returned.
+On Wed, Feb 26, 2025 at 10:42:56AM +0800, Richard Zhu wrote:
+> Use the domain number replace the hardcodes to uniquely identify
+> different controller on i.MX8MQ platforms. No function changes.
+> 
+> Signed-off-by: Richard Zhu <hongxing.zhu@nxp.com>
+> ---
+>  drivers/pci/controller/dwc/pci-imx6.c | 14 ++++++--------
+>  1 file changed, 6 insertions(+), 8 deletions(-)
+> 
+> diff --git a/drivers/pci/controller/dwc/pci-imx6.c b/drivers/pci/controller/dwc/pci-imx6.c
+> index 90ace941090f..ab9ebb783593 100644
+> --- a/drivers/pci/controller/dwc/pci-imx6.c
+> +++ b/drivers/pci/controller/dwc/pci-imx6.c
+> @@ -41,7 +41,6 @@
+>  #define IMX8MQ_GPR_PCIE_CLK_REQ_OVERRIDE	BIT(11)
+>  #define IMX8MQ_GPR_PCIE_VREG_BYPASS		BIT(12)
+>  #define IMX8MQ_GPR12_PCIE2_CTRL_DEVICE_TYPE	GENMASK(11, 8)
+> -#define IMX8MQ_PCIE2_BASE_ADDR			0x33c00000
+>  
+>  #define IMX95_PCIE_PHY_GEN_CTRL			0x0
+>  #define IMX95_PCIE_REF_USE_PAD			BIT(17)
+> @@ -1474,7 +1473,6 @@ static int imx_pcie_probe(struct platform_device *pdev)
+>  	struct dw_pcie *pci;
+>  	struct imx_pcie *imx_pcie;
+>  	struct device_node *np;
+> -	struct resource *dbi_base;
+>  	struct device_node *node = dev->of_node;
+>  	int i, ret, req_cnt;
+>  	u16 val;
+> @@ -1515,10 +1513,6 @@ static int imx_pcie_probe(struct platform_device *pdev)
+>  			return PTR_ERR(imx_pcie->phy_base);
+>  	}
+>  
+> -	pci->dbi_base = devm_platform_get_and_ioremap_resource(pdev, 0, &dbi_base);
+> -	if (IS_ERR(pci->dbi_base))
+> -		return PTR_ERR(pci->dbi_base);
 
-RFC2203, section 5.3.3.1 suggests a possible solution... “cache the
-RPCSEC_GSS sequence number of each request it sends” and "compute the
-checksum of each sequence number in the cache to try to match the
-checksum in the reply's verifier." This is what FreeBSD’s implementation
-does (rpc_gss_validate in sys/rpc/rpcsec_gss/rpcsec_gss.c).
+This makes me wonder.
 
-However, even with this cache, retransmits directly caused by a seqno
-mismatch can still cause a bad message interleaving that results in this
-bug. The RFC already suggests ignoring incorrect seqnos on the server
-side, and this seems symmetric, so this patchset also applies that
-behavior to the client as well.
+IIUC this means that previously we set controller_id to 1 if the first
+item in devicetree "reg" was 0x33c00000, and now we will set
+controller_id to 1 if the devicetree "linux,pci-domain" property is 1.
+This is good, but I think this new dependency on the correct
+"linux,pci-domain" in devicetree should be mentioned in the commit
+log.
 
-These two patches are *not* dependent on each other. I tested them by
-delaying packets with a Python script hooked up to NFQUEUE. If it would
-be helpful I can send this script along as well.
+My bigger worry is that we no longer set pci->dbi_base at all.  I see
+that the only use of pci->dbi_base in pci-imx6.c was to determine the
+controller_id, but this is a DWC-based driver, and the DWC core
+certainly uses pci->dbi_base.  Are we sure that none of those DWC core
+paths are important to pci-imx6.c?
 
-Nikhil Jha (2):
-  sunrpc: implement rfc2203 rpcsec_gss seqnum cache
-  sunrpc: don't retransmit on seqno events
-
- include/linux/sunrpc/xprt.h    | 31 +++++++++++++++++++++++++++++-
- net/sunrpc/auth_gss/auth_gss.c | 35 +++++++++++++++++++++++-----------
- net/sunrpc/clnt.c              |  9 +++++++--
- net/sunrpc/xprt.c              |  1 +
- 4 files changed, 62 insertions(+), 14 deletions(-)
-
--- 
-2.39.3
-
+>  	/* Fetch GPIOs */
+>  	imx_pcie->reset_gpiod = devm_gpiod_get_optional(dev, "reset", GPIOD_OUT_HIGH);
+>  	if (IS_ERR(imx_pcie->reset_gpiod))
+> @@ -1565,8 +1559,12 @@ static int imx_pcie_probe(struct platform_device *pdev)
+>  	switch (imx_pcie->drvdata->variant) {
+>  	case IMX8MQ:
+>  	case IMX8MQ_EP:
+> -		if (dbi_base->start == IMX8MQ_PCIE2_BASE_ADDR)
+> -			imx_pcie->controller_id = 1;
+> +		ret = of_get_pci_domain_nr(node);
+> +		if (ret < 0 || ret > 1)
+> +			return dev_err_probe(dev, -ENODEV,
+> +					     "failed to get valid pcie domain\n");
+> +		else
+> +			imx_pcie->controller_id = ret;
+>  		break;
+>  	default:
+>  		break;
+> -- 
+> 2.37.1
+> 
 
