@@ -1,145 +1,318 @@
-Return-Path: <linux-kernel+bounces-554350-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-554351-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DDBBBA596A1
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 14:46:42 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 09947A596A5
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 14:47:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9CBB33A5A42
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 13:46:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3A83C167A28
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 13:47:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF14322A807;
-	Mon, 10 Mar 2025 13:46:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAB1122A80A;
+	Mon, 10 Mar 2025 13:47:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HG4g0V2V"
-Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="l30mavZT"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 747431F956;
-	Mon, 10 Mar 2025 13:46:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33818229B18;
+	Mon, 10 Mar 2025 13:47:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741614396; cv=none; b=EBGDxlvUd3J1ibXZDAS9nhieDaEg1TVA5dAydxtJeFLWenNNumXHYeDnGzXNFxKRaUw8qvqBP2bPEPBjk/4Mbm9lNB/4eKyZsb3tVB5x6ocGZvZLjuyHodTnzK+e5CVU2eFJW7Qk6CikusFrYhD53IegBUYNeOCdUMS968aPH6U=
+	t=1741614453; cv=none; b=cKnxrXVTwCpi7oX4XWVeZSlR91bZ5k3e10RnN+WGXDrAtZHLVruDw32mgXUzdngUjpcmHayv4CpDrYZGU5lnKImWyA1uvFMBsTW+w8QJVbYrPTi6/ngxPzxW20C1hsV3gtGRiVgigNAySy9wocsnDfqW+/ekGO6gESVrirEEMjw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741614396; c=relaxed/simple;
-	bh=SUrcSvL5qLmeImXtGq+OJxPeZI5A25/7uBfeFpHt9wc=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=Bi5oMwp8tD3TzKpjVwU/H3VexMNxjZvW7a+UyDYfc8PdsMEQ7pSNmmZggx7i4jvO4wrIEX62+9wCnWSc6oxKzEnptBcUr9ks1kRdS4n/vM8hXoEwlbDUP4RzsjQH+mpVzlxArm63g84xN7Xak0KGBhvM4AGsHxWM+HTiE1uD/fI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HG4g0V2V; arc=none smtp.client-ip=209.85.221.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-39141ffa9fcso1249986f8f.0;
-        Mon, 10 Mar 2025 06:46:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741614393; x=1742219193; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:subject:from:user-agent:mime-version:date:message-id:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=6W2q6ww79dH6unrH45J+euLaeN4QlEFEIMUkdHmeXfg=;
-        b=HG4g0V2Vmv0pfIxVlSxjpsukeuu1fsvekckHY3MWY1lErzbWVrpy0dcK3AKDxmblKK
-         6OR3AtATsM+cZZ1zOb6SxCO+J2btp4R2uICsDIQ7VKf3gGWQeAKBxM0b29G5piNStN1/
-         GWayXvHv6edC8eAETKCRm3svm3xyC57rDlP7dzX5m4YlYDYhK3l9fhitFfJjt9hxF4S2
-         VWN48rMKAjNH94xahSwNbmoVGdLbqyvbQe2QbQ6htXb44UbMkp0rVHG0CaZBSh9tekHu
-         fLvHphjQ6UqZZsBsQFWZPQUilRI9MEbZXKjiUcWLnreIw8slTNMJBJUjT5lUNB+aEweL
-         QEBA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741614393; x=1742219193;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:subject:from:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=6W2q6ww79dH6unrH45J+euLaeN4QlEFEIMUkdHmeXfg=;
-        b=tf4mroA6uoNA1GPxkkZS9zfWLxPJtaLf2phCd6wSrgHorsQXBZvwg2MB1lqi+/VnYv
-         aRgJT/KqmGct7/jKrwVMp1jpT8Q6A5+viHNb+Y+1Iu0dQaAVfbCnnMb5QVwG8ZSM6jRc
-         lXM7qxDsOAvR4gcdyzw4waiDDL5tiz5BubVpcv5zXWgxHUxJPmWiZCfqudQ+7TIrJJOM
-         Iv7E58xoLV2Y8axQ6kqaYX76alhI0fs5L/VuIPlm6Por6U5PLKj9OqYZSIDedIDEPKkG
-         +E/x0FKoXyPuzwJ4SRFsDGpzzPKdOfnC5ZmMQh/2z57jmwhXafWwpWTmviJNdEzujQ1r
-         mUnQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUnzyFe5sEZqpE0f+81TJcGjgnJuhbklD+05DrFunaWFdl/ZDy958zMVnQ8csTtEw0FWXba+XE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxSPX33zOWDNbPtTP79gZlCtV2sJ5lgZXb+msnqz/4pEZ4yJKly
-	VpFJRvzJLWPSo4DPKwESo0nd/E3OblBQAf5FzSqIO1kISm+2vz+E
-X-Gm-Gg: ASbGncvVcbSxlxt6dCQS8RJzVuiTz67Ca2eDSL4lEoxyukYHos4vfIogqVoMEiN/LPD
-	LXORfgvu3lV9QUys0hg04OnsiqqkR3nRAvxgV7Zon+OXX11xZBYbHWgeFK4mbpC3wOxl4mJHcSW
-	FWvS8oKazkivPyNvEi1UA5fQuVKN6Qm/cW4XAIZuc8q7vCAWcctWa5qZWSlnLCCR24TWcIE9xX/
-	QipdLoA0H/rdvHgEtLRUQyUcWh+r8jZXw3yyQyvLXH5sITbJ6rvHzG4lRZ3RphKUZ8LLnGCoF1W
-	4XFRL8WoKtk3NTdbgrFOXrPOkZ56X9c791gO/KlGt2VhoMiF07Aao4fj4GMDxmCuVjSzFtgmZVj
-	qjh1xami9d+k=
-X-Google-Smtp-Source: AGHT+IG0rfUbSGfyc0uNEKNiN0VOzWgqrPHplWEWCLgtH8tBnJgmzGNqjOdjIEHokHjixoj8t0wWkA==
-X-Received: by 2002:a05:6000:4102:b0:391:487f:2828 with SMTP id ffacd0b85a97d-391487f2bbdmr2647368f8f.10.1741614392361;
-        Mon, 10 Mar 2025 06:46:32 -0700 (PDT)
-Received: from [93.173.93.237] (93-173-93-237.bb.netvision.net.il. [93.173.93.237])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43ced9a4b19sm68553345e9.29.2025.03.10.06.46.30
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 10 Mar 2025 06:46:31 -0700 (PDT)
-Message-ID: <4cd852e0-6d6d-fcb4-6e4c-e6f861f429db@outbound.gmail.com>
-Date: Mon, 10 Mar 2025 15:45:46 +0200
+	s=arc-20240116; t=1741614453; c=relaxed/simple;
+	bh=oBY81sWp1crFquGirT/b5lCiol5ySLrz5qGNRv/ktUo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=KHLOMH5mLZEut8VoZMP1tdIazwF2Y2JJKEHQjF9dE+P1KHb8zafdQ9oqve/M77IQJ4Zffko6FMa32GSel2hIhpzki1FxRE3OH6+QlFJsTRCMsXwfVJLv4EZBbYooYbZSxVrQChl7Y3nrEI6HxeHg31wn3FjJl6y86BXSTkybodk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=l30mavZT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 328BEC4CEE5;
+	Mon, 10 Mar 2025 13:47:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741614451;
+	bh=oBY81sWp1crFquGirT/b5lCiol5ySLrz5qGNRv/ktUo=;
+	h=From:To:Cc:Subject:Date:From;
+	b=l30mavZTUgq7WkAjRFnUfNy4xT/ItTyB3hR99DVt8x91a1teTMfZGuxAMHjsNgPv3
+	 NrIum/LQUVc7xjVwt+O1rbT0YoLAG5rKX6GyReGODKuWWzqWVLO0pyblMEXAo3C4s0
+	 ZYIbjmHZr+Szz+FFnApesmU5N5ZfxJMpIusGRdh8cyOjKGIi1ZU0HmpMULQDCAlK/S
+	 /LdxQ2nTcV51G3PZ37NX46gXfPKGRYl+f0iuIJOpbxQntmoDsdiKKhD+w7IKpjEx5p
+	 ChXiX0adGA6f81bWwqKN5WDZTxzlhfkxWwmJ4AkaCwN7TQk0rL0hAVSK3p8QlWrpZd
+	 1hVGj4rCJeOkg==
+From: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: Masami Hiramatsu <mhiramat@kernel.org>,
+	linux-kernel@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org,
+	Mark Rutland <mark.rutland@arm.com>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Subject: [PATCH v3] tracing: Show last module text symbols in the stacktrace
+Date: Mon, 10 Mar 2025 22:47:27 +0900
+Message-ID: <174161444691.1063601.16690699136628689205.stgit@devnote2>
+X-Mailer: git-send-email 2.43.0
+User-Agent: StGit/0.19
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.10.0
-From: Eli Billauer <eli.billauer@gmail.com>
-Subject: Re: [PATCH] char: xillybus: Fix error handling in
- xillybus_init_chrdev()
-To: Ma Ke <make24@iscas.ac.cn>, arnd@arndb.de, gregkh@linuxfoundation.org
-Cc: linux-kernel@vger.kernel.org, akpm@linux-foundation.org,
- stable@vger.kernel.org
-References: <20250310022811.182553-1-make24@iscas.ac.cn>
-Content-Language: en-US
-In-Reply-To: <20250310022811.182553-1-make24@iscas.ac.cn>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-Hello,
+From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
-Thanks for your patch.
+Since the previous boot trace buffer can include module text address in
+the stacktrace. As same as the kernel text address, convert the module
+text address using the module address information.
 
-However, as far as I understand, applying it will cause a Use After Free 
-(UAF) error by cdev_del(), as the call to kobject_put() unwinds the 
-memory allocation made by cdev_alloc().
+Signed-off-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+---
+ Changes in v3:
+  - Move module_delta to trace_scratch data structure.
+  - Remove LRU based removed module information.
+---
+ kernel/trace/trace.c        |   99 +++++++++++++++++++++++++++++++++++++++++--
+ kernel/trace/trace.h        |    2 +
+ kernel/trace/trace_output.c |    4 +-
+ 3 files changed, 98 insertions(+), 7 deletions(-)
 
-Or have I missed something?
-
-Regards,
-    Eli
-
-On 10/03/2025 4:28, Ma Ke wrote:
-> After cdev_alloc() succeed and cdev_add() failed, call cdev_del() to
-> remove unit->cdev from the system properly.
-> 
-> Found by code review.
-> 
-> Cc: stable@vger.kernel.org
-> Fixes: 8cb5d216ab33 ("char: xillybus: Move class-related functions to new xillybus_class.c")
-> Signed-off-by: Ma Ke <make24@iscas.ac.cn>
-> ---
->   drivers/char/xillybus/xillybus_class.c | 3 ++-
->   1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/char/xillybus/xillybus_class.c b/drivers/char/xillybus/xillybus_class.c
-> index c92a628e389e..045e125ec423 100644
-> --- a/drivers/char/xillybus/xillybus_class.c
-> +++ b/drivers/char/xillybus/xillybus_class.c
-> @@ -105,7 +105,7 @@ int xillybus_init_chrdev(struct device *dev,
->   		dev_err(dev, "Failed to add cdev.\n");
->   		/* kobject_put() is normally done by cdev_del() */
->   		kobject_put(&unit->cdev->kobj);
-> -		goto unregister_chrdev;
-> +		goto err_cdev;
->   	}
->   
->   	for (i = 0; i < num_nodes; i++) {
-> @@ -157,6 +157,7 @@ int xillybus_init_chrdev(struct device *dev,
->   		device_destroy(&xillybus_class, MKDEV(unit->major,
->   						     i + unit->lowest_minor));
->   
-> +err_cdev:
->   	cdev_del(unit->cdev);
->   
->   unregister_chrdev:
+diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
+index c3c79908766e..0c1aa1750077 100644
+--- a/kernel/trace/trace.c
++++ b/kernel/trace/trace.c
+@@ -49,6 +49,7 @@
+ #include <linux/fsnotify.h>
+ #include <linux/irq_work.h>
+ #include <linux/workqueue.h>
++#include <linux/sort.h>
+ 
+ #include <asm/setup.h> /* COMMAND_LINE_SIZE and kaslr_offset() */
+ 
+@@ -5996,11 +5997,41 @@ struct trace_mod_entry {
+ struct trace_scratch {
+ 	unsigned long		kaslr_addr;
+ 	unsigned long		nr_entries;
++	long			*module_delta;
+ 	struct trace_mod_entry	entries[];
+ };
+ 
+ static DEFINE_MUTEX(scratch_mutex);
+ 
++/**
++ * trace_adjust_address() - Adjust prev boot address to current address.
++ * @tr: Persistent ring buffer's trace_array.
++ * @addr: Address in @tr which is adjusted.
++ */
++unsigned long trace_adjust_address(struct trace_array *tr, unsigned long addr)
++{
++	struct trace_scratch *tscratch;
++	long *module_delta;
++	int i;
++
++	/* If we don't have last boot delta, return the address */
++	if (!(tr->flags & TRACE_ARRAY_FL_LAST_BOOT))
++		return addr;
++
++	tscratch = tr->scratch;
++	module_delta = READ_ONCE(tscratch->module_delta);
++	if (!tscratch || !tscratch->nr_entries || !module_delta ||
++	    tscratch->entries[0].mod_addr > addr)
++		return addr + tr->text_delta;
++
++	/* Note that entries must be sorted. */
++	for (i = 0; i < tscratch->nr_entries; i++)
++		if (addr < tscratch->entries[i].mod_addr)
++			break;
++
++	return addr + module_delta[i - 1];
++}
++
+ static int save_mod(struct module *mod, void *data)
+ {
+ 	struct trace_array *tr = data;
+@@ -6029,6 +6060,7 @@ static int save_mod(struct module *mod, void *data)
+ static void update_last_data(struct trace_array *tr)
+ {
+ 	struct trace_scratch *tscratch;
++	long *module_delta;
+ 
+ 	if (!(tr->flags & TRACE_ARRAY_FL_BOOT))
+ 		return;
+@@ -6063,6 +6095,8 @@ static void update_last_data(struct trace_array *tr)
+ 		return;
+ 
+ 	tscratch = tr->scratch;
++	module_delta = READ_ONCE(tscratch->module_delta);
++	WRITE_ONCE(tscratch->module_delta, NULL);
+ 
+ 	/* Set the persistent ring buffer meta data to this address */
+ #ifdef CONFIG_RANDOMIZE_BASE
+@@ -6071,6 +6105,8 @@ static void update_last_data(struct trace_array *tr)
+ 	tscratch->kaslr_addr = 0;
+ #endif
+ 	tr->flags &= ~TRACE_ARRAY_FL_LAST_BOOT;
++
++	kfree(module_delta);
+ }
+ 
+ /**
+@@ -9342,10 +9378,43 @@ static struct dentry *trace_instance_dir;
+ static void
+ init_tracer_tracefs(struct trace_array *tr, struct dentry *d_tracer);
+ 
++static int make_mod_delta(struct module *mod, void *data)
++{
++	struct trace_scratch *tscratch;
++	struct trace_mod_entry *entry;
++	struct trace_array *tr = data;
++	long *module_delta;
++	int i;
++
++	tscratch = tr->scratch;
++	module_delta = READ_ONCE(tscratch->module_delta);
++	for (i = 0; i < tscratch->nr_entries; i++) {
++		entry = &tscratch->entries[i];
++		if (!strcmp(mod->name, entry->mod_name)) {
++			if (mod->state == MODULE_STATE_GOING)
++				module_delta[i] = 0;
++			else
++				module_delta[i] = (unsigned long)mod->mem[MOD_TEXT].base
++						 - entry->mod_addr;
++			break;
++		}
++	}
++	return 0;
++}
++
++static int mod_addr_comp(const void *a, const void *b, const void *data)
++{
++	const struct trace_mod_entry *e1 = a;
++	const struct trace_mod_entry *e2 = b;
++
++	return e1->mod_addr > e2->mod_addr ? 1 : -1;
++}
++
+ static void setup_trace_scratch(struct trace_array *tr,
+ 				struct trace_scratch *tscratch, unsigned int size)
+ {
+ 	struct trace_mod_entry *entry;
++	int i, nr_entries;
+ 
+ 	if (!tscratch)
+ 		return;
+@@ -9362,7 +9431,7 @@ static void setup_trace_scratch(struct trace_array *tr,
+ 		goto reset;
+ 
+ 	/* Check if each module name is a valid string */
+-	for (int i = 0; i < tscratch->nr_entries; i++) {
++	for (i = 0; i < tscratch->nr_entries; i++) {
+ 		int n;
+ 
+ 		entry = &tscratch->entries[i];
+@@ -9376,6 +9445,21 @@ static void setup_trace_scratch(struct trace_array *tr,
+ 		if (n == MODULE_NAME_LEN)
+ 			goto reset;
+ 	}
++
++	nr_entries = i;
++	tscratch->module_delta = kcalloc(nr_entries, sizeof(long), GFP_KERNEL);
++	if (!tscratch->module_delta) {
++		pr_info("module_delta allocation failed. Not able to decode module address.");
++		goto reset;
++	}
++
++	/* Sort the entries so that we can find appropriate module from address. */
++	sort_r(tscratch->entries, nr_entries, sizeof(struct trace_mod_entry),
++	       mod_addr_comp, NULL, NULL);
++
++	/* Scan modules to make text delta for modules. */
++	module_for_each_mod(make_mod_delta, tr);
++
+ 	return;
+  reset:
+ 	/* Invalid trace modules */
+@@ -10101,19 +10185,23 @@ static bool trace_array_active(struct trace_array *tr)
+ 	return trace_events_enabled(tr, NULL) > 1;
+ }
+ 
+-static void trace_module_record(struct module *mod)
++static void trace_module_record(struct module *mod, bool remove)
+ {
+ 	struct trace_array *tr;
++	unsigned long flags;
+ 
+ 	list_for_each_entry(tr, &ftrace_trace_arrays, list) {
++		flags = tr->flags & (TRACE_ARRAY_FL_BOOT | TRACE_ARRAY_FL_LAST_BOOT);
+ 		/* Update any persistent trace array that has already been started */
+-		if ((tr->flags & (TRACE_ARRAY_FL_BOOT | TRACE_ARRAY_FL_LAST_BOOT)) ==
+-		    TRACE_ARRAY_FL_BOOT) {
++		if (flags == TRACE_ARRAY_FL_BOOT && !remove) {
+ 			/* Only update if the trace array is active */
+ 			if (trace_array_active(tr)) {
+ 				guard(mutex)(&scratch_mutex);
+ 				save_mod(mod, tr);
+ 			}
++		} else if (flags & TRACE_ARRAY_FL_LAST_BOOT) {
++			/* Update delta if the module loaded in previous boot */
++			make_mod_delta(mod, tr);
+ 		}
+ 	}
+ }
+@@ -10126,10 +10214,11 @@ static int trace_module_notify(struct notifier_block *self,
+ 	switch (val) {
+ 	case MODULE_STATE_COMING:
+ 		trace_module_add_evals(mod);
+-		trace_module_record(mod);
++		trace_module_record(mod, false);
+ 		break;
+ 	case MODULE_STATE_GOING:
+ 		trace_module_remove_evals(mod);
++		trace_module_record(mod, true);
+ 		break;
+ 	}
+ 
+diff --git a/kernel/trace/trace.h b/kernel/trace/trace.h
+index 0d6efb8a1179..3375f8301de3 100644
+--- a/kernel/trace/trace.h
++++ b/kernel/trace/trace.h
+@@ -466,6 +466,8 @@ extern int tracing_set_clock(struct trace_array *tr, const char *clockstr);
+ 
+ extern bool trace_clock_in_ns(struct trace_array *tr);
+ 
++extern unsigned long trace_adjust_address(struct trace_array *tr, unsigned long addr);
++
+ /*
+  * The global tracer (top) should be the first trace array added,
+  * but we check the flag anyway.
+diff --git a/kernel/trace/trace_output.c b/kernel/trace/trace_output.c
+index 03d56f711ad1..1ad54fcf25cb 100644
+--- a/kernel/trace/trace_output.c
++++ b/kernel/trace/trace_output.c
+@@ -5,6 +5,7 @@
+  * Copyright (C) 2008 Red Hat Inc, Steven Rostedt <srostedt@redhat.com>
+  *
+  */
++#include "trace.h"
+ #include <linux/module.h>
+ #include <linux/mutex.h>
+ #include <linux/ftrace.h>
+@@ -1248,7 +1249,6 @@ static enum print_line_t trace_stack_print(struct trace_iterator *iter,
+ 	struct trace_seq *s = &iter->seq;
+ 	unsigned long *p;
+ 	unsigned long *end;
+-	long delta = iter->tr->text_delta;
+ 
+ 	trace_assign_type(field, iter->ent);
+ 	end = (unsigned long *)((long)iter->ent + iter->ent_size);
+@@ -1265,7 +1265,7 @@ static enum print_line_t trace_stack_print(struct trace_iterator *iter,
+ 			trace_seq_puts(s, "[FTRACE TRAMPOLINE]\n");
+ 			continue;
+ 		}
+-		seq_print_ip_sym(s, (*p) + delta, flags);
++		seq_print_ip_sym(s, trace_adjust_address(iter->tr, *p), flags);
+ 		trace_seq_putc(s, '\n');
+ 	}
+ 
 
 
