@@ -1,239 +1,247 @@
-Return-Path: <linux-kernel+bounces-553845-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-553846-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 01D6EA58FC2
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 10:32:58 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D1ADA58FC4
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 10:33:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 31F9E16BCE7
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 09:32:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 19E66188FE15
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 09:33:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20D632253E4;
-	Mon, 10 Mar 2025 09:32:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 287E21C5F34;
+	Mon, 10 Mar 2025 09:33:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mysnt.onmicrosoft.com header.i=@mysnt.onmicrosoft.com header.b="UhzbPSxN"
-Received: from AS8PR04CU009.outbound.protection.outlook.com (mail-westeuropeazon11021081.outbound.protection.outlook.com [52.101.70.81])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Zy0quUPR"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8882122333B
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 09:32:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.70.81
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741599170; cv=fail; b=VJ5pM+N/D4pPlVqIZWsv2/Ew+VO2NE7RmAo4m51wf16ognzhUYFnFF/TlKQvNW8Ua2B/EolOcGnJ7aJfhlLiuy0hSQjSbewDk6HdBqtA4AUcYaP+v0GzCvRgqGBSlfpRordTClF9M7DSka5bf5mSo07IFxtk/4WXBDnLbwvip6E=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741599170; c=relaxed/simple;
-	bh=tuzYVCQ5OGDpAG1wFVJMHd0VQe+neUlZyXCxnVndIBY=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=sei2SdCbWTcril1Me+sfxMb2KE0ZWisNA3yiC/vnR1tAQM1LndMAfcdOZXc1Cl1KEnv4EOKU/KkvPY0d6RUTiH6OxzaLTOYXxygleg7nU0rB4Ulmr9BcwLQDBsN//ahTrurILGbwve6xo4sAdZh+r99Y7mpxrp2KKMudVMPEXCE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kontron.de; spf=pass smtp.mailfrom=kontron.de; dkim=pass (1024-bit key) header.d=mysnt.onmicrosoft.com header.i=@mysnt.onmicrosoft.com header.b=UhzbPSxN; arc=fail smtp.client-ip=52.101.70.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kontron.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kontron.de
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=sSdvMO9T7VP+LNahHhNnJch7XzQyJQjYAOtsFPg7sz4T6qF150sDJP7Hf6kfm+uO4Rvc7tlDc8VCuwI88IxsvR/fYeginTxoNKxWs/Fux/ZvtDHa508rOfoLEmv+xOBzWDgXwJkL5nom36JHsIzAd1BYy9DFZqPpK1lk9uH6pXnAnJ97Fb0fvIgwrbbJOvY5X3KpeYpNfrhrvvERazElST+FlWgKP4ef4BaWOOUTspGs1xWxxEEFcRyKxYgbaCVwGYmeo+ZuAncxkxogz9NDWKimWyxjAgT4acXHfLlUhFTZNR7geL5T+ytyVcYRKAVNWgFH8/JtKDIUP0RTQaH31A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Xxg2ds9B3ZeZYg50/wXNf990MfnCst457iGIPw4DG08=;
- b=vRlkYpUYe3jMkSm1sSR39E3krUwmPB0T8hOegVwCKU7N6W5s0KXL+oVI34Vp8dY5i5ajx0XM+vPr6ZB88XZcdZkwK6b5HqIbw+mH0Q2W7E4vmcYolY70yTkR5JqtlwvL1wVDeeS8P7J+CXUew0LDS7gNrCbtiERKtLmrWg/FmupxW52lx66p49JWkyM/ghHQVT3TfRzia5lDevoLxUY0/TdJ7k/qEBiLHJgL2mgjQJjXBlyHT1HUWFRfLEFL2KcmMIe6JukYByJ0VvFdsc5O/sRpxqgXPjyhlgqmkIx4t65i4FaSzHO+3qc5CteFPczcSfRDdGvqTiKdbFxXwVWJOw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=kontron.de; dmarc=pass action=none header.from=kontron.de;
- dkim=pass header.d=kontron.de; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mysnt.onmicrosoft.com;
- s=selector2-mysnt-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Xxg2ds9B3ZeZYg50/wXNf990MfnCst457iGIPw4DG08=;
- b=UhzbPSxNsicMl2KX/aoIKCchpz5Lu+ZJb9moTMFUzoanYqAUwsOdLW7gU7vuTGqT+Fzh3Dz8v4sdpswUH9yo47IXCogX7EPN8f+qDD7zT2cNOU2FYFQqKxjnolrScsR9iBIdkvlZndwLrH0UA1bDagYMya1qvKy3TZvaMY0vBnw=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=kontron.de;
-Received: from PA4PR10MB5681.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:102:263::10)
- by AS2PR10MB7761.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:644::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8511.27; Mon, 10 Mar
- 2025 09:32:44 +0000
-Received: from PA4PR10MB5681.EURPRD10.PROD.OUTLOOK.COM
- ([fe80::b854:7611:1533:2a19]) by PA4PR10MB5681.EURPRD10.PROD.OUTLOOK.COM
- ([fe80::b854:7611:1533:2a19%4]) with mapi id 15.20.8511.025; Mon, 10 Mar 2025
- 09:32:44 +0000
-Message-ID: <638865e3-53ea-44a4-a541-ed73ee2c476f@kontron.de>
-Date: Mon, 10 Mar 2025 10:32:42 +0100
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] phy: freescale: fsl-samsung-hdmi: return closest rate
- instead LUT
-To: Dominique Martinet <dominique.martinet@atmark-techno.com>,
- Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>
-Cc: Adam Ford <aford173@gmail.com>, Marco Felsch <m.felsch@pengutronix.de>,
- =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>,
- Lucas Stach <l.stach@pengutronix.de>, linux-phy@lists.infradead.org,
- linux-kernel@vger.kernel.org, Makoto Sato <makoto.sato@atmark-techno.com>
-References: <20250310-8ulp_hdmi-v1-1-a2f231e31987@atmark-techno.com>
-Content-Language: en-US, de-DE
-From: Frieder Schrempf <frieder.schrempf@kontron.de>
-In-Reply-To: <20250310-8ulp_hdmi-v1-1-a2f231e31987@atmark-techno.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: FR4P281CA0236.DEUP281.PROD.OUTLOOK.COM
- (2603:10a6:d10:e9::10) To PA4PR10MB5681.EURPRD10.PROD.OUTLOOK.COM
- (2603:10a6:102:263::10)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0F6B22333B
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 09:33:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741599193; cv=none; b=hHycXQny/7IkzdlBARrqW0lzvZeTueo9pMwM73mlGfykjmmvNFxRtO8NW/JxV7fcW4hfSYclZQggWqOTk4lCcOOejgA5+PeMV4H6qzHSaHskVUADDv6ho4zB/oyKKIKD/yku/9FUqkD8vn3IihPPEoLLo9kOJJiUVekn5ej5b2w=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741599193; c=relaxed/simple;
+	bh=wJpaHcARR3YB5XnG3M9UeeHERjXf318a8M9J0vLqzxw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=SbzoadQEaar3/+VLQdvx51x4OeJ0/Ss7rYtJOvyuHkGSiEbKWZ1u3ypPji9+TiCY/81mmqxFeh9vtfgy8yWyflwFdtyT4CxyqcI6IY1l9OBGk0nrr7rQ9RsJX31PGWjFj4UanYp68YFSd56BVE1lr2EBtMShXJKQsNhomI88fQc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Zy0quUPR; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1741599190;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=C1c5i2Qm2DUrkZQHaLsmF680F9xe+Pb2YDsGrDb31LY=;
+	b=Zy0quUPRV6vQ91+oc8A6DQZal7AkWnKtT5vfPVruvkzgLoSAZKI/lTYMB7zwdAKYbYwzH2
+	7oReIU6u1ihpbg5BrGGtiM4sDg86q5DqYbhM50WDSG6tQkYNbzeA0SmyyXwQyed0VUYWhC
+	VrMKiobkPphJZdu3ywVBIg9v0x5XxyQ=
+Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
+ [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-16-yTqgadkaMc2guXwOjmX5Lg-1; Mon, 10 Mar 2025 05:33:09 -0400
+X-MC-Unique: yTqgadkaMc2guXwOjmX5Lg-1
+X-Mimecast-MFC-AGG-ID: yTqgadkaMc2guXwOjmX5Lg_1741599188
+Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-438da39bb69so27184515e9.0
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 02:33:09 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741599186; x=1742203986;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=C1c5i2Qm2DUrkZQHaLsmF680F9xe+Pb2YDsGrDb31LY=;
+        b=NR5L9/ZnDz+99jRHYTd3xbQLauo9iY4ZC3ntaJho7Sfol79axRJ7U97oI7TNU0w0o5
+         /FttRjjq0G4Zc42mBb6PN4cOyt7MfRb5tUzKUeIKLijJ+9oDJSOY1B+dfMFcOQK9dHF3
+         YhjBL6ixFw15+rKoKDQgjWKOFH41iLhX1RQDfNdh0MZtul8lm+lx+8sLTmHnPLq2+z3Q
+         HHoqQ7PjCT/6FPe8Aju9H6yutq88jGsUcIzthbFaajGaui/1S7dVPBFooAAnjtCcNtDe
+         BEolTE0L97TulgewCjMkwRV45nmGO1J8jpzpzSz+wF03ZvDKW0MVzXHNNF17M3H0lJsg
+         kcsQ==
+X-Gm-Message-State: AOJu0Yw5G4N+FZ0CFdpnr3/2M53yg4JcGojRSu/X8Vl4dKCdoNkpYCcb
+	eA46C5/D1w7K5fzDc0Yw5q3rNZSElzHuVtxiW8UUjwJjV8OUqmf829ceouipvZkVLfB7ThJegxI
+	dkvTARb9djgSwBpcwpFbCEOgVPy/nPJmKUgctX1uqXRskqLY57tyY98Td4eQPe8fncRxFQYRhHV
+	97DEMu9rPXt+iTjgnrTnCr12keAoKkz4T5/nB3Ok0FNvTQknifous=
+X-Gm-Gg: ASbGncs9DUY9TViawQs4bvyE3i6RHQ/XmPbE1GJa74WRsxK4/uWRire7Z2XnD1kuK0e
+	Q/wIWvK6crKoCA1LnqCoRejOoacIUuOHlzUHkPgGnrNkKYYTHyWU4JQ9XeGAypzOCbWcIfrMJi6
+	3SQhlzEri4w7QRO0B5Dthh+3nAnIVhrBCoOQatAMvDMC04pDf8KcmJSF56DyHae21b3Bt2IL0y5
+	yQzpGTUNbMPvavKniDJVITzQqXtVCg9Ch4sdCCYB3A8o9jTY2C0FW15ojIXf4eAGL9JpVo69vKz
+	0gQFMRv+H2cHQyBKb23mSU8hmSqoDOlxkbzmGvmO5Q4=
+X-Received: by 2002:a05:600c:1f92:b0:43c:e5c2:394 with SMTP id 5b1f17b1804b1-43ce5c2054emr52822565e9.0.1741599185884;
+        Mon, 10 Mar 2025 02:33:05 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHLMiRzgA5hzMsBbSiJbAqQMr/pIjjtP9IG0cEEYXnbRD0gQZrY8zGFUbNgAmgSDjVV8Tx22w==
+X-Received: by 2002:a05:600c:1f92:b0:43c:e5c2:394 with SMTP id 5b1f17b1804b1-43ce5c2054emr52822125e9.0.1741599185397;
+        Mon, 10 Mar 2025 02:33:05 -0700 (PDT)
+Received: from jlelli-thinkpadt14gen4.remote.csb ([151.29.49.7])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43cfac24345sm19535045e9.22.2025.03.10.02.33.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 10 Mar 2025 02:33:03 -0700 (PDT)
+Date: Mon, 10 Mar 2025 10:33:00 +0100
+From: Juri Lelli <juri.lelli@redhat.com>
+To: linux-kernel@vger.kernel.org, cgroups@vger.kernel.org
+Cc: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+	Valentin Schneider <vschneid@redhat.com>,
+	Waiman Long <longman@redhat.com>, Tejun Heo <tj@kernel.org>,
+	Johannes Weiner <hannes@cmpxchg.org>,
+	Michal =?iso-8859-1?Q?Koutn=FD?= <mkoutny@suse.com>,
+	Qais Yousef <qyousef@layalina.io>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	Swapnil Sapkal <swapnil.sapkal@amd.com>,
+	Shrikanth Hegde <sshegde@linux.ibm.com>,
+	Phil Auld <pauld@redhat.com>, luca.abeni@santannapisa.it,
+	tommaso.cucinotta@santannapisa.it,
+	Jon Hunter <jonathanh@nvidia.com>
+Subject: [PATCH v3 2/8] sched/topology: Wrappers for sched_domains_mutex
+Message-ID: <Z86xzGyT3av5dh1p@jlelli-thinkpadt14gen4.remote.csb>
+References: <20250310091935.22923-1-juri.lelli@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PA4PR10MB5681:EE_|AS2PR10MB7761:EE_
-X-MS-Office365-Filtering-Correlation-Id: f6e84e00-077f-41b0-cc1c-08dd5fb682b1
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|366016|7416014|376014|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?MmR5QnBQTVZsQi8rRnlGd2ppNUJLQWVpMEgxT3cyOWY5TXpLSzR1c1ZiTzg1?=
- =?utf-8?B?SVN1bWhIV0FyS2hkRkc4eVVCYnhSSkdXWUIyOVpNTWttQzdOK2E1Vzg0N3Bh?=
- =?utf-8?B?bmYvZ2Uva2o2M0pSdExsSStRWlE3TnIrZ3lQaUtrUGlOTVNETUxJNUR6Q0dI?=
- =?utf-8?B?ZHovakxuaSs5ZVV2d0JvSHpreVJiRXR6V1UrMHZNblNpSGN1SVlBVXlZTUNs?=
- =?utf-8?B?UkhYd29mZEM4VmFOTkVSVWYvKzZDOEI4K2Fna0loZTA3YVQvam9mQWQ5bUpU?=
- =?utf-8?B?a3pGMDlsVjljUk1rY3k5U0h6T3BnOVFsMm5HTkxWUGdQU1luMXhzUVRhOHRS?=
- =?utf-8?B?YUFNTDVjWko4WDJEZURUczlFUWtXeHp1OGhxUkN6NXZWUllmcHcxUlQ0T1Ni?=
- =?utf-8?B?VXltS2pKNmRYV29qSEtOVnl4VkJxLy8yVkJkTTBzUkl5QTNhOWdtUFN2SXJS?=
- =?utf-8?B?TVFCT0dJWjRaQXBQbktKWExCUzBaSzcxaG9IdWc5N1RDcXZjeUVuQi9jMzdx?=
- =?utf-8?B?UjNOeEphOXVnTU1vNDE3SHFNYThXUFc5WWVSTFQwS3VsRXB3NnJIallpcVl5?=
- =?utf-8?B?S1NXaHFBU1VUcDdmUmt5c3A3eU5ZcU5WUW44d2NYd1JCSmpTQjJ2Nllob0tx?=
- =?utf-8?B?eGxxaGthUmZyVzNadkdhdWY1VEdzRDJEWVg5czlpcmpTdldIcnpKWDJHR3k2?=
- =?utf-8?B?NGxoUkFuUlFFM05NUE5KWkFLcnJBWGJkeEEyb3gra2lqQTNRK2hyQitKNmdl?=
- =?utf-8?B?V01LUG1tczJwVGxUa3pmZXB3UjJLWUxBSDBxbkhTbUx6S2RCR3FUVzBZakJs?=
- =?utf-8?B?QUVmQzdaUTcybkhLbkJXNjJLdEtuSGNwNjJ0V3hqS1NsaWRrMUh1UDJUVldI?=
- =?utf-8?B?cis4aWl2b29pT1hoR0NVV1Iya0wwc09HQjg3dXJTaUVmWjNCNUpXSGhWN1JR?=
- =?utf-8?B?OW53U3E5Z2FHYlJ2Q3N3eHNvNkYvbnhkR1ZacjByVExXdlk5Ynh4N1FmeTF4?=
- =?utf-8?B?dDRRSGozU3lYOHJrU21yWk1BSmo2MEMvckx6VUQyNXpmVlR4NnV3T1hadUZa?=
- =?utf-8?B?Mldiai9xYVpYRlA0dFppNG9QbFUyMitLQ2NUVVd6emE4S29oS0U5UEZNRkxE?=
- =?utf-8?B?RUpPZDhGWGhKMlcwQ0U3UExQVTFuRzc4Y01nbVZoREdLcDlic1lCbXN2amZx?=
- =?utf-8?B?cFJTOERFczg1c0FkanpPajlhSjhhS0dIWnB0TWsxQkdLenV2eFA3Q3ZpOXVK?=
- =?utf-8?B?eU1zb2lzenFZNXNYaytDWms1eFZhbkxpRDUvdHgvdzJhNnlicmt2UERKbDE0?=
- =?utf-8?B?WVpDN282VkRudkladTkyQWJQeXZXaTJPY0xlTUx3d003dktKUmo0bTFZSmlq?=
- =?utf-8?B?WkVUaUFhM1BaK2N2Q0o4elJrRHRzeldsUHRFLzdISkhxK0pjakNPM2lnc3M2?=
- =?utf-8?B?VDVwMXgvbHVTNUNwcnJib3g5SDNKM3U0NjA1YUZ3ZGkzVEJOQ1Jobk1wZURo?=
- =?utf-8?B?NS9SamJRcEt0bndYczQ2U0VXdjl0L1VqKzRCeUtJZ0Y4cTQzNFZ3dGJvbHBC?=
- =?utf-8?B?UUNJYlNQWnQ5cGFVZXNwMTdrVkhCRWR5ZjBZTldrbFhQSzdLcFdBWGVEZXRP?=
- =?utf-8?B?aE51dFJ1THdOWldhUW96TmFSQnhCOGdhVWgzeFhOY2ZuaGtodFVXc2pYejhM?=
- =?utf-8?B?Q3dMNzhBc0JYVkdXbzNpTFVVOG1TamlJYzJSVXQ1L2RDVzJDLzB0OUVhVXc1?=
- =?utf-8?B?Yml6VDJtY283c3gvTHViQkJBMXA1eDIzNGd6UHc2emxtWGREUzlPTmVjcWdq?=
- =?utf-8?B?MGpVUjF5SU1qY0ZVV2t1Q3dRRjcrcTV1WlE4Q1NjV2gvWGNZUnVLYnVNTEM5?=
- =?utf-8?Q?N48UbErKrwzk/?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PA4PR10MB5681.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(376014)(7053199007);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?elVSS24vNllsRm1DZlkrOUlIZERkWStSOWJuVGk0Ryt6ZjlvNXE1YWVxbkMw?=
- =?utf-8?B?K0MyTTErSG1IUmZiK01Xb1lYV09CVUdoRHN2S0RQVWlOUGhsaExyZ2dDVFln?=
- =?utf-8?B?VThWYkc2YWRZSXlKTG1jMElIOWpGU3ZDNE9HMmI1b3g3bVBNZW1oZVFReE9v?=
- =?utf-8?B?b0MwMGNDNnY4N2d3SFdrS04yaVFROU1aWEgwYkE4cDgxcUtHalpQdEhySjlj?=
- =?utf-8?B?c1dtSXJHK0NVZGZmemhNNU1kbHBONkcwZUhrQ1o4TWdCQU1BOEdtdkIwdVl3?=
- =?utf-8?B?cmp5ekptajdJbi9wMkJYNXVWc0JqRlRzREpjTkRKM1dpTnJock12VXRhNTl2?=
- =?utf-8?B?cEdtOVM4SGNpQkNHRXhFT0wwUVFlK29GYi9lU0cxY0FhTE5pSkw0Zmh3Tlp1?=
- =?utf-8?B?Zm52Z1M0aE5FckZkaFhqYWlnR1ljK0RYRXkrN1JOakRCaVM5ZTA1M29sbVFn?=
- =?utf-8?B?NXJETDZiRjNzWDRwejVDemVaRWlNZFZXc2VHVXRZVXBvU0dlN0twOHovdEhD?=
- =?utf-8?B?WGpoWDI1T2p4eTVzYU5VSVc1RnBEak5ibk9KQ2lGYkdkcWJvVi9FSlFpQ3VG?=
- =?utf-8?B?M0NqRVZ0MzJaRmtiZlE1VXhQZFVieVFkeTlhVFNCclR6WkdsWGxwQmcxaDkv?=
- =?utf-8?B?WXlHQ3d5d3lTVFNtMVFaQ1NFc1RqRW53a1liSzg2UnJPY2ZmT3N5M3Z4a0VM?=
- =?utf-8?B?d2R2SmpqYXN6MEFPSHZGdHhSdTNnWW1QOVdaOVZJVk12dWlQQzIxWVBuUjFK?=
- =?utf-8?B?Rkw2Z2FQM1ZNUGk0aGR6V1o3b2tSSjAzYXdEK3hjZ25ZNVpHUm5LVDNiUVpF?=
- =?utf-8?B?ekI5QzJUWlZrMEx5ZkdhN0NyZjM5TGl5bWNuSERmZGw3T2RLSk9KWFFGUUlk?=
- =?utf-8?B?ZDJBRGt6RjdpNG9GUTVEd21keENibGIzd1U2ckQwczVNU1g3c2Q0Vm5GNitM?=
- =?utf-8?B?THNwTHVFeE94cFRmOGErbUg1V09QME9Za3BPK1Rtbk1OeCsxbW5HR0d2M3Nw?=
- =?utf-8?B?TTJ6MU5RdmZvelZpbG4rWHVjd1VOV2JyalQrVW50RUFRdW1OZHZpNjRvdG5o?=
- =?utf-8?B?ZEtndHc5L1VnaGg4YTZldkRnMTlGaCtUWW1vd1QwVHljbkxsbXNDeGp5YnhJ?=
- =?utf-8?B?ck04UDE5TGpJWitLd0o0MHVoNFdBL3JiZTBFQWpzWHFXeDFJdjFUT3lWSmdM?=
- =?utf-8?B?R3IwK09WeTRxckppdlFuV1QzbTh5VC9aY1QzUldkUWZoM3puTEFPQVRVaFpP?=
- =?utf-8?B?U3Z6eHdwamw3QVdiY3lUTFhIaG5TWkJoY2FQVWtCUms0NTJSbHU3bG1POE1L?=
- =?utf-8?B?Wld5THZxcDBPQkJ0Q1kvdHJVcmh3ekYyU0hmOEZqbEpFTkhlZFpTL1RpQnV0?=
- =?utf-8?B?Z3h0eDFVVW5nWjNzaktqanVYSi9kaE9VSGoyN21jaS9hUHFzMUQ4bDlDSnhh?=
- =?utf-8?B?dmlJVjl4aVBCdVEyRm5Wb2J0SHJTdXdxR1h2aEs3V0llZFlzK3ZER2ZUTVlv?=
- =?utf-8?B?WlJ0OGk5TmRLbnRKWWt3WFpUYUJhdXZQUC9MSzlPK1JzOFJLVzAxZUVKOWJS?=
- =?utf-8?B?NTVXZnk1OG1lc3pnTDdDVlg4TlNkOFpOanpWWlRkbEtVOEd1YlFIdnVZRG50?=
- =?utf-8?B?dUJORXFEdHpOT001NHA5TmMzYXR0cHFZMm1JbmhOV0k0MXhRMGZQMGd5S3d3?=
- =?utf-8?B?bStrSmwrVXBWb1NQWkZqVElId1JValBTak90WnFKQlZoWWpWV2RiTHk2eTNH?=
- =?utf-8?B?V0xQVzBab2FGbExodjNvczkyR0JvL3Fsd3hYK0RBMVlZR2pNWW51VCtMcEpV?=
- =?utf-8?B?SzFpOVRkdDFhMC9FOWJJcnViZTFoUklxb3dBVnpXbEl3cUJiZnBNOXk5UTRa?=
- =?utf-8?B?TXpRRWRLSzViZUZseEh3STVGajlCejN0c21pbS9mUlUrS1VrOGI0eWk1bGxL?=
- =?utf-8?B?aU05NUdGSFJQcVNuOE5lczFSNUljajNGSzVhTnE2QUhESXlXZjNlY3Zpejc2?=
- =?utf-8?B?QUg4N0g5M0libGRGMFRRK3M0TkZZM2xURWJQeFcza2NMenNOdVVmNUxMS0I0?=
- =?utf-8?B?VXNyWXRKNktJM2p1aU5XSmNFaHJlZERkd3BxSzNvMnRHNjRFbENCKzVoemVO?=
- =?utf-8?B?Y3JKTjJ5aXR1OWhlbUVDQ2hRTWpBb2oyR3RKdjlqOU9NNC9KUzJYYTN6MGhR?=
- =?utf-8?B?cXc9PQ==?=
-X-OriginatorOrg: kontron.de
-X-MS-Exchange-CrossTenant-Network-Message-Id: f6e84e00-077f-41b0-cc1c-08dd5fb682b1
-X-MS-Exchange-CrossTenant-AuthSource: PA4PR10MB5681.EURPRD10.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Mar 2025 09:32:43.9619
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 8c9d3c97-3fd9-41c8-a2b1-646f3942daf1
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 33EVTlW8Ne7ZWU7MP+oyC1yIqoK6rEU2bj46V2RwWS1O+Di77FnrnsOF0UKjs+7I+fbXAd+ykxYSl5mKuuuP0MDEtVc30+n0B1ya/nnCztY=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS2PR10MB7761
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250310091935.22923-1-juri.lelli@redhat.com>
 
-On 10.03.25 2:21 AM, Dominique Martinet wrote:
-> From: Makoto Sato <makoto.sato@atmark-techno.com>
-> 
-> If the requested rate is not an exact match of the integer divider
-> phy_clk_round_rate() would return the look up table value,
-> but phy_clk_set_rate() can still use the integer divider if it results
-> in a frequency that is closer than the look up table.
-> 
-> In particular, not returning the actually used value here made the hdmi
-> bridge driver reject a frequency that has an integer divider rate
-> within 0.5% of the target:
-> for 83.5mHz, the integer divider generates 83.2mHz (-0.36%), but the
-> next LUT value (82.5mHz) is 1.2% off which incorrectly rejects modes
-> requiring this frequency.
-> 
-> This commit updates phy_clk_round_rate() to use the same logic as the
-> set operation.
-> 
-> Signed-off-by: Makoto Sato <makoto.sato@atmark-techno.com>
-> Signed-off-by: Dominique Martinet <dominique.martinet@atmark-techno.com>
+Create wrappers for sched_domains_mutex so that it can transparently be
+used on both CONFIG_SMP and !CONFIG_SMP, as some function will need to
+do.
 
-This looks good to me.
+Reported-by: Jon Hunter <jonathanh@nvidia.com>
+Fixes: 53916d5fd3c0 ("sched/deadline: Check bandwidth overflow earlier for hotplug")
+Tested-by: Waiman Long <longman@redhat.com>
+Tested-by: Jon Hunter <jonathanh@nvidia.com>
+Signed-off-by: Juri Lelli <juri.lelli@redhat.com>
+---
+v2 -> v3: Add wrappers back for the !SMP case as sched_rt_handler()
+          needs them
+---
+ include/linux/sched.h   |  5 +++++
+ kernel/cgroup/cpuset.c  |  4 ++--
+ kernel/sched/core.c     |  4 ++--
+ kernel/sched/debug.c    |  8 ++++----
+ kernel/sched/topology.c | 12 ++++++++++--
+ 5 files changed, 23 insertions(+), 10 deletions(-)
 
-Reviewed-by: Frieder Schrempf <frieder.schrempf@kontron.de>
-
-But I think we should also add the following Fixes tag:
-
-Fixes: 058ea4a06704 ("phy: freescale: fsl-samsung-hdmi: Use closest
-divider")
-
-> ---
-> We're finally using this rewrite in our (outdated) tree and noticed the
-> "best" mode missing on one of our picky displays.
-> It all looks good with this fix, thanks again!
-> ---
->  drivers/phy/freescale/phy-fsl-samsung-hdmi.c | 5 +++--
->  1 file changed, 3 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/phy/freescale/phy-fsl-samsung-hdmi.c b/drivers/phy/freescale/phy-fsl-samsung-hdmi.c
-> index e4c0a82d16d9ef0f64ebf9e505b8620423cdc416..91c4d27a31f48fc49f1e8417d7089f5519b8a0a2 100644
-> --- a/drivers/phy/freescale/phy-fsl-samsung-hdmi.c
-> +++ b/drivers/phy/freescale/phy-fsl-samsung-hdmi.c
-> @@ -557,8 +557,9 @@ static long phy_clk_round_rate(struct clk_hw *hw,
->  	if (int_div_clk == rate)
->  		return int_div_clk;
->  
-> -	/* If neither rate is an exact match, use the value from the LUT */
-> -	return fract_div_phy->pixclk;
-> +	/* If neither rate is an exact match, use the closest value */
-> +	return fsl_samsung_hdmi_phy_get_closest_rate(rate, int_div_clk,
-> +						     fract_div_phy->pixclk);
->  }
->  
->  static int phy_use_fract_div(struct fsl_samsung_hdmi_phy *phy, const struct phy_config *fract_div_phy)
-> 
-> ---
-> base-commit: 80e54e84911a923c40d7bee33a34c1b4be148d7a
-> change-id: 20250310-8ulp_hdmi-f8deac08611e
-> 
-> Best regards,
+diff --git a/include/linux/sched.h b/include/linux/sched.h
+index 9c15365a30c0..4659898c0299 100644
+--- a/include/linux/sched.h
++++ b/include/linux/sched.h
+@@ -382,6 +382,11 @@ enum uclamp_id {
+ #ifdef CONFIG_SMP
+ extern struct root_domain def_root_domain;
+ extern struct mutex sched_domains_mutex;
++extern void sched_domains_mutex_lock(void);
++extern void sched_domains_mutex_unlock(void);
++#else
++static inline void sched_domains_mutex_lock(void) { }
++static inline void sched_domains_mutex_unlock(void) { }
+ #endif
+ 
+ struct sched_param {
+diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
+index 0f910c828973..f87526edb2a4 100644
+--- a/kernel/cgroup/cpuset.c
++++ b/kernel/cgroup/cpuset.c
+@@ -994,10 +994,10 @@ static void
+ partition_and_rebuild_sched_domains(int ndoms_new, cpumask_var_t doms_new[],
+ 				    struct sched_domain_attr *dattr_new)
+ {
+-	mutex_lock(&sched_domains_mutex);
++	sched_domains_mutex_lock();
+ 	partition_sched_domains_locked(ndoms_new, doms_new, dattr_new);
+ 	dl_rebuild_rd_accounting();
+-	mutex_unlock(&sched_domains_mutex);
++	sched_domains_mutex_unlock();
+ }
+ 
+ /*
+diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+index 67189907214d..58593f4d09a1 100644
+--- a/kernel/sched/core.c
++++ b/kernel/sched/core.c
+@@ -8424,9 +8424,9 @@ void __init sched_init_smp(void)
+ 	 * CPU masks are stable and all blatant races in the below code cannot
+ 	 * happen.
+ 	 */
+-	mutex_lock(&sched_domains_mutex);
++	sched_domains_mutex_lock();
+ 	sched_init_domains(cpu_active_mask);
+-	mutex_unlock(&sched_domains_mutex);
++	sched_domains_mutex_unlock();
+ 
+ 	/* Move init over to a non-isolated CPU */
+ 	if (set_cpus_allowed_ptr(current, housekeeping_cpumask(HK_TYPE_DOMAIN)) < 0)
+diff --git a/kernel/sched/debug.c b/kernel/sched/debug.c
+index ef047add7f9e..a0893a483d35 100644
+--- a/kernel/sched/debug.c
++++ b/kernel/sched/debug.c
+@@ -292,7 +292,7 @@ static ssize_t sched_verbose_write(struct file *filp, const char __user *ubuf,
+ 	bool orig;
+ 
+ 	cpus_read_lock();
+-	mutex_lock(&sched_domains_mutex);
++	sched_domains_mutex_lock();
+ 
+ 	orig = sched_debug_verbose;
+ 	result = debugfs_write_file_bool(filp, ubuf, cnt, ppos);
+@@ -304,7 +304,7 @@ static ssize_t sched_verbose_write(struct file *filp, const char __user *ubuf,
+ 		sd_dentry = NULL;
+ 	}
+ 
+-	mutex_unlock(&sched_domains_mutex);
++	sched_domains_mutex_unlock();
+ 	cpus_read_unlock();
+ 
+ 	return result;
+@@ -515,9 +515,9 @@ static __init int sched_init_debug(void)
+ 	debugfs_create_u32("migration_cost_ns", 0644, debugfs_sched, &sysctl_sched_migration_cost);
+ 	debugfs_create_u32("nr_migrate", 0644, debugfs_sched, &sysctl_sched_nr_migrate);
+ 
+-	mutex_lock(&sched_domains_mutex);
++	sched_domains_mutex_lock();
+ 	update_sched_domain_debugfs();
+-	mutex_unlock(&sched_domains_mutex);
++	sched_domains_mutex_unlock();
+ #endif
+ 
+ #ifdef CONFIG_NUMA_BALANCING
+diff --git a/kernel/sched/topology.c b/kernel/sched/topology.c
+index c49aea8c1025..296ff2acfd32 100644
+--- a/kernel/sched/topology.c
++++ b/kernel/sched/topology.c
+@@ -6,6 +6,14 @@
+ #include <linux/bsearch.h>
+ 
+ DEFINE_MUTEX(sched_domains_mutex);
++void sched_domains_mutex_lock(void)
++{
++	mutex_lock(&sched_domains_mutex);
++}
++void sched_domains_mutex_unlock(void)
++{
++	mutex_unlock(&sched_domains_mutex);
++}
+ 
+ /* Protected by sched_domains_mutex: */
+ static cpumask_var_t sched_domains_tmpmask;
+@@ -2791,7 +2799,7 @@ void partition_sched_domains_locked(int ndoms_new, cpumask_var_t doms_new[],
+ void partition_sched_domains(int ndoms_new, cpumask_var_t doms_new[],
+ 			     struct sched_domain_attr *dattr_new)
+ {
+-	mutex_lock(&sched_domains_mutex);
++	sched_domains_mutex_lock();
+ 	partition_sched_domains_locked(ndoms_new, doms_new, dattr_new);
+-	mutex_unlock(&sched_domains_mutex);
++	sched_domains_mutex_unlock();
+ }
+-- 
+2.48.1
 
 
