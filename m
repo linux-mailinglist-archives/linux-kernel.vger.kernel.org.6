@@ -1,201 +1,119 @@
-Return-Path: <linux-kernel+bounces-554058-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-554060-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A1F3DA59243
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 12:08:55 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B872A5924B
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 12:10:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D291716B227
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 11:08:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F01A03A74C5
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 11:09:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F798226D1E;
-	Mon, 10 Mar 2025 11:08:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 790FD227586;
+	Mon, 10 Mar 2025 11:10:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="v5MaXLFh"
-Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2077.outbound.protection.outlook.com [40.107.237.77])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="dmYZzL94"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 010B4226193
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 11:08:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.237.77
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741604931; cv=fail; b=RAJzR5IppJzynSlKBScTJF7KNt0ZcVcTAhqA+M2dGpj/yX/WUzqIYt8V3DEvS2Zg+Kz/d7g/dcn7LRsVbibUxreVVVDwOBlkNrGC5I9qDLX0Pi0iwJEZPN3oU07Um1XZhwxJNC5dxisQNUNCCy/qVkvxA7QzKOkvY4hTCZrWWfQ=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741604931; c=relaxed/simple;
-	bh=ja+PfpKe2KAlrLbOEo5HG5kWPLYBNJfeN25ykOkO4YY=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=JuRAjZJb1wXf0JnkaWtbvUqeMZolfVtFV5AncrFe1Zm2HNWfb4HwVCTxvMHku2y23wcB1stU5rDGFXkFFApvFi2KWsZ/FSAuGGjIVDOZKz3mTVxyrRhElL4mGVccpV+C7+cb2AAgjQ8S2IHKSfwml5DfOsyntYMaHmakIUR42ZE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=v5MaXLFh; arc=fail smtp.client-ip=40.107.237.77
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=ymBD7gsd3nQBT51YiWsqkrrasSc2GWT9IO2lDmYtGKmQkSvbIMd+A0oPi7KzXK12Dz3Nycn8FStz+hygLn0P81snLGNHL/dZ9higk/NbgAS9B+WtEGySdVYUCoII1EXUBpteup5CeQGMS9EgkH5YyuxvPkOlJOCsNgDTTMS2IrvPInNrUcrQ7oqheOZdU9/pxtUDyxYaSsuazioNB588cu0/mM14WY8JeU6nMhgWxgj2K1uibTEQHLKmwemHMmO61FaK4TFwm8OX1RH/p0yxa1DcyE8/B9fX58J9uUBB5Sy1vpGDc4Kbre51+b7fKk1JcVjQ7ZLZU6X/KbztD4Pr5g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=yjt824qT4DNHD1kx0siqH6OBJu0sRIzi3ZdQjd3QcpA=;
- b=Vp5FV+l/ySfcEYYD9CNOcnRN9PIgk0fsVYfUPBM/UdgpvvoMGn70iYqAOuJ1fwmAikqDLmYstqMVyyqJ3dTh8H5EuVnQ09dmb1NWJuTZERhbBw9GJnmr5B/YTSNlqp7aHIetZWeoApF51fD2NbutaS+Ni16NOuKEZolzv8RQQKE+MbAq61/durCLoRed5Q3K3MQSRlJDlacBzm2KVwrCxVwZJFWM3R2Mmj0GcPDtPH2N/JFJvHqN5vnWAd2cWy1FLSjMYPY0hPph42T8tqxf9DfFnCmcMnpespq7oRca2wG+MkYP8VaF6xUXYTIi2fXdBFLMM4QSV/Qhdw/0Ao167A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=yjt824qT4DNHD1kx0siqH6OBJu0sRIzi3ZdQjd3QcpA=;
- b=v5MaXLFhZ4OJJYDV1yIFyNTmPq2S761VJj2wwajllFVmJTOjffxgbBGvbsKBF0GnZD7LZxfqOxWPWZVq/pBYSvRlINuWdg35nQFJav5jquUe96pHfvmGvbcwaCvQ3nG/hpSz8go8Efdab695kXgMw1Q6pHQsNvcS5wVv8C2NGTo=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from PH7PR12MB6588.namprd12.prod.outlook.com (2603:10b6:510:210::10)
- by DM6PR12MB4354.namprd12.prod.outlook.com (2603:10b6:5:28f::22) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8511.27; Mon, 10 Mar
- 2025 11:08:46 +0000
-Received: from PH7PR12MB6588.namprd12.prod.outlook.com
- ([fe80::5e9c:4117:b5e0:cf39]) by PH7PR12MB6588.namprd12.prod.outlook.com
- ([fe80::5e9c:4117:b5e0:cf39%6]) with mapi id 15.20.8511.025; Mon, 10 Mar 2025
- 11:08:45 +0000
-Message-ID: <d8be26ad-763b-4ab0-9f57-cfafad792194@amd.com>
-Date: Mon, 10 Mar 2025 16:38:36 +0530
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 6/7] perf: Rename perf_event_exit_task(.child)
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: mingo@kernel.org, lucas.demarchi@intel.com, linux-kernel@vger.kernel.org,
- acme@kernel.org, namhyung@kernel.org, mark.rutland@arm.com,
- alexander.shishkin@linux.intel.com, jolsa@kernel.org, irogers@google.com,
- adrian.hunter@intel.com, kan.liang@linux.intel.com,
- Ravi Bangoria <ravi.bangoria@amd.com>
-References: <20250307193305.486326750@infradead.org>
- <20250307193723.417881572@infradead.org>
-Content-Language: en-US
-From: Ravi Bangoria <ravi.bangoria@amd.com>
-In-Reply-To: <20250307193723.417881572@infradead.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: PN3PR01CA0038.INDPRD01.PROD.OUTLOOK.COM
- (2603:1096:c01:98::6) To PH7PR12MB6588.namprd12.prod.outlook.com
- (2603:10b6:510:210::10)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F64D28EA
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 11:09:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741604999; cv=none; b=fIqZRcq7fNYJ9OaokNy62AEn1B6LYP8XqKYpJrFGWLaQLLPRg7roObO7U1gCc68stIaKVF7IIBFBKjA8i5ZtVqsJt2rfx4KkVEx4bBw6cvCFKEFFcdeIyGnjIrhgP5WwcO4msIowTttPo9UqKTRcjydeTUyRzdTbO9GsQoN0pdU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741604999; c=relaxed/simple;
+	bh=QhZuDoyXPwU0zWzvdHsudE00w2M1x8BCuEsReSrGY+w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=H2LX02jpQ68H3Ma9FSLS8l6FWbj5EadSwvZU6dLPu6g4WN5Vj1VWevAdYwS1DMRQD1LKuWAZ4Ctjn5f28YNfgLAowGQEX3PeaRigpRHKzA+RtMmDyLC7R3ccQJhwiUhCtDW+5WmTUZHwdNKkgxjfo2LIChPJCdH2Zt+E8O3NCgU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=dmYZzL94; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1741604997;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=wYm99ae64FxzvhRAPoRmkCAFFzyYHIuA7FzWt/K271Y=;
+	b=dmYZzL94qXbvV9aC9YbaLOJf9Zfrfo82ejDQzHCnvBZ7CwVH1KKUGZGiq3c1I3CskYA4xt
+	AkuDmJTWhV9RyQuJ1zsuRk2Z+FowRh0mKmseQyCMvHV4cuApf6s/wwIQ6qu//XdmYW2KEn
+	sUiIieSPQhFwaJcUT6VoU6j7IQnoecU=
+Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-251-Xn0HdWn6P62amKN5gjJGeQ-1; Mon,
+ 10 Mar 2025 07:09:52 -0400
+X-MC-Unique: Xn0HdWn6P62amKN5gjJGeQ-1
+X-Mimecast-MFC-AGG-ID: Xn0HdWn6P62amKN5gjJGeQ_1741604990
+Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 7F50518004A9;
+	Mon, 10 Mar 2025 11:09:50 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.224.34])
+	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id B0F6B19560AB;
+	Mon, 10 Mar 2025 11:09:47 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+	oleg@redhat.com; Mon, 10 Mar 2025 12:09:19 +0100 (CET)
+Date: Mon, 10 Mar 2025 12:09:15 +0100
+From: Oleg Nesterov <oleg@redhat.com>
+To: Hillf Danton <hdanton@sina.com>
+Cc: K Prateek Nayak <kprateek.nayak@amd.com>,
+	Mateusz Guzik <mjguzik@gmail.com>,
+	"Sapkal, Swapnil" <swapnil.sapkal@amd.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] pipe_read: don't wake up the writer if the pipe is still
+ full
+Message-ID: <20250310110914.GA26382@redhat.com>
+References: <20250304050644.2983-1-hdanton@sina.com>
+ <20250304102934.2999-1-hdanton@sina.com>
+ <20250304233501.3019-1-hdanton@sina.com>
+ <20250305045617.3038-1-hdanton@sina.com>
+ <20250305224648.3058-1-hdanton@sina.com>
+ <20250307060827.3083-1-hdanton@sina.com>
+ <20250307104654.3100-1-hdanton@sina.com>
+ <20250307112920.GB5963@redhat.com>
+ <20250307235645.3117-1-hdanton@sina.com>
+ <20250310104910.3232-1-hdanton@sina.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PH7PR12MB6588:EE_|DM6PR12MB4354:EE_
-X-MS-Office365-Filtering-Correlation-Id: 5b08d9c7-37a4-4415-8af5-08dd5fc3ece6
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|366016|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?UzRnaWNSNDB4T3I3bTYwZUhpcnhZcHRWbnBNWFFEMjVQOHhCTDB6bW5lZXEv?=
- =?utf-8?B?NFpUejRKSEJYQkR1SCtHZExMMjJZdUF5cHQzV1dsQ04xM3NlRmlGcHAzbzVE?=
- =?utf-8?B?dWtaMzllendMOUNtZ1lBWEFTcVByai9jNUZTRklkU3dwRlRON1ZWeGl4Q01x?=
- =?utf-8?B?L0FON3hEZU9EdW55dWsyOUR4OUhhTUljWkdmS0RqNXorTERJelNCMVJibjgx?=
- =?utf-8?B?ZDZCRWlJREpRNTNQbWFRMmd2QTl4U3JHcU5aQWxHNStlWFJCV3VNMHJhcFRE?=
- =?utf-8?B?L01xZmIySzYrNTNqNGp4RVhUN25zcjlDU0RTclZ1Wk5pTmNmQnNNSzhaR3BY?=
- =?utf-8?B?YmwzaFhpRXIySFdMVHBONlExMzZLaXVsc1B6R0lyVkEwUnF1WTBzekp0VWxC?=
- =?utf-8?B?NDNScjZtSjFSSU44Nmh6VkYwb2kxbElXZG5oLzdOcVpiTFBqZEExREFENFQ2?=
- =?utf-8?B?ckx3ZGdaaEhTUDhwTTM1dks4bW95VWZ0MERDQWpoTXBZNUNtMUdKUWZLN0pI?=
- =?utf-8?B?Q0pvdktrMFlDSUc5bjJaaDFvRFhzbjFkNnlVeFF5aElXR3prdnpFMExBbzl0?=
- =?utf-8?B?MXdMODZCcEMyZ2kxZ3ZkTmMzUTJiejhlWnRaVjhjbFBzSlR4MTYwT1ZnVWRX?=
- =?utf-8?B?YUF0RjB2VHp0aEtFaVdGeUJpRmFlK1NxOXNwaU5jSU9DRGI0b0VWYk9vUjJZ?=
- =?utf-8?B?REVGbllGcmtNZnJUSEFGTytJTmM4d1k5NFNsK2xQdUp4ZStkOURRWkFQbXZu?=
- =?utf-8?B?MFA0RkVHaGpuN3g2Z0orTzVHRUJnNzhpV0NnYmxXQXcrRVRldTEyWkNRZXFt?=
- =?utf-8?B?N3k4RHNvd0tvanVJT3VLMTdhWHRla0V2N2VvR2F1TWZyYXN3ODB0Ymo0UUhl?=
- =?utf-8?B?Q1R2WjFwcFRVdGF3UHJnSXNrU2JtSHVXeHdRamUwYXhBZTZwVE1HWkd4V1h0?=
- =?utf-8?B?Q2FaMkNSQzVxMnRMajg4SWtRRm9kOXZ5YkdjcUx1NzMyaHVnMFVNczhGS2FH?=
- =?utf-8?B?Rkxpc0pSOS9nSGpuY2tuaVd6d1VQV2J2ZHRvSEFHWGRJZXZGaS82ZXkvVU9P?=
- =?utf-8?B?L2lDNWJjZ2ZKKytqSys2eTlXdVNIcUVXejZEYUJ0ZGRrQ1lXcEdNeCtVNGRq?=
- =?utf-8?B?TExPUXpsSXVNa2l2ZVdCYktFTGVQTG1DL1F2WGNXN1kzdU1KcGFiTmswMFdn?=
- =?utf-8?B?Nnp3eTJEZ1ArMmUvUHU4bTFnc0JnS3NOQ1BWZm1HQm02YStUdnA2QnY5YXNS?=
- =?utf-8?B?OU5mUCtQSFUxU2J0dG1XTXlRUXlTRXY3cmVtOEZ6MnZTdm41M2xPQXRwVzd3?=
- =?utf-8?B?ZHlnWFlYU2tHenFCbCtVczlXdnE4MGpVOHlXSFRmZEpQWGFtUm9SeGtudjRW?=
- =?utf-8?B?WG5rOGFPeVVFaDBlcVlOMnBTOXkwSUxkS2xybERFWlFpaHVuL3p3WGVON3RY?=
- =?utf-8?B?V1BLMjlmY3dGVTQvejhFV3orMmJUU2FzaUlDeElIWWw3SEljWGhQUU92WDZs?=
- =?utf-8?B?VlMvQjhDVENLZERWbWoxb25tZ3IyRzVvMUVueDcwWUw4ZXFtRnBZRTYyWkJI?=
- =?utf-8?B?TEpHbDJ1ekdXQ1J0MGxDSGNlMVRQckxSRFdod2tqcWMwZ0MvU0poWjR6amYr?=
- =?utf-8?B?VTJmUzBhT0xUamJsQzl3N3A0VUNBMnpTaW1uZ2lyUWZmTGdIdzFxc3FHZ1Qr?=
- =?utf-8?B?YzEyOWhQUVc1dXhUSnVORm9DVmluaFZ5RFpYNkFpalFVMEp0UTdCRHBFQjRa?=
- =?utf-8?B?MEhVL254dnRwZ0g0eHpLOGpBMmFtMDNLTUU5R0ZkWnZRZUFybGhjYkloUjRY?=
- =?utf-8?B?cTZrVDJKa2RlaWpSSWdJSzJlelN1SHVoR0cxZkRXdU9KNUludVRZQ3pUSVZh?=
- =?utf-8?Q?hEieeiwsPWbKw?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH7PR12MB6588.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(366016)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?bUFoVi9Pd0JQbk1JbWlKY2xkWkNOS2V3a2xWc0xEbEUwVXhJM1RxTXlSNUhT?=
- =?utf-8?B?d0NBRm0wYXhzdmJKTDNIVklQTGFldzV3ai9kRGRhVldDUHBOS2Q4a3R4anRY?=
- =?utf-8?B?cnB0emROQ1h2NEVBZi9NUDV0VDNteXBBam8zck5tZkVsYnVqejltNll6a3NF?=
- =?utf-8?B?cGdCWnc0RWUyR1NMYnNVUFNkWkpEaGlWbllRK0V1WmZDWnY1enBGeWlWWmVX?=
- =?utf-8?B?Mzl0RmloMjhrS242YkhvOXFPMG9lcE5qdXMvSWs3cnU4SVZBMUgxdDlveVF6?=
- =?utf-8?B?SFEyaWpwVjFIOXdLemJLd25ocm1RVDdSNm5QVkU1dXlsejRMaCtLQXBJMTF5?=
- =?utf-8?B?UnlISGM0TFZKOUd4c1FRK0J4cGNWMmJZR1B0dHZRZ001cUJ3U3ZyZ2dPWnZl?=
- =?utf-8?B?dkUzZUlQaFpTZWYrUFNEUWgvS0ZSUkZkNVo2V1ozbmc2NDdpMGFiQ2xTcVJa?=
- =?utf-8?B?dVBXN095U2lycU9tZ2dRaGM0MTYyUEx5SzZSWXF6SURzMU44T1NwWjVxKzQ3?=
- =?utf-8?B?em9RZTNRSHdRV1pMTmR4NklPUEpyRE1HOThVMktLYTk1ZXVKMWhpR0Fuc25P?=
- =?utf-8?B?SXQ2bnRGd1FSbUpLTjhIVjdVdzJXaFhpRVhsNWt2aXlKNVNFczVLWEJ5c1Mw?=
- =?utf-8?B?ZmhZVFhMMFZwQ3VCOU1uRTBGWWdWUmNSWHRNYnNVQXZJN1BYcU9xL3R5cEpS?=
- =?utf-8?B?ME9SSmVpRk5lN0hVc3NWOFVJTmdtKzBXUjl1ekVkUFltZnBXb0ZVTlAwVlNN?=
- =?utf-8?B?a0NuZlByOEZLbmQxTWx5bnNIcFNqOHNsdDZteFJWb2c3UlNaRHpaL0dpV1NU?=
- =?utf-8?B?TjJJZUtKUWZYaWRUZ2dLRzNpaFdud0R2ZUJOUVlxdEFraGM3eGVNcXAyYkN2?=
- =?utf-8?B?eW9uWEtJcmwxaUNoSzJHcWdMZGxDTy81elNTYjVKakNiOUpnZUIxRjV6V2RM?=
- =?utf-8?B?RmMzZkxIRnNPSExqOGlXWTlpcDF2ZkpLVDJ2ZGFobUQxSXBPS1QveG1pRHFR?=
- =?utf-8?B?em5peEN2Vk8rOUZtaGUwd3RTdm5Mc2hJbkdUTW9oSEVjQXhNK2xjQUxESmsx?=
- =?utf-8?B?RUVXZm9EZW10amxQdDVubDJ3VjJHc05YKy95OXEvbXFCZllGWlBlVlFJVTFB?=
- =?utf-8?B?QmJxMXpycVZaYUdJTFB6ZTJKSHVVSDliTkJlTzd6bGJ1RlA4bGdRTVBldlRm?=
- =?utf-8?B?c0NGY08xUWo4WDN0TzdtTVpDTGhUWllQaENyYVBvNDlXdjFFWG5XWllIZkZ3?=
- =?utf-8?B?MTIzMGZCK2JuM3RwTnNvTFM3bGExKzN5ZjNGVm01ajBORDE1NklOYnM0dWJo?=
- =?utf-8?B?RktPcW4vNEFxcDJKWVl3ejgyY2hvTW5YRHdoanArSDJ1bVkwUnMzcnVIVmsv?=
- =?utf-8?B?cDdJYktLRVd3Rkk2eHhtYzF0N2hZOWFpZHRDcjJKNC9halVtcTRNblB3cFk0?=
- =?utf-8?B?SXRWNG5QdDVvbnZOdmpXSTdiQVNCUk5WS3FNcUtXMlhKVm5mRFl4VVJocmNa?=
- =?utf-8?B?dElRSUdBZ0FkZEhuajJVNmovckdPdkJWaGhRRTFCZ0FmQ05sdnVpWFVieFQv?=
- =?utf-8?B?S25RVXRqaTZSWE5ncjlmV2pjbXVNekdRRWFXMGZRSGxpNXUrNXZuZDZKR0w4?=
- =?utf-8?B?TVRYSE9BclBuRmFBYnl1QTFuWU9kZzlaaVRBMzJEQ0JxUEYrb1NJalZmRUcx?=
- =?utf-8?B?ZklBbUVPQ211Skg0dUVaeXFCNEZabEhucHpiV0V1VnpyRmdoMld2VnlLNWE0?=
- =?utf-8?B?eXFEeHEya1J3Y05ZK0RkdzAxSStGaUQ2NFEyZ1ZXL1FCaS94K0ZCV1RaYUw2?=
- =?utf-8?B?NWhEU01NMU5rekpBNzNDN0RIWS9uSnFiNE81ZGVyUWRCNUJsbEpVTVJQWk9z?=
- =?utf-8?B?QlBteXZSaFpqS0VUMFFxQWVFV3g0Z0V6SlFrVDNmUkZwOEFldXBSVHFuV1dQ?=
- =?utf-8?B?ejgzckF2TDk1YlJzeUt4c2J6dnVUWWo2NmNNUzBwZFZuSXpLVklIazJ0clFV?=
- =?utf-8?B?elgrNTdvR2hGWVQzUWx3eGVYS0tDbVlyNEJSSzBDVTZkWVd0MDB1RC83M1pB?=
- =?utf-8?B?OWI1WDBRV1NCYzNpaDM5c0dta2JYTytjMmhkK2JFUURmUUFrOUVZZ2gwYlZZ?=
- =?utf-8?Q?WmzO4mztbTLsGOkDbY5ysrbsL?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 5b08d9c7-37a4-4415-8af5-08dd5fc3ece6
-X-MS-Exchange-CrossTenant-AuthSource: PH7PR12MB6588.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Mar 2025 11:08:45.7893
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: ukW/KG/6N0X1ChRmEsKsqERFHy0ItMLvtep9rqdPmvEiUVx5xCiK/WEXnICZ3WBajH7JUEFyGnTC12zXMArZoQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR12MB4354
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250310104910.3232-1-hdanton@sina.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
 
-Hi Peter,
+On 03/10, Hillf Danton wrote:
+>
+> On Sun, 9 Mar 2025 18:02:55 +0100 Oleg Nesterov
+> >
+> > So (again, in this particular case) we could apply the patch below
+> > on top of Linus's tree.
+> >
+> > So, with or without these changes, the writer should be woken up at
+> > step-03 in your scenario.
+> >
+> Fine, before checking my scenario once more, feel free to pinpoint the
+> line number where writer is woken up, with the change below applied.
 
-On 08-Mar-25 1:03 AM, Peter Zijlstra wrote:
-> The task passed to perf_event_exit_task() is not a child, it is
-> current. Fix this confusing naming, since much of the rest of the code
-> also relies on it being current.
-> 
-> Specifically, both exec() and exit() callers use it with current as
-> the argument.
+    381          if (wake_writer)
+==> 382                  wake_up_interruptible_sync_poll(&pipe->wr_wait, EPOLLOUT | EPOLLWRNORM);
+    383          if (wake_next_reader)
+    384                  wake_up_interruptible_sync_poll(&pipe->rd_wait, EPOLLIN | EPOLLRDNORM);
+    385          kill_fasync(&pipe->fasync_writers, SIGIO, POLL_OUT);
+    386          if (ret > 0)
+    387                  file_accessed(filp);
+    388          return ret;
 
-...
+line 382, no?
 
-> -static void perf_event_exit_task_context(struct task_struct *child, bool exit)
-> +static void perf_event_exit_task_context(struct task_struct *task, bool exit)
->  {
-> -	struct perf_event_context *child_ctx, *clone_ctx = NULL;
-> +	struct perf_event_context *ctx, *clone_ctx = NULL;
->  	struct perf_event *child_event, *next;
->  
-> -	WARN_ON_ONCE(child != current);
-> +	WARN_ON_ONCE(task != current);
+Oleg.
 
-exec() codepath (i.e. copy_process()) passes child pointer, not 'current'.
-
-Thanks,
-Ravi
 
