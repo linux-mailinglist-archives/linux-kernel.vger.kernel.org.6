@@ -1,346 +1,179 @@
-Return-Path: <linux-kernel+bounces-553930-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-553931-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 417CFA590D0
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 11:12:45 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 78605A590D3
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 11:14:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EF58E3A9580
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 10:12:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 345873AB24A
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 10:14:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5EF7225403;
-	Mon, 10 Mar 2025 10:12:37 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26DE8216392;
-	Mon, 10 Mar 2025 10:12:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 340DD22540A;
+	Mon, 10 Mar 2025 10:14:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="KSgaQ4cf"
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9A5A288A5
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 10:14:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741601557; cv=none; b=hwtWZZiQUI0DTc2M5w504+eP+XhON4S0dI32uPlPa46J1P5gkihGdPua+bkLWCupPmzQlg9FEyS1MGUCZzGBBm0Z7cRKRRO9yIqyzQhFdNpQN5FE6vnuNr8ydwgh9IIlMuZE0qxZsf3JIM4qfL9BnpIQi5uZRV8OhSpUUHyrZ3c=
+	t=1741601653; cv=none; b=IzMBOj6HVp/eodHvYl5pmXnrpuqJDFXzcpDcGWd1qe9OsOGNt4WEWRZDjTWAvOT0alwEqRzfhgICXrsTOXLCOwMgsGZh5T4RoXpUMykXqRGwsabqyJsk9QbF7Kxcb2R4IXrYy3AMvEXMPaCzUFZ9LGBFbw1BR6kzPYcR6LH6ggc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741601557; c=relaxed/simple;
-	bh=4itqZ0XMCX4rFZ6kG+9ByWJVoJi6K3Y7N/XugEuyjAY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Hw0fhXbzVZopStc+kfvvNIJ5W+ncEgCw9TmBGGGoLv6/WnHBwAPPukMqKqnQkR/vbpxWD8iB82ifq8twEdn7dhJk5rBIJGmA+8ZSCZI0bY5CD57HaQmpzvTi3puGewrSldvRuMUMmScqhmfFRjk+2TI2NbT5wUgV9QltXj+/heU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 06FC4153B;
-	Mon, 10 Mar 2025 03:12:46 -0700 (PDT)
-Received: from localhost (e132581.arm.com [10.1.196.87])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 197FD3F673;
-	Mon, 10 Mar 2025 03:12:33 -0700 (PDT)
-Date: Mon, 10 Mar 2025 10:12:29 +0000
-From: Leo Yan <leo.yan@arm.com>
-To: Ian Rogers <irogers@google.com>
-Cc: Kan Liang <kan.liang@linux.intel.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Thomas Falcon <thomas.falcon@intel.com>,
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] perf mem: Don't leak mem event names
-Message-ID: <20250310101229.GA9682@e132581.arm.com>
-References: <20250308012853.1384762-1-irogers@google.com>
+	s=arc-20240116; t=1741601653; c=relaxed/simple;
+	bh=qrhY1Bxhk9wF+bTuRi9kE+Jcd+57pGlbPZGR1j8y7ZI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=DhsL8bJ1Zp0Otwb6lqdLXAxZO65llaLtqSafAFaEkzt0QmkN7IobGWrhycZ56YhsG3/oMfx0kWGjWUA0e6It+opSA30OJOlRIrBJL5mtldP4ReI4rj4E+xItCQOPbpHykQmanBKoANSOFppXYz5Yqk4arXhiOvnfTdjcoNBop5Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=KSgaQ4cf; arc=none smtp.client-ip=209.85.128.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-43bc4b16135so22999235e9.1
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 03:14:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1741601649; x=1742206449; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Mb4ZEjkPxTZLwNM/RV2EyY1xOkJQUnNNIIHGYtjQ6vA=;
+        b=KSgaQ4cfqu560dgTpKRH7f18NRb/hxqlOVwHREc3haj7tXsq1WWisb4HEXLr2bpc8z
+         7n1tGNp1fCiJI3aSMs4BLu3gaOk/CKYBybhSPGDATBCEnZ9kAUoavGK7QzXp31OvRpOD
+         b7cmzoqWGdIqTaco8km5iNxg13yxr2Jd9VCYF4r6kwaT5HlbIO7G/h8KtY77CdojDvWh
+         cW0XPTrHFH9+TiMbv4eRztkjeSnAUAfzFpN4TK/6XUvMC6NfSnlr1Bfl98QzCkQ9Z/A1
+         NkQxoV7HXWhqdSeIe55Oyp+mbrmjbWdXVWDSkQn9u7c52TTctZZm+gfyeUL8cNdK86Rq
+         z5bA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741601649; x=1742206449;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Mb4ZEjkPxTZLwNM/RV2EyY1xOkJQUnNNIIHGYtjQ6vA=;
+        b=XokdYUCLDgkGbVZZN6M2XpbAFRRvwJ3Ul820mWsKHl09CnHGDge4RlHMuoT2FQssEp
+         FHPAeZgSV4YNDeDuACLzBnrODXULkHC4Ub2+WKbOPBzlx7hEh5Uoi9yXQevvuySDk3So
+         jqmaF3it2n1e9UDyKj9M9poAVCUQGkszFaDVLqGHqWHsCYvmv4DyOPx3CRy0DM4XRbSn
+         8+qsBPcGKPsEa3/e0oI4nonV7A2oogOWRFKHGARJu7bkVoYgWYv/YPBlRcCZGfqf/xsG
+         ZnPyI93rs3vBAHyV90I1He2hAI7RB3KjZHoyH3JHkbpVXFgtNRtIubqxJ+f+j+OcQ1iW
+         Y8ZA==
+X-Forwarded-Encrypted: i=1; AJvYcCX5CXzGKxHKlHr8Ri+T0J0YFllbPT6vnqTh6zteb4F0iH61Mvhxw+yX/UGpeCFQyZ4LtMHajKBaoo+WziA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzqBgtf/xaSNAFE6PtaNXV8Zb9P7ojIpzl93Dsx7pWbumzvlinj
+	OZcq0e/W3dpZMCCSky8YhcrIis3eaLh6O0I65WciZ69GGfFhk9xChvLxxNrJeiY=
+X-Gm-Gg: ASbGncv/ggCYvtmYHrdjMfULSdgjE23HqbYtvvjEyiRlRzm6DhVAezvJKYf79qw26+7
+	MNLmA/pSp24q5+jGazoBKh+AzOrh/EvCkQu5dOWjebmYH5j7bNCB1xRY7EF2OuqLHfiETSlPbe7
+	2DJom7qE5wIQtMwWLK2KFdUah0hepB2xZYerTgQBXYvuG14Xn+T+ArpoTby4mnROWOhHbbnRjoN
+	YK6DEuly0ltdjW+zg+ZwO8l2OBopI0DX1r6uu5oQiqgjnu+PeTgsS1f9kcQ27VfeOal5dv/o1vt
+	aET4gb4uZcQv7GW5q/IBpC/cw+tENNzvaqsfUCUg3VA2QM/LUtM3kw==
+X-Google-Smtp-Source: AGHT+IE1Ord0Tl8BurkaPnDuV4r4Te8iOeVLYyzC08bi05bzSeYXOW3onsNn3uUNCaQEE8mKnUg7hw==
+X-Received: by 2002:a05:600c:45d1:b0:43b:d0fe:b8ac with SMTP id 5b1f17b1804b1-43c686f96a0mr83815175e9.30.1741601648928;
+        Mon, 10 Mar 2025 03:14:08 -0700 (PDT)
+Received: from [192.168.0.62] ([79.115.63.206])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43cfa7e4f36sm22681595e9.40.2025.03.10.03.14.07
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 10 Mar 2025 03:14:08 -0700 (PDT)
+Message-ID: <f1111d1b-a111-4171-9467-450d90a14c0a@linaro.org>
+Date: Mon, 10 Mar 2025 12:14:06 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250308012853.1384762-1-irogers@google.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 01/21] mtd: spinand: Use more specific naming for the
+ reset op
+To: Miquel Raynal <miquel.raynal@bootlin.com>
+Cc: Richard Weinberger <richard@nod.at>, Vignesh Raghavendra
+ <vigneshr@ti.com>, Santhosh Kumar K <s-k6@ti.com>,
+ Pratyush Yadav <pratyush@kernel.org>, Michael Walle <michael@walle.cc>,
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+ Steam Lin <stlin2@winbond.com>, linux-mtd@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+References: <20250307-winbond-6-14-rc1-octal-v1-0-45c1e074ad74@bootlin.com>
+ <20250307-winbond-6-14-rc1-octal-v1-1-45c1e074ad74@bootlin.com>
+ <9004166e-5535-4024-8114-9fdb217407bb@linaro.org>
+ <87v7skrgjl.fsf@bootlin.com>
+From: Tudor Ambarus <tudor.ambarus@linaro.org>
+Content-Language: en-US
+In-Reply-To: <87v7skrgjl.fsf@bootlin.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Fri, Mar 07, 2025 at 05:28:53PM -0800, Ian Rogers wrote:
-> When preparing the mem events for the argv copies are intentionally
-> made. These copies are leaked and cause runs of perf using address
-> sanitizer to fail. Rather than leak the memory allocate a chunk of
-> memory for the mem event names upfront and build the strings in this -
-> the storage is sized larger than the previous buffer size. The caller
-> is then responsible for clearing up this memory. As part of this
-> change, remove the mem_loads_name and mem_stores_name global buffers
-> then change the perf_pmu__mem_events_name to write to an out argument
-> buffer.
-> 
-> Tested-by: Thomas Falcon <thomas.falcon@intel.com>
-> Signed-off-by: Ian Rogers <irogers@google.com>
 
-Reviewed-by: Leo Yan <leo.yan@arm.com>
 
-> ---
-> v2. Add return -ENOMEM suggested by Kan Liang.
-> ---
->  tools/perf/builtin-c2c.c     |  4 ++-
->  tools/perf/builtin-mem.c     | 12 ++++---
->  tools/perf/util/mem-events.c | 67 +++++++++++++++++++++---------------
->  tools/perf/util/mem-events.h |  3 +-
->  4 files changed, 53 insertions(+), 33 deletions(-)
+On 07.03.2025 17:45, Miquel Raynal wrote:
+> Hi Tudor,
+
+Hi!
+
 > 
-> diff --git a/tools/perf/builtin-c2c.c b/tools/perf/builtin-c2c.c
-> index 15e1fce71c72..5d5bb0f32334 100644
-> --- a/tools/perf/builtin-c2c.c
-> +++ b/tools/perf/builtin-c2c.c
-> @@ -3239,6 +3239,7 @@ static int perf_c2c__record(int argc, const char **argv)
->  {
->  	int rec_argc, i = 0, j;
->  	const char **rec_argv;
-> +	char *event_name_storage = NULL;
->  	int ret;
->  	bool all_user = false, all_kernel = false;
->  	bool event_set = false;
-> @@ -3300,7 +3301,7 @@ static int perf_c2c__record(int argc, const char **argv)
->  	rec_argv[i++] = "--phys-data";
->  	rec_argv[i++] = "--sample-cpu";
->  
-> -	ret = perf_mem_events__record_args(rec_argv, &i);
-> +	ret = perf_mem_events__record_args(rec_argv, &i, &event_name_storage);
->  	if (ret)
->  		goto out;
->  
-> @@ -3327,6 +3328,7 @@ static int perf_c2c__record(int argc, const char **argv)
->  
->  	ret = cmd_record(i, rec_argv);
->  out:
-> +	free(event_name_storage);
->  	free(rec_argv);
->  	return ret;
->  }
-> diff --git a/tools/perf/builtin-mem.c b/tools/perf/builtin-mem.c
-> index 99d5e1491a28..5ec83cd85650 100644
-> --- a/tools/perf/builtin-mem.c
-> +++ b/tools/perf/builtin-mem.c
-> @@ -74,6 +74,7 @@ static int __cmd_record(int argc, const char **argv, struct perf_mem *mem,
->  	int rec_argc, i = 0, j;
->  	int start, end;
->  	const char **rec_argv;
-> +	char *event_name_storage = NULL;
->  	int ret;
->  	struct perf_mem_event *e;
->  	struct perf_pmu *pmu;
-> @@ -140,7 +141,7 @@ static int __cmd_record(int argc, const char **argv, struct perf_mem *mem,
->  		rec_argv[i++] = "--data-page-size";
->  
->  	start = i;
-> -	ret = perf_mem_events__record_args(rec_argv, &i);
-> +	ret = perf_mem_events__record_args(rec_argv, &i, &event_name_storage);
->  	if (ret)
->  		goto out;
->  	end = i;
-> @@ -170,6 +171,7 @@ static int __cmd_record(int argc, const char **argv, struct perf_mem *mem,
->  
->  	ret = cmd_record(i, rec_argv);
->  out:
-> +	free(event_name_storage);
->  	free(rec_argv);
->  	return ret;
->  }
-> @@ -521,6 +523,7 @@ int cmd_mem(int argc, const char **argv)
->  		NULL,
->  		NULL
->  	};
-> +	int ret;
->  
->  	argc = parse_options_subcommand(argc, argv, mem_options, mem_subcommands,
->  					mem_usage, PARSE_OPT_STOP_AT_NON_OPTION);
-> @@ -536,14 +539,15 @@ int cmd_mem(int argc, const char **argv)
->  	}
->  
->  	if (strlen(argv[0]) > 2 && strstarts("record", argv[0]))
-> -		return __cmd_record(argc, argv, &mem, record_options);
-> +		ret = __cmd_record(argc, argv, &mem, record_options);
->  	else if (strlen(argv[0]) > 2 && strstarts("report", argv[0]))
-> -		return __cmd_report(argc, argv, &mem, report_options);
-> +		ret = __cmd_report(argc, argv, &mem, report_options);
->  	else
->  		usage_with_options(mem_usage, mem_options);
->  
->  	/* free usage string allocated by parse_options_subcommand */
->  	free((void *)mem_usage[0]);
-> +	free(sort_order_help);
->  
-> -	return 0;
-> +	return ret;
->  }
-> diff --git a/tools/perf/util/mem-events.c b/tools/perf/util/mem-events.c
-> index 0277d3e1505c..9011784b950d 100644
-> --- a/tools/perf/util/mem-events.c
-> +++ b/tools/perf/util/mem-events.c
-> @@ -31,9 +31,6 @@ struct perf_mem_event perf_mem_events[PERF_MEM_EVENTS__MAX] = {
->  
->  bool perf_mem_record[PERF_MEM_EVENTS__MAX] = { 0 };
->  
-> -static char mem_loads_name[100];
-> -static char mem_stores_name[100];
-> -
->  struct perf_mem_event *perf_pmu__mem_events_ptr(struct perf_pmu *pmu, int i)
->  {
->  	if (i >= PERF_MEM_EVENTS__MAX || !pmu)
-> @@ -81,7 +78,8 @@ int perf_pmu__mem_events_num_mem_pmus(struct perf_pmu *pmu)
->  	return num;
->  }
->  
-> -static const char *perf_pmu__mem_events_name(int i, struct perf_pmu *pmu)
-> +static const char *perf_pmu__mem_events_name(struct perf_pmu *pmu, int i,
-> +					     char *buf, size_t buf_size)
->  {
->  	struct perf_mem_event *e;
->  
-> @@ -96,31 +94,31 @@ static const char *perf_pmu__mem_events_name(int i, struct perf_pmu *pmu)
->  		if (e->ldlat) {
->  			if (!e->aux_event) {
->  				/* ARM and Most of Intel */
-> -				scnprintf(mem_loads_name, sizeof(mem_loads_name),
-> +				scnprintf(buf, buf_size,
->  					  e->name, pmu->name,
->  					  perf_mem_events__loads_ldlat);
->  			} else {
->  				/* Intel with mem-loads-aux event */
-> -				scnprintf(mem_loads_name, sizeof(mem_loads_name),
-> +				scnprintf(buf, buf_size,
->  					  e->name, pmu->name, pmu->name,
->  					  perf_mem_events__loads_ldlat);
->  			}
->  		} else {
->  			if (!e->aux_event) {
->  				/* AMD and POWER */
-> -				scnprintf(mem_loads_name, sizeof(mem_loads_name),
-> +				scnprintf(buf, buf_size,
->  					  e->name, pmu->name);
-> -			} else
-> +			} else {
->  				return NULL;
-> +			}
->  		}
-> -
-> -		return mem_loads_name;
-> +		return buf;
->  	}
->  
->  	if (i == PERF_MEM_EVENTS__STORE) {
-> -		scnprintf(mem_stores_name, sizeof(mem_stores_name),
-> +		scnprintf(buf, buf_size,
->  			  e->name, pmu->name);
-> -		return mem_stores_name;
-> +		return buf;
->  	}
->  
->  	return NULL;
-> @@ -238,55 +236,69 @@ void perf_pmu__mem_events_list(struct perf_pmu *pmu)
->  	int j;
->  
->  	for (j = 0; j < PERF_MEM_EVENTS__MAX; j++) {
-> +		char buf[128];
->  		struct perf_mem_event *e = perf_pmu__mem_events_ptr(pmu, j);
->  
->  		fprintf(stderr, "%-*s%-*s%s",
->  			e->tag ? 13 : 0,
->  			e->tag ? : "",
->  			e->tag && verbose > 0 ? 25 : 0,
-> -			e->tag && verbose > 0 ? perf_pmu__mem_events_name(j, pmu) : "",
-> +			e->tag && verbose > 0
-> +			? perf_pmu__mem_events_name(pmu, j, buf, sizeof(buf))
-> +			: "",
->  			e->supported ? ": available\n" : "");
->  	}
->  }
->  
-> -int perf_mem_events__record_args(const char **rec_argv, int *argv_nr)
-> +int perf_mem_events__record_args(const char **rec_argv, int *argv_nr, char **event_name_storage_out)
->  {
->  	const char *mnt = sysfs__mount();
->  	struct perf_pmu *pmu = NULL;
-> -	struct perf_mem_event *e;
->  	int i = *argv_nr;
-> -	const char *s;
-> -	char *copy;
->  	struct perf_cpu_map *cpu_map = NULL;
-> -	int ret;
-> +	size_t event_name_storage_size =
-> +		perf_pmu__mem_events_num_mem_pmus(NULL) * PERF_MEM_EVENTS__MAX * 128;
-> +	size_t event_name_storage_remaining = event_name_storage_size;
-> +	char *event_name_storage = malloc(event_name_storage_size);
-> +	char *event_name_storage_ptr = event_name_storage;
-> +
-> +	if (!event_name_storage)
-> +		return -ENOMEM;
->  
-> +	*event_name_storage_out = NULL;
->  	while ((pmu = perf_pmus__scan_mem(pmu)) != NULL) {
->  		for (int j = 0; j < PERF_MEM_EVENTS__MAX; j++) {
-> -			e = perf_pmu__mem_events_ptr(pmu, j);
-> +			const char *s;
-> +			struct perf_mem_event *e = perf_pmu__mem_events_ptr(pmu, j);
-> +			int ret;
->  
->  			if (!perf_mem_record[j])
->  				continue;
->  
->  			if (!e->supported) {
-> +				char buf[128];
-> +
->  				pr_err("failed: event '%s' not supported\n",
-> -					perf_pmu__mem_events_name(j, pmu));
-> +					perf_pmu__mem_events_name(pmu, j, buf, sizeof(buf)));
-> +				free(event_name_storage);
->  				return -1;
->  			}
->  
-> -			s = perf_pmu__mem_events_name(j, pmu);
-> +			s = perf_pmu__mem_events_name(pmu, j, event_name_storage_ptr,
-> +						      event_name_storage_remaining);
->  			if (!s || !perf_pmu__mem_events_supported(mnt, pmu, e))
->  				continue;
->  
-> -			copy = strdup(s);
-> -			if (!copy)
-> -				return -1;
-> -
->  			rec_argv[i++] = "-e";
-> -			rec_argv[i++] = copy;
-> +			rec_argv[i++] = event_name_storage_ptr;
-> +			event_name_storage_remaining -= strlen(event_name_storage_ptr) + 1;
-> +			event_name_storage_ptr += strlen(event_name_storage_ptr) + 1;
->  
->  			ret = perf_cpu_map__merge(&cpu_map, pmu->cpus);
-> -			if (ret < 0)
-> +			if (ret < 0) {
-> +				free(event_name_storage);
->  				return ret;
-> +			}
->  		}
->  	}
->  
-> @@ -301,6 +313,7 @@ int perf_mem_events__record_args(const char **rec_argv, int *argv_nr)
->  	}
->  
->  	*argv_nr = i;
-> +	*event_name_storage_out = event_name_storage;
->  	return 0;
->  }
->  
-> diff --git a/tools/perf/util/mem-events.h b/tools/perf/util/mem-events.h
-> index 8dc27db9fd52..a5c19d39ee37 100644
-> --- a/tools/perf/util/mem-events.h
-> +++ b/tools/perf/util/mem-events.h
-> @@ -38,7 +38,8 @@ int perf_pmu__mem_events_num_mem_pmus(struct perf_pmu *pmu);
->  bool is_mem_loads_aux_event(struct evsel *leader);
->  
->  void perf_pmu__mem_events_list(struct perf_pmu *pmu);
-> -int perf_mem_events__record_args(const char **rec_argv, int *argv_nr);
-> +int perf_mem_events__record_args(const char **rec_argv, int *argv_nr,
-> +				 char **event_name_storage_out);
->  
->  int perf_mem__tlb_scnprintf(char *out, size_t sz, const struct mem_info *mem_info);
->  int perf_mem__lvl_scnprintf(char *out, size_t sz, const struct mem_info *mem_info);
-> -- 
-> 2.49.0.rc0.332.g42c0ae87b1-goog
+>>> -#define SPINAND_RESET_OP						\
+>>> +#define SPINAND_RESET_1S_0_0_OP						\
+>> Hi, Miquel,
+>>
+>> Have you seen any reset op with address or data? If not, I'm not really
+>> sure whether we shall change the name for these basic operations.
+>>
+>> Changing them to 1S-0-0 may also indicate that there are resets with
+>> address or data fields, which I find confusing.
+>>
+>> I think the change is good for reads and writes. I'll check further in
+>> the series and let you know.
 > 
+> I want to rename this macro for two reasons:
+> - We might see in the near future the addition of 8D-0-0 ops (I plan on
+>   working on it).
+> - I would like some kind of harmony among these macros.
+> 
+> Now, whether is should be named like I proposed or just
+> SPINAND_RESET_OP_1S, I have no strong preference and I can change that
+> in an upcoming version.
+> 
+> Which one would you prefer?
+
+I don't know. Which one is backed up by a standard?
+
+JESD216F defines
+"(An-Bn-Cn): Command mode nomenclature used to indicate the number of
+active pins used for the instruction (A), address (B), and data (C), and
+the data rate used for each. Data rates(n) can be single (S) and dual (D)."
+
+Also, "(x-y-z) nomenclature is equivalent to(AS-BS-CS) unless otherwise
+noted."
+
+What's an "active pin"?
+
+Then if I look at JESD251-1.01 and JESD251C, (An-Bn-Cn) is referred to
+as "protocol mode". Write Enable, which is just an instruction command
+with no address or data, is seen as a required command in both 4D-4D-4D
+and 8D-8D-8D protocol modes, and it's defined as a "1.A" transaction
+format command. And the transaction format is:
+'''
+The following transaction formats are used in Profile 1.0 mode 8D-8D-8D:
+Format 1.A: Command and Command Extension
+Format 1.B: Command, Command Extension, 4-byte Address, ‘n’ Latency
+Cycles, and Read Data
+Format 1.C: Command, Command Extension, and 4-byte Address
+Format 1.D: Command, Command Extension, 4-byte Address, and Write Data
+'''
+
+So according to these standards maybe we shall refer to it as:
+WREN-8D-8D-8D-1A? This seems less intuitive than 8D-0-0, but I think it
+all depends on what's an "active pin". I think it describes the protocol
+mode, and not what's actually sent on the line. As we saw, WREN is
+considered an 8D-8D-8D command, and not an 8D-0-0 command.
+
+For dual mode, which is not covered by xSPI, I guess we can use the
+single spi transaction formats 0.{A,B,C,...}.
+
+How do you feel about a OP-An-Bn-Cn-transaction-format,
+	where A, B, C is {1, 2, 4, 8}
+	n is {S, D}
+	transaction format is {0,1,2,3}{A,B,C,...}
+
+Care must be taken care of at the transaction format, as I see there are
+a few, depending on the xSPI profile and protocol mode.
+
+Cheers,
+ta
 
