@@ -1,114 +1,126 @@
-Return-Path: <linux-kernel+bounces-554961-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-554962-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED2E9A5A3E4
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 20:38:00 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id AFF5AA5A3E5
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 20:38:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2D7161740B7
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 19:38:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 635293AB42D
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 19:38:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07A5623644F;
-	Mon, 10 Mar 2025 19:37:45 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A0572356CC;
-	Mon, 10 Mar 2025 19:37:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF33D22318;
+	Mon, 10 Mar 2025 19:38:50 +0000 (UTC)
+Received: from relay.hostedemail.com (smtprelay0013.hostedemail.com [216.40.44.13])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D76051CAA60
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 19:38:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741635464; cv=none; b=f09Z+QxytirLFmSe4+cCwWXKpQ47PoOBR3aKG833jwyWFeyl9IKb2uIhG7sn3Ullq0tycS9gIvv9NVqoYRoM5aDd+sjsp3ZYUQ6017W+5xcojctji9kucHQLfJiz525TmZs2dX5FXxfYq4CAZKhIRpxlJmUz6hGXZpwnFopHV8Y=
+	t=1741635530; cv=none; b=tF0KBZx5b/kBjdDMu4EVtVo8twP7kA2T3yFJq8VHD+eB6aPiDwpie+EK21IRuqlwQGf3E0sSOMs21bV2ldPthNIzqMcdhq9G+HTdr/IRj2/8dSTMB31ZsQrulegfebPtnC10XTWn2HvbVeFqKEqPJjdH+UR3Gg/qhEFxexf1UvA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741635464; c=relaxed/simple;
-	bh=c1iYrSO8Kd/12THIxsVRKDsAM0Bj4Yao50BlyA3CgBM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Mr6wJ87uhj6dXvwYVxAM8dKmaUlUMmmqt6xllOd0gjQETRNLzzOj8MZkNznn+LBEISL6tcHrXzVIKgyLv0PinomdJA+fsVhBrez7pET/bZ7G7L74cFCyoyg+x6yV/GPaZ1uw5oQeBufRBqSSCa7OLsigDztwGBpcSAa4tARd1QE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8194A152B;
-	Mon, 10 Mar 2025 12:37:52 -0700 (PDT)
-Received: from J2N7QTR9R3 (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B96A83F694;
-	Mon, 10 Mar 2025 12:37:38 -0700 (PDT)
-Date: Mon, 10 Mar 2025 19:37:32 +0000
-From: Mark Rutland <mark.rutland@arm.com>
-To: Catalin Marinas <catalin.marinas@arm.com>
-Cc: Kees Cook <kees@kernel.org>, Peter Collingbourne <pcc@google.com>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Andy Shevchenko <andy@kernel.org>,
-	Andrey Konovalov <andreyknvl@gmail.com>,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-hardening@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, stable@vger.kernel.org
-Subject: Re: [PATCH] string: Disable read_word_at_a_time() optimizations if
- kernel MTE is enabled
-Message-ID: <Z88_fFgr23_EtHMf@J2N7QTR9R3>
-References: <20250308023314.3981455-1-pcc@google.com>
- <202503071927.1A795821A@keescook>
- <Z88jbhobIz2yWBbJ@arm.com>
- <Z88r5qFLOSo0itaq@J2N7QTR9R3.cambridge.arm.com>
- <Z88yC7Oaj9DGaswc@arm.com>
+	s=arc-20240116; t=1741635530; c=relaxed/simple;
+	bh=p9ZZKrEOoR40lH9EoVCJzDAUOL+2yCiU0S5R4LpxHp0=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=nqx8e/ZepOkwf0OpgNODbn+ddaSLaauDnmXg1U7AnfoCRpAJoUDC4Vvmswf46e84DxC8haf646QIS/oCKnBN523CL3x7RTuh7B20opJl0GfkQgFW9QhFMhYN/B5Y3SqakoZCU11q1ALPAyISw1+ENeY8Wd08O5xJnk7a1i2zbhs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com; spf=pass smtp.mailfrom=perches.com; arc=none smtp.client-ip=216.40.44.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=perches.com
+Received: from omf18.hostedemail.com (a10.router.float.18 [10.200.18.1])
+	by unirelay06.hostedemail.com (Postfix) with ESMTP id 32B38B996A;
+	Mon, 10 Mar 2025 19:38:47 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: joe@perches.com) by omf18.hostedemail.com (Postfix) with ESMTPA id 9EBD431;
+	Mon, 10 Mar 2025 19:38:42 +0000 (UTC)
+Message-ID: <95d462018382f51ac88471fb555653b2b6601100.camel@perches.com>
+Subject: Re: [PATCH] checkpatch: Describe --min-conf-desc-length
+From: Joe Perches <joe@perches.com>
+To: Philipp Hahn <phahn-oss@avm.de>, linux-kernel@vger.kernel.org, Andrew
+ Morton <akpm@linux-foundation.org>
+Cc: Andy Whitcroft <apw@canonical.com>, Dwaipayan Ray
+ <dwaipayanray1@gmail.com>,  Lukas Bulwahn <lukas.bulwahn@gmail.com>,
+ Philipp Hahn <p.hahn@avm.de>
+Date: Mon, 10 Mar 2025 12:38:22 -0700
+In-Reply-To: <c71c170c90eba26265951e248adfedd3245fe575.1741605695.git.p.hahn@avm.de>
+References: 
+	<c71c170c90eba26265951e248adfedd3245fe575.1741605695.git.p.hahn@avm.de>
+Content-Type: text/plain; charset="ISO-8859-1"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.54.3 (3.54.3-1.fc41) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z88yC7Oaj9DGaswc@arm.com>
+X-Rspamd-Queue-Id: 9EBD431
+X-Rspamd-Server: rspamout04
+X-Stat-Signature: 69wo6514spjedkfkcus61af416bw5t14
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Session-ID: U2FsdGVkX1/tNPfUa4XU0LdRXTnpDhVxdlgocjb15fE=
+X-HE-Tag: 1741635522-117231
+X-HE-Meta: U2FsdGVkX1/bKrUdrgefrTjIC1N0fubvYz2FZAImQzxXPLLPuOFB7ucSEg3mpEqKKLi4XM/iIThYmT1oMUczvS2rH9gJgOEuI/ppcCqcG6dgLQR1qj1VF/YdxCDNQnILABFJynvj/D6b4ER+KZko/3buXWQbnTddnI2Upsmt3S7gG+7GfnUBN5g4eywFyfdijdGEofZCIVc905BkQhuEEdjXAMuTlKkiCipPVftH6y62yZFUNzQkHrASoU15nB7xVa7F3lArfVMdPwLCuc1h4UDP2eyClBhU6R2OyRe+anQqYibM6NXL+O8JOiSImUkuawD4wEbvQL1VZc/YHhgYT7mBx2y6TTjBS1Lkdq4Mebrv0jU3ZeY2Ke8er95CnvYxNKzJ9uLFaWzEvFZkm0zr2F47Cvvx3HMsTv632h8hg4M56InpZs5KJMWe+THVkMC4btgJKfzTqtpFPqBnHAVZzg==
 
-On Mon, Mar 10, 2025 at 06:40:11PM +0000, Catalin Marinas wrote:
-> On Mon, Mar 10, 2025 at 06:13:58PM +0000, Mark Rutland wrote:
-> > On Mon, Mar 10, 2025 at 05:37:50PM +0000, Catalin Marinas wrote:
-> > > On Fri, Mar 07, 2025 at 07:36:31PM -0800, Kees Cook wrote:
-> > > > On Fri, Mar 07, 2025 at 06:33:13PM -0800, Peter Collingbourne wrote:
-> > > > > The optimized strscpy() and dentry_string_cmp() routines will read 8
-> > > > > unaligned bytes at a time via the function read_word_at_a_time(), but
-> > > > > this is incompatible with MTE which will fault on a partially invalid
-> > > > > read. The attributes on read_word_at_a_time() that disable KASAN are
-> > > > > invisible to the CPU so they have no effect on MTE. Let's fix the
-> > > > > bug for now by disabling the optimizations if the kernel is built
-> > > > > with HW tag-based KASAN and consider improvements for followup changes.
-> > > > 
-> > > > Why is faulting on a partially invalid read a problem? It's still
-> > > > invalid, so ... it should fault, yes? What am I missing?
-> > > 
-> > > read_word_at_a_time() is used to read 8 bytes, potentially unaligned and
-> > > beyond the end of string. The has_zero() function is then used to check
-> > > where the string ends. For this uses, I think we can go with
-> > > load_unaligned_zeropad() which handles a potential fault and pads the
-> > > rest with zeroes.
-> > 
-> > If we only care about synchronous and asymmetric modes, that should be
-> > possible, but that won't work in asynchronous mode. In asynchronous mode
-> > the fault will accumulate into TFSR and will be detected later
-> > asynchronously where it cannot be related to its source and fixed up.
-> > 
-> > That means that both read_word_at_a_time() and load_unaligned_zeropad()
-> > are dodgy in async mode.
-> 
-> load_unaligned_zeropad() has a __mte_enable_tco_async() call to set
-> PSTATE.TCO if in async mode, so that's covered. read_word_at_a_time() is
-> indeed busted and I've had Vincezo's patches for a couple of years
-> already, they just never made it to the list.
+On Mon, 2025-03-10 at 12:22 +0100, Philipp Hahn wrote:
+> Neither the warning nor the help message gives any hint on the unit for
+> length: Could be meters, inches, bytes, characters or ... lines.
 
-Sorry, I missed the __mte_{enable,disable}_tco_async() calls. So long as
-we're happy to omit the check in that case, that's fine.
+I've no objection to this.
 
-I was worried that ex_handler_load_unaligned_zeropad() might not do the
-right thing in response to a tag check fault (e.g. access the wrong 8
-bytes), but it looks as though that's ok due to the way it generates the
-offset and the aligned pointer.
+>=20
+> Extend the output of `--help` to name the unit "lines" and the default:
+> -  --min-conf-desc-length=3Dn   set the min description length, if shorte=
+r, warn
+> +  --min-conf-desc-length=3Dn   set the minimum description length for co=
+nfig symbols
+> +                             in lines, if shorter, warn (default 4)
+>=20
+> Include the minimum number of lines as other error messages already do:
+> - WARNING: please write a help paragraph that fully describes the config =
+symbol
+> + WARNING: please write a help paragraph that fully describes the config =
+symbol with at least 4 lines
+>=20
+> Cc: Andy Whitcroft <apw@canonical.com>
+> Cc: Joe Perches <joe@perches.com>
+> Cc: Dwaipayan Ray <dwaipayanray1@gmail.com>
+> Cc: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+> Signed-off-by: Philipp Hahn <p.hahn@avm.de>
+> ---
+>  scripts/checkpatch.pl | 5 +++--
+>  1 file changed, 3 insertions(+), 2 deletions(-)
+>=20
+> diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
+> index 7b28ad331742..784912f570e9 100755
+> --- a/scripts/checkpatch.pl
+> +++ b/scripts/checkpatch.pl
+> @@ -113,7 +113,8 @@ Options:
+>    --max-line-length=3Dn        set the maximum line length, (default $ma=
+x_line_length)
+>                               if exceeded, warn on patches
+>                               requires --strict for use with --file
+> -  --min-conf-desc-length=3Dn   set the min description length, if shorte=
+r, warn
+> +  --min-conf-desc-length=3Dn   set the minimum description length for co=
+nfig symbols
+> +                             in lines, if shorter, warn (default $min_co=
+nf_desc_length)
+>    --tab-size=3Dn               set the number of spaces for tab (default=
+ $tabsize)
+>    --root=3DPATH                PATH to the kernel tree root
+>    --no-summary               suppress the per-file summary
+> @@ -3645,7 +3646,7 @@ sub process {
+>  			    $help_length < $min_conf_desc_length) {
+>  				my $stat_real =3D get_stat_real($linenr, $ln - 1);
+>  				WARN("CONFIG_DESCRIPTION",
+> -				     "please write a help paragraph that fully describes the config =
+symbol\n" . "$here\n$stat_real\n");
+> +				     "please write a help paragraph that fully describes the config =
+symbol with at least $min_conf_desc_length lines\n" . "$here\n$stat_real\n"=
+);
+>  			}
+>  		}
+> =20
 
-If load_unaligned_zeropad() is handed a string that starts with an
-unexpected tag (and even if that starts off aligned),
-ex_handler_load_unaligned_zeropad() will access that and cause another
-tag check fault, which will be reported.
-
-Mark.
 
