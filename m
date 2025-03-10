@@ -1,192 +1,79 @@
-Return-Path: <linux-kernel+bounces-553920-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-553916-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6573FA5909D
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 11:01:39 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 42C08A5908F
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 11:00:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 221573A63EE
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 10:01:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 77F9E16732B
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 10:00:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22DBA224AE0;
-	Mon, 10 Mar 2025 10:01:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8227A2253E4;
+	Mon, 10 Mar 2025 10:00:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=nicolas.frattaroli@collabora.com header.b="IQxgjB9l"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=pm.me header.i=@pm.me header.b="mRItwu+f"
+Received: from mail-40131.protonmail.ch (mail-40131.protonmail.ch [185.70.40.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F75B29A2;
-	Mon, 10 Mar 2025 10:01:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741600874; cv=pass; b=NJF1+NciMSJrHQB/UTCTURTZwJ1R+nSVhEi2bisj51f9pQiPaiXnaVHB0hn9NDDt1SRneHpNiiT6xtqVex3Z3I5mkauCH01j66jyEjmNKxh4vVRNiFKEsZbuScmOWb+heZhMxKfW9pR4UuRaVVLNnkcZltPfuJs9RNiEd/pcDME=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741600874; c=relaxed/simple;
-	bh=b76qrhBUBBQgOxNEP24/iaezZ47DqFJATqoAHC9PA6A=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Rofkw5F97fyJ05StyiCFyXusbPk5IK5wKXVW1iN6y3qtbPKKuM8zursQsIEoo2aC9TfjXimFEYAw0M55E3q9CFFzgviV8CptM2neN1IEkIGQJpN7hmGjmXuYwoR63Ma7ea9dBYwe/YaJ14F7i4TwyqAANtroiwpjcD9dA2PT0WQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=nicolas.frattaroli@collabora.com header.b=IQxgjB9l; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1741600844; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=LUAZ4AB574FF/KkzPzySh74VUqaKk7Up4geZssi+tUWNoVBPmbOXaAB0X2kT4+3Wbwj1fV/MKAEB7dANewJ33AqC8P4Oss8Iipj6Y97OwfM4KJ/c+VSRs1O1gLlaE9xuzeOnE90bxczUP5GDESSsbObyinaN12NBVrqijYEffFQ=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1741600844; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=sG0ZptlmWh6usz+6gYzu3av5prS4D953FeG+EZTRlmE=; 
-	b=Fyv59Hi6jM+QmMMz4EVYjOWDyqSx9Tdyog8JkvORFtntRG92twzxE0N61oF1iAv7x8o4qbhLsFLqKux87Hwt7QYYOlnQ4LFMYVFMLuXhhrCucZR8+ZZWZZWFS2WthKQfmqwC4VzPjrC/HclcCnESvi9XePFtgQ1mv5zh+rcgpYQ=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=nicolas.frattaroli@collabora.com;
-	dmarc=pass header.from=<nicolas.frattaroli@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1741600844;
-	s=zohomail; d=collabora.com; i=nicolas.frattaroli@collabora.com;
-	h=From:From:Date:Date:Subject:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding:Message-Id:Message-Id:References:In-Reply-To:To:To:Cc:Cc:Reply-To;
-	bh=sG0ZptlmWh6usz+6gYzu3av5prS4D953FeG+EZTRlmE=;
-	b=IQxgjB9lLAHcZuF00S0hPyH4P/moK4+Fc+IszQagDcah2y50VQSL1g435V4GGsjF
-	V2PW5GMQwJNtc/Xrg2fZ9rdxCtoJVRjFBeGPmQu2AdYVtZuO+U6SD0ms2XPVGWgkpwZ
-	6YCFoC8OeRm6qM5vLsMZvOGvmwcK+dGLvtsEqN6E=
-Received: by mx.zohomail.com with SMTPS id 174160084194050.598305390263135;
-	Mon, 10 Mar 2025 03:00:41 -0700 (PDT)
-From: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
-Date: Mon, 10 Mar 2025 10:59:57 +0100
-Subject: [PATCH 2/2] arm64: dts: rockchip: fix RK3576 SCMI clock IDs
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F0D022371F
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 10:00:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.40.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741600818; cv=none; b=dB5n1AA2YNKbrGVKk6rh2dbLc0+GfBN3Ncn6eSQNDGc80EKJotvEMdiq7r5A8eucxRqvLO5BT6KmolCF5Erv2k1e1Uj/8dtu3ks4ymddMAPlWIMrs3DzrL3m2uOwsjfM3TBXztp4VcdJ8K3aLimc+Zo8tAsOdC+jsvdsvICNltc=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741600818; c=relaxed/simple;
+	bh=zXA6vQFhc30A7EU2VUj2nZ7hAAlciGqFu6RCAmOQkjU=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=oSi/ZAE1OL56dTI9C+kL/tJ4rFnJqE0W+E+hCwv4pCSPoRTc1jcWIGlzNWpu7j29lOEXgxmk6PWSnpBLFrMfphEBsOirqBJW4n1LzgPDDhdh9xlFeVc4B2AodzFRwuoBHNw2lZQmD+yMa8xvebQYcIeDY16O/OJQFAQ/Osola+I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pm.me; spf=pass smtp.mailfrom=pm.me; dkim=pass (2048-bit key) header.d=pm.me header.i=@pm.me header.b=mRItwu+f; arc=none smtp.client-ip=185.70.40.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pm.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pm.me
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pm.me;
+	s=protonmail3; t=1741600814; x=1741860014;
+	bh=zXA6vQFhc30A7EU2VUj2nZ7hAAlciGqFu6RCAmOQkjU=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector:List-Unsubscribe:List-Unsubscribe-Post;
+	b=mRItwu+feXHR6uwlvGrye8dF/nrVBJGOJoTrgwHMG/+ozqaqcV2h31nseBmqm4vf7
+	 3+1lhWzFb1d4c1PxSkdlZOjQxvCr3PA0gq3hO2BJdwhW2ZYCsC4O+LVoWV1Fe5hHd1
+	 /LWTmoVaInOGhaBoABrFv4A91xqpCAv6a2Dl2C9nQ+nDkjuLMboai6WjDyyC2K+QDk
+	 IaqjlRyyv7bptnQGtX+CcHnQyeWlnOYz90QWD4Pa1NxKCViUufydTmBFehi9ppe0qC
+	 5sVCsyFBcTpI923s4XSyMwp6y6Npb7bggQqFuPeePKNBJws3rxMnuMHRnkxmY+VXtf
+	 ATUwX/Wotah8A==
+Date: Mon, 10 Mar 2025 10:00:05 +0000
+To: Alice Ryhl <aliceryhl@google.com>
+From: Oliver Mangold <oliver.mangold@pm.me>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>, Asahi Lina <lina@asahilina.net>, rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v6 2/5] rust: make Owned::into_raw() and Owned::from_raw() public
+Message-ID: <Z864IGPJ-v8Ttt51@mango>
+In-Reply-To: <Z8618XEgG1yNvppk@google.com>
+References: <20250310-unique-ref-v6-0-1ff53558617e@pm.me> <20250310-unique-ref-v6-2-1ff53558617e@pm.me> <Z8618XEgG1yNvppk@google.com>
+Feedback-ID: 31808448:user:proton
+X-Pm-Message-ID: 03bc40ba1dfd58add8200b81e1d5c65fbe446f86
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250310-rk3576-scmi-clocks-v1-2-e165deb034e8@collabora.com>
-References: <20250310-rk3576-scmi-clocks-v1-0-e165deb034e8@collabora.com>
-In-Reply-To: <20250310-rk3576-scmi-clocks-v1-0-e165deb034e8@collabora.com>
-To: Jonas Karlman <jonas@kwiboo.se>, 
- Sebastian Reichel <sebastian.reichel@collabora.com>, 
- Heiko Stuebner <heiko@sntech.de>, 
- Detlev Casanova <detlev.casanova@collabora.com>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Liang Chen <cl@rock-chips.com>, 
- Elaine Zhang <zhangqing@rock-chips.com>, 
- Finley Xiao <finley.xiao@rock-chips.com>, 
- Yifeng Zhao <yifeng.zhao@rock-chips.com>
-Cc: kernel@collabora.com, linux-clk@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, 
- Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
-X-Mailer: b4 0.14.2
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-Downstream Linux, and consequently both downstream and mainline TF-A,
-all use a different set of clock IDs from mainline Linux. If we want to
-fiddle with these clocks through SCMI, we'll need to use the right IDs.
-If we don't do this we'll end up changing unrelated clocks all over the
-place.
+On 250310 0950, Alice Ryhl wrote:
+>=20
+> You can't send a patch by others without adding your own SoB.
 
-Change the clock IDs to the newly added SCMI clock IDs for the CPU and
-GPU nodes, which are currently the only ones using SCMI clocks. This
-fixes the terrible GPU performance, as we weren't reclocking it
-properly.
+Ok. Sorry, didn't know that.
 
-Fixes: 57b1ce903966 ("arm64: dts: rockchip: Add rk3576 SoC base DT")
-Reported-by: Jonas Karlman <jonas@kwiboo.se>
-Closes: https://libera.irclog.whitequark.org/linux-rockchip/2025-03-09#1741542223-1741542875;
-Signed-off-by: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
----
- arch/arm64/boot/dts/rockchip/rk3576.dtsi | 18 +++++++++---------
- 1 file changed, 9 insertions(+), 9 deletions(-)
+On 250310 0950, Alice Ryhl wrote:
+>=20
+> I would probably just fold this into the previous patch.
 
-diff --git a/arch/arm64/boot/dts/rockchip/rk3576.dtsi b/arch/arm64/boot/dts/rockchip/rk3576.dtsi
-index 8591065b575223a5eb2da70f723f16969aa2ecf7..1fddf298795e5c914a76d9779b6f8563ee15c8e3 100644
---- a/arch/arm64/boot/dts/rockchip/rk3576.dtsi
-+++ b/arch/arm64/boot/dts/rockchip/rk3576.dtsi
-@@ -111,7 +111,7 @@ cpu_l0: cpu@0 {
- 			reg = <0x0>;
- 			enable-method = "psci";
- 			capacity-dmips-mhz = <485>;
--			clocks = <&scmi_clk ARMCLK_L>;
-+			clocks = <&scmi_clk SCMI_ARMCLK_L>;
- 			operating-points-v2 = <&cluster0_opp_table>;
- 			#cooling-cells = <2>;
- 			dynamic-power-coefficient = <120>;
-@@ -124,7 +124,7 @@ cpu_l1: cpu@1 {
- 			reg = <0x1>;
- 			enable-method = "psci";
- 			capacity-dmips-mhz = <485>;
--			clocks = <&scmi_clk ARMCLK_L>;
-+			clocks = <&scmi_clk SCMI_ARMCLK_L>;
- 			operating-points-v2 = <&cluster0_opp_table>;
- 			cpu-idle-states = <&CPU_SLEEP>;
- 		};
-@@ -135,7 +135,7 @@ cpu_l2: cpu@2 {
- 			reg = <0x2>;
- 			enable-method = "psci";
- 			capacity-dmips-mhz = <485>;
--			clocks = <&scmi_clk ARMCLK_L>;
-+			clocks = <&scmi_clk SCMI_ARMCLK_L>;
- 			operating-points-v2 = <&cluster0_opp_table>;
- 			cpu-idle-states = <&CPU_SLEEP>;
- 		};
-@@ -146,7 +146,7 @@ cpu_l3: cpu@3 {
- 			reg = <0x3>;
- 			enable-method = "psci";
- 			capacity-dmips-mhz = <485>;
--			clocks = <&scmi_clk ARMCLK_L>;
-+			clocks = <&scmi_clk SCMI_ARMCLK_L>;
- 			operating-points-v2 = <&cluster0_opp_table>;
- 			cpu-idle-states = <&CPU_SLEEP>;
- 		};
-@@ -157,7 +157,7 @@ cpu_b0: cpu@100 {
- 			reg = <0x100>;
- 			enable-method = "psci";
- 			capacity-dmips-mhz = <1024>;
--			clocks = <&scmi_clk ARMCLK_B>;
-+			clocks = <&scmi_clk SCMI_ARMCLK_B>;
- 			operating-points-v2 = <&cluster1_opp_table>;
- 			#cooling-cells = <2>;
- 			dynamic-power-coefficient = <320>;
-@@ -170,7 +170,7 @@ cpu_b1: cpu@101 {
- 			reg = <0x101>;
- 			enable-method = "psci";
- 			capacity-dmips-mhz = <1024>;
--			clocks = <&scmi_clk ARMCLK_B>;
-+			clocks = <&scmi_clk SCMI_ARMCLK_B>;
- 			operating-points-v2 = <&cluster1_opp_table>;
- 			cpu-idle-states = <&CPU_SLEEP>;
- 		};
-@@ -181,7 +181,7 @@ cpu_b2: cpu@102 {
- 			reg = <0x102>;
- 			enable-method = "psci";
- 			capacity-dmips-mhz = <1024>;
--			clocks = <&scmi_clk ARMCLK_B>;
-+			clocks = <&scmi_clk SCMI_ARMCLK_B>;
- 			operating-points-v2 = <&cluster1_opp_table>;
- 			cpu-idle-states = <&CPU_SLEEP>;
- 		};
-@@ -192,7 +192,7 @@ cpu_b3: cpu@103 {
- 			reg = <0x103>;
- 			enable-method = "psci";
- 			capacity-dmips-mhz = <1024>;
--			clocks = <&scmi_clk ARMCLK_B>;
-+			clocks = <&scmi_clk SCMI_ARMCLK_B>;
- 			operating-points-v2 = <&cluster1_opp_table>;
- 			cpu-idle-states = <&CPU_SLEEP>;
- 		};
-@@ -932,7 +932,7 @@ power-domain@RK3576_PD_VO1 {
- 		gpu: gpu@27800000 {
- 			compatible = "rockchip,rk3576-mali", "arm,mali-bifrost";
- 			reg = <0x0 0x27800000 0x0 0x200000>;
--			assigned-clocks = <&scmi_clk CLK_GPU>;
-+			assigned-clocks = <&scmi_clk SCMI_CLK_GPU>;
- 			assigned-clock-rates = <198000000>;
- 			clocks = <&cru CLK_GPU>;
- 			clock-names = "core";
+That is okay with different authors? Just leave that authorship with
+Asahi Lina, then, I assume?
 
--- 
-2.48.1
+Oliver
 
 
