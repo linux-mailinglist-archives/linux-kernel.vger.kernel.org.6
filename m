@@ -1,186 +1,140 @@
-Return-Path: <linux-kernel+bounces-554026-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-554016-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 15C2BA591EC
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 11:54:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C93DA591D7
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 11:52:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9D1361890A5E
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 10:54:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 83ECE1890855
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 10:52:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF654227E9F;
-	Mon, 10 Mar 2025 10:50:11 +0000 (UTC)
-Received: from mail115-24.sinamail.sina.com.cn (mail115-24.sinamail.sina.com.cn [218.30.115.24])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5D7A22ACCE;
+	Mon, 10 Mar 2025 10:49:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="bjk6RAj1"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C801227E81
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 10:50:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=218.30.115.24
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B411922A1D5;
+	Mon, 10 Mar 2025 10:49:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741603811; cv=none; b=RAOwxKbsT+q5wPOF+y0O/10faRqIzlBC0AzftgmqBCbw8vurY2RzVMS8pmoBzmoshd7Jmph6sqjjfIeuc8QaxJKBSiQ/SkT5Ah7KthjjYp+hZmgjvhiCyjfStjF6ghn3rXsHhy+fuHrdDLMBdFDKmEYNatRbR9YUWD05lR8ZciE=
+	t=1741603769; cv=none; b=cqn6me4esTTL2virmsY5oDPMJ9szKdRgA8GqmAwcMFDl9VvywS/lWFqOyDkNm4BCL6K1/xH6dtTX5nA/X1TIwuxz6mfjlRk/E2BeLzYy/Na5+g9h92PyeEC4PPomC9pq9Xg8pg9bWMaby3uDFm2Nm1nWPlGiA7b89XDexxE3xvY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741603811; c=relaxed/simple;
-	bh=IZlU5cNa8r4FVNiEVWpS8D09uzeiSeUP7VLyE2PJdmY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=aguaLPIvwinj2XtAvpB2y6W4mfqoTPTFmKiaOQDr6UtXDoFZpLiCmsQK5gS7a9tqDQcCzPlRrGk2MAd21/FUFYOycHx16u+BTsgJf2S+ZrgMu20pXK3VMHcPEqlLxXbid7L2C0iJa8q/XtX7DELPwGwxFVmP9kyMf+OpvUDRFZk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; arc=none smtp.client-ip=218.30.115.24
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
-X-SMAIL-HELO: localhost.localdomain
-Received: from unknown (HELO localhost.localdomain)([113.118.68.168])
-	by sina.com (10.185.250.22) with ESMTP
-	id 67CEC3AF00000ACE; Mon, 10 Mar 2025 18:49:22 +0800 (CST)
-X-Sender: hdanton@sina.com
-X-Auth-ID: hdanton@sina.com
-Authentication-Results: sina.com;
-	 spf=none smtp.mailfrom=hdanton@sina.com;
-	 dkim=none header.i=none;
-	 dmarc=none action=none header.from=hdanton@sina.com
-X-SMAIL-MID: 1923207602725
-X-SMAIL-UIID: 86346AB2018145879571C55EBA739B9F-20250310-184922-1
-From: Hillf Danton <hdanton@sina.com>
-To: Oleg Nesterov <oleg@redhat.com>
-Cc: K Prateek Nayak <kprateek.nayak@amd.com>,
-	Mateusz Guzik <mjguzik@gmail.com>,
-	"Sapkal, Swapnil" <swapnil.sapkal@amd.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] pipe_read: don't wake up the writer if the pipe is still full
-Date: Mon, 10 Mar 2025 18:49:09 +0800
-Message-ID: <20250310104910.3232-1-hdanton@sina.com>
-In-Reply-To: <20250309170254.GA15139@redhat.com>
-References: <20250228163347.GB17761@redhat.com> <20250304050644.2983-1-hdanton@sina.com> <20250304102934.2999-1-hdanton@sina.com> <20250304233501.3019-1-hdanton@sina.com> <20250305045617.3038-1-hdanton@sina.com> <20250305224648.3058-1-hdanton@sina.com> <20250307060827.3083-1-hdanton@sina.com> <20250307104654.3100-1-hdanton@sina.com> <20250307112920.GB5963@redhat.com> <20250307235645.3117-1-hdanton@sina.com>
+	s=arc-20240116; t=1741603769; c=relaxed/simple;
+	bh=7r91rKZtrskh6CmIPNf+XSih9a1OoxJ8ms07oy0GExk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=byq7RDf2umCDJiWcsCjJFgjHNJ8kDjaXBbBiVYDZ8qXeiIGkPIlaUCvVgQBAYzgMM+7PKk37GOcQHOgK5waKEmWVbicRveOMASOlzs4YBeo8TRlS40uxwT9fz6wqNvRguRV+4MteYZsq0MaPA/1nr3dMNcagUmvVP9LFxZ/P52s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=bjk6RAj1; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52A3kNJe017869;
+	Mon, 10 Mar 2025 10:49:18 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=pp1; bh=sKO+75m207JysMjIXv7KSQYHDy7YlP
+	HemyAx01aINeQ=; b=bjk6RAj1gYm/73g4miHHrITkpTZLeEM2xqwRejDgvimYNO
+	quInQEMglqZRTqIeqYXoqd4YLN7cZICq3Y9sHf1hHZ92XBlhyp6vU5FNuwOMMWl+
+	plTY1zZSZ6NbfBYroA0WcaGgXnvXzUW4RyCAVLHPwKV06TZ+8C9e9kfgJ/WTNivX
+	Zi+WJHO/zxDf1S009q1+Mx2b9mPN8mYb4vBricZ3BQtTRm0AWO2/phww4hGz9OK6
+	Oi1QWwxGdC0fBytqYYDKalMBIOWnhNMBVLioklJ+kN2aOAzvFatR1Eb+0PhyaPMo
+	/WQycoDFXrQl2Sv4zjUukTLA6iJQNAAp8GSbpr5Q==
+Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 459rf91vn1-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 10 Mar 2025 10:49:17 +0000 (GMT)
+Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 52AA1IRC023851;
+	Mon, 10 Mar 2025 10:49:16 GMT
+Received: from smtprelay03.fra02v.mail.ibm.com ([9.218.2.224])
+	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 4590kypaf7-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 10 Mar 2025 10:49:16 +0000
+Received: from smtpav06.fra02v.mail.ibm.com (smtpav06.fra02v.mail.ibm.com [10.20.54.105])
+	by smtprelay03.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 52AAnCI457606518
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 10 Mar 2025 10:49:12 GMT
+Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 7B0672004F;
+	Mon, 10 Mar 2025 10:49:12 +0000 (GMT)
+Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 1D94320040;
+	Mon, 10 Mar 2025 10:49:12 +0000 (GMT)
+Received: from osiris (unknown [9.171.17.80])
+	by smtpav06.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Mon, 10 Mar 2025 10:49:12 +0000 (GMT)
+Date: Mon, 10 Mar 2025 11:49:10 +0100
+From: Heiko Carstens <hca@linux.ibm.com>
+To: Thomas Huth <thuth@redhat.com>
+Cc: Vasily Gorbik <gor@linux.ibm.com>,
+        Alexander Gordeev <agordeev@linux.ibm.com>, linux-s390@vger.kernel.org,
+        Christian Borntraeger <borntraeger@linux.ibm.com>,
+        Sven Schnelle <svens@linux.ibm.com>, linux-kernel@vger.kernel.org,
+        Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [PATCH] s390/uapi: Replace __ASSEMBLY__ with __ASSEMBLER__ in
+ uapi headers
+Message-ID: <20250310104910.27210B18-hca@linux.ibm.com>
+References: <20250310102657.54557-1-thuth@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250310102657.54557-1-thuth@redhat.com>
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: V0k3BxwPMkpJ1gdsMev1GNuAAgSEoDZj
+X-Proofpoint-GUID: V0k3BxwPMkpJ1gdsMev1GNuAAgSEoDZj
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-10_04,2025-03-07_03,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 mlxlogscore=643
+ phishscore=0 bulkscore=0 mlxscore=0 suspectscore=0 impostorscore=0
+ lowpriorityscore=0 priorityscore=1501 malwarescore=0 adultscore=0
+ clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2502100000 definitions=main-2503100083
 
-On Sun, 9 Mar 2025 18:02:55 +0100 Oleg Nesterov
-> 
-> Well. Prateek has already provide the lengthy/thorough explanation,
-> but let me add anyway...
-> 
-lengthy != correct
 
-> On 03/08, Hillf Danton wrote:
-> > On Fri, 7 Mar 2025 13:34:43 +0100 Oleg Nesterov <oleg@redhat.com>
-> > > On 03/07, Oleg Nesterov wrote:
-> > > > On 03/07, Hillf Danton wrote:
-> > > > > On Fri, 7 Mar 2025 11:54:56 +0530 K Prateek Nayak <kprateek.nayak@amd.com>
-> > > > > >> step-03
-> > > > > >> 	task-118766 new reader
-> > > > > >> 	makes pipe empty
-> > > > > >
-> > > > > >Reader seeing a pipe full should wake up a writer allowing 118768 to
-> > > > > >wakeup again and fill the pipe. Am I missing something?
-> > > > > >
-> > > > > Good catch, but that wakeup was cut off [2,3]
-> > >
-> > > Please note that "that wakeup" was _not_ removed by the patch below.
-> > >
-> > After another look, you did cut it.
+On Mon, Mar 10, 2025 at 11:26:57AM +0100, Thomas Huth wrote:
+> __ASSEMBLY__ is only defined by the Makefile of the kernel, so
+> this is not really useful for uapi headers (unless the userspace
+> Makefile defines it, too). Let's switch to __ASSEMBLER__ which
+> gets set automatically by the compiler when compiling assembly
+> code.
 > 
-> I still don't think so.
-> 
-> > Link: https://lore.kernel.org/all/20250209150718.GA17013@redhat.com/
-> ...
-> > --- a/fs/pipe.c
-> > +++ b/fs/pipe.c
-> > @@ -360,29 +360,9 @@ anon_pipe_read(struct kiocb *iocb, struct iov_iter *to)
-> >  			break;
-> >  		}
-> >  		mutex_unlock(&pipe->mutex);
-> > -
-> >  		/*
-> >  		 * We only get here if we didn't actually read anything.
-> >  		 *
-> > -		 * However, we could have seen (and removed) a zero-sized
-> > -		 * pipe buffer, and might have made space in the buffers
-> > -		 * that way.
-> > -		 *
-> > -		 * You can't make zero-sized pipe buffers by doing an empty
-> > -		 * write (not even in packet mode), but they can happen if
-> > -		 * the writer gets an EFAULT when trying to fill a buffer
-> > -		 * that already got allocated and inserted in the buffer
-> > -		 * array.
-> > -		 *
-> > -		 * So we still need to wake up any pending writers in the
-> > -		 * _very_ unlikely case that the pipe was full, but we got
-> > -		 * no data.
-> > -		 */
-> > -		if (unlikely(wake_writer))
-> > -			wake_up_interruptible_sync_poll(&pipe->wr_wait, EPOLLOUT | EPOLLWRNORM);
-> > -		kill_fasync(&pipe->fasync_writers, SIGIO, POLL_OUT);
-> > -
-> > -		/*
-> >  		 * But because we didn't read anything, at this point we can
-> >  		 * just return directly with -ERESTARTSYS if we're interrupted,
-> >  		 * since we've done any required wakeups and there's no need
-> > @@ -391,7 +371,6 @@ anon_pipe_read(struct kiocb *iocb, struct iov_iter *to)
-> >  		if (wait_event_interruptible_exclusive(pipe->rd_wait, pipe_readable(pipe)) < 0)
-> >  			return -ERESTARTSYS;
-> >
-> > -		wake_writer = false;
-> >  		wake_next_reader = true;
-> >  		mutex_lock(&pipe->mutex);
-> >  	}
-> 
-> Please note that in this particular case (hackbench testing)
-> pipe_write() -> copy_page_from_iter() never fails. So wake_writer is
-> never true before pipe_reader() calls wait_event(pipe->rd_wait).
-> 
-Given never and the BUG_ON below, you accidentally prove that Prateek's
-comment is false, no?
-
-> So (again, in this particular case) we could apply the patch below
-> on top of Linus's tree.
-> 
-> So, with or without these changes, the writer should be woken up at
-> step-03 in your scenario.
-> 
-Fine, before checking my scenario once more, feel free to pinpoint the
-line number where writer is woken up, with the change below applied.
-
-> Oleg.
+> Signed-off-by: Thomas Huth <thuth@redhat.com>
 > ---
+>  arch/s390/include/uapi/asm/ptrace.h | 5 +++--
+>  arch/s390/include/uapi/asm/schid.h  | 4 ++--
+>  arch/s390/include/uapi/asm/types.h  | 4 ++--
+>  3 files changed, 7 insertions(+), 6 deletions(-)
 > 
-> --- a/fs/pipe.c
-> +++ b/fs/pipe.c
-> @@ -360,27 +360,7 @@ pipe_read(struct kiocb *iocb, struct iov_iter *to)
->  		}
->  		mutex_unlock(&pipe->mutex);
->  
-> -		/*
-> -		 * We only get here if we didn't actually read anything.
-> -		 *
-> -		 * However, we could have seen (and removed) a zero-sized
-> -		 * pipe buffer, and might have made space in the buffers
-> -		 * that way.
-> -		 *
-> -		 * You can't make zero-sized pipe buffers by doing an empty
-> -		 * write (not even in packet mode), but they can happen if
-> -		 * the writer gets an EFAULT when trying to fill a buffer
-> -		 * that already got allocated and inserted in the buffer
-> -		 * array.
-> -		 *
-> -		 * So we still need to wake up any pending writers in the
-> -		 * _very_ unlikely case that the pipe was full, but we got
-> -		 * no data.
-> -		 */
-> -		if (unlikely(wake_writer))
-> -			wake_up_interruptible_sync_poll(&pipe->wr_wait, EPOLLOUT | EPOLLWRNORM);
-> -		kill_fasync(&pipe->fasync_writers, SIGIO, POLL_OUT);
-> -
-> +		BUG_ON(wake_writer);
->  		/*
->  		 * But because we didn't read anything, at this point we can
->  		 * just return directly with -ERESTARTSYS if we're interrupted,
-> 
-> 
+> diff --git a/arch/s390/include/uapi/asm/ptrace.h b/arch/s390/include/uapi/asm/ptrace.h
+> index bb0826024bb95..ea202072f1ad5 100644
+> --- a/arch/s390/include/uapi/asm/ptrace.h
+> +++ b/arch/s390/include/uapi/asm/ptrace.h
+> @@ -242,7 +242,8 @@
+>  #define PTRACE_OLDSETOPTIONS		21
+>  #define PTRACE_SYSEMU			31
+>  #define PTRACE_SYSEMU_SINGLESTEP	32
+> -#ifndef __ASSEMBLY__
+> +
+> +#ifndef __ASSEMBLER__
+>  #include <linux/stddef.h>
+>  #include <linux/types.h>
+
+...
+
+Did this cause any sorts of problems? I can see this pattern all over
+the place, so why is this now a problem?
+
+Also, wouldn't it be better to fix this with an sed statement in
+scripts/headers_install.sh instead? Otherwise this is going to be a
+never ending story since those things will be re-introduced all the
+time.
 
