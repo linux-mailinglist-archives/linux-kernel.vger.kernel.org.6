@@ -1,58 +1,54 @@
-Return-Path: <linux-kernel+bounces-554276-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-554275-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 14250A5959B
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 14:09:00 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E9E5A59599
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 14:08:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C717C3A6631
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 13:08:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 707D416AB92
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 13:08:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B0A8229B0D;
-	Mon, 10 Mar 2025 13:08:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DA2F229B0E;
+	Mon, 10 Mar 2025 13:08:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rbox.co header.i=@rbox.co header.b="A8BFc6kb"
-Received: from mailtransmit04.runbox.com (mailtransmit04.runbox.com [185.226.149.37])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="IheArypQ"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAA53178395;
-	Mon, 10 Mar 2025 13:08:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.226.149.37
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1B1F178395;
+	Mon, 10 Mar 2025 13:08:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741612125; cv=none; b=Gq6Ny6K/dwcNunEqnLiKIfng7ICPIYrAJ67qUZTczSnLrx2imaj3PxHidj2qpQZ6qs+5euadKPUOZLNSf6c11cLDpfW/K3LQsIDPflqro0oFMp5Wc+u8+tsk3mCzKPOdsTciYKtVxhDHYgfiNxRr5zKahG4lggumEq046+Bh6p0=
+	t=1741612115; cv=none; b=ako2Xd6poivFYaVQVoXTDlugr5Pc0s/he8x2sxbig4FT35zBxhwo1YTMPjWSDyDftck2SiX84jZJW56DsdkcgIF+tFSpNTglhYqwoxyUfkT4NRR5CTSjvXKHa5LPdsR83mKT0/RGGy7mPNWw/K0KhIUKF8P7joC74JZ7SpAR4s8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741612125; c=relaxed/simple;
-	bh=rdAP5tZXO/e6X0g9/aj7v6Q8fYYTM/HQGTEow6hWTxU=;
+	s=arc-20240116; t=1741612115; c=relaxed/simple;
+	bh=2V13hVHvXTQg/CvSvaloH3gQXs0wrbSB+sIyuBsXghs=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=VoLzK/8EJqrMOisRfZeYIlsAmotcvhAQQ2NhGnx3dUVEQFcVbumNuklJDgxr8NygfFGbzrx6YvjypMtf/yiQ6HM85pDrhvbYlYp9zzItG/Ajk1BlsDHTuVkUY3ysrMZwsoPUUeKORsYpTbgTWRp6K0Og3xVq29Lp1iYWnfRZSAo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rbox.co; spf=pass smtp.mailfrom=rbox.co; dkim=pass (2048-bit key) header.d=rbox.co header.i=@rbox.co header.b=A8BFc6kb; arc=none smtp.client-ip=185.226.149.37
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rbox.co
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rbox.co
-Received: from mailtransmit02.runbox ([10.9.9.162] helo=aibo.runbox.com)
-	by mailtransmit04.runbox.com with esmtps  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-	(Exim 4.93)
-	(envelope-from <mhal@rbox.co>)
-	id 1trcrp-00ByIO-7S; Mon, 10 Mar 2025 14:08:25 +0100
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=rbox.co;
-	s=selector1; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
-	References:Cc:To:Subject:MIME-Version:Date:Message-ID;
-	bh=YMtG22Pqun0Tp+q9j4j91l8TFa4W5ET+k4wRnt7+fP0=; b=A8BFc6kbFm87pNoML1HwqDmRTf
-	UJA/GzevYwKdN5F5BZrgi//pgOyudJoiTj1cK1jqvTlnhZursG3xtzsBooyMMx4vLOx+Py6kxhz8u
-	hIEVjCM4oc8/5KNIerC9JWvKACQGvBa3WFWLxq6inZH8tyNEnNemy3BsVbvmoAWRn+/snlLvSHaXk
-	ddO8bi7iUrcF5CFLUzM58GA01OsGXH138lYeRHo1EjItfLMyknx62msIBc85WDunVEuay4pTlM87c
-	oHaOor4nkaHnadScKgfH3p4cxyNGqYOaGlUCpKQVr2CTHSgJL4J7b442qLYS5+VhMNWyP9iroaqxJ
-	2zf7qkeA==;
-Received: from [10.9.9.74] (helo=submission03.runbox)
-	by mailtransmit02.runbox with esmtp (Exim 4.86_2)
-	(envelope-from <mhal@rbox.co>)
-	id 1trcrc-0006oZ-M9; Mon, 10 Mar 2025 14:08:13 +0100
-Received: by submission03.runbox with esmtpsa  [Authenticated ID (604044)]  (TLS1.2:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
-	(Exim 4.93)
-	id 1trcrZ-007B3j-Vc; Mon, 10 Mar 2025 14:08:10 +0100
-Message-ID: <d2d3eff9-23df-4098-87cc-d0ad5fde6e1e@rbox.co>
-Date: Mon, 10 Mar 2025 14:08:07 +0100
+	 In-Reply-To:Content-Type; b=tH+5vQagTJRz+4RgZQa7VwIteKQCebScZ/PbctH1K3tXDPYKzD2D4thoebMvGK3BntyvquEErFWDvca4edE/yL/86Y0tuNbQ8QxC3AReRHQB6O0rR3PLsvwfrJ3iFRePOXn6sI+Pjgphfi7JM2Y1mAiG2qhJDmpmmk/w9aRTNqM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=IheArypQ; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1741612111;
+	bh=2V13hVHvXTQg/CvSvaloH3gQXs0wrbSB+sIyuBsXghs=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=IheArypQWOv9UwpKrgUcsLA0s7vBqv5CjrTQWYvVaDACSjJcSVW7bOxWJJRWuNh+K
+	 P8pVN2NV/ZzDfik5eC98VMBi0z9/pAVoYCsSipyoaSWI14fRFHIAcgFx9/07A9jH2f
+	 ikaVTr48JHjOeEvHeYEWjriIS8PvlAMvqWegW+2YuwO2lQEzImraGGMR+xrR1U3ZbX
+	 tDSpvYfMD461Pmq358tMEeUNDUiPbGuhIQY0jJSpDpJQvCAYB3sZPT5Rett2ym7MvC
+	 29jSKLt//tJqG22ia6WF/qvx1lBLSabvt2VLpd5gDufDoCc4G2GrxcJHYCcPqtUzs4
+	 HYeq7Ba7hvQkQ==
+Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 3BE4517E0B56;
+	Mon, 10 Mar 2025 14:08:31 +0100 (CET)
+Message-ID: <0abe6c3a-cffe-4aec-a95d-ea27704729b2@collabora.com>
+Date: Mon, 10 Mar 2025 14:08:30 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -60,72 +56,63 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH bpf-next v2 1/3] bpf, sockmap: avoid using sk_socket after
- free
-To: Jiayuan Chen <jiayuan.chen@linux.dev>, xiyou.wangcong@gmail.com,
- john.fastabend@gmail.com, jakub@cloudflare.com, martin.lau@linux.dev
-Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
- pabeni@redhat.com, horms@kernel.org, andrii@kernel.org, eddyz87@gmail.com,
- mykolal@fb.com, ast@kernel.org, daniel@iogearbox.net, song@kernel.org,
- yonghong.song@linux.dev, kpsingh@kernel.org, sdf@fomichev.me,
- haoluo@google.com, jolsa@kernel.org, shuah@kernel.org, sgarzare@redhat.com,
- netdev@vger.kernel.org, bpf@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-kselftest@vger.kernel.org, mrpre@163.com, cong.wang@bytedance.com,
- syzbot+dd90a702f518e0eac072@syzkaller.appspotmail.com
-References: <20250228055106.58071-1-jiayuan.chen@linux.dev>
- <20250228055106.58071-2-jiayuan.chen@linux.dev>
- <baeca627-e6f1-4d0a-aea5-fa31689edc4d@rbox.co>
- <78ee737400721758fa67b4f285e8ba61dc6b893b@linux.dev>
-Content-Language: pl-PL, en-GB
-From: Michal Luczaj <mhal@rbox.co>
-In-Reply-To: <78ee737400721758fa67b4f285e8ba61dc6b893b@linux.dev>
-Content-Type: text/plain; charset=UTF-8
+Subject: Re: [PATCH 00/13] pmdomain: mediatek: Add MT8196 power domain
+To: Guangjie Song <guangjie.song@mediatek.com>, Rob Herring
+ <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Matthias Brugger
+ <matthias.bgg@gmail.com>, Ulf Hansson <ulf.hansson@linaro.org>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
+ linux-pm@vger.kernel.org, Project_Global_Chrome_Upstream_Group@mediatek.com
+References: <20250307034454.12243-1-guangjie.song@mediatek.com>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Content-Language: en-US
+In-Reply-To: <20250307034454.12243-1-guangjie.song@mediatek.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 3/10/25 12:36, Jiayuan Chen wrote:
-> March 7, 2025 at 5:45 PM, "Michal Luczaj" <mhal@rbox.co> wrote:
-> ...
->> BTW, lockdep (CONFIG_LOCKDEP=y) complains about calling AF_UNIX's
->> read_skb() under RCU read lock.
->>
-> My environment also has LOCKDEP enabled, but I didn't see similar
-> warnings.
-> Moreover, RCU assertions are typically written as:
+Il 07/03/25 04:44, Guangjie Song ha scritto:
+> This series is based on linux-next, tag: next-20250306.
 > 
-> WARN_ON_ONCE(!rcu_read_lock_held())
-> 
-> And when LOCKDEP is not enabled, rcu_read_lock_held() defaults to
-> returning 1. So, it's unlikely to trigger a warning due to an RCU lock
-> being held.
-> 
-> Could you provide more of the call stack?
+> Changes:
+> - Update mtk-scpsys driver for MT8196
+> - Add MT8196 power domain support
 
-Sure, bpf-next with this series applied, test_progs -t sockmap_basic:
+The mtk-scpsys driver is deprecated since ... 2 years ago, and I have no idea why
+MediaTek folks still use it downstream.
 
-=============================
-[ BUG: Invalid wait context ]
-6.14.0-rc3+ #111 Tainted: G           OE
------------------------------
-test_progs/37755 is trying to lock:
-ffff88810d9bc3c0 (&u->iolock){+.+.}-{4:4}, at: unix_stream_read_skb+0x30/0x120
-other info that might help us debug this:
-context-{5:5}
-1 lock held by test_progs/37755:
- #0: ffffffff833700e0 (rcu_read_lock){....}-{1:3}, at: sk_psock_verdict_data_ready+0x3e/0x2a0
-stack backtrace:
-CPU: 13 UID: 0 PID: 37755 Comm: test_progs Tainted: G           OE      6.14.0-rc3+ #111
-Tainted: [O]=OOT_MODULE, [E]=UNSIGNED_MODULE
-Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS Arch Linux 1.16.3-1-1 04/01/2014
-Call Trace:
- dump_stack_lvl+0x68/0x90
- lock_acquire+0xcf/0x2e0
- __mutex_lock+0x9c/0xcc0
- unix_stream_read_skb+0x30/0x120
- sk_psock_verdict_data_ready+0x8d/0x2a0
- unix_stream_sendmsg+0x232/0x640
- __sys_sendto+0x1cd/0x1e0
- __x64_sys_sendto+0x20/0x30
- do_syscall_64+0x93/0x180
- entry_SYSCALL_64_after_hwframe+0x76/0x7e
+Please refactor this and use the mtk-pm-domains driver for any new MTCMOS
+implementation.
+
+Thanks,
+Angelo
+
+> 
+> Guangjie Song (13):
+>    pmdomain: mediatek: Support sram isolation
+>    pmdomain: mediatek: Support sram low power
+>    pmdomain: mediatek: Support power on bypass
+>    pmdomain: mediatek: Support check power on/off ack
+>    pmdomain: mediatek: Support voting for power domain
+>    pmdomain: mediatek: Support trigger subsys save/restore regesters
+>    pmdomain: mediatek: Support power domain irq safe
+>    pmdomain: mediatek: Support power domain always on
+>    pmdomain: mediatek: Refactor parameters of init_scp
+>    pmdomain: mediatek: Support bus protect with table
+>    pmdomain: mediatek: Add post init callback
+>    dt-bindings: power: mediatek: Add new MT8196 power domain
+>    pmdomain: mediatek: Add MT8196 power domain support
+> 
+>   .../mediatek,mt8196-power-controller.yaml     |   74 +
+>   drivers/pmdomain/mediatek/mt8196-scpsys.h     |  114 ++
+>   drivers/pmdomain/mediatek/mtk-scpsys.c        | 1276 ++++++++++++++++-
+>   include/dt-bindings/power/mt8196-power.h      |   57 +
+>   4 files changed, 1483 insertions(+), 38 deletions(-)
+>   create mode 100644 Documentation/devicetree/bindings/power/mediatek,mt8196-power-controller.yaml
+>   create mode 100644 drivers/pmdomain/mediatek/mt8196-scpsys.h
+>   create mode 100644 include/dt-bindings/power/mt8196-power.h
+> 
+
+
 
 
