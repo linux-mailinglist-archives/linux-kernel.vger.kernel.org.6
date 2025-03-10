@@ -1,228 +1,209 @@
-Return-Path: <linux-kernel+bounces-553991-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-553993-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A66E1A59195
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 11:47:22 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 948F4A591A1
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 11:48:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 169661890509
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 10:47:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 77F893ABEDC
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 10:47:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A4E1227B9E;
-	Mon, 10 Mar 2025 10:47:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0900D228375;
+	Mon, 10 Mar 2025 10:47:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="MKsE1Ajc"
-Received: from out.smtpout.orange.fr (out-18.smtpout.orange.fr [193.252.22.18])
-	(using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JA/O1xfD"
+Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 064FC227B9F
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 10:46:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.252.22.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DA5C227E81;
+	Mon, 10 Mar 2025 10:47:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741603620; cv=none; b=E7tljAv+nAQLwFxy6DJES8jlgyWpNQTAOW019UctolFBeFScWp2lb3VPQftfITEgtfe0/LkFNkq5LUn0/UBwSnFJKUQGOMihZfny/M3CtE/vWgt2mq69e44renv9EIVkbtkavIJCkgh3rieek7oOIyy68TQWurTRr4y7fDZzDLE=
+	t=1741603629; cv=none; b=YEawyGU53KSXUH339En/kFVjkq7KhdpjD1IBTS1BzPWnVfUp7QC9Mz6xoAoX6OJs87ZppJJty0YuhFj2vMO+WCgZMO8/+8pK/2kQLgRe07BIHh3M/GnxWg3YcqRDH0CZjBWAp2GyVwgTCcDtar9Aw1xGG+Y/sjsyhQvMVXVTyGE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741603620; c=relaxed/simple;
-	bh=werN9mZ2wg+YvLowvzIJiio61Fy7BVWnTM1tWOzX5Kc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=avtUdyWrrb+84bXHyHrdN7PoNvF47F9Ug+9JG7+5TGR2aisCIUCoBDO1ZKvrPhf3J+sRK9fue5lkb7A/Y5EQ0azIz8a3RqmVV3+WD4JKxti/ivA6i2Y9TjR4P/pYkPD6c1a9av4QwXX6Y2kxXuRnQYUcQwOm+pYVwWQQRA/DNmI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=MKsE1Ajc; arc=none smtp.client-ip=193.252.22.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Received: from [172.16.82.72] ([124.33.176.97])
-	by smtp.orange.fr with ESMTPA
-	id raebt34wJACDNraeftbFlA; Mon, 10 Mar 2025 11:46:49 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1741603609;
-	bh=SM+GH4W9Mgpq6UbMamTcytvpYPgAzdTWefneB42yE/0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From;
-	b=MKsE1Ajc+m6LGBqtCOp+fWLgINX4uVO2Wrtli0Wf+5I3+tbC5y8eUDQpVvSr+sVVq
-	 LGT5lUHG3IOlheI+5av6dg7E+H+0dAGJ9PmK1E3z4ldjAqjbTNpWRlcModsGvkIBPK
-	 McEgwDJzub0wiygpF9OLg8yJkqz4zrzyRupxB2fdmvNSwVVbeynkkDf1dMT4h/QfzF
-	 anmuTlXxHZ6Y3C0MFmb/Nmz76K5aADaLEu1rl0GYuQbLqM89s9tFFezxlxTjRqYZl6
-	 N7de4kkml1YTIY+mUr4sBP5yGotFwTIY862lumo4VGXwgMSi0hlFMI0ujKlRCKXBst
-	 4aDTEeuoMWKIA==
-X-ME-Helo: [172.16.82.72]
-X-ME-Auth: bWFpbGhvbC52aW5jZW50QHdhbmFkb28uZnI=
-X-ME-Date: Mon, 10 Mar 2025 11:46:49 +0100
-X-ME-IP: 124.33.176.97
-Message-ID: <d3c88533-2af7-4dc4-87e3-e6d03cd965b5@wanadoo.fr>
-Date: Mon, 10 Mar 2025 19:46:36 +0900
+	s=arc-20240116; t=1741603629; c=relaxed/simple;
+	bh=sOvLZP+VqkI4T4xcNYsIMRF59AWaSNQz51sz8tdlEz0=;
+	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PrH6kGidA+CBifTmAxAS2mWv7AxvqATgylUMhpuxA+Uap6NfuoIg5YavB7aRHmhyoUjzb8n3BuktRo7kAuS5gZrgZql3ZW6PaeoufN0kqy0+yfjnh74qV67ZtEm9ZFcEyuEMhM1S7+SHt/ZQImQk+X7iGQzhCKOimjpD9bHq+no=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JA/O1xfD; arc=none smtp.client-ip=209.85.208.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-5e5e7fd051bso3584395a12.0;
+        Mon, 10 Mar 2025 03:47:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741603625; x=1742208425; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:subject:cc
+         :to:from:date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=l5DEa09wiscb4LqtVRJpNAy3hWViEqi+/FfXF2zENFo=;
+        b=JA/O1xfDQ7WTsaAHYR08uZ0NZZlmngQDFtAR2tRTZWco3ttk32R1MlhCKMBp1w2j7U
+         iIShUcmL9R2kUQlhPsT7Pu4phVVGWrPvr4udT/Wy3TdNK6tYqC09PP/L24Cgxqa4Ifbi
+         i/t2nG7BCrt9QWVrxGW2TwWovEPh8sBvli+EYRWobtEPo/NmddRWyF7CB2tSA2vgHEjy
+         EnhnLb4jt3axjumnCJgkPlJOdahv9fTNzJ/srYIo0B5bsM8PPy0EvjYhla7mTom5R/fp
+         RG2vH+PtaxnbUqCZGCvgwD+E9a6WK0b6/UDbBw/ruAnNdZ323AxSoMs+CD/bGCMyvy2G
+         Du6w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741603625; x=1742208425;
+        h=in-reply-to:content-disposition:mime-version:references:subject:cc
+         :to:from:date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=l5DEa09wiscb4LqtVRJpNAy3hWViEqi+/FfXF2zENFo=;
+        b=pkKP3iaM627zFkn+4I7hJ52Yk+XSlXb0QCi6Vm9gZku4+rguifGvlO1hPVbGOS3oAb
+         eQx4Jaa7Jaiwk5LUxI9VteH3kljAkFTNGb5RhPSURMfMavzxC641YyEzLUhE6lRc2kko
+         7Cem5hK1smgFEUquXaM/AN9PSrjaGWZE1ybylS+9aQ0l/II6BEu8g7bRPiZU49KF+1xV
+         bQKNXs3xLDAntOcXXlSgnBdcwUTCwWJHy1eL+EX4KnZhe8ZJHk0LR4bMfOmiJl1xRs1p
+         ooUUd3wE5OcljHT1tUmyrAAU8St8MGZ5Pgkfpb2LUKdfkThBgL9HHR4fGTujGvgt9eWW
+         6EGg==
+X-Forwarded-Encrypted: i=1; AJvYcCUJb/TP2nnunb+xYHqi7XqiJVY11egWorG5+8nRBcJEJPIHpkEkpfHb8mb1wHXPRfsaCMmXw8ifvWSJDxfP@vger.kernel.org, AJvYcCV22bG86Wh4GEyfZf2fP6RodOfN/FPQ1EgS+IgIyumVKWabyfFP81ThU77iPTe8vURaVScxn7GuN31z@vger.kernel.org, AJvYcCV7wtCAlAmP1fd5xPV3Tn336tV9mKikndZCZrJBUHLuE2gxfgI/QfbGXQnofzlRNLjvdspsd8q0zhJ9@vger.kernel.org, AJvYcCW9hpr0QppceicN8IqUui5sj7uEfWbtaP84nCj69TnvTO6ZtOY+xh9UTKCOOTCyttY+DaYV37cZuynD@vger.kernel.org
+X-Gm-Message-State: AOJu0YyP1giPLRsfPNH/kgFwxe+fKR35vEFv2+LGJ5ZvfDN+k/zG4yqo
+	DeeDDOUaYwB53CTYTw0Q+GRT2190rEw7naASVDnYzrs2PivAsEsy
+X-Gm-Gg: ASbGnctaryibrvgk2FKbyUeY5jTTbOzUIrXogt4bBfk2QU+7ufeK9WQPT6LNMfQEL4d
+	1GAb592bGIE6THIx/PeseM4Qyyl9sSXkcRV7zxkK0lMeLUOiDbYy0Tn2vLNkoCcBjWn45fjd5/Q
+	8CEZn2UtIGY7BmWG4Gd/PNyuxvybw/FlwnfcS0Sny7WVtMdXz/S97uyLN5Usnr8WKhSpwx7llLf
+	1li7wo6jMRGIT+855vhRxhJyGLj2aQ3aQeNjvD39DZ3P9dTrfPodndW5TLVM36bh6w/yVJRdHsT
+	xL5rfigbbRZPBJl4kzaHdEAezB7kQWDpgCCn1mz/SQ==
+X-Google-Smtp-Source: AGHT+IGY9ZNuN9LrERXjHUYAwL4h4LC1ygOPlOz0b6pfTQ2hSZ2sXX5rhh5cw2fWoVRERYPwHIfVrQ==
+X-Received: by 2002:a17:907:8281:b0:abf:67d7:7816 with SMTP id a640c23a62f3a-ac2525dceb2mr1171265566b.3.1741603625111;
+        Mon, 10 Mar 2025 03:47:05 -0700 (PDT)
+Received: from Ansuel-XPS. ([85.119.46.8])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac23943d8absm742184666b.20.2025.03.10.03.47.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 10 Mar 2025 03:47:04 -0700 (PDT)
+Message-ID: <67cec328.170a0220.27ecbc.9c6e@mx.google.com>
+X-Google-Original-Message-ID: <Z87DJANlBejnqJHR@Ansuel-XPS.>
+Date: Mon, 10 Mar 2025 11:47:00 +0100
+From: Christian Marangi <ansuelsmth@gmail.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Lee Jones <lee@kernel.org>,
+	Vinod Koul <vkoul@kernel.org>,
+	Kishon Vijay Abraham I <kishon@kernel.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Lorenzo Bianconi <lorenzo@kernel.org>,
+	Daniel Danzberger <dd@embedd.com>, Arnd Bergmann <arnd@arndb.de>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Nikita Shubin <nikita.shubin@maquefel.me>,
+	Guo Ren <guoren@kernel.org>, Yangyu Chen <cyy@cyyself.name>,
+	Ben Hutchings <ben@decadent.org.uk>, Felix Fietkau <nbd@nbd.name>,
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-phy@lists.infradead.org, linux-mediatek@lists.infradead.org,
+	linux-usb@vger.kernel.org, upstream@airoha.com
+Subject: Re: [PATCH 05/13] dt-bindings: mfd: add Documentation for Airoha
+ EN7581 SCU
+References: <20250309132959.19045-1-ansuelsmth@gmail.com>
+ <20250309132959.19045-6-ansuelsmth@gmail.com>
+ <c1227083-a4ea-4dac-a9db-d6a5386c0437@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 1/7] bits: split the definition of the asm and non-asm
- GENMASK()
-To: David Laight <david.laight.linux@gmail.com>
-Cc: Yury Norov <yury.norov@gmail.com>,
- Lucas De Marchi <lucas.demarchi@intel.com>,
- Rasmus Villemoes <linux@rasmusvillemoes.dk>,
- Jani Nikula <jani.nikula@linux.intel.com>,
- Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
- Rodrigo Vivi <rodrigo.vivi@intel.com>, Tvrtko Ursulin
- <tursulin@ursulin.net>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>, Andrew Morton <akpm@linux-foundation.org>,
- linux-kernel@vger.kernel.org, intel-gfx@lists.freedesktop.org,
- dri-devel@lists.freedesktop.org, Andi Shyti <andi.shyti@linux.intel.com>,
- David Laight <David.Laight@ACULAB.COM>,
- Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
- Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-References: <20250306-fixed-type-genmasks-v5-0-b443e9dcba63@wanadoo.fr>
- <20250306-fixed-type-genmasks-v5-1-b443e9dcba63@wanadoo.fr>
- <20250306192331.2701a029@pumpkin>
- <bdce7d99-7f02-4667-acda-9ffc62c92af2@wanadoo.fr>
- <20250309015853.01412484@pumpkin> <20250309102312.4ff08576@pumpkin>
-Content-Language: en-US
-From: Vincent Mailhol <mailhol.vincent@wanadoo.fr>
-Autocrypt: addr=mailhol.vincent@wanadoo.fr; keydata=
- xjMEZluomRYJKwYBBAHaRw8BAQdAf+/PnQvy9LCWNSJLbhc+AOUsR2cNVonvxhDk/KcW7FvN
- LFZpbmNlbnQgTWFpbGhvbCA8bWFpbGhvbC52aW5jZW50QHdhbmFkb28uZnI+wrIEExYKAFoC
- GwMFCQp/CJcFCwkIBwICIgIGFQoJCAsCBBYCAwECHgcCF4AWIQTtj3AFdOZ/IOV06OKrX+uI
- bbuZwgUCZx41XhgYaGtwczovL2tleXMub3BlbnBncC5vcmcACgkQq1/riG27mcIYiwEAkgKK
- BJ+ANKwhTAAvL1XeApQ+2NNNEwFWzipVAGvTRigA+wUeyB3UQwZrwb7jsQuBXxhk3lL45HF5
- 8+y4bQCUCqYGzjgEZx4y8xIKKwYBBAGXVQEFAQEHQJrbYZzu0JG5w8gxE6EtQe6LmxKMqP6E
- yR33sA+BR9pLAwEIB8J+BBgWCgAmFiEE7Y9wBXTmfyDldOjiq1/riG27mcIFAmceMvMCGwwF
- CQPCZwAACgkQq1/riG27mcJU7QEA+LmpFhfQ1aij/L8VzsZwr/S44HCzcz5+jkxnVVQ5LZ4B
- ANOCpYEY+CYrld5XZvM8h2EntNnzxHHuhjfDOQ3MAkEK
-In-Reply-To: <20250309102312.4ff08576@pumpkin>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <c1227083-a4ea-4dac-a9db-d6a5386c0437@kernel.org>
 
-On 09/03/2025 at 19:23, David Laight wrote:
-> On Sun, 9 Mar 2025 01:58:53 +0000
-> David Laight <david.laight.linux@gmail.com> wrote:
+On Mon, Mar 10, 2025 at 10:21:45AM +0100, Krzysztof Kozlowski wrote:
+> On 09/03/2025 14:29, Christian Marangi wrote:
+> > Add Documentation for Airoha EN7581 SCU.
+> > 
+> > Airoha EN7581 SoC expose registers to control miscellaneous pheriperals
+> > via the SCU (System Controller Unit).
+> > 
+> > Example of these pheriperals are reset-controller, clock-controller,
+> > PCIe line speed controller and bits to configure different Serdes ports
+> > for USB or Ethernet usage.
+> > 
+> > Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
+> > ---
+> >  .../mfd/airoha,en7581-scu-sysctl.yaml         | 68 +++++++++++++++++++
+> >  1 file changed, 68 insertions(+)
+> >  create mode 100644 Documentation/devicetree/bindings/mfd/airoha,en7581-scu-sysctl.yaml
+> > 
+> > diff --git a/Documentation/devicetree/bindings/mfd/airoha,en7581-scu-sysctl.yaml b/Documentation/devicetree/bindings/mfd/airoha,en7581-scu-sysctl.yaml
+> > new file mode 100644
+> > index 000000000000..d7dc66f912c1
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/mfd/airoha,en7581-scu-sysctl.yaml
+> > @@ -0,0 +1,68 @@
+> > +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+> > +%YAML 1.2
+> > +---
+> > +$id: http://devicetree.org/schemas/mfd/airoha,en7581-scu-sysctl.yaml#
+> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > +
+> > +title: Airoha EN7581 SCU (System Controller Unit)
+> > +
+> > +maintainers:
+> > +  - Christian Marangi <ansuelsmth@gmail.com>
+> > +
+> > +description:
+> > +  Airoha EN7581 SoC expose registers to control miscellaneous
+> > +  pheriperals via the SCU (System Controller Unit).
+> > +
+> One more comment - there is no such thing as "sysctl" in your hardware.
+> Look at the SCU binding which clearly says that it is the hardware you
+> are duplicating here, so the "System Control Unit".
 > 
->> On Fri, 7 Mar 2025 18:58:08 +0900
->> Vincent Mailhol <mailhol.vincent@wanadoo.fr> wrote:
->>
->>> On 07/03/2025 at 04:23, David Laight wrote:  
->>>> On Thu, 06 Mar 2025 20:29:52 +0900
->>>> Vincent Mailhol via B4 Relay <devnull+mailhol.vincent.wanadoo.fr@kernel.org> wrote:
->>>>     
->>>>> From: Vincent Mailhol <mailhol.vincent@wanadoo.fr>
->>>>>
->>>>> In an upcoming change, GENMASK() and its friends will indirectly
->>>>> depend on sizeof() which is not available in asm.
->>>>>
->>>>> Instead of adding further complexity to __GENMASK() to make it work
->>>>> for both asm and non asm, just split the definition of the two
->>>>> variants.    
->>>> ...    
->>>>> +#else /* defined(__ASSEMBLY__) */
->>>>> +
->>>>> +#define GENMASK(h, l)		__GENMASK(h, l)
->>>>> +#define GENMASK_ULL(h, l)	__GENMASK_ULL(h, l)    
->>>>
->>>> What do those actually expand to now?
->>>> As I've said a few times both UL(0) and ULL(0) are just (0) for __ASSEMBLY__
->>>> so the expansions of __GENMASK() and __GENMASK_ULL() contained the
->>>> same numeric constants.    
->>>
->>> Indeed, in asm, the UL(0) and ULL(0) expands to the same thing: 0.
->>>
->>> But the two macros still expand to something different on 32 bits
->>> architectures:
->>>
->>>   * __GENMASK:
->>>
->>>       (((~(0)) << (l)) & (~(0) >> (32 - 1 - (h))))
->>>
->>>   * __GENMASK_ULL:
->>>
->>>       (((~(0)) << (l)) & (~(0) >> (64 - 1 - (h))))
->>>
->>> On 64 bits architecture these are the same.  
->>
->> I've just fed those into godbolt (https://www.godbolt.org/z/Ter6WE9qE) as:
->> int fi(void)
->> {
->>     int v;
->>     asm("mov $(((~(0)) << (8)) & (~(0) >> (32 - 1 - (15)))),%0": "=r" (v));
->>     return v -(((~(0u)) << (8)) & (~(0u) >> (32 - 1 - (15))));
->> }
->>
->> gas warns:
->> <source>:4: Warning: 0xffffffffff00 shortened to 0xffffff00
->>
->> unsigned long long fll(void)
->> {
->>     unsigned long long v;
->>     asm("mov $(((~(0)) << (8)) & (~(0) >> (64 - 1 - (15)))),%0": "=r" (v));
->>     return v -(((~(0ull)) << (8)) & (~(0ull) >> (64 - 1 - (15))));
->> }
->>
->> (for other architectures you'll need to change the opcode)
->>
->> For x86 and x86-32 the assembler seems to be doing 64bit maths with unsigned
->> right shifts - so the second function (with the 64 in it) generates 0xff00.
->> I doubt a 32bit only assembler does 64bit maths, but the '>> 48' above
->> might get masked to a '>> 16' by the cpu and generate the correct result.
->>
->> So __GENMASK() is likely to be broken for any assembler that supports 64bits
->> when generating 32bit code.
->> __GENMASK_ULL() works (assuming all have unsigned >>) on 64bit assemblers
->> (even when generating 32bit code). It may work on some 32bit assemblers.>
-> I've remembered my 'pi' has a 32bit userspace (on a 64bit kernel).
-> I quick test of "mov %0,#(...)" and bits 11..8 gives the correct output
-> for size '32' but the error message:
-> /tmp/ccPB7bWh.s:26: Warning: shift count out of range (56 is not between 0 and 31)
-> with size '64'.
+> So you have existing "This node defines the System Control Unit of the
+> EN7523 SoC" and you add one more node which defines the "System Control
+> Unit", so you have two "System Control Unit" device nodes?
 > 
-> Assuming that part of the gnu assembler is consistent across architectures
-> you can't use either GENMASK in asm for 32bit architectures.
+> Look also what Stephen asked for:
 > 
-> Any change (probably including removing the asm support for the uapi) isn't
-> going to make things worse!
+> https://lore.kernel.org/all/20220106013100.842FCC36AEB@smtp.kernel.org/
 > 
-> 	David
-> 
->>
->> Since most uses in the header files will be GENMASK() I doubt (hope) no
->> asm code actually uses the values!
+> so how system-controller can now became clock-controller? Now, it was
+> the system controller since the beginning.
+>
 
-After reading your message, I wanted to understand where these
-GENMASK*() were used in asm code. It happens that most of the
-architectures simply don't use it!
+The main problem here (and we had a similar problem with GPIO and PWM)
+is that the Vendor (Airoha) wasn't so bright in placing the different
+registers for the SoC so we have case where everything is mixed and not
+one after another... 
 
-I see these are using in aarch64, but that's about it.
+Example we have 
+- CLK register part 1
+- Some bits that configure PCIe
+- CLK register part 2
+- GPIO
+- CLK register part 3
+- ...
 
-I couldn't find any use of neither GENMASK() nor GENMASK_ULL() in x86,
-arm 32 bits, m68k or powerpc asm code (I did not check the other
-architectures).
+The driver solution for this is syscon and the simple-mfd node
+structure.
 
-aarch64 uses both the long and long long variants, but this being a 64
-bits architecture, these are the same. So OK.
+Now the main problem is how to modle this in DT. There are lots of case
+where the simple-mfd model is used (like the one proposed) but probably
+this is not accepted anymore. But again this should be clearly stated or
+we have a chicken-egg problem when other devs implement similar thing and
+have to implement simple MFD driver to handle this. (and driver
+maintainers say "Use the simple-mfd model like it was already done)
 
-So, this goes into the same direction as you: I guess that the fact that
-no one noticed the issue is that no one uses this on a 32 bits arch,
-probably for historical reasons, i.e. the asm code was written before
-the introduction of the GENMASK() macros.
+For this specific case (and to give an answer to the clock patch after
+this) the problem is that this register space was originally used only
+to control the clock and I wasn't aware that it was also used to control
+USB. Now that I'm implementing support for it, the disaster happened.
 
->> The headers assemble - but that is about all that can be said.
->>
->> Bags of worms :-)
+So In short SCU is lots of thing, both a system-controller, a
+clock-controller and even a reset-controller.
 
-+1 (I will not open that bag)
+To make it short, 2 different solution:
+1. We can keep the current node structure of the node-controller and add a
+child node for the SSR part (with a dedicated compatible).
+2. Those property need to be be defined in the clock-controller node?
 
-I think that the asm and non asm variant should have used a different
-implementation from the begining. By wanting to have a single variant
-that fit both the asm and the C code, we have a complex result that is
-hard to understand and maintain (c.f. the bug which you pointed out
-which have been unnoticed for ever).
+The ideal solution is 1. Does it work for you?
 
-But now that it is in the uapi, I am not sure of what is the best
-approach. I sincerely hope that we can just modify it with no userland
-impact.
+Sorry for the long post and hope you understand why this mess of
+reworking the binding.
 
-Well, just to make it clear, I am not touching the asm part. I
-acknowledge the issue, but I do not think that I have the skill to fix it.
-
-
-Yours sincerely,
-Vincent Mailhol
+-- 
+	Ansuel
 
