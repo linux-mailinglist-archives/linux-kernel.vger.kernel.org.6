@@ -1,165 +1,107 @@
-Return-Path: <linux-kernel+bounces-553621-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-553622-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A89AA58C94
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 08:15:38 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 02EB2A58C96
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 08:15:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3A4A716A455
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 07:15:37 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 917CD7A36FF
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 07:14:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0013A1CB332;
-	Mon, 10 Mar 2025 07:15:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 691791D61B7;
+	Mon, 10 Mar 2025 07:15:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rl4jWlx1"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ij88EF5R"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AD4A1A841C;
-	Mon, 10 Mar 2025 07:15:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C74721CAA70;
+	Mon, 10 Mar 2025 07:15:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741590929; cv=none; b=K242rrgHPJxBYNF69R77YZdEOkz76icphPDLN302CaZAnjAuIzH4qK3OYXUtOiDZtV+cfjsRTTJuNml6iQXcxp8tABYjWxQlQMg1P/7XhGlMAbXF/EVHWVZGu1wOR3ZHSM9TG83vmCyqJKae6+tAgMFlriuyQmMk1xChvI3eC7o=
+	t=1741590929; cv=none; b=k8nI70JUN07n6cDVcSN/2XqYjvtbAD7TixhjI39wiVNLtq8mYfElNkZkZjgm2gfW8NUjTI5JfegA1eKWKEziZvllaoUrfwrf+aidfpU77dYxt6LKF6/nRhvNTBkfL4DFQffD8MWuWIECLUZ0yJ8O6C8m55+Q0Q78BtijUEHOMWQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1741590929; c=relaxed/simple;
-	bh=ukmBN1EwaxLenjYh9LRHAQi25Riq9TJLf4Rh32znRWU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=DSPlzw/f5tkYkKTi6XTDPA3eYRpfEtvb/t+PSAi52EC8Kcorw8QlcNnRClv9a2ZrnYdwGGPzmeKOLftJKgAI2WfJJrl7/M/GbmG+rZO/YkOV7t7BYrNvaSWuzB1/MXclbDyAhPRDkjXUVXl7n6JOuPsX7jn1Ale+NDXzGafpANU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rl4jWlx1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0E459C4CEE5;
-	Mon, 10 Mar 2025 07:15:22 +0000 (UTC)
+	bh=gFnHB2SIZMW1uSMUca45r2RzoCogViTde2yZGSQuqLA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CincbYb1Odi51WB49p9LYwrg+pJw4YmzocrVct7Ev1AawcnSLSMVtHQ2+bOBh6XfVsTk9GFtHRgoEk2Be+NHNhKubqtjQZBBW1Wh3HGxXvDft4naUaDc7fxlvAg5nxrha0oUkbklVzETi/M5Kn6vJmfkQBn/sRwhfnp79Y65bHQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ij88EF5R; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5CD83C4CEED;
+	Mon, 10 Mar 2025 07:15:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741590928;
-	bh=ukmBN1EwaxLenjYh9LRHAQi25Riq9TJLf4Rh32znRWU=;
-	h=Date:Subject:To:References:From:In-Reply-To:From;
-	b=rl4jWlx14Ui4SWBpbVbkusbb+1KD/CyraNvvMNlQlfm4Sj/MOtaBNFQPYaH5dB9md
-	 jxIJPpsvvAE/S01SPXxL1y8id2UyEV1ZNhmtM53lREI+QO6YWDq2j64n60VN2ccWxr
-	 kbLbBmB/aDtZoOydQBiEWQYPrIYp3mhIER0pjvpVswumtc/RaSMvYJ8bvO1jLVidcY
-	 tgw3SAp/96nUKGSwpZg8RSMH2CgDXQVx4rOwWRYk16LsMjd2nfDL8OhUFYe8eXR2Tb
-	 b917+Am92yndoTxAjoHULvNcsmbp9uybDjhnEyQAryiXItGPSNG2ZrCcAJcMyC20HV
-	 Dcqp7Gb3lM9pA==
-Message-ID: <e17cdf9d-ba96-41d2-9656-9e50d0e0795a@kernel.org>
-Date: Mon, 10 Mar 2025 08:15:20 +0100
+	s=k20201202; t=1741590929;
+	bh=gFnHB2SIZMW1uSMUca45r2RzoCogViTde2yZGSQuqLA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ij88EF5R72C3F+9cFoXWHdVZq2x2+W/f+rn4Pn/I0LNvZbHVd+s8qpu4/ovfVXDNa
+	 cyg05y5KxMMpOLEkCSXo8t91RTM35OpK9I0t9mJTyTCMAVCDZ2611g0v9DMr5fmtUu
+	 VGG2LfI7DzS4HlQIMlGSECnVr0QmsM4GTFBcOu2FJleAMDxkt8C3sm0KUfv0AP2wnu
+	 CAhV8Zu/mMp0DYmeqJDWCrrfyBALULQBQN6v5rv/ss4BRtY4oHcBDofqGlVkKmVLaU
+	 tvvitlIIWvaLkxE28fo8RLJ7ri36gwGqWIVuNCF4Nduh63fW3W82nMhqspS2idnpqK
+	 yXq3s5fiKGISw==
+Date: Mon, 10 Mar 2025 12:45:25 +0530
+From: Vinod Koul <vkoul@kernel.org>
+To: Krishna Kurapati <krishna.kurapati@oss.qualcomm.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Kishon Vijay Abraham I <kishon@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+	Johan Hovold <johan+linaro@kernel.org>,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+	linux-phy@lists.infradead.org
+Subject: Re: (subset) [PATCH v3 0/3] Add support for USB controllers on QCS615
+Message-ID: <Z86RjQOSfWOGWeoj@vaman>
+References: <173505391861.950293.11120368190852109172.b4-ty@kernel.org>
+ <anfqf3jvh7timbvbfqfidylb4iro47cdinbb2y64fdalbiszum@2s3n7axnxixb>
+ <Z2sJK9g7hiHnPwYA@vaman>
+ <i7gptvn2fitpqypycjhsyjnp63s2w5omx4jtpubylfc3hx3m5l@jbuin5uvxuoc>
+ <Z2sOl9ltv0ug4d82@vaman>
+ <318620fc-e174-4ef3-808a-69fe1d4e1df5@oss.qualcomm.com>
+ <f607aa9b-018c-4df6-9921-725693353f65@oss.qualcomm.com>
+ <CAA8EJpr48k_tHKk-uVpAH7TMcp0-V97x6ztdFrbv0Go0a6kD2g@mail.gmail.com>
+ <Z683g5yuSu1Pi0pM@vaman>
+ <163cab94-3271-44ed-a211-300087f4bd83@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/3] dt-binding: aspeed: Add LPC PCC controller
-To: Kevin Chen <kevin_chen@aspeedtech.com>, "lee@kernel.org"
- <lee@kernel.org>, "robh@kernel.org" <robh@kernel.org>,
- "krzk+dt@kernel.org" <krzk+dt@kernel.org>,
- "conor+dt@kernel.org" <conor+dt@kernel.org>, "joel@jms.id.au"
- <joel@jms.id.au>, "andrew@codeconstruct.com.au"
- <andrew@codeconstruct.com.au>, "derek.kiernan@amd.com"
- <derek.kiernan@amd.com>, "dragan.cvetic@amd.com" <dragan.cvetic@amd.com>,
- "arnd@arndb.de" <arnd@arndb.de>,
- "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
- "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
- "linux-arm-kernel@lists.infradead.org"
- <linux-arm-kernel@lists.infradead.org>,
- "linux-aspeed@lists.ozlabs.org" <linux-aspeed@lists.ozlabs.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- Mo Elbadry <elbadrym@google.com>
-References: <20250304104434.481429-1-kevin_chen@aspeedtech.com>
- <20250304104434.481429-2-kevin_chen@aspeedtech.com>
- <8740eeb8-9467-48bb-a911-e70c3da3c45a@kernel.org>
- <PSAPR06MB494973DC08A8105EA05FBE6D89D62@PSAPR06MB4949.apcprd06.prod.outlook.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <PSAPR06MB494973DC08A8105EA05FBE6D89D62@PSAPR06MB4949.apcprd06.prod.outlook.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <163cab94-3271-44ed-a211-300087f4bd83@oss.qualcomm.com>
 
-On 10/03/2025 02:50, Kevin Chen wrote:
->>> +        $ref: /schemas/types.yaml#/definitions/uint32-array
->>> +        description: The LPC I/O ports to pcc
->>
->> Description is too vague. Why would we encode I/O ports as some numbers
->> instead of GPIOs for example? If these are ports, why this is not a graph?
-> For the port-mmaped I/O in x80 architecture, BMC need to handle specific port I/O in the relative HW module.
-> So, I need to add the pcc-ports property as the snoop-ports property in Documentation/devicetree/bindings/mfd/aspeed-lpc.yaml
+On 06-03-25, 18:53, Krishna Kurapati wrote:
 > 
->>
->> Missing constraints - min/maxItems, defaults, minimum/maximum etc.
-> The port-mmaped I/O is defined from host, BMC as the device would capture the port I/O from the pcc-ports property defined in dts.
-
-Put this information in the description, instead of copying property name.
-
 > 
->>
->>> +
->>> +    required:
->>> +      - compatible
->>> +      - interrupts
->>> +      - pcc-ports
->>> +
->>>    "^uart-routing@[0-9a-f]+$":
->>>      $ref: /schemas/soc/aspeed/uart-routing.yaml#
->>>      description: The UART routing control under LPC register space @@
->>> -176,6 +205,13 @@ examples:
->>>          #size-cells = <1>;
->>>          ranges = <0x0 0x1e789000 0x1000>;
->>>
->>> +        lpc_pcc: lpc-pcc@0 {
->>> +            compatible = "aspeed,ast2600-lpc-pcc";
->>> +            reg = <0x0 0x140>;
->>> +            interrupts = <GIC_SPI 145 IRQ_TYPE_LEVEL_HIGH>;
->>> +            pcc-ports = <0x80>;
->>
->> So what 0x80 stands for?
-> Host as x86 architecture would access the 0x80 port, which is mapped to the BMC PCC HW module.
-> As a result, x86 can keep the port-mmaped I/O usage and access the BMC device, which is needed to know which port using in the PCC module in BMC.
+> On 2/14/2025 6:00 PM, Vinod Koul wrote:
+> > On 23-01-25, 09:23, Dmitry Baryshkov wrote:
+> > > On Thu, 23 Jan 2025 at 09:00, Krishna Kurapati
+> > > <krishna.kurapati@oss.qualcomm.com> wrote:
+> > 
+> > > > > As mentioned in the cover letter, the bindings of phy have been merged
+> > > > > from v1.
+> > > > 
+> > > > Hi Vinod,
+> > > > 
+> > > >    Can you help in taking in the patch-3. As mentioned in previous mail,
+> > > > the bindings are merged and present in linux-next.
+> > 
+> > Can you pls post it after rebasing
+> > 
+> 
+> Hi Vinod,
+> 
+>  I see the patch-3 is applying cleanly on top of latest linux next. Do you
+> suggest sending a rebase or v3 is fine ?
 
-And on different boards this is not 0x80?
+Please rebase on phy/next and resend
 
-Best regards,
-Krzysztof
+-- 
+~Vinod
 
