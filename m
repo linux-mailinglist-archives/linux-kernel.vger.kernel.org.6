@@ -1,136 +1,155 @@
-Return-Path: <linux-kernel+bounces-554388-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-554389-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7FF00A5971C
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 15:10:55 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B5A45A59720
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 15:11:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3BFE116B29B
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 14:10:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CF02D3AAADE
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 14:10:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC47122B595;
-	Mon, 10 Mar 2025 14:10:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A436622B5AB;
+	Mon, 10 Mar 2025 14:11:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NgW6iTWz"
-Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ClPl/EeA"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC5D611CBA;
-	Mon, 10 Mar 2025 14:10:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D923122A4EA;
+	Mon, 10 Mar 2025 14:11:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741615850; cv=none; b=qZCX6oOwI84eguVFkXp/EgJxhU8D+YbJmQy97dKID9zdrwhv+R3e5Iv0lPgHXRWIDQEp5AvEvEbsuiHFJCw38uKB2GDd1+FfhNWSXfB1F3KLYl6vc5RBF+zjwZRm77dkmexEmMr+EKQ+UmewL1Yo3j9laCGSQH+xYEsqZQnPHLw=
+	t=1741615863; cv=none; b=kx0Fi8gbAWdrHdIjYlgxC/hbaLgH+4/Pfq3fNHgfc36wQ79HvJ9m4qNpXWWd+7V5O1CluQROUk2DktIw3u6t8sCnQSB4UNa7MvqtbHfeA/PDMsVMutMj6HeZK6oLigzk0nS65PSRuq1j6aFRw65hCel/3GWMhbjgjZP6rCIcvr8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741615850; c=relaxed/simple;
-	bh=QZ0yNRS89vW/MC8S75yQ51bHfUKOpWvVywpZvrYUBeE=;
-	h=Date:From:To:Cc:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=df+L4/DpXHZNtPd4wCXX5tsho5Ts/fbfsMv54U3e2ouJSxzeKY6YRdC47wKbRdNakR8/XXlj6JpO7jHmoxXEQfq9S/9n0cAdXmcVgfx2YVj7JJpFs8KBDoiNmrUT6cW6IEb1dKYkXv0QE6QbC3+jRy6h/bag8ffGqdvgaZwezDs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NgW6iTWz; arc=none smtp.client-ip=209.85.214.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-2255003f4c6so28275265ad.0;
-        Mon, 10 Mar 2025 07:10:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741615848; x=1742220648; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=bnVaOrL5Y/iVHUk0w+Yl4ad8FoJcX+AyK8CdUNgXlIQ=;
-        b=NgW6iTWzGt6k7bXGfeJGH7OD9GASrj7avvnxneaYKN1r5+00FrM5qLrMpn3r/yNu0B
-         ffmUrW8jRBuKbqlePHmfMTxi/gALlwHrSslHxtHt1ylj6Lkg/8NdQ+Hz7rnnj9/kWimM
-         7MxlQVyk5EnKZIdNd7LHnlXgUeYekj03zU64wJMjWi1c9hprqAi8B3aO8wyWyMNgkzKK
-         /o4bqvPjec84seiKHYfa7R96Cs4ZU9zdN2fQWFzCR0H1SGItnPCK3mJX4xS2r6IDUqNN
-         /s/U3uXHRlRZijLDrC0/c3I7TomSO9OfwSSz96DrlUeOGOk021IZJ/P7mjj8KLf+n6a+
-         kq+g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741615848; x=1742220648;
-        h=content-disposition:mime-version:message-id:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=bnVaOrL5Y/iVHUk0w+Yl4ad8FoJcX+AyK8CdUNgXlIQ=;
-        b=i/R0zxo7yDF3WylVri4XOq11z6L/o7grBMN5V1Ti5WpBLz6Ohsnes87BEREBAtpZTH
-         ZKeJlhDUOBeBMJTYaXTIB2Rx+9pHLxtnJ7t1ipB/BIc+UFwfdRkbhfSyM8whPalQxTKF
-         mytjYXzrxIszCeq6aLpBxqNMd8IexASRLj/46acJI6Qi5InxwqPfo5GNB6+7YI4i6T8P
-         x2XVlmZ6z923/W4NvzoS+E7WbMvRV3s4BKUpZ3FjjwtngEmByHrFELhrhwE7ptiydH5y
-         9cENJu3A4CR9KKU19BEjytPBuOjMC/4Z2OtVNJfN6+pttQY1DKxRf/cUBqQ/PF37ipwz
-         qQ6Q==
-X-Gm-Message-State: AOJu0YzeYBHBIu5Q43BokzNrJTAIQROYBbyZ++Jgq+NCaOKQu8pNOaDU
-	ce08kYlDmHivIkPCnO6ic1bw9ibJsXtZIn7EMMYlyEMix79emS+jpz2QNQ==
-X-Gm-Gg: ASbGnctxr6nMnJNMXm/Um03OwHSTm7nJag3dHDXUhRWKYsd1Zr/8UCzeIG1M1fNgzx8
-	lyXv36kpOn/BIbFfERnMNXZ4xe3ApszOCfOfylmufTTXrd3/r9BOrAFDjl7qj3ho+x9E8GeKwx6
-	e3l+nSgLwTpas7I4XwlYn8VDG8Y2KZ/HaHXUSU+0m1N4/7lXB6DfBMTOepYJ7KMViN2lEJe8z+a
-	hOpkdmdVich+/SMPt7kbsIy6GBYVmuF7SJO3vl8dzyFB7+RSve06VGE0mIbqh+nXVJPWL+LjqpM
-	mXlfwz5a64RLyDIA1zneOCw31UujRHSglIlNCzHoNPsyW9A=
-X-Google-Smtp-Source: AGHT+IGjHZX051QxHPM+sdDBQSagoo/GbuM4PfoSGycgXcvTr94A2AbGN9aybIIJfrSJHngucJThSQ==
-X-Received: by 2002:a05:6a21:3995:b0:1f5:6c94:2cce with SMTP id adf61e73a8af0-1f56c9432demr11184498637.30.1741615847565;
-        Mon, 10 Mar 2025 07:10:47 -0700 (PDT)
-Received: from gmail.com ([103.210.134.81])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-af281287c10sm6424583a12.78.2025.03.10.07.10.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 10 Mar 2025 07:10:47 -0700 (PDT)
-Date: Mon, 10 Mar 2025 19:40:41 +0530
-From: Brahmajit <brahmajit.xyz@gmail.com>
-To: linux-kernel <linux-kernel@vger.kernel.org>
-Cc: linux-wireless@vger.kernel.org, johannes.berg@intel.com
-Message-ID: <iu252dgt2sgg25fkuyl66r6scs5ln3fud644ept2dvtgfm2i77@6gwx3glxihja>
+	s=arc-20240116; t=1741615863; c=relaxed/simple;
+	bh=yz+QldxCtNgccfZ6ARlzhW3yaYz3Keq073Sg+hhKyCs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=DV6jFCNzRZNquR9iN8fFctWIGYRLCcy68sCmlaVGJRvvUdX8Ricx4xFix6bzNhuSts2IF9LBhDtcBg84fslxdF+y2Bf8bOPUjQ9XxSN0onUS8DdA8anP68P3YDYl9VXfQqib+IISqeYJcaBXHbjygqxsUjK1x1VTMwwXb/qtZWo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ClPl/EeA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 209EDC4CEEB;
+	Mon, 10 Mar 2025 14:10:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741615862;
+	bh=yz+QldxCtNgccfZ6ARlzhW3yaYz3Keq073Sg+hhKyCs=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=ClPl/EeA+JDtzs/dylVUaL3LMNXCfH9IIGzt0B2A90glh5jVcCyQu7WEqNZ8Kri3Z
+	 ndxfKVNWPZ8PJyfIKbR+SQPKoCp5cSsLK7WYGmOcVwpsGyZ/cKoTwAJbS1P72lUWok
+	 q4tKhELl9uAMVBJXtyrO7bLlDDSFGk5mmjVtSS4QnSr2smEzNcbyD8kdeAoQ3R4oI9
+	 9faifbo8q0JzcvCkTYrxJDUPaHdPfJ2xy4HwJqx3Socb4AnWbpu9EOLqlIh0wp+8Ns
+	 FChOu42LWzSBbPPM7cfZ1yky9oQNkVHztx3Y4hqOMIoY3lcWS5dFpAxwgXlm7z5Mub
+	 SoNEohrLD5urA==
+Message-ID: <ebc23aa2-c850-43c3-baa0-922da31208df@kernel.org>
+Date: Mon, 10 Mar 2025 15:10:53 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 4/8] memory: Add STM32 Octo Memory Manager driver
+To: Patrice CHOTARD <patrice.chotard@foss.st.com>,
+ Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Alexandre Torgue <alexandre.torgue@foss.st.com>,
+ Philipp Zabel <p.zabel@pengutronix.de>,
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Arnd Bergmann <arnd@arndb.de>, Catalin Marinas <catalin.marinas@arm.com>,
+ Will Deacon <will@kernel.org>
+Cc: linux-spi@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-stm32@st-md-mailman.stormreply.com,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ christophe.kerello@foss.st.com
+References: <20250219080059.367045-1-patrice.chotard@foss.st.com>
+ <20250219080059.367045-5-patrice.chotard@foss.st.com>
+ <6e1757ea-3f5e-4cc0-b142-aee52f016c8f@foss.st.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <6e1757ea-3f5e-4cc0-b142-aee52f016c8f@foss.st.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-ilan.peer@intel.com, miriam.rachel.korenblit@intel.com
-Bcc:
-Subject: Possible Null pointer dereferences in net/mac80211/parse.c
-Message-ID: <auwvcgrqt34qe277qkizbyhy3oji7h3axvstnhrqbriwtltxyd@o2sgx2cwlg2x>
-Reply-To:
+On 10/03/2025 14:52, Patrice CHOTARD wrote:
+> 
+> 
+> On 2/19/25 09:00, patrice.chotard@foss.st.com wrote:
+>> From: Patrice Chotard <patrice.chotard@foss.st.com>
+>>
+>> Octo Memory Manager driver (OMM) manages:
+>>   - the muxing between 2 OSPI busses and 2 output ports.
+>>     There are 4 possible muxing configurations:
+>>       - direct mode (no multiplexing): OSPI1 output is on port 1 and OSPI2
+>>         output is on port 2
+>>       - OSPI1 and OSPI2 are multiplexed over the same output port 1
+>>       - swapped mode (no multiplexing), OSPI1 output is on port 2,
+>>         OSPI2 output is on port 1
+>>       - OSPI1 and OSPI2 are multiplexed over the same output port 2
+>>   - the split of the memory area shared between the 2 OSPI instances.
+>>   - chip select selection override.
+>>   - the time between 2 transactions in multiplexed mode.
+>>   - check firewall access.
+>>
 
-Coverity Scan reports that there might be a possible NULL pointer
-dereferences in net/mac80211/parse.c: 1061 in
-ieee802_11_parse_elems_full(). I understand that these reports are not
-always correct.
 
-I'm not sure whether the syntax
-struct ieee80211_elems_parse_params sub = {};
-is correct or falls under C11 standard[0].
 
-initializer:
-         assignment-expression
-         { initializer-list }
-         { initializer-list , }
-initializer-list:
-         designation(opt) initializer
-         initializer-list , designation(opt) initializer
+Please kindly trim the replies from unnecessary context. It makes it
+much easier to find new content.
 
-I'm aware that C23 allows empty initialization[1].
+...
+> 
+> 
+> Hi all,
+> 
+> Anybody alse has additionnal remarks on this driver ?
 
-braced-initializer:
-                    { }
-                    { initializer-list }
-                    { initializer-list , }
+I am waiting too...
 
-Considering [0], if we do something like
-
---- a/net/mac80211/parse.c
-+++ b/net/mac80211/parse.c
-@@ -997,7 +997,7 @@ ieee80211_mle_defrag_epcs(struct ieee80211_elems_parse *elems_parse)
- struct ieee802_11_elems *
- ieee802_11_parse_elems_full(struct ieee80211_elems_parse_params *params)
- {
--	struct ieee80211_elems_parse_params sub = {};
-+	struct ieee80211_elems_parse_params sub = { 0 };
- 	struct ieee80211_elems_parse *elems_parse;
- 	const struct element *non_inherit = NULL;
- 	struct ieee802_11_elems *elems;
-
-Would it be incorrect? Would appreciate some feedback.
-
-[0]: https://www.open-std.org/jtc1/sc22/wg14/www/docs/n1570.pdf
-[1]: https://www.open-std.org/jtc1/sc22/wg14/www/docs/n3054.pdf
--- 
-Regards,
-Brahmajit
+Best regards,
+Krzysztof
 
