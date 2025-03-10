@@ -1,98 +1,203 @@
-Return-Path: <linux-kernel+bounces-554205-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-554206-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3EB2EA594A0
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 13:35:18 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8005BA594A6
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 13:38:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6E484168366
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 12:35:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3532F3A9D8A
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 12:38:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 506AA225413;
-	Mon, 10 Mar 2025 12:35:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 511162253E6;
+	Mon, 10 Mar 2025 12:38:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=8bytes.org header.i=@8bytes.org header.b="2bd2YLAf"
-Received: from mail.8bytes.org (mail.8bytes.org [85.214.250.239])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7385D220687
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 12:35:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.214.250.239
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741610112; cv=none; b=T83s1yrsaq2111v6GbAAfHFod4AtU4ZTHCdnZJx2mKeuQ5odJVlBbOCWrZr3rv0O8UHP0WsIFO6XFYRRUfoXRDJYtT5OZM1GUzR4JF9c8pGu/znmzbYAHPt1UnrkTCGC29QohlLArWJHgNJ77ic7pbUhzaH7x07+H8G/ArL7wmg=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741610112; c=relaxed/simple;
-	bh=HhXOLi/3CeOtVR5inmB3Pzf5XZSwuEMjTr25ldCYss0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bSXXna6Sl3IfJoz+8ef2sej5kgLXExIKIgcGFNMNk3qRYBDPg2yPh8ezUqueR7E4fUl9T3FRyHVpXXfDYC2sFzelPAyLH+CUhOrkMdA3Lw7hNc4s1r8dKTbGqac9ZBHPLZT3vuNMhnPsfCQAepR2KFv8lg8dYqWvFC2LMXl+OTU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=8bytes.org; spf=pass smtp.mailfrom=8bytes.org; dkim=pass (2048-bit key) header.d=8bytes.org header.i=@8bytes.org header.b=2bd2YLAf; arc=none smtp.client-ip=85.214.250.239
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=8bytes.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=8bytes.org
-Received: from 8bytes.org (p4ffe03ae.dip0.t-ipconnect.de [79.254.3.174])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="YIiKwph8"
+Received: from mout-p-202.mailbox.org (mout-p-202.mailbox.org [80.241.56.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.8bytes.org (Postfix) with ESMTPSA id E826C45174;
-	Mon, 10 Mar 2025 13:35:08 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=8bytes.org;
-	s=default; t=1741610109;
-	bh=HhXOLi/3CeOtVR5inmB3Pzf5XZSwuEMjTr25ldCYss0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=2bd2YLAfTH0cTtK0cWwz/yZa+boAmWBZyJ3qpTE9KTDCZo/eXb2JrVHZTeetct6tt
-	 EGs5ZkDwWV73m0uwSZ44BieEi2VEgV0gCjA/gBpZVU8KHZi/S6sDLGCaZ5odCO9onQ
-	 6F0W/ucltnlaoag1r1LbrcWRCqJTWAiLQW7bFoJH8FBPc98m2GNaIJnK4RPb9TEoff
-	 7/AlGjRqibHoLwb6AeSEkVVvW+MVVXPSnk78fzM8bHfgIs6kKXwwYm+OZ28oMLwrJA
-	 KUKm7VxcDs+5k5zquJjLvV1DHrN5CUl1GRk15QnSPrAW28GkHUwGkDN1TQiJpa/a7L
-	 QvIUSfhj4e3IA==
-Date: Mon, 10 Mar 2025 13:35:07 +0100
-From: Joerg Roedel <joro@8bytes.org>
-To: Juergen Gross <jgross@suse.com>
-Cc: Alexey Gladkov <legion@kernel.org>,
-	"Alexey Gladkov (Intel)" <alexey.gladkov@intel.com>,
-	"Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-	Dave Hansen <dave.hansen@intel.com>, Borislav Petkov <bp@alien8.de>,
-	Joerg Roedel <jroedel@suse.de>, Ingo Molnar <mingo@kernel.org>,
-	x86@kernel.org, hpa@zytor.com,
-	Tom Lendacky <thomas.lendacky@amd.com>,
-	Nikunj A Dadhania <nikunj@amd.com>, linux-kernel@vger.kernel.org,
-	Larry.Dewey@amd.com
-Subject: Re: [PATCH] x86/sev: Make SEV_STATUS available via SYSFS
-Message-ID: <Z87ce37GjCqpOLCW@8bytes.org>
-References: <20250305115035.GEZ8g6i7NTiSfkxk7J@fat_crate.local>
- <Z8hYEsHvwUwlOold@suse.de>
- <20250305153705.GKZ8hvoaz2GPt2rGtu@fat_crate.local>
- <b0cf4bfc-bf22-4986-9e76-62e3f54179ea@intel.com>
- <2koe2zg26fndx6d6jcmbg6dzybbgldgrjufupj74nvmav2dmqg@w6bknhosl64h>
- <Z8le_TWUJNebrfs7@8bytes.org>
- <Z8l66FFgPu5hWtuI@agladkov-desk>
- <Z86-3n1-MArVLM9Z@8bytes.org>
- <Z87L0bRi8tcAIsDw@example.org>
- <e9d58d64-ab0f-49e8-ac87-c02bda6bc837@suse.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE6711C07D9
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 12:38:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.172
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741610285; cv=none; b=bbC8WtVsvaw9ZAtf4zAG8SKbbPOMFNGDafa3746VrtuBfV18YUBJ8BllLgc7Lith1f/OPeJkJbgKL9GPy3aJ7xoIfLJ2lZv343ZLhg4Bcq/Z0/7N53QLIP/g72t2RWJCwCgJRl7P+YDD4E7lTZPViEiNMF1fErHORGARDfq7MvI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741610285; c=relaxed/simple;
+	bh=Nagh/5TlyKX2aQYN5BbQE07pr5TFCFn2jCmUJFYiWTU=;
+	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=mMAb+7pe6yNiR/54Od3e8H3VnU5YVw0+ub/j1GdWM8FK3lMhvbFt9BB0HbdgUtUn0RsXM/I7sWFAk0yU2/lANAnpgil8ne3fLRZitIVRazp3dWge8BGGGUYGkk2YTr4vhhUIifKU8jnxIK1EhHFcY3S9KnRpP2uptK6ELRscxBE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=YIiKwph8; arc=none smtp.client-ip=80.241.56.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
+Received: from smtp2.mailbox.org (smtp2.mailbox.org [IPv6:2001:67c:2050:b231:465::2])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-202.mailbox.org (Postfix) with ESMTPS id 4ZBGdG4c8fz9ss0;
+	Mon, 10 Mar 2025 13:37:54 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
+	t=1741610274; h=from:from:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=r4Q2+Zz4aPz+PBPNZqysqjDenVpdOzlAYx4ww6BzQo4=;
+	b=YIiKwph8lnDvc8xzpJULkDrrGUJFVJys2OWJUuH4wZ7Z8cNIwL0WofYCiM28BtS+alqJSB
+	xw59xsNsjuG63BcKsnWdzJaxoOkQA6mZo4Yjb2oxIM3+lnQhBKnl0s8D/Tf0jVCwKZ+KAS
+	zoxsfW/aXA9R5k0N7QgQcyoZwcKLIGwvAjGN1qjAGB411SMqqJDjTvU14o4F06aV02Ix+5
+	gkKMhR4/unbHJEyx2T6jtIZFUTZI0Vpdo4P2A0TnVeY6VME3Gt07OXUnYz34rapLCenkVM
+	/L+tQ2A2lvehqt+EpGHvURxXFTe3uwj/+lRG2140tRoeVigxJ3WTGFRRo2Vfpw==
+Message-ID: <95f663076b59fc85818d14a1a14416b88aae1c73.camel@mailbox.org>
+Subject: Re: [PATCH] drm/sched: revert "drm_sched_job_cleanup(): correct
+ false doc"
+From: Philipp Stanner <phasta@mailbox.org>
+Reply-To: phasta@kernel.org
+To: Christian =?ISO-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>, 
+ phasta@kernel.org, Christian =?ISO-8859-1?Q?K=F6nig?=
+ <ckoenig.leichtzumerken@gmail.com>, matthew.brost@intel.com,
+ dakr@kernel.org,  tvrtko.ursulin@igalia.com,
+ dri-devel@lists.freedesktop.org,  linux-kernel@vger.kernel.org
+Date: Mon, 10 Mar 2025 13:37:52 +0100
+In-Reply-To: <4269639b-56e0-4f44-8485-6120eeaf28e5@amd.com>
+References: <20250310074414.2129157-1-christian.koenig@amd.com>
+	 <564be70f7d64c04c1ad77499522d99c64ea4d4d3.camel@mailbox.org>
+	 <4269639b-56e0-4f44-8485-6120eeaf28e5@amd.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <e9d58d64-ab0f-49e8-ac87-c02bda6bc837@suse.com>
+X-MBO-RS-META: a6khkh5hoafds3zsfej451zfbp68wwtj
+X-MBO-RS-ID: 6bac97aba1c6295e0e0
 
-On Mon, Mar 10, 2025 at 01:28:38PM +0100, Juergen Gross wrote:
-> We can (saying that with my Xen maintainer hat on).
-> 
-> There is /sys/hypervisor/type which should return the used virtualization
-> environment ("xen" when running as a Xen guest).
+On Mon, 2025-03-10 at 13:25 +0100, Christian K=C3=B6nig wrote:
+> Am 10.03.25 um 13:11 schrieb Philipp Stanner:
+> > On Mon, 2025-03-10 at 08:44 +0100, Christian K=C3=B6nig wrote:
+> > > This reverts commit 44d2f310f008613c1dbe5e234c2cf2be90cbbfab.
+> > OK, your arguments with fence ordering are strong. Please update
+> > the
+> > commit message according to our discussion:
+> >=20
+> > > Sorry for the delayed response, I only stumbled over this now
+> > > while
+> > > going
+> > > over old mails and then re-thinking my reviewed by for this
+> > > change.
+> > Your RB hadn't even been applied (I merged before you gave it), so
+> > you
+> > can remove this first paragraph from the commit message
+> >=20
+> > > The function drm_sched_job_arm() is indeed the point of no
+> > > return.
+> > > The
+> > > background is that it is nearly impossible for the driver to
+> > > correctly
+> > > retract the fence and signal it in the order enforced by the
+> > > dma_fence
+> > > framework.
+> > >=20
+> > > The code in drm_sched_job_cleanup() is for the purpose to cleanup
+> > > after
+> > > the job was armed through drm_sched_job_arm() *and* processed by
+> > > the
+> > > scheduler.
+> > >=20
+> > > The correct approach for error handling in this situation is to
+> > > set
+> > > the
+> > > error on the fences and then push to the entity anyway. We can
+> > > certainly
+> > > improve the documentation, but removing the warning is clearly
+> > > not a
+> > > good
+> > > idea.
+> > This last paragraph, as per our discussion, seems invalid. We
+> > shouldn't
+> > have that in the commit log, so that it won't give later hackers
+> > browsing it wrong ideas and we end up with someone actually
+> > mengling
+> > with those fences.
+>=20
+> Sure, going to make those updates. I just wanted to give people a
+> possible direction to look into when they really run into a situation
+> where they need to abort some submission very late.
+>=20
+> Should I also clarify the comment in drm_sched_job_cleanup()?
 
-In CoCo environments there can be more than one hypervisor beneath the
-guest. For example KVM as the untrusted host, SVSM or another para-visor
-as the trusted in-guest hypervisor. On TDX there is also the TDX module
-in-between, which is another level of hypervisors. ARM and Risc-V will
-have similar architectures.
+Shouldn't be done in a revert-commit I think.
+
+I'd say we revert for now (it's not a big loss, just a bit of docu) and
+then you (or maybe I) submit a new patch where we discuss Tvrtko's
+questions and then write down the rules and issues precisely in both
+commit message and the function's comments.
 
 
-Regards,
+P.
 
-	Joerg
+>=20
+> Regards,
+> Christian.
+>=20
+> >=20
+> > Thx
+> > P.
+> >=20
+> > > Signed-off-by: Christian K=C3=B6nig <christian.koenig@amd.com>
+> > > ---
+> > > =C2=A0drivers/gpu/drm/scheduler/sched_main.c | 12 +++++-------
+> > > =C2=A01 file changed, 5 insertions(+), 7 deletions(-)
+> > >=20
+> > > diff --git a/drivers/gpu/drm/scheduler/sched_main.c
+> > > b/drivers/gpu/drm/scheduler/sched_main.c
+> > > index 53e6aec37b46..4d4219fbe49d 100644
+> > > --- a/drivers/gpu/drm/scheduler/sched_main.c
+> > > +++ b/drivers/gpu/drm/scheduler/sched_main.c
+> > > @@ -1015,13 +1015,11 @@
+> > > EXPORT_SYMBOL(drm_sched_job_has_dependency);
+> > > =C2=A0 * Cleans up the resources allocated with drm_sched_job_init().
+> > > =C2=A0 *
+> > > =C2=A0 * Drivers should call this from their error unwind code if @jo=
+b
+> > > is
+> > > aborted
+> > > - * before it was submitted to an entity with
+> > > drm_sched_entity_push_job().
+> > > + * before drm_sched_job_arm() is called.
+> > > =C2=A0 *
+> > > - * Since calling drm_sched_job_arm() causes the job's fences to
+> > > be
+> > > initialized,
+> > > - * it is up to the driver to ensure that fences that were
+> > > exposed to
+> > > external
+> > > - * parties get signaled. drm_sched_job_cleanup() does not ensure
+> > > this.
+> > > - *
+> > > - * This function must also be called in &struct
+> > > drm_sched_backend_ops.free_job
+> > > + * After that point of no return @job is committed to be
+> > > executed by
+> > > the
+> > > + * scheduler, and this function should be called from the
+> > > + * &drm_sched_backend_ops.free_job callback.
+> > > =C2=A0 */
+> > > =C2=A0void drm_sched_job_cleanup(struct drm_sched_job *job)
+> > > =C2=A0{
+> > > @@ -1032,7 +1030,7 @@ void drm_sched_job_cleanup(struct
+> > > drm_sched_job
+> > > *job)
+> > > =C2=A0		/* drm_sched_job_arm() has been called */
+> > > =C2=A0		dma_fence_put(&job->s_fence->finished);
+> > > =C2=A0	} else {
+> > > -		/* aborted job before arming */
+> > > +		/* aborted job before committing to run it */
+> > > =C2=A0		drm_sched_fence_free(job->s_fence);
+> > > =C2=A0	}
+> > > =C2=A0
+>=20
 
 
