@@ -1,120 +1,170 @@
-Return-Path: <linux-kernel+bounces-554269-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-554271-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 060CAA5958C
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 14:02:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id BA248A59591
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 14:04:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 38F983A5C08
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 13:02:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D33903A5CE4
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 13:04:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 855B6228CB0;
-	Mon, 10 Mar 2025 13:02:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7183F22A1CD;
+	Mon, 10 Mar 2025 13:04:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tRlts/Zh"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="SyqnXcx5"
+Received: from mail-m15567.qiye.163.com (mail-m15567.qiye.163.com [101.71.155.67])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBE2321E0AE;
-	Mon, 10 Mar 2025 13:02:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E3B022371A
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 13:04:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=101.71.155.67
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741611768; cv=none; b=SbYC5XGycDVULgcyYTNBDkyI0X5ATvHmm5n4iSEoY7GDLHpES9Ia1p4/6OM7Fqir/47KAJUp/2mTSp4BB99jcqBVx/xiArJahs68LSuQdYxoBp1rZsw+IVlNItiKyybflG/ttqi+ODp6oRRirGGEXAA4+OAn6Jj5mJXgZqEZpo8=
+	t=1741611876; cv=none; b=MWGrBRqGlI7/w2bvG5Gy7MYPlZQdugV191paqMOtJgU2imAb7Ats8BI7lj/iBnpZ8PsvVny6kYMSikMr+yep4eUtQTrQ+4d8BxyQ3kAKcbPaSRdFUMIBEAg5hIotjG6cCLFdedF0ZvMy5w21aU1jnAN7Js1Sq5h6uNJGZ0FESW8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741611768; c=relaxed/simple;
-	bh=qyHh1D1vX+68dKTG+EegRL4UgZ0evFBOJqQTycLFst0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QsDEhDMMvbzjVz7GHbj4utIRtYcHKJKjQTfmIYpUXk4g1XWHDKUq2DMm6pcpCWm8OKVKN1z7hXo12mVoj/VRhK3Ba9RFMxIvzvqOKMZM5+/4WBQm8Uc0iheB/Rv2+tiwElabRRO2iKppjZd7IMW2dVnuKxtN1uunKl1h2Fi5NcQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tRlts/Zh; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E466AC4CEE5;
-	Mon, 10 Mar 2025 13:02:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741611767;
-	bh=qyHh1D1vX+68dKTG+EegRL4UgZ0evFBOJqQTycLFst0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=tRlts/ZhNbYmFlrv133aUmOYU1WOKML75MIEjpre2hEcv3myqd87DyFLQEmRo1fSQ
-	 Wt77rGT8CpCxMYXdxnlvGTDS7gVM/oq+0Yabg9KyRwCimrQgMYcva+lH7NZ8Ll9pXT
-	 DjBQod9Nx2NN6R9+cyg0tr40cw8i1YvJ/mmVNrRyeTu5NnjxP5g70GRT1QK4r+m/eF
-	 Xg1XMXbNVXmVRdwS2el6Qp8uB8QkqKQHLL2d4ouqkJ9uNiSPx5IvzOLHUcAatGa5Sv
-	 //U55Hsf/t4AGYvngoH/4h0Px+Rys2VgQFM0d0Bt00bFVLeMhJJrU+h4lJckhhwp48
-	 zmChkwQWd2oCg==
-Date: Mon, 10 Mar 2025 08:02:44 -0500
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: =?iso-8859-1?Q?J=2E_Neusch=E4fer?= <j.ne@posteo.net>
-Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Madhavan Srinivasan <maddy@linux.ibm.com>,
-	devicetree@vger.kernel.org, dmaengine@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Vinod Koul <vkoul@kernel.org>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Crystal Wood <oss@buserror.net>,
-	Nicholas Piggin <npiggin@gmail.com>,
-	Naveen N Rao <naveen@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	linuxppc-dev@lists.ozlabs.org
-Subject: Re: [PATCH v4] dt-bindings: dma: Convert fsl,elo*-dma to YAML
-Message-ID: <174161174500.3899711.4362879691608337681.robh@kernel.org>
-References: <20250308-ppcyaml-dma-v4-1-20392ea81ec6@posteo.net>
+	s=arc-20240116; t=1741611876; c=relaxed/simple;
+	bh=BSpB9zsF3EpNXZc+dbwg181g4nLCQwLhSCE1P5bu3ro=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=BJSPVlHw8uhNny0kJCHAsG1aaXLDOgOz/00SWJ5G9QjWbHYL5U9R8VFl5Lp9XIlVB5++PE1yycqWHgkfEL/UQ6khg04MVfaVWTtr63O26ynUAtR1uH2T5EuGjrmz7SZROLxehq48QN9GBTQOcxibGcMNoaFMTccEtIOveK7WlHY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=SyqnXcx5; arc=none smtp.client-ip=101.71.155.67
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
+Received: from zyb-HP-ProDesk-680-G2-MT.. (unknown [58.22.7.114])
+	by smtp.qiye.163.com (Hmail) with ESMTP id dc188276;
+	Mon, 10 Mar 2025 18:42:13 +0800 (GMT+08:00)
+From: Damon Ding <damon.ding@rock-chips.com>
+To: heiko@sntech.de
+Cc: andy.yan@rock-chips.com,
+	hjc@rock-chips.com,
+	maarten.lankhorst@linux.intel.com,
+	mripard@kernel.org,
+	tzimmermann@suse.de,
+	airlied@gmail.com,
+	simona@ffwll.ch,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	andrzej.hajda@intel.com,
+	neil.armstrong@linaro.org,
+	rfoss@kernel.org,
+	Laurent.pinchart@ideasonboard.com,
+	jonas@kwiboo.se,
+	jernej.skrabec@gmail.com,
+	dmitry.baryshkov@linaro.org,
+	dianders@chromium.org,
+	sebastian.reichel@collabora.com,
+	cristian.ciocaltea@collabora.com,
+	boris.brezillon@collabora.com,
+	l.stach@pengutronix.de,
+	dri-devel@lists.freedesktop.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Damon Ding <damon.ding@rock-chips.com>
+Subject: [PATCH v8 06/13] drm/bridge: analogix_dp: Add support to get panel from the DP AUX bus
+Date: Mon, 10 Mar 2025 18:41:07 +0800
+Message-Id: <20250310104114.2608063-7-damon.ding@rock-chips.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20250310104114.2608063-1-damon.ding@rock-chips.com>
+References: <20250310104114.2608063-1-damon.ding@rock-chips.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250308-ppcyaml-dma-v4-1-20392ea81ec6@posteo.net>
+X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
+	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZGRlPS1ZCSkwaSxlDGUpOHklWFRQJFh
+	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSUhCS0
+	NVSktLVUpCWQY+
+X-HM-Tid: 0a957fa5e3da03a3kunmdc188276
+X-HM-MType: 1
+X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6NCI6Iio4FTJMHCMXMzoTPR4d
+	Lx9PFBpVSlVKTE9KTUtISEhOSU5LVTMWGhIXVR8aFhQVVR8SFRw7CRQYEFYYExILCFUYFBZFWVdZ
+	EgtZQVlOQ1VJSVVMVUpKT1lXWQgBWUFJTUtINwY+
+DKIM-Signature:a=rsa-sha256;
+	b=SyqnXcx5LoHD5wKranbdzL/uLV4monKu3+GvLzJszfSpIYP8gXm3AXFJ7eOES6jgCcw40ZuT5P1eNmUj3SMa2nXeTCXhMYmk6lnWiTYPayjSeQCwvk8bcgzcyWSwQnHrkIrr6UVA35XwFRvZIOvWzYyT4aZadNSy9Z9SyXtjpqQ=; s=default; c=relaxed/relaxed; d=rock-chips.com; v=1;
+	bh=PrzE4PXYA+y/tPMc43/nU1rxnuyoWCfIKQHOq/5i0Cs=;
+	h=date:mime-version:subject:message-id:from;
 
+The main modification is moving the DP AUX initialization from function
+analogix_dp_bind() to analogix_dp_probe(). In order to get the EDID of
+eDP panel during probing, it is also needed to advance PM operations to
+ensure that eDP controller and phy are prepared for AUX transmission.
 
-On Sat, 08 Mar 2025 19:33:39 +0100, J. Neuschäfer wrote:
-> The devicetree bindings for Freescale DMA engines have so far existed as
-> a text file. This patch converts them to YAML, and specifies all the
-> compatible strings currently in use in arch/powerpc/boot/dts.
-> 
-> Signed-off-by: J. Neuschäfer <j.ne@posteo.net>
-> ---
-> I considered referencing dma-controller.yaml, but that requires
-> the #dma-cells property (via dma-common.yaml), and I'm now sure which
-> value it should have, if any. Therefore I did not reference
-> dma-controller.yaml.
-> 
-> V4:
-> - switch DMA controller node name (in examples) back to dma@ because the
->   dma-controller.yaml binding is not used.
-> 
-> V3:
-> - Link: https://lore.kernel.org/r/20250226-ppcyaml-dma-v3-1-79ce3133569f@posteo.net
-> - split out as a single patch
-> - restructure "description" definitions to use "items:" as much as possible
-> - remove useless description of interrupts in fsl,elo3-dma
-> - rename DMA controller nodes to dma-controller@...
-> - use IRQ_TYPE_* constants in examples
-> - define unit address format for DMA channel nodes
-> - drop interrupts-parent properties from examples
-> 
-> V2:
-> - part of series [PATCH v2 00/12] YAML conversion of several Freescale/PowerPC DT bindings
->   Link: https://lore.kernel.org/lkml/20250207-ppcyaml-v2-5-8137b0c42526@posteo.net/
-> - remove unnecessary multiline markers
-> - fix additionalProperties to always be false
-> - add description/maxItems to interrupts
-> - add missing #address-cells/#size-cells properties
-> - convert "Note on DMA channel compatible properties" to YAML by listing
->   fsl,ssi-dma-channel as a valid compatible value
-> - fix property ordering in examples: compatible and reg come first
-> - add missing newlines in examples
-> - trim subject line (remove "bindings")
-> ---
->  .../devicetree/bindings/dma/fsl,elo-dma.yaml       | 137 ++++++++++++++
->  .../devicetree/bindings/dma/fsl,elo3-dma.yaml      | 125 +++++++++++++
->  .../devicetree/bindings/dma/fsl,eloplus-dma.yaml   | 132 +++++++++++++
->  .../devicetree/bindings/powerpc/fsl/dma.txt        | 204 ---------------------
->  4 files changed, 394 insertions(+), 204 deletions(-)
-> 
+Signed-off-by: Damon Ding <damon.ding@rock-chips.com>
 
-Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+---
+
+Changes in v4:
+- Use done_probing() to call drm_of_find_panel_or_bridge() and
+  component_add() when getting panel from the DP AUX bus
+
+Changes in v5:
+- Advance PM operations to make eDP AUX work well
+
+Changes in v6:
+- Use devm_pm_runtime_enable() instead of devm_add_action_or_reset()
+- Add a new function analogix_dp_remove() to ensure symmetry for PM
+  operations
+
+Changes in v7:
+- Fix the misspelling of word 'operations' in commit message
+- Remove the check related to CONFIG_PM
+- Remove the unnecessary call to pm_runtime_dont_use_autosuspend() if
+  devm_pm_runtime_enable() fails
+- Remove unnecessary function analogix_dp_remove()
+- Add new function analogix_dpaux_wait_hpd_asserted()
+
+Changes in v8:
+- Move the addition of the analogix_dpaux_wait_hpd_asserted() to the
+  other patch
+---
+ .../drm/bridge/analogix/analogix_dp_core.c    | 20 ++++++++++---------
+ 1 file changed, 11 insertions(+), 9 deletions(-)
+
+diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
+index dd91760c4b1c..2b76a9cf3bcb 100644
+--- a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
++++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
+@@ -1650,6 +1650,17 @@ analogix_dp_probe(struct device *dev, struct analogix_dp_plat_data *plat_data)
+ 		return ERR_PTR(ret);
+ 	}
+ 
++	dp->aux.name = "DP-AUX";
++	dp->aux.transfer = analogix_dpaux_transfer;
++	dp->aux.dev = dp->dev;
++	drm_dp_aux_init(&dp->aux);
++
++	pm_runtime_use_autosuspend(dp->dev);
++	pm_runtime_set_autosuspend_delay(dp->dev, 100);
++	ret = devm_pm_runtime_enable(dp->dev);
++	if (ret)
++		return ERR_PTR(ret);
++
+ 	return dp;
+ }
+ EXPORT_SYMBOL_GPL(analogix_dp_probe);
+@@ -1696,15 +1707,6 @@ int analogix_dp_bind(struct analogix_dp_device *dp, struct drm_device *drm_dev)
+ 	dp->drm_dev = drm_dev;
+ 	dp->encoder = dp->plat_data->encoder;
+ 
+-	pm_runtime_use_autosuspend(dp->dev);
+-	pm_runtime_set_autosuspend_delay(dp->dev, 100);
+-	ret = devm_pm_runtime_enable(dp->dev);
+-	if (ret)
+-		return ret;
+-
+-	dp->aux.name = "DP-AUX";
+-	dp->aux.transfer = analogix_dpaux_transfer;
+-	dp->aux.dev = dp->dev;
+ 	dp->aux.drm_dev = drm_dev;
+ 
+ 	ret = drm_dp_aux_register(&dp->aux);
+-- 
+2.34.1
 
 
