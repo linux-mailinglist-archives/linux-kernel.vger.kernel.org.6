@@ -1,107 +1,201 @@
-Return-Path: <linux-kernel+bounces-554553-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-554554-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3B15AA599CB
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 16:21:33 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 85CF1A599CD
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 16:21:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 121481887015
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 15:21:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B68801637C7
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 15:21:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF5F622D7B8;
-	Mon, 10 Mar 2025 15:21:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D4EC22D4D4;
+	Mon, 10 Mar 2025 15:21:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tN6SUlZf"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hNReww5F"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 188BD2206B2;
-	Mon, 10 Mar 2025 15:21:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2C1522C322;
+	Mon, 10 Mar 2025 15:21:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741620079; cv=none; b=Aa8qV/wKjbB1iM5H64ljOL6u5TEhlpwG/9zK3gjP1iTa6W1/j/nYlUDp3aHGZ1c29iOaOrvDY/UhKI+Gp5xPZJv2jF54cAVOYSkFxCdcq0eZIgJZ25iYecjvN9W9Fq9vgw8RdfvWtBNeLAoeVBdyFk2qx62uj8bL6FqPUE7CYGs=
+	t=1741620096; cv=none; b=swmiMcTfapx094PP4HNW/RmwlTfdiKgaxXMrUrhr3JvytofRK9Oudw4rxm/Aykn/4geSoeGUsZT8by5KTN43/XLN+b39AxFBj+uD9eJ+W58HxWOpga6CA7eJIin96Nn47cSkgkOSQFjndtru5KcorzjEK/P/wEMo9UggetWYfhQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741620079; c=relaxed/simple;
-	bh=Lq4ng9tUDh+Do3SLF+xgV+HmrJ7By4mHdda8vZYyX2o=;
+	s=arc-20240116; t=1741620096; c=relaxed/simple;
+	bh=hXQNgckFdKYueMq99vRKaTD58E0w+Kq8iFgHPpemBCg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HUugrkI+wd+tBxG2EtoJ/vOAxrJL/z7P8tG+9d4sDF02TKMXQc4tCVj/oAsPhLx1pzA85nkRxeNZWNCpLyxLEDNgixA10wj0N7hz6MUx25O7I8ZOfL97xEGSH00unkQ5JnqFYCteC6u0pQzQwFZAHR+Vz7xOQA4Vj5yChbVLm9A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tN6SUlZf; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 420A6C4CEF0;
-	Mon, 10 Mar 2025 15:21:10 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=HmLFjw9bXd2h0lyUgcUkUE9IcZkc2QV/LaP0gpkkfVRL0rlJeICxa4hrloRsUNGscyBa9fHNkrxcT9eLGjwfQZYhkks6rzre6xHu/3JI6RuOd/OsP2fpp0rDOXGeRiR8Wv3QCtXZ8QiDhhBzBfJz0pCXsNHLRiNAzSStYV4QErc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hNReww5F; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BF7B2C4CEE5;
+	Mon, 10 Mar 2025 15:21:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741620077;
-	bh=Lq4ng9tUDh+Do3SLF+xgV+HmrJ7By4mHdda8vZYyX2o=;
+	s=k20201202; t=1741620096;
+	bh=hXQNgckFdKYueMq99vRKaTD58E0w+Kq8iFgHPpemBCg=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=tN6SUlZfZij8LZDhONGQZYa0e7YUVUuznQJoN7QxJNnpe+jbNxOnouR+r6lsg7jz3
-	 4Lnrtw2jbVBA9IJxSTQbHidaF0Xgxo30DQX/+dScJ3X+P/HfURJVPE7azLzRl75Iuj
-	 R8qcVAe8zjuSBe0ms+K4GbTB1xyvm5SpRUbS7iX6tIkR0RqnWdsnTrb6c3W7zMZDv7
-	 l93X3XUIGRPiEP671e+UX6rqe3SSv1Mnw8M1IfM3zl0B/hdXNP+qm2TErT9R6lsSAV
-	 DzqqaC9VfMcf1rxLXbPztaw+62TIEvlf6O7v94iUwpFr2XUemJJ7QAOlLrT9UrMiF8
-	 HR7YneCmAO6Ug==
-Date: Mon, 10 Mar 2025 15:21:07 +0000
-From: Mark Brown <broonie@kernel.org>
-To: linux@treblig.org
-Cc: arnd@arndb.de, lee@kernel.org, dmitry.torokhov@gmail.com,
-	sre@kernel.org, lgirdwood@gmail.com, alexandre.belloni@bootlin.com,
-	danielt@kernel.org, jingoohan1@gmail.com, deller@gmx.de,
-	linus.walleij@linaro.org, brgl@bgdev.pl, tsbogend@alpha.franken.de,
-	linux-mips@vger.kernel.org, linux-input@vger.kernel.org,
-	linux-pm@vger.kernel.org, linux-rtc@vger.kernel.org,
-	dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org,
-	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 6/9] regulator: pcf50633-regulator: Remove
-Message-ID: <a45de47a-d3f8-4730-bb91-2782f52fd25f@sirena.org.uk>
-References: <20250309193612.251929-1-linux@treblig.org>
- <20250309193612.251929-7-linux@treblig.org>
+	b=hNReww5FtAFFdhfD6In7xw3zsTu1HsBArEBSTNJ9D6/7Ma7Ko7E3eoO3Bvaxi2Mjj
+	 QLb+ynyWl51Is7nlDrCEOY14QdL94m/IkLi6vH1DeZVUPPkQfNmB/KSLq5cFy3dFDP
+	 H28Z9iF7Ubu7GCGwW1QJ9FrBHG3jCkoW6HTmgbqg5McAR5paFN+4xvgVzUHxu/4L32
+	 UxAlKpnlBIu4RdA+ANGWQkjTl82PCViKN3gdMMepSda58qUcfUccnkNr3vr62KUXlw
+	 nBNVLIOEWiHRnCKa5aATe2ndOkDHHRcTS8HMHFAu6mssZbgyaQpOfbrTgJdVfg+hAj
+	 7La33v2FGW1nQ==
+Date: Mon, 10 Mar 2025 12:21:32 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Stephen Brennan <stephen.s.brennan@oracle.com>
+Cc: Namhyung Kim <namhyung@kernel.org>, Ingo Molnar <mingo@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	"Liang, Kan" <kan.liang@linux.intel.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Athira Rajeev <atrajeev@linux.vnet.ibm.com>,
+	Jiri Olsa <jolsa@kernel.org>, linux-kernel@vger.kernel.org,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	James Clark <james.clark@linaro.org>,
+	Chaitanya S Prakash <chaitanyas.prakash@arm.com>,
+	Ian Rogers <irogers@google.com>, linux-perf-users@vger.kernel.org,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Andi Kleen <ak@linux.intel.com>
+Subject: Re: [PATCH v2 0/3] Support .gnu_debugdata for symbols in perf
+Message-ID: <Z88DfA2ROWNGfpD_@x1>
+References: <20250220185512.3357820-1-stephen.s.brennan@oracle.com>
+ <Z7-QZKNT4Cc8lspM@google.com>
+ <Z8tSyzcHF2V7Lofx@x1>
+ <Z8tUmcIH1qTF6YTn@x1>
+ <Z8tbEgh7rZscggv6@x1>
+ <87a59wwjxe.fsf@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="xd0V7MnYEiEQnSNp"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250309193612.251929-7-linux@treblig.org>
-X-Cookie: I'm having an emotional outburst!!
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <87a59wwjxe.fsf@oracle.com>
 
+On Fri, Mar 07, 2025 at 02:33:01PM -0800, Stephen Brennan wrote:
+> Arnaldo Carvalho de Melo <acme@kernel.org> writes:
+> > On Fri, Mar 07, 2025 at 05:18:36PM -0300, Arnaldo Carvalho de Melo wrote:
+> [...]
+> > It has a way to use that section tho:
 
---xd0V7MnYEiEQnSNp
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+> > ⬢ [acme@toolbox perf-tools-next]$ man eu-readelf | grep -A2 -- --elf-section
+> >                [--elf-section [section] ]
+> >                [-w|
+> >                 --debug-dump[=line,=decodedline,=info,=info+,=abbrev,=pubnames,=aranges,=macro,=frames,=str,=loc,=ranges,=gdb_index,=addr]]
+> > --
+> >        --elf-section [section]
+> >            Use the named SECTION (default .gnu_debugdata) as (compressed) ELF input data
 
-On Sun, Mar 09, 2025 at 07:36:09PM +0000, linux@treblig.org wrote:
+> > ⬢ [acme@toolbox perf-tools-next]$
 
-> Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
-> ---
->  drivers/mfd/pcf50633-core.c            |  35 +------
->  drivers/regulator/Kconfig              |   7 --
->  drivers/regulator/Makefile             |   1 -
->  drivers/regulator/pcf50633-regulator.c | 124 -------------------------
->  include/linux/mfd/pcf50633/core.h      |   1 -
+> > ⬢ [acme@toolbox perf-tools-next]$ eu-readelf --elf-section -s /bin/find | grep -w FUNC | grep -vw UNDEF | wc -l
+> > 339
+> > ⬢ [acme@toolbox perf-tools-next]$ eu-readelf --elf-section -s /bin/find | grep -w FUNC | grep -vw UNDEF | head
+> >     1: 00000000000056d0     35 FUNC    LOCAL  DEFAULT       17 entry_hashfunc
+> >     2: 0000000000005700     34 FUNC    LOCAL  DEFAULT       17 entry_comparator
+> >     3: 0000000000005920    121 FUNC    LOCAL  DEFAULT       17 subtree_has_side_effects
+> >     4: 00000000000059a0    992 FUNC    LOCAL  DEFAULT       17 worst_cost.part.0
+> >     5: 0000000000005d80    449 FUNC    LOCAL  DEFAULT       17 traverse_tree
+> >     6: 0000000000005f50     73 FUNC    LOCAL  DEFAULT       17 undangle_file_pointers
+> >     7: 0000000000005fa0     72 FUNC    LOCAL  DEFAULT       17 looks_like_expression
+> >     8: 0000000000006030    303 FUNC    LOCAL  DEFAULT       17 get_fts_info_name
+> >     9: 0000000000006190     35 FUNC    LOCAL  DEFAULT       17 inside_dir.part.0
+> >    10: 0000000000006330    451 FUNC    LOCAL  DEFAULT       17 pred_sanity_check
+> > ⬢ [acme@toolbox perf-tools-next]$
+ 
+> Wow, thank you for teaching me that!
+> I had been using:
+ 
+>   gdb /usr/bin/bash --batch -ex 'maint print msymbols'
+ 
+> Because I knew GDB had support for .gnu_debugdata. But the --elf-section
+> argument to eu-readelf is much more useful.
 
-Putting MFD changes into the subsystem changes just makes everything
-harder to apply, please keep things separate unless there's a strong
-need to keep everything integrated.
+That was a nice assumption and it did the work for you :-)
 
-Acked-by: Mark Brown <broonie@kernel.org>
+I thought that the elfutils guys would add something to eu-readelf for
+them to dump the compressed data in human readable for, looked at the
+man page and voila! 
 
---xd0V7MnYEiEQnSNp
-Content-Type: application/pgp-signature; name="signature.asc"
+<SNIP>
+ 
+> > # Overhead  Command  Shared Object                    Symbol
+> > # ........  .......  ...............................  .......................................................
+> > #
+> >      8.72%  find     /usr/bin/find                    0xb498
+> >      7.90%  find     /usr/lib64/libc.so.6             0xe51e0            B [.] __GI___readdir64
+> >      7.44%  find     /usr/lib64/libc.so.6             0xa77cd            B [.] _int_malloc
+> > ⬢ [acme@toolbox perf-tools-next]$
 
------BEGIN PGP SIGNATURE-----
+> > The only strange thing was not having it resolved in the -v case, which
+> > I think its because you added a new type of DSO but didn't update the
+> > code that does the 'perf report -v' verbose case?
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmfPA2MACgkQJNaLcl1U
-h9DJ2Af/XTN0nfI5RCpJ/Fr/iN6MekiWRzaQb3lLzvZytMpntNc4uPwT7p5rYEHa
-ydU9MVFQh7Dyt0gJynsGwsny1gwwpV6lbD/t9Larxqo0gCebDw8KDzLqOEuj2U3k
-0qHsl4zlFCcPbafwODYl+E6ZsaE2i6qIaaYkuRVNtMVDmJ60E3NBfow87xLD56q3
-VH/Vp8e4kPNG/tHAfDadzy705WzmwwJHYSt1JCDPoyxlbXSrCzEDyN5w2+hq0Jvf
-YbmzdUrP2MUQlvOolK/ciND0mX/VT17xsO6Wg2b4t2ZyuDkxJ9bod08/xTZk7BxA
-j94zeh1q8atD27MZlCcC4ibCsF317A==
-=A1eA
------END PGP SIGNATURE-----
+> > I ran out of time, have to go AFK now, can you please take a look,
+> > Stephen?
+ 
+> Thanks for the catch. I double checked all the places where
+> DSO_BINARY_TYPE constants are enumerated, and it turns out I missed
+> adding an entry to
+ 
+> char dso__symtab_origin(const struct dso *dso) ...
+> 
+> I assume that the array defaulted to '\0' which terminated the string
+> too early for this line. Oops!
+> 
+> Most of the letters I would associate with ".gnu_debugdata" are
+> taken (namely, g/G for GNU, m/M for MiniDebugInfo, d/D for
+> debugdata...). So 'n', for the second letter of GNU, is my selection
+> unless you feel differently. With that change, the table is fixed for
+> "perf report -v". Here it is running against my test data focusing on a
+> symbol only found in .gnu_debugdata of bash:
+> 
+> $ ./perf report -v --stdio -i ~/repos/UEK6/perf.data 2>&1 | egrep yy_readline_get\|gnu_debugdata
+> read_gnu_debugdata: using .gnu_debugdata of /usr/bin/bash
+> unwind: yy_readline_get:ip = 0x55fdc4509dbe (0x33dbe)
+> unwind: yy_readline_get:ip = 0x55fdc4509dbe (0x33dbe)
+> unwind: yy_readline_get:ip = 0x55fdc4509dbe (0x33dbe)
+> unwind: yy_readline_get:ip = 0x55fdc4509dbe (0x33dbe)
+> unwind: yy_readline_get:ip = 0x55fdc4509dbe (0x33dbe)
+> unwind: yy_readline_get:ip = 0x55fdc4509dbe (0x33dbe)
+> read_gnu_debugdata: using .gnu_debugdata of /usr/bin/sed
+> read_gnu_debugdata: using .gnu_debugdata of /usr/bin/date
+> read_gnu_debugdata: using .gnu_debugdata of /usr/bin/sqlite3
+> read_gnu_debugdata: using .gnu_debugdata of /usr/bin/sleep
+>      0.20%     0.00%  bash     /usr/bin/bash                    0x55fdc4509dbe     n [.] yy_readline_get
+> 
+> I'll update the patch accordingly.
 
---xd0V7MnYEiEQnSNp--
+I just tested it, works as expected:
+
+⬢ [acme@toolbox perf-tools-next]$ perf report -v --stdio |& head -20
+build id event received for [vdso]: a2184b81fbbc08eff401d16259eca8ad5f9d8988 [20]
+build id event received for /usr/bin/find: 3faf3f04d1b31abc9e5ce8428110e424fd980a37 [20]
+build id event received for /usr/lib64/ld-linux-x86-64.so.2: 765f7ab0f3569ffe98de85864a0cedda9b686994 [20]
+build id event received for /usr/lib64/libc.so.6: c8c3fa52aaee3f5d73b6fd862e39e9d4c010b6ba [20]
+build id event received for [kernel.kallsyms]: c3fbb7df4dfb94762b1648bc65e4363e50f45585 [20]
+read_gnu_debugdata: using .gnu_debugdata of /usr/bin/find
+# To display the perf.data header info, please use --header/--header-only options.
+#
+#
+# Total Lost Samples: 0
+#
+# Samples: 163  of event 'cpu_core/cycles/Pu'
+# Event count (approx.): 68126524
+#
+# Overhead  Command  Shared Object                    Symbol                                                 
+# ........  .......  ...............................  .......................................................
+#
+     8.72%  find     /usr/bin/find                    0xb498             n [.] consider_visiting
+     7.90%  find     /usr/lib64/libc.so.6             0xe51e0            B [.] __GI___readdir64
+     7.44%  find     /usr/lib64/libc.so.6             0xa77cd            B [.] _int_malloc
+⬢ [acme@toolbox perf-tools-next]$
+
+I'll reply to the v3 thread with my Tested-by.
+
+Thanks!
+
+- Arnaldo
 
