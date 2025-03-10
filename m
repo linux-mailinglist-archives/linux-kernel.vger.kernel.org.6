@@ -1,49 +1,51 @@
-Return-Path: <linux-kernel+bounces-555192-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-555195-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10076A5A6B8
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 23:05:45 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D1E60A5A6C0
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 23:08:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5B1951893688
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 22:05:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7B23D166ADC
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 22:08:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D4A21E520E;
-	Mon, 10 Mar 2025 22:04:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB3D01E833D;
+	Mon, 10 Mar 2025 22:08:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=iencinas.com header.i=@iencinas.com header.b="N28ATju+"
-Received: from out-172.mta1.migadu.com (out-172.mta1.migadu.com [95.215.58.172])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JIwkxpXT"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59D271E2834
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 22:04:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29F161DF72D;
+	Mon, 10 Mar 2025 22:08:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741644258; cv=none; b=iEKUOOkrICn3Z5+S2bB84j9ZWwT7+YvJ19OakRCKhME3gMkAe+IBNe9JcLyoUTV3RdQBU768mnXwlKk83nYlVKpzl1PuxwTEcyFM88Wqbo+sp0ALfZBLft7Ydbuan2TVS0yLkEzakcz7BZwJXW9bBn28D0b7qrgrarX/Rab5a0E=
+	t=1741644481; cv=none; b=uahWeToBIVM2uoDhKtgSfjnX0U9j8QU1D1BLZuVMN7BAlpd9gDhD7HUiMoMRj4VTLOfG+Y9ovq5p997Pl22BIJDv/w5+1dYh4pr3UuWJoegL4kRflpBT9SiyjcrYcn+kbIqFZZ2FqQyuh64gFOGpeJOXQlk3OWmcRoTrD+2e5bk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741644258; c=relaxed/simple;
-	bh=FrKlVPINhgHm/qZYxoAI2bxJmn4MPARDw9Qn5DJ1fRc=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=XLKvXauWnRBOTBTy+rzH//f3AfZc2oNM+L7LZ+muE3menMLDHxFYXCP8mtBJtFwM1JH0KQKrjPW/VAfaWxJpj6mPIsO9LBWSQ8VNtM5CVlnaCswrpfWq+yqPKHRHSFYM2nbJfvqy8IoMuBk6jXNsbSIzdq5ulUlkEgH92Uu1DzQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=iencinas.com; spf=pass smtp.mailfrom=iencinas.com; dkim=pass (2048-bit key) header.d=iencinas.com header.i=@iencinas.com header.b=N28ATju+; arc=none smtp.client-ip=95.215.58.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=iencinas.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iencinas.com
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=iencinas.com;
-	s=key1; t=1741644253;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=vMEhOW9fgJPCr4InVKo09seDTKCph02bUyGs2pruQNI=;
-	b=N28ATju+SsOf5mOLkX4xSXH0ni5rpddkGVzQ0AFC5fZJcs6P9VO9pz7SF8qelSzN+l2NqC
-	8kfjOzO5vJk/0dupShTH1+xEiBt1YfuUS0lNDnS+CaDl5gjrC+TAduQkxHPxR2JbuBY8dT
-	j2wlpSllboIUsJ5sIPqcjTn/9mOURqWUOYZ6c/TGMSauNtDAR5erQ72gz/Td0PRtI7fBEn
-	BD3YkUwNcoep0OKwNa9/4u5ftcPliRRNb65AdzzivcwQbINktEq+ujn/vjK1IGQJi8uvsS
-	UnVv0QwKNYfl9M/wc/mFp+6ZjOaSkFGFYRITqUfIkQrcf5YsCIKSgtLPRhqhWQ==
-From: Ignacio Encinas <ignacio@iencinas.com>
-Date: Mon, 10 Mar 2025 23:03:55 +0100
-Subject: [PATCH RFC] riscv: introduce asm/swab.h
+	s=arc-20240116; t=1741644481; c=relaxed/simple;
+	bh=4NH90Cs04TqlOhUoz/iIw6tRYGsatu8fWNgt044t36M=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=dzk1nPb+UcpvxP7CLIbga5NJWHOklTgiXg3sEcPJzxX9fqCOfw2vXekuPGU1Z4noYHSINv0E+p/pXmCszp6ioJLcsGS8r8ycT04AFMOJjYUzAQ7Dg4bBrstu0XPI/DmVpOuFCX89zb1zDq0KPXoxQROx0pN4OHDwGN/LkGawEjk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JIwkxpXT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 7DD8BC4CEE5;
+	Mon, 10 Mar 2025 22:08:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741644480;
+	bh=4NH90Cs04TqlOhUoz/iIw6tRYGsatu8fWNgt044t36M=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=JIwkxpXTq/hqnVz9dSP6RI4Jmyb7693CWCXpJM+qFms3Jspu4Y3OrPrxhHae7OYfn
+	 UCKXxm5Z3kPaEusKVorAlLhBOuRSuo/Xe9lqhda6CPcgkBG8QAQMq4W8gvnyFJLyXi
+	 DsaxCcUTZ75dDYOozAIIXJm7mqxSgJcw9e1HQ4HiLCPJ4O2qCgFlBm3CfqTr4frKtG
+	 08c/q5Atp9mjXqPmb9n9jHuIRmt3VJ8Yv9nvlY50+8k8FgzXe7QQ6AkSupz40QGyaM
+	 6DtzTRKf0ib9C8T27kfgdn5FELUxarbjBa0k3GAAQ944fg9iHQXSr6D+n2E3TGDgVN
+	 /c+VnSGsaVqVQ==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D12EC282DE;
+	Mon, 10 Mar 2025 22:08:00 +0000 (UTC)
+From: Sasha Finkelstein via B4 Relay <devnull+fnkl.kernel.gmail.com@kernel.org>
+Subject: [PATCH v3 0/3] Driver for the Apple SPMI controller
+Date: Mon, 10 Mar 2025 23:07:57 +0100
+Message-Id: <20250310-spmi-v3-0-92a82e7d9f0d@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -52,141 +54,70 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250310-riscv-swab-v1-1-34652ef1ee96@iencinas.com>
-X-B4-Tracking: v=1; b=H4sIAMphz2cC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
- vPSU3UzU4B8JSMDI1MDYwNz3aLM4uQy3eLyxCTdJAvDJEuTRMvEZMMkJaCGgqLUtMwKsGHRSkF
- uzkqxtbUAh1/042EAAAA=
-X-Change-ID: 20250307-riscv-swab-b81b94a9ac1b
-To: Paul Walmsley <paul.walmsley@sifive.com>, 
- Palmer Dabbelt <palmer@dabbelt.com>, Alexandre Ghiti <alex@ghiti.fr>
-Cc: Eric Biggers <ebiggers@kernel.org>, linux-riscv@lists.infradead.org, 
- linux-kernel@vger.kernel.org, linux-kernel-mentees@lists.linux.dev, 
- skhan@linuxfoundation.org, Zhihang Shao <zhihang.shao.iscas@gmail.com>, 
- =?utf-8?q?Bj=C3=B6rn_T=C3=B6pel?= <bjorn@kernel.org>, 
- Ignacio Encinas <ignacio@iencinas.com>
-X-Migadu-Flow: FLOW_OUT
+X-B4-Tracking: v=1; b=H4sIAL1iz2cC/02MyQrCMBRFf6W8tZEMHUxX/oe4SNKkfWAHEglKy
+ b+bVoUuz+Wes0KwHm2AtljB24gB5ymDOBVgBjX1lmCXGTjlFRW0JGEZkdSdMLzUkvJGQb4u3jp
+ 87ZnbPfOA4Tn7916NbFv/geobiIxQYuTFVTVzSkp37UeFj7OZR9gCkR+l5ifxLFljOk1r5bSUR
+ yml9AH68rAFzQAAAA==
+X-Change-ID: 20250304-spmi-6d3c24b9027a
+To: Sven Peter <sven@svenpeter.dev>, Janne Grunau <j@jannau.net>, 
+ Alyssa Rosenzweig <alyssa@rosenzweig.io>, Stephen Boyd <sboyd@kernel.org>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: asahi@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
+ Sasha Finkelstein <fnkl.kernel@gmail.com>, 
+ Jean-Francois Bortolotti <jeff@borto.fr>, Nick Chan <towinchenmi@gmail.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1741644479; l=1465;
+ i=fnkl.kernel@gmail.com; s=20241124; h=from:subject:message-id;
+ bh=4NH90Cs04TqlOhUoz/iIw6tRYGsatu8fWNgt044t36M=;
+ b=g8CnRI6E0LKqOAOS/T7gnJRQIpwR+RGZtCOByjaUTDPnkY/76IvmqdKFQH66bpW46p5MmnOXm
+ cbATFvvfMoqBVkC6MTfJwMvVEb2+tmF81rCQYQLPCjubErPipZ6zuYG
+X-Developer-Key: i=fnkl.kernel@gmail.com; a=ed25519;
+ pk=aSkp1PdZ+eF4jpMO6oLvz/YfT5XkBUneWwyhQrOgmsU=
+X-Endpoint-Received: by B4 Relay for fnkl.kernel@gmail.com/20241124 with
+ auth_id=283
+X-Original-From: Sasha Finkelstein <fnkl.kernel@gmail.com>
+Reply-To: fnkl.kernel@gmail.com
 
-Implement endianness swap macros for RISC-V.
+Hi.
 
-Use the rev8 instruction when Zbb is available. Otherwise, rely on the
-default mask-and-shift implementation.
+This patch series adds support for the SPMI controller persent in most
+Apple SoCs. The drivers for the attached PMU and subdevices will be in
+further patch series.
 
-Signed-off-by: Ignacio Encinas <ignacio@iencinas.com>
+Signed-off-by: Sasha Finkelstein <fnkl.kernel@gmail.com>
 ---
-Motivated by [1]. A couple of things to note:
+Changes in v3:
+- Inlined helpers, dropped unneccesary error prefixes
+- Link to v2: https://lore.kernel.org/r/20250307-spmi-v2-0-eccdb06afb99@gmail.com
 
-We need a default implementation to fall back on, but there isn't any in
-`asm-generic/swab.h`. Should I introduce a first patch moving 
-___constant_swab<XX> into include/uapi/asm-generic/swab.h?
-
-I don't particularly like the ARCH_SWAB macro but I can't think of
-anything better that doesn't result in code duplication.
-
-Tested with crc_kunit as pointed out here [2]. I can't provide
-performance numbers as I don't have RISC-V hardware yet.
-
-Ccing everyone involved with [1].
-
-[1] https://lore.kernel.org/all/20250302220426.GC2079@quark.localdomain/
-[2] https://lore.kernel.org/all/20250216225530.306980-1-ebiggers@kernel.org/
----
- arch/riscv/include/asm/swab.h | 81 +++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 81 insertions(+)
-
-diff --git a/arch/riscv/include/asm/swab.h b/arch/riscv/include/asm/swab.h
-new file mode 100644
-index 0000000000000000000000000000000000000000..8f8a13b343f6ffbefbb3c7747ab4e14243852014
---- /dev/null
-+++ b/arch/riscv/include/asm/swab.h
-@@ -0,0 +1,81 @@
-+/* SPDX-License-Identifier: GPL-2.0-only */
-+#ifndef _ASM_RISCV_SWAB_H
-+#define _ASM_RISCV_SWAB_H
-+
-+#include <linux/types.h>
-+#include <linux/compiler.h>
-+#include <asm/alternative-macros.h>
-+#include <asm/hwcap.h>
-+
-+#if defined(CONFIG_RISCV_ISA_ZBB) && !defined(NO_ALTERNATIVE)
-+
-+/*
-+ * FIXME, RFC PATCH: This is copypasted from include/uapi/linux/swab.h
-+ * should I move these `#defines` to include/uapi/asm-generic/swab.h
-+ * and include that file here and in include/uapi/linux/swab.h ?
-+ */
-+#define ___constant_swab16(x) ((__u16)(				\
-+	(((__u16)(x) & (__u16)0x00ffU) << 8) |			\
-+	(((__u16)(x) & (__u16)0xff00U) >> 8)))
-+
-+#define ___constant_swab32(x) ((__u32)(				\
-+	(((__u32)(x) & (__u32)0x000000ffUL) << 24) |		\
-+	(((__u32)(x) & (__u32)0x0000ff00UL) <<  8) |		\
-+	(((__u32)(x) & (__u32)0x00ff0000UL) >>  8) |		\
-+	(((__u32)(x) & (__u32)0xff000000UL) >> 24)))
-+
-+#define ___constant_swab64(x) ((__u64)(				\
-+	(((__u64)(x) & (__u64)0x00000000000000ffULL) << 56) |	\
-+	(((__u64)(x) & (__u64)0x000000000000ff00ULL) << 40) |	\
-+	(((__u64)(x) & (__u64)0x0000000000ff0000ULL) << 24) |	\
-+	(((__u64)(x) & (__u64)0x00000000ff000000ULL) <<  8) |	\
-+	(((__u64)(x) & (__u64)0x000000ff00000000ULL) >>  8) |	\
-+	(((__u64)(x) & (__u64)0x0000ff0000000000ULL) >> 24) |	\
-+	(((__u64)(x) & (__u64)0x00ff000000000000ULL) >> 40) |	\
-+	(((__u64)(x) & (__u64)0xff00000000000000ULL) >> 56)))
-+
-+#define ___constant_swahw32(x) ((__u32)(			\
-+	(((__u32)(x) & (__u32)0x0000ffffUL) << 16) |		\
-+	(((__u32)(x) & (__u32)0xffff0000UL) >> 16)))
-+
-+#define ___constant_swahb32(x) ((__u32)(			\
-+	(((__u32)(x) & (__u32)0x00ff00ffUL) << 8) |		\
-+	(((__u32)(x) & (__u32)0xff00ff00UL) >> 8)))
-+
-+
-+#define ARCH_SWAB(size) \
-+static __always_inline unsigned long __arch_swab##size(__u##size value) \
-+{									\
-+	unsigned long x = value;					\
-+									\
-+	asm goto(ALTERNATIVE("j %l[legacy]", "nop", 0,			\
-+			     RISCV_ISA_EXT_ZBB, 1)			\
-+			     :::: legacy);				\
-+									\
-+	asm volatile (".option push\n"					\
-+		      ".option arch,+zbb\n"				\
-+		      "rev8 %0, %1\n"					\
-+		      ".option pop\n"					\
-+		      : "=r" (x) : "r" (x));				\
-+									\
-+	return x >> (BITS_PER_LONG - size);				\
-+									\
-+legacy:									\
-+	return  ___constant_swab##size(value);				\
-+}
-+
-+#ifdef CONFIG_64BIT
-+ARCH_SWAB(64)
-+#define __arch_swab64 __arch_swab64
-+#endif
-+
-+ARCH_SWAB(32)
-+#define __arch_swab32 __arch_swab32
-+
-+ARCH_SWAB(16)
-+#define __arch_swab16 __arch_swab16
-+
-+#undef ARCH_SWAB
-+
-+#endif /* defined(CONFIG_RISCV_ISA_ZBB) && !defined(NO_ALTERNATIVE) */
-+#endif /* _ASM_RISCV_SWAB_H */
+Changes in v2:
+- Removed redundant error prints
+- Various style fixes
+- Better explanation of why the driver is needed
+- Link to v1: https://lore.kernel.org/r/20250305-spmi-v1-0-c98f561fa99f@gmail.com
 
 ---
-base-commit: 2014c95afecee3e76ca4a56956a936e23283f05b
-change-id: 20250307-riscv-swab-b81b94a9ac1b
+Jean-Francois Bortolotti (1):
+      spmi: add a spmi driver for Apple SoC
 
-Best regards,
--- 
-Ignacio Encinas <ignacio@iencinas.com>
+Sasha Finkelstein (2):
+      dt-bindings: spmi: Add Apple SPMI controller
+      arm64: dts: apple: Add SPMI controller nodes
+
+ .../devicetree/bindings/spmi/apple,spmi.yaml       |  49 ++++++
+ MAINTAINERS                                        |   2 +
+ arch/arm64/boot/dts/apple/t600x-die0.dtsi          |   7 +
+ arch/arm64/boot/dts/apple/t8103.dtsi               |   8 +
+ arch/arm64/boot/dts/apple/t8112.dtsi               |   7 +
+ drivers/spmi/Kconfig                               |   8 +
+ drivers/spmi/Makefile                              |   1 +
+ drivers/spmi/spmi-apple-controller.c               | 168 +++++++++++++++++++++
+ 8 files changed, 250 insertions(+)
+---
+base-commit: 48a5eed9ad584315c30ed35204510536235ce402
+change-id: 20250304-spmi-6d3c24b9027a
+
 
 
