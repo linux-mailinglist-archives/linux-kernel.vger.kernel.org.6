@@ -1,60 +1,48 @@
-Return-Path: <linux-kernel+bounces-554802-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-554803-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6FD6EA59E46
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 18:29:44 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 94111A59E35
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 18:29:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 614263A9D91
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 17:27:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4C923188A93D
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 17:29:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47221233D98;
-	Mon, 10 Mar 2025 17:27:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vIuhOP3N"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4467232787;
+	Mon, 10 Mar 2025 17:29:10 +0000 (UTC)
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1DB023371B;
-	Mon, 10 Mar 2025 17:27:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49E8922FF40;
+	Mon, 10 Mar 2025 17:29:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741627656; cv=none; b=QC4nCfuI1xCqNf4lzJS+vB0CceIflcwDAgblPl5+sxvM+EjpgyrABVpoAmm7EBV18W6KRc8e+omEsC5eTtd1hRmWzJnR3w9bX5XT1hc6Wj4D5ANxr235/9sjN9YiWQInAn9CVyO4oMwkuQYWKjhF5A9KUVZql7z0AyI3qjwpgzs=
+	t=1741627750; cv=none; b=ofPRqBPekRDHvP1u6fL/jfetTQDnqAqsPRY0cOp6Go6ozLRFpGW0Pn3runetuBaHmyMpayW2dxuNQK4yOAPaPNd+TKN3GarVmUe/kub0b4PKSFEWr6Wc33PnEbdELa25w4Hc8+BSPrjBGyTXduRcDJMPAnM0nNNLQq+Z/DDQWaI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741627656; c=relaxed/simple;
-	bh=mfL+ECuyinM+wmc2OBrFOzo/GFhGAFreWMKKzFatSXc=;
+	s=arc-20240116; t=1741627750; c=relaxed/simple;
+	bh=5xnuI1TveaclJB5R/6loAt6lIQ6vPPgbqwh7vS1MAhU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gxiZlJM2NMcE0x7E17aMYARP1nJfVsaB2Z7PEeg1sGpyaULMujvZr6Bxp0O0QVqVpHKpHPLHO2vngEbCSmfK7LNEaBOcSB9tKZEAQc/FD4SySkg2Dk/xc1+Vf0eR87k4X+TrJF2n/8OFfv4XcyBwz8BCFrmPqaFtPnRB2+VcTww=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vIuhOP3N; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C4238C4CEE5;
-	Mon, 10 Mar 2025 17:27:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741627656;
-	bh=mfL+ECuyinM+wmc2OBrFOzo/GFhGAFreWMKKzFatSXc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=vIuhOP3NLjhj33EUr+hMQkvcx4HTSXtAPmXIc9GPTE+oTJvOzN2e4hOE035+tL9rt
-	 8S880nEDnSHwqG6cQB5xDl4FcBUPSzOWVJUyWHS1uMWtrPZdEsHW2iajZ2SYn4qvzb
-	 dRlRPXOwnOyxtYliMy+d9C2IRFPt0yvmhD+atblB3e3PHksUF+OPfNtf96HqT/hKPe
-	 dg+P/e7fd+u9TZPN75szBzEjxtnJME+aNhUwQPEwOdd/hB80OOAINRD4cxa+aTSNKc
-	 S32zghOWFDWJLfAO50Li75q+VXBEUCfU1G3rKLzoLQQCD2Vd9wr2g/EiGTlA664c5w
-	 imlZeBIBwffxw==
-Date: Mon, 10 Mar 2025 10:27:34 -0700
-From: Eric Biggers <ebiggers@kernel.org>
-To: Arnd Bergmann <arnd@kernel.org>
-Cc: Herbert Xu <herbert@gondor.apana.org.au>,
-	"David S. Miller" <davem@davemloft.net>,
-	"Justin M. Forbes" <jforbes@fedoraproject.org>,
-	"Jason A. Donenfeld" <Jason@zx2c4.com>,
-	Arnd Bergmann <arnd@arndb.de>, Ard Biesheuvel <ardb@kernel.org>,
-	Jarkko Sakkinen <jarkko@kernel.org>,
-	James Bottomley <James.Bottomley@hansenpartnership.com>,
-	linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] crypto: lib/Kconfig: hide library options
-Message-ID: <20250310172734.GE1701@sol.localdomain>
-References: <20250310132647.3256818-1-arnd@kernel.org>
- <20250310132647.3256818-2-arnd@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=aXXg/GPhcsN94ixGi079Fu3dPsIHjOI8WmTFyM3AKQbwWRh16aWsKrRJ2oD+sqmDhOfa2FLAzxZXGVOwSSJnrSpvbRiubDXJeSekN5/qKg9JABGeC6D0iMimIyLhnMHx80BSQwG3uDCaxwb0pBCQXanSULAUh2+q3CUf3vjj3Xo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C61A4C4CEE5;
+	Mon, 10 Mar 2025 17:29:07 +0000 (UTC)
+Date: Mon, 10 Mar 2025 17:29:05 +0000
+From: Catalin Marinas <catalin.marinas@arm.com>
+To: Peter Collingbourne <pcc@google.com>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Kees Cook <kees@kernel.org>, Andy Shevchenko <andy@kernel.org>,
+	Andrey Konovalov <andreyknvl@gmail.com>,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-hardening@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, stable@vger.kernel.org
+Subject: Re: [PATCH] string: Disable read_word_at_a_time() optimizations if
+ kernel MTE is enabled
+Message-ID: <Z88hYdTAe6ok4_WT@arm.com>
+References: <20250308023314.3981455-1-pcc@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -63,36 +51,50 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250310132647.3256818-2-arnd@kernel.org>
+In-Reply-To: <20250308023314.3981455-1-pcc@google.com>
 
-On Mon, Mar 10, 2025 at 02:26:40PM +0100, Arnd Bergmann wrote:
-> From: Arnd Bergmann <arnd@arndb.de>
+On Fri, Mar 07, 2025 at 06:33:13PM -0800, Peter Collingbourne wrote:
+> The optimized strscpy() and dentry_string_cmp() routines will read 8
+> unaligned bytes at a time via the function read_word_at_a_time(), but
+> this is incompatible with MTE which will fault on a partially invalid
+> read. The attributes on read_word_at_a_time() that disable KASAN are
+> invisible to the CPU so they have no effect on MTE. Let's fix the
+> bug for now by disabling the optimizations if the kernel is built
+> with HW tag-based KASAN and consider improvements for followup changes.
 > 
-> Any driver that needs these library functions should already be selecting
-> the corresponding Kconfig symbols, so there is no real point in making
-> these visible.
-> 
-> The original patch that made these user selectable described problems
-> with drivers failing to select the code they use, but as far as I can
-> tell, those were all bugs that got solved in the meantime and did not
-> get solved by that patch.
-> 
-> Fixes: e56e18985596 ("lib/crypto: add prompts back to crypto libraries")
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> ----
-> This does not actually fix a build failure, but I noticed that the
-> user visible options don't really make sense. Feel free to ignore
-> this one.
+> Signed-off-by: Peter Collingbourne <pcc@google.com>
+> Link: https://linux-review.googlesource.com/id/If4b22e43b5a4ca49726b4bf98ada827fdf755548
+> Fixes: 94ab5b61ee16 ("kasan, arm64: enable CONFIG_KASAN_HW_TAGS")
+> Cc: stable@vger.kernel.org
 
-Acked-by: Eric Biggers <ebiggers@kernel.org>
+Some time ago Vincenzo had an attempt at fixing this but neither of us
+got around to posting it. It's on top of 6.2 and not sure how cleanly it
+would rebase:
 
-But I think the following needs to be fixed first:
+git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux devel/mte-strscpy
 
-    config BIG_KEYS
-            bool "Large payload keys"
-            depends on KEYS
-            depends on TMPFS
-            depends on CRYPTO_LIB_CHACHA20POLY1305 = y
+Feel free to cherry-pick patches from above, rewrite them etc.
 
-- Eric
+> diff --git a/lib/string.c b/lib/string.c
+> index eb4486ed40d25..9a43a3824d0d7 100644
+> --- a/lib/string.c
+> +++ b/lib/string.c
+> @@ -119,7 +119,8 @@ ssize_t sized_strscpy(char *dest, const char *src, size_t count)
+>  	if (count == 0 || WARN_ON_ONCE(count > INT_MAX))
+>  		return -E2BIG;
+>  
+> -#ifdef CONFIG_HAVE_EFFICIENT_UNALIGNED_ACCESS
+> +#if defined(CONFIG_HAVE_EFFICIENT_UNALIGNED_ACCESS) && \
+> +	!defined(CONFIG_KASAN_HW_TAGS)
+
+Assuming that no-one wants to ever use KASAN_HW_TAGS=y in production,
+this patch would do. Otherwise I'd rather use TCO around the access as
+per the last patch from Vincenzo above.
+
+Yet another option - use load_unaligned_zeropad() instead of
+read_word_at_a_time(), not sure how it changes the semantics of
+strscpy() in any way. This can be done in the arch code
+
+-- 
+Catalin
 
