@@ -1,129 +1,423 @@
-Return-Path: <linux-kernel+bounces-554587-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-554588-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70D22A59A34
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 16:41:15 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BF33AA59A36
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 16:41:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 37A191884AB7
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 15:41:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 77DF93A9297
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 15:41:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19A9222D7AF;
-	Mon, 10 Mar 2025 15:41:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC6D522D4FA;
+	Mon, 10 Mar 2025 15:41:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="YQ0/P1FO"
-Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="pv2moFoA"
+Received: from YT3PR01CU008.outbound.protection.outlook.com (mail-canadacentralazon11020073.outbound.protection.outlook.com [52.101.189.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 937E622D4FA
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 15:41:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741621268; cv=none; b=IU7zSQUY7T59yPmSUPRPefN89pG136xsNP0CidTRSj7uab8Y6XarilKn1v/KHkPLPP+wVN22Z5qetJjZ+MzqBpvZQHyHNHhvoWMrrHy8oPaQybdGGyfzj3XF1+zyrfBI1hBzdBQos075HAnYuZTsTGex+Ibr5fTrHn/QR7KPrfU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741621268; c=relaxed/simple;
-	bh=SiSYBMtitncv76R++Rvdfnd/5GTxkby/K+Y+pHo4VFE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=VbPVdPergVPybXJZOC5KLYlAdzBIE9JHaa0gXHpRC4lce0QDW88aqHzhYa2GlKQPHnYcRYrEKv8nFK0j1m6xjm7CdQY94Z0vEUSsXSsg8J0Rd/PkaWvgnaG/hymVFYORxTew2NGaXNcUf0qQTEDPJPYbk5WjmUmyMAyJCy70H4k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=YQ0/P1FO; arc=none smtp.client-ip=209.85.221.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-39127512371so2459303f8f.0
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 08:41:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1741621265; x=1742226065; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=4DcQn3+I0jIkpf3ZBvexKFO6QcwbDbsZfCGjmeAilYo=;
-        b=YQ0/P1FOgLtnKJwGzKdrHdKAX4TNkcXOMSXbGeIJS1f6kzqt7pIvlGQX/PEywZ3oMz
-         yk4b5kyYSaCp7jlEt+YlaRu2fTv05yXZ49zv5hVoEzdt8EJb+vacPZics1TAHjeWaN+v
-         MfcOy1NcT0NQrdPgtVgAeh3ybjAnIH0rF8PQcYbqj3x7h4nVk3CK0Vgwx+pooDOJiB9a
-         39io3uTIc6KQ0aXvKxety5Hgfd6ssr4oaapzqJ9rXGHZe2m+1jdTRyV+10KEMao5ROgD
-         7osNuEJLqmLYqDlUs75AEz9FVQH1PJHeTCKX85Lm90PYEZWTduYxg5QVsKLvsPMrslK7
-         Be7Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741621265; x=1742226065;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=4DcQn3+I0jIkpf3ZBvexKFO6QcwbDbsZfCGjmeAilYo=;
-        b=cS5RD8md4sCSxqBnmtQ4cMfGQiUbc2YjVj4q36Y7vzjr4FYsiNjVWU25C4tYU1aLPh
-         VfcAJNZYadrIJ+yzMjAIX7kthmU3pMjm5aDGpVQY74S88EbxjOjREHWghhkqMTvXF3Bb
-         eCoOsLc9aWFGfqATTSG32qFdh7TptxF9eWxUHV6qNG361OtryjkIzUkYp9OHt2Qgv+Ax
-         qXXpBybVzpkENRnqKSxMapi9E1LM0FN/Jehk/4BzItsvGPo6tDEmMgFmel24uw7ml9E4
-         Nvlhw6pxIZIQhYCXUaejAZolZBl4JhGNNcnpByN03xL+ls432o/7QdjPVNHpmGImKqIK
-         baXA==
-X-Forwarded-Encrypted: i=1; AJvYcCVb424QPanYNwaGyYuo0EXYb6xsb8wEX9cEIwwReY0ngcdn6Bah2h9Cy/cywGjBbED7Hd/K6KJdhnx1+ac=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyExTzEtECMzaVXfwutSJCsRpuMJOKE0wXo/RXUnrW8aoj0R2bs
-	Dg9HcHR3+FJkDIDUeNJx8o17kDEfII4HVleqQyeQ+vK6Mfwg4RSoSAN816OtoZI=
-X-Gm-Gg: ASbGncuzrQbLZCf7X0CtEWU3mme4b/dg/J81J0Aw3OrCvIgDHzhRM9gLJOvTkRPtbWy
-	8UwvKlXwtXOWhTTjbTOmbeQxmnSi7FuZKsjvmPlQbTbMiI/VLdC5OFBMJDS0FtGfQbhSAqsn3Ks
-	iYFnCAi6H1as0LKtvz6MHeB/S+WgvBZAE0dzmZ/wpC1DR/iCOvYqnLHc4mnsRLyNJUOJumsDp0k
-	bFZL6JmFNmoIyCtGD7Dv82dlp9BOWmlXXaUE7G42QIOEUGDuuMqwm/RdnrErJybzhRrOWbe7mSj
-	cwLc4iAsnocs2QJUiB9FjQ4PHtcD8vO1QLKR7hFBdFpTyghoh5LuTTdGWPkY9n5kfRHQxcgrdiw
-	Sh8iZWqRZ
-X-Google-Smtp-Source: AGHT+IFTM9dXcEZw51WkmRY68H9XVcAqrdb0vR4We3kH39AbYRJBbyFLPPSlwgwvD+LzdOV/7amBMg==
-X-Received: by 2002:a5d:648f:0:b0:38f:2b77:a9f3 with SMTP id ffacd0b85a97d-39132dd6934mr10735927f8f.43.1741621264831;
-        Mon, 10 Mar 2025 08:41:04 -0700 (PDT)
-Received: from [192.168.10.46] (146725694.box.freepro.com. [130.180.211.218])
-        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-3912c104acesm15499409f8f.98.2025.03.10.08.41.03
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 10 Mar 2025 08:41:04 -0700 (PDT)
-Message-ID: <9dc5dadc-7ff1-484c-88a8-461d505cec03@linaro.org>
-Date: Mon, 10 Mar 2025 16:41:03 +0100
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 978951E519
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 15:41:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.189.73
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741621310; cv=fail; b=VLLdeWW3IITp2UxALBOFkSDkkLBWBRQ2gVjrBNLKVQ3UuwOaZap9TeApfHprq1OoYlPUQ5zcKvyWt/5dBCWN8KFLHGwRUvzkF7OKln84QSPnzO8FmPp0m0xd26DSecQIdCrs6HW4XekRGLkL9ZJAihtEsI8IZwQDKHQT6ShTux4=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741621310; c=relaxed/simple;
+	bh=wCu/Cc/dH3nt0/RIMBPHWH6PvDKZSo+8j8DWwp1/dyA=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=oJ5Oj2lSBTPC33n0+4sWhqVzgDtjIOo0x+IzOcGvxBT7l2I20PEvH8R+qCC6bTHtwks/J1mCataaWWo+5cYDTdwzevWoG+mudn6a3jB/KkwX3XiFf3G2IuKvoUmk82933qUry+Tw0HBA9iItQWuYNTJDHoOHSfh2juXPvcs+q4s=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com; spf=pass smtp.mailfrom=efficios.com; dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b=pv2moFoA; arc=fail smtp.client-ip=52.101.189.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=efficios.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Qq2Gyq+wBVSRjbpeVn+Bi9RKvh16E7aw013hp19fjuJuTXL37OxRxQhGCELF4qcEz+3wiTkkYMybc9Ss09vfnD1/ScOAqNNHJMe0Ee9oMAXTkYlejzMxawIzei+in2+IweQksT23cQsvkgRkpbpaompBBqt5oP0xbKjUCqYjazUNgVdDISX8saLPOnSZYC/pBO5pDWR6cGeUHHObhKL+BXyOK7ALNrZUb0jDQ5o2RfP3KmS47UgWFQljbsrv1LRm+Zcet8/kz1DNTc+Vkz+pm51xkAjBuvzFtXhjMELcE6xRu537IS4XyMu11vYMxBuKyu7od95gn/lwMOwkXsGuTA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=JNgeoTFVWFBJJEluv9GE+0jcWxOazNYGsPnP638PRTg=;
+ b=A2djBS93wy5uRIeIGyh/t4CFpycbbSlzkvcJPMd8steJetq40LXxfhGns7zheVBn5Rxlg8ftZgN6s9xTiFyoxI2N7salwi/nMHVwE+UcOdvMVl5lK8RgiOOcHlx3q2nggzPLstg72Ov5Szu3TPLHaZHmGnb0ta527/CQM+GHp5WFwcVs0Qb9k5WBI0RuQXPM/uKuQTyubvHSXJki/mCvKDYK6dECsRhzNvb/3m1eszdhHovypCXPsBXWTQ7e4nNj37aipH6deYFIx4XknHRT7jIse54p9jZH5HL0DVWpuIESfNiAvma8/eXysU/scXW9pkmdDs0BKE1eeqouXAvWhw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=efficios.com; dmarc=pass action=none header.from=efficios.com;
+ dkim=pass header.d=efficios.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=efficios.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=JNgeoTFVWFBJJEluv9GE+0jcWxOazNYGsPnP638PRTg=;
+ b=pv2moFoARDSpdZogKxSo3CjqrRmSEq7b1yeb8rPaeaLXjxV6uG8PHwLCVu7xQAYMiMDIoYC8/nTdDn2J2oZOg1VBj26+DDP5asEDzSMurOHk9teEP5mUC6kZI5zujv4GUM/1E+cnFIWztQkQhnciIWbGjQo+Z1B02NhqskdXoIvG+rZxN+0lgGK5GegzleiHB/1Mz5VF8+8NIfoz7TR7VCUuPFRYLPgBKn2VI+STfbI6r/NIfDntShGcy5l8ZaFB6c5HFtw43kgVI/I2mJnzl4AmTolHu1GbhFK+DQmJZVY/dUEfcOl+vYHDyxlObD5VIeBvbqCb86MppqsXCzpwPA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=efficios.com;
+Received: from YT3PR01MB9171.CANPRD01.PROD.OUTLOOK.COM (2603:10b6:b01:a0::18)
+ by YQBPR0101MB6198.CANPRD01.PROD.OUTLOOK.COM (2603:10b6:c01:36::13) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8511.27; Mon, 10 Mar
+ 2025 15:41:44 +0000
+Received: from YT3PR01MB9171.CANPRD01.PROD.OUTLOOK.COM
+ ([fe80::5393:fe91:357f:3ccf]) by YT3PR01MB9171.CANPRD01.PROD.OUTLOOK.COM
+ ([fe80::5393:fe91:357f:3ccf%6]) with mapi id 15.20.8511.026; Mon, 10 Mar 2025
+ 15:41:44 +0000
+Message-ID: <3c45a374-804f-4a9f-8885-5ef1bfc8676f@efficios.com>
+Date: Mon, 10 Mar 2025 11:41:43 -0400
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 4/4] selftests/rseq: Add test for rseq+pkeys
+To: Dmitry Vyukov <dvyukov@google.com>
+Cc: peterz@infradead.org, boqun.feng@gmail.com, tglx@linutronix.de,
+ mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com, hpa@zytor.com,
+ aruna.ramakrishna@oracle.com, elver@google.com,
+ "Paul E. McKenney" <paulmck@kernel.org>, x86@kernel.org,
+ linux-kernel@vger.kernel.org
+References: <cover.1740664852.git.dvyukov@google.com>
+ <9a98ed5d655e9a0d66027779c75c3ba67601e1bf.1740664852.git.dvyukov@google.com>
+ <26b779d4-0478-4926-ba5c-e71449e92020@efficios.com>
+ <CACT4Y+aT9z8qjY-66wiOR0Wiep2BoTN7QJYxj-QK_KRXLmgiLA@mail.gmail.com>
+ <c3781655-b667-4477-9337-445d8250fb4e@efficios.com>
+ <CACT4Y+YpnCfm6xjdwnUJ-3ND_YPNdAqReffueF1dWGfxmJLWEQ@mail.gmail.com>
+From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Content-Language: en-US
+In-Reply-To: <CACT4Y+YpnCfm6xjdwnUJ-3ND_YPNdAqReffueF1dWGfxmJLWEQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: YQBPR0101CA0211.CANPRD01.PROD.OUTLOOK.COM
+ (2603:10b6:c01:67::22) To YT3PR01MB9171.CANPRD01.PROD.OUTLOOK.COM
+ (2603:10b6:b01:a0::18)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] thermal: bcm2835: use %pC instead of %pCn
-To: Luca Ceresoli <luca.ceresoli@bootlin.com>,
- "Rafael J. Wysocki" <rafael@kernel.org>, Zhang Rui <rui.zhang@intel.com>,
- Lukasz Luba <lukasz.luba@arm.com>,
- Florian Fainelli <florian.fainelli@broadcom.com>, Ray Jui
- <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
- Broadcom internal kernel review list
- <bcm-kernel-feedback-list@broadcom.com>, Petr Mladek <pmladek@suse.com>,
- Steven Rostedt <rostedt@goodmis.org>,
- Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
- Rasmus Villemoes <linux@rasmusvillemoes.dk>,
- Sergey Senozhatsky <senozhatsky@chromium.org>,
- Jonathan Corbet <corbet@lwn.net>, Andrew Morton <akpm@linux-foundation.org>
-Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>,
- Liu Ying <victor.liu@nxp.com>, linux-clk@vger.kernel.org,
- linux-pm@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-doc@vger.kernel.org
-References: <20250307-vsprintf-pcn-v1-0-df0b2ccf610f@bootlin.com>
- <20250307-vsprintf-pcn-v1-1-df0b2ccf610f@bootlin.com>
-Content-Language: en-US
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
-In-Reply-To: <20250307-vsprintf-pcn-v1-1-df0b2ccf610f@bootlin.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: YT3PR01MB9171:EE_|YQBPR0101MB6198:EE_
+X-MS-Office365-Filtering-Correlation-Id: 26d2f7d4-afd5-4104-6948-08dd5fea0f82
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|7416014|366016|1800799024|13003099007|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?Umx2eUJXOThqSkREVUtBUDU1UEhaYVpISVZlOThEcXRPQWU4WUdobThKeHB1?=
+ =?utf-8?B?NDMzKzJ0bUgxbDFwUEpNSDZ4dzFNNXBIM3A2V0cvVTI2RlgvNU9KMmpsUUpu?=
+ =?utf-8?B?ZVVJdjZ5SWRlV2FLN0RLVzJWTjg2RHBuWTJmWlpZb0ZoMU5DanVaRThFcUIz?=
+ =?utf-8?B?TUZwMjM1Q1drMVRXMWp0WmlyL2U5aWFjZFhvVGpxRk5Kb3U0aFVLSlNISStY?=
+ =?utf-8?B?V2pHNjd6NEFUNGhqUjVJSWt5T3RGRWNjRmVGVkRzVjUxMUgxSGxPREo2VkRC?=
+ =?utf-8?B?RjdJUXg5VzlaWExramhnb09FZEZ6YWV1eExLREtjcUVsNkFQVm5aYkZLYnkw?=
+ =?utf-8?B?Rmx6TXV0ZGd6NHR4dkFPOUh1RU15c3FlZHB5bFg0Ym9YSURmY1EzWXdvNW9v?=
+ =?utf-8?B?OTR0V3ViVXJvZUcrNkdyZFpDbEZMbU9vQktDRXl3eGhORkg1UlpqVDlreVpX?=
+ =?utf-8?B?QlhEWTQ0aGdsZnJLZUxUeXdPYkZpMGR4RTZpd0JNTDNVRU1JaVh1VDh1eXAz?=
+ =?utf-8?B?MDV5UllueHN2Rmp3ODVSWFNuYzV0SW1wckZ3RmRQbDlrcEJEeE5peDR6L0lq?=
+ =?utf-8?B?ZnN0WlRueFE4S2RGVitQTlUvOHFNWFh0ajlvcEtnTGNTSW9LZDhycUFlMURW?=
+ =?utf-8?B?ckhLUkVaNG81NFRIRStGSnR6UXdGc2RWMEZKOVFpMFFWMlN6dThBWFhtbWx2?=
+ =?utf-8?B?WngrV3pkcVVJckwrTkZFamlkVEV3WVNHQ2VuUUNpNWxpa3NLUlVYeXJJUUdH?=
+ =?utf-8?B?WEdwaEJ5N1hzb1dYRkRxdmRQTEdvTVcwYldyTHk4MlhRbGRUd0x3WE1LSFc0?=
+ =?utf-8?B?Y0lrOWx4dlRKU2hCYWJuWW5DSkdMTzNMU1gzdDZvMU43elIxN2lCdFd5Znht?=
+ =?utf-8?B?a1RGV1hwTVNyc3JMMGd5Mm9VTnNCMXdidnpQYWZ5ZkppUDRDMGxNcjZNRjlr?=
+ =?utf-8?B?Q3ZDMHAweGsxZDNjbjhUc3M2WFROOU5TZzdUR0d0WEZ0aWkzMklmZEljMGdB?=
+ =?utf-8?B?ZzRzTGJpeDRoRWZKeUhGbCszZmdVRDRqblBZbldzR0toS1A3S28reU9ZSVda?=
+ =?utf-8?B?SFNoV0dpMHBkekU5YTc3aU8rUUpTcGRIZWFCSk5CcFM0WlBDM0JxUU5UUGdO?=
+ =?utf-8?B?VGlSZHJWSXBlMWkyNHNJR1FBSWxHNGdBRzlDTWZ5YVRrSUFnOEZhdDV1WmRI?=
+ =?utf-8?B?VVp5OE9VcmpzMjlhQUJibml0QVVaUy9yNFk1REM5UDQzTy9JZVZ4Tml2TDEr?=
+ =?utf-8?B?djBsTFdCdDV1MzBtaW0ycnRyVTVpU21CdW5BYnVYVnZTWTJtaHFMYjBoVWxm?=
+ =?utf-8?B?Ly9mKy9FMENNdDI2L2FjR1ZNMUJmdmFmblBtV3F6SUx6NmtzOG1NVzJraWhq?=
+ =?utf-8?B?cXA5SUJ4SVBRNlRvclU5TVR1YVVaeHkxMVp5MVQvZ3lYY3VnUzJBSjN5RWJI?=
+ =?utf-8?B?RitWRUtBVVhZUk1weUtGZGUwZVEzYk5XK1QyS2lDUFo2cGZieUdqbThMeXVF?=
+ =?utf-8?B?M09GdmpoUFRmRWlSZ1RNcTBBYlpGVnBURWV3TFhtWVRxUXhsL0U3QzhvSVdw?=
+ =?utf-8?B?eFV1TWRRWE1TdGk1NHVRUEJqNE5IdWxHbW54VkQxQkY2THFBS1c2dDBEa0g0?=
+ =?utf-8?B?WXhDNS9mUWJiOUxXck9UWHRKbGtXTHgwK2xSdG80Qk1FTWx1eEo3YkNiejRl?=
+ =?utf-8?B?UjJrMkE1YkZteUpOTnRZZVVRdmlqVFNBa0RqMGRjQUhxQ3JBSmtzdUVpR3Q1?=
+ =?utf-8?Q?QYzPVFbnZRAizuyaBNvnjEaCF7rnYme1688vXxf?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:YT3PR01MB9171.CANPRD01.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(366016)(1800799024)(13003099007)(7053199007);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?NnNQeXE1c3BHUUQ3aTcxSW5XRGZQbFJVbmFmQlRlRE9BVytzMEdnV25Dd1ZG?=
+ =?utf-8?B?Ykx4ajUrcjR1elhLUUhJZWVVWlkxeWJqSWp5bHREZ1JNbmhpVDZxR3ZRbVRC?=
+ =?utf-8?B?RUp2bGtsWnRDQkFTM1RyZHJvZUt6SEVqZ1VuWUIvdU0xd3JuUDlNczJMZXdF?=
+ =?utf-8?B?SUFNTlMvM0M4OUEyWTQvS0FmQXJ1SXJxdFhtS1hEWTJaNmFqdVBJb2RxM1Uy?=
+ =?utf-8?B?SUFDN1Yyb0JpUEozUWdrS0dQT2pGakpQYk9pdDF6c0JTZmJXVDdqTGJUY201?=
+ =?utf-8?B?bDIxSWo2dzZrbThjamJhU3BUQ0ZhTGt5Q0gwdTIvT0czS21KaHhlc3JJQ3RS?=
+ =?utf-8?B?V3dNMURZaGQ2L2pvcTdUZ2Vwa2p4REo4YllkY2ZBU0x4WWJmMXRPVDZxaVVV?=
+ =?utf-8?B?SUJ0NFVXUFBPUHNPZE15d1BqTnVaaCt0TzVaTEN2NFhlbk1FVFkzSlRIM1pU?=
+ =?utf-8?B?eUYwdkxwd0s0NHBySkcvMzNQV0hGd1Y5VUxpdG5WUENUV21tdkJOUUJrSHAx?=
+ =?utf-8?B?dXZ0SjBISzVDZzJ3YUltMGVEWWMrSDRnQStLMTE5QnpuUGNBUUJTWitrRHJi?=
+ =?utf-8?B?K3ZLMVRsWTBEeGRvUlRXT2xvc0lQZHQ1cytyanllT051RTZKV3Z4T3pRWlFE?=
+ =?utf-8?B?NHZGMG8ySEx2UnFPdzBLWllBMUJlQ3k1aW1KQkt2OVVYbFl5d0NqQUtyNlBU?=
+ =?utf-8?B?WjlLS2xiTnZTbjAvK01RdHVOVU9qRE9PSUhJdWllZHZrc1M5UnRoNDlGK05D?=
+ =?utf-8?B?c3dGODlya1VxN0h5ZjcwaGQ5dmNSRUVLK09HRjM3L29FckcwdjRaR3R3d1N3?=
+ =?utf-8?B?d3N4QmVURHhPRExGOXQ4eHJ2YkJiZXVzTkpDRm5saGJlWG9MVVRDajBwb1lr?=
+ =?utf-8?B?SFljZjM0SnIrQ2FUUXpWYkNYcGNYK1g1bHA0clBjZldwMFE1Mlp4SkNNdWg5?=
+ =?utf-8?B?cWhWMDVHTkx6OE96Z2E5Qyt6bzI2L0YvYVF2UUx0UFJRVGoreHRYQ0xabk03?=
+ =?utf-8?B?aGpPVGI2QUhzQ1kxTUgyenZTMHZYblc1dEFjL3RhZzhxNUMrUGVpaS9DdU5K?=
+ =?utf-8?B?Q0lycFU4b255UE9wZG5VckxTSTZoUEhKeEhVL2tlVmtsa1ZGN09ldW8rdkVz?=
+ =?utf-8?B?c3pxQWNaVTZVWnVOdEdRSk9HTW1ZWmF4NkdITzlHYTNtSW5hVm1CZDIzYWow?=
+ =?utf-8?B?aWJ4SXdTWGw4U2UvSUJZM2FCVGRVM0dlUmZ4YVAzK2loaDFML1QrajJ1OEY5?=
+ =?utf-8?B?RXo0bXVzbExUb3Y4emdmQlVsbmFiQ0psYXZseTdTeFZZZ3Y5bWMveUZmalEz?=
+ =?utf-8?B?TmtMVm51WU9sajd1a3plMFY1SFYxaHpsNzdiQWdhZW1uMW1IOGpNQXNDUkcw?=
+ =?utf-8?B?dG5Vd2FUbmV5VklKWkpvSFJIUXgyczhnNWhDRDNVRTBnTFhlY1hhUWNrUjl0?=
+ =?utf-8?B?dWJENENnRVQ3Unp3bmZhVmFSbmdkYTRwcnAwYUh2WDh0VVUzTjNCd1RVelND?=
+ =?utf-8?B?Qm5kTTRkaEM2RE1WRW42bldzeHJKMmZzTG44WFE5dkQra29abVlEdUNUYmhX?=
+ =?utf-8?B?WjN5dlAxZUVWLzhUcWFpK0syUS9Pa3FRQk5ZTU5kSlM0bmRuOGU2enYvenZh?=
+ =?utf-8?B?bDJqbGJ1aXY5ZHFaSVBDOWNUUzBLeGNzUmJtVXZvcFBoeFdlRmVxeGFsSHMw?=
+ =?utf-8?B?OHg2cldGZlF1a0RCOWtmYjRFY1BWSWE0NXVPc3ErYSt4OVRPMTVlRDlRbk90?=
+ =?utf-8?B?UHZidFRVSDN0RG1Ebjh5WDlnSmhkcWVZbHpIcHVWQ0NqVm41U0wxWXZ3TWpC?=
+ =?utf-8?B?SmNLa0pGeXc3L3BRS01lbkFtd1FJT0twb0ZxNUpiT0FFejhPNUtNSytxY1Ro?=
+ =?utf-8?B?Rk52VUhuZWoxbmZiTXJoRGNtWlRBUzBnS011Y2oxZkZZVXBRWHRLMU9DTCtx?=
+ =?utf-8?B?bitwVnFSM1Zxejdyc3hUKzcrWVlkanpMZXUwa3JTb3grc1NUaVZ2ckZUcHJq?=
+ =?utf-8?B?dnYvVFNCWVdFdU9PSDVHenN2ZUh1OVhSclFYRnZBUFBQUkJoN0tWUEY5SEVp?=
+ =?utf-8?B?L212M0UwVXNSaVlQZGZqNngrSWNNNUJyem9ERFZmcnVBaU53U3RpcnhwenJh?=
+ =?utf-8?B?UnpNS0JWcVhWK2FEWVh6cXNpZ216aU96QlhJdXJpWlF0NVNaQVFaTE4xZ1Zw?=
+ =?utf-8?Q?WeNR3x+LUYlm2CFgCWjGbVI=3D?=
+X-OriginatorOrg: efficios.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 26d2f7d4-afd5-4104-6948-08dd5fea0f82
+X-MS-Exchange-CrossTenant-AuthSource: YT3PR01MB9171.CANPRD01.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Mar 2025 15:41:44.6425
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4f278736-4ab6-415c-957e-1f55336bd31e
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: Bysk1BfgNxmrvtziRN5hFSovJ/xoBQdr1dGCnIgNsNN4a2TxaqoxDaLvcYSkQ4kFDMrzlIwkHRW6ENfx2im0ly0zu6O0DSodzlXMnn+SHNE=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: YQBPR0101MB6198
 
-On 07/03/2025 12:19, Luca Ceresoli wrote:
-> The %pC and %pCn printk format specifiers produce the exact same string. In
-> preparation for removing %pCn, use %pC.
+On 2025-03-10 10:43, Dmitry Vyukov wrote:
+> On Mon, 10 Mar 2025 at 15:38, Mathieu Desnoyers
+> <mathieu.desnoyers@efficios.com> wrote:
+>>
+>> On 2025-03-10 10:36, Dmitry Vyukov wrote:
+>>> On Mon, 10 Mar 2025 at 15:30, Mathieu Desnoyers
+>>> <mathieu.desnoyers@efficios.com> wrote:
+>>>>
+>>>> On 2025-02-27 09:03, Dmitry Vyukov wrote:
+>>>>> Add a test that ensures that PKEY-protected struct rseq_cs
+>>>>> works and does not lead to process kills.
+>>>>>
+>>>>> Signed-off-by: Dmitry Vyukov <dvyukov@google.com>
+>>>>> Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+>>>>> Cc: Peter Zijlstra <peterz@infradead.org>
+>>>>> Cc: "Paul E. McKenney" <paulmck@kernel.org>
+>>>>> Cc: Boqun Feng <boqun.feng@gmail.com>
+>>>>> Cc: Thomas Gleixner <tglx@linutronix.de>
+>>>>> Cc: Ingo Molnar <mingo@redhat.com>
+>>>>> Cc: Borislav Petkov <bp@alien8.de>
+>>>>> Cc: Dave Hansen <dave.hansen@linux.intel.com>
+>>>>> Cc: "H. Peter Anvin" <hpa@zytor.com>
+>>>>> Cc: Aruna Ramakrishna <aruna.ramakrishna@oracle.com>
+>>>>> Cc: x86@kernel.org
+>>>>> Cc: linux-kernel@vger.kernel.org
+>>>>> Acked-by: Dave Hansen <dave.hansen@linux.intel.com>
+>>>>> Fixes: d7822b1e24f2 ("rseq: Introduce restartable sequences system call")
+>>>>>
+>>>>> ---
+>>>>> Changes in v5:
+>>>>>     - Use static for variables/functions
+>>>>>     - Use RSEQ_READ/WRITE_ONCE instead of volatile
+>>>>>
+>>>>> Changes in v4:
+>>>>>     - Added Fixes tag
+>>>>>
+>>>>> Changes in v3:
+>>>>>     - added Acked-by: Dave Hansen <dave.hansen@linux.intel.com>
+>>>>>     - rework the test to work when only pkey 0 is supported for rseq
+>>>>>
+>>>>> Changes in v2:
+>>>>>     - change test to install protected rseq_cs instead of rseq
+>>>>> ---
+>>>>>     tools/testing/selftests/rseq/Makefile    |  2 +-
+>>>>>     tools/testing/selftests/rseq/pkey_test.c | 98 ++++++++++++++++++++++++
+>>>>>     tools/testing/selftests/rseq/rseq.h      |  1 +
+>>>>>     3 files changed, 100 insertions(+), 1 deletion(-)
+>>>>>
+>>>>> diff --git a/tools/testing/selftests/rseq/Makefile b/tools/testing/selftests/rseq/Makefile
+>>>>> index 5a3432fceb586..9111d25fea3af 100644
+>>>>> --- a/tools/testing/selftests/rseq/Makefile
+>>>>> +++ b/tools/testing/selftests/rseq/Makefile
+>>>>> @@ -16,7 +16,7 @@ OVERRIDE_TARGETS = 1
+>>>>>
+>>>>>     TEST_GEN_PROGS = basic_test basic_percpu_ops_test basic_percpu_ops_mm_cid_test param_test \
+>>>>>                 param_test_benchmark param_test_compare_twice param_test_mm_cid \
+>>>>> -             param_test_mm_cid_benchmark param_test_mm_cid_compare_twice
+>>>>> +             param_test_mm_cid_benchmark param_test_mm_cid_compare_twice pkey_test
+>>>>>
+>>>>>     TEST_GEN_PROGS_EXTENDED = librseq.so
+>>>>>
+>>>>> diff --git a/tools/testing/selftests/rseq/pkey_test.c b/tools/testing/selftests/rseq/pkey_test.c
+>>>>> new file mode 100644
+>>>>> index 0000000000000..cc4dd98190942
+>>>>> --- /dev/null
+>>>>> +++ b/tools/testing/selftests/rseq/pkey_test.c
+>>>>> @@ -0,0 +1,98 @@
+>>>>> +// SPDX-License-Identifier: LGPL-2.1
+>>>>> +/*
+>>>>> + * Ensure that rseq works when rseq data is inaccessible due to PKEYs.
+>>>>> + */
+>>>>> +
+>>>>> +#define _GNU_SOURCE
+>>>>> +#include <err.h>
+>>>>> +#include <errno.h>
+>>>>> +#include <stdio.h>
+>>>>> +#include <stdlib.h>
+>>>>> +#include <string.h>
+>>>>> +#include <sys/mman.h>
+>>>>> +#include <sys/syscall.h>
+>>>>> +#include <ucontext.h>
+>>>>> +#include <unistd.h>
+>>>>> +
+>>>>> +#include "rseq.h"
+>>>>> +#include "rseq-abi.h"
+>>>>> +
+>>>>> +static int pkey;
+>>>>> +static ucontext_t ucp0, ucp1;
+>>>>> +
+>>>>> +static void coroutine(void)
+>>>>> +{
+>>>>> +     int i, orig_pk0, old_pk0, old_pk1, pk0, pk1;
+>>>>> +     /*
+>>>>> +      * When we disable access to pkey 0, globals and TLS become
+>>>>> +      * inaccessible too, so we need to tread carefully.
+>>>>> +      * Pkey is global so we need to copy it onto the stack.
+>>>>> +      */
+>>>>> +     int pk = RSEQ_READ_ONCE(pkey);
+>>>>> +     struct timespec ts;
+>>>>> +
+>>>>> +     orig_pk0 = pkey_get(0);
+>>>>> +     if (pkey_set(0, PKEY_DISABLE_ACCESS))
+>>>>> +             err(1, "pkey_set failed");
+>>>>> +     old_pk0 = pkey_get(0);
+>>>>> +     old_pk1 = pkey_get(pk);
+>>>>> +
+>>>>> +     /*
+>>>>> +      * Prevent compiler from initializing it by loading a 16-global.
+>>>>> +      */
+>>>>> +     RSEQ_WRITE_ONCE(ts.tv_sec, 0);
+>>>>> +     RSEQ_WRITE_ONCE(ts.tv_nsec, 10 * 1000);
+>>>>> +     /*
+>>>>> +      * If the kernel misbehaves, context switches in the following loop
+>>>>> +      * will terminate the process with SIGSEGV.
+>>>>> +      * Trigger preemption w/o accessing TLS.
+>>>>> +      * Note that glibc's usleep touches errno always.
+>>>>> +      */
+>>>>> +     for (i = 0; i < 10; i++)
+>>>>> +             syscall(SYS_clock_nanosleep, CLOCK_MONOTONIC, 0, &ts, NULL);
+>>>>> +
+>>>>> +     pk0 = pkey_get(0);
+>>>>> +     pk1 = pkey_get(pk);
+>>>>> +     if (pkey_set(0, orig_pk0))
+>>>>> +             err(1, "pkey_set failed");
+>>>>> +
+>>>>> +     /*
+>>>>> +      * Ensure that the kernel has restored the previous value of pkeys
+>>>>> +      * register after changing them.
+>>>>> +      */
+>>>>> +     if (old_pk0 != pk0)
+>>>>> +             errx(1, "pkey 0 changed %d->%d", old_pk0, pk0);
+>>>>> +     if (old_pk1 != pk1)
+>>>>> +             errx(1, "pkey 1 changed %d->%d", old_pk1, pk1);
+>>>>> +
+>>>>> +     swapcontext(&ucp1, &ucp0);
+>>>>> +     abort();
+>>>>> +}
+>>>>> +
+>>>>> +int main(int argc, char **argv)
+>>>>> +{
+>>>>> +     pkey = pkey_alloc(0, 0);
+>>>>> +     if (pkey == -1) {
+>>>>> +             printf("[SKIP]\tKernel does not support PKEYs: %s\n",
+>>>>> +                     strerror(errno));
+>>>>> +             return 0;
+>>>>> +     }
+>>>>> +
+>>>>> +     if (rseq_register_current_thread())
+>>>>> +             err(1, "rseq_register_current_thread failed");
+>>>>> +
+>>>>> +     if (getcontext(&ucp1))
+>>>>> +             err(1, "getcontext failed");
+>>>>> +     ucp1.uc_stack.ss_size = getpagesize() * 4;
+>>>>> +     ucp1.uc_stack.ss_sp = mmap(NULL, ucp1.uc_stack.ss_size,
+>>>>> +             PROT_READ | PROT_WRITE, MAP_ANON | MAP_PRIVATE, -1, 0);
+>>>>> +     if (ucp1.uc_stack.ss_sp == MAP_FAILED)
+>>>>> +             err(1, "mmap failed");
+>>>>> +     if (pkey_mprotect(ucp1.uc_stack.ss_sp, ucp1.uc_stack.ss_size,
+>>>>> +                     PROT_READ | PROT_WRITE, pkey))
+>>>>> +             err(1, "pkey_mprotect failed");
+>>>>> +     makecontext(&ucp1, coroutine, 0);
+>>>>> +     if (swapcontext(&ucp0, &ucp1))
+>>>>> +             err(1, "swapcontext failed");
+>>>>
+>>>> Should the rseq register be paired with a rseq unregister here ?
+>>>
+>>> I dunno. It's necessary for this test and in general. Tcmalloc won't
+>>> unregister on thread exit. Even for a libc it may be a bad idea due to
+>>> signals.
+>>
+>> The rseq register/unregister is only for the case where libc does not
+>> support rseq. But if you want to use rseq_register_current_thread(),
+>> then you'll want to pair it with unregister.
 > 
-> Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
-> ---
+> Why? Isn't it better to have tests more realitic?
 
-Applied patch 1/2
+If you use rseq.c rseq_register_current_thread without
+rseq_unregister_current_thread, then you rely on implicit
+unregistration done by the kernel at thread exit.
 
-Thanks!
+Then you need to ensure your userspace runtime keep the TLS
+that holds the rseq area allocated for the entire execution
+of the thread until it exits in the kernel. Note that
+disabling signals is not sufficient to prevent the kernel
+from accessing the rseq area.
+
+GNU libc gets away with automatic unregistration at
+thread exit because it completely controls the lifetime
+of the registered rseq area, keeping it allocated for as
+long as the thread is executing.
+
+So in order to minimize the dependency on specific libc
+behavior in the kernel sefltests, the selftests rseq.h
+requires explicit registration *and* unregistration.
+
+Thanks,
+
+Mathieu
+
+
+> 
+> 
+>> Thanks,
+>>
+>> Mathieu
+>>
+>>>
+>>>> Thanks,
+>>>>
+>>>> Mathieu
+>>>>
+>>>>> +     return 0;
+>>>>> +}
+>>>>> diff --git a/tools/testing/selftests/rseq/rseq.h b/tools/testing/selftests/rseq/rseq.h
+>>>>> index ba424ce80a719..65da4a727c550 100644
+>>>>> --- a/tools/testing/selftests/rseq/rseq.h
+>>>>> +++ b/tools/testing/selftests/rseq/rseq.h
+>>>>> @@ -8,6 +8,7 @@
+>>>>>     #ifndef RSEQ_H
+>>>>>     #define RSEQ_H
+>>>>>
+>>>>> +#include <assert.h>
+>>>>>     #include <stdint.h>
+>>>>>     #include <stdbool.h>
+>>>>>     #include <pthread.h>
+>>>>
+>>>>
+>>>> --
+>>>> Mathieu Desnoyers
+>>>> EfficiOS Inc.
+>>>> https://www.efficios.com
+>>
+>>
+>> --
+>> Mathieu Desnoyers
+>> EfficiOS Inc.
+>> https://www.efficios.com
+
 
 -- 
-<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
-
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
+Mathieu Desnoyers
+EfficiOS Inc.
+https://www.efficios.com
 
