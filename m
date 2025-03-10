@@ -1,215 +1,100 @@
-Return-Path: <linux-kernel+bounces-554293-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-554294-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 769F5A595D5
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 14:14:47 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A598CA595D7
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 14:15:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D31891619CD
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 13:14:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 25D8D188E328
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 13:15:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDEFC22E3EA;
-	Mon, 10 Mar 2025 13:11:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="IBgq+m5p"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F207F22A7E1;
+	Mon, 10 Mar 2025 13:12:36 +0000 (UTC)
+Received: from baptiste.telenet-ops.be (baptiste.telenet-ops.be [195.130.132.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65D2622A4C8
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 13:11:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DC3622A4C8
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 13:12:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.132.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741612302; cv=none; b=j6OPdjbuEJ2bfclcwQ+qAgUIVQtiZgG3IJeDqxNFhtVMuyp2ER2Ghpg3Mz91w4tb6gOJ8ryjZe3vk4I2ZIzDt8dFZOJ9GAPv/cDZjZQGvtXGtc0xDlAuQonai5cnBGof6a/FyZuwt4WT4+l5lwC7KvwbS0+/VpvXLKf0nQhIRZs=
+	t=1741612356; cv=none; b=geK8tlHei7r0C6Xc41nfmqepMZZbo28PQn7d8Ipbp3h2GYExbPu4NzDLOaLnqj9lfNkNXaOVjgMTyQtUptt5gIg9IS0ZkjrfEzBcYimAFIHiza0qMxmgXIsEaxklJLzXbGqplO0iXIRE000zK0lKe60ZPDr78gghyA6mXdlUgT4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741612302; c=relaxed/simple;
-	bh=AssBWXIV/ifoG3hrXVd+m7SK7nKuBAWaSW5ZLSzg9hc=;
-	h=From:To:cc:Subject:MIME-Version:Content-Type:Date:Message-ID; b=Q2dbXIfFwiwTkaQEMNog1qMMozVqRPgKO5bY8CbF/EoaDLTvP8XLFMp2dJ0G4NCXU+DXE6LX9DH70e1qPyi7WXiTi8ZdxkwKZGAVchb4WplYJHShmHUgi68KDIpJ9cLGz1000NxPUVUTd5oBRFFDwlr2dmNTg+Uv4KviRPyPBqI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=IBgq+m5p; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1741612299;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=TvRKVxX2V+LpzqeszFyuH8/D6f0FPnNS+mKySUYqqBo=;
-	b=IBgq+m5pxHdjjqX4G5vRZQdVDls+Sre3FzPWVRfJSxdr8aX1Y50SCDHKWWAHyV2SYs8K/5
-	+OxuEpJ2/Sx6/Buvxk6Zh6AstR38Au/Zn6JR1JxVPBkgyL0Utt3HuPV3iJSy8Y48+1Yq9I
-	D1fvvzHu7ws7WW61ZtdGucov4gb/+HQ=
-Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-572-3E19lZTPOVewlYjg6GM7WQ-1; Mon,
- 10 Mar 2025 09:11:36 -0400
-X-MC-Unique: 3E19lZTPOVewlYjg6GM7WQ-1
-X-Mimecast-MFC-AGG-ID: 3E19lZTPOVewlYjg6GM7WQ_1741612294
-Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id B5D2E19560B7;
-	Mon, 10 Mar 2025 13:11:34 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.42.28.61])
-	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 6A1ED1956096;
-	Mon, 10 Mar 2025 13:11:32 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-	Kingdom.
-	Registered in England and Wales under Company Registration No. 3798903
-From: David Howells <dhowells@redhat.com>
-To: netdev@vger.kernel.org
-cc: dhowells@redhat.com, Christian Brauner <brauner@kernel.org>,
-    Marc Dionne <marc.dionne@auristor.com>,
-    linux-afs@lists.infradead.org, linux-fsdevel@vger.kernel.org,
-    linux-kernel@vger.kernel.org
-Subject: [GIT PULL net-next v4] afs, rxrpc: Clean up refcounting on afs_cell and afs_server records
+	s=arc-20240116; t=1741612356; c=relaxed/simple;
+	bh=nAvuHzzzD1vjk4IVAEMk2VVjvLtAEdLA21AfJteG4g0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=FSFgcs8e0PSlhOABRTD6ODZnst1UuPP6PAb8nAI1Iu0DTQ8Erwz/KQgi/md5apXdUMCNtt6qTQlXFuT5dKdrp+iNtRZv13jiHjzmfqdWkUGL82BClP5ipwcpdjie0RQgV9XZbvgy6ET+9rEGDko8y0MCrG3PBTYeLXGO/ITDHkc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.132.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
+Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed80:777d:24a3:a680:631e])
+	by baptiste.telenet-ops.be with cmsmtp
+	id P1CP2E0064XipzN011CPiH; Mon, 10 Mar 2025 14:12:25 +0100
+Received: from rox.of.borg ([192.168.97.57])
+	by ramsan.of.borg with esmtp (Exim 4.97)
+	(envelope-from <geert@linux-m68k.org>)
+	id 1trcvI-0000000DSFS-1IAc;
+	Mon, 10 Mar 2025 14:12:23 +0100
+Received: from geert by rox.of.borg with local (Exim 4.97)
+	(envelope-from <geert@linux-m68k.org>)
+	id 1trcve-0000000HCUx-3PbE;
+	Mon, 10 Mar 2025 14:12:22 +0100
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Magnus Damm <magnus.damm@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	Nicolas Pitre <nico@fluxnic.net>,
+	Simon Horman <horms+renesas@verge.net.au>,
+	Kees Cook <kees@kernel.org>
+Cc: linux-renesas-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH] ARM: shmobile: smp: Enforce shmobile_smp_* alignment
+Date: Mon, 10 Mar 2025 14:12:20 +0100
+Message-ID: <c499234d559a0d95ad9472883e46077311051cd8.1741612208.git.geert+renesas@glider.be>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <954021.1741612291.1@warthog.procyon.org.uk>
-Content-Transfer-Encoding: quoted-printable
-Date: Mon, 10 Mar 2025 13:11:31 +0000
-Message-ID: <954022.1741612291@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
+Content-Transfer-Encoding: 8bit
 
-Hi,
+When the addresses of the shmobile_smp_mpidr, shmobile_smp_fn, and
+shmobile_smp_arg variables are not multiples of 4 bytes, secondary CPU
+bring-up fails:
 
-Could you pull this into the net-next tree please (it has been pulled into
-the vfs tree[1])?  Besides fixing an rmmod bug, the changes made to the AF=
-S
-filesystem make it easier to use the AF_RXRPC RxGK (GSSAPI) security
-class[2].
+    smp: Bringing up secondary CPUs ...
+    CPU1: failed to come online
+    CPU2: failed to come online
+    CPU3: failed to come online
+    smp: Brought up 1 node, 1 CPU
 
-More specifically, these changes make it easier to map from the rxrpc_peer
-record back to the afs_server record, thereby making it easier for AF_RXRP=
-C
-to reach out to the AFS filesystem to obtain a token to include in the
-RESPONSE packet sent in reply to the AFS fileserver's security challenge.
-The fileserver can then use this token to set up a secure connection back
-to the client for the purpose of encrypted notifications.
+Fix this by adding the missing alignment directive.
 
-These changes fix an occasional hang that's only really encountered when
-rmmod'ing the kafs module, one of the reasons why I'm proposing it for the
-next merge window rather than immediate upstreaming.  The changes include:
-
- (1) Remove the "-o autocell" mount option.  This is obsolete with the
-     dynamic root and removing it makes the next patch slightly easier.
-
- (2) Change how the dynamic root mount is constructed.  Currently, the roo=
-t
-     directory is (de)populated when it is (un)mounted if there are cells
-     already configured and, further, pairs of automount points have to be
-     created/removed each time a cell is added/deleted.
-
-     This is changed so that readdir on the root dir lists all the known
-     cell automount pairs plus the @cell symlinks and the inodes and
-     dentries are constructed by lookup on demand.  This simplifies the
-     cell management code.
-
- (3) A few improvements to the afs_volume tracepoint.
-
- (4) A few improvements to the afs_server tracepoint.
-
- (5) Pass trace info into the afs_lookup_cell() function to allow the trac=
-e
-     log to indicate the purpose of the lookup.
-
- (6) Remove the 'net' parameter from afs_unuse_cell() as it's superfluous.
-
- (7) In rxrpc, allow a kernel app (such as kafs) to store a word of
-     information on rxrpc_peer records.
-
- (8) Use the information stored on the rxrpc_peer record to point to the
-     afs_server record.  This allows the server address lookup to be done
-     away with.
-
- (9) Simplify the afs_server ref/activity accounting to make each one
-     self-contained and not garbage collected from the cell management wor=
-k
-     item.
-
-(10) Simplify the afs_cell ref/activity accounting to make each one of
-     these also self-contained and not driven by a central management work
-     item.
-
-     The current code was intended to make it such that a single timer for
-     the namespace and one work item per cell could do all the work
-     required to maintain these records.  This, however, made for some
-     sequencing problems when cleaning up these records.  Further, the
-     attempt to pass refs along with timers and work items made getting it
-     right rather tricky when the timer or work item already had a ref
-     attached and now a ref had to be got rid of.
-
-Thanks,
-David
-
-Link: https://lore.kernel.org/r/20250310094206.801057-1-dhowells@redhat.co=
-m/ [1]
-Link: https://web.git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-f=
-s.git/log/?h=3Drxrpc-next [2]
-
+Fixes: 4e960f52fce16a3b ("ARM: shmobile: Move shmobile_smp_{mpidr, fn, arg}[] from .text to .bss")
+Closes: https://lore.kernel.org/r/CAMuHMdU=QR-JLgEHKWpsr6SbaZRc-Hz9r91JfpP8c3n2G-OjqA@mail.gmail.com
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
-The following changes since commit 1e15510b71c99c6e49134d756df91069f7d1814=
-1:
+To be queued in renesas-fixes-for-v6.14.
+---
+ arch/arm/mach-shmobile/headsmp.S | 1 +
+ 1 file changed, 1 insertion(+)
 
-  Merge tag 'net-6.14-rc5' of git://git.kernel.org/pub/scm/linux/kernel/gi=
-t/netdev/net (2025-02-27 09:32:42 -0800)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git tags=
-/afs-next-20250310
-
-for you to fetch changes up to e2c2cb8ef07affd9f69497ea128fa801240fdf32:
-
-  afs: Simplify cell record handling (2025-03-10 09:47:15 +0000)
-
-----------------------------------------------------------------
-afs: Fix ref leak in rmmod
-
-----------------------------------------------------------------
-David Howells (11):
-      afs: Fix afs_atcell_get_link() to handle RCU pathwalk
-      afs: Remove the "autocell" mount option
-      afs: Change dynroot to create contents on demand
-      afs: Improve afs_volume tracing to display a debug ID
-      afs: Improve server refcount/active count tracing
-      afs: Make afs_lookup_cell() take a trace note
-      afs: Drop the net parameter from afs_unuse_cell()
-      rxrpc: Allow the app to store private data on peer structs
-      afs: Use the per-peer app data provided by rxrpc
-      afs: Fix afs_server ref accounting
-      afs: Simplify cell record handling
-
- fs/afs/addr_list.c         |  50 ++++
- fs/afs/cell.c              | 446 ++++++++++++++-------------------
- fs/afs/cmservice.c         |  82 +------
- fs/afs/dir.c               |   5 +-
- fs/afs/dynroot.c           | 501 ++++++++++++++++---------------------
- fs/afs/fs_probe.c          |  32 ++-
- fs/afs/fsclient.c          |   4 +-
- fs/afs/internal.h          | 100 ++++----
- fs/afs/main.c              |  16 +-
- fs/afs/mntpt.c             |   5 +-
- fs/afs/proc.c              |  19 +-
- fs/afs/rxrpc.c             |   8 +-
- fs/afs/server.c            | 601 +++++++++++++++++++---------------------=
------
- fs/afs/server_list.c       |   6 +-
- fs/afs/super.c             |  25 +-
- fs/afs/vl_alias.c          |   7 +-
- fs/afs/vl_rotate.c         |   2 +-
- fs/afs/volume.c            |  15 +-
- include/net/af_rxrpc.h     |   2 +
- include/trace/events/afs.h |  83 ++++---
- net/rxrpc/ar-internal.h    |   1 +
- net/rxrpc/peer_object.c    |  30 ++-
- 22 files changed, 927 insertions(+), 1113 deletions(-)
+diff --git a/arch/arm/mach-shmobile/headsmp.S b/arch/arm/mach-shmobile/headsmp.S
+index a956b489b6ea12ca..2bc7e73a8582d2b3 100644
+--- a/arch/arm/mach-shmobile/headsmp.S
++++ b/arch/arm/mach-shmobile/headsmp.S
+@@ -136,6 +136,7 @@ ENDPROC(shmobile_smp_sleep)
+ 	.long	shmobile_smp_arg - 1b
+ 
+ 	.bss
++	.align	2
+ 	.globl	shmobile_smp_mpidr
+ shmobile_smp_mpidr:
+ 	.space	NR_CPUS * 4
+-- 
+2.43.0
 
 
