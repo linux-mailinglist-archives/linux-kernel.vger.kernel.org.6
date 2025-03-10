@@ -1,172 +1,178 @@
-Return-Path: <linux-kernel+bounces-554765-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-554766-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 68662A59C26
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 18:10:10 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id AED00A59C25
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 18:10:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 886B93A8D69
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 17:09:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3729C16DD31
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 17:10:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF206233148;
-	Mon, 10 Mar 2025 17:08:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62CE3230D2B;
+	Mon, 10 Mar 2025 17:09:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dP64LCSw"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="GZM3LX80"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F69922D79B;
-	Mon, 10 Mar 2025 17:08:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1C3B2309B6
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 17:09:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741626503; cv=none; b=mn7Men5siZRXC0U/K2iS7t6wmZaVEtAPOcfdodt+jm4+x0NVgBXcPrZQfy7vE5HuQK9XRaj8+FtR3sIaib1gpTs9+Z7wIBlfCGySIvr9L6qO30TQ2WmxV5ecfvpC04AJ1H31KVVHqWh8WEelx84GSvxVFSM5baYvYRM5WQHr274=
+	t=1741626571; cv=none; b=VuP1h4XY5NHZg1yl0aG27xCZ7/EmS6FATfSMxxumVDGyNyaQS6+CcjOH6goPNdIlX4IdQi9VFCegQPK5oVLmZAqT49OWuzhB+e+EYG3cXzx1yYYBSIYJHYApFEnqFf5/6SJXPhoUP/iruZ8QVP0aMFTjEoltle2F8Bckmwxg16w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741626503; c=relaxed/simple;
-	bh=BDPwHEQJtDtD2d6bq3wswYDHcfGQePvakq3VHHuiDXk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qfAOkHeVIzBSd8/exBjbvSDY5d6mJ3vtwLd5F7VgU2XrArnjNafb60mstVw3ouYAh1f0h+nEr6bageGQFTQNQrsjsnP5bAbYhnJOsohZv2p64NxILpfvGmRwzTDjfvba2aFur8HXzqMyXLPxXg135vM5pzXAQLju718VDb3Hgp8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dP64LCSw; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BD209C4CEEB;
-	Mon, 10 Mar 2025 17:08:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741626502;
-	bh=BDPwHEQJtDtD2d6bq3wswYDHcfGQePvakq3VHHuiDXk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=dP64LCSwb0qvMdmxNsq4aBgEkKCWTngBOaUBShh/E456amPJ+27bT3yYrEE5Gbe2Y
-	 pF1oiiVL7+YWc6JNBHa7O2WtXGhJjTJsTLGJyLtE+bAmPCfq/3Pc4kAd9bqycwPSz5
-	 Adjk1OWKoidmg9OiT3mJIBc1IgB4uMqcUHbsgzJ+KzsaRTD5TKEwDpPg4x9PsZvD/4
-	 EZ7Q2cZdK8XAVDyjTOEv9MAuloiaC6ai4D/YMIbH2cPTCon/hLkqajOt3wbw54YP15
-	 wU2ay6wa88LQr0FNFLZu5rhY2ee46XOCZ7yoC5WtWWFs0NwciIsHg/fMOPeT7J/JrC
-	 2y2dbOxSiNHfA==
-Date: Mon, 10 Mar 2025 19:08:01 +0200
-From: Mike Rapoport <rppt@kernel.org>
-To: Pratyush Yadav <ptyadav@amazon.de>
-Cc: linux-kernel@vger.kernel.org, Alexander Graf <graf@amazon.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Andy Lutomirski <luto@kernel.org>,
-	Anthony Yznaga <anthony.yznaga@oracle.com>,
-	Arnd Bergmann <arnd@arndb.de>, Ashish Kalra <ashish.kalra@amd.com>,
-	Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-	Borislav Petkov <bp@alien8.de>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	David Woodhouse <dwmw2@infradead.org>,
-	Eric Biederman <ebiederm@xmission.com>,
-	Ingo Molnar <mingo@redhat.com>, James Gowans <jgowans@amazon.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Paolo Bonzini <pbonzini@redhat.com>,
-	Pasha Tatashin <pasha.tatashin@soleen.com>,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Rob Herring <robh+dt@kernel.org>, Rob Herring <robh@kernel.org>,
-	Saravana Kannan <saravanak@google.com>,
-	Stanislav Kinsburskii <skinsburskii@linux.microsoft.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Tom Lendacky <thomas.lendacky@amd.com>,
-	Usama Arif <usama.arif@bytedance.com>,
-	Will Deacon <will@kernel.org>, devicetree@vger.kernel.org,
-	kexec@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
-	linux-doc@vger.kernel.org, linux-mm@kvack.org, x86@kernel.org
-Subject: Re: [PATCH v4 06/14] kexec: Add KHO parsing support
-Message-ID: <Z88ccZat5wm_iXx1@kernel.org>
-References: <20250206132754.2596694-1-rppt@kernel.org>
- <20250206132754.2596694-7-rppt@kernel.org>
- <mafs0zfhs97ta.fsf@amazon.de>
+	s=arc-20240116; t=1741626571; c=relaxed/simple;
+	bh=vwwFEjCbBHP1TP6cNYmasyrSWTNU63nZlMAjN3MDtDg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ee+ZZMNZehdwHYPdeqIGxfY+5JwbSQ2taJQc4hnb0UskKOS4lFz+KmdUN0QHuoyowZeqVPQMpkLCK+cGNk/Ghi5fL09Ja/dDWPcjzh/lzPyPGfEpXzYWlES3vPRuBYuTnpJ0r3vMZmL62Jf0IoPtF0tVO86AVtveTlFC9Wz/rLk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=GZM3LX80; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52AA9TnZ030400
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 17:09:28 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	kiESE3wnTdm5MieLpe83ZPyzj9dW/TZ+6Up49ZLOMzc=; b=GZM3LX801WeCDYMT
+	cbDeQKWmHzZ3zyuO/fFPoM1zHm2nQpcQq8kFfvWGjZLUso1WgITgI7rcx2ZUdRh3
+	YfB0KH3gt/SHvgGZTtQBAy+ReEffpJtPrIWA9hwAmkrau07slfDyDr/x4AgC2/Rr
+	b/oQTdgXG9dC27LGPSqA8HaJxgbUXFdedxHQKYz+0qG51q9mVIAON3Ro+tkz3Cmb
+	rRGmRjtR1T5eCPHL4+/NVMWU38fTHIUTOVf5bTkxt05WWWVpOk14bwXwNO9G8i4e
+	VgmDOS8S55YbO0TPrSkf+3e3otZlYuVfpmbbowKkPAFXrGrb5wB6ltdBMpBucRS5
+	OOPyLA==
+Received: from mail-pj1-f72.google.com (mail-pj1-f72.google.com [209.85.216.72])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 458f1jwj1h-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 17:09:28 +0000 (GMT)
+Received: by mail-pj1-f72.google.com with SMTP id 98e67ed59e1d1-2ff7cf599beso6314282a91.0
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 10:09:28 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741626567; x=1742231367;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=kiESE3wnTdm5MieLpe83ZPyzj9dW/TZ+6Up49ZLOMzc=;
+        b=BrYWSyZCbyjQSInBR9tjhvnHVzyXvuKZ65ku2WDZ2WRg0Cf68TXuPjCBEf9Y0XgS6+
+         WrbT/GuG7UcYQrKQH/srf9v5nZ1SKFhFBo6vh5sBAlDUjShqz8g4fv8nWS451fbFhxrl
+         MrxR6tCc72+sUmeBAXhfMEuL+PQgxPq1ikSVxbjN0jR/M9w0V2Xpm+4eWDJMLvyRiDxE
+         4I1Az2VjkK10x05Wx0MOqFNG4J9H81Ea+iAWov6rWbkCvhjTCDGVtwkaXptqfNWxk1CD
+         2RCFbJIZIF2TlAvrNU+RSXmVihl5ffw8v0f+9NkFlDT0F4aqNLjfB/pBoDcbuYOLiMRz
+         rspw==
+X-Forwarded-Encrypted: i=1; AJvYcCUWKqeryIehAovmwa2c7BHJz4M9tvs+Huaywd6Hibv0t77ewtgjraooHepUKHLxX3VS9UG4IbY/N7phhYA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzo8RI3GK5Cv8KTKJmEItmGXvM2zbDWCsf8Cp7Vu2vTnBqTWIZ6
+	v11EvkpBBKrOlnpE7IedXbtVUto1kt27PgvuWC8cw9meDUVeOPw9SYdpIwdczfo3yYhHypQFv08
+	3lQ3bhtOKkzz1QYjRhaYuSUuESUfwNvb29Rp+muYjFpbiMOtq+i05F3HpX4xhqOQ=
+X-Gm-Gg: ASbGncu0BzF9AnuPoE9UWBzp6Oyp7QyqiMICZF+xkXdixK+Lviiex/0aVxWqgGBPvxd
+	FndwxgjLPGCfrvjyVFVWL6MZC7iePLESLo7tEux7V/RkF0xo9IXEr1Uaoi7SjW6MnXiee7xA8wU
+	KL6oZ1NkYua6wNZd7SPkpc7OijRGevH0yAjSS+ps9hM/fiQgfVfOtix9M4gTRqpvZ4c7HqL5xTa
+	1kQCMHvsyQ8H4RhSwC9vidqhGe9maMb0ofa+rv09joDSdrG96xENCWvSp/mN8iv69yk3MXYXtMt
+	RkOGC1QolgjZZZlF5WVz0S5V3lNvvX4VFGd7HtoC6tzdfgm34mHA1Ltm3h0R7smoL9ZILxE=
+X-Received: by 2002:a17:90b:264e:b0:2fe:8c08:88c6 with SMTP id 98e67ed59e1d1-300ff0a9d81mr874136a91.7.1741626567185;
+        Mon, 10 Mar 2025 10:09:27 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGie2r7pmEwPgFFRIKxDe/DLR1ohRqxh9WveqVZp6iwrGPPw2SED4Us9MSYwIgkXhOSXnJwmA==
+X-Received: by 2002:a17:90b:264e:b0:2fe:8c08:88c6 with SMTP id 98e67ed59e1d1-300ff0a9d81mr874102a91.7.1741626566810;
+        Mon, 10 Mar 2025 10:09:26 -0700 (PDT)
+Received: from [10.227.110.203] (i-global254.qualcomm.com. [199.106.103.254])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2ff4d457cd0sm10153453a91.0.2025.03.10.10.09.26
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 10 Mar 2025 10:09:26 -0700 (PDT)
+Message-ID: <0b9d4a5d-326c-4281-b9fe-c8e1b1e4a026@oss.qualcomm.com>
+Date: Mon, 10 Mar 2025 10:09:25 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <mafs0zfhs97ta.fsf@amazon.de>
+User-Agent: Mozilla Thunderbird
+Subject: Re: Possible Null pointer dereferences in net/mac80211/parse.c
+To: Brahmajit <brahmajit.xyz@gmail.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Cc: linux-wireless@vger.kernel.org, johannes.berg@intel.com,
+        ilan.peer@intel.com, miriam.rachel.korenblit@intel.com
+References: <qriquzbudggauxqm5oz55zvkh3uhpk5icx6icnacyzzijdtivr@m37pbcwiqblb>
+From: Jeff Johnson <jeff.johnson@oss.qualcomm.com>
+Content-Language: en-US
+In-Reply-To: <qriquzbudggauxqm5oz55zvkh3uhpk5icx6icnacyzzijdtivr@m37pbcwiqblb>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Authority-Analysis: v=2.4 cv=ctthk04i c=1 sm=1 tr=0 ts=67cf1cc8 cx=c_pps a=RP+M6JBNLl+fLTcSJhASfg==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17 a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=b4LDLZbEAAAA:8 a=5Nd08vw50q0olsJ1Gb0A:9 a=QEXdDO2ut3YA:10
+ a=iS9zxrgQBfv6-_F4QbHw:22 a=20T61YgZp4ItGotXEy2O:22
+X-Proofpoint-ORIG-GUID: NTvWjJqZZnAxsAXIcFr2bYGWnD1zXzbj
+X-Proofpoint-GUID: NTvWjJqZZnAxsAXIcFr2bYGWnD1zXzbj
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-10_06,2025-03-07_03,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 bulkscore=0
+ clxscore=1015 priorityscore=1501 malwarescore=0 lowpriorityscore=0
+ phishscore=0 adultscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999
+ spamscore=0 classifier=spam authscore=0 authtc=n/a authcc= route=outbound
+ adjust=0 reason=mlx scancount=1 engine=8.19.0-2502100000
+ definitions=main-2503100134
 
-Hi Pratyush,
-
-On Mon, Mar 10, 2025 at 04:20:01PM +0000, Pratyush Yadav wrote:
-> Hi Mike,
+On 3/10/2025 7:16 AM, Brahmajit wrote:
+> Coverity Scan reports that there might be a possible NULL pointer
+> dereferences in net/mac80211/parse.c: 1061 in
+> ieee802_11_parse_elems_full(). I understand that these reports are not
+> always correct.
 > 
-> On Thu, Feb 06 2025, Mike Rapoport wrote:
-> [...]
-> > @@ -444,7 +576,141 @@ static void kho_reserve_scratch(void)
-> >  	kho_enable = false;
-> >  }
-> >  
-> > +/*
-> > + * Scan the DT for any memory ranges and make sure they are reserved in
-> > + * memblock, otherwise they will end up in a weird state on free lists.
-> > + */
-> > +static void kho_init_reserved_pages(void)
-> > +{
-> > +	const void *fdt = kho_get_fdt();
-> > +	int offset = 0, depth = 0, initial_depth = 0, len;
-> > +
-> > +	if (!fdt)
-> > +		return;
-> > +
-> > +	/* Go through the mem list and add 1 for each reference */
-> > +	for (offset = 0;
-> > +	     offset >= 0 && depth >= initial_depth;
-> > +	     offset = fdt_next_node(fdt, offset, &depth)) {
-> > +		const struct kho_mem *mems;
-> > +		u32 i;
-> > +
-> > +		mems = fdt_getprop(fdt, offset, "mem", &len);
-> > +		if (!mems || len & (sizeof(*mems) - 1))
-> > +			continue;
-> > +
-> > +		for (i = 0; i < len; i += sizeof(*mems)) {
-> > +			const struct kho_mem *mem = &mems[i];
-> 
-> i goes from 0 to len in steps of 16, but you use it to dereference an
-> array of type struct kho_mem. So you end up only looking at only one of
-> every 16 mems and do an out of bounds access. I found this when testing
-> the memfd patches and any time the file was more than 1 page, it started
-> to crash randomly.
+> I'm not sure whether the syntax
+> struct ieee80211_elems_parse_params sub = {};
+> is correct or falls under C11 standard[0].
 
-Thanks! Changyuan already pointed that out privately.
-But I'm going to adopt the memory reservation scheme Jason proposed so
-this code is going to go away anyway :)
+{} initializers are extensions supported by both gcc and clang/LLVM which
+AFAIK are the only two compilers currently used by Linux.
 
-> Below patch should fix that:
 > 
-> ---- 8< ----
-> diff --git a/kernel/kexec_handover.c b/kernel/kexec_handover.c
-> index c26753d613cbc..40d1d8ac68d44 100644
-> --- a/kernel/kexec_handover.c
-> +++ b/kernel/kexec_handover.c
-> @@ -685,13 +685,15 @@ static void kho_init_reserved_pages(void)
->              offset >= 0 && depth >= initial_depth;
->              offset = fdt_next_node(fdt, offset, &depth)) {
->                 const struct kho_mem *mems;
-> -               u32 i;
-> +               u32 i, nr_mems;
->  
->                 mems = fdt_getprop(fdt, offset, "mem", &len);
->                 if (!mems || len & (sizeof(*mems) - 1))
->                         continue;
->  
-> -               for (i = 0; i < len; i += sizeof(*mems)) {
-> +               nr_mems = len / sizeof(*mems);
-> +
-> +               for (i = 0; i < nr_mems; i++) {
->                         const struct kho_mem *mem = &mems[i];
->  
->                         memblock_reserve(mem->addr, mem->size);
-> ---- >8 ----
-> [...]
+> initializer:
+>          assignment-expression
+>          { initializer-list }
+>          { initializer-list , }
+> initializer-list:
+>          designation(opt) initializer
+>          initializer-list , designation(opt) initializer
 > 
-> -- 
-> Regards,
-> Pratyush Yadav
+> I'm aware that C23 allows empty initialization[1].
+> 
+> braced-initializer:
+>                     { }
+>                     { initializer-list }
+>                     { initializer-list , }
+> 
+> Considering [0], if we do something like
+> 
+> --- a/net/mac80211/parse.c
+> +++ b/net/mac80211/parse.c
+> @@ -997,7 +997,7 @@ ieee80211_mle_defrag_epcs(struct ieee80211_elems_parse *elems_parse)
+>  struct ieee802_11_elems *
+>  ieee802_11_parse_elems_full(struct ieee80211_elems_parse_params *params)
+>  {
+> -       struct ieee80211_elems_parse_params sub = {};
+> +       struct ieee80211_elems_parse_params sub = { 0 };
 
--- 
-Sincerely yours,
-Mike.
+using one of the supported compilers, these are identical for this struct.
+
+note that {} is usually preferable to {0} since {} works even when the first
+member is not a scalar.
+
+and the coverity report indicates the issue is that sub.start can be NULL,
+which will initially be true with either of these initializers.
+
+so the question is can sub.start really be NULL at the point where it is
+passed to cfg80211_find_elem(), or does every path initialize it?
+
+that is the question you should try to answer
+
+>         struct ieee80211_elems_parse *elems_parse;
+>         const struct element *non_inherit = NULL;
+>         struct ieee802_11_elems *elems;
+> 
+> Would it be incorrect? Would appreciate some feedback.
+> 
+> [0]: https://www.open-std.org/jtc1/sc22/wg14/www/docs/n1570.pdf
+> [1]: https://www.open-std.org/jtc1/sc22/wg14/www/docs/n3054.pdf
+
 
