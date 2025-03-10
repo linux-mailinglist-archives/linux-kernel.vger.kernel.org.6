@@ -1,160 +1,188 @@
-Return-Path: <linux-kernel+bounces-554548-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-554551-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5208FA599B9
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 16:20:14 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DA2D8A599B5
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 16:20:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 11BF93A6900
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 15:18:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9F3A1189155C
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 15:19:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FB6422DF87;
-	Mon, 10 Mar 2025 15:17:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="kbB96ZpT";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="GtkcfSU2"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47EAB22D4D1;
+	Mon, 10 Mar 2025 15:18:50 +0000 (UTC)
+Received: from mx3.molgen.mpg.de (mx3.molgen.mpg.de [141.14.17.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34C37227EA0;
-	Mon, 10 Mar 2025 15:17:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F21271A7264;
+	Mon, 10 Mar 2025 15:18:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=141.14.17.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741619870; cv=none; b=KGICZMhZhvKd96YB53Z0fZ33MekjzodOImj89HeAv2cc+Ta+jgLT0V7YUfJXI80EYkS4a53eI8dh2uAwZa+EEw8Mcs32Sk4hmU/ZpyZdsr70zAw8zbc8TQxvygkzmkR6q9fRy9miwUgioS287j0e4X48ofrmfTxWnyHubAsId3w=
+	t=1741619929; cv=none; b=mlXJpvmyQbqNJMB87t3JVEy1O1G6U0LafsuxHVuEEQpqmM0cEQDZo2hiQ+d7FZ7LDnJg08FrKDjEbEK5dD+2CdLmoe5LN4a1YXpeGh5qElFoqiF/c9mAkNXSAb2x4ySL4Yg5YX6p4D/Aq5TPuQZiQDxxtCrNMhQhPEyJksj0SK4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741619870; c=relaxed/simple;
-	bh=cq5Im/NgOcTZ4rtPa09PGi4z5bXY7vuDuSLx3ZWUD2Q=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=nDldyR4z+86hAnkuDy/giQ8PwJab25twEr+9B7y7yIFuiIEiAic5SJJ4WcMvyVMqYy71h9SZ7dW1XQSgm8JH0a57p2mGP29oONHncl57p2t6jAcgVL0lf4gbrSEh55oUsa+BJKWuQTXveW2PxTCfY3lwJWW+e9PLnJCFB4V2a0w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=kbB96ZpT; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=GtkcfSU2; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Mon, 10 Mar 2025 15:17:43 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1741619867;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=kjCXVwpRpL1HkRl3NKPzVuAOudC0kOAalJB1yrlrCZE=;
-	b=kbB96ZpTbWOWEtTRHu/8OmDeRE+k8DuRxNLyzRNxwveydC5UDjliZOzmkXhaevffLF541u
-	pnwWnCP64sQ31aXJfdkgKPDhN1VEZdLeI4Q6wpsoEbOhm0ARd/lIGZraW9SZARHc9h4HZy
-	qaEBz4m4AAO+YnOMGbsde+60vfok6Cws3XY3VQmMp+RfmPAow2WWRpmhCe4yXUYzFy6DX/
-	0YdrP+CIhJ5SK8/HRZZ6HB7SL2nxcQ349tbe19I35SrQDoUfF68qXV+ywZw0LlIdFFc4MS
-	E+H9PHyKTyRJwBGFKYm9B3su0jKYble22iYcWrYe6H9zdP5336JymGvd/+FmrQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1741619867;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=kjCXVwpRpL1HkRl3NKPzVuAOudC0kOAalJB1yrlrCZE=;
-	b=GtkcfSU28f+3GgA4ByOMml9NAr9hZfj5wacArlLtZxkvKkZH1mHxS74f5rMDmqc8BTNDf2
-	c/KZQCIIs8s0gQAg==
-From: "tip-bot2 for Florent Revest" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: x86/urgent] x86/microcode/AMD: Fix out-of-bounds on systems
- with CPU-less NUMA nodes
-Cc: Florent Revest <revest@chromium.org>,
- "Borislav Petkov (AMD)" <bp@alien8.de>, stable@vger.kernel.org,
- x86@kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20250310144243.861978-1-revest@chromium.org>
-References: <20250310144243.861978-1-revest@chromium.org>
+	s=arc-20240116; t=1741619929; c=relaxed/simple;
+	bh=bMPG0/W1J04vKv1BQV+5mjcFZMI4P3R3bE0XPo4Keck=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=XveAhej3H301xuOkl6N5tU/rnZLUSEJ5G2CZcc+kdqBYKFM8yRTcfZZfFBL1HWN7+tSh7uCC8apbb9GfmdYQXSQtbQYt3xcE3K8iN8A+WC03YIMjsQHNSxag2+poj7NzfMl070dfWBNzSP/jZrdt3QXuHIAAyQRVVPna3gY6soA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de; spf=pass smtp.mailfrom=molgen.mpg.de; arc=none smtp.client-ip=141.14.17.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=molgen.mpg.de
+Received: from [192.168.0.2] (ip5f5af04a.dynamic.kabel-deutschland.de [95.90.240.74])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: pmenzel)
+	by mx.molgen.mpg.de (Postfix) with ESMTPSA id 8402761E647BC;
+	Mon, 10 Mar 2025 16:17:52 +0100 (CET)
+Message-ID: <73da51ef-a7cc-4c38-8289-09c9cbd0c65d@molgen.mpg.de>
+Date: Mon, 10 Mar 2025 16:17:51 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <174161986360.14745.5442918704046363367.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: Warnings `Could not retrieve perf counters (-19)` and
+ `amd_pstate: the _CPC object is not present in SBIOS or ACPI disabled` (Dell
+ PowerEdge R7625, AMD EPYC 9174F)
+To: Mario Limonciello <mario.limonciello@amd.com>
+Cc: Gautham Ranjal Shenoy <gautham.shenoy@amd.com>,
+ Ray Huang <Ray.Huang@amd.com>, Thomas Gleixner <tglx@linutronix.de>,
+ Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+ Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+ linux-pm@vger.kernel.org, linux-acpi@vger.kernel.org,
+ LKML <linux-kernel@vger.kernel.org>, it+linux-dell@molgen.mpg.de
+References: <2b811df7-5278-4cfc-b8a0-7d6d72d3358d@molgen.mpg.de>
+ <5dff1719-c4e9-4ebf-ae0b-73b9de98df05@amd.com>
+ <DS7PR12MB82528A694056F1FBA20CE01E96EF2@DS7PR12MB8252.namprd12.prod.outlook.com>
+ <d09f52d8-e084-4875-9608-5b3db2554f3d@molgen.mpg.de>
+ <e26bc00f-1675-4aac-bd02-60774ff5901a@molgen.mpg.de>
+ <3ded4075-e2f9-4231-9c3f-49a14fbbde1e@molgen.mpg.de>
+ <1ba47782-0035-43c3-9ecd-887f1f60340a@amd.com>
+Content-Language: en-US
+From: Paul Menzel <pmenzel@molgen.mpg.de>
+In-Reply-To: <1ba47782-0035-43c3-9ecd-887f1f60340a@amd.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-The following commit has been merged into the x86/urgent branch of tip:
+Dear Mario,
 
-Commit-ID:     e3e89178a9f4a80092578af3ff3c8478f9187d59
-Gitweb:        https://git.kernel.org/tip/e3e89178a9f4a80092578af3ff3c8478f9187d59
-Author:        Florent Revest <revest@chromium.org>
-AuthorDate:    Mon, 10 Mar 2025 15:42:43 +01:00
-Committer:     Borislav Petkov (AMD) <bp@alien8.de>
-CommitterDate: Mon, 10 Mar 2025 16:02:54 +01:00
 
-x86/microcode/AMD: Fix out-of-bounds on systems with CPU-less NUMA nodes
+Am 11.02.25 um 17:18 schrieb Mario Limonciello:
+> On 2/11/2025 10:12, Paul Menzel wrote:
 
-Currently, load_microcode_amd() iterates over all NUMA nodes, retrieves their
-CPU masks and unconditionally accesses per-CPU data for the first CPU of each
-mask.
+>> Am 28.01.25 um 16:08 schrieb Paul Menzel:
+>>> [Cc: +x86 maintainers and ACPI list]
+>>
+>>> Am 28.01.25 um 11:49 schrieb Paul Menzel:
+>>>
+>>>> Thank you for your quick replies. Gautham, messages with HTML are 
+>>>> rejected by Linux kernel lists.
+>>>>
+>>>>
+>>>> Am 28.01.25 um 04:51 schrieb Shenoy, Gautham Ranjal:
+>>>>
+>>>>> As Mario mentioned, you need to enable the CPPC option. Looking for 
+>>>>> some of the Dell PowerEdge documentation, there is an option called 
+>>>>> "Collaborative CPU Performance Control" (https://www.dell.com/ 
+>>>>> support/manuals/en-in/poweredge-r730/r730_ompublication/system- 
+>>>>> profile-settings-details?guid=guid-2e9b46a1-71e3-4072-9d86- 
+>>>>> db648757f0e6&lang=en-us).
+>>>>>
+>>>>> [cid:fe57df8f-3d99-4ea0-8f6e-b0daae49bb0e]
+>>>>> Can you please try enabling it ?
+>>>>
+>>>> You quoted the Dell PowerEdge R730. I couldn’t find it in the *Dell 
+>>>> PowerEdge R7625 Installation and Service Manual* [1], and also it’s 
+>>>> not listed in the iDRAC9 Web site (attached with added `.txt` 
+>>>> extension to trick the Linux list).
+>>>
+>>> The amd_pstate warning seems to be related to the perf counters 
+>>> warning Linux prints earlier:
+>>>
+>>>      $ dmesg --level alert,crit,err,warn
+>>>      [    2.666393] Spectre V2 : WARNING: Unprivileged eBPF is enabled with eIBRS on, data leaks possible via Spectre v2 BHB attacks!
+>>>      [    8.109446] Could not retrieve perf counters (-19)
+>>>      [    9.386551] scsi 0:0:4:0: set ignore_delay_remove for  handle(0x0012)
+>>>      [    9.487804] amd_pstate: the _CPC object is not present in SBIOS or ACPI disabled
+>>>      [   14.726193] wmi_bus wmi_bus-PNP0C14:00: [Firmware Bug]: WQBC data block query control method not found
+>>>
+>>> x86 maintainers, the original report with the Linux logs attached is 
+>>> in the archive [3].
+>>>
+>>> It looks like, there is something missing in the Dell firmware to 
+>>> enable the feature.
+>>>
+>>> The perf counters warning is from `amd_set_max_freq_ratio()` in 
+>>> `arch/ x86/kernel/acpi/cppc.c`:
+>>>
+>>> ```
+>>> static void amd_set_max_freq_ratio(void)
+>>> {
+>>>          struct cppc_perf_caps perf_caps;
+>>>          u64 numerator, nominal_perf;
+>>>          u64 perf_ratio;
+>>>          int rc;
+>>>
+>>>          rc = cppc_get_perf_caps(0, &perf_caps);
+>>>          if (rc) {
+>>>                  pr_warn("Could not retrieve perf counters (%d)\n", rc);
+>>>                  return;
+>>>          }
+>>>          […]
+>>> }
+>>> ```
+>>>
+>>> With
+>>>
+>>>      include/uapi/asm-generic/errno-base.h:#define    ENODEV 19    /* No such device */
+>>>
+>>> this is returned by in `drivers/acpi/cppc_acpi.c`:
+>>>
+>>> ```
+>>> /**
+>>>   * cppc_get_perf_caps - Get a CPU's performance capabilities.
+>>>   * @cpunum: CPU from which to get capabilities info.
+>>>   * @perf_caps: ptr to cppc_perf_caps. See cppc_acpi.h
+>>>   *
+>>>   * Return: 0 for success with perf_caps populated else -ERRNO.
+>>>   */
+>>> int cppc_get_perf_caps(int cpunum, struct cppc_perf_caps *perf_caps)
+>>> {
+>>>          struct cpc_desc *cpc_desc = per_cpu(cpc_desc_ptr, cpunum);
+>>>          […]
+>>>          if (!cpc_desc) {
+>>>                  pr_debug("No CPC descriptor for CPU:%d\n", cpunum);
+>>>                  return -ENODEV;
+>>>          }
+>>>          […]
+>>> }
+>>> ```
+>>
+>> @AMD folks, just for clarity. Did Dell something with their firmware? 
+>> If so, are you going to work with Dell on a solution, or do I need to 
+>> report the issue to them?
+> 
+> I feel if there is a BIOS bug in hardware you purchased, you should 
+> report a bug to the hardware creator for them to fix.
 
-According to Documentation/admin-guide/mm/numaperf.rst:
+I made the service request 205423744 on February 12th, 2025, and after 
+collecting the details until February 14th, 2025, Dell replied on March 
+4th, 2025, that there L3 support and engineering team was able to 
+reproduce the issue, and they are going to provide a firmware update, 
+currently estimated for June.
 
-  "Some memory may share the same node as a CPU, and others are provided as
-  memory only nodes."
+I am still surprised, that Dell’s QA overlooked this. Does AMD provide 
+them test suites (does FWTS check for this). `dmesg --level=warning` is 
+unfortunately not empty, so maybe they ignore it.
 
-Therefore, some node CPU masks may be empty and wouldn't have a "first CPU".
+Would it make sense to make the warning an error, so it’s less likely 
+overlooked?
 
-On a machine with far memory (and therefore CPU-less NUMA nodes):
-- cpumask_of_node(nid) is 0
-- cpumask_first(0) is CONFIG_NR_CPUS
-- cpu_data(CONFIG_NR_CPUS) accesses the cpu_info per-CPU array at an
-  index that is 1 out of bounds
 
-This does not have any security implications since flashing microcode is
-a privileged operation but I believe this has reliability implications by
-potentially corrupting memory while flashing a microcode update.
+Kind regards,
 
-When booting with CONFIG_UBSAN_BOUNDS=y on an AMD machine that flashes
-a microcode update. I get the following splat:
-
-  UBSAN: array-index-out-of-bounds in arch/x86/kernel/cpu/microcode/amd.c:X:Y
-  index 512 is out of range for type 'unsigned long[512]'
-  [...]
-  Call Trace:
-   dump_stack
-   __ubsan_handle_out_of_bounds
-   load_microcode_amd
-   request_microcode_amd
-   reload_store
-   kernfs_fop_write_iter
-   vfs_write
-   ksys_write
-   do_syscall_64
-   entry_SYSCALL_64_after_hwframe
-
-Change the loop to go over only NUMA nodes which have CPUs before determining
-whether the first CPU on the respective node needs microcode update.
-
-  [ bp: Massage commit message, fix typo. ]
-
-Fixes: 7ff6edf4fef3 ("x86/microcode/AMD: Fix mixed steppings support")
-Signed-off-by: Florent Revest <revest@chromium.org>
-Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
-Cc: stable@vger.kernel.org
-Link: https://lore.kernel.org/r/20250310144243.861978-1-revest@chromium.org
----
- arch/x86/kernel/cpu/microcode/amd.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/arch/x86/kernel/cpu/microcode/amd.c b/arch/x86/kernel/cpu/microcode/amd.c
-index c69b1bc..138689b 100644
---- a/arch/x86/kernel/cpu/microcode/amd.c
-+++ b/arch/x86/kernel/cpu/microcode/amd.c
-@@ -1074,7 +1074,7 @@ static enum ucode_state load_microcode_amd(u8 family, const u8 *data, size_t siz
- 	if (ret != UCODE_OK)
- 		return ret;
- 
--	for_each_node(nid) {
-+	for_each_node_with_cpus(nid) {
- 		cpu = cpumask_first(cpumask_of_node(nid));
- 		c = &cpu_data(cpu);
- 
+Paul
 
