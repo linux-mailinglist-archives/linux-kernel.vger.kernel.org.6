@@ -1,54 +1,55 @@
-Return-Path: <linux-kernel+bounces-553528-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-553532-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4730EA58B07
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 05:01:46 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D8F5A58B1E
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 05:09:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C00C9188D69F
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 04:01:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 850613ABEE1
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 04:09:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AB1E1B414A;
-	Mon, 10 Mar 2025 04:01:33 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06EB61F61C
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 04:01:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DA7C1C1F10;
+	Mon, 10 Mar 2025 04:09:25 +0000 (UTC)
+Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04F9A1B85EE
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 04:09:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741579292; cv=none; b=hksArm882EhjvfX4ofBEDJe61ygxDOFmIfbe6w3XM8RpLyQnSlg9liy9QU575AAQ96V8njCn/t7XPw3otQdGh1qBv8eNdvj/EpUKIb709tyVPuYK47o1g8K6/GMkpWp79VIWXuG9xBsl3P6AT91cneMOiAoyYNmc54tyGsJO88w=
+	t=1741579764; cv=none; b=YnCa2Zms5xpziMZI1L3keFELIutXuRepgP+9Mycf44j/AQcti5ljBbVGZKO+EfJJF6VM+RxpJDwObFP0k6g3jBbCeIGqEfE+usnoCjMzwZaJ6oicp3dB3a0cL3ODhReCUTkg1X52uCIuMK2E4oKRrTqp0QQcKwbw9c803fj3Frg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741579292; c=relaxed/simple;
-	bh=By0v6yOJs36I8AWVqAqg3kNEdFDGFbUNVh6dT8Fncw0=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=YBasFEp7V1cMMIj5WIGslAfwXiTomThO+H6yFL/UavIShe2IYeHMnsGqzsesNMzF5vufshUaEWPK8z9lUZaA8bO8t+ABPD6N9k29pkRtQzNqKRfCe5a0ZKP664kWE/o781l0rKvnXF80EDKKOS0BY7seY3iIoqiI5HNtXqUl/OE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B477D15A1;
-	Sun,  9 Mar 2025 21:01:34 -0700 (PDT)
-Received: from a077893.arm.com (unknown [10.163.42.69])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 99DCC3F673;
-	Sun,  9 Mar 2025 21:01:18 -0700 (PDT)
-From: Anshuman Khandual <anshuman.khandual@arm.com>
-To: linux-arm-kernel@lists.infradead.org
-Cc: Anshuman Khandual <anshuman.khandual@arm.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Andrey Ryabinin <ryabinin.a.a@gmail.com>,
-	Alexander Potapenko <glider@google.com>,
-	Andrey Konovalov <andreyknvl@gmail.com>,
-	Dmitry Vyukov <dvyukov@google.com>,
-	Ard Biesheuvel <ardb@kernel.org>,
-	Ryan Roberts <ryan.roberts@arm.com>,
-	linux-kernel@vger.kernel.org,
-	kasan-dev@googlegroups.com
-Subject: [PATCH V2] arm64/mm: Define PTDESC_ORDER
-Date: Mon, 10 Mar 2025 09:31:15 +0530
-Message-Id: <20250310040115.91298-1-anshuman.khandual@arm.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1741579764; c=relaxed/simple;
+	bh=euNSufvnSoGcqfLkzN9FRXeS3C32IaZrs2y2ubzi0iM=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=c5fBM5Eiu0Hjb3EsYdB0xKrTyvHFh9F7FVcagfIkndap6Hl3hxlULuC1iBWNUDOR0xRIEElq81pFOSxPJRE9Y7mf/fMFaJCIjqHuTpkK1lFVU0OLhcf8FDcQ87avRt47Y6iPq8pkWc9E/sS7gyiQ7N0+DSYMXQ9VOErUllTnCmQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.17])
+	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4ZB3FL4mgzz2SSpk;
+	Mon, 10 Mar 2025 12:04:54 +0800 (CST)
+Received: from kwepemd500013.china.huawei.com (unknown [7.221.188.12])
+	by mail.maildlp.com (Postfix) with ESMTPS id 52B041A0188;
+	Mon, 10 Mar 2025 12:09:13 +0800 (CST)
+Received: from localhost.huawei.com (10.169.71.169) by
+ kwepemd500013.china.huawei.com (7.221.188.12) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1258.34; Mon, 10 Mar 2025 12:09:11 +0800
+From: Yongbang Shi <shiyongbang@huawei.com>
+To: <xinliang.liu@linaro.org>, <tiantao6@hisilicon.com>,
+	<maarten.lankhorst@linux.intel.com>, <mripard@kernel.org>,
+	<tzimmermann@suse.de>, <airlied@gmail.com>, <daniel@ffwll.ch>,
+	<kong.kongxinwei@hisilicon.com>
+CC: <liangjian010@huawei.com>, <chenjianmin@huawei.com>,
+	<lidongming5@huawei.com>, <shiyongbang@huawei.com>, <libaihan@huawei.com>,
+	<shenjian15@huawei.com>, <shaojijie@huawei.com>,
+	<dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH v6 drm-dp 0/9] Add HPD, getting EDID, colorbar features in DP function
+Date: Mon, 10 Mar 2025 12:01:29 +0800
+Message-ID: <20250310040138.2025715-1-shiyongbang@huawei.com>
+X-Mailer: git-send-email 2.33.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,216 +57,104 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
+ kwepemd500013.china.huawei.com (7.221.188.12)
 
-Address bytes shifted with a single 64 bit page table entry (any page table
-level) has been always hard coded as 3 (aka 2^3 = 8). Although intuitive it
-is not very readable or easy to reason about. Besides it is going to change
-with D128, where each 128 bit page table entry will shift address bytes by
-4 (aka 2^4 = 16) instead.
+From: Baihan Li <libaihan@huawei.com>
 
-Let's just formalise this address bytes shift value into a new macro called
-PTDESC_ORDER establishing a logical abstraction, thus improving readability
-as well. While here re-organize EARLY_LEVEL macro along with its dependents
-for better clarity. This does not cause any functional change.
-
-Cc: Catalin Marinas <catalin.marinas@arm.com>
-Cc: Will Deacon <will@kernel.org>
-Cc: Mark Rutland <mark.rutland@arm.com>
-Cc: Andrey Ryabinin <ryabinin.a.a@gmail.com>
-Cc: Alexander Potapenko <glider@google.com>
-Cc: Andrey Konovalov <andreyknvl@gmail.com>
-Cc: Dmitry Vyukov <dvyukov@google.com>
-Cc: Ard Biesheuvel <ardb@kernel.org>
-Cc: Ryan Roberts <ryan.roberts@arm.com>
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: linux-kernel@vger.kernel.org
-Cc: kasan-dev@googlegroups.com
-Acked-by: Ard Biesheuvel <ardb@kernel.org>
-Reviewed-by: Ryan Roberts <ryan.roberts@arm.com>
-Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
+To support DP HPD, edid printing, and colorbar display features based on
+the Hisislcon DP devices.
 ---
-This patch applies on v6.14-rc6
+ChangeLog:
+v5 -> v6:
+  - fix the DP_SERDES_VOL2_PRE0 value after electrical test.
+  - move the detect_ctx() to the patch 7/9.
+  - add detect_ctx with 200ms delay, suggested by Dmitry Baryshkov.
+v4 -> v5:
+  - add commit log about hibmc_kms_init(), suggested by Dmitry Baryshkov.
+  - fix the format of block comments, suggested by Dmitry Baryshkov.
+  - add hibmc_dp_get_serdes_rate_cfg() to correct transferring serdes cfg.
+  - separate the vga part commit, suggested by Dmitry Baryshkov.
+  - remove pci_disable_msi() in hibmc_unload()
+v3 -> v4:
+  - fix the serdes cfg in hibmc_dp_serdes_set_tx_cfg(), suggested by Dmitry Baryshkov.
+  - move the dp serdes registers to dp_reg.h, suggested by Dmitry Baryshkov.
+  - add comments for if-statement of dp_init(), suggested by Dmitry Baryshkov.
+  - fix the comment log to imperative sentence, suggested by Dmitry Baryshkov.
+  - add comments in hibmc_control_write(), suggested by Dmitry Baryshkov.
+  - add link reset of rates and lanes in pre link training process, suggested by Dmitry Baryshkov.
+  - add vdac detect and connected/disconnected status to enable HPD process, suggested by Dmitry Baryshkov.
+  - remove a drm_client, suggested by Dmitry Baryshkov.
+  - fix build errors reported by kernel test robot <lkp@intel.com>
+    Closes: https://lore.kernel.org/oe-kbuild-all/202502231304.BCzV4Y8D-lkp@intel.com/
+v2 -> v3:
+  - restructuring the header p_reg.h, suggested by Dmitry Baryshkov.
+  - add commit log about dp serdes, suggested by Dmitry Baryshkov.
+  - return value in hibmc_dp_serdes_init(), suggested by Dmitry Baryshkov.
+  - add static const in the array of serdes_tx_cfg[], suggested by Dmitry Baryshkov.
+  - change drm_warn to drm_dbg_dp, suggested by Dmitry Baryshkov.
+  - add explanations about dp serdes macros, suggested by Dmitry Baryshkov.
+  - change commit to an imperative sentence, suggested by Dmitry Baryshkov.
+  - put HIBMC_DP_HOST_SERDES_CTRL in dp_serdes.h, suggested by Dmitry Baryshkov.
+  - split the patch into two parts, suggested by Dmitry Baryshkov.
+  - Capitalized EDID and AUX, suggested by Dmitry Baryshkov.
+  - rewrite the commit log, suggested by Dmitry Baryshkov.
+  - move colorbar debugfs entry to this patch, suggested by Dmitry Baryshkov.
+  - change binary format to integer format, suggested by Dmitry Baryshkov.
+  - remove mdelay(100) hpd function in ISR, suggested by Dmitry Baryshkov.
+  - remove enble_display in ISR, suggested by Dmitry Baryshkov.
+  - change drm_kms_helper_connector_hotplug_event() to
+    drm_connector_helper_hpd_irq_event(), suggested by Dmitry Baryshkov.
+  - move macros to dp_reg.h, suggested by Dmitry Baryshkov.
+  - remove struct irqs, suggested by Dmitry Baryshkov.
+  - split this patch into two parts, suggested by Dmitry Baryshkov.
+v1 -> v2:
+  - splittting the patch and add more detailed the changes in the commit message, suggested by Dmitry Baryshkov.
+  - changing all names of dp phy to dp serdes.
+  - deleting type conversion, suggested by Dmitry Baryshkov.
+  - deleting hibmc_dp_connector_get_modes() and using drm_connector_helper_get_modes(), suggested by Dmitry Baryshkov.
+  - add colorbar introduction in commit, suggested by Dmitry Baryshkov.
+  - deleting edid decoder and its debugfs, suggested by Dmitry Baryshkov.
+  - using debugfs_init() callback, suggested by Dmitry Baryshkov.
+  - splittting colorbar and debugfs in different patches, suggested by Dmitry Baryshkov.
+  - optimizing the description in commit message, suggested by Dmitry Baryshkov.
+  - add mdelay(100) comments, suggested by Dmitry Baryshkov.
+  - deleting display enable in hpd event, suggested by Dmitry Baryshkov.
+---
 
-Changes in V2:
+Baihan Li (9):
+  drm/hisilicon/hibmc: Restructuring the header dp_reg.h
+  drm/hisilicon/hibmc: Add dp serdes cfg to adjust serdes rate, voltage
+    and pre-emphasis
+  drm/hisilicon/hibmc: Add dp serdes cfg in dp process
+  drm/hisilicon/hibmc: Refactor the member of drm_aux in struct hibmc_dp
+  drm/hisilicon/hibmc: Getting connector info and EDID by using AUX
+    channel
+  drm/hisilicon/hibmc: Add colorbar-cfg feature and its debugfs file
+  drm/hisilicon/hibmc: Enable this hot plug detect of irq feature
+  drm/hisilicon/hibmc: Add MSI irq getting and requesting for HPD
+  drm/hisilicon/hibmc: Add vga connector detect functions
 
-- Replaced PTE_SHIFT with PTDESC_ORDER per Ard
-- Re-organized EARLY_LEVEL macro per Mark
+ drivers/gpu/drm/hisilicon/hibmc/Makefile      |   3 +-
+ drivers/gpu/drm/hisilicon/hibmc/dp/dp_aux.c   |  16 ++-
+ drivers/gpu/drm/hisilicon/hibmc/dp/dp_comm.h  |  10 +-
+ .../gpu/drm/hisilicon/hibmc/dp/dp_config.h    |   2 +
+ drivers/gpu/drm/hisilicon/hibmc/dp/dp_hw.c    |  91 +++++++++++-
+ drivers/gpu/drm/hisilicon/hibmc/dp/dp_hw.h    |  36 +++++
+ drivers/gpu/drm/hisilicon/hibmc/dp/dp_link.c  |  97 +++++++++----
+ drivers/gpu/drm/hisilicon/hibmc/dp/dp_reg.h   | 130 +++++++++++++-----
+ .../gpu/drm/hisilicon/hibmc/dp/dp_serdes.c    |  71 ++++++++++
+ .../drm/hisilicon/hibmc/hibmc_drm_debugfs.c   | 104 ++++++++++++++
+ .../gpu/drm/hisilicon/hibmc/hibmc_drm_dp.c    |  75 +++++++++-
+ .../gpu/drm/hisilicon/hibmc/hibmc_drm_drv.c   |  87 +++++++++---
+ .../gpu/drm/hisilicon/hibmc/hibmc_drm_drv.h   |  12 ++
+ .../gpu/drm/hisilicon/hibmc/hibmc_drm_vdac.c  |   3 +
+ 14 files changed, 635 insertions(+), 102 deletions(-)
+ create mode 100644 drivers/gpu/drm/hisilicon/hibmc/dp/dp_serdes.c
+ create mode 100644 drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_debugfs.c
 
-Changes in V1:
-
-https://lore.kernel.org/all/20250307050851.4034393-1-anshuman.khandual@arm.com/
-
- arch/arm64/Kconfig                      |  2 +-
- arch/arm64/include/asm/kernel-pgtable.h | 11 ++++++----
- arch/arm64/include/asm/pgtable-hwdef.h  | 27 ++++++++++++++-----------
- arch/arm64/kernel/pi/map_range.c        |  2 +-
- arch/arm64/mm/kasan_init.c              |  6 +++---
- 5 files changed, 27 insertions(+), 21 deletions(-)
-
-diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
-index 940343beb3d4..657baf59fdbe 100644
---- a/arch/arm64/Kconfig
-+++ b/arch/arm64/Kconfig
-@@ -323,7 +323,7 @@ config ARCH_MMAP_RND_BITS_MIN
- 	default 18
- 
- # max bits determined by the following formula:
--#  VA_BITS - PAGE_SHIFT - 3
-+#  VA_BITS - PAGE_SHIFT - PTDESC_ORDER
- config ARCH_MMAP_RND_BITS_MAX
- 	default 19 if ARM64_VA_BITS=36
- 	default 24 if ARM64_VA_BITS=39
-diff --git a/arch/arm64/include/asm/kernel-pgtable.h b/arch/arm64/include/asm/kernel-pgtable.h
-index fd5a08450b12..78c7e03a0e35 100644
---- a/arch/arm64/include/asm/kernel-pgtable.h
-+++ b/arch/arm64/include/asm/kernel-pgtable.h
-@@ -45,11 +45,14 @@
- #define SPAN_NR_ENTRIES(vstart, vend, shift) \
- 	((((vend) - 1) >> (shift)) - ((vstart) >> (shift)) + 1)
- 
--#define EARLY_ENTRIES(vstart, vend, shift, add) \
--	(SPAN_NR_ENTRIES(vstart, vend, shift) + (add))
-+/* Number of VA bits resolved by a single translation table level */
-+#define PTDESC_TABLE_SHIFT	(PAGE_SHIFT - PTDESC_ORDER)
- 
--#define EARLY_LEVEL(lvl, lvls, vstart, vend, add)	\
--	(lvls > lvl ? EARLY_ENTRIES(vstart, vend, SWAPPER_BLOCK_SHIFT + lvl * (PAGE_SHIFT - 3), add) : 0)
-+#define EARLY_ENTRIES(lvl, vstart, vend) \
-+	SPAN_NR_ENTRIES(vstart, vend, SWAPPER_BLOCK_SHIFT + lvl * PTDESC_TABLE_SHIFT)
-+
-+#define EARLY_LEVEL(lvl, lvls, vstart, vend, add) \
-+	((lvls) > (lvl) ? EARLY_ENTRIES(lvl, vstart, vend) + (add) : 0)
- 
- #define EARLY_PAGES(lvls, vstart, vend, add) (1 	/* PGDIR page */				\
- 	+ EARLY_LEVEL(3, (lvls), (vstart), (vend), add) /* each entry needs a next level page table */	\
-diff --git a/arch/arm64/include/asm/pgtable-hwdef.h b/arch/arm64/include/asm/pgtable-hwdef.h
-index a9136cc551cc..3c544edc3968 100644
---- a/arch/arm64/include/asm/pgtable-hwdef.h
-+++ b/arch/arm64/include/asm/pgtable-hwdef.h
-@@ -7,40 +7,43 @@
- 
- #include <asm/memory.h>
- 
-+#define PTDESC_ORDER 3
-+
- /*
-  * Number of page-table levels required to address 'va_bits' wide
-  * address, without section mapping. We resolve the top (va_bits - PAGE_SHIFT)
-- * bits with (PAGE_SHIFT - 3) bits at each page table level. Hence:
-+ * bits with (PAGE_SHIFT - PTDESC_ORDER) bits at each page table level. Hence:
-  *
-- *  levels = DIV_ROUND_UP((va_bits - PAGE_SHIFT), (PAGE_SHIFT - 3))
-+ *  levels = DIV_ROUND_UP((va_bits - PAGE_SHIFT), (PAGE_SHIFT - PTDESC_ORDER))
-  *
-  * where DIV_ROUND_UP(n, d) => (((n) + (d) - 1) / (d))
-  *
-  * We cannot include linux/kernel.h which defines DIV_ROUND_UP here
-  * due to build issues. So we open code DIV_ROUND_UP here:
-  *
-- *	((((va_bits) - PAGE_SHIFT) + (PAGE_SHIFT - 3) - 1) / (PAGE_SHIFT - 3))
-+ *	((((va_bits) - PAGE_SHIFT) + (PAGE_SHIFT - PTDESC_ORDER) - 1) / (PAGE_SHIFT - PTDESC_ORDER))
-  *
-  * which gets simplified as :
-  */
--#define ARM64_HW_PGTABLE_LEVELS(va_bits) (((va_bits) - 4) / (PAGE_SHIFT - 3))
-+#define ARM64_HW_PGTABLE_LEVELS(va_bits) \
-+	(((va_bits) - PTDESC_ORDER - 1) / (PAGE_SHIFT - PTDESC_ORDER))
- 
- /*
-  * Size mapped by an entry at level n ( -1 <= n <= 3)
-- * We map (PAGE_SHIFT - 3) at all translation levels and PAGE_SHIFT bits
-+ * We map (PAGE_SHIFT - PTDESC_ORDER) at all translation levels and PAGE_SHIFT bits
-  * in the final page. The maximum number of translation levels supported by
-  * the architecture is 5. Hence, starting at level n, we have further
-  * ((4 - n) - 1) levels of translation excluding the offset within the page.
-  * So, the total number of bits mapped by an entry at level n is :
-  *
-- *  ((4 - n) - 1) * (PAGE_SHIFT - 3) + PAGE_SHIFT
-+ *  ((4 - n) - 1) * (PAGE_SHIFT - PTDESC_ORDER) + PAGE_SHIFT
-  *
-  * Rearranging it a bit we get :
-- *   (4 - n) * (PAGE_SHIFT - 3) + 3
-+ *   (4 - n) * (PAGE_SHIFT - PTDESC_ORDER) + PTDESC_ORDER
-  */
--#define ARM64_HW_PGTABLE_LEVEL_SHIFT(n)	((PAGE_SHIFT - 3) * (4 - (n)) + 3)
-+#define ARM64_HW_PGTABLE_LEVEL_SHIFT(n)	((PAGE_SHIFT - PTDESC_ORDER) * (4 - (n)) + PTDESC_ORDER)
- 
--#define PTRS_PER_PTE		(1 << (PAGE_SHIFT - 3))
-+#define PTRS_PER_PTE		(1 << (PAGE_SHIFT - PTDESC_ORDER))
- 
- /*
-  * PMD_SHIFT determines the size a level 2 page table entry can map.
-@@ -49,7 +52,7 @@
- #define PMD_SHIFT		ARM64_HW_PGTABLE_LEVEL_SHIFT(2)
- #define PMD_SIZE		(_AC(1, UL) << PMD_SHIFT)
- #define PMD_MASK		(~(PMD_SIZE-1))
--#define PTRS_PER_PMD		(1 << (PAGE_SHIFT - 3))
-+#define PTRS_PER_PMD		(1 << (PAGE_SHIFT - PTDESC_ORDER))
- #endif
- 
- /*
-@@ -59,14 +62,14 @@
- #define PUD_SHIFT		ARM64_HW_PGTABLE_LEVEL_SHIFT(1)
- #define PUD_SIZE		(_AC(1, UL) << PUD_SHIFT)
- #define PUD_MASK		(~(PUD_SIZE-1))
--#define PTRS_PER_PUD		(1 << (PAGE_SHIFT - 3))
-+#define PTRS_PER_PUD		(1 << (PAGE_SHIFT - PTDESC_ORDER))
- #endif
- 
- #if CONFIG_PGTABLE_LEVELS > 4
- #define P4D_SHIFT		ARM64_HW_PGTABLE_LEVEL_SHIFT(0)
- #define P4D_SIZE		(_AC(1, UL) << P4D_SHIFT)
- #define P4D_MASK		(~(P4D_SIZE-1))
--#define PTRS_PER_P4D		(1 << (PAGE_SHIFT - 3))
-+#define PTRS_PER_P4D		(1 << (PAGE_SHIFT - PTDESC_ORDER))
- #endif
- 
- /*
-diff --git a/arch/arm64/kernel/pi/map_range.c b/arch/arm64/kernel/pi/map_range.c
-index 2b69e3beeef8..f74335e13929 100644
---- a/arch/arm64/kernel/pi/map_range.c
-+++ b/arch/arm64/kernel/pi/map_range.c
-@@ -31,7 +31,7 @@ void __init map_range(u64 *pte, u64 start, u64 end, u64 pa, pgprot_t prot,
- {
- 	u64 cmask = (level == 3) ? CONT_PTE_SIZE - 1 : U64_MAX;
- 	pteval_t protval = pgprot_val(prot) & ~PTE_TYPE_MASK;
--	int lshift = (3 - level) * (PAGE_SHIFT - 3);
-+	int lshift = (3 - level) * (PAGE_SHIFT - PTDESC_ORDER);
- 	u64 lmask = (PAGE_SIZE << lshift) - 1;
- 
- 	start	&= PAGE_MASK;
-diff --git a/arch/arm64/mm/kasan_init.c b/arch/arm64/mm/kasan_init.c
-index b65a29440a0c..211821f80571 100644
---- a/arch/arm64/mm/kasan_init.c
-+++ b/arch/arm64/mm/kasan_init.c
-@@ -190,7 +190,7 @@ static void __init kasan_pgd_populate(unsigned long addr, unsigned long end,
-  */
- static bool __init root_level_aligned(u64 addr)
- {
--	int shift = (ARM64_HW_PGTABLE_LEVELS(vabits_actual) - 1) * (PAGE_SHIFT - 3);
-+	int shift = (ARM64_HW_PGTABLE_LEVELS(vabits_actual) - 1) * (PAGE_SHIFT - PTDESC_ORDER);
- 
- 	return (addr % (PAGE_SIZE << shift)) == 0;
- }
-@@ -245,7 +245,7 @@ static int __init root_level_idx(u64 addr)
- 	 */
- 	u64 vabits = IS_ENABLED(CONFIG_ARM64_64K_PAGES) ? VA_BITS
- 							: vabits_actual;
--	int shift = (ARM64_HW_PGTABLE_LEVELS(vabits) - 1) * (PAGE_SHIFT - 3);
-+	int shift = (ARM64_HW_PGTABLE_LEVELS(vabits) - 1) * (PAGE_SHIFT - PTDESC_ORDER);
- 
- 	return (addr & ~_PAGE_OFFSET(vabits)) >> (shift + PAGE_SHIFT);
- }
-@@ -269,7 +269,7 @@ static void __init clone_next_level(u64 addr, pgd_t *tmp_pg_dir, pud_t *pud)
-  */
- static int __init next_level_idx(u64 addr)
- {
--	int shift = (ARM64_HW_PGTABLE_LEVELS(vabits_actual) - 2) * (PAGE_SHIFT - 3);
-+	int shift = (ARM64_HW_PGTABLE_LEVELS(vabits_actual) - 2) * (PAGE_SHIFT - PTDESC_ORDER);
- 
- 	return (addr >> (shift + PAGE_SHIFT)) % PTRS_PER_PTE;
- }
 -- 
-2.25.1
+2.33.0
 
 
