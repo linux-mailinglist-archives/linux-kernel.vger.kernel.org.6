@@ -1,163 +1,142 @@
-Return-Path: <linux-kernel+bounces-553484-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-553485-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 313B9A58A43
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 03:13:46 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 31836A58A55
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 03:15:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 34F2518825D0
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 02:13:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 693F2188CFAC
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 02:15:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FE9A19007D;
-	Mon, 10 Mar 2025 02:13:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7102F1922FB;
+	Mon, 10 Mar 2025 02:14:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HR3HVoEJ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=ethancedwards.com header.i=@ethancedwards.com header.b="e3SCGore"
+Received: from mout-p-201.mailbox.org (mout-p-201.mailbox.org [80.241.56.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 411C42C9A;
-	Mon, 10 Mar 2025 02:13:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C80C17A2E8;
+	Mon, 10 Mar 2025 02:14:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741572818; cv=none; b=lNTj7JZTICaKdQjl+zWjnPdZ9xfxq2m3YA/m79ITK/fUzZuyzomTL7FvHKCrCf+R2LHfz1fRE/XEOyfeadG/24rOtYVoJCnmEA4imy5ntNnfttx+f8lihPmKbTI2jtIINjnRX+ca24QUbyEs/AAZrDRWLXJbILtGoDTDhVz0Hug=
+	t=1741572895; cv=none; b=NKQLpxf0Pm0NSnCKAWUBGH3okxYEuHwXg9Zdrub6ANGvJLdvUoxDb1TjOIefQT9RLvX1CPCxcR/x6WpBrMiMf0ASDnyPwOK+uB2Asfi1ai52g3GAEiEPUIfyaC4Gifr1orh0TkIBwMrj9xYjD0sFXp5h41guKf/yXVeDszAT+g4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741572818; c=relaxed/simple;
-	bh=z9mLsHw9Q3v422/Yt1W+ofnnkznofgPzm/tT/dzXn38=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=LEsZghhSgnhWFmkV/b0uYgKtKJsNnZtnp8MEspnQ9DyXfXhW96yNcL8hjedqcIIV1AhxbBZWZfLrpAsiLZ+gbkiCpnTGkOnO/IyRn6LnXI9cIEAWlJUBjZYYE0cBJINcMzXClmST/I+oUHHnoyG6s3S4Wbe/wrDYTtRPawmu9Lg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HR3HVoEJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BEBEEC4CEE5;
-	Mon, 10 Mar 2025 02:13:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741572817;
-	bh=z9mLsHw9Q3v422/Yt1W+ofnnkznofgPzm/tT/dzXn38=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=HR3HVoEJs8Dj3SJUQJl/9yOkY3qzYNH49NJSed8dRp+v8BKG7DmZN4jkt97KyJc0b
-	 r5kJKlTVYyJPJBrKUJXCa+eJt0MrjnGYClR9q2KAzOQgc9Ixw+TUTAD8tHdCTm8INh
-	 TjfexCnSzVOWUHewX3eeZTMyY6U4YkR6yRaJPRelwGTDeWt4gQxZNbDP7QntiPZnyS
-	 EjZodPom+DIfeozpq4+YApfldJjutgQTSIgU9BY94Qm/1L2c6oI3wJoJC0p6IqKa2t
-	 xhqNc1/CG/p1coU/y2Ckk+KrUR5B9n1JH+6a7KFXAp2X2fTaGrHg44mpj2TaUh2CrL
-	 1ZnerZ2TWwT0w==
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-43cf58eea0fso2684815e9.0;
-        Sun, 09 Mar 2025 19:13:37 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVROONEp0hMlSe3i0NE40E5HLbzZg3OHtIqqq27HSUz95XyBdZpt6LO3qRXfO0IPP4/GRIo1eg5smfq@vger.kernel.org, AJvYcCVcxjFJL3LNutwf9F8+zGmzpmw9KiRjrbBSUAMOSdc8CvBKJif7eV5SvTUmDWnn+j97FpiF4fNULFc5tg==@vger.kernel.org, AJvYcCXsIZJG1H3IqLFXsCKYDrOrBpFmKLirDWMLOIL7Rw2u3IeJ3bhIiSeGIr40jmMzCj7pBvuNl3npSrGGNugR@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw/acw+ec21L5hkB3VVdQ+Nte2Vv9ilcdlYCltL4S1kUHZhHO5V
-	3A0JOvmH7gBuR66M+zRn2ns3j91KEK4G4yvpuaaMDYoRvtB6LE2pG4z+r47sNQvXW6j+kgXr2zD
-	Wtjyjnf5VVxEQi3grdUnWOBErG3U=
-X-Google-Smtp-Source: AGHT+IFKsAup9e8Gc1v8ulkbmHr98edm6s87EvlcdJ5Cvko4at1GaCbqwTsdJwbMKXfm/BQUgl53lstuyy4HISvzJV0=
-X-Received: by 2002:a05:600c:1d1a:b0:43c:e6d1:efe7 with SMTP id
- 5b1f17b1804b1-43ce6d1f1e6mr28755625e9.26.1741572816273; Sun, 09 Mar 2025
- 19:13:36 -0700 (PDT)
+	s=arc-20240116; t=1741572895; c=relaxed/simple;
+	bh=P1T3On3tQTNTqqVq7iaUH7NJxNTY4cbFFUUGfn6kpVA=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=RWJ4VQd5OGeAhdNm4xRsHf9wnm3k0D1cbxLFAjF1hTDXGzTT8wG99xMyy7orfgmf5xiTpish5MXV+ktjtuZZ27nW6Cog1tw8P13Hejm9DfkOys5mpiPtiadvMR3dKuw5PAXTtymBTlNsZKYXYuL/9n4nC7/Mh8oR0evzcMvq/V4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ethancedwards.com; spf=pass smtp.mailfrom=ethancedwards.com; dkim=pass (2048-bit key) header.d=ethancedwards.com header.i=@ethancedwards.com header.b=e3SCGore; arc=none smtp.client-ip=80.241.56.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ethancedwards.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ethancedwards.com
+Received: from smtp102.mailbox.org (smtp102.mailbox.org [10.196.197.102])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-201.mailbox.org (Postfix) with ESMTPS id 4ZB0pC6YMYz9sQX;
+	Mon, 10 Mar 2025 03:14:43 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ethancedwards.com;
+	s=MBO0001; t=1741572884;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=PgClmaMdMd5lNbUr6yZ8zi6Q3ctl2WTDB68s025YeDo=;
+	b=e3SCGorePYw2i0g46qGpLBJi/BH4Kcf88f/Zm9Izi0ERBGOhnkpMxHfhHkUbuDRl/S1jts
+	j7jqeKvRw5BDPCrNpSK0DSmF8FOg7HKn7J4Mel9uKnGReOvfH+DsAw4SG+XV0rPyh5vEzA
+	iVLppE17RudH/xZCEFq8K7DqBzlMxKV5ldeEo+wOtXS/WxktjKNojRX3DsjyUtkxWIv8Ec
+	swRy5QaJwI0j8Ibsasu1bKhBXfief2WUBekCay5ulknSYmiI9oVH6iOznFTSnXoaOAWMWT
+	vxob/lcl4cJwVwpRXZmqBgTcaUCXgFfvpLyhmxwuMh0ucOCWf81UrssjRQfQpg==
+From: Ethan Carter Edwards <ethan@ethancedwards.com>
+Date: Sun, 09 Mar 2025 22:14:36 -0400
+Subject: [PATCH] rust/kernel/faux: mark Registration methods inline
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250224112042.60282-1-xry111@xry111.site> <91797ac4bbe27d7d60b89053050e429bcd630db3.camel@xry111.site>
-In-Reply-To: <91797ac4bbe27d7d60b89053050e429bcd630db3.camel@xry111.site>
-From: Guo Ren <guoren@kernel.org>
-Date: Mon, 10 Mar 2025 10:13:24 +0800
-X-Gmail-Original-Message-ID: <CAJF2gTRXyMX+9C_aEDbxAsxWDD2rbnDWO775YDZ3EmrQ=QinfQ@mail.gmail.com>
-X-Gm-Features: AQ5f1JpxPLjcz__aP8mbaWjnVB43tgqVJ36D7ViX6jxsCAtJ6NThRTlt4NTpaRI
-Message-ID: <CAJF2gTRXyMX+9C_aEDbxAsxWDD2rbnDWO775YDZ3EmrQ=QinfQ@mail.gmail.com>
-Subject: Re: Ping: [PATCH 0/3] Drop explicit --hash-style= setting for new
-To: Xi Ruoyao <xry111@xry111.site>
-Cc: Huacai Chen <chenhuacai@kernel.org>, WANG Xuerui <kernel@xen0n.name>, 
-	Palmer Dabbelt <palmer@dabbelt.com>, Fangrui Song <i@maskray.me>, Tiezhu Yang <yangtiezhu@loongson.cn>, 
-	linux-csky@vger.kernel.org, loongarch@lists.linux.dev, 
-	linux-riscv@lists.infradead.org, linux-arch@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250309-faux-inline-v1-1-c1b692862433@ethancedwards.com>
+X-B4-Tracking: v=1; b=H4sIAAtLzmcC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDI1MDYwNL3bTE0grdzLyczLxUXbNki9TUxBTDpOQUAyWgjoKi1LTMCrBp0bG
+ 1tQAfoO5lXQAAAA==
+X-Change-ID: 20250309-faux-inline-6c8eead1bcd0
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+ "Rafael J. Wysocki" <rafael@kernel.org>, Danilo Krummrich <dakr@kernel.org>, 
+ Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+ Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+ =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+ Benno Lossin <benno.lossin@proton.me>, 
+ Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, 
+ Trevor Gross <tmgross@umich.edu>, Nathan Chancellor <nathan@kernel.org>, 
+ Nick Desaulniers <nick.desaulniers+lkml@gmail.com>, 
+ Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>
+Cc: rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ llvm@lists.linux.dev, Ethan Carter Edwards <ethan@ethancedwards.com>
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1825;
+ i=ethan@ethancedwards.com; h=from:subject:message-id;
+ bh=P1T3On3tQTNTqqVq7iaUH7NJxNTY4cbFFUUGfn6kpVA=;
+ b=LS0tLS1CRUdJTiBQR1AgTUVTU0FHRS0tLS0tCgpvd0o0bkp2QXk4ekFKWGJEOXFoNThlVGp6e
+ GhQcXlVeHBKL3o1dHRXazNpcTJaOTc5N0kzUXZ6T2RobXM3REc5ClgydmZMODJxdi9PZlg5WWw0
+ bDVIS1F1REdCZURySmdpeS84YzViU0htak1VZHY1MWFZS1p3OG9FTW9TQmkxTUEKSnJLR25aRmg
+ 4cXgrcmR5Y1hSekxib3F0ZWIwMHRrNVJjR29UZDVPQlp2VHZpWlVSczdjYk16S2NVZHA0UGVxdA
+ poVlFXeHpOVjQzbnAyd1Q3anRXeC9Ybys0ZUR5dU04Y0Z3N3hBZ0FuYlVuSwo9MUxKbgotLS0tL
+ UVORCBQR1AgTUVTU0FHRS0tLS0tCg==
+X-Developer-Key: i=ethan@ethancedwards.com; a=openpgp;
+ fpr=2E51F61839D1FA947A7300C234C04305D581DBFE
 
-On Wed, Mar 5, 2025 at 9:27=E2=80=AFPM Xi Ruoyao <xry111@xry111.site> wrote=
-:
->
-> Ping.
->
-> On Mon, 2025-02-24 at 19:20 +0800, Xi Ruoyao wrote:
-> > For riscv, csky, and LoongArch, GNU hash had already become the de-
-> > facto
-> > standard when they borned, so there's no Glibc/Musl releases for them
-> > without GNU hash support, and the traditional SysV hash is just
-> > wasting
-> > space for them.
-> >
-> > Remove those settings and follow the distro toolchain default, which
-> > is
-> > likely --hash-style=3Dgnu.  In the past it could break vDSO self tests,
-> > but now the issue has been addressed by commit
-> > e0746bde6f82 ("selftests/vDSO: support DT_GNU_HASH").
-> >
-> > Xi Ruoyao (3):
-> >   riscv: vDSO: Remove --hash-style=3Dboth
-The patch's comment is incorrect; when I removed --hash-style=3Dboth,
-the output still contained the HASH, and no space was saved.
+When building the kernel on Arch Linux using on x86_64 with tools:
+$ rustc --version
+rustc 1.84.0 (9fc6b4312 2025-01-07)
+$ cargo --version
+cargo 1.84.0 (66221abde 2024-11-19)
+$ clang --version
+clang version 19.1.7
+Target: x86_64-pc-linux-gnu
 
---hash-style=3Dboth and after the patch are the same:
-Section Headers:
-  [Nr] Name              Type             Address           Offset
-       Size              EntSize          Flags  Link  Info  Align
-  [ 0]                   NULL             0000000000000000  00000000
-       0000000000000000  0000000000000000           0     0     0
-  [ 1] .hash             HASH             0000000000000120  00000120
-       000000000000003c  0000000000000004   A       3     0     8
-  [ 2] .gnu.hash         GNU_HASH         0000000000000160  00000160
-       0000000000000044  0000000000000000   A       3     0     8
+The following symbols are generated:
+$ nm vmlinux | rg ' _R' | rustfilt | rg faux
+ffffffff81959ae0 T <kernel::faux::Registration>::new
+ffffffff81959b40 T <kernel::faux::Registration as core::ops::drop::Drop>::drop
 
-But, --hash-style=3Dgnu could save space:
-Section Headers:
-  [Nr] Name              Type             Address           Offset
-       Size              EntSize          Flags  Link  Info  Align
-  [ 0]                   NULL             0000000000000000  00000000
-       0000000000000000  0000000000000000           0     0     0
-  [ 1] .gnu.hash         GNU_HASH         0000000000000120  00000120
-       0000000000000044  0000000000000000   A       2     0     8
+However, these Rust symbols are wrappers around bindings in the C faux
+code. Inlining these functions removes the middle-man wrapper function
+After applying this patch, the above function signatures disappear.
 
+Link: https://github.com/Rust-for-Linux/linux/issues/1145
+Signed-off-by: Ethan Carter Edwards <ethan@ethancedwards.com>
+---
+ rust/kernel/faux.rs | 2 ++
+ 1 file changed, 2 insertions(+)
 
-Here is my GCC VERSION:
-Using built-in specs.
-COLLECT_GCC=3D/rvhome/ren.guo/source/toolchain/rv64lp64/bin/riscv64-unknown=
--linux-gnu-gcc
-COLLECT_LTO_WRAPPER=3D/rvhome/ren.guo/source/toolchain/rv64lp64/bin/../libe=
-xec/gcc/riscv64-unknown-linux-gnu/13.2.0/lto-wrapper
-Target: riscv64-unknown-linux-gnu
-Configured with:
-/home/runner/work/riscv-gnu-toolchain/riscv-gnu-toolchain/gcc/configure
---target=3Driscv64-unknown-linux-gnu --prefix=3D/opt/riscv
---with-sysroot=3D/opt/riscv/sysroot --with-pkgversion=3D
---with-system-zlib --enable-shared --enable-tls
---enable-languages=3Dc,c++,fortran --disable-libmudflap --disable-libssp
---disable-libquadmath --disable-libsanitizer --disable-nls
---disable-bootstrap --src=3D.././gcc --disable-default-pie
---disable-multilib --with-abi=3Dlp64d --with-arch=3Drv64gc
---with-tune=3Drocket --with-isa-spec=3D20191213 'CFLAGS_FOR_TARGET=3D-O2
--mcmodel=3Dmedlow' 'CXXFLAGS_FOR_TARGET=3D-O2    -mcmodel=3Dmedlow'
-Thread model: posix
-Supported LTO compression algorithms: zlib
-gcc version 13.2.0 ()
+diff --git a/rust/kernel/faux.rs b/rust/kernel/faux.rs
+index 5acc0c02d451f6d5a26b837d509374d508f26368..5fdd85ea64398130066d38e42f7c7485673f290c 100644
+--- a/rust/kernel/faux.rs
++++ b/rust/kernel/faux.rs
+@@ -24,6 +24,7 @@
+ 
+ impl Registration {
+     /// Create and register a new faux device with the given name.
++    #[inline]
+     pub fn new(name: &CStr) -> Result<Self> {
+         // SAFETY:
+         // - `name` is copied by this function into its own storage
+@@ -50,6 +51,7 @@ fn as_ref(&self) -> &device::Device {
+ }
+ 
+ impl Drop for Registration {
++    #[inline]
+     fn drop(&mut self) {
+         // SAFETY: `self.0` is a valid registered faux_device via our type invariants.
+         unsafe { bindings::faux_device_destroy(self.as_raw()) }
 
-So, do you mean "--hash-style=3Dgnu"?
+---
+base-commit: fc2f191f850d9a2fb1b78c51d49076e60fb42c49
+change-id: 20250309-faux-inline-6c8eead1bcd0
 
-> >   csky: vDSO: Remove --hash-style=3Dboth
-> >   LoongArch: vDSO: Remove --hash-style=3Dsysv
-> >
-> >  arch/csky/kernel/vdso/Makefile  | 2 +-
-> >  arch/loongarch/vdso/Makefile    | 2 +-
-> >  arch/riscv/kernel/vdso/Makefile | 2 +-
-> >  3 files changed, 3 insertions(+), 3 deletions(-)
-> >
->
-> --
-> Xi Ruoyao <xry111@xry111.site>
-> School of Aerospace Science and Technology, Xidian University
+Best regards,
+-- 
+Ethan Carter Edwards <ethan@ethancedwards.com>
 
-
-
---=20
-Best Regards
- Guo Ren
 
