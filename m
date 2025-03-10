@@ -1,284 +1,183 @@
-Return-Path: <linux-kernel+bounces-554395-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-554270-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48B8AA59733
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 15:13:29 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 49BDEA59590
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 14:04:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A5E913AC13C
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 14:13:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C0928188D052
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 13:04:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EF5522B8A9;
-	Mon, 10 Mar 2025 14:13:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6023229B16;
+	Mon, 10 Mar 2025 13:04:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="EhDl7WWw"
-Received: from mail-m15598.qiye.163.com (mail-m15598.qiye.163.com [101.71.155.98])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iM+SNotq"
+Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com [209.85.208.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CD3D3EA76
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 14:13:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=101.71.155.98
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F83A22170B;
+	Mon, 10 Mar 2025 13:04:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741615989; cv=none; b=q4NUsJEia1kMiBSI/JphVQXvPW291sXH9FmHuK0KYwJPdFymaRMLVtFrdR5FQvYM8PeYNyUD2Rm7YeQiD6LY4fn5bUM5bVmSo/tUxLEkMu3/KQyCVmd2A89MeOOKdEYrtGV9xzcf4IkIK8WDAqGCkXvy/EYvet1vfyMRgjaD6WM=
+	t=1741611876; cv=none; b=HhdDo4ScN2GWpjUZzKWFTifYhbN/JsOMVTAAjPrnL5DO8hoos9lWVHWw2I4ksws1Xr/8JoAzhYfcmg7cgx31JZwZJ4HPVyVlnRkQN1Tfz7pYXJaUNknILCAD9wWIdX0/qiakaMvy48C4R/7UczXOluEIZQgzvvzqfdNOH7ZpKKw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741615989; c=relaxed/simple;
-	bh=fjNAGgrKeZTrzftZD3mX5G6O3Fkd7HV77QsyAn9TYi4=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=I2IaACliI+0WOAGY8Vvc3zpUOjAKdBaVlvlVeCohyITb720Kx+XyuP0gMPpLxqMKxA7vAWE5wMHgcam+HxyUONi0Y3kCJ7RQclxg29ufmuGrvqVRL4aEyqmyChtLPSooe7zFtGN83oMYfzt3rrkz2iMV4FMiAGL8T4hXxkY6Gcg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=EhDl7WWw; arc=none smtp.client-ip=101.71.155.98
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
-Received: from zyb-HP-ProDesk-680-G2-MT.. (unknown [58.22.7.114])
-	by smtp.qiye.163.com (Hmail) with ESMTP id dc1882a3;
-	Mon, 10 Mar 2025 18:42:24 +0800 (GMT+08:00)
-From: Damon Ding <damon.ding@rock-chips.com>
-To: heiko@sntech.de
-Cc: andy.yan@rock-chips.com,
-	hjc@rock-chips.com,
-	maarten.lankhorst@linux.intel.com,
-	mripard@kernel.org,
-	tzimmermann@suse.de,
-	airlied@gmail.com,
-	simona@ffwll.ch,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	andrzej.hajda@intel.com,
-	neil.armstrong@linaro.org,
-	rfoss@kernel.org,
-	Laurent.pinchart@ideasonboard.com,
-	jonas@kwiboo.se,
-	jernej.skrabec@gmail.com,
-	dmitry.baryshkov@linaro.org,
-	dianders@chromium.org,
-	sebastian.reichel@collabora.com,
-	cristian.ciocaltea@collabora.com,
-	boris.brezillon@collabora.com,
-	l.stach@pengutronix.de,
-	dri-devel@lists.freedesktop.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Damon Ding <damon.ding@rock-chips.com>
-Subject: [PATCH v8 11/13] drm/rockchip: analogix_dp: Add support for RK3588
-Date: Mon, 10 Mar 2025 18:41:12 +0800
-Message-Id: <20250310104114.2608063-12-damon.ding@rock-chips.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250310104114.2608063-1-damon.ding@rock-chips.com>
-References: <20250310104114.2608063-1-damon.ding@rock-chips.com>
+	s=arc-20240116; t=1741611876; c=relaxed/simple;
+	bh=MRIqdJjth7q4rC+R2rNFK723Fwf8fSj4srhXO5Unusg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=G3ktQFKWm/HKaIeaYNdKIgFpj3Oc24uA1XGJ7D/dpRIXkDFQBGpvHH7auXOhJkUh87kMOdvk4ClFgDcRYL2nxB3HCFXn/FvbpT+zAhXAs/BUklKHe7+cOHReue5gIgJ0mEK8Rn+jzoz/OGtdkO0lIq6kCBoEBNK6ai7UeWfeTIo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iM+SNotq; arc=none smtp.client-ip=209.85.208.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-30bfc8faef9so22783301fa.1;
+        Mon, 10 Mar 2025 06:04:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741611872; x=1742216672; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=3K7OcR09rEfJh9DFN1wj/M3SwMYinK3/xaauKUodjYw=;
+        b=iM+SNotqfAc+FDNKLdTtPpswlt8hzkm11rtBCFPfZ4lM1wTcO4HwzqKul8p0MZg4ZZ
+         A0LZ5ggeD/vzkrh9uOqsWyhf4BgdLojoJYrDClLFFEHEdLaWdwvvWSJdeMIwDiemiRxA
+         FDS7bksWmUtM93brUSyrdsi7awZ5IGgLsNXHFJSye8tVu2jFq8dkjrN0iDcl/YVcNXtB
+         4U3muRh1LhV5CJLHOTdFs8vjnI6Zws0vDxW+4xRTGzxCWNZv9y0MnfXpzvbliCkaiAJw
+         JlWBLYLIkSqmIqlFDSt8JfwZxzb5QqBB92oIPJn9HNxL7AMX8Sl1xKMv6cvQ+IbJ2kGc
+         IRcQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741611872; x=1742216672;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=3K7OcR09rEfJh9DFN1wj/M3SwMYinK3/xaauKUodjYw=;
+        b=BXSSN3QS7mqAdkMmOfVvgUZGDlw56z1zWZKH4oeyCp52/yj+5vk0/8K1yyOJLCpxve
+         KVO36Sao31dd8t6Rsmjy5R0ECR8f4nl7krPVWaClR2//WZ++rvWKj4K4fjmMguJGVqtY
+         mlMUE0M6DA1rwRXIc4W+hCJPmWBQ4Vk8cEKmL+KqTVoKtMNc24D3Ayzywc9eyDxv1GTd
+         7hR+P0ooNC/7UrmYq78PTd4xXgLWxSDjy4l8P83piF+DeNkzD7t2CzWkhKsXXLOOfJ/t
+         Hp1PAdvTa7aH53K5JWWNPDYVbYLLMQjjZBoauf6c84aa+r2xffshsBOTWnAW6QAqwawT
+         HSZQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU96dpnwuFYiA3piI+PWzY2FN/9RfYaRGXfHu3nTnAbHuizc+3UbisVPDspJMHYagUOX3zIME7kemI/OsA=@vger.kernel.org, AJvYcCWV6CiS4F/d4XhP5iLDJSHrcxYh8FAYFVGkKWAcIp9iDMoeOOvrhS0E8Yx719ZVFgpLWLVFDsrCPsT72B/3WwHoxAokwKSI@vger.kernel.org
+X-Gm-Message-State: AOJu0YzUdFbeBz9jDPFz4D0m24GOai4UErHna0z8W68HQC7ktueQdtlw
+	vKFj98jwp+XUpDG8CB7mttTKZ0Lq2wFk7z+m0YBbJxyrbjfJC4gJ
+X-Gm-Gg: ASbGncsuz5a+4LKQN4Kh/+EH1OZhz79nYXmNXR2PUiqqgA8z3qWRbUlTswKTZu5KnO1
+	3JBtiGzQW96rSxKDx03JiNXcWJuHboHALC9ybJcteBwXn6wr4DfBpc3dn13L+s0OPCLv7jEe4kC
+	Bxoqqli3WqmN8ozaADsny4N61QoFMajSb88uxXLa42ixLlhg54yvx8L5TYlScbmJjz0qaoW8e2x
+	Ty2sJn2duh0Gb3Fkx+xPfJata2PIY8O4x7afvsRzTmgu50m8jDIDfcikABF9w6sYzn+NzlEsoi/
+	3Ur7Do75dV8bLLqP21hOtsn92G2E0tzxVb3u0sHjZedQrblP/xv5
+X-Google-Smtp-Source: AGHT+IEdfHviVl8qv73NLqnbG5LMKxIjf1w+f+nIk6opcs2/kJ6jxk6indLGkIKxAROrKC0+KlNNuw==
+X-Received: by 2002:a05:6512:ba6:b0:545:a2f:22ba with SMTP id 2adb3069b0e04-54990ec1b80mr4453322e87.37.1741611871880;
+        Mon, 10 Mar 2025 06:04:31 -0700 (PDT)
+Received: from localhost ([2a02:168:59f0:1:b0ab:dd5e:5c82:86b0])
+        by smtp.gmail.com with UTF8SMTPSA id a640c23a62f3a-ac2523d940csm641944666b.178.2025.03.10.06.04.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 10 Mar 2025 06:04:29 -0700 (PDT)
+Date: Mon, 10 Mar 2025 14:04:23 +0100
+From: =?iso-8859-1?Q?G=FCnther?= Noack <gnoack3000@gmail.com>
+To: Paul Moore <paul@paul-moore.com>,
+	=?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>,
+	sergeh@kernel.org
+Cc: David Howells <dhowells@redhat.com>, Kees Cook <keescook@chromium.org>,
+	Paul Moore <paul@paul-moore.com>,
+	linux-security-module@vger.kernel.org,
+	Konstantin Meskhidze <konstantin.meskhidze@huawei.com>,
+	Jann Horn <jannh@google.com>, linux-kernel@vger.kernel.org,
+	Peter Newman <peternewman@google.com>
+Subject: Re: [RFC 1/2] landlock: Multithreading support for
+ landlock_restrict_self()
+Message-ID: <20250310.990b29c809af@gnoack.org>
+References: <20250221184417.27954-2-gnoack3000@gmail.com>
+ <20250221184417.27954-3-gnoack3000@gmail.com>
+ <20250227.Aequah6Avieg@digikod.net>
+ <20250228.b3794e33d5c0@gnoack.org>
+ <20250304.aroh3Aifiiz9@digikod.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZQ0sdTFZNHxhKH0pKS08aQ0JWFRQJFh
-	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSUhCS0
-	NVSktLVUpCWQY+
-X-HM-Tid: 0a957fa60ef003a3kunmdc1882a3
-X-HM-MType: 1
-X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6NU06Phw6UTIDPiNLFTkwPRAq
-	Vi0KCSNVSlVKTE9KTUtISE9NSUhDVTMWGhIXVR8aFhQVVR8SFRw7CRQYEFYYExILCFUYFBZFWVdZ
-	EgtZQVlOQ1VJSVVMVUpKT1lXWQgBWUFNT0hINwY+
-DKIM-Signature:a=rsa-sha256;
-	b=EhDl7WWwc5UH/JCcRBF/ghHkEAdtUrv9lku1B3YM0UJK93mOE/SmsKdRVJBw/mDqqZB2MmJAlJhvu3VPw8veBV6g5/hsZHPmssvXqK7sXDVjXPSr+gaWNVEpD3BOk7HHXa6lm2UpFGMIuFmWc7WiVvd/bFTSoYG3/SqwjwBFzVk=; s=default; c=relaxed/relaxed; d=rock-chips.com; v=1;
-	bh=MmAgdxXY+qxEevcP9ldCLwQthi/h62Xx0tBGh/13AqU=;
-	h=date:mime-version:subject:message-id:from;
+In-Reply-To: <20250304.aroh3Aifiiz9@digikod.net>
 
-RK3588 integrates the Analogix eDP 1.3 TX controller IP and the HDMI/eDP
-TX Combo PHY based on a Samsung IP block. There are also two independent
-eDP display interface with different address on RK3588 Soc.
+Hello Paul and Serge!
 
-The patch currently adds only the basic support, specifically RGB output
-up to 4K@60Hz, without the tests for audio, PSR and other eDP 1.3 specific
-features.
+On Tue, Mar 04, 2025 at 09:25:51PM +0100, Mickaël Salaün wrote:
+> On Fri, Feb 28, 2025 at 06:33:55PM +0100, Günther Noack wrote:
+> > Hello!
+> > 
+> > Thanks for the review!
+> > 
+> > I'm adding David Howells to this thread as well.  David, maybe you can
+> > help us and suggest a appropriate way to update the struct cred across
+> > multiple threads?
 
-In additon, the above Analogix IP has always been utilized as eDP on
-Rockchip platform, despite its capability to also support the DP v1.2.
-Therefore, the newly added logs will contain the term 'edp' rather than
-'dp'. And the newly added 'apb' reset control is to ensure the APB bus
-of eDP controller works well on the RK3588 SoC.
+Paul and Serge, since you are volunteering to take ownership of
+credentials, maybe you can advise on what is the best approach here?
 
-Acked-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Signed-off-by: Damon Ding <damon.ding@rock-chips.com>
+To summarize the approaches that I have been discussing with Mickaël:
 
----
+Approach 1: Use the creds API thread-by-thread (implemented here)
 
-Changes in v2:
-- Add support for the other eDP output edp1
+  * Each task calls prepare_creds() and commit_creds() on its own, in
+    line with the way the API is designed to be used (from a single
+    task).
+  * Task work gets scheduled with a pseudo-signal and the task that
+    invoked the syscall is waiting for all of them to return.
+  * Task work can fail at the beginning due to prepare_creds(), in
+    which case all tasks have to abort_creds(). Additional
+    synchronization is needed for that.
 
-Changes in v3:
-- Fix the unexpected use of alias
-- Add more details in commit message
+  Drawback: We need to grab the system-global task lock to prevent new
+  thread creation and also grab the per-process signal lock to prevent
+  races with other creds accesses, for the entire time as we wait for
+  each task to do the task work.
 
-Changes in v4:
-- Add the 'apb' reset control
+Approach 2: Attempt to do the prepare_creds() step in the calling task.
 
-Changes in v5:
-- Use drm_...()/dev_...() instead of DRM_...()
-- Clean &rockchip_dp_chip_data.reg related comments in commit message
-- Move the modifications in anlogix_dp.h to the Analogix side in order
-  to avoid the warning:
+  * Would use an API similar to what keyctl uses for the
+    parent-process update.
+  * This side-steps the credentials update API as it is documented in
+    Documentation, using the cred_alloc_blank() helper and replicating
+    some prepare_creds() logic.
 
-  drivers/gpu/drm/bridge/analogix/analogix_dp_core.c:1506:10: warning:
-  enumeration value 'RK3588_EDP' not handled in switch [-Wswitch]
-          switch (dp->plat_data->dev_type) {
+  Drawback: This would introduce another use of the cred_alloc_blank()
+  API (and the cred_transfer LSM hook), which would otherwise be
+  reasonable to delete if we can remove the keyctl use case.
+  (https://lore.kernel.org/all/20240805-remove-cred-transfer-v2-0-a2aa1d45e6b8@google.com/)
 
-Changes in v6:
-- Pass 'dp' in drm_...() rather than 'dp->drm_dev'
-- Use drm_...() uniformly rather than mixing drm_...() and dev_..()
+Approach 3: Store Landlock domains outside of credentials altogether
 
-Changes in v7:
-- Just keep the DRM_...() as they were in the previous for this series
----
- .../gpu/drm/rockchip/analogix_dp-rockchip.c   | 61 ++++++++++++++++++-
- 1 file changed, 58 insertions(+), 3 deletions(-)
+  * We could also store a task's Landlock domain as a pointer in the
+    per-task security blob, and refcount these.  We would need to make
+    sure that they get newly referenced and updated in the same
+    scenarios as they do within struct cred today.
+  * We could then guard accesses to a task's Landlock domain with a
+    more classic locking mechanism.  This would make it possible to
+    update the Landlock domain of all tasks in a process without
+    having to go through pseudo-signals.
 
-diff --git a/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c b/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c
-index 5632b7e3e122..d30f0983a53a 100644
---- a/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c
-+++ b/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c
-@@ -52,11 +52,13 @@ struct rockchip_grf_reg_field {
- /**
-  * struct rockchip_dp_chip_data - splite the grf setting of kind of chips
-  * @lcdc_sel: grf register field of lcdc_sel
-+ * @edp_mode: grf register field of edp_mode
-  * @chip_type: specific chip type
-  * @reg: register base address
-  */
- struct rockchip_dp_chip_data {
- 	const struct rockchip_grf_reg_field lcdc_sel;
-+	const struct rockchip_grf_reg_field edp_mode;
- 	u32	chip_type;
- 	u32	reg;
- };
-@@ -71,6 +73,7 @@ struct rockchip_dp_device {
- 	struct clk               *grfclk;
- 	struct regmap            *grf;
- 	struct reset_control     *rst;
-+	struct reset_control     *apbrst;
- 
- 	const struct rockchip_dp_chip_data *data;
- 
-@@ -116,6 +119,10 @@ static int rockchip_dp_pre_init(struct rockchip_dp_device *dp)
- 	usleep_range(10, 20);
- 	reset_control_deassert(dp->rst);
- 
-+	reset_control_assert(dp->apbrst);
-+	usleep_range(10, 20);
-+	reset_control_deassert(dp->apbrst);
-+
- 	return 0;
- }
- 
-@@ -137,12 +144,21 @@ static int rockchip_dp_poweron(struct analogix_dp_plat_data *plat_data)
- 		return ret;
- 	}
- 
-+	ret = rockchip_grf_field_write(dp->grf, &dp->data->edp_mode, 1);
-+	if (ret != 0)
-+		DRM_DEV_ERROR(dp->dev, "failed to set edp mode %d\n", ret);
-+
- 	return ret;
- }
- 
- static int rockchip_dp_powerdown(struct analogix_dp_plat_data *plat_data)
- {
- 	struct rockchip_dp_device *dp = pdata_encoder_to_dp(plat_data);
-+	int ret;
-+
-+	ret = rockchip_grf_field_write(dp->grf, &dp->data->edp_mode, 0);
-+	if (ret != 0)
-+		DRM_DEV_ERROR(dp->dev, "failed to set edp mode %d\n", ret);
- 
- 	clk_disable_unprepare(dp->pclk);
- 
-@@ -206,6 +222,10 @@ static void rockchip_dp_drm_encoder_enable(struct drm_encoder *encoder,
- 	struct rockchip_dp_device *dp = encoder_to_dp(encoder);
- 	struct drm_crtc *crtc;
- 	struct drm_crtc_state *old_crtc_state;
-+	struct of_endpoint endpoint;
-+	struct device_node *remote_port, *remote_port_parent;
-+	char name[32];
-+	u32 port_id;
- 	int ret;
- 
- 	crtc = rockchip_dp_drm_get_new_crtc(encoder, state);
-@@ -223,13 +243,27 @@ static void rockchip_dp_drm_encoder_enable(struct drm_encoder *encoder,
- 		return;
- 	}
- 
--	ret = drm_of_encoder_active_endpoint_id(dp->dev->of_node, encoder);
-+	ret = drm_of_encoder_active_endpoint(dp->dev->of_node, encoder, &endpoint);
- 	if (ret < 0)
- 		return;
- 
--	DRM_DEV_DEBUG(dp->dev, "vop %s output to dp\n", (ret) ? "LIT" : "BIG");
-+	remote_port_parent = of_graph_get_remote_port_parent(endpoint.local_node);
-+	if (remote_port_parent) {
-+		if (of_get_child_by_name(remote_port_parent, "ports")) {
-+			remote_port = of_graph_get_remote_port(endpoint.local_node);
-+			of_property_read_u32(remote_port, "reg", &port_id);
-+			of_node_put(remote_port);
-+			sprintf(name, "%s vp%d", remote_port_parent->full_name, port_id);
-+		} else {
-+			sprintf(name, "%s %s",
-+				remote_port_parent->full_name, endpoint.id ? "vopl" : "vopb");
-+		}
-+		of_node_put(remote_port_parent);
-+
-+		DRM_DEV_DEBUG(dp->dev, "vop %s output to dp\n", (ret) ? "LIT" : "BIG");
-+	}
- 
--	ret = rockchip_grf_field_write(dp->grf, &dp->data->lcdc_sel, ret);
-+	ret = rockchip_grf_field_write(dp->grf, &dp->data->lcdc_sel, endpoint.id);
- 	if (ret != 0)
- 		DRM_DEV_ERROR(dp->dev, "Could not write to GRF: %d\n", ret);
- 
-@@ -323,6 +357,12 @@ static int rockchip_dp_of_probe(struct rockchip_dp_device *dp)
- 		return PTR_ERR(dp->rst);
- 	}
- 
-+	dp->apbrst = devm_reset_control_get_optional(dev, "apb");
-+	if (IS_ERR(dp->apbrst)) {
-+		DRM_DEV_ERROR(dev, "failed to get apb reset control\n");
-+		return PTR_ERR(dp->apbrst);
-+	}
-+
- 	return 0;
- }
- 
-@@ -525,9 +565,24 @@ static const struct rockchip_dp_chip_data rk3288_dp[] = {
- 	{ /* sentinel */ }
- };
- 
-+static const struct rockchip_dp_chip_data rk3588_edp[] = {
-+	{
-+		.edp_mode = GRF_REG_FIELD(0x0000, 0, 0),
-+		.chip_type = RK3588_EDP,
-+		.reg = 0xfdec0000,
-+	},
-+	{
-+		.edp_mode = GRF_REG_FIELD(0x0004, 0, 0),
-+		.chip_type = RK3588_EDP,
-+		.reg = 0xfded0000,
-+	},
-+	{ /* sentinel */ }
-+};
-+
- static const struct of_device_id rockchip_dp_dt_ids[] = {
- 	{.compatible = "rockchip,rk3288-dp", .data = &rk3288_dp },
- 	{.compatible = "rockchip,rk3399-edp", .data = &rk3399_edp },
-+	{.compatible = "rockchip,rk3588-edp", .data = &rk3588_edp },
- 	{}
- };
- MODULE_DEVICE_TABLE(of, rockchip_dp_dt_ids);
--- 
-2.34.1
+  Drawbacks:
+  * Would have to make sure that the Landlock domain the task's LSM
+    blob behaves exactly the same as before in the struct cred.
+  * Potentially slower to access Landlock domains that are guarded by
+    a mutex.
 
+I'd be interested to hear your opinion on how we should best approach
+this.
+
+P.S. This is probably already clear to everyone who read this far, but
+the problem that creds can't be updated across tasks has already lead
+to other difficult APIs and also bleeds into user-level interfaces
+such as the setuid() family of syscalls as well as capability
+updating.  Both of these are solved from user space through the signal
+hack documented in nptl(7), which is used in glibc for setuid()-style
+calls and in libpsx for capabilities and Landlock's Go library.  If we
+had a working way to do these cross-thread updates in the kernel, that
+would simplify these userspace implementations.  (There are more links
+in the cover letter at the top of this thread.)
+
+Thanks,
+–Günther
 
