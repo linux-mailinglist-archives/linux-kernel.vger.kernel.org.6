@@ -1,79 +1,79 @@
-Return-Path: <linux-kernel+bounces-554496-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-554498-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 30C1FA598BD
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 15:59:30 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A885CA598CE
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 16:00:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BA7AB16DB3D
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 14:59:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4EEE91891448
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 14:59:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B60223A99C;
-	Mon, 10 Mar 2025 14:53:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 438A123BD18;
+	Mon, 10 Mar 2025 14:53:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="Ct+JB6P8"
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
+	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="zUHRTAMn"
+Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39F27238D50
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 14:53:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F02E23A560
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 14:53:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741618404; cv=none; b=flOovY7YR+T0lWyr5E7LLNnydKSJBSxy6lOgXxrIKKYugPSvYmC5h2Db87Gw12/9du+W9hHlBBGeuVR8h+QxJGzzTL4Nd3F66+tDbUt7rUvpMQY2vSIL1PMTyumrZxsGH/gturUBMTrE5Qw80lj9f2HrfjqxPs0ynGCWhPIZu+U=
+	t=1741618406; cv=none; b=NrO31QlRzBUGAcc+jQoE0O3+lMFRkS30uNyRIWJKrFNwwzbncrRHeP2hgcBCFlqE52HL/6HRqXisjGBGPVOnv++pedIku62uiuuONgEnaKbYFZdY84gfEo8T8HeqiZLSvhHh78+UDf6a3Jqsmnh+06nLUbk9G/I0VSsj4fHnqXY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741618404; c=relaxed/simple;
-	bh=lD6rgHPb/ib2WH9dder9ZLKtBlS2SotatDP0DK7YItE=;
+	s=arc-20240116; t=1741618406; c=relaxed/simple;
+	bh=eLCcCnwX3oMrnR0hoKevVmuVrExvCA/E4+w0/d6DmO4=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=BxmG7PBgKjuIUoGO+Cr1L5bIoZKi5lqMTG7HZLjTEbvOD97IwqamorpOc04QGYH0h/pBra/omjKFTD2QNcEYruZElye/DAk1o0drhWKYVwjQ4WyaEfzPBmrbDz84ln/p8Gbt1gOrbhaIuEruSArgMDci/xLmlOdg+k/tOsNzq5Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=Ct+JB6P8; arc=none smtp.client-ip=209.85.214.182
+	 In-Reply-To:To:Cc; b=jxVjpqC2OAq7X7sO2Plzz97FZKGerUPVKqAXUgaa0DmqMMx4rz5yeUvMetUohGyHZaq5YX3z69ckmmUJCZUhffRlsFU8i5wuwNchlZTVp5b49Z4Fd4YBocHCQ06Olp8q8jsVRkcpE18sqkxM1KSaNC4fzXQPqPjeLZ9yak4zwDs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=zUHRTAMn; arc=none smtp.client-ip=209.85.214.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-2239c066347so74054385ad.2
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 07:53:22 -0700 (PDT)
+Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-223a7065ff8so3892115ad.0
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 07:53:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1741618402; x=1742223202; darn=vger.kernel.org;
+        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1741618404; x=1742223204; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=a5uI84SXblQRDID2BHNWhhHsRc7xVUDdoiei4kS9c/0=;
-        b=Ct+JB6P8gBFhU2GL68I9x56icjkLjP62AapuT2jcDeENjphhxaGGU3o+qC8dvKrJ0g
-         2VfkE9773u7mT4/bPGU8BwIZlfR+Ynatelwu14iYwVM6exIiH6gjp+3B4XjVdJfL4EYs
-         4qC50m+e0mG7AbBt3fM2AWvnhDyCBIpD8l2BTMQceznIti+vPI3gt2Y8jENfIaqA2a9t
-         YRel1XQSF1IYenBIUAg/xE4OMXKixw6zVwXIxoQBEQQPIM3e5Gk7KDzclPmCj/1bCMaG
-         In0BU9boVSJlZ7ykEefPbMdFA3Qx0QxQ6esFxVSSS91DR0SnEDmlQDd66ojWVQcUwJ2q
-         gKZA==
+        bh=YHkNmM6XuphgUqeYDdwRc1f9MaOV9mSfy6OUDBv2dEo=;
+        b=zUHRTAMnMSaHlOldgj+y5jDjAYlmU7B0XUvZ6KgxMKKNrluU6quTfpD/Duk5wM0s2J
+         UfTIYhxGa5RhQK6VYs5rn78ang84tKTfKdmruN71mjbatvIArCfof4qVUOgEvKKYZDOk
+         sgIsgIItjsfP5m/lEdxKFxEmr2lmRac66WGRLhUFcZkm+MlvNwTDTmPVAKfhLdVnWwwm
+         8MYZ8VbRMGciDWwLP5joLbMMNmaJRsAcJqdvtzQbvF59J7Qg3xfWKSPUzkrvLCaBtrzd
+         dTdyYNOphbJTwNWRVHPpu3kx1sFnWNno9IN21VxZTeCjPv6AnDfG2RUu4TXA8n+N4wKQ
+         QPzg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741618402; x=1742223202;
+        d=1e100.net; s=20230601; t=1741618404; x=1742223204;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=a5uI84SXblQRDID2BHNWhhHsRc7xVUDdoiei4kS9c/0=;
-        b=pECKeIaGwiIuazO+F8SSPCSSE6lqoGExUo4zyyXG43SaMN9cofY+k0sp30dRv8UrJA
-         KlokD8fSQMWKA0BBSgz6v+YVVaoj9VFr08sXrWNs2q9h13SGaXwOAxW+o/B7DXbDansx
-         XXeaQRKHbG0rhy4dKLTdkylebIIyqfiFG1oeeTScLdcurJkI4OL1zFHZCDQiO+N2IfwC
-         ydPb/XIZRT0TADb/vu4RzQcnZAGIeS9DfOSNqyj6XqdTwCSbWroHBQ5geEXafYy9CkRk
-         k9cT8FqFuj32ZEqL0r5sNz+1qZBuPxvCurbwOomRyrhzQ1aRy17EK2N/BM3qbQOluu23
-         s81A==
-X-Gm-Message-State: AOJu0YwZ1UbXWyZDynx+Fy4Kz+3oqHY3QuYL6KgRHtL+qQmU9dH39hez
-	92kNdbnCaOI3d5AmpZvnQiwVa15plEAEaQ7qxD9Ewct7Yk8slVKa1iZkCCVt6BU=
-X-Gm-Gg: ASbGncvvfAfMWWdIFYgbZS4n/Du3cNaipbiWHnB90IRpQHde6/tFRIUewdyyEyxaXwK
-	Wjxh67GX5x0X5jibe6jn6KV2Us6bsXvOf2qr//qTDFeU0+68dOXHqM3u5wHBkEITGIgq4Z7veKw
-	hSCUkeKCD4vPBGzkT1w05JmIb3X/yFfHER1GKJlU90UYTP41wSaTgBiqOgFKjRf1T0hDkB9MhF4
-	VB+JInst3D9Tpe6zeM6ajvFUKJPCMAyxq/ZfYK3sZsTUDGUkO+x8IQXDxfaDZdFq4nDaf5vQQX6
-	7PeZzlcLEZHkzBQcw90yoj+73bTs59bQuiGKNbhwi7gM7T+aZ9RtXj8=
-X-Google-Smtp-Source: AGHT+IFjDwjQ9fbG75ByIkC5Z62BpsOlmfgaoy0NDr7CGAoT4eOeNPAoaYep0Q4HRAItC/SdOQSQyA==
-X-Received: by 2002:a05:6a00:4b4a:b0:736:54c9:df2c with SMTP id d2e1a72fcca58-736aaab75e8mr18259867b3a.15.1741618401679;
-        Mon, 10 Mar 2025 07:53:21 -0700 (PDT)
+        bh=YHkNmM6XuphgUqeYDdwRc1f9MaOV9mSfy6OUDBv2dEo=;
+        b=Lfgkd2VR36wOBjumcyu2N10DbKSqrkSt71jWxTkE0vDl+r8ROw+FUoIme2iilbuXAe
+         obdh2ZGvq0N8eDLGCnuCyEF6D02+Ts2yixv537MYlWZ9GW0/RZhsKuRdTb+gpR63cOES
+         oY8y0kanXzue6yzra0A5eKI9O14hSdDrmY1V5tVsmscznB9knO9p3XtToIgawRoxY3fa
+         o2s7Zm0P4666ngYr42luXyyuLyBWPstZyud0pOcz586kG5GioDmVYyoULd9NeTNd14hG
+         c3xpiGxmN2enl+P6ygJGfA5NfE0pTPztaaPJfiGoKwreJldFXcTZfjTV8XF0ClVASbVL
+         9lDw==
+X-Gm-Message-State: AOJu0YwMb1uG61YG4x8iNnivmMWYt6RCqGGTe7K2dIimkPWw0RbFsGJB
+	gubHzdEnCnmXs8ov0JUQRtfVOhuYpXaPrHBMotJMJoclgXmk1H5MVZbX/Xcms9M=
+X-Gm-Gg: ASbGncv0EK46Q8oXsHi7NU5k4sCXwKAgQ0XCUiXLWFrpKdeRzMHVhAXrY5FMIOGovZa
+	nLAs7X4GkVdJxuLGrj62p13n6Ky6OuzqDUcKs+1uG0BuMH8o7y+UyLxWpbCbmEvChbHUKNCVCmK
+	sZ9ewjnQkzHbnQaXBcQk7jVAmrFyzcQWAJeSDA0aIHlit6Qhdhx8eA0UpIjGrnYvkzZhkMmv852
+	Lgj8+KG6EUE3cX2CZtsakRyFSNo7VbM8JCgzZBa6WyeqCVWON3YvqmgDMiwX0gV4to22wEJH+S6
+	gqogNHwji1yzlOioWkqt/W/hhG2sfpbHB3vPnY9VMPOeGlp+6mmkGHI=
+X-Google-Smtp-Source: AGHT+IEufhMFpKiNcPYaN1q7fnoyb0yGUoGedR4PcX/LQ5rFfhM8NE7LJbQGAfjZIn8NhFa9HTR7qA==
+X-Received: by 2002:a05:6a21:b92:b0:1f3:3f0b:8abe with SMTP id adf61e73a8af0-1f544acd261mr21823779637.9.1741618404090;
+        Mon, 10 Mar 2025 07:53:24 -0700 (PDT)
 Received: from debug.ba.rivosinc.com ([64.71.180.162])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-736d11d4600sm2890275b3a.116.2025.03.10.07.53.19
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-736d11d4600sm2890275b3a.116.2025.03.10.07.53.21
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 10 Mar 2025 07:53:21 -0700 (PDT)
+        Mon, 10 Mar 2025 07:53:23 -0700 (PDT)
 From: Deepak Gupta <debug@rivosinc.com>
-Date: Mon, 10 Mar 2025 07:52:42 -0700
-Subject: [PATCH v11 20/27] riscv: Add Firmware Feature SBI extensions
- definitions
+Date: Mon, 10 Mar 2025 07:52:43 -0700
+Subject: [PATCH v11 21/27] riscv: enable kernel access to shadow stack
+ memory via FWFT sbi call
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,8 +81,8 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20250310-v5_user_cfi_series-v11-20-86b36cbfb910@rivosinc.com>
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250310-v5_user_cfi_series-v11-21-86b36cbfb910@rivosinc.com>
 References: <20250310-v5_user_cfi_series-v11-0-86b36cbfb910@rivosinc.com>
 In-Reply-To: <20250310-v5_user_cfi_series-v11-0-86b36cbfb910@rivosinc.com>
 To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
@@ -109,62 +109,68 @@ Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
  andybnac@gmail.com, kito.cheng@sifive.com, charlie@rivosinc.com, 
  atishp@rivosinc.com, evan@rivosinc.com, cleger@rivosinc.com, 
  alexghiti@rivosinc.com, samitolvanen@google.com, broonie@kernel.org, 
- rick.p.edgecombe@intel.com
+ rick.p.edgecombe@intel.com, Deepak Gupta <debug@rivosinc.com>
 X-Mailer: b4 0.14.0
 
-From: Clément Léger <cleger@rivosinc.com>
+Kernel will have to perform shadow stack operations on user shadow stack.
+Like during signal delivery and sigreturn, shadow stack token must be
+created and validated respectively. Thus shadow stack access for kernel
+must be enabled.
 
-Add necessary SBI definitions to use the FWFT extension.
+In future when kernel shadow stacks are enabled for linux kernel, it must
+be enabled as early as possible for better coverage and prevent imbalance
+between regular stack and shadow stack. After `relocate_enable_mmu` has
+been done, this is as early as possible it can enabled.
 
-Signed-off-by: Clément Léger <cleger@rivosinc.com>
+Signed-off-by: Deepak Gupta <debug@rivosinc.com>
 ---
- arch/riscv/include/asm/sbi.h | 26 ++++++++++++++++++++++++++
- 1 file changed, 26 insertions(+)
+ arch/riscv/kernel/asm-offsets.c |  4 ++++
+ arch/riscv/kernel/head.S        | 12 ++++++++++++
+ 2 files changed, 16 insertions(+)
 
-diff --git a/arch/riscv/include/asm/sbi.h b/arch/riscv/include/asm/sbi.h
-index 3d250824178b..23bfb254e3f4 100644
---- a/arch/riscv/include/asm/sbi.h
-+++ b/arch/riscv/include/asm/sbi.h
-@@ -35,6 +35,7 @@ enum sbi_ext_id {
- 	SBI_EXT_DBCN = 0x4442434E,
- 	SBI_EXT_STA = 0x535441,
- 	SBI_EXT_NACL = 0x4E41434C,
-+	SBI_EXT_FWFT = 0x46574654,
+diff --git a/arch/riscv/kernel/asm-offsets.c b/arch/riscv/kernel/asm-offsets.c
+index 0c188aaf3925..21f99d5757b6 100644
+--- a/arch/riscv/kernel/asm-offsets.c
++++ b/arch/riscv/kernel/asm-offsets.c
+@@ -515,4 +515,8 @@ void asm_offsets(void)
+ 	DEFINE(FREGS_A6,	    offsetof(struct __arch_ftrace_regs, a6));
+ 	DEFINE(FREGS_A7,	    offsetof(struct __arch_ftrace_regs, a7));
+ #endif
++	DEFINE(SBI_EXT_FWFT, SBI_EXT_FWFT);
++	DEFINE(SBI_EXT_FWFT_SET, SBI_EXT_FWFT_SET);
++	DEFINE(SBI_FWFT_SHADOW_STACK, SBI_FWFT_SHADOW_STACK);
++	DEFINE(SBI_FWFT_SET_FLAG_LOCK, SBI_FWFT_SET_FLAG_LOCK);
+ }
+diff --git a/arch/riscv/kernel/head.S b/arch/riscv/kernel/head.S
+index 356d5397b2a2..6244408ca917 100644
+--- a/arch/riscv/kernel/head.S
++++ b/arch/riscv/kernel/head.S
+@@ -164,6 +164,12 @@ secondary_start_sbi:
+ 	call relocate_enable_mmu
+ #endif
+ 	call .Lsetup_trap_vector
++	li a7, SBI_EXT_FWFT
++	li a6, SBI_EXT_FWFT_SET
++	li a0, SBI_FWFT_SHADOW_STACK
++	li a1, 1 /* enable supervisor to access shadow stack access */
++	li a2, SBI_FWFT_SET_FLAG_LOCK
++	ecall
+ 	scs_load_current
+ 	call smp_callin
+ #endif /* CONFIG_SMP */
+@@ -320,6 +326,12 @@ SYM_CODE_START(_start_kernel)
+ 	la tp, init_task
+ 	la sp, init_thread_union + THREAD_SIZE
+ 	addi sp, sp, -PT_SIZE_ON_STACK
++	li a7, SBI_EXT_FWFT
++	li a6, SBI_EXT_FWFT_SET
++	li a0, SBI_FWFT_SHADOW_STACK
++	li a1, 1 /* enable supervisor to access shadow stack access */
++	li a2, SBI_FWFT_SET_FLAG_LOCK
++	ecall
+ 	scs_load_current
  
- 	/* Experimentals extensions must lie within this range */
- 	SBI_EXT_EXPERIMENTAL_START = 0x08000000,
-@@ -401,6 +402,31 @@ enum sbi_ext_nacl_feature {
- 
- #define SBI_NACL_SHMEM_SRET_X(__i)		((__riscv_xlen / 8) * (__i))
- #define SBI_NACL_SHMEM_SRET_X_LAST		31
-+/* SBI function IDs for FW feature extension */
-+#define SBI_EXT_FWFT_SET		0x0
-+#define SBI_EXT_FWFT_GET		0x1
-+
-+enum sbi_fwft_feature_t {
-+	SBI_FWFT_MISALIGNED_EXC_DELEG		= 0x0,
-+	SBI_FWFT_LANDING_PAD			= 0x1,
-+	SBI_FWFT_SHADOW_STACK			= 0x2,
-+	SBI_FWFT_DOUBLE_TRAP			= 0x3,
-+	SBI_FWFT_PTE_AD_HW_UPDATING		= 0x4,
-+	SBI_FWFT_LOCAL_RESERVED_START		= 0x5,
-+	SBI_FWFT_LOCAL_RESERVED_END		= 0x3fffffff,
-+	SBI_FWFT_LOCAL_PLATFORM_START		= 0x40000000,
-+	SBI_FWFT_LOCAL_PLATFORM_END		= 0x7fffffff,
-+
-+	SBI_FWFT_GLOBAL_RESERVED_START		= 0x80000000,
-+	SBI_FWFT_GLOBAL_RESERVED_END		= 0xbfffffff,
-+	SBI_FWFT_GLOBAL_PLATFORM_START		= 0xc0000000,
-+	SBI_FWFT_GLOBAL_PLATFORM_END		= 0xffffffff,
-+};
-+
-+#define SBI_FWFT_GLOBAL_FEATURE_BIT		(1 << 31)
-+#define SBI_FWFT_PLATFORM_FEATURE_BIT		(1 << 30)
-+
-+#define SBI_FWFT_SET_FLAG_LOCK			(1 << 0)
- 
- /* SBI spec version fields */
- #define SBI_SPEC_VERSION_DEFAULT	0x1
+ #ifdef CONFIG_KASAN
 
 -- 
 2.34.1
