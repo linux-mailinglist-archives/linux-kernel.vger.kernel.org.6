@@ -1,146 +1,89 @@
-Return-Path: <linux-kernel+bounces-554296-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-554298-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B9B6EA595DA
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 14:15:26 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E00D7A595E0
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 14:15:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 529C7167832
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 13:15:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 09A2B189012B
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 13:16:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 311CC22AE49;
-	Mon, 10 Mar 2025 13:13:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43C2822A7EE;
+	Mon, 10 Mar 2025 13:15:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NyoS4A8R"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="XHB+6Ha/";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="nYIa9LG6"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 851C3227BB9;
-	Mon, 10 Mar 2025 13:13:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17DE222A1CD;
+	Mon, 10 Mar 2025 13:15:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741612404; cv=none; b=PpdhNJW4LYMTHsb5sooxElyzBrc2kPDeKJ7Bu1CJr8mtEXP28zyhv6kHE6Ie/AvVVW+/pw52kzgFRyeum0Jr4qhZvRqCPnkH2yvxuv5TLLXmHXCoZ2rlAWaf8ZxOhwZKuZMINyEs5MgOB7MF4U2oczAUk7h3JnpzIpyl/f/faes=
+	t=1741612502; cv=none; b=RKedZ8oJKPMKIpIfCFfnVVbyL0zfV35qtdFbGv7cZfMBdW2JvA5nxR9fA8vAQ7TId08TOQ1zxRXPsONMQ4OZs2/yjCc5fwyt+mX52FYs6rfCfFeoAqEzZbDqHZxDQ10BJifnJyLAyfltoflVsQEjJrwNr+CL+/7COK4vfTmfbsM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741612404; c=relaxed/simple;
-	bh=gj+NFBePdsuXWlftWTserZdsRfx1lIS1prLpNJrt8IY=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=LyiRge5NgcLUYnExDlmfvJRi/mlur7uF/+U0mFdHy29nBlK2+DO/yekNUbwORRJiJb2Dc3OWxuLsoQ0cqhrcjcbvhGibuXqLALHvDPOevmYSKWEQ21N35WU3tBA6BTmp468Lsjb6AGh1MZZ6Sj87VX7+zCbrlUd3Cyud23v5oAc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NyoS4A8R; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E86E9C4CEE5;
-	Mon, 10 Mar 2025 13:13:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741612404;
-	bh=gj+NFBePdsuXWlftWTserZdsRfx1lIS1prLpNJrt8IY=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=NyoS4A8Rcpq2q6yVbC1dPJiHOuwrTgh4XfLMpr7XuM+J+Nuxjj74AAER0deKQ5R+2
-	 3laMdtWBRoeDU4dT0C6Vxd0JFIUx4p534wxw6LBOaRv7XWesNlyiwuSDV5PlRIL838
-	 HJjUj8G9x0n0fplonOaWRXzR34maagXZIBS98HcHXdOqP2qOQmtSgrvfheQ1RYz5vw
-	 Ar6sdxhunSYgv/3Mt6A4zso+Lh4tsbODYaimk5d9nb4rwG1VK9AOI63ciJ/NX9RWl2
-	 sO6QqpP5tirRLYvYLfuBTw5BEm8R0svRdU/x7cT6SPWuzC85Mz1ZHc2Rz4laDNWX/j
-	 TlnQWuyTzhDsg==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1trcwb-00CBlH-Rv;
-	Mon, 10 Mar 2025 13:13:21 +0000
-Date: Mon, 10 Mar 2025 13:13:21 +0000
-Message-ID: <86zfhtni4u.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Oliver Upton <oliver.upton@linux.dev>
-Cc: kvmarm@lists.linux.dev,
-	Joey Gouly <joey.gouly@arm.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Zenghui Yu <yuzenghui@huawei.com>,
-	Mingwei Zhang <mizhang@google.com>,
-	Colton Lewis <coltonlewis@google.com>,
-	Raghavendra Rao Ananta <rananta@google.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Janne Grunau <j@jannau.net>
-Subject: Re: [PATCH v3 00/14] KVM: arm64: FEAT_PMUv3 on Apple hardware
-In-Reply-To: <20250305202641.428114-1-oliver.upton@linux.dev>
-References: <20250305202641.428114-1-oliver.upton@linux.dev>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	s=arc-20240116; t=1741612502; c=relaxed/simple;
+	bh=Kquilv86s6eN4jO6LhATImW+5Qgdpul8/DZ4u4vPph8=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=l9Y1Mx27x/+qGB9d5dE9c1pOj/7NpDWQhhAEJXOYATVgEAeOlvlTIv+lL1ABwSyshLnW470/v7KMyzLA7YbyrOiRQO1BGCrelMSG58IzkLP3l6AvzNpt4sNa1fzf3Atyt4z+g4klKiXsXC45xiPKgTSez4PGA7VwJ4wJs8deGQI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=XHB+6Ha/; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=nYIa9LG6; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1741612498;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Kquilv86s6eN4jO6LhATImW+5Qgdpul8/DZ4u4vPph8=;
+	b=XHB+6Ha/RBiey/Rpj1xbSFfcRIPpKzLao9wKvFzi5sOm6QVV8yzLrIMkW0Upa8BpIyRYt1
+	3aTlcAa5S07yYczzzp6FBLqJctKml3uO+S0QbfphhqlKrCTN6hDSlQNErhdYdGWJfoDhx/
+	80S3RIZFliZykSBEsPaa+ug38cqnbt5m3AvBdioB0sHktcQTMTQAbooadw4oMfbKY4ZKql
+	Dy9clv/YTsz7nZ+MaCPQomYQRzkavb1EhJcx7LNvqWYCaHt5poJpSTT7cdPk7x+jRQZJ8y
+	Txg5WLToCTP4oWuGxHqhXmq4YA4G1SRNtFbugs293m4bI3BcruJb6S1Ghj3BIg==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1741612498;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Kquilv86s6eN4jO6LhATImW+5Qgdpul8/DZ4u4vPph8=;
+	b=nYIa9LG6u6XLBoI874kNB/RjU2WTOfM8waox/rrARFlt2UwqgM4+636nLFdxuwOd62S5VT
+	Npl4MpwjH2oQ2TBA==
+To: Andreas Hindborg <a.hindborg@kernel.org>, Miguel Ojeda
+ <ojeda@kernel.org>, Anna-Maria Behnsen <anna-maria@linutronix.de>,
+ Frederic Weisbecker <frederic@kernel.org>, Danilo Krummrich
+ <dakr@kernel.org>
+Cc: Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>,
+ Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn?= Roy Baron
+ <bjorn3_gh@protonmail.com>,
+ Benno Lossin <benno.lossin@proton.me>, Alice Ryhl <aliceryhl@google.com>,
+ Trevor Gross <tmgross@umich.edu>, Lyude Paul <lyude@redhat.com>, Guangbo
+ Cui <2407018371@qq.com>, Dirk Behme <dirk.behme@gmail.com>, Daniel Almeida
+ <daniel.almeida@collabora.com>, Tamir Duberstein <tamird@gmail.com>,
+ Markus Elfring <Markus.Elfring@web.de>, rust-for-linux@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Andreas Hindborg <a.hindborg@kernel.org>
+Subject: Re: [PATCH v12 00/13] hrtimer Rust API
+In-Reply-To: <20250309-hrtimer-v3-v6-12-rc2-v12-0-73586e2bd5f1@kernel.org>
+References: <20250309-hrtimer-v3-v6-12-rc2-v12-0-73586e2bd5f1@kernel.org>
+Date: Mon, 10 Mar 2025 14:14:58 +0100
+Message-ID: <87tt8110z1.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: oliver.upton@linux.dev, kvmarm@lists.linux.dev, joey.gouly@arm.com, suzuki.poulose@arm.com, yuzenghui@huawei.com, mizhang@google.com, coltonlewis@google.com, rananta@google.com, catalin.marinas@arm.com, will@kernel.org, mark.rutland@arm.com, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, j@jannau.net
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+Content-Type: text/plain
 
-On Wed, 05 Mar 2025 20:26:27 +0000,
-Oliver Upton <oliver.upton@linux.dev> wrote:
-> 
-> Hopefully close to the last spin, this time addressing Marc's comments
-> on v2.
-> 
-> Full details found in the v1 cover letter.
-> 
-> v1: https://lore.kernel.org/kvmarm/20241217212048.3709204-1-oliver.upton@linux.dev/
-> v2: https://lore.kernel.org/kvmarm/20250203183111.191519-1-oliver.upton@linux.dev/
-> 
-> v2 -> v3:
->  - Reorder and restructure patches to include map_pmuv3_event()
->    definition w/ KVM usage.
->  - Disallow events that lack a valid PMUv3 -> HW mapping
->  - Various minor fixes/typos
-> 
-> Oliver Upton (14):
->   drivers/perf: apple_m1: Refactor event select/filter configuration
->   drivers/perf: apple_m1: Support host/guest event filtering
->   KVM: arm64: Compute PMCEID from arm_pmu's event bitmaps
->   KVM: arm64: Always support SW_INCR PMU event
->   KVM: arm64: Use a cpucap to determine if system supports FEAT_PMUv3
->   KVM: arm64: Drop kvm_arm_pmu_available static key
->   KVM: arm64: Use guard() to cleanup usage of arm_pmus_lock
->   KVM: arm64: Move PMUVer filtering into KVM code
->   KVM: arm64: Compute synthetic sysreg ESR for Apple PMUv3 traps
->   KVM: arm64: Advertise PMUv3 if IMPDEF traps are present
->   KVM: arm64: Remap PMUv3 events onto hardware
->   drivers/perf: apple_m1: Provide helper for mapping PMUv3 events
->   KVM: arm64: Provide 1 event counter on IMPDEF hardware
->   arm64: Enable IMP DEF PMUv3 traps on Apple M*
-> 
->  arch/arm64/include/asm/apple_m1_pmu.h   |   1 +
->  arch/arm64/include/asm/cpucaps.h        |   2 +
->  arch/arm64/include/asm/cpufeature.h     |  28 +----
->  arch/arm64/kernel/cpu_errata.c          |  44 ++++++++
->  arch/arm64/kernel/cpufeature.c          |  28 +++++
->  arch/arm64/kernel/image-vars.h          |   5 -
->  arch/arm64/kvm/arm.c                    |   4 +-
->  arch/arm64/kvm/hyp/include/hyp/switch.h |   4 +-
->  arch/arm64/kvm/hyp/vhe/switch.c         |  22 ++++
->  arch/arm64/kvm/pmu-emul.c               | 138 +++++++++++++++++-------
->  arch/arm64/kvm/pmu.c                    |  10 +-
->  arch/arm64/tools/cpucaps                |   2 +
->  drivers/perf/apple_m1_cpu_pmu.c         | 101 +++++++++++++----
->  include/kvm/arm_pmu.h                   |  12 +--
->  include/linux/perf/arm_pmu.h            |   4 +
->  15 files changed, 301 insertions(+), 104 deletions(-)
-> 
-> 
-> base-commit: 0ad2507d5d93f39619fc42372c347d6006b64319
+On Sun, Mar 09 2025 at 16:18, Andreas Hindborg wrote:
+> Add support for using the `hrtimer` subsystem from Rust code.
+>
+> Add support for timer mode and clock source configuration during timer
+> initialization. Do not add examples and functionality to execute closures at
+> timer expiration , as these depend on either atomics [3] or `SpinLockIrq` [4],
+> which are still being worked on.
 
-I'm quite happy with the way this looks now (well, apart from patch
-#9, but that's not something you can fix...).
-
-Reviewed-by: Marc Zyngier <maz@kernel.org>
-
-	M.
-
--- 
-Without deviation from the norm, progress is not possible.
+Acked-by: Thomas Gleixner <tglx@linutronix.de>
 
