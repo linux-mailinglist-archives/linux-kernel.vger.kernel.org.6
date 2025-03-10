@@ -1,53 +1,72 @@
-Return-Path: <linux-kernel+bounces-554198-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-554200-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B024DA5947A
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 13:29:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id CB980A59487
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 13:31:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AFA0518895A6
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 12:29:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 024E31890A96
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 12:29:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E63722A7E4;
-	Mon, 10 Mar 2025 12:27:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF14B229B01;
+	Mon, 10 Mar 2025 12:28:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="KFFVc9Xa"
-Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="ljbH+ZDn";
+	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="ljbH+ZDn"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9158C227BAD
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 12:27:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CCBF225413
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 12:28:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741609677; cv=none; b=XPVlhG/rbLo9fmJqmKh10r0vg3EZ53uFhusDUE5e4CZRXHEAh+faEWLHuPRh/OorLN8g2+hhApE1f8S65tkVaruwnNUma+gBgKjqmPt8ek4jxmzb1UWF8vVP+BFFv5P3KybBHLJMMkPdbXLmstEp6G1192DoGYcGiaHdcQ6yh8k=
+	t=1741609725; cv=none; b=ZWBe4LEOTIxFxDGxyzTYqfe9EEJ9kGSKXggmTa00UV47V9Ux3jvdxn7R/JMgPdEnScEGeBPQF/WE4EtJsq741ty9mx3a4tpT8GGzuCDuK/nrm7Na+gWLDUPTISNWdsLHWX2CF2WxPn/vgrUh/bpcJ9FutozMtK7ZlGYCmHeRNb4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741609677; c=relaxed/simple;
-	bh=HgIqmGu9WMv4AosBsYyNR+EjhaTIva6EV1iEbNMAm78=;
+	s=arc-20240116; t=1741609725; c=relaxed/simple;
+	bh=cIY10/oeQmZkDElk3y9rSx6qZ8yUR59w68YqYGvcGSc=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Z2FKI3eLolloXXY0qRa67Jt7R9ueemSvAyC51wd2DR/lyO/VRMIAWcoMxhQKpswt9bmASPMWx1sEWZgtGnmGUMnRNYYFgr8TcvGB6KMWP0aa0x80PiPWDDEXCaj61il1yN5MdsuQX3GRBqg1cqPaFSJh5rP2dyU6SlJrnv7FVJo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=KFFVc9Xa; arc=none smtp.client-ip=178.60.130.6
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
-	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=OOBZ8qTz+v44tkaV6ZMNqcXZyTXLCvBkFF2upUV3LoM=; b=KFFVc9XaY+1pFHNBOL4y01UKy3
-	zjmJtOA9Ognov++GYVTJxhjGRAfsvmzNPYAcIzh5il82pEKjczbp5VojwIOUWckxJ9mIzy6DLx72n
-	Vcw6Uen8ImsNc/buI1dH0OLt39jRq712dULKNwZCL/pR3Pj88TAW8P/p9TPsLN+UXmPyN1e5EcktJ
-	Uox80rIpGR5SXTeD/s2LDVJJBNO99LjGDmSbBhvPeh6vRORpub+LMMlJrAf3AH13xBqqOkm+EW+jn
-	b332S3z75Ss8viQ8jRYQpSNFy3wYYWMWZ2qmD5cNf1PRXc6Cw8NWHKkZXwa2sZ98NLLAMusMEasM6
-	pK3LK4vg==;
-Received: from [90.241.98.187] (helo=[192.168.0.101])
-	by fanzine2.igalia.com with esmtpsa 
-	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
-	id 1trcEL-006TNE-8x; Mon, 10 Mar 2025 13:27:43 +0100
-Message-ID: <6b9b27a7-2ccd-4f16-aa36-05877b5e8f7c@igalia.com>
-Date: Mon, 10 Mar 2025 12:27:42 +0000
+	 In-Reply-To:Content-Type; b=nfzZLlJqEv6Z844EMdZvmR3TRqNDYYm2sy+DC2ZJhSLcHkuln9RhbXoExK+YrvYHUvkQbpYOSmQJ/UKWr/c9PWCi9t9S5C3fdX5N0COxfi/pQcH2Kg8139XCD4cn9rrct1OwE0X5XlqyQIZrRaNPdJrP6dCM2FcMxL5wyCa8BAA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=ljbH+ZDn; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=ljbH+ZDn; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 023392115E;
+	Mon, 10 Mar 2025 12:28:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+	t=1741609720; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=cIY10/oeQmZkDElk3y9rSx6qZ8yUR59w68YqYGvcGSc=;
+	b=ljbH+ZDnSyULqMg2GCB2nRc7rwANONfY/66xUrwW/xAweggnwcTIXiUpHvC9JyMY8H+hJL
+	xuRa0Wjh9r2ozkjuIpxH8OMFuLqBHG/KCECpx/etSK+Cd+n2QYWJs/NkUNnVKVBIJuLVnp
+	+FYNpl+V9JU6ZqO4+1z+AfttvsKE8xU=
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.com header.s=susede1 header.b=ljbH+ZDn
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+	t=1741609720; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=cIY10/oeQmZkDElk3y9rSx6qZ8yUR59w68YqYGvcGSc=;
+	b=ljbH+ZDnSyULqMg2GCB2nRc7rwANONfY/66xUrwW/xAweggnwcTIXiUpHvC9JyMY8H+hJL
+	xuRa0Wjh9r2ozkjuIpxH8OMFuLqBHG/KCECpx/etSK+Cd+n2QYWJs/NkUNnVKVBIJuLVnp
+	+FYNpl+V9JU6ZqO4+1z+AfttvsKE8xU=
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 72A8B139E7;
+	Mon, 10 Mar 2025 12:28:39 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id bIvzGffazmfFEAAAD6G6ig
+	(envelope-from <jgross@suse.com>); Mon, 10 Mar 2025 12:28:39 +0000
+Message-ID: <e9d58d64-ab0f-49e8-ac87-c02bda6bc837@suse.com>
+Date: Mon, 10 Mar 2025 13:28:38 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -55,129 +74,236 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] drm/sched: revert "drm_sched_job_cleanup(): correct false
- doc"
-To: phasta@kernel.org, =?UTF-8?Q?Christian_K=C3=B6nig?=
- <ckoenig.leichtzumerken@gmail.com>, matthew.brost@intel.com,
- dakr@kernel.org, dri-devel@lists.freedesktop.org,
- linux-kernel@vger.kernel.org
-Cc: =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>
-References: <20250310074414.2129157-1-christian.koenig@amd.com>
- <564be70f7d64c04c1ad77499522d99c64ea4d4d3.camel@mailbox.org>
-Content-Language: en-GB
-From: Tvrtko Ursulin <tvrtko.ursulin@igalia.com>
-In-Reply-To: <564be70f7d64c04c1ad77499522d99c64ea4d4d3.camel@mailbox.org>
+Subject: Re: [PATCH] x86/sev: Make SEV_STATUS available via SYSFS
+To: Alexey Gladkov <legion@kernel.org>, Joerg Roedel <joro@8bytes.org>
+Cc: "Alexey Gladkov (Intel)" <alexey.gladkov@intel.com>,
+ "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+ Dave Hansen <dave.hansen@intel.com>, Borislav Petkov <bp@alien8.de>,
+ Joerg Roedel <jroedel@suse.de>, Ingo Molnar <mingo@kernel.org>,
+ x86@kernel.org, hpa@zytor.com, Tom Lendacky <thomas.lendacky@amd.com>,
+ Nikunj A Dadhania <nikunj@amd.com>, linux-kernel@vger.kernel.org,
+ Larry.Dewey@amd.com
+References: <20250305113155.GCZ8g2K1XEdgynTA9D@fat_crate.local>
+ <Z8g4sU_dsZgY0PuS@gmail.com>
+ <20250305115035.GEZ8g6i7NTiSfkxk7J@fat_crate.local>
+ <Z8hYEsHvwUwlOold@suse.de>
+ <20250305153705.GKZ8hvoaz2GPt2rGtu@fat_crate.local>
+ <b0cf4bfc-bf22-4986-9e76-62e3f54179ea@intel.com>
+ <2koe2zg26fndx6d6jcmbg6dzybbgldgrjufupj74nvmav2dmqg@w6bknhosl64h>
+ <Z8le_TWUJNebrfs7@8bytes.org> <Z8l66FFgPu5hWtuI@agladkov-desk>
+ <Z86-3n1-MArVLM9Z@8bytes.org> <Z87L0bRi8tcAIsDw@example.org>
+Content-Language: en-US
+From: Juergen Gross <jgross@suse.com>
+Autocrypt: addr=jgross@suse.com; keydata=
+ xsBNBFOMcBYBCACgGjqjoGvbEouQZw/ToiBg9W98AlM2QHV+iNHsEs7kxWhKMjrioyspZKOB
+ ycWxw3ie3j9uvg9EOB3aN4xiTv4qbnGiTr3oJhkB1gsb6ToJQZ8uxGq2kaV2KL9650I1SJve
+ dYm8Of8Zd621lSmoKOwlNClALZNew72NjJLEzTalU1OdT7/i1TXkH09XSSI8mEQ/ouNcMvIJ
+ NwQpd369y9bfIhWUiVXEK7MlRgUG6MvIj6Y3Am/BBLUVbDa4+gmzDC9ezlZkTZG2t14zWPvx
+ XP3FAp2pkW0xqG7/377qptDmrk42GlSKN4z76ELnLxussxc7I2hx18NUcbP8+uty4bMxABEB
+ AAHNH0p1ZXJnZW4gR3Jvc3MgPGpncm9zc0BzdXNlLmNvbT7CwHkEEwECACMFAlOMcK8CGwMH
+ CwkIBwMCAQYVCAIJCgsEFgIDAQIeAQIXgAAKCRCw3p3WKL8TL8eZB/9G0juS/kDY9LhEXseh
+ mE9U+iA1VsLhgDqVbsOtZ/S14LRFHczNd/Lqkn7souCSoyWsBs3/wO+OjPvxf7m+Ef+sMtr0
+ G5lCWEWa9wa0IXx5HRPW/ScL+e4AVUbL7rurYMfwCzco+7TfjhMEOkC+va5gzi1KrErgNRHH
+ kg3PhlnRY0Udyqx++UYkAsN4TQuEhNN32MvN0Np3WlBJOgKcuXpIElmMM5f1BBzJSKBkW0Jc
+ Wy3h2Wy912vHKpPV/Xv7ZwVJ27v7KcuZcErtptDevAljxJtE7aJG6WiBzm+v9EswyWxwMCIO
+ RoVBYuiocc51872tRGywc03xaQydB+9R7BHPzsBNBFOMcBYBCADLMfoA44MwGOB9YT1V4KCy
+ vAfd7E0BTfaAurbG+Olacciz3yd09QOmejFZC6AnoykydyvTFLAWYcSCdISMr88COmmCbJzn
+ sHAogjexXiif6ANUUlHpjxlHCCcELmZUzomNDnEOTxZFeWMTFF9Rf2k2F0Tl4E5kmsNGgtSa
+ aMO0rNZoOEiD/7UfPP3dfh8JCQ1VtUUsQtT1sxos8Eb/HmriJhnaTZ7Hp3jtgTVkV0ybpgFg
+ w6WMaRkrBh17mV0z2ajjmabB7SJxcouSkR0hcpNl4oM74d2/VqoW4BxxxOD1FcNCObCELfIS
+ auZx+XT6s+CE7Qi/c44ibBMR7hyjdzWbABEBAAHCwF8EGAECAAkFAlOMcBYCGwwACgkQsN6d
+ 1ii/Ey9D+Af/WFr3q+bg/8v5tCknCtn92d5lyYTBNt7xgWzDZX8G6/pngzKyWfedArllp0Pn
+ fgIXtMNV+3t8Li1Tg843EXkP7+2+CQ98MB8XvvPLYAfW8nNDV85TyVgWlldNcgdv7nn1Sq8g
+ HwB2BHdIAkYce3hEoDQXt/mKlgEGsLpzJcnLKimtPXQQy9TxUaLBe9PInPd+Ohix0XOlY+Uk
+ QFEx50Ki3rSDl2Zt2tnkNYKUCvTJq7jvOlaPd6d/W0tZqpyy7KVay+K4aMobDsodB3dvEAs6
+ ScCnh03dDAFgIq5nsB11j3KPKdVoPlfucX2c7kGNH+LUMbzqV6beIENfNexkOfxHfw==
+In-Reply-To: <Z87L0bRi8tcAIsDw@example.org>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ protocol="application/pgp-signature";
+ boundary="------------yh6GWUsZRjKC8o1bfCHMlPmR"
+X-Rspamd-Queue-Id: 023392115E
+X-Spam-Score: -5.41
+X-Rspamd-Action: no action
+X-Spamd-Result: default: False [-5.41 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	SIGNED_PGP(-2.00)[];
+	MIME_BASE64_TEXT_BOGUS(1.00)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.com:s=susede1];
+	MIME_GOOD(-0.20)[multipart/signed,multipart/mixed,text/plain];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_UNKNOWN(0.10)[application/pgp-keys];
+	MIME_BASE64_TEXT(0.10)[];
+	MX_GOOD(-0.01)[];
+	ARC_NA(0.00)[];
+	DKIM_SIGNED(0.00)[suse.com:s=susede1];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RCPT_COUNT_TWELVE(0.00)[14];
+	MIME_TRACE(0.00)[0:+,1:+,2:+,3:+,4:~,5:~];
+	FROM_HAS_DN(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	TO_DN_SOME(0.00)[];
+	MID_RHS_MATCH_FROM(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	HAS_ATTACHMENT(0.00)[];
+	ASN(0.00)[asn:25478, ipnet:::/0, country:RU];
+	DKIM_TRACE(0.00)[suse.com:+];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:mid,suse.com:dkim]
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spam-Flag: NO
+X-Spam-Level: 
+
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--------------yh6GWUsZRjKC8o1bfCHMlPmR
+Content-Type: multipart/mixed; boundary="------------qjn9IuYXiSHj6GBZSIueRQJj";
+ protected-headers="v1"
+From: Juergen Gross <jgross@suse.com>
+To: Alexey Gladkov <legion@kernel.org>, Joerg Roedel <joro@8bytes.org>
+Cc: "Alexey Gladkov (Intel)" <alexey.gladkov@intel.com>,
+ "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+ Dave Hansen <dave.hansen@intel.com>, Borislav Petkov <bp@alien8.de>,
+ Joerg Roedel <jroedel@suse.de>, Ingo Molnar <mingo@kernel.org>,
+ x86@kernel.org, hpa@zytor.com, Tom Lendacky <thomas.lendacky@amd.com>,
+ Nikunj A Dadhania <nikunj@amd.com>, linux-kernel@vger.kernel.org,
+ Larry.Dewey@amd.com
+Message-ID: <e9d58d64-ab0f-49e8-ac87-c02bda6bc837@suse.com>
+Subject: Re: [PATCH] x86/sev: Make SEV_STATUS available via SYSFS
+References: <20250305113155.GCZ8g2K1XEdgynTA9D@fat_crate.local>
+ <Z8g4sU_dsZgY0PuS@gmail.com>
+ <20250305115035.GEZ8g6i7NTiSfkxk7J@fat_crate.local>
+ <Z8hYEsHvwUwlOold@suse.de>
+ <20250305153705.GKZ8hvoaz2GPt2rGtu@fat_crate.local>
+ <b0cf4bfc-bf22-4986-9e76-62e3f54179ea@intel.com>
+ <2koe2zg26fndx6d6jcmbg6dzybbgldgrjufupj74nvmav2dmqg@w6bknhosl64h>
+ <Z8le_TWUJNebrfs7@8bytes.org> <Z8l66FFgPu5hWtuI@agladkov-desk>
+ <Z86-3n1-MArVLM9Z@8bytes.org> <Z87L0bRi8tcAIsDw@example.org>
+In-Reply-To: <Z87L0bRi8tcAIsDw@example.org>
+
+--------------qjn9IuYXiSHj6GBZSIueRQJj
+Content-Type: multipart/mixed; boundary="------------aq3C4iRCKfbEvOWCid3sbuCO"
+
+--------------aq3C4iRCKfbEvOWCid3sbuCO
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: base64
 
+T24gMTAuMDMuMjUgMTI6MjQsIEFsZXhleSBHbGFka292IHdyb3RlOg0KPiBPbiBNb24sIE1h
+ciAxMCwgMjAyNSBhdCAxMToyODo0NkFNICswMTAwLCBKb2VyZyBSb2VkZWwgd3JvdGU6DQo+
+PiBPbiBUaHUsIE1hciAwNiwgMjAyNSBhdCAxMTozNzoyOEFNICswMTAwLCBBbGV4ZXkgR2xh
+ZGtvdiAoSW50ZWwpIHdyb3RlOg0KPj4+IEkgd2FzIHRoaW5raW5nIHRvIHN1Z2dlc3Qgc29t
+ZXRoaW5nIGxpa2UgdGhhdA0KPj4+DQo+Pj4gL3N5cy9maXJtd2FyZS9jb2NvL3RkeC8uLi4N
+Cj4+PiAvc3lzL2Zpcm13YXJlL2NvY28vc2V2Ly4uLg0KPj4NCj4+IFNvIG9uIGEgc2Vjb25k
+IHRob3VnaHQgSSdkIGxpa2UgdG8gdm90ZSBmb3IgdGhlIC9zeXMvaHlwZXJ2aXNvci8NCj4+
+IGhpZXJhcmNoeS4gVGhlIGBmaXJtd2FyZWAgdGVybSBpcyBhIGJpdCBhbWliaW91cyBoZXJl
+LCB0aGUgVERYIG1vZHVsZQ0KPj4gY2FuIGJlIHNlZW4gYXMgYSBraW5kIG9mIGZpcm13YXJl
+IGZvciB0aGUgZ3Vlc3QgT1MsIGJ1dCByZWFsaXN0aWNhbGx5IGl0DQo+PiBpcyBtb3JlIGxp
+a2UgYW5vdGhlciBoeXBlcnZpc29yIHNpdHRpbmcgYmV0d2VlbiBLVk0gYW5kIHRoZSBndWVz
+dC4NCj4+DQo+PiBBbHNvIHRoZSBzZXR0aW5ncyBvbiB0aGUgU0VWIHNpZGUgdGhhdCBuZWVk
+IHRvIGJlIGV4cG9zZWQgKFZNUEwgYW5kDQo+PiBTRVZfU1RBVFVTKSBhcmUgQ1BVIHByb3Bl
+cnRpZXMsIGJ1dCBvbiB0aGUgb3RoZXIgc2lkZSBhbHNvIHNldCBieSBzb21lDQo+PiBmb3Jt
+IG9mIGh5cGVydmlzb3IgKGVpdGhlciBLVk0vUUVNVSwgdGhlIFNWU00sIG9yIHNvbWUgb3Ro
+ZXIgcGFyYXZpc29yDQo+PiBpbi1iZXR3ZWVuKS4NCj4+DQo+PiBPdmVyYWxsIC9zeXMvaHlw
+ZXJ2aXNvci8gc2VlbXMgdG8gYmUgdGhlIGJlc3QtZml0dGluZyBsb2NhdGlvbiBmb3IgYWxs
+DQo+PiB0aGlzIGRhdGEuIFRvIGF2b2lkIGFtYmlndWF0aW9uIEkgcHJvcG9zZToNCj4+DQo+
+PiAJL3N5cy9oeXBlcnZpc29yL2NvbW1vbi9bY29jby9ddGR4Lw0KPj4gCS9zeXMvaHlwZXJ2
+aXNvci9jb21tb24vW2NvY28vXXNldi8NCj4gDQo+IFRoZSAvc3lzL2h5cGVydmlzb3IgcmVx
+dWlyZXMgQ09ORklHX1NZU19IWVBFUlZJU09SPXkuIE5vdywgdGhpcyBwYXJhbWV0ZXINCj4g
+aXMgbm90IHJlcXVpcmVkIGZvciB0aGUgbWluaW11bSBURFggZ3Vlc3QgY29uZmlndXJhdGlv
+bi4NCj4gDQo+IEFzIEkgY2FuIHNlZSByaWdodCBub3cgWzFdIHRoaXMgZGlyZWN0b3J5IGlz
+IHVzZWQgZXhjbHVzaXZlbHkgYnkgeGVuIHRlYW0uDQo+IEl0J3MgcGFydCBvZiB0aGVpciBB
+Qkkgc3RhYmxlLiBJJ20gbm90IHN1cmUgd2UgY2FuIGdvIGluIHRoZXJlLg0KDQpXZSBjYW4g
+KHNheWluZyB0aGF0IHdpdGggbXkgWGVuIG1haW50YWluZXIgaGF0IG9uKS4NCg0KVGhlcmUg
+aXMgL3N5cy9oeXBlcnZpc29yL3R5cGUgd2hpY2ggc2hvdWxkIHJldHVybiB0aGUgdXNlZCB2
+aXJ0dWFsaXphdGlvbg0KZW52aXJvbm1lbnQgKCJ4ZW4iIHdoZW4gcnVubmluZyBhcyBhIFhl
+biBndWVzdCkuDQoNCg0KSnVlcmdlbg0K
+--------------aq3C4iRCKfbEvOWCid3sbuCO
+Content-Type: application/pgp-keys; name="OpenPGP_0xB0DE9DD628BF132F.asc"
+Content-Disposition: attachment; filename="OpenPGP_0xB0DE9DD628BF132F.asc"
+Content-Description: OpenPGP public key
+Content-Transfer-Encoding: quoted-printable
 
-On 10/03/2025 12:11, Philipp Stanner wrote:
-> On Mon, 2025-03-10 at 08:44 +0100, Christian König wrote:
->> This reverts commit 44d2f310f008613c1dbe5e234c2cf2be90cbbfab.
-> 
-> OK, your arguments with fence ordering are strong. Please update the
-> commit message according to our discussion:
+-----BEGIN PGP PUBLIC KEY BLOCK-----
 
-Could that argument please be explained in more concrete terms?
+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
+kt+z4drzFUyEjLM1vVvIMjkUoJs=3D
+=3DeeAB
+-----END PGP PUBLIC KEY BLOCK-----
 
-Are we talking here about skipping one seqno has potential to cause a 
-problem, or there is more to it?
+--------------aq3C4iRCKfbEvOWCid3sbuCO--
 
-Because if it is just skipping I don't immediately see that breaks the 
-monotonic/unique seqno ordering.
+--------------qjn9IuYXiSHj6GBZSIueRQJj--
 
-Only if we are worried about some code somewhere making assumptions  "if 
-N got completed, that means N-1 got completed too". That generally isn't 
-anything new and can happen with GPU resets, albeit in the latter case 
-the fence error is I think always set.
+--------------yh6GWUsZRjKC8o1bfCHMlPmR
+Content-Type: application/pgp-signature; name="OpenPGP_signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="OpenPGP_signature.asc"
 
-Regards,
+-----BEGIN PGP SIGNATURE-----
 
-Tvrtko
+wsB5BAABCAAjFiEEhRJncuj2BJSl0Jf3sN6d1ii/Ey8FAmfO2vYFAwAAAAAACgkQsN6d1ii/Ey/t
+VAf/Rfsv2UGy3eb4E9D3Fzr19V8isPm+KGWRBEEs0asyeyFgM5xPOLY2VE0tF+l+JgchGrkg5nDF
+wXcXl9JxBWwQGbTQ6Tg6juDhMG0aOMGT7RBR8KLL2ftrSM49KuGyXTuOqK9doPLRWTc2x4Pg+l/n
+XuNrEPcKzIhhqNxW/jCkb1FwYzC4Xqhn0XN2kxlooKvGqUpa/axcHJGYlOxckxHR91nG9fuzXk0d
+VxpXvzqglrWCXO1DsJm0HrKMwtV2oyLioe2Vvd6EZnFJlQi6eKHYMJFQLwYHalXCv8AF9RMCxCDy
+P6snJj1w4m855gVYWcUskD2sQPWQxIoDpJCOASjmyw==
+=hmnI
+-----END PGP SIGNATURE-----
 
->> Sorry for the delayed response, I only stumbled over this now while
->> going
->> over old mails and then re-thinking my reviewed by for this change.
-> 
-> Your RB hadn't even been applied (I merged before you gave it), so you
-> can remove this first paragraph from the commit message
-> 
->>
->> The function drm_sched_job_arm() is indeed the point of no return.
->> The
->> background is that it is nearly impossible for the driver to
->> correctly
->> retract the fence and signal it in the order enforced by the
->> dma_fence
->> framework.
->>
->> The code in drm_sched_job_cleanup() is for the purpose to cleanup
->> after
->> the job was armed through drm_sched_job_arm() *and* processed by the
->> scheduler.
->>
->> The correct approach for error handling in this situation is to set
->> the
->> error on the fences and then push to the entity anyway. We can
->> certainly
->> improve the documentation, but removing the warning is clearly not a
->> good
->> idea.
-> 
-> This last paragraph, as per our discussion, seems invalid. We shouldn't
-> have that in the commit log, so that it won't give later hackers
-> browsing it wrong ideas and we end up with someone actually mengling
-> with those fences.
-> 
-> Thx
-> P.
-> 
->>
->> Signed-off-by: Christian König <christian.koenig@amd.com>
->> ---
->>   drivers/gpu/drm/scheduler/sched_main.c | 12 +++++-------
->>   1 file changed, 5 insertions(+), 7 deletions(-)
->>
->> diff --git a/drivers/gpu/drm/scheduler/sched_main.c
->> b/drivers/gpu/drm/scheduler/sched_main.c
->> index 53e6aec37b46..4d4219fbe49d 100644
->> --- a/drivers/gpu/drm/scheduler/sched_main.c
->> +++ b/drivers/gpu/drm/scheduler/sched_main.c
->> @@ -1015,13 +1015,11 @@ EXPORT_SYMBOL(drm_sched_job_has_dependency);
->>    * Cleans up the resources allocated with drm_sched_job_init().
->>    *
->>    * Drivers should call this from their error unwind code if @job is
->> aborted
->> - * before it was submitted to an entity with
->> drm_sched_entity_push_job().
->> + * before drm_sched_job_arm() is called.
->>    *
->> - * Since calling drm_sched_job_arm() causes the job's fences to be
->> initialized,
->> - * it is up to the driver to ensure that fences that were exposed to
->> external
->> - * parties get signaled. drm_sched_job_cleanup() does not ensure
->> this.
->> - *
->> - * This function must also be called in &struct
->> drm_sched_backend_ops.free_job
->> + * After that point of no return @job is committed to be executed by
->> the
->> + * scheduler, and this function should be called from the
->> + * &drm_sched_backend_ops.free_job callback.
->>    */
->>   void drm_sched_job_cleanup(struct drm_sched_job *job)
->>   {
->> @@ -1032,7 +1030,7 @@ void drm_sched_job_cleanup(struct drm_sched_job
->> *job)
->>   		/* drm_sched_job_arm() has been called */
->>   		dma_fence_put(&job->s_fence->finished);
->>   	} else {
->> -		/* aborted job before arming */
->> +		/* aborted job before committing to run it */
->>   		drm_sched_fence_free(job->s_fence);
->>   	}
->>   
-> 
-
+--------------yh6GWUsZRjKC8o1bfCHMlPmR--
 
