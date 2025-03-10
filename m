@@ -1,91 +1,71 @@
-Return-Path: <linux-kernel+bounces-554849-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-554850-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 80E5FA5A1C2
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 19:13:08 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 46C6DA5A1C4
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 19:13:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7F09E173C02
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 18:13:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3881B18921E0
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 18:13:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE21E235BE1;
-	Mon, 10 Mar 2025 18:12:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3A5A2206BD;
+	Mon, 10 Mar 2025 18:13:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="FQkr1HSc"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ifDr2I4L"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9F562356CC;
-	Mon, 10 Mar 2025 18:12:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21A1222576A;
+	Mon, 10 Mar 2025 18:13:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741630355; cv=none; b=U9KVoHbnaqs9EPoYgLesvIUvX0jnGku4udNBnfx1sOEk6D2JGyS3I7SpIf+AQUnuKmJDDWZ42/q/1c4ZJOn7szrwQqYe0YYwO7E1tavjktGbGELYCMQGTQUHAu1Z8Yhiec6U3HR9BawzyPIGpWnOeN9cUZOk312avIhParh1nRg=
+	t=1741630394; cv=none; b=qwX51isLo+EDi0cdAw5OYr3jQcs0FIrR1uf1Oa2ciDWPOnBrLj8kjSnbJf96ewJ4Pq94H/K1Le1nyY7dkRBkMzBU8oRwZTsJIxKl+r5gx7agCr50nqidkD1J/N8Z4apo/SO1iFkzO1oMYrF3hrtUEtUpOmngqtx6Z/U+WLQ3l+8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741630355; c=relaxed/simple;
-	bh=xutUtI8ncSnysxzMFMlH3TgBkjEFcJ6ylYOCCdQt5sY=;
+	s=arc-20240116; t=1741630394; c=relaxed/simple;
+	bh=1lvYD4dJwhu3up1yUrM2XpUAp0MTVEkduNtJ4hcy4rM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TLQhCfjN1Nq9A/yjDCQzog4oDPGSsNapzc28nTDU5gEzp2cBdBWZX3l/Cu3Q3nYmsazCQaBcoXh1v+G9/YwQzWAUkfVryZPiAKP8G+yqDMBgHy7ePW49/PMwBzBlBmRFX03H2XzKggnKGkbwWU+uQtkf0qaJVsLw6eyjFXlYz50=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=FQkr1HSc; arc=none smtp.client-ip=192.198.163.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1741630354; x=1773166354;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=xutUtI8ncSnysxzMFMlH3TgBkjEFcJ6ylYOCCdQt5sY=;
-  b=FQkr1HScr8iBA6xrY2HK29ZJkkmZ6d9ztleZhLQlrUl6IBwrX5IpZcrV
-   opCHADnP3V0nFNg5MYKGDB6oYxCLuVvoBd4gU5HsdwRGwNOqHRfKk5iwR
-   Lu+bMDs1x957FWqZxAgxmGV/IuboTgapqxCXTjQc4tHBfy+NidiZOCpp8
-   uTQopKT0NOpJH03Kdul/AQobOjZdZFBDpB/mvelICgTq82oQhpJjDNlS1
-   FC1clurpE5Y5x3ZRNA2HHM4hHlEzHwFZhsppRogjeW0pNYjtMnRHbgP2v
-   2bl1m2Qwt6Gj9Bv42nFupKYaLC0NCfCNImURa4G6puwkaZmY3LS041jZ5
-   g==;
-X-CSE-ConnectionGUID: GgVKTgTVTAqPCT/Fik9T6Q==
-X-CSE-MsgGUID: B98toNZ5TEmsUSr2aGnzyQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11369"; a="45433458"
-X-IronPort-AV: E=Sophos;i="6.14,236,1736841600"; 
-   d="scan'208";a="45433458"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Mar 2025 11:12:32 -0700
-X-CSE-ConnectionGUID: XTWVcWlLSdaQ6N8oMqzVWQ==
-X-CSE-MsgGUID: D3Ts7d9eSaqsvtxwU60bpg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,236,1736841600"; 
-   d="scan'208";a="120552572"
-Received: from turnipsi.fi.intel.com (HELO kekkonen.fi.intel.com) ([10.237.72.44])
-  by fmviesa010-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Mar 2025 11:12:27 -0700
-Received: from kekkonen.localdomain (localhost [127.0.0.1])
-	by kekkonen.fi.intel.com (Postfix) with SMTP id A1BEB11F7E5;
-	Mon, 10 Mar 2025 20:12:24 +0200 (EET)
-Date: Mon, 10 Mar 2025 18:12:24 +0000
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-From: Sakari Ailus <sakari.ailus@linux.intel.com>
-To: Matti Vaittinen <mazziesaccount@gmail.com>
-Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
-	Jonathan Cameron <jic23@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Daniel Scally <djrscally@gmail.com>,
-	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Danilo Krummrich <dakr@kernel.org>,
-	Claudiu Manoil <claudiu.manoil@nxp.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org,
-	netdev@vger.kernel.org
-Subject: Re: [PATCH v6 02/10] property: Add functions to iterate named child
-Message-ID: <Z88riPwuTvnAy-cj@kekkonen.localdomain>
-References: <cover.1741610847.git.mazziesaccount@gmail.com>
- <ff924f640feeb87819d40557f12a04e607894682.1741610847.git.mazziesaccount@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=DvoHrdd5YjFWm+XWDSKySrzmoCYwzmAIMXufp1rqrwqQvoRB07aOkkqrzJprTkuFhtyRX9I9xPIus4J8hIGXI+mtqkel2qwdnig7VdJ+GikN5ytNyDbv8nKfe21JjtKlQkRPcV4opN5LK0p7uuNpS7/FgnARi7uh2Bb49odB0JE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ifDr2I4L; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DB3DCC4CEE5;
+	Mon, 10 Mar 2025 18:13:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741630393;
+	bh=1lvYD4dJwhu3up1yUrM2XpUAp0MTVEkduNtJ4hcy4rM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ifDr2I4LfGxd+q+0U+d/hAPdjxlxpILdlbBItf62WGSrsvHDbxKnOVO3ojHLubc4Y
+	 WFXmp/Abok5F82GJtyRS6+js8q9F8Y1IhmtYiOWbmgKH44gaBvf/0Sja6H62+Q3uVq
+	 H2OhDYDO9UxXQVFBT12b61lc9CaihqMp67iXG5bH2N12XX1l564msuBqLb5UVuFKUI
+	 chyKxzOnwV9shTj0g9QoVKKcHHxGp56n404JtcRIW6fgS9egd33yE/tbt0xS1Ed36G
+	 XRWUVt4z1XoGBiK2Ncjs41b1K6cKBc5WnEn/iyH3KASj48Z1MX+xaa0bUO8ck/9v/l
+	 ybVGAzQP44hPg==
+Date: Mon, 10 Mar 2025 19:13:08 +0100
+From: Niklas Cassel <cassel@kernel.org>
+To: Hans de Goede <hdegoede@redhat.com>
+Cc: Eric <eric.4.debian@grabatoulnz.fr>,
+	Salvatore Bonaccorso <carnil@debian.org>,
+	Mario Limonciello <mario.limonciello@amd.com>,
+	Christoph Hellwig <hch@infradead.org>,
+	Mika Westerberg <mika.westerberg@linux.intel.com>,
+	Damien Le Moal <dlemoal@kernel.org>,
+	Jian-Hong Pan <jhp@endlessos.org>, regressions@lists.linux.dev,
+	linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+	linux-ide@vger.kernel.org,
+	Dieter Mummenschanz <dmummenschanz@web.de>
+Subject: Re: Regression from 7627a0edef54 ("ata: ahci: Drop low power policy
+ board type") on reboot (but not cold boot)
+Message-ID: <Z88rtGH39C-S8phk@ryzen>
+References: <Z8SBZMBjvVXA7OAK@eldamar.lan>
+ <Z8SyVnXZ4IPZtgGN@ryzen>
+ <8763ed79-991a-4a19-abb6-599c47a35514@grabatoulnz.fr>
+ <Z8VLZERz0FpvpchM@x1-carbon>
+ <8b1cbfd4-6877-48ef-b17d-fc10402efbf7@grabatoulnz.fr>
+ <Z8l61Kxss0bdvAQt@ryzen>
+ <Z8l7paeRL9szo0C0@ryzen>
+ <689f8224-f118-47f0-8ae0-a7377c6ff386@grabatoulnz.fr>
+ <Z8rCF39n5GjTwfjP@ryzen>
+ <9c4a635a-ce9f-4ed9-9605-002947490c61@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -94,19 +74,71 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ff924f640feeb87819d40557f12a04e607894682.1741610847.git.mazziesaccount@gmail.com>
+In-Reply-To: <9c4a635a-ce9f-4ed9-9605-002947490c61@redhat.com>
 
-Moi,
+Hello Hans,
 
-On Mon, Mar 10, 2025 at 02:55:53PM +0200, Matti Vaittinen wrote:
-> Please note, the checkpatch.pl was not happy about the for_each...()
-> macros. I tried to make them to follow the existing convention. I am
-> open to suggestions how to improve.
+On Mon, Mar 10, 2025 at 10:34:13AM +0100, Hans de Goede wrote:
+> 
+> I think that the port-mask register is only read-only from an OS pov,
+> the BIOS/UEFI/firmware can likely set it to e.g. exclude ports which are
+> not enabled on the motherboard (e.g. an M2 slot which can do both pci-e + 
+> ata and is used in pci-e mode, so the sata port on that slot should be
+> ignored).
+> 
+> What we seem to be hitting here is a bug where the UEFI can not detect
+> the SATA SSD after reboot if it ALPM was used by the OS before reboot and
+> the UEFI's SATA driver responds to the not detecting by clearing the bit
+> in the port-mask register.
+> 
+> The UEFI not detecting the disk after reboot when ALPM was in use also
+> matches with not being able to boot from the disk after reboot.
 
-checkpatch.pl isn't always handling macros as well as it might. (It's just
-hard to parse C using regular expressions and in practice some
-simplifications end up being made.)
+If we look at dmesg:
+ahci 0000:00:11.0: AHCI vers 0001.0200, 32 command slots, 6 Gbps, SATA mode
+ahci 0000:00:11.0: 3/3 ports implemented (port mask 0x38)
+ahci 0000:00:11.0: flags: 64bit ncq sntf ilck pm led clo pmp pio slum part 
 
--- 
-Sakari Ailus
+We can see that the controller supports slumber, partial,
+and aggressive link power management ("pm").
+
+
+A COMRESET is supposed to take the device out of partial or slumber.
+
+Now, we do not know if the BIOS code sends a COMRESET, but it definitely
+should.
+
+Anyway, it is stated in AHCI 1.3.1 "10.1 Software Initialization of HBA",
+
+"To aid system software during runtime, the BIOS shall ensure that the
+following registers are initialized to values that are reflective of the
+capabilities supported by the platform."
+
+"-PI (ports implemented)"
+
+
+> 
+> I think what would be worth a try would be to disable ALPM on reboot
+> from a driver shutdown hook. IIRC the ALPM level can be changed at runtime
+> from a sysfs file, so we should be able to do the same at shutdown ?
+> 
+> Its been a while since I last touched the AHCI code, so I hope someone else
+> can write a proof of concept patch with the shutdown handler disabling ALPM
+> on reboot ?
+
+I mean, that would be a quirk, and if such a quirk is created, it should
+only be applied for buggy BIOS versions.
+
+(Since BIOS is supposed to initialize the PI register properly.)
+
+If
+ahci.mobile_lpm_policy=1
+or
+ahci.mobile_lpm_policy=2
+works around your buggy BIOS, then I suggest you keep that
+until your BIOS vendor manages to release a new BIOS version.
+
+
+Kind regards,
+Niklas
 
