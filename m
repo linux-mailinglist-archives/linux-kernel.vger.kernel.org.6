@@ -1,64 +1,39 @@
-Return-Path: <linux-kernel+bounces-554576-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-554577-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10FF2A59A1A
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 16:36:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D388A59A21
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 16:37:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 641BC188F68D
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 15:36:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DC64B188DB0E
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 15:37:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F8AE22D7AF;
-	Mon, 10 Mar 2025 15:36:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="mp1NPEM4"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 256B922D79D;
-	Mon, 10 Mar 2025 15:36:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 357EB22D4DE;
+	Mon, 10 Mar 2025 15:37:43 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 012511B3927
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 15:37:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741620993; cv=none; b=HKzneyR8a3yW021AmjcyxQy1PiyDqfQPCHFycOsQ/owBc28sXs19dnBh8dswEHnCUNZvkIbffxzQdniYdMYlA7dP71lKfVg4IMx8CM59BYZ3XoSSBqlp1QNOnNmwtw22RQcxOvO0SrMjdPwanMS+07t7k8iU5KCwK6wW/l1Mf/o=
+	t=1741621062; cv=none; b=GZW7AhDXE7qO6tDyS/esktB9O/NjMoC11vnNRA5B3z5ZPtSN5hqy2tQeA7lXUGHp0s/UMaHmTFGz0o/zqoNPgpDcqDg3maW9EReSG847Z7AJSNfxoRmQsPYQBWtzmSJwPg0fNTPLF4C+YyePWEFfl09tqxOUsJgOaVilP8mEA6I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741620993; c=relaxed/simple;
-	bh=64F4B4yJEEAfxN3wUIZgI4lC2XVN5r8inKVe5WmZtRY=;
+	s=arc-20240116; t=1741621062; c=relaxed/simple;
+	bh=DcaynPSTfCFPu46URPqTnbfY89OV/2dhTpGCXPyuXJM=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=QItSgq1xZk/DNB79G3MAC0UESQ2ylnCiuga0LXI8KTXhO+7HNalNjJ4qnLLe7U27xy41G6ZKz9IRAH1Ml6KeVpsbswc40Tws1s1LtPWQCn5jacGN239EubY3upYw98Q5BkQqvdRgXVD7z0NnGFF1mxRkG3iA9HysUgAH4u20Mv4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=mp1NPEM4; arc=none smtp.client-ip=192.198.163.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1741620992; x=1773156992;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=64F4B4yJEEAfxN3wUIZgI4lC2XVN5r8inKVe5WmZtRY=;
-  b=mp1NPEM40uZILz1IrbOiJ0lF3BzJvYZdlmmdnyZNjYljuaahSFNv/jto
-   NBwvNyuz1SQojnJgKuQJq4vqUMBSQrtRQ7tyRgN4Fc1gWI1Q1JP6wg+j3
-   VdN5+qRMKpErzSeumUQNW1aRopcOC7nxmsaBk5Hq9xzFSGaLiiWy0HliI
-   pSQdZb23B/6kHVzwBNum0oOLGXeS0DEemj47Oc6dS/1bcFweOqR68yq7J
-   Qio2abDxXsgNOTGUTBsKxuMGMtBjKlyUPM86wdd2et/P6X951NKeu0bsI
-   yORfWAH5XEEq/pUGmYu1hqSXMfPeVjskxZygwRKCLZ3ClWCvxljsNxrJW
-   Q==;
-X-CSE-ConnectionGUID: pja+oU0PR1mfojYMPPcj5A==
-X-CSE-MsgGUID: ppoDMT9BQgey6ZEw3SYRxg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11369"; a="41870588"
-X-IronPort-AV: E=Sophos;i="6.14,236,1736841600"; 
-   d="scan'208";a="41870588"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Mar 2025 08:36:30 -0700
-X-CSE-ConnectionGUID: F3VoGm4ET5KIlKSB614RWQ==
-X-CSE-MsgGUID: GZmB2o0OT2CBKOdaDJhi3w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,236,1736841600"; 
-   d="scan'208";a="150986398"
-Received: from dnelso2-mobl.amr.corp.intel.com (HELO [10.125.111.63]) ([10.125.111.63])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Mar 2025 08:36:29 -0700
-Message-ID: <49c6ce4e-52a4-43e2-b67f-9aa096694f39@intel.com>
-Date: Mon, 10 Mar 2025 08:36:28 -0700
+	 In-Reply-To:Content-Type; b=V8zbyvgdtIFDBL2GWj/5ApaD/eucEXdVWSUI4aD8EFtYJZVkFzTEqxQcRRLHp/WIy+mkWBQ+e8pywZtgt2XTfdwnGEHxnv2ez21+wCagZOFWbEu31AUU7CCu3M/uubPMZ3Di3j3k5QaQDq+VCe6t5J3M5dxatwQyFK/VYIiOt0I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A62E51692;
+	Mon, 10 Mar 2025 08:37:51 -0700 (PDT)
+Received: from [192.168.178.6] (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 9ABD53F5A1;
+	Mon, 10 Mar 2025 08:37:38 -0700 (PDT)
+Message-ID: <a5ea2f23-4b87-41d6-9dae-9ddc94024d6f@arm.com>
+Date: Mon, 10 Mar 2025 16:37:37 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,72 +41,67 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 9/9] dmaengine: idxd: Refactor remove call with
- idxd_cleanup() helper
-To: Shuai Xue <xueshuai@linux.alibaba.com>, vinicius.gomes@intel.com,
- Markus.Elfring@web.de, fenghuay@nvidia.com, vkoul@kernel.org
-Cc: dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250309062058.58910-1-xueshuai@linux.alibaba.com>
- <20250309062058.58910-10-xueshuai@linux.alibaba.com>
+Subject: Re: [PATCH v2 0/8] uclamp sum aggregation
+To: Hongyan Xia <hongyan.xia2@arm.com>, Xuewen Yan <xuewen.yan94@gmail.com>
+Cc: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
+ Vincent Guittot <vincent.guittot@linaro.org>,
+ Morten Rasmussen <morten.rasmussen@arm.com>,
+ Lukasz Luba <lukasz.luba@arm.com>,
+ Christian Loehle <christian.loehle@arm.com>,
+ Pierre Gondois <pierre.gondois@arm.com>, linux-kernel@vger.kernel.org,
+ Xuewen Yan <xuewen.yan@unisoc.com>
+References: <cover.1741091349.git.hongyan.xia2@arm.com>
+ <CAB8ipk_AvaOWp9QhmnFDdbFSWcKLhCH151=no6kRO2z+pSJfyQ@mail.gmail.com>
+ <6eb93af8-e239-44d7-a132-2932f260e792@arm.com>
+ <CAB8ipk9LpbiUDnbcV6+59+Sa=Ai7tFzO===mpLD3obNdV4=J-A@mail.gmail.com>
+ <13ea9f62-e373-4248-997c-47c15e024c02@arm.com>
+ <4a8ed999-2ee5-478c-a759-fec1c496cba9@arm.com>
+From: Dietmar Eggemann <dietmar.eggemann@arm.com>
 Content-Language: en-US
-From: Dave Jiang <dave.jiang@intel.com>
-In-Reply-To: <20250309062058.58910-10-xueshuai@linux.alibaba.com>
+In-Reply-To: <4a8ed999-2ee5-478c-a759-fec1c496cba9@arm.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
+On 10/03/2025 13:54, Hongyan Xia wrote:
+> On 10/03/2025 11:34, Dietmar Eggemann wrote:
+>> On 06/03/2025 12:38, Xuewen Yan wrote:
+>>> On Thu, Mar 6, 2025 at 7:32 PM Hongyan Xia <hongyan.xia2@arm.com> wrote:
+>>>>
+>>>> Hi Xuewen,
+>>>>
+>>>> On 06/03/2025 11:12, Xuewen Yan wrote:
+>>>>> Hi Hongyan,
+>>>>>
+>>>>> On Tue, Mar 4, 2025 at 10:26 PM Hongyan Xia <hongyan.xia2@arm.com>
 
+[...]
 
-On 3/8/25 11:20 PM, Shuai Xue wrote:
-> The idxd_cleanup() helper cleans up perfmon, interrupts, internals and
-> so on. Refactor remove call with the idxd_cleanup() helper to avoid code
-> duplication. Note, this also fixes the missing put_device() for idxd
-> groups, enginces and wqs.
+>> Like I mentioned already in the original thread:
+>>
+>> https://lkml.kernel.org/r/65365ec7-6a16-4e66-8005-e78788cbedfa@arm.com
+>>
+>> I would prefer that uclamp stays in core.c. ENQUEUE_DELAYED among all
+>> the other flags is already used there (ttwu_runnable()).
+>>
+>> task_struct contains sched_{,rt_,dl_}entity}. We just have to be
+>> careful when switching policies.
+>>
+>> -- 
+>>
+>> Could you also incorporate the changes in {en,de}queue_task_fair()
+>> ((task_on_rq_migrating(p) || (flags & {RESTORE,DEQUEUE}_SAVE))) vs.
+>> (!p->se.sched_delayed || (flags & ENQUEUE_DELAYED)) and
+>> (!p->se.sched_delayed) so the uclamp-util_est relation is easier to spot?
+>>
+>> [...]
 > 
-> Fixes: bfe1d56091c1 ("dmaengine: idxd: Init and probe for Intel data accelerators")
-> Cc: stable@vger.kernel.org
-> Suggested-by: Vinicius Costa Gomes <vinicius.gomes@intel.com>
-> Signed-off-by: Shuai Xue <xueshuai@linux.alibaba.com>
+> At the moment we can't do this. Sum aggregation was designed before
+> delayed dequeue and it syncs with p->se.on_rq. If we sync with something
+> else and take care of delayed dequeue cases (like util_est) then I have
+> to rewrite part of the series.
 
-Reviewed-by: Dave Jiang <dave.jiang@intel.com>
-> ---
->  drivers/dma/idxd/init.c | 14 ++------------
->  1 file changed, 2 insertions(+), 12 deletions(-)
-> 
-> diff --git a/drivers/dma/idxd/init.c b/drivers/dma/idxd/init.c
-> index ecb8d534fac4..22b411b470be 100644
-> --- a/drivers/dma/idxd/init.c
-> +++ b/drivers/dma/idxd/init.c
-> @@ -1310,7 +1310,6 @@ static void idxd_shutdown(struct pci_dev *pdev)
->  static void idxd_remove(struct pci_dev *pdev)
->  {
->  	struct idxd_device *idxd = pci_get_drvdata(pdev);
-> -	struct idxd_irq_entry *irq_entry;
->  
->  	idxd_unregister_devices(idxd);
->  	/*
-> @@ -1323,21 +1322,12 @@ static void idxd_remove(struct pci_dev *pdev)
->  	get_device(idxd_confdev(idxd));
->  	device_unregister(idxd_confdev(idxd));
->  	idxd_shutdown(pdev);
-> -	if (device_pasid_enabled(idxd))
-> -		idxd_disable_system_pasid(idxd);
->  	idxd_device_remove_debugfs(idxd);
-> -
-> -	irq_entry = idxd_get_ie(idxd, 0);
-> -	free_irq(irq_entry->vector, irq_entry);
-> -	pci_free_irq_vectors(pdev);
-> +	idxd_cleanup(idxd);
->  	pci_iounmap(pdev, idxd->reg_base);
-> -	if (device_user_pasid_enabled(idxd))
-> -		idxd_disable_sva(pdev);
-> -	pci_disable_device(pdev);
-> -	destroy_workqueue(idxd->wq);
-> -	perfmon_pmu_remove(idxd);
->  	put_device(idxd_confdev(idxd));
->  	idxd_free(idxd);
-> +	pci_disable_device(pdev);
->  }
->  
->  static struct pci_driver idxd_pci_driver = {
-
+Ah, OK! But this 'uclamp not in sync with util_est' is already an issue
+on today's mainline so I would like to see this fixed as discreet as
+possible and then another prep-patch for 'uclamp sum aggregation'.
+IMHO, then it's clearer why we would need more rework in this area.
 
