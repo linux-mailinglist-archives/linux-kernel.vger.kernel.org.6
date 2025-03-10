@@ -1,106 +1,63 @@
-Return-Path: <linux-kernel+bounces-553775-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-553777-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A6154A58EA5
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 09:55:16 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B0A16A58EA9
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 09:55:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6A7403A4C61
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 08:55:04 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 53CB37A295C
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 08:54:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3971F22424D;
-	Mon, 10 Mar 2025 08:55:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35F46224245;
+	Mon, 10 Mar 2025 08:55:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="RrBu00qO"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="qY1eII80"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5261224236
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 08:55:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBCB9380;
+	Mon, 10 Mar 2025 08:55:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741596909; cv=none; b=b0UMOSemWu4BO0UeM4DRzPOoXn7gOupgBT9UCYSWbEuX+bq7fh0FiTlp9fM774oe9Omt/25guSj/GNgh3BOUflBW6kbPc7wEjAJKmFO173+fStlpHFW2TYBDVOCQY41wQc0JkPS6puxdUtl8z1gnMR1XU7M/bn/R9zn+aHs7q9g=
+	t=1741596944; cv=none; b=COq0PKzoCnwBThABMElXfBbKLttnp9ca6tUmNTb0rCfLmolN0QhhcRsXliZS8WHUXtF+PY14fYQlbHQUfizXyRfoPyignbzmJzVkbMGl5usCrEs6HDzRY6VaKL7XX5Nzlu0ZvmfJsO0hSZuGykQovhNcF+MZZhwofix0LzU2eow=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741596909; c=relaxed/simple;
-	bh=Vdn0Xp45W0zY6EXvNCIpPx7m9OhRfnXKtkh1QQkRpho=;
+	s=arc-20240116; t=1741596944; c=relaxed/simple;
+	bh=yHvsB5ALBqO6HcLi9r38BJv6YSoU1qYhhIzz3JKUdcA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gKsjhh8FnCweY1AlAhkxSKrMOeKm8gA9ZacXktV6EHkwOMm7X2Kl1Uur1TuPQzTD6yviPAH3zIx5GXzwhUq235jSEk348EcBdmZ/FZ+i+HxxJ55P8cbU7PtcdNNnMTLOqpqOC2NAHd0Ggc+raTAWR1wBH9YIpCesCzzqM/sREOI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=RrBu00qO; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1741596906;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=MdmSXoVy0aw6POMq2SYkzyggnJQqhnLgSVhB7YCFo00=;
-	b=RrBu00qOZgp5gcUuyKuRaZGFAW7utPYq8Ko/7Dx2x+zQ8N+pVhhTdbSz9jBtx12oASAmta
-	rh9EusELq363dyIbN1MWJUUC6/2iDPuAECX9skO4B8xOskZyFf5z0QB1g8VQgF+UHL65EG
-	at0ekPjksVJMud0atmLP1PhLoja7VrM=
-Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
- [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-434-4F-uO7cKN7aJyV0L8cQQAA-1; Mon, 10 Mar 2025 04:55:05 -0400
-X-MC-Unique: 4F-uO7cKN7aJyV0L8cQQAA-1
-X-Mimecast-MFC-AGG-ID: 4F-uO7cKN7aJyV0L8cQQAA_1741596904
-Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-39123912ff0so1638052f8f.2
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 01:55:05 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741596904; x=1742201704;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=MdmSXoVy0aw6POMq2SYkzyggnJQqhnLgSVhB7YCFo00=;
-        b=esTzDYGxNTrdyd/jSRh09iYqQLKExM1eice3rLvRPr/+q9ki6FBZXsNPZSlT6qL0rB
-         GAaEUVl1yzlrQUvEkLbbFZeGLqliv9Iilb+18NMUPfccegVgykTM7WWJppDc+N84P+Ux
-         d06jauhl088c3qQRTZ/ZFKzyqcecLx2FPzsgVcg/vFiwIQ4C4VAQE0iHmhT9iE2FNnAl
-         /pEzSil1nUHDQxBn+JUUGeBkuSvcjSrBFE26AVZ/5+TNMfOk6ewXQ6yYdijbga9OPFdr
-         0O6w2pehudJcpRraXl5BIChcPoYLW7yW9F8MW8pvMGw3r4VAO1R5/yfA7Enp9MFcaNZx
-         FqDw==
-X-Gm-Message-State: AOJu0YziTCeMonOMgXdQj7UBRBtZDPL8vRIu8rWs+QXEUSubevovBFNm
-	eACG2mnQa2E20PI1RQd0NUG1JS4TAGpp48wnxAiVJKJ9Rh2FRv9KjmWwnB9GO/QmjrhvHY26hHC
-	Fu0YcNoWuKbPJM0axKaFjJ7RwY9keaF1q36GGYEwPAiCLLCfppcvyWfasCMR1Gw==
-X-Gm-Gg: ASbGncu8CyCTROisMRGEKXgeVf3QYL2s+vVbkFFRXNP3Agtm5vZpfRQ+kKjypc07uX1
-	ieabh022Wx/QlvzHpyTWQL3eLQf46fDi/4XIqnjEcrhdS8n6RPnF6ISF7oZ3BnoOuCXpclkD7xL
-	9vsB1bX8+vTRZmSYxEzbfhZaGiPw83TNAEHQHIaMY1QHNhevqvDqg9Pp3GAk7NdqDbZeGoylNyH
-	b6dFewjlDvHqREio+RJ80Ei7ePnmPrxyO8zREkOL9SKDxuXPDjebyuhJoV8G7V4XIKjX2wlHd9h
-	iYjUo6KlsspejC2Xp+WmT8YFzXkcHCJBCX4KYtYiM80=
-X-Received: by 2002:a05:6000:1867:b0:391:253b:405d with SMTP id ffacd0b85a97d-39132d98a1emr8359871f8f.41.1741596903774;
-        Mon, 10 Mar 2025 01:55:03 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFfdR0LZ/IejdEgtb62TmVCUDQ3vvw2ErQjEGxdgcFHhFM2pl+MvjaV81f9xdITu8Eal8mEIg==
-X-Received: by 2002:a05:6000:1867:b0:391:253b:405d with SMTP id ffacd0b85a97d-39132d98a1emr8359852f8f.41.1741596903437;
-        Mon, 10 Mar 2025 01:55:03 -0700 (PDT)
-Received: from jlelli-thinkpadt14gen4.remote.csb ([151.29.49.7])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43cf87a82f7sm26494435e9.14.2025.03.10.01.55.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 10 Mar 2025 01:55:02 -0700 (PDT)
-Date: Mon, 10 Mar 2025 09:55:00 +0100
-From: Juri Lelli <juri.lelli@redhat.com>
-To: Waiman Long <llong@redhat.com>
-Cc: linux-kernel@vger.kernel.org, cgroups@vger.kernel.org,
-	Ingo Molnar <mingo@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-	Valentin Schneider <vschneid@redhat.com>, Tejun Heo <tj@kernel.org>,
-	Johannes Weiner <hannes@cmpxchg.org>,
-	Michal =?iso-8859-1?Q?Koutn=FD?= <mkoutny@suse.com>,
-	Qais Yousef <qyousef@layalina.io>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	Swapnil Sapkal <swapnil.sapkal@amd.com>,
-	Shrikanth Hegde <sshegde@linux.ibm.com>,
-	Phil Auld <pauld@redhat.com>, luca.abeni@santannapisa.it,
-	tommaso.cucinotta@santannapisa.it,
-	Jon Hunter <jonathanh@nvidia.com>
-Subject: Re: [PATCH v2 0/8] Fix SCHED_DEADLINE bandwidth accounting during
- suspend
-Message-ID: <Z86o5MC6nXM9W5UL@jlelli-thinkpadt14gen4.remote.csb>
-References: <20250306141016.268313-1-juri.lelli@redhat.com>
- <93c3f9ac-0225-429a-807c-d11c649c819e@redhat.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=kpseceWbJu62WYZSeEQgkPgZjtKYYA2Dy8Ukat3JahOHQmrH66L9iGyPiZuipYDnr0kkcMQT0RJZpY1HEvevd2xAC1UxrfVSs3lH+OHYZiddRobn/+i7yqEN0duBDpp/BUSr1dTf6G8RwWHtVNXYrKX6NkgszVSJdCni8y0TpmQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=qY1eII80; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=y6ewIZM2dtnWRQcBfslu1okDKdEcc8mCLFTRLy3nMdY=; b=qY1eII80wtVqZhUqGvphOqBc6p
+	/Jc/c2Qop8wc3+/ZOOpcICg5f9hfwLEigNpRZIuPPgKCdXlJpQDdko+7npdFpw195J3r8FNnY+Ige
+	gKdoDuBlowUr+76i3AxH3r3JCj9+5YznP6kmMGqzr7VBY3MMvByJZytnp3FY9G3MPuwOUj8g/vk+K
+	b6pkv+WIYphhe8aR9OKtrofYhshhS/XzIv7YqeES9uv7RgZoQf2zeLgDao+NBHsSQPzfb2Xtj5RvX
+	xnFXcfSi8zwQy0SC6gyBU2+p25yfevV+tZSJsOrmUvdAD05WOkioZg6rLZfhPcTCYce5tp4GUojBP
+	vn+QbTUQ==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1trYvA-00000002l58-1k5G;
+	Mon, 10 Mar 2025 08:55:39 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id DDB143006C0; Mon, 10 Mar 2025 09:55:35 +0100 (CET)
+Date: Mon, 10 Mar 2025 09:55:35 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: linux-kernel@vger.kernel.org, ojeda@kernel.org
+Cc: linux-tip-commits@vger.kernel.org,
+	Scott Constable <scott.d.constable@intel.com>,
+	Ingo Molnar <mingo@kernel.org>, Kees Cook <kees@kernel.org>,
+	x86@kernel.org
+Subject: Re: [tip: x86/core] x86/ibt: Implement FineIBT-BHI mitigation
+Message-ID: <20250310085535.GQ31462@noisy.programming.kicks-ass.net>
+References: <20250224124200.820402212@infradead.org>
+ <174057447519.10177.9447726208823079202.tip-bot2@tip-bot2>
+ <20250226195308.GA29387@noisy.programming.kicks-ass.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -109,44 +66,55 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <93c3f9ac-0225-429a-807c-d11c649c819e@redhat.com>
+In-Reply-To: <20250226195308.GA29387@noisy.programming.kicks-ass.net>
 
-On 07/03/25 14:00, Waiman Long wrote:
-> On 3/6/25 9:10 AM, Juri Lelli wrote:
-> > Hello!
-> > 
-> > Jon reported [1] a suspend regression on a Tegra board configured to
-> > boot with isolcpus and bisected it to commit 53916d5fd3c0
-> > ("sched/deadline: Check bandwidth overflow earlier for hotplug").
-> > 
-> > Root cause analysis pointed out that we are currently failing to
-> > correctly clear and restore bandwidth accounting on root domains after
-> > changes that initiate from partition_sched_domains(), as it is the case
-> > for suspend operations on that board.
-> > 
-> > This is v2 [2] of the proposed approach to fix the issue. With respect
-> > to v1, the following implements the approach by:
-> > 
-> > - 01: filter out DEADLINE special tasks
-> > - 02: preparatory wrappers to be able to grab sched_domains_mutex on
-> >        UP (remove !SMP wrappers - Waiman)
-> > - 03: generalize unique visiting of root domains so that we can
-> >        re-use the mechanism elsewhere
-> > - 04: the bulk of the approach, clean and rebuild after changes
-> > - 05: clean up a now redundant call
-> > - 06: remove partition_and_rebuild_sched_domains() (Waiman)
-> > - 07: stop exposing partition_sched_domains_locked (Waiman)
-> > 
-> > Please test and review. The set is also available at
 
-...
+Ping -- anything I can do the help?
 
-> I have run my cpuset test and it completed successfully without any issue.
+On Wed, Feb 26, 2025 at 08:53:08PM +0100, Peter Zijlstra wrote:
+> On Wed, Feb 26, 2025 at 12:54:35PM -0000, tip-bot2 for Peter Zijlstra wrote:
 > 
-> Tested-by: Waiman Long <longman@redhat.com>
+> > diff --git a/Makefile b/Makefile
+> > index 96407c1..f19431f 100644
+> > --- a/Makefile
+> > +++ b/Makefile
+> > @@ -1014,6 +1014,9 @@ CC_FLAGS_CFI	:= -fsanitize=kcfi
+> >  ifdef CONFIG_CFI_ICALL_NORMALIZE_INTEGERS
+> >  	CC_FLAGS_CFI	+= -fsanitize-cfi-icall-experimental-normalize-integers
+> >  endif
+> > +ifdef CONFIG_FINEIBT_BHI
+> > +	CC_FLAGS_CFI	+= -fsanitize-kcfi-arity
+> > +endif
+> >  ifdef CONFIG_RUST
+> >  	# Always pass -Zsanitizer-cfi-normalize-integers as CONFIG_RUST selects
+> >  	# CONFIG_CFI_ICALL_NORMALIZE_INTEGERS.
+> > diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
+> > index c4175f4..5c27726 100644
+> > --- a/arch/x86/Kconfig
+> > +++ b/arch/x86/Kconfig
+> > @@ -2473,6 +2473,10 @@ config CC_HAS_RETURN_THUNK
+> >  config CC_HAS_ENTRY_PADDING
+> >  	def_bool $(cc-option,-fpatchable-function-entry=16,16)
+> >  
+> > +config CC_HAS_KCFI_ARITY
+> > +	def_bool $(cc-option,-fsanitize=kcfi -fsanitize-kcfi-arity)
+> > +	depends on CC_IS_CLANG && !RUST
+> > +
 > 
-
-Thanks!
-Juri
-
+> Miguel, can we work on fixing that !RUST dep?
+> 
+> >  config FUNCTION_PADDING_CFI
+> >  	int
+> >  	default 59 if FUNCTION_ALIGNMENT_64B
+> > @@ -2498,6 +2502,10 @@ config FINEIBT
+> >  	depends on X86_KERNEL_IBT && CFI_CLANG && MITIGATION_RETPOLINE
+> >  	select CALL_PADDING
+> >  
+> > +config FINEIBT_BHI
+> > +	def_bool y
+> > +	depends on FINEIBT && CC_HAS_KCFI_ARITY
+> > +
+> >  config HAVE_CALL_THUNKS
+> >  	def_bool y
+> >  	depends on CC_HAS_ENTRY_PADDING && MITIGATION_RETHUNK && OBJTOOL
 
