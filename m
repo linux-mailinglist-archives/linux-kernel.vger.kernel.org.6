@@ -1,107 +1,118 @@
-Return-Path: <linux-kernel+bounces-553882-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-553883-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 768D2A5901A
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 10:46:57 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D877EA5901E
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 10:47:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B61E91890953
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 09:46:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9544C1887089
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 09:46:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9DDC225A20;
-	Mon, 10 Mar 2025 09:44:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9CF3225A32;
+	Mon, 10 Mar 2025 09:45:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="CIZHb+w6"
-Received: from mail-wr1-f73.google.com (mail-wr1-f73.google.com [209.85.221.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MH2L4TQT"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98094226D0A
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 09:44:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26F601624C3;
+	Mon, 10 Mar 2025 09:45:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741599887; cv=none; b=ITS2WE11oK3c32fi/4krKAgvi7MjgftioBoA/0Bjesvmcsu9nvynXOXoxjzM/roghpD0Za/54fkzfBN1MJD49A5Nlhd+dTOMbih8saw08MqUgXBymA6hMd6saHGbG271KMIOA+IsvyAGoyOtEHLsjLD/ckd/UVmNFQaC+R2oRzM=
+	t=1741599932; cv=none; b=ZfJpJRpwgnhIv/pYHjKX3rdvI3TTqfyaX0VallWcxngrHIGu5/Jkm2l6FktcH9vMjOTO15INcrMeQ1WwaB3cHZmXs6yIZROByJdNXtNkdquIV+fNt2cnp62q7xrx8o4T80XRvjY8J68RS1WcBZt6fxCdjuxZ6LMAixPUn2W+AUw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741599887; c=relaxed/simple;
-	bh=gBsxJraH2VccxGdfoYatDUg8xaTF55kYrM6BAJWMFNw=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=UsaulkgyOsexvSfTmZC1nf+u5ZRLs5hUXnLbobOMoPrlG5ZL8dY7Mr1KJhfOnK/F3dMrrAYheAEII77TUg4AWjOEI2bWbvr5G8o0ZTRayAVnxV4fnmc7h0LOV3sIvtxBIcX1li/FuLz9hm7XJDms5IwaLLpPeTl9tIISY1buPCI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=CIZHb+w6; arc=none smtp.client-ip=209.85.221.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
-Received: by mail-wr1-f73.google.com with SMTP id ffacd0b85a97d-3913b2d355fso514163f8f.1
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 02:44:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1741599883; x=1742204683; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=K4uT7Aj9nf7d2IT7mRwWlJl8JB3gxTUY+mQiV67L5Z8=;
-        b=CIZHb+w6frU1eCTidgr9HQGGBMxs4svzTLld6UP12T1m9O5zv6QK0dUt+gSPPMpAlg
-         wJXeXaO3Zqv+ulTKBtZ47p2u5wSer1WttrHpkARWGB1f8Tj2QsTolKYse4D3nf4YBwTG
-         xncSeImfZ7uKE2wA3f3BLsm2rSFoxM5FR6oSuFbK+Zbi5kh5GEwA2GFUyEsZIPxS/Mny
-         VqZcFzJT8lR70SPI0jiNYVeweytT6z3y4Obly8an9NzSas5kowcoJ2vtCOQhD5fHJnVJ
-         CxgoaSkXgtyrXtbgjGzsbaXVRUR7IyTqKNMO0eUFeoLN+GTsm3Em/dUhyUbXcq/U4gTi
-         8vGQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741599883; x=1742204683;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=K4uT7Aj9nf7d2IT7mRwWlJl8JB3gxTUY+mQiV67L5Z8=;
-        b=Ndxxi7G6F3OAL/RvUj14m2HloMyVYWNi/0aM2fs/4cfZQUW/W47kXjcAjk6MoM8oKm
-         SFF57qkXtygXT59wEey/EFusZafTbhVBj1QL8nlUzuBM+meaPJGWYnqs9mONPhUfJ+yh
-         6JaL2NWXSzMztonJNo+ZMu15snsUIiO0KWCi6zVztdx6ZSnVZfL/MxbahrY8jKtevWKF
-         4fE4NnkvX9b82tsIwfhl37/4ru6z0nenB4HzyQ5MiKIch++CsANdkjCXEVi5GXpFAJ9v
-         RB+7K2Oj7Ue5S1DjphGNtUn7y8IEaG/ewlRvUQ8KcFCNfFrQ2gBqSz2P0G0uzlTBPKgy
-         tgQA==
-X-Forwarded-Encrypted: i=1; AJvYcCXmPeLLtANZVglMCPb+xfuGrayTwRTu7rnoAK8U8/uxv0y6za0myJ+dwbSVZVZD8WIdjwVTsWYIuZJ/xrI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwyMkCpv8xTLMbcUiQzz21LIyWRvwyYXwxiUXkfSGcPy+u/Mr7M
-	WLr9R+whgF/PpiN4mSiAMeuuwLvWF+mlm2cQNzRYowUSuqY8JLzPfSiBZ0pSyWLe+xRkpgw/dI1
-	w70Scjgkp0kk0nA==
-X-Google-Smtp-Source: AGHT+IGVyxro7AL58g4XR8fKVbaaI1TWX7wPwMNwsGLr+PpgDItcCn2Z27WVF1wmJWCgCt0fQ+bi8w9hZQvKDuI=
-X-Received: from wmbay19.prod.google.com ([2002:a05:600c:1e13:b0:43c:f27f:e9f2])
- (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
- 2002:a5d:598c:0:b0:391:3bdb:af5d with SMTP id ffacd0b85a97d-3913bdbb534mr4193539f8f.28.1741599882976;
- Mon, 10 Mar 2025 02:44:42 -0700 (PDT)
-Date: Mon, 10 Mar 2025 09:44:41 +0000
-In-Reply-To: <20250310073040.423383-2-richard120310@gmail.com>
+	s=arc-20240116; t=1741599932; c=relaxed/simple;
+	bh=RuNQEcmiwzRvpjUFcODBA0Mm17cQbne/86O864Wdscg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=AzGcynNmhQRfG10yS/wbeYFyjXWWbkVczHP1H/kqNEfJKqxhRVklMWWOKei0kHt37g4OmLovE2Y4+bjTXccVmVqX2JYYlw6jZExCBv4fWhKabb5Vhyux6QVLA4vmwDBFxpLyCsTdH91lNPHrX6vEgmFRfdh3d0HaAHY9jo9OvlI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MH2L4TQT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 06967C4CEE5;
+	Mon, 10 Mar 2025 09:45:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741599932;
+	bh=RuNQEcmiwzRvpjUFcODBA0Mm17cQbne/86O864Wdscg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=MH2L4TQTnjAZhVYzcFauyhGYNSN/gunC4BZUJuVp8XqhoovlE518Yr0wDnJGZQ2n9
+	 TvPI+BF77xLsuZP6avPO/cwo+7bkp17gvSZT/c2X6I6Z0YlZr+z60wkJTYBX5136wt
+	 gdnlLfen430m2t4nA3cR1SIuOu0FhQXPCc7sfEFxCatPa1L4YSQyuD9jJnmmrNyM2R
+	 Gu7iLP36pfBOfuw5eLT6hst5NwJZQ+LTLJj9kKZYb27GLBEB6Qx0MhyRBKu+xjOnfZ
+	 gzByfQOT/ja+pHNS5j05nbxoYHlYBB5VxT5nUNsDwRwQ9zG7dx+kJc8pqdHqeIu5jU
+	 Et4/4pVNegMPg==
+Date: Mon, 10 Mar 2025 10:45:28 +0100
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: David Heidelberg <david@ixit.cz>
+Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, "Jason A. Donenfeld" <Jason@zx2c4.com>, 
+	Matthias Schiffer <matthias.schiffer@ew.tq-group.com>, Vincent Huang <vincent.huang@tw.synaptics.com>, 
+	linux-input@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	phone-devel@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht, 
+	Caleb Connolly <caleb.connolly@linaro.org>
+Subject: Re: [PATCH v3 1/7] dt-bindings: input: syna,rmi4: document
+ syna,pdt-fallback-desc
+Message-ID: <20250310-hissing-vagabond-pegasus-cc8aed@krzk-bin>
+References: <20250308-synaptics-rmi4-v3-0-215d3e7289a2@ixit.cz>
+ <20250308-synaptics-rmi4-v3-1-215d3e7289a2@ixit.cz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250310073040.423383-1-richard120310@gmail.com> <20250310073040.423383-2-richard120310@gmail.com>
-Message-ID: <Z860iWGtaEFMD2hj@google.com>
-Subject: Re: [RFC PATCH 1/2] rust: list: Implement normal initializer for ListLinks
-From: Alice Ryhl <aliceryhl@google.com>
-To: I Hsin Cheng <richard120310@gmail.com>
-Cc: ojeda@kernel.org, alex.gaynor@gmail.com, boqun.feng@gmail.com, 
-	gary@garyguo.net, bjorn3_gh@protonmail.com, benno.lossin@proton.me, 
-	a.hindborg@kernel.org, tmgross@umich.edu, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, skhan@linuxfoundation.org, 
-	linux-kernel-mentees@lists.linux.dev, jserv@ccns.ncku.edu.tw
-Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250308-synaptics-rmi4-v3-1-215d3e7289a2@ixit.cz>
 
-On Mon, Mar 10, 2025 at 03:30:39PM +0800, I Hsin Cheng wrote:
-> Currently ListLinks only supports to create an initializer through
-> "new()", which will need further initialization because the return type
-> of "new()" is "impl Pininit<Self>". Not even "ListLinksSlefPtr" use the
-> method to create a new instance of "ListLinks".
+On Sat, Mar 08, 2025 at 03:08:37PM +0100, David Heidelberg wrote:
+> From: Caleb Connolly <caleb.connolly@linaro.org>
 > 
-> Implement a normal method to create a new instance of type "ListLinks".
-> This may be redundant as long as there exist a convenient and proper way
-> to deal with "ListLinks::new()".
-> 
-> For now it's introduce for the simplicity of examples in the following
-> patches.
-> 
-> Signed-off-by: I Hsin Cheng <richard120310@gmail.com>
+> This new property allows devices to specify some register values which
+> are missing on units with third party replacement displays. These
+> displays use unofficial touch ICs which only implement a subset of the
+> RMI4 specification.
 
-This change is not good. The ListLinks type has an invariant about when
-the pointers are null. The existing constructor argues that the
-invariant is satisfied because pin-init initializers can't be used in an
-existing Arc. Why is that satisfied here?
+These are different ICs, so they have their own compatibles. Why this
+cannot be deduced from the compatible?
 
-Alice
+> 
+> Signed-off-by: Caleb Connolly <caleb.connolly@linaro.org>
+> Signed-off-by: David Heidelberg <david@ixit.cz>
+> ---
+>  Documentation/devicetree/bindings/input/syna,rmi4.yaml | 18 ++++++++++++++++++
+>  1 file changed, 18 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/input/syna,rmi4.yaml b/Documentation/devicetree/bindings/input/syna,rmi4.yaml
+> index b522c8d3ce0db719ff379f2fefbdca79e73d027c..a80ec0c052cb1b7278f0832dd18ebd3256bc0874 100644
+> --- a/Documentation/devicetree/bindings/input/syna,rmi4.yaml
+> +++ b/Documentation/devicetree/bindings/input/syna,rmi4.yaml
+> @@ -49,6 +49,24 @@ properties:
+>      description:
+>        Delay to wait after powering on the device.
+>  
+> +  syna,pdt-fallback-desc:
+> +    $ref: /schemas/types.yaml#/definitions/uint8-matrix
+> +    description:
+> +      This property provides fallback values for certain register fields that
+> +      are missing on devices using third-party replacement displays.
+> +      These unofficial displays contain touch controllers that claim RMI4
+> +      compliance but fail to populate the function_number and function_version
+> +      registers of their Page Descriptor Table (PDT) entries.
+> +
+> +      Since the number of required fallback entries depends on the number of
+> +      Page Descriptor Tables supported by a given device, this property
+> +      should be provided on a best-effort basis.
+> +
+> +    items:
+
+min/maxItems here
+
+> +      items:
+> +        - description: The 5th byte of the PDT entry (function number)
+> +        - description: The 4th byte of the PDT entry (version value)
+
+Best regards,
+Krzysztof
+
 
