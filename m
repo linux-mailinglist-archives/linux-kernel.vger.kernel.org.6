@@ -1,94 +1,478 @@
-Return-Path: <linux-kernel+bounces-555063-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-555064-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42BDFA5A520
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 21:40:49 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B4A62A5A523
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 21:41:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D1624189389B
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 20:40:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E6063172E3D
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 20:41:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E7B81E1A20;
-	Mon, 10 Mar 2025 20:40:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 452761DF24A;
+	Mon, 10 Mar 2025 20:40:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="n5v+qJjr"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Xe62Xd7v"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C374B1DEFE7;
-	Mon, 10 Mar 2025 20:40:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED2BC1DE8AB;
+	Mon, 10 Mar 2025 20:40:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741639209; cv=none; b=bMXSwOe+iN4xVRfL1HFVH1tbUdiU+Hih0m7RmCNrNh4NkmLQevnjdJOulJJhD5KMGFG3xGuqh4DXkGs8kCZ2XvuO84YWQCmv7njFeR4huNKRk44i+TJ87ji/kq+fAuATMmHo2LD4xF/x25OUivyE9EUN1rhvxUPPSJS0Cyb46bk=
+	t=1741639255; cv=none; b=Rs0TnuIjqcpG1So0VfzPTqLCT3BLQH8JXXu7xxTMsBiR0r7qmJcEHRs7pkyPqoBxAWa48AG7zD8KkIoE1Sumxor1lY/5erSfKVt5+d7OfP4S1RqNhXG5mD97cY369dGzFGP16HKgR759DUJtVFxKWlnJBfnIw97H7YqHzx7oO60=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741639209; c=relaxed/simple;
-	bh=mzi6YTCCkVyl0WFrGQ3Nu4sAhX4Qm2Bqn1ozXtQ0AjI=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=Y95ufWpsnQH6oOTGbdnec/Td+74bUojTqDkxn9CLZJ74tsVXDcLOEbZB711HCqMLmqYtRbH4sW73cmbl3HelWgDbC/01LXd9Kk3IScw85gfwGXjRRTr95T0u8Y45GQHHRsXHuPiwTvVKJdpBuyw7sJJkCkQWr45abW8BG6hhPVw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=n5v+qJjr; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A048DC4CEED;
-	Mon, 10 Mar 2025 20:40:09 +0000 (UTC)
+	s=arc-20240116; t=1741639255; c=relaxed/simple;
+	bh=79Iy4PjlfM8x0qsncGpzq2YIDIllVdVOrTyqu2jRx7Y=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=hxdqUCeS61syX1qw1xWw8EuCKb2X2PphhTSIf4WsDtdO0raPk0+ACr+wQSop5MUOuGR7qCKUztYjm78xN3bIsh8qrFeKCcMiiA4ovuWKS0kqAmIuhpxuR/zepSsBMaFm+wAZavItTVaaP+0kXrZN93iNDEbid3VWDOd5FpiucjI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Xe62Xd7v; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C6E9EC4CEF1;
+	Mon, 10 Mar 2025 20:40:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741639209;
-	bh=mzi6YTCCkVyl0WFrGQ3Nu4sAhX4Qm2Bqn1ozXtQ0AjI=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=n5v+qJjr1j5sJuh2S26te73xS0ebtvETJRtDaUvwI4LdnmTSRQNZ5GfSiQliojyPW
-	 DsnPMFeVrN02VjahMqQh9Z1YuaJc5P+if4UYhbB30su9VKNV8JeDcGVCcZvbi3IpyQ
-	 AoIhb+EoFzTIf/f12hjiynWE0XTcdHcJXb5Fn0IM366XuUwAKYrfOqXHCeFELa7lAz
-	 x/uJ5kFzMcYaC4fzAAicHtxDg/wsg9bi4J/r6vC0hvHLuCl1laYkXrLzK1ZgRKNvCG
-	 YTe5O3d9Gf1IiHK8Q3v8tY76yoxocTO1u8K59RmI4QZDJQCHVVGS2CpBoAGJcpCFa6
-	 6JQQXqunL2D8w==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EAF43380AACB;
-	Mon, 10 Mar 2025 20:40:44 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=k20201202; t=1741639254;
+	bh=79Iy4PjlfM8x0qsncGpzq2YIDIllVdVOrTyqu2jRx7Y=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=Xe62Xd7vrF7V4Wl5SAQxJDeAZGz8DbCOSY5nDksQYWW8wZwVqSULAXGivzjLtmU1T
+	 EbemwITk12pJfDq8jhhfF4A0cyhLYjusWif83Vb0dscUhveZYHrYezJTSJlWNw4qLY
+	 IGPBuQ25updeJmypxIlmM6vnM5j/Afjb8KxF5a4sZ1QeJmRDAbPPJqFx/ubnNqHrqh
+	 YzfSalAdyts208eq3VuOcd5x3cnkG+UvmHeevsh2w7uTvJUPO1gp7khmOc1fqP1L79
+	 SnTA1TalSVuX5BA7TixyTw/QY3kh7Cd6G95Wf7E6aQj1hnZd1P9Xhdqboa5qa3LBOL
+	 Grw2Zj5jtdKsg==
+Received: by mail-yb1-f172.google.com with SMTP id 3f1490d57ef6-e5dcc411189so4339745276.0;
+        Mon, 10 Mar 2025 13:40:54 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVsgQNogW/er8uxbu6q2CaYFl8+99Sh5+I3p44zCW2Nv5uDVZMccEz0YXGqqsbnetH8eYAM8Q==@vger.kernel.org, AJvYcCWUoXg5CUsGf4NOF97yU+sDH7sk09KrnujdYJ2lmbJFoB4j4NquoiMQWGOpS2HfeIMPaLhs5fpNYHNy4N1r@vger.kernel.org, AJvYcCWxwyT0gIiVNxyICjhi8OvDosYPYsn2avutMyw7hOb+pujmIPFNU+f2eYCPRqe0LOGYR/Ds49+Dwmqs01DsvPB8rlQeroFg@vger.kernel.org, AJvYcCXorHoThyJc/dHa9OjfZZCd+CL9dX+j+t+rsQ815B6R1F4Ot27x8f0/GYx5FUDqBzFGI2zrU5KC6giT@vger.kernel.org
+X-Gm-Message-State: AOJu0YzY4qHtOj2s3W3X5TZzL5Yj4RG9Y+Iwh2a5W9MPRhstuQOjvb1Q
+	hfuBou93ARrOK/Nv+54uqRBkG87pp38t5UZl3+nYSJNlBATeYAZArBRfPjKC7Ho4m5nkqmZEvzv
+	FTrwcjAYqcnKP6IhlLVqpoCCPTSc=
+X-Google-Smtp-Source: AGHT+IGW3DJYCB1vqIA1aTnPKAEYaNV4ZR8s/OYmPYNC8BLKT8yN8zj7ypfY8XOqnpiLSHVUsg8tyQ7zTrG8R5Ovs+k=
+X-Received: by 2002:a05:6902:2a8b:b0:e5d:c6e8:2e32 with SMTP id
+ 3f1490d57ef6-e635c179f67mr15276065276.24.1741639253935; Mon, 10 Mar 2025
+ 13:40:53 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net-next] eth: fbnic: fix memory corruption in
- fbnic_tlv_attr_get_string()
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <174163924349.3688527.16911619738250606292.git-patchwork-notify@kernel.org>
-Date: Mon, 10 Mar 2025 20:40:43 +0000
-References: <2791d4be-ade4-4e50-9b12-33307d8410f6@stanley.mountain>
-In-Reply-To: <2791d4be-ade4-4e50-9b12-33307d8410f6@stanley.mountain>
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: lee@trager.us, alexanderduyck@fb.com, kuba@kernel.org,
- kernel-team@meta.com, andrew+netdev@lunn.ch, davem@davemloft.net,
- edumazet@google.com, pabeni@redhat.com, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+References: <1741385035-22090-1-git-send-email-jasjivsingh@linux.microsoft.com>
+ <1741385035-22090-2-git-send-email-jasjivsingh@linux.microsoft.com>
+In-Reply-To: <1741385035-22090-2-git-send-email-jasjivsingh@linux.microsoft.com>
+From: Fan Wu <wufan@kernel.org>
+Date: Mon, 10 Mar 2025 13:40:43 -0700
+X-Gmail-Original-Message-ID: <CAKtyLkGcU10+rxKd2uH5Hy2impDih_=AkAgcdu35h+xTeM=+OA@mail.gmail.com>
+X-Gm-Features: AQ5f1JqFWebr2Ri-dP7h4jCTkQyMh1VW_YSShcD9NrRfHs6Rl37FpE3tGPKz9Uc
+Message-ID: <CAKtyLkGcU10+rxKd2uH5Hy2impDih_=AkAgcdu35h+xTeM=+OA@mail.gmail.com>
+Subject: Re: [RFC PATCH v4 1/1] ipe: add errno field to IPE policy load auditing
+To: Jasjiv Singh <jasjivsingh@linux.microsoft.com>
+Cc: corbet@lwn.net, jmorris@namei.org, serge@hallyn.com, eparis@redhat.com, 
+	paul@paul-moore.com, linux-doc@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, audit@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello:
+On Fri, Mar 7, 2025 at 2:07=E2=80=AFPM Jasjiv Singh
+<jasjivsingh@linux.microsoft.com> wrote:
+...
+> Signed-off-by: Jasjiv Singh <jasjivsingh@linux.microsoft.com>
+> ---
+>  Documentation/admin-guide/LSM/ipe.rst | 69 +++++++++++++++++++--------
+>  security/ipe/audit.c                  | 21 ++++++--
+>  security/ipe/fs.c                     | 19 ++++++--
+>  security/ipe/policy.c                 | 11 ++++-
+>  security/ipe/policy_fs.c              | 29 ++++++++---
+>  5 files changed, 111 insertions(+), 38 deletions(-)
+>
+> diff --git a/Documentation/admin-guide/LSM/ipe.rst b/Documentation/admin-=
+guide/LSM/ipe.rst
+> index f93a467db628..0615941de6e0 100644
+> --- a/Documentation/admin-guide/LSM/ipe.rst
+> +++ b/Documentation/admin-guide/LSM/ipe.rst
+> @@ -423,7 +423,7 @@ Field descriptions:
+>
+>  Event Example::
+>
+> -   type=3D1422 audit(1653425529.927:53): policy_name=3D"boot_verified" p=
+olicy_version=3D0.0.0 policy_digest=3Dsha256:820EEA5B40CA42B51F68962354BA08=
+3122A20BB846F26765076DD8EED7B8F4DB auid=3D4294967295 ses=3D4294967295 lsm=
+=3Dipe res=3D1
+> +   type=3D1422 audit(1653425529.927:53): policy_name=3D"boot_verified" p=
+olicy_version=3D0.0.0 policy_digest=3Dsha256:820EEA5B40CA42B51F68962354BA08=
+3122A20BB846F26765076DD8EED7B8F4DB auid=3D4294967295 ses=3D4294967295 lsm=
+=3Dipe res=3D1 errno=3D0
+>     type=3D1300 audit(1653425529.927:53): arch=3Dc000003e syscall=3D1 suc=
+cess=3Dyes exit=3D2567 a0=3D3 a1=3D5596fcae1fb0 a2=3Da07 a3=3D2 items=3D0 p=
+pid=3D184 pid=3D229 auid=3D4294967295 uid=3D0 gid=3D0 euid=3D0 suid=3D0 fsu=
+id=3D0 egid=3D0 sgid=3D0 fsgid=3D0 tty=3Dpts0 ses=3D4294967295 comm=3D"pyth=
+on3" exe=3D"/usr/bin/python3.10" key=3D(null)
+>     type=3D1327 audit(1653425529.927:53): PROCTITLE proctitle=3D707974686=
+F6E3300746573742F6D61696E2E7079002D66002E2E
+>
+> @@ -433,24 +433,55 @@ This record will always be emitted in conjunction w=
+ith a ``AUDITSYSCALL`` record
+>
+>  Field descriptions:
+>
+> -+----------------+------------+-----------+-----------------------------=
+----------------------+
+> -| Field          | Value Type | Optional? | Description of Value        =
+                      |
+> -+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D+=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D+=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D+
+> -| policy_name    | string     | No        | The policy_name             =
+                      |
+> -+----------------+------------+-----------+-----------------------------=
+----------------------+
+> -| policy_version | string     | No        | The policy_version          =
+                      |
+> -+----------------+------------+-----------+-----------------------------=
+----------------------+
+> -| policy_digest  | string     | No        | The policy hash             =
+                      |
+> -+----------------+------------+-----------+-----------------------------=
+----------------------+
+> -| auid           | integer    | No        | The login user ID           =
+                      |
+> -+----------------+------------+-----------+-----------------------------=
+----------------------+
+> -| ses            | integer    | No        | The login session ID        =
+                      |
+> -+----------------+------------+-----------+-----------------------------=
+----------------------+
+> -| lsm            | string     | No        | The lsm name associated with=
+ the event            |
+> -+----------------+------------+-----------+-----------------------------=
+----------------------+
+> -| res            | integer    | No        | The result of the audited op=
+eration(success/fail) |
+> -+----------------+------------+-----------+-----------------------------=
+----------------------+
+> -
+> ++----------------+------------+-----------+-----------------------------=
+--------------------------------+
+> +| Field          | Value Type | Optional? | Description of Value        =
+                                |
+> ++=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D+=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D+=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D+
+> +| policy_name    | string     | Yes       | The policy_name             =
+                                |
+> ++----------------+------------+-----------+-----------------------------=
+--------------------------------+
+> +| policy_version | string     | Yes       | The policy_version          =
+                                |
+> ++----------------+------------+-----------+-----------------------------=
+--------------------------------+
+> +| policy_digest  | string     | Yes       | The policy hash             =
+                                |
+> ++----------------+------------+-----------+-----------------------------=
+--------------------------------+
+> +| auid           | integer    | No        | The login user ID           =
+                                |
+> ++----------------+------------+-----------+-----------------------------=
+--------------------------------+
+> +| ses            | integer    | No        | The login session ID        =
+                                |
+> ++----------------+------------+-----------+-----------------------------=
+--------------------------------+
+> +| lsm            | string     | No        | The lsm name associated with=
+ the event                      |
+> ++----------------+------------+-----------+-----------------------------=
+--------------------------------+
+> +| res            | integer    | No        | The result of the audited op=
+eration(success/fail)           |
+> ++----------------+------------+-----------+-----------------------------=
+--------------------------------+
+> +| errno          | integer    | No        | Error code from policy loadi=
+ng operations (see table below) |
+> ++----------------+------------+-----------+-----------------------------=
+--------------------------------+
+> +
+> +Policy error codes (errno):
+> +
+> +The following table lists the error codes that may appear in the errno f=
+ield while loading or updating the policy:
+> +
+> ++----------------+------------------------------------------------------=
+--+
+> +| Error Code     | Description                                          =
+  |
+> ++=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D+=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D+
+> +| 0              | No error                                             =
+  |
 
-This patch was applied to netdev/net-next.git (main)
-by Jakub Kicinski <kuba@kernel.org>:
+Nit: How about using "Success" here to match with the function comments.
 
-On Fri, 7 Mar 2025 12:28:48 +0300 you wrote:
-> This code is trying to ensure that the last byte of the buffer is a NUL
-> terminator.  However, the problem is that attr->value[] is an array of
-> __le32, not char, so it zeroes out 4 bytes way beyond the end of the
-> buffer.  Cast the buffer to char to address this.
-> 
-> Fixes: e5cf5107c9e4 ("eth: fbnic: Update fbnic_tlv_attr_get_string() to work like nla_strscpy()")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> 
-> [...]
+> ++----------------+------------------------------------------------------=
+--+
+> +| -EPERM         | Insufficient permission                              =
+  |
+> ++----------------+------------------------------------------------------=
+--+
+> +| -EEXIST        | Same name policy already deployed                    =
+  |
+> ++----------------+------------------------------------------------------=
+--+
+> +| -EBADMSG       | Policy is invalid                                    =
+  |
+> ++----------------+------------------------------------------------------=
+--+
+> +| -ENOMEM        | Out of memory (OOM)                                  =
+  |
+> ++----------------+------------------------------------------------------=
+--+
+> +| -ERANGE        | Policy version number overflow                       =
+  |
+> ++----------------+------------------------------------------------------=
+--+
+> +| -EINVAL        | Policy version parsing error                         =
+  |
+> ++----------------+------------------------------------------------------=
+--+
+> +| -ENOKEY        | Key used to sign the IPE policy not found in keyring =
+  |
+> ++----------------+------------------------------------------------------=
+--+
+> +| -EKEYREJECTED  | IPE signature verification failed                    =
+  |
 
-Here is the summary with links:
-  - [net-next] eth: fbnic: fix memory corruption in fbnic_tlv_attr_get_string()
-    https://git.kernel.org/netdev/net-next/c/991a1b09920b
+More accurately should be the IPE policy signature.
 
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+> ++----------------+------------------------------------------------------=
+--+
+> +| -ESTALE        | Attempting to update an IPE policy with older version=
+  |
+> ++----------------+------------------------------------------------------=
+--+
+> +| -ENOENT        | Policy was deleted while updating                    =
+  |
+> ++----------------+------------------------------------------------------=
+--+
+>
+>  1404 AUDIT_MAC_STATUS
+>  ^^^^^^^^^^^^^^^^^^^^^
+> diff --git a/security/ipe/audit.c b/security/ipe/audit.c
+> index f05f0caa4850..ac9d68b68b8b 100644
+> --- a/security/ipe/audit.c
+> +++ b/security/ipe/audit.c
+> @@ -21,6 +21,8 @@
+>
+>  #define AUDIT_POLICY_LOAD_FMT "policy_name=3D\"%s\" policy_version=3D%hu=
+.%hu.%hu "\
+>                               "policy_digest=3D" IPE_AUDIT_HASH_ALG ":"
+> +#define AUDIT_POLICY_LOAD_FAIL_FMT "policy_name=3D? policy_version=3D? "=
+\
+> +                                  "policy_digest=3D?"
+>  #define AUDIT_OLD_ACTIVE_POLICY_FMT "old_active_pol_name=3D\"%s\" "\
+>                                     "old_active_pol_version=3D%hu.%hu.%hu=
+ "\
+>                                     "old_policy_digest=3D" IPE_AUDIT_HASH=
+_ALG ":"
+> @@ -248,22 +250,31 @@ void ipe_audit_policy_activation(const struct ipe_p=
+olicy *const op,
+>  }
+>
+>  /**
+> - * ipe_audit_policy_load() - Audit a policy being loaded into the kernel=
+.
+> - * @p: Supplies a pointer to the policy to audit.
+> + * ipe_audit_policy_load() - Audit a policy being loaded or failing
+> + *        to load into the kernel.
 
+The brief description needs to fit in a single line, if necessary you
+can create a longer description. See
+https://origin.kernel.org/doc/html/latest/doc-guide/kernel-doc.html.
 
+> + * @p: Supplies a pointer to the policy to audit or an error pointer
+
+> + *        to audit a failure with the associated error code from PTR_ERR=
+(p).
+
+The second line doesn't seem necessary.
+
+>   */
+>  void ipe_audit_policy_load(const struct ipe_policy *const p)
+>  {
+>         struct audit_buffer *ab;
+> +       int err =3D 0;
+>
+>         ab =3D audit_log_start(audit_context(), GFP_KERNEL,
+>                              AUDIT_IPE_POLICY_LOAD);
+>         if (!ab)
+>                 return;
+>
+> -       audit_policy(ab, AUDIT_POLICY_LOAD_FMT, p);
+> -       audit_log_format(ab, " auid=3D%u ses=3D%u lsm=3Dipe res=3D1",
+> +       if (!IS_ERR(p)) {
+> +               audit_policy(ab, AUDIT_POLICY_LOAD_FMT, p);
+> +       } else {
+> +               audit_log_format(ab, AUDIT_POLICY_LOAD_FAIL_FMT);
+> +               err =3D PTR_ERR(p);
+> +       }
+> +
+> +       audit_log_format(ab, " auid=3D%u ses=3D%u lsm=3Dipe res=3D%d errn=
+o=3D%d",
+>                          from_kuid(&init_user_ns, audit_get_loginuid(curr=
+ent)),
+> -                        audit_get_sessionid(current));
+> +                        audit_get_sessionid(current), !err, err);
+>
+>         audit_log_end(ab);
+>  }
+> diff --git a/security/ipe/fs.c b/security/ipe/fs.c
+> index 5b6d19fb844a..db18636470bf 100644
+> --- a/security/ipe/fs.c
+> +++ b/security/ipe/fs.c
+> @@ -133,6 +133,8 @@ static ssize_t getenforce(struct file *f, char __user=
+ *data,
+>   * * %-ERANGE                  - Policy version number overflow
+>   * * %-EINVAL                  - Policy version parsing error
+>   * * %-EEXIST                  - Same name policy already deployed
+> + * * %-ENOKEY                  - Key used to sign the IPE policy not fou=
+nd in the keyring
+
+This line seems to exceed the 80 char line limit, did it pass checkpatch.pl=
+?
+See https://www.kernel.org/doc/html/latest/process/coding-style.html.
+It can be more concise like "Policy signing key not found"
+
+> + * * %-EKEYREJECTED            - IPE signature verification failed
+
+The above comment also applies to here.
+
+>   */
+>  static ssize_t new_policy(struct file *f, const char __user *data,
+>                           size_t len, loff_t *offset)
+> @@ -141,12 +143,17 @@ static ssize_t new_policy(struct file *f, const cha=
+r __user *data,
+>         char *copy =3D NULL;
+>         int rc =3D 0;
+>
+> -       if (!file_ns_capable(f, &init_user_ns, CAP_MAC_ADMIN))
+> -               return -EPERM;
+> +       if (!file_ns_capable(f, &init_user_ns, CAP_MAC_ADMIN)) {
+> +               rc =3D -EPERM;
+> +               goto out;
+> +       }
+>
+>         copy =3D memdup_user_nul(data, len);
+> -       if (IS_ERR(copy))
+> -               return PTR_ERR(copy);
+> +       if (IS_ERR(copy)) {
+> +               rc =3D PTR_ERR(copy);
+> +               copy =3D NULL;
+> +               goto out;
+> +       }
+>
+>         p =3D ipe_new_policy(NULL, 0, copy, len);
+>         if (IS_ERR(p)) {
+> @@ -161,8 +168,10 @@ static ssize_t new_policy(struct file *f, const char=
+ __user *data,
+>         ipe_audit_policy_load(p);
+>
+>  out:
+> -       if (rc < 0)
+> +       if (rc < 0) {
+>                 ipe_free_policy(p);
+> +               ipe_audit_policy_load(ERR_PTR(rc));
+> +       }
+>         kfree(copy);
+>         return (rc < 0) ? rc : len;
+
+Nit: we can change the style of returning like the one in update_policy().
+
+>  }
+> diff --git a/security/ipe/policy.c b/security/ipe/policy.c
+> index b628f696e32b..68a2078d5b6a 100644
+> --- a/security/ipe/policy.c
+> +++ b/security/ipe/policy.c
+> @@ -84,8 +84,12 @@ static int set_pkcs7_data(void *ctx, const void *data,=
+ size_t len,
+>   * ipe_new_policy.
+>   *
+>   * Context: Requires root->i_rwsem to be held.
+> - * Return: %0 on success. If an error occurs, the function will return
+> - * the -errno.
+> + * Return:
+> + * * %0                                        - Success
+> + * * %-ENOENT                                  - Policy was deleted whil=
+e updating
+> + * * %-EINVAL                                  - Policy name was changed=
+ while updating
+This one means "Policy name mismatch".
+> + * * %-ESTALE                                  - Attempting to update an=
+ IPE policy
+> + * *                                             with an older version
+
+This one can also be more concise, how about "Policy version too old"
+
+Also the indentation is too much, see
+https://origin.kernel.org/doc/html/latest/doc-guide/kernel-doc.html.
+
+>   */
+>  int ipe_update_policy(struct inode *root, const char *text, size_t textl=
+en,
+>                       const char *pkcs7, size_t pkcs7len)
+> @@ -150,6 +154,9 @@ int ipe_update_policy(struct inode *root, const char =
+*text, size_t textlen,
+>   * * %-ENOMEM                                  - Out of memory (OOM)
+>   * * %-ERANGE                                  - Policy version number o=
+verflow
+>   * * %-EINVAL                                  - Policy version parsing =
+error
+> + * * %-ENOKEY                                  - Key used to sign the IP=
+E policy
+> + *                                               not found in the keyrin=
+g
+> + * * %-EKEYREJECTED                            - IPE signature verificat=
+ion failed
+>   */
+
+The above doc style/accuracy issue also applies here.
+
+>  struct ipe_policy *ipe_new_policy(const char *text, size_t textlen,
+>                                   const char *pkcs7, size_t pkcs7len)
+> diff --git a/security/ipe/policy_fs.c b/security/ipe/policy_fs.c
+> index 3bcd8cbd09df..b70d2518b182 100644
+> --- a/security/ipe/policy_fs.c
+> +++ b/security/ipe/policy_fs.c
+> @@ -12,6 +12,7 @@
+>  #include "policy.h"
+>  #include "eval.h"
+>  #include "fs.h"
+> +#include "audit.h"
+>
+>  #define MAX_VERSION_SIZE ARRAY_SIZE("65535.65535.65535")
+>
+> @@ -282,8 +283,14 @@ static ssize_t getactive(struct file *f, char __user=
+ *data,
+>   * On success this updates the policy represented by $name,
+>   * in-place.
+>   *
+> - * Return: Length of buffer written on success. If an error occurs,
+> - * the function will return the -errno.
+> + * Return:
+> + * * Length of buffer written                  - Success
+> + * * %-EPERM                                   - Insufficient permission
+> + * * %-ENOMEM                                  - Out of memory (OOM)
+> + * * %-ENOENT                                  - Policy was deleted whil=
+e updating
+> + * * %-EINVAL                                  - Policy name was changed=
+ while updating
+> + * * %-ESTALE                                  - Attempting to update an=
+ IPE policy
+> + * *                                             with an older version
+>   */
+
+The above doc style/accuracy issue also applies here.
+
+-Fan
 
