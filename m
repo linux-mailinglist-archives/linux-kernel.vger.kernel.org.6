@@ -1,103 +1,110 @@
-Return-Path: <linux-kernel+bounces-553888-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-553889-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2DEF1A5903D
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 10:50:23 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C0778A5903F
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 10:50:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 62DD13A4480
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 09:50:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6EB233A4832
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 09:50:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B18AC22541D;
-	Mon, 10 Mar 2025 09:50:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A1172253FD;
+	Mon, 10 Mar 2025 09:50:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="BsKuJzZg"
-Received: from mail-wm1-f73.google.com (mail-wm1-f73.google.com [209.85.128.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="SDJLymip"
+Received: from mout.web.de (mout.web.de [212.227.15.4])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E1102253ED
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 09:50:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9640617A2E7;
+	Mon, 10 Mar 2025 09:50:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741600208; cv=none; b=RwMFRsVHH0f5qQSjZ1uMo0jnP3+CcnDUDOHJ97Yde5JPLLMD3ANCJ4szCBJBF4pSLUhR9cjYSmkEiCEDOHS/YiFJISMsb/e/cTjM4sCZEjO7mNpXsgHYi89VRLj9iauL2g8PBnRjcZoQ/4l+KZJ1RJdqVVTPEX4oH2pb0A0+/ls=
+	t=1741600226; cv=none; b=tFoUcVSpl+XULX1ZeU3KC/rxSwY00ho8J9++F83nKecCsibb7WJyYCOvQXDaZs9AtQ6/XCcczKjtczLd6XAscPBdS9ZOrg38q8THU2znzftajagrwf7eSIhANoBd+/XKBe01SWPsDXbo7ieLJcc1DrTfj8t8vyAUeOG2Fo8CIUY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741600208; c=relaxed/simple;
-	bh=li9maBtZYH0WSwQ7I4Sx8a2w/PrJcS0hZ8B1pMYw794=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=XJYuMCH7Dlwqd9rNt/myeysIqR8IepA0I2Dv6zLcZjYpvQFyFq/i1QVADra57CECr4aw/lr3rsa5vCjPpLv81u1YqRbVEJzRKltRg3m1Ea/e5ZzZIjC9o4lbei/L2pm0NJRPf1xjHvlPJ3GGFwnO0ggHOFaIY2oMkTN1Me0CcR8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=BsKuJzZg; arc=none smtp.client-ip=209.85.128.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
-Received: by mail-wm1-f73.google.com with SMTP id 5b1f17b1804b1-43cf446681cso4209705e9.1
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 02:50:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1741600205; x=1742205005; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=zayc4ME8ub10z847YBIo2OSP/R7y2OfUd/FH2hrf0YE=;
-        b=BsKuJzZgNkMN0gd1ldRnao7dettc3eGf/7vIIodjJYuAbZG7YPu9881ujBtpDvHaWl
-         PycahbH5cEMd7VP+CXIBku3jnPe4vQrHML8r8AjUe0tNxPYd6G2knFp1tdYpwODjYdSw
-         DtrnZA1AG7pgpZ2E3T+5H9sT0v02/W4CR4N55PmrJZZQiXDiFQW8I4XUl7M6m1bHxP3l
-         uRLg1Ss8N9vPuspEilaBC1lcdYKm5yAMqZbU6rE+2PiO5IPemGbZ7++Z7I2gHaW03e9V
-         TOxCUbigJgGdpkVe2qcAuEjy0Szz1TXkuxYwPFwTEqLoRsMsC6XYMM9kLPIEeXgFAy6C
-         gU7Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741600205; x=1742205005;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=zayc4ME8ub10z847YBIo2OSP/R7y2OfUd/FH2hrf0YE=;
-        b=W7TUdEs7J/SCeuNcG9pK2W2InizAb3KwTQBxFi6P45bGHEIImuZ6G2mkzVZe0PblFi
-         Yuao5PyOTvqWtd8xzT2WYbgkIOr5sZDswo4EO2HUTKmmaYGC26mRAOfRj/NkiD61QMDX
-         GxwSeH4H1wsn/hxcbaoG5NyLkk7cesQV4hJooam2XY9wPD7i2PES+3gG8ql2wux6tdBd
-         3OtvRRxUyaKuuH3LVUxzMb+caRR7vwBZc+An47R/44FYbGznN8spCudkBovNxvw57o9W
-         Zh9LKYjvfJaIlmRryKFIZp7BLwrejVHlIr4qTetyYLae4MnwgDcWrcquJdwoLZ8RZ/rP
-         8Q1g==
-X-Forwarded-Encrypted: i=1; AJvYcCUvyHR2ZBhtQihZszjti5WGoMFPMM6dfTevl1LgvhiiE8nUUWHwCxZuwszcemdoJfz4wfY0IO9R9iDVtLw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyELzDXIXgk7IxTAbcd/Z/9EulBD3JR87iRc7jqaROarKftq+F0
-	gjRgJw4HQ52KZ1WMGoLLFEiK6efp7bwQdolhUCAuS0UQZxe5tiBe6BHHVPzQRPh6MtDdLvpJ8yD
-	/vtGGSc6iMRwqcQ==
-X-Google-Smtp-Source: AGHT+IFh6zDOg5JSQ5hBks5Kv2fA7ferdFCU+xaQli8NpPVCQgSZ8GXEKmfHPKiJ2GFqReRUcUZjB4F9g1Vim14=
-X-Received: from wmgg17.prod.google.com ([2002:a05:600d:11:b0:43b:c336:7b29])
- (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:600c:474c:b0:434:fb65:ebbb with SMTP id 5b1f17b1804b1-43c5a6116f2mr81052195e9.17.1741600205067;
- Mon, 10 Mar 2025 02:50:05 -0700 (PDT)
-Date: Mon, 10 Mar 2025 09:50:02 +0000
-In-Reply-To: <20250310-unique-ref-v6-1-1ff53558617e@pm.me>
+	s=arc-20240116; t=1741600226; c=relaxed/simple;
+	bh=nwEizwjVfRNkakaeNjz30N3SBQfWGNsbW9XNO8YhWRQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=gytZvTRpZHXUSs7xQkF7LpELuQUbY0i5iBr6Z02roHs6aG0zFSXEomx7uzSzFCHZ0sGkdGMs1a2mkXDcmxf/QeWQNFltjTWXic8rpzB7LQsv1DIVhhMyrQ60HA2A+nYDD3ebqDJDhTDF+gXfSnxNgwjACKS4HYuLDTRgvkCqjTo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=SDJLymip; arc=none smtp.client-ip=212.227.15.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1741600208; x=1742205008; i=markus.elfring@web.de;
+	bh=nwEizwjVfRNkakaeNjz30N3SBQfWGNsbW9XNO8YhWRQ=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=SDJLymipvxq3ZixoqFKRO0tLFmYWTJG72yXByPoZCjNa3Hl2NeIZtAW+F10jG0Cz
+	 5rcrpzd8MkCQBm2V5gIuZZCmRoS1yQpEAK5j+ne0EiTLAqaPdacXlPnykob+AN+wa
+	 cIbUeFC5d6uoCyKpYkhdKG2FgainyBhEwtDk3Ywh14ZKkAsCRCW6TekQZkhmWid4j
+	 DqaYDLdBgfiJb6p9O5MnB+wLRAZMCXOt0XgxYzO4zBV2nbHtplfsc0S0fH30N/zXs
+	 837RGEttUChvC8SXnRoyVlcovhgmErfcfOlcFHztfp6yeYTfqXfCU20jLi/IpzDnh
+	 1qbgoY2LdflaBzYaBA==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.29] ([94.31.70.82]) by smtp.web.de (mrweb005
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1MqIFD-1tV78O3k0J-00i8e6; Mon, 10
+ Mar 2025 10:50:07 +0100
+Message-ID: <c29fb786-bfcb-4860-b781-606e5a093aaa@web.de>
+Date: Mon, 10 Mar 2025 10:50:06 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250310-unique-ref-v6-0-1ff53558617e@pm.me> <20250310-unique-ref-v6-1-1ff53558617e@pm.me>
-Message-ID: <Z861yk1hRZUtLtLp@google.com>
-Subject: Re: [PATCH v6 1/5] rust: types: Add Ownable/Owned types
-From: Alice Ryhl <aliceryhl@google.com>
-To: Oliver Mangold <oliver.mangold@pm.me>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	"=?utf-8?B?QmrDtnJu?= Roy Baron" <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>, 
-	Andreas Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>, 
-	Asahi Lina <lina@asahilina.net>, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [v3 1/9] dmaengine: idxd: fix memory leak in error handling path
+ of idxd_setup_wqs()
+To: Shuai Xue <xueshuai@linux.alibaba.com>, dmaengine@vger.kernel.org,
+ Dave Jiang <dave.jiang@intel.com>, Fenghua Yu <fenghuay@nvidia.com>,
+ Vinicius Costa Gomes <vinicius.gomes@intel.com>,
+ Vinod Koul <vkoul@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>
+References: <20250309062058.58910-1-xueshuai@linux.alibaba.com>
+ <20250309062058.58910-2-xueshuai@linux.alibaba.com>
+ <8545206d-4a7d-4e0f-812b-dadf923b5b5c@web.de>
+ <bb29d6d8-6887-4eed-ba24-7392de9c2c29@linux.alibaba.com>
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <bb29d6d8-6887-4eed-ba24-7392de9c2c29@linux.alibaba.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Provags-ID: V03:K1:YHhj8wRJcq7Ik2n7tdrbTrCOakGfW4l7pM033cH/lpnIcTmL/6P
+ 6DWX/BGjIp/KiXqiPY9kEDpVjR9MnDaGdJ1zUj1waIe9Sr8rbt580/ATgeuQyKYNuTWY013
+ b5UgaSjD9sme2nANaws6iFR8mZx0zRWvuYaxFY9rWNFQusrGUFx7rUx9tsN9EXXdzPJBV7I
+ gJ8gBa3k1PoDGNmnuuAMg==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:W6NfeSMmN+w=;qxZlsgPyzKSrFV/wthu3AQOwx1l
+ VCMLpYzv5nT0zjZpmClTkO1ISvvgpGVtiUZNqo7U1Dz85X+6Jp5p6qkGiCyImlsNQr4kQ1l7t
+ q6iorn3b6Fr0gHR4ErFkMu/o2TspKBgcfbUAYnuWeotS57XtmxPV5nJnOQ0lYrFNZYNZpDdCn
+ EGm3uNyfmPJJa9U4SBX5xDvehkITSJmJr/lBdZOYlJqBZkfhYSX352vRM1+FnTMZ3Cn7pw2fl
+ yF0oBrXE/S8qOFcQttqkWuFpN1UIkxGFSBlA/lw9pFkNUwnKJczydTbw02VAe8dkw2AybK7H8
+ v9+yk5ddwl7V3SxbfaW+aBOY4emSpwssGYazVcQeT4TpWjlsltSV2bPisOssKYZjKNh5hg+uX
+ Ok9cfc8/16NarI32tTD4I/Aly3PgMo/9Na7++B9NQ82B5tnIkM22mf2V61K0wTo0FjCCgBWJ/
+ TeiN0mGhHTzpR5lw/oE06xJ+zS4e9aa/3kut4Xq9z5uWIBmcdP7XvdnYt4cg9j2obnhUXT32J
+ lxuJNJlEYeeN9NBuT9jyuFcJXuPQVvzqGxp9TLTOYcwC8QZ5ePjE2g816IPkVvEgCZ5ZNmMpM
+ fs2CknL+/Ktgg+alztg6TEvA4/wrs93Dj+OPfPJCjWGk6HCgRVHsF8QhXdnrYh+qFvwsbAvmm
+ ZFzpJ/0fc5d24IHT3Ms+fxE+L7IYRG1FGKjBfqwcvpGPeBe49A3Li4HCIj77vAsl8QZ5FkT4C
+ 6PeN9gKIKHhlP7ffz1GEMs1skWwAdh51hnKFRzaHNjg4JHL1OpqhzO7lVTor+2Fkmr0xxV4xO
+ WadwI4TPA5j9bOOU6yFcILo59n8Foy+kntpe8csy9+lkXqmY6mugGmC4OLriBPXwrakc+zdgm
+ Owmcg5r8+/Ek3t4nwl4nu7MY0ublE0w810naQ1ltUuW22aikmXpOafY0ytnZ3dWj1Ga3GS9FO
+ 14fVjXx74GLSuNGqqCh8kXBUDENHGn9adbvBhURosZK5YeM3tRRVHlbUyWhzHlCeTkb0eNHah
+ piIJpfHUJRcz5l6bOSmYYEUHdwkDe9v1mk/TzEEL4bw8ku07hhuXhXAntvIhR6T55SaEjf5Zr
+ nxz2XqwIAat81Ay/w/t+hbcYdzNfZkhpXHSkejBR8M8XOD76G4xYE++jFbaC8Tgx4KCC1j3tO
+ +8sEf5sQS72PLF7n759xAGM2xWTYlHduvm67kmGETgTuOI6HuNF/sJY0PVqxc49M/zwL1h4WC
+ pU6F8IfzvbWdMyneKZWuC1R6B0bbAMo0IC+4z5aE8DBKbH2PBeD5kkvszw9upPLFsvejpVVtt
+ yc4l66w4UfjsmEi1RMwME6ZJlYGk6K6e6+Pg4eFLINDfoSKhOBWxN45ANyHtYdKIAus/ZLMJ5
+ H84It9eJYw3nY0FrnNPUPn0fwySMvSUHgbZ2GGhXH6OfIPlbCQZJ5I5WytownRiHJR0usXUkl
+ 9+H4thQ==
 
-On Mon, Mar 10, 2025 at 08:49:43AM +0000, Oliver Mangold wrote:
-> From: Asahi Lina <lina@asahilina.net>
-> 
-> By analogy to AlwaysRefCounted and ARef, an Ownable type is a (typically
-> C FFI) type that *may* be owned by Rust, but need not be. Unlike
-> AlwaysRefCounted, this mechanism expects the reference to be unique
-> within Rust, and does not allow cloning.
-> 
-> Conceptually, this is similar to a KBox<T>, except that it delegates
-> resource management to the T instead of using a generic allocator.
-> 
-> Signed-off-by: Asahi Lina <lina@asahilina.net>
+> I prefer to set error code before jumping to error handling label
+> so that we can extend/change the error code in any future path.
+I prefer to avoid duplicate source code another bit.
 
-You can't send a patch by others without adding your own SoB.
-
-Alice
+Regards,
+Markus
 
