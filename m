@@ -1,140 +1,135 @@
-Return-Path: <linux-kernel+bounces-554547-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-554536-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2CC67A599A4
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 16:18:29 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5AE85A5997D
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 16:15:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CA56C7A45CD
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 15:17:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 36E8716ED22
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 15:15:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E749714A098;
-	Mon, 10 Mar 2025 15:16:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B56522DFAA;
+	Mon, 10 Mar 2025 15:13:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b="tfWc913k"
-Received: from out203-205-221-245.mail.qq.com (out203-205-221-245.mail.qq.com [203.205.221.245])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iJJujxul"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 802D522B597;
-	Mon, 10 Mar 2025 15:16:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.245
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFA4122FF33;
+	Mon, 10 Mar 2025 15:13:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741619782; cv=none; b=nRUR7TYcHgKD11hVRxmm+JEiB2twUEI4bQV+E0OT+8E/jnRnwyrgBQ2CpPbnJ46jjD93vkOoXlFQbBlsPubEyTPqb8C5hahi36HslEJvMuQ3TlMNF+AfGODnfPXPyGIfCeB0aE5YAfkkJAnOZrqDcoU2IIyM9w7FbwqzTRijp8c=
+	t=1741619637; cv=none; b=tC5/J3D2Z32+NJM/b8l+AuI6WzwSEEtRiAB6YkHl9oHg1yo0HCJhG0sU4/EjKEYRnq9eY1urrNm2mSuuGMNDbDeYejBL5ODxVQR+I1vROu8cezNSOJJIFB1XKWJDt5l01z7zKMZcuq8nGs/jTfebaCfQZSP4UQPRi1PiQOBlrO4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741619782; c=relaxed/simple;
-	bh=i29N+u43fRtD6lnjrMAJHY4VE43Yw+EgbKOaqHTP6x4=;
-	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iDs22YPtpissQKRxGIvZRwh1PdFekePFp5AfoVcKBf0xWYJ3CV8q6VISjKpX7ahEdyD4Wm1lgZNuA3xS+fPp/zOphzHrxx20L1YzY8v0N0ITRnQ93RXnmidXS7haazoI/HfugYuhVq6hFpk2XMDiHBir111wIhYTNydGCrTgD20=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com; spf=pass smtp.mailfrom=foxmail.com; dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b=tfWc913k; arc=none smtp.client-ip=203.205.221.245
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foxmail.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foxmail.com;
-	s=s201512; t=1741619466;
-	bh=JVydiL4Vz0YDQP+EpA5Rcz0Mj+8qQUNDN9KpCmqJyDE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=tfWc913ku91iXJJozwhfpdl73cCxFoWsB2Z+GWM34ZEqJ1Ln+aG7fbbbNzJaNzIYR
-	 Edkk+aSL2oQunO7f11MZJyc6lP3bduw7hNhinYw8QSGfo0qNU/v0azAzUFV4GsgP+2
-	 EIyK2lXnMmooDmjwmZsLO4OCfAx7KzTYHbEqve0Y=
-Received: from chenyu5-mobl2 ([125.69.38.41])
-	by newxmesmtplogicsvrszb16-1.qq.com (NewEsmtp) with SMTP
-	id 2C114417; Mon, 10 Mar 2025 23:11:01 +0800
-X-QQ-mid: xmsmtpt1741619461tc0wkaf75
-Message-ID: <tencent_F6079264D94CE4B445A5EE6C3DAAE162670A@qq.com>
-X-QQ-XMAILINFO: NY3HYYTs4gYSCkstl2Z/dxjKIClzdbHnjpDbGNcHLK0GM09CJ4Z0H8DECAbmuj
-	 D/WWpq0UTlL8AWQFJWd1VcPhrB5oVMgjFFfCjnokjftQAMbzZhDoP+lDLMXmueoKVTmSlI5p7FWC
-	 U3Pi09l8Qh59ZzJ4p5WMyvY/aOm3rX83ZM+vC2uqGfxlTPUw8AST1nX6Gl9zeam+QVHT59OIwUj8
-	 0SUszbJvwUFSIhgWwARryf2IuqtGZguVi/buYrKoR5L0VovrCz8m0fHqg4aVzhjsvcqFFKPuhAG3
-	 gquK/gti2Kv+lv2T9sgXPmhKlQOy6YHLjwXQTzr32mu68RuDBfYfz8HvUXUlu/qKO4bkxv2M4LYa
-	 XXahRKg5Ar7pnFm6xTm2jtuIMZfWdZIT4RQkQRiCxgtcsgu3rfeKzTMk9FarSr9fXk8xKAUf9Ynm
-	 rztyvO68yQmkWO8nMUcXJ7Y/BBaSIiyjF1vWVCkBDC+hZDNsJS78BLoOx/OqKz4ZfU7ADWf9d5Am
-	 cHGl1YVGDSf/nCx1JfA2jocdFZ7D/UFME7IbChIoVidkImLkKstpovjI9Ton5MJbAOMVkGLkk1GG
-	 VxhzOwPccWezdjO4WNmykLdnWsljE1oaY1LF0bMGOtygKphARu4z8a7Cc6B6uQ+8tlkV5kK6xBRp
-	 byM1x1fz9QzlvCFraBw95EZX8ng9q30p75lR2xaVmPMXZA/DSl4qFxJ/QW/VEGvXncI2/THScPPI
-	 UwfY+Q/obj4g8QkqgsU4IAy1Jd2Zr7pDy44eqykFlALna58ALi2X7HrmVnUUUnpWuIMWJLs4f6RY
-	 OjJyUycyB5OIMBAyn6Y9Ncg3AlK9BbuYAJHDljzdL0dAqzITPji+u7H2s/5/P+MT+uab4R1xZWy+
-	 uMf7c6nNjnWujdzHVC4TifkyKUBoxVXsO/9Vd5wEYSCq2L52EyNbrW8HCF5jUXWgr6TqnBI/7SbM
-	 vuCAegoErmwvtX6hpfsQ==
-X-QQ-XMRINFO: MPJ6Tf5t3I/ycC2BItcBVIA=
-Date: Mon, 10 Mar 2025 23:12:31 +0800
-From: Chen Yu <yu.chen.surf@foxmail.com>
-To: Kaiyang Zhao <kaiyang2@cs.cmu.edu>
-Cc: Chen Yu <yu.c.chen@intel.com>, Ingo Molnar <mingo@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Rik van Riel <riel@redhat.com>, Mel Gorman <mgorman@suse.de>,
-	Johannes Weiner <hannes@cmpxchg.org>,
-	Michal Hocko <mhocko@kernel.org>,
-	Roman Gushchin <roman.gushchin@linux.dev>,
-	Shakeel Butt <shakeel.butt@linux.dev>,
-	Muchun Song <muchun.song@linux.dev>,
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	"Huang, Ying" <ying.huang@linux.alibaba.com>,
-	Tim Chen <tim.c.chen@intel.com>, Aubrey Li <aubrey.li@intel.com>,
-	David Rientjes <rientjes@google.com>,
-	Raghavendra K T <raghavendra.kt@amd.com>, cgroups@vger.kernel.org,
-	linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH 0/3] sched/numa: Introduce per cgroup numa balance
- control
-X-OQ-MSGID: <Z88BX/TLEEzo5Oxg@chenyu5-mobl2>
-References: <cover.1740483690.git.yu.c.chen@intel.com>
- <Z8hh1urLnpmMxHqW@localhost.localhost>
+	s=arc-20240116; t=1741619637; c=relaxed/simple;
+	bh=E8j4pIgtYeVUVyPLYeWsQ6wdM/3mTyY6T0E83ZHYNzU=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=BI7kf2Q41HoWGbmm7ljOJ+gHIqhiaRg13xkKM9U67l9GPrpT4AVwVh9bmLEMXP3tiBkVyW029R2y608MywMGKKQXLAqXFfPWEshZWw6SVBESRLLQAtdmd+N+AxI+0/w3oxnjZPDfysGAZ4J/nHFioPPzTjdinmuPmRIXNzD7wX8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iJJujxul; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B71B6C4CEED;
+	Mon, 10 Mar 2025 15:13:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741619637;
+	bh=E8j4pIgtYeVUVyPLYeWsQ6wdM/3mTyY6T0E83ZHYNzU=;
+	h=Date:From:To:Cc:Subject:From;
+	b=iJJujxulFWEs8Br8hqbYISk8Tujo00i169PIPNHrsXDEjwmWTKGeQbbQR1ptqtjOD
+	 BSqcllLruqCfmW26xbmMOR8eY3v1xJDW1t67GDozmSCMt1BKQn2kl2y1TfTDgOyhYt
+	 0lOrjm/qTQVdfe6dVcEPsPb/KlD3uP3AAHsrNboPK0cK8s1dArLABZHjdtvKTtWQLk
+	 IwJCoNBe7esLEi0kl39cBey0pYYsQtY3/r4g++V9TlOav7pjknjitEpEnnW2W/FRH+
+	 M5clvNcj8PVkFFXH/xqg6m9uAXieKswl7vYcgv6SfCT2rShQPMsaeYmHMNxIjGEN5H
+	 0dm9Vr1I8oTPw==
+Date: Mon, 10 Mar 2025 16:13:54 +0100
+From: Lorenzo Bianconi <lorenzo@kernel.org>
+To: Silvano Seva <s.seva@4sigma.it>
+Cc: a.greco@4sigma.it, Jonathan Cameron <jic23@kernel.org>,
+	Lars-Peter Clausen <lars@metafoo.de>, linux-iio@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] iio: imu: st_lsm6dsx: fix possible lockup during FIFO
+ read
+Message-ID: <Z88Bstpob7Jueugd@lore-desk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="TCV8Nel+ysraon/u"
+Content-Disposition: inline
+
+
+--TCV8Nel+ysraon/u
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <Z8hh1urLnpmMxHqW@localhost.localhost>
+Content-Transfer-Encoding: quoted-printable
 
-Hi Kaiyang,
+I guess it was v3 in this case :)
 
-On 2025-03-05 at 14:38:14 +0000, Kaiyang Zhao wrote:
-> On Tue, Feb 25, 2025 at 09:59:33PM +0800, Chen Yu wrote:
-> > This per-cgroup NUMA balancing control was once proposed in
-> > 2019 by Yun Wang[1]. Then, in 2024, Kaiyang Zhao mentioned
-> > that he was working with Meta on per-cgroup NUMA control[2]
-> > during a discussion with David Rientjes.
-> > 
-> > I could not find further discussion regarding per-cgroup NUMA
-> > balancing from that point on. This set of RFC patches is a
-> > rough and compile-passed version, and may have unhandled cases
-> > (for example, THP). It has not been thoroughly tested and is
-> > intended to initiate or resume the discussion on the topic of
-> > per-cgroup NUMA load balancing.
-> 
-> Hello Chen,
-> 
-> It's nice to see people interested in this. I posted a set of RFC patches
-> later[1] that focuses on the fairness issue in memory tiering. It mostly
-> concerns the demotion side of things, and the promotion / NUMA balancing
-> side of things was left out of the patch set.
->
+Acked-by: Lorenzo Bianconi <lorenzo@kernel.org>
 
-I see, thanks for the information.
- 
-> I don't work for Meta now, but my understanding is that they'll attempt
-> to push through a solution for per-cgroup control of memory tiering that
-> is in the same vein as my RFC patches, and it may include controls for
-> per-group NUMA balancing in the context of tiered memory.
->
+Regards,
+Lorenzo
 
-OK, it would be nice to see that patch set. We can continue the disscussion
-on this basic per-cgroup Numa balancing control, the tiered memory promotion
-could be on top of that IMO.
+> Prevent st_lsm6dsx_read_fifo and st_lsm6dsx_read_tagged_fifo functions
+> from falling in an infinite loop in case pattern_len is equal to zero and
+> the device FIFO is not empty.
+>=20
+> Fixes: 290a6ce11d93 ("iio: imu: add support to lsm6dsx driver")
+> Fixes: 801a6e0af0c6 ("iio: imu: st_lsm6dsx: add support to LSM6DSO")
+> Signed-off-by: Silvano Seva <s.seva@4sigma.it>
+> ---
+>=20
+> Changes since v1:
+> * st_lsm6dsx_read_fifo: moved check for zero pattern_len before fifo_len =
+assignment
+> * st_lsm6dsx_read_fifo: dropped check for zero fifo_len
+> * added Fixes tags in commit message
+>=20
+>  drivers/iio/imu/st_lsm6dsx/st_lsm6dsx_buffer.c | 6 ++++++
+>  1 file changed, 6 insertions(+)
+>=20
+> diff --git a/drivers/iio/imu/st_lsm6dsx/st_lsm6dsx_buffer.c b/drivers/iio=
+/imu/st_lsm6dsx/st_lsm6dsx_buffer.c
+> index 0a7cd8c1aa33..8a9d2593576a 100644
+> --- a/drivers/iio/imu/st_lsm6dsx/st_lsm6dsx_buffer.c
+> +++ b/drivers/iio/imu/st_lsm6dsx/st_lsm6dsx_buffer.c
+> @@ -392,6 +392,9 @@ int st_lsm6dsx_read_fifo(struct st_lsm6dsx_hw *hw)
+>  	if (fifo_status & cpu_to_le16(ST_LSM6DSX_FIFO_EMPTY_MASK))
+>  		return 0;
+> =20
+> +	if (!pattern_len)
+> +		pattern_len =3D ST_LSM6DSX_SAMPLE_SIZE;
+> +
+>  	fifo_len =3D (le16_to_cpu(fifo_status) & fifo_diff_mask) *
+>  		   ST_LSM6DSX_CHAN_SIZE;
+>  	fifo_len =3D (fifo_len / pattern_len) * pattern_len;
+> @@ -623,6 +626,9 @@ int st_lsm6dsx_read_tagged_fifo(struct st_lsm6dsx_hw =
+*hw)
+>  	if (!fifo_len)
+>  		return 0;
+> =20
+> +	if (!pattern_len)
+> +		pattern_len =3D ST_LSM6DSX_TAGGED_SAMPLE_SIZE;
+> +
+>  	for (read_len =3D 0; read_len < fifo_len; read_len +=3D pattern_len) {
+>  		err =3D st_lsm6dsx_read_block(hw,
+>  					    ST_LSM6DSX_REG_FIFO_OUT_TAG_ADDR,
+> --=20
+> 2.48.1
+>=20
 
-thanks,
-Chenyu
- 
-> Best,
-> Kaiyang
-> 
-> [1] https://lore.kernel.org/linux-mm/20240920221202.1734227-1-kaiyang2@cs.cmu.edu/
+--TCV8Nel+ysraon/u
+Content-Type: application/pgp-signature; name="signature.asc"
 
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQTquNwa3Txd3rGGn7Y6cBh0uS2trAUCZ88BsgAKCRA6cBh0uS2t
+rO6cAP9lH4mAzcPivWU2YzjjjKdDQnuieoUA6RK+0d++MzaFxwEAsxwK5sOeNt5O
+yeWZot/H9Wz2BM/v71/uWH2P+Iz2cgU=
+=iG3h
+-----END PGP SIGNATURE-----
+
+--TCV8Nel+ysraon/u--
 
