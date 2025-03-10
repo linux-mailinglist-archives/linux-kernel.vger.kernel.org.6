@@ -1,115 +1,117 @@
-Return-Path: <linux-kernel+bounces-553849-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-553850-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F8A4A58FCD
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 10:35:24 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A9F23A58FCF
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 10:36:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4DC8C168B2D
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 09:35:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E7BD41693E9
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 09:36:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54A8A2253E4;
-	Mon, 10 Mar 2025 09:35:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ISdDCx5v"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1F202253EA;
+	Mon, 10 Mar 2025 09:36:03 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC4E41C5F34;
-	Mon, 10 Mar 2025 09:35:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D9371C5F34;
+	Mon, 10 Mar 2025 09:35:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741599316; cv=none; b=p8cIxcXiKIMKc4ZW61eMWBMI+VRukKkSRGIOYGCXeWWRQCRK/QTalmkym90DBMEFRm0CPq5og4c6jV504+5nPYluKgJzckE1Qpu4HbUvoj1dGDplqBsWa/G/z0gtBk1IMwGx08UlTH+iI8U1G5meI3ICvwMKXjOp1ReBjEtg6K4=
+	t=1741599363; cv=none; b=DLveUX/ymw2B20LBEu9FCItX9HprN8igWaY49cAtkbG5RjewVKrNtk3cpxZiq4BvlaQqW2wjQHWfnothWabCkWapvRNhxpHIfbChbAjalMub+f8nxVZSLkpEGRfjaw3ifhQbfM/+X7mUIZDbqy2ePvuX476yqlJ+Wp6B3NIQ3LU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741599316; c=relaxed/simple;
-	bh=PdC6VAzrMyH8O2VveH3lYcAbaxYezDUcJBl9fDQ8Dv4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=swfyyx+HJWFo2hZQE2PMDfxEWlq3X/1w7RuvNJcg0cZQKGttrxwvJEDj21iWZByeFw7s1H1dUFdvFsWdXUJBKSaU7pQu6x4c0UDeN59s92uFIPrhcxAJQs+y2naNP3grvK7k/7CvRDkNtKh9h4KbEyZjMZyQsyNuSFIV+1OYga4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ISdDCx5v; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 19B0AC4CEEC;
-	Mon, 10 Mar 2025 09:35:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741599315;
-	bh=PdC6VAzrMyH8O2VveH3lYcAbaxYezDUcJBl9fDQ8Dv4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ISdDCx5vZ2wsLplSu5yq2lU/hgfCUFTCUX9lm8nWppg61P0zsWqtKtduRwM65jj/P
-	 QLS1smHqaPQodqDwLnvoCzmFwB2GmGrzVIpWa2G9yQi8gwSXe2AmicJVT/vnspfNjf
-	 AkFVpj+JLrz09tCyWpnUhDjbGnMl6aojwuQT68vv78iYVcncrehPTMfE7pW4fbKja9
-	 FO8ahUp7bk4A1DJDIeBq/3yK4T4dxW8tWK5n4XLfyVQJoEwtQ9HSG+TdMfQrJSAlK6
-	 7vSNo5Q+sLEIIkrFE0yctMsleC2YnAilktzdg7eNrKOCfNYh+rAa8DdpzAUbfXHqei
-	 v0YBSMYIPBIgg==
-Date: Mon, 10 Mar 2025 18:35:11 +0900
-From: William Breathitt Gray <wbg@kernel.org>
-To: =?iso-8859-1?B?Q3Pza+Fz?= Bence <csokas.bence@prolan.hu>
-Cc: Kamel Bouhara <kamel.bouhara@bootlin.com>, linux-iio@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 2/2] counter: microchip-tcb-capture: Add support for RC
- Compare
-Message-ID: <Z86yT0WoGbX7JXND@ishi>
-References: <20250306-introduce-compare-component-v1-0-93993b3dca9c@kernel.org>
- <20250306-introduce-compare-component-v1-2-93993b3dca9c@kernel.org>
- <790f00da-d66e-42bc-bae2-339144fbec95@prolan.hu>
+	s=arc-20240116; t=1741599363; c=relaxed/simple;
+	bh=kNb2JQdgpmQuQ04YabLBxOjcWUhVsjdPLsrTQR3QvZk=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=fsrKJrSe6XsJYZaoeV23rcFBZR6tEgX3GqBoXZ51qrcpLz2xr2QN5iBdPrN9YdGnTY9zui6S8d+EsIRrodp2ORJACklx6MCFLIkDkYVB/29uHq4OcwLdd9XDOsBVD5Pq6yfaR2u/H+IvBERr0mij2GM7NuWZEHmHSkz7NPTUsmc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.93.142])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4ZBBZz2stNz4f3kkF;
+	Mon, 10 Mar 2025 17:35:39 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.75])
+	by mail.maildlp.com (Postfix) with ESMTP id 5806E1A1176;
+	Mon, 10 Mar 2025 17:35:56 +0800 (CST)
+Received: from [10.174.178.129] (unknown [10.174.178.129])
+	by APP2 (Coremail) with SMTP id Syh0CgAX1Wd6ss5nFPMwGA--.11533S2;
+	Mon, 10 Mar 2025 17:35:56 +0800 (CST)
+Subject: Re: [PATCH] ext4: Fix potential null dereference in ext4 test
+To: Charles Han <hanchunchao@inspur.com>, tytso@mit.edu,
+ adilger.kernel@dilger.ca
+Cc: linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250307115432.2112-1-hanchunchao@inspur.com>
+From: Kemeng Shi <shikemeng@huaweicloud.com>
+Message-ID: <db5726b6-9320-8f53-7e26-31c1a755dc12@huaweicloud.com>
+Date: Mon, 10 Mar 2025 17:35:54 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="m0vFrlOyE6rOUs9t"
-Content-Disposition: inline
-In-Reply-To: <790f00da-d66e-42bc-bae2-339144fbec95@prolan.hu>
+In-Reply-To: <20250307115432.2112-1-hanchunchao@inspur.com>
+Content-Type: text/plain; charset=gbk
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:Syh0CgAX1Wd6ss5nFPMwGA--.11533S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7Cr43Zry5uFyDCr4UWw15Jwb_yoW8XF4Upw
+	s5KF1jkr4rWr1j9w47ur48WFWIqws8Kan8WryfWw4YvF9xJFyfC3ZIyw1UGr1kAFWxWa15
+	Za4aqF47Ga17WwUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUkKb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Cr0_Gr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I
+	0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
+	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
+	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lc7I2V7IY0VAS07AlzVAYIcxG8wCY1x0262kKe7AK
+	xVWUAVWUtwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F4
+	0E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_JF0_Jw1l
+	IxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxV
+	AFwI0_Jr0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j
+	6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Jr0_GrUvcSsGvfC2KfnxnUUI43ZEXa7IU80fO7
+	UUUUU==
+X-CM-SenderInfo: 5vklyvpphqwq5kxd4v5lfo033gof0z/
 
 
---m0vFrlOyE6rOUs9t
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-On Mon, Mar 10, 2025 at 09:38:13AM +0100, Cs=F3k=E1s Bence wrote:
-> Hi,
->=20
-> On 2025. 03. 06. 8:05, William Breathitt Gray wrote:
-> > In Capture mode, the RC register serves as a compare register for the
-> > Timer Counter Channel. When a the Counter Value reaches the RC value, a
-> > RC Compare event occurs (COUNTER_EVENT_THRESHOLD). This patch exposes
-> > the RC register to userspace as the 'compare' Count extension, thus
-> > allowing users to configure the threshold condition for these events.
-> >=20
-> > Signed-off-by: William Breathitt Gray <wbg@kernel.org>
->=20
-> I'm assuming you'll merge it with my capture extensions patch. Will this
-> `compare` extension be carried over to 104-quad-8 as well? Otherwise:
->=20
-> Acked-by: Bence Cs=F3k=E1s <csokas.bence@prolan.hu>
->=20
-> Bence
+on 3/7/2025 7:54 PM, Charles Han wrote:
+> kunit_kzalloc() may return a NULL pointer, dereferencing it without
+> NULL check may lead to NULL dereference.
+> Add a NULL check for test_state
+> 
+> Fixes: b7098e1fa7bc ("ext4: Add unit test for mb_free_blocks")
+> Fixes: ac96b56a2fbd ("ext4: Add unit test for mb_mark_used")
+> Signed-off-by: Charles Han <hanchunchao@inspur.com>
+> ---
+>  fs/ext4/mballoc-test.c | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/fs/ext4/mballoc-test.c b/fs/ext4/mballoc-test.c
+> index bb2a223b207c..d634c12f1984 100644
+> --- a/fs/ext4/mballoc-test.c
+> +++ b/fs/ext4/mballoc-test.c
+> @@ -796,6 +796,7 @@ static void test_mb_mark_used(struct kunit *test)
+>  	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, buddy);
+>  	grp = kunit_kzalloc(test, offsetof(struct ext4_group_info,
+>  				bb_counters[MB_NUM_ORDERS(sb)]), GFP_KERNEL);
+> +	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, grp);
+>  
+>  	ret = ext4_mb_load_buddy(sb, TEST_GOAL_GROUP, &e4b);
+>  	KUNIT_ASSERT_EQ(test, ret, 0);
+> @@ -860,6 +861,7 @@ static void test_mb_free_blocks(struct kunit *test)
+>  	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, buddy);
+>  	grp = kunit_kzalloc(test, offsetof(struct ext4_group_info,
+>  				bb_counters[MB_NUM_ORDERS(sb)]), GFP_KERNEL);
+> +	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, grp);
+>  
+>  	ret = ext4_mb_load_buddy(sb, TEST_GOAL_GROUP, &e4b);
+>  	KUNIT_ASSERT_EQ(test, ret, 0);
+> 
+Good catch, looks good to me.
 
-Thank you for the Ack, I've merged this series now and pushed it to
-counter-next.
+Reviewed-by: Kemeng Shi <shikemeng@huaweicloud.com>
 
-The compare functionality is already exposed through the `preset`
-component in the 104-quad-8 module, so I decided not to add a `compare`
-because it felt redundant. However, I'm certain `compare` will be useful
-in future drivers so that's why I want to get it merged with the rest of
-the microchip-tcb-capture changes. :-)
-
-Best regards,
-
-William Breathitt Gray
-
---m0vFrlOyE6rOUs9t
-Content-Type: application/pgp-signature; name=signature.asc
-
------BEGIN PGP SIGNATURE-----
-
-iHUEARYKAB0WIQSNN83d4NIlKPjon7a1SFbKvhIjKwUCZ86yTwAKCRC1SFbKvhIj
-KwWFAQCm5z3VyBDI0W1smBY+8YBSQ+c+bQHoNJ4rM5X3X4wq8gD/bAlld1d1zpIT
-5aOtYyixrV+cI01SKHuAhr8txzb7nwg=
-=q8uA
------END PGP SIGNATURE-----
-
---m0vFrlOyE6rOUs9t--
 
