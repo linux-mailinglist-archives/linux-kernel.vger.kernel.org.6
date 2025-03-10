@@ -1,118 +1,97 @@
-Return-Path: <linux-kernel+bounces-555200-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-555201-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C44A5A5A6C9
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 23:12:55 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 35D42A5A6CD
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 23:16:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0FC3C16D5F1
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 22:12:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 74C891739A9
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 22:16:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A45EA1E5B6A;
-	Mon, 10 Mar 2025 22:12:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9799E1E3DDE;
+	Mon, 10 Mar 2025 22:16:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OkNae5p5"
-Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VQi5Npox"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 896581D514E;
-	Mon, 10 Mar 2025 22:12:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0673F382
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 22:16:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741644769; cv=none; b=KyKyqXVAUQbuCzDJOpHo7s4ny76LsDvW38FjFYqqj+T4+uHQC1dAjvNlJ7XRXOPJ4x8Yh9t/D6skMsjRMejqbYPY3x9Aw/lE4w9cTbaxA1L1YcqhRf/I6MBLavfbBomcowt+VHMzb/A+BpOGnJFxHAF3vQHoEBwtMRTwFU6ENeI=
+	t=1741644968; cv=none; b=Pz1ifeePBcMlP7thEyza+as4qAWPzKGlUjSjqxJ4pIY2gM8FJ3DSm6axMSVcWIF23aLFK/mbQRYGVUn9iarMGNyoJsz5DFg81/aHpoqP9wOFuPyGqqKDNelg+7EsF+OwZJJlf3W479HWni3owbvLdSSzEecUaiwhuf5oeMW87+4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741644769; c=relaxed/simple;
-	bh=lTyqSLVLZ0kWBMHA53v7K6UIdBAn3oBWgOG9pMZ6oR8=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=LdAt8NPQBvHm6TAgW14N1LQKYVH6xeM/x3gYFIdp81esHa3HyMMjPNkpwsK3T6mtRE4UeZtSWKeFKqIwpmIMyc47tgGcNW4nKPnEo1x7fT5e7IQOwY47qTmQMhQ6KOowvsQetcmprqz0vl+MaT1V7GtDaRxdb0MVWiCXpCF00kc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OkNae5p5; arc=none smtp.client-ip=209.85.221.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-391342fc148so2193431f8f.2;
-        Mon, 10 Mar 2025 15:12:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741644766; x=1742249566; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=LcVXYzW6QMhtHVD+R6znA27GOFN+fRqBX35PKQ7T1MU=;
-        b=OkNae5p5lGO5GI4VaWE8vnju2ITKA3PWiy0mc8lpu+4bHxXMCuqEIp2blEYR564qf8
-         TVdX/RJVp64BTz83p0mt6R5TsN5XwvGoLlyAM0EbzXUl1M+oqFRl7qpkwLdrQ+L+pWyu
-         y2IH9LMeG6f1e9NI6dpu9vMyLLX1czTCVZrSkAzDWtsVzAkHo23LnGM/bWqhQtzetjse
-         q7YBYURZPLSA6RUJN/JveFOp4W4qbNpvhUKH1vO6y1v3R9UjrgW3cM1MsfESrfRBpb5g
-         Q4/gVLgARdHUCam2YAztkc/g239tXwf9OgXkK99LhA188w/PVnRUJsqa++NFUtQQ0wj4
-         DTZA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741644766; x=1742249566;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=LcVXYzW6QMhtHVD+R6znA27GOFN+fRqBX35PKQ7T1MU=;
-        b=jncG0cCHpkB4affNFgekBi08wIXWvy6rnMb8aplLFbUYGmUp9XtdWOtgdXKu21mXSh
-         WxrQC3GIhqvCC7UgpI4nf9RYKn0dIxuJLszNJXy46akIgzgU5pJBE84dVBj/bC1W0IvV
-         ZWgbgQ9geaRpIIYOIlzVWufbVtKaT/zFvEqEKvtEa0eABQibOgQYG7/3E0ld2O2v06DQ
-         Lvx2QiDJAFNirJ2mI4dHa5tWgy51DJAbX2gNxQIjTrOtJejOBHPH94/xnpGbQQkT458q
-         ftLTGbkxFhXIA9N1S91WGDVuvNK4mS9uLoisOIBO39NnCYor9WLEhVCw5vkKXEKyegAN
-         Ickg==
-X-Forwarded-Encrypted: i=1; AJvYcCX5PAK9LGq0aYBqVBY3H9znLRjq/rWu98Rw6/8rTHhYThhoxHqldwrv1cnpEG3SBW2zemDy2qhKOQLn@vger.kernel.org, AJvYcCXUcIXD10c9MgKsKKe582LXPME402aNugdjDptl7Vwp6xvLFFL3n1h15r3fmma5Wx8vGhSuoxfF+n8AMNfw@vger.kernel.org
-X-Gm-Message-State: AOJu0YxwkjebyT/uaSVJOOG4wtkLcEsJQyTXJ2WDJyoSosI7SS8gTgY8
-	ubPlQJJY0eEXVqcIswAvRBQuASM5Vm/0UNZWid4gzWtKl++YWgJ5
-X-Gm-Gg: ASbGnctBIsfyBIQF+F630yhxEesiHI4GpWOGjNbdByABVfmCrevGVYSXNMN1yU6TiK3
-	K62mnskOy82nvTAuvYZDU8gw+KaYQkOL6Y1FZhBTya+Rkxwivs/81eqaRBbLzz6BWzU7TCqCTcx
-	SdtpEeEMKXKVmo8cZGPble8BRmKOxY8inMed8Nht5au+x4Fvd1m+3jbUqxLhf8gUnJc4Gnb8Bom
-	5m0+Pz4yztWKC+eQiZ8QBh+lMBmFWtvDZivmTTeIkFVlJzzmErUnPJ0hCf+EmoQZ70Pj0FAXuWU
-	fziq3a4iiMK5CTYsMEocENciBW4K1IwLZ/5DKeM5oQjNOjgos3cHdQAua2BiR358oj35kuS2/Z8
-	vFQeaLYo=
-X-Google-Smtp-Source: AGHT+IHGRnGHmjeW/QrfiL1VK1BAnH7qXDOZkSRYFW1+/V2MmFUb9TgOXFcqlPCSC6bj7yZ+Hxrp3A==
-X-Received: by 2002:a05:6000:156a:b0:391:3fd2:610f with SMTP id ffacd0b85a97d-392641bcbfcmr1696778f8f.13.1741644765695;
-        Mon, 10 Mar 2025 15:12:45 -0700 (PDT)
-Received: from pumpkin (82-69-66-36.dsl.in-addr.zen.co.uk. [82.69.66.36])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3912c0e2b8bsm16226413f8f.64.2025.03.10.15.12.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 10 Mar 2025 15:12:45 -0700 (PDT)
-Date: Mon, 10 Mar 2025 22:12:43 +0000
-From: David Laight <david.laight.linux@gmail.com>
-To: "Theodore Ts'o" <tytso@mit.edu>
-Cc: "Artem S. Tashkinov" <aros@gmx.com>, linux-ext4@vger.kernel.org, Linux
- Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: A syscall for changing birth time
-Message-ID: <20250310221243.0d5db7b3@pumpkin>
-In-Reply-To: <20250310135828.GB8837@mit.edu>
-References: <bda3fa3f-dd12-40de-841a-e4c216ab533f@gmx.com>
-	<20250310135828.GB8837@mit.edu>
-X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
+	s=arc-20240116; t=1741644968; c=relaxed/simple;
+	bh=2lznBsKOnCQhwBSX9JGDubxasXvqODxFZfIiQ63hg7k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BWv17CWrRH/TbpZhhCofBYNUUa/5zp4pNiHAaaAcudeXxOAVUhIGA1XgLQt+bnY3kb9qN7c1znsN1O8yfQfJk07e2KP6TPjZP0yyEj/VSrLE2ljh5MvmXd2z4HiXymWxGbWPx4VaZ9WO5GT4IxC6/Gl6MXJ0CKXLK3I2I6HEcWY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VQi5Npox; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EC0ACC4CEE5;
+	Mon, 10 Mar 2025 22:16:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741644967;
+	bh=2lznBsKOnCQhwBSX9JGDubxasXvqODxFZfIiQ63hg7k=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=VQi5NpoxEp6tPlVC9XHg7z+BNOpnF1S47+ZvBurBXrpBxdR27zSGU2Mqz7N0MZi5W
+	 PyYfBTebUFimR3ORgJAXSVssrOy2r3b6+mVd92A115VxJdKFKTFKIDv/tXwqU9ufXY
+	 ri5DUtapaqEPI33kNqONgNNHXibGDkOqPjeRlVloF0b4/f+ocOHlny5ergUS1WzhoA
+	 0ag5h+jyHmnJ6G+MOgYKTONgG1/YsmrQ5Hq0tQQ3Axs7DhVdWgfwVBV6edlIRWNLIo
+	 hAIXZXjUrtgNTyLP1+gxR4lorQOSnjmhGjr6rUytZz9BgOzgGrnSvRRoDEh6uS7Pm2
+	 Js3U2fhqgFLPQ==
+Date: Mon, 10 Mar 2025 23:16:04 +0100
+From: Frederic Weisbecker <frederic@kernel.org>
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+	Anna-Maria Behnsen <anna-maria@linutronix.de>,
+	Benjamin Segall <bsegall@google.com>,
+	Eric Dumazet <edumazet@google.com>,
+	Andrey Vagin <avagin@openvz.org>,
+	Pavel Tikhomirov <ptikhomirov@virtuozzo.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Cyrill Gorcunov <gorcunov@gmail.com>
+Subject: Re: [patch V3 10/18] posix-timers: Make lock_timer() use guard()
+Message-ID: <Z89kpLzck5w7gVxi@pavilion.home>
+References: <20250308155501.391430556@linutronix.de>
+ <20250308155624.087465658@linutronix.de>
+ <Z87Tj5BryQd9Rya8@pavilion.home>
+ <87o6y823fx.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <87o6y823fx.ffs@tglx>
 
-On Mon, 10 Mar 2025 09:58:28 -0400
-"Theodore Ts'o" <tytso@mit.edu> wrote:
-
-> On Mon, Mar 10, 2025 at 07:26:00AM +0000, Artem S. Tashkinov wrote:
-> > 
-> > Why is it that the Linux kernel supports reading btime, but there's no
-> > syscall to change it? At least for ext4 there's the debugfs utility, but
-> > for other filesystems there's just nothing. And even debugfs is not a
-> > solution, since it requires root privileges and an unmounted/mounted RO
-> > filesystem.  
+Le Mon, Mar 10, 2025 at 06:36:18PM +0100, Thomas Gleixner a écrit :
+> On Mon, Mar 10 2025 at 12:57, Frederic Weisbecker wrote:
+> > Le Sat, Mar 08, 2025 at 05:48:34PM +0100, Thomas Gleixner a écrit :
+> >> --- a/kernel/time/posix-timers.c
+> >> +++ b/kernel/time/posix-timers.c
+> >> @@ -63,9 +63,18 @@ static struct k_itimer *__lock_timer(tim
+> >>  
+> >>  static inline void unlock_timer(struct k_itimer *timr)
+> >>  {
+> >> -	spin_unlock_irq(&timr->it_lock);
+> >> +	if (likely((timr)))
+> >> +		spin_unlock_irq(&timr->it_lock);
+> >>  }
+> >>  
+> >> +#define scoped_timer_get_or_fail(_id)					\
+> >> +	scoped_cond_guard(lock_timer, return -EINVAL, _id)
+> >
+> > I'm not really fond of the fact this hides a return.
 > 
-> POSIX and Single Unix Specification also doesn't provide a way to
-> allow userspace to set ctime (inode change time).  That's because the
-> definition of "change time" is defined to include the time to change
-> anything about the inode metadata --- including the inode timestamps.
+> I could drop the macro and let the call sites all do:
 > 
+> 	scoped_cond_guard(lock_timer, return -EINVAL, $d)
+> 
+> But I'm not sure it's much better :)
 
-I'm sure that hadn't used to be the case.
-But as some point the 'ctime' changed from something that was usually
-the file create time (for some definition of create) to a pretty useless
-time that is almost a waste of disk space.
-
-	David
+Nah let's just keep it as is, until we ever find a better idea :-)
 
