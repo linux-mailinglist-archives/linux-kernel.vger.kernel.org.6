@@ -1,205 +1,194 @@
-Return-Path: <linux-kernel+bounces-553949-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-553950-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 697E7A5910A
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 11:24:08 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C0CBA5910D
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 11:24:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 89B1B3AA1EE
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 10:23:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 98F531888E8F
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 10:24:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25934226CF0;
-	Mon, 10 Mar 2025 10:23:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75E38226870;
+	Mon, 10 Mar 2025 10:23:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Ny/JLlAt"
-Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="PGePVzJG"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC69A22652E
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 10:23:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B733D226529
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 10:23:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741602219; cv=none; b=nrGkUbA3KdRf6uCbHxZUZ5jMoOFPwPO5LOeGTmNoXXQGDeoO9qhrsMiFguGh5J/87lmezZMNxoLkkVdzHyQlSXz550ad5PdSSF07IvShP34DnXR73tjSnN/weeq3MddwdkzCAQy8FUnZiRpyEnGXbI0Oar3XlhDzmU50oZJjsmw=
+	t=1741602233; cv=none; b=q7GlLjNRYcGANnbKydvuyx9Q73BQmsAl4/uC3tCfU5Q9tMPA98QA7hvGNX7t4tpuqKxYfKeY35OlEO13+/BbmnF0Fj3a1dXIV16KExx53vkvn078LpzaZ/v6T7PDbitTrhXR6gbkAZWZYsfStINIFwubvVKbg/3py8ybWiROxew=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741602219; c=relaxed/simple;
-	bh=2XwFGzjDpF0x1UFVmFTA6zIi2TOnyhJHi1l7XwZxEvE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=W60e4LI+fzgLm5mDHlMOXj02G33hqQdvIo1RKdzDkSR8bBR0q0wtZS/m1arGrfokc505qKZNAjGKL8ttvJCgDz9XJ71+PMN3Cu2YxKn2CxijLdRZm396ps07shebj4u4HLXHIXkKIM/HD97pD5256ZxRhh1hTbcys0kRlKKVr9E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Ny/JLlAt; arc=none smtp.client-ip=209.85.221.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-39133f709f5so1315367f8f.0
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 03:23:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1741602215; x=1742207015; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=m0xh3FQ2ooUNMv0G7MnOObNExBcu0B8GC8+9Yidwtis=;
-        b=Ny/JLlAtIbwI9BEDXZTj3VisbPVe7d0AO3dFPgi1QMgtI130GsXybJFpRdRW41xczQ
-         1UdfAwB9IY0hKCFfYtVZKsVYDWaaFdA4ooxtC0LWjlzkdxQSRdPg8UQeOw+OL/hO0N8a
-         rA2U3DVObV2DizLsm8zu2UulCFbOE1ZZYAgDrZxeyeyPmwtOq5TkFM9RWvJqPLP1BQXT
-         e61p2UUCZ9VWKASX8wIsdQ3GCWkHqBcDXbMuDzelGNAfHeF+ig8f0YmoeLZV5Xka4fW0
-         Fq7/PgGma0VM9skuu0apA6EoYudNB+2DWGLVJUY0+Vit1LaeVaCvjK3tJo6mRiOWRmXX
-         TFuQ==
+	s=arc-20240116; t=1741602233; c=relaxed/simple;
+	bh=KfKRHQ8QFUYVsqgaPCXNdrqSt2cCVkpxSjrd0RLuCLw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Wlkt2sa1gMyBJ9aZ2y94xlMxQ9qDGvSG+gJ7xDczuR9uxzvrZ5Zko/l71Shx8SKlBin2VOuw8AWP1bprqLqT3qEUOpRL2hyvRLXQu+T6fm6o4/vJj2AZielJdA3JIbQSitvyIzz3SoXg9mtrtrXWa1L6bKeaeQbFF/XQZxjOwBQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=PGePVzJG; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1741602230;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=/12pVfGrHfAC9KyGDgoRmy2bzHmGQuVzoa458sMOedg=;
+	b=PGePVzJGA9AFXWShebGXObQLbomqOe73qMYQlo7e21WiszY5nnn/kOTFVQx4NUYmZjiE7f
+	725LZV4IseSIMGgmWQSYep3zgZav6i9gEF2xUkUI6mKsWh8nuDGTOtOBK3E+ys000pM2cp
+	oUZl8z4nUc+qME9N0nxU3dD/JMpo1Xw=
+Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
+ [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-93-DI6YVjloMkqt61PY_4mfIw-1; Mon, 10 Mar 2025 06:23:49 -0400
+X-MC-Unique: DI6YVjloMkqt61PY_4mfIw-1
+X-Mimecast-MFC-AGG-ID: DI6YVjloMkqt61PY_4mfIw_1741602228
+Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-3914bc0cc4aso332260f8f.3
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 03:23:49 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741602215; x=1742207015;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=m0xh3FQ2ooUNMv0G7MnOObNExBcu0B8GC8+9Yidwtis=;
-        b=fPHN/proZL0bDqeBK0P2BqwfLomEGv+Q13YM14WKvv8TFQuf+UOWZjFLSWpOkGsshi
-         ihE13lUPz3faFP/Mh+7gePghb+grgDvoxsZo51oHHSxknejT/w5wyN7Htk7SoVB1yCqX
-         HdDNIuHsE9pB/0IpjatOzoVTIfzlAe1ypg1nP240XmdMnNthW0fdjy8ukN68vRmIqC5U
-         cJRzYj3Rto/LG90SvlD2FJK2lu4DgSSk2JnVaLr4L9r9IHF3W7vxJHfvbI3fhvjTyBK/
-         7Xk4T2Gy5LF4jx4eKrvr2FpPxNcZ0MdymMZnAM7tSwT66ShRBcGpV/wS3QftkXyc8IhX
-         YXDg==
-X-Forwarded-Encrypted: i=1; AJvYcCX4LV+/GTE2dESezkZ/XwS30guCfk8O33NFAJoEOOQlsefeacWpNhw4uYEX4b14UJBab4kpdB5MOCsL1eQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxtidSwnbvV8O8Xj9VJXb1xebbIypBc+CjtBFahE+eJoV2tqCHQ
-	c+macLtnZAZLjBjqf+6L0JMLt76PqlI2i6iW/sDVyoG2UFKZUclKKm8UjHwRgFjnpssaXHGbBSR
-	Cl4u17tm3lyJkrbXu985aohLwEVV+c0mDXxZK
-X-Gm-Gg: ASbGnctgoAm2W9sKkMmpT+PsSyXyxNilIYJabRWedptYnA0RXy2QJdnRU/UN9hi9Bgj
-	yZNCERnAyvY7rDwete5HemlQ6wnC7kMMngIwiyPPvrz8fZ4dUSmUafReZr9QRRVSNbPdFFHaZVr
-	lCg2+6XaiVL4GJmNIAuEMrf3kj++yQ4ODpi1l6qDBnrQCn3ge0HvoiIA==
-X-Google-Smtp-Source: AGHT+IG6hUDw4rYaXTIDcQ0LDrqHThCZrRr65SaZXB8OZtLA5fDQVnneu5xULnptFbYCv65le8nwb6KH/dSV9yt6n+0=
-X-Received: by 2002:a5d:584f:0:b0:391:ffc:2413 with SMTP id
- ffacd0b85a97d-39132da08b4mr7510954f8f.40.1741602214935; Mon, 10 Mar 2025
- 03:23:34 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1741602228; x=1742207028;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=/12pVfGrHfAC9KyGDgoRmy2bzHmGQuVzoa458sMOedg=;
+        b=a03rvkui0b0mCd3r+TsG5DV2JXudbqLcK9LDFDsnQSUErj+cAIosIeUVtGJXPNuQ6G
+         WqhKj1k9YfA/2xKkxc2JaAUyZKQ+WCSRXSIEHS+96JZvwUtg+EyQUu2jq7GK6vW352Z8
+         gB6XRi86lGiq9MKZ4oZniatiAotBbaIKXZcTKQcrXDRMhxtH3/3E2Dphcqif2Lwj7UMI
+         aklXc94rDsGnmn0sz2upHdbgmMUXTJ4vdchQl1o2MuFWhgQ9WPcxT2Z7X7Rmc+klJZxi
+         Zk2AOdhK581VfOUqWoCjaBnD62LUdCOYn/kfw5cEXeX5oq8jfubQxxVR5dc0OwAuBaH1
+         SZCw==
+X-Forwarded-Encrypted: i=1; AJvYcCXcsbszL4JsKyb0X3yhZ4C6uIgVs6454yqWKQ3Kix4gVESEsN/sbCJnI+stYdtq0FrPckHHdamiQ8sJknQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzWbSvGjPyAyvRYqL4XXSnYYl8hLu7tkGYMJHxw4/j+VjBNvfPL
+	rmxPVbuTHbBH9Q86y202rAvQcqPHuyfTW/Iw3ZpD4sJMh/CX1UnIxdOr+JN2AG+OASn1TKOjPEt
+	Iu0GF6iU0PZ+ZVtHHUO//B8zYL3XpBqF713eJuozuZXkOxfB0E+IpPp1mafggqw==
+X-Gm-Gg: ASbGncs5FMfHK5QdYhYxx45WeIPmD7Qof+R5RTUM9WnRJHR3U4KeEn1rDwbqfjPQ8Gt
+	pN/UsQfCQgOz6/a5Gxd7lc15MGm9Rond/muEJKSnbh4Hv/dekQr4mpiAJuD/T+G0LT0a7UD95a/
+	KU1g+UIEiw6pM9sxdYP1Xd67VAzCmgMf40VnuX72O329NO6jppt4HcHT98Hn4gtwfILXbvCgpSY
+	EQy+lpYPDKOBHNfP31y7/rDIcQV2FlOic/V5YMMK4EBgrcH5Kki+QzB4KA+k+5J9BwrmMNdIGEm
+	s/VyII5lEwzoxfko1KGm2EUl8Vlirx8WOSwNDfMTIrk+FYBxameNxGo=
+X-Received: by 2002:adf:e007:0:b0:390:f4f9:8396 with SMTP id ffacd0b85a97d-39132d7ff8bmr4952018f8f.28.1741602227909;
+        Mon, 10 Mar 2025 03:23:47 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGTlUKdfWg/n6nLhAEk75JdM460Sx5llLCeap2DgVS7ohzTSeVMGhEWCd6FidoOs3NkTtglMA==
+X-Received: by 2002:adf:e007:0:b0:390:f4f9:8396 with SMTP id ffacd0b85a97d-39132d7ff8bmr4951998f8f.28.1741602227497;
+        Mon, 10 Mar 2025 03:23:47 -0700 (PDT)
+Received: from ?IPV6:2a01:e0a:c:37e0:ced3:55bd:f454:e722? ([2a01:e0a:c:37e0:ced3:55bd:f454:e722])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3912bfdff72sm14634492f8f.36.2025.03.10.03.23.46
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 10 Mar 2025 03:23:46 -0700 (PDT)
+Message-ID: <de5b9722-905c-49e6-87dc-3fcdeb07fb09@redhat.com>
+Date: Mon, 10 Mar 2025 11:23:45 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250310-inline-c-wrappers-v1-1-d726415e6332@posteo.net>
-In-Reply-To: <20250310-inline-c-wrappers-v1-1-d726415e6332@posteo.net>
-From: Alice Ryhl <aliceryhl@google.com>
-Date: Mon, 10 Mar 2025 11:23:22 +0100
-X-Gm-Features: AQ5f1JrcfSdFN8DKHXryu_jbKmLUDqV8puN-y6GO6BW9VxRHHXfINkGlFd0wh8s
-Message-ID: <CAH5fLgi1YOP9gbXEmYfBtjWeMaqsYpNrrC1fd2rGABCKWYVcbg@mail.gmail.com>
-Subject: Re: [PATCH] rust: task: mark Task methods inline
-To: Panagiotis Foliadis <pfoliadis@posteo.net>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Trevor Gross <tmgross@umich.edu>, Nathan Chancellor <nathan@kernel.org>, 
-	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>, Bill Wendling <morbo@google.com>, 
-	Justin Stitt <justinstitt@google.com>, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, llvm@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH drm-next 1/2] vmalloc: Add atomic_vmap
+To: Ryosuke Yasuoka <ryasuoka@redhat.com>
+Cc: Matthew Wilcox <willy@infradead.org>, maarten.lankhorst@linux.intel.com,
+ mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch,
+ kraxel@redhat.com, gurchetansingh@chromium.org, olvaffe@gmail.com,
+ akpm@linux-foundation.org, urezki@gmail.com, hch@infradead.org,
+ dmitry.osipenko@collabora.com, dri-devel@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org, virtualization@lists.linux.dev,
+ linux-mm@kvack.org
+References: <20250305152555.318159-1-ryasuoka@redhat.com>
+ <20250305152555.318159-2-ryasuoka@redhat.com>
+ <Z8kp9Z9VgTpQmV9d@casper.infradead.org>
+ <3bfd4238-6954-41a3-a5a3-8515a3ac9dce@redhat.com>
+ <Z8nEqDQhjU-Ly8Js@phenom.ffwll.local>
+ <51c11147-4927-4ebc-9737-fd1eebe4e0bd@redhat.com>
+ <CAHpthZqn7ZZW1ekFQe7nN0+xfsNvMQMKhjMNcB3EyQ18yfQhiA@mail.gmail.com>
+Content-Language: en-US, fr
+From: Jocelyn Falempe <jfalempe@redhat.com>
+In-Reply-To: <CAHpthZqn7ZZW1ekFQe7nN0+xfsNvMQMKhjMNcB3EyQ18yfQhiA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Mon, Mar 10, 2025 at 10:40=E2=80=AFAM Panagiotis Foliadis
-<pfoliadis@posteo.net> wrote:
->
-> When you build the kernel using the llvm-18.1.3-rust-1.85.0-x86_64
-> toolchain provided by kernel.org, the following symbols are generated:
->
-> $ nm vmlinux | grep ' _R'.*Task | rustfilt
-> ffffffff817b2d30 T <kernel::task::Task>::get_pid_ns
-> ffffffff817b2d50 T <kernel::task::Task>::tgid_nr_ns
-> ffffffff817b2c90 T <kernel::task::Task>::current_pid_ns
-> ffffffff817b2d00 T <kernel::task::Task>::signal_pending
-> ffffffff817b2cc0 T <kernel::task::Task>::uid
-> ffffffff817b2ce0 T <kernel::task::Task>::euid
-> ffffffff817b2c70 T <kernel::task::Task>::current
-> ffffffff817b2d70 T <kernel::task::Task>::wake_up
-> ffffffff817b2db0 T <kernel::task::Task as kernel::types::AlwaysRefCounted=
->::dec_ref
-> ffffffff817b2d90 T <kernel::task::Task as kernel::types::AlwaysRefCounted=
->::inc_ref
->
-> Most of these Rust symbols are trivial wrappers around the C functions
-> signal_pending, uid, euid, wake_up, dec_ref and inc_ref.It doesn't
-> make sense to go through a trivial wrapper for these functions, so
-> mark them inline.
+On 09/03/2025 09:07, Ryosuke Yasuoka wrote:
+> On Fri, Mar 7, 2025 at 4:55 PM Jocelyn Falempe <jfalempe@redhat.com> wrote:
+>>
+>> On 06/03/2025 16:52, Simona Vetter wrote:
+>>> On Thu, Mar 06, 2025 at 02:24:51PM +0100, Jocelyn Falempe wrote:
+>>>> On 06/03/2025 05:52, Matthew Wilcox wrote:
+>>>>> On Thu, Mar 06, 2025 at 12:25:53AM +0900, Ryosuke Yasuoka wrote:
+>>>>>> Some drivers can use vmap in drm_panic, however, vmap is sleepable and
+>>>>>> takes locks. Since drm_panic will vmap in panic handler, atomic_vmap
+>>>>>> requests pages with GFP_ATOMIC and maps KVA without locks and sleep.
+>>>>>
+>>>>> In addition to the implicit GFP_KERNEL allocations Vlad mentioned, how
+>>>>> is this supposed to work?
+>>>>>
+>>>>>> +  vn = addr_to_node(va->va_start);
+>>>>>> +
+>>>>>> +  insert_vmap_area(va, &vn->busy.root, &vn->busy.head);
+>>>>>
+>>>>> If someone else is holding the vn->busy.lock because they're modifying the
+>>>>> busy tree, you'll corrupt the tree.  You can't just say "I can't take a
+>>>>> lock here, so I won't bother".  You need to figure out how to do something
+>>>>> safe without taking the lock.  For example, you could preallocate the
+>>>>> page tables and reserve a vmap area when the driver loads that would
+>>>>> then be usable for the panic situation.  I don't know that we have APIs
+>>>>> to let you do that today, but it's something that could be added.
+>>>>>
+>>>> Regarding the lock, it should be possible to use the trylock() variant, and
+>>>> fail if the lock is already taken. (In the panic handler, only 1 CPU remain
+>>>> active, so it's unlikely the lock would be released anyway).
+>>>>
+>>>> If we need to pre-allocate the page table and reserve the vmap area, maybe
+>>>> it would be easier to just always vmap() the primary framebuffer, so it can
+>>>> be used in the panic handler?
+>>>
+>>> Yeah I really don't like the idea of creating some really brittle one-off
+>>> core mm code just so we don't have to vmap a buffer unconditionally. I
+>>> think even better would be if drm_panic can cope with non-linear buffers,
+>>> it's entirely fine if the drawing function absolutely crawls and sets each
+>>> individual byte ...
+>>
+>> It already supports some non-linear buffer, like Nvidia block-linear:
+>> https://elixir.bootlin.com/linux/v6.13.5/source/drivers/gpu/drm/nouveau/dispnv50/wndw.c#L606
+>>
+>> And I've also sent some patches to support Intel's 4-tile and Y-tile format:
+>> https://patchwork.freedesktop.org/patch/637200/?series=141936&rev=5
+>> https://patchwork.freedesktop.org/patch/637202/?series=141936&rev=5
+>>
+>> Hopefully Color Compression can be disabled on intel's GPU, otherwise
+>> that would be a bit harder to implement than tiling.
+>>
+>>>
+>>> The only thing you're allowed to do in panic is try_lock on a raw spinlock
+>>> (plus some really scare lockless tricks), imposing that on core mm sounds
+>>> like a non-starter to me.
+>>>
+>>> Cheers, Sima
+>>
+> 
+> Thank you all for your comments.
+> I understand adding atomic_vmap is not possible as vmalloc is not compatible
+> with GFP_ATOMIC. I'll re-implement this by pre-allocating the page table and
+> reserve the vmap area while the kernel is alive. It'll might be
+> allocated in driver
+> codes so maybe I don't need to add any features in core mm code.
 
-There's no C function called dec_ref or inc_ref? Please use the C
-function names instead of the Rust ones.
+Maybe another way to do that, would be to atomically kmap only one page 
+at a time. And when drawing the panic screen, make sure that for each 
+pixel the right page is mapped.
+Would kmap_local_page() fit for this purpose?
 
-> After applying this patch, the above command will produce this output:
->
-> ffff8000805aa004 T <kernel::task::Task>::get_pid_ns
-> ffff8000805aa01c T <kernel::task::Task>::tgid_nr_ns
-> ffff8000805a9fe8 T <kernel::task::Task>::current_pid_ns
-> ffff8000805a9fd0 T <kernel::task::Task>::current
+Best regards,
 
-I think it'd be nice with an explanation of why you did not mark these
-#[inline].
+-- 
 
-> Signed-off-by: Panagiotis Foliadis <pfoliadis@posteo.net>
-> Link: https://github.com/Rust-for-Linux/linux/issues/1145
+Jocelyn
 
-The SoB usually goes at the bottom of the tags.
 
->  rust/kernel/task.rs | 6 ++++++
->  1 file changed, 6 insertions(+)
->
-> diff --git a/rust/kernel/task.rs b/rust/kernel/task.rs
-> index 07bc22a7645c0c7d792a0a163dd55b8ff0fe5f92..996d7c96e48689a5752817f9c=
-a196c021865291d 100644
-> --- a/rust/kernel/task.rs
-> +++ b/rust/kernel/task.rs
-> @@ -273,18 +273,21 @@ pub fn pid(&self) -> Pid {
->      }
->
->      /// Returns the UID of the given task.
-> +    #[inline]
->      pub fn uid(&self) -> Kuid {
->          // SAFETY: It's always safe to call `task_uid` on a valid task.
->          Kuid::from_raw(unsafe { bindings::task_uid(self.as_ptr()) })
->      }
->
->      /// Returns the effective UID of the given task.
-> +    #[inline]
->      pub fn euid(&self) -> Kuid {
->          // SAFETY: It's always safe to call `task_euid` on a valid task.
->          Kuid::from_raw(unsafe { bindings::task_euid(self.as_ptr()) })
->      }
->
->      /// Determines whether the given task has pending signals.
-> +    #[inline]
->      pub fn signal_pending(&self) -> bool {
->          // SAFETY: It's always safe to call `signal_pending` on a valid =
-task.
->          unsafe { bindings::signal_pending(self.as_ptr()) !=3D 0 }
-> @@ -319,6 +322,7 @@ pub fn tgid_nr_ns(&self, pidns: Option<&PidNamespace>=
-) -> Pid {
->      }
->
->      /// Wakes up the task.
-> +    #[inline]
->      pub fn wake_up(&self) {
->          // SAFETY: It's always safe to call `signal_pending` on a valid =
-task, even if the task
->          // running.
-> @@ -328,11 +332,13 @@ pub fn wake_up(&self) {
->
->  // SAFETY: The type invariants guarantee that `Task` is always refcounte=
-d.
->  unsafe impl crate::types::AlwaysRefCounted for Task {
-> +    #[inline]
->      fn inc_ref(&self) {
->          // SAFETY: The existence of a shared reference means that the re=
-fcount is nonzero.
->          unsafe { bindings::get_task_struct(self.as_ptr()) };
->      }
->
-> +    #[inline]
->      unsafe fn dec_ref(obj: ptr::NonNull<Self>) {
->          // SAFETY: The safety requirements guarantee that the refcount i=
-s nonzero.
->          unsafe { bindings::put_task_struct(obj.cast().as_ptr()) }
->
-> ---
-> base-commit: 7f0e9ee5e44887272627d0fcde0b19a675daf597
-> change-id: 20250308-inline-c-wrappers-da83ec1c2a77
->
+> 
 > Best regards,
-> --
-> Panagiotis Foliadis <pfoliadis@posteo.net>
->
+> Ryosuke
+> 
+
 
