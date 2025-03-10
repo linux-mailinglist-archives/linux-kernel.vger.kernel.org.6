@@ -1,375 +1,306 @@
-Return-Path: <linux-kernel+bounces-554675-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-554680-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4797CA59B45
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 17:40:55 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9E875A59B4A
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 17:41:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3FE843A78B7
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 16:40:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C4D9A16EB7A
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 16:41:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81C8323237B;
-	Mon, 10 Mar 2025 16:40:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40816233729;
+	Mon, 10 Mar 2025 16:40:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="Ctxr40Tz"
-Received: from relay8-d.mail.gandi.net (relay8-d.mail.gandi.net [217.70.183.201])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="ME7eGwKh"
+Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2083.outbound.protection.outlook.com [40.107.92.83])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CB97230BE8;
-	Mon, 10 Mar 2025 16:40:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741624811; cv=none; b=XJz1f5tV/Ik9z8ANeR1Hrv1orQ402WLLcRvNY9HcjKx8RnwBPkgqs+nVlFe8Vc3UrGH7i1ZPE47RdqoT1HDXuwcM/dAjlM+GPOa1Du3Ylb4L2JCvXeUQh6OsTJ89Wu+Kd2jCieoVSTHnoQ8VhkBEzJXjCYJrljR7VqAMmdck2Nw=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741624811; c=relaxed/simple;
-	bh=jG2AhQ8rfFnaTwya10N47DF4WYRctsn28OpF3DNfM1U=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=GLKh3/CzRxwec19vm6qDRoMdnGWvVfqXhLWOcLUSD+ibanYz7mUYC95saW4Z1wly534MrgBCM4zdRABaZOlW9G/ITEIbUerF8gPNfChvpTCg3nLpLegG0B2EYhV8TBLY8Nn+YPkzfLnn/japDbrT/JVhaetsuCu0qNBmekUtB8g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=Ctxr40Tz; arc=none smtp.client-ip=217.70.183.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id D8E2944430;
-	Mon, 10 Mar 2025 16:40:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1741624807;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=a+jhmNSWGtF6gwCaOphrzoK/yfH+/FtGdxKL5Im1AWA=;
-	b=Ctxr40TztXSUsyl12pTNFDb1xb3FyY//+PeF5GfStZyzF4XtM4a+4FfX6Ud3r24dSgsdQO
-	6C7EEdHxb2T0Jz6zwPpXlZIYpSCpXweYR2iSTz2RmdFFTPrmIm0/a5hcIwcNjgLmvV8aGl
-	aHDh2YbJQcW1O45QCaVUeYKrYuyDsTyrRyhO3RwpV7Tog7eN7+PJr1GG5u/8wuNVLIjOEY
-	jEUWO7PUhblawju9gFRmqfuLSP+eAXl1/qAliHvzC2fEp5DPKvagerGnkuUidRqsXbtAbm
-	A4jXTIMHO+x8Frp3bG1h2ri9pJt3j+8LV5mghDMPK5gFty/wJbvy7Vbp0mrKKA==
-From: Antonin Godard <antonin.godard@bootlin.com>
-Date: Mon, 10 Mar 2025 17:39:49 +0100
-Subject: [PATCH v4 2/3] ARM: dts: imx6ul: Add Variscite VAR-SOM-MX6UL SoM
- support
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F76C230BDD
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 16:40:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.83
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741624844; cv=fail; b=QUzgMNouAJ/LTviTXk7gtBkh1jnPiyLO5yC8WTXxf6vbmuwYPhckbzFOrcFbkg2P4wHgRRhGiMxOeu7jWoL+CCfPMIGlhesZRBZM7OHQqF6ArAZV9nDgn9Lzw1Rc1yZ/aDros3HQOnc7rAWOsxnwxcaH0/fBfqHZrl1EiJchjYQ=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741624844; c=relaxed/simple;
+	bh=Sqaw8UFpYUMzx781NGBzRKHNs1p+8elV4TxLZBGBk4o=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Y7rmEy5BoDiDGShIFTvXuqR1lNX8h4Z+ZaaG4d6Z/Ghg6pzEAsQNp70e4+kXoKMfSRyoQwkSEn61hqugYbfy0SWL50LHcoEn/CRZU4XocutaE3n8zEgxrGfUpPDfDhQDxo2gf+xWxcnLgnON1nyL+kDmd7BfhHxsxLdzlyaW8HI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=ME7eGwKh; arc=fail smtp.client-ip=40.107.92.83
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=TH+MG59hwWE2fkmIabc/xENatC25VGbNYgwvBATMAmza1s7oVcUTtTDopPwxoziLPC9zSoUwvu/LM8gWiwLPtKvyY6dciR/uhguxuGvXukJkN/ejlkE7rEbS5EHrxk/19bqdlKWbH5l7HmwNVMjSl5MW62+kEjoqxPxY9XdsuU6jemfWaSH/fw04X45+1OsRajkEip/Hje2NAQjcn4KBl4hZEPEAYX5LjA8L3Ge106kGnMDSclRjkLhlSS6ERIDcSBEYaG/p53nBXNRttysJjZUO6njlvvJ88TRhy53VdZhBrkObmc8u2Iy0QJPds7MoRohwLk4lVJwm5ZN+fD37OQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=n8fEux3wP8a/V8mnio4UuQkemrlpdH65baMbpZPzPtw=;
+ b=g7glQqvrsVNRfY6J7oyXGabUJcMxEEuK5I8aEpn9wdSKcN2FYJsCfRjEnZrwZz9C13vSeCbkjrzIxTI3OCex9jlcWR3CrKu3iro8F63lB2KDU5dguqGShzV7Js2IvAhX51yrnL7fgCteXk/IaSUlcfcyE4JWyvkgCu1y6OtoEOrQ1p/8vqEOyfO2kzaaiD9qV+5LE47ildBz5zfxHv+p2L97e5YMN9ZfghZdxBNEAP/wKhsIofbX/TSfr37Bpt6M+PRmJMX4h6fAoiPDP3aQCxh/j9HD75kGnPKak3uzgqyLsux6eHJ47sExFN6k3b1HSWfCPqSj5gGpeVtlhHLyTg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=linutronix.de smtp.mailfrom=amd.com;
+ dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
+ header.from=amd.com; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=n8fEux3wP8a/V8mnio4UuQkemrlpdH65baMbpZPzPtw=;
+ b=ME7eGwKhhizqNtQ20U4PodV1dhU3GN7LU6Vp1twvoxiyX0JJwQpwitdtn1P91AjgiQfyMT+eweCx71tXkg09M0sUjHLIQQTKYVtGLdh/Oc0/ZexPfXz39OULMZn693vvnJSKZTrx2D5m2yb74OXIB6qEF8Ub946Sz0rnflrlF4E=
+Received: from BN1PR12CA0009.namprd12.prod.outlook.com (2603:10b6:408:e1::14)
+ by LV2PR12MB5728.namprd12.prod.outlook.com (2603:10b6:408:17c::7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8511.22; Mon, 10 Mar
+ 2025 16:40:36 +0000
+Received: from BL6PEPF00022570.namprd02.prod.outlook.com
+ (2603:10b6:408:e1:cafe::87) by BN1PR12CA0009.outlook.office365.com
+ (2603:10b6:408:e1::14) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8511.26 via Frontend Transport; Mon,
+ 10 Mar 2025 16:40:36 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ BL6PEPF00022570.mail.protection.outlook.com (10.167.249.38) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.8534.20 via Frontend Transport; Mon, 10 Mar 2025 16:40:35 +0000
+Received: from tiny.amd.com (10.180.168.240) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 10 Mar
+ 2025 11:40:34 -0500
+From: David Kaplan <david.kaplan@amd.com>
+To: Thomas Gleixner <tglx@linutronix.de>, Borislav Petkov <bp@alien8.de>,
+	Peter Zijlstra <peterz@infradead.org>, Josh Poimboeuf <jpoimboe@kernel.org>,
+	Pawan Gupta <pawan.kumar.gupta@linux.intel.com>, Ingo Molnar
+	<mingo@redhat.com>, Dave Hansen <dave.hansen@linux.intel.com>,
+	<x86@kernel.org>, "H . Peter Anvin" <hpa@zytor.com>
+CC: <linux-kernel@vger.kernel.org>, Brendan Jackman <jackmanb@google.com>,
+	Derek Manwaring <derekmn@amazon.com>
+Subject: [PATCH v4 02/36] x86/bugs: Restructure taa mitigation
+Date: Mon, 10 Mar 2025 11:39:49 -0500
+Message-ID: <20250310164023.779191-3-david.kaplan@amd.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20250310164023.779191-1-david.kaplan@amd.com>
+References: <20250310164023.779191-1-david.kaplan@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Message-Id: <20250310-varsom6ul-concerto-dts-v4-2-6034fda6ec64@bootlin.com>
-References: <20250310-varsom6ul-concerto-dts-v4-0-6034fda6ec64@bootlin.com>
-In-Reply-To: <20250310-varsom6ul-concerto-dts-v4-0-6034fda6ec64@bootlin.com>
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>, 
- Sascha Hauer <s.hauer@pengutronix.de>, 
- Pengutronix Kernel Team <kernel@pengutronix.de>, 
- Fabio Estevam <festevam@gmail.com>
-Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
- Antonin Godard <antonin.godard@bootlin.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=7899;
- i=antonin.godard@bootlin.com; h=from:subject:message-id;
- bh=jG2AhQ8rfFnaTwya10N47DF4WYRctsn28OpF3DNfM1U=;
- b=kA0DAAgB0YBBQCmjqDYByyZiAGfPFeWhE88pX5S2aqICactDuiuZq77zkE/zX8QF1d9WH5Zvb
- 4kCMwQAAQgAHRYhBIZIclGI3UAbuaDT/9GAQUApo6g2BQJnzxXlAAoJENGAQUApo6g2vFoP/iNM
- j5qShed0pMKax1FlHwK2gPZ3ZmMovvDLVhFAOIsW38prJSXpe9xrk4EZXfQ200TARIL/3Fnt6Dw
- oVX/YS3hxa8pTWEWxltAaOJsQyGUFt/mMTILgPk2dUJitj3wmyd9p6cyZLNemBsG0xl/1fHmR2K
- fpKrtl2y/z0O0/cf3CWMsdf272lUAvjyNTPeCfwcbsRtklNyLZtrO+/ZsABMLWtYf/d1RvaRSso
- nPwM6f00W4sVPGormnmsqtwPd1xdSBDUGLV6ihmQ5aX6tnbAgL3kq6tBkMGI/FDsIq/ba8t2xzO
- 7+MqvspaWSXCsyL0ZDFXcRhs9qXKgVkgTgWjB5kwomp8zFiRla0C8IfkufXWTGThh3QZeiYayk+
- 8Yevr/Yo/lW15fANkdqGjoUR+MaJh4uWoELJWyqL3ng7JVjdKEEcQmdSNq0cs3ipvQviF9qUKTa
- xmukhkeOI2jQ7Oc3Shjizj9GOAoJIFSNGCmJLEycU5QEQRubM/zHTE7ASIzX9pYXiUhoVc0ivAe
- +hRaJmJMGPdC1TW3vUj6wCepADC9y782TiIWaW2ryhl6UcFPlduWRNX9wUNLjXPP5+WdCtpGN58
- FJ3nXYKyqub8ZNi+xlQ6TYCHyr4ai9BQcoGif+dXX53bNncqBNXjnl0dTrId+ND7BWC5feB4isz
- VJWrc
-X-Developer-Key: i=antonin.godard@bootlin.com; a=openpgp;
- fpr=8648725188DD401BB9A0D3FFD180414029A3A836
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdduudelkeeiucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhfffugggtgffkfhgjvfevofesthekredtredtjeenucfhrhhomheptehnthhonhhinhcuifhouggrrhguuceorghnthhonhhinhdrghhouggrrhgusegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpefhvdetuefghfeugfeutdeuueettdffudefgfeljeehvdetvefhjeffvdetvdehhfenucffohhmrghinhepvhgrrhhishgtihhtvgdrtghomhenucfkphepvdgrtddumegtsgdugeemheehieemjegrtddtmeejtgehtgemiegruggvmeejleegkeemgedtheelnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepvdgrtddumegtsgdugeemheehieemjegrtddtmeejtgehtgemiegruggvmeejleegkeemgedtheelpdhhvghloheplgduvdejrddtrddurddungdpmhgrihhlfhhrohhmpegrnhhtohhnihhnrdhgohgurghrugessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepudefpdhrtghpthhtoheptghonhhorhdoughtsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehkrhiikhdoughtsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehrohgshheskhgvrhhnvghlr
- dhorhhgpdhrtghpthhtohepfhgvshhtvghvrghmsehgmhgrihhlrdgtohhmpdhrtghpthhtohepihhmgieslhhishhtshdrlhhinhhugidruggvvhdprhgtphhtthhopehshhgrfihnghhuoheskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheprghnthhonhhinhdrghhouggrrhgusegsohhothhlihhnrdgtohhmpdhrtghpthhtohepthhhohhmrghsrdhpvghtrgiiiihonhhisegsohhothhlihhnrdgtohhm
-X-GND-Sasl: antonin.godard@bootlin.com
+Content-Type: text/plain
+X-ClientProxiedBy: SATLEXMB04.amd.com (10.181.40.145) To SATLEXMB04.amd.com
+ (10.181.40.145)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BL6PEPF00022570:EE_|LV2PR12MB5728:EE_
+X-MS-Office365-Filtering-Correlation-Id: 15f168a5-83fc-44a1-ecfe-08dd5ff2486d
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|36860700013|7416014|376014|1800799024|82310400026;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?BMr5UE+iAGSmpg8Q9yiGVQ257Kav9+iXlrTzH06ms+EGtlAot0TbcwkPOYb4?=
+ =?us-ascii?Q?CzXmEZ7W2lQW4s+qEalARfAVtbwbFrw9XgKBq2bkFfaHuYq+Qqt1Bm69pyPd?=
+ =?us-ascii?Q?RyrndVblCGymTEwkh53ippLKtmeqQKn1GrnPRCvrORr75mSIv66cmyLp5Bpk?=
+ =?us-ascii?Q?kKybOLelN94fUagSNSzo/3qVCDdvbedBFozD5+WkkrQZN5jer4oy7I9paQ+h?=
+ =?us-ascii?Q?BXJ7PnGksXJ3+ovjOJxs8XycamfgM/bf0d9s7iKJPNE1CcT+zeN5ifLPtV/W?=
+ =?us-ascii?Q?gqJ2I8TTnhnejnq4SSodpSt6XX0f6oSHF00LryNeP8C5O1vE14wIjrMkBBvG?=
+ =?us-ascii?Q?Rq6u8Jo4A4Je4vDRsN1gp9ptWGn2f+NZ+9jDEKi7WHea2nhkdxB2DgCKZPI9?=
+ =?us-ascii?Q?w0uodv/jrMCla4fBQwv7V5J3qichJWZz8QEhlHIhtAkUM4rpfNLvAC5L8KP9?=
+ =?us-ascii?Q?iwNuQBHvNR42j6uIrKFPuXxqmkSofK2xWvyqzLrIFvZjAvFSY7AZw+cr01Io?=
+ =?us-ascii?Q?SrTMqh8mFGp/Ze3cYNWrt828neW273kaW9yfSPxkFy2Ad61oochew67a+n0z?=
+ =?us-ascii?Q?Xbt0A2jyzR4OuCRvHx2IcVSRB/AIdZmqkEbgyWHPAOTY/gdcRFiOjsGkMETu?=
+ =?us-ascii?Q?8ynWkVT/40u1rPLiLAFTYlYRLOBvIpsstAY1s0ixxH83Bm4csu1/yYh/PD1R?=
+ =?us-ascii?Q?XJJDC+sEua18DXUq8ypJaJET5JGmna1b3OUZpK+DEYtd/3Tc9H8rkNQ4Ga5G?=
+ =?us-ascii?Q?It1e+kiEammT6ItWkdY4QFFfOCFmnuzPg1fYDe0wEMO+1M6j7wO3bGiqxVS/?=
+ =?us-ascii?Q?EcLMCumVt4CkK5PCEqcSehhZHTny6O/SuMISuCihJFxBim17a6HUAQP9Lp46?=
+ =?us-ascii?Q?LCaiB8OF4GjfSNS6dDPF3AEPGi7xVRh5euVfnSubT3eFKsn+BCMrmhSJqygD?=
+ =?us-ascii?Q?3pShUDt5UcD0Zc1Pke4NAnMK4+SarLMCo8hazOMZHopbS/eQIBjp5TQMgG6W?=
+ =?us-ascii?Q?kIA4AMFwbNxd87LGYrZDNUyeO4ha/4YRUZ/sVFm28HLEoAXZdPtfddwJ4ugz?=
+ =?us-ascii?Q?PrjAv4yAR1uRpVI/IuVOBLrda5XzxYIgUjVkq+R/z27kqg35QH+GrYIeeery?=
+ =?us-ascii?Q?+NXUYSAxFsJPuZueU12/zksExhwhHhq3C1E4tIlomIqQIJXQtv7pq5u9g20X?=
+ =?us-ascii?Q?XtpsJzmaGeEiB04I8Mcsm8wIZVlgstsguMhur4YAhyezxrWIMAJrAmoHqWFN?=
+ =?us-ascii?Q?nBblGRB6D7nKjVqWLo4tjhxqIWlcDzekNXFeGw+RFBoo6Qe7TQ4U6BTdTQCN?=
+ =?us-ascii?Q?YdQk8y80d2MSemC9MZ0wTPaWNUaAAoLPh6iO893oep9qRsCY1JOnKDGpYbAV?=
+ =?us-ascii?Q?G30h/4bKqMsuoZsNtF6EKAT8LXzUnS8aRwUBTDV4KGrwSLDCH9e9W+aFPag7?=
+ =?us-ascii?Q?3YQfZ2/EHtwE2FAU1lXO6FS8N6o8HiYqrk24jEe6KL1jQ26CieQg018nmFpY?=
+ =?us-ascii?Q?lOeLZ4R0eyyW9pI=3D?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(7416014)(376014)(1800799024)(82310400026);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Mar 2025 16:40:35.8053
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 15f168a5-83fc-44a1-ecfe-08dd5ff2486d
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	BL6PEPF00022570.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV2PR12MB5728
 
-Add support for the Variscite VAR_SOM-MX6UL SoM with:
+Restructure taa mitigation to use select/update/apply functions to
+create consistent vulnerability handling.
 
-- NXP i.MX6 UltraLite SoC
-- 128–1024 MB DDR3L
-- 8–128 GB eMMC
-- 128–512 MB SLC NAND
-- Camera Interface
-- LVDS / Parallel RGB interfaces (not configured)
-- Touch controller (not configured)
-- Ethernet RMII interface (not configured)
-- On-SoM Wi-Fi/Bluetooth with CYW43353 on SDIO Module (not configured)
-- SD/MMC/SDIO interface
-- USB Host + USB OTG interface
-- I2C interfaces
-- SPI interfaces
-- PCI-Express 2.0 interface
-- on-SoM Audio Codec (not configured)
-- S/PDIF interface (not configured)
-
-Product website: https://www.variscite.com/product/system-on-module-som/cortex-a7/var-som-6ul-nxp-imx6ul-6ull-6ulz
-
-Support is handled with a SoM-centric dtsi exporting the default
-interfaces along the default pinmuxing to be enabled by the board dts
-file.
-
-I tested this on a VAR-SOM-6UL_G2_700C_512R_8N_IT_REV1.3A, which is why
-some of the features above are mentioned as "not configured" (I couldn't
-test them).
-
-This file is based on the one provided by Variscite on their own kernel,
-but adapted for mainline.
-
-Signed-off-by: Antonin Godard <antonin.godard@bootlin.com>
+Signed-off-by: David Kaplan <david.kaplan@amd.com>
 ---
- arch/arm/boot/dts/nxp/imx/imx6ul-var-som.dtsi | 233 ++++++++++++++++++++++++++
- 1 file changed, 233 insertions(+)
+ arch/x86/kernel/cpu/bugs.c | 94 ++++++++++++++++++++++++--------------
+ 1 file changed, 59 insertions(+), 35 deletions(-)
 
-diff --git a/arch/arm/boot/dts/nxp/imx/imx6ul-var-som.dtsi b/arch/arm/boot/dts/nxp/imx/imx6ul-var-som.dtsi
-new file mode 100644
-index 0000000000000000000000000000000000000000..4e536e0252def06a7660c29b7231169e3aa38dba
---- /dev/null
-+++ b/arch/arm/boot/dts/nxp/imx/imx6ul-var-som.dtsi
-@@ -0,0 +1,233 @@
-+// SPDX-License-Identifier: GPL-2.0+
-+/*
-+ * Support for Variscite VAR-SOM-MX6UL Module
-+ *
-+ * Copyright 2019 Variscite Ltd.
-+ * Copyright 2025 Bootlin
-+ */
+diff --git a/arch/x86/kernel/cpu/bugs.c b/arch/x86/kernel/cpu/bugs.c
+index 71da57c4f83b..2fd58b7089c4 100644
+--- a/arch/x86/kernel/cpu/bugs.c
++++ b/arch/x86/kernel/cpu/bugs.c
+@@ -65,6 +65,8 @@ static void __init mds_apply_mitigation(void);
+ static void __init md_clear_update_mitigation(void);
+ static void __init md_clear_select_mitigation(void);
+ static void __init taa_select_mitigation(void);
++static void __init taa_update_mitigation(void);
++static void __init taa_apply_mitigation(void);
+ static void __init mmio_select_mitigation(void);
+ static void __init srbds_select_mitigation(void);
+ static void __init l1d_flush_select_mitigation(void);
+@@ -191,6 +193,7 @@ void __init cpu_select_mitigations(void)
+ 	ssb_select_mitigation();
+ 	l1tf_select_mitigation();
+ 	mds_select_mitigation();
++	taa_select_mitigation();
+ 	md_clear_select_mitigation();
+ 	srbds_select_mitigation();
+ 	l1d_flush_select_mitigation();
+@@ -207,8 +210,10 @@ void __init cpu_select_mitigations(void)
+ 	 * choices.
+ 	 */
+ 	mds_update_mitigation();
++	taa_update_mitigation();
+ 
+ 	mds_apply_mitigation();
++	taa_apply_mitigation();
+ }
+ 
+ /*
+@@ -388,6 +393,11 @@ static const char * const taa_strings[] = {
+ 	[TAA_MITIGATION_TSX_DISABLED]	= "Mitigation: TSX disabled",
+ };
+ 
++static bool __init taa_vulnerable(void)
++{
++	return boot_cpu_has_bug(X86_BUG_TAA) && boot_cpu_has(X86_FEATURE_RTM);
++}
 +
-+/dts-v1/;
+ static void __init taa_select_mitigation(void)
+ {
+ 	if (!boot_cpu_has_bug(X86_BUG_TAA)) {
+@@ -401,48 +411,63 @@ static void __init taa_select_mitigation(void)
+ 		return;
+ 	}
+ 
+-	if (cpu_mitigations_off()) {
++	if (cpu_mitigations_off())
+ 		taa_mitigation = TAA_MITIGATION_OFF;
+-		return;
+-	}
+ 
+-	/*
+-	 * TAA mitigation via VERW is turned off if both
+-	 * tsx_async_abort=off and mds=off are specified.
+-	 */
+-	if (taa_mitigation == TAA_MITIGATION_OFF &&
+-	    mds_mitigation == MDS_MITIGATION_OFF)
++	/* Microcode will be checked in taa_update_mitigation(). */
++	if (taa_mitigation == TAA_MITIGATION_AUTO)
++		taa_mitigation = TAA_MITIGATION_VERW;
 +
-+#include "imx6ul.dtsi"
-+#include <dt-bindings/clock/imx6ul-clock.h>
-+#include <dt-bindings/gpio/gpio.h>
++	if (taa_mitigation != TAA_MITIGATION_OFF)
++		verw_mitigation_selected = true;
++}
 +
-+/ {
-+	model = "Variscite VAR-SOM-MX6UL module";
-+	compatible = "variscite,var-som-imx6ul", "fsl,imx6ul";
++static void __init taa_update_mitigation(void)
++{
++	if (!taa_vulnerable() || cpu_mitigations_off())
+ 		return;
+ 
+-	if (boot_cpu_has(X86_FEATURE_MD_CLEAR))
++	if (verw_mitigation_selected)
+ 		taa_mitigation = TAA_MITIGATION_VERW;
+-	else
+-		taa_mitigation = TAA_MITIGATION_UCODE_NEEDED;
+ 
+-	/*
+-	 * VERW doesn't clear the CPU buffers when MD_CLEAR=1 and MDS_NO=1.
+-	 * A microcode update fixes this behavior to clear CPU buffers. It also
+-	 * adds support for MSR_IA32_TSX_CTRL which is enumerated by the
+-	 * ARCH_CAP_TSX_CTRL_MSR bit.
+-	 *
+-	 * On MDS_NO=1 CPUs if ARCH_CAP_TSX_CTRL_MSR is not set, microcode
+-	 * update is required.
+-	 */
+-	if ( (x86_arch_cap_msr & ARCH_CAP_MDS_NO) &&
+-	    !(x86_arch_cap_msr & ARCH_CAP_TSX_CTRL_MSR))
+-		taa_mitigation = TAA_MITIGATION_UCODE_NEEDED;
++	if (taa_mitigation == TAA_MITIGATION_VERW) {
++		/* Check if the requisite ucode is available. */
++		if (!boot_cpu_has(X86_FEATURE_MD_CLEAR))
++			taa_mitigation = TAA_MITIGATION_UCODE_NEEDED;
+ 
+-	/*
+-	 * TSX is enabled, select alternate mitigation for TAA which is
+-	 * the same as MDS. Enable MDS static branch to clear CPU buffers.
+-	 *
+-	 * For guests that can't determine whether the correct microcode is
+-	 * present on host, enable the mitigation for UCODE_NEEDED as well.
+-	 */
+-	setup_force_cpu_cap(X86_FEATURE_CLEAR_CPU_BUF);
++		/*
++		 * VERW doesn't clear the CPU buffers when MD_CLEAR=1 and MDS_NO=1.
++		 * A microcode update fixes this behavior to clear CPU buffers. It also
++		 * adds support for MSR_IA32_TSX_CTRL which is enumerated by the
++		 * ARCH_CAP_TSX_CTRL_MSR bit.
++		 *
++		 * On MDS_NO=1 CPUs if ARCH_CAP_TSX_CTRL_MSR is not set, microcode
++		 * update is required.
++		 */
++		if ((x86_arch_cap_msr & ARCH_CAP_MDS_NO) &&
++		   !(x86_arch_cap_msr & ARCH_CAP_TSX_CTRL_MSR))
++			taa_mitigation = TAA_MITIGATION_UCODE_NEEDED;
++	}
+ 
+-	if (taa_nosmt || cpu_mitigations_auto_nosmt())
+-		cpu_smt_disable(false);
++	pr_info("%s\n", taa_strings[taa_mitigation]);
++}
 +
-+	memory@80000000 {
-+		device_type = "memory";
-+		reg = <0x80000000 0x20000000>;
-+	};
++static void __init taa_apply_mitigation(void)
++{
++	if (taa_mitigation == TAA_MITIGATION_VERW ||
++	    taa_mitigation == TAA_MITIGATION_UCODE_NEEDED) {
++		/*
++		 * TSX is enabled, select alternate mitigation for TAA which is
++		 * the same as MDS. Enable MDS static branch to clear CPU buffers.
++		 *
++		 * For guests that can't determine whether the correct microcode is
++		 * present on host, enable the mitigation for UCODE_NEEDED as well.
++		 */
++		setup_force_cpu_cap(X86_FEATURE_CLEAR_CPU_BUF);
 +
-+	reg_gpio_dvfs: reg-gpio-dvfs {
-+		compatible = "regulator-gpio";
-+		regulator-min-microvolt = <1300000>;
-+		regulator-max-microvolt = <1400000>;
-+		regulator-name = "gpio_dvfs";
-+		regulator-type = "voltage";
-+		gpios = <&gpio4 13 GPIO_ACTIVE_HIGH>;
-+		states = <1300000 0x1
-+			  1400000 0x0>;
-+	};
-+
-+	rmii_ref_clk: rmii-ref-clk {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <25000000>;
-+		clock-output-names = "rmii-ref";
-+	};
-+};
-+
-+&clks {
-+	assigned-clocks = <&clks IMX6UL_CLK_PLL4_AUDIO_DIV>;
-+	assigned-clock-rates = <786432000>;
-+};
-+
-+&cpu0 {
-+	dc-supply = <&reg_gpio_dvfs>;
-+};
-+
-+&fec1 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_enet1>, <&pinctrl_enet1_gpio>, <&pinctrl_enet1_mdio>;
-+	phy-mode = "rmii";
-+	phy-handle = <&ethphy0>;
-+	status = "okay";
-+
-+	mdio {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		ethphy0: ethernet-phy@1 {
-+			compatible = "ethernet-phy-ieee802.3-c22";
-+			reg = <1>;
-+			clocks = <&rmii_ref_clk>;
-+			clock-names = "rmii-ref";
-+			reset-gpios = <&gpio5 0 GPIO_ACTIVE_LOW>;
-+			reset-assert-us = <100000>;
-+			micrel,led-mode = <1>;
-+			micrel,rmii-reference-clock-select-25-mhz = <1>;
-+		};
-+	};
-+};
-+
-+&iomuxc {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_hog>;
-+
-+	pinctrl_enet1: enet1grp {
-+		fsl,pins = <
-+			MX6UL_PAD_ENET1_RX_EN__ENET1_RX_EN	0x1b0b0
-+			MX6UL_PAD_ENET1_RX_ER__ENET1_RX_ER	0x1b0b0
-+			MX6UL_PAD_ENET1_RX_DATA0__ENET1_RDATA00	0x1b0b0
-+			MX6UL_PAD_ENET1_RX_DATA1__ENET1_RDATA01	0x1b0b0
-+			MX6UL_PAD_ENET1_TX_EN__ENET1_TX_EN	0x1b0b0
-+			MX6UL_PAD_ENET1_TX_DATA0__ENET1_TDATA00	0x1b0b0
-+			MX6UL_PAD_ENET1_TX_DATA1__ENET1_TDATA01	0x1b0b0
-+			MX6UL_PAD_ENET1_TX_CLK__ENET1_REF_CLK1	0x4001b031
-+		>;
-+	};
-+
-+	pinctrl_enet1_gpio: enet1-gpiogrp {
-+		fsl,pins = <
-+			MX6UL_PAD_SNVS_TAMPER0__GPIO5_IO00	0x1b0b0 /* fec1 reset */
-+		>;
-+	};
-+
-+	pinctrl_enet1_mdio: enet1-mdiogrp {
-+		fsl,pins = <
-+			MX6UL_PAD_GPIO1_IO06__ENET1_MDIO	0x1b0b0
-+			MX6UL_PAD_GPIO1_IO07__ENET1_MDC		0x1b0b0
-+		>;
-+	};
-+
-+	pinctrl_hog: hoggrp {
-+		fsl,pins = <
-+			MX6UL_PAD_SNVS_TAMPER4__GPIO5_IO04	0x1b0b0	/* BT Enable */
-+			MX6UL_PAD_SNVS_TAMPER6__GPIO5_IO06	0x03029	/* WLAN Enable */
-+		>;
-+	};
-+
-+	pinctrl_sai2: sai2grp {
-+		fsl,pins = <
-+			MX6UL_PAD_JTAG_TDI__SAI2_TX_BCLK	0x17088
-+			MX6UL_PAD_JTAG_TDO__SAI2_TX_SYNC	0x17088
-+			MX6UL_PAD_JTAG_TRST_B__SAI2_TX_DATA	0x11088
-+			MX6UL_PAD_JTAG_TCK__SAI2_RX_DATA	0x11088
-+			MX6UL_PAD_JTAG_TMS__SAI2_MCLK		0x17088
-+		>;
-+	};
-+
-+	pinctrl_tsc: tscgrp {
-+		fsl,pins = <
-+			MX6UL_PAD_GPIO1_IO01__GPIO1_IO01	0xb0
-+			MX6UL_PAD_GPIO1_IO02__GPIO1_IO02	0xb0
-+			MX6UL_PAD_GPIO1_IO03__GPIO1_IO03	0xb0
-+			MX6UL_PAD_GPIO1_IO04__GPIO1_IO04	0xb0
-+		>;
-+	};
-+
-+	pinctrl_uart2: uart2grp {
-+		fsl,pins = <
-+			MX6UL_PAD_UART2_TX_DATA__UART2_DCE_TX	0x1b0b1
-+			MX6UL_PAD_UART2_RX_DATA__UART2_DCE_RX	0x1b0b1
-+			MX6UL_PAD_UART2_CTS_B__UART2_DCE_CTS	0x1b0b1
-+			MX6UL_PAD_UART2_RTS_B__UART2_DCE_RTS	0x1b0b1
-+		>;
-+	};
-+
-+	pinctrl_usdhc2: usdhc2grp {
-+		fsl,pins = <
-+			MX6UL_PAD_NAND_RE_B__USDHC2_CLK		0x10069
-+			MX6UL_PAD_NAND_WE_B__USDHC2_CMD		0x17059
-+			MX6UL_PAD_NAND_DATA00__USDHC2_DATA0	0x17059
-+			MX6UL_PAD_NAND_DATA01__USDHC2_DATA1	0x17059
-+			MX6UL_PAD_NAND_DATA02__USDHC2_DATA2	0x17059
-+			MX6UL_PAD_NAND_DATA03__USDHC2_DATA3	0x17059
-+			MX6UL_PAD_NAND_DATA04__USDHC2_DATA4	0x17059
-+			MX6UL_PAD_NAND_DATA05__USDHC2_DATA5	0x17059
-+			MX6UL_PAD_NAND_DATA06__USDHC2_DATA6	0x17059
-+			MX6UL_PAD_NAND_DATA07__USDHC2_DATA7	0x17059
-+		>;
-+	};
-+
-+	pinctrl_usdhc2_100mhz: usdhc2-100mhzgrp {
-+		fsl,pins = <
-+			MX6UL_PAD_NAND_RE_B__USDHC2_CLK		0x100b9
-+			MX6UL_PAD_NAND_WE_B__USDHC2_CMD		0x170b9
-+			MX6UL_PAD_NAND_DATA00__USDHC2_DATA0	0x170b9
-+			MX6UL_PAD_NAND_DATA01__USDHC2_DATA1	0x170b9
-+			MX6UL_PAD_NAND_DATA02__USDHC2_DATA2	0x170b9
-+			MX6UL_PAD_NAND_DATA03__USDHC2_DATA3	0x170b9
-+			MX6UL_PAD_NAND_DATA04__USDHC2_DATA4	0x170b9
-+			MX6UL_PAD_NAND_DATA05__USDHC2_DATA5	0x170b9
-+			MX6UL_PAD_NAND_DATA06__USDHC2_DATA6	0x170b9
-+			MX6UL_PAD_NAND_DATA07__USDHC2_DATA7	0x170b9
-+		>;
-+	};
-+
-+	pinctrl_usdhc2_200mhz: usdhc2-200mhzgrp {
-+		fsl,pins = <
-+			MX6UL_PAD_NAND_RE_B__USDHC2_CLK		0x100f9
-+			MX6UL_PAD_NAND_WE_B__USDHC2_CMD		0x170f9
-+			MX6UL_PAD_NAND_DATA00__USDHC2_DATA0	0x170f9
-+			MX6UL_PAD_NAND_DATA01__USDHC2_DATA1	0x170f9
-+			MX6UL_PAD_NAND_DATA02__USDHC2_DATA2	0x170f9
-+			MX6UL_PAD_NAND_DATA03__USDHC2_DATA3	0x170f9
-+			MX6UL_PAD_NAND_DATA04__USDHC2_DATA4	0x170f9
-+			MX6UL_PAD_NAND_DATA05__USDHC2_DATA5	0x170f9
-+			MX6UL_PAD_NAND_DATA06__USDHC2_DATA6	0x170f9
-+			MX6UL_PAD_NAND_DATA07__USDHC2_DATA7	0x170f9
-+		>;
-+	};
-+};
-+
-+&pxp {
-+	status = "okay";
-+};
-+
-+&sai2 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_sai2>;
-+	assigned-clocks = <&clks IMX6UL_CLK_SAI2_SEL>,
-+			  <&clks IMX6UL_CLK_SAI2>;
-+	assigned-clock-parents = <&clks IMX6UL_CLK_PLL4_AUDIO_DIV>;
-+	assigned-clock-rates = <0>, <12288000>;
-+	fsl,sai-mclk-direction-output;
-+	status = "okay";
-+};
-+
-+&snvs_poweroff {
-+	status = "okay";
-+};
-+
-+&tsc {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_tsc>;
-+	xnur-gpios = <&gpio1 3 GPIO_ACTIVE_LOW>;
-+	measure-delay-time = <0xffff>;
-+	pre-charge-time = <0xfff>;
-+	status = "okay";
-+};
-+
-+&uart2 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_uart2>;
-+	uart-has-rtscts;
-+	status = "okay";
-+};
-+
-+&usdhc2 {
-+	pinctrl-names = "default", "state_100mhz", "state_200mhz";
-+	pinctrl-0 = <&pinctrl_usdhc2>;
-+	pinctrl-1 = <&pinctrl_usdhc2_100mhz>;
-+	pinctrl-2 = <&pinctrl_usdhc2_200mhz>;
-+	bus-width = <8>;
-+	no-1-8-v;
-+	non-removable;
-+	keep-power-in-suspend;
-+	wakeup-source;
-+	status = "okay";
-+};
-
++		if (taa_nosmt || cpu_mitigations_auto_nosmt())
++			cpu_smt_disable(false);
++	}
+ }
+ 
+ static int __init tsx_async_abort_parse_cmdline(char *str)
+@@ -651,7 +676,6 @@ static void __init md_clear_update_mitigation(void)
+ 
+ static void __init md_clear_select_mitigation(void)
+ {
+-	taa_select_mitigation();
+ 	mmio_select_mitigation();
+ 	rfds_select_mitigation();
+ 
 -- 
-2.47.0
+2.34.1
 
 
