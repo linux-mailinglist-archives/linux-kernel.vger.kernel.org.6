@@ -1,211 +1,250 @@
-Return-Path: <linux-kernel+bounces-553511-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-553512-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8373FA58AC3
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 04:00:29 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5EC71A58AC6
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 04:04:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 464B53AC707
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 03:00:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 22F283AC720
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 03:04:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6840189B8C;
-	Mon, 10 Mar 2025 03:00:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=smartx-com.20230601.gappssmtp.com header.i=@smartx-com.20230601.gappssmtp.com header.b="3GbTcvbx"
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6989C1ADFFE;
+	Mon, 10 Mar 2025 03:04:52 +0000 (UTC)
+Received: from mail78-60.sinamail.sina.com.cn (mail78-60.sinamail.sina.com.cn [219.142.78.60])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E3C5184F
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 03:00:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4002A136349
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 03:04:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=219.142.78.60
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741575622; cv=none; b=W8BQUBzMAH0lG50+4a8r2iR/Hefk5xvO6MwtU/Xgx0aixpeeqc0D0HheDZAg2aQHo5RfZKXl8+kOKABkcuV4BO3Mkg1CW6Dhi/IzsoLdBYL83kUrNZzelNplz6G2s4EcZ2dIECc25YclFioYYKT7JUe7nLPZ94JgXe3N0Yx2E5s=
+	t=1741575892; cv=none; b=j0OJekns/cS+kQJz1g55Z8rJEEraLzaIcVwYBDYswp3A50Slw392ykTWWOD7G4pgauokHPu+ejprWIanf1yDQS7rJgaW8xCIJeHU0TBeLTEP/PdIAekDar62M28BgIHSx5h/T5oVbnRYzMNwNabfmgtMw90jAs2L63VUhDDjQXA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741575622; c=relaxed/simple;
-	bh=hBx1Gz2StHcPvEa5HNig06dZLy3zDu6fAmDgCL6PcQE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=AtXe4R102snWVGKvdKceuI1ZJtI34NP7UwOjRqcwS99xrGaigMy0bqsU8VwwGImh0J2uIvhC1y6gnGl2hk5AE/0BuyhgCniIEWjtz56NUPM5QSCWCDQw07iaDHlaYtU6UiTkphjtbImEfRFstdk+lLP4Infw/sYJcVj6Uh1Y3nw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=smartx.com; spf=pass smtp.mailfrom=smartx.com; dkim=pass (2048-bit key) header.d=smartx-com.20230601.gappssmtp.com header.i=@smartx-com.20230601.gappssmtp.com header.b=3GbTcvbx; arc=none smtp.client-ip=209.85.214.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=smartx.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=smartx.com
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-225477548e1so19198905ad.0
-        for <linux-kernel@vger.kernel.org>; Sun, 09 Mar 2025 20:00:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=smartx-com.20230601.gappssmtp.com; s=20230601; t=1741575619; x=1742180419; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZURtJBGMcbFFYH+strzONLA5Vczogwh/5hX0jmuWKyw=;
-        b=3GbTcvbxhgOIbKyKqLObMcycjr9/10/fTr8IVwcu9fYrRlnYxv4fpkgI6JX3AQLpnG
-         emUpVxLwhS+XYua0VTvoEB/VHqzL21q+RF0rzZK3MY6HwDswTAO+txsKDaOwVGm5tlih
-         11wDAbbhu0UtP4PCHBpNOFiEtpTePJJEt0KbkpKw0EN523PrEk7/PdGa/x5LrQVrhCYb
-         biHfyLw6JsuOUc0GAZL9JPv3V/oyYC6pQzqNLyNh8I+inxIZr8/iq0AF675zDAC4LAwG
-         XpOI4T5xkTkJ/y9lgmuwITb77WLG1tYuroUUHd8ML3QerM3iFZ9oOD6KOcyM/P+qHZzp
-         qVTQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741575619; x=1742180419;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ZURtJBGMcbFFYH+strzONLA5Vczogwh/5hX0jmuWKyw=;
-        b=Hl28TqJz4j0oCqkGuuNRA7ZlwXyYC2c207oJEQYWq7nvLaGTvsTQ9Xxs3UrJ2UmPnX
-         Lx2GbMoXQHyahe+B4ei+X4jRUjaDLV0YXhK4Boonp2ILF2QRX5maM0n5TfYgjW90vUhl
-         vwdLrXHtjO7fChqq/UQOuyqNC6GzYVTaCoIV+bQTEacvsxatF6PpF++XVXoa/85Y686O
-         olXW6nlLBfSl7JUkn0lnVI/L7dmEk8L3tWj6gUykL8iJhXoatSVmaBAADRbfQakW9eSR
-         odd37FFVREcGy6JR+COm+Kc+l0yeIqdlb2NVgL+037mIwO2FWJRKBRKErBqF/aXu6AMX
-         m11A==
-X-Forwarded-Encrypted: i=1; AJvYcCVmrwJnQbfI2k1NZ6U3iZbv5H2z5r2yTLalQUFhaYD7JDwztvFBnxK6trG0bLFawTk2774uVVtJOq1ocTc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzf8tx9auYm4LtrmwwvEl+FroFzCPc4qWzG3MWyPneyUjOqkhXm
-	eG0ISafa5/vH0M2NLu1GMa3Fi4PBxot8dQs7FtiY9r3AYNM9aDIdUIbKb14wfL0=
-X-Gm-Gg: ASbGncs8smg4tWRyFMwASGIBAaZmV4rLIIzTcEXwQr4FR01N6mYbK4gQgW7I/pbVQJ2
-	iX7mkFzEwRrzUCbEA63AqcMRG3T40EuHI+92xvuNEW7dw3oFwXJviX4kr6b47iU9Ojct0ttaYgt
-	32x+4P61LBsbW3TzBQSe0zhiP6H4oVkvzEuMoS5dv07ahehA5h3U8MFIL++N8sBmYctehi/0jKk
-	jdTOdSJZUu0XL+Jmww/iAvTMQc2DK+M7OTy+5unod1d+tw7wdEkuMF4h4R9lIHNm9B9d+s5ln6o
-	Mn3ri4PMjW9kqxdb4iddJ4O36/0QGZWQQ6pshVcybio5i5j641csob/4pe7XpvGw36XSmtyLG7+
-	k5IMvTLOlMXmH+jvkQmygDc36t5ySPimmlENZdA+aYVYPfnRdOdc=
-X-Google-Smtp-Source: AGHT+IHyoBkykGXzFkG2jWg3Bd1CqAx1te3/jtilPDZkT9O5/GqnMSo1h3Ly4n5g3i9dKxw5SX8epQ==
-X-Received: by 2002:a17:902:ce0a:b0:220:cb1a:da5 with SMTP id d9443c01a7336-22428c075e3mr224409445ad.40.1741575619196;
-        Sun, 09 Mar 2025 20:00:19 -0700 (PDT)
-Received: from localhost.localdomain (awork062100.netvigator.com. [203.198.28.100])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22410a7f75dsm66678965ad.122.2025.03.09.20.00.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 09 Mar 2025 20:00:18 -0700 (PDT)
-From: Lei Chen <lei.chen@smartx.com>
-To: John Stultz <jstultz@google.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Stephen Boyd <sboyd@kernel.org>
-Cc: Lei Chen <lei.chen@smartx.com>,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] Fix rolling back of CLOCK_MONOTONIC_COARSE
-Date: Mon, 10 Mar 2025 11:00:03 +0800
-Message-ID: <20250310030004.3705801-1-lei.chen@smartx.com>
-X-Mailer: git-send-email 2.44.0
+	s=arc-20240116; t=1741575892; c=relaxed/simple;
+	bh=26cx/vvyLmyfjqV5b45btoxXJllLg5LCM9Zt3cXbU8Y=;
+	h=From:To:Cc:Subject:Date:Message-Id; b=G286qHkDN3xbyOhXej68qoVa4pj4q0cROB2mBxjLetsMoBaZzjW4G3U2C0nVim96IJXyTX14Z0qBD2gpDlKm+aCgG/4Hi2t1BhYxUvlAeWKuRWFg9EIqfDTrPgxD4qDFBgOtMlE61yHPjKA2LqxP8kzMfwdAGvlUJnpWOIZe9BU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=everest-semi.com; spf=pass smtp.mailfrom=everest-semi.com; arc=none smtp.client-ip=219.142.78.60
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=everest-semi.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=everest-semi.com
+Received: from unknown (HELO zy-virtual-machine.localdomain)([180.159.108.137])
+	by sina.net (10.185.250.30) with ESMTP
+	id 67CE569D000009D8; Mon, 10 Mar 2025 11:03:58 +0800 (CST)
+X-Sender: zhangyi@everest-semi.com
+X-Auth-ID: zhangyi@everest-semi.com
+Authentication-Results: sina.net;
+	 spf=none smtp.mailfrom=zhangyi@everest-semi.com;
+	 dkim=none header.i=none;
+	 dmarc=none action=none header.from=zhangyi@everest-semi.com
+X-SMAIL-MID: B3C55CFE67994179ABD0A7C2F67E6B58
+X-SMAIL-UIID: B3C55CFE67994179ABD0A7C2F67E6B58-20250310-110358
+From: Zhang Yi <zhangyi@everest-semi.com>
+To: krzk@kernel.org
+Cc: tiwai@suse.com,
+	robh@kernel.org,
+	conor+dt@kernel.org,
+	broonie@kernel.org,
+	devicetree@vger.kernel.org,
+	lgirdwood@gmail.com,
+	linux-kernel@vger.kernel.org,
+	linux-sound@vger.kernel.org,
+	perex@perex.cz
+Subject: RE: [PATCH v4 1/2] ASoC: codecs: add support for ES8389
+Date: Mon, 10 Mar 2025 11:03:57 +0800
+Message-Id: <20250310030357.120390-1-zhangyi@everest-semi.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 
-timekeeping_apply_adjustment try to adjust tkr_mono.mult by @mult_adj.
-If @mult_adj > 0, tk->tkr_mono.xtime_nsec will be decreased by @offset.
-Then timekeeping_update flushes shadow_timekeeper to real tk and vdso
-data region. Then rolling back happens.
+I apologize for not responding to this review comment.
+But I did view these review comments and fixed the error.
+In the meantime I will modify my cc list, do I need to resend a new version
+of the patch to correct my error in my cc list?
 
-The drawing below illustrates the reason why timekeeping_apply_adjustment
-descreases tk->tkr_mono.xtime_nsec.
+> > +static int es8389_probe(struct snd_soc_component *codec)
+> > +{
+> > +	int ret = 0;
+> > +	struct es8389_private *es8389 = snd_soc_component_get_drvdata(codec);
+> > +
+> > +	ret = device_property_read_u8(codec->dev, "everest,mclk-src", &es8389->mclk_src);
+> > +	if (ret != 0) {
+> > +		dev_dbg(codec->dev, "mclk-src return %d", ret);
+> > +		es8389->mclk_src = ES8389_MCLK_SOURCE;
+> > +	}
+> > +
+> > +	ret = device_property_read_u8(codec->dev, "everest,adc-slot", &es8389->adc_slot);
+> > +	if (ret != 0) {
+> > +		dev_dbg(codec->dev, "adc-slot return %d", ret);
+> > +		es8389->adc_slot = 0x00;
+> > +	}
+> > +
+> > +	ret = device_property_read_u8(codec->dev, "everest,dac-slot", &es8389->dac_slot);
+> > +	if (ret != 0) {
+> > +		dev_dbg(codec->dev, "dac-slot return %d", ret);
+> > +		es8389->dac_slot = 0x00;
+> > +	}
+> > +
+> > +	es8389->dmic = device_property_read_bool(codec->dev,
+> > +			"everest,dmic-enabled");
+> > +	dev_dbg(codec->dev, "dmic-enabled %x", es8389->dmic);
+> > +
+> > +	if (!es8389->adc_slot) {
+> > +		es8389->mclk = devm_clk_get(codec->dev, "mclk");
+> > +		if (IS_ERR(es8389->mclk)) {
+> > +			dev_err(codec->dev, "%s,unable to get mclk\n", __func__);
+> 
+> Syntax is return dev_err_probe. Also, drop __func__.
 
-     cycle_interval       offset        clock_delta
-x-----------------------x----------x---------------------------x
+Ok,I'll fix it
 
-P0                      P1         P2                         P3
+> > +static struct snd_soc_component_driver soc_codec_dev_es8389 = {
+> > +	.probe = es8389_probe,
+> > +	.remove = es8389_remove,
+> > +	.suspend = es8389_suspend,
+> > +	.resume = es8389_resume,
+> > +	.set_bias_level = es8389_set_bias_level,
+> > +
+> > +	.controls = es8389_snd_controls,
+> > +	.num_controls = ARRAY_SIZE(es8389_snd_controls),
+> > +	.dapm_widgets = es8389_dapm_widgets,
+> > +	.num_dapm_widgets = ARRAY_SIZE(es8389_dapm_widgets),
+> > +	.dapm_routes = es8389_dapm_routes,
+> > +	.num_dapm_routes = ARRAY_SIZE(es8389_dapm_routes),
+> > +	.idle_bias_on = 1,
+> > +	.use_pmdown_time = 1,
+> > +};
+> > +
+> > +static struct regmap_config es8389_regmap = {
+> > +	.reg_bits = 8,
+> > +	.val_bits = 8,
+> > +
+> > +	.max_register = ES8389_MAX_REGISTER,
+> > +
+> > +	.volatile_reg = es8389_volatile_register,
+> > +	.cache_type = REGCACHE_MAPLE,
+> > +};
+> > +
+> > +#ifdef CONFIG_OF
+> > +static struct of_device_id es8389_if_dt_ids[] = {
+> > +	{ .compatible = "everest,es8389", },
+> 
+> Bindings are before the user (see DT submitting patches).
 
-N(P) means the nano sec count at the point P.
+Ok,I'll fix it
 
-Assume timekeeping_apply_adjustment runs at P1, with unaccumulated
-cycles @offset. Then tkr_mono.mult is adjusted from M1 to M2.
+> > +	{ }
+> > +};
+> > +MODULE_DEVICE_TABLE(of, es8389_if_dt_ids);
+> > +#endif
+> > +
+> > +static void es8389_i2c_shutdown(struct i2c_client *i2c)
+> > +{
+> > +	struct snd_soc_component *component;
+> > +	struct es8389_private *es8389;
+> > +
+> > +	es8389 = i2c_get_clientdata(i2c);
+> > +	component = es8389->component;
+> > +	dev_dbg(component->dev, "Enter into %s\n", __func__);
+> 
+> Please drop simple probe enter/exit debugs. Tracing is for that in
+> general.
 
-Since offset happens before tkr_mono.mult adjustment, so we want to
-achieve:
-N(P3) == offset * M1 + clock_delta * M2 + N(P1)   -------- (1)
+I'll drop these.
 
-But at P3, the code works as following:
-N(P3) := (offset + clock_delta) * M2 + N(P1)
-       = offset * M2 + clock_delta * M2 + N(P1)
+> > +
+> > +	regmap_write(es8389->regmap, ES8389_MASTER_MODE, 0x28);
+> > +	regmap_write(es8389->regmap, ES8389_HPSW, 0x00);
+> > +	regmap_write(es8389->regmap, ES8389_VMID, 0x00);
+> > +	regmap_write(es8389->regmap, ES8389_RESET, 0x00);
+> > +	regmap_write(es8389->regmap, ES8389_CSM_JUMP, 0xCC);
+> > +	usleep_range(500000, 550000);//500MS
+> > +	regmap_write(es8389->regmap, ES8389_CSM_JUMP, 0x00);
+> > +	regmap_write(es8389->regmap, ES8389_ANA_CTL1, 0x08);
+> > +	regmap_write(es8389->regmap, ES8389_ISO_CTL, 0xC1);
+> > +	regmap_write(es8389->regmap, ES8389_PULL_DOWN, 0x00);
+> > +}
+> > +
+> > +static int es8389_i2c_probe(struct i2c_client *i2c_client)
+> > +{
+> > +	struct es8389_private *es8389;
+> > +	int ret = -1;
+> > +
+> > +	es8389 = devm_kzalloc(&i2c_client->dev,
+> > +			sizeof(*es8389), GFP_KERNEL);
+> 
+> You wrapping is odd: unnecessary and not matching coding style.
 
-Apprently, N(P3) goes away from equation (1). To correct it, N(P1)
-should be adjusted at P2:
-N(P1) -= offset * (M2 - M1)
+Ok,I'll fix it
 
-To fix this issue, the patch accumulates offset into tk, and export
-N(P2) to real tk and vdso.
+>> +	if (es8389 == NULL)
+>> +		return -ENOMEM;
+>> +
+>> +	i2c_set_clientdata(i2c_client, es8389);
+>> +	es8389->regmap = devm_regmap_init_i2c(i2c_client, &es8389_regmap);
+>> +	if (IS_ERR(es8389->regmap))
+>> +		return dev_err_probe(&i2c_client->dev, PTR_ERR(es8389->regmap),
+>> +			"regmap_init() failed\n");
+>> +
+>> +	ret =  devm_snd_soc_register_component(&i2c_client->dev,
+>> +			&soc_codec_dev_es8389,
+>> +			&es8389_dai,
+>> +			1);
+>> +	if (ret < 0) {
+>> +		kfree(es8389);
+>
+>You have a bug here - double free. You can easily trigger this and see
+>the result with KASAN.
 
-tk.tkr_mono := N(P2) = N(P1) + offset * M1
+Ok,I'll fix it
 
-Then at P3, we calculate N(P3) based on N(P2) instead of N(P1):
-N(P3) := N(P2) + clock_delta * M2
+> > +		return ret;
+> > +	}
+> > +
+> > +	return ret;
+> > +}
+> > +
+> > +static const struct i2c_device_id es8389_i2c_id[] = {
+> > +	{"es8389"},
+> > +	{ }
+> > +};
+> > +MODULE_DEVICE_TABLE(i2c, es8389_i2c_id);
+> > +
+> > +static struct i2c_driver es8389_i2c_driver = {
+> > +	.driver = {
+> > +		.name	= "es8389",
+> > +		.owner	= THIS_MODULE,
+> 
+> So you sent us an old code, probably based on downstream, duplicating
+> issues we already fixed in upstream.
+> 
+> That's really suboptimal choice.
+> 
+> First, you have the issues here which we already fixed. Second, you ask
+> us to review and find the same problems we already pointed out and
+> fixed.
+> 
+> Instead, please take the newest reviewed driver and use it as base.
 
-Signed-off-by: Lei Chen <lei.chen@smartx.com>
----
- kernel/time/timekeeping.c | 44 +++++++++------------------------------
- 1 file changed, 10 insertions(+), 34 deletions(-)
+Ok,I'll fix it
 
-diff --git a/kernel/time/timekeeping.c b/kernel/time/timekeeping.c
-index 1e67d076f195..65647f7bbc69 100644
---- a/kernel/time/timekeeping.c
-+++ b/kernel/time/timekeeping.c
-@@ -1934,15 +1934,14 @@ static __always_inline void timekeeping_apply_adjustment(struct timekeeper *tk,
- {
- 	s64 interval = tk->cycle_interval;
- 
--	if (mult_adj == 0) {
-+	if (mult_adj == 0)
- 		return;
--	} else if (mult_adj == -1) {
-+
-+	if (mult_adj == -1)
- 		interval = -interval;
--		offset = -offset;
--	} else if (mult_adj != 1) {
-+	else if (mult_adj != 1)
- 		interval *= mult_adj;
--		offset *= mult_adj;
--	}
-+
- 
- 	/*
- 	 * So the following can be confusing.
-@@ -1963,33 +1962,8 @@ static __always_inline void timekeeping_apply_adjustment(struct timekeeper *tk,
- 	 * Which can be shortened to:
- 	 *	xtime_interval += cycle_interval
- 	 *
--	 * So offset stores the non-accumulated cycles. Thus the current
--	 * time (in shifted nanoseconds) is:
--	 *	now = (offset * adj) + xtime_nsec
--	 * Now, even though we're adjusting the clock frequency, we have
--	 * to keep time consistent. In other words, we can't jump back
--	 * in time, and we also want to avoid jumping forward in time.
--	 *
--	 * So given the same offset value, we need the time to be the same
--	 * both before and after the freq adjustment.
--	 *	now = (offset * adj_1) + xtime_nsec_1
--	 *	now = (offset * adj_2) + xtime_nsec_2
--	 * So:
--	 *	(offset * adj_1) + xtime_nsec_1 =
--	 *		(offset * adj_2) + xtime_nsec_2
--	 * And we know:
--	 *	adj_2 = adj_1 + 1
--	 * So:
--	 *	(offset * adj_1) + xtime_nsec_1 =
--	 *		(offset * (adj_1+1)) + xtime_nsec_2
--	 *	(offset * adj_1) + xtime_nsec_1 =
--	 *		(offset * adj_1) + offset + xtime_nsec_2
--	 * Canceling the sides:
--	 *	xtime_nsec_1 = offset + xtime_nsec_2
--	 * Which gives us:
--	 *	xtime_nsec_2 = xtime_nsec_1 - offset
--	 * Which simplifies to:
--	 *	xtime_nsec -= offset
-++	 * Since mult will be changed, @offset should be accumulated with original
-++	 * mult value
- 	 */
- 	if ((mult_adj > 0) && (tk->tkr_mono.mult + mult_adj < mult_adj)) {
- 		/* NTP adjustment caused clocksource mult overflow */
-@@ -1997,9 +1971,11 @@ static __always_inline void timekeeping_apply_adjustment(struct timekeeper *tk,
- 		return;
- 	}
- 
-+	tk->tkr_mono.xtime_nsec += offset * tk->tkr_mono.mult;
-+	tk->tkr_mono.cycle_last += offset;
-+
- 	tk->tkr_mono.mult += mult_adj;
- 	tk->xtime_interval += interval;
--	tk->tkr_mono.xtime_nsec -= offset;
- }
- 
- /*
--- 
-2.44.0
+> > +		.of_match_table = of_match_ptr(es8389_if_dt_ids),
+> > +	},
+> > +	.shutdown = es8389_i2c_shutdown,
+> > +	.probe = es8389_i2c_probe,
+> > +	.id_table = es8389_i2c_id,
+> > +};
+> > +module_i2c_driver(es8389_i2c_driver);
+> > +
+> > +MODULE_DESCRIPTION("ASoC es8389 driver");
+> > +MODULE_AUTHOR("Michael Zhang <zhangyi@everest-semi.com>");
+> > +MODULE_LICENSE("GPL");
+> > +
+> > +
+> 
+> No need for blank lines at the end.
 
+Ok,I'll fix it
 
