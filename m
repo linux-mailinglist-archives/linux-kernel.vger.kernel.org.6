@@ -1,178 +1,411 @@
-Return-Path: <linux-kernel+bounces-553559-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-553560-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1BC73A58B97
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 06:16:33 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7AEAEA58B9D
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 06:19:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9C9F2188CEE2
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 05:16:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3EA3C3AC000
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 05:19:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AAAB51C54A2;
-	Mon, 10 Mar 2025 05:16:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAEC61C54B2;
+	Mon, 10 Mar 2025 05:19:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CRJe2w5/"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="ILYDvuoJ"
+Received: from out-189.mta1.migadu.com (out-189.mta1.migadu.com [95.215.58.189])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F37982F28;
-	Mon, 10 Mar 2025 05:16:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B56D114F9E2
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 05:19:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.189
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741583786; cv=none; b=ZbkMm+zReT7RgMnmt5VA7EVo4t4GiTA9cCPP8QZOiYpkmulqo4Hj8nmQu+dUAYVVBoKsIpEc2FgaFdWSZ+OiFAMNwzbAq+nXeUHhGfQkbxwjo2ZfjNPoVUucWvx2x+r2iwK6d+ex0CpAyANuaBCNzRDNMUZiwUfN2pWTBwoymNM=
+	t=1741583959; cv=none; b=ZGu/ZHA0JlBgJoGvtMKPIL0jsIpMakR5W9CLsAloxZSIJ5Af6Sne2/vCZisBG51U42of+yE/ONjryBH+7qk0mrRwnA0PywMDIXY84sgXZsrLypCZOagyCiNIMyDKSqFZGYyB3KkEvG+RCBkSXzzojGTPKINJfucK610CaEaysUo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741583786; c=relaxed/simple;
-	bh=AMhI7JRcMqjYWK719rUTDjCl39e1BBUhYoi4R6FJmos=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=dR3MM/21y/sj6tsProdOEIEO9oQGxj3x9z2iFdiWdi/wDluwRvinsoOeQjU26Zl5RuNZnxUmox46d3ntyRQsqbCVPiXrsy8bgbJYczb1Q9C/Br7pC8E8x7cxN/1HGZ0hfrRy5nMrAoZDWCxSQfyT7ayYTrJ4FaeBhJlirQelMpA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CRJe2w5/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0A227C4CEE5;
-	Mon, 10 Mar 2025 05:16:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741583785;
-	bh=AMhI7JRcMqjYWK719rUTDjCl39e1BBUhYoi4R6FJmos=;
-	h=Date:From:To:Cc:Subject:From;
-	b=CRJe2w5/5Z/oIMxOkoZFBRvGujAkiKLCH6vOzH4SY2F1ktwmiWucg2VIZKD+3qF3t
-	 YB3cWptJGvHBU7RcYqX+J858AHK+Xx3EJZWyzl+OrVSj6Z/8mGIAr6WpQ16KQPXnr/
-	 vFNGT8bfv83CiGulOnAn2xwDSdQ9RZxqLnYkqH6FT+DzoNPfBLT+IujJ3/bVGiVj/K
-	 lBJKWR1kT1VmkTwZviCRQmLzm4+0XIFEsOJCss8EbVilz43FPmZJT3g0cdaFQeQRPQ
-	 ee2s/5Jqx5BKHVIje+a4N1ECqiWzJJqHxKys9yGuvflLUeGUKH0/h6ozTqXYhx/crs
-	 ahZg/Eo6rVnLg==
-Date: Mon, 10 Mar 2025 15:46:26 +1030
-From: "Gustavo A. R. Silva" <gustavoars@kernel.org>
-To: Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	Benson Leung <bleung@chromium.org>,
-	Guenter Roeck <groeck@chromium.org>
-Cc: linux-rtc@vger.kernel.org, chrome-platform@lists.linux.dev,
-	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
-Subject: [RFC] rtc: Avoid a couple of -Wflex-array-member-not-at-end warnings
-Message-ID: <Z851qvkycepdNlBd@kspp>
+	s=arc-20240116; t=1741583959; c=relaxed/simple;
+	bh=inog64yufDdOWa8O1dpELnEaWddxdP71b9o8tCOVvto=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Jl04Milw5mKdUeI8vxsM7REuaDwGfYty499SJqndr9IyXEOFO+J56PJkRz7jNvLx1VVJsdfJB13O2n7EFyclbJZNwhqJ8xdJLgpv7z0RamIqj0OIRLJOPWauBmDiY9hHW1ZBcuYjYnP4qeVdeHn0Qw0wbMPo8TDKgs0wjOX/DtM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=ILYDvuoJ; arc=none smtp.client-ip=95.215.58.189
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1741583943;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=MiuNrsjLASlbx0jkgoThd/Z8jOLJgxoJqGZk61IENFU=;
+	b=ILYDvuoJHVSzeXfsa7H/lhFnDHttMRWH/xTP7h1i8cX5+ge5ZBaZMf8FvUXpjjBDAdWOsS
+	tdzgB0iqIvgI1SKbfqsjaRLVReXq24t8P+RmNCpDr8jf4+g97ta7Dbqt2a16OPvQwoIHvL
+	Pkl/XHBSa5/FNIxhVbCJxGMhFPQgJNg=
+From: Wen Yang <wen.yang@linux.dev>
+To: Christian Brauner <brauner@kernel.org>,
+	Jan Kara <jack@suse.cz>,
+	Alexander Viro <viro@zeniv.linux.org.uk>
+Cc: Wen Yang <wen.yang@linux.dev>,
+	Jens Axboe <axboe@kernel.dk>,
+	Dylan Yudaken <dylany@fb.com>,
+	David Woodhouse <dwmw@amazon.co.uk>,
+	Paolo Bonzini <pbonzini@redhat.com>,
+	Dave Young <dyoung@redhat.com>,
+	kernel test robot <lkp@intel.com>,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v4] eventfd: introduce configurable maximum value for eventfd
+Date: Mon, 10 Mar 2025 13:18:32 +0800
+Message-Id: <20250310051832.5658-1-wen.yang@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-Hi all,
+For the NON-SEMAPHORE eventfd, a write (2) call adds the 8-byte integer
+value provided in its buffer to the counter, while a read (2) returns the
+8-byte value containing the value and resetting the counter value to 0.
+Therefore, the accumulated value of multiple writes can be retrieved by a
+single read.
 
-As part of the efforts to globally enable -Wflex-array-member-not-at-end,
-I'm currently trying to fix the following warnings:
+Currently, the reading thread is waked up immediately after the writing
+thread writes eventfd, and the maximum value of the counter is ULLONG_MAX,
+therefore, in the ping pong scene with frequent reading and writing,
+the CPU will be exhausted.
 
-drivers/rtc/rtc-cros-ec.c:62:40: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-drivers/rtc/rtc-cros-ec.c:40:40: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
+By introducing the configurable maximum counter, we could achieve flow
+control and reduce unnecessary CPU overhead.
 
-The issue is that `struct cros_ec_command` is a flexible structure (which
-means that it contains a flexible-array member), and there is an object
-of this type (msg) declared within another structure but at the end.
+We may use the following test code:
+	#define _GNU_SOURCE
+	#include <assert.h>
+	#include <errno.h>
+	#include <getopt.h>
+	#include <pthread.h>
+	#include <poll.h>
+	#include <stdlib.h>
+	#include <stdio.h>
+	#include <unistd.h>
+	#include <string.h>
+	#include <sys/eventfd.h>
+	#include <sys/prctl.h>
+	#include <sys/ioctl.h>
 
-It seems that the following patch would suffice, as long as the flex-array
-member in `struct cros_ec_command` is not expected to be accessed and
-overlap with `struct ec_response_rtc data` in a "controlled manner":
+	#define EFD_IOC_SET_MAXIMUM     _IOW('E', 0, __u64)
+	#define EFD_IOC_GET_MAXIMUM     _IOR('E', 0, __u64)
 
-diff --git a/drivers/rtc/rtc-cros-ec.c b/drivers/rtc/rtc-cros-ec.c
-index 865c2e82c7a5..7e9bbab47e4c 100644
---- a/drivers/rtc/rtc-cros-ec.c
-+++ b/drivers/rtc/rtc-cros-ec.c
-@@ -37,8 +37,8 @@ static int cros_ec_rtc_get(struct cros_ec_device *cros_ec, u32 command,
- {
-        int ret;
-        struct {
--               struct cros_ec_command msg;
-                struct ec_response_rtc data;
-+               struct cros_ec_command msg;
-        } __packed msg;
- 
-        memset(&msg, 0, sizeof(msg));
-@@ -59,8 +59,8 @@ static int cros_ec_rtc_set(struct cros_ec_device *cros_ec, u32 command,
- {
-        int ret;
-        struct {
--               struct cros_ec_command msg;
-                struct ec_response_rtc data;
-+               struct cros_ec_command msg;
-        } __packed msg;
- 
-        memset(&msg, 0, sizeof(msg));
+	struct param {
+		int fd;
+		int cpu;
+	};
 
-Otherwise, we probably need to use struct_group_tagged() as follows:
+	static void publish(void *data)
+	{
+		struct param * param = (struct param *)data;
+		unsigned long long value = 1;
+		cpu_set_t cpuset;
 
-diff --git a/drivers/rtc/rtc-cros-ec.c b/drivers/rtc/rtc-cros-ec.c
-index 865c2e82c7a5..6dc815bdbcd9 100644
---- a/drivers/rtc/rtc-cros-ec.c
-+++ b/drivers/rtc/rtc-cros-ec.c
-@@ -37,7 +37,7 @@ static int cros_ec_rtc_get(struct cros_ec_device *cros_ec, u32 command,
- {
-        int ret;
-        struct {
--               struct cros_ec_command msg;
-+               struct cros_ec_command_hdr msg;
-                struct ec_response_rtc data;
-        } __packed msg;
- 
-@@ -45,7 +45,10 @@ static int cros_ec_rtc_get(struct cros_ec_device *cros_ec, u32 command,
-        msg.msg.command = command;
-        msg.msg.insize = sizeof(msg.data);
- 
--       ret = cros_ec_cmd_xfer_status(cros_ec, &msg.msg);
-+       ret = cros_ec_cmd_xfer_status(cros_ec,
-+                                     container_of(&msg.msg,
-+                                                  struct cros_ec_command,
-+                                                  __hdr));
-        if (ret < 0)
-                return ret;
- 
-@@ -59,7 +62,7 @@ static int cros_ec_rtc_set(struct cros_ec_device *cros_ec, u32 command,
- {
-        int ret;
-        struct {
--               struct cros_ec_command msg;
-+               struct cros_ec_command_hdr msg;
-                struct ec_response_rtc data;
-        } __packed msg;
- 
-@@ -68,7 +71,10 @@ static int cros_ec_rtc_set(struct cros_ec_device *cros_ec, u32 command,
-        msg.msg.outsize = sizeof(msg.data);
-        msg.data.time = param;
- 
--       ret = cros_ec_cmd_xfer_status(cros_ec, &msg.msg);
-+       ret = cros_ec_cmd_xfer_status(cros_ec,
-+                                     container_of(&msg.msg,
-+                                                  struct cros_ec_command,
-+                                                  __hdr));
-        if (ret < 0)
-                return ret;
-        return 0;
-diff --git a/include/linux/platform_data/cros_ec_proto.h b/include/linux/platform_data/cros_ec_proto.h
-index 3ec24f445c29..2a638c8c5ec2 100644
---- a/include/linux/platform_data/cros_ec_proto.h
-+++ b/include/linux/platform_data/cros_ec_proto.h
-@@ -80,11 +80,13 @@ enum {
-  * @data: Where to put the incoming data from EC and outgoing data to EC.
-  */
- struct cros_ec_command {
--       uint32_t version;
--       uint32_t command;
--       uint32_t outsize;
--       uint32_t insize;
--       uint32_t result;
-+       struct_group_tagged(cros_ec_command_hdr, __hdr,
-+               uint32_t version;
-+               uint32_t command;
-+               uint32_t outsize;
-+               uint32_t insize;
-+               uint32_t result;
-+       );
-        uint8_t data[];
+		prctl(PR_SET_NAME, "publish");
+		CPU_ZERO(&cpuset);
+		CPU_SET(param->cpu, &cpuset);
+		sched_setaffinity(0, sizeof(cpuset), &cpuset);
+
+		while (1)
+			eventfd_write(param->fd, value);
+	}
+
+	static void subscribe(void *data)
+	{
+		struct param *param = (struct param *)data;
+		unsigned long long value = 0;
+		struct pollfd pfds[1];
+		cpu_set_t cpuset;
+
+		prctl(PR_SET_NAME, "subscribe");
+		CPU_ZERO(&cpuset);
+		CPU_SET(param->cpu, &cpuset);
+		sched_setaffinity(0, sizeof(cpuset), &cpuset);
+
+		pfds[0].fd = param->fd;
+		pfds[0].events = POLLIN;
+
+		while(1) {
+			poll(pfds, 1, -1);
+			if(pfds[0].revents & POLLIN) {
+				read(param->fd, &value, sizeof(value));
+			}
+		}
+	}
+
+	static void usage(void)
+	{
+		printf("Usage: \n");
+		printf("\t");
+		printf("<-p cpuid> <-s cpuid> <-m maximum> \n");
+	}
+
+	int main(int argc, char *argv[])
+	{
+		struct param sub_param = {0};
+		struct param pub_param = {0};
+		char *optstr = "p:s:m:";
+		int opt, ret, fd;
+		__u64 maximum;
+		pid_t pid;
+
+		if (argc < 2) {
+			usage();
+			return 1;
+		}
+
+		while((opt = getopt(argc, argv, optstr)) != -1){
+			switch(opt) {
+				case 'p':
+					pub_param.cpu = atoi(optarg);
+					break;
+				case 's':
+					sub_param.cpu = atoi(optarg);
+					break;
+				case 'm':
+					maximum = atoi(optarg);
+					break;
+				case '?':
+					usage();
+					return -1;
+			}
+		}
+
+		fd = eventfd(0, EFD_CLOEXEC);
+		assert(fd);
+
+		ret = ioctl(fd, EFD_IOC_SET_MAXIMUM, &maximum);
+		if (ret) {
+			printf("error=%s\n", strerror(errno));
+			return -1;
+		}
+
+		sub_param.fd = fd;
+		pub_param.fd = fd;
+
+		pid = fork();
+		if (pid == 0)
+			subscribe(&sub_param);
+		else if (pid > 0)
+			publish(&pub_param);
+		else {
+			printf("XXX: fork error!\n");
+			return -1;
+		}
+
+		return 0;
+	}
+
+$ ./a.out  -p 2 -s 3 -m 6553500
+-----cpu2-usage----------cpu3-usage----
+usr sys idl wai stl:usr sys idl wai stl
+ 47  53   0   0   0: 46  54   0   0   0
+ 53  47   0   0   0: 45  54   1   0   0
+ 56  44   0   0   0: 48  52   0   0   0
+ 53  47   0   0   0: 45  55   0   0   0
+
+$ ./a.out  -p 2 -s 3 -m 100
+-----cpu2-usage----------cpu3-usage----
+usr sys idl wai stl:usr sys idl wai stl
+ 41  59   0   0   0: 33  65   2   0   0
+ 46  54   0   0   0: 30  67   2   0   0
+ 38  62   0   0   0: 33  65   2   0   0
+ 37  63   0   0   0: 31  66   3   0   0
+
+$ ./a.out  -p 2 -s 3 -m 10
+-----cpu2-usage----------cpu3-usage----
+usr sys idl wai stl:usr sys idl wai stl
+ 37  43  20   0   0: 21  42  37   0   0
+ 30  47  23   0   0: 20  42  38   0   0
+ 39  39  23   0   0: 24  37  39   0   0
+ 39  40  22   0   0: 23  41  36   0   0
+
+Signed-off-by: Wen Yang <wen.yang@linux.dev>
+Cc: Al Viro <viro@zeniv.linux.org.uk>
+Cc: Jens Axboe <axboe@kernel.dk>
+Cc: Christian Brauner <brauner@kernel.org>
+Cc: Jan Kara <jack@suse.cz>
+Cc: Dylan Yudaken <dylany@fb.com>
+Cc: David Woodhouse <dwmw@amazon.co.uk>
+Cc: Paolo Bonzini <pbonzini@redhat.com>
+Cc: Dave Young <dyoung@redhat.com>
+Cc: kernel test robot <lkp@intel.com>
+Cc: linux-fsdevel@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+---
+v4: fix build errors reported by kernel test robot
+v3: simply achieve flow control by configuring the maximum value of counter
+v2: fix compilation errors 
+https://lore.kernel.org/all/20240811085954.17162-1-wen.yang@linux.dev/
+v1: https://lore.kernel.org/all/20240519144124.4429-1-wen.yang@linux.dev/
+
+ fs/eventfd.c                 | 63 ++++++++++++++++++++++++++++++++----
+ include/uapi/linux/eventfd.h |  3 ++
+ 2 files changed, 59 insertions(+), 7 deletions(-)
+
+diff --git a/fs/eventfd.c b/fs/eventfd.c
+index 76129bfcd663..043f637df5cb 100644
+--- a/fs/eventfd.c
++++ b/fs/eventfd.c
+@@ -39,6 +39,7 @@ struct eventfd_ctx {
+ 	 * also, adds to the "count" counter and issue a wakeup.
+ 	 */
+ 	__u64 count;
++	__u64 maximum;
+ 	unsigned int flags;
+ 	int id;
  };
+@@ -49,7 +50,7 @@ struct eventfd_ctx {
+  * @mask: [in] poll mask
+  *
+  * This function is supposed to be called by the kernel in paths that do not
+- * allow sleeping. In this function we allow the counter to reach the ULLONG_MAX
++ * allow sleeping. In this function we allow the counter to reach the maximum
+  * value, and we signal this as overflow condition by returning a EPOLLERR
+  * to poll(2).
+  */
+@@ -70,7 +71,7 @@ void eventfd_signal_mask(struct eventfd_ctx *ctx, __poll_t mask)
+ 
+ 	spin_lock_irqsave(&ctx->wqh.lock, flags);
+ 	current->in_eventfd = 1;
+-	if (ctx->count < ULLONG_MAX)
++	if (ctx->count < ctx->maximum)
+ 		ctx->count++;
+ 	if (waitqueue_active(&ctx->wqh))
+ 		wake_up_locked_poll(&ctx->wqh, EPOLLIN | mask);
+@@ -119,7 +120,7 @@ static __poll_t eventfd_poll(struct file *file, poll_table *wait)
+ {
+ 	struct eventfd_ctx *ctx = file->private_data;
+ 	__poll_t events = 0;
+-	u64 count;
++	u64 count, max;
+ 
+ 	poll_wait(file, &ctx->wqh, wait);
+ 
+@@ -162,12 +163,13 @@ static __poll_t eventfd_poll(struct file *file, poll_table *wait)
+ 	 *     eventfd_poll returns 0
+ 	 */
+ 	count = READ_ONCE(ctx->count);
++	max = READ_ONCE(ctx->maximum);
+ 
+ 	if (count > 0)
+ 		events |= EPOLLIN;
+-	if (count == ULLONG_MAX)
++	if (count == max)
+ 		events |= EPOLLERR;
+-	if (ULLONG_MAX - 1 > count)
++	if (max - 1 > count)
+ 		events |= EPOLLOUT;
+ 
+ 	return events;
+@@ -244,6 +246,11 @@ static ssize_t eventfd_read(struct kiocb *iocb, struct iov_iter *to)
+ 	return sizeof(ucnt);
+ }
+ 
++static inline bool eventfd_is_writable(struct eventfd_ctx *ctx, __u64 cnt)
++{
++	return (ctx->maximum > ctx->count) && (ctx->maximum - ctx->count > cnt);
++}
++
+ static ssize_t eventfd_write(struct file *file, const char __user *buf, size_t count,
+ 			     loff_t *ppos)
+ {
+@@ -259,11 +266,11 @@ static ssize_t eventfd_write(struct file *file, const char __user *buf, size_t c
+ 		return -EINVAL;
+ 	spin_lock_irq(&ctx->wqh.lock);
+ 	res = -EAGAIN;
+-	if (ULLONG_MAX - ctx->count > ucnt)
++	if (eventfd_is_writable(ctx, ucnt))
+ 		res = sizeof(ucnt);
+ 	else if (!(file->f_flags & O_NONBLOCK)) {
+ 		res = wait_event_interruptible_locked_irq(ctx->wqh,
+-				ULLONG_MAX - ctx->count > ucnt);
++				eventfd_is_writable(ctx, ucnt));
+ 		if (!res)
+ 			res = sizeof(ucnt);
+ 	}
+@@ -299,6 +306,46 @@ static void eventfd_show_fdinfo(struct seq_file *m, struct file *f)
+ }
+ #endif
+ 
++static long eventfd_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
++{
++	struct eventfd_ctx *ctx = file->private_data;
++	void __user *argp = (void __user *)arg;
++	int ret = 0;
++	__u64 max;
++
++	if (!argp)
++		return -EINVAL;
++
++	switch (cmd) {
++	case EFD_IOC_SET_MAXIMUM: {
++		if (copy_from_user(&max, argp, sizeof(max)))
++			return -EFAULT;
++
++		spin_lock_irq(&ctx->wqh.lock);
++		if (ctx->count >= max)
++			ret = -EINVAL;
++		else
++			ctx->maximum = max;
++		spin_unlock_irq(&ctx->wqh.lock);
++		break;
++	}
++	case EFD_IOC_GET_MAXIMUM: {
++		spin_lock_irq(&ctx->wqh.lock);
++		max = ctx->maximum;
++		spin_unlock_irq(&ctx->wqh.lock);
++
++		if (copy_to_user(argp, &max, sizeof(max)))
++			ret = -EFAULT;
++		break;
++	}
++	default:
++		ret = -ENOENT;
++		break;
++	}
++
++	return ret;
++}
++
+ static const struct file_operations eventfd_fops = {
+ #ifdef CONFIG_PROC_FS
+ 	.show_fdinfo	= eventfd_show_fdinfo,
+@@ -308,6 +355,7 @@ static const struct file_operations eventfd_fops = {
+ 	.read_iter	= eventfd_read,
+ 	.write		= eventfd_write,
+ 	.llseek		= noop_llseek,
++	.unlocked_ioctl	= eventfd_ioctl,
+ };
+ 
+ /**
+@@ -398,6 +446,7 @@ static int do_eventfd(unsigned int count, int flags)
+ 	init_waitqueue_head(&ctx->wqh);
+ 	ctx->count = count;
+ 	ctx->flags = flags;
++	ctx->maximum = ULLONG_MAX;
+ 	ctx->id = ida_alloc(&eventfd_ida, GFP_KERNEL);
+ 
+ 	flags &= EFD_SHARED_FCNTL_FLAGS;
+diff --git a/include/uapi/linux/eventfd.h b/include/uapi/linux/eventfd.h
+index 2eb9ab6c32f3..96e6430a3d12 100644
+--- a/include/uapi/linux/eventfd.h
++++ b/include/uapi/linux/eventfd.h
+@@ -8,4 +8,7 @@
+ #define EFD_CLOEXEC O_CLOEXEC
+ #define EFD_NONBLOCK O_NONBLOCK
+ 
++#define EFD_IOC_SET_MAXIMUM	_IOW('E', 0, __u64)
++#define EFD_IOC_GET_MAXIMUM	_IOR('E', 0, __u64)
++
+ #endif /* _UAPI_LINUX_EVENTFD_H */
+-- 
+2.25.1
 
-What do you think?
-
-Thanks!
---
-Gustavo
 
