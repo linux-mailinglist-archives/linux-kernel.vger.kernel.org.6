@@ -1,114 +1,166 @@
-Return-Path: <linux-kernel+bounces-555051-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-555052-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0840BA5A4E4
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 21:25:46 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2941EA5A4E9
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 21:26:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AB1ED1890FB7
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 20:25:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CBA601890FCC
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 20:27:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8036E1DE2B2;
-	Mon, 10 Mar 2025 20:25:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 600011DE4CC;
+	Mon, 10 Mar 2025 20:26:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="xH+OswmP"
-Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com [209.85.208.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bSvdsQlG"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2441F1DDA09
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 20:25:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDEEFEC5;
+	Mon, 10 Mar 2025 20:26:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741638338; cv=none; b=DyTHALgZ2aMumRJO7WHOKAHoC8EOrKiJXB+i0Gx7thE5RxlIM/pmyCgagCOZ2u/KdGQ+grww1AB9fYKQXBBxdK8AlRN7xhG7uAtexkqdSUt7WUFz2PxC0UkEZBhegHNleVZ2KW2qsERopZDxPPkdBXk2kS+SWNeVo18P5uZ1tAI=
+	t=1741638411; cv=none; b=nkFj/nHxp0Vftvmu4bOEItUTgPuWhMKzp6tagm2WZFm8bVXffxf9HVpiSZi/tOu13CDZ74tc04fc0Ff9Y74i+WtOEtzaMHERvKZSWAsYFlmpN5uN4zuPp+pUktGzTdzaCb9ZaIWZl/5oZE6nm2ZjVSBYMI6U6EIRmQiSbsix+mI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741638338; c=relaxed/simple;
-	bh=L9+uLSJLlnFoF8qnj42PdQx3Q5RYzcJ6a/f47QtrPHs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Xyc8zY6bF0B9o6j3HTZvPEaWryinq6TPm745DWiPzbuM/8fd6Ivy0rcKwuNJHzNLVkLq1m+0R3EvVUUXaDy8fwmgC2ooFK3D76znHJrKIxVScpoUKZdl1ZnLS2PZzB3XFWPsyMngFYS6ZeBZX0Ut26XhzHfWDi4jCqKejaG00o0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=xH+OswmP; arc=none smtp.client-ip=209.85.208.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f176.google.com with SMTP id 38308e7fff4ca-30bd21f887aso42518741fa.1
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 13:25:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1741638335; x=1742243135; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=dYNmRZYB/IDO1RurR4i6iqDD/1mktBUeW4kgdxDpZIw=;
-        b=xH+OswmP/CcgSiKX7NC5EIZKpFzqTMBvQKOua8bj2RCt/4KmiTK1Kj9rW64FBMSob6
-         RS382yhw5sZlzayoKWCCuOXdNJa4Gz8HJWPX1U3Pu6xDDmOAR8pp5nYOpZb2/YbZAnVs
-         crPuzbjdQRFMQ0eYUBe6G9YrnF18gMUtEOg1ex7ZoEGb8FK9lNWCiz4/dLijIU4UZr4/
-         xwQO7Yj/ldfq3hxzF5TiSuhtAePwdWzvWo1WnBK6RB81VbCohnmN7E7ntYZ/QZrt5nfH
-         hi7v4JHreheuI/szkNYb3NlbDXa1p0pXqM1GkzEmliccRQCsl05n5PyPQDXlgIkGzHjc
-         doYQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741638335; x=1742243135;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=dYNmRZYB/IDO1RurR4i6iqDD/1mktBUeW4kgdxDpZIw=;
-        b=hIyU8mz1vnymrRsl/fE6SCsuDIl7EGxyUS6lEBnudtgAxZxAaTt8PyjPZrYUdZl40D
-         ZWS4diH5lDGbn/HMBdpl1vtFB22zl+46UDJ1PRzv+bSNuKKNYDGb59BWLQsXQlnHKFzE
-         56RzFyc8AxiuNiI2+S2UvUwGn7tWepZ8sjcV1uNoQGaRSynOzMOeqB7Pqj60VnOi202M
-         iONce9bOoheU8qM/SP2rm9BkS0l+TsRR7G0JTv0mT8qKKs7GcUJ1E2fkgl9MQkx80KOh
-         Qf2JDNN6kL4clVRXhPJN8nHoxFXBl3/MoI/VpG9Q0CjE/jrejrypHg/WjmXJzb6zgiRh
-         tnHw==
-X-Forwarded-Encrypted: i=1; AJvYcCXOgQy5jjVNhDH3bOL2kUBEPeQTUCCd5pnpUJHfCRX51vBg4ZDSTIC6+aVISkuuavsqV1BLuijufFQu3cc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyuKx3TfPeANPwxES/Q8SV9uKGD5VPKbcFR+JdaiUZDyBD+1cK7
-	KTG7rAkcka37Qd2mDOVF9kMbUZGRj/kNbTTAflIBhn+sET71Lk8UXzAuM3jNrFU=
-X-Gm-Gg: ASbGncupf8ULZlp+wwfxfgXu7c8KlEu1opDPGIiRYhSQeExyg7KcNonRAuezVgGj/W3
-	fTjLt0270Lf+KInB6/fzBPDeZS4opTJ2kJg9SwqLvOmg2Rz6KbUq9EdQLW3YSSZFI8Z6WJq0m6u
-	qXyrB27qP2FifFzgIL6mP5VAAXH4A4yxiHEB9wqNlQiWhx+DxbKySCjxvf7EH8+fDujpY8dbGzk
-	mjnop94sHClb0e8rrdQBmuwyYSqaD7DCBEM83zrpvtMG6CQWSGwUkD3a5c4My3qsc9KCjoHSdmj
-	6SL11Ykk8O355cnEMSceeldIrgSCTfOqozlkUXRb3Q2ArkQTmiyk6Zey8gG/rnb8xzwYIhnDgNW
-	/T+3l08Jr1hqja3lY2vuB3PMw
-X-Google-Smtp-Source: AGHT+IEPVrqhzKdG85UY4VL7q1PeHiNjtgCxYCgNnkHHR37Br6Hv/tkjnMqe/JrlEqz3SvLMcEnR1A==
-X-Received: by 2002:a05:6512:b84:b0:545:f1d:6f2c with SMTP id 2adb3069b0e04-54990e5d4c2mr4659162e87.18.1741638335156;
-        Mon, 10 Mar 2025 13:25:35 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5498b0bcf77sm1556084e87.107.2025.03.10.13.25.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 10 Mar 2025 13:25:33 -0700 (PDT)
-Date: Mon, 10 Mar 2025 22:25:31 +0200
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Ziyue Zhang <quic_ziyuzhan@quicinc.com>
-Cc: bhelgaas@google.com, lpieralisi@kernel.org, kw@linux.com, 
-	manivannan.sadhasivam@linaro.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
-	vkoul@kernel.org, kishon@kernel.org, andersson@kernel.org, konradybcio@kernel.org, 
-	neil.armstrong@linaro.org, abel.vesa@linaro.org, quic_qianyu@quicinc.com, 
-	quic_krichai@quicinc.com, johan+linaro@kernel.org, linux-arm-msm@vger.kernel.org, 
-	linux-pci@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-phy@lists.infradead.org, Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Subject: Re: [PATCH v4 6/8] arm64: dts: qcom: qcs8300: enable pcie0 interface
-Message-ID: <mxqrssteqfzp2llhp7exj7yoduv3h26qrxnsb7tobxkk7lxyeh@ywers6elgmwy>
-References: <20250310063103.3924525-1-quic_ziyuzhan@quicinc.com>
- <20250310063103.3924525-7-quic_ziyuzhan@quicinc.com>
+	s=arc-20240116; t=1741638411; c=relaxed/simple;
+	bh=6TBv8eUZABNkITVZTddPYa48Ozritmys3dSTxrbdGck=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=CBKpMLi8OoFYUItUepNrLt3uVq0nrm1sBdv1IU6PQT1X3cpz1MaQORcrJm8vji26QdWsQRlPzwl9EYnS1XT2wMErSWNEfCZ5q4LHHDaRe+OAf5ybhS4jIFK7NIQKPvGh8gVFzBss2VLjkzEALXBq9/rAJW5vN4ajANMv5OUiFJE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bSvdsQlG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D6720C4CEE5;
+	Mon, 10 Mar 2025 20:26:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741638411;
+	bh=6TBv8eUZABNkITVZTddPYa48Ozritmys3dSTxrbdGck=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=bSvdsQlGcmGFCLbPdeAK4oIeozGaZPIq9L9QmMQSzy82NsHQ0sQuHiTHqr4WkvJgJ
+	 pH6m4rJI6jR7mquxwVkvHRUtImzSwcmlMfrwudfAWhDguJ0adjuyzByHNI8A/FKVxf
+	 TpGCdKpVyVCwRc0vNoG6fZsnNkzQUYODo/IWiBaxfYppGE/Q2qEOqW3G13VVC6G4sH
+	 mQT4OiMQBQ2YrpHcsStxquf8x/mI7Siy575F0VRl2pmDhAvHVNqBpStQGM2wTpU2CU
+	 XCaYxIqHoR4mroxZ3uaCayFmbfYDJO729td5Y2g7bxDevTtf0b4nklugA4frdKNMnq
+	 IZ+JcSoHnFGAQ==
+Date: Mon, 10 Mar 2025 20:26:40 +0000
+From: Jonathan Cameron <jic23@kernel.org>
+To: Matti Vaittinen <mazziesaccount@gmail.com>
+Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>, Lars-Peter Clausen
+ <lars@metafoo.de>, Nuno Sa <nuno.sa@analog.com>, David Lechner
+ <dlechner@baylibre.com>, Javier Carrasco <javier.carrasco.cruz@gmail.com>,
+ Olivier Moysan <olivier.moysan@foss.st.com>, Guillaume Stols
+ <gstols@baylibre.com>, Dumitru Ceclan <mitrutzceclan@gmail.com>, Trevor
+ Gamblin <tgamblin@baylibre.com>, Matteo Martelli
+ <matteomartelli3@gmail.com>, Alisa-Dariana Roman <alisadariana@gmail.com>,
+ Andy Shevchenko <andriy.shevchenko@linux.intel.com>, =?UTF-8?B?Sm/Do28=?=
+ Paulo =?UTF-8?B?R29uw6dhbHZlcw==?= <joao.goncalves@toradex.com>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org
+Subject: Re: [PATCH v6 06/10] iio: adc: Support ROHM BD79124 ADC
+Message-ID: <20250310202640.71f7ec1f@jic23-huawei>
+In-Reply-To: <448f1f3cd05a9798e79a3948f95ada3e4c3483f7.1741610847.git.mazziesaccount@gmail.com>
+References: <cover.1741610847.git.mazziesaccount@gmail.com>
+	<448f1f3cd05a9798e79a3948f95ada3e4c3483f7.1741610847.git.mazziesaccount@gmail.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.48; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250310063103.3924525-7-quic_ziyuzhan@quicinc.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Mon, Mar 10, 2025 at 02:31:01PM +0800, Ziyue Zhang wrote:
-> Add configurations in devicetree for PCIe0, board related gpios,
-> PMIC regulators, etc.
+On Mon, 10 Mar 2025 14:56:47 +0200
+Matti Vaittinen <mazziesaccount@gmail.com> wrote:
+
+> The ROHM BD79124 is a 12-bit, 8-channel, SAR ADC. The ADC supports
+> an automatic measurement mode, with an alarm interrupt for out-of-window
+> measurements. The window is configurable for each channel.
 > 
-> Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-> Signed-off-by: Ziyue Zhang <quic_ziyuzhan@quicinc.com>
-> ---
->  arch/arm64/boot/dts/qcom/qcs8300-ride.dts | 40 +++++++++++++++++++++++
->  1 file changed, 40 insertions(+)
+> The I2C protocol for manual start of the measurement and data reading is
+> somewhat peculiar. It requires the master to do clock stretching after
+> sending the I2C slave-address until the slave has captured the data.
+> Needless to say this is not well suopported by the I2C controllers.
+> 
+> Thus the driver does not support the BD79124's manual measurement mode
+> but implements the measurements using automatic measurement mode relying
+> on the BD79124's ability of storing latest measurements into register.
+> 
+> The driver does also support configuring the threshold events for
+> detecting the out-of-window events.
+> 
+> The BD79124 keeps asserting IRQ for as long as the measured voltage is
+> out of the configured window. Thus the driver masks the received event
+> for a fixed duration (1 second) when an event is handled. This prevents
+> the user-space from choking on the events
+> 
+> The ADC input pins can be also configured as general purpose outputs.
+> Those pins which don't have corresponding ADC channel node in the
+> device-tree will be controllable as GPO.
+> 
+> Signed-off-by: Matti Vaittinen <mazziesaccount@gmail.com>
 
-NIT: patch subject mentions qcs8300 (SoC), while the patch enables PCIe
-on qcs8300-ride (board).
 
--- 
-With best wishes
-Dmitry
+The comment below wins the Monday award for the trivial :)
+
+
+> diff --git a/drivers/iio/adc/rohm-bd79124.c b/drivers/iio/adc/rohm-bd79124.c
+> new file mode 100644
+> index 000000000000..f63141daf5e2
+> --- /dev/null
+> +++ b/drivers/iio/adc/rohm-bd79124.c
+
+> +static int bd79124_enable_event(struct bd79124_data *data,
+> +		enum iio_event_direction dir, unsigned int channel)
+> +{
+> +	int dir_bit = BIT(dir);
+> +	int reg, ret;
+> +	u16 *limit;
+> +
+> +	guard(mutex)(&data->mutex);
+> +	/* Set channel to be measured */
+> +	ret = bd79124_start_measurement(data, channel);
+> +	if (ret)
+> +		return ret;
+> +
+> +	data->alarm_monitored[channel] |= dir_bit;
+> +
+> +	/* Add the channel to the list of monitored channels */
+> +	ret = regmap_set_bits(data->map, BD79124_REG_ALERT_CH_SEL,
+> +			      BIT(channel));
+> +	if (ret)
+> +		return ret;
+> +
+> +	if (dir == IIO_EV_DIR_RISING) {
+> +		limit = &data->alarm_f_limit[channel];
+> +		reg = BD79124_GET_HIGH_LIMIT_REG(channel);
+> +	} else {
+> +		limit = &data->alarm_f_limit[channel];
+> +		reg = BD79124_GET_LOW_LIMIT_REG(channel);
+> +	}
+> +	/*
+> +	 * Don't write the new limit to the hardware if we are in the
+> +	 * rate-limit period. The timer which re-enables the event will set
+> +	 * the limit.
+> +	 */
+> +	if (!(data->alarm_suppressed[channel] & dir_bit)) {
+> +		ret = bd79124_write_int_to_reg(data, reg, *limit);
+> +		if (ret)
+> +			return ret;
+> +	}
+> +
+> +	/*
+> +	 * Enable comparator. Trust the regmap cache, no need to check
+> +	 * if it was already enabled.
+> +	 *
+> +	 * We could do this in the hw-init, but there may be users who
+> +	 * never enable alarms and for them it makes sense to not
+> +	 * enable the comparator at probe.
+> +	 */
+> +	return regmap_set_bits(data->map, BD79124_REG_GEN_CFG,
+> +				      BD79124_MASK_DWC_EN);
+> +
+Stray blank line.
+
+> +}
+>
 
