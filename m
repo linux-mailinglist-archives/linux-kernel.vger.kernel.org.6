@@ -1,97 +1,96 @@
-Return-Path: <linux-kernel+bounces-555001-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-555002-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8520DA5A456
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 21:03:58 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A9591A5A458
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 21:04:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2511C188659C
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 20:04:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 566451890561
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 20:04:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4CBF1D8DF6;
-	Mon, 10 Mar 2025 20:03:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE2841D8DF6;
+	Mon, 10 Mar 2025 20:04:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rOlp2Hms"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="GtXG+r1W"
+Received: from out-189.mta1.migadu.com (out-189.mta1.migadu.com [95.215.58.189])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3ACEA4437C;
-	Mon, 10 Mar 2025 20:03:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62AF51CD205
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 20:04:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.189
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741637028; cv=none; b=fYTHupiDC3BjC73x1tJIehapSKPyWtGhhyKfWvFNnCleJXAYu8ENk3qoMwTSThlQ/EJ16eAh8nuMCHLA+g177AM7upAFS1/T5snYmaYDQ6zyaqn88J0weJASx3FZpXSyhPGxPldYr6I2q5RdC8SfiqRCGGTy8PoFl6EWdVmFkSI=
+	t=1741637077; cv=none; b=PA1aInkoYK1ZfLnmSDdDPbLsMxM7j+yHRZ3eotF9aC6iEKOygXQqOFuxmwk4OyapyZxA8Td/ecrMB6a3H+snDIuvP33ip0+olIRkP9Kxf/DWP+Bz6Jdej85wv8M3W1y/s+aSq5+MpD9YNP7WNrDJOyn0APyz8JQGMp0w1Qz4/FY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741637028; c=relaxed/simple;
-	bh=RWZJoGTDKHzXEF1K2irWthYcXXJXmfncWeKho9RnFdU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ADpVGVHGPh77go/JxOxP+x7PPYygda7PI9ik9+bfCZpqj6/wWlKpNa5gC7dX30rLsfjAmFyu5PBbM1gx/w6Ze0rmw3tUsQXJfZF9fngyIF0W08dUUMZjOmhDGnanG8Q5QgdNCiehOZXREC5ONhOHkDUVV8+TDh9raNOJqlLOXQg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rOlp2Hms; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 24299C4CEE5;
-	Mon, 10 Mar 2025 20:03:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741637028;
-	bh=RWZJoGTDKHzXEF1K2irWthYcXXJXmfncWeKho9RnFdU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=rOlp2Hms9DgUM2sz/lJJ+G1gnWScDmZ0ctw4U8wTAQ6lO8Axm3HeCgHQeoQ69+YCS
-	 9Hi+54dbjslufZSeImGTTGQRFdqQxkSqrWGsJl0kx8D/kUf4jP71KKJ7czk97PV5ND
-	 rDeZ+1Ss2m0MTc1HimNSfggIocFOgiPNiBiYMEA2fTb5rA/nQWA3Jv/1Hshjwa33JN
-	 EM6we6rl8XEEiPdLy6TWTWMfzW3nEJ2GWhO9epqwHWQ4rLISPs/o9+vRIHd9zG9AfU
-	 kSS0Pw6n2KIrkJ3Rcujp5rgmAibWzf9IF5ia5IzrIXqnA8/u2t1V/fSYLBuvjAbuUB
-	 +mQrD/atlbbeQ==
-Date: Mon, 10 Mar 2025 21:03:41 +0100
-From: Danilo Krummrich <dakr@kernel.org>
-To: Ethan Carter Edwards <ethan@ethancedwards.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?us-ascii?B?PT91dGYtOD9xP0JqPUMzPUI2cm5fUm95X0Jhcm9uPz0=?= <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
-	Bill Wendling <morbo@google.com>,
-	Justin Stitt <justinstitt@google.com>,
-	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
-	llvm@lists.linux.dev
-Subject: Re: [PATCH v2] rust/kernel/faux: mark Registration methods inline
-Message-ID: <Z89Fne9Yn6zIBJ-L@cassiopeiae>
-References: <jesg4yu7m6fvzmgg5tlsktrrjm36l4qsranto5mdmnucx4pvf3@nhvt4juw5es3>
+	s=arc-20240116; t=1741637077; c=relaxed/simple;
+	bh=0I46IlE0eevSTbe6HgNGjPfeIS7xnB2S0NKk5f7/Yc4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=AWJaB297u7Iu9QhqQeTZSswuILH9uBhq3Hvfh2r4VJkbNmk3AxHegnwl15hNYmXcJIUTXy7+VUZB22+j8d5P+liIDpm/Vsg4aYTNA758+mvz775cDnEPuLwzDNHVMulBMBhtyomivpqRM7dqFVG9wnC8Jqy1gFJBTRd7ReF+XJ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=GtXG+r1W; arc=none smtp.client-ip=95.215.58.189
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1741637063;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=QKEtd75rPVsd5FrismUxBPw8k8s1SS03XckANZg+1No=;
+	b=GtXG+r1WybhFG2HKhJ7aHeW77ftOlVxjTPYaAYsDDuUGptrFh/SC3CD9t/w0lkzmykHP7g
+	GW8lywhzdbjgt9w/9LtF4Ra2PFBu/zLqGgB/1TJn0ihD9qx4vze2d43ncGATfiOrVHA+UZ
+	jFeCO4MV7fzxxoCxl5vHqjC0chqYdVU=
+From: Thorsten Blum <thorsten.blum@linux.dev>
+To: Steven Rostedt <rostedt@goodmis.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Cc: Thorsten Blum <thorsten.blum@linux.dev>,
+	linux-hardening@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org
+Subject: [PATCH] tracing/synthetic: Replace deprecated strncpy() with strscpy()
+Date: Mon, 10 Mar 2025 21:03:58 +0100
+Message-ID: <20250310200359.450172-1-thorsten.blum@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <jesg4yu7m6fvzmgg5tlsktrrjm36l4qsranto5mdmnucx4pvf3@nhvt4juw5es3>
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-On Mon, Mar 10, 2025 at 03:51:38PM -0400, Ethan Carter Edwards wrote:
-> When building the kernel on Arch Linux using on x86_64 with tools:
-> $ rustc --version
-> rustc 1.84.0 (9fc6b4312 2025-01-07)
-> $ cargo --version
-> cargo 1.84.0 (66221abde 2024-11-19)
-> $ clang --version
-> clang version 19.1.7
-> Target: x86_64-pc-linux-gnu
-> 
-> The following symbols are generated:
-> $ nm vmlinux | rg ' _R' | rustfilt | rg faux
-> ffffffff81959ae0 T <kernel::faux::Registration>::new
-> ffffffff81959b40 T <kernel::faux::Registration as core::ops::drop::Drop>::drop
-> 
-> However, these Rust symbols are wrappers around bindings in the C faux
-> code. Inlining these functions removes the middle-man wrapper function
-> After applying this patch, the above function signatures disappear.
-> 
-> Link: https://github.com/Rust-for-Linux/linux/issues/1145
-> Signed-off-by: Ethan Carter Edwards <ethan@ethancedwards.com>
+strncpy() is deprecated for NUL-terminated destination buffers; use
+strscpy() instead and remove the manual NUL-termination.
 
-Acked-by: Danilo Krummrich <dakr@kernel.org>
+The destination buffer 'buf' is used only with kstrtouint() and must be
+NUL-terminated, but not NUL-padded. The source string 'start' is also
+guaranteed to be NUL-terminated and meets the __must_be_cstr()
+requirement of strscpy().
+
+No functional changes intended.
+
+Link: https://github.com/KSPP/linux/issues/90
+Cc: linux-hardening@vger.kernel.org
+Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
+---
+ kernel/trace/trace_events_synth.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/kernel/trace/trace_events_synth.c b/kernel/trace/trace_events_synth.c
+index e3f7d09e5512..4b51f74897b4 100644
+--- a/kernel/trace/trace_events_synth.c
++++ b/kernel/trace/trace_events_synth.c
+@@ -207,8 +207,7 @@ static int synth_field_string_size(char *type)
+ 	if (len == 0)
+ 		return 0; /* variable-length string */
+ 
+-	strncpy(buf, start, len);
+-	buf[len] = '\0';
++	strscpy(buf, start, len + 1);
+ 
+ 	err = kstrtouint(buf, 0, &size);
+ 	if (err)
+-- 
+2.48.1
+
 
