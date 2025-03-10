@@ -1,115 +1,77 @@
-Return-Path: <linux-kernel+bounces-555046-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-555047-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E660A5A4DA
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 21:22:57 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B3BDFA5A4DD
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 21:23:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 12AE83ACB06
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 20:22:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F2B16175007
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 20:23:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FB491DDA09;
-	Mon, 10 Mar 2025 20:22:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F7EA1DE2B2;
+	Mon, 10 Mar 2025 20:23:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YJtkWd7+"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eATy/SAJ"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EC36EC5;
-	Mon, 10 Mar 2025 20:22:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03806EC5;
+	Mon, 10 Mar 2025 20:23:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741638169; cv=none; b=XfMmsF9ro3uGb6gp0gRkG6VT9mPp/bSE3vz5kzdob7paIx8X7dT/3fIz7LF/aOT3lHNNIfjLHqHTm2b+EBqxK9MPoXMebb50WMSeNe/p4T46dI0IVBdpU7h9F/tKBJHyPIKURSiIyERIwHc8059/uKIvBqFQzC14yqCG6tKniVE=
+	t=1741638185; cv=none; b=YO3bjXT3LYfFhhZqwPl/k6XQcSiKh6WuiH3CvQ3OFpDepQAwTODSxr9Sz4CN4q3IdKLshqwXpjh4DO3zZmz3Gmn0Q8B5JEqnJpl246oNGKS54nRRSjI6mdxYsRg5sNwRABIc/COkvPsfbguC1l1yS0Ke9BiCAYHtXJ4J7oGVW2k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741638169; c=relaxed/simple;
-	bh=noq37JP5Rq9ToLD7jW58TWDFFnYeTxmbxxmcOmoeV9Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JhA29IQomRGNGe0YF2SS59MgCIGyNM+6hPoWFmk/Tsut7W4wfTsC1F9wscjIrmK6s2pH5+NSOxGkoSvhqzA3VnCOF0Xsyqx0D4F8zIy59LLgvl89P/+sLj6s1F/4VK1f+GM+XKdEWcYB60Ux31XU0LRfRN0bbAKE0qn9cRQ8B8Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YJtkWd7+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 84EEEC4CEE5;
-	Mon, 10 Mar 2025 20:22:48 +0000 (UTC)
+	s=arc-20240116; t=1741638185; c=relaxed/simple;
+	bh=PBfB7zsuCWafYTfzaWtfPf+yNmlCmfjLBfhoGvaB8oE=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Wy2kWO9G898q7vxbv83sQTvAn2418I5FRhMFVeX3IT7QzXpsH1hV3WRRb8PCfH5WP91zvHgKWdgrkXWwjteOQevkn9m3LXOE/GBrFhwvmQ0KDwIgD2gNUSPYHILPDDt2e0O/9Iag3/AVvGS4hMGCj0X92q3p4yEMgt7Cf/7RH2s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eATy/SAJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1A8BBC4CEE5;
+	Mon, 10 Mar 2025 20:22:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741638169;
-	bh=noq37JP5Rq9ToLD7jW58TWDFFnYeTxmbxxmcOmoeV9Y=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=YJtkWd7+EwPayk6jsXmO+CurZdbvE2c4S2Ehd7xua7TmbrwgoaaS0+FD+CaGXACXO
-	 EaJRFhfcXdOYvy/Zg/7YLkAegKg4ume8Uly/OAS3y80R7TqV5vddApjKUfhKuGQDgs
-	 eeQ5tXBoDtEbOj2e2nL68i8sKlj987qpAr+2nB6d64flX2EE3+czs3x7wOswhoDu92
-	 RpOC6eDqN0qesYBR8jc9qni0Fo8asVuovJfiMfRZtgQeUo9wkVMvqtFYZ300LcG5qq
-	 cfVUja+4xXC1Yi5ffuZkG3vpyv4ELTedK4omB/FXOGXPgMlcdmNSKGWQEJNAm6I+f7
-	 TBLYSz8IJ7Q2g==
-Date: Mon, 10 Mar 2025 17:22:44 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Ian Rogers <irogers@google.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Kan Liang <kan.liang@linux.intel.com>,
-	Yicong Yang <yangyicong@hisilicon.com>,
-	James Clark <james.clark@linaro.org>,
-	"Dr. David Alan Gilbert" <linux@treblig.org>,
-	Levi Yun <yeoreum.yun@arm.com>, Ze Gao <zegao2021@gmail.com>,
-	Weilin Wang <weilin.wang@intel.com>, Xu Yang <xu.yang_2@nxp.com>,
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Howard Chu <howardchu95@gmail.com>
-Subject: Re: [PATCH v2 01/11] perf debug: Avoid stack overflow in recursive
- error message
-Message-ID: <Z89KFNVbh__UXjEg@x1>
-References: <20250228222308.626803-1-irogers@google.com>
- <20250228222308.626803-2-irogers@google.com>
- <Z89J9cBUR6NCMaaj@x1>
+	s=k20201202; t=1741638184;
+	bh=PBfB7zsuCWafYTfzaWtfPf+yNmlCmfjLBfhoGvaB8oE=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=eATy/SAJQkGtPOC9xzd2vrFraHPPiUSfSg/+jHl9rtYJKkD+wzOgQCTJDC9gXWqkB
+	 XLfuL2NkhmrmvYT7B+sZO2Q1+h3Dw+dMQAGf6jsFGGMH0PrL4g+8DZkcV8fkrRKmHN
+	 BPEWxAD2NbY2IGn9lb53HBrHvSfYMNuQv27cAhJ/tlZIK7aH0lw3P3Pojb7kT0qgtB
+	 e2vEJCiG4iKl64Bj0ctO+lwpayZ+fcKEWRgHFosUJoyPETOSPnB4T6AAW1dcfEHfYe
+	 narVS4E0RuzsiEMXN9/tHdxyE3UgRbQl6Rk3Clq6Jxn2jyWcsTpXFc6DciO52zuVIM
+	 cNbnJTJWzvK7Q==
+Date: Mon, 10 Mar 2025 20:22:52 +0000
+From: Jonathan Cameron <jic23@kernel.org>
+To: Matti Vaittinen <mazziesaccount@gmail.com>
+Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>, Lars-Peter Clausen
+ <lars@metafoo.de>, Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+ Chen-Yu Tsai <wens@csie.org>, David Lechner <dlechner@baylibre.com>, Javier
+ Carrasco <javier.carrasco.cruz@gmail.com>, Guillaume Stols
+ <gstols@baylibre.com>, Olivier Moysan <olivier.moysan@foss.st.com>, Dumitru
+ Ceclan <mitrutzceclan@gmail.com>, Trevor Gamblin <tgamblin@baylibre.com>,
+ Matteo Martelli <matteomartelli3@gmail.com>, Alisa-Dariana Roman
+ <alisadariana@gmail.com>, Andy Shevchenko
+ <andriy.shevchenko@linux.intel.com>, linux-iio@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH v6 04/10] iio: adc: rzg2l_adc: Use adc-helpers
+Message-ID: <20250310202252.1e903fe3@jic23-huawei>
+In-Reply-To: <e0b08f7cb2b564d9bc7b21f5712e69961863dcb1.1741610847.git.mazziesaccount@gmail.com>
+References: <cover.1741610847.git.mazziesaccount@gmail.com>
+	<e0b08f7cb2b564d9bc7b21f5712e69961863dcb1.1741610847.git.mazziesaccount@gmail.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.48; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z89J9cBUR6NCMaaj@x1>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Mon, Mar 10, 2025 at 05:22:16PM -0300, Arnaldo Carvalho de Melo wrote:
-> On Fri, Feb 28, 2025 at 02:22:58PM -0800, Ian Rogers wrote:
-> > In debug_file, pr_warning_once is called on error. As that function
-> > calls debug_file the function will yield a stack overflow. Switch the
-> > location of the call so the recursion is avoided.
-> > 
-> > Reviewed-by: Howard Chu <howardchu95@gmail.com>
-> > Signed-off-by: Ian Rogers <irogers@google.com>
-> 
-> Good to add this so that stable picks it:
-> 
-> Fixes: ec49230cf6dda704 ("perf debug: Expose debug file")
+On Mon, 10 Mar 2025 14:56:23 +0200
+Matti Vaittinen <mazziesaccount@gmail.com> wrote:
 
-Forgot to add:
+> The new devm_iio_adc_device_alloc_chaninfo() -helper is intended to help
+The function name changed.
 
-Reviewed-by: Arnaldo Carvalho de Melo <acme@redhat.com>
- 
-- Arnaldo
-> 
-> > ---
-> >  tools/perf/util/debug.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > 
-> > diff --git a/tools/perf/util/debug.c b/tools/perf/util/debug.c
-> > index 995f6bb05b5f..f9ef7d045c92 100644
-> > --- a/tools/perf/util/debug.c
-> > +++ b/tools/perf/util/debug.c
-> > @@ -46,8 +46,8 @@ int debug_type_profile;
-> >  FILE *debug_file(void)
-> >  {
-> >  	if (!_debug_file) {
-> > -		pr_warning_once("debug_file not set");
-> >  		debug_set_file(stderr);
-> > +		pr_warning_once("debug_file not set");
-> >  	}
-> >  	return _debug_file;
-> >  }
-> > -- 
-> > 2.48.1.711.g2feabab25a-goog
 
