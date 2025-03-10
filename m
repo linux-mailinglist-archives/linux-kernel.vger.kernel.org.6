@@ -1,111 +1,173 @@
-Return-Path: <linux-kernel+bounces-554278-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-554279-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 394EBA595A3
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 14:10:02 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A6EC3A595A4
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 14:11:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id ADC047A653F
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 13:08:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 280F3188A31B
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 13:11:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14340229B2D;
-	Mon, 10 Mar 2025 13:09:24 +0000 (UTC)
-Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E56A229B00;
+	Mon, 10 Mar 2025 13:11:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="FYzK+YX/";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="7jixCHNs"
+Received: from fhigh-b6-smtp.messagingengine.com (fhigh-b6-smtp.messagingengine.com [202.12.124.157])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0B04229B01;
-	Mon, 10 Mar 2025 13:09:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB67A178395
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 13:10:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741612163; cv=none; b=N/YSm94v+9Tad7Esusc0PK4+psBYz0qvfu4wuotWq9CN3euWbcOqNso1rFx2vykkfwJVr0/+wp/ju/f2+TqaR4JmGsdsBiZuQhKf8AxEKCMeeyTh1cKzzUFMwbcW4nc41PxDlunZLX0VYlImU+5JXCAzc9Xb+KMQ3Mb9qRxUh5w=
+	t=1741612261; cv=none; b=C/8H2YImRjNoNWOilO7YtPxmbaIhJNNDul2ZPDujLsq68/8WTQxNAwvdAkTo7V6tlLyxS2sAZ8r1r69fkcmvW/GKC9pGkL2GvX7pAOlKe8GodK8QJiiws3EH+RQWdOE7PCKO7ET/GfgWD8wpkBMU28NxemkC+PMvr/+nj0ueahE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741612163; c=relaxed/simple;
-	bh=tlca46uB4gXZyiSoLwdM6jMebWtzZXX1UAB5ei9AbZw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=Pjs2QVhYpTuk1vuWVHFEtpzWO4Ah7NfQaMMFG6ys3oEoCU58RkJWqQ7nt2L73/S0t3fA3xV2Se/g4eapL9T03cYkF93xVzrKA2jhlu9FmGMsV4VLLiN90cSmiQw3DwiQYRPFEDM110rnHi8bs+/998o2EyO7mmC+RB7rUTgYmnA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.234])
-	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4ZBHDV6Kwsz2RTL8;
-	Mon, 10 Mar 2025 21:04:58 +0800 (CST)
-Received: from kwepemg100017.china.huawei.com (unknown [7.202.181.58])
-	by mail.maildlp.com (Postfix) with ESMTPS id 078BC1401F0;
-	Mon, 10 Mar 2025 21:09:18 +0800 (CST)
-Received: from [10.67.120.108] (10.67.120.108) by
- kwepemg100017.china.huawei.com (7.202.181.58) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Mon, 10 Mar 2025 21:09:17 +0800
-Message-ID: <d0a6b502-328b-2f83-3cdf-55c1effd80c1@huawei.com>
-Date: Mon, 10 Mar 2025 21:09:16 +0800
+	s=arc-20240116; t=1741612261; c=relaxed/simple;
+	bh=/YBgUHgorEByh1qRn8grRlvMisGp1g3JEl01KzlpUz0=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=HZUEsNBYeasPExuM73sJs6S8JfiZwAtvooyrU0Yavd61izJPZdkmhV74rpNETmU0gnxmoaY73TKZ+Ju+k81Bm1yxKPUbtH4t0MJ3USyi6NXID+AivMhB7vVvHkAa9ZqhB4l6NvcU4W84AWdSq9+cbhAvrtvQISL7GZn+ZNbM+N0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=FYzK+YX/; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=7jixCHNs; arc=none smtp.client-ip=202.12.124.157
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from phl-compute-07.internal (phl-compute-07.phl.internal [10.202.2.47])
+	by mailfhigh.stl.internal (Postfix) with ESMTP id 67DEE2540201;
+	Mon, 10 Mar 2025 09:10:58 -0400 (EDT)
+Received: from phl-imap-11 ([10.202.2.101])
+  by phl-compute-07.internal (MEProxy); Mon, 10 Mar 2025 09:10:58 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm3; t=1741612258;
+	 x=1741698658; bh=OQntpLoo3ph3muLoF4Ou7wx76i2vcnUwLXFqRX2k83k=; b=
+	FYzK+YX/uP5dIuMqJ0YhLDWSZnV5Ba5Z3Vi/O27+agWlrwyHY6qjecekLwlpEkD5
+	iE8MnK2xUfNihxQF3kJMChtvmtA9dnVB8t09kxnq7ZPJKgiLW5S94azNadZYK0iu
+	plmu4oCDa18vZZVAasQ8bFiP9YNmc0cHXiFyDNiydvWJ7NebY2hpLRpmqYeAWA50
+	KZVt9t662FCtm2wp75InaMlbFhUFxU4D37v3vIBpn8OFgHhX9o1tE7MXFwMFJgdB
+	IYHIuI7Zcowj1lR2uX46QoexT6tR5KFUIBv2tmwhGOA5TgUUC0vXzqWq0Bgn/Oi5
+	VOpgNPHnyWrbSn3qFC2VQw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1741612258; x=
+	1741698658; bh=OQntpLoo3ph3muLoF4Ou7wx76i2vcnUwLXFqRX2k83k=; b=7
+	jixCHNsndMpFkg/bxWotZ9jihuZgVPSMy9RSh8tBTI2hxtrsdw51A7ENUKwdvk1Y
+	c0zg8575ey0P0ERTBiBOEFV1dTsdB9TV8K33O1oYR9YZSFkxlkEoLDRTdjPPQAnE
+	e7IErZM4bHX2MPMPzMDffvtbYRn090pcYGtJaUktTtMqQAJgVD4sGdCGMYpYfFkA
+	WpmWsNWMcYHV4sEp7mjuhAwRCAberEvdXqe1UDb9yhrlynUt4vHURcuuABd2VDQ4
+	IbidcZgiQgA9A8fVkeoQ4ugZTYj0jZv4pAXY4XcGimd1CX5jWNWweHjn7i/LHDvU
+	QwVzRiguN+czE6YomNf7Q==
+X-ME-Sender: <xms:4eTOZyZdYXnbrpO3hUKJpiuEzpSIExEowRfgS91FOXjOTEsXsAo3Fg>
+    <xme:4eTOZ1bpIkP-tKHQqmgYYpQbpC8GOdIXs6u_o0dKtNlZjYDdQK6pm3DVJpS7kzZ4Y
+    T6LLEdqgJ0CxEEoCOY>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdduudelgeefucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
+    pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
+    gvnhhtshculddquddttddmnecujfgurhepofggfffhvfevkfgjfhfutgfgsehtjeertder
+    tddtnecuhfhrohhmpedftehrnhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnug
+    gsrdguvgeqnecuggftrfgrthhtvghrnhephfdthfdvtdefhedukeetgefggffhjeeggeet
+    fefggfevudegudevledvkefhvdeinecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrg
+    hmpehmrghilhhfrhhomheprghrnhgusegrrhhnuggsrdguvgdpnhgspghrtghpthhtohep
+    udegpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopegsphesrghlihgvnhekrdguvg
+    dprhgtphhtthhopehthhhomhgrshdrlhgvnhgurggtkhihsegrmhgurdgtohhmpdhrtghp
+    thhtoheprhhitghkrdhprdgvughgvggtohhmsggvsehinhhtvghlrdgtohhmpdhrtghpth
+    htoheprghrnhgusehkvghrnhgvlhdrohhrghdprhgtphhtthhopehmihhnghhosehkvghr
+    nhgvlhdrohhrghdprhgtphhtthhopeigkeeisehkvghrnhgvlhdrohhrghdprhgtphhtth
+    hopehtghhlgieslhhinhhuthhrohhnihigrdguvgdprhgtphhtthhopegurghvvgdrhhgr
+    nhhsvghnsehlihhnuhigrdhinhhtvghlrdgtohhmpdhrtghpthhtohepkhhirhhilhhlrd
+    hshhhuthgvmhhovheslhhinhhugidrihhnthgvlhdrtghomh
+X-ME-Proxy: <xmx:4eTOZ8_1KJo9jpuy3vJKXKF2sAN2Jhn3OSPmZUOD5jm3AvFFwr7aPA>
+    <xmx:4eTOZ0oPANJHtNWC4p4lzlZHBTPD2j8WqnwkXRYgDjvCS4gqHJJd9w>
+    <xmx:4eTOZ9rCPvhGjiNefgfXysx0Kfcdkvzgtxvf--9RTGNwqgtN-_vNPg>
+    <xmx:4eTOZyRvp0Of_I2Yl0_PKa7siRf14jYWhm59Uba1F048eEWe3WVEqg>
+    <xmx:4uTOZ-4HqUswNRoNQWpeWe2wK97LG9Lgf2G0hi5V-VD25wfBSTlUfMWy>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id AA1AB2220073; Mon, 10 Mar 2025 09:10:57 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.3.1
-Subject: Re: [PATCH v3 1/3] scsi: hisi_sas: Enable force phy when SATA disk
- directly connected
-Content-Language: en-CA
-To: John Garry <john.g.garry@oracle.com>, <liyihang9@huawei.com>,
-	<yanaijie@huawei.com>
-CC: <jejb@linux.ibm.com>, <martin.petersen@oracle.com>,
-	<linux-scsi@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linuxarm@huawei.com>, <prime.zeng@huawei.com>, <liuyonglong@huawei.com>,
-	<kangfenglong@huawei.com>, <liyangyang20@huawei.com>,
-	<f.fangjian@huawei.com>, <xiabing14@h-partners.com>
-References: <20250220130546.2289555-1-yangxingui@huawei.com>
- <20250220130546.2289555-2-yangxingui@huawei.com>
- <4bf89b6c-8730-4ae8-8b26-770b2aab2c13@oracle.com>
- <5a4384dc-4edb-9e29-d1dd-190d69b9e313@huawei.com>
- <1e98a1eb-a763-4190-94c5-a867cdf0e09b@oracle.com>
- <235e7ad8-1e19-4b7b-c64b-b6703851ca65@huawei.com>
- <d233a108-a46e-47dd-86ad-756c60c8665e@oracle.com>
- <cc9ba6f8-1efb-4910-8952-9ca07c707658@huawei.com>
- <5d34595f-ff57-4679-b263-fa3fea006ce3@oracle.com>
- <25552c7d-858d-ea1e-0987-55f71642a503@huawei.com>
- <420fde94-28ec-4321-943b-5cb84cf14f0e@oracle.com>
-From: yangxingui <yangxingui@huawei.com>
-In-Reply-To: <420fde94-28ec-4321-943b-5cb84cf14f0e@oracle.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+Date: Mon, 10 Mar 2025 14:10:23 +0100
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Borislav Petkov" <bp@alien8.de>
+Cc: "Ingo Molnar" <mingo@kernel.org>, "Arnd Bergmann" <arnd@kernel.org>,
+ "Thomas Gleixner" <tglx@linutronix.de>, "Ingo Molnar" <mingo@redhat.com>,
+ "Dave Hansen" <dave.hansen@linux.intel.com>, x86@kernel.org,
+ "Kuppuswamy Sathyanarayanan" <sathyanarayanan.kuppuswamy@linux.intel.com>,
+ "Rick Edgecombe" <rick.p.edgecombe@intel.com>,
+ "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+ "Tom Lendacky" <thomas.lendacky@amd.com>, "H. Peter Anvin" <hpa@zytor.com>,
+ "Jason A . Donenfeld" <Jason@zx2c4.com>, linux-kernel@vger.kernel.org
+Message-Id: <7012583a-90be-4156-a151-2fc56fa18d51@app.fastmail.com>
+In-Reply-To: <20250305225057.GBZ8jVUXJmIJBZwdgT@fat_crate.local>
+References: <20250304143340.928503-1-arnd@kernel.org>
+ <Z8grEnsAcMrm9sCc@gmail.com>
+ <20250305221700.GPZ8jNXPCFR1w1NyEQ@fat_crate.local>
+ <20250305222052.GAZ8jORCVmKQhEkrw6@fat_crate.local>
+ <a6145d2a-e1a9-41b4-8017-5bbf37ec2d65@app.fastmail.com>
+ <20250305225057.GBZ8jVUXJmIJBZwdgT@fat_crate.local>
+Subject: Re: [PATCH] x86: coco: mark cc_mask as __maybe_unused
+Content-Type: text/plain
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: kwepemh200008.china.huawei.com (7.202.181.115) To
- kwepemg100017.china.huawei.com (7.202.181.58)
 
-Hi, John
+On Wed, Mar 5, 2025, at 23:50, Borislav Petkov wrote:
+> On Wed, Mar 05, 2025 at 11:45:11PM +0100, Arnd Bergmann wrote:
+>> There is a twist here: clang by default warns about unused const
+>> variables in .c files but not in headers, while gcc doesn't
+>
+> What is the point of this warning, do you know?
+>
+> Someone defines a const, forgets to use it and? Oh big deal. This should be
+> a -Wunused anyway, no?
+>
+> I must be missing something here...
 
-On 2025/2/25 16:19, John Garry wrote:
-> On 25/02/2025 01:48, yangxingui wrote:
->>>
->>>
->>> pm8001 sends sas_notify_port_event(sas_phy, PORTE_LINK_RESET_ERR,) 
->>> link reset errors - can you consider doing that in 
->>> hisi_sas_update_port_id() when you find an inconstant port id?
->> Currently during phyup, the hw port id may change, and the 
->> corresponding hisi_sas_port.id and the port id in itct are not updated 
->> synchronously. The problem caused is not a link error, so we don't 
->> need deform port, just update the port id when phyup.
-> 
-> Sure, but I am just trying to keep this simple. If you deform and reform 
-> the port - and so lose and find the disk (which does the itct config) - 
-> will that solve the problem?
-> 
-We found that we need to perform lose and find for all devices on the 
-port including the local phy and the remote phy. This process still 
-requires traversing the phy information corresponding to all devices to 
-reset and it is also necessary to consider that there is a race between 
-device removal and the current process.  it looks similar to solution of 
-update port id directly. And there will be the problem mentioned above. 
-e.g, during error handling, the recovery state will last for more than 
-15 seconds, affecting the performance of other disks on the same host.
+We turned on -Wunused a while ago for default builds after all the
+-Wunused-variable warnings got addressed, but instead turned off
+-Wunused-const-variable and -Wunused-but-set-variable
+unless W=1 is set while there are still existing warnings.
 
+In my opinion, there is little difference between unused const and
+non-const variables, the reason that gcc treats them differently
+seems to be from common c++ coding style advocating for them to be
+used in place of macros. This is the case here, but most of the
+warnings it actually shows are for mistakes where some variable
+is in the wrong #ifdef block or the only user got removed.
 
-Thanks,
-Xingui
+>> In this case, the only user is a macro:
+>> #define _PAGE_CC               (_AT(pteval_t, cc_mask))
+>> 
+>> so maybe '#define cc_mask 0' would be appropriate.
+>
+> Sounds a lot better to me.
 
+Too bad that did not work. This version is also a bit ugly:
 
+diff --git a/arch/x86/include/asm/pgtable_types.h b/arch/x86/include/asm/pgtable_types.h
+index c90e9c51edb7..f31c1a31742d 100644
+--- a/arch/x86/include/asm/pgtable_types.h
++++ b/arch/x86/include/asm/pgtable_types.h
+@@ -179,7 +179,11 @@ enum page_cache_mode {
+ };
+ #endif
+ 
++#ifdef CONFIG_ARCH_HAS_CC_PLATFORM
+ #define _PAGE_CC               (_AT(pteval_t, cc_mask))
++#else
++#define _PAGE_CC               (_AT(pteval_t, 0))
++#endif
+ #define _PAGE_ENC              (_AT(pteval_t, sme_me_mask))
+ 
+ #define _PAGE_CACHE_MASK       (_PAGE_PWT | _PAGE_PCD | _PAGE_PAT)
+
+so I'll just follow Ingo's earlier suggestion for the v2 patch.
+
+       Arnd
 
