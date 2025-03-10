@@ -1,145 +1,124 @@
-Return-Path: <linux-kernel+bounces-553806-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-553808-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8F80BA58F07
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 10:07:40 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D7CB8A58F12
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 10:09:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CD54A16BB81
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 09:07:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 013863A68CC
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 09:08:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90EAC2248A4;
-	Mon, 10 Mar 2025 09:07:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B1B62248A6;
+	Mon, 10 Mar 2025 09:08:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ROKa6JMy"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="JlQ+KPv9"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFEAC224220;
-	Mon, 10 Mar 2025 09:07:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98794224898;
+	Mon, 10 Mar 2025 09:08:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741597652; cv=none; b=qWNOP4xGNbaPbgoy+Es71GWqBct8S9sJKms4iJvS1dDFfiDo61ikjEAmHGW/XXQ8rf2azoBNxfQxF6whTdRcwnFrGRGUziS2OBS7r3n4FTJ+oFfpOwuzR0Ih15Wux5ZAO+1rDBMaq+xDCQSug73jpn8XUg2snoXbRWAwKUQz3C4=
+	t=1741597734; cv=none; b=Ez9BthnsJxWhklXZT7Kj0KZyRBi5fQWrIdWfhHAtcAgaZ8MZLxgprn/Agdgn+P+se45TulzziGT+YQ1U1pPkwGqNy/faetCxM2WHJEgp7VW1CVgnCuykAcMCepsd5e/n6pyE1rdBWbs/qzdVd2eHq9ZD9tMzZPo2HmHvNSr2PKo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741597652; c=relaxed/simple;
-	bh=qqZhkPRwUpaoAjzdi9JHwcv9INAknt/YcI8iZPeoNfo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=e3gNTUpjKFyfJ0Kzy0X1OJZfwBljONOpgApcBulRbtqS9bEbJGLsl808MvP6usEA8uPJUQIXRNBvtpoJgowJ22IL0W2qfus73Jp25A8TWDzIcNyf2FUpSk8ocT3vq4nf/w07PRPKwgnSZ9wZ8O/H3BSL0mh9AIVbpa24tUbhRDg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ROKa6JMy; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0A548C4CEE5;
-	Mon, 10 Mar 2025 09:07:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741597651;
-	bh=qqZhkPRwUpaoAjzdi9JHwcv9INAknt/YcI8iZPeoNfo=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=ROKa6JMyCGoEK1zQZ+eBDyj+9hajyMmPMUo7p+ulN5c9OciTut+lyLieibDtMKm+k
-	 +34mUJ1+bQNND/80CkFxp1gNAq/0l/C3PdHkixjHL10WU3ncQXusTkGHL8HevDyAnP
-	 FwOwrUWavuWxXpyc6bT9o3YCBYxq/uab27I3jsoljb8MbJ73Kku/9GunWxIwtvxMUS
-	 41LXhWzVdBgyEWT2ciP6fbLx1jpsiil+14U9o/NXpmUJBkgfKOFj0tt23ngXDaJxCW
-	 xuiyLHB0GUMYNjYaaMc6uW1AtXs0MDLdPvxHhnxSAW1R8M/KbYdtVslWNivVVqFAuj
-	 SkB+EFV0WQQtg==
-Message-ID: <b724d9c1-cd73-4e4e-aed1-101049204c90@kernel.org>
-Date: Mon, 10 Mar 2025 10:07:20 +0100
+	s=arc-20240116; t=1741597734; c=relaxed/simple;
+	bh=mXMYpSdxNuyQYTceRPm1q28M5l4U2u5jbpXDDH2mEy8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MgPF8iln7Vh1s+uCeyW8Zuc7OfOQmulUOku5QmAEY4pBoh/ppPMolRgGS1Ocdhz4tkaUBtg3IJC8cCm6vNmJYNE4EpwpqLQyiVkBbQwlU7Wtwu0XWEgYH7Hjdxv3A42RaxeSiPxH5bf6ZdPzctcgrmpDjHbLBOUvrRgZ//IadcU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=JlQ+KPv9; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=nGGBfXcW496O6Da1moftsrudvy0YYcf4pgpt3WGpC3U=; b=JlQ+KPv94Rkxr/w8pgcpv/iw9Z
+	Sm7h8AAU0/0+nMxF5j+LR4qSYTSdqP6g7Saqaqax+2Q8Zey49O/EYbPfABaiiDcfBSFyxJglvVYhK
+	/ZklYmDOhTiEJjvP057AnvK8le9EGdfph/6u5iajVIQ2JWxBz9kZOc1KH2ElHwKPRLab/Enveqhpp
+	reg4t7fFY8VlHipHtj2oY4t9bIiQt0CorxsnJeSGDiQq8D90xPjyTxpDi/0EYXlFzhNDOJlG++uco
+	AzlIR9vGpRmDaxV8xXv+cXVnWmDAvNJz7Stcee0Sfli45uBkA8ZMyi18pKlrPOf1c1ekmIYEJ1qFy
+	jRNaZd4A==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1trZ7M-00000002op3-0gPC;
+	Mon, 10 Mar 2025 09:08:21 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 60030300599; Mon, 10 Mar 2025 10:08:11 +0100 (CET)
+Date: Mon, 10 Mar 2025 10:08:11 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: Chris Murphy <lists@colorremedies.com>
+Cc: Waiman Long <longman@redhat.com>,
+	=?utf-8?B?0JzQuNGF0LDQuNC7INCT0LDQstGA0LjQu9C+0LI=?= <mikhail.v.gavrilov@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>, David Sterba <dsterba@suse.cz>,
+	Btrfs BTRFS <linux-btrfs@vger.kernel.org>,
+	linux-kernel <linux-kernel@vger.kernel.org>,
+	Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>,
+	Joel Fernandes <joel@joelfernandes.org>
+Subject: Re: BUG: MAX_LOCKDEP_CHAIN_HLOCKS too low!
+Message-ID: <20250310090811.GQ16878@noisy.programming.kicks-ass.net>
+References: <CABXGCsN+BcaGO0+0bJszDPvA=5JF_bOPfXC=OLzMzsXY2M8hyQ@mail.gmail.com>
+ <20220726164250.GE13489@twin.jikos.cz>
+ <CABXGCsN1rzCoYiB-vN5grzsMdvgm1qv2jnWn0enXq5R-wke8Eg@mail.gmail.com>
+ <20230125171517.GV11562@twin.jikos.cz>
+ <CABXGCsOD7jVGYkFFG-nM9BgNq_7c16yU08EBfaUc6+iNsX338g@mail.gmail.com>
+ <Y9K6m5USnON/19GT@boqun-archlinux>
+ <CABXGCsMD6nAPpF34c6oMK47kHUQqADQPUCWrxyY7WFiKi1qPNg@mail.gmail.com>
+ <a8992f62-06e6-b183-3ab5-8118343efb3f@redhat.com>
+ <7e48c1ec-c653-484e-88fb-69f3deb40b1d@app.fastmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 1/4] coresight: tmc: Introduce new APIs to get the RWP
- offset of ETR buffer
-To: Jie Gan <quic_jiegan@quicinc.com>,
- Suzuki K Poulose <suzuki.poulose@arm.com>, Mike Leach
- <mike.leach@linaro.org>, James Clark <james.clark@linaro.org>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Maxime Coquelin <mcoquelin.stm32@gmail.com>,
- Alexandre Torgue <alexandre.torgue@foss.st.com>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>
-Cc: Tingwei Zhang <quic_tingweiz@quicinc.com>,
- Jinlong Mao <quic_jinlmao@quicinc.com>, coresight@lists.linaro.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- linux-stm32@st-md-mailman.stormreply.com
-References: <20250310090407.2069489-1-quic_jiegan@quicinc.com>
- <20250310090407.2069489-2-quic_jiegan@quicinc.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20250310090407.2069489-2-quic_jiegan@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <7e48c1ec-c653-484e-88fb-69f3deb40b1d@app.fastmail.com>
 
-On 10/03/2025 10:04, Jie Gan wrote:
-> +static long tmc_sg_get_rwp_offset(struct tmc_drvdata *drvdata)
-> +{
-> +	struct etr_buf *etr_buf = drvdata->sysfs_buf;
-> +	struct etr_sg_table *etr_table = etr_buf->private;
-> +	struct tmc_sg_table *table = etr_table->sg_table;
-> +	long w_offset;
-> +	u64 rwp;
-> +
-> +	rwp = tmc_read_rwp(drvdata);
-> +	w_offset = tmc_sg_get_data_page_offset(table, rwp);
-> +
-> +	return w_offset;
-> +}
-> +
-> +/*
-> + * Retrieve the offset to the write pointer of the ETR buffer based on whether
-> + * the memory mode is SG, flat or reserved.
-> + */
-> +long tmc_get_rwp_offset(struct tmc_drvdata *drvdata)
+On Thu, Jan 26, 2023 at 10:37:56PM -0500, Chris Murphy wrote:
+> 
+> 
+> On Thu, Jan 26, 2023, at 7:20 PM, Waiman Long wrote:
+> > On 1/26/23 17:42, Mikhail Gavrilov wrote:
+> >>> I'm not sure whether these options are better than just increasing the
+> >>> number, maybe to unblock your ASAP, you can try make it 30 and make sure
+> >>> you have large enough memory to test.
+> >> About just to increase the LOCKDEP_CHAINS_BITS by 1. Where should this
+> >> be done? In vanilla kernel on kernel.org? In a specific distribution?
+> >> or the user must rebuild the kernel himself? Maybe increase
+> >> LOCKDEP_CHAINS_BITS by 1 is most reliable solution, but it difficult
+> >> to distribute to end users because the meaning of using packaged
+> >> distributions is lost (user should change LOCKDEP_CHAINS_BITS in
+> >> config and rebuild the kernel by yourself).
+> >
+> > Note that lockdep is typically only enabled in a debug kernel shipped by 
+> > a distro because of the high performance overhead. The non-debug kernel 
+> > doesn't have lockdep enabled. When LOCKDEP_CHAINS_BITS isn't big enough 
+> > when testing on the debug kernel, you can file a ticket to the distro 
+> > asking for an increase in CONFIG_LOCKDEP_CHAIN_BITS. Or you can build 
+> > your own debug kernel with a bigger CONFIG_LOCKDEP_CHAIN_BITS.
+> 
+> Fedora bumped CONFIG_LOCKDEP_CHAINS_BITS=17 to 18 just 6 months ago for debug kernels.
+> https://gitlab.com/cki-project/kernel-ark/-/merge_requests/1921
+> 
+> If 19 the recommended value I don't mind sending an MR for it. But if
+> the idea is we're going to be back here talking about bumping it to 20
+> in six months, I'd like to avoid that.
 
-You need kerneldoc for exports.
+Please all, also look at the lockdep_chains output for these kernels
+that need bumping this number and check if there's a particularly
+'silly' annotation.
 
+Notably, things like giving each CPU their own lock class for a double
+lock yields O(n^2) chains, while using a single class with 1 subclass
+for the double nesting results in O(1) chains.
 
-Best regards,
-Krzysztof
+We've had some needlessly expensive annotations like this in the past,
+and now with dyhamic classes this is even easier.
+
+So before bumping the number, check if there's something btrfs related
+that can be done better/different wrt annotations to reduce the number
+of lock chains.
 
