@@ -1,150 +1,196 @@
-Return-Path: <linux-kernel+bounces-554955-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-554957-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D4FACA5A3C8
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 20:27:53 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 12841A5A3CC
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 20:28:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1F2C41735E4
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 19:27:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2CFBB3AE86A
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 19:28:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5ADD423643B;
-	Mon, 10 Mar 2025 19:27:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1B00230BFC;
+	Mon, 10 Mar 2025 19:28:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="kA2Is0vS"
-Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=rosenzweig.io header.i=@rosenzweig.io header.b="qXgdLNp0"
+Received: from out-186.mta1.migadu.com (out-186.mta1.migadu.com [95.215.58.186])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 651B618FDAB
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 19:27:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13EEC22FDE8
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 19:28:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.186
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741634862; cv=none; b=hZNKhjJrqcgIx0xsdM3dyuKtooeKQUx2xfhTcIEBEF3CATbXllMXgy0K1qllmtmMssqWZr2lKP8FLvd/uook7hEa8MpKICNTtBUm0J04TIsPS4Eu0x9P/ucF25gdT4q7nYqBx7lMEkVD/wkTcpFMwQLjGVrYMKghPTCsqGjIBMo=
+	t=1741634899; cv=none; b=HtF1efwKdhl6TUCAUfmH5Yovpr4xroEcsb/qGIcExx55BzkvIfxuAOYEdUU3qk09a0KN3w4iiWHEWdUW2QJ5Q5ihoBcB8/hNvXTBEdKD9+XarOemHPoVrONNGl4+37W0TK/UtEY78chad3HLkZCxdszkREfOR+Dao06DSlxV4UE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741634862; c=relaxed/simple;
-	bh=7LKU0kJ16VYxkK8s6lY89w1ydzFDPQufI2P154/QRQI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=q6/lK1+YpueCvyILWWSvtc2sxJyY5/rjM0imocqYydeW07nO8Mm8PpxmvorJeNFvHwHkRImjQyMBG+LsKmlk+ErLEsX1l9o5uSnM9Hz+/G+9CfUDQcJZJVjEd5s5X/pcwkeNnC8WX+R6tdhejPMBe5l2Z+4J+Dj5O9b/fa9LiYc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=kA2Is0vS; arc=none smtp.client-ip=209.85.221.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-38dcac27bcbso3740719f8f.0
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 12:27:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1741634859; x=1742239659; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=dlpjAiSLLJUkqO0ugcAgjSoBJydtUnexkUj1lX29pb0=;
-        b=kA2Is0vSvEtEPMa4VzDtsTjsEwf1cGF/C+S99rJuyzaZnwshhszWpvdhdcY/HFi1Xs
-         Ihahol53XNJpJST2KySGRVUi6DdEmLpovx8Fpl+v3oX5q/LHH+OeQ75RQEuihjxObmEJ
-         jAm72NfS2w3qMOfAQQYVImyyKcC0hsEJFLgtcAYBGCTaofIM+C918SeTm8IqeTHyZQEx
-         dmcam9mACH19eLFszBQrYptTxjT3I0tejkgYw3IJzOetZmkUoYX26ov1Worh/ga4GGQq
-         meP6rmuWlKS+7mEKkcm9/wZPNnp7tDhAZHOWNzZ5a5JzRvKCv/sGW39fMvN2Whtzoh4m
-         SodA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741634859; x=1742239659;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=dlpjAiSLLJUkqO0ugcAgjSoBJydtUnexkUj1lX29pb0=;
-        b=vZvNRKkKAyZ0keiUMQrxLImQ90C4AOHIGGHXXsOCWT02eWsnNR8HBRhBW3J4mSTiE0
-         KtlD1a+EHoLCfelBuk0JPSjYJVgVSkhj0/Ht+tFDh1MXcpwNUqij9ExKvMe6QppWk+2D
-         luwJK9ZgbjHrMV5rLjhZhh/i4gLtIZa7rgXu1mgx69z24z2LJ3o2tfbRedL/IWXlW7te
-         wikntnD0XQ6+n5gzLFX6cGGAomYCYp/tJSLin5NzNyr+IrTdvgSUq4uB3ZFCV+Pteuj1
-         7y2AmOJp4KejVsCQL3yqaChayvCYHBMSJaZucztqpenY2FqBnsHUCm/wKXRKMGKPQ2Cd
-         X1Uw==
-X-Forwarded-Encrypted: i=1; AJvYcCXPqP/VMyWh3uXg+i/FOpJ+fTSt+sFsocR2qPsclwla/RyxxBVCk1z/cZ8/YOCLE/gzAT3fAbSgeWXsFis=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwAublETWOWv63riwq9cRhr+Mxwa5XtcvNvBJFOyXtPsUZUxsRg
-	8BHTVTXAgIjkW2eRkVOnIu9l8UEsjb9YU1thPE5iv95bsydQDxpVtm6O7HnlhNJeG0IVwNtk4HM
-	s
-X-Gm-Gg: ASbGncuO8whFc7xlpa+pf4gNtUldPdAvo1wfb7CxbWNg0CCgWepiPkjJm4QuX7O7Itm
-	mKvyOcoVmY41EPhqAJuvz7Go6VmuI1bRl64BFa4O4oCEpIsKQCuzYXeJVgaxeRmnekcPVQAZgis
-	DJ+QeGCulqHdVkb0UucivesKEt05XtYPvkwdtSbqxv86gfovo+0YYA54l9v5RePJMdkJ/q3g2gP
-	sLi6o+X3747dEJe7liI24AesZrUZUOKiNInE7UBXnSYIjre00eVDQdo0CVnCVTFq3aucZPMrFBX
-	9xCrcKZu4O+BmzzD5mxaWahH/LXQgyQWwwYkroZdou48igLysQ==
-X-Google-Smtp-Source: AGHT+IHyKkXj7bFHamDlhb852Q/c2KxdopTfCVoENlr9lgDt39iEHp5/omYhrGf0mlW3wl80G2nrEA==
-X-Received: by 2002:a5d:59a2:0:b0:391:1218:d5f4 with SMTP id ffacd0b85a97d-3926d218075mr917718f8f.23.1741634858689;
-        Mon, 10 Mar 2025 12:27:38 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3912bfdfdc5sm15554352f8f.25.2025.03.10.12.27.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 10 Mar 2025 12:27:38 -0700 (PDT)
-Date: Mon, 10 Mar 2025 22:27:34 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Michal Kubiak <michal.kubiak@intel.com>
-Cc: Felix Fietkau <nbd@nbd.name>, Sean Wang <sean.wang@mediatek.com>,
-	Lorenzo Bianconi <lorenzo@kernel.org>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH net] net: ethernet: mediatek: Fix bit field in
- mtk_set_queue_speed()
-Message-ID: <aab6d5f3-7ef9-4220-8b67-ee9b09a5f168@stanley.mountain>
-References: <eaab1b7b-b33b-458b-a89a-81391bd2e6e8@stanley.mountain>
- <Z87e75UV0Qc4oY64@localhost.localdomain>
+	s=arc-20240116; t=1741634899; c=relaxed/simple;
+	bh=UIAR8pl5wDADA7Rf+rS4oV7FqF5qP3rt9mHR+3I6SKc=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=PxQC/q7vhBBggo/qDFVEbTNc70Y2RhhJ6b7KiDngsEubYN1nTYog4LP1/eyXI7Vy7Kr4bZ6er2je9Nt6nuoZ7LP6LKHrbzeGVoF5gDWKpJW+HyGdOW+XGlgM/eh8F5dLcNsEF7OoTaFC1lj0Ad2r4UJ7GW/VX27I41kM9bWKLhE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=rosenzweig.io; spf=pass smtp.mailfrom=rosenzweig.io; dkim=pass (2048-bit key) header.d=rosenzweig.io header.i=@rosenzweig.io header.b=qXgdLNp0; arc=none smtp.client-ip=95.215.58.186
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=rosenzweig.io
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rosenzweig.io
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=rosenzweig.io;
+	s=key1; t=1741634893;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=9999RLa6slu4bV0OtUy1wWkUi/wxX/HStoyqP0HD3P4=;
+	b=qXgdLNp0d4h9G8/m7acdcBeQNavvweFagi4uC6smbHQ1aDPdXPoBeUOHdaPUNvChCPJVwn
+	1Wr6qvwLkcETt6CJ8fZRREoLQQRfuFhEqIEMkkZ4x3ZxTRit1cQS9fA+LlPFtZz5/PwhjA
+	Fh133JPQOztjssgJCe7xZckkFKu5UfEAAONXWOF0+QGzNGNtrYENG/NtwdxySB6EjrnBNm
+	vni4NSdUj/1DNVLeEeeeuHJnQC5s2k9MW90kqpi09vty0Mv79F+qQjD9Hi7c0UXRImqhiU
+	zb9FVpar6CzAdrVQBDghq7Trzn920UZa2ADa3dwK4Djc8Sg9oKtDLkoEeLID2g==
+From: Alyssa Rosenzweig <alyssa@rosenzweig.io>
+Date: Mon, 10 Mar 2025 15:28:02 -0400
+Subject: [PATCH v4] drm: add modifiers for Apple GPU layouts
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z87e75UV0Qc4oY64@localhost.localdomain>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250310-apple-twiddled-modifiers-v4-1-1ccac9544808@rosenzweig.io>
+X-B4-Tracking: v=1; b=H4sIAEE9z2cC/43NywrCMBCF4VcpWRtJJk0vrnwPcdE0k3agNiWRe
+ qPvbnSjiIjL/8B8c2MRA2Fkm+zGAs4UyY8p8lXG2r4ZO+RkUzMQoAXIijfTNCA/nsjaAS0/eEu
+ OMETuLMqmcLkSomXpfAro6Pykd/vUPcWjD5fnp1k+1j/QWXLJK62laUyuQLpt8BHH6wmpW5NnD
+ 3iGNwz0DwwS1rqiLqHGqnTFN0y9MCXkD0wlLDe1MWVdgXb4iS3LcgffJDY/XgEAAA==
+X-Change-ID: 20250218-apple-twiddled-modifiers-fde1a6f4300c
+To: David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+ asahi@lists.linux.dev, Faith Ekstrand <faith.ekstrand@collabora.com>, 
+ Sven Peter <sven@svenpeter.dev>, Alyssa Rosenzweig <alyssa@rosenzweig.io>
+X-Developer-Signature: v=1; a=openpgp-sha256; l=4815; i=alyssa@rosenzweig.io;
+ h=from:subject:message-id; bh=UIAR8pl5wDADA7Rf+rS4oV7FqF5qP3rt9mHR+3I6SKc=;
+ b=owEBbQKS/ZANAwAIAf7+UFoK9VgNAcsmYgBnzz1FFpf0BBtQsMU7Scsn1bEOO2j/hrvcKvaJn
+ ytwhricu6WJAjMEAAEIAB0WIQRDXuCbsK8A0B2q9jj+/lBaCvVYDQUCZ889RQAKCRD+/lBaCvVY
+ DQ+jD/0f+40M05Qu7kldwLeLL73Ab9aAi2e3bzaugXnMnU3PJ++Q7l6RTlhQVMteMz9zICzQKgr
+ j/DTiOWjPDQIhm8l7gvVCPOgxLcri9D1dm1IPQGmbbjZ7ojvLTSUHQlg8+q/QK+o2p+E4jyndy+
+ gc1Ln3GkcWqec60U4LEIf3ca8HdJ1LeDVxv7fAzxsTkhrowvS6siuB5y63AZKaArAbGOhLQ4GaO
+ 7NQWBrc/ri9ZUlv7kTL0nzgSUWBpJb7k2IoZoz9cxQk2k3vkwqHeTTyu+YycOyjmsgsAXDxMtfE
+ CwXPbPshxO6w1z4R975TVcWjQOTxpXT2NFGv+cAgGJ5T/aI7gXVgvf7CZfM8EAoCwvZ/ZWqpxm7
+ wP1mvYBAOUJzaVJVBrlushez4EvhB90Qcn1hx4rBjTtPRahE8nvYzRvlvAvp1xpsFBVxiJD673T
+ g73CYSZ7kCp3BQcRHLBCbzkOdCNvmPoYlQHiMxHoHvokNZEUQozpcRxLTqAds05GPl26t8rXWN/
+ uH2tUy/5b/HYBydfTZtqpGkwnMfVLOEZ/zFLxKG/rSvEMOs1ljtUHvl8jnICspmYNd8wS6y4QKk
+ 2UWmhhUht4eB1oEgFpLqvmOqZ94n0O5s43bxEaI8+aMXdj9R3WD7F5J7Z7OBJrpBGaDacQdRStX
+ VZUE1xpsOzEjwBg==
+X-Developer-Key: i=alyssa@rosenzweig.io; a=openpgp;
+ fpr=435EE09BB0AF00D01DAAF638FEFE505A0AF5580D
+X-Migadu-Flow: FLOW_OUT
 
-On Mon, Mar 10, 2025 at 01:45:35PM +0100, Michal Kubiak wrote:
-> On Mon, Mar 10, 2025 at 01:48:27PM +0300, Dan Carpenter wrote:
-> > This was supposed to set "FIELD_PREP(MTK_QTX_SCH_MAX_RATE_WEIGHT, 1)"
-> > but there was typo and the | operation was missing and which turned
-> > it into a no-op.
-> > 
-> > Fixes: f63959c7eec3 ("net: ethernet: mtk_eth_soc: implement multi-queue support for per-port queues")
-> > Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> > ---
-> > From static analysis, not tested.
-> > 
-> >  drivers/net/ethernet/mediatek/mtk_eth_soc.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > 
-> > diff --git a/drivers/net/ethernet/mediatek/mtk_eth_soc.c b/drivers/net/ethernet/mediatek/mtk_eth_soc.c
-> > index 922330b3f4d7..9efef0e860da 100644
-> > --- a/drivers/net/ethernet/mediatek/mtk_eth_soc.c
-> > +++ b/drivers/net/ethernet/mediatek/mtk_eth_soc.c
-> > @@ -757,7 +757,7 @@ static void mtk_set_queue_speed(struct mtk_eth *eth, unsigned int idx,
-> >  		case SPEED_100:
-> >  			val |= MTK_QTX_SCH_MAX_RATE_EN |
-> >  			       FIELD_PREP(MTK_QTX_SCH_MAX_RATE_MAN, 1) |
-> > -			       FIELD_PREP(MTK_QTX_SCH_MAX_RATE_EXP, 5);
-> > +			       FIELD_PREP(MTK_QTX_SCH_MAX_RATE_EXP, 5) |
-> >  			       FIELD_PREP(MTK_QTX_SCH_MAX_RATE_WEIGHT, 1);
-> >  			break;
-> >  		case SPEED_1000:
-> 
-> 
-> There's a similar bug a few lines above (line #737):
-> 
-> 	case SPEED_100:
-> 		val |= MTK_QTX_SCH_MAX_RATE_EN |
-> 		       FIELD_PREP(MTK_QTX_SCH_MAX_RATE_MAN, 103) |
-> 		       FIELD_PREP(MTK_QTX_SCH_MAX_RATE_EXP, 3);
-> 		       FIELD_PREP(MTK_QTX_SCH_MAX_RATE_WEIGHT, 1);
-> 		break;
-> 
-> I think it would be reasonable to fix that too in the same patch.
+Apple GPUs support non-linear "GPU-tiled" image layouts. Add modifiers
+for these layouts. Mesa requires these modifiers to share non-linear
+buffers across processes, but no other userspace or kernel support is
+required/expected.
 
-Yes.  You're of course correct.  I'm trying to figure out why my
-static checker found the one instance and not the other.  I will
-send a v2.
+These layouts are notably not used for interchange across hardware
+blocks (e.g. with the display controller). There are other layouts for
+that but we don't support them either in userspace or kernelspace yet
+(even downstream), so we don't add modifiers here.
 
-regards,
-dan carpenter
+Acked-by: Faith Ekstrand <faith.ekstrand@collabora.com>
+Reviewed-by: Sven Peter <sven@svenpeter.dev>
+Signed-off-by: Alyssa Rosenzweig <alyssa@rosenzweig.io>
+---
+Changes in v4:
+- Remove twiddled modifiers as it is only used for sparse and therefore
+  not shareable and therefore doesn't need a modifier.
+- Reflow comments accordingly.
+- Increase alignment to 128B out of abundance of caution.
+- Collect acks.
+- Link to v3: https://lore.kernel.org/r/20250301-apple-twiddled-modifiers-v3-1-4b9bb79825fe@rosenzweig.io
+
+Changes in v3:
+- Condense comments for clarity and concision.
+- Add text explaining strides and planes with justification.
+- Add table giving tile sizes for GPU tiled images.
+- Tighten up wording.
+- Link to v2: https://lore.kernel.org/r/20250225-apple-twiddled-modifiers-v2-1-cf69729e87f6@rosenzweig.io
+
+Changes in v2:
+- Rename "Twiddled" to "GPU-tiled" to match what I now believe is the canonical name.
+- Add modifiers for the actual "Twiddled" layouts.
+- Clarify that the body of compressed images are laid out like their
+  uncompressed counterparts.
+- Link to v1: https://lore.kernel.org/r/20250218-apple-twiddled-modifiers-v1-1-8551bab4321f@rosenzweig.io
+---
+ include/uapi/drm/drm_fourcc.h | 45 +++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 45 insertions(+)
+
+diff --git a/include/uapi/drm/drm_fourcc.h b/include/uapi/drm/drm_fourcc.h
+index e41a3cec6a9ed18760f3b0c88ba437c9aba3dd4f..81202a50dc9e2e4363abba91ca164b30d5b2f71d 100644
+--- a/include/uapi/drm/drm_fourcc.h
++++ b/include/uapi/drm/drm_fourcc.h
+@@ -422,6 +422,7 @@ extern "C" {
+ #define DRM_FORMAT_MOD_VENDOR_ALLWINNER 0x09
+ #define DRM_FORMAT_MOD_VENDOR_AMLOGIC 0x0a
+ #define DRM_FORMAT_MOD_VENDOR_MTK     0x0b
++#define DRM_FORMAT_MOD_VENDOR_APPLE   0x0c
+ 
+ /* add more to the end as needed */
+ 
+@@ -1494,6 +1495,50 @@ drm_fourcc_canonicalize_nvidia_format_mod(__u64 modifier)
+ /* alias for the most common tiling format */
+ #define DRM_FORMAT_MOD_MTK_16L_32S_TILE  DRM_FORMAT_MOD_MTK(MTK_FMT_MOD_TILE_16L32S)
+ 
++/*
++ * Apple GPU-tiled layouts.
++ *
++ * Apple GPUs support nonlinear tilings with optional lossless compression.
++ *
++ * GPU-tiled images are divided into 16KiB tiles:
++ *
++ *     Bytes per pixel  Tile size
++ *     ---------------  ---------
++ *                   1  128x128
++ *                   2  128x64
++ *                   4  64x64
++ *                   8  64x32
++ *                  16  32x32
++ *
++ * Tiles are raster-order. Pixels within a tile are interleaved (Morton order).
++ *
++ * Compressed images pad the body to 128-bytes and are immediately followed by a
++ * metadata section. The metadata section rounds the image dimensions to
++ * powers-of-two and contains 8 bytes for each 16x16 compression subtile.
++ * Subtiles are interleaved (Morton order).
++ *
++ * All images are 128-byte aligned.
++ *
++ * These layouts fundamentally do not have meaningful strides. No matter how we
++ * specify strides for these layouts, userspace unaware of Apple image layouts
++ * will be unable to use correctly the specified stride for any purpose.
++ * Userspace aware of the image layouts do not use strides. The most "correct"
++ * convention would be setting the image stride to 0. Unfortunately, some
++ * software assumes the stride is at least (width * bytes per pixel). We
++ * therefore require that stride equals (width * bytes per pixel). Since the
++ * stride is arbitrary here, we pick the simplest convention.
++ *
++ * Although containing two sections, compressed image layouts are treated in
++ * software as a single plane. This is modelled after AFBC, a similar
++ * scheme. Attempting to separate the sections to be "explicit" in DRM would
++ * only generate more confusion, as software does not treat the image this way.
++ *
++ * For detailed information on the hardware image layouts, see
++ * https://docs.mesa3d.org/drivers/asahi.html#image-layouts
++ */
++#define DRM_FORMAT_MOD_APPLE_GPU_TILED fourcc_mod_code(APPLE, 1)
++#define DRM_FORMAT_MOD_APPLE_GPU_TILED_COMPRESSED fourcc_mod_code(APPLE, 2)
++
+ /*
+  * AMD modifiers
+  *
+
+---
+base-commit: 0ed1356af8f629ae807963b7db4e501e3b580bc2
+change-id: 20250218-apple-twiddled-modifiers-fde1a6f4300c
+
+Best regards,
+-- 
+Alyssa Rosenzweig <alyssa@rosenzweig.io>
 
 
