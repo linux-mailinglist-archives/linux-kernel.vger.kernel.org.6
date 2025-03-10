@@ -1,211 +1,270 @@
-Return-Path: <linux-kernel+bounces-553433-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-553435-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08616A58983
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 01:10:35 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BBDC6A5898F
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 01:11:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BA9223AAF18
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 00:10:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 08FAD188C60E
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Mar 2025 00:11:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16DE8257D;
-	Mon, 10 Mar 2025 00:10:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08EFB79C0;
+	Mon, 10 Mar 2025 00:11:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="npSmY0LJ"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="KDwNqFoQ";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="CKCBvC+q";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="KDwNqFoQ";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="CKCBvC+q"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94EE7846C
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 00:10:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B498B676
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 00:11:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741565429; cv=none; b=BL1WTL3GVglhayRsXQhk0Jhk/FuUR2ceOWMpMUG5NwwCsM+V1sj83ya6MzMs5FVQyAg1VfE8nyGwbLhmn3qtvLeoLtM1DT7JZPVk1y2hq2lP5GlnJJygUjEQkk595446vfptNThE5FAFe9fU6XFUolfXokwswe45UmyO1flNvtc=
+	t=1741565480; cv=none; b=oWgmMXV8W/AVo6EtWwl3JmVfaM/3O8Ig6jG9diHL5d1Mw5sdhJH7nhugRqeZrAnTqB2IICdXt2ct/bjPdF7+SznITtFnODOJuJX27xrs122vpg76lq8sqTHG7hiXWPv+djMwqZYNdjykQh30vhOHUNgkOUDrTQk22pbA1aE7acY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741565429; c=relaxed/simple;
-	bh=dpMLSPu3tm3urLeArKbbND33SQTo47Luj9QdGB/MXKQ=;
-	h=Date:From:To:Cc:Subject:Message-ID; b=GzaRnyL18DKXyg7e73TOKPXSt20Vyj8TA2HBZp/sqHMidp7jU2Jw+q1HSnzMpzj0CvcFDLinZCsWL1BNtsbIsz92c4wvyOCOgRqM9m7UifxjfJWGpCryj06My9KdlLCkvKUf4fouZ9QHas9PIIMiHDlA0o3ldjmCL338afuGE80=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=npSmY0LJ; arc=none smtp.client-ip=192.198.163.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1741565428; x=1773101428;
-  h=date:from:to:cc:subject:message-id;
-  bh=dpMLSPu3tm3urLeArKbbND33SQTo47Luj9QdGB/MXKQ=;
-  b=npSmY0LJU3Fwg5OWZo4hQElC48eNi2A9vgZgrzCQfaAsw4VA6p8bNudn
-   ybKeyQRhI6maXMPNj6BxlmQ7endchEakdW6XrdzyIPKWRPn0Kb1/YIsY3
-   1t8c/dVsPMJ+Tcutm0a5N8T+iKxEgVveQDaB/o5l9c49Rzp+EJRAGW9nm
-   IEWSIIk0Z6TYsuwhpWcIZwQi0KfjyRTSA4GqL4xROWoo6Tz3iOvFjlYWn
-   DZ5qETNNP2GesQeqg6X5CygrL/V4XGZFxAn2ZMZH8nvP0JlK7wy/txUpy
-   nvZJGct+GWOJ2Wa9YY297n7CA7qqqx2KYXHh1ozDPfukiXhN8E4i/+Sdu
-   g==;
-X-CSE-ConnectionGUID: 4W9qThKgQNCM9dXrjsNIRA==
-X-CSE-MsgGUID: JnotnpdpTuefXwJlluJ86A==
-X-IronPort-AV: E=McAfee;i="6700,10204,11368"; a="42688270"
-X-IronPort-AV: E=Sophos;i="6.14,235,1736841600"; 
-   d="scan'208";a="42688270"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Mar 2025 17:10:27 -0700
-X-CSE-ConnectionGUID: 5s6YrNuOQr+Mft02e1/U3A==
-X-CSE-MsgGUID: DCqIO6gIRMmYIsIytgsszQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,235,1736841600"; 
-   d="scan'208";a="124917647"
-Received: from lkp-server02.sh.intel.com (HELO a4747d147074) ([10.239.97.151])
-  by fmviesa004.fm.intel.com with ESMTP; 09 Mar 2025 17:10:26 -0700
-Received: from kbuild by a4747d147074 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1trQit-0003Zs-2R;
-	Mon, 10 Mar 2025 00:10:23 +0000
-Date: Mon, 10 Mar 2025 08:09:58 +0800
-From: kernel test robot <lkp@intel.com>
-To: "x86-ml" <x86@kernel.org>
-Cc: linux-kernel@vger.kernel.org
-Subject: [tip:master] BUILD SUCCESS
- a66b8b4e9029a87fa7e59ea43fc749ddce6a0ed3
-Message-ID: <202503100852.vL1QAo8s-lkp@intel.com>
-User-Agent: s-nail v14.9.24
+	s=arc-20240116; t=1741565480; c=relaxed/simple;
+	bh=DG5VusSpng1Zw3Y9FQqDzYGxaM6OXVuK7yrTuyG2hko=;
+	h=Content-Type:MIME-Version:From:To:Cc:Subject:In-reply-to:
+	 References:Date:Message-id; b=hZ1y+KFlpJG/eNay7sn3Yv6grqklGSug6gAC0NliKoGm3txoLWj1Fl+kwWa8SKVnOWL4M0uhd0mMSmIRkEViKw0BBKrDHOoIVEfzkF2dF4TjpFvn61ykALrDJTokB4ZPbDPxwYofJ8+bq1UsIxTgqiJzegP/ZdnunrpgfjZMqjQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=KDwNqFoQ; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=CKCBvC+q; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=KDwNqFoQ; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=CKCBvC+q; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 37A3D21165;
+	Mon, 10 Mar 2025 00:11:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1741565470; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=VKyzFF9sqmXYhDyE0Ctknq3rDxkaHE2kfW5qcx4F3Vw=;
+	b=KDwNqFoQ1OfaFxm4+cFRAPQG/9lynj1ynPLvXyUtW/eDH0KUuIYqPg5O72cpxP/Zk1C/Y+
+	mehlBAkI9r02PjZFfCVLIG6S//j5OTq2c8ulSv29hm21UuGi+iN+usKAhsqGTGV0XBYiJa
+	mmhD6HUTTzVjz6QdBRenk6UuDxAESdM=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1741565470;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=VKyzFF9sqmXYhDyE0Ctknq3rDxkaHE2kfW5qcx4F3Vw=;
+	b=CKCBvC+qBGhb131WpP1iP4N9DXwY1T6wcW+5i8EpcqALKXBl5exCvK3fTYcuJC9NtT9axO
+	1sE6tGKLUorcLgAw==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=KDwNqFoQ;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=CKCBvC+q
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1741565470; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=VKyzFF9sqmXYhDyE0Ctknq3rDxkaHE2kfW5qcx4F3Vw=;
+	b=KDwNqFoQ1OfaFxm4+cFRAPQG/9lynj1ynPLvXyUtW/eDH0KUuIYqPg5O72cpxP/Zk1C/Y+
+	mehlBAkI9r02PjZFfCVLIG6S//j5OTq2c8ulSv29hm21UuGi+iN+usKAhsqGTGV0XBYiJa
+	mmhD6HUTTzVjz6QdBRenk6UuDxAESdM=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1741565470;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=VKyzFF9sqmXYhDyE0Ctknq3rDxkaHE2kfW5qcx4F3Vw=;
+	b=CKCBvC+qBGhb131WpP1iP4N9DXwY1T6wcW+5i8EpcqALKXBl5exCvK3fTYcuJC9NtT9axO
+	1sE6tGKLUorcLgAw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 22EDB139E7;
+	Mon, 10 Mar 2025 00:10:55 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id vGLtMQ8uzmfhQQAAD6G6ig
+	(envelope-from <neilb@suse.de>); Mon, 10 Mar 2025 00:10:55 +0000
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+From: "NeilBrown" <neilb@suse.de>
+To: "Yunsheng Lin" <yunshenglin0825@gmail.com>
+Cc: "Yunsheng Lin" <linyunsheng@huawei.com>, "Qu Wenruo" <wqu@suse.com>,
+ "Yishai Hadas" <yishaih@nvidia.com>, "Jason Gunthorpe" <jgg@ziepe.ca>,
+ "Shameer Kolothum" <shameerali.kolothum.thodi@huawei.com>,
+ "Kevin Tian" <kevin.tian@intel.com>,
+ "Alex Williamson" <alex.williamson@redhat.com>, "Chris Mason" <clm@fb.com>,
+ "Josef Bacik" <josef@toxicpanda.com>, "David Sterba" <dsterba@suse.com>,
+ "Gao Xiang" <xiang@kernel.org>, "Chao Yu" <chao@kernel.org>,
+ "Yue Hu" <zbestahu@gmail.com>, "Jeffle Xu" <jefflexu@linux.alibaba.com>,
+ "Sandeep Dhavale" <dhavale@google.com>, "Carlos Maiolino" <cem@kernel.org>,
+ "Darrick J. Wong" <djwong@kernel.org>,
+ "Andrew Morton" <akpm@linux-foundation.org>,
+ "Jesper Dangaard Brouer" <hawk@kernel.org>,
+ "Ilias Apalodimas" <ilias.apalodimas@linaro.org>,
+ "David S. Miller" <davem@davemloft.net>, "Eric Dumazet" <edumazet@google.com>,
+ "Jakub Kicinski" <kuba@kernel.org>, "Paolo Abeni" <pabeni@redhat.com>,
+ "Simon Horman" <horms@kernel.org>, "Trond Myklebust" <trondmy@kernel.org>,
+ "Anna Schumaker" <anna@kernel.org>, "Chuck Lever" <chuck.lever@oracle.com>,
+ "Jeff Layton" <jlayton@kernel.org>, "Olga Kornievskaia" <okorniev@redhat.com>,
+ "Dai Ngo" <Dai.Ngo@oracle.com>, "Tom Talpey" <tom@talpey.com>,
+ "Luiz Capitulino" <luizcap@redhat.com>,
+ "Mel Gorman" <mgorman@techsingularity.net>,
+ "Dave Chinner" <david@fromorbit.com>, kvm@vger.kernel.org,
+ virtualization@lists.linux.dev, linux-kernel@vger.kernel.org,
+ linux-btrfs@vger.kernel.org, linux-erofs@lists.ozlabs.org,
+ linux-xfs@vger.kernel.org, linux-mm@kvack.org, netdev@vger.kernel.org,
+ linux-nfs@vger.kernel.org
+Subject: Re: [PATCH v2] mm: alloc_pages_bulk: remove assumption of populating
+ only NULL elements
+In-reply-to: <7abb0e8c-f565-48f0-a393-8dabbabc3fe2@gmail.com>
+References: <>, <7abb0e8c-f565-48f0-a393-8dabbabc3fe2@gmail.com>
+Date: Mon, 10 Mar 2025 11:10:48 +1100
+Message-id: <174156544867.33508.5386967459254083056@noble.neil.brown.name>
+X-Rspamd-Queue-Id: 37A3D21165
+X-Spam-Score: -4.51
+X-Rspamd-Action: no action
+X-Spamd-Result: default: False [-4.51 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	FREEMAIL_TO(0.00)[gmail.com];
+	ARC_NA(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[45];
+	MIME_TRACE(0.00)[0:+];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	RCVD_TLS_ALL(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[huawei.com,suse.com,nvidia.com,ziepe.ca,intel.com,redhat.com,fb.com,toxicpanda.com,kernel.org,gmail.com,linux.alibaba.com,google.com,linux-foundation.org,linaro.org,davemloft.net,oracle.com,talpey.com,techsingularity.net,fromorbit.com,vger.kernel.org,lists.linux.dev,lists.ozlabs.org,kvack.org];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	ASN(0.00)[asn:25478, ipnet:::/0, country:RU];
+	DKIM_TRACE(0.00)[suse.de:+];
+	R_RATELIMIT(0.00)[from(RLewrxuus8mos16izbn),to_ip_from(RLodizb9et8yqpuyyezexhwnjp)];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:dkim]
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git master
-branch HEAD: a66b8b4e9029a87fa7e59ea43fc749ddce6a0ed3  Merge branch into tip/master: 'x86/sev'
+On Mon, 10 Mar 2025, Yunsheng Lin wrote:
+> On 3/8/2025 5:02 AM, NeilBrown wrote:
+>=20
+> ...
+>=20
+> >>
+> >>>    allocated pages in the array - just like the current
+> >>>    alloc_pages_bulk().
+> >>
+> >> I guess 'the total number of allocated pages in the array ' include
+> >> the pages which are already in the array before calling the above
+> >> API?
+> >=20
+> > Yes - just what the current function does.
+> > Though I don't know that we really need that detail.
+> > I think there are three interesting return values:
+> >=20
+> > - hard failure - don't bother trying again soon:   maybe -ENOMEM
+> > - success - all pages are allocated:  maybe 0 (or 1?)
+> > - partial success - at least one page allocated, ok to try again
+> >    immediately - maybe -EAGAIN (or 0).
+>=20
+> Yes, the above makes sense. And I guess returning '-ENOMEM' & '0' &
+> '-EAGAIN' seems like a more explicit value.
+>=20
+> >=20
+> >>
+>=20
+> ...
+>=20
+> >>
+> >=20
+> > If I were do work on this (and I'm not, so you don't have to follow my
+> > ideas) I would separate the bulk_alloc into several inline functions and
+> > combine them into the different interfaces that you want.  This will
+> > result in duplicated object code without duplicated source code.  The
+> > object code should be optimal.
+>=20
+> Thanks for the detailed suggestion, it seems feasible.
+> If the 'add to a linked list' dispose was not removed in the [1],
+> I guess it is worth trying.
+> But I am not sure if it is still worth it at the cost of the above
+> mentioned 'duplicated object code' considering the array defragmenting
+> seem to be able to unify the dispose of 'add to end of array' and
+> 'add to next hole in array'.
+>=20
+> I guess I can try with the easier one using array defragmenting first,
+> and try below if there is more complicated use case.
 
-elapsed time: 847m
+Your post observes a performance improvement - slight though it is.
+I might be worth measuring the performance change for a case that
+requires defragmenting to see how that compares.
 
-configs tested: 119
-configs skipped: 6
+Thanks,
+NeilBrown
 
-The following configs have been built successfully.
-More configs may be tested in the coming days.
 
-tested configs:
-alpha                             allnoconfig    gcc-14.2.0
-alpha                            allyesconfig    gcc-14.2.0
-arc                              allmodconfig    gcc-13.2.0
-arc                               allnoconfig    gcc-13.2.0
-arc                              allyesconfig    gcc-13.2.0
-arc                   randconfig-001-20250309    gcc-13.2.0
-arc                   randconfig-002-20250309    gcc-13.2.0
-arm                              allmodconfig    gcc-14.2.0
-arm                               allnoconfig    clang-17
-arm                              allyesconfig    gcc-14.2.0
-arm                   randconfig-001-20250309    clang-21
-arm                   randconfig-002-20250309    gcc-14.2.0
-arm                   randconfig-003-20250309    clang-21
-arm                   randconfig-004-20250309    gcc-14.2.0
-arm64                            allmodconfig    clang-18
-arm64                             allnoconfig    gcc-14.2.0
-arm64                 randconfig-001-20250309    clang-15
-arm64                 randconfig-002-20250309    clang-17
-arm64                 randconfig-003-20250309    clang-15
-arm64                 randconfig-004-20250309    gcc-14.2.0
-csky                              allnoconfig    gcc-14.2.0
-csky                  randconfig-001-20250309    gcc-14.2.0
-csky                  randconfig-002-20250309    gcc-14.2.0
-hexagon                          allmodconfig    clang-21
-hexagon                           allnoconfig    clang-21
-hexagon                          allyesconfig    clang-18
-hexagon               randconfig-001-20250309    clang-21
-hexagon               randconfig-002-20250309    clang-21
-i386                             allmodconfig    gcc-12
-i386                              allnoconfig    gcc-12
-i386                             allyesconfig    gcc-12
-i386        buildonly-randconfig-001-20250309    clang-19
-i386        buildonly-randconfig-002-20250309    clang-19
-i386        buildonly-randconfig-003-20250309    gcc-11
-i386        buildonly-randconfig-004-20250309    gcc-12
-i386        buildonly-randconfig-005-20250309    clang-19
-i386        buildonly-randconfig-006-20250309    clang-19
-i386                                defconfig    clang-19
-loongarch                        allmodconfig    gcc-14.2.0
-loongarch                         allnoconfig    gcc-14.2.0
-loongarch             randconfig-001-20250309    gcc-14.2.0
-loongarch             randconfig-002-20250309    gcc-14.2.0
-m68k                             allmodconfig    gcc-14.2.0
-m68k                              allnoconfig    gcc-14.2.0
-m68k                             allyesconfig    gcc-14.2.0
-m68k                           virt_defconfig    gcc-14.2.0
-microblaze                       allmodconfig    gcc-14.2.0
-microblaze                        allnoconfig    gcc-14.2.0
-microblaze                       allyesconfig    gcc-14.2.0
-mips                              allnoconfig    gcc-14.2.0
-mips                           mtx1_defconfig    clang-21
-nios2                             allnoconfig    gcc-14.2.0
-nios2                 randconfig-001-20250309    gcc-14.2.0
-nios2                 randconfig-002-20250309    gcc-14.2.0
-openrisc                          allnoconfig    gcc-14.2.0
-openrisc                         allyesconfig    gcc-14.2.0
-openrisc                            defconfig    gcc-14.2.0
-parisc                           allmodconfig    gcc-14.2.0
-parisc                            allnoconfig    gcc-14.2.0
-parisc                           allyesconfig    gcc-14.2.0
-parisc                              defconfig    gcc-14.2.0
-parisc                randconfig-001-20250309    gcc-14.2.0
-parisc                randconfig-002-20250309    gcc-14.2.0
-powerpc                          allmodconfig    gcc-14.2.0
-powerpc                           allnoconfig    gcc-14.2.0
-powerpc                          allyesconfig    clang-16
-powerpc                   motionpro_defconfig    clang-17
-powerpc               randconfig-001-20250309    gcc-14.2.0
-powerpc               randconfig-002-20250309    clang-21
-powerpc               randconfig-003-20250309    clang-21
-powerpc                    socrates_defconfig    gcc-14.2.0
-powerpc64             randconfig-001-20250309    clang-15
-powerpc64             randconfig-002-20250309    gcc-14.2.0
-riscv                            allmodconfig    clang-21
-riscv                             allnoconfig    gcc-14.2.0
-riscv                            allyesconfig    clang-21
-riscv                               defconfig    clang-19
-riscv                 randconfig-001-20250309    clang-15
-riscv                 randconfig-002-20250309    gcc-14.2.0
-s390                             allmodconfig    clang-19
-s390                              allnoconfig    clang-15
-s390                             allyesconfig    gcc-14.2.0
-s390                                defconfig    clang-15
-s390                  randconfig-001-20250309    clang-16
-s390                  randconfig-002-20250309    gcc-14.2.0
-sh                               allmodconfig    gcc-14.2.0
-sh                                allnoconfig    gcc-14.2.0
-sh                               allyesconfig    gcc-14.2.0
-sh                                  defconfig    gcc-14.2.0
-sh                    randconfig-001-20250309    gcc-14.2.0
-sh                    randconfig-002-20250309    gcc-14.2.0
-sh                        sh7785lcr_defconfig    gcc-14.2.0
-sparc                            allmodconfig    gcc-14.2.0
-sparc                             allnoconfig    gcc-14.2.0
-sparc                 randconfig-001-20250309    gcc-14.2.0
-sparc                 randconfig-002-20250309    gcc-14.2.0
-sparc64                             defconfig    gcc-14.2.0
-sparc64               randconfig-001-20250309    gcc-14.2.0
-sparc64               randconfig-002-20250309    gcc-14.2.0
-um                               allmodconfig    clang-21
-um                                allnoconfig    clang-18
-um                               allyesconfig    gcc-12
-um                                  defconfig    clang-21
-um                             i386_defconfig    gcc-12
-um                    randconfig-001-20250309    clang-21
-um                    randconfig-002-20250309    clang-21
-um                           x86_64_defconfig    clang-15
-x86_64                            allnoconfig    clang-19
-x86_64                           allyesconfig    clang-19
-x86_64      buildonly-randconfig-001-20250309    gcc-12
-x86_64      buildonly-randconfig-002-20250309    gcc-11
-x86_64      buildonly-randconfig-003-20250309    gcc-12
-x86_64      buildonly-randconfig-004-20250309    gcc-12
-x86_64      buildonly-randconfig-005-20250309    clang-19
-x86_64      buildonly-randconfig-006-20250309    clang-19
-x86_64                              defconfig    gcc-11
-xtensa                            allnoconfig    gcc-14.2.0
-xtensa                randconfig-001-20250309    gcc-14.2.0
-xtensa                randconfig-002-20250309    gcc-14.2.0
+>=20
+> 1.=20
+> https://lore.kernel.org/all/f1c75db91d08cafd211eca6a3b199b629d4ffe16.173499=
+1165.git.luizcap@redhat.com/
+>=20
+> >=20
+> > The parts of the function are:
+> >   - validity checks - fallback to single page allocation
+> >   - select zone - fallback to single page allocation
+> >   - allocate multiple pages in the zone and dispose of them
+> >   - allocate a single page
+> >=20
+> > The "dispose of them" is one of
+> >    - add to a linked list
+> >    - add to end of array
+> >    - add to next hole in array
+> >=20
+> > These three could be inline functions that the "allocate multiple pages"
+> > and "allocate single page" functions call.  We can pass these as
+> > function arguments and the compile will inline them.
+> > I imagine these little function would take one page and return
+> > a bool indicating if any more are wanted.
+> >=20
+> > The three functions: alloc_bulk_array alloc_bulk_list
+> > alloc_bulk_refill_array would each look like:
+> >=20
+> >    validity checks: do we need to allocate anything?
+> >=20
+> >    if want more than one page &&
+> >       am allowed to do mulipage (e.g. not __GFP_ACCOUNT) &&
+> >       zone =3D choose_zone() {
+> >          alloc_multi_from_zone(zone, dispose_function)
+> >    }
+> >    if nothing allocated
+> >       alloc_single_page(dispose_function)
+> >=20
+> > Each would have a different dispose_function and the initial checks
+> > would be quite different, as would the return value.
+> >=20
+> > Thanks for working on this.
+> >=20
+> > NeilBrown
+> >=20
+>=20
+>=20
 
---
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
 
