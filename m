@@ -1,63 +1,51 @@
-Return-Path: <linux-kernel+bounces-556542-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-556554-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F89AA5CB8A
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 18:05:24 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 00BA6A5CBA9
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 18:07:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A14807AB727
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 17:04:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 93FEC1899BBF
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 17:07:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02DDD261598;
-	Tue, 11 Mar 2025 17:05:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=tuxedocomputers.com header.i=@tuxedocomputers.com header.b="ZJ+WVzv0"
-Received: from mail.tuxedocomputers.com (mail.tuxedocomputers.com [157.90.84.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F0C825FA28;
-	Tue, 11 Mar 2025 17:05:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=157.90.84.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF97B263C72;
+	Tue, 11 Mar 2025 17:05:35 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5366C2620D7;
+	Tue, 11 Mar 2025 17:05:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741712708; cv=none; b=QVZQX8VqwKm0xPnGVamOGPD2KAae5Kv+rdEIlfgEGGyd0xFVASpEjwpzTgUt+ftQSR15Bo8+Ey/mqSOfNbSrd7qyzL/qUeNciaKlfXx+X+e2kvT5VVD6cy5BhZoQx1YRyKUBEkbdY4olHWpCQImMB18svqYbwzA+8tKSKt4vY2c=
+	t=1741712735; cv=none; b=cI9o1hiG0m/C4JAi7eoj/o06qCE7LWIWwzxgkfJ6aUohdSXhMhIxedtel80A0e8w8ecQhx3usF+A+G/2MfCbmpXMTW0pE6i2PR5mjFcbKI3Ta3QiL9IY8n5Q1YlSe4ZUKw9RyiEVO8gHAyrbUoYk/HO0rSnMlp/a+ep6Imjkhb8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741712708; c=relaxed/simple;
-	bh=BHav3oKa2uFyPTW/UrA35WATkduan0OqaEQuXBZpk98=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=uZXUGIDsoO/mFpDePDt/22OUUHTMZasF1HWlKhL5FIGTPtLFTeNgk/jXYJP1JewUWexqOFZB0Ca8yrbTRmMMhRvnD9rq1erFS9RJFT4GFbm2bXilOUGJSkWpXbJFUSW7hUJ2218sbdPfINy/oSCpB8JcuqhWJQGbuShFEs+YpA4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tuxedocomputers.com; spf=pass smtp.mailfrom=tuxedocomputers.com; dkim=pass (1024-bit key) header.d=tuxedocomputers.com header.i=@tuxedocomputers.com header.b=ZJ+WVzv0; arc=none smtp.client-ip=157.90.84.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tuxedocomputers.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxedocomputers.com
-Received: from wse-pc.fritz.box (pd9e59f4f.dip0.t-ipconnect.de [217.229.159.79])
-	(Authenticated sender: wse@tuxedocomputers.com)
-	by mail.tuxedocomputers.com (Postfix) with ESMTPA id 8EB302FC018A;
-	Tue, 11 Mar 2025 18:04:56 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tuxedocomputers.com;
-	s=default; t=1741712696;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=V6R6tm4ns8Um0TDPIr9+P3P4IbmZhumCp0uw8ROTCc4=;
-	b=ZJ+WVzv0g6G5OWKGe7kYYrw7TF6+Bm3gYgM4H/YuoC3A+pzJwBhr4cE1Gyvos0ozBB2KoA
-	I3SppHsDvavbtnz+Jc1G/x9JuXO/+EnmHPVHQdcx25GBqykQC+BhynKap5FToc2UJ6G7nA
-	FYonZWQYeyaCUjrASLHx04fh4HZI+Qg=
-Authentication-Results: mail.tuxedocomputers.com;
-	auth=pass smtp.auth=wse@tuxedocomputers.com smtp.mailfrom=wse@tuxedocomputers.com
-From: Werner Sembach <wse@tuxedocomputers.com>
-To: hdegoede@redhat.com,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: Werner Sembach <wse@tuxedocomputers.com>,
-	linux-input@vger.kernel.org,
+	s=arc-20240116; t=1741712735; c=relaxed/simple;
+	bh=udctrwbuiTyYZLDxzpiksmAUIKV99gHl3fUEtUiKXzs=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ZXkWCGkwERdzj1LG0AqWEfTpY1IUkekz2UI7TfL9Qx+IE9TfLqGutVsOhBl1zI5BmUoRJdMKMq80dj4LvYCsKdVnjXlY/gDs/SXcQrRoOhXPXubxao9+yKYOvYTdv3OIJOEndqJp5O7wUo269pXt9+SJJJIkNmIMD9iJk3vNtsE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4FB73152B;
+	Tue, 11 Mar 2025 10:05:42 -0700 (PDT)
+Received: from e132581.cambridge.arm.com (e132581.arm.com [10.1.196.87])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id BF4663F673;
+	Tue, 11 Mar 2025 10:05:29 -0700 (PDT)
+From: Leo Yan <leo.yan@arm.com>
+To: Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Mike Leach <mike.leach@linaro.org>,
+	James Clark <james.clark@linaro.org>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	coresight@lists.linaro.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-doc@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH 2/2] Input: atkbd - Correctly map F13 - F24
-Date: Tue, 11 Mar 2025 18:04:23 +0100
-Message-ID: <20250311170429.1091067-2-wse@tuxedocomputers.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250311170429.1091067-1-wse@tuxedocomputers.com>
-References: <20250311170429.1091067-1-wse@tuxedocomputers.com>
+Cc: Leo Yan <leo.yan@arm.com>
+Subject: [PATCH v3 0/6] Arm CoreSight: Support AUX pause and resume
+Date: Tue, 11 Mar 2025 17:04:45 +0000
+Message-Id: <20250311170451.611389-1-leo.yan@arm.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,54 +54,56 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Currently only F23 is correctly mapped for PS/2 keyboards.
+This series is to enable AUX pause and resume on Arm CoreSight.
 
-Following to this table:
-https://download.microsoft.com/download/1/6/1/161ba512-40e2-4cc9-843a-923143f3456c/translate.pdf
+The first patch extracts the trace unit controlling operations to two
+functions.  These two functions will be used by AUX pause and resume.
 
-- F24 and Zenkaku/Hankaku share the same scancode, but since in real world
-Zenkaku/Hankaku keys seem to just use the tilde scancode, this patch binds the
-scancode to F24. Note that on userspace side the KEY_ZENKAKUHANKAKU keycode is
-currently not bound in xkeyboard-config, so it is (mostly*) unused anyway.
+Patches 02 and 03 change the ETMv4 driver to prepare callback functions
+for AUX pause and resume.
 
-* Qt on Wayland and therefore KDE on Wayland can see the keypress anyway for
-some reason and it is actually used in a touchpad toggle shortcut, but this is
-currently being fixed in both KDE and xkeyboard-config to make this less weird,
-so it could directly be fixed to correctly handle the F24 keypress instead.
+Patch 04 changes the ETM perf layer to support AUX pause and resume in a
+perf session.  The patches 05 updates buffer on AUX pause occasion,
+which can mitigate the trace data lose issue.
 
-- The scancodes for F13-F22 are currently unmapped so there will probably be no
-harm in mapping them. This would also fix the issue that some of these keys
-can't be mapped as the target from userspace using the `setkeycodes` command.
+Patch 07 documents the AUX pause usages with Arm CoreSight.
 
-Signed-off-by: Werner Sembach <wse@tuxedocomputers.com>
----
- drivers/input/keyboard/atkbd.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+This patch set has been verified on the Hikey960 board and TC platform.
+The previous one uses ETR and the later uses TRBE as sink.
 
-diff --git a/drivers/input/keyboard/atkbd.c b/drivers/input/keyboard/atkbd.c
-index 3598a21d9d014..4bd6e6ef0715e 100644
---- a/drivers/input/keyboard/atkbd.c
-+++ b/drivers/input/keyboard/atkbd.c
-@@ -84,12 +84,12 @@ static const unsigned short atkbd_set2_keycode[ATKBD_KEYMAP_SIZE] = {
- #include "hpps2atkbd.h"	/* include the keyboard scancodes */
- 
- #else
--	  0, 67, 65, 63, 61, 59, 60, 88,  0, 68, 66, 64, 62, 15, 41,117,
--	  0, 56, 42, 93, 29, 16,  2,  0,  0,  0, 44, 31, 30, 17,  3,  0,
--	  0, 46, 45, 32, 18,  5,  4, 95,  0, 57, 47, 33, 20, 19,  6,183,
--	  0, 49, 48, 35, 34, 21,  7,184,  0,  0, 50, 36, 22,  8,  9,185,
--	  0, 51, 37, 23, 24, 11, 10,  0,  0, 52, 53, 38, 39, 25, 12,  0,
--	  0, 89, 40,  0, 26, 13,  0,193, 58, 54, 28, 27,  0, 43,  0, 85,
-+	  0, 67, 65, 63, 61, 59, 60, 88,183, 68, 66, 64, 62, 15, 41,117,
-+	184, 56, 42, 93, 29, 16,  2,  0,185,  0, 44, 31, 30, 17,  3,  0,
-+	186, 46, 45, 32, 18,  5,  4, 95,187, 57, 47, 33, 20, 19,  6,183,
-+	188, 49, 48, 35, 34, 21,  7,184,189,  0, 50, 36, 22,  8,  9,185,
-+	190, 51, 37, 23, 24, 11, 10,  0,191, 52, 53, 38, 39, 25, 12,  0,
-+	192, 89, 40,  0, 26, 13,  0,193, 58, 54, 28, 27,  0, 43,  0,194,
- 	  0, 86, 91, 90, 92,  0, 14, 94,  0, 79,124, 75, 71,121,  0,  0,
- 	 82, 83, 80, 76, 77, 72,  1, 69, 87, 78, 81, 74, 55, 73, 70, 99,
- 
+It is suggested to disable CPUIdle (add `nohlt` option in Linux command
+line) when verifying this series.  ETM and funnel drivers are found
+issues during CPU suspend and resume which will be addressed separately.
+
+Changes from v2:
+- Rebased on CoreSight next branch.
+- Dropped the uAPI 'update_buf_on_pause' and updated document
+  respectively (Suzuki).
+- Renamed ETM callbacks to .pause_perf() and .resume_perf() (Suzuki).
+- Minor improvement for error handling in the AUX resume flow.
+
+Changes from v1:
+- Added validation function pointers in pause and resume APIs (Mike).
+
+
+Leo Yan (6):
+  coresight: etm4x: Extract the trace unit controlling
+  coresight: Introduce pause and resume APIs for source
+  coresight: etm4x: Hook pause and resume callbacks
+  coresight: perf: Support AUX trace pause and resume
+  coresight: perf: Update buffer on AUX pause
+  Documentation: coresight: Document AUX pause and resume
+
+ .../trace/coresight/coresight-perf.rst        |  31 ++++
+ drivers/hwtracing/coresight/coresight-core.c  |  22 +++
+ .../hwtracing/coresight/coresight-etm-perf.c  |  84 +++++++++-
+ .../coresight/coresight-etm4x-core.c          | 143 +++++++++++++-----
+ drivers/hwtracing/coresight/coresight-etm4x.h |   2 +
+ drivers/hwtracing/coresight/coresight-priv.h  |   2 +
+ include/linux/coresight.h                     |   4 +
+ 7 files changed, 246 insertions(+), 42 deletions(-)
+
 -- 
-2.43.0
+2.34.1
 
 
