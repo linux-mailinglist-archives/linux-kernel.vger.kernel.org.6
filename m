@@ -1,137 +1,154 @@
-Return-Path: <linux-kernel+bounces-556153-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-556154-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A0F68A5C188
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 13:41:28 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1A63BA5C18A
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 13:41:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B99DB3AABF8
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 12:40:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 83B053A63F2
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 12:41:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 943ED2571BC;
-	Tue, 11 Mar 2025 12:40:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBA6A253F3B;
+	Tue, 11 Mar 2025 12:41:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="X0hm4EI7"
-Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QGQHkBh5"
+Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06B112571BA
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 12:40:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0503179BC;
+	Tue, 11 Mar 2025 12:41:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741696817; cv=none; b=LC+WAaBntQ48kGdKfJAYwB9sedKQVkYYnY5l+V/Fb6HxkldLriN5bJnEoNiQSIOuII2q2frgh54jsg3QU4fmxYaiGxWtVEIIbgplNB48Ycz5x12sDSvlr3C33VL4cSyeuC72gEiC/gkQh4vcDR+En7FHPlPk9MSqyfNMg5igzO0=
+	t=1741696876; cv=none; b=WReakUAkHYnwxfD3yr/pzd6cilUw1hKJnfJSu0irp4YJwzJbtIRn6YwxyD3fN2jR3GTKmINoz7O2ET/3NwuslS9cgVX0hdvVQS3P1CykuWV6S3tkcocfMQ4tA3bQrs9CANWih5kjX7Tjp2p8jS7SReG1ONIn8U8WnOgVQPEvrFs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741696817; c=relaxed/simple;
-	bh=eFLglormP4BRNTD9McBheIkazL8hunpP5eO6YCoRoD0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QLHm4oN5Cko3+sZloKJ81MvdRmnJ4+sT1DUiovoVj2WSP4C4fx+5Z6vAHeZ/HUttoOOCPQ1O8FKp4bqLZZl/QXUijHUL6tXwM1zdUYw0iTv/i9p2Vu471JNk+fqN/kBbHiCP+ivpOvjiaBRsacB8jpYm27vncqYKj7F7BX7X9ss=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=X0hm4EI7; arc=none smtp.client-ip=209.85.221.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-39140bd6317so1970811f8f.1
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 05:40:14 -0700 (PDT)
+	s=arc-20240116; t=1741696876; c=relaxed/simple;
+	bh=yr2NeM5xZd+21Kz+8dbrA+63YokkKPeruGiWILIFWq0=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=uYw0VGgPXA5wMumr8jOY40lP7Rv/4JMMxQ//5Z8v3hmBoapZW/bLH+1ageEJG/O0RbLLCR9YOEZr9x/JoAR9CrDJwRV3t3j7EzFNeEXh+20GgEj5eh0Xx1CrZgce70LNkFzWXPHTDnqy+pIv0f0VzpeqwVh/b7P1PZg17h1SPqE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QGQHkBh5; arc=none smtp.client-ip=209.85.214.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-22334203781so113184365ad.0;
+        Tue, 11 Mar 2025 05:41:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1741696813; x=1742301613; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=aISzCXBUSpl9Jdl7q1Wak8jR4Cx9Bei2SZjKv/F88EM=;
-        b=X0hm4EI7PM4g/EBVtBGHE2kYgtPVj6vYqP0/VUrsQA1FSRTiojMeYsRNxAf61iPZLX
-         mLSQS+mJ5FeiqKU0MEIuWNC8Yr8NbT9Qi0OZ5GAr67gbh0ocRTobC+qwZdqbn8EwFJ2D
-         x2YAftG3oN68T220lo24HNP9Vc63BBl0jMF4m90ZnlbpOme0N5IX0VShW0MMlhodgCPI
-         QMAOarzY8o06cQOtkh3w4EjWSSFigImIr+NiLxAJj7JwHlyuNbfongbuVSKXk/LUwMe4
-         TAq2QnNKDFHOSOVNfLayZU6qLDrmECMsZufinD4gpE4hrKO0CSAauyRJNhzTW1ZDNJDG
-         fspw==
+        d=gmail.com; s=20230601; t=1741696874; x=1742301674; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=4M/3rcO0sPMe5Iql+QqO4QeWNUxz9DotePxQss5GMBg=;
+        b=QGQHkBh58iYg92nHf4agc75f3pNI9dfDnSue90gseIs2jJj4I/jaR65YS4oyhf+D61
+         nBHJLlOo9Ojiww0wvRS/6hw4AUcRpStxQD6OWO5Y1vD8Sd3FYVx0880PrtelGndBhFq0
+         7qFC3vNjyjpcGW25LG9fDdijGAtWaylJzuYugto5xHWuesJBiO3aMz7ECs9pHPU2hFQ6
+         H7OtdY3M41tn1oZ+KlRbiosUaZ2wk03lDWtdHz/BItjGzBsHp1sCQWo3ICQB9KHLsF2O
+         pPsjbX8/HGtQxaP8WQhHem3xuN1jnCCOjoVvlI5/UZhKkg6Gtih8rGV9MNIYuytvTgYa
+         W5Zw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741696813; x=1742301613;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=aISzCXBUSpl9Jdl7q1Wak8jR4Cx9Bei2SZjKv/F88EM=;
-        b=ElctF1KQjV245YtIEG0tOPAmDImNrXbNuVDJ0yLZIYKHmOqSkrK74vvyEezygRDgB/
-         zMyUIqkefLSecdUKhNyryMbqxC8VLRvK+VHRB6xqnczUtgH+RUTL2AVU7be8cYoseB3Q
-         6mRRURExxSHt1ewmCDBiI9dDPm4z6GZGAD0MWsC29MEC1FwsaLS9za+Ej/WXIY+p77Yn
-         c7o2+ZmNp8covMA5aFPbXCDB8+jIFl1Qw8NmIjnSsz1VwnWdrVepHY/87riwTldkypVW
-         S5+DuMUsmYjBaVD5AQYSzThNa7MgkH4k6bqpnOudBSAmlyW4Rs2uZN/qUL9d9hVLV7sx
-         88NA==
-X-Forwarded-Encrypted: i=1; AJvYcCUwBkqhdgLCRn2kYj89djdPwI3p/mTL3mGWXAG48rY7wpMmpOGwe/7W05GpslBouKjt6wQkAXsAPqUiW8o=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyd9M14U7AnQcjsQRTZDSYBGw0MEm+UdRlAB5haacKBJGD2BQuk
-	gHy4aCkAf/K3TS91E3xB5fUbT3XxzDG2dyRuztwWtrkJa7HDpWyMApNrpXP3MK0=
-X-Gm-Gg: ASbGnctGxAHkL9lWyaBBjE/YJ63Af37Ld5hHXJWMbD0m8rYkAZOHxSBZffskTuT0een
-	M9Cghi9uJc0CN5jpyBJDPsO4/yv034L0z6mg700QcQ+EP1YVkPH5+hXJOQT/rtY48VaD3f9M9VJ
-	S2OZF2TnilmZbYuvjnelg4z1lPE1aAyt2UHsdSyf8V7FCVnRbmk+SoJKCVEi1rlrV4948AWqbhc
-	othOOjClHwsz9dfJZjDxmhP201lvLTgWxT0O5OcfxMTfJxi/myWyhi4dq9VBrau54RHBO04WTDa
-	0+pgeJJY0y4Sf3+g1Cptb4841L5TELSKpavNeEKetAQADqs=
-X-Google-Smtp-Source: AGHT+IH+hqLaIb0ak3/PDp2FI+P/Br6EuYDT0bw+M1n8JTY5wRGCazId9C1SCJxp8KfNPqmCL4R8NQ==
-X-Received: by 2002:a05:6000:186b:b0:391:231b:8e0d with SMTP id ffacd0b85a97d-39132dc5632mr17143565f8f.39.1741696813238;
-        Tue, 11 Mar 2025 05:40:13 -0700 (PDT)
-Received: from pathway.suse.cz ([176.114.240.130])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3912c1031e3sm17759906f8f.82.2025.03.11.05.40.12
+        d=1e100.net; s=20230601; t=1741696874; x=1742301674;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=4M/3rcO0sPMe5Iql+QqO4QeWNUxz9DotePxQss5GMBg=;
+        b=aTD6N9S0lOAxZ4MNxC9nDf1ZohHu5ratMoWpJB9gHz28NTrWqqdrTXjOIR6O+E+sB8
+         sNAmHSxk88RpxsiQ2Mrf9QWG5FNfNC/SZbaB/EaEbzNHE07JMi5R1Ckeah/3PP2PkQI+
+         Z1VnyBXQoIhGRPJfWb0bOU8U3FHZkL6IVxzHk1oFMVZjdyovmsCHrP1a+FuC8ISDIm7m
+         U27ia12pYbO2vkjAuJJsnvHtH7PyD6qZnqyyreEEn5fz/ciUZTlw8c5Tt/zORex8ICxY
+         nRlCZ0u7tTBMkSbMXOFO4EdvPqExtOSkhcVyf2qd1AJM3DNgBb3yAhavx0bDKzNfy5D+
+         A6PA==
+X-Forwarded-Encrypted: i=1; AJvYcCWAE1kfOdqL2wbdvnQa8Q/Wh3Kfk636FASukp7nQ+DgEa086cnBp31Z220U93u/D4oNdGuovZoxC6Y=@vger.kernel.org, AJvYcCXcdyDV3EbDs3D+qHQKQmaQda8euevp9G2Qn9ts+DZ6/JboXkPhAldOoR0z3jGOSpwIDOyiYF4jjocDcL2prfZXXRat@vger.kernel.org, AJvYcCXrkKh4c6TgKmHDFM6xlSxIoszIGme7X4ZXcwAjn5xFisK3QyXH5ZtJmEEXl1Submyxeis9wg/cbQhcZ/1I@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywlo0jvhbXgcJDlKcaB49NS9YMRdp6ROPqGSW9xigSKe4kbL1lQ
+	sZjwS1YC1PWloMuuB1LhEH2s7DTXXsWRYcpMEj2vImKd4V5PkCndKN/yWpH18V4=
+X-Gm-Gg: ASbGncuHPF5Rcs2LbX6ufT3dkOJa8cWXp3Kah2A1btpr5Y83JRittOuGOQKz866L1CH
+	aYT5lTc14AlAip4EVPhIJZibz6Zj8Je5Y4hUVlr4RDjp/Ev92elvtc68v9/ew/6iwANBnPY82s5
+	2XdWuzf+SGLvym1WT+FzH4yZ+DWStxVae8KA4LsgNf/0l4VjXvS1f3AOx0UeufehgIT8S+G1qxk
+	MdhZZQcDA4RHWOTWzDLLEHA+H+Aro/HnIiCGm7ExtcfUjFx/MyJHHLvbLXP7Jsj/ROsuXZswht0
+	tl0mbFNHjadlGl2ePkWd1n6EZNtp4QOcMUtdfoDByH3Y+vsmjhx0QFV+8APVW3bkMEL0UEWKvBY
+	=
+X-Google-Smtp-Source: AGHT+IGbBt3MHqJzH5ZhEpirMtpUqWFE9g6anhi16GbPmNioXomk9deQYpDwtvN1C6fHqh6lIYRUtA==
+X-Received: by 2002:a05:6a00:928f:b0:736:b923:5323 with SMTP id d2e1a72fcca58-736ec8d9671mr4402887b3a.10.1741696874095;
+        Tue, 11 Mar 2025 05:41:14 -0700 (PDT)
+Received: from purva-IdeaPad-Gaming-3-15IHU6.. ([14.139.108.62])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-736c005e7b7sm6689856b3a.107.2025.03.11.05.41.09
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 11 Mar 2025 05:40:12 -0700 (PDT)
-Date: Tue, 11 Mar 2025 13:40:10 +0100
-From: Petr Mladek <pmladek@suse.com>
-To: Marcos Paulo de Souza <mpdesouza@suse.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Eric Biederman <ebiederm@xmission.com>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Len Brown <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	John Ogness <john.ogness@linutronix.de>,
-	Sergey Senozhatsky <senozhatsky@chromium.org>,
-	Todd E Brandt <todd.e.brandt@linux.intel.com>,
-	Jiri Slaby <jirislaby@kernel.org>, linux-kernel@vger.kernel.org,
-	kexec@lists.infradead.org, linux-pm@vger.kernel.org,
-	linux-serial@vger.kernel.org
-Subject: Re: [PATCH 0/5] printk: renaming some suspend/resume functions and
- one fix for unblanking
-Message-ID: <Z9AvKmM4Li57-E2E@pathway.suse.cz>
-References: <20250226-printk-renaming-v1-0-0b878577f2e6@suse.com>
- <Z9AShs1dEO0jrgjL@pathway.suse.cz>
+        Tue, 11 Mar 2025 05:41:13 -0700 (PDT)
+From: Purva Yeshi <purvayeshi550@gmail.com>
+To: rostedt@goodmis.org,
+	mhiramat@kernel.org,
+	corbet@lwn.net
+Cc: mathieu.desnoyers@efficios.com,
+	linux-kernel@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org,
+	linux-doc@vger.kernel.org,
+	Purva Yeshi <purvayeshi550@gmail.com>
+Subject: [PATCH 1/3] docs: tracing: Reduce maxdepth in index documentation
+Date: Tue, 11 Mar 2025 18:10:29 +0530
+Message-Id: <20250311124029.22866-1-purvayeshi550@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z9AShs1dEO0jrgjL@pathway.suse.cz>
+Content-Transfer-Encoding: 8bit
 
-On Tue 2025-03-11 11:38:00, Petr Mladek wrote:
-> On Wed 2025-02-26 16:59:00, Marcos Paulo de Souza wrote:
-> > Hello, I've being working on some patches that help to clarify the suspend/resume
-> > of printk machinery. The last patch on this patchset address one issue regarding
-> > suspended consoles and blanking.
-> > 
-> > This is a part one patchset that I would like to see merged before I send more patches
-> > that will rework the suspend flag (a global suspend flag istead of per console) and
-> > the removal of CON_ENABLED flag later on (I've created a function that will forcibly)
-> > register the console instead of using this flag.
-> > 
-> > Please review!
-> > 
-> > Signed-off-by: Marcos Paulo de Souza <mpdesouza@suse.com>
-> 
-> Looks good to me. I could fix the typos when pushing.
-> 
-> Well, there is one more thing. It seems that the simple graphic logger
-> was merged for 6.14-rc1. And the console_stop()/console_start() API
-> is used also in drivers/gpu/drm/clients/drm_log.c.
-> 
-> It is actually the code which motivated this rename, as already
-> pointed out by John, see
-> https://lore.kernel.org/lkml/ZyoNZfLT6tlVAWjO@pathway.suse.cz/
-> 
-> Well, I am going to update these two locations when pushing this
-> as well. Let's just get this change done.
+Reduce :maxdepth: from 2 to 1 in index.rst to simplify the table of
+contents, showing only top-level document titles for better readability.
 
-And I did as mentioned above.
+Signed-off-by: Purva Yeshi <purvayeshi550@gmail.com>
+---
+ Documentation/trace/index.rst | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
-JFYI, the patcheset has been committed into printk/linux.git,
-branch for-6.15-console-suspend-api-cleanup.
+diff --git a/Documentation/trace/index.rst b/Documentation/trace/index.rst
+index 6b268194f..5ddd47ee7 100644
+--- a/Documentation/trace/index.rst
++++ b/Documentation/trace/index.rst
+@@ -14,7 +14,7 @@ This section provides an overview of Linux tracing mechanisms
+ and debugging approaches.
+ 
+ .. toctree::
+-   :maxdepth: 2
++   :maxdepth: 1
+ 
+    debugging
+    tracepoints
+@@ -28,7 +28,7 @@ The following are the primary tracing frameworks integrated into
+ the Linux kernel.
+ 
+ .. toctree::
+-   :maxdepth: 2
++   :maxdepth: 1
+ 
+    ftrace
+    ftrace-design
+@@ -47,7 +47,7 @@ A detailed explanation of event tracing mechanisms and their
+ applications.
+ 
+ .. toctree::
+-   :maxdepth: 2
++   :maxdepth: 1
+ 
+    events
+    events-kmem
+@@ -65,7 +65,7 @@ This section covers tracing features that monitor hardware
+ interactions and system performance.
+ 
+ .. toctree::
+-   :maxdepth: 2
++   :maxdepth: 1
+ 
+    intel_th
+    stm
+@@ -85,7 +85,7 @@ These tools allow tracing user-space applications and
+ interactions.
+ 
+ .. toctree::
+-   :maxdepth: 2
++   :maxdepth: 1
+ 
+    user_events
+ 
+-- 
+2.34.1
 
-Best Regards,
-Petr
 
