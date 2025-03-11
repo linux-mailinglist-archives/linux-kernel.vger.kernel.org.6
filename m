@@ -1,37 +1,37 @@
-Return-Path: <linux-kernel+bounces-556742-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-556743-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 36C01A5CE13
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 19:42:52 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 29F70A5CE12
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 19:42:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 658F03A46A7
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 18:42:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3D6A517D84B
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 18:42:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12F492620E5;
-	Tue, 11 Mar 2025 18:40:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57446263F30;
+	Tue, 11 Mar 2025 18:41:00 +0000 (UTC)
 Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE9B6264F83
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 18:40:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B920E264F93
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 18:40:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741718455; cv=none; b=fE/3a25TtFmaayyIuscfuyX/3ngFfvaIJYbF1bhTYy2FEDVRNrDUS6tWBvLrqbh4/5g8uO3u0Htbk8Zqv37oygSOq3mpC+cBdi7pi5VWgaYH+JfNcRomwewp0VkqR7Snd0gTDW1HrGX8zjdGQSe8URh9Co+hXJahP0ea5j/fMjo=
+	t=1741718459; cv=none; b=Mw+gOEuGtAOzj4Mf7+6Wr2kkr3lyTTO5IrnUzfHsnNDDM/XJOd6zjd/8RTLohqwjdYYIP2bL5j2O4TBGIZShrhYlbnu8qleVZZLSiJfn0zxZigs1JksLj1hk4EBra/kYsXqpbXyI6KnC0h9jXivptrpX4y5D1P865LcNQv60A1o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741718455; c=relaxed/simple;
-	bh=JPc8u02/qcXj5iOAULT0TRxIFltrzTXjIAfhuc345Ck=;
+	s=arc-20240116; t=1741718459; c=relaxed/simple;
+	bh=616hTUR6IFZ3lVm4uiCHm6fQ4taBBoJ3UxwHzfB59l8=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=j/rhQ+NcHO5E0wIHqHFi/kSwWvMwznJxTtAiBrL5G1oLgwifCzP1w0C170RvYxfkBiTvARwQl3E5VmqWBq43Z0k6aeGiNVM3Z6a/y59btfYNGxEdQA2EVckYhsDIxAey3Ev3xd2hGrs4LD4P1+i4/Rgqk03xhN/4hnzrqjUo1+k=
+	 MIME-Version; b=j6keD+PWRorn0goNm/gooGh4BrT0DxmUgCvWdm5yzz1Mugk7uzIMsqqUnNdg3OBBsfkX6vd3z6gL+YtIm8HTOs5Bxx93N5iIyBU7QMulr1IIz8FXgMviZIv6WCkEJfjICZWlDz7t4nJXkNkKj5rPAXPh8k51qb/fBNBW0JeTJ3w=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 57EE21688;
-	Tue, 11 Mar 2025 11:41:04 -0700 (PDT)
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1551C1515;
+	Tue, 11 Mar 2025 11:41:08 -0700 (PDT)
 Received: from merodach.members.linode.com (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E8ED83F694;
-	Tue, 11 Mar 2025 11:40:49 -0700 (PDT)
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 9183C3F694;
+	Tue, 11 Mar 2025 11:40:53 -0700 (PDT)
 From: James Morse <james.morse@arm.com>
 To: x86@kernel.org,
 	linux-kernel@vger.kernel.org
@@ -61,10 +61,11 @@ Cc: Reinette Chatre <reinette.chatre@intel.com>,
 	Shanker Donthineni <sdonthineni@nvidia.com>,
 	fenghuay@nvidia.com,
 	Shaopeng Tan <tan.shaopeng@jp.fujitsu.com>,
-	Babu Moger <babu.moger@amd.com>
-Subject: [PATCH v8:for-boris 12/30] x86/resctrl: Move rdt_find_domain() to be visible to arch and fs code
-Date: Tue, 11 Mar 2025 18:36:57 +0000
-Message-Id: <20250311183715.16445-13-james.morse@arm.com>
+	Babu Moger <babu.moger@amd.com>,
+	Tony Luck <tony.luck@intel.com>
+Subject: [PATCH v8:for-boris 13/30] x86/resctrl: Move resctrl types to a separate header
+Date: Tue, 11 Mar 2025 18:36:58 +0000
+Message-Id: <20250311183715.16445-14-james.morse@arm.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20250311183715.16445-1-james.morse@arm.com>
 References: <20250311183715.16445-1-james.morse@arm.com>
@@ -76,200 +77,237 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-rdt_find_domain() finds a domain given a resource and a cache-id.
-This is used by both the architecture code and the filesystem code.
+When resctrl is fully factored into core and per-arch code, each arch
+will need to use some resctrl common definitions in order to define its
+own specializations and helpers.  Following conventional practice, it
+would be desirable to put the dependent arch definitions in an
+<asm/resctrl.h> header that is included by the common <linux/resctrl.h>
+header.  However, this can make it awkward to avoid a circular
+dependency between <linux/resctrl.h> and the arch header.
 
-After the filesystem code moves to live in /fs/, this helper is either
-duplicated by all architectures, or needs exposing by the filesystem code.
+To avoid such dependencies, move the affected common types and
+constants into a new header that does not need to depend on
+<linux/resctrl.h> or on the arch headers.
 
-Add the declaration to the global header file. As its now globally visible,
-and has only a handful of callers, swap the 'rdt' for 'resctrl'. Move
-the function to live with its caller in ctrlmondata.c as the filesystem
-code will not have anything corresponding to core.c.
+The same logic applies to the monitor-configuration defines, move these
+too.
+
+Some kind of enumeration for events is needed between the filesystem
+and architecture code. Take the x86 definition as its convenient for
+x86.
+
+The definition of enum resctrl_event_id is needed to allow the
+architecture code to define resctrl_arch_mon_ctx_alloc() and
+resctrl_arch_mon_ctx_free().
+
+The definition of enum resctrl_res_level is needed to allow the
+architecture code to define resctrl_arch_set_cdp_enabled() and
+resctrl_arch_get_cdp_enabled().
+
+The bits for mbm_local_bytes_config et al are ABI, and must be the same
+on all architectures. These are documented in
+Documentation/arch/x86/resctrl.rst
+
+The maintainers entry for these headers was missed when resctrl.h was
+created. Add a wildcard entry to match both resctrl.h and
+resctrl_types.h.
 
 Signed-off-by: James Morse <james.morse@arm.com>
-Tested-by: Peter Newman <peternewman@google.com>
+Tested-by: Carl Worth <carl@os.amperecomputing.com> # arm64
 Tested-by: Shaopeng Tan <tan.shaopeng@jp.fujitsu.com>
+Tested-by: Peter Newman <peternewman@google.com>
 Tested-by: Amit Singh Tomar <amitsinght@marvell.com> # arm64
 Tested-by: Shanker Donthineni <sdonthineni@nvidia.com> # arm64
 Tested-by: Babu Moger <babu.moger@amd.com>
-Reviewed-by: Fenghua Yu <fenghuay@nvidia.com>
+Reviewed-by: Shaopeng Tan <tan.shaopeng@jp.fujitsu.com>
+Reviewed-by: Tony Luck <tony.luck@intel.com>
 Reviewed-by: Reinette Chatre <reinette.chatre@intel.com>
+Reviewed-by: Fenghua Yu <fenghuay@nvidia.com>
 ---
-Changes since v7:
- * "definition" -> "declaration"
-
 Changes since v6:
- * Don't inline this helper.
- * Moved some words from the discussion into the commit message.
+ * Used a different year in the boiler-plate copyright notice.
 
-Changes since v5:
- * This patch replaced one that split off the 'new entry to insert'
-   behaviour.
+Change since v3:
+ * Added header include.
+ * Corrected lists in the commit message.
+
+Changes since v2:
+ * Added to the commit message why each of these things is necessary.
+ * Moved the enum resctrl_conf_type back to resctrl.h - this week arm's
+   CDP emulation code gets away without this...
+
+Changes since v1:
+ * [Commit message only] Rewrite commit message to clarify the the
+   rationale for refactoring the headers in this way.
 ---
- arch/x86/kernel/cpu/resctrl/core.c        | 38 +++--------------------
- arch/x86/kernel/cpu/resctrl/ctrlmondata.c | 24 +++++++++++++-
- arch/x86/kernel/cpu/resctrl/internal.h    |  2 --
- include/linux/resctrl.h                   | 14 +++++++++
- 4 files changed, 41 insertions(+), 37 deletions(-)
+ MAINTAINERS                            |  1 +
+ arch/x86/include/asm/resctrl.h         |  1 +
+ arch/x86/kernel/cpu/resctrl/internal.h | 24 ------------
+ include/linux/resctrl.h                | 21 +---------
+ include/linux/resctrl_types.h          | 54 ++++++++++++++++++++++++++
+ 5 files changed, 57 insertions(+), 44 deletions(-)
+ create mode 100644 include/linux/resctrl_types.h
 
-diff --git a/arch/x86/kernel/cpu/resctrl/core.c b/arch/x86/kernel/cpu/resctrl/core.c
-index 212995149eac..850cb8643c4a 100644
---- a/arch/x86/kernel/cpu/resctrl/core.c
-+++ b/arch/x86/kernel/cpu/resctrl/core.c
-@@ -394,36 +394,6 @@ void rdt_ctrl_update(void *arg)
- 	hw_res->msr_update(m);
- }
+diff --git a/MAINTAINERS b/MAINTAINERS
+index efee40ea589f..3487ac429a9a 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -19881,6 +19881,7 @@ S:	Supported
+ F:	Documentation/arch/x86/resctrl*
+ F:	arch/x86/include/asm/resctrl.h
+ F:	arch/x86/kernel/cpu/resctrl/
++F:	include/linux/resctrl*.h
+ F:	tools/testing/selftests/resctrl/
  
--/*
-- * rdt_find_domain - Search for a domain id in a resource domain list.
-- *
-- * Search the domain list to find the domain id. If the domain id is
-- * found, return the domain. NULL otherwise.  If the domain id is not
-- * found (and NULL returned) then the first domain with id bigger than
-- * the input id can be returned to the caller via @pos.
-- */
--struct rdt_domain_hdr *rdt_find_domain(struct list_head *h, int id,
--				       struct list_head **pos)
--{
--	struct rdt_domain_hdr *d;
--	struct list_head *l;
--
--	list_for_each(l, h) {
--		d = list_entry(l, struct rdt_domain_hdr, list);
--		/* When id is found, return its domain. */
--		if (id == d->id)
--			return d;
--		/* Stop searching when finding id's position in sorted list. */
--		if (id < d->id)
--			break;
--	}
--
--	if (pos)
--		*pos = l;
--
--	return NULL;
--}
--
- static void setup_default_ctrlval(struct rdt_resource *r, u32 *dc)
- {
- 	struct rdt_hw_resource *hw_res = resctrl_to_arch_res(r);
-@@ -534,7 +504,7 @@ static void domain_add_cpu_ctrl(int cpu, struct rdt_resource *r)
- 		return;
- 	}
+ READ-COPY UPDATE (RCU)
+diff --git a/arch/x86/include/asm/resctrl.h b/arch/x86/include/asm/resctrl.h
+index 6908cd0e6e40..52f2326e2b1e 100644
+--- a/arch/x86/include/asm/resctrl.h
++++ b/arch/x86/include/asm/resctrl.h
+@@ -6,6 +6,7 @@
  
--	hdr = rdt_find_domain(&r->ctrl_domains, id, &add_pos);
-+	hdr = resctrl_find_domain(&r->ctrl_domains, id, &add_pos);
- 	if (hdr) {
- 		if (WARN_ON_ONCE(hdr->type != RESCTRL_CTRL_DOMAIN))
- 			return;
-@@ -589,7 +559,7 @@ static void domain_add_cpu_mon(int cpu, struct rdt_resource *r)
- 		return;
- 	}
+ #include <linux/jump_label.h>
+ #include <linux/percpu.h>
++#include <linux/resctrl_types.h>
+ #include <linux/sched.h>
  
--	hdr = rdt_find_domain(&r->mon_domains, id, &add_pos);
-+	hdr = resctrl_find_domain(&r->mon_domains, id, &add_pos);
- 	if (hdr) {
- 		if (WARN_ON_ONCE(hdr->type != RESCTRL_MON_DOMAIN))
- 			return;
-@@ -654,7 +624,7 @@ static void domain_remove_cpu_ctrl(int cpu, struct rdt_resource *r)
- 		return;
- 	}
- 
--	hdr = rdt_find_domain(&r->ctrl_domains, id, NULL);
-+	hdr = resctrl_find_domain(&r->ctrl_domains, id, NULL);
- 	if (!hdr) {
- 		pr_warn("Can't find control domain for id=%d for CPU %d for resource %s\n",
- 			id, cpu, r->name);
-@@ -700,7 +670,7 @@ static void domain_remove_cpu_mon(int cpu, struct rdt_resource *r)
- 		return;
- 	}
- 
--	hdr = rdt_find_domain(&r->mon_domains, id, NULL);
-+	hdr = resctrl_find_domain(&r->mon_domains, id, NULL);
- 	if (!hdr) {
- 		pr_warn("Can't find monitor domain for id=%d for CPU %d for resource %s\n",
- 			id, cpu, r->name);
-diff --git a/arch/x86/kernel/cpu/resctrl/ctrlmondata.c b/arch/x86/kernel/cpu/resctrl/ctrlmondata.c
-index 5d87f279085f..763317ea2256 100644
---- a/arch/x86/kernel/cpu/resctrl/ctrlmondata.c
-+++ b/arch/x86/kernel/cpu/resctrl/ctrlmondata.c
-@@ -610,6 +610,28 @@ int rdtgroup_mba_mbps_event_show(struct kernfs_open_file *of,
- 	return ret;
- }
- 
-+struct rdt_domain_hdr *resctrl_find_domain(struct list_head *h, int id,
-+					   struct list_head **pos)
-+{
-+	struct rdt_domain_hdr *d;
-+	struct list_head *l;
-+
-+	list_for_each(l, h) {
-+		d = list_entry(l, struct rdt_domain_hdr, list);
-+		/* When id is found, return its domain. */
-+		if (id == d->id)
-+			return d;
-+		/* Stop searching when finding id's position in sorted list. */
-+		if (id < d->id)
-+			break;
-+	}
-+
-+	if (pos)
-+		*pos = l;
-+
-+	return NULL;
-+}
-+
- void mon_event_read(struct rmid_read *rr, struct rdt_resource *r,
- 		    struct rdt_mon_domain *d, struct rdtgroup *rdtgrp,
- 		    cpumask_t *cpumask, int evtid, int first)
-@@ -695,7 +717,7 @@ int rdtgroup_mondata_show(struct seq_file *m, void *arg)
- 		 * This file provides data from a single domain. Search
- 		 * the resource to find the domain with "domid".
- 		 */
--		hdr = rdt_find_domain(&r->mon_domains, domid, NULL);
-+		hdr = resctrl_find_domain(&r->mon_domains, domid, NULL);
- 		if (!hdr || WARN_ON_ONCE(hdr->type != RESCTRL_MON_DOMAIN)) {
- 			ret = -ENOENT;
- 			goto out;
+ /*
 diff --git a/arch/x86/kernel/cpu/resctrl/internal.h b/arch/x86/kernel/cpu/resctrl/internal.h
-index 8291f1b59981..da73404183da 100644
+index da73404183da..5f3713fb2eaf 100644
 --- a/arch/x86/kernel/cpu/resctrl/internal.h
 +++ b/arch/x86/kernel/cpu/resctrl/internal.h
-@@ -581,8 +581,6 @@ void rdtgroup_kn_unlock(struct kernfs_node *kn);
- int rdtgroup_kn_mode_restrict(struct rdtgroup *r, const char *name);
- int rdtgroup_kn_mode_restore(struct rdtgroup *r, const char *name,
- 			     umode_t mask);
--struct rdt_domain_hdr *rdt_find_domain(struct list_head *h, int id,
--				       struct list_head **pos);
- ssize_t rdtgroup_schemata_write(struct kernfs_open_file *of,
- 				char *buf, size_t nbytes, loff_t off);
- int rdtgroup_schemata_show(struct kernfs_open_file *of,
+@@ -32,30 +32,6 @@
+  */
+ #define MBM_CNTR_WIDTH_OFFSET_MAX (62 - MBM_CNTR_WIDTH_BASE)
+ 
+-/* Reads to Local DRAM Memory */
+-#define READS_TO_LOCAL_MEM		BIT(0)
+-
+-/* Reads to Remote DRAM Memory */
+-#define READS_TO_REMOTE_MEM		BIT(1)
+-
+-/* Non-Temporal Writes to Local Memory */
+-#define NON_TEMP_WRITE_TO_LOCAL_MEM	BIT(2)
+-
+-/* Non-Temporal Writes to Remote Memory */
+-#define NON_TEMP_WRITE_TO_REMOTE_MEM	BIT(3)
+-
+-/* Reads to Local Memory the system identifies as "Slow Memory" */
+-#define READS_TO_LOCAL_S_MEM		BIT(4)
+-
+-/* Reads to Remote Memory the system identifies as "Slow Memory" */
+-#define READS_TO_REMOTE_S_MEM		BIT(5)
+-
+-/* Dirty Victims to All Types of Memory */
+-#define DIRTY_VICTIMS_TO_ALL_MEM	BIT(6)
+-
+-/* Max event bits supported */
+-#define MAX_EVT_CONFIG_BITS		GENMASK(6, 0)
+-
+ /**
+  * cpumask_any_housekeeping() - Choose any CPU in @mask, preferring those that
+  *			        aren't marked nohz_full
 diff --git a/include/linux/resctrl.h b/include/linux/resctrl.h
-index f1979e375da9..93d9a435f035 100644
+index 93d9a435f035..326f7ba220e7 100644
 --- a/include/linux/resctrl.h
 +++ b/include/linux/resctrl.h
-@@ -372,6 +372,20 @@ static inline void resctrl_arch_rmid_read_context_check(void)
- 		might_sleep();
- }
+@@ -6,6 +6,7 @@
+ #include <linux/kernel.h>
+ #include <linux/list.h>
+ #include <linux/pid.h>
++#include <linux/resctrl_types.h>
  
-+/**
-+ * resctrl_find_domain() - Search for a domain id in a resource domain list.
-+ * @h:		The domain list to search.
-+ * @id:		The domain id to search for.
-+ * @pos:	A pointer to position in the list id should be inserted.
-+ *
-+ * Search the domain list to find the domain id. If the domain id is
-+ * found, return the domain. NULL otherwise.  If the domain id is not
-+ * found (and NULL returned) then the first domain with id bigger than
-+ * the input id can be returned to the caller via @pos.
-+ */
-+struct rdt_domain_hdr *resctrl_find_domain(struct list_head *h, int id,
-+					   struct list_head **pos);
-+
+ /* CLOSID, RMID value used by the default control group */
+ #define RESCTRL_RESERVED_CLOSID		0
+@@ -37,28 +38,8 @@ enum resctrl_conf_type {
+ 	CDP_DATA,
+ };
+ 
+-enum resctrl_res_level {
+-	RDT_RESOURCE_L3,
+-	RDT_RESOURCE_L2,
+-	RDT_RESOURCE_MBA,
+-	RDT_RESOURCE_SMBA,
+-
+-	/* Must be the last */
+-	RDT_NUM_RESOURCES,
+-};
+-
+ #define CDP_NUM_TYPES	(CDP_DATA + 1)
+ 
+-/*
+- * Event IDs, the values match those used to program IA32_QM_EVTSEL before
+- * reading IA32_QM_CTR on RDT systems.
+- */
+-enum resctrl_event_id {
+-	QOS_L3_OCCUP_EVENT_ID		= 0x01,
+-	QOS_L3_MBM_TOTAL_EVENT_ID	= 0x02,
+-	QOS_L3_MBM_LOCAL_EVENT_ID	= 0x03,
+-};
+-
  /**
-  * resctrl_arch_reset_rmid() - Reset any private state associated with rmid
-  *			       and eventid.
+  * struct resctrl_staged_config - parsed configuration to be applied
+  * @new_ctrl:		new ctrl value to be loaded
+diff --git a/include/linux/resctrl_types.h b/include/linux/resctrl_types.h
+new file mode 100644
+index 000000000000..f26450b3326b
+--- /dev/null
++++ b/include/linux/resctrl_types.h
+@@ -0,0 +1,54 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/*
++ * Copyright (C) 2025 Arm Ltd.
++ * Based on arch/x86/kernel/cpu/resctrl/internal.h
++ */
++
++#ifndef __LINUX_RESCTRL_TYPES_H
++#define __LINUX_RESCTRL_TYPES_H
++
++/* Reads to Local DRAM Memory */
++#define READS_TO_LOCAL_MEM		BIT(0)
++
++/* Reads to Remote DRAM Memory */
++#define READS_TO_REMOTE_MEM		BIT(1)
++
++/* Non-Temporal Writes to Local Memory */
++#define NON_TEMP_WRITE_TO_LOCAL_MEM	BIT(2)
++
++/* Non-Temporal Writes to Remote Memory */
++#define NON_TEMP_WRITE_TO_REMOTE_MEM	BIT(3)
++
++/* Reads to Local Memory the system identifies as "Slow Memory" */
++#define READS_TO_LOCAL_S_MEM		BIT(4)
++
++/* Reads to Remote Memory the system identifies as "Slow Memory" */
++#define READS_TO_REMOTE_S_MEM		BIT(5)
++
++/* Dirty Victims to All Types of Memory */
++#define DIRTY_VICTIMS_TO_ALL_MEM	BIT(6)
++
++/* Max event bits supported */
++#define MAX_EVT_CONFIG_BITS		GENMASK(6, 0)
++
++enum resctrl_res_level {
++	RDT_RESOURCE_L3,
++	RDT_RESOURCE_L2,
++	RDT_RESOURCE_MBA,
++	RDT_RESOURCE_SMBA,
++
++	/* Must be the last */
++	RDT_NUM_RESOURCES,
++};
++
++/*
++ * Event IDs, the values match those used to program IA32_QM_EVTSEL before
++ * reading IA32_QM_CTR on RDT systems.
++ */
++enum resctrl_event_id {
++	QOS_L3_OCCUP_EVENT_ID		= 0x01,
++	QOS_L3_MBM_TOTAL_EVENT_ID	= 0x02,
++	QOS_L3_MBM_LOCAL_EVENT_ID	= 0x03,
++};
++
++#endif /* __LINUX_RESCTRL_TYPES_H */
 -- 
 2.39.5
 
