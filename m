@@ -1,121 +1,151 @@
-Return-Path: <linux-kernel+bounces-556657-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-556658-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 13FC1A5CCF2
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 18:59:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id D615AA5CCF7
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 19:00:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C5CE5189D923
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 17:59:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8F818189E7A8
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 18:00:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37359262D0D;
-	Tue, 11 Mar 2025 17:59:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="X66YWyFW"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCAD8262D10;
+	Tue, 11 Mar 2025 18:00:25 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 883391EDA3C;
-	Tue, 11 Mar 2025 17:59:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 367FE1EDA3C;
+	Tue, 11 Mar 2025 18:00:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741715973; cv=none; b=QFrn1I5NffD161p7++5kQdpORwyM5BW7TOUfhb93ZhiJCOvF1pQB4o8Cg4pkUyPrSChoTgmnBsS6ZtxsZs5Kkkgptw/YbsfwKY6Us2/yZT0mT9uc7fUFGcPg4iVplrIMrbVwgUOuxMnBLx39YfWcB9VWkoc4bDT/53tJSwpKX28=
+	t=1741716025; cv=none; b=rToQSgp73e04d3LwgWNV14/PrUUq1p9hqX4pL8KcfUjtZGzFPNGq0vMT8cfUyBqORzbZZZ0Eq0YXsCMKhMwi3vS76Wk+JtXHK9qL/Cx88pP2XXTYdkmeNYyBOckKZWchU8CZ1J6PCQgIj7UvH/hbhMXKxUIeqGp+dSQ8PtXLzYg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741715973; c=relaxed/simple;
-	bh=LcVYG/7KVwJ7seJ/zI0EBvrVmDu677dDQezkVFkJ2JM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=J09Pql/SlgWjml90nJKZIyY8AsIfFk8eDWGyuLiqLHUVw0eaJa1FyTq+hQiR+TivhMtaOoAp5JDKRGm96dKhDgcW2lwyeP2MYwQF0x5ZCkYzzDJ4Wq1CfgKoAomV+Epp12j+MENLfZ2iYUg05lINwZFxf8tTXtB+5C2Q9+tlOfs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=X66YWyFW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BB94CC4CEE9;
-	Tue, 11 Mar 2025 17:59:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741715973;
-	bh=LcVYG/7KVwJ7seJ/zI0EBvrVmDu677dDQezkVFkJ2JM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=X66YWyFWlQavZMSEKVZpeKS06oGHxn3Fzk+AmTT69O4dxKbRK3sGh6aWZDEhK2fAC
-	 S9Lof8uquiB/HTbsxsA592/v98n5mnmvVx1meVzpgzkaARG9PpwprwdUH6r83k6bMu
-	 pVgKqSQ4hrBmuT5tkecjRIEgdgzig3lrBcCbG4tXmffxD/JjR9vJoWuuTRIm2FUQ+e
-	 5AAzWWY0AMmBIw0DHcfJrmVjbqxE4yUFR3sglRidn4TLiuoFkb9XRS/TjO5IKBB0i2
-	 QLvZkVsrlRdAy1uR+5M7QJvptjevcYE154Tfo6fpYoTf/liAyQhCVrkghRrQEp43in
-	 +PBDFAiWcKcbg==
-Date: Tue, 11 Mar 2025 12:59:31 -0500
-From: Rob Herring <robh@kernel.org>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Francesco Dolcini <francesco@dolcini.it>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Saravana Kannan <saravanak@google.com>,
-	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-	patches@opensource.cirrus.com,
-	Ernest Van Hoecke <ernest.vanhoecke@toradex.com>,
-	linux-sound@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Francesco Dolcini <francesco.dolcini@toradex.com>,
-	Charles Keepax <ckeepax@opensource.cirrus.com>
-Subject: Re: [PATCH v3 3/5] ASoC: dt-bindings: wm8904: Add DMIC, GPIO, MIC
- and EQ support
-Message-ID: <20250311175931.GA3885406-robh@kernel.org>
-References: <20250307135244.100443-1-francesco@dolcini.it>
- <20250307135244.100443-4-francesco@dolcini.it>
- <20250311-solid-poetic-camel-77a29b@krzk-bin>
+	s=arc-20240116; t=1741716025; c=relaxed/simple;
+	bh=zK+X0rLMJe99DMsG8rEJBHZTAHUuGiZFAHYc8EjC2l8=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Dqh2/ANt3qRv3yJLmw5AjGdLgd3ZFi48bd2GidyzNNNPEK523fZeqz6uIp44sQxi0uA4HpM0Z6MlqBmhmRWdq7obHjbCpYqNa2SVWN6OpeWszNwQk7+qMKxBiX0Sh5spc/04HnGb+lnrnrIPLQQyuRK8KBKLmYw4T4c2xc0rrOg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.231])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4ZC1gt6fkjz6HJjP;
+	Wed, 12 Mar 2025 01:57:46 +0800 (CST)
+Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
+	by mail.maildlp.com (Postfix) with ESMTPS id F05B0140736;
+	Wed, 12 Mar 2025 02:00:19 +0800 (CST)
+Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
+ (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Tue, 11 Mar
+ 2025 19:00:19 +0100
+Date: Tue, 11 Mar 2025 18:00:17 +0000
+From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+To: Thomas Gleixner <tglx@linutronix.de>
+CC: LKML <linux-kernel@vger.kernel.org>, Marc Zyngier <maz@kernel.org>,
+	Nishanth Menon <nm@ti.com>, Tero Kristo <kristo@kernel.org>, "Santosh
+ Shilimkar" <ssantosh@kernel.org>, Jon Mason <jdmason@kudzu.us>, Dave Jiang
+	<dave.jiang@intel.com>, Allen Hubbe <allenbh@gmail.com>,
+	<ntb@lists.linux.dev>, Bjorn Helgaas <bhelgaas@google.com>,
+	<linux-pci@vger.kernel.org>, Haiyang Zhang <haiyangz@microsoft.com>, Wei Liu
+	<wei.liu@kernel.org>, <linux-hyperv@vger.kernel.org>, Wei Huang
+	<wei.huang2@amd.com>, Manivannan Sadhasivam
+	<manivannan.sadhasivam@linaro.org>, "James E.J. Bottomley"
+	<James.Bottomley@HansenPartnership.com>, "Martin K. Petersen"
+	<martin.petersen@oracle.com>, <linux-scsi@vger.kernel.org>, Dan Williams
+	<dan.j.williams@intel.com>
+Subject: Re: [patch 02/10] genirq/msi: Use lock guards for MSI descriptor
+ locking
+Message-ID: <20250311180017.00003fcc@huawei.com>
+In-Reply-To: <20250309084110.267883135@linutronix.de>
+References: <20250309083453.900516105@linutronix.de>
+	<20250309084110.267883135@linutronix.de>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250311-solid-poetic-camel-77a29b@krzk-bin>
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml100001.china.huawei.com (7.191.160.183) To
+ frapeml500008.china.huawei.com (7.182.85.71)
 
-On Tue, Mar 11, 2025 at 09:42:45AM +0100, Krzysztof Kozlowski wrote:
-> On Fri, Mar 07, 2025 at 02:52:42PM +0100, Francesco Dolcini wrote:
-> > From: Ernest Van Hoecke <ernest.vanhoecke@toradex.com>
-> > 
-> > Add two properties to select the IN1L/DMICDAT1 and IN2R/DMICDAT2
-> > functionality:
-> > - wlf,in1l-as-dmicdat1
-> > - wlf,in1r-as-dmicdat2
-> > 
-> > Add a property to describe the GPIO configuration registers, that can be
-> > used to set the four multifunction pins:
-> > - wlf,gpio-cfg
-> > 
-> > Add a property to describe the mic bias control registers:
-> > - wlf,mic-cfg
-> > 
-> > Add two properties to describe the Dynamic Range Controller (DRC),
-> > allowing multiple named configurations where each config sets the 4 DRC
-> > registers (R40-R43):
-> > - wlf,drc-cfg-regs
-> > - wlf,drc-cfg-names
-> > 
-> > Add three properties to describe the equalizer (ReTune Mobile), allowing
-> > multiple named configurations (associated with a samplerate) that set
-> > the 24 (R134-R157) EQ registers:
-> > - wlf,retune-mobile-cfg-regs
-> > - wlf,retune-mobile-cfg-hz
-> > - wlf,retune-mobile-cfg-rates
+On Sun,  9 Mar 2025 09:41:44 +0100 (CET)
+Thomas Gleixner <tglx@linutronix.de> wrote:
 
-
-> > +             * Config registers per name, respectively:
-> > +             * KNEE_IP = 0,   KNEE_OP = 0,     HI_COMP = 1,   LO_COMP = 1
-> > +             * KNEE_IP = -24, KNEE_OP = -6,    HI_COMP = 1/4, LO_COMP = 1
-> > +             * KNEE_IP = -42, KNEE_OP = -3,    HI_COMP = 0,   LO_COMP = 1
-> > +             * KNEE_IP = -45, KNEE_OP = -9,    HI_COMP = 1/8, LO_COMP = 1
-> > +             * KNEE_IP = -30, KNEE_OP = -10.5, HI_COMP = 1/4, LO_COMP = 1
-> > +             */
-> > +            wlf,drc-cfg-regs = /bits/ 16 <0x01af 0x3248 0x0000 0x0000>,
+> Provide a lock guard for MSI descriptor locking and update the core code
+> accordingly.
 > 
-> <number>, <number>, <number> ...
+> No functional change intended.
 > 
-> unless you wanted 64-bit?
+> Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+One case in here made me go back to the helpful docs Dan wrote
+after early confusion on how to use this stuff.  We might
+want to consider updating as you've found a case that I at least
+didn't consider when reviewing those.  +CC Dan.
 
-Why? You would need "/bits/ 16 <number>, /bits/ 16 <number>, ..."
+Anyhow, this seems fine to me.
+Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
 
-Rob
+
+>  
+> --- a/kernel/irq/msi.c
+> +++ b/kernel/irq/msi.c
+> @@ -443,7 +443,6 @@ EXPORT_SYMBOL_GPL(msi_next_desc);
+
+>  
+> @@ -1037,25 +1032,23 @@ bool msi_create_device_irq_domain(struct
+>  	if (msi_setup_device_data(dev))
+
+Hmm. We might want to make the docs in cleanup.h more nuanced.
+They specifically say to not mix goto and auto cleanup, but 
+in the case of scoped_guard() unlikely almost any other case
+it should be fine.
+
+>  		goto free_fwnode;
+>  
+> -	msi_lock_descs(dev);
+> -
+> -	if (WARN_ON_ONCE(msi_get_device_domain(dev, domid)))
+> -		goto fail;
+> -
+> -	if (!pops->init_dev_msi_info(dev, parent, parent, &bundle->info))
+> -		goto fail;
+> -
+> -	domain = __msi_create_irq_domain(fwnode, &bundle->info, IRQ_DOMAIN_FLAG_MSI_DEVICE, parent);
+> -	if (!domain)
+> -		goto fail;
+> -
+> -	domain->dev = dev;
+> -	dev->msi.data->__domains[domid].domain = domain;
+> -	msi_unlock_descs(dev);
+> -	return true;
+> +	scoped_guard(msi_descs_lock, dev) {
+> +		if (WARN_ON_ONCE(msi_get_device_domain(dev, domid)))
+> +			goto free_fwnode;
+> +
+> +		if (!pops->init_dev_msi_info(dev, parent, parent, &bundle->info))
+> +			goto free_fwnode;
+> +
+> +		domain = __msi_create_irq_domain(fwnode, &bundle->info, IRQ_DOMAIN_FLAG_MSI_DEVICE,
+> +						 parent);
+> +		if (!domain)
+> +			goto free_fwnode;
+> +
+> +		domain->dev = dev;
+> +		dev->msi.data->__domains[domid].domain = domain;
+> +		return true;
+> +	}
+>  
+> -fail:
+> -	msi_unlock_descs(dev);
+>  free_fwnode:
+>  	irq_domain_free_fwnode(fwnalloced);
+>  free_bundle:
+
+
+
+
+
 
