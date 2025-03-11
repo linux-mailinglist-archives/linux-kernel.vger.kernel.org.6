@@ -1,150 +1,100 @@
-Return-Path: <linux-kernel+bounces-556461-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-556462-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5BBE0A5CA01
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 17:00:43 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E7E4EA5CA0D
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 17:01:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9C2831738CA
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 16:00:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F069D1896AE9
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 16:01:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89DC726039B;
-	Tue, 11 Mar 2025 15:59:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94EE6260A3C;
+	Tue, 11 Mar 2025 15:59:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HvVhYvUJ"
-Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YMB6ULSE"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7142425E825;
-	Tue, 11 Mar 2025 15:59:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED30F260A31;
+	Tue, 11 Mar 2025 15:59:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741708775; cv=none; b=kGjI+MEvRYuggtm9jPrfLtRa+7klih8jeT+iskffwJe9XNql6M0DC4mbg6X/hvkUWG9ZfhtPTLzVnpYmJA/X5LO1609Y5cS+0/oj84/tebp/UjzL96tKDQMqSrJpFvliG2dKD8hxQiUOZc4ojBGwA4TKLMMJWG35geRl7F40yqI=
+	t=1741708780; cv=none; b=VZBVLWgjKv1Gi7/KZX+KK4saaQ7gwD8R4mOcM/I8hP3aloctynWSaLhKiiZnM9sbLYw6JA19U+ZNSufCCl2wNVi2zlDdYwgniva9M/PX6/4CH25+L+eEg3Wk0qudEV9WDf2g2deZOWfqIBGccdwz7JyLPzLuejG3avGaxXsjk7M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741708775; c=relaxed/simple;
-	bh=yZVDAMXDKyayS4W4DCnf2up7ngjkuWd+hjdokyxRVcs=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=DzjJt6rkDrb+MY2YRvVdmGtpiTRHd5hobkPa7SxoKfLKLk0EFgUQMjgezQ79wzMEvZprU/VjKsoPz+Be8mXWJuj9RxA42/4h3rB3HzHs40on3umRjeuJjftTyYuJNbgSATCg2Qwzpv89O0p7ETgKRrk5+nM6spOSFVkO+fShWVM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HvVhYvUJ; arc=none smtp.client-ip=209.85.214.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-223a7065ff8so13007365ad.0;
-        Tue, 11 Mar 2025 08:59:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741708773; x=1742313573; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=tCNydoAFyd6DNeo40itFioPOZBKtU3YX9TRd8RaDHCg=;
-        b=HvVhYvUJPe/hXJJp8AtilxBAOXpXdHxU/m5K11TLrlYJqqV/1iXc3CpXxtJp2mNm6N
-         CQrJEXglPKzGtMaPptiUYFu8rXxpAVYv7vjt2t7TZD0bSixO62iF30sMx2kToMFwbg8+
-         IOHKkzI8inDxPzlBvTodaFqB3jjF8bFWPEXidlF1lnxT/+E2W1LxauTVEEUCIc4/XyLs
-         zSgclzTu/I7dnlf995tUFGGUq1Pw7FIuHh72I+IynbObFTo1r0Pv4JNGTYJ8m33O0Q9w
-         LQ3xRc29NQCwHAOQhLmqyc7avoAE+vt/lMysSwgIdrVlHgl0dyEH+fADqGFq8aij74cP
-         ocsA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741708773; x=1742313573;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=tCNydoAFyd6DNeo40itFioPOZBKtU3YX9TRd8RaDHCg=;
-        b=A1mv8kKGgORHAXwUUUv9VAh0/Y6AniyXlwIdiDt07Mpt17Wz+jvaRwt/BgmNitbntn
-         rW66/5HsfP8Af597xFZYeBQ63ndPDVJtj9IaBZgoXtSiMcm4QIau4RIqd55T7cCEGLCj
-         Rc5cWZReNnIlkm9f4Ck4TjsUoQmw17CGXR8lwi4UiCb4UgwJCR5rZNOi2e8FhsLu34DP
-         /rM+efZuSuG9zTZGXT28BKwisRW0M7rxEkmsVadu3ERJn/NevHguBtL5JoP4+m4lboxl
-         QT30KFU3PMTxpXLmMSnOUawhrVJEsWeFiY/sHgemScscrT1pj8uatmnVUR3FhEdFRUx2
-         Jt7Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWx7gM552+fM9hy/uGXSsC77MkkWcRD62O2A9XxBiKn57UPJuDdx8g7YIDgDDc3zl6DgkjVJc3F/0Q=@vger.kernel.org, AJvYcCXMV2Yao5jdKyyZ0wBqnbd3S4pjKX6T2z7zjuZngHDBmtD96qk4rn+DUG2fxFVfC8SDxDUuyjzwJ4oNKwqo@vger.kernel.org
-X-Gm-Message-State: AOJu0YysZ/LFNKvkN1/HiXnhdqXthjKhTpQ9PJujcDpMXwOdsxqDMpmC
-	uiUFu5LIAaCBJzXxzM5GxBbCps1t2vAWtU1CDBxG2UnOUcCyTM5l
-X-Gm-Gg: ASbGncvvB0ss+mv1FqMFmBsVD+wAdA8HYdODGF1PNr8K8EjOP0nCSAdZiDI+/2WadPU
-	JpHqe/p2/fqIH5MV71Iw8nx9tkDDIbl5AbQ35sSteIyRB5xw4NVp1Z8lvmA0lIcj7/Gl6/fdq+y
-	/XONRR6f+/nf0vH3LkKxXnr3+cUD3ej2Sh/bFnGa4SANwtk7rXxsyDIl0jw4+I8Yo6C1tFrQjjw
-	l3dY5yEKkcewNPSjLr1PcL/Q+MuKFlQYLIA1UfdZb4UKdH4JrjYYku8MsXJa7E0BCEiXlGRCexa
-	WuT+6nB/Jg2ji8vCV9h04ykT4mTdZxNR1G1wvzk0VSRyapGzhsAxTtXVNF8zyHSB9bLRnWaGvZy
-	9tsI38lpVZcrR4UA+kHteN6U2tZRn6yhVy6Oofg==
-X-Google-Smtp-Source: AGHT+IGgeHlhqDLZGfH1ls3PTzCaL+VE5RDfOBxEXEDldkVg+Mz0o2RA+RV/kjYMYC0xERB7xuys4A==
-X-Received: by 2002:a05:6a21:9786:b0:1f5:8506:5039 with SMTP id adf61e73a8af0-1f585065599mr10314781637.28.1741708773532;
-        Tue, 11 Mar 2025 08:59:33 -0700 (PDT)
-Received: from test-suraj.qjz2hk5f2gku1a3adsvczrat5c.xx.internal.cloudapp.net ([20.9.134.79])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-af281075eaesm9750549a12.3.2025.03.11.08.59.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 11 Mar 2025 08:59:33 -0700 (PDT)
-From: Suraj Patil <surajpatil522@gmail.com>
-To: jic23@kernel.org
-Cc: lars@metafoo.de,
-	linux-iio@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Suraj Patil <surajpatil522@gmail.com>,
-	Suraj Patil <your-email@example.com>
-Subject: [PATCH] iio: industrialio-trigger: Fix typos in comments
-Date: Tue, 11 Mar 2025 15:59:27 +0000
-Message-ID: <20250311155927.467523-1-surajpatil522@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1741708780; c=relaxed/simple;
+	bh=o1zfNfRzSyzMnHbSnLiwhdNGDDh4V624T1bIqecRWjY=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=MmOXHAL02+Xb2Hmp74QI2czyGgBl8gbwCpDEO4uvP2GvZNfjtLBOIQtL+prr/Z+EG7GGVyWZBroaTl3AqKSYVuMK14KCC9pI8B6U2g0oe+tXtT4uIgiyy+lC78NAqenZMd20k8T0y3a45VRRztnCzEobuCjgNYOYJvYhXZHksMc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YMB6ULSE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 971A1C4CEE9;
+	Tue, 11 Mar 2025 15:59:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741708779;
+	bh=o1zfNfRzSyzMnHbSnLiwhdNGDDh4V624T1bIqecRWjY=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=YMB6ULSEr1kIy7ktKaoPIaEYVZ0DBfhQj61g+uFWsKtinp6iv9Yi2w6ZR/0iB9Jwv
+	 Iwf+R9S9SMrz6n7rO9EtVmaRXkMg4f3GkyAu1t606qFLi8wD/O8cza/7fMWvVMSL/X
+	 WxBcmYbtSeRWWCqeLA6j+J9/TbYVsdsOZBYpBsQYt2XyFdkbAxujPLEqshAy5pUs1c
+	 h3eVYo5UTncOCi8EhE8a110PjTpMQWYo+E6Sjo0Lgy+4z9JnG8xLaPzRRfNjka3zZU
+	 ku2PvZpuNGJTO5A6AIED9OrhVr5HxvAPCPo8DXr/66sSwEFOiM1t/ocgw30Mu8RjTW
+	 QG7+7oxH18WLg==
+Date: Tue, 11 Mar 2025 10:59:38 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Thippeswamy Havalige <thippeswamy.havalige@amd.com>
+Cc: bhelgaas@google.com, lpieralisi@kernel.org, kw@linux.com,
+	manivannan.sadhasivam@linaro.org, robh@kernel.org,
+	krzk+dt@kernel.org, conor+dt@kernel.org, linux-pci@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	michal.simek@amd.com, bharat.kumar.gogada@amd.com
+Subject: Re: [PATCH v5 3/3] PCI: xilinx-cpm: Add support for Versal Net
+ CPM5NC Root Port controller
+Message-ID: <20250311155938.GA629931@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250310170717.GA556500@bhelgaas>
 
-Fixed multiple occurrences of 'reenable' to 're-enable' in comments.
+On Mon, Mar 10, 2025 at 12:07:17PM -0500, Bjorn Helgaas wrote:
+> On Mon, Feb 24, 2025 at 09:20:24PM +0530, Thippeswamy Havalige wrote:
+> > The Versal Net ACAP (Adaptive Compute Acceleration Platform) devices
+> > incorporate the Coherency and PCIe Gen5 Module, specifically the
+> > Next-Generation Compact Module (CPM5NC).
+> > 
+> > The integrated CPM5NC block, along with the built-in bridge, can function
+> > as a PCIe Root Port & supports the PCIe Gen5 protocol with data transfer
+> > rates of up to 32 GT/s, capable of supporting up to a x16 lane-width
+> > configuration.
+> > 
+> > Bridge errors are managed using a specific interrupt line designed for
+> > CPM5N. INTx interrupt support is not available.
+> > 
+> > Currently in this commit platform specific Bridge errors support is not
+> > added.
+> 
+> > @@ -478,6 +479,9 @@ static void xilinx_cpm_pcie_init_port(struct xilinx_cpm_pcie *port)
+> >  {
+> >  	const struct xilinx_cpm_variant *variant = port->variant;
+> >  
+> > +	if (variant->version != CPM5NC_HOST)
+> > +		return;
+> 
+> You're adding support for CPM5NC_HOST, but this changes the behavior
+> for all the NON-CPM5NC_HOST devices, which looks like a typo.
+> 
+> Should it be "variant->version == CPM5NC_HOST" instead?
 
-Signed-off-by: Suraj Patil <your-email@example.com>
-Signed-off-by: Suraj Patil <surajpatil522@gmail.com>
----
- drivers/iio/industrialio-trigger.c | 14 +++++++-------
- 1 file changed, 7 insertions(+), 7 deletions(-)
+Thanks for your patch that fixes this part.
 
-diff --git a/drivers/iio/industrialio-trigger.c b/drivers/iio/industrialio-trigger.c
-index 54416a384232..21688cd348c6 100644
---- a/drivers/iio/industrialio-trigger.c
-+++ b/drivers/iio/industrialio-trigger.c
-@@ -162,11 +162,11 @@ static void iio_reenable_work_fn(struct work_struct *work)
- 	 * This 'might' occur after the trigger state is set to disabled -
- 	 * in that case the driver should skip reenabling.
- 	 */
--	trig->ops->reenable(trig);
-+	trig->ops->re-enable(trig);
- }
- 
- /*
-- * In general, reenable callbacks may need to sleep and this path is
-+ * In general, re-enable callbacks may need to sleep and this path is
-  * not performance sensitive, so just queue up a work item
-  * to reneable the trigger for us.
-  *
-@@ -175,14 +175,14 @@ static void iio_reenable_work_fn(struct work_struct *work)
-  *    the final decrement is still in this interrupt.
-  * 2) The trigger has been removed, but one last interrupt gets through.
-  *
-- * For (1) we must call reenable, but not in atomic context.
-+ * For (1) we must call re-enable, but not in atomic context.
-  * For (2) it should be safe to call reenanble, if drivers never blindly
-- * reenable after state is off.
-+ * re-enable after state is off.
-  */
- static void iio_trigger_notify_done_atomic(struct iio_trigger *trig)
- {
- 	if (atomic_dec_and_test(&trig->use_count) && trig->ops &&
--	    trig->ops->reenable)
-+	    trig->ops->re-enable)
- 		schedule_work(&trig->reenable_work);
- }
- 
-@@ -243,8 +243,8 @@ EXPORT_SYMBOL(iio_trigger_poll_nested);
- void iio_trigger_notify_done(struct iio_trigger *trig)
- {
- 	if (atomic_dec_and_test(&trig->use_count) && trig->ops &&
--	    trig->ops->reenable)
--		trig->ops->reenable(trig);
-+	    trig->ops->re-enable)
-+		trig->ops->re-enable(trig);
- }
- EXPORT_SYMBOL(iio_trigger_notify_done);
- 
--- 
-2.43.0
+> Also, this makes it look like CPM5NC_HOST doesn't support any
+> interrupts at all.  No INTx, no MSI, no MSI-X.  Is that true?  If so,
+> what good is a host controller where interrupts don't work?
 
+Does this controller support interrupts?
 
