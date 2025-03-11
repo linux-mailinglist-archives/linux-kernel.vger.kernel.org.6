@@ -1,192 +1,174 @@
-Return-Path: <linux-kernel+bounces-556076-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-556077-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1640CA5C0A2
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 13:21:00 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 417CDA5C0A6
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 13:21:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4380417ABE6
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 12:17:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 60D8F168E38
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 12:17:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BA1A25CC9E;
-	Tue, 11 Mar 2025 12:11:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB44C221F3C;
+	Tue, 11 Mar 2025 12:13:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="P81ZsbtE"
-Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=squebb.ca header.i=@squebb.ca header.b="GqYb6bsJ";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="NPJWyz8l"
+Received: from fout-a1-smtp.messagingengine.com (fout-a1-smtp.messagingengine.com [103.168.172.144])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8E56256C95
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 12:10:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE72F2566CE;
+	Tue, 11 Mar 2025 12:13:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.144
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741695059; cv=none; b=IF9DFodlVLh82UJ5p75FTW9NQaZniOOPX8yhwUc/KWnTbT2vJPGUXowTPXGEAtTV6ym4+/DJcJwYcmRr240ufPFlCQkpE2bbjUbEThohwRPXZ5RKk5HXLMds7cuD5CC6pFPft2Q0Dd9s+qdThldpEt4waYs8wvCWb7bi472vB/o=
+	t=1741695188; cv=none; b=ZZ30sn3L4l9bgBIfQWdevO6B1UXKl7lbL1zktZsvIUh1ZqdQLSwGxOgBaZIlZeGVU0zwUnZmp90FNvUMBAw6XACGS0c+cajqyyUcha7KTXyGWkjUiFQJcSZ7FzmwI7CZuj3vg4xNo+tkVcHHCz18mgvxbYeKWD2nMbZpq1fRfF8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741695059; c=relaxed/simple;
-	bh=zSPwxXlU8zKoR89yCExd+rmcWFjM6s7206Ph0rFGYxE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=fgmFV7H2S5zinR1sP/utbIdPrkroG0/z2q53OPFU+Hhp0qcfPz79cUQccmUaWdOReii6ZoQqlMX1OmBgf6Iic/sJKGmPwBDpViCZq+TmwrTA03f+fjEqEoz2EU9gajHoNn67Qoj8qPVWBJHym63MxWri4OkJG3qwtbSOylVgx64=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=P81ZsbtE; arc=none smtp.client-ip=209.85.218.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-abbb12bea54so983534966b.0
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 05:10:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1741695055; x=1742299855; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=YpSRq2NhGx61IXcChX3O1OuFIQ+cWb4jvdaEjASRrWg=;
-        b=P81ZsbtEk7no/75QuS3gtdwkbY1wNkAiNf6mXZCHVfVN3cefBJJBpKFSWT6HodgyX3
-         Z0Vl9FyLYjTuml//dDN5jEGGGYlv2rik+eS2EMj+2OzKBBSa9sp/sD40JW9cNisWGNkf
-         j+zNmKd/uRoHCgWfsSG+rJEEiceXRwcdxsaqJ/pJZ2MhDeFcFGOyGswaS5nr0Mwp6PVx
-         vVbn2bMH18rGqcfG5zcUGbQnfOkFLKHyKG/j2hKX6lEj6eCkPiGtM4BystLmL5pZczH/
-         15kUUPbh7D9OWnOeR0a+CnA3QrMLf+oqBI8LN/ySKmBqDhosn7GOgdKQkCA9nYNBtV8s
-         td/Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741695055; x=1742299855;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=YpSRq2NhGx61IXcChX3O1OuFIQ+cWb4jvdaEjASRrWg=;
-        b=i41pyJ2wsnRrnT3xqL2sg778mk/lJWyD/+jWE8uTQ6R55W/+FcywISc1K/AdjXjK/O
-         q6zaiDT0Fo0vKZIYo3z4JYgtmSBvBwFPSZx6cRxmX9MifjAUK3964ne9JsZbG0Pv8ssV
-         IH87RCbCsMkFdGANSlFyelCxZQJv+G66q8TPVeq9faKmbTcQibJJWlE+sF5k4MpAocjy
-         ffr82LjwqZTui4wNezezzu5HRofP2hLuTqCNhPdVGHPLrgmoytNX3mYjK3XWqRlxQ8C8
-         T7FkQJoc4tv50zq/Ck+gJZFvAE9uTej9FMYrMhwveQx3JrUuvh4Q1hvyQ/iO2z1olaZ2
-         xdyA==
-X-Forwarded-Encrypted: i=1; AJvYcCVLYd/eafms++brjpSf4JlZWeXtZAMv3v0QSXLVLkQZUuiPGi/BJwCViegGs/Knqaz7K9fSyQFU6dDq4iE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz6eF+OgRqdfFnselLD1sVyL85A1NHKInykpOcxIGyRIYPhetld
-	px5gcNGvEBZTJEO6IUcL56/BOG9++HjvZf5M7RGDMXAw1C5MjkhUfRs49V6jaL8=
-X-Gm-Gg: ASbGncuPizUKM379jWlZo3P/42sKHTh9cvnO47rtIPN9mz4kjhsfGAVJrYVib2OH9DT
-	scxXM1AWOKwWvpx22mf9U5sQ07CJhCaTM7eImiIyHfT0z12NodEKwaUJKhtHLh6HLx4Kg7gFc50
-	R0v1L0O1eaRFnVgztJCYYfQ62BXNY7iW3Gqm0r2k5Mtm/PoAPh+zqL58e5BH+lQEAfpKBgRXNyZ
-	7JOx1BvckKZO+rOY0WCNj9kIvI0zaDyl3MyVX8N0eKQeSh7OVvD6sHi7KrdhXeU8uQhAxwZX7K2
-	0ZCaJUXHCHAYWHh8w/gnX6aPVHdjX65eEAMGo8nTkgnd+iPVn1mKy2UDotRqdlaVONHQbYTq0xH
-	gHnrL3fxtJkZw8AGahYre
-X-Google-Smtp-Source: AGHT+IH6Ya7/iCUCKClbjsY4uNuhgYuKstLNpNY8OIGUfaJ0U+i2tVi/bJHr3Ky/JoXqb2hyREP3nA==
-X-Received: by 2002:a17:907:3f2a:b0:ac1:d91e:5596 with SMTP id a640c23a62f3a-ac25265915cmr1973198766b.23.1741695053409;
-        Tue, 11 Mar 2025 05:10:53 -0700 (PDT)
-Received: from [192.168.0.35] (188-141-3-146.dynamic.upc.ie. [188.141.3.146])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac24a843884sm823958566b.102.2025.03.11.05.10.52
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 11 Mar 2025 05:10:52 -0700 (PDT)
-Message-ID: <9e6fdcfe-3c6d-44c7-95a3-7652c0650bf4@linaro.org>
-Date: Tue, 11 Mar 2025 12:10:51 +0000
+	s=arc-20240116; t=1741695188; c=relaxed/simple;
+	bh=+k3q52EoqcvtqGv2M5AyIbDO/KKx1hnebaimGmGMPto=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=ISlcdbYkX2FW9C7uZHOjqotJSzyNZFQ2E5bRz1p3jySpCA987ocPYIDMMMNV1XBSdozSl1TdkIAU424UsRWa4H/Vtyu184I5doWDLQVEqxF1dUzh/uodjAZ/nw4v0KD3w0wUuWXFjMK35DuMSgl4aQSRrrT25BgGhZQzkic6K20=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=squebb.ca; spf=pass smtp.mailfrom=squebb.ca; dkim=pass (2048-bit key) header.d=squebb.ca header.i=@squebb.ca header.b=GqYb6bsJ; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=NPJWyz8l; arc=none smtp.client-ip=103.168.172.144
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=squebb.ca
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=squebb.ca
+Received: from phl-compute-06.internal (phl-compute-06.phl.internal [10.202.2.46])
+	by mailfout.phl.internal (Postfix) with ESMTP id ACAA21382D3C;
+	Tue, 11 Mar 2025 08:13:04 -0400 (EDT)
+Received: from phl-imap-10 ([10.202.2.85])
+  by phl-compute-06.internal (MEProxy); Tue, 11 Mar 2025 08:13:04 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=squebb.ca; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm2; t=1741695184;
+	 x=1741781584; bh=N9k2geTZznb7unSBRl52sG1fsJRfFqOnHSENCpmQupI=; b=
+	GqYb6bsJG/XDec6cqMgYuwqBkLNwqIbUfcVt82v7UYZZdStk5efYoxFdQry4AnUY
+	piOmCbPrnHM1aUa/5Kf7ZRyTCOkmQHJSKfkdmiw69V4WLk1J83J496i+m2QB8uM7
+	877XpFm3wCkLNKR6mAK0sLbOtTjxYnp4axIE3ENabXQrbnCR+UIOFt3kjrEKvZ6o
+	71yL72DwFU2yS5GuQoODgBGShkUgZcoxaWRa39rsOX1YqSokPBwz592ilyiXMURi
+	bwfUkwKNeZUpMYut3JORQb9WUE+DLo2W64SDINl1AZ91ZvBjg6d12QwOd84uDcmg
+	VwyKQ+bICpaX5ItEqsLObA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1741695184; x=
+	1741781584; bh=N9k2geTZznb7unSBRl52sG1fsJRfFqOnHSENCpmQupI=; b=N
+	PJWyz8lvu4yPLD+haZwKOTRW3fFe/KG/d++IxMYYzgEu4ev0yBN94QY3FYF8jy9E
+	6c/XHZTwNWT/coEDBxg3BUhe/GOa1dBsI99oI9Rz04wpoFL6sQKm75viF4ePS+aM
+	Ak0dcnk3B9CwV55wMoDSpL/OBemdE3onWlWM7HNeZBYg1YR/+sY9CKmIDJb1rgbF
+	q72CfM30EuRtVEpZGBzsQX1DEuuedofDq49Or/afXO0X+GeYVDx1lXdNhUSKeEfL
+	lAAS84e51pGkYMv9O6SnSpT9v9q83DLuFAoBtskOkhqXOmMOIVicpPcmOPWCYlF1
+	mJmuA4lz3tuQcH6GXWLbw==
+X-ME-Sender: <xms:zyjQZzGqo-wU_Y-tooqMiGJyD8Quy1J-8qHGH_9dSP2SRruDg2u8Ow>
+    <xme:zyjQZwWZuXcPOdes61Z_pSpfHTM3PEd5ytL7aWrVHfZY8MrRSBLqrSQsQ-mZcYSr3
+    MX5lgJ5NJBqk8XUELA>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdduvddvvddtucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
+    pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
+    gvnhhtshculddquddttddmnecujfgurhepofggfffhvfevkfgjfhfutgfgsehtjeertder
+    tddtnecuhfhrohhmpedfofgrrhhkucfrvggrrhhsohhnfdcuoehmphgvrghrshhonhdqlh
+    gvnhhovhhosehsqhhuvggssgdrtggrqeenucggtffrrghtthgvrhhnpefhuedvheetgeeh
+    tdehtdevheduvdejjefggfeijedvgeekhfefleehkeehvdffheenucevlhhushhtvghruf
+    hiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehmphgvrghrshhonhdqlhgvnhho
+    vhhosehsqhhuvggssgdrtggrpdhnsggprhgtphhtthhopeeipdhmohguvgepshhmthhpoh
+    huthdprhgtphhtthhopehsfhhrsegtrghnsgdrrghuuhhgrdhorhhgrdgruhdprhgtphht
+    thhopeifihhmsehighhurghnrgdrsggvpdhrtghpthhtohepfihimheslhhinhhugidqfi
+    grthgthhguohhgrdhorhhgpdhrtghpthhtoheplhhinhhugiesrhhovggtkhdquhhsrdhn
+    vghtpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrd
+    horhhgpdhrtghpthhtoheplhhinhhugidqnhgvgihtsehvghgvrhdrkhgvrhhnvghlrdho
+    rhhg
+X-ME-Proxy: <xmx:zyjQZ1L9fBcUf_r4M78cN7rw3f5_TGyY6ctLYGLxOAKhkq8YWW-KIQ>
+    <xmx:zyjQZxH0SjR0xUyeSBfvyV3y2dqXhVzXucVuMKmadArUJF-uGYU7uw>
+    <xmx:zyjQZ5X1IJUx1XgrxHRL97AaZZ5wPGo7hvh8rcRzi0XzuJJsdJDa4A>
+    <xmx:zyjQZ8MK7zesPTlwto_pP63yDp49VdRi3CW_aGzzw-EyeI_dzHnOYQ>
+    <xmx:0CjQZ3f49f1j6zYKE0mqWyCVXIuflxAbhyhcgL7Qv6NLwHnflLt9QmgG>
+Feedback-ID: ibe194615:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id ED28F3C0066; Tue, 11 Mar 2025 08:13:02 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 0/8] clk: qcom: Add support to attach multiple power
- domains in cc probe
-To: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
- Jagadeesh Kona <quic_jkona@quicinc.com>,
- Bjorn Andersson <andersson@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>
-Cc: Ajit Pandey <quic_ajipan@quicinc.com>,
- Imran Shaik <quic_imrashai@quicinc.com>, Taniya Das <quic_tdas@quicinc.com>,
- Satya Priya Kakitapalli <quic_skakitap@quicinc.com>,
- linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-References: <CMTYKKilQJYeHUYYKvlqnwv4Q2P-58Ic1v1ndS9HQ8Yhq2xpHuNThibFDjXDEQ1PyNbx__f9BVBr0peoTUdvPg==@protonmail.internalid>
- <20250306-videocc-pll-multi-pd-voting-v2-0-0cd00612bc0e@quicinc.com>
- <5a45fd25-74ed-46e3-b0e3-5adf92b5e9f7@linaro.org>
- <46d4f090-3e31-414f-abfc-3d1018913c56@linaro.org>
-Content-Language: en-US
-From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-In-Reply-To: <46d4f090-3e31-414f-abfc-3d1018913c56@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Date: Tue, 11 Mar 2025 08:12:41 -0400
+From: "Mark Pearson" <mpearson-lenovo@squebb.ca>
+To: "Stephen Rothwell" <sfr@canb.auug.org.au>,
+ "Wim Van Sebroeck" <wim@iguana.be>
+Cc: "Guenter Roeck" <linux@roeck-us.net>,
+ "Wim Van Sebroeck" <wim@linux-watchdog.org>,
+ "Linux Kernel Mailing List" <linux-kernel@vger.kernel.org>,
+ "Linux Next Mailing List" <linux-next@vger.kernel.org>
+Message-Id: <3da76007-31f0-404a-a324-dd3068e339c5@app.fastmail.com>
+In-Reply-To: <20250311210305.3c5a2313@canb.auug.org.au>
+References: <20250311210305.3c5a2313@canb.auug.org.au>
+Subject: Re: linux-next: build failure after merge of the watchdog tree
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-On 11/03/2025 10:12, Vladimir Zapolskiy wrote:
-> On 3/11/25 11:52, Bryan O'Donoghue wrote:
->> On 06/03/2025 08:55, Jagadeesh Kona wrote:
->>> In some of the recent chipsets, PLLs require more than one power domain
->>> to be kept ON to configure the PLL. But the current code doesn't enable
->>> all the required power domains while configuring the PLLs, this leads
->>> to functional issues due to suboptimal settings of PLLs.
->>>
->>> To address this, add support for handling runtime power management,
->>> configuring plls and enabling critical clocks from qcom_cc_really_probe.
->>> The clock controller can specify PLLs, critical clocks, and runtime PM
->>> requirements in the descriptor data. The code in qcom_cc_really_probe()
->>> ensures all necessary power domains are enabled before configuring PLLs
->>> or critical clocks.
->>>
->>> This series updates SM8450 & SM8550 videocc drivers to handle rpm,
->>> configure PLLs and enable critical clocks from within 
->>> qcom_cc_really_probe()
->>> using above support, so video PLLs are configured properly.
->>>
->>> This series fixes the below warning reported in SM8550 venus testing due
->>> to video_cc_pll0 not properly getting configured during videocc probe
->>>
->>> [   46.535132] Lucid PLL latch failed. Output may be unstable!
->>>
->>> The patch adding support to configure the PLLs from common code is
->>> picked from below series and updated it.
->>> https://lore.kernel.org/all/20250113-support-pll-reconfigure- 
->>> v1-0-1fae6bc1062d@quicinc.com/
->>>
->>> Signed-off-by: Jagadeesh Kona <quic_jkona@quicinc.com>
->>> ---
->>> Changes in v2:
->>>    - Added support to handle rpm, PLL configuration and enable critical
->>>      clocks from qcom_cc_really_probe() in common code as per v1 
->>> commments
->>>      from Bryan, Konrad and Dmitry
->>>    - Added patches to configure PLLs from common code
->>>    - Updated the SM8450, SM8550 videocc patches to use the newly
->>>      added support to handle rpm, configure PLLs from common code
->>>    - Split the DT change for each target separately as per
->>>      Dmitry comments
->>>    - Added R-By and A-By tags received on v1
->>> - Link to v1: https://lore.kernel.org/r/20250218-videocc-pll-multi- 
->>> pd-voting-v1-0-cfe6289ea29b@quicinc.com
->>>
->>> ---
->>> Jagadeesh Kona (7):
->>>         dt-bindings: clock: qcom,sm8450-videocc: Add MXC power domain
->>>         clk: qcom: common: Manage rpm, configure PLLs & AON clks in 
->>> really probe
->>>         clk: qcom: videocc-sm8450: Move PLL & clk configuration to 
->>> really probe
->>>         clk: qcom: videocc-sm8550: Move PLL & clk configuration to 
->>> really probe
->>>         arm64: dts: qcom: Add MXC power domain to videocc node on SM8450
->>>         arm64: dts: qcom: Add MXC power domain to videocc node on SM8550
->>>         arm64: dts: qcom: Add MXC power domain to videocc node on SM8650
->>>
->> This list looks sparse.
->>
->> - camcc is missing
->> - x1e is missing
->> - sm8650 and sm8750 and both also missing
->>
+Thanks Stephen,
+
+On Tue, Mar 11, 2025, at 6:03 AM, Stephen Rothwell wrote:
+> Hi all,
+>
+> After merging the watchdog tree, today's linux-next build (x86_64
+> allmodconfig) failed like this:
+>
+> drivers/watchdog/lenovo_se30_wdt.c: In function 'lenovo_se30_wdt_probe':
+> drivers/watchdog/lenovo_se30_wdt.c:272:31: error: implicit declaration 
+> of function 'devm_ioremap' [-Wimplicit-function-declaration]
+>   272 |         priv->shm_base_addr = devm_ioremap(dev, base_phys, 
+> SHM_WIN_SIZE);
+>       |                               ^~~~~~~~~~~~
+> drivers/watchdog/lenovo_se30_wdt.c:272:29: error: assignment to 
+> 'unsigned char *' from 'int' makes pointer from integer without a cast 
+> [-Wint-conversion]
+>   272 |         priv->shm_base_addr = devm_ioremap(dev, base_phys, 
+> SHM_WIN_SIZE);
+>       |                             ^
+>
+> Caused by commit
+>
+>   c284153a2c55 ("watchdog: lenovo_se30_wdt: Watchdog driver for Lenovo 
+> SE30 platform")
+>
+> Somewhere alogn the way a change to some include file means that
+> linux/io.h is no longer implicitly included.  I have added the following
+> patch for today.
+>
+> From: Stephen Rothwell <sfr@canb.auug.org.au>
+> Date: Tue, 11 Mar 2025 20:50:05 +1100
+> Subject: [PATCH] watchdog: lenovo_se30_wdt: include io.h for devm_ioremap()
+>
+> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> ---
+>  drivers/watchdog/lenovo_se30_wdt.c | 1 +
+>  1 file changed, 1 insertion(+)
+>
+> diff --git a/drivers/watchdog/lenovo_se30_wdt.c 
+> b/drivers/watchdog/lenovo_se30_wdt.c
+> index f25429da0cec..024b842499b3 100644
+> --- a/drivers/watchdog/lenovo_se30_wdt.c
+> +++ b/drivers/watchdog/lenovo_se30_wdt.c
+> @@ -5,6 +5,7 @@
 > 
-> Since there are concerns about DT bindings ABI change of CAMCC given by
-> Krzysztof, likely CAMCC changes shall not be inserted into this series.
+>  #define dev_fmt(fmt) KBUILD_MODNAME ": " fmt
 > 
+> +#include <linux/io.h>
+>  #include <linux/dmi.h>
+>  #include <linux/delay.h>
+>  #include <linux/iommu.h>
 > -- 
-> Best wishes,
-> Vladimir
+> 2.45.2
+>
+> -- 
+Appreciate you getting this done so fast - it was on my todo list for today.
+Apologies for the build break.
 
-drivers/clk/qcom/camcc-sm8650.c
-drivers/clk/qcom/camcc-x1e80100.c
+Change looks good to me.
+Reviewed-by: Mark Pearson <mpearson-lenovo@squebb.ca>
 
-In fact we appear to be amending the dts but not the driver for the 8650 
-here.
-
-@Jagadeesh please follow up.
-
----
-bod
+Mark
 
