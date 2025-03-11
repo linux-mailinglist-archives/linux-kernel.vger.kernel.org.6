@@ -1,127 +1,130 @@
-Return-Path: <linux-kernel+bounces-556612-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-556585-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AED71A5CC56
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 18:36:32 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 55406A5CBFE
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 18:22:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F03F5177DE9
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 17:36:31 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BD4F57A42CA
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 17:21:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49C12262D21;
-	Tue, 11 Mar 2025 17:36:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACE892620F3;
+	Tue, 11 Mar 2025 17:20:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="YJlDg6+G"
-Received: from mail-oa1-f47.google.com (mail-oa1-f47.google.com [209.85.160.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=iencinas.com header.i=@iencinas.com header.b="uPkyfvWZ"
+Received: from out-185.mta0.migadu.com (out-185.mta0.migadu.com [91.218.175.185])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AA15262D14
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 17:36:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CA782620EB
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 17:20:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.185
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741714570; cv=none; b=EqF2CIGG51Zlpto47snZ5hTJBqpr0dqe8bjTwgG8oT2Wy1Qhaw8j/oMNUKqPphW9mxjtYryc3LvrQ28cqC140tdC2EotAzZYW6t4ww2Oip6BPttMhleMXSt5tzdi0V/V7gM6DFHFJcuxAZd/0S72Zx0v44o/hTXtaihzHcM0G+0=
+	t=1741713655; cv=none; b=PcaZeIk/HuxLekz5loaJpxYZ0e1MjHmSOSexp91VpeM49KwIQup8iQjAAiwh4Z39CFsEfBawmL2Jk2pvbfswVx8ia1aX4ZUF62JXgNeZDC6JfL9Vbqnv67896FH/RM2TudSBjGswvGwb6+z7wnVeIIKs/wGOIgrnk8hVBzLfuNo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741714570; c=relaxed/simple;
-	bh=5aUsqOrI16iMveQNEajx0BokuB8rnFuNsAld9sPRVSo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=tAaaKSc0eO/Um3N4/HNKcN0sKJ+iOFC3FifFalietc+TPHdys3ArDjBWQ1wJQlWthIjmEkCJy7vaYEXBg6Gsf1OxAsvsWdiu52QE3lTxv8ZvBHkU5z5eW7WOsKsiqiFlcxj0PpjuzqK6B55QYppiwmTW1T1Inf76mx94xwL14ck=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=YJlDg6+G; arc=none smtp.client-ip=209.85.160.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
-Received: by mail-oa1-f47.google.com with SMTP id 586e51a60fabf-2bcc0c6c149so5474196fac.1
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 10:36:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google; t=1741714568; x=1742319368; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=4/AZGEVmfxF0jKoqVNVNRMBGz9sxfr8KBwzFyulmeIs=;
-        b=YJlDg6+GFLBTrY5+hbodE6loh2u46+g1BNHmXUiata7GIe7AyA7U97p/a4f+9QdmGG
-         MIxBquwZV7z4DtCoOXGES3AZteZc+Ei8I7q522qbgL6oHGZ9Ws8qNIYWxQOuWqD7m18U
-         3YI3M31CEnkJ999vm+dQ0Luq3gaY7FwlAiA4I=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741714568; x=1742319368;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=4/AZGEVmfxF0jKoqVNVNRMBGz9sxfr8KBwzFyulmeIs=;
-        b=C6M/y31KdmWTmx7rrrfuRBOK7sIqobTjnSoU2cgCtPTR/Nd0llv5zpIvob74LoXjAm
-         MeqAa/YM7WW/2NzvYpBmlVdPJzHpAg9pd2Py45vfUEA7cTcJNXoGDl3DaV7lLimHh4RW
-         NGO1HYbTl/e0v/x1/nBlP2Qvdj0EM6k8FTbfNE3TKv7la5gitXloeXeoGLkalHFpSLE/
-         BoN9imdvyqTw4AuF9rS8094w919MaiyWIxPXMCyaVCIG+Cow9oJxuaMx1DI6pPObMy6t
-         oSOM/Qt37QkwGRkAssEW3DgRvPs3QcLSjBHwLOwCpemJ2ufWoJitGrEcaUBsai7SkPCU
-         hZbw==
-X-Forwarded-Encrypted: i=1; AJvYcCXK2VDcOWk/83SC+Eh9yqiu7ezbPx6j1PvPjRHyuA+QDbW7tcTH/SBdicY3eMhwCF7EB0Z8S5+pUk7kHhM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy5f+j/oYyrLobjtlivyAXxZ04zTvNQlISG47+1VvlnP8syesVo
-	+Zfgd+IMNuw/LTGK2OGpcxE8fjJwgAVbXKk47vb/WWFLFMfPE98JQBGUg7tZvQ==
-X-Gm-Gg: ASbGncvTm3FCOdnZ8fzboa8z0rw0I/mtYbewQaHhv2lvSETs4Lh1pd/G6HhtGObnQYx
-	FKHUgDKrIN2c9NgU9Hfsn1ONCc49mIryLOIDye1iOFhPGUnpxXDipLEu3AafVJluln2XpxzwY6p
-	8+thVAKmtz8QfmKxTWxfrBGBBuXYKsLLHB2ldp15Rs0wrBUwwbvoxXHeECjow1OxWuZVsPyk5di
-	ITob2uWgVoupNlzFJetm2V1nqG+i8oL5CRxt69TkAB/rPaH7e6lQpL4NpThz9eaygiedfpAzDnz
-	/ayDH1tqp7aMsx6CVx6xvDFuT0PTEBwSe1VRSjhcfE7sHwiZPHE9hIPkcmbJipz0YWoi9mvHF3N
-	fbhus
-X-Google-Smtp-Source: AGHT+IF6stv4KV1HaEag5+77smmBKlZX0b6JVQBTx2uQ9Bg2ZjG5KNAD+BqnyMHU0PQVstMcpo8f2A==
-X-Received: by 2002:a05:6871:8416:b0:2c2:c404:465f with SMTP id 586e51a60fabf-2c2c4044b38mr3090975fac.6.1741714568018;
-        Tue, 11 Mar 2025 10:36:08 -0700 (PDT)
-Received: from [10.136.13.65] ([192.19.161.248])
-        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-2c2d749e115sm661597fac.13.2025.03.11.10.36.04
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 11 Mar 2025 10:36:06 -0700 (PDT)
-Message-ID: <9188b3d1-ee61-c1d1-f06e-854ffd2ccff7@broadcom.com>
-Date: Tue, 11 Mar 2025 10:20:05 -0700
+	s=arc-20240116; t=1741713655; c=relaxed/simple;
+	bh=rNUcHSP2FpvVCaR6xsgIP4uOrg8T5+YYy+BHIJDjss4=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=owfmaqy+Q5NKS5HEJJAos7zU5WFs2Zx2+OCtR/CJvJFC3d1gll2fHN4zkc9rQdpJb4ZIcsGU+6Urz41LvMKCMLmDyFjXRxd0cK6zX+uFGNN8vM0inm6ohVnPU+WHW6ZPr4cFQ20tJR+xXLAqAKN1Na6JmfvKk6Oy8L1VDn0dF+c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=iencinas.com; spf=pass smtp.mailfrom=iencinas.com; dkim=pass (2048-bit key) header.d=iencinas.com header.i=@iencinas.com header.b=uPkyfvWZ; arc=none smtp.client-ip=91.218.175.185
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=iencinas.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iencinas.com
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=iencinas.com;
+	s=key1; t=1741713650;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=tgSt81uvJI3vKLVetlm9klAJwDGyPHMhXRAlaqD2p8k=;
+	b=uPkyfvWZsSw6Vg3qkYIUrQn5g3wIyD7dEs+84MZY4jm5hSVFHR15Oc3tiUXoEgORGQhKSE
+	vdaWIl0Qh3YVuJzatKNWGqqsy8DxFAOsbWJ7bV8kxZ0vKsOk8WLCOAoiHcVwht1g95Wn+F
+	fNbfxz7Ed3ANi/JkQpjPwbgqGO6KW6UV/Oh+sGJulPsy7oyHaktFhscPH9WfDQA+31eCb0
+	8JbozNKnFsikmqyetGLZbfoPuRRWp6a2KJaR0tJyvVnld63l0pKgxeMaDPFar5zcDH8UVS
+	0pRIBJBc69VVbhMEAqW5xGwsYrBe53Amy85OzWG3VTpKsgOS3OkXQn1m5rfTsQ==
+From: Ignacio Encinas <ignacio@iencinas.com>
+Date: Tue, 11 Mar 2025 18:20:22 +0100
+Subject: [PATCH] riscv: fix test_and_{set,clear}_bit ordering documentation
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.11.0
-Subject: Re: [RFC] misc: bcm-vk: avoid -Wflex-array-member-not-at-end warning
-To: "Gustavo A. R. Silva" <gustavoars@kernel.org>,
- Arnd Bergmann <arnd@arndb.de>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Broadcom internal kernel review list
- <bcm-kernel-feedback-list@broadcom.com>, linux-kernel@vger.kernel.org,
- linux-hardening@vger.kernel.org
-References: <Z8_twT77rSIK-S_-@kspp>
-Content-Language: en-US
-From: Scott Branden <scott.branden@broadcom.com>
-In-Reply-To: <Z8_twT77rSIK-S_-@kspp>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+Message-Id: <20250311-riscv-fix-test-and-set-bit-comment-v1-1-8d2598e1e43b@iencinas.com>
+X-B4-Tracking: v=1; b=H4sIANVw0GcC/x2NQQqDMBBFryKzdiCTYlu9irhIk2k7C6Nkggji3
+ R1cvs/jvwOUi7DC0BxQeBOVJRtQ20D8h/xjlGQM3vnOPYiwiMYNv7JjZa0YckLlih+pGJd55mx
+ b6N2bgn+lJ4EdrYXNvyPjdJ4XARLKYnQAAAA=
+X-Change-ID: 20250311-riscv-fix-test-and-set-bit-comment-aa9081a27d61
+To: Yury Norov <yury.norov@gmail.com>, 
+ Rasmus Villemoes <linux@rasmusvillemoes.dk>, 
+ Paul Walmsley <paul.walmsley@sifive.com>, 
+ Palmer Dabbelt <palmer@dabbelt.com>
+Cc: linux-kernel-mentees@lists.linux.dev, skhan@linuxfoundation.org, 
+ linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ Ignacio Encinas <ignacio@iencinas.com>
+X-Migadu-Flow: FLOW_OUT
 
-Hi Gustavo,
+test_and_{set,clear}_bit are fully ordered as specified in
+Documentation/atomic_bitops.txt. Fix incorrect comment stating otherwise.
 
-On 2025-03-11 01:01, Gustavo A. R. Silva wrote:
-> Hi all,
-> 
-> I'm trying to fix the following warning:
-> 
-> drivers/misc/bcm-vk/bcm_vk.h:415:32: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-> 
-> after a quick look, I don't see any code directly using the flexible
-> array `data[]`, so this patch should probably suffice:
-> 
-> diff --git a/drivers/misc/bcm-vk/bcm_vk.h b/drivers/misc/bcm-vk/bcm_vk.h
-> index 386884c2a263..9344c2366a4b 100644
-> --- a/drivers/misc/bcm-vk/bcm_vk.h
-> +++ b/drivers/misc/bcm-vk/bcm_vk.h
-> @@ -311,7 +311,6 @@ struct bcm_vk_peer_log {
->          u32 wr_idx;
->          u32 buf_size;
->          u32 mask;
-> -       char data[];
->   };
-> 
-> What do you think?
-If it is changed to data[0] does the warning go away?  If not, you could 
-remove it or change the code to use it instead of the sizeof used to
-calculate peer offset.
-> 
-> Thanks
-> --
-> Gustavo
+Note that the implementation is correct since commit
+9347ce54cd69 ("RISC-V: __test_and_op_bit_ord should be strongly ordered")
+was introduced.
+
+Signed-off-by: Ignacio Encinas <ignacio@iencinas.com>
+---
+This seems to be a leftover comment from the initial implementation
+which assumed these operations were relaxed.
+
+Documentation/atomic_bitops.txt states:
+
+  [...]
+  RMW atomic operations with return value:
+  
+    test_and_{set,clear,change}_bit()
+    test_and_set_bit_lock()
+  [...]
+
+   - RMW operations that have a return value are fully ordered.
+
+Similar comments can be found in
+include/asm-generic/bitops/instrumented-atomic.h,
+include/linux/atomic/atomic-long.h, etc...
+---
+ arch/riscv/include/asm/bitops.h | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/arch/riscv/include/asm/bitops.h b/arch/riscv/include/asm/bitops.h
+index c6bd3d8354a96b4e7bbef0e98a201da412301b57..49a0f48d93df5be4d38fe25b437378467e4ca433 100644
+--- a/arch/riscv/include/asm/bitops.h
++++ b/arch/riscv/include/asm/bitops.h
+@@ -226,7 +226,7 @@ static __always_inline int variable_fls(unsigned int x)
+  * @nr: Bit to set
+  * @addr: Address to count from
+  *
+- * This operation may be reordered on other architectures than x86.
++ * This is an atomic fully-ordered operation (implied full memory barrier).
+  */
+ static __always_inline int arch_test_and_set_bit(int nr, volatile unsigned long *addr)
+ {
+@@ -238,7 +238,7 @@ static __always_inline int arch_test_and_set_bit(int nr, volatile unsigned long
+  * @nr: Bit to clear
+  * @addr: Address to count from
+  *
+- * This operation can be reordered on other architectures other than x86.
++ * This is an atomic fully-ordered operation (implied full memory barrier).
+  */
+ static __always_inline int arch_test_and_clear_bit(int nr, volatile unsigned long *addr)
+ {
+
+---
+base-commit: 2014c95afecee3e76ca4a56956a936e23283f05b
+change-id: 20250311-riscv-fix-test-and-set-bit-comment-aa9081a27d61
+
+Best regards,
+-- 
+Ignacio Encinas <ignacio@iencinas.com>
+
 
