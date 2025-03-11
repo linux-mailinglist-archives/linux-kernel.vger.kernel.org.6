@@ -1,162 +1,143 @@
-Return-Path: <linux-kernel+bounces-555891-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-555893-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 97ABCA5BDEE
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 11:33:53 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id F0829A5BDF3
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 11:34:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CE4AF167F60
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 10:33:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7B2A01889A35
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 10:34:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5871ABA34;
-	Tue, 11 Mar 2025 10:33:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80126238170;
+	Tue, 11 Mar 2025 10:34:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="rsScHTqU";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="LHgr+oik"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="trMzo645"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FCA42206BD
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 10:33:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EB182206BD;
+	Tue, 11 Mar 2025 10:34:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741689228; cv=none; b=djH7lANYmeVZ4NL5pi1HWsZg2UID9PMokVTdggsH2aEaQyVw5Fdk2/WBNY55b6tAqDlcsTLv9OQOl86satIJZQMCvo3upKh8S7NzzfFvRG5lUogrtonA6frY4CHISTP4qcxUFLaAEnWOwnZZIP03J+PP4w6Zapsy7gYPbaYlaAI=
+	t=1741689267; cv=none; b=hu0NfGNYa1hvSGD+QJSdr4FxLpg9jrkOAiw9zlQYS+DIKxXFIERR3Z9Jcn1IDk1vPh4PKQtTD6n39FCGgKlHXwokFUltpayA7jj6TXr3lbK+FqSR3VDsTPfehb3JAKW1vbpm9adog5o7T+9XoFXQuOdrolca4ygV7M1l8brE8II=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741689228; c=relaxed/simple;
-	bh=6iaKIcDcLtBUnfZj2ssz1Js32CswNScfI7rteqtVNFM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NHtsaIXiElMN7YI1ZWcRUoprzVQ7dHcRRjNVoEENn3szLHDrwqXwJDb7wzP1pi+/mBaANOihYcOqjhgto8kKyG3nLeUbT0Qw22JT1T58HdaWgJXUu/fqFlHlYLKSpzuRGoz3pZIjCDcmAQP3RD22a3KgJzFVvk/h2Xdd5XuoKRE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=rsScHTqU; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=LHgr+oik; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Tue, 11 Mar 2025 11:33:43 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1741689224;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=4W141gGFDKRnvx/vpB6B0h5KnkN4GxkpTzCHnQ55P/o=;
-	b=rsScHTqUol5pxURgpdql1VNW5WgOyOcYtqJtJIa7Zh2K5CHLRJd5BKhptpjv2y4g5bPxIk
-	h+siEFiVTSNbBZRTLc4PToEjoJl6O+ZED5u5dEc1NeQAoLmPR/CKx/KT2aY570cbrqufNm
-	Sj2RiiPUWapr+NRuG1LCFkAs90hjRk73Wd9pyPpiWLbgW5lqB5i0yO1bzqin1HwKPc/nyF
-	UxGYEgNwHpdkCD6S1/mmk9IhVVE4ZDX3MmEVNtiswuXBdIRgH0xqYmsRQ/hfo2AxYvUHZw
-	0wUkC5D10FzcklguUgy3GTUO11M16y+iwxVHgI1ak1YW2EW2IVAFJ9qVJk29/w==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1741689224;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=4W141gGFDKRnvx/vpB6B0h5KnkN4GxkpTzCHnQ55P/o=;
-	b=LHgr+oikYoChRaIeyP99LgfXxN7fYELHK68tfVTcAphjOKL7r8KIbmA3Qs2Y4f5XX+eP8B
-	x42dQ40jVhA40WDQ==
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: linux-kernel@vger.kernel.org,
-	=?utf-8?B?QW5kcsOp?= Almeida <andrealmeid@igalia.com>,
-	Darren Hart <dvhart@infradead.org>,
-	Davidlohr Bueso <dave@stgolabs.net>, Ingo Molnar <mingo@redhat.com>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Valentin Schneider <vschneid@redhat.com>,
-	Waiman Long <longman@redhat.com>
-Subject: Re: [PATCH v9 00/11] futex: Add support task local hash maps.
-Message-ID: <20250311103343.zCFqALMD@linutronix.de>
-References: <20250225170914.289358-1-bigeasy@linutronix.de>
- <20250303105416.GY11590@noisy.programming.kicks-ass.net>
- <20250303141753.tF-FoCm1@linutronix.de>
- <20250303164015.HHfy1Ibj@linutronix.de>
- <20250304145837.a8g07J-k@linutronix.de>
- <20250305090237.2Q9GwRA1@linutronix.de>
- <20250310160102.GG19344@noisy.programming.kicks-ass.net>
- <20250310162710.K9WY5tzN@linutronix.de>
- <20250311101714.GC19424@noisy.programming.kicks-ass.net>
+	s=arc-20240116; t=1741689267; c=relaxed/simple;
+	bh=S6wR8udc4flcNC99ou/zTegE4/iCZsKNPsN00sFe5JY=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=i18lwUaUiWtLU1jMK+twTcMXFmKUou0pnTE/yl9lbfIfzB6p43aqaZLWB/mAtSZ2CK/MiOTM5e4ZY/3bnVkcFLjca1SvV2yN7+6n5UhSYft6R7jQqOSwXIpBL5Ylv4W5J7o/Fu7X0URi1m0tkHRJga8ehLD0JnERHP8fWFReCLo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=trMzo645; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52B9PUlB026764;
+	Tue, 11 Mar 2025 10:34:24 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=EXkS22
+	ubkiuuVZA6TyT0Ek4W0I7j3tntZa9y+PgAqPY=; b=trMzo645qIlqFJAT49IzMv
+	2vDkujAdoEQVpBBLzVQzF0tPMmnVljAtYe3VUGtzrzh7vETw2NnCja7Or7mToRJV
+	znmFcOsdnnnasBQaOXbWhGcx2Cne/YR2iJFxFnQg8179zc6Bo1atS4XR6QkpPgLt
+	xTZDQJh4KG07VqOgBRXcr+Oin1L5O+iUnS4iwsoLm5HozVQHk7Tcjj9wx6Cfwg04
+	kfKuIjW2Y5l1ZAKmMdLHFR4sHcY2LMfBuN6RD/TIb7pVeBtBBB0CwmsUlYzhFasl
+	HBYBrMkVJ/QbwkPMl0w1iBQP6RF8lczqfUq1Ee/EB/cJ2Q8PWfn7OlbnWbhIJJlg
+	==
+Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 45a7a1b7kd-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 11 Mar 2025 10:34:23 +0000 (GMT)
+Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma12.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 52B8gOBK007011;
+	Tue, 11 Mar 2025 10:34:22 GMT
+Received: from smtprelay05.dal12v.mail.ibm.com ([172.16.1.7])
+	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 45907t3v70-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 11 Mar 2025 10:34:22 +0000
+Received: from smtpav01.dal12v.mail.ibm.com (smtpav01.dal12v.mail.ibm.com [10.241.53.100])
+	by smtprelay05.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 52BAYMbr24117960
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 11 Mar 2025 10:34:22 GMT
+Received: from smtpav01.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 1582258064;
+	Tue, 11 Mar 2025 10:34:22 +0000 (GMT)
+Received: from smtpav01.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 313C85806B;
+	Tue, 11 Mar 2025 10:34:21 +0000 (GMT)
+Received: from [9.61.127.211] (unknown [9.61.127.211])
+	by smtpav01.dal12v.mail.ibm.com (Postfix) with ESMTP;
+	Tue, 11 Mar 2025 10:34:21 +0000 (GMT)
+Message-ID: <ff033f2a-b82c-4c7b-a45d-71c674892b2d@linux.ibm.com>
+Date: Tue, 11 Mar 2025 06:34:20 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250311101714.GC19424@noisy.programming.kicks-ass.net>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] s390/vfio-ap: lock mdev object when handling mdev remove
+ request
+From: Anthony Krowiak <akrowiak@linux.ibm.com>
+To: linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org
+Cc: jjherne@linux.ibm.com, pasic@linux.ibm.com, hca@linux.ibm.com,
+        gor@linux.ibm.com, borntraeger@linux.ibm.com,
+        alex.williamson@redhat.com, clg@redhat.com, mjrosato@linux.ibm.com,
+        stable@vger.kernel.org
+References: <20250221153238.3242737-1-akrowiak@linux.ibm.com>
+Content-Language: en-US
+In-Reply-To: <20250221153238.3242737-1-akrowiak@linux.ibm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: RoiwAMSpPJPPSrY5iB4UQV1ltiLJsWnr
+X-Proofpoint-GUID: RoiwAMSpPJPPSrY5iB4UQV1ltiLJsWnr
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-11_01,2025-03-11_02,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ phishscore=0 lowpriorityscore=0 mlxlogscore=999 malwarescore=0
+ clxscore=1015 mlxscore=0 impostorscore=0 bulkscore=0 spamscore=0
+ suspectscore=0 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.19.0-2502100000 definitions=main-2503110070
 
-On 2025-03-11 11:17:14 [+0100], Peter Zijlstra wrote:
-> Right, so I failed to understand initially. When DEAD it stays 0, but
-> there is indeed the one case where it isn't yet DEAD but still returns
-> 0.
-> 
-> Making the DEAD return -1 seems like a good solution.
+PING!
 
-The patch below is what I have/ tglx asked for. I intend to use it the
-series and repost it once I fixed it up.
 
--------------->8--------------
-
-Subject: [PATCH] rcuref: Provide rcuref_is_dead().
-
-rcuref_read() returns the number of references that are currently held.
-If 0 is returned then it is not safe to assume that the object ca be
-scheduled for deconstruction because it is marked DEAD. This happens if
-the return value of rcuref_put() is ignored and assumptions are made.
-
-If 0 is returned then the counter transitioned from 0 to RCUREF_NOREF.
-If rcuref_put() did not return to the caller then the counter did not
-yet transition from RCUREF_NOREF to RCUREF_DEAD. This means that there
-is still a chance that the counter counter will transition from
-RCUREF_NOREF to 0 meaning it is still valid and must not be
-deconstructed. In this brief window rcuref_read() will return 0.
-
-Provide rcuref_is_dead() to determine if the counter is marked as
-RCUREF_DEAD.
-
-Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
----
- include/linux/rcuref.h | 22 +++++++++++++++++++++-
- 1 file changed, 21 insertions(+), 1 deletion(-)
-
-diff --git a/include/linux/rcuref.h b/include/linux/rcuref.h
-index 6322d8c1c6b42..2fb2af6d98249 100644
---- a/include/linux/rcuref.h
-+++ b/include/linux/rcuref.h
-@@ -30,7 +30,11 @@ static inline void rcuref_init(rcuref_t *ref, unsigned int cnt)
-  * rcuref_read - Read the number of held reference counts of a rcuref
-  * @ref:	Pointer to the reference count
-  *
-- * Return: The number of held references (0 ... N)
-+ * Return: The number of held references (0 ... N). The value 0 does not
-+ * indicate that it is safe to schedule the object, protected by this reference
-+ * counter, for deconstruction.
-+ * If you want to know if the reference counter has been marked DEAD (as
-+ * signaled by rcuref_put()) please use rcuread_is_dead().
-  */
- static inline unsigned int rcuref_read(rcuref_t *ref)
- {
-@@ -40,6 +44,22 @@ static inline unsigned int rcuref_read(rcuref_t *ref)
- 	return c >= RCUREF_RELEASED ? 0 : c + 1;
- }
- 
-+/**
-+ * rcuref_is_dead -	Check if the rcuref has been already marked dead
-+ * @ref:		Pointer to the reference count
-+ *
-+ * Return: True if the object has been marked DEAD. This signals that a previous
-+ * invocation of rcuref_put() returned true on this reference counter meaning
-+ * the protected object can safely be scheduled for deconstruction.
-+ * Otherwise, returns false.
-+ */
-+static inline bool rcuref_is_dead(rcuref_t *ref)
-+{
-+	unsigned int c = atomic_read(&ref->refcnt);
-+
-+	return (c >= RCUREF_RELEASED) && (c < RCUREF_NOREF);
-+}
-+
- extern __must_check bool rcuref_get_slowpath(rcuref_t *ref);
- 
- /**
--- 
-2.47.2
+On 2/21/25 10:32 AM, Anthony Krowiak wrote:
+> The vfio_ap_mdev_request function in drivers/s390/crypto/vfio_ap_ops.c
+> accesses fields of an ap_matrix_mdev object without ensuring that the
+> object is accessed by only one thread at a time. This patch adds the lock
+> necessary to secure access to the ap_matrix_mdev object.
+>
+> Fixes: 2e3d8d71e285 ("s390/vfio-ap: wire in the vfio_device_ops request callback")
+> Signed-off-by: Anthony Krowiak <akrowiak@linux.ibm.com>
+> Cc: <stable@vger.kernel.org>
+> ---
+>   drivers/s390/crypto/vfio_ap_ops.c | 3 +++
+>   1 file changed, 3 insertions(+)
+>
+> diff --git a/drivers/s390/crypto/vfio_ap_ops.c b/drivers/s390/crypto/vfio_ap_ops.c
+> index a52c2690933f..a2784d3357d9 100644
+> --- a/drivers/s390/crypto/vfio_ap_ops.c
+> +++ b/drivers/s390/crypto/vfio_ap_ops.c
+> @@ -2045,6 +2045,7 @@ static void vfio_ap_mdev_request(struct vfio_device *vdev, unsigned int count)
+>   	struct ap_matrix_mdev *matrix_mdev;
+>   
+>   	matrix_mdev = container_of(vdev, struct ap_matrix_mdev, vdev);
+> +	mutex_lock(&matrix_dev->mdevs_lock);
+>   
+>   	if (matrix_mdev->req_trigger) {
+>   		if (!(count % 10))
+> @@ -2057,6 +2058,8 @@ static void vfio_ap_mdev_request(struct vfio_device *vdev, unsigned int count)
+>   		dev_notice(dev,
+>   			   "No device request registered, blocked until released by user\n");
+>   	}
+> +
+> +	mutex_unlock(&matrix_dev->mdevs_lock);
+>   }
+>   
+>   static int vfio_ap_mdev_get_device_info(unsigned long arg)
 
 
