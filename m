@@ -1,74 +1,76 @@
-Return-Path: <linux-kernel+bounces-555571-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-555576-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D2E7A5B9C1
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 08:27:48 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 98CEDA5B9D4
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 08:31:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ADA0E16FB7B
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 07:27:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5A5E81894C5D
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 07:31:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9583D2222CA;
-	Tue, 11 Mar 2025 07:27:40 +0000 (UTC)
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CCFC2222DE;
+	Tue, 11 Mar 2025 07:31:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="eARvd6Ww"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE5C92206B1;
-	Tue, 11 Mar 2025 07:27:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FA231EB195;
+	Tue, 11 Mar 2025 07:31:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741678060; cv=none; b=RcJHJTKankJ182Ds5MLOYcRmPxXHui9fnm3kApFE2mKtz5KVWmhvebUcNQb1w2a3d6qnIUe9dLv9XNFngQH27fUA5U0i75yc/7AHm0FyjCSn+Oo3d9I0YWSsiHXsP5BPwsk/TrV0LhgNQ/5Vnvt7Un2pD+t+oYi5/2YhPnkIhNg=
+	t=1741678301; cv=none; b=ECUhzEl1RxotJYT1tMQrqAPibaPNtFA/1cXI4iUn/HRAbTMa8SRxBc31JojU4HL6MqeAHmqk97Xsdfqf0Of1Ox0bs9i7QQ5DAyLJoTp3WXZldsctdiXxQ57B2C/j9PzsojTHpRbEFoTlqN+SWybqedBNPI60WpgJ5eNDJaWP2MI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741678060; c=relaxed/simple;
-	bh=9lpj/SQtbcBYO7uyqYGorW8/ONntmoTjHBzPYBDq3ho=;
+	s=arc-20240116; t=1741678301; c=relaxed/simple;
+	bh=Hq9oj7wLpWMy8mr3CBZv+PzeXcEG672QxLovOqz+Mco=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SyfAtoKkGm4Dx8p7R71beMO2OoYfGShSIByksb2titTF3kLCc4DV0n0YN7NiLBoDrIG0zHsTiVihZVdqXYYFnTWioj9KafSXRueDpHh9JweBTJ9p7fd3383vxUn250VfzAEPUtfEg4d0KVD/OgpjgO80mDgLLHdgoBXNrtnlyAQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.214.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-22398e09e39so93677805ad.3;
-        Tue, 11 Mar 2025 00:27:38 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741678058; x=1742282858;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=9UdKkLSJGsV4gu9l5EP4VTB+jR8nNUuC37NW8oMZ9po=;
-        b=oVAJQLtrFejqZJMOBfgaXCvRO7/TBdjXeTBCbD0Lqmnflpw6e9fkobaYDSfTmIIKmO
-         3FplafqIcfB7K5r7kXYrA6ugjZX3tSCMFq+tJsue7LO+r0t2eFxvsU0L58xJvIB1ynV+
-         cqSUzfCnnVotiRGA7rnl97pnpLps7CKWolj9MzNdYjsjGSTFwdxRVr2BdwD10IVvR2aQ
-         su4dImlZ1QqoJ61Xkk24FlCvIFlIU4SwTd/GPV/ExY3yNO6Sz8pnKgCxkEZNRvY1w/V/
-         4en5/lau7Ab1J1YrMhimRK/ZZWwcbNPbKJGAYgSD9tXBBpO/GDAcCkrqZ6mImf+6rOPD
-         AoPg==
-X-Forwarded-Encrypted: i=1; AJvYcCVPx6xg29UcENmEL/f1gqXAJ4XybgEr3JsypKdOPig6TR/eBIswq2YW73GzGRqS7nRz4ry/7iUDuYQ2Ueql@vger.kernel.org, AJvYcCWlw3DvLHKQUiIjEgaz0G6B3CEq/+9FHzBJFMOBo6H6kVUQEFXRl997DeKK9I08t/ukEk2v2JuAy69n@vger.kernel.org, AJvYcCXgKcHM7+ndZWgaBMxpqqpmFdmweESHZN1qUekvT4iIZTAD611qWW5Az7wt+Rorva10SP7bZ7jGxCLr@vger.kernel.org
-X-Gm-Message-State: AOJu0YyYLhF1PyR9LWRKOrK3RG+mEXWcFALbJCF9oP7c3wD/RcSNhmTt
-	jAJkzmUkujvrYSNjOzkLT28XUs6RhBBccYxa/36Lx1E/W8zWTYhs
-X-Gm-Gg: ASbGncuO0/BROirZueT0ZRhxfxlj491NHdgMlSxtTObETYSSgYDHTiunICUXr8Ucpu1
-	8Dx1q4A9DEzz0iAdlGpDil2uAOv+O3J8J1Rap5a1Zop6RFQRphFM4ANl+10TI2zQl/U/C+0BWZu
-	XySrm5Yi9Db6oiezOHg5ZtxzkEzvnCi9tE19dm8NFFrbz/js9ABzcIcrVAnrsy2sHSoRuPb+xFt
-	A3CuE5YdO8BVh6iCNTNON2aasFExKRFQviQGB7tv59vlZAn5TYZGA20wV43Q+cQEaowlCCvyocX
-	N0FXHNx+zRETrBJUuj99h9f2sad3kKJDecWhsXGHWYEtxQplhP2UKaWVZUST40troBEzUpzHBuB
-	Ork819OgSwrGGTg==
-X-Google-Smtp-Source: AGHT+IHR8e37F9xXihhPeMOp3ErI52oDmeUT+ASdWqncNF+UAMKGzfdyXK2pLP0Bl/OTKQ6uYNeKfg==
-X-Received: by 2002:a17:902:ccc9:b0:223:2aab:462c with SMTP id d9443c01a7336-22428899f43mr267466135ad.15.1741678058000;
-        Tue, 11 Mar 2025 00:27:38 -0700 (PDT)
-Received: from localhost (fpd11144dd.ap.nuro.jp. [209.17.68.221])
-        by smtp.gmail.com with UTF8SMTPSA id d9443c01a7336-22410a8ff3csm90699945ad.161.2025.03.11.00.27.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 11 Mar 2025 00:27:37 -0700 (PDT)
-Date: Tue, 11 Mar 2025 16:27:36 +0900
-From: Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>
-To: Thippeswamy Havalige <thippeswamy.havalige@amd.com>
-Cc: bhelgaas@google.com, lpieralisi@kernel.org,
-	manivannan.sadhasivam@linaro.org, robh@kernel.org,
-	krzk+dt@kernel.org, conor+dt@kernel.org, linux-pci@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	michal.simek@amd.com, bharat.kumar.gogada@amd.com
-Subject: Re: [PATCH] PCI: xilinx-cpm: Fix incorrect version check in init_port
-Message-ID: <20250311072736.GB277060@rocinante>
-References: <20250311072402.1049990-1-thippeswamy.havalige@amd.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Z6t3iwyPgrJSRe6Q005I3nuRdEHPx2wbjH5MCTSBKns3dIpNmHCdnpY4IibQC2sDWXy9dTqgvNN0OXbg+rAhDQik+vKyriCluBzjTUSeeKNi2JMFjJAe2cXRY1rYjMww3S1zXhp43QLooNHX+DNWyz/YOIo4sjZUnEPknfV9c2s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=eARvd6Ww; arc=none smtp.client-ip=198.175.65.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1741678300; x=1773214300;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=Hq9oj7wLpWMy8mr3CBZv+PzeXcEG672QxLovOqz+Mco=;
+  b=eARvd6WwoBHVoDyX97WM0ZB1H6QPqhqOnIoWBJyUIjvOgIvByXZH/rUF
+   fmmBcol8C+lLnzX2kZXJ5OcgLFpgdz/7umy81TZStjWd1RIUXXbwE+enK
+   /dztaOLso6XgxKQMtSLwOmMaSfd/co5k2HY+k2wkowgy2DGMd7M+wXAZz
+   /FgIPBBdjuqcxfDq/lYCef2CQoB6sPSHzPDBsIOUWoSt+DVNd9FE1bDMH
+   0EuFh1Hl7O28lacpnQHb9fpF6+KJw+/yf6U0aAi04yXup+qS6RG665A5G
+   A2mhF0YwPyRDParhy3dzXVfu/1OHx7XNi/TcSOFFlwIAKKFxD15s2+EE0
+   Q==;
+X-CSE-ConnectionGUID: 6ss0DhYZTMeXfqIIaaiouQ==
+X-CSE-MsgGUID: FiDQXVD7QoaM/VBP+XhlbA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11369"; a="46350713"
+X-IronPort-AV: E=Sophos;i="6.14,238,1736841600"; 
+   d="scan'208";a="46350713"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Mar 2025 00:31:40 -0700
+X-CSE-ConnectionGUID: NTagemLOSlibh4jwNKS8ng==
+X-CSE-MsgGUID: u9trQ7IgS0q9Htl59JSXvg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,238,1736841600"; 
+   d="scan'208";a="125283253"
+Received: from mev-dev.igk.intel.com ([10.237.112.144])
+  by fmviesa004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Mar 2025 00:31:37 -0700
+Date: Tue, 11 Mar 2025 08:27:45 +0100
+From: Michal Swiatkowski <michal.swiatkowski@linux.intel.com>
+To: Kees Cook <kees@kernel.org>
+Cc: Nicolas Ferre <nicolas.ferre@microchip.com>,
+	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-hardening@vger.kernel.org
+Subject: Re: [PATCH] net: macb: Truncate TX1519CNT for trailing NUL
+Message-ID: <Z8/l8eM5u7QeUROt@mev-dev.igk.intel.com>
+References: <20250310222415.work.815-kees@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -77,32 +79,47 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250311072402.1049990-1-thippeswamy.havalige@amd.com>
+In-Reply-To: <20250310222415.work.815-kees@kernel.org>
 
-Hello,
-
-> Fix an incorrect conditional check in xilinx_cpm_pcie_init_port().
+On Mon, Mar 10, 2025 at 03:24:16PM -0700, Kees Cook wrote:
+> GCC 15's -Wunterminated-string-initialization saw that this string was
+> being truncated. Adjust the initializer so that the needed final NUL
+> character will be present.
 > 
-> The previous condition mistakenly skipped initialization for all
-> versions except CPM5NC_HOST. This is now corrected to ensure that only
-> the CPM5NC_HOST is skipped while other versions proceed with
-> initialization.
+> Cc: Nicolas Ferre <nicolas.ferre@microchip.com>
+> Cc: Claudiu Beznea <claudiu.beznea@tuxon.dev>
+> Cc: Andrew Lunn <andrew+netdev@lunn.ch>
+> Cc: "David S. Miller" <davem@davemloft.net>
+> Cc: Eric Dumazet <edumazet@google.com>
+> Cc: Jakub Kicinski <kuba@kernel.org>
+> Cc: Paolo Abeni <pabeni@redhat.com>
+> Cc: netdev@vger.kernel.org
+> Signed-off-by: Kees Cook <kees@kernel.org>
+> ---
+>  drivers/net/ethernet/cadence/macb.h | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/net/ethernet/cadence/macb.h b/drivers/net/ethernet/cadence/macb.h
+> index 2847278d9cd4..9a6acb97c82d 100644
+> --- a/drivers/net/ethernet/cadence/macb.h
+> +++ b/drivers/net/ethernet/cadence/macb.h
+> @@ -1067,7 +1067,8 @@ static const struct gem_statistic gem_statistics[] = {
+>  	GEM_STAT_TITLE(TX256CNT, "tx_256_511_byte_frames"),
+>  	GEM_STAT_TITLE(TX512CNT, "tx_512_1023_byte_frames"),
+>  	GEM_STAT_TITLE(TX1024CNT, "tx_1024_1518_byte_frames"),
+> -	GEM_STAT_TITLE(TX1519CNT, "tx_greater_than_1518_byte_frames"),
+> +	GEM_STAT_TITLE(TX1519CNT, "tx_greater_than_1518_byte_frame"),
+> +
+>  	GEM_STAT_TITLE_BITS(TXURUNCNT, "tx_underrun",
+>  			    GEM_BIT(NDS_TXERR)|GEM_BIT(NDS_TXFIFOERR)),
+>  	GEM_STAT_TITLE_BITS(SNGLCOLLCNT, "tx_single_collision_frames",
 
-[...]
->  {
->  	const struct xilinx_cpm_variant *variant = port->variant;
->  
-> -	if (variant->version != CPM5NC_HOST)
-> +	if (variant->version == CPM5NC_HOST)
->  		return;
->  
->  	if (cpm_pcie_link_up(port))
+"rx_greater_than_1518_byte_frames" is also 32, probably you should fix
+that too.
 
-Ouch!  Nice catch.
+Thanks
 
-I will pull and squash this against the existing code directly on the branch.
-
-Thank you!
-
-	Krzysztof
+> -- 
+> 2.34.1
+> 
 
