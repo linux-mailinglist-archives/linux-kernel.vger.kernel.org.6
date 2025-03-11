@@ -1,161 +1,97 @@
-Return-Path: <linux-kernel+bounces-557010-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-557012-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D8B28A5D25B
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 23:13:40 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D55D4A5D264
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 23:16:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 81C28173B7D
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 22:13:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A2A41189BA81
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 22:16:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D89E9264F99;
-	Tue, 11 Mar 2025 22:13:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 164CC264A7F;
+	Tue, 11 Mar 2025 22:16:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="D6CC4r+x"
-Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="C/6Rezwg"
+Received: from mail-pj1-f53.google.com (mail-pj1-f53.google.com [209.85.216.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85D571E7C06;
-	Tue, 11 Mar 2025 22:13:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C3C92F28;
+	Tue, 11 Mar 2025 22:16:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741731209; cv=none; b=d+ENXUU3YaP7vAJNOJ8UED0kRwNALxEE5yI51R15QWEwA/owHKeKmLjGGpHx0i0xjO6jSd3ljQ/n8aEPzhe52z/EZSOi1ZCy70ME7nvOSrAwhjpSt5Tpvi3+Xpvd6fE6oyaKnQ+7kQPM+Ca3qUZL9vLK/MmWJuvk6udl+/tbWMs=
+	t=1741731389; cv=none; b=cSM5s9E9juMLgFMPfkHjxA/7ahF0JKc5tfoRjksfSE0pVzeF2N/WQb+M2PLZDl61STGJ07ejloDM/f5TwJBwACEBuIgbO94ZMY7Riq/9x/lgseYlO9dVRoRoV+Ju2JrtFHoe8PUsmaLqhgdHIn6mIvzg9IHUSD2ZAhEXcPIJOuw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741731209; c=relaxed/simple;
-	bh=3aGBcFcTaNaR79p8ePa1pCcF1TKKHFwBabPmxaAkhoE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=KGNoVzLVGbrYoQPfOBzv6vYMrAGut7BFyEuff/3dZrijYVDTsjQfrVFWe8akpMdQnkIjuXG55yOn9OcY+QpBTeuIBmxX9aTcPQzFUyhBynj0wmy7VOlKycRz2rySucdl7dc+2Ulb5gl5vtnYV1Dzz5+t248Y2FdK44ff8A1p1j8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=D6CC4r+x; arc=none smtp.client-ip=209.85.218.48
+	s=arc-20240116; t=1741731389; c=relaxed/simple;
+	bh=iuiqi9e3e8PTnvOuSOCH00S3bhZKN6Wl9Ex5eOpNe3E=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=UZzS0rWaSd92zEiAkjEWu4gqqACVzo/+SrwSMlAVOZfNIpZ6UVk1lSlhJ09XhcbbAzJszU2asTrWOzADNIKR9bzxYAx85NxOYn65FLIdG5yA7aW2TPwztkgbQIe1UrGpN7Tdr6NKBX6Y8v2DFChK84Fzrp6Xs+BpDqDvuWp69Nw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=C/6Rezwg; arc=none smtp.client-ip=209.85.216.53
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-abf3d64849dso703450866b.3;
-        Tue, 11 Mar 2025 15:13:27 -0700 (PDT)
+Received: by mail-pj1-f53.google.com with SMTP id 98e67ed59e1d1-2f42992f608so10168993a91.0;
+        Tue, 11 Mar 2025 15:16:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741731206; x=1742336006; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=rjUc9bePqbTdDTZkTfNHhdZzvWN4QLUd87uz3URl6ag=;
-        b=D6CC4r+xzDIlgqPv4grzBXtonyzlAmJIoxU8qQ3jPwTMx5rKNdY3bc3cY9oiePXbx9
-         bt/KVQxxFJZ6HrB4lbhoEdoY5oe0lai5ddiAr7yowf2oYtufKFE3HRy5xRuu4ZKWKzFm
-         jwQbPSYvxlabHVWFKYHDcl6LIElX29MVl0BFrMcYb+VW9F7Evj8Y6L5uPS/kjPXaSgSs
-         mOqybz2i+nt1XL6iEvuIi88MHDPRzlN/BSDDp5nbeb0Rk9vxh4FTIkMswdm+HRuUVkyj
-         +QCl5hZYtJcEjnR5ATF3Aw9GjL/Dh7qgdyj9QEfuPae6GcOJA/1TXbzDnEM56mq8coxn
-         8spg==
+        d=gmail.com; s=20230601; t=1741731387; x=1742336187; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=iuiqi9e3e8PTnvOuSOCH00S3bhZKN6Wl9Ex5eOpNe3E=;
+        b=C/6RezwgZdoX2qwTituYZT4P+9JTWJ0J7Ydq7NK/ICdGxV2+D/OO0t7vKwHarGVNzp
+         oZ3pF0fnre2jeJOvpqxg3OCnCb+5AgMcKkYJWM1k/5xrDKkH+jz7y2epIWa4vraW55Wo
+         Dr83w1z/mmbpQ1Twg1WImDYQ8cdpuROGM2EkF2PimMRR0DxcOC4v7ngSWtoeDewVseO5
+         GQuVZidIKjcRRwt4radBvx4Ur5lICW/TKCH7Ov+kuym8nxSeJJFTPhiJW0ctVbLkqXOi
+         OjK18fSEs1VARfRj3vE9AU/hyhDalWH9itebUEX7c3bBoJWnIP0p+91vz6AxDXr8r10q
+         kMJQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741731206; x=1742336006;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1741731387; x=1742336187;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=rjUc9bePqbTdDTZkTfNHhdZzvWN4QLUd87uz3URl6ag=;
-        b=qmFB33MGA9BfDcA0QeW/gFbRZDrbXwbfX38lvJPCQtYeTVFPu5EFPuZpt1LGZA8vF+
-         gqAKLlgsvoWAW4tltYQ1YDjTtJ0Lql03O/aHFJVLZW93EIPD6w6akBv/+0Ks4ZCYTjEh
-         mdvjXluGHfqTKagrMuo/jgdFCSfkG3XKvLsbvUuD3iMVSUDiRuT0mW1UjIgEwH2lpdfk
-         P3sSe663ZovSRdJQmBmtzNxxXl68isE20TRID5aDduOk7r2ZLgZVaHw5XS/cJuHkSqy9
-         B3IsOLUoZlaHtnJnucMzzWGwvMywCfhwvAymsNF+I4VoB2cr5RJh7I0P7CG7xgYdCzeT
-         RjXw==
-X-Forwarded-Encrypted: i=1; AJvYcCV9aUOcYCpNOsSJyBJS4g/qo/ecQ+foAHg+YPtce14KMLPRbK5PB9RA0r+ILY5D6o3FWlaYsxg5zh7T4Qkr@vger.kernel.org, AJvYcCVStD/EkVDQv6OTDWAj2Ljxi9+RqvlbR6UXFbuNhXpzs9ucvCWde0/QdSzjH4UsoaXV9Ji1H1kaSnYXxM0=@vger.kernel.org, AJvYcCWLWmMDjNrRXoBt2rtqhjwaRWvmIQGf2j/7Cke7HhCJ+viDMSQwOUJOZDp5RlX6wxeSqJA0sxh0Cplf@vger.kernel.org, AJvYcCX1hqpagB7+3wRdd15BvKcvLLlAPbgresPr0dl3qpkj+hTfHki92pHWY9v35gop9G8dOUpyKK0Eep0fNIv75g==@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywiz8ozVWAjaYxpQQfx1ayYjWnSnQMT93zavw6vJtQXr8NrMAlD
-	p543nMJKzwI5T518ufDq1kjPAm5guyidZlyA/pahL2ZMLkFNYo0o/1FunSCCgs71Jgc3G3GZVGI
-	BzGmy2ziwwJ4yqv8HJo4TBEX6TgDWvg==
-X-Gm-Gg: ASbGnctkdNJtYvrwp0QbG70PnUNrGviFxB09nE/Qk0xq3M14I9mMkvj96Peq+SL5YDZ
-	yc5WRQnBsQvbpeVD0eM0AZz3ps+wh79oEPc1cJ5Euf5CplUH8zjUBXnbzj6ZA+SKM61sVyKklmy
-	Fcgpi5Dd4gt8fVuNiRgHLiZaQD4InW8EGFuGK2mzaoK5+qBAV7gT9J11qr7g==
-X-Google-Smtp-Source: AGHT+IEnlCesq9Sm6fpV1dwPArArN/oTo2sRyqjMAyFXYP4HF57/9egXxxaFYA3J1rptFlnafWwJQQ7H/6zLNQVjros=
-X-Received: by 2002:a17:906:dc8a:b0:ac1:dc6d:af32 with SMTP id
- a640c23a62f3a-ac25269072cmr205164466b.27.1741731205522; Tue, 11 Mar 2025
- 15:13:25 -0700 (PDT)
+        bh=iuiqi9e3e8PTnvOuSOCH00S3bhZKN6Wl9Ex5eOpNe3E=;
+        b=vHwndDxenl1yQbQKOJPEsKVDas8/uBBeRbWLXTPh3y6GGrvTnGSOoVC0mWIEBoD0VW
+         mVczYtGa/U0TCw6HjSandFQNBKAVd6DDFoneIIkoUSo4YG1iBrrTQae7X3hd1Ys1F27K
+         G+244jPup2o4CGPLQwzc3Sj1epNOZLwU56fFNf90Xap84pDeroIEwUG7VHJH+9yMlAN0
+         oJHP2cT/iZ8j5olfT0ljHW1KgDRlxKx2IrxV6N8mMa6f1PySRtt6RKi3gd0wbXgbE5Ad
+         lLIHrAjVRlKXMhLLnaVwPsXJoYFO3KXWOVp3CduIzmEbPXojS4txQivz8jMJrjKvTvaP
+         DVUQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVaPi598UJe8/xMvGBneSvGhfDufwW/SfvpFJBMTX01PiOHCmWqxAG+6CQOUYwZfxWHl+Ut5VxD@vger.kernel.org, AJvYcCWVur8lOnEmXXAtecOWz69bDZesiaYbvMO+pPblHVxsoHLi0RqlIRn7j2ye0iBw3LyKptApmnnWYF5xwUs=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyoak4cmnCcuK7Sqh/uYjzpsaVyS4D1bEnv+vrM4qXsSTnHmGu+
+	ShCbwp4WzXrKz/JspysceOtIKl+gu8PV+MENGZFB9dW6cjf/ADJU8tpUXXTjiHY=
+X-Gm-Gg: ASbGncv9qaiCpe7kayAjtTjVcIfihP5/7CWaeVID/Agy46tg+5olQ/OW6pnfWP2zSoN
+	zki4AjCHm1InpdJLSrhuI6ExJ0G+lgs5tX91kIc5IRCeShHObu6y1TjKAqnv9V4mFZaDb6Xy7w3
+	N9T9fkGK5DuXl4vZDa9YXlBGduK7WSSLRvnZc4XOzqqfax1/3YyqVB1x5AMoTj9c7K+GUUtuSrc
+	DoO+euCHpZ3T0AlxC6Dg/j53onHsJ0XpMAc0D5uMzOxSApUt/SnWJCHFQJeRXJZRhbDbxRxV3TV
+	kugP/z+9ccrRMcQ/Qb34r3Re2JsfXGh37HIT8L01hw==
+X-Google-Smtp-Source: AGHT+IHx77KmhClE9y0RHz3VSR7AoYY9YnSFnXUMXC59jH0tGBzghTeYuIgmk5Bdd4EbtttJn1ID6g==
+X-Received: by 2002:a17:90b:17c3:b0:2fe:a742:51b0 with SMTP id 98e67ed59e1d1-2ff7cf26dfemr26096359a91.31.1741731387229;
+        Tue, 11 Mar 2025 15:16:27 -0700 (PDT)
+Received: from fedora.. ([186.220.38.89])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-301190b98b7sm113364a91.32.2025.03.11.15.16.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 11 Mar 2025 15:16:26 -0700 (PDT)
+From: Joao Bonifacio <joaoboni017@gmail.com>
+To: Tony Nguyen <anthony.l.nguyen@intel.com>
+Cc: Przemek Kitszel <przemyslaw.kitszel@intel.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S . Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	intel-wired-lan@lists.osuosl.org,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: 
+Date: Tue, 11 Mar 2025 19:15:13 -0300
+Message-ID: <20250311221604.92767-1-joaoboni017@gmail.com>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250311-dtbinding-v1-0-5c807d33f7ae@quicinc.com>
- <20250311-dtbinding-v1-1-5c807d33f7ae@quicinc.com> <7yjj2eemvvvnsgv67d7tueid4h3n3onuou6ammx36am4qhfsal@xam3iamk4er3>
- <c0430086-675d-b58c-4ef9-1bd9ee51d3db@quicinc.com> <zssjkvxxv7kionartp6f3y2qh3d4i6gwnhwsrklsfad3t4fy3q@jkehbkx6wcyk>
- <203ea0bb-c53c-389e-db12-b41773c0ff5d@quicinc.com>
-In-Reply-To: <203ea0bb-c53c-389e-db12-b41773c0ff5d@quicinc.com>
-From: Dmitry Baryshkov <dbaryshkov@gmail.com>
-Date: Wed, 12 Mar 2025 00:13:14 +0200
-X-Gm-Features: AQ5f1JrSy91oYnYZTZryNqtuXvq7j4AA0a3FL9eIdiJigCbNEuF4Dql52zRWNxM
-Message-ID: <CALT56yP5mh4QjhOEHh0x2s_+BWWXH0fPM7r7YVvx+DEgWZ0MCw@mail.gmail.com>
-Subject: Re: [PATCH 1/4] dt-bindings: media: qcom,sm8550-iris: update power
- domain name
-To: Vikash Garodia <quic_vgarodia@quicinc.com>
-Cc: Dmitry Baryshkov <lumag@kernel.org>, Dikshita Agarwal <quic_dikshita@quicinc.com>, 
-	Abhinav Kumar <quic_abhinavk@quicinc.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
-	linux-arm-msm@vger.kernel.org, linux-media@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-
-On Tue, 11 Mar 2025 at 21:19, Vikash Garodia <quic_vgarodia@quicinc.com> wrote:
->
->
-> On 3/11/2025 9:05 PM, Dmitry Baryshkov wrote:
-> > On Tue, Mar 11, 2025 at 08:41:01PM +0530, Vikash Garodia wrote:
-> >>
-> >> On 3/11/2025 8:37 PM, Dmitry Baryshkov wrote:
-> >>> On Tue, Mar 11, 2025 at 05:33:53PM +0530, Vikash Garodia wrote:
-> >>>> Not all platforms has a collapsible mx, so use the more generic naming
-> >>>> of mx in the binding.
-> >>>
-> >>> I guess, it wasn't even tested...
-> >> Not sure what made you guess so, let me check why my binding checker did not
-> >> catch the bot reported warning.
-> >
-> > Obvious: you are changing the bindings in a non-backwards compatible
-> > way, but you are not changing the example in the same file (and
-> > obviously you are not changing the DTs), which means that this wasn't
-> > tested.
-> >
-> > Hint: you can use enum [mx, mxc] instead of const. That would make it
-> > backwards compatible.
-> Currently there are no user of this binding. Given that either of MX or MXC are
-> same connection to video hardware, just that one is collapsible, it would be
-> good to replace the existing element instead of enum.
-
-This obviously should go to the commit message.
-
->
-> Regards,
-> Vikash
-> >
-> >> Regards,
-> >> Vikash
-> >>>
-> >>>>
-> >>>> Signed-off-by: Vikash Garodia <quic_vgarodia@quicinc.com>
-> >>>> ---
-> >>>>  Documentation/devicetree/bindings/media/qcom,sm8550-iris.yaml | 2 +-
-> >>>>  1 file changed, 1 insertion(+), 1 deletion(-)
-> >>>>
-> >>>> diff --git a/Documentation/devicetree/bindings/media/qcom,sm8550-iris.yaml b/Documentation/devicetree/bindings/media/qcom,sm8550-iris.yaml
-> >>>> index e424ea84c211f473a799481fd5463a16580187ed..440a0d7cdfe19a1ccedefc207d96b26eed5d6630 100644
-> >>>> --- a/Documentation/devicetree/bindings/media/qcom,sm8550-iris.yaml
-> >>>> +++ b/Documentation/devicetree/bindings/media/qcom,sm8550-iris.yaml
-> >>>> @@ -28,7 +28,7 @@ properties:
-> >>>>      items:
-> >>>>        - const: venus
-> >>>>        - const: vcodec0
-> >>>> -      - const: mxc
-> >>>> +      - const: mx
-> >>>>        - const: mmcx
-> >>>>
-> >>>>    clocks:
-> >>>>
-> >>>> --
-> >>>> 2.34.1
-> >>>>
-> >>>
-> >
+Content-Transfer-Encoding: 8bit
 
 
-
--- 
-With best wishes
-Dmitry
+The following is a small change made to the file removing the zero values from the initializations.
 
