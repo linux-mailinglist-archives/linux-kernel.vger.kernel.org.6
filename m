@@ -1,157 +1,186 @@
-Return-Path: <linux-kernel+bounces-555602-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-555596-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C23AAA5BA21
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 08:45:10 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 16CCCA5BA11
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 08:41:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D6021171D10
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 07:45:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 95616189472F
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 07:41:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E57B223710;
-	Tue, 11 Mar 2025 07:45:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8B752222DE;
+	Tue, 11 Mar 2025 07:41:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="NWjS0NOJ"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=nicolas.frattaroli@collabora.com header.b="Z9If5mae"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6825D22173C;
-	Tue, 11 Mar 2025 07:45:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741679101; cv=none; b=J80QaArpzFDH7Usi2ACOG71jstZiokh8uJpN9fjEY1ACZqsT+IZw0SrmjFMy4yrimcykBLZq62VIEIunMZtEA+t7xroBeG+FrCkhDhiYXFuqADYAV2RPfOr3Z3T6eh/Z0Kx75QrPsydtez57wPmfNtR/vrDQoJtw+48v5OOenlY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741679101; c=relaxed/simple;
-	bh=1ADFlvq1wbboRCA2G1LV3CEb9m8pqmqaV3auLbDu4+s=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UqspIdNLMyKyu2QywreX+xSHV/JW5RdAK9uk3QNmef3cR9YxCVyT6JhTqM5+qjoynH4QfXGb6t4PpumK9ytlqIXm6SpqaUFny1xZOAxpfhOl0u+/hu8E1pGu1MjtESHpidE7bBEZN3trg9A3UBLrTUHOpAzH7ucJ9Ij4o/g768E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=NWjS0NOJ; arc=none smtp.client-ip=198.175.65.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1741679100; x=1773215100;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=1ADFlvq1wbboRCA2G1LV3CEb9m8pqmqaV3auLbDu4+s=;
-  b=NWjS0NOJLsidFQTyMTLgLwI4FBNZlYkH2CFeeaQoWAcXPTU1Q+srl2zw
-   qNmjQMWroq8KR/pEVaD6d3bfPKeQZiMFz2EQScaH+oplQpoVKha7YGXQ7
-   rv2yhglMyVG+P+CzP5gfv3ddd6O+xHLvkvjmlf1dBXiJCNF6mCfNS0iRi
-   xfI+kTNRM85hX7n10xGt0VRefDhYg5kiDroSq1m0i/KqX2mpBeK6K4fh+
-   pBO2+JowPQN5DI1ME+JRLaTqL+YcB8BVt2gi/34h9Ag/R1MUL5lGw4lRu
-   TK3pmP77kdleA0o+y7Djsf+0lCzjBTFGBbM8GChex9Y3i6pz7xam9C00+
-   w==;
-X-CSE-ConnectionGUID: bV4JgXrgRzetqh/oBsaMqQ==
-X-CSE-MsgGUID: fnSlpjnOSDWBqlO05yTiaw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11369"; a="42613009"
-X-IronPort-AV: E=Sophos;i="6.14,238,1736841600"; 
-   d="scan'208";a="42613009"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Mar 2025 00:45:00 -0700
-X-CSE-ConnectionGUID: RgQRP+pgRw+gu3XAjNHaAw==
-X-CSE-MsgGUID: /tDWz1lJQSa9OLn3xj5WMw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,238,1736841600"; 
-   d="scan'208";a="143439123"
-Received: from mev-dev.igk.intel.com ([10.237.112.144])
-  by fmviesa002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Mar 2025 00:44:56 -0700
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45765360
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 07:41:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741678889; cv=pass; b=Db7MbPbq92b251ZDUOLiShH+icPnqV9B1igzEyyZWlwBknBYNKb5Mr2dqU4Rdy5DqZsjQyn2RffHHdtSHIUiwI34vL0EMfxznuQe9xKHw0JF6Th7RfrPGzY8TBQSsrPXg5sf5uHDbPvi4WYkmWf0HoFC9vjFH7eAQ+7XkDHm9bk=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741678889; c=relaxed/simple;
+	bh=n4VtiVMz1fhevfF11inn+T7Qptnh4eFwvGobtv2LxVA=;
+	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=V14AEADW9E0sL3A5cWHKyLYmbrYGmEaUgmcT7OYFuHDvUBC3n/b6PZ7rumSog0cTUpEY2ebTnA/uGLbdWx/9KdCRM/lGmA5MR9XzfOWqHa9lygrp5xeKNqVtYi0wmbll1UQWWZticYdjY0ahSYjug7d2Am9h/13SYtG5oMuk4ng=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=nicolas.frattaroli@collabora.com header.b=Z9If5mae; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1741678872; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=MJhSiQKukPtTuShQejA0RSWV7KKFmxqUrfq/CsZhbzBAJzMIS9hkibtJfIWN4KX1qvuXh3QFp83els47mloBQ+GXqjUrmKlgNH3+5DkQa9PTTnWcIp362dcno3tKSbbj+nui+JMAkoJR+7/dq3iHHDL2ILkv6+Xqkcp0QRUyoPU=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1741678872; h=Content-Type:Content-Transfer-Encoding:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To:Cc; 
+	bh=rUxu9n8PWJK8TIneFd17PvzeUgHqtOvu2tZv8yp40q0=; 
+	b=VhquqaV+T7/RkZdjXbx+nFpkn6Eu1ZFXBTCGteIroX8Py4NRkWBz6pmcieXmhwOtjZa5E0LBIx5xvBtuVkwHv/4DXWmeoKnLXttyY1qQVeNZN9+Tyva/x0duz+0aYd/7AThDTj+SryJ9Oo0vBGYp3BVj7C1mfFOte5FiGgnQy/M=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=nicolas.frattaroli@collabora.com;
+	dmarc=pass header.from=<nicolas.frattaroli@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1741678872;
+	s=zohomail; d=collabora.com; i=nicolas.frattaroli@collabora.com;
+	h=From:From:To:To:Subject:Subject:Date:Date:Message-ID:In-Reply-To:References:MIME-Version:Content-Transfer-Encoding:Content-Type:Message-Id:Reply-To:Cc;
+	bh=rUxu9n8PWJK8TIneFd17PvzeUgHqtOvu2tZv8yp40q0=;
+	b=Z9If5maeCv7yGZ/Xsg08ZcvYTveoMcZhhSAopHPvcoCY7JWGhF3P+tzvjFWRI2yF
+	9mTIGlkobmpUrMSvQUJOi3s7myhb4gcMKjOJ0/FHokoadlNjoGktX7UTajD8dmDCvZG
+	/mDaZ6+Iwh/PQXFJgWsPGYdvISHmkVX4L2a0L41A=
+Received: by mx.zohomail.com with SMTPS id 1741678868033939.9054328647139;
+	Tue, 11 Mar 2025 00:41:08 -0700 (PDT)
+From: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, linux-kernel@vger.kernel.org,
+ Madhavan Srinivasan <maddy@linux.ibm.com>, linuxppc-dev@lists.ozlabs.org,
+ Michael Ellerman <mpe@ellerman.id.au>, heiko@sntech.de,
+ srinivas.kandagatla@linaro.org, Venkat Rao Bagalkote <venkat88@linux.ibm.com>
+Subject: Re: [linux-next-20250307] Build Failure
 Date: Tue, 11 Mar 2025 08:41:04 +0100
-From: Michal Swiatkowski <michal.swiatkowski@linux.intel.com>
-To: Tariq Toukan <tariqt@nvidia.com>
-Cc: "David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>, Gal Pressman <gal@nvidia.com>,
-	Mark Bloch <mbloch@nvidia.com>, Moshe Shemesh <moshe@nvidia.com>,
-	Saeed Mahameed <saeedm@nvidia.com>,
-	Leon Romanovsky <leon@kernel.org>, netdev@vger.kernel.org,
-	linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Shay Drory <shayd@nvidia.com>
-Subject: Re: [PATCH net 4/6] net/mlx5: Lag, Check shared fdb before creating
- MultiPort E-Switch
-Message-ID: <Z8/pEN9xy4Pw7kHF@mev-dev.igk.intel.com>
-References: <1741644104-97767-1-git-send-email-tariqt@nvidia.com>
- <1741644104-97767-5-git-send-email-tariqt@nvidia.com>
+Message-ID: <5867354.DvuYhMxLoT@workhorse>
+In-Reply-To: <25306d01-db9d-42aa-9c26-2e18dfc30241@linux.ibm.com>
+References:
+ <70ba4e80-53c4-4583-82f3-2851e0829aa6@linux.ibm.com>
+ <25306d01-db9d-42aa-9c26-2e18dfc30241@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1741644104-97767-5-git-send-email-tariqt@nvidia.com>
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="utf-8"
 
-On Tue, Mar 11, 2025 at 12:01:42AM +0200, Tariq Toukan wrote:
-> From: Shay Drory <shayd@nvidia.com>
-> 
-> Currently, MultiPort E-Switch is requesting to create a LAG with shared
-> FDB without checking the LAG is supporting shared FDB.
-> Add the check.
-> 
-> Fixes: a32327a3a02c ("net/mlx5: Lag, Control MultiPort E-Switch single FDB mode")
-> Signed-off-by: Shay Drory <shayd@nvidia.com>
-> Reviewed-by: Mark Bloch <mbloch@nvidia.com>
-> Signed-off-by: Tariq Toukan <tariqt@nvidia.com>
-> ---
->  drivers/net/ethernet/mellanox/mlx5/core/lag/lag.c   | 4 ++--
->  drivers/net/ethernet/mellanox/mlx5/core/lag/lag.h   | 1 +
->  drivers/net/ethernet/mellanox/mlx5/core/lag/mpesw.c | 3 ++-
->  3 files changed, 5 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/net/ethernet/mellanox/mlx5/core/lag/lag.c b/drivers/net/ethernet/mellanox/mlx5/core/lag/lag.c
-> index cea5aa314f6c..ed2ba272946b 100644
-> --- a/drivers/net/ethernet/mellanox/mlx5/core/lag/lag.c
-> +++ b/drivers/net/ethernet/mellanox/mlx5/core/lag/lag.c
-> @@ -951,7 +951,7 @@ void mlx5_disable_lag(struct mlx5_lag *ldev)
->  				mlx5_eswitch_reload_ib_reps(ldev->pf[i].dev->priv.eswitch);
->  }
->  
-> -static bool mlx5_shared_fdb_supported(struct mlx5_lag *ldev)
-> +bool mlx5_lag_shared_fdb_supported(struct mlx5_lag *ldev)
->  {
->  	int idx = mlx5_lag_get_dev_index_by_seq(ldev, MLX5_LAG_P1);
->  	struct mlx5_core_dev *dev;
-> @@ -1038,7 +1038,7 @@ static void mlx5_do_bond(struct mlx5_lag *ldev)
->  	}
->  
->  	if (do_bond && !__mlx5_lag_is_active(ldev)) {
-> -		bool shared_fdb = mlx5_shared_fdb_supported(ldev);
-> +		bool shared_fdb = mlx5_lag_shared_fdb_supported(ldev);
->  
->  		roce_lag = mlx5_lag_is_roce_lag(ldev);
->  
-> diff --git a/drivers/net/ethernet/mellanox/mlx5/core/lag/lag.h b/drivers/net/ethernet/mellanox/mlx5/core/lag/lag.h
-> index 01cf72366947..c2f256bb2bc2 100644
-> --- a/drivers/net/ethernet/mellanox/mlx5/core/lag/lag.h
-> +++ b/drivers/net/ethernet/mellanox/mlx5/core/lag/lag.h
-> @@ -92,6 +92,7 @@ mlx5_lag_is_ready(struct mlx5_lag *ldev)
->  	return test_bit(MLX5_LAG_FLAG_NDEVS_READY, &ldev->state_flags);
->  }
->  
-> +bool mlx5_lag_shared_fdb_supported(struct mlx5_lag *ldev);
->  bool mlx5_lag_check_prereq(struct mlx5_lag *ldev);
->  void mlx5_modify_lag(struct mlx5_lag *ldev,
->  		     struct lag_tracker *tracker);
-> diff --git a/drivers/net/ethernet/mellanox/mlx5/core/lag/mpesw.c b/drivers/net/ethernet/mellanox/mlx5/core/lag/mpesw.c
-> index ffac0bd6c895..1770297a112e 100644
-> --- a/drivers/net/ethernet/mellanox/mlx5/core/lag/mpesw.c
-> +++ b/drivers/net/ethernet/mellanox/mlx5/core/lag/mpesw.c
-> @@ -83,7 +83,8 @@ static int enable_mpesw(struct mlx5_lag *ldev)
->  	if (mlx5_eswitch_mode(dev0) != MLX5_ESWITCH_OFFLOADS ||
->  	    !MLX5_CAP_PORT_SELECTION(dev0, port_select_flow_table) ||
->  	    !MLX5_CAP_GEN(dev0, create_lag_when_not_master_up) ||
-> -	    !mlx5_lag_check_prereq(ldev))
-> +	    !mlx5_lag_check_prereq(ldev) ||
-> +	    !mlx5_lag_shared_fdb_supported(ldev))
->  		return -EOPNOTSUPP;
->  
->  	err = mlx5_mpesw_metadata_set(ldev);
+On Tuesday, 11 March 2025 05:23:23 Central European Standard Time Venkat Rao 
+Bagalkote wrote:
+> Git Bisect is poinitng to commit:
+> 3e081aa132bbefe31ac95dd6dfc8d787ffa83d0b as first bad commit.
 
-Reviewed-by: Michal Swiatkowski <michal.swiatkowski@linux.intel.com>
+That does not seem like a correct bisection to me. The build error isn't even 
+in the same translation unit as the change the commit you landed on touches, 
+much less any subsystem even remotely related to it.
 
-> -- 
-> 2.31.1
+> 
+> Git bisect log:
+> 
+> git bisect start
+> # status: waiting for both good and bad commits
+> # bad: [0a2f889128969dab41861b6e40111aa03dc57014] Add linux-next
+> specific files for 20250307
+> git bisect bad 0a2f889128969dab41861b6e40111aa03dc57014
+> # status: waiting for good commit(s), bad commit known
+> # good: [7eb172143d5508b4da468ed59ee857c6e5e01da6] Linux 6.14-rc5
+> git bisect good 7eb172143d5508b4da468ed59ee857c6e5e01da6
+> # good: [7eb172143d5508b4da468ed59ee857c6e5e01da6] Linux 6.14-rc5
+> git bisect good 7eb172143d5508b4da468ed59ee857c6e5e01da6
+> # good: [80ec13b98c6378cbf9b29d7ee7d3db930ddbd858] Merge branch 'master'
+> of git://git.kernel.org/pub/scm/linux/kernel/git/klassert/ipsec-next.git
+> git bisect good 80ec13b98c6378cbf9b29d7ee7d3db930ddbd858
+> # good: [6c60220c45270869a7c5f791f6e0197b1f0d0388] Merge branch
+> 'driver-core-next' of
+> git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/driver-core.git
+> git bisect good 6c60220c45270869a7c5f791f6e0197b1f0d0388
+> # good: [187734f508b0a9a00ccaaf7d8ba05874b624ac73] Merge branch
+> 'for-next' of
+> git://git.kernel.org/pub/scm/linux/kernel/git/remoteproc/linux.git
+> git bisect good 187734f508b0a9a00ccaaf7d8ba05874b624ac73
+> # good: [316ff3a28679b82eb2bf17c02dbca970e7433182] Merge branch
+> 'for-next/seccomp' of
+> git://git.kernel.org/pub/scm/linux/kernel/git/kees/linux.git
+> git bisect good 316ff3a28679b82eb2bf17c02dbca970e7433182
+> # bad: [69759c9d8dd7df716dcca3601b82e5618332cef7] Merge branch
+> 'rust-next' of https://github.com/Rust-for-Linux/linux.git
+> git bisect bad 69759c9d8dd7df716dcca3601b82e5618332cef7
+> # bad: [1e4eee5176c91b00e73cee90712a995668020a9c] Merge branch
+> 'mhi-next' of git://git.kernel.org/pub/scm/linux/kernel/git/mani/mhi.git
+> git bisect bad 1e4eee5176c91b00e73cee90712a995668020a9c
+> # bad: [962bc2aae4f4295314d4a5f5c59a465f97f8b59a] Merge branch
+> 'for-next' of
+> git://git.kernel.org/pub/scm/linux/kernel/git/andy/linux-auxdisplay.git
+> git bisect bad 962bc2aae4f4295314d4a5f5c59a465f97f8b59a
+> # bad: [612fd001319aae2b514fc234939806cf3294dbba] Merge branch 'main' of
+> git://git.infradead.org/users/willy/xarray.git
+> git bisect bad 612fd001319aae2b514fc234939806cf3294dbba
+> # bad: [f5175dd69428ab517c8d68e772c4d287b6570d8e] dt-bindings: nvmem:
+> fixed-cell: increase bits start value to 31
+> git bisect bad f5175dd69428ab517c8d68e772c4d287b6570d8e
+> # bad: [8c94337ebbfb840944574f82df0cbe35930d8df8] dt-bindings: nvmem:
+> rockchip,otp: Add compatible for RK3576
+> git bisect bad 8c94337ebbfb840944574f82df0cbe35930d8df8
+> # bad: [024e21343f3cbcde0343473fcaf094d2c19cc7bf] nvmem: rockchip-otp:
+> Move read-offset into variant-data
+> git bisect bad 024e21343f3cbcde0343473fcaf094d2c19cc7bf
+> # bad: [3e081aa132bbefe31ac95dd6dfc8d787ffa83d0b] clk: rockchip: rk3576:
+> define clk_otp_phy_g
+> git bisect bad 3e081aa132bbefe31ac95dd6dfc8d787ffa83d0b
+> # first bad commit: [3e081aa132bbefe31ac95dd6dfc8d787ffa83d0b] clk:
+> rockchip: rk3576: define clk_otp_phy_g
+> 
+> On 09/03/25 6:08 pm, Venkat Rao Bagalkote wrote:
+> > Greetings!!,
+> > 
+> > I see linux-next-20250307 fails to build on IBM Power9 and Power10
+> > servers.
+> > 
+> > 
+> > Errors:
+> > 
+> > In file included from ^[[01m^[[K<command-line>^[[m^[[K:
+
+"In file included from <command-line>" seems a little suspicious.
+
+> > ^[[01m^[[K./usr/include/cxl/features.h:11:10:^[[m^[[K
+> > ^[[01;31m^[[Kfatal error: ^[[m^[[Kuuid/uuid.h: No such file or directory
+> >    11 | #include ^[[01;31m^[[K<uuid/uuid.h>^[[m^[[K
+> >       |          ^[[01;31m^[[K^~~~~~~~~~~~~^[[m^[[K
+> > compilation terminated.
+> > make[4]: *** [usr/include/Makefile:85:
+> > usr/include/cxl/features.hdrtest] Error 1
+> > make[3]: *** [scripts/Makefile.build:461: usr/include] Error 2
+> > make[2]: *** [scripts/Makefile.build:461: usr] Error 2
+> > make[2]: *** Waiting for unfinished jobs....
+> > arch/powerpc/kernel/switch.o: warning: objtool: .text+0x4:
+> > intra_function_call not a direct call
+> > arch/powerpc/crypto/ghashp8-ppc.o: warning: objtool: .text+0x22c:
+> > unannotated intra-function call
+> > arch/powerpc/kvm/book3s_hv_rmhandlers.o: warning: objtool:
+> > .text+0xe84: intra_function_call not a direct call
+> > make[1]: *** [/home/linux_src/linux/Makefile:1997: .] Error 2
+> > make: *** [Makefile:251: __sub-make] Error 2
+> > 
+> > Please add below tag, if you happen to fix this issue.
+> > 
+> > Reported-by: Venkat Rao Bagalkote <venkat88@linux.ibm.com>
+> > 
+> > 
+> > Regards,
+> > 
+> > Venkat.
+
+Regards,
+Nicolas Frattaroli
+
+
+
+
 
