@@ -1,156 +1,110 @@
-Return-Path: <linux-kernel+bounces-555706-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-555707-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 866D6A5BBA3
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 10:09:44 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6A54CA5BBA5
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 10:09:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3EC56188E69D
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 09:09:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EE78F3AE431
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 09:09:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8A86223710;
-	Tue, 11 Mar 2025 09:09:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCF5422424D;
+	Tue, 11 Mar 2025 09:09:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="nDJuc/Az";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="0wHLy+N3"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="IPqCIJR1"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 980021CD205;
-	Tue, 11 Mar 2025 09:09:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3520E1CD205
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 09:09:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741684178; cv=none; b=gZI69AdavNgYv+wQm3klwQs3VQX17jzElQF0V9ePBpTyK3r0qfrN9+M09NWp32PpGm+Ib2ikijikDB24Jx88XzE7i0Z3bmlTJfM6fqhsqNMoc36XC1PqBnKR/c1cc7EhURWFXqD2wUcfwiSzsuajgCQdyd3V3qF1wH4ClZpnUZA=
+	t=1741684190; cv=none; b=bL7/ckvj1frqh65RZsI6fmEbc0/PPSnPySXFhqgjjKBprO7sRTfIWzm3yVeGXzPatSO/svIh8RwJYsaSm8cqYPQfhm57Ne76gwEFJxtCI1JCfgAX5Ddnr243jlVbRiZq7WmROl+Ey1LTCHlxGCnXNrjq7vmEZ0XFwnl/9XthORk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741684178; c=relaxed/simple;
-	bh=0flGchsd7b+D+Eonmve3najNNsFRrQsnH8yyHv5ZqaI=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=JR6LwWh3b21EUbs3pcV+irbN7ybh6mpwEcuWwsD0r8VkTWqlb9HGviT98o8DL/rYXNdEbuORbSuqeMHD1loaQCoqdy0JV0AArc63kaz+Eev18d7BxGt5KhZSM/sNHlVe3xMmc3JLM/2uwmcW9UMn/6SAh5ehYe9Tl4Yy4uScFys=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=nDJuc/Az; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=0wHLy+N3; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Tue, 11 Mar 2025 09:09:33 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1741684174;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ocwnkJUwj5sdelISdMdqZQ3L4dhRo0bS2D0K9BiAXV8=;
-	b=nDJuc/AzPwtSrAt7VQA3/o3Wik5obr8ldjoh7BrlJBWc10dZ8b+A5DN5coRLoia3ZFni4s
-	CrO/ykLIIC9m1WO0B/Yoog5Qa3iBZw2QsijDxmiWlCXU4Bf82OuQqlUbcPpXyvRvlUY6nS
-	DeNdi+RK6MqbCC8Zl9o+GYchCHCA4edfo7yBAyC2VoNBEgeWrsV+SWGsbRDMr1mGDQ4dQd
-	4qaCeViZOGNPYOzVXsosM1Tu4wAoDQ/DsClbbo/xMZc2O+gC+g/c3ac7WUptptL7u95NaC
-	9aXgXchpM/QMrmtsb6L4QIj7CeiMPNsZR9Qve2qAwCdbqfBHgk5CFymaHtEUCw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1741684174;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ocwnkJUwj5sdelISdMdqZQ3L4dhRo0bS2D0K9BiAXV8=;
-	b=0wHLy+N3NUB0Y35WXKSUOKVNPm2b+emIDZpldymznCrLVo3IzL2C+fZhorK3J4x07SiRVn
-	5AqMLU/eI0ZTL/Bg==
-From:
- tip-bot2 for Thomas =?utf-8?q?Wei=C3=9Fschuh?= <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: timers/vdso] sparc/vdso: Always reject undefined references
- during linking
-Cc: thomas.weissschuh@linutronix.de, Ingo Molnar <mingo@kernel.org>,
- "David S. Miller" <davem@davemloft.net>,
- Andreas Larsson <andreas@gaisler.com>, x86@kernel.org,
- linux-kernel@vger.kernel.org
-In-Reply-To: <20250306-vdso-checkundef-v2-2-a26cc315fd73@linutronix.de>
-References: <20250306-vdso-checkundef-v2-2-a26cc315fd73@linutronix.de>
+	s=arc-20240116; t=1741684190; c=relaxed/simple;
+	bh=6Y/kqe4ESlLKPPwAdQRMQdrAIo89CgPRwwvqGj8Dd8s=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=GYDryc3HF86c8XL81S0WI1W/j/MHXg5qtXRkLTsz1SegxJR8OHUfCMoAqteujEM87NGJq3LM+ulTRZefWlQ/WMF97KyJfKFqTqdkjzrfcMDB9H25ShkMO+xGb4oJAgG7gZVYyakOpoGH8XALwyuIlMFR5xscfm/lfAF2mu5ur8A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=IPqCIJR1; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1741684182;
+	bh=6Y/kqe4ESlLKPPwAdQRMQdrAIo89CgPRwwvqGj8Dd8s=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=IPqCIJR154BY6tFPErElSqI5KpX6LmqlGrxjLYgykbMbKI4AhzvIyiebJs1qcEKcl
+	 rS5yBrFJt4ENvvdHd3nD+eEz69JQuNKA/CXITBeYTe3s+yUlEbkamtX+AbLgRexF+P
+	 ZiFTOB7eMEKXUFhPO3XCrVyMDSAKUwaTYW6UCyS00H6Idclv6vLEL3d3OGsSOjCnkH
+	 4cZjsjvkxUwjm+fb2xfdS3m4m/G27lyBXBPWQYK9XdBFsXwXuy88TgxvvrEyT6Rlmn
+	 N2f826TK0hYW7dofQ4k3u3aCvAJqBrcZezwtPyJFEhPcWQizhd6WaVzGjxC3jxtGY4
+	 YBBORT+bdRvZA==
+Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 617C717E087E;
+	Tue, 11 Mar 2025 10:09:41 +0100 (CET)
+Message-ID: <55b8bc40-0a29-46c2-ba5d-c7cc7742cf5f@collabora.com>
+Date: Tue, 11 Mar 2025 10:09:40 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <174168417345.14745.6224882189458073686.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 5/6] drm/panfrost: Enable AARCH64_4K page table format
+ on mediatek_mt8188
+To: Ariel D'Alessandro <ariel.dalessandro@collabora.com>,
+ dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Cc: boris.brezillon@collabora.com, robh@kernel.org, steven.price@arm.com,
+ maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de,
+ airlied@gmail.com, simona@ffwll.ch, kernel@collabora.com,
+ linux-mediatek@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
+ sjoerd@collabora.com
+References: <20250310195921.157511-1-ariel.dalessandro@collabora.com>
+ <20250310195921.157511-6-ariel.dalessandro@collabora.com>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Content-Language: en-US
+In-Reply-To: <20250310195921.157511-6-ariel.dalessandro@collabora.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-The following commit has been merged into the timers/vdso branch of tip:
+Il 10/03/25 20:59, Ariel D'Alessandro ha scritto:
+> Now that Panfrost supports AARCH64_4K page table format, let's enable it
+> on Mediatek MT8188.
+> 
+> Signed-off-by: Ariel D'Alessandro <ariel.dalessandro@collabora.com>
+> ---
+>   drivers/gpu/drm/panfrost/panfrost_drv.c | 1 +
+>   1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/gpu/drm/panfrost/panfrost_drv.c b/drivers/gpu/drm/panfrost/panfrost_drv.c
+> index 0f3935556ac76..d7b8bded6d784 100644
+> --- a/drivers/gpu/drm/panfrost/panfrost_drv.c
+> +++ b/drivers/gpu/drm/panfrost/panfrost_drv.c
+> @@ -824,6 +824,7 @@ static const struct panfrost_compatible mediatek_mt8188_data = {
+>   	.num_pm_domains = ARRAY_SIZE(mediatek_mt8183_pm_domains),
+>   	.pm_domain_names = mediatek_mt8183_pm_domains,
+>   	.pm_features = BIT(GPU_PM_CLK_DIS) | BIT(GPU_PM_VREG_OFF),
+> +	.gpu_configs = BIT(GPU_CONFIG_AARCH64_4K),
+>   };
+>   
+>   static const char * const mediatek_mt8192_supplies[] = { "mali", NULL };
 
-Commit-ID:     652262975db421767ada3f05b926854bbb357759
-Gitweb:        https://git.kernel.org/tip/652262975db421767ada3f05b926854bbb3=
-57759
-Author:        Thomas Wei=C3=9Fschuh <thomas.weissschuh@linutronix.de>
-AuthorDate:    Thu, 06 Mar 2025 15:07:21 +01:00
-Committer:     Ingo Molnar <mingo@kernel.org>
-CommitterDate: Tue, 11 Mar 2025 09:54:48 +01:00
+Didn't that work on MT8195/8395 as well? I also recall hearing that it was somewhat
+giving ever-so-slightly better performance?
 
-sparc/vdso: Always reject undefined references during linking
+If it does, please enable it on 8195 as well :-)
 
-Instead of using a custom script to detect and fail on undefined
-references, use --no-undefined for all VDSO linker invocations.
+also s/mediatek_mt8188/MediaTek MT8188/g
 
-Drop the now unused checkundef.sh script.
+...and btw
+Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 
-Signed-off-by: Thomas Wei=C3=9Fschuh <thomas.weissschuh@linutronix.de>
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Cc: David S. Miller <davem@davemloft.net>
-Cc: Andreas Larsson <andreas@gaisler.com>
-Link: https://lore.kernel.org/r/20250306-vdso-checkundef-v2-2-a26cc315fd73@li=
-nutronix.de
----
- arch/sparc/vdso/Makefile      |  7 +++----
- arch/sparc/vdso/checkundef.sh | 10 ----------
- 2 files changed, 3 insertions(+), 14 deletions(-)
- delete mode 100644 arch/sparc/vdso/checkundef.sh
-
-diff --git a/arch/sparc/vdso/Makefile b/arch/sparc/vdso/Makefile
-index 50ec297..fdc4a8f 100644
---- a/arch/sparc/vdso/Makefile
-+++ b/arch/sparc/vdso/Makefile
-@@ -22,7 +22,7 @@ targets +=3D $(foreach x, 32 64, vdso-image-$(x).c vdso$(x)=
-.so vdso$(x).so.dbg)
-=20
- CPPFLAGS_vdso.lds +=3D -P -C
-=20
--VDSO_LDFLAGS_vdso.lds =3D -m elf64_sparc -soname linux-vdso.so.1 --no-undefi=
-ned \
-+VDSO_LDFLAGS_vdso.lds =3D -m elf64_sparc -soname linux-vdso.so.1 \
- 			-z max-page-size=3D8192
-=20
- $(obj)/vdso64.so.dbg: $(obj)/vdso.lds $(vobjs) FORCE
-@@ -101,7 +101,6 @@ $(obj)/vdso32.so.dbg: FORCE \
- quiet_cmd_vdso =3D VDSO    $@
-       cmd_vdso =3D $(LD) -nostdlib -o $@ \
- 		       $(VDSO_LDFLAGS) $(VDSO_LDFLAGS_$(filter %.lds,$(^F))) \
--		       -T $(filter %.lds,$^) $(filter %.o,$^) && \
--		sh $(src)/checkundef.sh '$(OBJDUMP)' '$@'
-+		       -T $(filter %.lds,$^) $(filter %.o,$^)
-=20
--VDSO_LDFLAGS =3D -shared --hash-style=3Dboth --build-id=3Dsha1 -Bsymbolic
-+VDSO_LDFLAGS =3D -shared --hash-style=3Dboth --build-id=3Dsha1 -Bsymbolic --=
-no-undefined
-diff --git a/arch/sparc/vdso/checkundef.sh b/arch/sparc/vdso/checkundef.sh
-deleted file mode 100644
-index 2d85876..0000000
---- a/arch/sparc/vdso/checkundef.sh
-+++ /dev/null
-@@ -1,10 +0,0 @@
--#!/bin/sh
--objdump=3D"$1"
--file=3D"$2"
--$objdump -t "$file" | grep '*UUND*' | grep -v '#scratch' > /dev/null 2>&1
--if [ $? -eq 1 ]; then
--    exit 0
--else
--    echo "$file: undefined symbols found" >&2
--    exit 1
--fi
+Cheers,
+Angelo
 
