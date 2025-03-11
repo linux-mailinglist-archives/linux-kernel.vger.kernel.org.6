@@ -1,152 +1,157 @@
-Return-Path: <linux-kernel+bounces-556827-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-556828-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B2992A5CF2C
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 20:20:40 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CB8FDA5CF2D
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 20:20:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0011017915C
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 19:20:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 64FF41898453
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 19:21:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96D2026460A;
-	Tue, 11 Mar 2025 19:20:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFE11263C74;
+	Tue, 11 Mar 2025 19:20:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KnzpMvk0"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="J4TunoYN"
+Received: from mail-ot1-f50.google.com (mail-ot1-f50.google.com [209.85.210.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB62A2641E8;
-	Tue, 11 Mar 2025 19:20:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D93B7264628;
+	Tue, 11 Mar 2025 19:20:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741720822; cv=none; b=tsnlhR7HFH+je4xZRwYMBcxKF0kQ+/+sBciuuBgEHYmkOWrP6yHbsBXsaCogbJ5bpefR8NF6zjBeLtalGQadOI5BeBd7Tq/8qsFlme/MHNOO7XUXcHKObnnHkwm8cdViyG64UPXgq6kvKUZ77XY6TOn/Uoea7aknbulZjb6GLOI=
+	t=1741720825; cv=none; b=b8dsHXV2a2wCDFOMgIDb2oSw9nRUsMvnuHwoZ03j7+ebj2toURB7nElOP/4T4LtADRWYaPeOqMImaaoxCH7E6paJc5MsT3xJByw4kjsQIg+v6wY6K2ho+nQ+bsSakRzc5mhj+fhRCKbHeZZxl6PTl3zzuIUz40Qb+k7euo2Y+5I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741720822; c=relaxed/simple;
-	bh=kcpuPf65uj8+Xtj1e9eOmZyXND0tqkIgzzMQ+yLTfRM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mXOqv0J3YJMGN3myWbgp3uFhJHhRcXVh2PbIZ5LtiNE1KUlsi2u8QIW9UhAv2DYIoRJ5Pk7IvwLWnl/a9BNPEiQATZxZ/CpErwuWs/RqM2ukaTKC+xXmkFwXhjKbBSmYm9cUb42ZLPNd4NniRPeXUydzUT74mDmpRIUMT9hYjNY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KnzpMvk0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2667BC4CEE9;
-	Tue, 11 Mar 2025 19:20:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741720821;
-	bh=kcpuPf65uj8+Xtj1e9eOmZyXND0tqkIgzzMQ+yLTfRM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=KnzpMvk0sZD2ybFPnFuUmHST+AHXtX+XKsjOttTZFgArB5KLfUeESvN6y3+9+rnvV
-	 zvBj0jTFY0ExBrdPpeJKq76DplD1a30rUmSPJFLcPBG3mS/lYfSKymTCjNF7SrQY2/
-	 zfE7Z3vjDtaCDNORb4zfB/ZhF8mBtDq2Wa8R2kC8NXHwXd6druJpSOsDpOI85Z3k3a
-	 Jd7VGh5yRZmaTG5uABfqNuOwqiaD9WrGSpRlxkGqXqs7yOJjoFX794Bfj+8N5dk85d
-	 1CsQpuPwHE2QYmpwVFE4iOCRfCvzB2jrBT+bCeiE1cltEk5loeXcgCKrrtNdP/QIrZ
-	 3A7illovJkQUw==
-Date: Tue, 11 Mar 2025 14:20:19 -0500
-From: Rob Herring <robh@kernel.org>
-To: Christian Marangi <ansuelsmth@gmail.com>
-Cc: Lee Jones <lee@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Vladimir Oltean <olteanv@gmail.com>,
-	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	Maxime Chevallier <maxime.chevallier@bootlin.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org, netdev@vger.kernel.org,
-	upstream@airoha.com
-Subject: Re: [net-next PATCH v12 03/13] dt-bindings: net: dsa: Document
- support for Airoha AN8855 DSA Switch
-Message-ID: <20250311192019.GA4067643-robh@kernel.org>
-References: <20250309172717.9067-1-ansuelsmth@gmail.com>
- <20250309172717.9067-4-ansuelsmth@gmail.com>
+	s=arc-20240116; t=1741720825; c=relaxed/simple;
+	bh=WPsMIjesWbvLxN+8bd4H4OdLtWrSfXjKDXPtW8Rpunk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=KRHV3r1By4mcU9YoaMYKCkN2jcfheFzg0jHDhuxkeievztIPtRi1ekQFVNO0sakexnbjeUgAKu5EbEEJsNVuk6/drPlsK42s6DLXzPIFAyrwp+lMEr3B7+hPdvQl3SRRWqvKkCXEHN8HbO7gNLBMb9uSknBKa8PwzXRoV7Inx7Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=J4TunoYN; arc=none smtp.client-ip=209.85.210.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ot1-f50.google.com with SMTP id 46e09a7af769-7272f3477e9so1269711a34.3;
+        Tue, 11 Mar 2025 12:20:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741720823; x=1742325623; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=mMiqGShaf6+4mNvxPXScNzPrGmIKZMZmM+gc8GKp3q0=;
+        b=J4TunoYNWaUNhL1VMfAfhHNche02/CRD5Om7I18I/hUuYTgLWT8gtOEUexEEx0H9lo
+         QyRiBgYrRRYTJiYKDzoHnqpq7PgLkMTJLwlhxnyZgwTZMJEPejX52g+y/8+UJaR0eDvj
+         QGJ711fknkj4CRXdIhJlk3on6JRFH3JXtP+wiizYafV6aHFzvOmd1IwfhQ8Sf4IbE5bL
+         Sw3gRt2L4VhfQ50XkBTkLqgvDzyzqK3JOce52y/IJdHZAY7z6uGEbqgU0R0+1kKAeKha
+         CiACdNzXtNIZBMVfVmBaxJezfIrFMv4EPkYMqERQyaatzqWSw4AvEtlfM75ANFCd3aZf
+         LQ/Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741720823; x=1742325623;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=mMiqGShaf6+4mNvxPXScNzPrGmIKZMZmM+gc8GKp3q0=;
+        b=AOkvqAqUOK0YbtOHja2NOIskswFIix2LPrmNnhqpoIFWHeP9geXah4ZopNvR4AmAHG
+         im7dbmFlIvZZ1rQyZj3Nh19BmhHIci2FSOtx7K6Cy+ZTokTPbN9D06dbuC/5QD6Ez3EX
+         O/YgvLuRraKmjPARgHCuB7fRiZPB8sezPhYx9adke7In8/hxfkERoV19qYBlNdcm/wtu
+         SSeWTxl/8RfJIu+6GftfjW7ZDe1R6EdyyJNRuqb1QEpa1m/i4xHoCSElQLrq3eeoqDGR
+         +Xmpwv1vOIA6+UTflOIgd5CMQ+4GhgOoF7wZ30EOqrNOApudFzxyHiK6+XtmUXio3Afw
+         SxvA==
+X-Forwarded-Encrypted: i=1; AJvYcCVTRIyUyXxJUp5GJl5Vp4cgJn871zLfUomJCkFzpy9wJRGKZ74BI4JjMyvytGLzei9FqgRy/+Ji@vger.kernel.org, AJvYcCWCVoNBmZ3+KPUOVDp9zX9yZSjRxFWS3Sx/j7u2hK4LYTlyVga/vCY7dOjTE3Yf/hNPE7mZ5eNFuZ3YViM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzxC3nXr7fAQCB6GkfkvPGVTS0lrxznsxvaHKK665TW3ncrwfBW
+	x4Ga4Iidw8RZvE7PBlaN0srS23eb1wvpGm+BiR82mfz5ME5tkHJimp5qTQ==
+X-Gm-Gg: ASbGncsX/LQAiZD8R8OFAK5OAJ7OmlZEYs+7I/SS7XcKDd+JHipbiNgEnnMzQ8S/scd
+	6N4AVcgloxVXOiimGnVD00gUueKglkXydT/EMejAtBLjenIWO7eKXO3DjyAUml17Pl9g76ZzdqU
+	TuOPAp4BF5nQ+znjO5hzckAWq/mqutW/gSvKOF1AkS/L6j2bHC5Dyb66+itom0JPy9eCTJHmM2G
+	g/ZfBDrdItBAkm0UnOJwon902ZyrS1qzD8K74gXrnadzD2DlZb8iwxk9QX4nCOzEX+pvoACw2BH
+	luBjvSw4rROE/mEvwYTQFCT7HLo+x/SNHwOtXjmDLcMhSrs5thtzANEsFjiZ5anmfDd2SQ5N
+X-Google-Smtp-Source: AGHT+IEF4j8mRUpB2qxdGfMsANCksqXmOCN9I60IJQKLmhsubG7t739J6/Ooqp98toqiXOjb8GW4eA==
+X-Received: by 2002:a05:6830:6d84:b0:72b:8c4b:8ef2 with SMTP id 46e09a7af769-72b8c4ba2d0mr5419459a34.24.1741720822862;
+        Tue, 11 Mar 2025 12:20:22 -0700 (PDT)
+Received: from [10.67.48.245] ([192.19.223.252])
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-72b7ce3a641sm1447569a34.24.2025.03.11.12.20.20
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 11 Mar 2025 12:20:22 -0700 (PDT)
+Message-ID: <19cc88cb-01e4-45c5-a784-1c4c045fb6ec@gmail.com>
+Date: Tue, 11 Mar 2025 12:20:20 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250309172717.9067-4-ansuelsmth@gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 6.13 000/197] 6.13.7-rc2 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org,
+ linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+ lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+ sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
+ conor@kernel.org, hargar@microsoft.com, broonie@kernel.org
+References: <20250311144241.070217339@linuxfoundation.org>
+Content-Language: en-US
+From: Florian Fainelli <f.fainelli@gmail.com>
+Autocrypt: addr=f.fainelli@gmail.com; keydata=
+ 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
+ WlfRzlpjIPmdjgoicA==
+In-Reply-To: <20250311144241.070217339@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Sun, Mar 09, 2025 at 06:26:48PM +0100, Christian Marangi wrote:
-> Document support for Airoha AN8855 5-port Gigabit Switch.
+On 3/11/25 07:48, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.13.7 release.
+> There are 197 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 > 
-> It does expose the 5 Internal PHYs on the MDIO bus and each port
-> can access the Switch register space by configurting the PHY page.
+> Responses should be made by Thu, 13 Mar 2025 14:41:52 +0000.
+> Anything received after that time might be too late.
 > 
-> Each internal PHY might require calibration with the fused EFUSE on
-> the switch exposed by the Airoha AN8855 SoC NVMEM.
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.13.7-rc2.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.13.y
+> and the diffstat can be found below.
 > 
-> Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
-> ---
->  .../net/dsa/airoha,an8855-switch.yaml         | 105 ++++++++++++++++++
->  MAINTAINERS                                   |   1 +
->  2 files changed, 106 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/net/dsa/airoha,an8855-switch.yaml
+> thanks,
 > 
-> diff --git a/Documentation/devicetree/bindings/net/dsa/airoha,an8855-switch.yaml b/Documentation/devicetree/bindings/net/dsa/airoha,an8855-switch.yaml
-> new file mode 100644
-> index 000000000000..63bcbebd6a29
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/net/dsa/airoha,an8855-switch.yaml
-> @@ -0,0 +1,105 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/net/dsa/airoha,an8855-switch.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Airoha AN8855 Gigabit Switch
-> +
-> +maintainers:
-> +  - Christian Marangi <ansuelsmth@gmail.com>
-> +
-> +description: >
-> +  Airoha AN8855 is a 5-port Gigabit Switch.
-> +
-> +  It does expose the 5 Internal PHYs on the MDIO bus and each port
-> +  can access the Switch register space by configurting the PHY page.
-> +
-> +  Each internal PHY might require calibration with the fused EFUSE on
-> +  the switch exposed by the Airoha AN8855 SoC NVMEM.
-> +
-> +$ref: dsa.yaml#
+> greg k-h
 
-This needs to be:
+On ARCH_BRCMSTB using 32-bit and 64-bit ARM kernels, build tested on 
+BMIPS_GENERIC:
 
-dsa.yaml#/$defs/ethernet-ports
-
-As that restricts custom properties.
-
-> +
-> +properties:
-> +  compatible:
-> +    const: airoha,an8855-switch
-> +
-> +  reset-gpios:
-> +    description:
-> +      GPIO to be used to reset the whole device
-> +    maxItems: 1
-> +
-> +  airoha,ext-surge:
-> +    $ref: /schemas/types.yaml#/definitions/flag
-> +    description:
-> +      Calibrate the internal PHY with the calibration values stored in EFUSE
-> +      for the r50Ohm values.
-
-Should you be using nvmem binding to the efuse block? Or the efuses are 
-within this block?
-
-> +
-> +required:
-> +  - compatible
-> +
-> +unevaluatedProperties: false
+Tested-by: Florian Fainelli <florian.fainelli@broadcom.com>
+-- 
+Florian
 
