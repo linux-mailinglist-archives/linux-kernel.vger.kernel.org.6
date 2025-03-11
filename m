@@ -1,212 +1,428 @@
-Return-Path: <linux-kernel+bounces-556525-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-556527-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 873A0A5CB1B
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 17:48:51 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BC764A5CB1F
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 17:49:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0D5A8188DD3A
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 16:48:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9BF6E3B08B2
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 16:49:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACFEB25FA3B;
-	Tue, 11 Mar 2025 16:48:43 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBE1119E975
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 16:48:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741711723; cv=none; b=DeGpOgQzYTFxi5fnLP8tZnsmdLoMHBjE2Tc6XVvLTFa3CJGqFPeF5qrL+jE84QrdXNZU6dQTn6XiApaNMTrw1svp7aO1GxVEzBGBg9ukv8K4Oy6FM59VwQva6IFxHxqNTPWcjGwXmbwp6JpEOaBP9zKsxLv4f4XaOaB/OoqBYfo=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741711723; c=relaxed/simple;
-	bh=lrsYFyN5cyDzQN9b2siw60UJaH8NKK/eMwzXKsXix6g=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=q7ElAN15J1gC8ykKPVfdjSFmrZ9fa+Ul/nqKgyAiSPNTi7Jf22NtD+QsnaCcrBO8l9D+UQyidFZ2yOthLc4OlJ2DLkFhcXRm9lM6T0ZPAvP5aWnc2VWsYEhJMQ8fBgLfqV/d9ZQPmoDXn05y9vzZjuoPJS77XSAMbBuqqlnpRuQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 564BB152B;
-	Tue, 11 Mar 2025 09:48:51 -0700 (PDT)
-Received: from [10.57.40.127] (unknown [10.57.40.127])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 02C043F673;
-	Tue, 11 Mar 2025 09:48:38 -0700 (PDT)
-Message-ID: <3f6dcb62-f9ba-4bed-9863-2d4569bafcf1@arm.com>
-Date: Tue, 11 Mar 2025 16:48:37 +0000
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86BF719E975;
+	Tue, 11 Mar 2025 16:49:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="d/LkO+RQ";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="Frbe28wd"
+Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D7531EB9E3
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 16:49:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741711769; cv=fail; b=r3+BtY3L8kkR80cHgpEFOwjHAP4q4W71jHKJ8TuLF0/9Eq7wKJv2SOhjj8EtYwntPp/Tx1y8W5/yI+/RxhIn8SlZ+fDEwyIEyzUl7IUEU/0buCzNPINy2OIHY9bbksOFir3+i86LGLU6h5E/slgZUmoj6GRBT5qtVos+zQCGg/8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741711769; c=relaxed/simple;
+	bh=ohCC8U4wC3+a1hlfScNdk4/GSiwWM4PwpIxbKCYE2lM=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=dXxXjPYtaNLXJ2T5mn9Bws8htPTqw+CoWzRVZfSJVnp3wN7OKAKwPF5aEX+a6G9Mt/ABJmuMIr7QjscvqwsiGkV25hEvgO4C3G5LewK5UY7quhHzaPg15o5E3ufTvhEswDvlskhpXcTFqtkxjvMZlfqavU6B7legvMhCMsWFO0I=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=d/LkO+RQ; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=Frbe28wd; arc=fail smtp.client-ip=205.220.177.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246632.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52BGQmE0004069;
+	Tue, 11 Mar 2025 16:49:09 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=
+	corp-2023-11-20; bh=9P+Ecr5UCdHOH0NxBHd1dR4rloeVXWZTRJ4ZdmVi0ug=; b=
+	d/LkO+RQkmi7lZDU+mL8+2QXQv8oB4Ly4a6T6xGuuB2yw/QoeZkW1NVmG4lO+k5B
+	AoDiF93RQx432ubQLZhZTuTv4mCoYZNZLib1SQlRxzWcbTyEg71/3UpaNE7hfulB
+	Y54fSsBR9cB/y6bld5/+MZOsD7KIdEimDsXEpQWl6L/BA6qCjlO1VRvUDe/D5JBT
+	zIsvQlZVpInsKulT7iwDs5nXkiaQIX7J7+mEvAJLFKCtnti6U/KW8jtx8fgJ8ugp
+	M+uf4o9teaI3CIn2YhwhMw+iAvrtS9KaclV0Rfl+S1tOi+Xu1bLnnrdvqRaSAsWi
+	MZIXYg6Jhf6SiHOZfJkf2g==
+Received: from phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta01.appoci.oracle.com [138.1.114.2])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 458dgt59fd-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 11 Mar 2025 16:49:08 +0000 (GMT)
+Received: from pps.filterd (phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 52BFwsMp030600;
+	Tue, 11 Mar 2025 16:49:07 GMT
+Received: from nam11-dm6-obe.outbound.protection.outlook.com (mail-dm6nam11lp2176.outbound.protection.outlook.com [104.47.57.176])
+	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 458gcnne53-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 11 Mar 2025 16:49:07 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=d1T66KoObK4Cpn0uRLHuyO8A+fU5+IhgGqWqf0apUr2+nGx/ZmEAdDfYkzUQQTcaBH8yDBID73STgWu9T/9cwaWN1fgjSWQd1HkBCR/AAtGuuO+NZmfn+R4cCBUwy70CCubJwcBtsYfQQr0PsybBc0StrHwjOEMGO3cpAOtNDXJ9AVnNWZ89FDXAyIaJ6VrgyKvwDNcYu+dvaVGuIQhqocBvaIjdDjdESFSZNU2UE6AtUUenJ3ttf1fcsHmqGhryiDgiNpWdlLS7f/5L2so4+vUw6bSSGpE1ZKoUuD7auTFZEANmFjHCp4MVqDTWS7mBc/uV74ckHekUSGaHcHibuw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=9P+Ecr5UCdHOH0NxBHd1dR4rloeVXWZTRJ4ZdmVi0ug=;
+ b=C0iOWEJ2fRxLrjBubVly2sf7eD1QSW/N0rS4mRi664y2ZSpE4kE7afuEDfAnkvAru6DQR/eOTL4c/oiyfBFoxJvRoch4IkapFo3lp5YsgRgoox6RjN3iwoQSfGCng6iuCanokcYZCRbpi/G4Zst45/w2Ejrt4yRFqc4P779JFTFXEdNlLFxhQCn/a2r1H9UDaOPXGXzcCTwEn5vj0fGdB8b51LUTQ51rSLnB6DBbo7yVr1FIAluWtnoxddGybL2/ijQfnBlAAb0zgJUfoJT/G+1NHYTCtTu/KvVEQ95GXILZTYKTp/7iZkd8bFULUyTzA91ZsEysOT67I5kxDTIzsw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=9P+Ecr5UCdHOH0NxBHd1dR4rloeVXWZTRJ4ZdmVi0ug=;
+ b=Frbe28wdL0U192Ld7RpaSY9dV46IUrJ0y2E/IXVql9h9t+ESn5HBrBzjluiKnlULNftTY2l9+77uCFZvlPZ/KmmL8y5z6nnzs9o7qKU2Q0UUvS/3pWARZVq1Le8igfWGnDPKJ+PLW+17Zg88JqW5hzAuEOQVyTGmF7Q4gEpN0+Y=
+Received: from MW5PR10MB5738.namprd10.prod.outlook.com (2603:10b6:303:19b::14)
+ by SJ1PR10MB6001.namprd10.prod.outlook.com (2603:10b6:a03:488::19) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8511.27; Tue, 11 Mar
+ 2025 16:49:04 +0000
+Received: from MW5PR10MB5738.namprd10.prod.outlook.com
+ ([fe80::187b:b241:398b:50eb]) by MW5PR10MB5738.namprd10.prod.outlook.com
+ ([fe80::187b:b241:398b:50eb%5]) with mapi id 15.20.8511.026; Tue, 11 Mar 2025
+ 16:49:04 +0000
+Message-ID: <e495bf9c-9fba-44ce-99fe-04879f8dd0c2@oracle.com>
+Date: Tue, 11 Mar 2025 11:49:01 -0500
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] jfs: jfs_xtree: replace XT_GETPAGE macro with
+ xt_getpage() function
+To: Suchit Karunakaran <suchitkarunakaran@gmail.com>,
+        jfs-discussion@lists.sourceforge.net
+Cc: linux-kernel@vger.kernel.org, skhan@linuxfoundation.org
+References: <20250302191558.47180-1-suchitkarunakaran@gmail.com>
+Content-Language: en-US
+From: Dave Kleikamp <dave.kleikamp@oracle.com>
+In-Reply-To: <20250302191558.47180-1-suchitkarunakaran@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: CH0P223CA0020.NAMP223.PROD.OUTLOOK.COM
+ (2603:10b6:610:116::10) To MW5PR10MB5738.namprd10.prod.outlook.com
+ (2603:10b6:303:19b::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] coresight: Add a KUnit test for
- coresight_find_default_sink()
-Content-Language: en-GB
-To: James Clark <james.clark@linaro.org>
-Cc: linux-kernel@vger.kernel.org, coresight@lists.linaro.org,
- linux-arm-kernel@lists.infradead.org, Mike Leach <mike.leach@linaro.org>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Leo Yan <leo.yan@arm.com>
-References: <20250305-james-cs-kunit-test-v2-1-83ba682b976c@linaro.org>
- <c31de6cb-f8f5-432c-b99e-68b10a24bc5e@arm.com>
- <16fd2023-1ffa-4e87-ad89-a7ccdd8ba458@linaro.org>
-From: Suzuki K Poulose <suzuki.poulose@arm.com>
-In-Reply-To: <16fd2023-1ffa-4e87-ad89-a7ccdd8ba458@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MW5PR10MB5738:EE_|SJ1PR10MB6001:EE_
+X-MS-Office365-Filtering-Correlation-Id: d27c5998-fbe9-4e46-fbcd-08dd60bca1b7
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|1800799024|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?Qi96TitSeGJtWUQyOGk1QVplL0hlL3d0K0xxVFU5eEVYcDFncERJaUdmMkpZ?=
+ =?utf-8?B?eG5uZGNmMHQ3REVySDZqaEhiN1JiV1R3SngzVnU5Y3Y0QjR3YW9XYjkzYkkv?=
+ =?utf-8?B?K09TR2ZzSGxZT1pBWE1qeWFvaTBJa1hReXhOWXRsQUJVd2pBc0laKzVPcHcy?=
+ =?utf-8?B?S3V1VXdLYXRDbC9SUyttQmlVVklORmJrTXpFa2t4RkJHdkJrZUtld09JR0Nr?=
+ =?utf-8?B?RGRPbng0UG9KcWlCeFM0anQyckllU1RWUW9iUUp2cDNaWi9zbFJnT2tmM2g0?=
+ =?utf-8?B?VHZYcDJwaHNKVmE1S1VNTWpsdjNYaDlTbXB0eEZxdEZ3MCs5ZEo3UlJUb0hO?=
+ =?utf-8?B?Z0ZlTVN6bmFHV3Zwc1Ura25ZNXFTcGw1WGIzNnJUUVFrTUJqNGlFcUVUSldD?=
+ =?utf-8?B?YnJOUGlJbzY2NXMyNEdOSlhDTXZISjBwYWhpZEhpUk05b0hOaHlSNHM2c1N6?=
+ =?utf-8?B?OVNNWWg5SHRhMk85MU5DYkVLaEpvQzNMc3pWQVprZGhVSExtU01xWkdwNlBI?=
+ =?utf-8?B?RnM3d3ZSakNscm9NZWlYVlM2OTBvNHVuS2ZiT0RiUllISTlPeFo2UFFWdmZT?=
+ =?utf-8?B?VVNuNGJKbE1OandaY1IvS2dNT0dIYTVVWHhDaEUySnMrU0ZScmMwVlZRa3lU?=
+ =?utf-8?B?MjN2dll2dnk2MUROZEFZekxqR0k5WFg4cnExb0RJZWcvOU1pUWQrdlVtNlNz?=
+ =?utf-8?B?MTJ0SUh4WDFMWHI2dVgyMnpjOGRmTDNvZmpvQktDam9YVkIwMDJYVTBpbkhm?=
+ =?utf-8?B?VmFTa0tqaDdsLy83QTcrSk1ORWl5alRSdkt1S1d0eEJhTkZEUUxTQ0JqUXVq?=
+ =?utf-8?B?YUpabmhGKzNmWVBhTkY1M3hnZTVPaXRRVW5XY3ZwWHVUdnpyVElzNCtnSGhh?=
+ =?utf-8?B?MGhTTGFaa1NoTm5TVzM0dVpLQ0xNSk95Ry8vNFpuajRkWTAvdlc4bkVPaUhU?=
+ =?utf-8?B?Z0VjTCtJaHVjSmVJWjVoODd3VWM2N25VRENHaDlOejRPTnpzUXp0S0ozZEU4?=
+ =?utf-8?B?N240eWNIWDlYSStpcVNGcTJjVTdjV1Y3RkhBeHFrcGVVelY1N0EzeENnQmlF?=
+ =?utf-8?B?eUNPaE1sK3hodUpXOVIwOHp3RURHVysvc3U3TmI4dDFqWGxsaXFGaEJFc2Z0?=
+ =?utf-8?B?RVQvUXlrMm5mVFM5aDJKUXllS1VuUW1LUjFHeFM0d2xJU2hMMnY5S21MZzZy?=
+ =?utf-8?B?encwNkdWSnRkZmE0emdUU1hjbDhQWlZBRmY2dVZPeVJxNzBzYThQZ3o4K2Ez?=
+ =?utf-8?B?L3JJMTZjMkUzTGVsdFhINkREajdhVU5nZVlsSGJsQlRSR2hjNUN3OVBvOFJj?=
+ =?utf-8?B?amVIeHhQU29SREdRMFpId004azduWjhUbmRDYWFkd2QweW1OVlhyai9RdE1B?=
+ =?utf-8?B?NC9EdGFBSU5iZGZTb1N5Zlo3UG1BWHdsdWVqckQ5aWNpeHdhTHVxYjhYV0Iz?=
+ =?utf-8?B?dTQvL3JUK0o2SzFXeWU1OStkd2pMQmpmSWZUWkYxdkxDaHcxWGxackkyRTBn?=
+ =?utf-8?B?SWl4dUQ1bnJFKytDT1UycU9sT1ViNzZGQVFHMTFhT3hIRFQ0ZGQydnMwbmw4?=
+ =?utf-8?B?cEpZbzFqd3dmN0lrQ0x1SkZzTU55eG1uMGg2cjN1azRuaTJMUUVBNUoxV3Q3?=
+ =?utf-8?B?Zko4N1JLb0dObTQxTzBKNmoweXRuUjJBZkp4SWJFeHdBMy9Bc2ZncDJ6K3p2?=
+ =?utf-8?B?THYvN0l0b1VHc3lQd2w2Vk9vbWRqdDRYYVNHdUFERGp2YjFIYzIxdmZMdnJ3?=
+ =?utf-8?B?KzBDbWhyYjBGNDEzdldlR1U5V3ZFTEtudE5PZjR5OVJVZ3h4b0ZXTFhsZDhG?=
+ =?utf-8?B?ckVsTmlhTkpybmR2cllpdE9FbXpWU0dJZEZKSG9FdmFzYmtRRWltenBUdEh3?=
+ =?utf-8?Q?olr4PWggP18DO?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MW5PR10MB5738.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?K0xFSERYaktwYVRCWEgzSDRqQnJ0QkRiUUU1L0hrdWIzWEpZS0lFQXhNazBP?=
+ =?utf-8?B?ZFMwMUlDbmcyY1lNRUgwRW96YmFmRkNFUU5hd1Y1MUZ5WXVhZy9pYVM4M3U0?=
+ =?utf-8?B?OHUxUGlCMkpneGR3aldJSUpsTFZycmZwaUZ2OTNoTkVSR1htSTVKUzBCcmpW?=
+ =?utf-8?B?Tlp2UC9CZkFXOFZWbzF6U3k1QVJFY2wzdUkvUjREYjhlcTZzUWZLd0lpYTl6?=
+ =?utf-8?B?THF1UW5ORTUzSW1NKzMvd3BxQmd6Y1VQL1REQ3BZZWxHQ1piR1lxeWNKT1I5?=
+ =?utf-8?B?TzgvNjRXNFhtQ2lueTh6Y1FvTEowdjRZbm4wYlNJMkt5TmZveGltaHBmTGlO?=
+ =?utf-8?B?Qjd2dnQ3aDg5T1FLY0l3TkthYm5JUU5NeXg0NENZMjk5MU1QTGVFQ2NRQkZp?=
+ =?utf-8?B?WXJlWFpNYXh1WFloMWthNXBPMVFJL0FiSTlzTzRCTnJBZFFaUlkyZ2t2SDhB?=
+ =?utf-8?B?QzVtUnFsZGEwR2F5UHhJNjkwR2QvUzVVbXcyTDZnb0NNVlpGT0czY3M5elZj?=
+ =?utf-8?B?eTdaWDB0ek9jNElBbnB6c2dLN0FPd29HempqLzl5UDNBSy8xVmF1dDRDVVBI?=
+ =?utf-8?B?TzVuWVpqVG5ncjNuMTFpUy9GM3hkSTVoRzcvWWdBb3ZPVU10ZmZ0NWRmZEFo?=
+ =?utf-8?B?bGZzK3hJL2dHc1VoZWxNZitYYVpmZWVBN2cxa3dRL1NRTWFYbzVXQU5BSlJ0?=
+ =?utf-8?B?VVJsNlA1UGJkT3ZDL0c2eEhSRDRnZEd0b1djTUxvczFGZ0w4VURkbW5Nc1No?=
+ =?utf-8?B?UEJ2SW11cVBydGhUR3dEU3pwMnVTMWJXSnZweldVUXQrS3BiclArOWlFS0l0?=
+ =?utf-8?B?L25WejFUVm1WcUJTcjhuT0xvSEZJdmt1NCttVGZ6T2ljUnBzMWhPNXFRMGpx?=
+ =?utf-8?B?NkcwOW4vdW9raEdoR1JnWmErR1hkU2ZtUFlVUDgyb21hcFMvS1d0UWZ2R25l?=
+ =?utf-8?B?Ymp0WmNkeUVVMmVMeWVoYjJCZUF2ZGwwY2dGTStyVS9oaklBSUJnaE1XVXNX?=
+ =?utf-8?B?WWpZTnVVYzFBckNnK1Jra0hIOCtjSGJHMWxqV2xhKzVxcG5yVjdxbGhEQ3Nw?=
+ =?utf-8?B?S1BrYmNrdVpISHJvVFdrZGQvWWZsTjQvUjdZMUxqNU5TSTNzY3lkTEQyS1RS?=
+ =?utf-8?B?S3dsdmNuZVdFdDRwcW5TMWR5eXl6VzJaa1VlaXZvUnZaV3c0YnNPWlFua2hY?=
+ =?utf-8?B?K01wUDNoemVUOVdXTXVMTWdQbnZaenJCNngxMW9EdER4RnVJMmlXc3NmcFBG?=
+ =?utf-8?B?a3p5TytvVHVSdU9LK2k2RGp4U2wvNW9pN2diamgwRTQ3S0RWbFBkdVNqbEZQ?=
+ =?utf-8?B?aUtveDJoNTJzczhaaTAyM09nejdsN2xJLzd1VUJDT3g2QlZoaHgxNHVFelFI?=
+ =?utf-8?B?NFdtMTAydWhtSmpxdGZKbldmK3lYTjREUFRBWmZZL1ZtNjdRSGVyT0pvcG45?=
+ =?utf-8?B?OUJGbWRQT000R1RJY2l5NlRHY255NzZhYVpUVHQrRnhJcFRsL0p1VzNPWncw?=
+ =?utf-8?B?V3hNU0c2eExtNVJzV29lT1BUU1N2TWpsSksxbnJaRHdDRlFqdXU1eEM2V09W?=
+ =?utf-8?B?a1lyd0ZZbzIvSE5GK0dhc2dQaDlwRlEwbnRNK0UvV0EyVnJDc3lKZTZjSjg5?=
+ =?utf-8?B?cU9IMWRIc2l4UnE0MjZLZnd6YWg2MkgyVnAyS0dQcjMrenVDcnNWQWpuMTgw?=
+ =?utf-8?B?TWNQWldjVWZFUExCNUtsYnRyY1ROK3FXTm5oTEo5ZVJzTjFUczNHK0NEYlpK?=
+ =?utf-8?B?N2ZaTVdpSmQ2Ykd0LzVEbEVFOEtING8wNnVSTGEzalpROEtZK1lmRWRnQmRF?=
+ =?utf-8?B?bjhzakZRdktRR2VyU3ByQXNwUEZ0Q0I2bXZxaEJRbDhZNUJoVGVpRTlwY2Jo?=
+ =?utf-8?B?NksveS9RcTVxVWsrTCtlbUl0d2NQcnpxMHdHOE5Yajh5SjFsVmROZlBMQkJa?=
+ =?utf-8?B?MCtJZG9DVVlvZENqamhrRkZBbjB5NG00eW5DeTd5ZVFCUk1hUzlZQ3NOcDhh?=
+ =?utf-8?B?ZTVCTGF2TFp1dEphbGQvdWt2U3dyVVQ4UHhubnZXT0ZzdElDYjYxN2RFSTc2?=
+ =?utf-8?B?K3BoV2MrZHBleHZkbENHK1BIWFRKaWs0ekNtOHh3T0haV29heTJCamVFSktm?=
+ =?utf-8?B?anVhdEdVQmxvRmFQY00xN0IrYSttait3bC9id2V5RnZib2NUODFaTkFpdTgr?=
+ =?utf-8?B?N0E9PQ==?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	/JmgSRcK2Iwbg3p788W+vigONmM67gfRP2NMyL01V5KAfyTT/e4FcOQO1v0h+EPQ6/RSQ0cOORJyQT0vIwxFSw3o/GwBpWNTvlYXTt8kxYFOrf+LevBT78xdgVuBhZr3iaGWo6JfH/TVXj1VfEg6iU0wWIfsdN+zux7y5C4XAiSmFgWpgnrsQoOUFYMOvkwU67RZFZMHnREWuvDpMhWU1Ee8Dh7rpSyQHITJQLL7ezcg6vqIsqveHosOXzctYx0GKRu05lPL3XUsTAa5Y6rK80Zr0iOseRJhvNsDc4llibOueaSEpUNjHui2ZM9a78SO0du/UerVozemPXkpNIXpRbY2+EQlPDZIRGKCEUfRv/DtiJLwdwY7lOBDe2n732Melv+zlPW3wgXg23Wd390sJfYjUVQvJTX8RrVqM9nGAJZjvSlJ+oiGl4nwAptoJJz5Mdyg3i9fsKHNbq/7Zzqy6KldWT2s9QNCrCJX0uuG07/EKxj6CZEQV1If6+DCt2qW5vXCSaceN/JFIwQACEkjn6Af7ZO6Kd8OhVMdcE6TUBJRMwP9TZYbtZrpvouBYKzv2shIoEXSs8Y1enkmxtI8gx2LxMcMbWGl+TVl/olnaiA=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: d27c5998-fbe9-4e46-fbcd-08dd60bca1b7
+X-MS-Exchange-CrossTenant-AuthSource: MW5PR10MB5738.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Mar 2025 16:49:04.2402
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: FnZfB4VY7QW9NhLXRGLyYTitdP0YGumf2yAq+mOplYIVTemOBdOc8ZmFh1BMVLXrpTXuwg4T3na3u/LQjnQL1uZnPKTYSO2mPwmkAQ65Gt8=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ1PR10MB6001
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-11_04,2025-03-11_02,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0 spamscore=0 phishscore=0
+ adultscore=0 mlxscore=0 mlxlogscore=999 malwarescore=0 suspectscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2502100000
+ definitions=main-2503110106
+X-Proofpoint-GUID: Y7CnToO662MMlWmJl0NFWKAJZ5fWelPA
+X-Proofpoint-ORIG-GUID: Y7CnToO662MMlWmJl0NFWKAJZ5fWelPA
 
-On 11/03/2025 16:06, James Clark wrote:
-> 
-> 
-> On 11/03/2025 3:00 pm, Suzuki K Poulose wrote:
->> On 05/03/2025 15:07, James Clark wrote:
->>> Add a test to confirm that default sink selection skips over an ETF
->>> and returns an ETR even if it's further away.
->>>
->>> This also makes it easier to add new unit tests in the future.
->>>
->>> Signed-off-by: James Clark <james.clark@linaro.org>
->>> ---
->>> Changes in v2:
->>> - Let devm free everything rather than doing individual kfrees:
->>>    "Like with managed drivers, KUnit-managed fake devices are
->>>    automatically cleaned up when the test finishes, but can be manually
->>>    cleaned up early with kunit_device_unregister()."
->>> - Link to v1: https://lore.kernel.org/r/20250225164639.522741-1- 
->>> james.clark@linaro.org
->>> ---
->>>   drivers/hwtracing/coresight/Kconfig                |  9 +++
->>>   drivers/hwtracing/coresight/Makefile               |  3 +-
->>>   drivers/hwtracing/coresight/coresight-core.c       |  1 +
->>>   .../hwtracing/coresight/coresight-kunit-tests.c    | 77 +++++++++++ 
->>> + ++++++++++
->>>   4 files changed, 88 insertions(+), 2 deletions(-)
->>>
->>> diff --git a/drivers/hwtracing/coresight/Kconfig b/drivers/hwtracing/ 
->>> coresight/Kconfig
->>> index ecd7086a5b83..f064e3d172b3 100644
->>> --- a/drivers/hwtracing/coresight/Kconfig
->>> +++ b/drivers/hwtracing/coresight/Kconfig
->>> @@ -259,4 +259,13 @@ config CORESIGHT_DUMMY
->>>         To compile this driver as a module, choose M here: the module 
->>> will be
->>>         called coresight-dummy.
->>> +
->>> +config CORESIGHT_KUNIT_TESTS
->>> +      tristate "Enable Coresight unit tests"
->>> +      depends on KUNIT
->>> +      default KUNIT_ALL_TESTS
->>> +      help
->>> +        Enable Coresight unit tests. Only useful for development and 
->>> not
->>> +        intended for production.
->>> +
->>>   endif
->>> diff --git a/drivers/hwtracing/coresight/Makefile b/drivers/ 
->>> hwtracing/ coresight/Makefile
->>> index 8e62c3150aeb..96f0dfedb1bf 100644
->>> --- a/drivers/hwtracing/coresight/Makefile
->>> +++ b/drivers/hwtracing/coresight/Makefile
->>> @@ -51,5 +51,4 @@ coresight-cti-y := coresight-cti-core.o coresight- 
->>> cti-platform.o \
->>>              coresight-cti-sysfs.o
->>>   obj-$(CONFIG_ULTRASOC_SMB) += ultrasoc-smb.o
->>>   obj-$(CONFIG_CORESIGHT_DUMMY) += coresight-dummy.o
->>> -obj-$(CONFIG_CORESIGHT_CTCU) += coresight-ctcu.o
->>> -coresight-ctcu-y := coresight-ctcu-core.o
->>> +obj-$(CONFIG_CORESIGHT_KUNIT_TESTS) += coresight-kunit-tests.o
->>> diff --git a/drivers/hwtracing/coresight/coresight-core.c b/drivers/ 
->>> hwtracing/coresight/coresight-core.c
->>> index bd0a7edd38c9..b101aa133ceb 100644
->>> --- a/drivers/hwtracing/coresight/coresight-core.c
->>> +++ b/drivers/hwtracing/coresight/coresight-core.c
->>> @@ -959,6 +959,7 @@ coresight_find_default_sink(struct 
->>> coresight_device *csdev)
->>>       }
->>>       return csdev->def_sink;
->>>   }
->>> +EXPORT_SYMBOL_GPL(coresight_find_default_sink);
->>>   static int coresight_remove_sink_ref(struct device *dev, void *data)
->>>   {
->>> diff --git a/drivers/hwtracing/coresight/coresight-kunit-tests.c b/ 
->>> drivers/hwtracing/coresight/coresight-kunit-tests.c
->>> new file mode 100644
->>> index 000000000000..a136af05eaf4
->>> --- /dev/null
->>> +++ b/drivers/hwtracing/coresight/coresight-kunit-tests.c
->>> @@ -0,0 +1,77 @@
->>> +// SPDX-License-Identifier: GPL-2.0
->>> +
->>> +#include <kunit/test.h>
->>> +#include <kunit/device.h>
->>> +#include <linux/coresight.h>
->>> +
->>> +#include "coresight-priv.h"
->>> +
->>> +static struct coresight_device *coresight_test_device(struct device 
->>> *dev)
->>> +{
->>> +    struct coresight_device *csdev = devm_kcalloc(dev, 1,
->>> +                             sizeof(struct coresight_device),
->>> +                             GFP_KERNEL);
->>> +    csdev->pdata = devm_kcalloc(dev, 1,
->>> +                   sizeof(struct coresight_platform_data),
->>> +                   GFP_KERNEL);
->>> +    return csdev;
->>> +}
->>> +
->>> +static int coresight_test_cpuid(struct coresight_device *csdev)
->>> +{
->>> +    return 0;
->>> +}
->>> +
->>> +static void test_default_sink(struct kunit *test)
->>> +{
->>> +    /*
->>> +     * ETM -> ETF -> ETR -> CATU
->>> +     *                ^
->>> +     *                | default
->>> +     */
->>> +    struct device *dev = kunit_device_register(test, 
->>> "coresight_kunit");
->>> +    struct coresight_device *etm = coresight_test_device(dev),
->>> +                *etf = coresight_test_device(dev),
->>> +                *etr = coresight_test_device(dev),
->>> +                *catu = coresight_test_device(dev);
->>> +    struct coresight_connection conn = {};
->>> +    struct coresight_ops_source src_ops = {.cpu_id = 
->>> coresight_test_cpuid };
->>
->> Do we need the trace_id() ? Why is this required ?
->>
->> Suzuki
->>
-> 
-> Because it tests with per-cpu sources so it checks if any of the TRBE 
-> sinks have been assigned first:
-> 
->   /* look for a default sink if we have not found for this device */
->     if (!csdev->def_sink) {
->        if (coresight_is_percpu_source(csdev))
->       csdev->def_sink = per_cpu(csdev_sink,
->                                     source_ops(csdev)->cpu_id(csdev));
-> 
-> I think this test would probably fail if run somewhere TRBE was already 
-> probed. I can make the source subtype to be 
-> CORESIGHT_DEV_SUBTYPE_SOURCE_BUS for the test to work around it. Any 
-> value other than CORESIGHT_DEV_SUBTYPE_SOURCE_PROC will work. And then I 
-> can drop the fake cpu_id() callback.
+On 3/2/25 1:15PM, Suchit Karunakaran wrote:
+> Replace legacy XT_GETPAGE macro with an inline function and update all
+> instances of XT_GETPAGE in jfs_xtree.c file to use the new function.
 
-If the purpose is to detect the ETR, then I guess we could make this a 
-non-ETM source
+I like the idea, but as long as we are changing this to a function, I'd 
+like to simplify it to return the xtpage (xtpage_t *). A NULL return 
+would indicate a failure.
 
-TBH, I don't see any value in the test as such. But it is a good 
-starting point for adding further cases. So, lets keep this in.
-
-Suzuki
-
+Also, the first argument should just be "struct inode *ip". That should 
+eliminate your second patch.
+  >
+> Signed-off-by: Suchit Karunakaran <suchitkarunakaran@gmail.com>
+> ---
+>   fs/jfs/jfs_xtree.c | 86 ++++++++++++++++++++++++++++------------------
+>   1 file changed, 52 insertions(+), 34 deletions(-)
 > 
+> diff --git a/fs/jfs/jfs_xtree.c b/fs/jfs/jfs_xtree.c
+> index 5ee618d17e77..fb736a06ea58 100644
+> --- a/fs/jfs/jfs_xtree.c
+> +++ b/fs/jfs/jfs_xtree.c
+> @@ -49,26 +49,6 @@
+>   
+>   #define XT_PAGE(IP, MP) BT_PAGE(IP, MP, xtpage_t, i_xtroot)
+>   
+> -/* get page buffer for specified block address */
+> -/* ToDo: Replace this ugly macro with a function */
+> -#define XT_GETPAGE(IP, BN, MP, SIZE, P, RC)				\
+> -do {									\
+> -	BT_GETPAGE(IP, BN, MP, xtpage_t, SIZE, P, RC, i_xtroot);	\
+> -	if (!(RC)) {							\
+> -		if ((le16_to_cpu((P)->header.nextindex) < XTENTRYSTART) || \
+> -		    (le16_to_cpu((P)->header.nextindex) >		\
+> -		     le16_to_cpu((P)->header.maxentry)) ||		\
+> -		    (le16_to_cpu((P)->header.maxentry) >		\
+> -		     (((BN) == 0) ? XTROOTMAXSLOT : PSIZE >> L2XTSLOTSIZE))) { \
+> -			jfs_error((IP)->i_sb,				\
+> -				  "XT_GETPAGE: xtree page corrupt\n");	\
+> -			BT_PUTPAGE(MP);					\
+> -			MP = NULL;					\
+> -			RC = -EIO;					\
+> -		}							\
+> -	}								\
+> -} while (0)
+> -
+>   /* for consistency */
+>   #define XT_PUTPAGE(MP) BT_PUTPAGE(MP)
+>   
+> @@ -114,6 +94,44 @@ static int xtSplitPage(tid_t tid, struct inode *ip, struct xtsplit * split,
+>   static int xtSplitRoot(tid_t tid, struct inode *ip,
+>   		       struct xtsplit * split, struct metapage ** rmpp);
+>   
+> +/*
+> + *	xt_getpage()
+> + *
+> + * function:	get the page buffer for a specified block address.
+> + *
+> + * parameters:
+> + *	ip      - pointer to the inode
+> + *	bn      - block number (s64) of the xtree page to be retrieved;
+> + *	mp      - pointer to a metapage pointer where the page buffer is returned;
+> + *	size    - size parameter to pass to BT_GETPAGE;
+> + *	p       - pointer to an xtpage_t pointer mapping the page's data.
+> + *
+> + * returns:
+> + *	0 on success, or -EIO if the page is corrupt or an error occurs.
+> + */
+> +
+> +static inline int xt_getpage(struct inode **ip, s64 bn, struct metapage **mp,
+> +			unsigned int size, xtpage_t **p)
+> +{
+> +	int rc;
+> +
+> +	BT_GETPAGE(ip, bn, *mp, xtpage_t, size, *p, rc, i_xtroot);
+> +
+> +	if (!rc) {
+> +		if ((le16_to_cpu((*p)->header.nextindex) < XTENTRYSTART) ||
+> +			(le16_to_cpu((*p)->header.nextindex) >
+> +				le16_to_cpu((*p)->header.maxentry)) ||
+> +			(le16_to_cpu((*p)->header.maxentry) >
+> +				((bn == 0) ? XTROOTMAXSLOT : PSIZE >> L2XTSLOTSIZE))) {
+> +			jfs_error(ip->i_sb, "xt_getpage: xtree page corrupt\n");
+> +			BT_PUTPAGE(*mp);
+> +			*mp = NULL;
+> +			rc = -EIO;
+> +		}
+> +	}
+> +	return rc;
+> +}
+> +
+>   /*
+>    *	xtLookup()
+>    *
+> @@ -252,7 +270,7 @@ static int xtSearch(struct inode *ip, s64 xoff,	s64 *nextp,
+>   	 */
+>   	for (bn = 0;;) {
+>   		/* get/pin the page to search */
+> -		XT_GETPAGE(ip, bn, mp, PSIZE, p, rc);
+> +		rc = xt_getpage(ip, bn, &mp, PSIZE, &p);
+>   		if (rc)
+>   			return rc;
+>   
+> @@ -807,7 +825,7 @@ xtSplitUp(tid_t tid,
+>   		 * insert router entry in parent for new right child page <rp>
+>   		 */
+>   		/* get/pin the parent page <sp> */
+> -		XT_GETPAGE(ip, parent->bn, smp, PSIZE, sp, rc);
+> +		rc = xt_getpage(ip, parent->bn, &smp, PSIZE, &sp);
+>   		if (rc) {
+>   			XT_PUTPAGE(rcmp);
+>   			return rc;
+> @@ -1062,7 +1080,7 @@ xtSplitPage(tid_t tid, struct inode *ip,
+>   	 * update previous pointer of old next/right page of <sp>
+>   	 */
+>   	if (nextbn != 0) {
+> -		XT_GETPAGE(ip, nextbn, mp, PSIZE, p, rc);
+> +		rc = xt_getpage(ip, nextbn, &mp, PSIZE, &p);
+>   		if (rc) {
+>   			XT_PUTPAGE(rmp);
+>   			goto clean_up;
+> @@ -1417,7 +1435,7 @@ int xtExtend(tid_t tid,		/* transaction id */
+>   			return rc;
+>   
+>   		/* get back old page */
+> -		XT_GETPAGE(ip, bn, mp, PSIZE, p, rc);
+> +		rc = xt_getpage(ip, bn, &mp, PSIZE, &p);
+>   		if (rc)
+>   			return rc;
+>   		/*
+> @@ -1433,7 +1451,7 @@ int xtExtend(tid_t tid,		/* transaction id */
+>   			XT_PUTPAGE(mp);
+>   
+>   			/* get new child page */
+> -			XT_GETPAGE(ip, bn, mp, PSIZE, p, rc);
+> +			rc = xt_getpage(ip, bn, &mp, PSIZE, &p);
+>   			if (rc)
+>   				return rc;
+>   
+> @@ -1711,7 +1729,7 @@ int xtUpdate(tid_t tid, struct inode *ip, xad_t * nxad)
+>   			return rc;
+>   
+>   		/* get back old page */
+> -		XT_GETPAGE(ip, bn, mp, PSIZE, p, rc);
+> +		rc = xt_getpage(ip, bn, &mp, PSIZE, &p);
+>   		if (rc)
+>   			return rc;
+>   		/*
+> @@ -1727,7 +1745,7 @@ int xtUpdate(tid_t tid, struct inode *ip, xad_t * nxad)
+>   			XT_PUTPAGE(mp);
+>   
+>   			/* get new child page */
+> -			XT_GETPAGE(ip, bn, mp, PSIZE, p, rc);
+> +			rc = xt_getpage(ip, bn, &mp, PSIZE, &p);
+>   			if (rc)
+>   				return rc;
+>   
+> @@ -1788,7 +1806,7 @@ int xtUpdate(tid_t tid, struct inode *ip, xad_t * nxad)
+>   		XT_PUTPAGE(mp);
+>   
+>   		/* get new right page */
+> -		XT_GETPAGE(ip, bn, mp, PSIZE, p, rc);
+> +		rc = xt_getpage(ip, bn, &mp, PSIZE, &p);
+>   		if (rc)
+>   			return rc;
+>   
+> @@ -1864,7 +1882,7 @@ printf("xtUpdate.updateLeft.split p:0x%p\n", p);
+>   			return rc;
+>   
+>   		/* get back old page */
+> -		XT_GETPAGE(ip, bn, mp, PSIZE, p, rc);
+> +		rc = xt_getpage(ip, bn, &mp, PSIZE, &p);
+>   		if (rc)
+>   			return rc;
+>   
+> @@ -1881,7 +1899,7 @@ printf("xtUpdate.updateLeft.split p:0x%p\n", p);
+>   			XT_PUTPAGE(mp);
+>   
+>   			/* get new child page */
+> -			XT_GETPAGE(ip, bn, mp, PSIZE, p, rc);
+> +			rc = xt_getpage(ip, bn, &mp, PSIZE, &p);
+>   			if (rc)
+>   				return rc;
+>   
+> @@ -2268,7 +2286,7 @@ s64 xtTruncate(tid_t tid, struct inode *ip, s64 newsize, int flag)
+>   	 * first access of each page:
+>   	 */
+>         getPage:
+> -	XT_GETPAGE(ip, bn, mp, PSIZE, p, rc);
+> +	rc = xt_getpage(ip, bn, &mp, PSIZE, &p);
+>   	if (rc)
+>   		return rc;
+>   
+> @@ -2506,7 +2524,7 @@ s64 xtTruncate(tid_t tid, struct inode *ip, s64 newsize, int flag)
+>   
+>   	/* get back the parent page */
+>   	bn = parent->bn;
+> -	XT_GETPAGE(ip, bn, mp, PSIZE, p, rc);
+> +	rc = xt_getpage(ip, bn, &mp, PSIZE, &p);
+>   	if (rc)
+>   		return rc;
+>   
+> @@ -2791,7 +2809,7 @@ s64 xtTruncate_pmap(tid_t tid, struct inode *ip, s64 committed_size)
+>   		 * first access of each page:
+>   		 */
+>         getPage:
+> -		XT_GETPAGE(ip, bn, mp, PSIZE, p, rc);
+> +		rc = xt_getpage(ip, bn, &mp, PSIZE, &p);
+>   		if (rc)
+>   			return rc;
+>   
+> @@ -2836,7 +2854,7 @@ s64 xtTruncate_pmap(tid_t tid, struct inode *ip, s64 committed_size)
+>   
+>   	/* get back the parent page */
+>   	bn = parent->bn;
+> -	XT_GETPAGE(ip, bn, mp, PSIZE, p, rc);
+> +	rc = xt_getpage(ip, bn, &mp, PSIZE, &p);
+>   	if (rc)
+>   		return rc;
+>   
 
 
