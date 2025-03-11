@@ -1,497 +1,134 @@
-Return-Path: <linux-kernel+bounces-556481-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-556489-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D7CDEA5CA65
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 17:10:52 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C05A4A5CA80
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 17:13:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 160C4164F5C
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 16:10:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9558E3AF6AD
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 16:12:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A5CA25F98C;
-	Tue, 11 Mar 2025 16:10:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D6F125B69D;
+	Tue, 11 Mar 2025 16:11:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="K4rgSdt1"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lM9ZmwsM"
+Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4705025B68E;
-	Tue, 11 Mar 2025 16:10:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8478225F964
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 16:11:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741709443; cv=none; b=ctbgVkbONC8JW1w/qfzpXh5Kdzu3wCUFkBdgkSEBiOhErZBkip5iJDNR8z0lFZ3/Ux4dnhDL6r5NCcPohblG4OOIqnwoRGropxh/g3aTP7uqo8wQN4z7aH3Ty2e9pUi0sFenf9pHk9/YKedCa8gdB/7ywTa9aj4Ag2UdukavC7c=
+	t=1741709518; cv=none; b=DFc1jvYf34JRjO+3XX0Gkg60pbdon+cufE/ASy+XPdBkYblTVd1tKpk0BhsZX8wKkPIEhS/7gn/iomfl7c7AhZO2VXaEBJlH3n4qhz58v0DEpk2cUZFl+fXNL8xMOd3LDn1EqJ7kwHn/Ax8ZTXGqp2Y69bWuTChlqcsLJl9DdRk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741709443; c=relaxed/simple;
-	bh=zgNmjhMoZPBMDiyBETdCfcW6FwZyRy/nV0ICAQVAZm8=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=HbYUI8yt0I/kyu8fwHwVuvpOW9viaNZhEVrfgyk03cfseWZSmIq2b6Twb5OuYN8SiR6vbxsvUQoW6O7lRBlZuENAjJqV6Cwas/quM8p7ffBZh8i6LhUz4AX85smN74bQXkR8E4nGJfknFBFImThMjF7ewTW4ZMx7yiJkXG7DIaU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=K4rgSdt1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 7BD24C4CEF3;
-	Tue, 11 Mar 2025 16:10:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741709442;
-	bh=zgNmjhMoZPBMDiyBETdCfcW6FwZyRy/nV0ICAQVAZm8=;
-	h=From:Date:Subject:To:Cc:Reply-To:From;
-	b=K4rgSdt1jALdxy4ZEx1QYVZwgD0PFlR1On6f8pAslLWTTSp6cx7wm7LqSp14Zd8Oi
-	 K77vbhWLsmu7xQLtdGBi5slR/fk84QpQQusPCvmVCXVzCB5oDLMSb8mmCPplApmnj5
-	 9YjJpf/gPB8YBotJSfAg046RHWh1XhF4kmMEFQ2uCOpApmtsSjHhl+1TVTie/e2Q5i
-	 QbM1KDi9y0dc0/DkHNvaShRW+bV9oApHRzcSewk4dz/aOwmcXDpoC+bPYWOGXFZNxO
-	 AuJ3+dJ318QR/vdet3OpqHF9HoK7yOOibHcn4OCyqu4baMvDzMWV/Ohp1+l9XoGGow
-	 b91C3DNUexWhw==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 404C2C282EC;
-	Tue, 11 Mar 2025 16:10:42 +0000 (UTC)
-From: David Heidelberg via B4 Relay <devnull+david.ixit.cz@kernel.org>
-Date: Tue, 11 Mar 2025 17:10:02 +0100
-Subject: [PATCH v4] ARM: dts: nexus4: Initial dts
+	s=arc-20240116; t=1741709518; c=relaxed/simple;
+	bh=k/54jlr9krgPTZhYjJWI7nxNZq0ii+sTeh+z9w0PQwA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=MjK7bYIW/frJvwp263us2TrFR7WYjRh2icXkRfbM0KmxtSpoWFLvkOuZc0JpgLu0T0/8xsAHUGW6GKM1NfmDD/9wdcc0yAbJwu4Ivn2KkWYrYG/MFhdEm32n1xzkSNYfqOcrOFah2v0HJ6IH/lRUsw4Cv9luH1vOOGnBPyI2gtc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lM9ZmwsM; arc=none smtp.client-ip=209.85.216.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f54.google.com with SMTP id 98e67ed59e1d1-2ff5544af03so1562000a91.1
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 09:11:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741709514; x=1742314314; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=tbXgDbQe6odtzN7qJt3Hn9EsxbW1Jh0Po6Yo1yHTQZY=;
+        b=lM9ZmwsM+GF4eulkMYfRztNk5Cs6w1BQI/mcwsNMdpKtWfUlsAW24XyKb1PHqCwdxp
+         UhH0Zvt9kr6qfLZxCU/Bd7OMzQX9ZPjEBz8UWHSveIFmhDx4gy0VZnK+j8s+/taBHyDF
+         855b7d9bHFbFhIWI2h9HKeiG/YIq33sE8XgfSyKB7oge62gw5T061M+M5Rn9YvMdFXxj
+         2bljFnEJ+tOdMw8221cFasMLtJqtKoNq5F6UicwbWe4AeeuQoOl02KC9dhbKZlo3b0hO
+         jc4FyOHecRRQYk4lxOclx2gqDACTT1xhWMzXDPmBLCJnl2EFuNG6r2SnH6yb0gfW1rhE
+         4zSA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741709514; x=1742314314;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=tbXgDbQe6odtzN7qJt3Hn9EsxbW1Jh0Po6Yo1yHTQZY=;
+        b=J2jPStwatZlqQQlLYfFiO6AQySJDss+58lKCp/fK8aGcEEY+xKPkbvNZ8DZFNaMX/b
+         /8JkUlAo9kG5VXc+77aD69jmK1xIeb5EIaBzDhHYFXgBhRsTbuEM6hgdo6mrv7sUpqE7
+         irSEFl9uEsA/1SZYmRgOIGyE3NTJ/cNCI9/XpgHVvaZ1KAYXv1599/7KIqSGAjCcCHBh
+         0Lqi/nl5cHACZrv4iOaryibUCxqrfXbcqiCyKs6kkF2d0q4+oiZKbQjo65CZ0BKdST9b
+         Oivd6EpMqVBUqHLiB+Eznbk3erdzxQz2R44DzlEy62dC0cdeNrWN1Fyv0sg5totMPGnj
+         TFUw==
+X-Forwarded-Encrypted: i=1; AJvYcCWviypjbdfodbaZVNUDKys8g66tlBMoOKnYv3O2OlcbKgTXjjdPv6+C4McQz5QCp8N+Y1KEZd3jbQMPSgo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwDz2q1r+hJAdU1L+JyB47zWhplwb9glD85y3q95aFUlRiReFv6
+	V69PhtLLend3eovuCTFkwYESf7FqT67QHKq/wvwhY/sI7xYuURHZgKUVbNN0fzWi5aJZ0iibd7Y
+	t6vscHtIMFdoinXGuFtzgWkBk+FA=
+X-Gm-Gg: ASbGncub1jEEmJJMR3W6wUrduJFFOlv7FqWZKhsr2vi93yu/S04j0dZJOmsTnlEL6Bo
+	H2GlAl40fxEj9uXABGP5fW6leivS2uECey/SysAFMKDSzi+lPNXXM+XxrD/2QMpDjrOsnBgdFYn
+	WrRSfckpJsQ/CyiDPBBGhkXRAUIQB41Uo75hS0
+X-Google-Smtp-Source: AGHT+IHoUI2IVDeSuvbHPxuzIsIzy8DbeE/xia2Z5IbkvUSauYjGSV2OlB5NBKJvQwzYZ9fQklzxpagAfdTPP7TP2rY=
+X-Received: by 2002:a17:90b:4d0b:b0:2fe:8fa0:e7a1 with SMTP id
+ 98e67ed59e1d1-300ff720794mr2092338a91.2.1741709513631; Tue, 11 Mar 2025
+ 09:11:53 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250311-lg-nexus4-mako-v4-1-3916c8ec7edb@ixit.cz>
-X-B4-Tracking: v=1; b=H4sIAFlg0GcC/3XMQQ6CMBCF4auQWTumtICFlfcwLCodYKJS0yKpE
- u5uZe/yf8n7VgjkmQI02QqeFg7sphTFIYNuNNNAyDY1SCFLoUSN9wEniq9Q4MPcHFojtFJal1d
- ZQTo9PfUcd/DSph45zM6/d39Rv/UvtSjMMbed1OJke1lXZ448H7sPtNu2fQFkqxLEqgAAAA==
-X-Change-ID: 20250309-lg-nexus4-mako-da0833885b26
-To: Bjorn Andersson <andersson@kernel.org>, 
- Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Kees Cook <kees@kernel.org>, 
- Tony Luck <tony.luck@intel.com>, 
- "Guilherme G. Piccoli" <gpiccoli@igalia.com>
-Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org, 
- Ivan Belokobylskiy <belokobylskij@gmail.com>, 
- David Heidelberg <david@ixit.cz>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=9574; i=david@ixit.cz;
- h=from:subject:message-id;
- bh=ej/fcyNobEhGu/DGU98SkH5ibaeHLK+oGaImrCZQGVA=;
- b=owEBbQKS/ZANAwAIAWACP8TTSSByAcsmYgBn0GB8zy0C8e3ZvENnVBihwn53dFwRSkkTq3jft
- 2A4dKa7tYmJAjMEAAEIAB0WIQTXegnP7twrvVOnBHRgAj/E00kgcgUCZ9BgfAAKCRBgAj/E00kg
- cqfQD/44hUKUo9cVwDBhie+HzrDf3AHjG0oITt5/Z7RJyLN24fKH//LeNRQ+4TXvtkOatEE/FAc
- 3zZ0wJxirG7qC7SgFE4+MlC8/GYwCBxpIptg+JaruMkIjQxBoirSDJ2MHj/ScdjXYznh6818OTL
- DlTSDPv71gHicU9n3z+rMpBXkDuNtcEMkIo0j1zlIUs8EO3/SenOojkRD2uRv5ser+my64v7JRF
- Q99cZkPNh0+zFQvKEefTYWE7j6gI52gOrUu4ETcrTw3sukuNgXSNmgWf6Tr35uUHgaKIT0EAPOB
- nkt80X0Te8x+xqp2DemmIGkmBCOdJm3cbrKFqe+Ty2EzSFPYe/ZxiqqoIL1XfaY9zjqlCBnhPhQ
- +aj1byPigyXFGQSQkzUsJe9twZw47y0ul6KlH1PO9+JeK6tM5Q0S9H65s5jgpmxxzkl2fAtkEYa
- ZrHrZ3eDQn50wAtI9B+C6wy8iuIbk1cV4jcGnHf9j8YDLV/rKxuw9tzx9sn7PgyaIe+Vucltp+t
- Dz1faaV/BsPi85MqSbvblEmMCXep2SE4U921r3x+57zOVwAjVXEmuoobPmSVZDlS1Zh769WDCZt
- uIHxrR43mXuVUAJZgevfMV6M7lEfog5rcFG1sexgXpRV50roYLkGe1wgfJWFe1dXj6gmhVydYvl
- 8AdL8Na11FM2RBw==
-X-Developer-Key: i=david@ixit.cz; a=openpgp;
- fpr=D77A09CFEEDC2BBD53A7047460023FC4D3492072
-X-Endpoint-Received: by B4 Relay for david@ixit.cz/default with auth_id=355
-X-Original-From: David Heidelberg <david@ixit.cz>
-Reply-To: david@ixit.cz
+References: <20250311111501.9190-1-n.zhandarovich@fintech.ru>
+In-Reply-To: <20250311111501.9190-1-n.zhandarovich@fintech.ru>
+From: Alex Deucher <alexdeucher@gmail.com>
+Date: Tue, 11 Mar 2025 12:11:41 -0400
+X-Gm-Features: AQ5f1Jo_n7znu1k53mWqt5ocAdZXDWFpNjqsQGbU5mMQMuEwRLuEpw7wKFxIBH4
+Message-ID: <CADnq5_M0vVpU-puopwNjJcaSKfHr3ZDS3_n-Cmf5MWAA_4qViQ@mail.gmail.com>
+Subject: Re: [PATCH] drm/radeon: fix uninitialized size issue in radeon_vce_cs_parse()
+To: Nikita Zhandarovich <n.zhandarovich@fintech.ru>
+Cc: Alex Deucher <alexander.deucher@amd.com>, 
+	=?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
+	Xinhui Pan <Xinhui.Pan@amd.com>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org, 
+	linux-kernel@vger.kernel.org, lvc-project@linuxtesting.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Ivan Belokobylskiy <belokobylskij@gmail.com>
+Applied.  Thanks!
 
-Add initial support for LG Nexus 4 (mako).
+Alex
 
-Features currently working: regulators, eMMC, and volume keys.
-
-Signed-off-by: Ivan Belokobylskiy <belokobylskij@gmail.com>
-Co-developed-by: David Heidelberg <david@ixit.cz>
-Signed-off-by: David Heidelberg <david@ixit.cz>
----
-Changes in v4:
-- Sorted regulators and added regulators compatible.
-- Corrected pmic include and references.
-- Moved &rpm outside of / node.
-- Moved and simplify pm8921 keypad.
-- Added chasis-type.
-- Dropped incomplete WiFi node, will be provided in future
-  contributions.
-- Link to v3: https://lore.kernel.org/r/20250309-lg-nexus4-mako-v3-1-1dc2807df296@ixit.cz
-
-Changes in v3:
-- rebased against next-20250307
-- dropped backlight until driver gets converted to DT
-
-Changes in v2:
-- lge vendor doesn't exist anymore, rename to lg
-- sdcc@ to mmc@ to comply with dt-schema
----
- arch/arm/boot/dts/qcom/Makefile                    |   1 +
- .../boot/dts/qcom/qcom-apq8064-lg-nexus4-mako.dts  | 344 +++++++++++++++++++++
- 2 files changed, 345 insertions(+)
-
-diff --git a/arch/arm/boot/dts/qcom/Makefile b/arch/arm/boot/dts/qcom/Makefile
-index f06c6d425e91dd73c2b453d15543d95bd32383b9..0c1d116f6e84f76994aa8c8286350bdcd1657a42 100644
---- a/arch/arm/boot/dts/qcom/Makefile
-+++ b/arch/arm/boot/dts/qcom/Makefile
-@@ -12,6 +12,7 @@ dtb-$(CONFIG_ARCH_QCOM) += \
- 	qcom-apq8064-ifc6410.dtb \
- 	qcom-apq8064-sony-xperia-lagan-yuga.dtb \
- 	qcom-apq8064-asus-nexus7-flo.dtb \
-+	qcom-apq8064-lg-nexus4-mako.dtb \
- 	qcom-apq8074-dragonboard.dtb \
- 	qcom-apq8084-ifc6540.dtb \
- 	qcom-apq8084-mtp.dtb \
-diff --git a/arch/arm/boot/dts/qcom/qcom-apq8064-lg-nexus4-mako.dts b/arch/arm/boot/dts/qcom/qcom-apq8064-lg-nexus4-mako.dts
-new file mode 100644
-index 0000000000000000000000000000000000000000..51edd661e4bd903a32445d15955585a194574f30
---- /dev/null
-+++ b/arch/arm/boot/dts/qcom/qcom-apq8064-lg-nexus4-mako.dts
-@@ -0,0 +1,344 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+#include <dt-bindings/gpio/gpio.h>
-+#include <dt-bindings/input/input.h>
-+#include <dt-bindings/mfd/qcom-rpm.h>
-+#include <dt-bindings/pinctrl/qcom,pmic-gpio.h>
-+
-+#include "qcom-apq8064-v2.0.dtsi"
-+#include "pm8821.dtsi"
-+#include "pm8921.dtsi"
-+
-+/ {
-+	model = "LG Nexus 4 (mako)";
-+	compatible = "lg,nexus4-mako", "qcom,apq8064";
-+	chassis-type = "handset";
-+
-+	aliases {
-+		serial0 = &gsbi7_serial;
-+		serial1 = &gsbi6_serial;
-+		serial2 = &gsbi4_serial;
-+	};
-+
-+	chosen {
-+		stdout-path = "serial2:115200n8";
-+	};
-+
-+	reserved-memory {
-+		#address-cells = <1>;
-+		#size-cells = <1>;
-+		ranges;
-+
-+		ramoops@88d00000{
-+			compatible = "ramoops";
-+			reg = <0x88d00000 0x100000>;
-+			record-size = <0x20000>;
-+			console-size = <0x20000>;
-+			ftrace-size = <0x20000>;
-+		};
-+	};
-+
-+	battery_cell: battery-cell {
-+		compatible = "simple-battery";
-+		constant-charge-current-max-microamp = <900000>;
-+		operating-range-celsius = <0 45>;
-+	};
-+};
-+
-+&rpm {
-+	regulators {
-+		compatible = "qcom,rpm-pm8921-regulators";
-+
-+		vin_lvs1_3_6-supply = <&pm8921_s4>;
-+		vin_lvs2-supply = <&pm8921_s1>;
-+		vin_lvs4_5_7-supply = <&pm8921_s4>;
-+
-+		vdd_l1_l2_l12_l18-supply = <&pm8921_s4>;
-+		vdd_l24-supply = <&pm8921_s1>;
-+		vdd_l25-supply = <&pm8921_s1>;
-+
-+		vdd_l26-supply = <&pm8921_s7>;
-+		vdd_l27-supply = <&pm8921_s7>;
-+		vdd_l28-supply = <&pm8921_s7>;
-+
-+		/* Buck SMPS */
-+		pm8921_s1: s1 {
-+			regulator-always-on;
-+			regulator-min-microvolt = <1225000>;
-+			regulator-max-microvolt = <1225000>;
-+			qcom,switch-mode-frequency = <3200000>;
-+			bias-pull-down;
-+		};
-+
-+		pm8921_s2: s2 {
-+			regulator-min-microvolt = <1300000>;
-+			regulator-max-microvolt = <1300000>;
-+			qcom,switch-mode-frequency = <1600000>;
-+			bias-pull-down;
-+		};
-+
-+		/* msm otg HSUSB_VDDCX */
-+		pm8921_s3: s3 {
-+			regulator-min-microvolt = <500000>;
-+			regulator-max-microvolt = <1150000>;
-+			qcom,switch-mode-frequency = <4800000>;
-+			bias-pull-down;
-+		};
-+
-+		/*
-+		 * msm_sdcc.1-sdc-vdd_io
-+		 * tabla2x-slim-CDC_VDDA_RX
-+		 * tabla2x-slim-CDC_VDDA_TX
-+		 * tabla2x-slim-CDC_VDD_CP
-+		 * tabla2x-slim-VDDIO_CDC
-+		 */
-+		pm8921_s4: s4 {
-+			regulator-always-on;
-+			regulator-min-microvolt	= <1800000>;
-+			regulator-max-microvolt	= <1800000>;
-+			qcom,switch-mode-frequency = <1600000>;
-+			bias-pull-down;
-+			qcom,force-mode = <QCOM_RPM_FORCE_MODE_AUTO>;
-+		};
-+
-+		/*
-+		 * supply vdd_l26, vdd_l27, vdd_l28
-+		 */
-+		pm8921_s7: s7 {
-+			regulator-min-microvolt = <1300000>;
-+			regulator-max-microvolt = <1300000>;
-+			qcom,switch-mode-frequency = <3200000>;
-+		};
-+
-+		pm8921_s8: s8 {
-+			regulator-min-microvolt = <2200000>;
-+			regulator-max-microvolt = <2200000>;
-+			qcom,switch-mode-frequency = <1600000>;
-+		};
-+
-+		pm8921_l1: l1 {
-+			regulator-min-microvolt = <1100000>;
-+			regulator-max-microvolt = <1100000>;
-+			regulator-always-on;
-+			bias-pull-down;
-+		};
-+
-+		/* mipi_dsi.1-dsi1_pll_vdda */
-+		pm8921_l2: l2 {
-+			regulator-min-microvolt = <1200000>;
-+			regulator-max-microvolt = <1200000>;
-+			bias-pull-down;
-+		};
-+
-+		/* msm_otg-HSUSB_3p3 */
-+		pm8921_l3: l3 {
-+			regulator-min-microvolt = <3075000>;
-+			regulator-max-microvolt = <3500000>;
-+			bias-pull-down;
-+		};
-+
-+		/* msm_otg-HSUSB_1p8 */
-+		pm8921_l4: l4 {
-+			regulator-always-on;
-+			regulator-min-microvolt = <1800000>;
-+			regulator-max-microvolt = <1800000>;
-+		};
-+
-+		/* msm_sdcc.1-sdc_vdd */
-+		pm8921_l5: l5 {
-+			regulator-min-microvolt = <2950000>;
-+			regulator-max-microvolt = <2950000>;
-+			bias-pull-down;
-+		};
-+
-+		/* earjack_debug */
-+		pm8921_l6: l6 {
-+			regulator-min-microvolt = <3000000>;
-+			regulator-max-microvolt = <3000000>;
-+			bias-pull-down;
-+		};
-+
-+		/* mipi_dsi.1-dsi_vci */
-+		pm8921_l8: l8 {
-+			regulator-min-microvolt = <2800000>;
-+			regulator-max-microvolt = <3000000>;
-+			bias-pull-down;
-+		};
-+
-+		/* wcnss_wlan.0-iris_vddpa */
-+		pm8921_l10: l10 {
-+			regulator-min-microvolt = <2900000>;
-+			regulator-max-microvolt = <2900000>;
-+			bias-pull-down;
-+		};
-+
-+		/* mipi_dsi.1-dsi1_avdd */
-+		pm8921_l11: l11 {
-+			regulator-min-microvolt = <2850000>;
-+			regulator-max-microvolt = <2850000>;
-+			bias-pull-down;
-+		};
-+
-+		/* touch_vdd */
-+		pm8921_l15: l15 {
-+			regulator-min-microvolt = <1800000>;
-+			regulator-max-microvolt = <2950000>;
-+			bias-pull-down;
-+		};
-+
-+		/* slimport_dvdd */
-+		pm8921_l18: l18 {
-+			regulator-min-microvolt = <1100000>;
-+			regulator-max-microvolt = <1100000>;
-+			bias-pull-down;
-+		};
-+
-+		/* touch_io */
-+		pm8921_l22: l22 {
-+			regulator-min-microvolt = <1800000>;
-+			regulator-max-microvolt = <1800000>;
-+			bias-pull-down;
-+		};
-+
-+		/*
-+		 * mipi_dsi.1-dsi_vddio
-+		 * pil_qdsp6v4.1-pll_vdd
-+		 * pil_qdsp6v4.2-pll_vdd
-+		 * msm_ehci_host.0-HSUSB_1p8
-+		 * msm_ehci_host.1-HSUSB_1p8
-+		 */
-+		pm8921_l23: l23 {
-+			regulator-min-microvolt = <1800000>;
-+			regulator-max-microvolt = <1800000>;
-+			bias-pull-down;
-+		};
-+
-+		/*
-+		 * tabla2x-slim-CDC_VDDA_A_1P2V
-+		 * tabla2x-slim-VDDD_CDC_D
-+		 */
-+		pm8921_l24: l24 {
-+			regulator-min-microvolt = <750000>;
-+			regulator-max-microvolt = <1150000>;
-+			bias-pull-down;
-+		};
-+
-+		pm8921_l25: l25 {
-+			regulator-min-microvolt = <1250000>;
-+			regulator-max-microvolt = <1250000>;
-+			regulator-always-on;
-+			bias-pull-down;
-+		};
-+
-+		pm8921_l26: l26 {
-+			regulator-min-microvolt = <375000>;
-+			regulator-max-microvolt = <1050000>;
-+			regulator-always-on;
-+			bias-pull-down;
-+		};
-+
-+		pm8921_l27: l27 {
-+			regulator-min-microvolt = <1100000>;
-+			regulator-max-microvolt = <1100000>;
-+		};
-+
-+		pm8921_l28: l28 {
-+			regulator-min-microvolt = <1050000>;
-+			regulator-max-microvolt = <1050000>;
-+			bias-pull-down;
-+		};
-+
-+		/* wcnss_wlan.0-iris_vddio */
-+		pm8921_lvs1: lvs1 {
-+			bias-pull-down;
-+		};
-+
-+		/* wcnss_wlan.0-iris_vdddig */
-+		pm8921_lvs2: lvs2 {
-+			bias-pull-down;
-+		};
-+
-+		pm8921_lvs3: lvs3 {
-+			bias-pull-down;
-+		};
-+
-+		pm8921_lvs4: lvs4 {
-+			bias-pull-down;
-+		};
-+
-+		pm8921_lvs5: lvs5 {
-+			bias-pull-down;
-+		};
-+
-+		/* mipi_dsi.1-dsi_iovcc */
-+		pm8921_lvs6: lvs6 {
-+			bias-pull-down;
-+		};
-+
-+		/*
-+		 * pil_riva-pll_vdd
-+		 * lvds.0-lvds_vdda
-+		 * mipi_dsi.1-dsi1_vddio
-+		 * hdmi_msm.0-hdmi_vdda
-+		 */
-+		pm8921_lvs7: lvs7 {
-+			bias-pull-down;
-+		};
-+
-+		pm8921_ncp: ncp {
-+			regulator-min-microvolt = <1800000>;
-+			regulator-max-microvolt = <1800000>;
-+			qcom,switch-mode-frequency = <1600000>;
-+		};
-+	};
-+};
-+
-+&gsbi1 {
-+	qcom,mode = <GSBI_PROT_I2C>;
-+
-+	status = "okay";
-+};
-+
-+&gsbi1_i2c {
-+	clock-frequency = <200000>;
-+
-+	status = "okay";
-+};
-+
-+&gsbi4 {
-+	qcom,mode = <GSBI_PROT_I2C_UART>;
-+
-+	status = "okay";
-+};
-+
-+&gsbi4_serial {
-+	status = "okay";
-+};
-+
-+&pm8821 {
-+	interrupts-extended = <&tlmm_pinmux 76 IRQ_TYPE_LEVEL_LOW>;
-+};
-+
-+&pm8921 {
-+	interrupts-extended = <&tlmm_pinmux 74 IRQ_TYPE_LEVEL_LOW>;
-+};
-+
-+&pm8921_keypad {
-+	linux,keymap = <
-+		MATRIX_KEY(0, 0, KEY_VOLUMEDOWN)
-+		MATRIX_KEY(0, 1, KEY_VOLUMEUP)
-+	>;
-+
-+	keypad,num-rows = <1>;
-+	keypad,num-columns = <5>;
-+
-+	status = "okay";
-+};
-+
-+
-+/* eMMC */
-+&sdcc1 {
-+	vmmc-supply = <&pm8921_l5>;
-+	vqmmc-supply = <&pm8921_s4>;
-+
-+	status = "okay";
-+};
-
----
-base-commit: 0a2f889128969dab41861b6e40111aa03dc57014
-change-id: 20250309-lg-nexus4-mako-da0833885b26
-
-Best regards,
--- 
-David Heidelberg <david@ixit.cz>
-
-
+On Tue, Mar 11, 2025 at 7:23=E2=80=AFAM Nikita Zhandarovich
+<n.zhandarovich@fintech.ru> wrote:
+>
+> On the off chance that command stream passed from userspace via
+> ioctl() call to radeon_vce_cs_parse() is weirdly crafted and
+> first command to execute is to encode (case 0x03000001), the function
+> in question will attempt to call radeon_vce_cs_reloc() with size
+> argument that has not been properly initialized. Specifically, 'size'
+> will point to 'tmp' variable before the latter had a chance to be
+> assigned any value.
+>
+> Play it safe and init 'tmp' with 0, thus ensuring that
+> radeon_vce_cs_reloc() will catch an early error in cases like these.
+>
+> Found by Linux Verification Center (linuxtesting.org) with static
+> analysis tool SVACE.
+>
+> Fixes: 2fc5703abda2 ("drm/radeon: check VCE relocation buffer range v3")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Nikita Zhandarovich <n.zhandarovich@fintech.ru>
+> ---
+>  drivers/gpu/drm/radeon/radeon_vce.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/gpu/drm/radeon/radeon_vce.c b/drivers/gpu/drm/radeon=
+/radeon_vce.c
+> index d1871af967d4..2355a78e1b69 100644
+> --- a/drivers/gpu/drm/radeon/radeon_vce.c
+> +++ b/drivers/gpu/drm/radeon/radeon_vce.c
+> @@ -557,7 +557,7 @@ int radeon_vce_cs_parse(struct radeon_cs_parser *p)
+>  {
+>         int session_idx =3D -1;
+>         bool destroyed =3D false, created =3D false, allocated =3D false;
+> -       uint32_t tmp, handle =3D 0;
+> +       uint32_t tmp =3D 0, handle =3D 0;
+>         uint32_t *size =3D &tmp;
+>         int i, r =3D 0;
+>
 
