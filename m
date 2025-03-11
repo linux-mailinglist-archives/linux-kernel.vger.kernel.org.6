@@ -1,119 +1,207 @@
-Return-Path: <linux-kernel+bounces-556306-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-556307-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D6BCAA5C3D6
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 15:32:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 44420A5C3D9
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 15:33:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 22F0E173C3D
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 14:32:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 774E6176C91
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 14:33:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AECD225A65A;
-	Tue, 11 Mar 2025 14:32:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23B5C25CC66;
+	Tue, 11 Mar 2025 14:32:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="cHY8ImlW"
-Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="NyjgEq5u"
+Received: from relay6-d.mail.gandi.net (relay6-d.mail.gandi.net [217.70.183.198])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 942711925AF
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 14:32:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C643F1D516C;
+	Tue, 11 Mar 2025 14:32:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741703567; cv=none; b=iIr8wGi0HqS1IxDdJOSWetHruL9v9URumsnq7P3o+ngZAmkyAASp4eYbZ2U8nTBKefBjhLvsWg8yjn6+NSZiu6bTtw29hr3wvVkxnRyHQNVDS+r6u2Qb2r5VDqgtul0aIWoHEwiJGpZbsLFnKVDMooe6HHRMOc6gwaCZ/5ZnnfI=
+	t=1741703569; cv=none; b=ulzxFRnNxxgto8Wr12CKQCmATOrLcNMp4QI3P/ziNmqcKr5tUfT1qhoMM0aNGSxWySYMq+NQz7r4HreYnlqi6AHl0DwA+4yIuXryQbfo8Ofg2q5HKRj8jewksVx3H/5g7Rog1mJlKWX5E3qa3J9/Xmbaif0bA+tRLv2cWIOBJdo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741703567; c=relaxed/simple;
-	bh=Zr6WgAlS6R5yGOn9CKEM1IoFRIXy8zA6M9eSlXDYnpU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=u2Q9pWYTj+1akTQD7Tnwxp6NGChpR+b/jIkDZDYDkMx9n63rZdm44zEfhAzcDUgFM6bNsey889QW484qDeCbFIqOjGDFFBdv7VFwFv7N3b51i2U/rFd3lJp82WCVqaJR79mlZ+PcJ2YP6uGa5XWmibXqrv+61aRLis3WpSQWF3s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=cHY8ImlW; arc=none smtp.client-ip=209.85.208.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-30bf8f5dde5so36976591fa.2
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 07:32:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1741703564; x=1742308364; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Zr6WgAlS6R5yGOn9CKEM1IoFRIXy8zA6M9eSlXDYnpU=;
-        b=cHY8ImlWfn1KKucrOuLSvRQJkROEQ8NPIPwNcEOlG4K9VBdUNsngaABubLvMZqF/mc
-         smgDyFfmtOY3pWTyN1HaRjGcRXmd/eP8M4tx6fg6TRQGoCsGc5frhYajUKvE4imld3SX
-         l1ppS/GScSELEbXWsXZddIDnIjpVJzKE2r9sHIWtmkurLp+FFT/IiflU8BJIL9oLHib3
-         tay/C3oQYtgNt7+zK3OKT+zxcH2HDJ5hs+RqPLvfKaGO5LjEW8KXfPguxhzQdboAMxbi
-         geRcWm93C3WoEhfyFRK6tHsfzzeaRjcm64SGQ/fQ3BoOonWFX/K8rm+mXWVlqGojEWO+
-         2J0A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741703564; x=1742308364;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Zr6WgAlS6R5yGOn9CKEM1IoFRIXy8zA6M9eSlXDYnpU=;
-        b=jRPkOyUHhZmfy9sCuccYvKFiSY74Bek3tMgyfFwmZAYv/NtAuRBYXvt9yZ8pW8x709
-         It4wiuJ/V9t6vOewe/T8EVAfDJ2g8e5bknyACUt1BNzHzAqDN959ehpiIpN3yOwWUaem
-         +fvTtF1m8JDruFnEOgg8M5YtXsuUPcHx8ebw29brGb7rG1DMtCFODoHFCNUXQZpJd0L9
-         vCisBt9bATjdBXPh5y/VDpWGxLKMmoZkQArNYIwr7ew8qnKjs99HberQmi+CmkwGMAVr
-         flr0vpYhGf5BOxb9fqP6XEefjoU99qBjDigZR4H7r8enmEElFvW4+AWkfljnV7KlAAdc
-         CWAQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV1kZF12YCs8mCSs6uUZoREK2ettgBMUH0+TN2WjP1EKS9MJdwE0zJ5j/EKXlHqs1UbPFY0JQ0dgV6luPw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxcmLwL1lZa8w9GQgnD+JDZj6rg7YpHEp1nVDKHDZPP3r1wHGRf
-	Buik0ckZwRGd+u9HkLsrqFAfv+cxqNKGAR//TxMQ+xb4CYmRQTxF4Jl+u2qwAjGz+Ty7qiYbduN
-	uWU7q4cZmu0k06ho3CDKuLIzoeJGtdHETBRFB0w==
-X-Gm-Gg: ASbGncs4WjcY9f86XkI90ChbfMNdJk01tONaj/G3+hVz1iKKoA/T+imuoS6b02xYKqY
-	X82fdzqqVWhpBmdXrT44y69/3HxFxKdRaXC+Lep++lF58M70fxK2t/42LV9xmk9e7J55LxtDNQf
-	qSSOXz7Rd7kFPBz+5RTjy6A0tN2wdO35bA8cCDgyQLOp+3aioQNfC0lT1s
-X-Google-Smtp-Source: AGHT+IEisI8Neqlj/Ik9FhV+05dwHOtFWei1CfbzlpUHAJT3kEAwnn1YOghnbkv8ficWwHYaID9U7+mw+S4I+MdiIko=
-X-Received: by 2002:a2e:8752:0:b0:30b:be53:bdd4 with SMTP id
- 38308e7fff4ca-30bf452d00emr56997631fa.20.1741703563437; Tue, 11 Mar 2025
- 07:32:43 -0700 (PDT)
+	s=arc-20240116; t=1741703569; c=relaxed/simple;
+	bh=6LRWqagH50pWtOvWLzmPECzX8JInGE4+p6WZsOeip2o=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Y3PJJ5lhUQOQwtbhgm4u9NUl5vPh7RuPLetBCRKJkDWTFQu5rrXmD0BEcK9jfujLxV9Z7iBhMKagLLXb1FXU+NxxTlTdVKpNvPqlcx/xtL4fnDYTXXzpmfXxym+ofsSyhyt7drq76CR6V1o/01A+ZEPdvK7xF2OyRmo//n1gT2c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=NyjgEq5u; arc=none smtp.client-ip=217.70.183.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 689B844293;
+	Tue, 11 Mar 2025 14:32:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1741703559;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=03SEpe76buerxO1Tyt/a95sW01GQX/8qXbwOFtLXNuw=;
+	b=NyjgEq5uNCMIvDFGJV4PzI9PBcADaiZ+rts7F1XijZiBRgxbhADNqb4p0IdN4cEJu6WMpi
+	JxUHcKEk/q2Pdw/oF/ikapdSxAyUThyvIWkCUCFakseQp8l45mVbcXUilmvFTzhBA7UWLC
+	PfvzwTymO1lcAjJzoafWUpNjDfGZ7XIrxIzaOOLdLLxruovnbTEiaupjv0tMPiRjNh2xJz
+	owTVU6I/Ndid2IM4CRuC0Y0pqkdhvJhqbPOO+4h/RO+DVyXePQ4miKTXZjFaWyKhW6B6Yo
+	gJN5eJtTocgxk7BGSc3dA3oSbs6fCxcuQZ0B4DsR7Y64QwyEaAuRw5mRJMo6XQ==
+Date: Tue, 11 Mar 2025 15:32:35 +0100
+From: Kory Maincent <kory.maincent@bootlin.com>
+To: Philipp Hahn <phahn-oss@avm.de>
+Cc: netdev@vger.kernel.org, Oliver Neukum <oliver@neukum.org>, Andrew Lunn
+ <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>, Eric
+ Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo
+ Abeni <pabeni@redhat.com>, linux-usb@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Leon Schuermann <leon@is.currently.online>
+Subject: Re: [PATCH v2] net-next: cdc_ether|r8152: ThinkPad Hybrid USB-C/A
+ Dock quirk
+Message-ID: <20250311153235.6cae893a@kmaincent-XPS-13-7390>
+In-Reply-To: <f736f5bd20e465656ebe2cc2e7be69c0ada852e3.1741627632.git.p.hahn@avm.de>
+References: <f736f5bd20e465656ebe2cc2e7be69c0ada852e3.1741627632.git.p.hahn@avm.de>
+Organization: bootlin
+X-Mailer: Claws Mail 4.0.0 (GTK+ 3.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250311-gpiolib-line-state-raw-notifier-v2-1-138374581e1e@linaro.org>
-In-Reply-To: <20250311-gpiolib-line-state-raw-notifier-v2-1-138374581e1e@linaro.org>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Tue, 11 Mar 2025 15:32:32 +0100
-X-Gm-Features: AQ5f1JoL2IvysYQ6AfSqrcf2OfHt89YRbBogJ_WeAFJSM_ju5h8hWF3NagavEQQ
-Message-ID: <CAMRc=McJPStp5UcvRN23yHWL3LHuREvOtQVe2iodeQj85KCojA@mail.gmail.com>
-Subject: Re: [PATCH RFT v2] gpio: cdev: use raw notifier for line state events
-To: Bartosz Golaszewski <brgl@bgdev.pl>, Kent Gibson <warthog618@gmail.com>, 
-	Linus Walleij <linus.walleij@linaro.org>, David Jander <david@protonic.nl>
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdduvddvgeekucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpeffhffvvefukfgjfhhoofggtgfgsehtqhertdertdejnecuhfhrohhmpefmohhrhicuofgrihhntggvnhhtuceokhhorhihrdhmrghinhgtvghnthessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepgeetgeeghfduhefhleelueeuueejjeegueegffdviedtheejieekhedvveejteehnecuffhomhgrihhnpehkvghrnhgvlhdrohhrghdplhgvnhhovhhordgtohhmpdgsohhothhlihhnrdgtohhmnecukfhppeduleehrddvledrheegrddvgeefnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepudelhedrvdelrdehgedrvdegfedphhgvlhhopehkmhgrihhntggvnhhtqdgirffuqddufedqjeefledtpdhmrghilhhfrhhomhepkhhorhihrdhmrghinhgtvghnthessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepuddvpdhrtghpthhtohepphhhrghhnhdqohhsshesrghvmhdruggvpdhrtghpthhtohepnhgvthguvghvsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepohhlihhvvghrsehnvghukhhumhdrohhrghdprhgtphhtthhopegrnhgurhgvfidon
+ hgvthguvghvsehluhhnnhdrtghhpdhrtghpthhtohepuggrvhgvmhesuggrvhgvmhhlohhfthdrnhgvthdprhgtphhtthhopegvughumhgriigvthesghhoohhglhgvrdgtohhmpdhrtghpthhtohepkhhusggrsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehprggsvghnihesrhgvughhrghtrdgtohhm
+X-GND-Sasl: kory.maincent@bootlin.com
 
-On Tue, Mar 11, 2025 at 3:31=E2=80=AFPM Bartosz Golaszewski <brgl@bgdev.pl>=
- wrote:
->
-> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
->
-> We use a notifier to implement the mechanism of informing the user-space
-> about changes in GPIO line status. We register with the notifier when
-> the GPIO character device file is opened and unregister when the last
-> reference to the associated file descriptor is dropped.
->
-> Since commit fcc8b637c542 ("gpiolib: switch the line state notifier to
-> atomic") we use the atomic notifier variant. Atomic notifiers call
-> rcu_synchronize in atomic_notifier_chain_unregister() which caused a
-> significant performance regression in some circumstances, observed by
-> user-space when calling close() on the GPIO device file descriptor.
->
-> Replace the atomic notifier with the raw variant and provide
-> synchronization with a read-write spinlock.
->
-> Fixes: fcc8b637c542 ("gpiolib: switch the line state notifier to atomic")
-> Reported-by: David Jander <david@protonic.nl>
-> Closes: https://lore.kernel.org/all/20250311110034.53959031@erd003.prtnl/
-> Tested-by: David Jander <david@protonic.nl>
-> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> ---
+On Tue, 11 Mar 2025 11:21:34 +0100
+Philipp Hahn <phahn-oss@avm.de> wrote:
 
-Ah, dang it, I didn't drop the RFT prefix from b4 config...
+> Lenovo ThinkPad Hybrid USB-C with USB-A Dock (17ef:a359) is affected by
+> the same problem as the Lenovo Powered USB-C Travel Hub (17ef:721e):
+> Both are based on the Realtek RTL8153B chip used to use the cdc_ether
+> driver. However, using this driver, with the system suspended the device
+> constantly sends pause-frames as soon as the receive buffer fills up.
+> This causes issues with other devices, where some Ethernet switches stop
+> forwarding packets altogether.
+>=20
+> Using the Realtek driver (r8152) fixes this issue. Pause frames are no
+> longer sent while the host system is suspended.
 
-Bart
+It seems patchwork detects it for net-next tree but nonetheless the subject
+of your patch should look like this:
+[PATCH net-next v2] cdc_ether|r8152: ThinkPad Hybrid USB-C/A Dock quirk
+
+Regards,
+
+> Cc: Oliver Neukum <oliver@neukum.org>
+> Cc: Andrew Lunn <andrew+netdev@lunn.ch>
+> Cc: "David S. Miller" <davem@davemloft.net>
+> Cc: Eric Dumazet <edumazet@google.com>
+> Cc: Jakub Kicinski <kuba@kernel.org>
+> Cc: Paolo Abeni <pabeni@redhat.com>
+> Cc: linux-usb@vger.kernel.org
+> Cc: netdev@vger.kernel.org
+> Cc: linux-kernel@vger.kernel.org
+> Cc: Leon Schuermann <leon@is.currently.online>
+> Link: https://git.kernel.org/netdev/net/c/cb82a54904a9
+> Link: https://git.kernel.org/netdev/net/c/2284bbd0cf39
+> Link:
+> https://www.lenovo.com/de/de/p/accessories-and-software/docking/docking-u=
+sb-docks/40af0135eu
+> Signed-off-by: Philipp Hahn <phahn-oss@avm.de> Reviewed-by: Kory Maincent
+> <kory.maincent@bootlin.com> ---
+> V1 -> V2: Prefix subject with `net-next:`
+> V1 -> V2: Add additional Cc:s
+>  drivers/net/usb/cdc_ether.c | 7 +++++++
+>  drivers/net/usb/r8152.c     | 6 ++++++
+>  drivers/net/usb/r8153_ecm.c | 6 ++++++
+>  3 files changed, 19 insertions(+)
+>=20
+> diff --git a/drivers/net/usb/cdc_ether.c b/drivers/net/usb/cdc_ether.c
+> index a6469235d904..a032c1ded406 100644
+> --- a/drivers/net/usb/cdc_ether.c
+> +++ b/drivers/net/usb/cdc_ether.c
+> @@ -783,6 +783,13 @@ static const struct usb_device_id	products[] =3D {
+>  	.driver_info =3D 0,
+>  },
+> =20
+> +/* Lenovo ThinkPad Hybrid USB-C with USB-A Dock (40af0135eu, based on
+> Realtek RTL8153) */ +{
+> +	USB_DEVICE_AND_INTERFACE_INFO(LENOVO_VENDOR_ID, 0xa359,
+> USB_CLASS_COMM,
+> +			USB_CDC_SUBCLASS_ETHERNET, USB_CDC_PROTO_NONE),
+> +	.driver_info =3D 0,
+> +},
+> +
+>  /* Aquantia AQtion USB to 5GbE Controller (based on AQC111U) */
+>  {
+>  	USB_DEVICE_AND_INTERFACE_INFO(AQUANTIA_VENDOR_ID, 0xc101,
+> diff --git a/drivers/net/usb/r8152.c b/drivers/net/usb/r8152.c
+> index 468c73974046..96fa3857d8e2 100644
+> --- a/drivers/net/usb/r8152.c
+> +++ b/drivers/net/usb/r8152.c
+> @@ -785,6 +785,7 @@ enum rtl8152_flags {
+>  #define DEVICE_ID_THINKPAD_USB_C_DONGLE			0x720c
+>  #define DEVICE_ID_THINKPAD_USB_C_DOCK_GEN2		0xa387
+>  #define DEVICE_ID_THINKPAD_USB_C_DOCK_GEN3		0x3062
+> +#define DEVICE_ID_THINKPAD_HYBRID_USB_C_DOCK		0xa359
+> =20
+>  struct tally_counter {
+>  	__le64	tx_packets;
+> @@ -9787,6 +9788,7 @@ static bool rtl8152_supports_lenovo_macpassthru(str=
+uct
+> usb_device *udev) case DEVICE_ID_THINKPAD_USB_C_DOCK_GEN2:
+>  		case DEVICE_ID_THINKPAD_USB_C_DOCK_GEN3:
+>  		case DEVICE_ID_THINKPAD_USB_C_DONGLE:
+> +		case DEVICE_ID_THINKPAD_HYBRID_USB_C_DOCK:
+>  			return 1;
+>  		}
+>  	} else if (vendor_id =3D=3D VENDOR_ID_REALTEK && parent_vendor_id =3D=3D
+> VENDOR_ID_LENOVO) { @@ -10064,6 +10066,8 @@ static const struct usb_devic=
+e_id
+> rtl8152_table[] =3D { { USB_DEVICE(VENDOR_ID_MICROSOFT, 0x0927) },
+>  	{ USB_DEVICE(VENDOR_ID_MICROSOFT, 0x0c5e) },
+>  	{ USB_DEVICE(VENDOR_ID_SAMSUNG, 0xa101) },
+> +
+> +	/* Lenovo */
+>  	{ USB_DEVICE(VENDOR_ID_LENOVO,  0x304f) },
+>  	{ USB_DEVICE(VENDOR_ID_LENOVO,  0x3054) },
+>  	{ USB_DEVICE(VENDOR_ID_LENOVO,  0x3062) },
+> @@ -10074,7 +10078,9 @@ static const struct usb_device_id rtl8152_table[]=
+ =3D {
+>  	{ USB_DEVICE(VENDOR_ID_LENOVO,  0x720c) },
+>  	{ USB_DEVICE(VENDOR_ID_LENOVO,  0x7214) },
+>  	{ USB_DEVICE(VENDOR_ID_LENOVO,  0x721e) },
+> +	{ USB_DEVICE(VENDOR_ID_LENOVO,  0xa359) },
+>  	{ USB_DEVICE(VENDOR_ID_LENOVO,  0xa387) },
+> +
+>  	{ USB_DEVICE(VENDOR_ID_LINKSYS, 0x0041) },
+>  	{ USB_DEVICE(VENDOR_ID_NVIDIA,  0x09ff) },
+>  	{ USB_DEVICE(VENDOR_ID_TPLINK,  0x0601) },
+> diff --git a/drivers/net/usb/r8153_ecm.c b/drivers/net/usb/r8153_ecm.c
+> index 20b2df8d74ae..8d860dacdf49 100644
+> --- a/drivers/net/usb/r8153_ecm.c
+> +++ b/drivers/net/usb/r8153_ecm.c
+> @@ -135,6 +135,12 @@ static const struct usb_device_id products[] =3D {
+>  				      USB_CDC_SUBCLASS_ETHERNET,
+> USB_CDC_PROTO_NONE), .driver_info =3D (unsigned long)&r8153_info,
+>  },
+> +/* Lenovo ThinkPad Hybrid USB-C with USB-A Dock (40af0135eu, based on
+> Realtek RTL8153) */ +{
+> +	USB_DEVICE_AND_INTERFACE_INFO(VENDOR_ID_LENOVO, 0xa359,
+> USB_CLASS_COMM,
+> +				      USB_CDC_SUBCLASS_ETHERNET,
+> USB_CDC_PROTO_NONE),
+> +	.driver_info =3D (unsigned long)&r8153_info,
+> +},
+> =20
+>  	{ },		/* END */
+>  };
+
+
+
+--=20
+K=C3=B6ry Maincent, Bootlin
+Embedded Linux and kernel engineering
+https://bootlin.com
 
