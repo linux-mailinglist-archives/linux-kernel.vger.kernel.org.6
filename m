@@ -1,85 +1,196 @@
-Return-Path: <linux-kernel+bounces-556971-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-556972-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 622CCA5D1C1
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 22:32:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F8DCA5D1CD
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 22:33:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A236017A61F
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 21:32:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C7E1B17A9AE
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 21:33:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74C5F2641DD;
-	Tue, 11 Mar 2025 21:32:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1959A264A8E;
+	Tue, 11 Mar 2025 21:33:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="pc8Cb1Sa"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vLCyIQJD"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3395123DE;
-	Tue, 11 Mar 2025 21:32:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3193015820C;
+	Tue, 11 Mar 2025 21:33:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741728739; cv=none; b=GQu6OAUR2Hvl4JntiCs/mLcOul7L/AzKL04cxdWO6qqb8hRuidrG4vgiGMvbfs5lCQDy9sXdrHVplpz7HdAKuh8+hzmPfQ0B8SGulBfWZj6Vvjm796wAY3jZvxoZPUO9EHDMv5wM7amKJQJy6vmzKREHh2xVF7udKsP9rSCXeWg=
+	t=1741728823; cv=none; b=chvl+BryluD0rwpPIyHMpudjssz9LZr/flzx5HAPQAUlVDiIyhlqaDmcXxtvfrsBpyzp4LhaoZ7XlufOEh6Fr8RkC2x3P8LyXKQjwNEa8KYns3xOxTZwFDHZuFCDrHQoH+n38VJo1bYElPzEMVRr8h9rlezpxj8ZzmGyVzriqqw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741728739; c=relaxed/simple;
-	bh=CGysvkbyat2v9Xt5IUN+jtxJSR/j0sVWvbITzTxLaqg=;
+	s=arc-20240116; t=1741728823; c=relaxed/simple;
+	bh=CmQW/T4z277siKf35pb3ufsM8TGho2hqx+eDDO0HDws=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=D9s6KpRP3NDwICHRDHwTAw3Aq3FK4knh2Q94P0T8Dc7TSHchc1djY16m+DmyvgqTezD3tXY5JqhbxUvByEF3dZNoEN3umxK9CujCToWZ5JJrUrquxANHCj9wmwFnkt1IInI7RgKmNtvU7yj2vO1Cz6q5buIM1DF2wlfhAbcgZH8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=pc8Cb1Sa; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=fBIv4qkUgiRYJGk6D64lsbFp1htOYMf0DoD3udKRKRQ=; b=pc8Cb1SanRw/DIOqyL1dmo9HBX
-	CJMarEMBHV5yOscodm9n0guO3IijKTZ7TZu3Z9QPOObQxToMuVUlOlSJzP2ZvdOp+hIhazx2zM/AI
-	kPCuD3w4E4TIaR8K6YdV0Qkrz+dbe+mV4wZHlrZ29s4HrMboxzJMyf4SkGS3tvn7Bf6c=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1ts7Cu-004Ss8-Ai; Tue, 11 Mar 2025 22:32:12 +0100
-Date: Tue, 11 Mar 2025 22:32:12 +0100
-From: Andrew Lunn <andrew@lunn.ch>
-To: Sai Krishna <saikrishnag@marvell.com>
-Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-	pabeni@redhat.com, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, sgoutham@marvell.com,
-	gakula@marvell.com, lcherian@marvell.com, jerinj@marvell.com,
-	hkelam@marvell.com, sbhatta@marvell.com, andrew+netdev@lunn.ch,
-	bbhushan2@marvell.com, nathan@kernel.org, ndesaulniers@google.com,
-	morbo@google.com, justinstitt@google.com, llvm@lists.linux.dev,
-	horms@kernel.org
-Subject: Re: [net-next PATCH v3 2/2] octeontx2-af: fix compiler warnings
- flagged by Sparse
-Message-ID: <3bc07f4f-73b4-4d34-98cb-79e84d9f1493@lunn.ch>
-References: <20250311182631.3224812-1-saikrishnag@marvell.com>
- <20250311182631.3224812-3-saikrishnag@marvell.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=f178puW+LMs7gOKjkGADttGXpvFUFOZF464EZMZTdDuzjZ4xuGbjoC0/Hn+09/6Rk0K0ULDGGc90ktbNQ38Z3J5HatISn0HdGLn0Bn+jGKWpJhKl7IwOM2+drOb/EZFhas6x1KEmm5Hh6GT7QBxk5iDOMOH3mLbqAx7LLbCpFDY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vLCyIQJD; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 040B9C4CEE9;
+	Tue, 11 Mar 2025 21:33:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741728822;
+	bh=CmQW/T4z277siKf35pb3ufsM8TGho2hqx+eDDO0HDws=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=vLCyIQJDWFuh5ztYOOYeWCEhiRhvpZcl92RbGikAE7KwUbCe2uq4bfhOrao1ZNvcj
+	 bwAW+0Rwi4xQLLzAy/w/Y/7g3G4kSnZLCM6joo4q71LSHr/bOH9ESHVSj4U79RkDbh
+	 3gY+xNDCPLiM9EAKTFg1qNLyNNZ1djyvSyC+VoEaZiXsjoThLIT3zy4u2kziTU7ERI
+	 J68mR5HXhsacNqXEnBs5lHzPD7Hm61yKsNzCPeeKfgdpU8hTzDjHgXMP9PhM8vMAte
+	 3WJ7PhQP12NqN5k0OO8Rf1bytRXjCsH4K0l7vv3HtwVztb53ay03HDlFllqDG5VPpH
+	 ahk/9X+RQ1jPg==
+Date: Tue, 11 Mar 2025 21:33:29 +0000
+From: Mark Brown <broonie@kernel.org>
+To: Mike Rapoport <rppt@kernel.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	Alexander Gordeev <agordeev@linux.ibm.com>,
+	Andreas Larsson <andreas@gaisler.com>,
+	Andy Lutomirski <luto@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+	Borislav Petkov <bp@alien8.de>, Brian Cain <bcain@kernel.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Dinh Nguyen <dinguyen@kernel.org>,
+	Geert Uytterhoeven <geert@linux-m68k.org>,
+	Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
+	Guo Ren <guoren@kernel.org>, Heiko Carstens <hca@linux.ibm.com>,
+	Helge Deller <deller@gmx.de>, Huacai Chen <chenhuacai@kernel.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Jiaxun Yang <jiaxun.yang@flygoat.com>,
+	Johannes Berg <johannes@sipsolutions.net>,
+	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
+	Madhavan Srinivasan <maddy@linux.ibm.com>,
+	Matt Turner <mattst88@gmail.com>, Max Filippov <jcmvbkbc@gmail.com>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Michal Simek <monstr@monstr.eu>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Richard Weinberger <richard@nod.at>,
+	Russell King <linux@armlinux.org.uk>,
+	Stafford Horne <shorne@gmail.com>,
+	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Vasily Gorbik <gor@linux.ibm.com>, Vineet Gupta <vgupta@kernel.org>,
+	Will Deacon <will@kernel.org>, linux-alpha@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-snps-arc@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org, linux-csky@vger.kernel.org,
+	linux-hexagon@vger.kernel.org, loongarch@lists.linux.dev,
+	linux-m68k@lists.linux-m68k.org, linux-mips@vger.kernel.org,
+	linux-openrisc@vger.kernel.org, linux-parisc@vger.kernel.org,
+	linuxppc-dev@lists.ozlabs.org, linux-riscv@lists.infradead.org,
+	linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
+	sparclinux@vger.kernel.org, linux-um@lists.infradead.org,
+	linux-arch@vger.kernel.org, linux-mm@kvack.org, x86@kernel.org
+Subject: Re: [PATCH 10/13] arch, mm: set high_memory in free_area_init()
+Message-ID: <5e40219b-f149-4e0f-aa10-c09fa183945e@sirena.org.uk>
+Mail-Followup-To: Mike Rapoport <rppt@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Alexander Gordeev <agordeev@linux.ibm.com>,
+	Andreas Larsson <andreas@gaisler.com>,
+	Andy Lutomirski <luto@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+	Borislav Petkov <bp@alien8.de>, Brian Cain <bcain@kernel.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Dinh Nguyen <dinguyen@kernel.org>,
+	Geert Uytterhoeven <geert@linux-m68k.org>,
+	Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
+	Guo Ren <guoren@kernel.org>, Heiko Carstens <hca@linux.ibm.com>,
+	Helge Deller <deller@gmx.de>, Huacai Chen <chenhuacai@kernel.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Jiaxun Yang <jiaxun.yang@flygoat.com>,
+	Johannes Berg <johannes@sipsolutions.net>,
+	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
+	Madhavan Srinivasan <maddy@linux.ibm.com>,
+	Matt Turner <mattst88@gmail.com>, Max Filippov <jcmvbkbc@gmail.com>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Michal Simek <monstr@monstr.eu>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Richard Weinberger <richard@nod.at>,
+	Russell King <linux@armlinux.org.uk>,
+	Stafford Horne <shorne@gmail.com>,
+	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Vasily Gorbik <gor@linux.ibm.com>, Vineet Gupta <vgupta@kernel.org>,
+	Will Deacon <will@kernel.org>, linux-alpha@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-snps-arc@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org, linux-csky@vger.kernel.org,
+	linux-hexagon@vger.kernel.org, loongarch@lists.linux.dev,
+	linux-m68k@lists.linux-m68k.org, linux-mips@vger.kernel.org,
+	linux-openrisc@vger.kernel.org, linux-parisc@vger.kernel.org,
+	linuxppc-dev@lists.ozlabs.org, linux-riscv@lists.infradead.org,
+	linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
+	sparclinux@vger.kernel.org, linux-um@lists.infradead.org,
+	linux-arch@vger.kernel.org, linux-mm@kvack.org, x86@kernel.org
+References: <20250306185124.3147510-1-rppt@kernel.org>
+ <20250306185124.3147510-11-rppt@kernel.org>
+ <cee346ec-5fa5-4d0b-987b-413ee585dbaa@sirena.org.uk>
+ <Z9Cl8JKkRGhaRrgM@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="kSKa7AdYHWDvxt4+"
+Content-Disposition: inline
+In-Reply-To: <Z9Cl8JKkRGhaRrgM@kernel.org>
+X-Cookie: This report is filled with omissions.
+
+
+--kSKa7AdYHWDvxt4+
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250311182631.3224812-3-saikrishnag@marvell.com>
 
-On Tue, Mar 11, 2025 at 11:56:31PM +0530, Sai Krishna wrote:
-> Sparse flagged a number of warnings while typecasting iomem
-> type to required data type.
- 
-> For example, fwdata is just a shared memory data structure used
-> between firmware and kernel, thus remapping and typecasting
-> to required data type may not cause issue.
+On Tue, Mar 11, 2025 at 11:06:56PM +0200, Mike Rapoport wrote:
+> On Tue, Mar 11, 2025 at 05:51:06PM +0000, Mark Brown wrote:
 
-This is generally wrong. __iomem is there for a reason. If you are
-removing it, it suggests what you do next with the pointer is wrong.
+> > This patch appears to be causing breakage on a number of 32 bit arm
+> > platforms, including qemu's virt-2.11,gic-version=3.  Affected platforms
+> > die on boot with no output, a bisect with qemu points at this commit and
+> > those for physical platforms appear to be converging on the same place.
 
-    Andrew
+> Can you share how this can be reproduced with qemu?
 
----
-pw-bot: cr
+https://lava.sirena.org.uk/scheduler/job/1184953
+
+Turns out it's actually producing output on qemu:
+
+[    0.000000] Booting Linux on physical CPU 0x0
+[    0.000000] Linux version 6.14.0-rc6-next-20250311 (tuxmake@tuxmake) (arm-linux-gnueabihf-gcc (Debian 13.3.0-5) 13.3.0, GNU ld (GNU Binutils for Debian) 2.43.1) #1 SMP @1741691801
+[    0.000000] CPU: ARMv7 Processor [414fc0f0] revision 0 (ARMv7), cr=10c5387d
+[    0.000000] CPU: div instructions available: patching division code
+[    0.000000] CPU: PIPT / VIPT nonaliasing data cache, PIPT instruction cache
+[    0.000000] OF: fdt: Machine model: linux,dummy-virt
+[    0.000000] random: crng init done
+[    0.000000] earlycon: pl11 at MMIO 0x09000000 (options '')
+[    0.000000] printk: legacy bootconsole [pl11] enabled
+[    0.000000] Memory policy: Data cache writealloc
+[    0.000000] efi: UEFI not found.
+[    0.000000] cma: Reserved 64 MiB at 0x00000000
+
+- I'd only been sampling the logs for the physical platforms, none of
+which had shown anything.
+
+(you dropped me from the CCs BTW!)
+
+--kSKa7AdYHWDvxt4+
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmfQrCgACgkQJNaLcl1U
+h9Cq1Af/adGmMv7dmqx2eBRJpvAPwHDA9kp/dbxIzrFhLkh4nCTOKPvEBHoRMm8l
+njRIpqHujhgnO4pVO+GhyLhLW3z+IQ+SJv2aD6GjoDfRmFH+GvdpuMHR9rvMtKIl
+ZC62+J7E7+kF77JCtkWs+u4q16i+uXL9uH9EHhS0qgPW7ie5TRGt9LlBpgYfXIDu
+FRz10cse8/VG/txtKUro2xDUofpy3EbyRp14M1bN9HCPO76XfdUuQlayf8eQ+jie
+IvbcXFTCm7tHM/DDnaYe2CtvOOfILKkdcJWhUckNZ5bFgkv6cCd3KD8tbsIV/YLI
+gIwCZaARgCPBoVAfG4mRjI82TcgYMw==
+=6gzY
+-----END PGP SIGNATURE-----
+
+--kSKa7AdYHWDvxt4+--
 
