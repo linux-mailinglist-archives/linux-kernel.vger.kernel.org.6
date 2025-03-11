@@ -1,160 +1,137 @@
-Return-Path: <linux-kernel+bounces-555479-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-555480-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C63CEA5B83D
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 06:08:55 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D22E8A5B83F
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 06:09:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 09E7B170529
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 05:08:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D2BF0170507
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 05:09:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4FCD1EB5C9;
-	Tue, 11 Mar 2025 05:08:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A4001EB9F9;
+	Tue, 11 Mar 2025 05:09:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="b4RSTFMD"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Tx5OK/tr"
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC9FB1CA9C;
-	Tue, 11 Mar 2025 05:08:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CAE41CA9C;
+	Tue, 11 Mar 2025 05:09:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741669728; cv=none; b=paaJXx+WWZDMZQTyvnircKeQPPA/wuppiJ4tEtvBSOcK1gzuG/sdDMrkNX3Pqx3znO/EP9MreOs9vOsE3FWeIKkYWXgfATBmZYnwgPROLztA60owmHGqPbgWqIYyMri3aS22fTOnwPE2/BgnoTI86Wi3uZpZ3RICpD0mcbc9QCM=
+	t=1741669768; cv=none; b=omtXX30BEWuRfhd+ugZ1DVulJsJB6cILKJ73lOl61VkTmL87mt77zz6tt6+K0zfr8wGeMrypjz8sTfgZr0ieVyWstSkZOvSy0TPeAY79rdz6kyp7Hl8QoFCHbJWLKYKP/m4HYigddBLPj9UFZF7CBL9eRt4cb5jIh4W6aDhRhWg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741669728; c=relaxed/simple;
-	bh=otZ3TQRBrKXoY/r6j9Eg5rw4zZXMFMzqxwqcSrMLmsc=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=uimQShjq+cNNPATrTbAcvtiLmkznPqnJpDYZA9LqFAocHooP/gXANa4B3cz0St25dfoTohpBr8b57gUFiSjrbLQsneuD7GHg5ZQSfpzbl9+4SAHdfQpM5V1dLPvmvgSeUYUBhzaBriRQegAQ5Gla9b5qBb+K/iL2zxNfuAQ5EBQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=b4RSTFMD; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1741669717;
-	bh=NnfwfeOIQyHPFQlIIwggaOgZOoeuywrf9oWDddPwvBM=;
-	h=Date:From:To:Cc:Subject:From;
-	b=b4RSTFMDajAI42IeglauZnmepdOxuSdKlksOGrtw6iZ9LN/Db9edmtad3mmUosG07
-	 vISj1ROczggwi+SmRwzp1Z0Lq3C7xuHdXdJcwVbC6oJsXOfs1L9tyFPOgf2wcaqDhC
-	 liFxy7x9IDnFNoNw5blFYgp5OdhVznM1BSuw8watEZD9alPQHqwHGPcqxUepAcsXu2
-	 na9gd1M8hMpNpjl/e5y1dUY4Gg4SGT2P0fe04GmOJ8b2m0Q4RQvxrlPnqby+lUottX
-	 CZdDIiYS6A61X4uUvD5F1nOX8eniZ/JTkGz+iYFm2/yK9Z47jM4KgRtTNdxNs9N6qb
-	 X8g6AwHSDQbzQ==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4ZBhcP0HwYz4x89;
-	Tue, 11 Mar 2025 16:08:36 +1100 (AEDT)
-Date: Tue, 11 Mar 2025 16:08:34 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu
- <mhiramat@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar
- <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra
- <peterz@infradead.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
- Mailing List <linux-next@vger.kernel.org>, "Mike Rapoport (Microsoft)"
- <rppt@kernel.org>
-Subject: linux-next: manual merge of the ftrace tree with the tip tree
-Message-ID: <20250311160834.5ae8c9b9@canb.auug.org.au>
+	s=arc-20240116; t=1741669768; c=relaxed/simple;
+	bh=szPTbQX8ub+gJITeHt7+qztGeP736USbvzR9YZkzPWY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RGR3i7c7TC7lMFdU+d8XXWXUAL1oi2xELVSxMcsc+sS0qzS5US07hhTW+UWH4ZZOO9vxTYP8gMx61ggJ9ARjXFj1RvyqJhUgcjmcgOb3C8tOmtHrbgOblQu6gb3qCuzaoDvWHWOs/CyDjvHXfFqEdN7Bk5j9MhYN6HMne26fZYA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Tx5OK/tr; arc=none smtp.client-ip=209.85.214.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-223959039f4so99785945ad.3;
+        Mon, 10 Mar 2025 22:09:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741669767; x=1742274567; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=n4KhD9AXiV/vH2JoWEUcvtMF0yMzInAf7cgiESBdhb4=;
+        b=Tx5OK/trsMVdYbMR3j26S7rz3f5bTCNT+dtQ5iutqi1nxtt/FSWCuRiLQr906nlSih
+         5DF22HUbWO30JNlkfQIkrt81zHo68/A/3MJiqY7ZJOMxQl3dRqweoFXDJ+pqsjBpT2Ga
+         ghkZkWVKdUacbODMNb9uBa/l5kI6iUXNjYOs2LeaD2KmlNKq7ZvKkiTykCEhte7jO9Fe
+         kUjKOtIFwZj2dtfXNb4np54FtFHqYo0eeqHX/ORwFEl4FjMl4SPfqdwSEh8iiQR1EipS
+         K4sSs57TuRYGQTSdhsgit6gP937+2khem5Uzwo3pXlzUhGbYCGJQLFWNLnLabJwn2Td6
+         Su1g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741669767; x=1742274567;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=n4KhD9AXiV/vH2JoWEUcvtMF0yMzInAf7cgiESBdhb4=;
+        b=qrneEGqFE63WjEuEhKdupGWBuJXXvs4/oPuZsP9y/UwLdFCW9zER8TWrMYoCstLt0H
+         5qEsG3bMPGqRvXFY/zPy8cZzlsHVVgajRfSnv90PZMhn5t2gyLhloBEhv5K/NyLaC7YD
+         7Nb1kb+jJbt1HTnqMbqutJJZHf9Tsq9XgsiCnmAG6uLIuK99NkeM+8dtM5j69SmaWBLl
+         gQv5Ded77AMGj10O5DgR0BfNJ5zjBWIWFzeV+THhcAZvhJyAW4nLWJUs31VkNp9hIWV5
+         6e0bBNCrk1v/bGvy1iXGocdUp8QiDai8IgIzQIrC45f84U1bAsrNoVqJ5Em9d8qDWVTD
+         PC9g==
+X-Forwarded-Encrypted: i=1; AJvYcCWPduDrEtUaj9uGudCI4PXmerkmNv4eKRqxuRREnJDqVmDoNwZPnkess/r7KxeZfnTo2BzfN2IcLDIAyOE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw6opmLBs+d69od8IIIYmx0JELE68QWeFM+FjNxneHIkH5jY8GI
+	p0m4bI029GsnXlqSbc0CcNKv27uS6yIUZ1WHKTPUi26eHSxFR2pX
+X-Gm-Gg: ASbGncs3CPFO9EiyHgxeC2tobEI/O7d3mjK6PDcr55ScbVqILIi4J1+RvppbBFy3Fpz
+	Ll9odO2MmUAcsQrq4oLIcJ3voyrK61wiTHct6l1czu5dSZa9TUbFq+He6h6nUAm8JXI0udCuXra
+	PxCK7J+h7mYl2VS0FQjJOm7o0537FF7FZE3pRkdWaEKwgn80KNCYCk+TbbaG0XEmytZXgNGs1+a
+	VsggXjp75nUkg3VKJHT9kv+18x+cFZrKoDj+f0JRhgwLVFhMCGX1GofHqe9pKGCmmkmrkIzCiMM
+	ub3CM11dfdZ3sBazbJUsZvYCWNkO3mbhrV21trEi80OJ
+X-Google-Smtp-Source: AGHT+IGCSJeg6lOkx+ryXRSoD/HFXBAGt4n82r1GjKJMtUbJQG1WxjEPT+XrgKO2OFeDFfl2ljy3fg==
+X-Received: by 2002:a17:903:22cc:b0:224:1943:c5c with SMTP id d9443c01a7336-2242888d0d9mr231616155ad.15.1741669766401;
+        Mon, 10 Mar 2025 22:09:26 -0700 (PDT)
+Received: from google.com ([2620:15c:9d:2:eb9f:29c2:9ede:46d])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22410a9d147sm88150065ad.208.2025.03.10.22.09.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 10 Mar 2025 22:09:26 -0700 (PDT)
+Date: Mon, 10 Mar 2025 22:09:23 -0700
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To: Ulf Hansson <ulf.hansson@linaro.org>
+Cc: linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
+	"Rafael J. Wysocki" <rafael@kernel.org>
+Subject: Re: [PATCH] Input: hisi_powerkey: Enable system-wakeup for s2idle
+Message-ID: <Z8_Fgx4YWwdpB1XK@google.com>
+References: <20250306115021.797426-1-ulf.hansson@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/3+m5UqZaYguCLgFxVmK3rBC";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250306115021.797426-1-ulf.hansson@linaro.org>
 
---Sig_/3+m5UqZaYguCLgFxVmK3rBC
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Hi Ulf,
 
-Hi all,
+On Thu, Mar 06, 2025 at 12:50:21PM +0100, Ulf Hansson wrote:
+> To wake up the system from s2idle when pressing the power-button, let's
+> convert from using pm_wakeup_event() to pm_wakeup_dev_event(), as it allows
+> us to specify the "hard" in-parameter, which needs to be set for s2idle.
 
-Today's linux-next merge of the ftrace tree got a conflict in:
+I was looking at pm_wakeup_event() and pm_wakeup_dev_event() and I am
+afraid I do not understand the distinction. Why would we want to
+abort suspend by only by some wakeup sources and not by others? And why
+does a driver need to know whether a system uses s2idle or some other
+implementation of low power state?
 
-  include/linux/module.h
+FWIW we have Chromebooks that use S0ix and Chromebooks that use S3 as
+well as ARM Chromebooks and I do not think they use
+pm_wakeup_dev_event() variant.
 
-between commits:
+I'm cc-ing Rafael to give us some guidance.
 
-  c287c0723329 ("module: switch to execmem API for remapping as RW and rest=
-oring ROX")
-  602df3712979 ("module: drop unused module_writable_address()")
+> 
+> Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+> ---
+>  drivers/input/misc/hisi_powerkey.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/input/misc/hisi_powerkey.c b/drivers/input/misc/hisi_powerkey.c
+> index d3c293a95d32..d315017324d9 100644
+> --- a/drivers/input/misc/hisi_powerkey.c
+> +++ b/drivers/input/misc/hisi_powerkey.c
+> @@ -30,7 +30,7 @@ static irqreturn_t hi65xx_power_press_isr(int irq, void *q)
+>  {
+>  	struct input_dev *input = q;
+>  
+> -	pm_wakeup_event(input->dev.parent, MAX_HELD_TIME);
+> +	pm_wakeup_dev_event(input->dev.parent, MAX_HELD_TIME, true);
+>  	input_report_key(input, KEY_POWER, 1);
+>  	input_sync(input);
+>  
+> -- 
+> 2.43.0
+> 
 
-from the tip tree and commit:
+Thanks.
 
-  186a3d01d596 ("module: Add module_for_each_mod() function")
-
-from the ftrace tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
-diff --cc include/linux/module.h
-index d9a5183a9fe7,9a71dd2cb11f..000000000000
---- a/include/linux/module.h
-+++ b/include/linux/module.h
-@@@ -771,6 -772,18 +771,8 @@@ static inline bool is_livepatch_module(
- =20
-  void set_module_sig_enforced(void);
- =20
- -void *__module_writable_address(struct module *mod, void *loc);
- -
- -static inline void *module_writable_address(struct module *mod, void *loc)
- -{
- -	if (!IS_ENABLED(CONFIG_ARCH_HAS_EXECMEM_ROX) || !mod ||
- -	    mod->state !=3D MODULE_STATE_UNFORMED)
- -		return loc;
- -	return __module_writable_address(mod, loc);
- -}
- -
-+ void module_for_each_mod(int(*func)(struct module *mod, void *data), void=
- *data);
-+=20
-  #else /* !CONFIG_MODULES... */
- =20
-  static inline struct module *__module_address(unsigned long addr)
-@@@ -878,6 -891,15 +880,10 @@@ static inline bool module_is_coming(str
-  {
-  	return false;
-  }
-+=20
- -static inline void *module_writable_address(struct module *mod, void *loc)
- -{
- -	return loc;
- -}
- -
-+ static inline void module_for_each_mod(int(*func)(struct module *mod, voi=
-d *data), void *data)
-+ {
-+ }
-  #endif /* CONFIG_MODULES */
- =20
-  #ifdef CONFIG_SYSFS
-
---Sig_/3+m5UqZaYguCLgFxVmK3rBC
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmfPxVIACgkQAVBC80lX
-0GyvQQf+L499S9KM35C1ug3/QlbIoPeQbkewFJ4c2aeXXeoWhPPaEsGko+aSCWJ9
-xBaACAixAZLGPJxVRVsfxVfkUXbBjxLjV/KmrARGJiWOpBDYIL+ZkY/z/2vC1ykc
-BQwS+eLFx40ruD0ZW8UJaWH5IXR5pNEbOiEf1L2F80nRVK4A2tRVx7q/lwS5oE2I
-ugk0jSAR0ZLCTu0vPnwCfKQIuTI8Xyv0tSubaLkjiCFMEGUYOwxyprhD8vs7pYDI
-hoW6D5ef+MZwZ+r7pCG5MgfBWKXI/1LqOzISrhAXCnA3GFyJiLnZTxejFh+o/CGV
-+e290LNZJgf5xDMYMTSfVBNRyJxNyw==
-=l0RN
------END PGP SIGNATURE-----
-
---Sig_/3+m5UqZaYguCLgFxVmK3rBC--
+-- 
+Dmitry
 
