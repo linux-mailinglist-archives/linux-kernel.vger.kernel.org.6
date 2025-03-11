@@ -1,121 +1,114 @@
-Return-Path: <linux-kernel+bounces-555324-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-555330-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 57C32A5B5AC
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 02:17:27 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E105A5B5BD
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 02:21:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 553E03A6DC6
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 01:17:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 340501894DAC
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 01:21:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 478C0146593;
-	Tue, 11 Mar 2025 01:17:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EF9E1E9B1A;
+	Tue, 11 Mar 2025 01:20:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aAzz+9v0"
-Received: from mail-qv1-f47.google.com (mail-qv1-f47.google.com [209.85.219.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="K1P2F3c/"
+Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4516A846C;
-	Tue, 11 Mar 2025 01:17:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 762D61DFDA5;
+	Tue, 11 Mar 2025 01:20:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.177.32
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741655839; cv=none; b=VkVakzWUrfcHVm4YrNYocc3zXbKx+jl/qGyL/uJQ6Ce5giBADmgJvLZthpVmdMgJtbTvH8ie2TISRPZvGlpWQZ5oSxWYrXTW3uSIBlFzfuN1NVdPm0teEpS26FYNx/npEVNdAN21UTKE72M5bJi2s6PU2NRZ1X4Z10bmrzBNqLE=
+	t=1741656003; cv=none; b=fssj03D7/gEnO2dxyRxY0GTBLOvxPJy+7XbWM27pcCzfQS5WJ6goobsis+fgNdAzCgnuJGJfXmSIF1noa0X/5OFUPA9UIQqXgZysbAgtVYuAMRy5OtbbBJjXZ1hm4THsaBzHKTeAQXfaocq50MDqftPDGYHUEwIDzkSLXUAOBRI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741655839; c=relaxed/simple;
-	bh=xMSiTnUY5WCIOXnfdK7peBdjLOd38DTSY+w++3s95tE=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=pnd1wjLmRD7Nr3VrivSL98FrKWBPws03AcrAeaPX5AiwtrBKJ04FE6flkEwLLZyRFHosFGIIsDwS79flSBT2vp2jH8LWelstnb2o53ytvS9BRpzL76cx5kCov+WAnj1skbEG4XLNnQztepqEBweRNx28g3/tgKSY1AjOEQzPCtA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aAzz+9v0; arc=none smtp.client-ip=209.85.219.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f47.google.com with SMTP id 6a1803df08f44-6e8a212a699so9167456d6.0;
-        Mon, 10 Mar 2025 18:17:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741655837; x=1742260637; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=lHQLfy7ZCLKhfFcUxyubv3kHT4mMsT+m4Xn1Zvd0Dn8=;
-        b=aAzz+9v0FpqgG/TrbXWs0/HZxreJoDvFi0aLvgG/8D0aLB2iT5875mXIoujXMuEocM
-         B7ovH1Ap98JDKwCK2H1i4REZbmkqeGa4hp7X+iG0Tx4VGnpLQZ36NKWL6bC+uQ1/2VcO
-         N5RfMFnPteCuOWwLI4KWH9z92MUPP3OmbOx8PDjBtTNh/DEJrwoLF3+UX4cy6DEbAmwi
-         Q4z6KR4+jVXI+pO04YQ0LX6Sq5pftBdr5vlhXWXZhRGBCf8k91TVfLTW1SmI8cXA5YAm
-         WxBzOWBPJ1Ewyz9WiDRzfOpy31b9N4wcJyv3jzHN/n8KqaUovoSOwqlosHFCLb1VMASB
-         7u6Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741655837; x=1742260637;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=lHQLfy7ZCLKhfFcUxyubv3kHT4mMsT+m4Xn1Zvd0Dn8=;
-        b=mOZ8dojq6h01cw+X5l+8DGKTh8dLTnm9e5/yN8Tjx3ERnTmGjhNR2tqxvWXZXZBihG
-         Y8MrzzHg8EGm6CUQVVYm47GgxcSfEFZYv+cFw/by/UzfhcGbGKbahfrc8GPGVClLbB8z
-         mHOiz9pj7wWmnTr1OQTit6M+7xACfAJ4ntD8zs8r4wH0vyNx8OchRcflq+CZXlx+omao
-         0BgmeET0IcADsAfypSRdmJG2JkfayVDWuBR8G/7ooNM8dkOQsxOjn/aJnm/oPH9WUS9t
-         O1Y6QWxNqd3WRF/gqqktL5EvgpWrpAOngWp0pqihlVciQKiFCR+e9kT8eESzdhgncfjZ
-         NitQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVEEn1URKqwqbqS0iLDAkUI7OKG4TejBnikELuInE8gA1WB3csCGSAUIVfUOah90mnBNqFQ1CVGdk1hbDs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzbBFfOk2fNHzgEhHorLHGdfC9R9k0HLydXvGJirpx+E30dqmVU
-	BNq7u89UpShT8yCHqm2bRu0mf4tBtOBRLgVWfyaV84Oo0sLow44=
-X-Gm-Gg: ASbGncsNAcAYEB9i4OHgagfpTJm60Hr3SHkF0lv090J1QSfvFTSH/kbOOzaVC5dSUqx
-	Fd1VdQYZVEaycdau3/MaGwA35OoVFZj9SmIJx1mmUDHvg6YtN3VNYuGcJz84gDK5XEzMQ19Qr2c
-	svUiD6SmMX7NU1rXBcfl8U8n/xy3qbKmdnC7GJxmDm+YC2o9phnO6vrp1BpbSUw0ATve4MexgzB
-	Fr0Z+4nTdr7dp36r0euL+z5RSHNfgA1BDqyZ/OYDlKwTuz2R54SOrqrXC0U+YE0cLWth/qNbY9y
-	xBuraBgGUSIkpLvn4HyQmddweAhHjJGFcENi6np2Wg==
-X-Google-Smtp-Source: AGHT+IFsNnvwuiKl7mq1VgQyS5iJwKXYAFib2e4g+qKyCpH41maIhobaZQ7I8O55WnIaSOBXcDc2vg==
-X-Received: by 2002:ad4:5b86:0:b0:6e8:fbaf:fad8 with SMTP id 6a1803df08f44-6ea2dd2381emr10517396d6.5.1741655837038;
-        Mon, 10 Mar 2025 18:17:17 -0700 (PDT)
-Received: from ise-alpha.. ([2620:0:e00:550a:642:1aff:fee8:511b])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6e8f70a44adsm64903516d6.64.2025.03.10.18.17.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 10 Mar 2025 18:17:16 -0700 (PDT)
-From: Chenyuan Yang <chenyuan0y@gmail.com>
-To: hao.wu@intel.com,
-	trix@redhat.com,
-	mdf@kernel.org,
-	yilun.xu@intel.com,
-	richardcochran@gmail.com
-Cc: linux-fpga@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Chenyuan Yang <chenyuan0y@gmail.com>
-Subject: [PATCH] fpga: dfl: fme: Add NULL pointer check in fme_perf_pmu_register()
-Date: Mon, 10 Mar 2025 20:16:53 -0500
-Message-Id: <20250311011653.1175840-1-chenyuan0y@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1741656003; c=relaxed/simple;
+	bh=FLbQEvhF8ubBfLttByiZmBGi3tS4mdgB1neecBcmil0=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=oVGqww7McKjKAFVa4f2C1kkyYbvDbvJ9s5E5JtkOkaWXdb4HpmiobxvKcO0MVXQgjB3ssVx6CNkwaePqZLvrXV4+dLPyNoMnNTyF5proOPkuJcf2Nn9ErYEpF69QqzdZNeA35fRiwiTP3myN6080pbJlAid5mWC9kuFK8h81thM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=K1P2F3c/; arc=none smtp.client-ip=205.220.177.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246632.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52ALfnxD009456;
+	Tue, 11 Mar 2025 01:19:43 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=
+	corp-2023-11-20; bh=UY6hKWRH1OcurE9yCs8Mf01957RBXLxna40vIEFmDyc=; b=
+	K1P2F3c/ep9CuCK7iB3rlpI0gQWLUyPPjWHwNOnxofdj0DZw8MixPvxLOsSGATJv
+	3Bp7xreue8qgJhLJtm9FBtAMcLxkg3h43RxIx2swWIQizSGo/0ETvW4FbICfNaW5
+	24Pzv6S/yKtmi85GeGACklDk5xCRZOIysxGww05lUtV9IqBPY3L1SvLBbzCIdnJy
+	cLtLDfHUaVXaoOizBi7HCEzGOTZPLbPpRAuqvCihFg04Kmgj83tTcck0R3Z2qy41
+	GX9s4xHQ5JHkvkGa/ksQOkIE2XWvxlDNYoGhXG2D+apk0SfVZwycZ3YV2gaHwKoh
+	bjDkHZK8LnTLVRSbJIfZrg==
+Received: from iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta03.appoci.oracle.com [130.35.103.27])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 458dgt3u5s-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 11 Mar 2025 01:19:43 +0000 (GMT)
+Received: from pps.filterd (iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 52B0J0Fk015052;
+	Tue, 11 Mar 2025 01:19:42 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 458cbencmd-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 11 Mar 2025 01:19:42 +0000
+Received: from iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 52B1Jfr6014960;
+	Tue, 11 Mar 2025 01:19:42 GMT
+Received: from ca-mkp2.ca.oracle.com.com (mpeterse-ol9.allregionaliads.osdevelopmeniad.oraclevcn.com [100.100.251.135])
+	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTP id 458cbencm8-1;
+	Tue, 11 Mar 2025 01:19:41 +0000
+From: "Martin K. Petersen" <martin.petersen@oracle.com>
+To: Yihang Li <liyihang9@huawei.com>,
+        "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
+        Arnd Bergmann <arnd@kernel.org>
+Cc: "Martin K . Petersen" <martin.petersen@oracle.com>,
+        Arnd Bergmann <arnd@arndb.de>, Damien Le Moal <dlemoal@kernel.org>,
+        John Garry <john.g.garry@oracle.com>,
+        Bart Van Assche <bvanassche@acm.org>,
+        =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>,
+        Jason Yan <yanaijie@huawei.com>, Igor Pylypiv <ipylypiv@google.com>,
+        linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] scsi: hisi: remove incorrect ACPI_PTR annotations
+Date: Mon, 10 Mar 2025 21:19:00 -0400
+Message-ID: <174165504943.528513.10440203351356285832.b4-ty@oracle.com>
+X-Mailer: git-send-email 2.48.1
+In-Reply-To: <20250225163637.4169300-1-arnd@kernel.org>
+References: <20250225163637.4169300-1-arnd@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-11_01,2025-03-07_03,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0 adultscore=0 spamscore=0
+ mlxlogscore=999 malwarescore=0 suspectscore=0 mlxscore=0 bulkscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2502100000
+ definitions=main-2503110007
+X-Proofpoint-GUID: ck-SAzov044k7wxaCZu7iscu8IvIxWaK
+X-Proofpoint-ORIG-GUID: ck-SAzov044k7wxaCZu7iscu8IvIxWaK
 
-name, returned by devm_kasprintf(), could be NULL.
-A pointer check is added to prevent potential NULL pointer dereference.
-This is similar to the fix in commit 3027e7b15b02
-("ice: Fix some null pointer dereference issues in ice_ptp.c").
+On Tue, 25 Feb 2025 17:36:27 +0100, Arnd Bergmann wrote:
 
-This issue is found by our static analysis tool.
+> Building with W=1 shows a warning about sas_v2_acpi_match being unused when
+> CONFIG_OF is disabled:
+> 
+>     drivers/scsi/hisi_sas/hisi_sas_v2_hw.c:3635:36: error: unused variable 'sas_v2_acpi_match' [-Werror,-Wunused-const-variable]
+> 
+> 
 
-Signed-off-by: Chenyuan Yang <chenyuan0y@gmail.com>
----
- drivers/fpga/dfl-fme-perf.c | 2 ++
- 1 file changed, 2 insertions(+)
+Applied to 6.15/scsi-queue, thanks!
 
-diff --git a/drivers/fpga/dfl-fme-perf.c b/drivers/fpga/dfl-fme-perf.c
-index 7422d2bc6f37..db56d52411ef 100644
---- a/drivers/fpga/dfl-fme-perf.c
-+++ b/drivers/fpga/dfl-fme-perf.c
-@@ -925,6 +925,8 @@ static int fme_perf_pmu_register(struct platform_device *pdev,
- 				PERF_PMU_CAP_NO_EXCLUDE;
- 
- 	name = devm_kasprintf(priv->dev, GFP_KERNEL, "dfl_fme%d", pdev->id);
-+	if (!name)
-+		return -ENOMEM;
- 
- 	ret = perf_pmu_register(pmu, name, -1);
- 	if (ret)
+[1/1] scsi: hisi: remove incorrect ACPI_PTR annotations
+      https://git.kernel.org/mkp/scsi/c/7a9c0476d407
+
 -- 
-2.34.1
-
+Martin K. Petersen	Oracle Linux Engineering
 
