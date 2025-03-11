@@ -1,160 +1,126 @@
-Return-Path: <linux-kernel+bounces-556768-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-556769-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5FA31A5CE3C
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 19:52:24 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7DAD3A5CE40
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 19:53:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AF1A93A172F
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 18:52:10 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D4A2C7A594D
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 18:52:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82160263F2B;
-	Tue, 11 Mar 2025 18:52:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FF39263C7D;
+	Tue, 11 Mar 2025 18:52:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cqmu6xVk"
-Received: from mail-ot1-f54.google.com (mail-ot1-f54.google.com [209.85.210.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="I3EdhOlY"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3920C263C7D;
-	Tue, 11 Mar 2025 18:52:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03854260375;
+	Tue, 11 Mar 2025 18:52:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741719132; cv=none; b=QjhVk0qntfqsgd8697mhASHfCwpdFLjgYm0daoG91i9+/S7WlVCzPFXXW+Hensuri9DB3dDvy89dn9Coe3gbI8+76k/E14tZSIoSm6eSpv/fUvc8QlWl/+NIvG2TRofezSQNfWlT107gCT8X/xSzRSkCn9HuqwfvaHcN3w9XBpA=
+	t=1741719177; cv=none; b=hwM6/3z4Oh4/4hKyyy4+2ek4Mzx9Xt6kvDijmoUUvDPDhwaPvTqIjuSZekV0HvDTdVEFEViXWuLgVDNq3AhIbyDPVB7dijMgsOaOUkB+Zh4zmZ4FYpbsDC07bOjjXUYSsJ/orQV96mstavuPQQt9POzlBRi02XQnulgovXpJr2w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741719132; c=relaxed/simple;
-	bh=pmh21KHHUJyITORe3G6MYTnt9mwiJEGrznvtH2hlXQ8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=cvFwr6yr1XcCS9AM+HelgAO1EQLTS3x8FGJMojcLW9x9m3Wb8Hk2n2WjpxwAGIDK8S3gxOm1u0vKI69O4HE4i8R6k8iZDDUURAMKXL8Q0iKfAFuKsWh09TkFLjct7QoPeDHSw9cqq08cll81VzUkOJAXdwCI30lVsq3KCeKKpFk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cqmu6xVk; arc=none smtp.client-ip=209.85.210.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ot1-f54.google.com with SMTP id 46e09a7af769-7272f9b4132so3779085a34.0;
-        Tue, 11 Mar 2025 11:52:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741719130; x=1742323930; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=Sq+W0mjXXkytCf2wQ234eWDtDS6+X3Z6W+0y68u9vgY=;
-        b=cqmu6xVkeIHFT7xekunuruS1CNuu/aoa7wswDoHeZO6wYSVGShXu5P1Lj47DyKPGhF
-         yKs/Xkn9HKe1FYRZQOQCHNZqV1/bU9WrmjkYQZYYjhV5LFYSWesY9EBxF2KREJDHFdsD
-         McXkOjcVbYsq1r7Ga7IB2GirgxWNq3/rJgceoA87g8eWCJ+FXvDRb091TW+zVYQEXdru
-         eRcIR7Ip+TMt3FHOarRU7JidHgNKGtS3SRob7D/FgvGTbpd3gI+7dzjT+ILJQw6LXWoE
-         W5W/VxbADDXCQIcgb/Lw3dV8ury40O6o7qmlmi2tHdrq8+YIdnAXlgnt40FxOFrUL1SM
-         9GVw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741719130; x=1742323930;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Sq+W0mjXXkytCf2wQ234eWDtDS6+X3Z6W+0y68u9vgY=;
-        b=cDC1UQdsK/N1e2xnBRakomPqCmoSZ370FNUVv8nImQXB3jXvRswqUC7ToFp5xhTa0J
-         jOH2lr1cnmziyQ0zn9ho33uPeKZWCIek/RZliuskRl5q3oRVlGfMu/EcxPqLbvBUfn/F
-         diLlWBxJoP9gc2elnsQPXy84V4AgthS2NMWkk69TiIspwHr1XZx/arnIw3CAjq8RJoy0
-         xhNcnndXuJc2uENShyZKoym/TCOuiN/l96fHYxaUp9tOsJouuBAmAPK1H6hNBnRlUtzZ
-         dqKUK58uCyX9cf1vA261DWXXzwfVCCl9NzbAC48uF8KW5wr3ofZlzOIYSmm9PVudoBkQ
-         6bXQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVW3304ImwmvVOCoXtKFsCZBetBUu2zo9f48xu8INYMjZBoI6rtN8lPUpkBfZirC+3NW/+NLYnCNMRfPz8=@vger.kernel.org, AJvYcCWSw14VQFHYy9fgHHbd82QAT0gAn3SdZJiCkrukz06UFI+vwQtwRrAmq2CLgejawMD1Pybmj+IW@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywdruv5B3QIP4LVT8BawjrbB42ho5rgK/pbPiEkmudVHc2bBoeB
-	+wzmGRcgDV7ZXW5qk9tHrfc2x4pCIjNqsQvSV24wrwYvpKM8vpHb
-X-Gm-Gg: ASbGncvZeWJY8HQBKss9Kl6SY5o9yiYy58nodg+NDl1a92QOklNr6YZuScZeuRBl0gI
-	COgRgpmGcS1E/ewBYi2LzSpA0Us1vBaVL9kH6qjDd7jAWMt0cRQB2Ie74xMLhJBhfSS5TevUQGW
-	gGTfTPI1TfGPjg/JDMbqh9XHdL0zgZq4TaE8mu4nGBDckoSIx9oKE+wi/2EnEcPjZpWN7OelpSo
-	IM4C7wMMF3MZuUXehFfr9EI4tf+HG21bU23YxeVwXwOojbz9jRJuus2OWmlGEh1MVCc6rWpvKA5
-	cUqsH00gn+Vit61MVTPqavZlEecBJ6CsF/VRPGWFTRk02ggrXCLqr2rGmCrnT8ejr4oeqK3d
-X-Google-Smtp-Source: AGHT+IHGo2cQ32wvmAWbFqPq3xOSCO1nxjOULnj+BI1Akbky84nYA6nCouocS8h1q3lZOLj0BYTO7Q==
-X-Received: by 2002:a05:6830:730a:b0:727:4a6:5b31 with SMTP id 46e09a7af769-72a37c523ebmr9831669a34.22.1741719129751;
-        Tue, 11 Mar 2025 11:52:09 -0700 (PDT)
-Received: from [10.67.48.245] ([192.19.223.252])
-        by smtp.gmail.com with ESMTPSA id 46e09a7af769-72a2db0c727sm2536220a34.36.2025.03.11.11.52.07
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 11 Mar 2025 11:52:08 -0700 (PDT)
-Message-ID: <acdbae48-2d7b-4eab-b53f-7bca6e30394e@gmail.com>
-Date: Tue, 11 Mar 2025 11:52:06 -0700
+	s=arc-20240116; t=1741719177; c=relaxed/simple;
+	bh=k8MfRkuQVtNg/Whp5KqW04/5VaX4YAL8LC6xTwCfixc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=amGq7sdnMfCdKN+qJExSIlzqGBBI07arPsYxS1pEx12fYG49ulc/LPWezPVkzYS8FTg7j+UHowRqqlcPze7Oya6fzylb/JfPVbGm17Ss20z5kwtbu676oSoznF9JlkF7mLPbUDLnQH9hED+H0w48B25PJP5BeN3Tkuefea2gLC0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=I3EdhOlY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ECB04C4CEE9;
+	Tue, 11 Mar 2025 18:52:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741719176;
+	bh=k8MfRkuQVtNg/Whp5KqW04/5VaX4YAL8LC6xTwCfixc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=I3EdhOlYj005iywEv7h8Yi7UH2k8LzKHIV2MjxFB5TLpJ2amc+PGLk+ZyAk3d0tVw
+	 OhyBphnk3V1oiPPtClm0UI4WytsnvUSLNjtzUpxkK71YuREPmEjnLnd+rmT7dBdGaD
+	 mD/3USPdtjZhXSH98gl2AUPmhjOQrjZhHR1uv53ZLuDMt6y4VIqpwu6S3MezOEctDm
+	 npWvxG+Lmuzt6j4vmF1aLNJxlz2WUQiBIKUYD54x0VYZNIqO6/bBSSUt4qYDNcqLOB
+	 tNB6QeW2IG+LfivLSJY/dul5SxAT+2QSnyqjbjYscr4s3Xfa7iFuXnwA8dqPYybWVQ
+	 Jyb1oLP5SAqig==
+Date: Tue, 11 Mar 2025 20:52:52 +0200
+From: Dmitry Baryshkov <lumag@kernel.org>
+To: Christopher Obbard <christopher.obbard@linaro.org>
+Cc: Catalin Marinas <catalin.marinas@arm.com>, 
+	Will Deacon <will@kernel.org>, Bjorn Andersson <andersson@kernel.org>, 
+	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org
+Subject: Re: [PATCH] arm64: defconfig: Enable Qualcomm interconnects as
+ built-in
+Message-ID: <vjkdwjudqsgcq2leabscnb2r5dbtztgfq3jlkfowcauslaymkp@qsxnpis3ksp6>
+References: <20250311-wip-obbardc-qcom-defconfig-interconnects-builtin-v1-1-675b6bc57176@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 5.10 000/462] 5.10.235-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
- torvalds@linux-foundation.org, akpm@linux-foundation.org,
- linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
- lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
- sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
- conor@kernel.org, hargar@microsoft.com, broonie@kernel.org
-References: <20250311145758.343076290@linuxfoundation.org>
-Content-Language: en-US
-From: Florian Fainelli <f.fainelli@gmail.com>
-Autocrypt: addr=f.fainelli@gmail.com; keydata=
- xsDiBEjPuBIRBACW9MxSJU9fvEOCTnRNqG/13rAGsj+vJqontvoDSNxRgmafP8d3nesnqPyR
- xGlkaOSDuu09rxuW+69Y2f1TzjFuGpBk4ysWOR85O2Nx8AJ6fYGCoeTbovrNlGT1M9obSFGQ
- X3IzRnWoqlfudjTO5TKoqkbOgpYqIo5n1QbEjCCwCwCg3DOH/4ug2AUUlcIT9/l3pGvoRJ0E
- AICDzi3l7pmC5IWn2n1mvP5247urtHFs/uusE827DDj3K8Upn2vYiOFMBhGsxAk6YKV6IP0d
- ZdWX6fqkJJlu9cSDvWtO1hXeHIfQIE/xcqvlRH783KrihLcsmnBqOiS6rJDO2x1eAgC8meAX
- SAgsrBhcgGl2Rl5gh/jkeA5ykwbxA/9u1eEuL70Qzt5APJmqVXR+kWvrqdBVPoUNy/tQ8mYc
- nzJJ63ng3tHhnwHXZOu8hL4nqwlYHRa9eeglXYhBqja4ZvIvCEqSmEukfivk+DlIgVoOAJbh
- qIWgvr3SIEuR6ayY3f5j0f2ejUMYlYYnKdiHXFlF9uXm1ELrb0YX4GMHz80nRmxvcmlhbiBG
- YWluZWxsaSA8Zi5mYWluZWxsaUBnbWFpbC5jb20+wmYEExECACYCGyMGCwkIBwMCBBUCCAME
- FgIDAQIeAQIXgAUCZ7gLLgUJMbXO7gAKCRBhV5kVtWN2DlsbAJ9zUK0VNvlLPOclJV3YM5HQ
- LkaemACgkF/tnkq2cL6CVpOk3NexhMLw2xzOw00ESM+4EhAQAL/o09boR9D3Vk1Tt7+gpYr3
- WQ6hgYVON905q2ndEoA2J0dQxJNRw3snabHDDzQBAcqOvdi7YidfBVdKi0wxHhSuRBfuOppu
- pdXkb7zxuPQuSveCLqqZWRQ+Cc2QgF7SBqgznbe6Ngout5qXY5Dcagk9LqFNGhJQzUGHAsIs
- hap1f0B1PoUyUNeEInV98D8Xd/edM3mhO9nRpUXRK9Bvt4iEZUXGuVtZLT52nK6Wv2EZ1TiT
- OiqZlf1P+vxYLBx9eKmabPdm3yjalhY8yr1S1vL0gSA/C6W1o/TowdieF1rWN/MYHlkpyj9c
- Rpc281gAO0AP3V1G00YzBEdYyi0gaJbCEQnq8Vz1vDXFxHzyhgGz7umBsVKmYwZgA8DrrB0M
- oaP35wuGR3RJcaG30AnJpEDkBYHznI2apxdcuTPOHZyEilIRrBGzDwGtAhldzlBoBwE3Z3MY
- 31TOpACu1ZpNOMysZ6xiE35pWkwc0KYm4hJA5GFfmWSN6DniimW3pmdDIiw4Ifcx8b3mFrRO
- BbDIW13E51j9RjbO/nAaK9ndZ5LRO1B/8Fwat7bLzmsCiEXOJY7NNpIEpkoNoEUfCcZwmLrU
- +eOTPzaF6drw6ayewEi5yzPg3TAT6FV3oBsNg3xlwU0gPK3v6gYPX5w9+ovPZ1/qqNfOrbsE
- FRuiSVsZQ5s3AAMFD/9XjlnnVDh9GX/r/6hjmr4U9tEsM+VQXaVXqZuHKaSmojOLUCP/YVQo
- 7IiYaNssCS4FCPe4yrL4FJJfJAsbeyDykMN7wAnBcOkbZ9BPJPNCbqU6dowLOiy8AuTYQ48m
- vIyQ4Ijnb6GTrtxIUDQeOBNuQC/gyyx3nbL/lVlHbxr4tb6YkhkO6shjXhQh7nQb33FjGO4P
- WU11Nr9i/qoV8QCo12MQEo244RRA6VMud06y/E449rWZFSTwGqb0FS0seTcYNvxt8PB2izX+
- HZA8SL54j479ubxhfuoTu5nXdtFYFj5Lj5x34LKPx7MpgAmj0H7SDhpFWF2FzcC1bjiW9mjW
- HaKaX23Awt97AqQZXegbfkJwX2Y53ufq8Np3e1542lh3/mpiGSilCsaTahEGrHK+lIusl6mz
- Joil+u3k01ofvJMK0ZdzGUZ/aPMZ16LofjFA+MNxWrZFrkYmiGdv+LG45zSlZyIvzSiG2lKy
- kuVag+IijCIom78P9jRtB1q1Q5lwZp2TLAJlz92DmFwBg1hyFzwDADjZ2nrDxKUiybXIgZp9
- aU2d++ptEGCVJOfEW4qpWCCLPbOT7XBr+g/4H3qWbs3j/cDDq7LuVYIe+wchy/iXEJaQVeTC
- y5arMQorqTFWlEOgRA8OP47L9knl9i4xuR0euV6DChDrguup2aJVU8JPBBgRAgAPAhsMBQJn
- uAtCBQkxtc7uAAoJEGFXmRW1Y3YOJHUAoLuIJDcJtl7ZksBQa+n2T7T5zXoZAJ9EnFa2JZh7
- WlfRzlpjIPmdjgoicA==
-In-Reply-To: <20250311145758.343076290@linuxfoundation.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250311-wip-obbardc-qcom-defconfig-interconnects-builtin-v1-1-675b6bc57176@linaro.org>
 
-On 3/11/25 07:54, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 5.10.235 release.
-> There are 462 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+On Tue, Mar 11, 2025 at 07:02:56PM +0100, Christopher Obbard wrote:
+> Currently some Qualcomm interconnect drivers are enabled
+> as modules which isn't overly useful since the interconnects
+> are required to be loaded during early boot.
 > 
-> Responses should be made by Thu, 13 Mar 2025 14:56:39 +0000.
-> Anything received after that time might be too late.
-> 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.10.235-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.10.y
-> and the diffstat can be found below.
-> 
-> thanks,
-> 
-> greg k-h
+> Loading the interconnects late (e.g. in initrd or as module)
+> can cause boot issues, such as slowdown or even not booting
+> at all (since the interconnect would be required for storage
+> devices).
 
-On ARCH_BRCMSTB using 32-bit and 64-bit ARM kernels, build tested on 
-BMIPS_GENERIC:
+This is not a good justification. It should be perfectly fine to load
+block drivers (including their dependencies) from the initramfs.
 
-Tested-by: Florian Fainelli <florian.fainelli@broadcom.com>
+Up to now we have been enabling only those interconnect (and pinctrl,
+btw) drivers, which are required to be able to open the consoe (thanks,
+systemd).
 
-Same thing as with the 5.4 kernel, "udp: gso: do not drop small packets 
-when PMTU reduces" needs to use min_t() instead. Thanks!
+> 
+> Be consistent and enable all of the Qualcomm interconnect
+> drivers as built-in to the kernel image.
+> 
+> Signed-off-by: Christopher Obbard <christopher.obbard@linaro.org>
+> ---
+>  arch/arm64/configs/defconfig | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
+> 
+> diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
+> index 219ef05ee5a757c43a37ec9f8571ce9976354830..6582baee2ab02ecb2ff442c6e73aa6a23fee8d7f 100644
+> --- a/arch/arm64/configs/defconfig
+> +++ b/arch/arm64/configs/defconfig
+> @@ -1656,11 +1656,11 @@ CONFIG_INTERCONNECT_IMX8MN=m
+>  CONFIG_INTERCONNECT_IMX8MQ=m
+>  CONFIG_INTERCONNECT_IMX8MP=y
+>  CONFIG_INTERCONNECT_QCOM=y
+> -CONFIG_INTERCONNECT_QCOM_MSM8916=m
+> +CONFIG_INTERCONNECT_QCOM_MSM8916=y
+>  CONFIG_INTERCONNECT_QCOM_MSM8996=y
+> -CONFIG_INTERCONNECT_QCOM_OSM_L3=m
+> +CONFIG_INTERCONNECT_QCOM_OSM_L3=y
+
+This is the memory / L3 / cpufreq interconnect, it has nothing to do
+with the block devices.
+
+>  CONFIG_INTERCONNECT_QCOM_QCM2290=y
+> -CONFIG_INTERCONNECT_QCOM_QCS404=m
+> +CONFIG_INTERCONNECT_QCOM_QCS404=y
+>  CONFIG_INTERCONNECT_QCOM_QCS615=y
+>  CONFIG_INTERCONNECT_QCOM_QCS8300=y
+>  CONFIG_INTERCONNECT_QCOM_QDU1000=y
+> 
+> ---
+> base-commit: b098bcd8278b89cb3eb73fdb6e06dc49af75ad37
+> change-id: 20250311-wip-obbardc-qcom-defconfig-interconnects-builtin-258fcc961b11
+> 
+> Best regards,
+> -- 
+> Christopher Obbard <christopher.obbard@linaro.org>
+> 
+
 -- 
-Florian
+With best wishes
+Dmitry
 
