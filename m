@@ -1,189 +1,349 @@
-Return-Path: <linux-kernel+bounces-555547-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-555549-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5161EA5B95F
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 07:48:30 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id DE897A5B964
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 07:51:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E3BC33AC316
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 06:48:17 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4398C7A638C
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 06:50:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B3E81EBA0C;
-	Tue, 11 Mar 2025 06:48:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 753AD21D595;
+	Tue, 11 Mar 2025 06:51:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dSj6L1vD"
-Received: from mail-yw1-f194.google.com (mail-yw1-f194.google.com [209.85.128.194])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="MJBH7bkS"
+Received: from mail-qk1-f171.google.com (mail-qk1-f171.google.com [209.85.222.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 415D2156861
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 06:48:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2E241E9B1A
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 06:50:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741675702; cv=none; b=Ok0vDmZyfGHRi54TDhkHfgk7edE5NWaB/OzL4rwVjlXacLyFTkoONM4tn5XlHutO2Uu0K32wZl2GlGWpO7Uuc/D/L3tbU4q5Z5y5pxCcpBk/yxtbp7ITJbAFnm0PL57x7cDbtJRAFLzhF8qcO/vfp1Q2WWqBB+EQoR7dptjXoy8=
+	t=1741675860; cv=none; b=JSXM9j9dU2M7/St1tVXtCVFUw0eVtj/DxQWaystU/2CHcS7V9Fo/B+1VPmwuTwgkLe9gdYqoxstBuR6X1F4qo6ophzdOY8QZYAqcVzAouuROYpaz8o6H7rQ7JLuwZFcHsCialf0VJl5oR4Kc/oYMe+Jhw98xSUx9mR+VJqzxIJU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741675702; c=relaxed/simple;
-	bh=kdW4lBDadmuM4Z/e6yPR8yUiON/o70lgDWYdaej70Wo=;
+	s=arc-20240116; t=1741675860; c=relaxed/simple;
+	bh=5DsCHjQTeHvFN25S26AhgzuhEouSlH45CBqgVIURWKE=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=kvRlfOp6kQu/0NWD9PdeeaXY32tPCrhoYjrFSx6C+JL4XNfMJeIjjajfEQ7na1//432QUS4X9tpuiVqrI0aG+TmLHDZO0lezY4Mkh9NufdREi1fP3PaqA8pmOn5zxjzVOyaUo8vF4WRef0XFXdJrfuCgPqC3p3219WEU0Nf3Pzo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dSj6L1vD; arc=none smtp.client-ip=209.85.128.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f194.google.com with SMTP id 00721157ae682-6fda22908d9so38135797b3.1
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 23:48:20 -0700 (PDT)
+	 To:Cc:Content-Type; b=rCq8uTYhTMyy7niE5iylWQYNdnO5GaEWfkheGAFXX3JXvFn1Z5TXv/6MzkcSztkfpW3mRUWEoz74J9X2BGCxrvLkVUBTxtwG+yP7LPBW3t+BREW30nSYp8qqYxfK+6cHbXCgxEJP2ZyRmRi/7Vd7rijfvfn1ZirA3xttH+lnBII=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=MJBH7bkS; arc=none smtp.client-ip=209.85.222.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qk1-f171.google.com with SMTP id af79cd13be357-7be49f6b331so522625585a.1
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 23:50:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741675700; x=1742280500; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1741675857; x=1742280657; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=eOnoY/5kztlCwhF/Bn+TEbdQ0a8Ic09Wnz9SPxYkbho=;
-        b=dSj6L1vDnheutz0RdTICNQNpAWrA+Q5jCPGrp9fALM3wQE1zzrHZmjKVOAgvwO3qSo
-         WnmdvCJxuwEafPOLhasOaEEDBbpGFCx3p2ZNpMvJ2RP9JwpB9YhaAUe00KLzA5K4zCBc
-         tpZ/2pBlZxqLuldPhAWAGLysRUOeldQ2foRqW5RRWhafAmnTmLSs+6fNyjRDF1Guj40F
-         UvZUJj94XqtE8jCnYalbBoqrDF1p7ME3uLAdNESe23xWfvAll3gL9Aq9V9ro7mUAQz3A
-         DndZLW4AqVC0zjvykucfyeZS042DjQFWta6JVsaa90X6goDqN96dci5HWghllMVF6xQr
-         yaNg==
+        bh=ubMBhXi/yYu3ojzFHZW4rI5kDxnm/+UpT5h9VMRAOig=;
+        b=MJBH7bkSFDlInaqh1Tw/lkbrFMT8fLQkNUXE2dDL69yRwaJZhxz0IQnMslQnPF3FgM
+         4ybBhlWe++pMlxq4UQP8pV5tb9/IR5aLtEtPoisnyCyBJ6Oht8c4zneRq9NmOZVkDXIN
+         Obt2uhribW11bAHD2iC5S1H9fUdNFqF24Pf7K5vxpKz3nXoeMGMoilrhjWjahSWeI6Zc
+         GhDWuFQuE9VaskGqpUX6H0ehnemYpywTMts+P1gMcEBmylmJOUJpEIHfNr0kOzqiWF7V
+         a/18kInMFH3SIrXzFL/ZTyyxWxp+1wUDtW4JB3+r3utKP9xuYJav+lMH5iy2w1OcY0QV
+         jj+A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741675700; x=1742280500;
+        d=1e100.net; s=20230601; t=1741675857; x=1742280657;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=eOnoY/5kztlCwhF/Bn+TEbdQ0a8Ic09Wnz9SPxYkbho=;
-        b=MNLuoRkPAzDuPJbrIW/ZBJ53FmXlbCM+9USmITq8V+6rucHS0EOQfDGc8YDOX1f8hl
-         5ya/Nc/4NQIVImcKTqUR+wKnVvLV+O1ImMfKnsBiismZ0QwztvzXEGjmrOLzjbiwdMyx
-         atsB1nPb4aAs/wQCsBjLK6TOUurGjF6Kb8OGzaPLlo7+WU2JE7NAVwTwJPbapW+vWEPT
-         YaogzCEcZ03KPjmqx6YI4RkCcbDfsFX8cc3gZGZfBuQf9zOsJuMW83i0FZn+E5FCNt+7
-         +ui5cOATzbU0+CJS8cx/TdsaKYlUfVIdjq4pDQ7psqgXQTQLgHIAALy8guiB9t6XL3iW
-         63pg==
-X-Gm-Message-State: AOJu0YylGBV33h6v7tIo8Ra/oAq+I9P5OS3tljSgHvgXJnXFeUIIagYY
-	IhgTYR2EPvffzAwVusttLos/98tlGajcHWanKHlNJlP7AehwGJhVNFNye5tZnv4tefVbf9aRqjX
-	WitXP0LlOmQFYiz8DKek7v5UoJmBObS7vJhvrhsBg
-X-Gm-Gg: ASbGncuWWI4pPLTagBfL4zirCQyU6OGQJAcNJlOS75S2WkGh+6dUd1T3nzSifcBxWX3
-	Rhuw3ydgRjbBfpeaRzCf3DhN35HQt4Yo5nA6BHfW4OTO3L/2V3EJ+RuNvgIFE9shMS8BUxKECE7
-	jtDbfmGoXvQmLQiAYkGuebC+1o1LIDZkib3GnyuxY5sYn309Fkp7iiNOP08J8=
-X-Google-Smtp-Source: AGHT+IFQCg1K1NRXUHUZkHPAga69L2cGS8uouCiyHSDg/OMJb2jeC93rPn3TmYWI710dM2K4sm5LJz43eAYjlF4ychg=
-X-Received: by 2002:a05:690c:6813:b0:6ef:4fba:8137 with SMTP id
- 00721157ae682-6febf292796mr233690747b3.6.1741675699951; Mon, 10 Mar 2025
- 23:48:19 -0700 (PDT)
+        bh=ubMBhXi/yYu3ojzFHZW4rI5kDxnm/+UpT5h9VMRAOig=;
+        b=rHJU2/DX/xPm1dwUerS0cozMW4Ck24UJAsi4kIpW6j03C6RAmTrI6iMxIAGhsW2jcY
+         pcCJGSHlCdJFlAkysaBy3Frqlb2xtrK/9RJrjTvdoctTsMQSwqahA2JFFI0Bf08VN4mQ
+         bg2nMkQyDX8Jjb8pqZi0tWHrCuHZakwb2iFPKc2R0nNoOXoq7iway2MpZwVHBhQvxbhR
+         1uDHO2yjkGNHvacn1ELGbjcXGVwsotCMy36mmlxMMRd/BLbWDcWm835jd15nsvzCbueF
+         bmbaaOprSKbPXy8wz3VqvB7YLYATdjpwZTEv3gx7dhFA7++nJZCDKD+RQmArV53vmKG7
+         3+sg==
+X-Forwarded-Encrypted: i=1; AJvYcCWB/oiHXy3qMCsTR8RHuIFYCDkYHhfErHCuoAJs6rtzOVlKfKhVRiDzZkKTpxas+JvXQd4ZymlLS7qU7lw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyZ0vXDKgFFU3XIRXU+32g4BA0XkbZP3iKxBy//qqPc0a8bn4xH
+	JQ+N8XYUIjITswq0Y4eoTflcgimYMTbKfyKjHdccgD6TnYyBX30jTMSoZRRzwIV91Prqgy0KIwq
+	c9LYDdvaDxRzbCc56v5LxrX2a8KUdCCBcPxSw
+X-Gm-Gg: ASbGncs35JvsfGjwib2f+R13DBmJg8dVMrNV5InftL8Ia4+L+7DkUFyqeHgESOeNwWs
+	4G3SoPPx4hFpYxA7g5QfhL+hsG9Otq+DZC4wFy+hvGTgED7P7feXHLNDCZ8pTu6Sluf0/noiu9C
+	vEz+Za7dOlIWiAUJqdtwvq5lx8N+pgDgTodf39vnh4tzKN03SBVtfMPu9sDUBx
+X-Google-Smtp-Source: AGHT+IEE5nx7BWjJWJGHKLHuppUHJvPRez+1ghLUOZnQX39XIBcj8o3Ezf5l5irw58xL8A9ZkvGm1uKFLrzD6EvrKXE=
+X-Received: by 2002:a05:6214:240b:b0:6e8:9378:94cf with SMTP id
+ 6a1803df08f44-6e900605bcamr230579426d6.21.1741675857252; Mon, 10 Mar 2025
+ 23:50:57 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAFf+5zj=KmBG0Avqy6cq9qtpGKR3HnYNc6rK6y8B_78Ajt4RhQ@mail.gmail.com>
- <20250311003554.GN2023217@ZenIV> <CAFf+5zjGKMSCYNZvOzaCNRFKHjWe2a6TKmmKqg7Fe-TLQW07yA@mail.gmail.com>
- <20250311044231.GO2023217@ZenIV>
-In-Reply-To: <20250311044231.GO2023217@ZenIV>
-From: Amit <amitchoudhary0523@gmail.com>
-Date: Tue, 11 Mar 2025 12:18:08 +0530
-X-Gm-Features: AQ5f1JqPXd4zm0WP4MffmU7O6IWPnEr7OyTZoQtf9n7cWIwuiGU5Z69MnD6-NZE
-Message-ID: <CAFf+5ziTDC1RYyfwRMdYMxtdDmb1dk=PY4++2aM3e1M444zO8A@mail.gmail.com>
-Subject: Re: Catching use-after-free easily in linux kernel.
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: linux-kernel@vger.kernel.org
+References: <20250304000458.1826450-1-royluo@google.com> <20250308010409.n55ivdubj7ylkr7j@synopsys.com>
+In-Reply-To: <20250308010409.n55ivdubj7ylkr7j@synopsys.com>
+From: Roy Luo <royluo@google.com>
+Date: Mon, 10 Mar 2025 23:50:21 -0700
+X-Gm-Features: AQ5f1Jov0naEx-TN8VB6kcMNOvFiLREBKbTZnMOeJs4H3iGS71s78Ymd6nlVN8A
+Message-ID: <CA+zupgzB2aKRn_KDcqSLctqmvnEW1923XQPDwDzfDVZxU70ORg@mail.gmail.com>
+Subject: Re: [PATCH v1] usb: dwc3: core: Avoid redundant system suspend/resume callbacks
+To: Thinh Nguyen <Thinh.Nguyen@synopsys.com>
+Cc: "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>, 
+	"linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, 11 Mar 2025 at 10:12, Al Viro <viro@zeniv.linux.org.uk> wrote:
+On Fri, Mar 7, 2025 at 5:04=E2=80=AFPM Thinh Nguyen <Thinh.Nguyen@synopsys.=
+com> wrote:
 >
-> On Tue, Mar 11, 2025 at 08:46:36AM +0530, Amit wrote:
-> > On Tue, Mar 11, 2025, 6:05=E2=80=AFAM Al Viro <viro@zeniv.linux.org.uk>=
- wrote:
-> >
-> > > On Mon, Mar 10, 2025 at 01:24:54PM +0530, Amit wrote:
-> > > > Hi,
-> > > >
-> > > > We can catch use-after-free easily if we do the following:
-> > > >
-> > > > kfree(x);
-> > > > (x) =3D NULL;
-> > > >
-> > > > Now, if someone uses 'x' again then the kernel will crash and we wi=
-ll
-> > > know where
-> > > > the use-after-free is happening and then we can fix it.
-> > >
-> > > That assumes that no pointer is ever stored in more than one place.
-> > > Which is very clearly false.
-> > >
-> >
-> >
-> > I will do some experiments and then I will reply if I find something.
-> >
-> > I will introduce a global macro and then change all kfree() to this mac=
-ro
-> > name using cscope probably.
-> >
-> > Then I will compile the kernel and run the new kernel and see if some c=
-rash
-> > is happening or not.
->
-> What would that test, exactly?  And why would that be any more useful tha=
+> On Tue, Mar 04, 2025, Roy Luo wrote:
+> > dwc3 device suspend/resume callbacks were being triggered during system
+> > suspend and resume even if the device was already runtime-suspended.
+> > This is redundant for device mode because the suspend and resume routin=
+es
+> > are essentially identical for system PM and runtime PM. The minor
+> > difference in pinctrl state changes has been moved to the common sectio=
 n
-> adding global variables named wank and magic and replacing every kfree(p)=
- with
-> ((magic =3D wank++),kfree(p))?  That also would not introduce any crashes=
-...
+> > in this patch.
+> > To prevent these unnecessary callbacks, indicate to the PM core that it
+> > can safely leave the device in runtime suspend if it's already
+> > runtime-suspended in device mode by returning a positive value in
+> > prepare() callback.
+> >
+> > Signed-off-by: Roy Luo <royluo@google.com>
+> > ---
+> >  drivers/usb/dwc3/core.c | 27 ++++++++++++++++++++++-----
+> >  1 file changed, 22 insertions(+), 5 deletions(-)
+> >
+> > diff --git a/drivers/usb/dwc3/core.c b/drivers/usb/dwc3/core.c
+> > index dfa1b5fe48dc..b83f094ff1c5 100644
+> > --- a/drivers/usb/dwc3/core.c
+> > +++ b/drivers/usb/dwc3/core.c
+> > @@ -2398,10 +2398,12 @@ static int dwc3_suspend_common(struct dwc3 *dwc=
+, pm_message_t msg)
+> >               dwc3_gadget_suspend(dwc);
+> >               synchronize_irq(dwc->irq_gadget);
+> >               dwc3_core_exit(dwc);
+> > +             pinctrl_pm_select_sleep_state(dwc->dev);
+> >               break;
+> >       case DWC3_GCTL_PRTCAP_HOST:
+> >               if (!PMSG_IS_AUTO(msg) && !device_may_wakeup(dwc->dev)) {
+> >                       dwc3_core_exit(dwc);
+> > +                     pinctrl_pm_select_sleep_state(dwc->dev);
+> >                       break;
+> >               }
+> >
+> > @@ -2436,6 +2438,7 @@ static int dwc3_suspend_common(struct dwc3 *dwc, =
+pm_message_t msg)
+> >
+> >               dwc3_otg_exit(dwc);
+> >               dwc3_core_exit(dwc);
+> > +             pinctrl_pm_select_sleep_state(dwc->dev);
+> >               break;
+> >       default:
+> >               /* do nothing */
+> > @@ -2453,6 +2456,7 @@ static int dwc3_resume_common(struct dwc3 *dwc, p=
+m_message_t msg)
+> >
+> >       switch (dwc->current_dr_role) {
+> >       case DWC3_GCTL_PRTCAP_DEVICE:
+> > +             pinctrl_pm_select_default_state(dwc->dev);
+> >               ret =3D dwc3_core_init_for_resume(dwc);
+> >               if (ret)
+> >                       return ret;
+> > @@ -2462,6 +2466,7 @@ static int dwc3_resume_common(struct dwc3 *dwc, p=
+m_message_t msg)
+> >               break;
+> >       case DWC3_GCTL_PRTCAP_HOST:
+> >               if (!PMSG_IS_AUTO(msg) && !device_may_wakeup(dwc->dev)) {
+> > +                     pinctrl_pm_select_default_state(dwc->dev);
+> >                       ret =3D dwc3_core_init_for_resume(dwc);
+> >                       if (ret)
+> >                               return ret;
+> > @@ -2490,6 +2495,7 @@ static int dwc3_resume_common(struct dwc3 *dwc, p=
+m_message_t msg)
+> >               if (PMSG_IS_AUTO(msg))
+> >                       break;
+> >
+> > +             pinctrl_pm_select_default_state(dwc->dev);
+> >               ret =3D dwc3_core_init_for_resume(dwc);
+> >               if (ret)
+> >                       return ret;
+> > @@ -2608,8 +2614,6 @@ static int dwc3_suspend(struct device *dev)
+> >       if (ret)
+> >               return ret;
+> >
+> > -     pinctrl_pm_select_sleep_state(dev);
+> > -
+> >       return 0;
+> >  }
+> >
+> > @@ -2618,8 +2622,6 @@ static int dwc3_resume(struct device *dev)
+> >       struct dwc3     *dwc =3D dev_get_drvdata(dev);
+> >       int             ret =3D 0;
+> >
+> > -     pinctrl_pm_select_default_state(dev);
+> > -
+> >       pm_runtime_disable(dev);
+> >       ret =3D pm_runtime_set_active(dev);
+> >       if (ret)
+> > @@ -2647,14 +2649,29 @@ static void dwc3_complete(struct device *dev)
+> >               dwc3_writel(dwc->regs, DWC3_GUCTL3, reg);
+> >       }
+> >  }
+> > +
+> > +static int dwc3_prepare(struct device *dev)
+> > +{
+> > +     struct dwc3     *dwc =3D dev_get_drvdata(dev);
+> > +
+> > +     /*
+> > +      * Indicate to the PM core that it may safely leave the device in
+> > +      * runtime suspend if runtime-suspended already in device mode.
+> > +      */
+> > +     if (dwc->current_dr_role =3D=3D DWC3_GCTL_PRTCAP_DEVICE)
+> > +             return 1;
+>
+> Why are you skipping suspend for all cases when in device mode? Don't we
+> need to check for current runtime suspend status?
+> (ie. check pm_runtime_status_suspended()).
+>
 
-My test is quite evident from my first mail (kfree(x); x =3D NULL;).
+I was looking at drivers/base/power/main.c device_suspend() to see how
+direct complete works, and there are a bunch of checks in the function to
+determine direct complete eligibility, including pm_runtime_status_suspende=
+d().
+That's why I thought it's already taken care of by the PM framework.
+However, looking at the documentation
+(https://docs.kernel.org/power/runtime_pm.html)
+again "Namely, if a system suspend .prepare() callback returns a positive
+number for a device, that indicates to the PM core that the device appears =
+to
+be runtime-suspended and its state is fine.". You're right, we should also
+do the check inside our .prepare callback. Will fix it in the next patch.
 
-Your example is nowhere related to my proposal.
+> I'm also a bit concernt about moving pinctrl_pm_select* to the
+> suspend/resume_common function. Is your device using pinctrl? If not,
+> how did you validate this?
+>
+> Thanks,
+> Thinh
+>
 
-So, either you didn't understand my issue properly or you thought that
-I was a fool. That's ok.
+I couldn't find any device node that's actually utilizing the pinctrl
+"sleep" state in upstream.
+I digged into the patch that introduced pinctrl to dwc3, i.e.
+https://lore.kernel.org/all/9dd70870cfee40154a37186d4cf3ae0e9a452cbd.144102=
+9572.git.nsekhar@ti.com/
+The intention was to control DRVVBUS pins using the pinctrl API so
+that VBUS can be
+turned off to conserve power when device is suspended (which also
+implies this is only
+relevant in host mode, at least in the initial patch).
+Since there was no runtime PM support in dwc3 at that time, the code was
+only added in the system suspend/resume path. Yet I don't see why this cann=
+ot
+be extended to the runtime suspend/resume path, ultimately it should be saf=
+e to
+turn off VBUS once the controller is completely torn down with dwc3_core_ex=
+it()
+regardless of which suspend path it's taking.
 
-You thought that I was a fool and I also think that you are a fool.
+Besides looking at how pinctrl in dwc3 is intended to be used, I did
+an inventory on how
+it actually is used. There are 3 major players: ti, qcom and socionext
+that has pinctrl property
+set in their dwc3 device node.
+1. ti/omap
+The pinctrl property is only set when dr_mode is host or otg.
+Only the "default" state is defined, none of boards has "sleep" state
+defined, not even the
+first user arch/arm/boot/dts/omap/am437x-gp-evm.dts that introduced
+the API to dwc3.
+(https://lore.kernel.org/all/4a8a072030c2a82867c6548627739146681b35a5.14410=
+29572.git.nsekhar@ti.com/)
+Setting pinctrl "default" state seems to be pretty common in ti/omap,
+and the usage is aligned
+with the original intention: control DRVVBUS. It's unclear why "sleep"
+state is no longer used though.
 
-Tit for tat.
+2. qcom
+The following 2 boards have pinctrl property defined, dr_mode are all
+host and also only the
+"default" state is defined.
+- sa8155p-adp.dts  &usb_1_dwc3 {
+                               dr_mode =3D "host";
+                               pinctrl-names =3D "default";
+                               pinctrl-0 =3D <&usb2phy_ac_en1_default>;
+                               };
+                               &usb_2_dwc3 {
+                               dr_mode =3D "host";
+                               pinctrl-names =3D "default";
+                               pinctrl-0 =3D <&usb2phy_ac_en2_default>;
+                               };
+- sm8350-hdk.dts  &usb_2_dwc3 {
+                              dr_mode =3D "host";
+                              pinctrl-names =3D "default";
+                              pinctrl-0 =3D <&usb_hub_enabled_state>;
+                              };
+It seems the pinctrl is used to control phy and perhaps downstream usb hub.
+Nothing is turned off explicitly during sleep as "sleep" state isn't define=
+d.
+It's more like setting the required pins for host mode to work.
 
-By the way, if you think that you are great because you are working in
-the linux kernel then at least I don't think so.
+3. socionext
+The pinctrl property is set on controllers with dr_mode peripheral or host.
+Still, only the "default" state is defined.
+The pin is assigned according to its dr_mode, controllers with dr_mode
+host will be assigned with
+pinctrl_usb* pin, while controllers with dr_mode peripheral will get
+pinctrl_usb*_device pin.
+        pinctrl_usb0: usb0 {
+                groups =3D "usb0";
+                function =3D "usb0";
+        };
+        pinctrl_usb0_device: usb0-device {
+                groups =3D "usb0_device";
+                function =3D "usb0";
+        };
+Again, these pins are not related to power management, it's tied to dr_mode=
+.
 
-I have also contributed a few patches to the linux kernel a long time
-ago and they were mostly related to memory leaks.
+To summarize the current pinctrl usage in dwc3:
+1. No user of "sleep" state, meaning it's unlikely to cause any impact
+on suspend flow.
+2. Typically, the default pin state reflects the controller's dr_mode,
+acting as a pre-configuration
+    step to set the operational mode.
 
-Anyone who spends ""one year"" hacking the linux kernel will become a
-great linux kernel programmer.
+Based on the above observation, the code change on the pinctrl is
+unlikely to introduce
+a regression as it aligns with the original intention of the pinctrl
+property, and the
+pinctrl_pm_select_sleep_state() is essentially an NOP in upstream as
+of now. Besides,
+pinctrl_pm_select_default_state() is called whenever we try to
+re-initialize the controller.
+I hope this addresses your concern.
 
-By the way, from my point of view, there's not much to do in the linux
-kernel ""now"". The main part of the kernel is device drivers and
-device drivers can only be written by people who have access to the
-hardware and the data sheet of the hardware. And these guys are mostly
-employed people in companies that release new hardware like Broadcom,
-etc.
+Best,
+Roy
 
-I had done a lot of hardware programming for ethernet switches at
-Juniper Networks in the FreeBSD kernel.
-
-I have worked on a few other kernels also - RT Linux, Nucleus OS,
-HP-UX, and VxWorks.
-
-If device drivers are taken out then there's not much work in the
-kernel - the only things left will be filesystems and networking
-subsystem and scheduling but probably there's not much to do there.
-
-So, the real stuff in the kernel is done by people who work for
-companies that develop new hardware and give the driver code to the
-linux kernel.
-
-Long time ago, I also worked on the linux kernel's wireless driver as
-an employee of a company (my work was related to searching for new APs
-if the signal quality falls below a certain threshold and then joining
-an AP having the highest signal quality - this was not there in the
-kernel at that time). However, the end client didn't give us the
-permission to release the patches to the linux kernel.
-
-I had also made modifications to the RT Linux kernel a long time ago,
-basically related to scheduling and priority inversion.
-
-Anyways, given all this, I actually don't think that people who work
-in the linux kernel are great people EXCEPT LINUS TORVALDS.
-
-Linus Torvalds is a great person and a great software engineer and he
-doesn't have much ego and he doesn't throw around his ego over all
-people.
-
-----
+> > +
+> > +     return 0;
+> > +}
+> >  #else
+> >  #define dwc3_complete NULL
+> > +#define dwc3_prepare NULL
+> >  #endif /* CONFIG_PM_SLEEP */
+> >
+> >  static const struct dev_pm_ops dwc3_dev_pm_ops =3D {
+> >       SET_SYSTEM_SLEEP_PM_OPS(dwc3_suspend, dwc3_resume)
+> >       .complete =3D dwc3_complete,
+> > -
+> > +     .prepare =3D dwc3_prepare,
+> >       /*
+> >        * Runtime suspend halts the controller on disconnection. It reli=
+es on
+> >        * platforms with custom connection notification to start the con=
+troller
+> >
+> > base-commit: 99fa936e8e4f117d62f229003c9799686f74cebc
+> > --
+> > 2.48.1.711.g2feabab25a-goog
+> >
+> >
 
