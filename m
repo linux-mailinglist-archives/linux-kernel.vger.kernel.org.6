@@ -1,126 +1,100 @@
-Return-Path: <linux-kernel+bounces-555952-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-555953-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 116ABA5BEB3
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 12:16:55 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 95835A5BEB7
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 12:17:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A5DE03B20AC
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 11:16:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D5766170C56
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 11:17:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E7862512C9;
-	Tue, 11 Mar 2025 11:16:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74C06238172;
+	Tue, 11 Mar 2025 11:17:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="YeWxFT7e"
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="0uWgT4A9"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B57F2222D0
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 11:16:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2E242528FD
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 11:17:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741691808; cv=none; b=D9OP01RBPdtLtnStWsm3PbrgHF3QaliWwitS0XtDaLjoGaVVztrTqv5sbNoaE7zeRDGviTtO3W3TcLMJbzpCheC0Be8wZt3lvuS9/vuvVjugAFkC81JbGLAd0rIkgXjgW6f7ZHo4Rv/f74hBgTdtWisjF5heT/XfDRyO7xTS3tg=
+	t=1741691840; cv=none; b=pMmNTVGru25RHwxSw48NEoOL4I0GWeHwvfQs9K1rmSBiHay+hx315gb0pXoPd+aWrjMBxQ7L0pexEodt2iCOHdIDNxXkkPDlY0JiUcsxq7gD7AHjek3rqYBkAgvzJ5lsayJ61klZQTE/hJszm6wvfrjYCtrSf5YjPkoVri9P3sQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741691808; c=relaxed/simple;
-	bh=mpmz9+gNfBkSRlzf5ohqnrqIElII8nIlcNv4e65+ehc=;
+	s=arc-20240116; t=1741691840; c=relaxed/simple;
+	bh=OM09r8o7osyfiRG+Tl7EaqHM/urKajqaYfr9L6tuhl0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=u6nuvjaW/F4HCvQJsUCaJmem1+fU7B8iGc1x12oxorwggelDHBL63lSPZpxpVt/UCZIpoiGy344cBipt9gq6RUX+6D/7HwcXNH9EupfaPGfi5txfqATwNTfybPZkW1nSWWJkjRvllUoicXmazbO7zBfe+8NG9crPq5nyBO+P2hU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=YeWxFT7e; arc=none smtp.client-ip=209.85.128.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-43cec5cd73bso16458285e9.3
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 04:16:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1741691804; x=1742296604; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=9Ee2vMUDZRdjGNIbzmhry++VVeENs1uRLq+FlAoQjWA=;
-        b=YeWxFT7ej3p6ZoEtJ9U+m6+qqoV7gGpASnll1yNPnh8olotSNcNoYkG/9ynS2tybyY
-         nq7xx1OV4IG+GdRtq9GbApAfUUj1UuX5LaiZrK526enLwIIU8Lud8zwkzxxtg2bxbMAR
-         NHebUBel6rwsrh0DbL51vtVjVrBKn517MW2amrAqRLmg+QRBUatjRYSPtx53RQv4MRaK
-         gsuRCuF8AgI4wSqzNvJtk5z9LwsCodIQgrHMdXMWjgNziSUYgeA1+tQVnrMIr2ATcpNl
-         I0eS5F4HMFQmTQh0PEa4V4LrT1zGa4bmNBBBu2YcYoAW5gndByJo7R3bazV9tTy3219K
-         OSNg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741691804; x=1742296604;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=9Ee2vMUDZRdjGNIbzmhry++VVeENs1uRLq+FlAoQjWA=;
-        b=c8PcyaaXRDRLcDnvmh6H/IPHRoiK9ASN8c5ZYHpkHSgnIof47SU39GhDqpcetFqDwg
-         fqHMDuH1t7No+QkpJl7nJNV8UloBtL0+qIL9TBWC9JNDo7SIdm76Gd/g+QGlQt1gsnLz
-         TGQV4usiJOtSjxqT4+oE+XBV3VWOa/8My52+hQBdK4RUF7QGJXZiJxLccyJOSvdCncXw
-         N/lh4fq0PF5qCYXKb7TMVYjJ95AkzsfYyy5MLHRPtj0YDriU8fD8SISnAKskosfikQSy
-         BX7EGZFt+/9NP8ErHBnaw+yTVtk58m2G8RKpxhcM4oi6YTJ3ViVpuYyaOhzm4079Ge3p
-         hcug==
-X-Forwarded-Encrypted: i=1; AJvYcCWwAG7BPshZlJuxNSwNbL0EwOD7ihMIE+5oc769nCJ5odAqHBOVmnIxhZDD11f4Ib3TVMevDLIcQPoBPzI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwPvkjMrnTg1t6jND4TyT9GUlfRQoQeMcCV8HjCDPLyzcoloesR
-	j1Ep/W5cU+QZFCy8Zx275g3oolxJfqhDbofMwj2muY96HNypnxBBMWtzsy0xKcA=
-X-Gm-Gg: ASbGncu9tRmtrjWFbeW+ZsR6agFhLNVp/oR1N3u6efK7W8LnF0+AomtoGiBmtGu7aFs
-	shLpnZvR02XFL6GN4+q4F5At9obpRnGwXdiAA1BJfpuEFFO9ZaOt/1JmMZ3ZXrhWJq5lsLreN42
-	86p+ywUBAc/47dy1HFIkYsF6Z13PyTu2dIB3AaeSRC+NnaZehNVoAw4zDyFzRfewDQ2uiJSOn0e
-	LnY9lCUY1gn3CuR+Iej3x4G22hWmkogEaCVl4Xil5nDPAqtjHKh4mCD6PPel6b/wpckIfpr8W9H
-	WINMq0Oc4nQX5uL76vs2ufv2AJJXAs/I9BbXJM1Rw4z6LyiriQ==
-X-Google-Smtp-Source: AGHT+IH62B2vN00mbQ7cGtF3KOTyZWYGf3hAB5PaS1iAsRYUThgYmKN7VFoKRyfU1FM6J06fivQQQQ==
-X-Received: by 2002:a5d:64cb:0:b0:391:3fa7:bf66 with SMTP id ffacd0b85a97d-3913fa7c415mr10740994f8f.31.1741691804523;
-        Tue, 11 Mar 2025 04:16:44 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-43cf0c42eb6sm87876805e9.16.2025.03.11.04.16.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 11 Mar 2025 04:16:44 -0700 (PDT)
-Date: Tue, 11 Mar 2025 14:16:40 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Thomas =?iso-8859-1?Q?Wei=DFschuh?= <thomas.weissschuh@linutronix.de>
-Cc: Florian Fainelli <florian.fainelli@broadcom.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	linux-rpi-kernel@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org, linux-staging@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] staging: vchiq_arm: Don't use %pK through printk
-Message-ID: <01a1fcd4-b626-44a2-b850-bf0d8b9efbfa@stanley.mountain>
-References: <20250311-restricted-pointers-vchiq_arm-v2-1-a14e1c0681fc@linutronix.de>
+	 Content-Type:Content-Disposition:In-Reply-To; b=BP5KXQhtr/ehgbnobxONtXhz0RMb3J38eYi7SdGnFXlP5mSfC36Pro7k2au7gi50cEg2puZUeTjvx+4pDBLr1aYq4tSNAtH9RGryA0kF69fXoGkMnyD2RhY3gV1WOHbRhSKmH981F2Nn/C9GbNWxcsJsWT93Yjt6JvO34B3QXVE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=0uWgT4A9; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C5543C4CEE9;
+	Tue, 11 Mar 2025 11:17:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1741691840;
+	bh=OM09r8o7osyfiRG+Tl7EaqHM/urKajqaYfr9L6tuhl0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=0uWgT4A9MQsvKFhUlGk2hYPuGEB/Zvu80oR4VoiNwZfKy/fjVilY9jom1F+JfGCuV
+	 lqzR9gnj1lwYPHntg0E3mFWT770IEyLeuR1ZptmqVa/yA7GAW1kI+7OcRLx70fnJhS
+	 GTbZSYfCTKCba9SdFRu1iNM9cXFlowWV1ry9IlzM=
+Date: Tue, 11 Mar 2025 12:17:17 +0100
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Siddarth G <siddarthsgml@gmail.com>
+Cc: abbotti@mev.co.uk, hsweeten@visionengravers.com,
+	skhan@linuxfoundation.org, linux-kernel@vger.kernel.org,
+	ruffalolavoisier@gmail.com, colin.i.king@gmail.com,
+	n.zhandarovich@fintech.ru
+Subject: Re: [PATCH v2] staging: comedi: remove redundant filename references
+ in headers
+Message-ID: <2025031113-resize-charbroil-0d6d@gregkh>
+References: <20250311100741.11999-1-siddarthsgml@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250311-restricted-pointers-vchiq_arm-v2-1-a14e1c0681fc@linutronix.de>
+In-Reply-To: <20250311100741.11999-1-siddarthsgml@gmail.com>
 
-On Tue, Mar 11, 2025 at 10:40:49AM +0100, Thomas Weiﬂschuh wrote:
-> In the past %pK was preferable to %p as it would not leak raw pointer
-> values into the kernel log.
-> Since commit ad67b74d2469 ("printk: hash addresses printed with %p")
-> the regular %p has been improved to avoid this issue.
-> Furthermore, restricted pointers ("%pK") were never meant to be used
-> through printk(). They can still unintentionally leak raw pointers or
-> acquire sleeping looks in atomic contexts.
+On Tue, Mar 11, 2025 at 03:37:41PM +0530, Siddarth G wrote:
+> checkpatch.pl reports the following warning in COMEDI subsystem files:
+>   WARNING: It's generally not useful to have the filename in the file
+> These file headers contain redundant filename references (e.g., "* comedi_buf.c"
+> in comedi_buf.c) which are unnecessary.
+> This patch removes these references from 14 files to comply with kernel coding
+> standards and eliminate the warnings.
 > 
-> Switch to the regular pointer formatting which is safer and
-> easier to reason about.
-> There are still a few users of %pK left, but these use it through seq_file,
-> for which its usage is safe.
-> 
-> Link: https://lore.kernel.org/lkml/20250113171731-dc10e3c1-da64-4af0-b767-7c7070468023@linutronix.de/
-> Signed-off-by: Thomas Weiﬂschuh <thomas.weissschuh@linutronix.de>
+> Signed-off-by: Siddarth G <siddarthsgml@gmail.com>
 > ---
 > Changes in v2:
-> - Fix wrong replacement with invalid %K (Dan Carpenter)
-> - Link to v1: https://lore.kernel.org/r/20250310-restricted-pointers-vchiq_arm-v1-1-dd04f208ee55@linutronix.de
+> -Included the exact checkpatch.pl warning in the commit message for clarity.
 > ---
+>  drivers/comedi/comedi_buf.c                          | 1 -
+>  drivers/comedi/comedi_fops.c                         | 1 -
+>  drivers/comedi/comedi_pci.c                          | 1 -
+>  drivers/comedi/comedi_pcmcia.c                       | 1 -
+>  drivers/comedi/comedi_usb.c                          | 1 -
+>  drivers/comedi/drivers.c                             | 1 -
+>  drivers/comedi/drivers/ni_routing/ni_device_routes.c | 1 -
+>  drivers/comedi/drivers/ni_routing/ni_device_routes.h | 1 -
+>  drivers/comedi/drivers/ni_routing/ni_route_values.c  | 1 -
+>  drivers/comedi/drivers/ni_routing/ni_route_values.h  | 1 -
+>  drivers/comedi/drivers/tests/comedi_example_test.c   | 1 -
+>  drivers/comedi/drivers/tests/ni_routes_test.c        | 1 -
+>  drivers/comedi/drivers/tests/unittest.h              | 1 -
+>  drivers/comedi/range.c                               | 1 -
 
-Thanks!
+These files are not in the "staging" directory, so no need for staging/
+to be in the subject line at all :(
 
-Reviewed-by: Dan Carpenter <dan.carpenter@linaro.org>
+Also, start by working on checkpatch cleanups in the drivers/staging/
+directory, not elsewhere in the kernel tree, so you get experience in
+doing all of this properly before moving out to other areas.  Also, some
+subsystems do not want checkpatch cleanups, so be careful.
 
-regards,
-dan carpenter
+thanks,
 
+greg k-h
 
