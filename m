@@ -1,247 +1,101 @@
-Return-Path: <linux-kernel+bounces-555895-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-555896-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 40885A5BDF7
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 11:35:02 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C07B9A5BDFC
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 11:36:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 68B923B13AC
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 10:34:49 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 285267A5CDA
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 10:35:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B79382397BE;
-	Tue, 11 Mar 2025 10:34:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62A7722FF42;
+	Tue, 11 Mar 2025 10:35:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="p8FCq85X"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gcWxOy+T"
+Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3A5823906A;
-	Tue, 11 Mar 2025 10:34:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A2C3BA34;
+	Tue, 11 Mar 2025 10:35:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741689282; cv=none; b=VuFg6JEdh2nPaMKCkUI0R+TStwe4m9QEAmh2jcHR9/x3rZqrKkRi18p3oMkshJahngpYP5ZgZJ1/4wwpuvZ6J+qIYaEEwS5WWrF3HXcCp+F95gcvMukYQl4XssH/eoSM/mU0qRLDm8ShLAbyn60YmaDN54TE6klhpyKAqTR3Tco=
+	t=1741689357; cv=none; b=Z/m4Gaqc+Hck26pIgg0whkpoEGd5gRWRmutuKdUzgvFrAc6ysumTkeBxk6bkj4NJc94leds1mTf29GMIKO+QUT5ykWFs+NgNFKsaUwV2Xq198wt1dOm6o4C0wQIBcvceZXFN6OealU+q/8AvQjhKf98DpxwZG28AIIIMlnx0/Bk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741689282; c=relaxed/simple;
-	bh=g5WrytiDfToUzuULW5k3QtsxNddrCwlXzxuLcthP2D0=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=tkfrXsbQovzDP1jB53il8bceA2Bcwzlw6Umv9B74KLF/mf9lzkCl5/L2DecWDUVrINyqBHVcTBsqtDF1oCplpLvfJodPU9rMxkqiyOX5W/357HTzWKqjsFjNcSQCgG+gg/vfAwCSzl2Js1vRmgoB076yjbwM41E5jDUIRAaz0cg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=p8FCq85X; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 57F47C4CEE9;
-	Tue, 11 Mar 2025 10:34:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741689281;
-	bh=g5WrytiDfToUzuULW5k3QtsxNddrCwlXzxuLcthP2D0=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=p8FCq85X5f02i8T5VUb5KvLi2wdt319XykQnPPZ85XN40ytu0+7ED46RY1qBAIIEt
-	 O//QtuPP7M/TtSDQQz3xcrLxsTPGSESCs4QRl3avMHs4SpiGe8oqI6+3KCrzjAkdLO
-	 Z+Us6U0HNCn6EmPALxtJPkuq1456fNp/HmKEtQk6oCc8/HJPqRyV3zZ4ubXH0qskbP
-	 Ff3zmw9s9oODMO0TNgvhsXMvSTmuuoZ4/lUA78aayRvcARGExdTM4NGFGtBg+Rr4fi
-	 pR9YCbMcdbfyf/IBS6GX/hVGoyWUNa14iGJ5Zi+WIJhdUrYQ4A6zkhpOB12CyC7FOR
-	 14PpUOmO4eY3w==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1trwwY-00CUjL-Op;
-	Tue, 11 Mar 2025 10:34:38 +0000
-Date: Tue, 11 Mar 2025 10:34:38 +0000
-Message-ID: <86senjony9.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Zhenyu Ye <yezhenyu2@huawei.com>
-Cc: <yuzenghui@huawei.com>,
-	<will@kernel.org>,
-	<oliver.upton@linux.dev>,
-	<catalin.marinas@arm.com>,
-	<joey.gouly@arm.com>,
-	<linux-kernel@vger.kernel.org>,
-	<xiexiangyou@huawei.com>,
-	<zhengchuan@huawei.com>,
-	<wangzhou1@hisilicon.com>,
-	<linux-arm-kernel@lists.infradead.org>,
-	<kvm@vger.kernel.org>,
-	<kvmarm@lists.linux.dev>
-Subject: Re: [PATCH v1 4/5] arm64/kvm: support to handle the HDBSSF event
-In-Reply-To: <20250311040321.1460-5-yezhenyu2@huawei.com>
-References: <20250311040321.1460-1-yezhenyu2@huawei.com>
-	<20250311040321.1460-5-yezhenyu2@huawei.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	s=arc-20240116; t=1741689357; c=relaxed/simple;
+	bh=UxDskpVLYU61Yhkdp0Uj1euBtT7W0h1UniNT/9Bub0M=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=dmb5Msq3kboOTwJsVRkLYqG5WsS7sy2FRHqTt68Vx84ETl2xvVZhwUSDy2E+ppRGYZb4GNWlQW7rHRDoF2gg/NTRVBjTkU5j5G0TeqGerz2zOjFN1EkeaYA2fGRo9wpwz34hKuen/GVLNydgdTKe0V2N+/+iiOkUAaSilDIxk7U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gcWxOy+T; arc=none smtp.client-ip=209.85.214.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-2240b4de10eso12102365ad.1;
+        Tue, 11 Mar 2025 03:35:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741689356; x=1742294156; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=UxDskpVLYU61Yhkdp0Uj1euBtT7W0h1UniNT/9Bub0M=;
+        b=gcWxOy+TeVBDelCLhWQAzFa1dqY6Psq84hW/Xr91qvdNqKu4cmAgylPDf/pvlC7SH5
+         Tld8eF1d+5v/RJwReOELGKtOnWkuNGPzf/1nuUAK3zojCOZ36rI6PLYWPhEwYSaipDgA
+         29p5Tb/t/i+BC0hS1ZNCjCmS5hGYDWn+uVaHWA2DLrrBcyqCMCKW1CgysqR4tzAPyw2f
+         5KYRoUMF56ngtO7sex74RQJJ5IuiazUJCLW6HJ1CpPmGiwkGitfGIgSEChbQy7XzIWM4
+         9+XruF+Ig0B7jdxe7zo6xT/L5zUNPVS+VpnjJn5rAhx2XT+afM9+HT5Oh8gpgGYyaeba
+         KN8Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741689356; x=1742294156;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=UxDskpVLYU61Yhkdp0Uj1euBtT7W0h1UniNT/9Bub0M=;
+        b=cZHQFENvWzdrG/D4LY/l3ogVEh/0ZcPKdpUEZOeWWB1BufH5/dyAJsTaVSSTvzmsAj
+         KMgHMk0OikeW4sYd+fQtjIen09rM7YwAakVX+kHjmMa8G5Cic5ZqevMLfkYKDwVi6GU6
+         j2C4zh3NEpl75PSredt4stkDHGnU7qG/+zUxMTgsKfXsl63rJFvlCkgIsJQKPVvDCx4u
+         tOuiZNzWMxeDJSqV8eE8a/7N/zv9oAPzClnKQ/aZ1CCymzKWBdqgXuHTlGkAOHEdzFz9
+         mPHsH6DUsy2sWBqrZc8dicMJre/XfdxTK+iGMAbQyeMVaOfWc0mMBCSNXF0TWwQpiZMD
+         7hUA==
+X-Forwarded-Encrypted: i=1; AJvYcCXRUvMru7EtGzNrXgDZTFpHWIX07ooUj9uWGNd/+BOMz//ZILDdU8gerWrLiw9nXqA9B7x26FYENLZcCx0=@vger.kernel.org, AJvYcCXVPimWKIfbcvo+XGQQiR6aMgMzhio2Y6OqM3Pw6G8iWgjZHy9ryLBgxmcLA+FIKIohZcjBdDOFzPEpkg==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzBAqPVFuPuP6xZ0uAnVopqqNcHY2fh9F+Wm7p1lFf65RW8wgaR
+	jUDRYz1AiqX9tLsn1LuTe8u14LcoF5YO+7QfIMprNsIGP5vqImi8oN7Wz5dqFEciCVMEzogjkqb
+	/j171HSm4I5o1oJLk1B0C1sUz3uU=
+X-Gm-Gg: ASbGnctnNHMYoDz9sVi0qXc5IGbebzJ14DhWdohMd65a8s5f06N8iRDO3zgSretDdeF
+	zQmBotSk5lrXdA+py74vyHP50XAvmdfuyVV+MfaGJT9pgWGZ6fAO3/fu8tg+v/3bU9cjy92s0w6
+	Akgk+KPzDVe9b4U5STx1bRYsnMVqJssejQ6PU7
+X-Google-Smtp-Source: AGHT+IF87YUiZ+c5JOKl7/uEv8ins8dVWQu9guMI6WW9ct4VPV38xmxKRqCghoMQdNmqmGUU8pbk7zCcBU98rWgQoGs=
+X-Received: by 2002:a17:902:db10:b0:223:5e86:efa9 with SMTP id
+ d9443c01a7336-225932807a6mr15210015ad.8.1741689355745; Tue, 11 Mar 2025
+ 03:35:55 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: yezhenyu2@huawei.com, yuzenghui@huawei.com, will@kernel.org, oliver.upton@linux.dev, catalin.marinas@arm.com, joey.gouly@arm.com, linux-kernel@vger.kernel.org, xiexiangyou@huawei.com, zhengchuan@huawei.com, wangzhou1@hisilicon.com, linux-arm-kernel@lists.infradead.org, kvm@vger.kernel.org, kvmarm@lists.linux.dev
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+References: <20250311201726.3f45cc67@canb.auug.org.au>
+In-Reply-To: <20250311201726.3f45cc67@canb.auug.org.au>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Tue, 11 Mar 2025 11:35:43 +0100
+X-Gm-Features: AQ5f1JpSKQvJcLrhKtcF2ocDtAMKZaTGndWlR_jK9p2w5k5M46BDlLORXfeX0qA
+Message-ID: <CANiq72=_jVDkSo8Q+it4_6-UkTEVxD6xG82aEPcpAwGQpKAB2g@mail.gmail.com>
+Subject: Re: linux-next: manual merge of the rust tree with the drm tree
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Dave Airlie <airlied@redhat.com>, 
+	Alice Ryhl <aliceryhl@google.com>, Jocelyn Falempe <jfalempe@redhat.com>, 
+	DRI <dri-devel@lists.freedesktop.org>, 
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
+	Linux Next Mailing List <linux-next@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, 11 Mar 2025 04:03:20 +0000,
-Zhenyu Ye <yezhenyu2@huawei.com> wrote:
-> 
-> From: eillon <yezhenyu2@huawei.com>
-> 
-> Updating the dirty bitmap based on the HDBSS buffer. Similar
-> to the implementation of the x86 pml feature, KVM flushes the
-> buffers on all VM-Exits, thus we only need to kick running
-> vCPUs to force a VM-Exit.
-> 
-> Signed-off-by: eillon <yezhenyu2@huawei.com>
-> ---
->  arch/arm64/kvm/arm.c         | 10 ++++++++
->  arch/arm64/kvm/handle_exit.c | 47 ++++++++++++++++++++++++++++++++++++
->  arch/arm64/kvm/mmu.c         |  7 ++++++
->  3 files changed, 64 insertions(+)
-> 
-> diff --git a/arch/arm64/kvm/arm.c b/arch/arm64/kvm/arm.c
-> index 825cfef3b1c2..fceceeead011 100644
-> --- a/arch/arm64/kvm/arm.c
-> +++ b/arch/arm64/kvm/arm.c
-> @@ -1845,7 +1845,17 @@ long kvm_arch_vcpu_ioctl(struct file *filp,
->  
->  void kvm_arch_sync_dirty_log(struct kvm *kvm, struct kvm_memory_slot *memslot)
->  {
-> +	/*
-> +	 * Flush all CPUs' dirty log buffers to the dirty_bitmap.  Called
-> +	 * before reporting dirty_bitmap to userspace.  KVM flushes the buffers
-> +	 * on all VM-Exits, thus we only need to kick running vCPUs to force a
-> +	 * VM-Exit.
-> +	 */
-> +	struct kvm_vcpu *vcpu;
-> +	unsigned long i;
->  
-> +	kvm_for_each_vcpu(i, vcpu, kvm)
-> +		kvm_vcpu_kick(vcpu);
+On Tue, Mar 11, 2025 at 10:17=E2=80=AFAM Stephen Rothwell <sfr@canb.auug.or=
+g.au> wrote:
+>
+> I fixed it up (I guess - see below) and can carry the fix as necessary.
 
-We don't need this outside of HDBSS. Why impose it on everyone else?
+Looks good to me, thanks!
 
-I'm also perplexed by the requirement to flush on all exits. Why can't
-this be deferred to vcpu_put() only? Specially given that I don't see
-any use of this stuff outside of a VHE system.
-
->  }
->  
->  static int kvm_vm_ioctl_set_device_addr(struct kvm *kvm,
-> diff --git a/arch/arm64/kvm/handle_exit.c b/arch/arm64/kvm/handle_exit.c
-> index 512d152233ff..db9d7e1f72bf 100644
-> --- a/arch/arm64/kvm/handle_exit.c
-> +++ b/arch/arm64/kvm/handle_exit.c
-> @@ -330,6 +330,50 @@ static exit_handle_fn kvm_get_exit_handler(struct kvm_vcpu *vcpu)
->  	return arm_exit_handlers[esr_ec];
->  }
->  
-> +#define HDBSS_ENTRY_VALID_SHIFT 0
-> +#define HDBSS_ENTRY_VALID_MASK (1UL << HDBSS_ENTRY_VALID_SHIFT)
-> +#define HDBSS_ENTRY_IPA_SHIFT 12
-> +#define HDBSS_ENTRY_IPA_MASK GENMASK_ULL(55, HDBSS_ENTRY_IPA_SHIFT)
-
-This has no place here. Move this stuff somewhere else. And rewrite in
-a more concise way:
-
-#define HDBSS_ENTRY_VALID	BIT(0)
-#define HDBSS_ENTRY_IPA		GENMASK(55, 12)
-
-> +
-> +static void kvm_flush_hdbss_buffer(struct kvm_vcpu *vcpu)
-> +{
-> +	int idx, curr_idx;
-> +	u64 *hdbss_buf;
-> +
-> +	if (!vcpu->kvm->enable_hdbss)
-
-This control is odd. You track the logging per-VM, but dump the
-buffers per-vcpu.
-
-> +		return;
-> +
-> +	dsb(sy);
-> +	isb();
-> +	curr_idx = HDBSSPROD_IDX(read_sysreg_s(SYS_HDBSSPROD_EL2));
-> +
-> +	/* Do nothing if HDBSS buffer is empty or br_el2 is NULL */
-> +	if (curr_idx == 0 || vcpu->arch.hdbss.br_el2 == 0)
-> +		return;
-> +
-> +	hdbss_buf = page_address(phys_to_page(HDBSSBR_BADDR(vcpu->arch.hdbss.br_el2)));
-
-Do you see why it is silly to keep the raw value of the register? It'd
-be far better to just keep the VA (and maybe the PA as well), and
-build the register value as required.
-
-> +	if (!hdbss_buf) {
-> +		kvm_err("Enter flush hdbss buffer with buffer == NULL!");
-> +		return;
-> +	}
-> +
-> +	for (idx = 0; idx < curr_idx; idx++) {
-> +		u64 gpa;
-> +
-> +		gpa = hdbss_buf[idx];
-> +		if (!(gpa & HDBSS_ENTRY_VALID_MASK))
-> +			continue;
-> +
-> +		gpa = gpa & HDBSS_ENTRY_IPA_MASK;
-> +		kvm_vcpu_mark_page_dirty(vcpu, gpa >> PAGE_SHIFT);
-
-Isn't there a requirement to hold a lock of some sort here?
-
-> +	}
-> +
-> +	/* reset HDBSS index */
-> +	write_sysreg_s(0, SYS_HDBSSPROD_EL2);
-> +	dsb(sy);
-
-Where is the DSB(SY) requirement coming from if the logging is
-per-vcpu and that each vcpu gets its own buffer?
-
-> +	isb();
-
-And you want to do that on each exit? How will userspace intercept
-this? Frankly, this should be moved to put-time, and only be
-guaranteed  to be visible to userspace when the vcpus are outside of
-the kernel.
-
-> +}
-> +
->  /*
->   * We may be single-stepping an emulated instruction. If the emulation
->   * has been completed in the kernel, we can return to userspace with a
-> @@ -365,6 +409,9 @@ int handle_exit(struct kvm_vcpu *vcpu, int exception_index)
->  {
->  	struct kvm_run *run = vcpu->run;
->  
-> +	if (vcpu->kvm->enable_hdbss)
-> +		kvm_flush_hdbss_buffer(vcpu);
-> +
->  	if (ARM_SERROR_PENDING(exception_index)) {
->  		/*
->  		 * The SError is handled by handle_exit_early(). If the guest
-> diff --git a/arch/arm64/kvm/mmu.c b/arch/arm64/kvm/mmu.c
-> index 9c11e2292b1e..3e0781ae0ae1 100644
-> --- a/arch/arm64/kvm/mmu.c
-> +++ b/arch/arm64/kvm/mmu.c
-> @@ -1790,6 +1790,13 @@ int kvm_handle_guest_abort(struct kvm_vcpu *vcpu)
->  	ipa = fault_ipa = kvm_vcpu_get_fault_ipa(vcpu);
->  	is_iabt = kvm_vcpu_trap_is_iabt(vcpu);
->  
-> +	/*
-> +	 * HDBSS buffer already flushed when enter handle_trap_exceptions().
-> +	 * Nothing to do here.
-> +	 */
-> +	if (ESR_ELx_ISS2(esr) & ESR_ELx_HDBSSF)
-> +		return 1;
-> +
-
-Can this happen on an instruction abort? Also, you seem to be ignoring
-any type of *faults*. Nothing can fail at all?
-
-	M.
-
--- 
-Without deviation from the norm, progress is not possible.
+Cheers,
+Miguel
 
