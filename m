@@ -1,136 +1,176 @@
-Return-Path: <linux-kernel+bounces-556699-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-556700-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F3C1FA5CD98
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 19:15:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id B8645A5CDA0
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 19:15:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 375BD1623AC
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 18:15:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EBE13164333
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 18:15:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D55D1EEA35;
-	Tue, 11 Mar 2025 18:15:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07BDB263C88;
+	Tue, 11 Mar 2025 18:15:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dzRvAZeL"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HMkcqqPM"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49B30260A5A;
-	Tue, 11 Mar 2025 18:15:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51B901E5711;
+	Tue, 11 Mar 2025 18:15:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741716921; cv=none; b=R0retZS+nEr5blOrhyNpHD8H+lgO1LIGp+cs4ssQgatwuPRuJxqekwfbsQSriyVWbLBvzBR9BL9Cx3Er7PBDsuZSKshV0JE49sU8JGnJUR5Z+/HSldzvXwFVzS/R1lLDthJStgOHQcg9rhy+DA1bBCAP2iMvYpw+H4P6PJ7fOlA=
+	t=1741716929; cv=none; b=gs4XLAbaD5TNckahkgxC7CXi6hCn5cfKhvWHqJI2ZccDVUD26EGiQjcQTEfkIWJrQMb/3ybhp4Po0cZenmmqsucyvFXf3eiuBcCq01k5XmUpN41uM2FMKCObOWLCB03AfLNkrzBooc1BLT5lYHsELJ6sJeCoxC8odE9C+UdN14Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741716921; c=relaxed/simple;
-	bh=QVKm1/ggon8nkDEmT9UXPEAL4izORGEQ9UkuDXgyZBo=;
+	s=arc-20240116; t=1741716929; c=relaxed/simple;
+	bh=vpOOffpnSh0fvqCTw4JxWUJ/X6ZreK0VQ8Rv3J0Zuk0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hv5M/Htohp5jFvMEkw2i+Ky2n7YVI7IYerGhXePO7e5guy3fUP6aqSuXmIZP1vmmSq28G91FN5c7DtVktLrIVYT21NJA8Ed5mM0HnPpgEHwbuGbEBcP41wnQLwnpl0LH2AflMGBi90+iUiuoB6EeqrABZQDt3PBTWadaWcq88+w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dzRvAZeL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AEE63C4CEEA;
-	Tue, 11 Mar 2025 18:15:16 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=iryhtz7dl/6//DB4MgQvgUE/mveZq/NhB34Wug27nQSHN8EZDWcY8TBdm0cpQ7h8ja7ECJNy3ad/QAt3npbeI/WlIVnSFfGe4pPCbDncby/jDUd2caafCczPa76uggsuMg/z18qtYOch+LpX/Jl2U2cb6pgUt6AW9GjmEmBi0Ek=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HMkcqqPM; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 74968C4CEEA;
+	Tue, 11 Mar 2025 18:15:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741716921;
-	bh=QVKm1/ggon8nkDEmT9UXPEAL4izORGEQ9UkuDXgyZBo=;
+	s=k20201202; t=1741716928;
+	bh=vpOOffpnSh0fvqCTw4JxWUJ/X6ZreK0VQ8Rv3J0Zuk0=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=dzRvAZeLYZVBx5UHTI50AopOoUuWTwRnPh40r49hYd3anLJbxT97umDFmTfLSwpJl
-	 z9OFRE+yaqy7PaYaB7F25BNW7paU2yfkT3/rDiZqdYoAxdj2I6mOaaUJOsE9Nymh18
-	 dwIGAWXKtBjq7DR1TDwUqZ5rVpcsVES/NwZqEU/FwB0rES1P8okJc4IzW0FwEft/7R
-	 EFgd0bIWOWIALBRzyE6RsT3IhCp1VJtfOJEkxyY35GDqfCPTel/2W5cQbJ8b7sTNRL
-	 z5mMrMqlmp/G4ZQ0QRWonBJS9HfYviL6ySabRP+/yg64WrtTytiDXczfCzXVY02E0s
-	 M1fr1T0AL4xsw==
-Date: Tue, 11 Mar 2025 18:15:13 +0000
-From: Conor Dooley <conor@kernel.org>
-To: Pinkesh Vaghela <pinkesh.vaghela@einfochips.com>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Samuel Holland <samuel.holland@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Min Lin <linmin@eswincomputing.com>,
-	Pritesh Patel <pritesh.patel@einfochips.com>,
-	Yangyu Chen <cyy@cyyself.name>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-	Yu Chien Peter Lin <peterlin@andestech.com>,
-	Charlie Jenkins <charlie@rivosinc.com>,
-	Kanak Shilledar <kanakshilledar@gmail.com>,
-	Darshan Prajapati <darshan.prajapati@einfochips.com>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Heiko Stuebner <heiko@sntech.de>, Aradhya Bhatia <a-bhatia1@ti.com>,
-	rafal@milecki.pl, Anup Patel <anup@brainfault.org>,
-	devicetree@vger.kernel.org, linux-riscv@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 03/10] dt-bindings: vendor-prefixes: add eswin
-Message-ID: <20250311-reproduce-smoked-b6a6025985d6@spud>
-References: <20250311073432.4068512-1-pinkesh.vaghela@einfochips.com>
- <20250311073432.4068512-4-pinkesh.vaghela@einfochips.com>
+	b=HMkcqqPMiAosOQ6797LvVM0cf0//2QkwY7Y/WX+Xbe0fHcYlmDB9hImV1m+0dtdnw
+	 SYaxhK5zIlVTYBS1aaho5ir9czEEetG18LYiuwbQnHwbq9Xn8MrEMAIcU+TmTEY/+U
+	 kNC4q11UEKsCy430kwd4TwECWpAajaMHNCHLe138iuX77M4uXnW80k9TDnky1HC2jU
+	 PMeLHqszfc/RldC++sAMTVp4TaECEq+CZZqZ9P3sqg5w4nz5J3sCYZdeZGbB6wJLoh
+	 k0nVEhynYytlveBn+KVgO5IFD+8+MEjjQTafF2lFnCIb6VSsc9dEB2ASZuc9n191hC
+	 OACZj9ubp4j4w==
+Date: Tue, 11 Mar 2025 13:15:27 -0500
+From: Rob Herring <robh@kernel.org>
+To: Cosmin Tanislav <demonsingur@gmail.com>
+Cc: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
+	Cosmin Tanislav <cosmin.tanislav@analog.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Niklas =?iso-8859-1?Q?S=F6derlund?= <niklas.soderlund@ragnatech.se>,
+	Julien Massot <julien.massot@collabora.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Bjorn Andersson <quic_bjorande@quicinc.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+	Arnd Bergmann <arnd@arndb.de>, Taniya Das <quic_tdas@quicinc.com>,
+	Biju Das <biju.das.jz@bp.renesas.com>,
+	=?iso-8859-1?Q?N=EDcolas_F_=2E_R_=2E_A_=2E?= Prado <nfraprado@collabora.com>,
+	Eric Biggers <ebiggers@google.com>,
+	Javier Carrasco <javier.carrasco@wolfvision.net>,
+	Ross Burton <ross.burton@arm.com>,
+	Hans Verkuil <hverkuil@xs4all.nl>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Zhi Mao <zhi.mao@mediatek.com>,
+	Kieran Bingham <kieran.bingham@ideasonboard.com>,
+	Dongcheng Yan <dongcheng.yan@intel.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Benjamin Mugnier <benjamin.mugnier@foss.st.com>,
+	Tommaso Merciai <tomm.merciai@gmail.com>,
+	Dan Carpenter <dan.carpenter@linaro.org>,
+	Ihor Matushchak <ihor.matushchak@foobox.net>,
+	Laurentiu Palcu <laurentiu.palcu@oss.nxp.com>,
+	linux-media@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-staging@lists.linux.dev, linux-gpio@vger.kernel.org
+Subject: Re: [RFC PATCH v2 03/16] dt-bindings: media: i2c: max96717: add
+ support for I2C ATR
+Message-ID: <20250311181527.GA3917837-robh@kernel.org>
+References: <20250309084814.3114794-1-demonsingur@gmail.com>
+ <20250309084814.3114794-4-demonsingur@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="dPdjNx0Q/ARv4t6y"
-Content-Disposition: inline
-In-Reply-To: <20250311073432.4068512-4-pinkesh.vaghela@einfochips.com>
-
-
---dPdjNx0Q/ARv4t6y
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20250309084814.3114794-4-demonsingur@gmail.com>
 
-On Tue, Mar 11, 2025 at 01:04:25PM +0530, Pinkesh Vaghela wrote:
-> From: Pritesh Patel <pritesh.patel@einfochips.com>
->=20
-> Add new vendor string to dt bindings.
-> This new vendor string is used by
-> - ESWIN EIC770X SoC
-> - HiFive Premier P550 board which uses EIC7700 SoC.
->=20
-> Link: https://www.eswin.com/en/
-> Signed-off-by: Pritesh Patel <pritesh.patel@einfochips.com>
-> Reviewed-by: Samuel Holland <samuel.holland@sifive.com>
-> Signed-off-by: Pinkesh Vaghela <pinkesh.vaghela@einfochips.com>
-
-Acked-by: Conor Dooley <conor.dooley@microchip.com>
-
+On Sun, Mar 09, 2025 at 10:47:55AM +0200, Cosmin Tanislav wrote:
+> MAX96717 is capable of address translation for the connected I2C slaves.
+> 
+> Add support for I2C ATR while keeping I2C gate for compatibility to
+> support this usecase.
+> 
+> Signed-off-by: Cosmin Tanislav <demonsingur@gmail.com>
 > ---
->  Documentation/devicetree/bindings/vendor-prefixes.yaml | 2 ++
->  1 file changed, 2 insertions(+)
->=20
-> diff --git a/Documentation/devicetree/bindings/vendor-prefixes.yaml b/Doc=
-umentation/devicetree/bindings/vendor-prefixes.yaml
-> index 5079ca6ce1d1..07ff140e67dc 100644
-> --- a/Documentation/devicetree/bindings/vendor-prefixes.yaml
-> +++ b/Documentation/devicetree/bindings/vendor-prefixes.yaml
-> @@ -490,6 +490,8 @@ patternProperties:
->      description: Espressif Systems Co. Ltd.
->    "^est,.*":
->      description: ESTeem Wireless Modems
-> +  "^eswin,.*":
-> +    description: Beijing ESWIN Technology Group Co. Ltd.
->    "^ettus,.*":
->      description: NI Ettus Research
->    "^eukrea,.*":
-> --=20
-> 2.25.1
->=20
+>  .../bindings/media/i2c/maxim,max96717.yaml    | 39 +++++++++++++++++++
+>  1 file changed, 39 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/media/i2c/maxim,max96717.yaml b/Documentation/devicetree/bindings/media/i2c/maxim,max96717.yaml
+> index 1026678a17a7..dd28cc397674 100644
+> --- a/Documentation/devicetree/bindings/media/i2c/maxim,max96717.yaml
+> +++ b/Documentation/devicetree/bindings/media/i2c/maxim,max96717.yaml
+> @@ -91,6 +91,30 @@ properties:
+>        incoming GMSL2 link. Therefore, it supports an i2c-gate
+>        subnode to configure a sensor.
+>  
+> +  i2c-alias-pool:
+> +    maxItems: 2
+> +
+> +  i2c-atr:
+> +    type: object
+> +    additionalProperties: false
+> +
+> +    properties:
+> +      '#address-cells':
+> +        const: 1
+> +
+> +      '#size-cells':
+> +        const: 0
+> +
+> +    patternProperties:
+> +      '^i2c@0':
 
---dPdjNx0Q/ARv4t6y
-Content-Type: application/pgp-signature; name="signature.asc"
+This allows "i2c@0anything-you-want". Based on reg, you want 
+'^i2c@[01]$'.
 
------BEGIN PGP SIGNATURE-----
+ 
+> +        $ref: /schemas/i2c/i2c-controller.yaml#
+> +        unevaluatedProperties: false
+> +        properties:
+> +          reg:
+> +            items:
+> +              minimum: 0
+> +              maximum: 1
+> +
+>  required:
+>    - compatible
+>    - reg
+> @@ -98,6 +122,21 @@ required:
+>  
+>  additionalProperties: false
+>  
+> +allOf:
+> +  - $ref: /schemas/i2c/i2c-atr.yaml#
+> +
+> +  - anyOf:
+> +      - oneOf:
+> +          - required: [i2c-atr]
+> +          - required: [i2c-gate]
+> +
+> +      - not:
+> +          required: [i2c-atr, i2c-gate]
+> +
+> +dependentRequired:
+> +  i2c-atr: [i2c-alias-pool]
+> +  i2c-alias-pool: [i2c-atr]
+> +
+>  examples:
+>    - |
+>      #include <dt-bindings/gpio/gpio.h>
+> -- 
+> 2.48.1
+> 
 
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZ9B9sQAKCRB4tDGHoIJi
-0pZoAP9+XoAhB5X/zHXubQ1FiTw4muY9Itw2e6V5S/HY/Q3fwwEAllR8f3pNGCJ1
-8Qaas6YgZerepyiwoergLbDFV1ASUws=
-=7vdG
------END PGP SIGNATURE-----
-
---dPdjNx0Q/ARv4t6y--
 
