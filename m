@@ -1,122 +1,131 @@
-Return-Path: <linux-kernel+bounces-556701-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-556702-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 908A3A5CDAA
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 19:17:43 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E19FBA5CDAC
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 19:17:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D293D167404
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 18:17:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 28D083A7E4C
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 18:17:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 285D2262D20;
-	Tue, 11 Mar 2025 18:17:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EC692638B6;
+	Tue, 11 Mar 2025 18:17:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b="UQTP0+QG"
-Received: from mout.gmx.net (mout.gmx.net [212.227.15.15])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="a83LfgTq"
+Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6466D1DE3CE;
-	Tue, 11 Mar 2025 18:17:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AD752627E7;
+	Tue, 11 Mar 2025 18:17:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741717057; cv=none; b=KQnreFZ05KKi0v7rA6zNJvmtaccZcijL6vgVRwxAWqSPRLKztKfvpdNSk8HOHi1s1p9nuMDat5HjlcAyEj2QxTkA54C+OEhrZ/fLVsWtXNskimqASGq7BqbS1hWFY5UUVSZSX1MrAmn6vTyot5CGwehsI834BA73HorKo8LjGCI=
+	t=1741717069; cv=none; b=fMgcWF95PgER1yGQyVmyzxxqpoIL1htSo7ClDsVJytFoBnkA6QIIaPBvkApmCNPyO0Jzd3WOQZnAwWf/t9yM+dbLHYIplUQ6Rckq7n+M6t9kmxCudRgnKoiLchkesXEwwAC4Dh8vgfH7wuT8AZ0cLvB3buOnMnDn7S+3/0mmT7U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741717057; c=relaxed/simple;
-	bh=dqGSDt393wLZ/84AHq84a5GjTYPy0MUv/hZxhrhFPKg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=uX0WLzeZANQO5HzLR/Kf6u8H5LDUXNXeQR+VrJ/rxFZk9LnbnPcBrA16r82V3bdyt0DVi3pF7MBysKQRgggGHBHoS3u1sQqhcepRHUBnd8sGQnJhC4bGK31rnRQACEpFECmrVGRCoIglkxRkHKgE/7+Bdce+sHz+ip9qOZmIawY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b=UQTP0+QG; arc=none smtp.client-ip=212.227.15.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
-	s=s31663417; t=1741717032; x=1742321832; i=w_armin@gmx.de;
-	bh=dqGSDt393wLZ/84AHq84a5GjTYPy0MUv/hZxhrhFPKg=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=UQTP0+QGJiNXurxJI6ewZ76EzV5MVgOTTd+FYVBzzKpN/UnjwozbXwpSx31He3Fz
-	 wW9JPaEymJFsTDbabv+71MgwMLnLocglmyh19yd08m+4ZfkAu0483l/gJA5Ytwthp
-	 hLTgr0O8uaXYsWBAijJ4UnCTRoLcJO8YJ+0cMqJqkUH684vq+Oz3W0ilJE6sC2w4I
-	 j8OhDc4LxyyC/AxmGu19vSERZcam0Ark4GnPb/02UINZObJ5SARfhZYrOqlwQ+8sZ
-	 gL/SnY7rvKaa1L6wLQzhFoOYfrZuM/o3A23QQMy5Z7lHJj5ezD9KhbHQKu+G8BOoh
-	 Kle+Jc/F+FA0wYjSOQ==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from [192.168.0.24] ([87.177.78.219]) by mail.gmx.net (mrgmx005
- [212.227.17.190]) with ESMTPSA (Nemesis) id 1M5fMe-1tqO8o1Das-0001Xq; Tue, 11
- Mar 2025 19:17:12 +0100
-Message-ID: <de49b8e8-e865-445d-881f-d26a7bbcf9e0@gmx.de>
-Date: Tue, 11 Mar 2025 19:17:08 +0100
+	s=arc-20240116; t=1741717069; c=relaxed/simple;
+	bh=amzaeUHYPxdXfgE5dqqUKy6QdRie3H51MlqUc45Ro3w=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=aFa7HnywXIWRghPL9eTs0uDC6oC8LE7yrbNoaszEss1BCF0a8xDIpekq2ReJl7nZqQAo6qXyjAeLyIwRViWg5sGahxicZkcGBUNuYZZw9nmzXQNhD8LYR1GykiOb5Twadn60/mwW9EdVs2NxJaxz3UxT0z4gsjnSxGU3RSXj8+c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=a83LfgTq; arc=none smtp.client-ip=209.85.167.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-5499614d3d2so5087186e87.3;
+        Tue, 11 Mar 2025 11:17:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741717065; x=1742321865; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=amzaeUHYPxdXfgE5dqqUKy6QdRie3H51MlqUc45Ro3w=;
+        b=a83LfgTqkvpxtQnqnPhn2ldUCCdvqNeKWbTuFECmo4RZVzrNSiR9pGeqJGPCFgT01Z
+         rJoTsc8qlwFnUjrdEdXRznSpIZu2cQOTlZXVshufZQIhlvt1PLf41LU9ItF8P07JpZyx
+         TMtz1l8tjcfvyEd+qr+SzDFNf2DixovBTZE5u9z0aSnaAsjwrNC4qShKNoHp75g+MNTl
+         iPMGAfcmKjGOHo43GQSjz97reiCohP07CV88FgsLtz7IzLid9ZKQG/DqmOzV1cPyq3K5
+         qxpI6YcW7xxIczZUqgRiXOh9/yrBFYOfro/VQ/furaiQl61cbro9mfY5vsBNb8PYNbGw
+         eTag==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741717065; x=1742321865;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=amzaeUHYPxdXfgE5dqqUKy6QdRie3H51MlqUc45Ro3w=;
+        b=m6gKVBIs0yQDQ7dZ3XCX3Wbi0oMZ8H0bs/cibdN9khd3wMeCQwV/KN7vCN+WxnCsow
+         J2ldrKaYuJcz4hVCek8tkVuecYzrPq/kdrXkybnx8y/wWxSrxLSebjmk5NJ2gci03rac
+         ABaCnF2iDuP/+eBUqx6w7278TcD2/vuXbPp+o/tH5cSOSt0H++YImYE3DDpCOs197wt0
+         /woP/hYtsWesr85zhm1DhVW4OMIuP+Q8RD1YgUTdh56werG2ZB+n9FhvGhxMMqf8f+6N
+         zAV6nvkIfuBDGVxLhDJLDAnwgNL2rQPkI5o6M4ZgxY9xncxXg+ug2pzg/3WPsEuvfiKH
+         XU9g==
+X-Forwarded-Encrypted: i=1; AJvYcCVhvaXpYBsOa8q3ZznliPXab24UwQEKhSmn1LSoiT6o5ocjCIJIQLq6ctOHpyU3mG9TCjVaWjizN7MJQSA=@vger.kernel.org, AJvYcCWw8kbHBbJAKlPZ7F7mD1PjlLRMObswxX5Fm1rxiUFSZ2CB2SYPY5c+eKfCCVVO5qtZ4An/phLO@vger.kernel.org
+X-Gm-Message-State: AOJu0YzZVtQ6vozaZV87ggkA0BRCaNZlhL+H2tLdsXXfXaFgjM5c9isr
+	WvdQemQ6TL0pd1tPYHxArFdL/PO7Qm1fn+ieXM7mvX1zwd7QHzVWRX2eepTfKvxT8Oy0VsLlpZJ
+	OMwSMi82C7MJHohkMc8uoJf4D0lg=
+X-Gm-Gg: ASbGncvEpsIF9vCj1Y2jWA11r1164HVFrNHBdd8kJmcw/L36N9n0KDgXwXMKTuoZp2E
+	CvHMA5yPXYu1tV2e60QGr1TYOkRl1NMg9cLCT7szcdMojUZEwPWI2yu/qWnNfzjkSVW/H2r/IDS
+	Tje6cd52BfdU63lt+hF8BRVtYeHQ==
+X-Google-Smtp-Source: AGHT+IEYrR3iuVb9k7bTT8zIzdeCEs1XeQqQDE64pk/im8l6F+pZMmJa1FuK6qJVeCb7epxnxpHYTAZTWwaqAKTXhR4=
+X-Received: by 2002:a05:6512:2386:b0:545:60b:f381 with SMTP id
+ 2adb3069b0e04-54990e6764cmr5155120e87.29.1741717065084; Tue, 11 Mar 2025
+ 11:17:45 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 1/1] hwmon: (dell-smm) Increment the number of fans
-To: Guenter Roeck <linux@roeck-us.net>, Kurt Borja <kuurtb@gmail.com>
-Cc: linux-hwmon@vger.kernel.org, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org, Jean Delvare <jdelvare@suse.com>,
- Jonathan Corbet <corbet@lwn.net>, =?UTF-8?Q?Pali_Roh=C3=A1r?=
- <pali@kernel.org>
-References: <20250304055249.51940-2-kuurtb@gmail.com>
- <bfb70a81-2ac1-428c-a327-d5098a8d3ce8@roeck-us.net>
-Content-Language: en-US
-From: Armin Wolf <W_Armin@gmx.de>
-In-Reply-To: <bfb70a81-2ac1-428c-a327-d5098a8d3ce8@roeck-us.net>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Provags-ID: V03:K1:uXcIDipZnToVJPwtmi/zIJQTB+M2OnOSCjaA0R/DWAQbszG0FWt
- qDiKkeZWB0guqKpdOIaqHUTM4U6IhIVtvNW1+Y+kTvJCXp72XTQ/H/F3WNzhy946gqPdbm+
- eMXWWhpQKVuwB4l5KZm6698QEG5kiDVo+PaVBmudg+dXW7yrD233uWTE6OBB8k4tx6+iHnY
- Z3NvavRiKRM5gDCxWbxjQ==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:3jH106I87AI=;6bQ9AFJbPDG/5Gz/9aWpUjpttvP
- vj/QwmAlte2tJXxnYIfPIZCtPPYc0l/JkOE9DBifo32YIvQhlupZp5C0O5uTyySvt+aAwcsgb
- /cqSfhDiZU0H94TkbcTUs6Ho2Qz0DKUk1g4PAXXeEe4XyX5DhLbGsjARB8ULHgB0mDgakeBEg
- YqDh7NAIsjjq+Ztr5UJMv4QEfUROJYTByCbdpupMgcWNRrw8MzbUHmMNJiuewiJ2e4djvpD2v
- 3zscZA5VDZsTuOErDicREoFPwjQ8SJHEBY0XVUOu1n/cMMGfmYAHsj+ht6ef9L522XMoJD5U8
- G6Xx52QlHwnfOqjjpnSRxhr4Zt0UAYKII8bbQuTZ8ENSg6Oi3VOSMzfcWeOttubfy3bIH9AMf
- pwIkzcpLYVs5fknE5haDVd2tDH2uHHO7TfkYXif7Zmvah9YFHPKM/mU5BCm+fv1A97Hb4cVkR
- hED+p8PesDjexN43OCljmkH01Nt7h4mBdbhNwgaADL10AJflhHxW5dK/TyYSxF9jLH2Wq0Saz
- wVj5qcJsLUbKn5OfdA9XPr1g1C/DvyBbbrh7gCH5EYeKySw/J1sNlx6pNMnzdgznVuRzB9qZS
- 7bzZkpISsz0yEhdR/ByirT/f7rusYXh783/jkMqMQQsiTMbaYPuFe0QPaYUjgzRze+eSHqyV9
- pC8cukM4+llCiOTK6s15LQ0Psim7XmFsHOsFNVKi7SIXDW6qN9a8ssp3YPVoOBH63Hrcd5T/k
- 43ay5+XuF1VnYnm1zgMofx0OPs6ZKpQsDi1npIp39bRusOr/JriRNucAtUbzUWETKpcFvbH5K
- cgdrKFZC55jImxa1YT3hhId5pTcLqJvJ2yu6F1KhZh7GcIxNlc3dMKN9GZXhZZstbeMyP4Kl+
- B47SQNzIDoCMsFGSO8LaG4KQ/sH/y3N7ohXidBIIR+DtBSWVPZOcxPhYGbCqIQNKWYm3E24Nq
- NSYfbiqsRtmvpIlMzSYtPqxjSDWRMoqmF07g6bPncQDWUKzMUcu95BJssdQDMF9cdZpftEVoD
- oHB9Pvx8u9nV3SWL1IvYtvkfLVtwFWIR17f95trG+V5hU7OtZJYCrZtqadMuaGZW2L6k67sgV
- GZ4DAHQKBaZl731v1cFH40jHn9lbr+Xl+ztkhNF4U8/HB2TyQ1MXo5ZpN7zjpSIW3X287AnIc
- ib7PFV1pJ+mUETOr8NhXryzP9VxCtyK0h2WZyzWs422BUip36WFEUykBQWCpZrFRchlMCPfF2
- FLn3HnaaeNE0nN6iB+hB+KCiHLlD7YQR5TeSXvH2S/DCp2VyHjGNxR9ZadKOhnX24Bsi3DIo+
- F50KFvziYIemC9m76VFA7hvj2GPq6fHf0CwFSlXqNcSPmh7xhX4klvSTkS7wrEsMUdqEPNbEO
- Wu8R/B+jUZ/0u/VUeE/FwbDffBK7iAR5cw6N6syNiUnWRYARZB9R3x0IIy
+References: <20250310-b4-qcom-smmu-v1-1-733a1398ff85@gmail.com>
+ <6f5f2047-b315-440b-b57d-2ed0dd7395f6@arm.com> <CALHNRZ87t7eXohTcpFnejFAPDsyE_1g0aPsASuQ7y5c_zxnLUw@mail.gmail.com>
+ <CAE2F3rB-ACt2rdVFYSpSap=t_poTi0-PxhgrYGg4vzjfic7vqA@mail.gmail.com>
+In-Reply-To: <CAE2F3rB-ACt2rdVFYSpSap=t_poTi0-PxhgrYGg4vzjfic7vqA@mail.gmail.com>
+From: Aaron Kling <webgeek1234@gmail.com>
+Date: Tue, 11 Mar 2025 13:17:33 -0500
+X-Gm-Features: AQ5f1Jotsyx4CiMaVUlC-vkoovHyzT3WerEGqfj6ILGnt1v6WPD-tu9VOLKyoNc
+Message-ID: <CALHNRZ8YUjMq0NfAT10wajFJGWaxGWarn-z2C=1Obf0ewT13gQ@mail.gmail.com>
+Subject: Re: [PATCH] iommu/arm: Allow disabling Qualcomm support in arm_smmu_v3
+To: Daniel Mentz <danielmentz@google.com>
+Cc: Robin Murphy <robin.murphy@arm.com>, Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>, 
+	Arnd Bergmann <arnd@arndb.de>, iommu@lists.linux.dev, linux-kernel@vger.kernel.org, 
+	stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Am 11.03.25 um 15:13 schrieb Guenter Roeck:
-
-> On Tue, Mar 04, 2025 at 12:52:50AM -0500, Kurt Borja wrote:
->> Some Alienware laptops that support the SMM interface, may have up to 4
->> fans.
->>
->> Tested on an Alienware x15 r1.
->>
->> Signed-off-by: Kurt Borja <kuurtb@gmail.com>
-> Oh, never mind, I'll apply this patch. If it causes trouble on older machines,
-> we may have to make it conditional, but that is not a reason to hold it up.
+On Tue, Mar 11, 2025 at 12:55=E2=80=AFPM Daniel Mentz <danielmentz@google.c=
+om> wrote:
 >
-> Guenter
+> On Mon, Mar 10, 2025 at 9:51=E2=80=AFAM Aaron Kling <webgeek1234@gmail.co=
+m> wrote:
+> > I am working with the android kernel. The more recent setup enables a
+> > minimal setup of configs in a core kernel that works across all
+> > supported arch's, then requires further support to all be modules. I
+> > specifically am working with tegra devices. But as ARCH_QCOM is
+> > enabled in the core defconfig, when I build smmuv3 as a module, I end
+> > up with a dependency on qcom-scm which gets built as an additional
+> > module. And it would be preferable to not require qcom modules to boot
+> > a tegra device.
 >
-Hi,
+> If you want to build arm_smmu_v3.ko, you'd have
+>
+> # CONFIG_ARM_SMMU is not set
+> CONFIG_ARM_SMMU_V3=3Dm
+>
+> in your .config. I don't see how this would enable ARM_SMMU_QCOM or QCOM_=
+SCM.
 
-seems that i forgot about this patch, sorry. I just tested it on my Inspiron 3505 (single fan)
-and everything works as expected.
+I went and double checked my defconfig snippet and I have to
+apologize. I put the wrong thing in the commit message and caused
+confusion to myself and the entire discussion. This is what I've got:
 
-Thanks,
-Armin Wolf
+# MMU
+CONFIG_ARM_SMMU=3Dm
+# CONFIG_ARM_SMMU_QCOM is not set
 
+Tegra186, tegra194, and tegra234 are supported by arm-smmu, not by
+arm-smmu-v3. And these are the relevant archs I'm trying to work on.
+
+Having the extra dep doesn't break anything, so worst case I continue
+to carry the extra dep or this as a downstream patch. But I had to at
+least try to decouple unnecessary dep.
+
+Sincerely,
+Aaron
 
