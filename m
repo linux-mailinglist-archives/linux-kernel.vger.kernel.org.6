@@ -1,279 +1,147 @@
-Return-Path: <linux-kernel+bounces-555474-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-555475-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1872A5B821
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 05:57:29 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 00584A5B824
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 05:58:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1EDD8172396
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 04:57:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A82981894A68
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 04:58:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53EB21EB5E0;
-	Tue, 11 Mar 2025 04:57:24 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64B191DF25C
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 04:57:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87FAF1EB9FF;
+	Tue, 11 Mar 2025 04:58:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Ez2j82m2"
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C4081EA7FC
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 04:58:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741669043; cv=none; b=P9EydT6v5xMCZi36+e2TfaxoA5QBsXuRA/UcRJL/F5xnoBGkRx+DIstGIW3KgCUx7OJkQCouEuttSTQJcIaHYi/pk9jqqDaZCp/rckdA4S2eVxx8A4wS5gxQComHSvTQtyUMsXBNdddvIGQSjQ8g2l8y8YzIqSI0CkPkG8yBSu4=
+	t=1741669115; cv=none; b=jnpSVQy8Hv/UJv+McTFxWxoqucSbgBhN9fUyDp/F2JrYe3Hih3p6O477WwjwG3iAT3l2kT/FP3VSeDN3ekYHP5ZEFNiNgXF2Q1G3WboAL28NjYUsPuFfubYkTI1bLbqqM1XfzetXHj3aLCBF5JzkHyS9ekg7E1VAXoPONFzVdDU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741669043; c=relaxed/simple;
-	bh=rXhUkLtMfGtbeHk/9pXFSDm9IdTmvizK2Xo6Onf0wYA=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=uR/JRgsSTuXf3iJMR5jm1YKcx+vI9+1uX1ppjwAGXyY1S0UfxDmR0lPY8hYnI8UC6BnkWzHSnfE/uSGGDDIBgoI7OaT6diwNlON8bSAieIz+KOxSKSmrOIlTPVz1ganrnO7Yj17jCBh37A1lWfJMFsp/Z6QZidKqv5ynW07tG7o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 027B01516;
-	Mon, 10 Mar 2025 21:57:32 -0700 (PDT)
-Received: from a077893.blr.arm.com (a077893.blr.arm.com [10.162.40.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 624C13F694;
-	Mon, 10 Mar 2025 21:57:16 -0700 (PDT)
-From: Anshuman Khandual <anshuman.khandual@arm.com>
-To: linux-arm-kernel@lists.infradead.org
-Cc: Anshuman Khandual <anshuman.khandual@arm.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Andrey Ryabinin <ryabinin.a.a@gmail.com>,
-	Alexander Potapenko <glider@google.com>,
-	Andrey Konovalov <andreyknvl@gmail.com>,
-	Dmitry Vyukov <dvyukov@google.com>,
-	Ard Biesheuvel <ardb@kernel.org>,
-	Ryan Roberts <ryan.roberts@arm.com>,
-	linux-kernel@vger.kernel.org,
-	kasan-dev@googlegroups.com
-Subject: [PATCH V3] arm64/mm: Define PTDESC_ORDER
-Date: Tue, 11 Mar 2025 10:27:10 +0530
-Message-Id: <20250311045710.550625-1-anshuman.khandual@arm.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1741669115; c=relaxed/simple;
+	bh=y4p+ZhQyaKnYanXotaEYWNu9zgRRUQZJKlAJpGme0rI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=V8HLziXew5vVmbjR28U/3n8Qg/5TGh/aIVG+Lm4jKFhkuUL8hQQTLfefzK7icorP27SaadJg4NX0WucMY8OoR4Oj81p3nr0C/1nugq8eAgaKYXDYA4RXVf7X2fXGnw5dcUE+tY7PR+alMGBOrI+0XeLfrfj9g9Z0NIfBR0xdEOg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=Ez2j82m2; arc=none smtp.client-ip=209.85.214.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-223a7065ff8so20983605ad.0
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 21:58:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1741669113; x=1742273913; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=8USPBO/MC/ax4XcIyiJLB9/BI0M0mqSA7MMjrt59Uto=;
+        b=Ez2j82m20xHQKNhorsuSx8AnaHYg8L8vXAm1cNR2XWaA0jFXh+2CK4ki8n3dwa0/ak
+         I9CUMuf0AZv8ISIXQVAT8qWQIzfzpXPdtIssTor09zGOXUVnqGw3wKBRj8r0CLDnw/tW
+         L+kGIbnzm8C0mpA86prz2hSm0QStDWqwHK26U=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741669113; x=1742273913;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=8USPBO/MC/ax4XcIyiJLB9/BI0M0mqSA7MMjrt59Uto=;
+        b=CxDuXq/PIjgnZHkNBr8cS8ggpQABqhN4J/yX5I8Z04hTE010KN/B1SAnCkKbIhvcb4
+         6rEhtEbL8l7A4iYbry5eIiHhDiqBBzKJKIrbVXVnoPFNsXUcnOzhC6HTswqqvD0mj3nd
+         i8KPC1tS0tlLrmuGGljcUPam6+9fgipZpDNmLLtcvYBjcFXFJ9y1LObPaLN2iXQFso+w
+         Er65j3e5qZ6/4xglk5FekSDt3uXcgFCmIDiUN9pYncSsdE5bMpDgS/QSIRE5f6K4Az7q
+         g2nYo/DYwXOKTYfC6vm8C9B8ldi8pRF1hYASeQzz8BZI/YXS2UUNilq7oJ4dibSMXCyV
+         OJyA==
+X-Forwarded-Encrypted: i=1; AJvYcCVnFn75uq4Ybq4LOrtXTN74Hei/3Q28MxVD3r0Ur3VpvALvtRUoi34c8fudwQjPZa2GultlDQ08r54oLqA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxW00AUaR5MJfHBNcn/p4QO8Vo/zVWjkXcOcJrRTMDPyeK9GoEb
+	R09RogoUxGDMJarmBC5q4ZaOC43EPc7qJGKZBtJ4OLaf+nNtRtnIkuxTD6S4cA==
+X-Gm-Gg: ASbGnctII6cmJ66zCZIfYELbs0KRMmiF2f7K8TKHhyAvs0i48OwLWC6gJCiRHYD/m6J
+	paXqUNh6B67Qc330l8XwmejVnzfs7DEzgTxP+CqABHqjgAWZoy6IYs5j7LWC8oR3aymJzUqPj5+
+	DH35ooxpQLG9AgMfzTvo8YfyxjJobpt39Tr2ig+vdPKhcIKHOW2BIcbi4wVO07+R+lesobKUQ6J
+	fKzumb4ixu8b7mG+bgjN+ozGV+ALMTbPgwYJRyaP8NRkiNIP6HittapYRBWQqn2bxCpMl/iNaKL
+	2JfuVr5IzZGPUf8dAYtkYbWNyP2FcNyIVOIDGXvTwR2owCZI/9VzmaEgSrs=
+X-Google-Smtp-Source: AGHT+IEy+/UJdnWSvGMFpDegWU6yxUJzFshmjVJEwVUQ1vPxzmyvb0Te8hk0DkXqfdh84yZ0kk8jEg==
+X-Received: by 2002:a05:6a00:b84:b0:736:3d7c:236c with SMTP id d2e1a72fcca58-736aaa00c36mr22819900b3a.14.1741669113611;
+        Mon, 10 Mar 2025 21:58:33 -0700 (PDT)
+Received: from google.com ([2401:fa00:8f:203:cce8:82e2:587d:db6a])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-af281287d9esm8542757a12.75.2025.03.10.21.58.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 10 Mar 2025 21:58:33 -0700 (PDT)
+Date: Tue, 11 Mar 2025 13:58:24 +0900
+From: Sergey Senozhatsky <senozhatsky@chromium.org>
+To: Qun-Wei Lin <qun-wei.lin@mediatek.com>
+Cc: Nhat Pham <nphamcs@gmail.com>, Barry Song <21cnbao@gmail.com>, 
+	Jens Axboe <axboe@kernel.dk>, Minchan Kim <minchan@kernel.org>, 
+	Sergey Senozhatsky <senozhatsky@chromium.org>, Vishal Verma <vishal.l.verma@intel.com>, 
+	Dan Williams <dan.j.williams@intel.com>, Dave Jiang <dave.jiang@intel.com>, 
+	Ira Weiny <ira.weiny@intel.com>, Andrew Morton <akpm@linux-foundation.org>, 
+	Matthias Brugger <matthias.bgg@gmail.com>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Chris Li <chrisl@kernel.org>, 
+	Ryan Roberts <ryan.roberts@arm.com>, "Huang, Ying" <ying.huang@intel.com>, 
+	Kairui Song <kasong@tencent.com>, Dan Schatzberg <schatzberg.dan@gmail.com>, 
+	Al Viro <viro@zeniv.linux.org.uk>, linux-kernel@vger.kernel.org, linux-block@vger.kernel.org, 
+	nvdimm@lists.linux.dev, linux-mm@kvack.org, linux-arm-kernel@lists.infradead.org, 
+	linux-mediatek@lists.infradead.org, Casper Li <casper.li@mediatek.com>, 
+	Chinwen Chang <chinwen.chang@mediatek.com>, Andrew Yang <andrew.yang@mediatek.com>, 
+	James Hsu <james.hsu@mediatek.com>
+Subject: Re: [PATCH 0/2] Improve Zram by separating compression context from
+ kswapd
+Message-ID: <dubgo2s3xafoitc2olyjqmkmroiowxbpbswefhdioaeupxoqs2@z3s4uuvojvyu>
+References: <20250307120141.1566673-1-qun-wei.lin@mediatek.com>
+ <CAKEwX=NfKrisQL-DBcNxBwK2ErK-u=MSzHNpETcuWWNBh9s9Bg@mail.gmail.com>
+ <CAGsJ_4ysL1xV=902oNM3vBfianF6F_iqDgyck6DGzFrZCtOprw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAGsJ_4ysL1xV=902oNM3vBfianF6F_iqDgyck6DGzFrZCtOprw@mail.gmail.com>
 
-Address bytes shifted with a single 64 bit page table entry (any page table
-level) has been always hard coded as 3 (aka 2^3 = 8). Although intuitive it
-is not very readable or easy to reason about. Besides it is going to change
-with D128, where each 128 bit page table entry will shift address bytes by
-4 (aka 2^4 = 16) instead.
+On (25/03/08 18:41), Barry Song wrote:
+> On Sat, Mar 8, 2025 at 12:03 PM Nhat Pham <nphamcs@gmail.com> wrote:
+> >
+> > On Fri, Mar 7, 2025 at 4:02 AM Qun-Wei Lin <qun-wei.lin@mediatek.com> wrote:
+> > >
+> > > This patch series introduces a new mechanism called kcompressd to
+> > > improve the efficiency of memory reclaiming in the operating system. The
+> > > main goal is to separate the tasks of page scanning and page compression
+> > > into distinct processes or threads, thereby reducing the load on the
+> > > kswapd thread and enhancing overall system performance under high memory
+> > > pressure conditions.
+> >
+> > Please excuse my ignorance, but from your cover letter I still don't
+> > quite get what is the problem here? And how would decouple compression
+> > and scanning help?
+> 
+> My understanding is as follows:
+> 
+> When kswapd attempts to reclaim M anonymous folios and N file folios,
+> the process involves the following steps:
+> 
+> * t1: Time to scan and unmap anonymous folios
+> * t2: Time to compress anonymous folios
+> * t3: Time to reclaim file folios
+> 
+> Currently, these steps are executed sequentially, meaning the total time
+> required to reclaim M + N folios is t1 + t2 + t3.
+> 
+> However, Qun-Wei's patch enables t1 + t3 and t2 to run in parallel,
+> reducing the total time to max(t1 + t3, t2). This likely improves the
+> reclamation speed, potentially reducing allocation stalls.
 
-Let's just formalise this address bytes shift value into a new macro called
-PTDESC_ORDER establishing a logical abstraction, thus improving readability
-as well. While here re-organize EARLY_LEVEL macro along with its dependents
-for better clarity. This does not cause any functional change. Also replace
-all (PAGE_SHIFT - PTDESC_ORDER) instances with PTDESC_TABLE_SHIFT.
+If compression kthread-s can run (have CPUs to be scheduled on).
+This looks a bit like a bottleneck.  Is there anything that
+guarantees forward progress?  Also, if compression kthreads
+constantly preempt kswapd, then it might not be worth it to
+have compression kthreads, I assume?
 
-Cc: Catalin Marinas <catalin.marinas@arm.com>
-Cc: Will Deacon <will@kernel.org>
-Cc: Mark Rutland <mark.rutland@arm.com>
-Cc: Andrey Ryabinin <ryabinin.a.a@gmail.com>
-Cc: Alexander Potapenko <glider@google.com>
-Cc: Andrey Konovalov <andreyknvl@gmail.com>
-Cc: Dmitry Vyukov <dvyukov@google.com>
-Cc: Ard Biesheuvel <ardb@kernel.org>
-Cc: Ryan Roberts <ryan.roberts@arm.com>
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: linux-kernel@vger.kernel.org
-Cc: kasan-dev@googlegroups.com
-Acked-by: Ard Biesheuvel <ardb@kernel.org>
-Reviewed-by: Ryan Roberts <ryan.roberts@arm.com>
-Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
----
-This patch applies on v6.14-rc6
-
-Changes in V3:
-
-- Moved PTDESC_TABLE_SHIFT definition inside asm/pgtable-hwdef.h
-- Replaced all (PAGE_SHIFT - PTDESC_ORDER) instances with PTDESC_TABLE_SHIFT
-
-Changes in V2:
-
-https://lore.kernel.org/all/20250310040115.91298-1-anshuman.khandual@arm.com/
-
-- Replaced PTE_SHIFT with PTDESC_ORDER per Ard
-- Re-organized EARLY_LEVEL macro per Mark
-
-Changes in V1:
-
-https://lore.kernel.org/all/20250307050851.4034393-1-anshuman.khandual@arm.com/
-
- arch/arm64/Kconfig                      |  2 +-
- arch/arm64/include/asm/kernel-pgtable.h |  8 +++----
- arch/arm64/include/asm/pgtable-hwdef.h  | 30 +++++++++++++++----------
- arch/arm64/kernel/pi/map_range.c        |  2 +-
- arch/arm64/mm/kasan_init.c              |  6 ++---
- 5 files changed, 27 insertions(+), 21 deletions(-)
-
-diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
-index 940343beb3d4..c8f48945cc09 100644
---- a/arch/arm64/Kconfig
-+++ b/arch/arm64/Kconfig
-@@ -323,7 +323,7 @@ config ARCH_MMAP_RND_BITS_MIN
- 	default 18
- 
- # max bits determined by the following formula:
--#  VA_BITS - PAGE_SHIFT - 3
-+#  VA_BITS - PTDESC_TABLE_SHIFT
- config ARCH_MMAP_RND_BITS_MAX
- 	default 19 if ARM64_VA_BITS=36
- 	default 24 if ARM64_VA_BITS=39
-diff --git a/arch/arm64/include/asm/kernel-pgtable.h b/arch/arm64/include/asm/kernel-pgtable.h
-index fd5a08450b12..9e93733523f6 100644
---- a/arch/arm64/include/asm/kernel-pgtable.h
-+++ b/arch/arm64/include/asm/kernel-pgtable.h
-@@ -45,11 +45,11 @@
- #define SPAN_NR_ENTRIES(vstart, vend, shift) \
- 	((((vend) - 1) >> (shift)) - ((vstart) >> (shift)) + 1)
- 
--#define EARLY_ENTRIES(vstart, vend, shift, add) \
--	(SPAN_NR_ENTRIES(vstart, vend, shift) + (add))
-+#define EARLY_ENTRIES(lvl, vstart, vend) \
-+	SPAN_NR_ENTRIES(vstart, vend, SWAPPER_BLOCK_SHIFT + lvl * PTDESC_TABLE_SHIFT)
- 
--#define EARLY_LEVEL(lvl, lvls, vstart, vend, add)	\
--	(lvls > lvl ? EARLY_ENTRIES(vstart, vend, SWAPPER_BLOCK_SHIFT + lvl * (PAGE_SHIFT - 3), add) : 0)
-+#define EARLY_LEVEL(lvl, lvls, vstart, vend, add) \
-+	((lvls) > (lvl) ? EARLY_ENTRIES(lvl, vstart, vend) + (add) : 0)
- 
- #define EARLY_PAGES(lvls, vstart, vend, add) (1 	/* PGDIR page */				\
- 	+ EARLY_LEVEL(3, (lvls), (vstart), (vend), add) /* each entry needs a next level page table */	\
-diff --git a/arch/arm64/include/asm/pgtable-hwdef.h b/arch/arm64/include/asm/pgtable-hwdef.h
-index a9136cc551cc..288964341404 100644
---- a/arch/arm64/include/asm/pgtable-hwdef.h
-+++ b/arch/arm64/include/asm/pgtable-hwdef.h
-@@ -7,40 +7,46 @@
- 
- #include <asm/memory.h>
- 
-+#define PTDESC_ORDER 3
-+
-+/* Number of VA bits resolved by a single translation table level */
-+#define PTDESC_TABLE_SHIFT	(PAGE_SHIFT - PTDESC_ORDER)
-+
- /*
-  * Number of page-table levels required to address 'va_bits' wide
-  * address, without section mapping. We resolve the top (va_bits - PAGE_SHIFT)
-- * bits with (PAGE_SHIFT - 3) bits at each page table level. Hence:
-+ * bits with PTDESC_TABLE_SHIFT bits at each page table level. Hence:
-  *
-- *  levels = DIV_ROUND_UP((va_bits - PAGE_SHIFT), (PAGE_SHIFT - 3))
-+ *  levels = DIV_ROUND_UP((va_bits - PAGE_SHIFT), PTDESC_TABLE_SHIFT)
-  *
-  * where DIV_ROUND_UP(n, d) => (((n) + (d) - 1) / (d))
-  *
-  * We cannot include linux/kernel.h which defines DIV_ROUND_UP here
-  * due to build issues. So we open code DIV_ROUND_UP here:
-  *
-- *	((((va_bits) - PAGE_SHIFT) + (PAGE_SHIFT - 3) - 1) / (PAGE_SHIFT - 3))
-+ *	((((va_bits) - PAGE_SHIFT) + PTDESC_TABLE_SHIFT - 1) / PTDESC_TABLE_SHIFT)
-  *
-  * which gets simplified as :
-  */
--#define ARM64_HW_PGTABLE_LEVELS(va_bits) (((va_bits) - 4) / (PAGE_SHIFT - 3))
-+#define ARM64_HW_PGTABLE_LEVELS(va_bits) \
-+	(((va_bits) - PTDESC_ORDER - 1) / PTDESC_TABLE_SHIFT)
- 
- /*
-  * Size mapped by an entry at level n ( -1 <= n <= 3)
-- * We map (PAGE_SHIFT - 3) at all translation levels and PAGE_SHIFT bits
-+ * We map PTDESC_TABLE_SHIFT at all translation levels and PAGE_SHIFT bits
-  * in the final page. The maximum number of translation levels supported by
-  * the architecture is 5. Hence, starting at level n, we have further
-  * ((4 - n) - 1) levels of translation excluding the offset within the page.
-  * So, the total number of bits mapped by an entry at level n is :
-  *
-- *  ((4 - n) - 1) * (PAGE_SHIFT - 3) + PAGE_SHIFT
-+ *  ((4 - n) - 1) * PTDESC_TABLE_SHIFT + PAGE_SHIFT
-  *
-  * Rearranging it a bit we get :
-- *   (4 - n) * (PAGE_SHIFT - 3) + 3
-+ *   (4 - n) * PTDESC_TABLE_SHIFT + PTDESC_ORDER
-  */
--#define ARM64_HW_PGTABLE_LEVEL_SHIFT(n)	((PAGE_SHIFT - 3) * (4 - (n)) + 3)
-+#define ARM64_HW_PGTABLE_LEVEL_SHIFT(n)	(PTDESC_TABLE_SHIFT * (4 - (n)) + PTDESC_ORDER)
- 
--#define PTRS_PER_PTE		(1 << (PAGE_SHIFT - 3))
-+#define PTRS_PER_PTE		(1 << PTDESC_TABLE_SHIFT)
- 
- /*
-  * PMD_SHIFT determines the size a level 2 page table entry can map.
-@@ -49,7 +55,7 @@
- #define PMD_SHIFT		ARM64_HW_PGTABLE_LEVEL_SHIFT(2)
- #define PMD_SIZE		(_AC(1, UL) << PMD_SHIFT)
- #define PMD_MASK		(~(PMD_SIZE-1))
--#define PTRS_PER_PMD		(1 << (PAGE_SHIFT - 3))
-+#define PTRS_PER_PMD		(1 << PTDESC_TABLE_SHIFT)
- #endif
- 
- /*
-@@ -59,14 +65,14 @@
- #define PUD_SHIFT		ARM64_HW_PGTABLE_LEVEL_SHIFT(1)
- #define PUD_SIZE		(_AC(1, UL) << PUD_SHIFT)
- #define PUD_MASK		(~(PUD_SIZE-1))
--#define PTRS_PER_PUD		(1 << (PAGE_SHIFT - 3))
-+#define PTRS_PER_PUD		(1 << PTDESC_TABLE_SHIFT)
- #endif
- 
- #if CONFIG_PGTABLE_LEVELS > 4
- #define P4D_SHIFT		ARM64_HW_PGTABLE_LEVEL_SHIFT(0)
- #define P4D_SIZE		(_AC(1, UL) << P4D_SHIFT)
- #define P4D_MASK		(~(P4D_SIZE-1))
--#define PTRS_PER_P4D		(1 << (PAGE_SHIFT - 3))
-+#define PTRS_PER_P4D		(1 << PTDESC_TABLE_SHIFT)
- #endif
- 
- /*
-diff --git a/arch/arm64/kernel/pi/map_range.c b/arch/arm64/kernel/pi/map_range.c
-index 2b69e3beeef8..dc68d09555b9 100644
---- a/arch/arm64/kernel/pi/map_range.c
-+++ b/arch/arm64/kernel/pi/map_range.c
-@@ -31,7 +31,7 @@ void __init map_range(u64 *pte, u64 start, u64 end, u64 pa, pgprot_t prot,
- {
- 	u64 cmask = (level == 3) ? CONT_PTE_SIZE - 1 : U64_MAX;
- 	pteval_t protval = pgprot_val(prot) & ~PTE_TYPE_MASK;
--	int lshift = (3 - level) * (PAGE_SHIFT - 3);
-+	int lshift = (3 - level) * PTDESC_TABLE_SHIFT;
- 	u64 lmask = (PAGE_SIZE << lshift) - 1;
- 
- 	start	&= PAGE_MASK;
-diff --git a/arch/arm64/mm/kasan_init.c b/arch/arm64/mm/kasan_init.c
-index b65a29440a0c..d541ce45daeb 100644
---- a/arch/arm64/mm/kasan_init.c
-+++ b/arch/arm64/mm/kasan_init.c
-@@ -190,7 +190,7 @@ static void __init kasan_pgd_populate(unsigned long addr, unsigned long end,
-  */
- static bool __init root_level_aligned(u64 addr)
- {
--	int shift = (ARM64_HW_PGTABLE_LEVELS(vabits_actual) - 1) * (PAGE_SHIFT - 3);
-+	int shift = (ARM64_HW_PGTABLE_LEVELS(vabits_actual) - 1) * PTDESC_TABLE_SHIFT;
- 
- 	return (addr % (PAGE_SIZE << shift)) == 0;
- }
-@@ -245,7 +245,7 @@ static int __init root_level_idx(u64 addr)
- 	 */
- 	u64 vabits = IS_ENABLED(CONFIG_ARM64_64K_PAGES) ? VA_BITS
- 							: vabits_actual;
--	int shift = (ARM64_HW_PGTABLE_LEVELS(vabits) - 1) * (PAGE_SHIFT - 3);
-+	int shift = (ARM64_HW_PGTABLE_LEVELS(vabits) - 1) * PTDESC_TABLE_SHIFT;
- 
- 	return (addr & ~_PAGE_OFFSET(vabits)) >> (shift + PAGE_SHIFT);
- }
-@@ -269,7 +269,7 @@ static void __init clone_next_level(u64 addr, pgd_t *tmp_pg_dir, pud_t *pud)
-  */
- static int __init next_level_idx(u64 addr)
- {
--	int shift = (ARM64_HW_PGTABLE_LEVELS(vabits_actual) - 2) * (PAGE_SHIFT - 3);
-+	int shift = (ARM64_HW_PGTABLE_LEVELS(vabits_actual) - 2) * PTDESC_TABLE_SHIFT;
- 
- 	return (addr >> (shift + PAGE_SHIFT)) % PTRS_PER_PTE;
- }
--- 
-2.25.1
-
+If we have a pagefault and need to map a page that is still in
+the compression queue (not compressed and stored in zram yet, e.g.
+dut to scheduling latency + slow compression algorithm) then what
+happens?
 
