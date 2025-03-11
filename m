@@ -1,55 +1,78 @@
-Return-Path: <linux-kernel+bounces-555531-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-555532-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A599A5B929
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 07:22:23 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 47CA3A5B92F
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 07:24:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CE32F1893BCF
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 06:22:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C97F21893BF9
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 06:24:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B56F61EE7B7;
-	Tue, 11 Mar 2025 06:22:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C2861F872F;
+	Tue, 11 Mar 2025 06:24:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.de header.i=deller@gmx.de header.b="pUH2nTQ5"
-Received: from mout.gmx.net (mout.gmx.net [212.227.17.20])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=daynix-com.20230601.gappssmtp.com header.i=@daynix-com.20230601.gappssmtp.com header.b="FPoHkQ99"
+Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97EFA1684AC;
-	Tue, 11 Mar 2025 06:22:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 151411E4928
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 06:24:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741674135; cv=none; b=bfUxchG0T2yWq2TdrWQWCKCEcjyXtD3mND1lzGdGr+ubCE12DTqwrRMsmZMc1IJgZ9QnKYyG+xIJn1EoPkCupgH1WD8YEVrz8hRKOnri/1baVZh/gH0Ytj2SmWdLfLtm/ZrtgjFNNWal2SE9tObUD08qMkAS04ebXj9iD+tXZrk=
+	t=1741674254; cv=none; b=IELVgDDiEtzfZmBgvY6oWZU8WfGQ/3boGPX8Fwaw2b6ZNkqShAFTH/o3d2D8sZvbUyYDE2tGdcyvvwAuK4c9ecsq2pqbeoDhhNjqpot+AgtcANepPhD7L25tLHvMUyyJmwJ1Gfw0l6YlwJQEywm9K4RmgvVW+sUSF5dlo+mjsvQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741674135; c=relaxed/simple;
-	bh=CjMfu1/BYp6fxCwvprSHtpdDUUGIcPtskeSLRTb/RL8=;
+	s=arc-20240116; t=1741674254; c=relaxed/simple;
+	bh=DsqDEHlBUwS8fyV8/WMCNPW7k1Q8GQhlh9GKPXRNGBY=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=OUgzc2vcxD6t8LI1M1dVCE+qvntw/vvEKJ4471keuNHiFsnfsVDV/tQO7JYxjp9AcKo6eD2wIuu2CRbgdvuFe7WgmlwdRyZp/CvIR181v6/pszziFjBGwRocnhOBMRGRd7SyuefWvQEQ5vYZXUn7uZdEORKSJuh/o0aFtDi7t9A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=deller@gmx.de header.b=pUH2nTQ5; arc=none smtp.client-ip=212.227.17.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
-	s=s31663417; t=1741674122; x=1742278922; i=deller@gmx.de;
-	bh=SRHBebjBNXM4fod5aEeNFESgCczxuBKBAyYU7j61vG0=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=pUH2nTQ5yvE1NbUA43RVznw6tZjU5ifENzR2sDqPBwU+7qKBm6Zz35t992BJfDYA
-	 YH4KfkPiCNxRRMUzIgtfd0G6EISUFyGQC2fHOp8knhKGk3DgisoElauyG0SrQ+kUI
-	 qdDDaVv0aLFU84ZTAYdAOeQSt4hBGUbQY3H9VxjUVxxT9MxqxEHraM0MA8fs0pTmf
-	 s3vJD57GXCVb0iBWB8dd+E1Et2z6DtWe7gXwHcIKpfSdzui8v0Zwbev9N2XnWheM4
-	 dgDF6YnIXX08GVCP+jJR2109lr2l8u23Qxas0l+0TGO6NeMgXOZPGb9eajUKT75Jl
-	 yDFIWA8PbIXcSR/Mpg==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from [192.168.20.173] ([109.250.63.121]) by mail.gmx.net (mrgmx105
- [212.227.17.168]) with ESMTPSA (Nemesis) id 1N95eJ-1tCAYg4503-00snES; Tue, 11
- Mar 2025 07:22:02 +0100
-Message-ID: <efa8ffb6-2d6f-4007-94d9-2e41b4e7410a@gmx.de>
-Date: Tue, 11 Mar 2025 07:22:00 +0100
+	 In-Reply-To:Content-Type; b=K34RKOQiBOwNNJDksxadrQaDBXsy+erYQyMsrlePsi0cWr/SQd5U9ASLWa37lzjfUjvOH5ldyR6Ig/Be4FfNgVfL3KpYg7o/1h/N7UlmRz0bbuGLOWX02bGYpHFhmHNNAwxefvthrC065tCAXRdvieZVFWeRTmV6XXnCjrd1jb0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=daynix.com; spf=pass smtp.mailfrom=daynix.com; dkim=pass (2048-bit key) header.d=daynix-com.20230601.gappssmtp.com header.i=@daynix-com.20230601.gappssmtp.com header.b=FPoHkQ99; arc=none smtp.client-ip=209.85.214.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=daynix.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=daynix.com
+Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-22349bb8605so92787245ad.0
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Mar 2025 23:24:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=daynix-com.20230601.gappssmtp.com; s=20230601; t=1741674252; x=1742279052; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=hcOWo3MpfkZwJWARJhxBJx9ftvSTMuCRJKTKMNfQ2T0=;
+        b=FPoHkQ9991pPxzcc1wNC8ql57JSLUfNSGlxHUt/djJvzy6tttksaE1tmYgZn/MSq6x
+         lheb9UNZRvv0CS3g7cAZbIkWUi0QW94/r3W7YPyowTp8j1CVIsojnZzWdIfE5IHMgxox
+         xpMbh0USTe0mijm9J/kWE+nUQDGnb3RAGZvbVQ3206vnggOSGs/Qmhauaf3cIILDwelF
+         EnQfIxlrnuULyyF9yAympiFuc98OYBkyvNvLiHskPcr8sTxahCxq1eYLSb/8H9ie7Pg+
+         SCLC4/3BzU04zYQZYRSDg4clysyhLsn6BYahOjjzCdzEjTXvADo3uLgEBD8fikXhi4m1
+         vvHw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741674252; x=1742279052;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=hcOWo3MpfkZwJWARJhxBJx9ftvSTMuCRJKTKMNfQ2T0=;
+        b=pxED1hy3+f3DxaC+L9VeS6GrIc3Fs6G0HsbMmGizxuN0e1PnF7o2gIn5uCyRiJfyV+
+         EeKXixHihM3M5BPSl4hPbYBmXEX/zSs3jqYtb9llfeQkPbDHKtjbgNN1oGl6NPGGLDCR
+         J6Tco/8z6HlTaoZOWGXmfVMUBw4uureh7lgfm4GdE3RiYTyKEIXOVl0iYyz/HXIL/ozL
+         rIF4EXbvQPA1alvk7DPQ+Slc1a3otTGoL8XKJMwyifvcX63U0DIgtZT1aIwb1ypIIwNr
+         OmeNS6ay8MwPyjEpTGvqS6rjx6gPq0cA0p2ZNL93/n1/ZumAGpsWG4gU5sUIv4mGpg98
+         Vs7A==
+X-Forwarded-Encrypted: i=1; AJvYcCV4UoUZM5eVLucUtwDifs4GGdVxxzZ74aKuqgrgmUYjP5LyMRc0A5FZ8DdO+LmgRAq+lMbOSv5JgFRQiU4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzhmvILCyHX26FI6rKo9PSbtcWNvDcTmjvO8oB5d+B9bwSVBOW9
+	DQ2wxBrxI0b+74DmMR4Ir70v7q0ux0Y7ToN5G4xJotkjRdC1ZiWbBizuld00okw=
+X-Gm-Gg: ASbGncsFzGjK3uATkVZie4y4xNB8ZvEg2W5Y7kBychqp8x1TwPvPJbqfwLZTNNyzOT8
+	4OItOFzGvPF6eNr74/p6kdY6N4ZCnLbt9+sTPsO0RCnezgrECQBvwOjQrj4OA7+jb7csso5CXLs
+	0ImNB915lNv8nUUJjchagF8WTr3sp3eXaHJMCuuzm9PD0ZiPj8u8Z4sqQS6Z6O7AqzIWNLx++1X
+	tM6ajhY1y+eeNYeKZL+N4IXry4oQmnulSZ724r/2oDrYO+lGMJsJEhnwtBj9CatiA8E/pEMwolt
+	20f+At0g8elM4Wbii5zJUD1xCYWlSPg7XO3OhB+7uqZDu0HDdz7XcnuELA==
+X-Google-Smtp-Source: AGHT+IGn18ZSOeDi0OtiFl4e+mdyHaJbBZUtxUxoxSL45HZJeEfhcKnA+r8VKFVTyGuyQbzX9uCMeA==
+X-Received: by 2002:a05:6a00:1a92:b0:730:d5ca:aee with SMTP id d2e1a72fcca58-736aaae81e6mr21317990b3a.23.1741674252333;
+        Mon, 10 Mar 2025 23:24:12 -0700 (PDT)
+Received: from [157.82.205.237] ([157.82.205.237])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-736a336010dsm9010979b3a.59.2025.03.10.23.24.08
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 10 Mar 2025 23:24:12 -0700 (PDT)
+Message-ID: <1dd2417a-3246-44b0-b4ba-feadfd6f794e@daynix.com>
+Date: Tue, 11 Mar 2025 15:24:06 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -57,101 +80,155 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: linux-next: duplicate patch in the fbdev tree
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Wei Liu <wei.liu@kernel.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- Linux Next Mailing List <linux-next@vger.kernel.org>
-References: <20250311143021.0cc40c0e@canb.auug.org.au>
+Subject: Re: [PATCH net-next v9 6/6] vhost/net: Support
+ VIRTIO_NET_F_HASH_REPORT
+To: Jason Wang <jasowang@redhat.com>
+Cc: Jonathan Corbet <corbet@lwn.net>,
+ Willem de Bruijn <willemdebruijn.kernel@gmail.com>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ "Michael S. Tsirkin" <mst@redhat.com>, Xuan Zhuo
+ <xuanzhuo@linux.alibaba.com>, Shuah Khan <shuah@kernel.org>,
+ linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ netdev@vger.kernel.org, kvm@vger.kernel.org,
+ virtualization@lists.linux-foundation.org, linux-kselftest@vger.kernel.org,
+ Yuri Benditovich <yuri.benditovich@daynix.com>,
+ Andrew Melnychenko <andrew@daynix.com>,
+ Stephen Hemminger <stephen@networkplumber.org>, gur.stavi@huawei.com,
+ Lei Yang <leiyang@redhat.com>, Simon Horman <horms@kernel.org>
+References: <20250307-rss-v9-0-df76624025eb@daynix.com>
+ <20250307-rss-v9-6-df76624025eb@daynix.com>
+ <CACGkMEuccQ6ah-aZ3tcW1VRuetEoPA_NaLxLT+9fb0uAab8Agg@mail.gmail.com>
+ <2e550452-a716-4c3f-9d5a-3882d2c9912a@daynix.com>
+ <CACGkMEu9tynRgTh__3p_vSqOekSirbVgS90rd5dUiJru9oV1eg@mail.gmail.com>
 Content-Language: en-US
-From: Helge Deller <deller@gmx.de>
-Autocrypt: addr=deller@gmx.de; keydata=
- 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
-In-Reply-To: <20250311143021.0cc40c0e@canb.auug.org.au>
+From: Akihiko Odaki <akihiko.odaki@daynix.com>
+In-Reply-To: <CACGkMEu9tynRgTh__3p_vSqOekSirbVgS90rd5dUiJru9oV1eg@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:ALnnbLuDM9CoIoOf2LXY3gFvxC4j/Sq8MSMh0VgqgSgeLtBOMef
- uK9h/dtd2wLtrXXsT/5UfAoRcBSaAPs640vksmXWE2wiOoxzPepfo8sZTqXKmzehgG+ZK3I
- 1DNd01h5rlyt8SvcAhPPM69ULsUtyi6roJZbgfrl4lL2SGOT/tIoDGEa60TI3rzHgTv/TFr
- qiVpt0JkRItolpxEkP0fA==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:FcioF6WzC1M=;NVyg4ekXInL9x3UxTRb6d29TtZw
- BKcYWHveL1uS1L5/cTOLh8yz3QHagtOqEKUV9VoPqnI2IcLPx1605PwINUElzFEEqL5hDN5Wb
- yHahmBwKdFr3UFuvDzOES/Imf7hZtQprLN0iGtYZehnVscxoYuay4aP8TLUe1N/+R2gbddq7g
- OG0PMIxHFXpn/iNN2kKeH6+o7Q1rtMTs26cBxst5cc3NLJVT4t277lOSoWqaM4zDTFH5c68nu
- TZL4kHNKf2aGCLY2UE7XZmuxnMslO3MDo05hrP0ivbas58TYaYA7hQ1Lyyh6pWt1rXm0MomK0
- ny+f9d1Pe8DPo7G5ztlQ4fSw1yL7bNqRYIK/4WmL8uEuR2pZKT/bEhAVYYehwqjHMw9aiiEok
- KDB+a58Om9+0yiOiXEMzxS+k1aKvANVuT8Clts3xIU5WVx4ybHrjtMNjxU90Dst9evTve0qXZ
- KY1CmrEc1CH7SF+vsGSIj+SBla8i8KUKtQ62agfuE7jXUmExnoisxaBxPmWKo1MC+l52RTq+q
- AhrLG3I0Rh/yxwSN+6KIV4q2e0OCClUCcOsyDrbN62vxZ6cGUlCpgRvg/RQxUlYdAqsZwF3Bo
- 9ClZirhyVB8ggD+tvYt9XHmNG4XRt46dHLKH+ZtVt4B3C7yy26hp1dNX70qImpEDWMlaz+R0l
- U3p69vOxscJ+Uyj16tUGjlWQi3zAat+EqKRT6tYMNvnY9v6YqoY8KN4YOKpRhOKqbu+jMKgq4
- Klo+E80AqBbusw4COgqd2sC5b9kGo4TDs4tRPMDsYfme8wNkQ+qilEt2ez1++yBEyD+ixOUTD
- DKa8vYfpLk6f9adMzuJzGwpXziCUaGDdkAUu8if7fo7GnzgCQKbB49bUl02b93GqbnQsFGR0l
- T0g0EA7ZAkyZpCQ/1+WmKkA3SocH6NmGIGp1Km+UXzazGXhYuWcfzOWSCsBSVjTsmaQCoI5jE
- DwWCTBC+Q3Wk54Y7WTylW+i+yi20qwCPZcRRZhw9HmRtaetn+7/N0z1LhC1RUY3yXE+qcTpXd
- QAhACgazrSWnkMpC0BI5s/oUR1m4pbR8QLA1k9vT8H6bAgGmNXlg1hM+hgCSArCwJ9IS1gBHK
- NSFjjT7d52/6TVX4rA4D1ZSDhcf1ziJiDIyYLN5NiApnAGKs2H9PvSHUb+9JVEn8GYIyAfOfj
- E+8q5cXDypQp06N/v3JRgLk5WsFPuhW4r8ht3qDuqokxW80VfzUoMQn0QWr6ZQep+MEwD+8Oz
- sHlUF58rsBblXU7uXo3SPhFoBFJW05Qp9Hd7uFtMvGsY3IjvCCvmaFBd+8Ax5y/LaRppoRftq
- RXkY4dAAjfqk/sOlQm8jXp7WE174rKTT9AkFG5EWbfzYtWjEqgYfk4X5gUtXNy2ZZdKkKfi0Y
- BpyexRB0BGWc+N5/IxMyQzWaAPwi6kreLInADOp8MIcnaAkT0DPA8KQMP3
+Content-Transfer-Encoding: 8bit
 
-On 3/11/25 04:30, Stephen Rothwell wrote:
-> The following commit is also in the hyperv-fixes tree as a different
-> commit (but the same patch):
->
->    f2b558988c7d ("fbdev: hyperv_fb: Fix hang in kdump kernel when on Hyp=
-er-V Gen 2 VMs")
->
-> This is comment
->
->    304386373007 ("fbdev: hyperv_fb: Fix hang in kdump kernel when on Hyp=
-er-V Gen 2 VMs")
->
-> in the hyperv-fixes tree.
+On 2025/03/11 9:42, Jason Wang wrote:
+> On Mon, Mar 10, 2025 at 3:04 PM Akihiko Odaki <akihiko.odaki@daynix.com> wrote:
+>>
+>> On 2025/03/10 13:43, Jason Wang wrote:
+>>> On Fri, Mar 7, 2025 at 7:02 PM Akihiko Odaki <akihiko.odaki@daynix.com> wrote:
+>>>>
+>>>> VIRTIO_NET_F_HASH_REPORT allows to report hash values calculated on the
+>>>> host. When VHOST_NET_F_VIRTIO_NET_HDR is employed, it will report no
+>>>> hash values (i.e., the hash_report member is always set to
+>>>> VIRTIO_NET_HASH_REPORT_NONE). Otherwise, the values reported by the
+>>>> underlying socket will be reported.
+>>>>
+>>>> VIRTIO_NET_F_HASH_REPORT requires VIRTIO_F_VERSION_1.
+>>>>
+>>>> Signed-off-by: Akihiko Odaki <akihiko.odaki@daynix.com>
+>>>> Tested-by: Lei Yang <leiyang@redhat.com>
+>>>> ---
+>>>>    drivers/vhost/net.c | 49 +++++++++++++++++++++++++++++--------------------
+>>>>    1 file changed, 29 insertions(+), 20 deletions(-)
+>>>>
+>>>> diff --git a/drivers/vhost/net.c b/drivers/vhost/net.c
+>>>> index b9b9e9d40951856d881d77ac74331d914473cd56..16b241b44f89820a42c302f3586ea6bb5e0d4289 100644
+>>>> --- a/drivers/vhost/net.c
+>>>> +++ b/drivers/vhost/net.c
+>>>> @@ -73,6 +73,7 @@ enum {
+>>>>           VHOST_NET_FEATURES = VHOST_FEATURES |
+>>>>                            (1ULL << VHOST_NET_F_VIRTIO_NET_HDR) |
+>>>>                            (1ULL << VIRTIO_NET_F_MRG_RXBUF) |
+>>>> +                        (1ULL << VIRTIO_NET_F_HASH_REPORT) |
+>>>>                            (1ULL << VIRTIO_F_ACCESS_PLATFORM) |
+>>>>                            (1ULL << VIRTIO_F_RING_RESET)
+>>>>    };
+>>>> @@ -1097,9 +1098,11 @@ static void handle_rx(struct vhost_net *net)
+>>>>                   .msg_controllen = 0,
+>>>>                   .msg_flags = MSG_DONTWAIT,
+>>>>           };
+>>>> -       struct virtio_net_hdr hdr = {
+>>>> -               .flags = 0,
+>>>> -               .gso_type = VIRTIO_NET_HDR_GSO_NONE
+>>>> +       struct virtio_net_hdr_v1_hash hdr = {
+>>>> +               .hdr = {
+>>>> +                       .flags = 0,
+>>>> +                       .gso_type = VIRTIO_NET_HDR_GSO_NONE
+>>>> +               }
+>>>>           };
+>>>>           size_t total_len = 0;
+>>>>           int err, mergeable;
+>>>> @@ -1110,7 +1113,6 @@ static void handle_rx(struct vhost_net *net)
+>>>>           bool set_num_buffers;
+>>>>           struct socket *sock;
+>>>>           struct iov_iter fixup;
+>>>> -       __virtio16 num_buffers;
+>>>>           int recv_pkts = 0;
+>>>>
+>>>>           mutex_lock_nested(&vq->mutex, VHOST_NET_VQ_RX);
+>>>> @@ -1191,30 +1193,30 @@ static void handle_rx(struct vhost_net *net)
+>>>>                           vhost_discard_vq_desc(vq, headcount);
+>>>>                           continue;
+>>>>                   }
+>>>> +               hdr.hdr.num_buffers = cpu_to_vhost16(vq, headcount);
+>>>>                   /* Supply virtio_net_hdr if VHOST_NET_F_VIRTIO_NET_HDR */
+>>>>                   if (unlikely(vhost_hlen)) {
+>>>> -                       if (copy_to_iter(&hdr, sizeof(hdr),
+>>>> -                                        &fixup) != sizeof(hdr)) {
+>>>> +                       if (copy_to_iter(&hdr, vhost_hlen,
+>>>> +                                        &fixup) != vhost_hlen) {
+>>>>                                   vq_err(vq, "Unable to write vnet_hdr "
+>>>>                                          "at addr %p\n", vq->iov->iov_base);
+>>>>                                   goto out;
+>>>
+>>> Is this an "issue" specific to RSS/HASH? If it's not, we need a separate patch.
+>>>
+>>> Honestly, I'm not sure if it's too late to fix this.
+>>
+>> There is nothing wrong with the current implementation.
+> 
+> Note that I meant the vhost_hlen part, and the current code is tricky.
+> 
+> The comment said:
+> 
+> """
+> /* Supply virtio_net_hdr if VHOST_NET_F_VIRTIO_NET_HDR */
+> """
+> 
+> So it tries to only offer virtio_net_hdr even if vhost_hlen is the set
+> to mrg_rxbuf len.
+> 
+> And this patch changes this behaviour.
 
-I've dropped that patch from the fbdev tree.
+mrg_rxbuf only adds the num_buffers field, which is always set for 
+mrg_rxbuf.
 
-Helge
+The num_buffers was not set for VIRTIO_F_VERSION_1 in the past, but this 
+was also fixed with commit a3b9c053d82a ("vhost/net: Set num_buffers for 
+virtio 1.0")
+
+So there is no behavioral change for existing features with this patch.
+
+Regards,
+Akihiko Odaki
+
+> 
+> Thanks
+> 
+>> The current
+>> implementation fills the header with zero except num_buffers, which it
+>> fills some real value. This functionality is working fine with
+>> VIRTIO_NET_F_MRG_RXBUF and VIRTIO_F_VERSION_1, which change the header size.
+>>
+>> Now I'm adding VIRTIO_NET_F_HASH_REPORT and it adds the hash_report
+>> field, which also needs to be initialized with zero, so I'm making sure
+>> vhost_net will also initialize it.
+>>
+>> Regards,
+>> Akihiko Odaki
+>>
+>>>
+>>> Others look fine.
+>>>
+>>> Thanks
+>>>
+>>
+> 
+
 
