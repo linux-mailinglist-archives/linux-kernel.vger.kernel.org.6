@@ -1,393 +1,233 @@
-Return-Path: <linux-kernel+bounces-555921-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-555922-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0FA25A5BE5A
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 11:59:16 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 99156A5BE5D
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 12:00:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D3A663B1ECC
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 10:59:00 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8253F7AAB91
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 10:58:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 190A2255E46;
-	Tue, 11 Mar 2025 10:58:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="B/q+k2gU"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D638525487F
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 10:58:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CFDB251797;
+	Tue, 11 Mar 2025 10:59:02 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C087F250BF8
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 10:58:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741690691; cv=none; b=iyLPB0w4xF0DmnlWGh7i3wikB3jRvL0LLeKolZ1IlJEwJHU0GrZgvp3xEqYyI8aN8F98pqjAoR3I2cqBuLW/nJ9c+QLvADTmfNqaCR0ymBgOT7hBxFcKEETOmLECgNULLQ4zshHw1RQBxLn1/sP16fbzXTG+/XmNjTX3PRoup1I=
+	t=1741690741; cv=none; b=nqsC1zRjKYo30S2DueQ4OpMe1UzMCXsHfXjNJy7m5oQtkFqN2wXlavDVI/npDEq6lljUDVgGN8Apq0ii61oVzEh7QWH0X2xebDVazRQwSP6trQAl//KTdjHohAf2d3XZSS+cTltlBfRrY5oLv58PSSqzXsZru3ebrH5XD1Yp/ZA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741690691; c=relaxed/simple;
-	bh=lPhvqY/DWixvUiDxDCvdqjupeH75rYCFT5oA6pH3xgs=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=UNr+pXDVOiaulq4rnbVP8n8T1zgiL/N0FGo8F70Z/+LHDJhwGW/cYCny80ByGz6vJRxgcljg5WxNLQ1YDWsCBJJHibRpPN+HgbfbKTS9cJhNIQ36SytkvfqfHvQawVF/DyqTKfqLrhEwSmTTfcGtnuyuuso2kM6zzrwkl9P7U28=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=B/q+k2gU; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1741690687;
-	bh=lPhvqY/DWixvUiDxDCvdqjupeH75rYCFT5oA6pH3xgs=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=B/q+k2gUfpJxaP1MbZbcLp6p5RMuemUtDJ79SVYugM6u7/FxDrr/G4ASyZxvWsH6f
-	 /FzEODi8d1u4w9ZPncPGqQ4sejL9HE5V5eaYWlovyzOEICCgm3PwCyjDOgFkpfediT
-	 v0c6Nuhczt7h3xwByfXvftyrgZrpzncvrTIt26Tb/l6RPUxg4vH6Rg4NEskgz9Kf7P
-	 ROISW5JfOU5pfQD6Ze5WgD8c0nmQHxWIjbtMeztWDaC47Mn+qPPns5YRI7eycwv9k1
-	 ur+FPbJigTQ/8+sSTfcX3rvMEbgOAsFElRc6VePAhJZ3Sb4MPrtXq9r6N/k3bGi/+C
-	 VG14cBaPyNjfw==
-Received: from localhost (unknown [84.232.140.93])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: cristicc)
-	by bali.collaboradmins.com (Postfix) with UTF8SMTPSA id 0448D17E0657;
-	Tue, 11 Mar 2025 11:58:06 +0100 (CET)
-From: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
-Date: Tue, 11 Mar 2025 12:57:39 +0200
-Subject: [PATCH v2 7/7] drm/tests: hdmi: Add max TMDS rate fallback tests
- for YUV420 mode
+	s=arc-20240116; t=1741690741; c=relaxed/simple;
+	bh=XVzqMHkJc4JT2E7A6VzB/d4ACXN8tfVE4I1WavXkVKM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=R7EuUgBfRLR0XyNtANKxuCRSi/k50vjQ4um2rHd4RQ3kNV2Dr42rs6dV7qNL0R+ep+Ikryngdy+a107VNvu9c3suo62DfZKUbpEVg+jkqLjbaJMSC6e1/JyxitFi5ZzdPCfVfRgQrqAw6XzkJku5N6b1ozlIQdGTS4TYSZAC7Cc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 37B411762;
+	Tue, 11 Mar 2025 03:59:10 -0700 (PDT)
+Received: from [10.1.30.125] (XHFQ2J9959.cambridge.arm.com [10.1.30.125])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id EEE1B3F673;
+	Tue, 11 Mar 2025 03:58:55 -0700 (PDT)
+Message-ID: <7cca1edf-fd1b-4622-999e-8e0ca098dfe2@arm.com>
+Date: Tue, 11 Mar 2025 10:58:54 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250311-hdmi-conn-yuv-v2-7-fbdb94f02562@collabora.com>
-References: <20250311-hdmi-conn-yuv-v2-0-fbdb94f02562@collabora.com>
-In-Reply-To: <20250311-hdmi-conn-yuv-v2-0-fbdb94f02562@collabora.com>
-To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
- Dave Stevenson <dave.stevenson@raspberrypi.com>, 
- Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc: kernel@collabora.com, dri-devel@lists.freedesktop.org, 
- linux-kernel@vger.kernel.org
-X-Mailer: b4 0.14.2
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 4/4] iommu/arm: Add BBM Level 2 smmu feature
+Content-Language: en-GB
+To: Suzuki K Poulose <suzuki.poulose@arm.com>,
+ Yang Shi <yang@os.amperecomputing.com>,
+ =?UTF-8?Q?Miko=C5=82aj_Lenczewski?= <miko.lenczewski@arm.com>,
+ catalin.marinas@arm.com, will@kernel.org, joro@8bytes.org,
+ jean-philippe@linaro.org, mark.rutland@arm.com, joey.gouly@arm.com,
+ oliver.upton@linux.dev, james.morse@arm.com, broonie@kernel.org,
+ maz@kernel.org, david@redhat.com, akpm@linux-foundation.org, jgg@ziepe.ca,
+ nicolinc@nvidia.com, mshavit@google.com, jsnitsel@redhat.com,
+ smostafa@google.com, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, iommu@lists.linux.dev
+References: <20250228182403.6269-2-miko.lenczewski@arm.com>
+ <20250228182403.6269-6-miko.lenczewski@arm.com>
+ <b46dc626-edc9-4d20-99d2-6cd08a01346c@os.amperecomputing.com>
+ <43732270-8fd0-4a18-abec-096e383a6a4d@arm.com>
+ <5ff34bd0-7823-4f31-9f13-bf60d3345b99@arm.com>
+From: Ryan Roberts <ryan.roberts@arm.com>
+In-Reply-To: <5ff34bd0-7823-4f31-9f13-bf60d3345b99@arm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Provide tests to verify drm_atomic_helper_connector_hdmi_check() helper
-fallback behavior when using YUV420 output.
+On 11/03/2025 10:17, Suzuki K Poulose wrote:
+> On 03/03/2025 10:17, Ryan Roberts wrote:
+>> On 01/03/2025 01:32, Yang Shi wrote:
+>>>
+>>>
+>>>
+>>> On 2/28/25 10:24 AM, Mikołaj Lenczewski wrote:
+>>>> For supporting BBM Level 2 for userspace mappings, we want to ensure
+>>>> that the smmu also supports its own version of BBM Level 2. Luckily, the
+>>>> smmu spec (IHI 0070G 3.21.1.3) is stricter than the aarch64 spec (DDI
+>>>> 0487K.a D8.16.2), so already guarantees that no aborts are raised when
+>>>> BBM level 2 is claimed.
+>>>>
+>>>> Add the feature and testing for it under arm_smmu_sva_supported().
+>>>>
+>>>> Signed-off-by: Mikołaj Lenczewski <miko.lenczewski@arm.com>
+>>>> ---
+>>>>    arch/arm64/kernel/cpufeature.c                  | 7 +++----
+>>>>    drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3-sva.c | 3 +++
+>>>>    drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c     | 3 +++
+>>>>    drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.h     | 4 ++++
+>>>>    4 files changed, 13 insertions(+), 4 deletions(-)
+>>>>
+>>>> diff --git a/arch/arm64/kernel/cpufeature.c b/arch/arm64/kernel/cpufeature.c
+>>>> index 63f6d356dc77..1022c63f81b2 100644
+>>>> --- a/arch/arm64/kernel/cpufeature.c
+>>>> +++ b/arch/arm64/kernel/cpufeature.c
+>>>> @@ -2223,8 +2223,6 @@ static bool has_bbml2_noabort(const struct
+>>>> arm64_cpu_capabilities *caps, int sco
+>>>>                if (!cpu_has_bbml2_noabort(__cpu_read_midr(cpu)))
+>>>>                    return false;
+>>>>            }
+>>>> -
+>>>> -        return true;
+>>>>        } else if (scope & SCOPE_LOCAL_CPU) {
+>>>>            /* We are a hot-plugged CPU, so only need to check our MIDR.
+>>>>             * If we have the correct MIDR, but the kernel booted on an
+>>>> @@ -2232,10 +2230,11 @@ static bool has_bbml2_noabort(const struct
+>>>> arm64_cpu_capabilities *caps, int sco
+>>>>             * we have an incorrect MIDR, but the kernel booted on a
+>>>>             * sufficient CPU, we will not bring up this CPU.
+>>>>             */
+>>>> -        return cpu_has_bbml2_noabort(read_cpuid_id());
+>>>> +        if (!cpu_has_bbml2_noabort(read_cpuid_id()))
+>>>> +            return false;
+>>>>        }
+>>>>    -    return false;
+>>>> +    return has_cpuid_feature(caps, scope);
+>>>
+>>> Do we really need this? IIRC, it means the MIDR has to be in the allow list
+>>> *AND* MMFR2 register has to be set too. AmpereOne doesn't have MMFR2 register
+>>> set.
+>>
+>> Miko, I think this should have been squashed into patch #1? It doesn't belong in
+>> this patch.
+>>
+>> Yang, we discussed this internally and decided that we thought it was best to
+>> still require BBML2 being advertised in the feature register. That way if trying
+>> to use KVM to emulate a CPU that is in the allow list but doesn't really support
+>> BBML2, we won't try to use it.
+>>
+>> But we still end up with the same problem if running on a physical CPU that
+>> supports BBML2 with conflict aborts, but emulating a CPU in the allow list. So
+> 
+> I don't understand the problem here ? In the worst case, if we want to disable
+> the BBML2 feature on a given CPU, we could provide an id-
+> override to reset the value of BBML2. Or provide a kernel parameter to
+> disable this in case we want to absolutely disable the feature on a
+> "distro" kernel.
 
-Also rename drm_test_check_max_tmds_rate_{bpc|format}_fallback() to
-better differentiate from the newly introduced *_yuv420() variants.
+Hi Suzuki,
 
-Signed-off-by: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
----
- drivers/gpu/drm/tests/drm_hdmi_state_helper_test.c | 145 ++++++++++++++++++++-
- drivers/gpu/drm/tests/drm_kunit_edid.h             | 110 ++++++++++++++++
- 2 files changed, 251 insertions(+), 4 deletions(-)
+Sorry perhaps I'm confusing everyone; As I recall, we had a conversation before
+Miko posted this series where you were suggesting we should check BOTH that all
+the CPUs' MIDRs are in the allow list AND that BBML2 is advertised in MMFR2 in
+order to decide to enable the CPU feature. My understanding was that without the
+MMFR2 check, you were concerned that in a virtualization scenario, a CPU's MIDR
+could be overridden to emulate a CPU that is in the allow list, but in reality
+the CPU does not support BBML2. We would then enable BBML2 and BadThings (TM)
+will happen. So additionally checking the MMFR2 would solve this.
 
-diff --git a/drivers/gpu/drm/tests/drm_hdmi_state_helper_test.c b/drivers/gpu/drm/tests/drm_hdmi_state_helper_test.c
-index 1df12c0b7768e4f85f4c943840d9b4dcb6e079e0..77da5b88c4cbd5bba22f4f0ce1ef2928042d7d50 100644
---- a/drivers/gpu/drm/tests/drm_hdmi_state_helper_test.c
-+++ b/drivers/gpu/drm/tests/drm_hdmi_state_helper_test.c
-@@ -1223,7 +1223,7 @@ static void drm_test_check_hdmi_funcs_reject_rate(struct kunit *test)
-  * Then we will pick the latter, and the computed TMDS character rate
-  * will be equal to 1.25 times the mode pixel clock.
-  */
--static void drm_test_check_max_tmds_rate_bpc_fallback(struct kunit *test)
-+static void drm_test_check_max_tmds_rate_bpc_fallback_rgb(struct kunit *test)
- {
- 	struct drm_atomic_helper_connector_hdmi_priv *priv;
- 	struct drm_modeset_acquire_ctx ctx;
-@@ -1275,6 +1275,72 @@ static void drm_test_check_max_tmds_rate_bpc_fallback(struct kunit *test)
- 	drm_modeset_acquire_fini(&ctx);
- }
- 
-+/*
-+ * Test that if:
-+ * - We have an HDMI connector supporting both RGB and YUV420
-+ * - The chosen mode can be supported in YUV420 output format only
-+ * - The chosen mode has a TMDS character rate higher than the display
-+ *   supports in YUV420/12bpc
-+ * - The chosen mode has a TMDS character rate lower than the display
-+ *   supports in YUV420/10bpc.
-+ *
-+ * Then we will pick the latter, and the computed TMDS character rate
-+ * will be equal to 1.25 * 0.5 times the mode pixel clock.
-+ */
-+static void drm_test_check_max_tmds_rate_bpc_fallback_yuv420(struct kunit *test)
-+{
-+	struct drm_atomic_helper_connector_hdmi_priv *priv;
-+	struct drm_modeset_acquire_ctx ctx;
-+	struct drm_connector_state *conn_state;
-+	struct drm_display_info *info;
-+	struct drm_display_mode *yuv420_only_mode;
-+	unsigned long long rate;
-+	struct drm_connector *conn;
-+	struct drm_device *drm;
-+	struct drm_crtc *crtc;
-+	int ret;
-+
-+	priv = drm_kunit_helper_connector_hdmi_init_set_edid(test,
-+				BIT(HDMI_COLORSPACE_RGB) |
-+				BIT(HDMI_COLORSPACE_YUV420),
-+				12,
-+				test_edid_hdmi_1080p_rgb_yuv_4k_yuv420_dc_max_200mhz);
-+	KUNIT_ASSERT_NOT_NULL(test, priv);
-+
-+	drm = &priv->drm;
-+	crtc = priv->crtc;
-+	conn = &priv->connector;
-+	info = &conn->display_info;
-+	KUNIT_ASSERT_TRUE(test, info->is_hdmi);
-+	KUNIT_ASSERT_GT(test, info->max_tmds_clock, 0);
-+
-+	yuv420_only_mode = drm_kunit_display_mode_from_cea_vic(test, drm, 95);
-+	KUNIT_ASSERT_NOT_NULL(test, yuv420_only_mode);
-+	KUNIT_ASSERT_TRUE(test, drm_mode_is_420_only(info, yuv420_only_mode));
-+
-+	rate = drm_hdmi_compute_mode_clock(yuv420_only_mode, 12, HDMI_COLORSPACE_YUV420);
-+	KUNIT_ASSERT_GT(test, rate, info->max_tmds_clock * 1000);
-+
-+	rate = drm_hdmi_compute_mode_clock(yuv420_only_mode, 10, HDMI_COLORSPACE_YUV420);
-+	KUNIT_ASSERT_LT(test, rate, info->max_tmds_clock * 1000);
-+
-+	drm_modeset_acquire_init(&ctx, 0);
-+
-+	ret = light_up_connector(test, drm, crtc, conn, yuv420_only_mode, &ctx);
-+	KUNIT_EXPECT_EQ(test, ret, 0);
-+
-+	conn_state = conn->state;
-+	KUNIT_ASSERT_NOT_NULL(test, conn_state);
-+
-+	KUNIT_EXPECT_EQ(test, conn_state->hdmi.output_bpc, 10);
-+	KUNIT_EXPECT_EQ(test, conn_state->hdmi.output_format, HDMI_COLORSPACE_YUV420);
-+	KUNIT_EXPECT_EQ(test, conn_state->hdmi.tmds_char_rate,
-+			yuv420_only_mode->clock * 1250 * 0.5);
-+
-+	drm_modeset_drop_locks(&ctx);
-+	drm_modeset_acquire_fini(&ctx);
-+}
-+
- /*
-  * Test that if:
-  * - We have an HDMI connector supporting both RGB and YUV422 and up to
-@@ -1288,7 +1354,7 @@ static void drm_test_check_max_tmds_rate_bpc_fallback(struct kunit *test)
-  * Then we will prefer to keep the RGB format with a lower bpc over
-  * picking YUV422.
-  */
--static void drm_test_check_max_tmds_rate_format_fallback(struct kunit *test)
-+static void drm_test_check_max_tmds_rate_format_fallback_yuv422(struct kunit *test)
- {
- 	struct drm_atomic_helper_connector_hdmi_priv *priv;
- 	struct drm_modeset_acquire_ctx ctx;
-@@ -1344,6 +1410,75 @@ static void drm_test_check_max_tmds_rate_format_fallback(struct kunit *test)
- 	drm_modeset_acquire_fini(&ctx);
- }
- 
-+/*
-+ * Test that if:
-+ * - We have an HDMI connector supporting both RGB and YUV420 and up to
-+ *   12 bpc
-+ * - The chosen mode has a TMDS character rate higher than the display
-+ *   supports in RGB/10bpc but lower than the display supports in
-+ *   RGB/8bpc
-+ * - The chosen mode has a TMDS character rate lower than the display
-+ *   supports in YUV420/12bpc.
-+ *
-+ * Then we will prefer to keep the RGB format with a lower bpc over
-+ * picking YUV420.
-+ */
-+static void drm_test_check_max_tmds_rate_format_fallback_yuv420(struct kunit *test)
-+{
-+	struct drm_atomic_helper_connector_hdmi_priv *priv;
-+	struct drm_modeset_acquire_ctx ctx;
-+	struct drm_connector_state *conn_state;
-+	struct drm_display_info *info;
-+	struct drm_display_mode *preferred;
-+	unsigned long long rate;
-+	struct drm_connector *conn;
-+	struct drm_device *drm;
-+	struct drm_crtc *crtc;
-+	int ret;
-+
-+	priv = drm_kunit_helper_connector_hdmi_init_set_edid(test,
-+				BIT(HDMI_COLORSPACE_RGB) |
-+				BIT(HDMI_COLORSPACE_YUV420),
-+				12,
-+				test_edid_hdmi_4k_rgb_yuv420_dc_max_340mhz);
-+	KUNIT_ASSERT_NOT_NULL(test, priv);
-+
-+	drm = &priv->drm;
-+	crtc = priv->crtc;
-+	conn = &priv->connector;
-+	info = &conn->display_info;
-+	KUNIT_ASSERT_TRUE(test, info->is_hdmi);
-+	KUNIT_ASSERT_GT(test, info->max_tmds_clock, 0);
-+
-+	preferred = find_preferred_mode(conn);
-+	KUNIT_ASSERT_NOT_NULL(test, preferred);
-+	KUNIT_ASSERT_FALSE(test, preferred->flags & DRM_MODE_FLAG_DBLCLK);
-+	KUNIT_ASSERT_TRUE(test, drm_mode_is_420_also(info, preferred));
-+
-+	rate = drm_hdmi_compute_mode_clock(preferred, 8, HDMI_COLORSPACE_RGB);
-+	KUNIT_ASSERT_LT(test, rate, info->max_tmds_clock * 1000);
-+
-+	rate = drm_hdmi_compute_mode_clock(preferred, 10, HDMI_COLORSPACE_RGB);
-+	KUNIT_ASSERT_GT(test, rate, info->max_tmds_clock * 1000);
-+
-+	rate = drm_hdmi_compute_mode_clock(preferred, 12, HDMI_COLORSPACE_YUV420);
-+	KUNIT_ASSERT_LT(test, rate, info->max_tmds_clock * 1000);
-+
-+	drm_modeset_acquire_init(&ctx, 0);
-+
-+	ret = light_up_connector(test, drm, crtc, conn, preferred, &ctx);
-+	KUNIT_EXPECT_EQ(test, ret, 0);
-+
-+	conn_state = conn->state;
-+	KUNIT_ASSERT_NOT_NULL(test, conn_state);
-+
-+	KUNIT_EXPECT_EQ(test, conn_state->hdmi.output_bpc, 8);
-+	KUNIT_EXPECT_EQ(test, conn_state->hdmi.output_format, HDMI_COLORSPACE_RGB);
-+
-+	drm_modeset_drop_locks(&ctx);
-+	drm_modeset_acquire_fini(&ctx);
-+}
-+
- /*
-  * Test that if a driver and screen supports RGB and YUV formats, and we
-  * try to set the VIC 1 mode, we end up with 8bpc RGB even if we could
-@@ -1713,8 +1848,10 @@ static struct kunit_case drm_atomic_helper_connector_hdmi_check_tests[] = {
- 	KUNIT_CASE(drm_test_check_broadcast_rgb_crtc_mode_not_changed),
- 	KUNIT_CASE(drm_test_check_disable_connector),
- 	KUNIT_CASE(drm_test_check_hdmi_funcs_reject_rate),
--	KUNIT_CASE(drm_test_check_max_tmds_rate_bpc_fallback),
--	KUNIT_CASE(drm_test_check_max_tmds_rate_format_fallback),
-+	KUNIT_CASE(drm_test_check_max_tmds_rate_bpc_fallback_rgb),
-+	KUNIT_CASE(drm_test_check_max_tmds_rate_bpc_fallback_yuv420),
-+	KUNIT_CASE(drm_test_check_max_tmds_rate_format_fallback_yuv422),
-+	KUNIT_CASE(drm_test_check_max_tmds_rate_format_fallback_yuv420),
- 	KUNIT_CASE(drm_test_check_output_bpc_crtc_mode_changed),
- 	KUNIT_CASE(drm_test_check_output_bpc_crtc_mode_not_changed),
- 	KUNIT_CASE(drm_test_check_output_bpc_dvi),
-diff --git a/drivers/gpu/drm/tests/drm_kunit_edid.h b/drivers/gpu/drm/tests/drm_kunit_edid.h
-index ff316e6114d65c96b1338cd83bc0d8d9e6e143e9..8e9086df20c690f34623d7858c716032d77d0c26 100644
---- a/drivers/gpu/drm/tests/drm_kunit_edid.h
-+++ b/drivers/gpu/drm/tests/drm_kunit_edid.h
-@@ -695,4 +695,114 @@ static const unsigned char test_edid_hdmi_1080p_rgb_yuv_4k_yuv420_dc_max_200mhz[
- 	0x00, 0x00, 0x00, 0xca
- };
- 
-+/*
-+ * edid-decode (hex):
-+ *
-+ * 00 ff ff ff ff ff ff 00 31 d8 34 00 00 00 00 00
-+ * ff 23 01 03 80 60 36 78 0f ee 91 a3 54 4c 99 26
-+ * 0f 50 54 20 00 00 01 01 01 01 01 01 01 01 01 01
-+ * 01 01 01 01 01 01 04 74 00 30 f2 70 5a 80 b0 58
-+ * 8a 00 40 84 63 00 00 1e 00 00 00 fc 00 54 65 73
-+ * 74 20 45 44 49 44 0a 20 20 20 00 00 00 fd 00 18
-+ * 55 18 5e 22 00 0a 20 20 20 20 20 20 00 00 00 10
-+ * 00 00 00 00 00 00 00 00 00 00 00 00 00 00 01 ce
-+ *
-+ * 02 03 27 31 41 5f 6c 03 0c 00 10 00 78 44 20 00
-+ * 00 01 03 6d d8 5d c4 01 44 80 07 00 00 00 00 00
-+ * 00 e3 0f 01 00 e1 0e 00 00 00 00 00 00 00 00 00
-+ * 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-+ * 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-+ * 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-+ * 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-+ * 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 84
-+ *
-+ * ----------------
-+ *
-+ * Block 0, Base EDID:
-+ *   EDID Structure Version & Revision: 1.3
-+ *   Vendor & Product Identification:
-+ *     Manufacturer: LNX
-+ *     Model: 52
-+ *     Model year: 2025
-+ *   Basic Display Parameters & Features:
-+ *     Digital display
-+ *     Maximum image size: 96 cm x 54 cm
-+ *     Gamma: 2.20
-+ *     RGB color display
-+ *     Default (sRGB) color space is primary color space
-+ *     First detailed timing is the preferred timing
-+ *     Supports GTF timings within operating range
-+ *   Color Characteristics:
-+ *     Red  : 0.6396, 0.3300
-+ *     Green: 0.2998, 0.5996
-+ *     Blue : 0.1503, 0.0595
-+ *     White: 0.3125, 0.3291
-+ *   Established Timings I & II:
-+ *     DMT 0x04:   640x480    59.940476 Hz   4:3     31.469 kHz     25.175000 MHz
-+ *   Standard Timings: none
-+ *   Detailed Timing Descriptors:
-+ *     DTD 1:  3840x2160   30.000000 Hz  16:9     67.500 kHz    297.000000 MHz (1600 mm x 900 mm)
-+ *                  Hfront  176 Hsync  88 Hback  296 Hpol P
-+ *                  Vfront    8 Vsync  10 Vback   72 Vpol P
-+ *     Display Product Name: 'Test EDID'
-+ *     Display Range Limits:
-+ *       Monitor ranges (GTF): 24-85 Hz V, 24-94 kHz H, max dotclock 340 MHz
-+ *     Dummy Descriptor:
-+ *   Extension blocks: 1
-+ * Checksum: 0xce
-+ *
-+ * ----------------
-+ *
-+ * Block 1, CTA-861 Extension Block:
-+ *   Revision: 3
-+ *   Supports YCbCr 4:4:4
-+ *   Supports YCbCr 4:2:2
-+ *   Native detailed modes: 1
-+ *   Video Data Block:
-+ *     VIC  95:  3840x2160   30.000000 Hz  16:9     67.500 kHz    297.000000 MHz
-+ *   Vendor-Specific Data Block (HDMI), OUI 00-0C-03:
-+ *     Source physical address: 1.0.0.0
-+ *     DC_48bit
-+ *     DC_36bit
-+ *     DC_30bit
-+ *     DC_Y444
-+ *     Maximum TMDS clock: 340 MHz
-+ *     Extended HDMI video details:
-+ *   Vendor-Specific Data Block (HDMI Forum), OUI C4-5D-D8:
-+ *     Version: 1
-+ *     Maximum TMDS Character Rate: 340 MHz
-+ *     SCDC Present
-+ *     Supports 16-bits/component Deep Color 4:2:0 Pixel Encoding
-+ *     Supports 12-bits/component Deep Color 4:2:0 Pixel Encoding
-+ *     Supports 10-bits/component Deep Color 4:2:0 Pixel Encoding
-+ *   YCbCr 4:2:0 Capability Map Data Block:
-+ *     VIC  95:  3840x2160   30.000000 Hz  16:9     67.500 kHz    297.000000 MHz
-+ *   YCbCr 4:2:0 Video Data Block:
-+ * Checksum: 0x84
-+ */
-+static const unsigned char test_edid_hdmi_4k_rgb_yuv420_dc_max_340mhz[] = {
-+	0x00, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0x00, 0x31, 0xd8, 0x34, 0x00,
-+	0x00, 0x00, 0x00, 0x00, 0xff, 0x23, 0x01, 0x03, 0x80, 0x60, 0x36, 0x78,
-+	0x0f, 0xee, 0x91, 0xa3, 0x54, 0x4c, 0x99, 0x26, 0x0f, 0x50, 0x54, 0x20,
-+	0x00, 0x00, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01,
-+	0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x04, 0x74, 0x00, 0x30, 0xf2, 0x70,
-+	0x5a, 0x80, 0xb0, 0x58, 0x8a, 0x00, 0x40, 0x84, 0x63, 0x00, 0x00, 0x1e,
-+	0x00, 0x00, 0x00, 0xfc, 0x00, 0x54, 0x65, 0x73, 0x74, 0x20, 0x45, 0x44,
-+	0x49, 0x44, 0x0a, 0x20, 0x20, 0x20, 0x00, 0x00, 0x00, 0xfd, 0x00, 0x18,
-+	0x55, 0x18, 0x5e, 0x22, 0x00, 0x0a, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20,
-+	0x00, 0x00, 0x00, 0x10, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-+	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01, 0xce, 0x02, 0x03, 0x27, 0x31,
-+	0x41, 0x5f, 0x6c, 0x03, 0x0c, 0x00, 0x10, 0x00, 0x78, 0x44, 0x20, 0x00,
-+	0x00, 0x01, 0x03, 0x6d, 0xd8, 0x5d, 0xc4, 0x01, 0x44, 0x80, 0x07, 0x00,
-+	0x00, 0x00, 0x00, 0x00, 0x00, 0xe3, 0x0f, 0x01, 0x00, 0xe1, 0x0e, 0x00,
-+	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-+	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-+	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-+	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-+	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-+	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-+	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-+	0x00, 0x00, 0x00, 0x84
-+};
-+
- #endif // DRM_KUNIT_EDID_H_
+But Yang is saying that he plans to add the AmpereOne to the allow list because
+it does support BBML2+NOCONFLICT semantics and we want to benefit from that. But
+AmpereOne does not advertise BBML2 in it's MMFR2. So with the current approach,
+adding AmpereOne to the allow list is not sufficient to enable the feature.
 
--- 
-2.48.1
+But back to your original justification for checking the MMFR2; I don't think
+that really solves the problem in general, because we don't just require BBML2,
+we require BBML2+NOCONFLICT. And we can only determine that from the MIDR. So
+why bother checking MMFR2?
+
+I guess we could provide an id-override on the kernel command line to *enable*
+BBML2 for AmpereOne, but that's not going to be suitable for mass deployment, I
+don't think?
+
+Thanks,
+Ryan
+
+> 
+> Suzuki
+> 
+> 
+>> given AmpereOne doesn't advertise BBML2 but does support it, I'd be happy to
+>> remove this check.
+>>
+>> Thanks,
+>> Ryan
+>>
+>>
+>>>
+>>> Thanks,
+>>> Yang
+>>>
+>>>>    }
+>>>>      #ifdef CONFIG_ARM64_PAN
+>>>> diff --git a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3-sva.c b/drivers/iommu/
+>>>> arm/arm-smmu-v3/arm-smmu-v3-sva.c
+>>>> index 9ba596430e7c..6ba182572788 100644
+>>>> --- a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3-sva.c
+>>>> +++ b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3-sva.c
+>>>> @@ -222,6 +222,9 @@ bool arm_smmu_sva_supported(struct arm_smmu_device *smmu)
+>>>>            feat_mask |= ARM_SMMU_FEAT_VAX;
+>>>>        }
+>>>>    +    if (system_supports_bbml2_noabort())
+>>>> +        feat_mask |= ARM_SMMU_FEAT_BBML2;
+>>>> +
+>>>>        if ((smmu->features & feat_mask) != feat_mask)
+>>>>            return false;
+>>>>    diff --git a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c b/drivers/iommu/
+>>>> arm/arm-smmu-v3/arm-smmu-v3.c
+>>>> index 358072b4e293..dcee0bdec924 100644
+>>>> --- a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
+>>>> +++ b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
+>>>> @@ -4406,6 +4406,9 @@ static int arm_smmu_device_hw_probe(struct
+>>>> arm_smmu_device *smmu)
+>>>>        if (FIELD_GET(IDR3_RIL, reg))
+>>>>            smmu->features |= ARM_SMMU_FEAT_RANGE_INV;
+>>>>    +    if (FIELD_GET(IDR3_BBML, reg) == IDR3_BBML2)
+>>>> +        smmu->features |= ARM_SMMU_FEAT_BBML2;
+>>>> +
+>>>>        /* IDR5 */
+>>>>        reg = readl_relaxed(smmu->base + ARM_SMMU_IDR5);
+>>>>    diff --git a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.h b/drivers/iommu/
+>>>> arm/arm-smmu-v3/arm-smmu-v3.h
+>>>> index bd9d7c85576a..85eaf3ab88c2 100644
+>>>> --- a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.h
+>>>> +++ b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.h
+>>>> @@ -60,6 +60,9 @@ struct arm_smmu_device;
+>>>>    #define ARM_SMMU_IDR3            0xc
+>>>>    #define IDR3_FWB            (1 << 8)
+>>>>    #define IDR3_RIL            (1 << 10)
+>>>> +#define IDR3_BBML            GENMASK(12, 11)
+>>>> +#define IDR3_BBML1            (1 << 11)
+>>>> +#define IDR3_BBML2            (2 << 11)
+>>>>      #define ARM_SMMU_IDR5            0x14
+>>>>    #define IDR5_STALL_MAX            GENMASK(31, 16)
+>>>> @@ -754,6 +757,7 @@ struct arm_smmu_device {
+>>>>    #define ARM_SMMU_FEAT_HA        (1 << 21)
+>>>>    #define ARM_SMMU_FEAT_HD        (1 << 22)
+>>>>    #define ARM_SMMU_FEAT_S2FWB        (1 << 23)
+>>>> +#define ARM_SMMU_FEAT_BBML2        (1 << 24)
+>>>>        u32                features;
+>>>>      #define ARM_SMMU_OPT_SKIP_PREFETCH    (1 << 0)
+>>>
+>>
+> 
 
 
