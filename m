@@ -1,163 +1,138 @@
-Return-Path: <linux-kernel+bounces-556258-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-556260-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 759E5A5C33E
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 15:06:34 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E9C2AA5C344
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 15:07:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 106B33A3B50
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 14:06:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7E4081890F89
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 14:07:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4964625B674;
-	Tue, 11 Mar 2025 14:06:27 +0000 (UTC)
-Received: from mail-il1-f206.google.com (mail-il1-f206.google.com [209.85.166.206])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 942911D63E2;
+	Tue, 11 Mar 2025 14:07:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="UOyj8i5s"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 461AD25A653
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 14:06:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.206
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89D961CD215;
+	Tue, 11 Mar 2025 14:06:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741701986; cv=none; b=Ei+iDenNo3JdkJOFUOrjRmZu7NPQ7vegP2JQ8w0kcDfgG7NjOJ0m+fviin2eLP4bmzEFBZRvZo4TEM4FlO6EDtnRyVaCb7QOQY9U3VV5wyN4fkl8GPfqCs2NYQ7/ZaMA1HVBm0JYKZ8bOmLucoBo1UhcD3VhLeEc04oCVq7DqKA=
+	t=1741702021; cv=none; b=B6E9hc7nJmLvbNB4z6GeBUtcNVRrZx5sppAOWSp8Izc5I6w/PfHp17xRO8t0G0nP0GynUrPV//9m1KK26Vl92fjJ1VDSdADMpt8fuRxBhplnlg1tzBGuKiHCV8UU23lYa+zXtqITyD1+hz1lQPN+fl6lpeuuttGB8hwDhg1YAsE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741701986; c=relaxed/simple;
-	bh=ZDwgVldp/dtR0sAQP/jrdO4x0Z5emH82grhthtbhCDc=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=EzToXESLoNDAX0urrjysZ4l/+440dMcm4v7WgojGzc/hOBWCp1/DzGsP/y9528W9ZwRXHAKGPCPEi2IDNuGR7oM1EFydxzj+BRm4Dv7X9GwW33CehDPsIZ7FHGe8qIqSvaGLdnsaf7v70GpZqWFTs87j5vU+4g3wWNqPZ5otQY8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.206
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f206.google.com with SMTP id e9e14a558f8ab-3d43d1df18bso44875285ab.0
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 07:06:25 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741701984; x=1742306784;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Qngm61D2P5O2wJvRP9JS9Q4K7MNXVw7PSsoQPHTFftA=;
-        b=EFvxly7oBdm24cefkYDwQ6tNb+nr6TWPxli6deV3w1m8LOXUbjPqhyPxH0uaX4bdqL
-         GZubnlE5MTU+eQt+oDyH2r/YjmHkeVb3EUn0+daIJuXIPmpRPud9e9N2UbhK6qYvMp4s
-         gr5yyDWU/AmF2kzM+5tKlDY0Q5m4y37zRkFjyJ0UFvgNLpZAuxtyVDIx4+dKF4fH8z+K
-         G7l4PNRRUYjna0FevQoUUK2fvgcyJQt4DcjJ1GW3wOo5mkg0GEX7ZajASUhohTWqBsGU
-         mjpgQWGwRSkb9owqyTC2mH6AbAal2kdTADXSf8VK37WUv9rESpiRkGl73H1brzFk/Xa9
-         XEug==
-X-Forwarded-Encrypted: i=1; AJvYcCXZ12wdXD58tFhpyeetMzqVrhczXCusQ8SCoOWCR/4W1CaMcLKdpBA+IlemzCA+2xIa5ynFICKxJK0Pbl0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw5BboyRAdjETUUG1zPek1Yo3LfeeP/v+lJKgRbFbFjfszfgMsy
-	MRHCW+mk9Vn2W4rc80H1TNXt2ecWfmVIGxrbxSP0HrLaPxPqP/hza0o6nT/BiR1WhgQWaiz61Tt
-	7Vk47emASttVV8xzQni6fgvUQjz+VOnBAMYe0JMr2Z+PDyf3J7iEx0Xo=
-X-Google-Smtp-Source: AGHT+IHUWAme+Fs0K+gNOZ+nI9ty/+hj1BANz5GfZzVckJV8cLPKZ5CoSUXCkX8P9/InJLZifFh14jePR0KOrqJKMHuo7SnqpgNP
+	s=arc-20240116; t=1741702021; c=relaxed/simple;
+	bh=b3D6rfSf4OXQDFRcpN32gyl8m6lS/+ZaLNjercmCQU4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qSsn/JSXZwkWn/kymTih99Qi1p5mTI+Fm0Gzy3L5RfcXPtOziYnBm2npLTBnWo7ijCtbXfcK0Ef+MpbnXcxoJJYjMnv5lh70g0O/x4M69YeCpH88zsjSuG3d024GKij3pLHE95SqgvI/JYSn7rwuErT1T7G4AdKTogtL/KDK2Nw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=UOyj8i5s; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52B7wI3P002107;
+	Tue, 11 Mar 2025 14:06:37 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=pp1; bh=5W8z3U+N4BjAA+H86UEnGNKa+ovXio
+	HYCGiGvZFiJG0=; b=UOyj8i5s4s50CZX8khMAhnHPHL9WdZNHgSX3MIc5fBSIQR
+	dugtHhElFxj3qqjObRbIkmhkfE4rt4XDJKcl3+QeNzc6Re89Dpyt6/wK0irFuOId
+	j4NjUld8ET7KAFfsnG6i7+ERcV30WgIxgrpGHcKJR2p3MPtAMGLCKR9xAFM9Px/H
+	MfOmlfgQ4N1PmMlT5EHL4YuowT97XXE/daVy3vS0Po2swCsOhKaThYkFLlm8cdaw
+	4aTd/52s+7yFguBqib7B2G/pItbarsns4rDPYXq10A9le/Ym/WvFBLiQjqfCvES0
+	L1PdRN/lBNvDIVkYoEzlMQq27pJr69P9Uyt0fgBw==
+Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 45a7g5v87f-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 11 Mar 2025 14:06:36 +0000 (GMT)
+Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 52BCViwt024087;
+	Tue, 11 Mar 2025 14:06:36 GMT
+Received: from smtprelay05.fra02v.mail.ibm.com ([9.218.2.225])
+	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 4590kyvp9h-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 11 Mar 2025 14:06:36 +0000
+Received: from smtpav03.fra02v.mail.ibm.com (smtpav03.fra02v.mail.ibm.com [10.20.54.102])
+	by smtprelay05.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 52BE6Wf252953416
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 11 Mar 2025 14:06:32 GMT
+Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 530FB20043;
+	Tue, 11 Mar 2025 14:06:32 +0000 (GMT)
+Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id C0C652004B;
+	Tue, 11 Mar 2025 14:06:31 +0000 (GMT)
+Received: from osiris (unknown [9.179.21.35])
+	by smtpav03.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Tue, 11 Mar 2025 14:06:31 +0000 (GMT)
+Date: Tue, 11 Mar 2025 15:06:30 +0100
+From: Heiko Carstens <hca@linux.ibm.com>
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, Jeff Xu <jeffxu@chromium.org>,
+        "Liam R . Howlett" <Liam.Howlett@oracle.com>,
+        Kees Cook <kees@kernel.org>,
+        Thomas =?iso-8859-1?Q?Wei=DFschuh?= <thomas.weissschuh@linutronix.de>,
+        Alexander Gordeev <agordeev@linux.ibm.com>,
+        Sven Schnelle <svens@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
+        Christian Borntraeger <borntraeger@linux.ibm.com>,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        linux-hardening@vger.kernel.org
+Subject: Re: [PATCH mm-unstable 0/2] mseal system mappings fix + s390
+ enablement
+Message-ID: <20250311140630.12846Eef-hca@linux.ibm.com>
+References: <20250311123326.2686682-1-hca@linux.ibm.com>
+ <a326735d-ca3e-4aee-9f98-4e742dfc15f5@lucifer.local>
+ <20250311133736.12846D42-hca@linux.ibm.com>
+ <b8cf08ef-0125-466f-89d2-d499cbdcd3aa@lucifer.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1848:b0:3d3:fa0a:7242 with SMTP id
- e9e14a558f8ab-3d441969734mr182111785ab.9.1741701984189; Tue, 11 Mar 2025
- 07:06:24 -0700 (PDT)
-Date: Tue, 11 Mar 2025 07:06:24 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67d04360.050a0220.1939a6.000e.GAE@google.com>
-Subject: [syzbot] [cgroups?] [mm?] KASAN: wild-memory-access Read in lookup_swap_cgroup_id
-From: syzbot <syzbot+d26257274cf7b53db74a@syzkaller.appspotmail.com>
-To: akpm@linux-foundation.org, cgroups@vger.kernel.org, hannes@cmpxchg.org, 
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org, mhocko@kernel.org, 
-	muchun.song@linux.dev, roman.gushchin@linux.dev, shakeel.butt@linux.dev, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <b8cf08ef-0125-466f-89d2-d499cbdcd3aa@lucifer.local>
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: 4S0zIuxNoDUzIcyMCnnFiJt06R98PYVr
+X-Proofpoint-ORIG-GUID: 4S0zIuxNoDUzIcyMCnnFiJt06R98PYVr
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-11_03,2025-03-11_02,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ bulkscore=0 spamscore=0 mlxlogscore=950 suspectscore=0 phishscore=0
+ priorityscore=1501 adultscore=0 clxscore=1015 malwarescore=0
+ impostorscore=0 mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2502100000 definitions=main-2503110089
 
-Hello,
+On Tue, Mar 11, 2025 at 01:42:01PM +0000, Lorenzo Stoakes wrote:
+> > Just like for arm64, and x86_64 the s390 part is just adding the new
+> > vm flag to the _install_mappings() call in vdso code. Otherwise there
+> > is nothing to be considered.
+> 
+> No, they are not just adding a flag, they are enabling the sealing of
+> system mappings, if a user chooses to make use of it, which already breaks
+> a number of useland applications that rely on remapping these.
+> 
+> if the architecture code ever needs to unmap/remap these, then this breaks
+> your architecture.
+> 
+> I think it would be sensible to clearly indicate that enabling this feature
+> does not break the s390 architecture and you've confirmed that by checking
+> the code and ensuring that nowhere does it rely upon doing this.
+> 
+> Likely that's the case, but I'd suggest you ought to make sure...
+> 
+> x86-64 and arm64 were checked for this and confirmed to not ever need this.
+> 
+> This is why we're restricting by architecture.
 
-syzbot found the following issue on:
+Ok, I was assuming more that whoever enables that config option knows
+what he or she is doing. However as far as I know there is no s390
+user space which relies on remapping vdso mappings.
 
-HEAD commit:    848e07631744 Merge tag 'hid-for-linus-2025030501' of git:/..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=1247ca54580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=2040405600e83619
-dashboard link: https://syzkaller.appspot.com/bug?extid=d26257274cf7b53db74a
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-
-Unfortunately, I don't have any reproducer for this issue yet.
-
-Downloadable assets:
-disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7feb34a89c2a/non_bootable_disk-848e0763.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/c46426c0526b/vmlinux-848e0763.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/d575feb1a7df/bzImage-848e0763.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+d26257274cf7b53db74a@syzkaller.appspotmail.com
-
-==================================================================
-BUG: KASAN: wild-memory-access in instrument_atomic_read include/linux/instrumented.h:68 [inline]
-BUG: KASAN: wild-memory-access in atomic_read include/linux/atomic/atomic-instrumented.h:32 [inline]
-BUG: KASAN: wild-memory-access in __swap_cgroup_id_lookup mm/swap_cgroup.c:28 [inline]
-BUG: KASAN: wild-memory-access in lookup_swap_cgroup_id+0x82/0xf0 mm/swap_cgroup.c:127
-Read of size 4 at addr 0007c8805a01cd3c by task udevd/5306
-
-CPU: 0 UID: 0 PID: 5306 Comm: udevd Not tainted 6.14.0-rc5-syzkaller-00039-g848e07631744 #0
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:94 [inline]
- dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
- print_report+0xe3/0x5b0 mm/kasan/report.c:524
- kasan_report+0x143/0x180 mm/kasan/report.c:634
- kasan_check_range+0x282/0x290 mm/kasan/generic.c:189
- instrument_atomic_read include/linux/instrumented.h:68 [inline]
- atomic_read include/linux/atomic/atomic-instrumented.h:32 [inline]
- __swap_cgroup_id_lookup mm/swap_cgroup.c:28 [inline]
- lookup_swap_cgroup_id+0x82/0xf0 mm/swap_cgroup.c:127
- swap_pte_batch+0x142/0x330 mm/internal.h:333
- zap_nonpresent_ptes mm/memory.c:1634 [inline]
- do_zap_pte_range mm/memory.c:1702 [inline]
- zap_pte_range mm/memory.c:1742 [inline]
- zap_pmd_range mm/memory.c:1834 [inline]
- zap_pud_range mm/memory.c:1863 [inline]
- zap_p4d_range mm/memory.c:1884 [inline]
- unmap_page_range+0x1bb5/0x4510 mm/memory.c:1905
- unmap_vmas+0x3cc/0x5f0 mm/memory.c:1995
- exit_mmap+0x283/0xd40 mm/mmap.c:1284
- __mmput+0x115/0x420 kernel/fork.c:1356
- exit_mm+0x220/0x310 kernel/exit.c:570
- do_exit+0x9ad/0x28e0 kernel/exit.c:925
- do_group_exit+0x207/0x2c0 kernel/exit.c:1087
- get_signal+0x168c/0x1720 kernel/signal.c:3036
- arch_do_signal_or_restart+0x96/0x860 arch/x86/kernel/signal.c:337
- exit_to_user_mode_loop kernel/entry/common.c:111 [inline]
- exit_to_user_mode_prepare include/linux/entry-common.h:329 [inline]
- irqentry_exit_to_user_mode+0x7e/0x250 kernel/entry/common.c:231
- exc_page_fault+0x590/0x8b0 arch/x86/mm/fault.c:1541
- asm_exc_page_fault+0x26/0x30 arch/x86/include/asm/idtentry.h:623
-RIP: 0033:0x56281d3a39d0
-Code: Unable to access opcode bytes at 0x56281d3a39a6.
-RSP: 002b:00007ffd4e66dab0 EFLAGS: 00010246
-RAX: 00007ffd4e66dac8 RBX: 0000000000000000 RCX: 0000000000000000
-RDX: 0000000000000000 RSI: 00007ffd4e66dad8 RDI: 00007ffd4e66db10
-RBP: 000056283b5a6980 R08: 0000000000000007 R09: a02c58fefe889121
-R10: 00000000ffffffff R11: 0000000000000246 R12: 000056283b5a6980
-R13: 00007ffd4e66db98 R14: 0000000000000000 R15: 000056281d3ae4df
- </TASK>
-==================================================================
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+When it comes to unmapping vdso: this would break user space since
+commit df29a7440c4b ("s390/signal: switch to using vdso for sigreturn
+and syscall restart") - there haven't been any reports.
 
