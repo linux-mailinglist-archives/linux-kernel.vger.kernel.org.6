@@ -1,83 +1,77 @@
-Return-Path: <linux-kernel+bounces-555680-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-555681-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C78DA5BB2F
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 09:52:38 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 58A0EA5BB34
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 09:54:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BEEEB172099
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 08:52:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8AD1B1716FB
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 08:54:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 019EA2288F7;
-	Tue, 11 Mar 2025 08:52:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA1D7226545;
+	Tue, 11 Mar 2025 08:54:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="Wau/oR09"
-Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2065.outbound.protection.outlook.com [40.107.244.65])
+	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="UGeNjDDd"
+Received: from HK3PR03CU002.outbound.protection.outlook.com (mail-eastasiaazon11011008.outbound.protection.outlook.com [52.101.129.8])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 556C2226865;
-	Tue, 11 Mar 2025 08:52:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.244.65
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 853621DED63
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 08:54:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.129.8
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741683135; cv=fail; b=P8IPfYE0AUUpJJ7pMKj66WsmkVFYq0REdGGKK/tVipOEfdngLkmoP0VA3uFSH2S3y1rNGRe974FAMdBOhpc9+Vir43tqwj6pGXvQK2UZDG2toJehJCvik1+MQahHdXlUVs4uhQ8B6HJwu0PvvzANPoeLKbkCqEGEyEbVCifxHFY=
+	t=1741683271; cv=fail; b=rLS7+rErmma6vSLEQi9sIPDA2C5hrZbKdJO+B5Bj9r8ASLJtiYRl5ldGN4P5OWSQ6FbDM4kvfTZ9wHuljiofNAeOOXhlhleKSQDzI8PG6xjNtaRfH7rS/A+SvfM2cW8C0x+AGS2w2hJoo1CTWSv4hN/9H3rkYhUjZL7WATwM8lA=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741683135; c=relaxed/simple;
-	bh=eU2Rzhpi9U9ttSXj3PKZzQorir4eFWz0Q4ciBjFVU5Y=;
+	s=arc-20240116; t=1741683271; c=relaxed/simple;
+	bh=0wLQDcLT7lS7PkoBHY0DCuOJImJgVRYxSRoacdBjt20=;
 	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=f76Nz4hc13RuGvpRc6uxdF6eIUyreVQ6xqzxX2tCtEH7lycXIliJZzuSV2u9ti+YpnLfV5LnShVGl+AYzZByQIf9GpbntB44BrOQX2iRu32gJkSxMzZL22tUOt2ZKGMMIutUAOQ5xGuWcSqpp0l8ciVzpMcMxaztkSWObEUnnNE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=Wau/oR09; arc=fail smtp.client-ip=40.107.244.65
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+	 Content-Type:MIME-Version; b=VdUQExbOozEsWhKqqgaMTJp2Y7FRlRXi3jpasMi8zB4kcuKzCtjK9FXSAvVnNmXJCLRAh5aVtPaWI3JibEwtVYVJ5+uLbSpBiO+Q6C+ePup3buC7SjrWoggQOuIgOYjf9Uh3VhF1wdQFK0T2tLx4VQZwPNEZ9Ps6coB0wS5o8t8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=UGeNjDDd; arc=fail smtp.client-ip=52.101.129.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=iysc71xyLHmcY7lwBhyEYlyAXuZMf/FrcOxblU18L/ZJain5I2XTdKV7gCt9wcAR6y5IxxHVqX/d60LxpWQs2ZyZ26mSYuW9amrBADbeHCHI+2lLrk3H8+XMjUSoMl0gRTTSI1ClbaqXO3jffst/4a3vL01db2ABfUG+M4FhkVNxkCit7Bj59Lp4mNzcMRZ7Y9zTqE8O7x720aVyGGA3U+zoGABluFWNJi40yNoP8xN+mXVwCQWDIj9pvSDkNTtHOoo6uSmNO70VPq73ioTsIlyhjT04HPXW0o4TJGQEZMvXdW/BL5uUA+9Czym4ylh+o8Nx8UMQil8fnpnkbszBEQ==
+ b=n3ejmcigOu6+F4cYSmsDUo0dD2Hl1ADlPKl7IzbeDtp64oMo+D50RQNgjaYZ3eGBQ6rDpjmhEuASl/kHkNpkUv2qWfMq2SzqmcVSsvvj+aabFwZV+S8aRvQoiHDFC0fDqlUGiXN8nS94mgFkF1k9Oj5QG/L5GhGyYYjgOQpaDNF3C+vbS/5S6VzaKzhfKw4HqSfL9fgRRk6o05megtsFW6A4dkZ+BXFs/Gs1fmWEuppFRkw01KMVE5HzWhVCFlpt5ADUo5h7jkp5C1q72at0rDjk4y0ucwbOfwekgkErYm0oDkZYVTr0MwqztKOZqmSxf4CuW6MZPQYdSRwa8wvv8Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=ZdRGSdjGfJkV/g4hrWDBRqlf4eMXpz3/aGQSpHr398o=;
- b=WlitRqstQasJ76UpKhURr7leNCGHpiN77w8Up1H4JIxsVvhLIWariQEdTkojHFKqjghzuGFyp/UNeKc+kgbUKSw/YfDgkFZBylJwZJMdFnqshdnyIj90JkBaM6zUImmKTFLQEgTAQs3La3EMc4XT31if1wCbbk6dHzRujn16XJML8hKdH5KEhIa8edM6hDIr+jOY1BHZMpO791dJNm2XgVDtVNY8YiBAZwZQld6SyjVQMG5ynBs+ytOTIDaThdGU2HxxEyCL4qvcBxJ0w1RjAtB063YOvWPYRNNDPzJFcaovr6v1sxy//1CNSYnErFouI9T8Htc4AUC/VRWBScDVDg==
+ bh=MLBSVZikwdtKaBi226WnPDaJ/bUJZ4WjcykbYu1Tk0I=;
+ b=SEAGc+pHdLvl4yIHQvBPQUrk8OTwjfQr16K0r8geHGq2BJTc3SXvPl9YTgIYD0NevgRY78mzjx+ZCBznRFbYrmAbc4SCNiuW+H47y5Po2u/Wzxc3suzh1DY1wQ0XKAQlmTP4EaoJ3gNu1bSDmH2g7noJEjUbzFwTgIK/2ebdqh7LzcvRnwVbsDh6KP9ew0R4LFvMH6dFKO4kdEPd2RKCPgiVPQhK8WmcQvN6DpGEGV0cykrl2MHRdAVIrUgHKMfeIeLxA9SeBa2HK+KlVqn53nITxFENTT20ipcVQWjnnnEaFV2lvLzeTPHKiCF8o6aiTt9nJOhwTYCGIX0TaGeKxQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
+ dkim=pass header.d=vivo.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ZdRGSdjGfJkV/g4hrWDBRqlf4eMXpz3/aGQSpHr398o=;
- b=Wau/oR095Pn0F8JOLpUmqGFz2n8HTk+K3jWsJhKKykHPF+GBUbJKUvmhz8QT4zJLiEYQ4Vkc0G3yCq84mX/mm747bvYfr5b23UT2WY7TGVA9RR9/ttNm+x09SS+YYzWDQKIDG3se6cbWzvHoVsqv9afax0xhlRJIYi+60usWDbA=
+ bh=MLBSVZikwdtKaBi226WnPDaJ/bUJZ4WjcykbYu1Tk0I=;
+ b=UGeNjDDdFBxNFPsFl54ac3CXVwQOyX1UIMsO9PzBY9tTO0T7Xh6XXPWMwoD53mHRy2aqLydSFUkNuP5BfW+PI0NttKQ1g1YnXEZ7rBhDNm7+SN5K2x5nAwDSwwLT0uy2PaSPP2FDTc6pwpF85vvGiGKtSAieJKAL450DksF6UfdShEcOQKj4eAA1xMzJjPVB+K8FrxP7wQw0X0BqeCEE6hadXawYKmyAnGWV9g2caMTyf0j12xFQ5oBdu2VmNMPoZ/0Ts+Hffo6S0yH0fLRF0WW2Y3IMaK8OPal5fWZ+wu344vD4pkb8SdZwJC1izFfgFq9OrUfzuVDzq99GnXVj/w==
 Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from BL1PR12MB5176.namprd12.prod.outlook.com (2603:10b6:208:311::19)
- by DS7PR12MB5768.namprd12.prod.outlook.com (2603:10b6:8:77::18) with
+ header.d=none;dmarc=none action=none header.from=vivo.com;
+Received: from PUZPR06MB5676.apcprd06.prod.outlook.com (2603:1096:301:f8::10)
+ by KL1PR0601MB5599.apcprd06.prod.outlook.com (2603:1096:820:9b::6) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8511.27; Tue, 11 Mar
- 2025 08:52:10 +0000
-Received: from BL1PR12MB5176.namprd12.prod.outlook.com
- ([fe80::ed5b:dd2f:995a:bcf4]) by BL1PR12MB5176.namprd12.prod.outlook.com
- ([fe80::ed5b:dd2f:995a:bcf4%3]) with mapi id 15.20.8511.026; Tue, 11 Mar 2025
- 08:52:10 +0000
-Message-ID: <a8592497-5204-47da-9801-a254b0852fe2@amd.com>
-Date: Tue, 11 Mar 2025 14:22:02 +0530
+ 2025 08:54:25 +0000
+Received: from PUZPR06MB5676.apcprd06.prod.outlook.com
+ ([fe80::a00b:f422:ac44:636f]) by PUZPR06MB5676.apcprd06.prod.outlook.com
+ ([fe80::a00b:f422:ac44:636f%3]) with mapi id 15.20.8511.026; Tue, 11 Mar 2025
+ 08:54:24 +0000
+Message-ID: <78cd737d-5e85-4d3c-8bb5-0b925d81719b@vivo.com>
+Date: Tue, 11 Mar 2025 16:54:19 +0800
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] platform/x86/amd/pmf: fix cleanup in
- amd_pmf_init_smart_pc()
-To: Dan Carpenter <dan.carpenter@linaro.org>,
- =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Cc: Hans de Goede <hdegoede@redhat.com>,
- Patil Rajesh Reddy <Patil.Reddy@amd.com>,
- Mario Limonciello <mario.limonciello@amd.com>,
- platform-driver-x86@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
- kernel-janitors@vger.kernel.org
-References: <43ad5358-f5b2-4cfc-85b4-e7ab8c7cf329@stanley.mountain>
- <32c6c456-94f0-f077-040c-09f67d60953a@linux.intel.com>
- <4a14c0a5-d6f8-4df9-b947-a0d3c3ef02b3@stanley.mountain>
-Content-Language: en-US
-From: Shyam Sundar S K <Shyam-sundar.S-k@amd.com>
-In-Reply-To: <4a14c0a5-d6f8-4df9-b947-a0d3c3ef02b3@stanley.mountain>
-Content-Type: text/plain; charset=UTF-8
+Subject: Re: udmabuf vmap failed (Revert "udmabuf: fix vmap_udmabuf error page
+ set" can help)
+To: Bingbu Cao <bingbu.cao@linux.intel.com>, vivek.kasireddy@intel.com
+Cc: linux-kernel@vger.kernel.org, christian.koenig@amd.com,
+ dri-devel@lists.freedesktop.org
+References: <9172a601-c360-0d5b-ba1b-33deba430455@linux.intel.com>
+ <d7a54599-350e-4e58-81b6-119ffa2ab03e@vivo.com>
+ <ab468ce7-c8ac-48eb-a6c0-386ea7aa9a0c@linux.intel.com>
+From: Huan Yang <link@vivo.com>
+In-Reply-To: <ab468ce7-c8ac-48eb-a6c0-386ea7aa9a0c@linux.intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: SG2PR01CA0166.apcprd01.prod.exchangelabs.com
- (2603:1096:4:28::22) To BL1PR12MB5176.namprd12.prod.outlook.com
- (2603:10b6:208:311::19)
+X-ClientProxiedBy: SG2PR04CA0168.apcprd04.prod.outlook.com (2603:1096:4::30)
+ To PUZPR06MB5676.apcprd06.prod.outlook.com (2603:1096:301:f8::10)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -85,150 +79,233 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BL1PR12MB5176:EE_|DS7PR12MB5768:EE_
-X-MS-Office365-Filtering-Correlation-Id: d22a26d5-657b-41fa-6a31-08dd607a0244
+X-MS-TrafficTypeDiagnostic: PUZPR06MB5676:EE_|KL1PR0601MB5599:EE_
+X-MS-Office365-Filtering-Correlation-Id: b7984295-c059-4127-7cbd-08dd607a52a2
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|1800799024;
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|1800799024|52116014|376014|7053199007|38350700014|13003099007;
 X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?SmszeGlVd2QwN3hJdDdJSTd2UTV2OFJHay96WStNYUNSUXJzRXpnajRuRHNt?=
- =?utf-8?B?bGJHNXg0ODlFb2RPYzlNSDVmYjl4RnpUekNKeU9lSmVTM1ROempzRjFjUTFT?=
- =?utf-8?B?TXkxZHQ5SFp3YmFLUVRoNUJoRmdreUpqTDMxcHZkbnBOSjczN2RzdmZ0VXli?=
- =?utf-8?B?c1AxQnNaSUJObmYyZEc0RU5jb3lnYzRNV0t1WThTQmFxRFpoaTkvZzhhbDhU?=
- =?utf-8?B?TVArNy9oSFkxRkFuY0FIRG5mODVMN0Z0SlZ2RmNpemdSMFNoWFBuTGtDVC9U?=
- =?utf-8?B?dGV2ejlTNFd2SXZmN2JGcmRLYkg4UVp1RDhiYzVnd2VXdDZSUlhlY2RaUVRN?=
- =?utf-8?B?bFdlczJwYlN3UDZ4RXp3RkhlNE9XbHgwMVFxTThUWTRtRE9SOVowbEF3Q3I3?=
- =?utf-8?B?cnlUZ3RrVmJVRDlPaXBkSlpRSjdEbE5YVlBGZlFhRklPWWcvYncrWmovaHpI?=
- =?utf-8?B?aTNSL1lKbzVjRURCanlrSGIxeFFzczhCMjFHRVZSZU9yaTUzMExvMFZhUzdo?=
- =?utf-8?B?UEJDc2VDZzZmOE95akhjb3ArV3EreWFqbXZOZWwza0YySXFtcTJKQjQxN3J4?=
- =?utf-8?B?V2JOcFdHc09wd1RWbyswQ21CRWJqQnJQdjJOSTBIdi9iYWpGd3pieFZjTjJB?=
- =?utf-8?B?L0tCZlZ2bUMzbS9Rb2U1SXJRd01seWhaU2pwb2JSY0FEQmo1eG5HV1g5MGdW?=
- =?utf-8?B?UWhoaC9zeFcyQjh0R3lrNE5uMnN3QVB0T252VDF4SysrWUhHTk1MU0RZRUxC?=
- =?utf-8?B?aXE3L0hVY0cyemJtTGpkYmp3ZHdNSUxPNldYVTZ4M2FISk1YMDB4aHhvVGxa?=
- =?utf-8?B?QXdYaVBNQjVxMHZjZ0luQmJVcmV1ZWhLMXNQdGlYRERSSEJZK2wvd1hTMDda?=
- =?utf-8?B?OFByTXIwTWpWYmZyc2ZvVnFtSmNHdUVpM3c0bEkrRTVGbDRFZnFFU2RRSmV3?=
- =?utf-8?B?bjlEY09OeEt1TlhuRXc0cFJ5RXdMVHFERm1FanlIYmV6Wm5qZFJRNjBiMHI0?=
- =?utf-8?B?TzJ6U1pZamw0c25JdFhGdDF2WkRMR251aXNpVlhUckZPWkJ5S2p3blE1OEFj?=
- =?utf-8?B?cVpCOG5XNWE2dDZXVXo2SS9xbDl5YUcyRUcwTEtJSDVzUG9YY2FrYW5kVVJx?=
- =?utf-8?B?SEpzdVluREcyZFVDdWpCbnpZLzQ0azVGSUYzcUFISlM0UzVDcURJMVI4dlNR?=
- =?utf-8?B?eG9yRXdEWjFoMXZ1c21TbW8vbHFRR0g4d3prMmpvMmF1U1VlVDQxOUtJN0tY?=
- =?utf-8?B?clhqbndnbTAzL3RrZUtEYTlPUnFKMS9USFBxR0xlbFFPVktMNDhFSU9qNGo2?=
- =?utf-8?B?dWxsdHg1Y3BuTzJ0RklvU0F4ZEFuSTEyVlA2ZUkzYWV0b0RZWENubjBTSFIz?=
- =?utf-8?B?MlBLTk1ueURXMUNRSStyV3hoZHptQ0o2TmpVQXBQQ2lheU1kK2NtWDBIR0xZ?=
- =?utf-8?B?M2pHQ0N5V2ZDSnA3KzI5bTQ3ekVvd0NqQ2IxZW9xcmx6OTBSQjdnVEhpaFhE?=
- =?utf-8?B?YncvZzdpYUdDVDRKQ0EvM2tYNlIzS25JVTlFb2hIRHVMb2ZkTWh5UFNSZy9M?=
- =?utf-8?B?Z0c3S1JJYUZLdWdaVEI4TE5DdUExMmQrNEwwUjk5TVpSUDErRm1GWGV3TW1l?=
- =?utf-8?B?bEhsV2lkakpIUGQ0YWFEUm1BOHZ0MTg3TGkrSUNIckx3SGY2cHZ1U1M5S3FO?=
- =?utf-8?B?TWcyYWwreU1tQlIwWUZ2RGJ1eXZzR3ZxTVFUV2U1ZFkvTnc1bnhtcTlYazdl?=
- =?utf-8?B?MW1xZUpmVHBsdXpiL20wSjBUZE1LblE5R1hieVo3bzBSNk12Y2IrdHJLdHA3?=
- =?utf-8?B?ZWNBeDk3eHdVeWowVlJSZWU2ekxjOWpFZGc0dGFhYTZJaEgrRHIrT291NHVP?=
- =?utf-8?Q?F/RxT/xv/ZVbr?=
+	=?utf-8?B?YnAwVEhGb1RnVUpTOTQ3cU1aRTErSlRzcngyZ0pPOVF6Wkh2VnZ6OE5qWDJG?=
+ =?utf-8?B?UkVpUThwRWVZRFhTS0M5d3VqMVVNVGxobnBDdllMaFhTaUY4aFFMbThmY0xp?=
+ =?utf-8?B?UWhiQmN4a1JVZ0hJTzMwWFRaMTZFN3FBSnZxSEtqMVoxS2E3RUZqSUpUY3JH?=
+ =?utf-8?B?NGtkS2F1eC9lWHdnc3ZQa3ZWN3N3ZmpkM1k4eXozUU5iQ2JpSTd4RktnVmpZ?=
+ =?utf-8?B?a1I3bWU3L21qR3BHODhsZ2dNaU9YelkyblpvOFpRdFVTTC9DNFN2enUxUjRw?=
+ =?utf-8?B?a3pqZW9kQzBGQjMvZzhrSm9aLzRYLy81WVdEdVBGRjFlbTVGZGRPdVMwcU9W?=
+ =?utf-8?B?d3Y3b2ZFV2hMelMzUW1PMFlENjdQemlFVGpQSkJWYTgwSnJuNWFQTzR1RVdZ?=
+ =?utf-8?B?T1NjMnAvUFFRaDcySFNBRmR4N3RyWHBGYWhCbmlaejBLWGlJMysyanNJRUdO?=
+ =?utf-8?B?cHlUSlRIWEZRVWgrdm4vODdQY2s3QTljeXZVc0hMZngxMXBaZEpTbUpKTUto?=
+ =?utf-8?B?YkhOdFRiZUtMSzVpanlkTER4SmY2ZUx6OFcrWW5rSGJaQTd5MkU4QzcyWnF6?=
+ =?utf-8?B?SzNBQ0s3QVA3NXFuQ0tqelNzTkVjUlpKbVhEd0lLd3g2dVQ2VVJOYTU0UWxF?=
+ =?utf-8?B?NWwrUHdsNWhFYVpoblRCaHFUUVR0dFhZR2Zab2Q1Q252djNTQVNiOWFHZVFS?=
+ =?utf-8?B?SXh4WHdnMUppMWdqaStDblR4eHBTUWhxVzNDbjZraERlMytSZ0xKd2pnM3Zw?=
+ =?utf-8?B?ZzVGMkNjbWQzNkMrelRwWE40NEYwU2Vha0FzODI4dEdXZ3lITHZtN2tQNENO?=
+ =?utf-8?B?eGNnRHBVOXBDdzJlRzdZWjJSOWM0OTdML09DRURScnpQRE95VkhaUlVXb2NQ?=
+ =?utf-8?B?Sjk4ZmUyYjdSWXRuMVhjUkpUU2VQUHJzYm4wdlc4VlFxcFBaSGNBRlRTUEpI?=
+ =?utf-8?B?OGo1aXlvdjlHZmN0aFV3TVZDb0ZITGhiSmxkRUV6WldDek9WdWtaSFo0bUVj?=
+ =?utf-8?B?VlZ4aWpVaCtvU1NlY3BCWVVSZnFsOGF2Y052cVVVZW9TelJDVzRDdDBuSFpC?=
+ =?utf-8?B?N1RGQndkZTNWTTVIWk1sWW4vbU1ZU21qUjR6YXBXNk1aeDNPdTVTVlN3YXhL?=
+ =?utf-8?B?VndSTXl4b0psMk5sbG9aS2JIS3lFRzZvYjhvdFVMV3VOUG9OM1NrREt4TGgx?=
+ =?utf-8?B?amV0bzZPT1VUTzJvalBPUk4yUkxHTFlRYmFQNE8rWjBkeUNhRWlVRHRNRGpv?=
+ =?utf-8?B?QlB6Um52TDZSUVpSUnNqVnh2bTV1R1lXN2FyeFREbkJ2MTdpSk1welRLRHQ3?=
+ =?utf-8?B?ZjVxNyt5YVVWOVMrcFYvNC9RNUowdjU4b1dyV2NMRDY2L1JYSVg1dk45RjRi?=
+ =?utf-8?B?TFh4cXZBejdJNloyeTcyYjh3MC9NU2oyWjF3VU9ZN1JvUGFVS1BtUlV1YXFO?=
+ =?utf-8?B?QXJmS002YW9rWElBNWRKRkhpTStxRXBlZGVzcHB6bzJPNWE4SS9nVnBaaWtH?=
+ =?utf-8?B?cElnd0M4Zng4WVBOSHE1UVVSN0pwOFU1dTVvbTVVL0J5SFBIeUowaGFySWNv?=
+ =?utf-8?B?UG1XWTMxWkNZUXVFN2JvdjFBL2k4MEE3SUNGOGV5N2h2VzErN2FqTmpGd01Z?=
+ =?utf-8?B?TndybGd4ODB4M2lNRFJHQjYzWGNLSUFKRUpobGtzV3VQd0VaS2V3L1FxeExu?=
+ =?utf-8?B?R05nSFREaWtpNjcwSTBNSVFzRWpKM1pRUUdPVkMyZjVjRXVxQzRQTDYxUlFu?=
+ =?utf-8?B?cmgvS09LT1NFUkF3OG9QcjVCWkVmK3R1SEhPaVpoWXVIZVVSQmkveFgrbUpV?=
+ =?utf-8?B?QlVvUDBlWWkwUkEyYVUvYlZRL0s0WFYyTlZjSTI0dE1uR0YzVlI4VjdleFZD?=
+ =?utf-8?B?ZFlSbHk4bmFZY04rZFVkNGM4RnB6ZFVKNm5COERmbXZSOWUxaGZ5azJUM0hU?=
+ =?utf-8?Q?HtVhuxMM5MKAkHD8evURQxwei/A/Nphd?=
 X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BL1PR12MB5176.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024);DIR:OUT;SFP:1101;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PUZPR06MB5676.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(52116014)(376014)(7053199007)(38350700014)(13003099007);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?REd0UTM0RFJyK2xXZXhGbXJWancxazRXWnB6TFk5N3BtVVlRK0d2cElaT1M5?=
- =?utf-8?B?K3dxcmh1N0lROC9MemQyS3Z3VzhSRjdYd1dJU2Q2bjNuRkFrRXFLZ2FhM3E0?=
- =?utf-8?B?UzI5WU5wRG9Ga2lKSVowVmtlZUpyN1lJN3Z0NndZaHZHZEUvZjNoQ0F1OUJY?=
- =?utf-8?B?bTJXdy9PbkFzVUNHTGRjT1ZkbzhBN043VnJPNTFQeHhPUUZJL1BIa3czNW8v?=
- =?utf-8?B?NDZPanN2S1AxM2F0N2ZpM2JBY21OZHNxSUQ5ZnRkdDRUc25GMmxKdVkzSDZy?=
- =?utf-8?B?ZDRGaE5FaG1sV2pZWGZUbWZpL3ZiZGZGa25OazRSMkU1Q2oyN05vRkJDMTVJ?=
- =?utf-8?B?SzZKT05hR1YyazNYbUFyemNhZENzUGNMYnlZU0ZveTdvMWNwQklRSklSRTJh?=
- =?utf-8?B?a2dEdng4M2VHK3NNalNzNFMwSytvU295NDlCOFlaVzgzWnR3djE3OS9sQUkw?=
- =?utf-8?B?aDAwQUhMK3lzOVJMdG00ZkdYMWJhSlFWcytrbjg0TGNFZi9XR1FKeFgwY3M5?=
- =?utf-8?B?akZLUWczUndtdlkxRzFvOVpVbVZ0WXdMbWkyd2tza2NJdGxZSW9DcTNVeTZq?=
- =?utf-8?B?ZnYvRWJ4UFVkTDh2ejJTQWdTQWZaODRSd0p3U1Z5STl6Mm1maVhYZzFDQkZR?=
- =?utf-8?B?Yk5lYXgwSmRKWkJjei9ndTNFNEh2UUJ0RE55aStxOWJxU1F2OEhKenBkZFRm?=
- =?utf-8?B?aUFLQ01taThwMDhZdk1MdXAxZ3pMWm5odExIZm1BR3pMYk5ldWRCS05PSmlB?=
- =?utf-8?B?M1A5NzFtSVJCanh1a3RraUwvNDZPdmp2OTNuR1VsTUxBQ2RxQmIwTTlzUnFL?=
- =?utf-8?B?eDlNajE2QUFsRVZmQ2UxOUhLVUpzb29qT25MLytkMS91cW5tNmFERjcvM0xm?=
- =?utf-8?B?NG5DdmJYaWIrT1FxeTdsekZzSTR4R0NCcXIzN2tTbGtBS3hMbTdBcGJaaE54?=
- =?utf-8?B?NFFYZmhjZ2FIczkwQUhzTVY4b2hpVE1WMXdqbm9pRFQ4K1hSeW16SnZkM3gy?=
- =?utf-8?B?Z1F4TUFOYkRaa1BKQ2tCTjR4L3RCUitCdnN2NVhWY3czUXZ4R1pUellncUxn?=
- =?utf-8?B?aG1KNjVGdUtqQVFjNVVSM2QyUUhLMUNuRFQvRkRwZFZRcVUxV1ozRmsyQ0RE?=
- =?utf-8?B?VXE1TDM5OGpXNEZKTzhBYWpHU1BNYlVKTklPakYrb2huM2xWZUQ2YjJjM0dy?=
- =?utf-8?B?YXY4dUs1a3JsT2t6NWtEc0toeEVEaWVxU3pHWW1qNXp4SERvLzVnWDlyRjRw?=
- =?utf-8?B?K2QxazBpMU8reWgyVnhzR1J6N1F5THFEQ0FOV0lJTGdGRkZRa0NyTWloMDZi?=
- =?utf-8?B?bWlwdmJMUWNURTRqWlZxR0xXSy9GSkswckUyS2VTUnA3MlFnd2pXR1RVSmJ1?=
- =?utf-8?B?dDJpWjlLNnlOQzJNakdLbUtQYWZCY2FYNklyUGxiUHc4aDZiSW9ZT1pNaUlF?=
- =?utf-8?B?cVpzdlB1SllUOFVZVmVpd2NwcnRsNFZMazU0dU5maXYvOHByLzBkalZxQXJ6?=
- =?utf-8?B?YlRseGVjcXJqSExuSTRINnIxNVNPZU9XRE5yV0tKdGNXN2N3QVNvQjBKNEcz?=
- =?utf-8?B?Qk8vRDNxcy92dU80UTBkWVBwUmdyc0Uvd0liWjhtQTBGS25RMVFhc1FEVVA3?=
- =?utf-8?B?OUdXUDRjSDREZ0Y4UThnV2EwZ2tka0hxa1kzaE83UWxxKzJuWCtCL0RCVytZ?=
- =?utf-8?B?MUNMWFhxNWJrZVowM1pKZXUyeU4xRi8zTTloby8vcjBXZzRVeHU5bzZRUXV5?=
- =?utf-8?B?UTRZV1MvcFR0K1pjOXdiY2lmOUdsaWxuSkNzaCtTR0d2UmJ3VlBDaWVsajdO?=
- =?utf-8?B?aDJXcWY0dld5UjBONHVrS2tUWEFuWHBMTTJCblkxTHNDTjVtdE9ab3A3b0k4?=
- =?utf-8?B?RHNNU3VLSEJhRzlkMUtmQm9BNnJNcExhNGpYc3YrMSs0QVEvUkQxTCtVMEk4?=
- =?utf-8?B?RmRCRFhIMlJSWE51T242TUdwdjNSZVB0cXJ4QWF5dkZtQ1VaanB0eklkOStn?=
- =?utf-8?B?WkF1UElXZ0oxV1NnaVBjaENML0FhNzUwMWhZVldtTGgyTkViVTUzR3V0d0ds?=
- =?utf-8?B?Z09Dem1DQUtsaWE3dnFZWFBjTnZqQlhBeFRZWFA3R2gzWm16d1VTcGpwSk9w?=
- =?utf-8?Q?zqTqeL+NGIYbkR6X1rzb+Ld3W?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: d22a26d5-657b-41fa-6a31-08dd607a0244
-X-MS-Exchange-CrossTenant-AuthSource: BL1PR12MB5176.namprd12.prod.outlook.com
+	=?utf-8?B?RmJrcDhaOWxiSkpzR29icU4wamZaS1ltbWd1WExja1RZc28rV1IxTnRJNExV?=
+ =?utf-8?B?L2xlOEUvRzkwSU42blJSUC9nK2FZTlNiamZzWmZOeEs4V2xVb0pFV20rQ09s?=
+ =?utf-8?B?dkZxNGlJbUtaUnRNMkFHZndnc0tVeGJYWTRTQWREUkk4VHpJSllFazViZENI?=
+ =?utf-8?B?dk5XRUQwQ3Q4Q3BETWlEd3dJVFFsd3NQazN1MTRFbXpkNWNwai92QWhHQnhG?=
+ =?utf-8?B?eStPQzRaQURRT2dVNTVpQ1JEd1A2T3QyL1h0ajZvSFRVQitzRnp3Y0VVWWE3?=
+ =?utf-8?B?YUdxR2ZCOGFnMGxDbXJVZnhpQUFtVFZjdEFlVjdVNHFNUCtTRjRGTUJUT1ZB?=
+ =?utf-8?B?Q2wzazlCT0NhOGdFQUNmUE14ZGc5Y2xmenZvcjhDanhwdldNMUhGYWw3Nkor?=
+ =?utf-8?B?NE1PKzBhWHlRMkVSTmFKUU9tWEZvMmMwS2VFM1dWNDcyWnFoUitzQzZuSnZ0?=
+ =?utf-8?B?dnRraWptWUFrQm9DZ1ZSMElaVzJtb0R3RS9ZOVdmZGNjYVZTRFF1d01nRnFx?=
+ =?utf-8?B?ay9NNmQ2bk1oaFZXRHZvQzhsQmZXcW55bVZ3ZlhtTGFURUt6clc1aG5PWDVR?=
+ =?utf-8?B?SlUrckpaU3E4eGlhWld1c2EyTUpXNWxCNElKdWtSRTJmZW5LRXFueVFLeGFR?=
+ =?utf-8?B?QlZFMVU1U2JocnNFekUrNjNKVFV4dU1QeUlRQys5eGZIdmE4OGJVWjVaUlR0?=
+ =?utf-8?B?K2g2OU9Ga2xHWkZIaHUxdlA3bVBySlJZL01lWHlVRE1oSW5DUkxEa2NLUmt6?=
+ =?utf-8?B?ZkdRM3JKeTd2ZjBsQThITm9ubHlrTlQ3dXlyeFB4dytBd1haWUMxWmNRVW1M?=
+ =?utf-8?B?WTVhVENXMUs2YythLzFpWXViY1ZkM1VieWtwZmlocGRQQkdVVkliTEI1ejhk?=
+ =?utf-8?B?NlZ5ZTNTdkZrdHJHZFdUb2ZIWXhHRU1veGlmWW02dGVlcC9teWcrQllSa013?=
+ =?utf-8?B?VG5NZ0wzTkF6VExnSFk1MGN1d1U2Q1ZIMDBHZ1d4NkRlZVVqV1h3L1dJU1VS?=
+ =?utf-8?B?UUgrM2pRSTdUUHNrSFlKK2NKcFM3OHVIaG1mODB4NGNtQ0ppdUMyUzloaWVz?=
+ =?utf-8?B?YkwrQXZ5eW5XRE9wZzMzTjdLOEtESGRJaXU0ekt3bkJIZkxNY1dWVXRYUXpR?=
+ =?utf-8?B?cDk0cmNtblNGZnhpV2hCRWdPVCtQcjdBWmo0ejRYSzZBQVZIUFdCSG1UeGpk?=
+ =?utf-8?B?UXR4NWNya3cxQ2RCeTZtbzdkK2tFVjg3YTBDSEJ5aTIrSmtnMzVKemh3bjFJ?=
+ =?utf-8?B?c1V5Yzd0L3RjSkdLNGQvYTFneWU3Qkw5NzllQm1aem9HcWNGSXNjcnh3Snkx?=
+ =?utf-8?B?Y0VPMEd2ZWpVc1pGNkFObGJId1F2NGVIUDZPdUtia2d1ZlJyRzJnVDdiTFlR?=
+ =?utf-8?B?dXJtKy96THpiSll0aVZXUm4wNGIrcC9wNzNWU2gyRW9ibWZxRk5CTFBXREFh?=
+ =?utf-8?B?d29MQ2FvakhsM2YzRndvSTlwUzVxMmZJRC8wWjJ2ZmM5M3B2S291US9zMjlu?=
+ =?utf-8?B?N2R2OXVvaGNDcDdQVVNHYWdLSHRkeHI0SXBvWUJ1MU14S2JkalVEbjJqTVpP?=
+ =?utf-8?B?aXVMQllyVmVVQWdXdFFOWjRCRWN0bktGTkhGT25ZTG9WMmRkV3lORFdFMHFH?=
+ =?utf-8?B?SXhDMmFmQkkxYzViT0RWNEpVTHQ4UE9ta2NDbjZwVDlrZGhwRCsxYTAvSThp?=
+ =?utf-8?B?T0cxK01VeENWVXpVQ25BTmhCdWcvRVpDT1U1Y0c1M015OVpmWVpXL0xJOEpa?=
+ =?utf-8?B?Q0cxWi9sYUt3WW16WktGM0VHTEZZNWp4RUhpelJKMkJNOGdoVGZXOHkySDJG?=
+ =?utf-8?B?K3F0NlhmTTJyWGVicHpjWnQ2SzNsWG9IenJvd3IxNXNzeHlGbFZuZUlIZm9R?=
+ =?utf-8?B?UHhkVEhqMGRyRFBTSGVLRGp1WThDa0JsRzJUc0RTRmdCU1FKanFETFRQVlQv?=
+ =?utf-8?B?Wi82djNQT2ZuVFE5a0I0NzBYbEpjYU9RV3ZPbnphYjk2bFZpZ1M0ZHdnaWU4?=
+ =?utf-8?B?TkF6cmdRcUlmM3FUaFhzYjJleXVxZGYzazI4RnVFWlVESFZzbXhLc1JEbHpR?=
+ =?utf-8?B?SFhDUCtPdFgxaCtvRFJCa1BNeXBETitCWmlBdWMxTzhNYWVSZlh3NnlVa3VL?=
+ =?utf-8?Q?3oUNoSw2IswBsU9YFY672KpWR?=
+X-OriginatorOrg: vivo.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: b7984295-c059-4127-7cbd-08dd607a52a2
+X-MS-Exchange-CrossTenant-AuthSource: PUZPR06MB5676.apcprd06.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Mar 2025 08:52:10.0655
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Mar 2025 08:54:24.6754
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: MBrk9e1vqIs1iUetnhP2lTdsEBiwX2SrjXSCPVFUMoZy3wUJIv7l+rN0EOEiZHOMK1YUmue2Ri9BIzWPjEo61Q==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR12MB5768
+X-MS-Exchange-CrossTenant-UserPrincipalName: 84N0DCes1ldf2roAeCwUuxbAajeWOV5IhWjdrAf0mNv12sxavGasolzsAnFca5NVi/yUyVdSEW0FF8j28GolJA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: KL1PR0601MB5599
 
-Hi Dan,
 
-On 3/10/2025 20:22, Dan Carpenter wrote:
-> On Mon, Mar 10, 2025 at 02:43:51PM +0200, Ilpo Järvinen wrote:
->> On Mon, 10 Mar 2025, Dan Carpenter wrote:
->>
->>> There are a couple problems in this code:
+在 2025/3/11 16:42, Bingbu Cao 写道:
+> [You don't often get email from bingbu.cao@linux.intel.com. Learn why this is important at https://aka.ms/LearnAboutSenderIdentification ]
+>
+> Huan,
+>
+> Thanks for your response.
+>
+> On 3/11/25 3:12 PM, Huan Yang wrote:
+>> 在 2025/3/11 14:40, Bingbu Cao 写道:
+>>> [You don't often get email from bingbu.cao@linux.intel.com. Learn why this is important at https://aka.ms/LearnAboutSenderIdentification ]
 >>>
->>> First, if amd_pmf_tee_init() fails then the function returns directly
->>> instead of cleaning up.  We cannot simply do a "goto error;" because
->>> that would lead to a double free.  I have re-written this code to
->>> use an unwind ladder to free the allocations.
+>>> Huan Yang and Vivek,
+>>>
+>>> I am trying to use udmabuf for my test, and I cannot vmap the udmabuf
+>>> buffers now. vmap_pfn_apply() will report a warning to complain that
+>>> the pfns are invalid.
+>>> I dump the pfn numbers as below:
+>>> [ 3365.399641] pg[0] pfn 1148695
+>>> [ 3365.399642] pg[1] pfn 1145057
+>>> [ 3365.399642] pg[2] pfn 1134070
+>>> [ 3365.399643] pg[3] pfn 1148700
+>>> [ 3365.399643] pg[4] pfn 1144871
+>>> [ 3365.399643] pg[5] pfn 1408686
+>>> [ 3365.399643] pg[6] pfn 1408683
+>>> ...
+>>> [ 3365.399660] WARNING: CPU: 3 PID: 2772 at mm/vmalloc.c:3489 vmap_pfn_apply+0xb7/0xd0
+>>> [ 3365.399667] Modules linked in:...
+>>> [ 3365.399750] CPU: 3 UID: 0 PID: 2772 Comm: drm-test Not tainted 6.13.0-rc2-rvp #845
+>>> [ 3365.399752] Hardware name: Intel Corporation Client Platform/xxxx, BIOS xxxFWI1.R00.3221.D83.2408120121 08/12/2024
+>>> [ 3365.399753] RIP: 0010:vmap_pfn_apply+0xb7/0xd0
+>>> [ 3365.399755] Code: 5b 41 5c 41 5d 5d c3 cc cc cc cc 48 21 c3 eb d1 48 21 c3 48 23 3d 31 c0 26 02 eb c5 48 c7 c7 c4 3c 20 a8 e8 5b c0 d8 ff eb 8a <0f> 0b b8 ea ff ff ff 5b 41 5c 41 5d 5d c3 cc cc cc cc 0f 1f 80 00
+>>> [ 3365.399756] RSP: 0018:ffffb9b50c32fad0 EFLAGS: 00010202
+>>> [ 3365.399757] RAX: 0000000000000001 RBX: 0000000000118717 RCX: 0000000000000000
+>>> [ 3365.399758] RDX: 0000000080000000 RSI: ffffb9b50c358000 RDI: 00000000ffffffff
+>>> [ 3365.399758] RBP: ffffb9b50c32fae8 R08: ffffb9b50c32fbd0 R09: 0000000000000001
+>>> [ 3365.399759] R10: ffff941602479288 R11: 0000000000000000 R12: ffffb9b50c32fbd0
+>>> [ 3365.399759] R13: ffff941618665ac0 R14: ffffb9b50c358000 R15: ffff941618665ac8
+>>> [ 3365.399760] FS:  00007ff9e9ddd740(0000) GS:ffff94196f780000(0000) knlGS:0000000000000000
+>>> [ 3365.399760] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+>>> [ 3365.399761] CR2: 000055fda5dc69d9 CR3: 00000001544de003 CR4: 0000000000f72ef0
+>>> [ 3365.399762] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+>>> [ 3365.399762] DR3: 0000000000000000 DR6: 00000000ffff07f0 DR7: 0000000000000400
+>>> [ 3365.399763] PKRU: 55555554
+>>> [ 3365.399763] Call Trace:
+>>> [ 3365.399765]  <TASK>
+>>> [ 3365.399769]  ? show_regs+0x6d/0x80
+>>> [ 3365.399773]  ? __warn+0x97/0x160
+>>> [ 3365.399777]  ? vmap_pfn_apply+0xb7/0xd0
+>>> [ 3365.399777]  ? report_bug+0x1ec/0x240
+>>> [ 3365.399782]  ? handle_bug+0x63/0xa0
+>>> [ 3365.399784]  ? exc_invalid_op+0x1d/0x80
+>>> [ 3365.399785]  ? asm_exc_invalid_op+0x1f/0x30
+>>> [ 3365.399790]  ? vmap_pfn_apply+0xb7/0xd0
+>>> [ 3365.399791]  __apply_to_page_range+0x522/0x8a0
+>>> [ 3365.399794]  ? __pfx_vmap_pfn_apply+0x10/0x10
+>>> [ 3365.399795]  apply_to_page_range+0x18/0x20
+>>> [ 3365.399796]  vmap_pfn+0x77/0xd0
+>>> [ 3365.399797]  vmap_udmabuf+0xc5/0x110
+>>> [ 3365.399802]  dma_buf_vmap+0x96/0x130
+>>>
+>>> I did an experiment to revert 18d7de823b7150344d242c3677e65d68c5271b04,
+>>> then I can vmap the pages. Could you help what's wrong with that?
+>> Sorry for that, as I reviewed pfn_valid, that's someting wired:
 >>
->> Thanks Dan,
+>> /**
+>>   * pfn_valid - check if there is a valid memory map entry for a PFN
+>>   * @pfn: the page frame number to check
+>>   *
+>>   * Check if there is a valid memory map entry aka struct page for the @pfn.
+>>   * Note, that availability of the memory map entry does not imply that
+>>   * there is actual usable memory at that @pfn. The struct page may
+>>   * represent a hole or an unusable page frame.
+>>   *
+>>   * Return: 1 for PFNs that have memory map entries and 0 otherwise
+>>   */
 >>
->> Could you please amend this with the information of what is getting 
->> double freed, it took considerable amount of time for me to figure out.
->> I assume it's ->fw_shm_pool ?
+>> So, if pfn valid, it's return 1, else 0. So mean, only 1 is a valid pfn. But vmap_pfn_apply in there:
 >>
-> 
-> Yes, that's it.  Sure, I can re-write that.
-> 
->>> Second, if amd_pmf_start_policy_engine() fails on every iteration though
->>> the loop then the code calls amd_pmf_tee_deinit() twice which is also a
->>> double free.  Call amd_pmf_tee_deinit() inside the loop for each failed
->>> iteration.  Also on that path the error codes are not necessarily
->>> negative kernel error codes.  Set the error code to -EINVAL.
+>> static int vmap_pfn_apply(pte_t *pte, unsigned long addr, void *private)
+>> {
+>>      struct vmap_pfn_data *data = private;
+>>      unsigned long pfn = data->pfns[data->idx];
+>>      pte_t ptent;
 >>
->> Maybe I should start to consistently reject any attempt to use 
->> cleanup/deinit helper functions instead of a proper rollback. It 
->> seems a pattern that is very prone to errors like this.
-> 
-> I do not like deinit functions.  They are so hard to review.  But I
-> detected this bug because of a Smatch warning:
-> 
-> drivers/platform/x86/amd/pmf/tee-if.c:540 amd_pmf_init_smart_pc() warn: missing unwind goto?
+>>      if (WARN_ON_ONCE(pfn_valid(pfn)))
+>>          return -EINVAL;
+>>
+>>      ptent = pte_mkspecial(pfn_pte(pfn, data->prot));
+>>      set_pte_at(&init_mm, addr, pte, ptent);
+>>
+>>      data->idx++;
+>>      return 0;
+>> }
+>>
+>> Do it give a wrong check? maybe should fix by:
+> I guess not, it looks more like warning when you trying to vmap a
+> pfn which already took a valid entry in pte.
 
-Thank you for the fix. We have a CI that runs sparse/smatch/coverity
-to catch all these issues and unfortunately this was not caught by the
-CI system.
+No, I think here check need pfn is valid, then can set it. If a pfn is 
+invalid, why we set it in PTE?
 
-But, I can confirm that Smatch is triggering this.
+Also, I can't make sure.
 
-drivers/platform/x86/amd/pmf/tee-if.c
-  CHECK   scripts/mod/empty.c
-  CALL    scripts/checksyscalls.sh
-  DESCEND objtool
-  INSTALL libsubcmd_headers
-  CC [M]  drivers/platform/x86/amd/pmf/tee-if.o
-  CHECK   drivers/platform/x86/amd/pmf/tee-if.c
-drivers/platform/x86/amd/pmf/tee-if.c:540 amd_pmf_init_smart_pc()
-warn: missing unwind goto?
+BTW, can you fix it then retest?
 
-Thanks,
-Shyam
+Thank you.
 
+>
+> However, the MM code is so complex for me, just my guess. :)
+>
+>> static int vmap_pfn_apply(pte_t *pte, unsigned long addr, void *private)
+>> {
+>>      struct vmap_pfn_data *data = private;
+>>      unsigned long pfn = data->pfns[data->idx];
+>>      pte_t ptent;
+>>
+>> -    if (WARN_ON_ONCE(pfn_valid(pfn)))
+>> +    if (WARN_ON_ONCE(!pfn_valid(pfn)))
+>>          return -EINVAL;
+>>
+>>      ptent = pte_mkspecial(pfn_pte(pfn, data->prot));
+>>      set_pte_at(&init_mm, addr, pte, ptent);
+>>
+>>      data->idx++;
+>>      return 0;
+>> }
+>>
+>> Please help me check it, also, you can apply this and then check it.:)
+>>
+>>>
+>>> --
+>>> Best regards,
+>>> Bingbu Cao
+> --
+> Best regards,
+> Bingbu Cao
 
