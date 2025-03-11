@@ -1,145 +1,72 @@
-Return-Path: <linux-kernel+bounces-556994-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-556995-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 98BC7A5D215
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 22:54:58 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id F403AA5D217
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 22:55:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 64C8B188980A
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 21:55:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 900413B2C9C
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 21:54:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B3C3264A98;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2E07264FA3;
 	Tue, 11 Mar 2025 21:54:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="JoMB+255"
-Received: from mail-oo1-f47.google.com (mail-oo1-f47.google.com [209.85.161.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="byRQQRx2"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B916264A7D
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 21:54:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 457FE264A94;
+	Tue, 11 Mar 2025 21:54:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741730091; cv=none; b=GCIaDJprnwv1Buxr0SFGM5ihNCGVASqqPI2o95uZrZcj2NvsFKi/K3VN8PlQT4rie8cmCTkPDz0y4ZyZtrAac5aCZW3TpTGxAngu0+JmypWtMkUvBijlh7WM0ncSqB3C4nsZeiqahW3ieRtgmoOaY0TWrmadMg3x6iVROr++IzY=
+	t=1741730092; cv=none; b=eP5ZT2sGNNUVN3UDKsxUzm3LPhpy2VRUsKEgkEpdQ/yNG5gcymjsiUd6f65xT1ip4cXXMepgZ6KYzDKk/e9FRQUZ7iKDiBkwoFAB3fTDsrUtQf6AkwGGDCFzLAVW1vuAkjJgebsLeSRbXz42bA8WhI121pjLbhXXRq04aPKlnZc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741730091; c=relaxed/simple;
-	bh=lx6oQy6ulCdJcKW6pyA6L4sW6xfoPq/2WIZT3ctB5TQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ZvqUE0OJYu7rKjH7nnyCWsVMOGqwISfieomy6GVY+V8IxtoK4ZWwHjasN+BBZrBKoX+5BeBZxnlC7YH2NuEE4LMKQmygXAI/FZ2MnVNWhEyJeR5lggSKAPkCN1V+KAdJigq017jo1DP7ywpDDvQ0EmR8vPoF4d4G4zAKYpRCcEU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=JoMB+255; arc=none smtp.client-ip=209.85.161.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-oo1-f47.google.com with SMTP id 006d021491bc7-601a15186f0so260223eaf.2
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 14:54:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1741730089; x=1742334889; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ZqtLjg1DzXxI0seit2K5+J+AUgYKo7ZSLSErJeqONSA=;
-        b=JoMB+255sF2i8fhdBJHvHjw4KW+rB8y5LAiR03LkvLMSV674R/GMu9+QF8XjBMlpqz
-         iLIP9Pt+mkVatgHHlktlkUlhiF7oKMQxzd0X6B/zR8iXgWVe+k3uO1AlcPb0lFuld7Sz
-         Fl5I6xQ3tKuvWG2SAZHNszd8/Y2kKFFKjteKg=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741730089; x=1742334889;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ZqtLjg1DzXxI0seit2K5+J+AUgYKo7ZSLSErJeqONSA=;
-        b=pyjag0HRTJ+3twIpr80ptS9MRbL5yf8dJxdDBMuGYdSeG7v81FrGf6v+sKvXOMiqH0
-         kXNQoljKwKTG4JgRya5KbafCOBHHqAOW944WxnX1EDzC3efw9qYb/3h/4SxivGrmQ9qm
-         b1VvONa4io1xeOZE3UWgZhFxnd8YE0WWnyu0x7La2ooUz+3EX7bo6CBY8FSsAb8lXKJN
-         oDhUnWAkZ6EQ6tyt/G+TMr6kDVnPudHbepjsmCYbl6tVIWISJtkbaUikAfyRYo0MeA/t
-         X0o+hP8QjlRHRyNqDGeFpWcnjUG8dnklDnjT7TuaFhe4jXPXHTPqfjKVfs0uuKkPEZd1
-         fctA==
-X-Forwarded-Encrypted: i=1; AJvYcCUpg8pdkR2y7W4k77ELSdvvz5Lj6xD3ui5cXSXMWNkpf9KsXnY3b9SUlVDn5qiA/6/6SEKDfaFJj75Zg7s=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyygjF1nqov4lrlI/Hewc4mII7WBzblWjpV8s9uanBN90zrJPiT
-	FNdT+hB7X1hqezAlMZck7mZ/v5vttxqysTgTqJdKLAT+IyvrTIlsu4D4pADE1ajhbGkq7ylQ5uT
-	GDfRK/VIl/7SGgxsuOkGc2XhHTqgJHFN/eTkG
-X-Gm-Gg: ASbGncstn4bIj8b/p6MeJsYwNIjilfG6wu3aupbln+qzKzksROD2oaHpx9ygJz9/iDw
-	V3B0DKQa2hh914Y3k4TtVkW1qmUinKcMGR9PkmVEtrD16ix6N8+3gyaKaH5lvJu024ynQAv28UM
-	JNDf7b8JUTGYvRl8LizlN7xwAq
-X-Google-Smtp-Source: AGHT+IH2IPSslGXs3S6U3SZyEjhufps+FOgJ4MI5DY7Uu+/0+4vI/knID5uO2tWz7qPzGa2aOnkdzTN2mj4h7r9KJSs=
-X-Received: by 2002:a05:6808:228a:b0:3f4:1be4:b1d4 with SMTP id
- 5614622812f47-3f6a2b39ca2mr2959328b6e.2.1741730088963; Tue, 11 Mar 2025
- 14:54:48 -0700 (PDT)
+	s=arc-20240116; t=1741730092; c=relaxed/simple;
+	bh=dgCDRRCaDUGdEb5+XrQyoxYViRq9OEfNVP33iEShzL4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DhrMdZvHdRysa0xXYOFpvcLlTHVvG4N6VDUFH3pYHvVuPiE8dbKhwpUsiMtPuTEuj9t52QJnuETtG6knIbwpy7mHS02YLn6b32lDnsdEV49nLHhr8e/kM4ta1AuePWW27foFxDUM8u7LUvACbwVbA9CM5ckSRrfctNUy/TII+Ls=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=byRQQRx2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 93CDAC4CEE9;
+	Tue, 11 Mar 2025 21:54:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741730091;
+	bh=dgCDRRCaDUGdEb5+XrQyoxYViRq9OEfNVP33iEShzL4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=byRQQRx2duPgo+SnsZ/GTrr8avf6FbK9eE7V++3NdBdtWS1ld5v3YpOsXn+qG2qbm
+	 NtT0EB6lFO5Or+z1x1VOYEIDftiOS6UwPw0r4nASe6R3tGsgAEjZRNzpNHMwUXZeD2
+	 Ug7gH7GGLfXCbHJymw3poh65a4FwKpHEswcn5YnRM8D5cFixUKl4H3pnc8xunDIj2h
+	 hW1QGHH3mSQXUi4E7r7+dbn5CIFje1aJvWT/+uKg6St+zPwtDllVlf875va45tgLFX
+	 4c/4j6vJ0W7smz85+JWyA0xFjTghi49PFdb7MNr+UknNBrKl9K2onKo6DwvKR6J4OE
+	 nvjXjX5mINwVg==
+Date: Tue, 11 Mar 2025 21:54:50 +0000
+From: Wei Liu <wei.liu@kernel.org>
+To: Thorsten Blum <thorsten.blum@linux.dev>
+Cc: "K. Y. Srinivasan" <kys@microsoft.com>,
+	Haiyang Zhang <haiyangz@microsoft.com>,
+	Wei Liu <wei.liu@kernel.org>, Dexuan Cui <decui@microsoft.com>,
+	Michael Kelley <mhklinux@outlook.com>, linux-hyperv@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] hyperv: Remove unused union and structs
+Message-ID: <Z9CxKvarA4VaAp2a@liuwe-devbox-ubuntu-v2.lamzopl0uupeniq2etz1fddiyg.xx.internal.cloudapp.net>
+References: <20250311091634.494888-2-thorsten.blum@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250311123326.2686682-1-hca@linux.ibm.com> <20250311123326.2686682-2-hca@linux.ibm.com>
-In-Reply-To: <20250311123326.2686682-2-hca@linux.ibm.com>
-From: Jeff Xu <jeffxu@chromium.org>
-Date: Tue, 11 Mar 2025 14:54:37 -0700
-X-Gm-Features: AQ5f1JoHdL7fy9WOBHHtsPNXX2PhdRPHU3FfnSh5XG6auVNGW-V5IoHWDbRycD8
-Message-ID: <CABi2SkUG6ddwOpZqp3frfHh+AvQP3fyhfN5WOn-cCNpavUhZ3A@mail.gmail.com>
-Subject: Re: [PATCH mm-unstable 1/2] mseal sysmap: generic vdso vvar mapping
-To: Heiko Carstens <hca@linux.ibm.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
-	"Liam R . Howlett" <Liam.Howlett@oracle.com>, Kees Cook <kees@kernel.org>, 
-	=?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>, 
-	Alexander Gordeev <agordeev@linux.ibm.com>, Sven Schnelle <svens@linux.ibm.com>, 
-	Vasily Gorbik <gor@linux.ibm.com>, Christian Borntraeger <borntraeger@linux.ibm.com>, 
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
-	linux-hardening@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250311091634.494888-2-thorsten.blum@linux.dev>
 
-On Tue, Mar 11, 2025 at 5:33=E2=80=AFAM Heiko Carstens <hca@linux.ibm.com> =
-wrote:
->
-> With the introduction of the generic vdso data storage the VM_SEALED_SYSM=
-AP
-> vm flag must be moved from the architecture specific
-> _install_special_mapping() call [1] [2] which maps the vvar mapping to
-> generic code.
->
-Thanks for fixing this merging problem.
-The new selftest in mseal_system_mappings should catch this :-)
+On Tue, Mar 11, 2025 at 10:16:34AM +0100, Thorsten Blum wrote:
+> The union vmpacket_largest_possible_header and several structs have not
+> been used for a long time afaict - remove them.
+> 
+> Reviewed-by: Michael Kelley <mhklinux@outlook.com>
+> Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
 
-Hi Andrew,
-when you apply this to mm-unstable, could you please insert this between:
-
-commit 5bda54a4f304a7c3d65a40c9c3f015901caa2ce6
-selftests: x86: test_mremap_vdso: skip if vdso is msealed
-and
-commit 884323e928c6938923e5dfcb8a601b3363e1130b
- mseal sysmap: enable x86-64
-
-That will make the series complete.
-
-
-> [1] https://lkml.kernel.org/r/20250305021711.3867874-4-jeffxu@google.com
-> [2] https://lkml.kernel.org/r/20250305021711.3867874-5-jeffxu@google.com
->
-> Signed-off-by: Heiko Carstens <hca@linux.ibm.com>
-> ---
->  lib/vdso/datastore.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
->
-> diff --git a/lib/vdso/datastore.c b/lib/vdso/datastore.c
-> index e227fbbcb796..b7c7386c98a9 100644
-> --- a/lib/vdso/datastore.c
-> +++ b/lib/vdso/datastore.c
-> @@ -99,7 +99,8 @@ const struct vm_special_mapping vdso_vvar_mapping =3D {
->  struct vm_area_struct *vdso_install_vvar_mapping(struct mm_struct *mm, u=
-nsigned long addr)
->  {
->         return _install_special_mapping(mm, addr, VDSO_NR_PAGES * PAGE_SI=
-ZE,
-> -                                       VM_READ | VM_MAYREAD | VM_IO | VM=
-_DONTDUMP | VM_PFNMAP,
-> +                                       VM_READ | VM_MAYREAD | VM_IO | VM=
-_DONTDUMP |
-> +                                       VM_PFNMAP | VM_SEALED_SYSMAP,
->                                         &vdso_vvar_mapping);
->  }
->
-> --
-> 2.45.2
->
-Reviewed-by: Jeff Xu <jeffxu@chromium.org>
+Applied to hyperv-next. Thanks.
 
