@@ -1,213 +1,108 @@
-Return-Path: <linux-kernel+bounces-556494-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-556495-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 87C9BA5CA98
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 17:17:18 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 61D31A5CA9F
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 17:18:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C75341775C5
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 16:17:17 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AEC747A55B5
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 16:17:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 967CB25E833;
-	Tue, 11 Mar 2025 16:17:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Tk20rqU6"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA02B32C8E
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 16:17:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36D0425E833;
+	Tue, 11 Mar 2025 16:18:13 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F9FB32C8E
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 16:18:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741709832; cv=none; b=UQPqYxmhp3a7fuoPiTy0hgHcAl3GkZidM6VNf+CMlVb2HBjISgCQStmaj2YvX2lBbUcCgIsJDG/gu852uL+eNe2rhVz5Yec8SCdVzlXsCpLQ+ptlwdbIdEzdlZ8TgxIE74FBWgGzXGJWTNc9jSTteh66c5EIiRzV6K1LyUA/RWg=
+	t=1741709892; cv=none; b=J+W2oNLa3tEMTymIMHcVjj5EUD6nx4bWJjV6BCaRQPxJQ3cCkcChD/UT4OQAyx4m9HI/JG4/rihzVsGaCMUI+X+FNts2kIUfybYviJpzMoPkmSiIqc1wt/m4vN7Rw8ZpIGavGSTT+wuLGNACqQ654VqZovkOLhWDTitX2Bd4Dlg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741709832; c=relaxed/simple;
-	bh=dAacS6pM8DLqKxFPAs1POWYCMSIz8OriSExs4t/LaOA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OARPeLwIm5wiMv7a/YTOYohMhg3eANJXOXeF/jKCx9+DUtRo2xXeEL9hDIczKLFp1rVozNLodU8qyE8E5NZ5Pww6tVsOxfIrCkyQN4wwsufs9+OMCkyUKJiRAdB1cdCPCtJ6Q6ZzWAOnXSrar3bWTj9vfvQAdBoFJIzvVhXaQo0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Tk20rqU6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DC667C4CEEC;
-	Tue, 11 Mar 2025 16:17:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741709831;
-	bh=dAacS6pM8DLqKxFPAs1POWYCMSIz8OriSExs4t/LaOA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Tk20rqU6xAF2qgFtUDzvKzc/ddb0gLaMjtKWiUUihY5eP+co3hVIi2UtIfdXWy5dm
-	 LnvwX9PHDfrX2VbHON3+ABY/DLdSBTu/7R6oEm8+p66birFi8OqAex749+N0fKugNY
-	 oSt3pV7tYHebYXOaK+4Iv41FJRSt1k9988czDtzJe+EfyZMW0lixwoEb6iB5WMxNhO
-	 4IgaqylCwV65/TNlMXwmr/1rRiLu8PMGb00mglEprxtiuK4d0aSrc7YYm+3E4QO6Al
-	 FqoewVvw+nXYpRhGUmUtPX4e9B7LUA/zPOqbGUQEJ+debksDv89cV9wX3MbrET4HTe
-	 cEEYXrwKbe0ZQ==
-Date: Tue, 11 Mar 2025 17:17:08 +0100
-From: Maxime Ripard <mripard@kernel.org>
-To: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
-Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, Dave Stevenson <dave.stevenson@raspberrypi.com>, 
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, kernel@collabora.com, dri-devel@lists.freedesktop.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 6/7] drm/tests: hdmi: Add limited range tests for
- YUV420 mode
-Message-ID: <20250311-burgundy-cat-of-diversity-b89681@houat>
-References: <20250311-hdmi-conn-yuv-v2-0-fbdb94f02562@collabora.com>
- <20250311-hdmi-conn-yuv-v2-6-fbdb94f02562@collabora.com>
+	s=arc-20240116; t=1741709892; c=relaxed/simple;
+	bh=M3oNNyikuJiqrPWwOjWDWDb8OBXjfC6fpC8/6GYut8c=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=do5DPtsCcSpHD+Ugnrc1XzJoA5uEuWZYVAzXZxyPk6+BBh3em8XFZGGl2qVuXTWzl6608xWOz5CmYNbhSbbzP7mSDaHxHIqXJRtBIdfS+bL+LOOMWqnYJwvO1IEwVJclFOxOWl7r1qfqXBv5rt5RRqwYlkjjcWFDIcXjt4nSnKY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 448911516;
+	Tue, 11 Mar 2025 09:18:21 -0700 (PDT)
+Received: from [10.1.197.49] (eglon.cambridge.arm.com [10.1.197.49])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 346523F673;
+	Tue, 11 Mar 2025 09:18:05 -0700 (PDT)
+Message-ID: <b23402de-1123-42d7-8b49-5ce0c017818d@arm.com>
+Date: Tue, 11 Mar 2025 16:18:03 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="csssixfkyybruyh2"
-Content-Disposition: inline
-In-Reply-To: <20250311-hdmi-conn-yuv-v2-6-fbdb94f02562@collabora.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v7 00/49] x86/resctrl: Move the resctrl filesystem code to
+ /fs/resctrl
+To: babu.moger@amd.com, x86@kernel.org, linux-kernel@vger.kernel.org
+Cc: Reinette Chatre <reinette.chatre@intel.com>,
+ Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+ Borislav Petkov <bp@alien8.de>, H Peter Anvin <hpa@zytor.com>,
+ shameerali.kolothum.thodi@huawei.com,
+ D Scott Phillips OS <scott@os.amperecomputing.com>,
+ carl@os.amperecomputing.com, lcherian@marvell.com,
+ bobo.shaobowang@huawei.com, tan.shaopeng@fujitsu.com,
+ baolin.wang@linux.alibaba.com, Jamie Iles <quic_jiles@quicinc.com>,
+ Xin Hao <xhao@linux.alibaba.com>, peternewman@google.com,
+ dfustini@baylibre.com, amitsinght@marvell.com,
+ David Hildenbrand <david@redhat.com>, Rex Nie <rex.nie@jaguarmicro.com>,
+ Dave Martin <dave.martin@arm.com>, Koba Ko <kobak@nvidia.com>,
+ Shanker Donthineni <sdonthineni@nvidia.com>, fenghuay@nvidia.com
+References: <20250228195913.24895-1-james.morse@arm.com>
+ <7945ffca-6c2c-4baf-89e7-688681db29ca@amd.com>
+Content-Language: en-GB
+From: James Morse <james.morse@arm.com>
+In-Reply-To: <7945ffca-6c2c-4baf-89e7-688681db29ca@amd.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+
+Hi Babu,
+
+On 10/03/2025 14:07, Moger, Babu wrote:
+> On 2/28/25 13:58, James Morse wrote:
+>> Changes since v6?:
+>>  * All the excitement is in patch 37, turns out there are two rmdir() paths
+>>    that don't join up.
+>> The last eight patches are new:
+>>  * The python script has been replaced with the patch that it generates, see
+>>    the bare branch below if you want to regenerate it.
+>>  * There have been comments on the followup to the generated patch, those are
+>>    included here - I suggest they be squashed into the generated patch.
+>>  * This version includes some checkpatch linting from Dave.
+>>
+>> ---
+>> This series renames functions and moves code around. With the
+>> exception of invalid configurations for the configurable-events, there should
+>> be no changes in behaviour caused by this series. It is now possible for
+>> throttle_mode to report 'undefined', but no known platform will do this.
+>>
+>> The driving pattern is to make things like struct rdtgroup private to resctrl.
+>> Features like pseudo-lock aren't going to work on arm64, the ability to disable
+>> it at compile time is added.
+>>
+>> After this, I can start posting the MPAM driver to make use of resctrl on arm64.
+>> (What's MPAM? See the cover letter of the first series. [1])
+>>
+>> This series is based on v6.14-rc3 and can be retrieved from:
+>> https://git.kernel.org/pub/scm/linux/kernel/git/morse/linux.git mpam/move_to_fs/v7
+>> or for those who want to regnerate the patch that moves all the code:
+>> https://git.kernel.org/pub/scm/linux/kernel/git/morse/linux.git mpam/move_to_fs/v7_bare
 
 
---csssixfkyybruyh2
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v2 6/7] drm/tests: hdmi: Add limited range tests for
- YUV420 mode
-MIME-Version: 1.0
+> Ran tests on couple of AMD systems.  Everything looks good.
+> 
+> Tested-by: Babu Moger <babu.moger@amd.com>
 
-On Tue, Mar 11, 2025 at 12:57:38PM +0200, Cristian Ciocaltea wrote:
-> Provide tests to verify that drm_atomic_helper_connector_hdmi_check()
-> helper behaviour when using YUV420 output format is to always set the
-> limited RGB quantization range to 'limited', no matter what the value of
-> Broadcast RGB property is.
->=20
-> Signed-off-by: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
-> ---
->  drivers/gpu/drm/tests/drm_hdmi_state_helper_test.c |  89 +++++++++++++++-
->  drivers/gpu/drm/tests/drm_kunit_edid.h             | 112 +++++++++++++++=
-++++++
->  2 files changed, 196 insertions(+), 5 deletions(-)
->=20
-> diff --git a/drivers/gpu/drm/tests/drm_hdmi_state_helper_test.c b/drivers=
-/gpu/drm/tests/drm_hdmi_state_helper_test.c
-> index a3f7f3ce31c73335c2c2643bdc5395b6ceb6f071..1df12c0b7768e4f85f4c94384=
-0d9b4dcb6e079e0 100644
-> --- a/drivers/gpu/drm/tests/drm_hdmi_state_helper_test.c
-> +++ b/drivers/gpu/drm/tests/drm_hdmi_state_helper_test.c
-> @@ -227,6 +227,8 @@ connector_hdmi_init_funcs_set_edid(struct kunit *test,
->  	enc->possible_crtcs =3D drm_crtc_mask(priv->crtc);
-> =20
->  	conn =3D &priv->connector;
-> +	conn->ycbcr_420_allowed =3D !!(formats & BIT(HDMI_COLORSPACE_YUV420));
-> +
->  	ret =3D drmm_connector_hdmi_init(drm, conn,
->  				       "Vendor", "Product",
->  				       &dummy_connector_funcs,
-> @@ -751,6 +753,86 @@ static void drm_test_check_broadcast_rgb_limited_cea=
-_mode_vic_1(struct kunit *te
->  	drm_modeset_acquire_fini(&ctx);
->  }
-> =20
-> +/*
-> + * Test that for an HDMI connector, with an HDMI monitor, we will
-> + * get a limited RGB Quantization Range with a YUV420 mode, no
-> + * matter what the value of the Broadcast RGB property is set to.
-> + */
-> +static void drm_test_check_broadcast_rgb_cea_mode_yuv420(struct kunit *t=
-est)
-> +{
-> +	struct drm_atomic_helper_connector_hdmi_priv *priv;
-> +	enum drm_hdmi_broadcast_rgb broadcast_rgb;
-> +	struct drm_modeset_acquire_ctx ctx;
-> +	struct drm_connector_state *conn_state;
-> +	struct drm_atomic_state *state;
-> +	struct drm_display_mode *mode;
-> +	struct drm_connector *conn;
-> +	struct drm_device *drm;
-> +	struct drm_crtc *crtc;
-> +	int ret;
-> +
-> +	broadcast_rgb =3D *(enum drm_hdmi_broadcast_rgb *)test->param_value;
-> +
-> +	priv =3D drm_kunit_helper_connector_hdmi_init_set_edid(test,
-> +				BIT(HDMI_COLORSPACE_RGB) |
-> +				BIT(HDMI_COLORSPACE_YUV420),
-> +				8,
-> +				test_edid_hdmi_1080p_rgb_yuv_4k_yuv420_dc_max_200mhz);
-> +	KUNIT_ASSERT_NOT_NULL(test, priv);
-> +
-> +	drm =3D &priv->drm;
-> +	crtc =3D priv->crtc;
-> +	conn =3D &priv->connector;
-> +	KUNIT_ASSERT_TRUE(test, conn->display_info.is_hdmi);
-> +
-> +	mode =3D drm_kunit_display_mode_from_cea_vic(test, drm, 95);
-> +	KUNIT_ASSERT_NOT_NULL(test, mode);
-> +
-> +	drm_modeset_acquire_init(&ctx, 0);
-> +
-> +	ret =3D light_up_connector(test, drm, crtc, conn, mode, &ctx);
-> +	KUNIT_ASSERT_EQ(test, ret, 0);
-> +
-> +	state =3D drm_kunit_helper_atomic_state_alloc(test, drm, &ctx);
-> +	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, state);
-> +
-> +	conn_state =3D drm_atomic_get_connector_state(state, conn);
-> +	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, conn_state);
-> +
-> +	conn_state->hdmi.broadcast_rgb =3D broadcast_rgb;
-> +
-> +	ret =3D drm_atomic_check_only(state);
-> +	KUNIT_ASSERT_EQ(test, ret, 0);
-> +
-> +	conn_state =3D drm_atomic_get_connector_state(state, conn);
-> +	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, conn_state);
-> +
-> +	KUNIT_ASSERT_EQ(test, conn_state->hdmi.broadcast_rgb, broadcast_rgb);
-> +	KUNIT_ASSERT_EQ(test, conn_state->hdmi.output_format, HDMI_COLORSPACE_Y=
-UV420);
-> +
-> +	KUNIT_EXPECT_TRUE(test, conn_state->hdmi.is_limited_range);
-> +
-> +	drm_modeset_drop_locks(&ctx);
-> +	drm_modeset_acquire_fini(&ctx);
-> +}
-> +
-> +static const enum drm_hdmi_broadcast_rgb check_broadcast_rgb_cea_mode_yu=
-v420_tests[] =3D {
-> +	DRM_HDMI_BROADCAST_RGB_AUTO,
-> +	DRM_HDMI_BROADCAST_RGB_FULL,
-> +	DRM_HDMI_BROADCAST_RGB_LIMITED,
-> +};
-> +
-> +static void
-> +check_broadcast_rgb_cea_mode_yuv420_desc(const enum drm_hdmi_broadcast_r=
-gb *broadcast_rgb,
-> +					 char *desc)
-> +{
-> +	sprintf(desc, "%s", drm_hdmi_connector_get_broadcast_rgb_name(*broadcas=
-t_rgb));
-> +}
-> +
-> +KUNIT_ARRAY_PARAM(check_broadcast_rgb_cea_mode_yuv420,
-> +		  check_broadcast_rgb_cea_mode_yuv420_tests,
-> +		  check_broadcast_rgb_cea_mode_yuv420_desc);
-> +
+Thanks!
 
-We need more tests than that to test the various combinations, whether
-the fallback to YUV420 should work or not depending on the EDID, the
-driver capabilities, YUV420-only vs YUV420-also, etc.
-
-Maxime
-
---csssixfkyybruyh2
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCZ9BiBAAKCRDj7w1vZxhR
-xUvlAQDL6N83IyNqafHlo3sadwTdpCNWd+crAmiVsRLfUEdeDgD7BDjL6Nksg1DW
-BZWzwo42fBiibREgpgNWMFayg7P33gw=
-=9aiN
------END PGP SIGNATURE-----
-
---csssixfkyybruyh2--
+James
 
