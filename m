@@ -1,256 +1,123 @@
-Return-Path: <linux-kernel+bounces-555372-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-555373-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8F8B4A5B692
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 03:15:22 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0FDADA5B693
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 03:15:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 39AC23A954C
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 02:15:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5711A171CCB
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 02:15:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02F7E1E4928;
-	Tue, 11 Mar 2025 02:15:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC73A1E4929;
+	Tue, 11 Mar 2025 02:15:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="X5KhHjqq"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=antoniohickey.com header.i=@antoniohickey.com header.b="eB/RiN0p";
+	dkim=pass (1024-bit key) header.d=amazonses.com header.i=@amazonses.com header.b="RnmMrFsP"
+Received: from a8-87.smtp-out.amazonses.com (a8-87.smtp-out.amazonses.com [54.240.8.87])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7CF71E2858;
-	Tue, 11 Mar 2025 02:15:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A2151E522;
+	Tue, 11 Mar 2025 02:15:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.240.8.87
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741659315; cv=none; b=JdlSLT3VGps1FE5nsUoO4T8PFx88d8854ap5nmZx/VELA0M9sUg4RH3f5cRMKTK5z7BGgdRTt91x37yBbnlcDLpXg9rOsNopYycpEL/BZM/EkIY8msg2OnjXi7G6X4tOA2stxaURxCirA/lilntiV0E7vSA9ysjcHtoTw+F2clo=
+	t=1741659338; cv=none; b=VbbwEfzBN7U1ZVSW8fUwxujNp6w67L3OFMH3Cvz/5qquwoEpFmN9QQL3UYQZk5wO35sxN7hS/ZYMO9M3NB6TV7DmfaezV4kW1b6bvuaPcxFH2POTQtW6hycQkgWy4MFjDjRlljcGd2IS+Ch6sEK8v72+f/45aB1pKB13atn0Nh0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741659315; c=relaxed/simple;
-	bh=6Pe6SYwxr/nOlWekTsT85wDU244rwpBxVMTiH4qMIIk=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=rGHEfAzVtx9Ig6unBDEQHBjPlG4xsOwBprk56ASGLF8aSvq7LLhBVRd8//gex5+CqCq0hIv649nzo6yc/O6KNFn2SGSirX0qHvd1c4Kut1fNb5T1D+l+Go1XCZprU0H9iOeByi3azw7uiK/mgZy6Qz5oTpw9GE3DqwJaLW/jzd8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=X5KhHjqq; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1741659311;
-	bh=H3bE3BXEcliSsdQIHq1WNgNGjfLvX5g6Km0crdEHh7E=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=X5KhHjqq5iXL61SSWrpNhpaqzQCyTaS11sEHf4GE5QWM5Zes3Qv4XwKxb3T18DKfF
-	 IYe1giSs7SS+ubbFrfjqTAv6J7oyIoigoeaiuKvi4m0Juj8sJSNlahRmJmDSmpI5Pk
-	 oF9DTByMTMFq6KMqRxmW+2etwmr4oQyyJdqQnoIxsM0tiyzSnQubxyZ60tVRgP34s6
-	 Mt8OcFWKobL16vSJd19z7XvEzQfCqzmrlsB4eryBjI1z7NkOGqhC6eYY+eSIy61Cw0
-	 Z+4Ve1xyIbNcRIb9Rg7B7nc3uiIFTWQQUEEr+npOFSk4c67Z6g6Ix3stf3yWeX+KbQ
-	 lXeWVzXNJGuRg==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4ZBcmG6ZJHz4x04;
-	Tue, 11 Mar 2025 13:15:10 +1100 (AEDT)
-Date: Tue, 11 Mar 2025 13:15:10 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Andrew Morton <akpm@linux-foundation.org>, Dave Airlie
- <airlied@redhat.com>
-Cc: Lucas De Marchi <lucas.demarchi@intel.com>, Thomas =?UTF-8?B?SGVsbHN0?=
- =?UTF-8?B?csO2bQ==?= <thomas.hellstrom@linux.intel.com>, Alistair Popple
- <apopple@nvidia.com>, Balbir Singh <balbirs@nvidia.com>, Matthew Brost
- <matthew.brost@intel.com>, DRM XE List <intel-xe@lists.freedesktop.org>,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
- Mailing List <linux-next@vger.kernel.org>, DRI
- <dri-devel@lists.freedesktop.org>
-Subject: Re: linux-next: build failure after merge of the drm-xe tree
-Message-ID: <20250311131510.2111c8c3@canb.auug.org.au>
-In-Reply-To: <20250307132112.18b6ce90@canb.auug.org.au>
-References: <20250307132112.18b6ce90@canb.auug.org.au>
+	s=arc-20240116; t=1741659338; c=relaxed/simple;
+	bh=avBbpXuLghR+QCylMU4TexjL870/yz8BwhT4jBHuwvw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=J4uz0z4YSOfCDprYwhyaiPze8ibLFapvWmaG1TRrS7Q6RpJQoCnFkAdELPNxsjSjbgq/uk94S9V8YI5olQICRd/QOWu+Fm1iEzdsP08+lEKv0Omyx5BcCuu6rbBo1oq41gCEVijp4iKx5/Ps8IAoFlMF/PSXcCjVzj4pZok8RzQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=antoniohickey.com; spf=pass smtp.mailfrom=amazonses.com; dkim=pass (2048-bit key) header.d=antoniohickey.com header.i=@antoniohickey.com header.b=eB/RiN0p; dkim=pass (1024-bit key) header.d=amazonses.com header.i=@amazonses.com header.b=RnmMrFsP; arc=none smtp.client-ip=54.240.8.87
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=antoniohickey.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazonses.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
+	s=cgcwyxycg75iw36cao5ku2ksreqpjkvc; d=antoniohickey.com;
+	t=1741659335;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Transfer-Encoding;
+	bh=avBbpXuLghR+QCylMU4TexjL870/yz8BwhT4jBHuwvw=;
+	b=eB/RiN0pn76xbGG4OlUovFSY3tgEMvKgSDWbkgSDbAi3d4IhYRKFlR5sQ5cZDYq2
+	jYf+cUF1NUonc4CWMQc5t686Zcq68Usu/vGr6221Culu0w03lmR1LHR800zrB2QXvT9
+	WWZdLrstbnP2GrfS97dJEh5eYfLNjpSUMbY84cBVrdCcFWB1nSYuBh+Z30ZJfQOtDjC
+	DgqfH1oX26X1kO80lVbQZ4PEVS1k9AOyuxqSifSfPgHYpg29aWDF6ugIe1TIr9ex7Lw
+	zn3BO58toJSf4tD+dfM6ix+TQvh7rV9B26uH3up0qpKq4c71d8Ux5+c4sc0WWOo5vGh
+	Wm6SLCZaow==
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
+	s=ug7nbtf4gccmlpwj322ax3p6ow6yfsug; d=amazonses.com; t=1741659335;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Transfer-Encoding:Feedback-ID;
+	bh=avBbpXuLghR+QCylMU4TexjL870/yz8BwhT4jBHuwvw=;
+	b=RnmMrFsPtt7WPSlkWUbdfI5kX7jDoiLKdlmRh48QmHUDCkjmHeHjM9Pa2OCLMpEf
+	NzDzFsJd/7IOKHuvxLrx9l7z5No5NBJ3WPA5HfHFrXXYfU785cgkj1MQH/baqe2s7n8
+	1BPh+HvYpZn7J54sYT4TF5ewj0ayhGtL9XRX3qd4=
+From: Antonio Hickey <contact@antoniohickey.com>
+To: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, 
+	Andreas Hindborg <a.hindborg@kernel.org>, 
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
+	Danilo Krummrich <dakr@kernel.org>, 
+	Nathan Chancellor <nathan@kernel.org>, 
+	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>, 
+	Bill Wendling <morbo@google.com>, 
+	Justin Stitt <justinstitt@google.com>
+Cc: Antonio Hickey <contact@antoniohickey.com>, 
+	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	llvm@lists.linux.dev
+Subject: [PATCH] rust: uaccess: mark UserSliceReader methods inline
+Date: Tue, 11 Mar 2025 02:15:35 +0000
+Message-ID: <0100019582fc6956-3b420cce-f122-4a26-8fea-94000b22bc90-000000@email.amazonses.com>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/Ei=AgDAf1QEyUaGu.mJ9V3O";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Transfer-Encoding: 8bit
+Feedback-ID: ::1.us-east-1.3SHHfi5Rh4c+NdtIv+pxNWeqDT0J3zAhYZLMebdhE9o=:AmazonSES
+X-SES-Outgoing: 2025.03.11-54.240.8.87
 
---Sig_/Ei=AgDAf1QEyUaGu.mJ9V3O
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+When you build the kernel using the llvm-19.1.4-rust-1.83.0-x86_64
+toolchain provided by kernel.org with ARCH=x86_64, the following symbols
+are generated:
 
-Hi Stephen,
+$nm vmlinux | grep ' _R'.*UserSliceReader | rustfilt
+ffffffff817c3320 T <kernel::uaccess::UserSliceReader>::read_slice
+ffffffff817c32b0 T <kernel::uaccess::UserSliceReader>::read_raw
 
-On Fri, 7 Mar 2025 13:21:12 +1100 Stephen Rothwell <sfr@canb.auug.org.au> w=
-rote:
->
-> Hi all,
->=20
-> After merging the drm-xe tree, today's linux-next build (x86_64
-> allmodconfig) failed like this:
->=20
-> In file included from include/linux/kernel.h:22,
->                  from include/linux/cpumask.h:11,
->                  from arch/x86/include/asm/paravirt.h:21,
->                  from arch/x86/include/asm/irqflags.h:80,
->                  from include/linux/irqflags.h:18,
->                  from include/linux/spinlock.h:59,
->                  from include/linux/mmzone.h:8,
->                  from include/linux/gfp.h:7,
->                  from include/linux/mm.h:7,
->                  from include/linux/pagemap.h:8,
->                  from include/drm/ttm/ttm_tt.h:30,
->                  from drivers/gpu/drm/xe/xe_bo.h:9,
->                  from drivers/gpu/drm/xe/xe_svm.c:6:
-> drivers/gpu/drm/xe/xe_svm.c: In function 'page_to_vr':
-> drivers/gpu/drm/xe/xe_svm.c:344:33: error: 'struct page' has no member na=
-med 'pgmap'
->   344 |         return container_of(page->pgmap, struct xe_vram_region, p=
-agemap);
->       |                                 ^~
-> include/linux/container_of.h:19:33: note: in definition of macro 'contain=
-er_of'
->    19 |         void *__mptr =3D (void *)(ptr);                          =
-         \
->       |                                 ^~~
-> In file included from include/linux/init.h:5,
->                  from include/linux/printk.h:6,
->                  from include/asm-generic/bug.h:22,
->                  from arch/x86/include/asm/bug.h:99,
->                  from include/linux/bug.h:5,
->                  from include/linux/mmdebug.h:5,
->                  from include/linux/mm.h:6:
-> drivers/gpu/drm/xe/xe_svm.c:344:33: error: 'struct page' has no member na=
-med 'pgmap'
->   344 |         return container_of(page->pgmap, struct xe_vram_region, p=
-agemap);
->       |                                 ^~
-> include/linux/build_bug.h:78:56: note: in definition of macro '__static_a=
-ssert'
->    78 | #define __static_assert(expr, msg, ...) _Static_assert(expr, msg)
->       |                                                        ^~~~
-> include/linux/container_of.h:20:9: note: in expansion of macro 'static_as=
-sert'
->    20 |         static_assert(__same_type(*(ptr), ((type *)0)->member) ||=
-       \
->       |         ^~~~~~~~~~~~~
-> include/linux/container_of.h:20:23: note: in expansion of macro '__same_t=
-ype'
->    20 |         static_assert(__same_type(*(ptr), ((type *)0)->member) ||=
-       \
->       |                       ^~~~~~~~~~~
-> drivers/gpu/drm/xe/xe_svm.c:344:16: note: in expansion of macro 'containe=
-r_of'
->   344 |         return container_of(page->pgmap, struct xe_vram_region, p=
-agemap);
->       |                ^~~~~~~~~~~~
-> drivers/gpu/drm/xe/xe_svm.c:344:33: error: 'struct page' has no member na=
-med 'pgmap'
->   344 |         return container_of(page->pgmap, struct xe_vram_region, p=
-agemap);
->       |                                 ^~
-> include/linux/build_bug.h:78:56: note: in definition of macro '__static_a=
-ssert'
->    78 | #define __static_assert(expr, msg, ...) _Static_assert(expr, msg)
->       |                                                        ^~~~
-> include/linux/container_of.h:20:9: note: in expansion of macro 'static_as=
-sert'
->    20 |         static_assert(__same_type(*(ptr), ((type *)0)->member) ||=
-       \
->       |         ^~~~~~~~~~~~~
-> include/linux/container_of.h:21:23: note: in expansion of macro '__same_t=
-ype'
->    21 |                       __same_type(*(ptr), void),                 =
-       \
->       |                       ^~~~~~~~~~~
-> drivers/gpu/drm/xe/xe_svm.c:344:16: note: in expansion of macro 'containe=
-r_of'
->   344 |         return container_of(page->pgmap, struct xe_vram_region, p=
-agemap);
->       |                ^~~~~~~~~~~~
-> include/linux/compiler_types.h:483:27: error: expression in static assert=
-ion is not an integer
->   483 | #define __same_type(a, b) __builtin_types_compatible_p(typeof(a),=
- typeof(b))
->       |                           ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
-> include/linux/build_bug.h:78:56: note: in definition of macro '__static_a=
-ssert'
->    78 | #define __static_assert(expr, msg, ...) _Static_assert(expr, msg)
->       |                                                        ^~~~
-> include/linux/container_of.h:20:9: note: in expansion of macro 'static_as=
-sert'
->    20 |         static_assert(__same_type(*(ptr), ((type *)0)->member) ||=
-       \
->       |         ^~~~~~~~~~~~~
-> include/linux/container_of.h:20:23: note: in expansion of macro '__same_t=
-ype'
->    20 |         static_assert(__same_type(*(ptr), ((type *)0)->member) ||=
-       \
->       |                       ^~~~~~~~~~~
-> drivers/gpu/drm/xe/xe_svm.c:344:16: note: in expansion of macro 'containe=
-r_of'
->   344 |         return container_of(page->pgmap, struct xe_vram_region, p=
-agemap);
->       |                ^~~~~~~~~~~~
->=20
-> Caused by commit
->=20
->   11bbe0d9aa96 ("drm/xe: Add drm_pagemap ops to SVM")
->=20
-> interacting with commit
->=20
->   089b22f60a0f ("mm: allow compound zone device pages")
->=20
-> from the mm-unstable branch of the mm tree.
->=20
-> I have applied the following merge fix patch for today
->=20
-> From: Stephen Rothwell <sfr@canb.auug.org.au>
-> Date: Fri, 7 Mar 2025 13:14:37 +1100
-> Subject: [PATCH] fixup for "drm/xe: Add drm_pagemap ops to SVM"
->=20
->   089b22f60a0f ("mm: allow compound zone device pages")
->=20
-> from the mm-unstable branch of the mm tree.
->=20
-> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> ---
->  drivers/gpu/drm/xe/xe_svm.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->=20
-> diff --git a/drivers/gpu/drm/xe/xe_svm.c b/drivers/gpu/drm/xe/xe_svm.c
-> index 516898e99b26..3e829c87d7b4 100644
-> --- a/drivers/gpu/drm/xe/xe_svm.c
-> +++ b/drivers/gpu/drm/xe/xe_svm.c
-> @@ -341,7 +341,7 @@ static void xe_svm_garbage_collector_work_func(struct=
- work_struct *w)
-> =20
->  static struct xe_vram_region *page_to_vr(struct page *page)
->  {
-> -	return container_of(page->pgmap, struct xe_vram_region, pagemap);
-> +	return container_of(page_pgmap(page), struct xe_vram_region, pagemap);
->  }
-> =20
->  static struct xe_tile *vr_to_tile(struct xe_vram_region *vr)
-> --=20
-> 2.45.2
+However, these Rust symbols are trivial wrappers around the functions
+copy_from_user, _copy_from_user respectively. It doesn't
+make sense to go through a trivial wrapper for these functions, so mark
+them inline.
 
-This is now a semantic conflict between the mm tree and the drm tree.
+After applying this patch, the above command will produce no output.
 
---=20
-Cheers,
-Stephen Rothwell
+Signed-off-by: Antonio Hickey <contact@antoniohickey.com>
+---
+ rust/kernel/uaccess.rs | 2 ++
+ 1 file changed, 2 insertions(+)
 
---Sig_/Ei=AgDAf1QEyUaGu.mJ9V3O
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+diff --git a/rust/kernel/uaccess.rs b/rust/kernel/uaccess.rs
+index 719b0a48ff55..3d8a08aeed89 100644
+--- a/rust/kernel/uaccess.rs
++++ b/rust/kernel/uaccess.rs
+@@ -218,6 +218,7 @@ pub fn is_empty(&self) -> bool {
+     /// # Guarantees
+     ///
+     /// After a successful call to this method, all bytes in `out` are initialized.
++    #[inline]
+     pub fn read_raw(&mut self, out: &mut [MaybeUninit<u8>]) -> Result {
+         let len = out.len();
+         let out_ptr = out.as_mut_ptr().cast::<c_void>();
+@@ -239,6 +240,7 @@ pub fn read_raw(&mut self, out: &mut [MaybeUninit<u8>]) -> Result {
+     ///
+     /// Fails with [`EFAULT`] if the read happens on a bad address, or if the read goes out of
+     /// bounds of this [`UserSliceReader`]. This call may modify `out` even if it returns an error.
++    #[inline]
+     pub fn read_slice(&mut self, out: &mut [u8]) -> Result {
+         // SAFETY: The types are compatible and `read_raw` doesn't write uninitialized bytes to
+         // `out`.
+-- 
+2.48.1
 
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmfPnK4ACgkQAVBC80lX
-0Gwt3Qf/QFt6K+0NCWbthrLa8s60vX/xuO9fu+5KuBS7ZE1FChOFbgbRi/z/xflf
-MqKqfVskxJoSaGTobKNqKdD0/Of4FrwGo63+14/kGbl3Hj1/9QEzBE5MOYjb7DsJ
-t3+uVHgJlxF8lWUEu9TTeS05bHpPB/CdoPehgOQYzYTvQE78ATfTbjhPf0M+fA6n
-VKVHWDyALxC7XsVdVM8yY5JuETLpd7144Gxaw+wMuh9rNCECT9G2Y1KKJBZggejf
-609UZHsk99f47i5s8HkF0i6VwSiiOjgsTgMz7CS8dbjMSQ1tYAoQetjTQswAQuIB
-z615n52fVlxyO405j0SOnz9zskx8gw==
-=akB5
------END PGP SIGNATURE-----
-
---Sig_/Ei=AgDAf1QEyUaGu.mJ9V3O--
 
