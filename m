@@ -1,165 +1,127 @@
-Return-Path: <linux-kernel+bounces-556584-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-556612-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2338EA5CBFB
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 18:21:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id AED71A5CC56
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 18:36:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4A3461761AC
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 17:21:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F03F5177DE9
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 17:36:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 098082627E7;
-	Tue, 11 Mar 2025 17:20:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49C12262D21;
+	Tue, 11 Mar 2025 17:36:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="IiOQlHtN"
-Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="YJlDg6+G"
+Received: from mail-oa1-f47.google.com (mail-oa1-f47.google.com [209.85.160.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 357C12627F3
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 17:20:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AA15262D14
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 17:36:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741713640; cv=none; b=KXB3F1D8OTNzALgJpbqJB1rMjcQeik8jc1VLXVzjvmTND7thqb4oo7G6bSbpijrkA+bsffuu2WlrsD5sNIGAbHk8vGRhdLwFe4WQ02cSHGgXeEoNAdhbryq3bA8tzuqpavcvBFsKQQ6STFSL/AE1Q1JYbz1lfRlk5FTtzSVXJzY=
+	t=1741714570; cv=none; b=EqF2CIGG51Zlpto47snZ5hTJBqpr0dqe8bjTwgG8oT2Wy1Qhaw8j/oMNUKqPphW9mxjtYryc3LvrQ28cqC140tdC2EotAzZYW6t4ww2Oip6BPttMhleMXSt5tzdi0V/V7gM6DFHFJcuxAZd/0S72Zx0v44o/hTXtaihzHcM0G+0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741713640; c=relaxed/simple;
-	bh=LjNeeGPZTSfwAfwVgmY6/aONFof+BNi8pWf8VZUD+9U=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:MIME-Version:
-	 Content-Type:References; b=azw2+wRGrItOgWijbJRhgtnfQjvsBsfBn8s0s6ZVO3sccNcIRB6qbmcgQHx7XSZTojKfFA0o2laQubbStrBWiK4txPY9tcyjYsBPjW7FioB3pBzsJPLSNiaOLpvwJ9KwysF6cDfRup3IxK23lWtl54nAsJ9cacLhBMJHy8GDisA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=IiOQlHtN; arc=none smtp.client-ip=210.118.77.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20250311172036euoutp02cc2a619fd523cce754641ca8d5a78d40~rz1LzPQzq0290402904euoutp02L
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 17:20:36 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20250311172036euoutp02cc2a619fd523cce754641ca8d5a78d40~rz1LzPQzq0290402904euoutp02L
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1741713636;
-	bh=GvH+KGxOLMWPvCT3kvkzzW6sq/iRIHCpZUQmHgtdxxI=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=IiOQlHtNB51SC7eX8KYn8qWCoQTHXB/XyjAZ9WBbzwZX4iYOg4hm1ougDaRQt3t65
-	 x5vca79kVf9HNMadosTT5Qzp8Cw7eZmRAKORs6lUMeewZy3k0GX7kqTMFmK6voSpxm
-	 pj8qG39IunaWK/MEabniNl+6G9gAZnCcSglWGSW0=
-Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
-	eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-	20250311172035eucas1p2f546acc75978c00e060391728e270e44~rz1Lc-kkL1590515905eucas1p2J;
-	Tue, 11 Mar 2025 17:20:35 +0000 (GMT)
-Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-	eusmges1new.samsung.com (EUCPMTA) with SMTP id F8.A8.20821.3E070D76; Tue, 11
-	Mar 2025 17:20:35 +0000 (GMT)
-Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
-	eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-	20250311172035eucas1p104dcbae706bec735194a1dc4a30db969~rz1LD3aGT0275502755eucas1p1t;
-	Tue, 11 Mar 2025 17:20:35 +0000 (GMT)
-Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
-	eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
-	20250311172035eusmtrp1c23ab61a4f5a1e521b1aaed8e93190f4~rz1LDPBge1317913179eusmtrp1T;
-	Tue, 11 Mar 2025 17:20:35 +0000 (GMT)
-X-AuditID: cbfec7f2-b11c470000005155-4c-67d070e38e80
-Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
-	eusmgms2.samsung.com (EUCPMTA) with SMTP id A5.BD.19654.3E070D76; Tue, 11
-	Mar 2025 17:20:35 +0000 (GMT)
-Received: from AMDC4942.home (unknown [106.210.136.40]) by
-	eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20250311172034eusmtip2064f8a52aed6e394724f5720883fe29c~rz1KHZEfr1726717267eusmtip2-;
-	Tue, 11 Mar 2025 17:20:34 +0000 (GMT)
-From: Michal Wilczynski <m.wilczynski@samsung.com>
-To: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, drew@pdp7.com,
-	guoren@kernel.org, wefu@redhat.com, paul.walmsley@sifive.com,
-	palmer@dabbelt.com, aou@eecs.berkeley.edu, alex@ghiti.fr,
-	jszhang@kernel.org, ulf.hansson@linaro.org, m.szyprowski@samsung.com
-Cc: linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org, Michal
-	Wilczynski <m.wilczynski@samsung.com>
-Subject: [PATCH v8 5/5] riscv: Enable PM_GENERIC_DOMAINS for T-Head SoCs
-Date: Tue, 11 Mar 2025 18:19:00 +0100
-Message-Id: <20250311171900.1549916-6-m.wilczynski@samsung.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250311171900.1549916-1-m.wilczynski@samsung.com>
+	s=arc-20240116; t=1741714570; c=relaxed/simple;
+	bh=5aUsqOrI16iMveQNEajx0BokuB8rnFuNsAld9sPRVSo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=tAaaKSc0eO/Um3N4/HNKcN0sKJ+iOFC3FifFalietc+TPHdys3ArDjBWQ1wJQlWthIjmEkCJy7vaYEXBg6Gsf1OxAsvsWdiu52QE3lTxv8ZvBHkU5z5eW7WOsKsiqiFlcxj0PpjuzqK6B55QYppiwmTW1T1Inf76mx94xwL14ck=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=YJlDg6+G; arc=none smtp.client-ip=209.85.160.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
+Received: by mail-oa1-f47.google.com with SMTP id 586e51a60fabf-2bcc0c6c149so5474196fac.1
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 10:36:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=broadcom.com; s=google; t=1741714568; x=1742319368; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=4/AZGEVmfxF0jKoqVNVNRMBGz9sxfr8KBwzFyulmeIs=;
+        b=YJlDg6+GFLBTrY5+hbodE6loh2u46+g1BNHmXUiata7GIe7AyA7U97p/a4f+9QdmGG
+         MIxBquwZV7z4DtCoOXGES3AZteZc+Ei8I7q522qbgL6oHGZ9Ws8qNIYWxQOuWqD7m18U
+         3YI3M31CEnkJ999vm+dQ0Luq3gaY7FwlAiA4I=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741714568; x=1742319368;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=4/AZGEVmfxF0jKoqVNVNRMBGz9sxfr8KBwzFyulmeIs=;
+        b=C6M/y31KdmWTmx7rrrfuRBOK7sIqobTjnSoU2cgCtPTR/Nd0llv5zpIvob74LoXjAm
+         MeqAa/YM7WW/2NzvYpBmlVdPJzHpAg9pd2Py45vfUEA7cTcJNXoGDl3DaV7lLimHh4RW
+         NGO1HYbTl/e0v/x1/nBlP2Qvdj0EM6k8FTbfNE3TKv7la5gitXloeXeoGLkalHFpSLE/
+         BoN9imdvyqTw4AuF9rS8094w919MaiyWIxPXMCyaVCIG+Cow9oJxuaMx1DI6pPObMy6t
+         oSOM/Qt37QkwGRkAssEW3DgRvPs3QcLSjBHwLOwCpemJ2ufWoJitGrEcaUBsai7SkPCU
+         hZbw==
+X-Forwarded-Encrypted: i=1; AJvYcCXK2VDcOWk/83SC+Eh9yqiu7ezbPx6j1PvPjRHyuA+QDbW7tcTH/SBdicY3eMhwCF7EB0Z8S5+pUk7kHhM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy5f+j/oYyrLobjtlivyAXxZ04zTvNQlISG47+1VvlnP8syesVo
+	+Zfgd+IMNuw/LTGK2OGpcxE8fjJwgAVbXKk47vb/WWFLFMfPE98JQBGUg7tZvQ==
+X-Gm-Gg: ASbGncvTm3FCOdnZ8fzboa8z0rw0I/mtYbewQaHhv2lvSETs4Lh1pd/G6HhtGObnQYx
+	FKHUgDKrIN2c9NgU9Hfsn1ONCc49mIryLOIDye1iOFhPGUnpxXDipLEu3AafVJluln2XpxzwY6p
+	8+thVAKmtz8QfmKxTWxfrBGBBuXYKsLLHB2ldp15Rs0wrBUwwbvoxXHeECjow1OxWuZVsPyk5di
+	ITob2uWgVoupNlzFJetm2V1nqG+i8oL5CRxt69TkAB/rPaH7e6lQpL4NpThz9eaygiedfpAzDnz
+	/ayDH1tqp7aMsx6CVx6xvDFuT0PTEBwSe1VRSjhcfE7sHwiZPHE9hIPkcmbJipz0YWoi9mvHF3N
+	fbhus
+X-Google-Smtp-Source: AGHT+IF6stv4KV1HaEag5+77smmBKlZX0b6JVQBTx2uQ9Bg2ZjG5KNAD+BqnyMHU0PQVstMcpo8f2A==
+X-Received: by 2002:a05:6871:8416:b0:2c2:c404:465f with SMTP id 586e51a60fabf-2c2c4044b38mr3090975fac.6.1741714568018;
+        Tue, 11 Mar 2025 10:36:08 -0700 (PDT)
+Received: from [10.136.13.65] ([192.19.161.248])
+        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-2c2d749e115sm661597fac.13.2025.03.11.10.36.04
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 11 Mar 2025 10:36:06 -0700 (PDT)
+Message-ID: <9188b3d1-ee61-c1d1-f06e-854ffd2ccff7@broadcom.com>
+Date: Tue, 11 Mar 2025 10:20:05 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrCKsWRmVeSWpSXmKPExsWy7djPc7qPCy6kG0z9rGbx7M5XVoutv2ex
-	W6zZe47JYv6Rc6wW9y5tYbJ4sbeRxaL52Ho2i5ez7rFZXN41h83ic+8RRottn1vYLNYeuctu
-	sf7rfCaLl5d7mC3aZvFb/N+zg93i+Npwi5b9U1gchDzevHzJ4nG44wu7x70T01g9Nq3qZPO4
-	c20Pm8fmJfUeLWuPMXm833eVzaNvyypGj0vN19k9Pm+SC+CO4rJJSc3JLEst0rdL4MqYvfYM
-	U8EUzoqe3RfYGhhPs3cxcnJICJhITJ//hq2LkYtDSGAFo8Sbjs2sEM4XRomJL09DZT4zShzZ
-	1MME0zL73AF2iMRyRomtlz4wQThvGCXOtB1gA6liEzCSeLB8PtgsEYF+Jom+I//BHGaBlYwS
-	9y+cZe5i5OAQFvCQ6HirDtLAIqAqcfnhU0YQm1fAXuJVwzUWiHXyEvsPgpRzcnAKOEh83rYC
-	qkZQ4uTMJ2A1zEA1zVtnM4PMlxDYzCkxY/Y8NohmF4mZ0x5AvSos8er4FihbRuL05B6oBfkS
-	D7Z+YoawayR29hyHsq0l7pz7xQZyJ7OApsT6XfoQYUeJR9s+s4KEJQT4JG68FYQ4gU9i0rbp
-	zBBhXomONiGIajWJqT29cEvPrdgGDUQPiZnv97JOYFScheSZWUiemYWwdwEj8ypG8dTS4tz0
-	1GLDvNRyveLE3OLSvHS95PzcTYzAhHj63/FPOxjnvvqod4iRiYPxEKMEB7OSCO9q2wvpQrwp
-	iZVVqUX58UWlOanFhxilOViUxHkX7W9NFxJITyxJzU5NLUgtgskycXBKNTBFhDv0/3Q/f2jr
-	LU5/g129z/X6Lq79YptUUaWf3vtr6aadrnMPmYmwJ7b+Wf9tX80Hhuc322VyeEU7eLR+3416
-	wtkn2LDH9VPSnuk/XBzymPlMN54IiH8WVXJ0xcXLv7jfCv0PS/9eI7tcYz1rsfpszcyV1rf1
-	Akr1FvE1Sxk4fPl855XTst8HVDzXbIi5Mk/lQWf1e5dtiwyfSTbd0IgXvRfExnhZaeoe2+Mu
-	f3mfPV8rkhinY+b16wSvD2vjJzWPa4w7a1bcDIl9cXX64xkx3IK19dMfd59qlu1sk1p54cfN
-	s4khIf7pZYG1LMd/Ls75PK3nmceJp/E/mhhSeyWTmferyzv57e7b80nMfJ8SS3FGoqEWc1Fx
-	IgDPs1jA9wMAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrMIsWRmVeSWpSXmKPExsVy+t/xe7qPCy6kGzSf5bB4ducrq8XW37PY
-	LdbsPcdkMf/IOVaLe5e2MFm82NvIYtF8bD2bxctZ99gsLu+aw2bxufcIo8W2zy1sFmuP3GW3
-	WP91PpPFy8s9zBZts/gt/u/ZwW5xfG24Rcv+KSwOQh5vXr5k8Tjc8YXd496Jaawem1Z1snnc
-	ubaHzWPzknqPlrXHmDze77vK5tG3ZRWjx6Xm6+wenzfJBXBH6dkU5ZeWpCpk5BeX2CpFG1oY
-	6RlaWugZmVjqGRqbx1oZmSrp29mkpOZklqUW6dsl6GXMXnuGqWAKZ0XP7gtsDYyn2bsYOTkk
-	BEwkZp87AGRzcQgJLGWU+PfoGhNEQkbiWvdLFghbWOLPtS42iKJXjBIzZjxkBEmwCRhJPFg+
-	nxUkISKwkEni6pQNzCAOs8BaRonDVy8BzeXgEBbwkOh4qw7SwCKgKnH54VOwZl4Be4lXDdeg
-	NshL7D94lhnE5hRwkPi8bQVYjRBQzbbJXcwQ9YISJ2c+AatnBqpv3jqbeQKjwCwkqVlIUgsY
-	mVYxiqSWFuem5xYb6RUn5haX5qXrJefnbmIExu62Yz+37GBc+eqj3iFGJg7GQ4wSHMxKIryr
-	bS+kC/GmJFZWpRblxxeV5qQWH2I0Bbp7IrOUaHI+MHnklcQbmhmYGpqYWRqYWpoZK4nzsl05
-	nyYkkJ5YkpqdmlqQWgTTx8TBKdXApCwYyeJv/snyqzZ3h4Z0ns+6xLmSt2yrdq31+9HYu/lN
-	pezqDRVz914wr4hcMvMdX6BiyfPehJ193x8vZt+1JPeJ+pNPykv37HU6v7X/7I2tl8r3HxHb
-	yj/fdsIapbxPoSInJnNHGvJmJ/Q5HHr86avY/bdhk7r0Gi3bnqX3+xbsEJA2f6nS/v/2yVMp
-	K375uApJW9/7zviifVlOD8usq5OmRkY+9/Ra4N+6n3FlEdfdWyu+H29ISBVhU1j3j/dGXkCk
-	kWwd/wX+UrcL3cEGkcnH+XYsWuhu4/tMX+d+wG/WusnKmV3T327+8OrozbK9d87OabveNzdn
-	s1mXDsP7963aif0TpxZvF/eaGCVzRYmlOCPRUIu5qDgRABO51fhmAwAA
-X-CMS-MailID: 20250311172035eucas1p104dcbae706bec735194a1dc4a30db969
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20250311172035eucas1p104dcbae706bec735194a1dc4a30db969
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20250311172035eucas1p104dcbae706bec735194a1dc4a30db969
-References: <20250311171900.1549916-1-m.wilczynski@samsung.com>
-	<CGME20250311172035eucas1p104dcbae706bec735194a1dc4a30db969@eucas1p1.samsung.com>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.11.0
+Subject: Re: [RFC] misc: bcm-vk: avoid -Wflex-array-member-not-at-end warning
+To: "Gustavo A. R. Silva" <gustavoars@kernel.org>,
+ Arnd Bergmann <arnd@arndb.de>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Broadcom internal kernel review list
+ <bcm-kernel-feedback-list@broadcom.com>, linux-kernel@vger.kernel.org,
+ linux-hardening@vger.kernel.org
+References: <Z8_twT77rSIK-S_-@kspp>
+Content-Language: en-US
+From: Scott Branden <scott.branden@broadcom.com>
+In-Reply-To: <Z8_twT77rSIK-S_-@kspp>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-T-Head SoCs feature separate power domains (power islands) for major
-components like the GPU, Audio, and NPU. To manage the power states of
-these components effectively, the kernel requires generic power domain
-support.
+Hi Gustavo,
 
-This commit enables `CONFIG_PM_GENERIC_DOMAINS` for T-Head SoCs,
-allowing the power domain driver for these components to be compiled and
-integrated. This ensures proper power management and energy efficiency
-on T-Head platforms.
-
-By selecting `PM_GENERIC_DOMAINS`, we provide the necessary framework
-for the power domain drivers to function correctly on RISC-V
-architecture with T-Head SoCs.
-
-Signed-off-by: Michal Wilczynski <m.wilczynski@samsung.com>
----
- arch/riscv/Kconfig.socs | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/arch/riscv/Kconfig.socs b/arch/riscv/Kconfig.socs
-index 1916cf7ba450..83833ded8908 100644
---- a/arch/riscv/Kconfig.socs
-+++ b/arch/riscv/Kconfig.socs
-@@ -53,6 +53,7 @@ config ARCH_THEAD
- 	bool "T-HEAD RISC-V SoCs"
- 	depends on MMU && !XIP_KERNEL
- 	select ERRATA_THEAD
-+	select PM_GENERIC_DOMAINS if PM
- 	help
- 	  This enables support for the RISC-V based T-HEAD SoCs.
- 
--- 
-2.34.1
-
+On 2025-03-11 01:01, Gustavo A. R. Silva wrote:
+> Hi all,
+> 
+> I'm trying to fix the following warning:
+> 
+> drivers/misc/bcm-vk/bcm_vk.h:415:32: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
+> 
+> after a quick look, I don't see any code directly using the flexible
+> array `data[]`, so this patch should probably suffice:
+> 
+> diff --git a/drivers/misc/bcm-vk/bcm_vk.h b/drivers/misc/bcm-vk/bcm_vk.h
+> index 386884c2a263..9344c2366a4b 100644
+> --- a/drivers/misc/bcm-vk/bcm_vk.h
+> +++ b/drivers/misc/bcm-vk/bcm_vk.h
+> @@ -311,7 +311,6 @@ struct bcm_vk_peer_log {
+>          u32 wr_idx;
+>          u32 buf_size;
+>          u32 mask;
+> -       char data[];
+>   };
+> 
+> What do you think?
+If it is changed to data[0] does the warning go away?  If not, you could 
+remove it or change the code to use it instead of the sizeof used to
+calculate peer offset.
+> 
+> Thanks
+> --
+> Gustavo
 
