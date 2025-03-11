@@ -1,109 +1,154 @@
-Return-Path: <linux-kernel+bounces-556906-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-556905-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 58183A5D069
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 21:07:04 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CD3F6A5D064
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 21:06:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 86E787A5F49
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 20:06:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6C43217D188
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 20:06:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D4B72641C3;
-	Tue, 11 Mar 2025 20:06:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6555264617;
+	Tue, 11 Mar 2025 20:06:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="TtSKNgWT"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b="LSlYGTiK"
+Received: from mout.gmx.net (mout.gmx.net [212.227.15.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FAD32620DD
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 20:06:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C98071E833F;
+	Tue, 11 Mar 2025 20:06:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741723610; cv=none; b=GnsGY0BKeQVy+BlCWbjshsbg6ovRCougr8HxVEKriaEYBoKFNTCCUz8hW5HEXmBKIci2cd0g63RnVx7lEWFh+wB01e9Xrvn7FBC5qDEqDi4ccYFINh6k7rhoacTWovjTM0icL4lTE7/StKxtqmcuTe25nuYBgsvWVZPDHk+jKv4=
+	t=1741723588; cv=none; b=fe1fe1bsPIbBEXcCK5+H1sAb4prtQmtFDPp7JGlMfmP7V1yQHXj3CvOUDBMTPuhmqSEqAFNaLPhYWSN9iZEqM2I0MOuJU4i1kjl4hQD0YEHlIdZ6wN9bKJ4O0aTOOXSEzoFs1yxBzcGwwhhZ0T9vaPzsgLsJowGx3/qNQqMgLS8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741723610; c=relaxed/simple;
-	bh=bQbYwDJCi4XfA8SvA2wX26olRhEGgMXvp7T5YMum8Vk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DhCQQiz/zWAY7idCvikyaaLYE3vCmS1T7RRTy9KawRKKxlpA4jY1IabNEt4OFM1tCznsFR2z7G9bgiVLE0n8eJiELH/AowmgWIpNT7e5zAQ4gmVVdSwfLKgfU84B3b9Ymu1BIRORygqU+DJTKk5DxfP8Fd0R6GiSspPTSd5gxZU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=TtSKNgWT; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id CEF1540E020E;
-	Tue, 11 Mar 2025 20:06:39 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id x7eXLGRS2_jy; Tue, 11 Mar 2025 20:06:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1741723595; bh=KrBk3abp9uHjNMQdxfz1gauQ7wGylV3yre/BW6WYd0U=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=TtSKNgWTd/4jy1NRUBrO0qbKv9J9xfSBxcfwED0sWuKNh890QRoz/mhZzPn2ZY9W8
-	 l7xLL1NutrQy8wtPnx42ekRDeGU19U6bMPYBQpC8gVB0gOVwVbxbWPHBEsvEA8/37q
-	 +aeVNyDwARXdA9y3+GSAk5w/eEXvSrLV7hsyrPqT2/cs1A4IvR/FqRgyd55Bqn9/HP
-	 9DyG9b26BWFe8TAFWADpzt+0Kv0BmNIlXThhubOvFnxmGHMs5rt9lBPD59DXVml+S9
-	 ubh/O4RqvWxZaarISY/dDtZNqwrQZVLloE8Kg4vee0OyYNay8D3jIh5dtCH34zAgrB
-	 sLv2F3VuavO6fF0Oy33KWbpZFX53ZbHijllGLFPgo4QUUt4h4NT1PnH7PCyiMY7Fm7
-	 UYG6FY7FUyuHuxbSsk9BovtCWpO8FwXwzu7DZn9X5KV6q0bfvle/l4kYFOp8qbIwoC
-	 eokGLcFK5A17/uJyuDD5cfoLoYZ1jgdmriw7aEQz5fDYpN8ojVJjN/n9JilYhuQxPJ
-	 DzRv+5Ik590yxCkmlgUUHXYc3tDU/g+zetAPWhv0DUdp0ppUcq6A4FXWJYnUiS8UKe
-	 5tfiu3PRTeQV3LdczWox3Wfc5w7Gr0ewTawqOx7OJUB/SNvFBhZfD4vYPtPqWwZ3rd
-	 3EVNewNOmzgl876nXpPLZrlQ=
-Received: from zn.tnic (pd95303ce.dip0.t-ipconnect.de [217.83.3.206])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id C3AC240E01A5;
-	Tue, 11 Mar 2025 20:06:08 +0000 (UTC)
-Date: Tue, 11 Mar 2025 21:06:03 +0100
-From: Borislav Petkov <bp@alien8.de>
-To: James Morse <james.morse@arm.com>
-Cc: x86@kernel.org, linux-kernel@vger.kernel.org,
-	Reinette Chatre <reinette.chatre@intel.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, H Peter Anvin <hpa@zytor.com>,
-	Babu Moger <Babu.Moger@amd.com>,
-	shameerali.kolothum.thodi@huawei.com,
-	D Scott Phillips OS <scott@os.amperecomputing.com>,
-	carl@os.amperecomputing.com, lcherian@marvell.com,
-	bobo.shaobowang@huawei.com, tan.shaopeng@fujitsu.com,
-	baolin.wang@linux.alibaba.com, Jamie Iles <quic_jiles@quicinc.com>,
-	Xin Hao <xhao@linux.alibaba.com>, peternewman@google.com,
-	dfustini@baylibre.com, amitsinght@marvell.com,
-	David Hildenbrand <david@redhat.com>,
-	Rex Nie <rex.nie@jaguarmicro.com>,
-	Dave Martin <dave.martin@arm.com>, Koba Ko <kobak@nvidia.com>,
-	Shanker Donthineni <sdonthineni@nvidia.com>, fenghuay@nvidia.com
-Subject: Re: [PATCH v7 00/49] x86/resctrl: Move the resctrl filesystem code
- to /fs/resctrl
-Message-ID: <20250311200603.GKZ9CXq9B_lqLUqSH5@fat_crate.local>
-References: <20250228195913.24895-1-james.morse@arm.com>
- <20250310190915.GAZ8842wfIn043W56k@fat_crate.local>
- <09b9d760-0c9f-46f5-9784-5229e9023583@arm.com>
+	s=arc-20240116; t=1741723588; c=relaxed/simple;
+	bh=Gti7/A9BWac5/4NqS14sIP1I/ISfrQITkGaBNSl6lrE=;
+	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=WkVw/phbWu1IJFgXwO7+xPY0Vpl1do7fNYf+Clfy6XLbnYgtT7o3hfbcDJdYi97wMFzUQRQcs3s1ul8c37Zs0eQZgoH1VTPUKgjY56/uWYH3ORTO+NFxL98bxufq4rheRUocVIohOyA2RDSns/wdjQa7TRS5hyBWXNBhCcnDSnk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b=LSlYGTiK; arc=none smtp.client-ip=212.227.15.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
+	s=s31663417; t=1741723577; x=1742328377; i=w_armin@gmx.de;
+	bh=DZBmXE3PhEOsVN8AoczAX6QJdKpQt5bApj5pggD05dA=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:From:
+	 Subject:Content-Type:Content-Transfer-Encoding:cc:
+	 content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=LSlYGTiKojOEOqvsNuOOtCdrWnA2q8AEbTmMRgPfcVz3Al4w7qPQEdYlcCZqRpX8
+	 G7t/hpGE8OfxU/ORkLNRYuiYyqwdC4Xx1tdQnVq2E/jegdEEZuD1C0e+tXxKV7e3U
+	 /PK/11bI6Sw2n1Jpeew+gAPN9f0EIGkoBbOcrD5jkcNBl2+chFZvfR/VSzlugzx3h
+	 eohyzTX7zVG64wxQ0mF3b8x4xWI3vinvJVIIsowZUbs357sHR6S45C1X6O2xKBbOZ
+	 bnifa+NrKNp2hAgjHcBxq1RmSb6kiAjuOEWgjmEqaf86Vi1A2bOMrZa+DWVBpr2g7
+	 cyWeJdeWFFuFbe3XOg==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from [192.168.0.69] ([87.177.78.219]) by mail.gmx.net (mrgmx004
+ [212.227.17.190]) with ESMTPSA (Nemesis) id 1MTAFh-1tnWVC1uN5-00VuUl; Tue, 11
+ Mar 2025 21:06:17 +0100
+Message-ID: <a18f2f93-c8ee-47af-9446-97e3714fc275@gmx.de>
+Date: Tue, 11 Mar 2025 21:06:16 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <09b9d760-0c9f-46f5-9784-5229e9023583@arm.com>
+User-Agent: Mozilla Thunderbird
+Content-Language: en-US
+To: =?UTF-8?Q?Pali_Roh=C3=A1r?= <pali@kernel.org>,
+ "linux@weissschuh.net" <linux@weissschuh.net>, Kurt Borja
+ <kuurtb@gmail.com>, akpm@linux-foundation.org, mcgrof@kernel.org,
+ russ.weight@linux.dev, dakr@kernel.org
+Cc: "platform-driver-x86@vger.kernel.org"
+ <platform-driver-x86@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
+From: Armin Wolf <W_Armin@gmx.de>
+Subject: In-kernel parser for the BMOF format used by WMI-ACPI
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:pifAFIH/MdkCINMdtBpl9GRvvRacmhl8BBbuaAju7gpDOIML/vl
+ EN1roCDbeoJEsIsrnSId9bH4e7Ttod2tPCRY7+cPHacdHHnWhXnY6DvPlnwmgltvhdjjcJg
+ /4E2cFwyOg+9+Pmr7ISUz6Us5J7oxNSuGLCjg8IdRgu4UwuSMtSYDsD3PzevXCWXg51IdcK
+ IuXP2FXcd7ke8qpF45GoA==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:VpPaDzBZEeQ=;BjNxB/FzusFAZMkhAloUumPNcqf
+ Gi4j6W73NeoLC8rn3sOCsdSjRJgYzbfE517CbkoJnFXeH8XuuSkeJEMLVuzs1T4lARzV/6uli
+ bbRkJYcUe1eEBly0tJ+p3HHlq2iDZwkvLgPSVNJaRP801IMzDcVewxdYXpL7B9YULt5C4U5Ed
+ pePHoNXZP+qjDCqZmdNMFHvA+hqPOtBu+Scm5eB4/dP06SPVMgJ/vt100/cZG2J+m1XK3lCRu
+ gR0Ci4OxPGi/Gmh+FyMcO5uCu77jqWtyjOcnvApMLTSpYBmZIrttkf5LVu0kzfOKgvHGA9viT
+ YMMRAh5l7ucpQsU48P4v3TClwPrfxnPabYJ8DEgB+7/oZJ+8kYraVdDJbCnmxndmmzAkyJFwO
+ 58H7TE7m9fBq+stTH1YIFO37DGooNpdRsQ+b5voyT+DcfX1SijvSh8KYE/UOqUUEq4zA55VD3
+ a17ULh6zACM0TW7S2oxVrdgwAoZFh173nmPtSRqODloRNByg7v49Oaei35uLC+tx0mZ2l5G75
+ Aaqp9aa6XSX2EJJHxB/lsj+0NbDXysNBSmxrqNqk4GQGJiTVm7iPi0zjspeFS1TpEDbGJCrh8
+ LQlDXEJ0WIPxZme2uOuqc0+0PH53tPc/ml0gqJIcPKkM4oKmMAzBOnDn6dRudRCt0BBn/BlZJ
+ liv/BrH1GwNMi96wLNiqMzLUeUFFjF3Bmngx2fXVCc2/zV3qlca2UmvruII3TcggA+TJv5kBV
+ kYjPsszhmX6iZDC2T1o0VqR2hj/CxjCoR0zXTc4SJGc8fKJfb6ixKpI2gqevW9Tk+OZVNsuKp
+ F99YdAOC0H/GDYWxneg6aaaqT1bh4WpQ/0aa2X00L4WOzqmpo9mVQzb/MCOk7UIAeXqfLmjoT
+ rhCeT/nw3Ikj3r6CRg/coBz5zwThfw2dvYPBFYG35JVWv0+xePUw1pKl1KK0I2LRlfIjD6SOT
+ cIvvsNX3wfBUIZsAj69eWzIt5tUDM73ZEgYJt2Fg1rJeOU5PTxOocLrXLBL4zVPRtAb/k6ZQE
+ mmV8uIKv/2Iy1fe5SmHZOsxnKZsFmEd3bG728Eq2ZfyIvMasFg0lpMrhTpGcsfkWo85InOAKY
+ didEYnMHfj3JikqMsaWSHOHnywKzyylBOiN4PUEfcC3d3557VLUTHsLEUzTzVu37lQtaGhrcm
+ LkpIFaoCeekWl30p6oJQRSRdYIHwxerjpT/M3SDgHLZV8V0QwYbcOatPHGWrFPRcm8CQ6cQ5v
+ aPukZ/XcLvpTLs4ERfcHAPgs5a0z2g9qvtkNCRAjxwrIGoJCSjqU2VVGNPzM7FBe3IY3tfXp3
+ wu3Au2LdZC2bgamFzJUmvrDqfALQIiM2NDVIEbWRkcx8jayQdeudfmq/zoGfJCeUO8CCyqag3
+ gJdDmxnQf8vudjirMO8vaIRwi38lLzmDhB/XVAYduaslRA4C8TviiRxaT2ngLXpGDvXbv5fml
+ vuoZ3d8Dp9fI/9D0bWW/CyS+R5iEpvTku9rhZxqrg+BNLM/6hBpLTwXsqPu4Y7/CrgpyMLw==
 
-On Tue, Mar 11, 2025 at 06:38:44PM +0000, James Morse wrote:
-> Thanks - look out for a 'v8:for_boris'.
+Hello,
 
-Got it, working through it slowly.
+since around 2017 we are able to partially decode the Binary MOF (BMOF) da=
+ta used to describe the interfaces of WMI-ACPI
+devices found inside modern devices. This initial reverse-engineering was =
+done by Pali Roh=C3=A1r and implementing a BMOF parser
+inside the kernel was originally also proposed by him (see https://lore.ke=
+rnel.org/lkml/201706041809.21573@pali/T/).
 
-Thx!
+As part of my bachelor thesis i finished the reverse-engineering and creat=
+ed yet another utility for parsing BMOF data.
+This utility can be found at github (https://github.com/Wer-Wolf/tarkin) a=
+nd i now intend to use it to finally implement
+a BMOF parser inside the kernel.
 
--- 
-Regards/Gruss,
-    Boris.
+There exists a growing list of WMI drivers using quirk tables for detectin=
+g the presence of specific WMI methods on a given
+device. This approach is maintenance-intensive and not exactly user friend=
+ly (end users rarely send kernel patches). Because
+of this we need this BMOF parser so that we can check which WMI methods ar=
+e available.
 
-https://people.kernel.org/tglx/notes-about-netiquette
+My current idea for this BMOF parser looks like this:
+
+  - support for the MS-DOS Doublespace compression algorithm (only decompr=
+ession) lands in lib/ds/
+
+  - WMI driver core moves into drivers/platform/x86/wmi/
+
+  - a new component called the WMI repository will hold all BMOF data know=
+n to the kernel (necessary to emulate the WMI infrastructure under Windows=
+)
+
+  - parsing of BMOF data is only done by the WMI repository which exposes =
+a in-kernel API under include/linux/wmi/repository.h
+
+  - BMOF data can be loaded into the WMI repository by the wmi-bmof driver=
+ (for firmware-provided BMOF data) or by WMI drivers themself (for WMI dev=
+ices with firmware-provided BMOF data)
+
+The remaining questions are:
+
+  - How to structure the library code inside /lib/ds/?
+
+  - Is there any way to check whether the Doublespace compression algorith=
+m is still encumbered by patents?
+
+  - Can BMOF files used by WMI drivers be included inside linux-firmware e=
+ven if they only hold configuration data?
+
+I would be very happy if the relevant maintainers could comment on the abo=
+ve questions.
+
+Thanks,
+Armin Wolf
+
+
 
