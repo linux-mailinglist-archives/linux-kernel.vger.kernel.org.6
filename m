@@ -1,286 +1,436 @@
-Return-Path: <linux-kernel+bounces-556898-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-556900-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 49FB0A5D03C
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 20:59:54 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E6E2FA5D041
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 21:00:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7E4F51785E3
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 19:59:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EABC5189F980
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 20:00:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6678D2641FE;
-	Tue, 11 Mar 2025 19:59:29 +0000 (UTC)
-Received: from mail-il1-f206.google.com (mail-il1-f206.google.com [209.85.166.206])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 535E8264A6E;
+	Tue, 11 Mar 2025 20:00:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PLzqCI33"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5B661EBFE1
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 19:59:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.206
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 365E12253AB;
+	Tue, 11 Mar 2025 20:00:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741723168; cv=none; b=sE1n5+GiJ0dHJ1yjIZoia2RvzvI82Kz8bz+AAWXxgwon9yXt3BnfRIzfOJ5fvExcm+/DXUpU2XfcKdwYRC1GTYl03wFZl3EIxP7BuKsKfsS8BHSy4QVMrB3NaRc52OfINUkPgktM/XNWkvmv7omcYxWx8zD+scb0WInJVM9zHcI=
+	t=1741723204; cv=none; b=gGbfRnMnX/8rkxN3HAUIGOxzk6Za4mOZxuPSqFf8pXLpKdCt3+rs/BlmrKLGV2K28vieRZQKS1/t6tRdcmzPhRFLgAptVuYCiAgM2r6NJo9eComLiAJR5nKZopVv8b5QnMMoSsYtA6deUu5N2f0ytQHS7c+4LRdrZlq6wWHFc1Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741723168; c=relaxed/simple;
-	bh=CyN0gEmRzzVHtEBOvfDm0RQTjbpTm2YM6UJbzDJurrs=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=HTfv78J7CKYDORrMVAdwPmduKOUbgDz2M1TSL4o5dsTECzge6Xjo41Rld9Bytv7o2l96bDyIWMxSbciuypx2AAR44do6u3aWL6e3yGhH1kdXQDpIkxJFbDxulbbKo1U00meOg0uOe3+DwKTGBGiuAUzZQqO9rN1IQAvVGP1fe9g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.206
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f206.google.com with SMTP id e9e14a558f8ab-3d43621bb7eso2131115ab.1
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 12:59:26 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741723166; x=1742327966;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=yk/UH2k2afq+h/x8kBeOme/IW+Mpk3G7Ew2UpkwpFCU=;
-        b=fnVBLmKnt1fIrqcGIF1KOtNVnh6qZMe+4PX1XXDXS6p9/Ww9H8ZqI1Fklif7lRM8Lp
-         sdp5wUCs6GAU5uri7GCNf95R7KbJsm84bwGGgsU4N41uFgqntu1UiWgsPHLHDJgWF1RG
-         AG4fqBAFD85eGjzRytkuYUKfES0cuIqGRvX6gYs+Vj3/bCrv2kjg9IqGPHBkEdBMgxJW
-         6XT2bcgZu8Ba8ho5kyE1AcFwjlZck5SPHthTasR5LHupTj2UrLU0vpwr9pcYC3lNbOcS
-         drQh3waNIHReBjhvMrdmCucz7xeBEu+2cVo3n0Qd+7BxkA8ID+9r2hDYOTByDNNpz9Cj
-         x3Cw==
-X-Forwarded-Encrypted: i=1; AJvYcCUC3JsUsKKF3aFvC74b5xAqjL0sgfgTzfx5ar9cWcCIxVZTKCbgCFpB/ncYwOPHFEj7GJVKbE0vv/yEXsg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw+pky3sl60iJZZMKD6lWOTiuR2R8O24wUtrtEB/u7a5vY6my5w
-	kMoyn6jH0FGIFtobU5jmiA3TlzHXu8At3NCF1SZqWmqI/3/FqRCGxV1D2UQEQZB5UN0Bvk4HIDw
-	kKN+n8ZA1b+ZE/bg5a2Wh3M4/wOu/uy5MwfXvlFt1i7hfeCoinBuSiWg=
-X-Google-Smtp-Source: AGHT+IGc+2+zNiurl64ycEqCSPHhQcu2nJJjs+oRkZMUax7kkyHoqxRAhcZ6FNS/RQYG42RUyVJViODRKc2USmXK+sQm1Ezw11wz
+	s=arc-20240116; t=1741723204; c=relaxed/simple;
+	bh=v/3az4vRYWs1ucCK+L7O2rSWOUhMtd/+E8koIZNf1pk=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=e5o+qU3ZMvw7wikM99uID7UqzL6U+ytOvNdP6kHL6gzNFc2tczGJrhgsfFjJCa4f5ykPIqB//Lpxwa2HnDaVS2vUWjmjBJwqAyhqb2FN5Y1m0wY2a/h4EF/+7ztSII5th2ZeWmkOnwJm9o52kMYok3YHoPuxMrCTODHH8h0GZoM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PLzqCI33; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 92EF9C4CEEA;
+	Tue, 11 Mar 2025 19:59:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741723203;
+	bh=v/3az4vRYWs1ucCK+L7O2rSWOUhMtd/+E8koIZNf1pk=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=PLzqCI33Rld89CMLqG4K05hZsXzto39OqGC8Ctlw9oBssd67NYytMot13Tsy+LPmA
+	 QN9rh68VTT7GjSVzb5UIu9UbR3TuVrlIp4cwwlAweFnBp691GTtiULPAUQQLK4V30i
+	 mTGOpceXlUjf/tbVI3a6QG7JXTLqLHagdJUSTU0BzGqFtPXeIVZ0aLzLSBmIm0nByQ
+	 u0mIh9LkHpr2OTzP0BUoE55lx0R2cQqOIAl0QzULSRCsFstwhHQRy8zF0vFbDbV15v
+	 zRNsnq8lVg8qabyi/pvnUgE6kfn4kiKvpUTwm/weVDi7ZUmMZzmddV3GFmKTKVg2Sx
+	 KzNBkYgi60aOA==
+From: Andreas Hindborg <a.hindborg@kernel.org>
+To: "Lyude Paul" <lyude@redhat.com>
+Cc: "Miguel Ojeda" <ojeda@kernel.org>,  "Anna-Maria Behnsen"
+ <anna-maria@linutronix.de>,  "Frederic Weisbecker" <frederic@kernel.org>,
+  "Thomas Gleixner" <tglx@linutronix.de>,  "Danilo Krummrich"
+ <dakr@kernel.org>,  "Alex Gaynor" <alex.gaynor@gmail.com>,  "Boqun Feng"
+ <boqun.feng@gmail.com>,  "Gary Guo" <gary@garyguo.net>,  =?utf-8?Q?Bj?=
+ =?utf-8?Q?=C3=B6rn?= Roy Baron
+ <bjorn3_gh@protonmail.com>,  "Benno Lossin" <benno.lossin@proton.me>,
+  "Alice Ryhl" <aliceryhl@google.com>,  "Trevor Gross" <tmgross@umich.edu>,
+  "Guangbo Cui" <2407018371@qq.com>,  "Dirk Behme" <dirk.behme@gmail.com>,
+  "Daniel Almeida" <daniel.almeida@collabora.com>,  "Tamir Duberstein"
+ <tamird@gmail.com>,  "Markus Elfring" <Markus.Elfring@web.de>,
+  <rust-for-linux@vger.kernel.org>,  <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v12 01/13] rust: hrtimer: introduce hrtimer support
+In-Reply-To: <a01b93484a4b67932413bf53f8a45cea315d8d58.camel@redhat.com>
+	(Lyude Paul's message of "Tue, 11 Mar 2025 13:06:56 -0400")
+References: <20250309-hrtimer-v3-v6-12-rc2-v12-0-73586e2bd5f1@kernel.org>
+	<20250309-hrtimer-v3-v6-12-rc2-v12-1-73586e2bd5f1@kernel.org>
+	<mgqJmos8H-QlK2HHH-RqPnV0apqkv5ljTKXvyRUHKyZvTBzorR0JGLwGK0MwHk-wLYoU19I-pRSrqJJKRCXfyQ==@protonmail.internalid>
+	<a01b93484a4b67932413bf53f8a45cea315d8d58.camel@redhat.com>
+User-Agent: mu4e 1.12.7; emacs 29.4
+Date: Tue, 11 Mar 2025 20:59:44 +0100
+Message-ID: <877c4vl4nj.fsf@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:b4a:b0:3d1:9bca:cf28 with SMTP id
- e9e14a558f8ab-3d469215c50mr48636235ab.8.1741723166055; Tue, 11 Mar 2025
- 12:59:26 -0700 (PDT)
-Date: Tue, 11 Mar 2025 12:59:26 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67d0961e.050a0220.14e108.001a.GAE@google.com>
-Subject: [syzbot] [net?] possible deadlock in dev_set_mac_address
-From: syzbot <syzbot+2d6285cc150f4ee51ef9@syzkaller.appspotmail.com>
-To: davem@davemloft.net, edumazet@google.com, horms@kernel.org, 
-	kuba@kernel.org, linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
-	pabeni@redhat.com, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
 
-Hello,
+"Lyude Paul" <lyude@redhat.com> writes:
 
-syzbot found the following issue on:
+> Only a few nits below!
+>
+> On Sun, 2025-03-09 at 16:18 +0100, Andreas Hindborg wrote:
+>> Add support for intrusive use of the hrtimer system. For now,
+>> only add support for embedding one timer per Rust struct.
+>>
+>> The hrtimer Rust API is based on the intrusive style pattern introduced by
+>> the Rust workqueue API.
+>>
+>> Acked-by: Frederic Weisbecker <frederic@kernel.org>
+>> Reviewed-by: Benno Lossin <benno.lossin@proton.me>
+>> Reviewed-by: Tamir Duberstein <tamird@gmail.com>
+>> Signed-off-by: Andreas Hindborg <a.hindborg@kernel.org>
+>> ---
+>>  rust/kernel/time.rs         |   2 +
+>>  rust/kernel/time/hrtimer.rs | 352 ++++++++++++++++++++++++++++++++++++++++++++
+>>  2 files changed, 354 insertions(+)
+>>
+>> diff --git a/rust/kernel/time.rs b/rust/kernel/time.rs
+>> index 379c0f5772e5..fab1dadfa589 100644
+>> --- a/rust/kernel/time.rs
+>> +++ b/rust/kernel/time.rs
+>> @@ -8,6 +8,8 @@
+>>  //! C header: [`include/linux/jiffies.h`](srctree/include/linux/jiffies.h).
+>>  //! C header: [`include/linux/ktime.h`](srctree/include/linux/ktime.h).
+>>
+>> +pub mod hrtimer;
+>> +
+>>  /// The number of nanoseconds per millisecond.
+>>  pub const NSEC_PER_MSEC: i64 = bindings::NSEC_PER_MSEC as i64;
+>>
+>> diff --git a/rust/kernel/time/hrtimer.rs b/rust/kernel/time/hrtimer.rs
+>> new file mode 100644
+>> index 000000000000..20d3440c2a02
+>> --- /dev/null
+>> +++ b/rust/kernel/time/hrtimer.rs
+>> @@ -0,0 +1,352 @@
+>> +// SPDX-License-Identifier: GPL-2.0
+>> +
+>> +//! Intrusive high resolution timers.
+>> +//!
+>> +//! Allows running timer callbacks without doing allocations at the time of
+>> +//! starting the timer. For now, only one timer per type is allowed.
+>> +//!
+>> +//! # Vocabulary
+>> +//!
+>> +//! States:
+>> +//!
+>> +//! - Stopped: initialized but not started, or cancelled, or not restarted.
+>> +//! - Started: initialized and started or restarted.
+>> +//! - Running: executing the callback.
+>> +//!
+>> +//! Operations:
+>> +//!
+>> +//! * Start
+>> +//! * Cancel
+>> +//! * Restart
+>> +//!
+>> +//! Events:
+>> +//!
+>> +//! * Expire
+>> +//!
+>> +//! ## State Diagram
+>> +//!
+>> +//! ```text
+>> +//!                                                   Return NoRestart
+>> +//!                       +---------------------------------------------------------------------+
+>> +//!                       |                                                                     |
+>> +//!                       |                                                                     |
+>> +//!                       |                                                                     |
+>> +//!                       |                                         Return Restart              |
+>> +//!                       |                                      +------------------------+     |
+>> +//!                       |                                      |                        |     |
+>> +//!                       |                                      |                        |     |
+>> +//!                       v                                      v                        |     |
+>> +//!           +-----------------+      Start      +------------------+           +--------+-----+--+
+>> +//!           |                 +---------------->|                  |           |                 |
+>> +//! Init      |                 |                 |                  |  Expire   |                 |
+>> +//! --------->|    Stopped      |                 |      Started     +---------->|     Running     |
+>> +//!           |                 |     Cancel      |                  |           |                 |
+>> +//!           |                 |<----------------+                  |           |                 |
+>> +//!           +-----------------+                 +---------------+--+           +-----------------+
+>> +//!                                                     ^         |
+>> +//!                                                     |         |
+>> +//!                                                     +---------+
+>> +//!                                                      Restart
+>> +//! ```
+>> +//!
+>> +//!
+>> +//! A timer is initialized in the **stopped** state. A stopped timer can be
+>> +//! **started** by the `start` operation, with an **expiry** time. After the
+>> +//! `start` operation, the timer is in the **started** state. When the timer
+>> +//! **expires**, the timer enters the **running** state and the handler is
+>> +//! executed. After the handler has returned, the timer may enter the
+>> +//! **started* or **stopped** state, depending on the return value of the
+>> +//! handler. A timer in the **started** or **running** state may be **canceled**
+>> +//! by the `cancel` operation. A timer that is cancelled enters the **stopped**
+>> +//! state.
+>> +//!
+>> +//! A `cancel` or `restart` operation on a timer in the **running** state takes
+>> +//! effect after the handler has returned and the timer has transitioned
+>> +//! out of the **running** state.
+>> +//!
+>> +//! A `restart` operation on a timer in the **stopped** state is equivalent to a
+>> +//! `start` operation.
+>> +
+>> +use crate::{init::PinInit, prelude::*, time::Ktime, types::Opaque};
+>> +use core::marker::PhantomData;
+>> +
+>> +/// A timer backed by a C `struct hrtimer`.
+>> +///
+>> +/// # Invariants
+>> +///
+>> +/// * `self.timer` is initialized by `bindings::hrtimer_setup`.
+>> +#[pin_data]
+>> +#[repr(C)]
+>> +pub struct HrTimer<T> {
+>> +    #[pin]
+>> +    timer: Opaque<bindings::hrtimer>,
+>> +    _t: PhantomData<T>,
+>> +}
+>> +
+>> +// SAFETY: Ownership of an `HrTimer` can be moved to other threads and
+>> +// used/dropped from there.
+>> +unsafe impl<T> Send for HrTimer<T> {}
+>> +
+>> +// SAFETY: Timer operations are locked on the C side, so it is safe to operate
+>> +// on a timer from multiple threads.
+>> +unsafe impl<T> Sync for HrTimer<T> {}
+>> +
+>> +impl<T> HrTimer<T> {
+>> +    /// Return an initializer for a new timer instance.
+>> +    pub fn new() -> impl PinInit<Self>
+>> +    where
+>> +        T: HrTimerCallback,
+>> +    {
+>> +        pin_init!(Self {
+>> +            // INVARIANT: We initialize `timer` with `hrtimer_setup` below.
+>> +            timer <- Opaque::ffi_init(move |place: *mut bindings::hrtimer| {
+>> +                // SAFETY: By design of `pin_init!`, `place` is a pointer to a
+>> +                // live allocation. hrtimer_setup will initialize `place` and
+>> +                // does not require `place` to be initialized prior to the call.
+>> +                unsafe {
+>> +                    bindings::hrtimer_setup(
+>> +                        place,
+>> +                        Some(T::Pointer::run),
+>> +                        bindings::CLOCK_MONOTONIC as i32,
+>> +                        bindings::hrtimer_mode_HRTIMER_MODE_REL,
+>> +                    );
+>> +                }
+>> +            }),
+>> +            _t: PhantomData,
+>> +        })
+>> +    }
+>> +
+>> +    /// Get a pointer to the contained `bindings::hrtimer`.
+>> +    ///
+>> +    /// This function is useful to get access to the value without creating
+>> +    /// intermediate references.
+>> +    ///
+>> +    /// # Safety
+>> +    ///
+>> +    /// `this` must point to a live allocation of at least the size of `Self`.
+>> +    unsafe fn raw_get(this: *const Self) -> *mut bindings::hrtimer {
+>> +        // SAFETY: The field projection to `timer` does not go out of bounds,
+>> +        // because the caller of this function promises that `this` points to an
+>> +        // allocation of at least the size of `Self`.
+>> +        unsafe { Opaque::raw_get(core::ptr::addr_of!((*this).timer)) }
+>> +    }
+>> +
+>> +    /// Cancel an initialized and potentially running timer.
+>> +    ///
+>> +    /// If the timer handler is running, this function will block until the
+>> +    /// handler returns.
+>> +    ///
+>> +    /// Note that the timer might be started by a concurrent start operation. If
+>> +    /// so, the timer might not be in the **stopped** state when this function
+>> +    /// returns.
+>> +    ///
+>> +    /// Users of the `HrTimer` API would not usually call this method directly.
+>> +    /// Instead they would use the safe [`HrTimerHandle::cancel`] on the handle
+>> +    /// returned when the timer was started.
+>> +    ///
+>> +    /// This function is useful to get access to the value without creating
+>> +    /// intermediate references.
+>> +    ///
+>> +    /// # Safety
+>> +    ///
+>> +    /// `this` must point to a valid `Self`.
+>> +    #[allow(dead_code)]
+>> +    pub(crate) unsafe fn raw_cancel(this: *const Self) -> bool {
+>> +        // SAFETY: `this` points to an allocation of at least `HrTimer` size.
+>> +        let c_timer_ptr = unsafe { HrTimer::raw_get(this) };
+>> +
+>> +        // If the handler is running, this will wait for the handler to return
+>> +        // before returning.
+>> +        // SAFETY: `c_timer_ptr` is initialized and valid. Synchronization is
+>> +        // handled on the C side.
+>> +        unsafe { bindings::hrtimer_cancel(c_timer_ptr) != 0 }
+>> +    }
+>> +}
+>> +
+>> +/// Implemented by pointer types that point to structs that contain a [`HrTimer`].
+>> +///
+>> +/// `Self` must be [`Sync`] because it is passed to timer callbacks in another
+>> +/// thread of execution (hard or soft interrupt context).
+>> +///
+>> +/// Starting a timer returns a [`HrTimerHandle`] that can be used to manipulate
+>> +/// the timer. Note that it is OK to call the start function repeatedly, and
+>> +/// that more than one [`HrTimerHandle`] associated with a [`HrTimerPointer`] may
+>> +/// exist. A timer can be manipulated through any of the handles, and a handle
+>> +/// may represent a cancelled timer.
+>> +pub trait HrTimerPointer: Sync + Sized {
+>> +    /// A handle representing a started or restarted timer.
+>> +    ///
+>> +    /// If the timer is running or if the timer callback is executing when the
+>> +    /// handle is dropped, the drop method of [`HrTimerHandle`] should not return
+>> +    /// until the timer is stopped and the callback has completed.
+>> +    ///
+>> +    /// Note: When implementing this trait, consider that it is not unsafe to
+>> +    /// leak the handle.
+>> +    type TimerHandle: HrTimerHandle;
+>> +
+>> +    /// Start the timer with expiry after `expires` time units. If the timer was
+>> +    /// already running, it is restarted with the new expiry time.
+>> +    fn start(self, expires: Ktime) -> Self::TimerHandle;
+>> +}
+>> +
+>> +/// Implemented by [`HrTimerPointer`] implementers to give the C timer callback a
+>> +/// function to call.
+>> +// This is split from `HrTimerPointer` to make it easier to specify trait bounds.
+>> +pub trait RawHrTimerCallback {
+>> +    /// Type of the parameter passed to [`HrTimerCallback::run`]. It may be
+>> +    /// [`Self`], or a pointer type derived from [`Self`].
+>> +    type CallbackTarget<'a>;
+>> +
+>> +    /// Callback to be called from C when timer fires.
+>> +    ///
+>> +    /// # Safety
+>> +    ///
+>> +    /// Only to be called by C code in the `hrtimer` subsystem. `this` must point
+>> +    /// to the `bindings::hrtimer` structure that was used to start the timer.
+>> +    unsafe extern "C" fn run(this: *mut bindings::hrtimer) -> bindings::hrtimer_restart;
+>> +}
+>> +
+>> +/// Implemented by structs that can be the target of a timer callback.
+>> +pub trait HrTimerCallback {
+>> +    /// The type whose [`RawHrTimerCallback::run`] method will be invoked when
+>> +    /// the timer expires.
+>> +    type Pointer<'a>: RawHrTimerCallback;
+>> +
+>> +    /// Called by the timer logic when the timer fires.
+>> +    fn run(this: <Self::Pointer<'_> as RawHrTimerCallback>::CallbackTarget<'_>)
+>> +    where
+>> +        Self: Sized;
+>> +}
+>> +
+>> +/// A handle representing a potentially running timer.
+>> +///
+>> +/// More than one handle representing the same timer might exist.
+>> +///
+>> +/// # Safety
+>> +///
+>> +/// When dropped, the timer represented by this handle must be cancelled, if it
+>> +/// is running. If the timer handler is running when the handle is dropped, the
+>> +/// drop method must wait for the handler to return before returning.
+>> +///
+>> +/// Note: One way to satisfy the safety requirement is to call `Self::cancel` in
+>> +/// the drop implementation for `Self.`
+>> +pub unsafe trait HrTimerHandle {
+>> +    /// Cancel the timer. If the timer is in the running state, block till the
+>> +    /// handler has returned.
+>> +    ///
+>> +    /// Note that the timer might be started by a concurrent start operation. If
+>> +    /// so, the timer might not be in the **stopped** state when this function
+>> +    /// returns.
+>> +    ///
+>
+> Extraneous newline
+>
+>> +    fn cancel(&mut self) -> bool;
+>> +}
+>> +
+>> +/// Implemented by structs that contain timer nodes.
+>> +///
+>> +/// Clients of the timer API would usually safely implement this trait by using
+>> +/// the [`crate::impl_has_hr_timer`] macro.
+>> +///
+>> +/// # Safety
+>> +///
+>> +/// Implementers of this trait must ensure that the implementer has a
+>> +/// [`HrTimer`] field and that all trait methods are implemented according to
+>> +/// their documentation. All the methods of this trait must operate on the same
+>> +/// field.
+>> +pub unsafe trait HasHrTimer<T> {
+>> +    /// Return a pointer to the [`HrTimer`] within `Self`.
+>> +    ///
+>> +    /// This function is useful to get access to the value without creating
+>> +    /// intermediate references.
+>> +    ///
+>> +    /// # Safety
+>> +    ///
+>> +    /// `this` must be a valid pointer.
+>> +    unsafe fn raw_get_timer(this: *const Self) -> *const HrTimer<T>;
+>> +
+>> +    /// Return a pointer to the struct that is containing the [`HrTimer`] pointed
+>> +    /// to by `ptr`.
+>> +    ///
+>> +    /// This function is useful to get access to the value without creating
+>> +    /// intermediate references.
+>> +    ///
+>> +    /// # Safety
+>> +    ///
+>> +    /// `ptr` must point to a [`HrTimer<T>`] field in a struct of type `Self`.
+>> +    unsafe fn timer_container_of(ptr: *mut HrTimer<T>) -> *mut Self
+>> +    where
+>> +        Self: Sized;
+>> +
+>> +    /// Get pointer to the contained `bindings::hrtimer` struct.
+>> +    ///
+>> +    /// This function is useful to get access to the value without creating
+>> +    /// intermediate references.
+>> +    ///
+>> +    /// # Safety
+>> +    ///
+>> +    /// `this` must be a valid pointer.
+>> +    unsafe fn c_timer_ptr(this: *const Self) -> *const bindings::hrtimer {
+>> +        // SAFETY: `this` is a valid pointer to a `Self`.
+>> +        let timer_ptr = unsafe { Self::raw_get_timer(this) };
+>> +
+>> +        // SAFETY: timer_ptr points to an allocation of at least `HrTimer` size.
+>> +        unsafe { HrTimer::raw_get(timer_ptr) }
+>> +    }
+>> +
+>> +    /// Start the timer contained in the `Self` pointed to by `self_ptr`. If
+>> +    /// it is already running it is removed and inserted.
+>> +    ///
+>> +    /// # Safety
+>> +    ///
+>> +    /// - `this` must point to a valid `Self`.
+>> +    /// - Caller must ensure that the pointee of `this` lives until the timer
+>> +    ///   fires or is canceled.
+>> +    unsafe fn start(this: *const Self, expires: Ktime) {
+>> +        // SAFETY: By function safety requirement, `this`is a valid `Self`.
+>
+> ---------------------------------------------------------^
+> Missing a space over there
+>
+> With that fixed:
+>
+> Reviewed-by: Lyude Paul <lyude@redhat.com>
 
-HEAD commit:    40587f749df2 Merge branch 'enic-enable-32-64-byte-cqes-and..
-git tree:       net-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=1420d478580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=ca99d9d1f4a8ecfa
-dashboard link: https://syzkaller.appspot.com/bug?extid=2d6285cc150f4ee51ef9
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-
-Unfortunately, I don't have any reproducer for this issue yet.
-
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/6d02993a9211/disk-40587f74.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/2c8b300bf362/vmlinux-40587f74.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/2d5be21882cf/bzImage-40587f74.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+2d6285cc150f4ee51ef9@syzkaller.appspotmail.com
-
-======================================================
-WARNING: possible circular locking dependency detected
-6.14.0-rc5-syzkaller-01183-g40587f749df2 #0 Not tainted
-------------------------------------------------------
-syz.3.4651/21867 is trying to acquire lock:
-ffff88805e634d28 (&dev_instance_lock_key#12){+.+.}-{4:4}, at: netdev_lock include/linux/netdevice.h:2731 [inline]
-ffff88805e634d28 (&dev_instance_lock_key#12){+.+.}-{4:4}, at: dev_set_mac_address+0x2a/0x50 net/core/dev_api.c:302
-
-but task is already holding lock:
-ffff88807de0cd28 (&dev_instance_lock_key#2){+.+.}-{4:4}, at: netdev_lock include/linux/netdevice.h:2731 [inline]
-ffff88807de0cd28 (&dev_instance_lock_key#2){+.+.}-{4:4}, at: do_setlink+0xa94/0x40f0 net/core/rtnetlink.c:3094
-
-which lock already depends on the new lock.
+Thanks!
 
 
-the existing dependency chain (in reverse order) is:
-
--> #2 (&dev_instance_lock_key#2){+.+.}-{4:4}:
-       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5851
-       __mutex_lock_common kernel/locking/mutex.c:585 [inline]
-       __mutex_lock+0x19c/0x1010 kernel/locking/mutex.c:730
-       netdev_lock include/linux/netdevice.h:2731 [inline]
-       netif_set_up net/core/dev.h:143 [inline]
-       __dev_open+0x5cb/0x8a0 net/core/dev.c:1651
-       netif_open+0xae/0x1b0 net/core/dev.c:1667
-       dev_open+0x13e/0x260 net/core/dev_api.c:191
-       team_port_add drivers/net/team/team_core.c:1230 [inline]
-       team_add_slave+0xabe/0x28a0 drivers/net/team/team_core.c:1989
-       do_set_master+0x579/0x730 net/core/rtnetlink.c:2943
-       do_setlink+0xfee/0x40f0 net/core/rtnetlink.c:3149
-       rtnl_changelink net/core/rtnetlink.c:3759 [inline]
-       __rtnl_newlink net/core/rtnetlink.c:3918 [inline]
-       rtnl_newlink+0x15a6/0x1d90 net/core/rtnetlink.c:4055
-       rtnetlink_rcv_msg+0x791/0xcf0 net/core/rtnetlink.c:6945
-       netlink_rcv_skb+0x206/0x480 net/netlink/af_netlink.c:2534
-       netlink_unicast_kernel net/netlink/af_netlink.c:1313 [inline]
-       netlink_unicast+0x7f6/0x990 net/netlink/af_netlink.c:1339
-       netlink_sendmsg+0x8de/0xcb0 net/netlink/af_netlink.c:1883
-       sock_sendmsg_nosec net/socket.c:709 [inline]
-       __sock_sendmsg+0x221/0x270 net/socket.c:724
-       ____sys_sendmsg+0x53a/0x860 net/socket.c:2564
-       ___sys_sendmsg net/socket.c:2618 [inline]
-       __sys_sendmsg+0x269/0x350 net/socket.c:2650
-       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
-       do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
-       entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
--> #1 (team->team_lock_key#2){+.+.}-{4:4}:
-       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5851
-       __mutex_lock_common kernel/locking/mutex.c:585 [inline]
-       __mutex_lock+0x19c/0x1010 kernel/locking/mutex.c:730
-       team_set_mac_address+0x122/0x280 drivers/net/team/team_core.c:1817
-       netif_set_mac_address+0x327/0x510 net/core/dev.c:9605
-       do_setlink+0xaa6/0x40f0 net/core/rtnetlink.c:3095
-       rtnl_changelink net/core/rtnetlink.c:3759 [inline]
-       __rtnl_newlink net/core/rtnetlink.c:3918 [inline]
-       rtnl_newlink+0x15a6/0x1d90 net/core/rtnetlink.c:4055
-       rtnetlink_rcv_msg+0x791/0xcf0 net/core/rtnetlink.c:6945
-       netlink_rcv_skb+0x206/0x480 net/netlink/af_netlink.c:2534
-       netlink_unicast_kernel net/netlink/af_netlink.c:1313 [inline]
-       netlink_unicast+0x7f6/0x990 net/netlink/af_netlink.c:1339
-       netlink_sendmsg+0x8de/0xcb0 net/netlink/af_netlink.c:1883
-       sock_sendmsg_nosec net/socket.c:709 [inline]
-       __sock_sendmsg+0x221/0x270 net/socket.c:724
-       __sys_sendto+0x363/0x4c0 net/socket.c:2178
-       __do_sys_sendto net/socket.c:2185 [inline]
-       __se_sys_sendto net/socket.c:2181 [inline]
-       __x64_sys_sendto+0xde/0x100 net/socket.c:2181
-       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
-       do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
-       entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
--> #0 (&dev_instance_lock_key#12){+.+.}-{4:4}:
-       check_prev_add kernel/locking/lockdep.c:3163 [inline]
-       check_prevs_add kernel/locking/lockdep.c:3282 [inline]
-       validate_chain+0x18ef/0x5920 kernel/locking/lockdep.c:3906
-       __lock_acquire+0x1397/0x2100 kernel/locking/lockdep.c:5228
-       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5851
-       __mutex_lock_common kernel/locking/mutex.c:585 [inline]
-       __mutex_lock+0x19c/0x1010 kernel/locking/mutex.c:730
-       netdev_lock include/linux/netdevice.h:2731 [inline]
-       dev_set_mac_address+0x2a/0x50 net/core/dev_api.c:302
-       bond_set_mac_address+0x28e/0x830 drivers/net/bonding/bond_main.c:4903
-       netif_set_mac_address+0x327/0x510 net/core/dev.c:9605
-       do_setlink+0xaa6/0x40f0 net/core/rtnetlink.c:3095
-       rtnl_changelink net/core/rtnetlink.c:3759 [inline]
-       __rtnl_newlink net/core/rtnetlink.c:3918 [inline]
-       rtnl_newlink+0x15a6/0x1d90 net/core/rtnetlink.c:4055
-       rtnetlink_rcv_msg+0x791/0xcf0 net/core/rtnetlink.c:6945
-       netlink_rcv_skb+0x206/0x480 net/netlink/af_netlink.c:2534
-       netlink_unicast_kernel net/netlink/af_netlink.c:1313 [inline]
-       netlink_unicast+0x7f6/0x990 net/netlink/af_netlink.c:1339
-       netlink_sendmsg+0x8de/0xcb0 net/netlink/af_netlink.c:1883
-       sock_sendmsg_nosec net/socket.c:709 [inline]
-       __sock_sendmsg+0x221/0x270 net/socket.c:724
-       ____sys_sendmsg+0x53a/0x860 net/socket.c:2564
-       ___sys_sendmsg net/socket.c:2618 [inline]
-       __sys_sendmsg+0x269/0x350 net/socket.c:2650
-       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
-       do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
-       entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-other info that might help us debug this:
-
-Chain exists of:
-  &dev_instance_lock_key#12 --> team->team_lock_key#2 --> &dev_instance_lock_key#2
-
- Possible unsafe locking scenario:
-
-       CPU0                    CPU1
-       ----                    ----
-  lock(&dev_instance_lock_key#2);
-                               lock(team->team_lock_key#2);
-                               lock(&dev_instance_lock_key#2);
-  lock(&dev_instance_lock_key#12);
-
- *** DEADLOCK ***
-
-2 locks held by syz.3.4651/21867:
- #0: ffffffff8fed6908 (rtnl_mutex){+.+.}-{4:4}, at: rtnl_lock net/core/rtnetlink.c:80 [inline]
- #0: ffffffff8fed6908 (rtnl_mutex){+.+.}-{4:4}, at: rtnl_nets_lock net/core/rtnetlink.c:341 [inline]
- #0: ffffffff8fed6908 (rtnl_mutex){+.+.}-{4:4}, at: rtnl_newlink+0xc4c/0x1d90 net/core/rtnetlink.c:4054
- #1: ffff88807de0cd28 (&dev_instance_lock_key#2){+.+.}-{4:4}, at: netdev_lock include/linux/netdevice.h:2731 [inline]
- #1: ffff88807de0cd28 (&dev_instance_lock_key#2){+.+.}-{4:4}, at: do_setlink+0xa94/0x40f0 net/core/rtnetlink.c:3094
-
-stack backtrace:
-CPU: 0 UID: 0 PID: 21867 Comm: syz.3.4651 Not tainted 6.14.0-rc5-syzkaller-01183-g40587f749df2 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 02/12/2025
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:94 [inline]
- dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
- print_circular_bug+0x13a/0x1b0 kernel/locking/lockdep.c:2076
- check_noncircular+0x36a/0x4a0 kernel/locking/lockdep.c:2208
- check_prev_add kernel/locking/lockdep.c:3163 [inline]
- check_prevs_add kernel/locking/lockdep.c:3282 [inline]
- validate_chain+0x18ef/0x5920 kernel/locking/lockdep.c:3906
- __lock_acquire+0x1397/0x2100 kernel/locking/lockdep.c:5228
- lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5851
- __mutex_lock_common kernel/locking/mutex.c:585 [inline]
- __mutex_lock+0x19c/0x1010 kernel/locking/mutex.c:730
- netdev_lock include/linux/netdevice.h:2731 [inline]
- dev_set_mac_address+0x2a/0x50 net/core/dev_api.c:302
- bond_set_mac_address+0x28e/0x830 drivers/net/bonding/bond_main.c:4903
- netif_set_mac_address+0x327/0x510 net/core/dev.c:9605
- do_setlink+0xaa6/0x40f0 net/core/rtnetlink.c:3095
- rtnl_changelink net/core/rtnetlink.c:3759 [inline]
- __rtnl_newlink net/core/rtnetlink.c:3918 [inline]
- rtnl_newlink+0x15a6/0x1d90 net/core/rtnetlink.c:4055
- rtnetlink_rcv_msg+0x791/0xcf0 net/core/rtnetlink.c:6945
- netlink_rcv_skb+0x206/0x480 net/netlink/af_netlink.c:2534
- netlink_unicast_kernel net/netlink/af_netlink.c:1313 [inline]
- netlink_unicast+0x7f6/0x990 net/netlink/af_netlink.c:1339
- netlink_sendmsg+0x8de/0xcb0 net/netlink/af_netlink.c:1883
- sock_sendmsg_nosec net/socket.c:709 [inline]
- __sock_sendmsg+0x221/0x270 net/socket.c:724
- ____sys_sendmsg+0x53a/0x860 net/socket.c:2564
- ___sys_sendmsg net/socket.c:2618 [inline]
- __sys_sendmsg+0x269/0x350 net/socket.c:2650
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7fb6b198d169
-Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007fb6af7d5038 EFLAGS: 00000246 ORIG_RAX: 000000000000002e
-RAX: ffffffffffffffda RBX: 00007fb6b1ba6080 RCX: 00007fb6b198d169
-RDX: 0000000000040880 RSI: 0000400000000000 RDI: 0000000000000009
-RBP: 00007fb6b1a0e2a0 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 0000000000000000 R14: 00007fb6b1ba6080 R15: 00007fff137bf0e8
- </TASK>
-bond0: entered promiscuous mode
-team0: entered promiscuous mode
-bond0: left allmulticast mode
-team0: left allmulticast mode
+Best regards,
+Andreas Hindborg
 
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
 
