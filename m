@@ -1,157 +1,105 @@
-Return-Path: <linux-kernel+bounces-557004-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-557002-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 531E9A5D24B
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 23:06:34 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E2D2A5D23D
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 23:05:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E19E6189CE26
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 22:06:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BA6C017C17E
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 22:05:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD843265603;
-	Tue, 11 Mar 2025 22:06:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CECF264FAA;
+	Tue, 11 Mar 2025 22:05:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="JMh6fI6C"
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="W2UEnNsr";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="KX7TT/O4"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE391199FBA;
-	Tue, 11 Mar 2025 22:06:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03423199FBA
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 22:05:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741730784; cv=none; b=YHCBTqvoymG0w3fwSHvUnPaeVnbt1zkNElUXgvLHIOSSNwtCiYpheK+SF/FFH5kKna95M6EsPJCi7xz2nf2h/PgLWVeLUoWuDa5mDhw8W6DiWCONg0koMGnpSwl0dr/CWddhFKBaZgAwqQ27cRqlDWDAqpap+WMjbJurOhuwQ8c=
+	t=1741730738; cv=none; b=MMeeSBzomMqMztidcDHMwpkOhN6vzbuM/JhfaFMpOcTg6UOEN/7BEVu84p7gG8zShgIjs8wn1mC3Fuqx/nrNvETY37eMqsuWb96DI1uzx4yYeIEGSr9xBzHx63ZdgLUCHwlhU8urG13V1f/gDNVL++92f9ROTaO3NIL99KV8COQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741730784; c=relaxed/simple;
-	bh=1FsEAoBQCwul9SXkYZakBAby+nof+BFT5YLa9ZLbmWo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jE5bBFsU4YQI5slNlwSO4amX1ivljkuFZHYXDhy4K2frMb6sbqTYqeyyExw/IhYSZi7Dvo4UFJyk3lZJHGqEN9ZpbhBogVuvoTzcTmYqB9thFvFWzM2Se1e7cCf8GWeLqogCXL/azMkhWpuEMSun2TuuByr5FTr9aithxY12Wq8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=JMh6fI6C; arc=none smtp.client-ip=78.32.30.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=VEtYjw1bJy2FyEgqNltD6h1CKY3ei2RKfjZVJcAYac8=; b=JMh6fI6ClsD77q6QFlO594QFyv
-	sKF4LPcJaQcTQzRqy28KBHvEvNbva/Q4T4karOQKqy3zGz5C6FZf26kql8lG10rd/yWDclC8ace2t
-	E8nv+RSCOd4MSUMTE37Jd6pwCjUlHw6IB88o86uJeQeu1vXLQvCcelUpTMH5zI9UW1Ln/0xzTIYnc
-	+ZxX47CDZdxAPYKw9IFXZpxwHKBPV2C5StuOVk/ouA+IPkzqmTobJn+hz8OlhffXTedE2VG2aUA6F
-	6ipRngplcXCrRC298lr1CqzLj89tc6A4tBT19pldI+iCk9Vc5UcPgIif4YSb1J3UDshYyiuaHWSri
-	JsTs7FhA==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:38464)
-	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <linux@armlinux.org.uk>)
-	id 1ts7j7-0004gC-0h;
-	Tue, 11 Mar 2025 22:05:29 +0000
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
-	(envelope-from <linux@shell.armlinux.org.uk>)
-	id 1ts7j4-0003rB-0F;
-	Tue, 11 Mar 2025 22:05:26 +0000
-Date: Tue, 11 Mar 2025 22:05:25 +0000
-From: "Russell King (Oracle)" <linux@armlinux.org.uk>
-To: Mark Brown <broonie@kernel.org>
-Cc: Mike Rapoport <rppt@kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Alexander Gordeev <agordeev@linux.ibm.com>,
-	Andreas Larsson <andreas@gaisler.com>,
-	Andy Lutomirski <luto@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
-	Borislav Petkov <bp@alien8.de>, Brian Cain <bcain@kernel.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Dinh Nguyen <dinguyen@kernel.org>,
-	Geert Uytterhoeven <geert@linux-m68k.org>,
-	Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
-	Guo Ren <guoren@kernel.org>, Heiko Carstens <hca@linux.ibm.com>,
-	Helge Deller <deller@gmx.de>, Huacai Chen <chenhuacai@kernel.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Jiaxun Yang <jiaxun.yang@flygoat.com>,
-	Johannes Berg <johannes@sipsolutions.net>,
-	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
-	Madhavan Srinivasan <maddy@linux.ibm.com>,
-	Matt Turner <mattst88@gmail.com>, Max Filippov <jcmvbkbc@gmail.com>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Michal Simek <monstr@monstr.eu>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Richard Weinberger <richard@nod.at>,
-	Stafford Horne <shorne@gmail.com>,
-	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Vasily Gorbik <gor@linux.ibm.com>, Vineet Gupta <vgupta@kernel.org>,
-	Will Deacon <will@kernel.org>, linux-alpha@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-snps-arc@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org, linux-csky@vger.kernel.org,
-	linux-hexagon@vger.kernel.org, loongarch@lists.linux.dev,
-	linux-m68k@lists.linux-m68k.org, linux-mips@vger.kernel.org,
-	linux-openrisc@vger.kernel.org, linux-parisc@vger.kernel.org,
-	linuxppc-dev@lists.ozlabs.org, linux-riscv@lists.infradead.org,
-	linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
-	sparclinux@vger.kernel.org, linux-um@lists.infradead.org,
-	linux-arch@vger.kernel.org, linux-mm@kvack.org, x86@kernel.org
-Subject: Re: [PATCH 10/13] arch, mm: set high_memory in free_area_init()
-Message-ID: <Z9CzpTlA2e0jR7UJ@shell.armlinux.org.uk>
-References: <20250306185124.3147510-1-rppt@kernel.org>
- <20250306185124.3147510-11-rppt@kernel.org>
- <cee346ec-5fa5-4d0b-987b-413ee585dbaa@sirena.org.uk>
- <Z9Cl8JKkRGhaRrgM@kernel.org>
- <5e40219b-f149-4e0f-aa10-c09fa183945e@sirena.org.uk>
+	s=arc-20240116; t=1741730738; c=relaxed/simple;
+	bh=AnPeBV9v0eQavJOTunchPujDNLwoucDO6rKl+JbAnAk=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=Keqviosz43OCTSjphD7vfvIwlZCz8OhG674ticdPTY6sCnKUQMoK4Na2goFKXekDcS6k79jOjdaAUXDc91+RSen9NivW9ovmunvDfhIZxaikuJBuxcMa6Lu4tvj5NytdxWC3RsvGSGphosrrHa/kYkorEhz0aXT7jyDLZRmT2bY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=W2UEnNsr; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=KX7TT/O4; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1741730734;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=vACigLEGtHhpuAQOGkUduRRDHEuvNOA0vqBD9eiwbdE=;
+	b=W2UEnNsrbcqKiBlx1jnNei4XFM4kWebJa27VSv0WuuDk1C+sR/LtZVv3xxGmcUSuVz6bI6
+	bEGvhVhBu/7Mg1CuarPePAiMNgX0zSwh4KkDlNYUfjMqKXQFnwKCrKPiddIKN+t/Vf3Hkk
+	+AwSQO2p1zkPPstFUnPTd+QhbCYoexpm1OIF9bsBsxG1EzWagtYzckHWtOYr3XcPPRkkTg
+	Oaj3hTRWNgJB+xGH7JQJNFP10xmAKFMApzHtLc6kKcu+b8RcMNX7lUXHNIh+k6V5b6mp3b
+	2FDFqzo2mtP3eK31PKftLoG/sRYzem08zo7WD2WrLbt3hvHsvz3E8vbN7k6R+w==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1741730734;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=vACigLEGtHhpuAQOGkUduRRDHEuvNOA0vqBD9eiwbdE=;
+	b=KX7TT/O44LA48Z/wBKbKU3MOhO6fy8FmwUXCBFHqAK+j6HvjmP+am4vOJNMBCQG5RkxWlx
+	dX9SfdXPY3sx1ZBw==
+To: Frederic Weisbecker <frederic@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, Anna-Maria Behnsen
+ <anna-maria@linutronix.de>, Benjamin Segall <bsegall@google.com>, Eric
+ Dumazet <edumazet@google.com>, Andrey Vagin <avagin@openvz.org>, Pavel
+ Tikhomirov <ptikhomirov@virtuozzo.com>, Peter Zijlstra
+ <peterz@infradead.org>, Cyrill Gorcunov <gorcunov@gmail.com>
+Subject: Re: [patch V3 17/18] posix-timers: Provide a mechanism to allocate
+ a given timer ID
+In-Reply-To: <Z9CsstMf-EVZpsiH@pavilion.home>
+References: <20250308155501.391430556@linutronix.de>
+ <20250308155624.526740902@linutronix.de> <Z9CsstMf-EVZpsiH@pavilion.home>
+Date: Tue, 11 Mar 2025 23:05:34 +0100
+Message-ID: <87msdrz0i9.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <5e40219b-f149-4e0f-aa10-c09fa183945e@sirena.org.uk>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Mar 11, 2025 at 09:33:29PM +0000, Mark Brown wrote:
-> [    0.000000] Booting Linux on physical CPU 0x0
-> [    0.000000] Linux version 6.14.0-rc6-next-20250311 (tuxmake@tuxmake) (arm-linux-gnueabihf-gcc (Debian 13.3.0-5) 13.3.0, GNU ld (GNU Binutils for Debian) 2.43.1) #1 SMP @1741691801
-> [    0.000000] CPU: ARMv7 Processor [414fc0f0] revision 0 (ARMv7), cr=10c5387d
-> [    0.000000] CPU: div instructions available: patching division code
-> [    0.000000] CPU: PIPT / VIPT nonaliasing data cache, PIPT instruction cache
-> [    0.000000] OF: fdt: Machine model: linux,dummy-virt
-> [    0.000000] random: crng init done
-> [    0.000000] earlycon: pl11 at MMIO 0x09000000 (options '')
-> [    0.000000] printk: legacy bootconsole [pl11] enabled
-> [    0.000000] Memory policy: Data cache writealloc
-> [    0.000000] efi: UEFI not found.
-> [    0.000000] cma: Reserved 64 MiB at 0x00000000
+On Tue, Mar 11 2025 at 22:35, Frederic Weisbecker wrote:
+> Le Sat, Mar 08, 2025 at 05:48:47PM +0100, Thomas Gleixner a =C3=A9crit :
+>> @@ -364,6 +389,16 @@ static enum hrtimer_restart posix_timer_
+>>  	return HRTIMER_NORESTART;
+>>  }
+>>=20=20
+>> +long posixtimer_create_prctl(unsigned long ctrl)
+>> +{
+>> +	if (ctrl > PR_TIMER_CREATE_RESTORE_IDS_ON)
+>> +		return -EINVAL;
+>> +
+>> +	guard(spinlock_irq)(&current->sighand->siglock);
+>> +	current->signal->timer_create_restore_ids =3D ctrl =3D=3D PR_TIMER_CRE=
+ATE_RESTORE_IDS_ON;
+>
+> Is the locking necessary here? It's not used on the read side.
+> It only makes sense if more flags are to be added later in struct signal =
+and the
+> fields write can race.
 
-If that CMA address is correct, then it's wrong. virt machines start
-DRAM at 0x40000000. This is a small memory VM:
+True.
 
-[    0.000000] Zone ranges:
-[    0.000000]   Normal   [mem 0x0000000040000000-0x0000000045ffffff]
-[    0.000000]   HighMem  empty
+> Also do we want to carry this PR_TIMER_CREATE_RESTORE_IDS_ON accross exec=
+? Posix
+> timers are removed then anyway.
 
-and this is a larger memory VM:
-
-[    0.000000] Zone ranges:
-[    0.000000]   Normal   [mem 0x0000000040000000-0x000000006fffffff]
-[    0.000000]   HighMem  [mem 0x0000000070000000-0x000000007fffffff]
-
-Neither have CMA enabled (it's not necessary for a VM).
-
-On a real platform where CMA and highmem is enabled, then:
-
-[    0.000000] cma: Reserved 16 MiB at 0x4f000000 on node -1
-[    0.000000] Zone ranges:
-[    0.000000]   Normal   [mem 0x0000000010000000-0x000000003fffffff]
-[    0.000000]   HighMem  [mem 0x0000000040000000-0x000000004fffffff]
-
-So that "cma:" line you are seeing is indicating that something is very
-very wrong - it should definitely not be zero.
-
--- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
+Indeed, we should clear that.
 
