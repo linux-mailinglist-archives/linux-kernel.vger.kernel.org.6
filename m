@@ -1,52 +1,52 @@
-Return-Path: <linux-kernel+bounces-555415-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-555417-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3B6C1A5B71C
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 04:08:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 23F5FA5B71E
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 04:08:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8C306170ED3
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 03:08:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 605FF1722F5
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 03:08:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90CC81EA7FF;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9661E1EB180;
 	Tue, 11 Mar 2025 03:08:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hvpweZMC"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="D1bmCMR0"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D86791DF268;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D87231E7C38;
 	Tue, 11 Mar 2025 03:08:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741662510; cv=none; b=tmp1/BoLe2LbbWgv21FaGsRM8ZoZJKCfJEokToMMl5B86nIbabWOelkgiBdtmz57s7yVl4cVOZQVZUmnHG+o7vBrczfqKeQO1CnbaN3d3boDj9zLRtjBBm1DZmtMW+7VtFODxZApQvmy8X9RmP0UplB0NhgHghOG4tq/Lwf2rQY=
+	t=1741662510; cv=none; b=Ft6MclUhZy5BB1r/2gQiMwehe0f4i2jfA8fkKwqJNDv0vfXNmoKZeucQoYe+GLe5w5j+0Muya/BGuZmVILuSYpHLZYI38O9rgGCFk6KTujgawCP9t/ka4558Qv2eUiQjKEiTXA8lOdis0E17MJvjC85gkb3zPOWEUJCrkpyAa4k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1741662510; c=relaxed/simple;
-	bh=6YFlKkmJqvHypt4lt2xcZRr3utLgEQlOW0fxh7lNRnQ=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=i5uojQMW0/uUJ2SBUh29qngHhu26FO5xAevNMnVSvDH2Pbc/88s5epuvY6uAI7WjhGeusIcMdQ2qRIjY2tINbpfuUhzLn8n+TxAa10GS8LJyHsSPW9qgHP1pAITkqv+RteOhx/w1ZSBS0Q5qSUY1uzQBoj94kEQPLdIxn6kGCIM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hvpweZMC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 5203AC4CEEC;
+	bh=par3qu1dv9Zw4UCxcBo6S18Zh0aWFYrWJBkvOV23iK8=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=nDjrPO7Nv1z7P1gzZFDzmD3DfISOIr90zGq98PCXS4acZSOGS1muKR9DT72CZq6NrYw2gJ9su1RXeUE/jQUqYlDiFDB833qzqe60B+VPkoPG3qvsYZ0dlZ+OidCkTO84nINP7e57ERwzirTOnRIKUNel7QZjVw9zlp8g7gniisc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=D1bmCMR0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 6792DC4CEE5;
 	Tue, 11 Mar 2025 03:08:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1741662510;
-	bh=6YFlKkmJqvHypt4lt2xcZRr3utLgEQlOW0fxh7lNRnQ=;
-	h=From:Subject:Date:To:Cc:Reply-To:From;
-	b=hvpweZMC7YwAnjQAJe4vr934bW6gdvtiy8YaZUPj7/AbPkF1AH9uvbsL8Z/mZce4i
-	 0j0Kl3u/JUN0WMxTqLQgaZzVkjdTp2SVLtWKo1iJHxntziPpFXt2TnJ5gcWM7q/izK
-	 le8bVbSX7WTlDOrWjzK+/Vo/lARHOAqOOkeQihHdaXZBwQnKas7KKoZ2sVcqb/nbSs
-	 Tv1OXxpwGUu+YAGTrwx0DPhf4xPt26baG46MbRawDKHGG99ydHYJiSNZCLicdn6384
-	 C8O+hxPfEtlNm52cvdal1uBk0RZzQIBNnO3VkpDoQwSFrgY8ZEnAENStIO2hANdwuz
-	 feccazQM0Kbew==
+	bh=par3qu1dv9Zw4UCxcBo6S18Zh0aWFYrWJBkvOV23iK8=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
+	b=D1bmCMR0PuRu4iD7DrvFHHXSFeXT0UxAt+gcZnx32KkXiRXnaDRu0g6BkzMxqzNbZ
+	 o4/MXxDYVLXsqMJ+UrBncr9Ihj/BI0d4Gd7AOY+eFyVDFiQGNPZhu/IjwiWJwL0fga
+	 ylaU8KghWXyuPyXlZid2OLey+O4Ny/xGe7R7Mywms51UHu1N/LxDNglXC13JdnuiFP
+	 1neTD2CALL1IFa85FxCUipb1KNv5gnILjgRz/utl7P8rPlhFQS+7hvlfHLqfckCq1g
+	 xkeKlWgrY+yQ7sObdaoEvU5zm3lq6XycAoHI+uTYqtn2zJ/bOdRcRtHAZivGOuko9l
+	 nBnUs8jwpKMeA==
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 42B20C28B2E;
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 54224C2BA1B;
 	Tue, 11 Mar 2025 03:08:30 +0000 (UTC)
 From: Xianwei Zhao via B4 Relay <devnull+xianwei.zhao.amlogic.com@kernel.org>
-Subject: [PATCH v5 0/4] Add GPIO interrupt support for Amlogic A4 and A5
- SoCs
-Date: Tue, 11 Mar 2025 11:08:26 +0800
-Message-Id: <20250311-irqchip-gpio-a4-a5-v5-0-ca4cc276c18c@amlogic.com>
+Date: Tue, 11 Mar 2025 11:08:27 +0800
+Subject: [PATCH v5 1/4] dt-bindings: interrupt-controller: Add support for
+ Amlogic A4 and A5 SoCs
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -55,11 +55,9 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIACupz2cC/23QzU7DMAzA8VeZcibITux9cOI9EIfUdVtLbCkpq
- kBT3510F4bW49+Sf5Z8dZMW08m97K6u6GyT5UsNfto5GdKlV29tbRcgEAaM3sqnDDb6frTsE/n
- E/gjCkJB4L+Tq4li0s+8b+vZee7DpK5ef240Z1+nKMQQ8bXEzevBRjkqUlELbvabzR+5NniWf3
- QrO4Q4J+00kVESYGwQGaZgfkfiHROBNJFYEVeUAkUOn6RGhe+SwiVBFWojpRPWFjM1/ZFmWX6f
- P8BaFAQAA
+Message-Id: <20250311-irqchip-gpio-a4-a5-v5-1-ca4cc276c18c@amlogic.com>
+References: <20250311-irqchip-gpio-a4-a5-v5-0-ca4cc276c18c@amlogic.com>
+In-Reply-To: <20250311-irqchip-gpio-a4-a5-v5-0-ca4cc276c18c@amlogic.com>
 To: Thomas Gleixner <tglx@linutronix.de>, Rob Herring <robh@kernel.org>, 
  Krzysztof Kozlowski <krzk+dt@kernel.org>, 
  Conor Dooley <conor+dt@kernel.org>, 
@@ -72,11 +70,11 @@ Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
  Xianwei Zhao <xianwei.zhao@amlogic.com>, 
  Conor Dooley <conor.dooley@microchip.com>
 X-Mailer: b4 0.12.4
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1741662508; l=1918;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1741662508; l=1799;
  i=xianwei.zhao@amlogic.com; s=20231208; h=from:subject:message-id;
- bh=6YFlKkmJqvHypt4lt2xcZRr3utLgEQlOW0fxh7lNRnQ=;
- b=3MveDm9G6ntXWpZhH6/St+ViGjIaVCdHUE+6VbXi9dIntkMm4Da3JSu+SLSFPuRx1RdkvfQhy
- 0r385KlVEghDWnVwJUNckZRD/te9Ox+CdrYCQ/XHusuCljFuKQB1OSW
+ bh=fjbxGdq7kon/f2bPEXT1/XjxHPpGuBnxVJQe/5OSgX0=;
+ b=A8Z0IMKvUx4BuCPhe2tK+AUJQUh2m+5mdPfe5RM8p3xReYGa0bspT9eplSjqXhH/nFWlxwuJr
+ VdHnUZcfSOHDBTHQGGwJ6gtf3VsBQM42Eqr50eQGmy9tqAx/NiEdYf3
 X-Developer-Key: i=xianwei.zhao@amlogic.com; a=ed25519;
  pk=o4fDH8ZXL6xQg5h17eNzRljf6pwZHWWjqcOSsj3dW24=
 X-Endpoint-Received: by B4 Relay for xianwei.zhao@amlogic.com/20231208 with
@@ -84,49 +82,64 @@ X-Endpoint-Received: by B4 Relay for xianwei.zhao@amlogic.com/20231208 with
 X-Original-From: Xianwei Zhao <xianwei.zhao@amlogic.com>
 Reply-To: xianwei.zhao@amlogic.com
 
-This patch adds GPIO interrupt support for Amlogic A4 and A5 SoCs
+From: Xianwei Zhao <xianwei.zhao@amlogic.com>
 
+Update dt-binding document for GPIO interrupt controller
+of Amlogic A4 and A5 SoCs
+
+Acked-by: Conor Dooley <conor.dooley@microchip.com>
 Signed-off-by: Xianwei Zhao <xianwei.zhao@amlogic.com>
 ---
-Changes in v5:
-- Make minor changes of source code according to Thomas's suggestion.
-- Link to v4: https://lore.kernel.org/r/20250307-irqchip-gpio-a4-a5-v4-0-d03a9424151b@amlogic.com
+ .../interrupt-controller/amlogic,meson-gpio-intc.yaml | 19 ++++++++++++++++++-
+ 1 file changed, 18 insertions(+), 1 deletion(-)
 
-Changes in v4:
-- Make minor changes for bindings as Conor and Rob suggest.
-- Format adjustment of source code according to Thomas's suggestion.
-- Link to v3: https://lore.kernel.org/r/20250305-irqchip-gpio-a4-a5-v3-0-1eec70352fea@amlogic.com
+diff --git a/Documentation/devicetree/bindings/interrupt-controller/amlogic,meson-gpio-intc.yaml b/Documentation/devicetree/bindings/interrupt-controller/amlogic,meson-gpio-intc.yaml
+index a93744763787..3d60d9e9e208 100644
+--- a/Documentation/devicetree/bindings/interrupt-controller/amlogic,meson-gpio-intc.yaml
++++ b/Documentation/devicetree/bindings/interrupt-controller/amlogic,meson-gpio-intc.yaml
+@@ -35,6 +35,9 @@ properties:
+               - amlogic,meson-sm1-gpio-intc
+               - amlogic,meson-a1-gpio-intc
+               - amlogic,meson-s4-gpio-intc
++              - amlogic,a4-gpio-intc
++              - amlogic,a4-gpio-ao-intc
++              - amlogic,a5-gpio-intc
+               - amlogic,c3-gpio-intc
+               - amlogic,t7-gpio-intc
+           - const: amlogic,meson-gpio-intc
+@@ -49,7 +52,7 @@ properties:
+ 
+   amlogic,channel-interrupts:
+     description: Array with the upstream hwirq numbers
+-    minItems: 8
++    minItems: 2
+     maxItems: 12
+     $ref: /schemas/types.yaml#/definitions/uint32-array
+ 
+@@ -60,6 +63,20 @@ required:
+   - "#interrupt-cells"
+   - amlogic,channel-interrupts
+ 
++if:
++  properties:
++    compatible:
++      contains:
++        const: amlogic,a4-gpio-ao-intc
++then:
++  properties:
++    amlogic,channel-interrupts:
++      maxItems: 2
++else:
++  properties:
++    amlogic,channel-interrupts:
++      minItems: 8
++
+ additionalProperties: false
+ 
+ examples:
 
-Changes in v3:
-- Fix warning when run 'make ARCH=arm64 dtbs_check'.
-- Fix warning when run 'make ARCH=arm64 Image W=1'.
-- Rebase file amlogic-a4.dtsi.
-- Link to v2: https://lore.kernel.org/r/20250226-irqchip-gpio-a4-a5-v2-0-c55b1050cb55@amlogic.com
-
-Changes in v2:
-- Use if/then instead of direct modification minimum value for property 'amlogic,channel-interrupts'.
-- Add register offsets to the parameter structure to reduce definition of a function.
-- Link to v1: https://lore.kernel.org/r/20250219-irqchip-gpio-a4-a5-v1-0-3c8e44ae42df@amlogic.com
-
----
-Xianwei Zhao (4):
-      dt-bindings: interrupt-controller: Add support for Amlogic A4 and A5 SoCs
-      irqchip: Add support for Amlogic A4 and A5 SoCs
-      arm64: dts: Add gpio_intc node for Amlogic A4 SoCs
-      arm64: dts: Add gpio_intc node for Amlogic A5 SoCs
-
- .../amlogic,meson-gpio-intc.yaml                   | 19 ++++++++-
- arch/arm64/boot/dts/amlogic/amlogic-a4.dtsi        | 19 +++++++++
- arch/arm64/boot/dts/amlogic/amlogic-a5.dtsi        | 12 ++++++
- drivers/irqchip/irq-meson-gpio.c                   | 48 +++++++++++++++++-----
- 4 files changed, 86 insertions(+), 12 deletions(-)
----
-base-commit: 73e4ffb27bb8a093d557bb2dac1a271474cca99c
-change-id: 20241213-irqchip-gpio-a4-a5-80c50a1456c4
-
-Best regards,
 -- 
-Xianwei Zhao <xianwei.zhao@amlogic.com>
+2.37.1
 
 
 
