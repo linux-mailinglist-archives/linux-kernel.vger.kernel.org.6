@@ -1,56 +1,60 @@
-Return-Path: <linux-kernel+bounces-556462-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-556463-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E7E4EA5CA0D
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 17:01:47 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id ABB4DA5CA23
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 17:02:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F069D1896AE9
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 16:01:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B52357ABBF9
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 16:00:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94EE6260A3C;
-	Tue, 11 Mar 2025 15:59:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49520260A5D;
+	Tue, 11 Mar 2025 16:00:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YMB6ULSE"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uUpknmff"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED30F260A31;
-	Tue, 11 Mar 2025 15:59:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8194C25F79C;
+	Tue, 11 Mar 2025 16:00:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741708780; cv=none; b=VZBVLWgjKv1Gi7/KZX+KK4saaQ7gwD8R4mOcM/I8hP3aloctynWSaLhKiiZnM9sbLYw6JA19U+ZNSufCCl2wNVi2zlDdYwgniva9M/PX6/4CH25+L+eEg3Wk0qudEV9WDf2g2deZOWfqIBGccdwz7JyLPzLuejG3avGaxXsjk7M=
+	t=1741708801; cv=none; b=l6+K8XX5ztqu+JPa+5HqM+3DiexqTFaJGo6syj+L/N40qzZqvTAZ97APA3zPZ1bxRfjSxewurlNPq/41Y7epd3Ln9in4aoi8oqD2zpggAv0krS8xhrDwT4gOx3A2MkVtiFymWfUgZ3Qw+yEWgdcyT5ybD0Ac0EFVDGsmyVjbLgk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741708780; c=relaxed/simple;
-	bh=o1zfNfRzSyzMnHbSnLiwhdNGDDh4V624T1bIqecRWjY=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=MmOXHAL02+Xb2Hmp74QI2czyGgBl8gbwCpDEO4uvP2GvZNfjtLBOIQtL+prr/Z+EG7GGVyWZBroaTl3AqKSYVuMK14KCC9pI8B6U2g0oe+tXtT4uIgiyy+lC78NAqenZMd20k8T0y3a45VRRztnCzEobuCjgNYOYJvYhXZHksMc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YMB6ULSE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 971A1C4CEE9;
-	Tue, 11 Mar 2025 15:59:39 +0000 (UTC)
+	s=arc-20240116; t=1741708801; c=relaxed/simple;
+	bh=frAwT789BAh4F89Qv4uDoVqmywdm58BDlCsir8WtQmY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FZc5yb4qck7NIF/QPI+f1TP4TYzmactsYD+lWJVUxHOXdxSNpaXCWlOTHCGj7XjxcKUkj+G3PDKXlbjlYZ6AQBe7JBzF++SsJbUi1zIYh9rKbpml4oADqt+5qImP6jImwoaBrbIluWzHl3HSffJMQOmFgQKTdd99BoojVzNO8Zg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uUpknmff; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D39B7C4CEE9;
+	Tue, 11 Mar 2025 15:59:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741708779;
-	bh=o1zfNfRzSyzMnHbSnLiwhdNGDDh4V624T1bIqecRWjY=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=YMB6ULSEr1kIy7ktKaoPIaEYVZ0DBfhQj61g+uFWsKtinp6iv9Yi2w6ZR/0iB9Jwv
-	 Iwf+R9S9SMrz6n7rO9EtVmaRXkMg4f3GkyAu1t606qFLi8wD/O8cza/7fMWvVMSL/X
-	 WxBcmYbtSeRWWCqeLA6j+J9/TbYVsdsOZBYpBsQYt2XyFdkbAxujPLEqshAy5pUs1c
-	 h3eVYo5UTncOCi8EhE8a110PjTpMQWYo+E6Sjo0Lgy+4z9JnG8xLaPzRRfNjka3zZU
-	 ku2PvZpuNGJTO5A6AIED9OrhVr5HxvAPCPo8DXr/66sSwEFOiM1t/ocgw30Mu8RjTW
-	 QG7+7oxH18WLg==
-Date: Tue, 11 Mar 2025 10:59:38 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Thippeswamy Havalige <thippeswamy.havalige@amd.com>
-Cc: bhelgaas@google.com, lpieralisi@kernel.org, kw@linux.com,
-	manivannan.sadhasivam@linaro.org, robh@kernel.org,
-	krzk+dt@kernel.org, conor+dt@kernel.org, linux-pci@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	michal.simek@amd.com, bharat.kumar.gogada@amd.com
-Subject: Re: [PATCH v5 3/3] PCI: xilinx-cpm: Add support for Versal Net
- CPM5NC Root Port controller
-Message-ID: <20250311155938.GA629931@bhelgaas>
+	s=k20201202; t=1741708800;
+	bh=frAwT789BAh4F89Qv4uDoVqmywdm58BDlCsir8WtQmY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=uUpknmffSTA6HHE+IafTOGZOOGVoB+jEDYMG0FuJYdMnNsfHRJu26BrQYwbY1k4zd
+	 VKL35+v1HICOjsfNov8pO2+cYat9912p8htjSX+3GMLdxnPdiWZvK3Alnapfyn4T9v
+	 3nP6aqWJvyplYWgTgw/9jqXL52VGrEIfxp5RsV3TzwvlM4ypshmqr9QBQv0l5sZk4X
+	 xhvSKndUayuYpc1EVBxlldxmAFq8YfLiSRYQ6WasQYbBtWt6/t6bhFJG4j9KqRsd7+
+	 ZQISQ/gxL7BFzAnnNdHfayVrshDGBctsKyclFm0jy2iwRpvcYmERzrVU5k8cre6UwP
+	 K1ZQCjo/9dTMQ==
+Date: Tue, 11 Mar 2025 17:59:55 +0200
+From: Dmitry Baryshkov <lumag@kernel.org>
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Thara Gopinath <thara.gopinath@gmail.com>, 
+	Herbert Xu <herbert@gondor.apana.org.au>, "David S. Miller" <davem@davemloft.net>, 
+	Vinod Koul <vkoul@kernel.org>, Jonathan Corbet <corbet@lwn.net>, 
+	Md Sadre Alam <quic_mdalam@quicinc.com>, Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, 
+	linux-crypto@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	dmaengine@vger.kernel.org, linux-doc@vger.kernel.org, 
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Subject: Re: [PATCH v7 1/8] dmaengine: add DMA_PREP_LOCK and DMA_PREP_UNLOCK
+ flag
+Message-ID: <ozcg3m3iwdprt4hnti473e4j6ixnwgggbdvsnxold32bigcv7i@koo3ww3wfw22>
+References: <20250311-qce-cmd-descr-v7-0-db613f5d9c9f@linaro.org>
+ <20250311-qce-cmd-descr-v7-1-db613f5d9c9f@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -59,42 +63,92 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250310170717.GA556500@bhelgaas>
+In-Reply-To: <20250311-qce-cmd-descr-v7-1-db613f5d9c9f@linaro.org>
 
-On Mon, Mar 10, 2025 at 12:07:17PM -0500, Bjorn Helgaas wrote:
-> On Mon, Feb 24, 2025 at 09:20:24PM +0530, Thippeswamy Havalige wrote:
-> > The Versal Net ACAP (Adaptive Compute Acceleration Platform) devices
-> > incorporate the Coherency and PCIe Gen5 Module, specifically the
-> > Next-Generation Compact Module (CPM5NC).
-> > 
-> > The integrated CPM5NC block, along with the built-in bridge, can function
-> > as a PCIe Root Port & supports the PCIe Gen5 protocol with data transfer
-> > rates of up to 32 GT/s, capable of supporting up to a x16 lane-width
-> > configuration.
-> > 
-> > Bridge errors are managed using a specific interrupt line designed for
-> > CPM5N. INTx interrupt support is not available.
-> > 
-> > Currently in this commit platform specific Bridge errors support is not
-> > added.
+On Tue, Mar 11, 2025 at 10:25:32AM +0100, Bartosz Golaszewski wrote:
+> From: Md Sadre Alam <quic_mdalam@quicinc.com>
 > 
-> > @@ -478,6 +479,9 @@ static void xilinx_cpm_pcie_init_port(struct xilinx_cpm_pcie *port)
-> >  {
-> >  	const struct xilinx_cpm_variant *variant = port->variant;
-> >  
-> > +	if (variant->version != CPM5NC_HOST)
-> > +		return;
+> Add lock and unlock flags for the command descriptor. With the former set
+> in the requester pipe, the bam controller will lock all other pipes and
+> process the request only from requester pipe. Unlocking can only be
+> performed from the same pipe.
 > 
-> You're adding support for CPM5NC_HOST, but this changes the behavior
-> for all the NON-CPM5NC_HOST devices, which looks like a typo.
+> Setting the DMA_PREP_LOCK/DMA_PREP_UNLOCK flags in the command
+> descriptor means, the caller requests the BAM controller to be locked
+> for the duration of the transaction. In this case the BAM driver must
+> set the LOCK/UNLOCK bits in the HW descriptor respectively.
 > 
-> Should it be "variant->version == CPM5NC_HOST" instead?
+> Only BAM IPs version 1.4.0 and above support the LOCK/UNLOCK feature.
 
-Thanks for your patch that fixes this part.
+You are describing behaviour (and even versions) of a particular DMA
+hardware (BAM) in the commit message for a generic flag. Please drop all
+of that. Generic code should be described in generic terms.
 
-> Also, this makes it look like CPM5NC_HOST doesn't support any
-> interrupts at all.  No INTx, no MSI, no MSI-X.  Is that true?  If so,
-> what good is a host controller where interrupts don't work?
+> 
+> Signed-off-by: Md Sadre Alam <quic_mdalam@quicinc.com>
+> [Bartosz: reworked the commit message]
+> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> ---
+>  Documentation/driver-api/dmaengine/provider.rst | 15 +++++++++++++++
+>  include/linux/dmaengine.h                       |  6 ++++++
+>  2 files changed, 21 insertions(+)
+> 
+> diff --git a/Documentation/driver-api/dmaengine/provider.rst b/Documentation/driver-api/dmaengine/provider.rst
+> index 3085f8b460fa..a032e55d0a4f 100644
+> --- a/Documentation/driver-api/dmaengine/provider.rst
+> +++ b/Documentation/driver-api/dmaengine/provider.rst
+> @@ -628,6 +628,21 @@ DMA_CTRL_REUSE
+>    - This flag is only supported if the channel reports the DMA_LOAD_EOT
+>      capability.
+>  
+> +- DMA_PREP_LOCK
+> +
+> +  - If set, the DMA will lock all other pipes not related to the current
+> +    pipe group, and keep handling the current pipe only.
+> +
+> +  - All pipes not within this group will be locked by this pipe upon lock
+> +    event.
+> +
+> +  - only pipes which are in the same group and relate to the same Environment
+> +    Execution(EE) will not be locked by a certain pipe.
+> +
+> +- DMA_PREP_UNLOCK
+> +
+> +  - If set, DMA will release all locked pipes
+> +
+>  General Design Notes
+>  ====================
+>  
+> diff --git a/include/linux/dmaengine.h b/include/linux/dmaengine.h
+> index 346251bf1026..8ebd43a998a7 100644
+> --- a/include/linux/dmaengine.h
+> +++ b/include/linux/dmaengine.h
+> @@ -200,6 +200,10 @@ struct dma_vec {
+>   *  transaction is marked with DMA_PREP_REPEAT will cause the new transaction
+>   *  to never be processed and stay in the issued queue forever. The flag is
+>   *  ignored if the previous transaction is not a repeated transaction.
+> + *  @DMA_PREP_LOCK: tell the driver that there is a lock bit set on command
+> + *  descriptor.
+> + *  @DMA_PREP_UNLOCK: tell the driver that there is a un-lock bit set on command
+> + *  descriptor.
+>   */
+>  enum dma_ctrl_flags {
+>  	DMA_PREP_INTERRUPT = (1 << 0),
+> @@ -212,6 +216,8 @@ enum dma_ctrl_flags {
+>  	DMA_PREP_CMD = (1 << 7),
+>  	DMA_PREP_REPEAT = (1 << 8),
+>  	DMA_PREP_LOAD_EOT = (1 << 9),
+> +	DMA_PREP_LOCK = (1 << 10),
+> +	DMA_PREP_UNLOCK = (1 << 11),
+>  };
+>  
+>  /**
+> 
+> -- 
+> 2.45.2
+> 
 
-Does this controller support interrupts?
+-- 
+With best wishes
+Dmitry
 
