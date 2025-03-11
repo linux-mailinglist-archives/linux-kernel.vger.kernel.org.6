@@ -1,157 +1,142 @@
-Return-Path: <linux-kernel+bounces-555770-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-555767-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5DBD9A5BC8B
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 10:43:52 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C9ADA5BC84
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 10:43:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4E49B174A66
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 09:43:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DD051189781A
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 09:43:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 224F4233D85;
-	Tue, 11 Mar 2025 09:42:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DC99230BD1;
+	Tue, 11 Mar 2025 09:42:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="eTLKMVqi"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="SZP9YVXH"
+Received: from mx.denx.de (mx.denx.de [89.58.32.78])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB2EC233D98
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 09:42:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB82A22FDE2;
+	Tue, 11 Mar 2025 09:42:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.58.32.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741686176; cv=none; b=kXrbA92rP/4/3Iyc1Wf9y0IHcCPrFYcceK4iBBgb+VFjZf7CD3XJxhi0hNFgu3mNk/HElXVVwstXoEivELkQ4FVt2J0YywiRB7QK3xgkt6ZMOayj8NyigoOmFV+LW9CefO+rpkDE77wjihBh9slTLOT058ayduFxQ93qfOcW62o=
+	t=1741686165; cv=none; b=h4DYnqs92CW3SV0YcAnAw94ey678vc5PKebuNzpfvFK6/dVM/VcQQPLieYaaQExvgfEYkQo+WQNGevodPYzb/3lsT1flHvQpNfxg6wp3NFdBL5ntNmoFkQ1huPlCv0QcxBX+nUayxTGiT9QD1BjYQQgmgsyMPr7zMbPbzyfwGeU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741686176; c=relaxed/simple;
-	bh=7ofinKFlIYAPL0uFGFVvSScK4HwNUlqf6CGOFX+txk4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=lJfHY8cYBwbMjFM5Ck6OKnMnyyv9RJYhnPH2Z8ScvncEVvKW4JvWTovVm0qpDlJ2MlapgmAGcOtGW5seuSRl61Aop8jNalNgeR3278BcIbRc+8AjoXv0HM81BG1fbWZ9+8YUtOUYgVXBUDRMp3HkYMqDtbVQlcilTmImqc7g8g8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=eTLKMVqi; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1741686174;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=4Hg6I6nIDb7vIFIV7ygI8oxn0FMZLdQaKjCFJAirlRo=;
-	b=eTLKMVqiEJ/uM3bfCPoNZuwLUwwX/9QlV2/PEbZNI61cVSlybAVmNOAZ6UqWdzwvpiN+An
-	2nuAu+8ezG8X5Z59uccVnhA8B4xdS2EHyI4xwBdROVCB3IrkzJ2P+OL3coFH1RuOHugJkT
-	9bZFQSmeAKVIQfipGf6MJrk3W1JtY50=
-Received: from mail-ej1-f69.google.com (mail-ej1-f69.google.com
- [209.85.218.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-150-G4M-Hwr7OVmxEFL8lgX91A-1; Tue, 11 Mar 2025 05:42:52 -0400
-X-MC-Unique: G4M-Hwr7OVmxEFL8lgX91A-1
-X-Mimecast-MFC-AGG-ID: G4M-Hwr7OVmxEFL8lgX91A_1741686172
-Received: by mail-ej1-f69.google.com with SMTP id a640c23a62f3a-abf4c4294b0so562780266b.0
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 02:42:52 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741686171; x=1742290971;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=4Hg6I6nIDb7vIFIV7ygI8oxn0FMZLdQaKjCFJAirlRo=;
-        b=IeGyr42ObqKlFYIk67ozTJ5TVE3rkQgLuhJUKRMnXgl2HH7k7tF56gvFwgxECwLGfN
-         VaYdD6AoEWxpYVUdkqv/W85FyQ5evqxM8BR8LOkpAtTeTWPDQYhn/4v05au3nPKo3xNa
-         zRIjhg6ucK6gs0ePPRPvke4+Z5B66S84Jm3wFWDAOkumX6kITfG6ASjobc5KDH7eqGu5
-         mgYQHaE7z5hey3IS7+3sFFjt1yliCeeoqlWxlx5m4Otdj+RLec5o1duyTF9QFZdbjCby
-         RqLUPcEZ25tPmFwcAg4tN9jkG/pcjCWqnbXSkAVnVQU+WnA0i6WK8wGakI+fXyyRAB1f
-         MDSQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUYX3fxOtD+Bz+15BiUqE95hRYSb6SEKrSQaMxqynT8r3cgbWBc8YjtVmkKVIuWlZdwWmsQezxZcR8srgQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyK1XkFUVTs5uLcrWxPfLC1GNUs9yjOEEJabdDtI0vL0UdQ0O/b
-	utW0n1mItt6wC5ILfRXaRjJE4C5cbZ2P8TxjC77Yua381t4nOa9GFERt8dUcqLyAiz62vSKZULw
-	b1Vp5vG1a+U8Tz461AQVnptCOCU9bWYcipBPUAyoMT1pbL5GcRKhoCdBJUSFnx3V2Vvh9sg==
-X-Gm-Gg: ASbGncu2AfTbaFafYAz6S48MLTXC1ZF79Sfgrh/+Ft1OK0IXcqmn/ME1eviLCLu2iT1
-	67uJUGLhE0Ue/TFivxeOTGx2QWCJvkWXlC4Sso5WY3VsRnI72kNIxHuFAOD61bV2rMa5H889YxA
-	oyZ58T/VrB5O7mPpabaRMDOgeDZGcdgsRnZ8bJF1Yyx3g6QXEeax1iD1dGBLS4m5Sxr2PyggLcy
-	CebMCJIL0VlCkjsu1dlIEJa1UPN33AxKSgtEzmM83sdsxTfqzwatKpymnerfrjx5975BA26hPuP
-	u7whdoxdChaK8TCwcNSWnEWdbNY+UQ04LRQU+c7cH8TVCI7zbtUUP7OKZ7gGo2ClEEzxL9qw
-X-Received: by 2002:a17:907:a310:b0:ac2:6fc6:b93d with SMTP id a640c23a62f3a-ac2ba473173mr370178166b.1.1741686171318;
-        Tue, 11 Mar 2025 02:42:51 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGkmP0r13TRekW78HkAFefp5cjLkHl6Mq2Ghd/8jrWtGCOF1SbwGI8W62TAbwjYfxllk7Faww==
-X-Received: by 2002:a17:907:a310:b0:ac2:6fc6:b93d with SMTP id a640c23a62f3a-ac2ba473173mr370172766b.1.1741686170721;
-        Tue, 11 Mar 2025 02:42:50 -0700 (PDT)
-Received: from localhost.localdomain (host-79-46-200-29.retail.telecomitalia.it. [79.46.200.29])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac239485bf3sm903753666b.63.2025.03.11.02.42.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 11 Mar 2025 02:42:49 -0700 (PDT)
-From: Stefano Garzarella <sgarzare@redhat.com>
-To: Jarkko Sakkinen <jarkko@kernel.org>
-Cc: Peter Huewe <peterhuewe@gmx.de>,
-	Tom Lendacky <thomas.lendacky@amd.com>,
-	Jason Gunthorpe <jgg@ziepe.ca>,
-	x86@kernel.org,
-	linux-kernel@vger.kernel.org,
-	Borislav Petkov <bp@alien8.de>,
-	linux-integrity@vger.kernel.org,
-	Dov Murik <dovmurik@linux.ibm.com>,
-	Dionna Glaze <dionnaglaze@google.com>,
-	linux-coco@lists.linux.dev,
-	James Bottomley <James.Bottomley@HansenPartnership.com>,
-	Claudio Carvalho <cclaudio@linux.ibm.com>,
-	Ingo Molnar <mingo@redhat.com>,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	Joerg Roedel <jroedel@suse.de>,
-	Stefano Garzarella <sgarzare@redhat.com>
-Subject: [PATCH v3 4/4] x86/sev: register tpm-svsm platform device
+	s=arc-20240116; t=1741686165; c=relaxed/simple;
+	bh=L5Bw9UBbZSq2OONuxWoDsaeg1DTWC3b2DYoYYrj9MBc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QqHDA/yXZ2e/pNlX8hATcQ9SCvmr99MUjm+T27HGmt8G1zndyMZGKNe+Id/B5ZtN3PggZsQtNGBdpC5J2HccsTkr9lTpQIJ3k35TdR1DbsavCmzzO19EwP5bXXiVPBU8y8Ftb0tiDpY97x6CX/gE0aoqUC9N2j3PSLq5dM/VghI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=SZP9YVXH; arc=none smtp.client-ip=89.58.32.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=denx.de
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id B0C3A103D3303;
+	Tue, 11 Mar 2025 10:42:28 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de; s=mx-20241105;
+	t=1741686154; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 in-reply-to:references; bh=ee0GouMttyoAI0zvBvt/JOBCHGowOvANqdNioGonbio=;
+	b=SZP9YVXHZk/yq4RN+3uIEDDZAtJqeOuemEx1bQ0ajxZ7hufQuMOLljjuDIoyT3KfOMH7ah
+	7Sgx/dZZzqvUXuppsQUfOOxYq++AC+RvyCSK2DxfFcRzW4fIrTwySsUXojItGeq5nddkKw
+	ZY+Od4qOCCpk1fHDZN6O+uXn5V6YhsKJVsOcDm9rlAPjOlFp78bll9CXaB+QhtjKRvQWX3
+	kiTuE++esGpUan9HglpvMBC0fbnP0dIqJj/Yp0raP4BIBlMHmG6tJ3HBPsaPJ3dYJmN8C9
+	JVuUmFxEoh9SwiCSUxnSCU7Ql++qw06Xy9KXwWCifxr2Ibivj7K4/+uCQJ5DYw==
 Date: Tue, 11 Mar 2025 10:42:25 +0100
-Message-ID: <20250311094225.35129-5-sgarzare@redhat.com>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20250311094225.35129-1-sgarzare@redhat.com>
-References: <20250311094225.35129-1-sgarzare@redhat.com>
+From: Pavel Machek <pavel@denx.de>
+To: Ron Economos <re@w6rz.net>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org,
+	patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+	torvalds@linux-foundation.org, akpm@linux-foundation.org,
+	linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+	lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+	f.fainelli@gmail.com, sudipm.mukherjee@gmail.com,
+	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org,
+	hargar@microsoft.com, broonie@kernel.org
+Subject: Re: [PATCH 6.6 000/145] 6.6.83-rc1 review
+Message-ID: <Z9AFgaBYY/VoF7X8@duo.ucw.cz>
+References: <20250310170434.733307314@linuxfoundation.org>
+ <81784d87-b837-4476-974a-87b0333e7e38@w6rz.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="MoM5oHu0BFGlukw+"
+Content-Disposition: inline
+In-Reply-To: <81784d87-b837-4476-974a-87b0333e7e38@w6rz.net>
+X-Last-TLS-Session-Version: TLSv1.3
 
-SNP platform can provide a vTPM device emulated by SVSM.
 
-The "tpm-svsm" device can be handled by the platform driver added
-by the previous commit in drivers/char/tpm/tpm_svsm.c
+--MoM5oHu0BFGlukw+
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-The driver will call snp_svsm_vtpm_probe() to check if SVSM is
-present and if it's support the vTPM protocol.
+Hi!
 
-Signed-off-by: Stefano Garzarella <sgarzare@redhat.com>
----
- arch/x86/coco/sev/core.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
+> > This is the start of the stable review cycle for the 6.6.83 release.
+> > There are 145 patches in this series, all will be posted as a response
+> > to this one.  If anyone has any issues with these being applied, please
+> > let me know.
+> >=20
+> > Responses should be made by Wed, 12 Mar 2025 17:04:00 +0000.
+> > Anything received after that time might be too late.
+> >=20
+> > The whole patch series can be found in one patch at:
+> > 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.6.8=
+3-rc1.gz
+> > or in the git tree and branch at:
+> > 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.g=
+it linux-6.6.y
+> > and the diffstat can be found below.
 
-diff --git a/arch/x86/coco/sev/core.c b/arch/x86/coco/sev/core.c
-index 2166bdff88b7..a2383457889e 100644
---- a/arch/x86/coco/sev/core.c
-+++ b/arch/x86/coco/sev/core.c
-@@ -2664,6 +2664,11 @@ static struct platform_device sev_guest_device = {
- 	.id		= -1,
- };
- 
-+static struct platform_device tpm_svsm_device = {
-+	.name		= "tpm-svsm",
-+	.id		= -1,
-+};
-+
- static int __init snp_init_platform_device(void)
- {
- 	if (!cc_platform_has(CC_ATTR_GUEST_SEV_SNP))
-@@ -2672,6 +2677,9 @@ static int __init snp_init_platform_device(void)
- 	if (platform_device_register(&sev_guest_device))
- 		return -ENODEV;
- 
-+	if (platform_device_register(&tpm_svsm_device))
-+		return -ENODEV;
-+
- 	pr_info("SNP guest platform device initialized.\n");
- 	return 0;
- }
--- 
-2.48.1
+> The build fails on RISC-V with:
+>=20
+> arch/riscv/kernel/suspend.c: In function 'suspend_save_csrs':
+> arch/riscv/kernel/suspend.c:14:66: error: 'RISCV_ISA_EXT_XLINUXENVCFG'
+> undeclared (first use in this function); did you mean
+> 'RISCV_ISA_EXT_ZIFENCEI'?
+> =A0=A0 14 |=A0=A0=A0=A0=A0=A0=A0=A0 if (riscv_cpu_has_extension_unlikely(=
+smp_processor_id(),
+> RISCV_ISA_EXT_XLINUXENVCFG))
+> | ^~~~~~~~~~~~~~~~~~~~~~~~~~
+> | RISCV_ISA_EXT_ZIFENCEI
+> arch/riscv/kernel/suspend.c:14:66: note: each undeclared identifier is
+> reported only once for each function it appears in
+> arch/riscv/kernel/suspend.c: In function 'suspend_restore_csrs':
+> arch/riscv/kernel/suspend.c:37:66: error: 'RISCV_ISA_EXT_XLINUXENVCFG'
+> undeclared (first use in this function); did you mean
+> 'RISCV_ISA_EXT_ZIFENCEI'?
+> =A0=A0 37 |=A0=A0=A0=A0=A0=A0=A0=A0 if (riscv_cpu_has_extension_unlikely(=
+smp_processor_id(),
+> RISCV_ISA_EXT_XLINUXENVCFG))
+> | ^~~~~~~~~~~~~~~~~~~~~~~~~~
+> | RISCV_ISA_EXT_ZIFENCEI
+> make[4]: *** [scripts/Makefile.build:243: arch/riscv/kernel/suspend.o] Er=
+ror
+> 1
+>=20
+> Reverting commit "riscv: Save/restore envcfg CSR during suspend"
+> 8bf2e196c94af0a384f7bb545d54d501a1e9c510 fixes the build.
 
+We see the same problem.
+
+Best regards,
+								Pavel
+--=20
+DENX Software Engineering GmbH,        Managing Director: Erika Unter
+HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
+
+--MoM5oHu0BFGlukw+
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCZ9AFgQAKCRAw5/Bqldv6
+8q7WAJ4qfchFT3jtZ4DDJ95rONDfKRmv5ACgi4BMYshb0f9+bnhBj0g52O+Qbb8=
+=xFsN
+-----END PGP SIGNATURE-----
+
+--MoM5oHu0BFGlukw+--
 
