@@ -1,128 +1,114 @@
-Return-Path: <linux-kernel+bounces-556797-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-556800-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F4DFA5CEC4
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 20:06:03 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 173CBA5CED1
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 20:07:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E1DDC189E258
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 19:06:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BB8023B9275
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 19:06:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4207D266B68;
-	Tue, 11 Mar 2025 19:02:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34101267391;
+	Tue, 11 Mar 2025 19:02:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qsu0BfO8"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DkaUpWFC"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0B90266B59;
-	Tue, 11 Mar 2025 19:02:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74E6A266B7B;
+	Tue, 11 Mar 2025 19:02:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741719763; cv=none; b=PNMal+058igwesex1ngpy/VvYu+hr6SJIaTlme0XklZwChyWa+lZKtGtE4fql0/CNo2zgKzeVXZ9jIg4+41uefwOE+jiO7TNIDoVc7An5Rv1T6fQVD8ewT311HqnYhPEFYdKBWQm09rjpDGL7ajsZBgHf04ogJdDYGaJuUyhoYk=
+	t=1741719769; cv=none; b=KhqFqY62wXtpcvHlYp7XDVP+T0dHmput9Zp53wly8206R3JtQ5DTtHHPB275qcy4kW4vAgBt9GSOJe4QZ6qXUf6Tnn9x3tdIH7pyAANIgxgY3Sskzc0fT6hCR/uu70rNEuJoGn4lRn3B3zaA6xI9RpFaLCgbUi0B4MUa6P1izbs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741719763; c=relaxed/simple;
-	bh=8bj9ZDMyTlueUZDlB2buhvlSJIb+8KSxh35El9mE13Y=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=cG+l8BG3LSsERo7w/PbF+RIxzRTWWXmaDuc8bp9qDylR+Eas88ibvM3sc3YxQY8mv38yKmMOmdZyuYM6a46CnzebZUVFZGRQKNd15R72tzAvBkUP8nD9GMRpcSfojG/em0gUYKjsjn5dZRIZmBlVwGYljiq8TMev850OUkN/IEA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qsu0BfO8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E3ECCC4CEEA;
-	Tue, 11 Mar 2025 19:02:41 +0000 (UTC)
+	s=arc-20240116; t=1741719769; c=relaxed/simple;
+	bh=903w085l1k6ydor21DnGi+IQsYPV/L4oQPMCNZIraXM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MOTZ66ftR/JCQmangQ7JBpvom9E66mYRfLZQNk5vR/We27z+Qi5HpSRA8YpZOyj348sGNrcs14yFVWQuLhrtvL3zs/qaIjxpq9o+Vi7beBx6tXvs4eooAca/ryl4S4nPBdp46SCdETH9qYJDLEOdCoLddYhwpzxCdZe+tAhbzIA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DkaUpWFC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8EA1BC4CEE9;
+	Tue, 11 Mar 2025 19:02:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741719763;
-	bh=8bj9ZDMyTlueUZDlB2buhvlSJIb+8KSxh35El9mE13Y=;
-	h=From:To:Cc:Subject:Date:From;
-	b=qsu0BfO85CvLqrGgn42hjojunM6DBWau6GgtdT4DK+5ReIuMXvIVsyXw/ie3LU8n7
-	 oMHA3LoIzcB4Z8qhDXByOB/aWcu9e1RhZLUIM8OhEa7m0Opw9pH57ysGp2lgRurh55
-	 X51qAtEdKyHSNJrmml7hCmFVW8b2L76cwR+wUyAU+eg3aRwLjSWyDbRc9thkmKj9xH
-	 Y/+AsTZRgmwFkS7DZlBl8owZhZMt7pQCcmBvXviYR6t1CdNodgZkbneiXFZHjkJK2j
-	 wXRp2K3gFicMLcXYKC0I8Oc6JSTynfcnqwxDB7TFQ00+r++aKfCzvxPMJ04QrMGm9S
-	 92F4Of8NrOk1g==
-From: Masahiro Yamada <masahiroy@kernel.org>
-To: linux-kbuild@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	Ben Hutchings <ben@decadent.org.uk>,
-	Masahiro Yamada <masahiroy@kernel.org>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nicolas Schier <nicolas@fjasle.eu>
-Subject: [PATCH] kbuild: deb-pkg: remove "version" variable in mkdebian
-Date: Wed, 12 Mar 2025 04:02:24 +0900
-Message-ID: <20250311190238.634226-1-masahiroy@kernel.org>
-X-Mailer: git-send-email 2.43.0
+	s=k20201202; t=1741719769;
+	bh=903w085l1k6ydor21DnGi+IQsYPV/L4oQPMCNZIraXM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=DkaUpWFC6tonuAozpZLRP44Mvhbl9mjvUdNpmQEM9MEl9LVsmHnVfX5Ye3l4xANs5
+	 3F+7S348veq0VbbP6e6uKnv7WBZ7XsoYLHnfDUetMq2y9OaDgJQbDZiwsQiigRpjkK
+	 xS94S5HNcVEV3bxzkr05+ELKkcq4I9otxTszR+kBPh94Vosbwg7JE4BsWj0rGe5CY5
+	 1Q0PdJl0mb8O2c+azuvNtTFn4MQeMY65V31g+MT/wEheoi9B1OApnfc8oF1JT6+j70
+	 GLLAr/04IkYZ+rVPnCPTN+6UmOiGOFuE8B8F6pUt47BESyKCN0zsC7IxFfVKqGLf2J
+	 U9eYovL+GD5rg==
+Date: Tue, 11 Mar 2025 14:02:47 -0500
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Cosmin Tanislav <demonsingur@gmail.com>
+Cc: =?iso-8859-1?Q?N=EDcolas_F_=2E_R_=2E_A_=2E?= Prado <nfraprado@collabora.com>,
+	linux-kernel@vger.kernel.org,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	devicetree@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+	Taniya Das <quic_tdas@quicinc.com>,
+	Cosmin Tanislav <cosmin.tanislav@analog.com>,
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+	linux-media@vger.kernel.org,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Eric Biggers <ebiggers@google.com>,
+	Ihor Matushchak <ihor.matushchak@foobox.net>,
+	Laurentiu Palcu <laurentiu.palcu@oss.nxp.com>,
+	Will Deacon <will@kernel.org>,
+	Dan Carpenter <dan.carpenter@linaro.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>, linux-staging@lists.linux.dev,
+	linux-gpio@vger.kernel.org, Mark Brown <broonie@kernel.org>,
+	Dongcheng Yan <dongcheng.yan@intel.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	linux-arm-kernel@lists.infradead.org,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Tommaso Merciai <tomm.merciai@gmail.com>,
+	Bjorn Andersson <quic_bjorande@quicinc.com>,
+	Ross Burton <ross.burton@arm.com>,
+	Kieran Bingham <kieran.bingham@ideasonboard.com>,
+	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
+	Julien Massot <julien.massot@collabora.com>,
+	Hans Verkuil <hverkuil@xs4all.nl>, Zhi Mao <zhi.mao@mediatek.com>,
+	Niklas =?iso-8859-1?Q?S=F6derlund?= <niklas.soderlund@ragnatech.se>,
+	Benjamin Mugnier <benjamin.mugnier@foss.st.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Javier Carrasco <javier.carrasco@wolfvision.net>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Biju Das <biju.das.jz@bp.renesas.com>
+Subject: Re: [RFC PATCH v2 10/16] dt-bindings: media: i2c: max96712: add
+ support for POC supplies
+Message-ID: <174171976682.3984722.17562171213323916839.robh@kernel.org>
+References: <20250309084814.3114794-1-demonsingur@gmail.com>
+ <20250309084814.3114794-11-demonsingur@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250309084814.3114794-11-demonsingur@gmail.com>
 
-${version} and ${KERNELRELEASE} are the same.
 
-Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
----
+On Sun, 09 Mar 2025 10:48:02 +0200, Cosmin Tanislav wrote:
+> The GMSL links can carry power to the serializer when using coaxial
+> cables.
+> 
+> Document this capability.
+> 
+> Signed-off-by: Cosmin Tanislav <demonsingur@gmail.com>
+> ---
+>  .../devicetree/bindings/media/i2c/maxim,max96712.yaml         | 4 ++++
+>  1 file changed, 4 insertions(+)
+> 
 
- scripts/package/mkdebian | 17 ++++++++---------
- 1 file changed, 8 insertions(+), 9 deletions(-)
-
-diff --git a/scripts/package/mkdebian b/scripts/package/mkdebian
-index 80ed96561993..6685d13737c1 100755
---- a/scripts/package/mkdebian
-+++ b/scripts/package/mkdebian
-@@ -163,7 +163,6 @@ while [ $# -gt 0 ]; do
- done
- 
- # Some variables and settings used throughout the script
--version=$KERNELRELEASE
- if [ "${KDEB_PKGVERSION:+set}" ]; then
- 	packageversion=$KDEB_PKGVERSION
- else
-@@ -222,11 +221,11 @@ Build-Depends-Arch: bc, bison, flex,
-  python3:native, rsync
- Homepage: https://www.kernel.org/
- 
--Package: $packagename-$version
-+Package: $packagename-${KERNELRELEASE}
- Architecture: $debarch
--Description: Linux kernel, version $version
-+Description: Linux kernel, version ${KERNELRELEASE}
-  This package contains the Linux kernel, modules and corresponding other
-- files, version: $version.
-+ files, version: ${KERNELRELEASE}.
- EOF
- 
- if [ "${SRCARCH}" != um ]; then
-@@ -245,11 +244,11 @@ EOF
- if is_enabled CONFIG_MODULES; then
- cat <<EOF >> debian/control
- 
--Package: linux-headers-$version
-+Package: linux-headers-${KERNELRELEASE}
- Architecture: $debarch
- Build-Profiles: <!pkg.${sourcename}.nokernelheaders>
--Description: Linux kernel headers for $version on $debarch
-- This package provides kernel header files for $version on $debarch
-+Description: Linux kernel headers for ${KERNELRELEASE} on $debarch
-+ This package provides kernel header files for ${KERNELRELEASE} on $debarch
-  .
-  This is useful for people who need to build external modules
- EOF
-@@ -259,11 +258,11 @@ fi
- if is_enabled CONFIG_DEBUG_INFO; then
- cat <<EOF >> debian/control
- 
--Package: linux-image-$version-dbg
-+Package: linux-image-${KERNELRELEASE}-dbg
- Section: debug
- Architecture: $debarch
- Build-Profiles: <!pkg.${sourcename}.nokerneldbg>
--Description: Linux kernel debugging symbols for $version
-+Description: Linux kernel debugging symbols for ${KERNELRELEASE}
-  This package will come in handy if you need to debug the kernel. It provides
-  all the necessary debug symbols for the kernel and its modules.
- EOF
--- 
-2.43.0
+Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
 
 
