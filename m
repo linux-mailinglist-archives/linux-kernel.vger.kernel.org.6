@@ -1,104 +1,215 @@
-Return-Path: <linux-kernel+bounces-556350-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-556351-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B599A5C458
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 16:00:14 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E433A5C459
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 16:00:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D06003A8599
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 14:59:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 240C03A8311
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 15:00:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2ADF25DB11;
-	Tue, 11 Mar 2025 15:00:05 +0000 (UTC)
-Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1309B25DAE7;
-	Tue, 11 Mar 2025 15:00:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8285F25DD08;
+	Tue, 11 Mar 2025 15:00:10 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 433E728E7
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 15:00:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741705205; cv=none; b=AxqrXvNdQQUtuLt+RsmaHwH52ibiy49JNouK89kv6WIv0NmxxbBlJcpdrp94ux/SYXopJSO7uqR6MJH4v12V8Yp+BkuSMRu+HaukDY7QlJKfgMO0krzeJ5O/XQIVl99TSLvU3BNCRbMVPd2UaJRsNGYZAnC/jWqeKXjdk3i1vwg=
+	t=1741705210; cv=none; b=KEnJxPit2NAXZt0LiHmLEtukV1ueH0HPELv6ZrMnM2+sZvJlRLA2U0za9ChOhB5aBzfPDa3ZlVS1DFdxpX3AImsd/GH4HB01xpAYm/9b1gf5lZW6m9NLXuesq+AIpFAzacUZccDJZPlX9j8IdAu0BG+Gd4OyjusRQbBDw08EHsc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741705205; c=relaxed/simple;
-	bh=5PJkwwYfGL4NbJsE8apZ0H1rlDQsfGXPYywEs5a7dgs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hbHDEK9m9Xwq9N4o1+WteyXg+HOz3d5+XFzNA6YdALqtHqdUEP9YuS5/fJ4F3jK94mVmETyxyffrWajjL62M9eihnj5C/vFfxxhv+Csj7oTDXNSHdb3lWyJLBwuXC67ue7OVZGlUoYia0lXS1o1Vnk+EUAZ3to/HjqtU9QuZtyM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.214.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-22401f4d35aso99883015ad.2;
-        Tue, 11 Mar 2025 08:00:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741705203; x=1742310003;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=MaJ8SLFG93FwYkFp7sfKg4X+KPodbWjwHYeXqqA9L2w=;
-        b=FFoNtEiwGDLcjBi3pKplT3KGrBuVaYywRABFEKQcnpb/oRicGBtN/F5+BsTM2+AGAq
-         q85c+riylkGI1yoSR0Ut/6CyOXaB9HRSg7ofHzVEgKBluTUcKmNs+7gyX1ZrthlzC2Oi
-         v2Irl/q3OCRcd4Di0tR+hBeOlO2PZ/Zn3PA6JmKuG6QXzg/JQBsM01Kf5q1Ux4ccNveF
-         XcVxwrGd/Q8S1L2xEX11Vx0sL9MEGS06Ss9Ytcow4IqLU3s5uUzqsZWkkRHjILFLzOZ3
-         oOOQu38NnMD/LbJUNQka3FOYy3vzgxBjIx1CBi3/IOSAiEiVSwaNFBATY/F2MeRJzd73
-         h1pA==
-X-Forwarded-Encrypted: i=1; AJvYcCVEzkJi4jGb/FUgw9qK/VUzc++Zi2BqTaNcDlMgUwYX248KH9JLylKi8CA4rSu1Ftix7YyCEwmsbgV8OGA=@vger.kernel.org, AJvYcCXVxUtxs3k3Sa+RwtAIPX4k6yBrAidjy6k4LM14sZqbX+qVGIOa7AVKJVpLz+szIpGtVLe7+iQL@vger.kernel.org, AJvYcCXWZ1zPziW2e5qiyOargm4i33YeTcr951JBAlQal5mEXNrPfGmP9fPcTwU7COzo/KHnMnu1T+riJhj3@vger.kernel.org, AJvYcCXhxjevKAo0yDcAHYyrlmOzl2HAH3dUUrs/iywgT6YZ22SkNYUwBHNQSEkWkP9lb0hHUxcqcJl/3NNNaw==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw7CxHK8DVigpg8QYCc98TJXpCpmQudIgSBVuzz1jsRThFzZtJt
-	IvD6/Ll2HBPumXyN39oxdQdr8nzsrQmCUCq68uMfXaUMqAS71hK1
-X-Gm-Gg: ASbGncsKcrLvqhLnWVyoJSrU7dG1vBYR5dbjMPt3JiBaM5cngveBfJ7MiEjCdRbEtxN
-	5WiTNt42T7wTsDA88FP7Tql6oVvQ6Ouud43hLqGw6PfQS6LH2ExnxvovvjUPWjewQFnkGeR0/RP
-	sZwtJCQieIu/otZcNTfBW0cy7ecAcCKabZo5IPftdKZadRKGd49JZntfSSxu5ukb1ObYWrxSvLT
-	br050e4JNF5SvXeoleu2uGMXPHZcWGiJkdQyvA/frtnRSQ1v0E1bFif8KXX6ZTH7Q2kDF468mWY
-	0oZwJVTd5euVIN03C6zZeTf1UXBgaQHDPLfcsi3z4MR8kRgqYUkVU0DVYUsONvAi9wvovt/L3Zc
-	LMjt2d/OvOuK7uw==
-X-Google-Smtp-Source: AGHT+IGDF17bVy+X8PD1CLxyryITaYKCJ8HP+TmrU6K1QilfB9RwZjOgz3kvEQi1n6fSoKOwqa28aQ==
-X-Received: by 2002:a05:6a00:cc4:b0:736:5544:7ad7 with SMTP id d2e1a72fcca58-736eb7ffa52mr5264312b3a.14.1741705201877;
-        Tue, 11 Mar 2025 08:00:01 -0700 (PDT)
-Received: from localhost (fpd11144dd.ap.nuro.jp. [209.17.68.221])
-        by smtp.gmail.com with UTF8SMTPSA id d2e1a72fcca58-736e3f9d4f0sm3313957b3a.145.2025.03.11.08.00.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 11 Mar 2025 08:00:01 -0700 (PDT)
-Date: Wed, 12 Mar 2025 00:00:00 +0900
-From: Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>
-To: Siddharth Vadapalli <s-vadapalli@ti.com>
-Cc: lpieralisi@kernel.org, vigneshr@ti.com,
-	manivannan.sadhasivam@linaro.org, robh@kernel.org,
-	bhelgaas@google.com, rogerq@kernel.org, linux-omap@vger.kernel.org,
-	linux-pci@vger.kernel.org, stable@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	srk@ti.com
-Subject: Re: [PATCH] PCI: j721e: Fix the value of linkdown_irq_regfield for
- J784S4
-Message-ID: <20250311150000.GB1381004@rocinante>
-References: <20250305132018.2260771-1-s-vadapalli@ti.com>
+	s=arc-20240116; t=1741705210; c=relaxed/simple;
+	bh=r6tYAqX2E+4pr4XcAQD2LjQ0hvAvy/AcizjvPHW+xrw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=faSkPjHeG6gujzNCEv2w4sfcSSjEXocx8AgCC/qjzi0a9ZhoN7W1/zTDiheXCPmDolf2NPvWMAf7KZqr/feSWNtjjg9s3jWd7egjzfBbdmPmU90lazLRoVQqKe9HBDEL2AIjDVM9wkD0jqznP24yxMoGVUoDLRUQSu/2iIdxSpI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8E45E152B;
+	Tue, 11 Mar 2025 08:00:18 -0700 (PDT)
+Received: from [10.57.40.127] (unknown [10.57.40.127])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 39B693F694;
+	Tue, 11 Mar 2025 08:00:06 -0700 (PDT)
+Message-ID: <c31de6cb-f8f5-432c-b99e-68b10a24bc5e@arm.com>
+Date: Tue, 11 Mar 2025 15:00:05 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250305132018.2260771-1-s-vadapalli@ti.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] coresight: Add a KUnit test for
+ coresight_find_default_sink()
+Content-Language: en-GB
+To: James Clark <james.clark@linaro.org>, Mike Leach <mike.leach@linaro.org>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Leo Yan <leo.yan@arm.com>
+Cc: linux-kernel@vger.kernel.org, coresight@lists.linaro.org,
+ linux-arm-kernel@lists.infradead.org
+References: <20250305-james-cs-kunit-test-v2-1-83ba682b976c@linaro.org>
+From: Suzuki K Poulose <suzuki.poulose@arm.com>
+In-Reply-To: <20250305-james-cs-kunit-test-v2-1-83ba682b976c@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hello,
-
-> Commit under Fixes assigned the value of 'linkdown_irq_regfield' for the
-> J784S4 SoC as 'LINK_DOWN' which corresponds to BIT(1). However, according
-> to the Technical Reference Manual and Register Documentation for the J784S4
-> SoC [0], BIT(1) corresponds to "ENABLE_SYS_EN_PCIE_DPA_1" which is __NOT__
-> the field for the link-state interrupt. Instead, it is BIT(10) of the
-> "PCIE_INTD_ENABLE_REG_SYS_2" register that corresponds to the link-state
-> field named as "ENABLE_SYS_EN_PCIE_LINK_STATE".
+On 05/03/2025 15:07, James Clark wrote:
+> Add a test to confirm that default sink selection skips over an ETF
+> and returns an ETR even if it's further away.
 > 
-> Hence, set 'linkdown_irq_regfield' to the macro 'J7200_LINK_DOWN' which
-> expands to BIT(10) and was first defined for the J7200 SoC. Other SoCs
-> already reuse this macro since it accurately represents the link-state
-> field in their respective "PCIE_INTD_ENABLE_REG_SYS_2" register.
+> This also makes it easier to add new unit tests in the future.
 > 
-> [0]: https://www.ti.com/lit/zip/spruj52
+> Signed-off-by: James Clark <james.clark@linaro.org>
+> ---
+> Changes in v2:
+> - Let devm free everything rather than doing individual kfrees:
+>    "Like with managed drivers, KUnit-managed fake devices are
+>    automatically cleaned up when the test finishes, but can be manually
+>    cleaned up early with kunit_device_unregister()."
+> - Link to v1: https://lore.kernel.org/r/20250225164639.522741-1-james.clark@linaro.org
+> ---
+>   drivers/hwtracing/coresight/Kconfig                |  9 +++
+>   drivers/hwtracing/coresight/Makefile               |  3 +-
+>   drivers/hwtracing/coresight/coresight-core.c       |  1 +
+>   .../hwtracing/coresight/coresight-kunit-tests.c    | 77 ++++++++++++++++++++++
+>   4 files changed, 88 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/hwtracing/coresight/Kconfig b/drivers/hwtracing/coresight/Kconfig
+> index ecd7086a5b83..f064e3d172b3 100644
+> --- a/drivers/hwtracing/coresight/Kconfig
+> +++ b/drivers/hwtracing/coresight/Kconfig
+> @@ -259,4 +259,13 @@ config CORESIGHT_DUMMY
+>   
+>   	  To compile this driver as a module, choose M here: the module will be
+>   	  called coresight-dummy.
+> +
+> +config CORESIGHT_KUNIT_TESTS
+> +	  tristate "Enable Coresight unit tests"
+> +	  depends on KUNIT
+> +	  default KUNIT_ALL_TESTS
+> +	  help
+> +	    Enable Coresight unit tests. Only useful for development and not
+> +	    intended for production.
+> +
+>   endif
+> diff --git a/drivers/hwtracing/coresight/Makefile b/drivers/hwtracing/coresight/Makefile
+> index 8e62c3150aeb..96f0dfedb1bf 100644
+> --- a/drivers/hwtracing/coresight/Makefile
+> +++ b/drivers/hwtracing/coresight/Makefile
+> @@ -51,5 +51,4 @@ coresight-cti-y := coresight-cti-core.o	coresight-cti-platform.o \
+>   		   coresight-cti-sysfs.o
+>   obj-$(CONFIG_ULTRASOC_SMB) += ultrasoc-smb.o
+>   obj-$(CONFIG_CORESIGHT_DUMMY) += coresight-dummy.o
+> -obj-$(CONFIG_CORESIGHT_CTCU) += coresight-ctcu.o
+> -coresight-ctcu-y := coresight-ctcu-core.o
+> +obj-$(CONFIG_CORESIGHT_KUNIT_TESTS) += coresight-kunit-tests.o
+> diff --git a/drivers/hwtracing/coresight/coresight-core.c b/drivers/hwtracing/coresight/coresight-core.c
+> index bd0a7edd38c9..b101aa133ceb 100644
+> --- a/drivers/hwtracing/coresight/coresight-core.c
+> +++ b/drivers/hwtracing/coresight/coresight-core.c
+> @@ -959,6 +959,7 @@ coresight_find_default_sink(struct coresight_device *csdev)
+>   	}
+>   	return csdev->def_sink;
+>   }
+> +EXPORT_SYMBOL_GPL(coresight_find_default_sink);
+>   
+>   static int coresight_remove_sink_ref(struct device *dev, void *data)
+>   {
+> diff --git a/drivers/hwtracing/coresight/coresight-kunit-tests.c b/drivers/hwtracing/coresight/coresight-kunit-tests.c
+> new file mode 100644
+> index 000000000000..a136af05eaf4
+> --- /dev/null
+> +++ b/drivers/hwtracing/coresight/coresight-kunit-tests.c
+> @@ -0,0 +1,77 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +
+> +#include <kunit/test.h>
+> +#include <kunit/device.h>
+> +#include <linux/coresight.h>
+> +
+> +#include "coresight-priv.h"
+> +
+> +static struct coresight_device *coresight_test_device(struct device *dev)
+> +{
+> +	struct coresight_device *csdev = devm_kcalloc(dev, 1,
+> +						     sizeof(struct coresight_device),
+> +						     GFP_KERNEL);
+> +	csdev->pdata = devm_kcalloc(dev, 1,
+> +				   sizeof(struct coresight_platform_data),
+> +				   GFP_KERNEL);
+> +	return csdev;
+> +}
+> +
+> +static int coresight_test_cpuid(struct coresight_device *csdev)
+> +{
+> +	return 0;
+> +}
+> +
+> +static void test_default_sink(struct kunit *test)
+> +{
+> +	/*
+> +	 * ETM -> ETF -> ETR -> CATU
+> +	 *                ^
+> +	 *                | default
+> +	 */
+> +	struct device *dev = kunit_device_register(test, "coresight_kunit");
+> +	struct coresight_device *etm = coresight_test_device(dev),
+> +				*etf = coresight_test_device(dev),
+> +				*etr = coresight_test_device(dev),
+> +				*catu = coresight_test_device(dev);
+> +	struct coresight_connection conn = {};
+> +	struct coresight_ops_source src_ops = {.cpu_id = coresight_test_cpuid };
 
-Applied to controller/j721e, thank you!
+Do we need the trace_id() ? Why is this required ?
 
-	Krzysztof
+Suzuki
+
+> +	struct coresight_ops etm_cs_ops = { .source_ops	= &src_ops };
+> +
+> +	etm->type = CORESIGHT_DEV_TYPE_SOURCE;
+> +	etm->ops = &etm_cs_ops;
+> +	etf->type = CORESIGHT_DEV_TYPE_LINKSINK;
+> +	etf->subtype.sink_subtype = CORESIGHT_DEV_SUBTYPE_SINK_BUFFER;
+> +	etr->type = CORESIGHT_DEV_TYPE_SINK;
+> +	etr->subtype.sink_subtype = CORESIGHT_DEV_SUBTYPE_SINK_SYSMEM;
+> +	catu->type = CORESIGHT_DEV_TYPE_HELPER;
+> +
+> +	conn.src_dev = etm;
+> +	conn.dest_dev = etf;
+> +	coresight_add_out_conn(dev, etm->pdata, &conn);
+> +
+> +	conn.src_dev = etf;
+> +	conn.dest_dev = etr;
+> +	coresight_add_out_conn(dev, etf->pdata, &conn);
+> +
+> +	conn.src_dev = etr;
+> +	conn.dest_dev = catu;
+> +	coresight_add_out_conn(dev, etr->pdata, &conn);
+> +
+> +	KUNIT_ASSERT_PTR_EQ(test, coresight_find_default_sink(etm), etr);
+> +}
+> +
+> +static struct kunit_case coresight_testcases[] = {
+> +	KUNIT_CASE(test_default_sink),
+> +	{}
+> +};
+> +
+> +static struct kunit_suite coresight_test_suite = {
+> +	.name = "coresight_test_suite",
+> +	.test_cases = coresight_testcases,
+> +};
+> +
+> +kunit_test_suites(&coresight_test_suite);
+> +MODULE_LICENSE("GPL");
+> +MODULE_AUTHOR("James Clark <james.clark@linaro.org>");
+> +MODULE_DESCRIPTION("Arm CoreSight KUnit tests");
+> 
+> ---
+> base-commit: eeafe6a8790ea125252ca2e23c1a2469eaff1d9a
+> change-id: 20250305-james-cs-kunit-test-3af1df2401e6
+> 
+> Best regards,
+
 
