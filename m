@@ -1,124 +1,132 @@
-Return-Path: <linux-kernel+bounces-556129-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-556131-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 33940A5C143
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 13:34:02 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 598B5A5C152
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 13:35:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1E9A53A46DC
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 12:32:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E1D02162610
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 12:33:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6386C256C6A;
-	Tue, 11 Mar 2025 12:32:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE344255E37;
+	Tue, 11 Mar 2025 12:33:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="PuR4A86a";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="iSRaSERv"
-Received: from fout-b4-smtp.messagingengine.com (fout-b4-smtp.messagingengine.com [202.12.124.147])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="P2W6bMNv"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97C972566DF;
-	Tue, 11 Mar 2025 12:32:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.147
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3280256C9F
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 12:33:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741696374; cv=none; b=sdSE50FZcZYvL98JMdRi5Scz5y0YsF9KImVqJAxmuowF5kgrsFZUxAM4uGakawKjjONO6uCxHMLHNr5ChNI8tmwL2P6WRrKRUbUq+NIF0ZRECaTZUyZtRu88B50m2PFLSPRKL6xb/+/s7ja6+WBRctitCbit5qOWMWCQaE5wupM=
+	t=1741696412; cv=none; b=oM9NZj1jz7YtQILQjr1DWJIjtZlZOyjt5F5JeQIG+4S6m+9/f244QpLUGTqO3ZvGPuiR7kk1GbPzNrmWoqpV0xVbWlYxFuqLX1FhNLoWqFbrmcvsZ5kk5FmkzC9F0ZQEQwXaFBGN0umCh8kJ9YLwFSnncZYAU+7zIc3mivQS5m4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741696374; c=relaxed/simple;
-	bh=fnfUwCVpxgGFnIhUtch5ji1/4WPSF8TxZw77sXyT+W0=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=QKXEhw2KFnLDsielmo2BeK7svkpSnFmp6Paetm4L9avSyBpXjRCIX40CI6sDj7iK/x53MOxai5gDfQp96voleQYmy1KkRUsbYWhr8t1IZbwIftmvVFjS5iP4sRMi9msnHmRkLluRVB3rHKU9WXdXM1j6eofZueFgb6Nbbc/LYIA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=PuR4A86a; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=iSRaSERv; arc=none smtp.client-ip=202.12.124.147
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from phl-compute-07.internal (phl-compute-07.phl.internal [10.202.2.47])
-	by mailfout.stl.internal (Postfix) with ESMTP id 5272E1140153;
-	Tue, 11 Mar 2025 08:32:50 -0400 (EDT)
-Received: from phl-imap-11 ([10.202.2.101])
-  by phl-compute-07.internal (MEProxy); Tue, 11 Mar 2025 08:32:50 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm3; t=1741696370;
-	 x=1741782770; bh=AHRUDiDL+udOA0j+pbNQc9o/g3Xg+29U5On+bEc2WEI=; b=
-	PuR4A86a2ISknob+LndBjLNMKvP7Wv2423VT1nrr9ARvYJjGaxQVBtiLRKjRLLVc
-	RC4VSu8toeGZA0AL+RgM5ohK0Oc/h2D+EslwAzHUFpsLd8ByX0LwRDiMbEOCsAkP
-	BGdgdEttwqyMzWvcR6EwM4XQnAwdKcWltgKdzSAsSBrRwCStwKVfV0laqN/5Fygb
-	YJEXxALluMepOYdmIreEkZhJc+xRm3L4Yk1WMPQVjnAProPpgfDphg0sQN8pTQZT
-	2t0bsyiK1qACK+t7dAofor1HpnnavK/vx/ABTaTiZpPw1mu3iyYN+dyJxv9yAfiI
-	tCq6QfQTosUJDD95XU4zvA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1741696370; x=
-	1741782770; bh=AHRUDiDL+udOA0j+pbNQc9o/g3Xg+29U5On+bEc2WEI=; b=i
-	SRaSERvRIUzwuvDbNKkrrLBhjDwc8ZawxUmlu8YGWw45md73Png1zy5Fvp7/PAFe
-	zQrvobhl0B08DRcrY++sCgPHtqhlEuJE5d26g2AKeXEZEv+SJm9Z14FrXOhHaZWE
-	v83OJjOD+lESGutH7fo1DeZC7xDF3nyPjwUtWGW38eCMS5n87VqQT039QN7+OCqc
-	ByUKBbJ0YA4acyJI5HGZveGC/WBhYFYgvnCmuuw7E3BUvKi/xiq8wf3/h0GWFvAo
-	wWuC4pyT9zkZzVcr5CVV0AbwHdnPQGyvJT2boVUrYDGKYHfbyu6po4ZBkCxrYn+h
-	eqVx1YZvk3GFcvuV0ofpw==
-X-ME-Sender: <xms:cC3QZ5VvmQv6af1sYcTh4L2sVCSIPb852VduAnglhAiOej0LubyVkQ>
-    <xme:cC3QZ5l85iX5kWWtvAVbgkSuVRfPtzYU9sUdn93_tkithsX7qDJDsSPrLjACv3yaS
-    HtlHNYBkvLVK0MV6GU>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdduvddvvdegucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
-    pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
-    gvnhhtshculddquddttddmnecujfgurhepofggfffhvfevkfgjfhfutgfgsehtjeertder
-    tddtnecuhfhrohhmpedftehrnhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnug
-    gsrdguvgeqnecuggftrfgrthhtvghrnhepfefhheetffduvdfgieeghfejtedvkeetkeej
-    feekkeelffejteevvdeghffhiefhnecuffhomhgrihhnpehkvghrnhgvlhdrohhrghenuc
-    evlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegrrhhnuges
-    rghrnhgusgdruggvpdhnsggprhgtphhtthhopeelpdhmohguvgepshhmthhpohhuthdprh
-    gtphhtthhopehsmhhuvghllhgvrhestghhrhhonhhogidruggvpdhrtghpthhtohepuggr
-    vhgvmhesuggrvhgvmhhlohhfthdrnhgvthdprhgtphhtthhopehhvghrsggvrhhtsehgoh
-    hnughorhdrrghprghnrgdrohhrghdrrghupdhrtghpthhtoheprghruggssehkvghrnhgv
-    lhdrohhrghdprhgtphhtthhopegrrhhnugeskhgvrhhnvghlrdhorhhgpdhrtghpthhtoh
-    epvggsihhgghgvrhhssehkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdgt
-    rhihphhtohesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqd
-    hkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehluhhkrghs
-    seifuhhnnhgvrhdruggv
-X-ME-Proxy: <xmx:cC3QZ1bbgLm91JnS19xYkrR6P8IQvD8nkfLL67KrWDqfhTo-ZLGhJQ>
-    <xmx:cC3QZ8UTGM0h1qv3E9e4tgFW8VEANX2qjYO15tDNFLOmddC8b9aihQ>
-    <xmx:cC3QZzkt40D7dGmwXby_7I4nxQYayu0p5O2G-ghRrAO3h7x1cyXaTQ>
-    <xmx:cC3QZ5cTzlqW1toGdUTeFSNyD328KlBcWTJ762bcgxCdCTOsenCrBA>
-    <xmx:ci3QZ15FFfbibcUpl4OtJIdYJjvb2Gu0ZFeNstm6CxgczfbbhVoIlhrr>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id 8BF532220071; Tue, 11 Mar 2025 08:32:48 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1741696412; c=relaxed/simple;
+	bh=vi8EgugFTqTZ8tDsE6qvQo8nr/UAfZcnC/Vx0pB+yZE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=njL7g3pxrDUF4ghGb9Y48ZeFTsGBJKTjPIm67fUeuMhOIrGqKBVj1pa07KQ/pcwXTerCSCegxMn/9dgwpbNNCjRB0/n+OdvzeJ6S086J7IKwW1eMiTC7PCmGEdUoZba6RnxwHNxY0lwc/F5zft6PLspcibgTuAwiVRy2mLWoUtI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=P2W6bMNv; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1741696409;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=palKyBcsgnYyLT7TccByqHvOUnQeIY6hqkQdRDklSI4=;
+	b=P2W6bMNv/LRqxn4GYSJk0Lt+DWLBKxRHr+YrokdpSqN6lrslp9V4aiZdMLb/PTDcP5Cqyi
+	ClioTEM3TBmMaGLwjEMoVC6NkTCTu5d030h2Kps3O8aJTln9UzmJLVKl62fq8te8yHzoDf
+	AtBq7XYjt12tl7ue+0nY8ihmgGc36LM=
+Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-571-hD9d9DKnN-OKC5JK0gX1hQ-1; Tue,
+ 11 Mar 2025 08:33:26 -0400
+X-MC-Unique: hD9d9DKnN-OKC5JK0gX1hQ-1
+X-Mimecast-MFC-AGG-ID: hD9d9DKnN-OKC5JK0gX1hQ_1741696404
+Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id D7D2C180AF5E;
+	Tue, 11 Mar 2025 12:33:22 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.22.90.58])
+	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 5616F180094A;
+	Tue, 11 Mar 2025 12:33:14 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+	oleg@redhat.com; Tue, 11 Mar 2025 13:32:51 +0100 (CET)
+Date: Tue, 11 Mar 2025 13:32:42 +0100
+From: Oleg Nesterov <oleg@redhat.com>
+To: David Hildenbrand <david@redhat.com>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-trace-kernel@vger.kernel.org,
+	linux-perf-users@vger.kernel.org,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Matthew Wilcox <willy@infradead.org>,
+	Russell King <linux@armlinux.org.uk>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	"Liang, Kan" <kan.liang@linux.intel.com>,
+	Tong Tiangen <tongtiangen@huawei.com>
+Subject: Re: [PATCH -next v1 3/3] kernel/events/uprobes:
+ uprobe_write_opcode() rewrite
+Message-ID: <20250311123241.GB3493@redhat.com>
+References: <20250304154846.1937958-1-david@redhat.com>
+ <20250304154846.1937958-4-david@redhat.com>
+ <20250310170320.GC26382@redhat.com>
+ <79ec5aa9-1937-436e-8cf4-436746142f7b@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Tue, 11 Mar 2025 13:32:27 +0100
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Eric Biggers" <ebiggers@kernel.org>, "Arnd Bergmann" <arnd@kernel.org>
-Cc: "Herbert Xu" <herbert@gondor.apana.org.au>,
- "David S . Miller" <davem@davemloft.net>, "Ard Biesheuvel" <ardb@kernel.org>,
- "Lukas Wunner" <lukas@wunner.de>, "Stephan Mueller" <smueller@chronox.de>,
- linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org
-Message-Id: <684865c2-c214-4b51-9742-a56119c83e6e@app.fastmail.com>
-In-Reply-To: <20250310172403.GD1701@sol.localdomain>
-References: <20250310132647.3256818-1-arnd@kernel.org>
- <20250310172403.GD1701@sol.localdomain>
-Subject: Re: [PATCH 1/2] crypto: fix dependencies on lib/crypto modules
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <79ec5aa9-1937-436e-8cf4-436746142f7b@redhat.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
 
-On Mon, Mar 10, 2025, at 18:24, Eric Biggers wrote:
-> On Mon, Mar 10, 2025 at 02:26:39PM +0100, Arnd Bergmann wrote:
+On 03/11, David Hildenbrand wrote:
 >
-> Looks the same as
-> https://lore.kernel.org/linux-crypto/Z8UdUoaKtDKzgPph@gondor.apana.org.au/ which
-> was already applied.
+> Regarding both questions, the code is fairly racy. Nothing would stop user
+> space from (a) modifying that memory
+
+Yes, but we don't really care. uprobes.c assumes that user-space won't play
+with the probed memory.
+
+Note that if is_register is false, then vma can be even writable. Hmm, why?
+Perhaps valid_vma() should ignore is_register and nack VM_MAYWRITE ? But
+this doesn't really matter, say, gdb can change this memory anyway. Again,
+we don't really care.
+
+> >do something like
+> >
+> >	/* Walk the page tables again, to perform the actual update. */
+> >	ret = -EAGAIN;
+> >	folio = folio_walk_start(&fw, vma, vaddr, 0);
+> >	if (folio) {
+> >		if (fw.page == page) {
+> >			WARN_ON(is_register && !folio_test_anon(folio));
 >
+> Yes, that would work (we could leave the WARN_ON in __uprobe_write_opcode),
+> but I am not sure if the end result is better better. No strong opinion on
+> the details though.
 
-Right, I see it in today's linux-next. I should have waited a day...
+Will, this way __uprobe_write_opcode() will look a little bit simpler...
 
-     Arnd
+But I won't insist, please do what you think is better.
+
+Oleg.
+
 
