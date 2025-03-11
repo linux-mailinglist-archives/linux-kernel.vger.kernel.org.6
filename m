@@ -1,118 +1,84 @@
-Return-Path: <linux-kernel+bounces-556694-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-556696-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C0558A5CD82
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 19:14:35 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 448FAA5CD83
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 19:14:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 35F203A6A58
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 18:13:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 77965169D15
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 18:14:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 708CC263883;
-	Tue, 11 Mar 2025 18:13:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dfyX1trx"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D53E72638A5;
+	Tue, 11 Mar 2025 18:14:24 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0ADF2627EC
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 18:13:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEDC126280A;
+	Tue, 11 Mar 2025 18:14:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741716831; cv=none; b=XUecUbnQ9sIfkiJizwGgg00zKO2gvoGXW6cOkE3HemmfVXsaMVrtUUwSDS2XHgVLznovU0n+JqeCVaU4wgIU+warBdsWfzcbS4nXCMQv+P3yO1E6vo+ogMFKnbMfK2eNYOJTAt8C0fKj7Sy8veeixs1PirO4GOD9n+PqIdtOSe8=
+	t=1741716864; cv=none; b=JvM2IQfr4M9YGn5ZK+GkpYV//6eK9tHq2sUPIMSy49wlQrsDhUN8uKlme4Cvf915nP1UOhI4XAFE/u501+ozNoFpQsPgN82Eo6KOsdz2LGR3bpTk/dxKyyHCh5OeeOy7mrpX74qpnMyDmGNTSCv6LtJWfNCIQOzq6WQohoSDJMo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741716831; c=relaxed/simple;
-	bh=cXeEF19DxsIvhCU468MqIFBIEu8EdcfdGkQCRwLdTrU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=d8l2YzAGuR1//6FMNEbfGod7Wt+/VU4onT97V2WHsPShoZZZQu7ggzTsO0kkKUhRuI8llR9L1Zzo3BakSg//tI8moVzSD1XpQ8Bsysw2oE6AFBP8OxqVsd4d1g9bNCcb1f8gGBWvxeRmMIQRypgJ6y3Trd5Ch+21Pebwoy4XskQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dfyX1trx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 66198C4CEEA;
-	Tue, 11 Mar 2025 18:13:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741716831;
-	bh=cXeEF19DxsIvhCU468MqIFBIEu8EdcfdGkQCRwLdTrU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=dfyX1trx/EccwwLbzWdaAudGQXy5b9nMnw+QVquoCqaZSgfl6hVvvXIAY/rRAfwYr
-	 WVLjquiD+w/wM2tfq/29PMsoqu2E8aK5cb+9NAl8eYwpigHu2JltVq1kmmxKtlUKhh
-	 9qseAYJZJiqOOdPnJZhxGZv7VlB6fr58XuvpGlSIxyxRZewELmgTy9nqiCZ3g7gIsR
-	 MBfPq6PXQGzaYDOOcaUMCQuYwHWtslr0xxkU/lYe/Gjt2LiZ7kV24m36xosNArmZzx
-	 UphkzBNqCZ1Luzl4gLoGawpT/9Kv3iT0FQvSV2tPOytnT0gYHwMHYkga6ayCtFwqvZ
-	 Ts2jHykra/H3g==
-Date: Tue, 11 Mar 2025 19:13:45 +0100
-From: Alexey Gladkov <legion@kernel.org>
-To: Joerg Roedel <jroedel@suse.de>
-Cc: =?iso-8859-1?Q?J=FCrgen_Gro=DF?= <jgross@suse.com>,
-	Borislav Petkov <bp@alien8.de>, Joerg Roedel <joro@8bytes.org>,
-	"Alexey Gladkov (Intel)" <alexey.gladkov@intel.com>,
-	"Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-	Dave Hansen <dave.hansen@intel.com>, Ingo Molnar <mingo@kernel.org>,
-	x86@kernel.org, hpa@zytor.com,
-	Tom Lendacky <thomas.lendacky@amd.com>,
-	Nikunj A Dadhania <nikunj@amd.com>, linux-kernel@vger.kernel.org,
-	Larry.Dewey@amd.com
-Subject: Re: [PATCH] x86/sev: Make SEV_STATUS available via SYSFS
-Message-ID: <Z9B9WWwfsraBoU41@example.org>
-References: <Z87L0bRi8tcAIsDw@example.org>
- <e9d58d64-ab0f-49e8-ac87-c02bda6bc837@suse.com>
- <Z87ce37GjCqpOLCW@8bytes.org>
- <b2e585a7-edd5-4b13-b904-3d0913177aee@suse.com>
- <20250310133833.GHZ87rWfuV6WgQTsoh@fat_crate.local>
- <Z878IRbbzIbUDQvj@example.org>
- <20250310151154.GOZ88BOinZVkbYEx0w@fat_crate.local>
- <104b6d4f-2848-42f4-a134-3373d12d9424@suse.com>
- <Z88Iv0w8_l9i7_8l@example.org>
- <Z9AFyG7798M4VNJQ@suse.de>
+	s=arc-20240116; t=1741716864; c=relaxed/simple;
+	bh=uLJcJ2E5by7/L+jLn25m72qfzTNr6EIlt9OKOUdIM+8=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=D9crMSXgyqD3ifAc/FKzdV+Wzj5vL1n4v9Rzqg/ArGr+yPY7ExH0C7AfY4ntm/bQhZri6RSe09mdYVe5I3O0xtIq8U8VA9xZumY0iRK2NNQncwdtsMZ81N9pxlFUoJJZFUs3k4Lz+WPd91Ng92ExH6UckYe8wW8uSa1TwtKVO/k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.31])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4ZC203619Lz6HJgy;
+	Wed, 12 Mar 2025 02:11:47 +0800 (CST)
+Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
+	by mail.maildlp.com (Postfix) with ESMTPS id E1C6B140155;
+	Wed, 12 Mar 2025 02:14:20 +0800 (CST)
+Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
+ (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Tue, 11 Mar
+ 2025 19:14:20 +0100
+Date: Tue, 11 Mar 2025 18:14:18 +0000
+From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+To: Thomas Gleixner <tglx@linutronix.de>
+CC: LKML <linux-kernel@vger.kernel.org>, Marc Zyngier <maz@kernel.org>,
+	Nishanth Menon <nm@ti.com>, Tero Kristo <kristo@kernel.org>, "Santosh
+ Shilimkar" <ssantosh@kernel.org>, Jon Mason <jdmason@kudzu.us>, Dave Jiang
+	<dave.jiang@intel.com>, Allen Hubbe <allenbh@gmail.com>,
+	<ntb@lists.linux.dev>, Bjorn Helgaas <bhelgaas@google.com>,
+	<linux-pci@vger.kernel.org>, Haiyang Zhang <haiyangz@microsoft.com>, Wei Liu
+	<wei.liu@kernel.org>, <linux-hyperv@vger.kernel.org>, Wei Huang
+	<wei.huang2@amd.com>, Manivannan Sadhasivam
+	<manivannan.sadhasivam@linaro.org>, "James E.J. Bottomley"
+	<James.Bottomley@HansenPartnership.com>, "Martin K. Petersen"
+	<martin.petersen@oracle.com>, <linux-scsi@vger.kernel.org>
+Subject: Re: [patch 10/10] genirq/msi: Rename msi_[un]lock_descs()
+Message-ID: <20250311181418.00002f8f@huawei.com>
+In-Reply-To: <20250309084110.776899075@linutronix.de>
+References: <20250309083453.900516105@linutronix.de>
+	<20250309084110.776899075@linutronix.de>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <Z9AFyG7798M4VNJQ@suse.de>
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml100001.china.huawei.com (7.191.160.183) To
+ frapeml500008.china.huawei.com (7.182.85.71)
 
-On Tue, Mar 11, 2025 at 10:43:36AM +0100, Joerg Roedel wrote:
-> On Mon, Mar 10, 2025 at 04:43:59PM +0100, Alexey Gladkov wrote:
-> > If in the /sys/hypervisor we have information for guest (for running under
-> > a hypervisor), where do you propose to put the information for the
-> > host-side (for running as a hypervisor) ?
-> 
-> Okay, so let's not mix things up too much here. The only (upstream) case
-> where Linux _is_ the hypervisor is when running KVM guests. What
-> information needs to be provided for this case in SYSFS that is not
-> already provided elsewhere, e.g. by the KVM modules or, in case of SEV,
-> by /dev/sev? What does Intel expose for TDX?
+On Sun,  9 Mar 2025 09:41:58 +0100 (CET)
+Thomas Gleixner <tglx@linutronix.de> wrote:
 
-Right now tdx does not export any information to userspace (neither
-host-side nor guest-side). I want to change that. I want to export
-version, attributes and features, maybe something else.
-
-> Back to the guest-side, I agree with introducing a new directory in
-> SYSFS with sub-directories for each detected hypervisor. To maximise
-> confusion, it can be called '/sys/hypervisors/', or just /sys/guest/ (as
-> Boris suggested).
+> Now that all abuse is gone and the legit users are converted to
+> guard(msi_descs_lock), rename the lock functions and document them as
+> internal.
 > 
-> Regards,
+> No functional chance.
 > 
-> -- 
-> Jörg Rödel
-> jroedel@suse.de
-> 
-> SUSE Software Solutions Germany GmbH
-> Frankenstraße 146
-> 90461 Nürnberg
-> Germany
-> https://www.suse.com/
-> 
-> Geschäftsführer: Ivo Totev, Andrew McDonald, Werner Knoblich
-> (HRB 36809, AG Nürnberg)
-> 
-
--- 
-Rgrds, legion
-
+> Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Sensible.
+Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huwei.com>
 
