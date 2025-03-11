@@ -1,114 +1,80 @@
-Return-Path: <linux-kernel+bounces-555790-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-555792-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A3FF2A5BCD6
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 10:53:41 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1A20BA5BCDA
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 10:54:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 21B663B2F0B
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 09:53:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B1BE53B3D4D
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 09:53:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FFF222DFA6;
-	Tue, 11 Mar 2025 09:52:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="s2/ec8DW"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FD922356A3;
+	Tue, 11 Mar 2025 09:53:06 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB176230BD1;
-	Tue, 11 Mar 2025 09:52:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91B9922DFAD;
+	Tue, 11 Mar 2025 09:53:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741686776; cv=none; b=Xc6305n8Gs7/d8VOnP6YW/MfNvzG9g1flh9m06T0EqtMD2SDkYArMZzlArth5g55WoASoN2xuYXsZ8KIh2x9wm5773Xz7pBsZ44dcct0H53pLiKoscWzqoAysRO7DLIBtlF4kGtrp4iSUPL3WFgJ4bY9b+QPlJDShXRfPV0puX0=
+	t=1741686786; cv=none; b=IVpZWYPGlOiZOYYQerEp00HPJ/TruTxPgUujehP8uQaSvh1M6OJ3dVAxd+V6KgNnD8E//SijrSwYmVRM+24CUVtzaNOH63EsYEkoCy3FeuawznAumvW0D1kqt8/QKXqocT38+T289JagYEPcwwuyjPb9Ebz4e5bmTQYzhfFgGIU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741686776; c=relaxed/simple;
-	bh=J2tmnpVcVYDj7jfW55SL3FOk3G+EyfoxP1nQem3juJ0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Wb18P5U+ID1jdybCjipBDJvpoMEMj7HzbjmtbIo2LX3DugRQTNbBIlOMydYWr5PyvqZBPo6aogORWUNFo28egerUDxea9hXtpXcXDge5avA/fTk91Qt/PGAQzN5fpiWBnDKVNNXik01GLHPtOjP+cowlZelJnaMgZpDxs9AIhkw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=s2/ec8DW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ADD92C4CEEB;
-	Tue, 11 Mar 2025 09:52:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1741686776;
-	bh=J2tmnpVcVYDj7jfW55SL3FOk3G+EyfoxP1nQem3juJ0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=s2/ec8DWt+H/JL3KlEQ+dqLAWY5ITkf3xI9NCFjBqVshXnKUB5olX539MXaD+wtqX
-	 PwhrNGIMbrJ8+mnPYMWqLl8fNzaXHydZnkEfcUThICsPnoLfhfqQ+aN3MuZJAOLiVV
-	 gu4vR/lAMOkp6e1pK4D73gDrlz4rT8MKqFndURdc=
-Date: Tue, 11 Mar 2025 10:52:53 +0100
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Ron Economos <re@w6rz.net>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev,
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
-	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
-	jonathanh@nvidia.com, f.fainelli@gmail.com,
-	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
-	conor@kernel.org, hargar@microsoft.com, broonie@kernel.org
-Subject: Re: [PATCH 6.6 000/145] 6.6.83-rc1 review
-Message-ID: <2025031142-hurricane-gracious-5403@gregkh>
-References: <20250310170434.733307314@linuxfoundation.org>
- <81784d87-b837-4476-974a-87b0333e7e38@w6rz.net>
+	s=arc-20240116; t=1741686786; c=relaxed/simple;
+	bh=XlRIUEmg7ePrZSczJQNPWZA2VCpkNf/KZaqoOHLetlY=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=GRlrmPguR51urlK9HQQzrH7RlHYyS7Qp5s625voHJSRNE7FG4C4mWPetMT7zrEmAsx2rHwmy3erj84IZB+4gQLB6/+T/TirUEuPEJ4/ozCDAJH0nasfym0lEUrLmMbPujAmnb53TXBZSpNTfHqRTjVxxI112sGjzj2qKHz9OPFk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.216])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4ZBpqT4TzMz6J6Bc;
+	Tue, 11 Mar 2025 17:48:37 +0800 (CST)
+Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
+	by mail.maildlp.com (Postfix) with ESMTPS id 959FD1404FC;
+	Tue, 11 Mar 2025 17:53:02 +0800 (CST)
+Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
+ (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Tue, 11 Mar
+ 2025 10:53:01 +0100
+Date: Tue, 11 Mar 2025 09:52:59 +0000
+From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+CC: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rob Herring (Arm)"
+	<robh@kernel.org>, Markus Elfring <elfring@users.sourceforge.net>, "Jakob
+ Riepler" <jakob+lkml@paranoidlabs.org>, Heikki Krogerus
+	<heikki.krogerus@linux.intel.com>, <linux-acpi@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linux-leds@vger.kernel.org>,
+	<linux-usb@vger.kernel.org>, Daniel Scally <djrscally@gmail.com>, "Sakari
+ Ailus" <sakari.ailus@linux.intel.com>, "Rafael J. Wysocki"
+	<rafael@kernel.org>, Danilo Krummrich <dakr@kernel.org>, Lee Jones
+	<lee@kernel.org>, Pavel Machek <pavel@kernel.org>, Matti Vaittinen
+	<mazziesaccount@gmail.com>, Jonathan Cameron <jic23@kernel.org>
+Subject: Re: [PATCH v1 2/4] leds: pwm-multicolor: Use
+ fwnode_get_child_node_count()
+Message-ID: <20250311095259.000068d2@huawei.com>
+In-Reply-To: <20250310150835.3139322-3-andriy.shevchenko@linux.intel.com>
+References: <20250310150835.3139322-1-andriy.shevchenko@linux.intel.com>
+	<20250310150835.3139322-3-andriy.shevchenko@linux.intel.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <81784d87-b837-4476-974a-87b0333e7e38@w6rz.net>
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml500001.china.huawei.com (7.191.163.213) To
+ frapeml500008.china.huawei.com (7.182.85.71)
 
-On Mon, Mar 10, 2025 at 07:31:54PM -0700, Ron Economos wrote:
-> On 3/10/25 10:04, Greg Kroah-Hartman wrote:
-> > This is the start of the stable review cycle for the 6.6.83 release.
-> > There are 145 patches in this series, all will be posted as a response
-> > to this one.  If anyone has any issues with these being applied, please
-> > let me know.
-> > 
-> > Responses should be made by Wed, 12 Mar 2025 17:04:00 +0000.
-> > Anything received after that time might be too late.
-> > 
-> > The whole patch series can be found in one patch at:
-> > 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.6.83-rc1.gz
-> > or in the git tree and branch at:
-> > 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.6.y
-> > and the diffstat can be found below.
-> > 
-> > thanks,
-> > 
-> > greg k-h
-> > 
-> The build fails on RISC-V with:
+On Mon, 10 Mar 2025 16:54:52 +0200
+Andy Shevchenko <andriy.shevchenko@linux.intel.com> wrote:
+
+> Since fwnode_get_child_node_count() was split from its device property
+> counterpart, we may utilise it in the driver and drop custom implementation.
 > 
-> arch/riscv/kernel/suspend.c: In function 'suspend_save_csrs':
-> arch/riscv/kernel/suspend.c:14:66: error: 'RISCV_ISA_EXT_XLINUXENVCFG'
-> undeclared (first use in this function); did you mean
-> 'RISCV_ISA_EXT_ZIFENCEI'?
->    14 |         if (riscv_cpu_has_extension_unlikely(smp_processor_id(),
-> RISCV_ISA_EXT_XLINUXENVCFG))
-> | ^~~~~~~~~~~~~~~~~~~~~~~~~~
-> | RISCV_ISA_EXT_ZIFENCEI
-> arch/riscv/kernel/suspend.c:14:66: note: each undeclared identifier is
-> reported only once for each function it appears in
-> arch/riscv/kernel/suspend.c: In function 'suspend_restore_csrs':
-> arch/riscv/kernel/suspend.c:37:66: error: 'RISCV_ISA_EXT_XLINUXENVCFG'
-> undeclared (first use in this function); did you mean
-> 'RISCV_ISA_EXT_ZIFENCEI'?
->    37 |         if (riscv_cpu_has_extension_unlikely(smp_processor_id(),
-> RISCV_ISA_EXT_XLINUXENVCFG))
-> | ^~~~~~~~~~~~~~~~~~~~~~~~~~
-> | RISCV_ISA_EXT_ZIFENCEI
-> make[4]: *** [scripts/Makefile.build:243: arch/riscv/kernel/suspend.o] Error
-> 1
-> 
-> Reverting commit "riscv: Save/restore envcfg CSR during suspend"
-> 8bf2e196c94af0a384f7bb545d54d501a1e9c510 fixes the build.
-
-Thanks, offending commit now dropped.
-
-greg k-h
+> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
 
