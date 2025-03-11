@@ -1,141 +1,156 @@
-Return-Path: <linux-kernel+bounces-555365-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-555368-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 87230A5B67D
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 03:08:35 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EA2B1A5B686
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 03:12:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8D57B7A51B1
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 02:07:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 363D216F9C0
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 02:12:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF9DC1E7C2B;
-	Tue, 11 Mar 2025 02:08:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 381321E47CA;
+	Tue, 11 Mar 2025 02:12:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="wQfQZG6I"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="fNPJBRQU"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCFF11DED47;
-	Tue, 11 Mar 2025 02:08:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE5A83FD1;
+	Tue, 11 Mar 2025 02:12:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741658887; cv=none; b=jM0DOXn1GqnLLpb1evWbpUIhFU+j66daX0D7uuiaDKwJBlGoXIl89RbPHAtmsXWZVJOvfLWPeXMEyBHK8LqeqDJMW59ytROmD0eisc9judOyJsnkwaRRHwv7khqH0dzGQ/9qcSQF7kFKQI4uLQjTPOPQRUqzDeaNW/X7EamW4Lo=
+	t=1741659140; cv=none; b=a3uKVEGraAQKSuEitdUhEKyRFIBEu49zqQ39ttqbHHdKVukdEsaE/a8qTWyeP7asfkGBRIHHqPromiHC+gMGnd3gXnU477fuY6JFwrI0CAWfByaEXTBJQCu/a4SXzYiHXXWy1WdYRwQapoZMhQBDCdVsQ1dl2YIpBk9HK4OUkyk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741658887; c=relaxed/simple;
-	bh=EO2y2EASnimfmC0To8IgjADGLB03IrpBXSrBRgvMOXc=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=MyAQ9PpvHk0UfRBxXL881HgKnFSOb8nyIUas40a6jqHjVvi88sZnO9rGyiWWH98xIYSlpX3AeMEUJZLdoeeJY/ZkK0ArYkRF0JCoad6fLoqYfyGughvYk5tVouV6sR2H6LHKtMbrHUUFzKyJuJkaZyOL4oYjF7osh98JVTajZqc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=wQfQZG6I; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 872A9C4CEE5;
-	Tue, 11 Mar 2025 02:08:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1741658886;
-	bh=EO2y2EASnimfmC0To8IgjADGLB03IrpBXSrBRgvMOXc=;
+	s=arc-20240116; t=1741659140; c=relaxed/simple;
+	bh=9BewszbnyKceG31QbpOA8h948LA+GGo/buud95D3c/E=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=L3MRq1M1J2wKjA0sZVK9T/vb7aPkXY5EOcFaA8pR8Sv8cO1LWa8o38DSEdPcfLFpZ8LzwCHM35HML4Yoh+YuOJDe2o9gcs9vZxFd1DoJ/wzVJ3cyB4YBRDRhUxYx4Anb/6mAXThyJV2tP36oZqAXcAlY97Y05vzIP4oOXBvYIJE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=fNPJBRQU; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1741659135;
+	bh=sPRc+SLGGmBsjVapsNsec//vcORc+A/EDQ02Tjp9hxk=;
 	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=wQfQZG6IKVV4Tew+S+0o+lnw12y0URQfWSPems1i8x5dKQTaPMYHdQMJDIg/0LCcq
-	 9ysqdCzIccJgUTy5+1XImjyPHewrVrCASW3U/ThAkRtkSNX1mJCMOLQBPQJNwR3UZE
-	 sXCoysWhDTs3Eikr7+eLtWHhOyIiad0yrUckBntM=
-Date: Mon, 10 Mar 2025 19:08:03 -0700
-From: Andrew Morton <akpm@linux-foundation.org>
-To: "Martin K. Petersen" <martin.petersen@oracle.com>
-Cc: Yaron Avizrat <yaron.avizrat@intel.com>, Oded Gabbay
- <ogabbay@kernel.org>, Julia Lawall <Julia.Lawall@inria.fr>, Nicolas Palix
- <nicolas.palix@imag.fr>, James Smart <james.smart@broadcom.com>, Dick
- Kennedy <dick.kennedy@broadcom.com>, "James E.J. Bottomley"
- <James.Bottomley@HansenPartnership.com>, Jaroslav Kysela <perex@perex.cz>,
- Takashi Iwai <tiwai@suse.com>, Chris Mason <clm@fb.com>, Josef Bacik
- <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>, Ilya Dryomov
- <idryomov@gmail.com>, Dongsheng Yang <dongsheng.yang@easystack.cn>, Jens
- Axboe <axboe@kernel.dk>, Xiubo Li <xiubli@redhat.com>, Damien Le Moal
- <dlemoal@kernel.org>, Niklas Cassel <cassel@kernel.org>, Carlos Maiolino
- <cem@kernel.org>, "Darrick J. Wong" <djwong@kernel.org>, Sebastian Reichel
- <sre@kernel.org>, Keith Busch <kbusch@kernel.org>, Christoph Hellwig
- <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>, Frank Li
- <Frank.Li@nxp.com>, Mark Brown <broonie@kernel.org>, Shawn Guo
- <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix
- Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>,
- Shyam Sundar S K <Shyam-sundar.S-k@amd.com>, Hans de Goede
- <hdegoede@redhat.com>, Ilpo =?ISO-8859-1?Q?J=E4rvinen?=
- <ilpo.jarvinen@linux.intel.com>, Henrique de Moraes Holschuh
- <hmh@hmh.eng.br>, Selvin Xavier <selvin.xavier@broadcom.com>, Kalesh AP
- <kalesh-anakkur.purayil@broadcom.com>, Jason Gunthorpe <jgg@ziepe.ca>, Leon
- Romanovsky <leon@kernel.org>, Easwar Hariharan
- <eahariha@linux.microsoft.com>, cocci@inria.fr,
- linux-kernel@vger.kernel.org, linux-scsi@vger.kernel.org,
- dri-devel@lists.freedesktop.org, linux-sound@vger.kernel.org,
- linux-btrfs@vger.kernel.org, ceph-devel@vger.kernel.org,
- linux-block@vger.kernel.org, linux-ide@vger.kernel.org,
- linux-xfs@vger.kernel.org, linux-pm@vger.kernel.org,
- linux-nvme@lists.infradead.org, linux-spi@vger.kernel.org,
- imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
- platform-driver-x86@vger.kernel.org, ibm-acpi-devel@lists.sourceforge.net,
- linux-rdma@vger.kernel.org, Takashi Iwai <tiwai@suse.de>, Carlos Maiolino
- <cmaiolino@redhat.com>
-Subject: Re: (subset) [PATCH v3 00/16] Converge on using secs_to_jiffies()
- part two
-Message-Id: <20250310190803.aaf868760781c9ae3fbe6df1@linux-foundation.org>
-In-Reply-To: <174165504986.528513.3575505677065987375.b4-ty@oracle.com>
-References: <20250225-converge-secs-to-jiffies-part-two-v3-0-a43967e36c88@linux.microsoft.com>
-	<174165504986.528513.3575505677065987375.b4-ty@oracle.com>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	b=fNPJBRQUlWyQoZ4l+yuMk9PjEFga7EpUUJBxPHBvL/78UNUd5LK9ekyvB0VfzcNbX
+	 8kRos6qJs5Fjh8LdO1KnzQCq5XHhg+v3Cu9q6LRv0TxoTHHlQUX6g+r8Mbg7pC/xpP
+	 I0AGq+wOL2qBzOUdyt3UHC8zkIxtoMZbO7+bhy/F1p3BYGyw3iSSrEeMMF6mqFnwZB
+	 ZCpsM6U7WQJ0zdnz/IF9v78uRkO/9tsWcNFLRA7HNRhdFdc3F7bNHvguKTYuh4qo9C
+	 INEq465rvxTzR+io+c4V2G5PgDbqRTOuL2gq4ilIypqLGcOcDQXtKboS72TlqFbmNA
+	 WZZ2wCuXZVUTw==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4ZBchv00qfz4wcw;
+	Tue, 11 Mar 2025 13:12:14 +1100 (AEDT)
+Date: Tue, 11 Mar 2025 13:12:14 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Andrew Morton <akpm@linux-foundation.org>, Dave Airlie
+ <airlied@redhat.com>
+Cc: Lucas De Marchi <lucas.demarchi@intel.com>, Thomas =?UTF-8?B?SGVsbHN0?=
+ =?UTF-8?B?csO2bQ==?= <thomas.hellstrom@linux.intel.com>, DRM XE List
+ <intel-xe@lists.freedesktop.org>, Alistair Popple <apopple@nvidia.com>,
+ Balbir Singh <balbirs@nvidia.com>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>, Matthew Brost <matthew.brost@intel.com>, DRI
+ <dri-devel@lists.freedesktop.org>
+Subject: Re: linux-next: manual merge of the drm-xe tree with the mm tree
+Message-ID: <20250311131214.530934a4@canb.auug.org.au>
+In-Reply-To: <20250307122954.1ab65809@canb.auug.org.au>
+References: <20250307122954.1ab65809@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
+MIME-Version: 1.0
+Content-Type: multipart/signed; boundary="Sig_//FZSXrmCnoUDnIwitfLYCfG";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
+
+--Sig_//FZSXrmCnoUDnIwitfLYCfG
 Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, 10 Mar 2025 21:19:03 -0400 "Martin K. Petersen" <martin.petersen@oracle.com> wrote:
+Hi all,
 
-> On Tue, 25 Feb 2025 20:17:14 +0000, Easwar Hariharan wrote:
-> 
-> > This is the second series (part 1*) that converts users of msecs_to_jiffies() that
-> > either use the multiply pattern of either of:
-> > - msecs_to_jiffies(N*1000) or
-> > - msecs_to_jiffies(N*MSEC_PER_SEC)
-> > 
-> > where N is a constant or an expression, to avoid the multiplication.
-> > 
-> > [...]
-> 
-> Applied to 6.15/scsi-queue, thanks!
-> 
-> [02/16] scsi: lpfc: convert timeouts to secs_to_jiffies()
->         https://git.kernel.org/mkp/scsi/c/a131f20804d6
+On Fri, 7 Mar 2025 12:29:54 +1100 Stephen Rothwell <sfr@canb.auug.org.au> w=
+rote:
+>
+> Hi all,
+>=20
+> Today's linux-next merge of the drm-xe tree got a conflict in:
+>=20
+>   mm/memory.c
+>=20
+> between commit:
+>=20
+>   089b22f60a0f ("mm: allow compound zone device pages")
+>=20
+> from the mm-unstable branch of the mm tree and commit:
+>=20
+>   1afaeb8293c9 ("mm/migrate: Trylock device page in do_swap_page")
+>=20
+> from the drm-xe tree.
+>=20
+> I fixed it up (see below) and can carry the fix as necessary. This
+> is now fixed as far as linux-next is concerned, but any non trivial
+> conflicts should be mentioned to your upstream maintainer when your tree
+> is submitted for merging.  You may also want to consider cooperating
+> with the maintainer of the conflicting tree to minimise any particularly
+> complex conflicts.
+>=20
+> diff --cc mm/memory.c
+> index d21f6cded7e3,59b804f4bf3f..000000000000
+> --- a/mm/memory.c
+> +++ b/mm/memory.c
+> @@@ -4473,11 -4348,15 +4473,16 @@@ vm_fault_t do_swap_page(struct vm_faul
+>   			 * Get a page reference while we know the page can't be
+>   			 * freed.
+>   			 */
+> - 			get_page(vmf->page);
+> - 			pte_unmap_unlock(vmf->pte, vmf->ptl);
+> - 			pgmap =3D page_pgmap(vmf->page);
+> - 			ret =3D pgmap->ops->migrate_to_ram(vmf);
+> - 			put_page(vmf->page);
+> + 			if (trylock_page(vmf->page)) {
+> + 				get_page(vmf->page);
+> + 				pte_unmap_unlock(vmf->pte, vmf->ptl);
+>  -				ret =3D vmf->page->pgmap->ops->migrate_to_ram(vmf);
+> ++				pgmap =3D page_pgmap(vmf->page);
+> ++				ret =3D pgmap->ops->migrate_to_ram(vmf);
+> + 				unlock_page(vmf->page);
+> + 				put_page(vmf->page);
+> + 			} else {
+> + 				pte_unmap_unlock(vmf->pte, vmf->ptl);
+> + 			}
+>   		} else if (is_hwpoison_entry(entry)) {
+>   			ret =3D VM_FAULT_HWPOISON;
+>   		} else if (is_pte_marker_entry(entry)) {
 
-Really, an acked-by would have been much easier all around, but whatever.
+This is now conflict between the mm tree and the drm tree.
 
-Did you get my fix?
+--=20
+Cheers,
+Stephen Rothwell
 
-From: Andrew Morton <akpm@linux-foundation.org>
-Subject: scsi-lpfc-convert-timeouts-to-secs_to_jiffies-fix
-Date: Tue Feb 25 07:32:03 PM PST 2025
+--Sig_//FZSXrmCnoUDnIwitfLYCfG
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
-fix build
+-----BEGIN PGP SIGNATURE-----
 
-Cc: Easwar Hariharan <eahariha@linux.microsoft.com>
-Cc: James Bottomley <james.bottomley@HansenPartnership.com>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
----
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmfPm/4ACgkQAVBC80lX
+0GwWgwf/dqiOYAQOJABrMGZlP96+Re5v5AI0/oZmQI8+MQRGYeeXMNCjKfQiMaTb
+zvZ12zDkJ3vfTd4aNBcO8uGO+rxiq9vH1w4vCyGhq+IHGITnDwos5pxLegtaUI/p
+69kuQNxO+iQL41EBii0t7w+tEUj0UEkUyfwi1zyPlPaunLtDVpEL05t2n8aD9A0O
+NKYrvND55PlC2OMncDvOwhy3B66KtUgFB3EyG1UdWYIPwlcwg3qiI1XBumb1pWFX
+/MihC/1QVJbzim3rbNmljyQM8GhBaz++2D7lf6LInAnVRwavcPHZoi0kKep12oYn
+vev33M8do2498+8JyrckThlnZnqxqQ==
+=Zw5K
+-----END PGP SIGNATURE-----
 
- drivers/scsi/lpfc/lpfc_sli.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
---- a/drivers/scsi/lpfc/lpfc_sli.c~scsi-lpfc-convert-timeouts-to-secs_to_jiffies-fix
-+++ a/drivers/scsi/lpfc/lpfc_sli.c
-@@ -3954,7 +3954,7 @@ void lpfc_poll_eratt(struct timer_list *
- 	else
- 		/* Restart the timer for next eratt poll */
- 		mod_timer(&phba->eratt_poll,
--			  jiffies + secs_to_jiffies(phba->eratt_poll_interval);
-+			  jiffies + secs_to_jiffies(phba->eratt_poll_interval));
- 	return;
- }
- 
-_
-
+--Sig_//FZSXrmCnoUDnIwitfLYCfG--
 
