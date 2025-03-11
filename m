@@ -1,139 +1,92 @@
-Return-Path: <linux-kernel+bounces-555929-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-555930-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8AB2BA5BE78
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 12:05:19 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 110B8A5BE7A
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 12:06:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2FADC3B0ACD
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 11:05:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4F0EF1685B0
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 11:06:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1ADF2253331;
-	Tue, 11 Mar 2025 11:05:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC7A5250C1F;
+	Tue, 11 Mar 2025 11:06:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BUpJzpgv"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="cQNwnPSX"
+Received: from out-170.mta1.migadu.com (out-170.mta1.migadu.com [95.215.58.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D8952505AE;
-	Tue, 11 Mar 2025 11:05:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3F3023F295
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Mar 2025 11:06:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741691112; cv=none; b=oCCYHnsEG3lQdMEbiWiGpMWcsGwMVZxRlL/CROwbUED2lmIVf0UW5JKQZjsCcUWbnBhEt3GOAkWWEHKDGt7oSxVtBaxC4YWQCRBNyD+fT9CZCB4tj+oX20rSBCF4Iv2sK83BbzWUuIG06HUfoExijNWtO4D2H7TK8LTrZVOUPdY=
+	t=1741691165; cv=none; b=J1Lguq1552bxlqRvdxN7MeMIP4LrmO2rPtkSCHlsjHrmb0qT958LuNAa3EMg34Ufuc1wkHsh8zYeS0FdPl38UcHdk1iR1xABooO6jtviEu5HwiNSOO1otnYpR9zRB3kpA26lPnd/G0sAWV78+AEoHS8kxUQipLwOlNgOyOZEAhc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741691112; c=relaxed/simple;
-	bh=BiHmDYOuzUjfVhezNhiaK4e3WiBwtSghS5TMbOSMbhY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=HImlfDD4zX3R6xx+axSacBjMTB79MfGlungXAeQ5da3lpZ1V6O+tn8DBMvXhqdf0PcC4LonCVUKG1xVho4sWwP4LreGSWKo+yOfGJug/Qb5NC3G0rIGpQFrtEOFZs1gg2xYyXyB7Iea+2TFCvVHz4q1XS6cGd7EhS5kA8THUm34=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BUpJzpgv; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4B129C4CEE9;
-	Tue, 11 Mar 2025 11:05:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741691112;
-	bh=BiHmDYOuzUjfVhezNhiaK4e3WiBwtSghS5TMbOSMbhY=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=BUpJzpgvO46/fHm0lQGpknJzkyRXqNRP9L8armM4SyU2ePvn0SjzecH4SuJK3qLjJ
-	 /C16bBN0A5zza7lLivOxkkVMpEgSDVblkn4KDwjWHrR70viR99+ot+OVC8dqdagknQ
-	 sia+/1UiwzdKuaMedHQrKFPWncnxfB/PPwOtSkX0snCtePRnwCBeV/bHVTNpl7GfnE
-	 ZiUjFujNFuAAAoUpVqpgKlx4e45fm0pQ5OTgx8k0tTVoyUKsSFbmSxWsM+jcklJ6Ra
-	 WF53BiyQQNemWxu9CIJDNnk9L7sJJAp5hhpi3elWnZ/mdNEjmivcoCPXT3MyLwjZwc
-	 ggcFkav+N3Heg==
-Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-30797730cbdso56279831fa.3;
-        Tue, 11 Mar 2025 04:05:12 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVg/Fj8yDMp3ftVHw/ATWyMw/ZAJ/nCErf2oHRhJoz1hzA8fVE9sYz+SUsd1TH9vJ+C1VxbOs4Td29uBiOi@vger.kernel.org, AJvYcCWHHy2hOhsbn/bWjdKY7YPoODQGm2Jm/lDyheAfjGv36OF3Ho16+y2Lh/8IBY5OEa6mdcEeSOPYr1dx6dI=@vger.kernel.org, AJvYcCX8k3j9Os/Vy0xuyHdTJa1u7IMrblZRvOkufZUvz+/P07WnneoqCMh8jMP7sSuA7awP3kr/lVDcFtMi/NBcSrQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwvNX/maDENFrC8HmVWu8DtJlxOD+hAu8h2Z9a4ze7+BKrgYjCF
-	qbWtFsSEZDImJCR2GYB7eWt3sGb2C6YxG8UUj5xw9Ef1F2A/zN+gR/2MwzDmoKXc+aOXCVmguNi
-	yw1y9EtoETx8oMguS7wpUM3j0BHI=
-X-Google-Smtp-Source: AGHT+IGOFIDfX9MZ/eIx+BRhPpz5HIYVrm/mXus767BMsorp4XqzU7zW79c2E/z3oT1nJUc5A5tpgawcytKkW1A431I=
-X-Received: by 2002:a05:6512:224f:b0:545:1e2d:6b73 with SMTP id
- 2adb3069b0e04-54990e5d317mr5302820e87.13.1741691110968; Tue, 11 Mar 2025
- 04:05:10 -0700 (PDT)
+	s=arc-20240116; t=1741691165; c=relaxed/simple;
+	bh=OCK7hwzzWPGxtPztmUpXo8Qw8E0tjJ/UxVW5B4dwt5o=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=s8AHtAEevrHnJExzDPAIoppNyZu9TY0mOhvSf5QCM7zg2P+vEaLSpt1xB6d7X0+QqzkQxyK+QI1UAa4SBntZY46cpd7AhezfUy/L8jqdgBAsdtZXj0ncyf8UD+rG+KnOVNEVQ8cVcXDg3KUv+OvBDomnTZoex4DL8o8kWUntLwA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=cQNwnPSX; arc=none smtp.client-ip=95.215.58.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1741691159;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=M2psLgsJ4algSAue7O4ZSsNUwcf2SUWe6woc6MfNSnQ=;
+	b=cQNwnPSXYvBBdm4tbNOaw/ThRynFK/DH1pdoCrg/6C5cBw1/qrKjjuC8xggU7HCpMEX5x/
+	3mO2QN3PfyIzEC7qWP5z7YWqmpXFT9PZVsS9jRwbhdYD8m7Ujwh6RLEaKiqp18bzLqHVRo
+	b4HU3VvCX1uR9rDA6SnNWBHjV06cLhs=
+From: Thorsten Blum <thorsten.blum@linux.dev>
+To: Andrew Morton <akpm@linux-foundation.org>,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	Christian Brauner <brauner@kernel.org>,
+	"Liam R. Howlett" <Liam.Howlett@Oracle.com>,
+	Suren Baghdasaryan <surenb@google.com>,
+	Wei Yang <richard.weiyang@gmail.com>,
+	David Hildenbrand <david@redhat.com>,
+	Miaohe Lin <linmiaohe@huawei.com>,
+	Al Viro <viro@zeniv.linux.org.uk>
+Cc: Thorsten Blum <thorsten.blum@linux.dev>,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] fork: Remove unnecessary size argument when calling strscpy()
+Date: Tue, 11 Mar 2025 12:05:39 +0100
+Message-ID: <20250311110542.495630-1-thorsten.blum@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250219-rust-path-remap-v2-1-8ce2c10d4d66@weissschuh.net>
-In-Reply-To: <20250219-rust-path-remap-v2-1-8ce2c10d4d66@weissschuh.net>
-From: Masahiro Yamada <masahiroy@kernel.org>
-Date: Tue, 11 Mar 2025 20:04:34 +0900
-X-Gmail-Original-Message-ID: <CAK7LNASvSShHcf-gL52cF0PGYOx=nJvvbfeGjPVtpEa+t78Kew@mail.gmail.com>
-X-Gm-Features: AQ5f1Jr91UjOmYq0vXb1xyKqplM7uLhxpXEIt_A2xO8VqfT5Gc9ntPiiMiy5pso
-Message-ID: <CAK7LNASvSShHcf-gL52cF0PGYOx=nJvvbfeGjPVtpEa+t78Kew@mail.gmail.com>
-Subject: Re: [PATCH v2] kbuild, rust: use -fremap-path-prefix to make paths relative
-To: =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
-Cc: Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>, 
-	Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
-	Danilo Krummrich <dakr@kernel.org>, linux-kbuild@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-On Thu, Feb 20, 2025 at 6:22=E2=80=AFAM Thomas Wei=C3=9Fschuh <linux@weisss=
-chuh.net> wrote:
->
-> Remap source path prefixes in all output, including compiler
-> diagnostics, debug information, macro expansions, etc.
-> This removes a few absolute paths from the binary and also makes it
-> possible to use core::panic::Location properly.
->
-> Equivalent to the same configuration done for C sources in
-> commit 1d3730f0012f ("kbuild: support -fmacro-prefix-map for external mod=
-ules")
-> and commit a73619a845d5 ("kbuild: use -fmacro-prefix-map to make __FILE__=
- a relative path").
->
-> Link: https://doc.rust-lang.org/rustc/command-line-arguments.html#--remap=
--path-prefix-remap-source-names-in-output
-> Acked-by: Miguel Ojeda <ojeda@kernel.org>
-> Signed-off-by: Thomas Wei=C3=9Fschuh <linux@weissschuh.net>
-> ---
-> Changes in v2:
-> - Drop the usage of $(call rustc-option)
-> - Link to v1: https://lore.kernel.org/r/20250210-rust-path-remap-v1-1-021=
-c48188df1@weissschuh.net
-> ---
+The size parameter is optional and strscpy() automatically determines
+the length of the destination buffer using sizeof() if the argument is
+omitted. This makes the explicit sizeof() unnecessary. Remove it to
+simplify the code.
 
-Applied to linux-kbuild.
-Thanks.
+Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
+---
+ kernel/fork.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/kernel/fork.c b/kernel/fork.c
+index 735405a9c5f3..81eef131e23c 100644
+--- a/kernel/fork.c
++++ b/kernel/fork.c
+@@ -2248,7 +2248,7 @@ __latent_entropy struct task_struct *copy_process(
+ 		p->flags |= PF_IO_WORKER;
+ 
+ 	if (args->name)
+-		strscpy_pad(p->comm, args->name, sizeof(p->comm));
++		strscpy_pad(p->comm, args->name);
+ 
+ 	p->set_child_tid = (clone_flags & CLONE_CHILD_SETTID) ? args->child_tid : NULL;
+ 	/*
+-- 
+2.48.1
 
->  Makefile | 1 +
->  1 file changed, 1 insertion(+)
->
-> diff --git a/Makefile b/Makefile
-> index 9e0d63d9d94b90672f91929e5e148e5a0c346cb6..9ed2222fafd4fa37a367b87a5=
-c681936368318e7 100644
-> --- a/Makefile
-> +++ b/Makefile
-> @@ -1068,6 +1068,7 @@ endif
->  # change __FILE__ to the relative path to the source directory
->  ifdef building_out_of_srctree
->  KBUILD_CPPFLAGS +=3D $(call cc-option,-fmacro-prefix-map=3D$(srcroot)/=
-=3D)
-> +KBUILD_RUSTFLAGS +=3D --remap-path-prefix=3D$(srcroot)/=3D
->  endif
->
->  # include additional Makefiles when needed
->
-> ---
-> base-commit: beeb78d46249cab8b2b8359a2ce8fa5376b5ad2d
-> change-id: 20250210-rust-path-remap-e97cec71e61a
->
-> Best regards,
-> --
-> Thomas Wei=C3=9Fschuh <linux@weissschuh.net>
->
-
-
---=20
-Best Regards
-Masahiro Yamada
 
