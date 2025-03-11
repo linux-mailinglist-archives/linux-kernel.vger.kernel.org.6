@@ -1,147 +1,134 @@
-Return-Path: <linux-kernel+bounces-556903-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-556904-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 55041A5D04F
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 21:03:36 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A5E93A5D051
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 21:03:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9312F3B9DA9
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 20:03:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 350E21793B6
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Mar 2025 20:03:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B624625F97A;
-	Tue, 11 Mar 2025 20:03:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F9A22620F9;
+	Tue, 11 Mar 2025 20:03:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="L6V/0LO5"
-Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SNWQIyCS"
+Received: from mail-il1-f180.google.com (mail-il1-f180.google.com [209.85.166.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4ACE71EDA20;
-	Tue, 11 Mar 2025 20:03:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7884E25CC6B;
+	Tue, 11 Mar 2025 20:03:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741723408; cv=none; b=gXe/6LbN17GJzGe+JPyc25NbNDk4R5ekiig9KIDamqkc+xaVpwTB97Css86zqb6gU7rM1vKC7evHEC4sDBoCHXDxLxy9PbkE5ChfrfHL2VYn1tpgtD9iHMOInwW0v7bwHvNYFfoHtLk5vEkIiVcEwCCtyGNZq17tJub/NiSN9B0=
+	t=1741723424; cv=none; b=RmOYtK8LjMftOlNRyRlRFC/Ta6v3YxCnf+4blPfYQ217OCA+MRP3VeqDRshDlwoULRcXGMJoqQVd9jHfOQoG+hSs3q2FjjL15XrJg1T5Bwufp2sOVnHhIMJOmUKU6fp8RNqvf1zeQWbsdxD2KC5mY1/ngZZqk3g65GNJXOUdCZs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741723408; c=relaxed/simple;
-	bh=DazzTJjUvICAz5WuwmaUGkDLCwMSypZsjO2sz2VA/TY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MyVLOycWHGJByXr5PBMyted2A1K0KupS+gLHyylnNBgllX3JIGV9E1vAg5SlAckyUb/Cd9spQSPrQpwccnrTkdB7nszcbo1z9XxrCRm74Z8C3JeDkeVKYCPL9m6+YGzCEVY2hPGQ7Shz9KAfWZSIk2FKUR4OkJjT4nMPX9QrQxI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=L6V/0LO5; arc=none smtp.client-ip=209.85.214.169
+	s=arc-20240116; t=1741723424; c=relaxed/simple;
+	bh=/Y1uKhocepPEVr4gRndRQFJfp4PlO9xpVDQBkK0VWtc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=TvH9pQcfNegcnIE0EFehoLqHyu5rwXjppPc3ihxDsSvTuwEv2o6JO8MUXm5xcmmA+riRoUdaJR8sjEpVgeHaawPmH68xP8lCXjLP3TKV6bxabusJsRYJOiBuT+v0knOBipmd9mAirgWDjRxRrFfvkzQo0QgmON2oqIi7HCzGhhU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SNWQIyCS; arc=none smtp.client-ip=209.85.166.180
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-22337bc9ac3so114255265ad.1;
-        Tue, 11 Mar 2025 13:03:26 -0700 (PDT)
+Received: by mail-il1-f180.google.com with SMTP id e9e14a558f8ab-3cf82bd380bso47356825ab.0;
+        Tue, 11 Mar 2025 13:03:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741723405; x=1742328205; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=Uhyx+ltpmDyiYsWozRzuwZLHrw4eKDZY65wSemvBkBA=;
-        b=L6V/0LO5mYo9SxYa6dUg12tN0GPP4Aq1VyrqwCwW6AQptn6oK6/uehG4/8YI3uOGsk
-         89QaLffbe04lpdHjAFt0wa0wkyNCjIxzTAeib9Mek9VxS4eRIiYpZeVL4n2ZJsgh43l0
-         TnjsFqDCVuVEgIrpd79+LzcOt6Qjqa/7eof/2mVqsG2txdENfkpGmQX4utlCSxsrCfM1
-         9EUSiUF3Rfe19Y6tTZ82XaKhzp18qYIMTmOnTLHTMUIJYyaPEoqM6rz82eJn6WYHzalg
-         4gNQ8At051mahFEay/gUDZPw/hsU8shxI2wH/AbL5FOhafkCzP6NcIGO/zAmsZDBie7g
-         LIlw==
+        d=gmail.com; s=20230601; t=1741723421; x=1742328221; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=GW523EAS3Rk6Z2Gf4pN5+J61D3es3lTSy0uI9oNxP9Q=;
+        b=SNWQIyCSjqPx8dCgqabzxh+CoawTNkIF2jSmU564pdpmCepWoxNjvMOMA3VgphLXUv
+         8qUdlP1O75MLGv9T8jx5gQRvGUuwQ91ub1POjxLblVLMDItOA4B71TAtGrPnJ/s6FMpj
+         DfKsLG9PNCKpa3DM0bgkSCUx6YcXpFZUTWO/LePyPoqCRroRNF5wfm433kJ8mpQyYI3Z
+         iRPZ5oiBsqZO/19jDPdFAUsustT8n4Z4vuCxkcsH75F/90+7QwTcyoK+7D55lzgcq3iI
+         Yl7xeTGT00PvHDNm8BT0KXvFWBk0ViNMg6exQWedhzAN92MASeI+x6uhUlyDFQjDTP8E
+         3jbQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741723405; x=1742328205;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Uhyx+ltpmDyiYsWozRzuwZLHrw4eKDZY65wSemvBkBA=;
-        b=Pn6/ih28T1+nAo1r0kCM6jDD3sOwe8/640AefZwlA2IFVmyHoYflSBlDg74YTBDYC1
-         RMN5i5jfy5osbEujB20ZM7Tqig3Fbgr5/61/XCJiApwL1zfpMJb6rHQpcK9NfRnOZ+q7
-         E8miETbaygAkwpK/Hi//wn+lxfVQ4LbwYGMHxUvrstaXzCVXwqmihPKU/s3gpsDXXibc
-         V2cwjhEuSCYTGpYxXK4MahKPPRqjtL5I7HOw6JnNT76D9Z3Q7chdhn/+qqBrPeljX5Yc
-         YSB0lyKi4g5hkSrks2y81LGYOsFvxHR5lOv7RxYnvLJQ9UyTTFBU0uAg+fwJ/p66VAbO
-         5TqQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUboAfVI6pe6ruub6qwdlytirGtZNzk2cjrELrkXuNyDQR9bUUpWM2Zax8L/pgryEyy8OmPpRMR@vger.kernel.org, AJvYcCVIEbPr/izy14JzRyAt8LJQv1jW0IpUEubNXLV8FG2aOhPTk6QnqTyeoPMvgTaVYz3JnkOahnjeKTFE2eg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzqzfK28whqCWG4XlJAs0B3dAdLCvQruCY9rEZLc8WlM+zm/Vgr
-	wqo4rO90fcbWrUr3ArCUjZl8HouzxoHlVfPW6Bh2tpkOWesQjD4=
-X-Gm-Gg: ASbGnctbqRGBCcGBdRmHifH6orYaSrfcYbe3cUxn7aejSNljdiSYupDH3D5ub22/6HS
-	3AyWe9i4hLNZ70Xizu5k2SNTj81G+s+DaE3ZVmOpTNqLcdNiohrhgKMknMlhcBPW9dBvwScPRVu
-	K0+wX3+Y7sapp9mqq5/Bcb8STCj9eEdCIqvNrkMHOtI3Af7OhaLVBeIjMtOYSHuQgisqFbtrzAC
-	FlmlOZlIw0jLl7f4nOKdWeWDMTd3iYZG+oN91IOvbd5N9ulK9Fz/azutDA69ewXyL0xhL0Pyk31
-	yxt44kZbGTJzaqrR3h69J5i+vErhZqXL7fPTS+4GJNo9
-X-Google-Smtp-Source: AGHT+IGUx2QQWAc7kIhaj5mfYBdyIReDilwsimkaa88Ci5UkrlWngIFZVxm9VPzlZ6J/y5lC2Pj1wg==
-X-Received: by 2002:a17:902:f54f:b0:223:58ff:c722 with SMTP id d9443c01a7336-22592e44a1fmr83727885ad.28.1741723405542;
-        Tue, 11 Mar 2025 13:03:25 -0700 (PDT)
-Received: from localhost ([2601:646:9e00:f56e:2844:3d8f:bf3e:12cc])
-        by smtp.gmail.com with UTF8SMTPSA id d9443c01a7336-224109e816csm102053775ad.54.2025.03.11.13.03.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 11 Mar 2025 13:03:25 -0700 (PDT)
-Date: Tue, 11 Mar 2025 13:03:24 -0700
-From: Stanislav Fomichev <stfomichev@gmail.com>
-To: Mina Almasry <almasrymina@google.com>
-Cc: Stanislav Fomichev <sdf@fomichev.me>, netdev@vger.kernel.org,
-	davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-	pabeni@redhat.com, linux-kernel@vger.kernel.org,
-	donald.hunter@gmail.com, horms@kernel.org,
-	michael.chan@broadcom.com, pavan.chebbi@broadcom.com,
-	andrew+netdev@lunn.ch, jdamato@fastly.com,
-	xuanzhuo@linux.alibaba.com, asml.silence@gmail.com, dw@davidwei.uk
-Subject: Re: [PATCH net-next v2 2/3] net: add granular lock for the netdev
- netlink socket
-Message-ID: <Z9CXDDrruPmTjdW5@mini-arch>
-References: <20250311144026.4154277-1-sdf@fomichev.me>
- <20250311144026.4154277-3-sdf@fomichev.me>
- <CAHS8izNVZ0RqccDKGiL2h+MesCrvza_kwck0RmsrTNAcTkcmjA@mail.gmail.com>
+        d=1e100.net; s=20230601; t=1741723421; x=1742328221;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=GW523EAS3Rk6Z2Gf4pN5+J61D3es3lTSy0uI9oNxP9Q=;
+        b=op6rUpLdC0AiL79IBUIcIPgjuvbmmamP6SUKN7qHDHk99jU/dI+YLJ7bnWh4FtWamq
+         o3kkLnzOw2DDwOsygIZDb8Ouek7ipekodrd2MY1Be9x45/GP6enXs8ypEHxnWeYe1BE+
+         5yhFyQrITjF0VRDdUSR+SRpX7rLFWtE4/pA5+qpYBzkuub7CS/XsGcqgUNXjtrnDoMJI
+         UDqmPWC0soLOk5iMXD6IH5JWrlrcyz7tQ5H74GRGizdAk0n136kZ6F3ceHLPKZHiReTu
+         nYxB5fS8JvngS80SOB9U2p+j84GjnBzzHvcMTdt3kKxbGgDCpdQCJJfHtgC14fPHIQee
+         Xx2A==
+X-Forwarded-Encrypted: i=1; AJvYcCUJhwH3YWke2Pt8VZASbCCwk/fojT5Fc2Tq4yYE7cXAVyQPFbuuQef1fF8kM/KOkiXSMiSmSG8rzxRHgTtp@vger.kernel.org, AJvYcCWf2aWYlYm7DLp0GKgjsNQCbaidwGw7PS2dvIwAP6Yx4GEeZfnNQavRqed9LLaX74p4yNZJpAbkSlDblgMO@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzb5V/Y3tKLmdONpVomZSD4iQtB2/jzO/SZyqJwGVXmnOhQ1Qtp
+	dQorStnmRwDIJTQppZaPxWMLK7DneRPj6YmWDKOICTpC2wMgWbN3m3CD8f+EUoehkK/oN2RW9Wu
+	/sO0DlefDI/Badm1rPXKUBmre+Wg=
+X-Gm-Gg: ASbGncs4KgnhHNV9M0JMlhD/G5tXyU2UuQeUBdPgpsNZomapYg7owmsR1ja5ee7gxBz
+	TnclCZnn86IaPRVt2efBJ3dDAmaY+BcDK7kNs2hWkyKMIv/wGoLDQG+solaZzpRPdiireSvgvAb
+	pLvniFcs2eeOhQFtrKZvR/oBQrdYzFvT3iWgba3KSd8027YgUOraaoLiaS
+X-Google-Smtp-Source: AGHT+IFYEIdqAXj57O99Zh2iip2gE6hYr3XolthP5tdHAJes3eWs+x8BQxcINUUI2peKOTGt7uFekvG8SKVQk3DUgs8=
+X-Received: by 2002:a05:6e02:174a:b0:3d3:e296:1c1c with SMTP id
+ e9e14a558f8ab-3d468921f95mr51075145ab.9.1741723421512; Tue, 11 Mar 2025
+ 13:03:41 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAHS8izNVZ0RqccDKGiL2h+MesCrvza_kwck0RmsrTNAcTkcmjA@mail.gmail.com>
+References: <20241212151402.159102-1-quic_bibekkum@quicinc.com>
+ <173625436399.258197.10961901698600591079.b4-ty@kernel.org> <20250311175528.GA5216@willie-the-truck>
+In-Reply-To: <20250311175528.GA5216@willie-the-truck>
+From: Rob Clark <robdclark@gmail.com>
+Date: Tue, 11 Mar 2025 13:03:29 -0700
+X-Gm-Features: AQ5f1JrHvI_RF7xvW5BrP_PBmrcW3VTWeSbeCSaeqxqwJS9gRSEMDCWlVX4sKfA
+Message-ID: <CAF6AEGvDyPtXN7Cn98BKsTM9GjUzy1sTEOsLiz-cdvaZ14qWyA@mail.gmail.com>
+Subject: Re: [PATCH v18 0/5] iommu/arm-smmu: introduction of ACTLR
+ implementation for Qualcomm SoCs
+To: Will Deacon <will@kernel.org>
+Cc: robin.murphy@arm.com, joro@8bytes.org, jgg@ziepe.ca, jsnitsel@redhat.com, 
+	robh@kernel.org, krzysztof.kozlowski@linaro.org, quic_c_gdjako@quicinc.com, 
+	dmitry.baryshkov@linaro.org, Bibek Kumar Patro <quic_bibekkum@quicinc.com>, 
+	catalin.marinas@arm.com, kernel-team@android.com, iommu@lists.linux.dev, 
+	linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 03/11, Mina Almasry wrote:
-> On Tue, Mar 11, 2025 at 7:40 AM Stanislav Fomichev <sdf@fomichev.me> wrote:
+On Tue, Mar 11, 2025 at 10:55=E2=80=AFAM Will Deacon <will@kernel.org> wrot=
+e:
+>
+> On Tue, Jan 07, 2025 at 04:42:39PM +0000, Will Deacon wrote:
+> > On Thu, 12 Dec 2024 20:43:57 +0530, Bibek Kumar Patro wrote:
+> > > This patch series consist of six parts and covers the following:
+> > >
+> > > 1. Provide option to re-enable context caching to retain prefetcher
+> > >    settings during reset and runtime suspend.
+> > >
+> > > 2. Remove cfg inside qcom_smmu structure and replace it with single
+> > >    pointer to qcom_smmu_match_data avoiding replication of multiple
+> > >    members from same.
+> > >
+> > > [...]
 > >
-> > As we move away from rtnl_lock for queue ops, introduce
-> > per-netdev_nl_sock lock.
+> > Applied to iommu (arm/smmu/updates), thanks!
 > >
-> > Cc: Mina Almasry <almasrymina@google.com>
-> > Signed-off-by: Stanislav Fomichev <sdf@fomichev.me>
-> > ---
-> >  include/net/netdev_netlink.h | 1 +
-> >  net/core/netdev-genl.c       | 6 ++++++
-> >  2 files changed, 7 insertions(+)
-> >
-> > diff --git a/include/net/netdev_netlink.h b/include/net/netdev_netlink.h
-> > index 1599573d35c9..075962dbe743 100644
-> > --- a/include/net/netdev_netlink.h
-> > +++ b/include/net/netdev_netlink.h
-> > @@ -5,6 +5,7 @@
-> >  #include <linux/list.h>
-> >
-> >  struct netdev_nl_sock {
-> > +       struct mutex lock;
-> >         struct list_head bindings;
-> >  };
-> >
-> > diff --git a/net/core/netdev-genl.c b/net/core/netdev-genl.c
-> > index a219be90c739..63e10717efc5 100644
-> > --- a/net/core/netdev-genl.c
-> > +++ b/net/core/netdev-genl.c
-> > @@ -859,6 +859,7 @@ int netdev_nl_bind_rx_doit(struct sk_buff *skb, struct genl_info *info)
-> >                 goto err_genlmsg_free;
-> >         }
-> >
-> > +       mutex_lock(&priv->lock);
-> 
-> You do not need to acquire this lock so early, no? AFAICT you only
-> need to lock around:
-> 
-> list_add(&binding->list, sock_binding_list);
-> 
-> Or is this to establish a locking order (sock_binding_list lock before
-> the netdev lock)?
+> > [1/5] iommu/arm-smmu: Re-enable context caching in smmu reset operation
+> >       https://git.kernel.org/iommu/c/ef4144b1b47d
+> > [2/5] iommu/arm-smmu: Refactor qcom_smmu structure to include single po=
+inter
+> >       https://git.kernel.org/iommu/c/445d7a8ed90e
+> > [3/5] iommu/arm-smmu: Add support for PRR bit setup
+> >       https://git.kernel.org/iommu/c/7f2ef1bfc758
+> > [4/5] iommu/arm-smmu: Introduce ACTLR custom prefetcher settings
+> >       https://git.kernel.org/iommu/c/9fe18d825a58
+> > [5/5] iommu/arm-smmu: Add ACTLR data and support for qcom_smmu_500
+> >       https://git.kernel.org/iommu/c/3e35c3e725de
+>
+> Hrm. I'm not seeing any user of the new ->set_prr*_() functions in
+> linux-next yet. Is there something under review, or should I revert this
+> for now?
 
-Right, if I acquire it later, I'd have to do the same order
-in netdev_nl_sock_priv_destroy and it seems to be a bit more complicated
-to do (since we go over the list of bindings over there).
+It is WIP, part of a larger patchset adding sparse binding support in
+drm/msm.  Please do not revert.
+
+BR,
+-R
 
